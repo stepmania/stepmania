@@ -14,30 +14,23 @@ struct RageTextureManagerPrefs
 	bool m_bHighResolutionTextures;
 	bool m_bMipMaps;
 	
-	RageTextureManagerPrefs()
-	{
-		m_bDelayedDelete = false;
-		m_iMovieColorDepth = 16;
-		m_iTextureColorDepth = 16;
-		m_iMaxTextureResolution = 1024;
-		m_bHighResolutionTextures = true;
-		m_bMipMaps = false;
-	}
+	RageTextureManagerPrefs(): m_iTextureColorDepth(16),
+		m_iMovieColorDepth(16), m_bDelayedDelete(false),
+		m_iMaxTextureResolution(1024),
+		m_bHighResolutionTextures(true), m_bMipMaps(false) {}
 	RageTextureManagerPrefs( 
 		int iTextureColorDepth,
 		int iMovieColorDepth,
 		bool bDelayedDelete,
 		int iMaxTextureResolution,
 		bool bHighResolutionTextures,
-		bool bMipMaps )
-	{
-		m_bDelayedDelete = bDelayedDelete;
-		m_iMovieColorDepth = iMovieColorDepth;
-		m_iTextureColorDepth = iTextureColorDepth;
-		m_iMaxTextureResolution = iMaxTextureResolution;
-		m_bHighResolutionTextures = bHighResolutionTextures;
-		m_bMipMaps = bMipMaps;
-	}
+		bool bMipMaps ):
+		m_iTextureColorDepth(iTextureColorDepth),
+		m_iMovieColorDepth(iMovieColorDepth),
+		m_bDelayedDelete(bDelayedDelete),
+		m_iMaxTextureResolution(iMaxTextureResolution),
+		m_bHighResolutionTextures(bHighResolutionTextures),
+		m_bMipMaps(bMipMaps) {}
 
 	bool operator!=( const RageTextureManagerPrefs& rhs ) const
 	{

@@ -454,7 +454,7 @@ static acolorhist_item *mediancut( acolorhist_item *achv, int colors, int sum, i
 #ifdef REP_AVERAGE_PIXELS
 		int indx = bv[bi].ind;
 		int clrs = bv[bi].colors;
-		long r = 0, g = 0, b = 0, a = 0, sum = 0;
+		long r = 0, g = 0, b = 0, a = 0, lSum = 0;
 
 		for ( int i = 0; i < clrs; ++i )
 		{
@@ -462,15 +462,15 @@ static acolorhist_item *mediancut( acolorhist_item *achv, int colors, int sum, i
 			g += PAM_GETG( achv[indx + i].acolor ) * achv[indx + i].value;
 			b += PAM_GETB( achv[indx + i].acolor ) * achv[indx + i].value;
 			a += PAM_GETA( achv[indx + i].acolor ) * achv[indx + i].value;
-			sum += achv[indx + i].value;
+			lSum += achv[indx + i].value;
 		}
-		r = r / sum;
+		r = r / lSum;
 		r = min( r, (long) maxval );
-		g = g / sum;
+		g = g / lSum;
 		g = min( g, (long) maxval );
-		b = b / sum;
+		b = b / lSum;
 		b = min( b, (long) maxval );
-		a = a / sum;
+		a = a / lSum;
 		a = min( a, (long) maxval );
 		PAM_ASSIGN( acolormap[bi].acolor, (uint8_t)r, (uint8_t)g, (uint8_t)b, (uint8_t)a );
 #endif // REP_AVERAGE_PIXELS

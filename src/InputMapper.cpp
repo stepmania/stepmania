@@ -1093,12 +1093,12 @@ void InputMappings::ReadMappings( const InputScheme *pInputScheme, RString sFile
 			vector<RString> sDeviceInputStrings;
 			split( value, DEVICE_INPUT_SEPARATOR, sDeviceInputStrings, false );
 
-			for( unsigned i=0; i<sDeviceInputStrings.size() && i<unsigned(NUM_GAME_TO_DEVICE_SLOTS); i++ )
+			for( unsigned j=0; j<sDeviceInputStrings.size() && j<unsigned(NUM_GAME_TO_DEVICE_SLOTS); j++ )
 			{
 				DeviceInput DeviceI;
-				DeviceI.FromString( sDeviceInputStrings[i] );
+				DeviceI.FromString( sDeviceInputStrings[j] );
 				if( DeviceI.IsValid() )
-					SetInputMap( DeviceI, GameI, i );
+					SetInputMap( DeviceI, GameI, j );
 			}
 		}
 	}

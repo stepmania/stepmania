@@ -425,10 +425,10 @@ wchar_t InputHandler_MacOSX_HID::DeviceButtonToChar( DeviceButton button, bool b
 		if( KeyLayout )
 		{
 			UInt32 keyboardType = LMGetKbdType();
-			UInt32 modifiers = bUseCurrentKeyModifiers ? GetCurrentKeyModifiers() : 0;
+			UInt32 nModifiers = bUseCurrentKeyModifiers ? GetCurrentKeyModifiers() : 0;
 			UniChar unicodeInputString[4];
 			UniCharCount length;
-			OSStatus status = UCKeyTranslate( *KeyLayout, iMacVirtualKey, kUCKeyActionDown, modifiers,
+			OSStatus status = UCKeyTranslate( *KeyLayout, iMacVirtualKey, kUCKeyActionDown, nModifiers,
 							  keyboardType, 0, &iDeadKeyState, ARRAYLEN(unicodeInputString),
 							  &length, unicodeInputString );
 

@@ -33,7 +33,6 @@ RageSoundReader_Chain::~RageSoundReader_Chain()
 	while( !m_apActiveSounds.empty() )
 		ReleaseSound( m_apActiveSounds.front() );
 
-	map<RString, RageSoundReader *>::iterator it;
 	FOREACH( RageSoundReader *, m_apLoadedSounds, it )
 		delete *it;
 }
@@ -103,7 +102,6 @@ int RageSoundReader_Chain::GetSampleRateInternal() const
 	if( m_apLoadedSounds.empty() )
 		return m_iPreferredSampleRate;
 
-	map<RString, RageSoundReader *>::const_iterator it;
 	int iRate = -1;
 	FOREACH_CONST( RageSoundReader *, m_apLoadedSounds, it )
 	{
@@ -120,7 +118,6 @@ void RageSoundReader_Chain::Finish()
 	/* Figure out how many channels we have.  All sounds must either have 1 or 2 channels,
 	 * which will be converted as needed, or have the same number of channels. */
 	m_iChannels = 1;
-	map<RString, RageSoundReader *>::iterator it;
 	FOREACH( RageSoundReader *, m_apLoadedSounds, it )
 		m_iChannels = max( m_iChannels, (*it)->GetNumChannels() );
 
