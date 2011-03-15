@@ -98,7 +98,7 @@ public:
 	 * @brief Translate any titles that aren't in english.
 	 *
 	 * This is called by TidyUpData. */
-	void TranslateTitles();	
+	void TranslateTitles();
 
 	/**
 	 * @brief Save to the new SSC file format.

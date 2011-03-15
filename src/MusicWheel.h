@@ -52,15 +52,14 @@ public:
 protected:
 	MusicWheelItem *MakeItem();
 
+	void GetSongList( vector<Song*> &arraySongs, SortOrder so );
 	void BuildWheelItemDatas( vector<MusicWheelItemData *> &arrayWheelItems, SortOrder so );
-	void UpdateWheelItemDatas( SortOrder so );
 	bool SelectSongOrCourse();
 	bool SelectCourse( const Course *p );
 	bool SelectModeMenuItem();
 
 	virtual void UpdateSwitch();
 
-	vector<MusicWheelItemData *>	m_UnfilteredWheelItemDatas[NUM_SortOrder];
 	vector<MusicWheelItemData *>	m_WheelItemDatas[NUM_SortOrder]; // aliases into m_UnfilteredWheelItemDatas
 
 	RString				m_sLastModeMenuItem;
