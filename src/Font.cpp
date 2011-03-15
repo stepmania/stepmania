@@ -11,10 +11,9 @@
 #include "FontCharAliases.h"
 #include "arch/Dialog/Dialog.h"
 
-FontPage::FontPage()
-{
-	m_iDrawExtraPixelsLeft = m_iDrawExtraPixelsRight = 0;
-}
+FontPage::FontPage(): m_iHeight(0), m_iLineSpacing(0), m_fVshift(0),
+	m_iDrawExtraPixelsLeft(0), m_iDrawExtraPixelsRight(0),
+	m_sTexturePath("") {}
 
 void FontPage::Load( const FontPageSettings &cfg )
 {
@@ -311,15 +310,15 @@ const glyph &Font::GetGlyph( wchar_t c ) const
 
 bool Font::FontCompleteForString( const wstring &str ) const
 {
-	map<wchar_t,glyph*>::const_iterator m_pDefault = m_iCharToGlyph.find( FONT_DEFAULT_GLYPH );
-	if( m_pDefault == m_iCharToGlyph.end() )
+	map<wchar_t,glyph*>::const_iterator mapDefault = m_iCharToGlyph.find( FONT_DEFAULT_GLYPH );
+	if( mapDefault == m_iCharToGlyph.end() )
 		RageException::Throw( "The default glyph is missing from the font \"%s\".", path.c_str() );
 
 	for( unsigned i = 0; i < str.size(); ++i )
 	{
 		// If the glyph for this character is the default glyph, we're incomplete.
 		const glyph &g = GetGlyph( str[i] );
-		if( &g == m_pDefault->second )
+		if( &g == mapDefault->second )
 			return false;
 	}
 	return true;
@@ -718,8 +717,8 @@ void Font::Load( const RString &sIniPath, RString sChars )
 
 		for(unsigned i = 0; i < ImportList.size(); ++i)
 		{
-			RString path = THEME->GetPathF( "", ImportList[i], true );
-			if( path == "" )
+			RString fPath = THEME->GetPathF( "", ImportList[i], true );
+			if( fPath == "" )
 			{
 				RString s = ssprintf( "Font \"%s\" imports a font \"%s\" that doesn't exist", sIniPath.c_str(), ImportList[i].c_str() );
 				Dialog::OK( s );
@@ -727,7 +726,7 @@ void Font::Load( const RString &sIniPath, RString sChars )
 			}
 
 			Font subfont;
-			subfont.Load(path,"");
+			subfont.Load(fPath,"");
 			MergeFont(subfont);
 			//FONT->UnloadFont(subfont);
 		}

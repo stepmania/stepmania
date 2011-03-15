@@ -133,10 +133,10 @@ struct TapNote
 	XNode* CreateNode() const;
 	void LoadFromNode( const XNode* pNode );
 
-	TapNote()
-	{
-		Init();	
-	}
+	TapNote(): type(empty), subType(SubType_Invalid), source(original),
+		pn(PLAYER_INVALID), bHopoPossible(false), 
+		sAttackModifiers(""), fAttackDurationSeconds(0), 
+		iKeysoundIndex(-1), iDuration(0) {}
 	void Init()
 	{
 		type = empty;
@@ -154,18 +154,12 @@ struct TapNote
 		Source source_, 
 		RString sAttackModifiers_,
 		float fAttackDurationSeconds_,
-		int iKeysoundIndex_ )
-	{
-		Init();
-		type = type_;
-		subType = subType_;
-		source = source_;
-		sAttackModifiers = sAttackModifiers_;
-		fAttackDurationSeconds = fAttackDurationSeconds_;
-		iKeysoundIndex = iKeysoundIndex_;
-		iDuration = 0;
-		pn = PLAYER_INVALID;
-	}
+		int iKeysoundIndex_ ):
+		type(type_), subType(subType_), source(source_),
+		pn(PLAYER_INVALID), sAttackModifiers(sAttackModifiers_),
+		fAttackDurationSeconds(fAttackDurationSeconds_),
+		iKeysoundIndex(iKeysoundIndex_), iDuration(0) {}
+
 	/**
 	 * @brief Determine if the two TapNotes are equal to each other.
 	 * @param other the other TapNote we're checking.
@@ -203,6 +197,29 @@ extern TapNote TAP_ORIGINAL_FAKE;		// 'F'
 //extern TapNote TAP_ORIGINAL_MINE_HEAD;	// 'N' (tentative, we'll see when iDance gets ripped.)
 extern TapNote TAP_ADDITION_TAP;
 extern TapNote TAP_ADDITION_MINE;
+
+/**
+ * @brief Retrieve the string representing the TapNote Type.
+ *
+ * TODO: Find a way to standardize this with the other enum string calls.
+ * @param tn the TapNote's type.
+ * @return the intended string. */
+inline const RString TapNoteTypeToString( TapNote::Type tn )
+{
+	switch( tn )
+	{
+		case TapNote::empty:		return RString("empty");
+		case TapNote::tap:		return RString("tap");
+		case TapNote::hold_head:	return RString("hold_head");
+		case TapNote::hold_tail:	return RString("hold_tail");
+		case TapNote::mine:		return RString("mine");
+		case TapNote::lift:		return RString("lift");
+		case TapNote::attack:		return RString("attack");
+		case TapNote::autoKeysound:	return RString("autoKeysound");
+		case TapNote::fake:		return RString("fake");
+		default:			return RString();
+	}
+}
 
 /**
  * @brief The number of tracks allowed.

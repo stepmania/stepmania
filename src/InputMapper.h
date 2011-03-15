@@ -12,20 +12,12 @@ const int NUM_USER_GAME_TO_DEVICE_SLOTS = 2;
 
 struct AutoMappingEntry
 {
-	AutoMappingEntry( int i, DeviceButton db, GameButton gb, bool b )
-	{
-		m_iSlotIndex = i;
-		m_deviceButton = db;
-		m_gb = gb;
-		m_bSecondController = b;
-	}
-	AutoMappingEntry()
-	{
-		m_iSlotIndex = -1;
-		m_deviceButton = DeviceButton_Invalid;
-		m_gb = GameButton_Invalid;
-		m_bSecondController = false;
-	}
+	AutoMappingEntry( int i, DeviceButton db, GameButton gb, bool b ):
+		m_iSlotIndex(i), m_deviceButton(db),
+		m_gb(gb), m_bSecondController(b) {}
+	AutoMappingEntry(): m_iSlotIndex(-1), 
+		m_deviceButton(DeviceButton_Invalid), m_gb(GameButton_Invalid),
+		m_bSecondController(false) {}
 	bool IsEmpty() const { return m_deviceButton == DeviceButton_Invalid  &&  m_gb == GameButton_Invalid; }
 
 	int m_iSlotIndex;
@@ -86,10 +78,8 @@ struct AutoMappings
 		AutoMappingEntry im37 = AutoMappingEntry(), 
 		AutoMappingEntry im38 = AutoMappingEntry(), 
 		AutoMappingEntry im39 = AutoMappingEntry() )
+	: m_sGame(s1), m_sDriverRegex(s2), m_sControllerName(s3)
 	{
-		m_sGame = s1;
-		m_sDriverRegex = s2;
-		m_sControllerName = s3;
 #define PUSH( im )	if(!im.IsEmpty()) m_vMaps.push_back(im);
 		PUSH(im0);PUSH(im1);PUSH(im2);PUSH(im3);PUSH(im4);PUSH(im5);PUSH(im6);PUSH(im7);PUSH(im8);PUSH(im9);PUSH(im10);PUSH(im11);PUSH(im12);PUSH(im13);PUSH(im14);PUSH(im15);PUSH(im16);PUSH(im17);PUSH(im18);PUSH(im19);
 		PUSH(im20);PUSH(im21);PUSH(im22);PUSH(im23);PUSH(im24);PUSH(im25);PUSH(im26);PUSH(im27);PUSH(im28);PUSH(im29);PUSH(im30);PUSH(im31);PUSH(im32);PUSH(im33);PUSH(im34);PUSH(im35);PUSH(im36);PUSH(im37);PUSH(im38);PUSH(im39);
@@ -206,6 +196,10 @@ protected:
 
 	void UpdateTempDItoGI();
 	const InputScheme *m_pInputScheme;
+	
+private:
+	InputMapper(const InputMapper& rhs);
+	InputMapper& operator=(const InputMapper& rhs);
 };
 
 extern InputMapper*	INPUTMAPPER;	// global and accessable from anywhere in our program

@@ -36,11 +36,9 @@ namespace
 	map<RageTextureID, RageTexture*> m_mapPathToTexture;
 };
 
-RageTextureManager::RageTextureManager()
-{
-	m_iNoWarnAboutOddDimensions = 0;
-	m_TexturePolicy = RageTextureID::TEX_DEFAULT;
-}
+RageTextureManager::RageTextureManager():
+	m_iNoWarnAboutOddDimensions(0),
+	m_TexturePolicy(RageTextureID::TEX_DEFAULT) {}
 
 RageTextureManager::~RageTextureManager()
 {
@@ -106,9 +104,8 @@ class RageTexture_Default: public RageTexture
 {
 public:
 	RageTexture_Default():
-		RageTexture( RageTextureID() )
+		RageTexture( RageTextureID() ), m_uTexHandle(0)
 	{
-		m_uTexHandle = 0;
 		m_iSourceWidth = m_iSourceHeight = 1;
 		m_iTextureWidth = m_iTextureHeight = 1;
 		m_iImageWidth = m_iImageHeight = 1;

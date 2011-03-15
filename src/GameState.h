@@ -348,6 +348,9 @@ private:
 	EarnedExtraStage	CalculateEarnedExtraStage() const;
 	int	m_iAwardedExtraStages[NUM_PLAYERS];
 	bool	m_bEarnedExtraStage;
+	
+	GameState(const GameState& rhs);
+	GameState& operator=(const GameState& rhs);
 
 };
 

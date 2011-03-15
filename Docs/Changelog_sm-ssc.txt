@@ -10,6 +10,17 @@ supported but exist anyways.)
 _____________________________________________________________________________
 
 ================================================================================
+sm-ssc v1.2.4 | 20110???
+--------------------------------------------------------------------------------
+
+20110313
+--------
+* [NotesWriterSM] Allow for either the #DESCRIPTION or #CREDIT tags to be used
+  for the .sm format's description token. [Wolfman2000]
+* [ScreenEdit] Add Tap Note Cycling to allow inputting all of the taps. The way
+  to make holds and rolls are still the same as before. [Wolfman2000]
+
+================================================================================
 sm-ssc v1.2.3 | 20110323
 --------------------------------------------------------------------------------
 
@@ -25,20 +36,6 @@ sm-ssc v1.2.3 | 20110323
 * [MeterDisplay] Add Lua binding. "Allow setting and changing the width
   dynamically. Phase out the "StreamWidth" node property; set it with
   SetStreamWidth instead." [Glenn Maynard]
-* sm5svn r28280: "Previously, we didn't create MusicWheel sorts when the screen
-  loads; it was delayed until the screen begins. This allowed preloading before
-  the style is set. However, it caused a major skip when the screen starts,
-  because creating the sorts is fairly expensive.
-  
-  Refactor this. Load the sorts when the screen is loaded, and then go through
-  them and quickly filter out unplayable data and handle other initialization
-  on begin. This is much faster, so we can more easily transition seamlessly
-  from the previous menu.
-  
-  One known limitation: the sorts are created before we know the style, so we
-  have to guess. This means if you're in a style like dance-solo or
-  pump-halfdouble, sorts will still be based on regular mode. This affects the
-  difficulty, top grade and roulette sorts." [Glenn Maynard]
 
 20110305
 --------

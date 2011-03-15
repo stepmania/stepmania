@@ -24,7 +24,7 @@ struct BPMSegment
 	 * @param s the starting row of this segment.
 	 * @param b the beats per second to be turned into beats per minute.
 	 */
-	BPMSegment( int s, float b ) { m_iStartRow = max( 0, s ); SetBPM( b ); }
+	BPMSegment( int s, float b ): m_iStartRow(max(0, s)), m_fBPS(0) { SetBPM( b ); }
 	/**
 	 * @brief The row in which the BPMSegment activates.
 	 */
@@ -115,10 +115,10 @@ struct StopSegment
 	 * @param s the starting row of this segment.
 	 * @param f the length of time to pause the note scrolling.
 	 */
-	StopSegment( int s, float f ) {
-		m_iStartRow = max( 0, s );
-		m_fStopSeconds = PREFSMAN->m_bQuirksMode ? f : max( 0.0f, f );
-		m_bDelay = false;
+	StopSegment( int s, float f ) : m_iStartRow(max(0, s)), 
+		m_fStopSeconds(f), m_bDelay(false)
+	{
+		if (!PREFSMAN->m_bQuirksMode) m_fStopSeconds = max( 0.0f, f );
 	}
 	/**
 	 * @brief Creates a Stop (or Delay) Segment at the specified row for the specified length of time.
@@ -126,10 +126,10 @@ struct StopSegment
 	 * @param f the length of time to pause the note scrolling.
 	 * @param d the flag that makes this Stop Segment a Delay Segment.
 	 */
-	StopSegment( int s, float f, bool d ) {
-		m_iStartRow = max( 0, s );
-		m_fStopSeconds = PREFSMAN->m_bQuirksMode ? f : max( 0.0f, f );
-		m_bDelay = d;
+	StopSegment( int s, float f, bool d ) : m_iStartRow(max(0, s)), 
+		m_fStopSeconds(f), m_bDelay(d)
+	{
+		if (!PREFSMAN->m_bQuirksMode) m_fStopSeconds = max( 0.0f, f );
 	}
 	/**
 	 * @brief The row in which the StopSegment activates.
@@ -221,22 +221,16 @@ struct TimeSignatureSegment
 	 * @param r the starting row of the segment.
 	 * @param n the numerator for the segment.
 	 */
-	TimeSignatureSegment( int r, int n ) {
-		m_iStartRow = max( 0, r );
-		m_iNumerator = n;
-		m_iDenominator = 4;
-	}
+	TimeSignatureSegment( int r, int n ): m_iStartRow(max(0, r)),
+		m_iNumerator(n), m_iDenominator(4) {}
 	/**
 	 * @brief Creates a Time Signature Segment at the given row with a supplied numerator & denominator.
 	 * @param r the starting row of the segment.
 	 * @param n the numerator for the segment.
 	 * @param d the denonimator for the segment.
 	 */
-	TimeSignatureSegment( int r, int n, int d ) {
-		m_iStartRow = max( 0, r );
-		m_iNumerator = n;
-		m_iDenominator = d;
-	}
+	TimeSignatureSegment( int r, int n, int d ): m_iStartRow(max(0, r)),
+	m_iNumerator(n), m_iDenominator(d) {}
 	/**
 	 * @brief The row in which the TimeSignatureSegment activates.
 	 */
@@ -334,17 +328,15 @@ struct WarpSegment
 	 * @param s the starting row of this segment.
 	 * @param r the row to warp to.
 	 */
-	WarpSegment( int s, int r )
-	{
-		m_iStartRow = max( 0, s );
-		m_fWarpBeats = max( 0, NoteRowToBeat( r ) );
-	}
+	WarpSegment( int s, int r ): m_iStartRow(max(0, s)),
+		m_fWarpBeats(max(0, NoteRowToBeat(r))) {}
 	/**
 	 * @brief Creates a Warp Segment with the specified starting row and beat to warp to.
 	 * @param s the starting row of this segment.
 	 * @param b the beat to warp to.
 	 */
-	WarpSegment( int s, float b ){ m_iStartRow = max( 0, s ); m_fWarpBeats = max( 0, b ); }
+	WarpSegment( int s, float b ): m_iStartRow(max(0, s)),
+		m_fWarpBeats(max(0, b)) {}
 	/**
 	 * @brief The row in which the WarpSegment activates.
 	 */
@@ -423,7 +415,8 @@ struct TickcountSegment
 	 * @param s the starting row of this segment.
 	 * @param t the amount of ticks counted per beat.
 	 */
-	TickcountSegment( int s, int t ){ m_iStartRow = max( 0, s ); m_iTicks = max( 0, t ); }
+	TickcountSegment( int s, int t ): m_iStartRow(max(0, s)), 
+		m_iTicks(max(0, t)) {}
 	/**
 	 * @brief The row in which the TickcountSegment activates.
 	 */
@@ -498,7 +491,8 @@ struct ComboSegment
 	 * @param s the starting row of this segment.
 	 * @param t the amount the combo increases on a succesful hit.
 	 */
-	ComboSegment( int s, int t ){ m_iStartRow = max( 0, s ); m_iCombo = max( 1, t ); }
+	ComboSegment( int s, int t ): m_iStartRow(max(0, s)),
+		m_iCombo(max(1,t)) {}
 	/**
 	 * @brief The row in which the ComboSegment activates.
 	 */

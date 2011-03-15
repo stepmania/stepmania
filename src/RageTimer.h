@@ -6,7 +6,7 @@
 class RageTimer
 {
 public:
-	RageTimer() { Touch(); }
+	RageTimer(): m_secs(0), m_us(0) { Touch(); }
 	RageTimer( int secs, int us ): m_secs(secs), m_us(us) { }
 
 	/* Time ago this RageTimer represents. */

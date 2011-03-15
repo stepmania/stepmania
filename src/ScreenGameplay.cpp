@@ -797,12 +797,12 @@ void ScreenGameplay::InitSongQueues()
 
 		FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
 		{
-			Trail *pTrail = GAMESTATE->m_pCurTrail[ pi->GetStepsAndTrailIndex() ];
-			ASSERT( pTrail );
+			Trail *lTrail = GAMESTATE->m_pCurTrail[ pi->GetStepsAndTrailIndex() ];
+			ASSERT( lTrail );
 
 			pi->m_vpStepsQueue.clear();
 			pi->m_asModifiersQueue.clear();
-			FOREACH_CONST( TrailEntry, pTrail->m_vEntries, e )
+			FOREACH_CONST( TrailEntry, lTrail->m_vEntries, e )
 			{
 				ASSERT( e->pSteps );
 				pi->m_vpStepsQueue.push_back( e->pSteps );
@@ -1270,8 +1270,6 @@ void ScreenGameplay::LoadLights()
 	{
 		if( asDifficulties[0].CompareNoCase("selected") == 0 )
 		{
-			PlayerInfo pi;
-
 			// Base lights off current difficulty of active player
 			// Can be either P1 or P2 if they're individual or P1 if both are active
 			FOREACH_EnabledPlayerNumberInfo( m_vPlayerInfo, pi )
@@ -1305,8 +1303,6 @@ void ScreenGameplay::LoadLights()
 		// We've also specified for Player 2 to be based off current difficulty
 		if( asDifficulties[1].CompareNoCase("selected") == 0 && GAMESTATE->GetNumPlayersEnabled() > 1 )
 		{
-			PlayerInfo pi;
-
 			// Base lights off current difficulty of active player
 			// Only do this for P2 in a two-player situation, since P1 is taken care of above
 			FOREACH_EnabledPlayerNumberInfo( m_vPlayerInfo, pi )

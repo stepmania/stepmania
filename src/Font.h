@@ -204,6 +204,9 @@ private:
 	void LoadFontPageSettings( FontPageSettings &cfg, IniFile &ini, const RString &sTexturePath, const RString &PageName, RString sChars );
 	static void GetFontPaths( const RString &sFontOrTextureFilePath, vector<RString> &sTexturePaths );
 	RString GetPageNameFromFileName( const RString &sFilename );
+	
+	Font(const Font& rhs);
+	Font& operator=(const Font& rhs);
 };
 
 /**

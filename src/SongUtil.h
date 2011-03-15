@@ -17,7 +17,11 @@ class XNode;
 class SongCriteria
 {
 public:
-	RString m_sGroupName;	// "" means don't match
+	/**
+	 * @brief What group name are we searching for for Songs?
+	 *
+	 * If an empty string, don't bother using this for searching. */
+	RString m_sGroupName;
 	bool m_bUseSongGenreAllowedList;
 	vector<RString> m_vsSongGenreAllowedList;
 	enum Selectable { Selectable_Yes, Selectable_No, Selectable_DontCare } m_Selectable;
@@ -43,16 +47,13 @@ public:
 	} m_Locked;
 
 	/** @brief Set up some initial song criteria. */
-	SongCriteria()
+	SongCriteria(): m_sGroupName(""), m_bUseSongGenreAllowedList(false), 
+		m_Selectable(Selectable_DontCare), m_bUseSongAllowedList(false),
+		m_iMaxStagesForSong(-1), m_Tutorial(Tutorial_DontCare),
+		m_Locked(Locked_DontCare)
 	{
-		m_bUseSongGenreAllowedList = false;
-		m_Selectable = Selectable_DontCare;
-		m_bUseSongAllowedList = false;
-		m_iMaxStagesForSong = -1;
 		// m_fMinBPM = -1;
 		// m_fMaxBPM = -1;
-		m_Tutorial = Tutorial_DontCare;
-		m_Locked = Locked_DontCare;
 	}
 
 	/**

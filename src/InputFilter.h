@@ -24,7 +24,7 @@ enum InputEventType
 
 struct InputEvent
 {
-	InputEvent() { type=IET_FIRST_PRESS; };
+	InputEvent(): type(IET_FIRST_PRESS) {}
 
 	DeviceInput di;
 	InputEventType type;
@@ -84,6 +84,9 @@ private:
 	vector<InputEvent> queue;
 	RageMutex *queuemutex;
 	MouseCoordinates m_MouseCoords;
+	
+	InputFilter(const InputFilter& rhs);
+	InputFilter& operator=(const InputFilter& rhs);
 };
 
 extern InputFilter*	INPUTFILTER;	// global and accessable from anywhere in our program
