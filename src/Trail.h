@@ -64,9 +64,15 @@ public:
 	mutable bool		m_bRadarValuesCached;
 	mutable RadarValues	m_CachedRadarValues;
 
-	Trail()
+	/**
+	 * @brief Set up the Trail with default values.
+	 *
+	 * This used to call Init(), which is still available. */
+	Trail(): m_StepsType(StepsType_Invalid),
+		m_CourseDifficulty(Difficulty_Invalid),
+		m_iSpecifiedMeter(-1), m_bRadarValuesCached(false)
 	{
-		Init();
+		m_vEntries.clear();
 	}
 	void Init()
 	{

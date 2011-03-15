@@ -363,8 +363,8 @@ float Profile::GetSongsActual( StepsType st, Difficulty dc ) const
 
 		FOREACHM_CONST( StepsID, HighScoresForASteps, hsfas.m_StepsHighScores, j )
 		{
-			const StepsID &id = j->first;
-			Steps* pSteps = id.ToSteps( pSong, true );
+			const StepsID &sid = j->first;
+			Steps* pSteps = sid.ToSteps( pSong, true );
 			CHECKPOINT_M( ssprintf("Profile::GetSongsActual: song %p, steps %p", pSong, pSteps) );
 
 			// If the Steps isn't loaded on the current machine, then we can't 
@@ -375,7 +375,7 @@ float Profile::GetSongsActual( StepsType st, Difficulty dc ) const
 			if( pSteps->m_StepsType != st )
 				continue;
 
-			CHECKPOINT_M( ssprintf("Profile::GetSongsActual: n %s = %p", id.ToString().c_str(), pSteps) );
+			CHECKPOINT_M( ssprintf("Profile::GetSongsActual: n %s = %p", sid.ToString().c_str(), pSteps) );
 			if( pSteps->GetDifficulty() != dc )
 				continue;	// skip
 			CHECKPOINT;
@@ -1303,13 +1303,13 @@ void Profile::LoadGeneralDataFromNode( const XNode* pNode )
 				if( style->GetName() != "Style" )
 					continue;
 
-				StyleID s;
-				s.LoadFromNode( style );
+				StyleID sID;
+				sID.LoadFromNode( style );
 
-				if( !s.IsValid() )
+				if( !sID.IsValid() )
 					WARN_AND_CONTINUE;
 
-				style->GetTextValue( m_iNumSongsPlayedByStyle[s] );
+				style->GetTextValue( m_iNumSongsPlayedByStyle[sID] );
 			}
 		}
 	}

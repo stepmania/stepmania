@@ -46,6 +46,9 @@ private:
 
 	static bool s_bSystemSupportsTLS;
 	static bool s_bIsShowingDialog;
+	
+	// Swallow up warnings. If they must be used, define them.
+	RageThread& operator=(const RageThread& rhs);
 };
 
 /**
@@ -61,6 +64,9 @@ public:
 
 private:
 	ThreadSlot *m_pSlot;
+	// Swallow up warnings. If they must be used, define them.
+	RageThreadRegister& operator=(const RageThreadRegister& rhs);
+	RageThreadRegister(const RageThreadRegister& rhs);
 };
 
 namespace Checkpoints
@@ -102,6 +108,10 @@ protected:
 	int m_LockCnt;
 
 	void MarkLockedMutex();
+private:
+	// Swallow up warnings. If they must be used, define them.
+	RageMutex& operator=(const RageMutex& rhs);
+	RageMutex(const RageMutex& rhs);
 };
 
 /**
@@ -128,6 +138,9 @@ public:
 	 *
 	 * This can only be called once. */
 	void Unlock();
+private:
+	// Swallow up warnings. If they must be used, define them.
+	LockMutex& operator=(const LockMutex& rhs);
 };
 
 #define LockMut(m) LockMutex UNIQUE_NAME(LocalLock) (m, __FILE__, __LINE__)
@@ -149,6 +162,9 @@ public:
 	void Signal();
 	void Broadcast();
 	bool WaitTimeoutSupported() const;
+	// Swallow up warnings. If they must be used, define them.
+	RageEvent& operator=(const RageEvent& rhs);
+	RageEvent(const RageEvent& rhs);
 
 private:
 	EventImpl *m_pEvent;
@@ -170,6 +186,10 @@ public:
 private:
 	SemaImpl *m_pSema;
 	RString m_sName;
+	
+	// Swallow up warnings. If they must be used, define them.
+	RageSemaphore& operator=(const RageSemaphore& rhs);
+	RageSemaphore(const RageSemaphore& rhs);
 };
 
 #endif

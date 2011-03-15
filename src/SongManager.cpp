@@ -1488,15 +1488,15 @@ void SongManager::UpdatePreferredSort(RString sPreferredSongs, RString sPreferre
 		if( MOVE_UNLOCKS_TO_BOTTOM_OF_PREFERRED_SORT.GetValue() )
 		{
 			// move all unlock songs to a group at the bottom
-			PreferredSortSection section;
-			section.sName = "Unlocks";
+			PreferredSortSection PFSection;
+			PFSection.sName = "Unlocks";
 			FOREACH( UnlockEntry, UNLOCKMAN->m_UnlockEntries, ue )
 			{
 				if( ue->m_Type == UnlockRewardType_Song )
 				{
 					Song *pSong = ue->m_Song.ToSong();
 					if( pSong )
-						section.vpSongs.push_back( pSong );
+						PFSection.vpSongs.push_back( pSong );
 				}
 			}
 
@@ -1505,14 +1505,14 @@ void SongManager::UpdatePreferredSort(RString sPreferredSongs, RString sPreferre
 				for( int i=v->vpSongs.size()-1; i>=0; i-- )
 				{
 					Song *pSong = v->vpSongs[i];
-					if( find(section.vpSongs.begin(),section.vpSongs.end(),pSong) != section.vpSongs.end() )
+					if( find(PFSection.vpSongs.begin(),PFSection.vpSongs.end(),pSong) != PFSection.vpSongs.end() )
 					{
 						v->vpSongs.erase( v->vpSongs.begin()+i );
 					}
 				}
 			}
 
-			m_vPreferredSongSort.push_back( section );
+			m_vPreferredSongSort.push_back( PFSection );
 		}
 
 		// prune empty groups

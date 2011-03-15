@@ -46,7 +46,7 @@ void ScrollBar::SetPercentage( float fCenterPercent, float fSizePercent )
 {
 	wrap( fCenterPercent, 1.0f );
 
-	const int iBarContentHeight = m_sprMiddle->GetZoomedHeight();
+	const int iBarContentHeight = static_cast<int>(m_sprMiddle->GetZoomedHeight());
 	ASSERT( iBarContentHeight != 0 );
 
 	/* Set tick thumb */

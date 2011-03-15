@@ -18,7 +18,6 @@ RageSoundReader_Merge::RageSoundReader_Merge()
 
 RageSoundReader_Merge::~RageSoundReader_Merge()
 {
-	map<RString, RageSoundReader *>::iterator it;
 	FOREACH( RageSoundReader *, m_aSounds, it )
 		delete *it;
 }
