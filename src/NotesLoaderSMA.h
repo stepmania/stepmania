@@ -2,6 +2,7 @@
 #define NOTES_LOADER_SMA_H
 
 #include "GameConstantsAndTypes.h"
+#include "BackgroundUtil.h"
 
 class MsdFile;
 class Song;
@@ -11,7 +12,7 @@ class TimingData;
 /** @brief Reads a Song from a .SMA file. */
 namespace SMALoader
 {
-	void LoadFromSMTokens( RString sStepsType, RString sDescription, 
+	void LoadFromSMATokens( RString sStepsType, RString sDescription, 
 			      RString sDifficulty, RString sMeter, 
 			      RString sMeterType, vector<RString> attackData,
 			      RString sRadarValues, RString sNoteData,
@@ -20,13 +21,14 @@ namespace SMALoader
 	bool LoadFromDir( const RString &sPath, Song &out );
 	void TidyUpData( Song &song, bool bFromCache );
 	
-	bool LoadFromSMFile( const RString &sPath, Song &out, bool bFromCache = false );
+	bool LoadFromSMAFile( const RString &sPath, Song &out );
 	void GetApplicableFiles( const RString &sPath, vector<RString> &out );
 	bool LoadTimingFromFile( const RString &fn, TimingData &out );
-	void LoadTimingFromSMFile( const MsdFile &msd, TimingData &out );
+	void LoadTimingFromSMAFile( const MsdFile &msd, TimingData &out );
 	bool LoadEditFromFile( RString sEditFilePath, ProfileSlot slot, bool bAddStepsToSong );
 	bool LoadEditFromBuffer( const RString &sBuffer, const RString &sEditFilePath, ProfileSlot slot );
 	bool LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePath, ProfileSlot slot, bool bAddStepsToSong );
+	bool LoadFromBGChangesString( BackgroundChange &change, const RString &sBGChangeExpression );
 };
 
 #endif

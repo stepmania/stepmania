@@ -2,6 +2,7 @@
 #define NotesLoaderSM_H
 
 #include "GameConstantsAndTypes.h"
+#include "BackgroundUtil.h"
 
 class MsdFile;
 class Song;
@@ -23,6 +24,7 @@ namespace SMLoader
 	bool LoadEditFromFile( RString sEditFilePath, ProfileSlot slot, bool bAddStepsToSong );
 	bool LoadEditFromBuffer( const RString &sBuffer, const RString &sEditFilePath, ProfileSlot slot );
 	bool LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePath, ProfileSlot slot, bool bAddStepsToSong );
+	bool LoadFromBGChangesString( BackgroundChange &change, const RString &sBGChangeExpression );
 }
 
 #endif
