@@ -690,7 +690,7 @@ int URLRageFile_read( avcodec::URLContext *h, unsigned char *buf, int size )
 #if defined(MACOSX) || defined(_MSC_VER) // still using older ffmpeg versions
 	int URLRageFile_write( avcodec::URLContext *h, unsigned char *buf, int size )
 #else // assume ffmpeg 0.6 on *nix
-	int URLRageFile_write( avcodec::URLContext *h, const unsigned char *buf, int size )
+	int URLRageFile_write( avcodec::URLContext *h, unsigned char *buf, int size )
 #endif
 {
 	RageFileBasic *f = (RageFileBasic *) h->priv_data;
