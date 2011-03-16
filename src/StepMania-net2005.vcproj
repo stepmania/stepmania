@@ -1291,11 +1291,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\NotesLoaderMidi.cpp"
+				RelativePath="NotesLoaderMidi.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\NotesLoaderMidi.h"
+				RelativePath="NotesLoaderMidi.h"
 				>
 			</File>
 			<File
@@ -1313,6 +1313,12 @@
 			<File
 				RelativePath="NotesLoaderSM.h"
 				>
+			</File>
+			<File
+				RelativePath="NotesLoaderSMA.cpp">
+			</File>
+			<File
+				RelativePath="NotesLoaderSMA.h">
 			</File>
 			<File
 				RelativePath="NotesLoaderSSC.cpp"
