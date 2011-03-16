@@ -15,7 +15,7 @@ public:
 	Font* LoadFont( const RString &sFontOrTextureFilePath, RString sChars = "" );
 	Font *CopyFont( Font *pFont );
 	void UnloadFont( Font *fp );
-	void PruneFonts();
+	//void PruneFonts();
 
 	/* Warning: This reloads fonts completely, so all BitmapTexts need to be
 	 * reset, too.  If this isn't done, best case they end up with old font
