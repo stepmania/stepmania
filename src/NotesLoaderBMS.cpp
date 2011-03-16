@@ -787,7 +787,7 @@ static void ReadGlobalTags( const NameToData_t &mapNameToData, Song &out, Measur
 		
 		// FIXME: garbled song names seem to crash the app.
 		// this might not be the best place to put this code.
-		if( !utf8_is_valid(sData) )
+		if( !utf8_is_valid(nData) )
 			continue;
 		
 		/* Due to bugs in some programs, many BMS files have a "WAV" extension
