@@ -37,7 +37,7 @@ void Foreground::LoadFromSong( const Song *pSong )
 
 		LoadedBGA bga;
 		bga.m_bga = ActorUtil::MakeActor( pSong->GetSongDir() + sBGName, this );
-		bga.m_bga->PlayCommand( "On" );
+		bga.m_bga->PlayCommand( "Init" );
 		bga.m_fStartBeat = change.m_fStartBeat;
 		bga.m_bFinished = false;
 
@@ -80,6 +80,7 @@ void Foreground::Update( float fDeltaTime )
 		if( !bga.m_bga->GetVisible() )
 		{
 			bga.m_bga->SetVisible( true );
+			bga.m_bga->PlayCommand( "On" );
 
 			const float fStartSecond = m_pSong->m_Timing.GetElapsedTimeFromBeat( bga.m_fStartBeat );
 			lDeltaTime = GAMESTATE->m_fMusicSeconds - fStartSecond;
