@@ -117,20 +117,26 @@ void TimingData::SetTimeSignatureAtRow( int iRow, int iNumerator, int iDenominat
 		if( m_vTimeSignatureSegments[i].m_iStartRow >= iRow)
 			break; // We found our segment.
 	}
-
-	if( i == m_vTimeSignatureSegments.size() )	// there is no TimeSignature Segment at the current beat
+	
+	if ( i == m_vTimeSignatureSegments.size() || m_vTimeSignatureSegments[i].m_iStartRow != iRow )
 	{
-		AddTimeSignatureSegment( TimeSignatureSegment(iRow, iNumerator, iDenominator) );
+		// No specific segmeent here: place one if it differs.
+		if( i == 0 || 
+		   ( m_vTimeSignatureSegments[i-1].m_iNumerator != iNumerator
+		    || m_vTimeSignatureSegments[i-1].m_iDenominator != iDenominator ) )
+			AddTimeSignatureSegment( TimeSignatureSegment(iRow, iNumerator, iDenominator) );
 	}
-	else // TimeSignatureSegment being modified is m_vTimeSignatureSegments[i]
+	else	// TimeSignatureSegment being modified is m_vTimeSignatureSegments[i]
 	{
-		if( iNumerator > 0 && iDenominator > 0 )
+		if( i > 0  && m_vTimeSignatureSegments[i-1].m_iNumerator == iNumerator
+		   && m_vTimeSignatureSegments[i-1].m_iDenominator == iDenominator )
+			m_vTimeSignatureSegments.erase( m_vTimeSignatureSegments.begin()+i,
+						       m_vTimeSignatureSegments.begin()+i+1 );
+		else
 		{
 			m_vTimeSignatureSegments[i].m_iNumerator = iNumerator;
 			m_vTimeSignatureSegments[i].m_iDenominator = iDenominator;
 		}
-		else
-			m_vTimeSignatureSegments.erase( m_vTimeSignatureSegments.begin()+i, m_vTimeSignatureSegments.begin()+i+1 );
 	}
 }
 
