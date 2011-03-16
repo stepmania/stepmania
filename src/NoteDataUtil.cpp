@@ -561,10 +561,11 @@ void NoteDataUtil::LoadTransformedSlidingWindow( const NoteData &in, NoteData &o
 	}
 }
 
-void PlaceAutoKeysound( const NoteData &in, NoteData &out, int iNewNumTracks, int row, const TapNote &tnFrom )
+void PlaceAutoKeysound( NoteData &out, int row, TapNote akTap )
 {
 	int iEmptyTrack = -1;
 	int iEmptyRow = row - 1;
+	int iNewNumTracks = out.GetNumTracks();
 	bool bFoundEmptyTrack = false;
 	if( iEmptyRow < 0 )
 	{
@@ -588,7 +589,8 @@ void PlaceAutoKeysound( const NoteData &in, NoteData &out, int iNewNumTracks, in
 	
 	if( iEmptyTrack != -1 )
 	{
-		out.SetTapNote( iEmptyTrack, iEmptyRow, tnFrom );
+		akTap.type = TapNote::autoKeysound;
+		out.SetTapNote( iEmptyTrack, iEmptyRow, akTap );
 	}
 }
 
@@ -645,8 +647,7 @@ void NoteDataUtil::LoadOverlapped( const NoteData &in, NoteData &out, int iNewNu
 					if( tnFrom.iKeysoundIndex >= 0 )
 					{
 						TapNote akTap = tnFrom;
-						akTap.type = TapNote::autoKeysound;
-						PlaceAutoKeysound( in, out, iNewNumTracks, row, akTap );
+						PlaceAutoKeysound( out, row, akTap );
 					}
 					continue;
 				}
@@ -669,7 +670,7 @@ void NoteDataUtil::LoadOverlapped( const NoteData &in, NoteData &out, int iNewNu
 			if( tnFrom.type != TapNote::autoKeysound )
 				continue;
 			
-			PlaceAutoKeysound( in, out, iNewNumTracks, row, tnFrom );
+			PlaceAutoKeysound( out, row, tnFrom );
 		}
 	}
 }
@@ -1439,7 +1440,6 @@ void NoteDataUtil::Little( NoteData &inout, int iStartIndex, int iEndIndex )
 		{
 			if( i % ROWS_PER_BEAT == 0 )
 				continue;
-
 			inout.SetTapNote( t, i, TAP_EMPTY );
 		}
 	}
