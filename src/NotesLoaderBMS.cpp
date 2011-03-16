@@ -842,7 +842,7 @@ static void ReadGlobalTags( const NameToData_t &mapNameToData, Song &out, Measur
 			LOG->UserLog( "Song file", out.GetSongDir(), "references key \"%s\" that can't be found", nData.c_str() );
 
 		sWavID.MakeUpper();		// HACK: undo the MakeLower()
-		out.m_vsKeysoundFile.push_back( nData + "" );
+		out.m_vsKeysoundFile.push_back( nData );
 		idToKeySoundIndexOut[ sWavID ] = out.m_vsKeysoundFile.size()-1;
 		LOG->Trace( "Inserting keysound index %u '%s'", unsigned(out.m_vsKeysoundFile.size()-1), sWavID.c_str() );
 	}

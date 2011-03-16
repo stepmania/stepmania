@@ -321,7 +321,7 @@ public:
 	/* Whether this button is pressed. This is level with a threshold and
 	 * debouncing applied. */
 	bool bDown;
-	
+
 	RageTimer ts;
 
 	DeviceInput(): device(InputDevice_Invalid), button(DeviceButton_Invalid), level(0), x(0), y(0), bDown(false), ts(RageZeroTimer) { }
