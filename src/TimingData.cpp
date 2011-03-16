@@ -111,6 +111,9 @@ void TimingData::SetStopAtRow( int iRow, float fSeconds, bool bDelay )
 
 void TimingData::SetTimeSignatureAtRow( int iRow, int iNumerator, int iDenominator )
 {
+	LOG->Trace("[TimingData::SetTimeSignatureAtRow] iRow = %i, iNumerator = %i, iDenominator = %i", iRow, iNumerator, iDenominator);
+	ASSERT_M(iDenominator > 0,ssprintf("Denominator must be greater than 0; iDenominator = %i",iDenominator));
+
 	unsigned i;
 	for( i = 0; i < m_vTimeSignatureSegments.size(); i++ )
 	{
