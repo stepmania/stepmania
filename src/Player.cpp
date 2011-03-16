@@ -2431,24 +2431,25 @@ done_checking_hopo:
 		 * even that doesn't seem quite right since it would then play the same (new) keysound twice which would
 		 * sound wrong even though the notes were judged as being correct, above. Fixing the above problem would
 		 * fix this one as well. */
-		if( iRowOfOverlappingNoteOrRow == -1 )
+		int iHeadRow;
+		if( iRowOfOverlappingNoteOrRow != -1 && score != TNS_None )
+		{
+			// just pressing a note, use that row.
+			// in other words, iRowOfOverlappingNoteOrRow = iRowOfOverlappingNoteOrRow
+		}
+		else if ( m_NoteData.IsHoldNoteAtRow( col, iSongRow, &iHeadRow ) )
+		{
+			// stepping on a hold, use it!
+			iRowOfOverlappingNoteOrRow = iHeadRow;
+		}
+		else
+		{
+			// or else find the closest note.
 			iRowOfOverlappingNoteOrRow = GetClosestNote( col, iSongRow, MAX_NOTE_ROW, MAX_NOTE_ROW, true );
+		}
 		if( iRowOfOverlappingNoteOrRow != -1 )
 		{
-			int iPrevIndex = GetClosestNoteDirectional( col, iSongRow-MAX_NOTE_ROW, iSongRow, true, false );
 			bool bShouldPlayNextKeysound = true;
-			
-			if( iPrevIndex != -1 )
-			{
-				const TapNote &tn = m_NoteData.GetTapNote( col, iPrevIndex );
-				if( tn.type == TapNote::hold_head )
-				{
-					if( tn.HoldResult.bActive && tn.HoldResult.fOverlappedTime != 0 && tn.HoldResult.hns != HNS_Held )
-					{
-						bShouldPlayNextKeysound = false;
-					}
-				}
-			}
 			
 			if( bShouldPlayNextKeysound )
 			{
