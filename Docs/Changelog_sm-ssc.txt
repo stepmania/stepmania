@@ -14,6 +14,7 @@ sm-ssc v1.2.4 | 20110???
 --------------------------------------------------------------------------------
 
 20110316
+--------
 * [NotesLoaderSMA] Allow for preliminary support of loading SMA files. This
   will become better once Split Timing is in place. [Wolfman2000]
 
