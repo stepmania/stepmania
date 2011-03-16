@@ -22,10 +22,10 @@ public:
 	};
 	DrainType m_DrainType;	// only used with LifeBar
 	int m_iBatteryLives;
-	float m_fMusicRate,	m_SpeedfMusicRate;
-	float m_fHaste, m_SpeedfHaste;
 	bool m_bAssistClap;
 	bool m_bAssistMetronome;
+	float m_fMusicRate,	m_SpeedfMusicRate;
+	float m_fHaste, m_SpeedfHaste;
 	enum AutosyncType { 
 		AUTOSYNC_OFF,
 		AUTOSYNC_SONG,
