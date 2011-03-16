@@ -21,6 +21,7 @@
 #include "GameManager.h"
 #include "NoteDataUtil.h"
 #include "NotesLoaderSSC.h"
+#include "NotesLoaderSM.h"
 
 #include <algorithm>
 
@@ -229,12 +230,17 @@ void Steps::Decompress() const
 
 	if( !m_sFilename.empty() && m_sNoteDataCompressed.empty() )
 	{
-		/* We have data on disk and not in memory.  Load it. */
+		// We have data on disk and not in memory. Load it.
 		Song s;
-		if( !SSCLoader::LoadFromSSCFile(m_sFilename, s, true) )
+		bool bLoadedFromSSC = SSCLoader::LoadFromSSCFile(m_sFilename, s, true);
+		if( !bLoadedFromSSC )
 		{
-			LOG->Warn( "Couldn't load \"%s\"", m_sFilename.c_str() );
-			return;
+			// try reading from .sm instead
+			if( !SMLoader::LoadFromSMFile(m_sFilename, s, true) )
+			{
+				LOG->Warn( "Couldn't load \"%s\"", m_sFilename.c_str() );
+				return;
+			}
 		}
 
 		/* Find the steps. */
