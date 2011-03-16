@@ -44,7 +44,7 @@
 				MkTypLibCompatible="true"
 				SuppressStartupBanner="true"
 				TargetEnvironment="1"
-				TypeLibraryName=".\../StepMania.tlb"
+				TypeLibraryName="../StepMania.tlb"
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
@@ -148,7 +148,7 @@
 				MkTypLibCompatible="true"
 				SuppressStartupBanner="true"
 				TargetEnvironment="1"
-				TypeLibraryName=".\../StepMania.tlb"
+				TypeLibraryName="../StepMania.tlb"
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
@@ -256,7 +256,7 @@
 				MkTypLibCompatible="true"
 				SuppressStartupBanner="true"
 				TargetEnvironment="1"
-				TypeLibraryName=".\../StepMania.tlb"
+				TypeLibraryName="../StepMania.tlb"
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
@@ -363,11 +363,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ScreenContinue.cpp"
+				RelativePath="ScreenContinue.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\ScreenContinue.h"
+				RelativePath="ScreenContinue.h"
 				>
 			</File>
 			<File
@@ -435,39 +435,39 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ScreenGameplayLesson.cpp"
+				RelativePath="ScreenGameplayLesson.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\ScreenGameplayNormal.cpp"
+				RelativePath="ScreenGameplayNormal.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\ScreenGameplayNormal.h"
+				RelativePath="ScreenGameplayNormal.h"
 				>
 			</File>
 			<File
-				RelativePath=".\ScreenGameplayShared.cpp"
+				RelativePath="ScreenGameplayShared.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\ScreenGameplayShared.h"
+				RelativePath="ScreenGameplayShared.h"
 				>
 			</File>
 			<File
-				RelativePath=".\ScreenGameplaySyncMachine.cpp"
+				RelativePath="ScreenGameplaySyncMachine.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\ScreenGameplaySyncMachine.h"
+				RelativePath="ScreenGameplaySyncMachine.h"
 				>
 			</File>
 			<File
-				RelativePath=".\ScreenHighScores.cpp"
+				RelativePath="ScreenHighScores.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\ScreenHighScores.h"
+				RelativePath="ScreenHighScores.h"
 				>
 			</File>
 			<File
@@ -583,59 +583,59 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ScreenOptionsCourseOverview.cpp"
+				RelativePath="ScreenOptionsCourseOverview.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\ScreenOptionsCourseOverview.h"
+				RelativePath="ScreenOptionsCourseOverview.h"
 				>
 			</File>
 			<File
-				RelativePath=".\ScreenOptionsEditCourse.cpp"
+				RelativePath="ScreenOptionsEditCourse.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\ScreenOptionsEditCourse.h"
+				RelativePath="ScreenOptionsEditCourse.h"
 				>
 			</File>
 			<File
-				RelativePath=".\ScreenOptionsEditProfile.cpp"
+				RelativePath="ScreenOptionsEditProfile.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\ScreenOptionsEditProfile.h"
+				RelativePath="ScreenOptionsEditProfile.h"
 				>
 			</File>
 			<File
-				RelativePath=".\ScreenOptionsExportPackage.cpp"
+				RelativePath="ScreenOptionsExportPackage.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\ScreenOptionsExportPackage.h"
+				RelativePath="ScreenOptionsExportPackage.h"
 				>
 			</File>
 			<File
-				RelativePath=".\ScreenOptionsManageCourses.cpp"
+				RelativePath="ScreenOptionsManageCourses.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\ScreenOptionsManageCourses.h"
+				RelativePath="ScreenOptionsManageCourses.h"
 				>
 			</File>
 			<File
-				RelativePath=".\ScreenOptionsManageEditSteps.cpp"
+				RelativePath="ScreenOptionsManageEditSteps.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\ScreenOptionsManageEditSteps.h"
+				RelativePath="ScreenOptionsManageEditSteps.h"
 				>
 			</File>
 			<File
-				RelativePath=".\ScreenOptionsManageProfiles.cpp"
+				RelativePath="ScreenOptionsManageProfiles.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\ScreenOptionsManageProfiles.h"
+				RelativePath="ScreenOptionsManageProfiles.h"
 				>
 			</File>
 			<File
@@ -655,19 +655,19 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ScreenOptionsMemoryCard.cpp"
+				RelativePath="ScreenOptionsMemoryCard.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\ScreenOptionsMemoryCard.h"
+				RelativePath="ScreenOptionsMemoryCard.h"
 				>
 			</File>
 			<File
-				RelativePath=".\ScreenOptionsToggleSongs.cpp"
+				RelativePath="ScreenOptionsToggleSongs.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\ScreenOptionsToggleSongs.h"
+				RelativePath="ScreenOptionsToggleSongs.h"
 				>
 			</File>
 			<File
@@ -687,19 +687,19 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ScreenProfileLoad.cpp"
+				RelativePath="ScreenProfileLoad.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\ScreenProfileLoad.h"
+				RelativePath="ScreenProfileLoad.h"
 				>
 			</File>
 			<File
-				RelativePath=".\ScreenProfileSave.cpp"
+				RelativePath="ScreenProfileSave.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\ScreenProfileSave.h"
+				RelativePath="ScreenProfileSave.h"
 				>
 			</File>
 			<File
@@ -759,11 +759,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ScreenSelectLanguage.cpp"
+				RelativePath="ScreenSelectLanguage.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\ScreenSelectLanguage.h"
+				RelativePath="ScreenSelectLanguage.h"
 				>
 			</File>
 			<File
@@ -783,19 +783,19 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ScreenSelectProfile.cpp"
+				RelativePath="ScreenSelectProfile.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\ScreenSelectProfile.h"
+				RelativePath="ScreenSelectProfile.h"
 				>
 			</File>
 			<File
-				RelativePath=".\ScreenServiceAction.cpp"
+				RelativePath="ScreenServiceAction.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\ScreenServiceAction.h"
+				RelativePath="ScreenServiceAction.h"
 				>
 			</File>
 			<File
@@ -831,11 +831,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ScreenStatsOverlay.cpp"
+				RelativePath="ScreenStatsOverlay.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\ScreenStatsOverlay.h"
+				RelativePath="ScreenStatsOverlay.h"
 				>
 			</File>
 			<File
@@ -903,27 +903,27 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ScreenUnlockBrowse.cpp"
+				RelativePath="ScreenUnlockBrowse.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\ScreenUnlockBrowse.h"
+				RelativePath="ScreenUnlockBrowse.h"
 				>
 			</File>
 			<File
-				RelativePath=".\ScreenUnlockCelebrate.cpp"
+				RelativePath="ScreenUnlockCelebrate.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\ScreenUnlockCelebrate.h"
+				RelativePath="ScreenUnlockCelebrate.h"
 				>
 			</File>
 			<File
-				RelativePath=".\ScreenUnlockStatus.cpp"
+				RelativePath="ScreenUnlockStatus.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\ScreenUnlockStatus.h"
+				RelativePath="ScreenUnlockStatus.h"
 				>
 			</File>
 			<File
@@ -939,11 +939,11 @@
 			Name="Data Structures"
 			>
 			<File
-				RelativePath=".\AdjustSync.cpp"
+				RelativePath="AdjustSync.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\AdjustSync.h"
+				RelativePath="AdjustSync.h"
 				>
 			</File>
 			<File
@@ -995,11 +995,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CodeSet.cpp"
+				RelativePath="CodeSet.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\CodeSet.h"
+				RelativePath="CodeSet.h"
 				>
 			</File>
 			<File
@@ -1019,11 +1019,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ControllerStateDisplay.cpp"
+				RelativePath="ControllerStateDisplay.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\ControllerStateDisplay.h"
+				RelativePath="ControllerStateDisplay.h"
 				>
 			</File>
 			<File
@@ -1035,11 +1035,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CourseLoaderCRS.cpp"
+				RelativePath="CourseLoaderCRS.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\CourseLoaderCRS.h"
+				RelativePath="CourseLoaderCRS.h"
 				>
 			</File>
 			<File
@@ -1051,11 +1051,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CourseWriterCRS.cpp"
+				RelativePath="CourseWriterCRS.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\CourseWriterCRS.h"
+				RelativePath="CourseWriterCRS.h"
 				>
 			</File>
 			<File
@@ -1083,11 +1083,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Font.cpp"
+				RelativePath="Font.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\Font.h"
+				RelativePath="Font.h"
 				>
 			</File>
 			<File
@@ -1143,27 +1143,27 @@
 				>
 			</File>
 			<File
-				RelativePath=".\GameplayAssist.cpp"
+				RelativePath="GameplayAssist.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\GameplayAssist.h"
+				RelativePath="GameplayAssist.h"
 				>
 			</File>
 			<File
-				RelativePath=".\GamePreferences.cpp"
+				RelativePath="GamePreferences.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\GamePreferences.h"
+				RelativePath="GamePreferences.h"
 				>
 			</File>
 			<File
-				RelativePath=".\Grade.cpp"
+				RelativePath="Grade.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\Grade.h"
+				RelativePath="Grade.h"
 				>
 			</File>
 			<File
@@ -1175,7 +1175,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\InputEventPlus.h"
+				RelativePath="InputEventPlus.h"
 				>
 			</File>
 			<File
@@ -1187,11 +1187,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\LocalizedString.cpp"
+				RelativePath="LocalizedString.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\LocalizedString.h"
+				RelativePath="LocalizedString.h"
 				>
 			</File>
 			<File
@@ -1203,11 +1203,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\LuaExpressionTransform.cpp"
+				RelativePath="LuaExpressionTransform.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\LuaExpressionTransform.h"
+				RelativePath="LuaExpressionTransform.h"
 				>
 			</File>
 			<File
@@ -1227,11 +1227,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ModsGroup.cpp"
+				RelativePath="ModsGroup.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\ModsGroup.h"
+				RelativePath="ModsGroup.h"
 				>
 			</File>
 			<File
@@ -1434,31 +1434,31 @@
 				>
 			</File>
 			<File
-				RelativePath=".\RandomSample.cpp"
+				RelativePath="RandomSample.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\RandomSample.h"
+				RelativePath="RandomSample.h"
 				>
 			</File>
 			<File
-				RelativePath=".\RoomInfoDisplay.cpp"
+				RelativePath="RoomInfoDisplay.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\RoomInfoDisplay.h"
+				RelativePath="RoomInfoDisplay.h"
 				>
 			</File>
 			<File
-				RelativePath=".\SampleHistory.cpp"
+				RelativePath="SampleHistory.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\SampleHistory.h"
+				RelativePath="SampleHistory.h"
 				>
 			</File>
 			<File
-				RelativePath=".\ScoreKeeper.cpp"
+				RelativePath="ScoreKeeper.cpp"
 				>
 			</File>
 			<File
@@ -1466,19 +1466,19 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ScoreKeeperGuitar.cpp"
+				RelativePath="ScoreKeeperGuitar.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\ScoreKeeperGuitar.h"
+				RelativePath="ScoreKeeperGuitar.h"
 				>
 			</File>
 			<File
-				RelativePath=".\ScoreKeeperNormal.cpp"
+				RelativePath="ScoreKeeperNormal.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\ScoreKeeperNormal.h"
+				RelativePath="ScoreKeeperNormal.h"
 				>
 			</File>
 			<File
@@ -1490,11 +1490,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ScoreKeeperShared.cpp"
+				RelativePath="ScoreKeeperShared.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\ScoreKeeperShared.h"
+				RelativePath="ScoreKeeperShared.h"
 				>
 			</File>
 			<File
@@ -1506,7 +1506,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Song.cpp"
+				RelativePath="Song.cpp"
 				>
 			</File>
 			<File
@@ -1538,11 +1538,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\SoundEffectControl.cpp"
+				RelativePath="SoundEffectControl.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\SoundEffectControl.h"
+				RelativePath="SoundEffectControl.h"
 				>
 			</File>
 			<File
@@ -1626,11 +1626,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Tween.cpp"
+				RelativePath="Tween.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\Tween.h"
+				RelativePath="Tween.h"
 				>
 			</File>
 		</Filter>
@@ -1638,11 +1638,11 @@
 			Name="File Types"
 			>
 			<File
-				RelativePath=".\IniFile.cpp"
+				RelativePath="IniFile.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\IniFile.h"
+				RelativePath="IniFile.h"
 				>
 			</File>
 			<File
@@ -1662,11 +1662,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\XmlFileUtil.cpp"
+				RelativePath="XmlFileUtil.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\XmlFileUtil.h"
+				RelativePath="XmlFileUtil.h"
 				>
 			</File>
 		</Filter>
@@ -1674,15 +1674,15 @@
 			Name="StepMania"
 			>
 			<File
-				RelativePath=".\GameLoop.cpp"
+				RelativePath="GameLoop.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\GameLoop.h"
+				RelativePath="GameLoop.h"
 				>
 			</File>
 			<File
-				RelativePath=".\global.cpp"
+				RelativePath="global.cpp"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -1710,7 +1710,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\global.h"
+				RelativePath="global.h"
 				>
 			</File>
 			<File
@@ -1718,11 +1718,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\SpecialFiles.cpp"
+				RelativePath="SpecialFiles.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\SpecialFiles.h"
+				RelativePath="SpecialFiles.h"
 				>
 			</File>
 			<File
@@ -1730,11 +1730,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\StepMania.cpp"
+				RelativePath="StepMania.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\StepMania.h"
+				RelativePath="StepMania.h"
 				>
 			</File>
 			<Filter
@@ -1745,18 +1745,18 @@
 					>
 				</File>
 				<File
-					RelativePath=".\arch\RageDriver.cpp"
+					RelativePath="arch\RageDriver.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\arch\RageDriver.h"
+					RelativePath="arch\RageDriver.h"
 					>
 				</File>
 				<Filter
 					Name="LoadingWindow"
 					>
 					<File
-						RelativePath=".\arch\LoadingWindow\LoadingWindow.cpp"
+						RelativePath="arch\LoadingWindow\LoadingWindow.cpp"
 						>
 					</File>
 					<File
@@ -1784,7 +1784,7 @@
 						>
 					</File>
 					<File
-						RelativePath=".\arch\Sound\RageSoundDriver.cpp"
+						RelativePath="arch\Sound\RageSoundDriver.cpp"
 						>
 					</File>
 					<File
@@ -1820,11 +1820,11 @@
 						>
 					</File>
 					<File
-						RelativePath=".\arch\Sound\RageSoundDriver_WDMKS.cpp"
+						RelativePath="arch\Sound\RageSoundDriver_WDMKS.cpp"
 						>
 					</File>
 					<File
-						RelativePath=".\arch\Sound\RageSoundDriver_WDMKS.h"
+						RelativePath="arch\Sound\RageSoundDriver_WDMKS.h"
 						>
 					</File>
 				</Filter>
@@ -1848,11 +1848,11 @@
 						>
 					</File>
 					<File
-						RelativePath=".\arch\ArchHooks\ArchHooks_Win32Static.cpp"
+						RelativePath="arch\ArchHooks\ArchHooks_Win32Static.cpp"
 						>
 					</File>
 					<File
-						RelativePath=".\arch\ArchHooks\ArchHooksUtil.cpp"
+						RelativePath="arch\ArchHooks\ArchHooksUtil.cpp"
 						>
 					</File>
 				</Filter>
@@ -1928,7 +1928,7 @@
 						>
 					</File>
 					<File
-						RelativePath=".\arch\MovieTexture\MovieTexture_DShow.cpp"
+						RelativePath="arch\MovieTexture\MovieTexture_DShow.cpp"
 						>
 						<FileConfiguration
 							Name="Debug|Win32"
@@ -1956,7 +1956,7 @@
 						</FileConfiguration>
 					</File>
 					<File
-						RelativePath=".\arch\MovieTexture\MovieTexture_DShow.h"
+						RelativePath="arch\MovieTexture\MovieTexture_DShow.h"
 						>
 						<FileConfiguration
 							Name="Debug|Win32"
@@ -1984,7 +1984,7 @@
 						</FileConfiguration>
 					</File>
 					<File
-						RelativePath=".\arch\MovieTexture\MovieTexture_DShowHelper.cpp"
+						RelativePath="arch\MovieTexture\MovieTexture_DShowHelper.cpp"
 						>
 						<FileConfiguration
 							Name="Debug|Win32"
@@ -2012,7 +2012,7 @@
 						</FileConfiguration>
 					</File>
 					<File
-						RelativePath=".\arch\MovieTexture\MovieTexture_DShowHelper.h"
+						RelativePath="arch\MovieTexture\MovieTexture_DShowHelper.h"
 						>
 						<FileConfiguration
 							Name="Debug|Win32"
@@ -2048,11 +2048,11 @@
 						>
 					</File>
 					<File
-						RelativePath=".\arch\MovieTexture\MovieTexture_Generic.cpp"
+						RelativePath="arch\MovieTexture\MovieTexture_Generic.cpp"
 						>
 					</File>
 					<File
-						RelativePath=".\arch\MovieTexture\MovieTexture_Generic.h"
+						RelativePath="arch\MovieTexture\MovieTexture_Generic.h"
 						>
 					</File>
 					<File
@@ -2064,11 +2064,11 @@
 						>
 					</File>
 					<File
-						RelativePath=".\arch\MovieTexture\MovieTexture_Theora.cpp"
+						RelativePath="arch\MovieTexture\MovieTexture_Theora.cpp"
 						>
 					</File>
 					<File
-						RelativePath=".\arch\MovieTexture\MovieTexture_Theora.h"
+						RelativePath="arch\MovieTexture\MovieTexture_Theora.h"
 						>
 					</File>
 				</Filter>
@@ -2076,7 +2076,7 @@
 					Name="LowLevelWindow"
 					>
 					<File
-						RelativePath=".\arch\LowLevelWindow\LowLevelWindow.cpp"
+						RelativePath="arch\LowLevelWindow\LowLevelWindow.cpp"
 						>
 					</File>
 					<File
@@ -2128,7 +2128,7 @@
 						>
 					</File>
 					<File
-						RelativePath=".\arch\Dialog\DialogDriver.cpp"
+						RelativePath="arch\Dialog\DialogDriver.cpp"
 						>
 					</File>
 					<File
@@ -2164,7 +2164,7 @@
 					Name="Lights"
 					>
 					<File
-						RelativePath=".\arch\Lights\LightsDriver.cpp"
+						RelativePath="arch\Lights\LightsDriver.cpp"
 						>
 					</File>
 					<File
@@ -2172,11 +2172,11 @@
 						>
 					</File>
 					<File
-						RelativePath=".\arch\Lights\LightsDriver_Export.cpp"
+						RelativePath="arch\Lights\LightsDriver_Export.cpp"
 						>
 					</File>
 					<File
-						RelativePath=".\arch\Lights\LightsDriver_Export.h"
+						RelativePath="arch\Lights\LightsDriver_Export.h"
 						>
 					</File>
 					<File
@@ -2217,15 +2217,15 @@
 					>
 				</File>
 				<File
-					RelativePath=".\archutils\Win32\arch_time.cpp"
+					RelativePath="archutils\Win32\arch_time.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\archutils\Win32\CommandLine.cpp"
+					RelativePath="archutils\Win32\CommandLine.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\archutils\Win32\CommandLine.h"
+					RelativePath="archutils\Win32\CommandLine.h"
 					>
 				</File>
 				<File
@@ -2237,51 +2237,51 @@
 					>
 				</File>
 				<File
-					RelativePath=".\archutils\Win32\CrashHandlerChild.cpp"
+					RelativePath="archutils\Win32\CrashHandlerChild.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\archutils\Win32\CrashHandlerInternal.h"
+					RelativePath="archutils\Win32\CrashHandlerInternal.h"
 					>
 				</File>
 				<File
-					RelativePath=".\archutils\Win32\CrashHandlerNetworking.cpp"
+					RelativePath="archutils\Win32\CrashHandlerNetworking.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\archutils\Win32\CrashHandlerNetworking.h"
+					RelativePath="archutils\Win32\CrashHandlerNetworking.h"
 					>
 				</File>
 				<File
-					RelativePath=".\archutils\Win32\DebugInfoHunt.cpp"
+					RelativePath="archutils\Win32\DebugInfoHunt.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\archutils\Win32\DebugInfoHunt.h"
+					RelativePath="archutils\Win32\DebugInfoHunt.h"
 					>
 				</File>
 				<File
-					RelativePath=".\archutils\Win32\DialogUtil.cpp"
+					RelativePath="archutils\Win32\DialogUtil.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\archutils\Win32\DialogUtil.h"
+					RelativePath="archutils\Win32\DialogUtil.h"
 					>
 				</File>
 				<File
-					RelativePath=".\archutils\Win32\DirectXHelpers.cpp"
+					RelativePath="archutils\Win32\DirectXHelpers.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\archutils\Win32\DirectXHelpers.h"
+					RelativePath="archutils\Win32\DirectXHelpers.h"
 					>
 				</File>
 				<File
-					RelativePath=".\archutils\Win32\ErrorStrings.cpp"
+					RelativePath="archutils\Win32\ErrorStrings.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\archutils\Win32\ErrorStrings.h"
+					RelativePath="archutils\Win32\ErrorStrings.h"
 					>
 				</File>
 				<File
@@ -2309,11 +2309,11 @@
 					>
 				</File>
 				<File
-					RelativePath=".\archutils\Win32\MessageWindow.cpp"
+					RelativePath="archutils\Win32\MessageWindow.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\archutils\Win32\MessageWindow.h"
+					RelativePath="archutils\Win32\MessageWindow.h"
 					>
 				</File>
 				<File
@@ -2333,15 +2333,15 @@
 					>
 				</File>
 				<File
-					RelativePath=".\archutils\Win32\smzip.ico"
+					RelativePath="archutils\Win32\smzip.ico"
 					>
 				</File>
 				<File
-					RelativePath=".\archutils\Win32\SpecialDirs.cpp"
+					RelativePath="archutils\Win32\SpecialDirs.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\archutils\Win32\SpecialDirs.h"
+					RelativePath="archutils\Win32\SpecialDirs.h"
 					>
 				</File>
 				<File
@@ -2373,11 +2373,11 @@
 					>
 				</File>
 				<File
-					RelativePath=".\archutils\Win32\WindowsDialogBox.cpp"
+					RelativePath="archutils\Win32\WindowsDialogBox.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\archutils\Win32\WindowsDialogBox.h"
+					RelativePath="archutils\Win32\WindowsDialogBox.h"
 					>
 				</File>
 				<File
@@ -2394,11 +2394,11 @@
 			Name="Actors used in Gameplay and Menus"
 			>
 			<File
-				RelativePath=".\Banner.cpp"
+				RelativePath="Banner.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\Banner.h"
+				RelativePath="Banner.h"
 				>
 			</File>
 			<File
@@ -2454,11 +2454,11 @@
 			Name="Actors used in Menus"
 			>
 			<File
-				RelativePath=".\BPMDisplay.cpp"
+				RelativePath="BPMDisplay.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\BPMDisplay.h"
+				RelativePath="BPMDisplay.h"
 				>
 			</File>
 			<File
@@ -2510,11 +2510,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\GradeDisplay.cpp"
+				RelativePath="GradeDisplay.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\GradeDisplay.h"
+				RelativePath="GradeDisplay.h"
 				>
 			</File>
 			<File
@@ -2558,27 +2558,27 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ModIcon.cpp"
+				RelativePath="ModIcon.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\ModIcon.h"
+				RelativePath="ModIcon.h"
 				>
 			</File>
 			<File
-				RelativePath=".\ModIconRow.cpp"
+				RelativePath="ModIconRow.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\ModIconRow.h"
+				RelativePath="ModIconRow.h"
 				>
 			</File>
 			<File
-				RelativePath=".\MusicWheel.cpp"
+				RelativePath="MusicWheel.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\MusicWheel.h"
+				RelativePath="MusicWheel.h"
 				>
 			</File>
 			<File
@@ -2606,11 +2606,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\OptionsList.cpp"
+				RelativePath="OptionsList.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\OptionsList.h"
+				RelativePath="OptionsList.h"
 				>
 			</File>
 			<File
@@ -2646,19 +2646,19 @@
 				>
 			</File>
 			<File
-				RelativePath=".\StepsDisplay.cpp"
+				RelativePath="StepsDisplay.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\StepsDisplay.h"
+				RelativePath="StepsDisplay.h"
 				>
 			</File>
 			<File
-				RelativePath=".\TextBanner.cpp"
+				RelativePath="TextBanner.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\TextBanner.h"
+				RelativePath="TextBanner.h"
 				>
 			</File>
 			<File
@@ -2686,11 +2686,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\WorkoutGraph.cpp"
+				RelativePath="WorkoutGraph.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\WorkoutGraph.h"
+				RelativePath="WorkoutGraph.h"
 				>
 			</File>
 		</Filter>
@@ -2698,19 +2698,19 @@
 			Name="Actors used in Gameplay"
 			>
 			<File
-				RelativePath=".\ActiveAttackList.cpp"
+				RelativePath="ActiveAttackList.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\ActiveAttackList.h"
+				RelativePath="ActiveAttackList.h"
 				>
 			</File>
 			<File
-				RelativePath=".\ArrowEffects.cpp"
+				RelativePath="ArrowEffects.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\ArrowEffects.h"
+				RelativePath="ArrowEffects.h"
 				>
 			</File>
 			<File
@@ -2722,11 +2722,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Background.cpp"
+				RelativePath="Background.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\Background.h"
+				RelativePath="Background.h"
 				>
 			</File>
 			<File
@@ -2782,7 +2782,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\LifeMeter.cpp"
+				RelativePath="LifeMeter.cpp"
 				>
 			</File>
 			<File
@@ -2846,19 +2846,19 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Player.cpp"
+				RelativePath="Player.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\Player.h"
+				RelativePath="Player.h"
 				>
 			</File>
 			<File
-				RelativePath=".\ReceptorArrow.cpp"
+				RelativePath="ReceptorArrow.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\ReceptorArrow.h"
+				RelativePath="ReceptorArrow.h"
 				>
 			</File>
 			<File
@@ -2946,11 +2946,11 @@
 			Name="Rage"
 			>
 			<File
-				RelativePath=".\RageBitmapTexture.cpp"
+				RelativePath="RageBitmapTexture.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\RageBitmapTexture.h"
+				RelativePath="RageBitmapTexture.h"
 				>
 			</File>
 			<File
@@ -2986,11 +2986,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\RageDisplay_OGL_Helpers.cpp"
+				RelativePath="RageDisplay_OGL_Helpers.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\RageDisplay_OGL_Helpers.h"
+				RelativePath="RageDisplay_OGL_Helpers.h"
 				>
 			</File>
 			<File
@@ -3058,11 +3058,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\RageFileDriverReadAhead.cpp"
+				RelativePath="RageFileDriverReadAhead.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\RageFileDriverReadAhead.h"
+				RelativePath="RageFileDriverReadAhead.h"
 				>
 			</File>
 			<File
@@ -3098,19 +3098,19 @@
 				>
 			</File>
 			<File
-				RelativePath=".\RageFileManager_ReadAhead.cpp"
+				RelativePath="RageFileManager_ReadAhead.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\RageFileManager_ReadAhead.h"
+				RelativePath="RageFileManager_ReadAhead.h"
 				>
 			</File>
 			<File
-				RelativePath=".\RageInput.cpp"
+				RelativePath="RageInput.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\RageInput.h"
+				RelativePath="RageInput.h"
 				>
 			</File>
 			<File
@@ -3178,7 +3178,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\RageSoundReader.cpp"
+				RelativePath="RageSoundReader.cpp"
 				>
 			</File>
 			<File
@@ -3194,19 +3194,19 @@
 				>
 			</File>
 			<File
-				RelativePath=".\RageSoundReader_ChannelSplit.cpp"
+				RelativePath="RageSoundReader_ChannelSplit.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\RageSoundReader_ChannelSplit.h"
+				RelativePath="RageSoundReader_ChannelSplit.h"
 				>
 			</File>
 			<File
-				RelativePath=".\RageSoundReader_Extend.cpp"
+				RelativePath="RageSoundReader_Extend.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\RageSoundReader_Extend.h"
+				RelativePath="RageSoundReader_Extend.h"
 				>
 			</File>
 			<File
@@ -3218,15 +3218,15 @@
 				>
 			</File>
 			<File
-				RelativePath=".\RageSoundReader_Filter.h"
+				RelativePath="RageSoundReader_Filter.h"
 				>
 			</File>
 			<File
-				RelativePath=".\RageSoundReader_Merge.cpp"
+				RelativePath="RageSoundReader_Merge.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\RageSoundReader_Merge.h"
+				RelativePath="RageSoundReader_Merge.h"
 				>
 			</File>
 			<File
@@ -3238,27 +3238,27 @@
 				>
 			</File>
 			<File
-				RelativePath=".\RageSoundReader_Pan.cpp"
+				RelativePath="RageSoundReader_Pan.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\RageSoundReader_Pan.h"
+				RelativePath="RageSoundReader_Pan.h"
 				>
 			</File>
 			<File
-				RelativePath=".\RageSoundReader_PitchChange.cpp"
+				RelativePath="RageSoundReader_PitchChange.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\RageSoundReader_PitchChange.h"
+				RelativePath="RageSoundReader_PitchChange.h"
 				>
 			</File>
 			<File
-				RelativePath=".\RageSoundReader_PostBuffering.cpp"
+				RelativePath="RageSoundReader_PostBuffering.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\RageSoundReader_PostBuffering.h"
+				RelativePath="RageSoundReader_PostBuffering.h"
 				>
 			</File>
 			<File
@@ -3278,19 +3278,19 @@
 				>
 			</File>
 			<File
-				RelativePath=".\RageSoundReader_SpeedChange.cpp"
+				RelativePath="RageSoundReader_SpeedChange.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\RageSoundReader_SpeedChange.h"
+				RelativePath="RageSoundReader_SpeedChange.h"
 				>
 			</File>
 			<File
-				RelativePath=".\RageSoundReader_ThreadedBuffer.cpp"
+				RelativePath="RageSoundReader_ThreadedBuffer.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\RageSoundReader_ThreadedBuffer.h"
+				RelativePath="RageSoundReader_ThreadedBuffer.h"
 				>
 			</File>
 			<File
@@ -3390,11 +3390,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\RageSurface_Save_PNG.cpp"
+				RelativePath="RageSurface_Save_PNG.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\RageSurface_Save_PNG.h"
+				RelativePath="RageSurface_Save_PNG.h"
 				>
 			</File>
 			<File
@@ -3430,11 +3430,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\RageTexture.cpp"
+				RelativePath="RageTexture.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\RageTexture.h"
+				RelativePath="RageTexture.h"
 				>
 			</File>
 			<File
@@ -3446,27 +3446,27 @@
 				>
 			</File>
 			<File
-				RelativePath=".\RageTextureManager.cpp"
+				RelativePath="RageTextureManager.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\RageTextureManager.h"
+				RelativePath="RageTextureManager.h"
 				>
 			</File>
 			<File
-				RelativePath=".\RageTexturePreloader.cpp"
+				RelativePath="RageTexturePreloader.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\RageTexturePreloader.h"
+				RelativePath="RageTexturePreloader.h"
 				>
 			</File>
 			<File
-				RelativePath=".\RageTextureRenderTarget.cpp"
+				RelativePath="RageTextureRenderTarget.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\RageTextureRenderTarget.h"
+				RelativePath="RageTextureRenderTarget.h"
 				>
 			</File>
 			<File
@@ -3486,7 +3486,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\RageTypes.cpp"
+				RelativePath="RageTypes.cpp"
 				>
 			</File>
 			<File
@@ -3494,11 +3494,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\RageUtil.cpp"
+				RelativePath="RageUtil.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\RageUtil.h"
+				RelativePath="RageUtil.h"
 				>
 			</File>
 			<File
@@ -3514,11 +3514,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\RageUtil_CachedObject.cpp"
+				RelativePath="RageUtil_CachedObject.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\RageUtil_CachedObject.h"
+				RelativePath="RageUtil_CachedObject.h"
 				>
 			</File>
 			<File
@@ -3568,7 +3568,7 @@
 					Name="pcre"
 					>
 					<File
-						RelativePath=".\pcre\chartables.c"
+						RelativePath="pcre\chartables.c"
 						>
 						<FileConfiguration
 							Name="Debug|Win32"
@@ -3720,7 +3720,7 @@
 					Name="Lua"
 					>
 					<File
-						RelativePath=".\lua-5.1\src\lapi.c"
+						RelativePath="lua-5.1\src\lapi.c"
 						>
 						<FileConfiguration
 							Name="Debug|Win32"
@@ -3748,43 +3748,11 @@
 						</FileConfiguration>
 					</File>
 					<File
-						RelativePath=".\lua-5.1\src\lapi.h"
+						RelativePath="lua-5.1\src\lapi.h"
 						>
 					</File>
 					<File
-						RelativePath=".\lua-5.1\src\lauxlib.c"
-						>
-						<FileConfiguration
-							Name="Debug|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="FastDebug|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-							/>
-						</FileConfiguration>
-					</File>
-					<File
-						RelativePath=".\lua-5.1\src\lauxlib.h"
-						>
-					</File>
-					<File
-						RelativePath=".\lua-5.1\src\lbaselib.c"
+						RelativePath="lua-5.1\src\lauxlib.c"
 						>
 						<FileConfiguration
 							Name="Debug|Win32"
@@ -3812,7 +3780,11 @@
 						</FileConfiguration>
 					</File>
 					<File
-						RelativePath=".\lua-5.1\src\lcode.c"
+						RelativePath="lua-5.1\src\lauxlib.h"
+						>
+					</File>
+					<File
+						RelativePath="lua-5.1\src\lbaselib.c"
 						>
 						<FileConfiguration
 							Name="Debug|Win32"
@@ -3840,11 +3812,7 @@
 						</FileConfiguration>
 					</File>
 					<File
-						RelativePath=".\lua-5.1\src\lcode.h"
-						>
-					</File>
-					<File
-						RelativePath=".\lua-5.1\src\ldblib.c"
+						RelativePath="lua-5.1\src\lcode.c"
 						>
 						<FileConfiguration
 							Name="Debug|Win32"
@@ -3872,7 +3840,11 @@
 						</FileConfiguration>
 					</File>
 					<File
-						RelativePath=".\lua-5.1\src\ldebug.c"
+						RelativePath="lua-5.1\src\lcode.h"
+						>
+					</File>
+					<File
+						RelativePath="lua-5.1\src\ldblib.c"
 						>
 						<FileConfiguration
 							Name="Debug|Win32"
@@ -3900,11 +3872,7 @@
 						</FileConfiguration>
 					</File>
 					<File
-						RelativePath=".\lua-5.1\src\ldebug.h"
-						>
-					</File>
-					<File
-						RelativePath=".\lua-5.1\src\ldo.c"
+						RelativePath="lua-5.1\src\ldebug.c"
 						>
 						<FileConfiguration
 							Name="Debug|Win32"
@@ -3932,39 +3900,11 @@
 						</FileConfiguration>
 					</File>
 					<File
-						RelativePath=".\lua-5.1\src\ldo.h"
+						RelativePath="lua-5.1\src\ldebug.h"
 						>
 					</File>
 					<File
-						RelativePath=".\lua-5.1\src\ldump.c"
-						>
-						<FileConfiguration
-							Name="Debug|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="FastDebug|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-							/>
-						</FileConfiguration>
-					</File>
-					<File
-						RelativePath=".\lua-5.1\src\lfunc.c"
+						RelativePath="lua-5.1\src\ldo.c"
 						>
 						<FileConfiguration
 							Name="Debug|Win32"
@@ -3992,43 +3932,11 @@
 						</FileConfiguration>
 					</File>
 					<File
-						RelativePath=".\lua-5.1\src\lfunc.h"
+						RelativePath="lua-5.1\src\ldo.h"
 						>
 					</File>
 					<File
-						RelativePath=".\lua-5.1\src\lgc.c"
-						>
-						<FileConfiguration
-							Name="Debug|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="FastDebug|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-							/>
-						</FileConfiguration>
-					</File>
-					<File
-						RelativePath=".\lua-5.1\src\lgc.h"
-						>
-					</File>
-					<File
-						RelativePath=".\lua-5.1\src\linit.c"
+						RelativePath="lua-5.1\src\ldump.c"
 						>
 						<FileConfiguration
 							Name="Debug|Win32"
@@ -4056,7 +3964,7 @@
 						</FileConfiguration>
 					</File>
 					<File
-						RelativePath=".\lua-5.1\src\liolib.c"
+						RelativePath="lua-5.1\src\lfunc.c"
 						>
 						<FileConfiguration
 							Name="Debug|Win32"
@@ -4084,7 +3992,11 @@
 						</FileConfiguration>
 					</File>
 					<File
-						RelativePath=".\lua-5.1\src\llex.c"
+						RelativePath="lua-5.1\src\lfunc.h"
+						>
+					</File>
+					<File
+						RelativePath="lua-5.1\src\lgc.c"
 						>
 						<FileConfiguration
 							Name="Debug|Win32"
@@ -4112,15 +4024,11 @@
 						</FileConfiguration>
 					</File>
 					<File
-						RelativePath=".\lua-5.1\src\llex.h"
+						RelativePath="lua-5.1\src\lgc.h"
 						>
 					</File>
 					<File
-						RelativePath=".\lua-5.1\src\llimits.h"
-						>
-					</File>
-					<File
-						RelativePath=".\lua-5.1\src\lmathlib.c"
+						RelativePath="lua-5.1\src\linit.c"
 						>
 						<FileConfiguration
 							Name="Debug|Win32"
@@ -4148,7 +4056,7 @@
 						</FileConfiguration>
 					</File>
 					<File
-						RelativePath=".\lua-5.1\src\lmem.c"
+						RelativePath="lua-5.1\src\liolib.c"
 						>
 						<FileConfiguration
 							Name="Debug|Win32"
@@ -4176,11 +4084,7 @@
 						</FileConfiguration>
 					</File>
 					<File
-						RelativePath=".\lua-5.1\src\lmem.h"
-						>
-					</File>
-					<File
-						RelativePath=".\lua-5.1\src\loadlib.c"
+						RelativePath="lua-5.1\src\llex.c"
 						>
 						<FileConfiguration
 							Name="Debug|Win32"
@@ -4208,7 +4112,15 @@
 						</FileConfiguration>
 					</File>
 					<File
-						RelativePath=".\lua-5.1\src\lobject.c"
+						RelativePath="lua-5.1\src\llex.h"
+						>
+					</File>
+					<File
+						RelativePath="lua-5.1\src\llimits.h"
+						>
+					</File>
+					<File
+						RelativePath="lua-5.1\src\lmathlib.c"
 						>
 						<FileConfiguration
 							Name="Debug|Win32"
@@ -4236,11 +4148,7 @@
 						</FileConfiguration>
 					</File>
 					<File
-						RelativePath=".\lua-5.1\src\lobject.h"
-						>
-					</File>
-					<File
-						RelativePath=".\lua-5.1\src\lopcodes.c"
+						RelativePath="lua-5.1\src\lmem.c"
 						>
 						<FileConfiguration
 							Name="Debug|Win32"
@@ -4268,39 +4176,11 @@
 						</FileConfiguration>
 					</File>
 					<File
-						RelativePath=".\lua-5.1\src\lopcodes.h"
+						RelativePath="lua-5.1\src\lmem.h"
 						>
 					</File>
 					<File
-						RelativePath=".\lua-5.1\src\loslib.c"
-						>
-						<FileConfiguration
-							Name="Debug|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="FastDebug|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-							/>
-						</FileConfiguration>
-					</File>
-					<File
-						RelativePath=".\lua-5.1\src\lparser.c"
+						RelativePath="lua-5.1\src\loadlib.c"
 						>
 						<FileConfiguration
 							Name="Debug|Win32"
@@ -4328,11 +4208,7 @@
 						</FileConfiguration>
 					</File>
 					<File
-						RelativePath=".\lua-5.1\src\lparser.h"
-						>
-					</File>
-					<File
-						RelativePath=".\lua-5.1\src\lstate.c"
+						RelativePath="lua-5.1\src\lobject.c"
 						>
 						<FileConfiguration
 							Name="Debug|Win32"
@@ -4360,43 +4236,11 @@
 						</FileConfiguration>
 					</File>
 					<File
-						RelativePath=".\lua-5.1\src\lstate.h"
+						RelativePath="lua-5.1\src\lobject.h"
 						>
 					</File>
 					<File
-						RelativePath=".\lua-5.1\src\lstring.c"
-						>
-						<FileConfiguration
-							Name="Debug|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="FastDebug|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-							/>
-						</FileConfiguration>
-					</File>
-					<File
-						RelativePath=".\lua-5.1\src\lstring.h"
-						>
-					</File>
-					<File
-						RelativePath=".\lua-5.1\src\lstrlib.c"
+						RelativePath="lua-5.1\src\lopcodes.c"
 						>
 						<FileConfiguration
 							Name="Debug|Win32"
@@ -4424,7 +4268,11 @@
 						</FileConfiguration>
 					</File>
 					<File
-						RelativePath=".\lua-5.1\src\ltable.c"
+						RelativePath="lua-5.1\src\lopcodes.h"
+						>
+					</File>
+					<File
+						RelativePath="lua-5.1\src\loslib.c"
 						>
 						<FileConfiguration
 							Name="Debug|Win32"
@@ -4452,11 +4300,7 @@
 						</FileConfiguration>
 					</File>
 					<File
-						RelativePath=".\lua-5.1\src\ltable.h"
-						>
-					</File>
-					<File
-						RelativePath=".\lua-5.1\src\ltablib.c"
+						RelativePath="lua-5.1\src\lparser.c"
 						>
 						<FileConfiguration
 							Name="Debug|Win32"
@@ -4484,7 +4328,11 @@
 						</FileConfiguration>
 					</File>
 					<File
-						RelativePath=".\lua-5.1\src\ltm.c"
+						RelativePath="lua-5.1\src\lparser.h"
+						>
+					</File>
+					<File
+						RelativePath="lua-5.1\src\lstate.c"
 						>
 						<FileConfiguration
 							Name="Debug|Win32"
@@ -4512,23 +4360,11 @@
 						</FileConfiguration>
 					</File>
 					<File
-						RelativePath=".\lua-5.1\src\ltm.h"
+						RelativePath="lua-5.1\src\lstate.h"
 						>
 					</File>
 					<File
-						RelativePath=".\lua-5.1\src\lua.h"
-						>
-					</File>
-					<File
-						RelativePath=".\lua-5.1\src\luaconf.h"
-						>
-					</File>
-					<File
-						RelativePath=".\lua-5.1\src\lualib.h"
-						>
-					</File>
-					<File
-						RelativePath=".\lua-5.1\src\lundump.c"
+						RelativePath="lua-5.1\src\lstring.c"
 						>
 						<FileConfiguration
 							Name="Debug|Win32"
@@ -4556,43 +4392,11 @@
 						</FileConfiguration>
 					</File>
 					<File
-						RelativePath=".\lua-5.1\src\lundump.h"
+						RelativePath="lua-5.1\src\lstring.h"
 						>
 					</File>
 					<File
-						RelativePath=".\lua-5.1\src\lvm.c"
-						>
-						<FileConfiguration
-							Name="Debug|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="FastDebug|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-							/>
-						</FileConfiguration>
-					</File>
-					<File
-						RelativePath=".\lua-5.1\src\lvm.h"
-						>
-					</File>
-					<File
-						RelativePath=".\lua-5.1\src\lzio.c"
+						RelativePath="lua-5.1\src\lstrlib.c"
 						>
 						<FileConfiguration
 							Name="Debug|Win32"
@@ -4620,7 +4424,203 @@
 						</FileConfiguration>
 					</File>
 					<File
-						RelativePath=".\lua-5.1\src\lzio.h"
+						RelativePath="lua-5.1\src\ltable.c"
+						>
+						<FileConfiguration
+							Name="Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="FastDebug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="lua-5.1\src\ltable.h"
+						>
+					</File>
+					<File
+						RelativePath="lua-5.1\src\ltablib.c"
+						>
+						<FileConfiguration
+							Name="Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="FastDebug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="lua-5.1\src\ltm.c"
+						>
+						<FileConfiguration
+							Name="Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="FastDebug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="lua-5.1\src\ltm.h"
+						>
+					</File>
+					<File
+						RelativePath="lua-5.1\src\lua.h"
+						>
+					</File>
+					<File
+						RelativePath="lua-5.1\src\luaconf.h"
+						>
+					</File>
+					<File
+						RelativePath="lua-5.1\src\lualib.h"
+						>
+					</File>
+					<File
+						RelativePath="lua-5.1\src\lundump.c"
+						>
+						<FileConfiguration
+							Name="Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="FastDebug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="lua-5.1\src\lundump.h"
+						>
+					</File>
+					<File
+						RelativePath="lua-5.1\src\lvm.c"
+						>
+						<FileConfiguration
+							Name="Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="FastDebug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="lua-5.1\src\lvm.h"
+						>
+					</File>
+					<File
+						RelativePath="lua-5.1\src\lzio.c"
+						>
+						<FileConfiguration
+							Name="Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="FastDebug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="lua-5.1\src\lzio.h"
 						>
 					</File>
 				</Filter>
@@ -4630,43 +4630,43 @@
 			Name="Actors"
 			>
 			<File
-				RelativePath=".\Actor.cpp"
+				RelativePath="Actor.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\Actor.h"
+				RelativePath="Actor.h"
 				>
 			</File>
 			<File
-				RelativePath=".\ActorFrame.cpp"
+				RelativePath="ActorFrame.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\ActorFrame.h"
+				RelativePath="ActorFrame.h"
 				>
 			</File>
 			<File
-				RelativePath=".\ActorFrameTexture.cpp"
+				RelativePath="ActorFrameTexture.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\ActorFrameTexture.h"
+				RelativePath="ActorFrameTexture.h"
 				>
 			</File>
 			<File
-				RelativePath=".\ActorMultiTexture.cpp"
+				RelativePath="ActorMultiTexture.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\ActorMultiTexture.h"
+				RelativePath="ActorMultiTexture.h"
 				>
 			</File>
 			<File
-				RelativePath=".\ActorProxy.cpp"
+				RelativePath="ActorProxy.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\ActorProxy.h"
+				RelativePath="ActorProxy.h"
 				>
 			</File>
 			<File
@@ -4678,11 +4678,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ActorSound.cpp"
+				RelativePath="ActorSound.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\ActorSound.h"
+				RelativePath="ActorSound.h"
 				>
 			</File>
 			<File
@@ -4702,19 +4702,19 @@
 				>
 			</File>
 			<File
-				RelativePath=".\BitmapText.cpp"
+				RelativePath="BitmapText.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\BitmapText.h"
+				RelativePath="BitmapText.h"
 				>
 			</File>
 			<File
-				RelativePath=".\DynamicActorScroller.cpp"
+				RelativePath="DynamicActorScroller.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\DynamicActorScroller.h"
+				RelativePath="DynamicActorScroller.h"
 				>
 			</File>
 			<File
@@ -4758,11 +4758,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Sprite.cpp"
+				RelativePath="Sprite.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\Sprite.h"
+				RelativePath="Sprite.h"
 				>
 			</File>
 		</Filter>
@@ -4786,19 +4786,19 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CharacterManager.cpp"
+				RelativePath="CharacterManager.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\CharacterManager.h"
+				RelativePath="CharacterManager.h"
 				>
 			</File>
 			<File
-				RelativePath=".\CommandLineActions.cpp"
+				RelativePath="CommandLineActions.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\CommandLineActions.h"
+				RelativePath="CommandLineActions.h"
 				>
 			</File>
 			<File
@@ -4826,19 +4826,19 @@
 				>
 			</File>
 			<File
-				RelativePath=".\FontManager.cpp"
+				RelativePath="FontManager.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\FontManager.h"
+				RelativePath="FontManager.h"
 				>
 			</File>
 			<File
-				RelativePath=".\GameManager.cpp"
+				RelativePath="GameManager.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\GameManager.h"
+				RelativePath="GameManager.h"
 				>
 			</File>
 			<File
@@ -4930,11 +4930,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\PrefsManager.cpp"
+				RelativePath="PrefsManager.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\PrefsManager.h"
+				RelativePath="PrefsManager.h"
 				>
 			</File>
 			<File
@@ -4954,11 +4954,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\SongManager.cpp"
+				RelativePath="SongManager.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\SongManager.h"
+				RelativePath="SongManager.h"
 				>
 			</File>
 			<File
@@ -4970,11 +4970,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ThemeManager.cpp"
+				RelativePath="ThemeManager.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\ThemeManager.h"
+				RelativePath="ThemeManager.h"
 				>
 			</File>
 			<File
@@ -4990,7 +4990,7 @@
 			Name="BaseClasses"
 			>
 			<File
-				RelativePath=".\BaseClasses\amextra.cpp"
+				RelativePath="BaseClasses\amextra.cpp"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -5021,7 +5021,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\BaseClasses\amextra.h"
+				RelativePath="BaseClasses\amextra.h"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -5049,66 +5049,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\BaseClasses\amfilter.cpp"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="FastDebug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\BaseClasses\amfilter.h"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="FastDebug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\BaseClasses\amvideo.cpp"
+				RelativePath="BaseClasses\amfilter.cpp"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -5139,7 +5080,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\BaseClasses\AMVIDEO.H"
+				RelativePath="BaseClasses\amfilter.h"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -5167,35 +5108,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\BaseClasses\cache.h"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="FastDebug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\BaseClasses\combase.cpp"
+				RelativePath="BaseClasses\amvideo.cpp"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -5226,7 +5139,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\BaseClasses\combase.h"
+				RelativePath="BaseClasses\AMVIDEO.H"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -5254,38 +5167,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\BaseClasses\cprop.cpp"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="FastDebug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\BaseClasses\cprop.h"
+				RelativePath="BaseClasses\cache.h"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -5313,7 +5195,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\BaseClasses\ctlutil.cpp"
+				RelativePath="BaseClasses\combase.cpp"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -5344,7 +5226,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\BaseClasses\ctlutil.h"
+				RelativePath="BaseClasses\combase.h"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -5372,66 +5254,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\BaseClasses\ddmm.cpp"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="FastDebug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\BaseClasses\ddmm.h"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="FastDebug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\BaseClasses\dllentry.cpp"
+				RelativePath="BaseClasses\cprop.cpp"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -5462,7 +5285,35 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\BaseClasses\dllsetup.cpp"
+				RelativePath="BaseClasses\cprop.h"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="FastDebug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="BaseClasses\ctlutil.cpp"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -5493,7 +5344,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\BaseClasses\dllsetup.h"
+				RelativePath="BaseClasses\ctlutil.h"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -5521,119 +5372,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\BaseClasses\dsschedule.h"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="FastDebug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\BaseClasses\fourcc.h"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="FastDebug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\BaseClasses\measure.h"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="FastDebug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\BaseClasses\msgthrd.h"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="FastDebug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\BaseClasses\mtype.cpp"
+				RelativePath="BaseClasses\ddmm.cpp"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -5664,7 +5403,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\BaseClasses\mtype.h"
+				RelativePath="BaseClasses\ddmm.h"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -5692,66 +5431,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\BaseClasses\outputq.cpp"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="FastDebug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\BaseClasses\outputq.h"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="FastDebug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\BaseClasses\pstream.cpp"
+				RelativePath="BaseClasses\dllentry.cpp"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -5782,35 +5462,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\BaseClasses\pstream.h"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="FastDebug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\BaseClasses\pullpin.cpp"
+				RelativePath="BaseClasses\dllsetup.cpp"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -5841,7 +5493,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\BaseClasses\pullpin.h"
+				RelativePath="BaseClasses\dllsetup.h"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -5869,38 +5521,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\BaseClasses\refclock.cpp"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="FastDebug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\BaseClasses\refclock.h"
+				RelativePath="BaseClasses\dsschedule.h"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -5928,7 +5549,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\BaseClasses\reftime.h"
+				RelativePath="BaseClasses\fourcc.h"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -5956,38 +5577,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\BaseClasses\renbase.cpp"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="FastDebug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\BaseClasses\renbase.h"
+				RelativePath="BaseClasses\measure.h"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -6015,7 +5605,35 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\BaseClasses\schedule.cpp"
+				RelativePath="BaseClasses\msgthrd.h"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="FastDebug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="BaseClasses\mtype.cpp"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -6046,7 +5664,35 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\BaseClasses\seekpt.cpp"
+				RelativePath="BaseClasses\mtype.h"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="FastDebug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="BaseClasses\outputq.cpp"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -6077,7 +5723,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\BaseClasses\seekpt.h"
+				RelativePath="BaseClasses\outputq.h"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -6105,94 +5751,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\BaseClasses\source.cpp"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="FastDebug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\BaseClasses\source.h"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="FastDebug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\BaseClasses\streams.h"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="FastDebug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\BaseClasses\strmctl.cpp"
+				RelativePath="BaseClasses\pstream.cpp"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -6223,7 +5782,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\BaseClasses\strmctl.h"
+				RelativePath="BaseClasses\pstream.h"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -6251,66 +5810,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\BaseClasses\sysclock.cpp"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="FastDebug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\BaseClasses\sysclock.h"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="FastDebug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\BaseClasses\transfrm.cpp"
+				RelativePath="BaseClasses\pullpin.cpp"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -6341,7 +5841,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\BaseClasses\transfrm.h"
+				RelativePath="BaseClasses\pullpin.h"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -6369,66 +5869,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\BaseClasses\transip.cpp"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="FastDebug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\BaseClasses\transip.h"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="FastDebug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\BaseClasses\videoctl.cpp"
+				RelativePath="BaseClasses\refclock.cpp"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -6459,7 +5900,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\BaseClasses\videoctl.h"
+				RelativePath="BaseClasses\refclock.h"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -6487,38 +5928,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\BaseClasses\vtrans.cpp"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="FastDebug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\BaseClasses\vtrans.h"
+				RelativePath="BaseClasses\reftime.h"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -6546,7 +5956,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\BaseClasses\winctrl.cpp"
+				RelativePath="BaseClasses\renbase.cpp"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -6577,7 +5987,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\BaseClasses\winctrl.h"
+				RelativePath="BaseClasses\renbase.h"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -6605,66 +6015,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\BaseClasses\winutil.cpp"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="FastDebug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\BaseClasses\winutil.h"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="FastDebug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\BaseClasses\wxdebug.cpp"
+				RelativePath="BaseClasses\schedule.cpp"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -6695,35 +6046,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\BaseClasses\wxdebug.h"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="FastDebug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\BaseClasses\wxlist.cpp"
+				RelativePath="BaseClasses\seekpt.cpp"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -6754,7 +6077,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\BaseClasses\wxlist.h"
+				RelativePath="BaseClasses\seekpt.h"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -6782,7 +6105,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\BaseClasses\wxutil.cpp"
+				RelativePath="BaseClasses\source.cpp"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -6813,7 +6136,684 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\BaseClasses\wxutil.h"
+				RelativePath="BaseClasses\source.h"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="FastDebug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="BaseClasses\streams.h"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="FastDebug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="BaseClasses\strmctl.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="FastDebug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="BaseClasses\strmctl.h"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="FastDebug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="BaseClasses\sysclock.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="FastDebug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="BaseClasses\sysclock.h"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="FastDebug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="BaseClasses\transfrm.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="FastDebug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="BaseClasses\transfrm.h"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="FastDebug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="BaseClasses\transip.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="FastDebug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="BaseClasses\transip.h"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="FastDebug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="BaseClasses\videoctl.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="FastDebug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="BaseClasses\videoctl.h"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="FastDebug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="BaseClasses\vtrans.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="FastDebug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="BaseClasses\vtrans.h"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="FastDebug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="BaseClasses\winctrl.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="FastDebug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="BaseClasses\winctrl.h"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="FastDebug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="BaseClasses\winutil.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="FastDebug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="BaseClasses\winutil.h"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="FastDebug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="BaseClasses\wxdebug.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="FastDebug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="BaseClasses\wxdebug.h"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="FastDebug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="BaseClasses\wxlist.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="FastDebug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="BaseClasses\wxlist.h"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="FastDebug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="BaseClasses\wxutil.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="FastDebug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="BaseClasses\wxutil.h"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -6850,7 +6850,7 @@
 			>
 		</File>
 		<File
-			RelativePath=".\smzip.ico"
+			RelativePath="smzip.ico"
 			>
 		</File>
 		<File
