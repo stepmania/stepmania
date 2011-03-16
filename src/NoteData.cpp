@@ -676,14 +676,16 @@ void NoteData::LoadTransformed( const NoteData& in, int iNewNumTracks, const int
 	Init();
 
 	SetNumTracks( iNewNumTracks );
-	
+
 	// an array to keep transformed tracks
+	/*
 	bool bTransformedTracks[in.GetNumTracks()];
 	for( int t=0; t<in.GetNumTracks(); t++ )
 	{
 		bTransformedTracks[t] = false;
 	}
-	
+	*/
+
 	// copy tracks
 	for( int t=0; t<GetNumTracks(); t++ )
 	{
@@ -694,7 +696,7 @@ void NoteData::LoadTransformed( const NoteData& in, int iNewNumTracks, const int
 		if( iOriginalTrack == -1 )
 			continue;
 		m_TapNotes[t] = in.m_TapNotes[iOriginalTrack];
-		bTransformedTracks[iOriginalTrack] = true;
+		//bTransformedTracks[iOriginalTrack] = true;
 	}
 }
 
