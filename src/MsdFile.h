@@ -1,9 +1,7 @@
-/** @brief MsdFile - Read .SSC, .SM, .DWI, and .MSD files. */
-
 #ifndef MSDFILE_H
 #define MSDFILE_H
 
-/** @brief The class that reads the various .SSC, .SM, .DWI, and .MSD files. */
+/** @brief The class that reads the various .SSC, .SM, .SMA, .DWI, and .MSD files. */
 class MsdFile  
 {
 public:
