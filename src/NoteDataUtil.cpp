@@ -564,18 +564,19 @@ void NoteDataUtil::LoadTransformedSlidingWindow( const NoteData &in, NoteData &o
 void PlaceAutoKeysound( NoteData &out, int row, TapNote akTap )
 {
 	int iEmptyTrack = -1;
-	int iEmptyRow = row - 1;
+	int iEmptyRow = row;
 	int iNewNumTracks = out.GetNumTracks();
 	bool bFoundEmptyTrack = false;
-	if( iEmptyRow < 0 )
+	int iRowsToLook[3] = {0, -1, 1};
+	
+	for( int j = 0; j < 3; j ++ )
 	{
-		iEmptyRow = 0;
-	}
-	for( int r = iEmptyRow; r <= iEmptyRow + 2; r += 2 )
-	{
+		int r = iRowsToLook[j] + row;
+		if( r < 0 )
+			continue;
 		for( int i = 0; i < iNewNumTracks; ++i )
 		{
-			if ( out.GetTapNote(i, r) == TAP_EMPTY )
+			if ( out.GetTapNote(i, r) == TAP_EMPTY && !out.IsHoldNoteAtRow(i, r) )
 			{
 				iEmptyTrack = i;
 				iEmptyRow = r;

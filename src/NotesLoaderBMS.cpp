@@ -405,7 +405,36 @@ static void SetTimeSigAdjustments( const MeasureToTimeSig_t &sigs, Song &out, Me
 
 static void ReadTimeSigs( const NameToData_t &mapNameToData, MeasureToTimeSig_t &out )
 {
+	// some convertors change some measure's time signature before any notes are there
+	// it is required because sometimes the BGA starts before the music and the measure size
+	// is the difference between the start of first bar and the BGA.
+	// something like #00002:1.55. that made all subsequent notes 192th.
+	// here, find the lowest measure for notes, and make this function skip the time signatures before it.
+	int iStartMeasureNo = 999;
 	NameToData_t::const_iterator it;
+	for( it = mapNameToData.lower_bound("#00000"); it != mapNameToData.end(); ++it )
+	{
+		const RString &sName = it->first;
+		if( sName.size() != 6 || sName[0] != '#' || !IsAnInt( sName.substr(1,5) ) )
+			continue;
+		// this is step or offset data.  Looks like "#00705"
+		int iMeasureNo	= atoi( sName.substr(1, 3).c_str() );
+		int iBMSTrackNo	= atoi( sName.substr(4, 2).c_str() );
+		RString nData = it->second;
+		int totalPairs = nData.size() / 2;
+		if( iBMSTrackNo != BMS_TRACK_TIME_SIG && iBMSTrackNo != 7 )
+		{
+			for( int i = 0; i < totalPairs; ++i )
+			{
+				RString sPair = nData.substr( i*2, 2 );
+				if (sPair == "00")
+				{
+					continue;
+				}
+				if( iMeasureNo < iStartMeasureNo ) iStartMeasureNo = iMeasureNo;
+			}
+		}
+	}
 	for( it = mapNameToData.lower_bound("#00000"); it != mapNameToData.end(); ++it )
 	{
 		const RString &sName = it->first;
@@ -415,6 +444,8 @@ static void ReadTimeSigs( const NameToData_t &mapNameToData, MeasureToTimeSig_t 
 		// this is step or offset data.  Looks like "#00705"
 		const RString &sData = it->second;
 		int iMeasureNo	= atoi( sName.substr(1, 3).c_str() );
+		if( iMeasureNo < iStartMeasureNo )
+			continue;
 		int iBMSTrackNo	= atoi( sName.substr(4, 2).c_str() );
 		if( iBMSTrackNo == BMS_TRACK_TIME_SIG )
 			out[iMeasureNo] = StringToFloat( sData );
@@ -815,7 +846,7 @@ static void ReadGlobalTags( const NameToData_t &mapNameToData, Song &out, Measur
 		idToKeySoundIndexOut[ sWavID ] = out.m_vsKeysoundFile.size()-1;
 		LOG->Trace( "Inserting keysound index %u '%s'", unsigned(out.m_vsKeysoundFile.size()-1), sWavID.c_str() );
 	}
-
+		
 	// Time signature tags affect all other global timing tags, so read them first.
 	MeasureToTimeSig_t mapMeasureToTimeSig;
 	ReadTimeSigs( mapNameToData, mapMeasureToTimeSig );
