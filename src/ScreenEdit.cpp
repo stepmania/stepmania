@@ -2867,9 +2867,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 			if( (*s)->IsAutogen() )
 				continue;
 			// If the notedata has content, let it go.
-			NoteData tmp;
-			(*s)->GetNoteData(tmp);
-			if( !tmp.IsEmpty() )
+			if( !(*s)->GetNoteData().IsEmpty() )
 				continue;
 			// It's hard to say if these steps were saved to disk or not.
 			/*

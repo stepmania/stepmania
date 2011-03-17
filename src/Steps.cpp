@@ -89,6 +89,13 @@ void Steps::GetNoteData( NoteData& noteDataOut ) const
 	}
 }
 
+NoteData Steps::GetNoteData() const
+{
+	NoteData tmp;
+	this->GetNoteData( tmp );
+	return tmp;
+}
+
 void Steps::SetSMNoteData( const RString &notes_comp_ )
 {
 	m_pNoteData->Init();
