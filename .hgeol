@@ -1,22 +1,23 @@
-[repository]
-native = CRLF
-
 [patterns]
-**.cpp = CRLF
-**.h = CRLF
-**.txt = CRLF
-**.lua = CRLF
+**.cpp = native
+**.h = native
+**.mm = native
+**.txt = native
+**.lua = native
 **.sln = CRLF
-**.ini = CRLF
-**.redir = CRLF
-**.sm = CRLF
-**.ssc = CRLF
+**.ini = native
+**.redir = native
+**.sm = native
+**.ssc = native
 **.vcproj = CRLF
-**.xsl = CRLF
-**.xml = CRLF
+**.xsl = native
+**.xml = native
 **.jpg = BIN
 **.png = BIN
 **.jpeg = BIN
 **.ogg = BIN
+**.mp3 = BIN
+**.wav = BIN
 **.sh = LF
 Makefile = LF
+Makefile.am = LF
