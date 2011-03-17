@@ -2850,6 +2850,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 
 		/* The user has been given a choice to save.  Delete all unsaved
 		 * steps before exiting the editor. */
+		/*
 		Song *pSong = GAMESTATE->m_pCurSong;
 		const vector<Steps*> &apSteps = pSong->GetAllSteps();
 		vector<Steps*> apToDelete;
@@ -2868,6 +2869,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 			if( GAMESTATE->m_pCurSteps[PLAYER_1].Get() == pSteps )
 				GAMESTATE->m_pCurSteps[PLAYER_1].Set( NULL );
 		}
+		*/
 
 		m_Out.StartTransitioning( SM_GoToNextScreen );
 	}
