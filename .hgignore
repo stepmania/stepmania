@@ -4,6 +4,7 @@ syntax: glob
 *~
 *.o
 tests/*.err
+ffmpeg-*
 *.ncb
 *.suo
 *.obj
