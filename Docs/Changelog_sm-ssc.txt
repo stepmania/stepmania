@@ -22,6 +22,8 @@ sm-ssc v1.2.4 | 20110???
 * [ScreenEdit] Add a metric to switch Ctrl+Up and Ctrl+Down. This is for
   easier compatibility with prior versions of SM. It defaults to false.
   [Wolfman2000]
+* [ScreenEdit] Fix bug number 65, where Steps disappeared if they were
+  involved with the Compress or Expand options. [Wolfman2000]
 
 20110316
 --------

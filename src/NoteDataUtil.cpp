@@ -2229,13 +2229,12 @@ void NoteDataUtil::AddTapAttacks( NoteData &nd, Song* pSong )
 	}
 }
 
-#if 0 // undo this if ScaleRegion breaks more things than it fixes
 void NoteDataUtil::Scale( NoteData &nd, float fScale )
 {
 	ASSERT( fScale > 0 );
 
 	NoteData temp;
-	temp.CopyAll( &nd );
+	temp.CopyAll( nd );
 	nd.ClearAll();
 
 	for( int r=0; r<=temp.GetLastRow(); r++ )
@@ -2253,7 +2252,6 @@ void NoteDataUtil::Scale( NoteData &nd, float fScale )
 		}
 	}
 }
-#endif
 
 void NoteDataUtil::ScaleRegion( NoteData &nd, float fScale, int iStartIndex, int iEndIndex )
 {

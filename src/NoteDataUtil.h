@@ -149,9 +149,8 @@ namespace NoteDataUtil
 			       int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW );
 	void AddTapAttacks( NoteData &nd, Song* pSong );
 
-	// void Scale( NoteData &nd, float fScale );
+	void Scale( NoteData &nd, float fScale );
 	void ScaleRegion( NoteData &nd, float fScale, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW );
-	inline void Scale( NoteData &nd, float fScale ) { NoteDataUtil::ScaleRegion(nd, fScale); }
 
 	void InsertRows( NoteData &nd, int iStartIndex, int iRowsToShift );
 	void DeleteRows( NoteData &nd, int iStartIndex, int iRowsToShift );
