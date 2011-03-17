@@ -1243,6 +1243,8 @@ static int FindAttackAtTime( const AttackArray& attacks, float fStartTime )
 
 static LocalizedString SWITCHED_TO		( "ScreenEdit", "Switched to" );
 static LocalizedString NO_BACKGROUNDS_AVAILABLE	( "ScreenEdit", "No backgrounds available" );
+static ThemeMetric<bool> INVERT_SCROLL_BUTTONS ( "ScreenEdit", "InvertScrollSpeedButtons" );
+
 void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 {
 	if( input.type == IET_RELEASE )
@@ -1364,10 +1366,10 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			{
 			DEFAULT_FAIL(EditB);
 			case EDIT_BUTTON_SCROLL_SPEED_DOWN:
-				--iSpeed;
+				INVERT_SCROLL_BUTTONS ? ++iSpeed : --iSpeed;
 				break;
 			case EDIT_BUTTON_SCROLL_SPEED_UP:
-				++iSpeed;
+				INVERT_SCROLL_BUTTONS ? --iSpeed : ++iSpeed;
 				break;
 			}
 			iSpeed = clamp( iSpeed, 0, (int) ARRAYLEN(fSpeeds)-1 );

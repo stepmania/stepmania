@@ -19,6 +19,9 @@ sm-ssc v1.2.4 | 20110???
   saved. [AJ, Wolfman2000]
 * [ScreenOptionsEdit] Fix bug number 186, where people could try to edit or
   share songs when they didn't have any. [Wolfman2000]
+* [ScreenEdit] Add a metric to switch Ctrl+Up and Ctrl+Down. This is for
+  easier compatibility with prior versions of SM. It defaults to false.
+  [Wolfman2000]
 
 20110316
 --------
