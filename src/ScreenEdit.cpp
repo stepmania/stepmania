@@ -2816,7 +2816,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 			HandleMainMenuChoice( ScreenEdit::save_on_exit );
 			return;
 		case ANSWER_NO:
-			/* Don't save; just exit. */
+			// Don't save; just exit.
 			SCREENMAN->SendMessageToTopScreen( SM_DoExit );
 			return;
 		case ANSWER_CANCEL:
@@ -2837,7 +2837,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if( SM == SM_SaveFailed ) // save failed; stay in the editor
 	{
-		/* We committed the steps to SongManager.  Revert to the last save, and
+		/* We committed the steps to SongManager. Revert to the last save, and
 		 * recommit the reversion to SongManager. */
 		LOG->Trace( "Save failed. Changes uncommitted from memory." );
 		CopyFromLastSave();
@@ -4128,7 +4128,7 @@ void ScreenEdit::DoHelp()
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the ScreenEdit. */ 
+/** @brief Allow Lua to have access to ScreenEdit. */ 
 class LunaScreenEdit: public Luna<ScreenEdit>
 {
 public:
