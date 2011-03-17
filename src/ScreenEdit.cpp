@@ -2854,13 +2854,26 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		 * without saving. However, without this code, any new steps will get
 		 * saved on quit. -aj */
 		
+		// At this point, the last good song copy is in use.
 		Song *pSong = GAMESTATE->m_pCurSong;
 		const vector<Steps*> &apSteps = pSong->GetAllSteps();
 		vector<Steps*> apToDelete;
 		FOREACH_CONST( Steps *, apSteps, s )
 		{
-			if( (*s)->IsAutogen() || (*s)->GetSavedToDisk() )
+			// If we're not on the same style, let it go.
+			if( GAMESTATE->m_pCurSteps[PLAYER_1]->m_StepsType != (*s)->m_StepsType )
 				continue;
+			// If autogenned, it isn't being saved.
+			if( (*s)->IsAutogen() )
+				continue;
+			// If the notedata has content, let it go.
+			if( !(*s)->m_NoteData->IsEmpty() )
+				continue;
+			// It's hard to say if these steps were saved to disk or not.
+			/*
+			if( !(*s)->GetSavedToDisk() )
+				continue;
+			 */
 			apToDelete.push_back( *s );
 		}
 		FOREACH_CONST( Steps *, apToDelete, s )
