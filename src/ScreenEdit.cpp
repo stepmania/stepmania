@@ -800,7 +800,7 @@ void ScreenEdit::Init()
 	m_bHasUndo = false;
 	m_Undo.SetNumTracks( m_NoteDataEdit.GetNumTracks() );
 
-	m_bDirty = false;
+	m_bDirty = m_NoteDataEdit.IsEmpty(); // require the usage of saving if empty.
 
 	m_Player->Init( "Player", GAMESTATE->m_pPlayerState[PLAYER_1], NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL );
 	m_Player->CacheAllUsedNoteSkins();
@@ -2853,7 +2853,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		/* FIXME: This code causes all the steps to be deleted if you quit
 		 * without saving. However, without this code, any new steps will get
 		 * saved on quit. -aj */
-		/*
+		
 		Song *pSong = GAMESTATE->m_pCurSong;
 		const vector<Steps*> &apSteps = pSong->GetAllSteps();
 		vector<Steps*> apToDelete;
@@ -2872,7 +2872,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 			if( GAMESTATE->m_pCurSteps[PLAYER_1].Get() == pSteps )
 				GAMESTATE->m_pCurSteps[PLAYER_1].Set( NULL );
 		}
-		*/
+		
 
 		m_Out.StartTransitioning( SM_GoToNextScreen );
 	}
