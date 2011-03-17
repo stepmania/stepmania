@@ -45,7 +45,6 @@ void ScreenEditMenu::Init()
 	m_Selector.SetXY( 0, 0 );
 	this->AddChild( &m_Selector );
 
-
 	m_textExplanation.SetName( "Explanation" );
 	m_textExplanation.LoadFromFont( THEME->GetPathF(m_sName,"explanation") );
 	LOAD_ALL_COMMANDS_AND_SET_XY( m_textExplanation );
@@ -58,7 +57,6 @@ void ScreenEditMenu::Init()
 	RefreshNumStepsLoadedFromProfile();
 	this->AddChild( &m_textNumStepsLoadedFromProfile );
 }
-
 
 void ScreenEditMenu::HandleScreenMessage( const ScreenMessage SM )
 {
@@ -77,8 +75,8 @@ void ScreenEditMenu::HandleScreenMessage( const ScreenMessage SM )
 		pSong->DeleteSteps( pStepsToDelete );
 		SONGMAN->Invalidate( pSong );
 
-		/* Only save to the main .SM file if the steps we're deleting were loaded
-		 * from it. */
+		/* Only save to the main .SM file if the steps we're deleting
+		 * were loaded from it. */
 		if( bSaveSong )
 		{
 			pSong->Save();
@@ -101,7 +99,7 @@ void ScreenEditMenu::HandleScreenMessage( const ScreenMessage SM )
 
 	ScreenWithMenuElements::HandleScreenMessage( SM );
 }
-	
+
 void ScreenEditMenu::MenuUp( const InputEventPlus &input )
 {
 	if( m_Selector.CanGoUp() )
@@ -141,18 +139,18 @@ static RString GetCopyDescription( const Steps *pSourceSteps )
 	RString s = pSourceSteps->GetDescription();
 	return s;
 }
-	
+
 static void SetCurrentStepsDescription( const RString &s )
 {
 	GAMESTATE->m_pCurSteps[0]->SetDescription( s );
 }
-	
+
 static void DeleteCurrentSteps()
 {
 	GAMESTATE->m_pCurSong->DeleteSteps( GAMESTATE->m_pCurSteps[0] );
 	GAMESTATE->m_pCurSteps[0].Set( NULL );
 }
-	
+
 static LocalizedString MISSING_MUSIC_FILE	( "ScreenEditMenu", "This song is missing a music file and cannot be edited." );
 static LocalizedString SONG_DIR_READ_ONLY	( "ScreenEditMenu", "The song directory is read-only and cannot be edited." );
 static LocalizedString DELETED_AUTOGEN_STEPS	( "ScreenEditMenu", "These steps are produced by autogen.  You do not need to delete them." );
@@ -232,14 +230,14 @@ void ScreenEditMenu::MenuStart( const InputEventPlus &input )
 		break;
 	case EditMenuAction_Delete:
 		ASSERT( pSteps );
-		ScreenPrompt::Prompt( SM_None, STEPS_WILL_BE_LOST.GetValue() + "\n\n" + CONTINUE_WITH_DELETE.GetValue(), 
+		ScreenPrompt::Prompt( SM_None, STEPS_WILL_BE_LOST.GetValue() + "\n\n" + CONTINUE_WITH_DELETE.GetValue(),
 		                      PROMPT_YES_NO, ANSWER_NO );
 		break;
 	case EditMenuAction_Create:
 		ASSERT( !pSteps );
 		{
 			pSteps = new Steps;
-			
+
 			switch( m_Selector.EDIT_MODE )
 			{
 			default:
@@ -268,10 +266,10 @@ void ScreenEditMenu::MenuStart( const InputEventPlus &input )
 			}
 
 			pSteps->SetDifficulty( dc );	// override difficulty with the user's choice
-			SongUtil::MakeUniqueEditDescription( pSong, st, sEditName ); 
+			SongUtil::MakeUniqueEditDescription( pSong, st, sEditName );
 			pSteps->SetDescription( sEditName );
 			pSong->AddSteps( pSteps );
-				
+
 			SCREENMAN->PlayStartSound();
 
 			GAMESTATE->m_pCurSong.Set( pSong );
@@ -295,13 +293,13 @@ void ScreenEditMenu::MenuStart( const InputEventPlus &input )
 			bool bPromptToNameSteps = (action == EditMenuAction_Create && dc == Difficulty_Edit);
 			if( bPromptToNameSteps )
 			{
-				ScreenTextEntry::TextEntry( 
-					SM_BackFromEditDescription, 
-					ENTER_EDIT_DESCRIPTION, 
-					GAMESTATE->m_pCurSteps[0]->GetDescription(), 
+				ScreenTextEntry::TextEntry(
+					SM_BackFromEditDescription,
+					ENTER_EDIT_DESCRIPTION,
+					GAMESTATE->m_pCurSteps[0]->GetDescription(),
 					MAX_EDIT_STEPS_DESCRIPTION_LENGTH,
 					SongUtil::ValidateCurrentStepsDescription,
-					SetCurrentStepsDescription, 
+					SetCurrentStepsDescription,
 					DeleteCurrentSteps );
 			}
 			else
@@ -342,7 +340,7 @@ void ScreenEditMenu::RefreshNumStepsLoadedFromProfile()
 /*
  * (c) 2002-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -352,7 +350,7 @@ void ScreenEditMenu::RefreshNumStepsLoadedFromProfile()
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF
