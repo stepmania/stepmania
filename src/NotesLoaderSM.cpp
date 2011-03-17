@@ -424,7 +424,7 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 	}
 }
 
-bool LoadFromBGChangesString( BackgroundChange &change, const RString &sBGChangeExpression )
+bool SMLoader::LoadFromBGChangesString( BackgroundChange &change, const RString &sBGChangeExpression )
 {
 	vector<RString> aBGChangeValues;
 	split( sBGChangeExpression, "=", aBGChangeValues, false );

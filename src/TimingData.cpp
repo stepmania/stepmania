@@ -117,26 +117,25 @@ void TimingData::SetTimeSignatureAtRow( int iRow, int iNumerator, int iDenominat
 		if( m_vTimeSignatureSegments[i].m_iStartRow >= iRow)
 			break; // We found our segment.
 	}
-	TimeSignatureSegment &ts = m_vTimeSignatureSegments[i];
-	TimeSignatureSegment &prev = m_vTimeSignatureSegments[i-1];
-	if( i == m_vTimeSignatureSegments.size() || ts.m_iStartRow != iRow )
+	
+	if ( i == m_vTimeSignatureSegments.size() || m_vTimeSignatureSegments[i].m_iStartRow != iRow )
 	{
-		// There is no TimeSignatureSegment at the specified beat.
-		// If the TimeSignatureSegment being set differs
-		// from the last TimeSignature, create a new TimeSignatureSegment.
-		if( i == 0 || ( prev.m_iNumerator != iNumerator || prev.m_iDenominator != iDenominator ) )
+		// No specific segmeent here: place one if it differs.
+		if( i == 0 || 
+		   ( m_vTimeSignatureSegments[i-1].m_iNumerator != iNumerator
+		    || m_vTimeSignatureSegments[i-1].m_iDenominator != iDenominator ) )
 			AddTimeSignatureSegment( TimeSignatureSegment(iRow, iNumerator, iDenominator) );
 	}
 	else	// TimeSignatureSegment being modified is m_vTimeSignatureSegments[i]
 	{
-		if( i > 0  && prev.m_iNumerator == iNumerator
-		   && prev.m_iDenominator == iDenominator )
+		if( i > 0  && m_vTimeSignatureSegments[i-1].m_iNumerator == iNumerator
+		   && m_vTimeSignatureSegments[i-1].m_iDenominator == iDenominator )
 			m_vTimeSignatureSegments.erase( m_vTimeSignatureSegments.begin()+i,
-						        m_vTimeSignatureSegments.begin()+i+1 );
+						       m_vTimeSignatureSegments.begin()+i+1 );
 		else
 		{
-			ts.m_iNumerator = iNumerator;
-			ts.m_iDenominator = iDenominator;
+			m_vTimeSignatureSegments[i].m_iNumerator = iNumerator;
+			m_vTimeSignatureSegments[i].m_iDenominator = iDenominator;
 		}
 	}
 }
@@ -165,7 +164,7 @@ void TimingData::SetTickcountAtRow( int iRow, int iTicks )
 	for( i=0; i<m_TickcountSegments.size(); i++ )
 		if( m_TickcountSegments[i].m_iStartRow >= iRow )
 			break;
-	
+
 	if( i == m_TickcountSegments.size() || m_TickcountSegments[i].m_iStartRow != iRow )
 	{
 		// No TickcountSegment here. Make a new segment if required.

@@ -147,7 +147,8 @@ NoteTypes.cpp NoteTypes.h NotesLoader.cpp NotesLoader.h \
 NotesLoaderBMS.cpp NotesLoaderBMS.h NotesLoaderDWI.cpp NotesLoaderDWI.h \
 NotesLoaderKSF.cpp NotesLoaderKSF.h NotesLoaderMidi.cpp NotesLoaderMidi.h \
 NotesLoaderPMS.cpp NotesLoaderPMS.h NotesLoaderSM.cpp NotesLoaderSM.h \
-NotesLoaderSSC.cpp NotesLoaderSSC.h NotesWriterDWI.cpp NotesWriterDWI.h \
+NotesLoaderSSC.cpp NotesLoaderSSC.h NotesLoaderSMA.cpp NotesLoaderSMA.h \
+NotesWriterDWI.cpp NotesWriterDWI.h \
 NotesWriterSM.cpp NotesWriterSM.h NotesWriterSSC.cpp NotesWriterSSC.h \
 OptionRowHandler.cpp OptionRowHandler.h OptionsList.cpp OptionsList.h \
 PlayerAI.cpp PlayerAI.h PlayerNumber.cpp PlayerNumber.h PlayerOptions.cpp PlayerOptions.h \

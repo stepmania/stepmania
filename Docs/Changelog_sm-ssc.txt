@@ -13,6 +13,11 @@ _____________________________________________________________________________
 sm-ssc v1.2.4 | 20110???
 --------------------------------------------------------------------------------
 
+20110316
+--------
+* [NotesLoaderSMA] Allow for preliminary support of loading SMA files. This
+  will become better once Split Timing is in place. [Wolfman2000]
+
 20110313
 --------
 * [NotesWriterSM] Allow for either the #DESCRIPTION or #CREDIT tags to be used

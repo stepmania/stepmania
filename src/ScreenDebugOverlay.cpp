@@ -216,7 +216,6 @@ void ScreenDebugOverlay::Init()
 		RString sPageName = (*p)->GetPageName();
 
 		DeviceInput di;
-		di.x = di.y = NULL;
 		switch( (*p)->GetType() )
 		{
 		case IDebugLine::all_screens:

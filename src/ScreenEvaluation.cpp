@@ -209,7 +209,7 @@ void ScreenEvaluation::Init()
 		}
 	}
 
-	ASSERT( !STATSMAN->m_vPlayedStageStats.empty() );
+	ASSERT_M( !STATSMAN->m_vPlayedStageStats.empty(), "PlayerStageStats is empty!" );
 	m_pStageStats = &STATSMAN->m_vPlayedStageStats.back();
 
 	ZERO( m_bSavedScreenshot );

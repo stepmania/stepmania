@@ -600,9 +600,7 @@ void Player::Load()
 
 	// parameters are invalid somehow... -aj
 	RageSoundLoadParams SoundParams;
-	//RageSoundParams p;
 	SoundParams.m_bSupportPan = true;
-	//p.StopMode = RageSoundParams::M_STOP;
 
 	float fBalance = GameSoundManager::GetPlayerBalance( pn );
 	for( unsigned i=0; i<m_vKeysounds.size(); i++ )
@@ -612,7 +610,7 @@ void Player::Load()
 		if( sound.GetLoadedFilePath() != sKeysoundFilePath )
 			sound.Load( sKeysoundFilePath, true, &SoundParams );
 		sound.SetProperty( "Pan", fBalance );
-		//sound.SetParams( p );
+		sound.SetStopModeFromString( "stop" );
 	}
 
 	if( m_pPlayerStageStats )
@@ -1300,16 +1298,22 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 		tn.HoldResult.hns = hns;
 		// Stop the playing keysound for the hold note.
 		// I think this causes crashes too -aj
-		/*
-		m_vKeysounds[tn.iKeysoundIndex].SetProperty ("Volume", max(0.0, min(1.0, fLife * 5.0 - 4.0)));
+		// Possibly fixed.
 		if( tn.iKeysoundIndex >= 0 && tn.iKeysoundIndex < (int) m_vKeysounds.size() )
 		{
+			if( tn.subType == TapNote::hold_head_roll )
+			{
+				m_vKeysounds[tn.iKeysoundIndex].SetProperty ("Volume", max(0.0, min(1.0, fLife * 2.0)));
+			}
+			else
+			{
+				m_vKeysounds[tn.iKeysoundIndex].SetProperty ("Volume", max(0.0, min(1.0, fLife * 10.0 - 8.5)));				
+			}
 			if (tn.HoldResult.fLife == 0)
 			{
 				m_vKeysounds[tn.iKeysoundIndex].StopPlaying();
 			}
 		}
-		*/
 	}
 
 	if( hns != HNS_None )
@@ -2427,33 +2431,54 @@ done_checking_hopo:
 		 * even that doesn't seem quite right since it would then play the same (new) keysound twice which would
 		 * sound wrong even though the notes were judged as being correct, above. Fixing the above problem would
 		 * fix this one as well. */
-		if( iRowOfOverlappingNoteOrRow == -1 )
+		int iHeadRow;
+		if( iRowOfOverlappingNoteOrRow != -1 && score != TNS_None )
+		{
+			// just pressing a note, use that row.
+			// in other words, iRowOfOverlappingNoteOrRow = iRowOfOverlappingNoteOrRow
+		}
+		else if ( m_NoteData.IsHoldNoteAtRow( col, iSongRow, &iHeadRow ) )
+		{
+			// stepping on a hold, use it!
+			iRowOfOverlappingNoteOrRow = iHeadRow;
+		}
+		else
+		{
+			// or else find the closest note.
 			iRowOfOverlappingNoteOrRow = GetClosestNote( col, iSongRow, MAX_NOTE_ROW, MAX_NOTE_ROW, true );
+		}
 		if( iRowOfOverlappingNoteOrRow != -1 )
 		{
-			switch( pbt )
+			bool bShouldPlayNextKeysound = true;
+			
+			if( bShouldPlayNextKeysound )
 			{
-			DEFAULT_FAIL(pbt);
-			case ButtonType_StrumFretsChanged:
-				for( int i=0; i<m_NoteData.GetNumTracks(); i++ )
+				
+				switch( pbt )
 				{
-					const TapNote &tn = m_NoteData.GetTapNote( i, iRowOfOverlappingNoteOrRow );
-					if( tn.iKeysoundIndex >= 0 && tn.iKeysoundIndex < (int) m_vKeysounds.size() && (tn.type != TapNote::hold_head || (!tn.HoldResult.bActive || (tn.HoldResult.fOverlappedTime == 0))) )
+				DEFAULT_FAIL(pbt);
+				case ButtonType_StrumFretsChanged:
+					for( int i=0; i<m_NoteData.GetNumTracks(); i++ )
+					{
+						const TapNote &tn = m_NoteData.GetTapNote( i, iRowOfOverlappingNoteOrRow );
+						if( tn.iKeysoundIndex >= 0 && tn.iKeysoundIndex < (int) m_vKeysounds.size() && (tn.type != TapNote::hold_head || (!tn.HoldResult.bActive || (tn.HoldResult.fOverlappedTime == 0 || (tn.HoldResult.hns == HNS_Held)))) )
+						{
+							m_vKeysounds[tn.iKeysoundIndex].Play();
+							m_vKeysounds[tn.iKeysoundIndex].SetProperty ("Volume", 1);
+						}
+					}
+					break;
+				case ButtonType_Step:
+				case ButtonType_Hopo:
+					const TapNote &tn = m_NoteData.GetTapNote( col, iRowOfOverlappingNoteOrRow );
+					if( tn.iKeysoundIndex >= 0 && tn.iKeysoundIndex < (int) m_vKeysounds.size() && (tn.type != TapNote::hold_head || (!tn.HoldResult.bActive || (tn.HoldResult.fOverlappedTime == 0 || (tn.HoldResult.hns == HNS_Held)))) )
 					{
 						m_vKeysounds[tn.iKeysoundIndex].Play();
 						m_vKeysounds[tn.iKeysoundIndex].SetProperty ("Volume", 1);
 					}
+					break;
 				}
-				break;
-			case ButtonType_Step:
-			case ButtonType_Hopo:
-				const TapNote &tn = m_NoteData.GetTapNote( col, iRowOfOverlappingNoteOrRow );
-				if( tn.iKeysoundIndex >= 0 && tn.iKeysoundIndex < (int) m_vKeysounds.size() && (tn.type != TapNote::hold_head || (!tn.HoldResult.bActive || (tn.HoldResult.fOverlappedTime == 0))) )
-				{
-					m_vKeysounds[tn.iKeysoundIndex].Play();
-					m_vKeysounds[tn.iKeysoundIndex].SetProperty ("Volume", 1);
-				}
-				break;
+				
 			}
 		}
 	}

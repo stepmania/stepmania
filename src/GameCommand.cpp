@@ -415,8 +415,8 @@ void GameCommand::LoadOne( const Command& cmd )
 		if( cmd.m_vsArgs.size() == 3 )
 		{
 			m_bFadeMusic = true;
-			m_fMusicFadeOutVolume = (float)atof( cmd.m_vsArgs[1] );
-			m_fMusicFadeOutSeconds = (float)atof( cmd.m_vsArgs[2] );
+			m_fMusicFadeOutVolume = atof( cmd.m_vsArgs[1] );
+			m_fMusicFadeOutSeconds = atof( cmd.m_vsArgs[2] );
 		}
 	}
 

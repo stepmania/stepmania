@@ -4,6 +4,7 @@ syntax: glob
 *~
 *.o
 tests/*.err
+ffmpeg-*
 *.ncb
 *.suo
 *.obj
@@ -20,11 +21,26 @@ ___*
 .cvsignore
 .DS_Store
 Thumbs.db
+config.log
+config.status
 *.pbxuser
 *.user
 *.mode1v3
 *.exe
 *.vdi
+Makefile
+stepmania
+Makefile.in
+_build/*
+aclocal.m4
+autoconf/*
+autom4te.cache/*
+configure
+src/Makefile.in
+src/Makefile
+src/config.h
+src/config.h.in
+src/stamp-h1
 Docs/doxygen
 PBProject/build
 Xcode/build
@@ -38,6 +54,9 @@ src/libtommath/build-*
 src/libtommath/Release-*
 src/*.old
 src/.deps
+src/*.a
+src/*.so
+GtkModule.so
 ver.cpp
 lib*_link.a
 Data/UserPrefs
@@ -60,3 +79,6 @@ Utils/temp*
 syntax: regexp
 .*\#.*\#$
 glob:Cache/Banners/AdditionalSongs_Airspace Preview_Derailed_Derailed bn.png
+
+syntax: regexp
+Songs/.+/

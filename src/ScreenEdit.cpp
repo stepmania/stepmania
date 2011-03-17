@@ -800,7 +800,7 @@ void ScreenEdit::Init()
 	m_bHasUndo = false;
 	m_Undo.SetNumTracks( m_NoteDataEdit.GetNumTracks() );
 
-	m_bDirty = false;
+	m_bDirty = m_NoteDataEdit.IsEmpty(); // require the usage of saving if empty.
 
 	m_Player->Init( "Player", GAMESTATE->m_pPlayerState[PLAYER_1], NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL );
 	m_Player->CacheAllUsedNoteSkins();
@@ -2816,7 +2816,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 			HandleMainMenuChoice( ScreenEdit::save_on_exit );
 			return;
 		case ANSWER_NO:
-			/* Don't save; just exit. */
+			// Don't save; just exit.
 			SCREENMAN->SendMessageToTopScreen( SM_DoExit );
 			return;
 		case ANSWER_CANCEL:
@@ -2837,9 +2837,9 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if( SM == SM_SaveFailed ) // save failed; stay in the editor
 	{
-		/* We committed the steps to SongManager.  Revert to the last save, and
+		/* We committed the steps to SongManager. Revert to the last save, and
 		 * recommit the reversion to SongManager. */
-		LOG->Trace( "Save failed.  Changes uncommitted from memory." );
+		LOG->Trace( "Save failed. Changes uncommitted from memory." );
 		CopyFromLastSave();
 		m_pSteps->SetNoteData( m_NoteDataEdit );
 	}
@@ -2848,15 +2848,32 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		// IMPORTANT: CopyFromLastSave before deleting the Steps below
 		CopyFromLastSave();
 
-		/* The user has been given a choice to save.  Delete all unsaved
-		 * steps before exiting the editor. */
+		/* The user has been given a choice to save.
+		 * Delete all unsaved steps before exiting the editor. */
+		/* FIXME: This code causes all the steps to be deleted if you quit
+		 * without saving. However, without this code, any new steps will get
+		 * saved on quit. -aj */
+		
+		// At this point, the last good song copy is in use.
 		Song *pSong = GAMESTATE->m_pCurSong;
 		const vector<Steps*> &apSteps = pSong->GetAllSteps();
 		vector<Steps*> apToDelete;
 		FOREACH_CONST( Steps *, apSteps, s )
 		{
-			if( (*s)->IsAutogen() || (*s)->GetSavedToDisk() )
+			// If we're not on the same style, let it go.
+			if( GAMESTATE->m_pCurSteps[PLAYER_1]->m_StepsType != (*s)->m_StepsType )
 				continue;
+			// If autogenned, it isn't being saved.
+			if( (*s)->IsAutogen() )
+				continue;
+			// If the notedata has content, let it go.
+			if( !(*s)->m_NoteData->IsEmpty() )
+				continue;
+			// It's hard to say if these steps were saved to disk or not.
+			/*
+			if( !(*s)->GetSavedToDisk() )
+				continue;
+			 */
 			apToDelete.push_back( *s );
 		}
 		FOREACH_CONST( Steps *, apToDelete, s )
@@ -2868,6 +2885,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 			if( GAMESTATE->m_pCurSteps[PLAYER_1].Get() == pSteps )
 				GAMESTATE->m_pCurSteps[PLAYER_1].Set( NULL );
 		}
+		
 
 		m_Out.StartTransitioning( SM_GoToNextScreen );
 	}
@@ -4123,7 +4141,7 @@ void ScreenEdit::DoHelp()
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the ScreenEdit. */ 
+/** @brief Allow Lua to have access to ScreenEdit. */ 
 class LunaScreenEdit: public Luna<ScreenEdit>
 {
 public:

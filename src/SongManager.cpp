@@ -193,13 +193,13 @@ void SongManager::AddGroup( RString sDir, RString sGroupDirName )
 	 * TODO: Once the files are implemented in Song, bring the extensions
 	 * from there into here. -aj */
 	// Group background
-/*
-	vector<RString> arrayGroupBackgrounds;
-	GetDirListing( sDir+sGroupDirName+"/*-bg.png", arrayGroupBanners );
-	GetDirListing( sDir+sGroupDirName+"/*-bg.jpg", arrayGroupBanners );
-	GetDirListing( sDir+sGroupDirName+"/*-bg.gif", arrayGroupBanners );
-	GetDirListing( sDir+sGroupDirName+"/*-bg.bmp", arrayGroupBanners );
 
+	//vector<RString> arrayGroupBackgrounds;
+	//GetDirListing( sDir+sGroupDirName+"/*-bg.png", arrayGroupBanners );
+	//GetDirListing( sDir+sGroupDirName+"/*-bg.jpg", arrayGroupBanners );
+	//GetDirListing( sDir+sGroupDirName+"/*-bg.gif", arrayGroupBanners );
+	//GetDirListing( sDir+sGroupDirName+"/*-bg.bmp", arrayGroupBanners );
+/*
 	RString sBackgroundPath;
 	if( !arrayGroupBackgrounds.empty() )
 		sBackgroundPath = sDir+sGroupDirName+"/"+arrayGroupBackgrounds[0];
