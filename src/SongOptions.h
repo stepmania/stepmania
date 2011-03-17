@@ -34,6 +34,7 @@ public:
 		NUM_AUTOSYNC_TYPES
 	};
 	AutosyncType m_AutosyncType;
+	SoundEffectType m_SoundEffectType;
 	bool m_bStaticBackground;
 	bool m_bRandomBGOnly;
 	bool m_bSaveScore;
@@ -44,7 +45,6 @@ public:
 		SOUNDEFFECT_PITCH,
 		NUM_SOUNDEFFECT
 	};
-	SoundEffectType m_SoundEffectType;
 
 	/**
 	 * @brief Set up the SongOptions with reasonable defaults.
