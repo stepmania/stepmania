@@ -45,7 +45,7 @@ void MouseDevice::AddElement( int usagePage, int usage, IOHIDElementCookie cooki
 				IntValue( CFDictionaryGetValue(properties, CFSTR(kIOHIDElementMinKey)), iMin );
 				int iMax = 0;
 				IntValue( CFDictionaryGetValue(properties, CFSTR(kIOHIDElementMaxKey)), iMax );
-				
+
 				// based on usage
 				switch( usage )
 				{
@@ -104,11 +104,11 @@ void MouseDevice::GetButtonPresses( vector<DeviceInput>& vPresses, IOHIDElementC
 	const Mouse& m = m_Mouse;
 	if( m.x_axis == cookie )
 	{
-//		INPUTFILTER->UpdateCursorLocation(m.x_axis,m.y_axis);
+//		INPUTFILTER->UpdateCursorLocation(value,m.y_axis);
 	}
 	else if( m.y_axis == cookie )
 	{
-//		INPUTFILTER->UpdateCursorLocation((float)m.x_axis,(float)m.y_axis);
+//		INPUTFILTER->UpdateCursorLocation(m.x_axis,value);
 	}
 	else if( m.z_axis == cookie )
 	{
