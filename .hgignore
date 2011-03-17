@@ -38,6 +38,8 @@ src/libtommath/build-*
 src/libtommath/Release-*
 src/*.old
 src/.deps
+src/*.a
+src/*.so
 ver.cpp
 lib*_link.a
 Data/UserPrefs
