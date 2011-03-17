@@ -2867,8 +2867,8 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 			if( (*s)->IsAutogen() )
 				continue;
 			// If the notedata has content, let it go.
-			if( !(*s)->m_NoteData->IsEmpty() )
-				continue;
+//			if( !(*s)->m_NoteData->IsEmpty() )
+//				continue;
 			// It's hard to say if these steps were saved to disk or not.
 			/*
 			if( !(*s)->GetSavedToDisk() )
