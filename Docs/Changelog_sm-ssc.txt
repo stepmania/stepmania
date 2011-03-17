@@ -13,6 +13,11 @@ _____________________________________________________________________________
 sm-ssc v1.2.4 | 20110???
 --------------------------------------------------------------------------------
 
+20110317
+--------
+* [ScreenEdit] Fix bug number 222, where Steps disappeared if they weren't
+  saved. [AJ, Wolfman2000]
+
 20110316
 --------
 * [NotesLoaderSMA] Allow for preliminary support of loading SMA files. This
