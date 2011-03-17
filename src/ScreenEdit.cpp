@@ -2839,7 +2839,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	{
 		/* We committed the steps to SongManager.  Revert to the last save, and
 		 * recommit the reversion to SongManager. */
-		LOG->Trace( "Save failed.  Changes uncommitted from memory." );
+		LOG->Trace( "Save failed. Changes uncommitted from memory." );
 		CopyFromLastSave();
 		m_pSteps->SetNoteData( m_NoteDataEdit );
 	}
@@ -2848,8 +2848,11 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		// IMPORTANT: CopyFromLastSave before deleting the Steps below
 		CopyFromLastSave();
 
-		/* The user has been given a choice to save.  Delete all unsaved
-		 * steps before exiting the editor. */
+		/* The user has been given a choice to save.
+		 * Delete all unsaved steps before exiting the editor. */
+		/* FIXME: This code causes all the steps to be deleted if you quit
+		 * without saving. However, without this code, any new steps will get
+		 * saved on quit. -aj */
 		/*
 		Song *pSong = GAMESTATE->m_pCurSong;
 		const vector<Steps*> &apSteps = pSong->GetAllSteps();
