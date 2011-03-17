@@ -34,17 +34,17 @@ public:
 		NUM_AUTOSYNC_TYPES
 	};
 	AutosyncType m_AutosyncType;
-	SoundEffectType m_SoundEffectType;
-	bool m_bStaticBackground;
-	bool m_bRandomBGOnly;
-	bool m_bSaveScore;
-	bool m_bSaveReplay;
 	enum SoundEffectType {
 		SOUNDEFFECT_OFF,
 		SOUNDEFFECT_SPEED,
 		SOUNDEFFECT_PITCH,
 		NUM_SOUNDEFFECT
 	};
+	SoundEffectType m_SoundEffectType;
+	bool m_bStaticBackground;
+	bool m_bRandomBGOnly;
+	bool m_bSaveScore;
+	bool m_bSaveReplay;
 
 	/**
 	 * @brief Set up the SongOptions with reasonable defaults.
