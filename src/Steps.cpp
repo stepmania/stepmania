@@ -26,7 +26,7 @@
 #include <algorithm>
 
 Steps::Steps(): m_StepsType(StepsType_Invalid), 
-	parent(NULL), m_pNoteData(NULL),m_bNoteDataIsFilled(false), 
+	parent(NULL), m_pNoteData(new NoteData), m_bNoteDataIsFilled(false), 
 	m_sNoteDataCompressed(""), m_sFilename(""), m_bSavedToDisk(false), 
 	m_LoadedFromProfile(ProfileSlot_Invalid), m_iHash(0),
 	m_sDescription(""), m_sChartStyle(""), 
