@@ -29,6 +29,14 @@ sm-ssc v1.2.4 | 20110???
 --------
 * [NotesLoaderSMA] Allow for preliminary support of loading SMA files. This
   will become better once Split Timing is in place. [Wolfman2000]
+* [NotesLoaderBMS] Improve BMS loading: [theDtTvB]
+    * Ignore time signatures before the notes for the steps to be more
+      synchronized.
+    * Load BPM changes properly. Many songs with BPM changes no longer freeze.
+* [Player] Stop playing the keysound when letting go of hold notes. [theDtTvB]
+* [NoteDataUtil] Make keysounded notes that can't be inserted when reducing
+  number of tracks autokeysound, means less missing sounds when playing
+  7-key BMS on dance-single. [theDtTvB]
 
 20110313
 --------
