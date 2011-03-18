@@ -178,7 +178,11 @@ class SongID
 	mutable CachedObjectPointer<Song> m_Cache;
 
 public:
-	SongID() { Unset(); }
+	/**
+	 * @brief Set up the SongID with default values.
+	 *
+	 * This used to call Unset() to do the same thing. */
+	SongID(): sDir("") { m_Cache.Unset(); }
 	void Unset() { FromSong(NULL); }
 	void FromSong( const Song *p );
 	Song *ToSong() const;
