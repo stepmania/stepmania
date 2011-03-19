@@ -68,7 +68,7 @@ namespace EditCourseUtil
 class CourseID
 {
 public:
-	CourseID() { Unset(); }
+	CourseID(): sPath(""), sFullTitle(""), m_Cache() { Unset(); }
 	void Unset() { FromCourse(NULL); }
 	void FromCourse( const Course *p );
 	Course *ToCourse() const;

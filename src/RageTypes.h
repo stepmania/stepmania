@@ -335,6 +335,7 @@ typedef StepMania::Rect<float> RectF;
  * have the same layout that D3D expects. */
 struct RageSpriteVertex	// has color
 {
+	RageSpriteVertex(): p(), n(), c(), t() {}
 	RageVector3 p; // position
 	RageVector3 n; // normal
 	RageVColor  c; // diffuse color

@@ -18,17 +18,14 @@ template<typename T>
 class CachedObject
 {
 public:
-	CachedObject()
+	CachedObject(): m_pObject(NULL)
 	{
-		m_pObject = NULL;
-
 		/* A new object is being constructed, so invalidate negative caching. */
 		ClearCacheNegative();
 	}
 
-	CachedObject( const CachedObject &cpy )
+	CachedObject( const CachedObject &cpy ): m_pObject(NULL)
 	{
-		m_pObject = NULL;
 		ClearCacheNegative();
 	}
 

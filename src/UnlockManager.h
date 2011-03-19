@@ -57,9 +57,10 @@ public:
 	 *
 	 * m_sEntryID starts as an empty string. It will be filled automatically
 	 * if not specified. */
-	UnlockEntry(): m_Type(UnlockRewardType_Invalid),
-		m_dc(Difficulty_Invalid), m_bRequirePassHardSteps(false),
-		m_bRoulette(false), m_sEntryID(RString(""))
+	UnlockEntry(): m_Type(UnlockRewardType_Invalid), m_cmd(),
+		m_Song(), m_dc(Difficulty_Invalid), m_Course(),
+		m_bRequirePassHardSteps(false), m_bRoulette(false),
+		m_sEntryID(RString(""))
 	{
 		ZERO( m_fRequirement );
 	}

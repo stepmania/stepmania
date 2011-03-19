@@ -264,7 +264,7 @@ class MatrixStack
 	vector<RageMatrix> stack;
 public:
 
-	MatrixStack()
+	MatrixStack(): stack()
 	{
 		stack.resize(1);
 		LoadIdentity();

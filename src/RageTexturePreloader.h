@@ -1,15 +1,13 @@
-/* RageTexturePreloader - Load textures in advance, for use later. */
-
 #ifndef RAGE_TEXTURE_PRELOADER_H
 #define RAGE_TEXTURE_PRELOADER_H
 
 class RageTexture;
 struct RageTextureID;
-
+/** @brief Load the textures in advance for using them later. */
 class RageTexturePreloader
 {
 public:
-	RageTexturePreloader() { }
+	RageTexturePreloader(): m_apTextures() { }
 	RageTexturePreloader( const RageTexturePreloader &cpy ) { *this = cpy; }
 	RageTexturePreloader &operator=( const RageTexturePreloader &rhs );
 	~RageTexturePreloader();

@@ -16,10 +16,13 @@ public:
 	struct Arg
 	{
 		RString s;
+		Arg(): s("") {}
 	};
 	Arg GetArg( unsigned index ) const;
 
 	vector<RString> m_vsArgs;
+	
+	Command(): m_vsArgs() {}
 };
 
 class Commands

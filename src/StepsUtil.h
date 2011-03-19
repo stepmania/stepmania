@@ -169,7 +169,7 @@ public:
 	 * This used to call Unset(), which set the variables to
 	 * the same thing. */
 	StepsID(): st(StepsType_Invalid), dc(Difficulty_Invalid),
-		sDescription(""), uHash(0) {}
+		sDescription(""), uHash(0), m_Cache() {}
 	void Unset() { FromSteps(NULL); }
 	void FromSteps( const Steps *p );
 	Steps *ToSteps( const Song *p, bool bAllowNull ) const;

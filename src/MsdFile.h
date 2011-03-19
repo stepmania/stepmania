@@ -13,6 +13,9 @@ public:
 	{
 		/** @brief The list of parameters. */
 		vector<RString> params;
+		/** @brief Set up the parameters with default values. */
+		value_t(): params() {}
+		
 		/**
 		 * @brief Access the proper parameter.
 		 * @param i the index.

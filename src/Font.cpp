@@ -220,14 +220,9 @@ int Font::GetLineHeightInSourcePixels( const wstring &szLine ) const
 }
 
 
-Font::Font()
-{
-	m_iRefCount = 1;
-	m_pDefault = NULL;
-	m_bRightToLeft = false;
-	// [sm-ssc] don't show strokes by default
-	m_DefaultStrokeColor = RageColor(0,0,0,0);
-}
+Font::Font(): m_iRefCount(1), path(""), m_apPages(), m_pDefault(NULL),
+	m_bRightToLeft(false), m_DefaultStrokeColor(RageColor(0,0,0,0)),
+	m_sChars("") {} // strokes aren't shown by default, hence the Color.
 
 Font::~Font()
 {
