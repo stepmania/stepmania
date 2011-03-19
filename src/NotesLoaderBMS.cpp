@@ -992,6 +992,7 @@ void BMSLoader::GetApplicableFiles( const RString &sPath, vector<RString> &out )
 {
 	GetDirListing( sPath + RString("*.bms"), out );
 	GetDirListing( sPath + RString("*.bme"), out );
+	GetDirListing( sPath + RString("*.bml"), out );
 }
 
 bool BMSLoader::LoadFromDir( const RString &sDir, Song &out )
