@@ -3455,7 +3455,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 				else
 					NoteDataUtil::DeleteRows( m_NoteDataEdit, m_NoteFieldEdit.m_iBeginMarker, -iDeltaRows );
 
-				m_pSong->m_Timing.ScaleRegion( fScale, m_NoteFieldEdit.m_iBeginMarker, m_NoteFieldEdit.m_iEndMarker );
+				m_pSong->m_Timing.ScaleRegion( fScale, m_NoteFieldEdit.m_iBeginMarker, m_NoteFieldEdit.m_iEndMarker, true );
 
 				HandleAreaMenuChoice( paste_at_begin_marker );
 
@@ -3479,12 +3479,6 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 				}
 
 				m_NoteFieldEdit.m_iEndMarker = iNewClipboardEndRow;
-
-				float fPriorBPM = m_pSong->GetBPMAtBeat( NoteRowToBeat(iNewClipboardEndRow + 1) );
-				float fOldBPM = m_pSong->GetBPMAtBeat( NoteRowToBeat(m_NoteFieldEdit.m_iBeginMarker) );
-				float fNewBPM = fOldBPM * fScale;
-				m_pSong->m_Timing.SetBPMAtRow( m_NoteFieldEdit.m_iBeginMarker, fNewBPM );
-				m_pSong->m_Timing.SetBPMAtRow( iNewClipboardEndRow, fPriorBPM );
 			}
 			break;
 		case play:

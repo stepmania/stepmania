@@ -611,12 +611,12 @@ float TimingData::GetElapsedTimeFromBeatNoOffset( float fBeat ) const
 	return fElapsedTime;
 }
 
-void TimingData::ScaleRegion( float fScale, int iStartIndex, int iEndIndex )
+void TimingData::ScaleRegion( float fScale, int iStartIndex, int iEndIndex, bool bAdjustBPM )
 {
 	ASSERT( fScale > 0 );
 	ASSERT( iStartIndex >= 0 );
 	ASSERT( iStartIndex < iEndIndex );
-
+	
 	for ( unsigned i = 0; i < m_BPMSegments.size(); i++ )
 	{
 		const int iSegStart = m_BPMSegments[i].m_iStartRow;
@@ -638,6 +638,31 @@ void TimingData::ScaleRegion( float fScale, int iStartIndex, int iEndIndex )
 		else
 			m_StopSegments[i].m_iStartRow = lrintf((iSegStartRow - iStartIndex) * fScale) + iStartIndex;
 	}
+	
+	// adjust BPM changes to preserve timing
+	if( bAdjustBPM )
+	{
+		int iNewEndIndex = lrintf( (iEndIndex - iStartIndex) * fScale ) + iStartIndex;
+		float fEndBPMBeforeScaling = GetBPMAtRow(iNewEndIndex);
+		
+		// adjust BPM changes "between" iStartIndex and iNewEndIndex
+		for ( unsigned i = 0; i < m_BPMSegments.size(); i++ )
+		{
+			const int iSegStart = m_BPMSegments[i].m_iStartRow;
+			if( iSegStart <= iStartIndex )
+				continue;
+			else if( iSegStart >= iNewEndIndex )
+				continue;
+			else
+				m_BPMSegments[i].m_fBPS *= fScale;
+		}
+		
+		// set BPM at iStartIndex and iNewEndIndex.
+		SetBPMAtRow( iStartIndex, GetBPMAtRow(iStartIndex) * fScale );
+		SetBPMAtRow( iNewEndIndex, fEndBPMBeforeScaling );
+		
+	}
+	
 }
 
 void TimingData::InsertRows( int iStartRow, int iRowsToAdd )
