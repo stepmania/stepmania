@@ -3419,11 +3419,9 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 		case tempo:
 			{
 				// This affects all steps.
-				const NoteData OldClipboard( m_Clipboard );
-				HandleAreaMenuChoice( cut );
-
 				AlterType at = (AlterType)iAnswers[c];
 				float fScale = -1;
+				
 				switch( at )
 				{
 				DEFAULT_FAIL( at );
@@ -3434,31 +3432,18 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 				case expand_3_2:	fScale = 1.5f;		break;
 				case expand_2x:		fScale = 2;		break;
 				}
-
-				switch( at )
-				{
-				DEFAULT_FAIL( at );
-				case compress_2x:	NoteDataUtil::Scale( m_Clipboard, fScale );	break;
-				case compress_3_2:	NoteDataUtil::Scale( m_Clipboard, fScale );	break;
-				case compress_4_3:	NoteDataUtil::Scale( m_Clipboard, fScale );	break;
-				case expand_4_3:	NoteDataUtil::Scale( m_Clipboard, fScale );	break;
-				case expand_3_2:	NoteDataUtil::Scale( m_Clipboard, fScale );	break;
-				case expand_2x:		NoteDataUtil::Scale( m_Clipboard, fScale );	break;
-				}
-
-				int iOldClipboardRow = m_NoteFieldEdit.m_iEndMarker - m_NoteFieldEdit.m_iBeginMarker;
-				int iNewClipboardRow = lrintf( iOldClipboardRow * fScale );
-				int iDeltaRows = iNewClipboardRow - iOldClipboardRow;
-				int iNewClipboardEndRow = m_NoteFieldEdit.m_iBeginMarker + iNewClipboardRow;
-				if( iDeltaRows > 0 )
-					NoteDataUtil::InsertRows( m_NoteDataEdit, m_NoteFieldEdit.m_iBeginMarker, iDeltaRows );
-				else
-					NoteDataUtil::DeleteRows( m_NoteDataEdit, m_NoteFieldEdit.m_iBeginMarker, -iDeltaRows );
-
+				
+				int iStartIndex  = m_NoteFieldEdit.m_iBeginMarker;
+				int iEndIndex    = m_NoteFieldEdit.m_iEndMarker;
+				int iNewEndIndex = iEndIndex + lrintf( (iEndIndex - iStartIndex) * (fScale - 1) );
+				
+				// scale currently editing notes
+				NoteDataUtil::ScaleRegion( m_NoteDataEdit, fScale, iStartIndex, iEndIndex );
+				
+				// scale timing data
 				m_pSong->m_Timing.ScaleRegion( fScale, m_NoteFieldEdit.m_iBeginMarker, m_NoteFieldEdit.m_iEndMarker, true );
 
-				HandleAreaMenuChoice( paste_at_begin_marker );
-
+				// scale all other steps.
 				const vector<Steps*> sIter = m_pSong->GetAllSteps();
 				RString sTempStyle, sTempDiff;
 				for( unsigned i = 0; i < sIter.size(); i++ )
@@ -3478,7 +3463,8 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 					sIter[i]->SetNoteData( ndTemp );
 				}
 
-				m_NoteFieldEdit.m_iEndMarker = iNewClipboardEndRow;
+				m_NoteFieldEdit.m_iEndMarker = iNewEndIndex;
+				
 			}
 			break;
 		case play:
