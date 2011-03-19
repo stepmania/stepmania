@@ -100,9 +100,13 @@ private:
 struct HighScoreList
 {
 public:
-	HighScoreList()
+	/**
+	 * @brief Set up the HighScore List with default values.
+	 *
+	 * This used to call Init(), but it's better to be explicit here. */
+	HighScoreList(): HighGrade(Grade_NoData), iNumTimesPlayed(0)
 	{
-		Init();
+		vHighScores.clear();
 	}
 	void Init();
 	
