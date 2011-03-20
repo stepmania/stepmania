@@ -179,6 +179,8 @@ static StepsType DetermineStepsType( int iPlayer, const NoteData &nd, const RStr
 		case 8:		return StepsType_beat_single7;
 		case 12:	return StepsType_beat_double5;
 		case 16:	return StepsType_beat_double7;
+		case 5:		return StepsType_popn_five;
+		case 9:		return StepsType_popn_nine;
 		default:	return StepsType_Invalid;
 		}
 	default:
