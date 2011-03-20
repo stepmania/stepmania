@@ -1,14 +1,10 @@
 #ifndef ARCH_SETUP_WINDOWS_H
 #define ARCH_SETUP_WINDOWS_H
 
-#if !defined(XBOX)
 #define HAVE_FFMPEG
 #define HAVE_THEORA
-#endif
 
-#if !defined(XBOX)
 #define SUPPORT_OPENGL
-#endif
 #define SUPPORT_D3D
 
 #if defined(__MINGW32__)
@@ -143,25 +139,13 @@ inline long int lrintf( float f )
 
 /* We implement the crash handler interface (though that interface isn't
  * completely uniform across platforms yet). */
-#if !defined(_XBOX) && !defined(SMPACKAGE)
+#if !defined(SMPACKAGE)
 #define CRASH_HANDLER
 #endif
 
 #define ENDIAN_LITTLE
 
-#if defined(_XBOX)
-#if defined(_DEBUG)
-#define OGG_LIB_DIR "vorbis/xbox/debug/"
-#else
-#define OGG_LIB_DIR "vorbis/xbox/release/"
-#endif
-#else
 #define OGG_LIB_DIR "vorbis/win32/"
-#endif
-
-#if defined(XBOX)
-#include "ArchUtils/Xbox/arch_setup.h"
-#endif
 
 #if defined(__GNUC__) // It might be MinGW or Cygwin(?)
 #include "archutils/Common/gcc_byte_swaps.h"

@@ -52,9 +52,6 @@ void MakeInputHandlers( const RString &drivers, vector<InputHandler *> &Add )
 #ifdef USE_INPUT_HANDLER_X11
 		if( !s->CompareNoCase("X11") )		ret = new InputHandler_X11;
 #endif
-#ifdef USE_INPUT_HANDLER_XBOX
-		if( !s->CompareNoCase("Xbox") )		ret = new InputHandler_Xbox;
-#endif
 #ifdef USE_INPUT_HANDLER_MACOSX_HID
 		if( !s->CompareNoCase("MacOSX") )	ret = new InputHandler_MacOSX_HID;
 #endif
@@ -104,7 +101,7 @@ LoadingWindow *MakeLoadingWindow()
 	return new LoadingWindow_Null;
 #endif
 	// Don't load NULL by default.
-	const RString drivers = "xbox,win32,cocoa,gtk";
+	const RString drivers = "win32,cocoa,gtk";
 	vector<RString> DriversToTry;
 	split( drivers, ",", DriversToTry, true );
 
@@ -129,11 +126,7 @@ LoadingWindow *MakeLoadingWindow()
 #ifdef USE_LOADING_WINDOW_WIN32
 		if( !DriversToTry[i].CompareNoCase("Win32") )	ret = new LoadingWindow_Win32;
 #endif
-#ifdef USE_LOADING_WINDOW_XBOX
-		if( !DriversToTry[i].CompareNoCase("Xbox") )	ret = new LoadingWindow_Xbox;
-#endif
 
-			
 		if( ret == NULL )
 			continue;
 
@@ -144,10 +137,10 @@ LoadingWindow *MakeLoadingWindow()
 			SAFE_DELETE( ret );
 		}
 	}
-	
+
 	if(ret)
 		LOG->Info( "Loading window: %s", Driver.c_str() );
-	
+
 	return ret;
 }
 
@@ -191,7 +184,7 @@ RageMovieTexture *MakeRageMovieTexture( RageTextureID ID )
 
 	vector<RString> DriversToTry;
 	split( sDrivers, ",", DriversToTry, true );
-	
+
 	if( DriversToTry.empty() )
 		RageException::Throw( MOVIE_DRIVERS_EMPTY.GetValue() );
 
@@ -231,7 +224,7 @@ RageMovieTexture *MakeRageMovieTexture( RageTextureID ID )
 		RageException::Throw( COULDNT_CREATE_MOVIE_DRIVER.GetValue() );
 
 	LOG->Trace( "Created movie texture \"%s\" with driver \"%s\"",
-		    ID.filename.c_str(), Driver.c_str() );
+			ID.filename.c_str(), Driver.c_str() );
 	return ret;
 }
 
@@ -291,10 +284,10 @@ RageSoundDriver *MakeRageSoundDriver( const RString &drivers )
 			SAFE_DELETE( ret );
 		}
 	}
-	
+
 	if( ret )
 		LOG->Info( "Sound driver: %s", Driver.c_str() );
-	
+
 	return ret;
 }
 

@@ -4,7 +4,7 @@ sm-ssc credits (in no particular order)
 * If you have any corrections to this list, let us know (via forums or IRC).
 
 ==the spinal shark collective==
-AJ Kelly
+AJ Kelly (freem)
  * Main programming
  * UserPreferences and some other Lua scripts
  * Some small theme edits here and there
@@ -43,7 +43,10 @@ FSX
 Nicole Reid (okeeblow)
  * Tested building sm-ssc on FreeBSD, provided fixes.
 
-Wolfman
+Thai Pangsakulyanont (theDtTvB)
+ * Various changes to BMS support to make things work better.
+
+Jason Felds (Wolfman2000)
  * [Player] PercentUntilColorCombo metric
  * Mac OS X maintainer
  * Various fixes/changes. (see Changelog_sm-ssc.txt for more details)
@@ -75,10 +78,6 @@ v1toko
 
 Macgravel
  * Orbular noteskin (the default kb7 noteskin)
-
-theDtTvB
- * Keysound patch (http://share11.appspot.com/20421)
-   [This patch is currently causing crashes for us, sadly.]
 
 sy567
  * Small beginner helper fix

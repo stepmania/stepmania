@@ -12,57 +12,13 @@
 #include <dirent.h>
 #include <fcntl.h>
 #else
-#if !defined(_XBOX)
 #include <windows.h>
-#endif
 #include <io.h>
 #endif
 
-#if defined(_XBOX)
-/* Wrappers for low-level file functions, to work around Xbox issues: */
-int DoMkdir( const RString &sPath, int perm )
-{
-	return mkdir( DoPathReplace(sPath), perm );
-}
-
-int DoOpen( const RString &sPath, int flags, int perm )
-{
-	return open( DoPathReplace(sPath), flags, perm );
-}
-
-int DoStat( const RString &sPath, struct stat *st )
-{
-	return stat( DoPathReplace(sPath), st );
-}
-
-int DoRename( const RString &sOldPath, const RString &sNewPath )
-{
-	return rename( DoPathReplace(sOldPath), DoPathReplace(sNewPath) );
-}
-
-int DoRemove( const RString &sPath )
-{
-	return remove( DoPathReplace(sPath) );
-}
-
-int DoRmdir( const RString &sPath )
-{
-	return rmdir( DoPathReplace(sPath) );
-}
-
-HANDLE DoFindFirstFile( const RString &sPath, WIN32_FIND_DATA *fd )
-{
-	return FindFirstFile( DoPathReplace(sPath), fd );
-}
-
-#endif
 RString DoPathReplace(const RString &sPath)
 {
 	RString TempPath = sPath;
-#if defined(XBOX)
-	TempPath.Replace( "//", "\\" );
-	TempPath.Replace( "/", "\\" );
-#endif
 	return TempPath;
 }
 
@@ -72,9 +28,9 @@ static bool WinMoveFileInternal( const RString &sOldPath, const RString &sNewPat
 {
 	static bool Win9x = false;
 
-	/* Windows botches rename: it returns error if the file exists.  In NT,
+	/* Windows botches rename: it returns error if the file exists. In NT,
 	 * we can use MoveFileEx( new, old, MOVEFILE_REPLACE_EXISTING ) (though I
-	 * don't know if it has similar atomicity guarantees to rename).  In
+	 * don't know if it has similar atomicity guarantees to rename). In
 	 * 9x, we're screwed, so just delete any existing file (we aren't going
 	 * to be robust on 9x anyway). */
 	if( !Win9x )
@@ -92,7 +48,7 @@ static bool WinMoveFileInternal( const RString &sOldPath, const RString &sNewPat
 
 	if( MoveFile( sOldPath, sNewPath ) )
 		return true;
-	
+
 	if( GetLastError() != ERROR_ALREADY_EXISTS )
 		return false;
 
@@ -118,15 +74,15 @@ bool WinMoveFile( RString sOldPath, RString sNewPath )
 /* mkdir -p.  Doesn't fail if Path already exists and is a directory. */
 bool CreateDirectories( RString Path )
 {
-	/* XXX: handle "//foo/bar" paths in Windows */
+	// XXX: handle "//foo/bar" paths in Windows
 	vector<RString> parts;
 	RString curpath;
 
-	/* If Path is absolute, add the initial slash ("ignore empty" will remove it). */
+	// If Path is absolute, add the initial slash ("ignore empty" will remove it).
 	if( Path.Left(1) == "/" )
 		curpath = "/";
 
-	/* Ignore empty, so eg. "/foo/bar//baz" doesn't try to create "/foo/bar" twice. */
+	// Ignore empty, so eg. "/foo/bar//baz" doesn't try to create "/foo/bar" twice.
 	split( Path, "/", parts, true );
 
 	for(unsigned i = 0; i < parts.size(); ++i)
@@ -174,7 +130,7 @@ bool CreateDirectories( RString Path )
 		WARN( ssprintf("Couldn't create %s: %s", curpath.c_str(), strerror(errno)) );
 		return false;
 	}
-	
+
 	return true;
 }
 
@@ -189,10 +145,10 @@ void DirectFilenameDB::SetRoot( RString root_ )
 {
 	root = root_;
 
-	/* "\abcd\" -> "/abcd/": */
+	// "\abcd\" -> "/abcd/":
 	root.Replace( "\\", "/" );
 
-	/* "/abcd/" -> "/abcd": */
+	// "/abcd/" -> "/abcd":
 	if( root.Right(1) == "/" )
 		root.erase( root.size()-1, 1 );
 }
@@ -210,7 +166,7 @@ void DirectFilenameDB::CacheFile( const RString &sPath )
 	}
 	while( !pFileSet->m_bFilled )
 		m_Mutex.Wait();
-		
+
 #if defined(WIN32)
 	// There is almost surely a better way to do this
 	WIN32_FIND_DATA fd;
@@ -224,12 +180,12 @@ void DirectFilenameDB::CacheFile( const RString &sPath )
 	f.dir = !!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY);
 	f.size = fd.nFileSizeLow;
 	f.hash = fd.ftLastWriteTime.dwLowDateTime;
-	
+
 	pFileSet->files.insert( f );
 	FindClose( hFind );
 #else
 	File f( Basename(sPath) );
-	
+
 	struct stat st;
 	if( DoStat(root+sPath, &st) == -1 )
 	{
@@ -237,7 +193,7 @@ void DirectFilenameDB::CacheFile( const RString &sPath )
 		// If it's a broken symlink, ignore it.  Otherwise, warn.
 		// Huh?
 		WARN( ssprintf("File '%s' is gone! (%s)",
-			       sPath.c_str(), strerror(iError)) );
+				sPath.c_str(), strerror(iError)) );
 	}
 	else
 	{
@@ -255,17 +211,10 @@ void DirectFilenameDB::PopulateFileSet( FileSet &fs, const RString &path )
 {
 	RString sPath = path;
 
-#if defined(XBOX)
-	/* Xbox doesn't handle path names which end with ".", which are used when using an
-	 * alternative song directory */
-	if( sPath.size() > 0 && sPath.Right(1) == "." )
-		sPath.erase( sPath.size() - 1 );
-#endif
-
-	/* Resolve path cases (path/Path -> PATH/path). */
+	// Resolve path cases (path/Path -> PATH/path).
 	ResolvePath( sPath );
 
-	fs.age.GetDeltaTime(); /* reset */
+	fs.age.GetDeltaTime(); // reset
 	fs.files.clear();
 
 #if defined(WIN32)

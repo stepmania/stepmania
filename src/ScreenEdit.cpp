@@ -94,35 +94,6 @@ static const char *EditStateNames[] = {
 XToString( EditState );
 LuaXType( EditState );
 
-#if defined(XBOX)
-void ScreenEdit::InitEditMappings()
-{
-	/* XXX: fill this in */
-	m_EditMappingsDeviceInput.Clear();
-
-	switch( EDIT_MODE.GetValue() )
-	{
-	case EditMode_Practice:
-		m_EditMappingsDeviceInput.button[EDIT_BUTTON_SCROLL_PREV_MEASURE][0] = DeviceInput(DEVICE_JOY1, JOY_HAT_UP);
-		m_EditMappingsMenuButton.button[EDIT_BUTTON_SCROLL_PREV_MEASURE][0] = GAME_BUTTON_UP;
-		m_EditMappingsDeviceInput.button[EDIT_BUTTON_SCROLL_NEXT_MEASURE][0] = DeviceInput(DEVICE_JOY1, JOY_HAT_DOWN);
-		m_EditMappingsMenuButton.button[EDIT_BUTTON_SCROLL_NEXT_MEASURE][0] = GAME_BUTTON_DOWN;
-		break;
-	default:
-		m_EditMappingsDeviceInput.button[EDIT_BUTTON_SCROLL_UP_LINE][0] = DeviceInput(DEVICE_JOY1, JOY_HAT_UP);
-		m_EditMappingsMenuButton.button[EDIT_BUTTON_SCROLL_UP_LINE][0] = GAME_BUTTON_UP;
-		m_EditMappingsDeviceInput.button[EDIT_BUTTON_SCROLL_DOWN_LINE][0] = DeviceInput(DEVICE_JOY1, JOY_HAT_DOWN);
-		m_EditMappingsMenuButton.button[EDIT_BUTTON_SCROLL_DOWN_LINE][0] = GAME_BUTTON_DOWN;
-		break;
-	}
-
-	// Map these to the triggers: L goes up, R goes down.
-	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SCROLL_UP_PAGE][0] = DeviceInput(DEVICE_JOY1, JOY_BUTTON_7);
-	//m_EditMappingsMenuButton.button[EDIT_BUTTON_SCROLL_UP_PAGE][0] = GAME_BUTTON_UPLEFT;
-	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SCROLL_DOWN_PAGE][0] = DeviceInput(DEVICE_JOY1, JOY_BUTTON_8);
-	//m_EditMappingsMenuButton.button[EDIT_BUTTON_SCROLL_DOWN_PAGE][0] = GAME_BUTTON_UPRIGHT;
-}
-#else
 void ScreenEdit::InitEditMappings()
 {
 	m_EditMappingsDeviceInput.Clear();
@@ -268,7 +239,7 @@ void ScreenEdit::InitEditMappings()
 	m_EditMappingsDeviceInput.button[EDIT_BUTTON_RIGHT_SIDE][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RALT);
 	m_EditMappingsDeviceInput.button[EDIT_BUTTON_LAY_ROLL][0]   = DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT);
 	// m_EditMappingsDeviceInput.button[EDIT_BUTTON_LAY_TAP_ATTACK][0] = DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT);
-	
+
 	m_EditMappingsDeviceInput.button[EDIT_BUTTON_CYCLE_TAP_LEFT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cn);
 	m_EditMappingsDeviceInput.button[EDIT_BUTTON_CYCLE_TAP_RIGHT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cm);
 
@@ -291,7 +262,7 @@ void ScreenEdit::InitEditMappings()
 	m_EditMappingsMenuButton.button[EDIT_BUTTON_OPEN_EDIT_MENU][1] = GAME_BUTTON_BACK;
 	m_EditMappingsDeviceInput.button[EDIT_BUTTON_OPEN_AREA_MENU][0] = DeviceInput(DEVICE_KEYBOARD, KEY_ENTER);
 	m_EditMappingsDeviceInput.button[EDIT_BUTTON_OPEN_INPUT_HELP][0] = DeviceInput(DEVICE_KEYBOARD, KEY_F1);
-	
+
 	m_EditMappingsDeviceInput.button[EDIT_BUTTON_BAKE_RANDOM_FROM_SONG_GROUP][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cb);
 	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_BAKE_RANDOM_FROM_SONG_GROUP][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LALT);
 	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_BAKE_RANDOM_FROM_SONG_GROUP][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RALT);
@@ -309,7 +280,7 @@ void ScreenEdit::InitEditMappings()
 
 	m_EditMappingsDeviceInput.button[EDIT_BUTTON_ADJUST_FINE][0] = DeviceInput(DEVICE_KEYBOARD, KEY_RALT);
 	m_EditMappingsDeviceInput.button[EDIT_BUTTON_ADJUST_FINE][1] = DeviceInput(DEVICE_KEYBOARD, KEY_LALT);
-	
+
 	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SAVE][1] = DeviceInput(DEVICE_KEYBOARD, KEY_Cs);
 	#if defined(MACOSX)
 		/* use cmd */
@@ -322,10 +293,10 @@ void ScreenEdit::InitEditMappings()
 	#endif
 
 	m_EditMappingsDeviceInput.button[EDIT_BUTTON_UNDO][1] = DeviceInput(DEVICE_KEYBOARD, KEY_Cu);
-	
+
 	// Switch players, if it makes sense to do so.
 	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SWITCH_PLAYERS][0] = DeviceInput(DEVICE_KEYBOARD, KEY_SLASH);
-	
+
 	m_PlayMappingsDeviceInput.button[EDIT_BUTTON_RETURN_TO_EDIT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_ESC);
 	m_PlayMappingsMenuButton.button[EDIT_BUTTON_RETURN_TO_EDIT][1] = GAME_BUTTON_BACK;
 
@@ -345,8 +316,6 @@ void ScreenEdit::InitEditMappings()
 	m_RecordPausedMappingsMenuButton.button[EDIT_BUTTON_RETURN_TO_EDIT][1] = GAME_BUTTON_BACK;
 	m_RecordPausedMappingsDeviceInput.button[EDIT_BUTTON_UNDO][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cu);
 }
-
-#endif
 
 /* Given a DeviceInput that was just depressed, return an active edit function. */
 EditButton ScreenEdit::DeviceToEdit( const DeviceInput &DeviceI ) const

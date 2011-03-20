@@ -2,14 +2,10 @@
 #include "DirectXHelpers.h"
 #include "RageUtil.h"
 
-#ifdef _XBOX
-#  include <D3DX8Core.h>
-#else
-#  include <windows.h>
-#  include <dxerr8.h>
-#  if defined(_MSC_VER)
-#    pragma comment(lib, "dxerr8.lib")
-#  endif
+#include <windows.h>
+#include <dxerr8.h>
+#if defined(_MSC_VER)
+#  pragma comment(lib, "dxerr8.lib")
 #endif
 
 RString hr_ssprintf( int hr, const char *fmt, ... )
@@ -19,13 +15,7 @@ RString hr_ssprintf( int hr, const char *fmt, ... )
 	RString s = vssprintf( fmt, va );
 	va_end(va);
 
-#ifdef _XBOX
-	char szError[1024] = "";
-	D3DXGetErrorString( hr, szError, sizeof(szError) );
-#else
 	const char *szError = DXGetErrorString8( hr );
-#endif
-
 	return s + ssprintf( " (%s)", szError );
 }
 

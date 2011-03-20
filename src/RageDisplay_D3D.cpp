@@ -17,16 +17,11 @@
 #include <D3dx8math.h>
 #include <D3DX8Core.h>
 
-#if !defined(XBOX)
 #include "archutils/Win32/GraphicsWindow.h"
-#else
-#include "archutils/Xbox/GraphicsWindow.h"
-#include "archutils/Xbox/VirtualMemory.h"
-#endif
 
 // Static libraries
 // load Windows D3D8 dynamically
-#if defined(_MSC_VER) && !defined(_XBOX)
+#if defined(_MSC_VER)
 	#pragma comment(lib, "D3dx8.lib")
 	#pragma comment(lib, "Dxerr8.lib")
 #endif
@@ -42,9 +37,7 @@ RString GetErrorString( HRESULT hr )
 }
 
 // Globals
-#if !defined(XBOX)
 HMODULE				g_D3D8_Module = NULL;
-#endif
 LPDIRECT3D8			g_pd3d = NULL;
 LPDIRECT3DDEVICE8	g_pd3dDevice = NULL;
 D3DCAPS8			g_DeviceCaps;
@@ -84,12 +77,8 @@ static void SetPalette( unsigned TexResource )
 		}
 
 		// Load it.
-#if !defined(XBOX)
 		TexturePalette& pal = g_TexResourceToTexturePalette[TexResource];
 		g_pd3dDevice->SetPaletteEntries( iPalIndex, pal.p );
-#else
-		ASSERT(0);
-#endif
 
 		g_TexResourceToPaletteIndex[TexResource] = iPalIndex;
 	}
@@ -106,11 +95,7 @@ static void SetPalette( unsigned TexResource )
 		break;
 	}
 
-#if !defined(XBOX)
 	g_pd3dDevice->SetCurrentTexturePalette( iPalIndex );
-#else
-	ASSERT(0);
-#endif
 }
 
 #define D3DFVF_RageSpriteVertex (D3DFVF_XYZ|D3DFVF_NORMAL|D3DFVF_DIFFUSE|D3DFVF_TEX1)
@@ -178,11 +163,7 @@ static D3DFORMAT D3DFORMATS[NUM_PixelFormat] =
 	D3DFMT_A4R4G4B4,
 	D3DFMT_A1R5G5B5,
 	D3DFMT_X1R5G5B5,
-#if defined(XBOX)
-	D3DFMT_UNKNOWN,  // no RGB
-#else
 	D3DFMT_R8G8B8,
-#endif
 	D3DFMT_P8,
 	D3DFMT_UNKNOWN, // no BGR
 	D3DFMT_UNKNOWN, // no ABGR
@@ -214,9 +195,7 @@ RString RageDisplay_D3D::Init( const VideoModeParams &p, bool bAllowUnaccelerate
 
 	typedef IDirect3D8 * (WINAPI * Direct3DCreate8_t) (UINT SDKVersion);
 	Direct3DCreate8_t pDirect3DCreate8;
-#if defined(XBOX)
-	pDirect3DCreate8 = Direct3DCreate8;
-#else
+
 	g_D3D8_Module = LoadLibrary("D3D8.dll");
 	if(!g_D3D8_Module)
 		return D3D_NOT_INSTALLED.GetValue() + "\n" + D3D_URL;
@@ -227,7 +206,6 @@ RString RageDisplay_D3D::Init( const VideoModeParams &p, bool bAllowUnaccelerate
 		LOG->Trace( "Direct3DCreate8 not found" );
 		return D3D_NOT_INSTALLED.GetValue();
 	}
-#endif
 
 	g_pd3d = pDirect3DCreate8( D3D_SDK_VERSION );
 	if(!g_pd3d)
@@ -294,13 +272,11 @@ RageDisplay_D3D::~RageDisplay_D3D()
 	/* Even after we call Release(), D3D may still affect our window. It seems
 	 * to subclass the window, and never release it. Free the DLL after
 	 * destroying the window. */
-#if !defined(XBOX)
 	if( g_D3D8_Module )
 	{
 		FreeLibrary( g_D3D8_Module );
 		g_D3D8_Module = NULL;
 	}
-#endif
 }
 
 void RageDisplay_D3D::GetDisplayResolutions( DisplayResolutions &out ) const
@@ -334,9 +310,7 @@ D3DFORMAT FindBackBufferType(bool bWindowed, int iBPP)
 	}
 	if( iBPP == 32 || bWindowed )
 	{
-#if !defined(XBOX)
 		vBackBufferFormats.push_back( D3DFMT_R8G8B8 );
-#endif
 		vBackBufferFormats.push_back( D3DFMT_X8R8G8B8 );
 		vBackBufferFormats.push_back( D3DFMT_A8R8G8B8 );
 	}
@@ -383,13 +357,8 @@ RString SetD3DParams( bool &bNewDeviceOut )
 		HRESULT hr = g_pd3d->CreateDevice(
 			D3DADAPTER_DEFAULT, 
 			D3DDEVTYPE_HAL, 
-#if !defined(XBOX)
 			GraphicsWindow::GetHwnd(),
 			D3DCREATE_SOFTWARE_VERTEXPROCESSING | D3DCREATE_MULTITHREADED,
-#else
-			NULL,
-			D3DCREATE_HARDWARE_VERTEXPROCESSING,
-#endif
 			&g_d3dpp, 
 			&g_pd3dDevice );
 		if( FAILED(hr) )
@@ -506,11 +475,7 @@ static void SetPresentParametersFromVideoModeParams( const VideoModeParams &p, D
 	pD3Dpp->BackBufferCount		= 1;
 	pD3Dpp->MultiSampleType		= D3DMULTISAMPLE_NONE;
 	pD3Dpp->SwapEffect		= D3DSWAPEFFECT_DISCARD;
-#if !defined(XBOX)
 	pD3Dpp->hDeviceWindow		= GraphicsWindow::GetHwnd();
-#else
-	pD3Dpp->hDeviceWindow		= NULL;
-#endif
 	pD3Dpp->Windowed		= p.windowed;
 	pD3Dpp->EnableAutoDepthStencil	= TRUE;
 	pD3Dpp->AutoDepthStencilFormat	= D3DFMT_D16;
@@ -520,25 +485,9 @@ static void SetPresentParametersFromVideoModeParams( const VideoModeParams &p, D
 	else
 		pD3Dpp->FullScreen_PresentationInterval = p.vsync ? D3DPRESENT_INTERVAL_ONE : D3DPRESENT_INTERVAL_IMMEDIATE;
 
-#if !defined(XBOX)
 	pD3Dpp->FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
 	if( !p.windowed && p.rate != REFRESH_DEFAULT )
 		pD3Dpp->FullScreen_RefreshRateInHz = p.rate;
-#else
-	if( XGetVideoStandard() == XC_VIDEO_STANDARD_PAL_I )
-	{
-		// Get supported video flags.
-		DWORD VideoFlags = XGetVideoFlags();
-
-		// Set pal60 if available.
-		if( VideoFlags & XC_VIDEO_FLAGS_PAL_60Hz )
-			pD3Dpp->FullScreen_RefreshRateInHz = 60;
-		else
-			pD3Dpp->FullScreen_RefreshRateInHz = 50;
-	}
-	else
-		pD3Dpp->FullScreen_RefreshRateInHz = 60;
-#endif
 
 	pD3Dpp->Flags = 0;
 
@@ -556,9 +505,6 @@ static void SetPresentParametersFromVideoModeParams( const VideoModeParams &p, D
 RString RageDisplay_D3D::TryVideoMode( const VideoModeParams &_p, bool &bNewDeviceOut )
 {
 	VideoModeParams p = _p;
-#if defined(XBOX)
-	p.windowed = false;
-#endif
 	LOG->Warn( "RageDisplay_D3D::TryVideoMode( %d, %d, %d, %d, %d, %d )", p.windowed, p.width, p.height, p.bpp, p.rate, p.vsync );
 
 	if( FindBackBufferType( p.windowed, p.bpp ) == D3DFMT_UNKNOWN )	// no possible back buffer formats
@@ -570,11 +516,6 @@ RString RageDisplay_D3D::TryVideoMode( const VideoModeParams &_p, bool &bNewDevi
 	GraphicsWindow::CreateGraphicsWindow( p );
 
 	SetPresentParametersFromVideoModeParams( p, &g_d3dpp );
-
-#if defined(XBOX)
-	if( D3D__pDevice )
-		g_pd3dDevice = D3D__pDevice;
-#endif
 
 	// Display the window immediately, so we don't display the desktop ...
 	while( 1 )
@@ -612,14 +553,6 @@ void RageDisplay_D3D::ResolutionChanged()
 {
 	//LOG->Warn( "RageDisplay_D3D::ResolutionChanged" );
 
-#if defined(XBOX)
-	VideoModeParams p = GetActualVideoModeParams();
-	D3DVIEWPORT8 viewData = { 0, 0, p.width, p.height, 0.f, 1.f };
-	g_pd3dDevice->SetViewport( &viewData );
-	g_pd3dDevice->Clear( 0, NULL, D3DCLEAR_TARGET|D3DCLEAR_ZBUFFER,
-						 D3DCOLOR_XRGB(0,0,0), 1.0f, 0x00000000 );
-#endif
-
 	RageDisplay::ResolutionChanged();
 }
 
@@ -632,7 +565,6 @@ bool RageDisplay_D3D::BeginFrame()
 {
 	GraphicsWindow::Update();
 
-#if !defined(XBOX)
 	switch( g_pd3dDevice->TestCooperativeLevel() )
 	{
 	case D3DERR_DEVICELOST:
@@ -647,7 +579,6 @@ bool RageDisplay_D3D::BeginFrame()
 			break;
 		}
 	}
-#endif
 
 	g_pd3dDevice->Clear( 0, NULL, D3DCLEAR_TARGET|D3DCLEAR_ZBUFFER,
 						 D3DCOLOR_XRGB(0,0,0), 1.0f, 0x00000000 );
@@ -670,16 +601,6 @@ void RageDisplay_D3D::EndFrame()
 
 bool RageDisplay_D3D::SupportsTextureFormat( PixelFormat pixfmt, bool realtime )
 {
-#if defined(XBOX)
-	/* Lazy...  Xbox handles paletted textures completely differently than
-	 * regular D3D. It's not worth writing a bunch of code to handle it.
-	 * Paletted textures result in worse cache efficiency anyway (see "Xbox 
-	 * Palettized Texture Performance" in XDK). So, just force 32bit ARGB textures.
-	 * -Chris
-	 * This is also needed for XGSwizzleRect(). */
-	return pixfmt == PixelFormat_RGBA8;
-#endif
-
 	// Some cards (Savage) don't support alpha in palettes.
 	// Don't allow paletted textures if this is the case.
 	if( pixfmt == PixelFormat_PAL  &&  !(g_DeviceCaps.TextureCaps & D3DPTEXTURECAPS_ALPHAPALETTE) )
@@ -707,9 +628,6 @@ bool RageDisplay_D3D::SupportsThreadedRendering()
 
 RageSurface* RageDisplay_D3D::CreateScreenshot()
 {
-#if defined(XBOX)
-	return NULL;
-#else
 	// Get the back buffer.
 	IDirect3DSurface8* pSurface;
 	g_pd3dDevice->GetBackBuffer( 0, D3DBACKBUFFER_TYPE_MONO, &pSurface );
@@ -756,7 +674,6 @@ RageSurface* RageDisplay_D3D::CreateScreenshot()
 	pCopy->Release();
 
 	return SurfaceCopy;
-#endif
 }
 
 VideoModeParams RageDisplay_D3D::GetActualVideoModeParams() const 
@@ -1429,15 +1346,6 @@ unsigned RageDisplay_D3D::CreateTexture(
 	IDirect3DTexture8* pTex;
 	hr = g_pd3dDevice->CreateTexture( power_of_two(img->w), power_of_two(img->h), 1, 0, D3DFORMATS[pixfmt], D3DPOOL_MANAGED, &pTex );
 
-#if defined(XBOX)
-	while(hr == E_OUTOFMEMORY)
-	{
-		if(!vmem_Manager.DecommitLRU())
-			break;
-		hr = g_pd3dDevice->CreateTexture( power_of_two(img->w), power_of_two(img->h), 1, 0, D3DFORMATS[pixfmt], D3DPOOL_MANAGED, &pTex );
-	}
-#endif
-
 	if( FAILED(hr) )
 		RageException::Throw( "CreateTexture(%i,%i,%s) failed: %s", 
 		img->w, img->h, PixelFormatToString(pixfmt).c_str(), GetErrorString(hr).c_str() );
@@ -1490,27 +1398,6 @@ void RageDisplay_D3D::UpdateTexture(
 	ASSERT( yoffset+height <= int(desc.Height) );
 
 	// Copy bits
-#if defined(XBOX)
-	RageSurface *Texture = CreateSurface( width, height, 32,
-			Swap32BE( 0x0000FF00 ),
-			Swap32BE( 0x00FF0000 ),
-			Swap32BE( 0xFF000000 ),
-			Swap32BE( 0x000000FF ) );
-	
-	RageSurfaceUtils::Blit( img, Texture, width, height );
-	
-	// Xbox textures need to be swizzled
-	XGSwizzleRect(
-		Texture->pixels,	// pSource, 
-		Texture->pitch,		// Pitch,
-		NULL,	// pRect,
-		lr.pBits,	// pDest,
-		Texture->w,	// Width,
-		Texture->h,	// Height,
-		NULL,	// pPoint,
-		Texture->format->BytesPerPixel ); //BytesPerPixel
-	delete Texture;
-#else
 	int texpixfmt;
 	for(texpixfmt = 0; texpixfmt < NUM_PixelFormat; ++texpixfmt)
 		if(D3DFORMATS[texpixfmt] == desc.Format) break;
@@ -1521,7 +1408,6 @@ void RageDisplay_D3D::UpdateTexture(
 	RageSurfaceUtils::Blit( img, Texture, width, height );
 
 	delete Texture;
-#endif
 
 	pTex->UnlockRect( 0 );
 }

@@ -78,7 +78,7 @@ struct AutoMappings
 		AutoMappingEntry im37 = AutoMappingEntry(), 
 		AutoMappingEntry im38 = AutoMappingEntry(), 
 		AutoMappingEntry im39 = AutoMappingEntry() )
-	: m_sGame(s1), m_sDriverRegex(s2), m_sControllerName(s3)
+	: m_sGame(s1), m_sDriverRegex(s2), m_sControllerName(s3), m_vMaps()
 	{
 #define PUSH( im )	if(!im.IsEmpty()) m_vMaps.push_back(im);
 		PUSH(im0);PUSH(im1);PUSH(im2);PUSH(im3);PUSH(im4);PUSH(im5);PUSH(im6);PUSH(im7);PUSH(im8);PUSH(im9);PUSH(im10);PUSH(im11);PUSH(im12);PUSH(im13);PUSH(im14);PUSH(im15);PUSH(im16);PUSH(im17);PUSH(im18);PUSH(im19);

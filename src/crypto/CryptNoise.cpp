@@ -5,16 +5,7 @@
 
 #include "global.h"
 
-#if defined(_XBOX)
-void noise_get_heavy(void (*func) (void *, int))
-{
-}
-
-void noise_get_light(void (*func) (void *, int))
-{
-}
-
-#elif defined(_WINDOWS)
+#if defined(_WINDOWS)
 #define _WIN32_WINNT 0x0400		// VC6 header needs this defined.  
 #include <windows.h>
 #include <wincrypt.h>

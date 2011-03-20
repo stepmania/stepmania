@@ -79,6 +79,9 @@ public:
 
 	// Lua
 	void PushSelf( lua_State *L );
+	
+private:
+	// TODO: Implement the copy and assignment operators on our own.
 };
 
 #endif
