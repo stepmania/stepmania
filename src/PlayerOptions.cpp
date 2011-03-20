@@ -841,10 +841,17 @@ class LunaPlayerOptions: public Luna<PlayerOptions>
 {
 public:
 	DEFINE_METHOD( GetNoteSkin, m_sNoteSkin )
+	static int SetNoteSkin( T *p, lua_State *L )
+	{
+		if( NOTESKIN->DoesNoteSkinExist(SArg(1)) )
+			p->m_sNoteSkin = SArg(1);
+		return 0;
+	}
 
 	LunaPlayerOptions()
 	{
 		ADD_METHOD( GetNoteSkin );
+		ADD_METHOD( SetNoteSkin );
 	}
 };
 
