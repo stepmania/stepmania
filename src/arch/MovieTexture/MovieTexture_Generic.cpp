@@ -9,7 +9,7 @@
 #include "RageUtil.h"
 #include "Sprite.h"
 
-#if defined(WIN32) && !defined(XBOX)
+#if defined(WIN32)
 #include "archutils/Win32/ErrorStrings.h"
 #include <windows.h>
 #endif

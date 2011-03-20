@@ -31,7 +31,7 @@ static void GetResolutionFromFileName( RString sPath, int &iWidth, int &iHeight 
 }
 
 RageBitmapTexture::RageBitmapTexture( RageTextureID name ) :
-	RageTexture( name )
+	RageTexture( name ), m_uTexHandle(0)
 {
 	Create();
 }

@@ -179,16 +179,15 @@ public:
 	float	m_fPerspectiveTilt,		m_SpeedfPerspectiveTilt;		// -1 = near, 0 = overhead, +1 = space
 	float	m_fSkew,			m_SpeedfSkew;		// 0 = vanish point is in center of player, 1 = vanish point is in center of screen
 
-	float	m_fRandomSpeed,			m_SpeedfRandomSpeed;
-
 	/* If this is > 0, then the player must have life above this value at the end of
 	 * the song to pass.  This is independent of SongOptions::m_FailType. */
 	float		m_fPassmark,			m_SpeedfPassmark;
 
+	float	m_fRandomSpeed,			m_SpeedfRandomSpeed;
+
 	bool		m_bTurns[NUM_TURNS];
 	bool		m_bTransforms[NUM_TRANSFORMS];
 	bool		m_bMuteOnError;
-	ScoreDisplay m_ScoreDisplay;
 	/** @brief How can the Player fail a song? */
 	enum FailType { 
 		FAIL_IMMEDIATE=0,		/**< fail immediately when life touches 0 */
@@ -198,6 +197,7 @@ public:
 	};
 	/** @brief The method for which a player can fail a song. */
 	FailType m_FailType;
+	ScoreDisplay m_ScoreDisplay;
 
 	/**
 	 * @brief The Noteskin to use.

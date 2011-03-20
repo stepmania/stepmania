@@ -27,7 +27,7 @@ struct Impl
 };
 static Impl *pImpl = NULL;
 
-#if defined(_MSC_VER) || defined (_XBOX)
+#if defined(_MSC_VER)
 	/* "interaction between '_setjmp' and C++ object destruction is non-portable"
 	 * We don't care; we'll throw a fatal exception immediately anyway. */
 	#pragma warning (disable : 4611)
@@ -973,9 +973,7 @@ LuaFunction( VersionTime, (RString) version_time );
 static RString GetOSName()
 {
 	RString system;
-	#if defined(XBOX)
-		system = "Xbox";
-	#elif defined(WIN32) && !defined(XBOX)
+	#if defined(WIN32)
 		system = "Windows";
 	#elif defined(LINUX)
 		system = "Linux";

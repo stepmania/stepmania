@@ -100,6 +100,7 @@ InputFilter::InputFilter()
 
 	m_MouseCoords.fX = 0;
 	m_MouseCoords.fY = 0;
+	m_MouseCoords.fZ = 0;
 
 	// Register with Lua.
 	{
@@ -415,6 +416,10 @@ void InputFilter::UpdateCursorLocation(float _fX, float _fY)
 	m_MouseCoords.fY = _fY;
 }
 
+void InputFilter::UpdateMouseWheel(float _fZ)
+{
+	m_MouseCoords.fZ = _fZ;
+}
 
 // lua start
 #include "LuaBinding.h"
@@ -439,11 +444,17 @@ public:
 		lua_pushnumber( L, fY );
 		return 1;
 	}
+	static int GetMouseWheel( T* p, lua_State *L ){
+		float fZ = p->GetMouseWheel();
+		lua_pushnumber( L, fZ );
+		return 1;
+	}
 
 	LunaInputFilter()
 	{
 		ADD_METHOD( GetMouseX );
 		ADD_METHOD( GetMouseY );
+		ADD_METHOD( GetMouseWheel );
 	}
 };
 

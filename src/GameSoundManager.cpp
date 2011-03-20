@@ -7,6 +7,7 @@
 #include "GameState.h"
 #include "TimingData.h"
 #include "NotesLoaderSSC.h"
+#include "NotesLoaderSM.h"
 #include "PrefsManager.h"
 #include "RageDisplay.h"
 #include "AnnouncerManager.h"
@@ -142,6 +143,15 @@ static void StartMusic( MusicToPlay &ToPlay )
 		LOG->Trace( "Found '%s'", ToPlay.m_sTimingFile.c_str() );
 		Song song;
 		if( SSCLoader::LoadFromSSCFile(ToPlay.m_sTimingFile, song) )
+		{
+			ToPlay.HasTiming = true;
+			ToPlay.m_TimingData = song.m_Timing;
+			// get cabinet lights if any
+			Steps *pStepsCabinetLights = SongUtil::GetOneSteps( &song, StepsType_lights_cabinet );
+			if( pStepsCabinetLights )
+				pStepsCabinetLights->GetNoteData( ToPlay.m_LightsData );
+		}
+		else if( SMLoader::LoadFromSMFile(ToPlay.m_sTimingFile, song) )
 		{
 			ToPlay.HasTiming = true;
 			ToPlay.m_TimingData = song.m_Timing;
@@ -704,6 +714,7 @@ void GameSoundManager::PlayMusic( PlayMusicParams params, PlayMusicParams Fallba
 	else
 	{
 		/* If no timing data was provided, look for it in the same place as the music file. */
+		// todo: allow loading .ssc files as well -aj
 		ToPlay.m_sTimingFile = SetExtension( params.sFile, "sm" );
 	}
 

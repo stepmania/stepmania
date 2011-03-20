@@ -21,23 +21,16 @@
 #include "GameManager.h"
 #include "NoteDataUtil.h"
 #include "NotesLoaderSSC.h"
+#include "NotesLoaderSM.h"
 
 #include <algorithm>
 
-Steps::Steps()
-{
-	m_bSavedToDisk = false;
-	m_StepsType = StepsType_Invalid;
-	m_LoadedFromProfile = ProfileSlot_Invalid;
-	m_iHash = 0;
-	m_Difficulty = Difficulty_Invalid;
-	m_iMeter = 0;
-
-	m_pNoteData = new NoteData;
-	m_bNoteDataIsFilled = false;
-	m_sNoteDataCompressed = "";
-	parent = NULL;
-}
+Steps::Steps(): m_StepsType(StepsType_Invalid), 
+	parent(NULL), m_pNoteData(new NoteData), m_bNoteDataIsFilled(false), 
+	m_sNoteDataCompressed(""), m_sFilename(""), m_bSavedToDisk(false), 
+	m_LoadedFromProfile(ProfileSlot_Invalid), m_iHash(0),
+	m_sDescription(""), m_sChartStyle(""), 
+	m_Difficulty(Difficulty_Invalid), m_iMeter(0), m_sCredit("") {}
 
 Steps::~Steps()
 {
@@ -86,6 +79,13 @@ void Steps::GetNoteData( NoteData& noteDataOut ) const
 		noteDataOut.ClearAll();
 		noteDataOut.SetNumTracks( GAMEMAN->GetStepsTypeInfo(m_StepsType).iNumTracks );
 	}
+}
+
+NoteData Steps::GetNoteData() const
+{
+	NoteData tmp;
+	this->GetNoteData( tmp );
+	return tmp;
 }
 
 void Steps::SetSMNoteData( const RString &notes_comp_ )
@@ -229,12 +229,17 @@ void Steps::Decompress() const
 
 	if( !m_sFilename.empty() && m_sNoteDataCompressed.empty() )
 	{
-		/* We have data on disk and not in memory.  Load it. */
+		// We have data on disk and not in memory. Load it.
 		Song s;
-		if( !SSCLoader::LoadFromSSCFile(m_sFilename, s, true) )
+		bool bLoadedFromSSC = SSCLoader::LoadFromSSCFile(m_sFilename, s, true);
+		if( !bLoadedFromSSC )
 		{
-			LOG->Warn( "Couldn't load \"%s\"", m_sFilename.c_str() );
-			return;
+			// try reading from .sm instead
+			if( !SMLoader::LoadFromSMFile(m_sFilename, s, true) )
+			{
+				LOG->Warn( "Couldn't load \"%s\"", m_sFilename.c_str() );
+				return;
+			}
 		}
 
 		/* Find the steps. */

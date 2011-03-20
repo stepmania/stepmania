@@ -509,18 +509,21 @@ void InputHandler_DInput::UpdateBuffered( DIDevice &device, const RageTimer &tm 
 						switch(in.ofs)
 						{
 							case DIMOFS_X:
-								up = MOUSE_X_LEFT; down = MOUSE_X_RIGHT;
 								INPUTFILTER->UpdateCursorLocation((float)cursorPos.x,(float)cursorPos.y);
 								break;
 							case DIMOFS_Y:
-								up = MOUSE_Y_UP; down = MOUSE_Y_DOWN;
 								INPUTFILTER->UpdateCursorLocation((float)cursorPos.x,(float)cursorPos.y);
 								break;
 							case DIMOFS_Z:
-								up = MOUSE_WHEELUP; down = MOUSE_WHEELDOWN;
-								l = SCALE( int(evtbuf[i].dwData), -120.0f, 120.0f, -1.0f, 1.0f );
-								ButtonPressed( DeviceInput(dev, up, max(-l,0), tm) );
-								ButtonPressed( DeviceInput(dev, down, max(+l,0), tm) );
+								INPUTFILTER->UpdateMouseWheel(l);
+								{
+									up = MOUSE_WHEELUP; down = MOUSE_WHEELDOWN;
+									l = SCALE( int(evtbuf[i].dwData), -120.0f, 120.0f, 1.0f, -1.0f );
+									DeviceInput diUp = DeviceInput(dev, up, max(-l,0), tm);
+									DeviceInput diDown = DeviceInput(dev, down, max(+l,0), tm);
+									ButtonPressed( diUp );
+									ButtonPressed( diDown );
+								}
 								break;
 							default: LOG->MapLog( "unknown input", 
 										 "Mouse '%s' is returning an unknown mouse offset [axis], %i",
@@ -552,6 +555,7 @@ void InputHandler_DInput::UpdateBuffered( DIDevice &device, const RageTimer &tm 
 					}
 					break;
 				}
+
 				case in.HAT:
 				{
 					const int pos = TranslatePOV( evtbuf[i].dwData );

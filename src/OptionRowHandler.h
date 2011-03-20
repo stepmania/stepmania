@@ -77,15 +77,14 @@ struct OptionRowDefinition
 
 	OptionRowDefinition(): m_sName(""), m_sExplanationName(""),
 		m_bOneChoiceForAllPlayers(false), m_selectType(SELECT_ONE),
-		m_layoutType(LAYOUT_SHOW_ALL_IN_ROW), m_iDefault(-1),
+		m_layoutType(LAYOUT_SHOW_ALL_IN_ROW), m_vsChoices(), 
+		m_vEnabledForPlayers(), m_iDefault(-1),
 		m_bExportOnChange(false), m_bAllowThemeItems(true),
 		m_bAllowThemeTitle(true), m_bAllowExplanation(true),
 		m_bShowChoicesListOnSelect(false)
 	{
-		m_vsChoices.clear();
-		m_vEnabledForPlayers.clear();
 		FOREACH_PlayerNumber( pn )
-		m_vEnabledForPlayers.insert( pn ); 
+			m_vEnabledForPlayers.insert( pn ); 
 	}
 	void Init()
 	{
@@ -106,13 +105,33 @@ struct OptionRowDefinition
 		m_bShowChoicesListOnSelect = false;
 	}
 
-	OptionRowDefinition( const char *n, bool b, const char *c0=NULL, const char *c1=NULL, const char *c2=NULL, const char *c3=NULL, const char *c4=NULL, const char *c5=NULL, const char *c6=NULL, const char *c7=NULL, const char *c8=NULL, const char *c9=NULL, const char *c10=NULL, const char *c11=NULL, const char *c12=NULL, const char *c13=NULL, const char *c14=NULL, const char *c15=NULL, const char *c16=NULL, const char *c17=NULL, const char *c18=NULL, const char *c19=NULL )
+	OptionRowDefinition( const char *n, bool b, const char *c0=NULL, 
+			    const char *c1=NULL, const char *c2=NULL, 
+			    const char *c3=NULL, const char *c4=NULL, 
+			    const char *c5=NULL, const char *c6=NULL, 
+			    const char *c7=NULL, const char *c8=NULL, 
+			    const char *c9=NULL, const char *c10=NULL, 
+			    const char *c11=NULL, const char *c12=NULL, 
+			    const char *c13=NULL, const char *c14=NULL, 
+			    const char *c15=NULL, const char *c16=NULL, 
+			    const char *c17=NULL, const char *c18=NULL, 
+			    const char *c19=NULL ): m_sName(n),
+		m_sExplanationName(""), m_bOneChoiceForAllPlayers(b),
+		m_selectType(SELECT_ONE),
+		m_layoutType(LAYOUT_SHOW_ALL_IN_ROW), m_vsChoices(), 
+		m_vEnabledForPlayers(), m_iDefault(-1),
+		m_bExportOnChange(false), m_bAllowThemeItems(true),
+		m_bAllowThemeTitle(true), m_bAllowExplanation(true),
+		m_bShowChoicesListOnSelect(false)
 	{
-		Init();
-		m_sName=n;
-		m_bOneChoiceForAllPlayers=b;
+		FOREACH_PlayerNumber( pn )
+			m_vEnabledForPlayers.insert( pn );
+		
 #define PUSH( c )	if(c) m_vsChoices.push_back(c);
-		PUSH(c0);PUSH(c1);PUSH(c2);PUSH(c3);PUSH(c4);PUSH(c5);PUSH(c6);PUSH(c7);PUSH(c8);PUSH(c9);PUSH(c10);PUSH(c11);PUSH(c12);PUSH(c13);PUSH(c14);PUSH(c15);PUSH(c16);PUSH(c17);PUSH(c18);PUSH(c19);
+		PUSH(c0);PUSH(c1);PUSH(c2);PUSH(c3);PUSH(c4);PUSH(c5);
+		PUSH(c6);PUSH(c7);PUSH(c8);PUSH(c9);PUSH(c10);PUSH(c11);
+		PUSH(c12);PUSH(c13);PUSH(c14);PUSH(c15);PUSH(c16);PUSH(c17);
+		PUSH(c18);PUSH(c19);
 #undef PUSH
 	}
 };
@@ -124,7 +143,7 @@ public:
 	OptionRowDefinition m_Def;
 	vector<RString> m_vsReloadRowMessages;	// refresh this row on on these messages
 
-	OptionRowHandler() { Init(); }
+	OptionRowHandler(): m_Def(), m_vsReloadRowMessages() { }
 	virtual ~OptionRowHandler() { }
 	virtual void Init()
 	{

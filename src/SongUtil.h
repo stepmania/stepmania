@@ -47,8 +47,9 @@ public:
 	} m_Locked;
 
 	/** @brief Set up some initial song criteria. */
-	SongCriteria(): m_sGroupName(""), m_bUseSongGenreAllowedList(false), 
-		m_Selectable(Selectable_DontCare), m_bUseSongAllowedList(false),
+	SongCriteria(): m_sGroupName(""), m_bUseSongGenreAllowedList(false),
+		m_vsSongGenreAllowedList(), m_Selectable(Selectable_DontCare),
+		m_bUseSongAllowedList(false), m_vpSongAllowedList(),
 		m_iMaxStagesForSong(-1), m_Tutorial(Tutorial_DontCare),
 		m_Locked(Locked_DontCare)
 	{
@@ -178,7 +179,11 @@ class SongID
 	mutable CachedObjectPointer<Song> m_Cache;
 
 public:
-	SongID() { Unset(); }
+	/**
+	 * @brief Set up the SongID with default values.
+	 *
+	 * This used to call Unset() to do the same thing. */
+	SongID(): sDir(""), m_Cache() { m_Cache.Unset(); }
 	void Unset() { FromSong(NULL); }
 	void FromSong( const Song *p );
 	Song *ToSong() const;

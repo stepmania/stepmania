@@ -22,10 +22,10 @@ public:
 	};
 	DrainType m_DrainType;	// only used with LifeBar
 	int m_iBatteryLives;
-	float m_fMusicRate,	m_SpeedfMusicRate;
-	float m_fHaste, m_SpeedfHaste;
 	bool m_bAssistClap;
 	bool m_bAssistMetronome;
+	float m_fMusicRate,	m_SpeedfMusicRate;
+	float m_fHaste, m_SpeedfHaste;
 	enum AutosyncType { 
 		AUTOSYNC_OFF,
 		AUTOSYNC_SONG,
@@ -34,10 +34,6 @@ public:
 		NUM_AUTOSYNC_TYPES
 	};
 	AutosyncType m_AutosyncType;
-	bool m_bStaticBackground;
-	bool m_bRandomBGOnly;
-	bool m_bSaveScore;
-	bool m_bSaveReplay;
 	enum SoundEffectType {
 		SOUNDEFFECT_OFF,
 		SOUNDEFFECT_SPEED,
@@ -45,6 +41,10 @@ public:
 		NUM_SOUNDEFFECT
 	};
 	SoundEffectType m_SoundEffectType;
+	bool m_bStaticBackground;
+	bool m_bRandomBGOnly;
+	bool m_bSaveScore;
+	bool m_bSaveReplay;
 
 	/**
 	 * @brief Set up the SongOptions with reasonable defaults.

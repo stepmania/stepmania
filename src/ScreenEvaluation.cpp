@@ -30,7 +30,6 @@
 #include "ScoreKeeperNormal.h"
 #include "InputEventPlus.h"
 
-
 // metrics that are common to all ScreenEvaluation classes
 #define BANNER_WIDTH			THEME->GetMetricF(m_sName,"BannerWidth")
 #define BANNER_HEIGHT			THEME->GetMetricF(m_sName,"BannerHeight")
@@ -45,7 +44,7 @@ LuaFunction( JudgmentLineToLocalizedString, JudgmentLineToLocalizedString(Enum::
 
 static const char *DetailLineNames[NUM_DetailLine] =
 {
-	"NumSteps","Jumps", "Holds", "Mines", "Hands", "Rolls",
+	"NumSteps","Jumps", "Holds", "Mines", "Hands", "Rolls", "Lifts", "Fakes"
 };
 XToString( DetailLine );
 #define DETAILLINE_FORMAT			THEME->GetMetric (m_sName,"DetailLineFormat")
@@ -209,7 +208,7 @@ void ScreenEvaluation::Init()
 		}
 	}
 
-	ASSERT( !STATSMAN->m_vPlayedStageStats.empty() );
+	ASSERT_M( !STATSMAN->m_vPlayedStageStats.empty(), "PlayerStageStats is empty!" );
 	m_pStageStats = &STATSMAN->m_vPlayedStageStats.back();
 
 	ZERO( m_bSavedScreenshot );

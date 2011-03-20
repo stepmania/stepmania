@@ -496,7 +496,7 @@ void NoteDataUtil::LoadTransformedSlidingWindow( const NoteData &in, NoteData &o
 {
 	// reset all notes
 	out.Init();
-
+	
 	if( in.GetNumTracks() > iNewNumTracks )
 	{
 		// Use a different algorithm for reducing tracks.
@@ -561,6 +561,40 @@ void NoteDataUtil::LoadTransformedSlidingWindow( const NoteData &in, NoteData &o
 	}
 }
 
+void PlaceAutoKeysound( NoteData &out, int row, TapNote akTap )
+{
+	int iEmptyTrack = -1;
+	int iEmptyRow = row;
+	int iNewNumTracks = out.GetNumTracks();
+	bool bFoundEmptyTrack = false;
+	int iRowsToLook[3] = {0, -1, 1};
+	
+	for( int j = 0; j < 3; j ++ )
+	{
+		int r = iRowsToLook[j] + row;
+		if( r < 0 )
+			continue;
+		for( int i = 0; i < iNewNumTracks; ++i )
+		{
+			if ( out.GetTapNote(i, r) == TAP_EMPTY && !out.IsHoldNoteAtRow(i, r) )
+			{
+				iEmptyTrack = i;
+				iEmptyRow = r;
+				bFoundEmptyTrack = true;
+				break;
+			}
+		}
+		if( bFoundEmptyTrack )
+			break;
+	}
+	
+	if( iEmptyTrack != -1 )
+	{
+		akTap.type = TapNote::autoKeysound;
+		out.SetTapNote( iEmptyTrack, iEmptyRow, akTap );
+	}
+}
+
 void NoteDataUtil::LoadOverlapped( const NoteData &in, NoteData &out, int iNewNumTracks )
 {
 	out.SetNumTracks( iNewNumTracks );
@@ -587,7 +621,7 @@ void NoteDataUtil::LoadOverlapped( const NoteData &in, NoteData &out, int iNewNu
 		for( int iTrackFrom = 0; iTrackFrom < in.GetNumTracks(); ++iTrackFrom )
 		{
 			const TapNote &tnFrom = in.GetTapNote( iTrackFrom, row );
-			if( tnFrom.type == TapNote::empty )
+			if( tnFrom.type == TapNote::empty || tnFrom.type == TapNote::autoKeysound )
 				continue;
 
 			// If this is a hold note, find the end.
@@ -609,7 +643,15 @@ void NoteDataUtil::LoadOverlapped( const NoteData &in, NoteData &out, int iNewNu
 
 				// If it's still in use, then we just don't have an available track.
 				if( iEndIndex - LastSourceRow[iTrackTo] < ShiftThreshold )
+				{
+					// If it has a keysound, put it in autokeysound track.
+					if( tnFrom.iKeysoundIndex >= 0 )
+					{
+						TapNote akTap = tnFrom;
+						PlaceAutoKeysound( out, row, akTap );
+					}
 					continue;
+				}
 			}
 
 			LastSourceTrack[iTrackTo] = iTrackFrom;
@@ -620,6 +662,16 @@ void NoteDataUtil::LoadOverlapped( const NoteData &in, NoteData &out, int iNewNu
 				const TapNote &tnTail = in.GetTapNote( iTrackFrom, iEndIndex );
 				out.SetTapNote( iTrackTo, iEndIndex, tnTail );
 			}
+		}
+		
+		// find empty track for autokeysounds in 2 next rows, so you can hear most autokeysounds
+		for( int iTrackFrom = 0; iTrackFrom < in.GetNumTracks(); ++iTrackFrom )
+		{
+			const TapNote &tnFrom = in.GetTapNote( iTrackFrom, row );
+			if( tnFrom.type != TapNote::autoKeysound )
+				continue;
+			
+			PlaceAutoKeysound( out, row, tnFrom );
 		}
 	}
 }
@@ -1389,7 +1441,6 @@ void NoteDataUtil::Little( NoteData &inout, int iStartIndex, int iEndIndex )
 		{
 			if( i % ROWS_PER_BEAT == 0 )
 				continue;
-
 			inout.SetTapNote( t, i, TAP_EMPTY );
 		}
 	}
@@ -2178,62 +2229,61 @@ void NoteDataUtil::AddTapAttacks( NoteData &nd, Song* pSong )
 	}
 }
 
-#if 0 // undo this if ScaleRegion breaks more things than it fixes
 void NoteDataUtil::Scale( NoteData &nd, float fScale )
 {
 	ASSERT( fScale > 0 );
-
-	NoteData temp;
-	temp.CopyAll( &nd );
-	nd.ClearAll();
-
-	for( int r=0; r<=temp.GetLastRow(); r++ )
+	
+	NoteData ndOut;
+	ndOut.SetNumTracks( nd.GetNumTracks() );
+	
+	for( int t=0; t<nd.GetNumTracks(); t++ )
 	{
-		for( int t=0; t<temp.GetNumTracks(); t++ )
+		for( NoteData::const_iterator iter = nd.begin(t); iter != nd.end(t); ++iter )
 		{
-			TapNote tn = temp.GetTapNote( t, r );
-			if( tn != TAP_EMPTY )
-			{
-				temp.SetTapNote( t, r, TAP_EMPTY );
-
-				int new_row = int(r*fScale);
-				nd.SetTapNote( t, new_row, tn );
-			}
+			TapNote tn = iter->second;
+			int iNewRow      = lrintf( fScale * iter->first );
+			int iNewDuration = lrintf( fScale * (iter->first + tn.iDuration) );
+			tn.iDuration = iNewDuration;
+			ndOut.SetTapNote( t, iNewRow, tn );
 		}
 	}
+	
+	nd.swap( ndOut );
 }
-#endif
+
+/* XXX: move this to an appropriate place, same place as NoteRowToBeat perhaps? */
+static inline int GetScaledRow( float fScale, int iStartIndex, int iEndIndex, int iRow )
+{
+	if( iRow < iStartIndex )
+		return iRow;
+	else if( iRow > iEndIndex )
+		return iRow + lrintf( (iEndIndex - iStartIndex) * (fScale - 1) );
+	else
+		return lrintf( (iRow - iStartIndex) * fScale ) + iStartIndex;
+}
 
 void NoteDataUtil::ScaleRegion( NoteData &nd, float fScale, int iStartIndex, int iEndIndex )
 {
 	ASSERT( fScale > 0 );
 	ASSERT( iStartIndex < iEndIndex );
 	ASSERT( iStartIndex >= 0 );
-
-	NoteData temp1, temp2;
-	temp1.SetNumTracks( nd.GetNumTracks() );
-	temp2.SetNumTracks( nd.GetNumTracks() );
-
-	if( iStartIndex != 0 )
-		temp1.CopyRange( nd, 0, iStartIndex );
-	if( iEndIndex != MAX_NOTE_ROW )
-	{
-		const int iScaledFirstRowAfterRegion = int(iStartIndex + (iEndIndex - iStartIndex) * fScale);
-		temp1.CopyRange( nd, iEndIndex, MAX_NOTE_ROW, iScaledFirstRowAfterRegion );
-	}
-	temp2.CopyRange( nd, iStartIndex, iEndIndex );
-	nd.ClearAll();
-
-	for( int t=0; t<temp2.GetNumTracks(); t++ )
+	
+	NoteData ndOut;
+	ndOut.SetNumTracks( nd.GetNumTracks() );
+	
+	for( int t=0; t<nd.GetNumTracks(); t++ )
 	{
 		for( NoteData::const_iterator iter = nd.begin(t); iter != nd.end(t); ++iter )
 		{
-			int new_row = int( iter->first*fScale + iStartIndex );
-			temp1.SetTapNote( t, new_row, iter->second );
+			TapNote tn = iter->second;
+			int iNewRow      = GetScaledRow( fScale, iStartIndex, iEndIndex, iter->first );
+			int iNewDuration = GetScaledRow( fScale, iStartIndex, iEndIndex, iter->first + tn.iDuration ) - iNewRow;
+			tn.iDuration = iNewDuration;
+			ndOut.SetTapNote( t, iNewRow, tn );
 		}
 	}
-
-	nd.swap( temp1 );
+	
+	nd.swap( ndOut );
 }
 
 void NoteDataUtil::InsertRows( NoteData &nd, int iStartIndex, int iRowsToAdd )

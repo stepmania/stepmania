@@ -25,6 +25,8 @@
 		1215D7A208C6559A00B87D8B /* ScreenGameplayNormal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1215D7A008C6559A00B87D8B /* ScreenGameplayNormal.cpp */; };
 		2B30D6821315EA7E00044B68 /* MouseDevice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2B30D6801315EA7E00044B68 /* MouseDevice.cpp */; };
 		2B30D6831315EA7E00044B68 /* MouseDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B30D6811315EA7E00044B68 /* MouseDevice.h */; };
+		2B76698B132FF71500586512 /* NotesLoaderSMA.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B766989132FF71500586512 /* NotesLoaderSMA.h */; };
+		2B76698C132FF71500586512 /* NotesLoaderSMA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2B76698A132FF71500586512 /* NotesLoaderSMA.cpp */; };
 		2BA7925E1304F20D002BD8E1 /* NotesLoaderSSC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2BA7925A1304F20D002BD8E1 /* NotesLoaderSSC.cpp */; };
 		2BA7925F1304F20D002BD8E1 /* NotesLoaderSSC.h in Headers */ = {isa = PBXBuildFile; fileRef = 2BA7925B1304F20D002BD8E1 /* NotesLoaderSSC.h */; };
 		2BA792601304F20D002BD8E1 /* NotesWriterSSC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2BA7925C1304F20D002BD8E1 /* NotesWriterSSC.cpp */; };
@@ -1776,6 +1778,8 @@
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		2B30D6801315EA7E00044B68 /* MouseDevice.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MouseDevice.cpp; sourceTree = "<group>"; };
 		2B30D6811315EA7E00044B68 /* MouseDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MouseDevice.h; sourceTree = "<group>"; };
+		2B766989132FF71500586512 /* NotesLoaderSMA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NotesLoaderSMA.h; path = ../src/NotesLoaderSMA.h; sourceTree = SOURCE_ROOT; };
+		2B76698A132FF71500586512 /* NotesLoaderSMA.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NotesLoaderSMA.cpp; path = ../src/NotesLoaderSMA.cpp; sourceTree = SOURCE_ROOT; };
 		2BA7925A1304F20D002BD8E1 /* NotesLoaderSSC.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NotesLoaderSSC.cpp; path = ../src/NotesLoaderSSC.cpp; sourceTree = SOURCE_ROOT; };
 		2BA7925B1304F20D002BD8E1 /* NotesLoaderSSC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NotesLoaderSSC.h; path = ../src/NotesLoaderSSC.h; sourceTree = SOURCE_ROOT; };
 		2BA7925C1304F20D002BD8E1 /* NotesWriterSSC.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NotesWriterSSC.cpp; path = ../src/NotesWriterSSC.cpp; sourceTree = SOURCE_ROOT; };
@@ -3154,6 +3158,7 @@
 				AA6EFDC804770AF1005F316C /* DataStructures */,
 				AA6EFE5704770C7E005F316C /* FileTypes */,
 				AA6E00FE047711FF005F316C /* GlobalSingletons */,
+				2B766980132FF62B00586512 /* NoteParsing */,
 				29B97315FDCFA39411CA2CEA /* Other Source */,
 				AA8B6C7804AFD82B00D02EE9 /* pcre */,
 				AA6EFDBB04770A83005F316C /* Rage */,
@@ -3199,6 +3204,37 @@
 				1058C7A2FEA54F0111CA2CBB /* Other Frameworks */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		2B766980132FF62B00586512 /* NoteParsing */ = {
+			isa = PBXGroup;
+			children = (
+				AA6EFDED04770C79005F316C /* NotesLoader.cpp */,
+				AA6EFDEE04770C79005F316C /* NotesLoader.h */,
+				AA6EFDEF04770C79005F316C /* NotesLoaderBMS.cpp */,
+				AA6EFDF004770C79005F316C /* NotesLoaderBMS.h */,
+				AA6EFDF104770C79005F316C /* NotesLoaderDWI.cpp */,
+				AA6EFDF204770C79005F316C /* NotesLoaderDWI.h */,
+				AA6EFDF304770C79005F316C /* NotesLoaderKSF.cpp */,
+				AA6EFDF404770C79005F316C /* NotesLoaderKSF.h */,
+				3688B8510BD42DAA004186AD /* NotesLoaderMidi.cpp */,
+				3688B8520BD42DAA004186AD /* NotesLoaderMidi.h */,
+				EE2153A710A75BEE0074B01B /* NotesLoaderPMS.cpp */,
+				EE2153A810A75BEE0074B01B /* NotesLoaderPMS.h */,
+				AA6EFDF504770C79005F316C /* NotesLoaderSM.cpp */,
+				AA6EFDF604770C79005F316C /* NotesLoaderSM.h */,
+				2B76698A132FF71500586512 /* NotesLoaderSMA.cpp */,
+				2B766989132FF71500586512 /* NotesLoaderSMA.h */,
+				2BA7925A1304F20D002BD8E1 /* NotesLoaderSSC.cpp */,
+				2BA7925B1304F20D002BD8E1 /* NotesLoaderSSC.h */,
+				AA6EFDF704770C79005F316C /* NotesWriterDWI.cpp */,
+				AA6EFDF804770C79005F316C /* NotesWriterDWI.h */,
+				AA6EFDF904770C79005F316C /* NotesWriterSM.cpp */,
+				AA6EFDFA04770C79005F316C /* NotesWriterSM.h */,
+				2BA7925C1304F20D002BD8E1 /* NotesWriterSSC.cpp */,
+				2BA7925D1304F20D002BD8E1 /* NotesWriterSSC.h */,
+			);
+			name = NoteParsing;
 			sourceTree = "<group>";
 		};
 		AA60E0BB067992D7008ADC41 /* Threads */ = {
@@ -3776,28 +3812,6 @@
 				AA4F38C104E2D0B700D02EE9 /* NoteDataUtil.h */,
 				AA6EFDE704770C79005F316C /* NoteDataWithScoring.cpp */,
 				AA6EFDE804770C79005F316C /* NoteDataWithScoring.h */,
-				AA6EFDED04770C79005F316C /* NotesLoader.cpp */,
-				AA6EFDEE04770C79005F316C /* NotesLoader.h */,
-				AA6EFDEF04770C79005F316C /* NotesLoaderBMS.cpp */,
-				AA6EFDF004770C79005F316C /* NotesLoaderBMS.h */,
-				AA6EFDF104770C79005F316C /* NotesLoaderDWI.cpp */,
-				AA6EFDF204770C79005F316C /* NotesLoaderDWI.h */,
-				AA6EFDF304770C79005F316C /* NotesLoaderKSF.cpp */,
-				AA6EFDF404770C79005F316C /* NotesLoaderKSF.h */,
-				3688B8510BD42DAA004186AD /* NotesLoaderMidi.cpp */,
-				3688B8520BD42DAA004186AD /* NotesLoaderMidi.h */,
-				EE2153A710A75BEE0074B01B /* NotesLoaderPMS.cpp */,
-				EE2153A810A75BEE0074B01B /* NotesLoaderPMS.h */,
-				AA6EFDF504770C79005F316C /* NotesLoaderSM.cpp */,
-				AA6EFDF604770C79005F316C /* NotesLoaderSM.h */,
-				2BA7925A1304F20D002BD8E1 /* NotesLoaderSSC.cpp */,
-				2BA7925B1304F20D002BD8E1 /* NotesLoaderSSC.h */,
-				AA6EFDF704770C79005F316C /* NotesWriterDWI.cpp */,
-				AA6EFDF804770C79005F316C /* NotesWriterDWI.h */,
-				AA6EFDF904770C79005F316C /* NotesWriterSM.cpp */,
-				AA6EFDFA04770C79005F316C /* NotesWriterSM.h */,
-				2BA7925C1304F20D002BD8E1 /* NotesWriterSSC.cpp */,
-				2BA7925D1304F20D002BD8E1 /* NotesWriterSSC.h */,
 				AA6EFDFB04770C79005F316C /* NoteTypes.cpp */,
 				AA6EFDFC04770C79005F316C /* NoteTypes.h */,
 				AA80C75707F20D6600C99272 /* OptionRowHandler.cpp */,
@@ -4935,6 +4949,7 @@
 				2BA7925F1304F20D002BD8E1 /* NotesLoaderSSC.h in Headers */,
 				2BA792611304F20D002BD8E1 /* NotesWriterSSC.h in Headers */,
 				2B30D6831315EA7E00044B68 /* MouseDevice.h in Headers */,
+				2B76698B132FF71500586512 /* NotesLoaderSMA.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6180,6 +6195,7 @@
 				2BA7925E1304F20D002BD8E1 /* NotesLoaderSSC.cpp in Sources */,
 				2BA792601304F20D002BD8E1 /* NotesWriterSSC.cpp in Sources */,
 				2B30D6821315EA7E00044B68 /* MouseDevice.cpp in Sources */,
+				2B76698C132FF71500586512 /* NotesLoaderSMA.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

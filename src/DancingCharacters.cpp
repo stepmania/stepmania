@@ -43,10 +43,11 @@ const float MODEL_X_ONE_PLAYER = 0;
 const float MODEL_X_TWO_PLAYERS[NUM_PLAYERS] = { +8, -8 };
 const float MODEL_ROTATIONY_TWO_PLAYERS[NUM_PLAYERS] = { -90, 90 };
 
-DancingCharacters::DancingCharacters()
+DancingCharacters::DancingCharacters(): m_bDrawDangerLight(false),
+	m_CameraDistance(0), m_CameraPanYStart(0), m_CameraPanYEnd(0),
+	m_fLookAtHeight(0), m_fCameraHeightStart(0), m_fCameraHeightEnd(0),
+	m_fThisCameraStartBeat(0), m_fThisCameraEndBeat(0)
 {
-	m_bDrawDangerLight = false;
-
 	FOREACH_PlayerNumber( p )
 	{
 		m_pCharacter[p] = new Model;

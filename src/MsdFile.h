@@ -1,9 +1,7 @@
-/** @brief MsdFile - Read .SSC, .SM, .DWI, and .MSD files. */
-
 #ifndef MSDFILE_H
 #define MSDFILE_H
 
-/** @brief The class that reads the various .SSC, .SM, .DWI, and .MSD files. */
+/** @brief The class that reads the various .SSC, .SM, .SMA, .DWI, and .MSD files. */
 class MsdFile  
 {
 public:
@@ -15,6 +13,9 @@ public:
 	{
 		/** @brief The list of parameters. */
 		vector<RString> params;
+		/** @brief Set up the parameters with default values. */
+		value_t(): params() {}
+		
 		/**
 		 * @brief Access the proper parameter.
 		 * @param i the index.
@@ -22,6 +23,8 @@ public:
 		 */
 		RString operator[]( unsigned i ) const { if( i >= params.size() ) return RString(); return params[i]; }
 	};
+	
+	MsdFile(): values(), error("") {}
 
 	/** @brief Remove the MSDFile. */
 	virtual ~MsdFile() { }

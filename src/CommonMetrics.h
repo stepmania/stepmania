@@ -11,7 +11,7 @@
 class ThemeMetricDifficultiesToShow : public ThemeMetric<RString>
 {
 public:
-	ThemeMetricDifficultiesToShow() { }
+	ThemeMetricDifficultiesToShow(): m_v() { }
 	ThemeMetricDifficultiesToShow( const RString& sGroup, const RString& sName );
 	void Read();
 	const vector<Difficulty> &GetValue() const;
@@ -21,7 +21,7 @@ private:
 class ThemeMetricCourseDifficultiesToShow : public ThemeMetric<RString>
 {
 public:
-	ThemeMetricCourseDifficultiesToShow() { }
+	ThemeMetricCourseDifficultiesToShow(): m_v() { }
 	ThemeMetricCourseDifficultiesToShow( const RString& sGroup, const RString& sName );
 	void Read();
 	const vector<CourseDifficulty> &GetValue() const;
@@ -31,7 +31,7 @@ private:
 class ThemeMetricStepsTypesToShow : public ThemeMetric<RString>
 {
 public:
-	ThemeMetricStepsTypesToShow() { }
+	ThemeMetricStepsTypesToShow(): m_v() { }
 	ThemeMetricStepsTypesToShow( const RString& sGroup, const RString& sName );
 	void Read();
 	const vector<StepsType> &GetValue() const;

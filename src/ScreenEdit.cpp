@@ -94,35 +94,6 @@ static const char *EditStateNames[] = {
 XToString( EditState );
 LuaXType( EditState );
 
-#if defined(XBOX)
-void ScreenEdit::InitEditMappings()
-{
-	/* XXX: fill this in */
-	m_EditMappingsDeviceInput.Clear();
-
-	switch( EDIT_MODE.GetValue() )
-	{
-	case EditMode_Practice:
-		m_EditMappingsDeviceInput.button[EDIT_BUTTON_SCROLL_PREV_MEASURE][0] = DeviceInput(DEVICE_JOY1, JOY_HAT_UP);
-		m_EditMappingsMenuButton.button[EDIT_BUTTON_SCROLL_PREV_MEASURE][0] = GAME_BUTTON_UP;
-		m_EditMappingsDeviceInput.button[EDIT_BUTTON_SCROLL_NEXT_MEASURE][0] = DeviceInput(DEVICE_JOY1, JOY_HAT_DOWN);
-		m_EditMappingsMenuButton.button[EDIT_BUTTON_SCROLL_NEXT_MEASURE][0] = GAME_BUTTON_DOWN;
-		break;
-	default:
-		m_EditMappingsDeviceInput.button[EDIT_BUTTON_SCROLL_UP_LINE][0] = DeviceInput(DEVICE_JOY1, JOY_HAT_UP);
-		m_EditMappingsMenuButton.button[EDIT_BUTTON_SCROLL_UP_LINE][0] = GAME_BUTTON_UP;
-		m_EditMappingsDeviceInput.button[EDIT_BUTTON_SCROLL_DOWN_LINE][0] = DeviceInput(DEVICE_JOY1, JOY_HAT_DOWN);
-		m_EditMappingsMenuButton.button[EDIT_BUTTON_SCROLL_DOWN_LINE][0] = GAME_BUTTON_DOWN;
-		break;
-	}
-
-	// Map these to the triggers: L goes up, R goes down.
-	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SCROLL_UP_PAGE][0] = DeviceInput(DEVICE_JOY1, JOY_BUTTON_7);
-	//m_EditMappingsMenuButton.button[EDIT_BUTTON_SCROLL_UP_PAGE][0] = GAME_BUTTON_UPLEFT;
-	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SCROLL_DOWN_PAGE][0] = DeviceInput(DEVICE_JOY1, JOY_BUTTON_8);
-	//m_EditMappingsMenuButton.button[EDIT_BUTTON_SCROLL_DOWN_PAGE][0] = GAME_BUTTON_UPRIGHT;
-}
-#else
 void ScreenEdit::InitEditMappings()
 {
 	m_EditMappingsDeviceInput.Clear();
@@ -268,7 +239,7 @@ void ScreenEdit::InitEditMappings()
 	m_EditMappingsDeviceInput.button[EDIT_BUTTON_RIGHT_SIDE][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RALT);
 	m_EditMappingsDeviceInput.button[EDIT_BUTTON_LAY_ROLL][0]   = DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT);
 	// m_EditMappingsDeviceInput.button[EDIT_BUTTON_LAY_TAP_ATTACK][0] = DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT);
-	
+
 	m_EditMappingsDeviceInput.button[EDIT_BUTTON_CYCLE_TAP_LEFT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cn);
 	m_EditMappingsDeviceInput.button[EDIT_BUTTON_CYCLE_TAP_RIGHT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cm);
 
@@ -291,7 +262,7 @@ void ScreenEdit::InitEditMappings()
 	m_EditMappingsMenuButton.button[EDIT_BUTTON_OPEN_EDIT_MENU][1] = GAME_BUTTON_BACK;
 	m_EditMappingsDeviceInput.button[EDIT_BUTTON_OPEN_AREA_MENU][0] = DeviceInput(DEVICE_KEYBOARD, KEY_ENTER);
 	m_EditMappingsDeviceInput.button[EDIT_BUTTON_OPEN_INPUT_HELP][0] = DeviceInput(DEVICE_KEYBOARD, KEY_F1);
-	
+
 	m_EditMappingsDeviceInput.button[EDIT_BUTTON_BAKE_RANDOM_FROM_SONG_GROUP][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cb);
 	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_BAKE_RANDOM_FROM_SONG_GROUP][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LALT);
 	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_BAKE_RANDOM_FROM_SONG_GROUP][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RALT);
@@ -309,7 +280,7 @@ void ScreenEdit::InitEditMappings()
 
 	m_EditMappingsDeviceInput.button[EDIT_BUTTON_ADJUST_FINE][0] = DeviceInput(DEVICE_KEYBOARD, KEY_RALT);
 	m_EditMappingsDeviceInput.button[EDIT_BUTTON_ADJUST_FINE][1] = DeviceInput(DEVICE_KEYBOARD, KEY_LALT);
-	
+
 	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SAVE][1] = DeviceInput(DEVICE_KEYBOARD, KEY_Cs);
 	#if defined(MACOSX)
 		/* use cmd */
@@ -322,10 +293,10 @@ void ScreenEdit::InitEditMappings()
 	#endif
 
 	m_EditMappingsDeviceInput.button[EDIT_BUTTON_UNDO][1] = DeviceInput(DEVICE_KEYBOARD, KEY_Cu);
-	
+
 	// Switch players, if it makes sense to do so.
 	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SWITCH_PLAYERS][0] = DeviceInput(DEVICE_KEYBOARD, KEY_SLASH);
-	
+
 	m_PlayMappingsDeviceInput.button[EDIT_BUTTON_RETURN_TO_EDIT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_ESC);
 	m_PlayMappingsMenuButton.button[EDIT_BUTTON_RETURN_TO_EDIT][1] = GAME_BUTTON_BACK;
 
@@ -345,8 +316,6 @@ void ScreenEdit::InitEditMappings()
 	m_RecordPausedMappingsMenuButton.button[EDIT_BUTTON_RETURN_TO_EDIT][1] = GAME_BUTTON_BACK;
 	m_RecordPausedMappingsDeviceInput.button[EDIT_BUTTON_UNDO][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cu);
 }
-
-#endif
 
 /* Given a DeviceInput that was just depressed, return an active edit function. */
 EditButton ScreenEdit::DeviceToEdit( const DeviceInput &DeviceI ) const
@@ -800,7 +769,7 @@ void ScreenEdit::Init()
 	m_bHasUndo = false;
 	m_Undo.SetNumTracks( m_NoteDataEdit.GetNumTracks() );
 
-	m_bDirty = false;
+	m_bDirty = m_NoteDataEdit.IsEmpty(); // require the usage of saving if empty.
 
 	m_Player->Init( "Player", GAMESTATE->m_pPlayerState[PLAYER_1], NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL );
 	m_Player->CacheAllUsedNoteSkins();
@@ -1243,6 +1212,8 @@ static int FindAttackAtTime( const AttackArray& attacks, float fStartTime )
 
 static LocalizedString SWITCHED_TO		( "ScreenEdit", "Switched to" );
 static LocalizedString NO_BACKGROUNDS_AVAILABLE	( "ScreenEdit", "No backgrounds available" );
+static ThemeMetric<bool> INVERT_SCROLL_BUTTONS ( "ScreenEdit", "InvertScrollSpeedButtons" );
+
 void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 {
 	if( input.type == IET_RELEASE )
@@ -1364,10 +1335,10 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			{
 			DEFAULT_FAIL(EditB);
 			case EDIT_BUTTON_SCROLL_SPEED_DOWN:
-				--iSpeed;
+				INVERT_SCROLL_BUTTONS ? ++iSpeed : --iSpeed;
 				break;
 			case EDIT_BUTTON_SCROLL_SPEED_UP:
-				++iSpeed;
+				INVERT_SCROLL_BUTTONS ? --iSpeed : ++iSpeed;
 				break;
 			}
 			iSpeed = clamp( iSpeed, 0, (int) ARRAYLEN(fSpeeds)-1 );
@@ -2816,7 +2787,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 			HandleMainMenuChoice( ScreenEdit::save_on_exit );
 			return;
 		case ANSWER_NO:
-			/* Don't save; just exit. */
+			// Don't save; just exit.
 			SCREENMAN->SendMessageToTopScreen( SM_DoExit );
 			return;
 		case ANSWER_CANCEL:
@@ -2837,9 +2808,9 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if( SM == SM_SaveFailed ) // save failed; stay in the editor
 	{
-		/* We committed the steps to SongManager.  Revert to the last save, and
+		/* We committed the steps to SongManager. Revert to the last save, and
 		 * recommit the reversion to SongManager. */
-		LOG->Trace( "Save failed.  Changes uncommitted from memory." );
+		LOG->Trace( "Save failed. Changes uncommitted from memory." );
 		CopyFromLastSave();
 		m_pSteps->SetNoteData( m_NoteDataEdit );
 	}
@@ -2848,15 +2819,32 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		// IMPORTANT: CopyFromLastSave before deleting the Steps below
 		CopyFromLastSave();
 
-		/* The user has been given a choice to save.  Delete all unsaved
-		 * steps before exiting the editor. */
+		/* The user has been given a choice to save.
+		 * Delete all unsaved steps before exiting the editor. */
+		/* FIXME: This code causes all the steps to be deleted if you quit
+		 * without saving. However, without this code, any new steps will get
+		 * saved on quit. -aj */
+		
+		// At this point, the last good song copy is in use.
 		Song *pSong = GAMESTATE->m_pCurSong;
 		const vector<Steps*> &apSteps = pSong->GetAllSteps();
 		vector<Steps*> apToDelete;
 		FOREACH_CONST( Steps *, apSteps, s )
 		{
-			if( (*s)->IsAutogen() || (*s)->GetSavedToDisk() )
+			// If we're not on the same style, let it go.
+			if( GAMESTATE->m_pCurSteps[PLAYER_1]->m_StepsType != (*s)->m_StepsType )
 				continue;
+			// If autogenned, it isn't being saved.
+			if( (*s)->IsAutogen() )
+				continue;
+			// If the notedata has content, let it go.
+			if( !(*s)->GetNoteData().IsEmpty() )
+				continue;
+			// It's hard to say if these steps were saved to disk or not.
+			/*
+			if( !(*s)->GetSavedToDisk() )
+				continue;
+			 */
 			apToDelete.push_back( *s );
 		}
 		FOREACH_CONST( Steps *, apToDelete, s )
@@ -2868,6 +2856,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 			if( GAMESTATE->m_pCurSteps[PLAYER_1].Get() == pSteps )
 				GAMESTATE->m_pCurSteps[PLAYER_1].Set( NULL );
 		}
+		
 
 		m_Out.StartTransitioning( SM_GoToNextScreen );
 	}
@@ -3399,11 +3388,9 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 		case tempo:
 			{
 				// This affects all steps.
-				const NoteData OldClipboard( m_Clipboard );
-				HandleAreaMenuChoice( cut );
-
 				AlterType at = (AlterType)iAnswers[c];
 				float fScale = -1;
+				
 				switch( at )
 				{
 				DEFAULT_FAIL( at );
@@ -3414,31 +3401,18 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 				case expand_3_2:	fScale = 1.5f;		break;
 				case expand_2x:		fScale = 2;		break;
 				}
+				
+				int iStartIndex  = m_NoteFieldEdit.m_iBeginMarker;
+				int iEndIndex    = m_NoteFieldEdit.m_iEndMarker;
+				int iNewEndIndex = iEndIndex + lrintf( (iEndIndex - iStartIndex) * (fScale - 1) );
+				
+				// scale currently editing notes
+				NoteDataUtil::ScaleRegion( m_NoteDataEdit, fScale, iStartIndex, iEndIndex );
+				
+				// scale timing data
+				m_pSong->m_Timing.ScaleRegion( fScale, m_NoteFieldEdit.m_iBeginMarker, m_NoteFieldEdit.m_iEndMarker, true );
 
-				switch( at )
-				{
-				DEFAULT_FAIL( at );
-				case compress_2x:	NoteDataUtil::Scale( m_Clipboard, fScale );	break;
-				case compress_3_2:	NoteDataUtil::Scale( m_Clipboard, fScale );	break;
-				case compress_4_3:	NoteDataUtil::Scale( m_Clipboard, fScale );	break;
-				case expand_4_3:	NoteDataUtil::Scale( m_Clipboard, fScale );	break;
-				case expand_3_2:	NoteDataUtil::Scale( m_Clipboard, fScale );	break;
-				case expand_2x:		NoteDataUtil::Scale( m_Clipboard, fScale );	break;
-				}
-
-				int iOldClipboardRow = m_NoteFieldEdit.m_iEndMarker - m_NoteFieldEdit.m_iBeginMarker;
-				int iNewClipboardRow = lrintf( iOldClipboardRow * fScale );
-				int iDeltaRows = iNewClipboardRow - iOldClipboardRow;
-				int iNewClipboardEndRow = m_NoteFieldEdit.m_iBeginMarker + iNewClipboardRow;
-				if( iDeltaRows > 0 )
-					NoteDataUtil::InsertRows( m_NoteDataEdit, m_NoteFieldEdit.m_iBeginMarker, iDeltaRows );
-				else
-					NoteDataUtil::DeleteRows( m_NoteDataEdit, m_NoteFieldEdit.m_iBeginMarker, -iDeltaRows );
-
-				m_pSong->m_Timing.ScaleRegion( fScale, m_NoteFieldEdit.m_iBeginMarker, m_NoteFieldEdit.m_iEndMarker );
-
-				HandleAreaMenuChoice( paste_at_begin_marker );
-
+				// scale all other steps.
 				const vector<Steps*> sIter = m_pSong->GetAllSteps();
 				RString sTempStyle, sTempDiff;
 				for( unsigned i = 0; i < sIter.size(); i++ )
@@ -3458,12 +3432,8 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 					sIter[i]->SetNoteData( ndTemp );
 				}
 
-				m_NoteFieldEdit.m_iEndMarker = iNewClipboardEndRow;
-
-				float fOldBPM = m_pSong->GetBPMAtBeat( NoteRowToBeat(m_NoteFieldEdit.m_iBeginMarker) );
-				float fNewBPM = fOldBPM * fScale;
-				m_pSong->m_Timing.SetBPMAtRow( m_NoteFieldEdit.m_iBeginMarker, fNewBPM );
-				m_pSong->m_Timing.SetBPMAtRow( iNewClipboardEndRow, fOldBPM );
+				m_NoteFieldEdit.m_iEndMarker = iNewEndIndex;
+				
 			}
 			break;
 		case play:
@@ -4123,7 +4093,7 @@ void ScreenEdit::DoHelp()
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the ScreenEdit. */ 
+/** @brief Allow Lua to have access to ScreenEdit. */ 
 class LunaScreenEdit: public Luna<ScreenEdit>
 {
 public:

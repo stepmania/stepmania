@@ -52,18 +52,18 @@ void NoteData::ClearRangeForTrack( int rowBegin, int rowEnd, int iTrack )
 	if( rowBegin == rowEnd )
 		return;
 
-	NoteData::TrackMap::iterator begin, end;
-	GetTapNoteRangeInclusive( iTrack, rowBegin, rowEnd, begin, end );
+	NoteData::TrackMap::iterator lBegin, lEnd;
+	GetTapNoteRangeInclusive( iTrack, rowBegin, rowEnd, lBegin, lEnd );
 
-	if( begin != end && begin->first < rowBegin && begin->first + begin->second.iDuration > rowEnd )
+	if( lBegin != lEnd && lBegin->first < rowBegin && lBegin->first + lBegin->second.iDuration > rowEnd )
 	{
 		/* A hold note overlaps the whole range. Truncate it, and add the
 		 * remainder to the end. */
-		TapNote tn1 = begin->second;
+		TapNote tn1 = lBegin->second;
 		TapNote tn2 = tn1;
 
-		int iEndRow = begin->first + tn1.iDuration;
-		int iRow = begin->first;
+		int iEndRow = lBegin->first + tn1.iDuration;
+		int iRow = lBegin->first;
 
 		tn1.iDuration = rowBegin - iRow;
 		tn2.iDuration = iEndRow - rowEnd;
@@ -72,23 +72,23 @@ void NoteData::ClearRangeForTrack( int rowBegin, int rowEnd, int iTrack )
 		SetTapNote( iTrack, rowEnd, tn2 );
 
 		// We may have invalidated our iterators.
-		GetTapNoteRangeInclusive( iTrack, rowBegin, rowEnd, begin, end );
+		GetTapNoteRangeInclusive( iTrack, rowBegin, rowEnd, lBegin, lEnd );
 	}
-	else if( begin != end && begin->first < rowBegin )
+	else if( lBegin != lEnd && lBegin->first < rowBegin )
 	{
 		// A hold note overlaps the beginning of the range.  Truncate it.
-		TapNote &tn1 = begin->second;
-		int iRow = begin->first;
+		TapNote &tn1 = lBegin->second;
+		int iRow = lBegin->first;
 		tn1.iDuration = rowBegin - iRow;
 
-		++begin;
+		++lBegin;
 	}
 
-	if( begin != end )
+	if( lBegin != lEnd )
 	{
-		NoteData::TrackMap::iterator prev = end;
+		NoteData::TrackMap::iterator prev = lEnd;
 		--prev;
-		TapNote tn = begin->second;
+		TapNote tn = lBegin->second;
 		int iRow = prev->first;
 		if( tn.type == TapNote::hold_head && iRow + tn.iDuration > rowEnd )
 		{
@@ -99,14 +99,14 @@ void NoteData::ClearRangeForTrack( int rowBegin, int rowEnd, int iTrack )
 			tn.iDuration -= iAdd;
 			iRow += iAdd;
 			SetTapNote( iTrack, iRow, tn );
-			end = prev;
+			lEnd = prev;
 		}
 
 		// We may have invalidated our iterators.
-		GetTapNoteRangeInclusive( iTrack, rowBegin, rowEnd, begin, end );
+		GetTapNoteRangeInclusive( iTrack, rowBegin, rowEnd, lBegin, lEnd );
 	}
 
-	m_TapNotes[iTrack].erase( begin, end );
+	m_TapNotes[iTrack].erase( lBegin, lEnd );
 }
 
 void NoteData::ClearRange( int rowBegin, int rowEnd )
@@ -138,17 +138,17 @@ void NoteData::CopyRange( const NoteData& from, int rowFromBegin, int rowFromEnd
 
 	for( int t=0; t<GetNumTracks(); t++ )
 	{
-		NoteData::TrackMap::const_iterator begin, end;
-		from.GetTapNoteRangeInclusive( t, rowFromBegin, rowFromEnd, begin, end );
-		for( ; begin != end; ++begin )
+		NoteData::TrackMap::const_iterator lBegin, lEnd;
+		from.GetTapNoteRangeInclusive( t, rowFromBegin, rowFromEnd, lBegin, lEnd );
+		for( ; lBegin != lEnd; ++lBegin )
 		{
-			TapNote head = begin->second;
+			TapNote head = lBegin->second;
 			if( head.type == TapNote::empty )
 				continue;
 
 			if( head.type == TapNote::hold_head )
 			{
-				int iStartRow = begin->first + iMoveBy;
+				int iStartRow = lBegin->first + iMoveBy;
 				int iEndRow = iStartRow + head.iDuration;
 
 				iStartRow = clamp( iStartRow, rowToBegin, rowToEnd );
@@ -158,7 +158,7 @@ void NoteData::CopyRange( const NoteData& from, int rowFromBegin, int rowFromEnd
 			}
 			else
 			{
-				int iTo = begin->first + iMoveBy;
+				int iTo = lBegin->first + iMoveBy;
 				if( iTo >= rowToBegin && iTo <= rowToEnd )
 					this->SetTapNote( t, iTo, head );
 			}
@@ -307,11 +307,11 @@ void NoteData::AddHoldNote( int iTrack, int iStartRow, int iEndRow, TapNote tn )
 	ASSERT_M( iEndRow >= iStartRow, ssprintf("EndRow %d < StartRow %d",iEndRow,iStartRow) );
 
 	/* Include adjacent (non-overlapping) hold notes, since we need to merge with them. */
-	NoteData::TrackMap::iterator begin, end;
-	GetTapNoteRangeInclusive( iTrack, iStartRow, iEndRow, begin, end, true );
+	NoteData::TrackMap::iterator lBegin, lEnd;
+	GetTapNoteRangeInclusive( iTrack, iStartRow, iEndRow, lBegin, lEnd, true );
 
 	// Look for other hold notes that overlap and merge them into add.
-	for( iterator it = begin; it != end; ++it )
+	for( iterator it = lBegin; it != lEnd; ++it )
 	{
 		int iOtherRow = it->first;
 		const TapNote &tnOther = it->second;
@@ -325,14 +325,14 @@ void NoteData::AddHoldNote( int iTrack, int iStartRow, int iEndRow, TapNote tn )
 	tn.iDuration = iEndRow - iStartRow;
 
 	// Remove everything in the range.
-	while( begin != end )
+	while( lBegin != lEnd )
 	{
-		iterator next = begin;
+		iterator next = lBegin;
 		++next;
 
-		RemoveTapNote( iTrack, begin );
+		RemoveTapNote( iTrack, lBegin );
 
-		begin = next;
+		lBegin = next;
 	}
 
 	/* Additionally, if there's a tap note lying at the end of our range,
@@ -590,12 +590,12 @@ int NoteData::GetNumHoldNotes( int iStartIndex, int iEndIndex ) const
 	int iNumHolds = 0;
 	for( int t=0; t<GetNumTracks(); ++t )
 	{
-		NoteData::TrackMap::const_iterator begin, end;
-		GetTapNoteRangeExclusive( t, iStartIndex, iEndIndex, begin, end );
-		for( ; begin != end; ++begin )
+		NoteData::TrackMap::const_iterator lBegin, lEnd;
+		GetTapNoteRangeExclusive( t, iStartIndex, iEndIndex, lBegin, lEnd );
+		for( ; lBegin != lEnd; ++lBegin )
 		{
-			if( begin->second.type != TapNote::hold_head ||
-				begin->second.subType != TapNote::hold_head_hold )
+			if( lBegin->second.type != TapNote::hold_head ||
+				lBegin->second.subType != TapNote::hold_head_hold )
 				continue;
 			iNumHolds++;
 		}
@@ -608,12 +608,12 @@ int NoteData::GetNumRolls( int iStartIndex, int iEndIndex ) const
 	int iNumRolls = 0;
 	for( int t=0; t<GetNumTracks(); ++t )
 	{
-		NoteData::TrackMap::const_iterator begin, end;
-		GetTapNoteRangeExclusive( t, iStartIndex, iEndIndex, begin, end );
-		for( ; begin != end; ++begin )
+		NoteData::TrackMap::const_iterator lBegin, lEnd;
+		GetTapNoteRangeExclusive( t, iStartIndex, iEndIndex, lBegin, lEnd );
+		for( ; lBegin != lEnd; ++lBegin )
 		{
-			if( begin->second.type != TapNote::hold_head ||
-				begin->second.subType != TapNote::hold_head_roll )
+			if( lBegin->second.type != TapNote::hold_head ||
+				lBegin->second.subType != TapNote::hold_head_roll )
 				continue;
 			iNumRolls++;
 		}
@@ -773,43 +773,43 @@ bool NoteData::GetPrevTapNoteRowForTrack( int track, int &rowInOut ) const
 	return true;
 }
 
-void NoteData::GetTapNoteRange( int iTrack, int iStartRow, int iEndRow, TrackMap::iterator &begin, TrackMap::iterator &end )
+void NoteData::GetTapNoteRange( int iTrack, int iStartRow, int iEndRow, TrackMap::iterator &lBegin, TrackMap::iterator &lEnd )
 {
 	ASSERT_M( iTrack < GetNumTracks(), ssprintf("%i,%i", iTrack, GetNumTracks())  );
 	TrackMap &mapTrack = m_TapNotes[iTrack];
 
 	if( iStartRow > iEndRow )
 	{
-		begin = end = mapTrack.end();
+		lBegin = lEnd = mapTrack.end();
 		return;
 	}
 
 	if( iStartRow <= 0 )
-		begin = mapTrack.begin(); // optimization
+		lBegin = mapTrack.begin(); // optimization
 	else if( iStartRow >= MAX_NOTE_ROW )
-		begin = mapTrack.end(); // optimization
+		lBegin = mapTrack.end(); // optimization
 	else
-		begin = mapTrack.lower_bound( iStartRow );
+		lBegin = mapTrack.lower_bound( iStartRow );
 
 	if( iEndRow <= 0 )
-		end = mapTrack.begin(); // optimization
+		lEnd = mapTrack.begin(); // optimization
 	else if( iEndRow >= MAX_NOTE_ROW )
-		end = mapTrack.end(); // optimization
+		lEnd = mapTrack.end(); // optimization
 	else
-		end = mapTrack.lower_bound( iEndRow );
+		lEnd = mapTrack.lower_bound( iEndRow );
 }
 
 
 /* Include hold notes that overlap the edges.  If a hold note completely surrounds the given
  * range, included it, too.  If bIncludeAdjacent is true, also include hold notes adjacent to,
  * but not overlapping, the edge. */
-void NoteData::GetTapNoteRangeInclusive( int iTrack, int iStartRow, int iEndRow, TrackMap::iterator &begin, TrackMap::iterator &end, bool bIncludeAdjacent )
+void NoteData::GetTapNoteRangeInclusive( int iTrack, int iStartRow, int iEndRow, TrackMap::iterator &lBegin, TrackMap::iterator &lEnd, bool bIncludeAdjacent )
 {
-	GetTapNoteRange( iTrack, iStartRow, iEndRow, begin, end );
+	GetTapNoteRange( iTrack, iStartRow, iEndRow, lBegin, lEnd );
 
-	if( begin != this->begin(iTrack) )
+	if( lBegin != this->begin(iTrack) )
 	{
-		iterator prev = Decrement(begin);
+		iterator prev = Decrement(lBegin);
 
 		const TapNote &tn = prev->second;
 		if( tn.type == TapNote::hold_head )
@@ -821,62 +821,62 @@ void NoteData::GetTapNoteRangeInclusive( int iTrack, int iStartRow, int iEndRow,
 			if( iHoldEndRow > iStartRow )
 			{
 				// The previous note is a hold.
-				begin = prev;
+				lBegin = prev;
 			}
 		}
 	}
 
-	if( bIncludeAdjacent && end != this->end(iTrack) )
+	if( bIncludeAdjacent && lEnd != this->end(iTrack) )
 	{
 		// Include the next note if it's a hold and starts on iEndRow.
-		const TapNote &tn = end->second;
-		int iHoldStartRow = end->first;
+		const TapNote &tn = lEnd->second;
+		int iHoldStartRow = lEnd->first;
 		if( tn.type == TapNote::hold_head && iHoldStartRow == iEndRow )
-			++end;
+			++lEnd;
 	}
 }
 
-void NoteData::GetTapNoteRangeExclusive( int iTrack, int iStartRow, int iEndRow, TrackMap::iterator &begin, TrackMap::iterator &end )
+void NoteData::GetTapNoteRangeExclusive( int iTrack, int iStartRow, int iEndRow, TrackMap::iterator &lBegin, TrackMap::iterator &lEnd )
 {
-	GetTapNoteRange( iTrack, iStartRow, iEndRow, begin, end );
+	GetTapNoteRange( iTrack, iStartRow, iEndRow, lBegin, lEnd );
 
 	// If end-1 is a hold_head, and extends beyond iEndRow, exclude it.
-	if( begin != end && end != this->begin(iTrack) )
+	if( lBegin != lEnd && lEnd != this->begin(iTrack) )
 	{
-		iterator prev = end;
+		iterator prev = lEnd;
 		--prev;
 		if( prev->second.type == TapNote::hold_head )
 		{
 			int localStartRow = prev->first;
 			const TapNote &tn = prev->second;
 			if( localStartRow + tn.iDuration >= iEndRow )
-				end = prev;
+				lEnd = prev;
 		}
 	}
 }
 
-void NoteData::GetTapNoteRange( int iTrack, int iStartRow, int iEndRow, TrackMap::const_iterator &begin, TrackMap::const_iterator &end ) const
+void NoteData::GetTapNoteRange( int iTrack, int iStartRow, int iEndRow, TrackMap::const_iterator &lBegin, TrackMap::const_iterator &lEnd ) const
 {
 	TrackMap::iterator const_begin, const_end;
 	const_cast<NoteData *>(this)->GetTapNoteRange( iTrack, iStartRow, iEndRow, const_begin, const_end );
-	begin = const_begin;
-	end = const_end;
+	lBegin = const_begin;
+	lEnd = const_end;
 }
 
-void NoteData::GetTapNoteRangeInclusive( int iTrack, int iStartRow, int iEndRow, TrackMap::const_iterator &begin, TrackMap::const_iterator &end, bool bIncludeAdjacent ) const
+void NoteData::GetTapNoteRangeInclusive( int iTrack, int iStartRow, int iEndRow, TrackMap::const_iterator &lBegin, TrackMap::const_iterator &lEnd, bool bIncludeAdjacent ) const
 {
 	TrackMap::iterator const_begin, const_end;
 	const_cast<NoteData *>(this)->GetTapNoteRangeInclusive( iTrack, iStartRow, iEndRow, const_begin, const_end, bIncludeAdjacent );
-	begin = const_begin;
-	end = const_end;
+	lBegin = const_begin;
+	lEnd = const_end;
 }
 
-void NoteData::GetTapNoteRangeExclusive( int iTrack, int iStartRow, int iEndRow, TrackMap::const_iterator &begin, TrackMap::const_iterator &end ) const
+void NoteData::GetTapNoteRangeExclusive( int iTrack, int iStartRow, int iEndRow, TrackMap::const_iterator &lBegin, TrackMap::const_iterator &lEnd ) const
 {
 	TrackMap::iterator const_begin, const_end;
 	const_cast<NoteData *>(this)->GetTapNoteRange( iTrack, iStartRow, iEndRow, const_begin, const_end );
-	begin = const_begin;
-	end = const_end;
+	lBegin = const_begin;
+	lEnd = const_end;
 }
 
 

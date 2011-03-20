@@ -126,7 +126,7 @@ bool SSCLoader::LoadFromSSCFile( const RString &sPath, Song &out, bool bFromCach
 
 	int state = GETTING_SONG_INFO;
 	const unsigned values = msd.GetNumValues();
-	Steps* pNewNotes;
+	Steps* pNewNotes = NULL;
 
 	for( unsigned i = 0; i < values; i++ )
 	{
@@ -1007,7 +1007,7 @@ bool SSCLoader::LoadEditFromFile( RString sEditFilePath, ProfileSlot slot, bool 
 bool SSCLoader::LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePath, ProfileSlot slot, bool bAddStepsToSong )
 {
 	Song* pSong = NULL;
-	Steps* pNewNotes;
+	Steps* pNewNotes = NULL;
 	bool bSSCFormat = false;
 
 	for( unsigned i=0; i<msd.GetNumValues(); i++ )

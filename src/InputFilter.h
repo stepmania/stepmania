@@ -37,6 +37,7 @@ struct MouseCoordinates
 {
 	float fX;
 	float fY;
+	float fZ;
 };
 
 class RageMutex;
@@ -70,8 +71,10 @@ public:
 
 	// cursor
 	void UpdateCursorLocation(float _fX, float _fY);
+	void UpdateMouseWheel(float _fZ);
 	float GetCursorX(){ return m_MouseCoords.fX; }
 	float GetCursorY(){ return m_MouseCoords.fY; }
+	float GetMouseWheel(){ return m_MouseCoords.fZ; }
 
 	// Lua
 	void PushSelf( lua_State *L );
@@ -84,7 +87,7 @@ private:
 	vector<InputEvent> queue;
 	RageMutex *queuemutex;
 	MouseCoordinates m_MouseCoords;
-	
+
 	InputFilter(const InputFilter& rhs);
 	InputFilter& operator=(const InputFilter& rhs);
 };
