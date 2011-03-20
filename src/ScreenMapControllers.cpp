@@ -240,28 +240,6 @@ void ScreenMapControllers::Input( const InputEventPlus &input )
 
 	int button = input.DeviceI.button;
 
-#ifdef _XBOX
-	if( m_WaitingForPress.IsZero() && input.DeviceI.device == DEVICE_JOY1 )
-	{
-		// map the xbox controller buttons to the keyboard equivalents
-		if( input.DeviceI.button == JOY_HAT_LEFT )
-			button = KEY_LEFT;
-		else if( input.DeviceI.button == JOY_HAT_RIGHT )
-			button = KEY_RIGHT;
-		else if( input.DeviceI.button == JOY_HAT_UP )
-			button = KEY_UP;
-		else if( input.DeviceI.button == JOY_HAT_DOWN )
-			button = KEY_DOWN;
-		else if( input.DeviceI.button == JOY_AUX_1 )
-			button = KEY_ENTER;
-		else if( input.DeviceI.button == JOY_AUX_2 )
-			button = KEY_ESC;
-		else if( input.DeviceI.button == JOY_BUTTON_1 || input.DeviceI.button == JOY_BUTTON_2 ||
-				input.DeviceI.button == JOY_BUTTON_3 || input.DeviceI.button == JOY_BUTTON_4 )
-			button = KEY_DEL;
-	}
-#endif
-
 	/* TRICKY: Some adapters map the PlayStation digital d-pad to both axes and
 	 * buttons. We want buttons to be used for any mappings where possible
 	 * because presses of buttons aren't mutually exclusive and presses of axes
@@ -293,11 +271,7 @@ void ScreenMapControllers::Input( const InputEventPlus &input )
 			m_DeviceIToMap = input.DeviceI;
 		}
 	}
-#ifdef _XBOX
-	else if( input.DeviceI.device == DEVICE_JOY1 )
-#else
 	else if( input.DeviceI.device == DEVICE_KEYBOARD )
-#endif
 	{
 		switch( button )
 		{
@@ -310,10 +284,8 @@ void ScreenMapControllers::Input( const InputEventPlus &input )
 		 * pressed up on the joypad. */
 
 		case KEY_DEL:
-#ifndef _XBOX
 		case KEY_SPACE:
 		case KEY_BACK: // Clear the selected input mapping.
-#endif
 			if( m_iCurButton == (int) m_KeysToMap.size() )
 				break; // on exit
 

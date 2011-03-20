@@ -22,16 +22,6 @@
 #define DEFAULT_SOUND_DRIVER_LIST "AudioUnit,Null"
 
 
-#elif defined(_XBOX)
-#include "ArchHooks/ArchHooks_Xbox.h"
-#include "LoadingWindow/LoadingWindow_Xbox.h"
-#include "LowLevelWindow/LowLevelWindow_Win32.h"
-#include "MemoryCard/MemoryCardDriverThreaded_Xbox.h"
-#define DEFAULT_INPUT_DRIVER_LIST "Xbox"
-#define DEFAULT_MOVIE_DRIVER_LIST "Theora,FFMpeg,DShow,Null"
-#define DEFAULT_SOUND_DRIVER_LIST "DirectSound,DirectSound-sw,Null"
-
-
 #elif defined(UNIX)
 #include "ArchHooks/ArchHooks_Unix.h"
 #include "LowLevelWindow/LowLevelWindow_X11.h"
