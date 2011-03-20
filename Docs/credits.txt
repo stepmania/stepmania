@@ -46,7 +46,7 @@ Nicole Reid (okeeblow)
 Thai Pangsakulyanont (theDtTvB)
  * Various changes to BMS support to make things work better.
 
-Jason Felds (Wolfman)
+Jason Felds (Wolfman2000)
  * [Player] PercentUntilColorCombo metric
  * Mac OS X maintainer
  * Various fixes/changes. (see Changelog_sm-ssc.txt for more details)
