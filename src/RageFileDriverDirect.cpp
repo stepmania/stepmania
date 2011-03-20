@@ -64,6 +64,10 @@ private:
 	 */
 	bool m_bWriteFailed;
 	bool WriteFailed() const { return !(m_iMode & RageFile::STREAMED) && m_bWriteFailed; }
+	
+	// unused
+	RageFileObjDirect& operator=(const RageFileObjDirect& rhs);
+	RageFileObjDirect(const RageFileObjDirect& rhs);
 };
 
 
