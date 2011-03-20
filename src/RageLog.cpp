@@ -175,7 +175,7 @@ void RageLog::SetShowLogOutput( bool show )
 {
 	m_bShowLogOutput = show;
 
-#if defined(WIN32) && !defined(_XBOX)
+#if defined(WIN32)
 	if( m_bShowLogOutput )
 	{
 		// create a new console window and attach standard handles

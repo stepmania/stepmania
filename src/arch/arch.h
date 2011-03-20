@@ -7,8 +7,6 @@
 #if defined(_WINDOWS)
 #define SUPPORT_OPENGL
 #define SUPPORT_D3D
-#elif defined(_XBOX)
-#define SUPPORT_D3D
 #else
 #define SUPPORT_OPENGL
 #endif

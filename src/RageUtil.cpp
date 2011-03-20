@@ -967,14 +967,10 @@ bool GetCommandlineArgument( const RString &option, RString *argument, int iInde
 
 RString GetCwd()
 {
-#ifdef _XBOX
-	return SYS_BASE_PATH;
-#else
 	char buf[PATH_MAX];
 	bool ret = getcwd(buf, PATH_MAX) != NULL;
 	ASSERT(ret);
 	return buf;
-#endif
 }
 
 /*
