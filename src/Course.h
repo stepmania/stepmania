@@ -189,6 +189,8 @@ public:
 	{
 		Trail trail;
 		bool null;
+		
+		CacheData(): trail(), null(false) {}
 	};
 	typedef map<CacheEntry, CacheData> TrailCache_t;
 	mutable TrailCache_t m_TrailCache;

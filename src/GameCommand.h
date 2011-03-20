@@ -22,7 +22,27 @@ struct lua_State;
 class GameCommand
 {
 public:
-	GameCommand() { Init(); }
+	GameCommand(): m_Commands(), m_sName(""), m_sText(""),
+		m_bInvalid(true), m_sInvalidReason(""),
+		m_iIndex(-1), m_MultiPlayer(MultiPlayer_Invalid),
+		m_pStyle(NULL), m_pm(PlayMode_Invalid),
+		m_dc(Difficulty_Invalid),
+		m_CourseDifficulty(Difficulty_Invalid),
+		m_sAnnouncer(""), m_sPreferredModifiers(""),
+		m_sStageModifiers(""), m_sScreen(""), m_LuaFunction(),
+		m_pSong(NULL), m_pSteps(NULL), m_pCourse(NULL),
+		m_pTrail(NULL), m_pCharacter(NULL), m_SetEnv(),
+		m_sSongGroup(""), m_SortOrder(SortOrder_Invalid),
+		m_sSoundPath(""), m_vsScreensToPrepare(), m_iWeightPounds(-1),
+		m_iGoalCalories(-1), m_GoalType(GoalType_Invalid),
+		m_sProfileID(""), m_sUrl(""), m_bUrlExits(true),
+		m_bInsertCredit(false), m_bClearCredits(false),
+		m_bStopMusic(false), m_bApplyDefaultOptions(false),
+		m_bFadeMusic(false), m_fMusicFadeOutVolume(-1),
+		m_fMusicFadeOutSeconds(-1), m_bApplyCommitsScreens(true)
+	{
+		m_LuaFunction.Unset();
+	}
 	void Init();
 
 	void Load( int iIndex, const Commands& cmds );

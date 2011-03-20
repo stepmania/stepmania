@@ -8,7 +8,8 @@ class RageTexturePreloader
 {
 public:
 	RageTexturePreloader(): m_apTextures() { }
-	RageTexturePreloader( const RageTexturePreloader &cpy ) { *this = cpy; }
+	RageTexturePreloader( const RageTexturePreloader &cpy ):
+		m_apTextures(cpy.m_apTextures) { }
 	RageTexturePreloader &operator=( const RageTexturePreloader &rhs );
 	~RageTexturePreloader();
 	void Load( const RageTextureID &ID );

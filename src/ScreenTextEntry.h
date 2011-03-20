@@ -71,7 +71,10 @@ public:
 	}
 
 	struct TextEntrySettings {
-		TextEntrySettings() { }
+		TextEntrySettings(): smSendOnPop(), sQuestion(""),
+			sInitialAnswer(""), iMaxInputLength(0),
+			bPassword(false), Validate(), OnOK(), OnCancel(),
+			ValidateAppend(), FormatAnswerForDisplay() { }
 		ScreenMessage smSendOnPop;
 		RString sQuestion;
 		RString sInitialAnswer;

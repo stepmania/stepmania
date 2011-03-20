@@ -114,11 +114,10 @@ public:
 		Object::Register( this );
 	}
 
-	CachedObjectPointer( const CachedObjectPointer &cpy )
+	CachedObjectPointer( const CachedObjectPointer &cpy ):
+		m_pCache(cpy.m_pCache), m_bCacheIsSet(cpy.m_bCacheIsSet)
 	{
 		CachedObjectHelpers::Lock();
-		m_pCache = cpy.m_pCache;
-		m_bCacheIsSet = cpy.m_bCacheIsSet;
 		Object::Register( this );
 		CachedObjectHelpers::Unlock();
 	}

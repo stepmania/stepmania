@@ -104,10 +104,9 @@ public:
 	 * @brief Set up the HighScore List with default values.
 	 *
 	 * This used to call Init(), but it's better to be explicit here. */
-	HighScoreList(): HighGrade(Grade_NoData), iNumTimesPlayed(0)
-	{
-		vHighScores.clear();
-	}
+	HighScoreList(): vHighScores(), HighGrade(Grade_NoData),
+		iNumTimesPlayed(0), dtLastPlayed() {}
+
 	void Init();
 	
 	int GetNumTimesPlayed() const

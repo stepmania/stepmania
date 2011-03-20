@@ -248,6 +248,9 @@ struct SortTrailEntry
 {
 	TrailEntry entry;
 	int SortMeter;
+	
+	SortTrailEntry(): entry(), SortMeter(0) {}
+	
 	bool operator< ( const SortTrailEntry &rhs ) const { return SortMeter < rhs.SortMeter; }
 };
 

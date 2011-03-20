@@ -23,6 +23,8 @@ public:
 		 */
 		RString operator[]( unsigned i ) const { if( i >= params.size() ) return RString(); return params[i]; }
 	};
+	
+	MsdFile(): values(), error("") {}
 
 	/** @brief Remove the MSDFile. */
 	virtual ~MsdFile() { }
