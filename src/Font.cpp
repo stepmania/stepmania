@@ -713,8 +713,8 @@ void Font::Load( const RString &sIniPath, RString sChars )
 
 		for(unsigned i = 0; i < ImportList.size(); ++i)
 		{
-			RString fPath = THEME->GetPathF( "", ImportList[i], true );
-			if( fPath == "" )
+			RString sPath = THEME->GetPathF( "", ImportList[i], true );
+			if( sPath == "" )
 			{
 				RString s = ssprintf( "Font \"%s\" imports a font \"%s\" that doesn't exist", sIniPath.c_str(), ImportList[i].c_str() );
 				Dialog::OK( s );
@@ -722,7 +722,7 @@ void Font::Load( const RString &sIniPath, RString sChars )
 			}
 
 			Font subfont;
-			subfont.Load(fPath,"");
+			subfont.Load(sPath,"");
 			MergeFont(subfont);
 		}
 	}
