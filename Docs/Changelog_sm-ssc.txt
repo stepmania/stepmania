@@ -16,6 +16,8 @@ sm-ssc v1.2.4 | 20110???
 20110320
 --------
 * [PlayerOptions] Added SetNoteSkin(string) Lua binding. [AJ]
+* [PlayerOptions] Tons of new Lua bindings. See the Lua documentation for all
+  of them, there's too many to print here. [AJ]
 
 20110317
 --------
