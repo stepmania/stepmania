@@ -840,7 +840,15 @@ void PlayerOptions::ResetPrefs( ResetPrefsType type )
 class LunaPlayerOptions: public Luna<PlayerOptions>
 {
 public:
-	DEFINE_METHOD( GetNoteSkin, m_sNoteSkin )
+	// NoteSkins
+	static int GetNoteSkin( T *p, lua_State *L )
+	{
+		if( p->m_sNoteSkin.empty()  )
+			lua_pushstring( L, CommonMetrics::DEFAULT_NOTESKIN_NAME.GetValue() );
+		else
+			lua_pushstring( L, p->m_sNoteSkin );
+		return 1;
+	}
 	static int SetNoteSkin( T *p, lua_State *L )
 	{
 		if( NOTESKIN->DoesNoteSkinExist(SArg(1)) )
