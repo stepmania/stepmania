@@ -62,8 +62,11 @@ private:
 
 struct MusicWheelItemData : public WheelItemBaseData
 {
-	MusicWheelItemData() : m_iSectionCount(0) { }
-	MusicWheelItemData( WheelItemDataType type, Song* pSong, RString sSectionName, Course* pCourse, RageColor color, int iSectionCount );
+	MusicWheelItemData() : m_pCourse(NULL), m_pSong(NULL), m_Flags(),
+		m_iSectionCount(0), m_sLabel(""), m_pAction() { }
+	MusicWheelItemData( WheelItemDataType type, Song* pSong, 
+			   RString sSectionName, Course* pCourse, 
+			   RageColor color, int iSectionCount );
 
 	Course*			m_pCourse;
 	Song*			m_pSong;
