@@ -126,6 +126,7 @@ MusicWheelItem::MusicWheelItem( const MusicWheelItem &cpy ):
 	WheelItemBase( cpy ),
 	GRADES_SHOW_MACHINE( cpy.GRADES_SHOW_MACHINE ),
 	m_TextBanner( cpy.m_TextBanner ),
+	m_pTextSectionCount( cpy.m_pTextSectionCount ),
 	m_WheelNotifyIcon( cpy.m_WheelNotifyIcon )
 {
 	FOREACH_ENUM( MusicWheelItemType, i )
@@ -158,7 +159,7 @@ MusicWheelItem::MusicWheelItem( const MusicWheelItem &cpy ):
 		}
 	}
 
-	m_pTextSectionCount = new BitmapText( *cpy.m_pTextSectionCount );
+	//m_pTextSectionCount = new BitmapText( *cpy.m_pTextSectionCount );
 	this->AddChild( m_pTextSectionCount );
 
 	this->AddChild( &m_WheelNotifyIcon );
