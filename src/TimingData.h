@@ -328,7 +328,7 @@ struct WarpSegment
 	 * @param s the starting row of this segment.
 	 * @param r the row to warp to.
 	 */
-	WarpSegment( int s, int r ): m_iStartRow(max(0, (s < r ? s : r)),
+	WarpSegment( int s, int r ): m_iStartRow(max(0, (s < r ? s : r))),
 		 m_fWarpBeats(max(0, NoteRowToBeat((r > s ? r : s)))) {}
 	/**
 	 * @brief Creates a Warp Segment with the specified starting row and beat to warp to.
