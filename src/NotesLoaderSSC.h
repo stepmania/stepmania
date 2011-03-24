@@ -21,7 +21,10 @@ enum SSCLoadingStates
 	NUM_SSCLoadingStates /**< The number of states used. */
 };
 
+/** @brief The version where fakes started to be used as a radar category. */
 const float VERSION_RADAR_FAKE = 0.53f;
+/** @brief The version where WarpSegments started to be utilized. */
+const float VERSION_WARP_SEGMENT = 0.56f;
 
 /**
  * @brief The SSCLoader handles all of the parsing needed for .ssc files.
