@@ -803,6 +803,7 @@
 			<Function name='LoadFromMultiPlayer'/>
 		</Class>
 		<Class name='InputFilter'>
+			<Function name='GetMouseWheel'/>
 			<Function name='GetMouseX'/>
 			<Function name='GetMouseY'/>
 		</Class>
@@ -887,7 +888,79 @@
 			<Function name='GetStepsQueueWrapped'/>
 		</Class>
 		<Class name='PlayerOptions'>
+			<Function name='GetAlternate'/>
+			<Function name='GetAttackMines'/>
+			<Function name='GetBMRize'/>
+			<Function name='GetBeat'/>
+			<Function name='GetBig'/>
+			<Function name='GetBlind'/>
+			<Function name='GetBlink'/>
+			<Function name='GetBoomerang'/>
+			<Function name='GetBoost'/>
+			<Function name='GetBrake'/>
+			<Function name='GetBumpy'/>
+			<Function name='GetCMod'/>
+			<Function name='GetCentered'/>
+			<Function name='GetConfusion'/>
+			<Function name='GetCover'/>
+			<Function name='GetCross'/>
+			<Function name='GetDark'/>
+			<Function name='GetDizzy'/>
+			<Function name='GetDrunk'/>
+			<Function name='GetEcho'/>
+			<Function name='GetExpand'/>
+			<Function name='GetFlip'/>
+			<Function name='GetFloored'/>
+			<Function name='GetHidden'/>
+			<Function name='GetHiddenOffset'/>
+			<Function name='GetHoldRolls'/>
+			<Function name='GetInvert'/>
+			<Function name='GetLeft'/>
+			<Function name='GetLittle'/>
+			<Function name='GetMines'/>
+			<Function name='GetMini'/>
+			<Function name='GetMirror'/>
+			<Function name='GetNoFakes'/>
+			<Function name='GetNoHands'/>
+			<Function name='GetNoHolds'/>
+			<Function name='GetNoJumps'/>
+			<Function name='GetNoLifts'/>
+			<Function name='GetNoMines'/>
+			<Function name='GetNoQuads'/>
+			<Function name='GetNoRolls'/>
+			<Function name='GetNoStretch'/>
 			<Function name='GetNoteSkin'/>
+			<Function name='GetPassmark'/>
+			<Function name='GetPlanted'/>
+			<Function name='GetQuick'/>
+			<Function name='GetRandomAttacks'/>
+			<Function name='GetRandomSpeed'/>
+			<Function name='GetRandomVanish'/>
+			<Function name='GetReverse'/>
+			<Function name='GetReversePercentForColumn'/>
+			<Function name='GetRight'/>
+			<Function name='GetRoll'/>
+			<Function name='GetShuffle'/>
+			<Function name='GetSkew'/>
+			<Function name='GetSkippy'/>
+			<Function name='GetSoftShuffle'/>
+			<Function name='GetSongAttacks'/>
+			<Function name='GetSplit'/>
+			<Function name='GetStealth'/>
+			<Function name='GetStomp'/>
+			<Function name='GetSudden'/>
+			<Function name='GetSuddenOffset'/>
+			<Function name='GetSuperShuffle'/>
+			<Function name='GetTiny'/>
+			<Function name='GetTipsy'/>
+			<Function name='GetTornado'/>
+			<Function name='GetTwirl'/>
+			<Function name='GetTwister'/>
+			<Function name='GetWave'/>
+			<Function name='GetWide'/>
+			<Function name='GetXMod'/>
+			<Function name='GetXMode'/>
+			<Function name='SetNoteSkin'/>
 		</Class>
 		<Class name='PlayerStageStats'>
 			<Function name='FullCombo'/>
@@ -1993,5 +2066,5 @@
 		<Constant name='top' value='&apos;VertAlign_Top&apos;'/>
 	</Constants>
 	<Version>sm-ssc v1.2.3</Version>
-	<Date>2011-03-15</Date>
+	<Date>2011-03-20</Date>
 </Lua>
