@@ -456,6 +456,7 @@ public:
 		time_signature_denominator,
 		tickcount,
 		combo,
+		warp,
 		NUM_TIMING_DATA_INFORMATION_CHOICES
 	};
 	
