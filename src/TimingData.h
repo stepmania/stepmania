@@ -924,6 +924,12 @@ public:
 	 */
 	int GetWarpSegmentIndexAtBeat( float fBeat ) const { return GetWarpSegmentIndexAtRow( BeatToNoteRow( fBeat ) ); }
 	/**
+	 * @brief Checks if the row is inside a warp.
+	 * @param iRow the row to focus on.
+	 * @return true if the row is inside a warp, false otherwise.
+	 */
+	bool IsWarpAtRow( int iRow ) const;
+	/**
 	 * @brief Add the WarpSegment to the TimingData.
 	 * @param seg the new WarpSegment.
 	 */
@@ -1051,7 +1057,7 @@ public:
 	}
 	float GetElapsedTimeFromBeat( float fBeat ) const;
 
-	void GetBeatAndBPSFromElapsedTimeNoOffset( float fElapsedTime, float &fBeatOut, float &fBPSOut, bool &bFreezeOut, bool &bDelayOut, int &iWarpBeginOut, float &iWarpLengthOut ) const;
+	void GetBeatAndBPSFromElapsedTimeNoOffset( float fElapsedTime, float &fBeatOut, float &fBPSOut, bool &bFreezeOut, bool &bDelayOut, int &iWarpBeginOut, float &fWarpDestinationOut ) const;
 	float GetBeatFromElapsedTimeNoOffset( float fElapsedTime ) const	// shortcut for places that care only about the beat
 	{
 		float fBeat, fThrowAway, fThrowAway2;

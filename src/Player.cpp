@@ -2522,8 +2522,8 @@ void Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 {
 	//LOG->Trace( "Steps::UpdateTapNotesMissedOlderThan(%f)", fMissIfOlderThanThisBeat );
 	int iMissIfOlderThanThisRow;
+	const float fEarliestTime = GAMESTATE->m_fMusicSeconds - fMissIfOlderThanSeconds;
 	{
-		const float fEarliestTime = GAMESTATE->m_fMusicSeconds - fMissIfOlderThanSeconds;
 		bool bFreeze, bDelay;
 		float fMissIfOlderThanThisBeat;
 		float fThrowAway;
@@ -2550,7 +2550,7 @@ void Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 
 		if( !NeedsTapJudging(tn) )
 			continue;
-
+		
 		// Ignore all notes that are skipped via WARPS.
 		if( iter.Row() >= GAMESTATE->m_iWarpBeginRow && iter.Row() < BeatToNoteRow(GAMESTATE->m_fWarpDestination) )
 			continue;
@@ -2568,11 +2568,6 @@ void Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 		}
 		else
 		{
-			// warp hackery: don't score notes within the warp region.
-			// (Only useful when QuirksMode is enabled.) -aj
-			if( iter.Row() >= GAMESTATE->m_iWarpBeginRow && iter.Row() < BeatToNoteRow(GAMESTATE->m_fWarpDestination) )
-				continue;
-
 			tn.result.tns = TNS_Miss;
 		}
 	}

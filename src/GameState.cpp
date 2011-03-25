@@ -962,7 +962,8 @@ void GameState::UpdateSongPosition( float fPositionSeconds, const TimingData &ti
 	ASSERT_M( m_fSongBeat > -2000, ssprintf("Song beat %f at %f seconds", m_fSongBeat, fPositionSeconds) );
 
 	//if( m_iWarpBeginRow != -1 || m_iWarpEndRow == -1 )
-	
+		
+	/*
 	if( m_iWarpBeginRow != -1 && m_fWarpDestination > 0.0f )
 	{
 		float fWarpLength = m_fWarpDestination-NoteRowToBeat(m_iWarpBeginRow);
@@ -973,6 +974,7 @@ void GameState::UpdateSongPosition( float fPositionSeconds, const TimingData &ti
 			   BeatToNoteRow(m_fWarpDestination));
 		fPositionSeconds += (fWarpLength * m_fCurBPS);
 	}
+	 */
 
 	m_fMusicSeconds = fPositionSeconds;
 
