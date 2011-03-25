@@ -150,12 +150,30 @@ void TimingData::SetTimeSignatureDenominatorAtRow( int iRow, int iDenominator )
 	SetTimeSignatureAtRow( iRow, GetTimeSignatureSegmentAtBeat( NoteRowToBeat( iRow ) ).m_iNumerator, iDenominator );
 }
 
-/*
-void TimingData::SetWarpAtRow( int iRowAt, float fLengthBeats )
+void TimingData::SetWarpAtRow( int iRow, float fNew )
 {
-	// todo: code this -aj
+	unsigned i;
+	for( i=0; i<m_WarpSegments.size(); i++ )
+		if( m_WarpSegments[i].m_iStartRow == iRow )
+			break;
+	bool valid = iRow > 0 && NoteRowToBeat(iRow) < fNew;
+	if( i == m_WarpSegments.size() )
+	{
+		if( valid )
+		{
+			AddWarpSegment( WarpSegment(iRow, fNew) );
+		}
+	}
+	else
+	{
+		if( valid )
+		{
+			m_WarpSegments[i].m_fEndBeat = fNew;
+		}
+		else
+			m_WarpSegments.erase( m_WarpSegments.begin()+i, m_WarpSegments.begin()+i+1 );
+	}
 }
-*/
 
 /* Change an existing Tickcount segment, merge identical segments together or insert a new one. */
 void TimingData::SetTickcountAtRow( int iRow, int iTicks )
@@ -229,13 +247,13 @@ int TimingData::GetComboAtRow( int iNoteRow ) const
 	return m_ComboSegments[GetComboSegmentIndexAtRow( iNoteRow )].m_iCombo;
 }
 
-int TimingData::GetWarpToRow( int iWarpBeginRow ) const
+float TimingData::GetWarpAtRow( int iWarpRow ) const
 {
 	for( unsigned i=0; i<m_WarpSegments.size(); i++ )
 	{
-		if( m_WarpSegments[i].m_iStartRow == iWarpBeginRow )
+		if( m_WarpSegments[i].m_iStartRow == iWarpRow )
 		{
-			return iWarpBeginRow + BeatToNoteRow(m_WarpSegments[i].m_fWarpBeats);
+			return m_WarpSegments[i].m_fEndBeat;
 		}
 	}
 	return 0;
@@ -296,7 +314,7 @@ int TimingData::GetBPMSegmentIndexAtRow( int iNoteRow ) const
 	for( i=0; i<m_BPMSegments.size()-1; i++ )
 		if( m_BPMSegments[i+1].m_iStartRow > iNoteRow )
 			break;
-	return (int)i;
+	return static_cast<int>(i);
 }
 
 int TimingData::GetStopSegmentIndexAtRow( int iNoteRow, bool bDelay ) const
@@ -308,16 +326,50 @@ int TimingData::GetStopSegmentIndexAtRow( int iNoteRow, bool bDelay ) const
 		if( s.m_iStartRow > iNoteRow && s.m_bDelay == bDelay )
 			break;
 	}
-	return (int)i;
+	return static_cast<int>(i);
+}
+
+int TimingData::GetWarpSegmentIndexAtRow( int iNoteRow ) const
+{
+	unsigned i;
+	for( i=0; i<m_WarpSegments.size()-1; i++ )
+	{
+		const WarpSegment& s = m_WarpSegments[i+1];
+		if( s.m_iStartRow > iNoteRow )
+			break;
+	}
+	return static_cast<int>(i);
 }
 
 int TimingData::GetTimeSignatureSegmentIndexAtRow( int iRow ) const
 {
-	int i;
-	for (i=0; i < (int)(m_vTimeSignatureSegments.size()) - 1; i++ )
+	unsigned i;
+	for (i=0; i < m_vTimeSignatureSegments.size() - 1; i++ )
 		if( m_vTimeSignatureSegments[i+1].m_iStartRow > iRow )
 			break;
-	return i;
+	return static_cast<int>(i);
+}
+
+int TimingData::GetComboSegmentIndexAtRow( int iRow ) const
+{
+	unsigned i;
+	for( i=0; i<m_ComboSegments.size()-1; i++ )
+	{
+		const ComboSegment& s = m_ComboSegments[i+1];
+		if( s.m_iStartRow > iRow )
+			break;
+	}
+	return static_cast<int>(i);
+}
+
+BPMSegment& TimingData::GetBPMSegmentAtRow( int iNoteRow )
+{
+	static BPMSegment empty;
+	if( m_BPMSegments.empty() )
+		return empty;
+
+	int i = GetBPMSegmentIndexAtRow( iNoteRow );
+	return m_BPMSegments[i];
 }
 
 TimeSignatureSegment& TimingData::GetTimeSignatureSegmentAtRow( int iRow )
@@ -339,28 +391,6 @@ int TimingData::GetTimeSignatureDenominatorAtRow( int iRow )
 	return GetTimeSignatureSegmentAtRow( iRow ).m_iDenominator;
 }
 
-int TimingData::GetComboSegmentIndexAtRow( int iRow ) const
-{
-	unsigned i;
-	for( i=0; i<m_ComboSegments.size()-1; i++ )
-	{
-		const ComboSegment& s = m_ComboSegments[i+1];
-		if( s.m_iStartRow > iRow )
-			break;
-	}
-	return (int)i;
-}
-
-BPMSegment& TimingData::GetBPMSegmentAtRow( int iNoteRow )
-{
-	static BPMSegment empty;
-	if( m_BPMSegments.empty() )
-		return empty;
-
-	int i = GetBPMSegmentIndexAtRow( iNoteRow );
-	return m_BPMSegments[i];
-}
-
 ComboSegment& TimingData::GetComboSegmentAtRow( int iRow )
 {
 	unsigned i;
@@ -378,6 +408,16 @@ StopSegment& TimingData::GetStopSegmentAtRow( int iNoteRow, bool bDelay )
 	
 	int i = GetStopSegmentIndexAtRow( iNoteRow, bDelay );
 	return m_StopSegments[i];
+}
+
+WarpSegment& TimingData::GetWarpSegmentAtRow( int iRow )
+{
+	static WarpSegment empty;
+	if( m_WarpSegments.empty() )
+		return empty;
+	
+	int i = GetWarpSegmentIndexAtRow( iRow );
+	return m_WarpSegments[i];
 }
 
 int TimingData::GetTickcountSegmentIndexAtRow( int iRow ) const
@@ -478,7 +518,7 @@ void TimingData::GetBeatAndBPSFromElapsedTimeNoOffset( float fElapsedTime, float
 			*/
 
 			// the freeze segment is <= current time
-			//fElapsedTime -= m_WarpSegments[j].m_fWarpBeats;
+			//fElapsedTime -= m_WarpSegments[j].m_fEndBeat;
 
 			// this warp lies within this BPMSegment.
 			/*
@@ -492,7 +532,7 @@ void TimingData::GetBeatAndBPSFromElapsedTimeNoOffset( float fElapsedTime, float
 				bFreezeOut = false;
 				bDelayOut = false;
 				iWarpBeginOut = m_WarpSegments[j].m_iStartRow;
-				fWarpLengthOut = m_WarpSegments[j].m_fWarpBeats;
+				fWarpLengthOut = m_WarpSegments[j].m_fEndBeat;
 				return;
 			}
 			*/

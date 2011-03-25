@@ -150,7 +150,7 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 	{
 		const WarpSegment &ws = out.m_Timing.m_WarpSegments[i];
 
-		f.PutLine( ssprintf( "%.6f=%.6f", NoteRowToBeat(ws.m_iStartRow), ws.m_fWarpBeats ) );
+		f.PutLine( ssprintf( "%.6f=%.6f", NoteRowToBeat(ws.m_iStartRow), ws.m_fEndBeat ) );
 		if( i != out.m_Timing.m_WarpSegments.size()-1 )
 			f.Write( "," );
 	}
