@@ -2551,8 +2551,8 @@ void Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 		if( !NeedsTapJudging(tn) )
 			continue;
 
-		// warp hackery
-		if( iter.Row() >= GAMESTATE->m_iWarpBeginRow && iter.Row() <= (GAMESTATE->m_iWarpBeginRow + BeatToNoteRow(GAMESTATE->m_fWarpLength)) )
+		// Ignore all notes that are skipped via WARPS.
+		if( iter.Row() >= GAMESTATE->m_iWarpBeginRow && iter.Row() < BeatToNoteRow(GAMESTATE->m_fWarpDestination) )
 			continue;
 
 		if( tn.type == TapNote::mine )
@@ -2570,7 +2570,7 @@ void Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 		{
 			// warp hackery: don't score notes within the warp region.
 			// (Only useful when QuirksMode is enabled.) -aj
-			if( iter.Row() >= GAMESTATE->m_iWarpBeginRow && iter.Row() <= (GAMESTATE->m_iWarpBeginRow + BeatToNoteRow(GAMESTATE->m_fWarpLength)) )
+			if( iter.Row() >= GAMESTATE->m_iWarpBeginRow && iter.Row() < BeatToNoteRow(GAMESTATE->m_fWarpDestination) )
 				continue;
 
 			tn.result.tns = TNS_Miss;
@@ -2593,7 +2593,7 @@ void Player::UpdateJudgedRows()
 
 			// if row is within a warp section, ignore it. -aj
 			if( iRow >= GAMESTATE->m_iWarpBeginRow &&
-				iRow <= (GAMESTATE->m_iWarpBeginRow + BeatToNoteRow(GAMESTATE->m_fWarpLength)) )
+				iRow < BeatToNoteRow(GAMESTATE->m_fWarpDestination) )
 				continue;
 
 			if( iLastSeenRow != iRow )
@@ -2929,7 +2929,7 @@ void Player::HandleTapRowScore( unsigned row )
 
 	// more warp hackery. -aj
 	if( row >= (unsigned)GAMESTATE->m_iWarpBeginRow &&
-		row <= (unsigned)(GAMESTATE->m_iWarpBeginRow + BeatToNoteRow(GAMESTATE->m_fWarpLength)) )
+		row < (unsigned)(BeatToNoteRow(GAMESTATE->m_fWarpDestination)) )
 		return;
 
 	if( GAMESTATE->m_bDemonstrationOrJukebox )
@@ -3034,7 +3034,7 @@ void Player::HandleHoldCheckpoint( int iRow, int iNumHoldsHeldThisRow, int iNumH
 
 	// more warp hackery. -aj
 	if( iRow >= GAMESTATE->m_iWarpBeginRow &&
-		iRow <= (GAMESTATE->m_iWarpBeginRow + BeatToNoteRow(GAMESTATE->m_fWarpLength)) )
+		iRow < BeatToNoteRow(GAMESTATE->m_fWarpDestination) )
 		return;
 
 	// don't accumulate combo if AutoPlay is on.
