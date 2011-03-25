@@ -343,14 +343,12 @@ int TimingData::GetWarpSegmentIndexAtRow( int iNoteRow ) const
 
 bool TimingData::IsWarpAtRow( int iNoteRow ) const
 {
-	unsigned i;
-	for( i=0; i<m_WarpSegments.size(); i++ )
-	{
-		const WarpSegment& s = m_WarpSegments[i];
-		if( s.m_iStartRow >= iNoteRow )
-			return iNoteRow < BeatToNoteRow(m_WarpSegments[i].m_fEndBeat);
-	}
-	return false;
+	if( m_WarpSegments.empty() )
+		return false;
+	
+	int i = GetWarpSegmentIndexAtRow( iNoteRow );
+	const WarpSegment& s = m_WarpSegments[i];
+	return s.m_iStartRow <= iNoteRow && iNoteRow < BeatToNoteRow(s.m_fEndBeat);
 }
 
 int TimingData::GetTimeSignatureSegmentIndexAtRow( int iRow ) const

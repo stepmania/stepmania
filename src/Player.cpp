@@ -2587,8 +2587,7 @@ void Player::UpdateJudgedRows()
 			int iRow = iter.Row();
 
 			// if row is within a warp section, ignore it. -aj
-			if( iRow >= GAMESTATE->m_iWarpBeginRow &&
-				iRow < BeatToNoteRow(GAMESTATE->m_fWarpDestination) )
+			if( GAMESTATE->m_pCurSong->m_Timing.IsWarpAtRow(iRow) )
 				continue;
 
 			if( iLastSeenRow != iRow )
