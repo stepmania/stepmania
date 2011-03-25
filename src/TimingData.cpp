@@ -544,7 +544,7 @@ void TimingData::GetBeatAndBPSFromElapsedTimeNoOffset( float fElapsedTime, float
 			fBPS = itBPMS->m_fBPS;
 			itBPMS ++;
 			break;
-		case FOUND_STOP:
+		case FOUND_STOP: // TODO: update for Delays.
 			fTimeToNextEvent = bIsWarping ? 0 : itSS->m_fStopSeconds;
 			fNextEventTime   = fLastTime + fTimeToNextEvent;
 			const bool bIsDelay = itSS->m_bDelay;
