@@ -683,6 +683,14 @@ void TimingData::InsertRows( int iStartRow, int iRowsToAdd )
 		stop.m_iStartRow += iRowsToAdd;
 	}
 	
+	for( unsigned i = 0; i < m_WarpSegments.size(); i++ )
+	{
+		WarpSegment &warp = m_WarpSegments[i];
+		if (warp.m_iStartRow < iStartRow )
+			continue;
+		warp.m_iStartRow += iRowsToAdd;
+	}
+	
 	for( unsigned i = 0; i < m_vTimeSignatureSegments.size(); i++ )
 	{
 		TimeSignatureSegment &time = m_vTimeSignatureSegments[i];
@@ -762,6 +770,23 @@ void TimingData::DeleteRows( int iStartRow, int iRowsToDelete )
 
 		// After deleted region:
 		stop.m_iStartRow -= iRowsToDelete;
+	}
+	
+	for( unsigned i = 0; i < m_WarpSegments.size(); i++ )
+	{
+		WarpSegment &warp = m_WarpSegments[i];
+		
+		if( warp.m_iStartRow < iStartRow )
+			continue;
+		
+		if( warp.m_iStartRow < iStartRow+iRowsToDelete )
+		{
+			m_WarpSegments.erase( m_WarpSegments.begin()+i, m_WarpSegments.begin()+i+1 );
+			--i;
+			continue;
+		}
+		
+		warp.m_iStartRow -= iRowsToDelete;
 	}
 	
 	for( unsigned i = 0; i < m_vTimeSignatureSegments.size(); i++ )
@@ -891,6 +916,7 @@ class LunaTimingData: public Luna<TimingData>
 public:
 	static int HasStops( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasStops()); return 1; }
 	static int HasBPMChanges( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasBpmChanges()); return 1; }
+	static int HasWarps( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasWarps()); return 1; }
 	static int GetStops( T* p, lua_State *L )
 	{
 		vector<RString> vStops;
@@ -965,6 +991,7 @@ public:
 	{
 		ADD_METHOD( HasStops );
 		ADD_METHOD( HasBPMChanges );
+		ADD_METHOD( HasWarps );
 		ADD_METHOD( GetStops );
 		ADD_METHOD( GetDelays );
 		ADD_METHOD( GetBPMs );
