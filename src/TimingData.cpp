@@ -676,7 +676,7 @@ void TimingData::ScaleRegion( float fScale, int iStartIndex, int iEndIndex, bool
 		else
 			m_BPMSegments[i].m_iStartRow = lrintf( (iSegStart - iStartIndex) * fScale ) + iStartIndex;
 	}
-
+	
 	for( unsigned i = 0; i < m_StopSegments.size(); i++ )
 	{
 		const int iSegStartRow = m_StopSegments[i].m_iStartRow;
@@ -686,6 +686,25 @@ void TimingData::ScaleRegion( float fScale, int iStartIndex, int iEndIndex, bool
 			m_StopSegments[i].m_iStartRow += lrintf((iEndIndex - iStartIndex) * (fScale - 1));
 		else
 			m_StopSegments[i].m_iStartRow = lrintf((iSegStartRow - iStartIndex) * fScale) + iStartIndex;
+	}
+	
+	for( unsigned i = 0; i < m_WarpSegments.size(); i++ )
+	{
+		const int iSegStartRow = m_WarpSegments[i].m_iStartRow;
+		const int iSegEndRow = BeatToNoteRow( m_WarpSegments[i].m_fEndBeat );
+		if( iSegEndRow >= iStartIndex )
+		{
+			if( iSegEndRow > iEndIndex )
+				m_WarpSegments[i].m_fEndBeat += NoteRowToBeat(lrintf((iEndIndex - iStartIndex) * (fScale - 1)));
+			else
+				m_WarpSegments[i].m_fEndBeat = NoteRowToBeat(lrintf((iSegEndRow - iStartIndex) * fScale) + iStartIndex);
+		}
+		if( iSegStartRow < iStartIndex )
+			continue;
+		else if( iSegStartRow > iEndIndex )
+			m_WarpSegments[i].m_iStartRow += lrintf((iEndIndex - iStartIndex) * (fScale - 1));
+		else
+			m_WarpSegments[i].m_iStartRow = lrintf((iSegStartRow - iStartIndex) * fScale) + iStartIndex;
 	}
 	
 	// adjust BPM changes to preserve timing
@@ -735,7 +754,9 @@ void TimingData::InsertRows( int iStartRow, int iRowsToAdd )
 	for( unsigned i = 0; i < m_WarpSegments.size(); i++ )
 	{
 		WarpSegment &warp = m_WarpSegments[i];
-		if (warp.m_iStartRow < iStartRow )
+		if( BeatToNoteRow(warp.m_fEndBeat) >= iStartRow )
+			warp.m_fEndBeat += NoteRowToBeat(iRowsToAdd);
+		if( warp.m_iStartRow < iStartRow )
 			continue;
 		warp.m_iStartRow += iRowsToAdd;
 	}
@@ -824,6 +845,9 @@ void TimingData::DeleteRows( int iStartRow, int iRowsToDelete )
 	for( unsigned i = 0; i < m_WarpSegments.size(); i++ )
 	{
 		WarpSegment &warp = m_WarpSegments[i];
+		
+		if( BeatToNoteRow(warp.m_fEndBeat) >= iStartRow )
+			warp.m_fEndBeat = max( NoteRowToBeat(iStartRow), warp.m_fEndBeat - NoteRowToBeat(iRowsToDelete) );
 		
 		if( warp.m_iStartRow < iStartRow )
 			continue;
