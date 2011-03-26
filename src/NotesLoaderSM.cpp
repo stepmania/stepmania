@@ -236,12 +236,11 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 
 					// get BPM at current row:
 					BPMSegment curBPM = out.GetBPMSegmentAtRow(BeatToNoteRow(fFreezeBeat));
-					float fSecondsPerBeat = 60 / curBPM.m_fBPS;
-					// stop length (# measures to skip) = secsPerBeat * 8
+					float fSecondsPerBeat = 60 / curBPM.GetBPM();
 					float fSkipBeats = fFreezeSeconds/fSecondsPerBeat;
 
-					// WarpSegment wsTemp( BeatToNoteRow(fFreezeBeat), [unknown] );
-					// arrayWarpsFromNegativeStops.push_back( wsTemp );
+					WarpSegment wsTemp( BeatToNoteRow(fFreezeBeat), BeatToNoteRow(fFreezeBeat+fSkipBeats) );
+					arrayWarpsFromNegativeStops.push_back( wsTemp );
 
 					if( PREFSMAN->m_bQuirksMode )
 					{
@@ -386,8 +385,17 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 				out.AddWarpSegment( arrayWarpsFromNegativeBPMs[j] );
 			}
 		}
-		// warp sorting will need to take place.
-		//sort(out.m_WarpSegments.begin(), out.m_WarpSegments.end());
+		// do the same for Warps from Negative Stops.
+		/*
+		if(arrayWarpsFromNegativeStops.size() > 0)
+		{
+			for( unsigned j=0; j<arrayWarpsFromNegativeStops.size(); j++ )
+			{
+				out.AddWarpSegment( arrayWarpsFromNegativeStops[j] );
+			}
+		}
+		*/
+		sort(out.m_WarpSegments.begin(), out.m_WarpSegments.end());
 	}
 }
 
