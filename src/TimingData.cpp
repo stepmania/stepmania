@@ -547,19 +547,21 @@ void TimingData::GetBeatAndBPSFromElapsedTimeNoOffset( float fElapsedTime, float
 			itBPMS ++;
 			break;
 		case FOUND_STOP: // TODO: update for Delays.
-			fTimeToNextEvent = itSS->m_fStopSeconds;
-			fNextEventTime   = fLastTime + fTimeToNextEvent;
-			const bool bIsDelay = itSS->m_bDelay;
-			if ( fElapsedTime < fNextEventTime )
 			{
-				bFreezeOut = !bIsDelay;
-				bDelayOut  = bIsDelay;
-				fBeatOut   = NoteRowToBeat( itSS->m_iStartRow );
-				fBPSOut    = fBPS;
-				return;
+				fTimeToNextEvent = itSS->m_fStopSeconds;
+				fNextEventTime   = fLastTime + fTimeToNextEvent;
+				const bool bIsDelay = itSS->m_bDelay;
+				if ( fElapsedTime < fNextEventTime )
+				{
+					bFreezeOut = !bIsDelay;
+					bDelayOut  = bIsDelay;
+					fBeatOut   = NoteRowToBeat( itSS->m_iStartRow );
+					fBPSOut    = fBPS;
+					return;
+				}
+				fLastTime = fNextEventTime;
+				itSS ++;
 			}
-			fLastTime = fNextEventTime;
-			itSS ++;
 			break;
 		case FOUND_WARP:
 			bIsWarping = true;
