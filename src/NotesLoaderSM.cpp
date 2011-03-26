@@ -105,7 +105,7 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 	out.m_vTimeSignatureSegments.clear();
 
 	vector<WarpSegment> arrayWarpsFromNegativeBPMs;
-	//vector<WarpSegment> arrayWarpsFromNegativeStops;
+	vector<WarpSegment> arrayWarpsFromNegativeStops;
 
 	for( unsigned i=0; i<msd.GetNumValues(); i++ )
 	{
@@ -233,14 +233,16 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 				if(fFreezeSeconds < 0.0f)
 				{
 					// Convert negative Stops into Warps.
-					// 60/BPM = quarter note value (in seconds)
-					// quarter note value * 4 = number of measures to skip
-					// (WinDEU's guide says 8, but this may not be right.)
 
 					// get BPM at current row:
 					BPMSegment curBPM = out.GetBPMSegmentAtRow(BeatToNoteRow(fFreezeBeat));
-					float fQuarterNoteVal = 60 / curBPM.m_fBPS;
-					float fSkipToSeconds = fQuarterNoteVal * 4;
+					float fSecondsPerBeat = 60 / curBPM.m_fBPS;
+					// stop length (# measures to skip) = secsPerBeat * 8
+					float fSkipToSeconds = fFreezeSeconds/fSecondsPerBeat;
+					// location - stoplength = time to subtract from current.
+
+					// WarpSegment wsTemp( BeatToNoteRow(fFreezeBeat), [unknown] );
+					// arrayWarpsFromNegativeStops.push_back( wsTemp );
 
 					if( PREFSMAN->m_bQuirksMode )
 					{
