@@ -141,12 +141,7 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 				new_seg.m_iStartRow = BeatToNoteRow(fFreezeBeat);
 				new_seg.m_fStopSeconds = fFreezeSeconds;
 
-				if(fFreezeSeconds > 0.0f)
-				{
-					// LOG->Trace( "Adding a freeze segment: beat: %f, seconds = %f", new_seg.m_fStartBeat, new_seg.m_fStopSeconds );
-					out.AddStopSegment( new_seg );
-				}
-				else
+				if(fFreezeSeconds < 0.0f)
 				{
 					// negative stops (hi JS!) -aj
 					if( PREFSMAN->m_bQuirksMode )
@@ -156,6 +151,11 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 					}
 					else
 						LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid stop at beat %f, length %f.", fFreezeBeat, fFreezeSeconds );
+				}
+				else
+				{
+					// LOG->Trace( "Adding a freeze segment: beat: %f, seconds = %f", new_seg.m_fStartBeat, new_seg.m_fStopSeconds );
+					out.AddStopSegment( new_seg );
 				}
 			}
 		}
@@ -216,7 +216,7 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 				BPMSegment new_seg;
 				new_seg.m_iStartRow = BeatToNoteRow(fBeat);
 				new_seg.SetBPM( fNewBPM );
-				
+
 				// convert negative BPMs into Warp segments
 				if( fNewBPM < 0.0f )
 				{
@@ -231,7 +231,7 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 						// tJumpPos = (tPosBPS-abs(negBPS)) + (gPosBPMPosition - fNegPosition)
 						float fDeltaBeat = ((fNextPositiveBPM/60.0f)-abs(fNewBPM/60.0f)) + (fNextPositiveBeat-fBeat);
 						//float fWarpLengthBeats = fNextPositiveBeat + fDeltaBeat;
-						WarpSegment wsTemp(BeatToNoteRow(fBeat),fDeltaBeat);
+						WarpSegment wsTemp( BeatToNoteRow(fBeat), BeatToNoteRow(fNextPositiveBeat+fDeltaBeat) );
 						arrayWarpsFromNegativeBPMs.push_back(wsTemp);
 
 						/*
