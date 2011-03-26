@@ -930,6 +930,12 @@ public:
 	 */
 	bool IsWarpAtRow( int iRow ) const;
 	/**
+	 * @brief Checks if the beat is inside a warp.
+	 * @param fBeat the beat to focus on.
+	 * @return true if the row is inside a warp, false otherwise.
+	 */
+	bool IsWarpAtBeat( float fBeat ) const { return IsWarpAtRow( BeatToNoteRow( fBeat ) ); }
+	/**
 	 * @brief Add the WarpSegment to the TimingData.
 	 * @param seg the new WarpSegment.
 	 */
