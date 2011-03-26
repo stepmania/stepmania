@@ -159,7 +159,6 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 						negBeat = -1;
 						negBPM = 1;
 					}
-					else
 					{
 						BPMSegment new_seg;
 						new_seg.m_iStartRow = BeatToNoteRow(fBeat);
