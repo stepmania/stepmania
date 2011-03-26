@@ -238,7 +238,7 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 					BPMSegment curBPM = out.GetBPMSegmentAtRow(BeatToNoteRow(fFreezeBeat));
 					float fSecondsPerBeat = 60 / curBPM.m_fBPS;
 					// stop length (# measures to skip) = secsPerBeat * 8
-					float fSkipToSeconds = fFreezeSeconds/fSecondsPerBeat;
+					float fSkipBeats = fFreezeSeconds/fSecondsPerBeat;
 					// location - stoplength = time to subtract from current.
 
 					// WarpSegment wsTemp( BeatToNoteRow(fFreezeBeat), [unknown] );
