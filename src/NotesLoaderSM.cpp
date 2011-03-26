@@ -12,7 +12,13 @@
 #include "Steps.h"
 #include "PrefsManager.h"
 
+/** @brief The maximum file size for edits. */
 const int MAX_EDIT_STEPS_SIZE_BYTES		= 60*1024;	// 60KB
+/**
+ * @brief The highest allowable speed before Warps come in.
+ *
+ * This was brought in from StepMania 4's recent betas. */
+const float FAST_BPM_WARP = 9999999.f;
 
 void SMLoader::LoadFromSMTokens( 
 			     RString sStepsType, 
@@ -159,7 +165,7 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 						negBPM = 1;
 					}
 					// too fast. make it a warp.
-					if( fNewBPM > 400000.0 )
+					if( fNewBPM > FAST_BPM_WARP )
 					{
 						highspeedBeat = fBeat;
 					}
