@@ -156,9 +156,8 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 					// add in a warp.
 					if( negBPM < 0 )
 					{
-						WarpSegment new_seg;
-						new_seg.m_iStartRow = BeatToNoteRow(negBeat);
-						new_seg.m_fEndBeat = fBeat + (fNewBPM / -negBPM) * (fBeat - negBeat);
+						float endBeat = fBeat + (fNewBPM / -negBPM) * (fBeat - negBeat);
+						WarpSegment new_seg(negBeat, endBeat);
 						out.AddWarpSegment( new_seg );
 						
 						negBeat = -1;
@@ -174,9 +173,7 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 						// add in a warp.
 						if( highspeedBeat > 0 )
 						{
-							WarpSegment new_seg;
-							new_seg.m_iStartRow = BeatToNoteRow(highspeedBeat);
-							new_seg.m_fEndBeat = fBeat;
+							WarpSegment new_seg(highspeedBeat, fBeat);
 							out.AddWarpSegment( new_seg );
 							highspeedBeat = -1;
 						}
@@ -225,7 +222,7 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 					if( negBeat + fSkipBeats > fFreezeBeat )
 						fSkipBeats = fFreezeBeat - negBeat;
 					
-					WarpSegment ws( BeatToNoteRow(negBeat), negBeat + fSkipBeats);
+					WarpSegment ws( negBeat, negBeat + fSkipBeats);
 					out.AddWarpSegment( ws );
 					
 					negBeat = -1;
@@ -252,7 +249,7 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 				float fSecondsPerBeat = 60 / oldBPM.GetBPM();
 				float fSkipBeats = negPause / fSecondsPerBeat;
 				
-				WarpSegment ws( BeatToNoteRow(negBeat), negBeat + fSkipBeats);
+				WarpSegment ws( negBeat, negBeat + fSkipBeats);
 				out.AddWarpSegment( ws );
 			}
 		}

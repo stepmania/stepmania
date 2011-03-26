@@ -507,7 +507,7 @@ bool SSCLoader::LoadFromSSCFile( const RString &sPath, Song &out, bool bFromCach
 						const float fNewBeat = StringToFloat( arrayWarpValues[1] );
 						
 						if(fNewBeat > fBeat)
-							out.m_Timing.AddWarpSegment( WarpSegment(BeatToNoteRow(fBeat), fNewBeat) );
+							out.m_Timing.AddWarpSegment( WarpSegment(fBeat, fNewBeat) );
 						else
 						{
 							LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid Warp at beat %f, BPM %f.", fBeat, fNewBeat );

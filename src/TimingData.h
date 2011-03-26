@@ -318,13 +318,13 @@ struct TimeSignatureSegment
 struct WarpSegment
 {
 	/**
-	 * @brief Creates a simple Warp Segment with default values.
+	 * @brief Create a simple Warp Segment with default values.
 	 *
 	 * It is best to override the values as soon as possible.
 	 */
 	WarpSegment() : m_iStartRow(-1), m_fEndBeat(-1) { }
 	/**
-	 * @brief Creates a Warp Segment with the specified starting row and row to warp to.
+	 * @brief Create a Warp Segment with the specified starting row and row to warp to.
 	 * @param s the starting row of this segment.
 	 * @param r the row to warp to.
 	 */
@@ -337,6 +337,22 @@ struct WarpSegment
 	 */
 	WarpSegment( int s, float b ): m_iStartRow(max(0, s)),
 		m_fEndBeat(max(0, b)) {}
+	/**
+	 * @brief Create a Warp Segment with the specified starting beat and row to warp to.
+	 * @param s the starting beat in this segment.
+	 * @param r the row to warp to.
+	 */
+	WarpSegment( float s, int r ):
+		m_iStartRow(max(0, BeatToNoteRow(s))),
+		m_fEndBeat(max(0, NoteRowToBeat(r))) {}
+	/**
+	 * @brief Creates a Warp Segment with the specified starting beat and beat to warp to.
+	 * @param s the starting beat of this segment.
+	 * @param b the beat to warp to.
+	 */
+	WarpSegment( float s, float b ):
+		m_iStartRow(max(0, BeatToNoteRow((s < b ? s : b)))),
+		m_fEndBeat(max(0, (b > s ? b : s))) {}
 	/**
 	 * @brief The row in which the WarpSegment activates.
 	 */
