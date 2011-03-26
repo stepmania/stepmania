@@ -1520,6 +1520,8 @@ int Player::GetClosestNoteDirectional( int col, int iStartRow, int iEndRow, bool
 		// Is this the row we want?
 		do {
 			const TapNote &tn = begin->second;
+			if( GAMESTATE->m_pCurSong->m_Timing.IsWarpAtRow( begin->first ) )
+				break;
 			if( tn.type == TapNote::empty )
 				break;
 			if( !bAllowGraded && tn.result.tns != TNS_None )
@@ -1565,6 +1567,11 @@ int Player::GetClosestNonEmptyRowDirectional( int iStartRow, int iEndRow, bool b
 		while( !iter.IsAtEnd() )
 		{
 			if( NoteDataWithScoring::IsRowCompletelyJudged(m_NoteData, iter.Row()) )
+			{
+				++iter;
+				continue;
+			}
+			if( GAMESTATE->m_pCurSong->m_Timing.IsWarpAtRow( iter.Row() ) )
 			{
 				++iter;
 				continue;
@@ -1966,7 +1973,7 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 	 * Either option would fundamentally change the grading of two quick notes
 	 * "jack hammers." Hmm.
 	 */
-	const int iStepSearchRows = BeatToNoteRow( StepSearchDistance * GAMESTATE->m_fCurBPS * GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate );
+	const int iStepSearchRows = BeatToNoteRow( GAMESTATE->m_pCurSong->m_Timing.GetBeatFromElapsedTime( GAMESTATE->m_fMusicSeconds + StepSearchDistance ) ) - iSongRow;
 	int iRowOfOverlappingNoteOrRow = row;
 	if( row == -1 )
 	{
