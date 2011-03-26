@@ -2561,7 +2561,7 @@ void Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 			continue;
 		
 		// Ignore all notes that are skipped via WARPS.
-		if( iter.Row() >= GAMESTATE->m_iWarpBeginRow && iter.Row() < BeatToNoteRow(GAMESTATE->m_fWarpDestination) )
+		if( GAMESTATE->m_pCurSong->m_Timing.IsWarpAtRow( iter.Row() ) )
 			continue;
 
 		if( tn.type == TapNote::mine )
@@ -2931,8 +2931,7 @@ void Player::HandleTapRowScore( unsigned row )
 #endif
 
 	// more warp hackery. -aj
-	if( row >= (unsigned)GAMESTATE->m_iWarpBeginRow &&
-		row < (unsigned)(BeatToNoteRow(GAMESTATE->m_fWarpDestination)) )
+	if( GAMESTATE->m_pCurSong->m_Timing.IsWarpAtRow( row ) )
 		return;
 
 	if( GAMESTATE->m_bDemonstrationOrJukebox )
@@ -3036,8 +3035,7 @@ void Player::HandleHoldCheckpoint( int iRow, int iNumHoldsHeldThisRow, int iNumH
 #endif
 
 	// more warp hackery. -aj
-	if( iRow >= GAMESTATE->m_iWarpBeginRow &&
-		iRow < BeatToNoteRow(GAMESTATE->m_fWarpDestination) )
+	if( GAMESTATE->m_pCurSong->m_Timing.IsWarpAtRow( iRow ) )
 		return;
 
 	// don't accumulate combo if AutoPlay is on.

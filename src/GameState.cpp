@@ -961,21 +961,6 @@ void GameState::UpdateSongPosition( float fPositionSeconds, const TimingData &ti
 	// "Crash reason : -243478.890625 -48695.773438"
 	ASSERT_M( m_fSongBeat > -2000, ssprintf("Song beat %f at %f seconds", m_fSongBeat, fPositionSeconds) );
 
-	//if( m_iWarpBeginRow != -1 || m_iWarpEndRow == -1 )
-		
-	/*
-	if( m_iWarpBeginRow != -1 && m_fWarpDestination > 0.0f )
-	{
-		float fWarpLength = m_fWarpDestination-NoteRowToBeat(m_iWarpBeginRow);
-		// There is a warp in this section.
-		LOG->Trace("warp at row %i lasts for %f beats, jumps to row %i",
-			   m_iWarpBeginRow,
-			   fWarpLength,
-			   BeatToNoteRow(m_fWarpDestination));
-		fPositionSeconds += (fWarpLength * m_fCurBPS);
-	}
-	 */
-
 	m_fMusicSeconds = fPositionSeconds;
 
 	m_fLightSongBeat = timing.GetBeatFromElapsedTime( fPositionSeconds + g_fLightsAheadSeconds );

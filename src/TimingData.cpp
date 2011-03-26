@@ -348,7 +348,19 @@ bool TimingData::IsWarpAtRow( int iNoteRow ) const
 	
 	int i = GetWarpSegmentIndexAtRow( iNoteRow );
 	const WarpSegment& s = m_WarpSegments[i];
-	return s.m_iStartRow <= iNoteRow && iNoteRow < BeatToNoteRow(s.m_fEndBeat);
+	if( s.m_iStartRow <= iNoteRow && iNoteRow < BeatToNoteRow(s.m_fEndBeat) )
+	{
+		if( m_StopSegments.empty() )
+		{
+			return true;
+		}
+		if( GetStopAtRow(iNoteRow) != 0.0f )
+		{
+			return false;
+		}
+		return true;
+	}
+	return false;
 }
 
 int TimingData::GetTimeSignatureSegmentIndexAtRow( int iRow ) const
@@ -499,11 +511,6 @@ void TimingData::GetBeatAndBPSFromElapsedTimeNoOffset( float fElapsedTime, float
 			iEventRow = BeatToNoteRow(fWarpDestination);
 			iEventType = FOUND_WARP_DESTINATION;
 		}
-		if( itWS != m_WarpSegments.end() && itWS->m_iStartRow < iEventRow )
-		{
-			iEventRow = itWS->m_iStartRow;
-			iEventType = FOUND_WARP;
-		}
 		if( itBPMS != m_BPMSegments.end() && itBPMS->m_iStartRow < iEventRow )
 		{
 			iEventRow = itBPMS->m_iStartRow;
@@ -513,6 +520,11 @@ void TimingData::GetBeatAndBPSFromElapsedTimeNoOffset( float fElapsedTime, float
 		{
 			iEventRow = itSS->m_iStartRow;
 			iEventType = FOUND_STOP;
+		}
+		if( itWS != m_WarpSegments.end() && itWS->m_iStartRow < iEventRow )
+		{
+			iEventRow = itWS->m_iStartRow;
+			iEventType = FOUND_WARP;
 		}
 		if( iEventType == NOT_FOUND )
 		{
@@ -530,22 +542,12 @@ void TimingData::GetBeatAndBPSFromElapsedTimeNoOffset( float fElapsedTime, float
 		case FOUND_WARP_DESTINATION:
 			bIsWarping = false;
 			break;
-		case FOUND_WARP:
-			bIsWarping = true;
-			if( itWS->m_fEndBeat > fWarpDestination )
-			{
-				fWarpDestination = itWS->m_fEndBeat;
-			}
-			iWarpBeginOut = iEventRow;
-			fWarpDestinationOut = fWarpDestination;
-			itWS ++;
-			break;
 		case FOUND_BPM_CHANGE:
 			fBPS = itBPMS->m_fBPS;
 			itBPMS ++;
 			break;
 		case FOUND_STOP: // TODO: update for Delays.
-			fTimeToNextEvent = bIsWarping ? 0 : itSS->m_fStopSeconds;
+			fTimeToNextEvent = itSS->m_fStopSeconds;
 			fNextEventTime   = fLastTime + fTimeToNextEvent;
 			const bool bIsDelay = itSS->m_bDelay;
 			if ( fElapsedTime < fNextEventTime )
@@ -558,6 +560,16 @@ void TimingData::GetBeatAndBPSFromElapsedTimeNoOffset( float fElapsedTime, float
 			}
 			fLastTime = fNextEventTime;
 			itSS ++;
+			break;
+		case FOUND_WARP:
+			bIsWarping = true;
+			if( itWS->m_fEndBeat > fWarpDestination )
+			{
+				fWarpDestination = itWS->m_fEndBeat;
+			}
+			iWarpBeginOut = iEventRow;
+			fWarpDestinationOut = fWarpDestination;
+			itWS ++;
 			break;
 		}
 		iLastRow = iEventRow;
@@ -599,17 +611,12 @@ float TimingData::GetElapsedTimeFromBeatNoOffset( float fBeat ) const
 			iEventRow = BeatToNoteRow(fWarpDestination);
 			iEventType = FOUND_WARP_DESTINATION;
 		}
-		if( itWS != m_WarpSegments.end() && itWS->m_iStartRow < iEventRow )
-		{
-			iEventRow = itWS->m_iStartRow;
-			iEventType = FOUND_WARP;
-		}
 		if( itBPMS != m_BPMSegments.end() && itBPMS->m_iStartRow < iEventRow )
 		{
 			iEventRow = itBPMS->m_iStartRow;
 			iEventType = FOUND_BPM_CHANGE;
 		}
-		if( itSS != m_StopSegments.end() && itSS->m_bDelay && itSS->m_iStartRow < iEventRow )
+		if( itSS != m_StopSegments.end() && itSS->m_bDelay && itSS->m_iStartRow < iEventRow ) // delays (come before marker)
 		{
 			iEventRow = itSS->m_iStartRow;
 			iEventType = FOUND_STOP;
@@ -619,10 +626,15 @@ float TimingData::GetElapsedTimeFromBeatNoOffset( float fBeat ) const
 			iEventRow = BeatToNoteRow(fBeat);
 			iEventType = FOUND_MARKER;
 		}
-		if( itSS != m_StopSegments.end() && !itSS->m_bDelay && itSS->m_iStartRow < iEventRow )
+		if( itSS != m_StopSegments.end() && !itSS->m_bDelay && itSS->m_iStartRow < iEventRow ) // stops (come after marker)
 		{
 			iEventRow = itSS->m_iStartRow;
 			iEventType = FOUND_STOP;
+		}
+		if( itWS != m_WarpSegments.end() && itWS->m_iStartRow < iEventRow )
+		{
+			iEventRow = itWS->m_iStartRow;
+			iEventType = FOUND_WARP;
 		}
 		float fTimeToNextEvent = bIsWarping ? 0 : NoteRowToBeat( iEventRow - iLastRow ) / fBPS;
 		float fNextEventTime   = fLastTime + fTimeToNextEvent;
@@ -632,6 +644,18 @@ float TimingData::GetElapsedTimeFromBeatNoOffset( float fBeat ) const
 		case FOUND_WARP_DESTINATION:
 			bIsWarping = false;
 			break;
+		case FOUND_BPM_CHANGE:
+			fBPS = itBPMS->m_fBPS;
+			itBPMS ++;
+			break;
+		case FOUND_STOP:
+			fTimeToNextEvent = itSS->m_fStopSeconds;
+			fNextEventTime   = fLastTime + fTimeToNextEvent;
+			fLastTime = fNextEventTime;
+			itSS ++;
+			break;
+		case FOUND_MARKER:
+			return fLastTime;	
 		case FOUND_WARP:
 			bIsWarping = true;
 			if( itWS->m_fEndBeat > fWarpDestination )
@@ -640,18 +664,6 @@ float TimingData::GetElapsedTimeFromBeatNoOffset( float fBeat ) const
 			}
 			itWS ++;
 			break;
-		case FOUND_BPM_CHANGE:
-			fBPS = itBPMS->m_fBPS;
-			itBPMS ++;
-			break;
-		case FOUND_STOP:
-			fTimeToNextEvent = bIsWarping ? 0 : itSS->m_fStopSeconds;
-			fNextEventTime   = fLastTime + fTimeToNextEvent;
-			fLastTime = fNextEventTime;
-			itSS ++;
-			break;
-		case FOUND_MARKER:
-			return fLastTime;	
 		}
 		iLastRow = iEventRow;
 	}

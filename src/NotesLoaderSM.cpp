@@ -122,6 +122,7 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 			// prepare storage variables for negative BPMs -> Warps.
 			float negBeat = -1;
 			float negBPM = 1;
+			float highspeedBeat = -1;
 			
 			for( unsigned b=0; b<arrayBPMChangeExpressions.size(); b++ )
 			{
@@ -157,11 +158,28 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 						negBeat = -1;
 						negBPM = 1;
 					}
+					// too fast. make it a warp.
+					if( fNewBPM > 400000.0 )
 					{
-						BPMSegment new_seg;
-						new_seg.m_iStartRow = BeatToNoteRow(fBeat);
-						new_seg.SetBPM( fNewBPM );
-						out.AddBPMSegment( new_seg );
+						highspeedBeat = fBeat;
+					}
+					else
+					{
+						// add in a warp.
+						if( highspeedBeat > 0 )
+						{
+							WarpSegment new_seg;
+							new_seg.m_iStartRow = BeatToNoteRow(highspeedBeat);
+							new_seg.m_fEndBeat = fBeat;
+							out.AddWarpSegment( new_seg );
+							highspeedBeat = -1;
+						}
+						{
+							BPMSegment new_seg;
+							new_seg.m_iStartRow = BeatToNoteRow(fBeat);
+							new_seg.SetBPM( fNewBPM );
+							out.AddBPMSegment( new_seg );
+						}
 					}
 				}
 			}
