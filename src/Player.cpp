@@ -2639,6 +2639,10 @@ void Player::UpdateJudgedRows()
 			int iRow = iter.Row();
 			TapNote &tn = *iter;
 
+			// if row is within a warp section, ignore it. -aj
+			if( GAMESTATE->m_pCurSong->m_Timing.IsWarpAtRow(iRow) )
+				continue;
+
 			if( iRow != iLastSeenRow )
 			{
 				iLastSeenRow = iRow;
