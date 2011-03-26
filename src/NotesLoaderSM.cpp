@@ -104,8 +104,6 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 	out.m_WarpSegments.clear();
 	out.m_vTimeSignatureSegments.clear();
 
-	vector<WarpSegment> arrayWarpsFromNegativeStops;
-
 	for( unsigned i=0; i<msd.GetNumValues(); i++ )
 	{
 		const MsdFile::value_t &sParams = msd.GetValue(i);
@@ -175,6 +173,10 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 			vector<RString> arrayFreezeExpressions;
 			split( sParams[1], ",", arrayFreezeExpressions );
 
+			// Prepare variables for negative stop conversion.
+			float negBeat = -1;
+			float negPause = 0;
+			
 			for( unsigned f=0; f<arrayFreezeExpressions.size(); f++ )
 			{
 				vector<RString> arrayFreezeValues;
@@ -189,36 +191,46 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 
 				const float fFreezeBeat = StringToFloat( arrayFreezeValues[0] );
 				const float fFreezeSeconds = StringToFloat( arrayFreezeValues[1] );
-				StopSegment new_seg( BeatToNoteRow(fFreezeBeat), fFreezeSeconds );
-				// XXX: Remove Negatives Bug?
-				new_seg.m_iStartRow = BeatToNoteRow(fFreezeBeat);
-				new_seg.m_fStopSeconds = fFreezeSeconds;
-
-				if(fFreezeSeconds < 0.0f)
+				
+				// Process the prior stop.
+				if( negPause > 0 )
 				{
-					// Convert negative Stops into Warps.
-
-					// get BPM at current row:
-					BPMSegment curBPM = out.GetBPMSegmentAtRow(BeatToNoteRow(fFreezeBeat));
-					float fSecondsPerBeat = 60 / curBPM.GetBPM();
-					float fSkipBeats = fFreezeSeconds/fSecondsPerBeat;
-
-					WarpSegment wsTemp( BeatToNoteRow(fFreezeBeat), BeatToNoteRow(fFreezeBeat+fSkipBeats) );
-					arrayWarpsFromNegativeStops.push_back( wsTemp );
-
-					if( PREFSMAN->m_bQuirksMode )
-					{
-						// LOG->Trace( "Adding a negative freeze segment: beat: %f, seconds = %f", new_seg.m_fStartBeat, new_seg.m_fStopSeconds );
-						out.AddStopSegment( new_seg );
-					}
-					else
-						LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid stop at beat %f, length %f.", fFreezeBeat, fFreezeSeconds );
+					BPMSegment oldBPM = out.GetBPMSegmentAtRow(BeatToNoteRow(negBeat));
+					float fSecondsPerBeat = 60 / oldBPM.GetBPM();
+					float fSkipBeats = negPause / fSecondsPerBeat;
+					
+					if( negBeat + fSkipBeats > fFreezeBeat )
+						fSkipBeats = fFreezeBeat - negBeat;
+					
+					WarpSegment ws( BeatToNoteRow(negBeat), negBeat + fSkipBeats);
+					out.AddWarpSegment( ws );
+					
+					negBeat = -1;
+					negPause = 0;
 				}
-				else
+				
+				if( fFreezeSeconds < 0.0f )
 				{
-					// LOG->Trace( "Adding a freeze segment: beat: %f, seconds = %f", new_seg.m_fStartBeat, new_seg.m_fStopSeconds );
-					out.AddStopSegment( new_seg );
+					negBeat = fFreezeBeat;
+					negPause = -fFreezeSeconds;
 				}
+				else if( fFreezeSeconds > 0.0f )
+				{
+					StopSegment ss( BeatToNoteRow(fFreezeBeat), fFreezeSeconds );
+					out.AddStopSegment( ss );
+				}
+				
+			}
+			
+			// Process the prior stop if there was one.
+			if( negPause > 0 )
+			{
+				BPMSegment oldBPM = out.GetBPMSegmentAtRow(BeatToNoteRow(negBeat));
+				float fSecondsPerBeat = 60 / oldBPM.GetBPM();
+				float fSkipBeats = negPause / fSecondsPerBeat;
+				
+				WarpSegment ws( BeatToNoteRow(negBeat), negBeat + fSkipBeats);
+				out.AddWarpSegment( ws );
 			}
 		}
 
@@ -340,17 +352,7 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 				}
 			}
 		}
-
-		// do the same for Warps from Negative Stops.
-		/*
-		if(arrayWarpsFromNegativeStops.size() > 0)
-		{
-			for( unsigned j=0; j<arrayWarpsFromNegativeStops.size(); j++ )
-			{
-				out.AddWarpSegment( arrayWarpsFromNegativeStops[j] );
-			}
-		}
-		*/
+		// Ensure all of the warps are handled right.
 		sort(out.m_WarpSegments.begin(), out.m_WarpSegments.end());
 	}
 }
