@@ -117,82 +117,6 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 		{
 			out.m_fBeat0OffsetInSeconds = StringToFloat( sParams[1] );
 		}
-		else if( sValueName=="STOPS" || sValueName=="FREEZES" )
-		{
-			vector<RString> arrayFreezeExpressions;
-			split( sParams[1], ",", arrayFreezeExpressions );
-
-			for( unsigned f=0; f<arrayFreezeExpressions.size(); f++ )
-			{
-				vector<RString> arrayFreezeValues;
-				split( arrayFreezeExpressions[f], "=", arrayFreezeValues );
-				if( arrayFreezeValues.size() != 2 )
-				{
-					// XXX: Hard to tell which file caused this.
-					LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid #%s value \"%s\" (must have exactly one '='), ignored.",
-						sValueName.c_str(), arrayFreezeExpressions[f].c_str() );
-					continue;
-				}
-
-				const float fFreezeBeat = StringToFloat( arrayFreezeValues[0] );
-				const float fFreezeSeconds = StringToFloat( arrayFreezeValues[1] );
-				StopSegment new_seg( BeatToNoteRow(fFreezeBeat), fFreezeSeconds );
-				// XXX: Remove Negatives Bug?
-				new_seg.m_iStartRow = BeatToNoteRow(fFreezeBeat);
-				new_seg.m_fStopSeconds = fFreezeSeconds;
-
-				if(fFreezeSeconds < 0.0f)
-				{
-					// negative stops (hi JS!) -aj
-					if( PREFSMAN->m_bQuirksMode )
-					{
-						// LOG->Trace( "Adding a negative freeze segment: beat: %f, seconds = %f", new_seg.m_fStartBeat, new_seg.m_fStopSeconds );
-						out.AddStopSegment( new_seg );
-					}
-					else
-						LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid stop at beat %f, length %f.", fFreezeBeat, fFreezeSeconds );
-				}
-				else
-				{
-					// LOG->Trace( "Adding a freeze segment: beat: %f, seconds = %f", new_seg.m_fStartBeat, new_seg.m_fStopSeconds );
-					out.AddStopSegment( new_seg );
-				}
-			}
-		}
-		else if( sValueName=="DELAYS" )
-		{
-			vector<RString> arrayDelayExpressions;
-			split( sParams[1], ",", arrayDelayExpressions );
-
-			for( unsigned f=0; f<arrayDelayExpressions.size(); f++ )
-			{
-				vector<RString> arrayDelayValues;
-				split( arrayDelayExpressions[f], "=", arrayDelayValues );
-				if( arrayDelayValues.size() != 2 )
-				{
-					// XXX: Hard to tell which file caused this.
-					LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid #%s value \"%s\" (must have exactly one '='), ignored.",
-						sValueName.c_str(), arrayDelayExpressions[f].c_str() );
-					continue;
-				}
-
-				const float fFreezeBeat = StringToFloat( arrayDelayValues[0] );
-				const float fFreezeSeconds = StringToFloat( arrayDelayValues[1] );
-
-				StopSegment new_seg( BeatToNoteRow(fFreezeBeat), fFreezeSeconds, true );
-				// XXX: Remove Negatives Bug?
-				new_seg.m_iStartRow = BeatToNoteRow(fFreezeBeat);
-				new_seg.m_fStopSeconds = fFreezeSeconds;
-				
-				// LOG->Trace( "Adding a delay segment: beat: %f, seconds = %f", new_seg.m_fStartBeat, new_seg.m_fStopSeconds );
-
-				if(fFreezeSeconds > 0.0f)
-					out.AddStopSegment( new_seg );
-				else
-					LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid delay at beat %f, length %f.", fFreezeBeat, fFreezeSeconds );
-			}
-		}
-
 		else if( sValueName=="BPMS" )
 		{
 			vector<RString> arrayBPMChangeExpressions;
@@ -279,6 +203,92 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 					else
 						LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid BPM change at beat %f, BPM %f.", fBeat, fNewBPM );
 				}
+			}
+		}
+
+		else if( sValueName=="STOPS" || sValueName=="FREEZES" )
+		{
+			vector<RString> arrayFreezeExpressions;
+			split( sParams[1], ",", arrayFreezeExpressions );
+
+			for( unsigned f=0; f<arrayFreezeExpressions.size(); f++ )
+			{
+				vector<RString> arrayFreezeValues;
+				split( arrayFreezeExpressions[f], "=", arrayFreezeValues );
+				if( arrayFreezeValues.size() != 2 )
+				{
+					// XXX: Hard to tell which file caused this.
+					LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid #%s value \"%s\" (must have exactly one '='), ignored.",
+						sValueName.c_str(), arrayFreezeExpressions[f].c_str() );
+					continue;
+				}
+
+				const float fFreezeBeat = StringToFloat( arrayFreezeValues[0] );
+				const float fFreezeSeconds = StringToFloat( arrayFreezeValues[1] );
+				StopSegment new_seg( BeatToNoteRow(fFreezeBeat), fFreezeSeconds );
+				// XXX: Remove Negatives Bug?
+				new_seg.m_iStartRow = BeatToNoteRow(fFreezeBeat);
+				new_seg.m_fStopSeconds = fFreezeSeconds;
+
+				if(fFreezeSeconds < 0.0f)
+				{
+					// Convert negative Stops into Warps.
+					// 60/BPM = quarter note value (in seconds)
+					// quarter note value * 4 = number of measures to skip
+					// (WinDEU's guide says 8, but this may not be right.)
+
+					// get BPM at current row:
+					BPMSegment curBPM = out.GetBPMSegmentAtRow(BeatToNoteRow(fFreezeBeat));
+					float fQuarterNoteVal = 60 / curBPM.m_fBPS;
+					float fSkipToSeconds = fQuarterNoteVal * 4;
+
+					if( PREFSMAN->m_bQuirksMode )
+					{
+						// LOG->Trace( "Adding a negative freeze segment: beat: %f, seconds = %f", new_seg.m_fStartBeat, new_seg.m_fStopSeconds );
+						out.AddStopSegment( new_seg );
+					}
+					else
+						LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid stop at beat %f, length %f.", fFreezeBeat, fFreezeSeconds );
+				}
+				else
+				{
+					// LOG->Trace( "Adding a freeze segment: beat: %f, seconds = %f", new_seg.m_fStartBeat, new_seg.m_fStopSeconds );
+					out.AddStopSegment( new_seg );
+				}
+			}
+		}
+
+		else if( sValueName=="DELAYS" )
+		{
+			vector<RString> arrayDelayExpressions;
+			split( sParams[1], ",", arrayDelayExpressions );
+
+			for( unsigned f=0; f<arrayDelayExpressions.size(); f++ )
+			{
+				vector<RString> arrayDelayValues;
+				split( arrayDelayExpressions[f], "=", arrayDelayValues );
+				if( arrayDelayValues.size() != 2 )
+				{
+					// XXX: Hard to tell which file caused this.
+					LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid #%s value \"%s\" (must have exactly one '='), ignored.",
+						sValueName.c_str(), arrayDelayExpressions[f].c_str() );
+					continue;
+				}
+
+				const float fFreezeBeat = StringToFloat( arrayDelayValues[0] );
+				const float fFreezeSeconds = StringToFloat( arrayDelayValues[1] );
+
+				StopSegment new_seg( BeatToNoteRow(fFreezeBeat), fFreezeSeconds, true );
+				// XXX: Remove Negatives Bug?
+				new_seg.m_iStartRow = BeatToNoteRow(fFreezeBeat);
+				new_seg.m_fStopSeconds = fFreezeSeconds;
+				
+				// LOG->Trace( "Adding a delay segment: beat: %f, seconds = %f", new_seg.m_fStartBeat, new_seg.m_fStopSeconds );
+
+				if(fFreezeSeconds > 0.0f)
+					out.AddStopSegment( new_seg );
+				else
+					LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid delay at beat %f, length %f.", fFreezeBeat, fFreezeSeconds );
 			}
 		}
 
