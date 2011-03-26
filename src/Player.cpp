@@ -2040,7 +2040,9 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 			{
 			case TapNote::mine:
 				// Stepped too close to mine?
-				if( !bRelease && ( REQUIRE_STEP_ON_MINES == !bHeld ) && fSecondsFromExact <= GetWindowSeconds(TW_Mine) )
+				if( !bRelease && ( REQUIRE_STEP_ON_MINES == !bHeld ) && 
+				   fSecondsFromExact <= GetWindowSeconds(TW_Mine) &&
+				   !GAMESTATE->m_pCurSong->m_Timing.IsWarpAtRow(iSongRow) )
 					score = TNS_HitMine;
 				break;
 
