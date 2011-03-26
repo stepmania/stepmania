@@ -843,8 +843,6 @@ void NoteField::DrawPrimitives()
 			}
 		}
 
-		// todo: add warp text -aj
-
 		// Course mods text
 		const Course *pCourse = GAMESTATE->m_pCurCourse;
 		if( pCourse )
