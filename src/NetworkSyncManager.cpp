@@ -107,12 +107,12 @@ void NetworkSyncManager::CloseConnection()
 void NetworkSyncManager::PostStartUp( const RString& ServerIP )
 {
 	RString sAddress;
-	short iPort;
+	unsigned int iPort;
 
 	size_t cLoc = ServerIP.find( ':' );
 	if( ServerIP.find( ':' ) != RString::npos )
 	{
-		iPort = (short) atoi( ServerIP.substr( cLoc + 1 ).c_str() );
+		iPort = (unsigned int)atoi( ServerIP.substr( cLoc + 1 ).c_str() );
 		sAddress = ServerIP.substr( 0, cLoc );
 	}
 	else
@@ -121,7 +121,7 @@ void NetworkSyncManager::PostStartUp( const RString& ServerIP )
 		sAddress = ServerIP;
 	}
 
-	LOG->Info( "Attempting to connect to: %s, Port: %d", sAddress.c_str(), iPort );
+	LOG->Info( "Attempting to connect to: %s, Port: %i", sAddress.c_str(), iPort );
 
 	CloseConnection();
 	if( !Connect(sAddress.c_str(), iPort) )
