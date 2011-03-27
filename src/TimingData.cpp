@@ -354,7 +354,7 @@ bool TimingData::IsWarpAtRow( int iNoteRow ) const
 		{
 			return true;
 		}
-		if( GetStopAtRow(iNoteRow) != 0.0f )
+		if( GetStopAtRow(iNoteRow) != 0.0f || GetDelayAtRow(iNoteRow) != 0.0f )
 		{
 			return false;
 		}
