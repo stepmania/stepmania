@@ -1,5 +1,6 @@
 function Actor:LyricCommand(side)
 	self:settext( Var "LyricText" )
+	self:draworder(102)
 
 	self:stoptweening()
 	self:shadowlengthx(0)
