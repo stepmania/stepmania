@@ -13,7 +13,8 @@
 
 FontPage::FontPage(): m_iHeight(0), m_iLineSpacing(0), m_fVshift(0),
 	m_iDrawExtraPixelsLeft(0), m_iDrawExtraPixelsRight(0),
-	m_sTexturePath("") {}
+	m_FontPageTextures(), m_sTexturePath(""), m_aGlyphs(),
+	m_iCharToGlyphNo() {}
 
 void FontPage::Load( const FontPageSettings &cfg )
 {
@@ -221,9 +222,9 @@ int Font::GetLineHeightInSourcePixels( const wstring &szLine ) const
 
 
 Font::Font(): m_iRefCount(1), path(""), m_apPages(), m_pDefault(NULL),
-	m_bRightToLeft(false), m_DefaultStrokeColor(RageColor(0,0,0,0)),
-	m_sChars("") {} // strokes aren't shown by default, hence the Color.
-
+	m_iCharToGlyph(), m_bRightToLeft(false),
+	// strokes aren't shown by default, hence the Color.
+	m_DefaultStrokeColor(RageColor(0,0,0,0)), m_sChars("") {}
 Font::~Font()
 {
 	Unload();
@@ -712,8 +713,8 @@ void Font::Load( const RString &sIniPath, RString sChars )
 
 		for(unsigned i = 0; i < ImportList.size(); ++i)
 		{
-			RString fPath = THEME->GetPathF( "", ImportList[i], true );
-			if( fPath == "" )
+			RString sPath = THEME->GetPathF( "", ImportList[i], true );
+			if( sPath == "" )
 			{
 				RString s = ssprintf( "Font \"%s\" imports a font \"%s\" that doesn't exist", sIniPath.c_str(), ImportList[i].c_str() );
 				Dialog::OK( s );
@@ -721,7 +722,7 @@ void Font::Load( const RString &sIniPath, RString sChars )
 			}
 
 			Font subfont;
-			subfont.Load(fPath,"");
+			subfont.Load(sPath,"");
 			MergeFont(subfont);
 		}
 	}

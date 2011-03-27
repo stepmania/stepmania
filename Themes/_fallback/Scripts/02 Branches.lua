@@ -193,10 +193,4 @@ Branch = {
 	Network = function()
 		return IsNetConnected() and "ScreenTitleMenu" or "ScreenTitleMenu"
 	end,
-	QuickSetupStart = "ScreenQuickSetupOverview",
-	QuickSetupA = "ScreenQuickSetupPhaseOne",
-	QuickSetupB = "ScreenQuickSetupPhaseTwo",
-	QuickSetupC = "ScreenQuickSetupPhaseThree",
-	QuickSetupD = "ScreenQuickSetupPhaseFour",
-	QuickSetupFinished = "ScreenQuickSetupFinished"
 }

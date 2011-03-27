@@ -374,7 +374,7 @@ public:
 			int iFramesToCopy = (m_iBufferAvail-m_iBufferUsed) / iBytesPerFrame;
 			iFramesToCopy = min( iFramesToCopy, (int) (iFrames-iGotFrames) );
 			int iSamplesToCopy = iFramesToCopy * iSamplesPerFrame;
-			int iBytesToCopy = iSamplesToCopy * sizeof(int16_t);
+			int iBytesToCopy = iSamplesToCopy * sizeof(float);
 			memcpy( buf, m_pBuffer+m_iBufferUsed, iBytesToCopy );
 			m_iBufferUsed += iBytesToCopy;
 			iGotFrames += iFramesToCopy;

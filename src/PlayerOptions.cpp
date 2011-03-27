@@ -840,11 +840,225 @@ void PlayerOptions::ResetPrefs( ResetPrefsType type )
 class LunaPlayerOptions: public Luna<PlayerOptions>
 {
 public:
-	DEFINE_METHOD( GetNoteSkin, m_sNoteSkin )
+	// NoteSkins
+	static int GetNoteSkin( T *p, lua_State *L )
+	{
+		if( p->m_sNoteSkin.empty()  )
+			lua_pushstring( L, CommonMetrics::DEFAULT_NOTESKIN_NAME.GetValue() );
+		else
+			lua_pushstring( L, p->m_sNoteSkin );
+		return 1;
+	}
+	static int SetNoteSkin( T *p, lua_State *L )
+	{
+		if( NOTESKIN->DoesNoteSkinExist(SArg(1)) )
+			p->m_sNoteSkin = SArg(1);
+		return 0;
+	}
+
+	// Speed Mods
+	static int GetCMod( T *p, lua_State *L )
+	{
+		if( p->m_fTimeSpacing )
+			lua_pushnumber( L, p->m_fTimeSpacing );
+		else
+			lua_pushnil(L);
+		return 1;
+	}
+	static int GetXMod( T *p, lua_State *L )
+	{
+		if( !p->m_fTimeSpacing )
+			lua_pushnumber( L, p->m_fScrollSpeed );
+		else
+			lua_pushnil(L);
+		return 1;
+	}
+
+	// Accel
+	DEFINE_METHOD( GetBoost, m_fAccels[PlayerOptions::ACCEL_BOOST] )
+	DEFINE_METHOD( GetBrake, m_fAccels[PlayerOptions::ACCEL_BRAKE] )
+	DEFINE_METHOD( GetWave, m_fAccels[PlayerOptions::ACCEL_WAVE] )
+	DEFINE_METHOD( GetExpand, m_fAccels[PlayerOptions::ACCEL_EXPAND] )
+	DEFINE_METHOD( GetBoomerang, m_fAccels[PlayerOptions::ACCEL_BOOMERANG] )
+
+	// Effect
+	DEFINE_METHOD( GetDrunk, m_fEffects[PlayerOptions::EFFECT_DRUNK] ) // MoonGyuHyuk
+	DEFINE_METHOD( GetDizzy, m_fEffects[PlayerOptions::EFFECT_DIZZY] )
+	DEFINE_METHOD( GetConfusion, m_fEffects[PlayerOptions::EFFECT_CONFUSION] )
+	DEFINE_METHOD( GetMini, m_fEffects[PlayerOptions::EFFECT_MINI] )
+	DEFINE_METHOD( GetTiny, m_fEffects[PlayerOptions::EFFECT_TINY] )
+	DEFINE_METHOD( GetFlip, m_fEffects[PlayerOptions::EFFECT_FLIP] )
+	DEFINE_METHOD( GetInvert, m_fEffects[PlayerOptions::EFFECT_INVERT] )
+	DEFINE_METHOD( GetTornado, m_fEffects[PlayerOptions::EFFECT_TORNADO] )
+	DEFINE_METHOD( GetTipsy, m_fEffects[PlayerOptions::EFFECT_TIPSY] )
+	DEFINE_METHOD( GetBumpy, m_fEffects[PlayerOptions::EFFECT_BUMPY] )
+	DEFINE_METHOD( GetBeat, m_fEffects[PlayerOptions::EFFECT_BEAT] )
+	DEFINE_METHOD( GetXMode, m_fEffects[PlayerOptions::EFFECT_XMODE] )
+	DEFINE_METHOD( GetTwirl, m_fEffects[PlayerOptions::EFFECT_TWIRL] )
+	DEFINE_METHOD( GetRoll, m_fEffects[PlayerOptions::EFFECT_ROLL] )
+
+	// Appearance
+	DEFINE_METHOD( GetHidden, m_fAppearances[PlayerOptions::APPEARANCE_HIDDEN] )
+	DEFINE_METHOD( GetHiddenOffset, m_fAppearances[PlayerOptions::APPEARANCE_HIDDEN_OFFSET] )
+	DEFINE_METHOD( GetSudden, m_fAppearances[PlayerOptions::APPEARANCE_SUDDEN] )
+	DEFINE_METHOD( GetSuddenOffset, m_fAppearances[PlayerOptions::APPEARANCE_SUDDEN_OFFSET] )
+	DEFINE_METHOD( GetStealth, m_fAppearances[PlayerOptions::APPEARANCE_STEALTH] )
+	DEFINE_METHOD( GetBlink, m_fAppearances[PlayerOptions::APPEARANCE_BLINK] )
+	DEFINE_METHOD( GetRandomVanish, m_fAppearances[PlayerOptions::APPEARANCE_RANDOMVANISH] )
+
+	// Scroll
+	DEFINE_METHOD( GetReverse, m_fScrolls[PlayerOptions::SCROLL_REVERSE] )
+	static int GetReversePercentForColumn( T *p, lua_State *L )
+	{
+		// todo: make sure IArg is within boundaries -aj
+		lua_pushnumber( L, p->GetReversePercentForColumn(IArg(1)) );
+		return 1;
+	}
+	DEFINE_METHOD( GetSplit, m_fScrolls[PlayerOptions::SCROLL_SPLIT] )
+	DEFINE_METHOD( GetAlternate, m_fScrolls[PlayerOptions::SCROLL_ALTERNATE] )
+	DEFINE_METHOD( GetCross, m_fScrolls[PlayerOptions::SCROLL_CROSS] )
+	DEFINE_METHOD( GetCentered, m_fScrolls[PlayerOptions::SCROLL_CENTERED] )
+
+	// Turns
+	DEFINE_METHOD( GetMirror, m_bTurns[PlayerOptions::TURN_MIRROR] )
+	DEFINE_METHOD( GetLeft, m_bTurns[PlayerOptions::TURN_LEFT] )
+	DEFINE_METHOD( GetRight, m_bTurns[PlayerOptions::TURN_RIGHT] )
+	DEFINE_METHOD( GetShuffle, m_bTurns[PlayerOptions::TURN_SHUFFLE] )
+	DEFINE_METHOD( GetSoftShuffle, m_bTurns[PlayerOptions::TURN_SOFT_SHUFFLE] )
+	DEFINE_METHOD( GetSuperShuffle, m_bTurns[PlayerOptions::TURN_SUPER_SHUFFLE] )
+
+	// Transform
+	DEFINE_METHOD( GetNoHolds, m_bTransforms[PlayerOptions::TRANSFORM_NOHOLDS] )
+	DEFINE_METHOD( GetNoRolls, m_bTransforms[PlayerOptions::TRANSFORM_NOROLLS] )
+	DEFINE_METHOD( GetNoMines, m_bTransforms[PlayerOptions::TRANSFORM_NOMINES] )
+	DEFINE_METHOD( GetLittle, m_bTransforms[PlayerOptions::TRANSFORM_LITTLE] )
+	DEFINE_METHOD( GetWide, m_bTransforms[PlayerOptions::TRANSFORM_WIDE] )
+	DEFINE_METHOD( GetBig, m_bTransforms[PlayerOptions::TRANSFORM_BIG] )
+	DEFINE_METHOD( GetQuick, m_bTransforms[PlayerOptions::TRANSFORM_QUICK] )
+	DEFINE_METHOD( GetBMRize, m_bTransforms[PlayerOptions::TRANSFORM_BMRIZE] )
+	DEFINE_METHOD( GetSkippy, m_bTransforms[PlayerOptions::TRANSFORM_SKIPPY] )
+	DEFINE_METHOD( GetMines, m_bTransforms[PlayerOptions::TRANSFORM_MINES] )
+	DEFINE_METHOD( GetAttackMines, m_bTransforms[PlayerOptions::TRANSFORM_ATTACKMINES] )
+	DEFINE_METHOD( GetEcho, m_bTransforms[PlayerOptions::TRANSFORM_ECHO] )
+	DEFINE_METHOD( GetStomp, m_bTransforms[PlayerOptions::TRANSFORM_STOMP] )
+	DEFINE_METHOD( GetPlanted, m_bTransforms[PlayerOptions::TRANSFORM_PLANTED] )
+	DEFINE_METHOD( GetFloored, m_bTransforms[PlayerOptions::TRANSFORM_FLOORED] )
+	DEFINE_METHOD( GetTwister, m_bTransforms[PlayerOptions::TRANSFORM_TWISTER] )
+	DEFINE_METHOD( GetHoldRolls, m_bTransforms[PlayerOptions::TRANSFORM_HOLDROLLS] )
+	DEFINE_METHOD( GetNoJumps, m_bTransforms[PlayerOptions::TRANSFORM_NOJUMPS] )
+	DEFINE_METHOD( GetNoHands, m_bTransforms[PlayerOptions::TRANSFORM_NOHANDS] )
+	DEFINE_METHOD( GetNoLifts, m_bTransforms[PlayerOptions::TRANSFORM_NOLIFTS] )
+	DEFINE_METHOD( GetNoFakes, m_bTransforms[PlayerOptions::TRANSFORM_NOFAKES] )
+	DEFINE_METHOD( GetNoQuads, m_bTransforms[PlayerOptions::TRANSFORM_NOQUADS] )
+	DEFINE_METHOD( GetNoStretch, m_bTransforms[PlayerOptions::TRANSFORM_NOSTRETCH] )
+
+	// Others
+	DEFINE_METHOD( GetDark, m_fDark )
+	DEFINE_METHOD( GetBlind, m_fBlind )
+	DEFINE_METHOD( GetCover, m_fCover )
+	DEFINE_METHOD( GetRandomAttacks, m_fRandAttack )
+	DEFINE_METHOD( GetSongAttacks, m_fSongAttack )
+	DEFINE_METHOD( GetSkew, m_fSkew )
+	DEFINE_METHOD( GetPassmark, m_fPassmark )
+	DEFINE_METHOD( GetRandomSpeed, m_fRandomSpeed )
 
 	LunaPlayerOptions()
 	{
+		ADD_METHOD( GetDark );
+		// SetDark
+		ADD_METHOD( GetBlind );
+		// SetBlind
+		ADD_METHOD( GetCover );
+		// SetCover
+		// GetMuteOnError, SetMuteOnError
 		ADD_METHOD( GetNoteSkin );
+		ADD_METHOD( SetNoteSkin );
+		// GetPerspectiveTilt, SetPerspectiveTilt
+		ADD_METHOD( GetPassmark );
+		// SetPassmark
+		ADD_METHOD( GetRandomAttacks );
+		// SetRandomAttacks
+		ADD_METHOD( GetRandomSpeed );
+		// SetRandomSpeed
+		ADD_METHOD( GetSkew );
+		// SetSkew
+		ADD_METHOD( GetSongAttacks );
+		// SetSongAttacks
+		ADD_METHOD( GetCMod );
+		ADD_METHOD( GetXMod );
+
+		// Accel
+		ADD_METHOD( GetBoost );
+		ADD_METHOD( GetBrake );
+		ADD_METHOD( GetWave );
+		ADD_METHOD( GetExpand );
+		ADD_METHOD( GetBoomerang );
+
+		// Effect
+		ADD_METHOD( GetDrunk );
+		ADD_METHOD( GetDizzy );
+		ADD_METHOD( GetConfusion );
+		ADD_METHOD( GetMini );
+		ADD_METHOD( GetTiny );
+		ADD_METHOD( GetFlip );
+		ADD_METHOD( GetInvert );
+		ADD_METHOD( GetTornado );
+		ADD_METHOD( GetTipsy );
+		ADD_METHOD( GetBumpy );
+		ADD_METHOD( GetBeat );
+		ADD_METHOD( GetXMode );
+		ADD_METHOD( GetTwirl );
+		ADD_METHOD( GetRoll );
+
+		// Appearance
+		ADD_METHOD( GetHidden );
+		ADD_METHOD( GetHiddenOffset );
+		ADD_METHOD( GetSudden );
+		ADD_METHOD( GetSuddenOffset );
+		ADD_METHOD( GetStealth );
+		ADD_METHOD( GetBlink );
+		ADD_METHOD( GetRandomVanish );
+
+		// Scroll
+		ADD_METHOD( GetReverse );
+		ADD_METHOD( GetReversePercentForColumn );
+		ADD_METHOD( GetSplit );
+		ADD_METHOD( GetAlternate );
+		ADD_METHOD( GetCross );
+		ADD_METHOD( GetCentered );
+
+		// Turns
+		ADD_METHOD( GetMirror );
+		ADD_METHOD( GetLeft );
+		ADD_METHOD( GetRight );
+		ADD_METHOD( GetShuffle );
+		ADD_METHOD( GetSoftShuffle );
+		ADD_METHOD( GetSuperShuffle );
+
+		// Transform
+		ADD_METHOD( GetNoHolds );
+		ADD_METHOD( GetNoRolls );
+		ADD_METHOD( GetNoMines );
+		ADD_METHOD( GetLittle );
+		ADD_METHOD( GetWide );
+		ADD_METHOD( GetBig );
+		ADD_METHOD( GetQuick );
+		ADD_METHOD( GetBMRize );
+		ADD_METHOD( GetSkippy );
+		ADD_METHOD( GetMines );
+		ADD_METHOD( GetAttackMines );
+		ADD_METHOD( GetEcho );
+		ADD_METHOD( GetStomp );
+		ADD_METHOD( GetPlanted );
+		ADD_METHOD( GetFloored );
+		ADD_METHOD( GetTwister );
+		ADD_METHOD( GetHoldRolls );
+		ADD_METHOD( GetNoJumps );
+		ADD_METHOD( GetNoHands );
+		ADD_METHOD( GetNoLifts );
+		ADD_METHOD( GetNoFakes );
+		ADD_METHOD( GetNoQuads );
+		ADD_METHOD( GetNoStretch );
 	}
 };
 

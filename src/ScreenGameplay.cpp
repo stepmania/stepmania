@@ -97,12 +97,15 @@ static Preference<bool> g_bEasterEggs( "EasterEggs", true );
 
 PlayerInfo::PlayerInfo(): m_pn(PLAYER_INVALID), m_mp(MultiPlayer_Invalid),
 	m_bIsDummy(false), m_iDummyIndex(0), m_iAddToDifficulty(0),
-	m_bPlayerEnabled(false), m_pLifeMeter(NULL), 
+	m_bPlayerEnabled(false), m_PlayerStateDummy(), 
+	m_PlayerStageStatsDummy(), m_SoundEffectControl(),
+	m_vpStepsQueue(), m_asModifiersQueue(), m_pLifeMeter(NULL), 
 	m_ptextCourseSongNumber(NULL), m_ptextStepsDescription(NULL),
 	m_pPrimaryScoreDisplay(NULL), m_pSecondaryScoreDisplay(NULL),
 	m_pPrimaryScoreKeeper(NULL), m_pSecondaryScoreKeeper(NULL),
-	m_pActiveAttackList(NULL), m_pPlayer(NULL), m_pInventory(NULL),
-	m_pStepsDisplay(NULL) {}
+	m_ptextPlayerOptions(NULL), m_pActiveAttackList(NULL),
+	m_NoteData(), m_pPlayer(NULL), m_pInventory(NULL), 
+	m_pStepsDisplay(NULL), m_sprOniGameOver() {}
 
 void PlayerInfo::Load( PlayerNumber pn, MultiPlayer mp, bool bShowNoteField, int iAddToDifficulty )
 {

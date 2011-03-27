@@ -1520,6 +1520,8 @@ int Player::GetClosestNoteDirectional( int col, int iStartRow, int iEndRow, bool
 		// Is this the row we want?
 		do {
 			const TapNote &tn = begin->second;
+			if( GAMESTATE->m_pCurSong->m_Timing.IsWarpAtRow( begin->first ) )
+				break;
 			if( tn.type == TapNote::empty )
 				break;
 			if( !bAllowGraded && tn.result.tns != TNS_None )
@@ -1565,6 +1567,11 @@ int Player::GetClosestNonEmptyRowDirectional( int iStartRow, int iEndRow, bool b
 		while( !iter.IsAtEnd() )
 		{
 			if( NoteDataWithScoring::IsRowCompletelyJudged(m_NoteData, iter.Row()) )
+			{
+				++iter;
+				continue;
+			}
+			if( GAMESTATE->m_pCurSong->m_Timing.IsWarpAtRow( iter.Row() ) )
 			{
 				++iter;
 				continue;
@@ -1966,7 +1973,7 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 	 * Either option would fundamentally change the grading of two quick notes
 	 * "jack hammers." Hmm.
 	 */
-	const int iStepSearchRows = BeatToNoteRow( StepSearchDistance * GAMESTATE->m_fCurBPS * GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate );
+	const int iStepSearchRows = BeatToNoteRow( GAMESTATE->m_pCurSong->m_Timing.GetBeatFromElapsedTime( GAMESTATE->m_fMusicSeconds + StepSearchDistance ) ) - iSongRow;
 	int iRowOfOverlappingNoteOrRow = row;
 	if( row == -1 )
 	{
@@ -2040,7 +2047,9 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 			{
 			case TapNote::mine:
 				// Stepped too close to mine?
-				if( !bRelease && ( REQUIRE_STEP_ON_MINES == !bHeld ) && fSecondsFromExact <= GetWindowSeconds(TW_Mine) )
+				if( !bRelease && ( REQUIRE_STEP_ON_MINES == !bHeld ) && 
+				   fSecondsFromExact <= GetWindowSeconds(TW_Mine) &&
+				   !GAMESTATE->m_pCurSong->m_Timing.IsWarpAtRow(iSongRow) )
 					score = TNS_HitMine;
 				break;
 
@@ -2522,8 +2531,8 @@ void Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 {
 	//LOG->Trace( "Steps::UpdateTapNotesMissedOlderThan(%f)", fMissIfOlderThanThisBeat );
 	int iMissIfOlderThanThisRow;
+	const float fEarliestTime = GAMESTATE->m_fMusicSeconds - fMissIfOlderThanSeconds;
 	{
-		const float fEarliestTime = GAMESTATE->m_fMusicSeconds - fMissIfOlderThanSeconds;
 		bool bFreeze, bDelay;
 		float fMissIfOlderThanThisBeat;
 		float fThrowAway;
@@ -2550,9 +2559,9 @@ void Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 
 		if( !NeedsTapJudging(tn) )
 			continue;
-
-		// warp hackery
-		if( iter.Row() >= GAMESTATE->m_iWarpBeginRow && iter.Row() <= (GAMESTATE->m_iWarpBeginRow + BeatToNoteRow(GAMESTATE->m_fWarpLength)) )
+		
+		// Ignore all notes that are skipped via WARPS.
+		if( GAMESTATE->m_pCurSong->m_Timing.IsWarpAtRow( iter.Row() ) )
 			continue;
 
 		if( tn.type == TapNote::mine )
@@ -2568,11 +2577,6 @@ void Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 		}
 		else
 		{
-			// warp hackery: don't score notes within the warp region.
-			// (Only useful when QuirksMode is enabled.) -aj
-			if( iter.Row() >= GAMESTATE->m_iWarpBeginRow && iter.Row() <= (GAMESTATE->m_iWarpBeginRow + BeatToNoteRow(GAMESTATE->m_fWarpLength)) )
-				continue;
-
 			tn.result.tns = TNS_Miss;
 		}
 	}
@@ -2592,8 +2596,7 @@ void Player::UpdateJudgedRows()
 			int iRow = iter.Row();
 
 			// if row is within a warp section, ignore it. -aj
-			if( iRow >= GAMESTATE->m_iWarpBeginRow &&
-				iRow <= (GAMESTATE->m_iWarpBeginRow + BeatToNoteRow(GAMESTATE->m_fWarpLength)) )
+			if( GAMESTATE->m_pCurSong->m_Timing.IsWarpAtRow(iRow) )
 				continue;
 
 			if( iLastSeenRow != iRow )
@@ -2928,8 +2931,7 @@ void Player::HandleTapRowScore( unsigned row )
 #endif
 
 	// more warp hackery. -aj
-	if( row >= (unsigned)GAMESTATE->m_iWarpBeginRow &&
-		row <= (unsigned)(GAMESTATE->m_iWarpBeginRow + BeatToNoteRow(GAMESTATE->m_fWarpLength)) )
+	if( GAMESTATE->m_pCurSong->m_Timing.IsWarpAtRow( row ) )
 		return;
 
 	if( GAMESTATE->m_bDemonstrationOrJukebox )
@@ -3033,8 +3035,7 @@ void Player::HandleHoldCheckpoint( int iRow, int iNumHoldsHeldThisRow, int iNumH
 #endif
 
 	// more warp hackery. -aj
-	if( iRow >= GAMESTATE->m_iWarpBeginRow &&
-		iRow <= (GAMESTATE->m_iWarpBeginRow + BeatToNoteRow(GAMESTATE->m_fWarpLength)) )
+	if( GAMESTATE->m_pCurSong->m_Timing.IsWarpAtRow( iRow ) )
 		return;
 
 	// don't accumulate combo if AutoPlay is on.

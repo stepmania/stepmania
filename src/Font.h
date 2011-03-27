@@ -84,7 +84,9 @@ struct FontPageSettings
 		m_iDefaultWidth(-1),
 		m_iAdvanceExtraPixels(1),
 		m_fScaleAllWidthsBy(1),
-		m_sTextureHints("default")
+		m_sTextureHints("default"),
+		CharToGlyphNo(),
+		m_mapGlyphWidths()
 	{ }
 
 	/**

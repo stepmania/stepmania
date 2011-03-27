@@ -77,7 +77,7 @@ void ScreenPlayerOptions::Input( const InputEventPlus &input )
 	{
 		// apply the game default mods, but not the Profile saved mods
 		GAMESTATE->m_pPlayerState[pn]->ResetToDefaultPlayerOptions( ModsLevel_Preferred );
-		
+
 		MESSAGEMAN->Broadcast( ssprintf("CancelAllP%i", pn+1) );
 
 		for( unsigned r=0; r<m_pRows.size(); r++ )

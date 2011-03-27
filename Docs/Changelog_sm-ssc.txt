@@ -10,8 +10,21 @@ supported but exist anyways.)
 _____________________________________________________________________________
 
 ================================================================================
-sm-ssc v1.2.4 | 20110???
+sm-ssc v1.2.4 | 20110327
 --------------------------------------------------------------------------------
+
+20110326
+--------
+* [NotesLoaderSM, NotesWriterSSC] Officially add the #WARPS tag. The negative
+  tricks of the past are now officially standardized. Please tell us about
+  files which have broken sync or are otherwise unplayable/incorrect.
+  [AJ, theDtTvB, Wolfman2000]
+
+20110320
+--------
+* [PlayerOptions] Added SetNoteSkin(string) Lua binding. [AJ]
+* [PlayerOptions] Tons of new Lua bindings. See the Lua documentation for all
+  of them, there's too many to print here. [AJ]
 
 20110317
 --------
@@ -42,8 +55,10 @@ sm-ssc v1.2.4 | 20110???
 --------
 * [NotesWriterSM] Allow for either the #DESCRIPTION or #CREDIT tags to be used
   for the .sm format's description token. [Wolfman2000]
-* [ScreenEdit] Add Tap Note Cycling to allow inputting all of the taps. The way
-  to make holds and rolls are still the same as before. [Wolfman2000]
+* [ScreenEdit] Add Tap Note Cycling to allow inputting all of the taps. Use the
+  n and m keys to switch between taps, mines, lifts, and fakes. The way to make
+  holds and rolls are still the same as before; hold 1-0 (plus shift for rolls)
+  and then drag up or down as needed. [Wolfman2000]
 
 ================================================================================
 sm-ssc v1.2.3 | 20110323

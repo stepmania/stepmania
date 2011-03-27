@@ -123,6 +123,7 @@ static StepsType DetermineStepsType( int iPlayer, const NoteData &nd, const RStr
 	switch( iPlayer )
 	{
 	case 1:
+	case 3:
 		switch( iNumNonEmptyTracks ) 
 		{
 			case 5:		return StepsType_popn_five;

@@ -179,6 +179,8 @@ static StepsType DetermineStepsType( int iPlayer, const NoteData &nd, const RStr
 		case 8:		return StepsType_beat_single7;
 		case 12:	return StepsType_beat_double5;
 		case 16:	return StepsType_beat_double7;
+		case 5:		return StepsType_popn_five;
+		case 9:		return StepsType_popn_nine;
 		default:	return StepsType_Invalid;
 		}
 	default:
@@ -1102,6 +1104,18 @@ bool BMSLoader::LoadFromDir( const RString &sDir, Song &out )
 	map<RString,int> idToKeysoundIndex;
 	ReadGlobalTags( aBMSData[iMainDataIndex], out, sigAdjustments, idToKeysoundIndex );
 
+	// The brackets before the difficulty are in common substring, so remove them if it's found.
+	if( commonSubstring.size() > 2 && commonSubstring[commonSubstring.size() - 2] == ' ' )
+	{
+		switch( commonSubstring[commonSubstring.size() - 1] )
+		{
+		case '[':
+		case '(':
+		case '<':
+			commonSubstring = commonSubstring.substr(0, commonSubstring.size() - 2);
+		}
+	}
+	
 	// Override what that global tag said about the title if we have a good substring.
 	// Prevents clobbering and catches "MySong (7keys)" / "MySong (Another) (7keys)"
 	// Also catches "MySong (7keys)" / "MySong (14keys)"

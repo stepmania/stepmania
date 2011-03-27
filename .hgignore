@@ -60,6 +60,7 @@ GtkModule.so
 ver.cpp
 lib*_link.a
 Data/UserPrefs
+Data/uPrefs
 Data/GamePrefs/*.cfg
 PBProject/Hardware.plist
 Themes/pump
@@ -71,6 +72,7 @@ Data/SpeedMods.txt
 Program/StepMania*.lib
 crashinfo.txt
 Utils/temp*
+*.lnk
 
 syntax: regexp
 .*\#.*\#$

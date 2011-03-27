@@ -162,9 +162,9 @@ public:
 	/* All floats have a corresponding speed setting, which determines how fast
 	 * PlayerOptions::Approach approaches. */
 	bool	m_bSetScrollSpeed;				// true if the scroll speed was set by FromString
-	float	m_fTimeSpacing,			m_SpeedfTimeSpacing;	// instead of Beat spacing
-	float	m_fScrollSpeed,			m_SpeedfScrollSpeed;	// used if !m_bTimeSpacing
-	float	m_fScrollBPM,			m_SpeedfScrollBPM;		// used if m_bTimeSpacing
+	float	m_fTimeSpacing,			m_SpeedfTimeSpacing;	// instead of Beat spacing (CMods, mMods)
+	float	m_fScrollSpeed,			m_SpeedfScrollSpeed;	// used if !m_bTimeSpacing (xMods)
+	float	m_fScrollBPM,			m_SpeedfScrollBPM;		// used if m_bTimeSpacing (CMod)
 	float	m_fAccels[NUM_ACCELS],		m_SpeedfAccels[NUM_ACCELS];
 	float	m_fEffects[NUM_EFFECTS],	m_SpeedfEffects[NUM_EFFECTS];
 	float	m_fAppearances[NUM_APPEARANCES],m_SpeedfAppearances[NUM_APPEARANCES];
@@ -189,7 +189,7 @@ public:
 	bool		m_bTransforms[NUM_TRANSFORMS];
 	bool		m_bMuteOnError;
 	/** @brief How can the Player fail a song? */
-	enum FailType { 
+	enum FailType {
 		FAIL_IMMEDIATE=0,		/**< fail immediately when life touches 0 */
 		FAIL_IMMEDIATE_CONTINUE,	/**< Same as above, but allow playing the rest of the song */
 		FAIL_AT_END,			/**< fail if life is at 0 when the song ends */

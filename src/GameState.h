@@ -208,9 +208,10 @@ public:
 	bool		m_bFreeze;
 	/** @brief A flag to determine if we're in the middle of a delay (Pump style stop). */
 	bool		m_bDelay;
-	// used for warping:
+	/** @brief The row used to start a warp. */
 	int			m_iWarpBeginRow;
-	float		m_fWarpLength;
+	/** @brief The beat to warp to afterwards. */
+	float		m_fWarpDestination;
 	RageTimer	m_LastBeatUpdate; // time of last m_fSongBeat, etc. update
 	BroadcastOnChange<bool> m_bGameplayLeadIn;
 
