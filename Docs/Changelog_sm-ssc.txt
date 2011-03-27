@@ -13,6 +13,10 @@ _____________________________________________________________________________
 sm-ssc v1.2.4 | 20110327
 --------------------------------------------------------------------------------
 
+20110327
+--------
+* Fix Gameplay Footer not showing up over arrows. [AJ]
+
 20110326
 --------
 * [NotesLoaderSM, NotesWriterSSC] Officially add the #WARPS tag. The negative
