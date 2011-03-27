@@ -13,6 +13,13 @@ _____________________________________________________________________________
 sm-ssc v1.2.4 | 2011032?
 --------------------------------------------------------------------------------
 
+20110326
+--------
+* [NotesLoaderSM, NotesWriterSSC] Officially add the #WARPS tag. The negative
+  tricks of the past are now officially standardized. Please tell us about
+  files which have broken sync or are otherwise unplayable/incorrect.
+  [AJ, Thai, Wolfman2000]
+
 20110320
 --------
 * [PlayerOptions] Added SetNoteSkin(string) Lua binding. [AJ]

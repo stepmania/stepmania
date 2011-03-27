@@ -864,8 +864,8 @@ void LuaHelpers::ParseCommandList( Lua *L, const RString &sCommands, const RStri
 		FOREACH_CONST( Command, cmds.v, c )
 		{
 			const Command& cmd = (*c);
-			RString sName = cmd.GetName();
-			s << "\tself:" << sName << "(";
+			RString local_sName = cmd.GetName();
+			s << "\tself:" << local_sName << "(";
 
 			for( unsigned i=1; i<cmd.m_vsArgs.size(); i++ )
 			{
@@ -877,10 +877,10 @@ void LuaHelpers::ParseCommandList( Lua *L, const RString &sCommands, const RStri
 
 				if( sArg[0] == '#' )	// HTML color
 				{
-					RageColor c;	// in case FromString fails
-					c.FromString( sArg );
-					// c is still valid if FromString fails
-					s << c.r << "," << c.g << "," << c.b << "," << c.a;
+					RageColor col;	// in case FromString fails
+					col.FromString( sArg );
+					// col is still valid if FromString fails
+					s << col.r << "," << col.g << "," << col.b << "," << col.a;
 				}
 				else
 				{

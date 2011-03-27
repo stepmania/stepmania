@@ -80,6 +80,7 @@ AutoScreenMessage( SM_BackFromTimeSignatureNumeratorChange );
 AutoScreenMessage( SM_BackFromTimeSignatureDenominatorChange );
 AutoScreenMessage( SM_BackFromTickcountChange );
 AutoScreenMessage( SM_BackFromComboChange );
+AutoScreenMessage( SM_BackFromWarpChange );
 AutoScreenMessage( SM_DoSaveAndExit );
 AutoScreenMessage( SM_DoExit );
 AutoScreenMessage( SM_SaveSuccessful );
@@ -549,7 +550,8 @@ static MenuDef g_TimingDataInformation(
 	MenuRowDef( ScreenEdit::time_signature_numerator,	"Edit time signature (top)",	true, EditMode_Full, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::time_signature_denominator,	"Edit time signature (bottom)",	true, EditMode_Full, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::tickcount,			"Edit tickcount",		true, EditMode_Full, true, true, 0, NULL ),
-	MenuRowDef( ScreenEdit::combo,				"Edit combo",			true, EditMode_Full, true, true, 0, NULL )
+	MenuRowDef( ScreenEdit::combo,				"Edit combo",			true, EditMode_Full, true, true, 0, NULL ),
+	MenuRowDef( ScreenEdit::warp,				"Edit warp",			true, EditMode_Full, true, true, 0, NULL )
 );
 
 enum { song_bganimation, song_movie, song_bitmap, global_bganimation, global_movie, global_movie_song_group, global_movie_song_group_and_genre, dynamic_random, baked_random, none };
@@ -2639,6 +2641,13 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		}
 		SetDirty( true );
 	}
+	else if ( SM == SM_BackFromWarpChange )
+	{
+		float fWarp = StringToFloat( ScreenTextEntry::s_sLastAnswer );
+		if( fWarp > 0 )
+			m_pSong->m_Timing.SetWarpAtBeat( GAMESTATE->m_fSongBeat, fWarp );
+		SetDirty( true );
+	}
 	else if( SM == SM_BackFromBGChange )
 	{
 		HandleBGChangeChoice( (BGChangeChoice)ScreenMiniMenu::s_iLastRowCode, ScreenMiniMenu::s_viLastAnswers );
@@ -3176,6 +3185,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 				g_TimingDataInformation.rows[time_signature_denominator].SetOneUnthemedChoice( ssprintf("%d", pTime.GetTimeSignatureDenominatorAtBeat( fBeat ) ) );
 				g_TimingDataInformation.rows[tickcount].SetOneUnthemedChoice( ssprintf("%d", pTime.GetTickcountAtBeat( fBeat ) ) );
 				g_TimingDataInformation.rows[combo].SetOneUnthemedChoice( ssprintf("%d", pTime.GetComboAtBeat( fBeat ) ) );
+				g_TimingDataInformation.rows[warp].SetOneUnthemedChoice( ssprintf("%.5f", pTime.GetWarpAtBeat( fBeat ) ) );
 				
 				EditMiniMenu( &g_TimingDataInformation, SM_BackFromTimingDataInformation );
 			}
@@ -3493,7 +3503,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 
 				// don't move the step from where it is, just move everything later
 				NoteDataUtil::InsertRows( m_NoteDataEdit, BeatToNoteRow(GAMESTATE->m_fSongBeat) + 1, BeatToNoteRow(fStopBeats) );
-				m_pSong->m_Timing.InsertRows( BeatToNoteRow(GAMESTATE->m_fSongBeat) + 1, BeatToNoteRow(fStopSeconds) );
+				m_pSong->m_Timing.InsertRows( BeatToNoteRow(GAMESTATE->m_fSongBeat) + 1, BeatToNoteRow(fStopBeats) );
 			}
 			break;
 		case undo:
@@ -3609,6 +3619,7 @@ static LocalizedString ENTER_TIME_SIGNATURE_NUMERATOR_VALUE	( "ScreenEdit", "Ent
 static LocalizedString ENTER_TIME_SIGNATURE_DENOMINATOR_VALUE	( "ScreenEdit", "Enter a new Time Signature denominator value." );
 static LocalizedString ENTER_TICKCOUNT_VALUE			( "ScreenEdit", "Enter a new Tickcount value." );
 static LocalizedString ENTER_COMBO_VALUE			( "ScreenEdit", "Enter a new Combo value." );
+static LocalizedString ENTER_WARP_VALUE				( "ScreenEdit", "Enter a new Warp value." );
 void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice c, const vector<int> &iAnswers )
 {
 	switch( c )
@@ -3671,6 +3682,15 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 		   ENTER_COMBO_VALUE,
 		   ssprintf( "%d", m_pSong->m_Timing.GetComboAtBeat( GAMESTATE->m_fSongBeat ) ),
 		   4
+		   );
+	break;
+	case warp:
+		// todo: Call a screen with class ScreenTextEntry instead. -aj
+		ScreenTextEntry::TextEntry( 
+		   SM_BackFromWarpChange, 
+		   ENTER_WARP_VALUE, 
+		   ssprintf( "%.4f", m_pSong->m_Timing.GetWarpAtRow( BeatToNoteRow(GAMESTATE->m_fSongBeat) ) ),
+		   10
 		   );
 	break;
 	}

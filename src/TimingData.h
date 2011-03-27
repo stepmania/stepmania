@@ -318,25 +318,41 @@ struct TimeSignatureSegment
 struct WarpSegment
 {
 	/**
-	 * @brief Creates a simple Warp Segment with default values.
+	 * @brief Create a simple Warp Segment with default values.
 	 *
 	 * It is best to override the values as soon as possible.
 	 */
-	WarpSegment() : m_iStartRow(-1), m_fWarpBeats(-1) { }
+	WarpSegment() : m_iStartRow(-1), m_fEndBeat(-1) { }
 	/**
-	 * @brief Creates a Warp Segment with the specified starting row and row to warp to.
+	 * @brief Create a Warp Segment with the specified starting row and row to warp to.
 	 * @param s the starting row of this segment.
 	 * @param r the row to warp to.
 	 */
-	WarpSegment( int s, int r ): m_iStartRow(max(0, s)),
-		m_fWarpBeats(max(0, NoteRowToBeat(r))) {}
+	WarpSegment( int s, int r ): m_iStartRow(max(0, (s < r ? s : r))),
+		 m_fEndBeat(max(0, NoteRowToBeat((r > s ? r : s)))) {}
 	/**
 	 * @brief Creates a Warp Segment with the specified starting row and beat to warp to.
 	 * @param s the starting row of this segment.
 	 * @param b the beat to warp to.
 	 */
 	WarpSegment( int s, float b ): m_iStartRow(max(0, s)),
-		m_fWarpBeats(max(0, b)) {}
+		m_fEndBeat(max(0, b)) {}
+	/**
+	 * @brief Create a Warp Segment with the specified starting beat and row to warp to.
+	 * @param s the starting beat in this segment.
+	 * @param r the row to warp to.
+	 */
+	WarpSegment( float s, int r ):
+		m_iStartRow(max(0, BeatToNoteRow(s))),
+		m_fEndBeat(max(0, NoteRowToBeat(r))) {}
+	/**
+	 * @brief Creates a Warp Segment with the specified starting beat and beat to warp to.
+	 * @param s the starting beat of this segment.
+	 * @param b the beat to warp to.
+	 */
+	WarpSegment( float s, float b ):
+		m_iStartRow(max(0, BeatToNoteRow((s < b ? s : b)))),
+		m_fEndBeat(max(0, (b > s ? b : s))) {}
 	/**
 	 * @brief The row in which the WarpSegment activates.
 	 */
@@ -344,7 +360,7 @@ struct WarpSegment
 	/**
 	 * @brief The beat to warp to.
 	 */
-	float m_fWarpBeats;
+	float m_fEndBeat;
 	/**
 	 * @brief Compares two WarpSegments to see if they are equal to each other.
 	 * @param other the other WarpSegment to compare to.
@@ -353,7 +369,7 @@ struct WarpSegment
 	bool operator==( const WarpSegment &other ) const
 	{
 		COMPARE( m_iStartRow );
-		COMPARE( m_fWarpBeats );
+		COMPARE( m_fEndBeat );
 		return true;
 	}
 	/**
@@ -370,7 +386,7 @@ struct WarpSegment
 	bool operator<( const WarpSegment &other ) const
 	{ 
 		return m_iStartRow < other.m_iStartRow ||
-		( m_iStartRow == other.m_iStartRow && m_fWarpBeats < other.m_fWarpBeats );
+		( m_iStartRow == other.m_iStartRow && m_fEndBeat < other.m_fEndBeat );
 	}
 	/**
 	 * @brief Compares two WarpSegments to see if one is less than or equal to the other.
@@ -875,19 +891,71 @@ public:
 	 * @param seg the new TimeSignatureSegment.
 	 */
 	void AddTimeSignatureSegment( const TimeSignatureSegment &seg );
-	
 	/**
-	 * @brief Determine the row to warp to.
-	 * @param iWarpBeginRow The row you start on.
-	 * @return the row you warp to.
+	 * @brief Determine the beat to warp to.
+	 * @param iRow The row you start on.
+	 * @return the beat you warp to.
 	 */
-	int GetWarpToRow( int iWarpBeginRow ) const;
+	float GetWarpAtRow( int iRow ) const;
+	/**
+	 * @brief Determine the beat to warp to.
+	 * @param fBeat The beat you start on.
+	 * @return the beat you warp to.
+	 */
+	float GetWarpAtBeat( float fBeat ) const { return GetWarpAtRow( BeatToNoteRow( fBeat ) ); }
+	/**
+	 * @brief Set the beat to warp to given a starting row.
+	 * @param iRow The row to start on.
+	 * @param fNew The destination beat.
+	 */
+	void SetWarpAtRow( int iRow, float fNew );
+	/**
+	 * @brief Set the beat to warp to given a starting beat.
+	 * @param fBeat The beat to start on.
+	 * @param fNew The destination beat.
+	 */
+	void SetWarpAtBeat( float fBeat, float fNew ) { SetWarpAtRow( BeatToNoteRow( fBeat ), fNew ); }
+	/**
+	 * @brief Retrieve the WarpSegment at the specified row.
+	 * @param iRow the row to focus on.
+	 * @return the WarpSegment in question.
+	 */
+	WarpSegment& GetWarpSegmentAtRow( int iRow );
+	/**
+	 * @brief Retrieve the WarpSegment at the specified beat.
+	 * @param fBeat the beat to focus on.
+	 * @return the WarpSegment in question.
+	 */
+	WarpSegment& GetWarpSegmentAtBeat( float fBeat ) { return GetWarpSegmentAtRow( BeatToNoteRow( fBeat ) ); }
+	/**
+	 * @brief Retrieve the index of the WarpSegment at the specified row.
+	 * @param iRow the row to focus on.
+	 * @return the index in question.
+	 */
+	int GetWarpSegmentIndexAtRow( int iRow ) const;
+	/**
+	 * @brief Retrieve the index of the WarpSegment at the specified beat.
+	 * @param fBeat the beat to focus on.
+	 * @return the index in question.
+	 */
+	int GetWarpSegmentIndexAtBeat( float fBeat ) const { return GetWarpSegmentIndexAtRow( BeatToNoteRow( fBeat ) ); }
+	/**
+	 * @brief Checks if the row is inside a warp.
+	 * @param iRow the row to focus on.
+	 * @return true if the row is inside a warp, false otherwise.
+	 */
+	bool IsWarpAtRow( int iRow ) const;
+	/**
+	 * @brief Checks if the beat is inside a warp.
+	 * @param fBeat the beat to focus on.
+	 * @return true if the row is inside a warp, false otherwise.
+	 */
+	bool IsWarpAtBeat( float fBeat ) const { return IsWarpAtRow( BeatToNoteRow( fBeat ) ); }
 	/**
 	 * @brief Add the WarpSegment to the TimingData.
 	 * @param seg the new WarpSegment.
 	 */
 	void AddWarpSegment( const WarpSegment &seg );
-	
 	/**
 	 * @brief Retrieve the Tickcount at the given row.
 	 * @param iNoteRow the row in question.
@@ -1011,7 +1079,7 @@ public:
 	}
 	float GetElapsedTimeFromBeat( float fBeat ) const;
 
-	void GetBeatAndBPSFromElapsedTimeNoOffset( float fElapsedTime, float &fBeatOut, float &fBPSOut, bool &bFreezeOut, bool &bDelayOut, int &iWarpBeginOut, float &iWarpLengthOut ) const;
+	void GetBeatAndBPSFromElapsedTimeNoOffset( float fElapsedTime, float &fBeatOut, float &fBPSOut, bool &bFreezeOut, bool &bDelayOut, int &iWarpBeginOut, float &fWarpDestinationOut ) const;
 	float GetBeatFromElapsedTimeNoOffset( float fElapsedTime ) const	// shortcut for places that care only about the beat
 	{
 		float fBeat, fThrowAway, fThrowAway2;
