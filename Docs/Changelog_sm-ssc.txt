@@ -18,7 +18,7 @@ sm-ssc v1.2.4 | 20110327
 * [NotesLoaderSM, NotesWriterSSC] Officially add the #WARPS tag. The negative
   tricks of the past are now officially standardized. Please tell us about
   files which have broken sync or are otherwise unplayable/incorrect.
-  [AJ, Thai, Wolfman2000]
+  [AJ, theDtTvB, Wolfman2000]
 
 20110320
 --------
