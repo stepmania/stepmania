@@ -9,6 +9,9 @@ change to JSON, but it is unsure if this will be done.
 Implement .ssc at your own risk.
 ________________________________________________________________________________
 
+[v0.66] - Wolfman2000
+* Implement #WARPS tag to replace negative bpm/stop gimmicks.
+
 [v0.55] - Wolfman2000
 * Add #COMBOS tag to the Song and Steps (does nothing here).
 
