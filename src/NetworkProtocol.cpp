@@ -1,4 +1,4 @@
-#include "global.cpp"
+#include "global.h"
 #include "NetworkProtocol.h"
 
 #include "NetworkProtocolLegacy.h"
