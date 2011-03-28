@@ -8,8 +8,8 @@ class NetworkProtocol
 public:
 	static NetworkProtocol* MakeNetworkProtocol(RString sProtocol);
 
-	virtual void Update(float fDeltaTime);
-	virtual void ParseInput();
+	virtual void Update(float fDeltaTime) {};
+	virtual void ParseInput() {};
 };
 
 #endif
