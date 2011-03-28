@@ -77,8 +77,8 @@ void ScreenNetRoom::HandleScreenMessage( const ScreenMessage SM )
 			NSMAN->m_SMOnlinePacket.Clear();
 			NSMAN->m_SMOnlinePacket.Write1( 1 );
 			NSMAN->m_SMOnlinePacket.Write1( 1 ); //Type (enter a room)
-			NSMAN->m_SMOnlinePacket.WriteNT( m_sLastPickedRoom );
-			NSMAN->m_SMOnlinePacket.WriteNT( ScreenTextEntry::s_sLastAnswer );
+			NSMAN->m_SMOnlinePacket.WriteString( m_sLastPickedRoom );
+			NSMAN->m_SMOnlinePacket.WriteString( ScreenTextEntry::s_sLastAnswer );
 			NSMAN->SendSMOnline( );
 		}
 	}
@@ -207,7 +207,7 @@ void ScreenNetRoom::MenuStart( const InputEventPlus &input )
 			NSMAN->m_SMOnlinePacket.Clear();
 			NSMAN->m_SMOnlinePacket.Write1( 1 );
 			NSMAN->m_SMOnlinePacket.Write1( 1 ); //Type (enter a room)
-			NSMAN->m_SMOnlinePacket.WriteNT( rwd->m_sText );
+			NSMAN->m_SMOnlinePacket.WriteString( rwd->m_sText );
 			NSMAN->SendSMOnline( );
 		}
 	}
@@ -297,10 +297,10 @@ void ScreenNetRoom::CreateNewRoom( const RString& rName,  const RString& rDesc, 
 	NSMAN->m_SMOnlinePacket.Clear();
 	NSMAN->m_SMOnlinePacket.Write1( (uint8_t)2 ); // Create room command
 	NSMAN->m_SMOnlinePacket.Write1( 1 );  // Type game room
-	NSMAN->m_SMOnlinePacket.WriteNT( rName );
-	NSMAN->m_SMOnlinePacket.WriteNT( rDesc );
+	NSMAN->m_SMOnlinePacket.WriteString( rName );
+	NSMAN->m_SMOnlinePacket.WriteString( rDesc );
 	if ( !rPass.empty() )
-		NSMAN->m_SMOnlinePacket.WriteNT( rPass );
+		NSMAN->m_SMOnlinePacket.WriteString( rPass );
 	NSMAN->SendSMOnline( );
 }
 

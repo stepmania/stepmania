@@ -219,8 +219,8 @@ void ScreenSMOnlineLogin::SendLogin( RString sPassword )
 	NSMAN->m_SMOnlinePacket.Write1( (uint8_t)0 );		//Login command
 	NSMAN->m_SMOnlinePacket.Write1( (uint8_t)m_iPlayer );	//Player
 	NSMAN->m_SMOnlinePacket.Write1( (uint8_t)authMethod );	//MD5 hash style
-	NSMAN->m_SMOnlinePacket.WriteNT( PlayerName );
-	NSMAN->m_SMOnlinePacket.WriteNT( HashedName );
+	NSMAN->m_SMOnlinePacket.WriteString( PlayerName );
+	NSMAN->m_SMOnlinePacket.WriteString( HashedName );
 	NSMAN->SendSMOnline();
 }
 

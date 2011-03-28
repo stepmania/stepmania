@@ -2,6 +2,7 @@
 #include "NetworkProtocolSMO.h"
 #include "LocalizedString.h"
 #include "ezsockets.h"
+#include "NetworkPacket.h"
 
 #include "ProfileManager.h"
 #include "RageLog.h"
@@ -19,8 +20,8 @@
 #include "PlayerState.h"
 #include "CryptManager.h"
 
-/* SMOPacket */
-uint16_t SMOPacket::Read2()
+/* NetworkPacket */
+uint16_t NetworkPacket::Read2()
 {
 	if(Position >= MAX_PACKET_BUFFER_SIZE-1)
 		return 0;
@@ -31,7 +32,7 @@ uint16_t SMOPacket::Read2()
 	return ntohs(Temp);
 }
 
-uint32_t SMOPacket::Read4()
+uint32_t NetworkPacket::Read4()
 {
 	if(Position >= MAX_PACKET_BUFFER_SIZE-3)
 		return 0;
@@ -42,7 +43,7 @@ uint32_t SMOPacket::Read4()
 	return ntohl(Temp);
 }
 
-RString SMOPacket::ReadNT()
+RString NetworkPacket::ReadNT()
 {
 	RString TempStr;
 	while((Position < MAX_PACKET_BUFFER_SIZE)&& (((char*)Data)[Position]!=0))
@@ -52,7 +53,7 @@ RString SMOPacket::ReadNT()
 	return TempStr;
 }
 
-void SMOPacket::Write1(uint8_t data)
+void NetworkPacket::Write1(uint8_t data)
 {
 	if(Position >= MAX_PACKET_BUFFER_SIZE)
 		return;
@@ -60,7 +61,7 @@ void SMOPacket::Write1(uint8_t data)
 	++Position;
 }
 
-void SMOPacket::Write2(uint16_t data)
+void NetworkPacket::Write2(uint16_t data)
 {
 	if(Position >= MAX_PACKET_BUFFER_SIZE-1)
 		return;
@@ -69,7 +70,7 @@ void SMOPacket::Write2(uint16_t data)
 	Position+=2;
 }
 
-void SMOPacket::Write4(uint32_t data)
+void NetworkPacket::Write4(uint32_t data)
 {
 	if(Position >= MAX_PACKET_BUFFER_SIZE-3)
 		return;
@@ -79,7 +80,7 @@ void SMOPacket::Write4(uint32_t data)
 	Position+=4;
 }
 
-void SMOPacket::WriteNT(const RString& data)
+void NetworkPacket::WriteString(const RString& data)
 {
 	size_t index=0;
 	while(Position < MAX_PACKET_BUFFER_SIZE && index < data.size())
@@ -87,7 +88,7 @@ void SMOPacket::WriteNT(const RString& data)
 	Data[Position++] = 0;
 }
 
-void SMOPacket::Clear()
+void NetworkPacket::Clear()
 {
 	memset((void*)(&Data),0, MAX_PACKET_BUFFER_SIZE);
 	Position = 0;
@@ -485,7 +486,7 @@ void NetworkProtocolSMO::SMOHello()
 	m_packet.Clear();
 	m_packet.Write1(SMOCMD_Hello);
 	m_packet.Write1(ProtocolVersion);
-	m_packet.WriteNT(RString(PRODUCT_ID_VER));
+	m_packet.WriteString(RString(PRODUCT_ID_VER));
 }
 
 void NetworkProtocolSMO::ReportStyle()
@@ -501,7 +502,7 @@ void NetworkProtocolSMO::ReportStyle()
 	FOREACH_EnabledPlayer(pn)
 	{
 		m_packet.Write1((uint8_t)pn);
-		m_packet.WriteNT(GAMESTATE->GetPlayerDisplayName(pn));
+		m_packet.WriteString(GAMESTATE->GetPlayerDisplayName(pn));
 	}
 
 	NetPlayerClient->SendPack((char*)&m_packet.Data, m_packet.Position);
@@ -519,7 +520,7 @@ void NetworkProtocolSMO::SendChat(const RString& sMessage)
 {
 	m_packet.Clear();
 	m_packet.Write1(SMOCMD_ChatMessage);
-	m_packet.WriteNT(sMessage);
+	m_packet.WriteString(sMessage);
 	NetPlayerClient->SendPack((char*)&m_packet.Data, m_packet.Position); 
 }
 
@@ -528,7 +529,7 @@ void NetworkProtocolSMO::RequestRoomInfo(const RString& sName)
 {
 	m_SMOnlinePacket.Clear();
 	m_SMOnlinePacket.Write1((uint8_t)3) // Request room info
-	m_SMOnlinePacket.WriteNT(sName);
+	m_SMOnlinePacket.WriteString(sName);
 	SendSMOnline();
 }
 
@@ -545,7 +546,7 @@ void NetworkProtocolSMO::ReportPlayerOptions()
 	m_packet.Clear();
 	m_packet.Write1(SMOCMD_ChangePlayerOptions);
 	FOREACH_PlayerNumber(pn)
-		m_packet.WriteNT(GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.GetCurrent().GetString());
+		m_packet.WriteString(GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.GetCurrent().GetString());
 	NetPlayerClient->SendPack((char*)&m_packet.Data, m_packet.Position); 
 }
 
@@ -590,33 +591,33 @@ void NetworkProtocolSMO::StartRequest(short iPosition)
 
 	if(GAMESTATE->m_pCurSong != NULL)
 	{
-		m_packet.WriteNT(GAMESTATE->m_pCurSong->m_sMainTitle);
-		m_packet.WriteNT(GAMESTATE->m_pCurSong->m_sSubTitle);
-		m_packet.WriteNT(GAMESTATE->m_pCurSong->m_sArtist);
+		m_packet.WriteString(GAMESTATE->m_pCurSong->m_sMainTitle);
+		m_packet.WriteString(GAMESTATE->m_pCurSong->m_sSubTitle);
+		m_packet.WriteString(GAMESTATE->m_pCurSong->m_sArtist);
 	}
 	else
 	{
-		m_packet.WriteNT("");
-		m_packet.WriteNT("");
-		m_packet.WriteNT("");
+		m_packet.WriteString("");
+		m_packet.WriteString("");
+		m_packet.WriteString("");
 	}
 
 	if(GAMESTATE->m_pCurCourse != NULL)
-		m_packet.WriteNT(GAMESTATE->m_pCurCourse->GetDisplayFullTitle());
+		m_packet.WriteString(GAMESTATE->m_pCurCourse->GetDisplayFullTitle());
 	else
-		m_packet.WriteNT(RString());
+		m_packet.WriteString(RString());
 
 	// "Send Player (and song) Options"
-	m_packet.WriteNT(GAMESTATE->m_SongOptions.GetCurrent().GetString());
+	m_packet.WriteString(GAMESTATE->m_SongOptions.GetCurrent().GetString());
 
 	int players = 0;
 	FOREACH_PlayerNumber(p)
 	{
 		++players;
-		m_packet.WriteNT(GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.GetCurrent().GetString());
+		m_packet.WriteString(GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.GetCurrent().GetString());
 	}
 	for (int i = 0; i < 2-players; ++i)
-		m_packet.WriteNT("");	//Write a NULL if no player
+		m_packet.WriteString("");	//Write a NULL if no player
 
 	// "This needs to be reset before ScreenEvaluation could possibly be called"
 	m_EvalPlayerData.clear();
@@ -650,9 +651,9 @@ void NetworkProtocolSMO::SelectUserSong()
 	m_packet.Clear();
 	m_packet.Write1(SMOCMD_RequestStartGame);
 	m_packet.Write1((uint8_t)m_iSelectMode);
-	m_packet.WriteNT(m_sMainTitle);
-	m_packet.WriteNT(m_sArtist);
-	m_packet.WriteNT(m_sSubTitle);
+	m_packet.WriteString(m_sMainTitle);
+	m_packet.WriteString(m_sArtist);
+	m_packet.WriteString(m_sSubTitle);
 	NetPlayerClient->SendPack((char*)&m_packet.Data, m_packet.Position);
 }
 

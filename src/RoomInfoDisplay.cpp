@@ -148,7 +148,7 @@ void RoomInfoDisplay::RequestRoomInfo(const RString& name)
 {
 	NSMAN->m_SMOnlinePacket.Clear();
 	NSMAN->m_SMOnlinePacket.Write1((uint8_t)3); //Request Room Info
-	NSMAN->m_SMOnlinePacket.WriteNT(name);
+	NSMAN->m_SMOnlinePacket.WriteString(name);
 	NSMAN->SendSMOnline( );
 }
 

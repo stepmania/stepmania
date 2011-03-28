@@ -5,6 +5,7 @@
 
 #include "PlayerNumber.h"
 #include "Difficulty.h"
+#include "NetworkPacket.h"
 
 class EzSockets;
 
@@ -18,31 +19,6 @@ struct SMOServerInfo
 };
 
 const int MAX_PACKET_BUFFER_SIZE = 1020; // 1024 - 4 bytes for EzSockets header
-
-/** @brief A packet used for legacy StepMania Online communications.
- * This is based on PacketFunctions.
- */
-class SMOPacket
-{
-public:
-	unsigned char Data[MAX_PACKET_BUFFER_SIZE];	// Data
-	int Position;							// "Other info"
-	int Size;								// Don't use this? use Position.
-
-	// read funcs
-	uint8_t  Read1(){ return (Position >= MAX_PACKET_BUFFER_SIZE) ? 0 : Data[Position++]; }
-	uint16_t Read2();
-	uint32_t Read4();
-	RString  ReadNT();
-
-	// write funcs
-	void Write1(uint8_t data);
-	void Write2(uint16_t data);
-	void Write4(uint32_t data);
-	void WriteNT(const RString& data);
-
-	void Clear();
-};
 
 const int NUM_SMO_TAP_SCORES = 8;
 struct EndOfGame_PlayerData
@@ -152,8 +128,8 @@ public:
 		NUM_SMO_COMMANDS
 	};
 	const Command ServerOffset = (Command)128;
-	SMOPacket m_packet;
-	SMOPacket m_SMOPacket;		// was m_SMOnlinePacket
+	NetworkPacket m_packet;
+	NetworkPacket m_NetworkPacket;		// was m_SMOnlinePacket
 
 	// Server Packet Handlers
 	void SMOPing();
