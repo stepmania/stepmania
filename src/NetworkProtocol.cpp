@@ -1,5 +1,5 @@
 #include "global.cpp"
-#include "NetworkProtocol.cpp"
+#include "NetworkProtocol.h"
 
 #include "NetworkProtocolLegacy.h"
 NetworkProtocol* NetworkProtocol::MakeNetworkProtocol(RString sProtocol)
