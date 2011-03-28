@@ -5,8 +5,35 @@
 #define NetworkProtocolLegacy_H
 
 #include "NetworkPacket.h"
+#include "NetworkProtocol.h"
 
 class EzSockets;
+class NetworkProtocol;
+
+const int ProtocolVersion = 3;
+
+// Client-side commands:
+enum LegacyCommand
+{
+	Ping = 0,				// [ 0/NSCPing] nop
+	PingReply,				// [ 1/NSCPingR] nop response
+	Hello,					// [ 2/NSCHello]
+	GameStartRequest,		// [ 3/NSCGSR]
+	GameOverNotice,			// [ 4/NSCGON]
+	GameStatusUpdate,		// [ 5/NSCGSU]
+	StyleUpdate,			// [ 6/NSCSU]
+	ChatMessage,			// [ 7/NSCCM]
+	RequestStartGame,		// [ 8/NSCRSG]
+	UpdateUserList,			// [ 9/NSCUUL] "reserved"
+	ScreenChange,			// [10/NSCSMS]
+	ChangePlayerOptions,	// [11/NSCUPOpts]
+	SMOnline,				// [12/NSCSMOnline]
+	Formatted,				// [13/NSCFormatted] Reserved client-side
+	Attack,					// [14/NSCAttack] undocumented
+	XML,					// [15] not really used
+	NUM_SMO_COMMANDS
+};
+const LegacyCommand ServerOffset = (LegacyCommand)128;
 
 class NetworkProtocolLegacy: public NetworkProtocol
 {
@@ -14,74 +41,43 @@ public:
 	NetworkProtocolLegacy();
 	~NetworkProtocolLegacy();
 
-	const int ProtocolVersion = 3;
+	void Update(float fDeltaTime);
+	void ParseInput();
 
-	EzSockets *NetPlayerClient;
-	EzSockets *BroadcastReception;	// only used for SMLAN servers?
-
-	bool m_bIsSMOnline;	// Are we using a SMO server?
-	int m_iServerVersion;	// if (>= 128) m_bIsSMOnline = true
-	RString m_sServerName;
-	int m_iSalt;
-	int GetSMOnlineSalt(){ return m_iSalt; }
-	RString MD5Hex( const RString &sInput );
-
-	// Client-side commands:
-	enum Command
-	{
-		Ping = 0,				// [ 0/NSCPing] nop
-		PingReply,				// [ 1/NSCPingR] nop response
-		Hello,					// [ 2/NSCHello]
-		GameStartRequest,		// [ 3/NSCGSR]
-		GameOverNotice,			// [ 4/NSCGON]
-		GameStatusUpdate,		// [ 5/NSCGSU]
-		StyleUpdate,			// [ 6/NSCSU]
-		ChatMessage,			// [ 7/NSCCM]
-		RequestStartGame,		// [ 8/NSCRSG]
-		UpdateUserList,			// [ 9/NSCUUL] "reserved"
-		ScreenChange,			// [10/NSCSMS]
-		ChangePlayerOptions,	// [11/NSCUPOpts]
-		SMOnline,				// [12/NSCSMOnline]
-		Formatted,				// [13/NSCFormatted] Reserved client-side
-		Attack,					// [14/NSCAttack] undocumented
-		XML,					// [15] not really used
-		NUM_SMO_COMMANDS
-	};
-	const Command ServerOffset = (Command)128;
 	NetworkPacket m_Packet;
 	NetworkPacket m_NetworkPacket;		// was m_SMOnlinePacket
 
 	// Server Packet Handlers
-	void SMOPing();
-	void SMOGameOverNotice();
-	void SMOScoreboardUpdate();
-	void SMOSystemMessage();
-	void SMOChatMessage();
-	void SMOChangeSong();
-	void SMOUpdateUserList();
-	void SMOSelectMusic();
-	void SMOnlinePacket();
-	void SMOAttack();
+	//void Ping();
+	//void GameOverNotice();
+	//void ScoreboardUpdate();
+	//void SystemMessage();
+	//void ChatMessage();
+	//void ChangeSong();
+	//void UpdateUserList();
+	//void SelectMusic();
+	//void OnlinePacket();
+	//void Attack();
 
 	// Client Packet Handlers
-	void SMOHello();
-	void SendSMOnline();
-	void ReportStyle();	// "Report style, players, and names"
+	//void Hello();
+	//void SendSMOnline();
+	//void ReportStyle();	// "Report style, players, and names"
 
 	// Lobby
-	void SendChat(const RString& sMessage);
-	void RequestRoomInfo(const RString& sName); // formerly in RoomInfoDisplay
+	//void SendChat(const RString& sMessage);
+	//void RequestRoomInfo(const RString& sName); // formerly in RoomInfoDisplay
 
 	// SelMusic
-	void ChangeScreen(int i);	// "Report song selection screen on/off" (was ReportNSSOnOff)
-	void ReportPlayerOptions();
-	void StartRequest(short iPosition);	// Request a start; Block until granted.
-	void SelectUserSong();
+	//void ChangeScreen(int i);	// "Report song selection screen on/off" (was ReportNSSOnOff)
+	//void ReportPlayerOptions();
+	//void StartRequest(short iPosition);	// Request a start; Block until granted.
+	//void SelectUserSong();
 
 	// Gameplay
-	void ReportScore(int playerID, int step, int score, int combo, float offset);
-	SMOStepType TranslateStepType(int score);
-	void ReportSongOver();
+	//void ReportScore(int playerID, int step, int score, int combo, float offset);
+	//SMOStepType TranslateStepType(int score);
+	//void ReportSongOver();
 };
 
 #endif

@@ -1,7 +1,24 @@
 #include "global.h"
+#include "NetworkProtocol.h"
 #include "NetworkProtocolLegacy.h"
 #include "ezsockets.h"
 #include "NetworkPacket.h"
+
+NetworkProtocolLegacy::NetworkProtocolLegacy()
+{
+}
+
+NetworkProtocolLegacy::~NetworkProtocolLegacy()
+{
+}
+
+void NetworkProtocolLegacy::Update(float fDeltaTime)
+{
+}
+
+void NetworkProtocolLegacy::ParseInput()
+{
+}
 
 /*
  * (c) 2011 AJ Kelly
