@@ -8,11 +8,11 @@
 
 class EzSockets;
 
-class NetworkProtocoLegacy: public NetworkProtocol
+class NetworkProtocolLegacy: public NetworkProtocol
 {
 public:
-	NetworkProtocoLegacy();
-	~NetworkProtocoLegacy();
+	NetworkProtocolLegacy();
+	~NetworkProtocolLegacy();
 
 	const int ProtocolVersion = 3;
 
