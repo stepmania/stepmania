@@ -1,12 +1,12 @@
 #ifndef NETWORKPACKET_H
 #define NETWORKPACKET_H
 
-const int MAX_BUFFER_SIZE = 1020; // 1024 - 4 bytes for EzSockets
+const int MAX_PACKET_BUFFER_SIZE = 1020; // 1024 - 4 bytes for EzSockets
 
 class NetworkPacket
 {
 public:
-	unsigned char Data[MAX_BUFFER_SIZE];
+	unsigned char Data[MAX_PACKET_BUFFER_SIZE];
 	int Position;
 	uint32_t Size; // Hacky; Only valid for packets read from the network.
 

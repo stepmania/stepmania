@@ -15,7 +15,7 @@ NetworkPacket::WriteString(const RString& str) { }
 #else
 void NetworkPacket::Clear()
 {
-	memset((void*)(&Data),0, MAX_BUFFER_SIZE);
+	memset((void*)(&Data),0, MAX_PACKET_BUFFER_SIZE);
 	Position = 0;
 	Size = 0;
 }
@@ -23,7 +23,7 @@ void NetworkPacket::Clear()
 // read functions
 uint8_t NetworkPacket::Read1()
 {
-	if( Position >= MAX_BUFFER_SIZE )
+	if( Position >= MAX_PACKET_BUFFER_SIZE )
 		return 0;
 
 	return Data[Position++];
@@ -31,7 +31,7 @@ uint8_t NetworkPacket::Read1()
 
 uint16_t NetworkPacket::Read2()
 {
-	if( Position >= MAX_BUFFER_SIZE-1 )
+	if( Position >= MAX_PACKET_BUFFER_SIZE-1 )
 		return 0;
 
 	uint16_t Temp;
@@ -42,7 +42,7 @@ uint16_t NetworkPacket::Read2()
 
 uint32_t NetworkPacket::Read4()
 {
-	if( Position >= MAX_BUFFER_SIZE-3 )
+	if( Position >= MAX_PACKET_BUFFER_SIZE-3 )
 		return 0;
 
 	uint32_t Temp;
@@ -54,7 +54,7 @@ uint32_t NetworkPacket::Read4()
 RString NetworkPacket::ReadString()
 {
 	RString TempStr;
-	while( (Position < MAX_BUFFER_SIZE) && ( ((char*)Data)[Position]!=0) )
+	while( (Position < MAX_PACKET_BUFFER_SIZE) && ( ((char*)Data)[Position]!=0) )
 		TempStr = TempStr + (char)Data[Position++];
 
 	++Position;
@@ -64,7 +64,7 @@ RString NetworkPacket::ReadString()
 // write functions
 void NetworkPacket::Write1(uint8_t data)
 {
-	if(Position >= MAX_BUFFER_SIZE)
+	if(Position >= MAX_PACKET_BUFFER_SIZE)
 		return;
 	memcpy( &Data[Position], &data, 1 );
 	++Position;
@@ -72,7 +72,7 @@ void NetworkPacket::Write1(uint8_t data)
 
 void NetworkPacket::Write2(uint16_t data)
 {
-	if(Position >= MAX_BUFFER_SIZE-1)
+	if(Position >= MAX_PACKET_BUFFER_SIZE-1)
 		return;
 	data = htons(data);
 	memcpy( &Data[Position], &data, 2 );
@@ -81,7 +81,7 @@ void NetworkPacket::Write2(uint16_t data)
 
 void NetworkPacket::Write4(uint32_t data)
 {
-	if(Position >= MAX_BUFFER_SIZE-3)
+	if(Position >= MAX_PACKET_BUFFER_SIZE-3)
 		return;
 	data = htonl(data);
 	memcpy( &Data[Position], &data, 4 );
@@ -91,7 +91,7 @@ void NetworkPacket::Write4(uint32_t data)
 void NetworkPacket::WriteString(const RString& str)
 {
 	unsigned int index=0;
-	while( (Position < MAX_BUFFER_SIZE) && (index < str.length()) )
+	while( (Position < MAX_PACKET_BUFFER_SIZE) && (index < str.length()) )
 		Data[Position++] = (unsigned char)(str.c_str()[index++]);
 	Data[Position++] = 0;
 }
