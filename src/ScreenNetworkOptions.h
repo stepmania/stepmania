@@ -15,7 +15,6 @@ public:
 private:
 	void ImportOptions( int iRow, const vector<PlayerNumber> &vpns );
 	void ExportOptions( int iRow, const vector<PlayerNumber> &vpns );
-	//vector<NetServerInfo> AllServers;
 
 	void UpdateConnectStatus();
 };
