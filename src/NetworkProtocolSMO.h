@@ -1,111 +1,30 @@
-/* NetworkProtocolSMO - Legacy EzSockets-based networking protocol */
+/* NetworkProtocolSMO - Legacy networking protocol */
 // todo: strip this file down to the relevant stuff.
 
 #ifndef NetworkProtocolSMO_H
 #define NetworkProtocolSMO_H
 
-#include "PlayerNumber.h"
-#include "Difficulty.h"
 #include "NetworkPacket.h"
 
 class EzSockets;
 
-const int SMOProtocolVersion = 3;
-const int SMOTapScores = 8;
-
-/** @brief The name and address of a specific server.
- * The SMOServerInfo is server information that is specific to the legacy
- * StepMania Online service. */
-struct SMOServerInfo
-{
-	RString Name;
-	RString Address;
-};
-
-struct EndOfGame_PlayerData
-{
-	int iNameIndex;
-	int iScore;
-	int iGrade;
-	Difficulty difficulty;
-	int iTapScores[SMOTapScores];	// this should be const? -freem
-	RString sPlayerOptions;
-};
-
-class LoadingWindow;
-// based on NetworkSyncManager
 class NetworkProtocolSMO: public NetworkProtocol
 {
 public:
-	NetworkProtocolSMO( LoadingWindow *ld = NULL );
+	NetworkProtocolSMO();
 	~NetworkProtocolSMO();
 
-	void StartUp();
-	void PostStartUp(const RString& sServerIP);
-	void GetServerInfo();
-
-	bool Connect(const RString& address, unsigned short port);
-	void Disconnect();				// was CloseConnection()
-	void DisplayStartupStatus();	// "Notify user if connect attempt was successful or not."
-	void Update(float fDeltaTime);
-	void ConnectionDropped();
-	void ProcessInput();
+	const int ProtocolVersion = 3;
 
 	EzSockets *NetPlayerClient;
-	EzSockets *BroadcastReception;
+	EzSockets *BroadcastReception;	// only used for SMLAN servers?
 
-	const int ProtocolVersion = 3;
-	int m_iServerVersion;					// if (>= 128) m_bIsSMOnline = true
+	bool m_bIsSMOnline;	// Are we using a SMO server?
+	int m_iServerVersion;	// if (>= 128) m_bIsSMOnline = true
 	RString m_sServerName;
 	int m_iSalt;
 	int GetSMOnlineSalt(){ return m_iSalt; }
 	RString MD5Hex( const RString &sInput );
-
-	int m_iStartupStatus;					// "Used to see if attempt was successful or not."
-
-	bool m_bUseSMServer;					// Are we playing on a server?
-	bool m_bIsSMOnline;					// Are we using a SMO server?
-	bool m_bIsSMOLoggedIn[NUM_PLAYERS];	// Is each side logged in?
-
-	vector<int> m_iPlayerStatus;			// ? idkwtf
-	int m_iActivePlayers;					// The number of active players
-	vector<int> m_iActivePlayer;			// List of active players as ints
-	vector<RString> m_sPlayerNames;			// List of player names
-
-	// Chat
-	RString m_sChatText;	// all chat lines
-	RString m_sWaitingChat;	// is this even used?
-
-	// Song checking/changing
-	RString m_sMainTitle;
-	RString m_sArtist;
-	RString m_sSubTitle;
-	int m_iSelectMode;
-
-	// Gameplay
-	int m_iPlayerLife[NUM_PLAYERS];
-	int m_playerID;
-	int m_step;
-	int m_score;
-	int m_combo;
-
-	enum SMOStepType
-	{
-		SMOST_Unused = 0,
-		SMOST_HitMine,
-		SMOST_AvoidMine,
-		SMOST_Miss,
-		SMOST_W5,
-		SMOST_W4,
-		SMOST_W3,
-		SMOST_W2,
-		SMOST_W1,
-		SMOST_LetGo,
-		SMOST_Held
-	};
-
-	// Evaluation
-	vector<EndOfGame_PlayerData> m_EvalPlayerData;
 
 	// Client-side commands:
 	enum Command
@@ -147,14 +66,14 @@ public:
 	// Client Packet Handlers
 	void SMOHello();
 	void SendSMOnline();
-	void ReportStyle();			// "Report style, players, and names"
+	void ReportStyle();	// "Report style, players, and names"
 
 	// Lobby
 	void SendChat(const RString& sMessage);
 	void RequestRoomInfo(const RString& sName); // formerly in RoomInfoDisplay
 
 	// SelMusic
-	void ChangeScreen(int i);			// "Report song selection screen on/off" (was ReportNSSOnOff)
+	void ChangeScreen(int i);	// "Report song selection screen on/off" (was ReportNSSOnOff)
 	void ReportPlayerOptions();
 	void StartRequest(short iPosition);	// Request a start; Block until granted.
 	void SelectUserSong();
