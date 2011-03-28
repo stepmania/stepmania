@@ -2,6 +2,7 @@
 #include "NetworkSyncManager.h"
 #include "LuaManager.h"
 #include "LocalizedString.h"
+#include <errno.h>
 
 NetworkSyncManager *NSMAN;
 
