@@ -8,27 +8,20 @@
 
 class EzSockets;
 
-/**********************************************************************/
-/* \struct SMOServerInfo
-\brief The name and address of a specific server.
-The SMOServerInfo is server information that is specific to the legacy
-StepMania Online service.
-*/
-/**********************************************************************/
+/** @brief The name and address of a specific server.
+ * The SMOServerInfo is server information that is specific to the legacy
+ * StepMania Online service. */
 struct SMOServerInfo
 {
 	RString Name;
 	RString Address;
 };
 
-/**********************************************************************/
-/* \class SMOPacket
-\brief A packet used for legacy StepMania Online communications. (based on PacketFunctions)
-This is based on PacketFunctions.
-*/
-/**********************************************************************/
 const int MAX_PACKET_BUFFER_SIZE = 1020; // 1024 - 4 bytes for EzSockets header
 
+/** @brief A packet used for legacy StepMania Online communications.
+ * This is based on PacketFunctions.
+ */
 class SMOPacket
 {
 public:
@@ -51,11 +44,6 @@ public:
 	void ClearPacket();
 };
 
-/**********************************************************************/
-/* \struct EndOfGame_PlayerData
-
-*/
-/**********************************************************************/
 const int NUM_SMO_TAP_SCORES = 8;
 struct EndOfGame_PlayerData
 {
