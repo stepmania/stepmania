@@ -2,6 +2,7 @@
 #include "NetworkSyncManager.h"
 #include "LuaManager.h"
 #include "LocalizedString.h"
+#include <errno.h>
 
 NetworkSyncManager *NSMAN;
 
@@ -107,13 +108,21 @@ void NetworkSyncManager::CloseConnection()
 void NetworkSyncManager::PostStartUp( const RString& ServerIP )
 {
 	RString sAddress;
-	short iPort;
+	unsigned short iPort;
 
 	size_t cLoc = ServerIP.find( ':' );
 	if( ServerIP.find( ':' ) != RString::npos )
 	{
-		iPort = (short) atoi( ServerIP.substr( cLoc + 1 ).c_str() );
 		sAddress = ServerIP.substr( 0, cLoc );
+		char* cEnd;
+		errno = 0;
+		iPort = (unsigned short)strtol( ServerIP.substr( cLoc + 1 ).c_str(), &cEnd, 10 );
+		if( *cEnd != 0 || errno != 0 )
+		{
+			m_startupStatus = 2;
+			LOG->Warn( "Invalid port" );
+			return;
+		}
 	}
 	else
 	{
@@ -121,7 +130,7 @@ void NetworkSyncManager::PostStartUp( const RString& ServerIP )
 		sAddress = ServerIP;
 	}
 
-	LOG->Info( "Attempting to connect to: %s, Port: %d", sAddress.c_str(), iPort );
+	LOG->Info( "Attempting to connect to: %s, Port: %i", sAddress.c_str(), iPort );
 
 	CloseConnection();
 	if( !Connect(sAddress.c_str(), iPort) )
@@ -136,7 +145,7 @@ void NetworkSyncManager::PostStartUp( const RString& ServerIP )
 
 	useSMserver = true;
 
-	m_startupStatus = 1;	//Connection attepmpt successful
+	m_startupStatus = 1;	// Connection attepmpt successful
 
 	// If network play is desired and the connection works,
 	// halt until we know what server version we're dealing with

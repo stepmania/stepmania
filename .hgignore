@@ -21,6 +21,7 @@ ___*
 .cvsignore
 .DS_Store
 Thumbs.db
+GameData.smzip
 config.log
 config.status
 *.pbxuser

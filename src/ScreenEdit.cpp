@@ -736,8 +736,11 @@ void ScreenEdit::Init()
 		}
 	}
 	m_PlayerStateEdit.m_PlayerNumber = PLAYER_1;
-	// If we always go with the GAMESTATE NoteSkin, we will have fun effects like Vivid or Flat in the editor notefield.
-	// This is not conducive to productive editing.
+	// If we always go with the GAMESTATE NoteSkin, we will have fun effects
+	// like Vivid or Flat in the editor notefield. This is not conducive to
+	// productive editing.
+	// todo: We should allow certain noteskins (note-colored/rhythm) to be
+	// displayed. (Perhaps this should be a noteskin metric.) -aj
 	if( NOTESKIN->DoesNoteSkinExist( EDITOR_NOTE_SKINS[PLAYER_1].Get() ) )
 	{
 		PO_GROUP_ASSIGN( m_PlayerStateEdit.m_PlayerOptions, ModsLevel_Stage, m_sNoteSkin, EDITOR_NOTE_SKINS[PLAYER_1].Get() );

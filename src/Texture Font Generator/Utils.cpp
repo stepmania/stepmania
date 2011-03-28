@@ -170,7 +170,7 @@ bool SavePNG( FILE *f, char szErrorbuf[1024], const Surface *pSurf )
 
 	if( setjmp(pPng->jmpbuf) )
 	{
-		png_destroy_read_struct( &pPng, &pInfo, png_infopp_NULL );
+		png_destroy_read_struct( &pPng, &pInfo, NULL );
 		return false;
 	}
 
