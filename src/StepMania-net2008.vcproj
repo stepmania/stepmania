@@ -8005,6 +8005,18 @@
 				</FileConfiguration>
 			</File>
 		</Filter>
+		<Filter
+			Name="Network"
+			>
+			<File
+				RelativePath=".\NetworkPacket.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\NetworkPacket.h"
+				>
+			</File>
+		</Filter>
 		<File
 			RelativePath="archutils\Win32\DialogCrashHeader.bmp"
 			>
