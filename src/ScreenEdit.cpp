@@ -2647,8 +2647,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	else if ( SM == SM_BackFromWarpChange )
 	{
 		float fWarp = StringToFloat( ScreenTextEntry::s_sLastAnswer );
-		if( fWarp > 0 )
-			m_pSong->m_Timing.SetWarpAtBeat( GAMESTATE->m_fSongBeat, fWarp );
+		m_pSong->m_Timing.SetWarpAtBeat( GAMESTATE->m_fSongBeat, fWarp );
 		SetDirty( true );
 	}
 	else if( SM == SM_BackFromBGChange )
