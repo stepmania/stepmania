@@ -87,7 +87,7 @@ void SMOPacket::WriteNT(const RString& data)
 	Data[Position++] = 0;
 }
 
-void SMOPacket::ClearPacket()
+void SMOPacket::Clear()
 {
 	memset((void*)(&Data),0, MAX_PACKET_BUFFER_SIZE);
 	Position = 0;
@@ -189,7 +189,7 @@ void NetworkProtocolSMO::PostStartUp(const RString& sServerIP)
 
 	while(bWaitingForResponse)
 	{
-		m_packet.ClearPacket();
+		m_packet.Clear();
 		// Allow an exit if there is a problem on the socket:
 		if(NetPlayerClient->ReadPack((char *)&m_packet,MAX_PACKET_BUFFER_SIZE) < 1)
 			bWaitingForResponse = false;
@@ -284,7 +284,7 @@ void NetworkProtocolSMO::ProcessInput()
 
 	// "load new data into buffer"
 	NetPlayerClient->update();
-	m_packet.ClearPacket();
+	m_packet.Clear();
 
 	int packetSize;
 	while ((packetSize = NetPlayerClient->ReadPack((char *)&m_packet, MAX_PACKET_BUFFER_SIZE) ) > 0)
@@ -335,7 +335,7 @@ void NetworkProtocolSMO::ProcessInput()
 				SMOAttack();
 				break;
 		}
-		m_packet.ClearPacket();
+		m_packet.Clear();
 	}
 }
 
@@ -347,7 +347,7 @@ RString NetworkProtocolSMO::MD5Hex(const RString &sInput)
 // Server commands (for ProcessInput)
 void NetworkProtocolSMO::SMOPing()
 {
-	m_packet.ClearPacket();
+	m_packet.Clear();
 	m_packet.Write1( SMOCMD_PingReply );
 	NetPlayerClient->SendPack((char*)m_packet.Data, m_packet.Position);
 }
@@ -476,13 +476,13 @@ void NetworkProtocolSMO::SMOAttack()
 		a.sModifiers = m_packet.ReadNT();
 		GAMESTATE->m_pPlayerState[iPlayerNumber]->LaunchAttack(a);
 	}
-	m_packet.ClearPacket();
+	m_packet.Clear();
 }
 
 // Client commands
 void NetworkProtocolSMO::SMOHello()
 {
-	m_packet.ClearPacket();
+	m_packet.Clear();
 	m_packet.Write1(SMOCMD_Hello);
 	m_packet.Write1(ProtocolVersion);
 	m_packet.WriteNT(RString(PRODUCT_ID_VER));
@@ -494,7 +494,7 @@ void NetworkProtocolSMO::ReportStyle()
 		return;
 
 	LOG->Trace("Sending Style to server");
-	m_packet.ClearPacket();
+	m_packet.Clear();
 	m_packet.Write1(SMOCMD_StyleUpdate);
 	m_packet.Write1((int8_t)GAMESTATE->GetNumPlayersEnabled());
 
@@ -517,7 +517,7 @@ void NetworkProtocolSMO::SendSMOnline()
 
 void NetworkProtocolSMO::SendChat(const RString& sMessage)
 {
-	m_packet.ClearPacket();
+	m_packet.Clear();
 	m_packet.Write1(SMOCMD_ChatMessage);
 	m_packet.WriteNT(sMessage);
 	NetPlayerClient->SendPack((char*)&m_packet.Data, m_packet.Position); 
@@ -526,7 +526,7 @@ void NetworkProtocolSMO::SendChat(const RString& sMessage)
 // formerly RoomInfoDisplay::RequestRoomInfo
 void NetworkProtocolSMO::RequestRoomInfo(const RString& sName)
 {
-	m_SMOnlinePacket.ClearPacket();
+	m_SMOnlinePacket.Clear();
 	m_SMOnlinePacket.Write1((uint8_t)3) // Request room info
 	m_SMOnlinePacket.WriteNT(sName);
 	SendSMOnline();
@@ -534,7 +534,7 @@ void NetworkProtocolSMO::RequestRoomInfo(const RString& sName)
 
 void NetworkProtocolSMO::ChangeScreen(int i)
 {
-	m_packet.ClearPacket();
+	m_packet.Clear();
 	m_packet.Write1(SMOCMD_ScreenChange);
 	m_packet.Write1((uint8_t)i);
 	NetPlayerClient->SendPack((char*)m_packet.Data, m_packet.Position);
@@ -542,7 +542,7 @@ void NetworkProtocolSMO::ChangeScreen(int i)
 
 void NetworkProtocolSMO::ReportPlayerOptions()
 {
-	m_packet.ClearPacket();
+	m_packet.Clear();
 	m_packet.Write1(SMOCMD_ChangePlayerOptions);
 	FOREACH_PlayerNumber(pn)
 		m_packet.WriteNT(GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.GetCurrent().GetString());
@@ -558,7 +558,7 @@ void NetworkProtocolSMO::StartRequest(short iPosition)
 		return;
 
 	LOG->Trace( "Requesting Start from Server." );
-	m_packet.ClearPacket();
+	m_packet.Clear();
 	m_packet.Write1(SMOCMD_GameStartRequest);
 	unsigned char ctr=0;
 
@@ -628,10 +628,10 @@ void NetworkProtocolSMO::StartRequest(short iPosition)
 	// "The following packet HAS to get through, so we turn blocking on for it as well"
 	NetPlayerClient->SendPack((char*)&m_packet.Data, m_packet.Position);
 	LOG->Trace("Waiting for RECV");
-	m_packet.ClearPacket();
+	m_packet.Clear();
 	while(bWaitingForReply)
 	{
-		m_packet.ClearPacket();
+		m_packet.Clear();
 		// "Also allow exit if there is a problem on the socket"
 		if(NetPlayerClient->ReadPack((char *)&m_packet, NETMAXBUFFERSIZE) < 1)
 			bWaitingForReply = false;
@@ -647,7 +647,7 @@ void NetworkProtocolSMO::StartRequest(short iPosition)
 
 void NetworkProtocolSMO::SelectUserSong()
 {
-	m_packet.ClearPacket();
+	m_packet.Clear();
 	m_packet.Write1(SMOCMD_RequestStartGame);
 	m_packet.Write1((uint8_t)m_iSelectMode);
 	m_packet.WriteNT(m_sMainTitle);
@@ -662,7 +662,7 @@ void NetworkProtocolSMO::ReportScore(int iPlayerID, int iStep, int iCombo, float
 		return;
 
 	LOG->Trace(ssprintf("Player ID %i combo = %i", iPlayerID, iCombo));
-	m_packet.ClearPacket();
+	m_packet.Clear();
 
 	m_packet.Write1(SMOCMD_GameStatusUpdate);
 	iStep = TranslateStepType(iStep);
@@ -730,7 +730,7 @@ void NetworkProtocolSMO::ReportSongOver()
 	if(!m_bUseSMServer)
 		return;
 
-	m_packet.ClearPacket();
+	m_packet.Clear();
 	m_packet.Write1(SMOCMD_GameOverNotice);
 	NetPlayerClient->SendPack((char*)&m_packet.Data, m_packet.Position);
 	return;

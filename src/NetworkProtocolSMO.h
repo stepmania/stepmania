@@ -41,7 +41,7 @@ public:
 	void Write4(uint32_t data);
 	void WriteNT(const RString& data);
 
-	void ClearPacket();
+	void Clear();
 };
 
 const int NUM_SMO_TAP_SCORES = 8;
