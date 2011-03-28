@@ -1,4 +1,5 @@
 /* NetworkProtocolSMO - Legacy EzSockets-based networking protocol */
+// todo: strip this file down to the relevant stuff.
 
 #ifndef NetworkProtocolSMO_H
 #define NetworkProtocolSMO_H
@@ -9,6 +10,9 @@
 
 class EzSockets;
 
+const int SMOProtocolVersion = 3;
+const int SMOTapScores = 8;
+
 /** @brief The name and address of a specific server.
  * The SMOServerInfo is server information that is specific to the legacy
  * StepMania Online service. */
@@ -18,16 +22,13 @@ struct SMOServerInfo
 	RString Address;
 };
 
-const int MAX_PACKET_BUFFER_SIZE = 1020; // 1024 - 4 bytes for EzSockets header
-
-const int NUM_SMO_TAP_SCORES = 8;
 struct EndOfGame_PlayerData
 {
 	int iNameIndex;
 	int iScore;
 	int iGrade;
 	Difficulty difficulty;
-	int iTapScores[NUM_SMO_TAP_SCORES];	// this should be const? -freem
+	int iTapScores[SMOTapScores];	// this should be const? -freem
 	RString sPlayerOptions;
 };
 

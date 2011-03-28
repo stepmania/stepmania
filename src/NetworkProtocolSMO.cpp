@@ -20,84 +20,10 @@
 #include "PlayerState.h"
 #include "CryptManager.h"
 
-/* NetworkPacket */
-uint16_t NetworkPacket::Read2()
-{
-	if(Position >= MAX_PACKET_BUFFER_SIZE-1)
-		return 0;
-
-	uint16_t Temp;
-	memcpy(&Temp, Data + Position, 2);
-	Position+=2;
-	return ntohs(Temp);
-}
-
-uint32_t NetworkPacket::Read4()
-{
-	if(Position >= MAX_PACKET_BUFFER_SIZE-3)
-		return 0;
-
-	uint32_t Temp;
-	memcpy(&Temp, Data + Position, 4);
-	Position+=4;
-	return ntohl(Temp);
-}
-
-RString NetworkPacket::ReadString()
-{
-	RString TempStr;
-	while((Position < MAX_PACKET_BUFFER_SIZE)&& (((char*)Data)[Position]!=0))
-		TempStr = TempStr + (char)Data[Position++];
-
-	++Position;
-	return TempStr;
-}
-
-void NetworkPacket::Write1(uint8_t data)
-{
-	if(Position >= MAX_PACKET_BUFFER_SIZE)
-		return;
-	memcpy(&Data[Position], &data, 1);
-	++Position;
-}
-
-void NetworkPacket::Write2(uint16_t data)
-{
-	if(Position >= MAX_PACKET_BUFFER_SIZE-1)
-		return;
-	data = htons(data);
-	memcpy(&Data[Position], &data, 2);
-	Position+=2;
-}
-
-void NetworkPacket::Write4(uint32_t data)
-{
-	if(Position >= MAX_PACKET_BUFFER_SIZE-3)
-		return;
-
-	data = htonl(data);
-	memcpy(&Data[Position], &data, 4);
-	Position+=4;
-}
-
-void NetworkPacket::WriteString(const RString& data)
-{
-	size_t index=0;
-	while(Position < MAX_PACKET_BUFFER_SIZE && index < data.size())
-		Data[Position++] = (unsigned char)(data.c_str()[index++]);
-	Data[Position++] = 0;
-}
-
-void NetworkPacket::Clear()
-{
-	memset((void*)(&Data),0, MAX_PACKET_BUFFER_SIZE);
-	Position = 0;
-}
-
 /* NetworkProtocolSMO */
 NetworkProtocolSMO::NetworkProtocolSMO(LoadingWindow *ld)
 {
-	// initialize shit
+	// initialize
 	BroadcastReception = NULL;
 
 	ld->SetText(INITIALIZING_CLIENT_NETWORK);
@@ -371,7 +297,7 @@ void NetworkProtocolSMO::SMOGameOverNotice()
 	for(int i = 0; i < PlayersInPack; ++i)
 		m_EvalPlayerData[i].difficulty = (Difficulty)m_packet.Read1();
 
-	for(int j = 0; j < NUM_SMO_TAP_SCORES; ++j)
+	for(int j = 0; j < SMOTapScores; ++j)
 		for(int i = 0; i < PlayersInPack; ++i)
 			m_EvalPlayerData[i].iTapScores[j] = m_packet.Read2();
 
