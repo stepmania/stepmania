@@ -107,12 +107,13 @@ void NetworkSyncManager::CloseConnection()
 void NetworkSyncManager::PostStartUp( const RString& ServerIP )
 {
 	RString sAddress;
-	unsigned int iPort;
+	unsigned short iPort;
 
 	size_t cLoc = ServerIP.find( ':' );
 	if( ServerIP.find( ':' ) != RString::npos )
 	{
-		iPort = (unsigned int)atoi( ServerIP.substr( cLoc + 1 ).c_str() );
+		char* cEnd;
+		iPort = (unsigned short)strtol( ServerIP.substr( cLoc + 1 ).c_str(), &cEnd, 10 );
 		sAddress = ServerIP.substr( 0, cLoc );
 	}
 	else
