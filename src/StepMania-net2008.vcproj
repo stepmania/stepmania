@@ -8016,6 +8016,22 @@
 				RelativePath=".\NetworkPacket.h"
 				>
 			</File>
+			<File
+				RelativePath=".\NetworkProtocol.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\NetworkProtocol.h"
+				>
+			</File>
+			<File
+				RelativePath=".\NetworkProtocolLegacy.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\NetworkProtocolLegacy.h"
+				>
+			</File>
 		</Filter>
 		<File
 			RelativePath="archutils\Win32\DialogCrashHeader.bmp"
