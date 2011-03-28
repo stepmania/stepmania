@@ -51,11 +51,6 @@ AutoScreenMessage( SM_GotEval );
 AutoScreenMessage( SM_UsersUpdate );
 AutoScreenMessage( SM_SMOnlinePack );
 
-int NetworkSyncManager::GetSMOnlineSalt()
-{
-	return m_iSalt;
-}
-
 static LocalizedString INITIALIZING_CLIENT_NETWORK	( "NetworkSyncManager", "Initializing Client Network..." );
 NetworkSyncManager::NetworkSyncManager( LoadingWindow *ld )
 {
@@ -104,6 +99,11 @@ void NetworkSyncManager::CloseConnection()
 		isSMOLoggedIn[pn] = false;
 	m_startupStatus = 0;
 	NetPlayerClient->close();
+}
+
+int NetworkSyncManager::GetSMOnlineSalt()
+{
+	return m_iSalt;
 }
 
 void NetworkSyncManager::PostStartUp( const RString& ServerIP )
