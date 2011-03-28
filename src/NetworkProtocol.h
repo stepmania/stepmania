@@ -7,15 +7,6 @@ class NetworkProtocol
 {
 public:
 	static NetworkProtocol* MakeNetworkProtocol(RString sProtocol);
-
-	// Connection handlers
-	virtual bool Connect(RString& address, unsigned short port){}
-	virtual void Disconnect(){}
-
-	// Communication, etc.
-	virtual void Update(float fDeltaTime){}
-
-	// Gameplay
 };
 
 #endif
