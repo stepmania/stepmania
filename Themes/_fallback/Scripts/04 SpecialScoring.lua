@@ -1,6 +1,6 @@
 --Special Scoring types.
 local r = {};
-local DisabledScoringModes = { 'DDR Extreme', '[SSC] Radar Master' };
+local DisabledScoringModes = { '[SSC] Radar Master' };
 --the following metatable makes any missing value in a table 0 instead of nil.
 local ZeroIfNotFound = { __index = function() return 0 end; };
 
