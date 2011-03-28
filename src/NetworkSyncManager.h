@@ -4,6 +4,7 @@
 #include "PlayerNumber.h"
 #include "Difficulty.h"
 #include <queue>
+#include "NetworkPacket.h"
 
 class LoadingWindow;
 
@@ -84,27 +85,6 @@ struct NetServerInfo
 class EzSockets;
 class StepManiaLanServer;
 
-class PacketFunctions
-{
-public:
-	unsigned char Data[NETMAXBUFFERSIZE];	//Data
-	int Position;				//Other info (Used for following functions)
-	int size;					//When sending these pacs, Position should
-								//be used; NOT size.
-
-	//Commands used to operate on NetPackets
-	uint8_t Read1();
-	uint16_t Read2();
-	uint32_t Read4();
-	RString ReadNT();
-
-	void Write1( uint8_t Data );
-	void Write2( uint16_t Data );
-	void Write4( uint32_t Data );
-	void WriteNT( const RString& Data );
-
-	void ClearPacket();
-};
 /** @brief Uses ezsockets for primitive song syncing and score reporting. */
 class NetworkSyncManager 
 {
@@ -167,7 +147,7 @@ public:
 
 	RString m_sChatText;
 
-	PacketFunctions	m_SMOnlinePacket;
+	NetworkPacket	m_SMOnlinePacket;
 
 	StepManiaLanServer *LANserver;
 
@@ -202,7 +182,7 @@ private:
 
 	int m_ServerVersion; // ServerVersion
 
-	PacketFunctions m_packet;
+	NetworkPacket m_packet;
 #endif
 };
 
