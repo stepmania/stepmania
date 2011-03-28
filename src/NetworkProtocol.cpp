@@ -1,17 +1,17 @@
 #include "global.cpp"
 #include "NetworkProtocol.cpp"
 
-#include "NetworkProtocolSMO.h"
+#include "NetworkProtocolLegacy.h"
 NetworkProtocol* NetworkProtocol::MakeNetworkProtocol(RString sProtocol)
 {
 	/*
 	if(sProtocol == "SSC")
 		return new NetworkProtocolSSC();
 	else if(sProtocol == "Legacy")
-		return new NetworkProtocolSMO();
+		return new NetworkProtocolLegacy();
 	FAIL_M(sProtocol);
 	*/
-	return new NetworkProtocolSMO();
+	return new NetworkProtocolLegacy();
 }
 
 /*

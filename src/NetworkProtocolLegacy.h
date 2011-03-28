@@ -1,18 +1,18 @@
-/* NetworkProtocolSMO - Legacy networking protocol */
+/* NetworkProtocolLegacy - Legacy SMOnline networking protocol */
 // todo: strip this file down to the relevant stuff.
 
-#ifndef NetworkProtocolSMO_H
-#define NetworkProtocolSMO_H
+#ifndef NetworkProtocolLegacy_H
+#define NetworkProtocolLegacy_H
 
 #include "NetworkPacket.h"
 
 class EzSockets;
 
-class NetworkProtocolSMO: public NetworkProtocol
+class NetworkProtocoLegacy: public NetworkProtocol
 {
 public:
-	NetworkProtocolSMO();
-	~NetworkProtocolSMO();
+	NetworkProtocoLegacy();
+	~NetworkProtocoLegacy();
 
 	const int ProtocolVersion = 3;
 

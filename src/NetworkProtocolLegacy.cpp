@@ -1,5 +1,5 @@
 #include "global.h"
-#include "NetworkProtocolSMO.h"
+#include "NetworkProtocoLegacy.h"
 #include "ezsockets.h"
 #include "NetworkPacket.h"
 
