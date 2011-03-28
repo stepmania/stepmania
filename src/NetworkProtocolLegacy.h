@@ -29,26 +29,26 @@ public:
 	// Client-side commands:
 	enum Command
 	{
-		SMOCMD_Ping = 0,				// [ 0/NSCPing] nop
-		SMOCMD_PingReply,				// [ 1/NSCPingR] nop response
-		SMOCMD_Hello,					// [ 2/NSCHello]
-		SMOCMD_GameStartRequest,		// [ 3/NSCGSR]
-		SMOCMD_GameOverNotice,			// [ 4/NSCGON]
-		SMOCMD_GameStatusUpdate,		// [ 5/NSCGSU]
-		SMOCMD_StyleUpdate,				// [ 6/NSCSU]
-		SMOCMD_ChatMessage,				// [ 7/NSCCM]
-		SMOCMD_RequestStartGame,		// [ 8/NSCRSG]
-		SMOCMD_UpdateUserList,			// [ 9/NSCUUL] "reserved"
-		SMOCMD_ScreenChange,			// [10/NSCSMS]
-		SMOCMD_ChangePlayerOptions,		// [11/NSCUPOpts]
-		SMOCMD_SMOnline,				// [12/NSCSMOnline]
-		SMOCMD_Formatted,				// [13/NSCFormatted] Reserved client-side
-		SMOCMD_Attack,					// [14/NSCAttack] undocumented
-		SMOCMD_XML,						// [15] not really used
+		Ping = 0,				// [ 0/NSCPing] nop
+		PingReply,				// [ 1/NSCPingR] nop response
+		Hello,					// [ 2/NSCHello]
+		GameStartRequest,		// [ 3/NSCGSR]
+		GameOverNotice,			// [ 4/NSCGON]
+		GameStatusUpdate,		// [ 5/NSCGSU]
+		StyleUpdate,			// [ 6/NSCSU]
+		ChatMessage,			// [ 7/NSCCM]
+		RequestStartGame,		// [ 8/NSCRSG]
+		UpdateUserList,			// [ 9/NSCUUL] "reserved"
+		ScreenChange,			// [10/NSCSMS]
+		ChangePlayerOptions,	// [11/NSCUPOpts]
+		SMOnline,				// [12/NSCSMOnline]
+		Formatted,				// [13/NSCFormatted] Reserved client-side
+		Attack,					// [14/NSCAttack] undocumented
+		XML,					// [15] not really used
 		NUM_SMO_COMMANDS
 	};
 	const Command ServerOffset = (Command)128;
-	NetworkPacket m_packet;
+	NetworkPacket m_Packet;
 	NetworkPacket m_NetworkPacket;		// was m_SMOnlinePacket
 
 	// Server Packet Handlers
