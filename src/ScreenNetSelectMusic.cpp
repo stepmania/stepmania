@@ -283,8 +283,8 @@ void ScreenNetSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 			case 0: // Room title Change
 				{
 					RString titleSub;
-					titleSub = NSMAN->m_SMOnlinePacket.ReadNT() + "\n";
-					titleSub += NSMAN->m_SMOnlinePacket.ReadNT();
+					titleSub = NSMAN->m_SMOnlinePacket.ReadString() + "\n";
+					titleSub += NSMAN->m_SMOnlinePacket.ReadString();
 					if( NSMAN->m_SMOnlinePacket.Read1() != 1 )
 					{
 						RString SMOnlineSelectScreen = THEME->GetMetric( m_sName, "RoomSelectScreen" );

@@ -43,7 +43,7 @@ uint32_t NetworkPacket::Read4()
 	return ntohl(Temp);
 }
 
-RString NetworkPacket::ReadNT()
+RString NetworkPacket::ReadString()
 {
 	RString TempStr;
 	while((Position < MAX_PACKET_BUFFER_SIZE)&& (((char*)Data)[Position]!=0))
@@ -210,7 +210,7 @@ void NetworkProtocolSMO::GetServerInfo()
 	m_iServerVersion = m_packet.Read1();
 	if(m_iServerVersion >= 128)
 		m_bIsSMOnline = true;
-	m_sServerName = m_packet.ReadNT();
+	m_sServerName = m_packet.ReadString();
 	m_iSalt = m_packet.Read4();
 	LOG->Info("Server Version: %d %s", m_ServerVersion, m_ServerName.c_str());
 }
@@ -376,7 +376,7 @@ void NetworkProtocolSMO::SMOGameOverNotice()
 			m_EvalPlayerData[i].iTapScores[j] = m_packet.Read2();
 
 	for(int i = 0; i < PlayersInPack; ++i)
-		m_EvalPlayerData[i].sPlayerOptions = m_packet.ReadNT();
+		m_EvalPlayerData[i].sPlayerOptions = m_packet.ReadString();
 
 	SCREENMAN->SendMessageToTopScreen( SM_GotEval );
 }
@@ -390,14 +390,14 @@ void NetworkProtocolSMO::SMOScoreboardUpdate()
 // case NSCSU: "System message from server"
 void NetworkProtocolSMO::SMOSystemMessage()
 {
-	RString sSysMsg = m_packet.ReadNT();
+	RString sSysMsg = m_packet.ReadString();
 	SCREENMAN->SystemMessage( sSysMsg );
 }
 
 // case NSCCM: "Chat message from server"
 void NetworkProtocolSMO::SMOChatMessage()
 {
-	m_sChatText += m_packet.ReadNT() + " \n ";
+	m_sChatText += m_packet.ReadString() + " \n ";
 	// "10000 chars backlog should be more than enough"
 	// sure.... -freem
 	m_sChatText = m_sChatText.Right(10000);
@@ -408,9 +408,9 @@ void NetworkProtocolSMO::SMOChatMessage()
 void NetworkProtocolSMO::SMOChangeSong()
 {
 	m_iSelectMode = m_packet.Read1();
-	m_sMainTitle = m_packet.ReadNT();
-	m_sArtist = m_packet.ReadNT();
-	m_sSubTitle = m_packet.ReadNT();
+	m_sMainTitle = m_packet.ReadString();
+	m_sArtist = m_packet.ReadString();
+	m_sSubTitle = m_packet.ReadString();
 	SCREENMAN->SendMessageToTopScreen(SM_ChangeSong);
 }
 
@@ -438,7 +438,7 @@ void NetworkProtocolSMO::SMOUpdateUserList()
 			m_iActivePlayer.push_back(i);
 		}
 		m_iPlayerStatus.push_back(PStatus);
-		m_sPlayerNames.push_back(m_packet.ReadNT());
+		m_sPlayerNames.push_back(m_packet.ReadString());
 	}
 	SCREENMAN->SendMessageToTopScreen( SM_UsersUpdate );
 }
@@ -446,8 +446,8 @@ void NetworkProtocolSMO::SMOUpdateUserList()
 void NetworkProtocolSMO::SMOSelectMusic()
 {
 	RString sStyleName, sGameName;
-	sGameName = m_packet.ReadNT();
-	sStyleName = m_packet.ReadNT();
+	sGameName = m_packet.ReadString();
+	sStyleName = m_packet.ReadString();
 
 	GAMESTATE->SetCurGame(GAMEMAN->StringToGame(sGameName));
 	GAMESTATE->SetCurrentStyle(GAMEMAN->GameAndStringToStyle(GAMESTATE->m_pCurGame,sStyleName));
@@ -474,7 +474,7 @@ void NetworkProtocolSMO::SMOAttack()
 		Attack a;
 		a.fSecsRemaining = float(m_packet.Read4()) / 1000.0f;
 		a.bGlobal = false;
-		a.sModifiers = m_packet.ReadNT();
+		a.sModifiers = m_packet.ReadString();
 		GAMESTATE->m_pPlayerState[iPlayerNumber]->LaunchAttack(a);
 	}
 	m_packet.Clear();

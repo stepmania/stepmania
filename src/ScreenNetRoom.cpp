@@ -92,8 +92,8 @@ void ScreenNetRoom::HandleScreenMessage( const ScreenMessage SM )
 				case 0: //Room title Change
 				{
 					RString title, subtitle;
-					title = NSMAN->m_SMOnlinePacket.ReadNT();
-					subtitle = NSMAN->m_SMOnlinePacket.ReadNT();
+					title = NSMAN->m_SMOnlinePacket.ReadString();
+					subtitle = NSMAN->m_SMOnlinePacket.ReadString();
 
 					Message msg( MessageIDToString(Message_UpdateScreenHeader) );
 					msg.SetParam( "Header", title );
@@ -113,8 +113,8 @@ void ScreenNetRoom::HandleScreenMessage( const ScreenMessage SM )
 					for( int i=0; i<numRooms; ++i )
 					{
 						RoomData tmpRoomData;
-						tmpRoomData.SetName( NSMAN->m_SMOnlinePacket.ReadNT() );
-						tmpRoomData.SetDescription( NSMAN->m_SMOnlinePacket.ReadNT() );
+						tmpRoomData.SetName( NSMAN->m_SMOnlinePacket.ReadString() );
+						tmpRoomData.SetDescription( NSMAN->m_SMOnlinePacket.ReadString() );
 						m_Rooms.push_back( tmpRoomData );
 					}
 					//Abide by protocol and read room status
@@ -134,14 +134,14 @@ void ScreenNetRoom::HandleScreenMessage( const ScreenMessage SM )
 			break;
 		case 3:
 			RoomInfo info;
-			info.songTitle = NSMAN->m_SMOnlinePacket.ReadNT();
-			info.songSubTitle = NSMAN->m_SMOnlinePacket.ReadNT();
-			info.songArtist = NSMAN->m_SMOnlinePacket.ReadNT();
+			info.songTitle = NSMAN->m_SMOnlinePacket.ReadString();
+			info.songSubTitle = NSMAN->m_SMOnlinePacket.ReadString();
+			info.songArtist = NSMAN->m_SMOnlinePacket.ReadString();
 			info.numPlayers = NSMAN->m_SMOnlinePacket.Read1();
 			info.maxPlayers = NSMAN->m_SMOnlinePacket.Read1();
 			info.players.resize( info.numPlayers );
 			for( int i = 0; i < info.numPlayers; ++i )
-				info.players[i] = NSMAN->m_SMOnlinePacket.ReadNT();
+				info.players[i] = NSMAN->m_SMOnlinePacket.ReadString();
 
 			m_roomInfo.SetRoomInfo( info );
 			break;

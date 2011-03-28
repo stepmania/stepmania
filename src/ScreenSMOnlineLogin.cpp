@@ -146,7 +146,7 @@ void ScreenSMOnlineLogin::HandleScreenMessage(const ScreenMessage SM)
 			}
 			else
 			{
-				RString Response = NSMAN->m_SMOnlinePacket.ReadNT();
+				RString Response = NSMAN->m_SMOnlinePacket.ReadString();
 				ScreenTextEntry::Password( SM_PasswordDone, Response + "\n\n" + sLoginQuestion, NULL );
 			}
 		}
