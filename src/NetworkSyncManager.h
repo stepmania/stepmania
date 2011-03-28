@@ -5,6 +5,7 @@
 #include "Difficulty.h"
 #include <queue>
 #include "NetworkPacket.h"
+#include "NetworkProtocol.h"
 
 class LoadingWindow;
 
@@ -150,6 +151,8 @@ public:
 	NetworkPacket	m_SMOnlinePacket;
 
 	StepManiaLanServer *LANserver;
+
+	NetworkProtocol *m_Protocol;
 
 	int GetSMOnlineSalt();
 

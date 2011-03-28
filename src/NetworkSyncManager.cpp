@@ -29,6 +29,7 @@ void NetworkSyncManager::GetListOfLANServers( vector<NetServerInfo>& AllServers 
 #else
 #include "ezsockets.h"
 #include "NetworkPacket.h"
+#include "NetworkProtocol.h"
 #include "ProfileManager.h"
 #include "RageLog.h"
 #include "ScreenManager.h"
@@ -190,6 +191,8 @@ void NetworkSyncManager::PostStartUp( const RString& ServerIP )
 	m_ServerVersion = m_packet.Read1();
 	if( m_ServerVersion >= 128 )
 		isSMOnline = true;
+
+	m_Protocol = NetworkProtocol::MakeNetworkProtocol("Legacy");
 
 	m_ServerName = m_packet.ReadString();
 	m_iSalt = m_packet.Read4();
