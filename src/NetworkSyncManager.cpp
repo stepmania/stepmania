@@ -51,7 +51,8 @@ AutoScreenMessage( SM_GotEval );
 AutoScreenMessage( SM_UsersUpdate );
 AutoScreenMessage( SM_SMOnlinePack );
 
-static LocalizedString INITIALIZING_CLIENT_NETWORK	( "NetworkSyncManager", "Initializing Client Network..." );
+static LocalizedString INITIALIZING_CLIENT_NETWORK	( "NetworkSyncManager", "Initializing Client Network..." ); // safe -f.
+
 NetworkSyncManager::NetworkSyncManager( LoadingWindow *ld )
 {
 	LANserver = NULL;	//So we know if it has been created yet
@@ -67,7 +68,7 @@ NetworkSyncManager::NetworkSyncManager( LoadingWindow *ld )
 	FOREACH_PlayerNumber( pn )
 		isSMOLoggedIn[pn] = false;
 
-	m_startupStatus = 0;	//By default, connection not tried.
+	m_startupStatus = 0;	// By default, connection not tried.
 
 	m_ActivePlayers = 0;
 
@@ -93,7 +94,7 @@ void NetworkSyncManager::CloseConnection()
 	if( !useSMserver )
 		return;
 	m_ServerVersion = 0;
-   	useSMserver = false;
+	useSMserver = false;
 	isSMOnline = false;
 	FOREACH_PlayerNumber( pn )
 		isSMOLoggedIn[pn] = false;
