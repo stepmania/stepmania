@@ -6,13 +6,10 @@
 
 NetworkProtocolLegacy::NetworkProtocolLegacy()
 {
+	m_sName = "Legacy";
 }
 
 NetworkProtocolLegacy::~NetworkProtocolLegacy()
-{
-}
-
-void NetworkProtocolLegacy::Update(float fDeltaTime)
 {
 }
 

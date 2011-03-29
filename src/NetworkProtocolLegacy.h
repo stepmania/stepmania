@@ -10,7 +10,7 @@
 class EzSockets;
 class NetworkProtocol;
 
-const int ProtocolVersion = 3;
+const int LegacyProtocolVersion = 3;
 
 // Client-side commands:
 enum LegacyCommand
@@ -33,7 +33,7 @@ enum LegacyCommand
 	XML,					// [15] not really used
 	NUM_SMO_COMMANDS
 };
-const LegacyCommand ServerOffset = (LegacyCommand)128;
+const LegacyCommand LegacyServerOffset = (LegacyCommand)128;
 
 class NetworkProtocolLegacy: public NetworkProtocol
 {
@@ -41,11 +41,10 @@ public:
 	NetworkProtocolLegacy();
 	~NetworkProtocolLegacy();
 
-	void Update(float fDeltaTime);
 	void ParseInput();
 
 	NetworkPacket m_Packet;
-	NetworkPacket m_NetworkPacket;		// was m_SMOnlinePacket
+	NetworkPacket m_SMOnlinePacket;
 
 	// Server Packet Handlers
 	//void Ping();
