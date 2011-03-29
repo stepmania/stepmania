@@ -18,6 +18,7 @@ It could be v1.2.5, it could be v1.3.0, it could even be StepMania 5.
 20110329
 --------
 * [ScreenEdit] Changed sample playback button to L. [AJ]
+* [ScreenGameplay] Announcers say combo messages again. [AJ]
 
 ================================================================================
 sm-ssc v1.2.4 | 20110327

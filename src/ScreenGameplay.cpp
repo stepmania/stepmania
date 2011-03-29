@@ -2517,9 +2517,11 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			if( !m_Toasty.IsTransitioning()  &&  !m_Toasty.IsFinished() )	// don't play if we've already played it once
 				m_Toasty.StartTransitioning();
 	}
-	else if( SM >= SM_100Combo && SM <= SM_1000Combo )
+	else if( ScreenMessageHelpers::ScreenMessageToString(SM).find("0Combo") != string::npos )
 	{
-		int iCombo = ( SM-(SM_100Combo+1) ) * 100;
+		int iCombo;
+		RString sCropped = ScreenMessageHelpers::ScreenMessageToString(SM).substr(3);
+		sscanf(sCropped.c_str(),"%d%*s",&iCombo);
 		PlayAnnouncer( ssprintf("gameplay %d combo",iCombo), 2 );
 	}
 	else if( SM == SM_ComboStopped )
