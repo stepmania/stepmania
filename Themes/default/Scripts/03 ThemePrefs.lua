@@ -231,7 +231,7 @@ function UserPrefShowLotsaOptions()
 end
 
 function UserPrefSpecialScoringMode()
-	local baseChoices = { 'DDR 1stMIX', 'DDR 4thMIX', 'DDR SuperNOVA', 'DDR SuperNOVA 2', 'MIGS' }; --'[SSC] Radar Master'
+	local baseChoices = { 'DDR 1stMIX', 'DDR 4thMIX', 'DDR Extreme', 'DDR SuperNOVA', 'DDR SuperNOVA 2', 'MIGS' }; --'[SSC] Radar Master'
 	local t = {
 		Name = "UserPrefSpecialScoringMode";
 		LayoutType = "ShowAllInRow";
