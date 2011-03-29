@@ -93,24 +93,21 @@ public:
 	NetworkSyncManager( LoadingWindow *ld = NULL );
 	~NetworkSyncManager();
 
-    // If "useSMserver" then send score to server
+	void CloseConnection();
+	void PostStartUp( const RString& ServerIP );
+	bool Connect( const RString& addy, unsigned short port );
+	void DisplayStartupStatus();	// Notify user if connect attempt was successful or not.
+
+	void ReportNSSOnOff( int i );	// Report song selection screen on/off
+	RString GetServerName();
+	// If "useSMserver" then send score to server
 	void ReportScore( int playerID, int step, int score, int combo, float offset );	
 	void ReportSongOver();
 	void ReportStyle(); // Report style, players, and names
-	void ReportNSSOnOff( int i );	// Report song selection screen on/off
 	void StartRequest( short position );	// Request a start; Block until granted.
-	RString GetServerName();
 
 	// SMOnline stuff
-	void SendSMOnline( );
-
-	bool Connect( const RString& addy, unsigned short port );
-
-	void PostStartUp( const RString& ServerIP );
-
-	void CloseConnection();
-
-	void DisplayStartupStatus();	// Notify user if connect attempt was successful or not.
+	void SendSMOnline();
 
 	int m_playerLife[NUM_PLAYERS];	// Life (used for sending to server)
 
