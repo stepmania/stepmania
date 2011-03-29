@@ -60,6 +60,7 @@ void MouseDevice::AddElement( int usagePage, int usage, IOHIDElementCookie cooki
 						m.y_max = iMax;
 						break;
 					case kHIDUsage_GD_Z:
+					case kHIDUsage_GD_Wheel: // also handle wheel
 						m.z_axis = cookie;
 						m.z_min = iMin;
 						m.z_max = iMax;
@@ -104,11 +105,13 @@ void MouseDevice::GetButtonPresses( vector<DeviceInput>& vPresses, IOHIDElementC
 	const Mouse& m = m_Mouse;
 	if( m.x_axis == cookie )
 	{
-//		INPUTFILTER->UpdateCursorLocation(value,m.y_axis);
+		//INPUTFILTER->UpdateCursorLocation(value,m.y_axis);
+		LOG->Trace("Mouse X: Value = %i",value);
 	}
 	else if( m.y_axis == cookie )
 	{
-//		INPUTFILTER->UpdateCursorLocation(m.x_axis,value);
+		//INPUTFILTER->UpdateCursorLocation(m.x_axis,value);
+		LOG->Trace("Mouse Y: Value = %i",value);
 	}
 	else if( m.z_axis == cookie )
 	{
