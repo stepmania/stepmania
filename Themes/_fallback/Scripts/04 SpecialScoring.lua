@@ -8,7 +8,8 @@ local ZeroIfNotFound = { __index = function() return 0 end; };
 function GetTotalItems(radars)
 	return radars:GetValue('RadarCategory_TapsAndHolds') 
 		+ radars:GetValue('RadarCategory_Holds') 
-		+ radars:GetValue('RadarCategory_Rolls');
+		+ radars:GetValue('RadarCategory_Rolls')
+		+ radars:GetValue('RadarCategory_Lifts');
 end;
 
 -- Determine whether marvelous timing is to be considered.
