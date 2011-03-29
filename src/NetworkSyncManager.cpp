@@ -30,6 +30,7 @@ void NetworkSyncManager::GetListOfLANServers( vector<NetServerInfo>& AllServers 
 #include "ezsockets.h"
 #include "NetworkPacket.h"
 #include "NetworkProtocol.h"
+#include "NetworkProtocolLegacy.h"
 #include "ProfileManager.h"
 #include "RageLog.h"
 #include "ScreenManager.h"
@@ -192,13 +193,17 @@ void NetworkSyncManager::PostStartUp( const RString& ServerIP )
 	if( m_ServerVersion >= 128 )
 		isSMOnline = true;
 
+	/*
+	if( m_ServerVersion == 0 ) // hacky thing, I suppose -aj
+		m_Protocol = NetworkProtocol::MakeNetworkProtocol("SSC");
+	else
+	*/
 	m_Protocol = NetworkProtocol::MakeNetworkProtocol("Legacy");
 
 	m_ServerName = m_packet.ReadString();
 	m_iSalt = m_packet.Read4();
 	LOG->Info( "Server Version: %d %s", m_ServerVersion, m_ServerName.c_str() );
 }
-
 
 void NetworkSyncManager::StartUp()
 {
@@ -207,12 +212,12 @@ void NetworkSyncManager::StartUp()
 	if( GetCommandlineArgument( "netip", &ServerIP ) )
 		PostStartUp( ServerIP );
 
+	// LAN
 	BroadcastReception = new EzSockets;
 	BroadcastReception->create( IPPROTO_UDP );
 	BroadcastReception->bind( 8765 );
 	BroadcastReception->blocking = false;
 }
-
 
 bool NetworkSyncManager::Connect( const RString& addy, unsigned short port )
 {
@@ -224,6 +229,12 @@ bool NetworkSyncManager::Connect( const RString& addy, unsigned short port )
 	return useSMserver;
 }
 
+RString NetworkSyncManager::GetServerName() 
+{ 
+	return m_ServerName;
+}
+
+// legacy
 void NetworkSyncManager::ReportNSSOnOff(int i) 
 {
 	m_packet.Clear();
@@ -232,11 +243,7 @@ void NetworkSyncManager::ReportNSSOnOff(int i)
 	NetPlayerClient->SendPack( (char*)m_packet.Data, m_packet.Position );
 }
 
-RString NetworkSyncManager::GetServerName() 
-{ 
-	return m_ServerName;
-}
-
+// legacy
 void NetworkSyncManager::ReportScore(int playerID, int step, int score, int combo, float offset)
 {
 	if( !useSMserver ) //Make sure that we are using the network
@@ -282,6 +289,7 @@ void NetworkSyncManager::ReportScore(int playerID, int step, int score, int comb
 
 }
 
+// legacy
 void NetworkSyncManager::ReportSongOver() 
 {
 	if ( !useSMserver )	//Make sure that we are using the network
@@ -295,6 +303,7 @@ void NetworkSyncManager::ReportSongOver()
 	return;
 }
 
+// legacy
 void NetworkSyncManager::ReportStyle() 
 {
 	LOG->Trace( "Sending \"Style\" to server" );
@@ -314,6 +323,7 @@ void NetworkSyncManager::ReportStyle()
 	NetPlayerClient->SendPack( (char*)&m_packet.Data, m_packet.Position );
 }
 
+// legacy
 void NetworkSyncManager::StartRequest( short position ) 
 {
 	if( !useSMserver )
@@ -670,6 +680,7 @@ void NetworkSyncManager::ProcessInput()
 	}
 }
 
+// legacy
 bool NetworkSyncManager::ChangedScoreboard(int Column) 
 {
 	if (!m_scoreboardchange[Column])
@@ -686,6 +697,7 @@ void NetworkSyncManager::SendChat(const RString& message)
 	NetPlayerClient->SendPack((char*)&m_packet.Data, m_packet.Position); 
 }
 
+// legacy
 void NetworkSyncManager::ReportPlayerOptions()
 {
 	m_packet.Clear();
@@ -695,6 +707,7 @@ void NetworkSyncManager::ReportPlayerOptions()
 	NetPlayerClient->SendPack((char*)&m_packet.Data, m_packet.Position); 
 }
 
+// legacy
 void NetworkSyncManager::SelectUserSong()
 {
 	m_packet.Clear();
@@ -706,14 +719,20 @@ void NetworkSyncManager::SelectUserSong()
 	NetPlayerClient->SendPack( (char*)&m_packet.Data, m_packet.Position );
 }
 
-void NetworkSyncManager::SendSMOnline( )
+// todo: replace anything that calls this? -aj
+void NetworkSyncManager::SendSMOnline()
 {
-	m_packet.Position = m_SMOnlinePacket.Position + 1;
-	memcpy( (m_packet.Data + 1), m_SMOnlinePacket.Data, m_SMOnlinePacket.Position );
-	m_packet.Data[0] = NSCSMOnline;
-	NetPlayerClient->SendPack( (char*)&m_packet.Data , m_packet.Position );
+	if( m_Protocol->m_sName == "Legacy" )
+		static_cast<NetworkProtocolLegacy*>(m_Protocol)->SendSMOnline(&m_packet);
 }
 
+// generic packet sending function, mostly used in NetworkProtocols
+void NetworkSyncManager::SendPacket(NetworkPacket *p)
+{
+	NetPlayerClient->SendPack( (char*)p->Data , p->Position );
+}
+
+// legacy
 SMOStepType NetworkSyncManager::TranslateStepType(int score)
 {
 	/* Translate from Stepmania's constantly changing TapNoteScore
@@ -745,16 +764,19 @@ SMOStepType NetworkSyncManager::TranslateStepType(int score)
 	}
 }
 
+// common
 RString NetworkSyncManager::MD5Hex( const RString &sInput ) 
 {
 	return BinaryToHex( CryptManager::GetMD5ForString(sInput) ).MakeUpper();
 }
 
+// LAN
 void NetworkSyncManager::GetListOfLANServers( vector<NetServerInfo>& AllServers ) 
 {
 	AllServers = m_vAllLANServers;
 }
 
+// common
 static bool ConnectToServer( const RString &t ) 
 { 
 	NSMAN->PostStartUp( t );
@@ -764,6 +786,7 @@ static bool ConnectToServer( const RString &t )
 
 extern Preference<RString> g_sLastServer;
 
+// begin lua
 LuaFunction( ConnectToServer, 		ConnectToServer( ( RString(SArg(1)).length()==0 ) ? RString(g_sLastServer) : RString(SArg(1) ) ) )
 
 #endif

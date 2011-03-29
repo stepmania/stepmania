@@ -93,96 +93,105 @@ public:
 	NetworkSyncManager( LoadingWindow *ld = NULL );
 	~NetworkSyncManager();
 
+	NetworkProtocol *m_Protocol;
+
 	void CloseConnection();
 	void PostStartUp( const RString& ServerIP );
 	bool Connect( const RString& addy, unsigned short port );
 	void DisplayStartupStatus();	// Notify user if connect attempt was successful or not.
-
-	void ReportNSSOnOff( int i );	// Report song selection screen on/off
 	RString GetServerName();
+	int GetSMOnlineSalt();
+	void Update( float fDeltaTime );
+
+	RString MD5Hex( const RString &sInput );
+
+	bool useSMserver;
+	bool isSMOnline;	// based on server version number
+	bool isSMOLoggedIn[NUM_PLAYERS];
+
+	// legacy-specific:
+	void ReportNSSOnOff( int i );	// Report song selection screen on/off
 	// If "useSMserver" then send score to server
-	void ReportScore( int playerID, int step, int score, int combo, float offset );	
+	void ReportScore( int playerID, int step, int score, int combo, float offset );
 	void ReportSongOver();
 	void ReportStyle(); // Report style, players, and names
 	void StartRequest( short position );	// Request a start; Block until granted.
 
-	// SMOnline stuff
+	// (Legacy) SMOnline stuff;
 	void SendSMOnline();
+	NetworkPacket	m_SMOnlinePacket;
 
 	int m_playerLife[NUM_PLAYERS];	// Life (used for sending to server)
 
-	void Update( float fDeltaTime );
-
-	bool useSMserver;
-	bool isSMOnline;
-	bool isSMOLoggedIn[NUM_PLAYERS];
-
+	// (legacy?) user list:
 	vector<int> m_PlayerStatus;
 	int m_ActivePlayers;
 	vector<int> m_ActivePlayer;
 	vector<RString> m_PlayerNames;
 
-	// Used for ScreenNetEvaluation
+	// (Legacy) Used for ScreenNetEvaluation
 	vector<EndOfGame_PlayerData> m_EvalPlayerData;
 
-	// Used together: 
+	// (legacy) Used together: 
 	bool ChangedScoreboard(int Column);	// Returns true if scoreboard changed since function was last called.
 	RString m_Scoreboard[NUM_NSScoreBoardColumn];
 
-	// Used for chatting
+	// (Legacy but likely common) Used for chatting
 	void SendChat(const RString& message);
 	RString m_WaitingChat;
+	RString m_sChatText;	// chatroom text buffer
 
-	// Used for options
+	// (Legacy) Used for options
 	void ReportPlayerOptions();
 
-	// Used for song checking/changing
+	// (Legacy) Used for song checking/changing
 	RString m_sMainTitle;
 	RString m_sArtist;
 	RString m_sSubTitle;
 	int m_iSelectMode;
 	void SelectUserSong();
 
-	RString m_sChatText;
-
-	NetworkPacket	m_SMOnlinePacket;
-
+	// (common) LAN-related
 	StepManiaLanServer *LANserver;
-
-	NetworkProtocol *m_Protocol;
-
-	int GetSMOnlineSalt();
-
-	RString MD5Hex( const RString &sInput );
-
 	void GetListOfLANServers( vector<NetServerInfo>& AllServers );
+
+	// new code
+	void SendPacket(NetworkPacket *p);
+
 private:
 #if !defined(WITHOUT_NETWORKING)
 
-	void ProcessInput();
-	SMOStepType TranslateStepType(int score);
 	void StartUp();
 
-	int m_playerID;  // Currently unused, but need to stay
+	// core of the networking experience
+	EzSockets *NetPlayerClient;
+	NetworkPacket m_packet;
+
+	RString m_ServerName;
+	int m_ServerVersion;
+	int m_startupStatus;	// Used to see if attempt was successful or not.
+	int m_iSalt;	// Legacy, but might be useful in SMO-SSC
+
+	// common stuff + Legacy packet parsing
+	void ProcessInput();
+	// (Legacy) for ReportScore()
+	SMOStepType TranslateStepType(int score);
+
+	// Currently unused, but need to stay. (who? -aj)
+	// why? -aj
+	/*
+	int m_playerID;
 	int m_step;
 	int m_score;
 	int m_combo;
-    
-	int m_startupStatus;	// Used to see if attempt was successful or not.
-	int m_iSalt;
+	*/
 
+	// (legacy) scoreboard
 	bool m_scoreboardchange[NUM_NSScoreBoardColumn];
 
-	RString m_ServerName;
- 
-	EzSockets *NetPlayerClient;
+	// (common) LAN
 	EzSockets *BroadcastReception;
-
 	vector<NetServerInfo> m_vAllLANServers;
-
-	int m_ServerVersion; // ServerVersion
-
-	NetworkPacket m_packet;
 #endif
 };
 

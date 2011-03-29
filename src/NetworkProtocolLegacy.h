@@ -15,23 +15,23 @@ const int LegacyProtocolVersion = 3;
 // Client-side commands:
 enum LegacyCommand
 {
-	Ping = 0,				// [ 0/NSCPing] nop
-	PingReply,				// [ 1/NSCPingR] nop response
-	Hello,					// [ 2/NSCHello]
-	GameStartRequest,		// [ 3/NSCGSR]
-	GameOverNotice,			// [ 4/NSCGON]
-	GameStatusUpdate,		// [ 5/NSCGSU]
-	StyleUpdate,			// [ 6/NSCSU]
-	ChatMessage,			// [ 7/NSCCM]
-	RequestStartGame,		// [ 8/NSCRSG]
-	UpdateUserList,			// [ 9/NSCUUL] "reserved"
-	ScreenChange,			// [10/NSCSMS]
-	ChangePlayerOptions,	// [11/NSCUPOpts]
-	SMOnline,				// [12/NSCSMOnline]
-	Formatted,				// [13/NSCFormatted] Reserved client-side
-	Attack,					// [14/NSCAttack] undocumented
-	XML,					// [15] not really used
-	NUM_SMO_COMMANDS
+	Cmd_Ping = 0,				// [ 0/NSCPing] nop
+	Cmd_PingReply,				// [ 1/NSCPingR] nop response
+	Cmd_Hello,					// [ 2/NSCHello]
+	Cmd_GameStartRequest,		// [ 3/NSCGSR]
+	Cmd_GameOverNotice,			// [ 4/NSCGON]
+	Cmd_GameStatusUpdate,		// [ 5/NSCGSU]
+	Cmd_StyleUpdate,			// [ 6/NSCSU]
+	Cmd_ChatMessage,			// [ 7/NSCCM]
+	Cmd_RequestStartGame,		// [ 8/NSCRSG]
+	Cmd_UpdateUserList,			// [ 9/NSCUUL] "reserved"
+	Cmd_ScreenChange,			// [10/NSCSMS]
+	Cmd_ChangePlayerOptions,	// [11/NSCUPOpts]
+	Cmd_SMOnline,				// [12/NSCSMOnline]
+	Cmd_Formatted,				// [13/NSCFormatted] Reserved client-side
+	Cmd_Attack,					// [14/NSCAttack] undocumented
+	Cmd_XML,					// [15] not really used
+	NUM_LegacyCommand
 };
 const LegacyCommand LegacyServerOffset = (LegacyCommand)128;
 
@@ -41,9 +41,8 @@ public:
 	NetworkProtocolLegacy();
 	~NetworkProtocolLegacy();
 
-	void ParseInput();
+	void ParseInput(NetworkPacket *p);
 
-	NetworkPacket m_Packet;
 	NetworkPacket m_SMOnlinePacket;
 
 	// Server Packet Handlers
@@ -60,7 +59,9 @@ public:
 
 	// Client Packet Handlers
 	//void Hello();
-	//void SendSMOnline();
+	// broken:
+	void SendLogin(uint8_t iPlayer, uint8_t iAuthMethod, RString sPlayerName, RString sHashedName);
+	void SendSMOnline(NetworkPacket *p);
 	//void ReportStyle();	// "Report style, players, and names"
 
 	// Lobby
@@ -77,6 +78,9 @@ public:
 	//void ReportScore(int playerID, int step, int score, int combo, float offset);
 	//SMOStepType TranslateStepType(int score);
 	//void ReportSongOver();
+
+private:
+	//NetworkPacket m_Packet;
 };
 
 #endif

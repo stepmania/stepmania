@@ -2,6 +2,7 @@
 #include "NetworkProtocol.h"
 #include "NetworkProtocolLegacy.h"
 #include "ezsockets.h"
+#include "NetworkSyncManager.h"
 #include "NetworkPacket.h"
 
 NetworkProtocolLegacy::NetworkProtocolLegacy()
@@ -13,8 +14,33 @@ NetworkProtocolLegacy::~NetworkProtocolLegacy()
 {
 }
 
-void NetworkProtocolLegacy::ParseInput()
+void NetworkProtocolLegacy::ParseInput(NetworkPacket *p)
 {
+}
+
+// Server Packet Handlers
+
+// Client Packet Handlers
+void NetworkProtocolLegacy::SendLogin(uint8_t iPlayer, uint8_t iAuthMethod, RString sPlayerName, RString sHashedName)
+{
+	// broken
+	/*
+	m_SMOnlinePacket.Clear();
+	m_SMOnlinePacket.Write1(0); // login
+	m_SMOnlinePacket.Write1( iPlayer ); // Player
+	m_SMOnlinePacket.Write1( iAuthMethod ); // Auth method
+	m_SMOnlinePacket.WriteString( sPlayerName );
+	m_SMOnlinePacket.WriteString( sHashedName );
+	SendSMOnline(&m_SMOnlinePacket);
+	*/
+}
+
+void NetworkProtocolLegacy::SendSMOnline(NetworkPacket *p)
+{
+	p->Position = NSMAN->m_SMOnlinePacket.Position + 1;
+	memcpy( (p->Data + 1), NSMAN->m_SMOnlinePacket.Data, NSMAN->m_SMOnlinePacket.Position );
+	p->Data[0] = Cmd_SMOnline;
+	NSMAN->SendPacket(p);
 }
 
 /*
