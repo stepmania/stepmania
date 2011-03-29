@@ -7,8 +7,8 @@ class NetworkProtocol
 {
 public:
 	static NetworkProtocol* MakeNetworkProtocol(RString sProtocol);
+	RString m_sName; // protocol name; "Legacy", "SSC"
 
-	virtual void Update(float fDeltaTime) {};
 	virtual void ParseInput() {};
 };
 
