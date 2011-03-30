@@ -74,6 +74,8 @@ Program/StepMania*.lib
 crashinfo.txt
 Utils/temp*
 *.lnk
+BuildLog.htm
+*.pch
 
 syntax: regexp
 .*\#.*\#$
