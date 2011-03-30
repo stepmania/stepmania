@@ -1,6 +1,7 @@
 #include "global.h"
 #include "RollingNumbers.h"
 #include "RageUtil.h"
+#include "GameState.h"
 #include "XmlFile.h"
 #include "ActorUtil.h"
 #include "LuaManager.h"
@@ -105,11 +106,17 @@ class LunaRollingNumbers: public Luna<RollingNumbers>
 public:
 	static int Load( T* p, lua_State *L )			{ p->Load(SArg(1)); return 0; }
 	static int targetnumber( T* p, lua_State *L )	{ p->SetTargetNumber( FArg(1) ); return 0; }
+	static int ForceReload( T* p, lua_State *L )
+	{ 
+		p->Update( GAMESTATE->m_LastBeatUpdate.GetDeltaTime() ); 
+		return 0; 
+	}
 
 	LunaRollingNumbers()
 	{
 		ADD_METHOD( Load );
 		ADD_METHOD( targetnumber );
+		ADD_METHOD( ForceReload );
 	}
 };
 
