@@ -64,7 +64,7 @@ r['DDR Extreme'] = function(params, pss)
 	local radarValues = steps:GetRadarValues(params.Player);
 	local baseScore = (steps:IsAnEdit() and 
 		5 or steps:GetMeter()) * 1000000;
-	local currentStep = pss:GetJudgedSegments();
+	local currentStep = pss:GetJudgedSegments() + 1; -- increased late.
 	local totalItems = GetTotalItems(radarValues);
 	local singleStep = (1 + totalItems) * totalItems / 2;
 	local stepLast = math.floor(baseScore / singleStep) * (currentStep);
