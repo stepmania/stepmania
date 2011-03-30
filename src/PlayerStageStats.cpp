@@ -41,6 +41,7 @@ void PlayerStageStats::Init()
 	m_iCurScoreMultiplier = 1;
 	m_iScore = 0;
 	m_iMaxScore = 0;
+	m_iJudgedSegments = 0;
 	m_iCurMaxScore = 0;
 	m_iSongsPassed = 0;
 	m_iSongsPlayed = 0;
@@ -87,6 +88,7 @@ void PlayerStageStats::AddStats( const PlayerStageStats& other )
 	m_iCurMissCombo += other.m_iCurMissCombo;
 	m_iScore += other.m_iScore;
 	m_iMaxScore += other.m_iMaxScore;
+	m_iJudgedSegments += other.m_iJudgedSegments;
 	m_iCurMaxScore += other.m_iCurMaxScore;
 	m_radarPossible += other.m_radarPossible;
 	m_radarActual += other.m_radarActual;
@@ -328,6 +330,7 @@ void PlayerStageStats::ResetScoreForLesson()
 	m_iScore = 0;
 	m_iCurMaxScore = 0;
 	m_iMaxScore = 0;
+	m_iJudgedSegments = 0;
 }
 
 void PlayerStageStats::SetLifeRecordAt( float fLife, float fStepsSecond )
@@ -679,6 +682,7 @@ public:
 	DEFINE_METHOD( GetCurrentMissCombo,			m_iCurMissCombo )
 	DEFINE_METHOD( GetCurrentScoreMultiplier,	m_iCurScoreMultiplier )
 	DEFINE_METHOD( GetScore,					m_iScore )
+	DEFINE_METHOD( GetJudgedSegments,			m_iJudgedSegments )
 	DEFINE_METHOD( GetTapNoteScores,			m_iTapNoteScores[Enum::Check<TapNoteScore>(L, 1)] )
 	DEFINE_METHOD( GetHoldNoteScores,			m_iHoldNoteScores[Enum::Check<HoldNoteScore>(L, 1)] )
 	DEFINE_METHOD( FullCombo,					FullCombo() )
@@ -735,6 +739,7 @@ public:
 		ADD_METHOD( GetCurrentMissCombo );
 		ADD_METHOD( GetCurrentScoreMultiplier );
 		ADD_METHOD( GetScore );
+		ADD_METHOD( GetJudgedSegments );
 		ADD_METHOD( GetTapNoteScores );
 		ADD_METHOD( GetHoldNoteScores );
 		ADD_METHOD( FullCombo );

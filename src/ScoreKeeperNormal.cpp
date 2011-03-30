@@ -369,6 +369,7 @@ void ScoreKeeperNormal::AddScoreInternal( TapNoteScore score )
 {
 	int &iScore = m_pPlayerStageStats->m_iScore;
 	int &iCurMaxScore = m_pPlayerStageStats->m_iCurMaxScore;
+	m_pPlayerStageStats->m_iJudgedSegments++;
 /*
   Regular scoring:
 
