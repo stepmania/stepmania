@@ -63,12 +63,12 @@ r['DDR Extreme'] = function(params, pss)
 	local steps = GAMESTATE:GetCurrentSteps(params.Player);
 	local radarValues = steps:GetRadarValues(params.Player);
 	local baseScore = (steps:IsAnEdit() and 
-		5 or steps:GetMeter()) * 10000000;
-	if not Shared.CurrentStep then Shared.CurrentStep = -1 end;
+		5 or steps:GetMeter()) * 1000000;
+	if not Shared.CurrentStep then Shared.CurrentStep = 0 end;
 	Shared.CurrentStep = Shared.CurrentStep + 1;
 	local totalItems = GetTotalItems(radarValues);
 	local singleStep = (1 + totalItems) * totalItems / 2;
-	local stepLast = math.floor(baseScore / singleStep) * (Shared.CurrentStep + 1);
+	local stepLast = math.floor(baseScore / singleStep) * (Shared.CurrentStep);
 	local judgeScore = 0;
 	if (params.HoldNoteScore == 'HoldNoteScore_Held') then
 		judgeScore = judgmentBase['TapNoteScore_W1'];
