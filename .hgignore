@@ -21,6 +21,7 @@ ___*
 .cvsignore
 .DS_Store
 Thumbs.db
+GameData.smzip
 config.log
 config.status
 *.pbxuser
@@ -73,6 +74,8 @@ Program/StepMania*.lib
 crashinfo.txt
 Utils/temp*
 *.lnk
+BuildLog.htm
+*.pch
 
 syntax: regexp
 .*\#.*\#$

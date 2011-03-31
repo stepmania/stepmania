@@ -925,7 +925,22 @@ bool Song::SaveToSMFile()
 	// If the file exists, make a backup.
 	if( IsAFile(sPath) )
 		FileCopy( sPath, sPath + ".old" );
-	return NotesWriterSM::Write( sPath, *this );
+	
+	vector<Steps*> vpStepsToSave;
+	FOREACH_CONST( Steps*, m_vpSteps, s ) 
+	{
+		Steps *pSteps = *s;
+		if( pSteps->IsAutogen() )
+			continue; // don't write autogen notes
+		
+		// Only save steps that weren't loaded from a profile.
+		if( pSteps->WasLoadedFromProfile() )
+			continue;
+		
+		vpStepsToSave.push_back( pSteps );
+	}
+	
+	return NotesWriterSM::Write( sPath, *this, vpStepsToSave );
 
 }
 

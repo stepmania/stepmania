@@ -287,7 +287,7 @@ static RString GetSMNotesTag( const Song &song, const Steps &in )
 	return JoinLineList( lines );
 }
 
-bool NotesWriterSM::Write( RString sPath, const Song &out )
+bool NotesWriterSM::Write( RString sPath, const Song &out, const vector<Steps*>& vpStepsToSave )
 {
 	int flags = RageFile::WRITE;
 
@@ -302,8 +302,6 @@ bool NotesWriterSM::Write( RString sPath, const Song &out )
 
 	WriteGlobalTags( f, out );
 
-	// Save specified Steps to this file
-	const vector<Steps*>& vpStepsToSave = out.GetAllSteps();
 	FOREACH_CONST( Steps*, vpStepsToSave, s ) 
 	{
 		const Steps* pSteps = *s;

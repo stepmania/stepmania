@@ -46,6 +46,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
+				AdditionalIncludeDirectories="..\libpng\include;..\zlib"
 				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -70,8 +71,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="libpng.lib;zdll.lib"
 				OutputFile="..\..\Program\$(ProjectName)-debug.exe"
 				LinkIncremental="2"
+				AdditionalLibraryDirectories="..\libpng\lib;..\zlib"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				RandomizedBaseAddress="1"
@@ -132,6 +135,7 @@
 				Optimization="2"
 				InlineFunctionExpansion="1"
 				OmitFramePointers="true"
+				AdditionalIncludeDirectories="..\libpng\include;..\zlib"
 				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG"
 				StringPooling="true"
 				MinimalRebuild="false"
@@ -157,8 +161,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="libpng.lib zdll.lib"
 				OutputFile="..\..\Program\$(ProjectName).exe"
 				LinkIncremental="1"
+				AdditionalLibraryDirectories="..\libpng\lib;..\zlib"
 				GenerateManifest="true"
 				GenerateDebugInformation="true"
 				SubSystem="2"

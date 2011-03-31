@@ -247,10 +247,10 @@ InputHandler_MacOSX_HID::InputHandler_MacOSX_HID() : m_Sem( "Input thread starte
 	// Add devices.
 	LOG->Trace( "Finding keyboards" );
 	AddDevices( kHIDPage_GenericDesktop, kHIDUsage_GD_Keyboard, id );
-	/*
+	
 	LOG->Trace( "Finding mice" );
 	AddDevices( kHIDPage_GenericDesktop, kHIDUsage_GD_Mouse, id );
-	*/
+	
 	LOG->Trace( "Finding joysticks" );
 	id = DEVICE_JOY1;
 	AddDevices( kHIDPage_GenericDesktop, kHIDUsage_GD_Joystick, id );

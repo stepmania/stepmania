@@ -207,7 +207,7 @@ void ScreenEdit::InitEditMappings()
 		m_EditMappingsDeviceInput.hold[EDIT_BUTTON_SAMPLE_LENGTH_DOWN][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT);
 		m_EditMappingsDeviceInput.hold[EDIT_BUTTON_SAMPLE_LENGTH_DOWN][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT);
 
-		m_EditMappingsDeviceInput.button[EDIT_BUTTON_PLAY_SAMPLE_MUSIC][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cm);
+		m_EditMappingsDeviceInput.button[EDIT_BUTTON_PLAY_SAMPLE_MUSIC][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cl);
 
 		m_EditMappingsDeviceInput.button[EDIT_BUTTON_OPEN_BGCHANGE_LAYER1_MENU][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cb);
 		m_EditMappingsDeviceInput.button[EDIT_BUTTON_OPEN_BGCHANGE_LAYER2_MENU][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cb);
@@ -2647,8 +2647,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	else if ( SM == SM_BackFromWarpChange )
 	{
 		float fWarp = StringToFloat( ScreenTextEntry::s_sLastAnswer );
-		if( fWarp > 0 )
-			m_pSong->m_Timing.SetWarpAtBeat( GAMESTATE->m_fSongBeat, fWarp );
+		m_pSong->m_Timing.SetWarpAtBeat( GAMESTATE->m_fSongBeat, fWarp );
 		SetDirty( true );
 	}
 	else if( SM == SM_BackFromBGChange )

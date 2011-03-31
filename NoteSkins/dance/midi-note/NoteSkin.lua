@@ -25,7 +25,7 @@ ret.Redir = function(sButton, sElement)
 	
 	-- Test
 	if sElement == "Hold Head Inactive" or
-	   sElement == "Roll Head Inactive" or
+	   sElement == "Roll Head Inactive"
 	then
 		sElement = "StreamHead Inactive";
 	end
