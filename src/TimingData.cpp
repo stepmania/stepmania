@@ -546,7 +546,7 @@ void TimingData::GetBeatAndBPSFromElapsedTimeNoOffset( float fElapsedTime, float
 			fBPS = itBPMS->m_fBPS;
 			itBPMS ++;
 			break;
-		case FOUND_STOP: // TODO: update for Delays.
+		case FOUND_STOP:
 			{
 				fTimeToNextEvent = itSS->m_fStopSeconds;
 				fNextEventTime   = fLastTime + fTimeToNextEvent;
