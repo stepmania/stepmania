@@ -11,7 +11,7 @@ namespace NotesWriterSM
 	 * @param sPath the path to write the file.
 	 * @param out the Song to be written out.
 	 * @return its success or failure. */
-	bool Write( RString sPath, const Song &out );
+	bool Write( RString sPath, const Song &out, const vector<Steps*>& vpStepsToSave );
 	/**
 	 * @brief Get some contents about the edit file first.
 	 * @param pSong the Song in question.
