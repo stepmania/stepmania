@@ -1973,7 +1973,10 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 	 * Either option would fundamentally change the grading of two quick notes
 	 * "jack hammers." Hmm.
 	 */
-	const int iStepSearchRows = BeatToNoteRow( GAMESTATE->m_pCurSong->m_Timing.GetBeatFromElapsedTime( GAMESTATE->m_fMusicSeconds + StepSearchDistance ) ) - iSongRow;
+	const int iStepSearchRows = max(
+		BeatToNoteRow( GAMESTATE->m_pCurSong->m_Timing.GetBeatFromElapsedTime( GAMESTATE->m_fMusicSeconds + StepSearchDistance ) ) - iSongRow,
+		iSongRow - BeatToNoteRow( GAMESTATE->m_pCurSong->m_Timing.GetBeatFromElapsedTime( GAMESTATE->m_fMusicSeconds - StepSearchDistance ) )
+	) + ROWS_PER_BEAT;
 	int iRowOfOverlappingNoteOrRow = row;
 	if( row == -1 )
 	{
