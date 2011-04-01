@@ -51,7 +51,6 @@ r['DDR 4thMIX'] = function(params, pss)
 end;
 -----------------------------------------------------------
 --DDR MAX2/Extreme Scoring
---This scoring system doesn't work and is locked out.
 -----------------------------------------------------------
 r['DDR Extreme'] = function(params, pss)
 	local judgmentBase = {
