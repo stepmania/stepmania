@@ -398,7 +398,7 @@ void InputHandler_Linux_Event::InputThread()
 				DeviceButton neg = g_apEventDevices[i]->aiAbsMappingLow[event.code];
 				DeviceButton pos = g_apEventDevices[i]->aiAbsMappingHigh[event.code];
 
-				float l = SCALE( int(event.value), (float) g_apEventDevices[i]->aiAbsMin[i], (float) g_apEventDevices[i]->aiAbsMax[i], -1.0f, 1.0f );
+				float l = SCALE( int(event.value), (float) g_apEventDevices[i]->aiAbsMin[event.code], (float) g_apEventDevices[i]->aiAbsMax[event.code], -1.0f, 1.0f );
 				ButtonPressed( DeviceInput(g_apEventDevices[i]->m_Dev, neg, max(-l,0), now) );
 				ButtonPressed( DeviceInput(g_apEventDevices[i]->m_Dev, pos, max(+l,0), now) );
 				break;
