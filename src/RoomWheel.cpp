@@ -151,7 +151,6 @@ bool RoomWheel::Select()
 	{
 		// Since this is not actually an option outside of this wheel, NULL is a good idea.
 		m_LastSelection = NULL;
-		// todo: Call a screen with class ScreenTextEntry instead. -aj
 		ScreenTextEntry::TextEntry( SM_BackFromRoomName, ENTER_ROOM_NAME, "", 255 );
 	}
 	return false;
