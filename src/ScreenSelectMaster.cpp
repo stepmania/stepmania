@@ -809,8 +809,7 @@ void ScreenSelectMaster::MenuStart( const InputEventPlus &input )
 		mc.ApplyToAllPlayers();
 		// We want to be able to broadcast a Start message to the theme, in
 		// case a themer wants to handle something. -aj
-		// TODO: Find a way to differentiate this from the message below, for
-		// less ambiguousness?
+		// TODO: Add a param to differentiate this from the message below.
 		MESSAGEMAN->Broadcast( (MessageID)(Message_MenuStartP1+pn) );
 		return;
 	}
