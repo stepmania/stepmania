@@ -3531,7 +3531,6 @@ void ScreenEdit::HandleStepsInformationChoice( StepsInformationChoice c, const v
 	switch( c )
 	{
 	case description:
-		// todo: Call a screen with class ScreenTextEntry instead. -aj
 		ScreenTextEntry::TextEntry( 
 			SM_None, 
 			ENTER_NEW_DESCRIPTION, 
@@ -3580,8 +3579,6 @@ void ScreenEdit::HandleSongInformationChoice( SongInformationChoice c, const vec
 {
 	Song* pSong = GAMESTATE->m_pCurSong;
 
-	// todo: Call a screen with class ScreenTextEntry instead.
-	// multiple times in this section, so I'm only saying it here. -aj
 	switch( c )
 	{
 	DEFAULT_FAIL(c);
@@ -3628,7 +3625,6 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 	{
 	DEFAULT_FAIL( c );
 	case bpm:
-		// todo: Call a screen with class ScreenTextEntry instead. -aj
 		ScreenTextEntry::TextEntry( 
 			SM_BackFromBPMChange, 
 			ENTER_BPM_VALUE, 
@@ -3637,7 +3633,6 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 			);
 		break;
 	case stop:
-		// todo: Call a screen with class ScreenTextEntry instead. -aj
 		ScreenTextEntry::TextEntry( 
 			SM_BackFromStopChange, 
 			ENTER_STOP_VALUE, 
@@ -3646,7 +3641,6 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 			);
 		break;
 	case delay:
-		// todo: Call a screen with class ScreenTextEntry instead. -aj
 		ScreenTextEntry::TextEntry( 
 			SM_BackFromDelayChange, 
 			ENTER_DELAY_VALUE, 
@@ -3687,7 +3681,6 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 		   );
 	break;
 	case warp:
-		// todo: Call a screen with class ScreenTextEntry instead. -aj
 		ScreenTextEntry::TextEntry( 
 		   SM_BackFromWarpChange, 
 		   ENTER_WARP_VALUE, 
