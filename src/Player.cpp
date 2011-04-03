@@ -2562,7 +2562,7 @@ void Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 
 		if( !NeedsTapJudging(tn) )
 			continue;
-		
+
 		// Ignore all notes that are skipped via WARPS.
 		if( GAMESTATE->m_pCurSong->m_Timing.IsWarpAtRow( iter.Row() ) )
 			continue;
@@ -2598,7 +2598,7 @@ void Player::UpdateJudgedRows()
 		{
 			int iRow = iter.Row();
 
-			// if row is within a warp section, ignore it. -aj
+			// If row is within a warp section, ignore it. -aj
 			if( GAMESTATE->m_pCurSong->m_Timing.IsWarpAtRow(iRow) )
 				continue;
 
@@ -2933,7 +2933,7 @@ void Player::HandleTapRowScore( unsigned row )
 	bNoCheating = false;
 #endif
 
-	// more warp hackery. -aj
+	// Warp hackery. -aj
 	if( GAMESTATE->m_pCurSong->m_Timing.IsWarpAtRow( row ) )
 		return;
 
@@ -3037,7 +3037,7 @@ void Player::HandleHoldCheckpoint( int iRow, int iNumHoldsHeldThisRow, int iNumH
 	bNoCheating = false;
 #endif
 
-	// more warp hackery. -aj
+	// More warp hackery. -aj
 	if( GAMESTATE->m_pCurSong->m_Timing.IsWarpAtRow( iRow ) )
 		return;
 
