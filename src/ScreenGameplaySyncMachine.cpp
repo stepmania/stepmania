@@ -35,6 +35,7 @@ void ScreenGameplaySyncMachine::Init()
 	SongUtil::GetPlayableSteps( &m_Song, vpSteps );
 	ASSERT_M(vpSteps.size() > 0, "No playable steps for ScreenGameplaySyncMachine");
 	Steps *pSteps = vpSteps[0];
+	// TODO: Either detect which player accessed this file, or FOREACH all of them. -Wolfman2000
 	GAMESTATE->m_pCurSteps[0].Set( pSteps );
 
 	GamePreferences::m_AutoPlay.Set( PC_HUMAN );

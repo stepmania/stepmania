@@ -85,11 +85,12 @@ public:
 		m_iNumExtraStagesPassed(0), m_iNumExtraStagesFailed(0),
 		m_iNumToasties(0), m_iTotalTapsAndHolds(0), m_iTotalJumps(0),
 		m_iTotalHolds(0), m_iTotalRolls(0), m_iTotalMines(0),
-		m_iTotalHands(0), m_iTotalLifts(0), m_UnlockedEntryIDs(),
-		m_sLastPlayedMachineGuid(""), m_LastPlayedDate(),
-		m_iNumSongsPlayedByStyle(), m_iNumTotalSongsPlayed(0),
-		m_UserData(), m_SongHighScores(), m_CourseHighScores(),
-		m_vScreenshots(), m_mapDayToCaloriesBurned()
+		m_iTotalHands(0), m_iTotalLifts(0), m_bNewProfile(false),
+		m_UnlockedEntryIDs(), m_sLastPlayedMachineGuid(""),
+		m_LastPlayedDate(),m_iNumSongsPlayedByStyle(),
+		m_iNumTotalSongsPlayed(0), m_UserData(), m_SongHighScores(),
+		m_CourseHighScores(), m_vScreenshots(),
+		m_mapDayToCaloriesBurned()
 	{
 		m_lastSong.Unset();
 		m_lastCourse.Unset();
@@ -182,6 +183,8 @@ public:
 	int m_iTotalMines;
 	int m_iTotalHands;
 	int m_iTotalLifts;
+	/** @brief Is this a brand new profile? */
+	bool m_bNewProfile;
 	set<RString> m_UnlockedEntryIDs;
 	/**
 	 * @brief Which machine did we play on last, based on the Guid?

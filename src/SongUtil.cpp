@@ -19,6 +19,9 @@
 #include "LuaBinding.h"
 #include "EnumHelper.h"
 
+ThemeMetric<int> SORT_BPM_DIVISION ( "MusicWheel", "SortBPMDivision" );
+ThemeMetric<int> SORT_LENGTH_DIVISION ( "MusicWheel", "SortLengthDivision" );
+
 bool SongCriteria::Matches( const Song *pSong ) const
 {
 	if( !m_sGroupName.empty()  &&  m_sGroupName != pSong->m_sGroupName )
@@ -595,8 +598,7 @@ RString SongUtil::GetSectionNameFromSongAndSort( const Song* pSong, SortOrder so
 		return SORT_NOT_AVAILABLE.GetValue();
 	case SORT_BPM:
 		{
-			// todo: make this a theme metric? -aj
-			const int iBPMGroupSize = 20;
+			const int iBPMGroupSize = SORT_BPM_DIVISION;
 			DisplayBpms bpms;
 			pSong->GetDisplayBpms( bpms );
 			int iMaxBPM = (int)bpms.GetMax();
@@ -605,8 +607,7 @@ RString SongUtil::GetSectionNameFromSongAndSort( const Song* pSong, SortOrder so
 		}
 	case SORT_LENGTH:
 		{
-			// todo: make this a theme metric? -aj
-			const int iSortLengthSize = 5;
+			const int iSortLengthSize = SORT_LENGTH_DIVISION;
 			int iMaxLength = (int)pSong->m_fMusicLengthSeconds;
 			iMaxLength += (iSortLengthSize - (iMaxLength%iSortLengthSize) - 1);
 			int iMinLength = iMaxLength - (iSortLengthSize-1);

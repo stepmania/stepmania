@@ -15,6 +15,12 @@ sm-ssc $NEXTVERSION | 2011????
 It depends on who you ask.
 It could be v1.2.5, it could be v1.3.0, it could even be StepMania 5.
 
+20110402
+--------
+* Fix a crash (issue 247) when exiting Practice mode from dance-solo,
+  dance-threepanel, and popn-nine (all of which can only have one player).
+  If you find any other modes this crashes on, let us know. [AJ]
+
 20110329
 --------
 * [ScreenEdit] Changed sample playback button to L. [AJ]

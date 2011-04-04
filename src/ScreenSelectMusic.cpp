@@ -485,7 +485,7 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 		m_bStepsChosen[input.pn] )
 		return; // ignore
 
-	// todo: use mousewheel to scroll MusicWheel -aj
+	// todo: Allow mousewheel to scroll MusicWheel -aj
 
 	if( USE_PLAYER_SELECT_MENU )
 	{
@@ -1528,9 +1528,8 @@ void ScreenSelectMusic::AfterStepsOrTrailChange( const vector<PlayerNumber> &vpn
 		}
 		else
 		{
-			// I don't like how numbers just stay up there if the current
-			// selection is NULL.
-			// todo: Let themers set the text instead of just using 0. -aj
+			// The numbers shouldn't stay if the current selection is NULL.
+			// todo: Let themers set the text value instead of just using 0. -aj
 			m_textHighScore[pn].SetText( ssprintf("%*i", NUM_SCORE_DIGITS, 0) );
 		}
 	}

@@ -101,7 +101,7 @@ void run()
 	CHECK( test.GetElapsedTimeFromBeat(15.0f), 14.5f ); // stopped
 	CHECK( test.GetElapsedTimeFromBeat(16), 20.0f );
 
-	/* todo: add warp tests once the warp code is done */
+	// todo: add warp tests -aj
 
 RageTimer foobar;
 	/* We can look up the time of any given beat, then look up the beat of that
@@ -124,10 +124,10 @@ int q = 0;
 	}
 LOG->Trace("... %i in %f", q, foobar.GetDeltaTime());
 
-	// todo: add warp segments
 	TimingData test2;
 	test2.AddBPMSegment( BPMSegment(0, 60) );
 	test2.AddStopSegment( StopSegment(0, 1) );
+	//test2.AddWarpSegment( WarpSegment() );
 	CHECK( test2.GetBeatFromElapsedTime(-1), -1.0f );
 	CHECK( test2.GetBeatFromElapsedTime(0), 0.0f );
 	CHECK( test2.GetBeatFromElapsedTime(1), 0.0f );

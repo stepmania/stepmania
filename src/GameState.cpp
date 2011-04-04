@@ -355,9 +355,14 @@ void GameState::JoinPlayer( PlayerNumber pn )
 	if( ALLOW_LATE_JOIN  &&  m_pCurStyle != NULL )
 	{
 		const Style *pStyle;
-		// only use one player for StyleType_OnePlayerTwoSides.
+		// Only use one player for StyleType_OnePlayerTwoSides and StepsTypes
+		// that can only be played by one player (e.g. dance-solo,
+		// dance-threepanel, popn-nine). -aj
 		// XXX?: still shows joined player as "Insert Card". May not be an issue? -aj
-		if( m_pCurStyle->m_StyleType == StyleType_OnePlayerTwoSides )
+		if( m_pCurStyle->m_StyleType == StyleType_OnePlayerTwoSides ||
+			m_pCurStyle->m_StepsType == StepsType_dance_solo || 
+			m_pCurStyle->m_StepsType == StepsType_dance_threepanel ||
+			m_pCurStyle->m_StepsType == StepsType_popn_nine )
 			pStyle = GAMEMAN->GetFirstCompatibleStyle( m_pCurGame, 1, m_pCurStyle->m_StepsType );
 		else
 			pStyle = GAMEMAN->GetFirstCompatibleStyle( m_pCurGame, GetNumSidesJoined(), m_pCurStyle->m_StepsType );
