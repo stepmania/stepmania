@@ -97,6 +97,7 @@ void ProfileManager::Init()
 		m_bLastLoadWasTamperedOrCorrupt[p] = false;
 		m_bLastLoadWasFromLastGood[p] = false;
 		m_bNeedToBackUpLastLoad[p] = false;
+		m_bNewProfile[p] = false;
 	}
 
 	LoadMachineProfile();
@@ -222,6 +223,7 @@ bool ProfileManager::LoadProfileFromMemoryCard( PlayerNumber pn, bool bLoadEdits
 
 	vector<RString> asDirsToTry;
 	GetMemoryCardProfileDirectoriesToTry( asDirsToTry );
+	m_bNewProfile[pn] = true;
 
 	for( unsigned i = 0; i < asDirsToTry.size(); ++i )
 	{
@@ -239,6 +241,7 @@ bool ProfileManager::LoadProfileFromMemoryCard( PlayerNumber pn, bool bLoadEdits
 		ProfileLoadResult res = LoadProfile( pn, sDir, true );
 		if( res == ProfileLoadResult_Success )
 		{
+			m_bNewProfile[pn] = false;
 			/* If importing, store the directory we imported from, for display purposes. */
 			if( i > 0 )
 				m_sProfileDirImportedFrom[pn] = asDirsToTry[i];
@@ -246,7 +249,10 @@ bool ProfileManager::LoadProfileFromMemoryCard( PlayerNumber pn, bool bLoadEdits
 		}
 		
 		if( res == ProfileLoadResult_FailedTampered )
+		{
+			m_bNewProfile[pn] = false;
 			break;
+		}
 	}
 
 	/* If we imported a profile fallback directory, change the memory card
@@ -542,6 +548,11 @@ void ProfileManager::LoadMachineProfileEdits()
 bool ProfileManager::ProfileWasLoadedFromMemoryCard( PlayerNumber pn ) const
 {
 	return !m_sProfileDir[pn].empty() && m_bWasLoadedFromMemoryCard[pn];
+}
+
+bool ProfileManager::ProfileFromMemoryCardIsNew( PlayerNumber pn ) const
+{
+	return GetProfile(pn) && m_bWasLoadedFromMemoryCard[pn] && m_bNewProfile[pn];
 }
 
 bool ProfileManager::LastLoadWasTamperedOrCorrupt( PlayerNumber pn ) const
