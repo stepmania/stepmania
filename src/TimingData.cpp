@@ -523,17 +523,13 @@ float TimingData::GetPreviousLabelSegmentBeatAtRow( int iRow ) const
 	float backup = -1;
 	for (unsigned i = 0; i < m_LabelSegments.size(); i++ )
 	{
-		if( m_LabelSegments[i].m_iStartRow > iRow )
+		if( m_LabelSegments[i].m_iStartRow >= iRow )
 		{
-			if( backup > -1 )
-			{
-				return backup;
-			}
 			break;
 		}
 		backup = NoteRowToBeat(m_LabelSegments[i].m_iStartRow);
 	}
-	return NoteRowToBeat(iRow);
+	return (backup > -1) ? backup : NoteRowToBeat(iRow);
 }
 
 float TimingData::GetNextLabelSegmentBeatAtRow( int iRow ) const
