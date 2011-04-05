@@ -92,17 +92,16 @@ void TimingData::SetStopAtRow( int iRow, float fSeconds, bool bDelay )
 	if( i == m_StopSegments.size() )	// there is no Stop/Delay Segment at the current beat
 	{
 		// create a new StopSegment
-		if( fSeconds > 0 || PREFSMAN->m_bQuirksMode )
+		if( fSeconds > 0 )
 		{
 			AddStopSegment( StopSegment(iRow, fSeconds, bDelay) );
 		}
 	}
 	else	// StopSegment being modified is m_StopSegments[i]
 	{
-		if( fSeconds > 0 || PREFSMAN->m_bQuirksMode )
+		if( fSeconds > 0 )
 		{
 			m_StopSegments[i].m_fStopSeconds = fSeconds;
-			//m_StopSegments[i].m_bDelay = bDelay; // use this?
 		}
 		else
 			m_StopSegments.erase( m_StopSegments.begin()+i, m_StopSegments.begin()+i+1 );
