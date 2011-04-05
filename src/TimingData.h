@@ -1158,13 +1158,13 @@ public:
 	 * @param iNoteRow the row to have the new Label.
 	 * @param sLabel the Label.
 	 */
-	void SetLabelAtRow( int iNoteRow, RString sLabel );
+	void SetLabelAtRow( int iNoteRow, const RString sLabel );
 	/**
 	 * @brief Set the beat to have the new Label.
 	 * @param fBeat the beat to have the new Label.
 	 * @param sLabel the Label.
 	 */
-	void SetLabelAtBeat( float fBeat, RString sLabel ) { SetLabelAtRow( BeatToNoteRow( fBeat ), sLabel ); }
+	void SetLabelAtBeat( float fBeat, const RString sLabel ) { SetLabelAtRow( BeatToNoteRow( fBeat ), sLabel ); }
 	/**
 	 * @brief Retrieve the LabelSegment at the specified row.
 	 * @param iNoteRow the row that has a LabelSegment.
