@@ -864,15 +864,13 @@ void NoteField::DrawPrimitives()
 		}
 		
 		// Label text
-		const vector<LabelSegment> &lLabelSegments = GAMESTATE->m_pCurSong->m_Timing.m_LabelSegments;
-		for( unsigned i=0; i<lLabelSegments.size(); i++ )
+		FOREACH_CONST( LabelSegment, GAMESTATE->m_pCurSong->m_Timing.m_LabelSegments, seg )
 		{
-			if( lLabelSegments[i].m_iStartRow >= iFirstRowToDraw &&
-			   lLabelSegments[i].m_iStartRow <= iLastRowToDraw)
+			if( seg->m_iStartRow >= iFirstRowToDraw && seg->m_iStartRow <= iLastRowToDraw )
 			{
-				float fBeat = NoteRowToBeat(lLabelSegments[i].m_iStartRow);
+				float fBeat = NoteRowToBeat(seg->m_iStartRow);
 				if( IS_ON_SCREEN(fBeat) )
-					DrawLabelText( fBeat, lLabelSegments[i].m_sLabel );
+					DrawLabelText( fBeat, seg->m_sLabel );
 			}
 		}
 
