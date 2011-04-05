@@ -532,7 +532,8 @@ bool SSCLoader::LoadFromSSCFile( const RString &sPath, Song &out, bool bFromCach
 						}
 						
 						const float fBeat = StringToFloat( arrayLabelValues[0] );
-						const RString sLabel = arrayLabelValues[1];
+						RString sLabel = arrayLabelValues[1];
+						TrimRight(sLabel);
 						if( fBeat > 0.0f )
 							out.m_Timing.AddLabelSegment( LabelSegment(fBeat, sLabel) );
 						else 
