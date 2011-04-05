@@ -238,7 +238,7 @@ void TimingData::SetLabelAtRow( int iRow, const RString sLabel )
 	}
 	else
 	{
-		if( i > 0 && m_LabelSegments[i-1].m_sLabel == sLabel )
+		if( i > 0 && ( m_LabelSegments[i-1].m_sLabel == sLabel || sLabel == "" ) )
 			m_LabelSegments.erase( m_LabelSegments.begin()+i, m_LabelSegments.begin()+i+1 );
 		else
 			m_LabelSegments[i].m_sLabel = sLabel;
@@ -543,6 +543,16 @@ float TimingData::GetNextLabelSegmentBeatAtRow( int iRow ) const
 		return NoteRowToBeat(m_LabelSegments[i].m_iStartRow);
 	}
 	return NoteRowToBeat(iRow);
+}
+
+bool TimingData::DoesLabelExist( RString sLabel ) const
+{
+	FOREACH_CONST( LabelSegment, m_LabelSegments, seg )
+	{
+		if( seg->m_sLabel == sLabel )
+			return true;
+	}
+	return false;
 }
 
 void TimingData::GetBeatAndBPSFromElapsedTime( float fElapsedTime, float &fBeatOut, float &fBPSOut, bool &bFreezeOut, bool &bDelayOut, int &iWarpBeginOut, float &fWarpLengthOut ) const

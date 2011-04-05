@@ -1216,6 +1216,12 @@ public:
 	float GetPreviousLabelSegmentBeatAtBeat( float fBeat ) const { return GetPreviousLabelSegmentBeatAtRow( BeatToNoteRow(fBeat) ); }
 
 	/**
+	 * @brief Determine if the requisite label already exists.
+	 * @param sLabel the label to check.
+	 * @return true if it exists, false otherwise. */
+	bool DoesLabelExist( RString sLabel ) const;
+	
+	/**
 	 * @brief Retrieve the next beat that contains a LabelSegment.
 	 * @param iRow the present row.
 	 * @return the next beat with a LabelSegment, or fBeat if there is none ahead.

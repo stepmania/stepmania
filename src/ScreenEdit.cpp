@@ -2669,13 +2669,13 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	else if ( SM == SM_BackFromLabelChange )
 	{
 		RString sLabel = ScreenTextEntry::s_sLastAnswer;
-		if ( sLabel.length() > 0 )
+		if ( !m_pSong->m_Timing.DoesLabelExist(sLabel) )
 		{
 			sLabel.Replace("=", "_");
 			sLabel.Replace(",", "_");
 			m_pSong->m_Timing.SetLabelAtBeat( GAMESTATE->m_fSongBeat, sLabel );
+			SetDirty( true );
 		}
-		SetDirty( true );
 	}
 	else if ( SM == SM_BackFromWarpChange )
 	{
