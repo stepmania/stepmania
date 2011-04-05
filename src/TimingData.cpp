@@ -57,6 +57,11 @@ void TimingData::AddComboSegment( const ComboSegment &seg )
 	m_ComboSegments.insert( upper_bound(m_ComboSegments.begin(), m_ComboSegments.end(), seg), seg );
 }
 
+void TimingData::AddLabelSegment( const LabelSegment &seg )
+{
+	m_LabelSegments.insert( upper_bound(m_LabelSegments.begin(), m_LabelSegments.end(), seg), seg );
+}
+
 /* Change an existing BPM segment, merge identical segments together or insert a new one. */
 void TimingData::SetBPMAtRow( int iNoteRow, float fBPM )
 {
