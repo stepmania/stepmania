@@ -565,6 +565,90 @@ struct ComboSegment
 };
 
 /**
+ * @brief Identifies when a chart is entering a different section.
+ * 
+ * This is meant for helping to identify different sections of a chart
+ * versus relying on measures and beats alone.
+ */
+struct LabelSegment
+{
+	/**
+	 * @brief Creates a simple Label Segment with default values.
+	 *
+	 * It is best to override the values as soon as possible.
+	 */
+	LabelSegment() : m_iStartRow(-1), m_sLabel("") { }
+	/**
+	 * @brief Creates a Label Segment with the specified starting row and label.
+	 * @param s the starting row of this segment.
+	 * @param l the label for this section.
+	 */
+	LabelSegment( int s, RString l ): m_iStartRow(max(0, s)),
+		m_sLabel(l) {}
+	/**
+	 * @brief Creates a Label Segment with the specified starting beat and label.
+	 * @param s the starting beat of this segment.
+	 * @param l the label for this section.
+	 */
+	LabelSegment( float s, RString l ):
+		m_iStartRow(max(0, BeatToNoteRow(s))), m_sLabel(l) {}
+	/**
+	 * @brief The row in which the ComboSegment activates.
+	 */
+	int m_iStartRow;
+	/**
+	 * @brief The label/section name for this point.
+	 */
+	RString m_sLabel;
+	
+	/**
+	 * @brief Compares two LabelSegments to see if they are equal to each other.
+	 * @param other the other LabelSegment to compare to.
+	 * @return the equality of the two segments.
+	 */
+	bool operator==( const LabelSegment &other ) const
+	{
+		COMPARE( m_iStartRow );
+		COMPARE( m_sLabel );
+		return true;
+	}
+	/**
+	 * @brief Compares two LabelSegments to see if they are not equal to each other.
+	 * @param other the other LabelSegment to compare to.
+	 * @return the inequality of the two segments.
+	 */
+	bool operator!=( const LabelSegment &other ) const { return !operator==(other); }
+	/**
+	 * @brief Compares two LabelSegments to see if one is less than the other.
+	 * @param other the other LabelSegment to compare to.
+	 * @return the truth/falsehood of if the first is less than the second.
+	 */
+	bool operator<( const LabelSegment &other ) const { return m_iStartRow < other.m_iStartRow; }
+	/**
+	 * @brief Compares two LabelSegments to see if one is less than or equal to the other.
+	 * @param other the other LabelSegment to compare to.
+	 * @return the truth/falsehood of if the first is less or equal to than the second.
+	 */
+	bool operator<=( const LabelSegment &other ) const
+	{
+		return ( operator<(other) || operator==(other) );
+	}
+	/**
+	 * @brief Compares two LabelSegments to see if one is greater than the other.
+	 * @param other the other LabelSegment to compare to.
+	 * @return the truth/falsehood of if the first is greater than the second.
+	 */
+	bool operator>( const LabelSegment &other ) const { return !operator<=(other); }
+	/**
+	 * @brief Compares two LabelSegments to see if one is greater than or equal to the other.
+	 * @param other the other LabelSegment to compare to.
+	 * @return the truth/falsehood of if the first is greater than or equal to the second.
+	 */
+	bool operator>=( const LabelSegment &other ) const { return !operator<(other); }
+};
+
+
+/**
  * @brief Holds data for translating beats<->seconds.
  */
 class TimingData
@@ -1064,6 +1148,92 @@ public:
 	 */
 	void AddComboSegment( const ComboSegment &seg );
 	
+	/**
+	 * @brief Retrieve the Label at the given row.
+	 * @param iNoteRow the row in question.
+	 * @return the Label.
+	 */
+	RString GetLabelAtRow( int iNoteRow ) const;
+	/**
+	 * @brief Retrieve the Label at the given beat.
+	 * @param fBeat the beat in question.
+	 * @return the Label.
+	 */
+	RString GetLabelAtBeat( float fBeat ) const { return GetLabelAtRow( BeatToNoteRow(fBeat) ); }
+	/**
+	 * @brief Set the row to have the new Label.
+	 * @param iNoteRow the row to have the new Label.
+	 * @param sLabel the Label.
+	 */
+	void SetLabelAtRow( int iNoteRow, const RString sLabel );
+	/**
+	 * @brief Set the beat to have the new Label.
+	 * @param fBeat the beat to have the new Label.
+	 * @param sLabel the Label.
+	 */
+	void SetLabelAtBeat( float fBeat, const RString sLabel ) { SetLabelAtRow( BeatToNoteRow( fBeat ), sLabel ); }
+	/**
+	 * @brief Retrieve the LabelSegment at the specified row.
+	 * @param iNoteRow the row that has a LabelSegment.
+	 * @return the LabelSegment in question.
+	 */
+	LabelSegment& GetLabelSegmentAtRow( int iNoteRow );
+	/**
+	 * @brief Retrieve the LabelSegment at the specified beat.
+	 * @param fBeat the beat that has a LabelSegment.
+	 * @return the LabelSegment in question.
+	 */
+	LabelSegment& GetLabelSegmentAtBeat( float fBeat ) { return GetLabelSegmentAtRow( BeatToNoteRow(fBeat) ); }
+	/**
+	 * @brief Retrieve the index of the LabelSegments at the specified row.
+	 * @param iNoteRow the row that has a LabelSegment.
+	 * @return the LabelSegment's index in question.
+	 */
+	int GetLabelSegmentIndexAtRow( int iNoteRow ) const;
+	/**
+	 * @brief Retrieve the index of the LabelSegments at the specified beat.
+	 * @param fBeat the beat that has a LabelSegment.
+	 * @return the LabelSegment's index in question.
+	 */
+	int GetLabelSegmentIndexAtBeat( float fBeat ) const { return GetLabelSegmentIndexAtRow( BeatToNoteRow(fBeat) ); }
+	/**
+	 * @brief Add the LabelSegment to the TimingData.
+	 * @param seg the new LabelSegment.
+	 */
+	void AddLabelSegment( const LabelSegment &seg );
+	
+	/**
+	 * @brief Retrieve the previous beat that contains a LabelSegment.
+	 * @param iRow the present row.
+	 * @return the previous beat with a LabelSegment, or fBeat if there is none prior.
+	 */
+	float GetPreviousLabelSegmentBeatAtRow( int iRow ) const;
+	/**
+	 * @brief Retrieve the previous beat that contains a LabelSegment.
+	 * @param fBeat the present beat.
+	 * @return the previous beat with a LabelSegment, or fBeat if there is none prior.
+	 */
+	float GetPreviousLabelSegmentBeatAtBeat( float fBeat ) const { return GetPreviousLabelSegmentBeatAtRow( BeatToNoteRow(fBeat) ); }
+
+	/**
+	 * @brief Determine if the requisite label already exists.
+	 * @param sLabel the label to check.
+	 * @return true if it exists, false otherwise. */
+	bool DoesLabelExist( RString sLabel ) const;
+	
+	/**
+	 * @brief Retrieve the next beat that contains a LabelSegment.
+	 * @param iRow the present row.
+	 * @return the next beat with a LabelSegment, or fBeat if there is none ahead.
+	 */
+	float GetNextLabelSegmentBeatAtRow( int iRow ) const;
+	/**
+	 * @brief Retrieve the previous beat that contains a LabelSegment.
+	 * @param fBeat the present beat.
+	 * @return the next beat with a LabelSegment, or fBeat if there is none ahead.
+	 */
+	float GetNextLabelSegmentBeatAtBeat( float fBeat ) const { return GetNextLabelSegmentBeatAtRow( BeatToNoteRow(fBeat) ); }
+	
 	void MultiplyBPMInBeatRange( int iStartIndex, int iEndIndex, float fFactor );
 	
 	void NoteRowToMeasureAndBeat( int iNoteRow, int &iMeasureIndexOut, int &iBeatIndexOut, int &iRowsRemainder ) const;
@@ -1131,6 +1301,8 @@ public:
 		COMPARE( m_ComboSegments.size() );
 		for( unsigned i=0; i<m_ComboSegments.size(); i++ )
 			COMPARE( m_ComboSegments[i] );
+		for( unsigned i=0; i<m_LabelSegments.size(); i++ )
+			COMPARE( m_LabelSegments[i] );
 		COMPARE( m_fBeat0OffsetInSeconds );
 		return true;
 	}
@@ -1178,6 +1350,10 @@ public:
 	 * @brief The collection of ComboSegments.
 	 */
 	vector<ComboSegment>		m_ComboSegments;
+	/**
+	 * @brief The collection of LabelSegments.
+	 */
+	vector<LabelSegment>		m_LabelSegments;
 	/**
 	 * @brief The initial offset of a song.
 	 */
