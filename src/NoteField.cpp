@@ -786,80 +786,68 @@ void NoteField::DrawPrimitives()
 		ASSERT(GAMESTATE->m_pCurSong);
 
 		// BPM text
-		const vector<BPMSegment> &aBPMSegments = GAMESTATE->m_pCurSong->m_Timing.m_BPMSegments;
-		for( unsigned i=0; i<aBPMSegments.size(); i++ )
+		FOREACH_CONST( BPMSegment, GAMESTATE->m_pCurSong->m_Timing.m_BPMSegments, seg )
 		{
-			if( aBPMSegments[i].m_iStartRow >= iFirstRowToDraw &&
-			    aBPMSegments[i].m_iStartRow <= iLastRowToDraw)
+			if( seg->m_iStartRow >= iFirstRowToDraw && seg->m_iStartRow <= iLastRowToDraw )
 			{
-				float fBeat = NoteRowToBeat(aBPMSegments[i].m_iStartRow);
+				float fBeat = NoteRowToBeat(seg->m_iStartRow);
 				if( IS_ON_SCREEN(fBeat) )
-					DrawBPMText( fBeat, aBPMSegments[i].GetBPM() );
+					DrawBPMText( fBeat, seg->GetBPM() );
 			}
 		}
 
 		// Freeze text
-		const vector<StopSegment> &aStopSegments = GAMESTATE->m_pCurSong->m_Timing.m_StopSegments;
-		for( unsigned i=0; i<aStopSegments.size(); i++ )
+		FOREACH_CONST( StopSegment, GAMESTATE->m_pCurSong->m_Timing.m_StopSegments, seg )
 		{
-			if( aStopSegments[i].m_iStartRow >= iFirstRowToDraw &&
-			    aStopSegments[i].m_iStartRow <= iLastRowToDraw)
+			if( seg->m_iStartRow >= iFirstRowToDraw && seg->m_iStartRow <= iLastRowToDraw )
 			{
-				float fBeat = NoteRowToBeat(aStopSegments[i].m_iStartRow);
+				float fBeat = NoteRowToBeat(seg->m_iStartRow);
 				if( IS_ON_SCREEN(fBeat) )
-					DrawFreezeText( fBeat, aStopSegments[i].m_fStopSeconds, aStopSegments[i].m_bDelay );
+					DrawFreezeText( fBeat, seg->m_fStopSeconds, seg->m_bDelay );
 			}
 		}
 		
 		// Warp text
-		const vector<WarpSegment> &aWarpSegments = GAMESTATE->m_pCurSong->m_Timing.m_WarpSegments;
-		for( unsigned i=0; i<aWarpSegments.size(); i++ )
+		FOREACH_CONST( WarpSegment, GAMESTATE->m_pCurSong->m_Timing.m_WarpSegments, seg )
 		{
-			if( aWarpSegments[i].m_iStartRow >= iFirstRowToDraw &&
-			    aWarpSegments[i].m_iStartRow <= iLastRowToDraw)
+			if( seg->m_iStartRow >= iFirstRowToDraw && seg->m_iStartRow <= iLastRowToDraw )
 			{
-				float fBeat = NoteRowToBeat(aWarpSegments[i].m_iStartRow);
+				float fBeat = NoteRowToBeat(seg->m_iStartRow);
 				if( IS_ON_SCREEN(fBeat) )
-					DrawWarpText( fBeat, aWarpSegments[i].m_fEndBeat );
+					DrawWarpText( fBeat, seg->m_fEndBeat );
 			}
 		}
 
 		// Time Signature text
-		const vector<TimeSignatureSegment> &vTimeSignatureSegments = GAMESTATE->m_pCurSong->m_Timing.m_vTimeSignatureSegments;
-		for( unsigned i=0; i<vTimeSignatureSegments.size(); i++ )
+		FOREACH_CONST( TimeSignatureSegment, GAMESTATE->m_pCurSong->m_Timing.m_vTimeSignatureSegments, seg )
 		{
-			if( vTimeSignatureSegments[i].m_iStartRow >= iFirstRowToDraw &&
-			    vTimeSignatureSegments[i].m_iStartRow <= iLastRowToDraw)
+			if( seg->m_iStartRow >= iFirstRowToDraw && seg->m_iStartRow <= iLastRowToDraw )
 			{
-				float fBeat = NoteRowToBeat(vTimeSignatureSegments[i].m_iStartRow);
+				float fBeat = NoteRowToBeat(seg->m_iStartRow);
 				if( IS_ON_SCREEN(fBeat) )
-					DrawTimeSignatureText( fBeat, vTimeSignatureSegments[i].m_iNumerator, vTimeSignatureSegments[i].m_iDenominator );
+					DrawTimeSignatureText( fBeat, seg->m_iNumerator, seg->m_iDenominator );
 			}
 		}
-
+		
 		// Tickcount text
-		const vector<TickcountSegment> &tTickcountSegments = GAMESTATE->m_pCurSong->m_Timing.m_TickcountSegments;
-		for( unsigned i=0; i<tTickcountSegments.size(); i++ )
+		FOREACH_CONST( TickcountSegment, GAMESTATE->m_pCurSong->m_Timing.m_TickcountSegments, seg )
 		{
-			if( tTickcountSegments[i].m_iStartRow >= iFirstRowToDraw &&
-			    tTickcountSegments[i].m_iStartRow <= iLastRowToDraw)
+			if( seg->m_iStartRow >= iFirstRowToDraw && seg->m_iStartRow <= iLastRowToDraw )
 			{
-				float fBeat = NoteRowToBeat(tTickcountSegments[i].m_iStartRow);
+				float fBeat = NoteRowToBeat(seg->m_iStartRow);
 				if( IS_ON_SCREEN(fBeat) )
-					DrawTickcountText( fBeat, tTickcountSegments[i].m_iTicks );
+					DrawTickcountText( fBeat, seg->m_iTicks );
 			}
 		}
 		
 		// Combo text
-		const vector<ComboSegment> &tComboSegments = GAMESTATE->m_pCurSong->m_Timing.m_ComboSegments;
-		for( unsigned i=0; i<tComboSegments.size(); i++ )
+		FOREACH_CONST( ComboSegment, GAMESTATE->m_pCurSong->m_Timing.m_ComboSegments, seg )
 		{
-			if( tComboSegments[i].m_iStartRow >= iFirstRowToDraw &&
-			   tComboSegments[i].m_iStartRow <= iLastRowToDraw)
+			if( seg->m_iStartRow >= iFirstRowToDraw && seg->m_iStartRow <= iLastRowToDraw )
 			{
-				float fBeat = NoteRowToBeat(tComboSegments[i].m_iStartRow);
+				float fBeat = NoteRowToBeat(seg->m_iStartRow);
 				if( IS_ON_SCREEN(fBeat) )
-					DrawComboText( fBeat, tComboSegments[i].m_iCombo );
+					DrawComboText( fBeat, seg->m_iCombo );
 			}
 		}
 		
