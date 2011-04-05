@@ -862,6 +862,19 @@ void NoteField::DrawPrimitives()
 					DrawComboText( fBeat, tComboSegments[i].m_iCombo );
 			}
 		}
+		
+		// Label text
+		const vector<LabelSegment> &lLabelSegments = GAMESTATE->m_pCurSong->m_Timing.m_LabelSegments;
+		for( unsigned i=0; i<lLabelSegments.size(); i++ )
+		{
+			if( lLabelSegments[i].m_iStartRow >= iFirstRowToDraw &&
+			   lLabelSegments[i].m_iStartRow <= iLastRowToDraw)
+			{
+				float fBeat = NoteRowToBeat(lLabelSegments[i].m_iStartRow);
+				if( IS_ON_SCREEN(fBeat) )
+					DrawLabelText( fBeat, lLabelSegments[i].m_sLabel );
+			}
+		}
 
 		// Course mods text
 		const Course *pCourse = GAMESTATE->m_pCurCourse;
