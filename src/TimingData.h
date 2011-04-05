@@ -584,7 +584,14 @@ struct LabelSegment
 	 * @param l the label for this section.
 	 */
 	LabelSegment( int s, RString l ): m_iStartRow(max(0, s)),
-	m_sLabel(l) {}
+		m_sLabel(l) {}
+	/**
+	 * @brief Creates a Label Segment with the specified starting beat and label.
+	 * @param s the starting beat of this segment.
+	 * @param l the label for this section.
+	 */
+	LabelSegment( float s, RString l ):
+		m_iStartRow(max(0, BeatToNoteRow(s))), m_sLabel(l) {}
 	/**
 	 * @brief The row in which the ComboSegment activates.
 	 */
