@@ -1391,6 +1391,7 @@
 			<Function name='GetBeatFromElapsedTime'/>
 			<Function name='GetDelays'/>
 			<Function name='GetElapsedTimeFromBeat'/>
+			<Function name='GetLabels'/>
 			<Function name='GetStops'/>
 			<Function name='HasBPMChanges'/>
 			<Function name='HasNegativeBPMs'/>
