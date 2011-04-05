@@ -1202,6 +1202,32 @@ public:
 	 */
 	void AddLabelSegment( const LabelSegment &seg );
 	
+	/**
+	 * @brief Retrieve the previous beat that contains a LabelSegment.
+	 * @param iRow the present row.
+	 * @return the previous beat with a LabelSegment, or fBeat if there is none prior.
+	 */
+	float GetPreviousLabelSegmentBeatAtRow( int iRow ) const;
+	/**
+	 * @brief Retrieve the previous beat that contains a LabelSegment.
+	 * @param fBeat the present beat.
+	 * @return the previous beat with a LabelSegment, or fBeat if there is none prior.
+	 */
+	float GetPreviousLabelSegmentBeatAtBeat( float fBeat ) const { return GetPreviousLabelSegmentBeatAtRow( BeatToNoteRow(fBeat) ); }
+
+	/**
+	 * @brief Retrieve the next beat that contains a LabelSegment.
+	 * @param iRow the present row.
+	 * @return the next beat with a LabelSegment, or fBeat if there is none ahead.
+	 */
+	float GetNextLabelSegmentBeatAtRow( int iRow ) const;
+	/**
+	 * @brief Retrieve the previous beat that contains a LabelSegment.
+	 * @param fBeat the present beat.
+	 * @return the next beat with a LabelSegment, or fBeat if there is none ahead.
+	 */
+	float GetNextLabelSegmentBeatAtBeat( float fBeat ) const { return GetNextLabelSegmentBeatAtRow( BeatToNoteRow(fBeat) ); }
+	
 	void MultiplyBPMInBeatRange( int iStartIndex, int iEndIndex, float fFactor );
 	
 	void NoteRowToMeasureAndBeat( int iNoteRow, int &iMeasureIndexOut, int &iBeatIndexOut, int &iRowsRemainder ) const;

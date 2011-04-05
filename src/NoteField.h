@@ -61,6 +61,7 @@ protected:
 	void DrawTimeSignatureText( const float fBeat, int iNumerator, int iDenominator );
 	void DrawTickcountText( const float fBeat, int iTicks );
 	void DrawComboText( const float fBeat, int iCombo );
+	void DrawLabelText( const float fBeat, RString sLabel );
 	void DrawAttackText( const float fBeat, const Attack &attack );
 	void DrawBGChangeText( const float fBeat, const RString sNewBGName );
 	float GetWidth() const;

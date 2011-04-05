@@ -80,6 +80,7 @@ AutoScreenMessage( SM_BackFromTimeSignatureNumeratorChange );
 AutoScreenMessage( SM_BackFromTimeSignatureDenominatorChange );
 AutoScreenMessage( SM_BackFromTickcountChange );
 AutoScreenMessage( SM_BackFromComboChange );
+AutoScreenMessage( SM_BackFromLabelChange );
 AutoScreenMessage( SM_BackFromWarpChange );
 AutoScreenMessage( SM_DoSaveAndExit );
 AutoScreenMessage( SM_DoExit );
@@ -255,6 +256,14 @@ void ScreenEdit::InitEditMappings()
 	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SCROLL_SELECT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT);
 	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SCROLL_SELECT][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT);
 
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_LABEL_NEXT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_PERIOD);
+	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_LABEL_NEXT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL);
+	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_LABEL_NEXT][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL);
+	
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_LABEL_PREV][0] = DeviceInput(DEVICE_KEYBOARD, KEY_COMMA);
+	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_LABEL_PREV][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL);
+	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_LABEL_PREV][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL);
+	
 	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SNAP_NEXT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LEFT);
 	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SNAP_PREV][0] = DeviceInput(DEVICE_KEYBOARD, KEY_RIGHT);
 
@@ -551,6 +560,7 @@ static MenuDef g_TimingDataInformation(
 	MenuRowDef( ScreenEdit::time_signature_denominator,	"Edit time signature (bottom)",	true, EditMode_Full, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::tickcount,			"Edit tickcount",		true, EditMode_Full, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::combo,				"Edit combo",			true, EditMode_Full, true, true, 0, NULL ),
+	MenuRowDef( ScreenEdit::label,				"Edit label",			true, EditMode_Full, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::warp,				"Edit warp",			true, EditMode_Full, true, true, 0, NULL )
 );
 
@@ -1423,6 +1433,18 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			int iRow = BeatToNoteRow( GAMESTATE->m_fSongBeat );
 			NoteDataUtil::GetPrevEditorPosition( m_NoteDataEdit, iRow );
 			ScrollTo( NoteRowToBeat(iRow) );
+		}
+		break;
+	case EDIT_BUTTON_LABEL_NEXT:
+		{
+			ScrollTo( GAMESTATE->m_pCurSong->m_Timing.
+				 GetNextLabelSegmentBeatAtBeat( GAMESTATE->m_fSongBeat ) );
+		}
+		break;
+	case EDIT_BUTTON_LABEL_PREV:
+		{
+			ScrollTo( GAMESTATE->m_pCurSong->m_Timing.
+				 GetPreviousLabelSegmentBeatAtBeat( GAMESTATE->m_fSongBeat ) );
 		}
 		break;
 	case EDIT_BUTTON_SNAP_NEXT:
@@ -2644,6 +2666,14 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		}
 		SetDirty( true );
 	}
+	else if ( SM == SM_BackFromLabelChange )
+	{
+		RString sLabel = ScreenTextEntry::s_sLastAnswer;
+		sLabel.Replace("=", "_");
+		sLabel.Replace(",", "_");
+		m_pSong->m_Timing.SetLabelAtBeat( GAMESTATE->m_fSongBeat, sLabel );
+		SetDirty( true );
+	}
 	else if ( SM == SM_BackFromWarpChange )
 	{
 		float fWarp = StringToFloat( ScreenTextEntry::s_sLastAnswer );
@@ -3187,6 +3217,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 				g_TimingDataInformation.rows[time_signature_denominator].SetOneUnthemedChoice( ssprintf("%d", pTime.GetTimeSignatureDenominatorAtBeat( fBeat ) ) );
 				g_TimingDataInformation.rows[tickcount].SetOneUnthemedChoice( ssprintf("%d", pTime.GetTickcountAtBeat( fBeat ) ) );
 				g_TimingDataInformation.rows[combo].SetOneUnthemedChoice( ssprintf("%d", pTime.GetComboAtBeat( fBeat ) ) );
+				g_TimingDataInformation.rows[label].SetOneUnthemedChoice( pTime.GetLabelAtBeat( fBeat ).c_str() );
 				g_TimingDataInformation.rows[warp].SetOneUnthemedChoice( ssprintf("%.5f", pTime.GetWarpAtBeat( fBeat ) ) );
 				
 				EditMiniMenu( &g_TimingDataInformation, SM_BackFromTimingDataInformation );
@@ -3618,6 +3649,7 @@ static LocalizedString ENTER_TIME_SIGNATURE_NUMERATOR_VALUE	( "ScreenEdit", "Ent
 static LocalizedString ENTER_TIME_SIGNATURE_DENOMINATOR_VALUE	( "ScreenEdit", "Enter a new Time Signature denominator value." );
 static LocalizedString ENTER_TICKCOUNT_VALUE			( "ScreenEdit", "Enter a new Tickcount value." );
 static LocalizedString ENTER_COMBO_VALUE			( "ScreenEdit", "Enter a new Combo value." );
+static LocalizedString ENTER_LABEL_VALUE			( "ScreenEdit", "Enter a new Label value." );
 static LocalizedString ENTER_WARP_VALUE				( "ScreenEdit", "Enter a new Warp value." );
 void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice c, const vector<int> &iAnswers )
 {
@@ -3680,6 +3712,14 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 		   4
 		   );
 	break;
+	case label:
+		ScreenTextEntry::TextEntry(
+		   SM_BackFromLabelChange,
+		   ENTER_LABEL_VALUE,
+		   ssprintf( "%s", m_pSong->m_Timing.GetLabelAtBeat( GAMESTATE->m_fSongBeat ).c_str() ),
+		   64
+		   );
+		break;
 	case warp:
 		ScreenTextEntry::TextEntry( 
 		   SM_BackFromWarpChange, 

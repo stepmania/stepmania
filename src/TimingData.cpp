@@ -496,11 +496,11 @@ WarpSegment& TimingData::GetWarpSegmentAtRow( int iRow )
 
 int TimingData::GetTickcountSegmentIndexAtRow( int iRow ) const
 {
-	int i;
-	for (i=0; i < (int)(m_TickcountSegments.size()) - 1; i++ )
+	unsigned i;
+	for (i=0; i < m_TickcountSegments.size() - 1; i++ )
 		if( m_TickcountSegments[i+1].m_iStartRow > iRow )
 			break;
-	return i;
+	return static_cast<int>(i);
 }
 
 TickcountSegment& TimingData::GetTickcountSegmentAtRow( int iRow )
@@ -516,6 +516,37 @@ TickcountSegment& TimingData::GetTickcountSegmentAtRow( int iRow )
 int TimingData::GetTickcountAtRow( int iRow ) const
 {
 	return m_TickcountSegments[GetTickcountSegmentIndexAtRow( iRow )].m_iTicks;
+}
+
+float TimingData::GetPreviousLabelSegmentBeatAtRow( int iRow ) const
+{
+	float backup = -1;
+	for (unsigned i = 0; i < m_LabelSegments.size(); i++ )
+	{
+		if( m_LabelSegments[i].m_iStartRow > iRow )
+		{
+			if( backup > -1 )
+			{
+				return backup;
+			}
+			break;
+		}
+		backup = NoteRowToBeat(m_LabelSegments[i].m_iStartRow);
+	}
+	return NoteRowToBeat(iRow);
+}
+
+float TimingData::GetNextLabelSegmentBeatAtRow( int iRow ) const
+{
+	for (unsigned i = 0; i < m_LabelSegments.size(); i++ )
+	{
+		if( m_LabelSegments[i].m_iStartRow <= iRow )
+		{
+			continue;
+		}
+		return NoteRowToBeat(m_LabelSegments[i].m_iStartRow);
+	}
+	return NoteRowToBeat(iRow);
 }
 
 void TimingData::GetBeatAndBPSFromElapsedTime( float fElapsedTime, float &fBeatOut, float &fBPSOut, bool &bFreezeOut, bool &bDelayOut, int &iWarpBeginOut, float &fWarpLengthOut ) const
@@ -633,9 +664,6 @@ void TimingData::GetBeatAndBPSFromElapsedTimeNoOffset( float fElapsedTime, float
 	fBPSOut = fBPS;
 	
 }
-
-
-
 
 float TimingData::GetElapsedTimeFromBeat( float fBeat ) const
 {
