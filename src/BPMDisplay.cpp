@@ -180,8 +180,8 @@ void BPMDisplay::SetBpmFromSong( const Song* pSong )
 	ASSERT( pSong );
 	switch( pSong->m_DisplayBPMType )
 	{
-	case Song::DISPLAY_ACTUAL:
-	case Song::DISPLAY_SPECIFIED:
+	case DISPLAY_BPM_ACTUAL:
+	case DISPLAY_BPM_SPECIFIED:
 		{
 			DisplayBpms bpms;
 			pSong->GetDisplayBpms( bpms );
@@ -189,7 +189,7 @@ void BPMDisplay::SetBpmFromSong( const Song* pSong )
 			m_fCycleTime = 1.0f;
 		}
 		break;
-	case Song::DISPLAY_RANDOM:
+	case DISPLAY_BPM_RANDOM:
 		CycleRandomly();
 		break;
 	default:

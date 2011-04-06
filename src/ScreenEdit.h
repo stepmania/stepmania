@@ -445,6 +445,9 @@ public:
 		sub_title_transliteration,
 		artist_transliteration,
 		last_beat_hint,
+		display_bpm,
+		min_bpm,
+		max_bpm,
 		NUM_SONG_INFORMATION_CHOICES
 	};
 	void HandleSongInformationChoice( SongInformationChoice c, const vector<int> &iAnswers );
