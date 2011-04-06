@@ -74,7 +74,7 @@ Song::Song()
 	m_fSpecifiedLastBeat = -1;
 	m_SelectionDisplay = SHOW_ALWAYS;
 	m_bEnabled = true;
-	m_DisplayBPMType = DISPLAY_ACTUAL;
+	m_DisplayBPMType = DISPLAY_BPM_ACTUAL;
 	m_fSpecifiedBPMMin = 0;
 	m_fSpecifiedBPMMax = 0;
 	m_bIsSymLink = false;
@@ -147,7 +147,7 @@ void Song::AddLyricSegment( LyricSegment seg )
 
 void Song::GetDisplayBpms( DisplayBpms &AddTo ) const
 {
-	if( m_DisplayBPMType == DISPLAY_SPECIFIED )
+	if( m_DisplayBPMType == DISPLAY_BPM_SPECIFIED )
 	{
 		AddTo.Add( m_fSpecifiedBPMMin );
 		AddTo.Add( m_fSpecifiedBPMMax );
@@ -1458,7 +1458,7 @@ bool Song::HasSignificantBpmChangesOrStops() const
 
 	// Don't consider BPM changes that only are only for maintaining sync as 
 	// a real BpmChange.
-	if( m_DisplayBPMType == DISPLAY_SPECIFIED )
+	if( m_DisplayBPMType == DISPLAY_BPM_SPECIFIED )
 	{
 		if( m_fSpecifiedBPMMin != m_fSpecifiedBPMMax )
 			return true;
@@ -1612,7 +1612,7 @@ public:
 	}
 	static int IsDisplayBpmRandom( T* p, lua_State *L )
 	{
-		lua_pushboolean( L, p->m_DisplayBPMType == Song::DISPLAY_RANDOM );
+		lua_pushboolean( L, p->m_DisplayBPMType == DISPLAY_BPM_RANDOM );
 		return 1;
 	}
 

@@ -20,14 +20,14 @@ ret.Redir = function(sButton, sElement)
 	if sElement == "Hold Head Active" or
 	   sElement == "Roll Head Active"
 	then
-		sElement = "StreamHead Active";
+		sElement = "Hold Head Active";
 	end
 	
 	-- Test
 	if sElement == "Hold Head Inactive" or
 	   sElement == "Roll Head Inactive"
 	then
-		sElement = "StreamHead Inactive";
+		sElement = "Hold Head Inactive";
 	end
 
 	sButton = ret.RedirTable[sButton];
