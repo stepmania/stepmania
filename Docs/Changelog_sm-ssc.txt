@@ -16,6 +16,11 @@ It depends on who you ask.
 It could be v1.2.5, it could be v1.3.0, it could even be StepMania 5.
 We will wait and see.
 
+20110405
+--------
+* [ScreenEdit] Allow modifying the #DISPLAYBPM traits in the editor. Look in
+  Edit Song Info to find it. [Wolfman2000]
+
 20110402
 --------
 * Fix a crash (issue 247) when exiting Practice mode from dance-solo,

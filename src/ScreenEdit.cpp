@@ -539,7 +539,10 @@ static MenuDef g_SongInformation(
 	MenuRowDef( ScreenEdit::main_title_transliteration,	"Main title transliteration",	true, EditMode_Practice, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::sub_title_transliteration,	"Sub title transliteration",	true, EditMode_Practice, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::artist_transliteration,		"Artist transliteration",	true, EditMode_Practice, true, true, 0, NULL ),
-	MenuRowDef( ScreenEdit::last_beat_hint,			"Last beat hint",		true, EditMode_Full, true, true, 0, NULL )
+	MenuRowDef( ScreenEdit::last_beat_hint,			"Last beat hint",		true, EditMode_Full, true, true, 0, NULL ),
+	MenuRowDef( ScreenEdit::display_bpm,			"Display BPM",			true, EditMode_Full, true, true, 0, "Actual", "Specified", "Random" ),
+	MenuRowDef( ScreenEdit::min_bpm,			"Min BPM",			true, EditMode_Full, true, true, 0, NULL ),
+	MenuRowDef( ScreenEdit::min_bpm,			"Max BPM",			true, EditMode_Full, true, true, 0, NULL )
 );
 
 static MenuDef g_TimingDataInformation(
@@ -2980,6 +2983,16 @@ static void ChangeLastBeatHint( const RString &sNew )
 	GAMESTATE->m_pCurSong->m_fSpecifiedLastBeat = StringToFloat( sNew );
 }
 
+static void ChangeMinBPM( const RString &sNew )
+{
+	GAMESTATE->m_pCurSong->m_fSpecifiedBPMMin = StringToFloat( sNew );
+}
+
+static void ChangeMaxBPM( const RString &sNew )
+{
+	GAMESTATE->m_pCurSong->m_fSpecifiedBPMMax = StringToFloat( sNew );
+}
+
 // End helper functions
 
 static LocalizedString REVERT_LAST_SAVE			( "ScreenEdit", "Do you want to revert to your last save?" );
@@ -3171,6 +3184,9 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 				g_SongInformation.rows[sub_title_transliteration].SetOneUnthemedChoice( pSong->m_sSubTitleTranslit );
 				g_SongInformation.rows[artist_transliteration].SetOneUnthemedChoice( pSong->m_sArtistTranslit );
 				g_SongInformation.rows[last_beat_hint].SetOneUnthemedChoice( ssprintf("%.5f", pSong->m_fSpecifiedLastBeat) );
+				g_SongInformation.rows[display_bpm].iDefaultChoice = pSong->m_DisplayBPMType;
+				g_SongInformation.rows[min_bpm].SetOneUnthemedChoice( ssprintf("%.5f", pSong->m_fSpecifiedBPMMin) );
+				g_SongInformation.rows[max_bpm].SetOneUnthemedChoice( ssprintf("%.5f", pSong->m_fSpecifiedBPMMax) );
 
 				EditMiniMenu( &g_SongInformation, SM_BackFromSongInformation );
 			}
@@ -3575,13 +3591,15 @@ static LocalizedString ENTER_MAIN_TITLE_TRANSLIT	("ScreenEdit","Enter a new main
 static LocalizedString ENTER_SUB_TITLE_TRANSLIT		("ScreenEdit","Enter a new sub title transliteration.");
 static LocalizedString ENTER_ARTIST_TRANSLIT		("ScreenEdit","Enter a new artist transliteration.");
 static LocalizedString ENTER_LAST_BEAT_HINT		("ScreenEdit","Enter a new last beat hint.");
+static LocalizedString ENTER_MIN_BPM			("ScreenEdit","Enter a new min BPM.");
+static LocalizedString ENTER_MAX_BPM			("ScreenEdit","Enter a new max BPM.");
 void ScreenEdit::HandleSongInformationChoice( SongInformationChoice c, const vector<int> &iAnswers )
 {
 	Song* pSong = GAMESTATE->m_pCurSong;
+	pSong->m_DisplayBPMType = static_cast<DisplayBPM>(iAnswers[display_bpm]);
 
 	switch( c )
 	{
-	DEFAULT_FAIL(c);
 	case main_title:
 		ScreenTextEntry::TextEntry( SM_None, ENTER_MAIN_TITLE, pSong->m_sMainTitle, 100, NULL, ChangeMainTitle, NULL );
 		break;
@@ -3607,7 +3625,20 @@ void ScreenEdit::HandleSongInformationChoice( SongInformationChoice c, const vec
 		ScreenTextEntry::TextEntry( SM_None, ENTER_ARTIST_TRANSLIT, pSong->m_sArtistTranslit, 100, NULL, ChangeArtistTranslit, NULL );
 		break;
 	case last_beat_hint:
-		ScreenTextEntry::TextEntry( SM_None, ENTER_LAST_BEAT_HINT, ssprintf("%.5f", pSong->m_fSpecifiedLastBeat), 20, ScreenTextEntry::FloatValidate, ChangeLastBeatHint, NULL );
+		ScreenTextEntry::TextEntry( SM_None, ENTER_LAST_BEAT_HINT, 
+					   ssprintf("%.5f", pSong->m_fSpecifiedLastBeat), 20, 
+					   ScreenTextEntry::FloatValidate, ChangeLastBeatHint, NULL );
+		break;
+	case min_bpm:
+		ScreenTextEntry::TextEntry( SM_None, ENTER_MIN_BPM,
+					   ssprintf("%.5f", pSong->m_fSpecifiedBPMMin), 20,
+					   ScreenTextEntry::FloatValidate, ChangeMinBPM, NULL );
+		break;
+	case max_bpm:
+		ScreenTextEntry::TextEntry( SM_None, ENTER_MAX_BPM,
+					   ssprintf("%.5f", pSong->m_fSpecifiedBPMMax), 20,
+					   ScreenTextEntry::FloatValidate, ChangeMaxBPM, NULL );
+		break;
 	};
 }
 
