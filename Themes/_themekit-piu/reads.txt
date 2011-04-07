@@ -1,0 +1,53 @@
+Congrats, you're reading the readme
+
+-= Themekit piu: a base for piu themes =-
+Use this theme as fallback for your own themes so you don't need to deal with
+piu related metric setups like lifebars, tiers, effects and such; also some
+screens are already linked (no attract screens tough)
+
+-= Why you do this? =-
+Well, I'm a PIU player, and as one, I like to have PIU setups in my Stepmania themes
+
+-= Basics and how to =-
+Easy!
+º Put this under /Themes
+º Make a blank folder under /Themes with whatever name you want for your theme
+º Create a blank Metrics.ini file inside
+º Open it
+º Write in:
+
+<code>
+[Global]
+FallbackTheme=_themekit_piu
+</code>
+
+º And there you go! just mount the screens that you want to work with or
+add/replace metrics/elements
+
+-= FAQ and details =-
+Q: Can't select themekit
+A: Themekits aren't supposed to be selectable, but if you want to use this as a
+theme (wich actually works like one) remove the first underscore in the theme
+folder name; alternately you can make a blank theme and fallback it with this
+(explained up there^) and it should work as is.
+
+Q: Theme doesn't work.
+A: Maybe you're using stepmania 4 alpha or some old cvs build, use sm-ssc
+
+Q: I want to use (partial or entirely) the lua modules outside
+A: Go ahead, just please read the notes if there are any.
+
+Q: Help me with X
+A: Sorry, I don't feel like doing so...
+
+Q: I want to contact you
+A: I don't like to have my email address floating around, visit sm-ssc irc channel
+at irc.badnik.net/sm-ssc, I'll be usually there
+
+Q: Er... Your real name?
+A: yeah, Alberto Ramos
+
+-= Least but not least: Final notes =-
+Well, I think that's pretty much it and what you need to know about this themekit,
+I hope that you enjoy it, whenever you are or not a themer, and if you are one I
+just hope that I didn't wasted time doing this... er... you found this useful ^^
