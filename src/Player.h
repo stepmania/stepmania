@@ -117,6 +117,7 @@ protected:
 	void DrawTapJudgments();
 	void DrawHoldJudgments();
 	void SendComboMessages( int iOldCombo, int iOldMissCombo );
+	void PlayKeysound( const TapNote &tn, TapNoteScore score );
 
 	void SetJudgment( TapNoteScore tns, int iFirstTrack, float fTapNoteOffset );	// -1 if no track as in TNS_Miss
 	void SetHoldJudgment( TapNoteScore tns, HoldNoteScore hns, int iTrack );

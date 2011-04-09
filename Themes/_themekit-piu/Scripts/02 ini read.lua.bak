@@ -1,0 +1,71 @@
+--iniread
+--references: http://lua.pastebin.com/fef286
+
+--[[function FirstCharMatch(text,pattern)
+	local count = 1
+	while true do
+		if string.sub(text,count,count) == pattern then
+			return count
+		end
+		count = count+1
+	end
+end]]
+
+function ReadIniFile( file )
+	local path = ResolveRelativePath( file, 2 )
+	assert(path, file .. " was not found")
+	
+	local inifile = File.Read( path )
+	local lines = {}
+	
+	--identify mac, unix or dos
+	--mac "\r" - cr
+	if string.find(inifile, "\r") ~= nil
+	and string.find(inifile, "\n") == nil
+	then
+		lines = split("\r", inifile)
+	--unix "\n" - lf
+	elseif string.find(inifile, "\r") == nil
+	and string.find(inifile, "\n") ~= nil
+	then
+		lines = split("\n", inifile)
+	--dos/win "\r\n" -crlf
+	elseif string.find(inifile, "\r") ~= nil
+	and string.find(inifile, "\n") ~= nil
+	then
+		lines = split("\r\n", inifile)
+	end
+	
+	local ret = {}
+	for k,v in ipairs(lines) do
+		if string.sub(v,1,1) == '[' then
+			
+		end
+	end
+
+	return {}
+end
+--[[--------------------
+[Section1]
+Key1=value1
+Key2=value2
+Key3=value3
+
+[Section2]
+Key1=value1
+Key2=value2
+Key3=value3
+
+ini = {
+	Section1 = {
+		Key1 = "Value1";
+		Key2 = "Value2";
+		Key3 = "Value3";
+	};
+	Section2 = {
+		Key1 = "Value1";
+		Key2 = "Value2";
+		Key3 = "Value3";
+	};
+}
+--]]--------------------
