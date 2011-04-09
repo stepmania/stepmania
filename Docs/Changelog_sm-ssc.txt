@@ -13,6 +13,11 @@ _____________________________________________________________________________
 sm-ssc $SM5VERSION | 2011????
 --------------------------------------------------------------------------------
 
+20110409
+--------
+* [Player] Force hold judgments to take place before setting the score.
+  [theDtTvB]
+
 20110405
 --------
 * [NotesLoaderSSC, NotesWriterSSC] Add the #LABELS tag. This is meant for step
