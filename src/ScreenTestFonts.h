@@ -1,5 +1,3 @@
-/* ScreenTestFonts - Display and test fonts. */
-
 #ifndef SCREEN_TEST_FONTS_H
 #define SCREEN_TEST_FONTS_H
 
@@ -7,6 +5,7 @@
 #include "BitmapText.h"
 #include "Quad.h"
 
+/** @brief Display and test fonts. */
 class ScreenTestFonts: public Screen
 {
 public:
@@ -20,7 +19,10 @@ private:
 	void SetText( RString sText );
 	void SetFont( RString sFont );
 
-	RString m_sCurText, m_sFont;
+	/** @brief The current text to display. */
+	RString m_sCurText;
+	/** @brief The current font in use. */
+	RString m_sFont;
 	BitmapText txt, font;
 	Quad Vline, Hline;
 };

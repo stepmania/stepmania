@@ -24,12 +24,13 @@
 const int NUM_EDIT_BUTTON_COLUMNS = 10;
 struct MenuDef;
 
+/** @brief What is going on with the Editor? */
 enum EditState
 {
-	STATE_EDITING,
-	STATE_RECORDING,
-	STATE_RECORDING_PAUSED,
-	STATE_PLAYING,
+	STATE_EDITING, /**< The person is making adjustments to the Steps. */
+	STATE_RECORDING, /**< The person is recording some Steps live. */
+	STATE_RECORDING_PAUSED, /**< The person has temporarily paused the recording of Steps. */
+	STATE_PLAYING, /**< The person is just trying out the Steps. */
 	NUM_EditState,
 	EditState_Invalid
 };
@@ -56,8 +57,8 @@ enum EditButton
 	EDIT_BUTTON_REMOVE_NOTE,
 	
 	// These are modifiers to change the present tap note.
-	EDIT_BUTTON_CYCLE_TAP_LEFT,
-	EDIT_BUTTON_CYCLE_TAP_RIGHT,
+	EDIT_BUTTON_CYCLE_TAP_LEFT, /**< Rotate the available tap notes once to the "left". */
+	EDIT_BUTTON_CYCLE_TAP_RIGHT, /**< Rotate the available tap notes once to the "right". */
 
 	EDIT_BUTTON_SCROLL_UP_LINE,
 	EDIT_BUTTON_SCROLL_UP_PAGE,
@@ -130,13 +131,13 @@ enum EditButton
 	// This modifies offset, BPM, and stop segment changes.
 	EDIT_BUTTON_ADJUST_FINE,
 
-	EDIT_BUTTON_SAVE,
+	EDIT_BUTTON_SAVE, /**< Save the present changes into the chart. */
 
-	EDIT_BUTTON_UNDO,
+	EDIT_BUTTON_UNDO, /**< Undo a recent change. */
 	
 	EDIT_BUTTON_ADD_COURSE_MODS,
 	
-	EDIT_BUTTON_SWITCH_PLAYERS,
+	EDIT_BUTTON_SWITCH_PLAYERS, /**< Allow entering notes for a different Player. */
 
 	NUM_EditButton, // leave this at the end
 	EditButton_Invalid
@@ -254,12 +255,17 @@ protected:
 	// The location we were at when shift was pressed, or -1 when shift isn't pressed:
 	int			m_iShiftAnchor;
 
+	/** @brief The NoteData that has been cut or copied. */
 	NoteData		m_Clipboard;
 	bool    		m_bHasUndo;
-	// TODO: convert this into a stack of NoteData objs for multi-state undo -aj
+	/**
+	 * @brief The NoteData as it once just one action prior.
+	 *
+	 * TODO: Convert this into a stack or vector of NoteData to allow multiple undos. -aj
+	 * TODO: Look into a redo option. -aj */
 	NoteData		m_Undo;
-	// TODO: also maybe have a redo stack/option -aj
 
+	/** @brief Has the NoteData been changed such that a user should be prompted to save? */
 	bool			m_bDirty;
 
 	RageSound		m_soundAddNote;

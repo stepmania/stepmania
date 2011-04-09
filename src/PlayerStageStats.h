@@ -12,9 +12,13 @@ struct lua_State;
 class PlayerStageStats
 {
 public:
+	/** @brief Set up the PlayerStageStats with default values. */
 	PlayerStageStats() { Init(); }
 	void Init();
 
+	/**
+	 * @brief Add stats from one PlayerStageStats to another.
+	 * @param other the other stats to add to this one. */
 	void AddStats( const PlayerStageStats& other );		// accumulate
 
 	Grade GetGrade() const;
@@ -58,8 +62,11 @@ public:
 	/** @brief The Player's current miss combo. */
 	int		m_iCurMissCombo;
 	int		m_iCurScoreMultiplier;
+	/** @brief The player's current score. */
 	int		m_iScore;
+	/** @brief The theoretically highest score the Player could have at this point. */
 	int		m_iCurMaxScore;
+	/** @brief The maximum score the Player can get this goaround. */
 	int		m_iMaxScore;
 	
 	/**

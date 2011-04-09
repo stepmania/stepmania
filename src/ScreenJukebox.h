@@ -1,11 +1,10 @@
-/* ScreenJukebox - Plays whole songs continuously. */
-
 #ifndef ScreenJukebox_H
 #define ScreenJukebox_H
 
 #include "ScreenGameplayNormal.h"
 class CourseEntry;
 
+/** @brief Plays whole songs continuously. */
 class ScreenJukebox : public ScreenGameplayNormal
 {
 public:
