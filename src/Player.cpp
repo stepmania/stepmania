@@ -1320,9 +1320,9 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 	{
 		//LOG->Trace("tap note scoring time.");
 		TapNote &tn = *vTN[0].pTN;
+		SetHoldJudgment( tn.result.tns, tn.HoldResult.hns, iFirstTrackWithMaxEndRow );
 		HandleHoldScore( tn );
 		//LOG->Trace("hold result = %s",StringConversion::ToString(tn.HoldResult.hns).c_str());
-		SetHoldJudgment( tn.result.tns, tn.HoldResult.hns, iFirstTrackWithMaxEndRow );
 	}
 	//LOG->Trace("[Player::UpdateHoldNotes] ends");
 }
@@ -1805,8 +1805,8 @@ void Player::ScoreAllActiveHoldsLetGo()
 					tn.HoldResult.hns = HNS_LetGo;
 					tn.HoldResult.fLife = 0;
 
-					HandleHoldScore( tn );
 					SetHoldJudgment( tn.result.tns, tn.HoldResult.hns, iTrack );
+					HandleHoldScore( tn );
 				}
 			}
 		}
