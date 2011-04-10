@@ -236,11 +236,11 @@ void ScoreKeeperNormal::OnNextSong( int iSongInCourseIndex, const Steps* pSteps,
 			m_iMaxPossiblePoints = (iMeter * iLengthMultiplier + 1) * 5000000;
 			break;
 		case SCORING_CUSTOM:
-			/* This is just simple additive/subtractive scoring, but cap the
-			 * score at the size of the score counter */
+			/* This is no longer just simple additive/subtractive scoring,
+			 * but start with capping the score at the size of the score counter. */
 			m_iMaxPossiblePoints = 10 * 10000000 * iLengthMultiplier;
 			break;
-		DEFAULT_FAIL( int(PREFSMAN->m_ScoringType) );
+		DEFAULT_FAIL( static_cast<int>(PREFSMAN->m_ScoringType) );
 		}
 	}
 	ASSERT( m_iMaxPossiblePoints >= 0 );
