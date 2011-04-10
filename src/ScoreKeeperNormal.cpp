@@ -263,13 +263,6 @@ void ScoreKeeperNormal::AddTapScore( TapNoteScore tns )
 
 void ScoreKeeperNormal::AddHoldScore( HoldNoteScore hns )
 {
-	if( PREFSMAN->m_ScoringType != SCORING_CUSTOM )
-	{
-		if( hns == HNS_Held )
-			AddScoreInternal( TNS_W1 );
-		else if ( hns == HNS_LetGo )
-			AddScoreInternal( TNS_W4 ); // required for subtractive score display to work properly
-	}
 }
 
 void ScoreKeeperNormal::AddTapRowScore( TapNoteScore score, const NoteData &nd, int iRow )
@@ -286,9 +279,6 @@ void ScoreKeeperNormal::HandleTapScoreNone()
 
 		if( m_pPlayerState->m_PlayerNumber != PLAYER_INVALID )
 			MESSAGEMAN->Broadcast( enum_add2(Message_CurrentComboChangedP1,m_pPlayerState->m_PlayerNumber) );
-
-		if( PREFSMAN->m_ScoringType != SCORING_CUSTOM )
-			AddScoreInternal( TNS_Miss );
 	}
 
 	// TODO: networking code
@@ -300,7 +290,7 @@ void ScoreKeeperNormal::AddScoreInternal( TapNoteScore score )
 	int &iCurMaxScore = m_pPlayerStageStats->m_iCurMaxScore;
 
 	// See Aaron In Japan for more details about the scoring formulas.
-	if( PREFSMAN->m_ScoringType != SCORING_CUSTOM || GAMESTATE->IsCourseMode() )
+	if( GAMESTATE->IsCourseMode() )
 	{
 		int p = 0;	// score multiplier
 
