@@ -246,7 +246,7 @@ function UserPrefSpecialScoringMode()
 				for k,v in ipairs(baseChoices) do if v == theValue then list[k] = true success = true break end end;
 				if success == false then list[1] = true end;
 			else
-				WritePrefToFile("UserPrefSpecialScoringMode", 'DDR 1stMIX');
+				WritePrefToFile("UserPrefSpecialScoringMode", 'DDR Extreme');
 				list[1] = true;
 			end;
 		end;
