@@ -263,7 +263,7 @@ PrefsManager::PrefsManager() :
 	m_CourseSortOrder		( "CourseSortOrder",			COURSE_SORT_SONGS ),
 	m_bSubSortByNumSteps		( "SubSortByNumSteps",			false ),
 	m_GetRankingName		( "GetRankingName",			RANKING_ON ),
-	m_ScoringType			( "ScoringType",			SCORING_NEW ),
+	m_ScoringType			( "ScoringType",			SCORING_CUSTOM ),
 	m_sAdditionalSongFolders	( "AdditionalSongFolders",		"" ),
 	m_sAdditionalCourseFolders	( "AdditionalCourseFolders",		"" ),
 	m_sAdditionalFolders		( "AdditionalFolders",			"" ),
