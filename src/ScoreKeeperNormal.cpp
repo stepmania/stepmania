@@ -155,24 +155,7 @@ void ScoreKeeperNormal::Load(
 	MESSAGEMAN->Broadcast( msg );
 
 	memset( m_ComboBonusFactor, 0, sizeof(m_ComboBonusFactor) );
-	switch( PREFSMAN->m_ScoringType )
-	{
-	case SCORING_NEW:
-	case SCORING_CUSTOM:
-		m_iRoundTo = 1;
-		break;
-	case SCORING_OLD:
-		m_iRoundTo = 5;
-		if (!GAMESTATE->IsCourseMode())
-		{
-			m_ComboBonusFactor[TNS_W1] = 55;
-			m_ComboBonusFactor[TNS_W2] = 55;
-			m_ComboBonusFactor[TNS_W3] = 33;
-		}
-		break;
-	DEFAULT_FAIL( int(PREFSMAN->m_ScoringType) );
-	}
-
+	m_iRoundTo = 1;
 }
 
 void ScoreKeeperNormal::OnNextSong( int iSongInCourseIndex, const Steps* pSteps, const NoteData* pNoteData )
@@ -223,25 +206,12 @@ void ScoreKeeperNormal::OnNextSong( int iSongInCourseIndex, const Steps* pSteps,
 	}
 	else
 	{
-		const int iMeter = clamp( pSteps->GetMeter(), 1, 10 );
-
 		// long ver and marathon ver songs have higher max possible scores
 		int iLengthMultiplier = GameState::GetNumStagesMultiplierForSong( GAMESTATE->m_pCurSong );
-		switch( PREFSMAN->m_ScoringType )
-		{
-		case SCORING_NEW:
-			m_iMaxPossiblePoints = iMeter * 10000000 * iLengthMultiplier;
-			break;
-		case SCORING_OLD:
-			m_iMaxPossiblePoints = (iMeter * iLengthMultiplier + 1) * 5000000;
-			break;
-		case SCORING_CUSTOM:
-			/* This is no longer just simple additive/subtractive scoring,
-			 * but start with capping the score at the size of the score counter. */
-			m_iMaxPossiblePoints = 10 * 10000000 * iLengthMultiplier;
-			break;
-		DEFAULT_FAIL( static_cast<int>(PREFSMAN->m_ScoringType) );
-		}
+		
+		/* This is no longer just simple additive/subtractive scoring,
+		 * but start with capping the score at the size of the score counter. */
+		m_iMaxPossiblePoints = 10 * 10000000 * iLengthMultiplier;
 	}
 	ASSERT( m_iMaxPossiblePoints >= 0 );
 	m_iMaxScoreSoFar += m_iMaxPossiblePoints;
