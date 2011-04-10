@@ -94,30 +94,6 @@ void ScoreKeeperNormal::Load(
 	//m_vToastyTriggers.Load( "Gameplay", "ToastyTriggersAt" );
 	m_ToastyTrigger.Load( "Gameplay", "ToastyTriggersAt" );
 
-	// Custom Scoring
-	m_CustomComboMultiplier.Load( "CustomScoring", "ComboMultiplier" );
-	m_CustomTNS_W1.Load( "CustomScoring", "PointsW1" );
-	m_CustomTNS_W2.Load( "CustomScoring", "PointsW2" );
-	m_CustomTNS_W3.Load( "CustomScoring", "PointsW3" );
-	m_CustomTNS_W4.Load( "CustomScoring", "PointsW4" );
-	m_CustomTNS_W5.Load( "CustomScoring", "PointsW5" );
-	m_CustomTNS_Miss.Load( "CustomScoring", "PointsMiss" );
-	m_CustomTNS_HitMine.Load( "CustomScoring", "PointsHitMine" );
-	m_CustomTNS_CheckpointHit.Load( "CustomScoring", "PointsCheckpointHit" );
-	m_CustomTNS_CheckpointMiss.Load( "CustomScoring", "PointsCheckpointMiss" );
-	m_CustomTNS_None.Load( "CustomScoring", "PointsNone" );
-
-	m_CustomHNS_Held.Load( "CustomScoring", "PointsHoldHeld" );
-	m_CustomHNS_LetGo.Load( "CustomScoring", "PointsHoldLetGo" );
-
-	m_CustomComboBonus.Load( "CustomScoring", "ComboAboveThresholdAddsToScoreBonus" );
-	m_CustomComboBonusThreshold.Load( "CustomScoring", "ComboScoreBonusThreshold" );
-	m_CustomComboBonusValue.Load( "CustomScoring", "ComboScoreBonusValue" );
-
-	m_DoubleNoteMultiplier.Load( "CustomScoring", "DoubleNoteScoreMultiplier" );
-	m_TripleNoteMultiplier.Load( "CustomScoring", "TripleNoteScoreMultiplier" );
-	m_QuadPlusNoteMultiplier.Load( "CustomScoring", "QuadOrHigherNoteScoreMultiplier" );
-
 	// Fill in STATSMAN->m_CurStageStats, calculate multiplier
 	int iTotalPossibleDancePoints = 0;
 	int iTotalPossibleGradePoints = 0;
@@ -317,19 +293,8 @@ void ScoreKeeperNormal::AddTapScore( TapNoteScore tns )
 
 void ScoreKeeperNormal::AddHoldScore( HoldNoteScore hns )
 {
-	if( PREFSMAN->m_ScoringType == SCORING_CUSTOM )
-	{
-		int &iScore = m_pPlayerStageStats->m_iScore;
-		int &iCurMaxScore = m_pPlayerStageStats->m_iCurMaxScore;
-
-		iCurMaxScore += m_CustomHNS_Held;
-
-		if( hns == HNS_Held )
-			iScore += m_CustomHNS_Held;
-		else if ( hns == HNS_LetGo )
-			iScore += m_CustomHNS_LetGo;
-	}
-	else
+	// custom scoring: set PSS:m_iCurMaxScore
+	if( PREFSMAN->m_ScoringType != SCORING_CUSTOM )
 	{
 		if( hns == HNS_Held )
 			AddScoreInternal( TNS_W1 );
@@ -353,12 +318,7 @@ void ScoreKeeperNormal::HandleTapScoreNone()
 		if( m_pPlayerState->m_PlayerNumber != PLAYER_INVALID )
 			MESSAGEMAN->Broadcast( enum_add2(Message_CurrentComboChangedP1,m_pPlayerState->m_PlayerNumber) );
 
-		if( PREFSMAN->m_ScoringType == SCORING_CUSTOM )
-		{
-			int &iScore = m_pPlayerStageStats->m_iScore;
-			iScore += m_CustomTNS_None;
-		}
-		else
+		if( PREFSMAN->m_ScoringType != SCORING_CUSTOM )
 			AddScoreInternal( TNS_Miss );
 	}
 
@@ -469,45 +429,7 @@ void ScoreKeeperNormal::AddScoreInternal( TapNoteScore score )
 	// Custom Scoring
 	else
 	{
-		int p = 0; // score value
-
-		switch( score )
-		{
-		case TNS_W1:	p = m_CustomTNS_W1;		break;
-		case TNS_W2:	p = m_CustomTNS_W2;		break;
-		case TNS_W3:	p = m_CustomTNS_W3;		break;
-		case TNS_W4:	p = m_CustomTNS_W4;		break;
-		case TNS_W5:	p = m_CustomTNS_W5;		break;
-		case TNS_Miss:	p = m_CustomTNS_Miss;	break;
-		default:		p = 0;					break;
-		}
-
-		if( m_CustomComboBonus )
-		{
-			if( m_pPlayerStageStats->m_iCurCombo > m_CustomComboBonusThreshold )
-				p += m_CustomComboBonusValue;
-		}
-
-		p += static_cast<int>(m_pPlayerStageStats->m_iCurCombo * m_CustomComboMultiplier);
-
-		if( m_iNumNotesHitThisRow == 2 )
-			p = (int)(p * m_DoubleNoteMultiplier);
-		else if( m_iNumNotesHitThisRow == 3 )
-			p = (int)(p * m_TripleNoteMultiplier);
-		else if( m_iNumNotesHitThisRow >= 4 )
-			p = (int)(p * m_QuadPlusNoteMultiplier);
-
-		if( !m_pPlayerStageStats->m_bFailed )
-		{
-			m_iTapNotesHit++;
-
-			iScore += p;
-			iCurMaxScore += m_CustomTNS_W1;
-		}
-
-		// Because the score can drop below 0 if you miss a bunch of notes, cap it off at zero
-		if( iScore <= 0 )
-			iScore = 0;
+		
 	}
 
 	ASSERT( iScore >= 0 );
@@ -536,11 +458,6 @@ void ScoreKeeperNormal::HandleTapScore( const TapNote &tn )
 			if( m_MineHitIncrementsMissCombo )
 				HandleComboInternal( 0, 0, 1 );
 			
-			if( PREFSMAN->m_ScoringType == SCORING_CUSTOM )
-			{
-				int &iScore = m_pPlayerStageStats->m_iScore;
-				iScore += m_CustomTNS_HitMine;
-			}
 		}
 		
 		if( tns == TNS_AvoidMine && m_AvoidMineIncrementsCombo )
@@ -564,19 +481,6 @@ void ScoreKeeperNormal::HandleTapScore( const TapNote &tn )
 
 void ScoreKeeperNormal::HandleHoldCheckpointScore( const NoteData &nd, int iRow, int iNumHoldsHeldThisRow, int iNumHoldsMissedThisRow )
 {
-	if( PREFSMAN->m_ScoringType == SCORING_CUSTOM )
-	{
-		int &iScore = m_pPlayerStageStats->m_iScore;
-		int &iCurMaxScore = m_pPlayerStageStats->m_iCurMaxScore;
-
-		iCurMaxScore += m_CustomTNS_CheckpointHit;
-
-		if( iNumHoldsMissedThisRow == 0 )
-			iScore += m_CustomTNS_CheckpointHit;
-		else
-			iScore += m_CustomTNS_CheckpointMiss;
-	}
-
 	HandleTapNoteScoreInternal( iNumHoldsMissedThisRow == 0? TNS_CheckpointHit:TNS_CheckpointMiss, TNS_CheckpointHit );
 	HandleComboInternal( iNumHoldsHeldThisRow, 0, iNumHoldsMissedThisRow, iRow );
 }
