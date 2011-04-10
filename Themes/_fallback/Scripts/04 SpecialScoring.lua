@@ -38,7 +38,9 @@ r['DDR 1stMIX'] = function(params, pss)
 	--if score increases above the boundaries of a 32-bit signed
 	--(about 2.15 billion), it stops increasing. Conveniently,
 	--1st Mix clamped score as well.
+	pss:SetCurMaxScore(clamp(pss:GetCurMaxScore()+(bScore*multLookup['TapNoteScore_W1']),0,999999999));
 	pss:SetScore(clamp(pss:GetScore()+(bScore*multLookup[params.TapNoteScore]),0,999999999));
+	
 end;
 -----------------------------------------------------------
 --DDR 4th Mix/Extra Mix/Konamix/GB3/DDRPC Scoring
@@ -47,6 +49,7 @@ r['DDR 4thMIX'] = function(params, pss)
 	local scoreLookupTable = { ['TapNoteScore_W1']=777, ['TapNoteScore_W2']=777, ['TapNoteScore_W3']=555 };
 	setmetatable(scoreLookupTable, ZeroIfNotFound); 
 	local comboBonusForThisStep = (pss:GetCurrentCombo()+1)*333;
+	pss:SeCurMaxScore(clamp(pss:GeCurMaxScore()+scoreLookupTable['TapNoteScore_W1']+(scoreLookupTable['TapNoteScore_W1'] and comboBonusForThisStep or 0),0,999999999));
 	pss:SetScore(clamp(pss:GetScore()+scoreLookupTable[params.TapNoteScore]+(scoreLookupTable[params.TapNoteScore] and comboBonusForThisStep or 0),0,999999999));
 end;
 -----------------------------------------------------------
@@ -70,6 +73,8 @@ r['DDR Extreme'] = function(params, pss)
 	end;
 	Shared.CurrentStep = Shared.CurrentStep + 1;
 	local stepLast = math.floor(baseScore / singleStep) * (Shared.CurrentStep);
+	pss:SetCurMaxScore(pss:GetCurMaxScore() + 
+		(stepLast * judgmentBase['TapNoteScore_W1']));
 	local judgeScore = 0;
 	if (params.HoldNoteScore == 'HoldNoteScore_Held') then
 		judgeScore = judgmentBase['TapNoteScore_W1'];
@@ -89,22 +94,40 @@ end;
 --DDR SuperNOVA(-esque) scoring
 -----------------------------------------------------------
 r['DDR SuperNOVA'] = function(params, pss)
-	local multLookup = { ['TapNoteScore_W1'] = 1, ['TapNoteScore_W2'] = 1, ['TapNoteScore_W3'] = 0.5 };
+	local multLookup =
+	{
+		['TapNoteScore_W1'] = 1,
+		['TapNoteScore_W2'] = 1,
+		['TapNoteScore_W3'] = 0.5
+	};
 	setmetatable(multLookup, ZeroIfNotFound);
 	local radarValues = GetDirectRadar(params.Player);
 	local totalItems = GetTotalItems(radarValues); 
-	local buildScore = (10000000 / totalItems * multLookup[params.TapNoteScore]) + (10000000 / totalItems * (params.HoldNoteScore == 'HoldNoteScore_Held' and 1 or 0));
+	local base = 10000000 / totalItems;
+	local hold = base * (params.HoldNoteScore == 'HoldNoteScore_Held' and 1 or 0);
+	local maxScore = (base * multLookup['TapNoteScore_W1']) + hold;
+	pss:SetCurMaxScore(pss:GetCurMaxScore() + math.round(maxScore));
+	local buildScore = (base * multLookup[params.TapNoteScore]) + hold;
 	pss:SetScore(pss:GetScore() + math.round(buildScore));
 end;
 -----------------------------------------------------------
 --DDR SuperNOVA 2(-esque) scoring
 -----------------------------------------------------------
 r['DDR SuperNOVA 2'] = function(params, pss)
-	local multLookup = { ['TapNoteScore_W1'] = 1, ['TapNoteScore_W2'] = 1, ['TapNoteScore_W3'] = 0.5 };
+	local multLookup =
+	{
+		['TapNoteScore_W1'] = 1,
+		['TapNoteScore_W2'] = 1,
+		['TapNoteScore_W3'] = 0.5
+	};
 	setmetatable(multLookup, ZeroIfNotFound);
 	local radarValues = GetDirectRadar(params.Player);
 	local totalItems = GetTotalItems(radarValues); 
-	local buildScore = (100000 / totalItems * multLookup[params.TapNoteScore] - (IsW1Allowed(params.TapNoteScore) and 10 or 0)) + (100000 / totalItems * (params.HoldNoteScore == 'HoldNoteScore_Held' and 1 or 0));
+	local base = 100000 / totalItems;
+	local hold = base * (params.HoldNoteScore == 'HoldNoteScore_Held' and 1 or 0);
+	local maxScore = (base * multLookup['TapNoteScore_W1']) + hold;
+	pss:SetCurMaxScore(pss:GetCurMaxScore() + (math.round(maxScore) * 10));
+	local buildScore = (base * multLookup[params.TapNoteScore] - (IsW1Allowed(params.TapNoteScore) and 10 or 0)) + hold;
 	pss:SetScore(pss:GetScore() + (math.round(buildScore) * 10));
 end;
 -----------------------------------------------------------
@@ -151,6 +174,8 @@ r['MIGS'] = function(params,pss)
 	curScore = curScore + ( pss:GetHoldNoteScores('HoldNoteScore_Held') * 6 );
 	pss:SetScore(clamp(curScore,0,math.huge));
 end;
+
+-- Formulas end here.
 SpecialScoring = {};
 setmetatable(SpecialScoring, { 
 	__metatable = { "Letting you change the metatable sort of defeats the purpose." };

@@ -293,7 +293,6 @@ void ScoreKeeperNormal::AddTapScore( TapNoteScore tns )
 
 void ScoreKeeperNormal::AddHoldScore( HoldNoteScore hns )
 {
-	// custom scoring: set PSS:m_iCurMaxScore
 	if( PREFSMAN->m_ScoringType != SCORING_CUSTOM )
 	{
 		if( hns == HNS_Held )
