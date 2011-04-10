@@ -328,46 +328,8 @@ void ScoreKeeperNormal::AddScoreInternal( TapNoteScore score )
 {
 	int &iScore = m_pPlayerStageStats->m_iScore;
 	int &iCurMaxScore = m_pPlayerStageStats->m_iCurMaxScore;
-/*
-  Regular scoring:
 
-  Let p = score multiplier (W1 = W2 = 10, W3 = 5, other = 0)
-
-  Note on NONSTOP Mode scoring
-
-  Let p = score multiplier (W1 = 10, W2 = 9, W3 = 5, other = 0)
-
-  N = total number of steps and freeze steps
-  S = The sum of all integers from 1 to N (the total number of steps/freeze steps)
-  n = number of the current step or freeze step (varies from 1 to N)
-  Z = Base value of the song (1,000,000 X the number of feet difficulty) - All edit data is rated as 5 feet
-  So, the score for one step is:
-  one_step_score = p * (Z/S) * n
-
-  *IMPORTANT* : Double steps (U+L, D+R, etc.) count as two steps instead of one *for your combo count only*,
-  so if you get a double L+R on the 112th step of a song, you score is calculated for only one step, not two,
-  as the combo counter might otherwise imply.
-
-  Now, through simple algebraic manipulation:
-  S = 1+...+N = (1+N)*N/2 (1 through N added together)
-
-  Okay, time for an example.  Suppose we wanted to calculate the step score of a W3 on the 57th step of
-  a 441 step, 8-foot difficulty song (I'm just making this one up):
-
-  S = (1 + 441)*441 / 2
-  = 194,222 / 2
-  = 97,461
-  StepScore = p * (Z/S) * n
-  = 5 * (8,000,000 / 97,461) * 57
-  = 5 * (82) * 57 (The 82 is rounded down from 82.08411...)
-  = 23,370
-
-  Remember this is just the score for the step, not the cumulative score up to the 57th step. Also, please note that
-  I am currently checking into rounding errors with the system and if there are any, how they are resolved in the system.
-
-  Note: if you got all W2s on this song, you would get (p=10)*Z, which is 80,000,000. In fact, the maximum possible
-  score for any song is the number of feet difficulty X 10,000,000.
-*/
+	// See Aaron In Japan for more details about the scoring formulas.
 	if( PREFSMAN->m_ScoringType != SCORING_CUSTOM || GAMESTATE->IsCourseMode() )
 	{
 		int p = 0;	// score multiplier
