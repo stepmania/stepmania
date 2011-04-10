@@ -64,15 +64,11 @@ r['DDR Extreme'] = function(params, pss)
 	local baseScore = (steps:IsAnEdit() and 
 		5 or steps:GetMeter()) * 1000000;
 	local totalItems = GetTotalItems(radarValues);
-	if (not Shared.TotalItems) then 
-		Shared.TotalItems = -1;
-	end;
 	local singleStep = (1 + totalItems) * totalItems / 2;
-	if (Shared.TotalItems ~= totalItems) then
+	if (not Shared.CurrentStep) then
 		Shared.CurrentStep = 0
 	end;
 	Shared.CurrentStep = Shared.CurrentStep + 1;
-	Shared.TotalItems = totalItems;
 	local stepLast = math.floor(baseScore / singleStep) * (Shared.CurrentStep);
 	local judgeScore = 0;
 	if (params.HoldNoteScore == 'HoldNoteScore_Held') then
@@ -84,7 +80,9 @@ r['DDR Extreme'] = function(params, pss)
 		end;
 	end;
 	local stepScore = judgeScore * stepLast;
-	
+	if (Shared.CurrentStep >= totalItems) then -- Just in case.
+		Shared.CurrentStep = 0; -- Reset for the next song.
+	end;
 	pss:SetScore(pss:GetScore() + stepScore);
 end;
 -----------------------------------------------------------
