@@ -156,7 +156,7 @@ setmetatable(SpecialScoring, {
 	__metatable = { "Letting you change the metatable sort of defeats the purpose." };
 	__index = function(tbl, key)
 			for v in ivalues(DisabledScoringModes) do
-				if key == v then return r['DDR 1stMIX']; end;
+				if key == v then return r['DDR Extreme']; end;
 			end;
 			return r[key];
 		end;
