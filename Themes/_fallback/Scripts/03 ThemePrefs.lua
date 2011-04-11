@@ -146,6 +146,7 @@ SetThemePref = ThemePrefs.Set
 function InitUserPrefs()
 	if GetUserPref("UserPrefSpecialScoringMode") == nil then
 		SetUserPref("UserPrefSpecialScoringMode", 'DDR Extreme');
+	end;
 end;
 
 function UserPrefSpecialScoringMode()
