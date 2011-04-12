@@ -90,7 +90,8 @@ r['DDR Extreme'] = function(params, pss)
 		Shared.CurrentStep = 0
 	end;
 	Shared.CurrentStep = Shared.CurrentStep + 1;
-	local stepLast = math.floor(baseScore / singleStep) * (Shared.CurrentStep);
+	local stepValue = math.floor(baseScore /singleStep);
+	local stepLast = stepValue * Shared.CurrentStep;
 	pss:SetCurMaxScore(pss:GetCurMaxScore() + 
 		(stepLast * judgmentBase['TapNoteScore_W1']));
 	local judgeScore = 0;
@@ -103,10 +104,11 @@ r['DDR Extreme'] = function(params, pss)
 		end;
 	end;
 	local stepScore = judgeScore * stepLast;
+	pss:SetScore(pss:GetScore() + stepScore);
 	if (Shared.CurrentStep >= totalItems) then -- Just in case.
+		-- TODO: Implement the bonus for the last step?
 		Shared.CurrentStep = 0; -- Reset for the next song.
 	end;
-	pss:SetScore(pss:GetScore() + stepScore);
 end;
 -----------------------------------------------------------
 --DDR SuperNOVA(-esque) scoring
