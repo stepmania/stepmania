@@ -144,33 +144,33 @@ SetThemePref = ThemePrefs.Set
 -- bring in SpecialScoring from default.
 
 function InitUserPrefs()
-	if GetUserPref("UserPrefSpecialScoringMode") == nil then
-		SetUserPref("UserPrefSpecialScoringMode", 'DDR Extreme');
+	if GetUserPref("UserPrefScoringMode") == nil then
+		SetUserPref("UserPrefScoringMode", 'DDR Extreme');
 	end;
 end;
 
-function UserPrefSpecialScoringMode()
+function UserPrefScoringMode()
 	local baseChoices = { 'DDR 1stMIX', 'DDR 4thMIX', 'DDR Extreme', 'DDR SuperNOVA', 'DDR SuperNOVA 2', 'MIGS' }; --'[SSC] Radar Master'
 	local t = {
-		Name = "UserPrefSpecialScoringMode";
+		Name = "UserPrefScoringMode";
 		LayoutType = "ShowAllInRow";
 		SelectType = "SelectOne";
 		OneChoiceForAllPlayers = true;
 		ExportOnChange = false;
 		Choices = baseChoices;
 		LoadSelections = function(self, list, pn)
-			if ReadPrefFromFile("UserPrefSpecialScoringMode") ~= nil then
-				local theValue = ReadPrefFromFile("UserPrefSpecialScoringMode");
+			if ReadPrefFromFile("UserPrefScoringMode") ~= nil then
+				local theValue = ReadPrefFromFile("UserPrefScoringMode");
 				local success = false;				
 				for k,v in ipairs(baseChoices) do if v == theValue then list[k] = true success = true break end end;
 				if success == false then list[1] = true end;
 			else
-				WritePrefToFile("UserPrefSpecialScoringMode", 'DDR Extreme');
+				WritePrefToFile("UserPrefScoringMode", 'DDR Extreme');
 				list[1] = true;
 			end;
 		end;
 		SaveSelections = function(self, list, pn)
-			for k,v in ipairs(list) do if v then WritePrefToFile("UserPrefSpecialScoringMode", baseChoices[k]) break end end;
+			for k,v in ipairs(list) do if v then WritePrefToFile("UserPrefScoringMode", baseChoices[k]) break end end;
 		end;
 	};
 	setmetatable( t, t );

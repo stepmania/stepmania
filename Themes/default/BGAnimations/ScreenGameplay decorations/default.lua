@@ -171,7 +171,7 @@ t[#t+1] = Def.ActorFrame {
 
 t[#t+1] = Def.Actor{
 	JudgmentMessageCommand = function(self, params)
-		SpecialScoring[GetUserPref("UserPrefSpecialScoringMode")](params, 
+		Scoring[GetUserPref("UserPrefScoringMode")](params, 
 			STATSMAN:GetCurStageStats():GetPlayerStageStats(params.Player))
 	end;
 };

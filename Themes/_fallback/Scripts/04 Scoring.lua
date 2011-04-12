@@ -10,8 +10,7 @@ local ZeroIfNotFound = { __index = function() return 0 end; };
 function GetTotalItems(radars)
 	return radars:GetValue('RadarCategory_TapsAndHolds') 
 		+ radars:GetValue('RadarCategory_Holds') 
-		+ radars:GetValue('RadarCategory_Rolls')
-		+ radars:GetValue('RadarCategory_Lifts');
+		+ radars:GetValue('RadarCategory_Rolls');
 end;
 
 -- Determine whether marvelous timing is to be considered.
@@ -176,8 +175,8 @@ r['MIGS'] = function(params,pss)
 end;
 
 -- Formulas end here.
-SpecialScoring = {};
-setmetatable(SpecialScoring, { 
+Scoring = {};
+setmetatable(Scoring, { 
 	__metatable = { "Letting you change the metatable sort of defeats the purpose." };
 	__index = function(tbl, key)
 			for v in ivalues(DisabledScoringModes) do
