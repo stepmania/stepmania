@@ -32,24 +32,43 @@ end;
 r['DDR 1stMIX'] = function(params, pss)
 	local dCombo = math.floor((pss:GetCurrentCombo()+1)/4);
 	local bScore = (dCombo^2+1) * 100;
-	local multLookup = { ['TapNoteScore_W1']=3, ['TapNoteScore_W2']=3, ['TapNoteScore_W3']=1 };
+	local multLookup = 
+	{ 
+		['TapNoteScore_W1']=3,
+		['TapNoteScore_W2']=3,
+		['TapNoteScore_W3']=1
+	};
 	setmetatable(multLookup, ZeroIfNotFound);
 	--if score increases above the boundaries of a 32-bit signed
 	--(about 2.15 billion), it stops increasing. Conveniently,
 	--1st Mix clamped score as well.
-	pss:SetCurMaxScore(clamp(pss:GetCurMaxScore()+(bScore*multLookup['TapNoteScore_W1']),0,999999999));
-	pss:SetScore(clamp(pss:GetScore()+(bScore*multLookup[params.TapNoteScore]),0,999999999));
+	local capScore = 999999999;
+	local bestScore = bScore * multLookup['TapNoteScore_W1'];
+	local localScore = bScore * multLookup[params.TapNoteScore];
+	pss:SetCurMaxScore(clamp(pss:GetCurMaxScore()+(bestScore),0,capScore));
+	pss:SetScore(clamp(pss:GetScore()+(localScore),0,capScore));
 	
 end;
 -----------------------------------------------------------
 --DDR 4th Mix/Extra Mix/Konamix/GB3/DDRPC Scoring
 -----------------------------------------------------------
 r['DDR 4thMIX'] = function(params, pss)
-	local scoreLookupTable = { ['TapNoteScore_W1']=777, ['TapNoteScore_W2']=777, ['TapNoteScore_W3']=555 };
-	setmetatable(scoreLookupTable, ZeroIfNotFound); 
+	local scoreLookupTable =
+	{ 
+		['TapNoteScore_W1']=777, 
+		['TapNoteScore_W2']=777, 
+		['TapNoteScore_W3']=555 
+	};
+	setmetatable(scoreLookupTable, ZeroIfNotFound);
+	-- TODO: Modify this so that current max assumes full combo?
 	local comboBonusForThisStep = (pss:GetCurrentCombo()+1)*333;
-	pss:SeCurMaxScore(clamp(pss:GeCurMaxScore()+scoreLookupTable['TapNoteScore_W1']+(scoreLookupTable['TapNoteScore_W1'] and comboBonusForThisStep or 0),0,999999999));
-	pss:SetScore(clamp(pss:GetScore()+scoreLookupTable[params.TapNoteScore]+(scoreLookupTable[params.TapNoteScore] and comboBonusForThisStep or 0),0,999999999));
+	local capScore = 999999999;
+	local bestPoints = scoreLookupTable['TapNoteScore_W1'];
+	local bestCombo = bestPoints and comboBonusForThisStep or 0;
+	pss:SeCurMaxScore(clamp(pss:GeCurMaxScore()+bestPoints+bestCombo,0,capScore));
+	local localPoints = scoreLookupTable[params.TapNoteScore];
+	local localCombo = localPoints and comboBonusForThisStep or 0;
+	pss:SetScore(clamp(pss:GetScore()+localPoints+localCombo,0,capScore));
 end;
 -----------------------------------------------------------
 --DDR MAX2/Extreme Scoring
@@ -126,7 +145,8 @@ r['DDR SuperNOVA 2'] = function(params, pss)
 	local hold = base * (params.HoldNoteScore == 'HoldNoteScore_Held' and 1 or 0);
 	local maxScore = (base * multLookup['TapNoteScore_W1']) + hold;
 	pss:SetCurMaxScore(pss:GetCurMaxScore() + (math.round(maxScore) * 10));
-	local buildScore = (base * multLookup[params.TapNoteScore] - (IsW1Allowed(params.TapNoteScore) and 10 or 0)) + hold;
+	local preW1 = base * multLookup[params.TapNoteScore];
+	local buildScore = (preW1 - (IsW1Allowed(params.TapNoteScore) and 10 or 0)) + hold;
 	pss:SetScore(pss:GetScore() + (math.round(buildScore) * 10));
 end;
 -----------------------------------------------------------
@@ -166,7 +186,14 @@ end;
 ------------------------------------------------------------
 r['MIGS'] = function(params,pss)
 	local curScore = 0;
-	local tapScoreTable = { ['TapNoteScore_W1'] = 3, ['TapNoteScore_W2'] = 2, ['TapNoteScore_W3'] = 1, ['TapNoteScore_W5'] = -4, ['TapNoteScore_Miss'] = -8 };
+	local tapScoreTable = 
+	{ 
+		['TapNoteScore_W1'] = 3,
+		['TapNoteScore_W2'] = 2,
+		['TapNoteScore_W3'] = 1,
+		['TapNoteScore_W5'] = -4,
+		['TapNoteScore_Miss'] = -8
+	};
 	for k,v in pairs(tapScoreTable) do
 		curScore = curScore + ( pss:GetTapNoteScores(k) * v );
 	end;
