@@ -16,6 +16,11 @@ It depends on who you ask.
 It could be v1.2.5, it could be v1.3.0, it could even be StepMania 5.
 We will wait and see.
 
+20110413
+--------
+* [ScreenSelectMusic] Made score frame into an AutoActor, changed the filename
+  from "score frame p1" to "ScoreFrame P1" for consistency with other elements. [AJ]
+
 20110405
 --------
 * [ScreenEdit] Allow modifying the #DISPLAYBPM traits in the editor. Look in
