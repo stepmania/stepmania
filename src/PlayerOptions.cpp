@@ -908,6 +908,7 @@ public:
 
 	// Scroll
 	DEFINE_METHOD( GetReverse, m_fScrolls[PlayerOptions::SCROLL_REVERSE] )
+	DEFINE_METHOD( UsingReverse, m_fScrolls[PlayerOptions::SCROLL_REVERSE] == 1 )
 	static int GetReversePercentForColumn( T *p, lua_State *L )
 	{
 		// todo: make sure IArg is within boundaries -aj
@@ -1021,6 +1022,7 @@ public:
 
 		// Scroll
 		ADD_METHOD( GetReverse );
+		ADD_METHOD( UsingReverse );
 		ADD_METHOD( GetReversePercentForColumn );
 		ADD_METHOD( GetSplit );
 		ADD_METHOD( GetAlternate );

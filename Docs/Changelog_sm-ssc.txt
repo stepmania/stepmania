@@ -10,11 +10,13 @@ supported but exist anyways.)
 _____________________________________________________________________________
 
 ================================================================================
-sm-ssc $NEXTVERSION | 2011????
+sm-ssc v1.2.5 | 201104??
 --------------------------------------------------------------------------------
-It depends on who you ask.
-It could be v1.2.5, it could be v1.3.0, it could even be StepMania 5.
-We will wait and see.
+
+20110416
+--------
+* [PlayerOptions] Added UsingReverse() Lua binding (automatically tests GetReverse() == 1) [AJ]
+* [PlayerState] Added GetCurrentPlayerOptions() Lua binding [AJ]
 
 20110413
 --------
