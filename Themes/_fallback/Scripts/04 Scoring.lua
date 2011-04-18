@@ -10,8 +10,7 @@ local ZeroIfNotFound = { __index = function() return 0 end; };
 function GetTotalItems(radars)
 	return radars:GetValue('RadarCategory_TapsAndHolds') 
 		+ radars:GetValue('RadarCategory_Holds') 
-		+ radars:GetValue('RadarCategory_Rolls')
-		+ radars:GetValue('RadarCategory_Lifts');
+		+ radars:GetValue('RadarCategory_Rolls');
 end;
 
 -- Determine whether marvelous timing is to be considered.
@@ -33,21 +32,43 @@ end;
 r['DDR 1stMIX'] = function(params, pss)
 	local dCombo = math.floor((pss:GetCurrentCombo()+1)/4);
 	local bScore = (dCombo^2+1) * 100;
-	local multLookup = { ['TapNoteScore_W1']=3, ['TapNoteScore_W2']=3, ['TapNoteScore_W3']=1 };
+	local multLookup = 
+	{ 
+		['TapNoteScore_W1']=3,
+		['TapNoteScore_W2']=3,
+		['TapNoteScore_W3']=1
+	};
 	setmetatable(multLookup, ZeroIfNotFound);
 	--if score increases above the boundaries of a 32-bit signed
 	--(about 2.15 billion), it stops increasing. Conveniently,
 	--1st Mix clamped score as well.
-	pss:SetScore(clamp(pss:GetScore()+(bScore*multLookup[params.TapNoteScore]),0,999999999));
+	local capScore = 999999999;
+	local bestScore = bScore * multLookup['TapNoteScore_W1'];
+	local localScore = bScore * multLookup[params.TapNoteScore];
+	pss:SetCurMaxScore(clamp(pss:GetCurMaxScore()+(bestScore),0,capScore));
+	pss:SetScore(clamp(pss:GetScore()+(localScore),0,capScore));
+	
 end;
 -----------------------------------------------------------
 --DDR 4th Mix/Extra Mix/Konamix/GB3/DDRPC Scoring
 -----------------------------------------------------------
 r['DDR 4thMIX'] = function(params, pss)
-	local scoreLookupTable = { ['TapNoteScore_W1']=777, ['TapNoteScore_W2']=777, ['TapNoteScore_W3']=555 };
-	setmetatable(scoreLookupTable, ZeroIfNotFound); 
+	local scoreLookupTable =
+	{ 
+		['TapNoteScore_W1']=777, 
+		['TapNoteScore_W2']=777, 
+		['TapNoteScore_W3']=555 
+	};
+	setmetatable(scoreLookupTable, ZeroIfNotFound);
+	-- TODO: Modify this so that current max assumes full combo?
 	local comboBonusForThisStep = (pss:GetCurrentCombo()+1)*333;
-	pss:SetScore(clamp(pss:GetScore()+scoreLookupTable[params.TapNoteScore]+(scoreLookupTable[params.TapNoteScore] and comboBonusForThisStep or 0),0,999999999));
+	local capScore = 999999999;
+	local bestPoints = scoreLookupTable['TapNoteScore_W1'];
+	local bestCombo = bestPoints and comboBonusForThisStep or 0;
+	pss:SeCurMaxScore(clamp(pss:GeCurMaxScore()+bestPoints+bestCombo,0,capScore));
+	local localPoints = scoreLookupTable[params.TapNoteScore];
+	local localCombo = localPoints and comboBonusForThisStep or 0;
+	pss:SetScore(clamp(pss:GetScore()+localPoints+localCombo,0,capScore));
 end;
 -----------------------------------------------------------
 --DDR MAX2/Extreme Scoring
@@ -69,7 +90,10 @@ r['DDR Extreme'] = function(params, pss)
 		Shared.CurrentStep = 0
 	end;
 	Shared.CurrentStep = Shared.CurrentStep + 1;
-	local stepLast = math.floor(baseScore / singleStep) * (Shared.CurrentStep);
+	local stepValue = math.floor(baseScore /singleStep);
+	local stepLast = stepValue * Shared.CurrentStep;
+	pss:SetCurMaxScore(pss:GetCurMaxScore() + 
+		(stepLast * judgmentBase['TapNoteScore_W1']));
 	local judgeScore = 0;
 	if (params.HoldNoteScore == 'HoldNoteScore_Held') then
 		judgeScore = judgmentBase['TapNoteScore_W1'];
@@ -80,31 +104,51 @@ r['DDR Extreme'] = function(params, pss)
 		end;
 	end;
 	local stepScore = judgeScore * stepLast;
+	pss:SetScore(pss:GetScore() + stepScore);
 	if (Shared.CurrentStep >= totalItems) then -- Just in case.
+		-- TODO: Implement the bonus for the last step?
 		Shared.CurrentStep = 0; -- Reset for the next song.
 	end;
-	pss:SetScore(pss:GetScore() + stepScore);
 end;
 -----------------------------------------------------------
 --DDR SuperNOVA(-esque) scoring
 -----------------------------------------------------------
 r['DDR SuperNOVA'] = function(params, pss)
-	local multLookup = { ['TapNoteScore_W1'] = 1, ['TapNoteScore_W2'] = 1, ['TapNoteScore_W3'] = 0.5 };
+	local multLookup =
+	{
+		['TapNoteScore_W1'] = 1,
+		['TapNoteScore_W2'] = 1,
+		['TapNoteScore_W3'] = 0.5
+	};
 	setmetatable(multLookup, ZeroIfNotFound);
 	local radarValues = GetDirectRadar(params.Player);
 	local totalItems = GetTotalItems(radarValues); 
-	local buildScore = (10000000 / totalItems * multLookup[params.TapNoteScore]) + (10000000 / totalItems * (params.HoldNoteScore == 'HoldNoteScore_Held' and 1 or 0));
+	local base = 10000000 / totalItems;
+	local hold = base * (params.HoldNoteScore == 'HoldNoteScore_Held' and 1 or 0);
+	local maxScore = (base * multLookup['TapNoteScore_W1']) + hold;
+	pss:SetCurMaxScore(pss:GetCurMaxScore() + math.round(maxScore));
+	local buildScore = (base * multLookup[params.TapNoteScore]) + hold;
 	pss:SetScore(pss:GetScore() + math.round(buildScore));
 end;
 -----------------------------------------------------------
 --DDR SuperNOVA 2(-esque) scoring
 -----------------------------------------------------------
 r['DDR SuperNOVA 2'] = function(params, pss)
-	local multLookup = { ['TapNoteScore_W1'] = 1, ['TapNoteScore_W2'] = 1, ['TapNoteScore_W3'] = 0.5 };
+	local multLookup =
+	{
+		['TapNoteScore_W1'] = 1,
+		['TapNoteScore_W2'] = 1,
+		['TapNoteScore_W3'] = 0.5
+	};
 	setmetatable(multLookup, ZeroIfNotFound);
 	local radarValues = GetDirectRadar(params.Player);
 	local totalItems = GetTotalItems(radarValues); 
-	local buildScore = (100000 / totalItems * multLookup[params.TapNoteScore] - (IsW1Allowed(params.TapNoteScore) and 10 or 0)) + (100000 / totalItems * (params.HoldNoteScore == 'HoldNoteScore_Held' and 1 or 0));
+	local base = 100000 / totalItems;
+	local hold = base * (params.HoldNoteScore == 'HoldNoteScore_Held' and 1 or 0);
+	local maxScore = (base * multLookup['TapNoteScore_W1']) + hold;
+	pss:SetCurMaxScore(pss:GetCurMaxScore() + (math.round(maxScore) * 10));
+	local preW1 = base * multLookup[params.TapNoteScore];
+	local buildScore = (preW1 - (IsW1Allowed(params.TapNoteScore) and 10 or 0)) + hold;
 	pss:SetScore(pss:GetScore() + (math.round(buildScore) * 10));
 end;
 -----------------------------------------------------------
@@ -144,19 +188,28 @@ end;
 ------------------------------------------------------------
 r['MIGS'] = function(params,pss)
 	local curScore = 0;
-	local tapScoreTable = { ['TapNoteScore_W1'] = 3, ['TapNoteScore_W2'] = 2, ['TapNoteScore_W3'] = 1, ['TapNoteScore_W5'] = -4, ['TapNoteScore_Miss'] = -8 };
+	local tapScoreTable = 
+	{ 
+		['TapNoteScore_W1'] = 3,
+		['TapNoteScore_W2'] = 2,
+		['TapNoteScore_W3'] = 1,
+		['TapNoteScore_W5'] = -4,
+		['TapNoteScore_Miss'] = -8
+	};
 	for k,v in pairs(tapScoreTable) do
 		curScore = curScore + ( pss:GetTapNoteScores(k) * v );
 	end;
 	curScore = curScore + ( pss:GetHoldNoteScores('HoldNoteScore_Held') * 6 );
 	pss:SetScore(clamp(curScore,0,math.huge));
 end;
-SpecialScoring = {};
-setmetatable(SpecialScoring, { 
+
+-- Formulas end here.
+Scoring = {};
+setmetatable(Scoring, { 
 	__metatable = { "Letting you change the metatable sort of defeats the purpose." };
 	__index = function(tbl, key)
 			for v in ivalues(DisabledScoringModes) do
-				if key == v then return r['DDR 1stMIX']; end;
+				if key == v then return r['DDR Extreme']; end;
 			end;
 			return r[key];
 		end;

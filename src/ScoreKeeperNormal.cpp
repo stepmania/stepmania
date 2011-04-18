@@ -94,30 +94,6 @@ void ScoreKeeperNormal::Load(
 	//m_vToastyTriggers.Load( "Gameplay", "ToastyTriggersAt" );
 	m_ToastyTrigger.Load( "Gameplay", "ToastyTriggersAt" );
 
-	// Custom Scoring
-	m_CustomComboMultiplier.Load( "CustomScoring", "ComboMultiplier" );
-	m_CustomTNS_W1.Load( "CustomScoring", "PointsW1" );
-	m_CustomTNS_W2.Load( "CustomScoring", "PointsW2" );
-	m_CustomTNS_W3.Load( "CustomScoring", "PointsW3" );
-	m_CustomTNS_W4.Load( "CustomScoring", "PointsW4" );
-	m_CustomTNS_W5.Load( "CustomScoring", "PointsW5" );
-	m_CustomTNS_Miss.Load( "CustomScoring", "PointsMiss" );
-	m_CustomTNS_HitMine.Load( "CustomScoring", "PointsHitMine" );
-	m_CustomTNS_CheckpointHit.Load( "CustomScoring", "PointsCheckpointHit" );
-	m_CustomTNS_CheckpointMiss.Load( "CustomScoring", "PointsCheckpointMiss" );
-	m_CustomTNS_None.Load( "CustomScoring", "PointsNone" );
-
-	m_CustomHNS_Held.Load( "CustomScoring", "PointsHoldHeld" );
-	m_CustomHNS_LetGo.Load( "CustomScoring", "PointsHoldLetGo" );
-
-	m_CustomComboBonus.Load( "CustomScoring", "ComboAboveThresholdAddsToScoreBonus" );
-	m_CustomComboBonusThreshold.Load( "CustomScoring", "ComboScoreBonusThreshold" );
-	m_CustomComboBonusValue.Load( "CustomScoring", "ComboScoreBonusValue" );
-
-	m_DoubleNoteMultiplier.Load( "CustomScoring", "DoubleNoteScoreMultiplier" );
-	m_TripleNoteMultiplier.Load( "CustomScoring", "TripleNoteScoreMultiplier" );
-	m_QuadPlusNoteMultiplier.Load( "CustomScoring", "QuadOrHigherNoteScoreMultiplier" );
-
 	// Fill in STATSMAN->m_CurStageStats, calculate multiplier
 	int iTotalPossibleDancePoints = 0;
 	int iTotalPossibleGradePoints = 0;
@@ -179,24 +155,7 @@ void ScoreKeeperNormal::Load(
 	MESSAGEMAN->Broadcast( msg );
 
 	memset( m_ComboBonusFactor, 0, sizeof(m_ComboBonusFactor) );
-	switch( PREFSMAN->m_ScoringType )
-	{
-	case SCORING_NEW:
-	case SCORING_CUSTOM:
-		m_iRoundTo = 1;
-		break;
-	case SCORING_OLD:
-		m_iRoundTo = 5;
-		if (!GAMESTATE->IsCourseMode())
-		{
-			m_ComboBonusFactor[TNS_W1] = 55;
-			m_ComboBonusFactor[TNS_W2] = 55;
-			m_ComboBonusFactor[TNS_W3] = 33;
-		}
-		break;
-	DEFAULT_FAIL( int(PREFSMAN->m_ScoringType) );
-	}
-
+	m_iRoundTo = 1;
 }
 
 void ScoreKeeperNormal::OnNextSong( int iSongInCourseIndex, const Steps* pSteps, const NoteData* pNoteData )
@@ -247,25 +206,12 @@ void ScoreKeeperNormal::OnNextSong( int iSongInCourseIndex, const Steps* pSteps,
 	}
 	else
 	{
-		const int iMeter = clamp( pSteps->GetMeter(), 1, 10 );
-
 		// long ver and marathon ver songs have higher max possible scores
 		int iLengthMultiplier = GameState::GetNumStagesMultiplierForSong( GAMESTATE->m_pCurSong );
-		switch( PREFSMAN->m_ScoringType )
-		{
-		case SCORING_NEW:
-			m_iMaxPossiblePoints = iMeter * 10000000 * iLengthMultiplier;
-			break;
-		case SCORING_OLD:
-			m_iMaxPossiblePoints = (iMeter * iLengthMultiplier + 1) * 5000000;
-			break;
-		case SCORING_CUSTOM:
-			/* This is just simple additive/subtractive scoring, but cap the
-			 * score at the size of the score counter */
-			m_iMaxPossiblePoints = 10 * 10000000 * iLengthMultiplier;
-			break;
-		DEFAULT_FAIL( int(PREFSMAN->m_ScoringType) );
-		}
+		
+		/* This is no longer just simple additive/subtractive scoring,
+		 * but start with capping the score at the size of the score counter. */
+		m_iMaxPossiblePoints = 10 * 10000000 * iLengthMultiplier;
 	}
 	ASSERT( m_iMaxPossiblePoints >= 0 );
 	m_iMaxScoreSoFar += m_iMaxPossiblePoints;
@@ -317,24 +263,12 @@ void ScoreKeeperNormal::AddTapScore( TapNoteScore tns )
 
 void ScoreKeeperNormal::AddHoldScore( HoldNoteScore hns )
 {
-	if( PREFSMAN->m_ScoringType == SCORING_CUSTOM )
-	{
-		int &iScore = m_pPlayerStageStats->m_iScore;
-		int &iCurMaxScore = m_pPlayerStageStats->m_iCurMaxScore;
-
-		iCurMaxScore += m_CustomHNS_Held;
-
-		if( hns == HNS_Held )
-			iScore += m_CustomHNS_Held;
-		else if ( hns == HNS_LetGo )
-			iScore += m_CustomHNS_LetGo;
-	}
-	else
+	if( GAMESTATE->IsCourseMode() )
 	{
 		if( hns == HNS_Held )
 			AddScoreInternal( TNS_W1 );
 		else if ( hns == HNS_LetGo )
-			AddScoreInternal( TNS_W4 ); // required for subtractive score display to work properly
+			AddScoreInternal( TNS_W4 ); // required for subtractive score display to work properly.
 	}
 }
 
@@ -352,14 +286,6 @@ void ScoreKeeperNormal::HandleTapScoreNone()
 
 		if( m_pPlayerState->m_PlayerNumber != PLAYER_INVALID )
 			MESSAGEMAN->Broadcast( enum_add2(Message_CurrentComboChangedP1,m_pPlayerState->m_PlayerNumber) );
-
-		if( PREFSMAN->m_ScoringType == SCORING_CUSTOM )
-		{
-			int &iScore = m_pPlayerStageStats->m_iScore;
-			iScore += m_CustomTNS_None;
-		}
-		else
-			AddScoreInternal( TNS_Miss );
 	}
 
 	// TODO: networking code
@@ -369,47 +295,9 @@ void ScoreKeeperNormal::AddScoreInternal( TapNoteScore score )
 {
 	int &iScore = m_pPlayerStageStats->m_iScore;
 	int &iCurMaxScore = m_pPlayerStageStats->m_iCurMaxScore;
-/*
-  Regular scoring:
 
-  Let p = score multiplier (W1 = W2 = 10, W3 = 5, other = 0)
-
-  Note on NONSTOP Mode scoring
-
-  Let p = score multiplier (W1 = 10, W2 = 9, W3 = 5, other = 0)
-
-  N = total number of steps and freeze steps
-  S = The sum of all integers from 1 to N (the total number of steps/freeze steps)
-  n = number of the current step or freeze step (varies from 1 to N)
-  Z = Base value of the song (1,000,000 X the number of feet difficulty) - All edit data is rated as 5 feet
-  So, the score for one step is:
-  one_step_score = p * (Z/S) * n
-
-  *IMPORTANT* : Double steps (U+L, D+R, etc.) count as two steps instead of one *for your combo count only*,
-  so if you get a double L+R on the 112th step of a song, you score is calculated for only one step, not two,
-  as the combo counter might otherwise imply.
-
-  Now, through simple algebraic manipulation:
-  S = 1+...+N = (1+N)*N/2 (1 through N added together)
-
-  Okay, time for an example.  Suppose we wanted to calculate the step score of a W3 on the 57th step of
-  a 441 step, 8-foot difficulty song (I'm just making this one up):
-
-  S = (1 + 441)*441 / 2
-  = 194,222 / 2
-  = 97,461
-  StepScore = p * (Z/S) * n
-  = 5 * (8,000,000 / 97,461) * 57
-  = 5 * (82) * 57 (The 82 is rounded down from 82.08411...)
-  = 23,370
-
-  Remember this is just the score for the step, not the cumulative score up to the 57th step. Also, please note that
-  I am currently checking into rounding errors with the system and if there are any, how they are resolved in the system.
-
-  Note: if you got all W2s on this song, you would get (p=10)*Z, which is 80,000,000. In fact, the maximum possible
-  score for any song is the number of feet difficulty X 10,000,000.
-*/
-	if( PREFSMAN->m_ScoringType != SCORING_CUSTOM || GAMESTATE->IsCourseMode() )
+	// See Aaron In Japan for more details about the scoring formulas.
+	if( GAMESTATE->IsCourseMode() )
 	{
 		int p = 0;	// score multiplier
 
@@ -469,45 +357,7 @@ void ScoreKeeperNormal::AddScoreInternal( TapNoteScore score )
 	// Custom Scoring
 	else
 	{
-		int p = 0; // score value
-
-		switch( score )
-		{
-		case TNS_W1:	p = m_CustomTNS_W1;		break;
-		case TNS_W2:	p = m_CustomTNS_W2;		break;
-		case TNS_W3:	p = m_CustomTNS_W3;		break;
-		case TNS_W4:	p = m_CustomTNS_W4;		break;
-		case TNS_W5:	p = m_CustomTNS_W5;		break;
-		case TNS_Miss:	p = m_CustomTNS_Miss;	break;
-		default:		p = 0;					break;
-		}
-
-		if( m_CustomComboBonus )
-		{
-			if( m_pPlayerStageStats->m_iCurCombo > m_CustomComboBonusThreshold )
-				p += m_CustomComboBonusValue;
-		}
-
-		p += static_cast<int>(m_pPlayerStageStats->m_iCurCombo * m_CustomComboMultiplier);
-
-		if( m_iNumNotesHitThisRow == 2 )
-			p = (int)(p * m_DoubleNoteMultiplier);
-		else if( m_iNumNotesHitThisRow == 3 )
-			p = (int)(p * m_TripleNoteMultiplier);
-		else if( m_iNumNotesHitThisRow >= 4 )
-			p = (int)(p * m_QuadPlusNoteMultiplier);
-
-		if( !m_pPlayerStageStats->m_bFailed )
-		{
-			m_iTapNotesHit++;
-
-			iScore += p;
-			iCurMaxScore += m_CustomTNS_W1;
-		}
-
-		// Because the score can drop below 0 if you miss a bunch of notes, cap it off at zero
-		if( iScore <= 0 )
-			iScore = 0;
+		
 	}
 
 	ASSERT( iScore >= 0 );
@@ -536,11 +386,6 @@ void ScoreKeeperNormal::HandleTapScore( const TapNote &tn )
 			if( m_MineHitIncrementsMissCombo )
 				HandleComboInternal( 0, 0, 1 );
 			
-			if( PREFSMAN->m_ScoringType == SCORING_CUSTOM )
-			{
-				int &iScore = m_pPlayerStageStats->m_iScore;
-				iScore += m_CustomTNS_HitMine;
-			}
 		}
 		
 		if( tns == TNS_AvoidMine && m_AvoidMineIncrementsCombo )
@@ -564,19 +409,6 @@ void ScoreKeeperNormal::HandleTapScore( const TapNote &tn )
 
 void ScoreKeeperNormal::HandleHoldCheckpointScore( const NoteData &nd, int iRow, int iNumHoldsHeldThisRow, int iNumHoldsMissedThisRow )
 {
-	if( PREFSMAN->m_ScoringType == SCORING_CUSTOM )
-	{
-		int &iScore = m_pPlayerStageStats->m_iScore;
-		int &iCurMaxScore = m_pPlayerStageStats->m_iCurMaxScore;
-
-		iCurMaxScore += m_CustomTNS_CheckpointHit;
-
-		if( iNumHoldsMissedThisRow == 0 )
-			iScore += m_CustomTNS_CheckpointHit;
-		else
-			iScore += m_CustomTNS_CheckpointMiss;
-	}
-
 	HandleTapNoteScoreInternal( iNumHoldsMissedThisRow == 0? TNS_CheckpointHit:TNS_CheckpointMiss, TNS_CheckpointHit );
 	HandleComboInternal( iNumHoldsHeldThisRow, 0, iNumHoldsMissedThisRow, iRow );
 }

@@ -718,7 +718,6 @@ static void InitializeConfOptions()
 	g_ConfOptions.back().m_sPrefName = "SongsPerPlay";
 
 	ADD( ConfOption( "EventMode",			MovePref<bool>,		"Off","On (recommended)" ) );
-	ADD( ConfOption( "ScoringType",			MovePref<ScoringType>,	"New","Old","Custom" ) );
 	ADD( ConfOption( "TimingWindowScale",		TimingWindowScale,	"|1","|2","|3","|4","|5","|6","|7","|8","Justice" ) );
 	ADD( ConfOption( "LifeDifficulty",		LifeDifficulty,		"|1.2","|1.0","|0.8","|0.6","|0.4","|0.33","|0.25" ) );
 	g_ConfOptions.back().m_sPrefName = "LifeDifficultyScale";

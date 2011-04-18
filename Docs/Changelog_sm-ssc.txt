@@ -13,6 +13,11 @@ _____________________________________________________________________________
 sm-ssc $SM5VERSION | 2011????
 --------------------------------------------------------------------------------
 
+20110417
+--------
+* Use lua for all primary score keeping. Course modes right now still use the
+  old fashioned system. [TeruFSX, Wolfman2000]
+
 20110409
 --------
 * [Player] Force hold judgments to take place before setting the score.
