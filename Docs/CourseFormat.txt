@@ -44,6 +44,11 @@ Complete Course Template
 	TIME:0.500:END:1.000:MODS:2x;
 	TIME:1.500:END:1.500:MODS:0.5x;
 
+#GAINSECONDS:60.5;
+--	The number of seconds gained before starting a song. This and #LIVES are
+--	mutually exclusive: you can either have one, the other, or none: both
+--	is not possible. This is meant to be used for Survival courses.
+
 #SONG:*:Medium:2x;
 -- #SONG can take quite a variety of parameters, of which may be useful to you
 -- for testing or randomocity purpose.

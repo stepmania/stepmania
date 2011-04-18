@@ -199,10 +199,10 @@ void ScreenSelectMusic::Init()
 
 	FOREACH_ENUM( PlayerNumber, p )
 	{
-		m_sprHighScoreFrame[p].SetName( ssprintf("ScoreFrameP%d",p+1) );
-		m_sprHighScoreFrame[p].Load( THEME->GetPathG(m_sName,ssprintf("score frame p%d",p+1)) );
+		m_sprHighScoreFrame[p].Load( THEME->GetPathG(m_sName,ssprintf("ScoreFrame P%d",p+1)) );
+		m_sprHighScoreFrame[p]->SetName( ssprintf("ScoreFrameP%d",p+1) );
 		LOAD_ALL_COMMANDS_AND_SET_XY( m_sprHighScoreFrame[p] );
-		this->AddChild( &m_sprHighScoreFrame[p] );
+		this->AddChild( m_sprHighScoreFrame[p] );
 
 		m_textHighScore[p].SetName( ssprintf("ScoreP%d",p+1) );
 		m_textHighScore[p].LoadFromFont( THEME->GetPathF(m_sName,"score") );
@@ -247,7 +247,7 @@ void ScreenSelectMusic::BeginScreen()
 	{
 		if( GAMESTATE->IsHumanPlayer(pn) )
 			continue;
-		m_sprHighScoreFrame[pn].SetVisible( false );
+		m_sprHighScoreFrame[pn]->SetVisible( false );
 		m_textHighScore[pn].SetVisible( false );
 	}
 

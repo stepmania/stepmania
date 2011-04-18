@@ -590,7 +590,6 @@ void ScreenGameplay::Init()
 			ASSERT( pi->m_ptextCourseSongNumber == NULL );
 			pi->m_ptextCourseSongNumber = new BitmapText;
 			pi->m_ptextCourseSongNumber->LoadFromFont( THEME->GetPathF(m_sName,"SongNum") );
-			pi->m_ptextCourseSongNumber->SetShadowLength( 0 );
 			pi->m_ptextCourseSongNumber->SetName( ssprintf("SongNumber%s",pi->GetName().c_str()) );
 			LOAD_ALL_COMMANDS_AND_SET_XY( pi->m_ptextCourseSongNumber );
 			pi->m_ptextCourseSongNumber->SetText( "" );
@@ -609,7 +608,6 @@ void ScreenGameplay::Init()
 		ASSERT( pi->m_ptextPlayerOptions == NULL );
 		pi->m_ptextPlayerOptions = new BitmapText;
 		pi->m_ptextPlayerOptions->LoadFromFont( THEME->GetPathF(m_sName,"player options") );
-		pi->m_ptextPlayerOptions->SetShadowLength( 0 );
 		pi->m_ptextPlayerOptions->SetName( ssprintf("PlayerOptions%s",pi->GetName().c_str()) );
 		LOAD_ALL_COMMANDS_AND_SET_XY( pi->m_ptextPlayerOptions );
 		this->AddChild( pi->m_ptextPlayerOptions );

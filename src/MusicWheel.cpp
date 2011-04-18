@@ -659,6 +659,7 @@ void MusicWheel::BuildWheelItemDatas( vector<MusicWheelItemData *> &arrayWheelIt
 
 			if( so != SORT_ROULETTE )
 			{
+				// todo: allow themers to change the order of the items. -aj
 				if( SHOW_ROULETTE )
 					arrayWheelItemDatas.push_back( new MusicWheelItemData(TYPE_ROULETTE, NULL, "", NULL, ROULETTE_COLOR, 0) );
 
