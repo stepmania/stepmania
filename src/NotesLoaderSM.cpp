@@ -10,6 +10,7 @@
 #include "Song.h"
 #include "SongManager.h"
 #include "Steps.h"
+#include "Attack.h"
 #include "PrefsManager.h"
 
 /** @brief The maximum file size for edits. */
@@ -468,7 +469,7 @@ bool SMLoader::LoadFromSMFile( const RString &sPath, Song &out, bool bFromCache 
 
 		// handle the data
 		/* Don't use GetMainAndSubTitlesFromFullTitle; that's only for heuristically
-		* splitting other formats that *don't* natively support #SUBTITLE. */
+		 * splitting other formats that *don't* natively support #SUBTITLE. */
 		if( sValueName=="TITLE" )
 			out.m_sMainTitle = sParams[1];
 
@@ -540,7 +541,7 @@ bool SMLoader::LoadFromSMFile( const RString &sPath, Song &out, bool bFromCache 
 			; /* ignore */
 
 		/* We calculate these.  Some SMs in circulation have bogus values for
-		* these, so make sure we always calculate it ourself. */
+		 * these, so make sure we always calculate it ourself. */
 		else if( sValueName=="FIRSTBEAT" )
 		{
 			if( bFromCache )
