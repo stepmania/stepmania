@@ -87,7 +87,7 @@ void LifeMeterBattery::OnSongEnded()
 		m_iTrailingLivesLeft = m_iLivesLeft;
 		PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
 		const Course *pCourse = GAMESTATE->m_pCurCourse;
-		
+
 		if( pCourse && pCourse->m_vEntries[GAMESTATE->GetCourseSongIndex()].iGainLives > -1 )
 			m_iLivesLeft += pCourse->m_vEntries[GAMESTATE->GetCourseSongIndex()].iGainLives;
 		else
@@ -101,14 +101,12 @@ void LifeMeterBattery::OnSongEnded()
 	Refresh();
 }
 
-
 void LifeMeterBattery::ChangeLife( TapNoteScore score )
 {
 	if( m_iLivesLeft == 0 )
 		return;
 
-	// xxx: this is hardcoded; we should use metrics for this. -aj
-	// How to: have a TapNote reference similar to LifeMeterBattery
+	// xxx: This is hardcoded; we should use metrics for this. -aj
 	switch( score )
 	{
 	case TNS_W1:
