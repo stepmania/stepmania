@@ -13,6 +13,10 @@ _____________________________________________________________________________
 sm-ssc v1.2.5 | 201104??
 --------------------------------------------------------------------------------
 
+20110420
+--------
+* [CourseContentsList] Fix a crash. [AJ]
+
 20110416
 --------
 * [PlayerOptions] Added UsingReverse() Lua binding (automatically tests GetReverse() == 1) [AJ]
