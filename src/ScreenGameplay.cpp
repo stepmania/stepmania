@@ -588,6 +588,7 @@ void ScreenGameplay::Init()
 		if( GAMESTATE->IsCourseMode() )
 		{
 			ASSERT( pi->m_ptextCourseSongNumber == NULL );
+			SONG_NUMBER_FORMAT.Load( m_sName, "SongNumberFormat" );
 			pi->m_ptextCourseSongNumber = new BitmapText;
 			pi->m_ptextCourseSongNumber->LoadFromFont( THEME->GetPathF(m_sName,"SongNum") );
 			pi->m_ptextCourseSongNumber->SetName( ssprintf("SongNumber%s",pi->GetName().c_str()) );
@@ -1011,7 +1012,7 @@ void ScreenGameplay::LoadNextSong()
 	{
 		pi->GetPlayerStageStats()->m_iSongsPlayed++;
 		if( pi->m_ptextCourseSongNumber )
-			pi->m_ptextCourseSongNumber->SetText( ssprintf("%d", pi->GetPlayerStageStats()->m_iSongsPassed+1) );
+			pi->m_ptextCourseSongNumber->SetText( ssprintf(SONG_NUMBER_FORMAT.GetValue(), pi->GetPlayerStageStats()->m_iSongsPassed+1) );
 	}
 
 	if( GAMESTATE->m_bMultiplayer )

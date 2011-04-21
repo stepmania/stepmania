@@ -19,6 +19,7 @@ sm-ssc v1.2.5 | 201104??
 * [LifeMeterBattery] Convert Frame to an AutoActor. [AJ]
 * [ScreenEvaluation] Added RollingNumbersClass metric, allowing for the ability
   to change which RollingNumbers class is loaded. [AJ]
+* [ScreenGameplay] Added SongNumberFormat metric. [AJ]
 
 20110420
 --------
