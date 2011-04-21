@@ -351,7 +351,7 @@ void ScreenEvaluation::Init()
 	{
 		FOREACH_EnabledPlayer( p )
 		{
-			m_sprPercentFrame[p].Load( THEME->GetPathG(m_sName,ssprintf("percent frame p%d",p+1)) );
+			m_sprPercentFrame[p].Load( THEME->GetPathG(m_sName,ssprintf("PercentFrame p%d",p+1)) );
 			m_sprPercentFrame[p]->SetName( ssprintf("PercentFrameP%d",p+1) );
 			ActorUtil::LoadAllCommands( *m_sprPercentFrame[p], m_sName );
 			SET_XY( m_sprPercentFrame[p] );
