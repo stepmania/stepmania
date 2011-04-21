@@ -16,6 +16,7 @@ sm-ssc v1.2.5 | 201104??
 20110421
 --------
 * [ScreenSelectMusic] Changed "Percent Frame p1" to "PercentFrame P1" for consistency. [AJ]
+* [LifeMeterBattery] Convert Frame to an AutoActor. [AJ]
 
 20110420
 --------

@@ -7,6 +7,7 @@
 #include "RageSound.h"
 #include "PercentageDisplay.h"
 #include "ThemeMetric.h"
+#include "AutoActor.h"
 
 /** @brief Battery life meter used in Oni mode. */
 class LifeMeterBattery : public LifeMeter
@@ -45,7 +46,7 @@ private:
 	//ThemeMetric<> METRIC_NAME;
 	ThemeMetric<float> BATTERY_BLINK_TIME;
 
-	Sprite		m_sprFrame;
+	AutoActor	m_sprFrame;
 	Sprite		m_sprBattery;
 	BitmapText	m_textNumLives;
 

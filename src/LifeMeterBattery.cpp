@@ -31,7 +31,7 @@ void LifeMeterBattery::Load( const PlayerState *pPlayerState, PlayerStageStats *
 	bool bPlayerEnabled = GAMESTATE->IsPlayerEnabled( pPlayerState );
 
 	m_sprFrame.Load( THEME->GetPathG(sType,"frame") );
-	this->AddChild( &m_sprFrame );
+	this->AddChild( m_sprFrame );
 
 	m_sprBattery.Load( THEME->GetPathG(sType,"lives 1x4") );
 	m_sprBattery.SetName( ssprintf("BatteryP%i",int(pn+1)) );
