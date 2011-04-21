@@ -17,6 +17,8 @@ sm-ssc v1.2.5 | 201104??
 --------
 * [ScreenSelectMusic] Changed "Percent Frame p1" to "PercentFrame P1" for consistency. [AJ]
 * [LifeMeterBattery] Convert Frame to an AutoActor. [AJ]
+* [ScreenEvaluation] Added RollingNumbersClass metric, allowing for the ability
+  to change which RollingNumbers class is loaded. [AJ]
 
 20110420
 --------

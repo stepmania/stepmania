@@ -452,6 +452,7 @@ void ScreenEvaluation::Init()
 	}
 
 	// init judgment area
+	ROLLING_NUMBERS_CLASS.Load( m_sName, "RollingNumbersClass" );
 	FOREACH_ENUM( JudgmentLine, l )
 	{
 		if( l == JudgmentLine_W1  && !GAMESTATE->ShowW1() )
@@ -473,7 +474,7 @@ void ScreenEvaluation::Init()
 			{
 				m_textJudgmentLineNumber[l][p].LoadFromFont( THEME->GetPathF(m_sName, "JudgmentLineNumber") );
 				m_textJudgmentLineNumber[l][p].SetName( JudgmentLineToString(l)+ssprintf("NumberP%d",p+1) );
-				m_textJudgmentLineNumber[l][p].Load( "RollingNumbersJudgment" );
+				m_textJudgmentLineNumber[l][p].Load( ROLLING_NUMBERS_CLASS );
 				ActorUtil::LoadAllCommands( m_textJudgmentLineNumber[l][p], m_sName );
 				SET_XY( m_textJudgmentLineNumber[l][p] );
 				this->AddChild( &m_textJudgmentLineNumber[l][p] );
