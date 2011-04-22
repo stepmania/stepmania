@@ -17,6 +17,7 @@ REGISTER_ACTOR_CLASS( Banner );
 
 ThemeMetric<bool> SCROLL_RANDOM	("Banner","ScrollRandom");
 ThemeMetric<bool> SCROLL_ROULETTE	("Banner","ScrollRoulette");
+ThemeMetric<float> SCROLL_SPEED_DIVISOR	("Banner","ScrollSpeedDivisor");
 
 Banner::Banner()
 {
@@ -79,7 +80,7 @@ void Banner::Update( float fDeltaTime )
 
 	if( m_bScrolling )
 	{
-		m_fPercentScrolling += fDeltaTime/2;
+		m_fPercentScrolling += fDeltaTime/(float)SCROLL_SPEED_DIVISOR;
 		m_fPercentScrolling -= (int)m_fPercentScrolling;
 
 		const RectF *pTextureRect = GetCurrentTextureCoordRect();

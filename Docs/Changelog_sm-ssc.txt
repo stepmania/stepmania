@@ -13,6 +13,11 @@ _____________________________________________________________________________
 sm-ssc v1.2.5 | 201104??
 --------------------------------------------------------------------------------
 
+20110422
+--------
+* [Banner] Added ScrollSpeedDivisor metric; controls the scroll speed of
+  Random/Roulette banners. [AJ]
+
 20110421
 --------
 * [ScreenSelectMusic] Changed "Percent Frame p1" to "PercentFrame P1" for consistency. [AJ]
