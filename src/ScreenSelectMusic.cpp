@@ -1722,10 +1722,13 @@ void ScreenSelectMusic::AfterMusicChange()
 				m_sSampleMusicToPlay = m_sRandomMusicPath;
 				break;
 			case TYPE_CUSTOM:
-				bWantBanner = false; // we load it ourself, or should
-				m_Banner.Load( THEME->GetPathG( "Banner", GetMusicWheel()->GetCurWheelItemData( GetMusicWheel()->GetCurrentIndex() )->m_pAction->m_sName.c_str() ) );
-				if( SAMPLE_MUSIC_PREVIEW_MODE != SampleMusicPreviewMode_LastSong )
-					m_sSampleMusicToPlay = m_sSectionMusicPath;
+				{
+					bWantBanner = false; // we load it ourself
+					RString sBannerName = GetMusicWheel()->GetCurWheelItemData( GetMusicWheel()->GetCurrentIndex() )->m_pAction->m_sName.c_str();
+					m_Banner.LoadCustom(sBannerName);
+					if( SAMPLE_MUSIC_PREVIEW_MODE != SampleMusicPreviewMode_LastSong )
+						m_sSampleMusicToPlay = m_sSectionMusicPath;
+				}
 				break;
 			default:
 				ASSERT(0);

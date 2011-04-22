@@ -17,6 +17,7 @@ sm-ssc v1.2.5 | 201104??
 --------
 * [Banner] Added ScrollSpeedDivisor metric; controls the scroll speed of
   Random/Roulette banners. [AJ]
+* [FadingBanner] Added BannerRoulette, BannerRandom, and Banner(Custom Item Name) commands. [AJ]
 
 20110421
 --------
