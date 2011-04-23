@@ -447,8 +447,13 @@ void ScreenOptionsEditCourse::AfterChangeRow( PlayerNumber pn )
 {
 	ScreenOptions::AfterChangeRow( pn );
 
-	SetCurrentSong();
-	SetCurrentSteps();
+	const int iCurRow = m_iCurrentRow[pn];
+	// only do this if it's not the first row. -aj
+	if( iCurRow > 0 )
+	{
+		SetCurrentSong();
+		SetCurrentSteps();
+	}
 }
 
 void ScreenOptionsEditCourse::AfterChangeValueInRow( int iRow, PlayerNumber pn )

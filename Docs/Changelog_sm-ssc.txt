@@ -19,6 +19,7 @@ sm-ssc v1.2.5 | 201104??
   probably others too. [AJ]
 * [ScreenGameplaySyncMachine] Fixed a crash when entering
   ScreenGameplaySyncMachine as Player 2. (Fixes issue 127) [AJ]
+* [ScreenOptionsEditCourse] Fixed a crash when going to the first row. (Fixes issue 235) [AJ]
 
 20110422
 --------
