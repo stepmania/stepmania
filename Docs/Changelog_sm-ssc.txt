@@ -17,6 +17,8 @@ sm-ssc v1.2.5 | 201104??
 --------
 * [CourseLoaderCRS] Fixed loading of Player's Best/Most Played courses,
   probably others too. [AJ]
+* [ScreenGameplaySyncMachine] Fixed a crash when entering
+  ScreenGameplaySyncMachine as Player 2. (Fixes issue 127) [AJ]
 
 20110422
 --------
