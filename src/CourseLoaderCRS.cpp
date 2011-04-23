@@ -161,6 +161,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 			// infer entry::Type from the first param
 			// todo: make sure these aren't generating bogus entries due
 			// to a lack of songs. -aj
+			LOG->Trace("[CourseLoaderCRS] sParams[1] = %s",sParams[1].c_str());
 			// most played
 			if( sParams[1].Left(strlen("BEST")) == "BEST" )
 			{
@@ -176,7 +177,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 				new_entry.songSort = SongSort_FewestPlays;
 			}
 			// best grades
-			if( sParams[1].Left(strlen("GRADEBEST")) == "GRADEBEST" )
+			else if( sParams[1].Left(strlen("GRADEBEST")) == "GRADEBEST" )
 			{
 				new_entry.iChooseIndex = atoi( sParams[1].Right(sParams[1].size()-strlen("GRADEBEST")) ) - 1;
 				CLAMP( new_entry.iChooseIndex, 0, 500 );
