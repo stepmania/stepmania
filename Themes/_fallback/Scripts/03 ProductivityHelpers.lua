@@ -141,7 +141,7 @@ function Actor:xy(actorX,actorY)
 	self:y(actorY)
 end
 
-function XPerPlayer(player, p1X, p2X)
+function PositionPerPlayer(player, p1X, p2X)
 	return player == PLAYER_1 and p1X or p2X
 end
 
