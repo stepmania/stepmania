@@ -40,7 +40,7 @@ v1.1
 * Cleaned up code some, I think.
 ________________________________________________________________________________
 anticipated future changes:
-* M-Mod support (when sm-ssc imntegrates it)
+* M-Mod support (when sm-ssc integrates it)
 ]]
 
 -- ProfileDir(slot): gets the profile dir for slot,
