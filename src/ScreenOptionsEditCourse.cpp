@@ -14,10 +14,11 @@
 #include "Style.h"
 #include "Steps.h"
 
-
 static void GetStepsForSong( Song *pSong, vector<Steps*> &vpStepsOut )
 {
 	SongUtil::GetSteps( pSong, vpStepsOut, GAMESTATE->GetCurrentStyle()->m_StepsType );
+	// xxx: If the StepsType isn't valid for the current game, this will cause
+	// a crash when changing songs. -aj
 	StepsUtil::RemoveLockedSteps( pSong, vpStepsOut );
 	StepsUtil::SortNotesArrayByDifficulty( vpStepsOut );
 }
@@ -334,7 +335,7 @@ void ScreenOptionsEditCourse::ExportOptions( int iRow, const vector<PlayerNumber
 				if( pSong )
 				{
 					Steps *pSteps = this->GetStepsForEntry( iEntryIndex );
-					ASSERT( pSteps );
+					ASSERT_M( pSteps, "No Steps for this Song!" );
 					CourseEntry ce;
 					ce.songID.FromSong( pSong );
 					ce.stepsCriteria.m_difficulty = pSteps->GetDifficulty();
