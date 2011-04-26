@@ -79,7 +79,6 @@ protected:
 	GradeDisplay	m_Grades[NUM_PLAYERS];
 
 	// points area
-	bool			m_bNewSongsUnlocked;
 	PercentageDisplay	m_Percent[NUM_PLAYERS];
 	AutoActor		m_sprPercentFrame[NUM_PLAYERS];
 
