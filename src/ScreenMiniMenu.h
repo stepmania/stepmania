@@ -4,6 +4,7 @@
 #define SCREEN_MINI_MENU_H
 
 #include "ScreenOptions.h"
+#include <sstream>
 #include "GameConstantsAndTypes.h"
 
 typedef bool (*MenuRowUpdateEnabled)();
@@ -75,6 +76,20 @@ struct MenuRowDef
 		PUSH(c18);PUSH(c19);PUSH(c20);PUSH(c21);PUSH(c22);PUSH(c22);
 		PUSH(c23);PUSH(c23);PUSH(c24);PUSH(c25);
 #undef PUSH
+	}
+	
+	MenuRowDef( int r, RString n, bool e, EditMode s, bool bTT, bool bTI,
+		   int d, int low, int high ):
+		iRowCode(r), sName(n), bEnabled(e), pfnEnabled(NULL),
+		emShowIn(s), iDefaultChoice(d), choices(),
+		bThemeTitle(bTT), bThemeItems(bTI)
+	{
+		for ( int i = low; i <= high; i++ )
+		{
+			std::stringstream ss;
+			ss << i;
+			choices.push_back(ss.str().c_str());
+		}
 	}
 
 	void SetOneUnthemedChoice( const RString &sChoice )
