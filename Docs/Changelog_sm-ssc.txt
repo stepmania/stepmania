@@ -18,6 +18,7 @@ sm-ssc v1.2.5 | 201104??
 * [BeginnerHelper] Various changes: [AJ]
  * Changed Player_#X/Y metrics to Player#X/Y metrics for consistency.
  * Converted the background to an AutoActor.
+* [BPMDisplay] Added SetFromSong Lua binding. [AJ]
 
 20110423
 --------
