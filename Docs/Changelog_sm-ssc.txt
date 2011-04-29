@@ -13,6 +13,12 @@ _____________________________________________________________________________
 sm-ssc v1.2.5 | 201104??
 --------------------------------------------------------------------------------
 
+20110428
+--------
+* [BeginnerHelper] Various changes: [AJ]
+ * Changed Player_#X/Y metrics to Player#X/Y metrics for consistency.
+ * Converted the background to an AutoActor.
+
 20110423
 --------
 * [CourseLoaderCRS] Fixed loading of Player's Best/Most Played courses,

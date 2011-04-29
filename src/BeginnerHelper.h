@@ -4,8 +4,10 @@
 #include "ActorFrame.h"
 #include "Character.h"
 #include "Sprite.h"
+#include "AutoActor.h"
 #include "PlayerNumber.h"
 #include "NoteData.h"
+#include "ThemeMetric.h"
 class Model;
 /** @brief A dancing character that follows the steps of the Song. */
 class BeginnerHelper : public ActorFrame
@@ -14,7 +16,7 @@ public:
 	BeginnerHelper();
 	~BeginnerHelper();
 
-	bool Initialize( int iDancePadType );
+	bool Init( int iDancePadType );
 	bool IsInitialized() { return m_bInitialized; }
 	static bool CanUse();
 	void AddPlayer( PlayerNumber pn, const NoteData &nd );
@@ -32,12 +34,14 @@ protected:
 	Model *m_pDancer[NUM_PLAYERS];
 	Model *m_pDancePad;
 	Sprite	m_sFlash;
-	Sprite	m_sBackground;
+	AutoActor	m_sBackground;
 	Sprite	m_sStepCircle[NUM_PLAYERS][4];	// More memory, but much easier to manage
 
 	int	m_iLastRowChecked;
 	int	m_iLastRowFlashed;
 	bool m_bInitialized;
+
+	ThemeMetric<bool> SHOW_DANCE_PAD;
 };
 #endif
 
