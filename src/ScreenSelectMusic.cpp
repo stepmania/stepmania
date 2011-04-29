@@ -1858,6 +1858,21 @@ void ScreenSelectMusic::AfterMusicChange()
 	AfterStepsOrTrailChange( vpns );
 }
 
+void ScreenSelectMusic::OpenOptionsList(PlayerNumber pn)
+
+{
+
+	
+
+	if( pn != PLAYER_INVALID )
+
+                {
+
+					m_OptionsList[pn].Open();
+
+				}
+
+}
 // lua start
 #include "LuaBinding.h"
 
@@ -1865,6 +1880,8 @@ void ScreenSelectMusic::AfterMusicChange()
 class LunaScreenSelectMusic: public Luna<ScreenSelectMusic>
 {
 public:
+	static int OpenOptionsList( T* p, lua_State *L ) { PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);  p->OpenOptionsList(pn); return 0; }
+	
 	static int GetGoToOptions( T* p, lua_State *L ) { lua_pushboolean( L, p->GetGoToOptions() ); return 1; }
 	static int GetMusicWheel( T* p, lua_State *L ) {
 		p->GetMusicWheel()->PushSelf(L);
@@ -1875,6 +1892,7 @@ public:
 	{
   		ADD_METHOD( GetGoToOptions );
 		ADD_METHOD( GetMusicWheel );
+		ADD_METHOD( OpenOptionsList );
 	}
 };
 
