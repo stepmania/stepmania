@@ -17,6 +17,8 @@ REGISTER_ACTOR_CLASS( Banner );
 
 ThemeMetric<bool> SCROLL_RANDOM	("Banner","ScrollRandom");
 ThemeMetric<bool> SCROLL_ROULETTE	("Banner","ScrollRoulette");
+//ThemeMetric<bool> SCROLL_MODE	("Banner","ScrollMode");
+//ThemeMetric<bool> SCROLL_SORT_ORDER	("Banner","ScrollSortOrder");
 ThemeMetric<float> SCROLL_SPEED_DIVISOR	("Banner","ScrollSpeedDivisor");
 
 Banner::Banner()
