@@ -878,6 +878,13 @@ void ScreenOptions::ProcessMenuStart( const InputEventPlus &input )
 		m_pRows[iCurRow]->PositionUnderlines( pn );
 		RefreshIcons( iCurRow, pn );
 
+		Message msg( "SelectMultiple" );
+		msg.SetParam( "PlayerNumber", pn );
+		msg.SetParam( "RowIndex", iCurRow );
+		msg.SetParam( "ChoiceInRow", iChoiceInRow );
+		msg.SetParam( "Selected", bSelected );
+		MESSAGEMAN->Broadcast( msg );
+
 		if( row.GetFirstItemGoesDown() )
 		{
 			// move to the first choice in the row
@@ -989,6 +996,11 @@ void ScreenOptions::ChangeValueInRowAbsolute( int iRow, PlayerNumber pn, int iCh
 
 	int iCurrentChoiceWithFocus = row.GetChoiceInRowWithFocus(pn);
 	int iDelta = iChoiceIndex - iCurrentChoiceWithFocus;
+
+	Message msg( "ChangeValue" );
+	msg.SetParam( "PlayerNumber", pn );
+	msg.SetParam( "RowIndex", iRow );
+	MESSAGEMAN->Broadcast( msg );
 
 	ChangeValueInRowRelative( iRow, pn, iDelta, bRepeat );
 }
