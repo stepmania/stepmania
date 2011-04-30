@@ -645,6 +645,7 @@ void OptionRow::SetModIcon( PlayerNumber pn, const RString &sText, GameCommand &
 	// update row frame
 	Message msg( "Refresh" );
 	msg.SetParam( "GameCommand", &gc );
+	msg.SetParam( "Text", sText );
 	m_sprFrame->HandleMessage( msg );
 	if( m_ModIcons[pn] != NULL )
 		m_ModIcons[pn]->Set( sText );

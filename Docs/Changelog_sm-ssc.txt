@@ -17,6 +17,7 @@ sm-ssc v1.2.5 | 20110???
 --------
 * [ScreenOptions] Renamed "ScreenOptions LineHighlight" to "ScreenOptions
   LineHighlight P#", making it load per-player. [AJ]
+* [OptionRow] Added Text param to RefreshMessageCommand. [AJ]
 
 20110428
 --------
