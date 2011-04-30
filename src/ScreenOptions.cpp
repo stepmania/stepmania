@@ -131,11 +131,11 @@ void ScreenOptions::Init()
 	LOAD_ALL_COMMANDS_AND_SET_XY( m_sprPage );
 	m_frameContainer.AddChild( m_sprPage );
 
-	// init line line highlights
+	// init line highlights
 	FOREACH_PlayerNumber( p )
 	{
-		m_sprLineHighlight[p].Load( THEME->GetPathG(m_sName,"LineHighlight") );
-		m_sprLineHighlight[p]->SetName( "LineHighlight" );
+		m_sprLineHighlight[p].Load( THEME->GetPathG(m_sName, ssprintf("LineHighlight P%d",p+1)) );
+		m_sprLineHighlight[p]->SetName( ssprintf("LineHighlightP%d",p+1) );
 		m_sprLineHighlight[p]->SetX( LINE_HIGHLIGHT_X );
 		LOAD_ALL_COMMANDS( m_sprLineHighlight[p] );
 		m_frameContainer.AddChild( m_sprLineHighlight[p] );
