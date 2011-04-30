@@ -33,7 +33,8 @@ static const char *UnlockRequirementNames[] =
 	"ExtraCleared",
 	"ExtraFailed",
 	"Toasties",
-	"StagesCleared"
+	"StagesCleared",
+	"NumberUnlocked"
 };
 XToString( UnlockRequirement );
 StringToX( UnlockRequirement );
@@ -294,6 +295,7 @@ void UnlockManager::GetPoints( const Profile *pProfile, float fScores[NUM_Unlock
 	fScores[UnlockRequirement_SongPoints] = GetSongPoints( pProfile );
 	fScores[UnlockRequirement_DancePoints] = (float) pProfile->m_iTotalDancePoints;
 	fScores[UnlockRequirement_StagesCleared] = (float) pProfile->GetTotalNumSongsPassed();
+	fScores[UnlockRequirement_NumUnlocked] = (float) GetNumUnlocked();
 }
 
 /* Return true if all songs and/or courses referenced by an unlock are available. */
@@ -469,7 +471,7 @@ void UnlockManager::Load()
 		}
 	}
 
-	// Make sure that we don't have duplicate unlock IDs.  This can cause problems 
+	// Make sure that we don't have duplicate unlock IDs. This can cause problems
 	// with UnlockCelebrate and with codes.
 	FOREACH_CONST( UnlockEntry, m_UnlockEntries, ue )
 		FOREACH_CONST( UnlockEntry, m_UnlockEntries, ue2 )
@@ -514,9 +516,7 @@ void UnlockManager::Load()
 		}
 	}
 
-	//
 	// Log unlocks
-	//
 	FOREACH_CONST( UnlockEntry, m_UnlockEntries, e )
 	{
 		RString str = ssprintf( "Unlock: %s; ", join("\n",e->m_cmd.m_vsArgs).c_str() );
@@ -558,7 +558,7 @@ float UnlockManager::PointsUntilNextUnlock( UnlockRequirement t ) const
 	for( unsigned a=0; a<m_UnlockEntries.size(); a++ )
 		if( m_UnlockEntries[a].m_fRequirement[t] > fScores[t] )
 			fSmallestPoints = min( fSmallestPoints, m_UnlockEntries[a].m_fRequirement[t] );
-	
+
 	if( fSmallestPoints == FLT_MAX )
 		return 0;  // no match found
 	return fSmallestPoints - fScores[t];
@@ -673,6 +673,17 @@ public:
 		if( pSong ) { pSong->PushSelf(L); return 1; }
 		return 0;
 	}
+	static int GetCourse( T* p, lua_State *L )
+	{
+		Course *pCourse = p->m_Course.ToCourse();
+		if( pCourse ) { pCourse->PushSelf(L); return 1; }
+		return 0;
+	}
+	static int GetCode( T* p, lua_State *L )
+	{
+		lua_pushstring( L, p->m_sEntryID );
+		return 1;
+	}
 
 	static int GetArgs( T* p, lua_State *L )
 	{
@@ -701,11 +712,13 @@ public:
 	LunaUnlockEntry()
 	{
 		ADD_METHOD( IsLocked );
+		ADD_METHOD( GetCode );
 		ADD_METHOD( GetDescription );
 		ADD_METHOD( GetUnlockRewardType );
 		ADD_METHOD( GetRequirement );
 		ADD_METHOD( GetRequirePassHardSteps );
 		ADD_METHOD( GetSong );
+		ADD_METHOD( GetCourse );
 		ADD_METHOD( song );
 		ADD_METHOD( steps );
 		ADD_METHOD( course );

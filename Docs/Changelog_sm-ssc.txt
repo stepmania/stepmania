@@ -19,6 +19,8 @@ sm-ssc v1.2.5 | 20110???
   LineHighlight P#", making it load per-player. [AJ]
 * [OptionRow] Added Text param to RefreshMessageCommand. [AJ]
 * [ScreenOptions] Added SelectMultipleMessageCommand, ChangeValueMessageCommand. [AJ]
+* [UnlockEntry] Added GetCourse, GetCode Lua bindings. [AJ]
+* [UnlockManager] Added UnlockRequirement_NumUnlocked enum. [AJ]
 
 20110428
 --------
