@@ -824,7 +824,7 @@ public:
 		if( pProfile ) 
 			pProfile->PushSelf(L);
 		else
-			lua_pushnil(L );
+			lua_pushnil(L);
 		return 1;
 	}
 	static int GetLocalProfileFromIndex( T* p, lua_State *L ) { Profile *pProfile = p->GetLocalProfileFromIndex(IArg(1)); ASSERT(pProfile); pProfile->PushSelf(L); return 1; }
