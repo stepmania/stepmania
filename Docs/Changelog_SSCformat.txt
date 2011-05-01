@@ -6,8 +6,11 @@ a changelog is provided here between each version.
 Notice: .ssc is not a finalized format at the moment. There are plans for a
 change to JSON, but it is unsure if this will be done.
 
-Implement .ssc at your own risk.
+/!\ Implement .ssc at your own risk. /!\
 ________________________________________________________________________________
+
+[v0.57] - AJ
+* Add #ORIGIN tag to metadata.
 
 [v0.56] - Wolfman2000
 * Implement #WARPS tag to replace negative bpm/stop gimmicks.

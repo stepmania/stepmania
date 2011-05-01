@@ -21,6 +21,7 @@ sm-ssc v1.2.5 | 20110???
 * [ScreenOptions] Added SelectMultipleMessageCommand, ChangeValueMessageCommand. [AJ]
 * [UnlockEntry] Added GetCourse, GetCode Lua bindings. [AJ]
 * [UnlockManager] Added UnlockRequirement_NumUnlocked enum. [AJ]
+* [Song] Added Origin (#ORIGIN tag in .ssc) [AJ]
 
 20110428
 --------

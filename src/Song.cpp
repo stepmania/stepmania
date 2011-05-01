@@ -1502,6 +1502,7 @@ public:
 	static int GetDisplayArtist( T* p, lua_State *L )	{ lua_pushstring(L, p->GetDisplayArtist() ); return 1; }
 	static int GetTranslitArtist( T* p, lua_State *L )	{ lua_pushstring(L, p->GetTranslitArtist() ); return 1; }
 	static int GetGenre( T* p, lua_State *L )		{ lua_pushstring(L, p->m_sGenre ); return 1; }
+	static int GetOrigin( T* p, lua_State *L )		{ lua_pushstring(L, p->m_sOrigin ); return 1; }
 	static int GetAllSteps( T* p, lua_State *L )
 	{
 		const vector<Steps*> &v = p->GetAllSteps();
@@ -1627,6 +1628,7 @@ public:
 		ADD_METHOD( GetDisplayArtist );
 		ADD_METHOD( GetTranslitArtist );
 		ADD_METHOD( GetGenre );
+		ADD_METHOD( GetOrigin );
 		ADD_METHOD( GetAllSteps );
 		ADD_METHOD( GetStepsByStepsType );
 		ADD_METHOD( GetSongDir );
