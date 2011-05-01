@@ -65,6 +65,8 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 			out.m_sMainTitle = sParams[1];
 		else if( 0 == stricmp(sValueName, "COURSETRANSLIT") )
 			out.m_sMainTitleTranslit = sParams[1];
+		else if( 0 == stricmp(sValueName, "SCRIPTER") )
+			out.m_sScripter = sParams[1];
 		else if( 0 == stricmp(sValueName, "REPEAT") )
 		{
 			RString str = sParams[1];

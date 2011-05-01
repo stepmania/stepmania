@@ -161,9 +161,10 @@ public:
 
 	RString	m_sMainTitle, m_sMainTitleTranslit;
 	RString	m_sSubTitle, m_sSubTitleTranslit;
+	RString m_sScripter;
 
 	RString	m_sBannerPath;
-	RString	m_sBackgroundPath; // after 9 years yes finally -aj
+	RString	m_sBackgroundPath;
 	RString	m_sCDTitlePath;
 	RString	m_sGroupName;
 

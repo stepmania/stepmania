@@ -24,6 +24,7 @@ sm-ssc v1.2.5 | 20110???
 * [Song] Added Origin (#ORIGIN tag in .ssc) [AJ]
 * [UnlockManager] Added GetPoints(UnlockRequirement),
   GetPointsForProfile(Profile,UnlockRequirement) Lua bindings. [AJ]
+* [Course] Added #SCRIPTER tag and GetScripter Lua binding. [AJ]
 
 20110428
 --------
