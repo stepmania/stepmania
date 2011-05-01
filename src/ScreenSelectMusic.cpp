@@ -1873,13 +1873,12 @@ void ScreenSelectMusic::OpenOptionsList(PlayerNumber pn)
 class LunaScreenSelectMusic: public Luna<ScreenSelectMusic>
 {
 public:
-	static int OpenOptionsList( T* p, lua_State *L ) { PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);  p->OpenOptionsList(pn); return 0; }
-	
 	static int GetGoToOptions( T* p, lua_State *L ) { lua_pushboolean( L, p->GetGoToOptions() ); return 1; }
 	static int GetMusicWheel( T* p, lua_State *L ) {
 		p->GetMusicWheel()->PushSelf(L);
 		return 1;
 	}
+	static int OpenOptionsList( T* p, lua_State *L ) { PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);  p->OpenOptionsList(pn); return 0; }
 
 	LunaScreenSelectMusic()
 	{
