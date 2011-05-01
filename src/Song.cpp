@@ -781,10 +781,7 @@ void Song::TidyUpData()
 	// If no time signature specified, assume 4/4 time for the whole song.
 	if( m_Timing.m_vTimeSignatureSegments.empty() )
 	{
-		TimeSignatureSegment seg;
-		seg.m_iStartRow = 0;
-		seg.m_iNumerator = 4;
-		seg.m_iDenominator = 4;
+		TimeSignatureSegment seg(0, 4, 4);
 		m_Timing.m_vTimeSignatureSegments.push_back( seg );
 	}
 	
@@ -795,18 +792,14 @@ void Song::TidyUpData()
 	 */
 	if( m_Timing.m_TickcountSegments.empty() )
 	{
-		TickcountSegment seg;
-		seg.m_iStartRow = 0;
-		seg.m_iTicks = 2;
+		TickcountSegment seg(0, 2);
 		m_Timing.m_TickcountSegments.push_back( seg );
 	}
 	
 	// Have a default combo segment of one just in case.
 	if( m_Timing.m_ComboSegments.empty() )
 	{
-		ComboSegment seg;
-		seg.m_iStartRow = 0;
-		seg.m_iCombo = 1;
+		ComboSegment seg(0, 1);
 		m_Timing.m_ComboSegments.push_back( seg );
 	}
 }
