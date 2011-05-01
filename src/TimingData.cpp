@@ -720,6 +720,28 @@ void TimingData::ScaleRegion( float fScale, int iStartIndex, int iEndIndex, bool
 			m_WarpSegments[i].m_iStartRow = lrintf((iSegStartRow - iStartIndex) * fScale) + iStartIndex;
 	}
 	
+	for ( unsigned i = 0; i < m_TickcountSegments.size(); i++ )
+	{
+		const int iSegStart = m_TickcountSegments[i].m_iStartRow;
+		if( iSegStart < iStartIndex )
+			continue;
+		else if( iSegStart > iEndIndex )
+			m_TickcountSegments[i].m_iStartRow += lrintf( (iEndIndex - iStartIndex) * (fScale - 1) );
+		else
+			m_TickcountSegments[i].m_iStartRow = lrintf( (iSegStart - iStartIndex) * fScale ) + iStartIndex;
+	}
+	
+	for ( unsigned i = 0; i < m_ComboSegments.size(); i++ )
+	{
+		const int iSegStart = m_ComboSegments[i].m_iStartRow;
+		if( iSegStart < iStartIndex )
+			continue;
+		else if( iSegStart > iEndIndex )
+			m_ComboSegments[i].m_iStartRow += lrintf( (iEndIndex - iStartIndex) * (fScale - 1) );
+		else
+			m_ComboSegments[i].m_iStartRow = lrintf( (iSegStart - iStartIndex) * fScale ) + iStartIndex;
+	}
+	
 	// adjust BPM changes to preserve timing
 	if( bAdjustBPM )
 	{
