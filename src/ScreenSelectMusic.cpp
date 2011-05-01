@@ -1859,20 +1859,13 @@ void ScreenSelectMusic::AfterMusicChange()
 }
 
 void ScreenSelectMusic::OpenOptionsList(PlayerNumber pn)
-
 {
-
-	
-
 	if( pn != PLAYER_INVALID )
-
-                {
-
-					m_OptionsList[pn].Open();
-
-				}
-
+	{
+		m_OptionsList[pn].Open();
+	}
 }
+
 // lua start
 #include "LuaBinding.h"
 
