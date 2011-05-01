@@ -685,6 +685,7 @@ public:
 		return 1;
 	}
 
+	// internal
 	static int GetArgs( T* p, lua_State *L )
 	{
 		Command cmd;
@@ -761,7 +762,7 @@ public:
 
 	static int GetStepsUnlockedByEntryID( T* p, lua_State *L )
 	{
-		// Return the song each steps are associated with, too.
+		// Return the Song each Steps are associated with, too.
 		vector<Song *> apSongs;
 		vector<Difficulty> apDifficulty;
 		UNLOCKMAN->GetStepsUnlockedByEntryID( apSongs, apDifficulty, SArg(1) );
@@ -770,20 +771,36 @@ public:
 		return 2;
 	}
 
+	static int GetPoints( T* p, lua_State *L ) {
+		float fScores[NUM_UnlockRequirement];
+		UNLOCKMAN->GetPoints( PROFILEMAN->GetMachineProfile(), fScores );
+		lua_pushnumber( fScores[Enum::Check<UnlockRequirement>(L, 1)] );
+		return 1;
+	}
+
+	static int GetPointsForProfile( T* p, lua_State *L ) {
+		float fScores[NUM_UnlockRequirement];
+		UNLOCKMAN->GetPoints( Luna<Profile>::check(L,1), fScores );
+		lua_pushnumber( fScores[Enum::Check<UnlockRequirement>(L, 2)] );
+		return 1;
+	}
+
 	LunaUnlockManager()
 	{
-		ADD_METHOD( GetPointsUntilNextUnlock );
+		ADD_METHOD( AnyUnlocksToCelebrate );
 		ADD_METHOD( FindEntryID );
-		ADD_METHOD( UnlockEntryID );
-		ADD_METHOD( UnlockEntryIndex );
-		ADD_METHOD( PreferUnlockEntryID );
 		ADD_METHOD( GetNumUnlocks );
 		ADD_METHOD( GetNumUnlocked );
-		ADD_METHOD( GetUnlockEntryIndexToCelebrate );
-		ADD_METHOD( AnyUnlocksToCelebrate );
-		ADD_METHOD( GetUnlockEntry );
+		ADD_METHOD( GetPoints );
+		ADD_METHOD( GetPointsForProfile );
+		ADD_METHOD( GetPointsUntilNextUnlock );
 		ADD_METHOD( GetSongsUnlockedByEntryID );
 		ADD_METHOD( GetStepsUnlockedByEntryID );
+		ADD_METHOD( GetUnlockEntry );
+		ADD_METHOD( GetUnlockEntryIndexToCelebrate );
+		ADD_METHOD( PreferUnlockEntryID );
+		ADD_METHOD( UnlockEntryID );
+		ADD_METHOD( UnlockEntryIndex );
 	}
 };
 

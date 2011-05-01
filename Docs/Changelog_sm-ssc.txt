@@ -22,6 +22,8 @@ sm-ssc v1.2.5 | 20110???
 * [UnlockEntry] Added GetCourse, GetCode Lua bindings. [AJ]
 * [UnlockManager] Added UnlockRequirement_NumUnlocked enum. [AJ]
 * [Song] Added Origin (#ORIGIN tag in .ssc) [AJ]
+* [UnlockManager] Added GetPoints(UnlockRequirement),
+  GetPointsForProfile(Profile,UnlockRequirement) Lua bindings. [AJ]
 
 20110428
 --------
