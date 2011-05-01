@@ -774,14 +774,14 @@ public:
 	static int GetPoints( T* p, lua_State *L ) {
 		float fScores[NUM_UnlockRequirement];
 		UNLOCKMAN->GetPoints( PROFILEMAN->GetMachineProfile(), fScores );
-		lua_pushnumber( fScores[Enum::Check<UnlockRequirement>(L, 1)] );
+		lua_pushnumber( L, fScores[Enum::Check<UnlockRequirement>(L, 1)] );
 		return 1;
 	}
 
 	static int GetPointsForProfile( T* p, lua_State *L ) {
 		float fScores[NUM_UnlockRequirement];
 		UNLOCKMAN->GetPoints( Luna<Profile>::check(L,1), fScores );
-		lua_pushnumber( fScores[Enum::Check<UnlockRequirement>(L, 2)] );
+		lua_pushnumber( L, fScores[Enum::Check<UnlockRequirement>(L, 2)] );
 		return 1;
 	}
 
