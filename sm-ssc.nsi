@@ -450,6 +450,8 @@ Section "Main Section" SecMain
 	File "Docs\Licenses.txt"
 	File "Docs\credits.txt"
 	File "Docs\Changelog_sm-ssc.txt"
+	File "Docs\Changelog_sm5.txt"
+	File "Docs\Changelog_SSCformat.txt"
 	File "Docs\CommandLineArgs.txt"
 	File /r /x CVS /x .svn "Docs\license-ext"
 	File /r /x CVS /x .svn "Docs\Luadoc"
