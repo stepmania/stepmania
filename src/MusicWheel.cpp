@@ -360,6 +360,8 @@ bool MusicWheel::SelectModeMenuItem()
 	return true;
 }
 
+// bool MusicWheel::SelectCustomItem()
+
 void MusicWheel::GetSongList( vector<Song*> &arraySongs, SortOrder so )
 {
 	vector<Song*> apAllSongs;

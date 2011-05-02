@@ -261,7 +261,7 @@ static RString GetSMNotesTag( const Song &song, const Steps &in )
 	RString desc = (USE_CREDIT ? in.GetCredit() : in.GetDescription());
 	lines.push_back( ssprintf( "     %s:", SmEscape(desc).c_str() ) );
 	lines.push_back( ssprintf( "     %s:", DifficultyToString(in.GetDifficulty()).c_str() ) );
-	lines.push_back( ssprintf( "     %d:", in.GetMeter() ) );
+	lines.push_back( ssprintf( "     %d:", clamp( in.GetMeter(), MIN_METER, MAX_METER ) ) );
 	
 	vector<RString> asRadarValues;
 	// SM files don't use fakes for radar data. Keep it that way.

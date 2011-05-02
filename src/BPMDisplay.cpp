@@ -294,11 +294,22 @@ class LunaBPMDisplay: public Luna<BPMDisplay>
 {
 public:
 	static int SetFromGameState( T* p, lua_State *L ) { p->SetFromGameState(); return 0; }
+	static int SetFromSong( T* p, lua_State *L )
+	{
+		if( lua_isnil(L,1) ) { p->NoBPM(); }
+		else
+		{
+			const Song* pSong = Luna<Song>::check( L, 1, true );
+			p->SetBpmFromSong(pSong);
+		}
+		return 0;
+	}
 	static int GetText( T* p, lua_State *L )		{ lua_pushstring( L, p->GetText() ); return 1; }
 
 	LunaBPMDisplay()
 	{
 		ADD_METHOD( SetFromGameState );
+		ADD_METHOD( SetFromSong );
 		ADD_METHOD( GetText );
 	}
 };

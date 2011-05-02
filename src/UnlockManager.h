@@ -25,6 +25,7 @@ enum UnlockRequirement
 	UnlockRequirement_ExtraFailed,
 	UnlockRequirement_Toasties,
 	UnlockRequirement_StagesCleared,
+	UnlockRequirement_NumUnlocked,
 	NUM_UnlockRequirement,
 	UnlockRequirement_Invalid,
 };
@@ -100,7 +101,7 @@ public:
 // Option is locked due to a #SELECTABLE tag.
 #define LOCKED_SELECTABLE    0x4
 
-// Option is disabled by the operator.  (For courses, this means that a song in the
+// Option is disabled by the operator. (For courses, this means that a song in the
 // course is disabled.)
 #define LOCKED_DISABLED      0x8
 

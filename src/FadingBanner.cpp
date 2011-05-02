@@ -226,12 +226,14 @@ void FadingBanner::LoadRoulette()
 {
 	BeforeChange();
 	m_Banner[m_iIndexLatest].LoadRoulette();
+	m_Banner[m_iIndexLatest].PlayCommand( "Roulette" );
 }
 
 void FadingBanner::LoadRandom()
 {
 	BeforeChange();
 	m_Banner[m_iIndexLatest].LoadRandom();
+	m_Banner[m_iIndexLatest].PlayCommand( "Random" );
 }
 
 void FadingBanner::LoadFromSortOrder( SortOrder so )
@@ -250,6 +252,13 @@ void FadingBanner::LoadCourseFallback()
 {
 	BeforeChange();
 	m_Banner[m_iIndexLatest].LoadCourseFallback();
+}
+
+void FadingBanner::LoadCustom( RString sBanner )
+{
+	BeforeChange();
+	m_Banner[m_iIndexLatest].Load( THEME->GetPathG( "Banner", sBanner ) );
+	m_Banner[m_iIndexLatest].PlayCommand( sBanner );
 }
 
 // lua start

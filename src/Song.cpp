@@ -41,7 +41,7 @@
  * @brief The internal version of the cache for StepMania.
  *
  * Increment this value to invalidate the current cache. */
-const int FILE_CACHE_VERSION = 168;
+const int FILE_CACHE_VERSION = 169;
 
 /** @brief How long does a song sample last by default? */
 const float DEFAULT_MUSIC_SAMPLE_LENGTH = 12.f;
@@ -799,9 +799,7 @@ void Song::TidyUpData()
 	// Have a default combo segment of one just in case.
 	if( m_Timing.m_ComboSegments.empty() )
 	{
-		ComboSegment seg;
-		seg.m_iStartRow = 0;
-		seg.m_iCombo = 1;
+		ComboSegment seg(0, 1);
 		m_Timing.m_ComboSegments.push_back( seg );
 	}
 	
@@ -1504,6 +1502,7 @@ public:
 	static int GetDisplayArtist( T* p, lua_State *L )	{ lua_pushstring(L, p->GetDisplayArtist() ); return 1; }
 	static int GetTranslitArtist( T* p, lua_State *L )	{ lua_pushstring(L, p->GetTranslitArtist() ); return 1; }
 	static int GetGenre( T* p, lua_State *L )		{ lua_pushstring(L, p->m_sGenre ); return 1; }
+	static int GetOrigin( T* p, lua_State *L )		{ lua_pushstring(L, p->m_sOrigin ); return 1; }
 	static int GetAllSteps( T* p, lua_State *L )
 	{
 		const vector<Steps*> &v = p->GetAllSteps();
@@ -1629,6 +1628,7 @@ public:
 		ADD_METHOD( GetDisplayArtist );
 		ADD_METHOD( GetTranslitArtist );
 		ADD_METHOD( GetGenre );
+		ADD_METHOD( GetOrigin );
 		ADD_METHOD( GetAllSteps );
 		ADD_METHOD( GetStepsByStepsType );
 		ADD_METHOD( GetSongDir );

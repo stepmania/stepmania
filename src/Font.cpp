@@ -157,11 +157,6 @@ void FontPage::SetTextureCoords( const vector<int> &widths, int iAdvanceExtraPix
 
 void FontPage::SetExtraPixels( int iDrawExtraPixelsLeft, int iDrawExtraPixelsRight )
 {
-	/* Hack: do one more than we were asked to; I think a lot of fonts are one
-	 * too low. - glenn */
-	iDrawExtraPixelsRight++;
-	iDrawExtraPixelsLeft++;
-
 	if( (iDrawExtraPixelsLeft % 2) == 1 )
 		++iDrawExtraPixelsLeft;
 

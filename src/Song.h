@@ -17,7 +17,7 @@ struct lua_State;
 struct BackgroundChange;
 
 /** @brief The version of the .ssc file format. */
-const static float STEPFILE_VERSION_NUMBER = 0.57f;
+const static float STEPFILE_VERSION_NUMBER = 0.58f;
 
 /** @brief How many edits for this song can each profile have? */
 const int MAX_EDITS_PER_SONG_PER_PROFILE	= 5;
@@ -221,6 +221,8 @@ public:
 	 *
 	 * This is read and saved, but never actually used. */
 	RString	m_sCredit;
+
+	RString m_sOrigin; // song origin (for .ssc format)
 
 	RString	m_sMusicFile;
 	RString	m_sInstrumentTrackFile[NUM_InstrumentTrack];

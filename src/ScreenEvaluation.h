@@ -76,10 +76,9 @@ protected:
 
 	// grade area
 	AutoActor		m_sprGradeFrame[NUM_PLAYERS];
-	GradeDisplay		m_Grades[NUM_PLAYERS];
+	GradeDisplay	m_Grades[NUM_PLAYERS];
 
 	// points area
-	bool			m_bNewSongsUnlocked;
 	PercentageDisplay	m_Percent[NUM_PLAYERS];
 	AutoActor		m_sprPercentFrame[NUM_PLAYERS];
 
@@ -115,6 +114,7 @@ protected:
 	RageSound		m_soundStart;	// sound played if the player passes or fails
 
 	ThemeMetric<bool>	SUMMARY;
+	ThemeMetric<RString> ROLLING_NUMBERS_CLASS;
 	/** @brief Did a player save a screenshot of their score? */
 	bool			m_bSavedScreenshot[NUM_PLAYERS];
 };

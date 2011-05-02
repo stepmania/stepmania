@@ -57,6 +57,7 @@ protected:
 	bool SelectSongOrCourse();
 	bool SelectCourse( const Course *p );
 	bool SelectModeMenuItem();
+	//bool SelectCustomItem();
 
 	virtual void UpdateSwitch();
 

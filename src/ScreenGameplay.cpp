@@ -588,6 +588,7 @@ void ScreenGameplay::Init()
 		if( GAMESTATE->IsCourseMode() )
 		{
 			ASSERT( pi->m_ptextCourseSongNumber == NULL );
+			SONG_NUMBER_FORMAT.Load( m_sName, "SongNumberFormat" );
 			pi->m_ptextCourseSongNumber = new BitmapText;
 			pi->m_ptextCourseSongNumber->LoadFromFont( THEME->GetPathF(m_sName,"SongNum") );
 			pi->m_ptextCourseSongNumber->SetName( ssprintf("SongNumber%s",pi->GetName().c_str()) );
@@ -1011,7 +1012,7 @@ void ScreenGameplay::LoadNextSong()
 	{
 		pi->GetPlayerStageStats()->m_iSongsPlayed++;
 		if( pi->m_ptextCourseSongNumber )
-			pi->m_ptextCourseSongNumber->SetText( ssprintf("%d", pi->GetPlayerStageStats()->m_iSongsPassed+1) );
+			pi->m_ptextCourseSongNumber->SetText( ssprintf(SONG_NUMBER_FORMAT.GetValue(), pi->GetPlayerStageStats()->m_iSongsPassed+1) );
 	}
 
 	if( GAMESTATE->m_bMultiplayer )
@@ -1130,13 +1131,12 @@ void ScreenGameplay::LoadNextSong()
 	m_LyricDisplay.PlayCommand( bAllReverse? "SetReverse": bAtLeastOneReverse? "SetOneReverse": "SetNoReverse" );
 
 	// Load lyrics
-	// XXX: don't load this here
+	// XXX: don't load this here (who and why? -aj)
 	LyricsLoader LL;
 	if( GAMESTATE->m_pCurSong->HasLyrics()  )
 		LL.LoadFromLRCFile(GAMESTATE->m_pCurSong->GetLyricsPath(), *GAMESTATE->m_pCurSong);
 
-
-	/* Set up song-specific graphics. */
+	// Set up song-specific graphics.
 
 	// Check to see if any players are in beginner mode.
 	// Note: steps can be different if turn modifiers are used.
@@ -1156,21 +1156,22 @@ void ScreenGameplay::LoadNextSong()
 	if( m_pSongForeground )
 		m_pSongForeground->Unload();
 
-	if( !PREFSMAN->m_bShowBeginnerHelper || !m_BeginnerHelper.Initialize(2) )
+	if( !PREFSMAN->m_bShowBeginnerHelper || !m_BeginnerHelper.Init(2) )
 	{
 		m_BeginnerHelper.SetVisible( false );
 
-		/* BeginnerHelper disabled, or failed to load. */
+		// BeginnerHelper disabled, or failed to load.
 		if( m_pSongBackground )
 			m_pSongBackground->LoadFromSong( GAMESTATE->m_pCurSong );
 
 		if( !GAMESTATE->m_bDemonstrationOrJukebox )
 		{
-			/* This will fade from a preset brightness to the actual brightness (based
-			 * on prefs and "cover").  The preset brightness may be 0 (to fade from
-			 * black), or it might be 1, if the stage screen has the song BG and we're
-			 * coming from it (like Pump).  This used to be done in SM_PlayReady, but
-			 * that means it's impossible to snap to the new brightness immediately. */
+			/* This will fade from a preset brightness to the actual brightness
+			 * (based on prefs and "cover"). The preset brightness may be 0 (to
+			 * fade from black), or it might be 1, if the stage screen has the
+			 * song BG and we're coming from it (like Pump). This used to be done
+			 * in SM_PlayReady, but that means it's impossible to snap to the
+			 * new brightness immediately. */
 			if( m_pSongBackground )
 			{
 				m_pSongBackground->SetBrightness( INITIAL_BACKGROUND_BRIGHTNESS );

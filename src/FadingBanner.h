@@ -29,6 +29,7 @@ public:
 	void LoadFromSortOrder( SortOrder so );
 	void LoadFallback();
 	void LoadCourseFallback();
+	void LoadCustom( RString sBanner );
 
 	bool LoadFromCachedBanner( const RString &path );
 	bool LoadFromCachedBackground( const RString &path );

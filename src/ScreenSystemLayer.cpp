@@ -110,6 +110,7 @@ namespace
 				int iCredits = GAMESTATE->m_iCoins / PREFSMAN->m_iCoinsPerCredit;
 				int iCoins = GAMESTATE->m_iCoins % PREFSMAN->m_iCoinsPerCredit;
 				RString sCredits = CREDITS_CREDITS;
+				// todo: allow themers to change these strings -aj
 				if( iCredits > 0 || PREFSMAN->m_iCoinsPerCredit == 1 )
 					sCredits += ssprintf("  %d", iCredits);
 				if( PREFSMAN->m_iCoinsPerCredit > 1 )

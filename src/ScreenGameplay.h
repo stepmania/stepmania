@@ -193,6 +193,7 @@ protected:
 	ThemeMetric<int> FAIL_ON_MISS_COMBO;
 	ThemeMetric<bool> ALLOW_CENTER_1_PLAYER;
 	ThemeMetric<bool> UNPAUSE_WITH_START;
+	ThemeMetric<RString> SONG_NUMBER_FORMAT;
 
 	bool IsLastSong();
 	void SetupSong( int iSongIndex );

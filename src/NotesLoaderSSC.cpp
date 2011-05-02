@@ -178,6 +178,11 @@ bool SSCLoader::LoadFromSSCFile( const RString &sPath, Song &out, bool bFromCach
 					out.m_sGenre = sParams[1];
 				}
 
+				else if( sValueName=="ORIGIN" )
+				{
+					out.m_sOrigin = sParams[1];
+				}
+
 				else if( sValueName=="CREDIT" )
 				{
 					out.m_sCredit = sParams[1];

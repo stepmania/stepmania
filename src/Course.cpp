@@ -91,7 +91,7 @@ int CourseEntry::GetNumModChanges() const
 Course::Course(): m_bIsAutogen(false), m_sPath(""), m_sMainTitle(""),
 	m_sMainTitleTranslit(""), m_sSubTitle(""), m_sSubTitleTranslit(""),
 	m_sBannerPath(""), m_sBackgroundPath(""), m_sCDTitlePath(""),
-	m_sGroupName(""), m_bRepeat(false), m_fGoalSeconds(0), 
+	m_sGroupName(""), m_sScripter(""), m_bRepeat(false), m_fGoalSeconds(0), 
 	m_bShuffle(false), m_iLives(-1), m_bSortByMeter(false),
 	m_bIncomplete(false), m_vEntries(), m_SortOrder_TotalDifficulty(0),
 	m_SortOrder_Ranking(0), m_LoadedFromProfile(ProfileSlot_Invalid),
@@ -175,6 +175,7 @@ void Course::Init()
 	m_sMainTitleTranslit = "";
 	m_sSubTitle = "";
 	m_sSubTitleTranslit = "";
+	m_sScripter = "";
 
 	m_sBannerPath = "";
 	m_sBackgroundPath = "";
@@ -1091,6 +1092,7 @@ public:
 	static int GetGroupName( T* p, lua_State *L )		{ lua_pushstring(L, p->m_sGroupName ); return 1; }
 	static int IsAutogen( T* p, lua_State *L )		{ lua_pushboolean(L, p->m_bIsAutogen ); return 1; }
 	static int GetEstimatedNumStages( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetEstimatedNumStages() ); return 1; }
+	static int GetScripter( T* p, lua_State *L )		{ lua_pushstring(L, p->m_sScripter ); return 1; }
 	static int GetTotalSeconds( T* p, lua_State *L )
 	{
 		StepsType st = Enum::Check<StepsType>(L, 1);
@@ -1111,28 +1113,29 @@ public:
 
 	LunaCourse()
 	{
-		ADD_METHOD( GetPlayMode ); // [sm-ssc] returns PlayMode enum now
+		ADD_METHOD( GetPlayMode );
 		ADD_METHOD( GetDisplayFullTitle );
 		ADD_METHOD( GetTranslitFullTitle );
 		ADD_METHOD( HasMods );
 		ADD_METHOD( HasTimedMods );
-		ADD_METHOD( GetCourseType ); // [sm-ssc] returns CourseType enum now
+		ADD_METHOD( GetCourseType );
 		ADD_METHOD( GetCourseEntry );
 		ADD_METHOD( GetCourseEntries );
 		ADD_METHOD( GetAllTrails );
 		ADD_METHOD( GetBannerPath );
-		ADD_METHOD( GetBackgroundPath ); // sm-ssc addition
-		ADD_METHOD( GetCourseDir ); // sm-ssc addition
+		ADD_METHOD( GetBackgroundPath );
+		ADD_METHOD( GetCourseDir );
 		ADD_METHOD( GetGroupName );
 		ADD_METHOD( IsAutogen );
 		ADD_METHOD( GetEstimatedNumStages );
+		ADD_METHOD( GetScripter ); 
 		ADD_METHOD( GetTotalSeconds );
 		ADD_METHOD( IsEndless );
-		ADD_METHOD( IsNonstop ); // sm-ssc addition
-		ADD_METHOD( IsOni ); // sm-ssc addition
+		ADD_METHOD( IsNonstop );
+		ADD_METHOD( IsOni );
 		ADD_METHOD( GetGoalSeconds );
-		ADD_METHOD( HasBanner ); // sm-ssc addition
-		ADD_METHOD( HasBackground ); // sm-ssc addition
+		ADD_METHOD( HasBanner );
+		ADD_METHOD( HasBackground );
 		ADD_METHOD( IsAnEdit );
 	}
 };
