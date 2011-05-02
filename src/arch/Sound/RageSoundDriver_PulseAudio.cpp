@@ -79,7 +79,7 @@ RString RageSoundDriver_PulseAudio::Init()
 #endif
 
 	pa_context_set_state_callback(m_PulseCtx, StaticCtxStateCb, this);
-
+	
 	LOG->Trace("Pulse: pa_context_connect()...");
 	error = pa_context_connect(m_PulseCtx, NULL, (pa_context_flags_t)0, NULL);
 	
@@ -299,6 +299,11 @@ int64_t RageSoundDriver_PulseAudio::GetPosition() const
 	return m_LastPosition;
 }
 
+/*
+ * XXX: Something here is slow and causes arrows to stutter in gameplay.
+ * This needs to be looked into (and for some reason the ALSA driver is
+ * useless on my laptop. - Colby
+ */
 void RageSoundDriver_PulseAudio::StreamWriteCb(pa_stream *s, size_t length)
 {
 #if PA_API_VERSION <= 11
