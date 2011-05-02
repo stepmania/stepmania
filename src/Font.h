@@ -23,11 +23,7 @@ struct FontPageTextures
 	RageTexture *m_pTextureStroke;
 
 	/** @brief Set up the initial textures. */
-	FontPageTextures()
-	{
-		m_pTextureMain = NULL;
-		m_pTextureStroke = NULL;
-	}
+	FontPageTextures(): m_pTextureMain(NULL), m_pTextureStroke(NULL) {}
 };
 
 /** @brief The components of a glyph (not technically a character). */
@@ -52,6 +48,10 @@ struct glyph
 
 	/** @brief Texture coordinate rect. */
 	RectF m_TexRect;
+	
+	/** @brief Set up the glyph with default values. */
+	glyph() : m_pPage(NULL), m_FontPageTextures(), m_iHadvance(0),
+		m_fWidth(0), m_fHeight(0), m_fHshift(0), m_TexRect() {}
 };
 
 /** @brief The settings used for the FontPage. */
@@ -75,7 +75,7 @@ struct FontPageSettings
 	map<int,int> m_mapGlyphWidths;
 
 	/** @brief The initial settings for the FontPage. */
-	FontPageSettings():
+	FontPageSettings(): m_sTexturePath(""),
 		m_iDrawExtraPixelsLeft(0), m_iDrawExtraPixelsRight(0),
 		m_iAddToAllWidths(0), 
 		m_iLineSpacing(-1),
@@ -84,7 +84,9 @@ struct FontPageSettings
 		m_iDefaultWidth(-1),
 		m_iAdvanceExtraPixels(1),
 		m_fScaleAllWidthsBy(1),
-		m_sTextureHints("default")
+		m_sTextureHints("default"),
+		CharToGlyphNo(),
+		m_mapGlyphWidths()
 	{ }
 
 	/**

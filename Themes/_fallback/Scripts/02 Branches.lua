@@ -71,6 +71,13 @@ Branch = {
 		end;
 		return "ScreenSelectProfile";
 	end,
+	OptionsEdit = function()
+		-- Similar to above, don't let anyone in here with 0 songs.
+		if SONGMAN:GetNumSongs() == 0 and SONGMAN:GetNumAdditionalSongs() == 0 then
+			return "ScreenHowToInstallSongs";
+		end;
+		return "ScreenOptionsEdit";
+	end,
 	AfterProfileLoad = function()
 		return "ScreenSelectProfile"
 	end,
@@ -186,10 +193,4 @@ Branch = {
 	Network = function()
 		return IsNetConnected() and "ScreenTitleMenu" or "ScreenTitleMenu"
 	end,
-	QuickSetupStart = "ScreenQuickSetupOverview",
-	QuickSetupA = "ScreenQuickSetupPhaseOne",
-	QuickSetupB = "ScreenQuickSetupPhaseTwo",
-	QuickSetupC = "ScreenQuickSetupPhaseThree",
-	QuickSetupD = "ScreenQuickSetupPhaseFour",
-	QuickSetupFinished = "ScreenQuickSetupFinished"
 }

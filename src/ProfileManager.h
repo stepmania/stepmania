@@ -77,6 +77,7 @@ public:
 
 	RString GetPlayerName( PlayerNumber pn ) const;
 	bool ProfileWasLoadedFromMemoryCard( PlayerNumber pn ) const;
+	bool ProfileFromMemoryCardIsNew( PlayerNumber pn ) const;
 	bool LastLoadWasTamperedOrCorrupt( PlayerNumber pn ) const;
 	bool LastLoadWasFromLastGood( PlayerNumber pn ) const;
 
@@ -117,6 +118,7 @@ private:
 	bool m_bLastLoadWasTamperedOrCorrupt[NUM_PLAYERS];	// true if Stats.xml was present, but failed to load (probably because of a signature failure)
 	bool m_bLastLoadWasFromLastGood[NUM_PLAYERS];		// if true, then m_bLastLoadWasTamperedOrCorrupt is also true
 	mutable bool m_bNeedToBackUpLastLoad[NUM_PLAYERS];	// if true, back up profile on next save
+	bool m_bNewProfile[NUM_PLAYERS];
 
 	Profile	*m_pMemoryCardProfile[NUM_PLAYERS];	// holds Profile for the currently inserted card
 	Profile *m_pMachineProfile;

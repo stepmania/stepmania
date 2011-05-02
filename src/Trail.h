@@ -17,6 +17,8 @@ struct TrailEntry
 	TrailEntry(): 
 		pSong(NULL), 
 		pSteps(NULL),
+		Modifiers(""),
+		Attacks(),
 		bSecret(false),
 		iLowMeter(-1),
 		iHighMeter(-1),
@@ -69,11 +71,11 @@ public:
 	 *
 	 * This used to call Init(), which is still available. */
 	Trail(): m_StepsType(StepsType_Invalid),
+		m_CourseType(CourseType_Invalid),
 		m_CourseDifficulty(Difficulty_Invalid),
-		m_iSpecifiedMeter(-1), m_bRadarValuesCached(false)
-	{
-		m_vEntries.clear();
-	}
+		m_vEntries(), m_iSpecifiedMeter(-1),
+		m_bRadarValuesCached(false), m_CachedRadarValues(),
+		m_CachedObject() {}
 	void Init()
 	{
 		m_StepsType = StepsType_Invalid;

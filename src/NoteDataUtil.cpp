@@ -2229,62 +2229,61 @@ void NoteDataUtil::AddTapAttacks( NoteData &nd, Song* pSong )
 	}
 }
 
-#if 0 // undo this if ScaleRegion breaks more things than it fixes
 void NoteDataUtil::Scale( NoteData &nd, float fScale )
 {
 	ASSERT( fScale > 0 );
-
-	NoteData temp;
-	temp.CopyAll( &nd );
-	nd.ClearAll();
-
-	for( int r=0; r<=temp.GetLastRow(); r++ )
+	
+	NoteData ndOut;
+	ndOut.SetNumTracks( nd.GetNumTracks() );
+	
+	for( int t=0; t<nd.GetNumTracks(); t++ )
 	{
-		for( int t=0; t<temp.GetNumTracks(); t++ )
+		for( NoteData::const_iterator iter = nd.begin(t); iter != nd.end(t); ++iter )
 		{
-			TapNote tn = temp.GetTapNote( t, r );
-			if( tn != TAP_EMPTY )
-			{
-				temp.SetTapNote( t, r, TAP_EMPTY );
-
-				int new_row = int(r*fScale);
-				nd.SetTapNote( t, new_row, tn );
-			}
+			TapNote tn = iter->second;
+			int iNewRow      = lrintf( fScale * iter->first );
+			int iNewDuration = lrintf( fScale * (iter->first + tn.iDuration) );
+			tn.iDuration = iNewDuration;
+			ndOut.SetTapNote( t, iNewRow, tn );
 		}
 	}
+	
+	nd.swap( ndOut );
 }
-#endif
+
+/* XXX: move this to an appropriate place, same place as NoteRowToBeat perhaps? */
+static inline int GetScaledRow( float fScale, int iStartIndex, int iEndIndex, int iRow )
+{
+	if( iRow < iStartIndex )
+		return iRow;
+	else if( iRow > iEndIndex )
+		return iRow + lrintf( (iEndIndex - iStartIndex) * (fScale - 1) );
+	else
+		return lrintf( (iRow - iStartIndex) * fScale ) + iStartIndex;
+}
 
 void NoteDataUtil::ScaleRegion( NoteData &nd, float fScale, int iStartIndex, int iEndIndex )
 {
 	ASSERT( fScale > 0 );
 	ASSERT( iStartIndex < iEndIndex );
 	ASSERT( iStartIndex >= 0 );
-
-	NoteData temp1, temp2;
-	temp1.SetNumTracks( nd.GetNumTracks() );
-	temp2.SetNumTracks( nd.GetNumTracks() );
-
-	if( iStartIndex != 0 )
-		temp1.CopyRange( nd, 0, iStartIndex );
-	if( iEndIndex != MAX_NOTE_ROW )
-	{
-		const int iScaledFirstRowAfterRegion = int(iStartIndex + (iEndIndex - iStartIndex) * fScale);
-		temp1.CopyRange( nd, iEndIndex, MAX_NOTE_ROW, iScaledFirstRowAfterRegion );
-	}
-	temp2.CopyRange( nd, iStartIndex, iEndIndex );
-	nd.ClearAll();
-
-	for( int t=0; t<temp2.GetNumTracks(); t++ )
+	
+	NoteData ndOut;
+	ndOut.SetNumTracks( nd.GetNumTracks() );
+	
+	for( int t=0; t<nd.GetNumTracks(); t++ )
 	{
 		for( NoteData::const_iterator iter = nd.begin(t); iter != nd.end(t); ++iter )
 		{
-			int new_row = int( iter->first*fScale + iStartIndex );
-			temp1.SetTapNote( t, new_row, iter->second );
+			TapNote tn = iter->second;
+			int iNewRow      = GetScaledRow( fScale, iStartIndex, iEndIndex, iter->first );
+			int iNewDuration = GetScaledRow( fScale, iStartIndex, iEndIndex, iter->first + tn.iDuration ) - iNewRow;
+			tn.iDuration = iNewDuration;
+			ndOut.SetTapNote( t, iNewRow, tn );
 		}
 	}
-
-	nd.swap( temp1 );
+	
+	nd.swap( ndOut );
 }
 
 void NoteDataUtil::InsertRows( NoteData &nd, int iStartIndex, int iRowsToAdd )

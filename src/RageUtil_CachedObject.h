@@ -18,17 +18,14 @@ template<typename T>
 class CachedObject
 {
 public:
-	CachedObject()
+	CachedObject(): m_pObject(NULL)
 	{
-		m_pObject = NULL;
-
 		/* A new object is being constructed, so invalidate negative caching. */
 		ClearCacheNegative();
 	}
 
-	CachedObject( const CachedObject &cpy )
+	CachedObject( const CachedObject &cpy ): m_pObject(NULL)
 	{
-		m_pObject = NULL;
 		ClearCacheNegative();
 	}
 
@@ -117,11 +114,10 @@ public:
 		Object::Register( this );
 	}
 
-	CachedObjectPointer( const CachedObjectPointer &cpy )
+	CachedObjectPointer( const CachedObjectPointer &cpy ):
+		m_pCache(cpy.m_pCache), m_bCacheIsSet(cpy.m_bCacheIsSet)
 	{
 		CachedObjectHelpers::Lock();
-		m_pCache = cpy.m_pCache;
-		m_bCacheIsSet = cpy.m_bCacheIsSet;
 		Object::Register( this );
 		CachedObjectHelpers::Unlock();
 	}

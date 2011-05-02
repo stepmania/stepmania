@@ -12,7 +12,13 @@
 #include "Steps.h"
 #include "PrefsManager.h"
 
+/** @brief The maximum file size for edits. */
 const int MAX_EDIT_STEPS_SIZE_BYTES		= 60*1024;	// 60KB
+/**
+ * @brief The highest allowable speed before Warps come in.
+ *
+ * This was brought in from StepMania 4's recent betas. */
+const float FAST_BPM_WARP = 9999999.f;
 
 void SMLoader::LoadFromSMTokens( 
 			     RString sStepsType, 
@@ -104,9 +110,6 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 	out.m_WarpSegments.clear();
 	out.m_vTimeSignatureSegments.clear();
 
-	vector<WarpSegment> arrayWarpsFromNegativeBPMs;
-	//vector<WarpSegment> arrayWarpsFromNegativeStops;
-
 	for( unsigned i=0; i<msd.GetNumValues(); i++ )
 	{
 		const MsdFile::value_t &sParams = msd.GetValue(i);
@@ -117,11 +120,83 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 		{
 			out.m_fBeat0OffsetInSeconds = StringToFloat( sParams[1] );
 		}
+		else if( sValueName=="BPMS" )
+		{
+			vector<RString> arrayBPMChangeExpressions;
+			split( sParams[1], ",", arrayBPMChangeExpressions );
+
+			// prepare storage variables for negative BPMs -> Warps.
+			float negBeat = -1;
+			float negBPM = 1;
+			float highspeedBeat = -1;
+			
+			for( unsigned b=0; b<arrayBPMChangeExpressions.size(); b++ )
+			{
+				vector<RString> arrayBPMChangeValues;
+				split( arrayBPMChangeExpressions[b], "=", arrayBPMChangeValues );
+				// XXX: Hard to tell which file caused this.
+				if( arrayBPMChangeValues.size() != 2 )
+				{
+					LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid #%s value \"%s\" (must have exactly one '='), ignored.",
+						sValueName.c_str(), arrayBPMChangeExpressions[b].c_str() );
+					continue;
+				}
+
+				const float fBeat = StringToFloat( arrayBPMChangeValues[0] );
+				const float fNewBPM = StringToFloat( arrayBPMChangeValues[1] );
+				
+				if( fNewBPM < 0.0f )
+				{
+					out.m_bHasNegativeBpms = true;
+					negBeat = fBeat;
+					negBPM = fNewBPM;
+				}
+				else if( fNewBPM > 0.0f )
+				{
+					// add in a warp.
+					if( negBPM < 0 )
+					{
+						float endBeat = fBeat + (fNewBPM / -negBPM) * (fBeat - negBeat);
+						WarpSegment new_seg(negBeat, endBeat);
+						out.AddWarpSegment( new_seg );
+						
+						negBeat = -1;
+						negBPM = 1;
+					}
+					// too fast. make it a warp.
+					if( fNewBPM > FAST_BPM_WARP )
+					{
+						highspeedBeat = fBeat;
+					}
+					else
+					{
+						// add in a warp.
+						if( highspeedBeat > 0 )
+						{
+							WarpSegment new_seg(highspeedBeat, fBeat);
+							out.AddWarpSegment( new_seg );
+							highspeedBeat = -1;
+						}
+						{
+							BPMSegment new_seg;
+							new_seg.m_iStartRow = BeatToNoteRow(fBeat);
+							new_seg.SetBPM( fNewBPM );
+							out.AddBPMSegment( new_seg );
+						}
+					}
+				}
+			}
+		}
+
 		else if( sValueName=="STOPS" || sValueName=="FREEZES" )
 		{
 			vector<RString> arrayFreezeExpressions;
 			split( sParams[1], ",", arrayFreezeExpressions );
 
+			// Prepare variables for negative stop conversion.
+			float negBeat = -1;
+			float negPause = 0;
+			
 			for( unsigned f=0; f<arrayFreezeExpressions.size(); f++ )
 			{
 				vector<RString> arrayFreezeValues;
@@ -136,29 +211,49 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 
 				const float fFreezeBeat = StringToFloat( arrayFreezeValues[0] );
 				const float fFreezeSeconds = StringToFloat( arrayFreezeValues[1] );
-				StopSegment new_seg( BeatToNoteRow(fFreezeBeat), fFreezeSeconds );
-				// XXX: Remove Negatives Bug?
-				new_seg.m_iStartRow = BeatToNoteRow(fFreezeBeat);
-				new_seg.m_fStopSeconds = fFreezeSeconds;
-
-				if(fFreezeSeconds > 0.0f)
+				
+				// Process the prior stop.
+				if( negPause > 0 )
 				{
-					// LOG->Trace( "Adding a freeze segment: beat: %f, seconds = %f", new_seg.m_fStartBeat, new_seg.m_fStopSeconds );
-					out.AddStopSegment( new_seg );
+					BPMSegment oldBPM = out.GetBPMSegmentAtRow(BeatToNoteRow(negBeat));
+					float fSecondsPerBeat = 60 / oldBPM.GetBPM();
+					float fSkipBeats = negPause / fSecondsPerBeat;
+					
+					if( negBeat + fSkipBeats > fFreezeBeat )
+						fSkipBeats = fFreezeBeat - negBeat;
+					
+					WarpSegment ws( negBeat, negBeat + fSkipBeats);
+					out.AddWarpSegment( ws );
+					
+					negBeat = -1;
+					negPause = 0;
 				}
-				else
+				
+				if( fFreezeSeconds < 0.0f )
 				{
-					// negative stops (hi JS!) -aj
-					if( PREFSMAN->m_bQuirksMode )
-					{
-						// LOG->Trace( "Adding a negative freeze segment: beat: %f, seconds = %f", new_seg.m_fStartBeat, new_seg.m_fStopSeconds );
-						out.AddStopSegment( new_seg );
-					}
-					else
-						LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid stop at beat %f, length %f.", fFreezeBeat, fFreezeSeconds );
+					negBeat = fFreezeBeat;
+					negPause = -fFreezeSeconds;
 				}
+				else if( fFreezeSeconds > 0.0f )
+				{
+					StopSegment ss( BeatToNoteRow(fFreezeBeat), fFreezeSeconds );
+					out.AddStopSegment( ss );
+				}
+				
+			}
+			
+			// Process the prior stop if there was one.
+			if( negPause > 0 )
+			{
+				BPMSegment oldBPM = out.GetBPMSegmentAtRow(BeatToNoteRow(negBeat));
+				float fSecondsPerBeat = 60 / oldBPM.GetBPM();
+				float fSkipBeats = negPause / fSecondsPerBeat;
+				
+				WarpSegment ws( negBeat, negBeat + fSkipBeats);
+				out.AddWarpSegment( ws );
 			}
 		}
+
 		else if( sValueName=="DELAYS" )
 		{
 			vector<RString> arrayDelayExpressions;
@@ -183,102 +278,13 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 				// XXX: Remove Negatives Bug?
 				new_seg.m_iStartRow = BeatToNoteRow(fFreezeBeat);
 				new_seg.m_fStopSeconds = fFreezeSeconds;
-				
+
 				// LOG->Trace( "Adding a delay segment: beat: %f, seconds = %f", new_seg.m_fStartBeat, new_seg.m_fStopSeconds );
 
 				if(fFreezeSeconds > 0.0f)
 					out.AddStopSegment( new_seg );
 				else
 					LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid delay at beat %f, length %f.", fFreezeBeat, fFreezeSeconds );
-			}
-		}
-
-		else if( sValueName=="BPMS" )
-		{
-			vector<RString> arrayBPMChangeExpressions;
-			split( sParams[1], ",", arrayBPMChangeExpressions );
-
-			for( unsigned b=0; b<arrayBPMChangeExpressions.size(); b++ )
-			{
-				vector<RString> arrayBPMChangeValues;
-				split( arrayBPMChangeExpressions[b], "=", arrayBPMChangeValues );
-				// XXX: Hard to tell which file caused this.
-				if( arrayBPMChangeValues.size() != 2 )
-				{
-					LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid #%s value \"%s\" (must have exactly one '='), ignored.",
-						sValueName.c_str(), arrayBPMChangeExpressions[b].c_str() );
-					continue;
-				}
-
-				const float fBeat = StringToFloat( arrayBPMChangeValues[0] );
-				const float fNewBPM = StringToFloat( arrayBPMChangeValues[1] );
-				// XXX: Remove Negatives Bug?
-				BPMSegment new_seg;
-				new_seg.m_iStartRow = BeatToNoteRow(fBeat);
-				new_seg.SetBPM( fNewBPM );
-				
-				// convert negative BPMs into Warp segments
-				if( fNewBPM < 0.0f )
-				{
-					vector<RString> arrayNextBPMChangeValues;
-					// get next bpm in sequence
-					if((b+1) < arrayBPMChangeExpressions.size())
-					{
-						split( arrayBPMChangeExpressions[b+1], "=", arrayNextBPMChangeValues );
-						const float fNextPositiveBeat = StringToFloat( arrayNextBPMChangeValues[0] );
-						const float fNextPositiveBPM  = StringToFloat( arrayNextBPMChangeValues[1] );
-
-						// tJumpPos = (tPosBPS-abs(negBPS)) + (gPosBPMPosition - fNegPosition)
-						float fDeltaBeat = ((fNextPositiveBPM/60.0f)-abs(fNewBPM/60.0f)) + (fNextPositiveBeat-fBeat);
-						//float fWarpLengthBeats = fNextPositiveBeat + fDeltaBeat;
-						WarpSegment wsTemp(BeatToNoteRow(fBeat),fDeltaBeat);
-						arrayWarpsFromNegativeBPMs.push_back(wsTemp);
-
-						/*
-						LOG->Trace( ssprintf("==NotesLoSM negbpm==\nfnextposbeat = %f, fnextposbpm = %f,\nfdelta = %f, fwarpto = %f",
-									fNextPositiveBeat,
-									fNextPositiveBPM,
-									fDeltaBeat,
-									fWarpToBeat
-									) );
-						*/
-						/*
-						LOG->Trace( ssprintf("==Negative/Subtractive BPM in NotesLoader==\nNegBPM has noterow = %i, BPM = %f\nNextBPM @ noterow %i\nDelta value = %i noterows\nThis warp will have us end up at noterow %i",
-							BeatToNoteRow(fBeat), fNewBPM,
-							BeatToNoteRow(fNextPositiveBeat),
-							BeatToNoteRow(fDeltaBeat),
-							BeatToNoteRow(fWarpToBeat))
-						);
-						*/
-						//float fDeltaBeat = ((fNextPositiveBPM/60.0f)-abs(fNewBPM/60.0f)) + (fNextPositiveBeat-fBeat);
-						/*
-						LOG->Trace( ssprintf("==NotesLoader Delta as NoteRows==\nfDeltaBeat = %f (beat)\nfDeltaBeat = (NextBPMSeg %f - abs(fBPS %f)) + (nextStartRow %i - thisRow %i)",
-							fDeltaBeat,(fNextPositiveBPM/60.0f),abs(fNewBPM/60.0f),BeatToNoteRow(fNextPositiveBeat),BeatToNoteRow(fBeat))
-						);
-						*/
-
-						out.AddBPMSegment( new_seg );
-
-						continue;
-					}
-					else
-					{
-						// last BPM is a negative one? ugh. -aj (MAX_NOTE_ROW exists btw)
-						out.AddBPMSegment( new_seg );
-					}
-				}
-
-				if(fNewBPM > 0.0f)
-					out.AddBPMSegment( new_seg );
-				else
-				{
-					out.m_bHasNegativeBpms = true;
-					// only add Negative BPMs in quirks mode -aj
-					if( PREFSMAN->m_bQuirksMode )
-						out.AddBPMSegment( new_seg );
-					else
-						LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid BPM change at beat %f, BPM %f.", fBeat, fNewBPM );
-				}
 			}
 		}
 
@@ -326,12 +332,12 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 				out.AddTimeSignatureSegment( seg );
 			}
 		}
-		
+
 		else if( sValueName=="TICKCOUNTS" )
 		{
 			vector<RString> arrayTickcountExpressions;
 			split( sParams[1], ",", arrayTickcountExpressions );
-			
+
 			for( unsigned f=0; f<arrayTickcountExpressions.size(); f++ )
 			{
 				vector<RString> arrayTickcountValues;
@@ -343,7 +349,7 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 						     sValueName.c_str(), arrayTickcountExpressions[f].c_str() );
 					continue;
 				}
-				
+
 				const float fTickcountBeat = StringToFloat( arrayTickcountValues[0] );
 				int iTicks = atoi( arrayTickcountValues[1] );
 				// you're lazy, let SM do the work for you... -DaisuMaster
@@ -366,61 +372,8 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 				}
 			}
 		}
-
-		// warps (replacement for Negative BPM and Negative Stops)
-		/*
-		else if( sValueName=="WARPS" )
-		{
-			vector<RString> arrayWarpExpressions;
-			split( sParams[1], ",", arrayWarpExpressions );
-
-			for( unsigned f=0; f<arrayWarpExpressions.size(); f++ )
-			{
-				vector<RString> arrayWarpValues;
-				split( arrayWarpExpressions[f], "=", arrayWarpValues );
-				if( arrayWarpValues.size() != 2 )
-				{
-					// XXX: Hard to tell which file caused this.
-					LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid #%s value \"%s\" (must have exactly one '='), ignored.",
-						sValueName.c_str(), arrayWarpExpressions[f].c_str() );
-					continue;
-				}
-
-				const float fWarpStart = StringToFloat( arrayWarpValues[0] );
-				const float fWarpBeats = StringToFloat( arrayWarpValues[1] );
-
-				if( fWarpStart > 0.0f && fWarpBeats > 0.0f )
-				{
-					WarpSegment new_seg( BeatToNoteRow(fWarpStart), fWarpBeats );
-					out.AddWarpSegment( new_seg );
-				}
-				else
-				{
-					// Currently disallow negative warps, to prevent the same
-					// kind of problem that happened when Negative/Subtractive
-					// BPMs arrived on the StepMania scene. -aj
-					LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid warp at beat %f lasting %f beats.", fWarpStart, fWarpBeats );
-				}
-			}
-		}
-		*/
-
-		// Note: Even though it is possible to have Negative BPMs and Stops in
-		// a song along with Warps, we should not support files that contain
-		// both styles of warp tricks (Negatives vs. #WARPS).
-		// If Warps have been populated from Negative BPMs, then go through that
-		// instead of using the data in the Warps tag. This should be above,
-		// but it breaks compiling so...
-		if(arrayWarpsFromNegativeBPMs.size() > 0)
-		{
-			// zomg we already have some warps...
-			for( unsigned j=0; j<arrayWarpsFromNegativeBPMs.size(); j++ )
-			{
-				out.AddWarpSegment( arrayWarpsFromNegativeBPMs[j] );
-			}
-		}
-		// warp sorting will need to take place.
-		//sort(out.m_WarpSegments.begin(), out.m_WarpSegments.end());
+		// Ensure all of the warps are handled right.
+		sort(out.m_WarpSegments.begin(), out.m_WarpSegments.end());
 	}
 }
 
@@ -628,10 +581,10 @@ bool SMLoader::LoadFromSMFile( const RString &sPath, Song &out, bool bFromCache 
 		{
 			// #DISPLAYBPM:[xxx][xxx:xxx]|[*]; 
 			if( sParams[1] == "*" )
-				out.m_DisplayBPMType = Song::DISPLAY_RANDOM;
+				out.m_DisplayBPMType = DISPLAY_BPM_RANDOM;
 			else 
 			{
-				out.m_DisplayBPMType = Song::DISPLAY_SPECIFIED;
+				out.m_DisplayBPMType = DISPLAY_BPM_SPECIFIED;
 				out.m_fSpecifiedBPMMin = StringToFloat( sParams[1] );
 				if( sParams[2].empty() )
 					out.m_fSpecifiedBPMMax = out.m_fSpecifiedBPMMin;

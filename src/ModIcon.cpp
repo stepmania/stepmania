@@ -24,9 +24,13 @@ ModIcon::ModIcon( const ModIcon &cpy ):
 void ModIcon::Load( RString sMetricsGroup )
 {
 	m_sprFilled.Load( THEME->GetPathG(sMetricsGroup,"Filled") );
+	m_sprFilled->SetName("Filled");
+	ActorUtil::LoadAllCommands( m_sprFilled, sMetricsGroup );
 	this->AddChild( m_sprFilled );
 
 	m_sprEmpty.Load( THEME->GetPathG(sMetricsGroup,"Empty") );
+	m_sprEmpty->SetName("Empty");
+	ActorUtil::LoadAllCommands( m_sprEmpty, sMetricsGroup );
 	this->AddChild( m_sprEmpty );
 
 	m_text.LoadFromFont( THEME->GetPathF(sMetricsGroup,"Text") );
@@ -70,7 +74,7 @@ void ModIcon::Set( const RString &_sText )
 
 	m_text.SetText( sText );
 	// This line makes Lua option rows crash: -aj
-	m_text.CropToWidth( CROP_TEXT_TO_WIDTH );
+	//m_text.CropToWidth( CROP_TEXT_TO_WIDTH );
 }
 
 /*

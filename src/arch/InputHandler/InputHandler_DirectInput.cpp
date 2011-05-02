@@ -413,12 +413,21 @@ void InputHandler_DInput::UpdatePolled( DIDevice &device, const RageTimer &tm )
 							break;
 						case DIMOFS_Z:
 							{
-								neg = MOUSE_WHEELUP; pos = MOUSE_WHEELDOWN;
+								neg = MOUSE_WHEELDOWN; pos = MOUSE_WHEELUP;
 								val = state.lZ;
+								//LOG->Trace("MouseWheel polled: %i",val);
+								INPUTFILTER->UpdateMouseWheel(val);
 
-								float l = SCALE( int(val), -120.0f, 120.0f, 0.0f, 1.0f );
-								ButtonPressed( DeviceInput(dev, neg, max(-l,0), tm) );
-								ButtonPressed( DeviceInput(dev, pos, max(+l,0), tm) );
+								/*
+								if( (int)val != 0 )
+								{
+									// positive values: WheelUp
+									// negative values: WheelDown
+									float l = SCALE( int(val), -120.0f, 120.0f, -1.0f, 1.0f );
+									ButtonPressed( DeviceInput(dev, neg, max(-l,0), tm) );
+									ButtonPressed( DeviceInput(dev, pos, max(+l,0), tm) );
+								}
+								*/
 							}
 							break;
 						default: LOG->MapLog( "unknown input", 
@@ -515,10 +524,12 @@ void InputHandler_DInput::UpdateBuffered( DIDevice &device, const RageTimer &tm 
 								INPUTFILTER->UpdateCursorLocation((float)cursorPos.x,(float)cursorPos.y);
 								break;
 							case DIMOFS_Z:
+								// positive values: WheelUp
+								// negative values: WheelDown
 								INPUTFILTER->UpdateMouseWheel(l);
 								{
 									up = MOUSE_WHEELUP; down = MOUSE_WHEELDOWN;
-									l = SCALE( int(evtbuf[i].dwData), -120.0f, 120.0f, 1.0f, -1.0f );
+									l = SCALE( int(evtbuf[i].dwData), -WHEEL_DELTA, WHEEL_DELTA, 1.0f, -1.0f );
 									DeviceInput diUp = DeviceInput(dev, up, max(-l,0), tm);
 									DeviceInput diDown = DeviceInput(dev, down, max(+l,0), tm);
 									ButtonPressed( diUp );

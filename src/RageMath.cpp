@@ -112,7 +112,7 @@ RageMatrix RageMatrix::GetTranspose() const
 
 void RageMatrixMultiply( RageMatrix* pOut, const RageMatrix* pA, const RageMatrix* pB )
 {
-//#if defined(_WINDOWS) || defined(_XBOX)
+//#if defined(_WINDOWS)
 //	// <30 cycles for theirs versus >100 for ours.
 //	D3DXMatrixMultiply( (D3DMATRIX*)pOut, (D3DMATRIX*)pA, (D3DMATRIX*)pB );
 //#else

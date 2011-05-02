@@ -53,9 +53,9 @@ public:
 	 * (everything except screens). */
 	ThemeMetric( const RString& sGroup = "", const RString& sName = "" ):
 		m_sGroup( sGroup ),
-		m_sName( sName )
+		m_sName( sName ),
+		m_Value(), m_currentValue(T()), m_bCallEachTime(false)
 	{
-		m_currentValue = T();
 		ThemeManager::Subscribe( this );
 	}
 
@@ -64,6 +64,7 @@ public:
 		m_sGroup( cpy.m_sGroup ),
 		m_sName( cpy.m_sName ),
 		m_Value( cpy.m_Value )
+		// do we transfer the current value or bCallEachTime?
 	{
 		ThemeManager::Subscribe( this );
 	}

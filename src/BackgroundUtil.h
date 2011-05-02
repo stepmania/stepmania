@@ -27,15 +27,26 @@ struct BackgroundDef
 	RString m_sColor2;	// "" == use default
 
 	XNode *CreateNode() const;
+	
+	/** @brief Set up the BackgroundDef with default values. */
+	BackgroundDef(): m_sEffect(""), m_sFile1(""), m_sFile2(""),
+		m_sColor1(""), m_sColor2("") {}
+	
+	/**
+	 * @brief Set up the BackgroundDef with some defined values.
+	 * @param effect the intended effect.
+	 * @param f1 the primary filename for the definition.
+	 * @param f2 the secondary filename (optional). */
+	BackgroundDef(RString effect, RString f1, RString f2):
+		m_sEffect(effect), m_sFile1(f1), m_sFile2(f2),
+		m_sColor1(""), m_sColor2("") {}
 };
 
 struct BackgroundChange
 {
-	BackgroundChange()
-	{
-		m_fStartBeat=-1;
-		m_fRate=1;
-	}
+	BackgroundChange(): m_def(), m_fStartBeat(-1), m_fRate(1),
+		m_sTransition("") {}
+
 	BackgroundChange( 
 		float s, 
 		RString f1,
@@ -43,15 +54,10 @@ struct BackgroundChange
 		float r=1.f, 
 		RString e=SBE_Centered,
 		RString t=RString()
-		)
-	{
-		m_fStartBeat=s;
-		m_def.m_sFile1=f1;
-		m_def.m_sFile2=f2;
-		m_fRate=r;
-		m_def.m_sEffect=e;
-		m_sTransition=t;
-	}
+			 ):
+		m_def(e, f1, f2), m_fStartBeat(s),
+		m_fRate(r), m_sTransition(t) {}
+
 	BackgroundDef m_def;
 	float m_fStartBeat;
 	float m_fRate;

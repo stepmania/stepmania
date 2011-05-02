@@ -95,26 +95,17 @@ static Preference<float> g_fNetStartOffset( "NetworkStartOffset", -3.0 );
 static Preference<bool> g_bEasterEggs( "EasterEggs", true );
 
 
-PlayerInfo::PlayerInfo()
-{
-	m_pn = PLAYER_INVALID;
-	m_mp = MultiPlayer_Invalid;
-	m_bIsDummy = false;
-	m_iDummyIndex = 0;
-	m_iAddToDifficulty = 0;
-	m_pLifeMeter = NULL;
-	m_ptextCourseSongNumber = NULL;
-	m_ptextStepsDescription = NULL;
-	m_pPrimaryScoreDisplay = NULL;
-	m_pSecondaryScoreDisplay = NULL;
-	m_pPrimaryScoreKeeper = NULL;
-	m_pSecondaryScoreKeeper = NULL;
-	m_ptextPlayerOptions = NULL;
-	m_pActiveAttackList = NULL;
-	m_pPlayer = NULL;
-	m_pInventory = NULL;
-	m_pStepsDisplay = NULL;
-}
+PlayerInfo::PlayerInfo(): m_pn(PLAYER_INVALID), m_mp(MultiPlayer_Invalid),
+	m_bIsDummy(false), m_iDummyIndex(0), m_iAddToDifficulty(0),
+	m_bPlayerEnabled(false), m_PlayerStateDummy(), 
+	m_PlayerStageStatsDummy(), m_SoundEffectControl(),
+	m_vpStepsQueue(), m_asModifiersQueue(), m_pLifeMeter(NULL), 
+	m_ptextCourseSongNumber(NULL), m_ptextStepsDescription(NULL),
+	m_pPrimaryScoreDisplay(NULL), m_pSecondaryScoreDisplay(NULL),
+	m_pPrimaryScoreKeeper(NULL), m_pSecondaryScoreKeeper(NULL),
+	m_ptextPlayerOptions(NULL), m_pActiveAttackList(NULL),
+	m_NoteData(), m_pPlayer(NULL), m_pInventory(NULL), 
+	m_pStepsDisplay(NULL), m_sprOniGameOver() {}
 
 void PlayerInfo::Load( PlayerNumber pn, MultiPlayer mp, bool bShowNoteField, int iAddToDifficulty )
 {
@@ -597,9 +588,9 @@ void ScreenGameplay::Init()
 		if( GAMESTATE->IsCourseMode() )
 		{
 			ASSERT( pi->m_ptextCourseSongNumber == NULL );
+			SONG_NUMBER_FORMAT.Load( m_sName, "SongNumberFormat" );
 			pi->m_ptextCourseSongNumber = new BitmapText;
 			pi->m_ptextCourseSongNumber->LoadFromFont( THEME->GetPathF(m_sName,"SongNum") );
-			pi->m_ptextCourseSongNumber->SetShadowLength( 0 );
 			pi->m_ptextCourseSongNumber->SetName( ssprintf("SongNumber%s",pi->GetName().c_str()) );
 			LOAD_ALL_COMMANDS_AND_SET_XY( pi->m_ptextCourseSongNumber );
 			pi->m_ptextCourseSongNumber->SetText( "" );
@@ -618,7 +609,6 @@ void ScreenGameplay::Init()
 		ASSERT( pi->m_ptextPlayerOptions == NULL );
 		pi->m_ptextPlayerOptions = new BitmapText;
 		pi->m_ptextPlayerOptions->LoadFromFont( THEME->GetPathF(m_sName,"player options") );
-		pi->m_ptextPlayerOptions->SetShadowLength( 0 );
 		pi->m_ptextPlayerOptions->SetName( ssprintf("PlayerOptions%s",pi->GetName().c_str()) );
 		LOAD_ALL_COMMANDS_AND_SET_XY( pi->m_ptextPlayerOptions );
 		this->AddChild( pi->m_ptextPlayerOptions );
@@ -1022,7 +1012,7 @@ void ScreenGameplay::LoadNextSong()
 	{
 		pi->GetPlayerStageStats()->m_iSongsPlayed++;
 		if( pi->m_ptextCourseSongNumber )
-			pi->m_ptextCourseSongNumber->SetText( ssprintf("%d", pi->GetPlayerStageStats()->m_iSongsPassed+1) );
+			pi->m_ptextCourseSongNumber->SetText( ssprintf(SONG_NUMBER_FORMAT.GetValue(), pi->GetPlayerStageStats()->m_iSongsPassed+1) );
 	}
 
 	if( GAMESTATE->m_bMultiplayer )
@@ -1141,13 +1131,12 @@ void ScreenGameplay::LoadNextSong()
 	m_LyricDisplay.PlayCommand( bAllReverse? "SetReverse": bAtLeastOneReverse? "SetOneReverse": "SetNoReverse" );
 
 	// Load lyrics
-	// XXX: don't load this here
+	// XXX: don't load this here (who and why? -aj)
 	LyricsLoader LL;
 	if( GAMESTATE->m_pCurSong->HasLyrics()  )
 		LL.LoadFromLRCFile(GAMESTATE->m_pCurSong->GetLyricsPath(), *GAMESTATE->m_pCurSong);
 
-
-	/* Set up song-specific graphics. */
+	// Set up song-specific graphics.
 
 	// Check to see if any players are in beginner mode.
 	// Note: steps can be different if turn modifiers are used.
@@ -1167,21 +1156,22 @@ void ScreenGameplay::LoadNextSong()
 	if( m_pSongForeground )
 		m_pSongForeground->Unload();
 
-	if( !PREFSMAN->m_bShowBeginnerHelper || !m_BeginnerHelper.Initialize(2) )
+	if( !PREFSMAN->m_bShowBeginnerHelper || !m_BeginnerHelper.Init(2) )
 	{
 		m_BeginnerHelper.SetVisible( false );
 
-		/* BeginnerHelper disabled, or failed to load. */
+		// BeginnerHelper disabled, or failed to load.
 		if( m_pSongBackground )
 			m_pSongBackground->LoadFromSong( GAMESTATE->m_pCurSong );
 
 		if( !GAMESTATE->m_bDemonstrationOrJukebox )
 		{
-			/* This will fade from a preset brightness to the actual brightness (based
-			 * on prefs and "cover").  The preset brightness may be 0 (to fade from
-			 * black), or it might be 1, if the stage screen has the song BG and we're
-			 * coming from it (like Pump).  This used to be done in SM_PlayReady, but
-			 * that means it's impossible to snap to the new brightness immediately. */
+			/* This will fade from a preset brightness to the actual brightness
+			 * (based on prefs and "cover"). The preset brightness may be 0 (to
+			 * fade from black), or it might be 1, if the stage screen has the
+			 * song BG and we're coming from it (like Pump). This used to be done
+			 * in SM_PlayReady, but that means it's impossible to snap to the
+			 * new brightness immediately. */
 			if( m_pSongBackground )
 			{
 				m_pSongBackground->SetBrightness( INITIAL_BACKGROUND_BRIGHTNESS );
@@ -2526,9 +2516,11 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			if( !m_Toasty.IsTransitioning()  &&  !m_Toasty.IsFinished() )	// don't play if we've already played it once
 				m_Toasty.StartTransitioning();
 	}
-	else if( SM >= SM_100Combo && SM <= SM_1000Combo )
+	else if( ScreenMessageHelpers::ScreenMessageToString(SM).find("0Combo") != string::npos )
 	{
-		int iCombo = ( SM-(SM_100Combo+1) ) * 100;
+		int iCombo;
+		RString sCropped = ScreenMessageHelpers::ScreenMessageToString(SM).substr(3);
+		sscanf(sCropped.c_str(),"%d%*s",&iCombo);
 		PlayAnnouncer( ssprintf("gameplay %d combo",iCombo), 2 );
 	}
 	else if( SM == SM_ComboStopped )

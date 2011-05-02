@@ -700,10 +700,9 @@ union luai_Cast { double l_d; long l_l; };
 #define LUA_DL_DLOPEN
 #endif
 
-#if defined(LUA_WIN) && !defined(XBOX)
+#if defined(LUA_WIN)
 #define LUA_DL_DLL
 #endif
-
 
 /*
 @@ LUAI_EXTRASPACE allows you to add user-specific data in a lua_State

@@ -16,9 +16,7 @@
 #include <fcntl.h>
 #else
 #include "archutils/Win32/ErrorStrings.h"
-#if !defined(_XBOX)
 #include <windows.h>
-#endif	// !defined(_XBOX)
 #include <io.h>
 #endif // !defined(WIN32)
 
@@ -66,6 +64,10 @@ private:
 	 */
 	bool m_bWriteFailed;
 	bool WriteFailed() const { return !(m_iMode & RageFile::STREAMED) && m_bWriteFailed; }
+	
+	// unused
+	RageFileObjDirect& operator=(const RageFileObjDirect& rhs);
+	RageFileObjDirect(const RageFileObjDirect& rhs);
 };
 
 

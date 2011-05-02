@@ -6,9 +6,9 @@
 #include "RageUtil.h"
 #include <memory>
 
-#if defined(_WINDOWS) || defined(_XBOX)
+#if defined(_WINDOWS)
         #include "zlib/zlib.h"
-#if defined(_MSC_VER) && !defined(_XBOX)
+#if defined(_MSC_VER)
         #pragma comment(lib, "zlib/zdll.lib")
 #endif
 #elif defined(MACOSX)

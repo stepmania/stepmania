@@ -13,6 +13,7 @@ ffmpeg-*
 *.idb
 *.pdb
 *.exp
+*.dmg
 ___*
 .hg
 .hgignore
@@ -21,6 +22,7 @@ ___*
 .cvsignore
 .DS_Store
 Thumbs.db
+GameData.smzip
 config.log
 config.status
 *.pbxuser
@@ -60,6 +62,7 @@ GtkModule.so
 ver.cpp
 lib*_link.a
 Data/UserPrefs
+Data/uPrefs
 Data/GamePrefs/*.cfg
 PBProject/Hardware.plist
 Themes/pump
@@ -75,6 +78,9 @@ Data/SpeedMods.txt
 Program/StepMania*.lib
 crashinfo.txt
 Utils/temp*
+*.lnk
+BuildLog.htm
+*.pch
 
 syntax: regexp
 .*\#.*\#$

@@ -33,7 +33,8 @@ class TrailID
 	mutable CachedObjectPointer<Trail> m_Cache;
 
 public:
-	TrailID() { Unset(); }
+	TrailID(): st(StepsType_Invalid), cd(Difficulty_Invalid),
+		m_Cache() { m_Cache.Unset(); }
 	void Unset() { FromTrail(NULL); }
 	void FromTrail( const Trail *p );
 	Trail *ToTrail( const Course *p, bool bAllowNull ) const;

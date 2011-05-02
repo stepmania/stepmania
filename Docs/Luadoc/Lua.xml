@@ -126,6 +126,7 @@
 		<Function name='PlayerNumberToLocalizedString'/>
 		<Function name='PlayerNumberToString'/>
 		<Function name='PlayerScoreColor'/>
+		<Function name='PositionPerPlayer'/>
 		<Function name='PrintTable'/>
 		<Function name='ProductID'/>
 		<Function name='ProductVersion'/>
@@ -519,6 +520,7 @@
 		<Class base='BitmapText' name='BPMDisplay'>
 			<Function name='GetText'/>
 			<Function name='SetFromGameState'/>
+			<Function name='SetFromSong'/>
 		</Class>
 		<Class base='Sprite' name='Banner'>
 			<Function name='GetPercentScrolling'/>
@@ -595,6 +597,7 @@
 			<Function name='GetGoalSeconds'/>
 			<Function name='GetGroupName'/>
 			<Function name='GetPlayMode'/>
+			<Function name='GetScripter'/>
 			<Function name='GetTotalSeconds'/>
 			<Function name='GetTranslitFullTitle'/>
 			<Function name='HasBackground'/>
@@ -803,6 +806,7 @@
 			<Function name='LoadFromMultiPlayer'/>
 		</Class>
 		<Class name='InputFilter'>
+			<Function name='GetMouseWheel'/>
 			<Function name='GetMouseX'/>
 			<Function name='GetMouseY'/>
 		</Class>
@@ -887,7 +891,80 @@
 			<Function name='GetStepsQueueWrapped'/>
 		</Class>
 		<Class name='PlayerOptions'>
+			<Function name='GetAlternate'/>
+			<Function name='GetAttackMines'/>
+			<Function name='GetBMRize'/>
+			<Function name='GetBeat'/>
+			<Function name='GetBig'/>
+			<Function name='GetBlind'/>
+			<Function name='GetBlink'/>
+			<Function name='GetBoomerang'/>
+			<Function name='GetBoost'/>
+			<Function name='GetBrake'/>
+			<Function name='GetBumpy'/>
+			<Function name='GetCMod'/>
+			<Function name='GetCentered'/>
+			<Function name='GetConfusion'/>
+			<Function name='GetCover'/>
+			<Function name='GetCross'/>
+			<Function name='GetDark'/>
+			<Function name='GetDizzy'/>
+			<Function name='GetDrunk'/>
+			<Function name='GetEcho'/>
+			<Function name='GetExpand'/>
+			<Function name='GetFlip'/>
+			<Function name='GetFloored'/>
+			<Function name='GetHidden'/>
+			<Function name='GetHiddenOffset'/>
+			<Function name='GetHoldRolls'/>
+			<Function name='GetInvert'/>
+			<Function name='GetLeft'/>
+			<Function name='GetLittle'/>
+			<Function name='GetMines'/>
+			<Function name='GetMini'/>
+			<Function name='GetMirror'/>
+			<Function name='GetNoFakes'/>
+			<Function name='GetNoHands'/>
+			<Function name='GetNoHolds'/>
+			<Function name='GetNoJumps'/>
+			<Function name='GetNoLifts'/>
+			<Function name='GetNoMines'/>
+			<Function name='GetNoQuads'/>
+			<Function name='GetNoRolls'/>
+			<Function name='GetNoStretch'/>
 			<Function name='GetNoteSkin'/>
+			<Function name='GetPassmark'/>
+			<Function name='GetPlanted'/>
+			<Function name='GetQuick'/>
+			<Function name='GetRandomAttacks'/>
+			<Function name='GetRandomSpeed'/>
+			<Function name='GetRandomVanish'/>
+			<Function name='GetReverse'/>
+			<Function name='GetReversePercentForColumn'/>
+			<Function name='GetRight'/>
+			<Function name='GetRoll'/>
+			<Function name='GetShuffle'/>
+			<Function name='GetSkew'/>
+			<Function name='GetSkippy'/>
+			<Function name='GetSoftShuffle'/>
+			<Function name='GetSongAttacks'/>
+			<Function name='GetSplit'/>
+			<Function name='GetStealth'/>
+			<Function name='GetStomp'/>
+			<Function name='GetSudden'/>
+			<Function name='GetSuddenOffset'/>
+			<Function name='GetSuperShuffle'/>
+			<Function name='GetTiny'/>
+			<Function name='GetTipsy'/>
+			<Function name='GetTornado'/>
+			<Function name='GetTwirl'/>
+			<Function name='GetTwister'/>
+			<Function name='GetWave'/>
+			<Function name='GetWide'/>
+			<Function name='GetXMod'/>
+			<Function name='GetXMode'/>
+			<Function name='SetNoteSkin'/>
+			<Function name='UsingReverse'/>
 		</Class>
 		<Class name='PlayerStageStats'>
 			<Function name='FullCombo'/>
@@ -925,6 +1002,7 @@
 			<Function name='SetScore'/>
 		</Class>
 		<Class name='PlayerState'>
+			<Function name='GetCurrentPlayerOptions'/>
 			<Function name='GetHealthState'/>
 			<Function name='GetMultiPlayerNumber'/>
 			<Function name='GetPlayerNumber'/>
@@ -1115,6 +1193,7 @@
 		<Class base='ScreenWithMenuElements' name='ScreenSelectMusic'>
 			<Function name='GetGoToOptions'/>
 			<Function name='GetMusicWheel'/>
+			<Function name='OpenOptionsList'/>
 			<Function name='setupcoursestagemods'/>
 			<Function name='setupmusicstagemods'/>
 		</Class>
@@ -1148,6 +1227,7 @@
 			<Function name='GetLyricsPath'/>
 			<Function name='GetMusicPath'/>
 			<Function name='GetOneSteps'/>
+			<Function name='GetOrigin'/>
 			<Function name='GetSongDir'/>
 			<Function name='GetSongFilePath'/>
 			<Function name='GetStepsByStepsType'/>
@@ -1185,6 +1265,7 @@
 			<Function name='GetAllCourses'/>
 			<Function name='GetAllSongs'/>
 			<Function name='GetCourseColor'/>
+			<Function name='GetCourseGroupNames'/>
 			<Function name='GetExtraStageInfo'/>
 			<Function name='GetNumAdditionalCourses'/>
 			<Function name='GetNumAdditionalSongs'/>
@@ -1322,6 +1403,7 @@
 			<Function name='HasBPMChanges'/>
 			<Function name='HasNegativeBPMs'/>
 			<Function name='HasStops'/>
+			<Function name='HasWarps'/>
 		</Class>
 		<Class name='Trail'>
 			<Function name='GetArtists'/>
@@ -1339,6 +1421,8 @@
 			<Function name='IsSecret'/>
 		</Class>
 		<Class name='UnlockEntry'>
+			<Function name='GetCode'/>
+			<Function name='GetCourse'/>
 			<Function name='GetDescription'/>
 			<Function name='GetRequirePassHardSteps'/>
 			<Function name='GetRequirement'/>
@@ -1359,6 +1443,8 @@
 			<Function name='FindEntryID'/>
 			<Function name='GetNumUnlocked'/>
 			<Function name='GetNumUnlocks'/>
+			<Function name='GetPoints'/>
+			<Function name='GetPointsForProfile'/>
 			<Function name='GetPointsUntilNextUnlock'/>
 			<Function name='GetSongsUnlockedByEntryID'/>
 			<Function name='GetStepsUnlockedByEntryID'/>
@@ -1952,6 +2038,7 @@
 			<EnumValue name='&apos;UnlockRequirement_ExtraFailed&apos;' value='4'/>
 			<EnumValue name='&apos;UnlockRequirement_Toasties&apos;' value='5'/>
 			<EnumValue name='&apos;UnlockRequirement_StagesCleared&apos;' value='6'/>
+			<EnumValue name='&apos;UnlockRequirement_NumberUnlocked&apos;' value='7'/>
 		</Enum>
 		<Enum name='UnlockRewardType'>
 			<EnumValue name='&apos;UnlockRewardType_Song&apos;' value='0'/>
@@ -1992,6 +2079,6 @@
 		<Constant name='sGame' value='&apos;dance&apos;'/>
 		<Constant name='top' value='&apos;VertAlign_Top&apos;'/>
 	</Constants>
-	<Version>sm-ssc v1.2.3</Version>
-	<Date>2011-03-15</Date>
+	<Version>sm-ssc v1.2.5</Version>
+	<Date>2011-05-01</Date>
 </Lua>

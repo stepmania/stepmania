@@ -178,6 +178,11 @@ bool SSCLoader::LoadFromSSCFile( const RString &sPath, Song &out, bool bFromCach
 					out.m_sGenre = sParams[1];
 				}
 
+				else if( sValueName=="ORIGIN" )
+				{
+					out.m_sOrigin = sParams[1];
+				}
+
 				else if( sValueName=="CREDIT" )
 				{
 					out.m_sCredit = sParams[1];
@@ -256,10 +261,10 @@ bool SSCLoader::LoadFromSSCFile( const RString &sPath, Song &out, bool bFromCach
 				{
 					// #DISPLAYBPM:[xxx][xxx:xxx]|[*]; 
 					if( sParams[1] == "*" )
-						out.m_DisplayBPMType = Song::DISPLAY_RANDOM;
+						out.m_DisplayBPMType = DISPLAY_BPM_RANDOM;
 					else 
 					{
-						out.m_DisplayBPMType = Song::DISPLAY_SPECIFIED;
+						out.m_DisplayBPMType = DISPLAY_BPM_SPECIFIED;
 						out.m_fSpecifiedBPMMin = StringToFloat( sParams[1] );
 						if( sParams[2].empty() )
 							out.m_fSpecifiedBPMMax = out.m_fSpecifiedBPMMin;
@@ -482,6 +487,35 @@ bool SSCLoader::LoadFromSSCFile( const RString &sPath, Song &out, bool bFromCach
 								out.m_Timing.AddBPMSegment( BPMSegment(BeatToNoteRow(fBeat), fNewBPM) );
 							else
 								LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid BPM change at beat %f, BPM %f.", fBeat, fNewBPM );
+						}
+					}
+				}
+				
+				else if( sValueName=="WARPS" )
+				{
+					vector<RString> arrayWarpExpressions;
+					split( sParams[1], ",", arrayWarpExpressions );
+					
+					for( unsigned b=0; b<arrayWarpExpressions.size(); b++ )
+					{
+						vector<RString> arrayWarpValues;
+						split( arrayWarpExpressions[b], "=", arrayWarpValues );
+						// XXX: Hard to tell which file caused this.
+						if( arrayWarpValues.size() != 2 )
+						{
+							LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid #%s value \"%s\" (must have exactly one '='), ignored.",
+								     sValueName.c_str(), arrayWarpExpressions[b].c_str() );
+							continue;
+						}
+						
+						const float fBeat = StringToFloat( arrayWarpValues[0] );
+						const float fNewBeat = StringToFloat( arrayWarpValues[1] );
+						
+						if(fNewBeat > fBeat)
+							out.m_Timing.AddWarpSegment( WarpSegment(fBeat, fNewBeat) );
+						else
+						{
+							LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid Warp at beat %f, BPM %f.", fBeat, fNewBeat );
 						}
 					}
 				}

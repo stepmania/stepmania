@@ -41,7 +41,7 @@
  * @brief The internal version of the cache for StepMania.
  *
  * Increment this value to invalidate the current cache. */
-const int FILE_CACHE_VERSION = 166;
+const int FILE_CACHE_VERSION = 168;
 
 /** @brief How long does a song sample last by default? */
 const float DEFAULT_MUSIC_SAMPLE_LENGTH = 12.f;
@@ -74,7 +74,7 @@ Song::Song()
 	m_fSpecifiedLastBeat = -1;
 	m_SelectionDisplay = SHOW_ALWAYS;
 	m_bEnabled = true;
-	m_DisplayBPMType = DISPLAY_ACTUAL;
+	m_DisplayBPMType = DISPLAY_BPM_ACTUAL;
 	m_fSpecifiedBPMMin = 0;
 	m_fSpecifiedBPMMax = 0;
 	m_bIsSymLink = false;
@@ -147,7 +147,7 @@ void Song::AddLyricSegment( LyricSegment seg )
 
 void Song::GetDisplayBpms( DisplayBpms &AddTo ) const
 {
-	if( m_DisplayBPMType == DISPLAY_SPECIFIED )
+	if( m_DisplayBPMType == DISPLAY_BPM_SPECIFIED )
 	{
 		AddTo.Add( m_fSpecifiedBPMMin );
 		AddTo.Add( m_fSpecifiedBPMMax );
@@ -781,10 +781,7 @@ void Song::TidyUpData()
 	// If no time signature specified, assume 4/4 time for the whole song.
 	if( m_Timing.m_vTimeSignatureSegments.empty() )
 	{
-		TimeSignatureSegment seg;
-		seg.m_iStartRow = 0;
-		seg.m_iNumerator = 4;
-		seg.m_iDenominator = 4;
+		TimeSignatureSegment seg(0, 4, 4);
 		m_Timing.m_vTimeSignatureSegments.push_back( seg );
 	}
 	
@@ -795,18 +792,14 @@ void Song::TidyUpData()
 	 */
 	if( m_Timing.m_TickcountSegments.empty() )
 	{
-		TickcountSegment seg;
-		seg.m_iStartRow = 0;
-		seg.m_iTicks = 2;
+		TickcountSegment seg(0, 2);
 		m_Timing.m_TickcountSegments.push_back( seg );
 	}
 	
 	// Have a default combo segment of one just in case.
 	if( m_Timing.m_ComboSegments.empty() )
 	{
-		ComboSegment seg;
-		seg.m_iStartRow = 0;
-		seg.m_iCombo = 1;
+		ComboSegment seg(0, 1);
 		m_Timing.m_ComboSegments.push_back( seg );
 	}
 }
@@ -925,7 +918,22 @@ bool Song::SaveToSMFile()
 	// If the file exists, make a backup.
 	if( IsAFile(sPath) )
 		FileCopy( sPath, sPath + ".old" );
-	return NotesWriterSM::Write( sPath, *this );
+	
+	vector<Steps*> vpStepsToSave;
+	FOREACH_CONST( Steps*, m_vpSteps, s ) 
+	{
+		Steps *pSteps = *s;
+		if( pSteps->IsAutogen() )
+			continue; // don't write autogen notes
+		
+		// Only save steps that weren't loaded from a profile.
+		if( pSteps->WasLoadedFromProfile() )
+			continue;
+		
+		vpStepsToSave.push_back( pSteps );
+	}
+	
+	return NotesWriterSM::Write( sPath, *this, vpStepsToSave );
 
 }
 
@@ -1443,7 +1451,7 @@ bool Song::HasSignificantBpmChangesOrStops() const
 
 	// Don't consider BPM changes that only are only for maintaining sync as 
 	// a real BpmChange.
-	if( m_DisplayBPMType == DISPLAY_SPECIFIED )
+	if( m_DisplayBPMType == DISPLAY_BPM_SPECIFIED )
 	{
 		if( m_fSpecifiedBPMMin != m_fSpecifiedBPMMax )
 			return true;
@@ -1487,6 +1495,7 @@ public:
 	static int GetDisplayArtist( T* p, lua_State *L )	{ lua_pushstring(L, p->GetDisplayArtist() ); return 1; }
 	static int GetTranslitArtist( T* p, lua_State *L )	{ lua_pushstring(L, p->GetTranslitArtist() ); return 1; }
 	static int GetGenre( T* p, lua_State *L )		{ lua_pushstring(L, p->m_sGenre ); return 1; }
+	static int GetOrigin( T* p, lua_State *L )		{ lua_pushstring(L, p->m_sOrigin ); return 1; }
 	static int GetAllSteps( T* p, lua_State *L )
 	{
 		const vector<Steps*> &v = p->GetAllSteps();
@@ -1597,7 +1606,7 @@ public:
 	}
 	static int IsDisplayBpmRandom( T* p, lua_State *L )
 	{
-		lua_pushboolean( L, p->m_DisplayBPMType == Song::DISPLAY_RANDOM );
+		lua_pushboolean( L, p->m_DisplayBPMType == DISPLAY_BPM_RANDOM );
 		return 1;
 	}
 
@@ -1612,6 +1621,7 @@ public:
 		ADD_METHOD( GetDisplayArtist );
 		ADD_METHOD( GetTranslitArtist );
 		ADD_METHOD( GetGenre );
+		ADD_METHOD( GetOrigin );
 		ADD_METHOD( GetAllSteps );
 		ADD_METHOD( GetStepsByStepsType );
 		ADD_METHOD( GetSongDir );

@@ -156,7 +156,7 @@ private:
 class MessageSubscriber : public IMessageSubscriber
 {
 public:
-	MessageSubscriber() {}
+	MessageSubscriber(): m_vsSubscribedTo() {}
 	MessageSubscriber( const MessageSubscriber &cpy );
 	MessageSubscriber &operator=(const MessageSubscriber &cpy);
 

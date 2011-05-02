@@ -1,0 +1,11 @@
+===
+COLORS
+====
+	BACKGROUND
+====
+	Clear		#000000	(Black)
+	Light		#646464	(Grey)
+	Primary		#007cd4	(Slate Blue)
+	Secondary	#a4005d	(Slate Purple)
+<freem_inc> the base is black (#000000)
+===

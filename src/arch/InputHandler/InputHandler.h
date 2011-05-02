@@ -25,7 +25,7 @@ public:
 	static void Create( const RString &sDrivers, vector<InputHandler *> &apAdd );
 	static DriverList m_pDriverList;
 
-	InputHandler(): m_iInputsSinceUpdate(0) {}
+	InputHandler(): m_LastUpdate(), m_iInputsSinceUpdate(0) {}
 	virtual ~InputHandler() { }
 	virtual void Update() { }
 	virtual bool DevicesChanged() { return false; }

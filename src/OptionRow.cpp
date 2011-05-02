@@ -168,7 +168,7 @@ void OptionRow::ChoicesChanged( RowType type )
 			vbSelected[0] = true;
 	}
 
-	// TRICKY:  Insert a down arrow as the first choice in the row.
+	// TRICKY: Insert a down arrow as the first choice in the row.
 	if( m_bFirstItemGoesDown )
 	{
 		m_pHand->m_Def.m_vsChoices.insert( m_pHand->m_Def.m_vsChoices.begin(), NEXT_ROW_NAME );
@@ -178,7 +178,7 @@ void OptionRow::ChoicesChanged( RowType type )
 
 	InitText( type );
 
-	/* When choices change, the old focus position is meaningless; reset it. */
+	// When choices change, the old focus position is meaningless; reset it.
 	FOREACH_PlayerNumber( p )
 		SetChoiceInRowWithFocus( p, 0 );
 
@@ -260,7 +260,7 @@ void OptionRow::InitText( RowType type )
 				m_ModIcons[p] = new ModIcon( m_pParentType->m_ModIcon );
 				m_ModIcons[p]->SetDrawOrder(-1); // under title
 				m_ModIcons[p]->PlayCommand( "On" );
-				
+
 				m_Frame.AddChild( m_ModIcons[p] );
 
 				GameCommand gc;
@@ -398,7 +398,7 @@ void OptionRow::InitText( RowType type )
 	this->SortByDrawOrder();
 }
 
-/* After importing options, choose which item is focused. */
+// After importing options, choose which item is focused.
 void OptionRow::AfterImportOptions( PlayerNumber pn )
 {
 	/* We load items for both players on start, since we don't know which players
@@ -604,7 +604,7 @@ void OptionRow::UpdateEnabledDisabled()
 		FOREACH_HumanPlayer( pn )
 		{
 			bRowEnabled = m_pHand->m_Def.m_vEnabledForPlayers.find(pn) != m_pHand->m_Def.m_vEnabledForPlayers.end();
-			
+
 			if( !m_pHand->m_Def.m_bOneChoiceForAllPlayers )
 			{
 				if( m_bRowHasFocus[pn] )	color = m_pParentType->COLOR_SELECTED;
@@ -645,6 +645,7 @@ void OptionRow::SetModIcon( PlayerNumber pn, const RString &sText, GameCommand &
 	// update row frame
 	Message msg( "Refresh" );
 	msg.SetParam( "GameCommand", &gc );
+	msg.SetParam( "Text", sText );
 	m_sprFrame->HandleMessage( msg );
 	if( m_ModIcons[pn] != NULL )
 		m_ModIcons[pn]->Set( sText );

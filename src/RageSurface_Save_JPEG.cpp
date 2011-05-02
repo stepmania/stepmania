@@ -6,7 +6,7 @@
 #include "RageUtil.h"
 #include "RageFile.h"
 
-#undef FAR /* fix for VC */
+#undef FAR // fix for VC
 /** @brief A helper to get the jpeg lib. */
 namespace jpeg
 {
@@ -16,15 +16,10 @@ namespace jpeg
 	}
 }
 
-/* Pull in JPEG library here. */
-#ifdef _XBOX
-#pragma comment(lib, "libjpeg/xboxjpeg.lib")
-#elif defined _MSC_VER
+// Pull in JPEG library here.
+#if defined _MSC_VER
 #pragma comment(lib, "libjpeg/jpeg.lib")
 #endif
-
-
-
 
 #define OUTPUT_BUFFER_SIZE	4096
 typedef struct

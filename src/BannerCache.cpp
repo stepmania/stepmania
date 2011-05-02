@@ -230,17 +230,13 @@ struct BannerTexture: public RageTexture
 		m_iTextureWidth = m_iImageWidth = m_pImage->w;
 		m_iTextureHeight = m_iImageHeight = m_pImage->h;
 
-		/* Find a supported texture format.  If it happens to match the stored
-		 * file, we won't have to do any conversion here, and that'll happen often
-		 * with paletted images. */
-#if !defined(XBOX)
+		/* Find a supported texture format. If it happens to match the stored
+		 * file, we won't have to do any conversion here, and that'll happen
+		 * often with paletted images. */
 		PixelFormat pf = m_pImage->format->BitsPerPixel == 8? PixelFormat_PAL: PixelFormat_RGB5A1;
 		if( !DISPLAY->SupportsTextureFormat(pf) )
 			pf = PixelFormat_RGBA4;
-#else
-		// xbox display currently supports only rgba8
-		PixelFormat pf = PixelFormat_RGBA8;
-#endif
+
 		ASSERT( DISPLAY->SupportsTextureFormat(pf) );
 
 		ASSERT(m_pImage);

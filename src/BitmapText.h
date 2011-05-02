@@ -51,7 +51,7 @@ public:
 
 	struct Attribute
 	{
-		Attribute() : length(-1) { }
+		Attribute() : length(-1), glow() { }
 		int		length;
 		RageColor	diffuse[4];
 		RageColor	glow;

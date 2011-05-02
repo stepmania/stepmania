@@ -29,33 +29,14 @@ namespace avcodec
 };
 
 /*
-#if defined(_MSC_VER) && !defined(XBOX)
+#if defined(_MSC_VER)
 	#pragma comment(lib, "ffmpeg/lib/avcodec.lib")
 	#pragma comment(lib, "ffmpeg/lib/avformat.lib")
 	#if defined(USE_MODERN_FFMPEG)
 		#pragma comment(lib, "ffmpeg/lib/swscale.lib")
 	#endif
-#endif // _MSC_VER && !XBOX
+#endif // _MSC_VER
 */
-
-#if defined(XBOX)
-	/* NOTES: ffmpeg static libraries arent included in SVN. You have to build
-	 *them yourself or remove this file to produce the xbox build.
-	 * 
-	 * build ffmpeg with mingw32 ( howto http://ffmpeg.arrozcru.org/wiki/index.php?title=Main_Page )
-     * ./configure --enable-memalign-hack --enable-static --disable-mmx --target-os=mingw32 --arch=x86
-     * you can use various switches to enable/disable codecs/muxers/etc. 
-	 * 
-	 * libgcc.a and libmingwex.a comes from mingw installation
-	 * msys\mingw\lib\gcc\mingw32\3.4.5\libgcc.a */
-	#pragma comment(lib, "ffmpeg/lib/libavcodec.a")
-	#pragma comment(lib, "ffmpeg/lib/libavformat.a")
-	#pragma comment(lib, "ffmpeg/lib/libavutil.a")
-	#pragma comment(lib, "ffmpeg/lib/libswscale.a")
-	#pragma comment(lib, "ffmpeg/lib/libgcc.a")
-	#pragma comment(lib, "ffmpeg/lib/libmingwex.a")
-	#pragma comment(lib, "ffmpeg/lib/libcoldname.a")
-#endif
 
 #if !defined(MACOSX)
 	static const int sws_flags = SWS_BICUBIC; // XXX: Reasonable default?

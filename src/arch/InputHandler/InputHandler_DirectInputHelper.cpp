@@ -331,7 +331,6 @@ static BOOL CALLBACK DIMouse_EnumDevObjectsProc(LPCDIDEVICEOBJECTINSTANCE dev, L
 
 	in.ofs = dev->dwOfs;
 
-	// xxx: does this check for scrollwheels? -aj
 	if(dev->dwType & DIDFT_BUTTON)
 	{
 		in.type = in.BUTTON;

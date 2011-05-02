@@ -422,18 +422,21 @@ void NoteField::DrawAreaHighlight( int iStartBeat, int iEndBeat )
 static ThemeMetric<RageColor> BPM_COLOR ( "NoteField", "BPMColor" );
 static ThemeMetric<RageColor> STOP_COLOR ( "NoteField", "StopColor" );
 static ThemeMetric<RageColor> DELAY_COLOR ( "NoteField", "DelayColor" );
+static ThemeMetric<RageColor> WARP_COLOR ( "NoteField", "WarpColor" );
 static ThemeMetric<RageColor> TIME_SIGNATURE_COLOR ( "NoteField", "TimeSignatureColor" );
 static ThemeMetric<RageColor> TICKCOUNT_COLOR ( "NoteField", "TickcountColor" );
 static ThemeMetric<RageColor> COMBO_COLOR ( "NoteField", "ComboColor" );
 static ThemeMetric<bool> BPM_IS_LEFT_SIDE ( "NoteField", "BPMIsLeftSide" );
 static ThemeMetric<bool> STOP_IS_LEFT_SIDE ( "NoteField", "StopIsLeftSide" );
 static ThemeMetric<bool> DELAY_IS_LEFT_SIDE ( "NoteField", "DelayIsLeftSide" );
+static ThemeMetric<bool> WARP_IS_LEFT_SIDE ( "NoteField", "WarpIsLeftSide" );
 static ThemeMetric<bool> TIME_SIGNATURE_IS_LEFT_SIDE ( "NoteField", "TimeSignatureIsLeftSide" );
 static ThemeMetric<bool> TICKCOUNT_IS_LEFT_SIDE ( "NoteField", "TickcountIsLeftSide" );
 static ThemeMetric<bool> COMBO_IS_LEFT_SIDE ( "NoteField", "ComboIsLeftSide" );
 static ThemeMetric<float> BPM_OFFSETX ( "NoteField", "BPMOffsetX" );
 static ThemeMetric<float> STOP_OFFSETX ( "NoteField", "StopOffsetX" );
 static ThemeMetric<float> DELAY_OFFSETX ( "NoteField", "DelayOffsetX" );
+static ThemeMetric<float> WARP_OFFSETX ( "NoteField", "WarpOffsetX" );
 static ThemeMetric<float> TIME_SIGNATURE_OFFSETX ( "NoteField", "TimeSignatureOffsetX" );
 static ThemeMetric<float> TICKCOUNT_OFFSETX ( "NoteField", "TickcountOffsetX" );
 static ThemeMetric<float> COMBO_OFFSETX ( "NoteField", "ComboOffsetX" );
@@ -478,6 +481,23 @@ void NoteField::DrawFreezeText( const float fBeat, const float fSecs, const floa
 	}
 	m_textMeasureNumber.SetGlow( RageColor(1,1,1,RageFastCos(RageTimer::GetTimeSinceStartFast()*2)/2+0.5f) );
 	m_textMeasureNumber.SetText( ssprintf("%.3f", fSecs) );
+	m_textMeasureNumber.Draw();
+}
+
+void NoteField::DrawWarpText( const float fBeat, const float fNewBeat )
+{
+	const float fYOffset	= ArrowEffects::GetYOffset( m_pPlayerState, 0, fBeat );
+	const float fYPos	= ArrowEffects::GetYPos(    m_pPlayerState, 0, fYOffset, m_fYReverseOffsetPixels );
+	const float fZoom	= ArrowEffects::GetZoom(    m_pPlayerState );
+	const float xBase	= GetWidth()/2.f;
+	const float xOffset	= WARP_OFFSETX * fZoom;
+	
+	m_textMeasureNumber.SetZoom( fZoom );
+	m_textMeasureNumber.SetHorizAlign( WARP_IS_LEFT_SIDE ? align_right : align_left );
+	m_textMeasureNumber.SetDiffuse( WARP_COLOR );
+	m_textMeasureNumber.SetGlow( RageColor(1,1,1,RageFastCos(RageTimer::GetTimeSinceStartFast()*2)/2+0.5f) );
+	m_textMeasureNumber.SetText( ssprintf("%.3f", fNewBeat) );
+	m_textMeasureNumber.SetXY( (WARP_IS_LEFT_SIDE ? -xBase - xOffset : xBase + xOffset), fYPos );
 	m_textMeasureNumber.Draw();
 }
 
@@ -746,71 +766,70 @@ void NoteField::DrawPrimitives()
 		ASSERT(GAMESTATE->m_pCurSong);
 
 		// BPM text
-		const vector<BPMSegment> &aBPMSegments = GAMESTATE->m_pCurSong->m_Timing.m_BPMSegments;
-		for( unsigned i=0; i<aBPMSegments.size(); i++ )
+		FOREACH_CONST( BPMSegment, GAMESTATE->m_pCurSong->m_Timing.m_BPMSegments, seg )
 		{
-			if( aBPMSegments[i].m_iStartRow >= iFirstRowToDraw &&
-			    aBPMSegments[i].m_iStartRow <= iLastRowToDraw)
+			if( seg->m_iStartRow >= iFirstRowToDraw && seg->m_iStartRow <= iLastRowToDraw )
 			{
-				float fBeat = NoteRowToBeat(aBPMSegments[i].m_iStartRow);
+				float fBeat = NoteRowToBeat(seg->m_iStartRow);
 				if( IS_ON_SCREEN(fBeat) )
-					DrawBPMText( fBeat, aBPMSegments[i].GetBPM() );
+					DrawBPMText( fBeat, seg->GetBPM() );
 			}
 		}
 
 		// Freeze text
-		const vector<StopSegment> &aStopSegments = GAMESTATE->m_pCurSong->m_Timing.m_StopSegments;
-		for( unsigned i=0; i<aStopSegments.size(); i++ )
+		FOREACH_CONST( StopSegment, GAMESTATE->m_pCurSong->m_Timing.m_StopSegments, seg )
 		{
-			if( aStopSegments[i].m_iStartRow >= iFirstRowToDraw &&
-			    aStopSegments[i].m_iStartRow <= iLastRowToDraw)
+			if( seg->m_iStartRow >= iFirstRowToDraw && seg->m_iStartRow <= iLastRowToDraw )
 			{
-				float fBeat = NoteRowToBeat(aStopSegments[i].m_iStartRow);
+				float fBeat = NoteRowToBeat(seg->m_iStartRow);
 				if( IS_ON_SCREEN(fBeat) )
-					DrawFreezeText( fBeat, aStopSegments[i].m_fStopSeconds, aStopSegments[i].m_bDelay );
+					DrawFreezeText( fBeat, seg->m_fStopSeconds, seg->m_bDelay );
+			}
+		}
+		
+		// Warp text
+		FOREACH_CONST( WarpSegment, GAMESTATE->m_pCurSong->m_Timing.m_WarpSegments, seg )
+		{
+			if( seg->m_iStartRow >= iFirstRowToDraw && seg->m_iStartRow <= iLastRowToDraw )
+			{
+				float fBeat = NoteRowToBeat(seg->m_iStartRow);
+				if( IS_ON_SCREEN(fBeat) )
+					DrawWarpText( fBeat, seg->m_fEndBeat );
 			}
 		}
 
 		// Time Signature text
-		const vector<TimeSignatureSegment> &vTimeSignatureSegments = GAMESTATE->m_pCurSong->m_Timing.m_vTimeSignatureSegments;
-		for( unsigned i=0; i<vTimeSignatureSegments.size(); i++ )
+		FOREACH_CONST( TimeSignatureSegment, GAMESTATE->m_pCurSong->m_Timing.m_vTimeSignatureSegments, seg )
 		{
-			if( vTimeSignatureSegments[i].m_iStartRow >= iFirstRowToDraw &&
-			    vTimeSignatureSegments[i].m_iStartRow <= iLastRowToDraw)
+			if( seg->m_iStartRow >= iFirstRowToDraw && seg->m_iStartRow <= iLastRowToDraw )
 			{
-				float fBeat = NoteRowToBeat(vTimeSignatureSegments[i].m_iStartRow);
+				float fBeat = NoteRowToBeat(seg->m_iStartRow);
 				if( IS_ON_SCREEN(fBeat) )
-					DrawTimeSignatureText( fBeat, vTimeSignatureSegments[i].m_iNumerator, vTimeSignatureSegments[i].m_iDenominator );
+					DrawTimeSignatureText( fBeat, seg->m_iNumerator, seg->m_iDenominator );
 			}
 		}
-
+		
 		// Tickcount text
-		const vector<TickcountSegment> &tTickcountSegments = GAMESTATE->m_pCurSong->m_Timing.m_TickcountSegments;
-		for( unsigned i=0; i<tTickcountSegments.size(); i++ )
+		FOREACH_CONST( TickcountSegment, GAMESTATE->m_pCurSong->m_Timing.m_TickcountSegments, seg )
 		{
-			if( tTickcountSegments[i].m_iStartRow >= iFirstRowToDraw &&
-			    tTickcountSegments[i].m_iStartRow <= iLastRowToDraw)
+			if( seg->m_iStartRow >= iFirstRowToDraw && seg->m_iStartRow <= iLastRowToDraw )
 			{
-				float fBeat = NoteRowToBeat(tTickcountSegments[i].m_iStartRow);
+				float fBeat = NoteRowToBeat(seg->m_iStartRow);
 				if( IS_ON_SCREEN(fBeat) )
-					DrawTickcountText( fBeat, tTickcountSegments[i].m_iTicks );
+					DrawTickcountText( fBeat, seg->m_iTicks );
 			}
 		}
 		
 		// Combo text
-		const vector<ComboSegment> &tComboSegments = GAMESTATE->m_pCurSong->m_Timing.m_ComboSegments;
-		for( unsigned i=0; i<tComboSegments.size(); i++ )
+		FOREACH_CONST( ComboSegment, GAMESTATE->m_pCurSong->m_Timing.m_ComboSegments, seg )
 		{
-			if( tComboSegments[i].m_iStartRow >= iFirstRowToDraw &&
-			   tComboSegments[i].m_iStartRow <= iLastRowToDraw)
+			if( seg->m_iStartRow >= iFirstRowToDraw && seg->m_iStartRow <= iLastRowToDraw )
 			{
-				float fBeat = NoteRowToBeat(tComboSegments[i].m_iStartRow);
+				float fBeat = NoteRowToBeat(seg->m_iStartRow);
 				if( IS_ON_SCREEN(fBeat) )
-					DrawComboText( fBeat, tComboSegments[i].m_iCombo );
+					DrawComboText( fBeat, seg->m_iCombo );
 			}
 		}
-
-		// todo: add warp text -aj
 
 		// Course mods text
 		const Course *pCourse = GAMESTATE->m_pCurCourse;

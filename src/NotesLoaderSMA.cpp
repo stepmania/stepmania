@@ -230,10 +230,10 @@ bool SMALoader::LoadFromSMAFile( const RString &sPath, Song &out )
 		{
 			// #DISPLAYBPM:[xxx][xxx:xxx]|[*]; 
 			if( sParams[1] == "*" )
-				out.m_DisplayBPMType = Song::DISPLAY_RANDOM;
+				out.m_DisplayBPMType = DISPLAY_BPM_RANDOM;
 			else 
 			{
-				out.m_DisplayBPMType = Song::DISPLAY_SPECIFIED;
+				out.m_DisplayBPMType = DISPLAY_BPM_SPECIFIED;
 				out.m_fSpecifiedBPMMin = StringToFloat( sParams[1] );
 				if( sParams[2].empty() )
 					out.m_fSpecifiedBPMMax = out.m_fSpecifiedBPMMin;

@@ -355,9 +355,14 @@ void GameState::JoinPlayer( PlayerNumber pn )
 	if( ALLOW_LATE_JOIN  &&  m_pCurStyle != NULL )
 	{
 		const Style *pStyle;
-		// only use one player for StyleType_OnePlayerTwoSides.
+		// Only use one player for StyleType_OnePlayerTwoSides and StepsTypes
+		// that can only be played by one player (e.g. dance-solo,
+		// dance-threepanel, popn-nine). -aj
 		// XXX?: still shows joined player as "Insert Card". May not be an issue? -aj
-		if( m_pCurStyle->m_StyleType == StyleType_OnePlayerTwoSides )
+		if( m_pCurStyle->m_StyleType == StyleType_OnePlayerTwoSides ||
+			m_pCurStyle->m_StepsType == StepsType_dance_solo || 
+			m_pCurStyle->m_StepsType == StepsType_dance_threepanel ||
+			m_pCurStyle->m_StepsType == StepsType_popn_nine )
 			pStyle = GAMEMAN->GetFirstCompatibleStyle( m_pCurGame, 1, m_pCurStyle->m_StepsType );
 		else
 			pStyle = GAMEMAN->GetFirstCompatibleStyle( m_pCurGame, GetNumSidesJoined(), m_pCurStyle->m_StepsType );
@@ -897,7 +902,7 @@ void GameState::ResetMusicStatistics()
 	m_bFreeze = false;
 	m_bDelay = false;
 	m_iWarpBeginRow = -1; // Set to -1 because some song may want to warp to row 0. -aj
-	m_fWarpLength = -1; // Set when a warp is encountered. also see above. -aj
+	m_fWarpDestination = -1; // Set when a warp is encountered. also see above. -aj
 	m_fMusicSecondsVisible = 0;
 	m_fSongBeatVisible = 0;
 	Actor::SetBGMTime( 0, 0, 0, 0 );
@@ -943,7 +948,7 @@ void GameState::ResetStageStatistics()
 }
 
 static Preference<float> g_fVisualDelaySeconds( "VisualDelaySeconds", 0.0f );
-// todo: modify for warps -aj
+
 void GameState::UpdateSongPosition( float fPositionSeconds, const TimingData &timing, const RageTimer &timestamp )
 {
 	if( !timestamp.IsZero() )
@@ -957,17 +962,9 @@ void GameState::UpdateSongPosition( float fPositionSeconds, const TimingData &ti
 		LOG->Trace( ssprintf("[GameState::UpdateSongPosition] cur BPS = %f, fPositionSeconds = %f",m_fCurBPS,fPositionSeconds) );
 	*/
 
-	timing.GetBeatAndBPSFromElapsedTime( fPositionSeconds, m_fSongBeat, m_fCurBPS, m_bFreeze, m_bDelay, m_iWarpBeginRow, m_fWarpLength );
+	timing.GetBeatAndBPSFromElapsedTime( fPositionSeconds, m_fSongBeat, m_fCurBPS, m_bFreeze, m_bDelay, m_iWarpBeginRow, m_fWarpDestination );
 	// "Crash reason : -243478.890625 -48695.773438"
 	ASSERT_M( m_fSongBeat > -2000, ssprintf("Song beat %f at %f seconds", m_fSongBeat, fPositionSeconds) );
-
-	//if( m_iWarpBeginRow != -1 || m_iWarpEndRow == -1 )
-	if( m_iWarpBeginRow != -1 && m_fWarpLength > 0.0f )
-	{
-		// There is a warp in this section.
-		LOG->Trace("warp at %i lasts for %f, jumps to %i",m_iWarpBeginRow,m_fWarpLength,m_iWarpBeginRow+BeatToNoteRow(m_fWarpLength));
-		//fPositionSeconds += (m_fWarpLength * m_fCurBPS);
-	}
 
 	m_fMusicSeconds = fPositionSeconds;
 

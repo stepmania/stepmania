@@ -187,7 +187,7 @@ typedef unsigned int JDIMENSION;
 /* a function referenced thru EXTERNs: */
 #define GLOBAL(type)		type
 /* a reference to a GLOBAL function: */
-#if defined(WIN32) && !defined(XBOX)
+#if defined(WIN32)
 # ifdef BUILDING_JPEG_DLL
 #  define DLLIMPORT __declspec (dllexport)
 # else

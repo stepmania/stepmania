@@ -46,6 +46,8 @@ bool CourseWriterCRS::Write( const Course &course, RageFileBasic &f, bool bSavin
 	f.PutLine( ssprintf("#COURSE:%s;", course.m_sMainTitle.c_str()) );
 	if( course.m_sMainTitleTranslit != "" )
 		f.PutLine( ssprintf("#COURSETRANSLIT:%s;", course.m_sMainTitleTranslit.c_str()) );
+	if( course.m_sScripter != "" )
+		f.PutLine( ssprintf("#SCRIPTER:%s;", course.m_sScripter.c_str()) );
 	if( course.m_bRepeat )
 		f.PutLine( "#REPEAT:YES;" );
 	if( course.m_iLives != -1 )

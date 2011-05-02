@@ -9,24 +9,16 @@
 #include <cerrno>
 #include <map>
 
-#if defined(_WINDOWS) || defined(_XBOX) || defined(MACOSX)
+#if defined(_WINDOWS) || defined(MACOSX)
 #include "mad-0.15.1b/mad.h"
 #ifdef _MSC_VER
-#ifdef _XBOX
-#ifdef DEBUG
-#pragma comment(lib, "mad-0.15.1b/xboxmad/debug/xboxmad.lib")
-#else
-#pragma comment(lib, "mad-0.15.1b/xboxmad/Release/xboxmad.lib")
-#endif // DEBUG
-#else
 #pragma comment(lib, "mad-0.15.1b/msvc++/Release/libmad.lib")
-#endif // _XBOX
 #endif //_MSC_VER
 #else
 #include <mad.h>
 #endif // _WINDOWS
 
-/* ID3 code from libid3: */
+// ID3 code from libid3:
 enum tagtype {
   TAGTYPE_NONE = 0,
   TAGTYPE_ID3V1,

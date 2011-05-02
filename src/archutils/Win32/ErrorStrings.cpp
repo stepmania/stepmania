@@ -2,17 +2,13 @@
 #include "ErrorStrings.h"
 #include "RageUtil.h"
 
-#if !defined(XBOX)
 #include <windows.h>
-#endif
 
 RString werr_ssprintf( int err, const char *fmt, ... )
 {
 	char buf[1024] = "";
-#ifndef _XBOX
 	FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM,
 		0, err, 0, buf, sizeof(buf), NULL);
-#endif
 
 	// Why is FormatMessage returning text ending with \r\n? (who? -aj)
 	// Perhaps it's because you're on Windows, where newlines are \r\n. -aj

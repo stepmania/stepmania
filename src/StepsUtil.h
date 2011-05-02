@@ -163,7 +163,13 @@ class StepsID
 	mutable CachedObjectPointer<Steps> m_Cache;
 
 public:
-	StepsID() { Unset(); }
+	/**
+	 * @brief Set up the StepsID with default values.
+	 *
+	 * This used to call Unset(), which set the variables to
+	 * the same thing. */
+	StepsID(): st(StepsType_Invalid), dc(Difficulty_Invalid),
+		sDescription(""), uHash(0), m_Cache() {}
 	void Unset() { FromSteps(NULL); }
 	void FromSteps( const Steps *p );
 	Steps *ToSteps( const Song *p, bool bAllowNull ) const;

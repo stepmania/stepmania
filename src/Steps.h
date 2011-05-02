@@ -108,6 +108,7 @@ public:
 
 	unsigned GetHash() const;
 	void GetNoteData( NoteData& noteDataOut ) const;
+	NoteData GetNoteData() const;
 	void SetNoteData( const NoteData& noteDataNew );
 	void SetSMNoteData( const RString &notes_comp );
 	void GetSMNoteData( RString &notes_comp_out ) const;

@@ -6,23 +6,14 @@
 #include "RageSurface.h"
 
 
-#if defined(_WINDOWS) || defined(_XBOX)
+#if defined(_WINDOWS)
 #  include "libpng/include/png.h"
 #  if defined(_MSC_VER)
-#  if defined(_XBOX)
-#    pragma comment(lib, "libpng/lib/xboxlibpng.lib")
-#  else
-#    pragma comment(lib, "libpng/lib/libpng.lib")
-#  endif
+#  pragma comment(lib, "libpng/lib/libpng.lib")
 #  pragma warning(disable: 4611) /* interaction between '_setjmp' and C++ object destruction is non-portable */
 #  endif // _MSC_VER
 #else
 #  include <png.h>
-#endif
-
-#if defined(_XBOX)
-#  include <malloc.h>	// for alloca
-#  include "archutils/Xbox/VirtualMemory.h"
 #endif
 
 namespace
@@ -79,16 +70,6 @@ static RageSurface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 	error.fn = fn;
 
 	png_struct *png = png_create_read_struct( PNG_LIBPNG_VER_STRING, &error, PNG_Error, PNG_Warning );
-
-#if defined(XBOX)
-	while(png == NULL)
-	{
-		if(!vmem_Manager.DecommitLRU())
-			break;
-
-		png = png_create_read_struct( PNG_LIBPNG_VER_STRING, &error, PNG_Error, PNG_Warning );
-	}
-#endif
 
 	if( png == NULL )
 	{

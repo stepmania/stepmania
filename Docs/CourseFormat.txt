@@ -1,0 +1,88 @@
+Complete Course Template
+
+[[ Header Content ]]
+-- Header Content is comprimised with any course-defining data such as the 
+-- title, banner and other parameters.
+#COURSE:My Course!;
+--	The title of the course.
+#COURSETRANSLIT:My Course, Translated!;
+--	The title of the course, translated into english.
+#REPEAT:YES;
+--	If this is present, the course does not end. Useful for endless & workout
+--	courses.
+#LIVES:4;
+--	The maximum(?) number of lives attainable in the course. Enabling this will
+--	automatically force your course into an Oni course.
+#BANNER:My Banner.png;
+--	A banner for your course.
+#BACKGROUND:My Background.png;
+--	A background for your course. Currently only available in SM-SSC.
+#STYLE:SINGLE,VERSUS;
+--	Denote which styles may be played on this course. This is useful in
+--	particular to clone courses for doubles and single courses.
+#METER:Beginner:3;
+--	A custom-set meter for that course difficulty. You may set the difficulty
+--	for Beginner, Easy, Medium, Hard, Challenge and Edit difficulties.
+
+[[ Song Content ]]
+-- Song Content is comprimised with any song-changing data such as modifiers,
+-- followed by an actual song for teh game to play.
+
+-- Modifiers can be assigned in a variety of formats, the most effective three being the following:
+
+1.) Repeated Modifier Block w/ Length:
+#MODS:TIME:0.500:LEN:0.500:MODS:2x;
+#MODS:TIME:1.500:LEN:0.500:MODS:0.5x;
+
+2.) Nested Modifier Block w/ Length:
+#MODS:
+	TIME:0.500:LEN:0.500:MODS:2x;
+	TIME:1.500:LEN:0.500:MODS:0.5x;
+
+3.) Nested Modifier Block w/ Ends:
+#MODS:
+	TIME:0.500:END:1.000:MODS:2x;
+	TIME:1.500:END:1.500:MODS:0.5x;
+
+#GAINSECONDS:60.5;
+--	The number of seconds gained before starting a song. This and #LIVES are
+--	mutually exclusive: you can either have one, the other, or none: both
+--	is not possible. This is meant to be used for Survival courses.
+
+#SONG:*:Medium:2x;
+-- #SONG can take quite a variety of parameters, of which may be useful to you
+-- for testing or randomocity purpose.
+-- * is a wildcard item, meaning that StepMania will always pick a random song
+-- for this part of the course.
+-- You can also replace with BEST*,WORST*,GRADEBEST*, or GRADEWORST*, where * 
+-- is a number to retrive the first of each category above.
+#SONG:BEST1:Medium:2x;
+-- As well as that, you may also do Group Random, like such:
+#SONG:Dance Dance Revolution 8th Mix/*:Medium:2x;
+-- If the above is not applicable, StepMania will search for the song title as best it can, depending on what you give it:
+#SONG:Xepher:Medium:2x;
+-- Will simply search the title of the song.
+#SONG:DDR Supernova/Xepher:Medium:2x;
+-- Will search for the exact directory.
+
+-- #SONG can also apply different effects on each entry in the course by adding
+-- special modifiers to the modifiers segment:
+#SONG:*:Medium:showcourse;
+-- For example, forces the course to never be hidden, noshowcourse being the
+-- reverse of such.
+-- nodifficult also exists to disable a player from changing difficulties, 
+-- barring the player from making it easier or harder ( Gauntlets & Survivals
+-- do not allow you to change difficulties ).
+-- Finally, award*, where * is a number, allows you to control how many lives
+-- the player gains from successfully completing a course in Oni mode.
+
+Finally, here's an example course:
+#COURSE:My Awesome Course - The Revenge;
+#METER:Medium:8;
+
+#MODS:
+	TIME:1.00:END:50.00:MODS:C150;
+#SONG:In The Groove/Dawn:Overhead;
+#SONG:In The Groove/Mouth:;
+#SONG:In The Groove 2/Funk Factory:;
+#SONG:In The Groove 3/Disconnected Zeo:;

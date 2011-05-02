@@ -83,6 +83,8 @@ private:
 	float			m_fCurAnimationRate;
 	bool			m_bLoop;
 	bool			m_bDrawCelShaded; // for Lua models
+	
+	Model& operator=(const Model& rhs);
 };
 
 #endif

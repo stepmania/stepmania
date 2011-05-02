@@ -180,8 +180,8 @@ void BPMDisplay::SetBpmFromSong( const Song* pSong )
 	ASSERT( pSong );
 	switch( pSong->m_DisplayBPMType )
 	{
-	case Song::DISPLAY_ACTUAL:
-	case Song::DISPLAY_SPECIFIED:
+	case DISPLAY_BPM_ACTUAL:
+	case DISPLAY_BPM_SPECIFIED:
 		{
 			DisplayBpms bpms;
 			pSong->GetDisplayBpms( bpms );
@@ -189,7 +189,7 @@ void BPMDisplay::SetBpmFromSong( const Song* pSong )
 			m_fCycleTime = 1.0f;
 		}
 		break;
-	case Song::DISPLAY_RANDOM:
+	case DISPLAY_BPM_RANDOM:
 		CycleRandomly();
 		break;
 	default:
@@ -294,11 +294,22 @@ class LunaBPMDisplay: public Luna<BPMDisplay>
 {
 public:
 	static int SetFromGameState( T* p, lua_State *L ) { p->SetFromGameState(); return 0; }
+	static int SetFromSong( T* p, lua_State *L )
+	{
+		if( lua_isnil(L,1) ) { p->NoBPM(); }
+		else
+		{
+			const Song* pSong = Luna<Song>::check( L, 1, true );
+			p->SetBpmFromSong(pSong);
+		}
+		return 0;
+	}
 	static int GetText( T* p, lua_State *L )		{ lua_pushstring( L, p->GetText() ); return 1; }
 
 	LunaBPMDisplay()
 	{
 		ADD_METHOD( SetFromGameState );
+		ADD_METHOD( SetFromSong );
 		ADD_METHOD( GetText );
 	}
 };

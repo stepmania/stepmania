@@ -33,14 +33,12 @@ static const char *MusicWheelItemTypeNames[] = {
 };
 XToString( MusicWheelItemType );
 
-MusicWheelItemData::MusicWheelItemData( WheelItemDataType type, Song* pSong, RString sSectionName, Course* pCourse, RageColor color, int iSectionCount ):
-	WheelItemBaseData(type, sSectionName, color)
-{
-	m_pSong = pSong;
-	m_pCourse = pCourse;
-	m_Flags = WheelNotifyIcon::Flags();
-	m_iSectionCount = iSectionCount;
-}
+MusicWheelItemData::MusicWheelItemData( WheelItemDataType type, Song* pSong, 
+				       RString sSectionName, Course* pCourse, 
+				       RageColor color, int iSectionCount ):
+	WheelItemBaseData(type, sSectionName, color),
+	m_pCourse(pCourse), m_pSong(pSong), m_Flags(WheelNotifyIcon::Flags()),
+	m_iSectionCount(iSectionCount), m_sLabel(""), m_pAction() {}
 
 MusicWheelItem::MusicWheelItem( RString sType ):
 	WheelItemBase( sType )
@@ -172,6 +170,7 @@ MusicWheelItem::MusicWheelItem( const MusicWheelItem &cpy ):
 
 MusicWheelItem::~MusicWheelItem()
 {
+	delete m_pTextSectionCount;
 }
 
 void MusicWheelItem::LoadFromWheelItemData( const WheelItemBaseData *pData, int iIndex, bool bHasFocus, int iDrawIndex )

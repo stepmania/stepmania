@@ -31,11 +31,9 @@ HANDLE Win32ThreadIdToHandle( uint64_t iID )
 
 void ThreadImpl_Win32::Halt( bool Kill )
 {
-#ifndef _XBOX
 	if( Kill )
 		TerminateThread( ThreadHandle, 0 );
 	else
-#endif
 		SuspendThread( ThreadHandle );
 }
 

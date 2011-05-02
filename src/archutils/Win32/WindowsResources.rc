@@ -171,8 +171,8 @@ END
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
-IDI_ICON1               ICON                    "smzip.ico"
 IDI_ICON                ICON                    "StepMania.ICO"
+IDI_ICON1               ICON                    "smzip.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -181,7 +181,7 @@ IDI_ICON                ICON                    "StepMania.ICO"
 
 VS_VERSION_INFO VERSIONINFO
  FILEVERSION 1,0,0,1
- PRODUCTVERSION 1,0,0,1
+ PRODUCTVERSION 1,2,4,1
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -198,12 +198,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "the spinal shark collective\nhttp://ssc.ajworld.net/"
             VALUE "FileDescription", "sm-ssc"
-            VALUE "FileVersion", "1, 2, 2, 0"
+            VALUE "FileVersion", "1, 2, 4, 0"
             VALUE "InternalName", "sm-ssc"
             VALUE "LegalCopyright", "Copyright © 2001-2011"
             VALUE "OriginalFilename", "StepMania.exe"
             VALUE "ProductName", "sm-ssc"
-            VALUE "ProductVersion", "1, 2, 2, 0"
+            VALUE "ProductVersion", "1, 2, 4, 0"
         END
     END
     BLOCK "VarFileInfo"

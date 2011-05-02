@@ -229,6 +229,12 @@ public:
 		LuaHelpers::Push( L, s );
 		return 1;
 	}
+	static int GetCurrentPlayerOptions( T* p, lua_State *L )
+	{
+		PlayerOptions po = p->m_PlayerOptions.GetCurrent();
+		po.PushSelf(L);
+		return 1;
+	}
 	DEFINE_METHOD( GetHealthState, m_HealthState );
 
 	LunaPlayerState()
@@ -239,6 +245,7 @@ public:
 		ADD_METHOD( GetPlayerOptions );
 		ADD_METHOD( GetPlayerOptionsArray );
 		ADD_METHOD( GetPlayerOptionsString );
+		ADD_METHOD( GetCurrentPlayerOptions );
 		ADD_METHOD( GetHealthState );
 	}
 };

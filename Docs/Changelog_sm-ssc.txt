@@ -10,20 +10,137 @@ supported but exist anyways.)
 _____________________________________________________________________________
 
 ================================================================================
-sm-ssc v1.2.4 | 20110???
+sm-ssc v1.2.5 | 20110501
 --------------------------------------------------------------------------------
+
+20110430
+--------
+* [ScreenOptions] Renamed "ScreenOptions LineHighlight" to "ScreenOptions
+  LineHighlight P#", making it load per-player. [AJ]
+* [OptionRow] Added Text param to RefreshMessageCommand. [AJ]
+* [ScreenOptions] Added SelectMultipleMessageCommand, ChangeValueMessageCommand. [AJ]
+* [UnlockEntry] Added GetCourse, GetCode Lua bindings. [AJ]
+* [UnlockManager] Added UnlockRequirement_NumUnlocked enum. [AJ]
+* [Song] Added Origin (#ORIGIN tag in .ssc) [AJ]
+* [UnlockManager] Added GetPoints(UnlockRequirement),
+  GetPointsForProfile(Profile,UnlockRequirement) Lua bindings. [AJ]
+* [Course] Added #SCRIPTER tag and GetScripter Lua binding. [AJ]
+
+20110428
+--------
+* [BeginnerHelper] Various changes: [AJ]
+ * Changed Player_#X/Y metrics to Player#X/Y metrics for consistency.
+ * Converted the background to an AutoActor.
+* [BPMDisplay] Added SetFromSong Lua binding. [AJ]
+
+20110423
+--------
+* [CourseLoaderCRS] Fixed loading of Player's Best/Most Played courses,
+  probably others too. [AJ]
+* [ScreenGameplaySyncMachine] Fixed a crash when entering
+  ScreenGameplaySyncMachine as Player 2. (Fixes issue 127) [AJ]
+* [ScreenOptionsEditCourse] Fixed a crash when going to the first row.
+  (Fixes issue 235) [AJ]
+* [SongManager] Added GetCourseGroupNames Lua binding. [AJ]
+
+20110422
+--------
+* [Banner] Added ScrollSpeedDivisor metric; controls the scroll speed of
+  Random/Roulette banners. [AJ]
+* [FadingBanner] Added BannerRoulette, BannerRandom, and Banner(Custom Item Name) commands. [AJ]
+
+20110421
+--------
+* [ScreenSelectMusic] Changed "Percent Frame p1" to "PercentFrame P1" for consistency. [AJ]
+* [LifeMeterBattery] Convert Frame to an AutoActor. [AJ]
+* [ScreenEvaluation] Added RollingNumbersClass metric, allowing for the ability
+  to change which RollingNumbers class is loaded. [AJ]
+* [ScreenGameplay] Added SongNumberFormat metric. [AJ]
+
+20110420
+--------
+* [CourseContentsList] Fix a crash. [AJ]
+
+20110416
+--------
+* [PlayerOptions] Added UsingReverse() Lua binding (automatically tests GetReverse() == 1) [AJ]
+* [PlayerState] Added GetCurrentPlayerOptions() Lua binding [AJ]
+
+20110413
+--------
+* [ScreenSelectMusic] Made score frame into an AutoActor, changed the filename
+  from "score frame p1" to "ScoreFrame P1" for consistency with other elements. [AJ]
+
+20110405
+--------
+* [ScreenEdit] Allow modifying the #DISPLAYBPM traits in the editor. Look in
+  Edit Song Info to find it. [Wolfman2000]
+
+20110402
+--------
+* Fix a crash (issue 247) when exiting Practice mode from dance-solo,
+  dance-threepanel, and popn-nine (all of which can only have one player).
+  If you find any other modes this crashes on, let us know. [AJ]
+
+20110329
+--------
+* [ScreenEdit] Changed sample playback button to L. [AJ]
+* [ScreenGameplay] Announcers say combo messages again. [AJ]
+
+================================================================================
+sm-ssc v1.2.4 | 20110327
+--------------------------------------------------------------------------------
+
+20110327
+--------
+* Fix Gameplay Footer not showing up over arrows. [AJ]
+
+20110326
+--------
+* [NotesLoaderSM, NotesWriterSSC] Officially add the #WARPS tag. The negative
+  tricks of the past are now officially standardized. Please tell us about
+  files which have broken sync or are otherwise unplayable/incorrect.
+  [AJ, theDtTvB, Wolfman2000]
+
+20110320
+--------
+* [PlayerOptions] Added SetNoteSkin(string) Lua binding. [AJ]
+* [PlayerOptions] Tons of new Lua bindings. See the Lua documentation for all
+  of them, there's too many to print here. [AJ]
+
+20110317
+--------
+* [ScreenEdit] Fix bug number 222, where Steps disappeared if they weren't
+  saved. [AJ, Wolfman2000]
+* [ScreenOptionsEdit] Fix bug number 186, where people could try to edit or
+  share songs when they didn't have any. [Wolfman2000]
+* [ScreenEdit] Add a metric to switch Ctrl+Up and Ctrl+Down. This is for
+  easier compatibility with prior versions of SM. It defaults to false.
+  [Wolfman2000]
+* [ScreenEdit] Fix bug number 65, where Steps disappeared if they were
+  involved with the Compress or Expand options. [Wolfman2000]
 
 20110316
 --------
 * [NotesLoaderSMA] Allow for preliminary support of loading SMA files. This
   will become better once Split Timing is in place. [Wolfman2000]
+* [NotesLoaderBMS] Improve BMS loading: [theDtTvB]
+    * Ignore time signatures before the notes for the steps to be more
+      synchronized.
+    * Load BPM changes properly. Many songs with BPM changes no longer freeze.
+* [Player] Stop playing the keysound when letting go of hold notes. [theDtTvB]
+* [NoteDataUtil] Make keysounded notes that can't be inserted when reducing
+  number of tracks autokeysound, means less missing sounds when playing
+  7-key BMS on dance-single. [theDtTvB]
 
 20110313
 --------
 * [NotesWriterSM] Allow for either the #DESCRIPTION or #CREDIT tags to be used
   for the .sm format's description token. [Wolfman2000]
-* [ScreenEdit] Add Tap Note Cycling to allow inputting all of the taps. The way
-  to make holds and rolls are still the same as before. [Wolfman2000]
+* [ScreenEdit] Add Tap Note Cycling to allow inputting all of the taps. Use the
+  n and m keys to switch between taps, mines, lifts, and fakes. The way to make
+  holds and rolls are still the same as before; hold 1-0 (plus shift for rolls)
+  and then drag up or down as needed. [Wolfman2000]
 
 ================================================================================
 sm-ssc v1.2.3 | 20110323

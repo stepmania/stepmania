@@ -13,7 +13,8 @@
 
 FontPage::FontPage(): m_iHeight(0), m_iLineSpacing(0), m_fVshift(0),
 	m_iDrawExtraPixelsLeft(0), m_iDrawExtraPixelsRight(0),
-	m_sTexturePath("") {}
+	m_FontPageTextures(), m_sTexturePath(""), m_aGlyphs(),
+	m_iCharToGlyphNo() {}
 
 void FontPage::Load( const FontPageSettings &cfg )
 {
@@ -156,11 +157,6 @@ void FontPage::SetTextureCoords( const vector<int> &widths, int iAdvanceExtraPix
 
 void FontPage::SetExtraPixels( int iDrawExtraPixelsLeft, int iDrawExtraPixelsRight )
 {
-	/* Hack: do one more than we were asked to; I think a lot of fonts are one
-	 * too low. - glenn */
-	iDrawExtraPixelsRight++;
-	iDrawExtraPixelsLeft++;
-
 	if( (iDrawExtraPixelsLeft % 2) == 1 )
 		++iDrawExtraPixelsLeft;
 
@@ -220,15 +216,10 @@ int Font::GetLineHeightInSourcePixels( const wstring &szLine ) const
 }
 
 
-Font::Font()
-{
-	m_iRefCount = 1;
-	m_pDefault = NULL;
-	m_bRightToLeft = false;
-	// [sm-ssc] don't show strokes by default
-	m_DefaultStrokeColor = RageColor(0,0,0,0);
-}
-
+Font::Font(): m_iRefCount(1), path(""), m_apPages(), m_pDefault(NULL),
+	m_iCharToGlyph(), m_bRightToLeft(false),
+	// strokes aren't shown by default, hence the Color.
+	m_DefaultStrokeColor(RageColor(0,0,0,0)), m_sChars("") {}
 Font::~Font()
 {
 	Unload();
@@ -717,8 +708,8 @@ void Font::Load( const RString &sIniPath, RString sChars )
 
 		for(unsigned i = 0; i < ImportList.size(); ++i)
 		{
-			RString fPath = THEME->GetPathF( "", ImportList[i], true );
-			if( fPath == "" )
+			RString sPath = THEME->GetPathF( "", ImportList[i], true );
+			if( sPath == "" )
 			{
 				RString s = ssprintf( "Font \"%s\" imports a font \"%s\" that doesn't exist", sIniPath.c_str(), ImportList[i].c_str() );
 				Dialog::OK( s );
@@ -726,7 +717,7 @@ void Font::Load( const RString &sIniPath, RString sChars )
 			}
 
 			Font subfont;
-			subfont.Load(fPath,"");
+			subfont.Load(sPath,"");
 			MergeFont(subfont);
 		}
 	}

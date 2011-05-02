@@ -30,7 +30,6 @@
 #include "ScoreKeeperNormal.h"
 #include "InputEventPlus.h"
 
-
 // metrics that are common to all ScreenEvaluation classes
 #define BANNER_WIDTH			THEME->GetMetricF(m_sName,"BannerWidth")
 #define BANNER_HEIGHT			THEME->GetMetricF(m_sName,"BannerHeight")
@@ -45,7 +44,7 @@ LuaFunction( JudgmentLineToLocalizedString, JudgmentLineToLocalizedString(Enum::
 
 static const char *DetailLineNames[NUM_DetailLine] =
 {
-	"NumSteps","Jumps", "Holds", "Mines", "Hands", "Rolls",
+	"NumSteps","Jumps", "Holds", "Mines", "Hands", "Rolls", "Lifts", "Fakes"
 };
 XToString( DetailLine );
 #define DETAILLINE_FORMAT			THEME->GetMetric (m_sName,"DetailLineFormat")
@@ -352,7 +351,7 @@ void ScreenEvaluation::Init()
 	{
 		FOREACH_EnabledPlayer( p )
 		{
-			m_sprPercentFrame[p].Load( THEME->GetPathG(m_sName,ssprintf("percent frame p%d",p+1)) );
+			m_sprPercentFrame[p].Load( THEME->GetPathG(m_sName,ssprintf("PercentFrame p%d",p+1)) );
 			m_sprPercentFrame[p]->SetName( ssprintf("PercentFrameP%d",p+1) );
 			ActorUtil::LoadAllCommands( *m_sprPercentFrame[p], m_sName );
 			SET_XY( m_sprPercentFrame[p] );
@@ -453,6 +452,7 @@ void ScreenEvaluation::Init()
 	}
 
 	// init judgment area
+	ROLLING_NUMBERS_CLASS.Load( m_sName, "RollingNumbersClass" );
 	FOREACH_ENUM( JudgmentLine, l )
 	{
 		if( l == JudgmentLine_W1  && !GAMESTATE->ShowW1() )
@@ -474,7 +474,7 @@ void ScreenEvaluation::Init()
 			{
 				m_textJudgmentLineNumber[l][p].LoadFromFont( THEME->GetPathF(m_sName, "JudgmentLineNumber") );
 				m_textJudgmentLineNumber[l][p].SetName( JudgmentLineToString(l)+ssprintf("NumberP%d",p+1) );
-				m_textJudgmentLineNumber[l][p].Load( "RollingNumbersJudgment" );
+				m_textJudgmentLineNumber[l][p].Load( ROLLING_NUMBERS_CLASS );
 				ActorUtil::LoadAllCommands( m_textJudgmentLineNumber[l][p], m_sName );
 				SET_XY( m_textJudgmentLineNumber[l][p] );
 				this->AddChild( &m_textJudgmentLineNumber[l][p] );

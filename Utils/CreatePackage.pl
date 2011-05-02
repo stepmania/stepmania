@@ -150,6 +150,7 @@ my @files = (
 	"Characters/default",
 	"Courses/Default",
 	"Data",
+	"NoteSkins/beat/default",
 	"NoteSkins/common/common",
 	# dance noteskins
 	"NoteSkins/dance/default",
@@ -166,8 +167,13 @@ my @files = (
 	"NoteSkins/dance/retrobar-splithand_whiteblue",
 	# pump noteskins
 	"NoteSkins/pump/cmd",
+	"NoteSkins/pump/cmd-routine-p1",
+	"NoteSkins/pump/cmd-routine-p2",
 	"NoteSkins/pump/complex",
 	"NoteSkins/pump/default",
+	"NoteSkins/pump/frame5p",
+	"NoteSkins/pump/newextra",
+	"NoteSkins/pump/rhythm",
 	"NoteSkins/pump/simple",
 	# kb7 noteskins
 	"NoteSkins/kb7/default",
@@ -175,6 +181,8 @@ my @files = (
 	"NoteSkins/kb7/retrobar",
 	"NoteSkins/kb7/retrobar-iidx",
 	"NoteSkins/kb7/retrobar-o2jam",
+	"NoteSkins/kb7/retrobar-razor",
+	"NoteSkins/kb7/retrobar-razor_o2",
 	# themes
 	"Themes/_fallback",
 	"Themes/_portKit-sm4",

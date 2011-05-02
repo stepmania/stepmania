@@ -55,6 +55,7 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 	f.PutLine( ssprintf( "#SUBTITLETRANSLIT:%s;", SmEscape(out.m_sSubTitleTranslit).c_str() ) );
 	f.PutLine( ssprintf( "#ARTISTTRANSLIT:%s;", SmEscape(out.m_sArtistTranslit).c_str() ) );
 	f.PutLine( ssprintf( "#GENRE:%s;", SmEscape(out.m_sGenre).c_str() ) );
+	f.PutLine( ssprintf( "#ORIGIN:%s;", SmEscape(out.m_sOrigin).c_str() ) );
 	f.PutLine( ssprintf( "#CREDIT:%s;", SmEscape(out.m_sCredit).c_str() ) );
 	f.PutLine( ssprintf( "#BANNER:%s;", SmEscape(out.m_sBannerFile).c_str() ) );
 	f.PutLine( ssprintf( "#BACKGROUND:%s;", SmEscape(out.m_sBackgroundFile).c_str() ) );
@@ -91,16 +92,16 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 
 	switch( out.m_DisplayBPMType )
 	{
-	case Song::DISPLAY_ACTUAL:
+	case DISPLAY_BPM_ACTUAL:
 		// write nothing
 		break;
-	case Song::DISPLAY_SPECIFIED:
+	case DISPLAY_BPM_SPECIFIED:
 		if( out.m_fSpecifiedBPMMin == out.m_fSpecifiedBPMMax )
 			f.PutLine( ssprintf( "#DISPLAYBPM:%.6f;", out.m_fSpecifiedBPMMin ) );
 		else
 			f.PutLine( ssprintf( "#DISPLAYBPM:%.6f:%.6f;", out.m_fSpecifiedBPMMin, out.m_fSpecifiedBPMMax ) );
 		break;
-	case Song::DISPLAY_RANDOM:
+	case DISPLAY_BPM_RANDOM:
 		f.PutLine( ssprintf( "#DISPLAYBPM:*;" ) );
 		break;
 	}
@@ -144,18 +145,18 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 	}
 	f.PutLine( ";" );
 
-	/*
+	
 	f.Write( "#WARPS:" );
 	for( unsigned i=0; i<out.m_Timing.m_WarpSegments.size(); i++ )
 	{
 		const WarpSegment &ws = out.m_Timing.m_WarpSegments[i];
 
-		f.PutLine( ssprintf( "%.6f=%.6f", NoteRowToBeat(ws.m_iStartRow), ws.m_fWarpBeats ) );
+		f.PutLine( ssprintf( "%.6f=%.6f", NoteRowToBeat(ws.m_iStartRow), ws.m_fEndBeat ) );
 		if( i != out.m_Timing.m_WarpSegments.size()-1 )
 			f.Write( "," );
 	}
 	f.PutLine( ";" );
-	*/
+	
 
 	ASSERT( !out.m_Timing.m_vTimeSignatureSegments.empty() );
 	f.Write( "#TIMESIGNATURES:" );
@@ -282,7 +283,7 @@ static RString GetSSCNoteData( const Song &song, const Steps &in, bool bSavingCa
 	lines.push_back( ssprintf( "#DESCRIPTION:%s;", SmEscape(in.GetDescription()).c_str() ) );
 	lines.push_back( ssprintf( "#CHARTSTYLE:%s;", SmEscape(in.GetChartStyle()).c_str() ) );
 	lines.push_back( ssprintf( "#DIFFICULTY:%s;", DifficultyToString(in.GetDifficulty()).c_str() ) );
-	lines.push_back( ssprintf( "#METER:%d;", in.GetMeter() ) );
+	lines.push_back( ssprintf( "#METER:%d;", clamp( in.GetMeter(), MIN_METER, MAX_METER ) ) );
 
 	vector<RString> asRadarValues;
 	FOREACH_PlayerNumber( pn )
@@ -299,6 +300,7 @@ static RString GetSSCNoteData( const Song &song, const Steps &in, bool bSavingCa
 	lines.push_back( "#BPMS:;" );
 	lines.push_back( "#STOPS:;" );
 	lines.push_back( "#DELAYS:;" );
+	lines.push_back( "#WARPS:;" );
 	lines.push_back( "#TIMESIGNATURES:;" );
 	lines.push_back( "#TICKCOUNTS:;" );
 	lines.push_back( "#ATTACKS:;" );
@@ -336,7 +338,19 @@ static RString GetSSCNoteData( const Song &song, const Steps &in, bool bSavingCa
 		}
 	}
 	lines.push_back( ssprintf( "#DELAYS:%s;", join("\n,", asDelayValues).c_str() ) );
-
+	
+	vector<RString> asWarpValues;
+	for( unsigned i=0; i<in.m_Timing.m_WarpSegments.size(); i++ )
+	{
+		const WarpSegment &ws = in.m_Timing.m_WarpSegments[i];
+		
+		if( ws.m_bDelay )
+		{
+			asWarpValues.push_back( ssprintf( "%.6f=%.6f", NoteRowToBeat(fs.m_iStartRow), fs.m_fWarpBeats ) );
+		}
+	}
+	lines.push_back( ssprintf( "#WARPS:%s;", join("\n,", asWarpValues).c_str() ) );
+	
 	ASSERT( !in.m_Timing.m_vTimeSignatureSegments.empty() );
 	vector<RString> asTimeSigValues;
 	FOREACH_CONST( TimeSignatureSegment, in.m_Timing.m_vTimeSignatureSegments, iter )

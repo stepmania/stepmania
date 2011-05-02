@@ -67,9 +67,50 @@ class Game;
 class Profile
 {
 public:
-	Profile()
+	/**
+	 * @brief Set up the Profile with default values.
+	 *
+	 * Note: there are probably a lot of variables. */
+	Profile(): m_sDisplayName(""), m_sCharacterID(""),
+		m_sLastUsedHighScoreName(""), m_iWeightPounds(0),
+		m_sGuid(MakeGuid()), m_sDefaultModifiers(),
+		m_SortOrder(SortOrder_Invalid),
+		m_LastDifficulty(Difficulty_Invalid),
+		m_LastCourseDifficulty(Difficulty_Invalid),
+		m_LastStepsType(StepsType_Invalid), m_lastSong(),
+		m_lastCourse(), m_iTotalSessions(0),
+		m_iTotalSessionSeconds(0), m_iTotalGameplaySeconds(0),
+		m_fTotalCaloriesBurned(0), m_GoalType(GoalType_Calories),
+		m_iGoalCalories(0), m_iGoalSeconds(0), m_iTotalDancePoints(0),
+		m_iNumExtraStagesPassed(0), m_iNumExtraStagesFailed(0),
+		m_iNumToasties(0), m_iTotalTapsAndHolds(0), m_iTotalJumps(0),
+		m_iTotalHolds(0), m_iTotalRolls(0), m_iTotalMines(0),
+		m_iTotalHands(0), m_iTotalLifts(0), m_bNewProfile(false),
+		m_UnlockedEntryIDs(), m_sLastPlayedMachineGuid(""),
+		m_LastPlayedDate(),m_iNumSongsPlayedByStyle(),
+		m_iNumTotalSongsPlayed(0), m_UserData(), m_SongHighScores(),
+		m_CourseHighScores(), m_vScreenshots(),
+		m_mapDayToCaloriesBurned()
 	{
-		InitAll();
+		m_lastSong.Unset();
+		m_lastCourse.Unset();
+		
+		m_LastPlayedDate.Init();
+		
+		FOREACH_ENUM( PlayMode, i )
+			m_iNumSongsPlayedByPlayMode[i] = 0;
+		FOREACH_ENUM( Difficulty, i )
+			m_iNumSongsPlayedByDifficulty[i] = 0;
+		for( int i=0; i<MAX_METER+1; i++ )
+			m_iNumSongsPlayedByMeter[i] = 0;
+		
+		ZERO( m_iNumStagesPassedByPlayMode );
+		ZERO( m_iNumStagesPassedByGrade );
+		m_UserData.Unset();
+		
+		FOREACH_ENUM( StepsType,st )
+			FOREACH_ENUM( RankingCategory,rc )
+				m_CategoryHighScores[st][rc].Init();
 	}
 
 	// smart accessors
@@ -142,6 +183,8 @@ public:
 	int m_iTotalMines;
 	int m_iTotalHands;
 	int m_iTotalLifts;
+	/** @brief Is this a brand new profile? */
+	bool m_bNewProfile;
 	set<RString> m_UnlockedEntryIDs;
 	/**
 	 * @brief Which machine did we play on last, based on the Guid?
@@ -170,11 +213,13 @@ public:
 	struct HighScoresForASteps
 	{
 		HighScoreList hsl;
+		HighScoresForASteps(): hsl() {}
 	};
 	struct HighScoresForASong
 	{
 		std::map<StepsID,HighScoresForASteps>	m_StepsHighScores;
 		int GetNumTimesPlayed() const;
+		HighScoresForASong(): m_StepsHighScores() {}
 	};
 	std::map<SongID,HighScoresForASong>	m_SongHighScores;
 
@@ -196,11 +241,13 @@ public:
 	struct HighScoresForATrail
 	{
 		HighScoreList hsl;
+		HighScoresForATrail(): hsl() {}
 	};
 	struct HighScoresForACourse
 	{
 		std::map<TrailID,HighScoresForATrail>	m_TrailHighScores;
 		int GetNumTimesPlayed() const;
+		HighScoresForACourse(): m_TrailHighScores() {}
 	};
 	std::map<CourseID,HighScoresForACourse>	m_CourseHighScores;
 
@@ -240,7 +287,7 @@ public:
 	 * insert some garbage entries into the map. */
 	struct Calories
 	{
-		Calories() { fCals = 0; }
+		Calories(): fCals(0) {}
 		float fCals;
 	};
 	map<DateTime,Calories> m_mapDayToCaloriesBurned;

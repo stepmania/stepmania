@@ -51,6 +51,7 @@ static const Content_t g_Contents[NUM_PaneCategory] =
 	{ NEED_NOTES, "count" },	// Mines
 	{ NEED_NOTES, "count" },	// Hands
 	{ NEED_NOTES, "count" },	// Lifts
+	{ NEED_NOTES, "count" },	// Fakes
 	{ NEED_NOTES, "score" },	// MachineHighScore
 	{ NEED_NOTES, "name" },		// MachineHighName
 	{ NEED_NOTES|NEED_PROFILE, "score" }, // ProfileHighScore
@@ -247,6 +248,7 @@ void PaneDisplay::SetContent( PaneCategory c )
 			case PaneCategory_Mines:
 			case PaneCategory_Hands:
 			case PaneCategory_Lifts:
+			case PaneCategory_Fakes:
 				str = ssprintf( COUNT_FORMAT.GetValue(), val );
 			}
 		}

@@ -134,9 +134,9 @@ struct TapNote
 	void LoadFromNode( const XNode* pNode );
 
 	TapNote(): type(empty), subType(SubType_Invalid), source(original),
-		pn(PLAYER_INVALID), bHopoPossible(false), 
+		result(), pn(PLAYER_INVALID), bHopoPossible(false), 
 		sAttackModifiers(""), fAttackDurationSeconds(0), 
-		iKeysoundIndex(-1), iDuration(0) {}
+		iKeysoundIndex(-1), iDuration(0), HoldResult() {}
 	void Init()
 	{
 		type = empty;
@@ -155,10 +155,11 @@ struct TapNote
 		RString sAttackModifiers_,
 		float fAttackDurationSeconds_,
 		int iKeysoundIndex_ ):
-		type(type_), subType(subType_), source(source_),
-		pn(PLAYER_INVALID), sAttackModifiers(sAttackModifiers_),
+		type(type_), subType(subType_), source(source_), result(),
+		pn(PLAYER_INVALID), bHopoPossible(false),
+		sAttackModifiers(sAttackModifiers_),
 		fAttackDurationSeconds(fAttackDurationSeconds_),
-		iKeysoundIndex(iKeysoundIndex_), iDuration(0) {}
+		iKeysoundIndex(iKeysoundIndex_), iDuration(0), HoldResult() {}
 
 	/**
 	 * @brief Determine if the two TapNotes are equal to each other.

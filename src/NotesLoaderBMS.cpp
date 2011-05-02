@@ -138,30 +138,9 @@ static RString FindLargestInitialSubstring( const RString &string1, const RStrin
 	return string1.substr( 0, i );
 }
 
-static StepsType DetermineStepsType( int iPlayer, const NoteData &nd, const RString &sPath )
+static StepsType DetermineStepsType( int iPlayer, const NoteData &nd, const RString &sPath, const int iNumNonEmptyTracks )
 {
 	ASSERT( NUM_BMS_TRACKS == nd.GetNumTracks() );
-
-	bool bTrackHasNote[NUM_NON_AUTO_KEYSOUND_TRACKS];
-	ZERO( bTrackHasNote );
-
-	int iLastRow = nd.GetLastRow();
-	for( int t=0; t<NUM_NON_AUTO_KEYSOUND_TRACKS; t++ )
-	{
-		for( int r=0; r<=iLastRow; r++ )
-		{
-			if( nd.GetTapNote(t, r).type != TapNote::empty )
-			{
-				bTrackHasNote[t] = true;
-				break;
-			}
-		}
-	}
-
-	int iNumNonEmptyTracks = 0;
-	for( int t=0; t<NUM_NON_AUTO_KEYSOUND_TRACKS; t++ )
-		if( bTrackHasNote[t] )
-			iNumNonEmptyTracks++;
 
 	switch( iPlayer )
 	{
@@ -170,6 +149,7 @@ static StepsType DetermineStepsType( int iPlayer, const NoteData &nd, const RStr
 		 * 4 - dance 4-panel
 		 * 5 - pop 5-key
 		 * 6 - dance 6-panel, beat 5-key
+		 * 7 - beat 7-key (scratch unused)
 		 * 8 - beat 7-key
 		 * 9 - popn 9-key */
 		switch( iNumNonEmptyTracks ) 
@@ -199,6 +179,8 @@ static StepsType DetermineStepsType( int iPlayer, const NoteData &nd, const RStr
 		case 8:		return StepsType_beat_single7;
 		case 12:	return StepsType_beat_double5;
 		case 16:	return StepsType_beat_double7;
+		case 5:		return StepsType_popn_five;
+		case 9:		return StepsType_popn_nine;
 		default:	return StepsType_Invalid;
 		}
 	default:
@@ -405,11 +387,9 @@ static void SetTimeSigAdjustments( const MeasureToTimeSig_t &sigs, Song &out, Me
 
 static void ReadTimeSigs( const NameToData_t &mapNameToData, MeasureToTimeSig_t &out )
 {
-	// some convertors change some measure's time signature before any notes are there
-	// it is required because sometimes the BGA starts before the music and the measure size
-	// is the difference between the start of first bar and the BGA.
-	// something like #00002:1.55. that made all subsequent notes 192th.
-	// here, find the lowest measure for notes, and make this function skip the time signatures before it.
+	/* some songs have BGA starting before the music, so convertors a put weird time signature
+	 * at first measure, something like #00002:1.55. that made all subsequent notes 192th.
+	 * here, find the lowest measure for notes track, and make it skip the time signatures before it. */
 	int iStartMeasureNo = 999;
 	NameToData_t::const_iterator it;
 	for( it = mapNameToData.lower_bound("#00000"); it != mapNameToData.end(); ++it )
@@ -604,7 +584,28 @@ static bool LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNameTo
 		}
 	}
 	
-	out.m_StepsType = DetermineStepsType( iPlayer, ndNotes, sPath );
+	bool bTrackHasNote[NUM_NON_AUTO_KEYSOUND_TRACKS];
+	ZERO( bTrackHasNote );
+	
+	int iLastRow = ndNotes.GetLastRow();
+	for( int t=0; t<NUM_NON_AUTO_KEYSOUND_TRACKS; t++ )
+	{
+		for( int r=0; r<=iLastRow; r++ )
+		{
+			if( ndNotes.GetTapNote(t, r).type != TapNote::empty )
+			{
+				bTrackHasNote[t] = true;
+				break;
+			}
+		}
+	}
+	
+	int iNumNonEmptyTracks = 0;
+	for( int t=0; t<NUM_NON_AUTO_KEYSOUND_TRACKS; t++ )
+		if( bTrackHasNote[t] )
+			iNumNonEmptyTracks++;
+	
+	out.m_StepsType = DetermineStepsType( iPlayer, ndNotes, sPath, iNumNonEmptyTracks );
 	if( out.m_StepsType == StepsType_beat_single5 && GetTagFromMap( mapNameToData, "#title", sData ) )
 	{
 		// Hack: guess at 6-panel.
@@ -692,14 +693,30 @@ static bool LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNameTo
 		iTransformNewToOld[11] = BMS_P2_TURN;
 		break;
 	case StepsType_beat_single7:
-		iTransformNewToOld[0] = BMS_P1_KEY1;
-		iTransformNewToOld[1] = BMS_P1_KEY2;
-		iTransformNewToOld[2] = BMS_P1_KEY3;
-		iTransformNewToOld[3] = BMS_P1_KEY4;
-		iTransformNewToOld[4] = BMS_P1_KEY5;
-		iTransformNewToOld[5] = BMS_P1_KEY6;
-		iTransformNewToOld[6] = BMS_P1_KEY7;
-		iTransformNewToOld[7] = BMS_P1_TURN;
+		if( !bTrackHasNote[BMS_P1_KEY7] && bTrackHasNote[BMS_P1_TURN] )
+		{
+			/* special case for o2mania style charts:
+			 * the turntable is used for first key while the real 7th key is not used. */
+			iTransformNewToOld[0] = BMS_P1_TURN;
+			iTransformNewToOld[1] = BMS_P1_KEY1;
+			iTransformNewToOld[2] = BMS_P1_KEY2;
+			iTransformNewToOld[3] = BMS_P1_KEY3;
+			iTransformNewToOld[4] = BMS_P1_KEY4;
+			iTransformNewToOld[5] = BMS_P1_KEY5;
+			iTransformNewToOld[6] = BMS_P1_KEY6;
+			iTransformNewToOld[7] = BMS_P1_KEY7;
+		}
+		else
+		{
+			iTransformNewToOld[0] = BMS_P1_KEY1;
+			iTransformNewToOld[1] = BMS_P1_KEY2;
+			iTransformNewToOld[2] = BMS_P1_KEY3;
+			iTransformNewToOld[3] = BMS_P1_KEY4;
+			iTransformNewToOld[4] = BMS_P1_KEY5;
+			iTransformNewToOld[5] = BMS_P1_KEY6;
+			iTransformNewToOld[6] = BMS_P1_KEY7;
+			iTransformNewToOld[7] = BMS_P1_TURN;
+		}
 		break;
 	case StepsType_beat_double7:
 		iTransformNewToOld[0] = BMS_P1_KEY1;
@@ -733,7 +750,7 @@ static bool LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNameTo
 			int iEmptyTrack = -1;
 			for( int i=0; i<iNumNewTracks; i++ )
 			{
-				if ( ndNotes.GetTapNote(iTransformNewToOld[i], row) == TAP_EMPTY )
+				if ( ndNotes.GetTapNote(iTransformNewToOld[i], row) == TAP_EMPTY && !ndNotes.IsHoldNoteAtRow(iTransformNewToOld[i], row) )
 				{
 					iEmptyTrack = iTransformNewToOld[i];
 					break;
@@ -977,6 +994,7 @@ void BMSLoader::GetApplicableFiles( const RString &sPath, vector<RString> &out )
 {
 	GetDirListing( sPath + RString("*.bms"), out );
 	GetDirListing( sPath + RString("*.bme"), out );
+	GetDirListing( sPath + RString("*.bml"), out );
 }
 
 bool BMSLoader::LoadFromDir( const RString &sDir, Song &out )
@@ -1086,6 +1104,18 @@ bool BMSLoader::LoadFromDir( const RString &sDir, Song &out )
 	map<RString,int> idToKeysoundIndex;
 	ReadGlobalTags( aBMSData[iMainDataIndex], out, sigAdjustments, idToKeysoundIndex );
 
+	// The brackets before the difficulty are in common substring, so remove them if it's found.
+	if( commonSubstring.size() > 2 && commonSubstring[commonSubstring.size() - 2] == ' ' )
+	{
+		switch( commonSubstring[commonSubstring.size() - 1] )
+		{
+		case '[':
+		case '(':
+		case '<':
+			commonSubstring = commonSubstring.substr(0, commonSubstring.size() - 2);
+		}
+	}
+	
 	// Override what that global tag said about the title if we have a good substring.
 	// Prevents clobbering and catches "MySong (7keys)" / "MySong (Another) (7keys)"
 	// Also catches "MySong (7keys)" / "MySong (14keys)"

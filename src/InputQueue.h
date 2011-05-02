@@ -27,11 +27,19 @@ struct InputQueueCode
 public:
 	bool Load( RString sButtonsNames );
 	bool EnteredCode( GameController controller ) const;
+	
+	InputQueueCode(): m_aPresses() {}
 
 private:
 	struct ButtonPress
 	{
-		ButtonPress() { m_bAllowIntermediatePresses = false; memset( m_InputTypes, 0, sizeof(m_InputTypes) ); m_InputTypes[IET_FIRST_PRESS] = true; }
+		ButtonPress(): m_aButtonsToHold(), m_aButtonsToNotHold(),
+			m_aButtonsToPress(),
+			m_bAllowIntermediatePresses(false)
+		{
+			memset( m_InputTypes, 0, sizeof(m_InputTypes) );
+			m_InputTypes[IET_FIRST_PRESS] = true;
+		}
 		vector<GameButton> m_aButtonsToHold;
 		vector<GameButton> m_aButtonsToNotHold;
 		vector<GameButton> m_aButtonsToPress;

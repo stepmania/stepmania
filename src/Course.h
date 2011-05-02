@@ -55,9 +55,11 @@ public:
 	float fGainSeconds;	// time gained back at the beginning of the song.  LifeMeterTime only.
 	int iGainLives;			// lives gained back at the beginning of the next song
 
-	CourseEntry(): bSecret(false), bNoDifficult(false),
+	CourseEntry(): bSecret(false), songID(), songCriteria(),
+		stepsCriteria(), bNoDifficult(false),
 		songSort(SongSort_Randomize), iChooseIndex(0),
-		sModifiers(RString("")), fGainSeconds(0), iGainLives(-1) {}
+		sModifiers(RString("")), attacks(), fGainSeconds(0),
+		iGainLives(-1) {}
 
 	bool IsFixedSong() const { return songID.IsValid(); }
 
@@ -159,9 +161,10 @@ public:
 
 	RString	m_sMainTitle, m_sMainTitleTranslit;
 	RString	m_sSubTitle, m_sSubTitleTranslit;
+	RString m_sScripter;
 
 	RString	m_sBannerPath;
-	RString	m_sBackgroundPath; // after 9 years yes finally -aj
+	RString	m_sBackgroundPath;
 	RString	m_sCDTitlePath;
 	RString	m_sGroupName;
 
@@ -187,6 +190,8 @@ public:
 	{
 		Trail trail;
 		bool null;
+		
+		CacheData(): trail(), null(false) {}
 	};
 	typedef map<CacheEntry, CacheData> TrailCache_t;
 	mutable TrailCache_t m_TrailCache;

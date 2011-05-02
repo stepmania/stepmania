@@ -12,7 +12,7 @@
 
 #include <cerrno>
 
-#if defined(WIN32) && !defined(XBOX)
+#if defined(WIN32)
 #include <windows.h>
 #elif defined(UNIX) || defined(MACOSX)
 #include <paths.h>
@@ -174,11 +174,7 @@ static RageFileDriverMountpoints *g_Mountpoints = NULL;
 
 static RString GetDirOfExecutable( RString argv0 )
 {
-#ifdef _XBOX
-	// ???: what if it's not running from D:\?
-	return "D:\\";
-#else
-	/* argv[0] can be wrong in most OS's; try to avoid using it. */
+	// argv[0] can be wrong in most OS's; try to avoid using it.
 
 	RString sPath;
 #if defined(WIN32)
@@ -241,7 +237,6 @@ static RString GetDirOfExecutable( RString argv0 )
 #endif
 	}
 	return sPath;
-#endif
 }
 
 static void ChangeToDirOfExecutable( const RString &argv0 )

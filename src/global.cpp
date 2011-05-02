@@ -10,7 +10,6 @@
 #  include "archutils/Darwin/Crash.h"
 using CrashHandler::IsDebuggerPresent;
 using CrashHandler::DebugBreak;
-#elif defined(XBOX)
 #else
 #  include <unistd.h>
 #endif

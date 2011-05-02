@@ -100,22 +100,10 @@ void GetBounds( const Surface *pSurf, RECT *out )
 }
 
 
-
-
-
-
-
-
-
-
 #pragma include_alias( "zlib/zlib.h", "../zlib/zlib.h" )
 #include "../libpng/include/png.h"
 #if defined(_MSC_VER)
-#  if defined(_XBOX)
-#    pragma comment(lib, "../libpng/lib/xboxlibpng.lib")
-#  else
-#    pragma comment(lib, "../libpng/lib/libpng.lib")
-#  endif
+#  pragma comment(lib, "../libpng/lib/libpng.lib")
 #pragma warning(disable: 4611) /* interaction between '_setjmp' and C++ object destruction is non-portable */
 #endif
 
@@ -182,7 +170,7 @@ bool SavePNG( FILE *f, char szErrorbuf[1024], const Surface *pSurf )
 
 	if( setjmp(pPng->jmpbuf) )
 	{
-		png_destroy_read_struct( &pPng, &pInfo, png_infopp_NULL );
+		png_destroy_read_struct( &pPng, &pInfo, NULL );
 		return false;
 	}
 

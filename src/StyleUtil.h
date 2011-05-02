@@ -11,7 +11,7 @@ class StyleID
 	RString sStyle;
 
 public:
-	StyleID() { Unset(); }
+	StyleID(): sGame(""), sStyle("") { }
 	void Unset() { FromStyle(NULL); }
 	void FromStyle( const Style *p );
 	const Style *ToStyle() const;
