@@ -302,7 +302,7 @@ int64_t RageSoundDriver_PulseAudio::GetPosition() const
 /*
  * XXX: Something here is slow and causes arrows to stutter in gameplay.
  * This needs to be looked into (and for some reason the ALSA driver is
- * useless on my laptop. - Colby
+ * useless on my laptop). - Colby
  */
 void RageSoundDriver_PulseAudio::StreamWriteCb(pa_stream *s, size_t length)
 {
