@@ -426,7 +426,7 @@ static void AdjustForChangedSystemCapabilities()
 #endif
 
 #if defined(SUPPORT_OPENGL)
-#include "RageDisplay_Legacy.h"
+#include "RageDisplay_OGL.h"
 #endif
 
 #include "RageDisplay_Null.h"

@@ -9,7 +9,7 @@
 #include "LocalizedString.h"
 
 #include "RageDisplay_OGL_Helpers.h"
-using namespace RageDisplay_OGL_Helpers;
+using namespace RageDisplay_Legacy_Helpers;
 using namespace X11Helper;
 
 #include <stack>

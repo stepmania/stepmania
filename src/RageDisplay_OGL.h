@@ -1,4 +1,4 @@
-/* RageDisplay_OGL: OpenGL renderer. */
+/* RageDisplay_Legacy: OpenGL renderer. */
 
 #ifndef RAGE_DISPLAY_OGL_H
 #define RAGE_DISPLAY_OGL_H
@@ -12,7 +12,7 @@
 #define AssertNoGLError() \
 { \
 	GLenum error = glGetError(); \
-	ASSERT_M( error == GL_NO_ERROR, RageDisplay_OGL_Helpers::GLToString(error) ); \
+	ASSERT_M( error == GL_NO_ERROR, RageDisplay_Legacy_Helpers::GLToString(error) ); \
 }
 
 #if defined(DEBUG) || !defined(GL_GET_ERROR_IS_SLOW)
@@ -23,11 +23,11 @@
 #define DebugAssertNoGLError()
 #endif
 
-class RageDisplay_OGL: public RageDisplay
+class RageDisplay_Legacy: public RageDisplay
 {
 public:
-	RageDisplay_OGL();
-	virtual ~RageDisplay_OGL();
+	RageDisplay_Legacy();
+	virtual ~RageDisplay_Legacy();
 	virtual RString Init( const VideoModeParams &p, bool bAllowUnacceleratedRenderer );
 
 	virtual RString GetApiDescription() const { return "OpenGL"; }
@@ -129,7 +129,7 @@ protected:
 #endif
 
 /*
- * Copyright (c) 2001-2004 Chris Danford, Glenn Maynard
+ * Copyright (c) 2001-2011 Chris Danford, Glenn Maynard, Colby Klein
  * All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
