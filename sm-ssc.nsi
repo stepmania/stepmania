@@ -404,7 +404,7 @@ Section "Main Section" SecMain
 
 	SetOutPath "$INSTDIR\Program"
 !ifdef INSTALL_EXECUTABLES
-	; normal exec (xxx: hardcoded to StepMania instead of ${PRODUCT_FAMILY})
+	; normal exec
 	File "Program\StepMania.exe"
 	File "Program\StepMania.vdi"
 	; sse2 exec
@@ -412,7 +412,7 @@ Section "Main Section" SecMain
 	File "Program\StepMania-SSE2.vdi"
 	; other programs
 	File "Program\Texture Font Generator.exe"
-	; this crashes so fuck it
+	; AJ can never get this built properly:
 	;File "Program\tools.exe" ; to be replaced eventually
 !endif
 !ifdef ASSOCIATE_SMZIP
