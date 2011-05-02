@@ -550,7 +550,7 @@ static MenuDef g_SongInformation(
 	MenuRowDef( ScreenEdit::last_beat_hint,			"Last beat hint",		true, EditMode_Full, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::display_bpm,			"Display BPM",			true, EditMode_Full, true, true, 0, "Actual", "Specified", "Random" ),
 	MenuRowDef( ScreenEdit::min_bpm,			"Min BPM",			true, EditMode_Full, true, true, 0, NULL ),
-	MenuRowDef( ScreenEdit::min_bpm,			"Max BPM",			true, EditMode_Full, true, true, 0, NULL )
+	MenuRowDef( ScreenEdit::max_bpm,			"Max BPM",			true, EditMode_Full, true, true, 0, NULL )
 );
 
 static MenuDef g_TimingDataInformation(

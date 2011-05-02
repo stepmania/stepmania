@@ -13,6 +13,7 @@ ffmpeg-*
 *.idb
 *.pdb
 *.exp
+*.dmg
 ___*
 .hg
 .hgignore
