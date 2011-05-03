@@ -10,26 +10,6 @@ supported but exist anyways.)
 _____________________________________________________________________________
 
 ================================================================================
-sm-ssc $SM5VERSION | 2011????
---------------------------------------------------------------------------------
-
-20110417
---------
-* Use lua for all primary score keeping. Course modes right now still use the
-  old fashioned system. [TeruFSX, Wolfman2000]
-
-20110409
---------
-* [Player] Force hold judgments to take place before setting the score.
-  [theDtTvB]
-
-20110405
---------
-* [NotesLoaderSSC, NotesWriterSSC] Add the #LABELS tag. This is meant for step
-  editors to label different parts of their stepcharts. Use Control + , or . to
-  jump to different labels made. [Wolfman2000]
-
-================================================================================
 sm-ssc v1.2.5 | 20110501
 --------------------------------------------------------------------------------
 
