@@ -68,11 +68,26 @@
 #include "SpecialFiles.h"
 #include "Profile.h"
 
-#if defined(WIN32)
+#if defined(XBOX)
+#include "Archutils/Xbox/VirtualMemory.h"
+#endif
+
+#if defined(WIN32) && !defined(XBOX)
 #include <windows.h>
 #endif
 
+// since the XBOX SDK only works with VS.Net 2003, this doesn't exist yet.
+// see http://old.nabble.com/Linking-Error-with-MSVC%2B%2B-6.0-td21608559.html
+// for more information. -aj
+#if defined(XBOX)
+	extern "C"
+	{
+		int _get_output_format( void ){ return 0; }
+	}
+#endif
+
 static Preference<bool> g_bAllowMultipleInstances( "AllowMultipleInstances", false );
+
 
 void StepMania::GetPreferredVideoModeParams( VideoModeParams &paramsOut )
 {
@@ -406,7 +421,7 @@ static void AdjustForChangedSystemCapabilities()
 }
 
 #if defined(WIN32)
-#include "RageDisplay_D3D.h"
+//#include "RageDisplay_D3D.h"
 #include "archutils/Win32/VideoDriverInfo.h"
 #endif
 
@@ -454,6 +469,14 @@ struct VideoCardDefaults
 	}
 } const g_VideoCardDefaults[] = 
 {
+	VideoCardDefaults(
+		"Xbox",
+		"d3d",
+		600,400,
+		32,32,32,
+		2048,
+		true
+	),
 	VideoCardDefaults(
 		"Voodoo *5",
 		"d3d,opengl",	// received 3 reports of opengl crashing. -Chris
@@ -613,6 +636,8 @@ static RString GetVideoDriverName()
 {
 #if defined(_WINDOWS)
 	return GetPrimaryVideoDriverName();
+#elif defined(_XBOX)
+	return "Xbox";
 #else
 	return "OpenGL";
 #endif
@@ -737,14 +762,15 @@ RageDisplay *CreateDisplay()
 		if( sRenderer.CompareNoCase("opengl")==0 )
 		{
 #if defined(SUPPORT_OPENGL)
-			pRet = new RageDisplay_OGL;
+			pRet = new RageDisplay_Legacy;
 #endif
 		}
 		else if( sRenderer.CompareNoCase("d3d")==0 )
 		{
-#if defined(SUPPORT_D3D)
-			pRet = new RageDisplay_D3D;
-#endif
+// TODO: ANGLE/RageDisplay_Modern
+//#if defined(SUPPORT_D3D)
+//			pRet = new RageDisplay_D3D;
+//#endif
 		}
 		else if( sRenderer.CompareNoCase("null")==0 )
 		{
@@ -854,8 +880,11 @@ static void MountTreeOfZips( const RString &dir )
 		RString path = dirs.back();
 		dirs.pop_back();
 
+#if !defined(XBOX)
+		// Xbox doesn't detect directories properly, so we'll ignore this
 		if( !IsADirectory(path) )
 			continue;
+#endif
 
 		vector<RString> zips;
 		GetDirListing( path + "/*.zip", zips, false, true );
@@ -968,6 +997,10 @@ int main(int argc, char* argv[])
 	}
 
 	ApplyLogPreferences();
+
+#if defined(XBOX)
+	vmem_Manager.Init();
+#endif
 
 	WriteLogHeader();
 
@@ -1534,4 +1567,3 @@ void HandleInputEvents(float fDeltaTime)
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-
