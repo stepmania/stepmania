@@ -1,51 +1,60 @@
-#ifndef RAGE_DISPLAY_OGL_HELPERS_H
-#define RAGE_DISPLAY_OGL_HELPERS_H
+#include "global.h"
+#include "RageDisplay_Legacy_Helpers.h"
+#include "RageUtil.h"
 
-#if defined(WIN32)
-#include <windows.h>
-#endif
+#include "RageLog.h"
+#include "RageUtil.h"
+#include "arch/LowLevelWindow/LowLevelWindow.h"
 
-#include <GL/glew.h>
+#include <map>
+#include <set>
 
-/* Import RageDisplay, for types.  Do not include RageDisplay_Legacy.h. */
-#include "RageDisplay.h"
-
-/* Windows defines GL_EXT_paletted_texture incompletely: */
-#ifndef GL_TEXTURE_INDEX_SIZE_EXT
-#define GL_TEXTURE_INDEX_SIZE_EXT         0x80ED
-#endif
-
-/** @brief Utilities for working with the RageDisplay. */
-namespace RageDisplay_Legacy_Helpers
+namespace
 {
-	void Init();
-	RString GLToString( GLenum e );
+	map<GLenum, RString> g_Strings;
+	void InitStringMap()
+	{
+		static bool bInitialized = false;
+		if( bInitialized )
+			return;
+		bInitialized = true;
+
+#define X(a) g_Strings[a] = #a;
+		X(GL_RGBA8);	X(GL_RGBA4);	X(GL_RGB5_A1);	X(GL_RGB5);	X(GL_RGBA);	X(GL_RGB);
+		X(GL_BGR);	X(GL_BGRA);
+		X(GL_COLOR_INDEX8_EXT);	X(GL_COLOR_INDEX4_EXT);	X(GL_COLOR_INDEX);
+		X(GL_UNSIGNED_BYTE);	X(GL_UNSIGNED_SHORT_4_4_4_4); X(GL_UNSIGNED_SHORT_5_5_5_1);
+		X(GL_UNSIGNED_SHORT_1_5_5_5_REV);
+		X(GL_INVALID_ENUM); X(GL_INVALID_VALUE); X(GL_INVALID_OPERATION);
+		X(GL_STACK_OVERFLOW); X(GL_STACK_UNDERFLOW); X(GL_OUT_OF_MEMORY);
+#undef X
+	}
 };
 
-class RenderTarget
+void RageDisplay_Legacy_Helpers::Init()
 {
-public:
-	virtual ~RenderTarget() { }
-	virtual void Create( const RenderTargetParam &param, int &iTextureWidthOut, int &iTextureHeightOut ) = 0;
+	InitStringMap();
+}
 
-	virtual unsigned GetTexture() const = 0;
+RString RageDisplay_Legacy_Helpers::GLToString( GLenum e )
+{
+	if( g_Strings.find(e) != g_Strings.end() )
+		return g_Strings[e];
 
-	/* Render to this RenderTarget. */
-	virtual void StartRenderingTo() = 0;
+	return ssprintf( "%i", int(e) );
+}
+/*
+static void GetGLExtensions( set<string> &ext )
+{
+	const char *szBuf = (const char *) glGetString( GL_EXTENSIONS );
 
-	/* Stop rendering to this RenderTarget.  Update the texture, if necessary, and
-	 * make it available. */
-	virtual void FinishRenderingTo() = 0;
+	vector<RString> asList;
+	split( szBuf, " ", asList );
 
-	virtual bool InvertY() const { return false; }
-
-	const RenderTargetParam &GetParam() const { return m_Param; }
-
-protected:
-	RenderTargetParam m_Param;
-};
-
-#endif
+	for( unsigned i = 0; i < asList.size(); ++i )
+		ext.insert( asList[i] );
+}
+*/
 
 /*
  * Copyright (c) 2001-2011 Chris Danford, Glenn Maynard, Colby Klein
