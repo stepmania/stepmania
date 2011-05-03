@@ -828,6 +828,17 @@ void TimingData::ScaleRegion( float fScale, int iStartIndex, int iEndIndex, bool
 			m_ComboSegments[i].m_iStartRow = lrintf( (iSegStart - iStartIndex) * fScale ) + iStartIndex;
 	}
 	
+	for ( unsigned i = 0; i < m_LabelSegments.size(); i++ )
+	{
+		const int iSegStart = m_LabelSegments[i].m_iStartRow;
+		if( iSegStart < iStartIndex )
+			continue;
+		else if( iSegStart > iEndIndex )
+			m_LabelSegments[i].m_iStartRow += lrintf( (iEndIndex - iStartIndex) * (fScale - 1) );
+		else
+			m_LabelSegments[i].m_iStartRow = lrintf( (iSegStart - iStartIndex) * fScale ) + iStartIndex;
+	}
+	
 	// adjust BPM changes to preserve timing
 	if( bAdjustBPM )
 	{
