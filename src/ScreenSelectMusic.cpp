@@ -92,6 +92,7 @@ void ScreenSelectMusic::Init()
 	TWO_PART_CONFIRMS_ONLY.Load( m_sName, "TwoPartConfirmsOnly" );
 	TWO_PART_TIMER_SECONDS.Load( m_sName, "TwoPartTimerSeconds" );
 	WRAP_CHANGE_STEPS.Load( m_sName, "WrapChangeSteps" );
+	NULL_SCORE_STRING.Load( m_sName, "NullScoreString" );
 	// To allow changing steps with gamebuttons -DaisuMaster
 	CHANGE_STEPS_WITH_GAME_BUTTONS.Load( m_sName, "ChangeStepsWithGameButtons" );
 	CHANGE_GROUPS_WITH_GAME_BUTTONS.Load( m_sName, "ChangeGroupsWithGameButtons" );
@@ -1530,7 +1531,7 @@ void ScreenSelectMusic::AfterStepsOrTrailChange( const vector<PlayerNumber> &vpn
 		{
 			// The numbers shouldn't stay if the current selection is NULL.
 			// todo: Let themers set the text value instead of just using 0. -aj
-			m_textHighScore[pn].SetText( ssprintf("%*i", NUM_SCORE_DIGITS, 0) );
+			m_textHighScore[pn].SetText( NULL_SCORE_STRING );
 		}
 	}
 }

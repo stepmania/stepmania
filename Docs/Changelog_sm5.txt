@@ -1,0 +1,13 @@
+StepMania 5 Changelog
+________________________________________________________________________________
+The StepMania 5 Changelog covers all post-sm-ssc changes. For a list of changes
+from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
+________________________________________________________________________________
+
+================================================================================
+StepMania 5.0 $NEXT | 20110xyy
+--------------------------------------------------------------------------------
+
+2011/05/02
+----------
+* [ScreenSelectMusic] Added NullScoreString metric. [AJ]
