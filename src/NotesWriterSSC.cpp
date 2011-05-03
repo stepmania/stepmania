@@ -303,7 +303,7 @@ static RString GetSSCNoteData( const Song &song, const Steps &in, bool bSavingCa
 		FOREACH_ENUM( RadarCategory, rc )
 			asRadarValues.push_back( ssprintf("%.3f", rv[rc]) );
 	}
-	lines.push_back( ssprintf( "#RADARVALUES:%s:", join(",",asRadarValues).c_str() ) );
+	lines.push_back( ssprintf( "#RADARVALUES:%s;", join(",",asRadarValues).c_str() ) );
 
 	lines.push_back( ssprintf( "#CREDIT:%s;", SmEscape(in.GetCredit()).c_str() ) );
 
