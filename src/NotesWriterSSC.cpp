@@ -325,6 +325,7 @@ static RString GetSSCNoteData( const Song &song, const Steps &in, bool bSavingCa
 
 	lines.push_back( song.m_vsKeysoundFile.empty() ? "#NOTES:" : "#NOTES2:" );
 
+	TrimLeft(sNoteData);
 	split( sNoteData, "\n", lines, true );
 	lines.push_back( ";" );
 
