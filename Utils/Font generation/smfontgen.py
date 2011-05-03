@@ -12,7 +12,7 @@ def smfontgen(fontname, fontsize, glyphsizex, glyphsizey, sstartcode, sendcode, 
 	texindex = 0
 	metricsfd = 0
 	atglyph = startcode
- 
+	
 	metrics = open(filename+".ini", "w")
 	metrics.write("\xEF\xBB\xBF") # Unicode BOM
 	metrics.write("[common]\n")
@@ -24,19 +24,19 @@ def smfontgen(fontname, fontsize, glyphsizex, glyphsizey, sstartcode, sendcode, 
 	metrics.write("DrawExtraPixelsRight=0\n")
 	metrics.write("AdvanceExtraPixels=0\n")
 	metrics.write("\n")
- 
+	
 	while(atglyph <= endcode):
 		atglyph = maketex(texindex, fontname, fontsize, glyphsizex, glyphsizey, atglyph, endcode, charsperrow, rowspertex, metrics, border, filename)
 		texindex+=1
 	# XXX Wrap up metrics here
- 
+
 # Generates one texture
 def maketex(texindex, fontname, fontsize, glyphsizex, glyphsizey, startcode, endcode, charsperrow, rowspertex, metrics, border, filename):
 	totalx = glyphsizex * charsperrow # We'll crop it down later if needed
 	totaly = glyphsizey*rowspertex # See above
- 
+	
 	metrics.write("["+str(texindex)+"]\n")
- 
+	
 	img = pdb.gimp_image_new(totalx, totaly, RGB)
 	# DEBUG: show the image
 	#pdb.gimp_display_new(img)
@@ -69,7 +69,7 @@ def maketex(texindex, fontname, fontsize, glyphsizex, glyphsizey, startcode, end
 			pdb.gimp_selection_layer_alpha(charlyr)
 			# Merge the layer down (the selection stays):
 			glyphlyr = pdb.gimp_image_merge_down(img, charlyr, CLIP_TO_IMAGE)
- 
+		
 		# And finally, test if the selection is empty. If it is, there's no glyph.
 		# If it isn't, we got a glyph.
 		# If no floating selection was created, nothing was drawn,
@@ -87,9 +87,9 @@ def maketex(texindex, fontname, fontsize, glyphsizex, glyphsizey, startcode, end
 				if celly >= rowspertex: break
 				metrics.write("\n")
 				metrics.write("Line "+str(celly)+"=")
- 
+		
 		atglyph+=1
- 
+	
 	# If we didn't use all the rows/columns, crop off the excess
 	if(celly == 0): # Only one row
 		assert atglyph >= endcode
@@ -97,9 +97,9 @@ def maketex(texindex, fontname, fontsize, glyphsizex, glyphsizey, startcode, end
 	elif ( (celly+1)*glyphsizey < totaly):
 		assert atglyph >= endcode
 		pdb.gimp_image_crop(img, totalx, (celly+1)*glyphsizey, 0, 0)
- 
+	
 	# Here is where you put your code for dressing the glyphs up. gimp_selection_layer_alpha is your friend.
- 
+	
 	# Outline
 	#otlnlyr = pdb.gimp_layer_copy(glyphlyr, False)
 	#pdb.gimp_drawable_set_name(otlnlyr, "Outlines")
@@ -108,10 +108,10 @@ def maketex(texindex, fontname, fontsize, glyphsizex, glyphsizey, startcode, end
 	#pdb.gimp_selection_layer_alpha(otlnlyr)
 	#pdb.gimp_selection_grow(img, 3)
 	#pdb.gimp_edit_bucket_fill(otlnlyr, BG_BUCKET_FILL, NORMAL_MODE,100, 255, False, 0, 0)
- 
+	
 	# Rename the ("new") glyph layer
 	pdb.gimp_drawable_set_name(glyphlyr, "Glyphs")
- 
+	
 	# Save the texture.
 	if(celly == rowspertex): # Full texture
 		finalfilename = filename+" ["+str(texindex)+"] "+str(charsperrow)+"x"+str(rowspertex)+".png"
@@ -119,23 +119,23 @@ def maketex(texindex, fontname, fontsize, glyphsizex, glyphsizey, startcode, end
 		finalfilename = filename+" ["+str(texindex)+"] "+str(charsperrow)+"x"+str(celly+1)+".png"
 	else: # Only one row
 		finalfilename = filename+" ["+str(texindex)+"] "+str(cellx+1)+"x1.png"
- 
+	
 	drwbl = pdb.gimp_image_merge_visible_layers(img, CLIP_TO_IMAGE)
 	pdb.gimp_file_save(img, drwbl, finalfilename, finalfilename)
- 
+	
 	# All saved up. Blow it out of RAM.
 	pdb.gimp_image_delete(img)
- 
+	
 	# Wrap up metrics for this tex.
 	metrics.write("\n")
 	metrics.write("\n")
 	metrics.write(charlenout)
 	metrics.write("\n")
- 
+	
 	charlenout = ""
- 
+	
 	return atglyph
- 
+
 register(
 	"python_fu_stepmania_font",
 	"Generate a bitmap font for StepMania.\nBe patient, this can take a LONG time.",
@@ -160,5 +160,5 @@ register(
 	[],
 	smfontgen,
 	"<Image>/File/Create/Misc/")
- 
+
 main()
