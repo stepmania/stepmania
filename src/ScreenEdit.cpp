@@ -547,7 +547,10 @@ static MenuDef g_SongInformation(
 	MenuRowDef( ScreenEdit::main_title_transliteration,	"Main title transliteration",	true, EditMode_Practice, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::sub_title_transliteration,	"Sub title transliteration",	true, EditMode_Practice, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::artist_transliteration,		"Artist transliteration",	true, EditMode_Practice, true, true, 0, NULL ),
+	MenuRowDef( ScreenEdit::beat_0_offset,			"Beat 0 Offset",		true, EditMode_Full, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::last_beat_hint,			"Last beat hint",		true, EditMode_Full, true, true, 0, NULL ),
+	MenuRowDef( ScreenEdit::preview_start,			"Preview Start",		true, EditMode_Full, true, true, 0, NULL ),
+	MenuRowDef( ScreenEdit::preview_length,			"Preview Length",		true, EditMode_Full, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::display_bpm,			"Display BPM",			true, EditMode_Full, true, true, 0, "Actual", "Specified", "Random" ),
 	MenuRowDef( ScreenEdit::min_bpm,			"Min BPM",			true, EditMode_Full, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::max_bpm,			"Max BPM",			true, EditMode_Full, true, true, 0, NULL )
@@ -3010,9 +3013,24 @@ static void ChangeArtistTranslit( const RString &sNew )
 	pSong->m_sArtistTranslit = sNew;
 }
 
+static void ChangeBeat0Offset( const RString &sNew )
+{
+	GAMESTATE->m_pCurSong->m_Timing.m_fBeat0OffsetInSeconds = StringToFloat( sNew );
+}
+
 static void ChangeLastBeatHint( const RString &sNew )
 {
 	GAMESTATE->m_pCurSong->m_fSpecifiedLastBeat = StringToFloat( sNew );
+}
+
+static void ChangePreviewStart( const RString &sNew )
+{
+	GAMESTATE->m_pCurSong->m_fMusicSampleStartSeconds = StringToFloat( sNew );
+}
+
+static void ChangePreviewLength( const RString &sNew )
+{
+	GAMESTATE->m_pCurSong->m_fMusicSampleLengthSeconds = StringToFloat( sNew );
 }
 
 static void ChangeMinBPM( const RString &sNew )
@@ -3215,7 +3233,10 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 				g_SongInformation.rows[main_title_transliteration].SetOneUnthemedChoice( pSong->m_sMainTitleTranslit );
 				g_SongInformation.rows[sub_title_transliteration].SetOneUnthemedChoice( pSong->m_sSubTitleTranslit );
 				g_SongInformation.rows[artist_transliteration].SetOneUnthemedChoice( pSong->m_sArtistTranslit );
+				g_SongInformation.rows[beat_0_offset].SetOneUnthemedChoice( ssprintf("%.5f", pSong->m_Timing.m_fBeat0OffsetInSeconds) );
 				g_SongInformation.rows[last_beat_hint].SetOneUnthemedChoice( ssprintf("%.5f", pSong->m_fSpecifiedLastBeat) );
+				g_SongInformation.rows[preview_start].SetOneUnthemedChoice( ssprintf("%.5f", pSong->m_fMusicSampleStartSeconds) );
+				g_SongInformation.rows[preview_length].SetOneUnthemedChoice( ssprintf("%.5f", pSong->m_fMusicSampleLengthSeconds) );
 				g_SongInformation.rows[display_bpm].iDefaultChoice = pSong->m_DisplayBPMType;
 				g_SongInformation.rows[min_bpm].SetOneUnthemedChoice( ssprintf("%.5f", pSong->m_fSpecifiedBPMMin) );
 				g_SongInformation.rows[max_bpm].SetOneUnthemedChoice( ssprintf("%.5f", pSong->m_fSpecifiedBPMMax) );
@@ -3623,7 +3644,10 @@ static LocalizedString ENTER_CREDIT			("ScreenEdit","Enter a new credit.");
 static LocalizedString ENTER_MAIN_TITLE_TRANSLIT	("ScreenEdit","Enter a new main title transliteration.");
 static LocalizedString ENTER_SUB_TITLE_TRANSLIT		("ScreenEdit","Enter a new sub title transliteration.");
 static LocalizedString ENTER_ARTIST_TRANSLIT		("ScreenEdit","Enter a new artist transliteration.");
+static LocalizedString ENTER_BEAT_0_OFFSET		("ScreenEdit","Enter the offset for the song.");
 static LocalizedString ENTER_LAST_BEAT_HINT		("ScreenEdit","Enter a new last beat hint.");
+static LocalizedString ENTER_PREVIEW_START		("ScreenEdit","Enter a new preview start.");
+static LocalizedString ENTER_PREVIEW_LENGTH		("ScreenEdit","Enter a new preview length.");
 static LocalizedString ENTER_MIN_BPM			("ScreenEdit","Enter a new min BPM.");
 static LocalizedString ENTER_MAX_BPM			("ScreenEdit","Enter a new max BPM.");
 void ScreenEdit::HandleSongInformationChoice( SongInformationChoice c, const vector<int> &iAnswers )
@@ -3657,10 +3681,25 @@ void ScreenEdit::HandleSongInformationChoice( SongInformationChoice c, const vec
 	case artist_transliteration:
 		ScreenTextEntry::TextEntry( SM_None, ENTER_ARTIST_TRANSLIT, pSong->m_sArtistTranslit, 100, NULL, ChangeArtistTranslit, NULL );
 		break;
+	case beat_0_offset:
+		ScreenTextEntry::TextEntry( SM_None, ENTER_BEAT_0_OFFSET,
+					   ssprintf("%.5f", pSong->m_Timing.m_fBeat0OffsetInSeconds), 20,
+					   ScreenTextEntry::FloatValidate, ChangeBeat0Offset, NULL );
+		break;
 	case last_beat_hint:
 		ScreenTextEntry::TextEntry( SM_None, ENTER_LAST_BEAT_HINT, 
 					   ssprintf("%.5f", pSong->m_fSpecifiedLastBeat), 20, 
 					   ScreenTextEntry::FloatValidate, ChangeLastBeatHint, NULL );
+		break;
+	case preview_start:
+		ScreenTextEntry::TextEntry( SM_None, ENTER_PREVIEW_START,
+					   ssprintf("%.5f", pSong->m_fMusicSampleStartSeconds), 20,
+					   ScreenTextEntry::FloatValidate, ChangePreviewStart, NULL );
+		break;
+	case preview_length:
+		ScreenTextEntry::TextEntry( SM_None, ENTER_PREVIEW_LENGTH,
+					   ssprintf("%.5f", pSong->m_fMusicSampleLengthSeconds), 20,
+					   ScreenTextEntry::FloatValidate, ChangePreviewLength, NULL );
 		break;
 	case min_bpm:
 		ScreenTextEntry::TextEntry( SM_None, ENTER_MIN_BPM,

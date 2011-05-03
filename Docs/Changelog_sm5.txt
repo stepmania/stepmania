@@ -8,6 +8,10 @@ ________________________________________________________________________________
 StepMania 5.0 $NEXT | 20110xyy
 --------------------------------------------------------------------------------
 
+2011/05/03
+* [ScreenEdit] Allow changing the Beat 0 Offset, Music Sample Start, and
+  Music Sample Length via Edit Song Info menu. [Wolfman2000]
+
 2011/05/02
 ----------
 * [ScreenSelectMusic] Added NullScoreString metric. [AJ]
