@@ -1,7 +1,7 @@
 #include "global.h"
 
-#include "RageDisplay_OGL.h"
-#include "RageDisplay_OGL_Helpers.h"
+#include "RageDisplay_Legacy.h"
+#include "RageDisplay_Legacy_Helpers.h"
 using namespace RageDisplay_Legacy_Helpers;
 
 #include "RageFile.h"
