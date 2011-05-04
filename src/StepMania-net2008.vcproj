@@ -50,7 +50,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".;vorbis;libjpeg;&quot;lua-5.1\include&quot;;ffmpeg\modern_working\include;BaseClasses;jsoncpp/include"
+				AdditionalIncludeDirectories=".;vorbis;libjpeg;&quot;lua-5.1\include&quot;;ffmpeg\modern_working\include;BaseClasses;jsoncpp/include;&quot;..\extern\glew-1.5.8\include&quot;"
 				PreprocessorDefinitions="WIN32,_DEBUG,_WINDOWS,WINDOWS,DEBUG"
 				ExceptionHandling="0"
 				BasicRuntimeChecks="3"
@@ -157,7 +157,7 @@
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="2"
-				AdditionalIncludeDirectories=".;vorbis;libjpeg;&quot;lua-5.1\include&quot;;ffmpeg\modern_working\include;BaseClasses;jsoncpp/include"
+				AdditionalIncludeDirectories=".;vorbis;libjpeg;&quot;lua-5.1\include&quot;;ffmpeg\modern_working\include;BaseClasses;jsoncpp/include;&quot;..\extern\glew-1.5.8\include&quot;"
 				PreprocessorDefinitions="WIN32,NDEBUG,_WINDOWS,WINDOWS,RELEASE"
 				StringPooling="true"
 				MinimalRebuild="false"
