@@ -264,7 +264,7 @@ static void DisplayResolutionChoices( vector<RString> &out )
 	}
 }
 
-static void Theme( int &sel, bool ToSel, const ConfOption *pConfOption )
+static void RequestedTheme( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	vector<RString> choices;
 	pConfOption->MakeOptionsList( choices );
@@ -653,7 +653,7 @@ static void InitializeConfOptions()
 
 	// Appearance options
 	ADD( ConfOption( "Language",			Language,		LanguageChoices ) );
-	ADD( ConfOption( "Theme",			Theme,			ThemeChoices ) );
+	ADD( ConfOption( "Theme",			RequestedTheme,		ThemeChoices ) );
 	g_ConfOptions.back().m_iEffects = OPT_APPLY_THEME;
 
 	ADD( ConfOption( "Announcer",			Announcer,		AnnouncerChoices ) );
