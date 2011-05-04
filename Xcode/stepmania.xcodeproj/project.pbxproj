@@ -3143,12 +3143,7 @@
 		29B97314FDCFA39411CA2CEA /* SDL App */ = {
 			isa = PBXGroup;
 			children = (
-				EE879B8E132E06C50078FDDC /* glew-1.5.8 */,
-				EE906F6F12BF3A5B00146C96 /* json */,
-				AAA070B20CE7B3AD005A3060 /* mad-0.15.1b */,
-				AA7C8B920B67467C00FD9940 /* libtomcrypt */,
-				AA7C8A7F0B6744F600FD9940 /* libtommath */,
-				AAE781870AC7E46E00AEFC64 /* lua-5.1 */,
+				2BDB87261371F7FF00E6FD3A /* extern */,
 				AA6EFF7404770F8B005F316C /* Actors */,
 				AA6EFEFA04770E84005F316C /* ActorsInGameplay */,
 				AA6EFE6D04770D3E005F316C /* ActorsInMenus */,
@@ -3159,7 +3154,6 @@
 				AA6E00FE047711FF005F316C /* GlobalSingletons */,
 				2B766980132FF62B00586512 /* NoteParsing */,
 				29B97315FDCFA39411CA2CEA /* Other Source */,
-				AA8B6C7804AFD82B00D02EE9 /* pcre */,
 				AA6EFDBB04770A83005F316C /* Rage */,
 				AA6EFE6A04770D01005F316C /* StepMania */,
 				AA6E00090477103E005F316C /* Screens */,
@@ -3234,6 +3228,20 @@
 				2BA7925D1304F20D002BD8E1 /* NotesWriterSSC.h */,
 			);
 			name = NoteParsing;
+			sourceTree = "<group>";
+		};
+		2BDB87261371F7FF00E6FD3A /* extern */ = {
+			isa = PBXGroup;
+			children = (
+				EE879B8E132E06C50078FDDC /* glew-1.5.8 */,
+				EE906F6F12BF3A5B00146C96 /* json */,
+				AA7C8A7F0B6744F600FD9940 /* libtommath */,
+				AA7C8B920B67467C00FD9940 /* libtomcrypt */,
+				AAE781870AC7E46E00AEFC64 /* lua-5.1 */,
+				AAA070B20CE7B3AD005A3060 /* mad-0.15.1b */,
+				AA8B6C7804AFD82B00D02EE9 /* pcre */,
+			);
+			name = extern;
 			sourceTree = "<group>";
 		};
 		AA60E0BB067992D7008ADC41 /* Threads */ = {
