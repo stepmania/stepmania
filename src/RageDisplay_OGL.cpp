@@ -22,7 +22,9 @@ using namespace RageDisplay_Legacy_Helpers;
 
 #include <set>
 
+#if defined(WINDOWS)
 #include <GL/wglew.h>
+#endif
 
 #if defined(_MSC_VER)
 #pragma comment(lib, "opengl32.lib")
