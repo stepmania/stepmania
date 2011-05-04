@@ -445,11 +445,9 @@
 	<References>
 	</References>
 	<Files>
-		<Filter Name="extern" >
-			<Filter Name="glew-1.5.8" >
-				<File RelativePath="..\extern\glew-1.5.8\src">
-				</File>
-			</Filter>
+		<Filter Name="glew-1.5.8" >
+			<File RelativePath="..\extern\glew-1.5.8\src">
+			</File>
 		</Filter>
 		<Filter
 			Name="Screens"
