@@ -22,6 +22,10 @@ using namespace RageDisplay_Legacy_Helpers;
 
 #include <set>
 
+#if defined(WINDOWS)
+#include <GL/wglew.h>
+#endif
+
 #if defined(_MSC_VER)
 #pragma comment(lib, "opengl32.lib")
 #pragma comment(lib, "glu32.lib")
@@ -743,8 +747,10 @@ RString RageDisplay_Legacy::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 #if defined(WINDOWS)
 	/* Set vsync the Windows way, if we can.  (What other extensions are there
 	 * to do this, for other archs?) */
-	if (GLEW_WGL_EXT_swap_control)
+	if( wglewIsSupported("WGL_EXT_swap_control") )
 		wglSwapIntervalEXT(p.vsync);
+	else
+		return RString("The WGL_EXT_swap_control extension is not supported on your computer.");
 #endif
 	
 	ResolutionChanged();

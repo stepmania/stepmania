@@ -25,8 +25,8 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/EHa"
 				Optimization="0"
-				AdditionalIncludeDirectories=".;vorbis;libjpeg;&quot;ffmpeg\include&quot;;est"
-				PreprocessorDefinitions="WIN32,_DEBUG,_WINDOWS,WINDOWS,DEBUG"
+				AdditionalIncludeDirectories=".;vorbis;libjpeg;&quot;ffmpeg\include&quot;;est;&quot;..\extern\glew-1.5.8\include&quot;"
+				PreprocessorDefinitions="WIN32,_DEBUG,_WINDOWS,WINDOWS,DEBUG,GLEW_STATIC"
 				ExceptionHandling="FALSE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="2"
@@ -109,8 +109,8 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				FavorSizeOrSpeed="2"
 				OptimizeForProcessor="2"
 				OptimizeForWindowsApplication="TRUE"
-				AdditionalIncludeDirectories=".;vorbis;libjpeg;&quot;ffmpeg\include&quot;"
-				PreprocessorDefinitions="WIN32,NDEBUG,_WINDOWS,WINDOWS,RELEASE"
+				AdditionalIncludeDirectories=".;vorbis;libjpeg;&quot;ffmpeg\include&quot;;&quot;..\extern\glew-1.5.8\include&quot;"
+				PreprocessorDefinitions="WIN32,NDEBUG,_WINDOWS,WINDOWS,RELEASE,GLEW_STATIC"
 				StringPooling="TRUE"
 				MinimalRebuild="FALSE"
 				ExceptionHandling="FALSE"
@@ -190,8 +190,8 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/EHa"
 				Optimization="0"
-				AdditionalIncludeDirectories=".;vorbis;libjpeg;&quot;ffmpeg\include&quot;"
-				PreprocessorDefinitions="WIN32,_DEBUG,_WINDOWS,WINDOWS,DEBUG"
+				AdditionalIncludeDirectories=".;vorbis;libjpeg;&quot;ffmpeg\include&quot;;&quot;..\extern\glew-1.5.8\include&quot;"
+				PreprocessorDefinitions="WIN32,_DEBUG,_WINDOWS,WINDOWS,DEBUG,GLEW_STATIC"
 				ExceptionHandling="FALSE"
 				BasicRuntimeChecks="0"
 				RuntimeLibrary="2"
@@ -259,6 +259,19 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 	<References>
 	</References>
 	<Files>
+		<Filter Name="glew-1.5.8" Filter="">
+			<File RelativePath="..\extern\glew-1.5.8\src\glew.c">
+				<FileConfiguration Name="Debug|Win32">
+					<Tool Name="VCCLCompilerTool" UsePrecompiledHeader="0" />
+				</FileConfiguration>
+				<FileConfiguration Name="Release|Win32">
+					<Tool Name="VCCLCompilerTool" UsePrecompiledHeader="0" />
+				</FileConfiguration>
+				<FileConfiguration Name="FastDebug|Win32">
+					<Tool Name="VCCLCompilerTool" UsePrecompiledHeader="0" />
+				</FileConfiguration>
+			</File>
+		</Filter>
 		<Filter
 			Name="Screens"
 			Filter="">
