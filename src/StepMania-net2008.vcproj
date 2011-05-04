@@ -449,7 +449,7 @@
 			Name="glew-1.5.8"
 			>
 			<File
-				RelativePath="..\extern\glew-1.5.8\src"
+				RelativePath="..\extern\glew-1.5.8\src\glew.c"
 				>
 			</File>
 		</Filter>
