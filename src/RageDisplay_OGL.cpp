@@ -704,6 +704,11 @@ void RageDisplay_Legacy::ResolutionChanged()
 	RageDisplay::ResolutionChanged();
 }
 
+#if defined(WINDOWS)
+	typedef BOOL (APIENTRY *PFNWGLSWAPINTERVALFARPROC)( int );
+	PFNWGLSWAPINTERVALFARPROC wglSwapIntervalEXT = 0;
+#endif
+
 // Return true if mode change was successful.
 // bNewDeviceOut is set true if a new device was created and textures
 // need to be reloaded.
@@ -739,11 +744,16 @@ RString RageDisplay_Legacy::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 		InitShaders();
 	}
 
+	const char *extensions = reinterpret_cast<const char *>(glGetString( GL_EXTENSIONS ));
 // I'm not sure this is correct -Colby
 #if defined(WINDOWS)
+	if( strstr( extensions, "WGL_EXT_swap_control" ) == 0 )
+		return RString("The WGL_EXT_swap_control extension is not supported on your computer.");
+
 	/* Set vsync the Windows way, if we can.  (What other extensions are there
 	 * to do this, for other archs?) */
-	if (GLEW_WGL_EXT_swap_control)
+	wglSwapIntervalEXT = (PFNWGLSWAPINTERVALFARPROC)wglGetProcAddress( "wglSwapIntervalEXT" );
+	if (wglSwapIntervalEXT)
 		wglSwapIntervalEXT(p.vsync);
 #endif
 	
