@@ -4716,7 +4716,7 @@
 				AA8B6C7F04AFD87300D02EE9 /* study.c */,
 			);
 			name = pcre;
-			path = ../src/pcre;
+			path = ../extern/pcre;
 			sourceTree = "<group>";
 		};
 		AAA070B20CE7B3AD005A3060 /* mad-0.15.1b */ = {
