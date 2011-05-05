@@ -24,9 +24,9 @@ extern "C"
 #endif /* __cplusplus */
 
 #ifndef LIBOGG2
-#include <ogg/ogg.h>
+#include <../extern/vorbis/ogg/ogg.h>
 #else
-#include <ogg2/ogg.h>
+#include <../extern/vorbis/ogg2/ogg.h>
 /* This is temporary until libogg2 is more complete */
 ogg_buffer_state *ogg_buffer_create(void);
 #endif
