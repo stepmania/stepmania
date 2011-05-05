@@ -21,8 +21,8 @@
 #pragma warning(disable: 4611) /* interaction between '_setjmp' and C++ object destruction is non-portable */
 #else
 extern "C" {
-#include <jpeglib.h>
-#include <jerror.h>
+#include <../extern/libjpeg/jpeglib.h>
+#include <../extern/libjpeg/jerror.h>
 }
 #endif
 
