@@ -50,7 +50,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".;vorbis;libjpeg;&quot;lua-5.1\include&quot;;ffmpeg\modern_working\include;BaseClasses;jsoncpp/include;&quot;..\extern\glew-1.5.8\include&quot;"
+				AdditionalIncludeDirectories=".;vorbis;libjpeg;&quot;..\extern\lua-5.1\src&quot;;ffmpeg\modern_working\include;BaseClasses;jsoncpp/include;&quot;..\extern\glew-1.5.8\include&quot;"
 				PreprocessorDefinitions="WIN32,_DEBUG,_WINDOWS,WINDOWS,DEBUG,GLEW_STATIC"
 				ExceptionHandling="0"
 				BasicRuntimeChecks="3"
@@ -157,7 +157,7 @@
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="2"
-				AdditionalIncludeDirectories=".;vorbis;libjpeg;&quot;lua-5.1\include&quot;;ffmpeg\modern_working\include;BaseClasses;jsoncpp/include;&quot;..\extern\glew-1.5.8\include&quot;"
+				AdditionalIncludeDirectories=".;vorbis;libjpeg;&quot;..\extern\lua-5.1\src&quot;;ffmpeg\modern_working\include;BaseClasses;jsoncpp/include;&quot;..\extern\glew-1.5.8\include&quot;"
 				PreprocessorDefinitions="WIN32,NDEBUG,_WINDOWS,WINDOWS,RELEASE,GLEW_STATIC"
 				StringPooling="true"
 				MinimalRebuild="false"
@@ -261,7 +261,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".;vorbis;libjpeg;&quot;lua-5.1\include&quot;;ffmpeg\modern_working\include;BaseClasses;jsoncpp/include;&quot;..\extern\glew-1.5.8\include&quot;"
+				AdditionalIncludeDirectories=".;vorbis;libjpeg;&quot;..\extern\lua-5.1\src&quot;;ffmpeg\modern_working\include;BaseClasses;jsoncpp/include;&quot;..\extern\glew-1.5.8\include&quot;"
 				PreprocessorDefinitions="WIN32,_DEBUG,_WINDOWS,WINDOWS,DEBUG,GLEW_STATIC"
 				ExceptionHandling="0"
 				BasicRuntimeChecks="0"
@@ -368,7 +368,7 @@
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
-				AdditionalIncludeDirectories=".;vorbis;libjpeg;&quot;lua-5.1\include&quot;;ffmpeg\modern_working\include;BaseClasses;jsoncpp/include;&quot;..\extern\glew-1.5.8\include&quot;"
+				AdditionalIncludeDirectories=".;vorbis;libjpeg;&quot;..\extern\lua-5.1\src&quot;;ffmpeg\modern_working\include;BaseClasses;jsoncpp/include;&quot;..\extern\glew-1.5.8\include&quot;"
 				PreprocessorDefinitions="WIN32,NDEBUG,_WINDOWS,WINDOWS,RELEASE,GLEW_STATIC"
 				StringPooling="true"
 				MinimalRebuild="false"
@@ -445,46 +445,6 @@
 	<References>
 	</References>
 	<Files>
-		<Filter
-			Name="glew-1.5.8"
-			>
-			<File
-				RelativePath="..\extern\glew-1.5.8\src\glew.c"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="FastDebug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release-SSE2|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-			</File>
-		</Filter>
 		<Filter
 			Name="Screens"
 			>
@@ -6796,7 +6756,7 @@
 				Name="Lua"
 				>
 				<File
-					RelativePath="lua-5.1\src\lapi.c"
+					RelativePath="..\extern\lua-5.1\src\lapi.c"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -6832,51 +6792,11 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="lua-5.1\src\lapi.h"
+					RelativePath="..\extern\lua-5.1\src\lapi.h"
 					>
 				</File>
 				<File
-					RelativePath="lua-5.1\src\lauxlib.c"
-					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="FastDebug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release-SSE2|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="lua-5.1\src\lauxlib.h"
-					>
-				</File>
-				<File
-					RelativePath="lua-5.1\src\lbaselib.c"
+					RelativePath="..\extern\lua-5.1\src\lauxlib.c"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -6912,7 +6832,11 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="lua-5.1\src\lcode.c"
+					RelativePath="..\extern\lua-5.1\src\lauxlib.h"
+					>
+				</File>
+				<File
+					RelativePath="..\extern\lua-5.1\src\lbaselib.c"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -6948,11 +6872,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="lua-5.1\src\lcode.h"
-					>
-				</File>
-				<File
-					RelativePath="lua-5.1\src\ldblib.c"
+					RelativePath="..\extern\lua-5.1\src\lcode.c"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -6988,7 +6908,11 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="lua-5.1\src\ldebug.c"
+					RelativePath="..\extern\lua-5.1\src\lcode.h"
+					>
+				</File>
+				<File
+					RelativePath="..\extern\lua-5.1\src\ldblib.c"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -7024,11 +6948,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="lua-5.1\src\ldebug.h"
-					>
-				</File>
-				<File
-					RelativePath="lua-5.1\src\ldo.c"
+					RelativePath="..\extern\lua-5.1\src\ldebug.c"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -7064,47 +6984,11 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="lua-5.1\src\ldo.h"
+					RelativePath="..\extern\lua-5.1\src\ldebug.h"
 					>
 				</File>
 				<File
-					RelativePath="lua-5.1\src\ldump.c"
-					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="FastDebug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release-SSE2|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="lua-5.1\src\lfunc.c"
+					RelativePath="..\extern\lua-5.1\src\ldo.c"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -7140,51 +7024,11 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="lua-5.1\src\lfunc.h"
+					RelativePath="..\extern\lua-5.1\src\ldo.h"
 					>
 				</File>
 				<File
-					RelativePath="lua-5.1\src\lgc.c"
-					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="FastDebug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release-SSE2|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="lua-5.1\src\lgc.h"
-					>
-				</File>
-				<File
-					RelativePath="lua-5.1\src\linit.c"
+					RelativePath="..\extern\lua-5.1\src\ldump.c"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -7220,7 +7064,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="lua-5.1\src\liolib.c"
+					RelativePath="..\extern\lua-5.1\src\lfunc.c"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -7256,7 +7100,11 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="lua-5.1\src\llex.c"
+					RelativePath="..\extern\lua-5.1\src\lfunc.h"
+					>
+				</File>
+				<File
+					RelativePath="..\extern\lua-5.1\src\lgc.c"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -7292,15 +7140,11 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="lua-5.1\src\llex.h"
+					RelativePath="..\extern\lua-5.1\src\lgc.h"
 					>
 				</File>
 				<File
-					RelativePath="lua-5.1\src\llimits.h"
-					>
-				</File>
-				<File
-					RelativePath="lua-5.1\src\lmathlib.c"
+					RelativePath="..\extern\lua-5.1\src\linit.c"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -7336,7 +7180,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="lua-5.1\src\lmem.c"
+					RelativePath="..\extern\lua-5.1\src\liolib.c"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -7372,11 +7216,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="lua-5.1\src\lmem.h"
-					>
-				</File>
-				<File
-					RelativePath="lua-5.1\src\loadlib.c"
+					RelativePath="..\extern\lua-5.1\src\llex.c"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -7412,7 +7252,15 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="lua-5.1\src\lobject.c"
+					RelativePath="..\extern\lua-5.1\src\llex.h"
+					>
+				</File>
+				<File
+					RelativePath="..\extern\lua-5.1\src\llimits.h"
+					>
+				</File>
+				<File
+					RelativePath="..\extern\lua-5.1\src\lmathlib.c"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -7448,11 +7296,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="lua-5.1\src\lobject.h"
-					>
-				</File>
-				<File
-					RelativePath="lua-5.1\src\lopcodes.c"
+					RelativePath="..\extern\lua-5.1\src\lmem.c"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -7488,47 +7332,11 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="lua-5.1\src\lopcodes.h"
+					RelativePath="..\extern\lua-5.1\src\lmem.h"
 					>
 				</File>
 				<File
-					RelativePath="lua-5.1\src\loslib.c"
-					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="FastDebug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release-SSE2|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="lua-5.1\src\lparser.c"
+					RelativePath="..\extern\lua-5.1\src\loadlib.c"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -7564,11 +7372,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="lua-5.1\src\lparser.h"
-					>
-				</File>
-				<File
-					RelativePath="lua-5.1\src\lstate.c"
+					RelativePath="..\extern\lua-5.1\src\lobject.c"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -7604,51 +7408,11 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="lua-5.1\src\lstate.h"
+					RelativePath="..\extern\lua-5.1\src\lobject.h"
 					>
 				</File>
 				<File
-					RelativePath="lua-5.1\src\lstring.c"
-					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="FastDebug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release-SSE2|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="lua-5.1\src\lstring.h"
-					>
-				</File>
-				<File
-					RelativePath="lua-5.1\src\lstrlib.c"
+					RelativePath="..\extern\lua-5.1\src\lopcodes.c"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -7684,7 +7448,11 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="lua-5.1\src\ltable.c"
+					RelativePath="..\extern\lua-5.1\src\lopcodes.h"
+					>
+				</File>
+				<File
+					RelativePath="..\extern\lua-5.1\src\loslib.c"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -7720,11 +7488,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="lua-5.1\src\ltable.h"
-					>
-				</File>
-				<File
-					RelativePath="lua-5.1\src\ltablib.c"
+					RelativePath="..\extern\lua-5.1\src\lparser.c"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -7760,7 +7524,11 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="lua-5.1\src\ltm.c"
+					RelativePath="..\extern\lua-5.1\src\lparser.h"
+					>
+				</File>
+				<File
+					RelativePath="..\extern\lua-5.1\src\lstate.c"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -7796,23 +7564,11 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="lua-5.1\src\ltm.h"
+					RelativePath="..\extern\lua-5.1\src\lstate.h"
 					>
 				</File>
 				<File
-					RelativePath="lua-5.1\src\lua.h"
-					>
-				</File>
-				<File
-					RelativePath="lua-5.1\src\luaconf.h"
-					>
-				</File>
-				<File
-					RelativePath="lua-5.1\src\lualib.h"
-					>
-				</File>
-				<File
-					RelativePath="lua-5.1\src\lundump.c"
+					RelativePath="..\extern\lua-5.1\src\lstring.c"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -7848,51 +7604,11 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="lua-5.1\src\lundump.h"
+					RelativePath="..\extern\lua-5.1\src\lstring.h"
 					>
 				</File>
 				<File
-					RelativePath="lua-5.1\src\lvm.c"
-					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="FastDebug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release-SSE2|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="lua-5.1\src\lvm.h"
-					>
-				</File>
-				<File
-					RelativePath="lua-5.1\src\lzio.c"
+					RelativePath="..\extern\lua-5.1\src\lstrlib.c"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -7928,7 +7644,251 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="lua-5.1\src\lzio.h"
+					RelativePath="..\extern\lua-5.1\src\ltable.c"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="FastDebug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release-SSE2|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\extern\lua-5.1\src\ltable.h"
+					>
+				</File>
+				<File
+					RelativePath="..\extern\lua-5.1\src\ltablib.c"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="FastDebug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release-SSE2|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\extern\lua-5.1\src\ltm.c"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="FastDebug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release-SSE2|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\extern\lua-5.1\src\ltm.h"
+					>
+				</File>
+				<File
+					RelativePath="..\extern\lua-5.1\src\lua.h"
+					>
+				</File>
+				<File
+					RelativePath="..\extern\lua-5.1\src\luaconf.h"
+					>
+				</File>
+				<File
+					RelativePath="..\extern\lua-5.1\src\lualib.h"
+					>
+				</File>
+				<File
+					RelativePath="..\extern\lua-5.1\src\lundump.c"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="FastDebug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release-SSE2|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\extern\lua-5.1\src\lundump.h"
+					>
+				</File>
+				<File
+					RelativePath="..\extern\lua-5.1\src\lvm.c"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="FastDebug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release-SSE2|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\extern\lua-5.1\src\lvm.h"
+					>
+				</File>
+				<File
+					RelativePath="..\extern\lua-5.1\src\lzio.c"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="FastDebug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release-SSE2|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\extern\lua-5.1\src\lzio.h"
 					>
 				</File>
 			</Filter>
@@ -8009,6 +7969,46 @@
 				</File>
 				<File
 					RelativePath="jsoncpp\src\lib_json\json_writer.cpp"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="FastDebug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release-SSE2|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+				</File>
+			</Filter>
+			<Filter
+				Name="glew"
+				>
+				<File
+					RelativePath="..\extern\glew-1.5.8\src\glew.c"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"

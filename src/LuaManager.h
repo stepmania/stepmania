@@ -10,9 +10,9 @@ class LuaReference;
 
 extern "C"
 {
-#include "lua-5.1/src/lua.h"
-#include "lua-5.1/src/lualib.h"
-#include "lua-5.1/src/lauxlib.h"
+#include "../extern/lua-5.1/src/lua.h"
+#include "../extern/lua-5.1/src/lualib.h"
+#include "../extern/lua-5.1/src/lauxlib.h"
 }
 
 class LuaManager
