@@ -31,6 +31,13 @@
 		2BA7925F1304F20D002BD8E1 /* NotesLoaderSSC.h in Headers */ = {isa = PBXBuildFile; fileRef = 2BA7925B1304F20D002BD8E1 /* NotesLoaderSSC.h */; };
 		2BA792601304F20D002BD8E1 /* NotesWriterSSC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2BA7925C1304F20D002BD8E1 /* NotesWriterSSC.cpp */; };
 		2BA792611304F20D002BD8E1 /* NotesWriterSSC.h in Headers */ = {isa = PBXBuildFile; fileRef = 2BA7925D1304F20D002BD8E1 /* NotesWriterSSC.h */; };
+		2BD06FEE137242680018CB9F /* json_batchallocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 2BD06FDD137240CF0018CB9F /* json_batchallocator.h */; };
+		2BD06FEF137242680018CB9F /* json_internalarray.inl in Resources */ = {isa = PBXBuildFile; fileRef = 2BD06FDE137240CF0018CB9F /* json_internalarray.inl */; };
+		2BD06FF0137242680018CB9F /* json_internalmap.inl in Resources */ = {isa = PBXBuildFile; fileRef = 2BD06FDF137240CF0018CB9F /* json_internalmap.inl */; };
+		2BD06FF1137242680018CB9F /* json_reader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2BD06FE0137240CF0018CB9F /* json_reader.cpp */; };
+		2BD06FF2137242680018CB9F /* json_value.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2BD06FE1137240CF0018CB9F /* json_value.cpp */; };
+		2BD06FF3137242680018CB9F /* json_valueiterator.inl in Resources */ = {isa = PBXBuildFile; fileRef = 2BD06FE2137240CF0018CB9F /* json_valueiterator.inl */; };
+		2BD06FF4137242680018CB9F /* json_writer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2BD06FE3137240CF0018CB9F /* json_writer.cpp */; };
 		2BDB88E9137201F700E6FD3A /* lapi.c in Sources */ = {isa = PBXBuildFile; fileRef = 2BDB88B2137201F700E6FD3A /* lapi.c */; };
 		2BDB88EA137201F700E6FD3A /* lapi.h in Headers */ = {isa = PBXBuildFile; fileRef = 2BDB88B3137201F700E6FD3A /* lapi.h */; };
 		2BDB88EB137201F700E6FD3A /* lauxlib.c in Sources */ = {isa = PBXBuildFile; fileRef = 2BDB88B4137201F700E6FD3A /* lauxlib.c */; };
@@ -1635,13 +1642,6 @@
 		EE879BC3132E06C50078FDDC /* glew.c in Sources */ = {isa = PBXBuildFile; fileRef = EE879BAA132E06C50078FDDC /* glew.c */; };
 		EE906F6612BF3A1B00146C96 /* ScreenInstallOverlay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EE906F6412BF3A1B00146C96 /* ScreenInstallOverlay.cpp */; };
 		EE906F6712BF3A1B00146C96 /* ScreenInstallOverlay.h in Headers */ = {isa = PBXBuildFile; fileRef = EE906F6512BF3A1B00146C96 /* ScreenInstallOverlay.h */; };
-		EE906F7712BF3A6900146C96 /* json_batchallocator.h in Headers */ = {isa = PBXBuildFile; fileRef = EE906F7012BF3A6900146C96 /* json_batchallocator.h */; };
-		EE906F7812BF3A6900146C96 /* json_internalarray.inl in Resources */ = {isa = PBXBuildFile; fileRef = EE906F7112BF3A6900146C96 /* json_internalarray.inl */; };
-		EE906F7912BF3A6900146C96 /* json_internalmap.inl in Resources */ = {isa = PBXBuildFile; fileRef = EE906F7212BF3A6900146C96 /* json_internalmap.inl */; };
-		EE906F7A12BF3A6900146C96 /* json_reader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EE906F7312BF3A6900146C96 /* json_reader.cpp */; };
-		EE906F7B12BF3A6900146C96 /* json_value.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EE906F7412BF3A6900146C96 /* json_value.cpp */; };
-		EE906F7C12BF3A6900146C96 /* json_valueiterator.inl in Resources */ = {isa = PBXBuildFile; fileRef = EE906F7512BF3A6900146C96 /* json_valueiterator.inl */; };
-		EE906F7D12BF3A6900146C96 /* json_writer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EE906F7612BF3A6900146C96 /* json_writer.cpp */; };
 		EE906F8212BF3AF800146C96 /* JsonUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EE906F8012BF3AF800146C96 /* JsonUtil.cpp */; };
 		EE906F8312BF3AF800146C96 /* JsonUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = EE906F8112BF3AF800146C96 /* JsonUtil.h */; };
 		EE906F8A12BF3C7C00146C96 /* FileDownload.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EE906F8812BF3C7C00146C96 /* FileDownload.cpp */; };
@@ -1782,6 +1782,13 @@
 		2BA7925B1304F20D002BD8E1 /* NotesLoaderSSC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NotesLoaderSSC.h; path = ../src/NotesLoaderSSC.h; sourceTree = SOURCE_ROOT; };
 		2BA7925C1304F20D002BD8E1 /* NotesWriterSSC.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NotesWriterSSC.cpp; path = ../src/NotesWriterSSC.cpp; sourceTree = SOURCE_ROOT; };
 		2BA7925D1304F20D002BD8E1 /* NotesWriterSSC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NotesWriterSSC.h; path = ../src/NotesWriterSSC.h; sourceTree = SOURCE_ROOT; };
+		2BD06FDD137240CF0018CB9F /* json_batchallocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = json_batchallocator.h; path = ../extern/jsoncpp/src/lib_json/json_batchallocator.h; sourceTree = SOURCE_ROOT; };
+		2BD06FDE137240CF0018CB9F /* json_internalarray.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = json_internalarray.inl; path = ../extern/jsoncpp/src/lib_json/json_internalarray.inl; sourceTree = SOURCE_ROOT; };
+		2BD06FDF137240CF0018CB9F /* json_internalmap.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = json_internalmap.inl; path = ../extern/jsoncpp/src/lib_json/json_internalmap.inl; sourceTree = SOURCE_ROOT; };
+		2BD06FE0137240CF0018CB9F /* json_reader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = json_reader.cpp; path = ../extern/jsoncpp/src/lib_json/json_reader.cpp; sourceTree = SOURCE_ROOT; };
+		2BD06FE1137240CF0018CB9F /* json_value.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = json_value.cpp; path = ../extern/jsoncpp/src/lib_json/json_value.cpp; sourceTree = SOURCE_ROOT; };
+		2BD06FE2137240CF0018CB9F /* json_valueiterator.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = json_valueiterator.inl; path = ../extern/jsoncpp/src/lib_json/json_valueiterator.inl; sourceTree = SOURCE_ROOT; };
+		2BD06FE3137240CF0018CB9F /* json_writer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = json_writer.cpp; path = ../extern/jsoncpp/src/lib_json/json_writer.cpp; sourceTree = SOURCE_ROOT; };
 		2BDB88B2137201F700E6FD3A /* lapi.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = lapi.c; path = "../extern/lua-5.1/src/lapi.c"; sourceTree = SOURCE_ROOT; };
 		2BDB88B3137201F700E6FD3A /* lapi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = lapi.h; path = "../extern/lua-5.1/src/lapi.h"; sourceTree = SOURCE_ROOT; };
 		2BDB88B4137201F700E6FD3A /* lauxlib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = lauxlib.c; path = "../extern/lua-5.1/src/lauxlib.c"; sourceTree = SOURCE_ROOT; };
@@ -2978,13 +2985,6 @@
 		EE879BAA132E06C50078FDDC /* glew.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glew.c; path = src/glew.c; sourceTree = "<group>"; };
 		EE906F6412BF3A1B00146C96 /* ScreenInstallOverlay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ScreenInstallOverlay.cpp; path = ../src/ScreenInstallOverlay.cpp; sourceTree = SOURCE_ROOT; };
 		EE906F6512BF3A1B00146C96 /* ScreenInstallOverlay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ScreenInstallOverlay.h; path = ../src/ScreenInstallOverlay.h; sourceTree = SOURCE_ROOT; };
-		EE906F7012BF3A6900146C96 /* json_batchallocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = json_batchallocator.h; path = ../src/jsoncpp/src/lib_json/json_batchallocator.h; sourceTree = SOURCE_ROOT; };
-		EE906F7112BF3A6900146C96 /* json_internalarray.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = json_internalarray.inl; path = ../src/jsoncpp/src/lib_json/json_internalarray.inl; sourceTree = SOURCE_ROOT; };
-		EE906F7212BF3A6900146C96 /* json_internalmap.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = json_internalmap.inl; path = ../src/jsoncpp/src/lib_json/json_internalmap.inl; sourceTree = SOURCE_ROOT; };
-		EE906F7312BF3A6900146C96 /* json_reader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = json_reader.cpp; path = ../src/jsoncpp/src/lib_json/json_reader.cpp; sourceTree = SOURCE_ROOT; };
-		EE906F7412BF3A6900146C96 /* json_value.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = json_value.cpp; path = ../src/jsoncpp/src/lib_json/json_value.cpp; sourceTree = SOURCE_ROOT; };
-		EE906F7512BF3A6900146C96 /* json_valueiterator.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = json_valueiterator.inl; path = ../src/jsoncpp/src/lib_json/json_valueiterator.inl; sourceTree = SOURCE_ROOT; };
-		EE906F7612BF3A6900146C96 /* json_writer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = json_writer.cpp; path = ../src/jsoncpp/src/lib_json/json_writer.cpp; sourceTree = SOURCE_ROOT; };
 		EE906F8012BF3AF800146C96 /* JsonUtil.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JsonUtil.cpp; path = ../src/JsonUtil.cpp; sourceTree = SOURCE_ROOT; };
 		EE906F8112BF3AF800146C96 /* JsonUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JsonUtil.h; path = ../src/JsonUtil.h; sourceTree = SOURCE_ROOT; };
 		EE906F8812BF3C7C00146C96 /* FileDownload.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FileDownload.cpp; path = ../src/FileDownload.cpp; sourceTree = SOURCE_ROOT; };
@@ -4931,13 +4931,13 @@
 		EE906F6F12BF3A5B00146C96 /* json */ = {
 			isa = PBXGroup;
 			children = (
-				EE906F7012BF3A6900146C96 /* json_batchallocator.h */,
-				EE906F7112BF3A6900146C96 /* json_internalarray.inl */,
-				EE906F7212BF3A6900146C96 /* json_internalmap.inl */,
-				EE906F7312BF3A6900146C96 /* json_reader.cpp */,
-				EE906F7412BF3A6900146C96 /* json_value.cpp */,
-				EE906F7512BF3A6900146C96 /* json_valueiterator.inl */,
-				EE906F7612BF3A6900146C96 /* json_writer.cpp */,
+				2BD06FDD137240CF0018CB9F /* json_batchallocator.h */,
+				2BD06FDE137240CF0018CB9F /* json_internalarray.inl */,
+				2BD06FDF137240CF0018CB9F /* json_internalmap.inl */,
+				2BD06FE0137240CF0018CB9F /* json_reader.cpp */,
+				2BD06FE1137240CF0018CB9F /* json_value.cpp */,
+				2BD06FE2137240CF0018CB9F /* json_valueiterator.inl */,
+				2BD06FE3137240CF0018CB9F /* json_writer.cpp */,
 			);
 			name = json;
 			sourceTree = "<group>";
@@ -4958,7 +4958,6 @@
 				36C6888411297FFE00453295 /* RageFileDriverReadAhead.h in Headers */,
 				36C6888611297FFE00453295 /* RageFileManager_ReadAhead.h in Headers */,
 				EE906F6712BF3A1B00146C96 /* ScreenInstallOverlay.h in Headers */,
-				EE906F7712BF3A6900146C96 /* json_batchallocator.h in Headers */,
 				EE906F8312BF3AF800146C96 /* JsonUtil.h in Headers */,
 				EE906F8B12BF3C7C00146C96 /* FileDownload.h in Headers */,
 				2BA7925F1304F20D002BD8E1 /* NotesLoaderSSC.h in Headers */,
@@ -4967,6 +4966,7 @@
 				EE879B61132DEE720078FDDC /* RageDisplay_Legacy_Helpers.h in Headers */,
 				EE879B63132DEE720078FDDC /* RageDisplay_Legacy.h in Headers */,
 				2B76698B132FF71500586512 /* NotesLoaderSMA.h in Headers */,
+				2BD06FEE137242680018CB9F /* json_batchallocator.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5683,9 +5683,9 @@
 				AA29CD3E0558741A00961A51 /* smicon.icns in Resources */,
 				AAF6A2F909B695BA00D5C614 /* Localizable.strings in Resources */,
 				AA1DE9580C5468CE00D59F20 /* Hardware.plist in Resources */,
-				EE906F7812BF3A6900146C96 /* json_internalarray.inl in Resources */,
-				EE906F7912BF3A6900146C96 /* json_internalmap.inl in Resources */,
-				EE906F7C12BF3A6900146C96 /* json_valueiterator.inl in Resources */,
+				2BD06FEF137242680018CB9F /* json_internalarray.inl in Resources */,
+				2BD06FF0137242680018CB9F /* json_internalmap.inl in Resources */,
+				2BD06FF3137242680018CB9F /* json_valueiterator.inl in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6199,9 +6199,6 @@
 				36C6888311297FFE00453295 /* RageFileDriverReadAhead.cpp in Sources */,
 				36C6888511297FFE00453295 /* RageFileManager_ReadAhead.cpp in Sources */,
 				EE906F6612BF3A1B00146C96 /* ScreenInstallOverlay.cpp in Sources */,
-				EE906F7A12BF3A6900146C96 /* json_reader.cpp in Sources */,
-				EE906F7B12BF3A6900146C96 /* json_value.cpp in Sources */,
-				EE906F7D12BF3A6900146C96 /* json_writer.cpp in Sources */,
 				EE906F8212BF3AF800146C96 /* JsonUtil.cpp in Sources */,
 				EE906F8A12BF3C7C00146C96 /* FileDownload.cpp in Sources */,
 				2BA7925E1304F20D002BD8E1 /* NotesLoaderSSC.cpp in Sources */,
@@ -6211,6 +6208,9 @@
 				EE879B62132DEE720078FDDC /* RageDisplay_Legacy.cpp in Sources */,
 				EE879BC3132E06C50078FDDC /* glew.c in Sources */,
 				2B76698C132FF71500586512 /* NotesLoaderSMA.cpp in Sources */,
+				2BD06FF1137242680018CB9F /* json_reader.cpp in Sources */,
+				2BD06FF2137242680018CB9F /* json_value.cpp in Sources */,
+				2BD06FF4137242680018CB9F /* json_writer.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
