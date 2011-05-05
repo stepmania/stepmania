@@ -190,6 +190,7 @@ protected:
 	ThemeMetric<bool> START_GIVES_UP;
 	ThemeMetric<bool> BACK_GIVES_UP;
 	ThemeMetric<bool> GIVING_UP_GOES_TO_PREV_SCREEN;
+	/** @brief The miss combo a player needs to fail out of a song. */
 	ThemeMetric<int> FAIL_ON_MISS_COMBO;
 	ThemeMetric<bool> ALLOW_CENTER_1_PLAYER;
 	ThemeMetric<bool> UNPAUSE_WITH_START;
