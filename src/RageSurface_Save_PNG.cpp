@@ -7,9 +7,9 @@
 #include "RageUtil.h"
 
 #if defined(WINDOWS)
-#include "libpng/include/png.h"
+#include "../extern/libpng/include/png.h"
 #if defined(_MSC_VER)
-#  pragma comment(lib, "libpng/lib/libpng.lib")
+#  pragma comment(lib, "../extern/libpng/lib/libpng.lib")
 #pragma warning(disable: 4611) /* interaction between '_setjmp' and C++ object destruction is non-portable */
 #endif
 #else
