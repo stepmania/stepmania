@@ -1,4 +1,4 @@
-/* MAD is available from: http://www.mars.org/home/rob/proj/mpeg/ */
+/* MAD is available from: http://www.underbit.com/products/mad/ */
 
 #include "global.h"
 #include "RageSoundReader_MP3.h"
