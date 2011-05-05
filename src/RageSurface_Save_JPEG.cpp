@@ -18,7 +18,7 @@ namespace jpeg
 
 // Pull in JPEG library here.
 #if defined _MSC_VER
-#pragma comment(lib, "libjpeg/jpeg.lib")
+#pragma comment(lib, "../extern/libjpeg/jpeg.lib")
 #endif
 
 #define OUTPUT_BUFFER_SIZE	4096
