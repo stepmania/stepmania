@@ -234,7 +234,7 @@ float PlayerStageStats::MakePercentScore( int iActual, int iPossible )
 
 	int iPercentTotalDigits = 3 + CommonMetrics::PERCENT_SCORE_DECIMAL_PLACES;	// "100" + "." + "00"
 
-	// TRICKY: printf will round, but we want to truncate.  therwise, we may display
+	// TRICKY: printf will round, but we want to truncate. Otherwise, we may display
 	// a percent score that's too high and doesn't match up with the calculated grade.
 	float fTruncInterval = powf( 0.1f, (float)iPercentTotalDigits-1 );
 
@@ -250,7 +250,9 @@ RString PlayerStageStats::FormatPercentScore( float fPercentDancePoints )
 {
 	int iPercentTotalDigits = 3 + CommonMetrics::PERCENT_SCORE_DECIMAL_PLACES;	// "100" + "." + "00"
 
-	RString s = ssprintf( "%*.*f%%", iPercentTotalDigits, (int)CommonMetrics::PERCENT_SCORE_DECIMAL_PLACES, fPercentDancePoints*100 );
+	RString s = ssprintf( "%*.*f%%", iPercentTotalDigits, 
+			     (int)CommonMetrics::PERCENT_SCORE_DECIMAL_PLACES,
+			     fPercentDancePoints*100 );
 	return s;
 }
 
@@ -679,6 +681,7 @@ public:
 	DEFINE_METHOD( GetCurrentMissCombo,			m_iCurMissCombo )
 	DEFINE_METHOD( GetCurrentScoreMultiplier,	m_iCurScoreMultiplier )
 	DEFINE_METHOD( GetScore,					m_iScore )
+	DEFINE_METHOD( GetCurMaxScore,			m_iCurMaxScore )
 	DEFINE_METHOD( GetTapNoteScores,			m_iTapNoteScores[Enum::Check<TapNoteScore>(L, 1)] )
 	DEFINE_METHOD( GetHoldNoteScores,			m_iHoldNoteScores[Enum::Check<HoldNoteScore>(L, 1)] )
 	DEFINE_METHOD( FullCombo,					FullCombo() )
@@ -724,7 +727,24 @@ public:
 
 	static int GetRadarPossible( T* p, lua_State *L ) { p->m_radarPossible.PushSelf(L); return 1; }
 	static int GetRadarActual( T* p, lua_State *L ) { p->m_radarActual.PushSelf(L); return 1; }
-	static int SetScore( T* p, lua_State *L )                { if( IArg(1) >= 0 ){ p->m_iScore = IArg(1); return 1; } return 0; }
+	static int SetScore( T* p, lua_State *L )                
+	{ 
+		if( IArg(1) >= 0 )
+		{ 
+			p->m_iScore = IArg(1); 
+			return 1; 
+		} 
+		return 0; 
+	}
+	static int SetCurMaxScore( T* p, lua_State *L )
+	{
+		if( IArg(1) >= 0 )
+		{
+			p->m_iCurMaxScore = IArg(1);
+			return 1;
+		}
+		return 0;
+	}
 
 	LunaPlayerStageStats()
 	{
@@ -735,6 +755,7 @@ public:
 		ADD_METHOD( GetCurrentMissCombo );
 		ADD_METHOD( GetCurrentScoreMultiplier );
 		ADD_METHOD( GetScore );
+		ADD_METHOD( GetCurMaxScore );
 		ADD_METHOD( GetTapNoteScores );
 		ADD_METHOD( GetHoldNoteScores );
 		ADD_METHOD( FullCombo );
@@ -761,6 +782,7 @@ public:
 		ADD_METHOD( GetRadarPossible );
 		ADD_METHOD( GetBestFullComboTapNoteScore );
 		ADD_METHOD( SetScore );
+		ADD_METHOD( SetCurMaxScore );
 	}
 };
 

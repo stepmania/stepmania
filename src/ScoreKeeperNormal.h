@@ -40,30 +40,6 @@ class ScoreKeeperNormal: public ScoreKeeper
 	ThemeMetric<bool>		m_MineHitIncrementsMissCombo;
 	ThemeMetric<bool>		m_AvoidMineIncrementsCombo;
 
-	// Custom Scoring Theme Metrics
-	ThemeMetric<int>		m_CustomTNS_W1;
-	ThemeMetric<int>		m_CustomTNS_W2;
-	ThemeMetric<int>		m_CustomTNS_W3;
-	ThemeMetric<int>		m_CustomTNS_W4;
-	ThemeMetric<int>		m_CustomTNS_W5;
-	ThemeMetric<int>		m_CustomTNS_Miss;
-	ThemeMetric<int>		m_CustomTNS_HitMine;
-	ThemeMetric<int>		m_CustomTNS_CheckpointHit;
-	ThemeMetric<int>		m_CustomTNS_CheckpointMiss;
-	ThemeMetric<int>		m_CustomTNS_None;
-	
-	ThemeMetric<int>		m_CustomHNS_Held;
-	ThemeMetric<int>		m_CustomHNS_LetGo;
-
-	ThemeMetric<bool>		m_CustomComboBonus;
-	ThemeMetric<int>		m_CustomComboBonusThreshold;
-	ThemeMetric<int>		m_CustomComboBonusValue;
-
-	ThemeMetric<float>		m_DoubleNoteMultiplier;
-	ThemeMetric<float>		m_TripleNoteMultiplier;
-	ThemeMetric<float>		m_QuadPlusNoteMultiplier;
-	ThemeMetric<float>		m_CustomComboMultiplier;
-
 	//ThemeMetric<LuaReference>	m_vToastyTriggers;
 	ThemeMetric<int>	m_ToastyTrigger;
 

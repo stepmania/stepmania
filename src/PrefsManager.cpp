@@ -125,15 +125,6 @@ XToString( CourseSortOrders );
 StringToX( CourseSortOrders );
 LuaXType( CourseSortOrders );
 
-static const char *ScoringTypeNames[] = {
-	"New",
-	"Old",
-	"Custom",
-};
-XToString( ScoringType );
-StringToX( ScoringType );
-LuaXType( ScoringType );
-
 // XXX: Fix fail bug?
 /* static const char *DefaultFailTypeNames[] = {
 	"Immediate",
@@ -263,7 +254,6 @@ PrefsManager::PrefsManager() :
 	m_CourseSortOrder		( "CourseSortOrder",			COURSE_SORT_SONGS ),
 	m_bSubSortByNumSteps		( "SubSortByNumSteps",			false ),
 	m_GetRankingName		( "GetRankingName",			RANKING_ON ),
-	m_ScoringType			( "ScoringType",			SCORING_NEW ),
 	m_sAdditionalSongFolders	( "AdditionalSongFolders",		"" ),
 	m_sAdditionalCourseFolders	( "AdditionalCourseFolders",		"" ),
 	m_sAdditionalFolders		( "AdditionalFolders",			"" ),

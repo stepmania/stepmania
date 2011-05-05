@@ -127,8 +127,13 @@ static Preference<bool> g_bEnableMineSoundPlayback	( "EnableMineHitSound", true 
 
 Preference<float> g_fTimingWindowHopo		( "TimingWindowHopo",		0.25 );		// max time between notes in a hopo chain
 Preference<float> g_fTimingWindowStrum		( "TimingWindowStrum",		0.1f );		// max time between strum and when the frets must match
+/** @brief How much life is in a hold note when you start on it? */
 ThemeMetric<float> INITIAL_HOLD_LIFE		( "Player", "InitialHoldLife" );
-ThemeMetric<float> MAX_HOLD_LIFE		( "Player", "MaxHoldLife" ); // sm-ssc addition
+/**
+ * @brief How much hold life is possible to have when holding a hold note?
+ *
+ * This was an sm-ssc addition. */
+ThemeMetric<float> MAX_HOLD_LIFE		( "Player", "MaxHoldLife" );
 ThemeMetric<bool> PENALIZE_TAP_SCORE_NONE	( "Player", "PenalizeTapScoreNone" );
 ThemeMetric<bool> JUDGE_HOLD_NOTES_ON_SAME_ROW_TOGETHER	( "Player", "JudgeHoldNotesOnSameRowTogether" );
 /**
@@ -174,6 +179,11 @@ ThemeMetric<bool> REQUIRE_STEP_ON_MINES	( "Player", "RequireStepOnMines" );
  *
  * For those wishing to make a theme very accurate to In The Groove 2, set this to false. */
 ThemeMetric<bool> ROLL_BODY_INCREMENTS_COMBO	( "Player", "RollBodyIncrementsCombo" );
+/**
+ * @brief Are checkpoints and taps considered separate judgments?
+ *
+ * If set to true, they are considered separate.
+ * If set to false, they are considered the same. */
 ThemeMetric<bool> CHECKPOINTS_TAPS_SEPARATE_JUDGMENT	( "Player", "CheckpointsTapsSeparateJudgment" );
 /**
  * @brief Do we score missed holds and rolls with HoldNoteScores?
@@ -1318,9 +1328,9 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 	{
 		//LOG->Trace("tap note scoring time.");
 		TapNote &tn = *vTN[0].pTN;
+		SetHoldJudgment( tn.result.tns, tn.HoldResult.hns, iFirstTrackWithMaxEndRow );
 		HandleHoldScore( tn );
 		//LOG->Trace("hold result = %s",StringConversion::ToString(tn.HoldResult.hns).c_str());
-		SetHoldJudgment( tn.result.tns, tn.HoldResult.hns, iFirstTrackWithMaxEndRow );
 	}
 	//LOG->Trace("[Player::UpdateHoldNotes] ends");
 }
@@ -1803,8 +1813,8 @@ void Player::ScoreAllActiveHoldsLetGo()
 					tn.HoldResult.hns = HNS_LetGo;
 					tn.HoldResult.fLife = 0;
 
-					HandleHoldScore( tn );
 					SetHoldJudgment( tn.result.tns, tn.HoldResult.hns, iTrack );
+					HandleHoldScore( tn );
 				}
 			}
 		}

@@ -26,7 +26,9 @@ InputMode StringToInputMode( const RString& str );
 
 /** @brief A custom foreach loop for the player options for each player. */
 #define FOREACH_OptionsPlayer( pn ) \
-	for( PlayerNumber pn=GetNextHumanPlayer((PlayerNumber)-1); pn!=PLAYER_INVALID && (m_InputMode==INPUTMODE_INDIVIDUAL || pn==0); pn=GetNextHumanPlayer(pn) )
+	for( PlayerNumber pn=GetNextHumanPlayer((PlayerNumber)-1); \
+	pn!=PLAYER_INVALID && (m_InputMode==INPUTMODE_INDIVIDUAL || pn==0); \
+	pn=GetNextHumanPlayer(pn) )
 
 /** @brief A grid of options; the selected option is drawn with a highlight rectangle. */
 class ScreenOptions : public ScreenWithMenuElements
@@ -53,7 +55,8 @@ protected:
 	virtual void ExportOptions( int iRow, const vector<PlayerNumber> &vpns ) = 0;
 
 	void RestartOptions();
-	void GetWidthXY( PlayerNumber pn, int iRow, int iChoiceOnRow, int &iWidthOut, int &iXOut, int &iYOut ) const;
+	void GetWidthXY( PlayerNumber pn, int iRow, int iChoiceOnRow, 
+			int &iWidthOut, int &iXOut, int &iYOut ) const;
 	RString GetExplanationText( int iRow ) const;
 	void RefreshIcons( int iRow, PlayerNumber pn );
 	void PositionCursor( PlayerNumber pn );
@@ -67,10 +70,18 @@ protected:
 
 	void ChangeValueInRowRelative( int iRow, PlayerNumber pn, int iDelta, bool bRepeat );
 	void ChangeValueInRowAbsolute( int iRow, PlayerNumber pn, int iChoiceIndex, bool bRepeat );
-	virtual void AfterChangeValueInRow( int iRow, PlayerNumber pn );	// override this to detect when the value in a row has changed
+	/**
+	 * @brief Perform an action after a row has changed its value.
+	 *
+	 * Override this to detect when the value in a row has changed. */
+	virtual void AfterChangeValueInRow( int iRow, PlayerNumber pn );
 	bool MoveRowRelative( PlayerNumber pn, int iDir, bool bRepeat );
 	bool MoveRowAbsolute( PlayerNumber pn, int iRow );
-	virtual void AfterChangeRow( PlayerNumber pn );	// override this to detect when the row has changed
+	/**
+	 * @brief Perform an action after moving to a new row.
+	 *
+	 * Override this to detect when the row has changed. */
+	virtual void AfterChangeRow( PlayerNumber pn );
 	virtual void AfterChangeValueOrRow( PlayerNumber pn );
 
 	virtual void MenuBack( const InputEventPlus &input );
@@ -107,6 +118,7 @@ protected:	// derived classes need access to these
 	bool			m_bWasOnExit[NUM_PLAYERS];
 
 	/** @brief True if at least one player pressed Start after selecting the song.
+	 * 
 	 * TRICKY: People hold Start to get to PlayerOptions, then the repeat events
 	 * cause them to zip to the bottom. So, ignore Start repeat events until
 	 * we've seen one first pressed event. */

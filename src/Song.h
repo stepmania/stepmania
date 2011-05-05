@@ -17,7 +17,7 @@ struct lua_State;
 struct BackgroundChange;
 
 /** @brief The version of the .ssc file format. */
-const static float STEPFILE_VERSION_NUMBER = 0.57f;
+const static float STEPFILE_VERSION_NUMBER = 0.59f;
 
 /** @brief How many edits for this song can each profile have? */
 const int MAX_EDITS_PER_SONG_PER_PROFILE	= 5;

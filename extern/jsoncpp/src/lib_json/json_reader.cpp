@@ -1,5 +1,5 @@
-#include <jsoncpp/include/json/reader.h>
-#include <jsoncpp/include/json/value.h>
+#include <../extern/jsoncpp/include/json/reader.h>
+#include <../extern/jsoncpp/include/json/value.h>
 #include <utility>
 #include <cstdio>
 #include <cassert>

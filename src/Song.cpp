@@ -41,7 +41,7 @@
  * @brief The internal version of the cache for StepMania.
  *
  * Increment this value to invalidate the current cache. */
-const int FILE_CACHE_VERSION = 168;
+const int FILE_CACHE_VERSION = 170;
 
 /** @brief How long does a song sample last by default? */
 const float DEFAULT_MUSIC_SAMPLE_LENGTH = 12.f;
@@ -801,6 +801,13 @@ void Song::TidyUpData()
 	{
 		ComboSegment seg(0, 1);
 		m_Timing.m_ComboSegments.push_back( seg );
+	}
+	
+	// Have a default label segment just in case.
+	if( m_Timing.m_LabelSegments.empty() )
+	{
+		LabelSegment seg(0, "Song Start");
+		m_Timing.m_LabelSegments.push_back( seg );
 	}
 }
 

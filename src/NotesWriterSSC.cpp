@@ -195,6 +195,17 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 	}
 	f.PutLine( ";" );
 	
+	f.Write( "#LABELS:" );
+	for( unsigned i=0; i<out.m_Timing.m_LabelSegments.size(); i++ )
+	{
+		const LabelSegment &ls = out.m_Timing.m_LabelSegments[i];
+		
+		f.PutLine( ssprintf( "%.6f=%s", NoteRowToBeat(ls.m_iStartRow), ls.m_sLabel.c_str() ) );
+		if( i != out.m_Timing.m_LabelSegments.size()-1 )
+			f.Write( "," );
+	}
+	f.PutLine( ";" );
+	
 	FOREACH_BackgroundLayer( b )
 	{
 		if( b==0 )
@@ -292,106 +303,29 @@ static RString GetSSCNoteData( const Song &song, const Steps &in, bool bSavingCa
 		FOREACH_ENUM( RadarCategory, rc )
 			asRadarValues.push_back( ssprintf("%.3f", rv[rc]) );
 	}
-	lines.push_back( ssprintf( "#RADARVALUES:%s:", join(",",asRadarValues).c_str() ) );
+	lines.push_back( ssprintf( "#RADARVALUES:%s;", join(",",asRadarValues).c_str() ) );
 
 	lines.push_back( ssprintf( "#CREDIT:%s;", SmEscape(in.GetCredit()).c_str() ) );
 
-	// TODO: Remove this block, uncomment below block for Split Timing. -Wolfman2000
+	/*
+	 * TODO: Remove this block, transplant above code
+	 * below for Split Timing. -Wolfman2000 */
 	lines.push_back( "#BPMS:;" );
 	lines.push_back( "#STOPS:;" );
 	lines.push_back( "#DELAYS:;" );
 	lines.push_back( "#WARPS:;" );
+	lines.push_back( "#LABELS:;" );
 	lines.push_back( "#TIMESIGNATURES:;" );
 	lines.push_back( "#TICKCOUNTS:;" );
 	lines.push_back( "#ATTACKS:;" );
 	lines.push_back( "#COMBOS:;" );
-
-	/*
-	vector<RString> asBPMValues;
-	for( unsigned i=0; i<in.m_Timing.m_BPMSegments.size(); i++ )
-	{
-		const BPMSegment &bs = in.m_Timing.m_BPMSegments[i];
-		asBPMValues.push_back( ssprintf("%.6f=%.6f", NoteRowToBeat(bs.m_iStartRow), bs.GetBPM() ) );
-	}
-	lines.push_back( ssprintf( "#BPMS:%s;", join("\n,", asBPMValues).c_str() ) );
-
-	vector<RString> asStopValues;
-	for( unsigned i=0; i<in.m_Timing.m_StopSegments.size(); i++ )
-	{
-		const StopSegment &fs = in.m_Timing.m_StopSegments[i];
-
-		if(!fs.m_bDelay)
-		{
-			asStopValues.push_back( ssprintf( "%.6f=%.6f", NoteRowToBeat(fs.m_iStartRow), fs.m_fStopSeconds ) );
-		}
-	}
-	lines.push_back( ssprintf( "#STOPS:%s;", join("\n,", asStopValues).c_str() ) );
-
-	vector<RString> asDelayValues;
-	for( unsigned i=0; i<in.m_Timing.m_StopSegments.size(); i++ )
-	{
-		const StopSegment &fs = in.m_Timing.m_StopSegments[i];
-
-		if( fs.m_bDelay )
-		{
-			asDelayValues.push_back( ssprintf( "%.6f=%.6f", NoteRowToBeat(fs.m_iStartRow), fs.m_fStopSeconds ) );
-		}
-	}
-	lines.push_back( ssprintf( "#DELAYS:%s;", join("\n,", asDelayValues).c_str() ) );
-	
-	vector<RString> asWarpValues;
-	for( unsigned i=0; i<in.m_Timing.m_WarpSegments.size(); i++ )
-	{
-		const WarpSegment &ws = in.m_Timing.m_WarpSegments[i];
-		
-		if( ws.m_bDelay )
-		{
-			asWarpValues.push_back( ssprintf( "%.6f=%.6f", NoteRowToBeat(fs.m_iStartRow), fs.m_fWarpBeats ) );
-		}
-	}
-	lines.push_back( ssprintf( "#WARPS:%s;", join("\n,", asWarpValues).c_str() ) );
-	
-	ASSERT( !in.m_Timing.m_vTimeSignatureSegments.empty() );
-	vector<RString> asTimeSigValues;
-	FOREACH_CONST( TimeSignatureSegment, in.m_Timing.m_vTimeSignatureSegments, iter )
-	{
-		asTimeSigValues.push_back( ssprintf( "%.6f=%d=%d", NoteRowToBeat(iter->m_iStartRow), iter->m_iNumerator, iter->m_iDenominator ) );
-		vector<TimeSignatureSegment>::const_iterator iter2 = iter;
-		iter2++;
-	}
-	lines.push_back( ssprintf( "#TIMESIGNATURES:%s;", join("\n,", asTimeSigValues).c_str() ) );
-
-	ASSERT( !in.m_Timing.m_TickcountSegments.empty() );
-	vector<RString> asTickValues;
-	for( unsigned i=0; i<in.m_Timing.m_TickcountSegments.size(); i++ )
-	{
-		const TickcountSegment &ts = in.m_Timing.m_TickcountSegments[i];
-
-		asTickValues.push_back( ssprintf( "%.6f=%d", NoteRowToBeat(ts.m_iStartRow), ts.m_iTicks ) );
-	}
-	lines.push_back( ssprintf( "#TICKCOUNTS:%s;", join("\n,", asTickValues).c_str() ) );
-
-	ASSERT( !in.m_Timing.m_ComboSegments.empty() );
-	vector<RString> asComboValues;
-	for( unsigned i=0; i<in.m_Timing.m_ComboSegments.size(); i++ )
-	{
-		const ComboSegment &cs = in.m_Timing.m_ComboSegments[i];
-
-		asComboValues.push_back( ssprintf( "%.6f=%d", NoteRowToBeat(cs.m_iStartRow), cs.m_iComboFactor ) );
-	}
-	
-	lines.push_back( "#ATTACKS:;" );
-	 
-	lines.push_back( ssprintf( "#COMBOS:%s;", join("\n,", asComboValues).c_str() ) );
-
-	lines.push_back( ssprintf( "#OFFSET:%.6f;", in.m_Timing.m_fBeat0OffsetInSeconds ) );
-	 */
 
 	RString sNoteData;
 	in.GetSMNoteData( sNoteData );
 
 	lines.push_back( song.m_vsKeysoundFile.empty() ? "#NOTES:" : "#NOTES2:" );
 
+	TrimLeft(sNoteData);
 	split( sNoteData, "\n", lines, true );
 	lines.push_back( ";" );
 

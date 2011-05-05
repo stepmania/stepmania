@@ -57,6 +57,11 @@ void TimingData::AddComboSegment( const ComboSegment &seg )
 	m_ComboSegments.insert( upper_bound(m_ComboSegments.begin(), m_ComboSegments.end(), seg), seg );
 }
 
+void TimingData::AddLabelSegment( const LabelSegment &seg )
+{
+	m_LabelSegments.insert( upper_bound(m_LabelSegments.begin(), m_LabelSegments.end(), seg), seg );
+}
+
 /* Change an existing BPM segment, merge identical segments together or insert a new one. */
 void TimingData::SetBPMAtRow( int iNoteRow, float fBPM )
 {
@@ -218,6 +223,27 @@ void TimingData::SetComboAtRow( int iRow, int iCombo )
 	}
 }
 
+void TimingData::SetLabelAtRow( int iRow, const RString sLabel )
+{
+	unsigned i;
+	for( i=0; i<m_LabelSegments.size(); i++ )
+		if( m_LabelSegments[i].m_iStartRow >= iRow )
+			break;
+	
+	if( i == m_LabelSegments.size() || m_LabelSegments[i].m_iStartRow != iRow )
+	{
+		if( i == 0 || m_LabelSegments[i-1].m_sLabel != sLabel )
+			AddLabelSegment( LabelSegment(iRow, sLabel ) );
+	}
+	else
+	{
+		if( i > 0 && ( m_LabelSegments[i-1].m_sLabel == sLabel || sLabel == "" ) )
+			m_LabelSegments.erase( m_LabelSegments.begin()+i, m_LabelSegments.begin()+i+1 );
+		else
+			m_LabelSegments[i].m_sLabel = sLabel;
+	}
+}
+
 float TimingData::GetStopAtRow( int iNoteRow, bool bDelay ) const
 {
 	for( unsigned i=0; i<m_StopSegments.size(); i++ )
@@ -244,6 +270,11 @@ float TimingData::GetDelayAtRow( int iRow ) const
 int TimingData::GetComboAtRow( int iNoteRow ) const
 {
 	return m_ComboSegments[GetComboSegmentIndexAtRow( iNoteRow )].m_iCombo;
+}
+
+RString TimingData::GetLabelAtRow( int iRow ) const
+{
+	return m_LabelSegments[GetLabelSegmentIndexAtRow( iRow )].m_sLabel;
 }
 
 float TimingData::GetWarpAtRow( int iWarpRow ) const
@@ -383,6 +414,18 @@ int TimingData::GetComboSegmentIndexAtRow( int iRow ) const
 	return static_cast<int>(i);
 }
 
+int TimingData::GetLabelSegmentIndexAtRow( int iRow ) const
+{
+	unsigned i;
+	for( i=0; i<m_LabelSegments.size()-1; i++ )
+	{
+		const LabelSegment& s = m_LabelSegments[i+1];
+		if( s.m_iStartRow > iRow )
+			break;
+	}
+	return static_cast<int>(i);
+}
+
 BPMSegment& TimingData::GetBPMSegmentAtRow( int iNoteRow )
 {
 	static BPMSegment empty;
@@ -421,6 +464,15 @@ ComboSegment& TimingData::GetComboSegmentAtRow( int iRow )
 	return m_ComboSegments[i];
 }
 
+LabelSegment& TimingData::GetLabelSegmentAtRow( int iRow )
+{
+	unsigned i;
+	for( i=0; i<m_LabelSegments.size()-1; i++ )
+		if( m_LabelSegments[i+1].m_iStartRow > iRow )
+			break;
+	return m_LabelSegments[i];
+}
+
 StopSegment& TimingData::GetStopSegmentAtRow( int iNoteRow, bool bDelay )
 {
 	static StopSegment empty;
@@ -443,11 +495,11 @@ WarpSegment& TimingData::GetWarpSegmentAtRow( int iRow )
 
 int TimingData::GetTickcountSegmentIndexAtRow( int iRow ) const
 {
-	int i;
-	for (i=0; i < (int)(m_TickcountSegments.size()) - 1; i++ )
+	unsigned i;
+	for (i=0; i < m_TickcountSegments.size() - 1; i++ )
 		if( m_TickcountSegments[i+1].m_iStartRow > iRow )
 			break;
-	return i;
+	return static_cast<int>(i);
 }
 
 TickcountSegment& TimingData::GetTickcountSegmentAtRow( int iRow )
@@ -463,6 +515,43 @@ TickcountSegment& TimingData::GetTickcountSegmentAtRow( int iRow )
 int TimingData::GetTickcountAtRow( int iRow ) const
 {
 	return m_TickcountSegments[GetTickcountSegmentIndexAtRow( iRow )].m_iTicks;
+}
+
+float TimingData::GetPreviousLabelSegmentBeatAtRow( int iRow ) const
+{
+	float backup = -1;
+	for (unsigned i = 0; i < m_LabelSegments.size(); i++ )
+	{
+		if( m_LabelSegments[i].m_iStartRow >= iRow )
+		{
+			break;
+		}
+		backup = NoteRowToBeat(m_LabelSegments[i].m_iStartRow);
+	}
+	return (backup > -1) ? backup : NoteRowToBeat(iRow);
+}
+
+float TimingData::GetNextLabelSegmentBeatAtRow( int iRow ) const
+{
+	for (unsigned i = 0; i < m_LabelSegments.size(); i++ )
+	{
+		if( m_LabelSegments[i].m_iStartRow <= iRow )
+		{
+			continue;
+		}
+		return NoteRowToBeat(m_LabelSegments[i].m_iStartRow);
+	}
+	return NoteRowToBeat(iRow);
+}
+
+bool TimingData::DoesLabelExist( RString sLabel ) const
+{
+	FOREACH_CONST( LabelSegment, m_LabelSegments, seg )
+	{
+		if( seg->m_sLabel == sLabel )
+			return true;
+	}
+	return false;
 }
 
 void TimingData::GetBeatAndBPSFromElapsedTime( float fElapsedTime, float &fBeatOut, float &fBPSOut, bool &bFreezeOut, bool &bDelayOut, int &iWarpBeginOut, float &fWarpLengthOut ) const
@@ -580,9 +669,6 @@ void TimingData::GetBeatAndBPSFromElapsedTimeNoOffset( float fElapsedTime, float
 	fBPSOut = fBPS;
 	
 }
-
-
-
 
 float TimingData::GetElapsedTimeFromBeat( float fBeat ) const
 {
@@ -742,6 +828,17 @@ void TimingData::ScaleRegion( float fScale, int iStartIndex, int iEndIndex, bool
 			m_ComboSegments[i].m_iStartRow = lrintf( (iSegStart - iStartIndex) * fScale ) + iStartIndex;
 	}
 	
+	for ( unsigned i = 0; i < m_LabelSegments.size(); i++ )
+	{
+		const int iSegStart = m_LabelSegments[i].m_iStartRow;
+		if( iSegStart < iStartIndex )
+			continue;
+		else if( iSegStart > iEndIndex )
+			m_LabelSegments[i].m_iStartRow += lrintf( (iEndIndex - iStartIndex) * (fScale - 1) );
+		else
+			m_LabelSegments[i].m_iStartRow = lrintf( (iSegStart - iStartIndex) * fScale ) + iStartIndex;
+	}
+	
 	// adjust BPM changes to preserve timing
 	if( bAdjustBPM )
 	{
@@ -818,6 +915,13 @@ void TimingData::InsertRows( int iStartRow, int iRowsToAdd )
 		if( comb.m_iStartRow < iStartRow )
 			continue;
 		comb.m_iStartRow += iRowsToAdd;
+	}
+	for( unsigned i = 0; i < m_LabelSegments.size(); i++ )
+	{
+		LabelSegment &labl = m_LabelSegments[i];
+		if( labl.m_iStartRow < iStartRow )
+			continue;
+		labl.m_iStartRow += iRowsToAdd;
 	}
 
 	if( iStartRow == 0 )
@@ -960,6 +1064,22 @@ void TimingData::DeleteRows( int iStartRow, int iRowsToDelete )
 		// After deleted region:
 		comb.m_iStartRow -= iRowsToDelete;
 	}
+	
+	for( unsigned i = 0; i < m_LabelSegments.size(); i++ )
+	{
+		LabelSegment &labl = m_LabelSegments[i];
+		
+		if( labl.m_iStartRow < iStartRow )
+			continue;
+		
+		if( labl.m_iStartRow < iStartRow+iRowsToDelete )
+		{
+			m_LabelSegments.erase( m_LabelSegments.begin()+i, m_LabelSegments.begin()+i+1 );
+			--i;
+			continue;
+		}
+		labl.m_iStartRow -= iRowsToDelete;
+	}
 
 	this->SetBPMAtRow( iStartRow, fNewBPM );
 }
@@ -1065,6 +1185,18 @@ public:
 		LuaHelpers::CreateTableFromArray(vBPMs, L);
 		return 1;
 	}
+	static int GetLabels( T* p, lua_State *L )
+	{
+		vector<RString> vLabels;
+		FOREACH_CONST( LabelSegment, p->m_LabelSegments, seg )
+		{
+			const float fStartRow = NoteRowToBeat(seg->m_iStartRow);
+			const RString sLabel = seg->m_sLabel;
+			vLabels.push_back( ssprintf("%f=%s", fStartRow, sLabel.c_str()) );
+		}
+		LuaHelpers::CreateTableFromArray(vLabels, L);
+		return 1;
+	}
 	static int GetBPMsAndTimes( T* p, lua_State *L )
 	{
 		vector<RString> vBPMs;
@@ -1103,6 +1235,7 @@ public:
 		ADD_METHOD( GetStops );
 		ADD_METHOD( GetDelays );
 		ADD_METHOD( GetBPMs );
+		ADD_METHOD( GetLabels );
 		ADD_METHOD( GetBPMsAndTimes );
 		ADD_METHOD( GetActualBPM );
 		ADD_METHOD( HasNegativeBPMs );

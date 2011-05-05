@@ -108,14 +108,6 @@ enum CourseSortOrders
 	NUM_CourseSortOrders,
 	CourseSortOrders_Invalid
 };
-enum ScoringType
-{
-	SCORING_NEW,
-	SCORING_OLD,
-	SCORING_CUSTOM,
-	NUM_ScoringType,
-	ScoringType_Invalid
-};
 
 enum DefaultFailType
 {
@@ -265,8 +257,6 @@ public:
 	Preference<CourseSortOrders>	m_CourseSortOrder;
 	Preference<bool>	m_bSubSortByNumSteps;
 	Preference<GetRankingName>	m_GetRankingName;
-
-	Preference<ScoringType>	m_ScoringType;
 
 	Preference<RString>	m_sAdditionalSongFolders;
 	Preference<RString>	m_sAdditionalCourseFolders;
