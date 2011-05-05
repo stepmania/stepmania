@@ -4748,7 +4748,7 @@
 				AAA070F10CE7B3AE005A3060 /* version.h */,
 			);
 			name = "mad-0.15.1b";
-			path = "../src/mad-0.15.1b";
+			path = "../extern/mad-0.15.1b";
 			sourceTree = "<group>";
 		};
 		AAA3741C09099ADA00141131 /* Libraries */ = {
