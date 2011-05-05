@@ -65,7 +65,7 @@
 				WarningLevel="4"
 				SuppressStartupBanner="true"
 				DebugInformationFormat="4"
-				DisableSpecificWarnings="4996"
+				DisableSpecificWarnings="4063;4100;4127;4201;4244;4275;4355;4505;4512;4702;4786;4996"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -176,7 +176,7 @@
 				WarningLevel="4"
 				SuppressStartupBanner="true"
 				DebugInformationFormat="3"
-				DisableSpecificWarnings="4996"
+				DisableSpecificWarnings="4063;4100;4127;4201;4244;4275;4355;4505;4512;4702;4786;4996"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -278,7 +278,7 @@
 				WarningLevel="4"
 				SuppressStartupBanner="true"
 				DebugInformationFormat="4"
-				DisableSpecificWarnings="4996"
+				DisableSpecificWarnings="4063;4100;4127;4201;4244;4275;4355;4505;4512;4702;4786;4996"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -390,7 +390,7 @@
 				WarningLevel="4"
 				SuppressStartupBanner="true"
 				DebugInformationFormat="3"
-				DisableSpecificWarnings="4996"
+				DisableSpecificWarnings="4063;4100;4127;4201;4244;4275;4355;4505;4512;4702;4786;4996"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
