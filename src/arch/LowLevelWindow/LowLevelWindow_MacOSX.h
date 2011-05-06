@@ -8,7 +8,11 @@
 typedef const struct __CFDictionary *CFDictionaryRef;
 /* XXX: This was changed to a uint32_t later and its header file cannot be included
  * since Style conflicts. Ugh. */
+#if __APPLE_CC__ < 5621
 typedef struct _CGDirectDisplayID *CGDirectDisplayID;
+#else
+typedef uint32_t *CGDirectDisplayID;
+#endif
 
 class LowLevelWindow_MacOSX : public LowLevelWindow
 {
