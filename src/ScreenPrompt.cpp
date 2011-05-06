@@ -251,8 +251,9 @@ void ScreenPrompt::TweenOffScreen()
 // lua start
 /*
 #include "LuaBinding.h"
- 
-/** @brief Allow Lua to have access to the ScreenPrompt.
+
+ // use proper doxygen when lua is enabled.
+ @brief Allow Lua to have access to the ScreenPrompt.
 class LunaScreenPrompt: public Luna<ScreenPrompt>
 {
 public:
