@@ -25,6 +25,7 @@
 		1215D7A208C6559A00B87D8B /* ScreenGameplayNormal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1215D7A008C6559A00B87D8B /* ScreenGameplayNormal.cpp */; };
 		2B30D6821315EA7E00044B68 /* MouseDevice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2B30D6801315EA7E00044B68 /* MouseDevice.cpp */; };
 		2B30D6831315EA7E00044B68 /* MouseDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B30D6811315EA7E00044B68 /* MouseDevice.h */; };
+		2B69675513749F3C000A63A2 /* glew.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B69675413749F3C000A63A2 /* glew.h */; };
 		2B76698B132FF71500586512 /* NotesLoaderSMA.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B766989132FF71500586512 /* NotesLoaderSMA.h */; };
 		2B76698C132FF71500586512 /* NotesLoaderSMA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2B76698A132FF71500586512 /* NotesLoaderSMA.cpp */; };
 		2BA7925E1304F20D002BD8E1 /* NotesLoaderSSC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2BA7925A1304F20D002BD8E1 /* NotesLoaderSSC.cpp */; };
@@ -1776,6 +1777,7 @@
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		2B30D6801315EA7E00044B68 /* MouseDevice.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MouseDevice.cpp; sourceTree = "<group>"; };
 		2B30D6811315EA7E00044B68 /* MouseDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MouseDevice.h; sourceTree = "<group>"; };
+		2B69675413749F3C000A63A2 /* glew.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = glew.h; path = include/GL/glew.h; sourceTree = "<group>"; };
 		2B766989132FF71500586512 /* NotesLoaderSMA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NotesLoaderSMA.h; path = ../src/NotesLoaderSMA.h; sourceTree = SOURCE_ROOT; };
 		2B76698A132FF71500586512 /* NotesLoaderSMA.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NotesLoaderSMA.cpp; path = ../src/NotesLoaderSMA.cpp; sourceTree = SOURCE_ROOT; };
 		2BA7925A1304F20D002BD8E1 /* NotesLoaderSSC.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NotesLoaderSSC.cpp; path = ../src/NotesLoaderSSC.cpp; sourceTree = SOURCE_ROOT; };
@@ -4922,6 +4924,7 @@
 		EE879B8E132E06C50078FDDC /* glew-1.5.8 */ = {
 			isa = PBXGroup;
 			children = (
+				2B69675413749F3C000A63A2 /* glew.h */,
 				EE879BAA132E06C50078FDDC /* glew.c */,
 			);
 			name = "glew-1.5.8";
@@ -4967,6 +4970,7 @@
 				EE879B63132DEE720078FDDC /* RageDisplay_Legacy.h in Headers */,
 				2B76698B132FF71500586512 /* NotesLoaderSMA.h in Headers */,
 				2BD06FEE137242680018CB9F /* json_batchallocator.h in Headers */,
+				2B69675513749F3C000A63A2 /* glew.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7086,9 +7090,9 @@
 				HEADER_SEARCH_PATHS = (
 					"$(SRCROOT)/../src",
 					"$(SRCROOT)/../src/ffmpeg/include",
-					"$(SRCROOT)/../src/vorbis",
-					"$(SRCROOT)/../src/libjpeg",
-					"$(SRCROOT)/../src/libpng/include",
+					"$(SRCROOT)/../extern/vorbis",
+					"$(SRCROOT)/../extern/libjpeg",
+					"$(SRCROOT)/../extern/libpng/include",
 				);
 				INFOPLIST_FILE = "Info-StepMania.plist";
 				INFOPLIST_PREFIX_HEADER = "$(SRCROOT)/../src/ProductInfo.h";
@@ -7097,7 +7101,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(SRCROOT)/build/$(CONFIGURATION)",
 					"$(SRCROOT)/Libraries",
-					"\"$(SRCROOT)/../src/mad-0.15.1b/msvc++/Release\"",
+					"\"$(SRCROOT)/../extern/mad-0.15.1b/msvc++/Release\"",
 				);
 				LIBRARY_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/build\"";
 				LINKER_DISPLAYS_MANGLED_NAMES = NO;
@@ -7585,9 +7589,9 @@
 				HEADER_SEARCH_PATHS = (
 					"$(SRCROOT)/../src",
 					"$(SRCROOT)/../src/ffmpeg/include",
-					"$(SRCROOT)/../src/vorbis",
-					"$(SRCROOT)/../src/libjpeg",
-					"$(SRCROOT)/../src/libpng/include",
+					"$(SRCROOT)/../extern/vorbis",
+					"$(SRCROOT)/../extern/libjpeg",
+					"$(SRCROOT)/../extern/libpng/include",
 				);
 				INFOPLIST_FILE = "Info-StepMania.plist";
 				INFOPLIST_PREFIX_HEADER = "$(SRCROOT)/../src/ProductInfo.h";
@@ -7596,7 +7600,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(SRCROOT)/build/$(CONFIGURATION)",
 					"$(SRCROOT)/Libraries",
-					"\"$(SRCROOT)/../src/mad-0.15.1b/msvc++/Release\"",
+					"\"$(SRCROOT)/../extern/mad-0.15.1b/msvc++/Release\"",
 				);
 				LIBRARY_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/build\"";
 				LINKER_DISPLAYS_MANGLED_NAMES = NO;
@@ -7816,9 +7820,9 @@
 				HEADER_SEARCH_PATHS = (
 					"$(SRCROOT)/../src",
 					"$(SRCROOT)/../src/ffmpeg/include",
-					"$(SRCROOT)/../src/vorbis",
-					"$(SRCROOT)/../src/libjpeg",
-					"$(SRCROOT)/../src/libpng/include",
+					"$(SRCROOT)/../extern/vorbis",
+					"$(SRCROOT)/../extern/libjpeg",
+					"$(SRCROOT)/../extern/libpng/include",
 				);
 				INFOPLIST_FILE = "Info-StepMania.plist";
 				INFOPLIST_PREFIX_HEADER = "$(SRCROOT)/../src/ProductInfo.h";
@@ -7827,7 +7831,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(SRCROOT)/build/$(CONFIGURATION)",
 					"$(SRCROOT)/Libraries",
-					"\"$(SRCROOT)/../src/mad-0.15.1b/msvc++/Release\"",
+					"\"$(SRCROOT)/../extern/mad-0.15.1b/msvc++/Release\"",
 				);
 				LIBRARY_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/build\"";
 				LINKER_DISPLAYS_MANGLED_NAMES = NO;
