@@ -31,6 +31,9 @@ public:
 	/** @brief Destroy the Steps that are no longer needed. */
 	~Steps();
 
+	/** @brief Timing data */
+	TimingData m_SongTiming;
+
 	// initializers
 	void AutogenFrom( const Steps *parent, StepsType ntTo );
 	void CopyFrom( Steps* pSource, StepsType ntTo, float fMusicLengthSeconds );
