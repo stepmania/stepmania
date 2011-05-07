@@ -11,7 +11,7 @@ typedef const struct __CFDictionary *CFDictionaryRef;
 #if __APPLE_CC__ < 5621
 typedef struct _CGDirectDisplayID *CGDirectDisplayID;
 #else
-typedef uint32_t *CGDirectDisplayID;
+typedef uint32_t CGDirectDisplayID;
 #endif
 
 class LowLevelWindow_MacOSX : public LowLevelWindow
