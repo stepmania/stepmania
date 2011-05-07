@@ -8,9 +8,9 @@
 #include "RageUtil_AutoPtr.h"
 #include "RageUtil_CachedObject.h"
 #include "RageTypes.h"
+#include "Steps.h"
 #include <set>
 
-class Steps;
 class Style;
 class StepsID;
 struct lua_State;
@@ -319,9 +319,11 @@ public:
 	 * This must be sorted before gameplay. */
 	vector<LyricSegment>			m_LyricSegments;
 
+/* [splittiming]
 	void AddBPMSegment( const BPMSegment &seg ) { m_Timing.AddBPMSegment( seg ); }
 	void AddStopSegment( const StopSegment &seg ) { m_Timing.AddStopSegment( seg ); }
 	void AddWarpSegment( const WarpSegment &seg ) { m_Timing.AddWarpSegment( seg ); }
+*/
 	void AddBackgroundChange( BackgroundLayer blLayer, BackgroundChange seg );
 	void AddForegroundChange( BackgroundChange seg );
 	void AddLyricSegment( LyricSegment seg );
@@ -329,18 +331,43 @@ public:
 	void GetDisplayBpms( DisplayBpms &AddTo ) const;
 	const BackgroundChange &GetBackgroundAtBeat( BackgroundLayer iLayer, float fBeat ) const;
 
+/* [splittiming]
 	float GetBPMAtBeat( float fBeat ) const { return m_Timing.GetBPMAtBeat( fBeat ); }
 	void SetBPMAtBeat( float fBeat, float fBPM ) { m_Timing.SetBPMAtBeat( fBeat, fBPM ); }
 	BPMSegment& GetBPMSegmentAtBeat( float fBeat ) { return m_Timing.GetBPMSegmentAtBeat( fBeat ); }
+*/
+
 	/**
 	 * @brief Retrieve the beat based on the specified time.
 	 * @param fElapsedTime the amount of time since the Song started.
 	 * @return the appropriate beat. */
 	float GetBeatFromElapsedTime( float fElapsedTime ) const 
+	{
+		return m_SongTiming.GetBeatFromElapsedTime( fElapsedTime );
+	}
+	float GetBeatFromElapsedTime( float fElapsedTime, const Steps &steps ) const 
+	{
+		return steps.m_Timing.GetBeatFromElapsedTime( fElapsedTime );
+	}
+	
+	float GetElapsedTimeFromBeat( float fBeat ) const
+	{
+		return m_SongTiming.GetElapsedTimeFromBeat( fBeat );
+	}
+	float GetElapsedTimeFromBeat( float fBeat, const Steps &steps ) const
+	{
+		return steps.m_Timing.GetElapsedTimeFromBeat( fBeat );
+	}
+	
+	
+	/* [splittiming]
+	float GetBeatFromElapsedTime( float fElapsedTime ) const 
 	{ 
 		return m_Timing.GetBeatFromElapsedTime( fElapsedTime );
 	}
 	float GetElapsedTimeFromBeat( float fBeat ) const { return m_Timing.GetElapsedTimeFromBeat( fBeat ); }
+	*/
+	
 	bool HasSignificantBpmChangesOrStops() const;
 	float GetStepsSeconds() const;
 	bool IsLong() const;

@@ -8,6 +8,8 @@
 #include "Difficulty.h"
 #include "RageUtil_AutoPtr.h"
 #include "RageUtil_CachedObject.h"
+#include "TimingData.h"
+
 class Profile;
 class NoteData;
 struct lua_State;
@@ -30,9 +32,6 @@ public:
 	Steps();
 	/** @brief Destroy the Steps that are no longer needed. */
 	~Steps();
-
-	/** @brief Timing data */
-	TimingData m_SongTiming;
 
 	// initializers
 	void AutogenFrom( const Steps *parent, StepsType ntTo );
@@ -118,6 +117,9 @@ public:
 
 	void TidyUpData();
 	void CalculateRadarValues( float fMusicLengthSeconds );
+
+	/** @brief Timing data */
+	TimingData m_Timing;
 
 	// Lua
 	void PushSelf( lua_State *L );
