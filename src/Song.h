@@ -341,20 +341,20 @@ public:
 	 * @brief Retrieve the beat based on the specified time.
 	 * @param fElapsedTime the amount of time since the Song started.
 	 * @return the appropriate beat. */
-	float GetBeatFromElapsedTime( float fElapsedTime ) const 
+	float SongGetBeatFromElapsedTime( float fElapsedTime ) const 
 	{
 		return m_SongTiming.GetBeatFromElapsedTime( fElapsedTime );
 	}
-	float GetBeatFromElapsedTime( float fElapsedTime, const Steps &steps ) const 
+	float StepsGetBeatFromElapsedTime( float fElapsedTime, const Steps &steps ) const 
 	{
 		return steps.m_Timing.GetBeatFromElapsedTime( fElapsedTime );
 	}
 	
-	float GetElapsedTimeFromBeat( float fBeat ) const
+	float SongGetElapsedTimeFromBeat( float fBeat ) const
 	{
 		return m_SongTiming.GetElapsedTimeFromBeat( fBeat );
 	}
-	float GetElapsedTimeFromBeat( float fBeat, const Steps &steps ) const
+	float StepsGetElapsedTimeFromBeat( float fBeat, const Steps &steps ) const
 	{
 		return steps.m_Timing.GetElapsedTimeFromBeat( fBeat );
 	}
