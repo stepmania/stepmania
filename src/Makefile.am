@@ -42,6 +42,19 @@ increment_version:
 ver.cpp:
 	$(MAKE) increment_version
 
+PNG = \
+../extern/libpng/include/png.c ../extern/libpng/include/.png.h \
+../extern/libpng/include/pngconf.h ../extern/libpng/include/pngdebug.h \
+../extern/libpng/include/pngerror.c ../extern/libpng/include/pngget.c \
+../extern/libpng/include/pnginfo.h ../extern/libpng/include/scripts/pnglibconf.h \
+../extern/libpng/include/pngmem.c ../extern/libpng/include/pngpread.c \
+../extern/libpng/include/pngpriv.h ../extern/libpng/include/pngread.c \
+../extern/libpng/include/pngrio.c ../extern/libpng/include/pngrtran.c \
+../extern/libpng/include/pngrutil.c ../extern/libpng/include/pngset.c \
+../extern/libpng/include/pngstruct.h ../extern/libpng/include/pngtrans.c \
+../extern/libpng/include/pngwio.c ../extern/libpng/include/pngwrite.c \
+../extern/libpng/include/pngwtran.c ../extern/libpng/include/pngwutil.c
+
 Screens = \
 Screen.cpp Screen.h ScreenAttract.cpp ScreenAttract.h \
 ScreenBookkeeping.cpp ScreenBookkeeping.h \
@@ -579,7 +592,8 @@ libtomcrypt_a_CPPFLAGS = -I$(srcdir)/libtomcrypt/src/headers $(AM_CPPFLAGS)
 
 noinst_LIBRARIES += libtomcrypt.a
 
-main_SOURCES = $(Screens) \
+main_SOURCES = $(PNG) \
+		$(Screens) \
 		$(DataStructures) \
 		$(FileTypes) \
 		$(StepMania) \
