@@ -1325,7 +1325,7 @@ void ScreenGameplay::StartPlayingSong( float fMinTimeToNotes, float fMinTimeToMu
 
 	{
 		const float fFirstBeat = GAMESTATE->m_pCurSong->m_fFirstBeat;
-		const float fFirstSecond = GAMESTATE->m_pCurSong->GetElapsedTimeFromBeat( fFirstBeat );
+		const float fFirstSecond = GAMESTATE->m_pCurSong->m_SongTiming.GetElapsedTimeFromBeat( fFirstBeat );
 		float fStartDelay = fMinTimeToNotes - fFirstSecond;
 		fStartDelay = max( fStartDelay, fMinTimeToMusic );
 		p.m_StartSecond = -fStartDelay;
