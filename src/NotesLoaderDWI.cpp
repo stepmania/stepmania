@@ -582,7 +582,7 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, set<RString> &Bla
 			 0==stricmp(sValueName,"COUPLE")  || 
 			 0==stricmp(sValueName,"SOLO") )
 		{
-			Steps* pNewNotes = new Steps;
+			Steps* pNewNotes = out.CreateSteps();
 			LoadFromDWITokens( 
 				sParams[0], 
 				sParams[1], 

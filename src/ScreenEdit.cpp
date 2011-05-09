@@ -3953,7 +3953,7 @@ void ScreenEdit::RevertFromDisk()
 		// put a blank Steps in its place.  Note that this does not have to be the
 		// work of someone maliciously changing the simfile; it could happen to 
 		// someone editing a new stepchart and reverting from disk, for example.
-		pNewSteps = new Steps();
+		pNewSteps = GAMESTATE->m_pCurSong->CreateSteps();
 		pNewSteps->CreateBlank( id.GetStepsType() );
 		pNewSteps->SetDifficulty( id.GetDifficulty() );
 		GAMESTATE->m_pCurSong->AddSteps( pNewSteps );

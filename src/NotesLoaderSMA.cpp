@@ -360,7 +360,7 @@ bool SMALoader::LoadFromSMAFile( const RString &sPath, Song &out )
 				continue;
 			}
 			
-			Steps* pNewNotes = new Steps;
+			Steps* pNewNotes = out.CreateSteps();
 			LoadFromSMATokens( 
 					 sParams[1], 
 					 sParams[2], 
@@ -702,7 +702,7 @@ bool SMALoader::LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePat
 			if( !bAddStepsToSong )
 				return true;
 			
-			Steps* pNewNotes = new Steps;
+			Steps* pNewNotes = pSong->CreateSteps();
 			LoadFromSMATokens( 
 					 sParams[1], sParams[2], sParams[3], sParams[4], sParams[5], sParams[6],
 					 *pNewNotes);

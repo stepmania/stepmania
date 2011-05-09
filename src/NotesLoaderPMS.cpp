@@ -843,7 +843,7 @@ bool PMSLoader::LoadFromDir( const RString &sDir, Song &out )
 	/* Create a Steps for each. */
 	vector<Steps*> apSteps;
 	for( unsigned i=0; i<arrayPMSFileNames.size(); i++ )
-		apSteps.push_back( new Steps );
+		apSteps.push_back( out.CreateSteps() );
 
 	// Now, with our fancy little substring, trim the titles and
 	// figure out where each goes.

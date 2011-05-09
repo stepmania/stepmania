@@ -686,7 +686,7 @@ bool SSCLoader::LoadFromSSCFile( const RString &sPath, Song &out, bool bFromCach
 				else if( sValueName=="NOTEDATA" )
 				{
 					state = GETTING_STEP_INFO;
-					pNewNotes = new Steps;
+					pNewNotes = out.CreateSteps();
 				}
 				break;
 			}
@@ -957,7 +957,7 @@ bool SSCLoader::LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePat
 
 		else if( sValueName=="NOTEDATA" )
 		{
-			pNewNotes = new Steps;
+			pNewNotes = pSong->CreateSteps();
 			bSSCFormat = true;
 		}
 		if( sValueName=="STEPSTYPE" )
@@ -1062,7 +1062,7 @@ bool SSCLoader::LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePat
 			}
 			else
 			{
-				pNewNotes = new Steps;
+				pNewNotes = pSong->CreateSteps();
 				SMLoader::LoadFromSMTokens( 
 						 sParams[1], sParams[2], sParams[3], sParams[4], sParams[5], sParams[6],
 						 *pNewNotes);
