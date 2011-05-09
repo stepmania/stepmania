@@ -457,7 +457,7 @@ bool SMLoader::LoadFromSMFile( const RString &sPath, Song &out, bool bFromCache 
 		return false;
 	}
 
-	out.m_Timing.m_sFile = sPath;
+	out.m_SongTiming.m_sFile = sPath;
 	LoadTimingFromSMFile( msd, out.m_SongTiming );
 
 	for( unsigned i=0; i<msd.GetNumValues(); i++ )
