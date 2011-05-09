@@ -145,6 +145,18 @@ void Song::AddLyricSegment( LyricSegment seg )
 	m_LyricSegments.push_back( seg );
 }
 
+Steps *Song::CreateSteps()
+{
+	Steps *pSteps = new Steps;
+	InitSteps( pSteps );
+	return pSteps;
+}
+
+void Song::InitSteps(Steps *pSteps)
+{
+	pSteps->m_Timing = m_SongTiming;
+}
+
 void Song::GetDisplayBpms( DisplayBpms &AddTo ) const
 {
 	if( m_DisplayBPMType == DISPLAY_BPM_SPECIFIED )

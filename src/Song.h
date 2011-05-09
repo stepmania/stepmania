@@ -336,11 +336,15 @@ public:
 	void SetBPMAtBeat( float fBeat, float fBPM ) { m_Timing.SetBPMAtBeat( fBeat, fBPM ); }
 	BPMSegment& GetBPMSegmentAtBeat( float fBeat ) { return m_Timing.GetBPMSegmentAtBeat( fBeat ); }
 */
+	
+	Steps *CreateSteps();
+	void InitSteps(Steps *pSteps);
 
 	/**
 	 * @brief Retrieve the beat based on the specified time.
 	 * @param fElapsedTime the amount of time since the Song started.
 	 * @return the appropriate beat. */
+	/* [splittiming]
 	float SongGetBeatFromElapsedTime( float fElapsedTime ) const 
 	{
 		return m_SongTiming.GetBeatFromElapsedTime( fElapsedTime );
@@ -358,7 +362,7 @@ public:
 	{
 		return steps.m_Timing.GetElapsedTimeFromBeat( fBeat );
 	}
-	
+	*/
 	
 	/* [splittiming]
 	float GetBeatFromElapsedTime( float fElapsedTime ) const 
