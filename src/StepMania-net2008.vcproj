@@ -50,7 +50,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".;vorbis;libjpeg;&quot;..\extern\lua-5.1\src&quot;;ffmpeg\modern_working\include;BaseClasses;&quot;..\extern\jsoncpp\include&quot;;&quot;..\extern\glew-1.5.8\include&quot;;..\extern\pcre;&quot;..\extern\mad-0.15.1b&quot;;..\extern\libpng;..\extern\libjpeg;..\extern\zlib;..\extern\vorbis"
+				AdditionalIncludeDirectories=".;&quot;..\extern\lua-5.1\src&quot;;ffmpeg\modern_working\include;BaseClasses;&quot;..\extern\jsoncpp\include&quot;;&quot;..\extern\glew-1.5.8\include&quot;;..\extern\pcre;&quot;..\extern\mad-0.15.1b&quot;;..\extern\libpng;..\extern\libjpeg;..\extern\zlib;..\extern\vorbis"
 				PreprocessorDefinitions="WIN32,_DEBUG,_WINDOWS,WINDOWS,DEBUG,GLEW_STATIC"
 				ExceptionHandling="0"
 				BasicRuntimeChecks="3"
@@ -158,7 +158,7 @@
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="2"
-				AdditionalIncludeDirectories=".;vorbis;libjpeg;&quot;..\extern\lua-5.1\src&quot;;ffmpeg\modern_working\include;BaseClasses;&quot;..\extern\jsoncpp\include&quot;;&quot;..\extern\glew-1.5.8\include&quot;;..\extern\pcre;&quot;..\extern\mad-0.15.1b&quot;;..\extern\libpng;..\extern\libjpeg;..\extern\zlib;..\extern\vorbis"
+				AdditionalIncludeDirectories=".;&quot;..\extern\lua-5.1\src&quot;;ffmpeg\modern_working\include;BaseClasses;&quot;..\extern\jsoncpp\include&quot;;&quot;..\extern\glew-1.5.8\include&quot;;..\extern\pcre;&quot;..\extern\mad-0.15.1b&quot;;..\extern\libpng;..\extern\libjpeg;..\extern\zlib;..\extern\vorbis"
 				PreprocessorDefinitions="WIN32,NDEBUG,_WINDOWS,WINDOWS,RELEASE,GLEW_STATIC"
 				StringPooling="true"
 				MinimalRebuild="false"
@@ -263,7 +263,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".;vorbis;libjpeg;&quot;..\extern\lua-5.1\src&quot;;ffmpeg\modern_working\include;BaseClasses;&quot;..\extern\jsoncpp\include&quot;;&quot;..\extern\glew-1.5.8\include&quot;;..\extern\pcre;&quot;..\extern\mad-0.15.1b&quot;;..\extern\libpng;..\extern\libjpeg;..\extern\zlib;..\extern\vorbis"
+				AdditionalIncludeDirectories=".;&quot;..\extern\lua-5.1\src&quot;;ffmpeg\modern_working\include;BaseClasses;&quot;..\extern\jsoncpp\include&quot;;&quot;..\extern\glew-1.5.8\include&quot;;..\extern\pcre;&quot;..\extern\mad-0.15.1b&quot;;..\extern\libpng;..\extern\libjpeg;..\extern\zlib;..\extern\vorbis"
 				PreprocessorDefinitions="WIN32,_DEBUG,_WINDOWS,WINDOWS,DEBUG,GLEW_STATIC"
 				ExceptionHandling="0"
 				BasicRuntimeChecks="0"
@@ -371,7 +371,7 @@
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
-				AdditionalIncludeDirectories=".;vorbis;libjpeg;&quot;..\extern\lua-5.1\src&quot;;ffmpeg\modern_working\include;BaseClasses;&quot;..\extern\jsoncpp\include&quot;;&quot;..\extern\glew-1.5.8\include&quot;;..\extern\pcre;&quot;..\extern\mad-0.15.1b&quot;;..\extern\libpng;..\extern\libjpeg;..\extern\zlib;..\extern\vorbis"
+				AdditionalIncludeDirectories=".;&quot;..\extern\lua-5.1\src&quot;;ffmpeg\modern_working\include;BaseClasses;&quot;..\extern\jsoncpp\include&quot;;&quot;..\extern\glew-1.5.8\include&quot;;..\extern\pcre;&quot;..\extern\mad-0.15.1b&quot;;..\extern\libpng;..\extern\libjpeg;..\extern\zlib;..\extern\vorbis"
 				PreprocessorDefinitions="WIN32,NDEBUG,_WINDOWS,WINDOWS,RELEASE,GLEW_STATIC"
 				StringPooling="true"
 				MinimalRebuild="false"
@@ -6564,6 +6564,30 @@
 				RelativePath="glext.h"
 				>
 			</File>
+			<Filter Name="libpng">
+				<File RelativePath="..\extern\libpng\include\png.c"></File>
+				<File RelativePath="..\extern\libpng\include\png.h"></File>
+				<File RelativePath="..\extern\libpng\include\pngconf.h"></File>
+				<File RelativePath="..\extern\libpng\include\pngdebug.h"></File>
+				<File RelativePath="..\extern\libpng\include\pngerror.c"></File>
+				<File RelativePath="..\extern\libpng\include\pngget.c"></File>
+				<File RelativePath="..\extern\libpng\include\pnginfo.h"></File>
+				<File RelativePath="..\extern\libpng\include\scripts\pnglibconf.h"></File>
+				<File RelativePath="..\extern\libpng\include\pngmem.c"></File>
+				<File RelativePath="..\extern\libpng\include\pngpread.c"></File>
+				<File RelativePath="..\extern\libpng\include\pngpriv.h"></File>
+				<File RelativePath="..\extern\libpng\include\pngread.c"></File>
+				<File RelativePath="..\extern\libpng\include\pngrio.c"></File>
+				<File RelativePath="..\extern\libpng\include\pngrtran.c"></File>
+				<File RelativePath="..\extern\libpng\include\pngrutil.c"></File>
+				<File RelativePath="..\extern\libpng\include\pngset.c"></File>
+				<File RelativePath="..\extern\libpng\include\pngstruct.h"></File>
+				<File RelativePath="..\extern\libpng\include\pngtrans.c"></File>
+				<File RelativePath="..\extern\libpng\include\pngwio.c"></File>
+				<File RelativePath="..\extern\libpng\include\pngwrite.c"></File>
+				<File RelativePath="..\extern\libpng\include\pngwtran.c"></File>
+				<File RelativePath="..\extern\libpng\include\pngwutil.c"></File>
+			</Filter>
 			<Filter
 				Name="pcre"
 				>

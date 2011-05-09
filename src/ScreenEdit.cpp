@@ -73,6 +73,7 @@ AutoScreenMessage( SM_BackFromCourseModeMenu );
 AutoScreenMessage( SM_DoRevertToLastSave );
 AutoScreenMessage( SM_DoRevertFromDisk );
 AutoScreenMessage( SM_BackFromTimingDataInformation );
+AutoScreenMessage( SM_BackFromDifficultyMeterChange );
 AutoScreenMessage( SM_BackFromBPMChange );
 AutoScreenMessage( SM_BackFromStopChange );
 AutoScreenMessage( SM_BackFromDelayChange );
@@ -519,7 +520,7 @@ static MenuDef g_AreaMenu(
 static MenuDef g_StepsInformation(
 	"ScreenMiniMenuStepsInformation",
 	MenuRowDef( ScreenEdit::difficulty,	"Difficulty",		true, EditMode_Practice, true, true, 0, NULL ),
-	MenuRowDef( ScreenEdit::meter,		"Meter",		true, EditMode_Practice, true, false, 0, MIN_METER, MAX_METER ),
+	MenuRowDef( ScreenEdit::meter,		"Meter",		true, EditMode_Practice, true, false, 0, NULL ),
 	MenuRowDef( ScreenEdit::description,	"Description",		true, EditMode_Practice, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::chartstyle,	"Chart Style",		true, EditMode_Practice, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::step_credit,	"Step Author",		true, EditMode_Practice, true, true, 0, NULL ),
@@ -2614,6 +2615,14 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	{
 		HandleTimingDataInformationChoice( (TimingDataInformationChoice)ScreenMiniMenu::s_iLastRowCode, ScreenMiniMenu::s_viLastAnswers );
 	}
+	else if( SM == SM_BackFromDifficultyMeterChange )
+	{
+		int i;
+		std::istringstream ss( ScreenTextEntry::s_sLastAnswer );
+		ss >> i;
+		GAMESTATE->m_pCurSteps[PLAYER_1]->SetMeter(i);
+		SetDirty( true );
+	}
 	else if( SM == SM_BackFromBPMChange )
 	{
 		float fBPM = StringToFloat( ScreenTextEntry::s_sLastAnswer );
@@ -3126,7 +3135,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 				}
 				g_StepsInformation.rows[difficulty].iDefaultChoice = pSteps->GetDifficulty();
 				g_StepsInformation.rows[difficulty].bEnabled = (EDIT_MODE.GetValue() >= EditMode_Full);
-				g_StepsInformation.rows[meter].iDefaultChoice = clamp( pSteps->GetMeter()-1, 0, MAX_METER+1 );
+				g_StepsInformation.rows[meter].SetOneUnthemedChoice( ssprintf("%d", pSteps->GetMeter()) );
 				g_StepsInformation.rows[meter].bEnabled = (EDIT_MODE.GetValue() >= EditMode_Home);
 				g_StepsInformation.rows[predict_meter].SetOneUnthemedChoice( ssprintf("%.2f",pSteps->PredictMeter()) );
 				g_StepsInformation.rows[description].bEnabled = (EDIT_MODE.GetValue() >= EditMode_Full);
@@ -3590,13 +3599,12 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 static LocalizedString ENTER_NEW_DESCRIPTION( "ScreenEdit", "Enter a new description." );
 static LocalizedString ENTER_NEW_CHART_STYLE( "ScreenEdit", "Enter a new chart style." );
 static LocalizedString ENTER_NEW_STEP_AUTHOR( "ScreenEdit", "Enter the author who made this step pattern." );
+static LocalizedString ENTER_NEW_METER( "ScreenEdit", "Enter a new meter." );
 void ScreenEdit::HandleStepsInformationChoice( StepsInformationChoice c, const vector<int> &iAnswers )
 {
 	Steps* pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
 	Difficulty dc = (Difficulty)iAnswers[difficulty];
 	pSteps->SetDifficulty( dc );
-	int iMeter = iAnswers[meter]+1;
-	pSteps->SetMeter( iMeter );
 	
 	switch( c )
 	{
@@ -3632,6 +3640,16 @@ void ScreenEdit::HandleStepsInformationChoice( StepsInformationChoice c, const v
 			ChangeStepCredit,
 			NULL
 			);
+		break;
+	case meter:
+		ScreenTextEntry::TextEntry(
+			   SM_BackFromDifficultyMeterChange,
+			   ENTER_NEW_METER,
+			   ssprintf("%d", m_pSteps->GetMeter()),
+			   4
+			   );
+		break;
+	default:
 		break;
 	}
 }
