@@ -34,12 +34,6 @@ void SongPosition::UpdateSongPosition( float fPositionSeconds, const TimingData 
 
 	m_fSongBeatNoOffset = timing.GetBeatFromElapsedTimeNoOffset( fPositionSeconds );
 
-	m_fMusicSecondsVisible = fPositionSeconds - g_fVisualDelaySeconds.Get();
-	float fThrowAway, fThrowAway2;
-	bool bThrowAway;
-	int iThrowAway;
-	timing.GetBeatAndBPSFromElapsedTime( m_fMusicSecondsVisible, m_fSongBeatVisible, fThrowAway, bThrowAway, bThrowAway, iThrowAway, fThrowAway2 );
-
 	/*
 	// xxx testing: only do this on monotune survivor
 	if( m_pCurSong && m_pCurSong->GetDisplayFullTitle() == "monotune survivor" )
@@ -58,6 +52,5 @@ void SongPosition::UpdateSongPosition( float fPositionSeconds, const TimingData 
 		}
 	}
 	*/
-
 
 }

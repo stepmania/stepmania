@@ -32,9 +32,6 @@ class SongPosition
 	float		m_fWarpDestination;
 	RageTimer	m_LastBeatUpdate; // time of last m_fSongBeat, etc. update
 
-	float		m_fMusicSecondsVisible;
-	float		m_fSongBeatVisible;
-
 	void UpdateSongPosition( float fPositionSeconds, const TimingData &timing, const RageTimer &timestamp = RageZeroTimer );
 
 };

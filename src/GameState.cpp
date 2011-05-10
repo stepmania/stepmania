@@ -957,7 +957,13 @@ void GameState::UpdateSongPosition( float fPositionSeconds, const TimingData &ti
 	FOREACH_EnabledPlayer( pn )
 		m_pPlayerState[pn]->m_Position.UpdateSongPosition( fPositionSeconds, m_pCurSteps[pn]->m_Timing, timestamp );
 	
-	Actor::SetBGMTime( m_Position.m_fMusicSecondsVisible, m_Position.m_fSongBeatVisible, m_Position.fPositionSeconds, m_Position.m_fSongBeatNoOffset );
+	m_fMusicSecondsVisible = fPositionSeconds - g_fVisualDelaySeconds.Get();
+	float fThrowAway, fThrowAway2;
+	bool bThrowAway;
+	int iThrowAway;
+	timing.GetBeatAndBPSFromElapsedTime( m_fMusicSecondsVisible, m_fSongBeatVisible, fThrowAway, bThrowAway, bThrowAway, iThrowAway, fThrowAway2 );
+
+	Actor::SetBGMTime( m_Position.m_fMusicSecondsVisible, m_Position.m_fSongBeatVisible, fPositionSeconds, m_Position.m_fSongBeatNoOffset );
 //	LOG->Trace( "m_fMusicSeconds = %f, m_fSongBeat = %f, m_fCurBPS = %f, m_bFreeze = %f", m_fMusicSeconds, m_fSongBeat, m_fCurBPS, m_bFreeze );
 }
 
