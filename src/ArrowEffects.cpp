@@ -67,13 +67,13 @@ static float GetNoteFieldHeight( const PlayerState* pPlayerState )
 
 namespace
 {
-	float g_fExpandSeconds = 0;
 	struct PerPlayerData
 	{
 		float m_fMinTornadoX[MAX_COLS_PER_PLAYER];
 		float m_fMaxTornadoX[MAX_COLS_PER_PLAYER];
 		float m_fInvertDistance[MAX_COLS_PER_PLAYER];
 		float m_fBeatFactor;
+		float m_fExpandSeconds;
 	};
 	PerPlayerData g_EffectData[NUM_PLAYERS];
 };
@@ -82,22 +82,23 @@ void ArrowEffects::Update()
 {
 	const Style* pStyle = GAMESTATE->GetCurrentStyle();
 
-	{
-		static float fLastTime = 0;
-		float fTime = RageTimer::GetTimeSinceStartFast();
-		if( !GAMESTATE->m_bFreeze || !GAMESTATE->m_bDelay )
-		{
-			g_fExpandSeconds += fTime - fLastTime;
-			g_fExpandSeconds = fmodf( g_fExpandSeconds, PI*2 );
-		}
-		fLastTime = fTime;
-	}
-
 	FOREACH_PlayerNumber( pn )
 	{
 		const Style::ColumnInfo* pCols = pStyle->m_ColumnInfo[pn];
 
 		PerPlayerData &data = g_EffectData[pn];
+		
+		{
+			static float fLastTime = 0;
+			float fTime = RageTimer::GetTimeSinceStartFast();
+			if( !GAMESTATE->m_pPlayerState[pn]->m_Position.m_bFreeze || !GAMESTATE->m_pPlayerState[pn]->m_Position.m_bDelay )
+			{
+				data.m_fExpandSeconds += fTime - fLastTime;
+				data.m_fExpandSeconds = fmodf( data.m_fExpandSeconds, PI*2 );
+			}
+			fLastTime = fTime;
+		}
+		
 		// Update Tornado
 		for( int iColNum = 0; iColNum < MAX_COLS_PER_PLAYER; ++iColNum )
 		{
@@ -307,7 +308,10 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 
 	if( fAccels[PlayerOptions::ACCEL_EXPAND] != 0 )
 	{
-		float fExpandMultiplier = SCALE( RageFastCos(g_fExpandSeconds*EXPAND_MULTIPLIER_FREQUENCY), 
+		// TODO: Don't index by PlayerNumber.
+		PerPlayerData &data = g_EffectData[pPlayerState->m_PlayerNumber];
+	
+		float fExpandMultiplier = SCALE( RageFastCos(data.m_fExpandSeconds*EXPAND_MULTIPLIER_FREQUENCY), 
 						EXPAND_MULTIPLIER_SCALE_FROM_LOW, EXPAND_MULTIPLIER_SCALE_FROM_HIGH,
 						EXPAND_MULTIPLIER_SCALE_TO_LOW, EXPAND_MULTIPLIER_SCALE_TO_HIGH );
 		fScrollSpeed *=	SCALE( fAccels[PlayerOptions::ACCEL_EXPAND], 

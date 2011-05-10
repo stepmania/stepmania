@@ -276,7 +276,7 @@ SongBPMDisplay::SongBPMDisplay()
 
 void SongBPMDisplay::Update( float fDeltaTime ) 
 {
-	float fGameStateBPM = GAMESTATE->m_fCurBPS * 60.0f;
+	float fGameStateBPM = GAMESTATE->m_Position.m_fCurBPS * 60.0f;
 	if( m_fLastGameStateBPM != fGameStateBPM )
 	{
 		m_fLastGameStateBPM = fGameStateBPM;

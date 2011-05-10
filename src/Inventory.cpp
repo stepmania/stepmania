@@ -121,7 +121,7 @@ void Inventory::Update( float fDelta )
 
 	// use items if this player is CPU-controlled
 	if( m_pPlayerState->m_PlayerController != PC_HUMAN &&
-		GAMESTATE->m_fSongBeat < GAMESTATE->m_pCurSong->m_fLastBeat )
+		GAMESTATE->m_Position.m_fSongBeat < GAMESTATE->m_pCurSong->m_fLastBeat )
 	{
 		// every 1 seconds, try to use an item
 		int iLastSecond = (int)(RageTimer::GetTimeSinceStartFast() - fDelta);
