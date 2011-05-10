@@ -74,7 +74,7 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 			f.PutLine( "#INSTRUMENTTRACK:" + s + ";\n" );
 		}
 	}
-	f.PutLine( ssprintf( "#OFFSET:%.6f;", out.m_Timing.m_fBeat0OffsetInSeconds ) );
+	f.PutLine( ssprintf( "#OFFSET:%.6f;", out.m_SongTiming.m_fBeat0OffsetInSeconds ) );
 	f.PutLine( ssprintf( "#SAMPLESTART:%.6f;", out.m_fMusicSampleStartSeconds ) );
 	f.PutLine( ssprintf( "#SAMPLELENGTH:%.6f;", out.m_fMusicSampleLengthSeconds ) );
 	if( out.m_fSpecifiedLastBeat > 0 )
@@ -107,39 +107,39 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 	}
 
 	f.Write( "#BPMS:" );
-	for( unsigned i=0; i<out.m_Timing.m_BPMSegments.size(); i++ )
+	for( unsigned i=0; i<out.m_SongTiming.m_BPMSegments.size(); i++ )
 	{
-		const BPMSegment &bs = out.m_Timing.m_BPMSegments[i];
+		const BPMSegment &bs = out.m_SongTiming.m_BPMSegments[i];
 
 		f.PutLine( ssprintf( "%.6f=%.6f", NoteRowToBeat(bs.m_iStartRow), bs.GetBPM() ) );
-		if( i != out.m_Timing.m_BPMSegments.size()-1 )
+		if( i != out.m_SongTiming.m_BPMSegments.size()-1 )
 			f.Write( "," );
 	}
 	f.PutLine( ";" );
 
 	f.Write( "#STOPS:" );
-	for( unsigned i=0; i<out.m_Timing.m_StopSegments.size(); i++ )
+	for( unsigned i=0; i<out.m_SongTiming.m_StopSegments.size(); i++ )
 	{
-		const StopSegment &fs = out.m_Timing.m_StopSegments[i];
+		const StopSegment &fs = out.m_SongTiming.m_StopSegments[i];
 
 		if(!fs.m_bDelay)
 		{
 			f.PutLine( ssprintf( "%.6f=%.6f", NoteRowToBeat(fs.m_iStartRow), fs.m_fStopSeconds ) );
-			if( i != out.m_Timing.m_StopSegments.size()-1 )
+			if( i != out.m_SongTiming.m_StopSegments.size()-1 )
 				f.Write( "," );
 		}
 	}
 	f.PutLine( ";" );
 
 	f.Write( "#DELAYS:" );
-	for( unsigned i=0; i<out.m_Timing.m_StopSegments.size(); i++ )
+	for( unsigned i=0; i<out.m_SongTiming.m_StopSegments.size(); i++ )
 	{
-		const StopSegment &fs = out.m_Timing.m_StopSegments[i];
+		const StopSegment &fs = out.m_SongTiming.m_StopSegments[i];
 
 		if( fs.m_bDelay )
 		{
 			f.PutLine( ssprintf( "%.6f=%.6f", NoteRowToBeat(fs.m_iStartRow), fs.m_fStopSeconds ) );
-			if( i != out.m_Timing.m_StopSegments.size()-1 )
+			if( i != out.m_SongTiming.m_StopSegments.size()-1 )
 				f.Write( "," );
 		}
 	}
@@ -147,61 +147,61 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 
 	
 	f.Write( "#WARPS:" );
-	for( unsigned i=0; i<out.m_Timing.m_WarpSegments.size(); i++ )
+	for( unsigned i=0; i<out.m_SongTiming.m_WarpSegments.size(); i++ )
 	{
-		const WarpSegment &ws = out.m_Timing.m_WarpSegments[i];
+		const WarpSegment &ws = out.m_SongTiming.m_WarpSegments[i];
 
 		f.PutLine( ssprintf( "%.6f=%.6f", NoteRowToBeat(ws.m_iStartRow), ws.m_fEndBeat ) );
-		if( i != out.m_Timing.m_WarpSegments.size()-1 )
+		if( i != out.m_SongTiming.m_WarpSegments.size()-1 )
 			f.Write( "," );
 	}
 	f.PutLine( ";" );
 	
 
-	ASSERT( !out.m_Timing.m_vTimeSignatureSegments.empty() );
+	ASSERT( !out.m_SongTiming.m_vTimeSignatureSegments.empty() );
 	f.Write( "#TIMESIGNATURES:" );
-	FOREACH_CONST( TimeSignatureSegment, out.m_Timing.m_vTimeSignatureSegments, iter )
+	FOREACH_CONST( TimeSignatureSegment, out.m_SongTiming.m_vTimeSignatureSegments, iter )
 	{
 		f.PutLine( ssprintf( "%.6f=%d=%d", NoteRowToBeat(iter->m_iStartRow), iter->m_iNumerator, iter->m_iDenominator ) );
 		vector<TimeSignatureSegment>::const_iterator iter2 = iter;
 		iter2++;
-		if( iter2 != out.m_Timing.m_vTimeSignatureSegments.end() )
+		if( iter2 != out.m_SongTiming.m_vTimeSignatureSegments.end() )
 			f.Write( "," );
 	}
 	f.PutLine( ";" );
 
-	ASSERT( !out.m_Timing.m_TickcountSegments.empty() );
+	ASSERT( !out.m_SongTiming.m_TickcountSegments.empty() );
 	f.Write( "#TICKCOUNTS:" );
-	for( unsigned i=0; i<out.m_Timing.m_TickcountSegments.size(); i++ )
+	for( unsigned i=0; i<out.m_SongTiming.m_TickcountSegments.size(); i++ )
 	{
-		const TickcountSegment &ts = out.m_Timing.m_TickcountSegments[i];
+		const TickcountSegment &ts = out.m_SongTiming.m_TickcountSegments[i];
 
 		f.PutLine( ssprintf( "%.6f=%d", NoteRowToBeat(ts.m_iStartRow), ts.m_iTicks ) );
-		if( i != out.m_Timing.m_TickcountSegments.size()-1 )
+		if( i != out.m_SongTiming.m_TickcountSegments.size()-1 )
 			f.Write( "," );
 	}
 	f.PutLine( ";" );
 	
 	
-	ASSERT( !out.m_Timing.m_ComboSegments.empty() );
+	ASSERT( !out.m_SongTiming.m_ComboSegments.empty() );
 	f.Write( "#COMBOS:" );
-	for( unsigned i=0; i<out.m_Timing.m_ComboSegments.size(); i++ )
+	for( unsigned i=0; i<out.m_SongTiming.m_ComboSegments.size(); i++ )
 	{
-		const ComboSegment &cs = out.m_Timing.m_ComboSegments[i];
+		const ComboSegment &cs = out.m_SongTiming.m_ComboSegments[i];
 
 		f.PutLine( ssprintf( "%.6f=%d", NoteRowToBeat(cs.m_iStartRow), cs.m_iCombo ) );
-		if( i != out.m_Timing.m_ComboSegments.size()-1 )
+		if( i != out.m_SongTiming.m_ComboSegments.size()-1 )
 			f.Write( "," );
 	}
 	f.PutLine( ";" );
 	
 	f.Write( "#LABELS:" );
-	for( unsigned i=0; i<out.m_Timing.m_LabelSegments.size(); i++ )
+	for( unsigned i=0; i<out.m_SongTiming.m_LabelSegments.size(); i++ )
 	{
-		const LabelSegment &ls = out.m_Timing.m_LabelSegments[i];
+		const LabelSegment &ls = out.m_SongTiming.m_LabelSegments[i];
 		
 		f.PutLine( ssprintf( "%.6f=%s", NoteRowToBeat(ls.m_iStartRow), ls.m_sLabel.c_str() ) );
-		if( i != out.m_Timing.m_LabelSegments.size()-1 )
+		if( i != out.m_SongTiming.m_LabelSegments.size()-1 )
 			f.Write( "," );
 	}
 	f.PutLine( ";" );

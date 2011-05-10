@@ -25,6 +25,13 @@ namespace SMLoader
 	bool LoadEditFromBuffer( const RString &sBuffer, const RString &sEditFilePath, ProfileSlot slot );
 	bool LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePath, ProfileSlot slot, bool bAddStepsToSong );
 	bool LoadFromBGChangesString( BackgroundChange &change, const RString &sBGChangeExpression );
+	
+	
+	void ProcessBPMs( TimingData &, const RString );
+	void ProcessStops( TimingData &, const RString );
+	void ProcessDelays( TimingData &, const RString );
+	void ProcessTimeSignatures( TimingData &, const RString );
+	void ProcessTickcounts( TimingData &, const RString );
 }
 
 #endif

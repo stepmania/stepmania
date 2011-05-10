@@ -419,7 +419,7 @@ void BackgroundImpl::LoadFromRandom( float fFirstBeat, float fEndBeat, const Bac
 	int iStartRow = BeatToNoteRow(fFirstBeat);
 	int iEndRow = BeatToNoteRow(fEndBeat);
 
-	const TimingData &timing = m_pSong->m_Timing;
+	const TimingData &timing = m_pSong->m_SongTiming;
 
 	// change BG every time signature change or 4 measures
 	FOREACH_CONST( TimeSignatureSegment, timing.m_vTimeSignatureSegments, iter )
@@ -697,7 +697,7 @@ void BackgroundImpl::Layer::UpdateCurBGChange( const Song *pSong, float fLastMus
 	float fBeat, fBPS, fThrowAway;
 	bool bFreeze;
 	int iThrowAway;
-	pSong->m_Timing.GetBeatAndBPSFromElapsedTime( fCurrentTime, fBeat, fBPS, bFreeze, bFreeze, iThrowAway, fThrowAway );
+	pSong->m_SongTiming.GetBeatAndBPSFromElapsedTime( fCurrentTime, fBeat, fBPS, bFreeze, bFreeze, iThrowAway, fThrowAway );
 
 	// Calls to Update() should *not* be scaled by music rate; fCurrentTime is. Undo it.
 	const float fRate = GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate;
@@ -762,7 +762,7 @@ void BackgroundImpl::Layer::UpdateCurBGChange( const Song *pSong, float fLastMus
 		m_pCurrentBGA->PlayCommand( "GainFocus" );
 
 		/* How much time of this BGA have we skipped?  (This happens with SetSeconds.) */
-		const float fStartSecond = pSong->m_Timing.GetElapsedTimeFromBeat( change.m_fStartBeat );
+		const float fStartSecond = pSong->m_SongTiming.GetElapsedTimeFromBeat( change.m_fStartBeat );
 
 		/* This is affected by the music rate. */
 		fDeltaTime = fCurrentTime - fStartSecond;

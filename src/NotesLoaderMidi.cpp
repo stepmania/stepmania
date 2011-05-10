@@ -682,7 +682,7 @@ static bool LoadFromMidi( const RString &sPath, Song &songOut )
 		double fSecondsPerBeat = (iter->tickSeconds * GUITAR_MIDI_COUNTS_PER_BEAT);
 		bpmSeg.m_fBPS = float( 1. / fSecondsPerBeat );
 
-		songOut.m_Timing.AddBPMSegment( bpmSeg );
+		songOut.m_SongTiming.AddBPMSegment( bpmSeg );
 	}
 
 	FOREACH_CONST( MidiFileIn::TimeSignatureChange, midi.timeSignatureEvents_, iter )
@@ -692,7 +692,7 @@ static bool LoadFromMidi( const RString &sPath, Song &songOut )
 		seg.m_iNumerator = iter->numerator;
 		seg.m_iDenominator = iter->denominator;
 
-		songOut.m_Timing.AddTimeSignatureSegment( seg );
+		songOut.m_SongTiming.AddTimeSignatureSegment( seg );
 	}
 
 

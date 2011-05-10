@@ -799,7 +799,7 @@ static void ReadGlobalTags( const NameToData_t &mapNameToData, Song &out, Measur
 		if( PREFSMAN->m_bQuirksMode )
 		{
 			BPMSegment newSeg( 0, fBPM );
-			out.AddBPMSegment( newSeg );
+			out.m_SongTiming.AddBPMSegment( newSeg );
 			if( fBPM > 0.0f )
 				LOG->Trace( "Inserting new positive BPM change at beat %f, BPM %f", NoteRowToBeat(0), fBPM );
 			else
@@ -810,7 +810,7 @@ static void ReadGlobalTags( const NameToData_t &mapNameToData, Song &out, Measur
 			if( fBPM > 0.0f )
 			{
 				BPMSegment newSeg( 0, fBPM );
-				out.AddBPMSegment( newSeg );
+				out.m_SongTiming.AddBPMSegment( newSeg );
 				LOG->Trace( "Inserting new BPM change at beat %f, BPM %f", NoteRowToBeat(0), fBPM );
 			}
 			else
@@ -901,7 +901,7 @@ static void ReadGlobalTags( const NameToData_t &mapNameToData, Song &out, Measur
 			case BMS_TRACK_BPM:
 				if( iVal > 0 )
 				{
-					out.SetBPMAtBeat( fBeat, (float) iVal );
+					out.m_SongTiming.SetBPMAtBeat( fBeat, (float) iVal );
 					LOG->Trace( "Inserting new BPM change at beat %f, BPM %i", fBeat, iVal );
 				}
 				else
@@ -918,7 +918,7 @@ static void ReadGlobalTags( const NameToData_t &mapNameToData, Song &out, Measur
 				if( GetTagFromMap( mapNameToData, sTagToLookFor, sBPM ) )
 				{
 					float fBPM = StringToFloat( sBPM );
-					out.SetBPMAtBeat( fBeat, fBPM );
+					out.m_SongTiming.SetBPMAtBeat( fBeat, fBPM );
 				}
 				else
 				{
@@ -937,12 +937,12 @@ static void ReadGlobalTags( const NameToData_t &mapNameToData, Song &out, Measur
 				if( GetTagFromMap( mapNameToData, sTagToLookFor, sBeats ) )
 				{
 					// find the BPM at the time of this freeze
-					float fBPS = out.m_Timing.GetBPMAtBeat(fBeat) / 60.0f;
+					float fBPS = out.m_SongTiming.GetBPMAtBeat(fBeat) / 60.0f;
 					float fBeats = StringToFloat( sBeats ) / 48.0f;
 					float fFreezeSecs = fBeats / fBPS;
 
 					StopSegment newSeg( BeatToNoteRow(fBeat), fFreezeSecs );
-					out.AddStopSegment( newSeg );
+					out.m_SongTiming.AddStopSegment( newSeg );
 					LOG->Trace( "Inserting new Freeze at beat %f, secs %f", fBeat, newSeg.m_fStopSeconds );
 				}
 				else

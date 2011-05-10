@@ -358,7 +358,7 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 		else if( sValueName=="BPM" )
 		{
 			BPM1 = StringToFloat(sParams[1]);
-			out.AddBPMSegment( BPMSegment(0, BPM1) );
+			out.m_SongTiming.AddBPMSegment( BPMSegment(0, BPM1) );
 		}
 		else if( sValueName=="BPM2" )
 		{
@@ -383,7 +383,7 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 		else if( sValueName=="STARTTIME" )
 		{
 			SMGap1 = -StringToFloat( sParams[1] )/100;
-			out.m_Timing.m_fBeat0OffsetInSeconds = SMGap1;
+			out.m_SongTiming.m_fBeat0OffsetInSeconds = SMGap1;
 		}
 		// This is currently required for more accurate KIU BPM changes.  
 		else if( sValueName=="STARTTIME2" )
@@ -409,7 +409,7 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 			TickcountSegment tcs;
 			tcs.m_iStartRow = BeatToNoteRow(0.0f);
 			tcs.m_iTicks = iTickCount > ROWS_PER_BEAT ? ROWS_PER_BEAT : iTickCount;
-			out.m_Timing.AddTickcountSegment( tcs );
+			out.m_SongTiming.AddTickcountSegment( tcs );
 		}
 		else if ( sValueName=="STEP" )
 		{
@@ -469,7 +469,7 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 			const float beat = (BPMPos2 + SMGap1) * BeatsPerSecond;
 			LOG->Trace( "BPM %f, BPS %f, BPMPos2 %f, beat %f",
 				    BPM1, BeatsPerSecond, BPMPos2, beat );
-			out.AddBPMSegment( BPMSegment(BeatToNoteRow(beat), BPM2) );
+			out.m_SongTiming.AddBPMSegment( BPMSegment(BeatToNoteRow(beat), BPM2) );
 		}
 
 		if( BPM3 > 0 && BPMPos3 > 0 )
@@ -479,7 +479,7 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 			const float beat = (BPMPos3 + SMGap2) * BeatsPerSecond;
 			LOG->Trace( "BPM %f, BPS %f, BPMPos3 %f, beat %f",
 			    BPM2, BeatsPerSecond, BPMPos3, beat );
-			out.AddBPMSegment( BPMSegment(BeatToNoteRow(beat), BPM3) );
+			out.m_SongTiming.AddBPMSegment( BPMSegment(BeatToNoteRow(beat), BPM3) );
 		}
 	}
 	else
@@ -515,7 +515,7 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 					TickcountSegment tcs;
 					tcs.m_iStartRow = BeatToNoteRow(fCurBeat);
 					tcs.m_iTicks = iTickCount > ROWS_PER_BEAT ? ROWS_PER_BEAT : iTickCount;
-					out.m_Timing.AddTickcountSegment( tcs );
+					out.m_SongTiming.AddTickcountSegment( tcs );
 
 					continue;
 				}
@@ -523,22 +523,22 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 				{
 					float fCurBpm = (float)numTemp;
 					//out.m_Timing.AddBPMSegment( BPMSegment( BeatToNoteRow(fCurBeat), (float)numTemp ) );
-					out.m_Timing.SetBPMAtBeat( fCurBeat, fCurBpm );
+					out.m_SongTiming.SetBPMAtBeat( fCurBeat, fCurBpm );
 					continue;
 				}
 				else if (BeginsWith(NoteRowString, "|E"))
 				{
 					// Finally! the |E| tag is working as it should. I can die happy now -DaisuMaster
-					float fCurDelay = 60 / out.m_Timing.GetBPMAtBeat(fCurBeat) * (float)numTemp / iTickCount;
-					fCurDelay += out.m_Timing.GetStopAtRow(BeatToNoteRow(fCurBeat) );
-					out.m_Timing.SetStopAtBeat( fCurBeat, fCurDelay, true );
+					float fCurDelay = 60 / out.m_SongTiming.GetBPMAtBeat(fCurBeat) * (float)numTemp / iTickCount;
+					fCurDelay += out.m_SongTiming.GetStopAtRow(BeatToNoteRow(fCurBeat) );
+					out.m_SongTiming.SetStopAtBeat( fCurBeat, fCurDelay, true );
 					continue;
 				}
 				else if (BeginsWith(NoteRowString, "|D"))
 				{
-					float fCurDelay = out.m_Timing.GetStopAtRow(BeatToNoteRow(fCurBeat) );
+					float fCurDelay = out.m_SongTiming.GetStopAtRow(BeatToNoteRow(fCurBeat) );
 					fCurDelay += (float)numTemp / 1000;
-					out.m_Timing.SetStopAtBeat( fCurBeat, fCurDelay, true );
+					out.m_SongTiming.SetStopAtBeat( fCurBeat, fCurDelay, true );
 					continue;
 				}
 			}

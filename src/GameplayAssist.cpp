@@ -27,7 +27,7 @@ void GameplayAssist::PlayTicks( const NoteData &nd )
 	 * come out on time; the actual precise timing is handled by SetStartTime. */
 	float fPositionSeconds = GAMESTATE->m_fMusicSeconds;
 	fPositionSeconds += SOUNDMAN->GetPlayLatency() + (float)CommonMetrics::TICK_EARLY_SECONDS + 0.250f;
-	const TimingData &timing = GAMESTATE->m_pCurSong->m_Timing;
+	const TimingData &timing = GAMESTATE->m_pCurSong->m_SongTiming;
 	const float fSongBeat = timing.GetBeatFromElapsedTimeNoOffset( fPositionSeconds );
 
 	const int iSongRow = max( 0, BeatToNoteRowNotRounded( fSongBeat ) );

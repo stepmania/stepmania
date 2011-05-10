@@ -167,7 +167,7 @@ void Song::GetDisplayBpms( DisplayBpms &AddTo ) const
 	else
 	{
 		float fMinBPM, fMaxBPM;
-		m_Timing.GetActualBPM( fMinBPM, fMaxBPM );
+		m_SongTiming.GetActualBPM( fMinBPM, fMaxBPM );
 		AddTo.Add( fMinBPM );
 		AddTo.Add( fMaxBPM );
 	}
@@ -488,29 +488,30 @@ void Song::TidyUpData()
 		m_sArtist = "Unknown artist";
 	TranslateTitles();
 
-	if( m_Timing.m_BPMSegments.empty() )
+	if( m_SongTiming.m_BPMSegments.empty() )
 	{
 		LOG->UserLog( "Song file", m_sSongDir + m_sSongFileName, "has no BPM segments, default provided." );
 
-		m_Timing.AddBPMSegment( BPMSegment(0, 60) );
+		m_SongTiming.AddBPMSegment( BPMSegment(0, 60) );
 	}
 
 	// Make sure the first BPM segment starts at beat 0.
-	if( m_Timing.m_BPMSegments[0].m_iStartRow != 0 )
-		m_Timing.m_BPMSegments[0].m_iStartRow = 0;
+	if( m_SongTiming.m_BPMSegments[0].m_iStartRow != 0 )
+		m_SongTiming.m_BPMSegments[0].m_iStartRow = 0;
 
 
 	if( m_fMusicSampleStartSeconds == -1 ||
 		m_fMusicSampleStartSeconds == 0 ||
 		m_fMusicSampleStartSeconds+m_fMusicSampleLengthSeconds > this->m_fMusicLengthSeconds )
 	{
-		m_fMusicSampleStartSeconds = this->GetElapsedTimeFromBeat( 100 );
+		const TimingData &timing = this->m_SongTiming;
+		m_fMusicSampleStartSeconds = timing.GetElapsedTimeFromBeat( 100 );
 
 		if( m_fMusicSampleStartSeconds+m_fMusicSampleLengthSeconds > this->m_fMusicLengthSeconds )
 		{
 			int iBeat = lrintf( m_fLastBeat/2 );
 			iBeat -= iBeat%4;
-			m_fMusicSampleStartSeconds = this->GetElapsedTimeFromBeat( (float)iBeat );
+			m_fMusicSampleStartSeconds = timing.GetElapsedTimeFromBeat( (float)iBeat );
 		}
 	}
 
@@ -791,10 +792,10 @@ void Song::TidyUpData()
 	}
 
 	// If no time signature specified, assume 4/4 time for the whole song.
-	if( m_Timing.m_vTimeSignatureSegments.empty() )
+	if( m_SongTiming.m_vTimeSignatureSegments.empty() )
 	{
 		TimeSignatureSegment seg(0, 4, 4);
-		m_Timing.m_vTimeSignatureSegments.push_back( seg );
+		m_SongTiming.m_vTimeSignatureSegments.push_back( seg );
 	}
 	
 	/*
@@ -802,24 +803,24 @@ void Song::TidyUpData()
 	 * per beat for the entire song. The default of 2 is chosen more
 	 * for compatibility with the Pump Pro series than anything else.
 	 */
-	if( m_Timing.m_TickcountSegments.empty() )
+	if( m_SongTiming.m_TickcountSegments.empty() )
 	{
 		TickcountSegment seg(0, 2);
-		m_Timing.m_TickcountSegments.push_back( seg );
+		m_SongTiming.m_TickcountSegments.push_back( seg );
 	}
 	
 	// Have a default combo segment of one just in case.
-	if( m_Timing.m_ComboSegments.empty() )
+	if( m_SongTiming.m_ComboSegments.empty() )
 	{
 		ComboSegment seg(0, 1);
-		m_Timing.m_ComboSegments.push_back( seg );
+		m_SongTiming.m_ComboSegments.push_back( seg );
 	}
 	
 	// Have a default label segment just in case.
-	if( m_Timing.m_LabelSegments.empty() )
+	if( m_SongTiming.m_LabelSegments.empty() )
 	{
 		LabelSegment seg(0, "Song Start");
-		m_Timing.m_LabelSegments.push_back( seg );
+		m_SongTiming.m_LabelSegments.push_back( seg );
 	}
 }
 
@@ -1465,7 +1466,7 @@ bool Song::IsEditAlreadyLoaded( Steps* pSteps ) const
 
 bool Song::HasSignificantBpmChangesOrStops() const
 {
-	if( m_Timing.HasStops() )
+	if( m_SongTiming.HasStops() )
 		return true;
 
 	// Don't consider BPM changes that only are only for maintaining sync as 
@@ -1475,7 +1476,7 @@ bool Song::HasSignificantBpmChangesOrStops() const
 		if( m_fSpecifiedBPMMin != m_fSpecifiedBPMMax )
 			return true;
 	}
-	else if( m_Timing.HasBpmChanges() )
+	else if( m_SongTiming.HasBpmChanges() )
 	{
 		return true;
 	}
@@ -1485,7 +1486,8 @@ bool Song::HasSignificantBpmChangesOrStops() const
 
 float Song::GetStepsSeconds() const
 {
-	return GetElapsedTimeFromBeat( m_fLastBeat ) - GetElapsedTimeFromBeat( m_fFirstBeat );
+	const TimingData &timing = this->m_SongTiming;
+	return timing.GetElapsedTimeFromBeat( m_fLastBeat ) - timing.GetElapsedTimeFromBeat( m_fFirstBeat );
 }
 
 bool Song::IsLong() const
@@ -1568,7 +1570,7 @@ public:
 	}
 	static int GetTimingData( T* p, lua_State *L )
 	{
-		p->m_Timing.PushSelf(L);
+		p->m_SongTiming.PushSelf(L);
 		return 1;
 	}
 	// has functions

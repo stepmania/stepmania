@@ -11,9 +11,10 @@ void Attack::GetAttackBeats( const Song *pSong, float &fStartBeat, float &fEndBe
 {
 	ASSERT( pSong );
 	ASSERT_M( fStartSecond >= 0, ssprintf("StartSecond: %f",fStartSecond) );
-
-	fStartBeat = pSong->GetBeatFromElapsedTime( fStartSecond );
-	fEndBeat = pSong->GetBeatFromElapsedTime( fStartSecond+fSecsRemaining );
+	
+	const TimingData &timing = pSong->m_SongTiming;
+	fStartBeat = timing.GetBeatFromElapsedTime( fStartSecond );
+	fEndBeat = timing.GetBeatFromElapsedTime( fStartSecond+fSecsRemaining );
 }
 
 /* Get the range for an attack that's being applied in realtime, eg. during battle
@@ -34,9 +35,10 @@ void Attack::GetRealtimeAttackBeats( const Song *pSong, const PlayerState* pPlay
 	fStartBeat = min( GAMESTATE->m_fSongBeat+8, pPlayerState->m_fLastDrawnBeat );
 	fStartBeat = truncf(fStartBeat)+1;
 
-	const float lStartSecond = pSong->GetElapsedTimeFromBeat( fStartBeat );
+	const TimingData &timing = pSong->m_SongTiming;
+	const float lStartSecond = timing.GetElapsedTimeFromBeat( fStartBeat );
 	const float fEndSecond = lStartSecond + fSecsRemaining;
-	fEndBeat = pSong->GetBeatFromElapsedTime( fEndSecond );
+	fEndBeat = timing.GetBeatFromElapsedTime( fEndSecond );
 	fEndBeat = truncf(fEndBeat)+1;
 
 	// loading the course should have caught this.
