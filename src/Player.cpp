@@ -2022,8 +2022,8 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 	 * "jack hammers." Hmm.
 	 */
 	const int iStepSearchRows = max(
-		BeatToNoteRow( m_Timing->GetBeatFromElapsedTime( GAMESTATE->m_fMusicSeconds + StepSearchDistance ) ) - iSongRow,
-		iSongRow - BeatToNoteRow( m_Timing->GetBeatFromElapsedTime( GAMESTATE->m_fMusicSeconds - StepSearchDistance ) )
+		BeatToNoteRow( m_Timing->GetBeatFromElapsedTime( m_pPlayerState->m_Position.m_fMusicSeconds + StepSearchDistance ) ) - iSongRow,
+		iSongRow - BeatToNoteRow( m_Timing->GetBeatFromElapsedTime( m_pPlayerState->m_Position.m_fMusicSeconds - StepSearchDistance ) )
 	) + ROWS_PER_BEAT;
 	int iRowOfOverlappingNoteOrRow = row;
 	if( row == -1 )

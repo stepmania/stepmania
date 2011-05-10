@@ -240,7 +240,7 @@ void NoteField::Update( float fDeltaTime )
 	ActorFrame::Update( fDeltaTime );
 
 	// update m_fBoardOffsetPixels, m_fCurrentBeatLastUpdate, m_fYPosCurrentBeatLastUpdate
-	const float fCurrentBeat = GAMESTATE->m_fSongBeat;
+	const float fCurrentBeat = m_pPlayerState->m_Position.m_fSongBeat;
 	bool bTweeningOn = m_sprBoard->GetCurrentDiffuseAlpha() >= 0.98  &&  m_sprBoard->GetCurrentDiffuseAlpha() < 1.00;	// HACK
 	if( !bTweeningOn  &&  m_fCurrentBeatLastUpdate != -1 )
 	{
@@ -606,7 +606,7 @@ void NoteField::DrawBGChangeText( const float fBeat, const RString sNewBGName )
 // change this probing to binary search
 float FindFirstDisplayedBeat( const PlayerState* pPlayerState, int iDrawDistanceAfterTargetsPixels )
 {
-	float fFirstBeatToDraw = GAMESTATE->m_fSongBeat-4;	// Adjust to balance off performance and showing enough notes.
+	float fFirstBeatToDraw = pPlayerState->m_Position.m_fSongBeat-4;	// Adjust to balance off performance and showing enough notes.
 
 	/* In Boomerang, we'll usually have two sections of notes: before and after
 	 * the peak. We always start drawing before the peak, and end after it, or
@@ -618,7 +618,7 @@ float FindFirstDisplayedBeat( const PlayerState* pPlayerState, int iDrawDistance
 		bBoomerang = (fAccels[PlayerOptions::ACCEL_BOOMERANG] != 0);
 	}
 
-	while( fFirstBeatToDraw < GAMESTATE->m_fSongBeat )
+	while( fFirstBeatToDraw < m_pPlayerState->m_Position.m_fSongBeat )
 	{
 		bool bIsPastPeakYOffset;
 		float fPeakYOffset;
@@ -640,7 +640,7 @@ float FindLastDisplayedBeat( const PlayerState* pPlayerState, int iDrawDistanceB
 	// Probe for last note to draw. Worst case is 0.25x + boost.
 	// Adjust search distance so that notes don't pop onto the screen.
 	float fSearchDistance = 10;
-	float fLastBeatToDraw = GAMESTATE->m_fSongBeat+fSearchDistance;
+	float fLastBeatToDraw = pPlayerState->m_Position.m_fSongBeat+fSearchDistance;
 
 	const int NUM_ITERATIONS = 20;
 
@@ -1045,7 +1045,7 @@ void NoteField::DrawPrimitives()
 				displayCols->display[c].DrawHold( tn, c, iStartRow, bIsHoldingNote, Result, bUseAdditionColoring, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail, 
 					m_fYReverseOffsetPixels, (float) iDrawDistanceAfterTargetsPixels, (float) iDrawDistanceBeforeTargetsPixels, iDrawDistanceBeforeTargetsPixels, FADE_BEFORE_TARGETS_PERCENT );
 
-				bool bNoteIsUpcoming = NoteRowToBeat(iStartRow) > GAMESTATE->m_fSongBeat;
+				bool bNoteIsUpcoming = NoteRowToBeat(iStartRow) > m_pPlayerState->m_Position.m_fSongBeat;
 				bAnyUpcomingInThisCol |= bNoteIsUpcoming;
 			}
 		}
@@ -1087,7 +1087,7 @@ void NoteField::DrawPrimitives()
 				continue; // skip
 
 			ASSERT_M( NoteRowToBeat(q) > -2000, ssprintf("%i %i %i, %f %f", q, iLastRowToDraw, 
-						     iFirstRowToDraw, GAMESTATE->m_fSongBeat, GAMESTATE->m_fMusicSeconds) );
+						     iFirstRowToDraw, m_pPlayerState->m_Position.m_fSongBeat, m_pPlayerState->m_Position.m_fMusicSeconds) );
 
 			// See if there is a hold step that begins on this index.
 			// Only do this if the noteskin cares.
@@ -1117,7 +1117,7 @@ void NoteField::DrawPrimitives()
 					m_fYReverseOffsetPixels, iDrawDistanceAfterTargetsPixels, iDrawDistanceBeforeTargetsPixels, 
 					FADE_BEFORE_TARGETS_PERCENT );
 
-			bool bNoteIsUpcoming = NoteRowToBeat(q) > GAMESTATE->m_fSongBeat;
+			bool bNoteIsUpcoming = NoteRowToBeat(q) > m_pPlayerState->m_Position.m_fSongBeat;
 			bAnyUpcomingInThisCol |= bNoteIsUpcoming;
 		}
 
