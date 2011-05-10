@@ -1090,6 +1090,56 @@ void TimingData::DeleteRows( int iStartRow, int iRowsToDelete )
 	this->SetBPMAtRow( iStartRow, fNewBPM );
 }
 
+void TimingData::TidyUpData()
+{
+	// If there are no BPM segments, provide a default.
+	if( m_BPMSegments.empty() )
+	{
+		LOG->UserLog( "Song file", m_sFile, "has no BPM segments, default provided." );
+
+		AddBPMSegment( BPMSegment(0, 60) );
+	}
+
+	// Make sure the first BPM segment starts at beat 0.
+	if( m_BPMSegments[0].m_iStartRow != 0 )
+		m_BPMSegments[0].m_iStartRow = 0;
+
+	// If no time signature specified, assume 4/4 time for the whole song.
+	if( m_vTimeSignatureSegments.empty() )
+	{
+		TimeSignatureSegment seg(0, 4, 4);
+		m_vTimeSignatureSegments.push_back( seg );
+	}
+	
+	// Likewise, if no tickcount signature is specified, assume 2 ticks
+	//per beat for the entire song. The default of 2 is chosen more
+	//for compatibility with the Pump Pro series than anything else.
+	if( m_TickcountSegments.empty() )
+	{
+		TickcountSegment seg(0, 2);
+		m_TickcountSegments.push_back( seg );
+	}
+	
+	// Have a default combo segment of one just in case.
+	if( m_ComboSegments.empty() )
+	{
+		ComboSegment seg(0, 1);
+		m_ComboSegments.push_back( seg );
+	}
+	
+	// Have a default label segment just in case.
+	if( m_LabelSegments.empty() )
+	{
+		LabelSegment seg(0, "Song Start");
+		m_LabelSegments.push_back( seg );
+	}
+
+}
+
+
+
+
+
 bool TimingData::HasBpmChanges() const
 {
 	return m_BPMSegments.size()>1;

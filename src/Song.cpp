@@ -488,17 +488,12 @@ void Song::TidyUpData()
 		m_sArtist = "Unknown artist";
 	TranslateTitles();
 
-	if( m_SongTiming.m_BPMSegments.empty() )
+	m_SongTiming.TidyUpData();
+	
+	FOREACH( Steps *, m_vpSteps, s )
 	{
-		LOG->UserLog( "Song file", m_sSongDir + m_sSongFileName, "has no BPM segments, default provided." );
-
-		m_SongTiming.AddBPMSegment( BPMSegment(0, 60) );
+		(*s)->m_Timing.TidyUpData();
 	}
-
-	// Make sure the first BPM segment starts at beat 0.
-	if( m_SongTiming.m_BPMSegments[0].m_iStartRow != 0 )
-		m_SongTiming.m_BPMSegments[0].m_iStartRow = 0;
-
 
 	if( m_fMusicSampleStartSeconds == -1 ||
 		m_fMusicSampleStartSeconds == 0 ||
@@ -789,38 +784,6 @@ void Song::TidyUpData()
 			m_sSongFileName += Basename(m_sSongDir);
 			m_sSongFileName += ".ssc";
 		} while(0);
-	}
-
-	// If no time signature specified, assume 4/4 time for the whole song.
-	if( m_SongTiming.m_vTimeSignatureSegments.empty() )
-	{
-		TimeSignatureSegment seg(0, 4, 4);
-		m_SongTiming.m_vTimeSignatureSegments.push_back( seg );
-	}
-	
-	/*
-	 * Likewise, if no tickcount signature is specified, assume 2 ticks
-	 * per beat for the entire song. The default of 2 is chosen more
-	 * for compatibility with the Pump Pro series than anything else.
-	 */
-	if( m_SongTiming.m_TickcountSegments.empty() )
-	{
-		TickcountSegment seg(0, 2);
-		m_SongTiming.m_TickcountSegments.push_back( seg );
-	}
-	
-	// Have a default combo segment of one just in case.
-	if( m_SongTiming.m_ComboSegments.empty() )
-	{
-		ComboSegment seg(0, 1);
-		m_SongTiming.m_ComboSegments.push_back( seg );
-	}
-	
-	// Have a default label segment just in case.
-	if( m_SongTiming.m_LabelSegments.empty() )
-	{
-		LabelSegment seg(0, "Song Start");
-		m_SongTiming.m_LabelSegments.push_back( seg );
 	}
 }
 

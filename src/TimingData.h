@@ -1321,6 +1321,11 @@ public:
 	void InsertRows( int iStartRow, int iRowsToAdd );
 	void DeleteRows( int iStartRow, int iRowsToDelete );
 
+	/**
+	 * @brief Tidy up the timing data, e.g. provide default BPMs, labels, tickcounts.
+	 */
+	void TidyUpData();
+
 	// Lua
 	void PushSelf( lua_State *L );
 	/**
