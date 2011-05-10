@@ -27,7 +27,7 @@ namespace SMLoader
 	bool LoadFromBGChangesString( BackgroundChange &change, const RString &sBGChangeExpression );
 	
 	
-	void ProcessBPMs( TimingData &, const RString );
+	bool ProcessBPMs( TimingData &, const RString );
 	void ProcessStops( TimingData &, const RString );
 	void ProcessDelays( TimingData &, const RString );
 	void ProcessTimeSignatures( TimingData &, const RString );

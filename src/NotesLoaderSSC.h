@@ -16,8 +16,6 @@ enum SSCLoadingStates
 {
 	GETTING_SONG_INFO, /**< Retrieving song information. */
 	GETTING_STEP_INFO, /**< Retrieving step information. */
-	GETTING_STEP_TIMING_INFO, /**< Retrieving a step's individual timing information. */
-	GETTING_NOTE_INFO, /**< Retrieving the specific notes. This state may be deprecated. */
 	NUM_SSCLoadingStates /**< The number of states used. */
 };
 

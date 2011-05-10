@@ -863,6 +863,12 @@ void Song::Save()
 
 	ReCalculateRadarValuesAndLastBeat();
 	TranslateTitles();
+	
+	// TODO: Figure out a better way to save to Song's timing data.
+	if( m_vpSteps.size() == 1 )
+	{
+		m_SongTiming = m_vpSteps[0]->m_Timing;
+	}
 
 	// Save the new files. These calls make backups on their own.
 	if( !SaveToSSCFile(GetSongFilePath(), false) )

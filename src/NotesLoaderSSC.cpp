@@ -142,6 +142,8 @@ bool SSCLoader::LoadFromSSCFile( const RString &sPath, Song &out, bool bFromCach
 	int state = GETTING_SONG_INFO;
 	const unsigned values = msd.GetNumValues();
 	Steps* pNewNotes = NULL;
+	TimingData stepsTiming;
+	bool bHasOwnTiming = false;
 
 	for( unsigned i = 0; i < values; i++ )
 	{
@@ -478,6 +480,8 @@ bool SSCLoader::LoadFromSSCFile( const RString &sPath, Song &out, bool bFromCach
 				{
 					state = GETTING_STEP_INFO;
 					pNewNotes = out.CreateSteps();
+					stepsTiming = TimingData( out.m_SongTiming.m_fBeat0OffsetInSeconds );
+					bHasOwnTiming = false;
 				}
 				break;
 			}
@@ -541,53 +545,54 @@ bool SSCLoader::LoadFromSSCFile( const RString &sPath, Song &out, bool bFromCach
 				else if( sValueName=="NOTES" || sValueName=="NOTES2" )
 				{
 					state = GETTING_SONG_INFO;
-					//pNewNotes->m_Timing = out.m_Timing;
+					if( bHasOwnTiming )
+						pNewNotes->m_Timing = stepsTiming;
 					pNewNotes->SetSMNoteData( sParams[1] );
 					pNewNotes->TidyUpData();
 					out.AddSteps( pNewNotes );
 				}
-
-				else if( sValueName=="BPMS" ) // This must ALWAYS be here in Split Timing.
+				
+				else if( sValueName=="BPMS" )
 				{
-					state = GETTING_STEP_TIMING_INFO;
-					/*
-					pNewNotes->m_Timing = TimingData(out.m_SongTiming.m_fBeat0OffsetInSeconds);
-					SMLoader::ProcessBPMs(pNewNotes->m_Timing, sParams[1]);
-					*/
-					
+					if( SMLoader::ProcessBPMs(stepsTiming, sParams[1]) )
+						bHasOwnTiming = true;
 				}
-				break;
-			}
-			case GETTING_STEP_TIMING_INFO:
-			{
-				if( sValueName=="STOPS" )
+				
+				else if( sValueName=="STOPS" )
 				{
-					// SMLoader::ProcessStops(pNewNotes->m_Timing, sParams[1]);
+					SMLoader::ProcessStops(stepsTiming, sParams[1]);
 				}
+				
 				else if( sValueName=="DELAYS" )
 				{
-					// SMLoader::ProcessDelays(pNewNotes->m_Timing, sParams[1]);
+					SMLoader::ProcessDelays(stepsTiming, sParams[1]);
 				}
+				
 				else if( sValueName=="TIMESIGNATURES" )
 				{
-					// SMLoader::ProcessTimeSignatures(pNewNotes->m_Timing, sParams[1]);
+					SMLoader::ProcessTimeSignatures(stepsTiming, sParams[1]);
 				}
+				
 				else if( sValueName=="TICKCOUNTS" )
 				{
-					// SMLoader::ProcessTickcounts(pNewNotes->m_Timing, sParams[1]);
+					SMLoader::ProcessTickcounts(stepsTiming, sParams[1]);
 				}
+				
 				else if( sValueName=="COMBOS" )
 				{
-					// ProcessCombos(pNewNotes->m_Timing, sParams[1]);
+					ProcessCombos(stepsTiming, sParams[1]);
 				}
+				
 				else if( sValueName=="WARPS" )
 				{
-					// ProcessWarps(pNewNotes->m_Timing, sParams[1]);
+					ProcessWarps(stepsTiming, sParams[1]);
 				}
+				
 				else if( sValueName=="LABELS" )
 				{
-					// ProcessLabels(pNewNotes->m_Timing, sParams[1]);
+					ProcessLabels(stepsTiming, sParams[1]);
 				}
+				
 				else if( sValueName=="ATTACKS" )
 				{
 					// TODO: Look into Step attacks vs Song Attacks. -Wolfman2000
@@ -635,18 +640,10 @@ bool SSCLoader::LoadFromSSCFile( const RString &sPath, Song &out, bool bFromCach
 					}
 					*/
 				}
+				
 				else if( sValueName=="OFFSET" )
-				{/*
-					pNewNotes->m_Timing.m_fBeat0OffsetInSeconds = StringToFloat( sParams[1] );
-				  */
-				}
-
-				else if( sValueName=="NOTES" || sValueName=="NOTES2" )
 				{
-					state = GETTING_SONG_INFO;
-					pNewNotes->SetSMNoteData( sParams[1] );
-					pNewNotes->TidyUpData();
-					out.AddSteps( pNewNotes );
+					stepsTiming.m_fBeat0OffsetInSeconds = StringToFloat( sParams[1] );
 				}
 				break;
 			}

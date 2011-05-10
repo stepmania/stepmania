@@ -103,7 +103,7 @@ bool SMLoader::LoadTimingFromFile( const RString &fn, TimingData &out )
 	return true;
 }
 
-void SMLoader::ProcessBPMs( TimingData &out, const RString sParam )
+bool SMLoader::ProcessBPMs( TimingData &out, const RString sParam )
 {
 	vector<RString> arrayBPMChangeExpressions;
 	split( sParam, ",", arrayBPMChangeExpressions );
@@ -112,6 +112,7 @@ void SMLoader::ProcessBPMs( TimingData &out, const RString sParam )
 	float negBeat = -1;
 	float negBPM = 1;
 	float highspeedBeat = -1;
+	bool bNotEmpty = false;
 	
 	for( unsigned b=0; b<arrayBPMChangeExpressions.size(); b++ )
 	{
@@ -124,6 +125,8 @@ void SMLoader::ProcessBPMs( TimingData &out, const RString sParam )
 				     arrayBPMChangeExpressions[b].c_str() );
 			continue;
 		}
+		
+		bNotEmpty = true;
 		
 		const float fBeat = StringToFloat( arrayBPMChangeValues[0] );
 		const float fNewBPM = StringToFloat( arrayBPMChangeValues[1] );
@@ -169,6 +172,8 @@ void SMLoader::ProcessBPMs( TimingData &out, const RString sParam )
 			}
 		}
 	}
+	
+	return bNotEmpty;
 }
 
 void SMLoader::ProcessStops( TimingData &out, const RString sParam )
