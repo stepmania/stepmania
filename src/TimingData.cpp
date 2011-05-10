@@ -8,10 +8,16 @@
 #include <float.h>
 
 
-TimingData::TimingData()
+TimingData::TimingData() : 
+	m_fBeat0OffsetInSeconds(0), 
+	m_bHasNegativeBpms(false)
 {
-	m_fBeat0OffsetInSeconds = 0;
-	m_bHasNegativeBpms = false;
+}
+
+TimingData::TimingData(float fOffset) : 
+	m_fBeat0OffsetInSeconds(fOffset),
+	m_bHasNegativeBpms(false)
+{	
 }
 
 void TimingData::GetActualBPM( float &fMinBPMOut, float &fMaxBPMOut ) const

@@ -659,6 +659,10 @@ public:
 	 */
 	TimingData();
 	/**
+	 * @brief Sets up initial timing data with a defined offset.
+	 * @param fOffset the offset from the 0th beat. */
+	TimingData(float fOffset);
+	/**
 	 * @brief Gets the actual BPM of the song.
 	 * @param fMinBPMOut the minimium specified BPM.
 	 * @param fMaxBPMOut the maximum specified BPM.

@@ -4,7 +4,7 @@
 #include "GameManager.h"
 #include "MsdFile.h" // No JSON here.
 #include "NoteTypes.h"
-#include "NotesLoaderSM.h" // For loading SM style edits.
+#include "NotesLoaderSM.h" // For programming shortcuts.
 #include "RageFileManager.h"
 #include "RageLog.h"
 #include "RageUtil.h"
@@ -30,70 +30,7 @@ const int MAX_EDIT_STEPS_SIZE_BYTES = 60*1024; // 60 KB
  */
 bool LoadFromBGSSCChangesString( BackgroundChange &change, const RString &sBGChangeExpression )
 {
-	vector<RString> aBGChangeValues;
-	split( sBGChangeExpression, "=", aBGChangeValues, false );
-
-	aBGChangeValues.resize( min((int)aBGChangeValues.size(),11) );
-
-	switch( aBGChangeValues.size() )
-	{
-		case 11:
-			change.m_def.m_sColor2 = aBGChangeValues[10];
-			change.m_def.m_sColor2.Replace( '^', ',' );
-			change.m_def.m_sColor2 = RageColor::NormalizeColorString( change.m_def.m_sColor2 );
-			// fall through
-		case 10:
-			change.m_def.m_sColor1 = aBGChangeValues[9];
-			change.m_def.m_sColor1.Replace( '^', ',' );
-			change.m_def.m_sColor1 = RageColor::NormalizeColorString( change.m_def.m_sColor1 );
-			// fall through
-		case 9:
-			change.m_sTransition = aBGChangeValues[8];
-			// fall through
-		case 8:
-			change.m_def.m_sFile2 = aBGChangeValues[7];
-			// fall through
-		case 7:
-			change.m_def.m_sEffect = aBGChangeValues[6];
-			// fall through
-		case 6:
-			// param 7 overrides this.
-			// Backward compatibility:
-			if( change.m_def.m_sEffect.empty() )
-			{
-				bool bLoop = atoi( aBGChangeValues[5] ) != 0;
-				if( !bLoop )
-					change.m_def.m_sEffect = SBE_StretchNoLoop;
-			}
-			// fall through
-		case 5:
-			// param 7 overrides this.
-			// Backward compatibility:
-			if( change.m_def.m_sEffect.empty() )
-			{
-				bool bRewindMovie = atoi( aBGChangeValues[4] ) != 0;
-				if( bRewindMovie )
-					change.m_def.m_sEffect = SBE_StretchRewind;
-			}
-			// fall through
-		case 4:
-			// param 9 overrides this.
-			// Backward compatibility:
-			if( change.m_sTransition.empty() )
-				change.m_sTransition = (atoi( aBGChangeValues[3] ) != 0) ? "CrossFade" : "";
-			// fall through
-		case 3:
-			change.m_fRate = StringToFloat( aBGChangeValues[2] );
-			// fall through
-		case 2:
-			change.m_def.m_sFile1 = aBGChangeValues[1];
-			// fall through
-		case 1:
-			change.m_fStartBeat = StringToFloat( aBGChangeValues[0] );
-			// fall through
-	}
-
-	return aBGChangeValues.size() >= 2;
+	return SMLoader::LoadFromBGChangesString( change, sBGChangeExpression );
 }
 
 bool SSCLoader::LoadFromDir( const RString &sPath, Song &out )
@@ -613,41 +550,14 @@ bool SSCLoader::LoadFromSSCFile( const RString &sPath, Song &out, bool bFromCach
 					out.AddSteps( pNewNotes );
 				}
 
-				else if( sValueName=="BPMS" )
+				else if( sValueName=="BPMS" ) // This must ALWAYS be here in Split Timing.
 				{
-					/*
 					state = GETTING_STEP_TIMING_INFO;
-					vector<RString> arrayBPMChangeExpressions;
-					split( sParams[1], ",", arrayBPMChangeExpressions );
-
-					for( unsigned b=0; b<arrayBPMChangeExpressions.size(); b++ )
-					{
-						vector<RString> arrayBPMChangeValues;
-						split( arrayBPMChangeExpressions[b], "=", arrayBPMChangeValues );
-						// XXX: Hard to tell which file caused this.
-						if( arrayBPMChangeValues.size() != 2 )
-						{
-							LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid #%s value \"%s\" (must have exactly one '='), ignored.",
-									 sValueName.c_str(), arrayBPMChangeExpressions[b].c_str() );
-							continue;
-						}
-
-						const float fBeat = StringToFloat( arrayBPMChangeValues[0] );
-						const float fNewBPM = StringToFloat( arrayBPMChangeValues[1] );
-
-						if(fNewBPM > 0.0f)
-							pNewNotes->m_Timing.AddBPMSegment( BPMSegment(BeatToNoteRow(fBeat), fNewBPM) );
-						else
-						{
-							pNewNotes->m_Timing.m_bHasNegativeBpms = true;
-							// only add Negative BPMs in quirks mode -aj
-							if( PREFSMAN->m_bQuirksMode )
-								pNewNotes->m_Timing.AddBPMSegment( BPMSegment(BeatToNoteRow(fBeat), fNewBPM) );
-							else
-								LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid BPM change at beat %f, BPM %f.", fBeat, fNewBPM );
-						}
-					}
-					 */
+					/*
+					pNewNotes->m_Timing = TimingData(out.m_SongTiming.m_fBeat0OffsetInSeconds);
+					SMLoader::ProcessBPMs(pNewNotes->m_Timing, sParams[1]);
+					*/
+					
 				}
 				break;
 			}
@@ -655,28 +565,31 @@ bool SSCLoader::LoadFromSSCFile( const RString &sPath, Song &out, bool bFromCach
 			{
 				if( sValueName=="STOPS" )
 				{
-					// copy from above when it's time.
+					// SMLoader::ProcessStops(pNewNotes->m_Timing, sParams[1]);
 				}
 				else if( sValueName=="DELAYS" )
 				{
-					// copy from above when it's time.
+					// SMLoader::ProcessDelays(pNewNotes->m_Timing, sParams[1]);
 				}
 				else if( sValueName=="TIMESIGNATURES" )
 				{
-					// copy from above when it's time.
+					// SMLoader::ProcessTimeSignatures(pNewNotes->m_Timing, sParams[1]);
 				}
-
 				else if( sValueName=="TICKCOUNTS" )
 				{
-					// copy from above when it's time.
+					// SMLoader::ProcessTickcounts(pNewNotes->m_Timing, sParams[1]);
 				}
 				else if( sValueName=="COMBOS" )
 				{
-					// copy from above when it's time.
+					// ProcessCombos(pNewNotes->m_Timing, sParams[1]);
 				}
-				else if( sValueName=="WARPS" || sValueName=="LABELS" )
+				else if( sValueName=="WARPS" )
 				{
-					// copy from above when it's time.
+					// ProcessWarps(pNewNotes->m_Timing, sParams[1]);
+				}
+				else if( sValueName=="LABELS" )
+				{
+					// ProcessLabels(pNewNotes->m_Timing, sParams[1]);
 				}
 				else if( sValueName=="ATTACKS" )
 				{
@@ -731,10 +644,9 @@ bool SSCLoader::LoadFromSSCFile( const RString &sPath, Song &out, bool bFromCach
 				  */
 				}
 
-				else if( sValueName=="NOTES" )
+				else if( sValueName=="NOTES" || sValueName=="NOTES2" )
 				{
 					state = GETTING_SONG_INFO;
-					// pNewNotes->m_Timing.m_fBeat0OffsetInSeconds = out.m_Timing.m_fBeat0OffsetInSeconds;
 					pNewNotes->SetSMNoteData( sParams[1] );
 					pNewNotes->TidyUpData();
 					out.AddSteps( pNewNotes );
@@ -952,55 +864,7 @@ bool SSCLoader::LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePat
 
 void SSCLoader::TidyUpData( Song &song, bool bFromCache )
 {
-	/*
-	 * Hack: if the song has any changes at all (so it won't use a random BGA)
-	 * and doesn't end with "-nosongbg-", add a song background BGC.  Remove
-	 * "-nosongbg-" if it exists.
-	 *
-	 * This way, songs that were created earlier, when we added the song BG
-	 * at the end by default, will still behave as expected; all new songs will
-	 * have to add an explicit song BG tag if they want it.  This is really a
-	 * formatting hack only; nothing outside of SMLoader ever sees "-nosongbg-".
-	 */
-	vector<BackgroundChange> &bg = song.GetBackgroundChanges(BACKGROUND_LAYER_1);
-	if( !bg.empty() )
-	{
-		/* BGChanges have been sorted. On the odd chance that a BGChange exists
-		 * with a very high beat, search the whole list. */
-		bool bHasNoSongBgTag = false;
-
-		for( unsigned i = 0; !bHasNoSongBgTag && i < bg.size(); ++i )
-		{
-			if( !bg[i].m_def.m_sFile1.CompareNoCase(NO_SONG_BG_FILE) )
-			{
-				bg.erase( bg.begin()+i );
-				bHasNoSongBgTag = true;
-			}
-		}
-
-		// If there's no -nosongbg- tag, add the song BG.
-		if( !bHasNoSongBgTag ) do
-		{
-			/* If we're loading cache, -nosongbg- should always be in there. We
-			 * must not call IsAFile(song.GetBackgroundPath()) when loading cache. */
-			if( bFromCache )
-				break;
-
-			/* If BGChanges already exist after the last beat, don't add the
-			 * background in the middle. */
-			if( !bg.empty() && bg.back().m_fStartBeat-0.0001f >= song.m_fLastBeat )
-				break;
-
-			// If the last BGA is already the song BGA, don't add a duplicate.
-			if( !bg.empty() && !bg.back().m_def.m_sFile1.CompareNoCase(song.m_sBackgroundFile) )
-				break;
-
-			if( !IsAFile( song.GetBackgroundPath() ) )
-				break;
-
-			bg.push_back( BackgroundChange(song.m_fLastBeat,song.m_sBackgroundFile) );
-		} while(0);
-	}
+	SMLoader::TidyUpData(song, bFromCache);
 }
 
 /*
