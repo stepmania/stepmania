@@ -785,8 +785,10 @@ void NoteField::DrawPrimitives()
 	{
 		ASSERT(GAMESTATE->m_pCurSong);
 
+		const TimingData &timing = GAMESTATE->m_pCurSong->m_SongTiming;
+		
 		// BPM text
-		FOREACH_CONST( BPMSegment, GAMESTATE->m_pCurSong->m_SongTiming.m_BPMSegments, seg )
+		FOREACH_CONST( BPMSegment, timing.m_BPMSegments, seg )
 		{
 			if( seg->m_iStartRow >= iFirstRowToDraw && seg->m_iStartRow <= iLastRowToDraw )
 			{
@@ -797,7 +799,7 @@ void NoteField::DrawPrimitives()
 		}
 
 		// Freeze text
-		FOREACH_CONST( StopSegment, GAMESTATE->m_pCurSong->m_SongTiming.m_StopSegments, seg )
+		FOREACH_CONST( StopSegment, timing.m_StopSegments, seg )
 		{
 			if( seg->m_iStartRow >= iFirstRowToDraw && seg->m_iStartRow <= iLastRowToDraw )
 			{
@@ -808,7 +810,7 @@ void NoteField::DrawPrimitives()
 		}
 		
 		// Warp text
-		FOREACH_CONST( WarpSegment, GAMESTATE->m_pCurSong->m_SongTiming.m_WarpSegments, seg )
+		FOREACH_CONST( WarpSegment, timing.m_WarpSegments, seg )
 		{
 			if( seg->m_iStartRow >= iFirstRowToDraw && seg->m_iStartRow <= iLastRowToDraw )
 			{
@@ -819,7 +821,7 @@ void NoteField::DrawPrimitives()
 		}
 
 		// Time Signature text
-		FOREACH_CONST( TimeSignatureSegment, GAMESTATE->m_pCurSong->m_SongTiming.m_vTimeSignatureSegments, seg )
+		FOREACH_CONST( TimeSignatureSegment, timing.m_vTimeSignatureSegments, seg )
 		{
 			if( seg->m_iStartRow >= iFirstRowToDraw && seg->m_iStartRow <= iLastRowToDraw )
 			{
@@ -830,7 +832,7 @@ void NoteField::DrawPrimitives()
 		}
 		
 		// Tickcount text
-		FOREACH_CONST( TickcountSegment, GAMESTATE->m_pCurSong->m_SongTiming.m_TickcountSegments, seg )
+		FOREACH_CONST( TickcountSegment, timing.m_TickcountSegments, seg )
 		{
 			if( seg->m_iStartRow >= iFirstRowToDraw && seg->m_iStartRow <= iLastRowToDraw )
 			{
@@ -841,7 +843,7 @@ void NoteField::DrawPrimitives()
 		}
 		
 		// Combo text
-		FOREACH_CONST( ComboSegment, GAMESTATE->m_pCurSong->m_SongTiming.m_ComboSegments, seg )
+		FOREACH_CONST( ComboSegment, timing.m_ComboSegments, seg )
 		{
 			if( seg->m_iStartRow >= iFirstRowToDraw && seg->m_iStartRow <= iLastRowToDraw )
 			{
@@ -852,7 +854,7 @@ void NoteField::DrawPrimitives()
 		}
 		
 		// Label text
-		FOREACH_CONST( LabelSegment, GAMESTATE->m_pCurSong->m_SongTiming.m_LabelSegments, seg )
+		FOREACH_CONST( LabelSegment, timing.m_LabelSegments, seg )
 		{
 			if( seg->m_iStartRow >= iFirstRowToDraw && seg->m_iStartRow <= iLastRowToDraw )
 			{
@@ -872,7 +874,7 @@ void NoteField::DrawPrimitives()
 			FOREACH_CONST( Attack, ce.attacks, a )
 			{
 				float fSecond = a->fStartSecond;
-				float fBeat = GAMESTATE->m_pCurSong->m_SongTiming.GetBeatFromElapsedTime( fSecond );
+				float fBeat = timing.GetBeatFromElapsedTime( fSecond );
 
 				if( BeatToNoteRow(fBeat) >= iFirstRowToDraw &&
 					BeatToNoteRow(fBeat) <= iLastRowToDraw)
