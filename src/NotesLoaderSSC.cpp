@@ -123,7 +123,7 @@ bool SSCLoader::LoadFromSSCFile( const RString &sPath, Song &out, bool bFromCach
 		return false;
 	}
 
-	out.m_Timing.m_sFile = sPath; // songs still have their fallback timing.
+	out.m_SongTiming.m_sFile = sPath; // songs still have their fallback timing.
 
 	int state = GETTING_SONG_INFO;
 	const unsigned values = msd.GetNumValues();
@@ -384,7 +384,7 @@ bool SSCLoader::LoadFromSSCFile( const RString &sPath, Song &out, bool bFromCach
 
 				else if( sValueName=="OFFSET" )
 				{
-					out.m_Timing.m_fBeat0OffsetInSeconds = StringToFloat( sParams[1] );
+					out.m_SongTiming.m_fBeat0OffsetInSeconds = StringToFloat( sParams[1] );
 				}
 				/* Below are the song based timings that should only be used
 				 * if the steps do not have their own timing. */
@@ -412,7 +412,7 @@ bool SSCLoader::LoadFromSSCFile( const RString &sPath, Song &out, bool bFromCach
 						if(fFreezeSeconds > 0.0f)
 						{
 							// LOG->Trace( "Adding a freeze segment: beat: %f, seconds = %f", new_seg.m_fStartBeat, new_seg.m_fStopSeconds );
-							out.m_Timing.AddStopSegment( new_seg );
+							out.m_SongTiming.AddStopSegment( new_seg );
 						}
 						else
 						{
@@ -420,7 +420,7 @@ bool SSCLoader::LoadFromSSCFile( const RString &sPath, Song &out, bool bFromCach
 							if( PREFSMAN->m_bQuirksMode )
 							{
 								// LOG->Trace( "Adding a negative freeze segment: beat: %f, seconds = %f", new_seg.m_fStartBeat, new_seg.m_fStopSeconds );
-								out.m_Timing.AddStopSegment( new_seg );
+								out.m_SongTiming.AddStopSegment( new_seg );
 							}
 							else
 								LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid stop at beat %f, length %f.", fFreezeBeat, fFreezeSeconds );
@@ -452,7 +452,7 @@ bool SSCLoader::LoadFromSSCFile( const RString &sPath, Song &out, bool bFromCach
 						// LOG->Trace( "Adding a delay segment: beat: %f, seconds = %f", new_seg.m_fStartBeat, new_seg.m_fStopSeconds );
 
 						if(fFreezeSeconds > 0.0f)
-							out.m_Timing.AddStopSegment( new_seg );
+							out.m_SongTiming.AddStopSegment( new_seg );
 						else
 							LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid delay at beat %f, length %f.", fFreezeBeat, fFreezeSeconds );
 					}
@@ -479,13 +479,13 @@ bool SSCLoader::LoadFromSSCFile( const RString &sPath, Song &out, bool bFromCach
 						const float fNewBPM = StringToFloat( arrayBPMChangeValues[1] );
 
 						if(fNewBPM > 0.0f)
-							out.m_Timing.AddBPMSegment( BPMSegment(BeatToNoteRow(fBeat), fNewBPM) );
+							out.m_SongTiming.AddBPMSegment( BPMSegment(BeatToNoteRow(fBeat), fNewBPM) );
 						else
 						{
-							out.m_Timing.m_bHasNegativeBpms = true;
+							out.m_SongTiming.m_bHasNegativeBpms = true;
 							// only add Negative BPMs in quirks mode -aj
 							if( PREFSMAN->m_bQuirksMode )
-								out.m_Timing.AddBPMSegment( BPMSegment(BeatToNoteRow(fBeat), fNewBPM) );
+								out.m_SongTiming.AddBPMSegment( BPMSegment(BeatToNoteRow(fBeat), fNewBPM) );
 							else
 								LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid BPM change at beat %f, BPM %f.", fBeat, fNewBPM );
 						}
@@ -513,7 +513,7 @@ bool SSCLoader::LoadFromSSCFile( const RString &sPath, Song &out, bool bFromCach
 						const float fNewBeat = StringToFloat( arrayWarpValues[1] );
 						
 						if(fNewBeat > fBeat)
-							out.m_Timing.AddWarpSegment( WarpSegment(fBeat, fNewBeat) );
+							out.m_SongTiming.AddWarpSegment( WarpSegment(fBeat, fNewBeat) );
 						else
 						{
 							LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid Warp at beat %f, BPM %f.", fBeat, fNewBeat );
@@ -541,7 +541,7 @@ bool SSCLoader::LoadFromSSCFile( const RString &sPath, Song &out, bool bFromCach
 						RString sLabel = arrayLabelValues[1];
 						TrimRight(sLabel);
 						if( fBeat >= 0.0f )
-							out.m_Timing.AddLabelSegment( LabelSegment(fBeat, sLabel) );
+							out.m_SongTiming.AddLabelSegment( LabelSegment(fBeat, sLabel) );
 						else 
 						{
 							LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid Label at beat %f called %s.", fBeat, sLabel.c_str() );
@@ -591,7 +591,7 @@ bool SSCLoader::LoadFromSSCFile( const RString &sPath, Song &out, bool bFromCach
 							continue;
 						}
 
-						out.m_Timing.AddTimeSignatureSegment( seg );
+						out.m_SongTiming.AddTimeSignatureSegment( seg );
 					}
 				}
 
@@ -619,7 +619,7 @@ bool SSCLoader::LoadFromSSCFile( const RString &sPath, Song &out, bool bFromCach
 						if(iTicks >= 1 && iTicks <= ROWS_PER_BEAT ) // Constants
 						{
 							// LOG->Trace( "Adding a tickcount segment: beat: %f, ticks = %d", fTickcountBeat, iTicks );
-							out.m_Timing.AddTickcountSegment( new_seg );
+							out.m_SongTiming.AddTickcountSegment( new_seg );
 						}
 						else
 						{
@@ -646,7 +646,7 @@ bool SSCLoader::LoadFromSSCFile( const RString &sPath, Song &out, bool bFromCach
 						const float fComboBeat = StringToFloat( arrayComboValues[0] );
 						const int iCombos = atoi( arrayComboValues[1] );
 						ComboSegment new_seg( BeatToNoteRow( fComboBeat ), iCombos );
-						out.m_Timing.AddComboSegment( new_seg );
+						out.m_SongTiming.AddComboSegment( new_seg );
 					}
 				}
 

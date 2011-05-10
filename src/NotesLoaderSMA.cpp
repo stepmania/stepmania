@@ -113,8 +113,8 @@ bool SMALoader::LoadFromSMAFile( const RString &sPath, Song &out )
 		return false;
 	}
 	
-	out.m_Timing.m_sFile = sPath;
-	LoadTimingFromSMAFile( msd, out.m_Timing );
+	out.m_SongTiming.m_sFile = sPath;
+	LoadTimingFromSMAFile( msd, out.m_SongTiming );
 	
 	for( unsigned i=0; i<msd.GetNumValues(); i++ )
 	{
