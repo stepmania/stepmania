@@ -221,7 +221,7 @@ bool ScreenSyncOverlay::OverlayInput( const InputEventPlus &input )
 			}
 			if( GAMESTATE->m_pCurSong != NULL )
 			{
-				BPMSegment& seg = GAMESTATE->m_pCurSong->m_SongTiming.GetBPMSegmentAtBeat( GAMESTATE->m_fSongBeat );
+				BPMSegment& seg = GAMESTATE->m_pCurSong->m_SongTiming.GetBPMSegmentAtBeat( GAMESTATE->m_Position.m_fSongBeat );
 				seg.m_fBPS += fDelta;
 			}
 		}

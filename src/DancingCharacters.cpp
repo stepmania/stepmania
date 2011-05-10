@@ -175,7 +175,7 @@ int Neg1OrPos1() { return RandomInt( 2 ) ? -1 : +1; }
 
 void DancingCharacters::Update( float fDelta )
 {
-	if( GAMESTATE->m_bFreeze || GAMESTATE->m_bDelay )
+	if( GAMESTATE->m_Position.m_bFreeze || GAMESTATE->m_Position.m_bDelay )
 	{
 		// spin the camera Matrix-style
 		m_CameraPanYStart += fDelta*40;
@@ -184,7 +184,7 @@ void DancingCharacters::Update( float fDelta )
 	else
 	{
 		// make the characters move
-		float fBPM = GAMESTATE->m_fCurBPS*60;
+		float fBPM = GAMESTATE->m_Position.m_fCurBPS*60;
 		float fUpdateScale = SCALE( fBPM, 60.f, 300.f, 0.75f, 1.5f );
 		CLAMP( fUpdateScale, 0.75f, 1.5f );
 
@@ -209,8 +209,8 @@ void DancingCharacters::Update( float fDelta )
 	}
 	bWasGameplayStarting = bGameplayStarting;
 
-	static float fLastBeat = GAMESTATE->m_fSongBeat;
-	float fThisBeat = GAMESTATE->m_fSongBeat;
+	static float fLastBeat = GAMESTATE->m_Position.m_fSongBeat;
+	float fThisBeat = GAMESTATE->m_Position.m_fSongBeat;
 	if( fLastBeat < GAMESTATE->m_pCurSong->m_fFirstBeat &&
 		fThisBeat >= GAMESTATE->m_pCurSong->m_fFirstBeat )
 	{
@@ -220,7 +220,7 @@ void DancingCharacters::Update( float fDelta )
 	fLastBeat = fThisBeat;
 
 	// time for a new sweep?
-	if( GAMESTATE->m_fSongBeat > m_fThisCameraEndBeat )
+	if( GAMESTATE->m_Position.m_fSongBeat > m_fThisCameraEndBeat )
 	{
 		if( RandomInt(6) >= 4 )
 		{
@@ -248,7 +248,7 @@ void DancingCharacters::Update( float fDelta )
 			m_fLookAtHeight = CAMERA_STILL_LOOK_AT_HEIGHT;
 		}
 
-		int iCurBeat = (int)GAMESTATE->m_fSongBeat;
+		int iCurBeat = (int)GAMESTATE->m_Position.m_fSongBeat;
 		iCurBeat -= iCurBeat%8;
 
 		m_fThisCameraStartBeat = (float) iCurBeat;
@@ -313,7 +313,7 @@ void DancingCharacters::DrawPrimitives()
 	if(m_fThisCameraStartBeat == m_fThisCameraEndBeat)
 		fPercentIntoSweep = 0;
 	else 
-		fPercentIntoSweep = SCALE(GAMESTATE->m_fSongBeat, m_fThisCameraStartBeat, m_fThisCameraEndBeat, 0.f, 1.f );
+		fPercentIntoSweep = SCALE(GAMESTATE->m_Position.m_fSongBeat, m_fThisCameraStartBeat, m_fThisCameraEndBeat, 0.f, 1.f );
 	float fCameraPanY = SCALE( fPercentIntoSweep, 0.f, 1.f, m_CameraPanYStart, m_CameraPanYEnd );
 	float fCameraHeight = SCALE( fPercentIntoSweep, 0.f, 1.f, m_fCameraHeightStart, m_fCameraHeightEnd );
 

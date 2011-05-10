@@ -61,7 +61,7 @@ void ScreenNameEntry::ScrollingText::Init( const RString &sName, const vector<fl
 
 void ScreenNameEntry::ScrollingText::DrawPrimitives()
 {
-	const float fFakeBeat = GAMESTATE->m_fSongBeat;
+	const float fFakeBeat = GAMESTATE->m_Position.m_fSongBeat;
 	const size_t iClosestIndex = lrintf( fFakeBeat ) % CHARS_CHOICES.size();
 	const float fClosestYOffset = GetClosestCharYOffset( fFakeBeat );
 
@@ -325,7 +325,7 @@ void ScreenNameEntry::Update( float fDelta )
 		SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("name entry") );
 
 	m_fFakeBeat += fDelta * FAKE_BEATS_PER_SEC;
-	GAMESTATE->m_fSongBeat = m_fFakeBeat;
+	GAMESTATE->m_Position.m_fSongBeat = m_fFakeBeat;
 
 	ScreenWithMenuElements::Update(fDelta);
 }

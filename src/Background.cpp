@@ -800,9 +800,9 @@ void BackgroundImpl::Update( float fDeltaTime )
 	FOREACH_BackgroundLayer( i )
 	{
 		Layer &layer = m_Layer[i];
-		layer.UpdateCurBGChange( m_pSong, m_fLastMusicSeconds, GAMESTATE->m_fMusicSeconds, m_mapNameToTransition );
+		layer.UpdateCurBGChange( m_pSong, m_fLastMusicSeconds, GAMESTATE->m_Position.m_fMusicSeconds, m_mapNameToTransition );
 	}
-	m_fLastMusicSeconds = GAMESTATE->m_fMusicSeconds;
+	m_fLastMusicSeconds = GAMESTATE->m_Position.m_fMusicSeconds;
 }
 
 void BackgroundImpl::DrawPrimitives()
