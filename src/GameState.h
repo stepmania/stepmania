@@ -10,6 +10,7 @@
 #include "RageTimer.h"
 #include "PlayerOptions.h"
 #include "SongOptions.h"
+#include "SongPosition.h"
 #include "Preference.h"
 
 #include <map>
@@ -194,29 +195,9 @@ public:
 	bool        m_bBackedOutOfFinalStage;
 
 	// Music statistics:
-	// Arcade - the current stage (one song).
-	// Oni/Endless - a single song in a course.
-	// Let a lot of classes access this info here so they don't have to keep their own copies.
-	// todo: [NUM_PLAYERS] this for split bpm lolol -aj
-	float		m_fMusicSeconds;	// time into the current song, not scaled by music rate
-	float		m_fSongBeat;
-	float		m_fSongBeatNoOffset;
-	float		m_fCurBPS;
-	float		m_fLightSongBeat; // g_fLightsFalloffSeconds ahead
-	//bool		m_bStop;	// in the middle of a stop (freeze or delay)
-	/** @brief A flag to determine if we're in the middle of a freeze/stop. */
-	bool		m_bFreeze;
-	/** @brief A flag to determine if we're in the middle of a delay (Pump style stop). */
-	bool		m_bDelay;
-	/** @brief The row used to start a warp. */
-	int			m_iWarpBeginRow;
-	/** @brief The beat to warp to afterwards. */
-	float		m_fWarpDestination;
-	RageTimer	m_LastBeatUpdate; // time of last m_fSongBeat, etc. update
-	BroadcastOnChange<bool> m_bGameplayLeadIn;
+	SongPosition m_Position;
 
-	float		m_fMusicSecondsVisible;
-	float		m_fSongBeatVisible;
+	BroadcastOnChange<bool> m_bGameplayLeadIn;
 
 	// if re-adding noteskin changes in courses, add functions and such here -aj
 	void GetAllUsedNoteSkins( vector<RString> &out ) const;
