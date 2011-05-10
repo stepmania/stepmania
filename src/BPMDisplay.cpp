@@ -204,7 +204,8 @@ void BPMDisplay::SetBpmFromCourse( const Course* pCourse )
 
 	StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
 	Trail *pTrail = pCourse->GetTrail( st );
-	ASSERT( pTrail );
+	// GetTranslitFullTitle because "Crashinfo.txt is garbled because of the ANSI output as usual." -f
+	ASSERT_M( pTrail, ssprintf("Course '%s' has no trail for StepsType '%s'", pCourse->GetTranslitFullTitle(), StringConversion::ToString(st).c_str() ) );
 
 	m_fCycleTime = 0.2f;
 
