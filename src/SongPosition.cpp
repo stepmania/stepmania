@@ -46,6 +46,22 @@ void SongPosition::UpdateSongPosition( float fPositionSeconds, const TimingData 
 
 }
 
+void SongPosition::Reset()
+{
+
+	m_fMusicSeconds = 0; // MUSIC_SECONDS_INVALID;
+	// todo: move me to FOREACH_EnabledPlayer( p ) after [NUM_PLAYERS]ing
+	m_fSongBeat = 0;
+	m_fSongBeatNoOffset = 0;
+	m_fCurBPS = 10;
+	//m_bStop = false;
+	m_bFreeze = false;
+	m_bDelay = false;
+	m_iWarpBeginRow = -1; // Set to -1 because some song may want to warp to row 0. -aj
+	m_fWarpDestination = -1; // Set when a warp is encountered. also see above. -aj
+
+}
+
 /**
  * @file
  * @author Thai Pangsakulyanont (c) 2011

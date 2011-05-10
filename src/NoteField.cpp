@@ -618,7 +618,7 @@ float FindFirstDisplayedBeat( const PlayerState* pPlayerState, int iDrawDistance
 		bBoomerang = (fAccels[PlayerOptions::ACCEL_BOOMERANG] != 0);
 	}
 
-	while( fFirstBeatToDraw < m_pPlayerState->m_Position.m_fSongBeat )
+	while( fFirstBeatToDraw < pPlayerState->m_Position.m_fSongBeat )
 	{
 		bool bIsPastPeakYOffset;
 		float fPeakYOffset;
