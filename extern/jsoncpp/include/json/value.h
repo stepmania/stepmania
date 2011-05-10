@@ -234,6 +234,13 @@ namespace Json {
       double asDouble() const;
       bool asBool() const;
 
+      bool TryGet( std::string &out ) const { if(!isString()) return false; out=asString(); return true; }
+      bool TryGet( int &out ) const { if(!isInt()) return false; out=asInt(); return true; }
+      bool TryGet( UInt &out ) const { if(!isUInt()) return false; out=asUInt(); return true; }
+      bool TryGet( double &out ) const { if(!isDouble()) return false; out=asDouble(); return true; }
+      bool TryGet( float &out ) const { if(!isDouble()) return false; out=(float)asDouble(); return true; }
+      bool TryGet( bool &out ) const { if(!isBool()) return false; out=asBool(); return true; }
+
       bool isNull() const;
       bool isBool() const;
       bool isInt() const;

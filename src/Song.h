@@ -73,6 +73,7 @@ class Song
 	RString m_sSongDir;
 public:
 	void SetSongDir( const RString sDir ) { m_sSongDir = sDir; }
+	RString GetSongDir() { return m_sSongDir; }
 
 	/** @brief When should this song be displayed in the music wheel? */
 	enum SelectionDisplay
