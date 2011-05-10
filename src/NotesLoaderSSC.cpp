@@ -112,6 +112,86 @@ bool SSCLoader::LoadFromDir( const RString &sPath, Song &out )
 	return LoadFromSSCFile( sPath + aFileNames[0], out );
 }
 
+void SSCLoader::ProcessWarps( TimingData &out, const RString sParam )
+{
+	vector<RString> arrayWarpExpressions;
+	split( sParam, ",", arrayWarpExpressions );
+	
+	for( unsigned b=0; b<arrayWarpExpressions.size(); b++ )
+	{
+		vector<RString> arrayWarpValues;
+		split( arrayWarpExpressions[b], "=", arrayWarpValues );
+		// XXX: Hard to tell which file caused this.
+		if( arrayWarpValues.size() != 2 )
+		{
+			LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid #WARPS value \"%s\" (must have exactly one '='), ignored.",
+				     arrayWarpExpressions[b].c_str() );
+			continue;
+		}
+		
+		const float fBeat = StringToFloat( arrayWarpValues[0] );
+		const float fNewBeat = StringToFloat( arrayWarpValues[1] );
+		
+		if(fNewBeat > fBeat)
+			out.AddWarpSegment( WarpSegment(fBeat, fNewBeat) );
+		else
+		{
+			LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid Warp at beat %f, BPM %f.", fBeat, fNewBeat );
+		}
+	}
+}
+
+void SSCLoader::ProcessLabels( TimingData &out, const RString sParam )
+{
+	vector<RString> arrayLabelExpressions;
+	split( sParam, ",", arrayLabelExpressions );
+	
+	for( unsigned b=0; b<arrayLabelExpressions.size(); b++ )
+	{
+		vector<RString> arrayLabelValues;
+		split( arrayLabelExpressions[b], "=", arrayLabelValues );
+		if( arrayLabelValues.size() != 2 )
+		{
+			LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid #LABELS value \"%s\" (must have exactly one '='), ignored.",
+				     arrayLabelExpressions[b].c_str() );
+			continue;
+		}
+		
+		const float fBeat = StringToFloat( arrayLabelValues[0] );
+		RString sLabel = arrayLabelValues[1];
+		TrimRight(sLabel);
+		if( fBeat >= 0.0f )
+			out.AddLabelSegment( LabelSegment(fBeat, sLabel) );
+		else 
+		{
+			LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid Label at beat %f called %s.", fBeat, sLabel.c_str() );
+		}
+		
+	}
+}
+
+void SSCLoader::ProcessCombos( TimingData &out, const RString sParam )
+{
+	vector<RString> arrayComboExpressions;
+	split( sParam, ",", arrayComboExpressions );
+	
+	for( unsigned f=0; f<arrayComboExpressions.size(); f++ )
+	{
+		vector<RString> arrayComboValues;
+		split( arrayComboExpressions[f], "=", arrayComboValues );
+		if( arrayComboValues.size() != 2 )
+		{
+			LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid #COMBOS value \"%s\" (must have exactly one '='), ignored.",
+				     arrayComboExpressions[f].c_str() );
+			continue;
+		}
+		const float fComboBeat = StringToFloat( arrayComboValues[0] );
+		const int iCombos = atoi( arrayComboValues[1] );
+		ComboSegment new_seg( BeatToNoteRow( fComboBeat ), iCombos );
+		out.AddComboSegment( new_seg );
+	}
+}
+
 bool SSCLoader::LoadFromSSCFile( const RString &sPath, Song &out, bool bFromCache )
 {
 	LOG->Trace( "Song::LoadFromSSCFile(%s)", sPath.c_str() );
@@ -390,264 +470,41 @@ bool SSCLoader::LoadFromSSCFile( const RString &sPath, Song &out, bool bFromCach
 				 * if the steps do not have their own timing. */
 				else if( sValueName=="STOPS" )
 				{
-					vector<RString> arrayFreezeExpressions;
-					split( sParams[1], ",", arrayFreezeExpressions );
-
-					for( unsigned f=0; f<arrayFreezeExpressions.size(); f++ )
-					{
-						vector<RString> arrayFreezeValues;
-						split( arrayFreezeExpressions[f], "=", arrayFreezeValues );
-						if( arrayFreezeValues.size() != 2 )
-						{
-							// XXX: Hard to tell which file caused this.
-							LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid #%s value \"%s\" (must have exactly one '='), ignored.",
-									 sValueName.c_str(), arrayFreezeExpressions[f].c_str() );
-							continue;
-						}
-
-						const float fFreezeBeat = StringToFloat( arrayFreezeValues[0] );
-						const float fFreezeSeconds = StringToFloat( arrayFreezeValues[1] );
-						StopSegment new_seg( BeatToNoteRow(fFreezeBeat), fFreezeSeconds );
-
-						if(fFreezeSeconds > 0.0f)
-						{
-							// LOG->Trace( "Adding a freeze segment: beat: %f, seconds = %f", new_seg.m_fStartBeat, new_seg.m_fStopSeconds );
-							out.m_SongTiming.AddStopSegment( new_seg );
-						}
-						else
-						{
-							// negative stops (hi JS!) -aj
-							if( PREFSMAN->m_bQuirksMode )
-							{
-								// LOG->Trace( "Adding a negative freeze segment: beat: %f, seconds = %f", new_seg.m_fStartBeat, new_seg.m_fStopSeconds );
-								out.m_SongTiming.AddStopSegment( new_seg );
-							}
-							else
-								LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid stop at beat %f, length %f.", fFreezeBeat, fFreezeSeconds );
-						}
-					}
+					SMLoader::ProcessStops(out.m_SongTiming, sParams[1]);
 				}
 				else if( sValueName=="DELAYS" )
 				{
-					vector<RString> arrayDelayExpressions;
-					split( sParams[1], ",", arrayDelayExpressions );
-
-					for( unsigned f=0; f<arrayDelayExpressions.size(); f++ )
-					{
-						vector<RString> arrayDelayValues;
-						split( arrayDelayExpressions[f], "=", arrayDelayValues );
-						if( arrayDelayValues.size() != 2 )
-						{
-							// XXX: Hard to tell which file caused this.
-							LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid #%s value \"%s\" (must have exactly one '='), ignored.",
-									 sValueName.c_str(), arrayDelayExpressions[f].c_str() );
-							continue;
-						}
-
-						const float fFreezeBeat = StringToFloat( arrayDelayValues[0] );
-						const float fFreezeSeconds = StringToFloat( arrayDelayValues[1] );
-
-						StopSegment new_seg( BeatToNoteRow(fFreezeBeat), fFreezeSeconds, true );
-
-						// LOG->Trace( "Adding a delay segment: beat: %f, seconds = %f", new_seg.m_fStartBeat, new_seg.m_fStopSeconds );
-
-						if(fFreezeSeconds > 0.0f)
-							out.m_SongTiming.AddStopSegment( new_seg );
-						else
-							LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid delay at beat %f, length %f.", fFreezeBeat, fFreezeSeconds );
-					}
+					SMLoader::ProcessDelays(out.m_SongTiming, sParams[1]);
 				}
 
 				else if( sValueName=="BPMS" )
 				{
-					vector<RString> arrayBPMChangeExpressions;
-					split( sParams[1], ",", arrayBPMChangeExpressions );
-
-					for( unsigned b=0; b<arrayBPMChangeExpressions.size(); b++ )
-					{
-						vector<RString> arrayBPMChangeValues;
-						split( arrayBPMChangeExpressions[b], "=", arrayBPMChangeValues );
-						// XXX: Hard to tell which file caused this.
-						if( arrayBPMChangeValues.size() != 2 )
-						{
-							LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid #%s value \"%s\" (must have exactly one '='), ignored.",
-									 sValueName.c_str(), arrayBPMChangeExpressions[b].c_str() );
-							continue;
-						}
-
-						const float fBeat = StringToFloat( arrayBPMChangeValues[0] );
-						const float fNewBPM = StringToFloat( arrayBPMChangeValues[1] );
-
-						if(fNewBPM > 0.0f)
-							out.m_SongTiming.AddBPMSegment( BPMSegment(BeatToNoteRow(fBeat), fNewBPM) );
-						else
-						{
-							out.m_SongTiming.m_bHasNegativeBpms = true;
-							// only add Negative BPMs in quirks mode -aj
-							if( PREFSMAN->m_bQuirksMode )
-								out.m_SongTiming.AddBPMSegment( BPMSegment(BeatToNoteRow(fBeat), fNewBPM) );
-							else
-								LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid BPM change at beat %f, BPM %f.", fBeat, fNewBPM );
-						}
-					}
+					SMLoader::ProcessBPMs(out.m_SongTiming, sParams[1]);
 				}
 				
 				else if( sValueName=="WARPS" )
 				{
-					vector<RString> arrayWarpExpressions;
-					split( sParams[1], ",", arrayWarpExpressions );
-					
-					for( unsigned b=0; b<arrayWarpExpressions.size(); b++ )
-					{
-						vector<RString> arrayWarpValues;
-						split( arrayWarpExpressions[b], "=", arrayWarpValues );
-						// XXX: Hard to tell which file caused this.
-						if( arrayWarpValues.size() != 2 )
-						{
-							LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid #%s value \"%s\" (must have exactly one '='), ignored.",
-								     sValueName.c_str(), arrayWarpExpressions[b].c_str() );
-							continue;
-						}
-						
-						const float fBeat = StringToFloat( arrayWarpValues[0] );
-						const float fNewBeat = StringToFloat( arrayWarpValues[1] );
-						
-						if(fNewBeat > fBeat)
-							out.m_SongTiming.AddWarpSegment( WarpSegment(fBeat, fNewBeat) );
-						else
-						{
-							LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid Warp at beat %f, BPM %f.", fBeat, fNewBeat );
-						}
-					}
+					ProcessWarps( out.m_SongTiming, sParams[1] );
 				}
 				
 				else if( sValueName=="LABELS" )
 				{
-					vector<RString> arrayLabelExpressions;
-					split( sParams[1], ",", arrayLabelExpressions );
-					
-					for( unsigned b=0; b<arrayLabelExpressions.size(); b++ )
-					{
-						vector<RString> arrayLabelValues;
-						split( arrayLabelExpressions[b], "=", arrayLabelValues );
-						if( arrayLabelValues.size() != 2 )
-						{
-							LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid #%s value \"%s\" (must have exactly one '='), ignored.",
-								     sValueName.c_str(), arrayLabelExpressions[b].c_str() );
-							continue;
-						}
-						
-						const float fBeat = StringToFloat( arrayLabelValues[0] );
-						RString sLabel = arrayLabelValues[1];
-						TrimRight(sLabel);
-						if( fBeat >= 0.0f )
-							out.m_SongTiming.AddLabelSegment( LabelSegment(fBeat, sLabel) );
-						else 
-						{
-							LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid Label at beat %f called %s.", fBeat, sLabel.c_str() );
-						}
-
-					}
+					ProcessLabels( out.m_SongTiming, sParams[1] );
 				}
 
 				else if( sValueName=="TIMESIGNATURES" )
 				{
-					vector<RString> vs1;
-					split( sParams[1], ",", vs1 );
-
-					FOREACH_CONST( RString, vs1, s1 )
-					{
-						vector<RString> vs2;
-						split( *s1, "=", vs2 );
-
-						if( vs2.size() < 3 )
-						{
-							LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid time signature change with %i values.", (int)vs2.size() );
-							continue;
-						}
-
-						const float fBeat = StringToFloat( vs2[0] );
-
-						TimeSignatureSegment seg;
-						seg.m_iStartRow = BeatToNoteRow(fBeat);
-						seg.m_iNumerator = atoi( vs2[1] ); 
-						seg.m_iDenominator = atoi( vs2[2] ); 
-
-						if( fBeat < 0 )
-						{
-							LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid time signature change with beat %f.", fBeat );
-							continue;
-						}
-
-						if( seg.m_iNumerator < 1 )
-						{
-							LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid time signature change with beat %f, iNumerator %i.", fBeat, seg.m_iNumerator );
-							continue;
-						}
-
-						if( seg.m_iDenominator < 1 )
-						{
-							LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid time signature change with beat %f, iDenominator %i.", fBeat, seg.m_iDenominator );
-							continue;
-						}
-
-						out.m_SongTiming.AddTimeSignatureSegment( seg );
-					}
+					SMLoader::ProcessTimeSignatures(out.m_SongTiming, sParams[1]);
 				}
 
 				else if( sValueName=="TICKCOUNTS" )
 				{
-					vector<RString> arrayTickcountExpressions;
-					split( sParams[1], ",", arrayTickcountExpressions );
-
-					for( unsigned f=0; f<arrayTickcountExpressions.size(); f++ )
-					{
-						vector<RString> arrayTickcountValues;
-						split( arrayTickcountExpressions[f], "=", arrayTickcountValues );
-						if( arrayTickcountValues.size() != 2 )
-						{
-							// XXX: Hard to tell which file caused this.
-							LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid #%s value \"%s\" (must have exactly one '='), ignored.",
-									 sValueName.c_str(), arrayTickcountExpressions[f].c_str() );
-							continue;
-						}
-
-						const float fTickcountBeat = StringToFloat( arrayTickcountValues[0] );
-						const int iTicks = atoi( arrayTickcountValues[1] );
-						TickcountSegment new_seg( BeatToNoteRow(fTickcountBeat), iTicks );
-
-						if(iTicks >= 1 && iTicks <= ROWS_PER_BEAT ) // Constants
-						{
-							// LOG->Trace( "Adding a tickcount segment: beat: %f, ticks = %d", fTickcountBeat, iTicks );
-							out.m_SongTiming.AddTickcountSegment( new_seg );
-						}
-						else
-						{
-							LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid tickcount at beat %f, ticks %d.", fTickcountBeat, iTicks );
-						}
-					}
+					SMLoader::ProcessTickcounts(out.m_SongTiming, sParams[1]);
 				}
 
 				else if( sValueName=="COMBOS" )
 				{
-					vector<RString> arrayComboExpressions;
-					split( sParams[1], ",", arrayComboExpressions );
-
-					for( unsigned f=0; f<arrayComboExpressions.size(); f++ )
-					{
-						vector<RString> arrayComboValues;
-						split( arrayComboExpressions[f], "=", arrayComboValues );
-						if( arrayComboValues.size() != 2 )
-						{
-							LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid #%s value \"%s\" (must have exactly one '='), ignored.",
-									 sValueName.c_str(), arrayComboExpressions[f].c_str() );
-							continue;
-						}
-						const float fComboBeat = StringToFloat( arrayComboValues[0] );
-						const int iCombos = atoi( arrayComboValues[1] );
-						ComboSegment new_seg( BeatToNoteRow( fComboBeat ), iCombos );
-						out.m_SongTiming.AddComboSegment( new_seg );
-					}
+					ProcessCombos( out.m_SongTiming, sParams[1] );
 				}
 
 				/* The following are cache tags. Never fill their values

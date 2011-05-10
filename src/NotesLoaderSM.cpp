@@ -103,6 +103,244 @@ bool SMLoader::LoadTimingFromFile( const RString &fn, TimingData &out )
 	return true;
 }
 
+void SMLoader::ProcessBPMs( TimingData &out, const RString sParam )
+{
+	vector<RString> arrayBPMChangeExpressions;
+	split( sParam, ",", arrayBPMChangeExpressions );
+	
+	// prepare storage variables for negative BPMs -> Warps.
+	float negBeat = -1;
+	float negBPM = 1;
+	float highspeedBeat = -1;
+	
+	for( unsigned b=0; b<arrayBPMChangeExpressions.size(); b++ )
+	{
+		vector<RString> arrayBPMChangeValues;
+		split( arrayBPMChangeExpressions[b], "=", arrayBPMChangeValues );
+		// XXX: Hard to tell which file caused this.
+		if( arrayBPMChangeValues.size() != 2 )
+		{
+			LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid #BPMs value \"%s\" (must have exactly one '='), ignored.",
+				     arrayBPMChangeExpressions[b].c_str() );
+			continue;
+		}
+		
+		const float fBeat = StringToFloat( arrayBPMChangeValues[0] );
+		const float fNewBPM = StringToFloat( arrayBPMChangeValues[1] );
+		
+		if( fNewBPM < 0.0f )
+		{
+			out.m_bHasNegativeBpms = true;
+			negBeat = fBeat;
+			negBPM = fNewBPM;
+		}
+		else if( fNewBPM > 0.0f )
+		{
+			// add in a warp.
+			if( negBPM < 0 )
+			{
+				float endBeat = fBeat + (fNewBPM / -negBPM) * (fBeat - negBeat);
+				WarpSegment new_seg(negBeat, endBeat);
+				out.AddWarpSegment( new_seg );
+				
+				negBeat = -1;
+				negBPM = 1;
+			}
+			// too fast. make it a warp.
+			if( fNewBPM > FAST_BPM_WARP )
+			{
+				highspeedBeat = fBeat;
+			}
+			else
+			{
+				// add in a warp.
+				if( highspeedBeat > 0 )
+				{
+					WarpSegment new_seg(highspeedBeat, fBeat);
+					out.AddWarpSegment( new_seg );
+					highspeedBeat = -1;
+				}
+				{
+					BPMSegment new_seg;
+					new_seg.m_iStartRow = BeatToNoteRow(fBeat);
+					new_seg.SetBPM( fNewBPM );
+					out.AddBPMSegment( new_seg );
+				}
+			}
+		}
+	}
+}
+
+void SMLoader::ProcessStops( TimingData &out, const RString sParam )
+{
+	vector<RString> arrayFreezeExpressions;
+	split( sParam, ",", arrayFreezeExpressions );
+	
+	// Prepare variables for negative stop conversion.
+	float negBeat = -1;
+	float negPause = 0;
+	
+	for( unsigned f=0; f<arrayFreezeExpressions.size(); f++ )
+	{
+		vector<RString> arrayFreezeValues;
+		split( arrayFreezeExpressions[f], "=", arrayFreezeValues );
+		if( arrayFreezeValues.size() != 2 )
+		{
+			// XXX: Hard to tell which file caused this.
+			LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid #STOPS value \"%s\" (must have exactly one '='), ignored.",
+				     arrayFreezeExpressions[f].c_str() );
+			continue;
+		}
+		
+		const float fFreezeBeat = StringToFloat( arrayFreezeValues[0] );
+		const float fFreezeSeconds = StringToFloat( arrayFreezeValues[1] );
+		
+		// Process the prior stop.
+		if( negPause > 0 )
+		{
+			BPMSegment oldBPM = out.GetBPMSegmentAtRow(BeatToNoteRow(negBeat));
+			float fSecondsPerBeat = 60 / oldBPM.GetBPM();
+			float fSkipBeats = negPause / fSecondsPerBeat;
+			
+			if( negBeat + fSkipBeats > fFreezeBeat )
+				fSkipBeats = fFreezeBeat - negBeat;
+			
+			WarpSegment ws( negBeat, negBeat + fSkipBeats);
+			out.AddWarpSegment( ws );
+			
+			negBeat = -1;
+			negPause = 0;
+		}
+		
+		if( fFreezeSeconds < 0.0f )
+		{
+			negBeat = fFreezeBeat;
+			negPause = -fFreezeSeconds;
+		}
+		else if( fFreezeSeconds > 0.0f )
+		{
+			StopSegment ss( BeatToNoteRow(fFreezeBeat), fFreezeSeconds );
+			out.AddStopSegment( ss );
+		}
+		
+	}
+	
+	// Process the prior stop if there was one.
+	if( negPause > 0 )
+	{
+		BPMSegment oldBPM = out.GetBPMSegmentAtRow(BeatToNoteRow(negBeat));
+		float fSecondsPerBeat = 60 / oldBPM.GetBPM();
+		float fSkipBeats = negPause / fSecondsPerBeat;
+		
+		WarpSegment ws( negBeat, negBeat + fSkipBeats);
+		out.AddWarpSegment( ws );
+	}
+}
+
+void SMLoader::ProcessDelays( TimingData &out, const RString sParam )
+{
+	vector<RString> arrayDelayExpressions;
+	split( sParam, ",", arrayDelayExpressions );
+	
+	for( unsigned f=0; f<arrayDelayExpressions.size(); f++ )
+	{
+		vector<RString> arrayDelayValues;
+		split( arrayDelayExpressions[f], "=", arrayDelayValues );
+		if( arrayDelayValues.size() != 2 )
+		{
+			// XXX: Hard to tell which file caused this.
+			LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid #DELAYS value \"%s\" (must have exactly one '='), ignored.",
+				     arrayDelayExpressions[f].c_str() );
+			continue;
+		}
+		
+		const float fFreezeBeat = StringToFloat( arrayDelayValues[0] );
+		const float fFreezeSeconds = StringToFloat( arrayDelayValues[1] );
+		
+		StopSegment new_seg( BeatToNoteRow(fFreezeBeat), fFreezeSeconds, true );
+		// XXX: Remove Negatives Bug?
+		new_seg.m_iStartRow = BeatToNoteRow(fFreezeBeat);
+		new_seg.m_fStopSeconds = fFreezeSeconds;
+		
+		// LOG->Trace( "Adding a delay segment: beat: %f, seconds = %f", new_seg.m_fStartBeat, new_seg.m_fStopSeconds );
+		
+		if(fFreezeSeconds > 0.0f)
+			out.AddStopSegment( new_seg );
+		else
+			LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid delay at beat %f, length %f.", fFreezeBeat, fFreezeSeconds );
+	}
+}
+
+void SMLoader::ProcessTimeSignatures( TimingData &out, const RString sParam )
+{
+	vector<RString> vs1;
+	split( sParam, ",", vs1 );
+	
+	FOREACH_CONST( RString, vs1, s1 )
+	{
+		vector<RString> vs2;
+		split( *s1, "=", vs2 );
+		
+		if( vs2.size() < 3 )
+		{
+			LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid time signature change with %i values.", (int)vs2.size() );
+			continue;
+		}
+		
+		const float fBeat = StringToFloat( vs2[0] );
+		
+		TimeSignatureSegment seg;
+		seg.m_iStartRow = BeatToNoteRow(fBeat);
+		seg.m_iNumerator = atoi( vs2[1] ); 
+		seg.m_iDenominator = atoi( vs2[2] ); 
+		
+		if( fBeat < 0 )
+		{
+			LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid time signature change with beat %f.", fBeat );
+			continue;
+		}
+		
+		if( seg.m_iNumerator < 1 )
+		{
+			LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid time signature change with beat %f, iNumerator %i.", fBeat, seg.m_iNumerator );
+			continue;
+		}
+		
+		if( seg.m_iDenominator < 1 )
+		{
+			LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid time signature change with beat %f, iDenominator %i.", fBeat, seg.m_iDenominator );
+			continue;
+		}
+		
+		out.AddTimeSignatureSegment( seg );
+	}
+}
+
+void SMLoader::ProcessTickcounts( TimingData &out, const RString sParam )
+{
+	vector<RString> arrayTickcountExpressions;
+	split( sParam, ",", arrayTickcountExpressions );
+	
+	for( unsigned f=0; f<arrayTickcountExpressions.size(); f++ )
+	{
+		vector<RString> arrayTickcountValues;
+		split( arrayTickcountExpressions[f], "=", arrayTickcountValues );
+		if( arrayTickcountValues.size() != 2 )
+		{
+			// XXX: Hard to tell which file caused this.
+			LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid #TICKCOUNTS value \"%s\" (must have exactly one '='), ignored.",
+				     arrayTickcountExpressions[f].c_str() );
+			continue;
+		}
+		
+		const float fTickcountBeat = StringToFloat( arrayTickcountValues[0] );
+		int iTicks = clamp(atoi( arrayTickcountValues[1] ), 0, ROWS_PER_BEAT);
+		
+		TickcountSegment new_seg( BeatToNoteRow(fTickcountBeat), iTicks );
+		out.AddTickcountSegment( new_seg );
+	}
+}
+
 void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 {
 	out.m_fBeat0OffsetInSeconds = 0;
@@ -123,255 +361,27 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 		}
 		else if( sValueName=="BPMS" )
 		{
-			vector<RString> arrayBPMChangeExpressions;
-			split( sParams[1], ",", arrayBPMChangeExpressions );
-
-			// prepare storage variables for negative BPMs -> Warps.
-			float negBeat = -1;
-			float negBPM = 1;
-			float highspeedBeat = -1;
-			
-			for( unsigned b=0; b<arrayBPMChangeExpressions.size(); b++ )
-			{
-				vector<RString> arrayBPMChangeValues;
-				split( arrayBPMChangeExpressions[b], "=", arrayBPMChangeValues );
-				// XXX: Hard to tell which file caused this.
-				if( arrayBPMChangeValues.size() != 2 )
-				{
-					LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid #%s value \"%s\" (must have exactly one '='), ignored.",
-						sValueName.c_str(), arrayBPMChangeExpressions[b].c_str() );
-					continue;
-				}
-
-				const float fBeat = StringToFloat( arrayBPMChangeValues[0] );
-				const float fNewBPM = StringToFloat( arrayBPMChangeValues[1] );
-				
-				if( fNewBPM < 0.0f )
-				{
-					out.m_bHasNegativeBpms = true;
-					negBeat = fBeat;
-					negBPM = fNewBPM;
-				}
-				else if( fNewBPM > 0.0f )
-				{
-					// add in a warp.
-					if( negBPM < 0 )
-					{
-						float endBeat = fBeat + (fNewBPM / -negBPM) * (fBeat - negBeat);
-						WarpSegment new_seg(negBeat, endBeat);
-						out.AddWarpSegment( new_seg );
-						
-						negBeat = -1;
-						negBPM = 1;
-					}
-					// too fast. make it a warp.
-					if( fNewBPM > FAST_BPM_WARP )
-					{
-						highspeedBeat = fBeat;
-					}
-					else
-					{
-						// add in a warp.
-						if( highspeedBeat > 0 )
-						{
-							WarpSegment new_seg(highspeedBeat, fBeat);
-							out.AddWarpSegment( new_seg );
-							highspeedBeat = -1;
-						}
-						{
-							BPMSegment new_seg;
-							new_seg.m_iStartRow = BeatToNoteRow(fBeat);
-							new_seg.SetBPM( fNewBPM );
-							out.AddBPMSegment( new_seg );
-						}
-					}
-				}
-			}
+			ProcessBPMs(out, sParams[1]);
 		}
 
 		else if( sValueName=="STOPS" || sValueName=="FREEZES" )
 		{
-			vector<RString> arrayFreezeExpressions;
-			split( sParams[1], ",", arrayFreezeExpressions );
-
-			// Prepare variables for negative stop conversion.
-			float negBeat = -1;
-			float negPause = 0;
-			
-			for( unsigned f=0; f<arrayFreezeExpressions.size(); f++ )
-			{
-				vector<RString> arrayFreezeValues;
-				split( arrayFreezeExpressions[f], "=", arrayFreezeValues );
-				if( arrayFreezeValues.size() != 2 )
-				{
-					// XXX: Hard to tell which file caused this.
-					LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid #%s value \"%s\" (must have exactly one '='), ignored.",
-						sValueName.c_str(), arrayFreezeExpressions[f].c_str() );
-					continue;
-				}
-
-				const float fFreezeBeat = StringToFloat( arrayFreezeValues[0] );
-				const float fFreezeSeconds = StringToFloat( arrayFreezeValues[1] );
-				
-				// Process the prior stop.
-				if( negPause > 0 )
-				{
-					BPMSegment oldBPM = out.GetBPMSegmentAtRow(BeatToNoteRow(negBeat));
-					float fSecondsPerBeat = 60 / oldBPM.GetBPM();
-					float fSkipBeats = negPause / fSecondsPerBeat;
-					
-					if( negBeat + fSkipBeats > fFreezeBeat )
-						fSkipBeats = fFreezeBeat - negBeat;
-					
-					WarpSegment ws( negBeat, negBeat + fSkipBeats);
-					out.AddWarpSegment( ws );
-					
-					negBeat = -1;
-					negPause = 0;
-				}
-				
-				if( fFreezeSeconds < 0.0f )
-				{
-					negBeat = fFreezeBeat;
-					negPause = -fFreezeSeconds;
-				}
-				else if( fFreezeSeconds > 0.0f )
-				{
-					StopSegment ss( BeatToNoteRow(fFreezeBeat), fFreezeSeconds );
-					out.AddStopSegment( ss );
-				}
-				
-			}
-			
-			// Process the prior stop if there was one.
-			if( negPause > 0 )
-			{
-				BPMSegment oldBPM = out.GetBPMSegmentAtRow(BeatToNoteRow(negBeat));
-				float fSecondsPerBeat = 60 / oldBPM.GetBPM();
-				float fSkipBeats = negPause / fSecondsPerBeat;
-				
-				WarpSegment ws( negBeat, negBeat + fSkipBeats);
-				out.AddWarpSegment( ws );
-			}
+			ProcessStops(out, sParams[1]);
 		}
 
 		else if( sValueName=="DELAYS" )
 		{
-			vector<RString> arrayDelayExpressions;
-			split( sParams[1], ",", arrayDelayExpressions );
-
-			for( unsigned f=0; f<arrayDelayExpressions.size(); f++ )
-			{
-				vector<RString> arrayDelayValues;
-				split( arrayDelayExpressions[f], "=", arrayDelayValues );
-				if( arrayDelayValues.size() != 2 )
-				{
-					// XXX: Hard to tell which file caused this.
-					LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid #%s value \"%s\" (must have exactly one '='), ignored.",
-						sValueName.c_str(), arrayDelayExpressions[f].c_str() );
-					continue;
-				}
-
-				const float fFreezeBeat = StringToFloat( arrayDelayValues[0] );
-				const float fFreezeSeconds = StringToFloat( arrayDelayValues[1] );
-
-				StopSegment new_seg( BeatToNoteRow(fFreezeBeat), fFreezeSeconds, true );
-				// XXX: Remove Negatives Bug?
-				new_seg.m_iStartRow = BeatToNoteRow(fFreezeBeat);
-				new_seg.m_fStopSeconds = fFreezeSeconds;
-
-				// LOG->Trace( "Adding a delay segment: beat: %f, seconds = %f", new_seg.m_fStartBeat, new_seg.m_fStopSeconds );
-
-				if(fFreezeSeconds > 0.0f)
-					out.AddStopSegment( new_seg );
-				else
-					LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid delay at beat %f, length %f.", fFreezeBeat, fFreezeSeconds );
-			}
+			ProcessDelays(out, sParams[1]);
 		}
 
 		else if( sValueName=="TIMESIGNATURES" )
 		{
-			vector<RString> vs1;
-			split( sParams[1], ",", vs1 );
-
-			FOREACH_CONST( RString, vs1, s1 )
-			{
-				vector<RString> vs2;
-				split( *s1, "=", vs2 );
-
-				if( vs2.size() < 3 )
-				{
-					LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid time signature change with %i values.", (int)vs2.size() );
-					continue;
-				}
-
-				const float fBeat = StringToFloat( vs2[0] );
-
-				TimeSignatureSegment seg;
-				seg.m_iStartRow = BeatToNoteRow(fBeat);
-				seg.m_iNumerator = atoi( vs2[1] ); 
-				seg.m_iDenominator = atoi( vs2[2] ); 
-
-				if( fBeat < 0 )
-				{
-					LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid time signature change with beat %f.", fBeat );
-					continue;
-				}
-
-				if( seg.m_iNumerator < 1 )
-				{
-					LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid time signature change with beat %f, iNumerator %i.", fBeat, seg.m_iNumerator );
-					continue;
-				}
-
-				if( seg.m_iDenominator < 1 )
-				{
-					LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid time signature change with beat %f, iDenominator %i.", fBeat, seg.m_iDenominator );
-					continue;
-				}
-
-				out.AddTimeSignatureSegment( seg );
-			}
+			ProcessTimeSignatures(out, sParams[1]);
 		}
 
 		else if( sValueName=="TICKCOUNTS" )
 		{
-			vector<RString> arrayTickcountExpressions;
-			split( sParams[1], ",", arrayTickcountExpressions );
-
-			for( unsigned f=0; f<arrayTickcountExpressions.size(); f++ )
-			{
-				vector<RString> arrayTickcountValues;
-				split( arrayTickcountExpressions[f], "=", arrayTickcountValues );
-				if( arrayTickcountValues.size() != 2 )
-				{
-					// XXX: Hard to tell which file caused this.
-					LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid #%s value \"%s\" (must have exactly one '='), ignored.",
-						     sValueName.c_str(), arrayTickcountExpressions[f].c_str() );
-					continue;
-				}
-
-				const float fTickcountBeat = StringToFloat( arrayTickcountValues[0] );
-				int iTicks = atoi( arrayTickcountValues[1] );
-				// you're lazy, let SM do the work for you... -DaisuMaster
-				if( iTicks < 1) iTicks = 1;
-				if( iTicks > ROWS_PER_BEAT ) iTicks = ROWS_PER_BEAT;
-
-				TickcountSegment new_seg( BeatToNoteRow(fTickcountBeat), iTicks );
-				out.AddTickcountSegment( new_seg );
-
-				if(iTicks >= 1 && iTicks <= ROWS_PER_BEAT ) // Constants
-				{
-					// LOG->Trace( "Adding a tickcount segment: beat: %f, ticks = %d", fTickcountBeat, iTicks );
-					//out.AddTickcountSegment( new_seg );
-				}
-				else
-				{
-					//LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid tickcount at beat %f, ticks %d.", fTickcountBeat, iTicks );
-					//LOG->UserLog( "Song file", "(UNKNOWN)", "Clamping tickcount value to %d at beat %f.", iTicks, fTickcountBeat);
-					//etc
-				}
-			}
+			ProcessTickcounts(out, sParams[1]);
 		}
 		// Ensure all of the warps are handled right.
 		sort(out.m_WarpSegments.begin(), out.m_WarpSegments.end());

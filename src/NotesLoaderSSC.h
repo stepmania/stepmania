@@ -75,6 +75,11 @@ namespace SSCLoader
 	 * @param bFromCache a flag to determine if this song is loaded from a cache file.
 	 */
 	void TidyUpData( Song &song, bool bFromCache );
+	
+	
+	void ProcessWarps( TimingData &, const RString );
+	void ProcessLabels( TimingData &, const RString );
+	void ProcessCombos( TimingData &, const RString );
 }
 #endif
 /**
