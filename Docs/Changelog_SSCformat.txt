@@ -9,6 +9,9 @@ change to JSON, but it is unsure if this will be done.
 Implement .ssc at your own risk.
 ________________________________________________________________________________
 
+[v0.7] - theDtTvB, Wolfman2000
+* Split Timing officially implemented.
+
 [v0.59] - Wolfman2000
 * Typo fix: #RADARVALUES needed a semicolon at the end, not a colon.
 
