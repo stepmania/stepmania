@@ -41,6 +41,7 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, const Song &song,
 				LOG->UserLog( "Song file", sPath, "has an invalid tick count: %d.", iTickCount );
 				return false;
 			}
+			out.m_Timing.AddTickcountSegment(TickcountSegment(0, iTickCount));
 		}
 		else if( sValueName=="STEP" )
 		{
@@ -133,6 +134,7 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, const Song &song,
 	case StepsType_pump_single: notedata.SetNumTracks( 5 ); break;
 	case StepsType_pump_couple: notedata.SetNumTracks( 10 ); break;
 	case StepsType_pump_double: notedata.SetNumTracks( 10 ); break;
+	case StepsType_pump_routine: notedata.SetNumTracks( 10 ); break; // future files may have this?
 	case StepsType_pump_halfdouble: notedata.SetNumTracks( 6 ); break;
 	default: FAIL_M( ssprintf("%i", out.m_StepsType) );
 	}
@@ -184,7 +186,7 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, const Song &song,
 		}*/
 		if( BeginsWith(sRowString, "|B") || BeginsWith(sRowString, "|D") || BeginsWith(sRowString, "|E") )
 		{
-			// These don't have to be worried about here: the changes and stops were already added.
+			// TODO: Update for Split Timing.
 			continue;
 		}
 		else if ( BeginsWith(sRowString, "|T") )
@@ -192,6 +194,7 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, const Song &song,
 			RString temp = sRowString.substr(2,sRowString.size()-3);
 			newTick = atoi(temp);
 			bTickChangeNeeded = true;
+			out.m_Timing.AddTickcountSegment(TickcountSegment(fCurBeat, newTick));
 			continue;
 		}
 		else
