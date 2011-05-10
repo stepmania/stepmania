@@ -506,7 +506,7 @@ void Player::Load()
 
 	m_LastTapNoteScore = TNS_None;
 	// The editor can start playing in the middle of the song.
-	const int iNoteRow = BeatToNoteRowNotRounded( GAMESTATE->m_fSongBeat );
+	const int iNoteRow = BeatToNoteRowNotRounded( m_pPlayerState->m_Position.m_fSongBeat );
 	m_iFirstUncrossedRow     = iNoteRow - 1;
 	m_pJudgedRows->Reset( iNoteRow );
 
@@ -695,7 +695,7 @@ void Player::Update( float fDeltaTime )
 			return;
 	}
 
-	const float fSongBeat = GAMESTATE->m_fSongBeat;
+	const float fSongBeat = m_pPlayerState->m_Position.m_fSongBeat;
 	const int iSongRow = BeatToNoteRow( fSongBeat );
 
 	// Optimization: Don't spend time processing the things below that won't show 
@@ -797,7 +797,7 @@ void Player::Update( float fDeltaTime )
 
 	// Check for a strum miss
 	if( m_pPlayerState->m_fLastStrumMusicSeconds != -1  &&
-		m_pPlayerState->m_fLastStrumMusicSeconds + g_fTimingWindowStrum < GAMESTATE->m_fMusicSeconds )
+		m_pPlayerState->m_fLastStrumMusicSeconds + g_fTimingWindowStrum < m_pPlayerState->m_Position.m_fMusicSeconds )
 	{
 		DoStrumMiss();
 	}
