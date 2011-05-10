@@ -6564,29 +6564,217 @@
 				RelativePath="glext.h"
 				>
 			</File>
-			<Filter Name="libpng">
-				<File RelativePath="..\extern\libpng\include\png.c"></File>
-				<File RelativePath="..\extern\libpng\include\png.h"></File>
-				<File RelativePath="..\extern\libpng\include\pngconf.h"></File>
-				<File RelativePath="..\extern\libpng\include\pngdebug.h"></File>
-				<File RelativePath="..\extern\libpng\include\pngerror.c"></File>
-				<File RelativePath="..\extern\libpng\include\pngget.c"></File>
-				<File RelativePath="..\extern\libpng\include\pnginfo.h"></File>
-				<File RelativePath="..\extern\libpng\include\scripts\pnglibconf.h"></File>
-				<File RelativePath="..\extern\libpng\include\pngmem.c"></File>
-				<File RelativePath="..\extern\libpng\include\pngpread.c"></File>
-				<File RelativePath="..\extern\libpng\include\pngpriv.h"></File>
-				<File RelativePath="..\extern\libpng\include\pngread.c"></File>
-				<File RelativePath="..\extern\libpng\include\pngrio.c"></File>
-				<File RelativePath="..\extern\libpng\include\pngrtran.c"></File>
-				<File RelativePath="..\extern\libpng\include\pngrutil.c"></File>
-				<File RelativePath="..\extern\libpng\include\pngset.c"></File>
-				<File RelativePath="..\extern\libpng\include\pngstruct.h"></File>
-				<File RelativePath="..\extern\libpng\include\pngtrans.c"></File>
-				<File RelativePath="..\extern\libpng\include\pngwio.c"></File>
-				<File RelativePath="..\extern\libpng\include\pngwrite.c"></File>
-				<File RelativePath="..\extern\libpng\include\pngwtran.c"></File>
-				<File RelativePath="..\extern\libpng\include\pngwutil.c"></File>
+			<Filter
+				Name="libpng"
+				>
+				<File
+					RelativePath="..\extern\libpng\include\png.c"
+					>
+					<FileConfiguration
+						Name="Release-SSE2|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\extern\libpng\include\png.h"
+					>
+				</File>
+				<File
+					RelativePath="..\extern\libpng\include\pngconf.h"
+					>
+				</File>
+				<File
+					RelativePath="..\extern\libpng\include\pngdebug.h"
+					>
+				</File>
+				<File
+					RelativePath="..\extern\libpng\include\pngerror.c"
+					>
+					<FileConfiguration
+						Name="Release-SSE2|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\extern\libpng\include\pngget.c"
+					>
+					<FileConfiguration
+						Name="Release-SSE2|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\extern\libpng\include\pnginfo.h"
+					>
+				</File>
+				<File
+					RelativePath="..\extern\libpng\include\scripts\pnglibconf.h"
+					>
+				</File>
+				<File
+					RelativePath="..\extern\libpng\include\pngmem.c"
+					>
+					<FileConfiguration
+						Name="Release-SSE2|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\extern\libpng\include\pngpread.c"
+					>
+					<FileConfiguration
+						Name="Release-SSE2|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\extern\libpng\include\pngpriv.h"
+					>
+				</File>
+				<File
+					RelativePath="..\extern\libpng\include\pngread.c"
+					>
+					<FileConfiguration
+						Name="Release-SSE2|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\extern\libpng\include\pngrio.c"
+					>
+					<FileConfiguration
+						Name="Release-SSE2|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\extern\libpng\include\pngrtran.c"
+					>
+					<FileConfiguration
+						Name="Release-SSE2|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\extern\libpng\include\pngrutil.c"
+					>
+					<FileConfiguration
+						Name="Release-SSE2|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\extern\libpng\include\pngset.c"
+					>
+					<FileConfiguration
+						Name="Release-SSE2|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\extern\libpng\include\pngstruct.h"
+					>
+				</File>
+				<File
+					RelativePath="..\extern\libpng\include\pngtrans.c"
+					>
+					<FileConfiguration
+						Name="Release-SSE2|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\extern\libpng\include\pngwio.c"
+					>
+					<FileConfiguration
+						Name="Release-SSE2|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\extern\libpng\include\pngwrite.c"
+					>
+					<FileConfiguration
+						Name="Release-SSE2|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\extern\libpng\include\pngwtran.c"
+					>
+					<FileConfiguration
+						Name="Release-SSE2|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\extern\libpng\include\pngwutil.c"
+					>
+					<FileConfiguration
+						Name="Release-SSE2|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+				</File>
 			</Filter>
 			<Filter
 				Name="pcre"
