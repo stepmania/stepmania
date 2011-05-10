@@ -504,13 +504,14 @@ void Song::TidyUpData()
 		m_fMusicSampleStartSeconds == 0 ||
 		m_fMusicSampleStartSeconds+m_fMusicSampleLengthSeconds > this->m_fMusicLengthSeconds )
 	{
-		m_fMusicSampleStartSeconds = this->GetElapsedTimeFromBeat( 100 );
+		const TimingData &timing = this->m_SongTiming;
+		m_fMusicSampleStartSeconds = timing.GetElapsedTimeFromBeat( 100 );
 
 		if( m_fMusicSampleStartSeconds+m_fMusicSampleLengthSeconds > this->m_fMusicLengthSeconds )
 		{
 			int iBeat = lrintf( m_fLastBeat/2 );
 			iBeat -= iBeat%4;
-			m_fMusicSampleStartSeconds = this->GetElapsedTimeFromBeat( (float)iBeat );
+			m_fMusicSampleStartSeconds = timing.GetElapsedTimeFromBeat( (float)iBeat );
 		}
 	}
 
@@ -1485,7 +1486,8 @@ bool Song::HasSignificantBpmChangesOrStops() const
 
 float Song::GetStepsSeconds() const
 {
-	return GetElapsedTimeFromBeat( m_fLastBeat ) - GetElapsedTimeFromBeat( m_fFirstBeat );
+	const TimingData &timing = this->m_SongTiming;
+	return timing.GetElapsedTimeFromBeat( m_fLastBeat ) - timing.GetElapsedTimeFromBeat( m_fFirstBeat );
 }
 
 bool Song::IsLong() const

@@ -146,7 +146,7 @@ static void StartMusic( MusicToPlay &ToPlay )
 			SSCLoader::LoadFromSSCFile(ToPlay.m_sTimingFile, song) )
 		{
 			ToPlay.HasTiming = true;
-			ToPlay.m_TimingData = song.m_Timing;
+			ToPlay.m_TimingData = song.m_SongTiming;
 			// get cabinet lights if any
 			Steps *pStepsCabinetLights = SongUtil::GetOneSteps( &song, StepsType_lights_cabinet );
 			if( pStepsCabinetLights )
@@ -156,7 +156,7 @@ static void StartMusic( MusicToPlay &ToPlay )
 			SMLoader::LoadFromSMFile(ToPlay.m_sTimingFile, song) )
 		{
 			ToPlay.HasTiming = true;
-			ToPlay.m_TimingData = song.m_Timing;
+			ToPlay.m_TimingData = song.m_SongTiming;
 			// get cabinet lights if any
 			Steps *pStepsCabinetLights = SongUtil::GetOneSteps( &song, StepsType_lights_cabinet );
 			if( pStepsCabinetLights )
