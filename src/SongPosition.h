@@ -40,7 +40,7 @@ class SongPosition
 
 /**
  * @file
- * @author Chris Danford, Glenn Maynard (c) 2001-2004
+ * @author Thai Pangsakulyanont (c) 2011
  * @section LICENSE
  * All rights reserved.
  * 

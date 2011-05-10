@@ -684,6 +684,8 @@ bool SSCLoader::LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePat
 	Song* pSong = NULL;
 	Steps* pNewNotes = NULL;
 	bool bSSCFormat = false;
+	bool bHasOwnTiming = false;
+	TimingData stepsTiming;
 
 	for( unsigned i=0; i<msd.GetNumValues(); i++ )
 	{
@@ -774,32 +776,54 @@ bool SSCLoader::LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePat
 			bSSCFormat = true;
 		}
 
-		// TimingData for Steps isn't set yet, but still prepare for it.
 		else if( sValueName=="BPMS" )
 		{
+			if( SMLoader::ProcessBPMs(stepsTiming, sParams[1]) )
+				bHasOwnTiming = true;
 			bSSCFormat = true;
 		}
+		
 		else if( sValueName=="STOPS" )
 		{
+			SMLoader::ProcessStops(stepsTiming, sParams[1]);
 			bSSCFormat = true;
 		}
+		
 		else if( sValueName=="DELAYS" )
 		{
+			SMLoader::ProcessDelays(stepsTiming, sParams[1]);
 			bSSCFormat = true;
 		}
+		
 		else if( sValueName=="TIMESIGNATURES" )
 		{
+			SMLoader::ProcessTimeSignatures(stepsTiming, sParams[1]);
 			bSSCFormat = true;
 		}
+		
 		else if( sValueName=="TICKCOUNTS" )
 		{
+			SMLoader::ProcessTickcounts(stepsTiming, sParams[1]);
 			bSSCFormat = true;
 		}
+		
 		else if( sValueName=="COMBOS" )
 		{
+			ProcessCombos(stepsTiming, sParams[1]);
 			bSSCFormat = true;
 		}
-
+		
+		else if( sValueName=="WARPS" )
+		{
+			ProcessWarps(stepsTiming, sParams[1]);
+			bSSCFormat = true;
+		}
+		
+		else if( sValueName=="LABELS" )
+		{
+			ProcessLabels(stepsTiming, sParams[1]);
+			bSSCFormat = true;
+		}
 		else if( sValueName=="NOTES" )
 		{
 			if( pSong == NULL )
@@ -819,6 +843,10 @@ bool SSCLoader::LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePat
 
 			if( bSSCFormat )
 			{
+				if ( bHasOwnTiming )
+				{
+					pNewNotes->m_Timing = stepsTiming;
+				}
 				pNewNotes->SetSMNoteData( sParams[1] );
 				pNewNotes->TidyUpData();
 				pSong->AddSteps( pNewNotes );
