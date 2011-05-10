@@ -919,12 +919,12 @@ void Player::Update( float fDeltaTime )
 		/* We want to send the crossed row message exactly when we cross the row--not
 		 * .5 before the row. Use a very slow song (around 2 BPM) as a test case: without
 		 * rounding, autoplay steps early. -glenn */
-		const int iRowNow = BeatToNoteRowNotRounded( GAMESTATE->m_fSongBeat );
+		const int iRowNow = BeatToNoteRowNotRounded( GAMESTATE->m_Position.m_fSongBeat );
 		if( iRowNow >= 0 )
 		{
 			if( GAMESTATE->IsPlayerEnabled(m_pPlayerState) )
 			{
-				if(GAMESTATE->m_bDelay)
+				if(m_pPlayerState->m_Position.m_bDelay)
 				{
 					if( !m_bDelay )
 						m_bDelay = true;
@@ -1652,7 +1652,7 @@ void Player::Fret( int col, int row, const RageTimer &tm, bool bHeld, bool bRele
 	}
 
 	// Handle hammer-ons and pull-offs
-	const float fPositionSeconds = GAMESTATE->m_fMusicSeconds - tm.Ago();
+	const float fPositionSeconds = m_pPlayerState->m_Position.m_fMusicSeconds - tm.Ago();
 	int iHopoCol = -1;
 	bool bDoHopo = 
 		m_pPlayerState->m_fLastHopoNoteMusicSeconds != -1  &&
@@ -1705,7 +1705,7 @@ void Player::Fret( int col, int row, const RageTimer &tm, bool bHeld, bool bRele
 	// Check if this fret breaks all active holds.
 	if( !bRelease )
 	{
-		const float fSongBeat = GAMESTATE->m_fSongBeat;
+		const float fSongBeat = m_pPlayerState->m_Position.m_fSongBeat;
 		const int iSongRow = BeatToNoteRow( fSongBeat );
 
 		int iMaxHoldCol = -1;
@@ -1747,7 +1747,7 @@ void Player::Strum( int col, int row, const RageTimer &tm, bool bHeld, bool bRel
 		DoStrumMiss();
 	}
 
-	m_pPlayerState->m_fLastStrumMusicSeconds = GAMESTATE->m_fMusicSeconds;
+	m_pPlayerState->m_fLastStrumMusicSeconds = m_pPlayerState->m_Position.m_fMusicSeconds;
 
 	StepStrumHopo( col, row, tm, bHeld, bRelease, ButtonType_StrumFretsChanged );
 }
@@ -1796,7 +1796,7 @@ void Player::ScoreAllActiveHoldsLetGo()
 {
 	if( PENALIZE_TAP_SCORE_NONE )
 	{
-		const float fSongBeat = GAMESTATE->m_fSongBeat;
+		const float fSongBeat = m_pPlayerState->m_Position.m_fSongBeat;
 		const int iSongRow = BeatToNoteRow( fSongBeat );
 
 		// Score all active holds to NotHeld
@@ -1859,8 +1859,8 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 
 	// Do everything that depends on a RageTimer here;
 	// set your breakpoints somewhere after this block.
-	const float fLastBeatUpdate = GAMESTATE->m_LastBeatUpdate.Ago();
-	const float fPositionSeconds = GAMESTATE->m_fMusicSeconds - tm.Ago();
+	const float fLastBeatUpdate = m_pPlayerState->m_Position.m_LastBeatUpdate.Ago();
+	const float fPositionSeconds = m_pPlayerState->m_Position.m_fMusicSeconds - tm.Ago();
 	const float fTimeSinceStep = tm.Ago();
 
 	switch( pbt )
@@ -1875,7 +1875,7 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 		break;
 	}
 
-	float fSongBeat = GAMESTATE->m_fSongBeat;
+	float fSongBeat = m_pPlayerState->m_Position.m_fSongBeat;
 	
 	if( GAMESTATE->m_pCurSong )
 	{
@@ -2059,7 +2059,7 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 
 			/* GAMESTATE->m_fMusicSeconds is the music time as of GAMESTATE->m_LastBeatUpdate. Figure
 			 * out what the music time is as of now. */
-			const float fCurrentMusicSeconds = GAMESTATE->m_fMusicSeconds + (fLastBeatUpdate*GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate);
+			const float fCurrentMusicSeconds = m_pPlayerState->m_Position.m_fMusicSeconds + (fLastBeatUpdate*GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate);
 
 			// ... which means it happened at this point in the music:
 			const float fMusicSeconds = fCurrentMusicSeconds - fTimeSinceStep * GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate;
@@ -2568,7 +2568,7 @@ void Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 {
 	//LOG->Trace( "Steps::UpdateTapNotesMissedOlderThan(%f)", fMissIfOlderThanThisBeat );
 	int iMissIfOlderThanThisRow;
-	const float fEarliestTime = GAMESTATE->m_fMusicSeconds - fMissIfOlderThanSeconds;
+	const float fEarliestTime = m_pPlayerState->m_Position.m_fMusicSeconds - fMissIfOlderThanSeconds;
 	{
 		bool bFreeze, bDelay;
 		float fMissIfOlderThanThisBeat;
@@ -2621,7 +2621,7 @@ void Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 
 void Player::UpdateJudgedRows()
 {
-	const int iEndRow = BeatToNoteRow( GAMESTATE->m_fSongBeat );
+	const int iEndRow = BeatToNoteRow( m_pPlayerState->m_Position.m_fSongBeat );
 	bool bAllJudged = true;
 	const bool bSeparately = GAMESTATE->GetCurrentGame()->m_bCountNotesSeparately;
 
@@ -3268,7 +3268,7 @@ void Player::SetCombo( int iCombo, int iMisses )
 	}
 	else
 	{
-		bPastBeginning = GAMESTATE->m_fMusicSeconds > GAMESTATE->m_pCurSong->m_fMusicLengthSeconds * PERCENT_UNTIL_COLOR_COMBO;
+		bPastBeginning = m_pPlayerState->m_Position.m_fMusicSeconds > GAMESTATE->m_pCurSong->m_fMusicLengthSeconds * PERCENT_UNTIL_COLOR_COMBO;
 	}
 
 	if( m_bSendJudgmentAndComboMessages )
