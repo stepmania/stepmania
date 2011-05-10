@@ -8,10 +8,11 @@ local ZeroIfNotFound = { __index = function() return 0 end; };
 
 -- Retrieve the amount of taps/holds/rolls involved. Used for some formulas.
 function GetTotalItems(radars)
-	return radars:GetValue('RadarCategory_TapsAndHolds') 
-		+ radars:GetValue('RadarCategory_Holds') 
-		+ radars:GetValue('RadarCategory_Rolls');
-		+ radars:GetValue('RadarCategory_Lifts');
+	local total = radars:GetValue('RadarCategory_TapsAndHolds')
+	total = total + radars:GetValue('RadarCategory_Holds') 
+	total = total + radars:GetValue('RadarCategory_Rolls')
+	total = total + radars:GetValue('RadarCategory_Lifts')
+	return total
 end;
 
 -- Determine whether marvelous timing is to be considered.
