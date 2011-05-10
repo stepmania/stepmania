@@ -209,7 +209,7 @@ void ScreenHowToPlay::Step()
 #define ST_JUMPUD	(ST_UP | ST_DOWN)
 
 	int iStep = 0;
-	const int iNoteRow = BeatToNoteRowNotRounded( GAMESTATE->m_fSongBeat + 0.6f );
+	const int iNoteRow = BeatToNoteRowNotRounded( GAMESTATE->m_Position.m_fSongBeat + 0.6f );
 	// if we want to miss from here on out, don't process steps.
 	if( m_iW2s < m_iNumW2s && m_NoteData.IsThereATapAtRow( iNoteRow ) )
 	{
@@ -230,10 +230,10 @@ void ScreenHowToPlay::Step()
 			m_pmCharacter->PlayAnimation( "Step-JUMPLR", 1.8f );
 
 			m_pmCharacter->StopTweening();
-			m_pmCharacter->BeginTweening( GAMESTATE->m_fCurBPS /8, TWEEN_LINEAR );
+			m_pmCharacter->BeginTweening( GAMESTATE->m_Position.m_fCurBPS /8, TWEEN_LINEAR );
 			m_pmCharacter->SetRotationY( 90 );
-			m_pmCharacter->BeginTweening( (1/(GAMESTATE->m_fCurBPS * 2) ) ); //sleep between jump-frames
-			m_pmCharacter->BeginTweening( GAMESTATE->m_fCurBPS /6, TWEEN_LINEAR );
+			m_pmCharacter->BeginTweening( (1/(GAMESTATE->m_Position.m_fCurBPS * 2) ) ); //sleep between jump-frames
+			m_pmCharacter->BeginTweening( GAMESTATE->m_Position.m_fCurBPS /6, TWEEN_LINEAR );
 			m_pmCharacter->SetRotationY( 0 );
 			break;
 		}
@@ -248,7 +248,7 @@ void ScreenHowToPlay::Update( float fDelta )
 		m_fFakeSecondsIntoSong += fDelta;
 
 		static int iLastNoteRowCounted = 0;
-		int iCurNoteRow = BeatToNoteRowNotRounded( GAMESTATE->m_fSongBeat );
+		int iCurNoteRow = BeatToNoteRowNotRounded( GAMESTATE->m_Position.m_fSongBeat );
 
 		if( iCurNoteRow != iLastNoteRowCounted &&m_NoteData.IsThereATapAtRow(iCurNoteRow) )
 		{

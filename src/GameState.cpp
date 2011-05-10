@@ -958,7 +958,7 @@ void GameState::UpdateSongPosition( float fPositionSeconds, const TimingData &ti
 	int iThrowAway;
 	timing.GetBeatAndBPSFromElapsedTime( m_fMusicSecondsVisible, m_fSongBeatVisible, fThrowAway, bThrowAway, bThrowAway, iThrowAway, fThrowAway2 );
 
-	Actor::SetBGMTime( m_Position.m_fMusicSecondsVisible, m_Position.m_fSongBeatVisible, fPositionSeconds, m_Position.m_fSongBeatNoOffset );
+	Actor::SetBGMTime( GAMESTATE->m_fMusicSecondsVisible, GAMESTATE->m_fSongBeatVisible, fPositionSeconds, GAMESTATE->m_Position.m_fSongBeatNoOffset );
 //	LOG->Trace( "m_fMusicSeconds = %f, m_fSongBeat = %f, m_fCurBPS = %f, m_bFreeze = %f", m_fMusicSeconds, m_fSongBeat, m_fCurBPS, m_bFreeze );
 }
 
@@ -2252,11 +2252,11 @@ public:
 	DEFINE_METHOD( GetHardestStepsDifficulty,	GetHardestStepsDifficulty() )
 	DEFINE_METHOD( IsEventMode,			IsEventMode() )
 	DEFINE_METHOD( GetNumPlayersEnabled,		GetNumPlayersEnabled() )
-	DEFINE_METHOD( GetSongBeat,			m_fSongBeat )
+	DEFINE_METHOD( GetSongBeat,			m_Position.m_fSongBeat )
 	DEFINE_METHOD( GetSongBeatVisible,		m_fSongBeatVisible )
-	DEFINE_METHOD( GetSongBPS,			m_fCurBPS )
-	DEFINE_METHOD( GetSongFreeze,			m_bFreeze )
-	DEFINE_METHOD( GetSongDelay,			m_bDelay )
+	DEFINE_METHOD( GetSongBPS,			m_Position.m_fCurBPS )
+	DEFINE_METHOD( GetSongFreeze,			m_Position.m_bFreeze )
+	DEFINE_METHOD( GetSongDelay,			m_Position.m_bDelay )
 	DEFINE_METHOD( GetGameplayLeadIn,		m_bGameplayLeadIn )
 	DEFINE_METHOD( GetCoins,			m_iCoins )
 	DEFINE_METHOD( IsSideJoined,			m_bSideIsJoined[Enum::Check<PlayerNumber>(L, 1)] )
@@ -2395,7 +2395,7 @@ public:
 	static int JoinPlayer( T* p, lua_State *L )				{ p->JoinPlayer(Enum::Check<PlayerNumber>(L, 1)); return 0; }
 	static int UnjoinPlayer( T* p, lua_State *L )				{ p->UnjoinPlayer(Enum::Check<PlayerNumber>(L, 1)); return 0; }
 	static int GetSongPercent( T* p, lua_State *L )				{ lua_pushnumber(L, p->GetSongPercent(FArg(1))); return 1; }
-	DEFINE_METHOD( GetCurMusicSeconds,	m_fMusicSeconds )
+	DEFINE_METHOD( GetCurMusicSeconds,	m_Position.m_fMusicSeconds )
 
 	DEFINE_METHOD( GetWorkoutGoalComplete,		m_bWorkoutGoalComplete )
 	static int GetCharacter( T* p, lua_State *L )				{ p->m_pCurCharacters[Enum::Check<PlayerNumber>(L, 1)]->PushSelf(L); return 1; }
