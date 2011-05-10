@@ -10,7 +10,8 @@ StepMania 5.0 $NEXT | 20110xyy
 
 2011/05/10
 ----------
-* [Sprite] Added SetSecondsIntoAnimation(float) Lua binding. [AJ]
+* [Sprite] Added SetSecondsIntoAnimation Lua binding. [AJ]
+* [BPMDisplay] Added SetFromCourse Lua binding. [AJ]
 
 2011/05/03
 ----------

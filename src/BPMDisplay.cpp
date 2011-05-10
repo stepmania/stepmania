@@ -305,12 +305,23 @@ public:
 		}
 		return 0;
 	}
+	static int SetFromCourse( T* p, lua_State *L )
+	{
+		if( lua_isnil(L,1) ) { p->NoBPM(); }
+		else
+		{
+			const Course* pCourse = Luna<Course>::check( L, 1, true );
+			p->SetBpmFromCourse(pCourse);
+		}
+		return 0;
+	}
 	static int GetText( T* p, lua_State *L )		{ lua_pushstring( L, p->GetText() ); return 1; }
 
 	LunaBPMDisplay()
 	{
 		ADD_METHOD( SetFromGameState );
 		ADD_METHOD( SetFromSong );
+		ADD_METHOD( SetFromCourse );
 		ADD_METHOD( GetText );
 	}
 };
