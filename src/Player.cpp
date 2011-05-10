@@ -1528,7 +1528,7 @@ int Player::GetClosestNoteDirectional( int col, int iStartRow, int iEndRow, bool
 		// Is this the row we want?
 		do {
 			const TapNote &tn = begin->second;
-			if( GAMESTATE->m_pCurSong->m_Timing.IsWarpAtRow( begin->first ) )
+			if( GAMESTATE->m_pCurSong->m_SongTiming.IsWarpAtRow( begin->first ) )
 				break;
 			if( tn.type == TapNote::empty )
 				break;
@@ -1579,7 +1579,7 @@ int Player::GetClosestNonEmptyRowDirectional( int iStartRow, int iEndRow, bool b
 				++iter;
 				continue;
 			}
-			if( GAMESTATE->m_pCurSong->m_Timing.IsWarpAtRow( iter.Row() ) )
+			if( GAMESTATE->m_pCurSong->m_SongTiming.IsWarpAtRow( iter.Row() ) )
 			{
 				++iter;
 				continue;
@@ -2011,8 +2011,8 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 	 * "jack hammers." Hmm.
 	 */
 	const int iStepSearchRows = max(
-		BeatToNoteRow( GAMESTATE->m_pCurSong->m_Timing.GetBeatFromElapsedTime( GAMESTATE->m_fMusicSeconds + StepSearchDistance ) ) - iSongRow,
-		iSongRow - BeatToNoteRow( GAMESTATE->m_pCurSong->m_Timing.GetBeatFromElapsedTime( GAMESTATE->m_fMusicSeconds - StepSearchDistance ) )
+		BeatToNoteRow( GAMESTATE->m_pCurSong->m_SongTiming.GetBeatFromElapsedTime( GAMESTATE->m_fMusicSeconds + StepSearchDistance ) ) - iSongRow,
+		iSongRow - BeatToNoteRow( GAMESTATE->m_pCurSong->m_SongTiming.GetBeatFromElapsedTime( GAMESTATE->m_fMusicSeconds - StepSearchDistance ) )
 	) + ROWS_PER_BEAT;
 	int iRowOfOverlappingNoteOrRow = row;
 	if( row == -1 )
@@ -2089,7 +2089,7 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 				// Stepped too close to mine?
 				if( !bRelease && ( REQUIRE_STEP_ON_MINES == !bHeld ) && 
 				   fSecondsFromExact <= GetWindowSeconds(TW_Mine) &&
-				   !GAMESTATE->m_pCurSong->m_Timing.IsWarpAtRow(iSongRow) )
+				   !GAMESTATE->m_pCurSong->m_SongTiming.IsWarpAtRow(iSongRow) )
 					score = TNS_HitMine;
 				break;
 
@@ -2564,7 +2564,7 @@ void Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 		float fThrowAway;
 		int iWarpBeginRow;
 		float fWarpLength;
-		GAMESTATE->m_pCurSong->m_Timing.GetBeatAndBPSFromElapsedTime( fEarliestTime, fMissIfOlderThanThisBeat, fThrowAway, bFreeze, bDelay, iWarpBeginRow, fWarpLength );
+		GAMESTATE->m_pCurSong->m_SongTiming.GetBeatAndBPSFromElapsedTime( fEarliestTime, fMissIfOlderThanThisBeat, fThrowAway, bFreeze, bDelay, iWarpBeginRow, fWarpLength );
 
 		iMissIfOlderThanThisRow = BeatToNoteRow( fMissIfOlderThanThisBeat );
 		if( bFreeze || bDelay )
@@ -2587,7 +2587,7 @@ void Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 			continue;
 
 		// Ignore all notes that are skipped via WARPS.
-		if( GAMESTATE->m_pCurSong->m_Timing.IsWarpAtRow( iter.Row() ) )
+		if( GAMESTATE->m_pCurSong->m_SongTiming.IsWarpAtRow( iter.Row() ) )
 			continue;
 
 		if( tn.type == TapNote::mine )
@@ -2622,7 +2622,7 @@ void Player::UpdateJudgedRows()
 			int iRow = iter.Row();
 
 			// If row is within a warp section, ignore it. -aj
-			if( GAMESTATE->m_pCurSong->m_Timing.IsWarpAtRow(iRow) )
+			if( GAMESTATE->m_pCurSong->m_SongTiming.IsWarpAtRow(iRow) )
 				continue;
 
 			if( iLastSeenRow != iRow )
@@ -2843,13 +2843,13 @@ void Player::CrossedRows( int iLastRowCrossed, const RageTimer &now )
 		int iCheckpointFrequencyRows = ROWS_PER_BEAT/2;
 		if( CHECKPOINTS_USE_TICKCOUNTS )
 		{
-			int tickCurrent = GAMESTATE->m_pCurSong->m_Timing.GetTickcountAtRow( iLastRowCrossed );
+			int tickCurrent = GAMESTATE->m_pCurSong->m_SongTiming.GetTickcountAtRow( iLastRowCrossed );
 			// There are some charts that don't want tickcounts involved at all.
 			iCheckpointFrequencyRows = (tickCurrent > 0 ? ROWS_PER_BEAT / tickCurrent : 0);
 		}
 		else if( CHECKPOINTS_USE_TIME_SIGNATURES )
 		{
-			TimeSignatureSegment tSignature = GAMESTATE->m_pCurSong->m_Timing.GetTimeSignatureSegmentAtBeat( NoteRowToBeat( iLastRowCrossed ) );
+			TimeSignatureSegment tSignature = GAMESTATE->m_pCurSong->m_SongTiming.GetTimeSignatureSegmentAtBeat( NoteRowToBeat( iLastRowCrossed ) );
 
 			// Most songs are in 4/4 time. The frequency for checking tick counts should reflect that.
 			iCheckpointFrequencyRows = ROWS_PER_BEAT * tSignature.m_iDenominator / (tSignature.m_iNumerator * 4);
@@ -2957,7 +2957,7 @@ void Player::HandleTapRowScore( unsigned row )
 #endif
 
 	// Warp hackery. -aj
-	if( GAMESTATE->m_pCurSong->m_Timing.IsWarpAtRow( row ) )
+	if( GAMESTATE->m_pCurSong->m_SongTiming.IsWarpAtRow( row ) )
 		return;
 
 	if( GAMESTATE->m_bDemonstrationOrJukebox )
@@ -3061,7 +3061,7 @@ void Player::HandleHoldCheckpoint( int iRow, int iNumHoldsHeldThisRow, int iNumH
 #endif
 
 	// More warp hackery. -aj
-	if( GAMESTATE->m_pCurSong->m_Timing.IsWarpAtRow( iRow ) )
+	if( GAMESTATE->m_pCurSong->m_SongTiming.IsWarpAtRow( iRow ) )
 		return;
 
 	// don't accumulate combo if AutoPlay is on.
