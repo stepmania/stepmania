@@ -74,8 +74,7 @@ static void Serialize( const TapNote &o, Json::Value &root )
 static void Serialize( const NoteData &o, Json::Value &root )
 {
 	root = Json::Value(Json::arrayValue);
-	int iNumTracks = o.GetNumTracks();
-	for(int t=0; t<iNumTracks; t++ )
+	for(int t=0; t < o.GetNumTracks(); t++ )
 	{
 		NoteData::TrackMap::iterator begin, end;
 		o.GetTapNoteRange( t, 0, MAX_NOTE_ROW, begin, end );
@@ -84,7 +83,7 @@ static void Serialize( const NoteData &o, Json::Value &root )
 		for( ; begin != end; ++begin )
 		{
 			int iRow = begin->first;
-			TapNote tn = begin->second;
+			const TapNote tn = begin->second;
 			root.resize( root.size()+1 );
 			Json::Value &root2 = root[ root.size()-1 ];
 			root2 = Json::Value(Json::arrayValue);
