@@ -78,7 +78,7 @@ static void Serialize( const NoteData &o, Json::Value &root )
 	for(int t=0; t<iNumTracks; t++ )
 	{
 		NoteData::TrackMap::iterator begin, end;
-		o.GetTapNoteRangeInclusive(t, 0, -1, begin, end );
+		o.GetTapNoteRange( t, 0, MAX_NOTE_ROW, begin, end );
 		//NoteData::TrackMap tm = o.GetTrack(t);
 		//FOREACHM_CONST( int, TapNote, tm, iter )
 		for( ; begin != end; ++begin )
