@@ -27,6 +27,10 @@
 		2B30D6831315EA7E00044B68 /* MouseDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B30D6811315EA7E00044B68 /* MouseDevice.h */; };
 		2B76698B132FF71500586512 /* NotesLoaderSMA.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B766989132FF71500586512 /* NotesLoaderSMA.h */; };
 		2B76698C132FF71500586512 /* NotesLoaderSMA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2B76698A132FF71500586512 /* NotesLoaderSMA.cpp */; };
+		2B9C2E8D137A138B004C92F3 /* NotesLoaderJson.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2B9C2E89137A138B004C92F3 /* NotesLoaderJson.cpp */; };
+		2B9C2E8E137A138B004C92F3 /* NotesLoaderJson.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B9C2E8A137A138B004C92F3 /* NotesLoaderJson.h */; };
+		2B9C2E8F137A138B004C92F3 /* NotesWriterJson.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2B9C2E8B137A138B004C92F3 /* NotesWriterJson.cpp */; };
+		2B9C2E90137A138B004C92F3 /* NotesWriterJson.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B9C2E8C137A138B004C92F3 /* NotesWriterJson.h */; };
 		2BA7925E1304F20D002BD8E1 /* NotesLoaderSSC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2BA7925A1304F20D002BD8E1 /* NotesLoaderSSC.cpp */; };
 		2BA7925F1304F20D002BD8E1 /* NotesLoaderSSC.h in Headers */ = {isa = PBXBuildFile; fileRef = 2BA7925B1304F20D002BD8E1 /* NotesLoaderSSC.h */; };
 		2BA792601304F20D002BD8E1 /* NotesWriterSSC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2BA7925C1304F20D002BD8E1 /* NotesWriterSSC.cpp */; };
@@ -1798,6 +1802,10 @@
 		2B30D6811315EA7E00044B68 /* MouseDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MouseDevice.h; sourceTree = "<group>"; };
 		2B766989132FF71500586512 /* NotesLoaderSMA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NotesLoaderSMA.h; path = ../src/NotesLoaderSMA.h; sourceTree = SOURCE_ROOT; };
 		2B76698A132FF71500586512 /* NotesLoaderSMA.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NotesLoaderSMA.cpp; path = ../src/NotesLoaderSMA.cpp; sourceTree = SOURCE_ROOT; };
+		2B9C2E89137A138B004C92F3 /* NotesLoaderJson.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NotesLoaderJson.cpp; path = ../src/NotesLoaderJson.cpp; sourceTree = SOURCE_ROOT; };
+		2B9C2E8A137A138B004C92F3 /* NotesLoaderJson.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NotesLoaderJson.h; path = ../src/NotesLoaderJson.h; sourceTree = SOURCE_ROOT; };
+		2B9C2E8B137A138B004C92F3 /* NotesWriterJson.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NotesWriterJson.cpp; path = ../src/NotesWriterJson.cpp; sourceTree = SOURCE_ROOT; };
+		2B9C2E8C137A138B004C92F3 /* NotesWriterJson.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NotesWriterJson.h; path = ../src/NotesWriterJson.h; sourceTree = SOURCE_ROOT; };
 		2BA7925A1304F20D002BD8E1 /* NotesLoaderSSC.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NotesLoaderSSC.cpp; path = ../src/NotesLoaderSSC.cpp; sourceTree = SOURCE_ROOT; };
 		2BA7925B1304F20D002BD8E1 /* NotesLoaderSSC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NotesLoaderSSC.h; path = ../src/NotesLoaderSSC.h; sourceTree = SOURCE_ROOT; };
 		2BA7925C1304F20D002BD8E1 /* NotesWriterSSC.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NotesWriterSSC.cpp; path = ../src/NotesWriterSSC.cpp; sourceTree = SOURCE_ROOT; };
@@ -3241,6 +3249,10 @@
 		2B766980132FF62B00586512 /* NoteParsing */ = {
 			isa = PBXGroup;
 			children = (
+				2B9C2E89137A138B004C92F3 /* NotesLoaderJson.cpp */,
+				2B9C2E8A137A138B004C92F3 /* NotesLoaderJson.h */,
+				2B9C2E8B137A138B004C92F3 /* NotesWriterJson.cpp */,
+				2B9C2E8C137A138B004C92F3 /* NotesWriterJson.h */,
 				AA6EFDED04770C79005F316C /* NotesLoader.cpp */,
 				AA6EFDEE04770C79005F316C /* NotesLoader.h */,
 				AA6EFDEF04770C79005F316C /* NotesLoaderBMS.cpp */,
@@ -5042,6 +5054,8 @@
 				2BC6132D13773C8E00CC8BBD /* pngpriv.h in Headers */,
 				2BC6133313773C8E00CC8BBD /* pngstruct.h in Headers */,
 				2BC6133E13773D2C00CC8BBD /* pnglibconf.h in Headers */,
+				2B9C2E8E137A138B004C92F3 /* NotesLoaderJson.h in Headers */,
+				2B9C2E90137A138B004C92F3 /* NotesWriterJson.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6301,6 +6315,8 @@
 				2BC6133813773C8E00CC8BBD /* pngwrite.c in Sources */,
 				2BC6133913773C8E00CC8BBD /* pngwtran.c in Sources */,
 				2BC6133A13773C8E00CC8BBD /* pngwutil.c in Sources */,
+				2B9C2E8D137A138B004C92F3 /* NotesLoaderJson.cpp in Sources */,
+				2B9C2E8F137A138B004C92F3 /* NotesWriterJson.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
