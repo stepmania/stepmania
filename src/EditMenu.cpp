@@ -386,7 +386,7 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 				dcOld = GetSelectedDifficulty();
 
 			m_vpSteps.clear();
-			
+
 			FOREACH_ENUM( Difficulty, dc )
 			{
 				if( dc == Difficulty_Edit )
