@@ -92,9 +92,9 @@ namespace JsonUtil
 		int i=0;
 		for( typename V::const_iterator iter=v.begin(); iter!=v.end(); iter++ )
 		{
-			Json::Value &v = root[i++];
-			iter->first.Serialize( v[sKeyName] );
-			iter->second.Serialize( v[sValueName] );
+			Json::Value &vv = root[i++];
+			iter->first.Serialize( vv[sKeyName] );
+			iter->second.Serialize( vv[sValueName] );
 		}
 	}
 
@@ -106,9 +106,9 @@ namespace JsonUtil
 		int i=0;
 		for( typename V::const_iterator iter=v.begin(); iter!=v.end(); iter++ )
 		{
-			Json::Value &v = root[i++];
-			iter->first.Serialize( v[sKeyName] );
-			v[sValueName] = iter->second;
+			Json::Value &vv = root[i++];
+			iter->first.Serialize( vv[sKeyName] );
+			vv[sValueName] = iter->second;
 		}
 	}
 
