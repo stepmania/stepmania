@@ -177,7 +177,7 @@ void ArrowEffects::Update()
 		// Update Beat
 		do {
 			float fAccelTime = 0.2f, fTotalTime = 0.5f;
-			float fBeat = GAMESTATE->m_fSongBeatVisible + fAccelTime;
+			float fBeat = GAMESTATE->m_pPlayerState[pn]->m_Position.m_fSongBeatVisible + fAccelTime;
 
 			const bool bEvenBeat = ( int(fBeat) % 2 ) != 0;
 
@@ -223,7 +223,7 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 	 * entirely time spacing (respectively). Occasionally, we tween between them. */
 	if( pPlayerState->m_PlayerOptions.GetCurrent().m_fTimeSpacing != 1.0f )
 	{
-		float fSongBeat = GAMESTATE->m_fSongBeatVisible;
+		float fSongBeat = pPlayerState->m_Position.m_fSongBeatVisible;
 		float fBeatsUntilStep = fNoteBeat - fSongBeat;
 		float fYOffsetBeatSpacing = fBeatsUntilStep;
 		fYOffset += fYOffsetBeatSpacing * (1-pPlayerState->m_PlayerOptions.GetCurrent().m_fTimeSpacing);
@@ -231,7 +231,7 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 
 	if( pPlayerState->m_PlayerOptions.GetCurrent().m_fTimeSpacing != 0.0f )
 	{
-		float fSongSeconds = GAMESTATE->m_fMusicSecondsVisible;
+		float fSongSeconds = pPlayerState->m_Position.m_fMusicSecondsVisible;
 		float fNoteSeconds = GAMESTATE->m_pCurSteps[pPlayerState->m_PlayerNumber]->m_Timing.GetElapsedTimeFromBeat(fNoteBeat);
 		float fSecondsUntilStep = fNoteSeconds - fSongSeconds;
 		float fBPM = pPlayerState->m_PlayerOptions.GetCurrent().m_fScrollBPM;
@@ -515,7 +515,7 @@ float ArrowEffects::GetRotationZ( const PlayerState* pPlayerState, float fNoteBe
 	// As usual, enable dizzy hold heads at your own risk. -Wolfman2000
 	if( fEffects[PlayerOptions::EFFECT_DIZZY] != 0 && ( DIZZY_HOLD_HEADS || !bIsHoldHead ) )
 	{
-		const float fSongBeat = GAMESTATE->m_fSongBeatVisible;
+		const float fSongBeat = pPlayerState->m_Position.m_fSongBeatVisible;
 		float fDizzyRotation = fNoteBeat - fSongBeat;
 		fDizzyRotation *= fEffects[PlayerOptions::EFFECT_DIZZY];
 		fDizzyRotation = fmodf( fDizzyRotation, 2*PI );
@@ -532,7 +532,7 @@ float ArrowEffects::ReceptorGetRotationZ( const PlayerState* pPlayerState )
 
 	if( fEffects[PlayerOptions::EFFECT_CONFUSION] != 0 )
 	{
-		float fConfRotation = GAMESTATE->m_fSongBeatVisible;
+		float fConfRotation = pPlayerState->m_Position.m_fSongBeatVisible;
 		fConfRotation *= fEffects[PlayerOptions::EFFECT_CONFUSION];
 		fConfRotation = fmodf( fConfRotation, 2*PI );
 		fConfRotation *= -180/PI;
@@ -684,7 +684,7 @@ float ArrowEffects::GetBrightness( const PlayerState* pPlayerState, float fNoteB
 	if( GAMESTATE->IsEditing() )
 		return 1;
 
-	float fSongBeat = GAMESTATE->m_fSongBeatVisible;
+	float fSongBeat = pPlayerState->m_Position.m_fSongBeatVisible;
 	float fBeatsUntilStep = fNoteBeat - fSongBeat;
 
 	float fBrightness = SCALE( fBeatsUntilStep, 0, -1, 1.f, 0.f );

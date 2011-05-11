@@ -895,8 +895,6 @@ void GameState::ResetMusicStatistics()
 {
 	m_Position.Reset();
 
-	m_fMusicSecondsVisible = 0;
-	m_fSongBeatVisible = 0;
 	Actor::SetBGMTime( 0, 0, 0, 0 );
 
 	FOREACH_PlayerNumber( p )
@@ -942,23 +940,16 @@ void GameState::ResetStageStatistics()
 	m_iStageSeed = rand();
 }
 
-static Preference<float> g_fVisualDelaySeconds( "VisualDelaySeconds", 0.0f );
-
 void GameState::UpdateSongPosition( float fPositionSeconds, const TimingData &timing, const RageTimer &timestamp )
 {
 	
 	m_Position.UpdateSongPosition( fPositionSeconds, timing, timestamp );
 
 	FOREACH_EnabledPlayer( pn )
-		m_pPlayerState[pn]->m_Position.UpdateSongPosition( fPositionSeconds, m_pCurSteps[pn]->m_Timing, timestamp );
-	
-	m_fMusicSecondsVisible = fPositionSeconds - g_fVisualDelaySeconds.Get();
-	float fThrowAway, fThrowAway2;
-	bool bThrowAway;
-	int iThrowAway;
-	timing.GetBeatAndBPSFromElapsedTime( m_fMusicSecondsVisible, m_fSongBeatVisible, fThrowAway, bThrowAway, bThrowAway, iThrowAway, fThrowAway2 );
+		if( m_pCurSteps[pn] )
+			m_pPlayerState[pn]->m_Position.UpdateSongPosition( fPositionSeconds, m_pCurSteps[pn]->m_Timing, timestamp );
 
-	Actor::SetBGMTime( GAMESTATE->m_fMusicSecondsVisible, GAMESTATE->m_fSongBeatVisible, fPositionSeconds, GAMESTATE->m_Position.m_fSongBeatNoOffset );
+	Actor::SetBGMTime( GAMESTATE->m_Position.m_fMusicSecondsVisible, GAMESTATE->m_Position.m_fSongBeatVisible, fPositionSeconds, GAMESTATE->m_Position.m_fSongBeatNoOffset );
 //	LOG->Trace( "m_fMusicSeconds = %f, m_fSongBeat = %f, m_fCurBPS = %f, m_bFreeze = %f", m_fMusicSeconds, m_fSongBeat, m_fCurBPS, m_bFreeze );
 }
 
@@ -2253,7 +2244,7 @@ public:
 	DEFINE_METHOD( IsEventMode,			IsEventMode() )
 	DEFINE_METHOD( GetNumPlayersEnabled,		GetNumPlayersEnabled() )
 	DEFINE_METHOD( GetSongBeat,			m_Position.m_fSongBeat )
-	DEFINE_METHOD( GetSongBeatVisible,		m_fSongBeatVisible )
+	DEFINE_METHOD( GetSongBeatVisible,		m_Position.m_fSongBeatVisible )
 	DEFINE_METHOD( GetSongBPS,			m_Position.m_fCurBPS )
 	DEFINE_METHOD( GetSongFreeze,			m_Position.m_bFreeze )
 	DEFINE_METHOD( GetSongDelay,			m_Position.m_bDelay )

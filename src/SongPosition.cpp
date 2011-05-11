@@ -1,5 +1,7 @@
 #include "SongPosition.h"
 
+static Preference<float> g_fVisualDelaySeconds( "VisualDelaySeconds", 0.0f );
+
 void SongPosition::UpdateSongPosition( float fPositionSeconds, const TimingData &timing, const RageTimer &timestamp )
 {
 
@@ -43,11 +45,20 @@ void SongPosition::UpdateSongPosition( float fPositionSeconds, const TimingData 
 		}
 	}
 	*/
+	
+	m_fMusicSecondsVisible = fPositionSeconds - g_fVisualDelaySeconds.Get();
+	float fThrowAway, fThrowAway2;
+	bool bThrowAway;
+	int iThrowAway;
+	timing.GetBeatAndBPSFromElapsedTime( m_fMusicSecondsVisible, m_fSongBeatVisible, fThrowAway, bThrowAway, bThrowAway, iThrowAway, fThrowAway2 );
 
 }
 
 void SongPosition::Reset()
 {
+
+	m_fMusicSecondsVisible = 0;
+	m_fSongBeatVisible = 0;
 
 	m_fMusicSeconds = 0; // MUSIC_SECONDS_INVALID;
 	// todo: move me to FOREACH_EnabledPlayer( p ) after [NUM_PLAYERS]ing

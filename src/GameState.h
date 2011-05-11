@@ -196,8 +196,6 @@ public:
 
 	// Music statistics:
 	SongPosition m_Position;
-	float		m_fMusicSecondsVisible;
-	float		m_fSongBeatVisible;
 
 	BroadcastOnChange<bool> m_bGameplayLeadIn;
 
