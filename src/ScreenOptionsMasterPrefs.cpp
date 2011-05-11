@@ -181,7 +181,7 @@ static void GameSel( int &sel, bool ToSel, const ConfOption *pConfOption )
 
 		sel = 0;
 		for(unsigned i = 0; i < choices.size(); ++i)
-			if( !stricmp(choices[i], sCurGameName) )
+			if( !choices[i].EqualsNoCase(sCurGameName) )
 				sel = i;
 	} else {
 		vector<const Game*> aGames;
@@ -222,12 +222,12 @@ static void Language( int &sel, bool ToSel, const ConfOption *pConfOption )
 	{
 		sel = -1;
 		for( unsigned i=0; sel == -1 && i < vs.size(); ++i )
-			if( !stricmp(vs[i], THEME->GetCurLanguage()) )
+			if( !vs[i].EqualsNoCase(THEME->GetCurLanguage()) )
 				sel = i;
 
 		// If the current language doesn't exist, we'll show BASE_LANGUAGE, so select that.
 		for( unsigned i=0; sel == -1 && i < vs.size(); ++i )
-			if( !stricmp(vs[i], SpecialFiles::BASE_LANGUAGE) )
+			if( !vs[i].EqualsNoCase(SpecialFiles::BASE_LANGUAGE) )
 				sel = i;
 
 		if( sel == -1 )
@@ -264,7 +264,7 @@ static void DisplayResolutionChoices( vector<RString> &out )
 	}
 }
 
-static void Theme( int &sel, bool ToSel, const ConfOption *pConfOption )
+static void RequestedTheme( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	vector<RString> choices;
 	pConfOption->MakeOptionsList( choices );
@@ -276,7 +276,7 @@ static void Theme( int &sel, bool ToSel, const ConfOption *pConfOption )
 	{
 		sel = 0;
 		for( unsigned i=1; i<vsThemeNames.size(); i++ )
-			if( !stricmp(vsThemeNames[i], PREFSMAN->m_sTheme.Get()) )
+			if( !vsThemeNames[i].EqualsNoCase(PREFSMAN->m_sTheme.Get()) )
 				sel = i;
 	}
 	else
@@ -302,7 +302,7 @@ static void Announcer( int &sel, bool ToSel, const ConfOption *pConfOption )
 	{
 		sel = 0;
 		for( unsigned i=1; i<choices.size(); i++ )
-			if( !stricmp(choices[i], ANNOUNCER->GetCurAnnouncerName()) )
+			if( !choices[i].EqualsNoCase(ANNOUNCER->GetCurAnnouncerName()) )
 				sel = i;
 	}
 	else
@@ -329,7 +329,7 @@ static void DefaultNoteSkin( int &sel, bool ToSel, const ConfOption *pConfOption
 		po.FromString( PREFSMAN->m_sDefaultModifiers );
 		sel = 0;
 		for( unsigned i=0; i < choices.size(); i++ )
-			if( !stricmp(choices[i], po.m_sNoteSkin) )
+			if( !choices[i].EqualsNoCase(po.m_sNoteSkin) )
 				sel = i;
 	}
 	else
@@ -653,7 +653,7 @@ static void InitializeConfOptions()
 
 	// Appearance options
 	ADD( ConfOption( "Language",			Language,		LanguageChoices ) );
-	ADD( ConfOption( "Theme",			Theme,			ThemeChoices ) );
+	ADD( ConfOption( "Theme",			RequestedTheme,		ThemeChoices ) );
 	g_ConfOptions.back().m_iEffects = OPT_APPLY_THEME;
 
 	ADD( ConfOption( "Announcer",			Announcer,		AnnouncerChoices ) );
@@ -718,7 +718,6 @@ static void InitializeConfOptions()
 	g_ConfOptions.back().m_sPrefName = "SongsPerPlay";
 
 	ADD( ConfOption( "EventMode",			MovePref<bool>,		"Off","On (recommended)" ) );
-	ADD( ConfOption( "ScoringType",			MovePref<ScoringType>,	"New","Old","Custom" ) );
 	ADD( ConfOption( "TimingWindowScale",		TimingWindowScale,	"|1","|2","|3","|4","|5","|6","|7","|8","Justice" ) );
 	ADD( ConfOption( "LifeDifficulty",		LifeDifficulty,		"|1.2","|1.0","|0.8","|0.6","|0.4","|0.33","|0.25" ) );
 	g_ConfOptions.back().m_sPrefName = "LifeDifficultyScale";

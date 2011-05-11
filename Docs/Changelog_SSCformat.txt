@@ -9,6 +9,15 @@ change to JSON, but it is unsure if this will be done.
 Implement .ssc at your own risk.
 ________________________________________________________________________________
 
+[v0.59] - Wolfman2000
+* Typo fix: #RADARVALUES needed a semicolon at the end, not a colon.
+
+[v0.58] - Wolfman2000
+* Implement #LABELS tag for easier Editor work/Rock Band section mimicry.
+
+[v0.57] - AJ
+* Add #ORIGIN tag to metadata.
+
 [v0.56] - Wolfman2000
 * Implement #WARPS tag to replace negative bpm/stop gimmicks.
 

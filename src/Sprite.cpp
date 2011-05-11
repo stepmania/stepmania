@@ -1130,6 +1130,7 @@ public:
 	static int setstate( T* p, lua_State *L )		{ p->SetState( IArg(1) ); return 0; }
 	static int GetState( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetState() ); return 1; }
 	static int GetAnimationLengthSeconds( T* p, lua_State *L ) { lua_pushnumber( L, p->GetAnimationLengthSeconds() ); return 1; }
+	static int SetSecondsIntoAnimation( T* p, lua_State *L )	{ p->SetSecondsIntoAnimation(FArg(0)); return 0; }
 	static int SetTexture( T* p, lua_State *L )
 	{
 		RageTexture *pTexture = Luna<RageTexture>::check(L, 1);
@@ -1170,6 +1171,7 @@ public:
 		ADD_METHOD( setstate );
 		ADD_METHOD( GetState );
 		ADD_METHOD( GetAnimationLengthSeconds );
+		ADD_METHOD( SetSecondsIntoAnimation );
 		ADD_METHOD( SetTexture );
 		ADD_METHOD( GetTexture );
 		ADD_METHOD( SetEffectMode );

@@ -4,8 +4,8 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "arch/Dialog/Dialog.h"
-#include "jsoncpp/include/json/reader.h"
-#include "jsoncpp/include/json/writer.h"
+#include "json/reader.h"
+#include "json/writer.h"
 
 bool JsonUtil::LoadFromString(Json::Value &root, RString sData, RString &sErrorOut)
 {

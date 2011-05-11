@@ -94,17 +94,17 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 
 	switch( out.m_DisplayBPMType )
 	{
-	case Song::DISPLAY_ACTUAL:
+	case DISPLAY_BPM_ACTUAL:
 		// write nothing
 		break;
-	case Song::DISPLAY_SPECIFIED:
+	case DISPLAY_BPM_SPECIFIED:
 		if( out.m_fSpecifiedBPMMin == out.m_fSpecifiedBPMMax )
 			f.PutLine( ssprintf( "#DISPLAYBPM:%.3f;", out.m_fSpecifiedBPMMin ) );
 		else
 			f.PutLine( ssprintf( "#DISPLAYBPM:%.3f:%.3f;", 
 					    out.m_fSpecifiedBPMMin, out.m_fSpecifiedBPMMax ) );
 		break;
-	case Song::DISPLAY_RANDOM:
+	case DISPLAY_BPM_RANDOM:
 		f.PutLine( ssprintf( "#DISPLAYBPM:*;" ) );
 		break;
 	}
@@ -132,6 +132,19 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 			if( i != out.m_Timing.m_StopSegments.size()-1 )
 				f.Write( "," );
 		}
+	}
+	f.PutLine( ";" );
+	
+	f.Write( "#ATTACKS:" );
+	for( unsigned j = 0; j < out.m_Attacks.size(); j++ )
+	{
+		const Attack &a = out.m_Attacks[j];
+		f.Write( ssprintf( "TIME=%.2f:LEN=%.2f:MODS=%s",
+			a.fStartSecond, a.fSecsRemaining, a.sModifiers.c_str() ) );
+
+		if( j+1 < out.m_Attacks.size() )
+			f.Write( ":" );
+		f.PutLine( "" );
 	}
 	f.PutLine( ";" );
 
@@ -287,7 +300,7 @@ static RString GetSMNotesTag( const Song &song, const Steps &in )
 	return JoinLineList( lines );
 }
 
-bool NotesWriterSM::Write( RString sPath, const Song &out )
+bool NotesWriterSM::Write( RString sPath, const Song &out, const vector<Steps*>& vpStepsToSave )
 {
 	int flags = RageFile::WRITE;
 
@@ -302,8 +315,6 @@ bool NotesWriterSM::Write( RString sPath, const Song &out )
 
 	WriteGlobalTags( f, out );
 
-	// Save specified Steps to this file
-	const vector<Steps*>& vpStepsToSave = out.GetAllSteps();
 	FOREACH_CONST( Steps*, vpStepsToSave, s ) 
 	{
 		const Steps* pSteps = *s;

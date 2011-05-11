@@ -157,11 +157,6 @@ void FontPage::SetTextureCoords( const vector<int> &widths, int iAdvanceExtraPix
 
 void FontPage::SetExtraPixels( int iDrawExtraPixelsLeft, int iDrawExtraPixelsRight )
 {
-	/* Hack: do one more than we were asked to; I think a lot of fonts are one
-	 * too low. - glenn */
-	iDrawExtraPixelsRight++;
-	iDrawExtraPixelsLeft++;
-
 	if( (iDrawExtraPixelsLeft % 2) == 1 )
 		++iDrawExtraPixelsLeft;
 
@@ -419,7 +414,7 @@ void Font::LoadFontPageSettings( FontPageSettings &cfg, IniFile &ini, const RStr
 			// If val is an integer, it's a width, eg. "10=27".
 			if( IsAnInt(sName) )
 			{
-				cfg.m_mapGlyphWidths[atoi(sName)] = pValue->GetValue<int>();
+				cfg.m_mapGlyphWidths[StringToInt(sName)] = pValue->GetValue<int>();
 				continue;
 			}
 
@@ -521,7 +516,7 @@ void Font::LoadFontPageSettings( FontPageSettings &cfg, IniFile &ini, const RStr
 				TrimLeft( sRowStr );
 
 				ASSERT( IsAnInt(sRowStr) );
-				const int iRow = atoi( sRowStr.c_str() );
+				const int iRow = StringToInt( sRowStr );
 				const int iFirstFrame = iRow * iNumFramesWide;
 
 				if( iRow > iNumFramesHigh )

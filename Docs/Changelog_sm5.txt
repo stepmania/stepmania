@@ -1,0 +1,45 @@
+StepMania 5 Changelog
+________________________________________________________________________________
+The StepMania 5 Changelog covers all post-sm-ssc changes. For a list of changes
+from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
+________________________________________________________________________________
+
+================================================================================
+StepMania 5.0 $NEXT | 20110xyy
+--------------------------------------------------------------------------------
+
+2011/05/11
+----------
+* [GameSoundManager] Added PlayAnnouncer Lua binding. [AJ]
+* [AnnouncerManager] Add support for "gameplay combo #" for announcer. [AJ]
+
+2011/05/10
+----------
+* [Sprite] Added SetSecondsIntoAnimation Lua binding. [AJ]
+* [BPMDisplay] Added SetFromCourse Lua binding. [AJ]
+
+2011/05/03
+----------
+* [ScreenEdit] Allow changing the Beat 0 Offset, Music Sample Start, and
+  Music Sample Length via Edit Song Info menu. [Wolfman2000]
+
+2011/05/02
+----------
+* [ScreenSelectMusic] Added NullScoreString metric. [AJ]
+
+2011/04/17
+--------
+* Use lua for all primary score keeping. Course modes right now still use the
+  old fashioned system. [TeruFSX, Wolfman2000]
+
+2011/04/09
+--------
+* [Player] Force hold judgments to take place before setting the score.
+  [theDtTvB]
+
+2011/04/05
+--------
+* [NotesLoaderSSC, NotesWriterSSC] Add the #LABELS tag. This is meant for step
+  editors to label different parts of their stepcharts. Use Control + , or . to
+  jump to different labels made. [Wolfman2000]
+

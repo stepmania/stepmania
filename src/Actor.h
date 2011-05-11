@@ -99,6 +99,9 @@ class Actor : public MessageSubscriber
 public:
 	/** @brief Set up the Actor with its initial settings. */
 	Actor();
+	/**
+	 * @brief Copy a new Actor to the old one.
+	 * @param cpy the new Actor to use in place of this one. */
 	Actor( const Actor &cpy );
 	virtual ~Actor();
 	virtual Actor *Copy() const;
@@ -218,11 +221,35 @@ public:
 		float		aux;
 	};
 
-	void Draw();						// calls, EarlyAbortDraw, BeginDraw, DrawPrimitives, EndDraw
-	virtual bool EarlyAbortDraw() const { return false; }	// return true to early abort drawing of this Actor
-	virtual void BeginDraw();				// pushes transform onto world matrix stack
-	virtual void SetGlobalRenderStates();			// Actor should call this at beginning of their DrawPrimitives()
-	virtual void SetTextureRenderStates();			// Actor should call this after setting a texture
+	/**
+	 * @brief Calls multiple functions for drawing the Actors.
+	 *
+	 * It calls the following in order:
+	 * -# EarlyAbortDraw
+	 * -# BeginDraw
+	 * -# DrawPrimitives
+	 * -# EndDraw
+	 */
+	void Draw();
+	/**
+	 * @brief Allow the Actor to be aborted early.
+	 *
+	 * Subclasses may wish to overwrite this to allow for
+	 * aborted actors.
+	 * @return false, as by default Actors shouldn't be aborted on drawing. */
+	virtual bool EarlyAbortDraw() const { return false; }
+	/** @brief Start the drawing and push the transform on the world matrix stack. */
+	virtual void BeginDraw();
+	/**
+	 * @brief Set the global rendering states of this Actor.
+	 *
+	 * This should be called at the beginning of an Actor's DrawPrimitives() call. */
+	virtual void SetGlobalRenderStates();
+	/**
+	 * @brief Set the texture rendering states of this Actor.
+	 *
+	 * This should be called after setting a texture for the Actor. */
+	virtual void SetTextureRenderStates();
 	/**
 	 * @brief Draw the primitives of the Actor.
 	 *
@@ -331,9 +358,26 @@ public:
 	 * @brief Retrieve the zoom factor for the z coordinate of the Actor.
 	 * @return the zoom factor for the z coordinate of the Actor. */
 	float GetZoomZ() const				{ return DestTweenState().scale.z; }
-	void  SetZoom( float zoom )			{ DestTweenState().scale.x = zoom; DestTweenState().scale.y = zoom; DestTweenState().scale.z = zoom; }
+	/**
+	 * @brief Set the zoom factor for all dimensions of the Actor.
+	 * @param zoom the zoom factor for all dimensions. */
+	void  SetZoom( float zoom )
+	{ 
+		DestTweenState().scale.x = zoom; 
+		DestTweenState().scale.y = zoom; 
+		DestTweenState().scale.z = zoom;
+	}
+	/**
+	 * @brief Set the zoom factor for the x dimension of the Actor.
+	 * @param zoom the zoom factor for the x dimension. */
 	void  SetZoomX( float zoom )			{ DestTweenState().scale.x = zoom; }
+	/**
+	 * @brief Set the zoom factor for the y dimension of the Actor.
+	 * @param zoom the zoom factor for the y dimension. */
 	void  SetZoomY( float zoom )			{ DestTweenState().scale.y = zoom; }
+	/**
+	 * @brief Set the zoom factor for the z dimension of the Actor.
+	 * @param zoom the zoom factor for the z dimension. */
 	void  SetZoomZ( float zoom )			{ DestTweenState().scale.z = zoom; }
 	void  ZoomTo( float fX, float fY )		{ ZoomToWidth(fX); ZoomToHeight(fY); }
 	void  ZoomToWidth( float zoom )			{ SetZoomX( zoom / GetUnzoomedWidth() ); }
@@ -420,7 +464,7 @@ public:
 	enum StretchType
 	{ 
 		fit_inside, /**< Have the Actor fit inside its parent, using the smaller zoom. */
-		cover /**, Have the Actor cover its parent, using the larger zoom. */
+		cover /**< Have the Actor cover its parent, using the larger zoom. */
 	};
 
 	void ScaleToCover( const RectF &rect )		{ ScaleTo( rect, cover ); }

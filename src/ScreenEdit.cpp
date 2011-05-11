@@ -73,6 +73,7 @@ AutoScreenMessage( SM_BackFromCourseModeMenu );
 AutoScreenMessage( SM_DoRevertToLastSave );
 AutoScreenMessage( SM_DoRevertFromDisk );
 AutoScreenMessage( SM_BackFromTimingDataInformation );
+AutoScreenMessage( SM_BackFromDifficultyMeterChange );
 AutoScreenMessage( SM_BackFromBPMChange );
 AutoScreenMessage( SM_BackFromStopChange );
 AutoScreenMessage( SM_BackFromDelayChange );
@@ -80,6 +81,7 @@ AutoScreenMessage( SM_BackFromTimeSignatureNumeratorChange );
 AutoScreenMessage( SM_BackFromTimeSignatureDenominatorChange );
 AutoScreenMessage( SM_BackFromTickcountChange );
 AutoScreenMessage( SM_BackFromComboChange );
+AutoScreenMessage( SM_BackFromLabelChange );
 AutoScreenMessage( SM_BackFromWarpChange );
 AutoScreenMessage( SM_DoSaveAndExit );
 AutoScreenMessage( SM_DoExit );
@@ -125,6 +127,14 @@ void ScreenEdit::InitEditMappings()
 	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SCROLL_NEXT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_PERIOD);
 	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SCROLL_PREV][0] = DeviceInput(DEVICE_KEYBOARD, KEY_COMMA);
 
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_LABEL_NEXT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_PERIOD);
+	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_LABEL_NEXT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL);
+	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_LABEL_NEXT][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL);
+	
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_LABEL_PREV][0] = DeviceInput(DEVICE_KEYBOARD, KEY_COMMA);
+	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_LABEL_PREV][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL);
+	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_LABEL_PREV][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL);
+	
 	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SCROLL_SELECT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT);
 	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SCROLL_SELECT][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT);
 
@@ -207,7 +217,7 @@ void ScreenEdit::InitEditMappings()
 		m_EditMappingsDeviceInput.hold[EDIT_BUTTON_SAMPLE_LENGTH_DOWN][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT);
 		m_EditMappingsDeviceInput.hold[EDIT_BUTTON_SAMPLE_LENGTH_DOWN][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT);
 
-		m_EditMappingsDeviceInput.button[EDIT_BUTTON_PLAY_SAMPLE_MUSIC][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cm);
+		m_EditMappingsDeviceInput.button[EDIT_BUTTON_PLAY_SAMPLE_MUSIC][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cl);
 
 		m_EditMappingsDeviceInput.button[EDIT_BUTTON_OPEN_BGCHANGE_LAYER1_MENU][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cb);
 		m_EditMappingsDeviceInput.button[EDIT_BUTTON_OPEN_BGCHANGE_LAYER2_MENU][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cb);
@@ -510,8 +520,7 @@ static MenuDef g_AreaMenu(
 static MenuDef g_StepsInformation(
 	"ScreenMiniMenuStepsInformation",
 	MenuRowDef( ScreenEdit::difficulty,	"Difficulty",		true, EditMode_Practice, true, true, 0, NULL ),
-	// xxx: this giant list of numbers SUUUUUUUUUUCKS -aj
-	MenuRowDef( ScreenEdit::meter,		"Meter",		true, EditMode_Practice, true, false, 0, "1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25" ),
+	MenuRowDef( ScreenEdit::meter,		"Meter",		true, EditMode_Practice, true, false, 0, NULL ),
 	MenuRowDef( ScreenEdit::description,	"Description",		true, EditMode_Practice, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::chartstyle,	"Chart Style",		true, EditMode_Practice, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::step_credit,	"Step Author",		true, EditMode_Practice, true, true, 0, NULL ),
@@ -539,7 +548,13 @@ static MenuDef g_SongInformation(
 	MenuRowDef( ScreenEdit::main_title_transliteration,	"Main title transliteration",	true, EditMode_Practice, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::sub_title_transliteration,	"Sub title transliteration",	true, EditMode_Practice, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::artist_transliteration,		"Artist transliteration",	true, EditMode_Practice, true, true, 0, NULL ),
-	MenuRowDef( ScreenEdit::last_beat_hint,			"Last beat hint",		true, EditMode_Full, true, true, 0, NULL )
+	MenuRowDef( ScreenEdit::beat_0_offset,			"Beat 0 Offset",		true, EditMode_Full, true, true, 0, NULL ),
+	MenuRowDef( ScreenEdit::last_beat_hint,			"Last beat hint",		true, EditMode_Full, true, true, 0, NULL ),
+	MenuRowDef( ScreenEdit::preview_start,			"Preview Start",		true, EditMode_Full, true, true, 0, NULL ),
+	MenuRowDef( ScreenEdit::preview_length,			"Preview Length",		true, EditMode_Full, true, true, 0, NULL ),
+	MenuRowDef( ScreenEdit::display_bpm,			"Display BPM",			true, EditMode_Full, true, true, 0, "Actual", "Specified", "Random" ),
+	MenuRowDef( ScreenEdit::min_bpm,			"Min BPM",			true, EditMode_Full, true, true, 0, NULL ),
+	MenuRowDef( ScreenEdit::max_bpm,			"Max BPM",			true, EditMode_Full, true, true, 0, NULL )
 );
 
 static MenuDef g_TimingDataInformation(
@@ -551,6 +566,7 @@ static MenuDef g_TimingDataInformation(
 	MenuRowDef( ScreenEdit::time_signature_denominator,	"Edit time signature (bottom)",	true, EditMode_Full, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::tickcount,			"Edit tickcount",		true, EditMode_Full, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::combo,				"Edit combo",			true, EditMode_Full, true, true, 0, NULL ),
+	MenuRowDef( ScreenEdit::label,				"Edit label",			true, EditMode_Full, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::warp,				"Edit warp",			true, EditMode_Full, true, true, 0, NULL )
 );
 
@@ -1423,6 +1439,18 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			int iRow = BeatToNoteRow( GAMESTATE->m_fSongBeat );
 			NoteDataUtil::GetPrevEditorPosition( m_NoteDataEdit, iRow );
 			ScrollTo( NoteRowToBeat(iRow) );
+		}
+		break;
+	case EDIT_BUTTON_LABEL_NEXT:
+		{
+			ScrollTo( GAMESTATE->m_pCurSong->m_Timing.
+				 GetNextLabelSegmentBeatAtBeat( GAMESTATE->m_fSongBeat ) );
+		}
+		break;
+	case EDIT_BUTTON_LABEL_PREV:
+		{
+			ScrollTo( GAMESTATE->m_pCurSong->m_Timing.
+				 GetPreviousLabelSegmentBeatAtBeat( GAMESTATE->m_fSongBeat ) );
 		}
 		break;
 	case EDIT_BUTTON_SNAP_NEXT:
@@ -2587,6 +2615,12 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	{
 		HandleTimingDataInformationChoice( (TimingDataInformationChoice)ScreenMiniMenu::s_iLastRowCode, ScreenMiniMenu::s_viLastAnswers );
 	}
+	else if( SM == SM_BackFromDifficultyMeterChange )
+	{
+		int i = StringToInt( ScreenTextEntry::s_sLastAnswer );
+		GAMESTATE->m_pCurSteps[PLAYER_1]->SetMeter(i);
+		SetDirty( true );
+	}
 	else if( SM == SM_BackFromBPMChange )
 	{
 		float fBPM = StringToFloat( ScreenTextEntry::s_sLastAnswer );
@@ -2610,7 +2644,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if( SM == SM_BackFromTimeSignatureNumeratorChange )
 	{
-		int iNum = atoi( ScreenTextEntry::s_sLastAnswer );
+		int iNum = StringToInt( ScreenTextEntry::s_sLastAnswer );
 		if( iNum > 0 )
 		{
 			m_pSong->m_Timing.SetTimeSignatureNumeratorAtBeat( GAMESTATE->m_fSongBeat, iNum );
@@ -2619,7 +2653,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if ( SM == SM_BackFromTimeSignatureDenominatorChange )
 	{
-		int iDen = atoi( ScreenTextEntry::s_sLastAnswer );
+		int iDen = StringToInt( ScreenTextEntry::s_sLastAnswer );
 		if( iDen > 0)
 		{
 			m_pSong->m_Timing.SetTimeSignatureDenominatorAtBeat( GAMESTATE->m_fSongBeat, iDen );
@@ -2628,7 +2662,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if ( SM == SM_BackFromTickcountChange )
 	{
-		int iTick = atoi( ScreenTextEntry::s_sLastAnswer );
+		int iTick = StringToInt( ScreenTextEntry::s_sLastAnswer );
 		if ( iTick >= 0 && iTick <= ROWS_PER_BEAT )
 		{
 			m_pSong->m_Timing.SetTickcountAtBeat( GAMESTATE->m_fSongBeat, iTick );
@@ -2637,12 +2671,23 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if ( SM == SM_BackFromComboChange )
 	{
-		int iCombo = atoi( ScreenTextEntry::s_sLastAnswer );
+		int iCombo = StringToInt( ScreenTextEntry::s_sLastAnswer );
 		if ( iCombo >= 0 )
 		{
 			m_pSong->m_Timing.SetComboAtBeat( GAMESTATE->m_fSongBeat, iCombo );
 		}
 		SetDirty( true );
+	}
+	else if ( SM == SM_BackFromLabelChange )
+	{
+		RString sLabel = ScreenTextEntry::s_sLastAnswer;
+		if ( !m_pSong->m_Timing.DoesLabelExist(sLabel) )
+		{
+			sLabel.Replace("=", "_");
+			sLabel.Replace(",", "_");
+			m_pSong->m_Timing.SetLabelAtBeat( GAMESTATE->m_fSongBeat, sLabel );
+			SetDirty( true );
+		}
 	}
 	else if ( SM == SM_BackFromWarpChange )
 	{
@@ -2975,9 +3020,34 @@ static void ChangeArtistTranslit( const RString &sNew )
 	pSong->m_sArtistTranslit = sNew;
 }
 
+static void ChangeBeat0Offset( const RString &sNew )
+{
+	GAMESTATE->m_pCurSong->m_Timing.m_fBeat0OffsetInSeconds = StringToFloat( sNew );
+}
+
 static void ChangeLastBeatHint( const RString &sNew )
 {
 	GAMESTATE->m_pCurSong->m_fSpecifiedLastBeat = StringToFloat( sNew );
+}
+
+static void ChangePreviewStart( const RString &sNew )
+{
+	GAMESTATE->m_pCurSong->m_fMusicSampleStartSeconds = StringToFloat( sNew );
+}
+
+static void ChangePreviewLength( const RString &sNew )
+{
+	GAMESTATE->m_pCurSong->m_fMusicSampleLengthSeconds = StringToFloat( sNew );
+}
+
+static void ChangeMinBPM( const RString &sNew )
+{
+	GAMESTATE->m_pCurSong->m_fSpecifiedBPMMin = StringToFloat( sNew );
+}
+
+static void ChangeMaxBPM( const RString &sNew )
+{
+	GAMESTATE->m_pCurSong->m_fSpecifiedBPMMax = StringToFloat( sNew );
 }
 
 // End helper functions
@@ -3063,7 +3133,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 				}
 				g_StepsInformation.rows[difficulty].iDefaultChoice = pSteps->GetDifficulty();
 				g_StepsInformation.rows[difficulty].bEnabled = (EDIT_MODE.GetValue() >= EditMode_Full);
-				g_StepsInformation.rows[meter].iDefaultChoice = clamp( pSteps->GetMeter()-1, 0, MAX_METER+1 );
+				g_StepsInformation.rows[meter].SetOneUnthemedChoice( ssprintf("%d", pSteps->GetMeter()) );
 				g_StepsInformation.rows[meter].bEnabled = (EDIT_MODE.GetValue() >= EditMode_Home);
 				g_StepsInformation.rows[predict_meter].SetOneUnthemedChoice( ssprintf("%.2f",pSteps->PredictMeter()) );
 				g_StepsInformation.rows[description].bEnabled = (EDIT_MODE.GetValue() >= EditMode_Full);
@@ -3170,7 +3240,13 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 				g_SongInformation.rows[main_title_transliteration].SetOneUnthemedChoice( pSong->m_sMainTitleTranslit );
 				g_SongInformation.rows[sub_title_transliteration].SetOneUnthemedChoice( pSong->m_sSubTitleTranslit );
 				g_SongInformation.rows[artist_transliteration].SetOneUnthemedChoice( pSong->m_sArtistTranslit );
+				g_SongInformation.rows[beat_0_offset].SetOneUnthemedChoice( ssprintf("%.5f", pSong->m_Timing.m_fBeat0OffsetInSeconds) );
 				g_SongInformation.rows[last_beat_hint].SetOneUnthemedChoice( ssprintf("%.5f", pSong->m_fSpecifiedLastBeat) );
+				g_SongInformation.rows[preview_start].SetOneUnthemedChoice( ssprintf("%.5f", pSong->m_fMusicSampleStartSeconds) );
+				g_SongInformation.rows[preview_length].SetOneUnthemedChoice( ssprintf("%.5f", pSong->m_fMusicSampleLengthSeconds) );
+				g_SongInformation.rows[display_bpm].iDefaultChoice = pSong->m_DisplayBPMType;
+				g_SongInformation.rows[min_bpm].SetOneUnthemedChoice( ssprintf("%.5f", pSong->m_fSpecifiedBPMMin) );
+				g_SongInformation.rows[max_bpm].SetOneUnthemedChoice( ssprintf("%.5f", pSong->m_fSpecifiedBPMMax) );
 
 				EditMiniMenu( &g_SongInformation, SM_BackFromSongInformation );
 			}
@@ -3187,6 +3263,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 				g_TimingDataInformation.rows[time_signature_denominator].SetOneUnthemedChoice( ssprintf("%d", pTime.GetTimeSignatureDenominatorAtBeat( fBeat ) ) );
 				g_TimingDataInformation.rows[tickcount].SetOneUnthemedChoice( ssprintf("%d", pTime.GetTickcountAtBeat( fBeat ) ) );
 				g_TimingDataInformation.rows[combo].SetOneUnthemedChoice( ssprintf("%d", pTime.GetComboAtBeat( fBeat ) ) );
+				g_TimingDataInformation.rows[label].SetOneUnthemedChoice( pTime.GetLabelAtBeat( fBeat ).c_str() );
 				g_TimingDataInformation.rows[warp].SetOneUnthemedChoice( ssprintf("%.5f", pTime.GetWarpAtBeat( fBeat ) ) );
 				
 				EditMiniMenu( &g_TimingDataInformation, SM_BackFromTimingDataInformation );
@@ -3520,18 +3597,16 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 static LocalizedString ENTER_NEW_DESCRIPTION( "ScreenEdit", "Enter a new description." );
 static LocalizedString ENTER_NEW_CHART_STYLE( "ScreenEdit", "Enter a new chart style." );
 static LocalizedString ENTER_NEW_STEP_AUTHOR( "ScreenEdit", "Enter the author who made this step pattern." );
+static LocalizedString ENTER_NEW_METER( "ScreenEdit", "Enter a new meter." );
 void ScreenEdit::HandleStepsInformationChoice( StepsInformationChoice c, const vector<int> &iAnswers )
 {
 	Steps* pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
 	Difficulty dc = (Difficulty)iAnswers[difficulty];
 	pSteps->SetDifficulty( dc );
-	int iMeter = iAnswers[meter]+1;
-	pSteps->SetMeter( iMeter );
 	
 	switch( c )
 	{
 	case description:
-		// todo: Call a screen with class ScreenTextEntry instead. -aj
 		ScreenTextEntry::TextEntry( 
 			SM_None, 
 			ENTER_NEW_DESCRIPTION, 
@@ -3564,6 +3639,16 @@ void ScreenEdit::HandleStepsInformationChoice( StepsInformationChoice c, const v
 			NULL
 			);
 		break;
+	case meter:
+		ScreenTextEntry::TextEntry(
+			   SM_BackFromDifficultyMeterChange,
+			   ENTER_NEW_METER,
+			   ssprintf("%d", m_pSteps->GetMeter()),
+			   4
+			   );
+		break;
+	default:
+		break;
 	}
 }
 
@@ -3575,16 +3660,19 @@ static LocalizedString ENTER_CREDIT			("ScreenEdit","Enter a new credit.");
 static LocalizedString ENTER_MAIN_TITLE_TRANSLIT	("ScreenEdit","Enter a new main title transliteration.");
 static LocalizedString ENTER_SUB_TITLE_TRANSLIT		("ScreenEdit","Enter a new sub title transliteration.");
 static LocalizedString ENTER_ARTIST_TRANSLIT		("ScreenEdit","Enter a new artist transliteration.");
+static LocalizedString ENTER_BEAT_0_OFFSET		("ScreenEdit","Enter the offset for the song.");
 static LocalizedString ENTER_LAST_BEAT_HINT		("ScreenEdit","Enter a new last beat hint.");
+static LocalizedString ENTER_PREVIEW_START		("ScreenEdit","Enter a new preview start.");
+static LocalizedString ENTER_PREVIEW_LENGTH		("ScreenEdit","Enter a new preview length.");
+static LocalizedString ENTER_MIN_BPM			("ScreenEdit","Enter a new min BPM.");
+static LocalizedString ENTER_MAX_BPM			("ScreenEdit","Enter a new max BPM.");
 void ScreenEdit::HandleSongInformationChoice( SongInformationChoice c, const vector<int> &iAnswers )
 {
 	Song* pSong = GAMESTATE->m_pCurSong;
+	pSong->m_DisplayBPMType = static_cast<DisplayBPM>(iAnswers[display_bpm]);
 
-	// todo: Call a screen with class ScreenTextEntry instead.
-	// multiple times in this section, so I'm only saying it here. -aj
 	switch( c )
 	{
-	DEFAULT_FAIL(c);
 	case main_title:
 		ScreenTextEntry::TextEntry( SM_None, ENTER_MAIN_TITLE, pSong->m_sMainTitle, 100, NULL, ChangeMainTitle, NULL );
 		break;
@@ -3609,8 +3697,36 @@ void ScreenEdit::HandleSongInformationChoice( SongInformationChoice c, const vec
 	case artist_transliteration:
 		ScreenTextEntry::TextEntry( SM_None, ENTER_ARTIST_TRANSLIT, pSong->m_sArtistTranslit, 100, NULL, ChangeArtistTranslit, NULL );
 		break;
+	case beat_0_offset:
+		ScreenTextEntry::TextEntry( SM_None, ENTER_BEAT_0_OFFSET,
+					   ssprintf("%.5f", pSong->m_Timing.m_fBeat0OffsetInSeconds), 20,
+					   ScreenTextEntry::FloatValidate, ChangeBeat0Offset, NULL );
+		break;
 	case last_beat_hint:
-		ScreenTextEntry::TextEntry( SM_None, ENTER_LAST_BEAT_HINT, ssprintf("%.5f", pSong->m_fSpecifiedLastBeat), 20, ScreenTextEntry::FloatValidate, ChangeLastBeatHint, NULL );
+		ScreenTextEntry::TextEntry( SM_None, ENTER_LAST_BEAT_HINT, 
+					   ssprintf("%.5f", pSong->m_fSpecifiedLastBeat), 20, 
+					   ScreenTextEntry::FloatValidate, ChangeLastBeatHint, NULL );
+		break;
+	case preview_start:
+		ScreenTextEntry::TextEntry( SM_None, ENTER_PREVIEW_START,
+					   ssprintf("%.5f", pSong->m_fMusicSampleStartSeconds), 20,
+					   ScreenTextEntry::FloatValidate, ChangePreviewStart, NULL );
+		break;
+	case preview_length:
+		ScreenTextEntry::TextEntry( SM_None, ENTER_PREVIEW_LENGTH,
+					   ssprintf("%.5f", pSong->m_fMusicSampleLengthSeconds), 20,
+					   ScreenTextEntry::FloatValidate, ChangePreviewLength, NULL );
+		break;
+	case min_bpm:
+		ScreenTextEntry::TextEntry( SM_None, ENTER_MIN_BPM,
+					   ssprintf("%.5f", pSong->m_fSpecifiedBPMMin), 20,
+					   ScreenTextEntry::FloatValidate, ChangeMinBPM, NULL );
+		break;
+	case max_bpm:
+		ScreenTextEntry::TextEntry( SM_None, ENTER_MAX_BPM,
+					   ssprintf("%.5f", pSong->m_fSpecifiedBPMMax), 20,
+					   ScreenTextEntry::FloatValidate, ChangeMaxBPM, NULL );
+		break;
 	};
 }
 
@@ -3621,6 +3737,7 @@ static LocalizedString ENTER_TIME_SIGNATURE_NUMERATOR_VALUE	( "ScreenEdit", "Ent
 static LocalizedString ENTER_TIME_SIGNATURE_DENOMINATOR_VALUE	( "ScreenEdit", "Enter a new Time Signature denominator value." );
 static LocalizedString ENTER_TICKCOUNT_VALUE			( "ScreenEdit", "Enter a new Tickcount value." );
 static LocalizedString ENTER_COMBO_VALUE			( "ScreenEdit", "Enter a new Combo value." );
+static LocalizedString ENTER_LABEL_VALUE			( "ScreenEdit", "Enter a new Label value." );
 static LocalizedString ENTER_WARP_VALUE				( "ScreenEdit", "Enter a new Warp value." );
 void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice c, const vector<int> &iAnswers )
 {
@@ -3628,7 +3745,6 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 	{
 	DEFAULT_FAIL( c );
 	case bpm:
-		// todo: Call a screen with class ScreenTextEntry instead. -aj
 		ScreenTextEntry::TextEntry( 
 			SM_BackFromBPMChange, 
 			ENTER_BPM_VALUE, 
@@ -3637,7 +3753,6 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 			);
 		break;
 	case stop:
-		// todo: Call a screen with class ScreenTextEntry instead. -aj
 		ScreenTextEntry::TextEntry( 
 			SM_BackFromStopChange, 
 			ENTER_STOP_VALUE, 
@@ -3646,7 +3761,6 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 			);
 		break;
 	case delay:
-		// todo: Call a screen with class ScreenTextEntry instead. -aj
 		ScreenTextEntry::TextEntry( 
 			SM_BackFromDelayChange, 
 			ENTER_DELAY_VALUE, 
@@ -3686,8 +3800,15 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 		   4
 		   );
 	break;
+	case label:
+		ScreenTextEntry::TextEntry(
+		   SM_BackFromLabelChange,
+		   ENTER_LABEL_VALUE,
+		   ssprintf( "%s", m_pSong->m_Timing.GetLabelAtBeat( GAMESTATE->m_fSongBeat ).c_str() ),
+		   64
+		   );
+		break;
 	case warp:
-		// todo: Call a screen with class ScreenTextEntry instead. -aj
 		ScreenTextEntry::TextEntry( 
 		   SM_BackFromWarpChange, 
 		   ENTER_WARP_VALUE, 

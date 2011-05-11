@@ -189,11 +189,11 @@ void Trail::GetDisplayBpms( DisplayBpms &AddTo ) const
 		ASSERT( pSong );
 		switch( pSong->m_DisplayBPMType )
 		{
-		case Song::DISPLAY_ACTUAL:
-		case Song::DISPLAY_SPECIFIED:
+		case DISPLAY_BPM_ACTUAL:
+		case DISPLAY_BPM_SPECIFIED:
 			pSong->GetDisplayBpms( AddTo );
 			break;
-		case Song::DISPLAY_RANDOM:
+		case DISPLAY_BPM_RANDOM:
 			AddTo.Add( -1 );
 			break;
 		DEFAULT_FAIL( pSong->m_DisplayBPMType );

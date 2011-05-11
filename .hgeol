@@ -9,6 +9,7 @@
 **.redir = native
 **.sm = native
 **.ssc = native
+**.py = native
 **.vcproj = CRLF
 **.xsl = native
 **.xml = native

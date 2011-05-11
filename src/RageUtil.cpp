@@ -10,6 +10,7 @@
 
 #include <numeric>
 #include <ctime>
+#include <sstream>
 #include <map>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -193,8 +194,8 @@ float HHMMSSToSeconds( const RString &sHHMMSS )
 		arrayBits.insert(arrayBits.begin(), "0" );	// pad missing bits
 
 	float fSeconds = 0;
-	fSeconds += atoi( arrayBits[0] ) * 60 * 60;
-	fSeconds += atoi( arrayBits[1] ) * 60;
+	fSeconds += StringToInt( arrayBits[0] ) * 60 * 60;
+	fSeconds += StringToInt( arrayBits[1] ) * 60;
 	fSeconds += StringToFloat( arrayBits[2] );
 
 	return fSeconds;
@@ -1280,7 +1281,7 @@ bool GetFileContents( const RString &sFile, vector<RString> &asOut )
 	return true;
 }
 
-#include "pcre/pcre.h"
+#include "../extern/pcre/pcre.h"
 void Regex::Compile()
 {
 	const char *error;
@@ -1693,6 +1694,20 @@ void MakeUpper( wchar_t *p, size_t iLen )
 void MakeLower( wchar_t *p, size_t iLen )
 {
 	UnicodeUpperLower( p, iLen, g_LowerCase );
+}
+
+int StringToInt( const RString &sString )
+{
+	int ret;
+	istringstream ( sString ) >> ret;
+	return ret;
+}
+
+RString IntToString( const int &iNum )
+{
+	stringstream ss;
+	ss << iNum;
+	return ss.str();
 }
 
 float StringToFloat( const RString &sString )
@@ -2141,7 +2156,7 @@ namespace StringConversion
 		if( sValue.size() == 0 )
 			return false;
 
-		out = (atoi(sValue) != 0);
+		out = (StringToInt(sValue) != 0);
 		return true;
 	}
 

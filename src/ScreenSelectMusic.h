@@ -47,6 +47,8 @@ public:
 	bool GetGoToOptions() const { return m_bGoToOptions; }
 	MusicWheel *GetMusicWheel() { return &m_MusicWheel; }
 
+	void OpenOptionsList( PlayerNumber pn );
+
 	// Lua
 	virtual void PushSelf( lua_State *L );
 
@@ -60,7 +62,7 @@ protected:
 	void SwitchToPreferredDifficulty();
 	void AfterMusicChange();
 
-	void CheckBackgroundRequests( bool bForce );
+	void CheckBackgroundRequests( bool bForce );	
 	bool DetectCodes( const InputEventPlus &input );
 
 	vector<Steps*>		m_vpSteps;
@@ -91,6 +93,7 @@ protected:
 	ThemeMetric<bool>		WRAP_CHANGE_STEPS;
 	ThemeMetric<bool>		CHANGE_STEPS_WITH_GAME_BUTTONS;
 	ThemeMetric<bool>		CHANGE_GROUPS_WITH_GAME_BUTTONS;
+	ThemeMetric<RString>	NULL_SCORE_STRING;
 
 	bool CanChangeSong() const { return m_SelectionState == SelectionState_SelectingSong; }
 	bool CanChangeSteps() const { return TWO_PART_SELECTION ? m_SelectionState == SelectionState_SelectingSteps : m_SelectionState == SelectionState_SelectingSong; }
@@ -123,7 +126,7 @@ protected:
 
 	FadingBanner	m_Banner;
 	Sprite			m_sprCDTitleFront, m_sprCDTitleBack;
-	Sprite			m_sprHighScoreFrame[NUM_PLAYERS];
+	AutoActor		m_sprHighScoreFrame[NUM_PLAYERS];
 	BitmapText		m_textHighScore[NUM_PLAYERS];
 	MusicWheel		m_MusicWheel;
 	OptionsList		m_OptionsList[NUM_PLAYERS];

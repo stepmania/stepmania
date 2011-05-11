@@ -76,6 +76,18 @@ struct MenuRowDef
 		PUSH(c23);PUSH(c23);PUSH(c24);PUSH(c25);
 #undef PUSH
 	}
+	
+	MenuRowDef( int r, RString n, bool e, EditMode s, bool bTT, bool bTI,
+		   int d, int low, int high ):
+		iRowCode(r), sName(n), bEnabled(e), pfnEnabled(NULL),
+		emShowIn(s), iDefaultChoice(d), choices(),
+		bThemeTitle(bTT), bThemeItems(bTI)
+	{
+		for ( int i = low; i <= high; i++ )
+		{
+			choices.push_back(IntToString(i).c_str());
+		}
+	}
 
 	void SetOneUnthemedChoice( const RString &sChoice )
 	{

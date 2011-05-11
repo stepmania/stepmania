@@ -418,7 +418,7 @@ void NoteDisplay::DrawHoldPart( vector<Sprite*> &vpSpr, int iCol, int fYStep, fl
 	{
 		/* For very large hold notes, shift the texture coordinates to be near 0, so we
 		 * don't send very large values to the renderer. */
-		const float fDistFromTop	= fYStartPos - fYTop;		
+		const float fDistFromTop	= fYStartPos - fYTop;
 		float fTexCoordTop		= SCALE( fDistFromTop, 0, fFrameHeight, rect.top, rect.bottom );
 		fTexCoordTop += fAddToTexCoord;
 		fAddToTexCoord -= floorf( fTexCoordTop );
@@ -542,8 +542,8 @@ void NoteDisplay::DrawHoldBody( const TapNote& tn, int iCol, float fBeat, bool b
 	DISPLAY->SetZTestMode( bWavyPartsNeedZBuffer?ZTEST_WRITE_ON_PASS:ZTEST_OFF );
 	DISPLAY->SetZWrite( bWavyPartsNeedZBuffer );
 
-	/* Hack: Z effects need a finer grain step. */
-	const int fYStep = bWavyPartsNeedZBuffer? 4: 16;		// use small steps only if wavy
+	// Hack: Z effects need a finer grain step.
+	const int fYStep = bWavyPartsNeedZBuffer? 4: 16; // use small steps only if wavy
 
 	if( bFlipHoldBody )
 	{
@@ -641,16 +641,18 @@ void NoteDisplay::DrawHold( const TapNote &tn, int iCol, int iRow, bool bIsBeing
 	/* The body and caps should have no overlap, so their order doesn't matter.
 	 * Draw the head last, so it appears on top. */
 	float fBeat = NoteRowToBeat(iRow);
-	//if( !cache->m_bHoldHeadIsAboveWavyParts )
-	//{
-	//	Actor *pActor = GetHoldActor( m_HoldHead, NotePart_HoldHead, NoteRowToBeat(iRow), tn.subType == TapNote::hold_head_roll, bIsBeingHeld );
-	//	DrawActor( tn, pActor, NotePart_HoldHead, iCol, bFlipHeadAndTail ? fEndYOffset : fStartYOffset, fBeat, bIsAddition, fPercentFadeToFail, fReverseOffsetPixels, fColorScale, fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
-	//}
-	//if( !cache->m_bHoldTailIsAboveWavyParts )
-	//{
-	//	Actor *pActor = GetHoldActor( m_HoldTail, NotePart_HoldTail, NoteRowToBeat(iRow), tn.subType == TapNote::hold_head_roll, bIsBeingHeld );
-	//	DrawActor( tn, pActor, NotePart_HoldTail, iCol, bFlipHeadAndTail ? fStartYOffset : fEndYOffset, fBeat, bIsAddition, fPercentFadeToFail, fReverseOffsetPixels, fColorScale, fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
-	//}
+	/*
+	if( !cache->m_bHoldHeadIsAboveWavyParts )
+	{
+		Actor *pActor = GetHoldActor( m_HoldHead, NotePart_HoldHead, NoteRowToBeat(iRow), tn.subType == TapNote::hold_head_roll, bIsBeingHeld );
+		DrawActor( tn, pActor, NotePart_HoldHead, iCol, bFlipHeadAndTail ? fEndYOffset : fStartYOffset, fBeat, bIsAddition, fPercentFadeToFail, fReverseOffsetPixels, fColorScale, fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
+	}
+	if( !cache->m_bHoldTailIsAboveWavyParts )
+	{
+		Actor *pActor = GetHoldActor( m_HoldTail, NotePart_HoldTail, NoteRowToBeat(iRow), tn.subType == TapNote::hold_head_roll, bIsBeingHeld );
+		DrawActor( tn, pActor, NotePart_HoldTail, iCol, bFlipHeadAndTail ? fStartYOffset : fEndYOffset, fBeat, bIsAddition, fPercentFadeToFail, fReverseOffsetPixels, fColorScale, fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
+	}
+	*/
 
 	DrawHoldBody( tn, iCol, fBeat, bIsBeingHeld, fYHead, fYTail, bIsAddition, fPercentFadeToFail, fColorScale, false, fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
 	DrawHoldBody( tn, iCol, fBeat, bIsBeingHeld, fYHead, fYTail, bIsAddition, fPercentFadeToFail, fColorScale, true, fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );

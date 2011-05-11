@@ -17,7 +17,7 @@ struct lua_State;
 struct BackgroundChange;
 
 /** @brief The version of the .ssc file format. */
-const static float STEPFILE_VERSION_NUMBER = 0.56f;
+const static float STEPFILE_VERSION_NUMBER = 0.59f;
 
 /** @brief How many edits for this song can each profile have? */
 const int MAX_EDITS_PER_SONG_PER_PROFILE	= 5;
@@ -35,6 +35,15 @@ enum BackgroundLayer
 	NUM_BackgroundLayer,
 	BACKGROUND_LAYER_Invalid
 };
+
+/** @brief The different ways of displaying the BPM. */
+enum DisplayBPM
+{
+	DISPLAY_BPM_ACTUAL, /**< Display the song's actual BPM. */
+	DISPLAY_BPM_SPECIFIED, /**< Display a specified value or values. */
+	DISPLAY_BPM_RANDOM /**< Display a random selection of BPMs. */
+};
+
 /** @brief A custom foreach loop for the different background layers. */
 #define FOREACH_BackgroundLayer( bl ) FOREACH_ENUM( BackgroundLayer, bl )
 
@@ -64,6 +73,7 @@ class Song
 	RString m_sSongDir;
 public:
 	void SetSongDir( const RString sDir ) { m_sSongDir = sDir; }
+	RString GetSongDir() { return m_sSongDir; }
 
 	/** @brief When should this song be displayed in the music wheel? */
 	enum SelectionDisplay
@@ -213,6 +223,8 @@ public:
 	 * This is read and saved, but never actually used. */
 	RString	m_sCredit;
 
+	RString m_sOrigin; // song origin (for .ssc format)
+
 	RString	m_sMusicFile;
 	RString	m_sInstrumentTrackFile[NUM_InstrumentTrack];
 
@@ -222,7 +234,7 @@ public:
 	float	m_fSpecifiedLastBeat;	// specified last beat of the song
 	float	m_fMusicSampleStartSeconds;
 	float	m_fMusicSampleLengthSeconds;
-	enum { DISPLAY_ACTUAL, DISPLAY_SPECIFIED, DISPLAY_RANDOM } m_DisplayBPMType;
+	DisplayBPM m_DisplayBPMType;
 	float	m_fSpecifiedBPMMin;
 	float	m_fSpecifiedBPMMax;	// if a range, then Min != Max
 

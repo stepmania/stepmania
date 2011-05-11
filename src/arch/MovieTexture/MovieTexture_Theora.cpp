@@ -23,7 +23,7 @@ namespace avcodec
 // #define HAVE_THEORAEXP
 
 #if !defined(HAVE_THEORAEXP)
-#include <theora/theora.h>
+#include <../extern/vorbis/theora/theora.h>
 
 #if defined(_MSC_VER)
 #pragma comment(lib, OGG_LIB_DIR "ogg_static.lib")

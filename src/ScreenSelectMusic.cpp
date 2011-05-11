@@ -92,6 +92,7 @@ void ScreenSelectMusic::Init()
 	TWO_PART_CONFIRMS_ONLY.Load( m_sName, "TwoPartConfirmsOnly" );
 	TWO_PART_TIMER_SECONDS.Load( m_sName, "TwoPartTimerSeconds" );
 	WRAP_CHANGE_STEPS.Load( m_sName, "WrapChangeSteps" );
+	NULL_SCORE_STRING.Load( m_sName, "NullScoreString" );
 	// To allow changing steps with gamebuttons -DaisuMaster
 	CHANGE_STEPS_WITH_GAME_BUTTONS.Load( m_sName, "ChangeStepsWithGameButtons" );
 	CHANGE_GROUPS_WITH_GAME_BUTTONS.Load( m_sName, "ChangeGroupsWithGameButtons" );
@@ -199,10 +200,10 @@ void ScreenSelectMusic::Init()
 
 	FOREACH_ENUM( PlayerNumber, p )
 	{
-		m_sprHighScoreFrame[p].SetName( ssprintf("ScoreFrameP%d",p+1) );
-		m_sprHighScoreFrame[p].Load( THEME->GetPathG(m_sName,ssprintf("score frame p%d",p+1)) );
+		m_sprHighScoreFrame[p].Load( THEME->GetPathG(m_sName,ssprintf("ScoreFrame P%d",p+1)) );
+		m_sprHighScoreFrame[p]->SetName( ssprintf("ScoreFrameP%d",p+1) );
 		LOAD_ALL_COMMANDS_AND_SET_XY( m_sprHighScoreFrame[p] );
-		this->AddChild( &m_sprHighScoreFrame[p] );
+		this->AddChild( m_sprHighScoreFrame[p] );
 
 		m_textHighScore[p].SetName( ssprintf("ScoreP%d",p+1) );
 		m_textHighScore[p].LoadFromFont( THEME->GetPathF(m_sName,"score") );
@@ -247,7 +248,7 @@ void ScreenSelectMusic::BeginScreen()
 	{
 		if( GAMESTATE->IsHumanPlayer(pn) )
 			continue;
-		m_sprHighScoreFrame[pn].SetVisible( false );
+		m_sprHighScoreFrame[pn]->SetVisible( false );
 		m_textHighScore[pn].SetVisible( false );
 	}
 
@@ -485,7 +486,7 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 		m_bStepsChosen[input.pn] )
 		return; // ignore
 
-	// todo: use mousewheel to scroll MusicWheel -aj
+	// todo: Allow mousewheel to scroll MusicWheel -aj
 
 	if( USE_PLAYER_SELECT_MENU )
 	{
@@ -1528,10 +1529,9 @@ void ScreenSelectMusic::AfterStepsOrTrailChange( const vector<PlayerNumber> &vpn
 		}
 		else
 		{
-			// I don't like how numbers just stay up there if the current
-			// selection is NULL.
-			// todo: Let themers set the text instead of just using 0. -aj
-			m_textHighScore[pn].SetText( ssprintf("%*i", NUM_SCORE_DIGITS, 0) );
+			// The numbers shouldn't stay if the current selection is NULL.
+			// todo: Let themers set the text value instead of just using 0. -aj
+			m_textHighScore[pn].SetText( NULL_SCORE_STRING );
 		}
 	}
 }
@@ -1723,10 +1723,13 @@ void ScreenSelectMusic::AfterMusicChange()
 				m_sSampleMusicToPlay = m_sRandomMusicPath;
 				break;
 			case TYPE_CUSTOM:
-				bWantBanner = false; // we load it ourself, or should
-				m_Banner.Load( THEME->GetPathG( "Banner", GetMusicWheel()->GetCurWheelItemData( GetMusicWheel()->GetCurrentIndex() )->m_pAction->m_sName.c_str() ) );
-				if( SAMPLE_MUSIC_PREVIEW_MODE != SampleMusicPreviewMode_LastSong )
-					m_sSampleMusicToPlay = m_sSectionMusicPath;
+				{
+					bWantBanner = false; // we load it ourself
+					RString sBannerName = GetMusicWheel()->GetCurWheelItemData( GetMusicWheel()->GetCurrentIndex() )->m_pAction->m_sName.c_str();
+					m_Banner.LoadCustom(sBannerName);
+					if( SAMPLE_MUSIC_PREVIEW_MODE != SampleMusicPreviewMode_LastSong )
+						m_sSampleMusicToPlay = m_sSectionMusicPath;
+				}
 				break;
 			default:
 				ASSERT(0);
@@ -1856,6 +1859,14 @@ void ScreenSelectMusic::AfterMusicChange()
 	AfterStepsOrTrailChange( vpns );
 }
 
+void ScreenSelectMusic::OpenOptionsList(PlayerNumber pn)
+{
+	if( pn != PLAYER_INVALID )
+	{
+		m_OptionsList[pn].Open();
+	}
+}
+
 // lua start
 #include "LuaBinding.h"
 
@@ -1868,11 +1879,13 @@ public:
 		p->GetMusicWheel()->PushSelf(L);
 		return 1;
 	}
+	static int OpenOptionsList( T* p, lua_State *L ) { PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);  p->OpenOptionsList(pn); return 0; }
 
 	LunaScreenSelectMusic()
 	{
   		ADD_METHOD( GetGoToOptions );
 		ADD_METHOD( GetMusicWheel );
+		ADD_METHOD( OpenOptionsList );
 	}
 };
 

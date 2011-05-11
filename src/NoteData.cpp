@@ -466,7 +466,8 @@ int NoteData::GetNumTapNotes( int iStartIndex, int iEndIndex ) const
 		FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( *this, t, r, iStartIndex, iEndIndex )
 		{
 			const TapNote &tn = GetTapNote(t, r);
-			if( tn.type != TapNote::empty  &&  tn.type != TapNote::mine  &&  tn.type != TapNote::fake )
+			if( tn.type != TapNote::empty && tn.type != TapNote::mine
+			   && tn.type != TapNote::lift && tn.type != TapNote::fake )
 				iNumNotes++;
 		}
 	}

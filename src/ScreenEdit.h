@@ -24,12 +24,13 @@
 const int NUM_EDIT_BUTTON_COLUMNS = 10;
 struct MenuDef;
 
+/** @brief What is going on with the Editor? */
 enum EditState
 {
-	STATE_EDITING,
-	STATE_RECORDING,
-	STATE_RECORDING_PAUSED,
-	STATE_PLAYING,
+	STATE_EDITING, /**< The person is making adjustments to the Steps. */
+	STATE_RECORDING, /**< The person is recording some Steps live. */
+	STATE_RECORDING_PAUSED, /**< The person has temporarily paused the recording of Steps. */
+	STATE_PLAYING, /**< The person is just trying out the Steps. */
 	NUM_EditState,
 	EditState_Invalid
 };
@@ -56,8 +57,8 @@ enum EditButton
 	EDIT_BUTTON_REMOVE_NOTE,
 	
 	// These are modifiers to change the present tap note.
-	EDIT_BUTTON_CYCLE_TAP_LEFT,
-	EDIT_BUTTON_CYCLE_TAP_RIGHT,
+	EDIT_BUTTON_CYCLE_TAP_LEFT, /**< Rotate the available tap notes once to the "left". */
+	EDIT_BUTTON_CYCLE_TAP_RIGHT, /**< Rotate the available tap notes once to the "right". */
 
 	EDIT_BUTTON_SCROLL_UP_LINE,
 	EDIT_BUTTON_SCROLL_UP_PAGE,
@@ -70,6 +71,9 @@ enum EditButton
 	EDIT_BUTTON_SCROLL_NEXT,
 	EDIT_BUTTON_SCROLL_PREV,
 
+	EDIT_BUTTON_LABEL_NEXT,
+	EDIT_BUTTON_LABEL_PREV,
+	
 	// These are modifiers to EDIT_BUTTON_SCROLL_*.
 	EDIT_BUTTON_SCROLL_SELECT,
 
@@ -124,16 +128,15 @@ enum EditButton
 	EDIT_BUTTON_SAMPLE_LENGTH_UP,
 	EDIT_BUTTON_SAMPLE_LENGTH_DOWN,
 
-	// This modifies offset, BPM, and stop segment changes.
-	EDIT_BUTTON_ADJUST_FINE,
+	EDIT_BUTTON_ADJUST_FINE, /**< This button modifies offset, BPM, and stop segment changes. */
 
-	EDIT_BUTTON_SAVE,
+	EDIT_BUTTON_SAVE, /**< Save the present changes into the chart. */
 
-	EDIT_BUTTON_UNDO,
+	EDIT_BUTTON_UNDO, /**< Undo a recent change. */
 	
 	EDIT_BUTTON_ADD_COURSE_MODS,
 	
-	EDIT_BUTTON_SWITCH_PLAYERS,
+	EDIT_BUTTON_SWITCH_PLAYERS, /**< Allow entering notes for a different Player. */
 
 	NUM_EditButton, // leave this at the end
 	EditButton_Invalid
@@ -162,7 +165,9 @@ struct MapEditToDI
 	}
 };
 
-// Like MapEditToDI, but maps GameButton instead of DeviceInput.
+/**
+ * @brief This is similar to MapEditToDI,
+ * but maps GameButton instead of DeviceInput. */
 struct MapEditButtonToMenuButton
 {
 	GameButton button[NUM_EditButton][NUM_EDIT_TO_MENU_SLOTS];
@@ -210,11 +215,14 @@ protected:
 
 	// Call this before modifying m_NoteDataEdit.
 	void SaveUndo();
-	// Revert m_NoteDataEdit using m_Undo.
+	/** @brief Revert the last change made to m_NoteDataEdit. */
 	void Undo();
+	/** @brief Remove the previously stored NoteData to prevent undoing. */
 	void ClearUndo();
-	// Call this after modifying m_NoteDataEdit.  It will Undo() if 
-	// MAX_NOTES_PER_MEASURE was exceeded.
+	/**
+	 * @brief This is to be called after modifying m_NoteDataEdit.
+	 *
+	 * It will Undo itself if MAX_NOTES_PER_MEASURE was exceeded. */
 	void CheckNumberOfNotesAndUndo();
 
 	void OnSnapModeChange();
@@ -248,15 +256,23 @@ protected:
 
 	// keep track of where we are and what we're doing
 	float			m_fTrailingBeat; // this approaches GAMESTATE->m_fSongBeat, which is the actual beat
-	// The location we were at when shift was pressed, or -1 when shift isn't pressed:
+	/**
+	 * @brief The location we were at when shift was pressed.
+	 *
+	 * If shift wasn't pressed, this will be -1. */
 	int			m_iShiftAnchor;
 
+	/** @brief The NoteData that has been cut or copied. */
 	NoteData		m_Clipboard;
 	bool    		m_bHasUndo;
-	// TODO: convert this into a stack of NoteData objs for multi-state undo -aj
+	/**
+	 * @brief The NoteData as it once just one action prior.
+	 *
+	 * TODO: Convert this into a stack or vector of NoteData to allow multiple undos. -aj
+	 * TODO: Look into a redo option. -aj */
 	NoteData		m_Undo;
-	// TODO: also maybe have a redo stack/option -aj
 
+	/** @brief Has the NoteData been changed such that a user should be prompted to save? */
 	bool			m_bDirty;
 
 	RageSound		m_soundAddNote;
@@ -302,22 +318,23 @@ protected:
 	ThemeMetric<EditMode> EDIT_MODE;
 
 public:
+	/** @brief What are the choices that one can make on the main menu? */
 	enum MainMenuChoice
 	{
 		play_selection,
 		set_selection_start,
 		set_selection_end,
 		edit_steps_information,
-		play_whole_song,
+		play_whole_song, /**< Play the entire chart from the beginning. */
 		play_selection_start_to_end,
 		play_current_beat_to_end,
-		save,
+		save, /**< Save the current chart to disk. */
 		revert_to_last_save,
 		revert_from_disk,
-		options,
-		edit_song_info,
-		edit_timing_data,
-		play_preview_music,
+		options, /**< Modify the PlayerOptions and SongOptions. */
+		edit_song_info, /**< Edit some general information about the song. */
+		edit_timing_data, /**< Edit the chart's timing data. */
+		play_preview_music, /**< Play the song's preview music. */
 		exit,
 		save_on_exit,
 		NUM_MAIN_MENU_CHOICES,
@@ -352,13 +369,14 @@ public:
 	};
 	void HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAnswers, bool bAllowUndo = true );
 	void HandleAreaMenuChoice( AreaMenuChoice c, bool bAllowUndo = true ) { const vector<int> v; HandleAreaMenuChoice( c, v, bAllowUndo ); }
+	/** @brief How should the selected notes be transformed? */
 	enum TurnType
 	{
-		left,
-		right,
-		mirror,
-		shuffle, 
-		super_shuffle, 
+		left, /**< Turn the notes as if you were facing to the left. */
+		right, /**< Turn the notes as if you were facing to the right. */
+		mirror, /**< Turn the notes as if you were facing away from the machine. */
+		shuffle, /**< Replace one column with another column. */
+		super_shuffle, /**< Replace each note individually. */
 		NUM_TURN_TYPES 
 	};
 	enum TransformType
@@ -412,10 +430,10 @@ public:
 	{
 		difficulty,
 		meter,
-		description,
-		chartstyle,
-		step_credit,
-		predict_meter,
+		description, /**< What is the description of this chart? */
+		chartstyle, /**< How is this chart meant to be played? */
+		step_credit, /**< Who wrote this individual chart? */
+		predict_meter, /**< What does the game think this chart's rating should be? */
 		tap_notes,
 		jumps,
 		hands,
@@ -441,7 +459,13 @@ public:
 		main_title_transliteration,
 		sub_title_transliteration,
 		artist_transliteration,
+		beat_0_offset,
 		last_beat_hint,
+		preview_start,
+		preview_length,
+		display_bpm,
+		min_bpm,
+		max_bpm,
 		NUM_SONG_INFORMATION_CHOICES
 	};
 	void HandleSongInformationChoice( SongInformationChoice c, const vector<int> &iAnswers );
@@ -456,6 +480,7 @@ public:
 		time_signature_denominator,
 		tickcount,
 		combo,
+		label,
 		warp,
 		NUM_TIMING_DATA_INFORMATION_CHOICES
 	};

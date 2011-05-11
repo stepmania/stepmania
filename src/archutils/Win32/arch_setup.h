@@ -21,25 +21,31 @@
 
 #define snprintf _snprintf // Unsure if this goes with __MINGW32__ right now.
 
-#pragma warning (disable : 4275) // non dll-interface class 'stdext::exception' used as base for dll-interface class 'std::bad_cast', bug in VC <exception> when exceptions disabled
-#pragma warning (disable : 4201) // nonstandard extension used : nameless struct/union (Windows headers do this)
-#pragma warning (disable : 4786) // turn off broken debugger warning
-#pragma warning (disable : 4512) // assignment operator could not be generated (so?)
-/* "unreachable code". This warning crops up in incorrect places (end of do ... while(0)
- * blocks, try/catch blocks), and I've never found it to be useful. */
-#pragma warning (disable : 4702) // assignment operator could not be generated (so?)
-// "unreferenced formal parameter"; we *want* that in many cases
-#pragma warning (disable : 4100)
-/* "case 'aaa' is not a valid value for switch of enum 'bbb'
- * Actually, this is a valid warning, but we do it all over the
- * place, eg. with ScreenMessages. Those should be fixed, but later. XXX */
-#pragma warning (disable : 4063)
-#pragma warning (disable : 4127)
-#pragma warning (disable : 4786) /* VC6: identifier was truncated to '255' characters in the debug information */
-#pragma warning (disable : 4505) // removed unferenced local function from integer.cpp & algebra.h
-#pragma warning (disable : 4244) // converting of data = possible data loss.  (This pragma should eventually go away)
-#pragma warning (disable : 4355) // 'this' : used in base member initializer list
+/*
+The following warnings are disabled in all builds.
+Enable them in the project file at your peril (or if you feel like
+learning of many pedantic style warnings and want to fix them).
 
+C2475: non dll-interface class 'stdext::exception' used as base for dll-interface class 'std::bad_cast', bug in VC <exception> when exceptions disabled
+C4201: nonstandard extension used : nameless struct/union (Windows headers do this)
+C4786: turn off broken debugger warning
+C4512: assignment operator could not be generated (so?)
+ "unreachable code". This warning crops up in incorrect places (end of do ... while(0)
+ blocks, try/catch blocks), and I've never found it to be useful.
+C4702: assignment operator could not be generated (so?)
+// "unreferenced formal parameter"; we *want* that in many cases
+C4100:
+ "case 'aaa' is not a valid value for switch of enum 'bbb'
+ Actually, this is a valid warning, but we do it all over the
+ place, eg. with ScreenMessages. Those should be fixed, but later. XXX
+C4063:
+C4127:
+C4786: VC6: identifier was truncated to '255' characters in the debug information
+C4505: removed unferenced local function from integer.cpp & algebra.h
+C4244: converting of data = possible data loss.  (This pragma should eventually go away)
+C4355: 'this' : used in base member initializer list
+
+*/
 // Fix VC breakage.
 #define PATH_MAX _MAX_PATH
 
@@ -145,7 +151,7 @@ inline long int lrintf( float f )
 
 #define ENDIAN_LITTLE
 
-#define OGG_LIB_DIR "vorbis/win32/"
+#define OGG_LIB_DIR "../extern/vorbis/win32/"
 
 #if defined(__GNUC__) // It might be MinGW or Cygwin(?)
 #include "archutils/Common/gcc_byte_swaps.h"

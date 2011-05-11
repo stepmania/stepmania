@@ -879,7 +879,7 @@ void SongManager::InitRandomAttacks()
 					continue;
 				}
 
-				if( stricmp(sType,"ATTACK") != 0 )
+				if( !sType.EqualsNoCase("ATTACK") )
 				{
 					LOG->Warn( "Got \"%s:%s\" tag with wrong declaration", sType.c_str(), sAttack.c_str() );
 					continue;
@@ -1890,6 +1890,14 @@ public:
 
 	DEFINE_METHOD( ShortenGroupName, ShortenGroupName( SArg(1) ) )
 
+	static int GetCourseGroupNames( T* p, lua_State *L )
+	{
+		vector<RString> v;
+		p->GetCourseGroupNames( v );
+		LuaHelpers::CreateTableFromArray<RString>( v, L );
+		return 1;
+	}
+
 	LunaSongManager()
 	{
 		ADD_METHOD( GetAllSongs );
@@ -1898,6 +1906,7 @@ public:
 		ADD_METHOD( FindCourse );
 		ADD_METHOD( GetRandomSong );
 		ADD_METHOD( GetRandomCourse );
+		ADD_METHOD( GetCourseGroupNames );
 		ADD_METHOD( GetNumSongs );
 		ADD_METHOD( GetNumUnlockedSongs );
 		ADD_METHOD( GetNumSelectableAndUnlockedSongs );

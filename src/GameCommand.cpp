@@ -335,12 +335,12 @@ void GameCommand::LoadOne( const Command& cmd )
 
 	else if( sName == "weight" )
 	{
-		m_iWeightPounds = atoi( sValue );
+		m_iWeightPounds = StringToInt( sValue );
 	}
 
 	else if( sName == "goalcalories" )
 	{
-		m_iGoalCalories = atoi( sValue );
+		m_iGoalCalories = StringToInt( sValue );
 	}
 
 	else if( sName == "goaltype" )
@@ -415,8 +415,8 @@ void GameCommand::LoadOne( const Command& cmd )
 		if( cmd.m_vsArgs.size() == 3 )
 		{
 			m_bFadeMusic = true;
-			m_fMusicFadeOutVolume = atof( cmd.m_vsArgs[1] );
-			m_fMusicFadeOutSeconds = atof( cmd.m_vsArgs[2] );
+			m_fMusicFadeOutVolume = static_cast<float>(atof( cmd.m_vsArgs[1] ));
+			m_fMusicFadeOutSeconds = static_cast<float>(atof( cmd.m_vsArgs[2] ));
 		}
 	}
 

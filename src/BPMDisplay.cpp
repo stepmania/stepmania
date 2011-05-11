@@ -180,8 +180,8 @@ void BPMDisplay::SetBpmFromSong( const Song* pSong )
 	ASSERT( pSong );
 	switch( pSong->m_DisplayBPMType )
 	{
-	case Song::DISPLAY_ACTUAL:
-	case Song::DISPLAY_SPECIFIED:
+	case DISPLAY_BPM_ACTUAL:
+	case DISPLAY_BPM_SPECIFIED:
 		{
 			DisplayBpms bpms;
 			pSong->GetDisplayBpms( bpms );
@@ -189,7 +189,7 @@ void BPMDisplay::SetBpmFromSong( const Song* pSong )
 			m_fCycleTime = 1.0f;
 		}
 		break;
-	case Song::DISPLAY_RANDOM:
+	case DISPLAY_BPM_RANDOM:
 		CycleRandomly();
 		break;
 	default:
@@ -204,7 +204,8 @@ void BPMDisplay::SetBpmFromCourse( const Course* pCourse )
 
 	StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
 	Trail *pTrail = pCourse->GetTrail( st );
-	ASSERT( pTrail );
+	// GetTranslitFullTitle because "Crashinfo.txt is garbled because of the ANSI output as usual." -f
+	ASSERT_M( pTrail, ssprintf("Course '%s' has no trail for StepsType '%s'", pCourse->GetTranslitFullTitle().c_str(), StringConversion::ToString(st).c_str() ) );
 
 	m_fCycleTime = 0.2f;
 
@@ -294,11 +295,33 @@ class LunaBPMDisplay: public Luna<BPMDisplay>
 {
 public:
 	static int SetFromGameState( T* p, lua_State *L ) { p->SetFromGameState(); return 0; }
+	static int SetFromSong( T* p, lua_State *L )
+	{
+		if( lua_isnil(L,1) ) { p->NoBPM(); }
+		else
+		{
+			const Song* pSong = Luna<Song>::check( L, 1, true );
+			p->SetBpmFromSong(pSong);
+		}
+		return 0;
+	}
+	static int SetFromCourse( T* p, lua_State *L )
+	{
+		if( lua_isnil(L,1) ) { p->NoBPM(); }
+		else
+		{
+			const Course* pCourse = Luna<Course>::check( L, 1, true );
+			p->SetBpmFromCourse(pCourse);
+		}
+		return 0;
+	}
 	static int GetText( T* p, lua_State *L )		{ lua_pushstring( L, p->GetText() ); return 1; }
 
 	LunaBPMDisplay()
 	{
 		ADD_METHOD( SetFromGameState );
+		ADD_METHOD( SetFromSong );
+		ADD_METHOD( SetFromCourse );
 		ADD_METHOD( GetText );
 	}
 };

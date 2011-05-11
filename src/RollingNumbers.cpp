@@ -1,6 +1,7 @@
 #include "global.h"
 #include "RollingNumbers.h"
 #include "RageUtil.h"
+#include "GameState.h"
 #include "XmlFile.h"
 #include "ActorUtil.h"
 #include "LuaManager.h"

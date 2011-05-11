@@ -40,7 +40,7 @@ v1.1
 * Cleaned up code some, I think.
 ________________________________________________________________________________
 anticipated future changes:
-* M-Mod support (when sm-ssc imntegrates it)
+* M-Mod support (when sm-ssc integrates it)
 ]]
 
 -- ProfileDir(slot): gets the profile dir for slot,
@@ -68,7 +68,7 @@ local function ParseSpeedModFile(path)
 		return mods
 	else
 		-- error; write a fallback mod file and return it
-		local fallbackString = "0.5x,0.75x,1x,1.75x,2x,2.25x,2.5x,C150,C300"
+		local fallbackString = "0.5x,1x,1.5x,2x,3x,4x,8x,C200,C400"
 		Trace("[CustomSpeedMods]: Could not read SpeedMods; writing fallback to "..path)
 		file:Open(path, 2)
 		file:Write(fallbackString)

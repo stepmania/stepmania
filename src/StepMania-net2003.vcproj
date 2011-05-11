@@ -25,8 +25,8 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/EHa"
 				Optimization="0"
-				AdditionalIncludeDirectories=".;vorbis;libjpeg;&quot;ffmpeg\include&quot;;est"
-				PreprocessorDefinitions="WIN32,_DEBUG,_WINDOWS,WINDOWS,DEBUG"
+				AdditionalIncludeDirectories=".;&quot;..\extern\lua-5.1\src&quot;;ffmpeg\modern_working\include;BaseClasses;&quot;..\extern\jsoncpp\include&quot;;&quot;..\extern\glew-1.5.8\include&quot;;..\extern\pcre;&quot;..\extern\mad-0.15.1b&quot;;..\extern\libpng;..\extern\libjpeg;..\extern\zlib;..\extern\vorbis"
+				PreprocessorDefinitions="WIN32,_DEBUG,_WINDOWS,WINDOWS,DEBUG,GLEW_STATIC"
 				ExceptionHandling="FALSE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="2"
@@ -40,7 +40,8 @@
 				BrowseInformation="0"
 				WarningLevel="4"
 				SuppressStartupBanner="TRUE"
-				DebugInformationFormat="4"/>
+				DebugInformationFormat="4"
+				DisableSpecificWarnings="4063;4100;4127;4201;4244;4275;4355;4505;4512;4702;4786;4996"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
@@ -109,8 +110,8 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				FavorSizeOrSpeed="2"
 				OptimizeForProcessor="2"
 				OptimizeForWindowsApplication="TRUE"
-				AdditionalIncludeDirectories=".;vorbis;libjpeg;&quot;ffmpeg\include&quot;"
-				PreprocessorDefinitions="WIN32,NDEBUG,_WINDOWS,WINDOWS,RELEASE"
+				AdditionalIncludeDirectories=".;&quot;..\extern\lua-5.1\src&quot;;ffmpeg\modern_working\include;BaseClasses;&quot;..\extern\jsoncpp\include&quot;;&quot;..\extern\glew-1.5.8\include&quot;;..\extern\pcre;&quot;..\extern\mad-0.15.1b&quot;;..\extern\libpng;..\extern\libjpeg;..\extern\zlib;..\extern\vorbis"
+				PreprocessorDefinitions="WIN32,NDEBUG,_WINDOWS,WINDOWS,RELEASE,GLEW_STATIC"
 				StringPooling="TRUE"
 				MinimalRebuild="FALSE"
 				ExceptionHandling="FALSE"
@@ -127,7 +128,8 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				BrowseInformation="0"
 				WarningLevel="4"
 				SuppressStartupBanner="TRUE"
-				DebugInformationFormat="3"/>
+				DebugInformationFormat="3"
+				DisableSpecificWarnings="4063;4100;4127;4201;4244;4275;4355;4505;4512;4702;4786;4996"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
@@ -190,8 +192,8 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/EHa"
 				Optimization="0"
-				AdditionalIncludeDirectories=".;vorbis;libjpeg;&quot;ffmpeg\include&quot;"
-				PreprocessorDefinitions="WIN32,_DEBUG,_WINDOWS,WINDOWS,DEBUG"
+				AdditionalIncludeDirectories=".;&quot;..\extern\lua-5.1\src&quot;;ffmpeg\modern_working\include;BaseClasses;&quot;..\extern\jsoncpp\include&quot;;&quot;..\extern\glew-1.5.8\include&quot;;..\extern\pcre;&quot;..\extern\mad-0.15.1b&quot;;..\extern\libpng;..\extern\libjpeg;..\extern\zlib;..\extern\vorbis"
+				PreprocessorDefinitions="WIN32,_DEBUG,_WINDOWS,WINDOWS,DEBUG,GLEW_STATIC"
 				ExceptionHandling="FALSE"
 				BasicRuntimeChecks="0"
 				RuntimeLibrary="2"
@@ -205,7 +207,8 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				BrowseInformation="0"
 				WarningLevel="4"
 				SuppressStartupBanner="TRUE"
-				DebugInformationFormat="4"/>
+				DebugInformationFormat="4"
+				DisableSpecificWarnings="4063;4100;4127;4201;4244;4275;4355;4505;4512;4702;4786;4996"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
@@ -259,6 +262,19 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 	<References>
 	</References>
 	<Files>
+		<Filter Name="glew-1.5.8" Filter="">
+			<File RelativePath="..\extern\glew-1.5.8\src\glew.c">
+				<FileConfiguration Name="Debug|Win32">
+					<Tool Name="VCCLCompilerTool" UsePrecompiledHeader="0" />
+				</FileConfiguration>
+				<FileConfiguration Name="Release|Win32">
+					<Tool Name="VCCLCompilerTool" UsePrecompiledHeader="0" />
+				</FileConfiguration>
+				<FileConfiguration Name="FastDebug|Win32">
+					<Tool Name="VCCLCompilerTool" UsePrecompiledHeader="0" />
+				</FileConfiguration>
+			</File>
+		</Filter>
 		<Filter
 			Name="Screens"
 			Filter="">
@@ -2146,6 +2162,30 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				<File
 					RelativePath="glext.h">
 				</File>
+				<Filter Name="libpng" Filter="">
+					<File RelativePath="..\extern\libpng\include\png.c"></File>
+					<File RelativePath="..\extern\libpng\include\png.h"></File>
+					<File RelativePath="..\extern\libpng\include\pngconf.h"></File>
+					<File RelativePath="..\extern\libpng\include\pngdebug.h"></File>
+					<File RelativePath="..\extern\libpng\include\pngerror.c"></File>
+					<File RelativePath="..\extern\libpng\include\pngget.c"></File>
+					<File RelativePath="..\extern\libpng\include\pnginfo.h"></File>
+					<File RelativePath="..\extern\libpng\include\scripts\pnglibconf.h"></File>
+					<File RelativePath="..\extern\libpng\include\pngmem.c"></File>
+					<File RelativePath="..\extern\libpng\include\pngpread.c"></File>
+					<File RelativePath="..\extern\libpng\include\pngpriv.h"></File>
+					<File RelativePath="..\extern\libpng\include\pngread.c"></File>
+					<File RelativePath="..\extern\libpng\include\pngrio.c"></File>
+					<File RelativePath="..\extern\libpng\include\pngrtran.c"></File>
+					<File RelativePath="..\extern\libpng\include\pngrutil.c"></File>
+					<File RelativePath="..\extern\libpng\include\pngset.c"></File>
+					<File RelativePath="..\extern\libpng\include\pngstruct.h"></File>
+					<File RelativePath="..\extern\libpng\include\pngtrans.c"></File>
+					<File RelativePath="..\extern\libpng\include\pngwio.c"></File>
+					<File RelativePath="..\extern\libpng\include\pngwrite.c"></File>
+					<File RelativePath="..\extern\libpng\include\pngwtran.c"></File>
+					<File RelativePath="..\extern\libpng\include\pngwutil.c"></File>
+				</Filter>
 				<Filter
 					Name="pcre"
 					Filter="">

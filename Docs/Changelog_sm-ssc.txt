@@ -10,6 +10,84 @@ supported but exist anyways.)
 _____________________________________________________________________________
 
 ================================================================================
+sm-ssc v1.2.5 | 20110501
+--------------------------------------------------------------------------------
+
+20110430
+--------
+* [ScreenOptions] Renamed "ScreenOptions LineHighlight" to "ScreenOptions
+  LineHighlight P#", making it load per-player. [AJ]
+* [OptionRow] Added Text param to RefreshMessageCommand. [AJ]
+* [ScreenOptions] Added SelectMultipleMessageCommand, ChangeValueMessageCommand. [AJ]
+* [UnlockEntry] Added GetCourse, GetCode Lua bindings. [AJ]
+* [UnlockManager] Added UnlockRequirement_NumUnlocked enum. [AJ]
+* [Song] Added Origin (#ORIGIN tag in .ssc) [AJ]
+* [UnlockManager] Added GetPoints(UnlockRequirement),
+  GetPointsForProfile(Profile,UnlockRequirement) Lua bindings. [AJ]
+* [Course] Added #SCRIPTER tag and GetScripter Lua binding. [AJ]
+
+20110428
+--------
+* [BeginnerHelper] Various changes: [AJ]
+ * Changed Player_#X/Y metrics to Player#X/Y metrics for consistency.
+ * Converted the background to an AutoActor.
+* [BPMDisplay] Added SetFromSong Lua binding. [AJ]
+
+20110423
+--------
+* [CourseLoaderCRS] Fixed loading of Player's Best/Most Played courses,
+  probably others too. [AJ]
+* [ScreenGameplaySyncMachine] Fixed a crash when entering
+  ScreenGameplaySyncMachine as Player 2. (Fixes issue 127) [AJ]
+* [ScreenOptionsEditCourse] Fixed a crash when going to the first row.
+  (Fixes issue 235) [AJ]
+* [SongManager] Added GetCourseGroupNames Lua binding. [AJ]
+
+20110422
+--------
+* [Banner] Added ScrollSpeedDivisor metric; controls the scroll speed of
+  Random/Roulette banners. [AJ]
+* [FadingBanner] Added BannerRoulette, BannerRandom, and Banner(Custom Item Name) commands. [AJ]
+
+20110421
+--------
+* [ScreenSelectMusic] Changed "Percent Frame p1" to "PercentFrame P1" for consistency. [AJ]
+* [LifeMeterBattery] Convert Frame to an AutoActor. [AJ]
+* [ScreenEvaluation] Added RollingNumbersClass metric, allowing for the ability
+  to change which RollingNumbers class is loaded. [AJ]
+* [ScreenGameplay] Added SongNumberFormat metric. [AJ]
+
+20110420
+--------
+* [CourseContentsList] Fix a crash. [AJ]
+
+20110416
+--------
+* [PlayerOptions] Added UsingReverse() Lua binding (automatically tests GetReverse() == 1) [AJ]
+* [PlayerState] Added GetCurrentPlayerOptions() Lua binding [AJ]
+
+20110413
+--------
+* [ScreenSelectMusic] Made score frame into an AutoActor, changed the filename
+  from "score frame p1" to "ScoreFrame P1" for consistency with other elements. [AJ]
+
+20110405
+--------
+* [ScreenEdit] Allow modifying the #DISPLAYBPM traits in the editor. Look in
+  Edit Song Info to find it. [Wolfman2000]
+
+20110402
+--------
+* Fix a crash (issue 247) when exiting Practice mode from dance-solo,
+  dance-threepanel, and popn-nine (all of which can only have one player).
+  If you find any other modes this crashes on, let us know. [AJ]
+
+20110329
+--------
+* [ScreenEdit] Changed sample playback button to L. [AJ]
+* [ScreenGameplay] Announcers say combo messages again. [AJ]
+
+================================================================================
 sm-ssc v1.2.4 | 20110327
 --------------------------------------------------------------------------------
 

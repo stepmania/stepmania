@@ -13,6 +13,7 @@ ffmpeg-*
 *.idb
 *.pdb
 *.exp
+*.dmg
 ___*
 .hg
 .hgignore
@@ -45,8 +46,8 @@ src/stamp-h1
 Docs/doxygen
 PBProject/build
 Xcode/build
-Xcode/stepmania.xcodeproj/xcuserdata
-Xcode/stepmania.xcodeproj/project.xcworkspace/xcuserdata
+*.xcodeproj/xcuserdata
+*.xcodeproj/project.xcworkspace/xcuserdata
 src/build-*
 src/Release-*
 src/libtomcrypt/build-*
@@ -68,12 +69,18 @@ Themes/pump
 Themes/optical-release
 src/version.bin
 src/verstub.cpp
+Songs/*
+*.dmg
+.git
+*.smzip
 nsis_strings_temp.inc
 Data/SpeedMods.txt
 Program/StepMania*.lib
 crashinfo.txt
 Utils/temp*
 *.lnk
+BuildLog.htm
+*.pch
 
 syntax: regexp
 .*\#.*\#$
@@ -81,3 +88,4 @@ glob:Cache/Banners/AdditionalSongs_Airspace Preview_Derailed_Derailed bn.png
 
 syntax: regexp
 Songs/.+/
+glob:*.ilk

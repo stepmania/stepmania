@@ -35,7 +35,7 @@ void ScreenGameplaySyncMachine::Init()
 	SongUtil::GetPlayableSteps( &m_Song, vpSteps );
 	ASSERT_M(vpSteps.size() > 0, "No playable steps for ScreenGameplaySyncMachine");
 	Steps *pSteps = vpSteps[0];
-	GAMESTATE->m_pCurSteps[0].Set( pSteps );
+	GAMESTATE->m_pCurSteps[GAMESTATE->GetFirstHumanPlayer()].Set( pSteps );
 
 	GamePreferences::m_AutoPlay.Set( PC_HUMAN );
 

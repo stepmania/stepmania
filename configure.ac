@@ -197,6 +197,7 @@ fi
 AM_CONDITIONAL(WITHOUT_NETWORKING, test "$with_network" = "no")
 
 SM_ZLIB
+SM_BZIP
 SM_AUDIO
 SM_VIDEO
 SM_TLS
@@ -266,6 +267,8 @@ AC_CHECK_DECL(strtof, , AC_DEFINE([NEED_STRTOF],1,[Need strtof]), [#include <std
 # AC_CHECK_FUNCS([sqrtf sinf tanf cosf acosf roundf truncf])
 
 AC_CHECK_DECLS([SIGPWR, SIGUSR1],,,[#include <signal.h>])
+
+PKG_CHECK_MODULES( [GLEW], [glew >= 1.3.5], LIBS="$LIBS -lGLEW" )
 
 AC_ARG_ENABLE(tests, AS_HELP_STRING([--enable-tests],[Build test programs]), enable_tests=$enableval, enable_tests=no)
 AM_CONDITIONAL(BUILD_TESTS, test "$enable_tests" = "yes" )

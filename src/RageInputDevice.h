@@ -315,8 +315,9 @@ public:
 	float level;
 
 	// Mouse coordinates
-	unsigned x;
-	unsigned y;
+	//unsigned x;
+	//unsigned y;
+	int z; // mousewheel
 
 	/* Whether this button is pressed. This is level with a threshold and
 	 * debouncing applied. */
@@ -324,12 +325,12 @@ public:
 
 	RageTimer ts;
 
-	DeviceInput(): device(InputDevice_Invalid), button(DeviceButton_Invalid), level(0), x(0), y(0), bDown(false), ts(RageZeroTimer) { }
-	DeviceInput( InputDevice d, DeviceButton b, float l=0 ): device(d), button(b), level(l), x(0), y(0), bDown(l > 0.5f), ts(RageZeroTimer) { }
+	DeviceInput(): device(InputDevice_Invalid), button(DeviceButton_Invalid), level(0), z(0), bDown(false), ts(RageZeroTimer) { }
+	DeviceInput( InputDevice d, DeviceButton b, float l=0 ): device(d), button(b), level(l), z(0), bDown(l > 0.5f), ts(RageZeroTimer) { }
 	DeviceInput( InputDevice d, DeviceButton b, float l, const RageTimer &t ):
-		device(d), button(b), level(l), x(0), y(0), bDown(level > 0.5f), ts(t) { }
-	DeviceInput( InputDevice d, DeviceButton b, const RageTimer &t, unsigned xPos=0, unsigned yPos=0 ):
-		device(d), button(b), level(0), x(xPos), y(yPos), bDown(false), ts(t) { }
+		device(d), button(b), level(l), z(0), bDown(level > 0.5f), ts(t) { }
+	DeviceInput( InputDevice d, DeviceButton b, const RageTimer &t, int zVal=0 ):
+		device(d), button(b), level(0), z(zVal), bDown(false), ts(t) { }
 
 	bool operator==( const DeviceInput &other ) const
 	{ 

@@ -1,9 +1,9 @@
 function GetLocalProfiles()
-	local ret = {};
+	local t = {};
 
 	for p = 0,PROFILEMAN:GetNumLocalProfiles()-1 do
 		local profile=PROFILEMAN:GetLocalProfileFromIndex(p);
-		local item = Def.ActorFrame {
+		local ProfileCard = Def.ActorFrame {
 --[[ 			Def.Quad {
 				InitCommand=cmd(zoomto,200,1;y,40/2);
 				OnCommand=cmd(diffuse,Color('Outline'););
@@ -22,10 +22,10 @@ function GetLocalProfiles()
 				end;
 			};
 		};
-		table.insert( ret, item );
+		t[#t+1]=ProfileCard;
 	end;
 
-	return ret;
+	return t;
 end;
 
 function LoadCard(cColor)
@@ -38,14 +38,14 @@ function LoadCard(cColor)
 	return t
 end
 function LoadPlayerStuff(Player)
-	local ret = {};
+	local t = {};
 
 	local pn = (Player == PLAYER_1) and 1 or 2;
 
 --[[ 	local t = LoadActor(THEME:GetPathB('', '_frame 3x3'), 'metal', 200, 230) .. {
 		Name = 'BigFrame';
 	}; --]]
-	local t = Def.ActorFrame {
+	t[#t+1] = Def.ActorFrame {
 		Name = 'JoinFrame';
 		LoadCard(Color('Orange'));
 --[[ 		Def.Quad {
@@ -62,23 +62,13 @@ function LoadPlayerStuff(Player)
 			OnCommand=cmd(diffuseshift;effectcolor1,Color('White');effectcolor2,color("0.5,0.5,0.5"));
 		};
 	};
-	table.insert( ret, t );
 	
-	t = Def.ActorFrame {
+	t[#t+1] = Def.ActorFrame {
 		Name = 'BigFrame';
 		LoadCard(PlayerColor(Player));
 	};
-	table.insert( ret, t );
-
---[[ 	t = LoadActor(THEME:GetPathB('', '_frame 3x3'), 'metal', 170, 20) .. {
+	t[#t+1] = Def.ActorFrame {
 		Name = 'SmallFrame';
-	}; --]]
-	t = Def.ActorFrame {
-		Name = 'SmallFrame';
---[[ 		Def.Quad {
-			InitCommand=cmd(zoomto,170+4,32+4);
-			OnCommand=cmd(shadowlength,1);
-		}; --]]
 		InitCommand=cmd(y,-2);
 		Def.Quad {
 			InitCommand=cmd(zoomto,200-10,40+2);
@@ -97,9 +87,8 @@ function LoadPlayerStuff(Player)
 			OnCommand=cmd(diffuse,PlayerColor(Player);glow,color("1,1,1,0.25"));
 		};	
 	};
-	table.insert( ret, t );
 
-	t = Def.ActorScroller{
+	t[#t+1] = Def.ActorScroller{
 		Name = 'Scroller';
 		NumItemsToDraw=6;
 -- 		InitCommand=cmd(y,-230/2+20;);
@@ -114,34 +103,17 @@ function LoadPlayerStuff(Player)
 		end;
 		children = GetLocalProfiles();
 	};
-	table.insert( ret, t );
 	
-	t = Def.ActorFrame {
+	t[#t+1] = Def.ActorFrame {
 		Name = "EffectFrame";
-	--[[ 		Def.Quad {
-				InitCommand=cmd(y,-230/2;vertalign,top;zoomto,200,8;fadebottom,1);
-				OnCommand=cmd(diffuse,Color("Black");diffusealpha,0.25);
-			};
-			Def.Quad {
-				InitCommand=cmd(y,230/2;vertalign,bottom;zoomto,200,8;fadetop,1);
-				OnCommand=cmd(diffuse,Color("Black");diffusealpha,0.25);
-			}; --]]
 	};
-	table.insert( ret, t );
---[[ 	t = Def.BitmapText {
-		OnCommand = cmd(y,160);
-		Name = 'SelectedProfileText';
-		Font = "Common Normal";
-		Text = 'No profile';
-	}; --]]
-	t = LoadFont("Common Normal") .. {
+	t[#t+1] = LoadFont("Common Normal") .. {
 		Name = 'SelectedProfileText';
 		--InitCommand=cmd(y,160;shadowlength,1;diffuse,PlayerColor(Player));
 		InitCommand=cmd(y,160;shadowlength,1;);
 	};
-	table.insert( ret, t );
 
-	return ret;
+	return t;
 end;
 
 function UpdateInternal3(self, Player)

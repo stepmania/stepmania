@@ -5,7 +5,7 @@
 #include "Preference.h"
 #include "RageLog.h"
 #include "FileDownload.h"
-#include "jsoncpp/include/json/value.h"
+#include "../extern/jsoncpp/include/json/value.h"
 #include "JsonUtil.h"
 #include "SpecialFiles.h"
 class Song;

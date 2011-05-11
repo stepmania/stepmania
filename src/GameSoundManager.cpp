@@ -142,7 +142,8 @@ static void StartMusic( MusicToPlay &ToPlay )
 	{
 		LOG->Trace( "Found '%s'", ToPlay.m_sTimingFile.c_str() );
 		Song song;
-		if( SSCLoader::LoadFromSSCFile(ToPlay.m_sTimingFile, song) )
+		if( GetExtension(ToPlay.m_sTimingFile) == ".ssc" &&
+			SSCLoader::LoadFromSSCFile(ToPlay.m_sTimingFile, song) )
 		{
 			ToPlay.HasTiming = true;
 			ToPlay.m_TimingData = song.m_Timing;
@@ -151,7 +152,8 @@ static void StartMusic( MusicToPlay &ToPlay )
 			if( pStepsCabinetLights )
 				pStepsCabinetLights->GetNoteData( ToPlay.m_LightsData );
 		}
-		else if( SMLoader::LoadFromSMFile(ToPlay.m_sTimingFile, song) )
+		else if( GetExtension(ToPlay.m_sTimingFile) == ".sm" &&
+			SMLoader::LoadFromSMFile(ToPlay.m_sTimingFile, song) )
 		{
 			ToPlay.HasTiming = true;
 			ToPlay.m_TimingData = song.m_Timing;
@@ -804,12 +806,14 @@ public:
 		return 0;
 	}
 	static int PlayOnce( T* p, lua_State *L ) { RString sPath = SArg(1); p->PlayOnce( sPath ); return 0; }
+	static int PlayAnnouncer( T* p, lua_State *L ) { RString sPath = SArg(1); p->PlayOnceFromAnnouncer( sPath ); return 0; }
 	static int GetPlayerBalance( T* p, lua_State *L ) { PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1); lua_pushnumber( L, p->GetPlayerBalance(pn) ); return 1; }
 
 	LunaGameSoundManager()
 	{
 		ADD_METHOD( DimMusic );
 		ADD_METHOD( PlayOnce );
+		ADD_METHOD( PlayAnnouncer );
 		ADD_METHOD( GetPlayerBalance );
 	}
 };

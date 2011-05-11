@@ -59,7 +59,7 @@ void SMALoader::LoadFromSMATokens(
 			out.SetDifficulty( Difficulty_Challenge );
 	}
 	
-	out.SetMeter( atoi(sMeter) );
+	out.SetMeter( StringToInt(sMeter) );
 	vector<RString> saValues;
 	split( sRadarValues, ",", saValues, true );
 	int categories = NUM_RadarCategory - 1; // Fakes aren't counted in the radar values.
@@ -230,10 +230,10 @@ bool SMALoader::LoadFromSMAFile( const RString &sPath, Song &out )
 		{
 			// #DISPLAYBPM:[xxx][xxx:xxx]|[*]; 
 			if( sParams[1] == "*" )
-				out.m_DisplayBPMType = Song::DISPLAY_RANDOM;
+				out.m_DisplayBPMType = DISPLAY_BPM_RANDOM;
 			else 
 			{
-				out.m_DisplayBPMType = Song::DISPLAY_SPECIFIED;
+				out.m_DisplayBPMType = DISPLAY_BPM_SPECIFIED;
 				out.m_fSpecifiedBPMMin = StringToFloat( sParams[1] );
 				if( sParams[2].empty() )
 					out.m_fSpecifiedBPMMax = out.m_fSpecifiedBPMMin;
@@ -244,20 +244,20 @@ bool SMALoader::LoadFromSMAFile( const RString &sPath, Song &out )
 		
 		else if( sValueName=="SELECTABLE" )
 		{
-			if(!stricmp(sParams[1],"YES"))
+			if(sParams[1].EqualsNoCase("YES"))
 				out.m_SelectionDisplay = out.SHOW_ALWAYS;
-			else if(!stricmp(sParams[1],"NO"))
+			else if(sParams[1].EqualsNoCase("NO"))
 				out.m_SelectionDisplay = out.SHOW_NEVER;
 			// ROULETTE from 3.9. It was removed since UnlockManager can serve
 			// the same purpose somehow. This, of course, assumes you're using
 			// unlocks. -aj
-			else if(!stricmp(sParams[1],"ROULETTE"))
+			else if(sParams[1].EqualsNoCase("ROULETTE"))
 				out.m_SelectionDisplay = out.SHOW_ALWAYS;
 			/* The following two cases are just fixes to make sure simfiles that
 			 * used 3.9+ features are not excluded here */
-			else if(!stricmp(sParams[1],"ES") || !stricmp(sParams[1],"OMES"))
+			else if(sParams[1].EqualsNoCase("ES") || sParams[1].EqualsNoCase("OMES"))
 				out.m_SelectionDisplay = out.SHOW_ALWAYS;
-			else if( atoi(sParams[1]) > 0 )
+			else if( StringToInt(sParams[1]) > 0 )
 				out.m_SelectionDisplay = out.SHOW_ALWAYS;
 			else
 				LOG->UserLog( "Song file", sPath, "has an unknown #SELECTABLE value, \"%s\"; ignored.", sParams[1].c_str() );
@@ -430,13 +430,13 @@ void SMALoader::LoadTimingFromSMAFile( const MsdFile &msd, TimingData &out )
 				break;
 			}
 			encountered = true;
-			rowsPerMeasure = atoi( sParams[1] );
+			rowsPerMeasure = StringToInt( sParams[1] );
 		}
 		else if( sValueName=="BEATSPERMEASURE" )
 		{
 			TimeSignatureSegment new_seg;
 			new_seg.m_iStartRow = 0;
-			new_seg.m_iNumerator = atoi( sParams[1] );
+			new_seg.m_iNumerator = StringToInt( sParams[1] );
 			new_seg.m_iDenominator = 4;
 			out.AddTimeSignatureSegment( new_seg );
 		}

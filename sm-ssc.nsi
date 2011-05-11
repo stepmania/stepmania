@@ -98,8 +98,8 @@
 
 		# These indented statements modify settings for MUI_PAGE_FINISH
 		!define MUI_FINISHPAGE_NOAUTOCLOSE
-		; xxx: hardcoded to StepMania
-		!define MUI_FINISHPAGE_RUN "$INSTDIR\Program\StepMania.exe"
+
+		!define MUI_FINISHPAGE_RUN "$INSTDIR\Program\StepMania-SSE2.exe"
 		!define MUI_FINISHPAGE_RUN_NOTCHECKED
 		!define MUI_FINISHPAGE_RUN_TEXT "$(TEXT_IO_LAUNCH_THE_GAME)"
 
@@ -163,7 +163,7 @@
 
 	; generate, then include installer strings
 	;!delfile "nsis_strings_temp.inc"
-	; xxx: hardcoded to StepMania
+
 	!system '"Program\StepMania.exe" --ExportNsisStrings'
 	!include "nsis_strings_temp.inc"
 
@@ -327,8 +327,9 @@ Section "Main Section" SecMain
 	SetOutPath "$INSTDIR\NoteSkins"
 	File "NoteSkins\instructions.txt"
 
+	; common noteskin
 	SetOutPath "$INSTDIR\NoteSkins\common"
-	File /r /x CVS /x .svn "NoteSkins\common\Common"
+	File /r /x CVS /x .svn "NoteSkins\common\common"
 
 	; install dance noteskins
 	SetOutPath "$INSTDIR\NoteSkins\dance"
@@ -336,10 +337,11 @@ Section "Main Section" SecMain
 	File /r /x CVS /x .svn "NoteSkins\dance\Delta"
 	; "midi" noteskin was split out after beta 2.
 	File /r /x CVS /x .svn "NoteSkins\dance\midi-note"
-	File /r /x CVS /x .svn "NoteSkins\dance\midi-solo"
-	File /r /x CVS /x .svn "NoteSkins\dance\midi-vivid"
+	File /r /x CVS /x .svn "NoteSkins\dance\midi-note-3d"
 	File /r /x CVS /x .svn "NoteSkins\dance\midi-routine-p1"
 	File /r /x CVS /x .svn "NoteSkins\dance\midi-routine-p2"
+	File /r /x CVS /x .svn "NoteSkins\dance\midi-solo"
+	File /r /x CVS /x .svn "NoteSkins\dance\midi-vivid"
 	; retro and retrobar
 	File /r /x CVS /x .svn "NoteSkins\dance\retro"
 	File /r /x CVS /x .svn "NoteSkins\dance\retrobar"
@@ -362,6 +364,7 @@ Section "Main Section" SecMain
 	; install kb7 noteskins
 	SetOutPath "$INSTDIR\NoteSkins\kb7"
 	File /r /x CVS /x .svn "NoteSkins\kb7\default"
+	;File /r /x CVS /x .svn "NoteSkins\kb7\orbital"
 	; retrobar
 	File /r /x CVS /x .svn "NoteSkins\kb7\retrobar"
 	File /r /x CVS /x .svn "NoteSkins\kb7\retrobar-iidx"
@@ -404,7 +407,7 @@ Section "Main Section" SecMain
 
 	SetOutPath "$INSTDIR\Program"
 !ifdef INSTALL_EXECUTABLES
-	; normal exec (xxx: hardcoded to StepMania instead of ${PRODUCT_FAMILY})
+	; normal exec
 	File "Program\StepMania.exe"
 	File "Program\StepMania.vdi"
 	; sse2 exec
@@ -412,7 +415,7 @@ Section "Main Section" SecMain
 	File "Program\StepMania-SSE2.vdi"
 	; other programs
 	File "Program\Texture Font Generator.exe"
-	; this crashes so fuck it
+	; AJ can never get this built properly:
 	;File "Program\tools.exe" ; to be replaced eventually
 !endif
 !ifdef ASSOCIATE_SMZIP
@@ -450,6 +453,8 @@ Section "Main Section" SecMain
 	File "Docs\Licenses.txt"
 	File "Docs\credits.txt"
 	File "Docs\Changelog_sm-ssc.txt"
+	File "Docs\Changelog_sm5.txt"
+	File "Docs\Changelog_SSCformat.txt"
 	File "Docs\CommandLineArgs.txt"
 	File /r /x CVS /x .svn "Docs\license-ext"
 	File /r /x CVS /x .svn "Docs\Luadoc"
@@ -462,8 +467,7 @@ Section "Main Section" SecMain
 	; Create Start Menu icons
 	SetShellVarContext current  # 	'all' doesn't work on Win9x
 	CreateDirectory "$SMPROGRAMS\${PRODUCT_ID}\"
-	; xxx: StepMania.exe
-	; xxx: make desktop shortcut an option
+	; todo: make desktop shortcut an option
 	!ifdef MAKE_DESKTOP_SHORTCUT
 		CreateShortCut "$DESKTOP\$(TEXT_IO_RUN).lnk" "$INSTDIR\Program\StepMania-SSE2.exe"
 	!endif
@@ -487,8 +491,6 @@ Section "Main Section" SecMain
 	!ifdef MAKE_UPDATES_SHORTCUT
 		CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_CHECK_FOR_UPDATES).lnk" "${UPDATES_URL}"
 	!endif
-
-	; xxx: StepMania.exe
 	CreateShortCut "$INSTDIR\${PRODUCT_ID}.lnk" "$INSTDIR\Program\StepMania-SSE2.exe"
 	CreateShortCut "$INSTDIR\${PRODUCT_ID} (non-SSE2).lnk" "$INSTDIR\Program\StepMania.exe"
 !endif
@@ -565,8 +567,7 @@ Function LeaveAutorun
 	GoTo proceed
 
 	play:
-	; xxx: StepMania.exe
-	Exec "$INSTDIR\Program\StepMania.exe"
+	Exec "$INSTDIR\Program\StepMania-SSE2.exe"
 	IfErrors play_error
 	quit
 
@@ -650,7 +651,6 @@ Function PreInstall
 	!endif
 !else
 		; Check that full version is installed.
-		; xxx: StepMania.exe
 		IfFileExists "$INSTDIR\Program\StepMania.exe" proceed_with_patch
 		MessageBox MB_YESNO|MB_ICONINFORMATION "$(TEXT_IO_FULL_INSTALL_NOT_FOUND)" IDYES proceed_with_patch
 		Abort
@@ -791,7 +791,6 @@ Section "Uninstall"
 !endif
 
 !ifdef INSTALL_EXECUTABLES
-	; xxx: StepMania.exe
 	Delete "$INSTDIR\Program\StepMania.exe"
 	Delete "$INSTDIR\Program\StepMania.vdi"
 	Delete "$INSTDIR\Program\StepMania-SSE2.exe"

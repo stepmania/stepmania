@@ -12,9 +12,13 @@ struct lua_State;
 class PlayerStageStats
 {
 public:
+	/** @brief Set up the PlayerStageStats with default values. */
 	PlayerStageStats() { Init(); }
 	void Init();
 
+	/**
+	 * @brief Add stats from one PlayerStageStats to another.
+	 * @param other the other stats to add to this one. */
 	void AddStats( const PlayerStageStats& other );		// accumulate
 
 	Grade GetGrade() const;
@@ -51,14 +55,25 @@ public:
 	int		m_iPossibleGradePoints;
 	int		m_iTapNoteScores[NUM_TapNoteScore];
 	int		m_iHoldNoteScores[NUM_HoldNoteScore];
+	/** @brief The Player's current combo. */
 	int		m_iCurCombo;
+	/** @brief The Player's max combo. */
 	int		m_iMaxCombo;
+	/** @brief The Player's current miss combo. */
 	int		m_iCurMissCombo;
 	int		m_iCurScoreMultiplier;
+	/** @brief The player's current score. */
 	int		m_iScore;
+	/** @brief The theoretically highest score the Player could have at this point. */
 	int		m_iCurMaxScore;
+	/** @brief The maximum score the Player can get this goaround. */
 	int		m_iMaxScore;
-	RadarValues	m_radarPossible;	// filled in by ScreenGameplay on start of notes
+	
+	/**
+	 * @brief The possible RadarValues for a song.
+	 *
+	 * This is filled in by ScreenGameplay on the start of the notes. */
+	RadarValues	m_radarPossible;
 	RadarValues	m_radarActual;
 	/** @brief How many songs were passed by the Player? */
 	int		m_iSongsPassed;
@@ -83,18 +98,30 @@ public:
 
 	struct Combo_t
 	{
-		/* Start and size of this combo, in the same scale as the combo list
-		 * mapping and the life record. */
-		float m_fStartSecond, m_fSizeSeconds;
+		/** 
+		 * @brief The start time of the combo.
+		 *
+		 * This uses the same scale as the combo list mapping. */
+		float m_fStartSecond;
+		/**
+		 * @brief The size time of the combo.
+		 *
+		 * This uses the same scale as the life record. */
+		float m_fSizeSeconds;
 
-		// Combo size, in steps.
+		/** @brief The size of the Combo, in steps. */
 		int m_cnt;
 
-		/* Size of the combo that didn't come from this stage (rollover from the
-		 * last song). (This is a subset of cnt.) */
+		/**
+		 * @brief The size of the combo that didn't come from this stage.
+		 *
+		 * This is generally rolled over from the last song.
+		 * It is also a subset of m_cnt. */
 		int m_rollover;
 
-		// Get the size of the combo that came from this song.
+		/**
+		 * @brief Retrieve the size of the combo that came from this song.
+		 * @return this song's combo size. */
 		int GetStageCnt() const { return m_cnt - m_rollover; }
 
 		Combo_t(): m_fStartSecond(0), m_fSizeSeconds(0), m_cnt(0), m_rollover(0) { }

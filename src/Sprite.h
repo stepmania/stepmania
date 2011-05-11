@@ -99,7 +99,13 @@ private:
 	EffectMode m_EffectMode;
 	bool m_bUsingCustomTexCoords;
 	bool m_bSkipNextUpdate;
-	float m_CustomTexCoords[8];	// (x,y) * 4: top left, bottom left, bottom right, top right
+	/**
+	 * @brief Set up the coordinates for the texture.
+	 *
+	 * The first two parameters are the (x, y) coordinates for the top left.
+	 * The remaining six are for the (x, y) coordinates for bottom left,
+	 * bottom right, and top right respectively. */
+	float m_CustomTexCoords[8];
 
 	// Remembered clipped dimensions are applied on Load().
 	// -1 means no remembered dimensions;

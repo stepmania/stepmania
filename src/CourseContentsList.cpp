@@ -78,7 +78,9 @@ void CourseContentsList::SetItemFromGameState( Actor *pActor, int iCourseEntryIn
 	FOREACH_HumanPlayer(pn)
 	{
 		const Trail *pTrail = GAMESTATE->m_pCurTrail[pn];
-		if( pTrail == NULL ||  iCourseEntryIndex >= (int) pTrail->m_vEntries.size() )
+		if( pTrail == NULL
+			|| iCourseEntryIndex >= (int) pTrail->m_vEntries.size()
+			|| iCourseEntryIndex >= (int) pCourse->m_vEntries.size() )
 			continue;
 
 		const TrailEntry *te = &pTrail->m_vEntries[iCourseEntryIndex];
