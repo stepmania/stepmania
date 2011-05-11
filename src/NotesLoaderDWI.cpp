@@ -206,7 +206,7 @@ static bool LoadFromDWITokens(
 	DEFAULT_FAIL( out.m_StepsType );
 	}
 
-	int iNumFeet = atoi(sNumFeet);
+	int iNumFeet = StringToInt(sNumFeet);
 	// out.SetDescription(sDescription); // Don't put garbage in the description.
 	out.SetMeter(iNumFeet);
 	out.SetDifficulty( DwiCompatibleStringToDifficulty(sDescription) );
@@ -517,7 +517,7 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, set<RString> &Bla
 
 		else if( 0==stricmp(sValueName,"GAP") )
 			// the units of GAP is 1/1000 second
-			out.m_Timing.m_fBeat0OffsetInSeconds = -atoi( sParams[1] ) / 1000.0f;
+			out.m_Timing.m_fBeat0OffsetInSeconds = -StringToInt( sParams[1] ) / 1000.0f;
 
 		else if( 0==stricmp(sValueName,"SAMPLESTART") )
 			out.m_fMusicSampleStartSeconds = ParseBrokenDWITimestamp(sParams[1], sParams[2], sParams[3]);

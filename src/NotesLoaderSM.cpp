@@ -60,7 +60,7 @@ void SMLoader::LoadFromSMTokens(
 			out.SetDifficulty( Difficulty_Challenge );
 	}
 
-	out.SetMeter( atoi(sMeter) );
+	out.SetMeter( StringToInt(sMeter) );
 	vector<RString> saValues;
 	split( sRadarValues, ",", saValues, true );
 	int categories = NUM_RadarCategory - 1; // Fakes aren't counted in the radar values.
@@ -309,8 +309,8 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 
 				TimeSignatureSegment seg;
 				seg.m_iStartRow = BeatToNoteRow(fBeat);
-				seg.m_iNumerator = atoi( vs2[1] ); 
-				seg.m_iDenominator = atoi( vs2[2] ); 
+				seg.m_iNumerator = StringToInt( vs2[1] ); 
+				seg.m_iDenominator = StringToInt( vs2[2] ); 
 
 				if( fBeat < 0 )
 				{
@@ -352,7 +352,7 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 				}
 
 				const float fTickcountBeat = StringToFloat( arrayTickcountValues[0] );
-				int iTicks = atoi( arrayTickcountValues[1] );
+				int iTicks = StringToInt( arrayTickcountValues[1] );
 				// you're lazy, let SM do the work for you... -DaisuMaster
 				if( iTicks < 1) iTicks = 1;
 				if( iTicks > ROWS_PER_BEAT ) iTicks = ROWS_PER_BEAT;
@@ -411,7 +411,7 @@ bool SMLoader::LoadFromBGChangesString( BackgroundChange &change, const RString 
 		// Backward compatibility:
 		if( change.m_def.m_sEffect.empty() )
 		{
-			bool bLoop = atoi( aBGChangeValues[5] ) != 0;
+			bool bLoop = StringToInt( aBGChangeValues[5] ) != 0;
 			if( !bLoop )
 				change.m_def.m_sEffect = SBE_StretchNoLoop;
 		}
@@ -421,7 +421,7 @@ bool SMLoader::LoadFromBGChangesString( BackgroundChange &change, const RString 
 		// Backward compatibility:
 		if( change.m_def.m_sEffect.empty() )
 		{
-			bool bRewindMovie = atoi( aBGChangeValues[4] ) != 0;
+			bool bRewindMovie = StringToInt( aBGChangeValues[4] ) != 0;
 			if( bRewindMovie )
 				change.m_def.m_sEffect = SBE_StretchRewind;
 		}
@@ -430,7 +430,7 @@ bool SMLoader::LoadFromBGChangesString( BackgroundChange &change, const RString 
 		// param 9 overrides this.
 		// Backward compatibility:
 		if( change.m_sTransition.empty() )
-			change.m_sTransition = (atoi( aBGChangeValues[3] ) != 0) ? "CrossFade" : "";
+			change.m_sTransition = (StringToInt( aBGChangeValues[3] ) != 0) ? "CrossFade" : "";
 		// fall through
 	case 3:
 		change.m_fRate = StringToFloat( aBGChangeValues[2] );
@@ -560,12 +560,12 @@ bool SMLoader::LoadFromSMFile( const RString &sPath, Song &out, bool bFromCache 
 		else if( sValueName=="HASMUSIC" )
 		{
 			if( bFromCache )
-				out.m_bHasMusic = atoi( sParams[1] ) != 0;
+				out.m_bHasMusic = StringToInt( sParams[1] ) != 0;
 		}
 		else if( sValueName=="HASBANNER" )
 		{
 			if( bFromCache )
-				out.m_bHasBanner = atoi( sParams[1] ) != 0;
+				out.m_bHasBanner = StringToInt( sParams[1] ) != 0;
 		}
 
 		else if( sValueName=="SAMPLESTART" )
@@ -609,7 +609,7 @@ bool SMLoader::LoadFromSMFile( const RString &sPath, Song &out, bool bFromCache 
 			 * used 3.9+ features are not excluded here */
 			else if(!stricmp(sParams[1],"ES") || !stricmp(sParams[1],"OMES"))
 				out.m_SelectionDisplay = out.SHOW_ALWAYS;
-			else if( atoi(sParams[1]) > 0 )
+			else if( StringToInt(sParams[1]) > 0 )
 				out.m_SelectionDisplay = out.SHOW_ALWAYS;
 			else
 				LOG->UserLog( "Song file", sPath, "has an unknown #SELECTABLE value, \"%s\"; ignored.", sParams[1].c_str() );

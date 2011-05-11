@@ -346,8 +346,8 @@ static void ReadTimeSigs( const NameToData_t &mapNameToData, MeasureToTimeSig_t 
 
 		// this is step or offset data.  Looks like "#00705"
 		const RString &sData = it->second;
-		int iMeasureNo	= atoi( sName.substr(1, 3).c_str() );
-		int iPMSTrackNo	= atoi( sName.substr(4, 2).c_str() );
+		int iMeasureNo	= StringToInt( sName.substr(1, 3) );
+		int iPMSTrackNo	= StringToInt( sName.substr(4, 2) );
 		if( iPMSTrackNo == PMS_TRACK_TIME_SIG )
 			out[iMeasureNo] = StringToFloat( sData );
 	}
@@ -367,9 +367,9 @@ static bool LoadFromPMSFile( const RString &sPath, const NameToData_t &mapNameTo
 	int iPlayer = -1;
 	RString sData;
 	if( GetTagFromMap( mapNameToData, "#player", sData ) )
-		iPlayer = atoi(sData);
+		iPlayer = StringToInt(sData);
 	if( GetTagFromMap( mapNameToData, "#playlevel", sData ) )
-		out.SetMeter( atoi(sData) );
+		out.SetMeter( StringToInt(sData) );
 
 	NoteData ndNotes;
 	ndNotes.SetNumTracks( NUM_PMS_TRACKS );
@@ -396,8 +396,8 @@ static bool LoadFromPMSFile( const RString &sPath, const NameToData_t &mapNameTo
 			 continue;
 
 		// this is step or offset data.  Looks like "#00705"
-		int iMeasureNo = atoi( sName.substr(1,3).c_str() );
-		int iRawTrackNum = atoi( sName.substr(4,2).c_str() );
+		int iMeasureNo = StringToInt( sName.substr(1,3) );
+		int iRawTrackNum = StringToInt( sName.substr(4,2) );
 		int iRowNo = GetMeasureStartRow( mapMeasureToTimeSig, iMeasureNo, sigAdjustments );
 		float fBeatsPerMeasure = GetBeatsPerMeasure( mapMeasureToTimeSig, iMeasureNo, sigAdjustments );
 		const RString &sNoteData = it->second;
@@ -649,8 +649,8 @@ static void ReadGlobalTags( const NameToData_t &mapNameToData, Song &out, Measur
 		if( sName.size() != 6 || sName[0] != '#' || !IsAnInt( sName.substr(1,5) ) )
 			 continue;
 		// this is step or offset data.  Looks like "#00705"
-		int iMeasureNo	= atoi( sName.substr(1, 3).c_str() );
-		int iPMSTrackNo	= atoi( sName.substr(4, 2).c_str() );
+		int iMeasureNo	= StringToInt( sName.substr(1, 3) );
+		int iPMSTrackNo	= StringToInt( sName.substr(4, 2) );
 		int iStepIndex = GetMeasureStartRow( mapMeasureToTimeSig, iMeasureNo, sigAdjustmentsOut );
 		float fBeatsPerMeasure = GetBeatsPerMeasure( mapMeasureToTimeSig, iMeasureNo, sigAdjustmentsOut );
 		int iRowsPerMeasure = BeatToNoteRow( fBeatsPerMeasure );

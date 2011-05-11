@@ -35,7 +35,7 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, const Song &song,
 		// handle the data
 		if( sValueName=="TICKCOUNT" )
 		{
-			iTickCount = atoi( sParams[1] );
+			iTickCount = StringToInt( sParams[1] );
 			if( iTickCount <= 0 )
 			{
 				LOG->UserLog( "Song file", sPath, "has an invalid tick count: %d.", iTickCount );
@@ -50,7 +50,7 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, const Song &song,
 		}
 		else if( sValueName=="DIFFICULTY" )
 		{
-			out.SetMeter( max(atoi(sParams[1]), 0) );
+			out.SetMeter( max(StringToInt(sParams[1]), 0) );
 		}
 		// new cases from Aldo_MX's fork:
 		else if( sValueName=="PLAYER" )
@@ -190,7 +190,7 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, const Song &song,
 		else if ( BeginsWith(sRowString, "|T") )
 		{
 			RString temp = sRowString.substr(2,sRowString.size()-3);
-			newTick = atoi(temp);
+			newTick = StringToInt(temp);
 			bTickChangeNeeded = true;
 			continue;
 		}
@@ -401,7 +401,7 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 			/* TICKCOUNT will be used below if there are DM compliant BPM changes
 			 * and stops. It will be called again in LoadFromKSFFile for the
 			 * actual steps. */
-			iTickCount = atoi( sParams[1] );
+			iTickCount = StringToInt( sParams[1] );
 			iTickCount = iTickCount > 0 ? iTickCount : 2; // again, Direct Move uses 4 as a default.
 			// add a tickcount for those using the [Player]
 			// CheckpointsUseTimeSignatures metric. -aj

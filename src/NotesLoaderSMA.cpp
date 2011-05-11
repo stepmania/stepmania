@@ -59,7 +59,7 @@ void SMALoader::LoadFromSMATokens(
 			out.SetDifficulty( Difficulty_Challenge );
 	}
 	
-	out.SetMeter( atoi(sMeter) );
+	out.SetMeter( StringToInt(sMeter) );
 	vector<RString> saValues;
 	split( sRadarValues, ",", saValues, true );
 	int categories = NUM_RadarCategory - 1; // Fakes aren't counted in the radar values.
@@ -257,7 +257,7 @@ bool SMALoader::LoadFromSMAFile( const RString &sPath, Song &out )
 			 * used 3.9+ features are not excluded here */
 			else if(!stricmp(sParams[1],"ES") || !stricmp(sParams[1],"OMES"))
 				out.m_SelectionDisplay = out.SHOW_ALWAYS;
-			else if( atoi(sParams[1]) > 0 )
+			else if( StringToInt(sParams[1]) > 0 )
 				out.m_SelectionDisplay = out.SHOW_ALWAYS;
 			else
 				LOG->UserLog( "Song file", sPath, "has an unknown #SELECTABLE value, \"%s\"; ignored.", sParams[1].c_str() );
@@ -430,13 +430,13 @@ void SMALoader::LoadTimingFromSMAFile( const MsdFile &msd, TimingData &out )
 				break;
 			}
 			encountered = true;
-			rowsPerMeasure = atoi( sParams[1] );
+			rowsPerMeasure = StringToInt( sParams[1] );
 		}
 		else if( sValueName=="BEATSPERMEASURE" )
 		{
 			TimeSignatureSegment new_seg;
 			new_seg.m_iStartRow = 0;
-			new_seg.m_iNumerator = atoi( sParams[1] );
+			new_seg.m_iNumerator = StringToInt( sParams[1] );
 			new_seg.m_iDenominator = 4;
 			out.AddTimeSignatureSegment( new_seg );
 		}

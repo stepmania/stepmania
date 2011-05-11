@@ -251,7 +251,7 @@ RString NoteSkinManager::GetMetric( const RString &sButtonName, const RString &s
 
 int NoteSkinManager::GetMetricI( const RString &sButtonName, const RString &sValueName )
 {
-	return atoi( GetMetric(sButtonName,sValueName) );
+	return StringToInt( GetMetric(sButtonName,sValueName) );
 }
 
 float NoteSkinManager::GetMetricF( const RString &sButtonName, const RString &sValueName )
@@ -261,7 +261,8 @@ float NoteSkinManager::GetMetricF( const RString &sButtonName, const RString &sV
 
 bool NoteSkinManager::GetMetricB( const RString &sButtonName, const RString &sValueName )
 {
-	return atoi( GetMetric(sButtonName,sValueName) ) != 0;
+	// Could also call GetMetricI here...hmm.
+	return StringToInt( GetMetric(sButtonName,sValueName) ) != 0;
 }
 
 apActorCommands NoteSkinManager::GetMetricA( const RString &sButtonName, const RString &sValueName )

@@ -154,7 +154,7 @@ public:
 				RageException::Throw( "Parse error in \"ScreenOptionsMaster::%s\".", sParam.c_str() );
 
 			m_Def.m_bOneChoiceForAllPlayers = false;
-			const int NumCols = atoi( lCmds.v[0].m_vsArgs[0] );
+			const int NumCols = StringToInt( lCmds.v[0].m_vsArgs[0] );
 			for( unsigned i=1; i<lCmds.v.size(); i++ )
 			{
 				const Command &cmd = lCmds.v[i];
@@ -165,7 +165,7 @@ public:
 				else if( sName == "selectone" )		m_Def.m_selectType = SELECT_ONE;
 				else if( sName == "selectnone" )	m_Def.m_selectType = SELECT_NONE;
 				else if( sName == "showoneinrow" )	m_Def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
-				else if( sName == "default" )		m_Def.m_iDefault = atoi( cmd.GetArg(1).s ) - 1; // match ENTRY_MODE
+				else if( sName == "default" )		m_Def.m_iDefault = StringToInt( cmd.GetArg(1).s ) - 1; // match ENTRY_MODE
 				else if( sName == "reloadrowmessages" )
 				{
 					for( unsigned a=1; a<cmd.m_vsArgs.size(); a++ )
@@ -177,7 +177,7 @@ public:
 					for( unsigned a=1; a<cmd.m_vsArgs.size(); a++ )
 					{
 						RString sArg = cmd.m_vsArgs[a];
-						PlayerNumber pn = (PlayerNumber)(atoi(sArg)-1);
+						PlayerNumber pn = (PlayerNumber)(StringToInt(sArg)-1);
 						ASSERT( pn >= 0 && pn < NUM_PLAYERS );
 						m_Def.m_vEnabledForPlayers.insert( pn );
 					}

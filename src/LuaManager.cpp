@@ -11,7 +11,7 @@
 #include "Command.h"
 #include "RageTypes.h"
 
-#include <sstream>
+#include <sstream> // conversion for lua functions.
 #include <csetjmp>
 #include <cassert>
 #include <map>

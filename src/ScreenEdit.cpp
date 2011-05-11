@@ -2617,9 +2617,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if( SM == SM_BackFromDifficultyMeterChange )
 	{
-		int i;
-		std::istringstream ss( ScreenTextEntry::s_sLastAnswer );
-		ss >> i;
+		int i = StringToInt( ScreenTextEntry::s_sLastAnswer );
 		GAMESTATE->m_pCurSteps[PLAYER_1]->SetMeter(i);
 		SetDirty( true );
 	}
@@ -2646,7 +2644,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if( SM == SM_BackFromTimeSignatureNumeratorChange )
 	{
-		int iNum = atoi( ScreenTextEntry::s_sLastAnswer );
+		int iNum = StringToInt( ScreenTextEntry::s_sLastAnswer );
 		if( iNum > 0 )
 		{
 			m_pSong->m_Timing.SetTimeSignatureNumeratorAtBeat( GAMESTATE->m_fSongBeat, iNum );
@@ -2655,7 +2653,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if ( SM == SM_BackFromTimeSignatureDenominatorChange )
 	{
-		int iDen = atoi( ScreenTextEntry::s_sLastAnswer );
+		int iDen = StringToInt( ScreenTextEntry::s_sLastAnswer );
 		if( iDen > 0)
 		{
 			m_pSong->m_Timing.SetTimeSignatureDenominatorAtBeat( GAMESTATE->m_fSongBeat, iDen );
@@ -2664,7 +2662,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if ( SM == SM_BackFromTickcountChange )
 	{
-		int iTick = atoi( ScreenTextEntry::s_sLastAnswer );
+		int iTick = StringToInt( ScreenTextEntry::s_sLastAnswer );
 		if ( iTick >= 0 && iTick <= ROWS_PER_BEAT )
 		{
 			m_pSong->m_Timing.SetTickcountAtBeat( GAMESTATE->m_fSongBeat, iTick );
@@ -2673,7 +2671,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if ( SM == SM_BackFromComboChange )
 	{
-		int iCombo = atoi( ScreenTextEntry::s_sLastAnswer );
+		int iCombo = StringToInt( ScreenTextEntry::s_sLastAnswer );
 		if ( iCombo >= 0 )
 		{
 			m_pSong->m_Timing.SetComboAtBeat( GAMESTATE->m_fSongBeat, iCombo );

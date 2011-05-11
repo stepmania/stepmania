@@ -61,7 +61,7 @@ bool LoadFromBGSSCChangesString( BackgroundChange &change, const RString &sBGCha
 			// Backward compatibility:
 			if( change.m_def.m_sEffect.empty() )
 			{
-				bool bLoop = atoi( aBGChangeValues[5] ) != 0;
+				bool bLoop = StringToInt( aBGChangeValues[5] ) != 0;
 				if( !bLoop )
 					change.m_def.m_sEffect = SBE_StretchNoLoop;
 			}
@@ -71,7 +71,7 @@ bool LoadFromBGSSCChangesString( BackgroundChange &change, const RString &sBGCha
 			// Backward compatibility:
 			if( change.m_def.m_sEffect.empty() )
 			{
-				bool bRewindMovie = atoi( aBGChangeValues[4] ) != 0;
+				bool bRewindMovie = StringToInt( aBGChangeValues[4] ) != 0;
 				if( bRewindMovie )
 					change.m_def.m_sEffect = SBE_StretchRewind;
 			}
@@ -80,7 +80,7 @@ bool LoadFromBGSSCChangesString( BackgroundChange &change, const RString &sBGCha
 			// param 9 overrides this.
 			// Backward compatibility:
 			if( change.m_sTransition.empty() )
-				change.m_sTransition = (atoi( aBGChangeValues[3] ) != 0) ? "CrossFade" : "";
+				change.m_sTransition = (StringToInt( aBGChangeValues[3] ) != 0) ? "CrossFade" : "";
 			// fall through
 		case 3:
 			change.m_fRate = StringToFloat( aBGChangeValues[2] );
@@ -287,7 +287,7 @@ bool SSCLoader::LoadFromSSCFile( const RString &sPath, Song &out, bool bFromCach
 					 * used 3.9+ features are not excluded here */
 					else if(!stricmp(sParams[1],"ES") || !stricmp(sParams[1],"OMES"))
 						out.m_SelectionDisplay = out.SHOW_ALWAYS;
-					else if( atoi(sParams[1]) > 0 )
+					else if( StringToInt(sParams[1]) > 0 )
 						out.m_SelectionDisplay = out.SHOW_ALWAYS;
 					else
 						LOG->UserLog( "Song file", sPath, "has an unknown #SELECTABLE value, \"%s\"; ignored.", sParams[1].c_str() );
@@ -570,8 +570,8 @@ bool SSCLoader::LoadFromSSCFile( const RString &sPath, Song &out, bool bFromCach
 
 						TimeSignatureSegment seg;
 						seg.m_iStartRow = BeatToNoteRow(fBeat);
-						seg.m_iNumerator = atoi( vs2[1] ); 
-						seg.m_iDenominator = atoi( vs2[2] ); 
+						seg.m_iNumerator = StringToInt( vs2[1] ); 
+						seg.m_iDenominator = StringToInt( vs2[2] ); 
 
 						if( fBeat < 0 )
 						{
@@ -613,7 +613,7 @@ bool SSCLoader::LoadFromSSCFile( const RString &sPath, Song &out, bool bFromCach
 						}
 
 						const float fTickcountBeat = StringToFloat( arrayTickcountValues[0] );
-						const int iTicks = atoi( arrayTickcountValues[1] );
+						const int iTicks = StringToInt( arrayTickcountValues[1] );
 						TickcountSegment new_seg( BeatToNoteRow(fTickcountBeat), iTicks );
 
 						if(iTicks >= 1 && iTicks <= ROWS_PER_BEAT ) // Constants
@@ -644,7 +644,7 @@ bool SSCLoader::LoadFromSSCFile( const RString &sPath, Song &out, bool bFromCach
 							continue;
 						}
 						const float fComboBeat = StringToFloat( arrayComboValues[0] );
-						const int iCombos = atoi( arrayComboValues[1] );
+						const int iCombos = StringToInt( arrayComboValues[1] );
 						ComboSegment new_seg( BeatToNoteRow( fComboBeat ), iCombos );
 						out.m_Timing.AddComboSegment( new_seg );
 					}
@@ -673,13 +673,13 @@ bool SSCLoader::LoadFromSSCFile( const RString &sPath, Song &out, bool bFromCach
 				else if( sValueName=="HASMUSIC" )
 				{
 					if( bFromCache )
-						out.m_bHasMusic = atoi( sParams[1] ) != 0;
+						out.m_bHasMusic = StringToInt( sParams[1] ) != 0;
 				}
 
 				else if( sValueName=="HASBANNER" )
 				{
 					if( bFromCache )
-						out.m_bHasBanner = atoi( sParams[1] ) != 0;
+						out.m_bHasBanner = StringToInt( sParams[1] ) != 0;
 				}
 
 				// This tag will get us to the next section.
@@ -714,7 +714,7 @@ bool SSCLoader::LoadFromSSCFile( const RString &sPath, Song &out, bool bFromCach
 
 				else if( sValueName=="METER" )
 				{
-					pNewNotes->SetMeter( atoi( sParams[1] ) );
+					pNewNotes->SetMeter( StringToInt( sParams[1] ) );
 				}
 
 				else if( sValueName=="RADARVALUES" )
@@ -986,7 +986,7 @@ bool SSCLoader::LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePat
 
 		else if( sValueName=="METER" )
 		{
-			pNewNotes->SetMeter( atoi( sParams[1] ) );
+			pNewNotes->SetMeter( StringToInt( sParams[1] ) );
 			bSSCFormat = true;
 		}
 

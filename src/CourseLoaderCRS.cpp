@@ -85,7 +85,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 		}
 		else if( 0 == stricmp(sValueName, "LIVES") )
 		{
-			out.m_iLives = max( atoi(sParams[1]), 0 );
+			out.m_iLives = max( StringToInt(sParams[1]), 0 );
 		}
 		else if( 0 == stricmp(sValueName, "GAINSECONDS") )
 		{
@@ -95,7 +95,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 		{
 			if( sParams.params.size() == 2 )
 			{
-				out.m_iCustomMeter[Difficulty_Medium] = max( atoi(sParams[1]), 0 ); /* compat */
+				out.m_iCustomMeter[Difficulty_Medium] = max( StringToInt(sParams[1]), 0 ); /* compat */
 			}
 			else if( sParams.params.size() == 3 )
 			{
@@ -105,7 +105,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 					LOG->UserLog( "Course file", sPath, "contains an invalid #METER string: \"%s\"", sParams[1].c_str() );
 					continue;
 				}
-				out.m_iCustomMeter[cd] = max( atoi(sParams[2]), 0 );
+				out.m_iCustomMeter[cd] = max( StringToInt(sParams[2]), 0 );
 			}
 		}
 		// todo: add COMBO and COMBOMODE from DWI CRS files? -aj
@@ -167,28 +167,28 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 			// most played
 			if( sParams[1].Left(strlen("BEST")) == "BEST" )
 			{
-				new_entry.iChooseIndex = atoi( sParams[1].Right(sParams[1].size()-strlen("BEST")) ) - 1;
+				new_entry.iChooseIndex = StringToInt( sParams[1].Right(sParams[1].size()-strlen("BEST")) ) - 1;
 				CLAMP( new_entry.iChooseIndex, 0, 500 );
 				new_entry.songSort = SongSort_MostPlays;
 			}
 			// least played
 			else if( sParams[1].Left(strlen("WORST")) == "WORST" )
 			{
-				new_entry.iChooseIndex = atoi( sParams[1].Right(sParams[1].size()-strlen("WORST")) ) - 1;
+				new_entry.iChooseIndex = StringToInt( sParams[1].Right(sParams[1].size()-strlen("WORST")) ) - 1;
 				CLAMP( new_entry.iChooseIndex, 0, 500 );
 				new_entry.songSort = SongSort_FewestPlays;
 			}
 			// best grades
 			else if( sParams[1].Left(strlen("GRADEBEST")) == "GRADEBEST" )
 			{
-				new_entry.iChooseIndex = atoi( sParams[1].Right(sParams[1].size()-strlen("GRADEBEST")) ) - 1;
+				new_entry.iChooseIndex = StringToInt( sParams[1].Right(sParams[1].size()-strlen("GRADEBEST")) ) - 1;
 				CLAMP( new_entry.iChooseIndex, 0, 500 );
 				new_entry.songSort = SongSort_TopGrades;
 			}
 			// worst grades
 			else if( sParams[1].Left(strlen("GRADEWORST")) == "GRADEWORST" )
 			{
-				new_entry.iChooseIndex = atoi( sParams[1].Right(sParams[1].size()-strlen("GRADEWORST")) ) - 1;
+				new_entry.iChooseIndex = StringToInt( sParams[1].Right(sParams[1].size()-strlen("GRADEWORST")) ) - 1;
 				CLAMP( new_entry.iChooseIndex, 0, 500 );
 				new_entry.songSort = SongSort_LowestGrades;
 			}
@@ -284,7 +284,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 					else if( !sMod.CompareNoCase("nodifficult") )
 						new_entry.bNoDifficult = true;
 					else if( sMod.length() > 5 && !sMod.Left(5).CompareNoCase("award") )
-						new_entry.iGainLives = atoi( sMod.substr(5).c_str() );
+						new_entry.iGainLives = StringToInt( sMod.substr(5) );
 					else
 						continue;
 					mods.erase( mods.begin() + j );
@@ -306,8 +306,8 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 
 		else if( bFromCache && !stricmp(sValueName, "RADAR") )
 		{
-			StepsType st = (StepsType) atoi(sParams[1]);
-			CourseDifficulty cd = (CourseDifficulty) atoi( sParams[2] );
+			StepsType st = (StepsType) StringToInt(sParams[1]);
+			CourseDifficulty cd = (CourseDifficulty) StringToInt( sParams[2] );
 
 			RadarValues rv;
 			rv.FromString( sParams[3] );
