@@ -742,7 +742,7 @@ void NoteField::DrawPrimitives()
 	// Draw beat bars
 	if( GAMESTATE->IsEditing() || SHOW_BEAT_BARS )
 	{
-		const vector<TimeSignatureSegment> &vTimeSignatureSegments = GAMESTATE->m_pCurSteps[PLAYER_1]->m_Timing.m_vTimeSignatureSegments;
+		const vector<TimeSignatureSegment> &vTimeSignatureSegments = GAMESTATE->m_pCurSteps[m_pPlayerState->m_PlayerNumber]->m_Timing.m_vTimeSignatureSegments;
 		int iMeasureIndex = 0;
 		FOREACH_CONST( TimeSignatureSegment, vTimeSignatureSegments, iter )
 		{
@@ -785,7 +785,7 @@ void NoteField::DrawPrimitives()
 	{
 		ASSERT(GAMESTATE->m_pCurSong);
 
-		const TimingData &timing = GAMESTATE->m_pCurSteps[PLAYER_1]->m_Timing;
+		const TimingData &timing = GAMESTATE->m_pCurSteps[m_pPlayerState->m_PlayerNumber]->m_Timing;
 		
 		// BPM text
 		FOREACH_CONST( BPMSegment, timing.m_BPMSegments, seg )
