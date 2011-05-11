@@ -194,7 +194,7 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, const Song &song,
 			RString temp = sRowString.substr(2,sRowString.size()-3);
 			newTick = StringToInt(temp);
 			bTickChangeNeeded = true;
-			out.m_Timing.AddTickcountSegment(TickcountSegment(fCurBeat, newTick));
+			out.m_Timing.AddTickcountSegment(TickcountSegment(BeatToNoteRow(fCurBeat), newTick));
 			continue;
 		}
 		else
