@@ -1142,26 +1142,30 @@ void ScreenEdit::UpdateTextInfo()
 
 void ScreenEdit::DrawPrimitives()
 {
-	// HACK:  Draw using the trailing beat
-	float fSongBeat = GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat;	// save song beat
-	float fSongBeatNoOffset = GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeatNoOffset;
-	float fSongBeatVisible = GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeatVisible;
 
-	if( !m_pSoundMusic->IsPlaying() )
+	if( m_pSoundMusic->IsPlaying() )
 	{
-		GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat = m_fTrailingBeat;	// put trailing beat in effect
-		GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeatNoOffset = m_fTrailingBeat;	// put trailing beat in effect
-		GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeatVisible = m_fTrailingBeat;	// put trailing beat in effect
+		ScreenWithMenuElements::DrawPrimitives();
+		return;
 	}
+
+	// HACK:  Draw using the trailing beat
+	PlayerState *pPlayerState = const_cast<PlayerState *> (m_NoteFieldEdit.GetPlayerState());
+	
+	float fSongBeat = pPlayerState->m_Position.m_fSongBeat;	// save song beat
+	float fSongBeatNoOffset = pPlayerState->m_Position.m_fSongBeatNoOffset;
+	float fSongBeatVisible = pPlayerState->m_Position.m_fSongBeatVisible;
+
+	pPlayerState->m_Position.m_fSongBeat = m_fTrailingBeat;	// put trailing beat in effect
+	pPlayerState->m_Position.m_fSongBeatNoOffset = m_fTrailingBeat;	// put trailing beat in effect
+	pPlayerState->m_Position.m_fSongBeatVisible = m_fTrailingBeat;	// put trailing beat in effect
 
 	ScreenWithMenuElements::DrawPrimitives();
 
-	if( !m_pSoundMusic->IsPlaying() )
-	{
-		GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat = fSongBeat;	// restore real song beat
-		GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeatNoOffset = fSongBeatNoOffset;
-		GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeatVisible = fSongBeatVisible;
-	}
+	pPlayerState->m_Position.m_fSongBeat = fSongBeat;	// restore real song beat
+	pPlayerState->m_Position.m_fSongBeatNoOffset = fSongBeatNoOffset;
+	pPlayerState->m_Position.m_fSongBeatVisible = fSongBeatVisible;
+
 }
 
 void ScreenEdit::Input( const InputEventPlus &input )
