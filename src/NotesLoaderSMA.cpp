@@ -244,18 +244,18 @@ bool SMALoader::LoadFromSMAFile( const RString &sPath, Song &out )
 		
 		else if( sValueName=="SELECTABLE" )
 		{
-			if(!stricmp(sParams[1],"YES"))
+			if(sParams[1].EqualsNoCase("YES"))
 				out.m_SelectionDisplay = out.SHOW_ALWAYS;
-			else if(!stricmp(sParams[1],"NO"))
+			else if(sParams[1].EqualsNoCase("NO"))
 				out.m_SelectionDisplay = out.SHOW_NEVER;
 			// ROULETTE from 3.9. It was removed since UnlockManager can serve
 			// the same purpose somehow. This, of course, assumes you're using
 			// unlocks. -aj
-			else if(!stricmp(sParams[1],"ROULETTE"))
+			else if(sParams[1].EqualsNoCase("ROULETTE"))
 				out.m_SelectionDisplay = out.SHOW_ALWAYS;
 			/* The following two cases are just fixes to make sure simfiles that
 			 * used 3.9+ features are not excluded here */
-			else if(!stricmp(sParams[1],"ES") || !stricmp(sParams[1],"OMES"))
+			else if(sParams[1].EqualsNoCase("ES") || sParams[1].EqualsNoCase("OMES"))
 				out.m_SelectionDisplay = out.SHOW_ALWAYS;
 			else if( StringToInt(sParams[1]) > 0 )
 				out.m_SelectionDisplay = out.SHOW_ALWAYS;

@@ -390,15 +390,15 @@ void BGAnimationLayer::LoadFromNode( const XNode* pNode )
 		// Check for string match first, then do integer match.
 		// "if(StringType(type)==0)" was matching against all string matches.
 		// -Chris
-		if( stricmp(type,"sprite")==0 )
+		if( type.EqualsNoCase("sprite") )
 		{
 			m_Type = TYPE_SPRITE;
 		}
-		else if( stricmp(type,"particles")==0 )
+		else if( type.EqualsNoCase("particles") )
 		{
 			m_Type = TYPE_PARTICLES;
 		}
-		else if( stricmp(type,"tiles")==0 )
+		else if( type.EqualsNoCase("tiles") )
 		{
 			m_Type = TYPE_TILES;
 		}
