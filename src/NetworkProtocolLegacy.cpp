@@ -25,13 +25,13 @@ void NetworkProtocolLegacy::SendLogin(uint8_t iPlayer, uint8_t iAuthMethod, RStr
 {
 	// broken
 	/*
-	m_SMOnlinePacket.Clear();
-	m_SMOnlinePacket.Write1(0); // login
-	m_SMOnlinePacket.Write1( iPlayer ); // Player
-	m_SMOnlinePacket.Write1( iAuthMethod ); // Auth method
-	m_SMOnlinePacket.WriteString( sPlayerName );
-	m_SMOnlinePacket.WriteString( sHashedName );
-	SendSMOnline(&m_SMOnlinePacket);
+	NSMAN->m_SMOnlinePacket.Clear();
+	NSMAN->m_SMOnlinePacket.Write1(0); // login
+	NSMAN->m_SMOnlinePacket.Write1( iPlayer ); // Player
+	NSMAN->m_SMOnlinePacket.Write1( iAuthMethod ); // Auth method
+	NSMAN->m_SMOnlinePacket.WriteString( sPlayerName );
+	NSMAN->m_SMOnlinePacket.WriteString( sHashedName );
+	SendSMOnline(NSMAN->&m_SMOnlinePacket);
 	*/
 }
 
