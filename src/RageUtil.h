@@ -405,6 +405,16 @@ void MakeUpper( char *p, size_t iLen );
 void MakeLower( char *p, size_t iLen );
 void MakeUpper( wchar_t *p, size_t iLen );
 void MakeLower( wchar_t *p, size_t iLen );
+/**
+ * @brief Have a standard way of converting Strings to integers.
+ * @param sString the string to convert.
+ * @return the integer we are after. */
+int StringToInt( const RString &sString );
+/**
+ * @brief Have a standard way of converting integers to Strings.
+ * @param iNum the integer to convert.
+ * @return the string we are after. */
+RString IntToString( const int &iNum );
 float StringToFloat( const RString &sString );
 bool StringToFloat( const RString &sString, float &fOut );
 

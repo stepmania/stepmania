@@ -63,7 +63,7 @@ void ModIcon::Set( const RString &_sText )
 	};
 
 	for( unsigned i=0; i<ARRAYLEN(sStopWords); i++ )
-		if( 0==stricmp(sText,sStopWords[i]) )
+		if( sText.EqualsNoCase(sStopWords[i]) )
 			sText = "";
 
 	sText.Replace( " ", "\n" );

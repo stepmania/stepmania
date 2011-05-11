@@ -398,8 +398,8 @@ static void ReadTimeSigs( const NameToData_t &mapNameToData, MeasureToTimeSig_t 
 		if( sName.size() != 6 || sName[0] != '#' || !IsAnInt( sName.substr(1,5) ) )
 			continue;
 		// this is step or offset data.  Looks like "#00705"
-		int iMeasureNo	= atoi( sName.substr(1, 3).c_str() );
-		int iBMSTrackNo	= atoi( sName.substr(4, 2).c_str() );
+		int iMeasureNo	= StringToInt( sName.substr(1, 3) );
+		int iBMSTrackNo	= StringToInt( sName.substr(4, 2) );
 		RString nData = it->second;
 		int totalPairs = nData.size() / 2;
 		if( iBMSTrackNo != BMS_TRACK_TIME_SIG && iBMSTrackNo != 7 )
@@ -423,10 +423,10 @@ static void ReadTimeSigs( const NameToData_t &mapNameToData, MeasureToTimeSig_t 
 
 		// this is step or offset data.  Looks like "#00705"
 		const RString &sData = it->second;
-		int iMeasureNo	= atoi( sName.substr(1, 3).c_str() );
+		int iMeasureNo	= StringToInt( sName.substr(1, 3) );
 		if( iMeasureNo < iStartMeasureNo )
 			continue;
-		int iBMSTrackNo	= atoi( sName.substr(4, 2).c_str() );
+		int iBMSTrackNo	= StringToInt( sName.substr(4, 2) );
 		if( iBMSTrackNo == BMS_TRACK_TIME_SIG )
 			out[iMeasureNo] = StringToFloat( sData );
 	}
@@ -446,9 +446,9 @@ static bool LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNameTo
 	int iPlayer = -1;
 	RString sData;
 	if( GetTagFromMap( mapNameToData, "#player", sData ) )
-		iPlayer = atoi(sData);
+		iPlayer = StringToInt(sData);
 	if( GetTagFromMap( mapNameToData, "#playlevel", sData ) )
-		out.SetMeter( atoi(sData) );
+		out.SetMeter( StringToInt(sData) );
 
 	NoteData ndNotes;
 	ndNotes.SetNumTracks( NUM_BMS_TRACKS );
@@ -475,8 +475,8 @@ static bool LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNameTo
 			 continue;
 
 		// this is step or offset data.  Looks like "#00705"
-		int iMeasureNo = atoi( sName.substr(1,3).c_str() );
-		int iRawTrackNum = atoi( sName.substr(4,2).c_str() );
+		int iMeasureNo = StringToInt( sName.substr(1,3) );
+		int iRawTrackNum = StringToInt( sName.substr(4,2) );
 		int iRowNo = GetMeasureStartRow( mapMeasureToTimeSig, iMeasureNo, sigAdjustments );
 		float fBeatsPerMeasure = GetBeatsPerMeasure( mapMeasureToTimeSig, iMeasureNo, sigAdjustments );
 		const RString &sNoteData = it->second;
