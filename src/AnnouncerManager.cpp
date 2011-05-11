@@ -88,6 +88,18 @@ static const char *aliases[][2] = {
 	{ "ScreenSelectStyle comment solo", "select style comment solo" },
 	{ "ScreenSelectStyle comment versus", "select style comment versus" },
 
+	/* Combo compatibility: */
+	{ "gameplay combo 100", "gameplay 100 combo" },
+	{ "gameplay combo 200", "gameplay 200 combo" },
+	{ "gameplay combo 300", "gameplay 300 combo" },
+	{ "gameplay combo 400", "gameplay 400 combo" },
+	{ "gameplay combo 500", "gameplay 500 combo" },
+	{ "gameplay combo 600", "gameplay 600 combo" },
+	{ "gameplay combo 700", "gameplay 700 combo" },
+	{ "gameplay combo 800", "gameplay 800 combo" },
+	{ "gameplay combo 900", "gameplay 900 combo" },
+	{ "gameplay combo 1000", "gameplay 1000 combo" },
+
 	{ NULL, NULL }
 };
 
