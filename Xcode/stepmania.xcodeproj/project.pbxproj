@@ -3249,16 +3249,14 @@
 		2B766980132FF62B00586512 /* NoteParsing */ = {
 			isa = PBXGroup;
 			children = (
-				2B9C2E89137A138B004C92F3 /* NotesLoaderJson.cpp */,
-				2B9C2E8A137A138B004C92F3 /* NotesLoaderJson.h */,
-				2B9C2E8B137A138B004C92F3 /* NotesWriterJson.cpp */,
-				2B9C2E8C137A138B004C92F3 /* NotesWriterJson.h */,
 				AA6EFDED04770C79005F316C /* NotesLoader.cpp */,
 				AA6EFDEE04770C79005F316C /* NotesLoader.h */,
 				AA6EFDEF04770C79005F316C /* NotesLoaderBMS.cpp */,
 				AA6EFDF004770C79005F316C /* NotesLoaderBMS.h */,
 				AA6EFDF104770C79005F316C /* NotesLoaderDWI.cpp */,
 				AA6EFDF204770C79005F316C /* NotesLoaderDWI.h */,
+				2B9C2E89137A138B004C92F3 /* NotesLoaderJson.cpp */,
+				2B9C2E8A137A138B004C92F3 /* NotesLoaderJson.h */,
 				AA6EFDF304770C79005F316C /* NotesLoaderKSF.cpp */,
 				AA6EFDF404770C79005F316C /* NotesLoaderKSF.h */,
 				3688B8510BD42DAA004186AD /* NotesLoaderMidi.cpp */,
@@ -3271,6 +3269,8 @@
 				2B766989132FF71500586512 /* NotesLoaderSMA.h */,
 				2BA7925A1304F20D002BD8E1 /* NotesLoaderSSC.cpp */,
 				2BA7925B1304F20D002BD8E1 /* NotesLoaderSSC.h */,
+				2B9C2E8B137A138B004C92F3 /* NotesWriterJson.cpp */,
+				2B9C2E8C137A138B004C92F3 /* NotesWriterJson.h */,
 				AA6EFDF704770C79005F316C /* NotesWriterDWI.cpp */,
 				AA6EFDF804770C79005F316C /* NotesWriterDWI.h */,
 				AA6EFDF904770C79005F316C /* NotesWriterSM.cpp */,
