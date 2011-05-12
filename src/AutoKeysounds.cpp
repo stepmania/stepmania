@@ -99,7 +99,7 @@ void AutoKeysounds::LoadAutoplaySoundsInto( RageSoundReader_Chain *pChain )
 				if( tn[pn].iKeysoundIndex >= 0 )
 				{
 					RString sKeysoundFilePath = sSongDir + pSong->m_vsKeysoundFile[tn[pn].iKeysoundIndex];
-					float fSeconds = pSong->m_SongTiming.GetElapsedTimeFromBeatNoOffset( NoteRowToBeat(iRow) ) + SOUNDMAN->GetPlayLatency();
+					float fSeconds = GAMESTATE->m_pCurSteps[pn]->m_Timing.GetElapsedTimeFromBeatNoOffset( NoteRowToBeat(iRow) ) + SOUNDMAN->GetPlayLatency();
 
 					float fPan = 0;
 					if( !bSoundIsGlobal )
