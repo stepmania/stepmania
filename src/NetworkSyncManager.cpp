@@ -151,6 +151,43 @@ void NetworkSyncManager::PostStartUp( const RString& ServerIP )
 
 	m_startupStatus = 1;	// Connection attepmpt successful
 
+	bool bModernServer = false;
+	// try smo-ssc protocol command 0x66:
+	m_packet.Clear();
+	m_packet.Write1(0x66);
+
+	// temporarily block
+	NetPlayerClient->blocking = true;
+	NetPlayerClient->SendPack( (char*)m_packet.Data, m_packet.Position );
+	m_packet.Clear();
+	bool bWaiting = true;
+
+	// wait for a response
+	while(bWaiting)
+	{
+		if( NetPlayerClient->ReadPack((char *)&m_packet, NETMAXBUFFERSIZE)<1 )
+			bWaiting = false; // exit if there's a socket problem
+		if( m_packet.Read1() == 0xE6 )
+		{
+			bWaiting = false;
+			bModernServer = true;
+		}
+	}
+	NetPlayerClient->blocking = false;
+
+	if( bModernServer )
+	{
+		// smo-ssc stuff
+		LOG->Trace("connected to smo-ssc server");
+		//m_Protocol = NetworkProtocol::MakeNetworkProtocol("SSC");
+	}
+	else
+	{
+		// otherwise, it's probably a legacy smonline server
+		LOG->Trace("trying to connect to legacy smonline server");
+		//m_Protocol = NetworkProtocol::MakeNetworkProtocol("Legacy");
+	}
+
 	// If network play is desired and the connection works,
 	// halt until we know what server version we're dealing with
 
@@ -195,7 +232,7 @@ void NetworkSyncManager::PostStartUp( const RString& ServerIP )
 
 	/*
 	if( m_ServerVersion == 0 ) // hacky thing, I suppose -aj
-		m_Protocol = NetworkProtocol::MakeNetworkProtocol("SSC");
+		
 	else
 	*/
 	m_Protocol = NetworkProtocol::MakeNetworkProtocol("Legacy");
