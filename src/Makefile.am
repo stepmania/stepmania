@@ -389,8 +389,17 @@ Lua = ../extern/lua-5.1/src/lapi.c ../extern/lua-5.1/src/lauxlib.c ../extern/lua
 ../extern/lua-5.1/src/lstring.h ../extern/lua-5.1/src/ltable.h ../extern/lua-5.1/src/ltm.h ../extern/lua-5.1/src/luaconf.h ../extern/lua-5.1/src/lua.h ../extern/lua-5.1/src/lualib.h \
 ../extern/lua-5.1/src/lundump.h ../extern/lua-5.1/src/lvm.h ../extern/lua-5.1/src/lzio.h
 
-jsoncpp = ../extern/jsoncpp/src/lib_json/json_reader.cpp ../extern/jsoncpp/src/lib_json/json_value.cpp \
-../extern/jsoncpp/src/lib_json/json_writer.cpp
+jsoncpp = ../extern/jsoncpp/src/lib_json/json_reader.cpp \
+../extern/jsoncpp/src/lib_json/json_value.cpp \ 
+../extern/jsoncpp/src/lib_json/json_writer.cpp \ 
+../extern/jsoncpp/include/json/autolink.h \ 
+../extern/jsoncpp/include/json/config.h \
+../extern/jsoncpp/include/json/features.h \
+../extern/jsoncpp/include/json/forwards.h \
+../extern/jsoncpp/include/json/json.h \
+../extern/jsoncpp/include/json/reader.h \
+../extern/jsoncpp/include/json/value.h \
+../extern/jsoncpp/include/json/writer.h 
 
 RageFile = \
 RageFileBasic.cpp RageFileBasic.h \
