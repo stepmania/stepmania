@@ -299,7 +299,7 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 			{
 				/* XXX We know what they want, is there any reason not to handle it? */
 				/* Yes.  We should be strict in handling the format. -Chris */
-				sErrorOut = ssprintf("Invalid player options \"%s\"; did you mean '*%d'?", s->c_str(), atoi(*s) );
+				sErrorOut = ssprintf("Invalid player options \"%s\"; did you mean '*%d'?", s->c_str(), StringToInt(*s) );
 				return false;
 			}
 			else

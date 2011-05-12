@@ -158,10 +158,12 @@ ModsGroup.cpp ModsGroup.h \
 NoteData.cpp NoteData.h NoteDataUtil.cpp NoteDataUtil.h NoteDataWithScoring.cpp NoteDataWithScoring.h \
 NoteTypes.cpp NoteTypes.h NotesLoader.cpp NotesLoader.h \
 NotesLoaderBMS.cpp NotesLoaderBMS.h NotesLoaderDWI.cpp NotesLoaderDWI.h \
+NotesLoaderJson.cpp NotesLoaderJson.h \
 NotesLoaderKSF.cpp NotesLoaderKSF.h NotesLoaderMidi.cpp NotesLoaderMidi.h \
 NotesLoaderPMS.cpp NotesLoaderPMS.h NotesLoaderSM.cpp NotesLoaderSM.h \
 NotesLoaderSSC.cpp NotesLoaderSSC.h NotesLoaderSMA.cpp NotesLoaderSMA.h \
 NotesWriterDWI.cpp NotesWriterDWI.h \
+NotesWriterJson.cpp NotesWriterJson.h \
 NotesWriterSM.cpp NotesWriterSM.h NotesWriterSSC.cpp NotesWriterSSC.h \
 OptionRowHandler.cpp OptionRowHandler.h OptionsList.cpp OptionsList.h \
 PlayerAI.cpp PlayerAI.h PlayerNumber.cpp PlayerNumber.h PlayerOptions.cpp PlayerOptions.h \

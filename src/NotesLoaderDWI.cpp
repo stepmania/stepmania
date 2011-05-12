@@ -206,7 +206,7 @@ static bool LoadFromDWITokens(
 	DEFAULT_FAIL( out.m_StepsType );
 	}
 
-	int iNumFeet = atoi(sNumFeet);
+	int iNumFeet = StringToInt(sNumFeet);
 	// out.SetDescription(sDescription); // Don't put garbage in the description.
 	out.SetMeter(iNumFeet);
 	out.SetDifficulty( DwiCompatibleStringToDifficulty(sDescription) );
@@ -447,10 +447,10 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, set<RString> &Bla
 		}
 
 		// handle the data
-		if( 0==stricmp(sValueName,"FILE") )
+		if( sValueName.EqualsNoCase("FILE") )
 			out.m_sMusicFile = sParams[1];
 
-		else if( 0==stricmp(sValueName,"TITLE") )
+		else if( sValueName.EqualsNoCase("TITLE") )
 		{
 			NotesLoader::GetMainAndSubTitlesFromFullTitle( sParams[1], out.m_sMainTitle, out.m_sSubTitle );
 
@@ -460,22 +460,22 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, set<RString> &Bla
 			ConvertString( out.m_sSubTitle, "utf-8,english" );
 		}
 
-		else if( 0==stricmp(sValueName,"ARTIST") )
+		else if( sValueName.EqualsNoCase("ARTIST") )
 		{
 			out.m_sArtist = sParams[1];
 			ConvertString( out.m_sArtist, "utf-8,english" );
 		}
 		
-		else if( 0==stricmp(sValueName,"GENRE") )
+		else if( sValueName.EqualsNoCase("GENRE") )
 		{
 			out.m_sGenre = sParams[1];
 			ConvertString( out.m_sGenre, "utf-8,english" );
 		}
 
-		else if( 0==stricmp(sValueName,"CDTITLE") )
+		else if( sValueName.EqualsNoCase("CDTITLE") )
 			out.m_sCDTitleFile = sParams[1];
 
-		else if( 0==stricmp(sValueName,"BPM") )
+		else if( sValueName.EqualsNoCase("BPM") )
 		{
 			const float fBPM = StringToFloat( sParams[1] );
 			
@@ -491,7 +491,7 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, set<RString> &Bla
 							  NoteRowToBeat(0), fBPM );
 			}
 		}
-		else if( 0==stricmp(sValueName,"DISPLAYBPM") )
+		else if( sValueName.EqualsNoCase("DISPLAYBPM") )
 		{
 			// #DISPLAYBPM:[xxx..xxx]|[xxx]|[*]; 
 		    int iMin, iMax;
@@ -515,17 +515,17 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, set<RString> &Bla
 			}
 		}
 
-		else if( 0==stricmp(sValueName,"GAP") )
+		else if( sValueName.EqualsNoCase("GAP") )
 			// the units of GAP is 1/1000 second
-			out.m_SongTiming.m_fBeat0OffsetInSeconds = -atoi( sParams[1] ) / 1000.0f;
+			out.m_SongTiming.m_fBeat0OffsetInSeconds = -StringToInt( sParams[1] ) / 1000.0f;
 
-		else if( 0==stricmp(sValueName,"SAMPLESTART") )
+		else if( sValueName.EqualsNoCase("SAMPLESTART") )
 			out.m_fMusicSampleStartSeconds = ParseBrokenDWITimestamp(sParams[1], sParams[2], sParams[3]);
 
-		else if( 0==stricmp(sValueName,"SAMPLELENGTH") )
+		else if( sValueName.EqualsNoCase("SAMPLELENGTH") )
 			out.m_fMusicSampleLengthSeconds = ParseBrokenDWITimestamp(sParams[1], sParams[2], sParams[3]);
 
-		else if( 0==stricmp(sValueName,"FREEZE") )
+		else if( sValueName.EqualsNoCase("FREEZE") )
 		{
 			vector<RString> arrayFreezeExpressions;
 			split( sParams[1], ",", arrayFreezeExpressions );
@@ -547,7 +547,7 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, set<RString> &Bla
 			}
 		}
 
-		else if( 0==stricmp(sValueName,"CHANGEBPM")  || 0==stricmp(sValueName,"BPMCHANGE") )
+		else if( sValueName.EqualsNoCase("CHANGEBPM")  || sValueName.EqualsNoCase("BPMCHANGE") )
 		{
 			vector<RString> arrayBPMChangeExpressions;
 			split( sParams[1], ",", arrayBPMChangeExpressions );
@@ -577,10 +577,10 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, set<RString> &Bla
 			}
 		}
 
-		else if( 0==stricmp(sValueName,"SINGLE")  || 
-			 0==stricmp(sValueName,"DOUBLE")  ||
-			 0==stricmp(sValueName,"COUPLE")  || 
-			 0==stricmp(sValueName,"SOLO") )
+		else if( sValueName.EqualsNoCase("SINGLE")  || 
+			 sValueName.EqualsNoCase("DOUBLE")  ||
+			 sValueName.EqualsNoCase("COUPLE")  || 
+			 sValueName.EqualsNoCase("SOLO") )
 		{
 			Steps* pNewNotes = out.CreateSteps();
 			LoadFromDWITokens( 
@@ -597,8 +597,8 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, set<RString> &Bla
 			else
 				delete pNewNotes;
 		}
-		else if( 0==stricmp(sValueName,"DISPLAYTITLE") ||
-			0==stricmp(sValueName,"DISPLAYARTIST") )
+		else if( sValueName.EqualsNoCase("DISPLAYTITLE") ||
+			sValueName.EqualsNoCase("DISPLAYARTIST") )
 		{
 			/* We don't want to support these tags.  However, we don't want
 			 * to pick up images used here as song images (eg. banners). */

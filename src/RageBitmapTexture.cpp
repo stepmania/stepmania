@@ -26,8 +26,8 @@ static void GetResolutionFromFileName( RString sPath, int &iWidth, int &iHeight 
 	if( !re.Compare(sPath, asMatches) )
 		return;
 
-	iWidth = atoi( asMatches[0].c_str() );
-	iHeight = atoi( asMatches[1].c_str() );
+	iWidth = StringToInt( asMatches[0] );
+	iHeight = StringToInt( asMatches[1] );
 }
 
 RageBitmapTexture::RageBitmapTexture( RageTextureID name ) :

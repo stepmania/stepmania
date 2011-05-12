@@ -4,7 +4,6 @@
 #define SCREEN_MINI_MENU_H
 
 #include "ScreenOptions.h"
-#include <sstream>
 #include "GameConstantsAndTypes.h"
 
 typedef bool (*MenuRowUpdateEnabled)();
@@ -86,9 +85,7 @@ struct MenuRowDef
 	{
 		for ( int i = low; i <= high; i++ )
 		{
-			std::stringstream ss;
-			ss << i;
-			choices.push_back(ss.str().c_str());
+			choices.push_back(IntToString(i).c_str());
 		}
 	}
 

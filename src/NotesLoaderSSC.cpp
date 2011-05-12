@@ -292,18 +292,18 @@ bool SSCLoader::LoadFromSSCFile( const RString &sPath, Song &out, bool bFromCach
 
 				else if( sValueName=="SELECTABLE" )
 				{
-					if(!stricmp(sParams[1],"YES"))
+					if(sParams[1].EqualsNoCase("YES"))
 						out.m_SelectionDisplay = out.SHOW_ALWAYS;
-					else if(!stricmp(sParams[1],"NO"))
+					else if(sParams[1].EqualsNoCase("NO"))
 						out.m_SelectionDisplay = out.SHOW_NEVER;
 					// ROULETTE from 3.9 is no longer in use.
-					else if(!stricmp(sParams[1],"ROULETTE"))
+					else if(sParams[1].EqualsNoCase("ROULETTE"))
 						out.m_SelectionDisplay = out.SHOW_ALWAYS;
 					/* The following two cases are just fixes to make sure simfiles that
 					 * used 3.9+ features are not excluded here */
-					else if(!stricmp(sParams[1],"ES") || !stricmp(sParams[1],"OMES"))
+					else if(sParams[1].EqualsNoCase("ES") || sParams[1].EqualsNoCase("OMES"))
 						out.m_SelectionDisplay = out.SHOW_ALWAYS;
-					else if( atoi(sParams[1]) > 0 )
+					else if( StringToInt(sParams[1]) > 0 )
 						out.m_SelectionDisplay = out.SHOW_ALWAYS;
 					else
 						LOG->UserLog( "Song file", sPath, "has an unknown #SELECTABLE value, \"%s\"; ignored.", sParams[1].c_str() );
@@ -466,13 +466,13 @@ bool SSCLoader::LoadFromSSCFile( const RString &sPath, Song &out, bool bFromCach
 				else if( sValueName=="HASMUSIC" )
 				{
 					if( bFromCache )
-						out.m_bHasMusic = atoi( sParams[1] ) != 0;
+						out.m_bHasMusic = StringToInt( sParams[1] ) != 0;
 				}
 
 				else if( sValueName=="HASBANNER" )
 				{
 					if( bFromCache )
-						out.m_bHasBanner = atoi( sParams[1] ) != 0;
+						out.m_bHasBanner = StringToInt( sParams[1] ) != 0;
 				}
 
 				// This tag will get us to the next section.
@@ -509,7 +509,7 @@ bool SSCLoader::LoadFromSSCFile( const RString &sPath, Song &out, bool bFromCach
 
 				else if( sValueName=="METER" )
 				{
-					pNewNotes->SetMeter( atoi( sParams[1] ) );
+					pNewNotes->SetMeter( StringToInt( sParams[1] ) );
 				}
 
 				else if( sValueName=="RADARVALUES" )
@@ -751,7 +751,7 @@ bool SSCLoader::LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePat
 
 		else if( sValueName=="METER" )
 		{
-			pNewNotes->SetMeter( atoi( sParams[1] ) );
+			pNewNotes->SetMeter( StringToInt( sParams[1] ) );
 			bSSCFormat = true;
 		}
 

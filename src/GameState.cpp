@@ -209,7 +209,7 @@ void GameState::ApplyCmdline()
 	RString sPlayer;
 	for( int i = 0; GetCommandlineArgument( "player", &sPlayer, i ); ++i )
 	{
-		int pn = atoi( sPlayer )-1;
+		int pn = StringToInt( sPlayer )-1;
 		if( !IsAnInt( sPlayer ) || pn < 0 || pn >= NUM_PLAYERS )
 			RageException::Throw( "Invalid argument \"--player=%s\".", sPlayer.c_str() );
 

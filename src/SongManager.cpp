@@ -879,7 +879,7 @@ void SongManager::InitRandomAttacks()
 					continue;
 				}
 
-				if( stricmp(sType,"ATTACK") != 0 )
+				if( !sType.EqualsNoCase("ATTACK") )
 				{
 					LOG->Warn( "Got \"%s:%s\" tag with wrong declaration", sType.c_str(), sAttack.c_str() );
 					continue;

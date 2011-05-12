@@ -429,7 +429,7 @@ bool ProfileManager::CreateLocalProfile( RString sName, RString &sProfileIDOut )
 	vector<RString> vs;
 	GetLocalProfileIDs( vs );
 	FOREACH_CONST( RString, vs, s )
-		iMaxProfileNumber = atoi( *s );
+		iMaxProfileNumber = StringToInt( *s );
 
 	int iProfileNumber = iMaxProfileNumber + 1;
 	RString sProfileID = ssprintf( "%08d", iProfileNumber );

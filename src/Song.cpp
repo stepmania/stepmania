@@ -619,13 +619,13 @@ void Song::TidyUpData()
 
 		// Skip any image that we've already classified
 
-		if( HasBanner()  &&  stricmp(m_sBannerFile, arrayImages[i])==0 )
+		if( HasBanner()  &&  m_sBannerFile.EqualsNoCase(arrayImages[i]) )
 			continue;	// skip
 
-		if( HasBackground()  &&  stricmp(m_sBackgroundFile, arrayImages[i])==0 )
+		if( HasBackground()  &&  m_sBackgroundFile.EqualsNoCase(arrayImages[i]) )
 			continue;	// skip
 
-		if( HasCDTitle()  &&  stricmp(m_sCDTitleFile, arrayImages[i])==0 )
+		if( HasCDTitle()  &&  m_sCDTitleFile.EqualsNoCase(arrayImages[i]) )
 			continue;	// skip
 
 		// todo: add checks for Jacket, Disc, and CDImage -aj

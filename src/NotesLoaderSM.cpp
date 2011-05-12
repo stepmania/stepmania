@@ -60,7 +60,7 @@ void SMLoader::LoadFromSMTokens(
 			out.SetDifficulty( Difficulty_Challenge );
 	}
 
-	out.SetMeter( atoi(sMeter) );
+	out.SetMeter( StringToInt(sMeter) );
 	vector<RString> saValues;
 	split( sRadarValues, ",", saValues, true );
 	int categories = NUM_RadarCategory - 1; // Fakes aren't counted in the radar values.
@@ -426,7 +426,7 @@ bool SMLoader::LoadFromBGChangesString( BackgroundChange &change, const RString 
 		// Backward compatibility:
 		if( change.m_def.m_sEffect.empty() )
 		{
-			bool bLoop = atoi( aBGChangeValues[5] ) != 0;
+			bool bLoop = StringToInt( aBGChangeValues[5] ) != 0;
 			if( !bLoop )
 				change.m_def.m_sEffect = SBE_StretchNoLoop;
 		}
@@ -436,7 +436,7 @@ bool SMLoader::LoadFromBGChangesString( BackgroundChange &change, const RString 
 		// Backward compatibility:
 		if( change.m_def.m_sEffect.empty() )
 		{
-			bool bRewindMovie = atoi( aBGChangeValues[4] ) != 0;
+			bool bRewindMovie = StringToInt( aBGChangeValues[4] ) != 0;
 			if( bRewindMovie )
 				change.m_def.m_sEffect = SBE_StretchRewind;
 		}
@@ -445,7 +445,7 @@ bool SMLoader::LoadFromBGChangesString( BackgroundChange &change, const RString 
 		// param 9 overrides this.
 		// Backward compatibility:
 		if( change.m_sTransition.empty() )
-			change.m_sTransition = (atoi( aBGChangeValues[3] ) != 0) ? "CrossFade" : "";
+			change.m_sTransition = (StringToInt( aBGChangeValues[3] ) != 0) ? "CrossFade" : "";
 		// fall through
 	case 3:
 		change.m_fRate = StringToFloat( aBGChangeValues[2] );
@@ -575,12 +575,12 @@ bool SMLoader::LoadFromSMFile( const RString &sPath, Song &out, bool bFromCache 
 		else if( sValueName=="HASMUSIC" )
 		{
 			if( bFromCache )
-				out.m_bHasMusic = atoi( sParams[1] ) != 0;
+				out.m_bHasMusic = StringToInt( sParams[1] ) != 0;
 		}
 		else if( sValueName=="HASBANNER" )
 		{
 			if( bFromCache )
-				out.m_bHasBanner = atoi( sParams[1] ) != 0;
+				out.m_bHasBanner = StringToInt( sParams[1] ) != 0;
 		}
 
 		else if( sValueName=="SAMPLESTART" )
@@ -611,20 +611,20 @@ bool SMLoader::LoadFromSMFile( const RString &sPath, Song &out, bool bFromCache 
 
 		else if( sValueName=="SELECTABLE" )
 		{
-			if(!stricmp(sParams[1],"YES"))
+			if(sParams[1].EqualsNoCase("YES"))
 				out.m_SelectionDisplay = out.SHOW_ALWAYS;
-			else if(!stricmp(sParams[1],"NO"))
+			else if(sParams[1].EqualsNoCase("NO"))
 				out.m_SelectionDisplay = out.SHOW_NEVER;
 			// ROULETTE from 3.9. It was removed since UnlockManager can serve
 			// the same purpose somehow. This, of course, assumes you're using
 			// unlocks. -aj
-			else if(!stricmp(sParams[1],"ROULETTE"))
+			else if(sParams[1].EqualsNoCase("ROULETTE"))
 				out.m_SelectionDisplay = out.SHOW_ALWAYS;
 			/* The following two cases are just fixes to make sure simfiles that
 			 * used 3.9+ features are not excluded here */
-			else if(!stricmp(sParams[1],"ES") || !stricmp(sParams[1],"OMES"))
+			else if(sParams[1].EqualsNoCase("ES") || sParams[1].EqualsNoCase("OMES"))
 				out.m_SelectionDisplay = out.SHOW_ALWAYS;
-			else if( atoi(sParams[1]) > 0 )
+			else if( StringToInt(sParams[1]) > 0 )
 				out.m_SelectionDisplay = out.SHOW_ALWAYS;
 			else
 				LOG->UserLog( "Song file", sPath, "has an unknown #SELECTABLE value, \"%s\"; ignored.", sParams[1].c_str() );

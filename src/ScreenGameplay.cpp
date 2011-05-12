@@ -2757,7 +2757,7 @@ void ScreenGameplay::SaveReplay()
 					continue;
 
 				ASSERT( matches.size() == 1 );
-				iIndex = atoi( matches[0] )+1;
+				iIndex = StringToInt( matches[0] )+1;
 				break;
 			}
 

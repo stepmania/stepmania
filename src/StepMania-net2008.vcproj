@@ -1576,6 +1576,14 @@
 					>
 				</File>
 				<File
+					RelativePath=".\NotesLoaderJson.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\NotesLoaderJson.h"
+					>
+				</File>
+				<File
 					RelativePath="NotesLoaderKSF.cpp"
 					>
 				</File>
@@ -1753,6 +1761,14 @@
 				</File>
 				<File
 					RelativePath="NotesWriterDWI.h"
+					>
+				</File>
+				<File
+					RelativePath=".\NotesWriterJson.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\NotesWriterJson.h"
 					>
 				</File>
 				<File
