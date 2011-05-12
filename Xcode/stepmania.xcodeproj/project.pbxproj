@@ -3308,13 +3308,14 @@
 				2BC6132313773C8E00CC8BBD /* pngwutil.c */,
 			);
 			name = libpng;
+			path = ../extern/libpng;
 			sourceTree = "<group>";
 		};
 		2BDB87261371F7FF00E6FD3A /* extern */ = {
 			isa = PBXGroup;
 			children = (
 				EE879B8E132E06C50078FDDC /* glew-1.5.8 */,
-				EE906F6F12BF3A5B00146C96 /* json */,
+				EE906F6F12BF3A5B00146C96 /* jsoncpp */,
 				2BC6130C13773C6800CC8BBD /* libpng */,
 				AA7C8A7F0B6744F600FD9940 /* libtommath */,
 				AA7C8B920B67467C00FD9940 /* libtomcrypt */,
@@ -5008,7 +5009,7 @@
 			path = "../extern/glew-1.5.8";
 			sourceTree = SOURCE_ROOT;
 		};
-		EE906F6F12BF3A5B00146C96 /* json */ = {
+		EE906F6F12BF3A5B00146C96 /* jsoncpp */ = {
 			isa = PBXGroup;
 			children = (
 				2BD06FDD137240CF0018CB9F /* json_batchallocator.h */,
@@ -5019,7 +5020,8 @@
 				2BD06FE2137240CF0018CB9F /* json_valueiterator.inl */,
 				2BD06FE3137240CF0018CB9F /* json_writer.cpp */,
 			);
-			name = json;
+			name = jsoncpp;
+			path = ../extern/jsoncpp;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
