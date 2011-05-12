@@ -24,4 +24,13 @@ t[#t+1] = StandardDecorationFromFileOptional("TextHeader","TextHeader") .. {
 };
 -- Image displayed on the bottom of the screen
 t[#t+1] = StandardDecorationFromFileOptional("Footer","Footer");
+t[#t+1] = StandardDecorationFromFileOptional( "HelpDisplay", "HelpDisplay" ) .. {
+	InitCommand=function(self)
+		local s = THEME:GetString(Var "LoadingScreen","HelpText");
+		self:SetTipsColonSeparated(s);
+	end;
+	SetHelpTextCommand=function(self, params)
+		self:SetTipsColonSeparated( params.Text );
+	end;
+};
 return t
