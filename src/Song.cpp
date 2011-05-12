@@ -472,6 +472,13 @@ void Song::TidyUpData()
 		m_fMusicLengthSeconds = 0;
 	}
 
+	m_SongTiming.TidyUpData();
+	
+	FOREACH( Steps *, m_vpSteps, s )
+	{
+		(*s)->m_Timing.TidyUpData();
+	}
+
 	/* Generate these before we autogen notes, so the new notes can inherit
 	 * their source's values. */
 	ReCalculateRadarValuesAndLastBeat();
@@ -487,13 +494,6 @@ void Song::TidyUpData()
 	if( m_sArtist == "" )
 		m_sArtist = "Unknown artist";
 	TranslateTitles();
-
-	m_SongTiming.TidyUpData();
-	
-	FOREACH( Steps *, m_vpSteps, s )
-	{
-		(*s)->m_Timing.TidyUpData();
-	}
 
 	if( m_fMusicSampleStartSeconds == -1 ||
 		m_fMusicSampleStartSeconds == 0 ||
@@ -833,8 +833,8 @@ void Song::ReCalculateRadarValuesAndLastBeat()
 		if( tempNoteData.GetLastRow() == 0 )
 			continue;
 
-		fFirstBeat = min( fFirstBeat, tempNoteData.GetFirstBeat() );
-		fLastBeat = max( fLastBeat, tempNoteData.GetLastBeat() );
+		fFirstBeat = min( fFirstBeat, m_SongTiming.GetBeatFromElapsedTime(pSteps->m_Timing.GetElapsedTimeFromBeat(tempNoteData.GetFirstBeat())) );
+		fLastBeat  = max( fLastBeat,  m_SongTiming.GetBeatFromElapsedTime(pSteps->m_Timing.GetElapsedTimeFromBeat(tempNoteData.GetLastBeat())) );
 	}
 
 	m_fFirstBeat = fFirstBeat;

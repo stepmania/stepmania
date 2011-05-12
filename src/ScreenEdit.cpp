@@ -2372,11 +2372,11 @@ void ScreenEdit::TransitionEditState( EditState em )
 		GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat = m_fBeatToReturnTo;
 
 		// Make sure we're snapped.
-		GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat = Quantize( GAMESTATE->m_Position.m_fSongBeat, NoteTypeToBeat(m_SnapDisplay.GetNoteType()) );
+		GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat = Quantize( GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat, NoteTypeToBeat(m_SnapDisplay.GetNoteType()) );
 
 		/* Playing and recording have lead-ins, which may start before beat 0;
 		 * make sure we don't stay there if we escaped out early. */
-		GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat = max( GAMESTATE->m_Position.m_fSongBeat, 0 );
+		GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat = max( GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat, 0 );
 
 		break;
 
