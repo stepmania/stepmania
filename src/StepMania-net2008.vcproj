@@ -50,8 +50,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".;../extern/vorbis;../extern/libjpeg;&quot;../extern/lua-5.1/include&quot;;ffmpeg/modern_working/include;BaseClasses;../extern/jsoncpp/include"
-				PreprocessorDefinitions="WIN32,_DEBUG,_WINDOWS,WINDOWS,DEBUG"
+				AdditionalIncludeDirectories=".;&quot;..\extern\lua-5.1\src&quot;;ffmpeg\modern_working\include;BaseClasses;&quot;..\extern\jsoncpp\include&quot;;&quot;..\extern\glew-1.5.8\include&quot;;..\extern\pcre;&quot;..\extern\mad-0.15.1b&quot;;..\extern\libpng;..\extern\libjpeg;..\extern\zlib;..\extern\vorbis"
+				PreprocessorDefinitions="WIN32,_DEBUG,_WINDOWS,WINDOWS,DEBUG,GLEW_STATIC"
 				ExceptionHandling="0"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -158,8 +158,8 @@
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="2"
-				AdditionalIncludeDirectories=".;../extern/vorbis;../extern/libjpeg;&quot;../extern/lua-5.1/include&quot;;ffmpeg/modern_working/include;BaseClasses;../extern/jsoncpp/include"
-				PreprocessorDefinitions="WIN32,NDEBUG,_WINDOWS,WINDOWS,RELEASE"
+				AdditionalIncludeDirectories=".;&quot;..\extern\lua-5.1\src&quot;;ffmpeg\modern_working\include;BaseClasses;&quot;..\extern\jsoncpp\include&quot;;&quot;..\extern\glew-1.5.8\include&quot;;..\extern\pcre;&quot;..\extern\mad-0.15.1b&quot;;..\extern\libpng;..\extern\libjpeg;..\extern\zlib;..\extern\vorbis"
+				PreprocessorDefinitions="WIN32,NDEBUG,_WINDOWS,WINDOWS,RELEASE,GLEW_STATIC"
 				StringPooling="true"
 				MinimalRebuild="false"
 				ExceptionHandling="0"
@@ -263,8 +263,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".;../extern/vorbis;../extern/libjpeg;&quot;../extern/lua-5.1/include&quot;;ffmpeg/modern_working/include;BaseClasses;../extern/jsoncpp/include"
-				PreprocessorDefinitions="WIN32,_DEBUG,_WINDOWS,WINDOWS,DEBUG"
+				AdditionalIncludeDirectories=".;&quot;..\extern\lua-5.1\src&quot;;ffmpeg\modern_working\include;BaseClasses;&quot;..\extern\jsoncpp\include&quot;;&quot;..\extern\glew-1.5.8\include&quot;;..\extern\pcre;&quot;..\extern\mad-0.15.1b&quot;;..\extern\libpng;..\extern\libjpeg;..\extern\zlib;..\extern\vorbis"
+				PreprocessorDefinitions="WIN32,_DEBUG,_WINDOWS,WINDOWS,DEBUG,GLEW_STATIC"
 				ExceptionHandling="0"
 				BasicRuntimeChecks="0"
 				RuntimeLibrary="3"
@@ -371,8 +371,8 @@
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
-				AdditionalIncludeDirectories=".;../extern/vorbis;../extern/libjpeg;&quot;../extern/lua-5.1/include&quot;;ffmpeg/modern_working/include;BaseClasses;../extern/jsoncpp/include"
-				PreprocessorDefinitions="WIN32,NDEBUG,_WINDOWS,WINDOWS,RELEASE"
+				AdditionalIncludeDirectories=".;&quot;..\extern\lua-5.1\src&quot;;ffmpeg\modern_working\include;BaseClasses;..\extern\jsoncpp\include;&quot;..\extern\glew-1.5.8\include&quot;;..\extern\pcre;&quot;..\extern\mad-0.15.1b&quot;;..\extern\libpng;..\extern\libjpeg;..\extern\zlib;..\extern\vorbis"
+				PreprocessorDefinitions="WIN32,NDEBUG,_WINDOWS,WINDOWS,RELEASE,GLEW_STATIC"
 				StringPooling="true"
 				MinimalRebuild="false"
 				ExceptionHandling="0"
@@ -1576,6 +1576,14 @@
 					>
 				</File>
 				<File
+					RelativePath=".\NotesLoaderJson.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\NotesLoaderJson.h"
+					>
+				</File>
+				<File
 					RelativePath="NotesLoaderKSF.cpp"
 					>
 				</File>
@@ -1753,6 +1761,14 @@
 				</File>
 				<File
 					RelativePath="NotesWriterDWI.h"
+					>
+				</File>
+				<File
+					RelativePath=".\NotesWriterJson.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\NotesWriterJson.h"
 					>
 				</File>
 				<File
@@ -4255,18 +4271,6 @@
 						>
 					</File>
 					<File
-						RelativePath="..\extern\lua-5.1\src\lua.c"
-						>
-						<FileConfiguration
-							Name="Release-SSE2|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-							/>
-						</FileConfiguration>
-					</File>
-					<File
 						RelativePath="..\extern\lua-5.1\src\lua.h"
 						>
 					</File>
@@ -4356,6 +4360,22 @@
 					</File>
 					<File
 						RelativePath="..\extern\jsoncpp\src\lib_json\json_writer.cpp"
+						>
+						<FileConfiguration
+							Name="Release-SSE2|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+					</File>
+				</Filter>
+				<Filter
+					Name="glew"
+					>
+					<File
+						RelativePath="..\extern\glew-1.5.8\src\glew.c"
 						>
 						<FileConfiguration
 							Name="Release-SSE2|Win32"
