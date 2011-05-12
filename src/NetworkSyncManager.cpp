@@ -172,6 +172,8 @@ void NetworkSyncManager::PostStartUp( const RString& ServerIP )
 			bWaiting = false;
 			bModernServer = true;
 		}
+		else
+			bWaiting = false; // exit if we didn't get the reply we were expecting
 	}
 	NetPlayerClient->blocking = false;
 
