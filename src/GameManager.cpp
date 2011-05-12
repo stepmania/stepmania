@@ -69,8 +69,10 @@ static const StepsTypeInfo g_StepsTypeInfos[] = {
 	{ "ds3ddx-single",	8,	true,	StepsTypeCategory_Single },
 	// beatmania
 	{ "bm-single5",		6,	true,	StepsTypeCategory_Single },	// called "bm" for backward compat
+	{ "bm-versus5",		6,	true,	StepsTypeCategory_Single },	// called "bm" for backward compat
 	{ "bm-double5",		12,	true,	StepsTypeCategory_Double },	// called "bm" for backward compat
 	{ "bm-single7",		8,	true,	StepsTypeCategory_Single },	// called "bm" for backward compat
+	{ "bm-versus7",		8,	true,	StepsTypeCategory_Single },	// called "bm" for backward compat
 	{ "bm-double7",		16,	true,	StepsTypeCategory_Double },	// called "bm" for backward compat
 	// dance maniax
 	{ "maniax-single",	4,	true,	StepsTypeCategory_Single },
