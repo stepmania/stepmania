@@ -16,7 +16,8 @@
 #include <map>
 #include "SpecialFiles.h"
 
-NoteSkinManager*	NOTESKIN = NULL;	// global object accessable from anywhere in the program
+/** @brief Have the NoteSkinManager available throughout the program. */
+NoteSkinManager*	NOTESKIN = NULL;
 
 const RString GAME_COMMON_NOTESKIN_NAME = "common";
 const RString GAME_BASE_NOTESKIN_NAME = "default";
