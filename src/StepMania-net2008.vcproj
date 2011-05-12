@@ -6587,6 +6587,14 @@
 					RelativePath="..\extern\libpng\include\png.c"
 					>
 					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
 						Name="Release-SSE2|Win32"
 						>
 						<Tool
@@ -6611,6 +6619,14 @@
 					RelativePath="..\extern\libpng\include\pngerror.c"
 					>
 					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
 						Name="Release-SSE2|Win32"
 						>
 						<Tool
@@ -6622,6 +6638,14 @@
 				<File
 					RelativePath="..\extern\libpng\include\pngget.c"
 					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
 					<FileConfiguration
 						Name="Release-SSE2|Win32"
 						>
@@ -6643,6 +6667,14 @@
 					RelativePath="..\extern\libpng\include\pngmem.c"
 					>
 					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
 						Name="Release-SSE2|Win32"
 						>
 						<Tool
@@ -6654,6 +6686,14 @@
 				<File
 					RelativePath="..\extern\libpng\include\pngpread.c"
 					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
 					<FileConfiguration
 						Name="Release-SSE2|Win32"
 						>
@@ -6671,6 +6711,14 @@
 					RelativePath="..\extern\libpng\include\pngread.c"
 					>
 					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
 						Name="Release-SSE2|Win32"
 						>
 						<Tool
@@ -6682,6 +6730,14 @@
 				<File
 					RelativePath="..\extern\libpng\include\pngrio.c"
 					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
 					<FileConfiguration
 						Name="Release-SSE2|Win32"
 						>
@@ -6695,6 +6751,14 @@
 					RelativePath="..\extern\libpng\include\pngrtran.c"
 					>
 					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
 						Name="Release-SSE2|Win32"
 						>
 						<Tool
@@ -6707,6 +6771,14 @@
 					RelativePath="..\extern\libpng\include\pngrutil.c"
 					>
 					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
 						Name="Release-SSE2|Win32"
 						>
 						<Tool
@@ -6718,6 +6790,14 @@
 				<File
 					RelativePath="..\extern\libpng\include\pngset.c"
 					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
 					<FileConfiguration
 						Name="Release-SSE2|Win32"
 						>
@@ -6735,6 +6815,14 @@
 					RelativePath="..\extern\libpng\include\pngtrans.c"
 					>
 					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
 						Name="Release-SSE2|Win32"
 						>
 						<Tool
@@ -6746,6 +6834,14 @@
 				<File
 					RelativePath="..\extern\libpng\include\pngwio.c"
 					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
 					<FileConfiguration
 						Name="Release-SSE2|Win32"
 						>
@@ -6759,6 +6855,14 @@
 					RelativePath="..\extern\libpng\include\pngwrite.c"
 					>
 					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
 						Name="Release-SSE2|Win32"
 						>
 						<Tool
@@ -6771,6 +6875,14 @@
 					RelativePath="..\extern\libpng\include\pngwtran.c"
 					>
 					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
 						Name="Release-SSE2|Win32"
 						>
 						<Tool
@@ -6782,6 +6894,14 @@
 				<File
 					RelativePath="..\extern\libpng\include\pngwutil.c"
 					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
 					<FileConfiguration
 						Name="Release-SSE2|Win32"
 						>
