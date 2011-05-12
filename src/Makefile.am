@@ -390,9 +390,9 @@ Lua = ../extern/lua-5.1/src/lapi.c ../extern/lua-5.1/src/lauxlib.c ../extern/lua
 ../extern/lua-5.1/src/lundump.h ../extern/lua-5.1/src/lvm.h ../extern/lua-5.1/src/lzio.h
 
 jsoncpp = ../extern/jsoncpp/src/lib_json/json_reader.cpp \
-../extern/jsoncpp/src/lib_json/json_value.cpp \ 
-../extern/jsoncpp/src/lib_json/json_writer.cpp \ 
-../extern/jsoncpp/include/json/autolink.h \ 
+../extern/jsoncpp/src/lib_json/json_value.cpp \
+../extern/jsoncpp/src/lib_json/json_writer.cpp \
+../extern/jsoncpp/include/json/autolink.h \
 ../extern/jsoncpp/include/json/config.h \
 ../extern/jsoncpp/include/json/features.h \
 ../extern/jsoncpp/include/json/forwards.h \
@@ -603,6 +603,8 @@ libtomcrypt_a_CPPFLAGS = -I$(srcdir)/libtomcrypt/src/headers $(AM_CPPFLAGS)
 
 noinst_LIBRARIES += libtomcrypt.a
 
+main_CPPFLAGS = -I$(top_srcdir)/extern/jsoncpp/include
+
 main_SOURCES = $(PNG) \
 		$(Screens) \
 		$(DataStructures) \
@@ -622,6 +624,7 @@ main_LDADD = \
 		  libtomcrypt.a libtommath.a
 
 nodist_stepmania_SOURCES = ver.cpp
+stepmania_CPPFLAGS = -I$(top_srcdir)/extern/jsoncpp/include
 stepmania_SOURCES = $(main_SOURCES)
 stepmania_LDADD = $(main_LDADD)
 
