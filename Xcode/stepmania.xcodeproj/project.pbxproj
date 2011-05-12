@@ -3312,6 +3312,7 @@
 				2BC6132313773C8E00CC8BBD /* pngwutil.c */,
 			);
 			name = libpng;
+			path = ../extern/libpng;
 			sourceTree = "<group>";
 		};
 		2BDB87261371F7FF00E6FD3A /* extern */ = {
@@ -5026,6 +5027,7 @@
 				2BD06FE3137240CF0018CB9F /* json_writer.cpp */,
 			);
 			name = json;
+			path = ../extern/jsoncpp;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -7211,7 +7213,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(SRCROOT)/build/$(CONFIGURATION)",
 					"$(SRCROOT)/Libraries",
-					"\"$(SRCROOT)/../src/mad-0.15.1b/msvc++/Release\"",
+					"\"$(SRCROOT)/../extern/mad-0.15.1b/msvc++/Release\"",
 				);
 				LIBRARY_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/build\"";
 				LINKER_DISPLAYS_MANGLED_NAMES = NO;
@@ -7324,7 +7326,7 @@
 					"$(SRCROOT)/Libraries",
 					"$(SRCROOT)/build/$(CONFIGURATION)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_1)",
-					"\"$(SRCROOT)/../src/mad-0.15.1b/msvc++/Release\"",
+					"\"$(SRCROOT)/../extern/mad-0.15.1b/msvc++/Release\"",
 				);
 				LIBRARY_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/build\"";
 				OBJROOT = "$(SRCROOT)/build";
@@ -7372,7 +7374,7 @@
 					"$(SRCROOT)/Libraries",
 					"$(SRCROOT)/build/$(CONFIGURATION)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_1)",
-					"\"$(SRCROOT)/../src/mad-0.15.1b/msvc++/Release\"",
+					"\"$(SRCROOT)/../extern/mad-0.15.1b/msvc++/Release\"",
 				);
 				LIBRARY_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/build\"";
 				OBJROOT = "$(SRCROOT)/build";
@@ -7422,7 +7424,7 @@
 					"$(SRCROOT)/Libraries",
 					"$(SRCROOT)/build/$(CONFIGURATION)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_1)",
-					"\"$(SRCROOT)/../src/mad-0.15.1b/msvc++/Release\"",
+					"\"$(SRCROOT)/../extern/mad-0.15.1b/msvc++/Release\"",
 				);
 				LIBRARY_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/build\"";
 				OBJROOT = "$(SRCROOT)/build";
@@ -7857,7 +7859,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(SRCROOT)/build/$(CONFIGURATION)",
 					"$(SRCROOT)/Libraries",
-					"\"$(SRCROOT)/../src/mad-0.15.1b/msvc++/Release\"",
+					"\"$(SRCROOT)/../extern/mad-0.15.1b/msvc++/Release\"",
 				);
 				LIBRARY_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/build\"";
 				LINKER_DISPLAYS_MANGLED_NAMES = NO;
@@ -7934,7 +7936,7 @@
 					"$(SRCROOT)/Libraries",
 					"$(SRCROOT)/build/$(CONFIGURATION)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_1)",
-					"\"$(SRCROOT)/../src/mad-0.15.1b/msvc++/Release\"",
+					"\"$(SRCROOT)/../extern/mad-0.15.1b/msvc++/Release\"",
 				);
 				LIBRARY_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/build\"";
 				OBJROOT = "$(SRCROOT)/build";
@@ -8086,7 +8088,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(SRCROOT)/build/$(CONFIGURATION)",
 					"$(SRCROOT)/Libraries",
-					"\"$(SRCROOT)/../src/mad-0.15.1b/msvc++/Release\"",
+					"\"$(SRCROOT)/../extern/mad-0.15.1b/msvc++/Release\"",
 				);
 				LIBRARY_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/build\"";
 				LINKER_DISPLAYS_MANGLED_NAMES = NO;
@@ -8214,7 +8216,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(SRCROOT)/build/$(CONFIGURATION)",
 					"$(SRCROOT)/Libraries",
-					"\"$(SRCROOT)/../src/mad-0.15.1b/msvc++/Release\"",
+					"\"$(SRCROOT)/../extern/mad-0.15.1b/msvc++/Release\"",
 				);
 				LIBRARY_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/build\"";
 				LINKER_DISPLAYS_MANGLED_NAMES = NO;

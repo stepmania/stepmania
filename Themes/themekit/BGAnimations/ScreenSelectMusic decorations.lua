@@ -3,7 +3,7 @@
 -- these elements.
 local t = LoadFallbackB();
 
--- Legacy StepMania 4 Function
+-- 
 local function CreateStepDisplay(pn)
 	local function set(self, player)
 		self:SetFromGameState( player );
@@ -23,9 +23,7 @@ local function CreateStepDisplay(pn)
 
 	return t;
 end
-
-
-
+-- Create StepsDisplay for each Player.
 for pn in ivalues(PlayerNumber) do
 	local MetricsName = "StepsDisplay" .. PlayerNumberToString(pn);
 	t[#t+1] = CreateStepDisplay(pn) .. {
@@ -44,4 +42,5 @@ for pn in ivalues(PlayerNumber) do
 		end;
 	};
 end
+
 return t

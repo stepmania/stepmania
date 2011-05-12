@@ -1,7 +1,7 @@
 #include "global.h"
 #include "NotesWriterJson.h"
 #include "TimingData.h"
-#include "Json/Value.h"
+#include "json/value.h"
 #include "JsonUtil.h"
 #include "Song.h"
 #include "BackgroundUtil.h"
