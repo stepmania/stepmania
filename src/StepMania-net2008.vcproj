@@ -1445,6 +1445,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\SongPosition.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\SongPosition.h"
+				>
+			</File>
+			<File
 				RelativePath="SongUtil.cpp"
 				>
 			</File>
