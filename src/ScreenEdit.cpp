@@ -3507,6 +3507,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 				m_pSteps->m_Timing.ScaleRegion( fScale, m_NoteFieldEdit.m_iBeginMarker, m_NoteFieldEdit.m_iEndMarker, true );
 
 				// scale all other steps.
+				/*
 				const vector<Steps*> sIter = m_pSong->GetAllSteps();
 				RString sTempStyle, sTempDiff;
 				for( unsigned i = 0; i < sIter.size(); i++ )
@@ -3525,7 +3526,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 					NoteDataUtil::ScaleRegion( ndTemp, fScale, m_NoteFieldEdit.m_iBeginMarker, m_NoteFieldEdit.m_iEndMarker );
 					sIter[i]->SetNoteData( ndTemp );
 				}
-
+				*/
 				m_NoteFieldEdit.m_iEndMarker = iNewEndIndex;
 				
 			}
