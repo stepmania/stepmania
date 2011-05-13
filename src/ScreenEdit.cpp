@@ -3165,8 +3165,8 @@ void ScreenEdit::DisplayTimingMenu()
 	{
 		const MenuRowDef &hl = g_TimingDataLines[i];
 		
-		if( ( hl.iRowCode == ScreenEdit::tickcount || hl.iRowCode == ScreenEdit::combo ) 
-		   && !GAMESTATE->m_bIsEditorStepTiming )
+		if( ( hl.iRowCode == ScreenEdit::tickcount || hl.iRowCode == ScreenEdit::combo
+		     || hl.iRowCode == ScreenEdit::warp ) && !GAMESTATE->m_bIsEditorStepTiming )
 		{
 			continue;
 		}
@@ -3179,7 +3179,6 @@ void ScreenEdit::DisplayTimingMenu()
 	
 	// TODO: Better way of guaranteeing that we don't go out of bounds between timings.
 	int posLabel = ScreenEdit::tickcount;
-	int posWarp = ScreenEdit::combo;
 
 	g_TimingDataInformation.rows[beat_0_offset].SetOneUnthemedChoice( ssprintf("%.5f", pTime.m_fBeat0OffsetInSeconds) );
 	g_TimingDataInformation.rows[bpm].SetOneUnthemedChoice( ssprintf("%.5f", pTime.GetBPMAtBeat( fBeat ) ) );
@@ -3192,11 +3191,10 @@ void ScreenEdit::DisplayTimingMenu()
 	{
 		g_TimingDataInformation.rows[tickcount].SetOneUnthemedChoice( ssprintf("%d", pTime.GetTickcountAtBeat( fBeat ) ) );
 		g_TimingDataInformation.rows[combo].SetOneUnthemedChoice( ssprintf("%d", pTime.GetComboAtBeat( fBeat ) ) );
+		g_TimingDataInformation.rows[warp].SetOneUnthemedChoice( ssprintf("%.5f", pTime.GetWarpAtBeat( fBeat ) ) );
 		posLabel = ScreenEdit::label;
-		posWarp = ScreenEdit::warp;
 	}
 	g_TimingDataInformation.rows[posLabel].SetOneUnthemedChoice( pTime.GetLabelAtBeat( fBeat ).c_str() );
-	g_TimingDataInformation.rows[posWarp].SetOneUnthemedChoice( ssprintf("%.5f", pTime.GetWarpAtBeat( fBeat ) ) );
 	
 	EditMiniMenu( &g_TimingDataInformation, SM_BackFromTimingDataInformation );
 }

@@ -82,7 +82,7 @@ struct TimingTagWriter {
 
 };
 
-static void GetTimingTags( vector<RString> &lines, TimingData timing )
+static void GetTimingTags( vector<RString> &lines, TimingData timing, bool bIsSong = false )
 {
 	TimingTagWriter w ( &lines );
 	
@@ -105,10 +105,13 @@ static void GetTimingTags( vector<RString> &lines, TimingData timing )
 			w.Write( ss->m_iStartRow, ss->m_fStopSeconds );
 	w.Finish();
 	
-	w.Init( "WARPS" );
-	FOREACH_CONST( WarpSegment, timing.m_WarpSegments, ws )
-		w.Write( ws->m_iStartRow, ws->m_fEndBeat );
-	w.Finish();
+	if( !bIsSong )
+	{
+		w.Init( "WARPS" );
+		FOREACH_CONST( WarpSegment, timing.m_WarpSegments, ws )
+			w.Write( ws->m_iStartRow, ws->m_fEndBeat );
+		w.Finish();
+	}
 	
 	ASSERT( !timing.m_vTimeSignatureSegments.empty() );
 	w.Init( "TIMESIGNATURES" );
@@ -134,12 +137,12 @@ static void GetTimingTags( vector<RString> &lines, TimingData timing )
 	w.Finish();
 }
 
-static void WriteTimingTags( RageFile &f, const TimingData &timing )
+static void WriteTimingTags( RageFile &f, const TimingData &timing, bool bIsSong = false )
 {
 
 	vector<RString> lines;
 	
-	GetTimingTags( lines, timing );
+	GetTimingTags( lines, timing, bIsSong );
 	
 	f.PutLine( JoinLineList( lines ) );
 
@@ -210,7 +213,7 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 		break;
 	}
 
-	WriteTimingTags( f, out.m_SongTiming );
+	WriteTimingTags( f, out.m_SongTiming, true );
 	
 	FOREACH_BackgroundLayer( b )
 	{
