@@ -3036,6 +3036,9 @@ static void ChangeArtistTranslit( const RString &sNew )
 
 static void ChangeBeat0Offset( const RString &sNew )
 {
+	/* TODO: Use a switch/boolean to determine which to write to.
+	 * If it's a new chart (have to find a way to determine that),
+	 * write to both. */
 	GAMESTATE->m_pCurSong->m_SongTiming.m_fBeat0OffsetInSeconds = GAMESTATE->m_pCurSteps[PLAYER_1]->m_Timing.m_fBeat0OffsetInSeconds = StringToFloat( sNew );
 }
 
@@ -3744,7 +3747,7 @@ void ScreenEdit::HandleSongInformationChoice( SongInformationChoice c, const vec
 }
 
 
-static LocalizedString ENTER_BEAT_0_OFFSET			("ScreenEdit","Enter the offset for the song.");
+static LocalizedString ENTER_BEAT_0_OFFSET			( "ScreenEdit", "Enter the offset for the song.");
 static LocalizedString ENTER_BPM_VALUE				( "ScreenEdit", "Enter a new BPM value." );
 static LocalizedString ENTER_STOP_VALUE				( "ScreenEdit", "Enter a new Stop value." );
 static LocalizedString ENTER_DELAY_VALUE			( "ScreenEdit", "Enter a new Delay value." );
