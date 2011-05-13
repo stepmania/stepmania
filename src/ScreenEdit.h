@@ -86,6 +86,7 @@ enum EditButton
 	EDIT_BUTTON_SNAP_PREV,
 
 	EDIT_BUTTON_OPEN_EDIT_MENU,
+	EDIT_BUTTON_OPEN_TIMING_MENU,
 	EDIT_BUTTON_OPEN_AREA_MENU,
 	EDIT_BUTTON_OPEN_BGCHANGE_LAYER1_MENU,
 	EDIT_BUTTON_OPEN_BGCHANGE_LAYER2_MENU,
@@ -231,6 +232,9 @@ protected:
 	float GetMaximumBeatForMoving() const;	// don't allow Down key to go past this beat.
 
 	void DoHelp();
+	
+	/** @brief Display the TimingData menu for editing song and step timing. */
+	void DisplayTimingMenu();
 
 	EditState		m_EditState;
 

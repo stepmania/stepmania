@@ -194,6 +194,9 @@ void ScreenEdit::InitEditMappings()
 		return;
 
 	case EditMode_Full:
+		// F4 = Show timing menu
+		m_EditMappingsDeviceInput.button[EDIT_BUTTON_OPEN_TIMING_MENU][0] = DeviceInput(DEVICE_KEYBOARD, KEY_F4);
+		
 		/* Don't allow F5/F6 in home mode. It breaks the "delay creation until first save" logic. */
 		m_EditMappingsDeviceInput.button[EDIT_BUTTON_OPEN_PREV_STEPS][0] = DeviceInput(DEVICE_KEYBOARD, KEY_F5);
 		m_EditMappingsDeviceInput.button[EDIT_BUTTON_OPEN_NEXT_STEPS][0] = DeviceInput(DEVICE_KEYBOARD, KEY_F6);
@@ -1522,6 +1525,11 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 	case EDIT_BUTTON_OPEN_INPUT_HELP:
 		DoHelp();
 		break;
+	case EDIT_BUTTON_OPEN_TIMING_MENU:
+		{
+			DisplayTimingMenu();
+			break;
+		}
 	case EDIT_BUTTON_OPEN_NEXT_STEPS:
 	case EDIT_BUTTON_OPEN_PREV_STEPS:
 		{
@@ -3056,6 +3064,23 @@ static void ChangeMaxBPM( const RString &sNew )
 	GAMESTATE->m_pCurSong->m_fSpecifiedBPMMax = StringToFloat( sNew );
 }
 
+void ScreenEdit::DisplayTimingMenu()
+{
+	TimingData pTime = m_pSteps->m_Timing;
+	const float fBeat = GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat;
+	g_TimingDataInformation.rows[bpm].SetOneUnthemedChoice( ssprintf("%.5f", pTime.GetBPMAtBeat( fBeat ) ) );
+	g_TimingDataInformation.rows[stop].SetOneUnthemedChoice( ssprintf("%.5f", pTime.GetStopAtBeat( fBeat ) ) ) ;
+	g_TimingDataInformation.rows[delay].SetOneUnthemedChoice( ssprintf("%.5f", pTime.GetDelayAtBeat( fBeat ) ) );
+	g_TimingDataInformation.rows[time_signature_numerator].SetOneUnthemedChoice( ssprintf("%d", pTime.GetTimeSignatureNumeratorAtBeat( fBeat ) ) );
+	g_TimingDataInformation.rows[time_signature_denominator].SetOneUnthemedChoice( ssprintf("%d", pTime.GetTimeSignatureDenominatorAtBeat( fBeat ) ) );
+	g_TimingDataInformation.rows[tickcount].SetOneUnthemedChoice( ssprintf("%d", pTime.GetTickcountAtBeat( fBeat ) ) );
+	g_TimingDataInformation.rows[combo].SetOneUnthemedChoice( ssprintf("%d", pTime.GetComboAtBeat( fBeat ) ) );
+	g_TimingDataInformation.rows[label].SetOneUnthemedChoice( pTime.GetLabelAtBeat( fBeat ).c_str() );
+	g_TimingDataInformation.rows[warp].SetOneUnthemedChoice( ssprintf("%.5f", pTime.GetWarpAtBeat( fBeat ) ) );
+	
+	EditMiniMenu( &g_TimingDataInformation, SM_BackFromTimingDataInformation );
+}
+
 // End helper functions
 
 static LocalizedString REVERT_LAST_SAVE			( "ScreenEdit", "Do you want to revert to your last save?" );
@@ -3259,19 +3284,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 			break;
 		case edit_timing_data:
 			{
-				TimingData pTime = m_pSteps->m_Timing;
-				const float fBeat = GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat;
-				g_TimingDataInformation.rows[bpm].SetOneUnthemedChoice( ssprintf("%.5f", pTime.GetBPMAtBeat( fBeat ) ) );
-				g_TimingDataInformation.rows[stop].SetOneUnthemedChoice( ssprintf("%.5f", pTime.GetStopAtBeat( fBeat ) ) ) ;
-				g_TimingDataInformation.rows[delay].SetOneUnthemedChoice( ssprintf("%.5f", pTime.GetDelayAtBeat( fBeat ) ) );
-				g_TimingDataInformation.rows[time_signature_numerator].SetOneUnthemedChoice( ssprintf("%d", pTime.GetTimeSignatureNumeratorAtBeat( fBeat ) ) );
-				g_TimingDataInformation.rows[time_signature_denominator].SetOneUnthemedChoice( ssprintf("%d", pTime.GetTimeSignatureDenominatorAtBeat( fBeat ) ) );
-				g_TimingDataInformation.rows[tickcount].SetOneUnthemedChoice( ssprintf("%d", pTime.GetTickcountAtBeat( fBeat ) ) );
-				g_TimingDataInformation.rows[combo].SetOneUnthemedChoice( ssprintf("%d", pTime.GetComboAtBeat( fBeat ) ) );
-				g_TimingDataInformation.rows[label].SetOneUnthemedChoice( pTime.GetLabelAtBeat( fBeat ).c_str() );
-				g_TimingDataInformation.rows[warp].SetOneUnthemedChoice( ssprintf("%.5f", pTime.GetWarpAtBeat( fBeat ) ) );
-				
-				EditMiniMenu( &g_TimingDataInformation, SM_BackFromTimingDataInformation );
+				DisplayTimingMenu();
 			}
 			break;
 		
