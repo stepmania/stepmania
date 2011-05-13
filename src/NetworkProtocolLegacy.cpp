@@ -21,6 +21,14 @@ void NetworkProtocolLegacy::ParseInput(NetworkPacket *p)
 // Server Packet Handlers
 
 // Client Packet Handlers
+void NetworkProtocolLegacy::Hello( const RString sClientName )
+{
+	m_Packet.Clear();
+	m_Packet.Write1(LegacyCmd_Hello);
+	m_Packet.Write1(LegacyProtocolVersion);
+	m_Packet.WriteString( sClientName );
+}
+
 void NetworkProtocolLegacy::SendLogin(uint8_t iPlayer, uint8_t iAuthMethod, RString sPlayerName, RString sHashedName)
 {
 	// broken
@@ -39,7 +47,7 @@ void NetworkProtocolLegacy::SendSMOnline(NetworkPacket *p)
 {
 	p->Position = NSMAN->m_SMOnlinePacket.Position + 1;
 	memcpy( (p->Data + 1), NSMAN->m_SMOnlinePacket.Data, NSMAN->m_SMOnlinePacket.Position );
-	p->Data[0] = Cmd_SMOnline;
+	p->Data[0] = LegacyCmd_SMOnline;
 	NSMAN->SendPacket(p);
 }
 

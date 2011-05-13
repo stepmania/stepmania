@@ -15,22 +15,22 @@ const int LegacyProtocolVersion = 3;
 // Client-side commands:
 enum LegacyCommand
 {
-	Cmd_Ping = 0,				// [ 0/NSCPing] nop
-	Cmd_PingReply,				// [ 1/NSCPingR] nop response
-	Cmd_Hello,					// [ 2/NSCHello]
-	Cmd_GameStartRequest,		// [ 3/NSCGSR]
-	Cmd_GameOverNotice,			// [ 4/NSCGON]
-	Cmd_GameStatusUpdate,		// [ 5/NSCGSU]
-	Cmd_StyleUpdate,			// [ 6/NSCSU]
-	Cmd_ChatMessage,			// [ 7/NSCCM]
-	Cmd_RequestStartGame,		// [ 8/NSCRSG]
-	Cmd_UpdateUserList,			// [ 9/NSCUUL] "reserved"
-	Cmd_ScreenChange,			// [10/NSCSMS]
-	Cmd_ChangePlayerOptions,	// [11/NSCUPOpts]
-	Cmd_SMOnline,				// [12/NSCSMOnline]
-	Cmd_Formatted,				// [13/NSCFormatted] Reserved client-side
-	Cmd_Attack,					// [14/NSCAttack] undocumented
-	Cmd_XML,					// [15] not really used
+	LegacyCmd_Ping = 0,				// [ 0/NSCPing] nop
+	LegacyCmd_PingReply,			// [ 1/NSCPingR] nop response
+	LegacyCmd_Hello,				// [ 2/NSCHello]
+	LegacyCmd_GameStartRequest,		// [ 3/NSCGSR]
+	LegacyCmd_GameOverNotice,		// [ 4/NSCGON]
+	LegacyCmd_GameStatusUpdate,		// [ 5/NSCGSU]
+	LegacyCmd_StyleUpdate,			// [ 6/NSCSU]
+	LegacyCmd_ChatMessage,			// [ 7/NSCCM]
+	LegacyCmd_RequestStartGame,		// [ 8/NSCRSG]
+	LegacyCmd_UpdateUserList,		// [ 9/NSCUUL] "reserved"
+	LegacyCmd_ScreenChange,			// [10/NSCSMS]
+	LegacyCmd_ChangePlayerOptions,	// [11/NSCUPOpts]
+	LegacyCmd_SMOnline,				// [12/NSCSMOnline]
+	LegacyCmd_Formatted,			// [13/NSCFormatted] Reserved client-side
+	LegacyCmd_Attack,				// [14/NSCAttack] undocumented
+	LegacyCmd_XML,					// [15] not really used
 	NUM_LegacyCommand
 };
 const LegacyCommand LegacyServerOffset = (LegacyCommand)128;
@@ -58,7 +58,7 @@ public:
 	//void Attack();
 
 	// Client Packet Handlers
-	//void Hello();
+	void Hello(const RString sClientName );
 	// broken:
 	void SendLogin(uint8_t iPlayer, uint8_t iAuthMethod, RString sPlayerName, RString sHashedName);
 	void SendSMOnline(NetworkPacket *p);
@@ -80,7 +80,7 @@ public:
 	//void ReportSongOver();
 
 private:
-	//NetworkPacket m_Packet;
+	NetworkPacket m_Packet;
 };
 
 #endif

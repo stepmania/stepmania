@@ -1,21 +1,13 @@
 #include "global.h"
 #include "NetworkProtocol.h"
 
-#include "NetworkProtocolLegacy.h"
-NetworkProtocol* NetworkProtocol::MakeNetworkProtocol(RString sProtocol)
+namespace NetworkProtocol
 {
-	/*
-	if(sProtocol == "SSC")
-		return new NetworkProtocolSSC();
-	else if(sProtocol == "Legacy")
-		return new NetworkProtocolLegacy();
-	FAIL_M(sProtocol);
-	*/
-	return new NetworkProtocolLegacy();
-}
+	
+};
 
 /*
- * (c) 2010 AJ Kelly
+ * (c) 2011 AJ Kelly
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

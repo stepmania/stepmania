@@ -5,34 +5,34 @@
 #include "Difficulty.h"
 #include <queue>
 #include "NetworkPacket.h"
-#include "NetworkProtocol.h"
 
 class LoadingWindow;
 
-const int NETPROTOCOLVERSION=3;
-const int NETMAXBUFFERSIZE=1020; //1024 - 4 bytes for EzSockets
-const int NETNUMTAPSCORES=8;
+const int LegacyProtocolVersion = 4;
+const int NETMAXBUFFERSIZE = 1020; //1024 - 4 bytes for EzSockets
+const int NETNUMTAPSCORES = 8;
 
 // [SMLClientCommands name]
-enum NSCommand
+enum LegacyNetCommand
 {
-	NSCPing = 0,
-	NSCPingR,		//  1 [SMLC_PingR]
-	NSCHello,		//  2 [SMLC_Hello]
-	NSCGSR,			//  3 [SMLC_GameStart]
-	NSCGON,			//  4 [SMLC_GameOver]
-	NSCGSU,			//  5 [SMLC_GameStatusUpdate]
-	NSCSU,			//  6 [SMLC_StyleUpdate]
-	NSCCM,			//  7 [SMLC_Chat]
-	NSCRSG,			//  8 [SMLC_RequestStart]
-	NSCUUL,			//  9 [SMLC_Reserved1]
-	NSCSMS,			// 10 [SMLC_MusicSelect]
-	NSCUPOpts,		// 11 [SMLC_PlayerOpts]
-	NSCSMOnline,	// 12 [SMLC_SMO]
-	NSCFormatted,	// 13 [SMLC_RESERVED1]
-	NSCAttack,		// 14 [SMLC_RESERVED2]
-	NUM_NS_COMMANDS
+	LegacyNetCmdPing = 0,
+	LegacyNetCmdPingR,		//  1 [SMLC_PingR]
+	LegacyNetCmdHello,		//  2 [SMLC_Hello]
+	LegacyNetCmdGSR,		//  3 [SMLC_GameStart]
+	LegacyNetCmdGON,		//  4 [SMLC_GameOver]
+	LegacyNetCmdGSU,		//  5 [SMLC_GameStatusUpdate]
+	LegacyNetCmdSU,			//  6 [SMLC_StyleUpdate]
+	LegacyNetCmdCM,			//  7 [SMLC_Chat]
+	LegacyNetCmdRSG,		//  8 [SMLC_RequestStart]
+	LegacyNetCmdUUL,		//  9 [SMLC_Reserved1]
+	LegacyNetCmdSMS,		// 10 [SMLC_MusicSelect]
+	LegacyNetCmdUPOpts,		// 11 [SMLC_PlayerOpts]
+	LegacyNetCmdSMOnline,	// 12 [SMLC_SMO]
+	LegacyNetCmdFormatted,	// 13 [SMLC_RESERVED1]
+	LegacyNetCmdAttack,		// 14 [SMLC_RESERVED2]
+	NUM_LegacyNetCommand
 };
+const LegacyNetCommand NSServerOffset = (LegacyNetCommand)128;
 
 enum SMOStepType
 {
@@ -52,8 +52,6 @@ enum SMOStepType
 	SMOST_CHECKPOINTHIT
 	 */
 };
-
-const NSCommand NSServerOffset = (NSCommand)128;
 
 // TODO: Provide a Lua binding that gives access to this data. -aj
 struct EndOfGame_PlayerData
@@ -92,8 +90,6 @@ class NetworkSyncManager
 public:
 	NetworkSyncManager( LoadingWindow *ld = NULL );
 	~NetworkSyncManager();
-
-	NetworkProtocol *m_Protocol;
 
 	void CloseConnection();
 	void PostStartUp( const RString& ServerIP );

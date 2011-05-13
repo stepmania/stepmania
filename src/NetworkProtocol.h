@@ -1,21 +1,19 @@
-/* NetworkProtocol - A generic class for defining Online protocols. */
-
+/* NetworkProtocol - The commands used for networking */
 #ifndef NetworkProtocol_H
 #define NetworkProtocol_H
 
-class NetworkProtocol
+namespace NetworkProtocol
 {
-public:
-	static NetworkProtocol* MakeNetworkProtocol(RString sProtocol);
-	RString m_sName; // protocol name; "Legacy", "SSC"
-
-	virtual void ParseInput() {};
+	enum Commands
+	{
+		
+	};
 };
 
 #endif
 
 /*
- * (c) 2010 AJ Kelly
+ * (c) 2011 AJ Kelly
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

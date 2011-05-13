@@ -81,7 +81,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386 &quot;$(intdir)\verstub.obj&quot;"
-				AdditionalDependencies="shell32.lib gdi32.lib user32.lib ole32.lib advapi32.lib ../extern/ffmpeg/modern_working/lib/avcodec.lib ../extern/ffmpeg/modern_working/lib/avformat.lib ../extern/ffmpeg/modern_working/lib/avutil.lib ../extern/ffmpeg/modern_working/lib/swscale.lib ../extern/libpng/lib/libpng.lib ../extern/zlib/zdll.lib"
+				AdditionalDependencies="shell32.lib gdi32.lib user32.lib ole32.lib advapi32.lib ffmpeg/modern_working/lib/avcodec.lib ffmpeg/modern_working/lib/avformat.lib ffmpeg/modern_working/lib/avutil.lib ffmpeg/modern_working/lib/swscale.lib ../extern/libpng/lib/libpng.lib ../extern/zlib/zdll.lib"
 				OutputFile="../Program/StepMania-debug.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
@@ -192,7 +192,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386 &quot;$(intdir)\verstub.obj&quot;"
-				AdditionalDependencies="shell32.lib gdi32.lib user32.lib ole32.lib advapi32.lib ../extern/ffmpeg/modern_working/lib/avcodec.lib ../extern/ffmpeg/modern_working/lib/avformat.lib ../extern/ffmpeg/modern_working/lib/avutil.lib ../extern/ffmpeg/modern_working/lib/swscale.lib ../extern/libpng/lib/libpng.lib ../extern/zlib/zdll.lib"
+				AdditionalDependencies="shell32.lib gdi32.lib user32.lib ole32.lib advapi32.lib ffmpeg/modern_working/lib/avcodec.lib ffmpeg/modern_working/lib/avformat.lib ffmpeg/modern_working/lib/avutil.lib ffmpeg/modern_working/lib/swscale.lib ../extern/libpng/lib/libpng.lib ../extern/zlib/zdll.lib"
 				OutputFile="..\Program/StepMania.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
@@ -294,7 +294,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386 &quot;$(intdir)\verstub.obj&quot;"
-				AdditionalDependencies="shell32.lib gdi32.lib user32.lib ole32.lib advapi32.lib ../extern/ffmpeg/modern_working/lib/avcodec.lib ../extern/ffmpeg/lib/avformat.lib ../extern/ffmpeg/lib/avutil.lib ../extern/ffmpeg/lib/swscale.lib ../extern/libpng/lib/libpng.lib ../extern/zlib/zdll.lib"
+				AdditionalDependencies="shell32.lib gdi32.lib user32.lib ole32.lib advapi32.lib ffmpeg/modern_working/lib/avcodec.lib ffmpeg/modern_working/lib/avformat.lib ffmpeg/modern_working/lib/avutil.lib ffmpeg/modern_working/lib/swscale.lib ../extern/libpng/lib/libpng.lib ../extern/zlib/zdll.lib"
 				OutputFile="..\Program/StepMania-fastdebug.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
@@ -6584,14 +6584,6 @@
 				RelativePath=".\NetworkProtocol.h"
 				>
 			</File>
-			<File
-				RelativePath=".\NetworkProtocolLegacy.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\NetworkProtocolLegacy.h"
-				>
-			</File>
 		</Filter>
 		<Filter
 			Name="Helpers"
@@ -6615,6 +6607,22 @@
 					RelativePath="..\extern\pcre\chartables.c"
 					>
 					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="FastDebug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
 						Name="Release-SSE2|Win32"
 						>
 						<Tool
@@ -6626,6 +6634,22 @@
 				<File
 					RelativePath="..\extern\pcre\get.c"
 					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="FastDebug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
 					<FileConfiguration
 						Name="Release-SSE2|Win32"
 						>
@@ -6643,6 +6667,22 @@
 					RelativePath="..\extern\pcre\maketables.c"
 					>
 					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="FastDebug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
 						Name="Release-SSE2|Win32"
 						>
 						<Tool
@@ -6654,6 +6694,22 @@
 				<File
 					RelativePath="..\extern\pcre\pcre.c"
 					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="FastDebug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
 					<FileConfiguration
 						Name="Release-SSE2|Win32"
 						>
@@ -6671,6 +6727,22 @@
 					RelativePath="..\extern\pcre\study.c"
 					>
 					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="FastDebug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
 						Name="Release-SSE2|Win32"
 						>
 						<Tool
@@ -6686,6 +6758,22 @@
 				<File
 					RelativePath="..\extern\lua-5.1\src\lapi.c"
 					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="FastDebug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
 					<FileConfiguration
 						Name="Release-SSE2|Win32"
 						>
@@ -6703,6 +6791,22 @@
 					RelativePath="..\extern\lua-5.1\src\lauxlib.c"
 					>
 					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="FastDebug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
 						Name="Release-SSE2|Win32"
 						>
 						<Tool
@@ -6719,6 +6823,22 @@
 					RelativePath="..\extern\lua-5.1\src\lbaselib.c"
 					>
 					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="FastDebug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
 						Name="Release-SSE2|Win32"
 						>
 						<Tool
@@ -6730,6 +6850,22 @@
 				<File
 					RelativePath="..\extern\lua-5.1\src\lcode.c"
 					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="FastDebug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
 					<FileConfiguration
 						Name="Release-SSE2|Win32"
 						>
@@ -6747,6 +6883,22 @@
 					RelativePath="..\extern\lua-5.1\src\ldblib.c"
 					>
 					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="FastDebug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
 						Name="Release-SSE2|Win32"
 						>
 						<Tool
@@ -6758,6 +6910,22 @@
 				<File
 					RelativePath="..\extern\lua-5.1\src\ldebug.c"
 					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="FastDebug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
 					<FileConfiguration
 						Name="Release-SSE2|Win32"
 						>
@@ -6775,6 +6943,22 @@
 					RelativePath="..\extern\lua-5.1\src\ldo.c"
 					>
 					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="FastDebug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
 						Name="Release-SSE2|Win32"
 						>
 						<Tool
@@ -6791,6 +6975,22 @@
 					RelativePath="..\extern\lua-5.1\src\ldump.c"
 					>
 					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="FastDebug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
 						Name="Release-SSE2|Win32"
 						>
 						<Tool
@@ -6802,6 +7002,22 @@
 				<File
 					RelativePath="..\extern\lua-5.1\src\lfunc.c"
 					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="FastDebug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
 					<FileConfiguration
 						Name="Release-SSE2|Win32"
 						>
@@ -6819,6 +7035,22 @@
 					RelativePath="..\extern\lua-5.1\src\lgc.c"
 					>
 					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="FastDebug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
 						Name="Release-SSE2|Win32"
 						>
 						<Tool
@@ -6835,6 +7067,22 @@
 					RelativePath="..\extern\lua-5.1\src\linit.c"
 					>
 					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="FastDebug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
 						Name="Release-SSE2|Win32"
 						>
 						<Tool
@@ -6847,6 +7095,22 @@
 					RelativePath="..\extern\lua-5.1\src\liolib.c"
 					>
 					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="FastDebug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
 						Name="Release-SSE2|Win32"
 						>
 						<Tool
@@ -6858,6 +7122,22 @@
 				<File
 					RelativePath="..\extern\lua-5.1\src\llex.c"
 					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="FastDebug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
 					<FileConfiguration
 						Name="Release-SSE2|Win32"
 						>
@@ -6879,6 +7159,22 @@
 					RelativePath="..\extern\lua-5.1\src\lmathlib.c"
 					>
 					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="FastDebug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
 						Name="Release-SSE2|Win32"
 						>
 						<Tool
@@ -6890,6 +7186,22 @@
 				<File
 					RelativePath="..\extern\lua-5.1\src\lmem.c"
 					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="FastDebug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
 					<FileConfiguration
 						Name="Release-SSE2|Win32"
 						>
@@ -6907,6 +7219,22 @@
 					RelativePath="..\extern\lua-5.1\src\loadlib.c"
 					>
 					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="FastDebug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
 						Name="Release-SSE2|Win32"
 						>
 						<Tool
@@ -6918,6 +7246,22 @@
 				<File
 					RelativePath="..\extern\lua-5.1\src\lobject.c"
 					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="FastDebug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
 					<FileConfiguration
 						Name="Release-SSE2|Win32"
 						>
@@ -6935,6 +7279,22 @@
 					RelativePath="..\extern\lua-5.1\src\lopcodes.c"
 					>
 					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="FastDebug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
 						Name="Release-SSE2|Win32"
 						>
 						<Tool
@@ -6951,6 +7311,22 @@
 					RelativePath="..\extern\lua-5.1\src\loslib.c"
 					>
 					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="FastDebug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
 						Name="Release-SSE2|Win32"
 						>
 						<Tool
@@ -6962,6 +7338,22 @@
 				<File
 					RelativePath="..\extern\lua-5.1\src\lparser.c"
 					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="FastDebug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
 					<FileConfiguration
 						Name="Release-SSE2|Win32"
 						>
@@ -6979,6 +7371,22 @@
 					RelativePath="..\extern\lua-5.1\src\lstate.c"
 					>
 					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="FastDebug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
 						Name="Release-SSE2|Win32"
 						>
 						<Tool
@@ -6994,6 +7402,22 @@
 				<File
 					RelativePath="..\extern\lua-5.1\src\lstring.c"
 					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="FastDebug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
 					<FileConfiguration
 						Name="Release-SSE2|Win32"
 						>
@@ -7011,6 +7435,22 @@
 					RelativePath="..\extern\lua-5.1\src\lstrlib.c"
 					>
 					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="FastDebug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
 						Name="Release-SSE2|Win32"
 						>
 						<Tool
@@ -7022,6 +7462,22 @@
 				<File
 					RelativePath="..\extern\lua-5.1\src\ltable.c"
 					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="FastDebug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
 					<FileConfiguration
 						Name="Release-SSE2|Win32"
 						>
@@ -7039,6 +7495,22 @@
 					RelativePath="..\extern\lua-5.1\src\ltablib.c"
 					>
 					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="FastDebug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
 						Name="Release-SSE2|Win32"
 						>
 						<Tool
@@ -7050,6 +7522,22 @@
 				<File
 					RelativePath="..\extern\lua-5.1\src\ltm.c"
 					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="FastDebug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
 					<FileConfiguration
 						Name="Release-SSE2|Win32"
 						>
@@ -7079,6 +7567,22 @@
 					RelativePath="..\extern\lua-5.1\src\lundump.c"
 					>
 					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="FastDebug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
 						Name="Release-SSE2|Win32"
 						>
 						<Tool
@@ -7095,6 +7599,22 @@
 					RelativePath="..\extern\lua-5.1\src\lvm.c"
 					>
 					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="FastDebug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
 						Name="Release-SSE2|Win32"
 						>
 						<Tool
@@ -7110,6 +7630,22 @@
 				<File
 					RelativePath="..\extern\lua-5.1\src\lzio.c"
 					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="FastDebug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
 					<FileConfiguration
 						Name="Release-SSE2|Win32"
 						>
@@ -7131,6 +7667,22 @@
 					RelativePath="..\extern\jsoncpp\src\lib_json\json_reader.cpp"
 					>
 					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="FastDebug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
 						Name="Release-SSE2|Win32"
 						>
 						<Tool
@@ -7143,6 +7695,22 @@
 					RelativePath="..\extern\jsoncpp\src\lib_json\json_value.cpp"
 					>
 					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="FastDebug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
 						Name="Release-SSE2|Win32"
 						>
 						<Tool
@@ -7154,6 +7722,22 @@
 				<File
 					RelativePath="..\extern\jsoncpp\src\lib_json\json_writer.cpp"
 					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="FastDebug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
 					<FileConfiguration
 						Name="Release-SSE2|Win32"
 						>
@@ -7171,6 +7755,22 @@
 					RelativePath="..\extern\glew-1.5.8\src\glew.c"
 					>
 					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="FastDebug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
 						Name="Release-SSE2|Win32"
 						>
 						<Tool
@@ -7186,6 +7786,22 @@
 				<File
 					RelativePath="..\extern\libpng\include\png.c"
 					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="FastDebug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
 					<FileConfiguration
 						Name="Release-SSE2|Win32"
 						>
@@ -7211,6 +7827,22 @@
 					RelativePath="..\extern\libpng\include\pngerror.c"
 					>
 					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="FastDebug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
 						Name="Release-SSE2|Win32"
 						>
 						<Tool
@@ -7222,6 +7854,22 @@
 				<File
 					RelativePath="..\extern\libpng\include\pngget.c"
 					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="FastDebug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
 					<FileConfiguration
 						Name="Release-SSE2|Win32"
 						>
@@ -7243,6 +7891,22 @@
 					RelativePath="..\extern\libpng\include\pngmem.c"
 					>
 					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="FastDebug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
 						Name="Release-SSE2|Win32"
 						>
 						<Tool
@@ -7254,6 +7918,22 @@
 				<File
 					RelativePath="..\extern\libpng\include\pngpread.c"
 					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="FastDebug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
 					<FileConfiguration
 						Name="Release-SSE2|Win32"
 						>
@@ -7271,6 +7951,22 @@
 					RelativePath="..\extern\libpng\include\pngread.c"
 					>
 					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="FastDebug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
 						Name="Release-SSE2|Win32"
 						>
 						<Tool
@@ -7282,6 +7978,22 @@
 				<File
 					RelativePath="..\extern\libpng\include\pngrio.c"
 					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="FastDebug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
 					<FileConfiguration
 						Name="Release-SSE2|Win32"
 						>
@@ -7295,6 +8007,22 @@
 					RelativePath="..\extern\libpng\include\pngrtran.c"
 					>
 					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="FastDebug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
 						Name="Release-SSE2|Win32"
 						>
 						<Tool
@@ -7307,6 +8035,22 @@
 					RelativePath="..\extern\libpng\include\pngrutil.c"
 					>
 					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="FastDebug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
 						Name="Release-SSE2|Win32"
 						>
 						<Tool
@@ -7318,6 +8062,22 @@
 				<File
 					RelativePath="..\extern\libpng\include\pngset.c"
 					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="FastDebug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
 					<FileConfiguration
 						Name="Release-SSE2|Win32"
 						>
@@ -7335,6 +8095,22 @@
 					RelativePath="..\extern\libpng\include\pngtrans.c"
 					>
 					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="FastDebug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
 						Name="Release-SSE2|Win32"
 						>
 						<Tool
@@ -7346,6 +8122,22 @@
 				<File
 					RelativePath="..\extern\libpng\include\pngwio.c"
 					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="FastDebug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
 					<FileConfiguration
 						Name="Release-SSE2|Win32"
 						>
@@ -7359,6 +8151,22 @@
 					RelativePath="..\extern\libpng\include\pngwrite.c"
 					>
 					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="FastDebug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
 						Name="Release-SSE2|Win32"
 						>
 						<Tool
@@ -7371,6 +8179,22 @@
 					RelativePath="..\extern\libpng\include\pngwtran.c"
 					>
 					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="FastDebug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
 						Name="Release-SSE2|Win32"
 						>
 						<Tool
@@ -7382,6 +8206,22 @@
 				<File
 					RelativePath="..\extern\libpng\include\pngwutil.c"
 					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="FastDebug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
 					<FileConfiguration
 						Name="Release-SSE2|Win32"
 						>

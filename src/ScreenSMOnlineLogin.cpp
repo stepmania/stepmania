@@ -14,7 +14,6 @@
 #include "Profile.h"
 #include "LocalizedString.h"
 #include "OptionRowHandler.h"
-#include "NetworkProtocolLegacy.h"
 
 REGISTER_SCREEN_CLASS(ScreenSMOnlineLogin);
 
@@ -215,11 +214,6 @@ void ScreenSMOnlineLogin::SendLogin( RString sPassword )
 		authMethod = 1;
 		HashedName = NSMAN->MD5Hex( HashedName + ssprintf("%d", NSMAN->GetSMOnlineSalt()) );
 	}
-
-	/*
-	if( NSMAN->m_Protocol->m_sName == "Legacy" )
-		static_cast<NetworkProtocolLegacy*>(NSMAN->m_Protocol)->SendLogin((uint8_t)m_iPlayer, (uint8_t)authMethod, PlayerName, HashedName );
-	*/
 
 	NSMAN->m_SMOnlinePacket.Clear();
 	NSMAN->m_SMOnlinePacket.Write1( (uint8_t)0 );		//Login command
