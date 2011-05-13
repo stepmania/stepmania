@@ -562,10 +562,10 @@ static MenuDef g_SongInformation(
 	MenuRowDef( ScreenEdit::max_bpm,			"Max BPM",			true, EditMode_Full, true, true, 0, NULL )
 );
 
-static MenuDef g_TimingDataInformation(
-	"ScreenMiniMenuTimingDataInformation",
-       MenuRowDef( ScreenEdit::beat_0_offset,			"Beat 0 Offset",		true, EditMode_Full, true, true, 0, NULL ),
-       MenuRowDef( ScreenEdit::bpm,				"Edit BPM change",		true, EditMode_Full, true, true, 0, NULL ),
+static const MenuRowDef g_TimingDataLines[] =
+{
+	MenuRowDef( ScreenEdit::beat_0_offset,			"Beat 0 Offset",		true, EditMode_Full, true, true, 0, NULL ),
+	MenuRowDef( ScreenEdit::bpm,				"Edit BPM change",		true, EditMode_Full, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::stop,				"Edit stop",			true, EditMode_Full, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::delay,				"Edit delay",			true, EditMode_Full, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::time_signature_numerator,	"Edit time signature (top)",	true, EditMode_Full, true, true, 0, NULL ),
@@ -573,7 +573,12 @@ static MenuDef g_TimingDataInformation(
 	MenuRowDef( ScreenEdit::tickcount,			"Edit tickcount",		true, EditMode_Full, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::combo,				"Edit combo",			true, EditMode_Full, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::label,				"Edit label",			true, EditMode_Full, true, true, 0, NULL ),
-	MenuRowDef( ScreenEdit::warp,				"Edit warp",			true, EditMode_Full, true, true, 0, NULL )
+	MenuRowDef( ScreenEdit::warp,				"Edit warp",			true, EditMode_Full, true, true, 0, NULL ),
+};
+
+static MenuDef g_TimingDataInformation(
+	"ScreenMiniMenuTimingDataInformation"
+        // fill this in dynamically too.
 );
 
 enum { song_bganimation, song_movie, song_bitmap, global_bganimation, global_movie, global_movie_song_group, global_movie_song_group_and_genre, dynamic_random, baked_random, none };
@@ -3106,6 +3111,21 @@ TimingData & ScreenEdit::GetAppropriateTiming() const
 
 void ScreenEdit::DisplayTimingMenu()
 {
+	g_TimingDataInformation.rows.clear();
+	
+	for( unsigned i=0; i<ARRAYLEN(g_TimingDataLines); ++i )
+	{
+		const MenuRowDef &hl = g_TimingDataLines[i];
+		
+		if( ( hl.iRowCode == ScreenEdit::tickcount || hl.iRowCode == ScreenEdit::combo ) 
+		   && !GAMESTATE->m_bIsEditorStepTiming )
+		{
+			continue;
+		}
+		
+		g_TimingDataInformation.rows.push_back(hl);
+	}
+	
 	float fBeat;
 	TimingData &pTime = GetAppropriateTiming();
 	if( !GAMESTATE->m_bIsEditorStepTiming )
@@ -3116,6 +3136,10 @@ void ScreenEdit::DisplayTimingMenu()
 	{
 		fBeat = GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat;
 	}
+	
+	// TODO: Better way of guaranteeing that we don't go out of bounds between timings.
+	int posLabel = ScreenEdit::tickcount;
+	int posWarp = ScreenEdit::combo;
 
 	g_TimingDataInformation.rows[beat_0_offset].SetOneUnthemedChoice( ssprintf("%.5f", pTime.m_fBeat0OffsetInSeconds) );
 	g_TimingDataInformation.rows[bpm].SetOneUnthemedChoice( ssprintf("%.5f", pTime.GetBPMAtBeat( fBeat ) ) );
@@ -3123,13 +3147,16 @@ void ScreenEdit::DisplayTimingMenu()
 	g_TimingDataInformation.rows[delay].SetOneUnthemedChoice( ssprintf("%.5f", pTime.GetDelayAtBeat( fBeat ) ) );
 	g_TimingDataInformation.rows[time_signature_numerator].SetOneUnthemedChoice( ssprintf("%d", pTime.GetTimeSignatureNumeratorAtBeat( fBeat ) ) );
 	g_TimingDataInformation.rows[time_signature_denominator].SetOneUnthemedChoice( ssprintf("%d", pTime.GetTimeSignatureDenominatorAtBeat( fBeat ) ) );
+	
 	if( GAMESTATE->m_bIsEditorStepTiming )
 	{
 		g_TimingDataInformation.rows[tickcount].SetOneUnthemedChoice( ssprintf("%d", pTime.GetTickcountAtBeat( fBeat ) ) );
 		g_TimingDataInformation.rows[combo].SetOneUnthemedChoice( ssprintf("%d", pTime.GetComboAtBeat( fBeat ) ) );
+		posLabel = ScreenEdit::label;
+		posWarp = ScreenEdit::warp;
 	}
-	g_TimingDataInformation.rows[label].SetOneUnthemedChoice( pTime.GetLabelAtBeat( fBeat ).c_str() );
-	g_TimingDataInformation.rows[warp].SetOneUnthemedChoice( ssprintf("%.5f", pTime.GetWarpAtBeat( fBeat ) ) );
+	g_TimingDataInformation.rows[posLabel].SetOneUnthemedChoice( pTime.GetLabelAtBeat( fBeat ).c_str() );
+	g_TimingDataInformation.rows[posWarp].SetOneUnthemedChoice( ssprintf("%.5f", pTime.GetWarpAtBeat( fBeat ) ) );
 	
 	EditMiniMenu( &g_TimingDataInformation, SM_BackFromTimingDataInformation );
 }
