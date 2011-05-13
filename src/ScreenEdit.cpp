@@ -3874,14 +3874,14 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 	DEFAULT_FAIL( c );
 	case beat_0_offset:
 		ScreenTextEntry::TextEntry( SM_None, ENTER_BEAT_0_OFFSET,
-					   ssprintf("%.5f", m_pSteps->m_Timing.m_fBeat0OffsetInSeconds), 20,
+					   ssprintf("%.5f", GetAppropriateTiming().m_fBeat0OffsetInSeconds), 20,
 					   ScreenTextEntry::FloatValidate, ChangeBeat0Offset, NULL );
 		break;
 		case bpm:
 		ScreenTextEntry::TextEntry( 
 			SM_BackFromBPMChange, 
 			ENTER_BPM_VALUE, 
-			ssprintf( "%.4f", m_pSteps->m_Timing.GetBPMAtBeat(GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat) ),
+			ssprintf( "%.4f", GetAppropriateTiming().GetBPMAtBeat( GetBeat() ) ),
 			10
 			);
 		break;
@@ -3889,7 +3889,7 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 		ScreenTextEntry::TextEntry( 
 			SM_BackFromStopChange, 
 			ENTER_STOP_VALUE, 
-			ssprintf( "%.4f", m_pSteps->m_Timing.GetStopAtRow( BeatToNoteRow(GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat) ) ),
+			ssprintf( "%.4f", GetAppropriateTiming().GetStopAtBeat( GetBeat() ) ),
 			10
 			);
 		break;
@@ -3897,7 +3897,7 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 		ScreenTextEntry::TextEntry( 
 			SM_BackFromDelayChange, 
 			ENTER_DELAY_VALUE, 
-			ssprintf( "%.4f", m_pSteps->m_Timing.GetDelayAtRow( BeatToNoteRow(GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat) ) ),
+			ssprintf( "%.4f", GetAppropriateTiming().GetDelayAtBeat( GetBeat() ) ),
 			10
 		);
 		break;
@@ -3905,7 +3905,7 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 		ScreenTextEntry::TextEntry(
 			SM_BackFromTimeSignatureNumeratorChange,
 			ENTER_TIME_SIGNATURE_NUMERATOR_VALUE,
-			ssprintf( "%d", m_pSteps->m_Timing.GetTimeSignatureSegmentAtBeat( GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat ).m_iNumerator ),
+			ssprintf( "%d", GetAppropriateTiming().GetTimeSignatureSegmentAtBeat( GetBeat() ).m_iNumerator ),
 			3
 			);
 		break;
@@ -3913,7 +3913,7 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 		ScreenTextEntry::TextEntry(
 			SM_BackFromTimeSignatureDenominatorChange,
 			ENTER_TIME_SIGNATURE_DENOMINATOR_VALUE,
-			ssprintf( "%d", m_pSteps->m_Timing.GetTimeSignatureSegmentAtBeat( GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat ).m_iDenominator ),
+			ssprintf( "%d", GetAppropriateTiming().GetTimeSignatureSegmentAtBeat( GetBeat() ).m_iDenominator ),
 			3
 			);
 		break;
@@ -3921,7 +3921,7 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 		ScreenTextEntry::TextEntry(
 			SM_BackFromTickcountChange,
 			ENTER_TICKCOUNT_VALUE,
-			ssprintf( "%d", m_pSteps->m_Timing.GetTickcountAtBeat( GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat ) ),
+			ssprintf( "%d", GetAppropriateTiming().GetTickcountAtBeat( GetBeat() ) ),
 			2
 			);
 		break;
@@ -3929,7 +3929,7 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 		ScreenTextEntry::TextEntry(
 		   SM_BackFromComboChange,
 		   ENTER_COMBO_VALUE,
-		   ssprintf( "%d", m_pSteps->m_Timing.GetComboAtBeat( GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat ) ),
+		   ssprintf( "%d", GetAppropriateTiming().GetComboAtBeat( GetBeat() ) ),
 		   4
 		   );
 	break;
@@ -3937,7 +3937,7 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 		ScreenTextEntry::TextEntry(
 		   SM_BackFromLabelChange,
 		   ENTER_LABEL_VALUE,
-		   ssprintf( "%s", m_pSteps->m_Timing.GetLabelAtBeat( GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat ).c_str() ),
+		   ssprintf( "%s", GetAppropriateTiming().GetLabelAtBeat( GetBeat() ).c_str() ),
 		   64
 		   );
 		break;
@@ -3945,7 +3945,7 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 		ScreenTextEntry::TextEntry( 
 		   SM_BackFromWarpChange, 
 		   ENTER_WARP_VALUE, 
-		   ssprintf( "%.4f", m_pSteps->m_Timing.GetWarpAtRow( BeatToNoteRow(GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat) ) ),
+		   ssprintf( "%.4f", GetAppropriateTiming().GetWarpAtBeat( GetBeat() ) ),
 		   10
 		   );
 	break;
