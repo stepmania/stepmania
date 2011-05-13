@@ -3684,8 +3684,8 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 		case convert_to_pause:
 			{
 				ASSERT( m_NoteFieldEdit.m_iBeginMarker!=-1 && m_NoteFieldEdit.m_iEndMarker!=-1 );
-				float fMarkerStart = m_pSteps->m_Timing.GetElapsedTimeFromBeat( NoteRowToBeat(m_NoteFieldEdit.m_iBeginMarker) );
-				float fMarkerEnd = m_pSteps->m_Timing.GetElapsedTimeFromBeat( NoteRowToBeat(m_NoteFieldEdit.m_iEndMarker) );
+				float fMarkerStart = GetAppropriateTiming().GetElapsedTimeFromBeat( NoteRowToBeat(m_NoteFieldEdit.m_iBeginMarker) );
+				float fMarkerEnd = GetAppropriateTiming().GetElapsedTimeFromBeat( NoteRowToBeat(m_NoteFieldEdit.m_iEndMarker) );
 
 				// The length of the stop segment we're going to create.  This includes time spent in any
 				// stops in the selection, which will be deleted and subsumed into the new stop.
@@ -3697,9 +3697,9 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 						m_NoteFieldEdit.m_iBeginMarker + 1,
 						m_NoteFieldEdit.m_iEndMarker-m_NoteFieldEdit.m_iBeginMarker
 					);
-				m_pSteps->m_Timing.DeleteRows( m_NoteFieldEdit.m_iBeginMarker,
+				GetAppropriateTiming().DeleteRows( m_NoteFieldEdit.m_iBeginMarker,
 						m_NoteFieldEdit.m_iEndMarker-m_NoteFieldEdit.m_iBeginMarker );
-				m_pSteps->m_Timing.SetStopAtRow( m_NoteFieldEdit.m_iBeginMarker, fStopLength );
+				GetAppropriateTiming().SetStopAtRow( m_NoteFieldEdit.m_iBeginMarker, fStopLength );
 				m_NoteFieldEdit.m_iBeginMarker = -1;
 				m_NoteFieldEdit.m_iEndMarker = -1;
 				break;
@@ -3707,14 +3707,14 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 		case convert_pause_to_beat:
 			{
 				// TODO: Convert both Delays and Stops at once.
-				float fStopSeconds = m_pSteps->m_Timing.GetStopAtRow( BeatToNoteRow(GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat) );
-				m_pSteps->m_Timing.SetStopAtBeat( GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat, 0 );
+				float fStopSeconds = GetAppropriateTiming().GetStopAtRow( BeatToNoteRow( GetBeat() ) );
+				GetAppropriateTiming().SetStopAtBeat( GetBeat() , 0 );
 
-				float fStopBeats = fStopSeconds * m_pSteps->m_Timing.GetBPMAtBeat(GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat) / 60;
+				float fStopBeats = fStopSeconds * GetAppropriateTiming().GetBPMAtBeat( GetBeat() ) / 60;
 
 				// don't move the step from where it is, just move everything later
-				NoteDataUtil::InsertRows( m_NoteDataEdit, BeatToNoteRow(GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat) + 1, BeatToNoteRow(fStopBeats) );
-				m_pSteps->m_Timing.InsertRows( BeatToNoteRow(GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat) + 1, BeatToNoteRow(fStopBeats) );
+				NoteDataUtil::InsertRows( m_NoteDataEdit, BeatToNoteRow( GetBeat() ) + 1, BeatToNoteRow(fStopBeats) );
+				GetAppropriateTiming().InsertRows( BeatToNoteRow( GetBeat() ) + 1, BeatToNoteRow(fStopBeats) );
 			}
 			break;
 		case undo:
