@@ -138,6 +138,8 @@ enum EditButton
 	EDIT_BUTTON_ADD_COURSE_MODS,
 	
 	EDIT_BUTTON_SWITCH_PLAYERS, /**< Allow entering notes for a different Player. */
+	
+	EDIT_BUTTON_SWITCH_TIMINGS, /**< Allow switching between Song and Step TimingData. */
 
 	NUM_EditButton, // leave this at the end
 	EditButton_Invalid

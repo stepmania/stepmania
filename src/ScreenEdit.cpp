@@ -310,6 +310,9 @@ void ScreenEdit::InitEditMappings()
 
 	// Switch players, if it makes sense to do so.
 	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SWITCH_PLAYERS][0] = DeviceInput(DEVICE_KEYBOARD, KEY_SLASH);
+	
+	// Allow song and step timing to be swapped.
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SWITCH_TIMINGS][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Ct);
 
 	m_PlayMappingsDeviceInput.button[EDIT_BUTTON_RETURN_TO_EDIT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_ESC);
 	m_PlayMappingsMenuButton.button[EDIT_BUTTON_RETURN_TO_EDIT][1] = GAME_BUTTON_BACK;
@@ -2104,6 +2107,10 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			if( m_InputPlayerNumber == NUM_PLAYERS )
 				m_InputPlayerNumber = PLAYER_1;
 		}
+		break;
+	
+	case EDIT_BUTTON_SWITCH_TIMINGS:
+		GAMESTATE->m_bIsEditorStepTiming = !GAMESTATE->m_bIsEditorStepTiming;
 		break;
 	}
 }
@@ -4190,6 +4197,7 @@ struct EditHelpLine
 #undef PUSH_IF_VALID
 	}
 };
+// TODO: Identify which of these can be removed and sent to a readme.
 static const EditHelpLine g_EditHelpLines[] =
 {
 	EditHelpLine( "Move cursor",					EDIT_BUTTON_SCROLL_UP_LINE,		EDIT_BUTTON_SCROLL_DOWN_LINE ),
@@ -4218,6 +4226,7 @@ static const EditHelpLine g_EditHelpLines[] =
 	EditHelpLine( "Shift BPM changes and stops up one beat",	EDIT_BUTTON_DELETE_SHIFT_PAUSES ),
 	EditHelpLine( "Cycle between tap notes",			EDIT_BUTTON_CYCLE_TAP_LEFT,		EDIT_BUTTON_CYCLE_TAP_RIGHT ),
 	EditHelpLine( "Add to/remove from right half",			EDIT_BUTTON_RIGHT_SIDE ),
+	EditHelpLine( "Switch Timing",					EDIT_BUTTON_SWITCH_TIMINGS ),
 	EditHelpLine( "Switch player (Routine only)",			EDIT_BUTTON_SWITCH_PLAYERS ),
 };
 
