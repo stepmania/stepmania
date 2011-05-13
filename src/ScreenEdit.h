@@ -492,9 +492,9 @@ public:
 //		time_signature,
 		time_signature_numerator,
 		time_signature_denominator,
+		label,
 		tickcount,
 		combo,
-		label,
 		warp,
 		NUM_TIMING_DATA_INFORMATION_CHOICES
 	};
