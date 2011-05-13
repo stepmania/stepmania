@@ -132,7 +132,6 @@ static void GetTimingTags( vector<RString> &lines, TimingData timing )
 	FOREACH_CONST( LabelSegment, timing.m_LabelSegments, ls )
 		w.Write( ls->m_iStartRow, ls->m_sLabel.c_str() );
 	w.Finish();
-	
 }
 
 static void WriteTimingTags( RageFile &f, const TimingData &timing )
@@ -147,7 +146,7 @@ static void WriteTimingTags( RageFile &f, const TimingData &timing )
 }
 
 /**
- * @brief Write out the common tags for .SM files.
+ * @brief Write out the common tags for .SSC files.
  * @param f the file in question.
  * @param out the Song in question. */
 static void WriteGlobalTags( RageFile &f, const Song &out )
@@ -298,6 +297,9 @@ static RString GetSSCNoteData( const Song &song, const Steps &in, bool bSavingCa
 	lines.push_back( ssprintf( "#CREDIT:%s;", SmEscape(in.GetCredit()).c_str() ) );
 
 	GetTimingTags( lines, in.m_Timing );
+	
+	lines.push_back( "#ATTACKS:;" ); // not sure of how to handle this yet.
+	lines.push_back( ssprintf( "#OFFSET:%.6f;", in.m_Timing.m_fBeat0OffsetInSeconds ) );
 	
 	RString sNoteData;
 	in.GetSMNoteData( sNoteData );
