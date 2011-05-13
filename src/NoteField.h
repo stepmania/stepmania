@@ -56,7 +56,7 @@ protected:
 	void DrawMarkerBar( int fBeat );
 	void DrawAreaHighlight( int iStartBeat, int iEndBeat );
 	void DrawBPMText( const float fBeat, const float fBPM );
-	void DrawFreezeText( const float fBeat, const float fBPM, const float bDelay );
+	void DrawFreezeText( const float fBeat, const float fLength, const float bDelay );
 	void DrawWarpText( const float fBeat, const float fNewBeat );
 	void DrawTimeSignatureText( const float fBeat, int iNumerator, int iDenominator );
 	void DrawTickcountText( const float fBeat, int iTicks );

@@ -4227,6 +4227,13 @@ void ScreenEdit::DoHelp()
 
 		RString sButtons = GetDeviceButtonsLocalized( hl.veb, m_EditMappingsDeviceInput );
 		RString sDescription = THEME->GetString( "EditHelpDescription", hl.szEnglishDescription );
+		
+		// TODO: Better way of hiding routine only key on non-routine.
+		if( sDescription.Left(13) == "Switch player" && m_InputPlayerNumber == PLAYER_INVALID )
+		{
+			continue;
+		}
+		
 		g_EditHelp.rows.push_back( MenuRowDef( -1, sDescription, false, EditMode_Practice, false, false, 0, sButtons ) );
 	}
 

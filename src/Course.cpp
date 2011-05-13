@@ -90,8 +90,8 @@ int CourseEntry::GetNumModChanges() const
 
 Course::Course(): m_bIsAutogen(false), m_sPath(""), m_sMainTitle(""),
 	m_sMainTitleTranslit(""), m_sSubTitle(""), m_sSubTitleTranslit(""),
-	m_sBannerPath(""), m_sBackgroundPath(""), m_sCDTitlePath(""),
-	m_sGroupName(""), m_sScripter(""), m_bRepeat(false), m_fGoalSeconds(0), 
+	m_sScripter(""), m_sBannerPath(""), m_sBackgroundPath(""),
+	m_sCDTitlePath(""), m_sGroupName(""), m_bRepeat(false), m_fGoalSeconds(0), 
 	m_bShuffle(false), m_iLives(-1), m_bSortByMeter(false),
 	m_bIncomplete(false), m_vEntries(), m_SortOrder_TotalDifficulty(0),
 	m_SortOrder_Ranking(0), m_LoadedFromProfile(ProfileSlot_Invalid),
