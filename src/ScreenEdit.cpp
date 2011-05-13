@@ -1010,12 +1010,12 @@ void ScreenEdit::Update( float fDeltaTime )
 
 
 	// Update trailing beat
-	float fDelta = GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat - m_fTrailingBeat;
+	float fDelta = GetBeat() - m_fTrailingBeat;
 	if( fabsf(fDelta) < 10 )
-		fapproach( m_fTrailingBeat, GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat,
+		fapproach( m_fTrailingBeat, GetBeat(),
 			fDeltaTime*40 / m_NoteFieldEdit.GetPlayerState()->m_PlayerOptions.GetCurrent().m_fScrollSpeed );
 	else
-		fapproach( m_fTrailingBeat, GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat,
+		fapproach( m_fTrailingBeat, GetBeat(),
 			fabsf(fDelta) * fDeltaTime*5 );
 
 	PlayTicks();
@@ -1090,8 +1090,8 @@ void ScreenEdit::UpdateTextInfo()
 	RString sNoteType = ssprintf( NOTES.GetValue(), NoteTypeToLocalizedString(m_SnapDisplay.GetNoteType()).c_str() );
 
 	RString sText;
-	sText += ssprintf( CURRENT_BEAT_FORMAT.GetValue(), CURRENT_BEAT.GetValue().c_str(), GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat );
-	sText += ssprintf( CURRENT_SECOND_FORMAT.GetValue(), CURRENT_SECOND.GetValue().c_str(), m_pSteps->m_Timing.GetElapsedTimeFromBeat(GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat) );
+	sText += ssprintf( CURRENT_BEAT_FORMAT.GetValue(), CURRENT_BEAT.GetValue().c_str(), GetBeat() );
+	sText += ssprintf( CURRENT_SECOND_FORMAT.GetValue(), CURRENT_SECOND.GetValue().c_str(), GetAppropriateTiming().GetElapsedTimeFromBeat(GetBeat()) );
 	switch( EDIT_MODE.GetValue() )
 	{
 	DEFAULT_FAIL( EDIT_MODE.GetValue() );
@@ -1188,6 +1188,10 @@ void ScreenEdit::DrawPrimitives()
 	pPlayerState->m_Position.m_fSongBeat = m_fTrailingBeat;	// put trailing beat in effect
 	pPlayerState->m_Position.m_fSongBeatNoOffset = m_fTrailingBeat;	// put trailing beat in effect
 	pPlayerState->m_Position.m_fSongBeatVisible = m_fTrailingBeat;	// put trailing beat in effect
+	
+	GAMESTATE->m_Position.m_fSongBeat = m_fTrailingBeat;	// put trailing beat in effect
+	GAMESTATE->m_Position.m_fSongBeatNoOffset = m_fTrailingBeat;	// put trailing beat in effect
+	GAMESTATE->m_Position.m_fSongBeatVisible = m_fTrailingBeat;	// put trailing beat in effect
 
 	ScreenWithMenuElements::DrawPrimitives();
 
@@ -1446,7 +1450,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			if( m_PlayerStateEdit.m_PlayerOptions.GetSong().m_fScrolls[PlayerOptions::SCROLL_REVERSE] > 0.5 )
 				fBeatsToMove *= -1;
 
-			float fDestinationBeat = GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat + fBeatsToMove;
+			float fDestinationBeat = GetBeat() + fBeatsToMove;
 			fDestinationBeat = Quantize( fDestinationBeat, NoteTypeToBeat(m_SnapDisplay.GetNoteType()) );
 
 			ScrollTo( fDestinationBeat );
@@ -2969,7 +2973,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	else if( SM == SM_LoseFocus )
 	{
 		// Snap the trailing beat, in case we lose focus while tweening.
-		m_fTrailingBeat = GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat;
+		m_fTrailingBeat = GetBeat(); //GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat;
 	}
 
 	ScreenWithMenuElements::HandleScreenMessage( SM );

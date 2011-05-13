@@ -85,13 +85,14 @@ void ArrowEffects::Update()
 	FOREACH_PlayerNumber( pn )
 	{
 		const Style::ColumnInfo* pCols = pStyle->m_ColumnInfo[pn];
+		const SongPosition &position = GAMESTATE->m_bIsEditorStepTiming ? GAMESTATE->m_pPlayerState[pn]->m_Position : GAMESTATE->m_Position;
 
 		PerPlayerData &data = g_EffectData[pn];
 		
 		{
 			static float fLastTime = 0;
 			float fTime = RageTimer::GetTimeSinceStartFast();
-			if( !GAMESTATE->m_pPlayerState[pn]->m_Position.m_bFreeze || !GAMESTATE->m_pPlayerState[pn]->m_Position.m_bDelay )
+			if( !position.m_bFreeze || !position.m_bDelay )
 			{
 				data.m_fExpandSeconds += fTime - fLastTime;
 				data.m_fExpandSeconds = fmodf( data.m_fExpandSeconds, PI*2 );
@@ -177,7 +178,7 @@ void ArrowEffects::Update()
 		// Update Beat
 		do {
 			float fAccelTime = 0.2f, fTotalTime = 0.5f;
-			float fBeat = GAMESTATE->m_pPlayerState[pn]->m_Position.m_fSongBeatVisible + fAccelTime;
+			float fBeat = position.m_fSongBeatVisible + fAccelTime;
 
 			const bool bEvenBeat = ( int(fBeat) % 2 ) != 0;
 
@@ -218,12 +219,13 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 	bIsPastPeakOut = true;
 
 	float fYOffset = 0;
+	const SongPosition &position = GAMESTATE->m_bIsEditorStepTiming ? pPlayerState->m_Position : GAMESTATE->m_Position;
 
 	/* Usually, fTimeSpacing is 0 or 1, in which case we use entirely beat spacing or
 	 * entirely time spacing (respectively). Occasionally, we tween between them. */
 	if( pPlayerState->m_PlayerOptions.GetCurrent().m_fTimeSpacing != 1.0f )
 	{
-		float fSongBeat = pPlayerState->m_Position.m_fSongBeatVisible;
+		float fSongBeat = position.m_fSongBeatVisible;
 		float fBeatsUntilStep = fNoteBeat - fSongBeat;
 		float fYOffsetBeatSpacing = fBeatsUntilStep;
 		fYOffset += fYOffsetBeatSpacing * (1-pPlayerState->m_PlayerOptions.GetCurrent().m_fTimeSpacing);
@@ -231,7 +233,7 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 
 	if( pPlayerState->m_PlayerOptions.GetCurrent().m_fTimeSpacing != 0.0f )
 	{
-		float fSongSeconds = pPlayerState->m_Position.m_fMusicSecondsVisible;
+		float fSongSeconds = position.m_fMusicSecondsVisible;
 		float fNoteSeconds = GAMESTATE->m_pCurSteps[pPlayerState->m_PlayerNumber]->m_Timing.GetElapsedTimeFromBeat(fNoteBeat);
 		float fSecondsUntilStep = fNoteSeconds - fSongSeconds;
 		float fBPM = pPlayerState->m_PlayerOptions.GetCurrent().m_fScrollBPM;
