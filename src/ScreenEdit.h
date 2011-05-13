@@ -529,6 +529,12 @@ public:
 		NUM_BGCHANGE_CHOICES
 	};
 
+	/**
+	 * @brief Take care of any background changes that the user wants.
+	 *
+	 * It is important that this is only called in Song Timing mode.
+	 * @param c the Background Change style requested.
+	 * @param iAnswers the other settings involving the change. */
 	void HandleBGChangeChoice( BGChangeChoice c, const vector<int> &iAnswers );
 
 	enum CourseAttackChoice
