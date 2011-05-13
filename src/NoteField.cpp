@@ -833,25 +833,31 @@ void NoteField::DrawPrimitives()
 			}
 		}
 		
-		// Tickcount text
-		FOREACH_CONST( TickcountSegment, timing.m_TickcountSegments, seg )
+		if( GAMESTATE->m_bIsEditorStepTiming )
 		{
-			if( seg->m_iStartRow >= iFirstRowToDraw && seg->m_iStartRow <= iLastRowToDraw )
+			// Tickcount text
+			FOREACH_CONST( TickcountSegment, timing.m_TickcountSegments, seg )
 			{
-				float fBeat = NoteRowToBeat(seg->m_iStartRow);
-				if( IS_ON_SCREEN(fBeat) )
-					DrawTickcountText( fBeat, seg->m_iTicks );
+				if( seg->m_iStartRow >= iFirstRowToDraw && seg->m_iStartRow <= iLastRowToDraw )
+				{
+					float fBeat = NoteRowToBeat(seg->m_iStartRow);
+					if( IS_ON_SCREEN(fBeat) )
+						DrawTickcountText( fBeat, seg->m_iTicks );
+				}
 			}
 		}
 		
-		// Combo text
-		FOREACH_CONST( ComboSegment, timing.m_ComboSegments, seg )
+		if( GAMESTATE->m_bIsEditorStepTiming )
 		{
-			if( seg->m_iStartRow >= iFirstRowToDraw && seg->m_iStartRow <= iLastRowToDraw )
+			// Combo text
+			FOREACH_CONST( ComboSegment, timing.m_ComboSegments, seg )
 			{
-				float fBeat = NoteRowToBeat(seg->m_iStartRow);
-				if( IS_ON_SCREEN(fBeat) )
-					DrawComboText( fBeat, seg->m_iCombo );
+				if( seg->m_iStartRow >= iFirstRowToDraw && seg->m_iStartRow <= iLastRowToDraw )
+				{
+					float fBeat = NoteRowToBeat(seg->m_iStartRow);
+					if( IS_ON_SCREEN(fBeat) )
+						DrawComboText( fBeat, seg->m_iCombo );
+				}
 			}
 		}
 		
@@ -886,71 +892,74 @@ void NoteField::DrawPrimitives()
 				}
 			}
 		}
-
-		// BGChange text
-		switch( GAMESTATE->m_EditMode )
+		
+		if( !GAMESTATE->m_bIsEditorStepTiming )
 		{
-			case EditMode_Home:
-			case EditMode_CourseMods:
-			case EditMode_Practice:
-				break;
-			case EditMode_Full:
-				{
-					vector<BackgroundChange>::iterator iter[NUM_BackgroundLayer];
-					FOREACH_BackgroundLayer( i )
-						iter[i] = GAMESTATE->m_pCurSong->GetBackgroundChanges(i).begin();
-	
-					while( 1 )
+			// BGChange text
+			switch( GAMESTATE->m_EditMode )
+			{
+				case EditMode_Home:
+				case EditMode_CourseMods:
+				case EditMode_Practice:
+					break;
+				case EditMode_Full:
 					{
-						float fLowestBeat = FLT_MAX;
-						vector<BackgroundLayer> viLowestIndex;
-	
+						vector<BackgroundChange>::iterator iter[NUM_BackgroundLayer];
 						FOREACH_BackgroundLayer( i )
+							iter[i] = GAMESTATE->m_pCurSong->GetBackgroundChanges(i).begin();
+		
+						while( 1 )
 						{
-							if( iter[i] == GAMESTATE->m_pCurSong->GetBackgroundChanges(i).end() )
-								continue;
-	
-							float fBeat = iter[i]->m_fStartBeat;
-							if( fBeat < fLowestBeat )
-							{
-								fLowestBeat = fBeat;
-								viLowestIndex.clear();
-								viLowestIndex.push_back( i );
-							}
-							else if( fBeat == fLowestBeat )
-							{
-								viLowestIndex.push_back( i );
-							}
-						}
-	
-						if( viLowestIndex.empty() )
-						{
+							float fLowestBeat = FLT_MAX;
+							vector<BackgroundLayer> viLowestIndex;
+		
 							FOREACH_BackgroundLayer( i )
-								ASSERT( iter[i] == GAMESTATE->m_pCurSong->GetBackgroundChanges(i).end() );
-							break;
-						}
-	
-						if( IS_ON_SCREEN(fLowestBeat) )
-						{
-							vector<RString> vsBGChanges;
-							FOREACH_CONST( BackgroundLayer, viLowestIndex, i )
 							{
-								ASSERT( iter[*i] != GAMESTATE->m_pCurSong->GetBackgroundChanges(*i).end() );
-								const BackgroundChange& change = *iter[*i];
-								RString s = change.GetTextDescription();
-								if( *i!=0 )
-									s = ssprintf("%d: ",*i) + s;
-								vsBGChanges.push_back( s );
+								if( iter[i] == GAMESTATE->m_pCurSong->GetBackgroundChanges(i).end() )
+									continue;
+		
+								float fBeat = iter[i]->m_fStartBeat;
+								if( fBeat < fLowestBeat )
+								{
+									fLowestBeat = fBeat;
+									viLowestIndex.clear();
+									viLowestIndex.push_back( i );
+								}
+								else if( fBeat == fLowestBeat )
+								{
+									viLowestIndex.push_back( i );
+								}
 							}
-							DrawBGChangeText( fLowestBeat, join("\n",vsBGChanges) );
+		
+							if( viLowestIndex.empty() )
+							{
+								FOREACH_BackgroundLayer( i )
+									ASSERT( iter[i] == GAMESTATE->m_pCurSong->GetBackgroundChanges(i).end() );
+								break;
+							}
+		
+							if( IS_ON_SCREEN(fLowestBeat) )
+							{
+								vector<RString> vsBGChanges;
+								FOREACH_CONST( BackgroundLayer, viLowestIndex, i )
+								{
+									ASSERT( iter[*i] != GAMESTATE->m_pCurSong->GetBackgroundChanges(*i).end() );
+									const BackgroundChange& change = *iter[*i];
+									RString s = change.GetTextDescription();
+									if( *i!=0 )
+										s = ssprintf("%d: ",*i) + s;
+									vsBGChanges.push_back( s );
+								}
+								DrawBGChangeText( fLowestBeat, join("\n",vsBGChanges) );
+							}
+							FOREACH_CONST( BackgroundLayer, viLowestIndex, i )
+								iter[*i]++;
 						}
-						FOREACH_CONST( BackgroundLayer, viLowestIndex, i )
-							iter[*i]++;
 					}
-				}
-				break;
-			default:
-				ASSERT(0);
+					break;
+				default:
+					ASSERT(0);
+			}
 		}
 
 		// Draw marker bars
