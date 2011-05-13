@@ -2153,6 +2153,9 @@ void ScreenEdit::InputRecord( const InputEventPlus &input, EditButton EditB )
 		TransitionEditState( STATE_EDITING );
 		return;
 	}
+	
+	if ( !GAMESTATE->m_bIsEditorStepTiming )
+		return; // can't allow changes if in song timing.
 
 	if( input.pn != PLAYER_1 )
 		return;		// ignore
@@ -3667,16 +3670,16 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 			TransitionEditState( STATE_RECORDING );
 			break;
 		case insert_and_shift:
-			NoteDataUtil::InsertRows( m_NoteDataEdit, BeatToNoteRow(GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat), BeatToNoteRow(1) );
+			NoteDataUtil::InsertRows( m_NoteDataEdit, BeatToNoteRow( GetBeat() ), BeatToNoteRow(1) );
 			break;
 		case delete_and_shift:
-			NoteDataUtil::DeleteRows( m_NoteDataEdit, BeatToNoteRow(GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat), BeatToNoteRow(1) );
+			NoteDataUtil::DeleteRows( m_NoteDataEdit, BeatToNoteRow( GetBeat() ), BeatToNoteRow(1) );
 			break;
 		case shift_pauses_forward:
-			m_pSteps->m_Timing.InsertRows( BeatToNoteRow(GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat), BeatToNoteRow(1) );
+			GetAppropriateTiming().InsertRows( BeatToNoteRow( GetBeat() ), BeatToNoteRow(1) );
 			break;
 		case shift_pauses_backward:
-			m_pSteps->m_Timing.DeleteRows( BeatToNoteRow(GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat), BeatToNoteRow(1) );
+			GetAppropriateTiming().DeleteRows( BeatToNoteRow( GetBeat() ), BeatToNoteRow(1) );
 			break;
 		case convert_to_pause:
 			{
