@@ -1472,42 +1472,40 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 		break;
 	case EDIT_BUTTON_SCROLL_NEXT_MEASURE:
 		{
-			float fDestinationBeat = GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat + beatsPerMeasure;
+			float fDestinationBeat = GetBeat() + beatsPerMeasure;
 			fDestinationBeat = ftruncf( fDestinationBeat, (float)beatsPerMeasure );
 			ScrollTo( fDestinationBeat );
 			break;
 		}
 	case EDIT_BUTTON_SCROLL_PREV_MEASURE:
 		{
-			float fDestinationBeat = QuantizeUp( GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat, (float)beatsPerMeasure );
+			float fDestinationBeat = QuantizeUp( GetBeat(), (float)beatsPerMeasure );
 			fDestinationBeat -= (float)beatsPerMeasure;
 			ScrollTo( fDestinationBeat );
 			break;
 		}
 	case EDIT_BUTTON_SCROLL_NEXT:
 		{
-			int iRow = BeatToNoteRow( GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat );
+			int iRow = BeatToNoteRow( GetBeat() );
 			NoteDataUtil::GetNextEditorPosition( m_NoteDataEdit, iRow );
 			ScrollTo( NoteRowToBeat(iRow) );
 		}
 		break;
 	case EDIT_BUTTON_SCROLL_PREV:
 		{
-			int iRow = BeatToNoteRow( GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat );
+			int iRow = BeatToNoteRow( GetBeat() );
 			NoteDataUtil::GetPrevEditorPosition( m_NoteDataEdit, iRow );
 			ScrollTo( NoteRowToBeat(iRow) );
 		}
 		break;
 	case EDIT_BUTTON_LABEL_NEXT:
 		{
-			ScrollTo( GAMESTATE->m_pCurSong->m_SongTiming.
-				 GetNextLabelSegmentBeatAtBeat( GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat ) );
+			ScrollTo( GetAppropriateTiming().GetNextLabelSegmentBeatAtBeat( GetBeat() ) );
 		}
 		break;
 	case EDIT_BUTTON_LABEL_PREV:
 		{
-			ScrollTo( GAMESTATE->m_pCurSong->m_SongTiming.
-				 GetPreviousLabelSegmentBeatAtBeat( GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat ) );
+			ScrollTo( GetAppropriateTiming().GetPreviousLabelSegmentBeatAtBeat( GetBeat() ) );
 		}
 		break;
 	case EDIT_BUTTON_SNAP_NEXT:
