@@ -739,10 +739,12 @@ void NoteField::DrawPrimitives()
 		cur->m_ReceptorArrowRow.Draw();
 	}
 
+	Steps *stepChecking = GAMESTATE->m_pCurSteps[m_pPlayerState->m_PlayerNumber];
+	
 	// Draw beat bars
-	if( GAMESTATE->IsEditing() || SHOW_BEAT_BARS )
+	if( ( GAMESTATE->IsEditing() || SHOW_BEAT_BARS ) && stepChecking != NULL )
 	{
-		const vector<TimeSignatureSegment> &vTimeSignatureSegments = GAMESTATE->m_pCurSteps[m_pPlayerState->m_PlayerNumber]->m_Timing.m_vTimeSignatureSegments;
+		const vector<TimeSignatureSegment> &vTimeSignatureSegments = stepChecking->m_Timing.m_vTimeSignatureSegments;
 		int iMeasureIndex = 0;
 		FOREACH_CONST( TimeSignatureSegment, vTimeSignatureSegments, iter )
 		{
@@ -781,11 +783,11 @@ void NoteField::DrawPrimitives()
 		}
 	}
 
-	if( GAMESTATE->IsEditing() )
+	if( GAMESTATE->IsEditing() && stepChecking != NULL )
 	{
 		ASSERT(GAMESTATE->m_pCurSong);
 
-		const TimingData &timing = GAMESTATE->m_pCurSteps[m_pPlayerState->m_PlayerNumber]->m_Timing;
+		const TimingData &timing = stepChecking->m_Timing;
 		
 		// BPM text
 		FOREACH_CONST( BPMSegment, timing.m_BPMSegments, seg )
