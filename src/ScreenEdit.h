@@ -71,8 +71,8 @@ enum EditButton
 	EDIT_BUTTON_SCROLL_NEXT,
 	EDIT_BUTTON_SCROLL_PREV,
 
-	EDIT_BUTTON_LABEL_NEXT,
-	EDIT_BUTTON_LABEL_PREV,
+	EDIT_BUTTON_LABEL_NEXT, /**< Jump to the start of the next label downward. */
+	EDIT_BUTTON_LABEL_PREV, /**< Jump to the start of the previous label upward. */
 	
 	// These are modifiers to EDIT_BUTTON_SCROLL_*.
 	EDIT_BUTTON_SCROLL_SELECT,
