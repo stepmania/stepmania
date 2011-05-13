@@ -1326,7 +1326,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 				ShiftToRightSide( iCol, m_NoteDataEdit.GetNumTracks() );
 
 
-			const float fSongBeat = GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat;
+			const float fSongBeat = GetBeat();
 			const int iSongIndex = BeatToNoteRow( fSongBeat );
 
 			if( iCol >= m_NoteDataEdit.GetNumTracks() )	// this button is not in the range of columns for this Style
@@ -2179,7 +2179,7 @@ void ScreenEdit::InputRecord( const InputEventPlus &input, EditButton EditB )
 			}
 
 			// Add a tap
-			float fBeat = GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat;
+			float fBeat = GetBeat();
 			fBeat = Quantize( fBeat, NoteTypeToBeat(m_SnapDisplay.GetNoteType()) );
 
 			const int iRow = BeatToNoteRow( fBeat );
@@ -2695,21 +2695,21 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	{
 		float fBPM = StringToFloat( ScreenTextEntry::s_sLastAnswer );
 		if( fBPM > 0 )
-			GetAppropriateTiming().SetBPMAtBeat( GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat, fBPM );
+			GetAppropriateTiming().SetBPMAtBeat( GetBeat(), fBPM );
 		SetDirty( true );
 	}
 	else if( SM == SM_BackFromStopChange )
 	{
 		float fStop = StringToFloat( ScreenTextEntry::s_sLastAnswer );
 		if( fStop >= 0 )
-			GetAppropriateTiming().SetStopAtBeat( GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat, fStop );
+			GetAppropriateTiming().SetStopAtBeat( GetBeat(), fStop );
 		SetDirty( true );
 	}
 	else if( SM == SM_BackFromDelayChange )
 	{
 		float fDelay = StringToFloat( ScreenTextEntry::s_sLastAnswer );
 		if( fDelay >= 0 )
-			GetAppropriateTiming().SetStopAtBeat( GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat, fDelay, true );
+			GetAppropriateTiming().SetStopAtBeat( GetBeat(), fDelay, true );
 		SetDirty( true );
 	}
 	else if( SM == SM_BackFromTimeSignatureNumeratorChange )
@@ -2717,7 +2717,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		int iNum = StringToInt( ScreenTextEntry::s_sLastAnswer );
 		if( iNum > 0 )
 		{
-			GetAppropriateTiming().SetTimeSignatureNumeratorAtBeat( GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat, iNum );
+			GetAppropriateTiming().SetTimeSignatureNumeratorAtBeat( GetBeat(), iNum );
 		}
 		SetDirty( true );
 	}
@@ -2726,7 +2726,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		int iDen = StringToInt( ScreenTextEntry::s_sLastAnswer );
 		if( iDen > 0)
 		{
-			GetAppropriateTiming().SetTimeSignatureDenominatorAtBeat( GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat, iDen );
+			GetAppropriateTiming().SetTimeSignatureDenominatorAtBeat( GetBeat(), iDen );
 		}
 		SetDirty( true );
 	}
@@ -2735,7 +2735,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		int iTick = StringToInt( ScreenTextEntry::s_sLastAnswer );
 		if ( iTick >= 0 && iTick <= ROWS_PER_BEAT )
 		{
-			GetAppropriateTiming().SetTickcountAtBeat( GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat, iTick );
+			GetAppropriateTiming().SetTickcountAtBeat( GetBeat(), iTick );
 		}
 		SetDirty( true );
 	}
@@ -2744,7 +2744,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		int iCombo = StringToInt( ScreenTextEntry::s_sLastAnswer );
 		if ( iCombo >= 0 )
 		{
-			GetAppropriateTiming().SetComboAtBeat( GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat, iCombo );
+			GetAppropriateTiming().SetComboAtBeat( GetBeat(), iCombo );
 		}
 		SetDirty( true );
 	}
@@ -2755,14 +2755,14 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		{
 			sLabel.Replace("=", "_");
 			sLabel.Replace(",", "_");
-			GetAppropriateTiming().SetLabelAtBeat( GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat, sLabel );
+			GetAppropriateTiming().SetLabelAtBeat( GetBeat(), sLabel );
 			SetDirty( true );
 		}
 	}
 	else if ( SM == SM_BackFromWarpChange )
 	{
 		float fWarp = StringToFloat( ScreenTextEntry::s_sLastAnswer );
-		GetAppropriateTiming().SetWarpAtBeat( GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat, fWarp );
+		GetAppropriateTiming().SetWarpAtBeat( GetBeat(), fWarp );
 		SetDirty( true );
 	}
 	else if( SM == SM_BackFromBGChange )
@@ -3494,6 +3494,8 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 		case paste_at_current_beat:
 		case paste_at_begin_marker:
 			{
+				// TODO: Song/Step Timing checks?
+				
 				int iDestFirstRow = -1;
 				switch( c )
 				{
