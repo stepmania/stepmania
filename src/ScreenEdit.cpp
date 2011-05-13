@@ -936,6 +936,8 @@ void ScreenEdit::Update( float fDeltaTime )
 
 	if( m_EditState == STATE_RECORDING  )	
 	{
+		// TODO: Find a way to prevent STATE_RECORDING when in Song Timing.
+		
 		for( int t=0; t<GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer; t++ )	// for each track
 		{
 			GameInput GameI = GAMESTATE->GetCurrentStyle()->StyleInputToGameInput( t, PLAYER_1 );
@@ -950,7 +952,7 @@ void ScreenEdit::Update( float fDeltaTime )
 
 			float fStartedHoldingSeconds = m_pSoundMusic->GetPositionSeconds() - fSecsHeld;
 			float fStartBeat = max( fStartPlayingAtBeat, m_pSteps->m_Timing.GetBeatFromElapsedTime(fStartedHoldingSeconds) );
-			float fEndBeat = max( fStartBeat, GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat );
+			float fEndBeat = max( fStartBeat, GetBeat() );
 			fEndBeat = min( fEndBeat, NoteRowToBeat(m_iStopPlayingAt) );
 
 			// Round start and end to the nearest snap interval
@@ -992,12 +994,13 @@ void ScreenEdit::Update( float fDeltaTime )
 		}
 
 		float fLastBeat = NoteRowToBeat(m_iStopPlayingAt);
-		if( bButtonIsBeingPressed && m_EditState == STATE_RECORDING )
+		if( bButtonIsBeingPressed && m_EditState == STATE_RECORDING && GAMESTATE->m_bIsEditorStepTiming )
 		{
 			float fSeconds = m_pSteps->m_Timing.GetElapsedTimeFromBeat( fLastBeat );
 			fLastBeat = m_pSteps->m_Timing.GetBeatFromElapsedTime( fSeconds + 0.5f );
 		}
 
+		// This should be fine: it will convert to the same I believe. -Wolfman2000
 		float fStopAtSeconds = m_pSteps->m_Timing.GetElapsedTimeFromBeat( NoteRowToBeat(m_iStopPlayingAt) ) + 1;
 		if( GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fMusicSeconds > fStopAtSeconds )
 		{
@@ -1638,7 +1641,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 	case EDIT_BUTTON_BPM_UP:
 	case EDIT_BUTTON_BPM_DOWN:
 		{
-			float fBPM = m_pSteps->m_Timing.GetBPMAtBeat( GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat );
+			float fBPM = GetAppropriateTiming().GetBPMAtBeat( GetBeat() );
 			float fDelta;
 			switch( EditB )
 			{
@@ -1659,7 +1662,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			}
 			
 			float fNewBPM = fBPM + fDelta;
-			m_pSteps->m_Timing.SetBPMAtBeat( GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat, fNewBPM );
+			GetAppropriateTiming().SetBPMAtBeat( GetBeat(), fNewBPM );
 			(fDelta>0 ? m_soundValueIncrease : m_soundValueDecrease).Play();
 			SetDirty( true );
 		}
@@ -1686,24 +1689,24 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 					fDelta *= 40;
 			}
 			unsigned i;
-			for( i=0; i<m_pSteps->m_Timing.m_StopSegments.size(); i++ )
+			for( i=0; i<GetAppropriateTiming().m_StopSegments.size(); i++ )
 			{
-				if( m_pSteps->m_Timing.m_StopSegments[i].m_iStartRow == BeatToNoteRow(GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat) )
+				if( GetAppropriateTiming().m_StopSegments[i].m_iStartRow == BeatToNoteRow( GetBeat() ) )
 					break;
 			}
 
-			if( i == m_pSteps->m_Timing.m_StopSegments.size() )	// there is no StopSegment at the current beat
+			if( i == GetAppropriateTiming().m_StopSegments.size() )	// there is no StopSegment at the current beat
 			{
 				// create a new StopSegment
 				if( fDelta > 0 )
-					m_pSteps->m_Timing.AddStopSegment( StopSegment(BeatToNoteRow(GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat), fDelta) );
+					GetAppropriateTiming().AddStopSegment( StopSegment(BeatToNoteRow( GetBeat() ), fDelta) );
 			}
 			else	// StopSegment being modified is m_SongTiming.m_StopSegments[i]
 			{
-				m_pSteps->m_Timing.m_StopSegments[i].m_fStopSeconds += fDelta;
-				if( m_pSteps->m_Timing.m_StopSegments[i].m_fStopSeconds <= 0 )
-					m_pSteps->m_Timing.m_StopSegments.erase( m_pSteps->m_Timing.m_StopSegments.begin()+i,
-													  m_pSteps->m_Timing.m_StopSegments.begin()+i+1);
+				GetAppropriateTiming().m_StopSegments[i].m_fStopSeconds += fDelta;
+				if( GetAppropriateTiming().m_StopSegments[i].m_fStopSeconds <= 0 )
+					GetAppropriateTiming().m_StopSegments.erase( GetAppropriateTiming().m_StopSegments.begin()+i,
+										    GetAppropriateTiming().m_StopSegments.begin()+i+1);
 			}
 			(fDelta>0 ? m_soundValueIncrease : m_soundValueDecrease).Play();
 			SetDirty( true );
@@ -1732,13 +1735,13 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 					fDelta *= 40;
 			}
 			unsigned i;
-			for( i=0; i<m_pSteps->m_Timing.m_StopSegments.size(); i++ )
+			for( i=0; i<GetAppropriateTiming().m_StopSegments.size(); i++ )
 			{
-				if( m_pSteps->m_Timing.m_StopSegments[i].m_iStartRow == BeatToNoteRow(GAMESTATE->m_Position.m_fSongBeat) )
+				if( GetAppropriateTiming().m_StopSegments[i].m_iStartRow == BeatToNoteRow(GAMESTATE->m_Position.m_fSongBeat) )
 					break;
 			}
 
-			if( i == m_pSteps->m_Timing.m_StopSegments.size() )	// there is no delay segment at the current beat
+			if( i == GetAppropriateTiming().m_StopSegments.size() )	// there is no delay segment at the current beat
 			{
 				// create a new delay segment
 				if( fDelta > 0 )
@@ -1746,10 +1749,10 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			}
 			else	// delay segment being modified is m_SongTiming.m_StopSegments[i]
 			{
-				m_pSteps->m_Timing.m_StopSegments[i].m_fStopSeconds += fDelta;
-				if( m_pSteps->m_Timing.m_StopSegments[i].m_fStopSeconds <= 0 )
-					m_pSteps->m_Timing.m_StopSegments.erase( m_pSteps->m_Timing.m_StopSegments.begin()+i,
-													  m_pSteps->m_Timing.m_StopSegments.begin()+i+1);
+				GetAppropriateTiming().m_StopSegments[i].m_fStopSeconds += fDelta;
+				if( GetAppropriateTiming().m_StopSegments[i].m_fStopSeconds <= 0 )
+					GetAppropriateTiming().m_StopSegments.erase( GetAppropriateTiming().m_StopSegments.begin()+i,
+													  GetAppropriateTiming().m_StopSegments.begin()+i+1);
 			}
 			(fDelta>0 ? m_soundValueIncrease : m_soundValueDecrease).Play();
 			SetDirty( true );
@@ -1777,7 +1780,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 				else
 					fDelta *= 40;
 			}
-			m_pSteps->m_Timing.m_fBeat0OffsetInSeconds += fDelta;
+			GetAppropriateTiming().m_fBeat0OffsetInSeconds += fDelta;
 			(fDelta>0 ? m_soundValueIncrease : m_soundValueDecrease).Play();
 			SetDirty( true );
 		}
@@ -1958,6 +1961,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 		break;
 	case EDIT_BUTTON_OPEN_COURSE_ATTACK_MENU:
 		{
+			// TODO: Give Song/Step Timing switches/functions here?
 			Course *pCourse = GAMESTATE->m_pCurCourse;
 			if( pCourse == NULL )
 				break;
@@ -2003,6 +2007,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			}
 			else
 			{
+				// TODO: Give Song/Step Timing switches/functions here? 
 				fStart = m_pSteps->m_Timing.GetElapsedTimeFromBeat( NoteRowToBeat(m_NoteFieldEdit.m_iBeginMarker) );
 				int iAttack = FindAttackAtTime( ce.attacks, fStart );
 
@@ -2336,7 +2341,7 @@ void ScreenEdit::InputPlay( const InputEventPlus &input, EditButton EditB )
 					fOffsetDelta *= 40;
 			}
 
-			m_pSteps->m_Timing.m_fBeat0OffsetInSeconds += fOffsetDelta;
+			GetAppropriateTiming().m_fBeat0OffsetInSeconds += fOffsetDelta;
 		}
 			break;
 		}
@@ -2444,9 +2449,10 @@ void ScreenEdit::TransitionEditState( EditState em )
 		if( bStateChanging )
 			AdjustSync::ResetOriginalSyncData();
 
-		/* Give a 1 second lead-in.  If we're loading Player, this must be done first. */
-		float fSeconds = m_pSteps->m_Timing.GetElapsedTimeFromBeat( NoteRowToBeat(m_iStartPlayingAt) ) - 1;
-		GAMESTATE->UpdateSongPosition( fSeconds, m_pSteps->m_Timing, RageZeroTimer, true );
+		/* Give a 1 second lead-in.  If we're loading Player, this must be done first.
+		 * Also be sure to get the right timing. */
+		float fSeconds = GetAppropriateTiming().GetElapsedTimeFromBeat( NoteRowToBeat(m_iStartPlayingAt) ) - 1;
+		GAMESTATE->UpdateSongPosition( fSeconds, GetAppropriateTiming(), RageZeroTimer, true );
 
 		GAMESTATE->m_bGameplayLeadIn.Set( false );
 
@@ -2527,7 +2533,7 @@ void ScreenEdit::TransitionEditState( EditState em )
 	{
 	case STATE_PLAYING:
 	case STATE_RECORDING:
-		const float fStartSeconds = m_pSteps->m_Timing.GetElapsedTimeFromBeat(GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat);
+		const float fStartSeconds = GetAppropriateTiming().GetElapsedTimeFromBeat( GetBeat() );
 		LOG->Trace( "Starting playback at %f", fStartSeconds );
 
 		RageSoundParams p;
@@ -2828,6 +2834,8 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		Course *pCourse = GAMESTATE->m_pCurCourse;
 		CourseEntry &ce = pCourse->m_vEntries[GAMESTATE->m_iEditCourseEntryIndex];
 		int iAttack;
+		
+		// TODO: Handle Song/Step Timing functions/switches here?
 
 		g_fLastInsertAttackPositionSeconds = m_pSteps->m_Timing.GetElapsedTimeFromBeat( GAMESTATE->m_Position.m_fSongBeat );
 		g_fLastInsertAttackDurationSeconds = StringToFloat( g_InsertCourseAttack.rows[0].choices[iDurationChoice] );
@@ -3630,7 +3638,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 				NoteDataUtil::ScaleRegion( m_NoteDataEdit, fScale, iStartIndex, iEndIndex );
 				
 				// scale timing data
-				m_pSteps->m_Timing.ScaleRegion( fScale, m_NoteFieldEdit.m_iBeginMarker, m_NoteFieldEdit.m_iEndMarker, true );
+				GetAppropriateTiming().ScaleRegion( fScale, m_NoteFieldEdit.m_iBeginMarker, m_NoteFieldEdit.m_iEndMarker, true );
 
 				// scale all other steps.
 				/*
