@@ -32,6 +32,33 @@ static ThemeMetric<float> FADE_FAIL_TIME( "NoteField", "FadeFailTime" );
 static RString RoutineNoteSkinName( size_t i ) { return ssprintf("RoutineNoteSkinP%i",int(i+1)); }
 static ThemeMetric1D<RString> ROUTINE_NOTESKIN( "NoteField", RoutineNoteSkinName, NUM_PLAYERS );
 
+
+inline const TimingData *GetRealTiming(const PlayerState *pPlayerState)
+{
+	if( GAMESTATE->m_pCurSteps[pPlayerState->m_PlayerNumber] != NULL )
+		return &GAMESTATE->m_pCurSteps[pPlayerState->m_PlayerNumber]->m_Timing;
+	return NULL;	
+}
+
+inline const TimingData *GetDisplayedTiming(const PlayerState *pPlayerState)
+{
+	if( !GAMESTATE->m_bIsEditorStepTiming )
+		return &GAMESTATE->m_pCurSong->m_SongTiming;
+	return GetRealTiming(pPlayerState);
+}
+
+inline const SongPosition *GetRealPosition(const PlayerState *pPlayerState)
+{
+	return &pPlayerState->m_Position;
+}
+
+inline const SongPosition *GetDisplayedPosition(const PlayerState *pPlayerState)
+{
+	if( !GAMESTATE->m_bIsEditorStepTiming )
+		return &GAMESTATE->m_Position;
+	return GetRealPosition(pPlayerState);
+}
+
 NoteField::NoteField()
 {
 	m_pNoteData = NULL;
@@ -240,7 +267,7 @@ void NoteField::Update( float fDeltaTime )
 	ActorFrame::Update( fDeltaTime );
 
 	// update m_fBoardOffsetPixels, m_fCurrentBeatLastUpdate, m_fYPosCurrentBeatLastUpdate
-	const float fCurrentBeat = m_pPlayerState->m_Position.m_fSongBeat;
+	const float fCurrentBeat = GetDisplayedPosition(m_pPlayerState)->m_fSongBeat;
 	bool bTweeningOn = m_sprBoard->GetCurrentDiffuseAlpha() >= 0.98  &&  m_sprBoard->GetCurrentDiffuseAlpha() < 1.00;	// HACK
 	if( !bTweeningOn  &&  m_fCurrentBeatLastUpdate != -1 )
 	{
@@ -444,6 +471,7 @@ static ThemeMetric<float> TICKCOUNT_OFFSETX ( "NoteField", "TickcountOffsetX" );
 static ThemeMetric<float> COMBO_OFFSETX ( "NoteField", "ComboOffsetX" );
 static ThemeMetric<float> LABEL_OFFSETX ( "NoteField", "LabelOffsetX" );
 
+
 void NoteField::DrawBPMText( const float fBeat, const float fBPM )
 {
 	const float fYOffset	= ArrowEffects::GetYOffset( m_pPlayerState, 0, fBeat );
@@ -606,7 +634,7 @@ void NoteField::DrawBGChangeText( const float fBeat, const RString sNewBGName )
 // change this probing to binary search
 float FindFirstDisplayedBeat( const PlayerState* pPlayerState, int iDrawDistanceAfterTargetsPixels )
 {
-	float fFirstBeatToDraw = pPlayerState->m_Position.m_fSongBeat-4;	// Adjust to balance off performance and showing enough notes.
+	float fFirstBeatToDraw = GetDisplayedPosition(pPlayerState)->m_fSongBeat-4;	// Adjust to balance off performance and showing enough notes.
 
 	/* In Boomerang, we'll usually have two sections of notes: before and after
 	 * the peak. We always start drawing before the peak, and end after it, or
@@ -618,7 +646,7 @@ float FindFirstDisplayedBeat( const PlayerState* pPlayerState, int iDrawDistance
 		bBoomerang = (fAccels[PlayerOptions::ACCEL_BOOMERANG] != 0);
 	}
 
-	while( fFirstBeatToDraw < pPlayerState->m_Position.m_fSongBeat )
+	while( fFirstBeatToDraw < GetDisplayedPosition(pPlayerState)->m_fSongBeat )
 	{
 		bool bIsPastPeakYOffset;
 		float fPeakYOffset;
@@ -640,7 +668,7 @@ float FindLastDisplayedBeat( const PlayerState* pPlayerState, int iDrawDistanceB
 	// Probe for last note to draw. Worst case is 0.25x + boost.
 	// Adjust search distance so that notes don't pop onto the screen.
 	float fSearchDistance = 10;
-	float fLastBeatToDraw = pPlayerState->m_Position.m_fSongBeat+fSearchDistance;
+	float fLastBeatToDraw = GetDisplayedPosition(pPlayerState)->m_fSongBeat+fSearchDistance;
 
 	const int NUM_ITERATIONS = 20;
 
@@ -739,12 +767,13 @@ void NoteField::DrawPrimitives()
 		cur->m_ReceptorArrowRow.Draw();
 	}
 
-	Steps *stepChecking = GAMESTATE->m_pCurSteps[m_pPlayerState->m_PlayerNumber];
+	const TimingData *pTiming = GetDisplayedTiming(m_pPlayerState);
 	
 	// Draw beat bars
-	if( ( GAMESTATE->IsEditing() || SHOW_BEAT_BARS ) && stepChecking != NULL )
+	if( ( GAMESTATE->IsEditing() || SHOW_BEAT_BARS ) && pTiming != NULL )
 	{
-		const vector<TimeSignatureSegment> &vTimeSignatureSegments = stepChecking->m_Timing.m_vTimeSignatureSegments;
+		const TimingData &timing = *pTiming;
+		const vector<TimeSignatureSegment> &vTimeSignatureSegments = timing.m_vTimeSignatureSegments;
 		int iMeasureIndex = 0;
 		FOREACH_CONST( TimeSignatureSegment, vTimeSignatureSegments, iter )
 		{
@@ -783,11 +812,11 @@ void NoteField::DrawPrimitives()
 		}
 	}
 
-	if( GAMESTATE->IsEditing() && stepChecking != NULL )
+	if( GAMESTATE->IsEditing() && pTiming != NULL )
 	{
 		ASSERT(GAMESTATE->m_pCurSong);
 
-		const TimingData &timing = stepChecking->m_Timing;
+		const TimingData &timing = *pTiming;
 		
 		// BPM text
 		FOREACH_CONST( BPMSegment, timing.m_BPMSegments, seg )
@@ -1056,7 +1085,7 @@ void NoteField::DrawPrimitives()
 				displayCols->display[c].DrawHold( tn, c, iStartRow, bIsHoldingNote, Result, bUseAdditionColoring, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail, 
 					m_fYReverseOffsetPixels, (float) iDrawDistanceAfterTargetsPixels, (float) iDrawDistanceBeforeTargetsPixels, iDrawDistanceBeforeTargetsPixels, FADE_BEFORE_TARGETS_PERCENT );
 
-				bool bNoteIsUpcoming = NoteRowToBeat(iStartRow) > m_pPlayerState->m_Position.m_fSongBeat;
+				bool bNoteIsUpcoming = NoteRowToBeat(iStartRow) > GetDisplayedPosition(m_pPlayerState)->m_fSongBeat;
 				bAnyUpcomingInThisCol |= bNoteIsUpcoming;
 			}
 		}
@@ -1098,7 +1127,7 @@ void NoteField::DrawPrimitives()
 				continue; // skip
 
 			ASSERT_M( NoteRowToBeat(q) > -2000, ssprintf("%i %i %i, %f %f", q, iLastRowToDraw, 
-						     iFirstRowToDraw, m_pPlayerState->m_Position.m_fSongBeat, m_pPlayerState->m_Position.m_fMusicSeconds) );
+						     iFirstRowToDraw, GetDisplayedPosition(m_pPlayerState)->m_fSongBeat, GetDisplayedPosition(m_pPlayerState)->m_fMusicSeconds) );
 
 			// See if there is a hold step that begins on this index.
 			// Only do this if the noteskin cares.
@@ -1128,7 +1157,7 @@ void NoteField::DrawPrimitives()
 					m_fYReverseOffsetPixels, iDrawDistanceAfterTargetsPixels, iDrawDistanceBeforeTargetsPixels, 
 					FADE_BEFORE_TARGETS_PERCENT );
 
-			bool bNoteIsUpcoming = NoteRowToBeat(q) > m_pPlayerState->m_Position.m_fSongBeat;
+			bool bNoteIsUpcoming = NoteRowToBeat(q) > GetDisplayedPosition(m_pPlayerState)->m_fSongBeat;
 			bAnyUpcomingInThisCol |= bNoteIsUpcoming;
 		}
 

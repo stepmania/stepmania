@@ -555,6 +555,9 @@ private:
 	 * @brief Retrieve the appropriate TimingData based on GAMESTATE.
 	 * @return the proper TimingData. */
 	TimingData & GetAppropriateTiming() const;
+	void SetBeat(float fBeat);
+	float GetBeat();
+	
 };
 
 #endif

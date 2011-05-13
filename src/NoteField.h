@@ -1,6 +1,8 @@
 #ifndef NOTE_FIELD_H
 #define NOTE_FIELD_H
 
+#include "TimingData.h"
+#include "SongPosition.h"
 #include "Sprite.h"
 #include "ActorFrame.h"
 #include "BitmapText.h"
@@ -65,7 +67,7 @@ protected:
 	void DrawAttackText( const float fBeat, const Attack &attack );
 	void DrawBGChangeText( const float fBeat, const RString sNewBGName );
 	float GetWidth() const;
-
+	
 	const NoteData *m_pNoteData;
 
 	float			m_fPercentFadeToFail;	// -1 if not fading to fail
