@@ -1306,6 +1306,13 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			if( input.type != IET_FIRST_PRESS )
 				break;	// We only care about first presses
 
+			
+			if( !GAMESTATE->m_bIsEditorStepTiming )
+			{
+				// TODO: broadcast a message...?
+				break; // Only allow steps to be hit in Step Timing.
+			}
+			
 			int iCol = EditB - EDIT_BUTTON_COLUMN_0;
 
 
