@@ -1798,101 +1798,104 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 		break;
 	case EDIT_BUTTON_OPEN_BGCHANGE_LAYER1_MENU:
 	case EDIT_BUTTON_OPEN_BGCHANGE_LAYER2_MENU:
-		switch( EditB )
+		if( !GAMESTATE->m_bIsEditorStepTiming )
 		{
-		DEFAULT_FAIL( EditB );
-		case EDIT_BUTTON_OPEN_BGCHANGE_LAYER1_MENU: g_CurrentBGChangeLayer = BACKGROUND_LAYER_1; break;
-		case EDIT_BUTTON_OPEN_BGCHANGE_LAYER2_MENU: g_CurrentBGChangeLayer = BACKGROUND_LAYER_2; break;
-		}
-
-		{
-			// Fill in option names
-			vector<RString> vThrowAway;
-
-			MenuDef &menu = g_BackgroundChange;
-
-			menu.rows[layer].choices[0] = ssprintf("%d",g_CurrentBGChangeLayer);
-			BackgroundUtil::GetBackgroundTransitions(	"", vThrowAway, menu.rows[transition].choices );
-			g_BackgroundChange.rows[transition].choices.insert( g_BackgroundChange.rows[transition].choices.begin(), "None" );	// add "no transition"
-			BackgroundUtil::GetBackgroundEffects(		"", vThrowAway, menu.rows[effect].choices );
-			menu.rows[effect].choices.insert( menu.rows[effect].choices.begin(), "Default" );	// add "default effect"
-
-			BackgroundUtil::GetSongBGAnimations(   m_pSong, "", vThrowAway, menu.rows[file1_song_bganimation].choices );
-			BackgroundUtil::GetSongMovies(         m_pSong, "", vThrowAway, menu.rows[file1_song_movie].choices );
-			BackgroundUtil::GetSongBitmaps(        m_pSong, "", vThrowAway, menu.rows[file1_song_still].choices );
-			BackgroundUtil::GetGlobalBGAnimations( m_pSong, "", vThrowAway, menu.rows[file1_global_bganimation].choices );	// NULL to get all background files
-			BackgroundUtil::GetGlobalRandomMovies( m_pSong, "", vThrowAway, menu.rows[file1_global_movie].choices, false, false );	// all backgrounds
-			BackgroundUtil::GetGlobalRandomMovies( m_pSong, "", vThrowAway, menu.rows[file1_global_movie_song_group].choices, false, true );	// song group's backgrounds
-			BackgroundUtil::GetGlobalRandomMovies( m_pSong, "", vThrowAway, menu.rows[file1_global_movie_song_group_and_genre].choices, true, true );	// song group and genre's backgrounds
-
-			menu.rows[file2_type].choices					= menu.rows[file1_type].choices;
-			menu.rows[file2_song_bganimation].choices			= menu.rows[file1_song_bganimation].choices;
-			menu.rows[file2_song_movie].choices				= menu.rows[file1_song_movie].choices;
-			menu.rows[file2_song_still].choices				= menu.rows[file1_song_still].choices;
-			menu.rows[file2_global_bganimation].choices			= menu.rows[file1_global_bganimation].choices;
-			menu.rows[file2_global_movie].choices				= menu.rows[file1_global_movie].choices;
-			menu.rows[file2_global_movie_song_group].choices		= menu.rows[file1_global_movie_song_group].choices;
-			menu.rows[file2_global_movie_song_group_and_genre].choices	= menu.rows[file1_global_movie_song_group_and_genre].choices;
-
-
-			// Fill in lines enabled/disabled
-			bool bAlreadyBGChangeHere = false;
-			BackgroundChange bgChange; 
-			FOREACH( BackgroundChange, m_pSong->GetBackgroundChanges(g_CurrentBGChangeLayer), bgc )
+			switch( EditB )
 			{
-				if( bgc->m_fStartBeat == GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat )
-				{
-					bAlreadyBGChangeHere = true;
-					bgChange = *bgc;
-				}
+			DEFAULT_FAIL( EditB );
+			case EDIT_BUTTON_OPEN_BGCHANGE_LAYER1_MENU: g_CurrentBGChangeLayer = BACKGROUND_LAYER_1; break;
+			case EDIT_BUTTON_OPEN_BGCHANGE_LAYER2_MENU: g_CurrentBGChangeLayer = BACKGROUND_LAYER_2; break;
 			}
 
+			{
+				// Fill in option names
+				vector<RString> vThrowAway;
+
+				MenuDef &menu = g_BackgroundChange;
+
+				menu.rows[layer].choices[0] = ssprintf("%d",g_CurrentBGChangeLayer);
+				BackgroundUtil::GetBackgroundTransitions(	"", vThrowAway, menu.rows[transition].choices );
+				g_BackgroundChange.rows[transition].choices.insert( g_BackgroundChange.rows[transition].choices.begin(), "None" );	// add "no transition"
+				BackgroundUtil::GetBackgroundEffects(		"", vThrowAway, menu.rows[effect].choices );
+				menu.rows[effect].choices.insert( menu.rows[effect].choices.begin(), "Default" );	// add "default effect"
+
+				BackgroundUtil::GetSongBGAnimations(   m_pSong, "", vThrowAway, menu.rows[file1_song_bganimation].choices );
+				BackgroundUtil::GetSongMovies(         m_pSong, "", vThrowAway, menu.rows[file1_song_movie].choices );
+				BackgroundUtil::GetSongBitmaps(        m_pSong, "", vThrowAway, menu.rows[file1_song_still].choices );
+				BackgroundUtil::GetGlobalBGAnimations( m_pSong, "", vThrowAway, menu.rows[file1_global_bganimation].choices );	// NULL to get all background files
+				BackgroundUtil::GetGlobalRandomMovies( m_pSong, "", vThrowAway, menu.rows[file1_global_movie].choices, false, false );	// all backgrounds
+				BackgroundUtil::GetGlobalRandomMovies( m_pSong, "", vThrowAway, menu.rows[file1_global_movie_song_group].choices, false, true );	// song group's backgrounds
+				BackgroundUtil::GetGlobalRandomMovies( m_pSong, "", vThrowAway, menu.rows[file1_global_movie_song_group_and_genre].choices, true, true );	// song group and genre's backgrounds
+
+				menu.rows[file2_type].choices					= menu.rows[file1_type].choices;
+				menu.rows[file2_song_bganimation].choices			= menu.rows[file1_song_bganimation].choices;
+				menu.rows[file2_song_movie].choices				= menu.rows[file1_song_movie].choices;
+				menu.rows[file2_song_still].choices				= menu.rows[file1_song_still].choices;
+				menu.rows[file2_global_bganimation].choices			= menu.rows[file1_global_bganimation].choices;
+				menu.rows[file2_global_movie].choices				= menu.rows[file1_global_movie].choices;
+				menu.rows[file2_global_movie_song_group].choices		= menu.rows[file1_global_movie_song_group].choices;
+				menu.rows[file2_global_movie_song_group_and_genre].choices	= menu.rows[file1_global_movie_song_group_and_genre].choices;
+
+
+				// Fill in lines enabled/disabled
+				bool bAlreadyBGChangeHere = false;
+				BackgroundChange bgChange; 
+				FOREACH( BackgroundChange, m_pSong->GetBackgroundChanges(g_CurrentBGChangeLayer), bgc )
+				{
+					if( bgc->m_fStartBeat == GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat )
+					{
+						bAlreadyBGChangeHere = true;
+						bgChange = *bgc;
+					}
+				}
+
 #define FILL_ENABLED( x )	menu.rows[x].bEnabled	= menu.rows[x].choices.size() > 0;
-			FILL_ENABLED( transition );
-			FILL_ENABLED( effect );
-			FILL_ENABLED( file1_song_bganimation );
-			FILL_ENABLED( file1_song_movie );
-			FILL_ENABLED( file1_song_still );
-			FILL_ENABLED( file1_global_bganimation );
-			FILL_ENABLED( file1_global_movie );
-			FILL_ENABLED( file1_global_movie_song_group );
-			FILL_ENABLED( file1_global_movie_song_group_and_genre );
-			FILL_ENABLED( file2_song_bganimation );
-			FILL_ENABLED( file2_song_movie );
-			FILL_ENABLED( file2_song_still );
-			FILL_ENABLED( file2_global_bganimation );
-			FILL_ENABLED( file2_global_movie );
-			FILL_ENABLED( file2_global_movie_song_group );
-			FILL_ENABLED( file2_global_movie_song_group_and_genre );
+				FILL_ENABLED( transition );
+				FILL_ENABLED( effect );
+				FILL_ENABLED( file1_song_bganimation );
+				FILL_ENABLED( file1_song_movie );
+				FILL_ENABLED( file1_song_still );
+				FILL_ENABLED( file1_global_bganimation );
+				FILL_ENABLED( file1_global_movie );
+				FILL_ENABLED( file1_global_movie_song_group );
+				FILL_ENABLED( file1_global_movie_song_group_and_genre );
+				FILL_ENABLED( file2_song_bganimation );
+				FILL_ENABLED( file2_song_movie );
+				FILL_ENABLED( file2_song_still );
+				FILL_ENABLED( file2_global_bganimation );
+				FILL_ENABLED( file2_global_movie );
+				FILL_ENABLED( file2_global_movie_song_group );
+				FILL_ENABLED( file2_global_movie_song_group_and_genre );
 #undef FILL_ENABLED
-			menu.rows[delete_change].bEnabled = bAlreadyBGChangeHere;
+				menu.rows[delete_change].bEnabled = bAlreadyBGChangeHere;
 
-			// set default choices
-			menu.rows[rate].					SetDefaultChoiceIfPresent( ssprintf("%2.0f%%",bgChange.m_fRate*100) );
-			menu.rows[transition].					SetDefaultChoiceIfPresent( bgChange.m_sTransition );
-			menu.rows[effect].					SetDefaultChoiceIfPresent( bgChange.m_def.m_sEffect );
-			menu.rows[file1_type].iDefaultChoice			= none;
-			if( bgChange.m_def.m_sFile1 == RANDOM_BACKGROUND_FILE )								menu.rows[file1_type].iDefaultChoice	= dynamic_random;
-			if( menu.rows[file1_song_bganimation].			SetDefaultChoiceIfPresent( bgChange.m_def.m_sFile1 ) )	menu.rows[file1_type].iDefaultChoice	= song_bganimation;
-			if( menu.rows[file1_song_movie].			SetDefaultChoiceIfPresent( bgChange.m_def.m_sFile1 ) )	menu.rows[file1_type].iDefaultChoice	= song_movie;
-			if( menu.rows[file1_song_still].			SetDefaultChoiceIfPresent( bgChange.m_def.m_sFile1 ) )	menu.rows[file1_type].iDefaultChoice	= song_bitmap;
-			if( menu.rows[file1_global_bganimation].		SetDefaultChoiceIfPresent( bgChange.m_def.m_sFile1 ) )	menu.rows[file1_type].iDefaultChoice	= global_bganimation;
-			if( menu.rows[file1_global_movie].			SetDefaultChoiceIfPresent( bgChange.m_def.m_sFile1 ) )	menu.rows[file1_type].iDefaultChoice	= global_movie;
-			if( menu.rows[file1_global_movie_song_group].		SetDefaultChoiceIfPresent( bgChange.m_def.m_sFile1 ) )	menu.rows[file1_type].iDefaultChoice	= global_movie_song_group;
-			if( menu.rows[file1_global_movie_song_group_and_genre].	SetDefaultChoiceIfPresent( bgChange.m_def.m_sFile1 ) )	menu.rows[file1_type].iDefaultChoice	= global_movie_song_group_and_genre;
-			menu.rows[file2_type].iDefaultChoice			= none;
-			if( bgChange.m_def.m_sFile2 == RANDOM_BACKGROUND_FILE )								menu.rows[file2_type].iDefaultChoice	= dynamic_random;
-			if( menu.rows[file2_song_bganimation].			SetDefaultChoiceIfPresent( bgChange.m_def.m_sFile2 ) )	menu.rows[file2_type].iDefaultChoice	= song_bganimation;
-			if( menu.rows[file2_song_movie].			SetDefaultChoiceIfPresent( bgChange.m_def.m_sFile2 ) )	menu.rows[file2_type].iDefaultChoice	= song_movie;
-			if( menu.rows[file2_song_still].			SetDefaultChoiceIfPresent( bgChange.m_def.m_sFile2 ) )	menu.rows[file2_type].iDefaultChoice	= song_bitmap;
-			if( menu.rows[file2_global_bganimation].		SetDefaultChoiceIfPresent( bgChange.m_def.m_sFile2 ) )	menu.rows[file2_type].iDefaultChoice	= global_bganimation;
-			if( menu.rows[file2_global_movie].			SetDefaultChoiceIfPresent( bgChange.m_def.m_sFile2 ) )	menu.rows[file2_type].iDefaultChoice	= global_movie;
-			if( menu.rows[file2_global_movie_song_group].		SetDefaultChoiceIfPresent( bgChange.m_def.m_sFile2 ) )	menu.rows[file2_type].iDefaultChoice	= global_movie_song_group;
-			if( menu.rows[file2_global_movie_song_group_and_genre].	SetDefaultChoiceIfPresent( bgChange.m_def.m_sFile2 ) )	menu.rows[file2_type].iDefaultChoice	= global_movie_song_group_and_genre;
-			menu.rows[color1].					SetDefaultChoiceIfPresent( bgChange.m_def.m_sColor1 );
-			menu.rows[color2].					SetDefaultChoiceIfPresent( bgChange.m_def.m_sColor2 );
+				// set default choices
+				menu.rows[rate].					SetDefaultChoiceIfPresent( ssprintf("%2.0f%%",bgChange.m_fRate*100) );
+				menu.rows[transition].					SetDefaultChoiceIfPresent( bgChange.m_sTransition );
+				menu.rows[effect].					SetDefaultChoiceIfPresent( bgChange.m_def.m_sEffect );
+				menu.rows[file1_type].iDefaultChoice			= none;
+				if( bgChange.m_def.m_sFile1 == RANDOM_BACKGROUND_FILE )								menu.rows[file1_type].iDefaultChoice	= dynamic_random;
+				if( menu.rows[file1_song_bganimation].			SetDefaultChoiceIfPresent( bgChange.m_def.m_sFile1 ) )	menu.rows[file1_type].iDefaultChoice	= song_bganimation;
+				if( menu.rows[file1_song_movie].			SetDefaultChoiceIfPresent( bgChange.m_def.m_sFile1 ) )	menu.rows[file1_type].iDefaultChoice	= song_movie;
+				if( menu.rows[file1_song_still].			SetDefaultChoiceIfPresent( bgChange.m_def.m_sFile1 ) )	menu.rows[file1_type].iDefaultChoice	= song_bitmap;
+				if( menu.rows[file1_global_bganimation].		SetDefaultChoiceIfPresent( bgChange.m_def.m_sFile1 ) )	menu.rows[file1_type].iDefaultChoice	= global_bganimation;
+				if( menu.rows[file1_global_movie].			SetDefaultChoiceIfPresent( bgChange.m_def.m_sFile1 ) )	menu.rows[file1_type].iDefaultChoice	= global_movie;
+				if( menu.rows[file1_global_movie_song_group].		SetDefaultChoiceIfPresent( bgChange.m_def.m_sFile1 ) )	menu.rows[file1_type].iDefaultChoice	= global_movie_song_group;
+				if( menu.rows[file1_global_movie_song_group_and_genre].	SetDefaultChoiceIfPresent( bgChange.m_def.m_sFile1 ) )	menu.rows[file1_type].iDefaultChoice	= global_movie_song_group_and_genre;
+				menu.rows[file2_type].iDefaultChoice			= none;
+				if( bgChange.m_def.m_sFile2 == RANDOM_BACKGROUND_FILE )								menu.rows[file2_type].iDefaultChoice	= dynamic_random;
+				if( menu.rows[file2_song_bganimation].			SetDefaultChoiceIfPresent( bgChange.m_def.m_sFile2 ) )	menu.rows[file2_type].iDefaultChoice	= song_bganimation;
+				if( menu.rows[file2_song_movie].			SetDefaultChoiceIfPresent( bgChange.m_def.m_sFile2 ) )	menu.rows[file2_type].iDefaultChoice	= song_movie;
+				if( menu.rows[file2_song_still].			SetDefaultChoiceIfPresent( bgChange.m_def.m_sFile2 ) )	menu.rows[file2_type].iDefaultChoice	= song_bitmap;
+				if( menu.rows[file2_global_bganimation].		SetDefaultChoiceIfPresent( bgChange.m_def.m_sFile2 ) )	menu.rows[file2_type].iDefaultChoice	= global_bganimation;
+				if( menu.rows[file2_global_movie].			SetDefaultChoiceIfPresent( bgChange.m_def.m_sFile2 ) )	menu.rows[file2_type].iDefaultChoice	= global_movie;
+				if( menu.rows[file2_global_movie_song_group].		SetDefaultChoiceIfPresent( bgChange.m_def.m_sFile2 ) )	menu.rows[file2_type].iDefaultChoice	= global_movie_song_group;
+				if( menu.rows[file2_global_movie_song_group_and_genre].	SetDefaultChoiceIfPresent( bgChange.m_def.m_sFile2 ) )	menu.rows[file2_type].iDefaultChoice	= global_movie_song_group_and_genre;
+				menu.rows[color1].					SetDefaultChoiceIfPresent( bgChange.m_def.m_sColor1 );
+				menu.rows[color2].					SetDefaultChoiceIfPresent( bgChange.m_def.m_sColor2 );
 
-			EditMiniMenu( &g_BackgroundChange, SM_BackFromBGChange );
+				EditMiniMenu( &g_BackgroundChange, SM_BackFromBGChange );
+			}
 		}
 		break;
 
@@ -2718,7 +2721,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	else if ( SM == SM_BackFromLabelChange )
 	{
 		RString sLabel = ScreenTextEntry::s_sLastAnswer;
-		if ( !m_pSteps->m_Timing.DoesLabelExist(sLabel) )
+		if ( !GetAppropriateTiming().DoesLabelExist(sLabel) )
 		{
 			sLabel.Replace("=", "_");
 			sLabel.Replace(",", "_");
