@@ -281,14 +281,22 @@ protected:
 	/** @brief Has the NoteData been changed such that a user should be prompted to save? */
 	bool			m_bDirty;
 
+	/** @brief The sound that is played when a note is added. */
 	RageSound		m_soundAddNote;
+	/** @brief The sound that is played when a note is removed. */
 	RageSound		m_soundRemoveNote;
 	RageSound		m_soundChangeLine;
 	RageSound		m_soundChangeSnap;
 	RageSound		m_soundMarker;
 	RageSound		m_soundValueIncrease;
 	RageSound		m_soundValueDecrease;
+	/** @brief The sound that is played when switching players for Routine. */
+	RageSound		m_soundSwitchPlayer;
+	/** @brief The sound that is played when switching song/step timing. */
+	RageSound		m_soundSwitchTiming;
+	/** @brief The sound that is played when switching to a different chart. */
 	RageSound		m_soundSwitchSteps;
+	/** @brief The sound that is played when the chart is saved. */
 	RageSound		m_soundSave;
 
 	// used for reverting

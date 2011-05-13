@@ -837,6 +837,8 @@ void ScreenEdit::Init()
 	m_soundMarker.Load(		THEME->GetPathS("ScreenEdit","marker"), true );
 	m_soundValueIncrease.Load(	THEME->GetPathS("ScreenEdit","value increase"), true );
 	m_soundValueDecrease.Load(	THEME->GetPathS("ScreenEdit","value decrease"), true );
+	m_soundSwitchPlayer.Load(	THEME->GetPathS("ScreenEdit","switch player"), true );
+	m_soundSwitchTiming.Load(	THEME->GetPathS("ScreenEdit","switch timing"), true );
 	m_soundSwitchSteps.Load(	THEME->GetPathS("ScreenEdit","switch steps") );
 	m_soundSave.Load(		THEME->GetPathS("ScreenEdit","save") );
 	m_GameplayAssist.Init();
@@ -2124,11 +2126,13 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			enum_add( m_InputPlayerNumber, 1 );
 			if( m_InputPlayerNumber == NUM_PLAYERS )
 				m_InputPlayerNumber = PLAYER_1;
+			m_soundSwitchPlayer.Play();
 		}
 		break;
 	
 	case EDIT_BUTTON_SWITCH_TIMINGS:
 		GAMESTATE->m_bIsEditorStepTiming = !GAMESTATE->m_bIsEditorStepTiming;
+		m_soundSwitchTiming.Play();
 		break;
 	}
 }
