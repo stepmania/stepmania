@@ -1544,18 +1544,20 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 		{
 			// update enabled/disabled in g_AreaMenu
 			bool bAreaSelected = m_NoteFieldEdit.m_iBeginMarker!=-1 && m_NoteFieldEdit.m_iEndMarker!=-1;
-			g_AreaMenu.rows[cut].bEnabled = bAreaSelected;
+			g_AreaMenu.rows[cut].bEnabled = bAreaSelected && GAMESTATE->m_bIsEditorStepTiming;
 			g_AreaMenu.rows[copy].bEnabled = bAreaSelected;
-			g_AreaMenu.rows[paste_at_current_beat].bEnabled = !m_Clipboard.IsEmpty();
-			g_AreaMenu.rows[paste_at_begin_marker].bEnabled = !m_Clipboard.IsEmpty() != 0 && m_NoteFieldEdit.m_iBeginMarker!=-1;
-			g_AreaMenu.rows[clear].bEnabled = bAreaSelected;
-			g_AreaMenu.rows[quantize].bEnabled = bAreaSelected;
-			g_AreaMenu.rows[turn].bEnabled = bAreaSelected;
-			g_AreaMenu.rows[transform].bEnabled = bAreaSelected;
+			g_AreaMenu.rows[paste_at_current_beat].bEnabled = !m_Clipboard.IsEmpty() && GAMESTATE->m_bIsEditorStepTiming;
+			g_AreaMenu.rows[paste_at_begin_marker].bEnabled = !m_Clipboard.IsEmpty() != 0 && m_NoteFieldEdit.m_iBeginMarker!=-1 && GAMESTATE->m_bIsEditorStepTiming;
+			g_AreaMenu.rows[clear].bEnabled = bAreaSelected && GAMESTATE->m_bIsEditorStepTiming;
+			g_AreaMenu.rows[quantize].bEnabled = bAreaSelected && GAMESTATE->m_bIsEditorStepTiming;
+			g_AreaMenu.rows[turn].bEnabled = bAreaSelected && GAMESTATE->m_bIsEditorStepTiming;
+			g_AreaMenu.rows[transform].bEnabled = bAreaSelected && GAMESTATE->m_bIsEditorStepTiming;
 			g_AreaMenu.rows[alter].bEnabled = bAreaSelected;
 			g_AreaMenu.rows[tempo].bEnabled = bAreaSelected;
 			g_AreaMenu.rows[play].bEnabled = bAreaSelected;
-			g_AreaMenu.rows[record].bEnabled = bAreaSelected;
+			g_AreaMenu.rows[record].bEnabled = bAreaSelected && GAMESTATE->m_bIsEditorStepTiming;
+			g_AreaMenu.rows[insert_and_shift].bEnabled = GAMESTATE->m_bIsEditorStepTiming;
+			g_AreaMenu.rows[delete_and_shift].bEnabled = GAMESTATE->m_bIsEditorStepTiming;
 			g_AreaMenu.rows[convert_to_pause].bEnabled = bAreaSelected;
 			g_AreaMenu.rows[undo].bEnabled = m_bHasUndo;
 			EditMiniMenu( &g_AreaMenu, SM_BackFromAreaMenu );
@@ -2065,6 +2067,11 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 		HandleMainMenuChoice( play_selection );
 		break;
 	case EDIT_BUTTON_RECORD_SELECTION:
+		if( !GAMESTATE->m_bIsEditorStepTiming )
+		{
+			// broadcast message maybe.
+			break;
+		}
 		if( m_NoteFieldEdit.m_iBeginMarker!=-1 && m_NoteFieldEdit.m_iEndMarker!=-1 )
 		{
 			HandleAreaMenuChoice( record );
@@ -2221,7 +2228,12 @@ void ScreenEdit::InputRecordPaused( const InputEventPlus &input, EditButton Edit
 		break;
 
 	case EDIT_BUTTON_RECORD_SELECTION:
-		TransitionEditState( STATE_RECORDING );
+		if( GAMESTATE->m_bIsEditorStepTiming )
+			TransitionEditState( STATE_RECORDING );
+		else
+		{
+			// broadcast error maybe.
+		}
 		break;
 
 	case EDIT_BUTTON_RECORD_FROM_CURSOR:
