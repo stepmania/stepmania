@@ -516,8 +516,8 @@ static MenuDef g_AreaMenu(
 	MenuRowDef( ScreenEdit::record,			"Record in selection",			true, EditMode_Practice, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::insert_and_shift,	"Insert beat and shift down",		true, EditMode_Practice, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::delete_and_shift,	"Delete beat and shift up",		true, EditMode_Practice, true, true, 0, NULL ),
-	MenuRowDef( ScreenEdit::shift_pauses_forward,	"Shift pauses and BPM changes down",	true, EditMode_Full, true, true, 0, NULL ),
-	MenuRowDef( ScreenEdit::shift_pauses_backward,	"Shift pauses and BPM changes up",	true, EditMode_Full, true, true, 0, NULL ),
+	MenuRowDef( ScreenEdit::shift_pauses_forward,	"Shift all timing changes down",	true, EditMode_Full, true, true, 0, NULL ),
+	MenuRowDef( ScreenEdit::shift_pauses_backward,	"Shift all timing changes up",		true, EditMode_Full, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::convert_to_pause,	"Convert selection to pause",		true, EditMode_Full, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::convert_pause_to_beat,	"Convert pause to beats",		true, EditMode_Full, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::undo,			"Undo",					true, EditMode_Practice, true, true, 0, NULL )
