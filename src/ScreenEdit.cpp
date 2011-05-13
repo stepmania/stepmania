@@ -692,6 +692,8 @@ REGISTER_SCREEN_CLASS( ScreenEdit );
 void ScreenEdit::Init()
 {
 	m_pSoundMusic = NULL;
+	
+	GAMESTATE->m_bIsEditorStepTiming = true;
 
 	SubscribeToMessage( "Judgment" );
 
@@ -849,6 +851,9 @@ ScreenEdit::~ScreenEdit()
 
 	LOG->Trace( "ScreenEdit::~ScreenEdit()" );
 	m_pSoundMusic->StopPlaying();
+	
+	// Reset the GameState variable in case it's needed elsewhere.
+	GAMESTATE->m_bIsEditorStepTiming = false;
 }
 
 void ScreenEdit::BeginScreen()

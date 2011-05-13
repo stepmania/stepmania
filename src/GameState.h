@@ -44,7 +44,8 @@ public:
 	void ResetPlayer( PlayerNumber pn );
 	void ApplyCmdline(); // called by Reset
 	void ApplyGameCommand( const RString &sCommand, PlayerNumber pn=PLAYER_INVALID );
-	void BeginGame();	// called when first player joins
+	/** @brief Start the game when the first player joins in. */
+	void BeginGame();
 	void JoinPlayer( PlayerNumber pn );
 	void UnjoinPlayer( PlayerNumber pn );
 	bool JoinInput( PlayerNumber pn );
@@ -56,13 +57,25 @@ public:
 	bool HaveProfileToSave();
 	void SaveLocalData();
 	void LoadCurrentSettingsFromProfile( PlayerNumber pn );
-	void SaveCurrentSettingsToProfile( PlayerNumber pn ); // called at the beginning of each stage
+	/**
+	 * @brief Save the specified player's settings to his/her profile.
+	 *
+	 * This is called at the beginning of each stage.
+	 * @param pn the PlayerNumber to save the stats to. */
+	void SaveCurrentSettingsToProfile( PlayerNumber pn );
 	Song* GetDefaultSong() const;
 
 	void Update( float fDelta );
 
 	// Main state info
-	void SetCurGame( const Game *pGame );	// Call this instead of m_pCurGame.Set to make sure PREFSMAN->m_sCurrentGame stays in sync
+	
+	/**
+	 * @brief State what the current game is.
+	 *
+	 * Call this instead of m_pCurGame.Set to make sure that
+	 * PREFSMAN->m_sCurrentGame stays in sync.
+	 * @param pGame the game to start using. */
+	void SetCurGame( const Game *pGame );
 	BroadcastOnChangePtr<const Game>	m_pCurGame;
 	BroadcastOnChangePtr<const Style>	m_pCurStyle;
 	/** @brief Determine which side is joined.
@@ -130,6 +143,9 @@ public:
 	bool IsCourseMode() const;
 	bool IsBattleMode() const; // not Rave
 
+	/**
+	 * @brief Do we show the W1 timing judgment?
+	 * @return true if we do, or false otherwise. */
 	bool ShowW1() const;
 
 	BroadcastOnChange<RString>	m_sPreferredSongGroup;		// GROUP_ALL denotes no preferred group
@@ -142,7 +158,11 @@ public:
 	SortOrder	m_PreferredSortOrder;		// used by MusicWheel
 	EditMode	m_EditMode;
 	bool		IsEditing() const { return m_EditMode != EditMode_Invalid; }
-	bool		m_bDemonstrationOrJukebox;	// ScreenGameplay does special stuff when this is true
+	/**
+	 * @brief Are we in the demonstration or jukebox mode?
+	 *
+	 * ScreenGameplay often does special things when this is set to true. */
+	bool		m_bDemonstrationOrJukebox;
 	bool		m_bJukeboxUsesModifiers;
 	int			m_iNumStagesOfThisSong;
 	/**
@@ -240,8 +260,11 @@ public:
 	// Options stuff
 	ModsGroup<SongOptions>	m_SongOptions;
 
-	// True if the current mode has changed the default NoteSkin, such as Edit/Sync Songs does.
-	// Note: any mode that wants to use it must set it
+	/**
+	 * @brief Did the current game mode change the default Noteskin?
+	 *
+	 * This is true if it has: see Edit/Sync Songs for a common example.
+	 * Note: any mode that wants to use this must set it explicitly. */
 	bool m_bDidModeChangeNoteSkin;
 
 	void GetDefaultPlayerOptions( PlayerOptions &po );
@@ -308,6 +331,12 @@ public:
 	Premium		GetPremium() const;
 
 	// Edit stuff
+	
+	/**
+	 * @brief Is the editor making changes to Song timing or Steps timing?
+	 *
+	 * Different options are available depending on this setting. */
+	bool m_bIsEditorStepTiming;
 	BroadcastOnChange<StepsType> m_stEdit;
 	BroadcastOnChange<CourseDifficulty> m_cdEdit;
 	BroadcastOnChangePtr<Steps> m_pEditSourceSteps;
