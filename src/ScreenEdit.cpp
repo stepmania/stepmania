@@ -1276,9 +1276,10 @@ static int FindAttackAtTime( const AttackArray& attacks, float fStartTime )
 	return -1;
 }
 
+static LocalizedString TAP_NOTE_SONG_TIMING	( "ScreenEdit", "You must be in Step Timing Mode to edit the notes." );
 static LocalizedString SWITCHED_TO		( "ScreenEdit", "Switched to" );
 static LocalizedString NO_BACKGROUNDS_AVAILABLE	( "ScreenEdit", "No backgrounds available" );
-static ThemeMetric<bool> INVERT_SCROLL_BUTTONS ( "ScreenEdit", "InvertScrollSpeedButtons" );
+static ThemeMetric<bool> INVERT_SCROLL_BUTTONS	( "ScreenEdit", "InvertScrollSpeedButtons" );
 
 void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 {
@@ -1309,8 +1310,9 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			
 			if( !GAMESTATE->m_bIsEditorStepTiming )
 			{
-				// TODO: broadcast a message...?
-				break; // Only allow steps to be hit in Step Timing.
+				// Only allow steps to be hit in Step Timing.
+				SCREENMAN->SystemMessage( TAP_NOTE_SONG_TIMING );
+				break;
 			}
 			
 			int iCol = EditB - EDIT_BUTTON_COLUMN_0;
