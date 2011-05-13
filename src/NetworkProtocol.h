@@ -4,10 +4,16 @@
 
 namespace NetworkProtocol
 {
-	enum Commands
+	enum NetworkCommand
 	{
-		
+		NetCommand_Ping = 0,
+		NetCommand_Pong,
+		NetCommand_LegacyHello,
+		//NetCommand_Json,
+		NUM_NetCommand
 	};
+	// xxx: do this?
+	const NetworkCommand ncServerOffset = (NetworkCommand)128;
 };
 
 #endif

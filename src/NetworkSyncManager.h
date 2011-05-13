@@ -9,7 +9,7 @@
 class LoadingWindow;
 
 const int LegacyProtocolVersion = 4;
-const int NETMAXBUFFERSIZE = 1020; //1024 - 4 bytes for EzSockets
+//const int ModernProtocolVersion = 0;
 const int NETNUMTAPSCORES = 8;
 
 // [SMLClientCommands name]

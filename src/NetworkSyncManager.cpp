@@ -176,7 +176,7 @@ void NetworkSyncManager::PostStartUp( const RString& ServerIP )
 	while( dontExit )
 	{
 		m_packet.Clear();
-		if( NetPlayerClient->ReadPack((char *)&m_packet, NETMAXBUFFERSIZE)<1 )
+		if( NetPlayerClient->ReadPack((char *)&m_packet, MAX_PACKET_BUFFER_SIZE) < 1 )
 			dontExit=false; // Also allow exit if there is a problem on the socket
 		if( m_packet.Read1() == NSServerOffset + LegacyNetCmdHello )
 			dontExit=false;
@@ -207,6 +207,10 @@ void NetworkSyncManager::PostStartUp( const RString& ServerIP )
 		}
 
 		// send the real hello packet
+		m_packet.Clear();
+		//m_packet.Write1( NetworkProtocol::NetCommand_LegacyHello );
+		//m_packet.Write1( ModernProtocolVersion );
+		//m_packet.WriteString( RString(PRODUCT_ID_VER) );
 	}
 	else if( m_ServerVersion >= 128 )
 	{
@@ -446,7 +450,7 @@ void NetworkSyncManager::StartRequest( short position )
 	while (dontExit)
 	{
 		m_packet.Clear();
-		if (NetPlayerClient->ReadPack((char *)&m_packet, NETMAXBUFFERSIZE)<1)
+		if( NetPlayerClient->ReadPack((char *)&m_packet, MAX_PACKET_BUFFER_SIZE) < 1 )
 				dontExit=false; // Also allow exit if there is a problem on the socket
 								// Only do if we are not the server, otherwise the sync
 								// gets hosed up due to non blocking mode.
@@ -544,7 +548,7 @@ void NetworkSyncManager::ProcessInput()
 	m_packet.Clear();
 
 	int packetSize;
-	while ( (packetSize = NetPlayerClient->ReadPack((char *)&m_packet, NETMAXBUFFERSIZE) ) > 0 )
+	while( (packetSize = NetPlayerClient->ReadPack((char *)&m_packet, MAX_PACKET_BUFFER_SIZE)) > 0 )
 	{
 		m_packet.Size = packetSize;
 		int command = m_packet.Read1();
