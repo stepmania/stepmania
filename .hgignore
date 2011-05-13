@@ -81,6 +81,10 @@ Utils/temp*
 *.lnk
 BuildLog.htm
 *.pch
+Portable.ini
+Cache/*
+Save/*
+Logs/*
 
 syntax: regexp
 .*\#.*\#$
