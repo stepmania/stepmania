@@ -1139,7 +1139,11 @@ void ScreenEdit::UpdateTextInfo()
 	case EditMode_Home:
 		break;
 	case EditMode_Full:
-		sText += ssprintf( BEAT_0_OFFSET_FORMAT.GetValue(), BEAT_0_OFFSET.GetValue().c_str(), m_pSteps->m_Timing.m_fBeat0OffsetInSeconds );
+		sText += ssprintf( BEAT_0_OFFSET_FORMAT.GetValue(), 
+				  BEAT_0_OFFSET.GetValue().c_str(), 
+				  ( GAMESTATE->m_bIsEditorStepTiming ? 
+				   m_pSteps->m_Timing.m_fBeat0OffsetInSeconds : 
+				   m_pSong->m_SongTiming.m_fBeat0OffsetInSeconds ) );
 		sText += ssprintf( PREVIEW_START_FORMAT.GetValue(), PREVIEW_START.GetValue().c_str(), m_pSong->m_fMusicSampleStartSeconds );
 		sText += ssprintf( PREVIEW_LENGTH_FORMAT.GetValue(), PREVIEW_LENGTH.GetValue().c_str(), m_pSong->m_fMusicSampleLengthSeconds );
 		break;
@@ -3041,10 +3045,12 @@ static void ChangeArtistTranslit( const RString &sNew )
 
 static void ChangeBeat0Offset( const RString &sNew )
 {
-	/* TODO: Use a switch/boolean to determine which to write to.
-	 * If it's a new chart (have to find a way to determine that),
-	 * write to both. */
-	GAMESTATE->m_pCurSong->m_SongTiming.m_fBeat0OffsetInSeconds = GAMESTATE->m_pCurSteps[PLAYER_1]->m_Timing.m_fBeat0OffsetInSeconds = StringToFloat( sNew );
+	TimingData &timing = GAMESTATE->m_pCurSong->m_SongTiming;
+	if( GAMESTATE->m_bIsEditorStepTiming )
+	{
+		timing = GAMESTATE->m_pCurSteps[PLAYER_1]->m_Timing;
+	}
+	timing.m_fBeat0OffsetInSeconds = StringToFloat( sNew );
 }
 
 static void ChangeLastBeatHint( const RString &sNew )
