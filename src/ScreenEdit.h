@@ -463,7 +463,6 @@ public:
 		main_title_transliteration,
 		sub_title_transliteration,
 		artist_transliteration,
-		beat_0_offset,
 		last_beat_hint,
 		preview_start,
 		preview_length,
@@ -476,6 +475,7 @@ public:
 	
 	enum TimingDataInformationChoice
 	{
+		beat_0_offset,
 		bpm,
 		stop,
 		delay,
