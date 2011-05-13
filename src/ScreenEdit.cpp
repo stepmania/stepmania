@@ -1035,6 +1035,9 @@ static LocalizedString MINES("ScreenEdit", "Mines");
 static LocalizedString ROLLS("ScreenEdit", "Rolls");
 static LocalizedString LIFTS("ScreenEdit", "Lifts");
 static LocalizedString FAKES("ScreenEdit", "Fakes");
+static LocalizedString TIMING_MODE("ScreenEdit", "Timing Mode");
+static LocalizedString STEP_TIMING("ScreenEdit", "Step Timing");
+static LocalizedString SONG_TIMING("ScreenEdit", "Song Timing");
 static LocalizedString BEAT_0_OFFSET("ScreenEdit", "Beat 0 offset");
 static LocalizedString PREVIEW_START("ScreenEdit", "Preview Start");
 static LocalizedString PREVIEW_LENGTH("ScreenEdit", "Preview Length");
@@ -1060,6 +1063,7 @@ static ThemeMetric<RString> NUM_HANDS_FORMAT("ScreenEdit", "NumHandsFormat");
 static ThemeMetric<RString> NUM_ROLLS_FORMAT("ScreenEdit", "NumRollsFormat");
 static ThemeMetric<RString> NUM_LIFTS_FORMAT("ScreenEdit", "NumLiftsFormat");
 static ThemeMetric<RString> NUM_FAKES_FORMAT("ScreenEdit", "NumFakesFormat");
+static ThemeMetric<RString> TIMING_MODE_FORMAT("ScreenEdit", "TimingModeFormat");
 static ThemeMetric<RString> BEAT_0_OFFSET_FORMAT("ScreenEdit", "Beat0OffsetFormat");
 static ThemeMetric<RString> PREVIEW_START_FORMAT("ScreenEdit", "PreviewStartFormat");
 static ThemeMetric<RString> PREVIEW_LENGTH_FORMAT("ScreenEdit", "PreviewLengthFormat");
@@ -1139,6 +1143,11 @@ void ScreenEdit::UpdateTextInfo()
 	case EditMode_Home:
 		break;
 	case EditMode_Full:
+		sText += ssprintf( TIMING_MODE_FORMAT.GetValue(),
+				  TIMING_MODE.GetValue().c_str(),
+				  ( GAMESTATE->m_bIsEditorStepTiming ?
+				   STEP_TIMING.GetValue().c_str() :
+				   SONG_TIMING.GetValue().c_str() ) );
 		sText += ssprintf( BEAT_0_OFFSET_FORMAT.GetValue(), 
 				  BEAT_0_OFFSET.GetValue().c_str(), 
 				  GetAppropriateTiming().m_fBeat0OffsetInSeconds );
