@@ -548,6 +548,11 @@ public:
 
 	void MakeFilteredMenuDef( const MenuDef* pDef, MenuDef &menu );
 	void EditMiniMenu( const MenuDef* pDef, ScreenMessage SM_SendOnOK = SM_None, ScreenMessage SM_SendOnCancel = SM_None );
+private:
+	/**
+	 * @brief Retrieve the appropriate TimingData based on GAMESTATE.
+	 * @return the proper TimingData. */
+	TimingData & GetAppropriateTiming() const;
 };
 
 #endif
