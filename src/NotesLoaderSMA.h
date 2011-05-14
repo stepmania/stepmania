@@ -43,6 +43,8 @@ namespace SMALoader
 	
 	void ProcessBeatsPerMeasure( TimingData &out, const RString sParam );
 	bool ProcessBPMs( TimingData &out, const int iRowsPerBeat, const RString sParam );
+	void ProcessStops( TimingData &out, const int iRowsPerBeat, const RString sParam );
+	void ProcessDelays( TimingData &out, const int iRowsPerBeat, const RString sParam );
 	
 	float RowToBeat( RString sLine, const int iRowsPerBeat );
 };

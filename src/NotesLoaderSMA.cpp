@@ -123,6 +123,105 @@ bool SMALoader::ProcessBPMs( TimingData &out, const int iRowsPerBeat, const RStr
 	return bNotEmpty;
 }
 
+void SMALoader::ProcessStops( TimingData &out, const int iRowsPerBeat, const RString sParam )
+{
+	vector<RString> arrayFreezeExpressions;
+	split( sParam, ",", arrayFreezeExpressions );
+	
+	// Prepare variables for negative stop conversion.
+	float negBeat = -1;
+	float negPause = 0;
+	
+	for( unsigned f=0; f<arrayFreezeExpressions.size(); f++ )
+	{
+		vector<RString> arrayFreezeValues;
+		split( arrayFreezeExpressions[f], "=", arrayFreezeValues );
+		if( arrayFreezeValues.size() != 2 )
+		{
+			// XXX: Hard to tell which file caused this.
+			LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid #STOPS value \"%s\" (must have exactly one '='), ignored.",
+				     arrayFreezeExpressions[f].c_str() );
+			continue;
+		}
+		
+		const float fFreezeBeat = RowToBeat( arrayFreezeValues[0], iRowsPerBeat );
+		const float fFreezeSeconds = StringToFloat( arrayFreezeValues[1] );
+		
+		// Process the prior stop.
+		if( negPause > 0 )
+		{
+			BPMSegment oldBPM = out.GetBPMSegmentAtRow(BeatToNoteRow(negBeat));
+			float fSecondsPerBeat = 60 / oldBPM.GetBPM();
+			float fSkipBeats = negPause / fSecondsPerBeat;
+			
+			if( negBeat + fSkipBeats > fFreezeBeat )
+				fSkipBeats = fFreezeBeat - negBeat;
+			
+			WarpSegment ws( negBeat, negBeat + fSkipBeats);
+			out.AddWarpSegment( ws );
+			
+			negBeat = -1;
+			negPause = 0;
+		}
+		
+		if( fFreezeSeconds < 0.0f )
+		{
+			negBeat = fFreezeBeat;
+			negPause = -fFreezeSeconds;
+		}
+		else if( fFreezeSeconds > 0.0f )
+		{
+			StopSegment ss( BeatToNoteRow(fFreezeBeat), fFreezeSeconds );
+			out.AddStopSegment( ss );
+		}
+		
+	}
+	
+	// Process the prior stop if there was one.
+	if( negPause > 0 )
+	{
+		BPMSegment oldBPM = out.GetBPMSegmentAtRow(BeatToNoteRow(negBeat));
+		float fSecondsPerBeat = 60 / oldBPM.GetBPM();
+		float fSkipBeats = negPause / fSecondsPerBeat;
+		
+		WarpSegment ws( negBeat, negBeat + fSkipBeats);
+		out.AddWarpSegment( ws );
+	}
+}
+
+void SMALoader::ProcessDelays( TimingData &out, const int iRowsPerBeat, const RString sParam )
+{
+	vector<RString> arrayDelayExpressions;
+	split( sParam, ",", arrayDelayExpressions );
+	
+	for( unsigned f=0; f<arrayDelayExpressions.size(); f++ )
+	{
+		vector<RString> arrayDelayValues;
+		split( arrayDelayExpressions[f], "=", arrayDelayValues );
+		if( arrayDelayValues.size() != 2 )
+		{
+			// XXX: Hard to tell which file caused this.
+			LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid #DELAYS value \"%s\" (must have exactly one '='), ignored.",
+				     arrayDelayExpressions[f].c_str() );
+			continue;
+		}
+		
+		const float fFreezeBeat = RowToBeat( arrayDelayValues[0], iRowsPerBeat );
+		const float fFreezeSeconds = StringToFloat( arrayDelayValues[1] );
+		
+		StopSegment new_seg( BeatToNoteRow(fFreezeBeat), fFreezeSeconds, true );
+		// XXX: Remove Negatives Bug?
+		new_seg.m_iStartRow = BeatToNoteRow(fFreezeBeat);
+		new_seg.m_fStopSeconds = fFreezeSeconds;
+		
+		// LOG->Trace( "Adding a delay segment: beat: %f, seconds = %f", new_seg.m_fStartBeat, new_seg.m_fStopSeconds );
+		
+		if(fFreezeSeconds > 0.0f)
+			out.AddStopSegment( new_seg );
+		else
+			LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid delay at beat %f, length %f.", fFreezeBeat, fFreezeSeconds );
+	}
+}
 
 void SMALoader::ProcessBeatsPerMeasure( TimingData &out, const RString sParam )
 {
@@ -456,6 +555,20 @@ bool SMALoader::LoadFromSMAFile( const RString &sPath, Song &out )
 			ProcessBPMs( timing, iRowsPerBeat, sParams[1] );
 		}
 		
+		else if( sValueName=="STOPS" || sValueName=="FREEZES" )
+		{
+			TimingData &timing = (state == SMA_GETTING_STEP_INFO 
+					      ? pNewNotes->m_Timing : out.m_SongTiming);
+			ProcessStops( timing, iRowsPerBeat, sParams[1] );
+		}
+		
+		else if( sValueName=="DELAYS" )
+		{
+			TimingData &timing = (state == SMA_GETTING_STEP_INFO 
+					      ? pNewNotes->m_Timing : out.m_SongTiming);
+			ProcessDelays( timing, iRowsPerBeat, sParams[1] );
+		}
+		
 		else if( sValueName=="KEYSOUNDS" )
 		{
 			split( sParams[1], ",", out.m_vsKeysoundFile );
@@ -490,7 +603,7 @@ bool SMALoader::LoadFromSMAFile( const RString &sPath, Song &out )
 		 * We used to check for timing data in this section. That has
 		 * since been moved to a dedicated function.
 		 */
-		else if( sValueName=="STOPS" || sValueName=="FREEZES" || sValueName=="DELAYS" || sValueName=="TIMESIGNATURES" || sValueName=="LEADTRACK" || sValueName=="TICKCOUNTS" )
+		else if( sValueName=="TIMESIGNATURES" || sValueName=="LEADTRACK" || sValueName=="TICKCOUNTS" )
 			;
 		else
 			LOG->UserLog( "Song file", sPath, "has an unexpected value named \"%s\".", sValueName.c_str() );
@@ -502,99 +615,6 @@ bool SMALoader::LoadFromSMAFile( const RString &sPath, Song &out )
 void SMALoader::GetApplicableFiles( const RString &sPath, vector<RString> &out )
 {
 	GetDirListing( sPath + RString("*.sma"), out );
-}
-
-void SMALoader::LoadTimingFromSMAFile( const MsdFile &msd, TimingData &out )
-{
-	out.m_fBeat0OffsetInSeconds = 0;
-	out.m_BPMSegments.clear();
-	out.m_StopSegments.clear();
-	out.m_WarpSegments.clear();
-	out.m_vTimeSignatureSegments.clear();
-	
-	vector<WarpSegment> arrayWarpsFromNegativeBPMs;
-	//vector<WarpSegment> arrayWarpsFromNegativeStops;
-	int rowsPerMeasure = 0;
-	bool encountered = false;
-	
-	for( unsigned i=0; i<msd.GetNumValues(); i++ )
-	{
-		const MsdFile::value_t &sParams = msd.GetValue(i);
-		RString sValueName = sParams[0];
-		sValueName.MakeUpper();
-		
-		if( sValueName=="STOPS" )
-		{
-			vector<RString> arrayFreezeExpressions;
-			split( sParams[1], ",", arrayFreezeExpressions );
-			
-			for( unsigned f=0; f<arrayFreezeExpressions.size(); f++ )
-			{
-				vector<RString> arrayFreezeValues;
-				split( arrayFreezeExpressions[f], "=", arrayFreezeValues );
-				if( arrayFreezeValues.size() != 2 )
-				{
-					// XXX: Hard to tell which file caused this.
-					LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid #%s value \"%s\" (must have exactly one '='), ignored.",
-						     sValueName.c_str(), arrayFreezeExpressions[f].c_str() );
-					continue;
-				}
-				
-				float fFreezeBeat = 0;
-				RString beat = arrayFreezeValues[0];
-				if( beat.Right(0).MakeUpper() == "R" )
-				{
-					beat = beat.Left(beat.size()-1);
-					fFreezeBeat = StringToFloat( beat ) / rowsPerMeasure;
-				}
-				else
-				{
-					fFreezeBeat = StringToFloat(beat);
-				}
-				
-				//float fFreezeBeat = StringToFloat( arrayBPMChangeValues[0] );
-				const float fFreezeSeconds = StringToFloat( arrayFreezeValues[1] );
-				StopSegment new_seg( BeatToNoteRow(fFreezeBeat), fFreezeSeconds );
-				// XXX: Remove Negatives Bug?
-				new_seg.m_iStartRow = BeatToNoteRow(fFreezeBeat);
-				new_seg.m_fStopSeconds = fFreezeSeconds;
-				
-				if(fFreezeSeconds > 0.0f)
-				{
-					// LOG->Trace( "Adding a freeze segment: beat: %f, seconds = %f", new_seg.m_fStartBeat, new_seg.m_fStopSeconds );
-					out.AddStopSegment( new_seg );
-				}
-				else
-				{
-					// negative stops (hi JS!) -aj
-					if( PREFSMAN->m_bQuirksMode )
-					{
-						// LOG->Trace( "Adding a negative freeze segment: beat: %f, seconds = %f", new_seg.m_fStartBeat, new_seg.m_fStopSeconds );
-						out.AddStopSegment( new_seg );
-					}
-					else
-						LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid stop at beat %f, length %f.", fFreezeBeat, fFreezeSeconds );
-				}
-			}
-		}
-		
-		// Note: Even though it is possible to have Negative BPMs and Stops in
-		// a song along with Warps, we should not support files that contain
-		// both styles of warp tricks (Negatives vs. #WARPS).
-		// If Warps have been populated from Negative BPMs, then go through that
-		// instead of using the data in the Warps tag. This should be above,
-		// but it breaks compiling so...
-		if(arrayWarpsFromNegativeBPMs.size() > 0)
-		{
-			// zomg we already have some warps...
-			for( unsigned j=0; j<arrayWarpsFromNegativeBPMs.size(); j++ )
-			{
-				out.AddWarpSegment( arrayWarpsFromNegativeBPMs[j] );
-			}
-		}
-		// warp sorting will need to take place.
-		//sort(out.m_WarpSegments.begin(), out.m_WarpSegments.end());
-	}
 }
 
 bool SMALoader::LoadEditFromFile( RString sEditFilePath, ProfileSlot slot, bool bAddStepsToSong )
