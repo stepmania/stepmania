@@ -683,13 +683,13 @@ void Actor::UpdateInternal( float fDeltaTime )
 		break;
 	
 	case CLOCK_BGM_BEAT_PLAYER1:
-		m_fEffectDelta = g_vfCurrentBGMBeat[PlayerNumber_P1] - m_fSecsIntoEffect;
-		m_fSecsIntoEffect = g_vfCurrentBGMBeat[PlayerNumber_P1];
+		m_fEffectDelta = g_vfCurrentBGMBeat[PLAYER_1] - m_fSecsIntoEffect;
+		m_fSecsIntoEffect = g_vfCurrentBGMBeat[PLAYER_1];
 		break;
 
 	case CLOCK_BGM_BEAT_PLAYER2:
-		m_fEffectDelta = g_vfCurrentBGMBeat[PlayerNumber_P2] - m_fSecsIntoEffect;
-		m_fSecsIntoEffect = g_vfCurrentBGMBeat[PlayerNumber_P2];
+		m_fEffectDelta = g_vfCurrentBGMBeat[PLAYER_2] - m_fSecsIntoEffect;
+		m_fSecsIntoEffect = g_vfCurrentBGMBeat[PLAYER_2];
 		break;
 
 	case CLOCK_BGM_TIME:
