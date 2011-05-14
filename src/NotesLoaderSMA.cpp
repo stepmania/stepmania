@@ -120,8 +120,12 @@ bool SMALoader::LoadFromSMAFile( const RString &sPath, Song &out )
 		return false;
 	}
 	
-	out.m_SongTiming.m_sFile = sPath;
-	LoadTimingFromSMAFile( msd, out.m_SongTiming );
+	out.m_SongTiming.m_sFile = sPath; // songs still have their fallback timing.
+	
+	int state = SMA_GETTING_SONG_INFO;
+	Steps* pNewNotes = NULL;
+	TimingData stepsTiming;
+	int iRowsPerBeat = -1; // Start with an invalid value: needed for checking.
 	
 	for( unsigned i=0; i<msd.GetNumValues(); i++ )
 	{
@@ -175,19 +179,7 @@ bool SMALoader::LoadFromSMAFile( const RString &sPath, Song &out )
 		
 		else if( sValueName=="INSTRUMENTTRACK" )
 		{
-			vector<RString> vs1;
-			split( sParams[1], ",", vs1 );
-			FOREACH_CONST( RString, vs1, s )
-			{
-				vector<RString> vs2;
-				split( *s, "=", vs2 );
-				if( vs2.size() >= 2 )
-				{
-					InstrumentTrack it = StringToInstrumentTrack( vs2[0] );
-					if( it != InstrumentTrack_Invalid )
-						out.m_sInstrumentTrackFile[it] = vs2[1];
-				}
-			}
+			SMLoader::ProcessInstrumentTracks( out, sParams[1] );
 		}
 		
 		else if( sValueName=="MUSICLENGTH" )

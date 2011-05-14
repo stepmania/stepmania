@@ -35,6 +35,7 @@ namespace SMLoader
 	void ProcessBGChanges( Song &out, const RString &sValueName, 
 			      const RString &sPath, const RString &sParam );
 	void ProcessAttacks( Song &out, MsdFile::value_t sParams );
+	void ProcessInstrumentTracks( Song &out, const RString &sParam );
 }
 
 #endif

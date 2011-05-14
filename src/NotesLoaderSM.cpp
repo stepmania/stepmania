@@ -173,6 +173,23 @@ void SMLoader::ProcessAttacks( Song &out, MsdFile::value_t sParams )
 	}
 }
 
+void SMLoader::ProcessInstrumentTracks( Song &out, const RString &sParam )
+{
+	vector<RString> vs1;
+	split( sParam, ",", vs1 );
+	FOREACH_CONST( RString, vs1, s )
+	{
+		vector<RString> vs2;
+		split( *s, "=", vs2 );
+		if( vs2.size() >= 2 )
+		{
+			InstrumentTrack it = StringToInstrumentTrack( vs2[0] );
+			if( it != InstrumentTrack_Invalid )
+				out.m_sInstrumentTrackFile[it] = vs2[1];
+		}
+	}
+}
+
 bool SMLoader::ProcessBPMs( TimingData &out, const RString sParam )
 {
 	vector<RString> arrayBPMChangeExpressions;
@@ -597,19 +614,7 @@ bool SMLoader::LoadFromSMFile( const RString &sPath, Song &out, bool bFromCache 
 
 		else if( sValueName=="INSTRUMENTTRACK" )
 		{
-			vector<RString> vs1;
-			split( sParams[1], ",", vs1 );
-			FOREACH_CONST( RString, vs1, s )
-			{
-				vector<RString> vs2;
-				split( *s, "=", vs2 );
-				if( vs2.size() >= 2 )
-				{
-					InstrumentTrack it = StringToInstrumentTrack( vs2[0] );
-					if( it != InstrumentTrack_Invalid )
-						out.m_sInstrumentTrackFile[it] = vs2[1];
-				}
-			}
+			ProcessInstrumentTracks( out, sParams[1] );
 		}
 
 		else if( sValueName=="MUSICLENGTH" )

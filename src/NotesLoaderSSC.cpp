@@ -232,19 +232,7 @@ bool SSCLoader::LoadFromSSCFile( const RString &sPath, Song &out, bool bFromCach
 
 				else if( sValueName=="INSTRUMENTTRACK" )
 				{
-					vector<RString> vs1;
-					split( sParams[1], ",", vs1 );
-					FOREACH_CONST( RString, vs1, s )
-					{
-						vector<RString> vs2;
-						split( *s, "=", vs2 );
-						if( vs2.size() >= 2 )
-						{
-							InstrumentTrack it = StringToInstrumentTrack( vs2[0] );
-							if( it != InstrumentTrack_Invalid )
-								out.m_sInstrumentTrackFile[it] = vs2[1];
-						}
-					}
+					SMLoader::ProcessInstrumentTracks( out, sParams[1] );
 				}
 
 				else if( sValueName=="MUSICLENGTH" )
