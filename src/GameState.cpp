@@ -128,7 +128,7 @@ GameState::GameState() :
 	m_stEditSource(			Message_EditSourceStepsTypeChanged ),
 	m_iEditCourseEntryIndex(	Message_EditCourseEntryIndexChanged ),
 	m_sEditLocalProfileID(		Message_EditLocalProfileIDChanged ),
-	m_bIsEditorStepTiming(		false )
+	m_bIsEditorStepTiming(		true )
 {
 	g_pImpl = new GameStateImpl;
 
