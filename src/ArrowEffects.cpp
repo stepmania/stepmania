@@ -85,7 +85,8 @@ void ArrowEffects::Update()
 	FOREACH_PlayerNumber( pn )
 	{
 		const Style::ColumnInfo* pCols = pStyle->m_ColumnInfo[pn];
-		const SongPosition &position = GAMESTATE->m_bIsEditorStepTiming ? GAMESTATE->m_pPlayerState[pn]->m_Position : GAMESTATE->m_Position;
+		const SongPosition &position = (!GAMESTATE->m_bInStepEditor || GAMESTATE->m_bIsEditorStepTiming) 
+		? GAMESTATE->m_pPlayerState[pn]->m_Position : GAMESTATE->m_Position;
 
 		PerPlayerData &data = g_EffectData[pn];
 		
@@ -219,7 +220,8 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 	bIsPastPeakOut = true;
 
 	float fYOffset = 0;
-	const SongPosition &position = GAMESTATE->m_bIsEditorStepTiming ? pPlayerState->m_Position : GAMESTATE->m_Position;
+	const SongPosition &position = (!GAMESTATE->m_bInStepEditor || GAMESTATE->m_bIsEditorStepTiming)
+	? pPlayerState->m_Position : GAMESTATE->m_Position;
 
 	/* Usually, fTimeSpacing is 0 or 1, in which case we use entirely beat spacing or
 	 * entirely time spacing (respectively). Occasionally, we tween between them. */

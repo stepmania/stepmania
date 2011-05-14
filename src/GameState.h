@@ -337,6 +337,11 @@ public:
 	 *
 	 * Different options are available depending on this setting. */
 	bool m_bIsEditorStepTiming;
+	/**
+	 * @brief Are we presently in the Step Editor, where some rules apply differently?
+	 *
+	 * TODO: Find a better way to implement this. */
+	bool m_bInStepEditor;
 	BroadcastOnChange<StepsType> m_stEdit;
 	BroadcastOnChange<CourseDifficulty> m_cdEdit;
 	BroadcastOnChangePtr<Steps> m_pEditSourceSteps;
