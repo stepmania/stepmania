@@ -103,6 +103,31 @@ bool SMLoader::LoadTimingFromFile( const RString &fn, TimingData &out )
 	return true;
 }
 
+void SMLoader::ProcessBGChanges( Song &out, const RString &sValueName, const RString &sPath, const RString &sParam )
+{
+	BackgroundLayer iLayer = BACKGROUND_LAYER_1;
+	if( sscanf(sValueName, "BGCHANGES%d", &*ConvertValue<int>(&iLayer)) == 1 )
+		enum_add(iLayer, -1);	// #BGCHANGES2 = BACKGROUND_LAYER_2
+	
+	bool bValid = iLayer>=0 && iLayer<NUM_BackgroundLayer;
+	if( !bValid )
+	{
+		LOG->UserLog( "Song file", sPath, "has a #BGCHANGES tag \"%s\" that is out of range.", sValueName.c_str() );
+	}
+	else
+	{
+		vector<RString> aBGChangeExpressions;
+		split( sParam, ",", aBGChangeExpressions );
+		
+		for( unsigned b=0; b<aBGChangeExpressions.size(); b++ )
+		{
+			BackgroundChange change;
+			if( LoadFromBGChangesString( change, aBGChangeExpressions[b] ) )
+				out.AddBackgroundChange( iLayer, change );
+		}
+	}
+}
+
 bool SMLoader::ProcessBPMs( TimingData &out, const RString sParam )
 {
 	vector<RString> arrayBPMChangeExpressions;
@@ -632,27 +657,7 @@ bool SMLoader::LoadFromSMFile( const RString &sPath, Song &out, bool bFromCache 
 
 		else if( sValueName.Left(strlen("BGCHANGES"))=="BGCHANGES" || sValueName=="ANIMATIONS" )
 		{
-			BackgroundLayer iLayer = BACKGROUND_LAYER_1;
-			if( sscanf(sValueName, "BGCHANGES%d", &*ConvertValue<int>(&iLayer)) == 1 )
-				enum_add(iLayer, -1);	// #BGCHANGES2 = BACKGROUND_LAYER_2
-
-			bool bValid = iLayer>=0 && iLayer<NUM_BackgroundLayer;
-			if( !bValid )
-			{
-				LOG->UserLog( "Song file", sPath, "has a #BGCHANGES tag \"%s\" that is out of range.", sValueName.c_str() );
-			}
-			else
-			{
-				vector<RString> aBGChangeExpressions;
-				split( sParams[1], ",", aBGChangeExpressions );
-
-				for( unsigned b=0; b<aBGChangeExpressions.size(); b++ )
-				{
-					BackgroundChange change;
-					if( LoadFromBGChangesString( change, aBGChangeExpressions[b] ) )
-						out.AddBackgroundChange( iLayer, change );
-				}
-			}
+			ProcessBGChanges( out, sValueName, sPath, sParams[1]);
 		}
 
 		else if( sValueName=="FGCHANGES" )

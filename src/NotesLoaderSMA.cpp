@@ -12,11 +12,32 @@
 #include "Song.h"
 #include "SongManager.h"
 #include "Steps.h"
+#include "Attack.h"
 
 /**
  * @brief A custom .edit file can only be so big before we have to reject it.
  */
 const int MAX_EDIT_STEPS_SIZE_BYTES = 60*1024; // 60 KB
+
+bool SMALoader::LoadFromBGChangesString( BackgroundChange &change, 
+					const RString &sBGChangeExpression )
+{
+	return SMLoader::LoadFromBGChangesString(change, sBGChangeExpression);
+}
+
+bool SMALoader::LoadFromDir( const RString &sPath, Song &out )
+{
+	vector<RString> aFileNames;
+	GetApplicableFiles( sPath, aFileNames );
+	
+	if( aFileNames.size() > 1 )
+	{
+		LOG->UserLog( "Song", sPath, "has more than one SMA file. Only one SMA file is allowed per song." );
+		return false;
+	}
+	ASSERT( aFileNames.size() == 1 );
+	return LoadFromSMAFile( sPath + aFileNames[0], out );
+}
 
 void SMALoader::LoadFromSMATokens(
 				  RString sStepsType,
@@ -81,20 +102,6 @@ void SMALoader::LoadFromSMATokens(
 	out.SetSMNoteData( sNoteData );
 	
 	out.TidyUpData();
-}
-
-bool SMALoader::LoadFromDir( const RString &sPath, Song &out )
-{
-	vector<RString> aFileNames;
-	GetApplicableFiles( sPath, aFileNames );
-	
-	if( aFileNames.size() > 1 )
-	{
-		LOG->UserLog( "Song", sPath, "has more than one SMA file. There can be only one!" );
-		return false;
-	}
-	ASSERT( aFileNames.size() == 1 );
-	return LoadFromSMAFile( sPath + aFileNames[0], out );
 }
 
 void SMALoader::TidyUpData( Song &song, bool bFromCache )
@@ -265,27 +272,7 @@ bool SMALoader::LoadFromSMAFile( const RString &sPath, Song &out )
 		
 		else if( sValueName.Left(strlen("BGCHANGES"))=="BGCHANGES" || sValueName=="ANIMATIONS" )
 		{
-			BackgroundLayer iLayer = BACKGROUND_LAYER_1;
-			if( sscanf(sValueName, "BGCHANGES%d", &*ConvertValue<int>(&iLayer)) == 1 )
-				enum_add(iLayer, -1);	// #BGCHANGES2 = BACKGROUND_LAYER_2
-			
-			bool bValid = iLayer>=0 && iLayer<NUM_BackgroundLayer;
-			if( !bValid )
-			{
-				LOG->UserLog( "Song file", sPath, "has a #BGCHANGES tag \"%s\" that is out of range.", sValueName.c_str() );
-			}
-			else
-			{
-				vector<RString> aBGChangeExpressions;
-				split( sParams[1], ",", aBGChangeExpressions );
-				
-				for( unsigned b=0; b<aBGChangeExpressions.size(); b++ )
-				{
-					BackgroundChange change;
-					if( LoadFromBGChangesString( change, aBGChangeExpressions[b] ) )
-						out.AddBackgroundChange( iLayer, change );
-				}
-			}
+			SMLoader::ProcessBGChanges( out, sValueName, sPath, sParams[1]);
 		}
 		
 		else if( sValueName=="FGCHANGES" )
@@ -728,12 +715,6 @@ bool SMALoader::LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePat
 	}
 	
 	return true;
-}
-
-bool SMALoader::LoadFromBGChangesString( BackgroundChange &change, 
-					const RString &sBGChangeExpression )
-{
-	return SMLoader::LoadFromBGChangesString(change, sBGChangeExpression);
 }
 
 /**

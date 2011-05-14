@@ -32,6 +32,8 @@ namespace SMLoader
 	void ProcessDelays( TimingData &, const RString );
 	void ProcessTimeSignatures( TimingData &, const RString );
 	void ProcessTickcounts( TimingData &, const RString );
+	void ProcessBGChanges( Song &out, const RString &sValueName, 
+			      const RString &sPath, const RString &sParam );
 }
 
 #endif

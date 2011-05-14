@@ -311,27 +311,7 @@ bool SSCLoader::LoadFromSSCFile( const RString &sPath, Song &out, bool bFromCach
 
 				else if( sValueName.Left(strlen("BGCHANGES"))=="BGCHANGES" || sValueName=="ANIMATIONS" )
 				{
-					BackgroundLayer iLayer = BACKGROUND_LAYER_1;
-					if( sscanf(sValueName, "BGCHANGES%d", &*ConvertValue<int>(&iLayer)) == 1 )
-						enum_add(iLayer, -1);	// #BGCHANGES2 = BACKGROUND_LAYER_2
-
-					bool bValid = iLayer>=0 && iLayer<NUM_BackgroundLayer;
-					if( !bValid )
-					{
-						LOG->UserLog( "Song file", sPath, "has a #BGCHANGES tag \"%s\" that is out of range.", sValueName.c_str() );
-					}
-					else
-					{
-						vector<RString> aBGChangeExpressions;
-						split( sParams[1], ",", aBGChangeExpressions );
-
-						for( unsigned b=0; b<aBGChangeExpressions.size(); b++ )
-						{
-							BackgroundChange change;
-							if( LoadFromBGSSCChangesString( change, aBGChangeExpressions[b] ) )
-								out.AddBackgroundChange( iLayer, change );
-						}
-					}
+					SMLoader::ProcessBGChanges( out, sValueName, sPath, sParams[1]);
 				}
 
 				else if( sValueName=="FGCHANGES" )
