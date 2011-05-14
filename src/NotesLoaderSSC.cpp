@@ -120,7 +120,7 @@ void SSCLoader::ProcessCombos( TimingData &out, const RString sParam )
 			continue;
 		}
 		const float fComboBeat = StringToFloat( arrayComboValues[0] );
-		const int iCombos = atoi( arrayComboValues[1] );
+		const int iCombos = StringToInt( arrayComboValues[1] );
 		ComboSegment new_seg( BeatToNoteRow( fComboBeat ), iCombos );
 		out.AddComboSegment( new_seg );
 	}
