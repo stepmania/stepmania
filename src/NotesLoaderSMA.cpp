@@ -223,6 +223,53 @@ void SMALoader::ProcessDelays( TimingData &out, const int iRowsPerBeat, const RS
 	}
 }
 
+void SMALoader::ProcessTickcounts( TimingData &out, const int iRowsPerBeat, const RString sParam )
+{
+	vector<RString> arrayTickcountExpressions;
+	split( sParam, ",", arrayTickcountExpressions );
+	
+	for( unsigned f=0; f<arrayTickcountExpressions.size(); f++ )
+	{
+		vector<RString> arrayTickcountValues;
+		split( arrayTickcountExpressions[f], "=", arrayTickcountValues );
+		if( arrayTickcountValues.size() != 2 )
+		{
+			// XXX: Hard to tell which file caused this.
+			LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid #TICKCOUNTS value \"%s\" (must have exactly one '='), ignored.",
+				     arrayTickcountExpressions[f].c_str() );
+			continue;
+		}
+		
+		const float fTickcountBeat = RowToBeat( arrayTickcountValues[0], iRowsPerBeat );
+		int iTicks = clamp(atoi( arrayTickcountValues[1] ), 0, ROWS_PER_BEAT);
+		
+		TickcountSegment new_seg( BeatToNoteRow(fTickcountBeat), iTicks );
+		out.AddTickcountSegment( new_seg );
+	}
+}
+
+void SMALoader::ProcessMultipliers( TimingData &out, const int iRowsPerBeat, const RString sParam )
+{
+	vector<RString> arrayMultiplierExpressions;
+	split( sParam, ",", arrayMultiplierExpressions );
+	
+	for( unsigned f=0; f<arrayMultiplierExpressions.size(); f++ )
+	{
+		vector<RString> arrayMultiplierValues;
+		split( arrayMultiplierExpressions[f], "=", arrayMultiplierValues );
+		if( arrayMultiplierValues.size() != 2 )
+		{
+			LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid #MULTIPLIER value \"%s\" (must have exactly one '='), ignored.",
+				     arrayMultiplierExpressions[f].c_str() );
+			continue;
+		}
+		const float fComboBeat = RowToBeat( arrayMultiplierValues[0], iRowsPerBeat );
+		const int iCombos = StringToInt( arrayMultiplierValues[1] );
+		ComboSegment new_seg( BeatToNoteRow( fComboBeat ), iCombos );
+		out.AddComboSegment( new_seg );
+	}
+}
+
 void SMALoader::ProcessBeatsPerMeasure( TimingData &out, const RString sParam )
 {
 	vector<RString> vs1;
@@ -569,6 +616,23 @@ bool SMALoader::LoadFromSMAFile( const RString &sPath, Song &out )
 			ProcessDelays( timing, iRowsPerBeat, sParams[1] );
 		}
 		
+		else if( sValueName=="TICKCOUNT" )
+		{
+			TimingData &timing = (state == SMA_GETTING_STEP_INFO 
+					      ? pNewNotes->m_Timing : out.m_SongTiming);
+			ProcessTickcounts( timing, iRowsPerBeat, sParams[1] );
+		}
+		
+		else if( sValueName=="SPEED" )
+		{
+			; // This is something we should consider implementing.
+		}
+		
+		else if( sValueName=="MULTIPLIER" )
+		{
+			ProcessMultipliers( pNewNotes->m_Timing, iRowsPerBeat, sParams[1] );
+		}
+		
 		else if( sValueName=="KEYSOUNDS" )
 		{
 			split( sParams[1], ",", out.m_vsKeysoundFile );
@@ -603,7 +667,7 @@ bool SMALoader::LoadFromSMAFile( const RString &sPath, Song &out )
 		 * We used to check for timing data in this section. That has
 		 * since been moved to a dedicated function.
 		 */
-		else if( sValueName=="TIMESIGNATURES" || sValueName=="LEADTRACK" || sValueName=="TICKCOUNTS" )
+		else if( sValueName=="TIMESIGNATURES" || sValueName=="LEADTRACK"  )
 			;
 		else
 			LOG->UserLog( "Song file", sPath, "has an unexpected value named \"%s\".", sValueName.c_str() );
