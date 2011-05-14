@@ -575,7 +575,7 @@ static MenuDef g_TimingDataInformation(
         MenuRowDef( ScreenEdit::label,				"Edit label",			true, EditMode_Full, true, true, 0, NULL ),
         MenuRowDef( ScreenEdit::tickcount,			"Edit tickcount",		true, EditMode_Full, true, true, 0, NULL ),
         MenuRowDef( ScreenEdit::combo,				"Edit combo",			true, EditMode_Full, true, true, 0, NULL ),
-        MenuRowDef( ScreenEdit::warp,				"Edit warp",			true, EditMode_Full, true, true, 0, NULL )
+        MenuRowDef( ScreenEdit::warp,				"Edit warp",			true, EditMode_Full, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::erase_step_timing,		"Erase step timing",		true, EditMode_Full,	true, true, 0, NULL )
 );
 
@@ -2945,7 +2945,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 			SetDirty( false );
 		}
 	}
-	else if( SM == SM_DoEraseSplitTiming )
+	else if( SM == SM_DoEraseStepTiming )
 	{
 		if( ScreenPrompt::s_LastAnswer == ANSWER_YES )
 		{
