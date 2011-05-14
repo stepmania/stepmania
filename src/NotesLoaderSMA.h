@@ -42,6 +42,9 @@ namespace SMALoader
 	bool LoadFromBGChangesString( BackgroundChange &change, const RString &sBGChangeExpression );
 	
 	void ProcessBeatsPerMeasure( TimingData &out, const RString sParam );
+	bool ProcessBPMs( TimingData &out, const int iRowsPerBeat, const RString sParam );
+	
+	float RowToBeat( RString sLine, const int iRowsPerBeat );
 };
 
 #endif

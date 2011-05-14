@@ -39,6 +39,91 @@ bool SMALoader::LoadFromDir( const RString &sPath, Song &out )
 	return LoadFromSMAFile( sPath + aFileNames[0], out );
 }
 
+float SMALoader::RowToBeat( RString sLine, const int iRowsPerBeat )
+{
+	if( sLine.Right(0).MakeUpper() == "R" )
+	{
+		sLine = sLine.Left(sLine.size()-1);
+		return StringToFloat( sLine ) / iRowsPerBeat;
+	}
+	else
+	{
+		return StringToFloat( sLine );
+	}
+}
+
+bool SMALoader::ProcessBPMs( TimingData &out, const int iRowsPerBeat, const RString sParam )
+{
+	vector<RString> arrayBPMChangeExpressions;
+	split( sParam, ",", arrayBPMChangeExpressions );
+	
+	// prepare storage variables for negative BPMs -> Warps.
+	float negBeat = -1;
+	float negBPM = 1;
+	float highspeedBeat = -1;
+	bool bNotEmpty = false;
+	
+	for( unsigned b=0; b<arrayBPMChangeExpressions.size(); b++ )
+	{
+		vector<RString> arrayBPMChangeValues;
+		split( arrayBPMChangeExpressions[b], "=", arrayBPMChangeValues );
+		// XXX: Hard to tell which file caused this.
+		if( arrayBPMChangeValues.size() != 2 )
+		{
+			LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid #BPMs value \"%s\" (must have exactly one '='), ignored.",
+				     arrayBPMChangeExpressions[b].c_str() );
+			continue;
+		}
+		
+		bNotEmpty = true;
+		
+		const float fBeat = RowToBeat( arrayBPMChangeValues[0], iRowsPerBeat );
+		const float fNewBPM = StringToFloat( arrayBPMChangeValues[1] );
+		
+		if( fNewBPM < 0.0f )
+		{
+			out.m_bHasNegativeBpms = true;
+			negBeat = fBeat;
+			negBPM = fNewBPM;
+		}
+		else if( fNewBPM > 0.0f )
+		{
+			// add in a warp.
+			if( negBPM < 0 )
+			{
+				float endBeat = fBeat + (fNewBPM / -negBPM) * (fBeat - negBeat);
+				WarpSegment new_seg(negBeat, endBeat);
+				out.AddWarpSegment( new_seg );
+				
+				negBeat = -1;
+				negBPM = 1;
+			}
+			// too fast. make it a warp.
+			if( fNewBPM > FAST_BPM_WARP )
+			{
+				highspeedBeat = fBeat;
+			}
+			else
+			{
+				// add in a warp.
+				if( highspeedBeat > 0 )
+				{
+					WarpSegment new_seg(highspeedBeat, fBeat);
+					out.AddWarpSegment( new_seg );
+					highspeedBeat = -1;
+				}
+				{
+					BPMSegment new_seg( BeatToNoteRow( fBeat ), fNewBPM );
+					out.AddBPMSegment( new_seg );
+				}
+			}
+		}
+	}
+	
+	return bNotEmpty;
+}
+
+
 void SMALoader::ProcessBeatsPerMeasure( TimingData &out, const RString sParam )
 {
 	vector<RString> vs1;
@@ -364,7 +449,12 @@ bool SMALoader::LoadFromSMAFile( const RString &sPath, Song &out )
 			timing.m_fBeat0OffsetInSeconds = StringToFloat( sParams[1] );
 		}
 		
-		
+		else if( sValueName=="BPMS" )
+		{
+			TimingData &timing = (state == SMA_GETTING_STEP_INFO 
+					      ? pNewNotes->m_Timing : out.m_SongTiming);
+			ProcessBPMs( timing, iRowsPerBeat, sParams[1] );
+		}
 		
 		else if( sValueName=="KEYSOUNDS" )
 		{
@@ -400,7 +490,7 @@ bool SMALoader::LoadFromSMAFile( const RString &sPath, Song &out )
 		 * We used to check for timing data in this section. That has
 		 * since been moved to a dedicated function.
 		 */
-		else if( sValueName=="BPMS" || sValueName=="STOPS" || sValueName=="FREEZES" || sValueName=="DELAYS" || sValueName=="TIMESIGNATURES" || sValueName=="LEADTRACK" || sValueName=="TICKCOUNTS" )
+		else if( sValueName=="STOPS" || sValueName=="FREEZES" || sValueName=="DELAYS" || sValueName=="TIMESIGNATURES" || sValueName=="LEADTRACK" || sValueName=="TICKCOUNTS" )
 			;
 		else
 			LOG->UserLog( "Song file", sPath, "has an unexpected value named \"%s\".", sValueName.c_str() );
@@ -487,108 +577,6 @@ void SMALoader::LoadTimingFromSMAFile( const MsdFile &msd, TimingData &out )
 				}
 			}
 		}
-		
-		else if( sValueName=="BPMS" )
-		{
-			vector<RString> arrayBPMChangeExpressions;
-			split( sParams[1], ",", arrayBPMChangeExpressions );
-			
-			for( unsigned b=0; b<arrayBPMChangeExpressions.size(); b++ )
-			{
-				vector<RString> arrayBPMChangeValues;
-				split( arrayBPMChangeExpressions[b], "=", arrayBPMChangeValues );
-				// XXX: Hard to tell which file caused this.
-				if( arrayBPMChangeValues.size() != 2 )
-				{
-					LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid #%s value \"%s\" (must have exactly one '='), ignored.",
-						     sValueName.c_str(), arrayBPMChangeExpressions[b].c_str() );
-					continue;
-				}
-				
-				float fBeat = 0;
-				RString beat = arrayBPMChangeValues[0];
-				if( beat.Right(0).MakeUpper() == "R" )
-				{
-					beat = beat.Left(beat.size()-1);
-					fBeat = StringToFloat( beat ) / rowsPerMeasure;
-				}
-				else
-				{
-					fBeat = StringToFloat(beat);
-				}
-				
-				//float fBeat = StringToFloat( arrayBPMChangeValues[0] );
-				const float fNewBPM = StringToFloat( arrayBPMChangeValues[1] );
-				// XXX: Remove Negatives Bug?
-				BPMSegment new_seg;
-				new_seg.m_iStartRow = BeatToNoteRow(fBeat);
-				new_seg.SetBPM( fNewBPM );
-				
-				// convert negative BPMs into Warp segments
-				if( fNewBPM < 0.0f )
-				{
-					vector<RString> arrayNextBPMChangeValues;
-					// get next bpm in sequence
-					if((b+1) < arrayBPMChangeExpressions.size())
-					{
-						split( arrayBPMChangeExpressions[b+1], "=", arrayNextBPMChangeValues );
-						const float fNextPositiveBeat = StringToFloat( arrayNextBPMChangeValues[0] );
-						const float fNextPositiveBPM  = StringToFloat( arrayNextBPMChangeValues[1] );
-						
-						// tJumpPos = (tPosBPS-abs(negBPS)) + (gPosBPMPosition - fNegPosition)
-						float fDeltaBeat = ((fNextPositiveBPM/60.0f)-abs(fNewBPM/60.0f)) + (fNextPositiveBeat-fBeat);
-						//float fWarpLengthBeats = fNextPositiveBeat + fDeltaBeat;
-						WarpSegment wsTemp(BeatToNoteRow(fBeat),fDeltaBeat);
-						arrayWarpsFromNegativeBPMs.push_back(wsTemp);
-						
-						/*
-						 LOG->Trace( ssprintf("==NotesLoSM negbpm==\nfnextposbeat = %f, fnextposbpm = %f,\nfdelta = %f, fwarpto = %f",
-						 fNextPositiveBeat,
-						 fNextPositiveBPM,
-						 fDeltaBeat,
-						 fWarpToBeat
-						 ) );
-						 */
-						/*
-						 LOG->Trace( ssprintf("==Negative/Subtractive BPM in NotesLoader==\nNegBPM has noterow = %i, BPM = %f\nNextBPM @ noterow %i\nDelta value = %i noterows\nThis warp will have us end up at noterow %i",
-						 BeatToNoteRow(fBeat), fNewBPM,
-						 BeatToNoteRow(fNextPositiveBeat),
-						 BeatToNoteRow(fDeltaBeat),
-						 BeatToNoteRow(fWarpToBeat))
-						 );
-						 */
-						//float fDeltaBeat = ((fNextPositiveBPM/60.0f)-abs(fNewBPM/60.0f)) + (fNextPositiveBeat-fBeat);
-						/*
-						 LOG->Trace( ssprintf("==NotesLoader Delta as NoteRows==\nfDeltaBeat = %f (beat)\nfDeltaBeat = (NextBPMSeg %f - abs(fBPS %f)) + (nextStartRow %i - thisRow %i)",
-						 fDeltaBeat,(fNextPositiveBPM/60.0f),abs(fNewBPM/60.0f),BeatToNoteRow(fNextPositiveBeat),BeatToNoteRow(fBeat))
-						 );
-						 */
-						
-						out.AddBPMSegment( new_seg );
-						
-						continue;
-					}
-					else
-					{
-						// last BPM is a negative one? ugh. -aj (MAX_NOTE_ROW exists btw)
-						out.AddBPMSegment( new_seg );
-					}
-				}
-				
-				if(fNewBPM > 0.0f)
-					out.AddBPMSegment( new_seg );
-				else
-				{
-					out.m_bHasNegativeBpms = true;
-					// only add Negative BPMs in quirks mode -aj
-					if( PREFSMAN->m_bQuirksMode )
-						out.AddBPMSegment( new_seg );
-					else
-						LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid BPM change at beat %f, BPM %f.", fBeat, fNewBPM );
-				}
-			}
-		}
-		
 		
 		// Note: Even though it is possible to have Negative BPMs and Stops in
 		// a song along with Warps, we should not support files that contain

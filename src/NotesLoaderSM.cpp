@@ -15,11 +15,6 @@
 
 /** @brief The maximum file size for edits. */
 const int MAX_EDIT_STEPS_SIZE_BYTES		= 60*1024;	// 60KB
-/**
- * @brief The highest allowable speed before Warps come in.
- *
- * This was brought in from StepMania 4's recent betas. */
-const float FAST_BPM_WARP = 9999999.f;
 
 void SMLoader::LoadFromSMTokens( 
 			     RString sStepsType, 
@@ -251,9 +246,7 @@ bool SMLoader::ProcessBPMs( TimingData &out, const RString sParam )
 					highspeedBeat = -1;
 				}
 				{
-					BPMSegment new_seg;
-					new_seg.m_iStartRow = BeatToNoteRow(fBeat);
-					new_seg.SetBPM( fNewBPM );
+					BPMSegment new_seg( BeatToNoteRow( fBeat ), fNewBPM );
 					out.AddBPMSegment( new_seg );
 				}
 			}

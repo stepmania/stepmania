@@ -8,6 +8,13 @@
 class Song;
 class Steps;
 class TimingData;
+
+/**
+ * @brief The highest allowable speed before Warps come in.
+ *
+ * This was brought in from StepMania 4's recent betas. */
+const float FAST_BPM_WARP = 9999999.f;
+
 /** @brief Reads a Song from an .SM file. */
 namespace SMLoader
 {
