@@ -919,7 +919,7 @@ void Player::Update( float fDeltaTime )
 		/* We want to send the crossed row message exactly when we cross the row--not
 		 * .5 before the row. Use a very slow song (around 2 BPM) as a test case: without
 		 * rounding, autoplay steps early. -glenn */
-		const int iRowNow = BeatToNoteRowNotRounded( GAMESTATE->m_Position.m_fSongBeat );
+		const int iRowNow = BeatToNoteRowNotRounded( m_pPlayerState->m_Position.m_fSongBeat );
 		if( iRowNow >= 0 )
 		{
 			if( GAMESTATE->IsPlayerEnabled(m_pPlayerState) )
