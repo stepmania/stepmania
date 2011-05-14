@@ -262,6 +262,11 @@ bool SMALoader::LoadFromSMAFile( const RString &sPath, Song &out )
 		//else if( sValueName=="SAMPLEPATH" )
 		//out.m_sMusicSamplePath = sParams[1];
 		
+		else if( sValueName=="LISTSORT" )
+		{
+			;
+		}
+		
 		else if( sValueName=="DISPLAYBPM" )
 		{
 			// #DISPLAYBPM:[xxx][xxx:xxx]|[*]; 
@@ -302,7 +307,7 @@ bool SMALoader::LoadFromSMAFile( const RString &sPath, Song &out )
 			else
 			{
 				state = SMA_GETTING_STEP_INFO;
-				// start again.
+				pNewNotes = out.CreateSteps();
 			}
 		}
 		
@@ -352,6 +357,15 @@ bool SMALoader::LoadFromSMAFile( const RString &sPath, Song &out )
 			}
 		}
 		
+		else if( sValueName=="OFFSET" )
+		{
+			TimingData &timing = (state == SMA_GETTING_STEP_INFO 
+					      ? pNewNotes->m_Timing : out.m_SongTiming);
+			timing.m_fBeat0OffsetInSeconds = StringToFloat( sParams[1] );
+		}
+		
+		
+		
 		else if( sValueName=="KEYSOUNDS" )
 		{
 			split( sParams[1], ",", out.m_vsKeysoundFile );
@@ -371,7 +385,6 @@ bool SMALoader::LoadFromSMAFile( const RString &sPath, Song &out )
 				continue;
 			}
 			
-			Steps* pNewNotes = out.CreateSteps();
 			LoadFromSMATokens( 
 					 sParams[1], 
 					 sParams[2], 
@@ -387,7 +400,7 @@ bool SMALoader::LoadFromSMAFile( const RString &sPath, Song &out )
 		 * We used to check for timing data in this section. That has
 		 * since been moved to a dedicated function.
 		 */
-		else if( sValueName=="OFFSET" || sValueName=="BPMS" || sValueName=="STOPS" || sValueName=="FREEZES" || sValueName=="DELAYS" || sValueName=="TIMESIGNATURES" || sValueName=="LEADTRACK" || sValueName=="TICKCOUNTS" )
+		else if( sValueName=="BPMS" || sValueName=="STOPS" || sValueName=="FREEZES" || sValueName=="DELAYS" || sValueName=="TIMESIGNATURES" || sValueName=="LEADTRACK" || sValueName=="TICKCOUNTS" )
 			;
 		else
 			LOG->UserLog( "Song file", sPath, "has an unexpected value named \"%s\".", sValueName.c_str() );
@@ -420,11 +433,7 @@ void SMALoader::LoadTimingFromSMAFile( const MsdFile &msd, TimingData &out )
 		RString sValueName = sParams[0];
 		sValueName.MakeUpper();
 		
-		if( sValueName=="OFFSET" )
-		{
-			out.m_fBeat0OffsetInSeconds = StringToFloat( sParams[1] );
-		}
-		else if( sValueName=="STOPS" )
+		if( sValueName=="STOPS" )
 		{
 			vector<RString> arrayFreezeExpressions;
 			split( sParams[1], ",", arrayFreezeExpressions );
