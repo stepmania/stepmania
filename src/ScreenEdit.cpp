@@ -1561,7 +1561,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			g_AreaMenu.rows[quantize].bEnabled = bAreaSelected && GAMESTATE->m_bIsEditorStepTiming;
 			g_AreaMenu.rows[turn].bEnabled = bAreaSelected && GAMESTATE->m_bIsEditorStepTiming;
 			g_AreaMenu.rows[transform].bEnabled = bAreaSelected && GAMESTATE->m_bIsEditorStepTiming;
-			g_AreaMenu.rows[alter].bEnabled = bAreaSelected;
+			g_AreaMenu.rows[alter].bEnabled = bAreaSelected && GAMESTATE->m_bIsEditorStepTiming;
 			g_AreaMenu.rows[tempo].bEnabled = bAreaSelected;
 			g_AreaMenu.rows[play].bEnabled = bAreaSelected;
 			g_AreaMenu.rows[record].bEnabled = bAreaSelected && GAMESTATE->m_bIsEditorStepTiming;
