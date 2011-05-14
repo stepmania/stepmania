@@ -2584,17 +2584,20 @@ void ScreenEdit::ScrollTo( float fDestinationBeat )
 		if( !EditIsBeingPressed(b) )
 			continue;
 
-		// create a new hold note
-		int iStartRow = BeatToNoteRow( min(fOriginalBeat, fDestinationBeat) );
-		int iEndRow = BeatToNoteRow( max(fOriginalBeat, fDestinationBeat) );
+		if( GAMESTATE->m_bIsEditorStepTiming )
+		{
+			// create a new hold note
+			int iStartRow = BeatToNoteRow( min(fOriginalBeat, fDestinationBeat) );
+			int iEndRow = BeatToNoteRow( max(fOriginalBeat, fDestinationBeat) );
 
-		// Don't SaveUndo.  We want to undo the whole hold, not just the last segment
-		// that the user made.  Dragging the hold bigger can only absorb and remove
-		// other taps, so dragging won't cause us to exceed the note limit.
-		TapNote tn = EditIsBeingPressed(EDIT_BUTTON_LAY_ROLL) ? TAP_ORIGINAL_ROLL_HEAD : TAP_ORIGINAL_HOLD_HEAD;
+			// Don't SaveUndo.  We want to undo the whole hold, not just the last segment
+			// that the user made.  Dragging the hold bigger can only absorb and remove
+			// other taps, so dragging won't cause us to exceed the note limit.
+			TapNote tn = EditIsBeingPressed(EDIT_BUTTON_LAY_ROLL) ? TAP_ORIGINAL_ROLL_HEAD : TAP_ORIGINAL_HOLD_HEAD;
 
-		tn.pn = m_InputPlayerNumber;
-		m_NoteDataEdit.AddHoldNote( iCol, iStartRow, iEndRow, tn );
+			tn.pn = m_InputPlayerNumber;
+			m_NoteDataEdit.AddHoldNote( iCol, iStartRow, iEndRow, tn );
+		}
 	}
 
 	if( EditIsBeingPressed(EDIT_BUTTON_SCROLL_SELECT) )
