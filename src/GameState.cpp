@@ -947,12 +947,16 @@ void GameState::UpdateSongPosition( float fPositionSeconds, const TimingData &ti
 	m_Position.UpdateSongPosition( fPositionSeconds, timing, timestamp );
 
 	if( bUpdatePlayers )
+	{
 		FOREACH_EnabledPlayer( pn )
+		{
 			if( m_pCurSteps[pn] )
 			{
 				m_pPlayerState[pn]->m_Position.UpdateSongPosition( fPositionSeconds, m_pCurSteps[pn]->m_Timing, timestamp );
 				Actor::SetPlayerBGMBeat( pn, m_pPlayerState[pn]->m_Position.m_fSongBeatVisible, m_pPlayerState[pn]->m_Position.m_fSongBeatNoOffset );
-
+			}
+		}
+	}
 	Actor::SetBGMTime( GAMESTATE->m_Position.m_fMusicSecondsVisible, GAMESTATE->m_Position.m_fSongBeatVisible, fPositionSeconds, GAMESTATE->m_Position.m_fSongBeatNoOffset );
 //	LOG->Trace( "m_fMusicSeconds = %f, m_fSongBeat = %f, m_fCurBPS = %f, m_bFreeze = %f", m_fMusicSeconds, m_fSongBeat, m_fCurBPS, m_bFreeze );
 }
