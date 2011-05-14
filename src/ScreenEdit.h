@@ -496,6 +496,7 @@ public:
 		tickcount,
 		combo,
 		warp,
+		erase_step_timing,
 		NUM_TIMING_DATA_INFORMATION_CHOICES
 	};
 	

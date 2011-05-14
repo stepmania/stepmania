@@ -83,6 +83,7 @@ AutoScreenMessage( SM_BackFromTickcountChange );
 AutoScreenMessage( SM_BackFromComboChange );
 AutoScreenMessage( SM_BackFromLabelChange );
 AutoScreenMessage( SM_BackFromWarpChange );
+AutoScreenMessage( SM_DoEraseStepTiming );
 AutoScreenMessage( SM_DoSaveAndExit );
 AutoScreenMessage( SM_DoExit );
 AutoScreenMessage( SM_SaveSuccessful );
@@ -575,6 +576,7 @@ static MenuDef g_TimingDataInformation(
         MenuRowDef( ScreenEdit::tickcount,			"Edit tickcount",		true, EditMode_Full, true, true, 0, NULL ),
         MenuRowDef( ScreenEdit::combo,				"Edit combo",			true, EditMode_Full, true, true, 0, NULL ),
         MenuRowDef( ScreenEdit::warp,				"Edit warp",			true, EditMode_Full, true, true, 0, NULL )
+	MenuRowDef( ScreenEdit::erase_step_timing,		"Erase step timing",		true, EditMode_Full,	true, true, 0, NULL )
 );
 
 enum { song_bganimation, song_movie, song_bitmap, global_bganimation, global_movie, global_movie_song_group, global_movie_song_group_and_genre, dynamic_random, baked_random, none };
@@ -2943,6 +2945,15 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 			SetDirty( false );
 		}
 	}
+	else if( SM == SM_DoEraseSplitTiming )
+	{
+		if( ScreenPrompt::s_LastAnswer == ANSWER_YES )
+		{
+			SaveUndo();
+			m_pSteps->m_Timing = m_pSong->m_SongTiming;
+			SetDirty( true );
+		}
+	}
 	else if( SM == SM_DoSaveAndExit ) // just asked "save before exiting? yes, no, cancel"
 	{
 		switch( ScreenPrompt::s_LastAnswer )
@@ -3893,6 +3904,7 @@ static LocalizedString ENTER_TICKCOUNT_VALUE			( "ScreenEdit", "Enter a new Tick
 static LocalizedString ENTER_COMBO_VALUE			( "ScreenEdit", "Enter a new Combo value." );
 static LocalizedString ENTER_LABEL_VALUE			( "ScreenEdit", "Enter a new Label value." );
 static LocalizedString ENTER_WARP_VALUE				( "ScreenEdit", "Enter a new Warp value." );
+static LocalizedString CONFIRM_TIMING_ERASE			( "ScreenEdit", "Are you sure you want to erase this chart's timing data?" );
 void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice c, const vector<int> &iAnswers )
 {
 	switch( c )
@@ -3974,6 +3986,8 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 		   ssprintf( "%.4f", GetAppropriateTiming().GetWarpAtBeat( GetBeat() ) ),
 		   10
 		   );
+	case erase_step_timing:
+		ScreenPrompt::Prompt( SM_DoEraseStepTiming, CONFIRM_TIMING_ERASE , PROMPT_YES_NO, ANSWER_NO );
 	break;
 	}
 }
