@@ -5,6 +5,7 @@
 #include "RageUtil_AutoPtr.h"
 #include "LuaReference.h"
 #include "EnumHelper.h"
+#include "PlayerNumber.h"
 #include <map>
 class XNode;
 struct lua_State;
