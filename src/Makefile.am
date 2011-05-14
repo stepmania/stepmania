@@ -373,7 +373,8 @@ ScoreDisplayBattle.cpp ScoreDisplayBattle.h \
 ScoreDisplayCalories.cpp ScoreDisplayCalories.h \
 ScoreDisplayLifeTime.cpp ScoreDisplayLifeTime.h \
 ScoreDisplayNormal.cpp ScoreDisplayNormal.h ScoreDisplayOni.cpp ScoreDisplayOni.h \
-ScoreDisplayPercentage.cpp ScoreDisplayPercentage.h ScoreDisplayRave.cpp ScoreDisplayRave.h
+ScoreDisplayPercentage.cpp ScoreDisplayPercentage.h ScoreDisplayRave.cpp ScoreDisplayRave.h \
+SongPosition.cpp SongPosition.h
 
 PCRE = ../extern/pcre/get.c ../extern/pcre/internal.h ../extern/pcre/maketables.c ../extern/pcre/pcre.c ../extern/pcre/pcre.h ../extern/pcre/study.c
 EXTRA_DIST += ../extern/pcre/chartables.c
