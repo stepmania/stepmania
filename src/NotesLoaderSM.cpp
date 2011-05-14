@@ -381,10 +381,7 @@ void SMLoader::ProcessTimeSignatures( TimingData &out, const RString sParam )
 		
 		const float fBeat = StringToFloat( vs2[0] );
 		
-		TimeSignatureSegment seg;
-		seg.m_iStartRow = BeatToNoteRow(fBeat);
-		seg.m_iNumerator = atoi( vs2[1] ); 
-		seg.m_iDenominator = atoi( vs2[2] ); 
+		TimeSignatureSegment seg( BeatToNoteRow( fBeat ), StringToInt( vs2[1] ), StringToInt( vs2[2] ));
 		
 		if( fBeat < 0 )
 		{
