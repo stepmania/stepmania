@@ -335,47 +335,7 @@ bool SSCLoader::LoadFromSSCFile( const RString &sPath, Song &out, bool bFromCach
 				// Attacks loaded from file
 				else if( sValueName=="ATTACKS" )
 				{
-					// Build the RString vector here so we can write it to file again later
-					for( unsigned s=1; s < sParams.params.size(); ++s )
-						out.m_sAttackString.push_back( sParams[s] );
-
-					Attack attack;
-					float end = -9999;
-
-					for( unsigned j=1; j < sParams.params.size(); ++j )
-					{
-						vector<RString> sBits;
-						split( sParams[j], "=", sBits, false );
-
-						// Need an identifer and a value for this to work
-						if( sBits.size() < 2 )
-							continue;
-
-						TrimLeft( sBits[0] );
-						TrimRight( sBits[0] );
-
-						if( !sBits[0].CompareNoCase("TIME") )
-							attack.fStartSecond = strtof( sBits[1], NULL );
-						else if( !sBits[0].CompareNoCase("LEN") )
-							attack.fSecsRemaining = strtof( sBits[1], NULL );
-						else if( !sBits[0].CompareNoCase("END") )
-							end = strtof( sBits[1], NULL );
-						else if( !sBits[0].CompareNoCase("MODS") )
-						{
-							attack.sModifiers = sBits[1];
-
-							if( end != -9999 )
-							{
-								attack.fSecsRemaining = end - attack.fStartSecond;
-								end = -9999;
-							}
-
-							if( attack.fSecsRemaining < 0.0f )
-								attack.fSecsRemaining = 0.0f;
-
-							out.m_Attacks.push_back( attack );
-						}
-					}
+					SMLoader::ProcessAttacks( out, sParams );
 				}
 
 				else if( sValueName=="OFFSET" )

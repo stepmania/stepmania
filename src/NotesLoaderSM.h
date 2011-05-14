@@ -3,8 +3,8 @@
 
 #include "GameConstantsAndTypes.h"
 #include "BackgroundUtil.h"
+#include "MsdFile.h" // we require the struct from here.
 
-class MsdFile;
 class Song;
 class Steps;
 class TimingData;
@@ -34,6 +34,7 @@ namespace SMLoader
 	void ProcessTickcounts( TimingData &, const RString );
 	void ProcessBGChanges( Song &out, const RString &sValueName, 
 			      const RString &sPath, const RString &sParam );
+	void ProcessAttacks( Song &out, MsdFile::value_t sParams );
 }
 
 #endif
