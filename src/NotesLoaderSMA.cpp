@@ -39,6 +39,42 @@ bool SMALoader::LoadFromDir( const RString &sPath, Song &out )
 	return LoadFromSMAFile( sPath + aFileNames[0], out );
 }
 
+void SMALoader::ProcessBeatsPerMeasure( TimingData &out, const RString sParam )
+{
+	vector<RString> vs1;
+	split( sParam, ",", vs1 );
+	
+	FOREACH_CONST( RString, vs1, s1 )
+	{
+		vector<RString> vs2;
+		split( *s1, "=", vs2 );
+		
+		if( vs2.size() < 2 )
+		{
+			LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid beats per measure change with %i values.", (int)vs2.size() );
+			continue;
+		}
+		
+		const float fBeat = StringToFloat( vs2[0] );
+		
+		TimeSignatureSegment seg( BeatToNoteRow( fBeat ), StringToInt( vs2[1] ), StringToInt( vs2[2] ));
+		
+		if( fBeat < 0 )
+		{
+			LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid time signature change with beat %f.", fBeat );
+			continue;
+		}
+		
+		if( seg.m_iNumerator < 1 )
+		{
+			LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid time signature change with beat %f, iNumerator %i.", fBeat, seg.m_iNumerator );
+			continue;
+		}
+		
+		out.AddTimeSignatureSegment( seg );
+	}
+}
+
 void SMALoader::LoadFromSMATokens(
 				  RString sStepsType,
 				  RString sDescription,
@@ -201,7 +237,8 @@ bool SMALoader::LoadFromSMAFile( const RString &sPath, Song &out )
 		}
 		else if( sValueName=="LASTBEAT" )
 		{
-			;		}
+			;
+		}
 		else if( sValueName=="SONGFILENAME" )
 		{
 			;
@@ -239,6 +276,41 @@ bool SMALoader::LoadFromSMAFile( const RString &sPath, Song &out )
 				else
 					out.m_fSpecifiedBPMMax = StringToFloat( sParams[2] );
 			}
+		}
+		
+		else if( sValueName=="SMAVERSION" )
+		{
+			; // ignore it.
+		}
+		
+		else if( sValueName=="ROWSPERBEAT" )
+		{
+			/* This value is used to help translate the timings
+			 * the SMA format uses. Starting with the second
+			 * appearance, it delimits NoteData. Right now, this
+			 * value doesn't seem to be editable in SMA. When it
+			 * becomes so, make adjustments to this code. */
+			if( iRowsPerBeat < 0 )
+			{
+				vector<RString> arrayBeatChangeExpressions;
+				split( sParams[1], ",", arrayBeatChangeExpressions );
+				
+				vector<RString> arrayBeatChangeValues;
+				split( arrayBeatChangeExpressions[0], "=", arrayBeatChangeValues );
+				iRowsPerBeat = StringToInt(arrayBeatChangeValues[1]);
+			}
+			else
+			{
+				state = SMA_GETTING_STEP_INFO;
+				// start again.
+			}
+		}
+		
+		else if( sValueName=="BEATSPERMEASURE" )
+		{
+			TimingData &timing = (state == SMA_GETTING_STEP_INFO 
+					      ? pNewNotes->m_Timing : out.m_SongTiming);
+			ProcessBeatsPerMeasure( timing, sParams[1] );
 		}
 		
 		else if( sValueName=="SELECTABLE" )
@@ -329,20 +401,6 @@ void SMALoader::GetApplicableFiles( const RString &sPath, vector<RString> &out )
 	GetDirListing( sPath + RString("*.sma"), out );
 }
 
-bool SMALoader::LoadTimingFromFile( const RString &fn, TimingData &out )
-{
-	MsdFile msd;
-	if( !msd.ReadFile( fn, true ) )  // unescape
-	{
-		LOG->UserLog( "Song file", fn, "couldn't be loaded: %s", msd.GetError().c_str() );
-		return false;
-	}
-	
-	out.m_sFile = fn;
-	LoadTimingFromSMAFile( msd, out );
-	return true;
-}
-
 void SMALoader::LoadTimingFromSMAFile( const MsdFile &msd, TimingData &out )
 {
 	out.m_fBeat0OffsetInSeconds = 0;
@@ -362,24 +420,7 @@ void SMALoader::LoadTimingFromSMAFile( const MsdFile &msd, TimingData &out )
 		RString sValueName = sParams[0];
 		sValueName.MakeUpper();
 		
-		if( sValueName=="ROWSPERBEAT")
-		{
-			if( encountered )
-			{
-				break;
-			}
-			encountered = true;
-			rowsPerMeasure = StringToInt( sParams[1] );
-		}
-		else if( sValueName=="BEATSPERMEASURE" )
-		{
-			TimeSignatureSegment new_seg;
-			new_seg.m_iStartRow = 0;
-			new_seg.m_iNumerator = StringToInt( sParams[1] );
-			new_seg.m_iDenominator = 4;
-			out.AddTimeSignatureSegment( new_seg );
-		}
-		else if( sValueName=="OFFSET" )
+		if( sValueName=="OFFSET" )
 		{
 			out.m_fBeat0OffsetInSeconds = StringToFloat( sParams[1] );
 		}
