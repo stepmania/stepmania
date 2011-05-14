@@ -1280,6 +1280,9 @@ static int FindAttackAtTime( const AttackArray& attacks, float fStartTime )
 
 static LocalizedString TAP_NOTE_SONG_TIMING	( "ScreenEdit", "You must be in Step Timing Mode to edit the notes." );
 static LocalizedString BG_CHANGE_STEP_TIMING	( "ScreenEdit", "You must be in Song Timing Mode to edit BG Changes." );
+static LocalizedString RECORD_SONG_TIMING	( "ScreenEdit", "You must be in Step Timing Mode to record steps." );
+static LocalizedString INSERT_BEAT_SONG_TIMING	( "ScreenEdit", "You must be in Step Timing Mode to insert beats and shift down." );
+static LocalizedString DELETE_BEAT_SONG_TIMING	( "ScreenEdit", "You must be in Step Timing Mode to delete beats and shift up." );
 
 static LocalizedString SWITCHED_TO		( "ScreenEdit", "Switched to" );
 static LocalizedString NO_BACKGROUNDS_AVAILABLE	( "ScreenEdit", "No backgrounds available" );
@@ -1316,6 +1319,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			{
 				// Only allow steps to be hit in Step Timing.
 				SCREENMAN->SystemMessage( TAP_NOTE_SONG_TIMING );
+				SCREENMAN->PlayInvalidSound();
 				break;
 			}
 			
@@ -1930,6 +1934,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 		else
 		{
 			SCREENMAN->SystemMessage( BG_CHANGE_STEP_TIMING );
+			SCREENMAN->PlayInvalidSound();
 		}
 		break;
 
@@ -2078,7 +2083,8 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 	case EDIT_BUTTON_RECORD_SELECTION:
 		if( !GAMESTATE->m_bIsEditorStepTiming )
 		{
-			// broadcast message maybe.
+			SCREENMAN->SystemMessage( RECORD_SONG_TIMING );
+			SCREENMAN->PlayInvalidSound();
 			break;
 		}
 		if( m_NoteFieldEdit.m_iBeginMarker!=-1 && m_NoteFieldEdit.m_iEndMarker!=-1 )
@@ -2117,7 +2123,14 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 		break;
 
 	case EDIT_BUTTON_INSERT:
-		HandleAreaMenuChoice( insert_and_shift );
+		if( GAMESTATE->m_bIsEditorStepTiming )
+		{
+			HandleAreaMenuChoice( insert_and_shift );
+		}
+		else
+		{
+			SCREENMAN->SystemMessage( INSERT_BEAT_SONG_TIMING );
+		}
 		SCREENMAN->PlayInvalidSound();
 		break;
 
@@ -2127,7 +2140,14 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 		break;
 
 	case EDIT_BUTTON_DELETE:
-		HandleAreaMenuChoice( delete_and_shift );
+		if( GAMESTATE->m_bIsEditorStepTiming )
+		{
+			HandleAreaMenuChoice( delete_and_shift );
+		}
+		else
+		{
+			SCREENMAN->SystemMessage( DELETE_BEAT_SONG_TIMING );
+		}
 		SCREENMAN->PlayInvalidSound();
 		break;
 
