@@ -288,7 +288,7 @@ void SMALoader::ProcessBeatsPerMeasure( TimingData &out, const RString sParam )
 		
 		const float fBeat = StringToFloat( vs2[0] );
 		
-		TimeSignatureSegment seg( BeatToNoteRow( fBeat ), StringToInt( vs2[1] ), StringToInt( vs2[2] ));
+		TimeSignatureSegment seg( BeatToNoteRow( fBeat ), StringToInt( vs2[1] ), 4 );
 		
 		if( fBeat < 0 )
 		{
