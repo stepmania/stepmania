@@ -633,6 +633,11 @@ bool SMALoader::LoadFromSMAFile( const RString &sPath, Song &out )
 			ProcessMultipliers( pNewNotes->m_Timing, iRowsPerBeat, sParams[1] );
 		}
 		
+		else if( sValueName=="METERTYPE" )
+		{
+			; // We don't use this...yet.
+		}
+		
 		else if( sValueName=="KEYSOUNDS" )
 		{
 			split( sParams[1], ",", out.m_vsKeysoundFile );
@@ -663,10 +668,6 @@ bool SMALoader::LoadFromSMAFile( const RString &sPath, Song &out )
 			
 			out.AddSteps( pNewNotes );
 		}
-		/*
-		 * We used to check for timing data in this section. That has
-		 * since been moved to a dedicated function.
-		 */
 		else if( sValueName=="TIMESIGNATURES" || sValueName=="LEADTRACK"  )
 			;
 		else
