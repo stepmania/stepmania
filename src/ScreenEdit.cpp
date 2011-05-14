@@ -1279,6 +1279,8 @@ static int FindAttackAtTime( const AttackArray& attacks, float fStartTime )
 }
 
 static LocalizedString TAP_NOTE_SONG_TIMING	( "ScreenEdit", "You must be in Step Timing Mode to edit the notes." );
+static LocalizedString BG_CHANGE_STEP_TIMING	( "ScreenEdit", "You must be in Song Timing Mode to edit BG Changes." );
+
 static LocalizedString SWITCHED_TO		( "ScreenEdit", "Switched to" );
 static LocalizedString NO_BACKGROUNDS_AVAILABLE	( "ScreenEdit", "No backgrounds available" );
 static ThemeMetric<bool> INVERT_SCROLL_BUTTONS	( "ScreenEdit", "InvertScrollSpeedButtons" );
@@ -1924,6 +1926,10 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 
 				EditMiniMenu( &g_BackgroundChange, SM_BackFromBGChange );
 			}
+		}
+		else
+		{
+			SCREENMAN->SystemMessage( BG_CHANGE_STEP_TIMING );
 		}
 		break;
 
