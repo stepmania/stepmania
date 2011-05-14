@@ -40,6 +40,8 @@ namespace SMALoader
 	bool LoadEditFromBuffer( const RString &sBuffer, const RString &sEditFilePath, ProfileSlot slot );
 	bool LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePath, ProfileSlot slot, bool bAddStepsToSong );
 	bool LoadFromBGChangesString( BackgroundChange &change, const RString &sBGChangeExpression );
+	
+	void ProcessBeatsPerMeasure( TimingData &out, const RString sParam );
 };
 
 #endif
