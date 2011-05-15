@@ -222,12 +222,15 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 	float fYOffset = 0;
 	const SongPosition &position = (!GAMESTATE->m_bInStepEditor || GAMESTATE->m_bIsEditorStepTiming)
 	? pPlayerState->m_Position : GAMESTATE->m_Position;
+	
+	float fSongBeat = position.m_fSongBeatVisible;
+	
+	Steps *pCurSteps = GAMESTATE->m_pCurSteps[pPlayerState->m_PlayerNumber];
 
 	/* Usually, fTimeSpacing is 0 or 1, in which case we use entirely beat spacing or
 	 * entirely time spacing (respectively). Occasionally, we tween between them. */
 	if( pPlayerState->m_PlayerOptions.GetCurrent().m_fTimeSpacing != 1.0f )
 	{
-		float fSongBeat = position.m_fSongBeatVisible;
 		float fBeatsUntilStep = fNoteBeat - fSongBeat;
 		float fYOffsetBeatSpacing = fBeatsUntilStep;
 		fYOffset += fYOffsetBeatSpacing * (1-pPlayerState->m_PlayerOptions.GetCurrent().m_fTimeSpacing);
@@ -235,8 +238,8 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 
 	if( pPlayerState->m_PlayerOptions.GetCurrent().m_fTimeSpacing != 0.0f )
 	{
-		float fSongSeconds = position.m_fMusicSecondsVisible;
-		float fNoteSeconds = GAMESTATE->m_pCurSteps[pPlayerState->m_PlayerNumber]->m_Timing.GetElapsedTimeFromBeat(fNoteBeat);
+		float fSongSeconds = GAMESTATE->m_Position.m_fMusicSecondsVisible;
+		float fNoteSeconds = pCurSteps->m_Timing.GetElapsedTimeFromBeat(fNoteBeat);
 		float fSecondsUntilStep = fNoteSeconds - fSongSeconds;
 		float fBPM = pPlayerState->m_PlayerOptions.GetCurrent().m_fScrollBPM;
 		float fBPS = fBPM/60.f;
@@ -246,7 +249,7 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 
 	// TODO: If we allow noteskins to have metricable row spacing
 	// (per issue 24), edit this to reflect that. -aj
-	fYOffset *= ARROW_SPACING;
+	fYOffset *= ARROW_SPACING * pCurSteps->m_Timing.GetSpeedPercentAtBeat( fSongBeat );
 
 	// don't mess with the arrows after they've crossed 0
 	if( fYOffset < 0 )
@@ -293,6 +296,7 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 
 	// Factor in scroll speed
 	float fScrollSpeed = pPlayerState->m_PlayerOptions.GetCurrent().m_fScrollSpeed;
+	
 	if( pPlayerState->m_PlayerOptions.GetCurrent().m_fRandomSpeed > 0 && !bAbsolute )
 	{
 		// Generate a deterministically "random" speed for each arrow.
