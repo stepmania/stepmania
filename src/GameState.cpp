@@ -2256,7 +2256,11 @@ public:
 	DEFINE_METHOD( GetSongBPS,			m_Position.m_fCurBPS )
 	DEFINE_METHOD( GetSongFreeze,			m_Position.m_bFreeze )
 	DEFINE_METHOD( GetSongDelay,			m_Position.m_bDelay )*/
-	DEFINE_METHOD( GetSongPosition,			m_Position )
+	static int GetSongPosition( T* p, lua_State *L )
+	{
+		p->m_Position.PushSelf(L);
+		return 1;
+	}
 	DEFINE_METHOD( GetGameplayLeadIn,		m_bGameplayLeadIn )
 	DEFINE_METHOD( GetCoins,			m_iCoins )
 	DEFINE_METHOD( IsSideJoined,			m_bSideIsJoined[Enum::Check<PlayerNumber>(L, 1)] )

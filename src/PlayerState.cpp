@@ -197,7 +197,11 @@ class LunaPlayerState: public Luna<PlayerState>
 {
 public:
 	DEFINE_METHOD( GetPlayerNumber, m_PlayerNumber );
-	DEFINE_METHOD( GetSongPosition, m_Position );
+	static int GetSongPosition( T* p, lua_State *L )
+	{
+		p->m_Position.PushSelf(L);
+		return 1;
+	}
 	DEFINE_METHOD( GetMultiPlayerNumber, m_mp );
 	DEFINE_METHOD( GetPlayerController, m_PlayerController );
 	static int SetPlayerOptions( T* p, lua_State *L )
@@ -247,6 +251,7 @@ public:
 		ADD_METHOD( GetPlayerOptionsArray );
 		ADD_METHOD( GetPlayerOptionsString );
 		ADD_METHOD( GetCurrentPlayerOptions );
+		ADD_METHOD( GetSongPosition );
 		ADD_METHOD( GetHealthState );
 	}
 };
