@@ -538,7 +538,7 @@ bool SMALoader::LoadFromSMAFile( const RString &sPath, Song &out )
 			else
 			{
 				state = SMA_GETTING_STEP_INFO;
-				pNewNotes = out.CreateSteps();
+				pNewNotes = new Steps;
 			}
 		}
 		
