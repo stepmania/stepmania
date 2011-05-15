@@ -17,8 +17,8 @@ REGISTER_ACTOR_CLASS( Banner );
 
 ThemeMetric<bool> SCROLL_RANDOM	("Banner","ScrollRandom");
 ThemeMetric<bool> SCROLL_ROULETTE	("Banner","ScrollRoulette");
-//ThemeMetric<bool> SCROLL_MODE	("Banner","ScrollMode");
-//ThemeMetric<bool> SCROLL_SORT_ORDER	("Banner","ScrollSortOrder");
+ThemeMetric<bool> SCROLL_MODE	("Banner","ScrollMode");
+ThemeMetric<bool> SCROLL_SORT_ORDER	("Banner","ScrollSortOrder");
 ThemeMetric<float> SCROLL_SPEED_DIVISOR	("Banner","ScrollSpeedDivisor");
 
 Banner::Banner()
@@ -119,7 +119,7 @@ void Banner::LoadFromSong( Song* pSong ) // NULL means no song
 void Banner::LoadMode()
 {
 	Load( THEME->GetPathG("Banner","Mode") );
-	m_bScrolling = false;
+	m_bScrolling = (bool)SCROLL_MODE;
 }
 
 void Banner::LoadFromSongGroup( RString sSongGroup )
@@ -229,7 +229,7 @@ void Banner::LoadFromSortOrder( SortOrder so )
 		if( so != SORT_GROUP && so != SORT_RECENT )
 			Load( THEME->GetPathG("Banner",ssprintf("%s",SortOrderToString(so).c_str())) );
 	}
-	m_bScrolling = false;
+	m_bScrolling = (bool)SCROLL_SORT_ORDER;
 }
 
 // lua start

@@ -59,6 +59,7 @@ void StepsDisplay::Load( const RString &sMetricsGroup, const PlayerState *pPlaye
 	m_bShowAutogen.Load(m_sMetricsGroup,"ShowAutogen");
 	m_bShowStepsType.Load(m_sMetricsGroup,"ShowStepsType");
 	m_sZeroMeterString.Load(m_sMetricsGroup,"ZeroMeterString");
+	m_sMeterFormatString.Load(m_sMetricsGroup,"MeterFormatString");
 
 	m_sprFrame.Load( THEME->GetPathG(m_sMetricsGroup,"frame") );
 	m_sprFrame->SetName( "Frame" );
@@ -241,8 +242,7 @@ void StepsDisplay::SetInternal( const SetParams &params )
 		}
 		else
 		{
-			// todo: allow themer to specify a format string? -aj
-			const RString sMeter = ssprintf( "%i", params.iMeter );
+			const RString sMeter = ssprintf( m_sMeterFormatString.GetValue().c_str(), params.iMeter );
 			m_textMeter.SetText( sMeter );
 			m_textMeter.HandleMessage( msg );
 		}

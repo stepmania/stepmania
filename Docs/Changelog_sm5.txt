@@ -8,6 +8,16 @@ ________________________________________________________________________________
 StepMania 5.0 $NEXT | 20110xyy
 --------------------------------------------------------------------------------
 
+2011/05/14
+----------
+* [ModIcon] Added StopWords metric. [AJ]
+* [ScreenSelectMaster] Add "ScreenEmpty" param to MenuStartP# when the GameCommand
+  doesn't set a screen. [AJ]
+* [StepsDisplay] Added MeterFormatString metric. [AJ]
+* [MusicWheel] Added ShowSectionsInBPMSort and ShowSectionsInLengthSort metrics. [AJ]
+* [ScreenEvaluation] Stop the Bonus bars from overflowing in course modes. [AJ]
+* [Banner] Added ScrollMode and ScrollSortOrder metrics. [AJ]
+
 2011/05/11
 ----------
 * [GameSoundManager] Added PlayAnnouncer Lua binding. [AJ]

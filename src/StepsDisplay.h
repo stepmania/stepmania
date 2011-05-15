@@ -72,6 +72,7 @@ private:
 	ThemeMetric<bool>	m_bShowAutogen;
 	ThemeMetric<bool>	m_bShowStepsType;
 	ThemeMetric<RString>	m_sZeroMeterString;
+	ThemeMetric<RString>	m_sMeterFormatString;
 };
 
 #endif
