@@ -709,7 +709,7 @@ bool SSCLoader::LoadFromSSCFile( const RString &sPath, Song &out, bool bFromCach
 
 				else if( sValueName=="DIFFICULTY" )
 				{
-					pNewNotes->SetDifficulty( DwiCompatibleStringToDifficulty( sParams[1] ) );
+					pNewNotes->SetDifficulty( StringToDifficulty( sParams[1] ) );
 				}
 
 				else if( sValueName=="METER" )
@@ -980,7 +980,7 @@ bool SSCLoader::LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePat
 
 		else if( sValueName=="DIFFICULTY" )
 		{
-			pNewNotes->SetDifficulty( DwiCompatibleStringToDifficulty( sParams[1] ) );
+			pNewNotes->SetDifficulty( StringToDifficulty( sParams[1] ) );
 			bSSCFormat = true;
 		}
 
