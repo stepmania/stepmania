@@ -136,7 +136,7 @@ static void GetTimingTags( vector<RString> &lines, TimingData timing, bool bIsSo
 	{
 		w.Init( "SPEEDS" );
 		FOREACH_CONST( SpeedSegment, timing.m_SpeedSegments, ss )
-		w.Write( ss->m_iStartRow, ss->m_fPercent, ss->m_fWait );
+			w.Write( ss->m_iStartRow, ss->m_fPercent, ss->m_fWait );
 		w.Finish();
 	}
 	

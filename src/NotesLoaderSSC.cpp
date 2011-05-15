@@ -558,7 +558,7 @@ bool SSCLoader::LoadFromSSCFile( const RString &sPath, Song &out, bool bFromCach
 					ProcessWarps(stepsTiming, sParams[1]);
 				}
 				
-				else if( sValueName=="SPEED" )
+				else if( sValueName=="SPEEDS" )
 				{
 					ProcessSpeeds( stepsTiming, sParams[1] );
 				}
