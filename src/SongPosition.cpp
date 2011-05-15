@@ -74,6 +74,38 @@ void SongPosition::Reset()
 
 }
 
+//lua start
+#include "LuaBinding.h"
+class LunaSongPosition: public Luna<SongPosition>
+{
+public:
+	DEFINE_METHOD( GetMusicSecondsVisible, m_fMusicSecondsVisible );
+	DEFINE_METHOD( GetSongBeatVisible, m_fSongBeatVisible );
+	DEFINE_METHOD( GetMusicSeconds, m_fMusicSeconds );
+	DEFINE_METHOD( GetSongBeat, m_fSongBeat );
+	DEFINE_METHOD( GetSongBeatNoOffset, m_fSongBeatNoOffset );
+	DEFINE_METHOD( GetCurBPS, m_fCurBPS );
+	DEFINE_METHOD( GetFreeze, m_bFreeze );
+	DEFINE_METHOD( GetDelay, m_bDelay );
+	DEFINE_METHOD( GetWarpBeginRow, m_fWarpBeginRow );
+	DEFINE_METHOD( GetWarpDestination, m_fWarpDestination );
+
+	LunaSongPosition()
+	{
+		ADD_METHOD( GetMusicSecondsVisible );
+		ADD_METHOD( GetSongBeatVisible );
+		ADD_METHOD( GetMusicSeconds );
+		ADD_METHOD( GetSongBeat );
+		ADD_METHOD( GetSongBeatNoOffset );
+		ADD_METHOD( GetCurBPS );
+		ADD_METHOD( GetFreeze );
+		ADD_METHOD( GetDelay );
+		ADD_METHOD( GetWarpBeginRow );
+		ADD_METHOD( GetWarpDestination );
+	}
+};
+
+LUA_REGISTER_CLASS( SongPosition )
 /**
  * @file
  * @author Thai Pangsakulyanont (c) 2011

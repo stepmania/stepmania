@@ -2251,11 +2251,13 @@ public:
 	DEFINE_METHOD( GetHardestStepsDifficulty,	GetHardestStepsDifficulty() )
 	DEFINE_METHOD( IsEventMode,			IsEventMode() )
 	DEFINE_METHOD( GetNumPlayersEnabled,		GetNumPlayersEnabled() )
+	//TODO: move GetSongBeat (etc.) to a compatbility layer
 	DEFINE_METHOD( GetSongBeat,			m_Position.m_fSongBeat )
 	DEFINE_METHOD( GetSongBeatVisible,		m_Position.m_fSongBeatVisible )
 	DEFINE_METHOD( GetSongBPS,			m_Position.m_fCurBPS )
 	DEFINE_METHOD( GetSongFreeze,			m_Position.m_bFreeze )
 	DEFINE_METHOD( GetSongDelay,			m_Position.m_bDelay )
+	DEFINE_METHOD( GetSongPosition,			m_Position )
 	DEFINE_METHOD( GetGameplayLeadIn,		m_bGameplayLeadIn )
 	DEFINE_METHOD( GetCoins,			m_iCoins )
 	DEFINE_METHOD( IsSideJoined,			m_bSideIsJoined[Enum::Check<PlayerNumber>(L, 1)] )
@@ -2465,6 +2467,7 @@ public:
 		ADD_METHOD( GetSongBPS );
 		ADD_METHOD( GetSongFreeze );
 		ADD_METHOD( GetSongDelay );
+		ADD_METHOD( GetSongPosition );
 		ADD_METHOD( GetGameplayLeadIn );
 		ADD_METHOD( GetCoins );
 		ADD_METHOD( IsSideJoined );

@@ -197,6 +197,7 @@ class LunaPlayerState: public Luna<PlayerState>
 {
 public:
 	DEFINE_METHOD( GetPlayerNumber, m_PlayerNumber );
+	DEFINE_METHOD( GetSongPosition, m_Position );
 	DEFINE_METHOD( GetMultiPlayerNumber, m_mp );
 	DEFINE_METHOD( GetPlayerController, m_PlayerController );
 	static int SetPlayerOptions( T* p, lua_State *L )
