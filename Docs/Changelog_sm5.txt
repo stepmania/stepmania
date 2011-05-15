@@ -11,6 +11,7 @@ StepMania 5.0 $NEXT | 20110xyy
 2011/05/14
 ----------
 * [MusicWheel] Added ShowSectionsInBPMSort and ShowSectionsInLengthSort metrics. [AJ]
+* [ScreenEvaluation] Stop the Bonus bars from overflowing in course modes. [AJ]
 
 2011/05/11
 ----------
