@@ -2462,11 +2462,11 @@ public:
 		ADD_METHOD( GetHardestStepsDifficulty );
 		ADD_METHOD( IsEventMode );
 		ADD_METHOD( GetNumPlayersEnabled );
-		ADD_METHOD( GetSongBeat );
+		/*ADD_METHOD( GetSongBeat );
 		ADD_METHOD( GetSongBeatVisible );
 		ADD_METHOD( GetSongBPS );
 		ADD_METHOD( GetSongFreeze );
-		ADD_METHOD( GetSongDelay );
+		ADD_METHOD( GetSongDelay );*/
 		ADD_METHOD( GetSongPosition );
 		ADD_METHOD( GetGameplayLeadIn );
 		ADD_METHOD( GetCoins );
