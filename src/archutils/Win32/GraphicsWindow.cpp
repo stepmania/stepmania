@@ -136,7 +136,7 @@ static LRESULT CALLBACK GraphicsWindow_WndProc( HWND hWnd, UINT msg, WPARAM wPar
 		case WM_KEYUP:
 		case WM_SYSKEYDOWN:
 		case WM_SYSKEYUP:
-		case WM_MOUSEWHEEL:
+		case WM_MOUSEWHEEL: // might want to use this for GET_WHEEL_DELTA_WPARAM(wParam) -aj
 			// We handle all input ourself, via DirectInput.
 			return 0;
 
