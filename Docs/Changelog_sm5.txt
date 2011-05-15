@@ -10,6 +10,7 @@ StepMania 5.0 $NEXT | 20110xyy
 
 2011/05/14
 ----------
+* [StepsDisplay] Added MeterFormatString metric. [AJ]
 * [MusicWheel] Added ShowSectionsInBPMSort and ShowSectionsInLengthSort metrics. [AJ]
 * [ScreenEvaluation] Stop the Bonus bars from overflowing in course modes. [AJ]
 * [Banner] Added ScrollMode and ScrollSortOrder metrics. [AJ]
