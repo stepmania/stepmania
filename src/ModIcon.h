@@ -21,6 +21,8 @@ protected:
 	AutoActor	m_sprEmpty;
 
 	ThemeMetric<int> CROP_TEXT_TO_WIDTH;
+	ThemeMetric<RString> STOP_WORDS;
+	vector<RString> m_vStopWords;
 };
 
 #endif
