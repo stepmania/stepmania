@@ -6,6 +6,8 @@
 #include "LightsManager.h"
 #include "MessageManager.h"
 #include "TimingData.h"
+//XXX: where does this come from? might need another include
+struct lua_State;
 
 class SongPosition
 {
@@ -36,6 +38,8 @@ class SongPosition
 	void Reset();
 	void UpdateSongPosition( float fPositionSeconds, const TimingData &timing, const RageTimer &timestamp = RageZeroTimer );
 
+	// Lua
+        void PushSelf( lua_State *L );
 };
 
 #endif
