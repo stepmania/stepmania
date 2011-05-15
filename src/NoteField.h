@@ -64,6 +64,7 @@ protected:
 	void DrawTickcountText( const float fBeat, int iTicks );
 	void DrawComboText( const float fBeat, int iCombo );
 	void DrawLabelText( const float fBeat, RString sLabel );
+	void DrawSpeedText( const float fBeat, float fPercent, float fWait );
 	void DrawAttackText( const float fBeat, const Attack &attack );
 	void DrawBGChangeText( const float fBeat, const RString sNewBGName );
 	float GetWidth() const;

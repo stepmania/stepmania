@@ -8,6 +8,11 @@ ________________________________________________________________________________
 StepMania 5.0 $NEXT | 20110xyy
 --------------------------------------------------------------------------------
 
+2011/05/15
+----------
+* Added #SPEEDS to the SSC format. This multiplies your scrolling speed during
+  gameplay, not replaces it (see mod attacks for replacing). [Wolfman2000]
+
 2011/05/14
 ----------
 * [ModIcon] Added StopWords metric. [AJ]
