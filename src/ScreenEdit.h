@@ -496,6 +496,9 @@ public:
 		tickcount,
 		combo,
 		warp,
+//		speed,
+		speed_percent,
+		speed_wait,
 		erase_step_timing,
 		NUM_TIMING_DATA_INFORMATION_CHOICES
 	};

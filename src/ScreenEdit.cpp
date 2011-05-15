@@ -83,6 +83,8 @@ AutoScreenMessage( SM_BackFromTickcountChange );
 AutoScreenMessage( SM_BackFromComboChange );
 AutoScreenMessage( SM_BackFromLabelChange );
 AutoScreenMessage( SM_BackFromWarpChange );
+AutoScreenMessage( SM_BackFromSpeedPercentChange );
+AutoScreenMessage( SM_BackFromSpeedWaitChange );
 AutoScreenMessage( SM_DoEraseStepTiming );
 AutoScreenMessage( SM_DoSaveAndExit );
 AutoScreenMessage( SM_DoExit );
@@ -576,7 +578,9 @@ static MenuDef g_TimingDataInformation(
         MenuRowDef( ScreenEdit::tickcount,			"Edit tickcount",		true, EditMode_Full, true, true, 0, NULL ),
         MenuRowDef( ScreenEdit::combo,				"Edit combo",			true, EditMode_Full, true, true, 0, NULL ),
         MenuRowDef( ScreenEdit::warp,				"Edit warp",			true, EditMode_Full, true, true, 0, NULL ),
-	MenuRowDef( ScreenEdit::erase_step_timing,		"Erase step timing",		true, EditMode_Full,	true, true, 0, NULL )
+        MenuRowDef( ScreenEdit::speed_percent,			"Edit speed (percent)",		true, EditMode_Full, true, true, 0, NULL ),
+        MenuRowDef( ScreenEdit::speed_wait,			"Edit speed (wait)",		true, EditMode_Full, true, true, 0, NULL ),
+        MenuRowDef( ScreenEdit::erase_step_timing,		"Erase step timing",		true, EditMode_Full, true, true, 0, NULL )
 );
 
 enum { song_bganimation, song_movie, song_bitmap, global_bganimation, global_movie, global_movie_song_group, global_movie_song_group_and_genre, dynamic_random, baked_random, none };
@@ -2759,6 +2763,22 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		GetAppropriateTiming().SetWarpAtBeat( GetBeat(), fWarp );
 		SetDirty( true );
 	}
+	else if( SM == SM_BackFromSpeedPercentChange )
+	{
+		float fNum = StringToFloat( ScreenTextEntry::s_sLastAnswer );
+		GetAppropriateTiming().SetSpeedPercentAtBeat( GetBeat(), fNum );
+		SetDirty( true );
+	}
+	else if ( SM == SM_BackFromSpeedWaitChange )
+	{
+		float fDen = StringToFloat( ScreenTextEntry::s_sLastAnswer );
+		if( fDen >= 0)
+		{
+			GetAppropriateTiming().SetSpeedWaitAtBeat( GetBeat(), fDen );
+		}
+		SetDirty( true );
+	}
+	
 	else if( SM == SM_BackFromBGChange )
 	{
 		HandleBGChangeChoice( (BGChangeChoice)ScreenMiniMenu::s_iLastRowCode, ScreenMiniMenu::s_viLastAnswers );
@@ -3176,10 +3196,14 @@ void ScreenEdit::DisplayTimingMenu()
 	g_TimingDataInformation.rows[tickcount].SetOneUnthemedChoice( ssprintf("%d", pTime.GetTickcountAtBeat( fBeat ) ) );
 	g_TimingDataInformation.rows[combo].SetOneUnthemedChoice( ssprintf("%d", pTime.GetComboAtBeat( fBeat ) ) );
 	g_TimingDataInformation.rows[warp].SetOneUnthemedChoice( ssprintf("%.5f", pTime.GetWarpAtBeat( fBeat ) ) );
+	g_TimingDataInformation.rows[speed_percent].SetOneUnthemedChoice( ssprintf("%.5f", pTime.GetSpeedPercentAtBeat( fBeat ) ) );
+	g_TimingDataInformation.rows[speed_wait].SetOneUnthemedChoice( ssprintf("%.5f", pTime.GetSpeedWaitAtBeat( fBeat ) ) );
 	
 	g_TimingDataInformation.rows[tickcount].bEnabled = GAMESTATE->m_bIsEditorStepTiming;
 	g_TimingDataInformation.rows[combo].bEnabled = GAMESTATE->m_bIsEditorStepTiming;
 	g_TimingDataInformation.rows[warp].bEnabled = GAMESTATE->m_bIsEditorStepTiming;
+	g_TimingDataInformation.rows[speed_percent].bEnabled = GAMESTATE->m_bIsEditorStepTiming;
+	g_TimingDataInformation.rows[speed_wait].bEnabled = GAMESTATE->m_bIsEditorStepTiming;
 		
 	EditMiniMenu( &g_TimingDataInformation, SM_BackFromTimingDataInformation );
 }
@@ -3858,6 +3882,8 @@ static LocalizedString ENTER_TICKCOUNT_VALUE			( "ScreenEdit", "Enter a new Tick
 static LocalizedString ENTER_COMBO_VALUE			( "ScreenEdit", "Enter a new Combo value." );
 static LocalizedString ENTER_LABEL_VALUE			( "ScreenEdit", "Enter a new Label value." );
 static LocalizedString ENTER_WARP_VALUE				( "ScreenEdit", "Enter a new Warp value." );
+static LocalizedString ENTER_SPEED_PERCENT_VALUE		( "ScreenEdit", "Enter a new Speed percent value." );
+static LocalizedString ENTER_SPEED_WAIT_VALUE			( "ScreenEdit", "Enter a new Speed wait value." );
 static LocalizedString CONFIRM_TIMING_ERASE			( "ScreenEdit", "Are you sure you want to erase this chart's timing data?" );
 void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice c, const vector<int> &iAnswers )
 {
@@ -3938,6 +3964,22 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 		   SM_BackFromWarpChange, 
 		   ENTER_WARP_VALUE, 
 		   ssprintf( "%.4f", GetAppropriateTiming().GetWarpAtBeat( GetBeat() ) ),
+		   10
+		   );
+		break;
+	case speed_percent:
+		ScreenTextEntry::TextEntry(
+		   SM_BackFromSpeedPercentChange,
+		   ENTER_SPEED_PERCENT_VALUE,
+		   ssprintf( "%.5f", GetAppropriateTiming().GetSpeedSegmentAtBeat( GetBeat() ).m_fPercent ),
+		   10
+		   );
+		break;
+	case speed_wait:
+		ScreenTextEntry::TextEntry(
+		   SM_BackFromSpeedWaitChange,
+		   ENTER_SPEED_WAIT_VALUE,
+		   ssprintf( "%.5f", GetAppropriateTiming().GetSpeedSegmentAtBeat( GetBeat() ).m_fWait ),
 		   10
 		   );
 		break;
