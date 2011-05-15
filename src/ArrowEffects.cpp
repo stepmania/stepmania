@@ -249,8 +249,15 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 
 	// TODO: If we allow noteskins to have metricable row spacing
 	// (per issue 24), edit this to reflect that. -aj
-	fYOffset *= ARROW_SPACING * pCurSteps->m_Timing.GetSpeedPercentAtBeat( fSongBeat );
-
+	fYOffset *= ARROW_SPACING;
+	
+	// Factor in the SpeedSegment.
+	SpeedSegment &seg = pCurSteps->m_Timing.GetSpeedSegmentAtBeat( fSongBeat );
+	if( seg.m_fPercent != 1 && fSongBeat + seg.m_fWait <= fNoteBeat )
+	{
+		// Math here.
+		fYOffset *= pCurSteps->m_Timing.GetSpeedPercentAtBeat( fSongBeat );
+	}
 	// don't mess with the arrows after they've crossed 0
 	if( fYOffset < 0 )
 		return fYOffset * pPlayerState->m_PlayerOptions.GetCurrent().m_fScrollSpeed;
