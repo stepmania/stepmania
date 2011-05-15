@@ -529,11 +529,28 @@ void InputHandler_DInput::UpdateBuffered( DIDevice &device, const RageTimer &tm 
 								INPUTFILTER->UpdateMouseWheel(l);
 								{
 									up = MOUSE_WHEELUP; down = MOUSE_WHEELDOWN;
-									l = SCALE( int(evtbuf[i].dwData), -WHEEL_DELTA, WHEEL_DELTA, 1.0f, -1.0f );
-									DeviceInput diUp = DeviceInput(dev, up, max(-l,0), tm);
-									DeviceInput diDown = DeviceInput(dev, down, max(+l,0), tm);
-									ButtonPressed( diUp );
-									ButtonPressed( diDown );
+									//l = SCALE( int(evtbuf[i].dwData), -WHEEL_DELTA, WHEEL_DELTA, 1.0f, -1.0f );
+									if( int(evtbuf[i].dwData) > 0 )
+									{
+										DeviceInput diUp = DeviceInput(dev, up, 1, tm);
+										ButtonPressed( diUp );
+										DeviceInput diDown = DeviceInput(dev, down, 0, tm);
+										ButtonPressed( diDown );
+									}
+									else if( int(evtbuf[i].dwData) < 0 )
+									{
+										DeviceInput diDown = DeviceInput(dev, down, 1, tm);
+										ButtonPressed( diDown );
+										DeviceInput diUp = DeviceInput(dev, up, 0, tm);
+										ButtonPressed( diUp );
+									}
+									else
+									{
+										DeviceInput diUp = DeviceInput(dev, up, 0, tm);
+										ButtonPressed( diUp );
+										DeviceInput diDown = DeviceInput(dev, down, 0, tm);
+										ButtonPressed( diDown );
+									}
 								}
 								break;
 							default: LOG->MapLog( "unknown input", 
