@@ -22,9 +22,7 @@ public:
 
 	virtual void HandleMessage( const Message &msg );
 
-	//
 	// Commands
-	//
 	virtual void PushSelf( lua_State *L );
 
 protected:
