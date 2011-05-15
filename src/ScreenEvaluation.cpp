@@ -357,7 +357,7 @@ void ScreenEvaluation::Init()
 			SET_XY( m_sprPercentFrame[p] );
 			this->AddChild( m_sprPercentFrame[p] );
 
-			/* Use "ScreenEvaluation Percent" for the [metric set], but position and
+			/* Use "ScreenEvaluation Percent" in the [metrics], but position and
 			 * tween it with "PercentP1X", etc. */
 			m_Percent[p].SetName( ssprintf("PercentP%d",p+1) );
 			m_Percent[p].Load( GAMESTATE->m_pPlayerState[p], &m_pStageStats->m_player[p], "ScreenEvaluation Percent", true );
@@ -404,7 +404,8 @@ void ScreenEvaluation::Init()
 				ActorUtil::LoadAllCommands( m_sprActualBar[p][r], m_sName );
 				SET_XY( m_sprActualBar[p][r] );
 
-				// .99999 is fairly close to 1.00, so we use that 
+				// .99999 is fairly close to 1.00, so we use that.
+				// todo: allow extra commands for AAA/AAAA? -aj
 				if( m_pStageStats->m_player[p].m_radarActual[r] > 0.99999f )
 					m_sprActualBar[p][r].RunCommands( BAR_ACTUAL_MAX_COMMAND );
 				this->AddChild( &m_sprActualBar[p][r] );
@@ -546,12 +547,12 @@ void ScreenEvaluation::Init()
 				SET_XY( m_textDetailText[l][p] );
 				this->AddChild( &m_textDetailText[l][p] );
 
-				static const int indeces[NUM_DetailLine] =
+				static const int indices[NUM_DetailLine] =
 				{
 					RadarCategory_TapsAndHolds, RadarCategory_Jumps, RadarCategory_Holds, RadarCategory_Mines, 
 					RadarCategory_Hands, RadarCategory_Rolls, RadarCategory_Lifts, RadarCategory_Fakes
 				};
-				const int ind = indeces[l];
+				const int ind = indices[l];
 				const int iActual = lrintf(m_pStageStats->m_player[p].m_radarActual[ind]);
 				const int iPossible = lrintf(m_pStageStats->m_player[p].m_radarPossible[ind]);
 

@@ -10,6 +10,7 @@
 #include "GameInput.h"
 #include "NotesLoader.h"
 #include "PrefsManager.h"
+#include "Difficulty.h"
 
 #include <map>
 
@@ -139,6 +140,33 @@ static bool Is192( const RString &sStepData, size_t pos )
 }
 /** @brief All DWI files use 4 beats per measure. */
 const int BEATS_PER_MEASURE = 4;
+
+/* We prefer the normal names; recognize a number of others, too. (They'll get
+ * normalized when written to SMs, etc.) */
+Difficulty DwiCompatibleStringToDifficulty( const RString& sDC )
+{
+	RString s2 = sDC;
+	s2.MakeLower();
+	if( s2 == "beginner" )			return Difficulty_Beginner;
+	else if( s2 == "easy" )		return Difficulty_Easy;
+	else if( s2 == "basic" )		return Difficulty_Easy;
+	else if( s2 == "light" )		return Difficulty_Easy;
+	else if( s2 == "medium" )		return Difficulty_Medium;
+	else if( s2 == "another" )		return Difficulty_Medium;
+	else if( s2 == "trick" )		return Difficulty_Medium;
+	else if( s2 == "standard" )	return Difficulty_Medium;
+	else if( s2 == "difficult")	return Difficulty_Medium;
+	else if( s2 == "hard" )		return Difficulty_Hard;
+	else if( s2 == "ssr" )			return Difficulty_Hard;
+	else if( s2 == "maniac" )		return Difficulty_Hard;
+	else if( s2 == "heavy" )		return Difficulty_Hard;
+	else if( s2 == "smaniac" )		return Difficulty_Challenge;
+	else if( s2 == "challenge" )	return Difficulty_Challenge;
+	else if( s2 == "expert" )		return Difficulty_Challenge;
+	else if( s2 == "oni" )			return Difficulty_Challenge;
+	else if( s2 == "edit" )		return Difficulty_Edit;
+	else							return Difficulty_Invalid;
+}
 
 /**
  * @brief Look through the notes tag to extract the data.

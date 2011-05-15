@@ -330,7 +330,7 @@ void SMALoader::LoadFromSMATokens(
 	out.m_StepsType = GAMEMAN->StringToStepsType( sStepsType );
 	out.SetDescription( sDescription );
 	out.SetCredit( sDescription ); // this is often used for both.
-	out.SetDifficulty( DwiCompatibleStringToDifficulty(sDifficulty) );
+	out.SetDifficulty( StringToDifficulty(sDifficulty) );
 	
 	sDescription.MakeLower();
 	

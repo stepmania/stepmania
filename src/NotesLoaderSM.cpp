@@ -40,7 +40,7 @@ void SMLoader::LoadFromSMTokens(
 	out.m_StepsType = GAMEMAN->StringToStepsType( sStepsType );
 	out.SetDescription( sDescription );
 	out.SetCredit( sDescription ); // this is often used for both.
-	out.SetDifficulty( DwiCompatibleStringToDifficulty(sDifficulty) );
+	out.SetDifficulty( StringToDifficulty(sDifficulty) );
 
 	// Handle hacks that originated back when StepMania didn't have
 	// Difficulty_Challenge. (At least v1.64, possibly v3.0 final...)
