@@ -261,11 +261,8 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 		{
 			float fBeatsUsed = fSongBeat - fStartBeat;
 			float fRatioUsed = fBeatsUsed / seg.m_fWait;
-			
 			float fDistance = 1 - seg.m_fPercent;
-			
-			float fRatioNeed = fRatioUsed * fDistance;
-			
+			float fRatioNeed = fRatioUsed * -fDistance;
 			fYOffset *= (1 + fRatioNeed);
 		}
 		else 
