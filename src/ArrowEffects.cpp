@@ -230,7 +230,8 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 		float fSongBeat = position.m_fSongBeatVisible;
 		float fBeatsUntilStep = fNoteBeat - fSongBeat;
 		float fYOffsetBeatSpacing = fBeatsUntilStep;
-		fYOffset += fYOffsetBeatSpacing * (1-pPlayerState->m_PlayerOptions.GetCurrent().m_fTimeSpacing);
+		fYOffset += GAMESTATE->m_pCurSteps[pPlayerState->m_PlayerNumber]->m_Timing.GetSpeedPercentAtBeat( fNoteBeat ) *
+			fYOffsetBeatSpacing * (1-pPlayerState->m_PlayerOptions.GetCurrent().m_fTimeSpacing);
 	}
 
 	if( pPlayerState->m_PlayerOptions.GetCurrent().m_fTimeSpacing != 0.0f )
@@ -241,7 +242,8 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 		float fBPM = pPlayerState->m_PlayerOptions.GetCurrent().m_fScrollBPM;
 		float fBPS = fBPM/60.f;
 		float fYOffsetTimeSpacing = fSecondsUntilStep * fBPS;
-		fYOffset += fYOffsetTimeSpacing * pPlayerState->m_PlayerOptions.GetCurrent().m_fTimeSpacing;
+		fYOffset += GAMESTATE->m_pCurSteps[pPlayerState->m_PlayerNumber]->m_Timing.GetSpeedPercentAtBeat( fNoteBeat ) *
+			fYOffsetTimeSpacing * pPlayerState->m_PlayerOptions.GetCurrent().m_fTimeSpacing;
 	}
 
 	// TODO: If we allow noteskins to have metricable row spacing
