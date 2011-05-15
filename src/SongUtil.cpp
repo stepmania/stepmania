@@ -21,6 +21,8 @@
 
 ThemeMetric<int> SORT_BPM_DIVISION ( "MusicWheel", "SortBPMDivision" );
 ThemeMetric<int> SORT_LENGTH_DIVISION ( "MusicWheel", "SortLengthDivision" );
+ThemeMetric<bool> SHOW_SECTIONS_IN_BPM_SORT ( "MusicWheel", "ShowSectionsInBPMSort" );
+ThemeMetric<bool> SHOW_SECTIONS_IN_LENGTH_SORT ( "MusicWheel", "ShowSectionsInLengthSort" );
 
 bool SongCriteria::Matches( const Song *pSong ) const
 {
@@ -598,20 +600,30 @@ RString SongUtil::GetSectionNameFromSongAndSort( const Song* pSong, SortOrder so
 		return SORT_NOT_AVAILABLE.GetValue();
 	case SORT_BPM:
 		{
-			const int iBPMGroupSize = SORT_BPM_DIVISION;
-			DisplayBpms bpms;
-			pSong->GetDisplayBpms( bpms );
-			int iMaxBPM = (int)bpms.GetMax();
-			iMaxBPM += iBPMGroupSize - (iMaxBPM%iBPMGroupSize) - 1;
-			return ssprintf("%03d-%03d",iMaxBPM-(iBPMGroupSize-1), iMaxBPM);
+			if( SHOW_SECTIONS_IN_BPM_SORT )
+			{
+				const int iBPMGroupSize = SORT_BPM_DIVISION;
+				DisplayBpms bpms;
+				pSong->GetDisplayBpms( bpms );
+				int iMaxBPM = (int)bpms.GetMax();
+				iMaxBPM += iBPMGroupSize - (iMaxBPM%iBPMGroupSize) - 1;
+				return ssprintf("%03d-%03d",iMaxBPM-(iBPMGroupSize-1), iMaxBPM);
+			}
+			else
+				return RString();
 		}
 	case SORT_LENGTH:
 		{
-			const int iSortLengthSize = SORT_LENGTH_DIVISION;
-			int iMaxLength = (int)pSong->m_fMusicLengthSeconds;
-			iMaxLength += (iSortLengthSize - (iMaxLength%iSortLengthSize) - 1);
-			int iMinLength = iMaxLength - (iSortLengthSize-1);
-			return ssprintf( "%s-%s", SecondsToMMSS(iMinLength).c_str(), SecondsToMMSS(iMaxLength).c_str() );
+			if( SHOW_SECTIONS_IN_LENGTH_SORT )
+			{
+				const int iSortLengthSize = SORT_LENGTH_DIVISION;
+				int iMaxLength = (int)pSong->m_fMusicLengthSeconds;
+				iMaxLength += (iSortLengthSize - (iMaxLength%iSortLengthSize) - 1);
+				int iMinLength = iMaxLength - (iSortLengthSize-1);
+				return ssprintf( "%s-%s", SecondsToMMSS(iMinLength).c_str(), SecondsToMMSS(iMaxLength).c_str() );
+			}
+			else
+				return RString();
 		}
 	case SORT_POPULARITY:
 	case SORT_RECENT:

@@ -8,6 +8,10 @@ ________________________________________________________________________________
 StepMania 5.0 $NEXT | 20110xyy
 --------------------------------------------------------------------------------
 
+2011/05/14
+----------
+* [MusicWheel] Added ShowSectionsInBPMSort and ShowSectionsInLengthSort metrics. [AJ]
+
 2011/05/11
 ----------
 * [GameSoundManager] Added PlayAnnouncer Lua binding. [AJ]
