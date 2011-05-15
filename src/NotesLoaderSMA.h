@@ -47,6 +47,7 @@ namespace SMALoader
 	void ProcessDelays( TimingData &out, const int iRowsPerBeat, const RString sParam );
 	void ProcessTickcounts( TimingData &out, const int iRowsPerBeat, const RString sParam );
 	void ProcessMultipliers( TimingData &out, const int iRowsPerBeat, const RString sParam );
+	void ProcessSpeeds( TimingData &out, const int iRowsPerBeat, const RString sParam );
 	
 	float RowToBeat( RString sLine, const int iRowsPerBeat );
 };

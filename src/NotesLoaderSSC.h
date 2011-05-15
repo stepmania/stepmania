@@ -80,6 +80,7 @@ namespace SSCLoader
 	void ProcessWarps( TimingData &, const RString );
 	void ProcessLabels( TimingData &, const RString );
 	void ProcessCombos( TimingData &, const RString );
+	void ProcessSpeeds( TimingData &, const RString );
 }
 #endif
 /**

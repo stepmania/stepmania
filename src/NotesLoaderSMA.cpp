@@ -306,6 +306,48 @@ void SMALoader::ProcessBeatsPerMeasure( TimingData &out, const RString sParam )
 	}
 }
 
+void SMALoader::ProcessSpeeds( TimingData &out, const int iRowsPerBeat, const RString sParam )
+{
+	vector<RString> vs1;
+	split( sParam, ",", vs1 );
+	
+	FOREACH_CONST( RString, vs1, s1 )
+	{
+		vector<RString> vs2;
+		split( *s1, "=", vs2 );
+		
+		if( vs2[0] == 0 ) // First one always seems to have 2.
+		{
+			vs2.push_back(0);
+		}
+		
+		if( vs2.size() < 3 )
+		{
+			LOG->UserLog( "Song file", "(UNKNOWN)", "has an speed change with %i values.", (int)vs2.size() );
+			continue;
+		}
+		
+		const float fBeat = RowToBeat( vs2[0], iRowsPerBeat );
+		
+		SpeedSegment seg( fBeat, StringToFloat( vs2[1] ), StringToFloat( vs2[2] ));
+		
+		if( fBeat < 0 )
+		{
+			LOG->UserLog( "Song file", "(UNKNOWN)", "has an speed change with beat %f.", fBeat );
+			continue;
+		}
+		
+		if( seg.m_fWait < 0 )
+		{
+			LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid time signature change with beat %f, fWait %f.", fBeat, seg.m_fWait );
+			continue;
+		}
+		
+		out.AddSpeedSegment( seg );
+	}
+}
+
+
 void SMALoader::LoadFromSMATokens(
 				  RString sStepsType,
 				  RString sDescription,

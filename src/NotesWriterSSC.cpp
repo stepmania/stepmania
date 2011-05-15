@@ -76,6 +76,7 @@ struct TimingTagWriter {
 	void Write( const int row, const float value )        { Write( row, ssprintf( "%.6f",  value ) ); }
 	void Write( const int row, const int value )          { Write( row, ssprintf( "%d",    value ) ); }
 	void Write( const int row, const int a, const int b ) { Write( row, ssprintf( "%d=%d", a, b ) );  }
+	void Write( const int row, const float a, const float b ) { Write( row, ssprintf( "%.6f=%.6f", a, b) ); }
 
 	void Init( const RString sTag ) { m_sNext = "#" + sTag + ":"; }
 	void Finish( ) { m_pvsLines->push_back( ( m_sNext != "," ? m_sNext : "" ) + ";" ); }
@@ -130,6 +131,14 @@ static void GetTimingTags( vector<RString> &lines, TimingData timing, bool bIsSo
 	FOREACH_CONST( ComboSegment, timing.m_ComboSegments, cs )
 		w.Write( cs->m_iStartRow, cs->m_iCombo );
 	w.Finish();
+	
+	if( !bIsSong )
+	{
+		w.Init( "SPEEDS" );
+		FOREACH_CONST( SpeedSegment, timing.m_SpeedSegments, ss )
+		w.Write( ss->m_iStartRow, ss->m_fPercent, ss->m_fWait );
+		w.Finish();
+	}
 	
 	w.Init( "LABELS" );
 	FOREACH_CONST( LabelSegment, timing.m_LabelSegments, ls )
