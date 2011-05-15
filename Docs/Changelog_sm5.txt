@@ -10,6 +10,8 @@ StepMania 5.0 $NEXT | 20110xyy
 
 2011/05/14
 ----------
+* [ScreenSelectMaster] Add "ScreenEmpty" param to MenuStartP# when the GameCommand
+  doesn't set a screen. [AJ]
 * [StepsDisplay] Added MeterFormatString metric. [AJ]
 * [MusicWheel] Added ShowSectionsInBPMSort and ShowSectionsInLengthSort metrics. [AJ]
 * [ScreenEvaluation] Stop the Bonus bars from overflowing in course modes. [AJ]
