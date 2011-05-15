@@ -252,18 +252,23 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 	fYOffset *= ARROW_SPACING;
 	
 	// Factor in the SpeedSegment.
-	SpeedSegment &seg = pCurSteps->m_Timing.GetSpeedSegmentAtBeat( fSongBeat );
-	if( seg.m_fPercent != 1 )
+	TimingData &tim = pCurSteps->m_Timing;
+	
+	const int index = tim.GetSpeedSegmentIndexAtBeat( fSongBeat );
+	if( index > 0 )
 	{
+		SpeedSegment &seg = tim.GetSpeedSegmentAtBeat( fSongBeat );
 		float fStartBeat = NoteRowToBeat(seg.m_iStartRow);
 		
 		if( fStartBeat + seg.m_fWait >= fSongBeat )
 		{
+			const float fPriorSpeed = tim.m_SpeedSegments[index - 1].m_fPercent;
 			float fBeatsUsed = fSongBeat - fStartBeat;
 			float fRatioUsed = fBeatsUsed / seg.m_fWait;
-			float fDistance = 1 - seg.m_fPercent;
+			
+			float fDistance = fPriorSpeed - seg.m_fPercent;
 			float fRatioNeed = fRatioUsed * -fDistance;
-			fYOffset *= (1 + fRatioNeed);
+			fYOffset *= (fPriorSpeed + fRatioNeed);
 		}
 		else 
 		{
