@@ -41,7 +41,7 @@ bool SMALoader::LoadFromDir( const RString &sPath, Song &out )
 
 float SMALoader::RowToBeat( RString sLine, const int iRowsPerBeat )
 {
-	if( sLine.Right(0).MakeUpper() == "R" )
+	if( sLine.find("R") || sLine.find("r") )
 	{
 		sLine = sLine.Left(sLine.size()-1);
 		return StringToFloat( sLine ) / iRowsPerBeat;
