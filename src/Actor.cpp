@@ -34,6 +34,8 @@ REGISTER_ACTOR_CLASS_WITH_NAME( HiddenActor, Actor );
 
 float Actor::g_fCurrentBGMTime = 0, Actor::g_fCurrentBGMBeat;
 float Actor::g_fCurrentBGMTimeNoOffset = 0, Actor::g_fCurrentBGMBeatNoOffset = 0;
+vector<float> Actor::g_vfCurrentBGMBeatPlayer(NUM_PlayerNumber, 0);
+vector<float> Actor::g_vfCurrentBGMBeatPlayerNoOffset(NUM_PlayerNumber, 0);
 
 
 Actor *Actor::Copy() const { return new Actor(*this); }
@@ -66,6 +68,12 @@ void Actor::SetBGMTime( float fTime, float fBeat, float fTimeNoOffset, float fBe
 	 * g_fVisualDelaySeconds. */
 	g_fCurrentBGMTimeNoOffset = fTimeNoOffset;
 	g_fCurrentBGMBeatNoOffset = fBeatNoOffset;
+}
+
+void Actor::SetPlayerBGMBeat( PlayerNumber pn, float fBeat, float fBeatNoOffset )
+{
+	g_vfCurrentBGMBeatPlayer[pn] = fBeat;
+	g_vfCurrentBGMBeatPlayerNoOffset[pn] = fBeatNoOffset;
 }
 
 void Actor::SetBGMLight( int iLightNumber, float fCabinetLights )
@@ -150,8 +158,7 @@ Actor::Actor()
 		lua_setfield( L, -2, "ctx" );
 		lua_pop( L, 1 );
 	LUA->Release( L );
-
-
+	
 	m_size = RageVector2( 1, 1 );
 	InitState();
 	m_pParent = NULL;
@@ -676,6 +683,16 @@ void Actor::UpdateInternal( float fDeltaTime )
 		m_fSecsIntoEffect = g_fCurrentBGMBeat;
 		break;
 
+	case CLOCK_BGM_BEAT_PLAYER1:
+		m_fEffectDelta = g_vfCurrentBGMBeatPlayer[PLAYER_1] - m_fSecsIntoEffect;
+		m_fSecsIntoEffect = g_vfCurrentBGMBeatPlayerNoOffset[PLAYER_1];
+		break;
+		
+	case CLOCK_BGM_BEAT_PLAYER2:
+		m_fEffectDelta = g_vfCurrentBGMBeatPlayer[PLAYER_2] - m_fSecsIntoEffect;
+		m_fSecsIntoEffect = g_vfCurrentBGMBeatPlayerNoOffset[PLAYER_2];
+		break;
+	
 	case CLOCK_BGM_TIME:
 		m_fEffectDelta = g_fCurrentBGMTime - m_fSecsIntoEffect;
 		m_fSecsIntoEffect = g_fCurrentBGMTime;
