@@ -402,6 +402,21 @@ void Steps::SetMeter( int meter )
 	m_iMeter = meter;
 }
 
+bool Steps::HasSignificantTimingChanges() const
+{
+	if( m_Timing.HasStops() )
+		return true;
+	
+	/* TODO: Deal with DisplayBPM here...if possible?
+	 * Song's version may still be useful. */
+	
+	else if( m_Timing.HasBpmChanges() || m_Timing.HasWarps() || m_Timing.HasSpeedChanges() )
+	{
+		return true;
+	}
+	return false;
+}
+
 void Steps::SetCachedRadarValues( const RadarValues v[NUM_PLAYERS] )
 {
 	DeAutogen();
@@ -426,6 +441,8 @@ public:
 	DEFINE_METHOD( IsAnEdit,	IsAnEdit() )
 	DEFINE_METHOD( IsAPlayerEdit,	IsAPlayerEdit() )
 
+	static int HasSignificantTimingChanges( T* p, lua_State *L )	{ lua_pushboolean(L, p->HasSignificantTimingChanges()); return 1; }
+	
 	static int GetRadarValues( T* p, lua_State *L )
 	{
 		PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);
@@ -454,6 +471,7 @@ public:
 		ADD_METHOD( GetFilename );
 		ADD_METHOD( GetHash );
 		ADD_METHOD( GetMeter );
+		ADD_METHOD( HasSignificantTimingChanges );
 		ADD_METHOD( GetRadarValues );
 		//ADD_METHOD( GetSMNoteData );
 		ADD_METHOD( GetStepsType );

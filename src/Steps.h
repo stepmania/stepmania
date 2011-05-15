@@ -120,6 +120,11 @@ public:
 
 	/** @brief Timing data */
 	TimingData m_Timing;
+	
+	/**
+	 * @brief Determine if the Steps have any major timing changes during gameplay.
+	 * @return true if it does, or false otherwise. */
+	bool HasSignificantTimingChanges() const;
 
 	// Lua
 	void PushSelf( lua_State *L );
