@@ -443,7 +443,7 @@ void ScoreKeeperNormal::HandleComboInternal( int iNumHitContinueCombo, int iNumH
 
 	if( iNumBreakCombo == 0 )
 	{
-		TimingData td = GAMESTATE->m_pCurSong->m_SongTiming;
+		TimingData td = GAMESTATE->m_pCurSteps[m_pPlayerState->m_PlayerNumber]->m_Timing;
 		int multiplier = ( iRow == -1 ? 1 : td.GetComboSegmentAtRow( iRow ).m_iCombo );
 		m_pPlayerStageStats->m_iCurCombo += iNumHitContinueCombo * multiplier;
 	}

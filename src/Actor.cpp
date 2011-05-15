@@ -68,12 +68,6 @@ void Actor::SetBGMTime( float fTime, float fBeat, float fTimeNoOffset, float fBe
 	g_fCurrentBGMBeatNoOffset = fBeatNoOffset;
 }
 
-void Actor::SetPlayerBGMBeat( PlayerNumber pn, float fBeat, float fBeatNoOffset )
-{
-	g_vfCurrentBGMBeatPlayer[pn] = fBeat;
-	g_vfCurrentBGMBeatPlayerNoOffset[pn] = fBeatNoOffset;
-}
-
 void Actor::SetBGMLight( int iLightNumber, float fCabinetLights )
 {
 	ASSERT( iLightNumber < NUM_CabinetLight );
@@ -680,16 +674,6 @@ void Actor::UpdateInternal( float fDeltaTime )
 	case CLOCK_BGM_BEAT:
 		m_fEffectDelta = g_fCurrentBGMBeat - m_fSecsIntoEffect;
 		m_fSecsIntoEffect = g_fCurrentBGMBeat;
-		break;
-	
-	case CLOCK_BGM_BEAT_PLAYER1:
-		m_fEffectDelta = g_vfCurrentBGMBeatPlayer[PLAYER_1] - m_fSecsIntoEffect;
-		m_fSecsIntoEffect = g_vfCurrentBGMBeatPlayer[PLAYER_1];
-		break;
-
-	case CLOCK_BGM_BEAT_PLAYER2:
-		m_fEffectDelta = g_vfCurrentBGMBeatPlayer[PLAYER_2] - m_fSecsIntoEffect;
-		m_fSecsIntoEffect = g_vfCurrentBGMBeatPlayer[PLAYER_2];
 		break;
 
 	case CLOCK_BGM_TIME:
