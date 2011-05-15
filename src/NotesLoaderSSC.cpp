@@ -558,6 +558,11 @@ bool SSCLoader::LoadFromSSCFile( const RString &sPath, Song &out, bool bFromCach
 					ProcessWarps(stepsTiming, sParams[1]);
 				}
 				
+				else if( sValueName=="SPEED" )
+				{
+					ProcessSpeeds( stepsTiming, sParams[1] );
+				}
+				
 				else if( sValueName=="LABELS" )
 				{
 					ProcessLabels(stepsTiming, sParams[1]);

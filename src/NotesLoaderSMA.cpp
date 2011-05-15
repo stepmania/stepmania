@@ -667,7 +667,9 @@ bool SMALoader::LoadFromSMAFile( const RString &sPath, Song &out )
 		
 		else if( sValueName=="SPEED" )
 		{
-			; // This is something we should consider implementing.
+			TimingData &timing = (state == SMA_GETTING_STEP_INFO 
+					      ? pNewNotes->m_Timing : out.m_SongTiming);
+			ProcessSpeeds( timing, iRowsPerBeat, sParams[1] );
 		}
 		
 		else if( sValueName=="MULTIPLIER" )
