@@ -614,7 +614,7 @@ void NoteField::DrawSpeedText( const float fBeat, float fPercent, float fWait )
 	m_textMeasureNumber.SetHorizAlign( SPEED_IS_LEFT_SIDE ? align_right : align_left );
 	m_textMeasureNumber.SetDiffuse( SPEED_COLOR );
 	m_textMeasureNumber.SetGlow( RageColor(1,1,1,RageFastCos(RageTimer::GetTimeSinceStartFast()*2)/2+0.5f) );
-	m_textMeasureNumber.SetText( ssprintf("%.6f\n--\n%.6f", fPercent, fWait) );
+	m_textMeasureNumber.SetText( ssprintf("%.3f\n--\n%.3f", fPercent, fWait) );
 	m_textMeasureNumber.SetXY( (SPEED_IS_LEFT_SIDE ? -xBase - xOffset : xBase + xOffset), fYPos );
 	m_textMeasureNumber.Draw();
 }
