@@ -87,7 +87,7 @@ public:
 	DEFINE_METHOD( GetCurBPS, m_fCurBPS );
 	DEFINE_METHOD( GetFreeze, m_bFreeze );
 	DEFINE_METHOD( GetDelay, m_bDelay );
-	DEFINE_METHOD( GetWarpBeginRow, m_fWarpBeginRow );
+	DEFINE_METHOD( GetWarpBeginRow, m_iWarpBeginRow );
 	DEFINE_METHOD( GetWarpDestination, m_fWarpDestination );
 
 	LunaSongPosition()
@@ -105,7 +105,7 @@ public:
 	}
 };
 
-LUA_REGISTER_CLASS( SongPosition )
+LUA_REGISTER_CLASS( SongPosition );
 /**
  * @file
  * @author Thai Pangsakulyanont (c) 2011
