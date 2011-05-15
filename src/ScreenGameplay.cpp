@@ -2156,11 +2156,7 @@ void ScreenGameplay::Input( const InputEventPlus &input )
 			else if( input.type==IET_FIRST_PRESS && m_GiveUpTimer.IsZero() )
 			{
 				m_textDebug.SetText( GIVE_UP_START_TEXT );
-				// todo: un-hardcode commands and move to metrics -aj
-				m_textDebug.StopTweening();
-				m_textDebug.SetDiffuse( RageColor(1,1,1,0) );
-				m_textDebug.BeginTweening( 1/8.f );
-				m_textDebug.SetDiffuse( RageColor(1,1,1,1) );
+				m_textDebug.PlayCommand( "StartOn" );
 				m_GiveUpTimer.Touch(); // start the timer
 			}
 
@@ -2187,18 +2183,11 @@ void ScreenGameplay::Input( const InputEventPlus &input )
 			else if( PREFSMAN->m_bDelayedBack && input.type==IET_FIRST_PRESS )
 			{
 				m_textDebug.SetText( GIVE_UP_BACK_TEXT );
-				// todo: un-hardcode commands and move to metrics -aj
-				m_textDebug.StopTweening();
-				m_textDebug.SetDiffuse( RageColor(1,1,1,0) );
-				m_textDebug.BeginTweening( 1/8.f );
-				m_textDebug.SetDiffuse( RageColor(1,1,1,1) );
+				m_textDebug.PlayCommand( "BackOn" );
 			}
 			else if( PREFSMAN->m_bDelayedBack && input.type==IET_RELEASE )
 			{
-				// todo: un-hardcode commands and move to metrics -aj
-				m_textDebug.StopTweening();
-				m_textDebug.BeginTweening( 1/8.f );
-				m_textDebug.SetDiffuse( RageColor(1,1,1,0) );
+				m_textDebug.PlayCommand( "TweenOff" );
 			}
 
 			return;

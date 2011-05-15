@@ -8,6 +8,12 @@ ________________________________________________________________________________
 StepMania 5.0 $NEXT | 20110xyy
 --------------------------------------------------------------------------------
 
+2011/05/15
+----------
+* [ScreenGameplay] Removed hardcoded commands for Debug (give up text) and
+  replace them with DebugStartOnCommand, DebugBackOnCommand, and
+  DebugTweenOffCommand. [AJ] 
+
 2011/05/14
 ----------
 * [ModIcon] Added StopWords metric. [AJ]
