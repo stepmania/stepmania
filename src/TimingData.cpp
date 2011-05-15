@@ -68,6 +68,11 @@ void TimingData::AddLabelSegment( const LabelSegment &seg )
 	m_LabelSegments.insert( upper_bound(m_LabelSegments.begin(), m_LabelSegments.end(), seg), seg );
 }
 
+void TimingData::AddSpeedSegment( const SpeedSegment &seg )
+{
+	m_SpeedSegments.insert( upper_bound(m_SpeedSegments.begin(), m_SpeedSegments.end(), seg), seg );
+}
+
 /* Change an existing BPM segment, merge identical segments together or insert a new one. */
 void TimingData::SetBPMAtRow( int iNoteRow, float fBPM )
 {
@@ -250,6 +255,47 @@ void TimingData::SetLabelAtRow( int iRow, const RString sLabel )
 	}
 }
 
+void TimingData::SetSpeedAtRow( int iRow, float fPercent, float fWait )
+{
+	unsigned i;
+	for( i = 0; i < m_SpeedSegments.size(); i++ )
+	{
+		if( m_SpeedSegments[i].m_iStartRow >= iRow)
+			break;
+	}
+	
+	if ( i == m_SpeedSegments.size() || m_SpeedSegments[i].m_iStartRow != iRow )
+	{
+		if( i == 0 || 
+		   ( m_SpeedSegments[i-1].m_fPercent != fPercent
+		    || m_SpeedSegments[i-1].m_fWait != fWait ) )
+			AddSpeedSegment( SpeedSegment(iRow, fPercent, fWait) );
+	}
+	else
+	{
+		if( i > 0  && m_SpeedSegments[i-1].m_fPercent == fPercent
+		   && m_SpeedSegments[i-1].m_fWait == fWait )
+			m_SpeedSegments.erase( m_SpeedSegments.begin()+i,
+					       m_SpeedSegments.begin()+i+1 );
+		else
+		{
+			m_SpeedSegments[i].m_fPercent = fPercent;
+			m_SpeedSegments[i].m_fWait = fWait;
+		}
+	}
+}
+
+void TimingData::SetSpeedPercentAtRow( int iRow, float fPercent )
+{
+	SetSpeedAtRow( iRow, fPercent, GetSpeedSegmentAtBeat( NoteRowToBeat( iRow ) ).m_fWait );
+}
+
+void TimingData::SetSpeedWaitAtRow( int iRow, float fWait )
+{
+	SetSpeedAtRow( iRow, GetSpeedSegmentAtBeat( NoteRowToBeat( iRow ) ).m_fPercent, fWait );
+}
+
+
 float TimingData::GetStopAtRow( int iNoteRow, bool bDelay ) const
 {
 	for( unsigned i=0; i<m_StopSegments.size(); i++ )
@@ -293,6 +339,16 @@ float TimingData::GetWarpAtRow( int iWarpRow ) const
 		}
 	}
 	return 0;
+}
+
+float TimingData::GetSpeedPercentAtRow( int iRow )
+{
+	return GetSpeedSegmentAtRow( iRow ).m_fPercent;
+}
+
+float TimingData::GetSpeedWaitAtRow( int iRow )
+{
+	return GetSpeedSegmentAtRow( iRow ).m_fWait;
 }
 
 // Multiply the BPM in the range [fStartBeat,fEndBeat) by fFactor.
@@ -432,6 +488,15 @@ int TimingData::GetLabelSegmentIndexAtRow( int iRow ) const
 	return static_cast<int>(i);
 }
 
+int TimingData::GetSpeedSegmentIndexAtRow( int iRow ) const
+{
+	unsigned i;
+	for (i=0; i < m_SpeedSegments.size() - 1; i++ )
+		if( m_SpeedSegments[i+1].m_iStartRow > iRow )
+			break;
+	return static_cast<int>(i);
+}
+
 BPMSegment& TimingData::GetBPMSegmentAtRow( int iNoteRow )
 {
 	static BPMSegment empty;
@@ -449,6 +514,15 @@ TimeSignatureSegment& TimingData::GetTimeSignatureSegmentAtRow( int iRow )
 		if( m_vTimeSignatureSegments[i+1].m_iStartRow > iRow )
 			break;
 	return m_vTimeSignatureSegments[i];
+}
+
+SpeedSegment& TimingData::GetSpeedSegmentAtRow( int iRow )
+{
+	unsigned i;
+	for( i=0; i<m_SpeedSegments.size()-1; i++ )
+		if( m_SpeedSegments[i+1].m_iStartRow > iRow )
+			break;
+	return m_SpeedSegments[i];
 }
 
 int TimingData::GetTimeSignatureNumeratorAtRow( int iRow )
@@ -845,6 +919,17 @@ void TimingData::ScaleRegion( float fScale, int iStartIndex, int iEndIndex, bool
 			m_LabelSegments[i].m_iStartRow = lrintf( (iSegStart - iStartIndex) * fScale ) + iStartIndex;
 	}
 	
+	for ( unsigned i = 0; i < m_SpeedSegments.size(); i++ )
+	{
+		const int iSegStart = m_SpeedSegments[i].m_iStartRow;
+		if( iSegStart < iStartIndex )
+			continue;
+		else if( iSegStart > iEndIndex )
+			m_SpeedSegments[i].m_iStartRow += lrintf( (iEndIndex - iStartIndex) * (fScale - 1) );
+		else
+			m_SpeedSegments[i].m_iStartRow = lrintf( (iSegStart - iStartIndex) * fScale ) + iStartIndex;
+	}
+	
 	// adjust BPM changes to preserve timing
 	if( bAdjustBPM )
 	{
@@ -928,6 +1013,14 @@ void TimingData::InsertRows( int iStartRow, int iRowsToAdd )
 		if( labl.m_iStartRow < iStartRow )
 			continue;
 		labl.m_iStartRow += iRowsToAdd;
+	}
+	
+	for( unsigned i = 0; i < m_SpeedSegments.size(); i++ )
+	{
+		SpeedSegment &sped = m_SpeedSegments[i];
+		if( sped.m_iStartRow < iStartRow )
+			continue;
+		sped.m_iStartRow += iRowsToAdd;
 	}
 
 	if( iStartRow == 0 )
@@ -1086,6 +1179,22 @@ void TimingData::DeleteRows( int iStartRow, int iRowsToDelete )
 		}
 		labl.m_iStartRow -= iRowsToDelete;
 	}
+	
+	for( unsigned i = 0; i < m_SpeedSegments.size(); i++ )
+	{
+		SpeedSegment &sped = m_SpeedSegments[i];
+		
+		if( sped.m_iStartRow < iStartRow )
+			continue;
+		
+		if( sped.m_iStartRow < iStartRow+iRowsToDelete )
+		{
+			m_SpeedSegments.erase( m_SpeedSegments.begin()+i, m_SpeedSegments.begin()+i+1 );
+			--i;
+			continue;
+		}
+		sped.m_iStartRow -= iRowsToDelete;
+	}
 
 	this->SetBPMAtRow( iStartRow, fNewBPM );
 }
@@ -1133,7 +1242,13 @@ void TimingData::TidyUpData()
 		LabelSegment seg(0, "Song Start");
 		m_LabelSegments.push_back( seg );
 	}
-
+	
+	// Always be sure there is a starting speed.
+	if( m_SpeedSegments.empty() )
+	{
+		SpeedSegment seg(0, 1, 0);
+		m_SpeedSegments.push_back( seg );
+	}
 }
 
 
@@ -1153,6 +1268,11 @@ bool TimingData::HasStops() const
 bool TimingData::HasWarps() const
 {
 	return m_WarpSegments.size()>0;
+}
+
+bool TimingData::HasSpeedChanges() const
+{
+	return m_SpeedSegments.size()>1;
 }
 
 void TimingData::NoteRowToMeasureAndBeat( int iNoteRow, int &iMeasureIndexOut, int &iBeatIndexOut, int &iRowsRemainder ) const
@@ -1201,6 +1321,7 @@ public:
 	static int HasStops( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasStops()); return 1; }
 	static int HasBPMChanges( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasBpmChanges()); return 1; }
 	static int HasWarps( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasWarps()); return 1; }
+	static int HasSpeedChanges( T* p, lua_State *L )	{ lua_pushboolean(L, p->HasSpeedChanges()); return 1; }
 	static int GetStops( T* p, lua_State *L )
 	{
 		vector<RString> vStops;
@@ -1288,6 +1409,7 @@ public:
 		ADD_METHOD( HasStops );
 		ADD_METHOD( HasBPMChanges );
 		ADD_METHOD( HasWarps );
+		ADD_METHOD( HasSpeedChanges );
 		ADD_METHOD( GetStops );
 		ADD_METHOD( GetDelays );
 		ADD_METHOD( GetBPMs );

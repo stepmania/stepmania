@@ -3516,6 +3516,9 @@
 	<Function name='HasWarps' sm-ssc='true' return='bool' arguments=''>
 		Returns <code>true</code> if the TimingData contains warps.
 	</Function>
+	<Function name='HasSpeedChanges' sm-ssc='true' return='bool' arguments=''>
+		Returns <code>true</code> if the TimingData contains speed scrolling changes.
+	</Function>
 </Class>
 <Class name='Trail'>
 	<Function name='GetArtists' return='{string}' arguments=''>

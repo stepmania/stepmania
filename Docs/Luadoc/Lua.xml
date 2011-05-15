@@ -1405,6 +1405,7 @@
 			<Function name='HasNegativeBPMs'/>
 			<Function name='HasStops'/>
 			<Function name='HasWarps'/>
+			<Function name='HasSpeedChanges'/>
 		</Class>
 		<Class name='Trail'>
 			<Function name='GetArtists'/>

@@ -1339,6 +1339,101 @@ public:
 	 */
 	float GetNextLabelSegmentBeatAtBeat( float fBeat ) const { return GetNextLabelSegmentBeatAtRow( BeatToNoteRow(fBeat) ); }
 	
+	
+	/**
+	 * @brief Retrieve the Speed's percent at the given row.
+	 * @param iNoteRow the row in question.
+	 * @return the percent.
+	 */
+	float GetSpeedPercentAtRow( int iNoteRow );
+	/**
+	 * @brief Retrieve the Speed's percent at the given beat.
+	 * @param fBeat the beat in question.
+	 * @return the percent.
+	 */
+	float GetSpeedPercentAtBeat( float fBeat ) { return GetSpeedPercentAtRow( BeatToNoteRow(fBeat) ); }
+	/**
+	 * @brief Retrieve the Speed's wait at the given row.
+	 * @param iNoteRow the row in question.
+	 * @return the wait.
+	 */
+	float GetSpeedWaitAtRow( int iNoteRow );
+ 	/**
+	 * @brief Retrieve the Speed's wait at the given beat.
+	 * @param fBeat the beat in question.
+	 * @return the wait.
+	 */
+	float GetSpeedWaitAtBeat( float fBeat ) { return GetSpeedWaitAtRow( BeatToNoteRow(fBeat) ); }
+	/**
+	 * @brief Set the row to have the new Speed.
+	 * @param iNoteRow the row to have the new Speed.
+	 * @param fPercent the percent.
+	 * @param fWait the wait.
+	 */
+	void SetSpeedAtRow( int iNoteRow, float fPercent, float fWait );
+	/**
+	 * @brief Set the beat to have the new Speed.
+	 * @param fBeat the beat to have the new Speed.
+	 * @param fPercent the percent.
+	 * @param fWait the wait.
+	 */
+	void SetSpeedAtBeat( float fBeat, float fPercent, float fWait ) { SetSpeedAtRow( BeatToNoteRow(fBeat), fPercent, fWait ); }
+	/**
+	 * @brief Set the row to have the new Speed percent.
+	 * @param iNoteRow the row to have the new Speed percent.
+	 * @param fPercent the percent.
+	 */
+	void SetSpeedPercentAtRow( int iNoteRow, float fPercent );
+	/**
+	 * @brief Set the beat to have the new Speed percent.
+	 * @param fBeat the beat to have the new Speed percent.
+	 * @param fPercent the percent.
+	 */
+	void SetSpeedPercentAtBeat( float fBeat, float fPercent ) { SetSpeedPercentAtRow( BeatToNoteRow(fBeat), fPercent); }
+	/**
+	 * @brief Set the row to have the new Speed wait.
+	 * @param iNoteRow the row to have the new Speed wait.
+	 * @param fWait the wait.
+	 */
+	void SetSpeedWaitAtRow( int iNoteRow, float fWait );
+	/**
+	 * @brief Set the beat to have the new Speed wait.
+	 * @param fBeat the beat to have the new Speed wait.
+	 * @param fWait the wait.
+	 */
+	void SetSpeedWaitAtBeat( float fBeat, float fWait ) { SetSpeedWaitAtRow( BeatToNoteRow(fBeat), fWait); }
+	/**
+	 * @brief Retrieve the SpeedSegment at the specified row.
+	 * @param iNoteRow the row that has a SpeedSegment.
+	 * @return the SpeedSegment in question.
+	 */
+	SpeedSegment& GetSpeedSegmentAtRow( int iNoteRow );
+	/**
+	 * @brief Retrieve the SpeedSegment at the specified beat.
+	 * @param fBeat the beat that has a SpeedSegment.
+	 * @return the SpeedSegment in question.
+	 */
+	SpeedSegment& GetSpeedSegmentAtBeat( float fBeat ) { return GetSpeedSegmentAtRow( BeatToNoteRow(fBeat) ); }
+	/**
+	 * @brief Retrieve the index of the SpeedSegments at the specified row.
+	 * @param iNoteRow the row that has a SpeedSegment.
+	 * @return the SpeedSegment's index in question.
+	 */
+	int GetSpeedSegmentIndexAtRow( int iNoteRow ) const;
+	/**
+	 * @brief Retrieve the index of the SpeedSegments at the specified beat.
+	 * @param fBeat the beat that has a SpeedSegment.
+	 * @return the SpeedSegment's index in question.
+	 */
+	int GetSpeedSegmentIndexAtBeat( float fBeat ) const { return GetSpeedSegmentIndexAtRow( BeatToNoteRow(fBeat) ); }
+	/**
+	 * @brief Add the SpeedSegment to the TimingData.
+	 * @param seg the new SpeedSegment.
+	 */
+	void AddSpeedSegment( const SpeedSegment &seg );
+	
+	
+	
 	void MultiplyBPMInBeatRange( int iStartIndex, int iEndIndex, float fFactor );
 	
 	void NoteRowToMeasureAndBeat( int iNoteRow, int &iMeasureIndexOut, int &iBeatIndexOut, int &iRowsRemainder ) const;
@@ -1381,6 +1476,10 @@ public:
 	 * @return true if there is at least one warp, false otherwise.
 	 */
 	bool HasWarps() const;
+	/**
+	 * @brief View the TimingData to see if a song changes its speed scrolling at any point.
+	 * @return true if there is at least one change, false otherwise. */
+	bool HasSpeedChanges() const;
 	/**
 	 * @brief Compare two sets of timing data to see if they are equal.
 	 * @param other the other TimingData.
