@@ -536,20 +536,31 @@ void InputHandler_DInput::UpdateBuffered( DIDevice &device, const RageTimer &tm 
 								INPUTFILTER->UpdateMouseWheel(l);
 								{
 									up = MOUSE_WHEELUP; down = MOUSE_WHEELDOWN;
+									float fWheelDelta = l;
 									//l = SCALE( int(evtbuf[i].dwData), -WHEEL_DELTA, WHEEL_DELTA, 1.0f, -1.0f );
-									if( int(evtbuf[i].dwData) > 0 )
+									if( l > 0 )
 									{
 										DeviceInput diUp = DeviceInput(dev, up, 1.0f, tm);
-										ButtonPressed( diUp );
 										DeviceInput diDown = DeviceInput(dev, down, 0.0f, tm);
-										ButtonPressed( diDown );
+										while( fWheelDelta >= WHEEL_DELTA )
+										{
+											ButtonPressed( diUp );
+											ButtonPressed( diDown );
+											INPUTFILTER->UpdateMouseWheel(fWheelDelta);
+											fWheelDelta -= WHEEL_DELTA;
+										}
 									}
-									else if( int(evtbuf[i].dwData) < 0 )
+									else if( l < 0 )
 									{
 										DeviceInput diDown = DeviceInput(dev, down, 1.0f, tm);
-										ButtonPressed( diDown );
 										DeviceInput diUp = DeviceInput(dev, up, 0.0f, tm);
-										ButtonPressed( diUp );
+										while( fWheelDelta <= -WHEEL_DELTA )
+										{
+											ButtonPressed( diDown );
+											ButtonPressed( diUp );
+											INPUTFILTER->UpdateMouseWheel(fWheelDelta);
+											fWheelDelta += WHEEL_DELTA;
+										}
 									}
 									else
 									{
