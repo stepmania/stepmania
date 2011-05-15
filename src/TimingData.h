@@ -647,6 +647,107 @@ struct LabelSegment
 	bool operator>=( const LabelSegment &other ) const { return !operator<(other); }
 };
 
+/**
+ * @brief Identifies when the arrow scroll changes.
+ *
+ * SpeedSegments take a Player's scrolling BPM (Step's BPM * speed mod),
+ * and then multiplies it with the percentage value. No matter the player's
+ * speed mod, the ratio will be the same. Unlike forced attacks, these
+ * cannot be turned off at a set time: reset it by setting the precentage
+ * back to 1.
+ *
+ * These were inspired by the Pump It Up series. */
+struct SpeedSegment
+{
+	/** @brief Sets up the SpeedSegment with default values. */
+	SpeedSegment(): m_iStartRow(0), m_fPercent(1), m_fWait(0) {}
+	
+	/**
+	 * @brief Sets up the SpeedSegment with specified values.
+	 * @param i The row this activates.
+	 * @param p The percentage to use. */
+	SpeedSegment(int i, float p): m_iStartRow(0), m_fPercent(p), m_fWait(0) {}
+	
+	/**
+	 * @brief Sets up the SpeedSegment with specified values.
+	 * @param r The beat this activates.
+	 * @param p The percentage to use. */
+	SpeedSegment(float r, float p): m_iStartRow(BeatToNoteRow(r)),
+		m_fPercent(p), m_fWait(0) {}
+	
+	/**
+	 * @brief Sets up the SpeedSegment with specified values.
+	 * @param i The row this activates.
+	 * @param p The percentage to use.
+	 * @param w The number of beats to wait. */
+	SpeedSegment(int i, float p, float w): m_iStartRow(i),
+		m_fPercent(p), m_fWait(w) {}
+	
+	/**
+	 * @brief Sets up the SpeedSegment with specified values.
+	 * @param r The beat this activates.
+	 * @param p The percentage to use.
+	 * @param w The number of beats to wait. */
+	SpeedSegment(float r, float p, float w): m_iStartRow(BeatToNoteRow(r)),
+		m_fPercent(p), m_fWait(w) {}
+	
+	/** @brief The row in which the ComboSegment activates. */
+	int m_iStartRow;
+	/** @brief The percentage to use when multiplying the Player's BPM. */
+	float m_fPercent;
+	/** 
+	 * @brief The number of beats to wait for the change to take place.
+	 *
+	 * A value of 0 means this is immediate. */
+	float m_fWait;
+	
+	/**
+	 * @brief Compares two SpeedSegments to see if they are equal to each other.
+	 * @param other the other SpeedSegment to compare to.
+	 * @return the equality of the two segments.
+	 */
+	bool operator==( const SpeedSegment &other ) const
+	{
+		COMPARE( m_iStartRow );
+		COMPARE( m_fPercent );
+		COMPARE( m_fWait );
+		return true;
+	}
+	/**
+	 * @brief Compares two SpeedSegments to see if they are not equal to each other.
+	 * @param other the other SpeedSegment to compare to.
+	 * @return the inequality of the two segments.
+	 */
+	bool operator!=( const SpeedSegment &other ) const { return !operator==(other); }
+	/**
+	 * @brief Compares two SpeedSegments to see if one is less than the other.
+	 * @param other the other SpeedSegment to compare to.
+	 * @return the truth/falsehood of if the first is less than the second.
+	 */
+	bool operator<( const SpeedSegment &other ) const { return m_iStartRow < other.m_iStartRow; }
+	/**
+	 * @brief Compares two SpeedSegments to see if one is less than or equal to the other.
+	 * @param other the other SpeedSegment to compare to.
+	 * @return the truth/falsehood of if the first is less or equal to than the second.
+	 */
+	bool operator<=( const SpeedSegment &other ) const
+	{
+		return ( operator<(other) || operator==(other) );
+	}
+	/**
+	 * @brief Compares two SpeedSegments to see if one is greater than the other.
+	 * @param other the other SpeedSegment to compare to.
+	 * @return the truth/falsehood of if the first is greater than the second.
+	 */
+	bool operator>( const SpeedSegment &other ) const { return !operator<=(other); }
+	/**
+	 * @brief Compares two SpeedSegments to see if one is greater than or equal to the other.
+	 * @param other the other SpeedSegment to compare to.
+	 * @return the truth/falsehood of if the first is greater than or equal to the second.
+	 */
+	bool operator>=( const SpeedSegment &other ) const { return !operator<(other); }
+};
+
 
 /**
  * @brief Holds data for translating beats<->seconds.
@@ -1305,8 +1406,12 @@ public:
 		COMPARE( m_ComboSegments.size() );
 		for( unsigned i=0; i<m_ComboSegments.size(); i++ )
 			COMPARE( m_ComboSegments[i] );
+		COMPARE( m_LabelSegments.size() );
 		for( unsigned i=0; i<m_LabelSegments.size(); i++ )
 			COMPARE( m_LabelSegments[i] );
+		COMPARE( m_SpeedSegments.size() );
+		for( unsigned i=0; i<m_SpeedSegments.size(); i++ )
+			COMPARE( m_SpeedSegments[i] );
 		COMPARE( m_fBeat0OffsetInSeconds );
 		return true;
 	}
@@ -1363,6 +1468,8 @@ public:
 	 * @brief The collection of LabelSegments.
 	 */
 	vector<LabelSegment>		m_LabelSegments;
+	/** @brief The collection of SpeedSegments. */
+	vector<SpeedSegment>		m_SpeedSegments;
 	/**
 	 * @brief The initial offset of a song.
 	 */
