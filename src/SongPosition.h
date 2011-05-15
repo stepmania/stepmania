@@ -15,7 +15,6 @@ class SongPosition
 	// Arcade - the current stage (one song).
 	// Oni/Endless - a single song in a course.
 	// Let a lot of classes access this info here so they don't have to keep their own copies.
-	// todo: [NUM_PLAYERS] this for split bpm lolol -aj
 	float		m_fMusicSeconds;	// time into the current song, not scaled by music rate
 	float		m_fSongBeat;
 	float		m_fSongBeatNoOffset;
