@@ -680,7 +680,7 @@ bool PlayerOptions::operator==( const PlayerOptions &other ) const
 
 bool PlayerOptions::IsEasierForSongAndSteps( Song* pSong, Steps* pSteps, PlayerNumber pn ) const
 {
-	if( m_fTimeSpacing && pSong->HasSignificantBpmChangesOrStops() )
+	if( m_fTimeSpacing && pSteps->HasSignificantTimingChanges() )
 		return true;
 	const RadarValues &rv = pSteps->GetRadarValues( pn );
 	if( m_bTransforms[TRANSFORM_NOHOLDS] && rv[RadarCategory_Holds]>0 )

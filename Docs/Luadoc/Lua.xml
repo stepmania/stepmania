@@ -1349,6 +1349,7 @@
 			<Function name='GetMeter'/>
 			<Function name='GetRadarValues'/>
 			<Function name='GetStepsType'/>
+			<Function name='HasSignificantTimingChanges'/>
 			<Function name='IsAPlayerEdit'/>
 			<Function name='IsAnEdit'/>
 			<Function name='IsAutogen'/>
