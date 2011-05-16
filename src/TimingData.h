@@ -322,21 +322,21 @@ struct WarpSegment
 	 *
 	 * It is best to override the values as soon as possible.
 	 */
-	WarpSegment() : m_iStartRow(-1), m_fEndBeat(-1) { }
+	WarpSegment() : m_iStartRow(-1), m_fLengthBeats(-1) { }
 	/**
 	 * @brief Create a Warp Segment with the specified starting row and row to warp to.
 	 * @param s the starting row of this segment.
 	 * @param r the number of rows to jump ahead.
 	 */
 	WarpSegment( int s, int r ): m_iStartRow(max(0, (s < r ? s : r))),
-		 m_fEndBeat(max(0, NoteRowToBeat((r > s ? r : s)))) {}
+		 m_fLengthBeats(max(0, NoteRowToBeat((r > s ? r : s)))) {}
 	/**
 	 * @brief Creates a Warp Segment with the specified starting row and beat to warp to.
 	 * @param s the starting row of this segment.
 	 * @param b the number of beats to jump ahead.
 	 */
 	WarpSegment( int s, float b ): m_iStartRow(max(0, s)),
-		m_fEndBeat(max(0, b)) {}
+		m_fLengthBeats(max(0, b)) {}
 	/**
 	 * @brief Create a Warp Segment with the specified starting beat and row to warp to.
 	 * @param s the starting beat in this segment.
@@ -344,7 +344,7 @@ struct WarpSegment
 	 */
 	WarpSegment( float s, int r ):
 		m_iStartRow(max(0, BeatToNoteRow(s))),
-		m_fEndBeat(max(0, NoteRowToBeat(r))) {}
+		m_fLengthBeats(max(0, NoteRowToBeat(r))) {}
 	/**
 	 * @brief Creates a Warp Segment with the specified starting beat and beat to warp to.
 	 * @param s the starting beat of this segment.
@@ -352,7 +352,7 @@ struct WarpSegment
 	 */
 	WarpSegment( float s, float b ):
 		m_iStartRow(max(0, BeatToNoteRow((s < b ? s : b)))),
-		m_fEndBeat(max(0, (b > s ? b : s))) {}
+		m_fLengthBeats(max(0, (b > s ? b : s))) {}
 	/**
 	 * @brief The row in which the WarpSegment activates.
 	 */
@@ -360,7 +360,7 @@ struct WarpSegment
 	/**
 	 * @brief The number of beats to warp ahead by.
 	 */
-	float m_fEndBeat;
+	float m_fLengthBeats;
 	/**
 	 * @brief Compares two WarpSegments to see if they are equal to each other.
 	 * @param other the other WarpSegment to compare to.
@@ -369,7 +369,7 @@ struct WarpSegment
 	bool operator==( const WarpSegment &other ) const
 	{
 		COMPARE( m_iStartRow );
-		COMPARE( m_fEndBeat );
+		COMPARE( m_fLengthBeats );
 		return true;
 	}
 	/**
@@ -386,7 +386,7 @@ struct WarpSegment
 	bool operator<( const WarpSegment &other ) const
 	{ 
 		return m_iStartRow < other.m_iStartRow ||
-		( m_iStartRow == other.m_iStartRow && m_fEndBeat < other.m_fEndBeat );
+		( m_iStartRow == other.m_iStartRow && m_fLengthBeats < other.m_fLengthBeats );
 	}
 	/**
 	 * @brief Compares two WarpSegments to see if one is less than or equal to the other.
@@ -795,21 +795,21 @@ struct FakeSegment
 	 *
 	 * It is best to override the values as soon as possible.
 	 */
-	FakeSegment() : m_iStartRow(-1), m_fEndBeat(-1) { }
+	FakeSegment() : m_iStartRow(-1), m_fLengthBeats(-1) { }
 	/**
 	 * @brief Create a Fake Segment with the specified values.
 	 * @param s the starting row of this segment.
 	 * @param r the number of rows this segment lasts.
 	 */
 	FakeSegment( int s, int r ): m_iStartRow(max(0, (s < r ? s : r))),
-	m_fEndBeat(max(0, NoteRowToBeat((r > s ? r : s)))) {}
+	m_fLengthBeats(max(0, NoteRowToBeat((r > s ? r : s)))) {}
 	/**
 	 * @brief Creates a Fake Segment with the specified values.
 	 * @param s the starting row of this segment.
 	 * @param b the number of beats this segment lasts.
 	 */
 	FakeSegment( int s, float b ): m_iStartRow(max(0, s)),
-	m_fEndBeat(max(0, b)) {}
+	m_fLengthBeats(max(0, b)) {}
 	/**
 	 * @brief Create a Fake Segment with the specified values.
 	 * @param s the starting beat in this segment.
@@ -817,7 +817,7 @@ struct FakeSegment
 	 */
 	FakeSegment( float s, int r ):
 	m_iStartRow(max(0, BeatToNoteRow(s))),
-	m_fEndBeat(max(0, NoteRowToBeat(r))) {}
+	m_fLengthBeats(max(0, NoteRowToBeat(r))) {}
 	/**
 	 * @brief Creates a Fake Segment with the specified values.
 	 * @param s the starting beat of this segment.
@@ -825,7 +825,7 @@ struct FakeSegment
 	 */
 	FakeSegment( float s, float b ):
 	m_iStartRow(max(0, BeatToNoteRow((s < b ? s : b)))),
-	m_fEndBeat(max(0, (b > s ? b : s))) {}
+	m_fLengthBeats(max(0, (b > s ? b : s))) {}
 	/**
 	 * @brief The row in which the FakeSegment activates.
 	 */
@@ -833,7 +833,7 @@ struct FakeSegment
 	/**
 	 * @brief The number of beats the FakeSegment is alive for.
 	 */
-	float m_fEndBeat;
+	float m_fLengthBeats;
 	/**
 	 * @brief Compares two FakeSegments to see if they are equal to each other.
 	 * @param other the other FakeSegment to compare to.
@@ -842,7 +842,7 @@ struct FakeSegment
 	bool operator==( const FakeSegment &other ) const
 	{
 		COMPARE( m_iStartRow );
-		COMPARE( m_fEndBeat );
+		COMPARE( m_fLengthBeats );
 		return true;
 	}
 	/**
@@ -859,7 +859,7 @@ struct FakeSegment
 	bool operator<( const FakeSegment &other ) const
 	{ 
 		return m_iStartRow < other.m_iStartRow ||
-		( m_iStartRow == other.m_iStartRow && m_fEndBeat < other.m_fEndBeat );
+		( m_iStartRow == other.m_iStartRow && m_fLengthBeats < other.m_fLengthBeats );
 	}
 	/**
 	 * @brief Compares two FakeSegments to see if one is less than or equal to the other.
