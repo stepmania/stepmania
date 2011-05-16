@@ -168,7 +168,7 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, const Song &song,
 				LOG->UserLog( "Song file", sPath, "has an invalid tick count: %d.", iTickCount );
 				return false;
 			}
-			out.m_Timing.AddTickcountSegment(TickcountSegment(0, iTickCount));
+			stepsTiming.AddTickcountSegment(TickcountSegment(0, iTickCount));
 		}
 		
 		else if( sValueName=="DIFFICULTY" )
