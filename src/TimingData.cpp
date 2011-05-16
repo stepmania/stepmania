@@ -176,7 +176,7 @@ void TimingData::SetWarpAtRow( int iRow, float fNew )
 	for( i=0; i<m_WarpSegments.size(); i++ )
 		if( m_WarpSegments[i].m_iStartRow == iRow )
 			break;
-	bool valid = iRow > 0 && NoteRowToBeat(iRow) < fNew;
+	bool valid = iRow > 0 && fNew > 0;
 	if( i == m_WarpSegments.size() )
 	{
 		if( valid )
@@ -513,7 +513,7 @@ bool TimingData::IsWarpAtRow( int iNoteRow ) const
 	
 	int i = GetWarpSegmentIndexAtRow( iNoteRow );
 	const WarpSegment& s = m_WarpSegments[i];
-	if( s.m_iStartRow <= iNoteRow && iNoteRow < BeatToNoteRow(s.m_fEndBeat) )
+	if( s.m_iStartRow <= iNoteRow && iNoteRow < (s.m_iStartRow + BeatToNoteRow(s.m_fEndBeat) ) )
 	{
 		if( m_StopSegments.empty() )
 		{
@@ -535,7 +535,7 @@ bool TimingData::IsFakeAtRow( int iNoteRow ) const
 	
 	int i = GetFakeSegmentIndexAtRow( iNoteRow );
 	const FakeSegment& s = m_FakeSegments[i];
-	if( s.m_iStartRow <= iNoteRow && iNoteRow < BeatToNoteRow(s.m_fEndBeat) )
+	if( s.m_iStartRow <= iNoteRow && iNoteRow < ( s.m_iStartRow + BeatToNoteRow(s.m_fEndBeat) ) )
 	{
 		return true;
 	}
@@ -829,15 +829,18 @@ void TimingData::GetBeatAndBPSFromElapsedTimeNoOffset( float fElapsedTime, float
 			}
 			break;
 		case FOUND_WARP:
-			bIsWarping = true;
-			if( itWS->m_fEndBeat > fWarpDestination )
 			{
-				fWarpDestination = itWS->m_fEndBeat;
+				bIsWarping = true;
+				float fWarpSum = itWS->m_fEndBeat + NoteRowToBeat( itWS->m_iStartRow );
+				if( fWarpSum > fWarpDestination )
+				{
+					fWarpDestination = itWS->m_fEndBeat;
+				}
+				iWarpBeginOut = iEventRow;
+				fWarpDestinationOut = fWarpDestination;
+				itWS ++;
+				break;
 			}
-			iWarpBeginOut = iEventRow;
-			fWarpDestinationOut = fWarpDestination;
-			itWS ++;
-			break;
 		}
 		iLastRow = iEventRow;
 	}
@@ -921,13 +924,16 @@ float TimingData::GetElapsedTimeFromBeatNoOffset( float fBeat ) const
 		case FOUND_MARKER:
 			return fLastTime;	
 		case FOUND_WARP:
-			bIsWarping = true;
-			if( itWS->m_fEndBeat > fWarpDestination )
 			{
-				fWarpDestination = itWS->m_fEndBeat;
+				bIsWarping = true;
+				float fWarpSum = itWS->m_fEndBeat + NoteRowToBeat( itWS->m_iStartRow );
+				if( fWarpSum > fWarpDestination )
+				{
+					fWarpDestination = itWS->m_fEndBeat;
+				}
+				itWS ++;
+				break;
 			}
-			itWS ++;
-			break;
 		}
 		iLastRow = iEventRow;
 	}
@@ -967,7 +973,7 @@ void TimingData::ScaleRegion( float fScale, int iStartIndex, int iEndIndex, bool
 	for( unsigned i = 0; i < m_WarpSegments.size(); i++ )
 	{
 		const int iSegStartRow = m_WarpSegments[i].m_iStartRow;
-		const int iSegEndRow = BeatToNoteRow( m_WarpSegments[i].m_fEndBeat );
+		const int iSegEndRow = iSegStartRow + BeatToNoteRow( m_WarpSegments[i].m_fEndBeat );
 		if( iSegEndRow >= iStartIndex )
 		{
 			if( iSegEndRow > iEndIndex )
@@ -1030,7 +1036,7 @@ void TimingData::ScaleRegion( float fScale, int iStartIndex, int iEndIndex, bool
 	for( unsigned i = 0; i < m_FakeSegments.size(); i++ )
 	{
 		const int iSegStartRow = m_FakeSegments[i].m_iStartRow;
-		const int iSegEndRow = BeatToNoteRow( m_FakeSegments[i].m_fEndBeat );
+		const int iSegEndRow = iSegStartRow + BeatToNoteRow( m_FakeSegments[i].m_fEndBeat );
 		if( iSegEndRow >= iStartIndex )
 		{
 			if( iSegEndRow > iEndIndex )
@@ -1093,8 +1099,6 @@ void TimingData::InsertRows( int iStartRow, int iRowsToAdd )
 	for( unsigned i = 0; i < m_WarpSegments.size(); i++ )
 	{
 		WarpSegment &warp = m_WarpSegments[i];
-		if( BeatToNoteRow(warp.m_fEndBeat) >= iStartRow )
-			warp.m_fEndBeat += NoteRowToBeat(iRowsToAdd);
 		if( warp.m_iStartRow < iStartRow )
 			continue;
 		warp.m_iStartRow += iRowsToAdd;
@@ -1142,8 +1146,6 @@ void TimingData::InsertRows( int iStartRow, int iRowsToAdd )
 	for( unsigned i = 0; i < m_FakeSegments.size(); i++ )
 	{
 		FakeSegment &fake = m_FakeSegments[i];
-		if( BeatToNoteRow(fake.m_fEndBeat) >= iStartRow )
-			fake.m_fEndBeat += NoteRowToBeat(iRowsToAdd);
 		if( fake.m_iStartRow < iStartRow )
 			continue;
 		fake.m_iStartRow += iRowsToAdd;
@@ -1209,9 +1211,6 @@ void TimingData::DeleteRows( int iStartRow, int iRowsToDelete )
 	for( unsigned i = 0; i < m_WarpSegments.size(); i++ )
 	{
 		WarpSegment &warp = m_WarpSegments[i];
-		
-		if( BeatToNoteRow(warp.m_fEndBeat) >= iStartRow )
-			warp.m_fEndBeat = max( NoteRowToBeat(iStartRow), warp.m_fEndBeat - NoteRowToBeat(iRowsToDelete) );
 		
 		if( warp.m_iStartRow < iStartRow )
 			continue;
@@ -1325,9 +1324,6 @@ void TimingData::DeleteRows( int iStartRow, int iRowsToDelete )
 	for( unsigned i = 0; i < m_FakeSegments.size(); i++ )
 	{
 		FakeSegment &fake = m_FakeSegments[i];
-		
-		if( BeatToNoteRow(fake.m_fEndBeat) >= iStartRow )
-			fake.m_fEndBeat = max( NoteRowToBeat(iStartRow), fake.m_fEndBeat - NoteRowToBeat(iRowsToDelete) );
 		
 		if( fake.m_iStartRow < iStartRow )
 			continue;
