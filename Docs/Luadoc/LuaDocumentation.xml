@@ -1626,12 +1626,11 @@
 		<!-- XXX: What is the edit course entry index? -->
 	</Function>
 	<Function name='GetEditLocalProfile' return='Profile' arguments=''>
-		<!-- XXX: What is the EditLocalProfile? -->
-		Return the Edit Local <Link class='Profile' /> or <code>nil</code> if
-		it does not exist.
+		Return the Edit Local <Link class='Profile' /> (during Profile editing)
+		or <code>nil</code> if it does not exist.
 	</Function>
 	<Function name='GetEditLocalProfileID' return='string' arguments=''>
-		<!-- XXX: What is the EditLocalProfileID? -->
+		Returns the ID of the Edit Local <Link class='Profile' /> (during Profile editing).
 	</Function>
 	<Function name='GetEditSourceSteps' return='Steps' arguments=''>
 		Return the source <Link class='Steps' /> for the editor or <code>nil</code>
