@@ -271,17 +271,14 @@ void TimingData::SetSpeedAtRow( int iRow, float fPercent, float fWait, unsigned 
 	
 	if ( i == m_SpeedSegments.size() || m_SpeedSegments[i].m_iStartRow != iRow )
 	{
-		if( i == 0 || 
-		   ( m_SpeedSegments[i-1].m_fPercent != fPercent
-		    || m_SpeedSegments[i-1].m_fWait != fWait 
-		    || m_SpeedSegments[i-1].m_usMode != usMode ) )
+		// the core mod itself matters the most for comparisons.
+		if( i == 0 || m_SpeedSegments[i-1].m_fPercent != fPercent )
 			AddSpeedSegment( SpeedSegment(iRow, fPercent, fWait, usMode) );
 	}
 	else
 	{
-		if( i > 0  && m_SpeedSegments[i-1].m_fPercent == fPercent
-		   && m_SpeedSegments[i-1].m_fWait == fWait
-		   && m_SpeedSegments[i-1].m_usMode == usMode )
+		// The others aren't compared: only the mod itself matters.
+		if( i > 0  && m_SpeedSegments[i-1].m_fPercent == fPercent )
 			m_SpeedSegments.erase( m_SpeedSegments.begin()+i,
 					       m_SpeedSegments.begin()+i+1 );
 		else
