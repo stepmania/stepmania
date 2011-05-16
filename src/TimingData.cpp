@@ -296,7 +296,7 @@ void TimingData::SetFakeAtRow( int iRow, float fNew )
 	for( i=0; i<m_FakeSegments.size(); i++ )
 		if( m_FakeSegments[i].m_iStartRow == iRow )
 			break;
-	bool valid = iRow > 0 && NoteRowToBeat(iRow) < fNew;
+	bool valid = iRow > 0 && fNew > 0;
 	if( i == m_FakeSegments.size() )
 	{
 		if( valid )
