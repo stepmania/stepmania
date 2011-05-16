@@ -2763,7 +2763,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	else if ( SM == SM_BackFromWarpChange )
 	{
 		float fWarp = StringToFloat( ScreenTextEntry::s_sLastAnswer );
-		if( fWarp > 0 )
+		if( fWarp >= 0 ) // allow 0 to kill a warp.
 		{
 			GetAppropriateTiming().SetWarpAtBeat( GetBeat(), fWarp );
 			SetDirty( true );
