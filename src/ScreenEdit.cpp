@@ -77,8 +77,7 @@ AutoScreenMessage( SM_BackFromDifficultyMeterChange );
 AutoScreenMessage( SM_BackFromBPMChange );
 AutoScreenMessage( SM_BackFromStopChange );
 AutoScreenMessage( SM_BackFromDelayChange );
-AutoScreenMessage( SM_BackFromTimeSignatureNumeratorChange );
-AutoScreenMessage( SM_BackFromTimeSignatureDenominatorChange );
+AutoScreenMessage( SM_BackFromTimeSignatureChange );
 AutoScreenMessage( SM_BackFromTickcountChange );
 AutoScreenMessage( SM_BackFromComboChange );
 AutoScreenMessage( SM_BackFromLabelChange );
@@ -574,8 +573,7 @@ static MenuDef g_TimingDataInformation(
         MenuRowDef( ScreenEdit::bpm,				"Edit BPM change",		true, EditMode_Full, true, true, 0, NULL ),
         MenuRowDef( ScreenEdit::stop,				"Edit stop",			true, EditMode_Full, true, true, 0, NULL ),
         MenuRowDef( ScreenEdit::delay,				"Edit delay",			true, EditMode_Full, true, true, 0, NULL ),
-        MenuRowDef( ScreenEdit::time_signature_numerator,	"Edit time signature (top)",	true, EditMode_Full, true, true, 0, NULL ),
-        MenuRowDef( ScreenEdit::time_signature_denominator,	"Edit time signature (bottom)",	true, EditMode_Full, true, true, 0, NULL ),
+        MenuRowDef( ScreenEdit::time_signature,		"Edit time signature",	true, EditMode_Full, true, true, 0, NULL ),
         MenuRowDef( ScreenEdit::label,				"Edit label",			true, EditMode_Full, true, true, 0, NULL ),
         MenuRowDef( ScreenEdit::tickcount,			"Edit tickcount",		true, EditMode_Full, true, true, 0, NULL ),
         MenuRowDef( ScreenEdit::combo,				"Edit combo",			true, EditMode_Full, true, true, 0, NULL ),
@@ -2715,20 +2713,12 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 			GetAppropriateTiming().SetStopAtBeat( GetBeat(), fDelay, true );
 		SetDirty( true );
 	}
-	else if( SM == SM_BackFromTimeSignatureNumeratorChange )
+	else if( SM == SM_BackFromTimeSignatureChange )
 	{
-		int iNum = StringToInt( ScreenTextEntry::s_sLastAnswer );
-		if( iNum > 0 )
+		int iNum, iDen;
+		if( sscanf( " %d / %d ", ScreenTextEntry::s_sLastAnswer.c_str(), &iNum, &iDen ) == 2 )
 		{
 			GetAppropriateTiming().SetTimeSignatureNumeratorAtBeat( GetBeat(), iNum );
-		}
-		SetDirty( true );
-	}
-	else if ( SM == SM_BackFromTimeSignatureDenominatorChange )
-	{
-		int iDen = StringToInt( ScreenTextEntry::s_sLastAnswer );
-		if( iDen > 0)
-		{
 			GetAppropriateTiming().SetTimeSignatureDenominatorAtBeat( GetBeat(), iDen );
 		}
 		SetDirty( true );
@@ -3227,8 +3217,7 @@ void ScreenEdit::DisplayTimingMenu()
 	g_TimingDataInformation.rows[bpm].SetOneUnthemedChoice( ssprintf("%.5f", pTime.GetBPMAtBeat( fBeat ) ) );
 	g_TimingDataInformation.rows[stop].SetOneUnthemedChoice( ssprintf("%.5f", pTime.GetStopAtBeat( fBeat ) ) ) ;
 	g_TimingDataInformation.rows[delay].SetOneUnthemedChoice( ssprintf("%.5f", pTime.GetDelayAtBeat( fBeat ) ) );
-	g_TimingDataInformation.rows[time_signature_numerator].SetOneUnthemedChoice( ssprintf("%d", pTime.GetTimeSignatureNumeratorAtBeat( fBeat ) ) );
-	g_TimingDataInformation.rows[time_signature_denominator].SetOneUnthemedChoice( ssprintf("%d", pTime.GetTimeSignatureDenominatorAtBeat( fBeat ) ) );
+	g_TimingDataInformation.rows[time_signature].SetOneUnthemedChoice( ssprintf("%d / %d", pTime.GetTimeSignatureNumeratorAtBeat( fBeat ), pTime.GetTimeSignatureDenominatorAtBeat( fBeat ) ) );
 	g_TimingDataInformation.rows[label].SetOneUnthemedChoice( pTime.GetLabelAtBeat( fBeat ).c_str() );
 	g_TimingDataInformation.rows[tickcount].SetOneUnthemedChoice( ssprintf("%d", pTime.GetTickcountAtBeat( fBeat ) ) );
 	g_TimingDataInformation.rows[combo].SetOneUnthemedChoice( ssprintf("%d", pTime.GetComboAtBeat( fBeat ) ) );
@@ -3920,8 +3909,7 @@ static LocalizedString ENTER_BEAT_0_OFFSET			( "ScreenEdit", "Enter the offset f
 static LocalizedString ENTER_BPM_VALUE				( "ScreenEdit", "Enter a new BPM value." );
 static LocalizedString ENTER_STOP_VALUE				( "ScreenEdit", "Enter a new Stop value." );
 static LocalizedString ENTER_DELAY_VALUE			( "ScreenEdit", "Enter a new Delay value." );
-static LocalizedString ENTER_TIME_SIGNATURE_NUMERATOR_VALUE	( "ScreenEdit", "Enter a new Time Signature numerator value." );
-static LocalizedString ENTER_TIME_SIGNATURE_DENOMINATOR_VALUE	( "ScreenEdit", "Enter a new Time Signature denominator value." );
+static LocalizedString ENTER_TIME_SIGNATURE_VALUE	( "ScreenEdit", "Enter a new Time Signature." );
 static LocalizedString ENTER_TICKCOUNT_VALUE			( "ScreenEdit", "Enter a new Tickcount value." );
 static LocalizedString ENTER_COMBO_VALUE			( "ScreenEdit", "Enter a new Combo value." );
 static LocalizedString ENTER_LABEL_VALUE			( "ScreenEdit", "Enter a new Label value." );
@@ -3965,20 +3953,12 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 			10
 		);
 		break;
-	case time_signature_numerator:
+	case time_signature:
 		ScreenTextEntry::TextEntry(
-			SM_BackFromTimeSignatureNumeratorChange,
-			ENTER_TIME_SIGNATURE_NUMERATOR_VALUE,
-			ssprintf( "%d", GetAppropriateTiming().GetTimeSignatureSegmentAtBeat( GetBeat() ).m_iNumerator ),
-			3
-			);
-		break;
-	case time_signature_denominator:
-		ScreenTextEntry::TextEntry(
-			SM_BackFromTimeSignatureDenominatorChange,
-			ENTER_TIME_SIGNATURE_DENOMINATOR_VALUE,
-			ssprintf( "%d", GetAppropriateTiming().GetTimeSignatureSegmentAtBeat( GetBeat() ).m_iDenominator ),
-			3
+			SM_BackFromTimeSignatureChange,
+			ENTER_TIME_SIGNATURE_VALUE,
+			ssprintf( "%d/%d", GetAppropriateTiming().GetTimeSignatureSegmentAtBeat( GetBeat() ).m_iNumerator, GetAppropriateTiming().GetTimeSignatureSegmentAtBeat( GetBeat() ).m_iDenominator ),
+			8
 			);
 		break;
 	case tickcount:
