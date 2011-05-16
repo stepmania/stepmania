@@ -6,7 +6,7 @@ local function Beat(self)
 	local part = beat%1
 	part = clamp(part,0,0.5)
 	local eff = scale(part,0,0.5,1,0)
-	if (GAMESTATE:GetSongDelay() or false) and part == 0 then eff = 0 end
+	if (GAMESTATE:GetSongPosition:GetDelay() or false) and part == 0 then eff = 0 end
 	if beat < 0 then
 		eff = 0
 	end
