@@ -8,6 +8,14 @@ ________________________________________________________________________________
 StepMania 5.0 $NEXT | 20110xyy
 --------------------------------------------------------------------------------
 
+2011/05/16
+----------
+* Added #FAKES to the SSC format. Similar to the fake arrows, these blocks
+  prevent all judgments within the range. [Wolfman2000]
+* Changed the syntax of #WARPS slightly. Now the second value is the relative
+  distance that is skipped, not the absolute value when you start hitting
+  arrows again. [Wolfman2000]
+
 2011/05/15
 ----------
 * Added #SPEEDS to the SSC format. This multiplies your scrolling speed during
