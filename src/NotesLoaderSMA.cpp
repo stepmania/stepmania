@@ -395,7 +395,7 @@ void SMALoader::LoadFromSMATokens(
 				  Steps &out
 )
 {
-	SMLoader::LoadFromSMATokens( sStepsType, sDescription,
+	SMLoader::LoadFromSMTokens( sStepsType, sDescription,
 				    sDifficulty, sMeter, sRadarValues,
 				    sNoteData, out );
 }
