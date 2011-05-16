@@ -2718,8 +2718,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		int iNum, iDen;
 		if( sscanf( ScreenTextEntry::s_sLastAnswer.c_str(), " %d / %d ", &iNum, &iDen ) == 2 )
 		{
-			GetAppropriateTiming().SetTimeSignatureNumeratorAtBeat( GetBeat(), iNum );
-			GetAppropriateTiming().SetTimeSignatureDenominatorAtBeat( GetBeat(), iDen );
+			GetAppropriateTiming().SetTimeSignatureAtBeat( GetBeat(), iNum, iDen );
 		}
 		SetDirty( true );
 	}
@@ -4028,6 +4027,7 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 			        ssprintf("%.5f", GetAppropriateTiming().GetFakeAtBeat( GetBeat() ) ),
 				10
 			);
+			break;
 		}
 	case erase_step_timing:
 		ScreenPrompt::Prompt( SM_DoEraseStepTiming, CONFIRM_TIMING_ERASE , PROMPT_YES_NO, ANSWER_NO );
