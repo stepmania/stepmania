@@ -451,6 +451,12 @@ public:
 		return 1;
 	}
 
+	static int GetTimingData( T* p, lua_State *L )
+	{
+		p->m_SongTiming.PushSelf(L);
+		return 1;
+	}
+
 	static int GetHash( T* p, lua_State *L ) { lua_pushnumber( L, p->GetHash() ); return 1; }
 
 	// untested
@@ -461,6 +467,7 @@ public:
 		lua_pushstring( L, out );
 		return 1;
 	}
+	
 
 	LunaSteps()
 	{
@@ -473,6 +480,7 @@ public:
 		ADD_METHOD( GetMeter );
 		ADD_METHOD( HasSignificantTimingChanges );
 		ADD_METHOD( GetRadarValues );
+		ADD_METHOD( GetTimingData );
 		//ADD_METHOD( GetSMNoteData );
 		ADD_METHOD( GetStepsType );
 		ADD_METHOD( IsAnEdit );
