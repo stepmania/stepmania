@@ -508,7 +508,7 @@ struct ComboSegment
 	 * @param t the amount the combo increases on a succesful hit.
 	 */
 	ComboSegment( int s, int t ): m_iStartRow(max(0, s)),
-		m_iCombo(max(1,t)) {}
+		m_iCombo(max(0,t)) {}
 	/**
 	 * @brief The row in which the ComboSegment activates.
 	 */
