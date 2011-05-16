@@ -1530,7 +1530,7 @@ int Player::GetClosestNoteDirectional( int col, int iStartRow, int iEndRow, bool
 		// Is this the row we want?
 		do {
 			const TapNote &tn = begin->second;
-			if( m_Timing->IsWarpAtRow( begin->first ) )
+			if( m_Timing->IsWarpAtRow( begin->first ) || m_Timing->IsFakeAtRow( begin->first ) )
 				break;
 			if( tn.type == TapNote::empty )
 				break;
@@ -1581,7 +1581,7 @@ int Player::GetClosestNonEmptyRowDirectional( int iStartRow, int iEndRow, bool b
 				++iter;
 				continue;
 			}
-			if( m_Timing->IsWarpAtRow( iter.Row() ) )
+			if( m_Timing->IsWarpAtRow( iter.Row() ) || m_Timing->IsFakeAtRow( iter.Row() ) )
 			{
 				++iter;
 				continue;
@@ -2100,7 +2100,7 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 				// Stepped too close to mine?
 				if( !bRelease && ( REQUIRE_STEP_ON_MINES == !bHeld ) && 
 				   fSecondsFromExact <= GetWindowSeconds(TW_Mine) &&
-				   !m_Timing->IsWarpAtRow(iSongRow) )
+				   !m_Timing->IsWarpAtRow(iSongRow) && !m_Timing->IsFakeAtRow(iSongRow))
 					score = TNS_HitMine;
 				break;
 
@@ -2597,8 +2597,8 @@ void Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 		if( !NeedsTapJudging(tn) )
 			continue;
 
-		// Ignore all notes that are skipped via WARPS.
-		if( m_Timing->IsWarpAtRow( iter.Row() ) )
+		// Ignore all notes in WarpSegments or FakeSegments.
+		if( m_Timing->IsWarpAtRow( iter.Row() ) || m_Timing->IsFakeAtRow( iter.Row() ) )
 			continue;
 
 		if( tn.type == TapNote::mine )
@@ -2632,8 +2632,8 @@ void Player::UpdateJudgedRows()
 		{
 			int iRow = iter.Row();
 
-			// If row is within a warp section, ignore it. -aj
-			if( m_Timing->IsWarpAtRow(iRow) )
+			// Do not judge arrows in WarpSegments or FakeSegments
+			if( m_Timing->IsWarpAtRow(iRow) || m_Timing->IsFakeAtRow(iRow) )
 				continue;
 
 			if( iLastSeenRow != iRow )
@@ -2967,8 +2967,8 @@ void Player::HandleTapRowScore( unsigned row )
 	bNoCheating = false;
 #endif
 
-	// Warp hackery. -aj
-	if( m_Timing->IsWarpAtRow( row ) )
+	// Do not score rows in WarpSegments or FakeSegments
+	if( m_Timing->IsWarpAtRow( row ) || m_Timing->IsFakeAtRow( row ) )
 		return;
 
 	if( GAMESTATE->m_bDemonstrationOrJukebox )
@@ -3071,8 +3071,8 @@ void Player::HandleHoldCheckpoint( int iRow, int iNumHoldsHeldThisRow, int iNumH
 	bNoCheating = false;
 #endif
 
-	// More warp hackery. -aj
-	if( m_Timing->IsWarpAtRow( iRow ) )
+	// WarpSegments and FakeSegments aren't judged in any way.
+	if( m_Timing->IsWarpAtRow( iRow ) || m_Timing->IsFakeAtRow( iRow ) )
 		return;
 
 	// don't accumulate combo if AutoPlay is on.
