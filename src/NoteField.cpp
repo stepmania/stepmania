@@ -879,7 +879,7 @@ void NoteField::DrawPrimitives()
 			{
 				float fBeat = NoteRowToBeat(seg->m_iStartRow);
 				if( IS_ON_SCREEN(fBeat) )
-					DrawWarpText( fBeat, seg->m_fEndBeat );
+					DrawWarpText( fBeat, seg->m_fLengthBeats );
 			}
 		}
 

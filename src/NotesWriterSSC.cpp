@@ -112,7 +112,7 @@ static void GetTimingTags( vector<RString> &lines, TimingData timing, bool bIsSo
 	{
 		w.Init( "WARPS" );
 		FOREACH_CONST( WarpSegment, timing.m_WarpSegments, ws )
-			w.Write( ws->m_iStartRow, ws->m_fEndBeat );
+			w.Write( ws->m_iStartRow, ws->m_fLengthBeats );
 		w.Finish();
 	}
 	
@@ -143,7 +143,7 @@ static void GetTimingTags( vector<RString> &lines, TimingData timing, bool bIsSo
 		
 		w.Init( "FAKES" );
 		FOREACH_CONST( FakeSegment, timing.m_FakeSegments, fs )
-			w.Write( fs->m_iStartRow, fs->m_fEndBeat );
+			w.Write( fs->m_iStartRow, fs->m_fLengthBeats );
 		w.Finish();
 	}
 	
