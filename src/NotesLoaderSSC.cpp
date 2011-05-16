@@ -138,7 +138,7 @@ void SSCLoader::ProcessSpeeds( TimingData &out, const RString sParam )
 		
 		if( vs2[0] == 0 ) // First one always seems to have 2.
 		{
-			vs2.push_back(0);
+			vs2.push_back("0");
 		}
 		
 		if( vs2.size() < 3 )
