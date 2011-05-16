@@ -46,7 +46,7 @@ bool SSCLoader::LoadFromDir( const RString &sPath, Song &out )
 	return LoadFromSSCFile( sPath + aFileNames[0], out );
 }
 
-void SSCLoader::ProcessWarps( TimingData &out, const RString sParam )
+void SSCLoader::ProcessWarps( TimingData &out, const RString sParam, const float fVersion )
 {
 	vector<RString> arrayWarpExpressions;
 	split( sParam, ",", arrayWarpExpressions );
@@ -65,8 +65,8 @@ void SSCLoader::ProcessWarps( TimingData &out, const RString sParam )
 		
 		const float fBeat = StringToFloat( arrayWarpValues[0] );
 		const float fNewBeat = StringToFloat( arrayWarpValues[1] );
-		
-		if(fNewBeat > fBeat)
+		// Early versions were absolute in beats. They should be relative.
+		if( ( fVersion < VERSION_SPLIT_TIMING && fNewBeat > fBeat ) || fNewBeat > 0 )
 			out.AddWarpSegment( WarpSegment(fBeat, fNewBeat) );
 		else
 		{
@@ -169,6 +169,35 @@ void SSCLoader::ProcessSpeeds( TimingData &out, const RString sParam )
 		}
 		
 		out.AddSpeedSegment( seg );
+	}
+}
+
+void SSCLoader::ProcessFakes( TimingData &out, const RString sParam )
+{
+	vector<RString> arrayFakeExpressions;
+	split( sParam, ",", arrayFakeExpressions );
+	
+	for( unsigned b=0; b<arrayFakeExpressions.size(); b++ )
+	{
+		vector<RString> arrayFakeValues;
+		split( arrayFakeExpressions[b], "=", arrayFakeValues );
+		// XXX: Hard to tell which file caused this.
+		if( arrayFakeValues.size() != 2 )
+		{
+			LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid #FAKES value \"%s\" (must have exactly one '='), ignored.",
+				     arrayFakeExpressions[b].c_str() );
+			continue;
+		}
+		
+		const float fBeat = StringToFloat( arrayFakeValues[0] );
+		const float fNewBeat = StringToFloat( arrayFakeValues[1] );
+		
+		if(fNewBeat > 0)
+			out.AddFakeSegment( FakeSegment(fBeat, fNewBeat) );
+		else
+		{
+			LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid Fake at beat %f, BPM %f.", fBeat, fNewBeat );
+		}
 	}
 }
 
@@ -393,9 +422,9 @@ bool SSCLoader::LoadFromSSCFile( const RString &sPath, Song &out, bool bFromCach
 					SMLoader::ProcessBPMs(out.m_SongTiming, sParams[1]);
 				}
 				
-				else if( sValueName=="WARPS" )
+				else if( sValueName=="WARPS" ) // Older versions allowed em here.
 				{
-					ProcessWarps( out.m_SongTiming, sParams[1] );
+					ProcessWarps( out.m_SongTiming, sParams[1], out.m_fVersion );
 				}
 				
 				else if( sValueName=="LABELS" )
@@ -560,12 +589,17 @@ bool SSCLoader::LoadFromSSCFile( const RString &sPath, Song &out, bool bFromCach
 				
 				else if( sValueName=="WARPS" )
 				{
-					ProcessWarps(stepsTiming, sParams[1]);
+					ProcessWarps(stepsTiming, sParams[1], out.m_fVersion);
 				}
 				
 				else if( sValueName=="SPEEDS" )
 				{
 					ProcessSpeeds( stepsTiming, sParams[1] );
+				}
+				
+				else if( sValueName=="FAKES" )
+				{
+					ProcessFakes( stepsTiming, sParams[1] );
 				}
 				
 				else if( sValueName=="LABELS" )
@@ -675,7 +709,12 @@ bool SSCLoader::LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePat
 		sValueName.MakeUpper();
 
 		// handle the data
-		if( sValueName=="SONG" )
+		if( sValueName=="VERSION" )
+		{
+			pSong->m_fVersion = StringToFloat( sParams[1] );
+		}
+		
+		else if( sValueName=="SONG" )
 		{
 			if( pSong )
 			{
@@ -795,7 +834,19 @@ bool SSCLoader::LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePat
 		
 		else if( sValueName=="WARPS" )
 		{
-			ProcessWarps(stepsTiming, sParams[1]);
+			ProcessWarps(stepsTiming, sParams[1], pSong->m_fVersion);
+			bSSCFormat = true;
+		}
+		
+		else if( sValueName=="SPEEDS" )
+		{
+			ProcessSpeeds( stepsTiming, sParams[1] );
+			bSSCFormat = true;
+		}
+		
+		else if( sValueName=="FAKES" )
+		{
+			ProcessFakes( stepsTiming, sParams[1] );
 			bSSCFormat = true;
 		}
 		

@@ -140,6 +140,11 @@ static void GetTimingTags( vector<RString> &lines, TimingData timing, bool bIsSo
 		FOREACH_CONST( SpeedSegment, timing.m_SpeedSegments, ss )
 			w.Write( ss->m_iStartRow, ss->m_fPercent, ss->m_fWait, ss->m_usMode );
 		w.Finish();
+		
+		w.Init( "FAKES" );
+		FOREACH_CONST( FakeSegment, timing.m_FakeSegments, fs )
+			w.Write( fs->m_iStartRow, fs->m_fEndBeat );
+		w.Finish();
 	}
 	
 	w.Init( "LABELS" );
@@ -312,7 +317,8 @@ static RString GetSSCNoteData( const Song &song, const Steps &in, bool bSavingCa
 
 	GetTimingTags( lines, in.m_Timing );
 	
-	lines.push_back( "#ATTACKS:;" ); // not sure of how to handle this yet.
+	// For now, attacks are NOT in use for the step.
+	lines.push_back( "#ATTACKS:;" );
 	lines.push_back( ssprintf( "#OFFSET:%.6f;", in.m_Timing.m_fBeat0OffsetInSeconds ) );
 	
 	RString sNoteData;

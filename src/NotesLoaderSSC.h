@@ -77,10 +77,11 @@ namespace SSCLoader
 	void TidyUpData( Song &song, bool bFromCache );
 	
 	
-	void ProcessWarps( TimingData &, const RString );
+	void ProcessWarps( TimingData &, const RString, const float );
 	void ProcessLabels( TimingData &, const RString );
 	void ProcessCombos( TimingData &, const RString );
 	void ProcessSpeeds( TimingData &, const RString );
+	void ProcessFakes( TimingData &, const RString );
 }
 #endif
 /**
