@@ -682,14 +682,16 @@ bool KSFLoader::LoadFromDir( const RString &sDir, Song &out )
 
 	bool bKIUCompliant = false;
 	/* With Split Timing, there has to be a backup Song Timing in case
-	 * anything goes wrong. Use the first file found to determine said
-	 * timing, while also establishing whether this file respects the
-	 * Kick It Up syntax. */
-	if( !LoadGlobalData(out.GetSongDir() + arrayKSFFileNames[0], out, bKIUCompliant) )
+	 * anything goes wrong. As these files are kept in alphabetical
+	 * order (hopefully), it is best to use the LAST file for timing 
+	 * purposes, for that is the "normal", or easiest difficulty.
+	 * Usually. */
+	unsigned files = arrayKSFFileNames.size();
+	if( !LoadGlobalData(out.GetSongDir() + arrayKSFFileNames[files - 1], out, bKIUCompliant) )
 		return false;
 
 	// load the Steps from the rest of the KSF files
-	for( unsigned i=0; i<arrayKSFFileNames.size(); i++ ) 
+	for( unsigned i=0; i<files; i++ ) 
 	{
 		Steps* pNewNotes = out.CreateSteps();
 		if( !LoadFromKSFFile(out.GetSongDir() + arrayKSFFileNames[i], *pNewNotes, out, bKIUCompliant) )
