@@ -86,6 +86,7 @@ AutoScreenMessage( SM_BackFromWarpChange );
 AutoScreenMessage( SM_BackFromSpeedPercentChange );
 AutoScreenMessage( SM_BackFromSpeedWaitChange );
 AutoScreenMessage( SM_BackFromSpeedModeChange );
+AutoScreenMessage( SM_BackFromFakeChange );
 AutoScreenMessage( SM_DoEraseStepTiming );
 AutoScreenMessage( SM_DoSaveAndExit );
 AutoScreenMessage( SM_DoExit );
@@ -582,6 +583,7 @@ static MenuDef g_TimingDataInformation(
         MenuRowDef( ScreenEdit::speed_percent,			"Edit speed (percent)",		true, EditMode_Full, true, true, 0, NULL ),
         MenuRowDef( ScreenEdit::speed_wait,			"Edit speed (wait)",		true, EditMode_Full, true, true, 0, NULL ),
         MenuRowDef( ScreenEdit::speed_mode,			"Edit speed (mode)",		true, EditMode_Full, true, true, 0, "Beats", "Seconds" ),
+        MenuRowDef( ScreenEdit::fake,				"Edit fake",			true, EditMode_Full, true, true, 0, NULL ),
         MenuRowDef( ScreenEdit::erase_step_timing,		"Erase step timing",		true, EditMode_Full, true, true, 0, NULL )
 );
 
@@ -2797,6 +2799,15 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		}
 		SetDirty( true );
 	}
+	else if ( SM == SM_BackFromFakeChange )
+	{
+		float fFake = StringToFloat( ScreenTextEntry::s_sLastAnswer );
+		if( fFake >= 0 ) // allow 0 to kill a warp.
+		{
+			GetAppropriateTiming().SetFakeAtBeat( GetBeat(), fFake );
+			SetDirty( true );
+		}
+	}
 	
 	else if( SM == SM_BackFromBGChange )
 	{
@@ -3217,12 +3228,15 @@ void ScreenEdit::DisplayTimingMenu()
 	RString starting = ( pTime.GetSpeedModeAtBeat( fBeat ) == 1 ? "Seconds" : "Beats" );
 	g_TimingDataInformation.rows[speed_mode].SetOneUnthemedChoice( starting.c_str() );
 	
+	g_TimingDataInformation.rows[fake].SetOneUnthemedChoice( ssprintf("%.5f", pTime.GetFakeAtBeat( fBeat ) ) );
+	
 	g_TimingDataInformation.rows[tickcount].bEnabled = GAMESTATE->m_bIsEditorStepTiming;
 	g_TimingDataInformation.rows[combo].bEnabled = GAMESTATE->m_bIsEditorStepTiming;
 	g_TimingDataInformation.rows[warp].bEnabled = GAMESTATE->m_bIsEditorStepTiming;
 	g_TimingDataInformation.rows[speed_percent].bEnabled = GAMESTATE->m_bIsEditorStepTiming;
 	g_TimingDataInformation.rows[speed_wait].bEnabled = GAMESTATE->m_bIsEditorStepTiming;
 	g_TimingDataInformation.rows[speed_mode].bEnabled = GAMESTATE->m_bIsEditorStepTiming;
+	g_TimingDataInformation.rows[fake].bEnabled = GAMESTATE->m_bIsEditorStepTiming;
 		
 	EditMiniMenu( &g_TimingDataInformation, SM_BackFromTimingDataInformation );
 }
@@ -3904,6 +3918,7 @@ static LocalizedString ENTER_WARP_VALUE				( "ScreenEdit", "Enter a new Warp val
 static LocalizedString ENTER_SPEED_PERCENT_VALUE		( "ScreenEdit", "Enter a new Speed percent value." );
 static LocalizedString ENTER_SPEED_WAIT_VALUE			( "ScreenEdit", "Enter a new Speed wait value." );
 static LocalizedString ENTER_SPEED_MODE_VALUE			( "ScreenEdit", "Enter a new Speed mode value." );
+static LocalizedString ENTER_FAKE_VALUE				( "ScreenEdit", "Enter a new Fake value." );
 static LocalizedString CONFIRM_TIMING_ERASE			( "ScreenEdit", "Are you sure you want to erase this chart's timing data?" );
 void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice c, const vector<int> &iAnswers )
 {
@@ -4013,6 +4028,15 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 			);
 			
 			break;
+		}
+	case fake:
+		{
+			ScreenTextEntry::TextEntry(
+				SM_BackFromFakeChange,
+				ENTER_FAKE_VALUE,
+			        ssprintf("%.5f", GetAppropriateTiming().GetFakeAtBeat( GetBeat() ) ),
+				10
+			);
 		}
 	case erase_step_timing:
 		ScreenPrompt::Prompt( SM_DoEraseStepTiming, CONFIRM_TIMING_ERASE , PROMPT_YES_NO, ANSWER_NO );

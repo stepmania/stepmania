@@ -501,6 +501,7 @@ public:
 		speed_wait,
 		speed_mode,
 		erase_step_timing,
+		fake,
 		NUM_TIMING_DATA_INFORMATION_CHOICES
 	};
 	
