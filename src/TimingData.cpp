@@ -73,6 +73,11 @@ void TimingData::AddSpeedSegment( const SpeedSegment &seg )
 	m_SpeedSegments.insert( upper_bound(m_SpeedSegments.begin(), m_SpeedSegments.end(), seg), seg );
 }
 
+void TimingData::AddFakeSegment( const FakeSegment &seg )
+{
+	m_FakeSegments.insert( upper_bound(m_FakeSegments.begin(), m_FakeSegments.end(), seg), seg );
+}
+
 /* Change an existing BPM segment, merge identical segments together or insert a new one. */
 void TimingData::SetBPMAtRow( int iNoteRow, float fBPM )
 {
@@ -288,6 +293,31 @@ void TimingData::SetSpeedAtRow( int iRow, float fPercent, float fWait, unsigned 
 	}
 }
 
+void TimingData::SetFakeAtRow( int iRow, float fNew )
+{
+	unsigned i;
+	for( i=0; i<m_FakeSegments.size(); i++ )
+		if( m_FakeSegments[i].m_iStartRow == iRow )
+			break;
+	bool valid = iRow > 0 && NoteRowToBeat(iRow) < fNew;
+	if( i == m_FakeSegments.size() )
+	{
+		if( valid )
+		{
+			AddFakeSegment( FakeSegment(iRow, fNew) );
+		}
+	}
+	else
+	{
+		if( valid )
+		{
+			m_FakeSegments[i].m_fEndBeat = fNew;
+		}
+		else
+			m_FakeSegments.erase( m_FakeSegments.begin()+i, m_FakeSegments.begin()+i+1 );
+	}
+}
+
 void TimingData::SetSpeedPercentAtRow( int iRow, float fPercent )
 {
 	SetSpeedAtRow( iRow, 
@@ -373,6 +403,18 @@ unsigned short TimingData::GetSpeedModeAtRow( int iRow )
 	return GetSpeedSegmentAtRow( iRow ).m_usMode;
 }
 
+float TimingData::GetFakeAtRow( int iFakeRow ) const
+{
+	for( unsigned i=0; i<m_FakeSegments.size(); i++ )
+	{
+		if( m_FakeSegments[i].m_iStartRow == iFakeRow )
+		{
+			return m_FakeSegments[i].m_fEndBeat;
+		}
+	}
+	return 0;
+}
+
 // Multiply the BPM in the range [fStartBeat,fEndBeat) by fFactor.
 void TimingData::MultiplyBPMInBeatRange( int iStartIndex, int iEndIndex, float fFactor )
 {
@@ -455,6 +497,18 @@ int TimingData::GetWarpSegmentIndexAtRow( int iNoteRow ) const
 	return static_cast<int>(i);
 }
 
+int TimingData::GetFakeSegmentIndexAtRow( int iNoteRow ) const
+{
+	unsigned i;
+	for( i=0; i<m_FakeSegments.size()-1; i++ )
+	{
+		const FakeSegment& s = m_FakeSegments[i+1];
+		if( s.m_iStartRow > iNoteRow )
+			break;
+	}
+	return static_cast<int>(i);
+}
+
 bool TimingData::IsWarpAtRow( int iNoteRow ) const
 {
 	if( m_WarpSegments.empty() )
@@ -472,6 +526,20 @@ bool TimingData::IsWarpAtRow( int iNoteRow ) const
 		{
 			return false;
 		}
+		return true;
+	}
+	return false;
+}
+
+bool TimingData::IsFakeAtRow( int iNoteRow ) const
+{
+	if( m_FakeSegments.empty() )
+		return false;
+	
+	int i = GetFakeSegmentIndexAtRow( iNoteRow );
+	const FakeSegment& s = m_FakeSegments[i];
+	if( s.m_iStartRow <= iNoteRow && iNoteRow < BeatToNoteRow(s.m_fEndBeat) )
+	{
 		return true;
 	}
 	return false;
@@ -593,6 +661,16 @@ WarpSegment& TimingData::GetWarpSegmentAtRow( int iRow )
 	
 	int i = GetWarpSegmentIndexAtRow( iRow );
 	return m_WarpSegments[i];
+}
+
+FakeSegment& TimingData::GetFakeSegmentAtRow( int iRow )
+{
+	static FakeSegment empty;
+	if( m_FakeSegments.empty() )
+		return empty;
+	
+	int i = GetFakeSegmentIndexAtRow( iRow );
+	return m_FakeSegments[i];
 }
 
 int TimingData::GetTickcountSegmentIndexAtRow( int iRow ) const
@@ -952,6 +1030,25 @@ void TimingData::ScaleRegion( float fScale, int iStartIndex, int iEndIndex, bool
 			m_SpeedSegments[i].m_iStartRow = lrintf( (iSegStart - iStartIndex) * fScale ) + iStartIndex;
 	}
 	
+	for( unsigned i = 0; i < m_FakeSegments.size(); i++ )
+	{
+		const int iSegStartRow = m_FakeSegments[i].m_iStartRow;
+		const int iSegEndRow = BeatToNoteRow( m_FakeSegments[i].m_fEndBeat );
+		if( iSegEndRow >= iStartIndex )
+		{
+			if( iSegEndRow > iEndIndex )
+				m_FakeSegments[i].m_fEndBeat += NoteRowToBeat(lrintf((iEndIndex - iStartIndex) * (fScale - 1)));
+			else
+				m_FakeSegments[i].m_fEndBeat = NoteRowToBeat(lrintf((iSegEndRow - iStartIndex) * fScale) + iStartIndex);
+		}
+		if( iSegStartRow < iStartIndex )
+			continue;
+		else if( iSegStartRow > iEndIndex )
+			m_FakeSegments[i].m_iStartRow += lrintf((iEndIndex - iStartIndex) * (fScale - 1));
+		else
+			m_FakeSegments[i].m_iStartRow = lrintf((iSegStartRow - iStartIndex) * fScale) + iStartIndex;
+	}
+	
 	// adjust BPM changes to preserve timing
 	if( bAdjustBPM )
 	{
@@ -1043,6 +1140,16 @@ void TimingData::InsertRows( int iStartRow, int iRowsToAdd )
 		if( sped.m_iStartRow < iStartRow )
 			continue;
 		sped.m_iStartRow += iRowsToAdd;
+	}
+	
+	for( unsigned i = 0; i < m_FakeSegments.size(); i++ )
+	{
+		FakeSegment &fake = m_FakeSegments[i];
+		if( BeatToNoteRow(fake.m_fEndBeat) >= iStartRow )
+			fake.m_fEndBeat += NoteRowToBeat(iRowsToAdd);
+		if( fake.m_iStartRow < iStartRow )
+			continue;
+		fake.m_iStartRow += iRowsToAdd;
 	}
 
 	if( iStartRow == 0 )
@@ -1217,6 +1324,26 @@ void TimingData::DeleteRows( int iStartRow, int iRowsToDelete )
 		}
 		sped.m_iStartRow -= iRowsToDelete;
 	}
+	
+	for( unsigned i = 0; i < m_FakeSegments.size(); i++ )
+	{
+		FakeSegment &fake = m_FakeSegments[i];
+		
+		if( BeatToNoteRow(fake.m_fEndBeat) >= iStartRow )
+			fake.m_fEndBeat = max( NoteRowToBeat(iStartRow), fake.m_fEndBeat - NoteRowToBeat(iRowsToDelete) );
+		
+		if( fake.m_iStartRow < iStartRow )
+			continue;
+		
+		if( fake.m_iStartRow < iStartRow+iRowsToDelete )
+		{
+			m_FakeSegments.erase( m_FakeSegments.begin()+i, m_FakeSegments.begin()+i+1 );
+			--i;
+			continue;
+		}
+		
+		fake.m_iStartRow -= iRowsToDelete;
+	}
 
 	this->SetBPMAtRow( iStartRow, fNewBPM );
 }
@@ -1292,6 +1419,11 @@ bool TimingData::HasWarps() const
 	return m_WarpSegments.size()>0;
 }
 
+bool TimingData::HasFakes() const
+{
+	return m_FakeSegments.size()>0;
+}
+
 bool TimingData::HasSpeedChanges() const
 {
 	return m_SpeedSegments.size()>1;
@@ -1343,6 +1475,7 @@ public:
 	static int HasStops( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasStops()); return 1; }
 	static int HasBPMChanges( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasBpmChanges()); return 1; }
 	static int HasWarps( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasWarps()); return 1; }
+	static int HasFakes( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasFakes()); return 1; }
 	static int HasSpeedChanges( T* p, lua_State *L )	{ lua_pushboolean(L, p->HasSpeedChanges()); return 1; }
 	static int GetStops( T* p, lua_State *L )
 	{
@@ -1431,6 +1564,7 @@ public:
 		ADD_METHOD( HasStops );
 		ADD_METHOD( HasBPMChanges );
 		ADD_METHOD( HasWarps );
+		ADD_METHOD( HasFakes );
 		ADD_METHOD( HasSpeedChanges );
 		ADD_METHOD( GetStops );
 		ADD_METHOD( GetDelays );

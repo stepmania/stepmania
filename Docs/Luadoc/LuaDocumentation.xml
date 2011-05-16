@@ -3519,6 +3519,9 @@
 	<Function name='HasWarps' sm-ssc='true' return='bool' arguments=''>
 		Returns <code>true</code> if the TimingData contains warps.
 	</Function>
+        <Function name='HasFakes' sm-ssc='true' return='bool' arguments=''>
+                Returns <code>true</code> if the TimingData contains fake segments.
+        </Function>
 	<Function name='HasSpeedChanges' sm-ssc='true' return='bool' arguments=''>
 		Returns <code>true</code> if the TimingData contains speed scrolling changes.
 	</Function>

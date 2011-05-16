@@ -777,6 +777,113 @@ struct SpeedSegment
 	bool operator>=( const SpeedSegment &other ) const { return !operator<(other); }
 };
 
+/**
+ * @brief Identifies when a whole region of arrows is to be ignored.
+ *
+ * FakeSegments are similar to the Fake Tap Notes in that the contents
+ * inside are neither for nor against the player. They can be useful for
+ * mission modes, in conjunction with WarpSegments, or perhaps other
+ * uses not thought up at the time of this comment. Unlike the Warp
+ * Segments, these are not magically jumped over: instead, these are
+ * drawn normally.
+ *
+ * These were inspired by the Pump It Up series. */
+struct FakeSegment
+{
+	/**
+	 * @brief Create a simple Fake Segment with default values.
+	 *
+	 * It is best to override the values as soon as possible.
+	 */
+	FakeSegment() : m_iStartRow(-1), m_fEndBeat(-1) { }
+	/**
+	 * @brief Create a Fake Segment with the specified values.
+	 * @param s the starting row of this segment.
+	 * @param r the row to be real again.
+	 */
+	FakeSegment( int s, int r ): m_iStartRow(max(0, (s < r ? s : r))),
+	m_fEndBeat(max(0, NoteRowToBeat((r > s ? r : s)))) {}
+	/**
+	 * @brief Creates a Fake Segment with the specified values.
+	 * @param s the starting row of this segment.
+	 * @param b the beat to be real again.
+	 */
+	FakeSegment( int s, float b ): m_iStartRow(max(0, s)),
+	m_fEndBeat(max(0, b)) {}
+	/**
+	 * @brief Create a Fake Segment with the specified values.
+	 * @param s the starting beat in this segment.
+	 * @param r the row to be real again.
+	 */
+	FakeSegment( float s, int r ):
+	m_iStartRow(max(0, BeatToNoteRow(s))),
+	m_fEndBeat(max(0, NoteRowToBeat(r))) {}
+	/**
+	 * @brief Creates a Fake Segment with the specified values.
+	 * @param s the starting beat of this segment.
+	 * @param b the beat to be real again.
+	 */
+	FakeSegment( float s, float b ):
+	m_iStartRow(max(0, BeatToNoteRow((s < b ? s : b)))),
+	m_fEndBeat(max(0, (b > s ? b : s))) {}
+	/**
+	 * @brief The row in which the FakeSegment activates.
+	 */
+	int m_iStartRow;
+	/**
+	 * @brief The beat that ends the FakeSegment.
+	 */
+	float m_fEndBeat;
+	/**
+	 * @brief Compares two FakeSegments to see if they are equal to each other.
+	 * @param other the other FakeSegment to compare to.
+	 * @return the equality of the two segments.
+	 */
+	bool operator==( const FakeSegment &other ) const
+	{
+		COMPARE( m_iStartRow );
+		COMPARE( m_fEndBeat );
+		return true;
+	}
+	/**
+	 * @brief Compares two FakeSegments to see if they are not equal to each other.
+	 * @param other the other FakeSegment to compare to.
+	 * @return the inequality of the two segments.
+	 */
+	bool operator!=( const FakeSegment &other ) const { return !operator==(other); }
+	/**
+	 * @brief Compares two FakeSegments to see if one is less than the other.
+	 * @param other the other FakeSegment to compare to.
+	 * @return the truth/falsehood of if the first is less than the second.
+	 */
+	bool operator<( const FakeSegment &other ) const
+	{ 
+		return m_iStartRow < other.m_iStartRow ||
+		( m_iStartRow == other.m_iStartRow && m_fEndBeat < other.m_fEndBeat );
+	}
+	/**
+	 * @brief Compares two FakeSegments to see if one is less than or equal to the other.
+	 * @param other the other FakeSegment to compare to.
+	 * @return the truth/falsehood of if the first is less or equal to than the second.
+	 */
+	bool operator<=( const FakeSegment &other ) const
+	{
+		return ( operator<(other) || operator==(other) );
+	}
+	/**
+	 * @brief Compares two FakeSegments to see if one is greater than the other.
+	 * @param other the other FakeSegment to compare to.
+	 * @return the truth/falsehood of if the first is greater than the second.
+	 */
+	bool operator>( const FakeSegment &other ) const { return !operator<=(other); }
+	/**
+	 * @brief Compares two FakeSegments to see if one is greater than or equal to the other.
+	 * @param other the other FakeSegment to compare to.
+	 * @return the truth/falsehood of if the first is greater than or equal to the second.
+	 */
+	bool operator>=( const FakeSegment &other ) const { return !operator<(other); }
+};
+
 
 /**
  * @brief Holds data for translating beats<->seconds.
@@ -1487,6 +1594,72 @@ public:
 	 */
 	void AddSpeedSegment( const SpeedSegment &seg );
 	
+	/**
+	 * @brief Determine when the fakes end.
+	 * @param iRow The row you start on.
+	 * @return the time when the fakes end.
+	 */
+	float GetFakeAtRow( int iRow ) const;
+	/**
+	 * @brief Determine when the fakes end.
+	 * @param fBeat The beat you start on.
+	 * @return the time when the fakes end.
+	 */
+	float GetFakeAtBeat( float fBeat ) const { return GetFakeAtRow( BeatToNoteRow( fBeat ) ); }
+	/**
+	 * @brief Set the beat to indicate when the FakeSegment ends.
+	 * @param iRow The row to start on.
+	 * @param fNew The destination beat.
+	 */
+	void SetFakeAtRow( int iRow, float fNew );
+	/**
+	 * @brief Set the beat to indicate when the FakeSegment ends.
+	 * @param fBeat The beat to start on.
+	 * @param fNew The destination beat.
+	 */
+	void SetFakeAtBeat( float fBeat, float fNew ) { SetFakeAtRow( BeatToNoteRow( fBeat ), fNew ); }
+	/**
+	 * @brief Retrieve the FakeSegment at the specified row.
+	 * @param iRow the row to focus on.
+	 * @return the FakeSegment in question.
+	 */
+	FakeSegment& GetFakeSegmentAtRow( int iRow );
+	/**
+	 * @brief Retrieve the FakeSegment at the specified beat.
+	 * @param fBeat the beat to focus on.
+	 * @return the FakeSegment in question.
+	 */
+	FakeSegment& GetFakeSegmentAtBeat( float fBeat ) { return GetFakeSegmentAtRow( BeatToNoteRow( fBeat ) ); }
+	/**
+	 * @brief Retrieve the index of the FakeSegment at the specified row.
+	 * @param iRow the row to focus on.
+	 * @return the index in question.
+	 */
+	int GetFakeSegmentIndexAtRow( int iRow ) const;
+	/**
+	 * @brief Retrieve the index of the FakeSegment at the specified beat.
+	 * @param fBeat the beat to focus on.
+	 * @return the index in question.
+	 */
+	int GetFakeSegmentIndexAtBeat( float fBeat ) const { return GetFakeSegmentIndexAtRow( BeatToNoteRow( fBeat ) ); }
+	/**
+	 * @brief Checks if the row is inside a fake.
+	 * @param iRow the row to focus on.
+	 * @return true if the row is inside a fake, false otherwise.
+	 */
+	bool IsFakeAtRow( int iRow ) const;
+	/**
+	 * @brief Checks if the beat is inside a fake.
+	 * @param fBeat the beat to focus on.
+	 * @return true if the row is inside a fake, false otherwise.
+	 */
+	bool IsFakeAtBeat( float fBeat ) const { return IsFakeAtRow( BeatToNoteRow( fBeat ) ); }
+	/**
+	 * @brief Add the FakeSegment to the TimingData.
+	 * @param seg the new FakeSegment.
+	 */
+	void AddFakeSegment( const FakeSegment &seg );
+	
 	
 	
 	void MultiplyBPMInBeatRange( int iStartIndex, int iEndIndex, float fFactor );
@@ -1532,6 +1705,10 @@ public:
 	 */
 	bool HasWarps() const;
 	/**
+	 * @brief View the TimingData to see if there is at least one fake segment involved.
+	 * @return true if there is at least one fake segment, false otherwise. */
+	bool HasFakes() const;
+	/**
 	 * @brief View the TimingData to see if a song changes its speed scrolling at any point.
 	 * @return true if there is at least one change, false otherwise. */
 	bool HasSpeedChanges() const;
@@ -1566,6 +1743,9 @@ public:
 		COMPARE( m_SpeedSegments.size() );
 		for( unsigned i=0; i<m_SpeedSegments.size(); i++ )
 			COMPARE( m_SpeedSegments[i] );
+		COMPARE( m_FakeSegments.size() );
+		for( unsigned i=0; i<m_FakeSegments.size(); i++ )
+			COMPARE( m_FakeSegments[i] );
 		COMPARE( m_fBeat0OffsetInSeconds );
 		return true;
 	}
@@ -1624,6 +1804,8 @@ public:
 	vector<LabelSegment>		m_LabelSegments;
 	/** @brief The collection of SpeedSegments. */
 	vector<SpeedSegment>		m_SpeedSegments;
+	/** @brief The collection of FakeSegments. */
+	vector<FakeSegment>		m_FakeSegments;
 	/**
 	 * @brief The initial offset of a song.
 	 */
