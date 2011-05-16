@@ -328,8 +328,8 @@ struct WarpSegment
 	 * @param s the starting row of this segment.
 	 * @param r the number of rows to jump ahead.
 	 */
-	WarpSegment( int s, int r ): m_iStartRow(max(0, (s < r ? s : r))),
-		 m_fLengthBeats(max(0, NoteRowToBeat((r > s ? r : s)))) {}
+	WarpSegment( int s, int r ): m_iStartRow(s),
+		 m_fLengthBeats(NoteRowToBeat(r)) {}
 	/**
 	 * @brief Creates a Warp Segment with the specified starting row and beat to warp to.
 	 * @param s the starting row of this segment.
@@ -351,8 +351,8 @@ struct WarpSegment
 	 * @param b the number of beats to jump ahead.
 	 */
 	WarpSegment( float s, float b ):
-		m_iStartRow(max(0, BeatToNoteRow((s < b ? s : b)))),
-		m_fLengthBeats(max(0, (b > s ? b : s))) {}
+		m_iStartRow(BeatToNoteRow(s)),
+		m_fLengthBeats(b) {}
 	/**
 	 * @brief The row in which the WarpSegment activates.
 	 */
@@ -801,8 +801,8 @@ struct FakeSegment
 	 * @param s the starting row of this segment.
 	 * @param r the number of rows this segment lasts.
 	 */
-	FakeSegment( int s, int r ): m_iStartRow(max(0, (s < r ? s : r))),
-	m_fLengthBeats(max(0, NoteRowToBeat((r > s ? r : s)))) {}
+	FakeSegment( int s, int r ): m_iStartRow(s),
+	m_fLengthBeats(NoteRowToBeat(r)) {}
 	/**
 	 * @brief Creates a Fake Segment with the specified values.
 	 * @param s the starting row of this segment.
@@ -824,8 +824,8 @@ struct FakeSegment
 	 * @param b the number of beats this segment lasts.
 	 */
 	FakeSegment( float s, float b ):
-	m_iStartRow(max(0, BeatToNoteRow((s < b ? s : b)))),
-	m_fLengthBeats(max(0, (b > s ? b : s))) {}
+	m_iStartRow(BeatToNoteRow(s)),
+	m_fLengthBeats(b) {}
 	/**
 	 * @brief The row in which the FakeSegment activates.
 	 */
