@@ -2788,14 +2788,25 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if ( SM == SM_BackFromSpeedModeChange )
 	{
-		int tmp = StringToInt(ScreenTextEntry::s_sLastAnswer );
-		if( tmp == 0 || ScreenTextEntry::s_sLastAnswer.substr(0, 1) == "b" || ScreenTextEntry::s_sLastAnswer.substr(0, 1) == "B" )
+		if( ScreenTextEntry::s_sLastAnswer.substr(0, 1) == "b" || ScreenTextEntry::s_sLastAnswer.substr(0, 1) == "B" )
 		{
 			GetAppropriateTiming().SetSpeedModeAtBeat( GetBeat(), 0 );
 		}
-		else 
+		else if( ScreenTextEntry::s_sLastAnswer.substr(0, 1) == "s" || ScreenTextEntry::s_sLastAnswer.substr(0, 1) == "S" )
 		{
 			GetAppropriateTiming().SetSpeedModeAtBeat( GetBeat(), 1 );
+		}
+		else
+		{
+			int tmp = StringToInt(ScreenTextEntry::s_sLastAnswer );
+			if( tmp == 0 )
+			{
+				GetAppropriateTiming().SetSpeedModeAtBeat( GetBeat(), 0 );
+			}
+			else
+			{
+				GetAppropriateTiming().SetSpeedModeAtBeat( GetBeat(), 1 );
+			}
 		}
 		SetDirty( true );
 	}
