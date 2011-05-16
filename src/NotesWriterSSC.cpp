@@ -134,13 +134,14 @@ static void GetTimingTags( vector<RString> &lines, TimingData timing, bool bIsSo
 		w.Write( cs->m_iStartRow, cs->m_iCombo );
 	w.Finish();
 	
+	// Song Timing should only have the initial value.
+	w.Init( "SPEEDS" );
+	FOREACH_CONST( SpeedSegment, timing.m_SpeedSegments, ss )
+		w.Write( ss->m_iStartRow, ss->m_fPercent, ss->m_fWait, ss->m_usMode );
+	w.Finish();
+	
 	if( !bIsSong )
-	{
-		w.Init( "SPEEDS" );
-		FOREACH_CONST( SpeedSegment, timing.m_SpeedSegments, ss )
-			w.Write( ss->m_iStartRow, ss->m_fPercent, ss->m_fWait, ss->m_usMode );
-		w.Finish();
-		
+	{	
 		w.Init( "FAKES" );
 		FOREACH_CONST( FakeSegment, timing.m_FakeSegments, fs )
 			w.Write( fs->m_iStartRow, fs->m_fLengthBeats );
