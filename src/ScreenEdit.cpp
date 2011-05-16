@@ -2718,8 +2718,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		int iNum, iDen;
 		if( sscanf( ScreenTextEntry::s_sLastAnswer.c_str(), " %d / %d ", &iNum, &iDen ) == 2 )
 		{
-			GetAppropriateTiming().SetTimeSignatureNumeratorAtBeat( GetBeat(), iNum );
-			GetAppropriateTiming().SetTimeSignatureDenominatorAtBeat( GetBeat(), iDen );
+			GetAppropriateTiming().SetTimeSignatureAtBeat( GetBeat(), iNum, iDen );
 		}
 		SetDirty( true );
 	}
