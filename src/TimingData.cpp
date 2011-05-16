@@ -188,7 +188,7 @@ void TimingData::SetWarpAtRow( int iRow, float fNew )
 	{
 		if( valid )
 		{
-			m_WarpSegments[i].m_fEndBeat = fNew;
+			m_WarpSegments[i].m_fLengthBeats = fNew;
 		}
 		else
 			m_WarpSegments.erase( m_WarpSegments.begin()+i, m_WarpSegments.begin()+i+1 );
@@ -308,7 +308,7 @@ void TimingData::SetFakeAtRow( int iRow, float fNew )
 	{
 		if( valid )
 		{
-			m_FakeSegments[i].m_fEndBeat = fNew;
+			m_FakeSegments[i].m_fLengthBeats = fNew;
 		}
 		else
 			m_FakeSegments.erase( m_FakeSegments.begin()+i, m_FakeSegments.begin()+i+1 );
@@ -379,7 +379,7 @@ float TimingData::GetWarpAtRow( int iWarpRow ) const
 	{
 		if( m_WarpSegments[i].m_iStartRow == iWarpRow )
 		{
-			return m_WarpSegments[i].m_fEndBeat;
+			return m_WarpSegments[i].m_fLengthBeats;
 		}
 	}
 	return 0;
@@ -406,7 +406,7 @@ float TimingData::GetFakeAtRow( int iFakeRow ) const
 	{
 		if( m_FakeSegments[i].m_iStartRow == iFakeRow )
 		{
-			return m_FakeSegments[i].m_fEndBeat;
+			return m_FakeSegments[i].m_fLengthBeats;
 		}
 	}
 	return 0;
@@ -513,7 +513,7 @@ bool TimingData::IsWarpAtRow( int iNoteRow ) const
 	
 	int i = GetWarpSegmentIndexAtRow( iNoteRow );
 	const WarpSegment& s = m_WarpSegments[i];
-	if( s.m_iStartRow <= iNoteRow && iNoteRow < (s.m_iStartRow + BeatToNoteRow(s.m_fEndBeat) ) )
+	if( s.m_iStartRow <= iNoteRow && iNoteRow < (s.m_iStartRow + BeatToNoteRow(s.m_fLengthBeats) ) )
 	{
 		if( m_StopSegments.empty() )
 		{
@@ -535,7 +535,7 @@ bool TimingData::IsFakeAtRow( int iNoteRow ) const
 	
 	int i = GetFakeSegmentIndexAtRow( iNoteRow );
 	const FakeSegment& s = m_FakeSegments[i];
-	if( s.m_iStartRow <= iNoteRow && iNoteRow < ( s.m_iStartRow + BeatToNoteRow(s.m_fEndBeat) ) )
+	if( s.m_iStartRow <= iNoteRow && iNoteRow < ( s.m_iStartRow + BeatToNoteRow(s.m_fLengthBeats) ) )
 	{
 		return true;
 	}
@@ -831,10 +831,10 @@ void TimingData::GetBeatAndBPSFromElapsedTimeNoOffset( float fElapsedTime, float
 		case FOUND_WARP:
 			{
 				bIsWarping = true;
-				float fWarpSum = itWS->m_fEndBeat + NoteRowToBeat( itWS->m_iStartRow );
+				float fWarpSum = itWS->m_fLengthBeats + NoteRowToBeat( itWS->m_iStartRow );
 				if( fWarpSum > fWarpDestination )
 				{
-					fWarpDestination = itWS->m_fEndBeat;
+					fWarpDestination = fWarpSum;
 				}
 				iWarpBeginOut = iEventRow;
 				fWarpDestinationOut = fWarpDestination;
@@ -926,10 +926,10 @@ float TimingData::GetElapsedTimeFromBeatNoOffset( float fBeat ) const
 		case FOUND_WARP:
 			{
 				bIsWarping = true;
-				float fWarpSum = itWS->m_fEndBeat + NoteRowToBeat( itWS->m_iStartRow );
+				float fWarpSum = itWS->m_fLengthBeats + NoteRowToBeat( itWS->m_iStartRow );
 				if( fWarpSum > fWarpDestination )
 				{
-					fWarpDestination = itWS->m_fEndBeat;
+					fWarpDestination = fWarpSum;
 				}
 				itWS ++;
 				break;
@@ -973,13 +973,13 @@ void TimingData::ScaleRegion( float fScale, int iStartIndex, int iEndIndex, bool
 	for( unsigned i = 0; i < m_WarpSegments.size(); i++ )
 	{
 		const int iSegStartRow = m_WarpSegments[i].m_iStartRow;
-		const int iSegEndRow = iSegStartRow + BeatToNoteRow( m_WarpSegments[i].m_fEndBeat );
+		const int iSegEndRow = iSegStartRow + BeatToNoteRow( m_WarpSegments[i].m_fLengthBeats );
 		if( iSegEndRow >= iStartIndex )
 		{
 			if( iSegEndRow > iEndIndex )
-				m_WarpSegments[i].m_fEndBeat += NoteRowToBeat(lrintf((iEndIndex - iStartIndex) * (fScale - 1)));
+				m_WarpSegments[i].m_fLengthBeats += NoteRowToBeat(lrintf((iEndIndex - iStartIndex) * (fScale - 1)));
 			else
-				m_WarpSegments[i].m_fEndBeat = NoteRowToBeat(lrintf((iSegEndRow - iStartIndex) * fScale) + iStartIndex);
+				m_WarpSegments[i].m_fLengthBeats = NoteRowToBeat(lrintf((iSegEndRow - iStartIndex) * fScale));
 		}
 		if( iSegStartRow < iStartIndex )
 			continue;
@@ -1036,13 +1036,13 @@ void TimingData::ScaleRegion( float fScale, int iStartIndex, int iEndIndex, bool
 	for( unsigned i = 0; i < m_FakeSegments.size(); i++ )
 	{
 		const int iSegStartRow = m_FakeSegments[i].m_iStartRow;
-		const int iSegEndRow = iSegStartRow + BeatToNoteRow( m_FakeSegments[i].m_fEndBeat );
+		const int iSegEndRow = iSegStartRow + BeatToNoteRow( m_FakeSegments[i].m_fLengthBeats );
 		if( iSegEndRow >= iStartIndex )
 		{
 			if( iSegEndRow > iEndIndex )
-				m_FakeSegments[i].m_fEndBeat += NoteRowToBeat(lrintf((iEndIndex - iStartIndex) * (fScale - 1)));
+				m_FakeSegments[i].m_fLengthBeats += NoteRowToBeat(lrintf((iEndIndex - iStartIndex) * (fScale - 1)));
 			else
-				m_FakeSegments[i].m_fEndBeat = NoteRowToBeat(lrintf((iSegEndRow - iStartIndex) * fScale) + iStartIndex);
+				m_FakeSegments[i].m_fLengthBeats = NoteRowToBeat(lrintf((iSegEndRow - iStartIndex) * fScale));
 		}
 		if( iSegStartRow < iStartIndex )
 			continue;
