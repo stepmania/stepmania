@@ -4027,6 +4027,7 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 			        ssprintf("%.5f", GetAppropriateTiming().GetFakeAtBeat( GetBeat() ) ),
 				10
 			);
+			break;
 		}
 	case erase_step_timing:
 		ScreenPrompt::Prompt( SM_DoEraseStepTiming, CONFIRM_TIMING_ERASE , PROMPT_YES_NO, ANSWER_NO );
