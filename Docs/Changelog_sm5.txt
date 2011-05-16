@@ -8,6 +8,11 @@ ________________________________________________________________________________
 StepMania 5.0 $NEXT | 20110xyy
 --------------------------------------------------------------------------------
 
+2011/05/16
+----------
+* [ProfileManager] Added ProfileWasLoadedFromMemoryCard(PlayerNumber)
+  Lua binding. [AJ]
+
 2011/05/15
 ----------
 * [ScreenGameplay] Removed hardcoded commands for Debug (give up text) and
