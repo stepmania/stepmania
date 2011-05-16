@@ -321,7 +321,7 @@ void SMALoader::ProcessSpeeds( TimingData &out, const int iRowsPerBeat, const RS
 		vector<RString> vs2;
 		split( *s1, "=", vs2 );
 		
-		if( RowToBeat(vs2[0], iRowsPerBeat) == 0 ) // First one always seems to have 2.
+		if( RowToBeat(vs2[0], iRowsPerBeat) == 0 && vs2.size() == 2 ) // First one always seems to have 2.
 		{
 			vs2.push_back("0");
 		}
