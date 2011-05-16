@@ -141,7 +141,12 @@ void SSCLoader::ProcessSpeeds( TimingData &out, const RString sParam )
 			vs2.push_back("0");
 		}
 		
-		if( vs2.size() < 3 )
+		if( vs2.size() == 3 )
+		{
+			vs2.push_back("0");
+		}
+		
+		if( vs2.size() < 4 )
 		{
 			LOG->UserLog( "Song file", "(UNKNOWN)", "has an speed change with %i values.", (int)vs2.size() );
 			continue;
@@ -149,7 +154,7 @@ void SSCLoader::ProcessSpeeds( TimingData &out, const RString sParam )
 		
 		const float fBeat = StringToFloat( vs2[0] );
 		
-		SpeedSegment seg( fBeat, StringToFloat( vs2[1] ), StringToFloat( vs2[2] ));
+		SpeedSegment seg( fBeat, StringToFloat( vs2[1] ), StringToFloat( vs2[2] ), static_cast<unsigned short>(StringToInt(vs2[3])));
 		
 		if( fBeat < 0 )
 		{

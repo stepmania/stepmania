@@ -660,20 +660,22 @@ struct LabelSegment
 struct SpeedSegment
 {
 	/** @brief Sets up the SpeedSegment with default values. */
-	SpeedSegment(): m_iStartRow(0), m_fPercent(1), m_fWait(0) {}
+	SpeedSegment(): m_iStartRow(0), 
+		m_fPercent(1), m_fWait(0), m_usMode(0) {}
 	
 	/**
 	 * @brief Sets up the SpeedSegment with specified values.
 	 * @param i The row this activates.
 	 * @param p The percentage to use. */
-	SpeedSegment(int i, float p): m_iStartRow(0), m_fPercent(p), m_fWait(0) {}
+	SpeedSegment(int i, float p): m_iStartRow(0), 
+		m_fPercent(p), m_fWait(0), m_usMode(0) {}
 	
 	/**
 	 * @brief Sets up the SpeedSegment with specified values.
 	 * @param r The beat this activates.
 	 * @param p The percentage to use. */
 	SpeedSegment(float r, float p): m_iStartRow(BeatToNoteRow(r)),
-		m_fPercent(p), m_fWait(0) {}
+		m_fPercent(p), m_fWait(0), m_usMode(0) {}
 	
 	/**
 	 * @brief Sets up the SpeedSegment with specified values.
@@ -681,7 +683,7 @@ struct SpeedSegment
 	 * @param p The percentage to use.
 	 * @param w The number of beats to wait. */
 	SpeedSegment(int i, float p, float w): m_iStartRow(i),
-		m_fPercent(p), m_fWait(w) {}
+		m_fPercent(p), m_fWait(w), m_usMode(0) {}
 	
 	/**
 	 * @brief Sets up the SpeedSegment with specified values.
@@ -689,17 +691,43 @@ struct SpeedSegment
 	 * @param p The percentage to use.
 	 * @param w The number of beats to wait. */
 	SpeedSegment(float r, float p, float w): m_iStartRow(BeatToNoteRow(r)),
-		m_fPercent(p), m_fWait(w) {}
+		m_fPercent(p), m_fWait(w), m_usMode(0) {}
+	
+	/**
+	 * @brief Sets up the SpeedSegment with specified values.
+	 * @param i The row this activates.
+	 * @param p The percentage to use.
+	 * @param w The number of beats/seconds to wait.
+	 * @param k The mode used for the wait variable. */
+	SpeedSegment(int i, float p, float w, unsigned short k): m_iStartRow(i),
+	m_fPercent(p), m_fWait(w), m_usMode(k) {}
+	
+	/**
+	 * @brief Sets up the SpeedSegment with specified values.
+	 * @param r The beat this activates.
+	 * @param p The percentage to use.
+	 * @param w The number of beats/seconds to wait.
+	 * @param k The mode used for the wait variable.*/
+	SpeedSegment(float r, float p, float w, unsigned short k): m_iStartRow(BeatToNoteRow(r)),
+	m_fPercent(p), m_fWait(w), m_usMode(k) {}
 	
 	/** @brief The row in which the ComboSegment activates. */
 	int m_iStartRow;
 	/** @brief The percentage to use when multiplying the Player's BPM. */
 	float m_fPercent;
 	/** 
-	 * @brief The number of beats to wait for the change to take place.
+	 * @brief The number of beats or seconds to wait for the change to take place.
 	 *
 	 * A value of 0 means this is immediate. */
 	float m_fWait;
+	/**
+	 * @brief The mode that this segment uses for the math.
+	 *
+	 * 0: beats
+	 * 1: seconds
+	 * other
+	 */
+	unsigned short m_usMode;
 	
 	/**
 	 * @brief Compares two SpeedSegments to see if they are equal to each other.
@@ -710,6 +738,7 @@ struct SpeedSegment
 	{
 		COMPARE( m_iStartRow );
 		COMPARE( m_fPercent );
+		COMPARE( m_usMode );
 		COMPARE( m_fWait );
 		return true;
 	}
@@ -1365,19 +1394,33 @@ public:
 	 */
 	float GetSpeedWaitAtBeat( float fBeat ) { return GetSpeedWaitAtRow( BeatToNoteRow(fBeat) ); }
 	/**
+	 * @brief Retrieve the Speed's mode at the given row.
+	 * @param iNoteRow the row in question.
+	 * @return the mode.
+	 */
+	unsigned short GetSpeedModeAtRow( int iNoteRow );
+ 	/**
+	 * @brief Retrieve the Speed's mode at the given beat.
+	 * @param fBeat the beat in question.
+	 * @return the mode.
+	 */
+	unsigned short GetSpeedModeAtBeat( float fBeat ) { return GetSpeedModeAtRow( BeatToNoteRow(fBeat) ); }
+	/**
 	 * @brief Set the row to have the new Speed.
 	 * @param iNoteRow the row to have the new Speed.
 	 * @param fPercent the percent.
 	 * @param fWait the wait.
+	 * @param usMode the mode.
 	 */
-	void SetSpeedAtRow( int iNoteRow, float fPercent, float fWait );
+	void SetSpeedAtRow( int iNoteRow, float fPercent, float fWait, unsigned short usMode );
 	/**
 	 * @brief Set the beat to have the new Speed.
 	 * @param fBeat the beat to have the new Speed.
 	 * @param fPercent the percent.
 	 * @param fWait the wait.
+	 * @param usMode the mode.
 	 */
-	void SetSpeedAtBeat( float fBeat, float fPercent, float fWait ) { SetSpeedAtRow( BeatToNoteRow(fBeat), fPercent, fWait ); }
+	void SetSpeedAtBeat( float fBeat, float fPercent, float fWait, unsigned short usMode ) { SetSpeedAtRow( BeatToNoteRow(fBeat), fPercent, fWait, usMode ); }
 	/**
 	 * @brief Set the row to have the new Speed percent.
 	 * @param iNoteRow the row to have the new Speed percent.
@@ -1402,6 +1445,18 @@ public:
 	 * @param fWait the wait.
 	 */
 	void SetSpeedWaitAtBeat( float fBeat, float fWait ) { SetSpeedWaitAtRow( BeatToNoteRow(fBeat), fWait); }
+	/**
+	 * @brief Set the row to have the new Speed mode.
+	 * @param iNoteRow the row to have the new Speed mode.
+	 * @param usMode the mode.
+	 */
+	void SetSpeedModeAtRow( int iNoteRow, unsigned short usMode );
+	/**
+	 * @brief Set the beat to have the new Speed mode.
+	 * @param fBeat the beat to have the new Speed mode.
+	 * @param usMode the mode.
+	 */
+	void SetSpeedModeAtBeat( float fBeat, unsigned short usMode ) { SetSpeedModeAtRow( BeatToNoteRow(fBeat), usMode); }
 	/**
 	 * @brief Retrieve the SpeedSegment at the specified row.
 	 * @param iNoteRow the row that has a SpeedSegment.

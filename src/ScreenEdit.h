@@ -499,6 +499,7 @@ public:
 //		speed,
 		speed_percent,
 		speed_wait,
+		speed_mode,
 		erase_step_timing,
 		NUM_TIMING_DATA_INFORMATION_CHOICES
 	};
@@ -531,6 +532,12 @@ public:
 		file2_global_movie_song_group_and_genre,
 		delete_change,
 		NUM_BGCHANGE_CHOICES
+	};
+	
+	enum SpeedSegmentModes
+	{
+		SSMODE_Beats,
+		SSMODE_Seconds
 	};
 
 	/**

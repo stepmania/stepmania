@@ -255,7 +255,7 @@ void TimingData::SetLabelAtRow( int iRow, const RString sLabel )
 	}
 }
 
-void TimingData::SetSpeedAtRow( int iRow, float fPercent, float fWait )
+void TimingData::SetSpeedAtRow( int iRow, float fPercent, float fWait, unsigned short usMode )
 {
 	unsigned i;
 	for( i = 0; i < m_SpeedSegments.size(); i++ )
@@ -268,31 +268,48 @@ void TimingData::SetSpeedAtRow( int iRow, float fPercent, float fWait )
 	{
 		if( i == 0 || 
 		   ( m_SpeedSegments[i-1].m_fPercent != fPercent
-		    || m_SpeedSegments[i-1].m_fWait != fWait ) )
-			AddSpeedSegment( SpeedSegment(iRow, fPercent, fWait) );
+		    || m_SpeedSegments[i-1].m_fWait != fWait 
+		    || m_SpeedSegments[i-1].m_usMode != usMode ) )
+			AddSpeedSegment( SpeedSegment(iRow, fPercent, fWait, usMode) );
 	}
 	else
 	{
 		if( i > 0  && m_SpeedSegments[i-1].m_fPercent == fPercent
-		   && m_SpeedSegments[i-1].m_fWait == fWait )
+		   && m_SpeedSegments[i-1].m_fWait == fWait
+		   && m_SpeedSegments[i-1].m_usMode == usMode )
 			m_SpeedSegments.erase( m_SpeedSegments.begin()+i,
 					       m_SpeedSegments.begin()+i+1 );
 		else
 		{
 			m_SpeedSegments[i].m_fPercent = fPercent;
 			m_SpeedSegments[i].m_fWait = fWait;
+			m_SpeedSegments[i].m_usMode = usMode;
 		}
 	}
 }
 
 void TimingData::SetSpeedPercentAtRow( int iRow, float fPercent )
 {
-	SetSpeedAtRow( iRow, fPercent, GetSpeedSegmentAtBeat( NoteRowToBeat( iRow ) ).m_fWait );
+	SetSpeedAtRow( iRow, 
+		      fPercent, 
+		      GetSpeedSegmentAtBeat( NoteRowToBeat( iRow ) ).m_fWait,
+		      GetSpeedSegmentAtBeat( NoteRowToBeat( iRow ) ).m_usMode);
 }
 
 void TimingData::SetSpeedWaitAtRow( int iRow, float fWait )
 {
-	SetSpeedAtRow( iRow, GetSpeedSegmentAtBeat( NoteRowToBeat( iRow ) ).m_fPercent, fWait );
+	SetSpeedAtRow( iRow, 
+		      GetSpeedSegmentAtBeat( NoteRowToBeat( iRow ) ).m_fPercent,
+		      fWait,
+		      GetSpeedSegmentAtBeat( NoteRowToBeat( iRow ) ).m_usMode);
+}
+
+void TimingData::SetSpeedModeAtRow( int iRow, unsigned short usMode )
+{
+	SetSpeedAtRow( iRow, 
+		      GetSpeedSegmentAtBeat( NoteRowToBeat( iRow ) ).m_fPercent,
+		      GetSpeedSegmentAtBeat( NoteRowToBeat( iRow ) ).m_fWait,
+		      usMode );
 }
 
 
@@ -349,6 +366,11 @@ float TimingData::GetSpeedPercentAtRow( int iRow )
 float TimingData::GetSpeedWaitAtRow( int iRow )
 {
 	return GetSpeedSegmentAtRow( iRow ).m_fWait;
+}
+
+unsigned short TimingData::GetSpeedModeAtRow( int iRow )
+{
+	return GetSpeedSegmentAtRow( iRow ).m_usMode;
 }
 
 // Multiply the BPM in the range [fStartBeat,fEndBeat) by fFactor.

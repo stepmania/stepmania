@@ -306,6 +306,11 @@ void SMALoader::ProcessBeatsPerMeasure( TimingData &out, const RString sParam )
 	}
 }
 
+float BeatToSeconds(float fromBeat, RString toSomething)
+{
+	return 0;
+}
+
 void SMALoader::ProcessSpeeds( TimingData &out, const int iRowsPerBeat, const RString sParam )
 {
 	vector<RString> vs1;
@@ -329,7 +334,10 @@ void SMALoader::ProcessSpeeds( TimingData &out, const int iRowsPerBeat, const RS
 		
 		const float fBeat = RowToBeat( vs2[0], iRowsPerBeat );
 		
-		SpeedSegment seg( fBeat, StringToFloat( vs2[1] ), StringToFloat( vs2[2] ));
+		unsigned short tmp = ( (vs2[2].find("s") || vs2[2].find("S") )
+				      ? 1 : 0);
+		
+		SpeedSegment seg( fBeat, StringToFloat( vs2[1] ), StringToFloat( vs2[2] ), tmp);
 		
 		if( fBeat < 0 )
 		{
