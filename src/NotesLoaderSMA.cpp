@@ -395,59 +395,9 @@ void SMALoader::LoadFromSMATokens(
 				  Steps &out
 )
 {
-	// we're loading from disk, so this is by definition already saved:
-	out.SetSavedToDisk( true );
-	
-	Trim( sStepsType );
-	Trim( sDescription );
-	Trim( sDifficulty );
-	Trim( sNoteData );
-	
-	//	LOG->Trace( "Steps::LoadFromSMTokens()" );
-	
-	// insert stepstype hacks from GameManager.cpp here? -aj
-	out.m_StepsType = GAMEMAN->StringToStepsType( sStepsType );
-	out.SetDescription( sDescription );
-	out.SetCredit( sDescription ); // this is often used for both.
-	out.SetDifficulty( StringToDifficulty(sDifficulty) );
-	
-	sDescription.MakeLower();
-	
-	// Handle hacks that originated back when StepMania didn't have
-	// Difficulty_Challenge. (At least v1.64, possibly v3.0 final...)
-	if( out.GetDifficulty() == Difficulty_Hard )
-	{
-		// HACK: SMANIAC used to be Difficulty_Hard with a special description.
-		if( sDescription == "smaniac" ) 
-			out.SetDifficulty( Difficulty_Challenge );
-		
-		// HACK: CHALLENGE used to be Difficulty_Hard with a special description.
-		if( sDescription == "challenge" ) 
-			out.SetDifficulty( Difficulty_Challenge );
-	}
-	
-	out.SetMeter( StringToInt(sMeter) );
-	vector<RString> saValues;
-	split( sRadarValues, ",", saValues, true );
-	int categories = NUM_RadarCategory - 1; // Fakes aren't counted in the radar values.
-	if( saValues.size() == (unsigned)categories * NUM_PLAYERS )
-	{
-		RadarValues v[NUM_PLAYERS];
-		FOREACH_PlayerNumber( pn )
-		{
-			// Can't use the foreach anymore due to flexible radar lines.
-			for( RadarCategory rc = (RadarCategory)0; rc < categories; 
-			    enum_add<RadarCategory>( rc, 1 ) )
-			{
-				v[pn][rc] = StringToFloat( saValues[pn*categories + rc] );
-			}
-		}
-		out.SetCachedRadarValues( v );
-	}
-	
-	out.SetSMNoteData( sNoteData );
-	
-	out.TidyUpData();
+	SMLoader::LoadFromSMATokens( sStepsType, sDescription,
+				    sDifficulty, sMeter, sRadarValues,
+				    sNoteData, out );
 }
 
 void SMALoader::TidyUpData( Song &song, bool bFromCache )
