@@ -66,7 +66,11 @@ void SSCLoader::ProcessWarps( TimingData &out, const RString sParam, const float
 		const float fBeat = StringToFloat( arrayWarpValues[0] );
 		const float fNewBeat = StringToFloat( arrayWarpValues[1] );
 		// Early versions were absolute in beats. They should be relative.
-		if( ( fVersion < VERSION_SPLIT_TIMING && fNewBeat > fBeat ) || fNewBeat > 0 )
+		if( ( fVersion < VERSION_SPLIT_TIMING && fNewBeat > fBeat ) )
+		{
+			out.AddWarpSegment( WarpSegment(fBeat, fNewBeat - fBeat) );
+		}
+		else if( fNewBeat > 0 )
 			out.AddWarpSegment( WarpSegment(fBeat, fNewBeat) );
 		else
 		{
