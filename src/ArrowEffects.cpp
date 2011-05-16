@@ -233,7 +233,11 @@ float GetSpeedMultiplier( float fSongBeat, float fMusicSeconds, const TimingData
 		fEndTime = tim.GetElapsedTimeFromBeat( fStartBeat + seg.m_fWait ) - tim.GetDelayAtBeat( fStartBeat + seg.m_fWait );
 	}
 	
-	if( fEndTime >= fCurTime && ( index > 0 || tim.m_SpeedSegments[0].m_fWait > 0.0 ) )
+	if( ( index == 0 && tim.m_SpeedSegments[0].m_fWait > 0.0 ) && fCurTime < fStartTime )
+	{
+		return 1.0;
+	}
+	else if( fEndTime >= fCurTime && ( index > 0 || tim.m_SpeedSegments[0].m_fWait > 0.0 ) )
 	{
 		const float fPriorSpeed = ( index == 0 ? 1 : tim.m_SpeedSegments[index - 1].m_fPercent );
 		float fTimeUsed = fCurTime - fStartTime;
