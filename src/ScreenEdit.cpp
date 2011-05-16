@@ -2438,7 +2438,7 @@ void ScreenEdit::TransitionEditState( EditState em )
 
 		// Restore the cursor position + Quantize + Clamp
 		SetBeat( max( 0, Quantize( m_fBeatToReturnTo, NoteTypeToBeat(m_SnapDisplay.GetNoteType()) ) ) );
-
+		GAMESTATE->m_bInStepEditor = true;
 		break;
 
 	case STATE_PLAYING:
@@ -2458,10 +2458,11 @@ void ScreenEdit::TransitionEditState( EditState em )
 		// XXX
 		// GAMESTATE->ResetNoteSkins();
 		//GAMESTATE->res
-
+		GAMESTATE->m_bInStepEditor = false;
 		break;
 	}
 	case STATE_RECORDING_PAUSED:
+		GAMESTATE->m_bInStepEditor = false;
 		break;
 	}
 
