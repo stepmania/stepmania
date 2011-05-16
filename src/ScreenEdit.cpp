@@ -3133,11 +3133,7 @@ static void ChangeArtistTranslit( const RString &sNew )
 
 static void ChangeBeat0Offset( const RString &sNew )
 {
-	TimingData &timing = GAMESTATE->m_pCurSong->m_SongTiming;
-	if( GAMESTATE->m_bIsEditorStepTiming )
-	{
-		timing = GAMESTATE->m_pCurSteps[PLAYER_1]->m_Timing;
-	}
+	TimingData &timing = GAMESTATE->m_bIsEditorStepTiming ? GAMESTATE->m_pCurSteps[PLAYER_1]->m_Timing : GAMESTATE->m_pCurSong->m_SongTiming;
 	timing.m_fBeat0OffsetInSeconds = StringToFloat( sNew );
 }
 
