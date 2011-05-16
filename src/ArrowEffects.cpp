@@ -255,7 +255,7 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 	TimingData &tim = pCurSteps->m_Timing;
 	
 	const int index = tim.GetSpeedSegmentIndexAtBeat( fSongBeat );
-	if( index > 0 )
+	if( !GAMESTATE->m_bInStepEditor && index > 0 )
 	{
 		SpeedSegment &seg = tim.GetSpeedSegmentAtBeat( fSongBeat );
 		float fStartBeat = NoteRowToBeat(seg.m_iStartRow);
