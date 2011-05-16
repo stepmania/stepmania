@@ -2716,7 +2716,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	else if( SM == SM_BackFromTimeSignatureChange )
 	{
 		int iNum, iDen;
-		if( sscanf( " %d / %d ", ScreenTextEntry::s_sLastAnswer.c_str(), &iNum, &iDen ) == 2 )
+		if( sscanf( ScreenTextEntry::s_sLastAnswer.c_str(), " %d / %d ", &iNum, &iDen ) == 2 )
 		{
 			GetAppropriateTiming().SetTimeSignatureNumeratorAtBeat( GetBeat(), iNum );
 			GetAppropriateTiming().SetTimeSignatureDenominatorAtBeat( GetBeat(), iDen );
