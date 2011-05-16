@@ -4002,13 +4002,11 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 		break;
 	case speed_mode: 
 		{
-			RString sMode = ( GetAppropriateTiming().GetSpeedModeAtBeat( GetBeat() ) == 0 ?
-				       "Beats" : "Seconds" );
 			ScreenTextEntry::TextEntry(
 						SM_BackFromSpeedModeChange,
 						   ENTER_SPEED_MODE_VALUE,
-						   sMode.c_str(),
-						   10
+						   "",
+						   3
 			);
 			
 			break;
