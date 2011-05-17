@@ -883,7 +883,7 @@ skip_track:
 		pSteps->SetNoteData( noteData );
 		songOut.AddSteps( pSteps );
 	}
-
+	
 	return true;
 }
 
@@ -956,6 +956,7 @@ bool MidiLoader::LoadFromDir( const RString &sDir, Song &out )
 	if( !LoadFromMidi(sDir+vsFiles[0], out) )
 		return false;
 
+	out.TidyUpData();
 	return true;
 }
 

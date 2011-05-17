@@ -625,6 +625,7 @@ bool SSCLoader::LoadFromSSCFile( const RString &sPath, Song &out, bool bFromCach
 		}
 	}
 	out.m_fVersion = STEPFILE_VERSION_NUMBER;
+	TidyUpData(out, bFromCache);
 	return true;
 }
 

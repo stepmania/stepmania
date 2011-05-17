@@ -711,7 +711,8 @@ bool SMALoader::LoadFromSMAFile( const RString &sPath, Song &out )
 		else
 			LOG->UserLog( "Song file", sPath, "has an unexpected value named \"%s\".", sValueName.c_str() );
 	}
-	
+	TidyUpData(out, false);
+	out.TidyUpData();
 	return true;
 }
 

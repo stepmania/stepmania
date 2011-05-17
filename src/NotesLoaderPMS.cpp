@@ -940,7 +940,7 @@ bool PMSLoader::LoadFromDir( const RString &sDir, Song &out )
 	ConvertString( out.m_sArtist, "utf-8,japanese" );
 	ConvertString( out.m_sGenre, "utf-8,japanese" );
 
-
+	out.TidyUpData();
 	return true;
 }
 

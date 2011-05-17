@@ -753,7 +753,7 @@ bool SMLoader::LoadFromSMFile( const RString &sPath, Song &out, bool bFromCache 
 		else
 			LOG->UserLog( "Song file", sPath, "has an unexpected value named \"%s\".", sValueName.c_str() );
 	}
-
+	TidyUpData( out, bFromCache );
 	return true;
 }
 
@@ -946,6 +946,7 @@ void SMLoader::TidyUpData( Song &song, bool bFromCache )
 			bg.push_back( BackgroundChange(song.m_fLastBeat,song.m_sBackgroundFile) );
 		} while(0);
 	}
+	song.TidyUpData();
 }
 
 /*

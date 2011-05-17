@@ -702,6 +702,7 @@ bool KSFLoader::LoadFromDir( const RString &sDir, Song &out )
 
 		out.AddSteps( pNewNotes );
 	}
+	out.TidyUpData();
 
 	return true;
 }

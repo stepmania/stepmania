@@ -656,7 +656,7 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, set<RString> &Bla
 			// do nothing.  We don't care about this value name
 		}
 	}
-
+	out.TidyUpData();
 	return true;
 }
 
