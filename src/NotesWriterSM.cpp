@@ -63,19 +63,6 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 	f.PutLine( ssprintf( "#LYRICSPATH:%s;", SmEscape(out.m_sLyricsFile).c_str() ) );
 	f.PutLine( ssprintf( "#CDTITLE:%s;", SmEscape(out.m_sCDTitleFile).c_str() ) );
 	f.PutLine( ssprintf( "#MUSIC:%s;", SmEscape(out.m_sMusicFile).c_str() ) );
-	
-	{
-		vector<RString> vs;
-		FOREACH_ENUM( InstrumentTrack, it )
-			if( out.HasInstrumentTrack(it) )
-				vs.push_back( InstrumentTrackToString(it) + 
-					     "=" + out.m_sInstrumentTrackFile[it] );
-		if( !vs.empty() )
-		{
-			RString s = join( ",", vs );
-			f.PutLine( "#INSTRUMENTTRACK:" + s + ";\n" );
-		}
-	}
 	f.PutLine( ssprintf( "#OFFSET:%.3f;", out.m_SongTiming.m_fBeat0OffsetInSeconds ) );
 	f.PutLine( ssprintf( "#SAMPLESTART:%.3f;", out.m_fMusicSampleStartSeconds ) );
 	f.PutLine( ssprintf( "#SAMPLELENGTH:%.3f;", out.m_fMusicSampleLengthSeconds ) );
@@ -125,30 +112,17 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 	for( unsigned i=0; i<out.m_SongTiming.m_StopSegments.size(); i++ )
 	{
 		const StopSegment &fs = out.m_SongTiming.m_StopSegments[i];
-
+		int iRow = fs.m_iStartRow;
+		float fBeat = NoteRowToBeat(!fs.m_bDelay ? iRow : iRow - 1);
+		
 		if(!fs.m_bDelay)
 		{
-			f.PutLine( ssprintf( "%.3f=%.3f", NoteRowToBeat(fs.m_iStartRow), fs.m_fStopSeconds ) );
+			f.PutLine( ssprintf( "%.3f=%.3f", fBeat, fs.m_fStopSeconds ) );
 			if( i != out.m_SongTiming.m_StopSegments.size()-1 )
 				f.Write( "," );
 		}
 	}
 	f.PutLine( ";" );
-
-	f.Write( "#DELAYS:" );
-	for( unsigned i=0; i<out.m_SongTiming.m_StopSegments.size(); i++ )
-	{
-		const StopSegment &fs = out.m_SongTiming.m_StopSegments[i];
-
-		if( fs.m_bDelay )
-		{
-			f.PutLine( ssprintf( "%.3f=%.3f", NoteRowToBeat(fs.m_iStartRow), fs.m_fStopSeconds ) );
-			if( i != out.m_SongTiming.m_StopSegments.size()-1 )
-				f.Write( "," );
-		}
-	}
-	f.PutLine( ";" );
-
 		
 	FOREACH_BackgroundLayer( b )
 	{
