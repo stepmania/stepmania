@@ -48,7 +48,7 @@ static RString BackgroundChangeToString( const BackgroundChange &bgc )
  * @brief Write out the common tags for .SM files.
  * @param f the file in question.
  * @param out the Song in question. */
-static void WriteGlobalTags( RageFile &f, const Song &out )
+static void WriteGlobalTags( RageFile &f, Song &out )
 {
 	f.PutLine( ssprintf( "#TITLE:%s;", SmEscape(out.m_sMainTitle).c_str() ) );
 	f.PutLine( ssprintf( "#SUBTITLE:%s;", SmEscape(out.m_sSubTitle).c_str() ) );
@@ -107,6 +107,22 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 			f.Write( "," );
 	}
 	f.PutLine( ";" );
+	
+	unsigned wSize = out.m_SongTiming.m_WarpSegments.size();
+	if( wSize > 0 )
+	{
+		for( unsigned i=0; i < wSize; i++ )
+		{
+			int iRow = out.m_SongTiming.m_WarpSegments[i].m_iStartRow;
+			float fBPS = 60 / out.m_SongTiming.GetBPMAtRow(iRow);
+			float fSkip = fBPS * out.m_SongTiming.m_WarpSegments[i].m_fLengthBeats;
+			StopSegment ss;
+			ss.m_iStartRow = iRow;
+			ss.m_fStopSeconds = -fSkip;
+			ss.m_bDelay = false; // Best to be sure.
+			out.m_SongTiming.AddStopSegment( ss );
+		}
+	}
 
 	f.Write( "#STOPS:" );
 	for( unsigned i=0; i<out.m_SongTiming.m_StopSegments.size(); i++ )
@@ -120,6 +136,13 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 			f.PutLine( ssprintf( "%.3f=%.3f", fBeat, fs.m_fStopSeconds ) );
 			if( i != out.m_SongTiming.m_StopSegments.size()-1 )
 				f.Write( "," );
+			if( fs.m_fStopSeconds < 0 )
+			{
+				out.m_SongTiming.m_StopSegments.erase( 
+						     out.m_SongTiming.m_StopSegments.begin()+i,
+						     out.m_SongTiming.m_StopSegments.begin()+i+1 );
+				i--;
+			}
 		}
 	}
 	f.PutLine( ";" );
@@ -237,7 +260,7 @@ static RString GetSMNotesTag( const Song &song, const Steps &in )
 	return JoinLineList( lines );
 }
 
-bool NotesWriterSM::Write( RString sPath, const Song &out, const vector<Steps*>& vpStepsToSave )
+bool NotesWriterSM::Write( RString sPath, Song &out, const vector<Steps*>& vpStepsToSave )
 {
 	int flags = RageFile::WRITE;
 
