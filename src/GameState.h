@@ -333,10 +333,10 @@ public:
 	// Edit stuff
 	
 	/**
-	 * @brief Is the editor making changes to Song timing or Steps timing?
+	 * @brief Is the game right now using Song timing or Steps timing?
 	 *
 	 * Different options are available depending on this setting. */
-	bool m_bIsEditorStepTiming;
+	bool m_bIsUsingStepTiming;
 	/**
 	 * @brief Are we presently in the Step Editor, where some rules apply differently?
 	 *

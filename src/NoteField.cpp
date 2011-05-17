@@ -42,7 +42,7 @@ inline const TimingData *GetRealTiming(const PlayerState *pPlayerState)
 
 inline const TimingData *GetDisplayedTiming(const PlayerState *pPlayerState)
 {
-	if( !GAMESTATE->m_bIsEditorStepTiming )
+	if( !GAMESTATE->m_bIsUsingStepTiming )
 		return &GAMESTATE->m_pCurSong->m_SongTiming;
 	return GetRealTiming(pPlayerState);
 }
@@ -54,7 +54,7 @@ inline const SongPosition *GetRealPosition(const PlayerState *pPlayerState)
 
 inline const SongPosition *GetDisplayedPosition(const PlayerState *pPlayerState)
 {
-	if( !GAMESTATE->m_bIsEditorStepTiming )
+	if( !GAMESTATE->m_bIsUsingStepTiming )
 		return &GAMESTATE->m_Position;
 	return GetRealPosition(pPlayerState);
 }
@@ -739,7 +739,7 @@ float FindLastDisplayedBeat( const PlayerState* pPlayerState, int iDrawDistanceB
 inline float NoteRowToVisibleBeat( const PlayerState *pPlayerState, int iRow )
 {
 	/*
-	if( GAMESTATE->m_bIsEditorStepTiming )
+	if( GAMESTATE->m_bIsUsingStepTiming )
 	{
 	*/
 		return NoteRowToBeat(iRow);
@@ -893,7 +893,7 @@ void NoteField::DrawPrimitives()
 		}
 		
 		// Warp text
-		if( GAMESTATE->m_bIsEditorStepTiming )
+		if( GAMESTATE->m_bIsUsingStepTiming )
 		{
 			FOREACH_CONST( WarpSegment, timing.m_WarpSegments, seg )
 			{
@@ -917,7 +917,7 @@ void NoteField::DrawPrimitives()
 			}
 		}
 		
-		if( GAMESTATE->m_bIsEditorStepTiming )
+		if( GAMESTATE->m_bIsUsingStepTiming )
 		{
 			// Tickcount text
 			FOREACH_CONST( TickcountSegment, timing.m_TickcountSegments, seg )
@@ -931,7 +931,7 @@ void NoteField::DrawPrimitives()
 			}
 		}
 		
-		if( GAMESTATE->m_bIsEditorStepTiming )
+		if( GAMESTATE->m_bIsUsingStepTiming )
 		{
 			// Combo text
 			FOREACH_CONST( ComboSegment, timing.m_ComboSegments, seg )
@@ -956,7 +956,7 @@ void NoteField::DrawPrimitives()
 			}
 		}
 		
-		if( GAMESTATE->m_bIsEditorStepTiming )
+		if( GAMESTATE->m_bIsUsingStepTiming )
 		{
 			FOREACH_CONST( SpeedSegment, timing.m_SpeedSegments, seg )
 			{
@@ -970,7 +970,7 @@ void NoteField::DrawPrimitives()
 		}
 		
 		// Speed text
-		if( GAMESTATE->m_bIsEditorStepTiming )
+		if( GAMESTATE->m_bIsUsingStepTiming )
 		{
 			FOREACH_CONST( FakeSegment, timing.m_FakeSegments, seg )
 			{
@@ -1004,7 +1004,7 @@ void NoteField::DrawPrimitives()
 			}
 		}
 		
-		if( !GAMESTATE->m_bIsEditorStepTiming )
+		if( !GAMESTATE->m_bIsUsingStepTiming )
 		{
 			// BGChange text
 			switch( GAMESTATE->m_EditMode )

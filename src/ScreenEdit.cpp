@@ -705,7 +705,7 @@ void ScreenEdit::Init()
 {
 	m_pSoundMusic = NULL;
 	
-	GAMESTATE->m_bIsEditorStepTiming = true;
+	GAMESTATE->m_bIsUsingStepTiming = true;
 	GAMESTATE->m_bInStepEditor = true;
 
 	SubscribeToMessage( "Judgment" );
@@ -865,8 +865,8 @@ ScreenEdit::~ScreenEdit()
 	LOG->Trace( "ScreenEdit::~ScreenEdit()" );
 	m_pSoundMusic->StopPlaying();
 	
-	// Reset the GameState variable in case it's needed elsewhere.
-	GAMESTATE->m_bIsEditorStepTiming = false;
+	// Go back to Step Timing on leave.
+	GAMESTATE->m_bIsUsingStepTiming = true;
 	// DEFINITELY reset the InStepEditor variable.
 	GAMESTATE->m_bInStepEditor = false;
 }
@@ -1163,7 +1163,7 @@ void ScreenEdit::UpdateTextInfo()
 	case EditMode_Full:
 		sText += ssprintf( TIMING_MODE_FORMAT.GetValue(),
 				  TIMING_MODE.GetValue().c_str(),
-				  ( GAMESTATE->m_bIsEditorStepTiming ?
+				  ( GAMESTATE->m_bIsUsingStepTiming ?
 				   STEP_TIMING.GetValue().c_str() :
 				   SONG_TIMING.GetValue().c_str() ) );
 		sText += ssprintf( BEAT_0_OFFSET_FORMAT.GetValue(), 
@@ -1825,7 +1825,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 		break;
 	case EDIT_BUTTON_OPEN_BGCHANGE_LAYER1_MENU:
 	case EDIT_BUTTON_OPEN_BGCHANGE_LAYER2_MENU:
-		if( !GAMESTATE->m_bIsEditorStepTiming )
+		if( !GAMESTATE->m_bIsUsingStepTiming )
 		{
 			switch( EditB )
 			{
@@ -2148,7 +2148,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 		break;
 	
 	case EDIT_BUTTON_SWITCH_TIMINGS:
-		GAMESTATE->m_bIsEditorStepTiming = !GAMESTATE->m_bIsEditorStepTiming;
+		GAMESTATE->m_bIsUsingStepTiming = !GAMESTATE->m_bIsUsingStepTiming;
 		m_soundSwitchTiming.Play();
 		break;
 	}
@@ -3147,7 +3147,7 @@ static void ChangeArtistTranslit( const RString &sNew )
 
 static void ChangeBeat0Offset( const RString &sNew )
 {
-	TimingData &timing = GAMESTATE->m_bIsEditorStepTiming ? GAMESTATE->m_pCurSteps[PLAYER_1]->m_Timing : GAMESTATE->m_pCurSong->m_SongTiming;
+	TimingData &timing = GAMESTATE->m_bIsUsingStepTiming ? GAMESTATE->m_pCurSteps[PLAYER_1]->m_Timing : GAMESTATE->m_pCurSong->m_SongTiming;
 	timing.m_fBeat0OffsetInSeconds = StringToFloat( sNew );
 }
 
@@ -3178,7 +3178,7 @@ static void ChangeMaxBPM( const RString &sNew )
 
 TimingData & ScreenEdit::GetAppropriateTiming() const
 {
-	if( GAMESTATE->m_bIsEditorStepTiming )
+	if( GAMESTATE->m_bIsUsingStepTiming )
 	{
 		return m_pSteps->m_Timing;
 	}
@@ -3187,7 +3187,7 @@ TimingData & ScreenEdit::GetAppropriateTiming() const
 
 inline void ScreenEdit::SetBeat(float fBeat)
 {
-	if( !GAMESTATE->m_bIsEditorStepTiming )
+	if( !GAMESTATE->m_bIsUsingStepTiming )
 	{
 		GAMESTATE->m_Position.m_fSongBeat = fBeat;
 		GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat = m_pSteps->m_Timing.GetBeatFromElapsedTime(m_pSong->m_SongTiming.GetElapsedTimeFromBeat(fBeat));
@@ -3201,7 +3201,7 @@ inline void ScreenEdit::SetBeat(float fBeat)
 
 inline float ScreenEdit::GetBeat()
 {
-	if( !GAMESTATE->m_bIsEditorStepTiming )
+	if( !GAMESTATE->m_bIsUsingStepTiming )
 	{
 		return GAMESTATE->m_Position.m_fSongBeat;
 	}
@@ -3229,13 +3229,13 @@ void ScreenEdit::DisplayTimingMenu()
 	
 	g_TimingDataInformation.rows[fake].SetOneUnthemedChoice( ssprintf("%.5f", pTime.GetFakeAtBeat( fBeat ) ) );
 	
-	g_TimingDataInformation.rows[tickcount].bEnabled = GAMESTATE->m_bIsEditorStepTiming;
-	g_TimingDataInformation.rows[combo].bEnabled = GAMESTATE->m_bIsEditorStepTiming;
-	g_TimingDataInformation.rows[warp].bEnabled = GAMESTATE->m_bIsEditorStepTiming;
-	g_TimingDataInformation.rows[speed_percent].bEnabled = GAMESTATE->m_bIsEditorStepTiming;
-	g_TimingDataInformation.rows[speed_wait].bEnabled = GAMESTATE->m_bIsEditorStepTiming;
-	g_TimingDataInformation.rows[speed_mode].bEnabled = GAMESTATE->m_bIsEditorStepTiming;
-	g_TimingDataInformation.rows[fake].bEnabled = GAMESTATE->m_bIsEditorStepTiming;
+	g_TimingDataInformation.rows[tickcount].bEnabled = GAMESTATE->m_bIsUsingStepTiming;
+	g_TimingDataInformation.rows[combo].bEnabled = GAMESTATE->m_bIsUsingStepTiming;
+	g_TimingDataInformation.rows[warp].bEnabled = GAMESTATE->m_bIsUsingStepTiming;
+	g_TimingDataInformation.rows[speed_percent].bEnabled = GAMESTATE->m_bIsUsingStepTiming;
+	g_TimingDataInformation.rows[speed_wait].bEnabled = GAMESTATE->m_bIsUsingStepTiming;
+	g_TimingDataInformation.rows[speed_mode].bEnabled = GAMESTATE->m_bIsUsingStepTiming;
+	g_TimingDataInformation.rows[fake].bEnabled = GAMESTATE->m_bIsUsingStepTiming;
 		
 	EditMiniMenu( &g_TimingDataInformation, SM_BackFromTimingDataInformation );
 }
