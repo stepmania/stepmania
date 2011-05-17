@@ -134,19 +134,6 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 		}
 	}
 	f.PutLine( ";" );
-	
-	f.Write( "#ATTACKS:" );
-	for( unsigned j = 0; j < out.m_Attacks.size(); j++ )
-	{
-		const Attack &a = out.m_Attacks[j];
-		f.Write( ssprintf( "TIME=%.2f:LEN=%.2f:MODS=%s",
-			a.fStartSecond, a.fSecsRemaining, a.sModifiers.c_str() ) );
-
-		if( j+1 < out.m_Attacks.size() )
-			f.Write( ":" );
-		f.PutLine( "" );
-	}
-	f.PutLine( ";" );
 
 	f.Write( "#DELAYS:" );
 	for( unsigned i=0; i<out.m_SongTiming.m_StopSegments.size(); i++ )
@@ -162,31 +149,7 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 	}
 	f.PutLine( ";" );
 
-	ASSERT( !out.m_SongTiming.m_vTimeSignatureSegments.empty() );
-	f.Write( "#TIMESIGNATURES:" );
-	FOREACH_CONST( TimeSignatureSegment, out.m_SongTiming.m_vTimeSignatureSegments, iter )
-	{
-		f.PutLine( ssprintf( "%.3f=%d=%d", NoteRowToBeat(iter->m_iStartRow), 
-				    iter->m_iNumerator, iter->m_iDenominator ) );
-		vector<TimeSignatureSegment>::const_iterator iter2 = iter;
-		iter2++;
-		if( iter2 != out.m_SongTiming.m_vTimeSignatureSegments.end() )
-			f.Write( "," );
-	}
-	f.PutLine( ";" );
-
-	ASSERT( !out.m_SongTiming.m_TickcountSegments.empty() );
-	f.Write( "#TICKCOUNTS:" );
-	for( unsigned i=0; i<out.m_SongTiming.m_TickcountSegments.size(); i++ )
-	{
-		const TickcountSegment &ts = out.m_SongTiming.m_TickcountSegments[i];
 		
-		f.PutLine( ssprintf( "%.3f=%d", NoteRowToBeat(ts.m_iStartRow), ts.m_iTicks ) );
-		if( i != out.m_SongTiming.m_TickcountSegments.size()-1 )
-			f.Write( "," );
-	}
-	f.PutLine( ";" );
-	
 	FOREACH_BackgroundLayer( b )
 	{
 		if( b==0 )
