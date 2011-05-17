@@ -498,8 +498,8 @@ public:
 		speed_percent,
 		speed_wait,
 		speed_mode,
-		erase_step_timing,
 		fake,
+		erase_step_timing,
 		NUM_TIMING_DATA_INFORMATION_CHOICES
 	};
 	
