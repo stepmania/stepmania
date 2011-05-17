@@ -290,7 +290,7 @@ void SMLoader::ProcessStops( TimingData &out, const RString sParam )
 			if( negBeat + fSkipBeats > fFreezeBeat )
 				fSkipBeats = fFreezeBeat - negBeat;
 			
-			WarpSegment ws( negBeat, negBeat + fSkipBeats);
+			WarpSegment ws( negBeat, fSkipBeats);
 			out.AddWarpSegment( ws );
 			
 			negBeat = -1;
