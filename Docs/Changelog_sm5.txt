@@ -8,6 +8,13 @@ ________________________________________________________________________________
 StepMania 5.0 $NEXT | 20110xyy
 --------------------------------------------------------------------------------
 
+2011/05/17
+----------
+* [NotesWriterSM] Write out OpenITG compatible SM files from here on out.
+  This includes turning Warps into Negative Stops. For those that wanted
+  negative BPMs specifically, my apologies, but stops are easier on math.
+  [Wolfman2000]
+
 2011/05/16
 ----------
 * [ProfileManager] Added ProfileWasLoadedFromMemoryCard(PlayerNumber)
