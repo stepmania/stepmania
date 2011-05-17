@@ -24,7 +24,7 @@ OptionsCursor::OptionsCursor( const OptionsCursor &cpy ):
 	m_iOriginalCanGoLeftX( cpy.m_iOriginalCanGoLeftX ),
 	m_iOriginalCanGoRightX( cpy.m_iOriginalCanGoRightX )
 {
-	/* Re-add children, or m_SubActors will point to cpy's children and not our own. */
+	// Re-add children, or m_SubActors will point to cpy's children and not our own.
 	m_SubActors.clear();
 	this->AddChild( m_sprMiddle );
 	this->AddChild( m_sprLeft );

@@ -144,8 +144,7 @@ void ScreenHowToPlay::Init()
 		const Style* pStyle = GAMESTATE->GetCurrentStyle();
 
 		Steps *pSteps = SongUtil::GetStepsByDescription( &m_Song, pStyle->m_StepsType, "" );
-		// todo: make StepsType human readable. -aj
-		ASSERT_M( pSteps != NULL, "No playable steps for ScreenHowToPlay" );
+		ASSERT_M( pSteps != NULL, ssprintf("No playable steps of StepsType '%s' for ScreenHowToPlay", StringConversion::ToString(pStyle->m_StepsType).c_str()) );
 
 		NoteData tempNoteData;
 		pSteps->GetNoteData( tempNoteData );
