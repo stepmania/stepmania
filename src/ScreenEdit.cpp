@@ -3231,7 +3231,6 @@ void ScreenEdit::DisplayTimingMenu()
 	
 	g_TimingDataInformation.rows[tickcount].bEnabled = GAMESTATE->m_bIsUsingStepTiming;
 	g_TimingDataInformation.rows[combo].bEnabled = GAMESTATE->m_bIsUsingStepTiming;
-	g_TimingDataInformation.rows[warp].bEnabled = GAMESTATE->m_bIsUsingStepTiming;
 	g_TimingDataInformation.rows[speed_percent].bEnabled = GAMESTATE->m_bIsUsingStepTiming;
 	g_TimingDataInformation.rows[speed_wait].bEnabled = GAMESTATE->m_bIsUsingStepTiming;
 	g_TimingDataInformation.rows[speed_mode].bEnabled = GAMESTATE->m_bIsUsingStepTiming;

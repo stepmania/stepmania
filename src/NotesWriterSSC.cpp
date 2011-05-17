@@ -108,13 +108,10 @@ static void GetTimingTags( vector<RString> &lines, TimingData timing, bool bIsSo
 			w.Write( ss->m_iStartRow, ss->m_fStopSeconds );
 	w.Finish();
 	
-	if( !bIsSong )
-	{
-		w.Init( "WARPS" );
-		FOREACH_CONST( WarpSegment, timing.m_WarpSegments, ws )
-			w.Write( ws->m_iStartRow, ws->m_fLengthBeats );
-		w.Finish();
-	}
+	w.Init( "WARPS" );
+	FOREACH_CONST( WarpSegment, timing.m_WarpSegments, ws )
+		w.Write( ws->m_iStartRow, ws->m_fLengthBeats );
+	w.Finish();
 	
 	ASSERT( !timing.m_vTimeSignatureSegments.empty() );
 	w.Init( "TIMESIGNATURES" );
