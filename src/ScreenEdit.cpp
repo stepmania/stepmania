@@ -777,7 +777,7 @@ void ScreenEdit::Init()
 	m_NoteDataRecord.SetNumTracks( m_NoteDataEdit.GetNumTracks() );
 	m_NoteFieldRecord.SetXY( RECORD_X, RECORD_Y );
 	m_NoteFieldRecord.Init( GAMESTATE->m_pPlayerState[PLAYER_1], PLAYER_HEIGHT );
-	m_NoteFieldRecord.Load( &m_NoteDataRecord, -(int)SCREEN_HEIGHT/2, (int)SCREEN_HEIGHT/2 );
+	m_NoteFieldRecord.Load( &m_NoteDataRecord, -120, 425 );
 	this->AddChild( &m_NoteFieldRecord );
 
 	m_EditState = EditState_Invalid;
