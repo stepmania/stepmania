@@ -2418,14 +2418,6 @@ void ScreenEdit::TransitionEditState( EditState em )
 		// Load the player's default PlayerOptions.
 		GAMESTATE->m_pPlayerState[PLAYER_1]->RebuildPlayerOptionsFromActiveAttacks();
 
-		switch( em )
-		{
-		case STATE_RECORDING:
-		case STATE_RECORDING_PAUSED:
-			PO_GROUP_ASSIGN_N( GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions, ModsLevel_Stage, m_fScrolls, PlayerOptions::SCROLL_CENTERED, 1.0f );
-			break;
-		}
-
 		// Snap to current options.
 		GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.SetCurrentToLevel( ModsLevel_Stage );
 	}
