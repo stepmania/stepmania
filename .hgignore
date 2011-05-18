@@ -82,6 +82,7 @@ Utils/temp*
 BuildLog.htm
 *.pch
 
+.hgrc
 syntax: regexp
 .*\#.*\#$
 glob:Cache/Banners/AdditionalSongs_Airspace Preview_Derailed_Derailed bn.png
