@@ -43,11 +43,9 @@ bool NotesLoader::LoadFromDir( const RString &sPath, Song &out, set<RString> &Bl
 	SMLoader::GetApplicableFiles( sPath, list );
 	if (!list.empty() )
 		return SMLoader::LoadFromDir( sPath, out );
-#if defined(_MSC_VER) || defined(MACOSX)
 	SMALoader::GetApplicableFiles( sPath, list );
 	if (!list.empty() )
 		return SMALoader::LoadFromDir( sPath, out );
-#endif
 	DWILoader::GetApplicableFiles( sPath, list );
 	if( !list.empty() )
 		return DWILoader::LoadFromDir( sPath, out, BlacklistedImages );
