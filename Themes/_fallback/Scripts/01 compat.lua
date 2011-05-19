@@ -72,5 +72,5 @@ end
 function GameState:GetSongBeat() return self:GetSongPosition():GetSongBeat() end
 function GameState:GetSongBeatNoOffset() return self:GetSongPosition():GetSongBeatNoOffset() end
 function GameState:GetSongBPS() return self:GetSongPosition():GetCurBPS() end
-function GameState:GetSongDelay() return self:GetSongPosition:GetDelay() end
-function GameState:GetSongFreeze() return self:GetSongPosition:GetFreeze() end
+function GameState:GetSongDelay() return self:GetSongPosition():GetDelay() end
+function GameState:GetSongFreeze() return self:GetSongPosition():GetFreeze() end
