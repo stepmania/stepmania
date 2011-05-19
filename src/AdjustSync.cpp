@@ -35,6 +35,7 @@
 
 #include "global.h"
 #include "Song.h"
+#include "Steps.h"
 #include "AdjustSync.h"
 #include "GameState.h"
 #include "LocalizedString.h"
@@ -186,8 +187,15 @@ void AdjustSync::AutosyncOffset()
 		switch( GAMESTATE->m_SongOptions.GetCurrent().m_AutosyncType )
 		{
 		case SongOptions::AUTOSYNC_SONG:
+			{
 			GAMESTATE->m_pCurSong->m_SongTiming.m_fBeat0OffsetInSeconds += mean;
+			const vector<Steps*>& vpSteps = GAMESTATE->m_pCurSong->GetAllSteps();
+			FOREACH( Steps*, const_cast<vector<Steps*>&>(vpSteps), s )
+			{
+				(*s)->m_Timing.m_fBeat0OffsetInSeconds += mean;
+			}
 			break;
+			}
 		case SongOptions::AUTOSYNC_MACHINE:
 			PREFSMAN->m_fGlobalOffsetSeconds.Set( PREFSMAN->m_fGlobalOffsetSeconds + mean );
 			break;
