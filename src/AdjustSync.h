@@ -13,8 +13,7 @@ class TimingData;
 class AdjustSync
 {
 public:
-	/** @brief The original timing data for the Song and Steps. */
-	static vector<TimingData *> s_vTimingDataOriginal;
+	static TimingData *s_pTimingDataOriginal;
 	static float s_fGlobalOffsetSecondsOriginal;
 	/* We only want to call the Reset methods before a song, not immediately after
 	 * a song. If we reset it at the end of a song, we have to carefully check
