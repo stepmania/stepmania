@@ -1258,6 +1258,9 @@
 	<Function name='GetText' sm-ssc='true' return='string' arguments=''>
 		Returns the text that is currently set at the exact moment you call it. This is likely only going to be useful in an Update command.
 	</Function>
+	<Function name='SetFromCourse' sm-ssc='true' return='void' arguments='Course c'>
+		Sets the BPMDisplay from the specified Course.
+	</Function>
 	<Function name='SetFromGameState' return='void' arguments=''>
 		Sets the BPMDisplay from the GameState.
 	</Function>
@@ -1536,6 +1539,9 @@
 		<!-- XXX: Presumably, 0 is all the way to the left, and 1 is all the way
 		          to the right. -->
 		Return the sound balance for <code>pn</code>.
+	</Function>
+	<Function name='PlayAnnouncer' sm-ssc='true' return='void' arguments='string sPath'>
+		Plays a sound from the current announcer.
 	</Function>
 	<Function name='PlayOnce' return='void' arguments='string sPath'>
 		Play the sound at <code>sPath</code> one time.
