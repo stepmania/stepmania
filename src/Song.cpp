@@ -252,7 +252,7 @@ bool Song::LoadFromSongDir( RString sDir )
 
 		if( !NotesLoader::LoadFromDir(sDir, *this, BlacklistedImages) )
 		{
-			LOG->UserLog( "Song", sDir, "has no SM, DWI, BMS, or KSF files." );
+			LOG->UserLog( "Song", sDir, "has no SSC, SM, SMA, DWI, BMS, or KSF files." );
 
 			vector<RString> vs;
 			GetDirListing( sDir + "*.mp3", vs, false, false ); 
