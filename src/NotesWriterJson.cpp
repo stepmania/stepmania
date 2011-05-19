@@ -137,7 +137,7 @@ bool NotesWriterJson::WriteSong( const RString &sFile, const Song &out, bool bWr
 	root["LyricsFile"] = out.m_sLyricsFile;
 	root["CDTitle"] = out.m_sCDTitleFile;
 	root["Music"] = out.m_sMusicFile;
-	root["Offset"] = out.m_Timing.m_fBeat0OffsetInSeconds;
+	root["Offset"] = out.m_SongTiming.m_fBeat0OffsetInSeconds;
 	root["SampleStart"] = out.m_fMusicSampleStartSeconds;
 	root["SampleLength"] = out.m_fMusicSampleLengthSeconds;
 	if( out.m_SelectionDisplay == Song::SHOW_ALWAYS )
@@ -161,7 +161,7 @@ bool NotesWriterJson::WriteSong( const RString &sFile, const Song &out, bool bWr
 		root["SpecifiedBpmMax"] = out.m_fSpecifiedBPMMax;
 	}
 
-	Serialize( out.m_Timing, root["TimingData"] );
+	Serialize( out.m_SongTiming, root["TimingData"] );
 	JsonUtil::SerializeVectorObjects( out.m_LyricSegments, Serialize, root["LyricSegments"] );
 
 	{

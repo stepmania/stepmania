@@ -1325,7 +1325,7 @@ void ScreenGameplay::StartPlayingSong( float fMinTimeToNotes, float fMinTimeToMu
 
 	{
 		const float fFirstBeat = GAMESTATE->m_pCurSong->m_fFirstBeat;
-		const float fFirstSecond = GAMESTATE->m_pCurSong->GetElapsedTimeFromBeat( fFirstBeat );
+		const float fFirstSecond = GAMESTATE->m_pCurSong->m_SongTiming.GetElapsedTimeFromBeat( fFirstBeat );
 		float fStartDelay = fMinTimeToNotes - fFirstSecond;
 		fStartDelay = max( fStartDelay, fMinTimeToMusic );
 		p.m_StartSecond = -fStartDelay;
@@ -1347,10 +1347,10 @@ void ScreenGameplay::StartPlayingSong( float fMinTimeToNotes, float fMinTimeToMu
 		m_pSoundMusic->Pause( true );
 
 	/* Make sure GAMESTATE->m_fMusicSeconds is set up. */
-	GAMESTATE->m_fMusicSeconds = -5000;
+	GAMESTATE->m_Position.m_fMusicSeconds = -5000;
 	UpdateSongPosition(0);
 
-	ASSERT( GAMESTATE->m_fMusicSeconds > -4000 ); /* make sure the "fake timer" code doesn't trigger */
+	ASSERT( GAMESTATE->m_Position.m_fMusicSeconds > -4000 ); /* make sure the "fake timer" code doesn't trigger */
 }
 
 
@@ -1405,7 +1405,7 @@ void ScreenGameplay::PlayAnnouncer( RString type, float fSeconds )
 	if( m_DancingState != STATE_DANCING )
 		return;
 	if( GAMESTATE->m_pCurSong == NULL  ||	// this will be true on ScreenDemonstration sometimes
-		GAMESTATE->m_fSongBeat < GAMESTATE->m_pCurSong->m_fFirstBeat )
+		GAMESTATE->m_Position.m_fSongBeat < GAMESTATE->m_pCurSong->m_fFirstBeat )
 		return;
 
 	if( m_fTimeSinceLastDancingComment < fSeconds )
@@ -1423,7 +1423,7 @@ void ScreenGameplay::UpdateSongPosition( float fDeltaTime )
 	RageTimer tm;
 	const float fSeconds = m_pSoundMusic->GetPositionSeconds( NULL, &tm );
 	const float fAdjust = SOUND->GetFrameTimingAdjustment( fDeltaTime );
-	GAMESTATE->UpdateSongPosition( fSeconds+fAdjust, GAMESTATE->m_pCurSong->m_Timing, tm+fAdjust );
+	GAMESTATE->UpdateSongPosition( fSeconds+fAdjust, GAMESTATE->m_pCurSong->m_SongTiming, tm+fAdjust, true );
 }
 
 void ScreenGameplay::BeginScreen()
@@ -1480,7 +1480,7 @@ bool ScreenGameplay::AllAreFailing()
 
 void ScreenGameplay::GetMusicEndTiming( float &fSecondsToStartFadingOutMusic, float &fSecondsToStartTransitioningOut )
 {
-	float fLastStepSeconds = GAMESTATE->m_pCurSong->GetElapsedTimeFromBeat( GAMESTATE->m_pCurSong->m_fLastBeat );
+	float fLastStepSeconds = GAMESTATE->m_pCurSong->m_SongTiming.GetElapsedTimeFromBeat( GAMESTATE->m_pCurSong->m_fLastBeat );
 	fLastStepSeconds += Player::GetMaxStepDistanceSeconds();
 
 	float fTransitionLength;
@@ -1687,7 +1687,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 
 		// update fGameplaySeconds
 		STATSMAN->m_CurStageStats.m_fGameplaySeconds += fUnscaledDeltaTime;
-		if( GAMESTATE->m_fSongBeat >= GAMESTATE->m_pCurSong->m_fFirstBeat && GAMESTATE->m_fSongBeat < GAMESTATE->m_pCurSong->m_fLastBeat )
+		if( GAMESTATE->m_Position.m_fSongBeat >= GAMESTATE->m_pCurSong->m_fFirstBeat && GAMESTATE->m_Position.m_fSongBeat < GAMESTATE->m_pCurSong->m_fLastBeat )
 		{
 			STATSMAN->m_CurStageStats.m_fStepsSeconds += fUnscaledDeltaTime;
 
@@ -1707,7 +1707,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 			if( bAllReallyFailed )
 				fSecondsToStartTransitioningOut += BEGIN_FAILED_DELAY;
 
-			if( GAMESTATE->m_fMusicSeconds >= fSecondsToStartTransitioningOut && !m_NextSong.IsTransitioning() )
+			if( GAMESTATE->m_Position.m_fMusicSeconds >= fSecondsToStartTransitioningOut && !m_NextSong.IsTransitioning() )
 				this->PostScreenMessage( SM_NotesEnded, 0 );
 		}
 
@@ -1843,8 +1843,8 @@ void ScreenGameplay::Update( float fDeltaTime )
 
 float ScreenGameplay::GetHasteRate()
 {
-	if( GAMESTATE->m_fMusicSeconds < GAMESTATE->m_fLastHasteUpdateMusicSeconds || // new song
-		GAMESTATE->m_fMusicSeconds > GAMESTATE->m_fLastHasteUpdateMusicSeconds + 4 )
+	if( GAMESTATE->m_Position.m_fMusicSeconds < GAMESTATE->m_fLastHasteUpdateMusicSeconds || // new song
+		GAMESTATE->m_Position.m_fMusicSeconds > GAMESTATE->m_fLastHasteUpdateMusicSeconds + 4 )
 	{
 		bool bAnyPlayerHitAllNotes = false;
 		FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
@@ -1865,7 +1865,7 @@ float ScreenGameplay::GetHasteRate()
 			GAMESTATE->m_fHasteRate += 0.1f;
 		CLAMP( GAMESTATE->m_fHasteRate, -1.0f, +1.0f );
 
-		GAMESTATE->m_fLastHasteUpdateMusicSeconds = GAMESTATE->m_fMusicSeconds;
+		GAMESTATE->m_fLastHasteUpdateMusicSeconds = GAMESTATE->m_Position.m_fMusicSeconds;
 	}
 
 	/* If the life meter is less than half full, push the haste rate down to let
@@ -1914,7 +1914,7 @@ void ScreenGameplay::UpdateLights()
 	ZERO( bBlinkGameButton );
 	bool bCrossedABeat = false;
 	{
-		const float fSongBeat = GAMESTATE->m_fLightSongBeat;
+		const float fSongBeat = GAMESTATE->m_Position.m_fLightSongBeat;
 		const int iSongRow = BeatToNoteRowNotRounded( fSongBeat );
 
 		static int iRowLastCrossed = 0;
@@ -1968,7 +1968,7 @@ void ScreenGameplay::UpdateLights()
 	}
 
 	// Before the first beat of the song, all cabinet lights solid on (except for menu buttons).
-	bool bOverrideCabinetBlink = (GAMESTATE->m_fSongBeat < GAMESTATE->m_pCurSong->m_fFirstBeat);
+	bool bOverrideCabinetBlink = (GAMESTATE->m_Position.m_fSongBeat < GAMESTATE->m_pCurSong->m_fFirstBeat);
 	FOREACH_CabinetLight( cl )
 		bBlinkCabinetLight[cl] |= bOverrideCabinetBlink;
 
@@ -1994,8 +1994,8 @@ void ScreenGameplay::SendCrossedMessages()
 	{
 		static int iRowLastCrossed = 0;
 
-		float fPositionSeconds = GAMESTATE->m_fMusicSeconds;
-		float fSongBeat = GAMESTATE->m_pCurSong->GetBeatFromElapsedTime( fPositionSeconds );
+		float fPositionSeconds = GAMESTATE->m_Position.m_fMusicSeconds;
+		float fSongBeat = GAMESTATE->m_pCurSong->m_SongTiming.GetBeatFromElapsedTime( fPositionSeconds );
 
 		int iRowNow = BeatToNoteRowNotRounded( fSongBeat );
 		iRowNow = max( 0, iRowNow );
@@ -2032,8 +2032,8 @@ void ScreenGameplay::SendCrossedMessages()
 		{
 			float fNoteWillCrossInSeconds = MESSAGE_SPACING_SECONDS * i;
 
-			float fPositionSeconds = GAMESTATE->m_fMusicSeconds + fNoteWillCrossInSeconds;
-			float fSongBeat = GAMESTATE->m_pCurSong->GetBeatFromElapsedTime( fPositionSeconds );
+			float fPositionSeconds = GAMESTATE->m_Position.m_fMusicSeconds + fNoteWillCrossInSeconds;
+			float fSongBeat = GAMESTATE->m_pCurSong->m_SongTiming.GetBeatFromElapsedTime( fPositionSeconds );
 
 			int iRowNow = BeatToNoteRowNotRounded( fSongBeat );
 			iRowNow = max( 0, iRowNow );

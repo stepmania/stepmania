@@ -591,7 +591,7 @@ static void ReadGlobalTags( const NameToData_t &mapNameToData, Song &out, Measur
 		if( fBPM > 0.0f )
 		{
 			BPMSegment newSeg( 0, fBPM );
-			out.AddBPMSegment( newSeg );
+			out.m_SongTiming.AddBPMSegment( newSeg );
 			LOG->Trace( "Inserting new BPM change at beat %f, BPM %f", NoteRowToBeat(0), fBPM );
 		}
 		else
@@ -673,7 +673,7 @@ static void ReadGlobalTags( const NameToData_t &mapNameToData, Song &out, Measur
 				case PMS_TRACK_BPM:
 					if( iVal > 0 )
 					{
-						out.SetBPMAtBeat( fBeat, (float) iVal );
+						out.m_SongTiming.SetBPMAtBeat( fBeat, (float) iVal );
 						LOG->Trace( "Inserting new BPM change at beat %f, BPM %i", fBeat, iVal );
 					}
 					else
@@ -694,7 +694,7 @@ static void ReadGlobalTags( const NameToData_t &mapNameToData, Song &out, Measur
 						if( fBPM > 0.0f )
 						{
 							BPMSegment newSeg( BeatToNoteRow(fBeat), fBPM );
-							out.AddBPMSegment( newSeg );
+							out.m_SongTiming.AddBPMSegment( newSeg );
 							LOG->Trace( "Inserting new BPM change at beat %f, BPM %f", fBeat, newSeg.GetBPM() );
 						}
 						else
@@ -716,12 +716,12 @@ static void ReadGlobalTags( const NameToData_t &mapNameToData, Song &out, Measur
 					if( GetTagFromMap( mapNameToData, sTagToLookFor, sBeats ) )
 					{
 						// find the BPM at the time of this freeze
-						float fBPS = out.m_Timing.GetBPMAtBeat(fBeat) / 60.0f;
+						float fBPS = out.m_SongTiming.GetBPMAtBeat(fBeat) / 60.0f;
 						float fBeats = StringToFloat( sBeats ) / 48.0f;
 						float fFreezeSecs = fBeats / fBPS;
 
 						StopSegment newSeg( BeatToNoteRow(fBeat), fFreezeSecs );
-						out.AddStopSegment( newSeg );
+						out.m_SongTiming.AddStopSegment( newSeg );
 						LOG->Trace( "Inserting new Freeze at beat %f, secs %f", fBeat, newSeg.m_fStopSeconds );
 					}
 					else
@@ -750,7 +750,7 @@ static void ReadGlobalTags( const NameToData_t &mapNameToData, Song &out, Measur
 					if( fBPM > 0.0f )
 					{
 						BPMSegment newSeg( iStepIndex, fBPM );
-						out.AddBPMSegment( newSeg );
+						out.m_SongTiming.AddBPMSegment( newSeg );
 						LOG->Trace( "Inserting new BPM change at beat %f, BPM %f", NoteRowToBeat(newSeg.m_iStartRow), newSeg.GetBPM() );
 				
 					}
@@ -843,7 +843,7 @@ bool PMSLoader::LoadFromDir( const RString &sDir, Song &out )
 	/* Create a Steps for each. */
 	vector<Steps*> apSteps;
 	for( unsigned i=0; i<arrayPMSFileNames.size(); i++ )
-		apSteps.push_back( new Steps );
+		apSteps.push_back( out.CreateSteps() );
 
 	// Now, with our fancy little substring, trim the titles and
 	// figure out where each goes.
@@ -940,7 +940,7 @@ bool PMSLoader::LoadFromDir( const RString &sDir, Song &out )
 	ConvertString( out.m_sArtist, "utf-8,japanese" );
 	ConvertString( out.m_sGenre, "utf-8,japanese" );
 
-
+	out.TidyUpData();
 	return true;
 }
 

@@ -86,6 +86,7 @@ enum EditButton
 	EDIT_BUTTON_SNAP_PREV,
 
 	EDIT_BUTTON_OPEN_EDIT_MENU,
+	EDIT_BUTTON_OPEN_TIMING_MENU,
 	EDIT_BUTTON_OPEN_AREA_MENU,
 	EDIT_BUTTON_OPEN_BGCHANGE_LAYER1_MENU,
 	EDIT_BUTTON_OPEN_BGCHANGE_LAYER2_MENU,
@@ -137,6 +138,8 @@ enum EditButton
 	EDIT_BUTTON_ADD_COURSE_MODS,
 	
 	EDIT_BUTTON_SWITCH_PLAYERS, /**< Allow entering notes for a different Player. */
+	
+	EDIT_BUTTON_SWITCH_TIMINGS, /**< Allow switching between Song and Step TimingData. */
 
 	NUM_EditButton, // leave this at the end
 	EditButton_Invalid
@@ -231,6 +234,9 @@ protected:
 	float GetMaximumBeatForMoving() const;	// don't allow Down key to go past this beat.
 
 	void DoHelp();
+	
+	/** @brief Display the TimingData menu for editing song and step timing. */
+	void DisplayTimingMenu();
 
 	EditState		m_EditState;
 
@@ -275,14 +281,22 @@ protected:
 	/** @brief Has the NoteData been changed such that a user should be prompted to save? */
 	bool			m_bDirty;
 
+	/** @brief The sound that is played when a note is added. */
 	RageSound		m_soundAddNote;
+	/** @brief The sound that is played when a note is removed. */
 	RageSound		m_soundRemoveNote;
 	RageSound		m_soundChangeLine;
 	RageSound		m_soundChangeSnap;
 	RageSound		m_soundMarker;
 	RageSound		m_soundValueIncrease;
 	RageSound		m_soundValueDecrease;
+	/** @brief The sound that is played when switching players for Routine. */
+	RageSound		m_soundSwitchPlayer;
+	/** @brief The sound that is played when switching song/step timing. */
+	RageSound		m_soundSwitchTiming;
+	/** @brief The sound that is played when switching to a different chart. */
 	RageSound		m_soundSwitchSteps;
+	/** @brief The sound that is played when the chart is saved. */
 	RageSound		m_soundSave;
 
 	// used for reverting
@@ -459,7 +473,6 @@ public:
 		main_title_transliteration,
 		sub_title_transliteration,
 		artist_transliteration,
-		beat_0_offset,
 		last_beat_hint,
 		preview_start,
 		preview_length,
@@ -472,16 +485,21 @@ public:
 	
 	enum TimingDataInformationChoice
 	{
+		beat_0_offset,
 		bpm,
 		stop,
 		delay,
-//		time_signature,
-		time_signature_numerator,
-		time_signature_denominator,
+		time_signature,
+		label,
 		tickcount,
 		combo,
-		label,
 		warp,
+//		speed,
+		speed_percent,
+		speed_wait,
+		speed_mode,
+		fake,
+		erase_step_timing,
 		NUM_TIMING_DATA_INFORMATION_CHOICES
 	};
 	
@@ -514,7 +532,19 @@ public:
 		delete_change,
 		NUM_BGCHANGE_CHOICES
 	};
+	
+	enum SpeedSegmentModes
+	{
+		SSMODE_Beats,
+		SSMODE_Seconds
+	};
 
+	/**
+	 * @brief Take care of any background changes that the user wants.
+	 *
+	 * It is important that this is only called in Song Timing mode.
+	 * @param c the Background Change style requested.
+	 * @param iAnswers the other settings involving the change. */
 	void HandleBGChangeChoice( BGChangeChoice c, const vector<int> &iAnswers );
 
 	enum CourseAttackChoice
@@ -544,6 +574,14 @@ public:
 
 	void MakeFilteredMenuDef( const MenuDef* pDef, MenuDef &menu );
 	void EditMiniMenu( const MenuDef* pDef, ScreenMessage SM_SendOnOK = SM_None, ScreenMessage SM_SendOnCancel = SM_None );
+private:
+	/**
+	 * @brief Retrieve the appropriate TimingData based on GAMESTATE.
+	 * @return the proper TimingData. */
+	TimingData & GetAppropriateTiming() const;
+	void SetBeat(float fBeat);
+	float GetBeat();
+	
 };
 
 #endif

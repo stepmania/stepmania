@@ -313,8 +313,8 @@ struct TimeSignatureSegment
  *
  * A warp segment is used to replicate the effects of Negative BPMs without
  * abusing negative BPMs. Negative BPMs should be converted to warp segments.
- * WarpAt=WarpTo is the format, where both are in beats. (Technically they're
- * both rows though.) */
+ * WarpAt=WarpToRelative is the format, where both are in beats.
+ * (Technically they're both rows though.) */
 struct WarpSegment
 {
 	/**
@@ -322,45 +322,45 @@ struct WarpSegment
 	 *
 	 * It is best to override the values as soon as possible.
 	 */
-	WarpSegment() : m_iStartRow(-1), m_fEndBeat(-1) { }
+	WarpSegment() : m_iStartRow(-1), m_fLengthBeats(-1) { }
 	/**
 	 * @brief Create a Warp Segment with the specified starting row and row to warp to.
 	 * @param s the starting row of this segment.
-	 * @param r the row to warp to.
+	 * @param r the number of rows to jump ahead.
 	 */
-	WarpSegment( int s, int r ): m_iStartRow(max(0, (s < r ? s : r))),
-		 m_fEndBeat(max(0, NoteRowToBeat((r > s ? r : s)))) {}
+	WarpSegment( int s, int r ): m_iStartRow(s),
+		 m_fLengthBeats(NoteRowToBeat(r)) {}
 	/**
 	 * @brief Creates a Warp Segment with the specified starting row and beat to warp to.
 	 * @param s the starting row of this segment.
-	 * @param b the beat to warp to.
+	 * @param b the number of beats to jump ahead.
 	 */
 	WarpSegment( int s, float b ): m_iStartRow(max(0, s)),
-		m_fEndBeat(max(0, b)) {}
+		m_fLengthBeats(max(0, b)) {}
 	/**
 	 * @brief Create a Warp Segment with the specified starting beat and row to warp to.
 	 * @param s the starting beat in this segment.
-	 * @param r the row to warp to.
+	 * @param r the number of rows to jump ahead.
 	 */
 	WarpSegment( float s, int r ):
 		m_iStartRow(max(0, BeatToNoteRow(s))),
-		m_fEndBeat(max(0, NoteRowToBeat(r))) {}
+		m_fLengthBeats(max(0, NoteRowToBeat(r))) {}
 	/**
 	 * @brief Creates a Warp Segment with the specified starting beat and beat to warp to.
 	 * @param s the starting beat of this segment.
-	 * @param b the beat to warp to.
+	 * @param b the number of beats to jump ahead.
 	 */
 	WarpSegment( float s, float b ):
-		m_iStartRow(max(0, BeatToNoteRow((s < b ? s : b)))),
-		m_fEndBeat(max(0, (b > s ? b : s))) {}
+		m_iStartRow(BeatToNoteRow(s)),
+		m_fLengthBeats(b) {}
 	/**
 	 * @brief The row in which the WarpSegment activates.
 	 */
 	int m_iStartRow;
 	/**
-	 * @brief The beat to warp to.
+	 * @brief The number of beats to warp ahead by.
 	 */
-	float m_fEndBeat;
+	float m_fLengthBeats;
 	/**
 	 * @brief Compares two WarpSegments to see if they are equal to each other.
 	 * @param other the other WarpSegment to compare to.
@@ -369,7 +369,7 @@ struct WarpSegment
 	bool operator==( const WarpSegment &other ) const
 	{
 		COMPARE( m_iStartRow );
-		COMPARE( m_fEndBeat );
+		COMPARE( m_fLengthBeats );
 		return true;
 	}
 	/**
@@ -386,7 +386,7 @@ struct WarpSegment
 	bool operator<( const WarpSegment &other ) const
 	{ 
 		return m_iStartRow < other.m_iStartRow ||
-		( m_iStartRow == other.m_iStartRow && m_fEndBeat < other.m_fEndBeat );
+		( m_iStartRow == other.m_iStartRow && m_fLengthBeats < other.m_fLengthBeats );
 	}
 	/**
 	 * @brief Compares two WarpSegments to see if one is less than or equal to the other.
@@ -508,7 +508,7 @@ struct ComboSegment
 	 * @param t the amount the combo increases on a succesful hit.
 	 */
 	ComboSegment( int s, int t ): m_iStartRow(max(0, s)),
-		m_iCombo(max(1,t)) {}
+		m_iCombo(max(0,t)) {}
 	/**
 	 * @brief The row in which the ComboSegment activates.
 	 */
@@ -647,6 +647,243 @@ struct LabelSegment
 	bool operator>=( const LabelSegment &other ) const { return !operator<(other); }
 };
 
+/**
+ * @brief Identifies when the arrow scroll changes.
+ *
+ * SpeedSegments take a Player's scrolling BPM (Step's BPM * speed mod),
+ * and then multiplies it with the percentage value. No matter the player's
+ * speed mod, the ratio will be the same. Unlike forced attacks, these
+ * cannot be turned off at a set time: reset it by setting the precentage
+ * back to 1.
+ *
+ * These were inspired by the Pump It Up series. */
+struct SpeedSegment
+{
+	/** @brief Sets up the SpeedSegment with default values. */
+	SpeedSegment(): m_iStartRow(0), 
+		m_fPercent(1), m_fWait(0), m_usMode(0) {}
+	
+	/**
+	 * @brief Sets up the SpeedSegment with specified values.
+	 * @param i The row this activates.
+	 * @param p The percentage to use. */
+	SpeedSegment(int i, float p): m_iStartRow(0), 
+		m_fPercent(p), m_fWait(0), m_usMode(0) {}
+	
+	/**
+	 * @brief Sets up the SpeedSegment with specified values.
+	 * @param r The beat this activates.
+	 * @param p The percentage to use. */
+	SpeedSegment(float r, float p): m_iStartRow(BeatToNoteRow(r)),
+		m_fPercent(p), m_fWait(0), m_usMode(0) {}
+	
+	/**
+	 * @brief Sets up the SpeedSegment with specified values.
+	 * @param i The row this activates.
+	 * @param p The percentage to use.
+	 * @param w The number of beats to wait. */
+	SpeedSegment(int i, float p, float w): m_iStartRow(i),
+		m_fPercent(p), m_fWait(w), m_usMode(0) {}
+	
+	/**
+	 * @brief Sets up the SpeedSegment with specified values.
+	 * @param r The beat this activates.
+	 * @param p The percentage to use.
+	 * @param w The number of beats to wait. */
+	SpeedSegment(float r, float p, float w): m_iStartRow(BeatToNoteRow(r)),
+		m_fPercent(p), m_fWait(w), m_usMode(0) {}
+	
+	/**
+	 * @brief Sets up the SpeedSegment with specified values.
+	 * @param i The row this activates.
+	 * @param p The percentage to use.
+	 * @param w The number of beats/seconds to wait.
+	 * @param k The mode used for the wait variable. */
+	SpeedSegment(int i, float p, float w, unsigned short k): m_iStartRow(i),
+	m_fPercent(p), m_fWait(w), m_usMode(k) {}
+	
+	/**
+	 * @brief Sets up the SpeedSegment with specified values.
+	 * @param r The beat this activates.
+	 * @param p The percentage to use.
+	 * @param w The number of beats/seconds to wait.
+	 * @param k The mode used for the wait variable.*/
+	SpeedSegment(float r, float p, float w, unsigned short k): m_iStartRow(BeatToNoteRow(r)),
+	m_fPercent(p), m_fWait(w), m_usMode(k) {}
+	
+	/** @brief The row in which the ComboSegment activates. */
+	int m_iStartRow;
+	/** @brief The percentage to use when multiplying the Player's BPM. */
+	float m_fPercent;
+	/** 
+	 * @brief The number of beats or seconds to wait for the change to take place.
+	 *
+	 * A value of 0 means this is immediate. */
+	float m_fWait;
+	/**
+	 * @brief The mode that this segment uses for the math.
+	 *
+	 * 0: beats
+	 * 1: seconds
+	 * other
+	 */
+	unsigned short m_usMode;
+	
+	/**
+	 * @brief Compares two SpeedSegments to see if they are equal to each other.
+	 * @param other the other SpeedSegment to compare to.
+	 * @return the equality of the two segments.
+	 */
+	bool operator==( const SpeedSegment &other ) const
+	{
+		COMPARE( m_iStartRow );
+		COMPARE( m_fPercent );
+		COMPARE( m_usMode );
+		COMPARE( m_fWait );
+		return true;
+	}
+	/**
+	 * @brief Compares two SpeedSegments to see if they are not equal to each other.
+	 * @param other the other SpeedSegment to compare to.
+	 * @return the inequality of the two segments.
+	 */
+	bool operator!=( const SpeedSegment &other ) const { return !operator==(other); }
+	/**
+	 * @brief Compares two SpeedSegments to see if one is less than the other.
+	 * @param other the other SpeedSegment to compare to.
+	 * @return the truth/falsehood of if the first is less than the second.
+	 */
+	bool operator<( const SpeedSegment &other ) const { return m_iStartRow < other.m_iStartRow; }
+	/**
+	 * @brief Compares two SpeedSegments to see if one is less than or equal to the other.
+	 * @param other the other SpeedSegment to compare to.
+	 * @return the truth/falsehood of if the first is less or equal to than the second.
+	 */
+	bool operator<=( const SpeedSegment &other ) const
+	{
+		return ( operator<(other) || operator==(other) );
+	}
+	/**
+	 * @brief Compares two SpeedSegments to see if one is greater than the other.
+	 * @param other the other SpeedSegment to compare to.
+	 * @return the truth/falsehood of if the first is greater than the second.
+	 */
+	bool operator>( const SpeedSegment &other ) const { return !operator<=(other); }
+	/**
+	 * @brief Compares two SpeedSegments to see if one is greater than or equal to the other.
+	 * @param other the other SpeedSegment to compare to.
+	 * @return the truth/falsehood of if the first is greater than or equal to the second.
+	 */
+	bool operator>=( const SpeedSegment &other ) const { return !operator<(other); }
+};
+
+/**
+ * @brief Identifies when a whole region of arrows is to be ignored.
+ *
+ * FakeSegments are similar to the Fake Tap Notes in that the contents
+ * inside are neither for nor against the player. They can be useful for
+ * mission modes, in conjunction with WarpSegments, or perhaps other
+ * uses not thought up at the time of this comment. Unlike the Warp
+ * Segments, these are not magically jumped over: instead, these are
+ * drawn normally.
+ *
+ * These were inspired by the Pump It Up series. */
+struct FakeSegment
+{
+	/**
+	 * @brief Create a simple Fake Segment with default values.
+	 *
+	 * It is best to override the values as soon as possible.
+	 */
+	FakeSegment() : m_iStartRow(-1), m_fLengthBeats(-1) { }
+	/**
+	 * @brief Create a Fake Segment with the specified values.
+	 * @param s the starting row of this segment.
+	 * @param r the number of rows this segment lasts.
+	 */
+	FakeSegment( int s, int r ): m_iStartRow(s),
+	m_fLengthBeats(NoteRowToBeat(r)) {}
+	/**
+	 * @brief Creates a Fake Segment with the specified values.
+	 * @param s the starting row of this segment.
+	 * @param b the number of beats this segment lasts.
+	 */
+	FakeSegment( int s, float b ): m_iStartRow(max(0, s)),
+	m_fLengthBeats(max(0, b)) {}
+	/**
+	 * @brief Create a Fake Segment with the specified values.
+	 * @param s the starting beat in this segment.
+	 * @param r the number of rows this segment lasts.
+	 */
+	FakeSegment( float s, int r ):
+	m_iStartRow(max(0, BeatToNoteRow(s))),
+	m_fLengthBeats(max(0, NoteRowToBeat(r))) {}
+	/**
+	 * @brief Creates a Fake Segment with the specified values.
+	 * @param s the starting beat of this segment.
+	 * @param b the number of beats this segment lasts.
+	 */
+	FakeSegment( float s, float b ):
+	m_iStartRow(BeatToNoteRow(s)),
+	m_fLengthBeats(b) {}
+	/**
+	 * @brief The row in which the FakeSegment activates.
+	 */
+	int m_iStartRow;
+	/**
+	 * @brief The number of beats the FakeSegment is alive for.
+	 */
+	float m_fLengthBeats;
+	/**
+	 * @brief Compares two FakeSegments to see if they are equal to each other.
+	 * @param other the other FakeSegment to compare to.
+	 * @return the equality of the two segments.
+	 */
+	bool operator==( const FakeSegment &other ) const
+	{
+		COMPARE( m_iStartRow );
+		COMPARE( m_fLengthBeats );
+		return true;
+	}
+	/**
+	 * @brief Compares two FakeSegments to see if they are not equal to each other.
+	 * @param other the other FakeSegment to compare to.
+	 * @return the inequality of the two segments.
+	 */
+	bool operator!=( const FakeSegment &other ) const { return !operator==(other); }
+	/**
+	 * @brief Compares two FakeSegments to see if one is less than the other.
+	 * @param other the other FakeSegment to compare to.
+	 * @return the truth/falsehood of if the first is less than the second.
+	 */
+	bool operator<( const FakeSegment &other ) const
+	{ 
+		return m_iStartRow < other.m_iStartRow ||
+		( m_iStartRow == other.m_iStartRow && m_fLengthBeats < other.m_fLengthBeats );
+	}
+	/**
+	 * @brief Compares two FakeSegments to see if one is less than or equal to the other.
+	 * @param other the other FakeSegment to compare to.
+	 * @return the truth/falsehood of if the first is less or equal to than the second.
+	 */
+	bool operator<=( const FakeSegment &other ) const
+	{
+		return ( operator<(other) || operator==(other) );
+	}
+	/**
+	 * @brief Compares two FakeSegments to see if one is greater than the other.
+	 * @param other the other FakeSegment to compare to.
+	 * @return the truth/falsehood of if the first is greater than the second.
+	 */
+	bool operator>( const FakeSegment &other ) const { return !operator<=(other); }
+	/**
+	 * @brief Compares two FakeSegments to see if one is greater than or equal to the other.
+	 * @param other the other FakeSegment to compare to.
+	 * @return the truth/falsehood of if the first is greater than or equal to the second.
+	 */
+	bool operator>=( const FakeSegment &other ) const { return !operator<(other); }
+};
+
 
 /**
  * @brief Holds data for translating beats<->seconds.
@@ -658,6 +895,10 @@ public:
 	 * @brief Sets up initial timing data.
 	 */
 	TimingData();
+	/**
+	 * @brief Sets up initial timing data with a defined offset.
+	 * @param fOffset the offset from the 0th beat. */
+	TimingData(float fOffset);
 	/**
 	 * @brief Gets the actual BPM of the song.
 	 * @param fMinBPMOut the minimium specified BPM.
@@ -1234,6 +1475,193 @@ public:
 	 */
 	float GetNextLabelSegmentBeatAtBeat( float fBeat ) const { return GetNextLabelSegmentBeatAtRow( BeatToNoteRow(fBeat) ); }
 	
+	
+	/**
+	 * @brief Retrieve the Speed's percent at the given row.
+	 * @param iNoteRow the row in question.
+	 * @return the percent.
+	 */
+	float GetSpeedPercentAtRow( int iNoteRow );
+	/**
+	 * @brief Retrieve the Speed's percent at the given beat.
+	 * @param fBeat the beat in question.
+	 * @return the percent.
+	 */
+	float GetSpeedPercentAtBeat( float fBeat ) { return GetSpeedPercentAtRow( BeatToNoteRow(fBeat) ); }
+	/**
+	 * @brief Retrieve the Speed's wait at the given row.
+	 * @param iNoteRow the row in question.
+	 * @return the wait.
+	 */
+	float GetSpeedWaitAtRow( int iNoteRow );
+ 	/**
+	 * @brief Retrieve the Speed's wait at the given beat.
+	 * @param fBeat the beat in question.
+	 * @return the wait.
+	 */
+	float GetSpeedWaitAtBeat( float fBeat ) { return GetSpeedWaitAtRow( BeatToNoteRow(fBeat) ); }
+	/**
+	 * @brief Retrieve the Speed's mode at the given row.
+	 * @param iNoteRow the row in question.
+	 * @return the mode.
+	 */
+	unsigned short GetSpeedModeAtRow( int iNoteRow );
+ 	/**
+	 * @brief Retrieve the Speed's mode at the given beat.
+	 * @param fBeat the beat in question.
+	 * @return the mode.
+	 */
+	unsigned short GetSpeedModeAtBeat( float fBeat ) { return GetSpeedModeAtRow( BeatToNoteRow(fBeat) ); }
+	/**
+	 * @brief Set the row to have the new Speed.
+	 * @param iNoteRow the row to have the new Speed.
+	 * @param fPercent the percent.
+	 * @param fWait the wait.
+	 * @param usMode the mode.
+	 */
+	void SetSpeedAtRow( int iNoteRow, float fPercent, float fWait, unsigned short usMode );
+	/**
+	 * @brief Set the beat to have the new Speed.
+	 * @param fBeat the beat to have the new Speed.
+	 * @param fPercent the percent.
+	 * @param fWait the wait.
+	 * @param usMode the mode.
+	 */
+	void SetSpeedAtBeat( float fBeat, float fPercent, float fWait, unsigned short usMode ) { SetSpeedAtRow( BeatToNoteRow(fBeat), fPercent, fWait, usMode ); }
+	/**
+	 * @brief Set the row to have the new Speed percent.
+	 * @param iNoteRow the row to have the new Speed percent.
+	 * @param fPercent the percent.
+	 */
+	void SetSpeedPercentAtRow( int iNoteRow, float fPercent );
+	/**
+	 * @brief Set the beat to have the new Speed percent.
+	 * @param fBeat the beat to have the new Speed percent.
+	 * @param fPercent the percent.
+	 */
+	void SetSpeedPercentAtBeat( float fBeat, float fPercent ) { SetSpeedPercentAtRow( BeatToNoteRow(fBeat), fPercent); }
+	/**
+	 * @brief Set the row to have the new Speed wait.
+	 * @param iNoteRow the row to have the new Speed wait.
+	 * @param fWait the wait.
+	 */
+	void SetSpeedWaitAtRow( int iNoteRow, float fWait );
+	/**
+	 * @brief Set the beat to have the new Speed wait.
+	 * @param fBeat the beat to have the new Speed wait.
+	 * @param fWait the wait.
+	 */
+	void SetSpeedWaitAtBeat( float fBeat, float fWait ) { SetSpeedWaitAtRow( BeatToNoteRow(fBeat), fWait); }
+	/**
+	 * @brief Set the row to have the new Speed mode.
+	 * @param iNoteRow the row to have the new Speed mode.
+	 * @param usMode the mode.
+	 */
+	void SetSpeedModeAtRow( int iNoteRow, unsigned short usMode );
+	/**
+	 * @brief Set the beat to have the new Speed mode.
+	 * @param fBeat the beat to have the new Speed mode.
+	 * @param usMode the mode.
+	 */
+	void SetSpeedModeAtBeat( float fBeat, unsigned short usMode ) { SetSpeedModeAtRow( BeatToNoteRow(fBeat), usMode); }
+	/**
+	 * @brief Retrieve the SpeedSegment at the specified row.
+	 * @param iNoteRow the row that has a SpeedSegment.
+	 * @return the SpeedSegment in question.
+	 */
+	SpeedSegment& GetSpeedSegmentAtRow( int iNoteRow );
+	/**
+	 * @brief Retrieve the SpeedSegment at the specified beat.
+	 * @param fBeat the beat that has a SpeedSegment.
+	 * @return the SpeedSegment in question.
+	 */
+	SpeedSegment& GetSpeedSegmentAtBeat( float fBeat ) { return GetSpeedSegmentAtRow( BeatToNoteRow(fBeat) ); }
+	/**
+	 * @brief Retrieve the index of the SpeedSegments at the specified row.
+	 * @param iNoteRow the row that has a SpeedSegment.
+	 * @return the SpeedSegment's index in question.
+	 */
+	int GetSpeedSegmentIndexAtRow( int iNoteRow ) const;
+	/**
+	 * @brief Retrieve the index of the SpeedSegments at the specified beat.
+	 * @param fBeat the beat that has a SpeedSegment.
+	 * @return the SpeedSegment's index in question.
+	 */
+	int GetSpeedSegmentIndexAtBeat( float fBeat ) const { return GetSpeedSegmentIndexAtRow( BeatToNoteRow(fBeat) ); }
+	/**
+	 * @brief Add the SpeedSegment to the TimingData.
+	 * @param seg the new SpeedSegment.
+	 */
+	void AddSpeedSegment( const SpeedSegment &seg );
+	
+	/**
+	 * @brief Determine when the fakes end.
+	 * @param iRow The row you start on.
+	 * @return the time when the fakes end.
+	 */
+	float GetFakeAtRow( int iRow ) const;
+	/**
+	 * @brief Determine when the fakes end.
+	 * @param fBeat The beat you start on.
+	 * @return the time when the fakes end.
+	 */
+	float GetFakeAtBeat( float fBeat ) const { return GetFakeAtRow( BeatToNoteRow( fBeat ) ); }
+	/**
+	 * @brief Set the beat to indicate when the FakeSegment ends.
+	 * @param iRow The row to start on.
+	 * @param fNew The destination beat.
+	 */
+	void SetFakeAtRow( int iRow, float fNew );
+	/**
+	 * @brief Set the beat to indicate when the FakeSegment ends.
+	 * @param fBeat The beat to start on.
+	 * @param fNew The destination beat.
+	 */
+	void SetFakeAtBeat( float fBeat, float fNew ) { SetFakeAtRow( BeatToNoteRow( fBeat ), fNew ); }
+	/**
+	 * @brief Retrieve the FakeSegment at the specified row.
+	 * @param iRow the row to focus on.
+	 * @return the FakeSegment in question.
+	 */
+	FakeSegment& GetFakeSegmentAtRow( int iRow );
+	/**
+	 * @brief Retrieve the FakeSegment at the specified beat.
+	 * @param fBeat the beat to focus on.
+	 * @return the FakeSegment in question.
+	 */
+	FakeSegment& GetFakeSegmentAtBeat( float fBeat ) { return GetFakeSegmentAtRow( BeatToNoteRow( fBeat ) ); }
+	/**
+	 * @brief Retrieve the index of the FakeSegment at the specified row.
+	 * @param iRow the row to focus on.
+	 * @return the index in question.
+	 */
+	int GetFakeSegmentIndexAtRow( int iRow ) const;
+	/**
+	 * @brief Retrieve the index of the FakeSegment at the specified beat.
+	 * @param fBeat the beat to focus on.
+	 * @return the index in question.
+	 */
+	int GetFakeSegmentIndexAtBeat( float fBeat ) const { return GetFakeSegmentIndexAtRow( BeatToNoteRow( fBeat ) ); }
+	/**
+	 * @brief Checks if the row is inside a fake.
+	 * @param iRow the row to focus on.
+	 * @return true if the row is inside a fake, false otherwise.
+	 */
+	bool IsFakeAtRow( int iRow ) const;
+	/**
+	 * @brief Checks if the beat is inside a fake.
+	 * @param fBeat the beat to focus on.
+	 * @return true if the row is inside a fake, false otherwise.
+	 */
+	bool IsFakeAtBeat( float fBeat ) const { return IsFakeAtRow( BeatToNoteRow( fBeat ) ); }
+	/**
+	 * @brief Add the FakeSegment to the TimingData.
+	 * @param seg the new FakeSegment.
+	 */
+	void AddFakeSegment( const FakeSegment &seg );
+	
+	
+	
 	void MultiplyBPMInBeatRange( int iStartIndex, int iEndIndex, float fFactor );
 	
 	void NoteRowToMeasureAndBeat( int iNoteRow, int &iMeasureIndexOut, int &iBeatIndexOut, int &iRowsRemainder ) const;
@@ -1277,6 +1705,14 @@ public:
 	 */
 	bool HasWarps() const;
 	/**
+	 * @brief View the TimingData to see if there is at least one fake segment involved.
+	 * @return true if there is at least one fake segment, false otherwise. */
+	bool HasFakes() const;
+	/**
+	 * @brief View the TimingData to see if a song changes its speed scrolling at any point.
+	 * @return true if there is at least one change, false otherwise. */
+	bool HasSpeedChanges() const;
+	/**
 	 * @brief Compare two sets of timing data to see if they are equal.
 	 * @param other the other TimingData.
 	 * @return the equality or lack thereof of the two TimingData.
@@ -1301,8 +1737,15 @@ public:
 		COMPARE( m_ComboSegments.size() );
 		for( unsigned i=0; i<m_ComboSegments.size(); i++ )
 			COMPARE( m_ComboSegments[i] );
+		COMPARE( m_LabelSegments.size() );
 		for( unsigned i=0; i<m_LabelSegments.size(); i++ )
 			COMPARE( m_LabelSegments[i] );
+		COMPARE( m_SpeedSegments.size() );
+		for( unsigned i=0; i<m_SpeedSegments.size(); i++ )
+			COMPARE( m_SpeedSegments[i] );
+		COMPARE( m_FakeSegments.size() );
+		for( unsigned i=0; i<m_FakeSegments.size(); i++ )
+			COMPARE( m_FakeSegments[i] );
 		COMPARE( m_fBeat0OffsetInSeconds );
 		return true;
 	}
@@ -1316,6 +1759,11 @@ public:
 	void ScaleRegion( float fScale = 1, int iStartRow = 0, int iEndRow = MAX_NOTE_ROW, bool bAdjustBPM = false );
 	void InsertRows( int iStartRow, int iRowsToAdd );
 	void DeleteRows( int iStartRow, int iRowsToDelete );
+
+	/**
+	 * @brief Tidy up the timing data, e.g. provide default BPMs, labels, tickcounts.
+	 */
+	void TidyUpData();
 
 	// Lua
 	void PushSelf( lua_State *L );
@@ -1354,6 +1802,10 @@ public:
 	 * @brief The collection of LabelSegments.
 	 */
 	vector<LabelSegment>		m_LabelSegments;
+	/** @brief The collection of SpeedSegments. */
+	vector<SpeedSegment>		m_SpeedSegments;
+	/** @brief The collection of FakeSegments. */
+	vector<FakeSegment>		m_FakeSegments;
 	/**
 	 * @brief The initial offset of a song.
 	 */

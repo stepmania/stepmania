@@ -77,12 +77,16 @@ AutoScreenMessage( SM_BackFromDifficultyMeterChange );
 AutoScreenMessage( SM_BackFromBPMChange );
 AutoScreenMessage( SM_BackFromStopChange );
 AutoScreenMessage( SM_BackFromDelayChange );
-AutoScreenMessage( SM_BackFromTimeSignatureNumeratorChange );
-AutoScreenMessage( SM_BackFromTimeSignatureDenominatorChange );
+AutoScreenMessage( SM_BackFromTimeSignatureChange );
 AutoScreenMessage( SM_BackFromTickcountChange );
 AutoScreenMessage( SM_BackFromComboChange );
 AutoScreenMessage( SM_BackFromLabelChange );
 AutoScreenMessage( SM_BackFromWarpChange );
+AutoScreenMessage( SM_BackFromSpeedPercentChange );
+AutoScreenMessage( SM_BackFromSpeedWaitChange );
+AutoScreenMessage( SM_BackFromSpeedModeChange );
+AutoScreenMessage( SM_BackFromFakeChange );
+AutoScreenMessage( SM_DoEraseStepTiming );
 AutoScreenMessage( SM_DoSaveAndExit );
 AutoScreenMessage( SM_DoExit );
 AutoScreenMessage( SM_SaveSuccessful );
@@ -194,6 +198,9 @@ void ScreenEdit::InitEditMappings()
 		return;
 
 	case EditMode_Full:
+		// F4 = Show timing menu
+		m_EditMappingsDeviceInput.button[EDIT_BUTTON_OPEN_TIMING_MENU][0] = DeviceInput(DEVICE_KEYBOARD, KEY_F4);
+		
 		/* Don't allow F5/F6 in home mode. It breaks the "delay creation until first save" logic. */
 		m_EditMappingsDeviceInput.button[EDIT_BUTTON_OPEN_PREV_STEPS][0] = DeviceInput(DEVICE_KEYBOARD, KEY_F5);
 		m_EditMappingsDeviceInput.button[EDIT_BUTTON_OPEN_NEXT_STEPS][0] = DeviceInput(DEVICE_KEYBOARD, KEY_F6);
@@ -307,6 +314,9 @@ void ScreenEdit::InitEditMappings()
 
 	// Switch players, if it makes sense to do so.
 	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SWITCH_PLAYERS][0] = DeviceInput(DEVICE_KEYBOARD, KEY_SLASH);
+	
+	// Allow song and step timing to be swapped.
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SWITCH_TIMINGS][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Ct);
 
 	m_PlayMappingsDeviceInput.button[EDIT_BUTTON_RETURN_TO_EDIT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_ESC);
 	m_PlayMappingsMenuButton.button[EDIT_BUTTON_RETURN_TO_EDIT][1] = GAME_BUTTON_BACK;
@@ -548,7 +558,6 @@ static MenuDef g_SongInformation(
 	MenuRowDef( ScreenEdit::main_title_transliteration,	"Main title transliteration",	true, EditMode_Practice, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::sub_title_transliteration,	"Sub title transliteration",	true, EditMode_Practice, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::artist_transliteration,		"Artist transliteration",	true, EditMode_Practice, true, true, 0, NULL ),
-	MenuRowDef( ScreenEdit::beat_0_offset,			"Beat 0 Offset",		true, EditMode_Full, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::last_beat_hint,			"Last beat hint",		true, EditMode_Full, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::preview_start,			"Preview Start",		true, EditMode_Full, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::preview_length,			"Preview Length",		true, EditMode_Full, true, true, 0, NULL ),
@@ -557,17 +566,23 @@ static MenuDef g_SongInformation(
 	MenuRowDef( ScreenEdit::max_bpm,			"Max BPM",			true, EditMode_Full, true, true, 0, NULL )
 );
 
+
 static MenuDef g_TimingDataInformation(
 	"ScreenMiniMenuTimingDataInformation",
-	MenuRowDef( ScreenEdit::bpm,				"Edit BPM change",		true, EditMode_Full, true, true, 0, NULL ),
-	MenuRowDef( ScreenEdit::stop,				"Edit stop",			true, EditMode_Full, true, true, 0, NULL ),
-	MenuRowDef( ScreenEdit::delay,				"Edit delay",			true, EditMode_Full, true, true, 0, NULL ),
-	MenuRowDef( ScreenEdit::time_signature_numerator,	"Edit time signature (top)",	true, EditMode_Full, true, true, 0, NULL ),
-	MenuRowDef( ScreenEdit::time_signature_denominator,	"Edit time signature (bottom)",	true, EditMode_Full, true, true, 0, NULL ),
-	MenuRowDef( ScreenEdit::tickcount,			"Edit tickcount",		true, EditMode_Full, true, true, 0, NULL ),
-	MenuRowDef( ScreenEdit::combo,				"Edit combo",			true, EditMode_Full, true, true, 0, NULL ),
-	MenuRowDef( ScreenEdit::label,				"Edit label",			true, EditMode_Full, true, true, 0, NULL ),
-	MenuRowDef( ScreenEdit::warp,				"Edit warp",			true, EditMode_Full, true, true, 0, NULL )
+	MenuRowDef( ScreenEdit::beat_0_offset,			"Beat 0 Offset",		true, EditMode_Full, true, true, 0, NULL ),
+        MenuRowDef( ScreenEdit::bpm,				"Edit BPM change",		true, EditMode_Full, true, true, 0, NULL ),
+        MenuRowDef( ScreenEdit::stop,				"Edit stop",			true, EditMode_Full, true, true, 0, NULL ),
+        MenuRowDef( ScreenEdit::delay,				"Edit delay",			true, EditMode_Full, true, true, 0, NULL ),
+        MenuRowDef( ScreenEdit::time_signature,		"Edit time signature",	true, EditMode_Full, true, true, 0, NULL ),
+        MenuRowDef( ScreenEdit::label,				"Edit label",			true, EditMode_Full, true, true, 0, NULL ),
+        MenuRowDef( ScreenEdit::tickcount,			"Edit tickcount",		true, EditMode_Full, true, true, 0, NULL ),
+        MenuRowDef( ScreenEdit::combo,				"Edit combo",			true, EditMode_Full, true, true, 0, NULL ),
+        MenuRowDef( ScreenEdit::warp,				"Edit warp",			true, EditMode_Full, true, true, 0, NULL ),
+        MenuRowDef( ScreenEdit::speed_percent,			"Edit speed (percent)",		true, EditMode_Full, true, true, 0, NULL ),
+        MenuRowDef( ScreenEdit::speed_wait,			"Edit speed (wait)",		true, EditMode_Full, true, true, 0, NULL ),
+        MenuRowDef( ScreenEdit::speed_mode,			"Edit speed (mode)",		true, EditMode_Full, true, true, 0, "Beats", "Seconds" ),
+        MenuRowDef( ScreenEdit::fake,				"Edit fake",			true, EditMode_Full, true, true, 0, NULL ),
+        MenuRowDef( ScreenEdit::erase_step_timing,		"Erase step timing",		true, EditMode_Full, true, true, 0, NULL )
 );
 
 enum { song_bganimation, song_movie, song_bitmap, global_bganimation, global_movie, global_movie_song_group, global_movie_song_group_and_genre, dynamic_random, baked_random, none };
@@ -689,6 +704,9 @@ REGISTER_SCREEN_CLASS( ScreenEdit );
 void ScreenEdit::Init()
 {
 	m_pSoundMusic = NULL;
+	
+	GAMESTATE->m_bIsUsingStepTiming = true;
+	GAMESTATE->m_bInStepEditor = true;
 
 	SubscribeToMessage( "Judgment" );
 
@@ -722,8 +740,8 @@ void ScreenEdit::Init()
 
 	GAMESTATE->m_bGameplayLeadIn.Set( true );
 	GAMESTATE->m_EditMode = EDIT_MODE.GetValue();
-	GAMESTATE->m_fSongBeat = 0;
-	m_fTrailingBeat = GAMESTATE->m_fSongBeat;
+	SetBeat(0);
+	m_fTrailingBeat = 0;
 
 	m_iShiftAnchor = -1;
 	m_iStartPlayingAt = -1;
@@ -824,6 +842,8 @@ void ScreenEdit::Init()
 	m_soundMarker.Load(		THEME->GetPathS("ScreenEdit","marker"), true );
 	m_soundValueIncrease.Load(	THEME->GetPathS("ScreenEdit","value increase"), true );
 	m_soundValueDecrease.Load(	THEME->GetPathS("ScreenEdit","value decrease"), true );
+	m_soundSwitchPlayer.Load(	THEME->GetPathS("ScreenEdit","switch player"), true );
+	m_soundSwitchTiming.Load(	THEME->GetPathS("ScreenEdit","switch timing"), true );
 	m_soundSwitchSteps.Load(	THEME->GetPathS("ScreenEdit","switch steps") );
 	m_soundSave.Load(		THEME->GetPathS("ScreenEdit","save") );
 	m_GameplayAssist.Init();
@@ -844,6 +864,11 @@ ScreenEdit::~ScreenEdit()
 
 	LOG->Trace( "ScreenEdit::~ScreenEdit()" );
 	m_pSoundMusic->StopPlaying();
+	
+	// Go back to Step Timing on leave.
+	GAMESTATE->m_bIsUsingStepTiming = true;
+	// DEFINITELY reset the InStepEditor variable.
+	GAMESTATE->m_bInStepEditor = false;
 }
 
 void ScreenEdit::BeginScreen()
@@ -913,11 +938,13 @@ void ScreenEdit::Update( float fDeltaTime )
 	{
 		RageTimer tm;
 		const float fSeconds = m_pSoundMusic->GetPositionSeconds( NULL, &tm );
-		GAMESTATE->UpdateSongPosition( fSeconds, GAMESTATE->m_pCurSong->m_Timing, tm );
+		GAMESTATE->UpdateSongPosition( fSeconds, GAMESTATE->m_pCurSong->m_SongTiming, tm, true );
 	}
 
 	if( m_EditState == STATE_RECORDING  )	
 	{
+		// TODO: Find a way to prevent STATE_RECORDING when in Song Timing.
+		
 		for( int t=0; t<GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer; t++ )	// for each track
 		{
 			GameInput GameI = GAMESTATE->GetCurrentStyle()->StyleInputToGameInput( t, PLAYER_1 );
@@ -927,12 +954,12 @@ void ScreenEdit::Update( float fDeltaTime )
 				continue;
 
 			float fStartPlayingAtBeat = NoteRowToBeat(m_iStartPlayingAt);
-			if( GAMESTATE->m_fSongBeat <= fStartPlayingAtBeat )
+			if( GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat <= fStartPlayingAtBeat )
 				continue;
 
 			float fStartedHoldingSeconds = m_pSoundMusic->GetPositionSeconds() - fSecsHeld;
-			float fStartBeat = max( fStartPlayingAtBeat, m_pSong->GetBeatFromElapsedTime(fStartedHoldingSeconds) );
-			float fEndBeat = max( fStartBeat, GAMESTATE->m_fSongBeat );
+			float fStartBeat = max( fStartPlayingAtBeat, m_pSteps->m_Timing.GetBeatFromElapsedTime(fStartedHoldingSeconds) );
+			float fEndBeat = max( fStartBeat, GetBeat() );
 			fEndBeat = min( fEndBeat, NoteRowToBeat(m_iStopPlayingAt) );
 
 			// Round start and end to the nearest snap interval
@@ -976,12 +1003,13 @@ void ScreenEdit::Update( float fDeltaTime )
 		float fLastBeat = NoteRowToBeat(m_iStopPlayingAt);
 		if( bButtonIsBeingPressed && m_EditState == STATE_RECORDING )
 		{
-			float fSeconds = m_pSong->m_Timing.GetElapsedTimeFromBeat( fLastBeat );
-			fLastBeat = m_pSong->m_Timing.GetBeatFromElapsedTime( fSeconds + 0.5f );
+			float fSeconds = m_pSteps->m_Timing.GetElapsedTimeFromBeat( fLastBeat );
+			fLastBeat = m_pSteps->m_Timing.GetBeatFromElapsedTime( fSeconds + 0.5f );
 		}
 
-		float fStopAtSeconds = m_pSong->m_Timing.GetElapsedTimeFromBeat( NoteRowToBeat(m_iStopPlayingAt) ) + 1;
-		if( GAMESTATE->m_fMusicSeconds > fStopAtSeconds )
+		// This should be fine: it will convert to the same I believe. -Wolfman2000
+		float fStopAtSeconds = m_pSteps->m_Timing.GetElapsedTimeFromBeat( NoteRowToBeat(m_iStopPlayingAt) ) + 1;
+		if( GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fMusicSeconds > fStopAtSeconds )
 		{
 			// loop
 			TransitionEditState( STATE_PLAYING );
@@ -994,12 +1022,12 @@ void ScreenEdit::Update( float fDeltaTime )
 
 
 	// Update trailing beat
-	float fDelta = GAMESTATE->m_fSongBeat - m_fTrailingBeat;
+	float fDelta = GetBeat() - m_fTrailingBeat;
 	if( fabsf(fDelta) < 10 )
-		fapproach( m_fTrailingBeat, GAMESTATE->m_fSongBeat,
+		fapproach( m_fTrailingBeat, GetBeat(),
 			fDeltaTime*40 / m_NoteFieldEdit.GetPlayerState()->m_PlayerOptions.GetCurrent().m_fScrollSpeed );
 	else
-		fapproach( m_fTrailingBeat, GAMESTATE->m_fSongBeat,
+		fapproach( m_fTrailingBeat, GetBeat(),
 			fabsf(fDelta) * fDeltaTime*5 );
 
 	PlayTicks();
@@ -1025,6 +1053,9 @@ static LocalizedString MINES("ScreenEdit", "Mines");
 static LocalizedString ROLLS("ScreenEdit", "Rolls");
 static LocalizedString LIFTS("ScreenEdit", "Lifts");
 static LocalizedString FAKES("ScreenEdit", "Fakes");
+static LocalizedString TIMING_MODE("ScreenEdit", "Timing Mode");
+static LocalizedString STEP_TIMING("ScreenEdit", "Step Timing");
+static LocalizedString SONG_TIMING("ScreenEdit", "Song Timing");
 static LocalizedString BEAT_0_OFFSET("ScreenEdit", "Beat 0 offset");
 static LocalizedString PREVIEW_START("ScreenEdit", "Preview Start");
 static LocalizedString PREVIEW_LENGTH("ScreenEdit", "Preview Length");
@@ -1050,6 +1081,7 @@ static ThemeMetric<RString> NUM_HANDS_FORMAT("ScreenEdit", "NumHandsFormat");
 static ThemeMetric<RString> NUM_ROLLS_FORMAT("ScreenEdit", "NumRollsFormat");
 static ThemeMetric<RString> NUM_LIFTS_FORMAT("ScreenEdit", "NumLiftsFormat");
 static ThemeMetric<RString> NUM_FAKES_FORMAT("ScreenEdit", "NumFakesFormat");
+static ThemeMetric<RString> TIMING_MODE_FORMAT("ScreenEdit", "TimingModeFormat");
 static ThemeMetric<RString> BEAT_0_OFFSET_FORMAT("ScreenEdit", "Beat0OffsetFormat");
 static ThemeMetric<RString> PREVIEW_START_FORMAT("ScreenEdit", "PreviewStartFormat");
 static ThemeMetric<RString> PREVIEW_LENGTH_FORMAT("ScreenEdit", "PreviewLengthFormat");
@@ -1070,8 +1102,8 @@ void ScreenEdit::UpdateTextInfo()
 	RString sNoteType = ssprintf( NOTES.GetValue(), NoteTypeToLocalizedString(m_SnapDisplay.GetNoteType()).c_str() );
 
 	RString sText;
-	sText += ssprintf( CURRENT_BEAT_FORMAT.GetValue(), CURRENT_BEAT.GetValue().c_str(), GAMESTATE->m_fSongBeat );
-	sText += ssprintf( CURRENT_SECOND_FORMAT.GetValue(), CURRENT_SECOND.GetValue().c_str(), m_pSong->GetElapsedTimeFromBeat(GAMESTATE->m_fSongBeat) );
+	sText += ssprintf( CURRENT_BEAT_FORMAT.GetValue(), CURRENT_BEAT.GetValue().c_str(), GetBeat() );
+	sText += ssprintf( CURRENT_SECOND_FORMAT.GetValue(), CURRENT_SECOND.GetValue().c_str(), GetAppropriateTiming().GetElapsedTimeFromBeat(GetBeat()) );
 	switch( EDIT_MODE.GetValue() )
 	{
 	DEFAULT_FAIL( EDIT_MODE.GetValue() );
@@ -1129,7 +1161,14 @@ void ScreenEdit::UpdateTextInfo()
 	case EditMode_Home:
 		break;
 	case EditMode_Full:
-		sText += ssprintf( BEAT_0_OFFSET_FORMAT.GetValue(), BEAT_0_OFFSET.GetValue().c_str(), m_pSong->m_Timing.m_fBeat0OffsetInSeconds );
+		sText += ssprintf( TIMING_MODE_FORMAT.GetValue(),
+				  TIMING_MODE.GetValue().c_str(),
+				  ( GAMESTATE->m_bIsUsingStepTiming ?
+				   STEP_TIMING.GetValue().c_str() :
+				   SONG_TIMING.GetValue().c_str() ) );
+		sText += ssprintf( BEAT_0_OFFSET_FORMAT.GetValue(), 
+				  BEAT_0_OFFSET.GetValue().c_str(), 
+				  GetAppropriateTiming().m_fBeat0OffsetInSeconds );
 		sText += ssprintf( PREVIEW_START_FORMAT.GetValue(), PREVIEW_START.GetValue().c_str(), m_pSong->m_fMusicSampleStartSeconds );
 		sText += ssprintf( PREVIEW_LENGTH_FORMAT.GetValue(), PREVIEW_LENGTH.GetValue().c_str(), m_pSong->m_fMusicSampleLengthSeconds );
 		break;
@@ -1140,26 +1179,42 @@ void ScreenEdit::UpdateTextInfo()
 
 void ScreenEdit::DrawPrimitives()
 {
-	// HACK:  Draw using the trailing beat
-	float fSongBeat = GAMESTATE->m_fSongBeat;	// save song beat
-	float fSongBeatNoOffset = GAMESTATE->m_fSongBeatNoOffset;
-	float fSongBeatVisible = GAMESTATE->m_fSongBeatVisible;
 
-	if( !m_pSoundMusic->IsPlaying() )
+	if( m_pSoundMusic->IsPlaying() )
 	{
-		GAMESTATE->m_fSongBeat = m_fTrailingBeat;	// put trailing beat in effect
-		GAMESTATE->m_fSongBeatNoOffset = m_fTrailingBeat;	// put trailing beat in effect
-		GAMESTATE->m_fSongBeatVisible = m_fTrailingBeat;	// put trailing beat in effect
+		ScreenWithMenuElements::DrawPrimitives();
+		return;
 	}
+
+	// HACK:  Draw using the trailing beat
+	PlayerState *pPlayerState = const_cast<PlayerState *> (m_NoteFieldEdit.GetPlayerState());
+	
+	float fPlayerSongBeat = pPlayerState->m_Position.m_fSongBeat;	// save song beat
+	float fPlayerSongBeatNoOffset = pPlayerState->m_Position.m_fSongBeatNoOffset;
+	float fPlayerSongBeatVisible = pPlayerState->m_Position.m_fSongBeatVisible;
+
+	float fGameSongBeat = GAMESTATE->m_Position.m_fSongBeat;	// save song beat
+	float fGameSongBeatNoOffset = GAMESTATE->m_Position.m_fSongBeatNoOffset;
+	float fGameSongBeatVisible = GAMESTATE->m_Position.m_fSongBeatVisible;
+
+	pPlayerState->m_Position.m_fSongBeat = m_fTrailingBeat;	// put trailing beat in effect
+	pPlayerState->m_Position.m_fSongBeatNoOffset = m_fTrailingBeat;	// put trailing beat in effect
+	pPlayerState->m_Position.m_fSongBeatVisible = m_fTrailingBeat;	// put trailing beat in effect
+	
+	GAMESTATE->m_Position.m_fSongBeat = m_fTrailingBeat;	// put trailing beat in effect
+	GAMESTATE->m_Position.m_fSongBeatNoOffset = m_fTrailingBeat;	// put trailing beat in effect
+	GAMESTATE->m_Position.m_fSongBeatVisible = m_fTrailingBeat;	// put trailing beat in effect
 
 	ScreenWithMenuElements::DrawPrimitives();
 
-	if( !m_pSoundMusic->IsPlaying() )
-	{
-		GAMESTATE->m_fSongBeat = fSongBeat;	// restore real song beat
-		GAMESTATE->m_fSongBeatNoOffset = fSongBeatNoOffset;
-		GAMESTATE->m_fSongBeatVisible = fSongBeatVisible;
-	}
+	pPlayerState->m_Position.m_fSongBeat = fPlayerSongBeat;	// restore real song beat
+	pPlayerState->m_Position.m_fSongBeatNoOffset = fPlayerSongBeatNoOffset;
+	pPlayerState->m_Position.m_fSongBeatVisible = fPlayerSongBeatVisible;
+	
+	GAMESTATE->m_Position.m_fSongBeat = fGameSongBeat;	// restore real song beat
+	GAMESTATE->m_Position.m_fSongBeatNoOffset = fGameSongBeatNoOffset;
+	GAMESTATE->m_Position.m_fSongBeatVisible = fGameSongBeatVisible;
+
 }
 
 void ScreenEdit::Input( const InputEventPlus &input )
@@ -1231,9 +1286,11 @@ static int FindAttackAtTime( const AttackArray& attacks, float fStartTime )
 	return -1;
 }
 
+static LocalizedString BG_CHANGE_STEP_TIMING	( "ScreenEdit", "You must be in Song Timing Mode to edit BG Changes." );
+
 static LocalizedString SWITCHED_TO		( "ScreenEdit", "Switched to" );
 static LocalizedString NO_BACKGROUNDS_AVAILABLE	( "ScreenEdit", "No backgrounds available" );
-static ThemeMetric<bool> INVERT_SCROLL_BUTTONS ( "ScreenEdit", "InvertScrollSpeedButtons" );
+static ThemeMetric<bool> INVERT_SCROLL_BUTTONS	( "ScreenEdit", "InvertScrollSpeedButtons" );
 
 void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 {
@@ -1243,7 +1300,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			m_iShiftAnchor = -1;
 		return;
 	}
-	int beatsPerMeasure = GAMESTATE->m_pCurSong->m_Timing.GetTimeSignatureSegmentAtBeat( GAMESTATE->m_fSongBeat ).m_iNumerator;
+	int beatsPerMeasure = GAMESTATE->m_pCurSong->m_SongTiming.GetTimeSignatureSegmentAtBeat( GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat ).m_iNumerator;
 	
 	switch( EditB )
 	{
@@ -1269,7 +1326,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 				ShiftToRightSide( iCol, m_NoteDataEdit.GetNumTracks() );
 
 
-			const float fSongBeat = GAMESTATE->m_fSongBeat;
+			const float fSongBeat = GetBeat();
 			const int iSongIndex = BeatToNoteRow( fSongBeat );
 
 			if( iCol >= m_NoteDataEdit.GetNumTracks() )	// this button is not in the range of columns for this Style
@@ -1407,7 +1464,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			if( m_PlayerStateEdit.m_PlayerOptions.GetSong().m_fScrolls[PlayerOptions::SCROLL_REVERSE] > 0.5 )
 				fBeatsToMove *= -1;
 
-			float fDestinationBeat = GAMESTATE->m_fSongBeat + fBeatsToMove;
+			float fDestinationBeat = GetBeat() + fBeatsToMove;
 			fDestinationBeat = Quantize( fDestinationBeat, NoteTypeToBeat(m_SnapDisplay.GetNoteType()) );
 
 			ScrollTo( fDestinationBeat );
@@ -1415,42 +1472,40 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 		break;
 	case EDIT_BUTTON_SCROLL_NEXT_MEASURE:
 		{
-			float fDestinationBeat = GAMESTATE->m_fSongBeat + beatsPerMeasure;
+			float fDestinationBeat = GetBeat() + beatsPerMeasure;
 			fDestinationBeat = ftruncf( fDestinationBeat, (float)beatsPerMeasure );
 			ScrollTo( fDestinationBeat );
 			break;
 		}
 	case EDIT_BUTTON_SCROLL_PREV_MEASURE:
 		{
-			float fDestinationBeat = QuantizeUp( GAMESTATE->m_fSongBeat, (float)beatsPerMeasure );
+			float fDestinationBeat = QuantizeUp( GetBeat(), (float)beatsPerMeasure );
 			fDestinationBeat -= (float)beatsPerMeasure;
 			ScrollTo( fDestinationBeat );
 			break;
 		}
 	case EDIT_BUTTON_SCROLL_NEXT:
 		{
-			int iRow = BeatToNoteRow( GAMESTATE->m_fSongBeat );
+			int iRow = BeatToNoteRow( GetBeat() );
 			NoteDataUtil::GetNextEditorPosition( m_NoteDataEdit, iRow );
 			ScrollTo( NoteRowToBeat(iRow) );
 		}
 		break;
 	case EDIT_BUTTON_SCROLL_PREV:
 		{
-			int iRow = BeatToNoteRow( GAMESTATE->m_fSongBeat );
+			int iRow = BeatToNoteRow( GetBeat() );
 			NoteDataUtil::GetPrevEditorPosition( m_NoteDataEdit, iRow );
 			ScrollTo( NoteRowToBeat(iRow) );
 		}
 		break;
 	case EDIT_BUTTON_LABEL_NEXT:
 		{
-			ScrollTo( GAMESTATE->m_pCurSong->m_Timing.
-				 GetNextLabelSegmentBeatAtBeat( GAMESTATE->m_fSongBeat ) );
+			ScrollTo( GetAppropriateTiming().GetNextLabelSegmentBeatAtBeat( GetBeat() ) );
 		}
 		break;
 	case EDIT_BUTTON_LABEL_PREV:
 		{
-			ScrollTo( GAMESTATE->m_pCurSong->m_Timing.
-				 GetPreviousLabelSegmentBeatAtBeat( GAMESTATE->m_fSongBeat ) );
+			ScrollTo( GetAppropriateTiming().GetPreviousLabelSegmentBeatAtBeat( GetBeat() ) );
 		}
 		break;
 	case EDIT_BUTTON_SNAP_NEXT:
@@ -1463,11 +1518,11 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 		break;
 	case EDIT_BUTTON_LAY_SELECT:
 		{
-			const int iCurrentRow = BeatToNoteRow(GAMESTATE->m_fSongBeat);
+			const int iCurrentRow = BeatToNoteRow(GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat);
 			if( m_NoteFieldEdit.m_iBeginMarker==-1 && m_NoteFieldEdit.m_iEndMarker==-1 )
 			{
 				// lay begin marker
-				m_NoteFieldEdit.m_iBeginMarker = BeatToNoteRow(GAMESTATE->m_fSongBeat);
+				m_NoteFieldEdit.m_iBeginMarker = BeatToNoteRow(GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat);
 			}
 			else if( m_NoteFieldEdit.m_iEndMarker==-1 )	// only begin marker is laid
 			{
@@ -1516,6 +1571,11 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 	case EDIT_BUTTON_OPEN_INPUT_HELP:
 		DoHelp();
 		break;
+	case EDIT_BUTTON_OPEN_TIMING_MENU:
+		{
+			DisplayTimingMenu();
+			break;
+		}
 	case EDIT_BUTTON_OPEN_NEXT_STEPS:
 	case EDIT_BUTTON_OPEN_PREV_STEPS:
 		{
@@ -1579,7 +1639,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 	case EDIT_BUTTON_BPM_UP:
 	case EDIT_BUTTON_BPM_DOWN:
 		{
-			float fBPM = m_pSong->GetBPMAtBeat( GAMESTATE->m_fSongBeat );
+			float fBPM = GetAppropriateTiming().GetBPMAtBeat( GetBeat() );
 			float fDelta;
 			switch( EditB )
 			{
@@ -1600,7 +1660,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			}
 			
 			float fNewBPM = fBPM + fDelta;
-			m_pSong->SetBPMAtBeat( GAMESTATE->m_fSongBeat, fNewBPM );
+			GetAppropriateTiming().SetBPMAtBeat( GetBeat(), fNewBPM );
 			(fDelta>0 ? m_soundValueIncrease : m_soundValueDecrease).Play();
 			SetDirty( true );
 		}
@@ -1627,24 +1687,24 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 					fDelta *= 40;
 			}
 			unsigned i;
-			for( i=0; i<m_pSong->m_Timing.m_StopSegments.size(); i++ )
+			for( i=0; i<GetAppropriateTiming().m_StopSegments.size(); i++ )
 			{
-				if( m_pSong->m_Timing.m_StopSegments[i].m_iStartRow == BeatToNoteRow(GAMESTATE->m_fSongBeat) )
+				if( GetAppropriateTiming().m_StopSegments[i].m_iStartRow == BeatToNoteRow( GetBeat() ) )
 					break;
 			}
 
-			if( i == m_pSong->m_Timing.m_StopSegments.size() )	// there is no StopSegment at the current beat
+			if( i == GetAppropriateTiming().m_StopSegments.size() )	// there is no StopSegment at the current beat
 			{
 				// create a new StopSegment
 				if( fDelta > 0 )
-					m_pSong->AddStopSegment( StopSegment(BeatToNoteRow(GAMESTATE->m_fSongBeat), fDelta) );
+					GetAppropriateTiming().AddStopSegment( StopSegment(BeatToNoteRow( GetBeat() ), fDelta) );
 			}
-			else	// StopSegment being modified is m_Timing.m_StopSegments[i]
+			else	// StopSegment being modified is m_SongTiming.m_StopSegments[i]
 			{
-				m_pSong->m_Timing.m_StopSegments[i].m_fStopSeconds += fDelta;
-				if( m_pSong->m_Timing.m_StopSegments[i].m_fStopSeconds <= 0 )
-					m_pSong->m_Timing.m_StopSegments.erase( m_pSong->m_Timing.m_StopSegments.begin()+i,
-													  m_pSong->m_Timing.m_StopSegments.begin()+i+1);
+				GetAppropriateTiming().m_StopSegments[i].m_fStopSeconds += fDelta;
+				if( GetAppropriateTiming().m_StopSegments[i].m_fStopSeconds <= 0 )
+					GetAppropriateTiming().m_StopSegments.erase( GetAppropriateTiming().m_StopSegments.begin()+i,
+										    GetAppropriateTiming().m_StopSegments.begin()+i+1);
 			}
 			(fDelta>0 ? m_soundValueIncrease : m_soundValueDecrease).Play();
 			SetDirty( true );
@@ -1673,24 +1733,24 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 					fDelta *= 40;
 			}
 			unsigned i;
-			for( i=0; i<m_pSong->m_Timing.m_StopSegments.size(); i++ )
+			for( i=0; i<GetAppropriateTiming().m_StopSegments.size(); i++ )
 			{
-				if( m_pSong->m_Timing.m_StopSegments[i].m_iStartRow == BeatToNoteRow(GAMESTATE->m_fSongBeat) )
+				if( GetAppropriateTiming().m_StopSegments[i].m_iStartRow == BeatToNoteRow(GAMESTATE->m_Position.m_fSongBeat) )
 					break;
 			}
 
-			if( i == m_pSong->m_Timing.m_StopSegments.size() )	// there is no delay segment at the current beat
+			if( i == GetAppropriateTiming().m_StopSegments.size() )	// there is no delay segment at the current beat
 			{
 				// create a new delay segment
 				if( fDelta > 0 )
-					m_pSong->AddStopSegment( StopSegment(BeatToNoteRow(GAMESTATE->m_fSongBeat), fDelta, true) );
+					m_pSong->AddStopSegment( StopSegment(BeatToNoteRow(GAMESTATE->m_Position.m_fSongBeat), fDelta, true) );
 			}
-			else	// delay segment being modified is m_Timing.m_StopSegments[i]
+			else	// delay segment being modified is m_SongTiming.m_StopSegments[i]
 			{
-				m_pSong->m_Timing.m_StopSegments[i].m_fStopSeconds += fDelta;
-				if( m_pSong->m_Timing.m_StopSegments[i].m_fStopSeconds <= 0 )
-					m_pSong->m_Timing.m_StopSegments.erase( m_pSong->m_Timing.m_StopSegments.begin()+i,
-													  m_pSong->m_Timing.m_StopSegments.begin()+i+1);
+				GetAppropriateTiming().m_StopSegments[i].m_fStopSeconds += fDelta;
+				if( GetAppropriateTiming().m_StopSegments[i].m_fStopSeconds <= 0 )
+					GetAppropriateTiming().m_StopSegments.erase( GetAppropriateTiming().m_StopSegments.begin()+i,
+													  GetAppropriateTiming().m_StopSegments.begin()+i+1);
 			}
 			(fDelta>0 ? m_soundValueIncrease : m_soundValueDecrease).Play();
 			SetDirty( true );
@@ -1718,7 +1778,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 				else
 					fDelta *= 40;
 			}
-			m_pSong->m_Timing.m_fBeat0OffsetInSeconds += fDelta;
+			GetAppropriateTiming().m_fBeat0OffsetInSeconds += fDelta;
 			(fDelta>0 ? m_soundValueIncrease : m_soundValueDecrease).Play();
 			SetDirty( true );
 		}
@@ -1765,101 +1825,109 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 		break;
 	case EDIT_BUTTON_OPEN_BGCHANGE_LAYER1_MENU:
 	case EDIT_BUTTON_OPEN_BGCHANGE_LAYER2_MENU:
-		switch( EditB )
+		if( !GAMESTATE->m_bIsUsingStepTiming )
 		{
-		DEFAULT_FAIL( EditB );
-		case EDIT_BUTTON_OPEN_BGCHANGE_LAYER1_MENU: g_CurrentBGChangeLayer = BACKGROUND_LAYER_1; break;
-		case EDIT_BUTTON_OPEN_BGCHANGE_LAYER2_MENU: g_CurrentBGChangeLayer = BACKGROUND_LAYER_2; break;
-		}
-
-		{
-			// Fill in option names
-			vector<RString> vThrowAway;
-
-			MenuDef &menu = g_BackgroundChange;
-
-			menu.rows[layer].choices[0] = ssprintf("%d",g_CurrentBGChangeLayer);
-			BackgroundUtil::GetBackgroundTransitions(	"", vThrowAway, menu.rows[transition].choices );
-			g_BackgroundChange.rows[transition].choices.insert( g_BackgroundChange.rows[transition].choices.begin(), "None" );	// add "no transition"
-			BackgroundUtil::GetBackgroundEffects(		"", vThrowAway, menu.rows[effect].choices );
-			menu.rows[effect].choices.insert( menu.rows[effect].choices.begin(), "Default" );	// add "default effect"
-
-			BackgroundUtil::GetSongBGAnimations(   m_pSong, "", vThrowAway, menu.rows[file1_song_bganimation].choices );
-			BackgroundUtil::GetSongMovies(         m_pSong, "", vThrowAway, menu.rows[file1_song_movie].choices );
-			BackgroundUtil::GetSongBitmaps(        m_pSong, "", vThrowAway, menu.rows[file1_song_still].choices );
-			BackgroundUtil::GetGlobalBGAnimations( m_pSong, "", vThrowAway, menu.rows[file1_global_bganimation].choices );	// NULL to get all background files
-			BackgroundUtil::GetGlobalRandomMovies( m_pSong, "", vThrowAway, menu.rows[file1_global_movie].choices, false, false );	// all backgrounds
-			BackgroundUtil::GetGlobalRandomMovies( m_pSong, "", vThrowAway, menu.rows[file1_global_movie_song_group].choices, false, true );	// song group's backgrounds
-			BackgroundUtil::GetGlobalRandomMovies( m_pSong, "", vThrowAway, menu.rows[file1_global_movie_song_group_and_genre].choices, true, true );	// song group and genre's backgrounds
-
-			menu.rows[file2_type].choices					= menu.rows[file1_type].choices;
-			menu.rows[file2_song_bganimation].choices			= menu.rows[file1_song_bganimation].choices;
-			menu.rows[file2_song_movie].choices				= menu.rows[file1_song_movie].choices;
-			menu.rows[file2_song_still].choices				= menu.rows[file1_song_still].choices;
-			menu.rows[file2_global_bganimation].choices			= menu.rows[file1_global_bganimation].choices;
-			menu.rows[file2_global_movie].choices				= menu.rows[file1_global_movie].choices;
-			menu.rows[file2_global_movie_song_group].choices		= menu.rows[file1_global_movie_song_group].choices;
-			menu.rows[file2_global_movie_song_group_and_genre].choices	= menu.rows[file1_global_movie_song_group_and_genre].choices;
-
-
-			// Fill in lines enabled/disabled
-			bool bAlreadyBGChangeHere = false;
-			BackgroundChange bgChange; 
-			FOREACH( BackgroundChange, m_pSong->GetBackgroundChanges(g_CurrentBGChangeLayer), bgc )
+			switch( EditB )
 			{
-				if( bgc->m_fStartBeat == GAMESTATE->m_fSongBeat )
-				{
-					bAlreadyBGChangeHere = true;
-					bgChange = *bgc;
-				}
+			DEFAULT_FAIL( EditB );
+			case EDIT_BUTTON_OPEN_BGCHANGE_LAYER1_MENU: g_CurrentBGChangeLayer = BACKGROUND_LAYER_1; break;
+			case EDIT_BUTTON_OPEN_BGCHANGE_LAYER2_MENU: g_CurrentBGChangeLayer = BACKGROUND_LAYER_2; break;
 			}
 
+			{
+				// Fill in option names
+				vector<RString> vThrowAway;
+
+				MenuDef &menu = g_BackgroundChange;
+
+				menu.rows[layer].choices[0] = ssprintf("%d",g_CurrentBGChangeLayer);
+				BackgroundUtil::GetBackgroundTransitions(	"", vThrowAway, menu.rows[transition].choices );
+				g_BackgroundChange.rows[transition].choices.insert( g_BackgroundChange.rows[transition].choices.begin(), "None" );	// add "no transition"
+				BackgroundUtil::GetBackgroundEffects(		"", vThrowAway, menu.rows[effect].choices );
+				menu.rows[effect].choices.insert( menu.rows[effect].choices.begin(), "Default" );	// add "default effect"
+
+				BackgroundUtil::GetSongBGAnimations(   m_pSong, "", vThrowAway, menu.rows[file1_song_bganimation].choices );
+				BackgroundUtil::GetSongMovies(         m_pSong, "", vThrowAway, menu.rows[file1_song_movie].choices );
+				BackgroundUtil::GetSongBitmaps(        m_pSong, "", vThrowAway, menu.rows[file1_song_still].choices );
+				BackgroundUtil::GetGlobalBGAnimations( m_pSong, "", vThrowAway, menu.rows[file1_global_bganimation].choices );	// NULL to get all background files
+				BackgroundUtil::GetGlobalRandomMovies( m_pSong, "", vThrowAway, menu.rows[file1_global_movie].choices, false, false );	// all backgrounds
+				BackgroundUtil::GetGlobalRandomMovies( m_pSong, "", vThrowAway, menu.rows[file1_global_movie_song_group].choices, false, true );	// song group's backgrounds
+				BackgroundUtil::GetGlobalRandomMovies( m_pSong, "", vThrowAway, menu.rows[file1_global_movie_song_group_and_genre].choices, true, true );	// song group and genre's backgrounds
+
+				menu.rows[file2_type].choices					= menu.rows[file1_type].choices;
+				menu.rows[file2_song_bganimation].choices			= menu.rows[file1_song_bganimation].choices;
+				menu.rows[file2_song_movie].choices				= menu.rows[file1_song_movie].choices;
+				menu.rows[file2_song_still].choices				= menu.rows[file1_song_still].choices;
+				menu.rows[file2_global_bganimation].choices			= menu.rows[file1_global_bganimation].choices;
+				menu.rows[file2_global_movie].choices				= menu.rows[file1_global_movie].choices;
+				menu.rows[file2_global_movie_song_group].choices		= menu.rows[file1_global_movie_song_group].choices;
+				menu.rows[file2_global_movie_song_group_and_genre].choices	= menu.rows[file1_global_movie_song_group_and_genre].choices;
+
+
+				// Fill in lines enabled/disabled
+				bool bAlreadyBGChangeHere = false;
+				BackgroundChange bgChange; 
+				FOREACH( BackgroundChange, m_pSong->GetBackgroundChanges(g_CurrentBGChangeLayer), bgc )
+				{
+					if( bgc->m_fStartBeat == GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat )
+					{
+						bAlreadyBGChangeHere = true;
+						bgChange = *bgc;
+					}
+				}
+
 #define FILL_ENABLED( x )	menu.rows[x].bEnabled	= menu.rows[x].choices.size() > 0;
-			FILL_ENABLED( transition );
-			FILL_ENABLED( effect );
-			FILL_ENABLED( file1_song_bganimation );
-			FILL_ENABLED( file1_song_movie );
-			FILL_ENABLED( file1_song_still );
-			FILL_ENABLED( file1_global_bganimation );
-			FILL_ENABLED( file1_global_movie );
-			FILL_ENABLED( file1_global_movie_song_group );
-			FILL_ENABLED( file1_global_movie_song_group_and_genre );
-			FILL_ENABLED( file2_song_bganimation );
-			FILL_ENABLED( file2_song_movie );
-			FILL_ENABLED( file2_song_still );
-			FILL_ENABLED( file2_global_bganimation );
-			FILL_ENABLED( file2_global_movie );
-			FILL_ENABLED( file2_global_movie_song_group );
-			FILL_ENABLED( file2_global_movie_song_group_and_genre );
+				FILL_ENABLED( transition );
+				FILL_ENABLED( effect );
+				FILL_ENABLED( file1_song_bganimation );
+				FILL_ENABLED( file1_song_movie );
+				FILL_ENABLED( file1_song_still );
+				FILL_ENABLED( file1_global_bganimation );
+				FILL_ENABLED( file1_global_movie );
+				FILL_ENABLED( file1_global_movie_song_group );
+				FILL_ENABLED( file1_global_movie_song_group_and_genre );
+				FILL_ENABLED( file2_song_bganimation );
+				FILL_ENABLED( file2_song_movie );
+				FILL_ENABLED( file2_song_still );
+				FILL_ENABLED( file2_global_bganimation );
+				FILL_ENABLED( file2_global_movie );
+				FILL_ENABLED( file2_global_movie_song_group );
+				FILL_ENABLED( file2_global_movie_song_group_and_genre );
 #undef FILL_ENABLED
-			menu.rows[delete_change].bEnabled = bAlreadyBGChangeHere;
+				menu.rows[delete_change].bEnabled = bAlreadyBGChangeHere;
 
-			// set default choices
-			menu.rows[rate].					SetDefaultChoiceIfPresent( ssprintf("%2.0f%%",bgChange.m_fRate*100) );
-			menu.rows[transition].					SetDefaultChoiceIfPresent( bgChange.m_sTransition );
-			menu.rows[effect].					SetDefaultChoiceIfPresent( bgChange.m_def.m_sEffect );
-			menu.rows[file1_type].iDefaultChoice			= none;
-			if( bgChange.m_def.m_sFile1 == RANDOM_BACKGROUND_FILE )								menu.rows[file1_type].iDefaultChoice	= dynamic_random;
-			if( menu.rows[file1_song_bganimation].			SetDefaultChoiceIfPresent( bgChange.m_def.m_sFile1 ) )	menu.rows[file1_type].iDefaultChoice	= song_bganimation;
-			if( menu.rows[file1_song_movie].			SetDefaultChoiceIfPresent( bgChange.m_def.m_sFile1 ) )	menu.rows[file1_type].iDefaultChoice	= song_movie;
-			if( menu.rows[file1_song_still].			SetDefaultChoiceIfPresent( bgChange.m_def.m_sFile1 ) )	menu.rows[file1_type].iDefaultChoice	= song_bitmap;
-			if( menu.rows[file1_global_bganimation].		SetDefaultChoiceIfPresent( bgChange.m_def.m_sFile1 ) )	menu.rows[file1_type].iDefaultChoice	= global_bganimation;
-			if( menu.rows[file1_global_movie].			SetDefaultChoiceIfPresent( bgChange.m_def.m_sFile1 ) )	menu.rows[file1_type].iDefaultChoice	= global_movie;
-			if( menu.rows[file1_global_movie_song_group].		SetDefaultChoiceIfPresent( bgChange.m_def.m_sFile1 ) )	menu.rows[file1_type].iDefaultChoice	= global_movie_song_group;
-			if( menu.rows[file1_global_movie_song_group_and_genre].	SetDefaultChoiceIfPresent( bgChange.m_def.m_sFile1 ) )	menu.rows[file1_type].iDefaultChoice	= global_movie_song_group_and_genre;
-			menu.rows[file2_type].iDefaultChoice			= none;
-			if( bgChange.m_def.m_sFile2 == RANDOM_BACKGROUND_FILE )								menu.rows[file2_type].iDefaultChoice	= dynamic_random;
-			if( menu.rows[file2_song_bganimation].			SetDefaultChoiceIfPresent( bgChange.m_def.m_sFile2 ) )	menu.rows[file2_type].iDefaultChoice	= song_bganimation;
-			if( menu.rows[file2_song_movie].			SetDefaultChoiceIfPresent( bgChange.m_def.m_sFile2 ) )	menu.rows[file2_type].iDefaultChoice	= song_movie;
-			if( menu.rows[file2_song_still].			SetDefaultChoiceIfPresent( bgChange.m_def.m_sFile2 ) )	menu.rows[file2_type].iDefaultChoice	= song_bitmap;
-			if( menu.rows[file2_global_bganimation].		SetDefaultChoiceIfPresent( bgChange.m_def.m_sFile2 ) )	menu.rows[file2_type].iDefaultChoice	= global_bganimation;
-			if( menu.rows[file2_global_movie].			SetDefaultChoiceIfPresent( bgChange.m_def.m_sFile2 ) )	menu.rows[file2_type].iDefaultChoice	= global_movie;
-			if( menu.rows[file2_global_movie_song_group].		SetDefaultChoiceIfPresent( bgChange.m_def.m_sFile2 ) )	menu.rows[file2_type].iDefaultChoice	= global_movie_song_group;
-			if( menu.rows[file2_global_movie_song_group_and_genre].	SetDefaultChoiceIfPresent( bgChange.m_def.m_sFile2 ) )	menu.rows[file2_type].iDefaultChoice	= global_movie_song_group_and_genre;
-			menu.rows[color1].					SetDefaultChoiceIfPresent( bgChange.m_def.m_sColor1 );
-			menu.rows[color2].					SetDefaultChoiceIfPresent( bgChange.m_def.m_sColor2 );
+				// set default choices
+				menu.rows[rate].					SetDefaultChoiceIfPresent( ssprintf("%2.0f%%",bgChange.m_fRate*100) );
+				menu.rows[transition].					SetDefaultChoiceIfPresent( bgChange.m_sTransition );
+				menu.rows[effect].					SetDefaultChoiceIfPresent( bgChange.m_def.m_sEffect );
+				menu.rows[file1_type].iDefaultChoice			= none;
+				if( bgChange.m_def.m_sFile1 == RANDOM_BACKGROUND_FILE )								menu.rows[file1_type].iDefaultChoice	= dynamic_random;
+				if( menu.rows[file1_song_bganimation].			SetDefaultChoiceIfPresent( bgChange.m_def.m_sFile1 ) )	menu.rows[file1_type].iDefaultChoice	= song_bganimation;
+				if( menu.rows[file1_song_movie].			SetDefaultChoiceIfPresent( bgChange.m_def.m_sFile1 ) )	menu.rows[file1_type].iDefaultChoice	= song_movie;
+				if( menu.rows[file1_song_still].			SetDefaultChoiceIfPresent( bgChange.m_def.m_sFile1 ) )	menu.rows[file1_type].iDefaultChoice	= song_bitmap;
+				if( menu.rows[file1_global_bganimation].		SetDefaultChoiceIfPresent( bgChange.m_def.m_sFile1 ) )	menu.rows[file1_type].iDefaultChoice	= global_bganimation;
+				if( menu.rows[file1_global_movie].			SetDefaultChoiceIfPresent( bgChange.m_def.m_sFile1 ) )	menu.rows[file1_type].iDefaultChoice	= global_movie;
+				if( menu.rows[file1_global_movie_song_group].		SetDefaultChoiceIfPresent( bgChange.m_def.m_sFile1 ) )	menu.rows[file1_type].iDefaultChoice	= global_movie_song_group;
+				if( menu.rows[file1_global_movie_song_group_and_genre].	SetDefaultChoiceIfPresent( bgChange.m_def.m_sFile1 ) )	menu.rows[file1_type].iDefaultChoice	= global_movie_song_group_and_genre;
+				menu.rows[file2_type].iDefaultChoice			= none;
+				if( bgChange.m_def.m_sFile2 == RANDOM_BACKGROUND_FILE )								menu.rows[file2_type].iDefaultChoice	= dynamic_random;
+				if( menu.rows[file2_song_bganimation].			SetDefaultChoiceIfPresent( bgChange.m_def.m_sFile2 ) )	menu.rows[file2_type].iDefaultChoice	= song_bganimation;
+				if( menu.rows[file2_song_movie].			SetDefaultChoiceIfPresent( bgChange.m_def.m_sFile2 ) )	menu.rows[file2_type].iDefaultChoice	= song_movie;
+				if( menu.rows[file2_song_still].			SetDefaultChoiceIfPresent( bgChange.m_def.m_sFile2 ) )	menu.rows[file2_type].iDefaultChoice	= song_bitmap;
+				if( menu.rows[file2_global_bganimation].		SetDefaultChoiceIfPresent( bgChange.m_def.m_sFile2 ) )	menu.rows[file2_type].iDefaultChoice	= global_bganimation;
+				if( menu.rows[file2_global_movie].			SetDefaultChoiceIfPresent( bgChange.m_def.m_sFile2 ) )	menu.rows[file2_type].iDefaultChoice	= global_movie;
+				if( menu.rows[file2_global_movie_song_group].		SetDefaultChoiceIfPresent( bgChange.m_def.m_sFile2 ) )	menu.rows[file2_type].iDefaultChoice	= global_movie_song_group;
+				if( menu.rows[file2_global_movie_song_group_and_genre].	SetDefaultChoiceIfPresent( bgChange.m_def.m_sFile2 ) )	menu.rows[file2_type].iDefaultChoice	= global_movie_song_group_and_genre;
+				menu.rows[color1].					SetDefaultChoiceIfPresent( bgChange.m_def.m_sColor1 );
+				menu.rows[color2].					SetDefaultChoiceIfPresent( bgChange.m_def.m_sColor2 );
 
-			EditMiniMenu( &g_BackgroundChange, SM_BackFromBGChange );
+				EditMiniMenu( &g_BackgroundChange, SM_BackFromBGChange );
+			}
+		}
+		else
+		{
+			SCREENMAN->SystemMessage( BG_CHANGE_STEP_TIMING );
+			SCREENMAN->PlayInvalidSound();
 		}
 		break;
 
@@ -1896,11 +1964,12 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 		break;
 	case EDIT_BUTTON_OPEN_COURSE_ATTACK_MENU:
 		{
+			// TODO: Give Song/Step Timing switches/functions here?
 			Course *pCourse = GAMESTATE->m_pCurCourse;
 			if( pCourse == NULL )
 				break;
 			CourseEntry &ce = pCourse->m_vEntries[GAMESTATE->m_iEditCourseEntryIndex];
-			float fStartTime = m_pSong->GetElapsedTimeFromBeat( GAMESTATE->m_fSongBeat );
+			float fStartTime = m_pSteps->m_Timing.GetElapsedTimeFromBeat( GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat );
 			int iAttack = FindAttackAtTime( ce.attacks, fStartTime );
 
 			if( iAttack >= 0 )
@@ -1941,7 +2010,8 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			}
 			else
 			{
-				fStart = m_pSong->GetElapsedTimeFromBeat( NoteRowToBeat(m_NoteFieldEdit.m_iBeginMarker) );
+				// TODO: Give Song/Step Timing switches/functions here? 
+				fStart = m_pSteps->m_Timing.GetElapsedTimeFromBeat( NoteRowToBeat(m_NoteFieldEdit.m_iBeginMarker) );
 				int iAttack = FindAttackAtTime( ce.attacks, fStart );
 
 				if( iAttack >= 0 )
@@ -1950,7 +2020,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 				if( m_NoteFieldEdit.m_iEndMarker == -1 )
 					fEnd = m_pSong->m_fMusicLengthSeconds;
 				else
-					fEnd = m_pSong->GetElapsedTimeFromBeat( NoteRowToBeat(m_NoteFieldEdit.m_iEndMarker) );
+					fEnd = m_pSteps->m_Timing.GetElapsedTimeFromBeat( NoteRowToBeat(m_NoteFieldEdit.m_iEndMarker) );
 			}
 			g_fLastInsertAttackPositionSeconds = fStart;
 			g_fLastInsertAttackDurationSeconds = fEnd - fStart;
@@ -1974,10 +2044,10 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 				bool bAlreadyBGChangeHere = false;
 				BackgroundLayer iLayer = BACKGROUND_LAYER_1;
 				BackgroundChange bgChange;
-				bgChange.m_fStartBeat = GAMESTATE->m_fSongBeat;
+				bgChange.m_fStartBeat = GAMESTATE->m_Position.m_fSongBeat;
 				FOREACH( BackgroundChange, m_pSong->GetBackgroundChanges(iLayer), bgc )
 				{
-					if( bgc->m_fStartBeat == GAMESTATE->m_fSongBeat )
+					if( bgc->m_fStartBeat == GAMESTATE->m_Position.m_fSongBeat )
 					{
 						bAlreadyBGChangeHere = true;
 						bgChange = *bgc;
@@ -2012,12 +2082,12 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 		{
 			if( g_iDefaultRecordLength.Get() == -1 )
 			{
-				m_iStartPlayingAt = BeatToNoteRow(GAMESTATE->m_fSongBeat);
+				m_iStartPlayingAt = BeatToNoteRow(GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat);
 				m_iStopPlayingAt = max( m_iStartPlayingAt, m_NoteDataEdit.GetLastRow() + 1 );
 			}
 			else
 			{
-				m_iStartPlayingAt = BeatToNoteRow( ftruncf(GAMESTATE->m_fSongBeat, g_iDefaultRecordLength.Get()) );
+				m_iStartPlayingAt = BeatToNoteRow( ftruncf(GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat, g_iDefaultRecordLength.Get()) );
 				m_iStopPlayingAt = m_iStartPlayingAt + BeatToNoteRow( g_iDefaultRecordLength.Get() );
 			}
 
@@ -2034,7 +2104,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 		}
 		break;
 	case EDIT_BUTTON_RECORD_FROM_CURSOR:
-		m_iStartPlayingAt = BeatToNoteRow(GAMESTATE->m_fSongBeat);
+		m_iStartPlayingAt = BeatToNoteRow(GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat);
 		m_iStopPlayingAt = max( m_iStartPlayingAt, m_NoteDataEdit.GetLastRow() );
 		TransitionEditState( STATE_RECORDING );
 		break;
@@ -2073,7 +2143,13 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			enum_add( m_InputPlayerNumber, 1 );
 			if( m_InputPlayerNumber == NUM_PLAYERS )
 				m_InputPlayerNumber = PLAYER_1;
+			m_soundSwitchPlayer.Play();
 		}
+		break;
+	
+	case EDIT_BUTTON_SWITCH_TIMINGS:
+		GAMESTATE->m_bIsUsingStepTiming = !GAMESTATE->m_bIsUsingStepTiming;
+		m_soundSwitchTiming.Play();
 		break;
 	}
 }
@@ -2103,7 +2179,7 @@ void ScreenEdit::InputRecord( const InputEventPlus &input, EditButton EditB )
 			}
 
 			// Add a tap
-			float fBeat = GAMESTATE->m_fSongBeat;
+			float fBeat = GetBeat();
 			fBeat = Quantize( fBeat, NoteTypeToBeat(m_SnapDisplay.GetNoteType()) );
 
 			const int iRow = BeatToNoteRow( fBeat );
@@ -2239,7 +2315,7 @@ void ScreenEdit::InputPlay( const InputEventPlus &input, EditButton EditB )
 		{
 		case EDIT_BUTTON_RETURN_TO_EDIT:
 			/* When exiting play mode manually, leave the cursor where it is. */
-			m_fBeatToReturnTo = GAMESTATE->m_fSongBeat;
+			m_fBeatToReturnTo = GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat;
 			TransitionEditState( STATE_EDITING );
 			break;
 		case EDIT_BUTTON_OFFSET_UP:
@@ -2265,7 +2341,7 @@ void ScreenEdit::InputPlay( const InputEventPlus &input, EditButton EditB )
 					fOffsetDelta *= 40;
 			}
 
-			m_pSong->m_Timing.m_fBeat0OffsetInSeconds += fOffsetDelta;
+			GetAppropriateTiming().m_fBeat0OffsetInSeconds += fOffsetDelta;
 		}
 			break;
 		}
@@ -2310,7 +2386,7 @@ void ScreenEdit::TransitionEditState( EditState em )
 		{
 		case STATE_EDITING:
 			// If exiting EDIT mode, save the cursor position.
-			m_fBeatToReturnTo = GAMESTATE->m_fSongBeat;
+			m_fBeatToReturnTo = GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat;
 			break;
 
 		case STATE_PLAYING:
@@ -2354,16 +2430,9 @@ void ScreenEdit::TransitionEditState( EditState em )
 		m_Background.Unload();
 		m_Foreground.Unload();
 
-		// Restore the cursor position.
-		GAMESTATE->m_fSongBeat = m_fBeatToReturnTo;
-
-		// Make sure we're snapped.
-		GAMESTATE->m_fSongBeat = Quantize( GAMESTATE->m_fSongBeat, NoteTypeToBeat(m_SnapDisplay.GetNoteType()) );
-
-		/* Playing and recording have lead-ins, which may start before beat 0;
-		 * make sure we don't stay there if we escaped out early. */
-		GAMESTATE->m_fSongBeat = max( GAMESTATE->m_fSongBeat, 0 );
-
+		// Restore the cursor position + Quantize + Clamp
+		SetBeat( max( 0, Quantize( m_fBeatToReturnTo, NoteTypeToBeat(m_SnapDisplay.GetNoteType()) ) ) );
+		GAMESTATE->m_bInStepEditor = true;
 		break;
 
 	case STATE_PLAYING:
@@ -2372,9 +2441,10 @@ void ScreenEdit::TransitionEditState( EditState em )
 		if( bStateChanging )
 			AdjustSync::ResetOriginalSyncData();
 
-		/* Give a 1 second lead-in.  If we're loading Player, this must be done first. */
-		float fSeconds = m_pSong->m_Timing.GetElapsedTimeFromBeat( NoteRowToBeat(m_iStartPlayingAt) ) - 1;
-		GAMESTATE->UpdateSongPosition( fSeconds, m_pSong->m_Timing );
+		/* Give a 1 second lead-in.  If we're loading Player, this must be done first.
+		 * Also be sure to get the right timing. */
+		float fSeconds = GetAppropriateTiming().GetElapsedTimeFromBeat( NoteRowToBeat(m_iStartPlayingAt) ) - 1;
+		GAMESTATE->UpdateSongPosition( fSeconds, GetAppropriateTiming(), RageZeroTimer, true );
 
 		GAMESTATE->m_bGameplayLeadIn.Set( false );
 
@@ -2382,10 +2452,11 @@ void ScreenEdit::TransitionEditState( EditState em )
 		// XXX
 		// GAMESTATE->ResetNoteSkins();
 		//GAMESTATE->res
-
+		GAMESTATE->m_bInStepEditor = false;
 		break;
 	}
 	case STATE_RECORDING_PAUSED:
+		GAMESTATE->m_bInStepEditor = false;
 		break;
 	}
 
@@ -2455,7 +2526,7 @@ void ScreenEdit::TransitionEditState( EditState em )
 	{
 	case STATE_PLAYING:
 	case STATE_RECORDING:
-		const float fStartSeconds = m_pSong->GetElapsedTimeFromBeat(GAMESTATE->m_fSongBeat);
+		const float fStartSeconds = GetAppropriateTiming().GetElapsedTimeFromBeat( GetBeat() );
 		LOG->Trace( "Starting playback at %f", fStartSeconds );
 
 		RageSoundParams p;
@@ -2475,11 +2546,11 @@ void ScreenEdit::ScrollTo( float fDestinationBeat )
 	CLAMP( fDestinationBeat, 0, GetMaximumBeatForMoving() );
 
 	// Don't play the sound and do the hold note logic below if our position didn't change.
-	const float fOriginalBeat = GAMESTATE->m_fSongBeat;
+	const float fOriginalBeat = GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat;
 	if( fOriginalBeat == fDestinationBeat )
 		return;
 
-	GAMESTATE->m_fSongBeat = fDestinationBeat;
+	SetBeat(fDestinationBeat);
 
 	// check to see if they're holding a button
 	for( int n=0; n<NUM_EDIT_BUTTON_COLUMNS; n++ )
@@ -2617,38 +2688,29 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	{
 		float fBPM = StringToFloat( ScreenTextEntry::s_sLastAnswer );
 		if( fBPM > 0 )
-			m_pSong->SetBPMAtBeat( GAMESTATE->m_fSongBeat, fBPM );
+			GetAppropriateTiming().SetBPMAtBeat( GetBeat(), fBPM );
 		SetDirty( true );
 	}
 	else if( SM == SM_BackFromStopChange )
 	{
 		float fStop = StringToFloat( ScreenTextEntry::s_sLastAnswer );
 		if( fStop >= 0 )
-			m_pSong->m_Timing.SetStopAtBeat( GAMESTATE->m_fSongBeat, fStop );
+			GetAppropriateTiming().SetStopAtBeat( GetBeat(), fStop );
 		SetDirty( true );
 	}
 	else if( SM == SM_BackFromDelayChange )
 	{
 		float fDelay = StringToFloat( ScreenTextEntry::s_sLastAnswer );
 		if( fDelay >= 0 )
-			m_pSong->m_Timing.SetStopAtBeat( GAMESTATE->m_fSongBeat, fDelay, true );
+			GetAppropriateTiming().SetStopAtBeat( GetBeat(), fDelay, true );
 		SetDirty( true );
 	}
-	else if( SM == SM_BackFromTimeSignatureNumeratorChange )
+	else if( SM == SM_BackFromTimeSignatureChange )
 	{
-		int iNum = StringToInt( ScreenTextEntry::s_sLastAnswer );
-		if( iNum > 0 )
+		int iNum, iDen;
+		if( sscanf( ScreenTextEntry::s_sLastAnswer.c_str(), " %d / %d ", &iNum, &iDen ) == 2 )
 		{
-			m_pSong->m_Timing.SetTimeSignatureNumeratorAtBeat( GAMESTATE->m_fSongBeat, iNum );
-		}
-		SetDirty( true );
-	}
-	else if ( SM == SM_BackFromTimeSignatureDenominatorChange )
-	{
-		int iDen = StringToInt( ScreenTextEntry::s_sLastAnswer );
-		if( iDen > 0)
-		{
-			m_pSong->m_Timing.SetTimeSignatureDenominatorAtBeat( GAMESTATE->m_fSongBeat, iDen );
+			GetAppropriateTiming().SetTimeSignatureAtBeat( GetBeat(), iNum, iDen );
 		}
 		SetDirty( true );
 	}
@@ -2657,7 +2719,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		int iTick = StringToInt( ScreenTextEntry::s_sLastAnswer );
 		if ( iTick >= 0 && iTick <= ROWS_PER_BEAT )
 		{
-			m_pSong->m_Timing.SetTickcountAtBeat( GAMESTATE->m_fSongBeat, iTick );
+			GetAppropriateTiming().SetTickcountAtBeat( GetBeat(), iTick );
 		}
 		SetDirty( true );
 	}
@@ -2666,27 +2728,79 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		int iCombo = StringToInt( ScreenTextEntry::s_sLastAnswer );
 		if ( iCombo >= 0 )
 		{
-			m_pSong->m_Timing.SetComboAtBeat( GAMESTATE->m_fSongBeat, iCombo );
+			GetAppropriateTiming().SetComboAtBeat( GetBeat(), iCombo );
 		}
 		SetDirty( true );
 	}
 	else if ( SM == SM_BackFromLabelChange )
 	{
 		RString sLabel = ScreenTextEntry::s_sLastAnswer;
-		if ( !m_pSong->m_Timing.DoesLabelExist(sLabel) )
+		if ( !GetAppropriateTiming().DoesLabelExist(sLabel) )
 		{
 			sLabel.Replace("=", "_");
 			sLabel.Replace(",", "_");
-			m_pSong->m_Timing.SetLabelAtBeat( GAMESTATE->m_fSongBeat, sLabel );
+			GetAppropriateTiming().SetLabelAtBeat( GetBeat(), sLabel );
 			SetDirty( true );
 		}
 	}
 	else if ( SM == SM_BackFromWarpChange )
 	{
 		float fWarp = StringToFloat( ScreenTextEntry::s_sLastAnswer );
-		m_pSong->m_Timing.SetWarpAtBeat( GAMESTATE->m_fSongBeat, fWarp );
+		if( fWarp >= 0 ) // allow 0 to kill a warp.
+		{
+			GetAppropriateTiming().SetWarpAtBeat( GetBeat(), fWarp );
+			SetDirty( true );
+		}
+	}
+	else if( SM == SM_BackFromSpeedPercentChange )
+	{
+		float fNum = StringToFloat( ScreenTextEntry::s_sLastAnswer );
+		GetAppropriateTiming().SetSpeedPercentAtBeat( GetBeat(), fNum );
 		SetDirty( true );
 	}
+	else if ( SM == SM_BackFromSpeedWaitChange )
+	{
+		float fDen = StringToFloat( ScreenTextEntry::s_sLastAnswer );
+		if( fDen >= 0)
+		{
+			GetAppropriateTiming().SetSpeedWaitAtBeat( GetBeat(), fDen );
+		}
+		SetDirty( true );
+	}
+	else if ( SM == SM_BackFromSpeedModeChange )
+	{
+		if( ScreenTextEntry::s_sLastAnswer.substr(0, 1) == "b" || ScreenTextEntry::s_sLastAnswer.substr(0, 1) == "B" )
+		{
+			GetAppropriateTiming().SetSpeedModeAtBeat( GetBeat(), 0 );
+		}
+		else if( ScreenTextEntry::s_sLastAnswer.substr(0, 1) == "s" || ScreenTextEntry::s_sLastAnswer.substr(0, 1) == "S" )
+		{
+			GetAppropriateTiming().SetSpeedModeAtBeat( GetBeat(), 1 );
+		}
+		else
+		{
+			int tmp = StringToInt(ScreenTextEntry::s_sLastAnswer );
+			if( tmp == 0 )
+			{
+				GetAppropriateTiming().SetSpeedModeAtBeat( GetBeat(), 0 );
+			}
+			else
+			{
+				GetAppropriateTiming().SetSpeedModeAtBeat( GetBeat(), 1 );
+			}
+		}
+		SetDirty( true );
+	}
+	else if ( SM == SM_BackFromFakeChange )
+	{
+		float fFake = StringToFloat( ScreenTextEntry::s_sLastAnswer );
+		if( fFake >= 0 ) // allow 0 to kill a warp.
+		{
+			GetAppropriateTiming().SetFakeAtBeat( GetBeat(), fFake );
+			SetDirty( true );
+		}
+	}
+	
 	else if( SM == SM_BackFromBGChange )
 	{
 		HandleBGChangeChoice( (BGChangeChoice)ScreenMiniMenu::s_iLastRowCode, ScreenMiniMenu::s_viLastAnswers );
@@ -2735,7 +2849,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	{
 		PlayerOptions poChosen = GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.GetPreferred();
 		RString sMods = poChosen.GetString();
-		const int row = BeatToNoteRow( GAMESTATE->m_fSongBeat );
+		const int row = BeatToNoteRow( GAMESTATE->m_Position.m_fSongBeat );
 
 		TapNote tn(
 			TapNote::attack, 
@@ -2756,8 +2870,10 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		Course *pCourse = GAMESTATE->m_pCurCourse;
 		CourseEntry &ce = pCourse->m_vEntries[GAMESTATE->m_iEditCourseEntryIndex];
 		int iAttack;
+		
+		// TODO: Handle Song/Step Timing functions/switches here?
 
-		g_fLastInsertAttackPositionSeconds = m_pSong->GetElapsedTimeFromBeat( GAMESTATE->m_fSongBeat );
+		g_fLastInsertAttackPositionSeconds = m_pSteps->m_Timing.GetElapsedTimeFromBeat( GAMESTATE->m_Position.m_fSongBeat );
 		g_fLastInsertAttackDurationSeconds = StringToFloat( g_InsertCourseAttack.rows[0].choices[iDurationChoice] );
 		iAttack = FindAttackAtTime( ce.attacks, g_fLastInsertAttackPositionSeconds );
 
@@ -2823,6 +2939,15 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 			RevertFromDisk();
 			m_pSteps->GetNoteData( m_NoteDataEdit );
 			SetDirty( false );
+		}
+	}
+	else if( SM == SM_DoEraseStepTiming )
+	{
+		if( ScreenPrompt::s_LastAnswer == ANSWER_YES )
+		{
+			SaveUndo();
+			m_pSteps->m_Timing = m_pSong->m_SongTiming;
+			SetDirty( true );
 		}
 	}
 	else if( SM == SM_DoSaveAndExit ) // just asked "save before exiting? yes, no, cancel"
@@ -2912,12 +3037,12 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	{
 		/* When another screen comes up, RageSounds takes over the sound timer.  When we come
 		 * back, put the timer back to where it was. */
-		GAMESTATE->m_fSongBeat = m_fTrailingBeat;
+		SetBeat(m_fTrailingBeat);
 	}
 	else if( SM == SM_LoseFocus )
 	{
 		// Snap the trailing beat, in case we lose focus while tweening.
-		m_fTrailingBeat = GAMESTATE->m_fSongBeat;
+		m_fTrailingBeat = GetBeat(); //GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat;
 	}
 
 	ScreenWithMenuElements::HandleScreenMessage( SM );
@@ -2928,10 +3053,10 @@ void ScreenEdit::OnSnapModeChange()
 	m_soundChangeSnap.Play();
 
 	NoteType nt = m_SnapDisplay.GetNoteType();
-	int iStepIndex = BeatToNoteRow( GAMESTATE->m_fSongBeat );
+	int iStepIndex = BeatToNoteRow( GetBeat() );
 	int iElementsPerNoteType = BeatToNoteRow( NoteTypeToBeat(nt) );
 	int iStepIndexHangover = iStepIndex % iElementsPerNoteType;
-	GAMESTATE->m_fSongBeat -= NoteRowToBeat( iStepIndexHangover );
+	SetBeat( GetBeat() - NoteRowToBeat( iStepIndexHangover ) );
 }
 
 
@@ -3014,7 +3139,8 @@ static void ChangeArtistTranslit( const RString &sNew )
 
 static void ChangeBeat0Offset( const RString &sNew )
 {
-	GAMESTATE->m_pCurSong->m_Timing.m_fBeat0OffsetInSeconds = StringToFloat( sNew );
+	TimingData &timing = GAMESTATE->m_bIsUsingStepTiming ? GAMESTATE->m_pCurSteps[PLAYER_1]->m_Timing : GAMESTATE->m_pCurSong->m_SongTiming;
+	timing.m_fBeat0OffsetInSeconds = StringToFloat( sNew );
 }
 
 static void ChangeLastBeatHint( const RString &sNew )
@@ -3040,6 +3166,69 @@ static void ChangeMinBPM( const RString &sNew )
 static void ChangeMaxBPM( const RString &sNew )
 {
 	GAMESTATE->m_pCurSong->m_fSpecifiedBPMMax = StringToFloat( sNew );
+}
+
+TimingData & ScreenEdit::GetAppropriateTiming() const
+{
+	if( GAMESTATE->m_bIsUsingStepTiming )
+	{
+		return m_pSteps->m_Timing;
+	}
+	return m_pSong->m_SongTiming;
+}
+
+inline void ScreenEdit::SetBeat(float fBeat)
+{
+	if( !GAMESTATE->m_bIsUsingStepTiming )
+	{
+		GAMESTATE->m_Position.m_fSongBeat = fBeat;
+		GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat = m_pSteps->m_Timing.GetBeatFromElapsedTime(m_pSong->m_SongTiming.GetElapsedTimeFromBeat(fBeat));
+	}
+	else
+	{
+		GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat = fBeat;
+		GAMESTATE->m_Position.m_fSongBeat = m_pSong->m_SongTiming.GetBeatFromElapsedTime(m_pSteps->m_Timing.GetElapsedTimeFromBeat(fBeat));
+	}
+}
+
+inline float ScreenEdit::GetBeat()
+{
+	if( !GAMESTATE->m_bIsUsingStepTiming )
+	{
+		return GAMESTATE->m_Position.m_fSongBeat;
+	}
+	return GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat;
+}
+
+void ScreenEdit::DisplayTimingMenu()
+{
+	float fBeat = GetBeat();
+	TimingData &pTime = GetAppropriateTiming();
+	g_TimingDataInformation.rows[beat_0_offset].SetOneUnthemedChoice( ssprintf("%.5f", pTime.m_fBeat0OffsetInSeconds) );
+	g_TimingDataInformation.rows[bpm].SetOneUnthemedChoice( ssprintf("%.5f", pTime.GetBPMAtBeat( fBeat ) ) );
+	g_TimingDataInformation.rows[stop].SetOneUnthemedChoice( ssprintf("%.5f", pTime.GetStopAtBeat( fBeat ) ) ) ;
+	g_TimingDataInformation.rows[delay].SetOneUnthemedChoice( ssprintf("%.5f", pTime.GetDelayAtBeat( fBeat ) ) );
+	g_TimingDataInformation.rows[time_signature].SetOneUnthemedChoice( ssprintf("%d / %d", pTime.GetTimeSignatureNumeratorAtBeat( fBeat ), pTime.GetTimeSignatureDenominatorAtBeat( fBeat ) ) );
+	g_TimingDataInformation.rows[label].SetOneUnthemedChoice( pTime.GetLabelAtBeat( fBeat ).c_str() );
+	g_TimingDataInformation.rows[tickcount].SetOneUnthemedChoice( ssprintf("%d", pTime.GetTickcountAtBeat( fBeat ) ) );
+	g_TimingDataInformation.rows[combo].SetOneUnthemedChoice( ssprintf("%d", pTime.GetComboAtBeat( fBeat ) ) );
+	g_TimingDataInformation.rows[warp].SetOneUnthemedChoice( ssprintf("%.5f", pTime.GetWarpAtBeat( fBeat ) ) );
+	g_TimingDataInformation.rows[speed_percent].SetOneUnthemedChoice( ssprintf("%.5f", pTime.GetSpeedPercentAtBeat( fBeat ) ) );
+	g_TimingDataInformation.rows[speed_wait].SetOneUnthemedChoice( ssprintf("%.5f", pTime.GetSpeedWaitAtBeat( fBeat ) ) );
+	
+	RString starting = ( pTime.GetSpeedModeAtBeat( fBeat ) == 1 ? "Seconds" : "Beats" );
+	g_TimingDataInformation.rows[speed_mode].SetOneUnthemedChoice( starting.c_str() );
+	
+	g_TimingDataInformation.rows[fake].SetOneUnthemedChoice( ssprintf("%.5f", pTime.GetFakeAtBeat( fBeat ) ) );
+	
+	g_TimingDataInformation.rows[tickcount].bEnabled = GAMESTATE->m_bIsUsingStepTiming;
+	g_TimingDataInformation.rows[combo].bEnabled = GAMESTATE->m_bIsUsingStepTiming;
+	g_TimingDataInformation.rows[speed_percent].bEnabled = GAMESTATE->m_bIsUsingStepTiming;
+	g_TimingDataInformation.rows[speed_wait].bEnabled = GAMESTATE->m_bIsUsingStepTiming;
+	g_TimingDataInformation.rows[speed_mode].bEnabled = GAMESTATE->m_bIsUsingStepTiming;
+	g_TimingDataInformation.rows[fake].bEnabled = GAMESTATE->m_bIsUsingStepTiming;
+		
+	EditMiniMenu( &g_TimingDataInformation, SM_BackFromTimingDataInformation );
 }
 
 // End helper functions
@@ -3078,14 +3267,14 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 			break;
 		case play_current_beat_to_end:
 			{
-				m_iStartPlayingAt = BeatToNoteRow(GAMESTATE->m_fSongBeat);
+				m_iStartPlayingAt = BeatToNoteRow(GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat);
 				m_iStopPlayingAt = max( m_iStartPlayingAt, m_NoteDataEdit.GetLastRow() );
 				TransitionEditState( STATE_PLAYING );
 			}
 			break;
 		case set_selection_start:
 			{
-				const int iCurrentRow = BeatToNoteRow(GAMESTATE->m_fSongBeat);
+				const int iCurrentRow = BeatToNoteRow(GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat);
 				if( m_NoteFieldEdit.m_iEndMarker!=-1 && iCurrentRow >= m_NoteFieldEdit.m_iEndMarker )
 				{
 					SCREENMAN->PlayInvalidSound();
@@ -3099,7 +3288,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 			break;
 		case set_selection_end:
 			{
-				const int iCurrentRow = BeatToNoteRow(GAMESTATE->m_fSongBeat);
+				const int iCurrentRow = BeatToNoteRow(GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat);
 				if( m_NoteFieldEdit.m_iBeginMarker!=-1 && iCurrentRow <= m_NoteFieldEdit.m_iBeginMarker )
 				{
 					SCREENMAN->PlayInvalidSound();
@@ -3232,7 +3421,6 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 				g_SongInformation.rows[main_title_transliteration].SetOneUnthemedChoice( pSong->m_sMainTitleTranslit );
 				g_SongInformation.rows[sub_title_transliteration].SetOneUnthemedChoice( pSong->m_sSubTitleTranslit );
 				g_SongInformation.rows[artist_transliteration].SetOneUnthemedChoice( pSong->m_sArtistTranslit );
-				g_SongInformation.rows[beat_0_offset].SetOneUnthemedChoice( ssprintf("%.5f", pSong->m_Timing.m_fBeat0OffsetInSeconds) );
 				g_SongInformation.rows[last_beat_hint].SetOneUnthemedChoice( ssprintf("%.5f", pSong->m_fSpecifiedLastBeat) );
 				g_SongInformation.rows[preview_start].SetOneUnthemedChoice( ssprintf("%.5f", pSong->m_fMusicSampleStartSeconds) );
 				g_SongInformation.rows[preview_length].SetOneUnthemedChoice( ssprintf("%.5f", pSong->m_fMusicSampleLengthSeconds) );
@@ -3245,20 +3433,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 			break;
 		case edit_timing_data:
 			{
-				const Song* pSong = GAMESTATE->m_pCurSong;
-				TimingData pTime = pSong->m_Timing;
-				const float fBeat = GAMESTATE->m_fSongBeat;
-				g_TimingDataInformation.rows[bpm].SetOneUnthemedChoice( ssprintf("%.5f", pSong->GetBPMAtBeat( fBeat ) ) );
-				g_TimingDataInformation.rows[stop].SetOneUnthemedChoice( ssprintf("%.5f", pTime.GetStopAtBeat( fBeat ) ) ) ;
-				g_TimingDataInformation.rows[delay].SetOneUnthemedChoice( ssprintf("%.5f", pTime.GetDelayAtBeat( fBeat ) ) );
-				g_TimingDataInformation.rows[time_signature_numerator].SetOneUnthemedChoice( ssprintf("%d", pTime.GetTimeSignatureNumeratorAtBeat( fBeat ) ) );
-				g_TimingDataInformation.rows[time_signature_denominator].SetOneUnthemedChoice( ssprintf("%d", pTime.GetTimeSignatureDenominatorAtBeat( fBeat ) ) );
-				g_TimingDataInformation.rows[tickcount].SetOneUnthemedChoice( ssprintf("%d", pTime.GetTickcountAtBeat( fBeat ) ) );
-				g_TimingDataInformation.rows[combo].SetOneUnthemedChoice( ssprintf("%d", pTime.GetComboAtBeat( fBeat ) ) );
-				g_TimingDataInformation.rows[label].SetOneUnthemedChoice( pTime.GetLabelAtBeat( fBeat ).c_str() );
-				g_TimingDataInformation.rows[warp].SetOneUnthemedChoice( ssprintf("%.5f", pTime.GetWarpAtBeat( fBeat ) ) );
-				
-				EditMiniMenu( &g_TimingDataInformation, SM_BackFromTimingDataInformation );
+				DisplayTimingMenu();
 			}
 			break;
 		
@@ -3347,12 +3522,14 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 		case paste_at_current_beat:
 		case paste_at_begin_marker:
 			{
+				// TODO: Song/Step Timing checks?
+				
 				int iDestFirstRow = -1;
 				switch( c )
 				{
 					DEFAULT_FAIL( c );
 					case paste_at_current_beat:
-						iDestFirstRow = BeatToNoteRow( GAMESTATE->m_fSongBeat );
+						iDestFirstRow = BeatToNoteRow( GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat );
 						break;
 					case paste_at_begin_marker:
 						ASSERT( m_NoteFieldEdit.m_iBeginMarker!=-1 );
@@ -3491,9 +3668,10 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 				NoteDataUtil::ScaleRegion( m_NoteDataEdit, fScale, iStartIndex, iEndIndex );
 				
 				// scale timing data
-				m_pSong->m_Timing.ScaleRegion( fScale, m_NoteFieldEdit.m_iBeginMarker, m_NoteFieldEdit.m_iEndMarker, true );
+				GetAppropriateTiming().ScaleRegion( fScale, m_NoteFieldEdit.m_iBeginMarker, m_NoteFieldEdit.m_iEndMarker, true );
 
 				// scale all other steps.
+				/*
 				const vector<Steps*> sIter = m_pSong->GetAllSteps();
 				RString sTempStyle, sTempDiff;
 				for( unsigned i = 0; i < sIter.size(); i++ )
@@ -3512,7 +3690,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 					NoteDataUtil::ScaleRegion( ndTemp, fScale, m_NoteFieldEdit.m_iBeginMarker, m_NoteFieldEdit.m_iEndMarker );
 					sIter[i]->SetNoteData( ndTemp );
 				}
-
+				*/
 				m_NoteFieldEdit.m_iEndMarker = iNewEndIndex;
 				
 			}
@@ -3530,22 +3708,22 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 			TransitionEditState( STATE_RECORDING );
 			break;
 		case insert_and_shift:
-			NoteDataUtil::InsertRows( m_NoteDataEdit, BeatToNoteRow(GAMESTATE->m_fSongBeat), BeatToNoteRow(1) );
+			NoteDataUtil::InsertRows( m_NoteDataEdit, BeatToNoteRow( GetBeat() ), BeatToNoteRow(1) );
 			break;
 		case delete_and_shift:
-			NoteDataUtil::DeleteRows( m_NoteDataEdit, BeatToNoteRow(GAMESTATE->m_fSongBeat), BeatToNoteRow(1) );
+			NoteDataUtil::DeleteRows( m_NoteDataEdit, BeatToNoteRow( GetBeat() ), BeatToNoteRow(1) );
 			break;
 		case shift_pauses_forward:
-			m_pSong->m_Timing.InsertRows( BeatToNoteRow(GAMESTATE->m_fSongBeat), BeatToNoteRow(1) );
+			GetAppropriateTiming().InsertRows( BeatToNoteRow( GetBeat() ), BeatToNoteRow(1) );
 			break;
 		case shift_pauses_backward:
-			m_pSong->m_Timing.DeleteRows( BeatToNoteRow(GAMESTATE->m_fSongBeat), BeatToNoteRow(1) );
+			GetAppropriateTiming().DeleteRows( BeatToNoteRow( GetBeat() ), BeatToNoteRow(1) );
 			break;
 		case convert_to_pause:
 			{
 				ASSERT( m_NoteFieldEdit.m_iBeginMarker!=-1 && m_NoteFieldEdit.m_iEndMarker!=-1 );
-				float fMarkerStart = m_pSong->m_Timing.GetElapsedTimeFromBeat( NoteRowToBeat(m_NoteFieldEdit.m_iBeginMarker) );
-				float fMarkerEnd = m_pSong->m_Timing.GetElapsedTimeFromBeat( NoteRowToBeat(m_NoteFieldEdit.m_iEndMarker) );
+				float fMarkerStart = GetAppropriateTiming().GetElapsedTimeFromBeat( NoteRowToBeat(m_NoteFieldEdit.m_iBeginMarker) );
+				float fMarkerEnd = GetAppropriateTiming().GetElapsedTimeFromBeat( NoteRowToBeat(m_NoteFieldEdit.m_iEndMarker) );
 
 				// The length of the stop segment we're going to create.  This includes time spent in any
 				// stops in the selection, which will be deleted and subsumed into the new stop.
@@ -3557,9 +3735,9 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 						m_NoteFieldEdit.m_iBeginMarker + 1,
 						m_NoteFieldEdit.m_iEndMarker-m_NoteFieldEdit.m_iBeginMarker
 					);
-				m_pSong->m_Timing.DeleteRows( m_NoteFieldEdit.m_iBeginMarker,
+				GetAppropriateTiming().DeleteRows( m_NoteFieldEdit.m_iBeginMarker,
 						m_NoteFieldEdit.m_iEndMarker-m_NoteFieldEdit.m_iBeginMarker );
-				m_pSong->m_Timing.SetStopAtRow( m_NoteFieldEdit.m_iBeginMarker, fStopLength );
+				GetAppropriateTiming().SetStopAtRow( m_NoteFieldEdit.m_iBeginMarker, fStopLength );
 				m_NoteFieldEdit.m_iBeginMarker = -1;
 				m_NoteFieldEdit.m_iEndMarker = -1;
 				break;
@@ -3567,14 +3745,14 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 		case convert_pause_to_beat:
 			{
 				// TODO: Convert both Delays and Stops at once.
-				float fStopSeconds = m_pSong->m_Timing.GetStopAtRow( BeatToNoteRow(GAMESTATE->m_fSongBeat) );
-				m_pSong->m_Timing.SetStopAtBeat( GAMESTATE->m_fSongBeat, 0 );
+				float fStopSeconds = GetAppropriateTiming().GetStopAtRow( BeatToNoteRow( GetBeat() ) );
+				GetAppropriateTiming().SetStopAtBeat( GetBeat() , 0 );
 
-				float fStopBeats = fStopSeconds * m_pSong->GetBPMAtBeat(GAMESTATE->m_fSongBeat) / 60;
+				float fStopBeats = fStopSeconds * GetAppropriateTiming().GetBPMAtBeat( GetBeat() ) / 60;
 
 				// don't move the step from where it is, just move everything later
-				NoteDataUtil::InsertRows( m_NoteDataEdit, BeatToNoteRow(GAMESTATE->m_fSongBeat) + 1, BeatToNoteRow(fStopBeats) );
-				m_pSong->m_Timing.InsertRows( BeatToNoteRow(GAMESTATE->m_fSongBeat) + 1, BeatToNoteRow(fStopBeats) );
+				NoteDataUtil::InsertRows( m_NoteDataEdit, BeatToNoteRow( GetBeat() ) + 1, BeatToNoteRow(fStopBeats) );
+				GetAppropriateTiming().InsertRows( BeatToNoteRow( GetBeat() ) + 1, BeatToNoteRow(fStopBeats) );
 			}
 			break;
 		case undo:
@@ -3652,7 +3830,6 @@ static LocalizedString ENTER_CREDIT			("ScreenEdit","Enter a new credit.");
 static LocalizedString ENTER_MAIN_TITLE_TRANSLIT	("ScreenEdit","Enter a new main title transliteration.");
 static LocalizedString ENTER_SUB_TITLE_TRANSLIT		("ScreenEdit","Enter a new sub title transliteration.");
 static LocalizedString ENTER_ARTIST_TRANSLIT		("ScreenEdit","Enter a new artist transliteration.");
-static LocalizedString ENTER_BEAT_0_OFFSET		("ScreenEdit","Enter the offset for the song.");
 static LocalizedString ENTER_LAST_BEAT_HINT		("ScreenEdit","Enter a new last beat hint.");
 static LocalizedString ENTER_PREVIEW_START		("ScreenEdit","Enter a new preview start.");
 static LocalizedString ENTER_PREVIEW_LENGTH		("ScreenEdit","Enter a new preview length.");
@@ -3689,11 +3866,6 @@ void ScreenEdit::HandleSongInformationChoice( SongInformationChoice c, const vec
 	case artist_transliteration:
 		ScreenTextEntry::TextEntry( SM_None, ENTER_ARTIST_TRANSLIT, pSong->m_sArtistTranslit, 100, NULL, ChangeArtistTranslit, NULL );
 		break;
-	case beat_0_offset:
-		ScreenTextEntry::TextEntry( SM_None, ENTER_BEAT_0_OFFSET,
-					   ssprintf("%.5f", pSong->m_Timing.m_fBeat0OffsetInSeconds), 20,
-					   ScreenTextEntry::FloatValidate, ChangeBeat0Offset, NULL );
-		break;
 	case last_beat_hint:
 		ScreenTextEntry::TextEntry( SM_None, ENTER_LAST_BEAT_HINT, 
 					   ssprintf("%.5f", pSong->m_fSpecifiedLastBeat), 20, 
@@ -3722,25 +3894,36 @@ void ScreenEdit::HandleSongInformationChoice( SongInformationChoice c, const vec
 	};
 }
 
+
+static LocalizedString ENTER_BEAT_0_OFFSET			( "ScreenEdit", "Enter the offset for the song.");
 static LocalizedString ENTER_BPM_VALUE				( "ScreenEdit", "Enter a new BPM value." );
 static LocalizedString ENTER_STOP_VALUE				( "ScreenEdit", "Enter a new Stop value." );
 static LocalizedString ENTER_DELAY_VALUE			( "ScreenEdit", "Enter a new Delay value." );
-static LocalizedString ENTER_TIME_SIGNATURE_NUMERATOR_VALUE	( "ScreenEdit", "Enter a new Time Signature numerator value." );
-static LocalizedString ENTER_TIME_SIGNATURE_DENOMINATOR_VALUE	( "ScreenEdit", "Enter a new Time Signature denominator value." );
+static LocalizedString ENTER_TIME_SIGNATURE_VALUE	( "ScreenEdit", "Enter a new Time Signature." );
 static LocalizedString ENTER_TICKCOUNT_VALUE			( "ScreenEdit", "Enter a new Tickcount value." );
 static LocalizedString ENTER_COMBO_VALUE			( "ScreenEdit", "Enter a new Combo value." );
 static LocalizedString ENTER_LABEL_VALUE			( "ScreenEdit", "Enter a new Label value." );
 static LocalizedString ENTER_WARP_VALUE				( "ScreenEdit", "Enter a new Warp value." );
+static LocalizedString ENTER_SPEED_PERCENT_VALUE		( "ScreenEdit", "Enter a new Speed percent value." );
+static LocalizedString ENTER_SPEED_WAIT_VALUE			( "ScreenEdit", "Enter a new Speed wait value." );
+static LocalizedString ENTER_SPEED_MODE_VALUE			( "ScreenEdit", "Enter a new Speed mode value." );
+static LocalizedString ENTER_FAKE_VALUE				( "ScreenEdit", "Enter a new Fake value." );
+static LocalizedString CONFIRM_TIMING_ERASE			( "ScreenEdit", "Are you sure you want to erase this chart's timing data?" );
 void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice c, const vector<int> &iAnswers )
 {
 	switch( c )
 	{
 	DEFAULT_FAIL( c );
-	case bpm:
+	case beat_0_offset:
+		ScreenTextEntry::TextEntry( SM_None, ENTER_BEAT_0_OFFSET,
+					   ssprintf("%.5f", GetAppropriateTiming().m_fBeat0OffsetInSeconds), 20,
+					   ScreenTextEntry::FloatValidate, ChangeBeat0Offset, NULL );
+		break;
+		case bpm:
 		ScreenTextEntry::TextEntry( 
 			SM_BackFromBPMChange, 
 			ENTER_BPM_VALUE, 
-			ssprintf( "%.4f", m_pSong->GetBPMAtBeat(GAMESTATE->m_fSongBeat) ),
+			ssprintf( "%.4f", GetAppropriateTiming().GetBPMAtBeat( GetBeat() ) ),
 			10
 			);
 		break;
@@ -3748,7 +3931,7 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 		ScreenTextEntry::TextEntry( 
 			SM_BackFromStopChange, 
 			ENTER_STOP_VALUE, 
-			ssprintf( "%.4f", m_pSong->m_Timing.GetStopAtRow( BeatToNoteRow(GAMESTATE->m_fSongBeat) ) ),
+			ssprintf( "%.4f", GetAppropriateTiming().GetStopAtBeat( GetBeat() ) ),
 			10
 			);
 		break;
@@ -3756,31 +3939,23 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 		ScreenTextEntry::TextEntry( 
 			SM_BackFromDelayChange, 
 			ENTER_DELAY_VALUE, 
-			ssprintf( "%.4f", m_pSong->m_Timing.GetDelayAtRow( BeatToNoteRow(GAMESTATE->m_fSongBeat) ) ),
+			ssprintf( "%.4f", GetAppropriateTiming().GetDelayAtBeat( GetBeat() ) ),
 			10
 		);
 		break;
-	case time_signature_numerator:
+	case time_signature:
 		ScreenTextEntry::TextEntry(
-			SM_BackFromTimeSignatureNumeratorChange,
-			ENTER_TIME_SIGNATURE_NUMERATOR_VALUE,
-			ssprintf( "%d", m_pSong->m_Timing.GetTimeSignatureSegmentAtBeat( GAMESTATE->m_fSongBeat ).m_iNumerator ),
-			3
-			);
-		break;
-	case time_signature_denominator:
-		ScreenTextEntry::TextEntry(
-			SM_BackFromTimeSignatureDenominatorChange,
-			ENTER_TIME_SIGNATURE_DENOMINATOR_VALUE,
-			ssprintf( "%d", m_pSong->m_Timing.GetTimeSignatureSegmentAtBeat( GAMESTATE->m_fSongBeat ).m_iDenominator ),
-			3
+			SM_BackFromTimeSignatureChange,
+			ENTER_TIME_SIGNATURE_VALUE,
+			ssprintf( "%d/%d", GetAppropriateTiming().GetTimeSignatureSegmentAtBeat( GetBeat() ).m_iNumerator, GetAppropriateTiming().GetTimeSignatureSegmentAtBeat( GetBeat() ).m_iDenominator ),
+			8
 			);
 		break;
 	case tickcount:
 		ScreenTextEntry::TextEntry(
 			SM_BackFromTickcountChange,
 			ENTER_TICKCOUNT_VALUE,
-			ssprintf( "%d", m_pSong->m_Timing.GetTickcountAtBeat( GAMESTATE->m_fSongBeat ) ),
+			ssprintf( "%d", GetAppropriateTiming().GetTickcountAtBeat( GetBeat() ) ),
 			2
 			);
 		break;
@@ -3788,7 +3963,7 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 		ScreenTextEntry::TextEntry(
 		   SM_BackFromComboChange,
 		   ENTER_COMBO_VALUE,
-		   ssprintf( "%d", m_pSong->m_Timing.GetComboAtBeat( GAMESTATE->m_fSongBeat ) ),
+		   ssprintf( "%d", GetAppropriateTiming().GetComboAtBeat( GetBeat() ) ),
 		   4
 		   );
 	break;
@@ -3796,7 +3971,7 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 		ScreenTextEntry::TextEntry(
 		   SM_BackFromLabelChange,
 		   ENTER_LABEL_VALUE,
-		   ssprintf( "%s", m_pSong->m_Timing.GetLabelAtBeat( GAMESTATE->m_fSongBeat ).c_str() ),
+		   ssprintf( "%s", GetAppropriateTiming().GetLabelAtBeat( GetBeat() ).c_str() ),
 		   64
 		   );
 		break;
@@ -3804,10 +3979,51 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 		ScreenTextEntry::TextEntry( 
 		   SM_BackFromWarpChange, 
 		   ENTER_WARP_VALUE, 
-		   ssprintf( "%.4f", m_pSong->m_Timing.GetWarpAtRow( BeatToNoteRow(GAMESTATE->m_fSongBeat) ) ),
+		   ssprintf( "%.4f", GetAppropriateTiming().GetWarpAtBeat( GetBeat() ) ),
 		   10
 		   );
+		break;
+	case speed_percent:
+		ScreenTextEntry::TextEntry(
+		   SM_BackFromSpeedPercentChange,
+		   ENTER_SPEED_PERCENT_VALUE,
+		   ssprintf( "%.5f", GetAppropriateTiming().GetSpeedSegmentAtBeat( GetBeat() ).m_fPercent ),
+		   10
+		   );
+		break;
+	case speed_wait:
+		ScreenTextEntry::TextEntry(
+		   SM_BackFromSpeedWaitChange,
+		   ENTER_SPEED_WAIT_VALUE,
+		   ssprintf( "%.5f", GetAppropriateTiming().GetSpeedSegmentAtBeat( GetBeat() ).m_fWait ),
+		   10
+		   );
+		break;
+	case speed_mode: 
+		{
+			ScreenTextEntry::TextEntry(
+						SM_BackFromSpeedModeChange,
+						   ENTER_SPEED_MODE_VALUE,
+						   "",
+						   3
+			);
+			
+			break;
+		}
+	case fake:
+		{
+			ScreenTextEntry::TextEntry(
+				SM_BackFromFakeChange,
+				ENTER_FAKE_VALUE,
+			        ssprintf("%.5f", GetAppropriateTiming().GetFakeAtBeat( GetBeat() ) ),
+				10
+			);
+			break;
+		}
+	case erase_step_timing:
+		ScreenPrompt::Prompt( SM_DoEraseStepTiming, CONFIRM_TIMING_ERASE , PROMPT_YES_NO, ANSWER_NO );
 	break;
+		
 	}
 }
 
@@ -3817,7 +4033,7 @@ void ScreenEdit::HandleBGChangeChoice( BGChangeChoice c, const vector<int> &iAns
 
 	FOREACH( BackgroundChange, m_pSong->GetBackgroundChanges(g_CurrentBGChangeLayer), iter )
 	{
-		if( iter->m_fStartBeat == GAMESTATE->m_fSongBeat )
+		if( iter->m_fStartBeat == GAMESTATE->m_Position.m_fSongBeat )
 		{
 			newChange = *iter;
 			// delete the old change.  We'll add a new one below.
@@ -3826,7 +4042,7 @@ void ScreenEdit::HandleBGChangeChoice( BGChangeChoice c, const vector<int> &iAns
 		}
 	}
 
-	newChange.m_fStartBeat    = GAMESTATE->m_fSongBeat;
+	newChange.m_fStartBeat    = GAMESTATE->m_Position.m_fSongBeat;
 	newChange.m_fRate         = StringToFloat( g_BackgroundChange.rows[rate].choices[iAnswers[rate]] )/100.f;
 	newChange.m_sTransition   = iAnswers[transition] ? g_BackgroundChange.rows[transition].choices[iAnswers[transition]] : RString();
 	newChange.m_def.m_sEffect = iAnswers[effect]     ? g_BackgroundChange.rows[effect].choices[iAnswers[effect]]         : RString();
@@ -3961,7 +4177,7 @@ void ScreenEdit::RevertFromDisk()
 		// put a blank Steps in its place.  Note that this does not have to be the
 		// work of someone maliciously changing the simfile; it could happen to 
 		// someone editing a new stepchart and reverting from disk, for example.
-		pNewSteps = new Steps();
+		pNewSteps = GAMESTATE->m_pCurSong->CreateSteps();
 		pNewSteps->CreateBlank( id.GetStepsType() );
 		pNewSteps->SetDifficulty( id.GetDifficulty() );
 		GAMESTATE->m_pCurSong->AddSteps( pNewSteps );
@@ -4011,7 +4227,7 @@ void ScreenEdit::CheckNumberOfNotesAndUndo()
 	if( EDIT_MODE.GetValue() != EditMode_Home )
 		return;
 	
-	TimeSignatureSegment curTime = GAMESTATE->m_pCurSong->m_Timing.GetTimeSignatureSegmentAtBeat( GAMESTATE->m_fSongBeat );
+	TimeSignatureSegment curTime = GAMESTATE->m_pCurSong->m_SongTiming.GetTimeSignatureSegmentAtBeat( GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat );
 	int rowsPerMeasure = curTime.m_iDenominator * curTime.m_iNumerator;
 
 	for( int row=0; row<=m_NoteDataEdit.GetLastRow(); row+=rowsPerMeasure )
@@ -4063,7 +4279,7 @@ float ScreenEdit::GetMaximumBeatForNewNote() const
 			/* Round up to the next measure end.  Some songs end on weird beats 
 			 * mid-measure, and it's odd to have movement capped to these weird
 			 * beats. */
-			int beatsPerMeasure = GAMESTATE->m_pCurSong->m_Timing.GetTimeSignatureSegmentAtBeat( GAMESTATE->m_fSongBeat ).m_iNumerator;
+			int beatsPerMeasure = GAMESTATE->m_pCurSong->m_SongTiming.GetTimeSignatureSegmentAtBeat( GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat ).m_iNumerator;
 			fEndBeat += beatsPerMeasure;
 			fEndBeat = ftruncf( fEndBeat, (float)beatsPerMeasure );
 
@@ -4120,6 +4336,7 @@ struct EditHelpLine
 #undef PUSH_IF_VALID
 	}
 };
+// TODO: Identify which of these can be removed and sent to a readme.
 static const EditHelpLine g_EditHelpLines[] =
 {
 	EditHelpLine( "Move cursor",					EDIT_BUTTON_SCROLL_UP_LINE,		EDIT_BUTTON_SCROLL_DOWN_LINE ),
@@ -4148,6 +4365,7 @@ static const EditHelpLine g_EditHelpLines[] =
 	EditHelpLine( "Shift BPM changes and stops up one beat",	EDIT_BUTTON_DELETE_SHIFT_PAUSES ),
 	EditHelpLine( "Cycle between tap notes",			EDIT_BUTTON_CYCLE_TAP_LEFT,		EDIT_BUTTON_CYCLE_TAP_RIGHT ),
 	EditHelpLine( "Add to/remove from right half",			EDIT_BUTTON_RIGHT_SIDE ),
+	EditHelpLine( "Switch Timing",					EDIT_BUTTON_SWITCH_TIMINGS ),
 	EditHelpLine( "Switch player (Routine only)",			EDIT_BUTTON_SWITCH_PLAYERS ),
 };
 

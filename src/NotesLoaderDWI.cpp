@@ -509,11 +509,11 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, set<RString> &Bla
 			
 			if( PREFSMAN->m_bQuirksMode )
 			{
-				out.AddBPMSegment( BPMSegment(0, fBPM) );
+				out.m_SongTiming.AddBPMSegment( BPMSegment(0, fBPM) );
 			}
 			else{
 				if( fBPM > 0.0f )
-					out.AddBPMSegment( BPMSegment(0, fBPM) );
+					out.m_SongTiming.AddBPMSegment( BPMSegment(0, fBPM) );
 				else
 					LOG->UserLog( "Song file", sPath, "has an invalid BPM change at beat %f, BPM %f.",
 							  NoteRowToBeat(0), fBPM );
@@ -545,7 +545,7 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, set<RString> &Bla
 
 		else if( sValueName.EqualsNoCase("GAP") )
 			// the units of GAP is 1/1000 second
-			out.m_Timing.m_fBeat0OffsetInSeconds = -StringToInt( sParams[1] ) / 1000.0f;
+			out.m_SongTiming.m_fBeat0OffsetInSeconds = -StringToInt( sParams[1] ) / 1000.0f;
 
 		else if( sValueName.EqualsNoCase("SAMPLESTART") )
 			out.m_fMusicSampleStartSeconds = ParseBrokenDWITimestamp(sParams[1], sParams[2], sParams[3]);
@@ -570,7 +570,7 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, set<RString> &Bla
 				int iFreezeRow = BeatToNoteRow( StringToFloat(arrayFreezeValues[0]) / 4.0f );
 				float fFreezeSeconds = StringToFloat( arrayFreezeValues[1] ) / 1000.0f;
 				
-				out.AddStopSegment( StopSegment(iFreezeRow, fFreezeSeconds) );
+				out.m_SongTiming.AddStopSegment( StopSegment(iFreezeRow, fFreezeSeconds) );
 //				LOG->Trace( "Adding a freeze segment: beat: %f, seconds = %f", fFreezeBeat, fFreezeSeconds );
 			}
 		}
@@ -595,7 +595,7 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, set<RString> &Bla
 				if( fBPM > 0.0f )
 				{
 					BPMSegment bs( iStartIndex, fBPM );
-					out.AddBPMSegment( bs );
+					out.m_SongTiming.AddBPMSegment( bs );
 				}
 				else
 				{
@@ -610,7 +610,7 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, set<RString> &Bla
 			 sValueName.EqualsNoCase("COUPLE")  || 
 			 sValueName.EqualsNoCase("SOLO") )
 		{
-			Steps* pNewNotes = new Steps;
+			Steps* pNewNotes = out.CreateSteps();
 			LoadFromDWITokens( 
 				sParams[0], 
 				sParams[1], 
@@ -656,7 +656,7 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, set<RString> &Bla
 			// do nothing.  We don't care about this value name
 		}
 	}
-
+	out.TidyUpData();
 	return true;
 }
 

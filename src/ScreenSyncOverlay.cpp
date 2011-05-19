@@ -221,7 +221,7 @@ bool ScreenSyncOverlay::OverlayInput( const InputEventPlus &input )
 			}
 			if( GAMESTATE->m_pCurSong != NULL )
 			{
-				BPMSegment& seg = GAMESTATE->m_pCurSong->GetBPMSegmentAtBeat( GAMESTATE->m_fSongBeat );
+				BPMSegment& seg = GAMESTATE->m_pCurSong->m_SongTiming.GetBPMSegmentAtBeat( GAMESTATE->m_Position.m_fSongBeat );
 				seg.m_fBPS += fDelta;
 			}
 		}
@@ -253,7 +253,7 @@ bool ScreenSyncOverlay::OverlayInput( const InputEventPlus &input )
 
 			case ChangeSongOffset:
 				if( GAMESTATE->m_pCurSong != NULL )
-					GAMESTATE->m_pCurSong->m_Timing.m_fBeat0OffsetInSeconds += fDelta;
+					GAMESTATE->m_pCurSong->m_SongTiming.m_fBeat0OffsetInSeconds += fDelta;
 				break;
 			}
 		}

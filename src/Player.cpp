@@ -506,7 +506,7 @@ void Player::Load()
 
 	m_LastTapNoteScore = TNS_None;
 	// The editor can start playing in the middle of the song.
-	const int iNoteRow = BeatToNoteRowNotRounded( GAMESTATE->m_fSongBeat );
+	const int iNoteRow = BeatToNoteRowNotRounded( m_pPlayerState->m_Position.m_fSongBeat );
 	m_iFirstUncrossedRow     = iNoteRow - 1;
 	m_pJudgedRows->Reset( iNoteRow );
 
@@ -540,6 +540,8 @@ void Player::Load()
 	const Song* pSong = GAMESTATE->m_pCurSong;
 	if( GAMESTATE->m_pCurGame->m_bAllowHopos )
 		NoteDataUtil::SetHopoPossibleFlags( pSong, m_NoteData );
+
+	m_Timing = &GAMESTATE->m_pCurSteps[pn]->m_Timing;
 
 	switch( GAMESTATE->m_PlayMode )
 	{
@@ -693,7 +695,7 @@ void Player::Update( float fDeltaTime )
 			return;
 	}
 
-	const float fSongBeat = GAMESTATE->m_fSongBeat;
+	const float fSongBeat = m_pPlayerState->m_Position.m_fSongBeat;
 	const int iSongRow = BeatToNoteRow( fSongBeat );
 
 	// Optimization: Don't spend time processing the things below that won't show 
@@ -795,7 +797,7 @@ void Player::Update( float fDeltaTime )
 
 	// Check for a strum miss
 	if( m_pPlayerState->m_fLastStrumMusicSeconds != -1  &&
-		m_pPlayerState->m_fLastStrumMusicSeconds + g_fTimingWindowStrum < GAMESTATE->m_fMusicSeconds )
+		m_pPlayerState->m_fLastStrumMusicSeconds + g_fTimingWindowStrum < m_pPlayerState->m_Position.m_fMusicSeconds )
 	{
 		DoStrumMiss();
 	}
@@ -917,12 +919,12 @@ void Player::Update( float fDeltaTime )
 		/* We want to send the crossed row message exactly when we cross the row--not
 		 * .5 before the row. Use a very slow song (around 2 BPM) as a test case: without
 		 * rounding, autoplay steps early. -glenn */
-		const int iRowNow = BeatToNoteRowNotRounded( GAMESTATE->m_fSongBeat );
+		const int iRowNow = BeatToNoteRowNotRounded( m_pPlayerState->m_Position.m_fSongBeat );
 		if( iRowNow >= 0 )
 		{
 			if( GAMESTATE->IsPlayerEnabled(m_pPlayerState) )
 			{
-				if(GAMESTATE->m_bDelay)
+				if(m_pPlayerState->m_Position.m_bDelay)
 				{
 					if( !m_bDelay )
 						m_bDelay = true;
@@ -1528,7 +1530,7 @@ int Player::GetClosestNoteDirectional( int col, int iStartRow, int iEndRow, bool
 		// Is this the row we want?
 		do {
 			const TapNote &tn = begin->second;
-			if( GAMESTATE->m_pCurSong->m_Timing.IsWarpAtRow( begin->first ) )
+			if( m_Timing->IsWarpAtRow( begin->first ) || m_Timing->IsFakeAtRow( begin->first ) )
 				break;
 			if( tn.type == TapNote::empty )
 				break;
@@ -1579,7 +1581,7 @@ int Player::GetClosestNonEmptyRowDirectional( int iStartRow, int iEndRow, bool b
 				++iter;
 				continue;
 			}
-			if( GAMESTATE->m_pCurSong->m_Timing.IsWarpAtRow( iter.Row() ) )
+			if( m_Timing->IsWarpAtRow( iter.Row() ) || m_Timing->IsFakeAtRow( iter.Row() ) )
 			{
 				++iter;
 				continue;
@@ -1650,7 +1652,7 @@ void Player::Fret( int col, int row, const RageTimer &tm, bool bHeld, bool bRele
 	}
 
 	// Handle hammer-ons and pull-offs
-	const float fPositionSeconds = GAMESTATE->m_fMusicSeconds - tm.Ago();
+	const float fPositionSeconds = m_pPlayerState->m_Position.m_fMusicSeconds - tm.Ago();
 	int iHopoCol = -1;
 	bool bDoHopo = 
 		m_pPlayerState->m_fLastHopoNoteMusicSeconds != -1  &&
@@ -1703,7 +1705,7 @@ void Player::Fret( int col, int row, const RageTimer &tm, bool bHeld, bool bRele
 	// Check if this fret breaks all active holds.
 	if( !bRelease )
 	{
-		const float fSongBeat = GAMESTATE->m_fSongBeat;
+		const float fSongBeat = m_pPlayerState->m_Position.m_fSongBeat;
 		const int iSongRow = BeatToNoteRow( fSongBeat );
 
 		int iMaxHoldCol = -1;
@@ -1745,7 +1747,7 @@ void Player::Strum( int col, int row, const RageTimer &tm, bool bHeld, bool bRel
 		DoStrumMiss();
 	}
 
-	m_pPlayerState->m_fLastStrumMusicSeconds = GAMESTATE->m_fMusicSeconds;
+	m_pPlayerState->m_fLastStrumMusicSeconds = m_pPlayerState->m_Position.m_fMusicSeconds;
 
 	StepStrumHopo( col, row, tm, bHeld, bRelease, ButtonType_StrumFretsChanged );
 }
@@ -1794,7 +1796,7 @@ void Player::ScoreAllActiveHoldsLetGo()
 {
 	if( PENALIZE_TAP_SCORE_NONE )
 	{
-		const float fSongBeat = GAMESTATE->m_fSongBeat;
+		const float fSongBeat = m_pPlayerState->m_Position.m_fSongBeat;
 		const int iSongRow = BeatToNoteRow( fSongBeat );
 
 		// Score all active holds to NotHeld
@@ -1857,8 +1859,8 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 
 	// Do everything that depends on a RageTimer here;
 	// set your breakpoints somewhere after this block.
-	const float fLastBeatUpdate = GAMESTATE->m_LastBeatUpdate.Ago();
-	const float fPositionSeconds = GAMESTATE->m_fMusicSeconds - tm.Ago();
+	const float fLastBeatUpdate = m_pPlayerState->m_Position.m_LastBeatUpdate.Ago();
+	const float fPositionSeconds = m_pPlayerState->m_Position.m_fMusicSeconds - tm.Ago();
 	const float fTimeSinceStep = tm.Ago();
 
 	switch( pbt )
@@ -1873,7 +1875,16 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 		break;
 	}
 
-	const float fSongBeat = GAMESTATE->m_pCurSong ? GAMESTATE->m_pCurSong->GetBeatFromElapsedTime( fPositionSeconds ) : GAMESTATE->m_fSongBeat;
+	float fSongBeat = m_pPlayerState->m_Position.m_fSongBeat;
+	
+	if( GAMESTATE->m_pCurSong )
+	{
+		fSongBeat = GAMESTATE->m_pCurSong->m_SongTiming.GetBeatFromElapsedTime( fPositionSeconds );
+	
+		if( GAMESTATE->m_pCurSteps[m_pPlayerState->m_PlayerNumber] )
+			fSongBeat = m_Timing->GetBeatFromElapsedTime( fPositionSeconds );
+	}
+	
 	const int iSongRow = row == -1 ? BeatToNoteRow( fSongBeat ) : row;
 
 	if( col != -1 && !bRelease )
@@ -2011,8 +2022,8 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 	 * "jack hammers." Hmm.
 	 */
 	const int iStepSearchRows = max(
-		BeatToNoteRow( GAMESTATE->m_pCurSong->m_Timing.GetBeatFromElapsedTime( GAMESTATE->m_fMusicSeconds + StepSearchDistance ) ) - iSongRow,
-		iSongRow - BeatToNoteRow( GAMESTATE->m_pCurSong->m_Timing.GetBeatFromElapsedTime( GAMESTATE->m_fMusicSeconds - StepSearchDistance ) )
+		BeatToNoteRow( m_Timing->GetBeatFromElapsedTime( m_pPlayerState->m_Position.m_fMusicSeconds + StepSearchDistance ) ) - iSongRow,
+		iSongRow - BeatToNoteRow( m_Timing->GetBeatFromElapsedTime( m_pPlayerState->m_Position.m_fMusicSeconds - StepSearchDistance ) )
 	) + ROWS_PER_BEAT;
 	int iRowOfOverlappingNoteOrRow = row;
 	if( row == -1 )
@@ -2039,7 +2050,7 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 		float fNoteOffset = 0.0f;
 		// we need this later if we are autosyncing
 		const float fStepBeat = NoteRowToBeat( iRowOfOverlappingNoteOrRow );
-		const float fStepSeconds = GAMESTATE->m_pCurSong->GetElapsedTimeFromBeat(fStepBeat);
+		const float fStepSeconds = m_Timing->GetElapsedTimeFromBeat(fStepBeat);
 
 		if( row == -1 )
 		{
@@ -2048,7 +2059,7 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 
 			/* GAMESTATE->m_fMusicSeconds is the music time as of GAMESTATE->m_LastBeatUpdate. Figure
 			 * out what the music time is as of now. */
-			const float fCurrentMusicSeconds = GAMESTATE->m_fMusicSeconds + (fLastBeatUpdate*GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate);
+			const float fCurrentMusicSeconds = m_pPlayerState->m_Position.m_fMusicSeconds + (fLastBeatUpdate*GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate);
 
 			// ... which means it happened at this point in the music:
 			const float fMusicSeconds = fCurrentMusicSeconds - fTimeSinceStep * GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate;
@@ -2089,7 +2100,7 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 				// Stepped too close to mine?
 				if( !bRelease && ( REQUIRE_STEP_ON_MINES == !bHeld ) && 
 				   fSecondsFromExact <= GetWindowSeconds(TW_Mine) &&
-				   !GAMESTATE->m_pCurSong->m_Timing.IsWarpAtRow(iSongRow) )
+				   !m_Timing->IsWarpAtRow(iSongRow) && !m_Timing->IsFakeAtRow(iSongRow))
 					score = TNS_HitMine;
 				break;
 
@@ -2557,14 +2568,14 @@ void Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 {
 	//LOG->Trace( "Steps::UpdateTapNotesMissedOlderThan(%f)", fMissIfOlderThanThisBeat );
 	int iMissIfOlderThanThisRow;
-	const float fEarliestTime = GAMESTATE->m_fMusicSeconds - fMissIfOlderThanSeconds;
+	const float fEarliestTime = m_pPlayerState->m_Position.m_fMusicSeconds - fMissIfOlderThanSeconds;
 	{
 		bool bFreeze, bDelay;
 		float fMissIfOlderThanThisBeat;
 		float fThrowAway;
 		int iWarpBeginRow;
 		float fWarpLength;
-		GAMESTATE->m_pCurSong->m_Timing.GetBeatAndBPSFromElapsedTime( fEarliestTime, fMissIfOlderThanThisBeat, fThrowAway, bFreeze, bDelay, iWarpBeginRow, fWarpLength );
+		m_Timing->GetBeatAndBPSFromElapsedTime( fEarliestTime, fMissIfOlderThanThisBeat, fThrowAway, bFreeze, bDelay, iWarpBeginRow, fWarpLength );
 
 		iMissIfOlderThanThisRow = BeatToNoteRow( fMissIfOlderThanThisBeat );
 		if( bFreeze || bDelay )
@@ -2586,8 +2597,8 @@ void Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 		if( !NeedsTapJudging(tn) )
 			continue;
 
-		// Ignore all notes that are skipped via WARPS.
-		if( GAMESTATE->m_pCurSong->m_Timing.IsWarpAtRow( iter.Row() ) )
+		// Ignore all notes in WarpSegments or FakeSegments.
+		if( m_Timing->IsWarpAtRow( iter.Row() ) || m_Timing->IsFakeAtRow( iter.Row() ) )
 			continue;
 
 		if( tn.type == TapNote::mine )
@@ -2610,7 +2621,7 @@ void Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 
 void Player::UpdateJudgedRows()
 {
-	const int iEndRow = BeatToNoteRow( GAMESTATE->m_fSongBeat );
+	const int iEndRow = BeatToNoteRow( m_pPlayerState->m_Position.m_fSongBeat );
 	bool bAllJudged = true;
 	const bool bSeparately = GAMESTATE->GetCurrentGame()->m_bCountNotesSeparately;
 
@@ -2621,8 +2632,8 @@ void Player::UpdateJudgedRows()
 		{
 			int iRow = iter.Row();
 
-			// If row is within a warp section, ignore it. -aj
-			if( GAMESTATE->m_pCurSong->m_Timing.IsWarpAtRow(iRow) )
+			// Do not judge arrows in WarpSegments or FakeSegments
+			if( m_Timing->IsWarpAtRow(iRow) || m_Timing->IsFakeAtRow(iRow) )
 				continue;
 
 			if( iLastSeenRow != iRow )
@@ -2843,13 +2854,13 @@ void Player::CrossedRows( int iLastRowCrossed, const RageTimer &now )
 		int iCheckpointFrequencyRows = ROWS_PER_BEAT/2;
 		if( CHECKPOINTS_USE_TICKCOUNTS )
 		{
-			int tickCurrent = GAMESTATE->m_pCurSong->m_Timing.GetTickcountAtRow( iLastRowCrossed );
+			int tickCurrent = m_Timing->GetTickcountAtRow( iLastRowCrossed );
 			// There are some charts that don't want tickcounts involved at all.
 			iCheckpointFrequencyRows = (tickCurrent > 0 ? ROWS_PER_BEAT / tickCurrent : 0);
 		}
 		else if( CHECKPOINTS_USE_TIME_SIGNATURES )
 		{
-			TimeSignatureSegment tSignature = GAMESTATE->m_pCurSong->m_Timing.GetTimeSignatureSegmentAtBeat( NoteRowToBeat( iLastRowCrossed ) );
+			TimeSignatureSegment tSignature = m_Timing->GetTimeSignatureSegmentAtBeat( NoteRowToBeat( iLastRowCrossed ) );
 
 			// Most songs are in 4/4 time. The frequency for checking tick counts should reflect that.
 			iCheckpointFrequencyRows = ROWS_PER_BEAT * tSignature.m_iDenominator / (tSignature.m_iNumerator * 4);
@@ -2956,8 +2967,8 @@ void Player::HandleTapRowScore( unsigned row )
 	bNoCheating = false;
 #endif
 
-	// Warp hackery. -aj
-	if( GAMESTATE->m_pCurSong->m_Timing.IsWarpAtRow( row ) )
+	// Do not score rows in WarpSegments or FakeSegments
+	if( m_Timing->IsWarpAtRow( row ) || m_Timing->IsFakeAtRow( row ) )
 		return;
 
 	if( GAMESTATE->m_bDemonstrationOrJukebox )
@@ -3060,8 +3071,8 @@ void Player::HandleHoldCheckpoint( int iRow, int iNumHoldsHeldThisRow, int iNumH
 	bNoCheating = false;
 #endif
 
-	// More warp hackery. -aj
-	if( GAMESTATE->m_pCurSong->m_Timing.IsWarpAtRow( iRow ) )
+	// WarpSegments and FakeSegments aren't judged in any way.
+	if( m_Timing->IsWarpAtRow( iRow ) || m_Timing->IsFakeAtRow( iRow ) )
 		return;
 
 	// don't accumulate combo if AutoPlay is on.
@@ -3257,7 +3268,7 @@ void Player::SetCombo( int iCombo, int iMisses )
 	}
 	else
 	{
-		bPastBeginning = GAMESTATE->m_fMusicSeconds > GAMESTATE->m_pCurSong->m_fMusicLengthSeconds * PERCENT_UNTIL_COLOR_COMBO;
+		bPastBeginning = m_pPlayerState->m_Position.m_fMusicSeconds > GAMESTATE->m_pCurSong->m_fMusicLengthSeconds * PERCENT_UNTIL_COLOR_COMBO;
 	}
 
 	if( m_bSendJudgmentAndComboMessages )

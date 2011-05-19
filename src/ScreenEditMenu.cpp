@@ -236,7 +236,7 @@ void ScreenEditMenu::MenuStart( const InputEventPlus &input )
 	case EditMenuAction_Create:
 		ASSERT( !pSteps );
 		{
-			pSteps = new Steps;
+			pSteps = pSong->CreateSteps();
 
 			switch( m_Selector.EDIT_MODE )
 			{

@@ -1764,7 +1764,7 @@ void ScreenSelectMusic::AfterMusicChange()
 			case SampleMusicPreviewMode_LastSong: // fall through
 				// play the sample music
 				m_sSampleMusicToPlay = pSong->GetMusicPath();
-				m_pSampleMusicTimingData = &pSong->m_Timing;
+				m_pSampleMusicTimingData = &pSong->m_SongTiming;
 				m_fSampleStartSeconds = pSong->m_fMusicSampleStartSeconds;
 				m_fSampleLengthSeconds = pSong->m_fMusicSampleLengthSeconds;
 				break;

@@ -16,8 +16,6 @@ enum SSCLoadingStates
 {
 	GETTING_SONG_INFO, /**< Retrieving song information. */
 	GETTING_STEP_INFO, /**< Retrieving step information. */
-	GETTING_STEP_TIMING_INFO, /**< Retrieving a step's individual timing information. */
-	GETTING_NOTE_INFO, /**< Retrieving the specific notes. This state may be deprecated. */
 	NUM_SSCLoadingStates /**< The number of states used. */
 };
 
@@ -25,6 +23,8 @@ enum SSCLoadingStates
 const float VERSION_RADAR_FAKE = 0.53f;
 /** @brief The version where WarpSegments started to be utilized. */
 const float VERSION_WARP_SEGMENT = 0.56f;
+/** @brief The version that formally introduced Split Timing. */
+const float VERSION_SPLIT_TIMING = 0.7f;
 
 /**
  * @brief The SSCLoader handles all of the parsing needed for .ssc files.
@@ -75,6 +75,13 @@ namespace SSCLoader
 	 * @param bFromCache a flag to determine if this song is loaded from a cache file.
 	 */
 	void TidyUpData( Song &song, bool bFromCache );
+	
+	
+	void ProcessWarps( TimingData &, const RString, const float );
+	void ProcessLabels( TimingData &, const RString );
+	void ProcessCombos( TimingData &, const RString );
+	void ProcessSpeeds( TimingData &, const RString );
+	void ProcessFakes( TimingData &, const RString );
 }
 #endif
 /**

@@ -682,7 +682,7 @@ static bool LoadFromMidi( const RString &sPath, Song &songOut )
 		double fSecondsPerBeat = (iter->tickSeconds * GUITAR_MIDI_COUNTS_PER_BEAT);
 		bpmSeg.m_fBPS = float( 1. / fSecondsPerBeat );
 
-		songOut.m_Timing.AddBPMSegment( bpmSeg );
+		songOut.m_SongTiming.AddBPMSegment( bpmSeg );
 	}
 
 	FOREACH_CONST( MidiFileIn::TimeSignatureChange, midi.timeSignatureEvents_, iter )
@@ -692,7 +692,7 @@ static bool LoadFromMidi( const RString &sPath, Song &songOut )
 		seg.m_iNumerator = iter->numerator;
 		seg.m_iDenominator = iter->denominator;
 
-		songOut.m_Timing.AddTimeSignatureSegment( seg );
+		songOut.m_SongTiming.AddTimeSignatureSegment( seg );
 	}
 
 
@@ -877,13 +877,13 @@ skip_track:
 			}
 		}
 
-		Steps *pSteps = new Steps;
+		Steps *pSteps = songOut.CreateSteps();
 		pSteps->m_StepsType = StepsType_guitar_five;
 		pSteps->SetDifficulty( (Difficulty)(gd+1) );
 		pSteps->SetNoteData( noteData );
 		songOut.AddSteps( pSteps );
 	}
-
+	
 	return true;
 }
 
@@ -956,6 +956,7 @@ bool MidiLoader::LoadFromDir( const RString &sDir, Song &out )
 	if( !LoadFromMidi(sDir+vsFiles[0], out) )
 		return false;
 
+	out.TidyUpData();
 	return true;
 }
 

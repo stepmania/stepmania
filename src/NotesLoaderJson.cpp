@@ -139,7 +139,7 @@ static void Deserialize( Song &out, const Json::Value &root )
 	out.m_sLyricsFile = root["LyricsFile"].asString();
 	out.m_sCDTitleFile = root["CDTitle"].asString();
 	out.m_sMusicFile = root["Music"].asString();
-	out.m_Timing.m_fBeat0OffsetInSeconds = (float)root["Offset"].asDouble();
+	out.m_SongTiming.m_fBeat0OffsetInSeconds = (float)root["Offset"].asDouble();
 	out.m_fMusicSampleStartSeconds = (float)root["SampleStart"].asDouble();
 	out.m_fMusicSampleLengthSeconds = (float)root["SampleLength"].asDouble();
 	RString sSelectable = root["Selectable"].asString();
@@ -167,7 +167,7 @@ static void Deserialize( Song &out, const Json::Value &root )
 		out.m_fSpecifiedBPMMax = (float)root["SpecifiedBpmMax"].asDouble();
 	}
 
-	Deserialize( out.m_Timing, root["TimingData"] );
+	Deserialize( out.m_SongTiming, root["TimingData"] );
 	JsonUtil::DeserializeVectorObjects( out.m_LyricSegments, Deserialize, root["LyricSegments"] );
 
 	{

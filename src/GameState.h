@@ -10,6 +10,7 @@
 #include "RageTimer.h"
 #include "PlayerOptions.h"
 #include "SongOptions.h"
+#include "SongPosition.h"
 #include "Preference.h"
 
 #include <map>
@@ -43,7 +44,8 @@ public:
 	void ResetPlayer( PlayerNumber pn );
 	void ApplyCmdline(); // called by Reset
 	void ApplyGameCommand( const RString &sCommand, PlayerNumber pn=PLAYER_INVALID );
-	void BeginGame();	// called when first player joins
+	/** @brief Start the game when the first player joins in. */
+	void BeginGame();
 	void JoinPlayer( PlayerNumber pn );
 	void UnjoinPlayer( PlayerNumber pn );
 	bool JoinInput( PlayerNumber pn );
@@ -55,13 +57,25 @@ public:
 	bool HaveProfileToSave();
 	void SaveLocalData();
 	void LoadCurrentSettingsFromProfile( PlayerNumber pn );
-	void SaveCurrentSettingsToProfile( PlayerNumber pn ); // called at the beginning of each stage
+	/**
+	 * @brief Save the specified player's settings to his/her profile.
+	 *
+	 * This is called at the beginning of each stage.
+	 * @param pn the PlayerNumber to save the stats to. */
+	void SaveCurrentSettingsToProfile( PlayerNumber pn );
 	Song* GetDefaultSong() const;
 
 	void Update( float fDelta );
 
 	// Main state info
-	void SetCurGame( const Game *pGame );	// Call this instead of m_pCurGame.Set to make sure PREFSMAN->m_sCurrentGame stays in sync
+	
+	/**
+	 * @brief State what the current game is.
+	 *
+	 * Call this instead of m_pCurGame.Set to make sure that
+	 * PREFSMAN->m_sCurrentGame stays in sync.
+	 * @param pGame the game to start using. */
+	void SetCurGame( const Game *pGame );
 	BroadcastOnChangePtr<const Game>	m_pCurGame;
 	BroadcastOnChangePtr<const Style>	m_pCurStyle;
 	/** @brief Determine which side is joined.
@@ -129,6 +143,9 @@ public:
 	bool IsCourseMode() const;
 	bool IsBattleMode() const; // not Rave
 
+	/**
+	 * @brief Do we show the W1 timing judgment?
+	 * @return true if we do, or false otherwise. */
 	bool ShowW1() const;
 
 	BroadcastOnChange<RString>	m_sPreferredSongGroup;		// GROUP_ALL denotes no preferred group
@@ -141,7 +158,11 @@ public:
 	SortOrder	m_PreferredSortOrder;		// used by MusicWheel
 	EditMode	m_EditMode;
 	bool		IsEditing() const { return m_EditMode != EditMode_Invalid; }
-	bool		m_bDemonstrationOrJukebox;	// ScreenGameplay does special stuff when this is true
+	/**
+	 * @brief Are we in the demonstration or jukebox mode?
+	 *
+	 * ScreenGameplay often does special things when this is set to true. */
+	bool		m_bDemonstrationOrJukebox;
 	bool		m_bJukeboxUsesModifiers;
 	int			m_iNumStagesOfThisSong;
 	/**
@@ -194,29 +215,9 @@ public:
 	bool        m_bBackedOutOfFinalStage;
 
 	// Music statistics:
-	// Arcade - the current stage (one song).
-	// Oni/Endless - a single song in a course.
-	// Let a lot of classes access this info here so they don't have to keep their own copies.
-	// todo: [NUM_PLAYERS] this for split bpm lolol -aj
-	float		m_fMusicSeconds;	// time into the current song, not scaled by music rate
-	float		m_fSongBeat;
-	float		m_fSongBeatNoOffset;
-	float		m_fCurBPS;
-	float		m_fLightSongBeat; // g_fLightsFalloffSeconds ahead
-	//bool		m_bStop;	// in the middle of a stop (freeze or delay)
-	/** @brief A flag to determine if we're in the middle of a freeze/stop. */
-	bool		m_bFreeze;
-	/** @brief A flag to determine if we're in the middle of a delay (Pump style stop). */
-	bool		m_bDelay;
-	/** @brief The row used to start a warp. */
-	int			m_iWarpBeginRow;
-	/** @brief The beat to warp to afterwards. */
-	float		m_fWarpDestination;
-	RageTimer	m_LastBeatUpdate; // time of last m_fSongBeat, etc. update
-	BroadcastOnChange<bool> m_bGameplayLeadIn;
+	SongPosition m_Position;
 
-	float		m_fMusicSecondsVisible;
-	float		m_fSongBeatVisible;
+	BroadcastOnChange<bool> m_bGameplayLeadIn;
 
 	// if re-adding noteskin changes in courses, add functions and such here -aj
 	void GetAllUsedNoteSkins( vector<RString> &out ) const;
@@ -224,7 +225,7 @@ public:
 	static const float MUSIC_SECONDS_INVALID;
 
 	void ResetMusicStatistics();	// Call this when it's time to play a new song.  Clears the values above.
-	void UpdateSongPosition( float fPositionSeconds, const TimingData &timing, const RageTimer &timestamp = RageZeroTimer );
+	void UpdateSongPosition( float fPositionSeconds, const TimingData &timing, const RageTimer &timestamp = RageZeroTimer, bool bUpdatePlayers = false );
 	float GetSongPercent( float beat ) const;
 
 	bool AllAreInDangerOrWorse() const;
@@ -259,8 +260,11 @@ public:
 	// Options stuff
 	ModsGroup<SongOptions>	m_SongOptions;
 
-	// True if the current mode has changed the default NoteSkin, such as Edit/Sync Songs does.
-	// Note: any mode that wants to use it must set it
+	/**
+	 * @brief Did the current game mode change the default Noteskin?
+	 *
+	 * This is true if it has: see Edit/Sync Songs for a common example.
+	 * Note: any mode that wants to use this must set it explicitly. */
 	bool m_bDidModeChangeNoteSkin;
 
 	void GetDefaultPlayerOptions( PlayerOptions &po );
@@ -327,6 +331,17 @@ public:
 	Premium		GetPremium() const;
 
 	// Edit stuff
+	
+	/**
+	 * @brief Is the game right now using Song timing or Steps timing?
+	 *
+	 * Different options are available depending on this setting. */
+	bool m_bIsUsingStepTiming;
+	/**
+	 * @brief Are we presently in the Step Editor, where some rules apply differently?
+	 *
+	 * TODO: Find a better way to implement this. */
+	bool m_bInStepEditor;
 	BroadcastOnChange<StepsType> m_stEdit;
 	BroadcastOnChange<CourseDifficulty> m_cdEdit;
 	BroadcastOnChangePtr<Steps> m_pEditSourceSteps;

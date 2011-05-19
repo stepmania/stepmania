@@ -69,8 +69,8 @@ void PlayerState::Update( float fDelta )
 
 		bool bCurrentlyEnabled =
 			attack.bGlobal ||
-			( attack.fStartSecond < GAMESTATE->m_fMusicSeconds &&
-			GAMESTATE->m_fMusicSeconds < attack.fStartSecond+attack.fSecsRemaining );
+			( attack.fStartSecond < m_Position.m_fMusicSeconds &&
+			m_Position.m_fMusicSeconds < attack.fStartSecond+attack.fSecsRemaining );
 
 		if( m_ActiveAttacks[s].bOn == bCurrentlyEnabled )
 			continue; // OK
@@ -116,7 +116,7 @@ void PlayerState::LaunchAttack( const Attack& a )
 	 * so Player::Update knows to apply attack transforms correctly. (yuck) */
 	m_ModsToApply.push_back( attack );
 	if( attack.fStartSecond == -1 )
-		attack.fStartSecond = GAMESTATE->m_fMusicSeconds;
+		attack.fStartSecond = m_Position.m_fMusicSeconds;
 	m_ActiveAttacks.push_back( attack );
 
 	RebuildPlayerOptionsFromActiveAttacks();
@@ -197,6 +197,11 @@ class LunaPlayerState: public Luna<PlayerState>
 {
 public:
 	DEFINE_METHOD( GetPlayerNumber, m_PlayerNumber );
+	static int GetSongPosition( T* p, lua_State *L )
+	{
+		p->m_Position.PushSelf(L);
+		return 1;
+	}
 	DEFINE_METHOD( GetMultiPlayerNumber, m_mp );
 	DEFINE_METHOD( GetPlayerController, m_PlayerController );
 	static int SetPlayerOptions( T* p, lua_State *L )
@@ -246,6 +251,7 @@ public:
 		ADD_METHOD( GetPlayerOptionsArray );
 		ADD_METHOD( GetPlayerOptionsString );
 		ADD_METHOD( GetCurrentPlayerOptions );
+		ADD_METHOD( GetSongPosition );
 		ADD_METHOD( GetHealthState );
 	}
 };

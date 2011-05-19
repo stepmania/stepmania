@@ -64,6 +64,7 @@ lib*_link.a
 Data/UserPrefs
 Data/uPrefs
 Data/GamePrefs/*.cfg
+Data/Static.ini
 PBProject/Hardware.plist
 Themes/pump
 Themes/optical-release

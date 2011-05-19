@@ -41,9 +41,9 @@ void LyricDisplay::Update( float fDeltaTime )
 		return;
 
 	// If the song has changed (in a course), reset.
-	if( GAMESTATE->m_fMusicSeconds < m_fLastSecond )
+	if( GAMESTATE->m_Position.m_fMusicSeconds < m_fLastSecond )
 		Init();
-	m_fLastSecond = GAMESTATE->m_fMusicSeconds;
+	m_fLastSecond = GAMESTATE->m_Position.m_fMusicSeconds;
 
 	if( m_iCurLyricNumber >= GAMESTATE->m_pCurSong->m_LyricSegments.size() )
 		return;
@@ -51,7 +51,7 @@ void LyricDisplay::Update( float fDeltaTime )
 	const Song *pSong = GAMESTATE->m_pCurSong;
 	const float fStartTime = (pSong->m_LyricSegments[m_iCurLyricNumber].m_fStartTime) - IN_LENGTH.GetValue();
 
-	if( GAMESTATE->m_fMusicSeconds < fStartTime )
+	if( GAMESTATE->m_Position.m_fMusicSeconds < fStartTime )
 		return;
 
 	// Clamp this lyric to the beginning of the next or the end of the music.
@@ -59,7 +59,7 @@ void LyricDisplay::Update( float fDeltaTime )
 	if( m_iCurLyricNumber+1 < GAMESTATE->m_pCurSong->m_LyricSegments.size() )
 		fEndTime = pSong->m_LyricSegments[m_iCurLyricNumber+1].m_fStartTime;
 	else
-		fEndTime = pSong->GetElapsedTimeFromBeat( pSong->m_fLastBeat );
+		fEndTime = pSong->m_SongTiming.GetElapsedTimeFromBeat( pSong->m_fLastBeat );
 
 	const float fDistance = fEndTime - pSong->m_LyricSegments[m_iCurLyricNumber].m_fStartTime;
 	const float fTweenBufferTime = IN_LENGTH.GetValue() + OUT_LENGTH.GetValue();

@@ -8,6 +8,8 @@
 #include "Difficulty.h"
 #include "RageUtil_AutoPtr.h"
 #include "RageUtil_CachedObject.h"
+#include "TimingData.h"
+
 class Profile;
 class NoteData;
 struct lua_State;
@@ -115,6 +117,14 @@ public:
 
 	void TidyUpData();
 	void CalculateRadarValues( float fMusicLengthSeconds );
+
+	/** @brief Timing data */
+	TimingData m_Timing;
+	
+	/**
+	 * @brief Determine if the Steps have any major timing changes during gameplay.
+	 * @return true if it does, or false otherwise. */
+	bool HasSignificantTimingChanges() const;
 
 	// Lua
 	void PushSelf( lua_State *L );

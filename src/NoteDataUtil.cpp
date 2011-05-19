@@ -2215,7 +2215,7 @@ void NoteDataUtil::AddTapAttacks( NoteData &nd, Song* pSong )
 
 	for( float sec=15; sec<pSong->m_fMusicLengthSeconds; sec+=30 )
 	{
-		float fBeat = pSong->GetBeatFromElapsedTime( sec );
+		float fBeat = pSong->m_SongTiming.GetBeatFromElapsedTime( sec );
 		int iBeat = (int)fBeat;
 		int iTrack = iBeat % nd.GetNumTracks();	// deterministically calculates track
 		TapNote tn(
@@ -2448,7 +2448,7 @@ void NoteDataUtil::SetHopoPossibleFlags( const Song *pSong, NoteData& ndInOut )
 	FOREACH_NONEMPTY_ROW_ALL_TRACKS( ndInOut, r )
 	{
 		float fBeat = NoteRowToBeat( r );
-		float fSeconds = pSong->GetElapsedTimeFromBeat( fBeat );
+		float fSeconds = pSong->m_SongTiming.GetElapsedTimeFromBeat( fBeat );
 
 		int iLastTapTrack = ndInOut.GetLastTrackWithTapOrHoldHead( r );
 		if( iLastTapTrack != -1  &&  fSeconds <= fLastRowMusicSeconds + g_fTimingWindowHopo )

@@ -350,10 +350,10 @@ bool NotesWriterDWI::Write( RString sPath, const Song &out )
 	/* Write transliterations, if we have them, since DWI doesn't support UTF-8. */
 	f.PutLine( ssprintf("#TITLE:%s;", DwiEscape(out.GetTranslitFullTitle()).c_str()) );
 	f.PutLine( ssprintf("#ARTIST:%s;", DwiEscape(out.GetTranslitArtist()).c_str()) );
-	ASSERT( out.m_Timing.m_BPMSegments[0].m_iStartRow == 0 );
+	ASSERT( out.m_SongTiming.m_BPMSegments[0].m_iStartRow == 0 );
 	f.PutLine( ssprintf("#FILE:%s;", DwiEscape(out.m_sMusicFile).c_str()) );
-	f.PutLine( ssprintf("#BPM:%.3f;", out.m_Timing.m_BPMSegments[0].GetBPM()) );
-	f.PutLine( ssprintf("#GAP:%ld;", -lrintf( out.m_Timing.m_fBeat0OffsetInSeconds*1000 )) );
+	f.PutLine( ssprintf("#BPM:%.3f;", out.m_SongTiming.m_BPMSegments[0].GetBPM()) );
+	f.PutLine( ssprintf("#GAP:%ld;", -lrintf( out.m_SongTiming.m_fBeat0OffsetInSeconds*1000 )) );
 	f.PutLine( ssprintf("#SAMPLESTART:%.3f;", out.m_fMusicSampleStartSeconds) );
 	f.PutLine( ssprintf("#SAMPLELENGTH:%.3f;", out.m_fMusicSampleLengthSeconds) );
 	if( out.m_sCDTitleFile.size() )
@@ -374,29 +374,29 @@ bool NotesWriterDWI::Write( RString sPath, const Song &out )
 		break;
 	}
 
-	if( !out.m_Timing.m_StopSegments.empty() )
+	if( !out.m_SongTiming.m_StopSegments.empty() )
 	{
 		f.Write( "#FREEZE:" );
 
-		for( unsigned i=0; i<out.m_Timing.m_StopSegments.size(); i++ )
+		for( unsigned i=0; i<out.m_SongTiming.m_StopSegments.size(); i++ )
 		{
-			const StopSegment &fs = out.m_Timing.m_StopSegments[i];
+			const StopSegment &fs = out.m_SongTiming.m_StopSegments[i];
 			f.Write( ssprintf("%.3f=%.3f", fs.m_iStartRow * 4.0f / ROWS_PER_BEAT,
 				roundf(fs.m_fStopSeconds*1000)) );
-			if( i != out.m_Timing.m_StopSegments.size()-1 )
+			if( i != out.m_SongTiming.m_StopSegments.size()-1 )
 				f.Write( "," );
 		}
 		f.PutLine( ";" );
 	}
 
-	if( out.m_Timing.m_BPMSegments.size() > 1)
+	if( out.m_SongTiming.m_BPMSegments.size() > 1)
 	{
 		f.Write( "#CHANGEBPM:" );
-		for( unsigned i=1; i<out.m_Timing.m_BPMSegments.size(); i++ )
+		for( unsigned i=1; i<out.m_SongTiming.m_BPMSegments.size(); i++ )
 		{
-			const BPMSegment &bs = out.m_Timing.m_BPMSegments[i];
+			const BPMSegment &bs = out.m_SongTiming.m_BPMSegments[i];
 			f.Write( ssprintf("%.3f=%.3f", bs.m_iStartRow * 4.0f / ROWS_PER_BEAT, bs.GetBPM() ) );
-			if( i != out.m_Timing.m_BPMSegments.size()-1 )
+			if( i != out.m_SongTiming.m_BPMSegments.size()-1 )
 				f.Write( "," );
 		}
 		f.PutLine( ";" );

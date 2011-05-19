@@ -16,9 +16,10 @@
 #INSTRUMENTTRACK:;
 #MUSICLENGTH:;
 #OFFSET:;
+#BPMS:;
 #STOPS:;
 #DELAYS:;
-#BPMS:;
+#LABELS:;
 #TIMESIGNATURES:;
 #LASTBEATHINT:;
 #SAMPLESTART:;
@@ -43,17 +44,24 @@
 // information from #NOTES moved here
 #STEPSTYPE:;
 #DESCRIPTION:;
+#CHARTSTYLE:;
 #DIFFICULTY:;
 #METER:;
 #RADARVALUES:;
 #CREDIT:;
 
 // steps-based timingdata
+#BPMS:;
 #STOPS:;
 #DELAYS:;
-#BPMS:;
 #TIMESIGNATURES:;
-#LASTBEATHINT:;
+#TICKCOUNTS:;
+#COMBOS:;
+#SPEEDS:;
+#FAKES:;
+#LABELS:;
+#ATTACKS:; // Not yet in use.
+#OFFSET:;
 
 // actual step data
 #NOTES:;

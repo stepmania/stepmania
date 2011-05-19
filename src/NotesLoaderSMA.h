@@ -9,6 +9,16 @@ class Song;
 class Steps;
 class TimingData;
 
+/**
+ * @brief The various states while parsing a .sma file.
+ */
+enum SMALoadingStates
+{
+	SMA_GETTING_SONG_INFO, /**< Retrieving song information. */
+	SMA_GETTING_STEP_INFO, /**< Retrieving step information. */
+	NUM_SMALoadingStates /**< The number of states used. */
+};
+
 /** @brief Reads a Song from a .SMA file. */
 namespace SMALoader
 {
@@ -25,12 +35,22 @@ namespace SMALoader
 	
 	bool LoadFromSMAFile( const RString &sPath, Song &out );
 	void GetApplicableFiles( const RString &sPath, vector<RString> &out );
-	bool LoadTimingFromFile( const RString &fn, TimingData &out );
-	void LoadTimingFromSMAFile( const MsdFile &msd, TimingData &out );
+	
 	bool LoadEditFromFile( RString sEditFilePath, ProfileSlot slot, bool bAddStepsToSong );
 	bool LoadEditFromBuffer( const RString &sBuffer, const RString &sEditFilePath, ProfileSlot slot );
 	bool LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePath, ProfileSlot slot, bool bAddStepsToSong );
 	bool LoadFromBGChangesString( BackgroundChange &change, const RString &sBGChangeExpression );
+	
+	void ProcessBeatsPerMeasure( TimingData &out, const RString sParam );
+	bool ProcessBPMs( TimingData &out, const int iRowsPerBeat, const RString sParam );
+	void ProcessStops( TimingData &out, const int iRowsPerBeat, const RString sParam );
+	void ProcessDelays( TimingData &out, const int iRowsPerBeat, const RString sParam );
+	void ProcessTickcounts( TimingData &out, const int iRowsPerBeat, const RString sParam );
+	void ProcessMultipliers( TimingData &out, const int iRowsPerBeat, const RString sParam );
+	void ProcessSpeeds( TimingData &out, const int iRowsPerBeat, const RString sParam );
+	void ProcessFakes( TimingData &out, const int iRowsPerBeat, const RString sParam );
+	
+	float RowToBeat( RString sLine, const int iRowsPerBeat );
 };
 
 #endif
