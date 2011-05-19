@@ -11,9 +11,7 @@ struct lua_State;
 
 class SongPosition
 {
-
-	public:
-
+public:
 	// Arcade - the current stage (one song).
 	// Oni/Endless - a single song in a course.
 	// Let a lot of classes access this info here so they don't have to keep their own copies.
@@ -39,7 +37,7 @@ class SongPosition
 	void UpdateSongPosition( float fPositionSeconds, const TimingData &timing, const RageTimer &timestamp = RageZeroTimer );
 
 	// Lua
-        void PushSelf( lua_State *L );
+	void PushSelf( lua_State *L );
 };
 
 #endif
