@@ -32,6 +32,7 @@ void BPMDisplay::Load()
 	SET_EXTRA_COMMAND.Load( m_sName, "SetExtraCommand" );
 	CYCLE.Load( m_sName, "Cycle" );
 	RANDOM_CYCLE_SPEED.Load( m_sName, "RandomCycleSpeed" );
+	COURSE_CYCLE_SPEED.Load( m_sName, "CourseCycleSpeed" );
 	SEPARATOR.Load( m_sName, "Separator" );
 	SHOW_QMARKS.Load( m_sName, "ShowQMarksInRandomCycle" );
 	NO_BPM_TEXT.Load( m_sName, "NoBpmText" );
@@ -207,7 +208,8 @@ void BPMDisplay::SetBpmFromCourse( const Course* pCourse )
 	// GetTranslitFullTitle because "Crashinfo.txt is garbled because of the ANSI output as usual." -f
 	ASSERT_M( pTrail, ssprintf("Course '%s' has no trail for StepsType '%s'", pCourse->GetTranslitFullTitle().c_str(), StringConversion::ToString(st).c_str() ) );
 
-	m_fCycleTime = 0.2f;
+	// todo: let themers define this. -aj
+	m_fCycleTime = (float)COURSE_CYCLE_SPEED;
 
 	if( (int)pTrail->m_vEntries.size() > CommonMetrics::MAX_COURSE_ENTRIES_BEFORE_VARIOUS )
 	{

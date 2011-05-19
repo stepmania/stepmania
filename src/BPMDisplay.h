@@ -82,6 +82,7 @@ protected:
 	ThemeMetric<bool> SHOW_QMARKS;
 	/** @brief How often the random BPMs cycle themselves. */
 	ThemeMetric<float> RANDOM_CYCLE_SPEED;
+	ThemeMetric<float> COURSE_CYCLE_SPEED;
 	/** @brief The text used to separate the low and high BPMs. */
 	ThemeMetric<RString> SEPARATOR;
 	/** @brief The text used when there is no BPM. */
