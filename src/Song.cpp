@@ -1151,9 +1151,6 @@ bool Song::HasEdits( StepsType st ) const
 	return false;
 }
 
-/* Return false if the song should not be displayed for selection in normal
- * gameplay (but may still be available in random selection, during extra
- * stages, or in other special conditions). */
 bool Song::NormallyDisplayed() const
 {
 	return UNLOCKMAN == NULL || !UNLOCKMAN->SongIsLocked(this);

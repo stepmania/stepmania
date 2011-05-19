@@ -389,6 +389,12 @@ public:
 
 	void SetEnabled( bool b ) { m_bEnabled = b; }
 	bool GetEnabled() const { return m_bEnabled; }
+	/**
+	 * @brief Determine if the song should be shown on the MusicWheel normally.
+	 *
+	 * Songs that are not displayed normally may still be available during
+	 * random selection, extra stages, or other special conditions.
+	 * @return true if displayed normally, false otherwise. */
 	bool NormallyDisplayed() const;
 	bool ShowInDemonstrationAndRanking() const;
 
