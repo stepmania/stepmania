@@ -56,11 +56,15 @@ int AdjustSync::s_iStepsFiltered = 0;
 void AdjustSync::ResetOriginalSyncData()
 {
 	if( s_vTimingDataOriginal.empty() )
+	{
 		s_vTimingDataOriginal.push_back(new TimingData);
+		s_vTimingDataOriginal.resize(1);
+	}
 	else if( s_vTimingDataOriginal[0] == NULL )
+	{
 		s_vTimingDataOriginal[0] = new TimingData;
-	
-	s_vTimingDataOriginal.resize(1);
+		s_vTimingDataOriginal.resize(1);
+	}
 
 	const vector<Steps*>& vpSteps = GAMESTATE->m_pCurSong->GetAllSteps();
 	if( GAMESTATE->m_pCurSong )
@@ -74,11 +78,7 @@ void AdjustSync::ResetOriginalSyncData()
 	else
 	{
 		s_vTimingDataOriginal.push_back(new TimingData);
-		FOREACH( Steps*, const_cast<vector<Steps*>&>(vpSteps), s )
-		{
-			s_vTimingDataOriginal.push_back( new TimingData );
-		}
-		
+		// No Steps here to even grab.
 	}
 	s_fGlobalOffsetSecondsOriginal = PREFSMAN->m_fGlobalOffsetSeconds;
 
