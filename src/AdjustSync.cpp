@@ -279,6 +279,23 @@ void AdjustSync::AutosyncTempo()
 		// change to the stops.
 		FOREACH( StopSegment, GAMESTATE->m_pCurSong->m_SongTiming.m_StopSegments, i )
 			i->m_fStopSeconds *= 1.0f - fSlope;
+		
+		// Now the fun part: doing the same as above, but for each step.
+		const vector<Steps*>& vpSteps = GAMESTATE->m_pCurSong->GetAllSteps();
+		FOREACH( Steps*, const_cast<vector<Steps*>&>(vpSteps), s )
+		{
+			TimingData &timing = (*s)->m_Timing;
+			timing.m_fBeat0OffsetInSeconds += fIntercept;
+			
+			FOREACH( BPMSegment, timing.m_BPMSegments, i )
+			{
+				i->SetBPM( i->GetBPM() * fScaleBPM );
+			}
+			FOREACH( StopSegment, timing.m_StopSegments, i )
+			{
+				i->m_fStopSeconds *= 1.0f - fSlope;
+			}
+		}
 
 		SCREENMAN->SystemMessage( AUTOSYNC_CORRECTION_APPLIED.GetValue() );
 	}
