@@ -43,7 +43,7 @@
 #include "ScreenManager.h"
 #include "Foreach.h"
 
-TimingData *AdjustSync::s_pTimingDataOriginal = NULL;
+vector<TimingData *> AdjustSync::s_vTimingDataOriginal;
 float AdjustSync::s_fGlobalOffsetSecondsOriginal = 0.0f;
 int AdjustSync::s_iAutosyncOffsetSample = 0;
 float AdjustSync::s_fAutosyncOffset[AdjustSync::OFFSET_SAMPLE_COUNT];
@@ -55,13 +55,31 @@ int AdjustSync::s_iStepsFiltered = 0;
 
 void AdjustSync::ResetOriginalSyncData()
 {
-	if( s_pTimingDataOriginal == NULL )
-		s_pTimingDataOriginal = new TimingData;
+	if( s_vTimingDataOriginal.empty() )
+		s_vTimingDataOriginal.push_back(new TimingData);
+	else if( s_vTimingDataOriginal[0] == NULL )
+		s_vTimingDataOriginal[0] = new TimingData;
+	
+	s_vTimingDataOriginal.resize(1);
 
+	const vector<Steps*>& vpSteps = GAMESTATE->m_pCurSong->GetAllSteps();
 	if( GAMESTATE->m_pCurSong )
-		*s_pTimingDataOriginal = GAMESTATE->m_pCurSong->m_SongTiming;
+	{
+		s_vTimingDataOriginal.push_back(&GAMESTATE->m_pCurSong->m_SongTiming);
+		FOREACH( Steps*, const_cast<vector<Steps*>&>(vpSteps), s )
+		{
+			s_vTimingDataOriginal.push_back(&(*s)->m_Timing);
+		}
+	}
 	else
-		*s_pTimingDataOriginal = TimingData();
+	{
+		s_vTimingDataOriginal.push_back(new TimingData);
+		FOREACH( Steps*, const_cast<vector<Steps*>&>(vpSteps), s )
+		{
+			s_vTimingDataOriginal.push_back( new TimingData );
+		}
+		
+	}
 	s_fGlobalOffsetSecondsOriginal = PREFSMAN->m_fGlobalOffsetSeconds;
 
 	ResetAutosync();
@@ -71,6 +89,7 @@ void AdjustSync::ResetAutosync()
 {
 	s_iAutosyncOffsetSample = 0;
 	s_vAutosyncTempoData.clear();
+	// TODO: Add a call to s_vTimingDataOriginal?
 }
 
 bool AdjustSync::IsSyncDataChanged()
@@ -88,7 +107,7 @@ void AdjustSync::SaveSyncChanges()
 {
 	if( GAMESTATE->IsCourseMode() )
 		return;
-	if( GAMESTATE->m_pCurSong && *s_pTimingDataOriginal != GAMESTATE->m_pCurSong->m_SongTiming )
+	if( GAMESTATE->m_pCurSong && *s_vTimingDataOriginal[0] != GAMESTATE->m_pCurSong->m_SongTiming )
 	{
 		if( GAMESTATE->IsEditing() )
 		{
@@ -111,7 +130,15 @@ void AdjustSync::RevertSyncChanges()
 	if( GAMESTATE->IsCourseMode() )
 		return;
 	PREFSMAN->m_fGlobalOffsetSeconds.Set( s_fGlobalOffsetSecondsOriginal );
-	GAMESTATE->m_pCurSong->m_SongTiming = *s_pTimingDataOriginal;
+	GAMESTATE->m_pCurSong->m_SongTiming = *s_vTimingDataOriginal[0];
+	const vector<Steps*>& vpSteps = GAMESTATE->m_pCurSong->GetAllSteps();
+	
+	unsigned index = 1;
+	FOREACH( Steps*, const_cast<vector<Steps*>&>(vpSteps), s )
+	{
+		(*s)->m_Timing = *s_vTimingDataOriginal[index];
+		index++;
+	}
 	ResetOriginalSyncData();
 	s_fStandardDeviation = 0.0f;
 	s_fAverageError = 0.0f;
@@ -223,6 +250,8 @@ void AdjustSync::AutosyncTempo()
 		s_vAutosyncTempoData.clear();
 		return;
 	}
+	
+	// TODO: Make this work with Steps timing.
 
 	if( s_fAverageError < ERROR_TOO_HIGH )
 	{
@@ -303,7 +332,7 @@ void AdjustSync::GetSyncChangeTextSong( vector<RString> &vsAddTo )
 		unsigned int iOriginalSize = vsAddTo.size();
 
 		{
-			float fOld = Quantize( AdjustSync::s_pTimingDataOriginal->m_fBeat0OffsetInSeconds, 0.001f );
+			float fOld = Quantize( AdjustSync::s_vTimingDataOriginal[0]->m_fBeat0OffsetInSeconds, 0.001f );
 			float fNew = Quantize( GAMESTATE->m_pCurSong->m_SongTiming.m_fBeat0OffsetInSeconds, 0.001f );
 			float fDelta = fNew - fOld;
 
@@ -319,7 +348,7 @@ void AdjustSync::GetSyncChangeTextSong( vector<RString> &vsAddTo )
 
 		for( unsigned i=0; i<GAMESTATE->m_pCurSong->m_SongTiming.m_BPMSegments.size(); i++ )
 		{
-			float fOld = Quantize( AdjustSync::s_pTimingDataOriginal->m_BPMSegments[i].GetBPM(), 0.001f );
+			float fOld = Quantize( AdjustSync::s_vTimingDataOriginal[0]->m_BPMSegments[i].GetBPM(), 0.001f );
 			float fNew = Quantize( GAMESTATE->m_pCurSong->m_SongTiming.m_BPMSegments[i].GetBPM(), 0.001f );
 			float fDelta = fNew - fOld;
 
@@ -340,7 +369,7 @@ void AdjustSync::GetSyncChangeTextSong( vector<RString> &vsAddTo )
 
 		for( unsigned i=0; i<GAMESTATE->m_pCurSong->m_SongTiming.m_StopSegments.size(); i++ )
 		{
-			float fOld = Quantize( AdjustSync::s_pTimingDataOriginal->m_StopSegments[i].m_fStopSeconds, 0.001f );
+			float fOld = Quantize( AdjustSync::s_vTimingDataOriginal[0]->m_StopSegments[i].m_fStopSeconds, 0.001f );
 			float fNew = Quantize( GAMESTATE->m_pCurSong->m_SongTiming.m_StopSegments[i].m_fStopSeconds, 0.001f );
 			float fDelta = fNew - fOld;
 
