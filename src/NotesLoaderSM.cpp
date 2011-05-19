@@ -493,8 +493,16 @@ bool SMLoader::LoadFromBGChangesString( BackgroundChange &change, const RString 
 		change.m_sTransition = aBGChangeValues[8];
 		// fall through
 	case 8:
+	{
+		RString tmp = aBGChangeValues[7];
+		tmp.MakeLower();
+		if( tmp.find(".ini") != string::npos || tmp.find(".xml") != string::npos )
+		{
+			return false;
+		}
 		change.m_def.m_sFile2 = aBGChangeValues[7];
 		// fall through
+	}
 	case 7:
 		change.m_def.m_sEffect = aBGChangeValues[6];
 		// fall through
@@ -528,8 +536,16 @@ bool SMLoader::LoadFromBGChangesString( BackgroundChange &change, const RString 
 		change.m_fRate = StringToFloat( aBGChangeValues[2] );
 		// fall through
 	case 2:
+	{
+		RString tmp = aBGChangeValues[1];
+		tmp.MakeLower();
+		if( tmp.find(".ini") != string::npos || tmp.find(".xml") != string::npos )
+		{
+			return false;
+		}
 		change.m_def.m_sFile1 = aBGChangeValues[1];
 		// fall through
+	}
 	case 1:
 		change.m_fStartBeat = StringToFloat( aBGChangeValues[0] );
 		// fall through
