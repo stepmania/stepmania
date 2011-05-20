@@ -225,7 +225,7 @@ bool SMLoader::ProcessBPMs( TimingData &out, const RString sParam )
 			if( negBPM < 0 )
 			{
 				float endBeat = fBeat + (fNewBPM / -negBPM) * (fBeat - negBeat);
-				WarpSegment new_seg(negBeat, endBeat);
+				WarpSegment new_seg(negBeat, endBeat - negBeat);
 				out.AddWarpSegment( new_seg );
 				
 				negBeat = -1;
@@ -241,7 +241,7 @@ bool SMLoader::ProcessBPMs( TimingData &out, const RString sParam )
 				// add in a warp.
 				if( highspeedBeat > 0 )
 				{
-					WarpSegment new_seg(highspeedBeat, fBeat);
+					WarpSegment new_seg(highspeedBeat, fBeat - highspeedBeat);
 					out.AddWarpSegment( new_seg );
 					highspeedBeat = -1;
 				}
@@ -317,7 +317,7 @@ void SMLoader::ProcessStops( TimingData &out, const RString sParam )
 		float fSecondsPerBeat = 60 / oldBPM.GetBPM();
 		float fSkipBeats = negPause / fSecondsPerBeat;
 		
-		WarpSegment ws( negBeat, negBeat + fSkipBeats);
+		WarpSegment ws( negBeat, fSkipBeats);
 		out.AddWarpSegment( ws );
 	}
 }
