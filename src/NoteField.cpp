@@ -893,18 +893,16 @@ void NoteField::DrawPrimitives()
 		}
 		
 		// Warp text
-		if( GAMESTATE->m_bIsUsingStepTiming )
+		FOREACH_CONST( WarpSegment, timing.m_WarpSegments, seg )
 		{
-			FOREACH_CONST( WarpSegment, timing.m_WarpSegments, seg )
+			if( seg->m_iStartRow >= iFirstRowToDraw && seg->m_iStartRow <= iLastRowToDraw )
 			{
-				if( seg->m_iStartRow >= iFirstRowToDraw && seg->m_iStartRow <= iLastRowToDraw )
-				{
-					float fBeat = NoteRowToBeat(seg->m_iStartRow);
-					if( IS_ON_SCREEN(fBeat) )
-						DrawWarpText( fBeat, seg->m_fLengthBeats );
-				}
+				float fBeat = NoteRowToBeat(seg->m_iStartRow);
+				if( IS_ON_SCREEN(fBeat) )
+					DrawWarpText( fBeat, seg->m_fLengthBeats );
 			}
 		}
+		
 		
 		// Time Signature text
 		FOREACH_CONST( TimeSignatureSegment, timing.m_vTimeSignatureSegments, seg )
