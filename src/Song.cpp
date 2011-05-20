@@ -651,12 +651,6 @@ void Song::TidyUpData()
 			continue;
 		}
 
-		if( !HasBanner() && Sprite::IsDiagonalBanner(width, height) )
-		{
-			m_sBannerFile = arrayImages[i];
-			continue;
-		}
-
 		if( !HasBanner()  &&  100<=width  &&  width<=320  &&  50<=height  &&  height<=240 )
 		{
 			m_sBannerFile = arrayImages[i];

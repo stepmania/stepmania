@@ -67,7 +67,6 @@ public:
 	 * @param fHeight the new height. */
 	void ScaleToClipped( float fWidth, float fHeight );
 	void CropTo( float fWidth, float fHeight );
-	static bool IsDiagonalBanner( int iWidth, int iHeight );
 
 	// Commands
 	virtual void PushSelf( lua_State *L );
