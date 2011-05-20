@@ -11,11 +11,11 @@
 // work around namespace bugs in win32/libjpeg:
 #define XMD_H
 #undef FAR
-#include "../extern/libjpeg/jpeglib.h"
-#include "../extern/libjpeg/jerror.h"
+#include "jpeglib.h"
+#include "jerror.h"
 
 #if defined(_MSC_VER)
-#pragma comment(lib, "../extern/libjpeg/jpeg.lib")
+#pragma comment(lib, "jpeg.lib")
 #endif
 
 #pragma warning(disable: 4611) /* interaction between '_setjmp' and C++ object destruction is non-portable */
