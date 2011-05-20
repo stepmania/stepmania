@@ -27,6 +27,7 @@ public:
 	static RString GetMD5ForFile( RString fn );		// in binary
 	static RString GetMD5ForString( RString sData );	// in binary
 	static RString GetSHA1ForString( RString sData );	// in binary
+	static RString GetSHA1ForFile( RString fn );		// in binary
 
 	static RString GetPublicKeyFileName();
 
