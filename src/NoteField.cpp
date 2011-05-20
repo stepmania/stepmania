@@ -768,6 +768,8 @@ void NoteField::DrawPrimitives()
 {
 
 	// XXX Hack: Set Actor's active player number so the notes get the flashing that matches the steps.
+	// save the active player number (so they can nest)
+	PlayerNumber pnLastActivePlayerNumber = m_pPlayerState->m_PlayerNumber;
 	Actor::m_ActivePlayerNumber = m_pPlayerState->m_PlayerNumber;
 
 	//LOG->Trace( "NoteField::DrawPrimitives()" );
@@ -1252,6 +1254,9 @@ void NoteField::DrawPrimitives()
 	}
 
 	cur->m_GhostArrowRow.Draw();
+	
+	// restore the active player number
+	Actor::m_ActivePlayerNumber = pnLastActivePlayerNumber;
 }
 
 void NoteField::FadeToFail()
