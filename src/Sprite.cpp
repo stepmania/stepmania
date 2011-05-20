@@ -855,9 +855,6 @@ void Sprite::ScaleToClipped( float fWidth, float fHeight )
 
 	float fScaleFudgePercent = 0.15f;	// scale up to this amount in one dimension to avoid clipping.
 
-	int iSourceWidth	= m_pTexture->GetSourceWidth();
-	int iSourceHeight	= m_pTexture->GetSourceHeight();
-
 	// save the original X and Y.  We're going to restore them later.
 	float fOriginalX = GetX();
 	float fOriginalY = GetY();
@@ -918,9 +915,6 @@ void Sprite::CropTo( float fWidth, float fHeight )
 
 	if( !m_pTexture )
 		return;
-
-	int iSourceWidth	= m_pTexture->GetSourceWidth();
-	int iSourceHeight	= m_pTexture->GetSourceHeight();
 
 	// save the original X&Y.  We're going to restore them later.
 	float fOriginalX = GetX();
