@@ -902,11 +902,17 @@
 	<Function name='bezier' theme='_fallback' return='void' arguments=''>
 		[02 Actor.lua]
 	</Function>
+	<Function name='Center' theme='_fallback' return='void' arguments=''>
+		[02 Actor.lua] Centers an Actor on the screen. (equivalent to <code>x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y</code>)
+	</Function>
 	<Function name='CenterX' theme='_fallback' return='void' arguments=''>
 		[03 ProductivityHelpers.lua] Centers an Actor on the X axis. (equivalent to <code>x,SCREEN_CENTER_X</code>)
 	</Function>
 	<Function name='CenterY' theme='_fallback' return='void' arguments=''>
 		[03 ProductivityHelpers.lua] Centers an Actor on the y axis. (equivalent to <code>y,SCREEN_CENTER_Y</code>)
+	</Function>
+	<Function name='FullScreen' theme='_fallback' return='void' arguments=''>
+		[02 Actor.lua] Stretches an Actor to cover the screen. (equivalent to <code>stretchto,0,0,SCREEN_WIDTH,SCREEN_HEIGHT</code>)
 	</Function>
 	<Function name='heartbeat' theme='_fallback' return='void' arguments='float fEffectPeriod'>
 		[03 ProductivityHelpers.lua] A customized version of pulse that is more appealing for on-beat effects.
