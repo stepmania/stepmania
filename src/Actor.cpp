@@ -854,7 +854,7 @@ void Actor::SetEffectClockString( const RString &s )
 {
 	if     (s.EqualsNoCase("timer"))	this->SetEffectClock( CLOCK_TIMER );
 	if     (s.EqualsNoCase("timerglobal"))	this->SetEffectClock( CLOCK_TIMER_GLOBAL );
-	else if(s.EqualsNoCase("beat"))		this->SetEffectClock( CLOCK_BGM_BEAT_ACTIVE );
+	else if(s.EqualsNoCase("beat"))		this->SetEffectClock( CLOCK_BGM_BEAT_PLAYER_ACTIVE );
 	else if(s.EqualsNoCase("music"))	this->SetEffectClock( CLOCK_BGM_TIME );
 	else if(s.EqualsNoCase("bgm"))		this->SetEffectClock( CLOCK_BGM_BEAT ); // compat, deprecated
 	else if(s.EqualsNoCase("musicnooffset"))this->SetEffectClock( CLOCK_BGM_TIME_NO_OFFSET );
