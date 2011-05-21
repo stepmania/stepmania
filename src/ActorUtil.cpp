@@ -116,7 +116,9 @@ Actor* ActorUtil::LoadFromNode( const XNode* pNode, Actor *pParentActor )
 	}
 
 	RString sClass;
-	pNode->GetAttrValue( "Class", sClass );
+	bool bHasClass = pNode->GetAttrValue( "Class", sClass );
+	if( !bHasClass )
+		bHasClass = pNode->GetAttrValue( "Type", sClass );
 
 	map<RString,CreateActorFn>::iterator iter = g_pmapRegistrees->find( sClass );
 	if( iter == g_pmapRegistrees->end() )
