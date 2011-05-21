@@ -48,7 +48,7 @@ static RString BackgroundChangeToString( const BackgroundChange &bgc )
  * @brief Write out the common tags for .SM files.
  * @param f the file in question.
  * @param out the Song in question. */
-static void WriteGlobalTags( RageFile &f, const Song &out )
+static void WriteGlobalTags( RageFile &f, Song &out )
 {
 	f.PutLine( ssprintf( "#TITLE:%s;", SmEscape(out.m_sMainTitle).c_str() ) );
 	f.PutLine( ssprintf( "#SUBTITLE:%s;", SmEscape(out.m_sSubTitle).c_str() ) );
@@ -63,20 +63,7 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 	f.PutLine( ssprintf( "#LYRICSPATH:%s;", SmEscape(out.m_sLyricsFile).c_str() ) );
 	f.PutLine( ssprintf( "#CDTITLE:%s;", SmEscape(out.m_sCDTitleFile).c_str() ) );
 	f.PutLine( ssprintf( "#MUSIC:%s;", SmEscape(out.m_sMusicFile).c_str() ) );
-	
-	{
-		vector<RString> vs;
-		FOREACH_ENUM( InstrumentTrack, it )
-			if( out.HasInstrumentTrack(it) )
-				vs.push_back( InstrumentTrackToString(it) + 
-					     "=" + out.m_sInstrumentTrackFile[it] );
-		if( !vs.empty() )
-		{
-			RString s = join( ",", vs );
-			f.PutLine( "#INSTRUMENTTRACK:" + s + ";\n" );
-		}
-	}
-	f.PutLine( ssprintf( "#OFFSET:%.3f;", out.m_Timing.m_fBeat0OffsetInSeconds ) );
+	f.PutLine( ssprintf( "#OFFSET:%.3f;", out.m_SongTiming.m_fBeat0OffsetInSeconds ) );
 	f.PutLine( ssprintf( "#SAMPLESTART:%.3f;", out.m_fMusicSampleStartSeconds ) );
 	f.PutLine( ssprintf( "#SAMPLELENGTH:%.3f;", out.m_fMusicSampleLengthSeconds ) );
 	if( out.m_fSpecifiedLastBeat > 0 )
@@ -111,82 +98,55 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 
 
 	f.Write( "#BPMS:" );
-	for( unsigned i=0; i<out.m_Timing.m_BPMSegments.size(); i++ )
+	for( unsigned i=0; i<out.m_SongTiming.m_BPMSegments.size(); i++ )
 	{
-		const BPMSegment &bs = out.m_Timing.m_BPMSegments[i];
+		const BPMSegment &bs = out.m_SongTiming.m_BPMSegments[i];
 
 		f.PutLine( ssprintf( "%.3f=%.3f", NoteRowToBeat(bs.m_iStartRow), bs.GetBPM() ) );
-		if( i != out.m_Timing.m_BPMSegments.size()-1 )
+		if( i != out.m_SongTiming.m_BPMSegments.size()-1 )
 			f.Write( "," );
 	}
 	f.PutLine( ";" );
+	
+	unsigned wSize = out.m_SongTiming.m_WarpSegments.size();
+	if( wSize > 0 )
+	{
+		for( unsigned i=0; i < wSize; i++ )
+		{
+			int iRow = out.m_SongTiming.m_WarpSegments[i].m_iStartRow;
+			float fBPS = 60 / out.m_SongTiming.GetBPMAtRow(iRow);
+			float fSkip = fBPS * out.m_SongTiming.m_WarpSegments[i].m_fLengthBeats;
+			StopSegment ss;
+			ss.m_iStartRow = iRow;
+			ss.m_fStopSeconds = -fSkip;
+			ss.m_bDelay = false; // Best to be sure.
+			out.m_SongTiming.AddStopSegment( ss );
+		}
+	}
 
 	f.Write( "#STOPS:" );
-	for( unsigned i=0; i<out.m_Timing.m_StopSegments.size(); i++ )
+	for( unsigned i=0; i<out.m_SongTiming.m_StopSegments.size(); i++ )
 	{
-		const StopSegment &fs = out.m_Timing.m_StopSegments[i];
-
+		const StopSegment &fs = out.m_SongTiming.m_StopSegments[i];
+		int iRow = fs.m_iStartRow;
+		float fBeat = NoteRowToBeat(!fs.m_bDelay ? iRow : iRow - 1);
+		
 		if(!fs.m_bDelay)
 		{
-			f.PutLine( ssprintf( "%.3f=%.3f", NoteRowToBeat(fs.m_iStartRow), fs.m_fStopSeconds ) );
-			if( i != out.m_Timing.m_StopSegments.size()-1 )
+			f.PutLine( ssprintf( "%.3f=%.3f", fBeat, fs.m_fStopSeconds ) );
+			if( i != out.m_SongTiming.m_StopSegments.size()-1 )
 				f.Write( "," );
+			if( fs.m_fStopSeconds < 0 )
+			{
+				out.m_SongTiming.m_StopSegments.erase( 
+						     out.m_SongTiming.m_StopSegments.begin()+i,
+						     out.m_SongTiming.m_StopSegments.begin()+i+1 );
+				i--;
+			}
 		}
 	}
 	f.PutLine( ";" );
-	
-	f.Write( "#ATTACKS:" );
-	for( unsigned j = 0; j < out.m_Attacks.size(); j++ )
-	{
-		const Attack &a = out.m_Attacks[j];
-		f.Write( ssprintf( "TIME=%.2f:LEN=%.2f:MODS=%s",
-			a.fStartSecond, a.fSecsRemaining, a.sModifiers.c_str() ) );
-
-		if( j+1 < out.m_Attacks.size() )
-			f.Write( ":" );
-		f.PutLine( "" );
-	}
-	f.PutLine( ";" );
-
-	f.Write( "#DELAYS:" );
-	for( unsigned i=0; i<out.m_Timing.m_StopSegments.size(); i++ )
-	{
-		const StopSegment &fs = out.m_Timing.m_StopSegments[i];
-
-		if( fs.m_bDelay )
-		{
-			f.PutLine( ssprintf( "%.3f=%.3f", NoteRowToBeat(fs.m_iStartRow), fs.m_fStopSeconds ) );
-			if( i != out.m_Timing.m_StopSegments.size()-1 )
-				f.Write( "," );
-		}
-	}
-	f.PutLine( ";" );
-
-	ASSERT( !out.m_Timing.m_vTimeSignatureSegments.empty() );
-	f.Write( "#TIMESIGNATURES:" );
-	FOREACH_CONST( TimeSignatureSegment, out.m_Timing.m_vTimeSignatureSegments, iter )
-	{
-		f.PutLine( ssprintf( "%.3f=%d=%d", NoteRowToBeat(iter->m_iStartRow), 
-				    iter->m_iNumerator, iter->m_iDenominator ) );
-		vector<TimeSignatureSegment>::const_iterator iter2 = iter;
-		iter2++;
-		if( iter2 != out.m_Timing.m_vTimeSignatureSegments.end() )
-			f.Write( "," );
-	}
-	f.PutLine( ";" );
-
-	ASSERT( !out.m_Timing.m_TickcountSegments.empty() );
-	f.Write( "#TICKCOUNTS:" );
-	for( unsigned i=0; i<out.m_Timing.m_TickcountSegments.size(); i++ )
-	{
-		const TickcountSegment &ts = out.m_Timing.m_TickcountSegments[i];
 		
-		f.PutLine( ssprintf( "%.3f=%d", NoteRowToBeat(ts.m_iStartRow), ts.m_iTicks ) );
-		if( i != out.m_Timing.m_TickcountSegments.size()-1 )
-			f.Write( "," );
-	}
-	f.PutLine( ";" );
-	
 	FOREACH_BackgroundLayer( b )
 	{
 		if( b==0 )
@@ -274,11 +234,11 @@ static RString GetSMNotesTag( const Song &song, const Steps &in )
 	RString desc = (USE_CREDIT ? in.GetCredit() : in.GetDescription());
 	lines.push_back( ssprintf( "     %s:", SmEscape(desc).c_str() ) );
 	lines.push_back( ssprintf( "     %s:", DifficultyToString(in.GetDifficulty()).c_str() ) );
-	lines.push_back( ssprintf( "     %d:", clamp( in.GetMeter(), MIN_METER, MAX_METER ) ) );
+	lines.push_back( ssprintf( "     %d:", in.GetMeter() ) );
 	
 	vector<RString> asRadarValues;
-	// SM files don't use fakes for radar data. Keep it that way.
-	int categories = NUM_RadarCategory - 1;
+	// OpenITG simfiles use 11 radar categories.
+	int categories = 11;
 	FOREACH_PlayerNumber( pn )
 	{
 		const RadarValues &rv = in.GetRadarValues( pn );
@@ -300,7 +260,7 @@ static RString GetSMNotesTag( const Song &song, const Steps &in )
 	return JoinLineList( lines );
 }
 
-bool NotesWriterSM::Write( RString sPath, const Song &out, const vector<Steps*>& vpStepsToSave )
+bool NotesWriterSM::Write( RString sPath, Song &out, const vector<Steps*>& vpStepsToSave )
 {
 	int flags = RageFile::WRITE;
 

@@ -7,9 +7,9 @@
 #include <memory>
 
 #if defined(_WINDOWS)
-        #include "../extern/zlib/zlib.h"
+        #include "zlib.h"
 #if defined(_MSC_VER)
-        #pragma comment(lib, "../extern/zlib/zdll.lib")
+        #pragma comment(lib, "zdll.lib")
 #endif
 #elif defined(MACOSX)
     /* Since crypto++ was added to the repository, <zlib.h> includes the zlib.h

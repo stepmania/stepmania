@@ -346,8 +346,8 @@ static void ReadTimeSigs( const NameToData_t &mapNameToData, MeasureToTimeSig_t 
 
 		// this is step or offset data.  Looks like "#00705"
 		const RString &sData = it->second;
-		int iMeasureNo	= atoi( sName.substr(1, 3).c_str() );
-		int iPMSTrackNo	= atoi( sName.substr(4, 2).c_str() );
+		int iMeasureNo	= StringToInt( sName.substr(1, 3) );
+		int iPMSTrackNo	= StringToInt( sName.substr(4, 2) );
 		if( iPMSTrackNo == PMS_TRACK_TIME_SIG )
 			out[iMeasureNo] = StringToFloat( sData );
 	}
@@ -367,9 +367,9 @@ static bool LoadFromPMSFile( const RString &sPath, const NameToData_t &mapNameTo
 	int iPlayer = -1;
 	RString sData;
 	if( GetTagFromMap( mapNameToData, "#player", sData ) )
-		iPlayer = atoi(sData);
+		iPlayer = StringToInt(sData);
 	if( GetTagFromMap( mapNameToData, "#playlevel", sData ) )
-		out.SetMeter( atoi(sData) );
+		out.SetMeter( StringToInt(sData) );
 
 	NoteData ndNotes;
 	ndNotes.SetNumTracks( NUM_PMS_TRACKS );
@@ -396,8 +396,8 @@ static bool LoadFromPMSFile( const RString &sPath, const NameToData_t &mapNameTo
 			 continue;
 
 		// this is step or offset data.  Looks like "#00705"
-		int iMeasureNo = atoi( sName.substr(1,3).c_str() );
-		int iRawTrackNum = atoi( sName.substr(4,2).c_str() );
+		int iMeasureNo = StringToInt( sName.substr(1,3) );
+		int iRawTrackNum = StringToInt( sName.substr(4,2) );
 		int iRowNo = GetMeasureStartRow( mapMeasureToTimeSig, iMeasureNo, sigAdjustments );
 		float fBeatsPerMeasure = GetBeatsPerMeasure( mapMeasureToTimeSig, iMeasureNo, sigAdjustments );
 		const RString &sNoteData = it->second;
@@ -591,7 +591,7 @@ static void ReadGlobalTags( const NameToData_t &mapNameToData, Song &out, Measur
 		if( fBPM > 0.0f )
 		{
 			BPMSegment newSeg( 0, fBPM );
-			out.AddBPMSegment( newSeg );
+			out.m_SongTiming.AddBPMSegment( newSeg );
 			LOG->Trace( "Inserting new BPM change at beat %f, BPM %f", NoteRowToBeat(0), fBPM );
 		}
 		else
@@ -649,8 +649,8 @@ static void ReadGlobalTags( const NameToData_t &mapNameToData, Song &out, Measur
 		if( sName.size() != 6 || sName[0] != '#' || !IsAnInt( sName.substr(1,5) ) )
 			 continue;
 		// this is step or offset data.  Looks like "#00705"
-		int iMeasureNo	= atoi( sName.substr(1, 3).c_str() );
-		int iPMSTrackNo	= atoi( sName.substr(4, 2).c_str() );
+		int iMeasureNo	= StringToInt( sName.substr(1, 3) );
+		int iPMSTrackNo	= StringToInt( sName.substr(4, 2) );
 		int iStepIndex = GetMeasureStartRow( mapMeasureToTimeSig, iMeasureNo, sigAdjustmentsOut );
 		float fBeatsPerMeasure = GetBeatsPerMeasure( mapMeasureToTimeSig, iMeasureNo, sigAdjustmentsOut );
 		int iRowsPerMeasure = BeatToNoteRow( fBeatsPerMeasure );
@@ -673,7 +673,7 @@ static void ReadGlobalTags( const NameToData_t &mapNameToData, Song &out, Measur
 				case PMS_TRACK_BPM:
 					if( iVal > 0 )
 					{
-						out.SetBPMAtBeat( fBeat, (float) iVal );
+						out.m_SongTiming.SetBPMAtBeat( fBeat, (float) iVal );
 						LOG->Trace( "Inserting new BPM change at beat %f, BPM %i", fBeat, iVal );
 					}
 					else
@@ -694,7 +694,7 @@ static void ReadGlobalTags( const NameToData_t &mapNameToData, Song &out, Measur
 						if( fBPM > 0.0f )
 						{
 							BPMSegment newSeg( BeatToNoteRow(fBeat), fBPM );
-							out.AddBPMSegment( newSeg );
+							out.m_SongTiming.AddBPMSegment( newSeg );
 							LOG->Trace( "Inserting new BPM change at beat %f, BPM %f", fBeat, newSeg.GetBPM() );
 						}
 						else
@@ -716,12 +716,12 @@ static void ReadGlobalTags( const NameToData_t &mapNameToData, Song &out, Measur
 					if( GetTagFromMap( mapNameToData, sTagToLookFor, sBeats ) )
 					{
 						// find the BPM at the time of this freeze
-						float fBPS = out.m_Timing.GetBPMAtBeat(fBeat) / 60.0f;
+						float fBPS = out.m_SongTiming.GetBPMAtBeat(fBeat) / 60.0f;
 						float fBeats = StringToFloat( sBeats ) / 48.0f;
 						float fFreezeSecs = fBeats / fBPS;
 
 						StopSegment newSeg( BeatToNoteRow(fBeat), fFreezeSecs );
-						out.AddStopSegment( newSeg );
+						out.m_SongTiming.AddStopSegment( newSeg );
 						LOG->Trace( "Inserting new Freeze at beat %f, secs %f", fBeat, newSeg.m_fStopSeconds );
 					}
 					else
@@ -750,7 +750,7 @@ static void ReadGlobalTags( const NameToData_t &mapNameToData, Song &out, Measur
 					if( fBPM > 0.0f )
 					{
 						BPMSegment newSeg( iStepIndex, fBPM );
-						out.AddBPMSegment( newSeg );
+						out.m_SongTiming.AddBPMSegment( newSeg );
 						LOG->Trace( "Inserting new BPM change at beat %f, BPM %f", NoteRowToBeat(newSeg.m_iStartRow), newSeg.GetBPM() );
 				
 					}
@@ -843,7 +843,7 @@ bool PMSLoader::LoadFromDir( const RString &sDir, Song &out )
 	/* Create a Steps for each. */
 	vector<Steps*> apSteps;
 	for( unsigned i=0; i<arrayPMSFileNames.size(); i++ )
-		apSteps.push_back( new Steps );
+		apSteps.push_back( out.CreateSteps() );
 
 	// Now, with our fancy little substring, trim the titles and
 	// figure out where each goes.
@@ -940,7 +940,7 @@ bool PMSLoader::LoadFromDir( const RString &sDir, Song &out )
 	ConvertString( out.m_sArtist, "utf-8,japanese" );
 	ConvertString( out.m_sGenre, "utf-8,japanese" );
 
-
+	out.TidyUpData();
 	return true;
 }
 

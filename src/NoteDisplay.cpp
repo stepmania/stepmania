@@ -286,7 +286,7 @@ void NoteDisplay::Update( float fDeltaTime )
 void NoteDisplay::SetActiveFrame( float fNoteBeat, Actor &actorToSet, float fAnimationLength, bool bVivid )
 {
 	/* -inf ... inf */
-	float fBeatOrSecond = cache->m_bAnimationBasedOnBeats ? GAMESTATE->m_fSongBeat : GAMESTATE->m_fMusicSeconds;
+	float fBeatOrSecond = cache->m_bAnimationBasedOnBeats ? m_pPlayerState->m_Position.m_fSongBeat : m_pPlayerState->m_Position.m_fMusicSeconds;
 	/* -len ... +len */
 	float fPercentIntoAnimation = fmodf( fBeatOrSecond, fAnimationLength );
 	/* -1 ... 1 */

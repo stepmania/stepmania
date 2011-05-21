@@ -1455,7 +1455,9 @@ void ScreenSelectMusic::MenuBack( const InputEventPlus &input )
 	// Handle unselect song (ffff)
 	// todo: this isn't right at all. -aj
 	/*
-	if( m_SelectionState == SelectionState_SelectingSteps  &&  !m_bStepsChosen[input.pn]  &&  input.MenuI == GAME_BUTTON_BACK  &&  input.type == IET_FIRST_PRESS )
+	if( m_SelectionState == SelectionState_SelectingSteps &&
+		!m_bStepsChosen[input.pn] && input.MenuI == GAME_BUTTON_BACK &&
+		input.type == IET_FIRST_PRESS )
 	{
 		// if a player has chosen their steps already, don't unchoose song.
 		FOREACH_HumanPlayer( p )
@@ -1530,7 +1532,6 @@ void ScreenSelectMusic::AfterStepsOrTrailChange( const vector<PlayerNumber> &vpn
 		else
 		{
 			// The numbers shouldn't stay if the current selection is NULL.
-			// todo: Let themers set the text value instead of just using 0. -aj
 			m_textHighScore[pn].SetText( NULL_SCORE_STRING );
 		}
 	}
@@ -1763,7 +1764,7 @@ void ScreenSelectMusic::AfterMusicChange()
 			case SampleMusicPreviewMode_LastSong: // fall through
 				// play the sample music
 				m_sSampleMusicToPlay = pSong->GetMusicPath();
-				m_pSampleMusicTimingData = &pSong->m_Timing;
+				m_pSampleMusicTimingData = &pSong->m_SongTiming;
 				m_fSampleStartSeconds = pSong->m_fMusicSampleStartSeconds;
 				m_fSampleLengthSeconds = pSong->m_fMusicSampleLengthSeconds;
 				break;

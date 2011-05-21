@@ -360,14 +360,14 @@ void ScoreKeeperNormal::AddScoreInternal( TapNoteScore score )
 		
 	}
 
-	ASSERT( iScore >= 0 );
+	ASSERT_M( iScore >= 0, "iScore < 0 before re-rounding" );
 
 	// Undo rounding from the last tap, and re-round.
 	iScore += m_iScoreRemainder;
 	m_iScoreRemainder = (iScore % m_iRoundTo);
 	iScore = iScore - m_iScoreRemainder;
 
-	ASSERT( iScore >= 0 );
+	ASSERT_M( iScore >= 0, "iScore < 0 after re-rounding" );
 
 	// LOG->Trace( "score: %i", iScore );
 }
@@ -443,7 +443,7 @@ void ScoreKeeperNormal::HandleComboInternal( int iNumHitContinueCombo, int iNumH
 
 	if( iNumBreakCombo == 0 )
 	{
-		TimingData td = GAMESTATE->m_pCurSong->m_Timing;
+		TimingData td = GAMESTATE->m_pCurSteps[m_pPlayerState->m_PlayerNumber]->m_Timing;
 		int multiplier = ( iRow == -1 ? 1 : td.GetComboSegmentAtRow( iRow ).m_iCombo );
 		m_pPlayerStageStats->m_iCurCombo += iNumHitContinueCombo * multiplier;
 	}
@@ -463,7 +463,7 @@ void ScoreKeeperNormal::HandleRowComboInternal( TapNoteScore tns, int iNumTapsIn
 	if ( tns >= m_MinScoreToContinueCombo )
 	{
 		m_pPlayerStageStats->m_iCurMissCombo = 0;
-		TimingData td = GAMESTATE->m_pCurSong->m_Timing;
+		TimingData td = GAMESTATE->m_pCurSteps[m_pPlayerState->m_PlayerNumber]->m_Timing;
 		int multiplier = ( iRow == -1 ? 1 : td.GetComboSegmentAtRow( iRow ).m_iCombo );
 		m_pPlayerStageStats->m_iCurCombo += iNumTapsInRow * multiplier;
 	}

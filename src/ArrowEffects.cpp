@@ -67,13 +67,13 @@ static float GetNoteFieldHeight( const PlayerState* pPlayerState )
 
 namespace
 {
-	float g_fExpandSeconds = 0;
 	struct PerPlayerData
 	{
 		float m_fMinTornadoX[MAX_COLS_PER_PLAYER];
 		float m_fMaxTornadoX[MAX_COLS_PER_PLAYER];
 		float m_fInvertDistance[MAX_COLS_PER_PLAYER];
 		float m_fBeatFactor;
+		float m_fExpandSeconds;
 	};
 	PerPlayerData g_EffectData[NUM_PLAYERS];
 };
@@ -82,22 +82,25 @@ void ArrowEffects::Update()
 {
 	const Style* pStyle = GAMESTATE->GetCurrentStyle();
 
-	{
-		static float fLastTime = 0;
-		float fTime = RageTimer::GetTimeSinceStartFast();
-		if( !GAMESTATE->m_bFreeze || !GAMESTATE->m_bDelay )
-		{
-			g_fExpandSeconds += fTime - fLastTime;
-			g_fExpandSeconds = fmodf( g_fExpandSeconds, PI*2 );
-		}
-		fLastTime = fTime;
-	}
-
 	FOREACH_PlayerNumber( pn )
 	{
 		const Style::ColumnInfo* pCols = pStyle->m_ColumnInfo[pn];
+		const SongPosition &position = GAMESTATE->m_bIsUsingStepTiming
+		? GAMESTATE->m_pPlayerState[pn]->m_Position : GAMESTATE->m_Position;
 
 		PerPlayerData &data = g_EffectData[pn];
+		
+		{
+			static float fLastTime = 0;
+			float fTime = RageTimer::GetTimeSinceStartFast();
+			if( !position.m_bFreeze || !position.m_bDelay )
+			{
+				data.m_fExpandSeconds += fTime - fLastTime;
+				data.m_fExpandSeconds = fmodf( data.m_fExpandSeconds, PI*2 );
+			}
+			fLastTime = fTime;
+		}
+		
 		// Update Tornado
 		for( int iColNum = 0; iColNum < MAX_COLS_PER_PLAYER; ++iColNum )
 		{
@@ -176,7 +179,7 @@ void ArrowEffects::Update()
 		// Update Beat
 		do {
 			float fAccelTime = 0.2f, fTotalTime = 0.5f;
-			float fBeat = GAMESTATE->m_fSongBeatVisible + fAccelTime;
+			float fBeat = position.m_fSongBeatVisible + fAccelTime;
 
 			const bool bEvenBeat = ( int(fBeat) % 2 ) != 0;
 
@@ -208,6 +211,50 @@ void ArrowEffects::Update()
 	}
 }
 
+float GetSpeedMultiplier( float fSongBeat, float fMusicSeconds, const TimingData &tim )
+{
+	if( tim.m_SpeedSegments.size() == 0 )
+		return 1.0;
+
+	const int index = tim.GetSpeedSegmentIndexAtBeat( fSongBeat );
+	
+	const SpeedSegment &seg = tim.m_SpeedSegments[index];
+	float fStartBeat = NoteRowToBeat(seg.m_iStartRow);
+	float fStartTime = tim.GetElapsedTimeFromBeat( fStartBeat ) - tim.GetDelayAtBeat( fStartBeat );
+	float fEndTime;
+	float fCurTime = fMusicSeconds;
+	
+	if( seg.m_usMode == 1 ) // seconds
+	{
+		fEndTime = fStartTime + seg.m_fWait;
+	}
+	else
+	{
+		fEndTime = tim.GetElapsedTimeFromBeat( fStartBeat + seg.m_fWait ) - tim.GetDelayAtBeat( fStartBeat + seg.m_fWait );
+	}
+	
+	if( ( index == 0 && tim.m_SpeedSegments[0].m_fWait > 0.0 ) && fCurTime < fStartTime )
+	{
+		return 1.0;
+	}
+	else if( fEndTime >= fCurTime && ( index > 0 || tim.m_SpeedSegments[0].m_fWait > 0.0 ) )
+	{
+		const float fPriorSpeed = ( index == 0 ? 1 : tim.m_SpeedSegments[index - 1].m_fPercent );
+		float fTimeUsed = fCurTime - fStartTime;
+		float fDuration = fEndTime - fStartTime;
+		float fRatioUsed = fDuration == 0.0 ? 1 : fTimeUsed / fDuration;
+		
+		float fDistance = fPriorSpeed - seg.m_fPercent;
+		float fRatioNeed = fRatioUsed * -fDistance;
+		return (fPriorSpeed + fRatioNeed);
+	}
+	else 
+	{
+		return seg.m_fPercent;
+	}
+
+}
+
 /* For visibility testing: if bAbsolute is false, random modifiers must return
  * the minimum possible scroll speed. */
 float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float fNoteBeat, float &fPeakYOffsetOut, bool &bIsPastPeakOut, bool bAbsolute )
@@ -217,21 +264,27 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 	bIsPastPeakOut = true;
 
 	float fYOffset = 0;
+	const SongPosition &position = GAMESTATE->m_bIsUsingStepTiming
+	? pPlayerState->m_Position : GAMESTATE->m_Position;
+	
+	float fSongBeat = position.m_fSongBeatVisible;
+	
+	Steps *pCurSteps = GAMESTATE->m_pCurSteps[pPlayerState->m_PlayerNumber];
 
 	/* Usually, fTimeSpacing is 0 or 1, in which case we use entirely beat spacing or
 	 * entirely time spacing (respectively). Occasionally, we tween between them. */
 	if( pPlayerState->m_PlayerOptions.GetCurrent().m_fTimeSpacing != 1.0f )
 	{
-		float fSongBeat = GAMESTATE->m_fSongBeatVisible;
 		float fBeatsUntilStep = fNoteBeat - fSongBeat;
 		float fYOffsetBeatSpacing = fBeatsUntilStep;
-		fYOffset += fYOffsetBeatSpacing * (1-pPlayerState->m_PlayerOptions.GetCurrent().m_fTimeSpacing);
+		float fSpeedMultiplier = ( GAMESTATE->m_bInStepEditor || !GAMESTATE->m_bIsUsingStepTiming ) ? 1.0 : GetSpeedMultiplier( position.m_fSongBeatVisible, position.m_fMusicSecondsVisible, pCurSteps->m_Timing );
+		fYOffset += fSpeedMultiplier * fYOffsetBeatSpacing * (1-pPlayerState->m_PlayerOptions.GetCurrent().m_fTimeSpacing);
 	}
 
 	if( pPlayerState->m_PlayerOptions.GetCurrent().m_fTimeSpacing != 0.0f )
 	{
-		float fSongSeconds = GAMESTATE->m_fMusicSecondsVisible;
-		float fNoteSeconds = GAMESTATE->m_pCurSong->GetElapsedTimeFromBeat(fNoteBeat);
+		float fSongSeconds = GAMESTATE->m_Position.m_fMusicSecondsVisible;
+		float fNoteSeconds = pCurSteps->m_Timing.GetElapsedTimeFromBeat(fNoteBeat);
 		float fSecondsUntilStep = fNoteSeconds - fSongSeconds;
 		float fBPM = pPlayerState->m_PlayerOptions.GetCurrent().m_fScrollBPM;
 		float fBPS = fBPM/60.f;
@@ -242,7 +295,7 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 	// TODO: If we allow noteskins to have metricable row spacing
 	// (per issue 24), edit this to reflect that. -aj
 	fYOffset *= ARROW_SPACING;
-
+	
 	// don't mess with the arrows after they've crossed 0
 	if( fYOffset < 0 )
 		return fYOffset * pPlayerState->m_PlayerOptions.GetCurrent().m_fScrollSpeed;
@@ -288,6 +341,7 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 
 	// Factor in scroll speed
 	float fScrollSpeed = pPlayerState->m_PlayerOptions.GetCurrent().m_fScrollSpeed;
+	
 	if( pPlayerState->m_PlayerOptions.GetCurrent().m_fRandomSpeed > 0 && !bAbsolute )
 	{
 		// Generate a deterministically "random" speed for each arrow.
@@ -307,7 +361,10 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 
 	if( fAccels[PlayerOptions::ACCEL_EXPAND] != 0 )
 	{
-		float fExpandMultiplier = SCALE( RageFastCos(g_fExpandSeconds*EXPAND_MULTIPLIER_FREQUENCY), 
+		// TODO: Don't index by PlayerNumber.
+		PerPlayerData &data = g_EffectData[pPlayerState->m_PlayerNumber];
+	
+		float fExpandMultiplier = SCALE( RageFastCos(data.m_fExpandSeconds*EXPAND_MULTIPLIER_FREQUENCY), 
 						EXPAND_MULTIPLIER_SCALE_FROM_LOW, EXPAND_MULTIPLIER_SCALE_FROM_HIGH,
 						EXPAND_MULTIPLIER_SCALE_TO_LOW, EXPAND_MULTIPLIER_SCALE_TO_HIGH );
 		fScrollSpeed *=	SCALE( fAccels[PlayerOptions::ACCEL_EXPAND], 
@@ -511,7 +568,7 @@ float ArrowEffects::GetRotationZ( const PlayerState* pPlayerState, float fNoteBe
 	// As usual, enable dizzy hold heads at your own risk. -Wolfman2000
 	if( fEffects[PlayerOptions::EFFECT_DIZZY] != 0 && ( DIZZY_HOLD_HEADS || !bIsHoldHead ) )
 	{
-		const float fSongBeat = GAMESTATE->m_fSongBeatVisible;
+		const float fSongBeat = pPlayerState->m_Position.m_fSongBeatVisible;
 		float fDizzyRotation = fNoteBeat - fSongBeat;
 		fDizzyRotation *= fEffects[PlayerOptions::EFFECT_DIZZY];
 		fDizzyRotation = fmodf( fDizzyRotation, 2*PI );
@@ -528,7 +585,7 @@ float ArrowEffects::ReceptorGetRotationZ( const PlayerState* pPlayerState )
 
 	if( fEffects[PlayerOptions::EFFECT_CONFUSION] != 0 )
 	{
-		float fConfRotation = GAMESTATE->m_fSongBeatVisible;
+		float fConfRotation = pPlayerState->m_Position.m_fSongBeatVisible;
 		fConfRotation *= fEffects[PlayerOptions::EFFECT_CONFUSION];
 		fConfRotation = fmodf( fConfRotation, 2*PI );
 		fConfRotation *= -180/PI;
@@ -680,7 +737,7 @@ float ArrowEffects::GetBrightness( const PlayerState* pPlayerState, float fNoteB
 	if( GAMESTATE->IsEditing() )
 		return 1;
 
-	float fSongBeat = GAMESTATE->m_fSongBeatVisible;
+	float fSongBeat = pPlayerState->m_Position.m_fSongBeatVisible;
 	float fBeatsUntilStep = fNoteBeat - fSongBeat;
 
 	float fBrightness = SCALE( fBeatsUntilStep, 0, -1, 1.f, 0.f );

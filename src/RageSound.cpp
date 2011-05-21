@@ -51,7 +51,7 @@ RageSound::RageSound():
 	m_Mutex( "RageSound" ), m_pSource(NULL), 
 	m_sFilePath(""), m_Param(), m_iStreamFrame(0),
 	m_iStoppedSourceFrame(0), m_bPlaying(false),
-	m_sError(""), m_bDeleteWhenFinished(false)
+	m_bDeleteWhenFinished(false), m_sError("")
 {
 	ASSERT( SOUNDMAN );
 }

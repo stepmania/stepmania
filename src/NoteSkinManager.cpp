@@ -16,7 +16,8 @@
 #include <map>
 #include "SpecialFiles.h"
 
-NoteSkinManager*	NOTESKIN = NULL;	// global object accessable from anywhere in the program
+/** @brief Have the NoteSkinManager available throughout the program. */
+NoteSkinManager*	NOTESKIN = NULL;
 
 const RString GAME_COMMON_NOTESKIN_NAME = "common";
 const RString GAME_BASE_NOTESKIN_NAME = "default";
@@ -199,7 +200,7 @@ bool NoteSkinManager::DoesNoteSkinExist( const RString &sSkinName )
 	vector<RString> asSkinNames;
 	GetAllNoteSkinNamesForGame( GAMESTATE->m_pCurGame, asSkinNames );
 	for( unsigned i=0; i<asSkinNames.size(); i++ )
-		if( 0==stricmp(sSkinName, asSkinNames[i]) )
+		if( sSkinName.EqualsNoCase(asSkinNames[i]) )
 			return true;
 	return false;
 }
@@ -251,7 +252,7 @@ RString NoteSkinManager::GetMetric( const RString &sButtonName, const RString &s
 
 int NoteSkinManager::GetMetricI( const RString &sButtonName, const RString &sValueName )
 {
-	return atoi( GetMetric(sButtonName,sValueName) );
+	return StringToInt( GetMetric(sButtonName,sValueName) );
 }
 
 float NoteSkinManager::GetMetricF( const RString &sButtonName, const RString &sValueName )
@@ -261,7 +262,8 @@ float NoteSkinManager::GetMetricF( const RString &sButtonName, const RString &sV
 
 bool NoteSkinManager::GetMetricB( const RString &sButtonName, const RString &sValueName )
 {
-	return atoi( GetMetric(sButtonName,sValueName) ) != 0;
+	// Could also call GetMetricI here...hmm.
+	return StringToInt( GetMetric(sButtonName,sValueName) ) != 0;
 }
 
 apActorCommands NoteSkinManager::GetMetricA( const RString &sButtonName, const RString &sValueName )

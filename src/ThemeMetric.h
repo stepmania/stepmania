@@ -21,7 +21,7 @@ public:
 template<class T>
 struct ThemeMetricTypeTraits
 {
-        enum { Callable = 1 };
+	enum { Callable = 1 };
 };
 
 /* LuaReference and apActorCommands return the function directly without calling it. */
@@ -68,7 +68,7 @@ public:
 	{
 		ThemeManager::Subscribe( this );
 	}
-	
+
 	~ThemeMetric()
 	{
 		ThemeManager::Unsubscribe( this );
@@ -131,7 +131,7 @@ public:
 	 * @brief Retrieve the metric's group.
 	 * @return the metric's group. */
 	const RString &GetGroup() const { return m_sGroup; }
-	
+
 	/**
 	 * @brief Retrieve the metric's value.
 	 * @return the metric's value. */
@@ -154,7 +154,7 @@ public:
 
 		return m_currentValue;
 	}
-	
+
 	operator const T& () const
 	{
 		return GetValue();
@@ -162,7 +162,8 @@ public:
 
 	bool IsLoaded() const	{ return m_Value.IsSet(); }
 
-	//Hacks for VC6 for all boolean operators.
+	// Hacks for VC6 for all boolean operators.
+	// todo: get rid of these -aj
 	bool operator ! () const { return !GetValue(); }
 	bool operator && ( const T& input ) const { return GetValue() && input; }
 	bool operator || ( const T& input ) const { return GetValue() || input; }

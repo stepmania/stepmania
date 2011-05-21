@@ -8,9 +8,11 @@ local ZeroIfNotFound = { __index = function() return 0 end; };
 
 -- Retrieve the amount of taps/holds/rolls involved. Used for some formulas.
 function GetTotalItems(radars)
-	return radars:GetValue('RadarCategory_TapsAndHolds') 
-		+ radars:GetValue('RadarCategory_Holds') 
-		+ radars:GetValue('RadarCategory_Rolls');
+	local total = radars:GetValue('RadarCategory_TapsAndHolds')
+	total = total + radars:GetValue('RadarCategory_Holds') 
+	total = total + radars:GetValue('RadarCategory_Rolls')
+	total = total + radars:GetValue('RadarCategory_Lifts')
+	return total
 end;
 
 -- Determine whether marvelous timing is to be considered.
@@ -87,11 +89,14 @@ r['DDR Extreme'] = function(params, pss)
 	local totalItems = GetTotalItems(radarValues);
 	local singleStep = (1 + totalItems) * totalItems / 2;
 	if (not Shared.CurrentStep) then
-		Shared.CurrentStep = 0
+		Shared.CurrentStep = {};
+		Shared.CurrentStep["P1"] = 0;
+		Shared.CurrentStep["P2"] = 0;
 	end;
-	Shared.CurrentStep = Shared.CurrentStep + 1;
+	local pn = PlayerNumberToString(params.Player);
+	Shared.CurrentStep[pn] = Shared.CurrentStep[pn] + 1;
 	local stepValue = math.floor(baseScore /singleStep);
-	local stepLast = stepValue * Shared.CurrentStep;
+	local stepLast = stepValue * Shared.CurrentStep[pn];
 	pss:SetCurMaxScore(pss:GetCurMaxScore() + 
 		(stepLast * judgmentBase['TapNoteScore_W1']));
 	local judgeScore = 0;
@@ -105,9 +110,9 @@ r['DDR Extreme'] = function(params, pss)
 	end;
 	local stepScore = judgeScore * stepLast;
 	pss:SetScore(pss:GetScore() + stepScore);
-	if (Shared.CurrentStep >= totalItems) then -- Just in case.
+	if (Shared.CurrentStep[pn] >= totalItems) then -- Just in case.
 		-- TODO: Implement the bonus for the last step?
-		Shared.CurrentStep = 0; -- Reset for the next song.
+		Shared.CurrentStep[pn] = 0; -- Reset for the next song.
 	end;
 end;
 -----------------------------------------------------------

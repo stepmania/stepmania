@@ -64,10 +64,6 @@ void ScreenWithMenuElements::Init()
 		this->AddChild( m_MenuTimer );
 	}
 
-	/* TODO: Remove overlay and underlay in favor of more flexible decorations */
-	// Decorations don't let you use UpdateCommand, so don't ever
-	// remove underlay and overlay, otherwise good themes break. -aj
-
 	m_sprUnderlay.Load( THEME->GetPathB(m_sName,"underlay") );
 	m_sprUnderlay->SetName("Underlay");
 	m_sprUnderlay->SetDrawOrder( DRAW_ORDER_UNDERLAY );

@@ -10,6 +10,7 @@
 #include "ScreenMessage.h"
 #include "ThemeMetric.h"
 #include "InputEventPlus.h"
+#include "TimingData.h"
 
 class ScoreDisplay;
 class LifeMeter;
@@ -147,6 +148,7 @@ protected:
 	PlayerState		*m_pPlayerState;
 	/** @brief The player's present stage stats. */
 	PlayerStageStats	*m_pPlayerStageStats;
+	TimingData      *m_Timing;
 	float			m_fNoteFieldHeight;
 
 	bool			m_bPaused;

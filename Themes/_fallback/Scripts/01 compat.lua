@@ -64,3 +64,13 @@ end
 if ScreenMetric then
 	ScreenMetric = Screen.Metric
 end
+
+--[[ GameState ]]
+--Aliases for old GAMESTATE timing functions.
+--These have been converted to SongPosition, but most themes still use these old functions.
+
+function GameState:GetSongBeat() return self:GetSongPosition():GetSongBeat() end
+function GameState:GetSongBeatNoOffset() return self:GetSongPosition():GetSongBeatNoOffset() end
+function GameState:GetSongBPS() return self:GetSongPosition():GetCurBPS() end
+function GameState:GetSongDelay() return self:GetSongPosition():GetDelay() end
+function GameState:GetSongFreeze() return self:GetSongPosition():GetFreeze() end

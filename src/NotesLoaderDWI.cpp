@@ -10,6 +10,7 @@
 #include "GameInput.h"
 #include "NotesLoader.h"
 #include "PrefsManager.h"
+#include "Difficulty.h"
 
 #include <map>
 
@@ -140,6 +141,33 @@ static bool Is192( const RString &sStepData, size_t pos )
 /** @brief All DWI files use 4 beats per measure. */
 const int BEATS_PER_MEASURE = 4;
 
+/* We prefer the normal names; recognize a number of others, too. (They'll get
+ * normalized when written to SMs, etc.) */
+Difficulty DwiCompatibleStringToDifficulty( const RString& sDC )
+{
+	RString s2 = sDC;
+	s2.MakeLower();
+	if( s2 == "beginner" )			return Difficulty_Beginner;
+	else if( s2 == "easy" )		return Difficulty_Easy;
+	else if( s2 == "basic" )		return Difficulty_Easy;
+	else if( s2 == "light" )		return Difficulty_Easy;
+	else if( s2 == "medium" )		return Difficulty_Medium;
+	else if( s2 == "another" )		return Difficulty_Medium;
+	else if( s2 == "trick" )		return Difficulty_Medium;
+	else if( s2 == "standard" )	return Difficulty_Medium;
+	else if( s2 == "difficult")	return Difficulty_Medium;
+	else if( s2 == "hard" )		return Difficulty_Hard;
+	else if( s2 == "ssr" )			return Difficulty_Hard;
+	else if( s2 == "maniac" )		return Difficulty_Hard;
+	else if( s2 == "heavy" )		return Difficulty_Hard;
+	else if( s2 == "smaniac" )		return Difficulty_Challenge;
+	else if( s2 == "challenge" )	return Difficulty_Challenge;
+	else if( s2 == "expert" )		return Difficulty_Challenge;
+	else if( s2 == "oni" )			return Difficulty_Challenge;
+	else if( s2 == "edit" )		return Difficulty_Edit;
+	else							return Difficulty_Invalid;
+}
+
 /**
  * @brief Look through the notes tag to extract the data.
  * @param sMode the steps type.
@@ -206,7 +234,7 @@ static bool LoadFromDWITokens(
 	DEFAULT_FAIL( out.m_StepsType );
 	}
 
-	int iNumFeet = atoi(sNumFeet);
+	int iNumFeet = StringToInt(sNumFeet);
 	// out.SetDescription(sDescription); // Don't put garbage in the description.
 	out.SetMeter(iNumFeet);
 	out.SetDifficulty( DwiCompatibleStringToDifficulty(sDescription) );
@@ -447,10 +475,10 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, set<RString> &Bla
 		}
 
 		// handle the data
-		if( 0==stricmp(sValueName,"FILE") )
+		if( sValueName.EqualsNoCase("FILE") )
 			out.m_sMusicFile = sParams[1];
 
-		else if( 0==stricmp(sValueName,"TITLE") )
+		else if( sValueName.EqualsNoCase("TITLE") )
 		{
 			NotesLoader::GetMainAndSubTitlesFromFullTitle( sParams[1], out.m_sMainTitle, out.m_sSubTitle );
 
@@ -460,38 +488,38 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, set<RString> &Bla
 			ConvertString( out.m_sSubTitle, "utf-8,english" );
 		}
 
-		else if( 0==stricmp(sValueName,"ARTIST") )
+		else if( sValueName.EqualsNoCase("ARTIST") )
 		{
 			out.m_sArtist = sParams[1];
 			ConvertString( out.m_sArtist, "utf-8,english" );
 		}
 		
-		else if( 0==stricmp(sValueName,"GENRE") )
+		else if( sValueName.EqualsNoCase("GENRE") )
 		{
 			out.m_sGenre = sParams[1];
 			ConvertString( out.m_sGenre, "utf-8,english" );
 		}
 
-		else if( 0==stricmp(sValueName,"CDTITLE") )
+		else if( sValueName.EqualsNoCase("CDTITLE") )
 			out.m_sCDTitleFile = sParams[1];
 
-		else if( 0==stricmp(sValueName,"BPM") )
+		else if( sValueName.EqualsNoCase("BPM") )
 		{
 			const float fBPM = StringToFloat( sParams[1] );
 			
 			if( PREFSMAN->m_bQuirksMode )
 			{
-				out.AddBPMSegment( BPMSegment(0, fBPM) );
+				out.m_SongTiming.AddBPMSegment( BPMSegment(0, fBPM) );
 			}
 			else{
 				if( fBPM > 0.0f )
-					out.AddBPMSegment( BPMSegment(0, fBPM) );
+					out.m_SongTiming.AddBPMSegment( BPMSegment(0, fBPM) );
 				else
 					LOG->UserLog( "Song file", sPath, "has an invalid BPM change at beat %f, BPM %f.",
 							  NoteRowToBeat(0), fBPM );
 			}
 		}
-		else if( 0==stricmp(sValueName,"DISPLAYBPM") )
+		else if( sValueName.EqualsNoCase("DISPLAYBPM") )
 		{
 			// #DISPLAYBPM:[xxx..xxx]|[xxx]|[*]; 
 		    int iMin, iMax;
@@ -515,17 +543,17 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, set<RString> &Bla
 			}
 		}
 
-		else if( 0==stricmp(sValueName,"GAP") )
+		else if( sValueName.EqualsNoCase("GAP") )
 			// the units of GAP is 1/1000 second
-			out.m_Timing.m_fBeat0OffsetInSeconds = -atoi( sParams[1] ) / 1000.0f;
+			out.m_SongTiming.m_fBeat0OffsetInSeconds = -StringToInt( sParams[1] ) / 1000.0f;
 
-		else if( 0==stricmp(sValueName,"SAMPLESTART") )
+		else if( sValueName.EqualsNoCase("SAMPLESTART") )
 			out.m_fMusicSampleStartSeconds = ParseBrokenDWITimestamp(sParams[1], sParams[2], sParams[3]);
 
-		else if( 0==stricmp(sValueName,"SAMPLELENGTH") )
+		else if( sValueName.EqualsNoCase("SAMPLELENGTH") )
 			out.m_fMusicSampleLengthSeconds = ParseBrokenDWITimestamp(sParams[1], sParams[2], sParams[3]);
 
-		else if( 0==stricmp(sValueName,"FREEZE") )
+		else if( sValueName.EqualsNoCase("FREEZE") )
 		{
 			vector<RString> arrayFreezeExpressions;
 			split( sParams[1], ",", arrayFreezeExpressions );
@@ -542,12 +570,12 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, set<RString> &Bla
 				int iFreezeRow = BeatToNoteRow( StringToFloat(arrayFreezeValues[0]) / 4.0f );
 				float fFreezeSeconds = StringToFloat( arrayFreezeValues[1] ) / 1000.0f;
 				
-				out.AddStopSegment( StopSegment(iFreezeRow, fFreezeSeconds) );
+				out.m_SongTiming.AddStopSegment( StopSegment(iFreezeRow, fFreezeSeconds) );
 //				LOG->Trace( "Adding a freeze segment: beat: %f, seconds = %f", fFreezeBeat, fFreezeSeconds );
 			}
 		}
 
-		else if( 0==stricmp(sValueName,"CHANGEBPM")  || 0==stricmp(sValueName,"BPMCHANGE") )
+		else if( sValueName.EqualsNoCase("CHANGEBPM")  || sValueName.EqualsNoCase("BPMCHANGE") )
 		{
 			vector<RString> arrayBPMChangeExpressions;
 			split( sParams[1], ",", arrayBPMChangeExpressions );
@@ -567,7 +595,7 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, set<RString> &Bla
 				if( fBPM > 0.0f )
 				{
 					BPMSegment bs( iStartIndex, fBPM );
-					out.AddBPMSegment( bs );
+					out.m_SongTiming.AddBPMSegment( bs );
 				}
 				else
 				{
@@ -577,12 +605,12 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, set<RString> &Bla
 			}
 		}
 
-		else if( 0==stricmp(sValueName,"SINGLE")  || 
-			 0==stricmp(sValueName,"DOUBLE")  ||
-			 0==stricmp(sValueName,"COUPLE")  || 
-			 0==stricmp(sValueName,"SOLO") )
+		else if( sValueName.EqualsNoCase("SINGLE")  || 
+			 sValueName.EqualsNoCase("DOUBLE")  ||
+			 sValueName.EqualsNoCase("COUPLE")  || 
+			 sValueName.EqualsNoCase("SOLO") )
 		{
-			Steps* pNewNotes = new Steps;
+			Steps* pNewNotes = out.CreateSteps();
 			LoadFromDWITokens( 
 				sParams[0], 
 				sParams[1], 
@@ -597,8 +625,8 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, set<RString> &Bla
 			else
 				delete pNewNotes;
 		}
-		else if( 0==stricmp(sValueName,"DISPLAYTITLE") ||
-			0==stricmp(sValueName,"DISPLAYARTIST") )
+		else if( sValueName.EqualsNoCase("DISPLAYTITLE") ||
+			sValueName.EqualsNoCase("DISPLAYARTIST") )
 		{
 			/* We don't want to support these tags.  However, we don't want
 			 * to pick up images used here as song images (eg. banners). */
@@ -628,7 +656,7 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, set<RString> &Bla
 			// do nothing.  We don't care about this value name
 		}
 	}
-
+	out.TidyUpData();
 	return true;
 }
 

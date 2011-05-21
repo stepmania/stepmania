@@ -32,6 +32,7 @@ void BPMDisplay::Load()
 	SET_EXTRA_COMMAND.Load( m_sName, "SetExtraCommand" );
 	CYCLE.Load( m_sName, "Cycle" );
 	RANDOM_CYCLE_SPEED.Load( m_sName, "RandomCycleSpeed" );
+	COURSE_CYCLE_SPEED.Load( m_sName, "CourseCycleSpeed" );
 	SEPARATOR.Load( m_sName, "Separator" );
 	SHOW_QMARKS.Load( m_sName, "ShowQMarksInRandomCycle" );
 	NO_BPM_TEXT.Load( m_sName, "NoBpmText" );
@@ -204,9 +205,11 @@ void BPMDisplay::SetBpmFromCourse( const Course* pCourse )
 
 	StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
 	Trail *pTrail = pCourse->GetTrail( st );
-	ASSERT( pTrail );
+	// GetTranslitFullTitle because "Crashinfo.txt is garbled because of the ANSI output as usual." -f
+	ASSERT_M( pTrail, ssprintf("Course '%s' has no trail for StepsType '%s'", pCourse->GetTranslitFullTitle().c_str(), StringConversion::ToString(st).c_str() ) );
 
-	m_fCycleTime = 0.2f;
+	// todo: let themers define this. -aj
+	m_fCycleTime = (float)COURSE_CYCLE_SPEED;
 
 	if( (int)pTrail->m_vEntries.size() > CommonMetrics::MAX_COURSE_ENTRIES_BEFORE_VARIOUS )
 	{
@@ -276,7 +279,7 @@ SongBPMDisplay::SongBPMDisplay()
 
 void SongBPMDisplay::Update( float fDeltaTime ) 
 {
-	float fGameStateBPM = GAMESTATE->m_fCurBPS * 60.0f;
+	float fGameStateBPM = GAMESTATE->m_Position.m_fCurBPS * 60.0f;
 	if( m_fLastGameStateBPM != fGameStateBPM )
 	{
 		m_fLastGameStateBPM = fGameStateBPM;
@@ -304,12 +307,23 @@ public:
 		}
 		return 0;
 	}
+	static int SetFromCourse( T* p, lua_State *L )
+	{
+		if( lua_isnil(L,1) ) { p->NoBPM(); }
+		else
+		{
+			const Course* pCourse = Luna<Course>::check( L, 1, true );
+			p->SetBpmFromCourse(pCourse);
+		}
+		return 0;
+	}
 	static int GetText( T* p, lua_State *L )		{ lua_pushstring( L, p->GetText() ); return 1; }
 
 	LunaBPMDisplay()
 	{
 		ADD_METHOD( SetFromGameState );
 		ADD_METHOD( SetFromSong );
+		ADD_METHOD( SetFromCourse );
 		ADD_METHOD( GetText );
 	}
 };

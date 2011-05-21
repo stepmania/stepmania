@@ -202,7 +202,6 @@ void StageStats::FinalizeScores( bool bSummary )
 		m_multiPlayer[mp].m_HighScore = FillInHighScore( m_multiPlayer[mp], *GAMESTATE->m_pMultiPlayerState[mp], "", sPlayerGuid );
 	}
 
-	// todo: don't save scores in autoplay -aj
 	FOREACH_HumanPlayer( p )
 	{
 		const HighScore &hs = m_player[p].m_HighScore;
@@ -213,6 +212,10 @@ void StageStats::FinalizeScores( bool bSummary )
 
 		// Don't save DQ'd scores
 		if( hs.GetDisqualified() )
+			continue;
+
+		// Don't save autoplay scores
+		if( m_bUsedAutoplay )
 			continue;
 
 		if( bSummary )

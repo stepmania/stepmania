@@ -1922,7 +1922,7 @@ RString Profile::MakeUniqueFileNameNoExtension( RString sDir, RString sFileNameB
 			continue;
 
 		ASSERT( matches.size() == 1 );
-		iIndex = atoi( matches[0] )+1;
+		iIndex = StringToInt( matches[0] )+1;
 		break;
 	}
 

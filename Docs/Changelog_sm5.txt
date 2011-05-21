@@ -8,7 +8,61 @@ ________________________________________________________________________________
 StepMania 5.0 $NEXT | 20110xyy
 --------------------------------------------------------------------------------
 
+2011/05/20
+----------
+* [CryptManager] Added SHA1File Lua binding. [AJ]
+
+2011/05/19
+----------
+* [BPMDisplay] Add CourseCycleSpeed metric. [AJ]
+
+2011/05/17
+----------
+* [NotesWriterSM] Write out OpenITG compatible SM files from here on out.
+  This includes turning Warps into Negative Stops. For those that wanted
+  negative BPMs specifically, my apologies, but stops are easier on math.
+  [Wolfman2000]
+
+2011/05/16
+----------
+* [ProfileManager] Added ProfileWasLoadedFromMemoryCard(PlayerNumber)
+  Lua binding. [AJ]
+* Added #FAKES to the SSC format. Similar to the fake arrows, these blocks
+  prevent all judgments within the range. [Wolfman2000]
+* Changed the syntax of #WARPS slightly. Now the second value is the relative
+  distance that is skipped, not the absolute value when you start hitting
+  arrows again. [Wolfman2000]
+
+2011/05/15
+----------
+* [ScreenGameplay] Removed hardcoded commands for Debug (give up text) and
+  replace them with DebugStartOnCommand, DebugBackOnCommand, and
+  DebugTweenOffCommand. [AJ] 
+* Added #SPEEDS to the SSC format. This multiplies your scrolling speed during
+  gameplay, not replaces it (see mod attacks for replacing). [Wolfman2000]
+
+2011/05/14
+----------
+* [ModIcon] Added StopWords metric. [AJ]
+* [ScreenSelectMaster] Add "ScreenEmpty" param to MenuStartP# when the GameCommand
+  doesn't set a screen. [AJ]
+* [StepsDisplay] Added MeterFormatString metric. [AJ]
+* [MusicWheel] Added ShowSectionsInBPMSort and ShowSectionsInLengthSort metrics. [AJ]
+* [ScreenEvaluation] Stop the Bonus bars from overflowing in course modes. [AJ]
+* [Banner] Added ScrollMode and ScrollSortOrder metrics. [AJ]
+
+2011/05/11
+----------
+* [GameSoundManager] Added PlayAnnouncer Lua binding. [AJ]
+* [AnnouncerManager] Add support for "gameplay combo #" for announcer. [AJ]
+
+2011/05/10
+----------
+* [Sprite] Added SetSecondsIntoAnimation Lua binding. [AJ]
+* [BPMDisplay] Added SetFromCourse Lua binding. [AJ]
+
 2011/05/03
+----------
 * [ScreenEdit] Allow changing the Beat 0 Offset, Music Sample Start, and
   Music Sample Length via Edit Song Info menu. [Wolfman2000]
 

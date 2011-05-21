@@ -8,16 +8,16 @@
 #include "RageUtil_AutoPtr.h"
 #include "RageUtil_CachedObject.h"
 #include "RageTypes.h"
+#include "Steps.h"
 #include <set>
 
-class Steps;
 class Style;
 class StepsID;
 struct lua_State;
 struct BackgroundChange;
 
 /** @brief The version of the .ssc file format. */
-const static float STEPFILE_VERSION_NUMBER = 0.59f;
+const static float STEPFILE_VERSION_NUMBER = 0.7f;
 
 /** @brief How many edits for this song can each profile have? */
 const int MAX_EDITS_PER_SONG_PER_PROFILE	= 5;
@@ -73,6 +73,7 @@ class Song
 	RString m_sSongDir;
 public:
 	void SetSongDir( const RString sDir ) { m_sSongDir = sDir; }
+	RString GetSongDir() { return m_sSongDir; }
 
 	/** @brief When should this song be displayed in the music wheel? */
 	enum SelectionDisplay
@@ -284,7 +285,10 @@ public:
 	bool Matches(RString sGroup, RString sSong) const;
 
 	/** @brief The Song's TimingData. */
-	TimingData m_Timing;
+	TimingData m_SongTiming;
+
+	/** @brief The initial offset of a song. */
+	float	m_fBeat0OffsetInSeconds;
 
 	typedef vector<BackgroundChange> 	VBackgroundChange;
 private:
@@ -316,9 +320,11 @@ public:
 	 * This must be sorted before gameplay. */
 	vector<LyricSegment>			m_LyricSegments;
 
+/* [splittiming]
 	void AddBPMSegment( const BPMSegment &seg ) { m_Timing.AddBPMSegment( seg ); }
 	void AddStopSegment( const StopSegment &seg ) { m_Timing.AddStopSegment( seg ); }
 	void AddWarpSegment( const WarpSegment &seg ) { m_Timing.AddWarpSegment( seg ); }
+*/
 	void AddBackgroundChange( BackgroundLayer blLayer, BackgroundChange seg );
 	void AddForegroundChange( BackgroundChange seg );
 	void AddLyricSegment( LyricSegment seg );
@@ -326,18 +332,47 @@ public:
 	void GetDisplayBpms( DisplayBpms &AddTo ) const;
 	const BackgroundChange &GetBackgroundAtBeat( BackgroundLayer iLayer, float fBeat ) const;
 
+/* [splittiming]
 	float GetBPMAtBeat( float fBeat ) const { return m_Timing.GetBPMAtBeat( fBeat ); }
 	void SetBPMAtBeat( float fBeat, float fBPM ) { m_Timing.SetBPMAtBeat( fBeat, fBPM ); }
 	BPMSegment& GetBPMSegmentAtBeat( float fBeat ) { return m_Timing.GetBPMSegmentAtBeat( fBeat ); }
+*/
+	
+	Steps *CreateSteps();
+	void InitSteps(Steps *pSteps);
+
 	/**
 	 * @brief Retrieve the beat based on the specified time.
 	 * @param fElapsedTime the amount of time since the Song started.
 	 * @return the appropriate beat. */
+	/* [splittiming]
+	float SongGetBeatFromElapsedTime( float fElapsedTime ) const 
+	{
+		return m_SongTiming.GetBeatFromElapsedTime( fElapsedTime );
+	}
+	float StepsGetBeatFromElapsedTime( float fElapsedTime, const Steps &steps ) const 
+	{
+		return steps.m_Timing.GetBeatFromElapsedTime( fElapsedTime );
+	}
+	
+	float SongGetElapsedTimeFromBeat( float fBeat ) const
+	{
+		return m_SongTiming.GetElapsedTimeFromBeat( fBeat );
+	}
+	float StepsGetElapsedTimeFromBeat( float fBeat, const Steps &steps ) const
+	{
+		return steps.m_Timing.GetElapsedTimeFromBeat( fBeat );
+	}
+	*/
+	
+	/* [splittiming]
 	float GetBeatFromElapsedTime( float fElapsedTime ) const 
 	{ 
 		return m_Timing.GetBeatFromElapsedTime( fElapsedTime );
 	}
 	float GetElapsedTimeFromBeat( float fBeat ) const { return m_Timing.GetElapsedTimeFromBeat( fBeat ); }
+	*/
+	
 	bool HasSignificantBpmChangesOrStops() const;
 	float GetStepsSeconds() const;
 	bool IsLong() const;
@@ -354,6 +389,12 @@ public:
 
 	void SetEnabled( bool b ) { m_bEnabled = b; }
 	bool GetEnabled() const { return m_bEnabled; }
+	/**
+	 * @brief Determine if the song should be shown on the MusicWheel normally.
+	 *
+	 * Songs that are not displayed normally may still be available during
+	 * random selection, extra stages, or other special conditions.
+	 * @return true if displayed normally, false otherwise. */
 	bool NormallyDisplayed() const;
 	bool ShowInDemonstrationAndRanking() const;
 

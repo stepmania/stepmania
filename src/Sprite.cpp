@@ -855,51 +855,11 @@ void Sprite::ScaleToClipped( float fWidth, float fHeight )
 
 	float fScaleFudgePercent = 0.15f;	// scale up to this amount in one dimension to avoid clipping.
 
-	int iSourceWidth	= m_pTexture->GetSourceWidth();
-	int iSourceHeight	= m_pTexture->GetSourceHeight();
-
 	// save the original X and Y.  We're going to restore them later.
 	float fOriginalX = GetX();
 	float fOriginalY = GetY();
 
-	if( IsDiagonalBanner(iSourceWidth, iSourceHeight) ) // this is a SSR/DWI CroppedSprite
-	{
-		float fCustomImageCoords[8] = {
-			0.02f,	0.78f, // top left
-			0.22f,	0.98f, // bottom left
-			0.98f,	0.22f, // bottom right
-			0.78f,	0.02f, // top right
-		};
-		Sprite::SetCustomImageCoords( fCustomImageCoords );
-
-		if( fWidth != -1 && fHeight != -1 )
-		{
-			m_size = RageVector2( fWidth, fHeight );
-		}
-		else
-		{
-			/* If no crop size is set, then we're only being used to crop diagonal
-			 * banners so they look like regular ones. We don't actually care about
-			 * the size of the image, only that it has an aspect ratio of 4:1. */
-			m_size = RageVector2( 256, 64 );
-		}
-		SetZoom( 1 );
-	}
-	else if( m_pTexture->GetID().filename.find("(was rotated)") != string::npos && 
-			 fWidth != -1 && fHeight != -1 )
-	{
-		/* Dumb hack: Normally, we crop all sprites except for diagonal banners,
-		 * which are stretched. Low-res versions of banners need to do the same
-		 * thing as their full resolution counterpart, so the crossfade looks right.
-		 * However, low-res diagonal banners are un-rotated, to save space.
-		 * BannerCache drops the above text into the "filename" (which is
-		 * otherwise unused for these banners) to tell us this.
-		 */
-		Sprite::StopUsingCustomCoords();
-		m_size = RageVector2( fWidth, fHeight );
-		SetZoom( 1 );
-	}
-	else if( fWidth != -1 && fHeight != -1 )
+	if( fWidth != -1 && fHeight != -1 )
 	{
 		// this is probably a background graphic or something not intended to be a CroppedSprite
 		Sprite::StopUsingCustomCoords();
@@ -956,51 +916,11 @@ void Sprite::CropTo( float fWidth, float fHeight )
 	if( !m_pTexture )
 		return;
 
-	int iSourceWidth	= m_pTexture->GetSourceWidth();
-	int iSourceHeight	= m_pTexture->GetSourceHeight();
-
 	// save the original X&Y.  We're going to restore them later.
 	float fOriginalX = GetX();
 	float fOriginalY = GetY();
 
-	if( IsDiagonalBanner(iSourceWidth, iSourceHeight) ) // this is a SSR/DWI CroppedSprite
-	{
-		float fCustomImageCoords[8] = {
-			0.02f,	0.78f, // top left
-			0.22f,	0.98f, // bottom left
-			0.98f,	0.22f, // bottom right
-			0.78f,	0.02f, // top right
-		};
-		Sprite::SetCustomImageCoords( fCustomImageCoords );
-
-		if( fWidth != -1 && fHeight != -1 )
-		{
-			m_size = RageVector2( fWidth, fHeight );
-		}
-		else
-		{
-			/* If no crop size is set, then we're only being used to crop diagonal
-			 * banners so they look like regular ones. We don't actually care about
-			 * the size of the image, only that it has an aspect ratio of 4:1.  */
-			m_size = RageVector2( 256, 64 );
-		}
-		SetZoom( 1 );
-	}
-	else if( m_pTexture->GetID().filename.find("(was rotated)") != string::npos && 
-			 fWidth != -1 && fHeight != -1 )
-	{
-		/* Dumb hack:  Normally, we crop all sprites except for diagonal banners,
-		 * which are stretched.  Low-res versions of banners need to do the same
-		 * thing as their full resolution counterpart, so the crossfade looks right.
-		 * However, low-res diagonal banners are un-rotated, to save space.  BannerCache
-		 * drops the above text into the "filename" (which is otherwise unused for
-		 * these banners) to tell us this.
-		 */
-		Sprite::StopUsingCustomCoords();
-		m_size = RageVector2( fWidth, fHeight );
-		SetZoom( 1 );
-	}
-	else if( fWidth != -1 && fHeight != -1 )
+	if( fWidth != -1 && fHeight != -1 )
 	{
 		// this is probably a background graphic or something not intended to be a CroppedSprite
 		Sprite::StopUsingCustomCoords();
@@ -1044,13 +964,6 @@ void Sprite::CropTo( float fWidth, float fHeight )
 	SetXY( fOriginalX, fOriginalY );
 }
 // end magic
-
-
-bool Sprite::IsDiagonalBanner( int iWidth, int iHeight )
-{
-	// A diagonal banner is a square.  Give a couple pixels of leeway.
-	return iWidth >= 100 && abs(iWidth - iHeight) < 2;
-}
 
 void Sprite::StretchTexCoords( float fX, float fY )
 {
@@ -1130,6 +1043,7 @@ public:
 	static int setstate( T* p, lua_State *L )		{ p->SetState( IArg(1) ); return 0; }
 	static int GetState( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetState() ); return 1; }
 	static int GetAnimationLengthSeconds( T* p, lua_State *L ) { lua_pushnumber( L, p->GetAnimationLengthSeconds() ); return 1; }
+	static int SetSecondsIntoAnimation( T* p, lua_State *L )	{ p->SetSecondsIntoAnimation(FArg(0)); return 0; }
 	static int SetTexture( T* p, lua_State *L )
 	{
 		RageTexture *pTexture = Luna<RageTexture>::check(L, 1);
@@ -1170,6 +1084,7 @@ public:
 		ADD_METHOD( setstate );
 		ADD_METHOD( GetState );
 		ADD_METHOD( GetAnimationLengthSeconds );
+		ADD_METHOD( SetSecondsIntoAnimation );
 		ADD_METHOD( SetTexture );
 		ADD_METHOD( GetTexture );
 		ADD_METHOD( SetEffectMode );

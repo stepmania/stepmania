@@ -27,10 +27,36 @@
 		2B30D6831315EA7E00044B68 /* MouseDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B30D6811315EA7E00044B68 /* MouseDevice.h */; };
 		2B76698B132FF71500586512 /* NotesLoaderSMA.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B766989132FF71500586512 /* NotesLoaderSMA.h */; };
 		2B76698C132FF71500586512 /* NotesLoaderSMA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2B76698A132FF71500586512 /* NotesLoaderSMA.cpp */; };
+		2B9C2E8D137A138B004C92F3 /* NotesLoaderJson.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2B9C2E89137A138B004C92F3 /* NotesLoaderJson.cpp */; };
+		2B9C2E8E137A138B004C92F3 /* NotesLoaderJson.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B9C2E8A137A138B004C92F3 /* NotesLoaderJson.h */; };
+		2B9C2E8F137A138B004C92F3 /* NotesWriterJson.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2B9C2E8B137A138B004C92F3 /* NotesWriterJson.cpp */; };
+		2B9C2E90137A138B004C92F3 /* NotesWriterJson.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B9C2E8C137A138B004C92F3 /* NotesWriterJson.h */; };
 		2BA7925E1304F20D002BD8E1 /* NotesLoaderSSC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2BA7925A1304F20D002BD8E1 /* NotesLoaderSSC.cpp */; };
 		2BA7925F1304F20D002BD8E1 /* NotesLoaderSSC.h in Headers */ = {isa = PBXBuildFile; fileRef = 2BA7925B1304F20D002BD8E1 /* NotesLoaderSSC.h */; };
 		2BA792601304F20D002BD8E1 /* NotesWriterSSC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2BA7925C1304F20D002BD8E1 /* NotesWriterSSC.cpp */; };
 		2BA792611304F20D002BD8E1 /* NotesWriterSSC.h in Headers */ = {isa = PBXBuildFile; fileRef = 2BA7925D1304F20D002BD8E1 /* NotesWriterSSC.h */; };
+		2BC6132413773C8E00CC8BBD /* png.c in Sources */ = {isa = PBXBuildFile; fileRef = 2BC6130D13773C8E00CC8BBD /* png.c */; };
+		2BC6132513773C8E00CC8BBD /* png.h in Headers */ = {isa = PBXBuildFile; fileRef = 2BC6130E13773C8E00CC8BBD /* png.h */; };
+		2BC6132613773C8E00CC8BBD /* pngconf.h in Headers */ = {isa = PBXBuildFile; fileRef = 2BC6130F13773C8E00CC8BBD /* pngconf.h */; };
+		2BC6132713773C8E00CC8BBD /* pngdebug.h in Headers */ = {isa = PBXBuildFile; fileRef = 2BC6131013773C8E00CC8BBD /* pngdebug.h */; };
+		2BC6132813773C8E00CC8BBD /* pngerror.c in Sources */ = {isa = PBXBuildFile; fileRef = 2BC6131113773C8E00CC8BBD /* pngerror.c */; };
+		2BC6132913773C8E00CC8BBD /* pngget.c in Sources */ = {isa = PBXBuildFile; fileRef = 2BC6131213773C8E00CC8BBD /* pngget.c */; };
+		2BC6132A13773C8E00CC8BBD /* pnginfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 2BC6131313773C8E00CC8BBD /* pnginfo.h */; };
+		2BC6132B13773C8E00CC8BBD /* pngmem.c in Sources */ = {isa = PBXBuildFile; fileRef = 2BC6131413773C8E00CC8BBD /* pngmem.c */; };
+		2BC6132C13773C8E00CC8BBD /* pngpread.c in Sources */ = {isa = PBXBuildFile; fileRef = 2BC6131513773C8E00CC8BBD /* pngpread.c */; };
+		2BC6132D13773C8E00CC8BBD /* pngpriv.h in Headers */ = {isa = PBXBuildFile; fileRef = 2BC6131613773C8E00CC8BBD /* pngpriv.h */; };
+		2BC6132E13773C8E00CC8BBD /* pngread.c in Sources */ = {isa = PBXBuildFile; fileRef = 2BC6131713773C8E00CC8BBD /* pngread.c */; };
+		2BC6132F13773C8E00CC8BBD /* pngrio.c in Sources */ = {isa = PBXBuildFile; fileRef = 2BC6131813773C8E00CC8BBD /* pngrio.c */; };
+		2BC6133013773C8E00CC8BBD /* pngrtran.c in Sources */ = {isa = PBXBuildFile; fileRef = 2BC6131913773C8E00CC8BBD /* pngrtran.c */; };
+		2BC6133113773C8E00CC8BBD /* pngrutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 2BC6131A13773C8E00CC8BBD /* pngrutil.c */; };
+		2BC6133213773C8E00CC8BBD /* pngset.c in Sources */ = {isa = PBXBuildFile; fileRef = 2BC6131B13773C8E00CC8BBD /* pngset.c */; };
+		2BC6133313773C8E00CC8BBD /* pngstruct.h in Headers */ = {isa = PBXBuildFile; fileRef = 2BC6131C13773C8E00CC8BBD /* pngstruct.h */; };
+		2BC6133513773C8E00CC8BBD /* pngtrans.c in Sources */ = {isa = PBXBuildFile; fileRef = 2BC6131E13773C8E00CC8BBD /* pngtrans.c */; };
+		2BC6133713773C8E00CC8BBD /* pngwio.c in Sources */ = {isa = PBXBuildFile; fileRef = 2BC6132013773C8E00CC8BBD /* pngwio.c */; };
+		2BC6133813773C8E00CC8BBD /* pngwrite.c in Sources */ = {isa = PBXBuildFile; fileRef = 2BC6132113773C8E00CC8BBD /* pngwrite.c */; };
+		2BC6133913773C8E00CC8BBD /* pngwtran.c in Sources */ = {isa = PBXBuildFile; fileRef = 2BC6132213773C8E00CC8BBD /* pngwtran.c */; };
+		2BC6133A13773C8E00CC8BBD /* pngwutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 2BC6132313773C8E00CC8BBD /* pngwutil.c */; };
+		2BC6133E13773D2C00CC8BBD /* pnglibconf.h in Headers */ = {isa = PBXBuildFile; fileRef = 2BC6133D13773D2C00CC8BBD /* pnglibconf.h */; };
 		2BD06FEE137242680018CB9F /* json_batchallocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 2BD06FDD137240CF0018CB9F /* json_batchallocator.h */; };
 		2BD06FEF137242680018CB9F /* json_internalarray.inl in Resources */ = {isa = PBXBuildFile; fileRef = 2BD06FDE137240CF0018CB9F /* json_internalarray.inl */; };
 		2BD06FF0137242680018CB9F /* json_internalmap.inl in Resources */ = {isa = PBXBuildFile; fileRef = 2BD06FDF137240CF0018CB9F /* json_internalmap.inl */; };
@@ -157,12 +183,10 @@
 		AA21D59D0712ADE4008B825F /* ScreenDimensions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA21D59C0712ADE4008B825F /* ScreenDimensions.cpp */; };
 		AA21E4790A9826CD00684CEA /* libjpeg_link.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AA21E4730A9826CD00684CEA /* libjpeg_link.a */; };
 		AA21E47B0A9826CD00684CEA /* libogg_link.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AA21E4750A9826CD00684CEA /* libogg_link.a */; };
-		AA21E47C0A9826CD00684CEA /* libpng_link.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AA21E4760A9826CD00684CEA /* libpng_link.a */; };
 		AA21E47D0A9826CD00684CEA /* libtheora_link.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AA21E4770A9826CD00684CEA /* libtheora_link.a */; };
 		AA21E47E0A9826CD00684CEA /* libvorbis_link.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AA21E4780A9826CD00684CEA /* libvorbis_link.a */; };
 		AA21E47F0A9826CD00684CEA /* libjpeg_link.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AA21E4730A9826CD00684CEA /* libjpeg_link.a */; };
 		AA21E4810A9826CD00684CEA /* libogg_link.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AA21E4750A9826CD00684CEA /* libogg_link.a */; };
-		AA21E4820A9826CD00684CEA /* libpng_link.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AA21E4760A9826CD00684CEA /* libpng_link.a */; };
 		AA21E4830A9826CD00684CEA /* libtheora_link.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AA21E4770A9826CD00684CEA /* libtheora_link.a */; };
 		AA21E4840A9826CD00684CEA /* libvorbis_link.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AA21E4780A9826CD00684CEA /* libvorbis_link.a */; };
 		AA22CBA506DE909C0083BA97 /* ScreenNetSelectMusic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA22CBA306DE909C0083BA97 /* ScreenNetSelectMusic.cpp */; };
@@ -1633,6 +1657,8 @@
 		AAFF41A40F5BD4AD00FFDB67 /* ScreenOptionsExportPackage.h in Headers */ = {isa = PBXBuildFile; fileRef = AAFF41A20F5BD4AD00FFDB67 /* ScreenOptionsExportPackage.h */; };
 		AAFF41A50F5BD4AD00FFDB67 /* ScreenOptionsExportPackage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAFF41A10F5BD4AD00FFDB67 /* ScreenOptionsExportPackage.cpp */; };
 		AAFF41A60F5BD4AD00FFDB67 /* ScreenOptionsExportPackage.h in Headers */ = {isa = PBXBuildFile; fileRef = AAFF41A20F5BD4AD00FFDB67 /* ScreenOptionsExportPackage.h */; };
+		B75CE3B5137963350076A82D /* SongPosition.h in Headers */ = {isa = PBXBuildFile; fileRef = B75CE3B3137963350076A82D /* SongPosition.h */; };
+		B75CE3B6137963350076A82D /* SongPosition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B75CE3B4137963350076A82D /* SongPosition.cpp */; };
 		EE2153A910A75BEE0074B01B /* NotesLoaderPMS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EE2153A710A75BEE0074B01B /* NotesLoaderPMS.cpp */; };
 		EE2153AA10A75BEE0074B01B /* NotesLoaderPMS.h in Headers */ = {isa = PBXBuildFile; fileRef = EE2153A810A75BEE0074B01B /* NotesLoaderPMS.h */; };
 		EE879B60132DEE720078FDDC /* RageDisplay_Legacy_Helpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EE879B5C132DEE720078FDDC /* RageDisplay_Legacy_Helpers.cpp */; };
@@ -1778,10 +1804,36 @@
 		2B30D6811315EA7E00044B68 /* MouseDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MouseDevice.h; sourceTree = "<group>"; };
 		2B766989132FF71500586512 /* NotesLoaderSMA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NotesLoaderSMA.h; path = ../src/NotesLoaderSMA.h; sourceTree = SOURCE_ROOT; };
 		2B76698A132FF71500586512 /* NotesLoaderSMA.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NotesLoaderSMA.cpp; path = ../src/NotesLoaderSMA.cpp; sourceTree = SOURCE_ROOT; };
+		2B9C2E89137A138B004C92F3 /* NotesLoaderJson.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NotesLoaderJson.cpp; path = ../src/NotesLoaderJson.cpp; sourceTree = SOURCE_ROOT; };
+		2B9C2E8A137A138B004C92F3 /* NotesLoaderJson.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NotesLoaderJson.h; path = ../src/NotesLoaderJson.h; sourceTree = SOURCE_ROOT; };
+		2B9C2E8B137A138B004C92F3 /* NotesWriterJson.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NotesWriterJson.cpp; path = ../src/NotesWriterJson.cpp; sourceTree = SOURCE_ROOT; };
+		2B9C2E8C137A138B004C92F3 /* NotesWriterJson.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NotesWriterJson.h; path = ../src/NotesWriterJson.h; sourceTree = SOURCE_ROOT; };
 		2BA7925A1304F20D002BD8E1 /* NotesLoaderSSC.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NotesLoaderSSC.cpp; path = ../src/NotesLoaderSSC.cpp; sourceTree = SOURCE_ROOT; };
 		2BA7925B1304F20D002BD8E1 /* NotesLoaderSSC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NotesLoaderSSC.h; path = ../src/NotesLoaderSSC.h; sourceTree = SOURCE_ROOT; };
 		2BA7925C1304F20D002BD8E1 /* NotesWriterSSC.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NotesWriterSSC.cpp; path = ../src/NotesWriterSSC.cpp; sourceTree = SOURCE_ROOT; };
 		2BA7925D1304F20D002BD8E1 /* NotesWriterSSC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NotesWriterSSC.h; path = ../src/NotesWriterSSC.h; sourceTree = SOURCE_ROOT; };
+		2BC6130D13773C8E00CC8BBD /* png.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = png.c; path = ../extern/libpng/include/png.c; sourceTree = SOURCE_ROOT; };
+		2BC6130E13773C8E00CC8BBD /* png.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = png.h; path = ../extern/libpng/include/png.h; sourceTree = SOURCE_ROOT; };
+		2BC6130F13773C8E00CC8BBD /* pngconf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pngconf.h; path = ../extern/libpng/include/pngconf.h; sourceTree = SOURCE_ROOT; };
+		2BC6131013773C8E00CC8BBD /* pngdebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pngdebug.h; path = ../extern/libpng/include/pngdebug.h; sourceTree = SOURCE_ROOT; };
+		2BC6131113773C8E00CC8BBD /* pngerror.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pngerror.c; path = ../extern/libpng/include/pngerror.c; sourceTree = SOURCE_ROOT; };
+		2BC6131213773C8E00CC8BBD /* pngget.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pngget.c; path = ../extern/libpng/include/pngget.c; sourceTree = SOURCE_ROOT; };
+		2BC6131313773C8E00CC8BBD /* pnginfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pnginfo.h; path = ../extern/libpng/include/pnginfo.h; sourceTree = SOURCE_ROOT; };
+		2BC6131413773C8E00CC8BBD /* pngmem.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pngmem.c; path = ../extern/libpng/include/pngmem.c; sourceTree = SOURCE_ROOT; };
+		2BC6131513773C8E00CC8BBD /* pngpread.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pngpread.c; path = ../extern/libpng/include/pngpread.c; sourceTree = SOURCE_ROOT; };
+		2BC6131613773C8E00CC8BBD /* pngpriv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pngpriv.h; path = ../extern/libpng/include/pngpriv.h; sourceTree = SOURCE_ROOT; };
+		2BC6131713773C8E00CC8BBD /* pngread.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pngread.c; path = ../extern/libpng/include/pngread.c; sourceTree = SOURCE_ROOT; };
+		2BC6131813773C8E00CC8BBD /* pngrio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pngrio.c; path = ../extern/libpng/include/pngrio.c; sourceTree = SOURCE_ROOT; };
+		2BC6131913773C8E00CC8BBD /* pngrtran.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pngrtran.c; path = ../extern/libpng/include/pngrtran.c; sourceTree = SOURCE_ROOT; };
+		2BC6131A13773C8E00CC8BBD /* pngrutil.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pngrutil.c; path = ../extern/libpng/include/pngrutil.c; sourceTree = SOURCE_ROOT; };
+		2BC6131B13773C8E00CC8BBD /* pngset.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pngset.c; path = ../extern/libpng/include/pngset.c; sourceTree = SOURCE_ROOT; };
+		2BC6131C13773C8E00CC8BBD /* pngstruct.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pngstruct.h; path = ../extern/libpng/include/pngstruct.h; sourceTree = SOURCE_ROOT; };
+		2BC6131E13773C8E00CC8BBD /* pngtrans.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pngtrans.c; path = ../extern/libpng/include/pngtrans.c; sourceTree = SOURCE_ROOT; };
+		2BC6132013773C8E00CC8BBD /* pngwio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pngwio.c; path = ../extern/libpng/include/pngwio.c; sourceTree = SOURCE_ROOT; };
+		2BC6132113773C8E00CC8BBD /* pngwrite.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pngwrite.c; path = ../extern/libpng/include/pngwrite.c; sourceTree = SOURCE_ROOT; };
+		2BC6132213773C8E00CC8BBD /* pngwtran.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pngwtran.c; path = ../extern/libpng/include/pngwtran.c; sourceTree = SOURCE_ROOT; };
+		2BC6132313773C8E00CC8BBD /* pngwutil.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pngwutil.c; path = ../extern/libpng/include/pngwutil.c; sourceTree = SOURCE_ROOT; };
+		2BC6133D13773D2C00CC8BBD /* pnglibconf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pnglibconf.h; path = ../extern/libpng/include/pnglibconf.h; sourceTree = SOURCE_ROOT; };
 		2BD06FDD137240CF0018CB9F /* json_batchallocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = json_batchallocator.h; path = ../extern/jsoncpp/src/lib_json/json_batchallocator.h; sourceTree = SOURCE_ROOT; };
 		2BD06FDE137240CF0018CB9F /* json_internalarray.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = json_internalarray.inl; path = ../extern/jsoncpp/src/lib_json/json_internalarray.inl; sourceTree = SOURCE_ROOT; };
 		2BD06FDF137240CF0018CB9F /* json_internalmap.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = json_internalmap.inl; path = ../extern/jsoncpp/src/lib_json/json_internalmap.inl; sourceTree = SOURCE_ROOT; };
@@ -1924,7 +1976,6 @@
 		AA21D5A10712AE16008B825F /* ThemeMetric.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ThemeMetric.h; path = ../src/ThemeMetric.h; sourceTree = "<group>"; };
 		AA21E4730A9826CD00684CEA /* libjpeg_link.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libjpeg_link.a; sourceTree = "<group>"; };
 		AA21E4750A9826CD00684CEA /* libogg_link.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libogg_link.a; sourceTree = "<group>"; };
-		AA21E4760A9826CD00684CEA /* libpng_link.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libpng_link.a; sourceTree = "<group>"; };
 		AA21E4770A9826CD00684CEA /* libtheora_link.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libtheora_link.a; sourceTree = "<group>"; };
 		AA21E4780A9826CD00684CEA /* libvorbis_link.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libvorbis_link.a; sourceTree = "<group>"; };
 		AA22CBA306DE909C0083BA97 /* ScreenNetSelectMusic.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScreenNetSelectMusic.cpp; path = ../src/ScreenNetSelectMusic.cpp; sourceTree = "<group>"; };
@@ -2976,6 +3027,8 @@
 		AAFF55220549F43A00D02EE9 /* ComboGraph.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ComboGraph.h; path = ../src/ComboGraph.h; sourceTree = "<group>"; };
 		AAFF5541054E736D00D02EE9 /* Attack.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = Attack.cpp; path = ../src/Attack.cpp; sourceTree = "<group>"; };
 		AAFF5542054E736D00D02EE9 /* Attack.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = Attack.h; path = ../src/Attack.h; sourceTree = "<group>"; };
+		B75CE3B3137963350076A82D /* SongPosition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SongPosition.h; path = ../src/SongPosition.h; sourceTree = SOURCE_ROOT; };
+		B75CE3B4137963350076A82D /* SongPosition.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SongPosition.cpp; path = ../src/SongPosition.cpp; sourceTree = SOURCE_ROOT; };
 		EE2153A710A75BEE0074B01B /* NotesLoaderPMS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NotesLoaderPMS.cpp; path = ../src/NotesLoaderPMS.cpp; sourceTree = SOURCE_ROOT; };
 		EE2153A810A75BEE0074B01B /* NotesLoaderPMS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NotesLoaderPMS.h; path = ../src/NotesLoaderPMS.h; sourceTree = SOURCE_ROOT; };
 		EE879B5C132DEE720078FDDC /* RageDisplay_Legacy_Helpers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RageDisplay_Legacy_Helpers.cpp; path = ../src/RageDisplay_Legacy_Helpers.cpp; sourceTree = SOURCE_ROOT; };
@@ -3012,7 +3065,6 @@
 				AA77E8B108B6ABD500FA24CA /* vecLib.framework in Frameworks */,
 				AA21E4790A9826CD00684CEA /* libjpeg_link.a in Frameworks */,
 				AA21E47B0A9826CD00684CEA /* libogg_link.a in Frameworks */,
-				AA21E47C0A9826CD00684CEA /* libpng_link.a in Frameworks */,
 				AA21E47D0A9826CD00684CEA /* libtheora_link.a in Frameworks */,
 				AA21E47E0A9826CD00684CEA /* libvorbis_link.a in Frameworks */,
 				AAE782030AC7E64D00AEFC64 /* liblua-5.1.a in Frameworks */,
@@ -3040,7 +3092,6 @@
 				AA40D51F09A08D650068C0D5 /* vecLib.framework in Frameworks */,
 				AA21E47F0A9826CD00684CEA /* libjpeg_link.a in Frameworks */,
 				AA21E4810A9826CD00684CEA /* libogg_link.a in Frameworks */,
-				AA21E4820A9826CD00684CEA /* libpng_link.a in Frameworks */,
 				AA21E4830A9826CD00684CEA /* libtheora_link.a in Frameworks */,
 				AA21E4840A9826CD00684CEA /* libvorbis_link.a in Frameworks */,
 				AAE782040AC7E65200AEFC64 /* liblua-5.1.a in Frameworks */,
@@ -3208,6 +3259,8 @@
 				AA6EFDF004770C79005F316C /* NotesLoaderBMS.h */,
 				AA6EFDF104770C79005F316C /* NotesLoaderDWI.cpp */,
 				AA6EFDF204770C79005F316C /* NotesLoaderDWI.h */,
+				2B9C2E89137A138B004C92F3 /* NotesLoaderJson.cpp */,
+				2B9C2E8A137A138B004C92F3 /* NotesLoaderJson.h */,
 				AA6EFDF304770C79005F316C /* NotesLoaderKSF.cpp */,
 				AA6EFDF404770C79005F316C /* NotesLoaderKSF.h */,
 				3688B8510BD42DAA004186AD /* NotesLoaderMidi.cpp */,
@@ -3220,6 +3273,8 @@
 				2B766989132FF71500586512 /* NotesLoaderSMA.h */,
 				2BA7925A1304F20D002BD8E1 /* NotesLoaderSSC.cpp */,
 				2BA7925B1304F20D002BD8E1 /* NotesLoaderSSC.h */,
+				2B9C2E8B137A138B004C92F3 /* NotesWriterJson.cpp */,
+				2B9C2E8C137A138B004C92F3 /* NotesWriterJson.h */,
 				AA6EFDF704770C79005F316C /* NotesWriterDWI.cpp */,
 				AA6EFDF804770C79005F316C /* NotesWriterDWI.h */,
 				AA6EFDF904770C79005F316C /* NotesWriterSM.cpp */,
@@ -3230,11 +3285,42 @@
 			name = NoteParsing;
 			sourceTree = "<group>";
 		};
+		2BC6130C13773C6800CC8BBD /* libpng */ = {
+			isa = PBXGroup;
+			children = (
+				2BC6130D13773C8E00CC8BBD /* png.c */,
+				2BC6130E13773C8E00CC8BBD /* png.h */,
+				2BC6130F13773C8E00CC8BBD /* pngconf.h */,
+				2BC6131013773C8E00CC8BBD /* pngdebug.h */,
+				2BC6131113773C8E00CC8BBD /* pngerror.c */,
+				2BC6131213773C8E00CC8BBD /* pngget.c */,
+				2BC6131313773C8E00CC8BBD /* pnginfo.h */,
+				2BC6133D13773D2C00CC8BBD /* pnglibconf.h */,
+				2BC6131413773C8E00CC8BBD /* pngmem.c */,
+				2BC6131513773C8E00CC8BBD /* pngpread.c */,
+				2BC6131613773C8E00CC8BBD /* pngpriv.h */,
+				2BC6131713773C8E00CC8BBD /* pngread.c */,
+				2BC6131813773C8E00CC8BBD /* pngrio.c */,
+				2BC6131913773C8E00CC8BBD /* pngrtran.c */,
+				2BC6131A13773C8E00CC8BBD /* pngrutil.c */,
+				2BC6131B13773C8E00CC8BBD /* pngset.c */,
+				2BC6131C13773C8E00CC8BBD /* pngstruct.h */,
+				2BC6131E13773C8E00CC8BBD /* pngtrans.c */,
+				2BC6132013773C8E00CC8BBD /* pngwio.c */,
+				2BC6132113773C8E00CC8BBD /* pngwrite.c */,
+				2BC6132213773C8E00CC8BBD /* pngwtran.c */,
+				2BC6132313773C8E00CC8BBD /* pngwutil.c */,
+			);
+			name = libpng;
+			path = ../extern/libpng;
+			sourceTree = "<group>";
+		};
 		2BDB87261371F7FF00E6FD3A /* extern */ = {
 			isa = PBXGroup;
 			children = (
 				EE879B8E132E06C50078FDDC /* glew-1.5.8 */,
 				EE906F6F12BF3A5B00146C96 /* json */,
+				2BC6130C13773C6800CC8BBD /* libpng */,
 				AA7C8A7F0B6744F600FD9940 /* libtommath */,
 				AA7C8B920B67467C00FD9940 /* libtomcrypt */,
 				AAE781870AC7E46E00AEFC64 /* lua-5.1 */,
@@ -3856,6 +3942,8 @@
 				AA7CDD930D8395F90001DAFC /* Song.h */,
 				AA6EFE0704770C79005F316C /* SongOptions.cpp */,
 				AA6EFE0804770C79005F316C /* SongOptions.h */,
+				B75CE3B4137963350076A82D /* SongPosition.cpp */,
+				B75CE3B3137963350076A82D /* SongPosition.h */,
 				AA5C73F90637A5F000AFB891 /* SongUtil.cpp */,
 				AA5C73FA0637A5F000AFB891 /* SongUtil.h */,
 				AAEBF57C0B5C83F4005F3C7C /* SoundEffectControl.cpp */,
@@ -4757,7 +4845,6 @@
 				AAA0704D0CE5082D005A3060 /* libffmpeg_link.a */,
 				AA21E4730A9826CD00684CEA /* libjpeg_link.a */,
 				AA21E4750A9826CD00684CEA /* libogg_link.a */,
-				AA21E4760A9826CD00684CEA /* libpng_link.a */,
 				AA21E4770A9826CD00684CEA /* libtheora_link.a */,
 				AA21E4780A9826CD00684CEA /* libvorbis_link.a */,
 				AA059E2A0B8F0C66006F8139 /* libz_link.a */,
@@ -4940,6 +5027,7 @@
 				2BD06FE3137240CF0018CB9F /* json_writer.cpp */,
 			);
 			name = json;
+			path = ../extern/jsoncpp;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -4967,6 +5055,16 @@
 				EE879B63132DEE720078FDDC /* RageDisplay_Legacy.h in Headers */,
 				2B76698B132FF71500586512 /* NotesLoaderSMA.h in Headers */,
 				2BD06FEE137242680018CB9F /* json_batchallocator.h in Headers */,
+				2BC6132513773C8E00CC8BBD /* png.h in Headers */,
+				2BC6132613773C8E00CC8BBD /* pngconf.h in Headers */,
+				2BC6132713773C8E00CC8BBD /* pngdebug.h in Headers */,
+				2BC6132A13773C8E00CC8BBD /* pnginfo.h in Headers */,
+				2BC6132D13773C8E00CC8BBD /* pngpriv.h in Headers */,
+				2BC6133313773C8E00CC8BBD /* pngstruct.h in Headers */,
+				2BC6133E13773D2C00CC8BBD /* pnglibconf.h in Headers */,
+				B75CE3B5137963350076A82D /* SongPosition.h in Headers */,
+				2B9C2E8E137A138B004C92F3 /* NotesLoaderJson.h in Headers */,
+				2B9C2E90137A138B004C92F3 /* NotesWriterJson.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6211,6 +6309,24 @@
 				2BD06FF1137242680018CB9F /* json_reader.cpp in Sources */,
 				2BD06FF2137242680018CB9F /* json_value.cpp in Sources */,
 				2BD06FF4137242680018CB9F /* json_writer.cpp in Sources */,
+				2BC6132413773C8E00CC8BBD /* png.c in Sources */,
+				2BC6132813773C8E00CC8BBD /* pngerror.c in Sources */,
+				2BC6132913773C8E00CC8BBD /* pngget.c in Sources */,
+				2BC6132B13773C8E00CC8BBD /* pngmem.c in Sources */,
+				2BC6132C13773C8E00CC8BBD /* pngpread.c in Sources */,
+				2BC6132E13773C8E00CC8BBD /* pngread.c in Sources */,
+				2BC6132F13773C8E00CC8BBD /* pngrio.c in Sources */,
+				2BC6133013773C8E00CC8BBD /* pngrtran.c in Sources */,
+				2BC6133113773C8E00CC8BBD /* pngrutil.c in Sources */,
+				2BC6133213773C8E00CC8BBD /* pngset.c in Sources */,
+				2BC6133513773C8E00CC8BBD /* pngtrans.c in Sources */,
+				2BC6133713773C8E00CC8BBD /* pngwio.c in Sources */,
+				2BC6133813773C8E00CC8BBD /* pngwrite.c in Sources */,
+				2BC6133913773C8E00CC8BBD /* pngwtran.c in Sources */,
+				2BC6133A13773C8E00CC8BBD /* pngwutil.c in Sources */,
+				B75CE3B6137963350076A82D /* SongPosition.cpp in Sources */,
+				2B9C2E8D137A138B004C92F3 /* NotesLoaderJson.cpp in Sources */,
+				2B9C2E8F137A138B004C92F3 /* NotesWriterJson.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7097,7 +7213,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(SRCROOT)/build/$(CONFIGURATION)",
 					"$(SRCROOT)/Libraries",
-					"\"$(SRCROOT)/../src/mad-0.15.1b/msvc++/Release\"",
+					"\"$(SRCROOT)/../extern/mad-0.15.1b/msvc++/Release\"",
 				);
 				LIBRARY_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/build\"";
 				LINKER_DISPLAYS_MANGLED_NAMES = NO;
@@ -7123,6 +7239,7 @@
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				EXCLUDED_RECURSIVE_SEARCH_PATH_SUBDIRECTORIES = "*.nib *.lproj *.framework *.gch *.xcode* (*) CVS .svn .hg .git";
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				GCC_DEBUGGING_SYMBOLS = full;
 				GCC_DYNAMIC_NO_PIC = YES;
@@ -7173,7 +7290,7 @@
 				SHARED_PRECOMPS_DIR = "/Library/Caches/com.apple.Xcode.$(UID)/SharedPrecompiledHeaders/$(PRODUCT_NAME)/$(CONFIGURATION)";
 				STRIP_INSTALLED_PRODUCT = NO;
 				STRIP_STYLE = "non-global";
-				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/../extern/glew-1.5.8/include $(PROJECT_DIR)/../src/jsoncpp/include";
+				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/../extern/glew-1.5.8/include $(PROJECT_DIR)/../extern/jsoncpp/include";
 			};
 			name = Debug;
 		};
@@ -7209,7 +7326,7 @@
 					"$(SRCROOT)/Libraries",
 					"$(SRCROOT)/build/$(CONFIGURATION)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_1)",
-					"\"$(SRCROOT)/../src/mad-0.15.1b/msvc++/Release\"",
+					"\"$(SRCROOT)/../extern/mad-0.15.1b/msvc++/Release\"",
 				);
 				LIBRARY_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/build\"";
 				OBJROOT = "$(SRCROOT)/build";
@@ -7257,7 +7374,7 @@
 					"$(SRCROOT)/Libraries",
 					"$(SRCROOT)/build/$(CONFIGURATION)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_1)",
-					"\"$(SRCROOT)/../src/mad-0.15.1b/msvc++/Release\"",
+					"\"$(SRCROOT)/../extern/mad-0.15.1b/msvc++/Release\"",
 				);
 				LIBRARY_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/build\"";
 				OBJROOT = "$(SRCROOT)/build";
@@ -7307,7 +7424,7 @@
 					"$(SRCROOT)/Libraries",
 					"$(SRCROOT)/build/$(CONFIGURATION)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_1)",
-					"\"$(SRCROOT)/../src/mad-0.15.1b/msvc++/Release\"",
+					"\"$(SRCROOT)/../extern/mad-0.15.1b/msvc++/Release\"",
 				);
 				LIBRARY_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/build\"";
 				OBJROOT = "$(SRCROOT)/build";
@@ -7660,6 +7777,7 @@
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)";
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				EXCLUDED_RECURSIVE_SEARCH_PATH_SUBDIRECTORIES = "*.nib *.lproj *.framework *.gch *.xcode* (*) CVS .svn .hg .git";
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				GCC_DEBUGGING_SYMBOLS = full;
 				GCC_DYNAMIC_NO_PIC = YES;
@@ -7709,7 +7827,7 @@
 				SHARED_PRECOMPS_DIR = "/Library/Caches/com.apple.Xcode.$(UID)/SharedPrecompiledHeaders/$(PRODUCT_NAME)/$(CONFIGURATION)";
 				STRIP_INSTALLED_PRODUCT = YES;
 				STRIP_STYLE = "non-global";
-				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/../extern/glew-1.5.8/include $(PROJECT_DIR)/../src/jsoncpp/include";
+				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/../extern/glew-1.5.8/include $(PROJECT_DIR)/../extern/jsoncpp/include";
 			};
 			name = PerformanceDebug;
 		};
@@ -7741,7 +7859,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(SRCROOT)/build/$(CONFIGURATION)",
 					"$(SRCROOT)/Libraries",
-					"\"$(SRCROOT)/../src/mad-0.15.1b/msvc++/Release\"",
+					"\"$(SRCROOT)/../extern/mad-0.15.1b/msvc++/Release\"",
 				);
 				LIBRARY_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/build\"";
 				LINKER_DISPLAYS_MANGLED_NAMES = NO;
@@ -7818,7 +7936,7 @@
 					"$(SRCROOT)/Libraries",
 					"$(SRCROOT)/build/$(CONFIGURATION)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_1)",
-					"\"$(SRCROOT)/../src/mad-0.15.1b/msvc++/Release\"",
+					"\"$(SRCROOT)/../extern/mad-0.15.1b/msvc++/Release\"",
 				);
 				LIBRARY_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/build\"";
 				OBJROOT = "$(SRCROOT)/build";
@@ -7970,7 +8088,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(SRCROOT)/build/$(CONFIGURATION)",
 					"$(SRCROOT)/Libraries",
-					"\"$(SRCROOT)/../src/mad-0.15.1b/msvc++/Release\"",
+					"\"$(SRCROOT)/../extern/mad-0.15.1b/msvc++/Release\"",
 				);
 				LIBRARY_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/build\"";
 				LINKER_DISPLAYS_MANGLED_NAMES = NO;
@@ -7995,6 +8113,7 @@
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)";
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				EXCLUDED_RECURSIVE_SEARCH_PATH_SUBDIRECTORIES = "*.nib *.lproj *.framework *.gch *.xcode* (*) CVS .svn .hg .git";
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				GCC_DEBUGGING_SYMBOLS = full;
 				GCC_DYNAMIC_NO_PIC = YES;
@@ -8044,7 +8163,7 @@
 				SHARED_PRECOMPS_DIR = "/Library/Caches/com.apple.Xcode.$(UID)/SharedPrecompiledHeaders/$(PRODUCT_NAME)/$(CONFIGURATION)";
 				STRIP_INSTALLED_PRODUCT = YES;
 				STRIP_STYLE = "non-global";
-				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/../extern/glew-1.5.8/include $(PROJECT_DIR)/../src/jsoncpp/include";
+				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/../extern/glew-1.5.8/include $(PROJECT_DIR)/../extern/jsoncpp/include";
 			};
 			name = Native;
 		};
@@ -8097,7 +8216,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(SRCROOT)/build/$(CONFIGURATION)",
 					"$(SRCROOT)/Libraries",
-					"\"$(SRCROOT)/../src/mad-0.15.1b/msvc++/Release\"",
+					"\"$(SRCROOT)/../extern/mad-0.15.1b/msvc++/Release\"",
 				);
 				LIBRARY_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/build\"";
 				LINKER_DISPLAYS_MANGLED_NAMES = NO;
@@ -8124,6 +8243,7 @@
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)";
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				EXCLUDED_RECURSIVE_SEARCH_PATH_SUBDIRECTORIES = "*.nib *.lproj *.framework *.gch *.xcode* (*) CVS .svn .hg .git";
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				GCC_DEBUGGING_SYMBOLS = full;
 				GCC_DYNAMIC_NO_PIC = YES;
@@ -8174,7 +8294,7 @@
 				SHARED_PRECOMPS_DIR = "/Library/Caches/com.apple.Xcode.$(UID)/SharedPrecompiledHeaders/$(PRODUCT_NAME)/$(CONFIGURATION)";
 				STRIP_INSTALLED_PRODUCT = YES;
 				STRIP_STYLE = "non-global";
-				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/../extern/glew-1.5.8/include $(PROJECT_DIR)/../src/jsoncpp/include";
+				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/../extern/glew-1.5.8/include $(PROJECT_DIR)/../extern/jsoncpp/include";
 			};
 			name = Universal;
 		};

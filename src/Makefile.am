@@ -42,6 +42,19 @@ increment_version:
 ver.cpp:
 	$(MAKE) increment_version
 
+PNG = \
+../extern/libpng/include/png.c ../extern/libpng/include/.png.h \
+../extern/libpng/include/pngconf.h ../extern/libpng/include/pngdebug.h \
+../extern/libpng/include/pngerror.c ../extern/libpng/include/pngget.c \
+../extern/libpng/include/pnginfo.h ../extern/libpng/include/scripts/pnglibconf.h \
+../extern/libpng/include/pngmem.c ../extern/libpng/include/pngpread.c \
+../extern/libpng/include/pngpriv.h ../extern/libpng/include/pngread.c \
+../extern/libpng/include/pngrio.c ../extern/libpng/include/pngrtran.c \
+../extern/libpng/include/pngrutil.c ../extern/libpng/include/pngset.c \
+../extern/libpng/include/pngstruct.h ../extern/libpng/include/pngtrans.c \
+../extern/libpng/include/pngwio.c ../extern/libpng/include/pngwrite.c \
+../extern/libpng/include/pngwtran.c ../extern/libpng/include/pngwutil.c
+
 Screens = \
 Screen.cpp Screen.h ScreenAttract.cpp ScreenAttract.h \
 ScreenBookkeeping.cpp ScreenBookkeeping.h \
@@ -145,10 +158,12 @@ ModsGroup.cpp ModsGroup.h \
 NoteData.cpp NoteData.h NoteDataUtil.cpp NoteDataUtil.h NoteDataWithScoring.cpp NoteDataWithScoring.h \
 NoteTypes.cpp NoteTypes.h NotesLoader.cpp NotesLoader.h \
 NotesLoaderBMS.cpp NotesLoaderBMS.h NotesLoaderDWI.cpp NotesLoaderDWI.h \
+NotesLoaderJson.cpp NotesLoaderJson.h \
 NotesLoaderKSF.cpp NotesLoaderKSF.h NotesLoaderMidi.cpp NotesLoaderMidi.h \
 NotesLoaderPMS.cpp NotesLoaderPMS.h NotesLoaderSM.cpp NotesLoaderSM.h \
 NotesLoaderSSC.cpp NotesLoaderSSC.h NotesLoaderSMA.cpp NotesLoaderSMA.h \
 NotesWriterDWI.cpp NotesWriterDWI.h \
+NotesWriterJson.cpp NotesWriterJson.h \
 NotesWriterSM.cpp NotesWriterSM.h NotesWriterSSC.cpp NotesWriterSSC.h \
 OptionRowHandler.cpp OptionRowHandler.h OptionsList.cpp OptionsList.h \
 PlayerAI.cpp PlayerAI.h PlayerNumber.cpp PlayerNumber.h PlayerOptions.cpp PlayerOptions.h \
@@ -358,24 +373,34 @@ ScoreDisplayBattle.cpp ScoreDisplayBattle.h \
 ScoreDisplayCalories.cpp ScoreDisplayCalories.h \
 ScoreDisplayLifeTime.cpp ScoreDisplayLifeTime.h \
 ScoreDisplayNormal.cpp ScoreDisplayNormal.h ScoreDisplayOni.cpp ScoreDisplayOni.h \
-ScoreDisplayPercentage.cpp ScoreDisplayPercentage.h ScoreDisplayRave.cpp ScoreDisplayRave.h
+ScoreDisplayPercentage.cpp ScoreDisplayPercentage.h ScoreDisplayRave.cpp ScoreDisplayRave.h \
+SongPosition.cpp SongPosition.h
 
-PCRE = pcre/get.c pcre/internal.h pcre/maketables.c pcre/pcre.c pcre/pcre.h pcre/study.c
-EXTRA_DIST += pcre/chartables.c
+PCRE = ../extern/pcre/get.c ../extern/pcre/internal.h ../extern/pcre/maketables.c ../extern/pcre/pcre.c ../extern/pcre/pcre.h ../extern/pcre/study.c
+EXTRA_DIST += ../extern/pcre/chartables.c
 
-Lua = lua-5.1/src/lapi.c lua-5.1/src/lauxlib.c lua-5.1/src/lbaselib.c lua-5.1/src/lcode.c lua-5.1/src/ldblib.c \
-lua-5.1/src/ldebug.c lua-5.1/src/ldo.c lua-5.1/src/ldump.c lua-5.1/src/lfunc.c lua-5.1/src/lgc.c lua-5.1/src/linit.c \
-lua-5.1/src/liolib.c lua-5.1/src/llex.c lua-5.1/src/lmathlib.c lua-5.1/src/lmem.c lua-5.1/src/loadlib.c \
-lua-5.1/src/lobject.c lua-5.1/src/lopcodes.c lua-5.1/src/loslib.c lua-5.1/src/lparser.c lua-5.1/src/lstate.c \
-lua-5.1/src/lstring.c lua-5.1/src/lstrlib.c lua-5.1/src/ltable.c lua-5.1/src/ltablib.c lua-5.1/src/ltm.c \
-lua-5.1/src/lundump.c lua-5.1/src/lvm.c lua-5.1/src/lzio.c lua-5.1/src/lapi.h lua-5.1/src/lauxlib.h lua-5.1/src/lcode.h \
-lua-5.1/src/ldebug.h lua-5.1/src/ldo.h lua-5.1/src/lfunc.h lua-5.1/src/lgc.h lua-5.1/src/llex.h lua-5.1/src/llimits.h \
-lua-5.1/src/lmem.h lua-5.1/src/lobject.h lua-5.1/src/lopcodes.h lua-5.1/src/lparser.h lua-5.1/src/lstate.h \
-lua-5.1/src/lstring.h lua-5.1/src/ltable.h lua-5.1/src/ltm.h lua-5.1/src/luaconf.h lua-5.1/src/lua.h lua-5.1/src/lualib.h \
-lua-5.1/src/lundump.h lua-5.1/src/lvm.h lua-5.1/src/lzio.h
+Lua = ../extern/lua-5.1/src/lapi.c ../extern/lua-5.1/src/lauxlib.c ../extern/lua-5.1/src/lbaselib.c ../extern/lua-5.1/src/lcode.c ../extern/lua-5.1/src/ldblib.c \
+../extern/lua-5.1/src/ldebug.c ../extern/lua-5.1/src/ldo.c ../extern/lua-5.1/src/ldump.c ../extern/lua-5.1/src/lfunc.c ../extern/lua-5.1/src/lgc.c ../extern/lua-5.1/src/linit.c \
+../extern/lua-5.1/src/liolib.c ../extern/lua-5.1/src/llex.c ../extern/lua-5.1/src/lmathlib.c ../extern/lua-5.1/src/lmem.c ../extern/lua-5.1/src/loadlib.c \
+../extern/lua-5.1/src/lobject.c ../extern/lua-5.1/src/lopcodes.c ../extern/lua-5.1/src/loslib.c ../extern/lua-5.1/src/lparser.c ../extern/lua-5.1/src/lstate.c \
+../extern/lua-5.1/src/lstring.c ../extern/lua-5.1/src/lstrlib.c ../extern/lua-5.1/src/ltable.c ../extern/lua-5.1/src/ltablib.c ../extern/lua-5.1/src/ltm.c \
+../extern/lua-5.1/src/lundump.c ../extern/lua-5.1/src/lvm.c ../extern/lua-5.1/src/lzio.c ../extern/lua-5.1/src/lapi.h ../extern/lua-5.1/src/lauxlib.h ../extern/lua-5.1/src/lcode.h \
+../extern/lua-5.1/src/ldebug.h ../extern/lua-5.1/src/ldo.h ../extern/lua-5.1/src/lfunc.h ../extern/lua-5.1/src/lgc.h ../extern/lua-5.1/src/llex.h ../extern/lua-5.1/src/llimits.h \
+../extern/lua-5.1/src/lmem.h ../extern/lua-5.1/src/lobject.h ../extern/lua-5.1/src/lopcodes.h ../extern/lua-5.1/src/lparser.h ../extern/lua-5.1/src/lstate.h \
+../extern/lua-5.1/src/lstring.h ../extern/lua-5.1/src/ltable.h ../extern/lua-5.1/src/ltm.h ../extern/lua-5.1/src/luaconf.h ../extern/lua-5.1/src/lua.h ../extern/lua-5.1/src/lualib.h \
+../extern/lua-5.1/src/lundump.h ../extern/lua-5.1/src/lvm.h ../extern/lua-5.1/src/lzio.h
 
-jsoncpp = jsoncpp/src/lib_json/json_reader.cpp jsoncpp/src/lib_json/json_value.cpp \
-jsoncpp/src/lib_json/json_writer.cpp
+jsoncpp = ../extern/jsoncpp/src/lib_json/json_reader.cpp \
+../extern/jsoncpp/src/lib_json/json_value.cpp \
+../extern/jsoncpp/src/lib_json/json_writer.cpp \
+../extern/jsoncpp/include/json/autolink.h \
+../extern/jsoncpp/include/json/config.h \
+../extern/jsoncpp/include/json/features.h \
+../extern/jsoncpp/include/json/forwards.h \
+../extern/jsoncpp/include/json/json.h \
+../extern/jsoncpp/include/json/reader.h \
+../extern/jsoncpp/include/json/value.h \
+../extern/jsoncpp/include/json/writer.h 
 
 RageFile = \
 RageFileBasic.cpp RageFileBasic.h \
@@ -579,7 +604,11 @@ libtomcrypt_a_CPPFLAGS = -I$(srcdir)/libtomcrypt/src/headers $(AM_CPPFLAGS)
 
 noinst_LIBRARIES += libtomcrypt.a
 
-main_SOURCES = $(Screens) \
+main_CPPFLAGS = -I$(top_srcdir)/extern/jsoncpp/include \
+-I$(top_srcdir)/extern/glew-1.5.8/include
+
+main_SOURCES = $(PNG) \
+		$(Screens) \
 		$(DataStructures) \
 		$(FileTypes) \
 		$(StepMania) \
@@ -597,15 +626,17 @@ main_LDADD = \
 		  libtomcrypt.a libtommath.a
 
 nodist_stepmania_SOURCES = ver.cpp
+
+stepmania_CPPFLAGS = $(main_CPPFLAGS)
 stepmania_SOURCES = $(main_SOURCES)
 stepmania_LDADD = $(main_LDADD)
 
 if BUILD_LUA_BINARIES
 noinst_PROGRAMS += lua luac
-lua_SOURCES = $(Lua) lua-5.1/src/lua.c
+lua_SOURCES = $(Lua) ../extern/lua-5.1/src/lua.c
 lua_LDADD = -lreadline
 
-luac_SOURCES = $(Lua) lua-5.1/src/luac.c lua-5.1/src/print.c
+luac_SOURCES = $(Lua) ../extern/lua-5.1/src/luac.c ../extern/lua-5.1/src/print.c
 luac_LDADD =
 endif
 

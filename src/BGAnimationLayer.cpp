@@ -388,30 +388,30 @@ void BGAnimationLayer::LoadFromNode( const XNode* pNode )
 		pNode->GetAttrValue( "Stretch", bStretch );
 
 		// Check for string match first, then do integer match.
-		// "if(atoi(type)==0)" was matching against all string matches.
+		// "if(StringType(type)==0)" was matching against all string matches.
 		// -Chris
-		if( stricmp(type,"sprite")==0 )
+		if( type.EqualsNoCase("sprite") )
 		{
 			m_Type = TYPE_SPRITE;
 		}
-		else if( stricmp(type,"particles")==0 )
+		else if( type.EqualsNoCase("particles") )
 		{
 			m_Type = TYPE_PARTICLES;
 		}
-		else if( stricmp(type,"tiles")==0 )
+		else if( type.EqualsNoCase("tiles") )
 		{
 			m_Type = TYPE_TILES;
 		}
-		else if( atoi(type) == 1 )
+		else if( StringToInt(type) == 1 )
 		{
 			m_Type = TYPE_SPRITE; 
 			bStretch = true; 
 		}
-		else if( atoi(type) == 2 )
+		else if( StringToInt(type) == 2 )
 		{
 			m_Type = TYPE_PARTICLES; 
 		}
-		else if( atoi(type) == 3 )
+		else if( StringToInt(type) == 3 )
 		{
 			m_Type = TYPE_TILES; 
 		}

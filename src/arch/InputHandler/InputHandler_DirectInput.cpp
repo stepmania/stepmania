@@ -417,17 +417,24 @@ void InputHandler_DInput::UpdatePolled( DIDevice &device, const RageTimer &tm )
 								val = state.lZ;
 								//LOG->Trace("MouseWheel polled: %i",val);
 								INPUTFILTER->UpdateMouseWheel(val);
-
-								/*
-								if( (int)val != 0 )
+								if( val == 0 )
+								{
+									// release all
+									ButtonPressed( DeviceInput(dev, pos, 0, tm) );
+									ButtonPressed( DeviceInput(dev, neg, 0, tm) );
+								}
+								else if( int(val) > 0 )
 								{
 									// positive values: WheelUp
-									// negative values: WheelDown
-									float l = SCALE( int(val), -120.0f, 120.0f, -1.0f, 1.0f );
-									ButtonPressed( DeviceInput(dev, neg, max(-l,0), tm) );
-									ButtonPressed( DeviceInput(dev, pos, max(+l,0), tm) );
+									ButtonPressed( DeviceInput(dev, pos, 1, tm) );
+									ButtonPressed( DeviceInput(dev, neg, 0, tm) );
 								}
-								*/
+								else if( int(val) < 0 )
+								{
+									// negative values: WheelDown
+									ButtonPressed( DeviceInput(dev, neg, 1, tm) );
+									ButtonPressed( DeviceInput(dev, pos, 0, tm) );
+								}
 							}
 							break;
 						default: LOG->MapLog( "unknown input", 
@@ -529,11 +536,39 @@ void InputHandler_DInput::UpdateBuffered( DIDevice &device, const RageTimer &tm 
 								INPUTFILTER->UpdateMouseWheel(l);
 								{
 									up = MOUSE_WHEELUP; down = MOUSE_WHEELDOWN;
-									l = SCALE( int(evtbuf[i].dwData), -WHEEL_DELTA, WHEEL_DELTA, 1.0f, -1.0f );
-									DeviceInput diUp = DeviceInput(dev, up, max(-l,0), tm);
-									DeviceInput diDown = DeviceInput(dev, down, max(+l,0), tm);
-									ButtonPressed( diUp );
-									ButtonPressed( diDown );
+									float fWheelDelta = l;
+									//l = SCALE( int(evtbuf[i].dwData), -WHEEL_DELTA, WHEEL_DELTA, 1.0f, -1.0f );
+									if( l > 0 )
+									{
+										DeviceInput diUp = DeviceInput(dev, up, 1.0f, tm);
+										DeviceInput diDown = DeviceInput(dev, down, 0.0f, tm);
+										while( fWheelDelta >= WHEEL_DELTA )
+										{
+											ButtonPressed( diUp );
+											ButtonPressed( diDown );
+											INPUTFILTER->UpdateMouseWheel(fWheelDelta);
+											fWheelDelta -= WHEEL_DELTA;
+										}
+									}
+									else if( l < 0 )
+									{
+										DeviceInput diDown = DeviceInput(dev, down, 1.0f, tm);
+										DeviceInput diUp = DeviceInput(dev, up, 0.0f, tm);
+										while( fWheelDelta <= -WHEEL_DELTA )
+										{
+											ButtonPressed( diDown );
+											ButtonPressed( diUp );
+											INPUTFILTER->UpdateMouseWheel(fWheelDelta);
+											fWheelDelta += WHEEL_DELTA;
+										}
+									}
+									else
+									{
+										DeviceInput diUp = DeviceInput(dev, up, 0.0f, tm);
+										ButtonPressed( diUp );
+										DeviceInput diDown = DeviceInput(dev, down, 0.0f, tm);
+										ButtonPressed( diDown );
+									}
 								}
 								break;
 							default: LOG->MapLog( "unknown input", 

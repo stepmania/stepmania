@@ -429,7 +429,7 @@ bool ProfileManager::CreateLocalProfile( RString sName, RString &sProfileIDOut )
 	vector<RString> vs;
 	GetLocalProfileIDs( vs );
 	FOREACH_CONST( RString, vs, s )
-		iMaxProfileNumber = atoi( *s );
+		iMaxProfileNumber = StringToInt( *s );
 
 	int iProfileNumber = iMaxProfileNumber + 1;
 	RString sProfileID = ssprintf( "%08d", iProfileNumber );
@@ -833,6 +833,7 @@ public:
 	static int GetNumLocalProfiles( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetNumLocalProfiles() ); return 1; }
 	static int GetProfileDir( T* p, lua_State *L ) { lua_pushstring(L, p->GetProfileDir(Enum::Check<ProfileSlot>(L, 1)) ); return 1; }
 	static int IsSongNew( T* p, lua_State *L )	{ lua_pushboolean(L, p->IsSongNew(Luna<Song>::check(L,1)) ); return 1; }
+	static int ProfileWasLoadedFromMemoryCard( T* p, lua_State *L )	{ lua_pushboolean(L, p->ProfileWasLoadedFromMemoryCard(Enum::Check<PlayerNumber>(L, 1)) ); return 1; }
 
 	LunaProfileManager()
 	{
@@ -847,6 +848,7 @@ public:
 		ADD_METHOD( GetNumLocalProfiles );
 		ADD_METHOD( GetProfileDir );
 		ADD_METHOD( IsSongNew );
+		ADD_METHOD( ProfileWasLoadedFromMemoryCard );
 	}
 };
 

@@ -3,11 +3,18 @@
 
 #include "GameConstantsAndTypes.h"
 #include "BackgroundUtil.h"
+#include "MsdFile.h" // we require the struct from here.
 
-class MsdFile;
 class Song;
 class Steps;
 class TimingData;
+
+/**
+ * @brief The highest allowable speed before Warps come in.
+ *
+ * This was brought in from StepMania 4's recent betas. */
+const float FAST_BPM_WARP = 9999999.f;
+
 /** @brief Reads a Song from an .SM file. */
 namespace SMLoader
 {
@@ -25,6 +32,17 @@ namespace SMLoader
 	bool LoadEditFromBuffer( const RString &sBuffer, const RString &sEditFilePath, ProfileSlot slot );
 	bool LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePath, ProfileSlot slot, bool bAddStepsToSong );
 	bool LoadFromBGChangesString( BackgroundChange &change, const RString &sBGChangeExpression );
+	
+	
+	bool ProcessBPMs( TimingData &, const RString );
+	void ProcessStops( TimingData &, const RString );
+	void ProcessDelays( TimingData &, const RString );
+	void ProcessTimeSignatures( TimingData &, const RString );
+	void ProcessTickcounts( TimingData &, const RString );
+	void ProcessBGChanges( Song &out, const RString &sValueName, 
+			      const RString &sPath, const RString &sParam );
+	void ProcessAttacks( Song &out, MsdFile::value_t sParams );
+	void ProcessInstrumentTracks( Song &out, const RString &sParam );
 }
 
 #endif

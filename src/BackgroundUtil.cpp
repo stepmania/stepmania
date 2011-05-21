@@ -133,7 +133,8 @@ void BackgroundUtil::GetBackgroundTransitions( const RString &_sName, vector<RSt
 		sName = "*";
 
 	vsPathsOut.clear();
-	GetDirListing( BACKGROUND_TRANSITIONS_DIR+sName+".xml", vsPathsOut, false, true );
+	if( true )
+		GetDirListing( BACKGROUND_TRANSITIONS_DIR+sName+".xml", vsPathsOut, false, true );
 	GetDirListing( BACKGROUND_TRANSITIONS_DIR+sName+".lua", vsPathsOut, false, true );
 
 	vsNamesOut.clear();
@@ -241,7 +242,8 @@ void BackgroundUtil::GetGlobalBGAnimations( const Song *pSong, const RString &sM
 {
 	vsPathsOut.clear();
 	GetDirListing( BG_ANIMS_DIR+sMatch+"*", vsPathsOut, true, true );
-	GetDirListing( BG_ANIMS_DIR+sMatch+"*.xml", vsPathsOut, false, true );
+	if( true )
+		GetDirListing( BG_ANIMS_DIR+sMatch+"*.xml", vsPathsOut, false, true );
 
 	vsNamesOut.clear();
 	FOREACH_CONST( RString, vsPathsOut, s )

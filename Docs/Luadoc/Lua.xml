@@ -187,8 +187,8 @@
 		<Function name='UserPrefGameplayShowStepsDisplay'/>
 		<Function name='UserPrefLongFail'/>
 		<Function name='UserPrefNotePosition'/>
+		<Function name='UserPrefScoringMode'/>
 		<Function name='UserPrefShowLotsaOptions'/>
-		<Function name='UserPrefSpecialScoringMode'/>
 		<Function name='Var'/>
 		<Function name='VersionDate'/>
 		<Function name='VersionTime'/>
@@ -519,6 +519,7 @@
 		</Class>
 		<Class base='BitmapText' name='BPMDisplay'>
 			<Function name='GetText'/>
+			<Function name='SetFromCourse'/>
 			<Function name='SetFromGameState'/>
 			<Function name='SetFromSong'/>
 		</Class>
@@ -669,6 +670,7 @@
 		<Class name='GameSoundManager'>
 			<Function name='DimMusic'/>
 			<Function name='GetPlayerBalance'/>
+			<Function name='PlayAnnouncer'/>
 			<Function name='PlayOnce'/>
 		</Class>
 		<Class name='GameState'>
@@ -722,12 +724,13 @@
 			<Function name='GetSmallestNumStagesLeftForAnyHumanPlayer'/>
 			<Function name='GetSongBPS'/>
 			<Function name='GetSongBeat'/>
-			<Function name='GetSongBeatVisible'/>
+			<Function name='GetSongBeatNoOffset'/>
 			<Function name='GetSongDelay'/>
 			<Function name='GetSongFreeze'/>
 			<Function name='GetSongOptions'/>
 			<Function name='GetSongOptionsString'/>
 			<Function name='GetSongPercent'/>
+			<Function name='GetSongPosition'/>
 			<Function name='GetSortOrder'/>
 			<Function name='GetStageSeed'/>
 			<Function name='GetWorkoutGoalComplete'/>
@@ -973,6 +976,7 @@
 			<Function name='GetAliveSeconds'/>
 			<Function name='GetBestFullComboTapNoteScore'/>
 			<Function name='GetCaloriesBurned'/>
+			<Function name='GetCurMaxScore'/>
 			<Function name='GetCurrentCombo'/>
 			<Function name='GetCurrentLife'/>
 			<Function name='GetCurrentMissCombo'/>
@@ -999,6 +1003,7 @@
 			<Function name='GetTapNoteScores'/>
 			<Function name='IsDisqualified'/>
 			<Function name='MaxCombo'/>
+			<Function name='SetCurMaxScore'/>
 			<Function name='SetScore'/>
 		</Class>
 		<Class name='PlayerState'>
@@ -1009,6 +1014,7 @@
 			<Function name='GetPlayerOptions'/>
 			<Function name='GetPlayerOptionsArray'/>
 			<Function name='GetPlayerOptionsString'/>
+			<Function name='GetSongPosition'/>
 			<Function name='SetPlayerOptions'/>
 		</Class>
 		<Class name='PrefsManager'>
@@ -1074,6 +1080,7 @@
 			<Function name='GetProfileDir'/>
 			<Function name='IsPersistentProfile'/>
 			<Function name='IsSongNew'/>
+			<Function name='ProfileWasLoadedFromMemoryCard'/>
 			<Function name='SaveMachineProfile'/>
 		</Class>
 		<Class name='RadarValues'>
@@ -1287,6 +1294,18 @@
 			<Function name='SetPreferredSongs'/>
 			<Function name='ShortenGroupName'/>
 		</Class>
+		<Class name='SongPosition'>
+			<Function name='GetCurBPS'/>
+			<Function name='GetDelay'/>
+			<Function name='GetFreeze'/>
+			<Function name='GetMusicSeconds'/>
+			<Function name='GetMusicSecondsVisible'/>
+			<Function name='GetSongBeat'/>
+			<Function name='GetSongBeatNoOffset'/>
+			<Function name='GetSongBeatVisible'/>
+			<Function name='GetWarpBeginRow'/>
+			<Function name='GetWarpDestination'/>
+		</Class>
 		<Class base='Actor' name='Sprite'>
 			<Function name='CropTo'/>
 			<Function name='GetAnimationLengthSeconds'/>
@@ -1303,6 +1322,7 @@
 			<Function name='SetAllStateDelays'/>
 			<Function name='SetCustomImageRect'/>
 			<Function name='SetEffectMode'/>
+			<Function name='SetSecondsIntoAnimation'/>
 			<Function name='SetTexture'/>
 			<Function name='addimagecoords'/>
 			<Function name='cropto'/>
@@ -1349,6 +1369,8 @@
 			<Function name='GetMeter'/>
 			<Function name='GetRadarValues'/>
 			<Function name='GetStepsType'/>
+			<Function name='GetTimingData'/>
+			<Function name='HasSignificantTimingChanges'/>
 			<Function name='IsAPlayerEdit'/>
 			<Function name='IsAnEdit'/>
 			<Function name='IsAutogen'/>
@@ -1402,7 +1424,9 @@
 			<Function name='GetLabels'/>
 			<Function name='GetStops'/>
 			<Function name='HasBPMChanges'/>
+			<Function name='HasFakes'/>
 			<Function name='HasNegativeBPMs'/>
+			<Function name='HasSpeedChanges'/>
 			<Function name='HasStops'/>
 			<Function name='HasWarps'/>
 		</Class>
@@ -1879,11 +1903,6 @@
 			<EnumValue name='&apos;SampleMusicPreviewMode_ScreenMusic&apos;' value='2'/>
 			<EnumValue name='&apos;SampleMusicPreviewMode_LastSong&apos;' value='3'/>
 		</Enum>
-		<Enum name='ScoringType'>
-			<EnumValue name='&apos;ScoringType_New&apos;' value='0'/>
-			<EnumValue name='&apos;ScoringType_Old&apos;' value='1'/>
-			<EnumValue name='&apos;ScoringType_Custom&apos;' value='2'/>
-		</Enum>
 		<Enum name='ScreenType'>
 			<EnumValue name='&apos;ScreenType_Attract&apos;' value='0'/>
 			<EnumValue name='&apos;ScreenType_GameMenu&apos;' value='1'/>
@@ -1975,21 +1994,23 @@
 			<EnumValue name='&apos;StepsType_Para_Single&apos;' value='15'/>
 			<EnumValue name='&apos;StepsType_Ds3ddx_Single&apos;' value='16'/>
 			<EnumValue name='&apos;StepsType_Bm_Single5&apos;' value='17'/>
-			<EnumValue name='&apos;StepsType_Bm_Double5&apos;' value='18'/>
-			<EnumValue name='&apos;StepsType_Bm_Single7&apos;' value='19'/>
-			<EnumValue name='&apos;StepsType_Bm_Double7&apos;' value='20'/>
-			<EnumValue name='&apos;StepsType_Maniax_Single&apos;' value='21'/>
-			<EnumValue name='&apos;StepsType_Maniax_Double&apos;' value='22'/>
-			<EnumValue name='&apos;StepsType_Techno_Single4&apos;' value='23'/>
-			<EnumValue name='&apos;StepsType_Techno_Single5&apos;' value='24'/>
-			<EnumValue name='&apos;StepsType_Techno_Single8&apos;' value='25'/>
-			<EnumValue name='&apos;StepsType_Techno_Double4&apos;' value='26'/>
-			<EnumValue name='&apos;StepsType_Techno_Double5&apos;' value='27'/>
-			<EnumValue name='&apos;StepsType_Techno_Double8&apos;' value='28'/>
-			<EnumValue name='&apos;StepsType_Pnm_Five&apos;' value='29'/>
-			<EnumValue name='&apos;StepsType_Pnm_Nine&apos;' value='30'/>
-			<EnumValue name='&apos;StepsType_Guitar_Five&apos;' value='31'/>
-			<EnumValue name='&apos;StepsType_Lights_Cabinet&apos;' value='32'/>
+			<EnumValue name='&apos;StepsType_Bm_Versus5&apos;' value='18'/>
+			<EnumValue name='&apos;StepsType_Bm_Double5&apos;' value='19'/>
+			<EnumValue name='&apos;StepsType_Bm_Single7&apos;' value='20'/>
+			<EnumValue name='&apos;StepsType_Bm_Versus7&apos;' value='21'/>
+			<EnumValue name='&apos;StepsType_Bm_Double7&apos;' value='22'/>
+			<EnumValue name='&apos;StepsType_Maniax_Single&apos;' value='23'/>
+			<EnumValue name='&apos;StepsType_Maniax_Double&apos;' value='24'/>
+			<EnumValue name='&apos;StepsType_Techno_Single4&apos;' value='25'/>
+			<EnumValue name='&apos;StepsType_Techno_Single5&apos;' value='26'/>
+			<EnumValue name='&apos;StepsType_Techno_Single8&apos;' value='27'/>
+			<EnumValue name='&apos;StepsType_Techno_Double4&apos;' value='28'/>
+			<EnumValue name='&apos;StepsType_Techno_Double5&apos;' value='29'/>
+			<EnumValue name='&apos;StepsType_Techno_Double8&apos;' value='30'/>
+			<EnumValue name='&apos;StepsType_Pnm_Five&apos;' value='31'/>
+			<EnumValue name='&apos;StepsType_Pnm_Nine&apos;' value='32'/>
+			<EnumValue name='&apos;StepsType_Guitar_Five&apos;' value='33'/>
+			<EnumValue name='&apos;StepsType_Lights_Cabinet&apos;' value='34'/>
 		</Enum>
 		<Enum name='StyleType'>
 			<EnumValue name='&apos;StyleType_OnePlayerOneSide&apos;' value='0'/>
@@ -2081,5 +2102,5 @@
 		<Constant name='top' value='&apos;VertAlign_Top&apos;'/>
 	</Constants>
 	<Version>sm-ssc v1.2.5</Version>
-	<Date>2011-05-01</Date>
+	<Date>2011-05-19</Date>
 </Lua>

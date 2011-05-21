@@ -50,7 +50,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".;vorbis;libjpeg;&quot;..\extern\lua-5.1\src&quot;;ffmpeg\modern_working\include;BaseClasses;&quot;..\extern\jsoncpp\include&quot;;&quot;..\extern\glew-1.5.8\include&quot;;..\extern\pcre;&quot;..\extern\mad-0.15.1b&quot;;..\extern\libpng;..\extern\libjpeg;..\extern\zlib;..\extern\vorbis"
+				AdditionalIncludeDirectories=".;&quot;..\extern\lua-5.1\src&quot;;ffmpeg\modern_working\include;BaseClasses;..\extern\jsoncpp\include;&quot;..\extern\glew-1.5.8\include&quot;;..\extern\pcre;&quot;..\extern\mad-0.15.1b&quot;;..\extern\libpng\include;..\extern\libjpeg;..\extern\zlib;..\extern\vorbis"
 				PreprocessorDefinitions="WIN32,_DEBUG,_WINDOWS,WINDOWS,DEBUG,GLEW_STATIC"
 				ExceptionHandling="0"
 				BasicRuntimeChecks="3"
@@ -85,7 +85,7 @@
 				OutputFile="../Program/StepMania-debug.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="ffmpeg\lib"
+				AdditionalLibraryDirectories="ffmpeg\lib;..\extern\libpng\lib\;..\extern\libjpeg\;..\extern\zlib\;&quot;..\extern\mad-0.15.1b\msvc++\Release\&quot;"
 				GenerateManifest="true"
 				IgnoreDefaultLibraryNames="wininet.lib;msimg32.lib;libci.lib;msvcrt.lib"
 				GenerateDebugInformation="true"
@@ -158,7 +158,7 @@
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="2"
-				AdditionalIncludeDirectories=".;vorbis;libjpeg;&quot;..\extern\lua-5.1\src&quot;;ffmpeg\modern_working\include;BaseClasses;&quot;..\extern\jsoncpp\include&quot;;&quot;..\extern\glew-1.5.8\include&quot;;..\extern\pcre;&quot;..\extern\mad-0.15.1b&quot;;..\extern\libpng;..\extern\libjpeg;..\extern\zlib;..\extern\vorbis"
+				AdditionalIncludeDirectories=".;&quot;..\extern\lua-5.1\src&quot;;ffmpeg\modern_working\include;BaseClasses;..\extern\jsoncpp\include;&quot;..\extern\glew-1.5.8\include&quot;;..\extern\pcre;&quot;..\extern\mad-0.15.1b&quot;;..\extern\libpng\include;..\extern\libjpeg;..\extern\zlib;..\extern\vorbis"
 				PreprocessorDefinitions="WIN32,NDEBUG,_WINDOWS,WINDOWS,RELEASE,GLEW_STATIC"
 				StringPooling="true"
 				MinimalRebuild="false"
@@ -196,7 +196,7 @@
 				OutputFile="../Program/StepMania.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="ffmpeg\lib"
+				AdditionalLibraryDirectories="ffmpeg\lib;..\extern\libpng\lib\;..\extern\libjpeg\;..\extern\zlib\;&quot;..\extern\mad-0.15.1b\msvc++\Release\&quot;"
 				IgnoreDefaultLibraryNames="wininet.lib;msimg32.lib;libci.lib"
 				ProgramDatabaseFile="$(IntDir)/StepMania.pdb"
 				GenerateMapFile="true"
@@ -263,7 +263,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".;vorbis;libjpeg;&quot;..\extern\lua-5.1\src&quot;;ffmpeg\modern_working\include;BaseClasses;&quot;..\extern\jsoncpp\include&quot;;&quot;..\extern\glew-1.5.8\include&quot;;..\extern\pcre;&quot;..\extern\mad-0.15.1b&quot;;..\extern\libpng;..\extern\libjpeg;..\extern\zlib;..\extern\vorbis"
+				AdditionalIncludeDirectories=".;&quot;..\extern\lua-5.1\src&quot;;ffmpeg\modern_working\include;BaseClasses;..\extern\jsoncpp\include;&quot;..\extern\glew-1.5.8\include&quot;;..\extern\pcre;&quot;..\extern\mad-0.15.1b&quot;;..\extern\libpng\include;..\extern\libjpeg;..\extern\zlib;..\extern\vorbis"
 				PreprocessorDefinitions="WIN32,_DEBUG,_WINDOWS,WINDOWS,DEBUG,GLEW_STATIC"
 				ExceptionHandling="0"
 				BasicRuntimeChecks="0"
@@ -298,7 +298,7 @@
 				OutputFile="../Program/StepMania-fastdebug.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="ffmpeg\lib"
+				AdditionalLibraryDirectories="ffmpeg\lib;..\extern\libpng\lib\;..\extern\libjpeg\;..\extern\zlib\;&quot;..\extern\mad-0.15.1b\msvc++\Release\&quot;"
 				GenerateManifest="true"
 				IgnoreDefaultLibraryNames="wininet.lib;msimg32.lib;libci.lib;msvcrt.lib"
 				GenerateDebugInformation="true"
@@ -371,7 +371,7 @@
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
-				AdditionalIncludeDirectories=".;vorbis;libjpeg;&quot;..\extern\lua-5.1\src&quot;;ffmpeg\modern_working\include;BaseClasses;&quot;..\extern\jsoncpp\include&quot;;&quot;..\extern\glew-1.5.8\include&quot;;..\extern\pcre;&quot;..\extern\mad-0.15.1b&quot;;..\extern\libpng;..\extern\libjpeg;..\extern\zlib;..\extern\vorbis"
+				AdditionalIncludeDirectories=".;&quot;..\extern\lua-5.1\src&quot;;ffmpeg\modern_working\include;BaseClasses;..\extern\jsoncpp\include;&quot;..\extern\glew-1.5.8\include&quot;;..\extern\pcre;&quot;..\extern\mad-0.15.1b&quot;;..\extern\libpng\include;..\extern\libjpeg;..\extern\zlib;..\extern\vorbis"
 				PreprocessorDefinitions="WIN32,NDEBUG,_WINDOWS,WINDOWS,RELEASE,GLEW_STATIC"
 				StringPooling="true"
 				MinimalRebuild="false"
@@ -410,7 +410,7 @@
 				OutputFile="..\Program/StepMania-SSE2.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="ffmpeg\lib"
+				AdditionalLibraryDirectories="ffmpeg\lib;..\extern\libpng\lib\;..\extern\libjpeg\;..\extern\zlib\;&quot;..\extern\mad-0.15.1b\msvc++\Release\&quot;"
 				IgnoreDefaultLibraryNames="wininet.lib;msimg32.lib;libci.lib"
 				ProgramDatabaseFile="$(IntDir)/StepMania-SSE2.pdb"
 				GenerateMapFile="true"
@@ -1445,6 +1445,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\SongPosition.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\SongPosition.h"
+				>
+			</File>
+			<File
 				RelativePath="SongUtil.cpp"
 				>
 			</File>
@@ -1573,6 +1581,14 @@
 				</File>
 				<File
 					RelativePath="NotesLoaderDWI.h"
+					>
+				</File>
+				<File
+					RelativePath=".\NotesLoaderJson.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\NotesLoaderJson.h"
 					>
 				</File>
 				<File
@@ -1753,6 +1769,14 @@
 				</File>
 				<File
 					RelativePath="NotesWriterDWI.h"
+					>
+				</File>
+				<File
+					RelativePath=".\NotesWriterJson.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\NotesWriterJson.h"
 					>
 				</File>
 				<File
@@ -6564,6 +6588,578 @@
 				RelativePath="glext.h"
 				>
 			</File>
+			<Filter
+				Name="libpng"
+				>
+				<File
+					RelativePath="..\extern\libpng\include\png.c"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="FastDebug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release-SSE2|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\extern\libpng\include\png.h"
+					>
+				</File>
+				<File
+					RelativePath="..\extern\libpng\include\pngconf.h"
+					>
+				</File>
+				<File
+					RelativePath="..\extern\libpng\include\pngdebug.h"
+					>
+				</File>
+				<File
+					RelativePath="..\extern\libpng\include\pngerror.c"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="FastDebug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release-SSE2|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\extern\libpng\include\pngget.c"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="FastDebug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release-SSE2|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\extern\libpng\include\pnginfo.h"
+					>
+				</File>
+				<File
+					RelativePath="..\extern\libpng\include\scripts\pnglibconf.h"
+					>
+				</File>
+				<File
+					RelativePath="..\extern\libpng\include\pngmem.c"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="FastDebug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release-SSE2|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\extern\libpng\include\pngpread.c"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="FastDebug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release-SSE2|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\extern\libpng\include\pngpriv.h"
+					>
+				</File>
+				<File
+					RelativePath="..\extern\libpng\include\pngread.c"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="FastDebug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release-SSE2|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\extern\libpng\include\pngrio.c"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="FastDebug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release-SSE2|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\extern\libpng\include\pngrtran.c"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="FastDebug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release-SSE2|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\extern\libpng\include\pngrutil.c"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="FastDebug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release-SSE2|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\extern\libpng\include\pngset.c"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="FastDebug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release-SSE2|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\extern\libpng\include\pngstruct.h"
+					>
+				</File>
+				<File
+					RelativePath="..\extern\libpng\include\pngtrans.c"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="FastDebug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release-SSE2|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\extern\libpng\include\pngwio.c"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="FastDebug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release-SSE2|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\extern\libpng\include\pngwrite.c"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="FastDebug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release-SSE2|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\extern\libpng\include\pngwtran.c"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="FastDebug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release-SSE2|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\extern\libpng\include\pngwutil.c"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="FastDebug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release-SSE2|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+				</File>
+			</Filter>
 			<Filter
 				Name="pcre"
 				>

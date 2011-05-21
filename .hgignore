@@ -64,6 +64,7 @@ lib*_link.a
 Data/UserPrefs
 Data/uPrefs
 Data/GamePrefs/*.cfg
+Data/Static.ini
 PBProject/Hardware.plist
 Themes/pump
 Themes/optical-release
@@ -82,6 +83,9 @@ Utils/temp*
 BuildLog.htm
 *.pch
 
+.hgrc
+src/UpgradeLog*.XML
+src/_UpgradeReport_Files
 syntax: regexp
 .*\#.*\#$
 glob:Cache/Banners/AdditionalSongs_Airspace Preview_Derailed_Derailed bn.png

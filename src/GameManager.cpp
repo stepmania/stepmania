@@ -69,8 +69,10 @@ static const StepsTypeInfo g_StepsTypeInfos[] = {
 	{ "ds3ddx-single",	8,	true,	StepsTypeCategory_Single },
 	// beatmania
 	{ "bm-single5",		6,	true,	StepsTypeCategory_Single },	// called "bm" for backward compat
+	{ "bm-versus5",		6,	true,	StepsTypeCategory_Single },	// called "bm" for backward compat
 	{ "bm-double5",		12,	true,	StepsTypeCategory_Double },	// called "bm" for backward compat
 	{ "bm-single7",		8,	true,	StepsTypeCategory_Single },	// called "bm" for backward compat
+	{ "bm-versus7",		8,	true,	StepsTypeCategory_Single },	// called "bm" for backward compat
 	{ "bm-double7",		16,	true,	StepsTypeCategory_Double },	// called "bm" for backward compat
 	// dance maniax
 	{ "maniax-single",	4,	true,	StepsTypeCategory_Single },
@@ -1584,7 +1586,47 @@ static const Style g_Style_Beat_Single5 =
 	false, // m_bLockDifficulties
 };
 
-static const Style g_Style_Beat_Double =
+static const Style g_Style_Beat_Versus5 =
+{	// STYLE_BEAT_VERSUS
+	true,				// m_bUsedForGameplay
+	false,				// m_bUsedForEdit
+	true,				// m_bUsedForDemonstration
+	false,				// m_bUsedForHowToPlay
+	"versus",			// m_szName
+	StepsType_beat_versus5,	// m_StepsType
+	StyleType_TwoPlayersTwoSides,		// m_StyleType
+	6,				// m_iColsPerPlayer
+	{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
+		{	// PLAYER_1
+			{ TRACK_1,	-BEAT_COL_SPACING*2.5f, NULL },
+			{ TRACK_2,	-BEAT_COL_SPACING*1.5f, NULL },
+			{ TRACK_3,	-BEAT_COL_SPACING*0.5f, NULL },
+			{ TRACK_4,	+BEAT_COL_SPACING*0.5f, NULL },
+			{ TRACK_5,	+BEAT_COL_SPACING*1.5f, NULL },
+			{ TRACK_6,	+BEAT_COL_SPACING*3.0f, "scratch" },
+		},
+		{	// PLAYER_2
+			{ TRACK_1,	-BEAT_COL_SPACING*2.5f, NULL },
+			{ TRACK_2,	-BEAT_COL_SPACING*1.5f, NULL },
+			{ TRACK_3,	-BEAT_COL_SPACING*0.5f, NULL },
+			{ TRACK_4,	+BEAT_COL_SPACING*0.5f, NULL },
+			{ TRACK_5,	+BEAT_COL_SPACING*1.5f, NULL },
+			{ TRACK_6,	+BEAT_COL_SPACING*3.0f, "scratch" },
+		},
+	},
+	{	// m_iInputColumn[NUM_GameController][NUM_GameButton]
+		{ 0, 1, 2, 3, 4, Style::NO_MAPPING, Style::NO_MAPPING, 5, 5, Style::END_MAPPING },
+		{ 0, 1, 2, 3, 4, Style::NO_MAPPING, Style::NO_MAPPING, 5, 5, Style::END_MAPPING }
+	},
+	{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
+		0,1,2,3,4,5
+	},
+	false, // m_bNeedsZoomOutWith2Players
+	false, // m_bCanUseBeginnerHelper
+	false, // m_bLockDifficulties
+};
+
+static const Style g_Style_Beat_Double5 =
 {	// STYLE_BEAT_DOUBLE
 	true,				// m_bUsedForGameplay
 	true,				// m_bUsedForEdit
@@ -1680,6 +1722,51 @@ static const Style g_Style_Beat_Single7 =
 	false, // m_bLockDifficulties
 };
 
+static const Style g_Style_Beat_Versus7 =
+{	// STYLE_BEAT_VERSUS7
+	true,				// m_bUsedForGameplay
+	true,				// m_bUsedForEdit
+	false,				// m_bUsedForDemonstration
+	false,				// m_bUsedForHowToPlay
+	"single7",			// m_szName
+	StepsType_beat_versus7,	// m_StepsType
+	StyleType_TwoPlayersTwoSides,		// m_StyleType
+	8,				// m_iColsPerPlayer
+	{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
+		{	// PLAYER_1
+			{ TRACK_8,	-BEAT_COL_SPACING*3.5f, "scratch" },
+			{ TRACK_1,	-BEAT_COL_SPACING*2.0f, NULL },
+			{ TRACK_2,	-BEAT_COL_SPACING*1.0f, NULL },
+			{ TRACK_3,	-BEAT_COL_SPACING*0.0f, NULL },
+			{ TRACK_4,	+BEAT_COL_SPACING*1.0f, NULL },
+			{ TRACK_5,	+BEAT_COL_SPACING*2.0f, NULL },
+			{ TRACK_6,	+BEAT_COL_SPACING*3.0f, NULL },
+			{ TRACK_7,	+BEAT_COL_SPACING*4.0f, NULL },
+		},
+		{	// PLAYER_2
+			{ TRACK_1,	-BEAT_COL_SPACING*3.5f, NULL },
+			{ TRACK_2,	-BEAT_COL_SPACING*2.5f, NULL },
+			{ TRACK_3,	-BEAT_COL_SPACING*1.5f, NULL },
+			{ TRACK_4,	-BEAT_COL_SPACING*0.5f, NULL },
+			{ TRACK_5,	+BEAT_COL_SPACING*0.5f, NULL },
+			{ TRACK_6,	+BEAT_COL_SPACING*1.5f, NULL },
+			{ TRACK_7,	+BEAT_COL_SPACING*2.5f, NULL },
+			{ TRACK_8,	+BEAT_COL_SPACING*4.0f, "scratch" },
+		},
+	},
+	{	// m_iInputColumn[NUM_GameController][NUM_GameButton]
+		{ 1, 2, 3, 4, 5, 6, 7, 0, 0, Style::END_MAPPING },
+		{ 0, 1, 2, 3, 4, 5, 6, 7, 7, Style::END_MAPPING },
+	},
+	{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
+		0,1,2,3,4,5,6,7
+	},
+	false, // m_bNeedsZoomOutWith2Players
+	false, // m_bCanUseBeginnerHelper
+	false, // m_bLockDifficulties
+};
+
+
 static const Style g_Style_Beat_Double7 =
 {	// STYLE_BEAT_DOUBLE7
 	true,				// m_bUsedForGameplay
@@ -1743,8 +1830,10 @@ static const Style g_Style_Beat_Double7 =
 static const Style *g_apGame_Beat_Styles[] =
 {
 	&g_Style_Beat_Single5,
-	&g_Style_Beat_Double,
+	&g_Style_Beat_Versus5,
+	&g_Style_Beat_Double5,
 	&g_Style_Beat_Single7,
+	&g_Style_Beat_Versus7,
 	&g_Style_Beat_Double7,
 	NULL
 };

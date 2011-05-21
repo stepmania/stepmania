@@ -41,7 +41,7 @@
  * @brief The internal version of the cache for StepMania.
  *
  * Increment this value to invalidate the current cache. */
-const int FILE_CACHE_VERSION = 170;
+const int FILE_CACHE_VERSION = 176;
 
 /** @brief How long does a song sample last by default? */
 const float DEFAULT_MUSIC_SAMPLE_LENGTH = 12.f;
@@ -145,6 +145,18 @@ void Song::AddLyricSegment( LyricSegment seg )
 	m_LyricSegments.push_back( seg );
 }
 
+Steps *Song::CreateSteps()
+{
+	Steps *pSteps = new Steps;
+	InitSteps( pSteps );
+	return pSteps;
+}
+
+void Song::InitSteps(Steps *pSteps)
+{
+	pSteps->m_Timing = m_SongTiming;
+}
+
 void Song::GetDisplayBpms( DisplayBpms &AddTo ) const
 {
 	if( m_DisplayBPMType == DISPLAY_BPM_SPECIFIED )
@@ -155,7 +167,7 @@ void Song::GetDisplayBpms( DisplayBpms &AddTo ) const
 	else
 	{
 		float fMinBPM, fMaxBPM;
-		m_Timing.GetActualBPM( fMinBPM, fMaxBPM );
+		m_SongTiming.GetActualBPM( fMinBPM, fMaxBPM );
 		AddTo.Add( fMinBPM );
 		AddTo.Add( fMaxBPM );
 	}
@@ -240,7 +252,7 @@ bool Song::LoadFromSongDir( RString sDir )
 
 		if( !NotesLoader::LoadFromDir(sDir, *this, BlacklistedImages) )
 		{
-			LOG->UserLog( "Song", sDir, "has no SM, DWI, BMS, or KSF files." );
+			LOG->UserLog( "Song", sDir, "has no SSC, SM, SMA, DWI, BMS, or KSF files." );
 
 			vector<RString> vs;
 			GetDirListing( sDir + "*.mp3", vs, false, false ); 
@@ -460,6 +472,13 @@ void Song::TidyUpData()
 		m_fMusicLengthSeconds = 0;
 	}
 
+	m_SongTiming.TidyUpData();
+	
+	FOREACH( Steps *, m_vpSteps, s )
+	{
+		(*s)->m_Timing.TidyUpData();
+	}
+
 	/* Generate these before we autogen notes, so the new notes can inherit
 	 * their source's values. */
 	ReCalculateRadarValuesAndLastBeat();
@@ -476,29 +495,18 @@ void Song::TidyUpData()
 		m_sArtist = "Unknown artist";
 	TranslateTitles();
 
-	if( m_Timing.m_BPMSegments.empty() )
-	{
-		LOG->UserLog( "Song file", m_sSongDir + m_sSongFileName, "has no BPM segments, default provided." );
-
-		m_Timing.AddBPMSegment( BPMSegment(0, 60) );
-	}
-
-	// Make sure the first BPM segment starts at beat 0.
-	if( m_Timing.m_BPMSegments[0].m_iStartRow != 0 )
-		m_Timing.m_BPMSegments[0].m_iStartRow = 0;
-
-
 	if( m_fMusicSampleStartSeconds == -1 ||
 		m_fMusicSampleStartSeconds == 0 ||
 		m_fMusicSampleStartSeconds+m_fMusicSampleLengthSeconds > this->m_fMusicLengthSeconds )
 	{
-		m_fMusicSampleStartSeconds = this->GetElapsedTimeFromBeat( 100 );
+		const TimingData &timing = this->m_SongTiming;
+		m_fMusicSampleStartSeconds = timing.GetElapsedTimeFromBeat( 100 );
 
 		if( m_fMusicSampleStartSeconds+m_fMusicSampleLengthSeconds > this->m_fMusicLengthSeconds )
 		{
 			int iBeat = lrintf( m_fLastBeat/2 );
 			iBeat -= iBeat%4;
-			m_fMusicSampleStartSeconds = this->GetElapsedTimeFromBeat( (float)iBeat );
+			m_fMusicSampleStartSeconds = timing.GetElapsedTimeFromBeat( (float)iBeat );
 		}
 	}
 
@@ -611,13 +619,13 @@ void Song::TidyUpData()
 
 		// Skip any image that we've already classified
 
-		if( HasBanner()  &&  stricmp(m_sBannerFile, arrayImages[i])==0 )
+		if( HasBanner()  &&  m_sBannerFile.EqualsNoCase(arrayImages[i]) )
 			continue;	// skip
 
-		if( HasBackground()  &&  stricmp(m_sBackgroundFile, arrayImages[i])==0 )
+		if( HasBackground()  &&  m_sBackgroundFile.EqualsNoCase(arrayImages[i]) )
 			continue;	// skip
 
-		if( HasCDTitle()  &&  stricmp(m_sCDTitleFile, arrayImages[i])==0 )
+		if( HasCDTitle()  &&  m_sCDTitleFile.EqualsNoCase(arrayImages[i]) )
 			continue;	// skip
 
 		// todo: add checks for Jacket, Disc, and CDImage -aj
@@ -640,12 +648,6 @@ void Song::TidyUpData()
 		if( !HasBackground()  &&  width >= 320  &&  height >= 240 )
 		{
 			m_sBackgroundFile = arrayImages[i];
-			continue;
-		}
-
-		if( !HasBanner() && Sprite::IsDiagonalBanner(width, height) )
-		{
-			m_sBannerFile = arrayImages[i];
 			continue;
 		}
 
@@ -777,38 +779,6 @@ void Song::TidyUpData()
 			m_sSongFileName += ".ssc";
 		} while(0);
 	}
-
-	// If no time signature specified, assume 4/4 time for the whole song.
-	if( m_Timing.m_vTimeSignatureSegments.empty() )
-	{
-		TimeSignatureSegment seg(0, 4, 4);
-		m_Timing.m_vTimeSignatureSegments.push_back( seg );
-	}
-	
-	/*
-	 * Likewise, if no tickcount signature is specified, assume 2 ticks
-	 * per beat for the entire song. The default of 2 is chosen more
-	 * for compatibility with the Pump Pro series than anything else.
-	 */
-	if( m_Timing.m_TickcountSegments.empty() )
-	{
-		TickcountSegment seg(0, 2);
-		m_Timing.m_TickcountSegments.push_back( seg );
-	}
-	
-	// Have a default combo segment of one just in case.
-	if( m_Timing.m_ComboSegments.empty() )
-	{
-		ComboSegment seg(0, 1);
-		m_Timing.m_ComboSegments.push_back( seg );
-	}
-	
-	// Have a default label segment just in case.
-	if( m_Timing.m_LabelSegments.empty() )
-	{
-		LabelSegment seg(0, "Song Start");
-		m_Timing.m_LabelSegments.push_back( seg );
-	}
 }
 
 void Song::TranslateTitles()
@@ -857,8 +827,8 @@ void Song::ReCalculateRadarValuesAndLastBeat()
 		if( tempNoteData.GetLastRow() == 0 )
 			continue;
 
-		fFirstBeat = min( fFirstBeat, tempNoteData.GetFirstBeat() );
-		fLastBeat = max( fLastBeat, tempNoteData.GetLastBeat() );
+		fFirstBeat = min( fFirstBeat, m_SongTiming.GetBeatFromElapsedTime(pSteps->m_Timing.GetElapsedTimeFromBeat(tempNoteData.GetFirstBeat())) );
+		fLastBeat  = max( fLastBeat,  m_SongTiming.GetBeatFromElapsedTime(pSteps->m_Timing.GetElapsedTimeFromBeat(tempNoteData.GetLastBeat())) );
 	}
 
 	m_fFirstBeat = fFirstBeat;
@@ -887,6 +857,12 @@ void Song::Save()
 
 	ReCalculateRadarValuesAndLastBeat();
 	TranslateTitles();
+	
+	// TODO: Figure out a better way to save to Song's timing data.
+	if( m_vpSteps.size() == 1 )
+	{
+		m_SongTiming = m_vpSteps[0]->m_Timing;
+	}
 
 	// Save the new files. These calls make backups on their own.
 	if( !SaveToSSCFile(GetSongFilePath(), false) )
@@ -1169,9 +1145,6 @@ bool Song::HasEdits( StepsType st ) const
 	return false;
 }
 
-/* Return false if the song should not be displayed for selection in normal
- * gameplay (but may still be available in random selection, during extra
- * stages, or in other special conditions). */
 bool Song::NormallyDisplayed() const
 {
 	return UNLOCKMAN == NULL || !UNLOCKMAN->SongIsLocked(this);
@@ -1453,7 +1426,7 @@ bool Song::IsEditAlreadyLoaded( Steps* pSteps ) const
 
 bool Song::HasSignificantBpmChangesOrStops() const
 {
-	if( m_Timing.HasStops() )
+	if( m_SongTiming.HasStops() )
 		return true;
 
 	// Don't consider BPM changes that only are only for maintaining sync as 
@@ -1463,7 +1436,7 @@ bool Song::HasSignificantBpmChangesOrStops() const
 		if( m_fSpecifiedBPMMin != m_fSpecifiedBPMMax )
 			return true;
 	}
-	else if( m_Timing.HasBpmChanges() )
+	else if( m_SongTiming.HasBpmChanges() )
 	{
 		return true;
 	}
@@ -1473,7 +1446,8 @@ bool Song::HasSignificantBpmChangesOrStops() const
 
 float Song::GetStepsSeconds() const
 {
-	return GetElapsedTimeFromBeat( m_fLastBeat ) - GetElapsedTimeFromBeat( m_fFirstBeat );
+	const TimingData &timing = this->m_SongTiming;
+	return timing.GetElapsedTimeFromBeat( m_fLastBeat ) - timing.GetElapsedTimeFromBeat( m_fFirstBeat );
 }
 
 bool Song::IsLong() const
@@ -1556,7 +1530,7 @@ public:
 	}
 	static int GetTimingData( T* p, lua_State *L )
 	{
-		p->m_Timing.PushSelf(L);
+		p->m_SongTiming.PushSelf(L);
 		return 1;
 	}
 	// has functions

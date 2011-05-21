@@ -339,6 +339,7 @@ void Steps::AutogenFrom( const Steps *parent_, StepsType ntTo )
 {
 	parent = parent_;
 	m_StepsType = ntTo;
+	m_Timing = parent->m_Timing;
 }
 
 void Steps::CopyFrom( Steps* pSource, StepsType ntTo, float fMusicLengthSeconds )	// pSource does not have to be of the same StepsType
@@ -348,6 +349,7 @@ void Steps::CopyFrom( Steps* pSource, StepsType ntTo, float fMusicLengthSeconds 
 	pSource->GetNoteData( noteData );
 	noteData.SetNumTracks( GAMEMAN->GetStepsTypeInfo(ntTo).iNumTracks );
 	parent = NULL;
+	m_Timing = pSource->m_Timing;
 	this->SetNoteData( noteData );
 	this->SetDescription( pSource->GetDescription() );
 	this->SetDifficulty( pSource->GetDifficulty() );
@@ -400,6 +402,21 @@ void Steps::SetMeter( int meter )
 	m_iMeter = meter;
 }
 
+bool Steps::HasSignificantTimingChanges() const
+{
+	if( m_Timing.HasStops() )
+		return true;
+	
+	/* TODO: Deal with DisplayBPM here...if possible?
+	 * Song's version may still be useful. */
+	
+	else if( m_Timing.HasBpmChanges() || m_Timing.HasWarps() || m_Timing.HasSpeedChanges() )
+	{
+		return true;
+	}
+	return false;
+}
+
 void Steps::SetCachedRadarValues( const RadarValues v[NUM_PLAYERS] )
 {
 	DeAutogen();
@@ -424,11 +441,19 @@ public:
 	DEFINE_METHOD( IsAnEdit,	IsAnEdit() )
 	DEFINE_METHOD( IsAPlayerEdit,	IsAPlayerEdit() )
 
+	static int HasSignificantTimingChanges( T* p, lua_State *L )	{ lua_pushboolean(L, p->HasSignificantTimingChanges()); return 1; }
+	
 	static int GetRadarValues( T* p, lua_State *L )
 	{
 		PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);
 		RadarValues &rv = const_cast<RadarValues &>(p->GetRadarValues(pn));
 		rv.PushSelf(L);
+		return 1;
+	}
+
+	static int GetTimingData( T* p, lua_State *L )
+	{
+		p->m_Timing.PushSelf(L);
 		return 1;
 	}
 
@@ -442,6 +467,7 @@ public:
 		lua_pushstring( L, out );
 		return 1;
 	}
+	
 
 	LunaSteps()
 	{
@@ -452,7 +478,9 @@ public:
 		ADD_METHOD( GetFilename );
 		ADD_METHOD( GetHash );
 		ADD_METHOD( GetMeter );
+		ADD_METHOD( HasSignificantTimingChanges );
 		ADD_METHOD( GetRadarValues );
+		ADD_METHOD( GetTimingData );
 		//ADD_METHOD( GetSMNoteData );
 		ADD_METHOD( GetStepsType );
 		ADD_METHOD( IsAnEdit );

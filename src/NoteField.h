@@ -1,6 +1,8 @@
 #ifndef NOTE_FIELD_H
 #define NOTE_FIELD_H
 
+#include "TimingData.h"
+#include "SongPosition.h"
 #include "Sprite.h"
 #include "ActorFrame.h"
 #include "BitmapText.h"
@@ -56,16 +58,18 @@ protected:
 	void DrawMarkerBar( int fBeat );
 	void DrawAreaHighlight( int iStartBeat, int iEndBeat );
 	void DrawBPMText( const float fBeat, const float fBPM );
-	void DrawFreezeText( const float fBeat, const float fBPM, const float bDelay );
+	void DrawFreezeText( const float fBeat, const float fLength, const float bDelay );
 	void DrawWarpText( const float fBeat, const float fNewBeat );
 	void DrawTimeSignatureText( const float fBeat, int iNumerator, int iDenominator );
 	void DrawTickcountText( const float fBeat, int iTicks );
 	void DrawComboText( const float fBeat, int iCombo );
 	void DrawLabelText( const float fBeat, RString sLabel );
+	void DrawSpeedText( const float fBeat, float fPercent, float fWait, unsigned short usMode );
+	void DrawFakeText( const float fBeat, const float fNewBeat );
 	void DrawAttackText( const float fBeat, const Attack &attack );
 	void DrawBGChangeText( const float fBeat, const RString sNewBGName );
 	float GetWidth() const;
-
+	
 	const NoteData *m_pNoteData;
 
 	float			m_fPercentFadeToFail;	// -1 if not fading to fail

@@ -35,8 +35,9 @@ public:
 		m_fPassmark(0), m_SpeedfPassmark(1.0f),
 		m_fRandomSpeed(0), m_SpeedfRandomSpeed(1.0f),
 		m_bMuteOnError(false), m_FailType(FAIL_IMMEDIATE),
-		m_ScoreDisplay(SCORING_ADD), m_sNoteSkin("")
+		m_ScoreDisplay(SCORING_ADD)
 	{
+		m_sNoteSkin = "";
 		ZERO( m_fAccels );	ONE( m_SpeedfAccels );
 		ZERO( m_fEffects );	ONE( m_SpeedfEffects );
 		ZERO( m_fAppearances );	ONE( m_SpeedfAppearances );

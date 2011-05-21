@@ -1258,6 +1258,9 @@
 	<Function name='GetText' sm-ssc='true' return='string' arguments=''>
 		Returns the text that is currently set at the exact moment you call it. This is likely only going to be useful in an Update command.
 	</Function>
+	<Function name='SetFromCourse' sm-ssc='true' return='void' arguments='Course c'>
+		Sets the BPMDisplay from the specified Course.
+	</Function>
 	<Function name='SetFromGameState' return='void' arguments=''>
 		Sets the BPMDisplay from the GameState.
 	</Function>
@@ -1463,6 +1466,20 @@
 		Blanks the DifficultyIcon.
 	</Function>
 </Class>
+<Class name='FadingBanner'>
+	<Function name='GetLatestIndex' sm-ssc='true' return='int' arguments=''>
+		Returns the index of the last banner loaded.
+	</Function>
+	<Function name='LoadFromCourse' return='void' arguments='Course c'>
+		Loads a Banner from a specified Course.
+	</Function>
+	<Function name='LoadFromSong' return='void' arguments='Song s'>
+		Loads a Banner from a specified Song.
+	</Function>
+	<Function name='LoadFromSongGroup' return='void' arguments='string s'>
+		Loads a Banner from a specified Song Group.
+	</Function>
+</Class>
 <Class name='StepsDisplayList'>
 	<Function name='setfromgamestate' return='void' arguments=''>
 		Sets the StepsDisplayList from the GameState.
@@ -1536,6 +1553,9 @@
 		<!-- XXX: Presumably, 0 is all the way to the left, and 1 is all the way
 		          to the right. -->
 		Return the sound balance for <code>pn</code>.
+	</Function>
+	<Function name='PlayAnnouncer' sm-ssc='true' return='void' arguments='string sPath'>
+		Plays a sound from the current announcer.
 	</Function>
 	<Function name='PlayOnce' return='void' arguments='string sPath'>
 		Play the sound at <code>sPath</code> one time.
@@ -1626,12 +1646,11 @@
 		<!-- XXX: What is the edit course entry index? -->
 	</Function>
 	<Function name='GetEditLocalProfile' return='Profile' arguments=''>
-		<!-- XXX: What is the EditLocalProfile? -->
-		Return the Edit Local <Link class='Profile' /> or <code>nil</code> if
-		it does not exist.
+		Return the Edit Local <Link class='Profile' /> (during Profile editing)
+		or <code>nil</code> if it does not exist.
 	</Function>
 	<Function name='GetEditLocalProfileID' return='string' arguments=''>
-		<!-- XXX: What is the EditLocalProfileID? -->
+		Returns the ID of the Edit Local <Link class='Profile' /> (during Profile editing).
 	</Function>
 	<Function name='GetEditSourceSteps' return='Steps' arguments=''>
 		Return the source <Link class='Steps' /> for the editor or <code>nil</code>
@@ -1719,6 +1738,9 @@
 	</Function>
 	<Function name='GetSongPercent' sm-ssc='true' return='float' arguments='float fBeat'>
 		Returns how much of the song is through at beat <code>fBeat</code>.
+	</Function>
+	<Function name='GetSongPosition' sm-ssc='true' return='SongPosition' arguments=''>
+		<!-- todo -->
 	</Function>
 	<Function name='GetSortOrder' return='SortOrder' arguments=''>
 		Returns the current SortOrder.
@@ -1931,6 +1953,8 @@
 	</Function>
 </Class>
 <Class name='InputFilter'>
+	<Function name='GetMouseWheel' sm-ssc='true' return='float' arguments=''>
+	</Function>
 	<Function name='GetMouseX' sm-ssc='true' return='float' arguments=''>
 		Returns the X position of the mouse.
 	</Function>
@@ -2369,6 +2393,9 @@
 	<Function name='GetCaloriesBurned' return='float' arguments=''>
 		Returns the number of calories burned.
 	</Function>
+	<Function name='GetCurMaxScore' sm-ssc='true' return='int' arguments=''>
+		Returns the current possible maximum score.
+	</Function>
 	<Function name='GetCurrentCombo' return='int' arguments=''>
 		Returns the player's current combo.
 	</Function>
@@ -2461,6 +2488,9 @@
 	<Function name='IsDisqualified' return='bool' arguments=''>
 		Returns <code>true</code> if the player was disqualified from ranking.
 	</Function>
+	<Function name='SetCurMaxScore' sm-ssc='true' return='int' arguments=''>
+		Sets the current possible maximum score.
+	</Function>
 	<Function name='SetScore' sm-ssc='true' return='void' arguments='int iScore'>
 		Sets the Player's score to <code>iScore</code>.
 	</Function>
@@ -2489,6 +2519,9 @@
 	</Function>
 	<Function name='GetPlayerOptionsArray' return='{string}' arguments='ModsLevel ml'>
 		Returns a table of strings, containing the player options for the specified ModsLevel.
+	</Function>
+	<Function name='GetSongPosition' sm-ssc='true' return='SongPosition' arguments=''>
+		Returns the SongPosition for this PlayerState.
 	</Function>
 	<Function name='SetPlayerOptions' return='string' arguments='ModsLevel ml, string sPlayerOptions'>
 		Sets the player options to <code>sPlayerOptions</code> for the specified ModsLevel.
@@ -3208,6 +3241,38 @@
 		Loads preferred songs from <code>{theme}/Other/SongManager sListName.txt</code>.
 	</Function>
 </Class>
+<Class name='SongPosition'>
+	<Function name='GetCurBPS' sm-ssc='true' return='float' arguments=''>
+		Returns the current beats per second.
+	</Function>
+	<Function name='GetDelay' sm-ssc='true' return='bool' arguments=''>
+		Returns <code>true</code> if a Delay is active.
+	</Function>
+	<Function name='GetFreeze' sm-ssc='true' return='bool' arguments=''>
+		Returns <code>true</code> if a Freeze is active.
+	</Function>
+	<Function name='GetMusicSeconds' sm-ssc='true' return='float' arguments=''>
+		<!-- todo -->
+	</Function>
+	<Function name='GetMusicSecondsVisible' sm-ssc='true' return='float' arguments=''>
+		<!-- todo -->
+	</Function>
+	<Function name='GetSongBeat' sm-ssc='true' return='float' arguments=''>
+		<!-- todo -->
+	</Function>
+	<Function name='GetSongBeatNoOffset' sm-ssc='true' return='float' arguments=''>
+		<!-- todo -->
+	</Function>
+	<Function name='GetSongBeatVisible' sm-ssc='true' return='float' arguments=''>
+		<!-- todo -->
+	</Function>
+	<Function name='GetWarpBeginRow' sm-ssc='true' return='int' arguments=''>
+		Returns the row where a warp appears.
+	</Function>
+	<Function name='GetWarpDestination' sm-ssc='true' return='float' arguments=''>
+		Returns the warp destination length.
+	</Function>
+</Class>
 <Class name='Sprite'>
 	<Function name='GetAnimationLengthSeconds' return='float' arguments=''>
 		Returns the length of the animation in seconds.
@@ -3368,11 +3433,17 @@
 	<Function name='GetMeter' return='int' arguments=''>
 		Returns the numerical difficulty of the Steps.
 	</Function>
+        <Function name='HasSignificantTimingChanges' sm-ssc='true' return='bool' arguments=''>
+                Returns <code>true</code> if the song has significant timing changes.
+        </Function>
 	<Function name='GetRadarValues' return='RadarValues' arguments='PlayerNumber pn'>
 		Returns the complete list of RadarValues for player <code>pn</code>. Use <Link class='RadarValues' function='GetValue' /> to grab a specific value.
 	</Function>
 	<Function name='GetStepsType' return='StepsType' arguments=''>
 		Returns the Steps type.
+	</Function>
+	<Function name='GetTimingData' sm-ssc='true' return='TimingData' arguments=''>
+		Returns the TimingData for the Steps.
 	</Function>
 	<Function name='IsAnEdit' sm-ssc='true' return='bool' arguments=''>
 		Returns <code>true</code> if the Steps are an edit.
@@ -3515,6 +3586,12 @@
 	</Function>
 	<Function name='HasWarps' sm-ssc='true' return='bool' arguments=''>
 		Returns <code>true</code> if the TimingData contains warps.
+	</Function>
+        <Function name='HasFakes' sm-ssc='true' return='bool' arguments=''>
+                Returns <code>true</code> if the TimingData contains fake segments.
+        </Function>
+	<Function name='HasSpeedChanges' sm-ssc='true' return='bool' arguments=''>
+		Returns <code>true</code> if the TimingData contains speed scrolling changes.
 	</Function>
 </Class>
 <Class name='Trail'>

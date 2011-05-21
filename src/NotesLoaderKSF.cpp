@@ -9,6 +9,51 @@
 #include "Song.h"
 #include "Steps.h"
 
+static void HandleBunki( TimingData &timing, const float fEarlyBPM, 
+			const float fCurBPM, const float fGap, 
+			const float fPos )
+{
+	const float BeatsPerSecond = fEarlyBPM / 60.0f;
+	const float beat = (fPos + fGap) * BeatsPerSecond;
+	LOG->Trace( "BPM %f, BPS %f, BPMPos %f, beat %f",
+		   fEarlyBPM, BeatsPerSecond, fPos, beat );
+	timing.AddBPMSegment( BPMSegment(BeatToNoteRow(beat), fCurBPM) );
+}
+
+static bool HandlePipeChars( TimingData &timing, const RString sNoteRow, 
+			    const float fCurBeat, int &iTickCount )
+{
+	RString temp = sNoteRow.substr(2,sNoteRow.size()-3);
+	float numTemp = StringToFloat(temp);
+	if (BeginsWith(sNoteRow, "|T")) 
+	{
+		iTickCount = static_cast<int>(numTemp);
+		timing.SetTickcountAtBeat( fCurBeat, clamp(iTickCount, 0, ROWS_PER_BEAT) );
+		return true;
+	}
+	else if (BeginsWith(sNoteRow, "|B")) 
+	{
+		timing.SetBPMAtBeat( fCurBeat, numTemp );
+		return true;
+	}
+	else if (BeginsWith(sNoteRow, "|E"))
+	{
+		// Finally! the |E| tag is working as it should. I can die happy now -DaisuMaster
+		float fCurDelay = 60 / timing.GetBPMAtBeat(fCurBeat) * numTemp / iTickCount;
+		fCurDelay += timing.GetDelayAtRow(BeatToNoteRow(fCurBeat) );
+		timing.SetStopAtBeat( fCurBeat, fCurDelay, true );
+		return true;
+	}
+	else if (BeginsWith(sNoteRow, "|D"))
+	{
+		float fCurDelay = timing.GetStopAtRow(BeatToNoteRow(fCurBeat) );
+		fCurDelay += numTemp / 1000;
+		timing.SetStopAtBeat( fCurBeat, fCurDelay, true );
+		return true;
+	}
+	return false;
+}
+
 static bool LoadFromKSFFile( const RString &sPath, Steps &out, const Song &song, bool bKIUCompliant )
 {
 	LOG->Trace( "Steps::LoadFromKSFFile( '%s' )", sPath.c_str() );
@@ -25,6 +70,9 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, const Song &song,
 
 	// According to Aldo_MX, there is a default BPM and it's 60. -aj
 	bool bDoublesChart = false;
+	
+	TimingData stepsTiming;
+	float SMGap1 = 0, SMGap2 = 0, BPM1 = -1, BPMPos2 = -1, BPM2 = -1, BPMPos3 = -1, BPM3 = -1;
 
 	for( unsigned i=0; i<msd.GetNumValues(); i++ )
 	{
@@ -32,25 +80,100 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, const Song &song,
 		RString sValueName = sParams[0];
 		sValueName.MakeUpper();
 
-		// handle the data
-		if( sValueName=="TICKCOUNT" )
+		/* handle the data...well, not this data: not related to steps.
+		 * Skips INTRO, MUSICINTRO, TITLEFILE, DISCFILE, SONGFILE. */
+		if (sValueName=="TITLE" || EndsWith(sValueName, "INTRO")
+		    || EndsWith(sValueName, "FILE") )
 		{
-			iTickCount = atoi( sParams[1] );
+			;
+		}
+		
+		else if( sValueName=="BPM" )
+		{
+			BPM1 = StringToFloat(sParams[1]);
+			stepsTiming.AddBPMSegment( BPMSegment(0, BPM1) );
+		}
+		else if( sValueName=="BPM2" )
+		{
+			if (bKIUCompliant)
+			{
+				BPM2 = StringToFloat( sParams[1] );
+			}
+			else
+			{
+				// LOG an error.
+			}
+		}
+		else if( sValueName=="BPM3" )
+		{
+			if (bKIUCompliant)
+			{
+				BPM3 = StringToFloat( sParams[1] );
+			}
+			else
+			{
+				// LOG an error.
+			}
+		}
+		else if( sValueName=="BUNKI" )
+		{
+			if (bKIUCompliant)
+			{
+				BPMPos2 = StringToFloat( sParams[1] ) / 100.0f;
+			}
+			else
+			{
+				// LOG an error.
+			}
+		}
+		else if( sValueName=="BUNKI2" )
+		{
+			if (bKIUCompliant)
+			{
+				BPMPos3 = StringToFloat( sParams[1] ) / 100.0f;
+			}
+			else
+			{
+				// LOG an error.
+			}
+		}
+		else if( sValueName=="STARTTIME" )
+		{
+			SMGap1 = -StringToFloat( sParams[1] )/100;
+			stepsTiming.m_fBeat0OffsetInSeconds = SMGap1;
+		}
+		// This is currently required for more accurate KIU BPM changes.  
+		else if( sValueName=="STARTTIME2" )
+		{
+			if (bKIUCompliant)
+			{
+				SMGap2 = -StringToFloat( sParams[1] )/100;
+			}
+			else
+			{
+				// LOG an error.
+			}
+		}
+		else if ( sValueName=="STARTTIME3" )
+		{
+			// STARTTIME3 only ensures this is a KIU compliant simfile.
+			bKIUCompliant = true;
+		}
+		
+		else if( sValueName=="TICKCOUNT" )
+		{
+			iTickCount = StringToInt( sParams[1] );
 			if( iTickCount <= 0 )
 			{
 				LOG->UserLog( "Song file", sPath, "has an invalid tick count: %d.", iTickCount );
 				return false;
 			}
+			stepsTiming.AddTickcountSegment(TickcountSegment(0, iTickCount));
 		}
-		else if( sValueName=="STEP" )
-		{
-			RString theSteps = sParams[1];
-			TrimLeft( theSteps );
-			split( theSteps, "\n", vNoteRows, true );
-		}
+		
 		else if( sValueName=="DIFFICULTY" )
 		{
-			out.SetMeter( max(atoi(sParams[1]), 0) );
+			out.SetMeter( max(StringToInt(sParams[1]), 0) );
 		}
 		// new cases from Aldo_MX's fork:
 		else if( sValueName=="PLAYER" )
@@ -60,12 +183,33 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, const Song &song,
 			if( sPlayer.find( "double" ) != string::npos )
 				bDoublesChart = true;
 		}
+		// This should always be last.
+		else if( sValueName=="STEP" )
+		{
+			RString theSteps = sParams[1];
+			TrimLeft( theSteps );
+			split( theSteps, "\n", vNoteRows, true );
+		}
 	}
 
 	if( iTickCount == -1 )
 	{
-		iTickCount = 2; // Direct Move 0.5 has a default value of 4... -aj
+		iTickCount = 4;
 		LOG->UserLog( "Song file", sPath, "doesn't have a TICKCOUNT. Defaulting to %i.", iTickCount );
+	}
+	
+	// Prepare BPM stuff already if the file uses KSF syntax.
+	if( bKIUCompliant )
+	{
+		if( BPM2 > 0 && BPMPos2 > 0 )
+		{
+			HandleBunki( stepsTiming, BPM1, BPM2, SMGap1, BPMPos2 );
+		}
+		
+		if( BPM3 > 0 && BPMPos3 > 0 )
+		{
+			HandleBunki( stepsTiming, BPM2, BPM3, SMGap2, BPMPos3 );
+		}
 	}
 
 	NoteData notedata;	// read it into here
@@ -133,6 +277,7 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, const Song &song,
 	case StepsType_pump_single: notedata.SetNumTracks( 5 ); break;
 	case StepsType_pump_couple: notedata.SetNumTracks( 10 ); break;
 	case StepsType_pump_double: notedata.SetNumTracks( 10 ); break;
+	case StepsType_pump_routine: notedata.SetNumTracks( 10 ); break; // future files may have this?
 	case StepsType_pump_halfdouble: notedata.SetNumTracks( 6 ); break;
 	default: FAIL_M( ssprintf("%i", out.m_StepsType) );
 	}
@@ -146,6 +291,7 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, const Song &song,
 	int newTick = -1;
 	float fCurBeat = 0.0f;
 	float prevBeat = 0.0f; // Used for hold tails.
+
 	for( unsigned r=0; r<vNoteRows.size(); r++ )
 	{
 		RString& sRowString = vNoteRows[r];
@@ -155,7 +301,7 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, const Song &song,
 			continue;	// skip
 
 		// All 2s indicates the end of the song.
-		if( sRowString == "2222222222222" )
+		else if( sRowString == "2222222222222" )
 		{
 			// Finish any holds that didn't get...well, finished.
 			for( t=0; t < notedata.GetNumTracks(); t++ )
@@ -171,29 +317,21 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, const Song &song,
 			break;
 		}
 
-		// Why do this? Rows made with precise DM05 tags can go up to 13 too -DaisuMaster
-		//if( sRowString.size() != 13 )
-		//this is wrong in many ways...
-		/*if( bKIUCompliant )
+		else if( BeginsWith(sRowString, "|") )
 		{
-			LOG->UserLog( "Song file", sPath, "has illegal syntax \"%s\" which can't be in KIU complient files.",
-				      sRowString.c_str() );
-			return false;
-			//In other words: you can't mix ksf's with DM05 tags and ksf's without any DM05 tags
-			//Either one set or another will be read...
-		}*/
-		if( BeginsWith(sRowString, "|B") || BeginsWith(sRowString, "|D") || BeginsWith(sRowString, "|E") )
-		{
-			// These don't have to be worried about here: the changes and stops were already added.
+			if (bKIUCompliant)
+			{
+				// Log an error, ignore the line.
+				continue;
+			}
+			if ( !HandlePipeChars( stepsTiming, sRowString, fCurBeat, iTickCount ) )
+			{
+				// LOG it first.
+			}
 			continue;
+			
 		}
-		else if ( BeginsWith(sRowString, "|T") )
-		{
-			RString temp = sRowString.substr(2,sRowString.size()-3);
-			newTick = atoi(temp);
-			bTickChangeNeeded = true;
-			continue;
-		}
+		
 		else
 		{
 			// Is this why improper ksf or some kiucompilant ksf mixed with dm05 ksf are ignored?? -DaisuMaster
@@ -270,6 +408,7 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, const Song &song,
 	}
 
 	out.SetNoteData( notedata );
+	out.m_Timing = stepsTiming;
 
 	out.TidyUpData();
 
@@ -286,12 +425,12 @@ static void LoadTags( const RString &str, Song &out )
 	split( str, " - ", asBits, false );
 	// Ignore the difficulty, since we get that elsewhere.
 	if( asBits.size() == 3 && (
-		!stricmp(asBits[2], "double") ||
-		!stricmp(asBits[2], "easy") ||
-		!stricmp(asBits[2], "normal") ||
-		!stricmp(asBits[2], "hard") ||
-		!stricmp(asBits[2], "crazy") ||
-		!stricmp(asBits[2], "nightmare")) 
+		asBits[2].EqualsNoCase("double") ||
+		asBits[2].EqualsNoCase("easy") ||
+		asBits[2].EqualsNoCase("normal") ||
+		asBits[2].EqualsNoCase("hard") ||
+		asBits[2].EqualsNoCase("crazy") ||
+		asBits[2].EqualsNoCase("nightmare")) 
 		)
 	{
 		asBits.erase( asBits.begin()+2, asBits.begin()+3 );
@@ -358,7 +497,7 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 		else if( sValueName=="BPM" )
 		{
 			BPM1 = StringToFloat(sParams[1]);
-			out.AddBPMSegment( BPMSegment(0, BPM1) );
+			out.m_SongTiming.AddBPMSegment( BPMSegment(0, BPM1) );
 		}
 		else if( sValueName=="BPM2" )
 		{
@@ -383,7 +522,7 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 		else if( sValueName=="STARTTIME" )
 		{
 			SMGap1 = -StringToFloat( sParams[1] )/100;
-			out.m_Timing.m_fBeat0OffsetInSeconds = SMGap1;
+			out.m_SongTiming.m_fBeat0OffsetInSeconds = SMGap1;
 		}
 		// This is currently required for more accurate KIU BPM changes.  
 		else if( sValueName=="STARTTIME2" )
@@ -401,7 +540,7 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 			/* TICKCOUNT will be used below if there are DM compliant BPM changes
 			 * and stops. It will be called again in LoadFromKSFFile for the
 			 * actual steps. */
-			iTickCount = atoi( sParams[1] );
+			iTickCount = StringToInt( sParams[1] );
 			iTickCount = iTickCount > 0 ? iTickCount : 2; // again, Direct Move uses 4 as a default.
 			// add a tickcount for those using the [Player]
 			// CheckpointsUseTimeSignatures metric. -aj
@@ -409,7 +548,7 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 			TickcountSegment tcs;
 			tcs.m_iStartRow = BeatToNoteRow(0.0f);
 			tcs.m_iTicks = iTickCount > ROWS_PER_BEAT ? ROWS_PER_BEAT : iTickCount;
-			out.m_Timing.AddTickcountSegment( tcs );
+			out.m_SongTiming.AddTickcountSegment( tcs );
 		}
 		else if ( sValueName=="STEP" )
 		{
@@ -465,21 +604,12 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 	{
 		if( BPM2 > 0 && BPMPos2 > 0 )
 		{
-			const float BeatsPerSecond = BPM1 / 60.0f;
-			const float beat = (BPMPos2 + SMGap1) * BeatsPerSecond;
-			LOG->Trace( "BPM %f, BPS %f, BPMPos2 %f, beat %f",
-				    BPM1, BeatsPerSecond, BPMPos2, beat );
-			out.AddBPMSegment( BPMSegment(BeatToNoteRow(beat), BPM2) );
+			HandleBunki( out.m_SongTiming, BPM1, BPM2, SMGap1, BPMPos2 );
 		}
 
 		if( BPM3 > 0 && BPMPos3 > 0 )
 		{
-			const float BeatsPerSecond = BPM2 / 60.0f;
-			//The line below isn't perfect, but works better than previous versions.
-			const float beat = (BPMPos3 + SMGap2) * BeatsPerSecond;
-			LOG->Trace( "BPM %f, BPS %f, BPMPos3 %f, beat %f",
-			    BPM2, BeatsPerSecond, BPMPos3, beat );
-			out.AddBPMSegment( BPMSegment(BeatToNoteRow(beat), BPM3) );
+			HandleBunki( out.m_SongTiming, BPM2, BPM3, SMGap2, BPMPos3 );
 		}
 	}
 	else
@@ -507,40 +637,11 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 				BeginsWith(NoteRowString, "|D") || BeginsWith(NoteRowString, "|E") )
 			{
 				bDMRequired = true;
-				RString temp = NoteRowString.substr(2,NoteRowString.size()-3);
-				float numTemp = StringToFloat(temp);
-				if (BeginsWith(NoteRowString, "|T")) 
+				if ( !HandlePipeChars( out.m_SongTiming, NoteRowString, fCurBeat, iTickCount ) )
 				{
-					iTickCount = (int)numTemp;
-					TickcountSegment tcs;
-					tcs.m_iStartRow = BeatToNoteRow(fCurBeat);
-					tcs.m_iTicks = iTickCount > ROWS_PER_BEAT ? ROWS_PER_BEAT : iTickCount;
-					out.m_Timing.AddTickcountSegment( tcs );
-
-					continue;
+					// LOG it first.
 				}
-				else if (BeginsWith(NoteRowString, "|B")) 
-				{
-					float fCurBpm = (float)numTemp;
-					//out.m_Timing.AddBPMSegment( BPMSegment( BeatToNoteRow(fCurBeat), (float)numTemp ) );
-					out.m_Timing.SetBPMAtBeat( fCurBeat, fCurBpm );
-					continue;
-				}
-				else if (BeginsWith(NoteRowString, "|E"))
-				{
-					// Finally! the |E| tag is working as it should. I can die happy now -DaisuMaster
-					float fCurDelay = 60 / out.m_Timing.GetBPMAtBeat(fCurBeat) * (float)numTemp / iTickCount;
-					fCurDelay += out.m_Timing.GetStopAtRow(BeatToNoteRow(fCurBeat) );
-					out.m_Timing.SetStopAtBeat( fCurBeat, fCurDelay, true );
-					continue;
-				}
-				else if (BeginsWith(NoteRowString, "|D"))
-				{
-					float fCurDelay = out.m_Timing.GetStopAtRow(BeatToNoteRow(fCurBeat) );
-					fCurDelay += (float)numTemp / 1000;
-					out.m_Timing.SetStopAtBeat( fCurBeat, fCurDelay, true );
-					continue;
-				}
+				continue;
 			}
 			else
 			{
@@ -580,16 +681,19 @@ bool KSFLoader::LoadFromDir( const RString &sDir, Song &out )
 	ASSERT( arrayKSFFileNames.size() );
 
 	bool bKIUCompliant = false;
-	/* If only the first file is read, it will cause problems for other simfiles with
-	 * different BPM changes and tickcounts.  This command will probably have to be
-	 * changed in the future. */
-	if( !LoadGlobalData(out.GetSongDir() + arrayKSFFileNames[0], out, bKIUCompliant) )
+	/* With Split Timing, there has to be a backup Song Timing in case
+	 * anything goes wrong. As these files are kept in alphabetical
+	 * order (hopefully), it is best to use the LAST file for timing 
+	 * purposes, for that is the "normal", or easiest difficulty.
+	 * Usually. */
+	unsigned files = arrayKSFFileNames.size();
+	if( !LoadGlobalData(out.GetSongDir() + arrayKSFFileNames[files - 1], out, bKIUCompliant) )
 		return false;
 
 	// load the Steps from the rest of the KSF files
-	for( unsigned i=0; i<arrayKSFFileNames.size(); i++ ) 
+	for( unsigned i=0; i<files; i++ ) 
 	{
-		Steps* pNewNotes = new Steps;
+		Steps* pNewNotes = out.CreateSteps();
 		if( !LoadFromKSFFile(out.GetSongDir() + arrayKSFFileNames[i], *pNewNotes, out, bKIUCompliant) )
 		{
 			delete pNewNotes;
@@ -598,6 +702,7 @@ bool KSFLoader::LoadFromDir( const RString &sDir, Song &out )
 
 		out.AddSteps( pNewNotes );
 	}
+	out.TidyUpData();
 
 	return true;
 }
