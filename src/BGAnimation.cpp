@@ -118,7 +118,7 @@ void BGAnimation::LoadFromAniDir( const RString &_sAniDir )
 			
 			LoadFromNode( pBGAnimation );
 		}
-		else
+		else // We don't officially support .ini files anymore.
 		{
 			XNode dummy( "BGAnimation" );
 			XNode *pBG = &dummy;
