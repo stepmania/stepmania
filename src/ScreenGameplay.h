@@ -78,8 +78,9 @@ public:
 	// Lua
 	void PushSelf( lua_State *L );
 
-	/** @brief The present Player that is playing the game. */
+	/** @brief The present Player's number. */
 	PlayerNumber		m_pn;
+	/** @brief The present Player's multiplayer number. */
 	MultiPlayer		m_mp;
 	bool			m_bIsDummy;
 	int			m_iDummyIndex;
@@ -122,6 +123,7 @@ public:
 
 	/** @brief The NoteData the Player has to get through. */
 	NoteData		m_NoteData;
+	/** @brief The specific Player that is going to play. */
 	Player			*m_pPlayer;
 
 	/**
@@ -222,12 +224,14 @@ protected:
 
 	virtual void InitSongQueues();
 
+	/** @brief The different game states of ScreenGameplay. */
 	enum DancingState { 
-		STATE_INTRO = 0, // not allowed to press Back
-		STATE_DANCING,
-		STATE_OUTRO,	// not allowed to press Back
+		STATE_INTRO = 0, /**< The starting state, pressing Back isn't allowed here. */
+		STATE_DANCING,	 /**< The main state where notes have to be pressed. */
+		STATE_OUTRO,	 /**< The ending state, pressing Back isn't allowed here. */
 		NUM_DANCING_STATES
-	} m_DancingState;
+	} 
+	/** @brief The specific point within ScreenGameplay. */ m_DancingState;
 	bool			m_bPaused;
 
 	GameController		m_PauseController;
@@ -261,8 +265,10 @@ protected:
 
 	Transition		m_Ready;
 	Transition		m_Go;
+	/** @brief The transition to use when all players have failed. */
 	Transition		m_Failed;
-	Transition		m_Toasty;	// easter egg
+	/** @brief The transition to use when one player earns an easter egg. */
+	Transition		m_Toasty;
 
 	/**
 	 * @brief How much time has the player survived in the extra stage?
@@ -284,6 +290,7 @@ protected:
 
 	BeginnerHelper		m_BeginnerHelper;
 
+	/** @brief The NoteData that controls the lights on an arcade cabinet. */
 	NoteData		m_CabinetLightsNoteData;
 
 	vector<PlayerInfo>	m_vPlayerInfo;	// filled by SGameplay derivatives in FillPlayerInfo
