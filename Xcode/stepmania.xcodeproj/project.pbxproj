@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 44;
+	objectVersion = 45;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -5740,7 +5740,7 @@
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = AAC845130856A19700A9FEAB /* Build configuration list for PBXProject "stepmania" */;
-			compatibilityVersion = "Xcode 3.0";
+			compatibilityVersion = "Xcode 3.1";
 			developmentRegion = English;
 			hasScannedForEncodings = 1;
 			knownRegions = (
@@ -8237,8 +8237,7 @@
 		AAE44A2D0965707500B025E5 /* Universal */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1)";
-				ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1 = "ppc i386";
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				BUILD_VARIANTS = normal;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)";
 				DEAD_CODE_STRIPPING = YES;
@@ -8288,7 +8287,7 @@
 				ONLY_LINK_ESSENTIAL_SYMBOLS = YES;
 				PREBINDING = NO;
 				PRESERVE_DEAD_CODE_INITS_AND_TERMS = YES;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.4u.sdk";
+				SDKROOT = macosx10.4;
 				SDKROOT_i386 = /Developer/SDKs/MacOSX10.4u.sdk;
 				SDKROOT_ppc = /Developer/SDKs/MacOSX10.4u.sdk;
 				SHARED_PRECOMPS_DIR = "/Library/Caches/com.apple.Xcode.$(UID)/SharedPrecompiledHeaders/$(PRODUCT_NAME)/$(CONFIGURATION)";
