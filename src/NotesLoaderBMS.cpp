@@ -1188,6 +1188,9 @@ bool BMSLoader::LoadFromDir( const RString &sDir, Song &out )
 			delete pNewNotes;
 	}
 
+	// set song's timing data to the main file.
+	out.m_SongTiming = apSteps[iMainDataIndex]->m_Timing;
+
 	SlideDuplicateDifficulties( out );
 
 	ConvertString( out.m_sMainTitle, "utf-8,japanese" );
