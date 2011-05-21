@@ -496,7 +496,8 @@ bool SMLoader::LoadFromBGChangesString( BackgroundChange &change, const RString 
 	{
 		RString tmp = aBGChangeValues[7];
 		tmp.MakeLower();
-		if( tmp.find(".ini") != string::npos || tmp.find(".xml") != string::npos )
+		if( ( tmp.find(".ini") != string::npos || tmp.find(".xml") != string::npos )
+		   && !PREFSMAN->m_bQuirksMode )
 		{
 			return false;
 		}
@@ -539,7 +540,8 @@ bool SMLoader::LoadFromBGChangesString( BackgroundChange &change, const RString 
 	{
 		RString tmp = aBGChangeValues[1];
 		tmp.MakeLower();
-		if( tmp.find(".ini") != string::npos || tmp.find(".xml") != string::npos )
+		if( ( tmp.find(".ini") != string::npos || tmp.find(".xml") != string::npos )
+		   && !PREFSMAN->m_bQuirksMode )
 		{
 			return false;
 		}
