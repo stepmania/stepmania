@@ -6,6 +6,7 @@
 #include "ActorUtil.h"
 #include "Foreach.h"
 #include "LuaManager.h"
+#include "PrefsManager.h"
 
 REGISTER_ACTOR_CLASS(BGAnimation);
 
@@ -100,7 +101,7 @@ void BGAnimation::LoadFromAniDir( const RString &_sAniDir )
 
 	RString sPathToIni = sAniDir + "BGAnimation.ini";
 
-	if( DoesFileExist(sPathToIni) )
+	if( DoesFileExist(sPathToIni) && PREFSMAN->m_bQuirksMode )
 	{
 		// This is a 3.9-style BGAnimation (using .ini)
 		IniFile ini;
