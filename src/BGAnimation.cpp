@@ -103,18 +103,27 @@ void BGAnimation::LoadFromAniDir( const RString &_sAniDir )
 
 	if( DoesFileExist(sPathToIni) )
 	{
-		// This is a 3.9-style BGAnimation (using .ini)
-		IniFile ini;
-		ini.ReadFile( sPathToIni );
-
-		AddLayersFromAniDir( sAniDir, &ini ); // TODO: Check for circular load
-
-		XNode* pBGAnimation = ini.GetChild( "BGAnimation" );
-		XNode dummy( "BGAnimation" );
-		if( pBGAnimation == NULL )
-			pBGAnimation = &dummy;
-
-		LoadFromNode( pBGAnimation );
+		if( PREFSMAN->m_bQuirksMode )
+		{
+			// This is a 3.9-style BGAnimation (using .ini)
+			IniFile ini;
+			ini.ReadFile( sPathToIni );
+			
+			AddLayersFromAniDir( sAniDir, &ini ); // TODO: Check for circular load
+			
+			XNode* pBGAnimation = ini.GetChild( "BGAnimation" );
+			XNode dummy( "BGAnimation" );
+			if( pBGAnimation == NULL )
+				pBGAnimation = &dummy;
+			
+			LoadFromNode( pBGAnimation );
+		}
+		else
+		{
+			XNode dummy( "BGAnimation" );
+			XNode *pBG = &dummy;
+			LoadFromNode( pBG );
+		}
 	}
 	else
 	{
