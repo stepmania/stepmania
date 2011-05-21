@@ -101,7 +101,7 @@ void BGAnimation::LoadFromAniDir( const RString &_sAniDir )
 
 	RString sPathToIni = sAniDir + "BGAnimation.ini";
 
-	if( DoesFileExist(sPathToIni) && PREFSMAN->m_bQuirksMode )
+	if( DoesFileExist(sPathToIni) )
 	{
 		// This is a 3.9-style BGAnimation (using .ini)
 		IniFile ini;
