@@ -28,7 +28,7 @@ bool GetThreadBacktraceContext( uint64_t iID, BacktraceContext *ctx )
 	thread_act_t thread = thread_act_t( iID );	
 
 #if defined(__ppc__)
-	ppc_thread_state state;
+	ppc_thread_state_t state;
 	mach_msg_type_number_t count = PPC_THREAD_STATE_COUNT;
 	
 	if( thread_get_state(thread, PPC_THREAD_STATE, thread_state_t(&state), &count) )
@@ -37,14 +37,14 @@ bool GetThreadBacktraceContext( uint64_t iID, BacktraceContext *ctx )
 	ctx->PC = (void *)state.srr0;
 	return true;
 #elif defined(__i386__)
-	i386_thread_state state;
+	i386_thread_state_t state;
 	mach_msg_type_number_t count = i386_THREAD_STATE_COUNT;
 	
 	if( thread_get_state(thread, i386_THREAD_STATE, thread_state_t(&state), &count) )
 		return false;
-	ctx->ip = (void *)state.eip;
-	ctx->bp = (void *)state.ebp;
-	ctx->sp = (void *)state.esp;
+	ctx->ip = (void *)state.__eip;
+	ctx->bp = (void *)state.__ebp;
+	ctx->sp = (void *)state.__esp;
 	return true;
 #else
 	return false;
