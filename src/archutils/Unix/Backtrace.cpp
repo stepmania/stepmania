@@ -456,9 +456,15 @@ void InitializeBacktrace()
 
 void GetSignalBacktraceContext( BacktraceContext *ctx, const ucontext_t *uc )
 {
+#if !defined(MACOSX)
 	ctx->ip = (void *) uc->uc_mcontext->ss.eip;
 	ctx->bp = (void *) uc->uc_mcontext->ss.ebp;
 	ctx->sp = (void *) uc->uc_mcontext->ss.esp;
+#else
+	ctx->ip = (void *) uc->uc_mcontext->__ss.__eip;
+	ctx->bp = (void *) uc->uc_mcontext->__ss.__ebp;
+	ctx->sp = (void *) uc->uc_mcontext->__ss.__esp;	
+#endif
 }
 
 /* The following from VirtualDub: */
