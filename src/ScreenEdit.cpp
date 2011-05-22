@@ -705,7 +705,7 @@ void ScreenEdit::Init()
 {
 	m_pSoundMusic = NULL;
 	
-	GAMESTATE->m_bIsUsingStepTiming = true;
+	GAMESTATE->m_bIsUsingStepTiming = false;
 	GAMESTATE->m_bInStepEditor = true;
 
 	SubscribeToMessage( "Judgment" );
