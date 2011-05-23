@@ -667,7 +667,7 @@ struct SpeedSegment
 	 * @brief Sets up the SpeedSegment with specified values.
 	 * @param i The row this activates.
 	 * @param p The percentage to use. */
-	SpeedSegment(int i, float p): m_iStartRow(0), 
+	SpeedSegment(int i, float p): m_iStartRow(i), 
 		m_fPercent(p), m_fWait(0), m_usMode(0) {}
 	
 	/**
