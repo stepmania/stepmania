@@ -107,6 +107,8 @@ public:
 
 	// Lua
 	virtual void PushSelf( lua_State *L );
+	
+	PlayerState * GetPlayerState() { return this->m_pPlayerState; }
 
 protected:
 	void UpdateTapNotesMissedOlderThan( float fMissIfOlderThanThisBeat );

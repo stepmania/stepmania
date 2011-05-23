@@ -1388,7 +1388,7 @@ void ScreenGameplay::PlayTicks()
 {
 	Player &player = *m_vPlayerInfo[0].m_pPlayer;
 	const NoteData &nd = player.GetNoteData();
-	m_GameplayAssist.PlayTicks( nd );
+	m_GameplayAssist.PlayTicks( nd, player.GetPlayerState() );
 }
 
 /* Play announcer "type" if it's been at least fSeconds since the last announcer. */

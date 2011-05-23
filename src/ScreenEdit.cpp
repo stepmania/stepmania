@@ -892,7 +892,7 @@ void ScreenEdit::PlayTicks()
 	if( m_EditState != STATE_PLAYING )
 		return;
 
-	m_GameplayAssist.PlayTicks( m_Player->GetNoteData() );
+	m_GameplayAssist.PlayTicks( m_Player->GetNoteData(), m_Player->GetPlayerState() );
 }
 
 void ScreenEdit::PlayPreviewMusic()
