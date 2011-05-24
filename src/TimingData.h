@@ -1350,13 +1350,13 @@ public:
 	/**
 	 * @brief Set the row to have the new Combo.
 	 * @param iNoteRow the row to have the new Combo.
-	 * @param iTicks the Combo.
+	 * @param iCombo the Combo.
 	 */
 	void SetComboAtRow( int iNoteRow, int iCombo );
 	/**
 	 * @brief Set the beat to have the new Combo.
 	 * @param fBeat the beat to have the new Combo.
-	 * @param iTicks the Combo.
+	 * @param iCombo the Combo.
 	 */
 	void SetComboAtBeat( float fBeat, int iCombo ) { SetComboAtRow( BeatToNoteRow( fBeat ), iCombo ); }
 	/**

@@ -8,6 +8,10 @@ ________________________________________________________________________________
 StepMania 5.0 $NEXT | 20110xyy
 --------------------------------------------------------------------------------
 
+2011/05/23
+----------
+* [Steps] Added the UsesSplitTiming Lua binding. [Wolfman2000]
+
 2011/05/20
 ----------
 * [CryptManager] Added SHA1File Lua binding. [AJ]
@@ -50,6 +54,12 @@ StepMania 5.0 $NEXT | 20110xyy
 * [MusicWheel] Added ShowSectionsInBPMSort and ShowSectionsInLengthSort metrics. [AJ]
 * [ScreenEvaluation] Stop the Bonus bars from overflowing in course modes. [AJ]
 * [Banner] Added ScrollMode and ScrollSortOrder metrics. [AJ]
+
+2011/05/13
+----------
+* Added Split Timing to .SSC files. All older .SSC files and other file
+  formats are converted to split timing on cache load. We are no longer bound
+  by Song Timing for everything. [theDtTvB, Wolfman2000, TeruFSX]
 
 2011/05/11
 ----------

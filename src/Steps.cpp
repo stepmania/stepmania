@@ -19,6 +19,7 @@
 #include "RageLog.h"
 #include "NoteData.h"
 #include "GameManager.h"
+#include "SongManager.h"
 #include "NoteDataUtil.h"
 #include "NotesLoaderSSC.h"
 #include "NotesLoaderSM.h"
@@ -468,6 +469,13 @@ public:
 		return 1;
 	}
 	
+	static int UsesSplitTiming( T* p, lua_State *L )
+	{
+		Song *song = SONGMAN->GetSongFromSteps(p);
+		lua_pushboolean(L, p->m_Timing != song->m_SongTiming);
+		return 1;
+	}
+	
 
 	LunaSteps()
 	{
@@ -486,6 +494,7 @@ public:
 		ADD_METHOD( IsAnEdit );
 		ADD_METHOD( IsAutogen );
 		ADD_METHOD( IsAPlayerEdit );
+		ADD_METHOD( UsesSplitTiming );
 	}
 };
 

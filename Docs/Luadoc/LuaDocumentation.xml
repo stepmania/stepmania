@@ -3454,6 +3454,9 @@
 	<Function name='IsAutogen' return='bool' arguments=''>
 		Returns <code>true</code> if the steps were automatically generated.
 	</Function>
+	<Function name='UsesSplitTiming' return='bool' sm-ssc='true' arguments=''>
+		Returns <code>true</code> if the Steps use different <code>TimingData</code> from the Song.
+	</Function>
 </Class>
 <Class name='StepsDisplay'>
 	<Function name='Load' return='void' arguments='string sMetricsGroup'>
