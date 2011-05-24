@@ -1374,6 +1374,7 @@
 			<Function name='IsAPlayerEdit'/>
 			<Function name='IsAnEdit'/>
 			<Function name='IsAutogen'/>
+			<Function name='UsesSplitTiming'/>
 		</Class>
 		<Class base='ActorFrame' name='StepsDisplay'>
 			<Function name='Load'/>
