@@ -1341,6 +1341,50 @@ void TimingData::DeleteRows( int iStartRow, int iRowsToDelete )
 	this->SetBPMAtRow( iStartRow, fNewBPM );
 }
 
+float TimingData::GetDisplayedSpeedPercent( float fSongBeat, float fMusicSeconds )
+{
+	if( m_SpeedSegments.size() == 0 )
+		return 1.0;
+
+	const int index = GetSpeedSegmentIndexAtBeat( fSongBeat );
+	
+	const SpeedSegment &seg = m_SpeedSegments[index];
+	float fStartBeat = NoteRowToBeat(seg.m_iStartRow);
+	float fStartTime = GetElapsedTimeFromBeat( fStartBeat ) - GetDelayAtBeat( fStartBeat );
+	float fEndTime;
+	float fCurTime = fMusicSeconds;
+	
+	if( seg.m_usMode == 1 ) // seconds
+	{
+		fEndTime = fStartTime + seg.m_fWait;
+	}
+	else
+	{
+		fEndTime = GetElapsedTimeFromBeat( fStartBeat + seg.m_fWait ) - GetDelayAtBeat( fStartBeat + seg.m_fWait );
+	}
+	
+	if( ( index == 0 && m_SpeedSegments[0].m_fWait > 0.0 ) && fCurTime < fStartTime )
+	{
+		return 1.0;
+	}
+	else if( fEndTime >= fCurTime && ( index > 0 || m_SpeedSegments[0].m_fWait > 0.0 ) )
+	{
+		const float fPriorSpeed = ( index == 0 ? 1 : m_SpeedSegments[index - 1].m_fPercent );
+		float fTimeUsed = fCurTime - fStartTime;
+		float fDuration = fEndTime - fStartTime;
+		float fRatioUsed = fDuration == 0.0 ? 1 : fTimeUsed / fDuration;
+		
+		float fDistance = fPriorSpeed - seg.m_fPercent;
+		float fRatioNeed = fRatioUsed * -fDistance;
+		return (fPriorSpeed + fRatioNeed);
+	}
+	else 
+	{
+		return seg.m_fPercent;
+	}
+
+}
+
 void TimingData::TidyUpData()
 {
 	// If there are no BPM segments, provide a default.
