@@ -1341,7 +1341,7 @@ void TimingData::DeleteRows( int iStartRow, int iRowsToDelete )
 	this->SetBPMAtRow( iStartRow, fNewBPM );
 }
 
-float TimingData::GetDisplayedSpeedPercent( float fSongBeat, float fMusicSeconds )
+float TimingData::GetDisplayedSpeedPercent( float fSongBeat, float fMusicSeconds ) const
 {
 	if( m_SpeedSegments.size() == 0 )
 		return 1.0;
