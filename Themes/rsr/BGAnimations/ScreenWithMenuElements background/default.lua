@@ -35,14 +35,14 @@ t[#t+1] = Def.ActorFrame {
 		self:visible( bShow == 1 );
 	end;
 	-- Grid
-	LoadActor("_32") .. {
+--[[ 	LoadActor("_32") .. {
 		InitCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y;zoomto,SCREEN_WIDTH,SCREEN_HEIGHT;customtexturerect,0,0,SCREEN_WIDTH/32,SCREEN_HEIGHT/32);
 		OnCommand=cmd(diffuse,color("0,0,0,0.5"));
 	};
 	LoadActor("_16") .. {
 		InitCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y;zoomto,SCREEN_WIDTH,SCREEN_HEIGHT;customtexturerect,0,0,SCREEN_WIDTH/16,SCREEN_HEIGHT/16);
 		OnCommand=cmd(diffuse,color("1,1,1,0.125"));
-	};
+	}; --]]
 --[[ 	LoadActor("_8") .. {
 		InitCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y;zoomto,SCREEN_WIDTH,SCREEN_HEIGHT;customtexturerect,0,0,SCREEN_WIDTH/8,SCREEN_HEIGHT/8);
 		OnCommand=cmd(diffuse,color("#00BFE833"));
