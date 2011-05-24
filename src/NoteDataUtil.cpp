@@ -1359,6 +1359,7 @@ static void SuperShuffleTaps( NoteData &inout, int iStartIndex, int iEndIndex )
 				case TapNote::mine:
 				case TapNote::attack:
 				case TapNote::lift:
+				case TapNote::fake:
 					break;	// ok to swap with this
 				DEFAULT_FAIL( tn2.type );
 				}
