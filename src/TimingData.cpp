@@ -515,6 +515,7 @@ bool TimingData::IsWarpAtRow( int iNoteRow ) const
 	const WarpSegment& s = m_WarpSegments[i];
 	if( s.m_iStartRow <= iNoteRow && iNoteRow < (s.m_iStartRow + BeatToNoteRow(s.m_fLengthBeats) ) )
 	{
+		// Allow stops inside warps to allow things like stop, warp, stop, warp, stop, and so on.
 		if( m_StopSegments.empty() )
 		{
 			return true;
