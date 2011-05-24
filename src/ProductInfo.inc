@@ -1,11 +1,11 @@
 ; Included by the NSIS installer script
 ; Don't forget to also change ProductInfo.h!
 
-!define PRODUCT_FAMILY "sm-ssc"
+!define PRODUCT_FAMILY "StepMania"
 
 ; see ProductInfo.h for use descriptions
-!define PRODUCT_ID "sm-ssc"
-!define PRODUCT_VER "v1.2.5"
+!define PRODUCT_ID "StepMania"
+!define PRODUCT_VER "v5.0 Preview 1"
 !define PRODUCT_DISPLAY "${PRODUCT_ID} ${PRODUCT_VER}"
 !define PRODUCT_BITMAP "ssc"
 
