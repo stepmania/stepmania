@@ -19,7 +19,6 @@
 #include "BackgroundUtil.h"
 #include "Course.h"
 #include "NoteData.h"
-#include "Actor.h"
 
 static ThemeMetric<bool> SHOW_BOARD( "NoteField", "ShowBoard" );
 static ThemeMetric<bool> SHOW_BEAT_BARS( "NoteField", "ShowBeatBars" );
@@ -766,10 +765,6 @@ bool NoteField::IsOnScreen( float fBeat, int iCol, int iDrawDistanceAfterTargets
 
 void NoteField::DrawPrimitives()
 {
-
-	// XXX Hack: Set Actor's active player number so the notes get the flashing that matches the steps.
-	Actor::m_ActivePlayerNumber = m_pPlayerState->m_PlayerNumber;
-
 	//LOG->Trace( "NoteField::DrawPrimitives()" );
 
 	// This should be filled in on the first update.

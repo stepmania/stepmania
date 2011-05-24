@@ -114,13 +114,6 @@ public:
 	static void SetBGMLight( int iLightNumber, float fCabinetLights );
 
 	/**
-	 * @brief The actively-drawing player number. This is used as a hack
-	 * so that we don't need to tell each actor which player it belongs to.
-	 * This is used to figure out the right player for "beat" effect clock.
-	 */
-	static PlayerNumber m_ActivePlayerNumber;
-
-	/**
 	 * @brief The list of the different effects.
 	 *
 	 * todo: split out into diffuse effects and translation effects, or
@@ -142,7 +135,6 @@ public:
 		CLOCK_BGM_BEAT_NO_OFFSET,
 		CLOCK_BGM_BEAT_PLAYER1,
 		CLOCK_BGM_BEAT_PLAYER2,
-		CLOCK_BGM_BEAT_PLAYER_ACTIVE,
 		CLOCK_LIGHT_1 = 1000,
 		CLOCK_LIGHT_LAST = 1100,
 		NUM_CLOCKS
