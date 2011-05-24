@@ -1594,7 +1594,7 @@ public:
 	 */
 	void AddSpeedSegment( const SpeedSegment &seg );
 	
-	float GetDisplayedSpeedPercent( float fBeat, float fMusicSeconds );
+	float GetDisplayedSpeedPercent( float fBeat, float fMusicSeconds ) const;
 	
 	/**
 	 * @brief Determine when the fakes end.
