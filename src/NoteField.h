@@ -65,6 +65,7 @@ protected:
 	void DrawComboText( const float fBeat, int iCombo );
 	void DrawLabelText( const float fBeat, RString sLabel );
 	void DrawSpeedText( const float fBeat, float fPercent, float fWait, unsigned short usMode );
+	void DrawScrollText( const float fBeat, float fPercent );
 	void DrawFakeText( const float fBeat, const float fNewBeat );
 	void DrawAttackText( const float fBeat, const Attack &attack );
 	void DrawBGChangeText( const float fBeat, const RString sNewBGName );

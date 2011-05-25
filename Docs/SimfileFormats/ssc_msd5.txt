@@ -58,6 +58,7 @@
 #TICKCOUNTS:;
 #COMBOS:;
 #SPEEDS:;
+#SCROLLS:;
 #FAKES:;
 #LABELS:;
 #ATTACKS:; // Not yet in use.

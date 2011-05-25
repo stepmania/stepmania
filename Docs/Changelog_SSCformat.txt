@@ -14,6 +14,7 @@ ________________________________________________________________________________
 * #SPEEDS tag for modified scroll speeds.
 * #FAKES tag for ignoring judgments within a range.
 * #WARPS modified so that second parameter is now relative to the start.
+* #SCROLLS tag for...hilarity?
 
 [v0.59] - Wolfman2000
 * Typo fix: #RADARVALUES needed a semicolon at the end, not a colon.

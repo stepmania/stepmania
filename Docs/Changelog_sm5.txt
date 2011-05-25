@@ -8,6 +8,11 @@ ________________________________________________________________________________
 StepMania 5.0 $NEXT | 20110xyy
 --------------------------------------------------------------------------------
 
+2011/05/25
+----------
+* [NotesLoaderSSC/NotesWriterSSC] Added the ScrollSegments. Think BPM change,
+  but not. [theDtTvB]
+
 2011/05/23
 ----------
 * [Steps] Added the UsesSplitTiming Lua binding. [Wolfman2000]

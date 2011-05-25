@@ -231,9 +231,12 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 	 * entirely time spacing (respectively). Occasionally, we tween between them. */
 	if( pPlayerState->m_PlayerOptions.GetCurrent().m_fTimeSpacing != 1.0f )
 	{
+		float bShowEffects = !( GAMESTATE->m_bInStepEditor || !GAMESTATE->m_bIsUsingStepTiming );
 		float fBeatsUntilStep = fNoteBeat - fSongBeat;
+		if( bShowEffects )
+			fBeatsUntilStep = pCurSteps->m_Timing.GetDisplayedBeat(fNoteBeat) - pCurSteps->m_Timing.GetDisplayedBeat(fSongBeat);
 		float fYOffsetBeatSpacing = fBeatsUntilStep;
-		float fSpeedMultiplier = ( GAMESTATE->m_bInStepEditor || !GAMESTATE->m_bIsUsingStepTiming ) ? 1.0 : pCurSteps->m_Timing.GetDisplayedSpeedPercent( position.m_fSongBeatVisible, position.m_fMusicSecondsVisible );
+		float fSpeedMultiplier = bShowEffects ? pCurSteps->m_Timing.GetDisplayedSpeedPercent( position.m_fSongBeatVisible, position.m_fMusicSecondsVisible ) : 1.0;
 		fYOffset += fSpeedMultiplier * fYOffsetBeatSpacing * (1-pPlayerState->m_PlayerOptions.GetCurrent().m_fTimeSpacing);
 	}
 

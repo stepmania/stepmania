@@ -778,6 +778,82 @@ struct SpeedSegment
 };
 
 /**
+ * @brief Identifies when the chart scroll changes.
+ *
+ * ScrollSegments adjusts the scrolling speed of the note field.
+ * Unlike forced attacks, these cannot be turned off at a set time:
+ * reset it by setting the precentage back to 1.
+ *
+ * These were inspired by the Pump It Up series. */
+struct ScrollSegment
+{
+	/** @brief Sets up the ScrollSegment with default values. */
+	ScrollSegment(): m_iStartRow(0), m_fPercent(1) {}
+	
+	/**
+	 * @brief Sets up the ScrollSegment with specified values.
+	 * @param i The row this activates.
+	 * @param p The percentage to use. */
+	ScrollSegment(int i, float p): m_iStartRow(i), m_fPercent(p) {}
+	
+	/**
+	 * @brief Sets up the ScrollSegment with specified values.
+	 * @param r The beat this activates.
+	 * @param p The percentage to use. */
+	ScrollSegment(float r, float p): m_iStartRow(BeatToNoteRow(r)), m_fPercent(p) {}
+	
+	/** @brief The row in which the ScrollSegment activates. */
+	int m_iStartRow;
+	/** @brief The percentage to use when multiplying the chart's scroll rate. */
+	float m_fPercent;
+	
+	/**
+	 * @brief Compares two ScrollSegment to see if they are equal to each other.
+	 * @param other the other ScrollSegment to compare to.
+	 * @return the equality of the two segments.
+	 */
+	bool operator==( const ScrollSegment &other ) const
+	{
+		COMPARE( m_iStartRow );
+		COMPARE( m_fPercent );
+		return true;
+	}
+	/**
+	 * @brief Compares two ScrollSegment to see if they are not equal to each other.
+	 * @param other the other ScrollSegment to compare to.
+	 * @return the inequality of the two segments.
+	 */
+	bool operator!=( const ScrollSegment &other ) const { return !operator==(other); }
+	/**
+	 * @brief Compares two ScrollSegment to see if one is less than the other.
+	 * @param other the other ScrollSegment to compare to.
+	 * @return the truth/falsehood of if the first is less than the second.
+	 */
+	bool operator<( const ScrollSegment &other ) const { return m_iStartRow < other.m_iStartRow; }
+	/**
+	 * @brief Compares two ScrollSegment to see if one is less than or equal to the other.
+	 * @param other the other ScrollSegment to compare to.
+	 * @return the truth/falsehood of if the first is less or equal to than the second.
+	 */
+	bool operator<=( const ScrollSegment &other ) const
+	{
+		return ( operator<(other) || operator==(other) );
+	}
+	/**
+	 * @brief Compares two ScrollSegment to see if one is greater than the other.
+	 * @param other the other ScrollSegment to compare to.
+	 * @return the truth/falsehood of if the first is greater than the second.
+	 */
+	bool operator>( const ScrollSegment &other ) const { return !operator<=(other); }
+	/**
+	 * @brief Compares two ScrollSegment to see if one is greater than or equal to the other.
+	 * @param other the other ScrollSegment to compare to.
+	 * @return the truth/falsehood of if the first is greater than or equal to the second.
+	 */
+	bool operator>=( const ScrollSegment &other ) const { return !operator<(other); }
+};
+
+/**
  * @brief Identifies when a whole region of arrows is to be ignored.
  *
  * FakeSegments are similar to the Fake Tap Notes in that the contents
@@ -1597,6 +1673,65 @@ public:
 	float GetDisplayedSpeedPercent( float fBeat, float fMusicSeconds ) const;
 	
 	/**
+	 * @brief Retrieve the scrolling factor at the given row.
+	 * @param iNoteRow the row in question.
+	 * @return the percent.
+	 */
+	float GetScrollAtRow( int iNoteRow );
+	/**
+	 * @brief Retrieve the scrolling factor at the given beat.
+	 * @param fBeat the beat in question.
+	 * @return the percent.
+	 */
+	float GetScrollAtBeat( float fBeat ) { return GetScrollAtRow( BeatToNoteRow(fBeat) ); }
+
+	/**
+	 * @brief Set the row to have the new Scrolling factor.
+	 * @param iNoteRow the row to have the new Speed.
+	 * @param fPercent the scrolling factor.
+	 */
+	void SetScrollAtRow( int iNoteRow, float fPercent );
+	/**
+	 * @brief Set the row to have the new Scrolling factor.
+	 * @param iNoteRow the row to have the new Speed.
+	 * @param fPercent the scrolling factor.
+	 */
+	void SetScrollAtBeat( float fBeat, float fPercent ) { SetScrollAtRow( BeatToNoteRow(fBeat), fPercent ); }
+	
+	/**
+	 * @brief Retrieve the ScrollSegment at the specified row.
+	 * @param iNoteRow the row that has a ScrollSegment.
+	 * @return the ScrollSegment in question.
+	 */
+	ScrollSegment& GetScrollSegmentAtRow( int iNoteRow );
+	/**
+	 * @brief Retrieve the ScrollSegment at the specified beat.
+	 * @param fBeat the beat that has a ScrollSegment.
+	 * @return the ScrollSegment in question.
+	 */
+	ScrollSegment& GetScrollSegmentAtBeat( float fBeat ) { return GetScrollSegmentAtRow( BeatToNoteRow(fBeat) ); }
+	
+	/**
+	 * @brief Retrieve the index of the ScrollSegment at the specified row.
+	 * @param iNoteRow the row that has a ScrollSegment.
+	 * @return the ScrollSegment's index in question.
+	 */
+	int GetScrollSegmentIndexAtRow( int iNoteRow ) const;
+	/**
+	 * @brief Retrieve the index of the ScrollSegment at the specified beat.
+	 * @param fBeat the beat that has a ScrollSegment.
+	 * @return the ScrollSegment's index in question.
+	 */
+	int GetScrollSegmentIndexAtBeat( float fBeat ) const { return GetScrollSegmentIndexAtRow( BeatToNoteRow(fBeat) ); }
+	
+	/**
+	 * @brief Add the ScrollSegment to the TimingData.
+	 * @param seg the new ScrollSegment.
+	 */
+	void AddScrollSegment( const ScrollSegment &seg );
+	
+	
+	/**
 	 * @brief Determine when the fakes end.
 	 * @param iRow The row you start on.
 	 * @return the time when the fakes end.
@@ -1689,6 +1824,7 @@ public:
 		return fBeat;
 	}
 	float GetElapsedTimeFromBeatNoOffset( float fBeat ) const;
+	float GetDisplayedBeat( float fBeat ) const;
 	/**
 	 * @brief View the TimingData to see if a song changes its BPM at any point.
 	 * @return true if there is at least one change, false otherwise.
@@ -1714,6 +1850,10 @@ public:
 	 * @brief View the TimingData to see if a song changes its speed scrolling at any point.
 	 * @return true if there is at least one change, false otherwise. */
 	bool HasSpeedChanges() const;
+	/**
+	 * @brief View the TimingData to see if a song changes its speed scrolling at any point.
+	 * @return true if there is at least one change, false otherwise. */
+	bool HasScrollChanges() const;
 	/**
 	 * @brief Compare two sets of timing data to see if they are equal.
 	 * @param other the other TimingData.
@@ -1745,6 +1885,9 @@ public:
 		COMPARE( m_SpeedSegments.size() );
 		for( unsigned i=0; i<m_SpeedSegments.size(); i++ )
 			COMPARE( m_SpeedSegments[i] );
+		COMPARE( m_ScrollSegments.size() );
+		for( unsigned i=0; i<m_ScrollSegments.size(); i++ )
+			COMPARE( m_ScrollSegments[i] );
 		COMPARE( m_FakeSegments.size() );
 		for( unsigned i=0; i<m_FakeSegments.size(); i++ )
 			COMPARE( m_FakeSegments[i] );
@@ -1806,6 +1949,8 @@ public:
 	vector<LabelSegment>		m_LabelSegments;
 	/** @brief The collection of SpeedSegments. */
 	vector<SpeedSegment>		m_SpeedSegments;
+	/** @brief The collection of ScrollSegments. */
+	vector<ScrollSegment>		m_ScrollSegments;
 	/** @brief The collection of FakeSegments. */
 	vector<FakeSegment>		m_FakeSegments;
 	/**

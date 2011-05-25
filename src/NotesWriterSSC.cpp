@@ -137,6 +137,11 @@ static void GetTimingTags( vector<RString> &lines, TimingData timing, bool bIsSo
 		w.Write( ss->m_iStartRow, ss->m_fPercent, ss->m_fWait, ss->m_usMode );
 	w.Finish();
 	
+	w.Init( "SCROLLS" );
+	FOREACH_CONST( ScrollSegment, timing.m_ScrollSegments, ss )
+		w.Write( ss->m_iStartRow, ss->m_fPercent );
+	w.Finish();
+	
 	if( !bIsSong )
 	{	
 		w.Init( "FAKES" );

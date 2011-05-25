@@ -455,6 +455,7 @@ static ThemeMetric<RageColor> TICKCOUNT_COLOR ( "NoteField", "TickcountColor" );
 static ThemeMetric<RageColor> COMBO_COLOR ( "NoteField", "ComboColor" );
 static ThemeMetric<RageColor> LABEL_COLOR ( "NoteField", "LabelColor" );
 static ThemeMetric<RageColor> SPEED_COLOR ( "NoteField", "SpeedColor" );
+static ThemeMetric<RageColor> SCROLL_COLOR ( "NoteField", "ScrollColor" );
 static ThemeMetric<RageColor> FAKE_COLOR ("NoteField", "FakeColor" );
 static ThemeMetric<bool> BPM_IS_LEFT_SIDE ( "NoteField", "BPMIsLeftSide" );
 static ThemeMetric<bool> STOP_IS_LEFT_SIDE ( "NoteField", "StopIsLeftSide" );
@@ -465,6 +466,7 @@ static ThemeMetric<bool> TICKCOUNT_IS_LEFT_SIDE ( "NoteField", "TickcountIsLeftS
 static ThemeMetric<bool> COMBO_IS_LEFT_SIDE ( "NoteField", "ComboIsLeftSide" );
 static ThemeMetric<bool> LABEL_IS_LEFT_SIDE ( "NoteField", "LabelIsLeftSide" );
 static ThemeMetric<bool> SPEED_IS_LEFT_SIDE ( "NoteField", "SpeedIsLeftSide" );
+static ThemeMetric<bool> SCROLL_IS_LEFT_SIDE ( "NoteField", "ScrollIsLeftSide" );
 static ThemeMetric<bool> FAKE_IS_LEFT_SIDE ( "NoteField", "FakeIsLeftSide" );
 static ThemeMetric<float> BPM_OFFSETX ( "NoteField", "BPMOffsetX" );
 static ThemeMetric<float> STOP_OFFSETX ( "NoteField", "StopOffsetX" );
@@ -475,6 +477,7 @@ static ThemeMetric<float> TICKCOUNT_OFFSETX ( "NoteField", "TickcountOffsetX" );
 static ThemeMetric<float> COMBO_OFFSETX ( "NoteField", "ComboOffsetX" );
 static ThemeMetric<float> LABEL_OFFSETX ( "NoteField", "LabelOffsetX" );
 static ThemeMetric<float> SPEED_OFFSETX ( "NoteField", "SpeedOffsetX" );
+static ThemeMetric<float> SCROLL_OFFSETX ( "NoteField", "ScrollOffsetX" );
 static ThemeMetric<float> FAKE_OFFSETX ( "NoteField", "FakeOffsetX" );
 
 void NoteField::DrawBPMText( const float fBeat, const float fBPM )
@@ -619,6 +622,23 @@ void NoteField::DrawSpeedText( const float fBeat, float fPercent, float fWait, u
 	m_textMeasureNumber.SetGlow( RageColor(1,1,1,RageFastCos(RageTimer::GetTimeSinceStartFast()*2)/2+0.5f) );
 	m_textMeasureNumber.SetText( ssprintf("%.3f\n%s\n%.3f", fPercent, (usMode == 1 ? "S" : "B"), fWait) );
 	m_textMeasureNumber.SetXY( (SPEED_IS_LEFT_SIDE ? -xBase - xOffset : xBase + xOffset), fYPos );
+	m_textMeasureNumber.Draw();
+}
+
+void NoteField::DrawScrollText( const float fBeat, float fPercent )
+{
+	const float fYOffset	= ArrowEffects::GetYOffset( m_pPlayerState, 0, fBeat );
+ 	const float fYPos	= ArrowEffects::GetYPos(    m_pPlayerState, 0, fYOffset, m_fYReverseOffsetPixels );
+	const float fZoom	= ArrowEffects::GetZoom(    m_pPlayerState );
+	const float xBase	= GetWidth()/2.f;
+	const float xOffset	= SCROLL_OFFSETX * fZoom;
+	
+	m_textMeasureNumber.SetZoom( fZoom );
+	m_textMeasureNumber.SetHorizAlign( SCROLL_IS_LEFT_SIDE ? align_right : align_left );
+	m_textMeasureNumber.SetDiffuse( SCROLL_COLOR );
+	m_textMeasureNumber.SetGlow( RageColor(1,1,1,RageFastCos(RageTimer::GetTimeSinceStartFast()*2)/2+0.5f) );
+	m_textMeasureNumber.SetText( ssprintf("%.3fx", fPercent) );
+	m_textMeasureNumber.SetXY( (SCROLL_IS_LEFT_SIDE ? -xBase - xOffset : xBase + xOffset), fYPos );
 	m_textMeasureNumber.Draw();
 }
 
@@ -969,6 +989,20 @@ void NoteField::DrawPrimitives()
 					float fBeat = NoteRowToBeat(seg->m_iStartRow);
 					if( IS_ON_SCREEN(fBeat) )
 						DrawSpeedText( fBeat, seg->m_fPercent, seg->m_fWait, seg->m_usMode );
+				}
+			}
+		}
+		
+		// Scroll text
+		if( GAMESTATE->m_bIsUsingStepTiming )
+		{
+			FOREACH_CONST( ScrollSegment, timing.m_ScrollSegments, seg )
+			{
+				if( seg->m_iStartRow >= iFirstRowToDraw && seg->m_iStartRow <= iLastRowToDraw )
+				{
+					float fBeat = NoteRowToBeat(seg->m_iStartRow);
+					if( IS_ON_SCREEN(fBeat) )
+						DrawScrollText( fBeat, seg->m_fPercent );
 				}
 			}
 		}
