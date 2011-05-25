@@ -236,7 +236,7 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 		if( bShowEffects )
 			fBeatsUntilStep = pCurSteps->m_Timing.GetDisplayedBeat(fNoteBeat) - pCurSteps->m_Timing.GetDisplayedBeat(fSongBeat);
 		float fYOffsetBeatSpacing = fBeatsUntilStep;
-		float fSpeedMultiplier = bShowEffects ? GetSpeedMultiplier( position.m_fSongBeatVisible, position.m_fMusicSecondsVisible, pCurSteps->m_Timing ) : 1.0;
+		float fSpeedMultiplier = bShowEffects ? pCurSteps->m_Timing.GetDisplayedSpeedPercent( position.m_fSongBeatVisible, position.m_fMusicSecondsVisible ) : 1.0;
 		fYOffset += fSpeedMultiplier * fYOffsetBeatSpacing * (1-pPlayerState->m_PlayerOptions.GetCurrent().m_fTimeSpacing);
 	}
 
