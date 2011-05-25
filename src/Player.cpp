@@ -1563,8 +1563,13 @@ int Player::GetClosestNote( int col, int iNoteRow, int iMaxRowsAhead, int iMaxRo
 	if( iPrevIndex == -1 )
 		return iNextIndex;
 
+	// Get the current time, previous time, and next time.
+	float fNoteTime = m_pPlayerState->m_Position.m_fMusicSeconds	;
+	float fNextTime = m_Timing->GetElapsedTimeFromBeat(NoteRowToBeat(iNextIndex));
+	float fPrevTime = m_Timing->GetElapsedTimeFromBeat(NoteRowToBeat(iPrevIndex));
+
 	/* Figure out which row is closer. */
-	if( abs(iNoteRow-iNextIndex) > abs(iNoteRow-iPrevIndex) )
+	if( fabsf(fNoteTime-fNextTime) > fabsf(fNoteTime-fPrevTime) )
 		return iPrevIndex;
 	else
 		return iNextIndex;
@@ -1623,8 +1628,13 @@ int Player::GetClosestNonEmptyRow( int iNoteRow, int iMaxRowsAhead, int iMaxRows
 	if( iPrevRow == -1 )
 		return iNextRow;
 
+	// Get the current time, previous time, and next time.
+	float fNoteTime = m_pPlayerState->m_Position.m_fMusicSeconds;
+	float fNextTime = m_Timing->GetElapsedTimeFromBeat(NoteRowToBeat(iNextRow));
+	float fPrevTime = m_Timing->GetElapsedTimeFromBeat(NoteRowToBeat(iPrevRow));
+
 	/* Figure out which row is closer. */
-	if( abs(iNoteRow-iNextRow) > abs(iNoteRow-iPrevRow) )
+	if( fabsf(fNoteTime-fNextTime) > fabsf(fNoteTime-fPrevTime) )
 		return iPrevRow;
 	else
 		return iNextRow;
