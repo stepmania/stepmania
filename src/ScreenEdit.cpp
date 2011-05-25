@@ -733,6 +733,10 @@ void ScreenEdit::Init()
 
 	m_pSong = GAMESTATE->m_pCurSong;
 	m_pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
+	
+	if( m_pSteps->UsesSplitTiming() )
+		GAMESTATE->m_bIsUsingStepTiming = true;
+	
 	m_bReturnToRecordMenuAfterPlay = false;
 	m_fBeatToReturnTo = 0;
 	

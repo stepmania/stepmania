@@ -132,6 +132,11 @@ public:
 	StepsType			m_StepsType;
 
 	CachedObject<Steps> m_CachedObject;
+	
+	/**
+	 * @brief Determine if the Steps use Split Timing by comparing the Song it's in.
+	 * @return true if the Step and Song use different timings, false otherwise. */
+	bool UsesSplitTiming() const;
 
 private:
 	inline const Steps *Real() const		{ return parent ? parent : this; }

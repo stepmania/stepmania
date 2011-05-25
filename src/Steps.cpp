@@ -424,6 +424,12 @@ void Steps::SetCachedRadarValues( const RadarValues v[NUM_PLAYERS] )
 	copy( v, v + NUM_PLAYERS, m_CachedRadarValues );
 }
 
+bool Steps::UsesSplitTiming() const
+{
+	Song *song = SONGMAN->GetSongFromSteps(const_cast<Steps *>(this));
+	return song->m_SongTiming != this->m_Timing;
+}
+
 
 // lua start
 #include "LuaBinding.h"
@@ -441,6 +447,7 @@ public:
 	DEFINE_METHOD( IsAutogen,	IsAutogen() )
 	DEFINE_METHOD( IsAnEdit,	IsAnEdit() )
 	DEFINE_METHOD( IsAPlayerEdit,	IsAPlayerEdit() )
+	DEFINE_METHOD( UsesSplitTiming, UsesSplitTiming() )
 
 	static int HasSignificantTimingChanges( T* p, lua_State *L )	{ lua_pushboolean(L, p->HasSignificantTimingChanges()); return 1; }
 	
@@ -468,14 +475,6 @@ public:
 		lua_pushstring( L, out );
 		return 1;
 	}
-	
-	static int UsesSplitTiming( T* p, lua_State *L )
-	{
-		Song *song = SONGMAN->GetSongFromSteps(p);
-		lua_pushboolean(L, p->m_Timing != song->m_SongTiming);
-		return 1;
-	}
-	
 
 	LunaSteps()
 	{
