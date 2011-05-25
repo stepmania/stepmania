@@ -474,6 +474,7 @@ static bool NeedsTapJudging( const TapNote &tn )
 	case TapNote::attack:
 	case TapNote::autoKeysound:
 	case TapNote::fake:
+	case TapNote::empty:
 		return false;
 	}
 }
@@ -496,6 +497,7 @@ static bool NeedsHoldJudging( const TapNote &tn )
 	case TapNote::attack:
 	case TapNote::autoKeysound:
 	case TapNote::fake:
+	case TapNote::empty:
 		return false;
 	}
 }
