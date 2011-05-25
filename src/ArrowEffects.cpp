@@ -211,50 +211,6 @@ void ArrowEffects::Update()
 	}
 }
 
-float GetSpeedMultiplier( float fSongBeat, float fMusicSeconds, const TimingData &tim )
-{
-	if( tim.m_SpeedSegments.size() == 0 )
-		return 1.0;
-
-	const int index = tim.GetSpeedSegmentIndexAtBeat( fSongBeat );
-	
-	const SpeedSegment &seg = tim.m_SpeedSegments[index];
-	float fStartBeat = NoteRowToBeat(seg.m_iStartRow);
-	float fStartTime = tim.GetElapsedTimeFromBeat( fStartBeat ) - tim.GetDelayAtBeat( fStartBeat );
-	float fEndTime;
-	float fCurTime = fMusicSeconds;
-	
-	if( seg.m_usMode == 1 ) // seconds
-	{
-		fEndTime = fStartTime + seg.m_fWait;
-	}
-	else
-	{
-		fEndTime = tim.GetElapsedTimeFromBeat( fStartBeat + seg.m_fWait ) - tim.GetDelayAtBeat( fStartBeat + seg.m_fWait );
-	}
-	
-	if( ( index == 0 && tim.m_SpeedSegments[0].m_fWait > 0.0 ) && fCurTime < fStartTime )
-	{
-		return 1.0;
-	}
-	else if( fEndTime >= fCurTime && ( index > 0 || tim.m_SpeedSegments[0].m_fWait > 0.0 ) )
-	{
-		const float fPriorSpeed = ( index == 0 ? 1 : tim.m_SpeedSegments[index - 1].m_fPercent );
-		float fTimeUsed = fCurTime - fStartTime;
-		float fDuration = fEndTime - fStartTime;
-		float fRatioUsed = fDuration == 0.0 ? 1 : fTimeUsed / fDuration;
-		
-		float fDistance = fPriorSpeed - seg.m_fPercent;
-		float fRatioNeed = fRatioUsed * -fDistance;
-		return (fPriorSpeed + fRatioNeed);
-	}
-	else 
-	{
-		return seg.m_fPercent;
-	}
-
-}
-
 /* For visibility testing: if bAbsolute is false, random modifiers must return
  * the minimum possible scroll speed. */
 float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float fNoteBeat, float &fPeakYOffsetOut, bool &bIsPastPeakOut, bool bAbsolute )

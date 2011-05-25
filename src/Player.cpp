@@ -474,6 +474,7 @@ static bool NeedsTapJudging( const TapNote &tn )
 	case TapNote::attack:
 	case TapNote::autoKeysound:
 	case TapNote::fake:
+	case TapNote::empty:
 		return false;
 	}
 }
@@ -496,6 +497,7 @@ static bool NeedsHoldJudging( const TapNote &tn )
 	case TapNote::attack:
 	case TapNote::autoKeysound:
 	case TapNote::fake:
+	case TapNote::empty:
 		return false;
 	}
 }
@@ -2940,13 +2942,17 @@ void Player::RandomizeNotes( int iNoteRow )
 	int iNumOfTracks = m_NoteData.GetNumTracks();
 	for( int t=0; t+1 < iNumOfTracks; t++ )
 	{
-		const int iSwapWith = RandomInt( iNumOfTracks );
-
 		/* Only swap a tap and an empty. */
 		NoteData::iterator iter = m_NoteData.FindTapNote( t, iNewNoteRow );
 		if( iter == m_NoteData.end(t) || iter->second.type != TapNote::tap )
 			continue;
 
+		const int iSwapWith = RandomInt( iNumOfTracks );
+		
+		// Make sure we're not swapping with ourselves.
+		if( t == iSwapWith )
+			continue;
+		
 		// Make sure this is empty.
 		if( m_NoteData.FindTapNote(iSwapWith, iNewNoteRow) != m_NoteData.end(iSwapWith) )
 			continue;

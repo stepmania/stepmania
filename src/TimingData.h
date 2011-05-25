@@ -1670,6 +1670,8 @@ public:
 	 */
 	void AddSpeedSegment( const SpeedSegment &seg );
 	
+	float GetDisplayedSpeedPercent( float fBeat, float fMusicSeconds ) const;
+	
 	/**
 	 * @brief Retrieve the scrolling factor at the given row.
 	 * @param iNoteRow the row in question.

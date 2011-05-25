@@ -728,6 +728,7 @@ float FindLastDisplayedBeat( const PlayerState* pPlayerState, int iDrawDistanceB
 	// Adjust search distance so that notes don't pop onto the screen.
 	float fSearchDistance = 10;
 	float fLastBeatToDraw = GetDisplayedPosition(pPlayerState)->m_fSongBeat+fSearchDistance;
+	float fSpeedMultiplier = GetDisplayedTiming(pPlayerState)->GetDisplayedSpeedPercent(GetDisplayedPosition(pPlayerState)->m_fSongBeatVisible, GetDisplayedPosition(pPlayerState)->m_fMusicSecondsVisible);
 
 	const int NUM_ITERATIONS = 20;
 
@@ -751,6 +752,11 @@ float FindLastDisplayedBeat( const PlayerState* pPlayerState, int iDrawDistanceB
 			fLastBeatToDraw += fSearchDistance;
 
 		fSearchDistance /= 2;
+	}
+
+	if( fSpeedMultiplier < 0.75 )
+	{
+		fLastBeatToDraw = min(fLastBeatToDraw, GetDisplayedPosition(pPlayerState)->m_fSongBeat + 16);
 	}
 
 	return fLastBeatToDraw;
