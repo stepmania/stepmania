@@ -5,6 +5,7 @@
 
 #include "GameConstantsAndTypes.h"
 #include "PlayerNumber.h"
+#include "RageLog.h"
 
 class XNode;
 
@@ -159,7 +160,14 @@ struct TapNote
 		pn(PLAYER_INVALID), bHopoPossible(false),
 		sAttackModifiers(sAttackModifiers_),
 		fAttackDurationSeconds(fAttackDurationSeconds_),
-		iKeysoundIndex(iKeysoundIndex_), iDuration(0), HoldResult() {}
+		iKeysoundIndex(iKeysoundIndex_), iDuration(0), HoldResult()
+	{
+		if (type_ > TapNote::fake )
+		{
+			LOG->Trace(ssprintf("Invalid tap note type %d (most likely) due to random vanish issues. Assume it doesn't need judging.", type_ ) );
+			type = TapNote::empty;
+		}
+	}
 
 	/**
 	 * @brief Determine if the two TapNotes are equal to each other.
