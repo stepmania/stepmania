@@ -1185,7 +1185,7 @@ bool BMSLoader::LoadFromDir( const RString &sDir, Song &out )
 		if( ok )
 		{
 			// set song's timing data to the main file.
-			if( i == iMainDataIndex )
+			if( i == static_cast<unsigned>(iMainDataIndex) )
 				out.m_SongTiming = pNewNotes->m_Timing;
 				
 			out.AddSteps( pNewNotes );
