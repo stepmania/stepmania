@@ -81,6 +81,7 @@ namespace SSCLoader
 	void ProcessLabels( TimingData &, const RString );
 	void ProcessCombos( TimingData &, const RString );
 	void ProcessSpeeds( TimingData &, const RString );
+	void ProcessScrolls( TimingData &, const RString );
 	void ProcessFakes( TimingData &, const RString );
 }
 #endif

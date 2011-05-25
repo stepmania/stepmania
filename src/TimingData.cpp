@@ -73,6 +73,11 @@ void TimingData::AddSpeedSegment( const SpeedSegment &seg )
 	m_SpeedSegments.insert( upper_bound(m_SpeedSegments.begin(), m_SpeedSegments.end(), seg), seg );
 }
 
+void TimingData::AddScrollSegment( const ScrollSegment &seg )
+{
+	m_ScrollSegments.insert( upper_bound(m_ScrollSegments.begin(), m_ScrollSegments.end(), seg), seg );
+}
+
 void TimingData::AddFakeSegment( const FakeSegment &seg )
 {
 	m_FakeSegments.insert( upper_bound(m_FakeSegments.begin(), m_FakeSegments.end(), seg), seg );
@@ -290,6 +295,34 @@ void TimingData::SetSpeedAtRow( int iRow, float fPercent, float fWait, unsigned 
 	}
 }
 
+void TimingData::SetScrollAtRow( int iRow, float fPercent )
+{
+	unsigned i;
+	for( i = 0; i < m_ScrollSegments.size(); i++ )
+	{
+		if( m_ScrollSegments[i].m_iStartRow >= iRow)
+			break;
+	}
+	
+	if ( i == m_ScrollSegments.size() || m_ScrollSegments[i].m_iStartRow != iRow )
+	{
+		// the core mod itself matters the most for comparisons.
+		if( i == 0 || m_ScrollSegments[i-1].m_fPercent != fPercent )
+			AddScrollSegment( ScrollSegment(iRow, fPercent) );
+	}
+	else
+	{
+		// The others aren't compared: only the mod itself matters.
+		if( i > 0  && m_ScrollSegments[i-1].m_fPercent == fPercent )
+			m_ScrollSegments.erase( m_ScrollSegments.begin()+i,
+					       m_ScrollSegments.begin()+i+1 );
+		else
+		{
+			m_ScrollSegments[i].m_fPercent = fPercent;
+		}
+	}
+}
+
 void TimingData::SetFakeAtRow( int iRow, float fNew )
 {
 	unsigned i;
@@ -398,6 +431,11 @@ float TimingData::GetSpeedWaitAtRow( int iRow )
 unsigned short TimingData::GetSpeedModeAtRow( int iRow )
 {
 	return GetSpeedSegmentAtRow( iRow ).m_usMode;
+}
+
+float TimingData::GetScrollAtRow( int iRow )
+{
+	return GetScrollSegmentAtRow( iRow ).m_fPercent;
 }
 
 float TimingData::GetFakeAtRow( int iFakeRow ) const
@@ -584,6 +622,15 @@ int TimingData::GetSpeedSegmentIndexAtRow( int iRow ) const
 	return static_cast<int>(i);
 }
 
+int TimingData::GetScrollSegmentIndexAtRow( int iRow ) const
+{
+	unsigned i;
+	for (i=0; i < m_ScrollSegments.size() - 1; i++ )
+		if( m_ScrollSegments[i+1].m_iStartRow > iRow )
+			break;
+	return static_cast<int>(i);
+}
+
 BPMSegment& TimingData::GetBPMSegmentAtRow( int iNoteRow )
 {
 	static BPMSegment empty;
@@ -610,6 +657,15 @@ SpeedSegment& TimingData::GetSpeedSegmentAtRow( int iRow )
 		if( m_SpeedSegments[i+1].m_iStartRow > iRow )
 			break;
 	return m_SpeedSegments[i];
+}
+
+ScrollSegment& TimingData::GetScrollSegmentAtRow( int iRow )
+{
+	unsigned i;
+	for( i=0; i<m_ScrollSegments.size()-1; i++ )
+		if( m_ScrollSegments[i+1].m_iStartRow > iRow )
+			break;
+	return m_ScrollSegments[i];
 }
 
 int TimingData::GetTimeSignatureNumeratorAtRow( int iRow )
@@ -940,6 +996,17 @@ float TimingData::GetElapsedTimeFromBeatNoOffset( float fBeat ) const
 	
 	// won't reach here, unless BeatToNoteRow(fBeat == INT_MAX) (impossible)
 	
+}
+
+float TimingData::GetDisplayedBeat( float fBeat ) const
+{
+	unsigned index = GetScrollSegmentIndexAtBeat(fBeat);
+	float fOutBeat = ( fBeat - NoteRowToBeat(m_ScrollSegments[index].m_iStartRow) ) * m_ScrollSegments[index].m_fPercent;
+	for( unsigned i = 0; i < index; i ++ )
+	{
+		fOutBeat += ( NoteRowToBeat(m_ScrollSegments[i + 1].m_iStartRow) - NoteRowToBeat(m_ScrollSegments[i].m_iStartRow) ) * m_ScrollSegments[i].m_fPercent;
+	}
+	return fOutBeat;
 }
 
 void TimingData::ScaleRegion( float fScale, int iStartIndex, int iEndIndex, bool bAdjustBPM )
@@ -1391,6 +1458,13 @@ void TimingData::TidyUpData()
 		SpeedSegment seg(0, 1, 0);
 		m_SpeedSegments.push_back( seg );
 	}
+	
+	// Always be sure there is a starting scrolling factor.
+	if( m_ScrollSegments.empty() )
+	{
+		ScrollSegment seg(0, 1);
+		m_ScrollSegments.push_back( seg );
+	}
 }
 
 
@@ -1420,6 +1494,11 @@ bool TimingData::HasFakes() const
 bool TimingData::HasSpeedChanges() const
 {
 	return m_SpeedSegments.size()>1;
+}
+
+bool TimingData::HasScrollChanges() const
+{
+	return m_ScrollSegments.size()>1;
 }
 
 void TimingData::NoteRowToMeasureAndBeat( int iNoteRow, int &iMeasureIndexOut, int &iBeatIndexOut, int &iRowsRemainder ) const
