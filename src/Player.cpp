@@ -2947,6 +2947,10 @@ void Player::RandomizeNotes( int iNoteRow )
 
 		const int iSwapWith = RandomInt( iNumOfTracks );
 		
+		// Make sure we're not swapping with ourselves.
+		if( t == iSwapWith )
+			continue;
+		
 		// Make sure this is empty.
 		if( m_NoteData.FindTapNote(iSwapWith, iNewNoteRow) != m_NoteData.end(iSwapWith) )
 			continue;
