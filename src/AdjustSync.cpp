@@ -114,7 +114,7 @@ void AdjustSync::SaveSyncChanges()
 	
 	/* TODO: Save all of the timing data changes.
 	 * Luckily, only the song timing data needs comparing here. */
-	if( GAMESTATE->m_pCurSong && *s_pTimingDataOriginal != GAMESTATE->m_pCurSong->m_SongTiming )
+	if( GAMESTATE->m_pCurSong && *s_vpTimingDataOriginal[0] != GAMESTATE->m_pCurSong->m_SongTiming )
 	{
 		if( GAMESTATE->IsEditing() )
 		{
