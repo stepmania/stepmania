@@ -57,12 +57,26 @@ void AdjustSync::ResetOriginalSyncData()
 {
 	// TODO: Reset the vector if not in a song?
 	if( s_pTimingDataOriginal == NULL )
+	{
 		s_pTimingDataOriginal = new TimingData;
+		s_vpTimingDataOriginal.clear(); // sanity check for now.
+		s_vpTimingDataOriginal.push_back(new TimingData);
+	}
 
 	if( GAMESTATE->m_pCurSong )
+	{
 		*s_pTimingDataOriginal = GAMESTATE->m_pCurSong->m_SongTiming;
+		// Deal with the vector code here.
+		s_vpTimingDataOriginal.clear();
+		s_vpTimingDataOriginal.push_back(&GAMESTATE->m_pCurSong->m_SongTiming);
+		// Loop through the steps.
+	}
 	else
+	{
+		s_vpTimingDataOriginal.clear();
+		s_vpTimingDataOriginal.push_back(new TimingData);
 		*s_pTimingDataOriginal = TimingData();
+	}
 	s_fGlobalOffsetSecondsOriginal = PREFSMAN->m_fGlobalOffsetSeconds;
 
 	ResetAutosync();
