@@ -136,11 +136,18 @@ void AdjustSync::RevertSyncChanges()
 	if( GAMESTATE->IsCourseMode() )
 		return;
 	PREFSMAN->m_fGlobalOffsetSeconds.Set( s_fGlobalOffsetSecondsOriginal );
-	/* TODO: Return EACH TimingData back to normal.
-	 * Hopefully on a loop ot always uses the same order. Either that,
-	 * or we can loop through the vector and manually access the proper
-	 * steps through GameState. */
-	GAMESTATE->m_pCurSong->m_SongTiming = *s_pTimingDataOriginal;
+	
+	// The first one is ALWAYS the song timing.
+	GAMESTATE->m_pCurSong->m_SongTiming = *s_vpTimingDataOriginal[0];
+	
+	unsigned location = 1;
+	const vector<Steps *>& vpSteps = GAMESTATE->m_pCurSong->GetAllSteps();
+	FOREACH( Steps*, const_cast<vector<Steps *>&>(vpSteps), s )
+	{
+		(*s)->m_Timing = *s_vpTimingDataOriginal[location];
+		location++;
+	}
+	
 	ResetOriginalSyncData();
 	s_fStandardDeviation = 0.0f;
 	s_fAverageError = 0.0f;
