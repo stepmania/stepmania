@@ -55,6 +55,7 @@ int AdjustSync::s_iStepsFiltered = 0;
 
 void AdjustSync::ResetOriginalSyncData()
 {
+	// TODO: Reset the vector if not in a song?
 	if( s_pTimingDataOriginal == NULL )
 		s_pTimingDataOriginal = new TimingData;
 
@@ -88,6 +89,9 @@ void AdjustSync::SaveSyncChanges()
 {
 	if( GAMESTATE->IsCourseMode() )
 		return;
+	
+	/* TODO: Save all of the timing data changes.
+	 * Luckily, only the song timing data needs comparing here. */
 	if( GAMESTATE->m_pCurSong && *s_pTimingDataOriginal != GAMESTATE->m_pCurSong->m_SongTiming )
 	{
 		if( GAMESTATE->IsEditing() )
@@ -111,6 +115,10 @@ void AdjustSync::RevertSyncChanges()
 	if( GAMESTATE->IsCourseMode() )
 		return;
 	PREFSMAN->m_fGlobalOffsetSeconds.Set( s_fGlobalOffsetSecondsOriginal );
+	/* TODO: Return EACH TimingData back to normal.
+	 * Hopefully on a loop ot always uses the same order. Either that,
+	 * or we can loop through the vector and manually access the proper
+	 * steps through GameState. */
 	GAMESTATE->m_pCurSong->m_SongTiming = *s_pTimingDataOriginal;
 	ResetOriginalSyncData();
 	s_fStandardDeviation = 0.0f;
