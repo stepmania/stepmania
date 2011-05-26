@@ -61,7 +61,7 @@ void AdjustSync::ResetOriginalSyncData()
 	{
 		s_pTimingDataOriginal = new TimingData;
 		s_vpTimingDataOriginal.clear(); // sanity check for now.
-		s_vpTimingDataOriginal.push_back(new TimingData);
+		s_vpTimingDataOriginal.push_back(new TimingData());
 	}
 
 	if( GAMESTATE->m_pCurSong )
@@ -74,14 +74,15 @@ void AdjustSync::ResetOriginalSyncData()
 		const vector<Steps *>& vpSteps = GAMESTATE->m_pCurSong->GetAllSteps();
 		FOREACH( Steps*, const_cast<vector<Steps *>&>(vpSteps), s )
 		{
-			// the size will be original song + each step.
+			/* Capture each Step's timing data in the vector.
+			 * TODO: Make this less ugly. */
 			s_vpTimingDataOriginal.push_back(&(*s)->m_Timing);
 		}
 	}
 	else
 	{
 		s_vpTimingDataOriginal.clear();
-		s_vpTimingDataOriginal.push_back(new TimingData);
+		s_vpTimingDataOriginal.push_back(new TimingData());
 		*s_pTimingDataOriginal = TimingData();
 	}
 	s_fGlobalOffsetSecondsOriginal = PREFSMAN->m_fGlobalOffsetSeconds;
@@ -338,10 +339,12 @@ void AdjustSync::GetSyncChangeTextSong( vector<RString> &vsAddTo )
 	if( GAMESTATE->m_pCurSong.Get() )
 	{
 		unsigned int iOriginalSize = vsAddTo.size();
+		TimingData *original = s_pTimingDataOriginal;
+		TimingData &testing = GAMESTATE->m_pCurSong->m_SongTiming;
 
 		{
-			float fOld = Quantize( AdjustSync::s_pTimingDataOriginal->m_fBeat0OffsetInSeconds, 0.001f );
-			float fNew = Quantize( GAMESTATE->m_pCurSong->m_SongTiming.m_fBeat0OffsetInSeconds, 0.001f );
+			float fOld = Quantize( original->m_fBeat0OffsetInSeconds, 0.001f );
+			float fNew = Quantize( testing.m_fBeat0OffsetInSeconds, 0.001f );
 			float fDelta = fNew - fOld;
 
 			if( fabsf(fDelta) > 0.0001f )
@@ -354,10 +357,10 @@ void AdjustSync::GetSyncChangeTextSong( vector<RString> &vsAddTo )
 			}
 		}
 
-		for( unsigned i=0; i<GAMESTATE->m_pCurSong->m_SongTiming.m_BPMSegments.size(); i++ )
+		for( unsigned i=0; i< testing.m_BPMSegments.size(); i++ )
 		{
-			float fOld = Quantize( AdjustSync::s_pTimingDataOriginal->m_BPMSegments[i].GetBPM(), 0.001f );
-			float fNew = Quantize( GAMESTATE->m_pCurSong->m_SongTiming.m_BPMSegments[i].GetBPM(), 0.001f );
+			float fOld = Quantize( original->m_BPMSegments[i].GetBPM(), 0.001f );
+			float fNew = Quantize( testing.m_BPMSegments[i].GetBPM(), 0.001f );
 			float fDelta = fNew - fOld;
 
 			if( fabsf(fDelta) > 0.0001f )
@@ -375,10 +378,10 @@ void AdjustSync::GetSyncChangeTextSong( vector<RString> &vsAddTo )
 			}
 		}
 
-		for( unsigned i=0; i<GAMESTATE->m_pCurSong->m_SongTiming.m_StopSegments.size(); i++ )
+		for( unsigned i=0; i< testing.m_StopSegments.size(); i++ )
 		{
-			float fOld = Quantize( AdjustSync::s_pTimingDataOriginal->m_StopSegments[i].m_fStopSeconds, 0.001f );
-			float fNew = Quantize( GAMESTATE->m_pCurSong->m_SongTiming.m_StopSegments[i].m_fStopSeconds, 0.001f );
+			float fOld = Quantize( original->m_StopSegments[i].m_fStopSeconds, 0.001f );
+			float fNew = Quantize( testing.m_StopSegments[i].m_fStopSeconds, 0.001f );
 			float fDelta = fNew - fOld;
 
 			if( fabsf(fDelta) > 0.0001f )
