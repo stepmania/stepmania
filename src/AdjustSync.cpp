@@ -35,6 +35,7 @@
 
 #include "global.h"
 #include "Song.h"
+#include "Steps.h"
 #include "AdjustSync.h"
 #include "GameState.h"
 #include "LocalizedString.h"
