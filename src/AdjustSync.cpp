@@ -43,6 +43,7 @@
 #include "Foreach.h"
 
 TimingData *AdjustSync::s_pTimingDataOriginal = NULL;
+vector<TimingData *> AdjustSync::s_vpTimingDataOriginal;
 float AdjustSync::s_fGlobalOffsetSecondsOriginal = 0.0f;
 int AdjustSync::s_iAutosyncOffsetSample = 0;
 float AdjustSync::s_fAutosyncOffset[AdjustSync::OFFSET_SAMPLE_COUNT];

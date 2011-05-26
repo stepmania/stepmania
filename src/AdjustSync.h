@@ -13,7 +13,15 @@ class TimingData;
 class AdjustSync
 {
 public:
+	/** @brief The original TimingData before adjustments are made. */
 	static TimingData *s_pTimingDataOriginal;
+	
+	/**
+	 * @brief The original TimingData before adjustments were made.
+	 *
+	 * This is designed to work with Split Timing. */
+	static vector<TimingData *> s_vpTimingDataOriginal;
+	
 	static float s_fGlobalOffsetSecondsOriginal;
 	/* We only want to call the Reset methods before a song, not immediately after
 	 * a song. If we reset it at the end of a song, we have to carefully check
