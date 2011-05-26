@@ -71,6 +71,12 @@ void AdjustSync::ResetOriginalSyncData()
 		s_vpTimingDataOriginal.clear();
 		s_vpTimingDataOriginal.push_back(&GAMESTATE->m_pCurSong->m_SongTiming);
 		// Loop through the steps.
+		const vector<Steps *>& vpSteps = GAMESTATE->m_pCurSong->GetAllSteps();
+		FOREACH( Steps*, const_cast<vector<Steps *>&>(vpSteps), s )
+		{
+			// the size will be original song + each step.
+			s_vpTimingDataOriginal.push_back(&(*s)->m_Timing);
+		}
 	}
 	else
 	{
