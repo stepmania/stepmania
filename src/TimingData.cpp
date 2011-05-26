@@ -1038,6 +1038,17 @@ void TimingData::ScaleRegion( float fScale, int iStartIndex, int iEndIndex, bool
 			m_StopSegments[i].m_iStartRow = lrintf((iSegStartRow - iStartIndex) * fScale) + iStartIndex;
 	}
 	
+	for( unsigned i = 0; i < m_vTimeSignatureSegments.size(); i++ )
+	{
+		const int iSegStartRow = m_vTimeSignatureSegments[i].m_iStartRow;
+		if( iSegStartRow < iStartIndex )
+			continue;
+		else if( iSegStartRow > iEndIndex )
+			m_vTimeSignatureSegments[i].m_iStartRow += lrintf((iEndIndex - iStartIndex) * (fScale - 1));
+		else
+			m_vTimeSignatureSegments[i].m_iStartRow = lrintf((iSegStartRow - iStartIndex) * fScale) + iStartIndex;
+	}
+	
 	for( unsigned i = 0; i < m_WarpSegments.size(); i++ )
 	{
 		const int iSegStartRow = m_WarpSegments[i].m_iStartRow;
@@ -1118,6 +1129,17 @@ void TimingData::ScaleRegion( float fScale, int iStartIndex, int iEndIndex, bool
 			m_FakeSegments[i].m_iStartRow += lrintf((iEndIndex - iStartIndex) * (fScale - 1));
 		else
 			m_FakeSegments[i].m_iStartRow = lrintf((iSegStartRow - iStartIndex) * fScale) + iStartIndex;
+	}
+	
+	for( unsigned i = 0; i < m_ScrollSegments.size(); i++ )
+	{
+		const int iSegStartRow = m_ScrollSegments[i].m_iStartRow;
+		if( iSegStartRow < iStartIndex )
+			continue;
+		else if( iSegStartRow > iEndIndex )
+			m_ScrollSegments[i].m_iStartRow += lrintf((iEndIndex - iStartIndex) * (fScale - 1));
+		else
+			m_ScrollSegments[i].m_iStartRow = lrintf((iSegStartRow - iStartIndex) * fScale) + iStartIndex;
 	}
 	
 	// adjust BPM changes to preserve timing
@@ -1217,6 +1239,14 @@ void TimingData::InsertRows( int iStartRow, int iRowsToAdd )
 		if( fake.m_iStartRow < iStartRow )
 			continue;
 		fake.m_iStartRow += iRowsToAdd;
+	}
+	
+	for( unsigned i = 0; i < m_ScrollSegments.size(); i++ )
+	{
+		ScrollSegment &scrl = m_ScrollSegments[i];
+		if( scrl.m_iStartRow < iStartRow )
+			continue;
+		scrl.m_iStartRow += iRowsToAdd;
 	}
 
 	if( iStartRow == 0 )
@@ -1404,6 +1434,22 @@ void TimingData::DeleteRows( int iStartRow, int iRowsToDelete )
 		}
 		
 		fake.m_iStartRow -= iRowsToDelete;
+	}
+	
+	for( unsigned i = 0; i < m_ScrollSegments.size(); i++ )
+	{
+		ScrollSegment &scrl = m_ScrollSegments[i];
+		
+		if( scrl.m_iStartRow < iStartRow )
+			continue;
+		
+		if( scrl.m_iStartRow < iStartRow+iRowsToDelete )
+		{
+			m_ScrollSegments.erase( m_ScrollSegments.begin()+i, m_ScrollSegments.begin()+i+1 );
+			--i;
+			continue;
+		}
+		scrl.m_iStartRow -= iRowsToDelete;
 	}
 
 	this->SetBPMAtRow( iStartRow, fNewBPM );
