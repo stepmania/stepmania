@@ -56,7 +56,7 @@ int AdjustSync::s_iStepsFiltered = 0;
 void AdjustSync::ResetOriginalSyncData()
 {
 	// TODO: Reset the vector if not in a song?
-	if( s_pTimingDataOriginal == NULL )
+	if( s_vpTimingDataOriginal.empty() )
 	{
 		s_pTimingDataOriginal = new TimingData;
 		s_vpTimingDataOriginal.clear(); // sanity check for now.
