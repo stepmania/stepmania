@@ -3733,7 +3733,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 			GetAppropriateTiming().InsertRows( BeatToNoteRow( GetBeat() ), BeatToNoteRow(1) );
 			break;
 		case shift_pauses_backward:
-			GetAppropriateTiming().DeleteRows( BeatToNoteRow( GetBeat() ), BeatToNoteRow(1) );
+			GetAppropriateTiming().DeleteRows( BeatToNoteRow( GetBeat() + 1 ), BeatToNoteRow(1) );
 			break;
 		case convert_to_pause:
 			{
