@@ -269,7 +269,7 @@ void PlayerOptions::FromString( const RString &sMultipleMods )
 
 bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut )
 {
-	ASSERT( NOTESKIN );
+	ASSERT_M( NOTESKIN, "The Noteskin Manager must be loaded in order to process mods." );
 
 	RString sBit = sOneMod;
 	sBit.MakeLower();
