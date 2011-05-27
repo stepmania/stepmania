@@ -265,7 +265,7 @@ void PlayerOptions::FromString( const RString &sMultipleMods )
 	{
 		if (!FromOneModString( *s, sThrowAway ))
 		{
-			LOG->Trace( "Attempted to load a non-existing mod %s for the Player. Ignoring.", s );
+			LOG->Trace( "Attempted to load a non-existing mod %s for the Player. Ignoring.", (*s).c_str() );
 		}
 	}
 }
