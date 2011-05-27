@@ -8,6 +8,13 @@ ________________________________________________________________________________
 StepMania 5.0 $NEXT | 20110xyy
 --------------------------------------------------------------------------------
 
+2011/05/27
+----------
+* [ScreenEdit] Added the LoopOnChartEnd metric. Once you get to the end of
+  the chart while playing it in the editor, this controls whether it loops and
+  plays again, or simply stops. By default, this is true, replicating current
+  behavior. Set to false to replicate older StepMania behavior. [Wolfman2000]
+
 2011/05/26
 ----------
 * [ScoreKeeperNormal] Added the MissComboIsPerRow metric. Similar to the
