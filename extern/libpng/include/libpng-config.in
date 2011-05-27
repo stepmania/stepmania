@@ -1,8 +1,34 @@
+#! /bin/sh
+
+# libpng-config
+# provides configuration info for libpng.
+
+# Copyright (C) 2002, 2004, 2006, 2007 Glenn Randers-Pehrson
+
+# This code is released under the libpng license.
+# For conditions of distribution and use, see the disclaimer
+# and license in png.h
+
+# Modeled after libxml-config.
+
+version="@PNGLIB_VERSION@"
+prefix="@prefix@"
+exec_prefix="@exec_prefix@"
+libdir="@libdir@"
+includedir="@includedir@/libpng@PNGLIB_MAJOR@@PNGLIB_MINOR@"
+libs="-lpng@PNGLIB_MAJOR@@PNGLIB_MINOR@"
+all_libs="-lpng@PNGLIB_MAJOR@@PNGLIB_MINOR@ @LIBS@"
+I_opts="-I${includedir}"
+L_opts="-L${libdir}"
+R_opts=""
+cppflags=""
+ccopts=""
+ldopts=""
 
 usage()
 {
     cat <<EOF
-Usage: libpng-config [OPTION] ...
+Usage: $0 [OPTION] ...
 
 Known values for OPTION are:
 
@@ -77,12 +103,17 @@ while test $# -gt 0; do
         echo ${R_opts}
         ;;
 
+    --ldopts)
+        echo ${ldopts}
+        ;;
+
     --ldflags)
-        echo ${ldflags} ${L_opts} ${R_opts} ${libs}
+        echo ${ldopts} ${L_opts} ${R_opts} ${libs}
         ;;
 
     --static)
         R_opts=""
+        libs=${all_libs}
         ;;
 
     *)
