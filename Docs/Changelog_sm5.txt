@@ -8,6 +8,13 @@ ________________________________________________________________________________
 StepMania 5.0 $NEXT | 20110xyy
 --------------------------------------------------------------------------------
 
+2011/05/26
+----------
+* [ScoreKeeperNormal] Added the MissComboIsPerRow metric. Similar to the
+  ComboIsPerRow metric, this determines how much miss combo is earned on missing
+  a row of notes. By default, this is true. Set to false to replicate Pump Pro
+  behavior. [Wolfman2000]
+
 2011/05/25
 ----------
 * [NotesLoaderSSC/NotesWriterSSC] Added the ScrollSegments. Think BPM change,
