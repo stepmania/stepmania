@@ -263,7 +263,10 @@ void PlayerOptions::FromString( const RString &sMultipleMods )
 	RString sThrowAway;
 	FOREACH( RString, vs, s )
 	{
-		FromOneModString( *s, sThrowAway );
+		if (!FromOneModString( *s, sThrowAway ))
+		{
+			LOG->Trace( "Attempted to load a non-existing mod %s for the Player. Ignoring.", s );
+		}
 	}
 }
 
