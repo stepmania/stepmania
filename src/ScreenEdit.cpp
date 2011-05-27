@@ -3736,7 +3736,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 			break;
 		case convert_to_pause:
 			{
-				ASSERT( m_NoteFieldEdit.m_iBeginMarker!=-1 && m_NoteFieldEdit.m_iEndMarker!=-1 );
+				ASSERT_M( m_NoteFieldEdit.m_iBeginMarker!=-1 && m_NoteFieldEdit.m_iEndMarker!=-1, "Attempted to convert beats outside the notefield to pauses!" );
 				float fMarkerStart = GetAppropriateTiming().GetElapsedTimeFromBeat( NoteRowToBeat(m_NoteFieldEdit.m_iBeginMarker) );
 				float fMarkerEnd = GetAppropriateTiming().GetElapsedTimeFromBeat( NoteRowToBeat(m_NoteFieldEdit.m_iEndMarker) );
 
@@ -3750,7 +3750,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 						m_NoteFieldEdit.m_iBeginMarker + 1,
 						m_NoteFieldEdit.m_iEndMarker-m_NoteFieldEdit.m_iBeginMarker
 					);
-				GetAppropriateTiming().DeleteRows( m_NoteFieldEdit.m_iBeginMarker,
+				GetAppropriateTiming().DeleteRows( m_NoteFieldEdit.m_iBeginMarker + 1,
 						m_NoteFieldEdit.m_iEndMarker-m_NoteFieldEdit.m_iBeginMarker );
 				GetAppropriateTiming().SetStopAtRow( m_NoteFieldEdit.m_iBeginMarker, fStopLength );
 				m_NoteFieldEdit.m_iBeginMarker = -1;
