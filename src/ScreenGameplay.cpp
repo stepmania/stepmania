@@ -804,11 +804,6 @@ void ScreenGameplay::InitSongQueues()
 			// In a survival course, override stored mods
 			if( pCourse->GetCourseType() == COURSE_TYPE_SURVIVAL )
 			{
-				/* Note: Survivals insist on giving everyone default and 1.5x here.
-				 * This definitely sounds like old Oni behavior.
-				 * If anything, maybe this part shouldn't be hardcoded for just
-				 * Survival...or maybe it needs a metric switch.
-				 * Either way, DEFAULT_MODIFIERS is suspect. */
 				pi->GetPlayerState()->m_PlayerOptions.FromString( ModsLevel_Stage, "clearall,"+CommonMetrics::DEFAULT_MODIFIERS.GetValue() );
 				pi->GetPlayerState()->RebuildPlayerOptionsFromActiveAttacks();
 			}
