@@ -582,6 +582,7 @@ private:
 	TimingData & GetAppropriateTiming() const;
 	void SetBeat(float fBeat);
 	float GetBeat();
+	int GetRow();
 	
 };
 
