@@ -133,7 +133,7 @@ static void PNG_Error( png_struct *pPng, const char *szError )
 	error_info *pInfo = (error_info *) png_get_error_ptr(pPng);
 	strncpy( pInfo->szErr, szError, 1024 );
 	pInfo->szErr[1023] = 0;
-	longjmp( pPng->jmpbuf, 1 );
+	longjmp( png_jmpbuf(pPng), 1 );
 }
 
 static void PNG_Warning( png_struct *png, const char *warning )
@@ -168,7 +168,7 @@ bool SavePNG( FILE *f, char szErrorbuf[1024], const Surface *pSurf )
 		return false;
 	}
 
-	if( setjmp(pPng->jmpbuf) )
+	if( setjmp(png_jmpbuf(pPng)) )
 	{
 		png_destroy_read_struct( &pPng, &pInfo, NULL );
 		return false;
