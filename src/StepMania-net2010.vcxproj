@@ -107,7 +107,7 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>.;..\extern\lua-5.1\src;ffmpeg\modern_working\include;BaseClasses;..\extern\jsoncpp\include;..\extern\glew-1.5.8\include;..\extern\pcre;..\extern\mad-0.15.1b;..\extern\libpng;..\extern\libjpeg;..\extern\zlib;..\extern\vorbis;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;..\extern\lua-5.1\src;ffmpeg\modern_working\include;BaseClasses;..\extern\jsoncpp\include;..\extern\glew-1.5.8\include;..\extern\pcre;..\extern\mad-0.15.1b;..\extern\libpng\lib;..\extern\libpng\include;..\extern\libjpeg;..\extern\zlib;..\extern\vorbis;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;WINDOWS;DEBUG;GLEW_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>
       </ExceptionHandling>
@@ -168,7 +168,7 @@
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
-      <AdditionalIncludeDirectories>.;..\extern\lua-5.1\src;ffmpeg\modern_working\include;BaseClasses;..\extern\jsoncpp\include;..\extern\glew-1.5.8\include;..\extern\pcre;..\extern\mad-0.15.1b;..\extern\libpng;..\extern\libjpeg;..\extern\zlib;..\extern\vorbis;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;..\extern\lua-5.1\src;ffmpeg\modern_working\include;BaseClasses;..\extern\jsoncpp\include;..\extern\glew-1.5.8\include;..\extern\pcre;..\extern\mad-0.15.1b;..\extern\libpng\lib;..\extern\libpng\include;..\extern\libjpeg;..\extern\zlib;..\extern\vorbis;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;WINDOWS;RELEASE;GLEW_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <MinimalRebuild>false</MinimalRebuild>
@@ -228,7 +228,7 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>.;..\extern\lua-5.1\src;ffmpeg\modern_working\include;BaseClasses;..\extern\jsoncpp\include;..\extern\glew-1.5.8\include;..\extern\pcre;..\extern\mad-0.15.1b;..\extern\libpng;..\extern\libjpeg;..\extern\zlib;..\extern\vorbis;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;..\extern\lua-5.1\src;ffmpeg\modern_working\include;BaseClasses;..\extern\jsoncpp\include;..\extern\glew-1.5.8\include;..\extern\pcre;..\extern\mad-0.15.1b;..\extern\libpng\lib;..\extern\libpng\include;..\extern\libjpeg;..\extern\zlib;..\extern\vorbis;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;WINDOWS;DEBUG;GLEW_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>
       </ExceptionHandling>
@@ -289,7 +289,7 @@
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <AdditionalIncludeDirectories>.;..\extern\lua-5.1\src;ffmpeg\modern_working\include;BaseClasses;..\extern\jsoncpp\include;..\extern\glew-1.5.8\include;..\extern\pcre;..\extern\mad-0.15.1b;..\extern\libpng;..\extern\libjpeg;..\extern\zlib;..\extern\vorbis;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;..\extern\lua-5.1\src;ffmpeg\modern_working\include;BaseClasses;..\extern\jsoncpp\include;..\extern\glew-1.5.8\include;..\extern\pcre;..\extern\mad-0.15.1b;..\extern\libpng\lib;..\extern\libpng\include;..\extern\libjpeg;..\extern\zlib;..\extern\vorbis;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;WINDOWS;RELEASE;GLEW_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <MinimalRebuild>false</MinimalRebuild>
