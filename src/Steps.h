@@ -118,7 +118,10 @@ public:
 	void TidyUpData();
 	void CalculateRadarValues( float fMusicLengthSeconds );
 
-	/** @brief Timing data */
+	/** 
+	 * @brief The TimingData used by the Steps.
+	 *
+	 * This is required to allow Split Timing. */
 	TimingData m_Timing;
 	
 	/**
