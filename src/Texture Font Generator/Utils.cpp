@@ -109,7 +109,7 @@ void GetBounds( const Surface *pSurf, RECT *out )
 
 static void File_png_write( png_struct *pPng, png_byte *pData, png_size_t iSize )
 {
-	FILE *f = (FILE *) pPng->io_ptr;
+	FILE *f = (FILE *) png_get_io_ptr(pPng);
 	size_t iGot = fwrite( pData, (int) iSize, 1, f );
 	if( iGot == 0 )
 		png_error( pPng, strerror(errno) );
@@ -117,7 +117,7 @@ static void File_png_write( png_struct *pPng, png_byte *pData, png_size_t iSize 
 
 static void File_png_flush( png_struct *pPng )
 {
-	FILE *f = (FILE *) pPng->io_ptr;
+	FILE *f = (FILE *) png_get_io_ptr(pPng);
 	int iGot = fflush(f);
 	if( iGot == -1 )
 		png_error( pPng, strerror(errno) );
@@ -130,7 +130,7 @@ struct error_info
 
 static void PNG_Error( png_struct *pPng, const char *szError )
 {
-	error_info *pInfo = (error_info *) pPng->error_ptr;
+	error_info *pInfo = (error_info *) png_get_error_ptr(pPng);
 	strncpy( pInfo->szErr, szError, 1024 );
 	pInfo->szErr[1023] = 0;
 	longjmp( pPng->jmpbuf, 1 );
