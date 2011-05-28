@@ -96,7 +96,8 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <PreBuildEvent>
-      <Command>archutils\Win32\verinc cl /Zl /nologo /c verstub.cpp /Fo"$(IntDir)"</Command>
+      <Command>archutils\Win32\verinc
+cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)</Command>
     </PreBuildEvent>
     <Midl>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -135,7 +136,7 @@
       <AdditionalDependencies>shell32.lib;gdi32.lib;user32.lib;ole32.lib;advapi32.lib;ffmpeg/modern_working/lib/avcodec.lib;ffmpeg/modern_working/lib/avformat.lib;ffmpeg/modern_working/lib/avutil.lib;ffmpeg/modern_working/lib/swscale.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>../Program/StepMania-debug.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>ffmpeg\lib;..\extern\libjpeg\;..\extern\zlib\;..\extern\mad-0.15.1b\msvc++\Release\%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\extern\libpng\lib;ffmpeg\lib;..\extern\libjpeg\;..\extern\zlib\;..\extern\mad-0.15.1b\msvc++\Release\%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>wininet.lib;msimg32.lib;libci.lib;msvcrt.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(IntDir)StepMania.pdb</ProgramDatabaseFile>
@@ -153,7 +154,8 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <PreBuildEvent>
-      <Command>archutils\Win32\verinc cl /Zl /nologo /c verstub.cpp /Fo"$(IntDir)"</Command>
+      <Command>archutils\Win32\verinc
+cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)</Command>
     </PreBuildEvent>
     <Midl>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -199,7 +201,7 @@
       <AdditionalDependencies>shell32.lib;gdi32.lib;user32.lib;ole32.lib;advapi32.lib;ffmpeg/modern_working/lib/avcodec.lib;ffmpeg/modern_working/lib/avformat.lib;ffmpeg/modern_working/lib/avutil.lib;ffmpeg/modern_working/lib/swscale.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>../Program/StepMania.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>ffmpeg\lib;..\extern\libjpeg\;..\extern\zlib\;..\extern\mad-0.15.1b\msvc++\Release\%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\extern\libpng\lib;ffmpeg\lib;..\extern\libjpeg\;..\extern\zlib\;..\extern\mad-0.15.1b\msvc++\Release\%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>wininet.lib;msimg32.lib;libci.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ProgramDatabaseFile>$(IntDir)StepMania.pdb</ProgramDatabaseFile>
       <GenerateMapFile>true</GenerateMapFile>
@@ -217,7 +219,8 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='FastDebug|Win32'">
     <PreBuildEvent>
-      <Command>archutils\Win32\verinc cl /Zl /nologo /c verstub.cpp /Fo"$(IntDir)"</Command>
+      <Command>archutils\Win32\verinc
+cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)</Command>
     </PreBuildEvent>
     <Midl>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -256,7 +259,7 @@
       <AdditionalDependencies>shell32.lib;gdi32.lib;user32.lib;ole32.lib;advapi32.lib;ffmpeg/modern_working/lib/avcodec.lib;ffmpeg/lib/avformat.lib;ffmpeg/lib/avutil.lib;ffmpeg/lib/swscale.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>../Program/StepMania-fastdebug.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>ffmpeg\lib;..\extern\libjpeg\;..\extern\zlib\;..\extern\mad-0.15.1b\msvc++\Release\%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\extern\libpng\lib;ffmpeg\lib;..\extern\libjpeg\;..\extern\zlib\;..\extern\mad-0.15.1b\msvc++\Release\%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>wininet.lib;msimg32.lib;libci.lib;msvcrt.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(IntDir)StepMania.pdb</ProgramDatabaseFile>
@@ -274,7 +277,8 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release-SSE2|Win32'">
     <PreBuildEvent>
-      <Command>archutils\Win32\verinc cl /Zl /nologo /c verstub.cpp /Fo"$(IntDir)"</Command>
+      <Command>archutils\Win32\verinc
+cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)</Command>
     </PreBuildEvent>
     <Midl>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -321,7 +325,7 @@
       <AdditionalDependencies>shell32.lib;gdi32.lib;user32.lib;ole32.lib;advapi32.lib;ffmpeg/modern_working/lib/avcodec.lib;ffmpeg/modern_working/lib/avformat.lib;ffmpeg/modern_working/lib/avutil.lib;ffmpeg/modern_working/lib/swscale.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>..\Program/StepMania-SSE2.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>ffmpeg\lib;..\extern\libjpeg\;..\extern\zlib\;..\extern\mad-0.15.1b\msvc++\Release\%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\extern\libpng\lib;ffmpeg\lib;..\extern\libjpeg\;..\extern\zlib\;..\extern\mad-0.15.1b\msvc++\Release\%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>wininet.lib;msimg32.lib;libci.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ProgramDatabaseFile>$(IntDir)StepMania-SSE2.pdb</ProgramDatabaseFile>
       <GenerateMapFile>true</GenerateMapFile>
