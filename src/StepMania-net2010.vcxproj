@@ -96,9 +96,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <PreBuildEvent>
-      <Command>archutils\Win32\verinc
-cl /Zl /nologo /c verstub.cpp /Fo"$(IntDir)"\
-</Command>
+      <Command>archutils\Win32\verinc cl /Zl /nologo /c verstub.cpp /Fo"$(IntDir)"</Command>
     </PreBuildEvent>
     <Midl>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -155,9 +153,7 @@ cl /Zl /nologo /c verstub.cpp /Fo"$(IntDir)"\
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <PreBuildEvent>
-      <Command>archutils\Win32\verinc
-cl /Zl /nologo /c verstub.cpp /Fo"$(IntDir)"\
-</Command>
+      <Command>archutils\Win32\verinc cl /Zl /nologo /c verstub.cpp /Fo"$(IntDir)"</Command>
     </PreBuildEvent>
     <Midl>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -221,9 +217,7 @@ cl /Zl /nologo /c verstub.cpp /Fo"$(IntDir)"\
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='FastDebug|Win32'">
     <PreBuildEvent>
-      <Command>archutils\Win32\verinc
-cl /Zl /nologo /c verstub.cpp /Fo"$(IntDir)"\
-</Command>
+      <Command>archutils\Win32\verinc cl /Zl /nologo /c verstub.cpp /Fo"$(IntDir)"</Command>
     </PreBuildEvent>
     <Midl>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -280,9 +274,7 @@ cl /Zl /nologo /c verstub.cpp /Fo"$(IntDir)"\
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release-SSE2|Win32'">
     <PreBuildEvent>
-      <Command>archutils\Win32\verinc
-cl /Zl /nologo /c verstub.cpp /Fo"$(IntDir)"\
-</Command>
+      <Command>archutils\Win32\verinc cl /Zl /nologo /c verstub.cpp /Fo"$(IntDir)"</Command>
     </PreBuildEvent>
     <Midl>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
