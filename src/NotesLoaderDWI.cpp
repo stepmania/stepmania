@@ -198,7 +198,7 @@ static bool LoadFromDWITokens(
 	else if( sMode == "SOLO" )		out.m_StepsType = StepsType_dance_solo;
 	else	
 	{
-		ASSERT(0);	// Unrecognized DWI notes format
+		ASSERT_M(0, "Unrecognized DWI notes format " + sMode + "!");
 		out.m_StepsType = StepsType_dance_single;
 	}
 
