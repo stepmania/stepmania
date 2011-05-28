@@ -3248,6 +3248,7 @@ void ScreenEdit::DisplayTimingMenu()
 	g_TimingDataInformation.rows[speed_wait].bEnabled = GAMESTATE->m_bIsUsingStepTiming && bHasSpeedOnThisRow;
 	g_TimingDataInformation.rows[speed_mode].bEnabled = GAMESTATE->m_bIsUsingStepTiming && bHasSpeedOnThisRow;
 	g_TimingDataInformation.rows[fake].bEnabled = GAMESTATE->m_bIsUsingStepTiming;
+	g_TimingDataInformation.rows[scroll].bEnabled = GAMESTATE->m_bIsUsingStepTiming;
 		
 	EditMiniMenu( &g_TimingDataInformation, SM_BackFromTimingDataInformation );
 }
