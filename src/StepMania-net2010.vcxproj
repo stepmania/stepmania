@@ -461,6 +461,7 @@
     <ClCompile Include="Song.cpp" />
     <ClCompile Include="SongCacheIndex.cpp" />
     <ClCompile Include="SongOptions.cpp" />
+    <ClCompile Include="SongPosition.cpp" />
     <ClCompile Include="SongUtil.cpp" />
     <ClCompile Include="SoundEffectControl.cpp" />
     <ClCompile Include="StageStats.cpp" />
@@ -1778,6 +1779,7 @@
     <ClInclude Include="Song.h" />
     <ClInclude Include="SongCacheIndex.h" />
     <ClInclude Include="SongOptions.h" />
+    <ClInclude Include="SongPosition.h" />
     <ClInclude Include="SongUtil.h" />
     <ClInclude Include="SoundEffectControl.h" />
     <ClInclude Include="StageStats.h" />

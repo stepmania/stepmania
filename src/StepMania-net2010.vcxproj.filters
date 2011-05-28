@@ -1623,6 +1623,9 @@
     <ClCompile Include="..\extern\glew-1.5.8\src\glew.c">
       <Filter>Helpers\glew</Filter>
     </ClCompile>
+    <ClCompile Include="SongPosition.cpp">
+      <Filter>Data Structures</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Screen.h">
@@ -3013,6 +3016,9 @@
     </ClInclude>
     <ClInclude Include="..\extern\lua-5.1\src\lzio.h">
       <Filter>Helpers\Lua</Filter>
+    </ClInclude>
+    <ClInclude Include="SongPosition.h">
+      <Filter>Data Structures</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
