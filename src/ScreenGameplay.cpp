@@ -804,7 +804,11 @@ void ScreenGameplay::InitSongQueues()
 			// In a survival course, override stored mods
 			if( pCourse->GetCourseType() == COURSE_TYPE_SURVIVAL )
 			{
-				pi->GetPlayerState()->m_PlayerOptions.FromString( ModsLevel_Stage, "clearall,"+CommonMetrics::DEFAULT_MODIFIERS.GetValue() );
+				pi->GetPlayerState()->m_PlayerOptions.FromString( ModsLevel_Stage, 
+										 "clearall,"
+										 + CommonMetrics::DEFAULT_NOTESKIN_NAME.GetValue()
+										 + ","
+										 + CommonMetrics::DEFAULT_MODIFIERS.GetValue() );
 				pi->GetPlayerState()->RebuildPlayerOptionsFromActiveAttacks();
 			}
 		}
