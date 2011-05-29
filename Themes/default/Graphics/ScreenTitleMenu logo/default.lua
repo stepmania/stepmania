@@ -2,8 +2,8 @@
 -- It should be noted that additional commands on the ActorFrame as a whole for
 -- this file are in metrics.ini ([ScreenTitleMenu] ShowLogo, etc.)
 local t = Def.ActorFrame{ -- [BGAnimation]
-	LoadActor("_ball"); -- [Layer1] Type=0 File=_ball.png
-	LoadActor("_ball")..{ -- [Layer2] Type=0 File=_ball.png
+	LoadActor("_logo"); -- [Layer1] Type=0 File=_ball.png
+	LoadActor("_logo")..{ -- [Layer2] Type=0 File=_ball.png
 	};
 	--[[LoadActor("_text")..{ -- [Layer3] Type=0 File=_text.png
 		InitCommand=cmd(y,48;hide_if,GAMESTATE:GetMultiplayer()); -- Command=y,48
