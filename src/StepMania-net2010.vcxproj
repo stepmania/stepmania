@@ -76,7 +76,7 @@
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='FastDebug|Win32'">$(TargetDir)</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='FastDebug|Win32'">$(SolutionDir)/build-$(SolutionName)/$(ProjectName)/$(Configuration)\</IntDir>
-    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='FastDebug|Win32'">true</LinkIncremental>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='FastDebug|Win32'">false</LinkIncremental>
     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='FastDebug|Win32'">true</GenerateManifest>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release-SSE2|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release-SSE2|Win32'">$(Configuration)\</IntDir>
@@ -93,10 +93,18 @@
     <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
     <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
     <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\Program Files (x86)\Microsoft DirectX 9.0 SDK (Summer 2004)\Include;$(IncludePath)</IncludePath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\Program Files (x86)\Microsoft DirectX 9.0 SDK (Summer 2004)\Lib;$(LibraryPath)</LibraryPath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='FastDebug|Win32'">C:\Program Files (x86)\Microsoft DirectX 9.0 SDK (Summer 2004)\Include;$(IncludePath)</IncludePath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release-SSE2|Win32'">C:\Program Files (x86)\Microsoft DirectX 9.0 SDK (Summer 2004)\Include;$(IncludePath)</IncludePath>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">StepMania</TargetName>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='FastDebug|Win32'">StepMania</TargetName>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Release-SSE2|Win32'">StepMania</TargetName>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">StepMania</TargetName>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\Program Files (x86)\Microsoft DirectX 9.0 SDK (Summer 2004)\Include;$(IncludePath)</IncludePath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='FastDebug|Win32'">C:\Program Files (x86)\Microsoft DirectX 9.0 SDK (Summer 2004)\Lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release-SSE2|Win32'">C:\Program Files (x86)\Microsoft DirectX 9.0 SDK (Summer 2004)\Lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\Program Files (x86)\Microsoft DirectX 9.0 SDK (Summer 2004)\Lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <PreBuildEvent>
@@ -130,6 +138,10 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)</Command>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <DisableSpecificWarnings>4063;4100;4127;4201;4244;4275;4355;4505;4512;4702;4786;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <MinimalRebuild>true</MinimalRebuild>
+      <AdditionalOptions>/EHsc %(AdditionalOptions)</AdditionalOptions>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -151,6 +163,7 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)</Command>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention>
       </DataExecutionPrevention>
+      <LinkErrorReporting>SendErrorReport</LinkErrorReporting>
     </Link>
     <PostBuildEvent>
       <Command>archutils\Win32\mapconv "$(IntDir)$(TargetName).map" "$(TargetDir)\StepMania-debug.vdi"</Command>
@@ -195,6 +208,7 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)</Command>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <DisableSpecificWarnings>4063;4100;4127;4201;4244;4275;4355;4505;4512;4702;4786;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -215,6 +229,7 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)</Command>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention>
       </DataExecutionPrevention>
+      <LinkErrorReporting>SendErrorReport</LinkErrorReporting>
     </Link>
     <PostBuildEvent>
       <Command>archutils\Win32\mapconv "$(IntDir)$(TargetName).map" "$(TargetDir)\StepMania.vdi"
@@ -234,11 +249,10 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)</Command>
       <TypeLibraryName>../StepMania.tlb</TypeLibraryName>
     </Midl>
     <ClCompile>
-      <Optimization>Disabled</Optimization>
+      <Optimization>MaxSpeed</Optimization>
       <AdditionalIncludeDirectories>.;..\extern\lua-5.1\src;ffmpeg\modern_working\include;BaseClasses;..\extern\jsoncpp\include;..\extern\glew-1.5.8\include;..\extern\pcre;..\extern\mad-0.15.1b;..\extern\libpng\lib;..\extern\libpng\include;..\extern\libjpeg;..\extern\zlib;..\extern\vorbis;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;WINDOWS;DEBUG;GLEW_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ExceptionHandling>
-      </ExceptionHandling>
+      <ExceptionHandling>Sync</ExceptionHandling>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <PrecompiledHeader>Use</PrecompiledHeader>
@@ -251,8 +265,13 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)</Command>
       </BrowseInformation>
       <WarningLevel>Level4</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <DisableSpecificWarnings>4063;4100;4127;4201;4244;4275;4355;4505;4512;4702;4786;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <WholeProgramOptimization>true</WholeProgramOptimization>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -260,10 +279,10 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)</Command>
     </ResourceCompile>
     <Link>
       <AdditionalOptions>/MACHINE:I386 "$(IntDir)verstub.obj" %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>shell32.lib;gdi32.lib;user32.lib;ole32.lib;advapi32.lib;ffmpeg/modern_working/lib/avcodec.lib;ffmpeg/lib/avformat.lib;ffmpeg/lib/avutil.lib;ffmpeg/lib/swscale.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>shell32.lib;gdi32.lib;user32.lib;ole32.lib;advapi32.lib;avcodec.lib;avformat.lib;avutil.lib;swscale.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>../Program/StepMania-fastdebug.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>..\extern\libpng\lib;ffmpeg\lib;..\extern\libjpeg\;..\extern\zlib\;..\extern\mad-0.15.1b\msvc++\Release\%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\extern\libpng\lib;ffmpeg\modern_working\lib;..\extern\libjpeg\;..\extern\zlib\;..\extern\mad-0.15.1b\msvc++\Release\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>wininet.lib;msimg32.lib;libci.lib;msvcrt.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(IntDir)StepMania.pdb</ProgramDatabaseFile>
@@ -274,6 +293,8 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)</Command>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention>
       </DataExecutionPrevention>
+      <LinkErrorReporting>SendErrorReport</LinkErrorReporting>
+      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
     </Link>
     <PostBuildEvent>
       <Command>archutils\Win32\mapconv "$(IntDir)$(TargetName).map" "$(TargetDir)\StepMania-fastdebug.vdi"</Command>
@@ -319,6 +340,7 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)</Command>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <DisableSpecificWarnings>4063;4100;4127;4201;4244;4275;4355;4505;4512;4702;4786;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -340,6 +362,7 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)</Command>
       <DataExecutionPrevention>
       </DataExecutionPrevention>
       <TargetMachine>NotSet</TargetMachine>
+      <LinkErrorReporting>SendErrorReport</LinkErrorReporting>
     </Link>
     <PostBuildEvent>
       <Command>archutils\Win32\mapconv "$(IntDir)$(TargetName)-SSE2.map" "$(TargetDir)\StepMania-SSE2.vdi"
