@@ -53,15 +53,14 @@ protected:
 	MusicWheelItem *MakeItem();
 
 	void GetSongList( vector<Song*> &arraySongs, SortOrder so );
-	void BuildWheelItemDatas( vector<MusicWheelItemData *> &arrayWheelItems, SortOrder so );
 	bool SelectSongOrCourse();
 	bool SelectCourse( const Course *p );
 	bool SelectModeMenuItem();
-	//bool SelectCustomItem();
 
 	virtual void UpdateSwitch();
 
-	vector<MusicWheelItemData *>	m_WheelItemDatas[NUM_SortOrder]; // aliases into m_UnfilteredWheelItemDatas
+	vector<MusicWheelItemData *> & getWheelItemsData(SortOrder so);
+	void readyWheelItemsData(SortOrder so);
 
 	RString				m_sLastModeMenuItem;
 	SortOrder			m_SortOrder;
@@ -72,15 +71,15 @@ protected:
 	ThemeMetric<float>		ROULETTE_SWITCH_SECONDS;
 	ThemeMetric<int>		ROULETTE_SLOW_DOWN_SWITCHES;
 	ThemeMetric<int>		NUM_SECTION_COLORS;
-	ThemeMetric<RageColor>	SONG_REAL_EXTRA_COLOR;
-	ThemeMetric<RageColor>	SORT_MENU_COLOR;
+	ThemeMetric<RageColor>		SONG_REAL_EXTRA_COLOR;
+	ThemeMetric<RageColor>		SORT_MENU_COLOR;
 	ThemeMetric<bool>		SHOW_ROULETTE;
 	ThemeMetric<bool>		SHOW_RANDOM;
 	ThemeMetric<bool>		SHOW_PORTAL;
 	ThemeMetric<bool>		RANDOM_PICKS_LOCKED_SONGS;
 	ThemeMetric<int>		MOST_PLAYED_SONGS_TO_SHOW;
 	ThemeMetric<int>		RECENT_SONGS_TO_SHOW;
-	ThemeMetric<RString>	MODE_MENU_CHOICE_NAMES;
+	ThemeMetric<RString>		MODE_MENU_CHOICE_NAMES;
 	ThemeMetricMap<RString>		CHOICE;
 	ThemeMetric1D<RageColor>	SECTION_COLORS;
 	ThemeMetric<LuaReference>	SORT_ORDERS;
@@ -96,6 +95,15 @@ protected:
 	ThemeMetric<RString>	CUSTOM_WHEEL_ITEM_NAMES;
 	ThemeMetricMap<RString>	CUSTOM_CHOICES;
 	ThemeMetricMap<RageColor>	CUSTOM_CHOICE_COLORS;
+
+private:
+	//use getWheelItemsData instead of touching this one
+	enum {INVALID,NEEDREFILTER,VALID} m_WheelItemDatasStatus[NUM_SortOrder];
+	vector<MusicWheelItemData *> m__WheelItemDatas[NUM_SortOrder];
+	vector<MusicWheelItemData *> m__UnFilteredWheelItemDatas[NUM_SortOrder];
+
+	void BuildWheelItemDatas( vector<MusicWheelItemData *> &arrayWheelItems, SortOrder so );
+	void FilterWheelItemDatas(vector<MusicWheelItemData *> &aUnFilteredDatas, vector<MusicWheelItemData *> &aFilteredData, SortOrder so );
 };
 
 #endif
