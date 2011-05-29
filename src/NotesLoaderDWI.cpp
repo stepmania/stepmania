@@ -333,6 +333,10 @@ static bool LoadFromDWITokens(
 					if( iCol2 != -1 )
 						newNoteData.SetTapNote(iCol2, iIndex, TAP_ORIGINAL_TAP);
 
+					if(i>=sStepData.length()) {
+						break;//we ran out of data while looking for the ending > mark
+					}
+
 					if( sStepData[i] == '!' )
 					{
 						i++;
