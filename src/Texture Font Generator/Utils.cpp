@@ -101,15 +101,15 @@ void GetBounds( const Surface *pSurf, RECT *out )
 
 
 #pragma include_alias( "zlib/zlib.h", "../zlib/zlib.h" )
-#include "../libpng/include/png.h"
+#include "png.h"
 #if defined(_MSC_VER)
-#  pragma comment(lib, "../libpng/lib/libpng.lib")
+#  pragma comment(lib, "libpng.lib")
 #pragma warning(disable: 4611) /* interaction between '_setjmp' and C++ object destruction is non-portable */
 #endif
 
 static void File_png_write( png_struct *pPng, png_byte *pData, png_size_t iSize )
 {
-	FILE *f = (FILE *) pPng->io_ptr;
+	FILE *f = (FILE *) png_get_io_ptr(pPng);
 	size_t iGot = fwrite( pData, (int) iSize, 1, f );
 	if( iGot == 0 )
 		png_error( pPng, strerror(errno) );
@@ -117,7 +117,7 @@ static void File_png_write( png_struct *pPng, png_byte *pData, png_size_t iSize 
 
 static void File_png_flush( png_struct *pPng )
 {
-	FILE *f = (FILE *) pPng->io_ptr;
+	FILE *f = (FILE *) png_get_io_ptr(pPng);
 	int iGot = fflush(f);
 	if( iGot == -1 )
 		png_error( pPng, strerror(errno) );
@@ -130,10 +130,10 @@ struct error_info
 
 static void PNG_Error( png_struct *pPng, const char *szError )
 {
-	error_info *pInfo = (error_info *) pPng->error_ptr;
+	error_info *pInfo = (error_info *) png_get_error_ptr(pPng);
 	strncpy( pInfo->szErr, szError, 1024 );
 	pInfo->szErr[1023] = 0;
-	longjmp( pPng->jmpbuf, 1 );
+	longjmp( png_jmpbuf(pPng), 1 );
 }
 
 static void PNG_Warning( png_struct *png, const char *warning )
@@ -168,7 +168,7 @@ bool SavePNG( FILE *f, char szErrorbuf[1024], const Surface *pSurf )
 		return false;
 	}
 
-	if( setjmp(pPng->jmpbuf) )
+	if( setjmp(png_jmpbuf(pPng)) )
 	{
 		png_destroy_read_struct( &pPng, &pInfo, NULL );
 		return false;
