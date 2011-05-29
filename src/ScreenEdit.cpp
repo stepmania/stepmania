@@ -2691,28 +2691,28 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		GAMESTATE->m_pCurSteps[PLAYER_1]->SetMeter(i);
 		SetDirty( true );
 	}
-	else if( SM == SM_BackFromBPMChange )
+	else if( SM == SM_BackFromBPMChange && !ScreenTextEntry::s_bCancelledLast )
 	{
 		float fBPM = StringToFloat( ScreenTextEntry::s_sLastAnswer );
 		if( fBPM > 0 )
 			GetAppropriateTiming().SetBPMAtBeat( GetBeat(), fBPM );
 		SetDirty( true );
 	}
-	else if( SM == SM_BackFromStopChange )
+	else if( SM == SM_BackFromStopChange && !ScreenTextEntry::s_bCancelledLast )
 	{
 		float fStop = StringToFloat( ScreenTextEntry::s_sLastAnswer );
 		if( fStop >= 0 )
 			GetAppropriateTiming().SetStopAtBeat( GetBeat(), fStop );
 		SetDirty( true );
 	}
-	else if( SM == SM_BackFromDelayChange )
+	else if( SM == SM_BackFromDelayChange && !ScreenTextEntry::s_bCancelledLast )
 	{
 		float fDelay = StringToFloat( ScreenTextEntry::s_sLastAnswer );
 		if( fDelay >= 0 )
 			GetAppropriateTiming().SetStopAtBeat( GetBeat(), fDelay, true );
 		SetDirty( true );
 	}
-	else if( SM == SM_BackFromTimeSignatureChange )
+	else if( SM == SM_BackFromTimeSignatureChange && !ScreenTextEntry::s_bCancelledLast )
 	{
 		int iNum, iDen;
 		if( sscanf( ScreenTextEntry::s_sLastAnswer.c_str(), " %d / %d ", &iNum, &iDen ) == 2 )
@@ -2721,7 +2721,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		}
 		SetDirty( true );
 	}
-	else if ( SM == SM_BackFromTickcountChange )
+	else if ( SM == SM_BackFromTickcountChange && !ScreenTextEntry::s_bCancelledLast )
 	{
 		int iTick = StringToInt( ScreenTextEntry::s_sLastAnswer );
 		if ( iTick >= 0 && iTick <= ROWS_PER_BEAT )
@@ -2730,7 +2730,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		}
 		SetDirty( true );
 	}
-	else if ( SM == SM_BackFromComboChange )
+	else if ( SM == SM_BackFromComboChange && !ScreenTextEntry::s_bCancelledLast )
 	{
 		int iCombo = StringToInt( ScreenTextEntry::s_sLastAnswer );
 		if ( iCombo >= 0 )
@@ -2739,7 +2739,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		}
 		SetDirty( true );
 	}
-	else if ( SM == SM_BackFromLabelChange )
+	else if ( SM == SM_BackFromLabelChange && !ScreenTextEntry::s_bCancelledLast )
 	{
 		RString sLabel = ScreenTextEntry::s_sLastAnswer;
 		if ( !GetAppropriateTiming().DoesLabelExist(sLabel) )
@@ -2750,7 +2750,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 			SetDirty( true );
 		}
 	}
-	else if ( SM == SM_BackFromWarpChange )
+	else if ( SM == SM_BackFromWarpChange && !ScreenTextEntry::s_bCancelledLast )
 	{
 		float fWarp = StringToFloat( ScreenTextEntry::s_sLastAnswer );
 		if( fWarp >= 0 ) // allow 0 to kill a warp.
@@ -2759,13 +2759,13 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 			SetDirty( true );
 		}
 	}
-	else if( SM == SM_BackFromSpeedPercentChange )
+	else if( SM == SM_BackFromSpeedPercentChange && !ScreenTextEntry::s_bCancelledLast )
 	{
 		float fNum = StringToFloat( ScreenTextEntry::s_sLastAnswer );
 		GetAppropriateTiming().SetSpeedPercentAtBeat( GetBeat(), fNum );
 		SetDirty( true );
 	}
-	else if ( SM == SM_BackFromSpeedWaitChange )
+	else if ( SM == SM_BackFromSpeedWaitChange && !ScreenTextEntry::s_bCancelledLast )
 	{
 		float fDen = StringToFloat( ScreenTextEntry::s_sLastAnswer );
 		if( fDen >= 0)
@@ -2774,7 +2774,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		}
 		SetDirty( true );
 	}
-	else if ( SM == SM_BackFromSpeedModeChange )
+	else if ( SM == SM_BackFromSpeedModeChange && !ScreenTextEntry::s_bCancelledLast )
 	{
 		if( ScreenTextEntry::s_sLastAnswer.substr(0, 1) == "b" || ScreenTextEntry::s_sLastAnswer.substr(0, 1) == "B" )
 		{
@@ -2798,13 +2798,13 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		}
 		SetDirty( true );
 	}
-	else if( SM == SM_BackFromScrollChange )
+	else if( SM == SM_BackFromScrollChange && !ScreenTextEntry::s_bCancelledLast )
 	{
 		float fNum = StringToFloat( ScreenTextEntry::s_sLastAnswer );
 		GetAppropriateTiming().SetScrollAtBeat( GetBeat(), fNum );
 		SetDirty( true );
 	}
-	else if ( SM == SM_BackFromFakeChange )
+	else if ( SM == SM_BackFromFakeChange && !ScreenTextEntry::s_bCancelledLast )
 	{
 		float fFake = StringToFloat( ScreenTextEntry::s_sLastAnswer );
 		if( fFake >= 0 ) // allow 0 to kill a warp.
