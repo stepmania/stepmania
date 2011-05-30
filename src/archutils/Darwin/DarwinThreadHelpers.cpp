@@ -33,8 +33,8 @@ bool GetThreadBacktraceContext( uint64_t iID, BacktraceContext *ctx )
 	
 	if( thread_get_state(thread, PPC_THREAD_STATE, thread_state_t(&state), &count) )
 		return false;
-	ctx->FramePtr = (const Frame *)state.r1;
-	ctx->PC = (void *)state.srr0;
+	ctx->FramePtr = (const Frame *)state.__r1;
+	ctx->PC = (void *)state.__srr0;
 	return true;
 #elif defined(__i386__)
 	i386_thread_state_t state;
