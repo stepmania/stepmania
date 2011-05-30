@@ -2,9 +2,6 @@
 
 // Only do this for c++ files.
 #ifdef __cplusplus
-# include "global.h"
-#endif
-
-#ifdef __OBJC__
-# import <Cocoa/Cocoa.h>
+#include "global.h"
+#include <map>
 #endif

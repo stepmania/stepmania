@@ -14,6 +14,7 @@
  */
 
 #include "Style.h"
+#include "GameState.h"
 #include "RageLog.h"
 #include "RageUtil.h"
 #include "InputMapper.h"
@@ -69,7 +70,7 @@ GameInput Style::StyleInputToGameInput( int iCol, PlayerNumber pn ) const
 		}
 	}
 
-	FAIL_M( ssprintf("Invalid column %i,%i", pn, iCol) );
+	FAIL_M( ssprintf("Invalid column number %i for player %i in the style %s", iCol, pn, GAMESTATE->GetCurrentStyle()->m_szName) );
 };
 
 int Style::GameInputToColumn( const GameInput &GameI ) const
