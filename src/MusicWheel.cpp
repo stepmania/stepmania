@@ -124,17 +124,20 @@ void MusicWheel::Load( RString sType )
 void MusicWheel::BeginScreen()
 {
 	RageTimer timer;
-	FOREACH_ENUM( SortOrder, so ) {
 	RString times;
+	FOREACH_ENUM( SortOrder, so ) {	
 		if(m_WheelItemDatasStatus[so]!=INVALID) {
 			m_WheelItemDatasStatus[so]=NEEDREFILTER;
-		times += ssprintf( "%i:%.3f ", so, timer.GetDeltaTime() );
+			
 		}
-	LOG->Trace( "MusicWheel sorting took: %s", times.c_str() );
 
 		if(g_bPrecacheAllSorts) {
 			readyWheelItemsData(so);
+			times += ssprintf( "%i:%.3f ", so, timer.GetDeltaTime() );
 		}
+	}
+	if(g_bPrecacheAllSorts) {
+		LOG->Trace( "MusicWheel sorting took: %s", times.c_str() );
 	}
 
 	// Set m_LastModeMenuItem to the first item that matches the current mode.  (Do this
@@ -1495,7 +1498,10 @@ void MusicWheel::PlayerJoined()
 	// We need to rebuild the wheel item data in this situation. -aj
 	if( !GAMESTATE->IsCourseMode() && !PREFSMAN->m_bAutogenSteps )
 	{
-		m_WheelItemDatasStatus [GAMESTATE->m_SortOrder]=INVALID;
+		if(m_WheelItemDatasStatus[GAMESTATE->m_SortOrder]!=INVALID)
+			m_WheelItemDatasStatus[GAMESTATE->m_SortOrder]=NEEDREFILTER;
+
+		RebuildWheelItems();
 	}
 
 	SetOpenSection( m_sExpandedSectionName );
