@@ -2935,7 +2935,7 @@ const Style* GameManager::GetEditorStyleForStepsType( StepsType st )
 		}
 	}
 
-	ASSERT_M(0, ssprintf("The current game \"%s\" cannot use this Style with the editor!", pGame->m_szName.c_str()));
+	ASSERT_M(0, ssprintf("The current game cannot use this Style with the editor!"));
 	return NULL;
 }
 
