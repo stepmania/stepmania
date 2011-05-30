@@ -319,7 +319,10 @@ void SMALoader::ProcessSpeeds( TimingData &out, const int iRowsPerBeat, const RS
 	FOREACH_CONST( RString, vs1, s1 )
 	{
 		vector<RString> vs2;
-		split( *s1, "=", vs2 );
+		vs2.clear(); // trying something.
+		RString loopTmp = *s1;
+		Trim( loopTmp );
+		split( loopTmp, "=", vs2 );
 		
 		if( vs2.size() == 2 ) // First one always seems to have 2.
 		{
@@ -656,7 +659,9 @@ bool SMALoader::LoadFromSMAFile( const RString &sPath, Song &out )
 		{
 			TimingData &timing = (state == SMA_GETTING_STEP_INFO 
 					      ? pNewNotes->m_Timing : out.m_SongTiming);
-			ProcessSpeeds( timing, iRowsPerBeat, sParams[1] );
+			RString tmp = sParams[1];
+			Trim( tmp );
+			ProcessSpeeds( timing, iRowsPerBeat, tmp );
 		}
 		
 		else if( sValueName=="MULTIPLIER" )
