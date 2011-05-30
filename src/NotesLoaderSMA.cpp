@@ -661,7 +661,9 @@ bool SMALoader::LoadFromSMAFile( const RString &sPath, Song &out )
 		
 		else if( sValueName=="MULTIPLIER" )
 		{
-			ProcessMultipliers( pNewNotes->m_Timing, iRowsPerBeat, sParams[1] );
+			TimingData &timing = (state == SMA_GETTING_STEP_INFO 
+					      ? pNewNotes->m_Timing : out.m_SongTiming);
+			ProcessMultipliers( timing, iRowsPerBeat, sParams[1] );
 		}
 		
 		else if( sValueName=="FAKES" )
