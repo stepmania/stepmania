@@ -82,9 +82,35 @@ public:
 	static RString ShortenGroupName( RString sLongGroupName );
 
 	// Lookup
+	/**
+	 * @brief Retrieve all of the songs that belong to a particular group.
+	 * @param sGroupName the name of the group.
+	 * @return the songs that belong in the group. */
 	const vector<Song*> &GetSongs( const RString &sGroupName ) const;
+	/**
+	 * @brief Retrieve all of the songs in the game.
+	 * @return all of the songs. */
 	const vector<Song*> &GetAllSongs() const { return GetSongs(GROUP_ALL); }
+	/**
+	 * @brief Retrieve all of the popular songs.
+	 *
+	 * Popularity is determined specifically by the number of times
+	 * a song is chosen.
+	 * @return all of the popular songs. */
 	const vector<Song*> &GetPopularSongs() const { return m_pPopularSongs; }
+	
+	/**
+	 * @brief Retrieve all of the songs in a group that have at least one
+	 * valid step for the current gametype.
+	 * @param sGroupName the name of the group.
+	 * @return the songs within the group that have at least one valid Step. */
+	const vector<Song *> & GetSongsOfCurrentGame( const RString &sGroupName ) const;
+	/**
+	 * @brief Retrieve all of the songs in the game that have at least one
+	 * valid step for the current gametype.
+	 * @return the songs within the game that have at least one valid Step. */
+	const vector<Song *> & GetAllSongsOfCurrentGame() const;
+	
 	void GetPreferredSortSongs( vector<Song*> &AddTo ) const;
 	RString SongToPreferredSortSectionName( const Song *pSong ) const;
 	const vector<Course*> &GetPopularCourses( CourseType ct ) const { return m_pPopularCourses[ct]; }
@@ -92,11 +118,17 @@ public:
 	Song *FindSong( RString sGroup, RString sSong ) const;
 	Course *FindCourse( RString sPath ) const;
 	Course *FindCourse( RString sGroup, RString sName ) const;
+	/**
+	 * @brief Retrieve the number of songs in the game.
+	 * @return the number of songs. */
 	int GetNumSongs() const;
 	int GetNumUnlockedSongs() const;
 	int GetNumSelectableAndUnlockedSongs() const;
 	int GetNumAdditionalSongs() const;
 	int GetNumSongGroups() const;
+	/**
+	 * @brief Retrieve the number of courses in the game.
+	 * @return the number of courses. */
 	int GetNumCourses() const;
 	int GetNumAdditionalCourses() const;
 	int GetNumCourseGroups() const;
