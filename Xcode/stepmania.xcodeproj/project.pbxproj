@@ -35,6 +35,7 @@
 		2BA7925F1304F20D002BD8E1 /* NotesLoaderSSC.h in Headers */ = {isa = PBXBuildFile; fileRef = 2BA7925B1304F20D002BD8E1 /* NotesLoaderSSC.h */; };
 		2BA792601304F20D002BD8E1 /* NotesWriterSSC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2BA7925C1304F20D002BD8E1 /* NotesWriterSSC.cpp */; };
 		2BA792611304F20D002BD8E1 /* NotesWriterSSC.h in Headers */ = {isa = PBXBuildFile; fileRef = 2BA7925D1304F20D002BD8E1 /* NotesWriterSSC.h */; };
+		2BBF97CC139327F300D950F6 /* glew.c in Sources */ = {isa = PBXBuildFile; fileRef = EE879BAA132E06C50078FDDC /* glew.c */; };
 		2BC6132413773C8E00CC8BBD /* png.c in Sources */ = {isa = PBXBuildFile; fileRef = 2BC6130D13773C8E00CC8BBD /* png.c */; };
 		2BC6132513773C8E00CC8BBD /* png.h in Headers */ = {isa = PBXBuildFile; fileRef = 2BC6130E13773C8E00CC8BBD /* png.h */; };
 		2BC6132613773C8E00CC8BBD /* pngconf.h in Headers */ = {isa = PBXBuildFile; fileRef = 2BC6130F13773C8E00CC8BBD /* pngconf.h */; };
@@ -1665,7 +1666,6 @@
 		EE879B61132DEE720078FDDC /* RageDisplay_Legacy_Helpers.h in Headers */ = {isa = PBXBuildFile; fileRef = EE879B5D132DEE720078FDDC /* RageDisplay_Legacy_Helpers.h */; };
 		EE879B62132DEE720078FDDC /* RageDisplay_Legacy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EE879B5E132DEE720078FDDC /* RageDisplay_Legacy.cpp */; };
 		EE879B63132DEE720078FDDC /* RageDisplay_Legacy.h in Headers */ = {isa = PBXBuildFile; fileRef = EE879B5F132DEE720078FDDC /* RageDisplay_Legacy.h */; };
-		EE879BC3132E06C50078FDDC /* glew.c in Sources */ = {isa = PBXBuildFile; fileRef = EE879BAA132E06C50078FDDC /* glew.c */; };
 		EE906F6612BF3A1B00146C96 /* ScreenInstallOverlay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EE906F6412BF3A1B00146C96 /* ScreenInstallOverlay.cpp */; };
 		EE906F6712BF3A1B00146C96 /* ScreenInstallOverlay.h in Headers */ = {isa = PBXBuildFile; fileRef = EE906F6512BF3A1B00146C96 /* ScreenInstallOverlay.h */; };
 		EE906F8212BF3AF800146C96 /* JsonUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EE906F8012BF3AF800146C96 /* JsonUtil.cpp */; };
@@ -1680,6 +1680,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		2BBF97CD139327FC00D950F6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2BBF97C5139327A800D950F6 /* glew */;
+			remoteInfo = glew;
+		};
 		AA30C61907F5E2EF0066F398 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
@@ -1812,6 +1819,7 @@
 		2BA7925B1304F20D002BD8E1 /* NotesLoaderSSC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NotesLoaderSSC.h; path = ../src/NotesLoaderSSC.h; sourceTree = SOURCE_ROOT; };
 		2BA7925C1304F20D002BD8E1 /* NotesWriterSSC.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NotesWriterSSC.cpp; path = ../src/NotesWriterSSC.cpp; sourceTree = SOURCE_ROOT; };
 		2BA7925D1304F20D002BD8E1 /* NotesWriterSSC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NotesWriterSSC.h; path = ../src/NotesWriterSSC.h; sourceTree = SOURCE_ROOT; };
+		2BBF97C6139327A800D950F6 /* libglew.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libglew.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		2BC6130D13773C8E00CC8BBD /* png.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = png.c; path = ../extern/libpng/include/png.c; sourceTree = SOURCE_ROOT; };
 		2BC6130E13773C8E00CC8BBD /* png.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = png.h; path = ../extern/libpng/include/png.h; sourceTree = SOURCE_ROOT; };
 		2BC6130F13773C8E00CC8BBD /* pngconf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pngconf.h; path = ../extern/libpng/include/pngconf.h; sourceTree = SOURCE_ROOT; };
@@ -3049,6 +3057,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		2BBF97C4139327A800D950F6 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		AA29CE3B0558741A00961A51 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -3187,6 +3202,7 @@
 				AA7C895F0B67444700FD9940 /* libtommath.a */,
 				AA7C8B8B0B67460600FD9940 /* libtomcrypt.a */,
 				AAA070A90CE7B0DF005A3060 /* libmad.a */,
+				2BBF97C6139327A800D950F6 /* libglew.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -5033,6 +5049,13 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
+		2BBF97C2139327A800D950F6 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		AA29CC270558741A00961A51 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -5578,6 +5601,23 @@
 /* End PBXLegacyTarget section */
 
 /* Begin PBXNativeTarget section */
+		2BBF97C5139327A800D950F6 /* glew */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2BBF97CB139327DE00D950F6 /* Build configuration list for PBXNativeTarget "glew" */;
+			buildPhases = (
+				2BBF97C2139327A800D950F6 /* Headers */,
+				2BBF97C3139327A800D950F6 /* Sources */,
+				2BBF97C4139327A800D950F6 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = glew;
+			productName = glew;
+			productReference = 2BBF97C6139327A800D950F6 /* libglew.a */;
+			productType = "com.apple.product-type.library.static";
+		};
 		AA29CC240558741A00961A51 /* stepmania */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = AAC8450F0856A19700A9FEAB /* Build configuration list for PBXNativeTarget "stepmania" */;
@@ -5593,6 +5633,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				2BBF97CE139327FC00D950F6 /* PBXTargetDependency */,
 				AAE781FE0AC7E61900AEFC64 /* PBXTargetDependency */,
 				AA7C8D180B6748B800FD9940 /* PBXTargetDependency */,
 				AA7C8D160B6748B800FD9940 /* PBXTargetDependency */,
@@ -5769,6 +5810,7 @@
 				AA7C895E0B67444700FD9940 /* tommath */,
 				AA7C8B8A0B67460600FD9940 /* tomcrypt */,
 				AAA070A80CE7B0DF005A3060 /* mad */,
+				2BBF97C5139327A800D950F6 /* glew */,
 			);
 		};
 /* End PBXProject section */
@@ -5898,6 +5940,14 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		2BBF97C3139327A800D950F6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2BBF97CC139327F300D950F6 /* glew.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		AA29CD410558741A00961A51 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -6304,7 +6354,6 @@
 				2B30D6821315EA7E00044B68 /* MouseDevice.cpp in Sources */,
 				EE879B60132DEE720078FDDC /* RageDisplay_Legacy_Helpers.cpp in Sources */,
 				EE879B62132DEE720078FDDC /* RageDisplay_Legacy.cpp in Sources */,
-				EE879BC3132E06C50078FDDC /* glew.c in Sources */,
 				2B76698C132FF71500586512 /* NotesLoaderSMA.cpp in Sources */,
 				2BD06FF1137242680018CB9F /* json_reader.cpp in Sources */,
 				2BD06FF2137242680018CB9F /* json_value.cpp in Sources */,
@@ -7078,6 +7127,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		2BBF97CE139327FC00D950F6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2BBF97C5139327A800D950F6 /* glew */;
+			targetProxy = 2BBF97CD139327FC00D950F6 /* PBXContainerItemProxy */;
+		};
 		AA30C61A07F5E2EF0066F398 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = AA30C60F07F5E24A0066F398 /* version */;
@@ -7162,6 +7216,113 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		2BBF97C7139327A800D950F6 /* Native */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = "";
+				GCC_PREFIX_HEADER = "";
+				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
+				GCC_WARN_ALLOW_INCOMPLETE_PROTOCOL = NO;
+				GCC_WARN_PROTOTYPE_CONVERSION = NO;
+				GCC_WARN_SHADOW = NO;
+				HEADER_SEARCH_PATHS = "../extern/glew-1.5.8/include";
+				INSTALL_PATH = /usr/local/lib;
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = glew;
+			};
+			name = Native;
+		};
+		2BBF97C8139327A800D950F6 /* PerformanceDebug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = "";
+				GCC_PREFIX_HEADER = "";
+				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
+				GCC_WARN_ALLOW_INCOMPLETE_PROTOCOL = NO;
+				GCC_WARN_PROTOTYPE_CONVERSION = NO;
+				GCC_WARN_SHADOW = NO;
+				HEADER_SEARCH_PATHS = "../extern/glew-1.5.8/include";
+				INSTALL_PATH = /usr/local/lib;
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = glew;
+			};
+			name = PerformanceDebug;
+		};
+		2BBF97C9139327A800D950F6 /* Universal */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = "";
+				GCC_PREFIX_HEADER = "";
+				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
+				GCC_WARN_ALLOW_INCOMPLETE_PROTOCOL = NO;
+				GCC_WARN_PROTOTYPE_CONVERSION = NO;
+				GCC_WARN_SHADOW = NO;
+				HEADER_SEARCH_PATHS = "../extern/glew-1.5.8/include";
+				INSTALL_PATH = /usr/local/lib;
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = glew;
+			};
+			name = Universal;
+		};
+		2BBF97CA139327A800D950F6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = "";
+				GCC_PREFIX_HEADER = "";
+				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
+				GCC_WARN_ALLOW_INCOMPLETE_PROTOCOL = NO;
+				GCC_WARN_PROTOTYPE_CONVERSION = NO;
+				GCC_WARN_SHADOW = NO;
+				HEADER_SEARCH_PATHS = "../extern/glew-1.5.8/include";
+				INSTALL_PATH = /usr/local/lib;
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = glew;
+			};
+			name = Debug;
+		};
 		AA0AA8FE0963CF7700427F4D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -8423,6 +8584,17 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		2BBF97CB139327DE00D950F6 /* Build configuration list for PBXNativeTarget "glew" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2BBF97C7139327A800D950F6 /* Native */,
+				2BBF97C8139327A800D950F6 /* PerformanceDebug */,
+				2BBF97C9139327A800D950F6 /* Universal */,
+				2BBF97CA139327A800D950F6 /* Debug */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Native;
+		};
 		AA40D52709A08D650068C0D5 /* Build configuration list for PBXNativeTarget "stepmania-bare" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
