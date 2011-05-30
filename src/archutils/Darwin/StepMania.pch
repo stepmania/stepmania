@@ -4,9 +4,3 @@
 #ifdef __cplusplus
 # include "global.h"
 #endif
-
-#ifdef __OBJC__
-// Cocoa includes OpenGL from Mac OS X 10.5 onward.
-# import <GL/glew.h>
-# import <Cocoa/Cocoa.h>
-#endif

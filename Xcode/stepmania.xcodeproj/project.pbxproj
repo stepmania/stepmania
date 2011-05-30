@@ -5943,6 +5943,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B7B0914B1393481B00C33E6B /* glew.c in Sources */,
 				AA29CD520558741A00961A51 /* RageUtil.cpp in Sources */,
 				AA29CD420558741A00961A51 /* RageBitmapTexture.cpp in Sources */,
 				AA29CD430558741A00961A51 /* RageDisplay.cpp in Sources */,
@@ -6367,7 +6368,6 @@
 				B75CE3B6137963350076A82D /* SongPosition.cpp in Sources */,
 				2B9C2E8D137A138B004C92F3 /* NotesLoaderJson.cpp in Sources */,
 				2B9C2E8F137A138B004C92F3 /* NotesWriterJson.cpp in Sources */,
-				B7B0914B1393481B00C33E6B /* glew.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
