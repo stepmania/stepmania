@@ -6,5 +6,6 @@
 #endif
 
 #ifdef __OBJC__
+# import <GL/glew.h>
 # import <Cocoa/Cocoa.h>
 #endif
