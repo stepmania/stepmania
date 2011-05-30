@@ -263,13 +263,16 @@ void PlayerOptions::FromString( const RString &sMultipleMods )
 	RString sThrowAway;
 	FOREACH( RString, vs, s )
 	{
-		FromOneModString( *s, sThrowAway );
+		if (!FromOneModString( *s, sThrowAway ))
+		{
+			LOG->Trace( "Attempted to load a non-existing mod %s for the Player. Ignoring.", (*s).c_str() );
+		}
 	}
 }
 
 bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut )
 {
-	ASSERT( NOTESKIN );
+	ASSERT_M( NOTESKIN, "The Noteskin Manager must be loaded in order to process mods." );
 
 	RString sBit = sOneMod;
 	sBit.MakeLower();

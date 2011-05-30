@@ -1,6 +1,6 @@
-.TH LIBPNG 3 "March 31, 2011"
+.TH LIBPNG 3 "February 3, 2011"
 .SH NAME
-libpng \- Portable Network Graphics (PNG) Reference Library 1.5.2
+libpng \- Portable Network Graphics (PNG) Reference Library 1.5.1
 .SH SYNOPSIS
 \fI\fB
 
@@ -576,10 +576,6 @@ libpng \- Portable Network Graphics (PNG) Reference Library 1.5.2
 
 \fI\fB
 
-\fBvoid png_set_expand_16 (png_structp \fIpng_ptr\fP\fB);\fP
-
-\fI\fB
-
 \fBvoid png_set_expand_gray_1_2_4_to_8 (png_structp \fIpng_ptr\fP\fB);\fP
 
 \fI\fB
@@ -923,7 +919,7 @@ Following is a copy of the libpng-manual.txt file that accompanies libpng.
 .SH LIBPNG.TXT
 libpng-manual.txt - A description on how to use and modify libpng
 
- libpng version 1.5.2 - March 31, 2011
+ libpng version 1.5.1 - February 3, 2011
  Updated and distributed by Glenn Randers-Pehrson
  <glennrp at users.sourceforge.net>
  Copyright (c) 1998-2011 Glenn Randers-Pehrson
@@ -934,7 +930,7 @@ libpng-manual.txt - A description on how to use and modify libpng
 
  Based on:
 
- libpng versions 0.97, January 1998, through 1.5.2 - March 31, 2011
+ libpng versions 0.97, January 1998, through 1.5.1 - February 3, 2011
  Updated and distributed by Glenn Randers-Pehrson
  Copyright (c) 1998-2011 Glenn Randers-Pehrson
 
@@ -1435,19 +1431,6 @@ You must supply a function
 To inform libpng about your function, use
 
     png_set_read_status_fn(png_ptr, read_row_callback);
-
-When this function is called the row has already been completely processed and
-the 'row' and 'pass' refer to the next row to be handled.  For the
-non-interlaced case the row that was just handled is simply one less than the
-passed in row number, and pass will always be 0.  For the interlaced case the
-same applies unless the row value is 0, in which case the row just handled was
-the last one from one of the preceding passes.  Because interlacing may skip a
-pass you cannot be sure that the preceding pass is just 'pass-1', if you really
-need to know what the last pass is record (row,pass) from the callback and use
-the last recorded value each time.
-
-As with the user transform you can find the output row using the
-PNG_ROW_FROM_PASS_ROW macro.
 
 .SS Unknown-chunk handling
 
@@ -2005,7 +1988,7 @@ forms:
        72 dpi is stored as 0.28346 pixels/meter, and
        when this is retrieved it is 71.9988 dpi, so
        be sure to round the returned value appropriately
-       if you want to display a reasonable-looking result.
+       if you want to display a reasonable-looking result. 
 
 The data from the oFFs chunk can be retrieved in several convenient
 forms:
@@ -2097,13 +2080,13 @@ viewing application that wishes to treat all images in the same way.
     if (color_type == PNG_COLOR_TYPE_PALETTE)
         png_set_palette_to_rgb(png_ptr);
 
-    if (png_get_valid(png_ptr, info_ptr,
-        PNG_INFO_tRNS)) png_set_tRNS_to_alpha(png_ptr);
-
     if (color_type == PNG_COLOR_TYPE_GRAY &&
         bit_depth < 8) png_set_expand_gray_1_2_4_to_8(png_ptr);
 
-The first two functions are actually aliases for png_set_expand(), added
+    if (png_get_valid(png_ptr, info_ptr,
+        PNG_INFO_tRNS)) png_set_tRNS_to_alpha(png_ptr);
+
+These three functions are actually aliases for png_set_expand(), added
 in libpng version 1.0.4, with the function names expanded to improve code
 readability.  In some future version they may actually do different
 things.
@@ -2111,13 +2094,42 @@ things.
 As of libpng version 1.2.9, png_set_expand_gray_1_2_4_to_8() was
 added.  It expands the sample depth without changing tRNS to alpha.
 
-As of libpng version 1.5.2, png_set_expand_16() was added.  It behaves as
-png_set_expand(), however, the resultant channels have 16 bits rather than 8.
-Use this when the output color or gray channels are made linear to avoid fairly
-severe accuracy loss.
+As of libpng version 1.5.1, not all possible expansions are supported.
 
-   if (bit_depth < 16)
-      png_set_expand_16(png_ptr);
+In the following table, the 01 means grayscale with depth<8, 31 means
+indexed with depth<8, other numerals represent the color type, "T" means
+the tRNS chunk is present, A means an alpha channel is present, and O
+means tRNS or alpha is present but all pixels in the image are opaque.
+
+  FROM  01  31   0  0T  0O   2  2T  2O   3  3T  3O  4A  4O  6A  6O 
+   TO
+   01    -                   
+   31        -
+    0    1       -           
+   0T                -
+   0O                    -
+    2           GX           -
+   2T                            -
+   2O                                -
+    3        1                           -
+   3T                                        -
+   3O                                            -
+   4A                T                               -
+   4O                                                    -
+   6A               GX         TX           TX               -
+   6O                   GX                      TX               -
+
+Within the matrix,
+     "-" means the transformation is not supported.
+     "X" means the transformation is obtained by png_set_expand().
+     "1" means the transformation is obtained by
+         png_set_expand_gray_1_2_4_to_8
+     "G" means the transformation is obtained by
+         png_set_gray_to_rgb().
+     "P" means the transformation is obtained by
+         png_set_expand_palette_to_rgb().
+     "T" means the transformation is obtained by
+         png_set_tRNS_to_alpha().
 
 PNG can have files with 16 bits per channel.  If you only can handle
 8 bits per channel, this will strip the pixels down to 8 bit.
@@ -2132,66 +2144,6 @@ it with the background, so that's what you should probably do):
 
     if (color_type & PNG_COLOR_MASK_ALPHA)
        png_set_strip_alpha(png_ptr);
-
-See below for png_set_background(), which does the correct composition on a
-single opaque color.  This is probably what you should do in all cases rather
-than use png_set_strip_alpha() - unless you know for sure that it is the wrong
-thing to do.
-
-As of libpng version 1.5.2, almost all useful expansions are supported, the
-major ommissions are convertion of grayscale to indexed images (which can be
-done trivially in the application) and convertion of indexed to grayscale (which
-can be done by a trivial manipulation of the palette.)
-
-In the following table, the 01 means grayscale with depth<8, 31 means
-indexed with depth<8, other numerals represent the color type, "T" means
-the tRNS chunk is present, A means an alpha channel is present, and O
-means tRNS or alpha is present but all pixels in the image are opaque.
-
-  FROM  01  31   0  0T  0O   2  2T  2O   3  3T  3O  4A  4O  6A  6O
-   TO
-   01    -  [G]  -   -   -   -   -   -   -   -   -   -   -   -   -
-   31   [Q]  Q  [Q] [Q] [Q]  Q   Q   Q   Q   Q   Q  [Q] [Q]  Q   Q
-    0    1   G   +   .   .   G   G   G   G   G   G   B   B  GB  GB
-   0T    lt  Gt  t   +   .   Gt  G   G   Gt  G   G   Bt  Bt GBt GBt
-   0O    lt  Gt  t   .   +   Gt  Gt  G   Gt  Gt  G   Bt  Bt GBt GBt
-    2    C   P   C   C   C   +   .   .   C   -   -  CB  CB   B   B
-   2T    Ct  -   Ct  C   C   t   +   t   -   -   -  CBt CBt  Bt  Bt
-   2O    Ct  -   Ct  C   C   t   t   +   -   -   -  CBt CBt  Bt  Bt
-    3   [Q]  p  [Q] [Q] [Q]  Q   Q   Q   +   .   .  [Q] [Q]  Q   Q
-   3T   [Qt] p  [Qt][Q] [Q]  Qt  Qt  Qt  t   +   t  [Qt][Qt] Qt  Qt
-   3O   [Qt] p  [Qt][Q] [Q]  Qt  Qt  Qt  t   t   +  [Qt][Qt] Qt  Qt
-   4A    lA  G   A   T   T   GA  GT  GT  GA  GT  GT  +   BA  G  GBA
-   4O    lA GBA  A   T   T   GA  GT  GT  GA  GT  GT  BA  +  GBA  G
-   6A    CA  PA  CA  C   C   A   T  tT   PA  P   P   C  CBA  +   BA
-   6O    CA PBA  CA  C   C   A  tT   T   PA  P   P  CBA  C   BA  +
-
-Within the matrix,
-     "+" identifies entries where 'from' and 'to' are the same.
-     "-" means the transformation is not supported.
-     "." means nothing is necessary (a tRNS chunk can just be ignored).
-     "t" means the transformation is obtained by png_set_tRNS.
-     "A" means the transformation is obtained by png_set_add_alpha().
-     "X" means the transformation is obtained by png_set_expand().
-     "1" means the transformation is obtained by
-         png_set_expand_gray_1_2_4_to_8() (and by png_set_expand() if there
-         is no transparency in the original or the final format).
-     "C" means the transformation is obtained by png_set_gray_to_rgb().
-     "G" means the transformation is obtained by png_set_rgb_to_gray() or
-         png_set_rgb_to_Y().
-     "P" means the transformation is obtained by
-         png_set_expand_palette_to_rgb().
-     "p" means the transformation is obtained by png_set_packing().
-     "Q" means the transformation is obtained by png_set_quantize().
-     "T" means the transformation is obtained by png_set_tRNS_to_alpha().
-     "B" means the transformation is obtained by png_set_background(), or
-         png_strip_alpha().
-
-When an entry has multiple transforms listed all are required to cause the
-right overall transformation.  When two transforms are separated by a comma
-either will do the job.  When transforms are enclosed in [] the transform should
-do the job but this is currently unimplemented - a different format will result
-if the suggested transformations are used.
 
 In PNG files, the alpha channel in an image
 is the level of opacity.  If you need the alpha channel in an image to
@@ -2319,7 +2271,7 @@ Libpng approximates this with integers scaled by 32768:
 The calculation is done in a linear colorspace, if the image gamma
 can be determined.
 
-If you have a grayscale and you are using png_set_expand_gray_1_2_4_to_8(),
+If you have a grayscale and you are using png_set_expand_depth(),
 png_set_expand(), or png_set_gray_to_rgb to change to truecolor or to
 a higher bit-depth, you must either supply the background color as a gray
 value at the original file bit-depth (need_expand = 1) or else supply the
@@ -2478,7 +2430,7 @@ with
 
 You must supply the function
 
-    void read_transform_fn(png_structp png_ptr, png_row_infop
+    void read_transform_fn(png_structp png_ptr, row_info_ptr
         row_info, png_bytep data)
 
 See pngtest.c for a working example.  Your function will be called
@@ -2496,14 +2448,6 @@ Don't try using these outside a transform callback - firstly they are only
 supported if user transforms are supported, secondly they may well return
 unexpected results unless the row is actually being processed at the moment they
 are called.
-
-With interlaced
-images the value returned is the row in the input sub-image image.  Use
-PNG_ROW_FROM_PASS_ROW(row, pass) and PNG_COL_FROM_PASS_COL(col, pass) to
-find the output pixel (x,y) given an interlaced sub-image pixel (row,col,pass).
-
-The discussion of interlace handling above contains more information on how to
-use these values.
 
 You can also set up a pointer to a user structure for use by your
 callback function, and you can inform libpng that your transform
@@ -3158,20 +3102,6 @@ To inform libpng about your function, use
 
     png_set_write_status_fn(png_ptr, write_row_callback);
 
-When this function is called the row has already been completely processed and
-it has also been written out.  The 'row' and 'pass' refer to the next row to be
-handled.  For the
-non-interlaced case the row that was just handled is simply one less than the
-passed in row number, and pass will always be 0.  For the interlaced case the
-same applies unless the row value is 0, in which case the row just handled was
-the last one from one of the preceding passes.  Because interlacing may skip a
-pass you cannot be sure that the preceding pass is just 'pass-1', if you really
-need to know what the last pass is record (row,pass) from the callback and use
-the last recorded value each time.
-
-As with the user transform you can find the output row using the
-PNG_ROW_FROM_PASS_ROW macro.
-
 You now have the option of modifying how the compression library will
 run.  The following functions are mainly for testing, but may be useful
 in some cases, like if you need to write PNG files extremely fast and
@@ -3215,8 +3145,6 @@ doing.  The only generally useful call is png_set_compression_level()
 which changes how much time zlib spends on trying to compress the image
 data.  See the Compression Library (zlib.h and algorithm.txt, distributed
 with zlib) for details on the compression levels.
-
-    #include zlib.h
 
     /* set the zlib compression level */
     png_set_compression_level(png_ptr,
@@ -3770,8 +3698,8 @@ with
 
 You must supply the function
 
-    void write_transform_fn(png_structp png_ptr, png_row_infop
-       row_info, png_bytep data)
+    void write_transform_fn(png_structp png_ptr ptr,
+       row_info_ptr row_info, png_bytep data)
 
 See pngtest.c for a working example.  Your function will be called
 before any of the other transformations are processed.  If supported
@@ -3779,15 +3707,9 @@ libpng also supplies an information routine that may be called from
 your callback:
 
    png_get_current_row_number(png_ptr);
-   png_get_current_pass_number(png_ptr);
 
-This returns the current row passed to the transform.  With interlaced
-images the value returned is the row in the input sub-image image.  Use
-PNG_ROW_FROM_PASS_ROW(row, pass) and PNG_COL_FROM_PASS_COL(col, pass) to
-find the output pixel (x,y) given an interlaced sub-image pixel (row,col,pass).
-
-The discussion of interlace handling above contains more information on how to
-use these values.
+This returns the current row passed to the transform.  Even with interlaced
+images the value returned is the row in the final output image.
 
 You can also set up a pointer to a user structure for use by your
 callback function.
@@ -4207,7 +4129,6 @@ specify no compression (Z_NO_COMPRESSION = 0), but this would create
 files larger than just storing the raw bitmap.  You can specify the
 compression level by calling:
 
-    #include zlib.h
     png_set_compression_level(png_ptr, level);
 
 Another useful one is to reduce the memory level used by the library.
@@ -4218,14 +4139,12 @@ other things, lower levels will result in sections of incompressible
 data being emitted in smaller stored blocks, with a correspondingly
 larger relative overhead of up to 15% in the worst case.
 
-    #include zlib.h
     png_set_compression_mem_level(png_ptr, level);
 
 The other functions are for configuring zlib.  They are not recommended
 for normal use and may result in writing an invalid PNG file.  See
 zlib.h for more information on what these mean.
 
-    #include zlib.h
     png_set_compression_strategy(png_ptr,
         strategy);
 
@@ -4623,12 +4542,12 @@ and memset(), respectively.
 The function png_set_gray_1_2_4_to_8() was removed. It has been
 deprecated since libpng-1.0.18 and 1.2.9, when it was replaced with
 png_set_expand_gray_1_2_4_to_8() because the former function also
-expanded any tRNS chunk to an alpha channel.
+expanded palette images.
 
 Macros for png_get_uint_16, png_get_uint_32, and png_get_int_32
 were added and are used by default instead of the corresponding
 functions. Unfortunately,
-from libpng-1.4.0 until 1.4.4, the png_get_uint_16 macro (but not the
+from libpng-1.4.0 until 1.4.4, the png_get_uint_16 macro (but not the  
 function) incorrectly returned a value of type png_uint_32.
 
 We changed the prototype for png_malloc() from
@@ -4671,7 +4590,7 @@ We removed the trailing '.' from the warning and error messages.
 
 .SH X.  Changes to Libpng from version 1.4.x to 1.5.x
 
-From libpng-1.4.0 until 1.4.4, the png_get_uint_16 macro (but not the
+From libpng-1.4.0 until 1.4.4, the png_get_uint_16 macro (but not the  
 function) incorrectly returned a value of type png_uint_32.
 
 A. Changes that affect users of libpng
@@ -4708,8 +4627,7 @@ application code.  (It is extremely rare for an application to do this.)
 
 Any program that compiled against libpng 1.4 and did not use deprecated
 features or access internal library structures should compile and work
-against libpng 1.5, except for the change in the prototype for
-png_get_iCCP() and png_set_iCCP() API functions mentioned above.
+against libpng 1.5.
 
 libpng 1.5.0 adds PNG_ PASS macros to help in the reading and writing of
 interlaced images.  The macros return the number of rows and columns in
@@ -4717,7 +4635,7 @@ each pass and information that can be used to de-interlace and (if
 absolutely necessary) interlace an image.
 
 libpng 1.5.0 adds an API png_longjmp(png_ptr, value).  This API calls
-the application-provided png_longjmp_ptr on the internal, but application
+the application provided png_longjmp_ptr on the internal, but application
 initialized, jmpbuf.  It is provided as a convenience to avoid the need
 to use the png_jmpbuf macro, which had the unnecessary side effect of
 resetting the internal png_longjmp_ptr value.
@@ -4763,7 +4681,7 @@ reset by pngusr.h or by explicit settings on the compiler command line.
 These settings may produce compiler warnings or errors in 1.5.0 because
 of macro redefinition.
 
-From libpng-1.4.0 until 1.4.4, the png_get_uint_16 macro (but not the
+From libpng-1.4.0 until 1.4.4, the png_get_uint_16 macro (but not the  
 function) incorrectly returned a value of type png_uint_32.  libpng 1.5.0
 is consistent with the implementation in 1.4.5 and 1.2.x (where the macro
 did not exist.)
@@ -5082,13 +5000,13 @@ Other rules can be inferred by inspecting the libpng source.
 
 .SH XIV. Y2K Compliance in libpng
 
-March 31, 2011
+February 3, 2011
 
 Since the PNG Development group is an ad-hoc body, we can't make
 an official declaration.
 
 This is your unofficial assurance that libpng from version 0.71 and
-upward through 1.5.2 are Y2K compliant.  It is my belief that earlier
+upward through 1.5.1 are Y2K compliant.  It is my belief that earlier
 versions were also Y2K compliant.
 
 Libpng only has three year fields.  One is a 2-byte unsigned integer that
@@ -5274,9 +5192,6 @@ the first widely used release:
  1.5.1beta01-11      15    10501  15.so.15.1[.0]
  1.5.1rc01-02        15    10501  15.so.15.1[.0]
  1.5.1               15    10501  15.so.15.1[.0]
- 1.5.2beta01-03      15    10502  15.so.15.2[.0]
- 1.5.2rc01-03        15    10502  15.so.15.2[.0]
- 1.5.2               15    10502  15.so.15.2[.0]
 
 Henceforth the source version will match the shared-library minor
 and patch numbers; the shared-library major version number will be
@@ -5333,7 +5248,7 @@ possible without all of you.
 
 Thanks to Frank J. T. Wojcik for helping with the documentation.
 
-Libpng version 1.5.2 - March 31, 2011:
+Libpng version 1.5.1 - February 3, 2011:
 Initially created in 1995 by Guy Eric Schalnat, then of Group 42, Inc.
 Currently maintained by Glenn Randers-Pehrson (glennrp at users.sourceforge.net).
 
@@ -5356,7 +5271,7 @@ this sentence.
 
 This code is released under the libpng license.
 
-libpng versions 1.2.6, August 15, 2004, through 1.5.2, March 31, 2011, are
+libpng versions 1.2.6, August 15, 2004, through 1.5.1, February 3, 2011, are
 Copyright (c) 2004,2006-2007 Glenn Randers-Pehrson, and are
 distributed according to the same disclaimer and license as libpng-1.2.5
 with the following individual added to the list of Contributing Authors
@@ -5455,7 +5370,7 @@ certification mark of the Open Source Initiative.
 
 Glenn Randers-Pehrson
 glennrp at users.sourceforge.net
-March 31, 2011
+February 3, 2011
 
 .\" end of man page
 

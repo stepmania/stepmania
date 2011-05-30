@@ -18,8 +18,6 @@
 
 static Preference<bool> g_bShowMasks("ShowMasks", false);
 
-PlayerNumber Actor::m_ActivePlayerNumber = PLAYER_1;
-
 /**
  * @brief Set up a hidden Actor that won't be drawn.
  *
@@ -310,11 +308,6 @@ void Actor::BeginDraw()		// set the world matrix and calculate actor properties
 	{
 		m_pTempState = &tempState;
 		tempState = m_current;
-
-		// XXX HACK! We can't really determine the active player outside Draw() so
-		// figure it out just for this clock type here.
-		if( m_EffectClock == CLOCK_BGM_BEAT_PLAYER_ACTIVE )
-			m_fSecsIntoEffect = g_vfCurrentBGMBeatPlayerNoOffset[m_ActivePlayerNumber];
 
 		const float fTotalPeriod = GetEffectPeriod();
 		ASSERT( fTotalPeriod > 0 );
@@ -685,7 +678,6 @@ void Actor::UpdateInternal( float fDeltaTime )
 		break;
 	}
 
-	case CLOCK_BGM_BEAT_PLAYER_ACTIVE:
 	case CLOCK_BGM_BEAT:
 		m_fEffectDelta = g_fCurrentBGMBeat - m_fSecsIntoEffect;
 		m_fSecsIntoEffect = g_fCurrentBGMBeat;
@@ -855,7 +847,7 @@ void Actor::SetEffectClockString( const RString &s )
 {
 	if     (s.EqualsNoCase("timer"))	this->SetEffectClock( CLOCK_TIMER );
 	if     (s.EqualsNoCase("timerglobal"))	this->SetEffectClock( CLOCK_TIMER_GLOBAL );
-	else if(s.EqualsNoCase("beat"))		this->SetEffectClock( CLOCK_BGM_BEAT_PLAYER_ACTIVE );
+	else if(s.EqualsNoCase("beat"))		this->SetEffectClock( CLOCK_BGM_BEAT );
 	else if(s.EqualsNoCase("music"))	this->SetEffectClock( CLOCK_BGM_TIME );
 	else if(s.EqualsNoCase("bgm"))		this->SetEffectClock( CLOCK_BGM_BEAT ); // compat, deprecated
 	else if(s.EqualsNoCase("musicnooffset"))this->SetEffectClock( CLOCK_BGM_TIME_NO_OFFSET );

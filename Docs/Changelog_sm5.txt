@@ -5,8 +5,31 @@ from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
 ================================================================================
-StepMania 5.0 $NEXT | 20110xyy
+StepMania 5.0 Preview 1 | 20110529
 --------------------------------------------------------------------------------
+
+2011/05/27
+----------
+* [ScreenEdit] Added the LoopOnChartEnd metric. Once you get to the end of
+  the chart while playing it in the editor, this controls whether it loops and
+  plays again, or simply stops. By default, this is true, replicating current
+  behavior. Set to false to replicate older StepMania behavior. [Wolfman2000]
+
+2011/05/26
+----------
+* [ScoreKeeperNormal] Added the MissComboIsPerRow metric. Similar to the
+  ComboIsPerRow metric, this determines how much miss combo is earned on missing
+  a row of notes. By default, this is true. Set to false to replicate Pump Pro
+  behavior. [Wolfman2000]
+
+2011/05/25
+----------
+* [NotesLoaderSSC/NotesWriterSSC] Added the ScrollSegments. Think BPM change,
+  but not. [theDtTvB]
+
+2011/05/23
+----------
+* [Steps] Added the UsesSplitTiming Lua binding. [Wolfman2000]
 
 2011/05/20
 ----------
@@ -50,6 +73,12 @@ StepMania 5.0 $NEXT | 20110xyy
 * [MusicWheel] Added ShowSectionsInBPMSort and ShowSectionsInLengthSort metrics. [AJ]
 * [ScreenEvaluation] Stop the Bonus bars from overflowing in course modes. [AJ]
 * [Banner] Added ScrollMode and ScrollSortOrder metrics. [AJ]
+
+2011/05/13
+----------
+* Added Split Timing to .SSC files. All older .SSC files and other file
+  formats are converted to split timing on cache load. We are no longer bound
+  by Song Timing for everything. [theDtTvB, Wolfman2000, TeruFSX]
 
 2011/05/11
 ----------

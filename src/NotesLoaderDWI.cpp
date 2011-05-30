@@ -198,7 +198,7 @@ static bool LoadFromDWITokens(
 	else if( sMode == "SOLO" )		out.m_StepsType = StepsType_dance_solo;
 	else	
 	{
-		ASSERT(0);	// Unrecognized DWI notes format
+		ASSERT_M(0, "Unrecognized DWI notes format " + sMode + "!");
 		out.m_StepsType = StepsType_dance_single;
 	}
 
@@ -332,6 +332,10 @@ static bool LoadFromDWITokens(
 						newNoteData.SetTapNote(iCol1, iIndex, TAP_ORIGINAL_TAP);
 					if( iCol2 != -1 )
 						newNoteData.SetTapNote(iCol2, iIndex, TAP_ORIGINAL_TAP);
+
+					if(i>=sStepData.length()) {
+						break;//we ran out of data while looking for the ending > mark
+					}
 
 					if( sStepData[i] == '!' )
 					{

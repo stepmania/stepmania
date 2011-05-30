@@ -71,11 +71,13 @@ local thanks = {
 local shoutout = {
 	"The Lua team", -- lua project lead or some shit. super nerdy but oh hell.
 	"Mojang", -- minecraft forever -freem
+	"Wolfire Games", -- piles of inspiration
 	"NAKET Coder",
 	"Ciera Boyd", -- you bet your ass I'm putting my girlfriend in the credits
 	--Image(), -- we should have some logos probably to look super pro
-	"You showed us... your ultimate dance",
 	-- "Can't stop crying... buckets of tears!"
+	"AJ Kelly, without which this game would have never been.",
+	"You showed us... your ultimate dance",
 }
 
 local copyright = {

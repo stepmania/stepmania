@@ -498,6 +498,7 @@ public:
 		speed_percent,
 		speed_wait,
 		speed_mode,
+		scroll,
 		fake,
 		erase_step_timing,
 		NUM_TIMING_DATA_INFORMATION_CHOICES
@@ -581,6 +582,7 @@ private:
 	TimingData & GetAppropriateTiming() const;
 	void SetBeat(float fBeat);
 	float GetBeat();
+	int GetRow();
 	
 };
 

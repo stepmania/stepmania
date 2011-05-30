@@ -341,10 +341,6 @@ public:
 	Steps *CreateSteps();
 	void InitSteps(Steps *pSteps);
 
-	/**
-	 * @brief Retrieve the beat based on the specified time.
-	 * @param fElapsedTime the amount of time since the Song started.
-	 * @return the appropriate beat. */
 	/* [splittiming]
 	float SongGetBeatFromElapsedTime( float fElapsedTime ) const 
 	{

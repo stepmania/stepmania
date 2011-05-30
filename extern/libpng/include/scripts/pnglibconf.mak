@@ -12,9 +12,8 @@ AWK = mawk
 AWK = nawk
 AWK = one-true-awk
 AWK = awk  # Crashes on SunOS 5.10 - use 'nawk'
-CPP = $(CC) -E # Does not work on SUN OS 5.10 - use /lib/cpp
 SED = sed
-
+CPP = $(CC) -E
 COPY = cp
 DELETE = rm -f
 ECHO = echo
@@ -34,7 +33,6 @@ pnglibconf.h: pnglibconf.dfn
 	$(DELETE) $@ dfn.c dfn1.out dfn2.out dfn3.out
 	$(ECHO) '#include "pnglibconf.dfn"' >dfn.c
 	$(CPP) $(DFNFLAGS) dfn.c >dfn1.out
-	$(ECHO) "If 'cpp -e' crashes try /lib/cpp (e.g. CPP='/lib/cpp')" >&2
 	$(SED) -n -e 's|^.*PNG_DEFN_MAGIC-\(.*\)-PNG_DEFN_END.*$$|\1|p'\
 	    dfn1.out >dfn2.out
 	$(SED) -e 's| *@@@ *||g' -e 's| *$$||' dfn2.out >dfn3.out

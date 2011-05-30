@@ -474,6 +474,7 @@ static bool NeedsTapJudging( const TapNote &tn )
 	case TapNote::attack:
 	case TapNote::autoKeysound:
 	case TapNote::fake:
+	case TapNote::empty:
 		return false;
 	}
 }
@@ -496,6 +497,7 @@ static bool NeedsHoldJudging( const TapNote &tn )
 	case TapNote::attack:
 	case TapNote::autoKeysound:
 	case TapNote::fake:
+	case TapNote::empty:
 		return false;
 	}
 }
@@ -1561,8 +1563,13 @@ int Player::GetClosestNote( int col, int iNoteRow, int iMaxRowsAhead, int iMaxRo
 	if( iPrevIndex == -1 )
 		return iNextIndex;
 
+	// Get the current time, previous time, and next time.
+	float fNoteTime = m_pPlayerState->m_Position.m_fMusicSeconds	;
+	float fNextTime = m_Timing->GetElapsedTimeFromBeat(NoteRowToBeat(iNextIndex));
+	float fPrevTime = m_Timing->GetElapsedTimeFromBeat(NoteRowToBeat(iPrevIndex));
+
 	/* Figure out which row is closer. */
-	if( abs(iNoteRow-iNextIndex) > abs(iNoteRow-iPrevIndex) )
+	if( fabsf(fNoteTime-fNextTime) > fabsf(fNoteTime-fPrevTime) )
 		return iPrevIndex;
 	else
 		return iNextIndex;
@@ -1621,8 +1628,13 @@ int Player::GetClosestNonEmptyRow( int iNoteRow, int iMaxRowsAhead, int iMaxRows
 	if( iPrevRow == -1 )
 		return iNextRow;
 
+	// Get the current time, previous time, and next time.
+	float fNoteTime = m_pPlayerState->m_Position.m_fMusicSeconds;
+	float fNextTime = m_Timing->GetElapsedTimeFromBeat(NoteRowToBeat(iNextRow));
+	float fPrevTime = m_Timing->GetElapsedTimeFromBeat(NoteRowToBeat(iPrevRow));
+
 	/* Figure out which row is closer. */
-	if( abs(iNoteRow-iNextRow) > abs(iNoteRow-iPrevRow) )
+	if( fabsf(fNoteTime-fNextTime) > fabsf(fNoteTime-fPrevTime) )
 		return iPrevRow;
 	else
 		return iNextRow;
@@ -2940,13 +2952,17 @@ void Player::RandomizeNotes( int iNoteRow )
 	int iNumOfTracks = m_NoteData.GetNumTracks();
 	for( int t=0; t+1 < iNumOfTracks; t++ )
 	{
-		const int iSwapWith = RandomInt( iNumOfTracks );
-
 		/* Only swap a tap and an empty. */
 		NoteData::iterator iter = m_NoteData.FindTapNote( t, iNewNoteRow );
 		if( iter == m_NoteData.end(t) || iter->second.type != TapNote::tap )
 			continue;
 
+		const int iSwapWith = RandomInt( iNumOfTracks );
+		
+		// Make sure we're not swapping with ourselves.
+		if( t == iSwapWith )
+			continue;
+		
 		// Make sure this is empty.
 		if( m_NoteData.FindTapNote(iSwapWith, iNewNoteRow) != m_NoteData.end(iSwapWith) )
 			continue;
