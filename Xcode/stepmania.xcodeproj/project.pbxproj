@@ -5901,6 +5901,7 @@
 		AA29CD410558741A00961A51 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
+			comments = "We need a better way of organizing compile order here.";
 			files = (
 				B7B0914B1393481B00C33E6B /* glew.c in Sources */,
 				AA29CD520558741A00961A51 /* RageUtil.cpp in Sources */,
@@ -5935,10 +5936,16 @@
 				AA29CD660558741A00961A51 /* NotesLoader.cpp in Sources */,
 				AA29CD670558741A00961A51 /* NotesLoaderBMS.cpp in Sources */,
 				AA29CD680558741A00961A51 /* NotesLoaderDWI.cpp in Sources */,
+				2B9C2E8D137A138B004C92F3 /* NotesLoaderJson.cpp in Sources */,
 				AA29CD690558741A00961A51 /* NotesLoaderKSF.cpp in Sources */,
+				EE2153A910A75BEE0074B01B /* NotesLoaderPMS.cpp in Sources */,
 				AA29CD6A0558741A00961A51 /* NotesLoaderSM.cpp in Sources */,
+				2B76698C132FF71500586512 /* NotesLoaderSMA.cpp in Sources */,
+				2BA7925E1304F20D002BD8E1 /* NotesLoaderSSC.cpp in Sources */,
 				AA29CD6B0558741A00961A51 /* NotesWriterDWI.cpp in Sources */,
+				2B9C2E8F137A138B004C92F3 /* NotesWriterJson.cpp in Sources */,
 				AA29CD6C0558741A00961A51 /* NotesWriterSM.cpp in Sources */,
+				B75CE3B6137963350076A82D /* SongPosition.cpp in Sources */,
 				AA29CD6D0558741A00961A51 /* NoteTypes.cpp in Sources */,
 				AA29CD6E0558741A00961A51 /* Player.cpp in Sources */,
 				AA29CD6F0558741A00961A51 /* PlayerAI.cpp in Sources */,
@@ -6293,19 +6300,16 @@
 				3659B56F0F902143002B6B68 /* CommandLineActions.cpp in Sources */,
 				36CA531C0F91564A0063D59D /* ScreenOptionsCourseOverview.cpp in Sources */,
 				36CA53200F9156860063D59D /* ScreenOptionsEditCourse.cpp in Sources */,
-				EE2153A910A75BEE0074B01B /* NotesLoaderPMS.cpp in Sources */,
 				EEA7C84310A805A300082E7B /* ScreenPackagesSSC.cpp in Sources */,
 				36C6888311297FFE00453295 /* RageFileDriverReadAhead.cpp in Sources */,
 				36C6888511297FFE00453295 /* RageFileManager_ReadAhead.cpp in Sources */,
 				EE906F6612BF3A1B00146C96 /* ScreenInstallOverlay.cpp in Sources */,
 				EE906F8212BF3AF800146C96 /* JsonUtil.cpp in Sources */,
 				EE906F8A12BF3C7C00146C96 /* FileDownload.cpp in Sources */,
-				2BA7925E1304F20D002BD8E1 /* NotesLoaderSSC.cpp in Sources */,
 				2BA792601304F20D002BD8E1 /* NotesWriterSSC.cpp in Sources */,
 				2B30D6821315EA7E00044B68 /* MouseDevice.cpp in Sources */,
 				EE879B60132DEE720078FDDC /* RageDisplay_Legacy_Helpers.cpp in Sources */,
 				EE879B62132DEE720078FDDC /* RageDisplay_Legacy.cpp in Sources */,
-				2B76698C132FF71500586512 /* NotesLoaderSMA.cpp in Sources */,
 				2BD06FF1137242680018CB9F /* json_reader.cpp in Sources */,
 				2BD06FF2137242680018CB9F /* json_value.cpp in Sources */,
 				2BD06FF4137242680018CB9F /* json_writer.cpp in Sources */,
@@ -6324,9 +6328,6 @@
 				2BC6133813773C8E00CC8BBD /* pngwrite.c in Sources */,
 				2BC6133913773C8E00CC8BBD /* pngwtran.c in Sources */,
 				2BC6133A13773C8E00CC8BBD /* pngwutil.c in Sources */,
-				B75CE3B6137963350076A82D /* SongPosition.cpp in Sources */,
-				2B9C2E8D137A138B004C92F3 /* NotesLoaderJson.cpp in Sources */,
-				2B9C2E8F137A138B004C92F3 /* NotesWriterJson.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
