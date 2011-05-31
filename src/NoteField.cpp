@@ -960,11 +960,11 @@ void NoteField::DrawPrimitives()
 			// Combo text
 			FOREACH_CONST( ComboSegment, timing.m_ComboSegments, seg )
 			{
-				if( seg->m_iStartRow >= iFirstRowToDraw && seg->m_iStartRow <= iLastRowToDraw )
+				if( seg->GetRow() >= iFirstRowToDraw && seg->GetRow() <= iLastRowToDraw )
 				{
-					float fBeat = NoteRowToBeat(seg->m_iStartRow);
+					float fBeat = seg->GetBeat();
 					if( IS_ON_SCREEN(fBeat) )
-						DrawComboText( fBeat, seg->m_iCombo );
+						DrawComboText( fBeat, seg->GetCombo() );
 				}
 			}
 		}

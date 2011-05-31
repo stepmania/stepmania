@@ -284,6 +284,55 @@ private:
 };
 
 /**
+ * @brief Identifies when a chart is to have a different combo multiplier value.
+ * 
+ * Admitedly, this would primarily be used for mission mode style charts. However,
+ * it can have its place during normal gameplay.
+ */
+struct ComboSegment : public TimingSegment<ComboSegment>
+{
+	/**
+	 * @brief Creates a simple Combo Segment with default values.
+	 *
+	 * It is best to override the values as soon as possible.
+	 */
+	ComboSegment() : 
+		TimingSegment<ComboSegment>(), combo(1) { }
+	/**
+	 * @brief Creates a Combo Segment with the specified values.
+	 * @param s the starting row / beat of this segment.
+	 * @param t the amount the combo increases on a succesful hit.
+	 */
+	template <typename StartType>
+	ComboSegment( StartType s, int t ):
+		TimingSegment<ComboSegment>(max((StartType)0, s)),
+		combo(max(0,t)) {}
+	
+	/**
+	 * @brief Get the combo in this ComboSegment.
+	 * @return the combo. */
+	int GetCombo() const;
+	
+	/**
+	 * @brief Set the combo in this ComboSegment.
+	 * @param i the combo. */
+	void SetCombo(const int i);
+	
+	/**
+	 * @brief Compares two ComboSegments to see if one is less than the other.
+	 * @param other the other ComboSegment to compare to.
+	 * @return the truth/falsehood of if the first is less than the second.
+	 */
+	bool operator<( const ComboSegment &other ) const;
+private:
+	/**
+	 * @brief The amount the combo increases at this point.
+	 */
+	int combo;
+};
+
+
+/**
  * @brief Identifies when a chart is entering a different section.
  * 
  * This is meant for helping to identify different sections of a chart

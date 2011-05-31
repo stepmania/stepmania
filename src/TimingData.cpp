@@ -227,20 +227,20 @@ void TimingData::SetComboAtRow( int iRow, int iCombo )
 {
 	unsigned i;
 	for( i=0; i<m_ComboSegments.size(); i++ )
-		if( m_ComboSegments[i].m_iStartRow >= iRow )
+		if( m_ComboSegments[i].GetRow() >= iRow )
 			break;
 	
-	if( i == m_ComboSegments.size() || m_ComboSegments[i].m_iStartRow != iRow )
+	if( i == m_ComboSegments.size() || m_ComboSegments[i].GetRow() != iRow )
 	{
-		if( i == 0 || m_ComboSegments[i-1].m_iCombo != iCombo )
+		if( i == 0 || m_ComboSegments[i-1].GetCombo() != iCombo )
 			AddComboSegment( ComboSegment(iRow, iCombo ) );
 	}
 	else
 	{
-		if( i > 0 && m_ComboSegments[i-1].m_iCombo == iCombo )
+		if( i > 0 && m_ComboSegments[i-1].GetCombo() == iCombo )
 			m_ComboSegments.erase( m_ComboSegments.begin()+i, m_ComboSegments.begin()+i+1 );
 		else
-			m_ComboSegments[i].m_iCombo = iCombo;
+			m_ComboSegments[i].SetCombo(iCombo);
 	}
 }
 
@@ -398,7 +398,7 @@ float TimingData::GetDelayAtRow( int iRow ) const
 
 int TimingData::GetComboAtRow( int iNoteRow ) const
 {
-	return m_ComboSegments[GetComboSegmentIndexAtRow( iNoteRow )].m_iCombo;
+	return m_ComboSegments[GetComboSegmentIndexAtRow( iNoteRow )].GetCombo();
 }
 
 RString TimingData::GetLabelAtRow( int iRow ) const
@@ -598,7 +598,7 @@ int TimingData::GetComboSegmentIndexAtRow( int iRow ) const
 	for( i=0; i<m_ComboSegments.size()-1; i++ )
 	{
 		const ComboSegment& s = m_ComboSegments[i+1];
-		if( s.m_iStartRow > iRow )
+		if( s.GetRow() > iRow )
 			break;
 	}
 	return static_cast<int>(i);
@@ -685,7 +685,7 @@ ComboSegment& TimingData::GetComboSegmentAtRow( int iRow )
 {
 	unsigned i;
 	for( i=0; i<m_ComboSegments.size()-1; i++ )
-		if( m_ComboSegments[i+1].m_iStartRow > iRow )
+		if( m_ComboSegments[i+1].GetRow() > iRow )
 			break;
 	return m_ComboSegments[i];
 }
@@ -1086,13 +1086,14 @@ void TimingData::ScaleRegion( float fScale, int iStartIndex, int iEndIndex, bool
 	
 	for ( unsigned i = 0; i < m_ComboSegments.size(); i++ )
 	{
-		const int iSegStart = m_ComboSegments[i].m_iStartRow;
+		ComboSegment &c = m_ComboSegments[i];
+		const int iSegStart = c.GetRow();
 		if( iSegStart < iStartIndex )
 			continue;
 		else if( iSegStart > iEndIndex )
-			m_ComboSegments[i].m_iStartRow += lrintf( (iEndIndex - iStartIndex) * (fScale - 1) );
+			c.SetRow(c.GetRow() + lrintf( (iEndIndex - iStartIndex) * (fScale - 1) ));
 		else
-			m_ComboSegments[i].m_iStartRow = lrintf( (iSegStart - iStartIndex) * fScale ) + iStartIndex;
+			c.SetRow(lrintf( (iSegStart - iStartIndex) * fScale ) + iStartIndex);
 	}
 	
 	for ( unsigned i = 0; i < m_LabelSegments.size(); i++ )
@@ -1222,9 +1223,9 @@ void TimingData::InsertRows( int iStartRow, int iRowsToAdd )
 	for( unsigned i = 0; i < m_ComboSegments.size(); i++ )
 	{
 		ComboSegment &comb = m_ComboSegments[i];
-		if( comb.m_iStartRow < iStartRow )
+		if( comb.GetRow() < iStartRow )
 			continue;
-		comb.m_iStartRow += iRowsToAdd;
+		comb.SetRow(comb.GetRow() + iRowsToAdd);
 	}
 	for( unsigned i = 0; i < m_LabelSegments.size(); i++ )
 	{
@@ -1379,13 +1380,13 @@ void TimingData::DeleteRows( int iStartRow, int iRowsToDelete )
 	for( unsigned i = 0; i < m_ComboSegments.size(); i++ )
 	{
 		ComboSegment &comb = m_ComboSegments[i];
-		
+		int keyRow = comb.GetRow();
 		// Before deleted region:
-		if( comb.m_iStartRow < iStartRow )
+		if( keyRow < iStartRow )
 			continue;
 		
 		// Inside deleted region:
-		if( comb.m_iStartRow < iStartRow+iRowsToDelete )
+		if( keyRow < iStartRow+iRowsToDelete )
 		{
 			m_ComboSegments.erase( m_ComboSegments.begin()+i, m_ComboSegments.begin()+i+1 );
 			--i;
@@ -1393,7 +1394,7 @@ void TimingData::DeleteRows( int iStartRow, int iRowsToDelete )
 		}
 		
 		// After deleted region:
-		comb.m_iStartRow -= iRowsToDelete;
+		comb.SetRow(keyRow - iRowsToDelete);
 	}
 	
 	for( unsigned i = 0; i < m_LabelSegments.size(); i++ )

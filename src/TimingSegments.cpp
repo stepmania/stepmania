@@ -89,6 +89,23 @@ bool TickcountSegment::operator<( const TickcountSegment &other ) const
 	return false;
 }
 
+int ComboSegment::GetCombo() const
+{
+	return this->combo;
+}
+
+void ComboSegment::SetCombo(const int i)
+{
+	this->combo = i;
+}
+
+bool ComboSegment::operator<( const ComboSegment &other ) const
+{
+	LTCOMPARE(GetRow());
+	LTCOMPARE(GetCombo());
+	return false;
+}
+
 RString LabelSegment::GetLabel() const
 {
 	return this->label;
