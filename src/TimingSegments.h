@@ -54,7 +54,7 @@ struct BaseTimingSegment
 	 * @return the starting beat. */
 	float GetBeat() const;
 
-protected:
+private:
 	/** @brief The row in which this segment activates. */
 	int startingRow;
 	
