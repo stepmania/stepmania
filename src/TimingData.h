@@ -2,6 +2,7 @@
 #define TIMING_DATA_H
 
 #include "NoteTypes.h"
+#include "TimingSegments.h"
 #include "PrefsManager.h"
 struct lua_State;
 
