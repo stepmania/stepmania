@@ -14,6 +14,11 @@ struct BaseTimingSegment
 	/** @brief Set up a BaseTimingSegment with default values. */
 	BaseTimingSegment():
 		startingRow(-1) {};
+
+	BaseTimingSegment(const BaseTimingSegment &b)
+	{
+		*this = b;
+	}
 	
 	/**
 	 * @brief Set up a BaseTimingSegment with specified values.
