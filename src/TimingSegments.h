@@ -153,6 +153,98 @@ private:
 	float lengthBeats;
 };
 
+/**
+ * @brief Identifies when a chart is to have a different tickcount value 
+ * for hold notes.
+ * 
+ * A tickcount segment is used to better replicate the checkpoint hold
+ * system used by various based video games. The number is used to 
+ * represent how many ticks can be counted in one beat.
+ */
+struct TickcountSegment : public TimingSegment
+{
+	/**
+	 * @brief Creates a simple Tickcount Segment with default values.
+	 *
+	 * It is best to override the values as soon as possible.
+	 */
+	TickcountSegment();
+	/**
+	 * @brief Creates a TickcountSegment with specified values.
+	 * @param s the starting row. */
+	TickcountSegment(int s);
+	/**
+	 * @brief Creates a TickcountSegment with specified values.
+	 * @param s the starting beat. */
+	TickcountSegment(float s);
+	/**
+	 * @brief Creates a Tickcount Segment with the specified values.
+	 * @param s the starting row.
+	 * @param t the amount of ticks counted per beat.
+	 */
+	TickcountSegment( int s, int t );
+	/**
+	 * @brief Creates a Tickcount Segment with the specified values.
+	 * @param s the starting beat.
+	 * @param t the amount of ticks counted per beat.
+	 */
+	TickcountSegment( float s, int t );
+	
+	/**
+	 * @brief Get the number of ticks in this TickcountSegment.
+	 * @return the tickcount. */
+	int GetTicks() const;
+	
+	/**
+	 * @brief Set the number of ticks in this TickcountSegment.
+	 * @param i the tickcount. */
+	void SetTicks(const int i);
+	
+	/**
+	 * @brief Compares two TickcountSegments to see if they are equal to each other.
+	 * @param other the other TickcountSegment to compare to.
+	 * @return the equality of the two segments.
+	 */
+	bool operator==( const TickcountSegment &other ) const;
+	/**
+	 * @brief Compares two TickcountSegments to see if they are not equal to each other.
+	 * @param other the other TickcountSegment to compare to.
+	 * @return the inequality of the two segments.
+	 */
+	bool operator!=( const TickcountSegment &other ) const;
+	/**
+	 * @brief Compares two TickcountSegments to see if one is less than the other.
+	 * @param other the other TickcountSegment to compare to.
+	 * @return the truth/falsehood of if the first is less than the second.
+	 */
+	bool operator<( const TickcountSegment &other ) const;
+	/**
+	 * @brief Compares two TickcountSegments to see if one is less than or equal to the other.
+	 * @param other the other TickcountSegment to compare to.
+	 * @return the truth/falsehood of if the first is less or equal to than the second.
+	 */
+	bool operator<=( const TickcountSegment &other ) const;
+	/**
+	 * @brief Compares two TickcountSegments to see if one is greater than the other.
+	 * @param other the other TickcountSegment to compare to.
+	 * @return the truth/falsehood of if the first is greater than the second.
+	 */
+	bool operator>( const TickcountSegment &other ) const;
+	/**
+	 * @brief Compares two TickcountSegments to see if one is greater than or equal to the other.
+	 * @param other the other TickcountSegment to compare to.
+	 * @return the truth/falsehood of if the first is greater than or equal to the second.
+	 */
+	bool operator>=( const TickcountSegment &other ) const;
+	
+private:
+	/**
+	 * @brief The amount of ticks counted per beat.
+	 */
+	int ticks;
+};
+
+
 
 #undef COMPARE
 

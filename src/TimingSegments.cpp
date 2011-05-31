@@ -31,7 +31,7 @@ float TimingSegment::GetBeat() const
 }
 
 FakeSegment::FakeSegment():
-	TimingSegment(-1), lengthBeats(-1) {}
+	TimingSegment(), lengthBeats(-1) {}
 
 FakeSegment::FakeSegment( int s, int r ):
 	TimingSegment(max(0, s)), lengthBeats(NoteRowToBeat(max(0, r))) {}
@@ -85,6 +85,65 @@ bool FakeSegment::operator>( const FakeSegment &other ) const
 }
 
 bool FakeSegment::operator>=( const FakeSegment &other ) const
+{
+	return !this->operator<(other);
+}
+
+TickcountSegment::TickcountSegment() :
+	TimingSegment(), ticks(4) {}
+
+TickcountSegment::TickcountSegment(int s) :
+	TimingSegment(s), ticks(4) {}
+
+TickcountSegment::TickcountSegment(float s) :
+	TimingSegment(s), ticks(4) {}
+
+TickcountSegment::TickcountSegment( int s, int t ):
+	TimingSegment(max(0, s)), ticks(max(0, t)) {}
+
+TickcountSegment::TickcountSegment( float s, int t ):
+	TimingSegment(max(0, s)), ticks(max(0, t)) {}
+
+int TickcountSegment::GetTicks() const
+{
+	return this->ticks;
+}
+
+void TickcountSegment::SetTicks(const int i)
+{
+	this->ticks = i;
+}
+
+bool TickcountSegment::operator==( const TickcountSegment &other ) const
+{
+	if (this->GetRow() != other.GetRow()) return false;
+	if (this->GetTicks() != other.GetTicks()) return false;
+	return true;
+}
+
+bool TickcountSegment::operator!=( const TickcountSegment &other ) const
+{
+	return !this->operator==(other);
+}
+
+bool TickcountSegment::operator<( const TickcountSegment &other ) const
+{
+	if (this->GetRow() < other.GetRow()) return true;
+	if (this->GetRow() > other.GetRow()) return false;
+	return this->GetTicks() < other.GetTicks();
+}
+
+bool TickcountSegment::operator<=( const TickcountSegment &other ) const
+{
+	return ( this->operator<(other) || this->operator==(other) );
+}
+
+bool TickcountSegment::operator>( const TickcountSegment &other ) const
+{
+	return !this->operator<=(other);
+}
+
+bool TickcountSegment::operator>=( const TickcountSegment &other ) const
 {
 	return !this->operator<(other);
 }

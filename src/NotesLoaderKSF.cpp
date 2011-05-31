@@ -541,13 +541,12 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 			 * and stops. It will be called again in LoadFromKSFFile for the
 			 * actual steps. */
 			iTickCount = StringToInt( sParams[1] );
-			iTickCount = iTickCount > 0 ? iTickCount : 2; // again, Direct Move uses 4 as a default.
+			iTickCount = iTickCount > 0 ? iTickCount : 4;
 			// add a tickcount for those using the [Player]
 			// CheckpointsUseTimeSignatures metric. -aj
 			// It's not with timesigs now -DaisuMaster
-			TickcountSegment tcs;
-			tcs.m_iStartRow = BeatToNoteRow(0.0f);
-			tcs.m_iTicks = iTickCount > ROWS_PER_BEAT ? ROWS_PER_BEAT : iTickCount;
+			TickcountSegment tcs(0);
+			tcs.SetTicks(iTickCount > ROWS_PER_BEAT ? ROWS_PER_BEAT : iTickCount);
 			out.m_SongTiming.AddTickcountSegment( tcs );
 		}
 		else if ( sValueName=="STEP" )

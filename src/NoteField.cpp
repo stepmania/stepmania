@@ -946,11 +946,11 @@ void NoteField::DrawPrimitives()
 			// Tickcount text
 			FOREACH_CONST( TickcountSegment, timing.m_TickcountSegments, seg )
 			{
-				if( seg->m_iStartRow >= iFirstRowToDraw && seg->m_iStartRow <= iLastRowToDraw )
+				if( seg->GetRow() >= iFirstRowToDraw && seg->GetRow() <= iLastRowToDraw )
 				{
-					float fBeat = NoteRowToBeat(seg->m_iStartRow);
+					float fBeat = seg->GetBeat();
 					if( IS_ON_SCREEN(fBeat) )
-						DrawTickcountText( fBeat, seg->m_iTicks );
+						DrawTickcountText( fBeat, seg->GetTicks() );
 				}
 			}
 		}

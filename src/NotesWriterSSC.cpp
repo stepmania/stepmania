@@ -122,7 +122,7 @@ static void GetTimingTags( vector<RString> &lines, TimingData timing, bool bIsSo
 	ASSERT( !timing.m_TickcountSegments.empty() );
 	w.Init( "TICKCOUNTS" );
 	FOREACH_CONST( TickcountSegment, timing.m_TickcountSegments, ts )
-		w.Write( ts->m_iStartRow, ts->m_iTicks );
+		w.Write( ts->GetRow(), ts->GetTicks() );
 	w.Finish();
 	
 	ASSERT( !timing.m_ComboSegments.empty() );

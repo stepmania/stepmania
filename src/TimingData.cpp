@@ -205,21 +205,21 @@ void TimingData::SetTickcountAtRow( int iRow, int iTicks )
 {
 	unsigned i;
 	for( i=0; i<m_TickcountSegments.size(); i++ )
-		if( m_TickcountSegments[i].m_iStartRow >= iRow )
+		if( m_TickcountSegments[i].GetRow() >= iRow )
 			break;
 
-	if( i == m_TickcountSegments.size() || m_TickcountSegments[i].m_iStartRow != iRow )
+	if( i == m_TickcountSegments.size() || m_TickcountSegments[i].GetRow() != iRow )
 	{
 		// No TickcountSegment here. Make a new segment if required.
-		if( i == 0 || m_TickcountSegments[i-1].m_iTicks != iTicks )
+		if( i == 0 || m_TickcountSegments[i-1].GetTicks() != iTicks )
 			AddTickcountSegment( TickcountSegment(iRow, iTicks ) );
 	}
 	else	// TickcountSegment being modified is m_TickcountSegments[i]
 	{
-		if( i > 0  && m_TickcountSegments[i-1].m_iTicks == iTicks )
+		if( i > 0  && m_TickcountSegments[i-1].GetTicks() == iTicks )
 			m_TickcountSegments.erase( m_TickcountSegments.begin()+i, m_TickcountSegments.begin()+i+1 );
 		else
-			m_TickcountSegments[i].m_iTicks = iTicks;
+			m_TickcountSegments[i].SetTicks(iTicks);
 	}
 }
 
@@ -732,7 +732,7 @@ int TimingData::GetTickcountSegmentIndexAtRow( int iRow ) const
 {
 	unsigned i;
 	for (i=0; i < m_TickcountSegments.size() - 1; i++ )
-		if( m_TickcountSegments[i+1].m_iStartRow > iRow )
+		if( m_TickcountSegments[i+1].GetRow() > iRow )
 			break;
 	return static_cast<int>(i);
 }
@@ -749,7 +749,7 @@ TickcountSegment& TimingData::GetTickcountSegmentAtRow( int iRow )
 
 int TimingData::GetTickcountAtRow( int iRow ) const
 {
-	return m_TickcountSegments[GetTickcountSegmentIndexAtRow( iRow )].m_iTicks;
+	return m_TickcountSegments[GetTickcountSegmentIndexAtRow( iRow )].GetTicks();
 }
 
 float TimingData::GetPreviousLabelSegmentBeatAtRow( int iRow ) const
@@ -1071,13 +1071,14 @@ void TimingData::ScaleRegion( float fScale, int iStartIndex, int iEndIndex, bool
 	
 	for ( unsigned i = 0; i < m_TickcountSegments.size(); i++ )
 	{
-		const int iSegStart = m_TickcountSegments[i].m_iStartRow;
+		TickcountSegment &t = m_TickcountSegments[i];
+		const int iSegStart = t.GetRow();
 		if( iSegStart < iStartIndex )
 			continue;
 		else if( iSegStart > iEndIndex )
-			m_TickcountSegments[i].m_iStartRow += lrintf( (iEndIndex - iStartIndex) * (fScale - 1) );
+			t.SetRow(t.GetRow() + lrintf( (iEndIndex - iStartIndex) * (fScale - 1) ));
 		else
-			m_TickcountSegments[i].m_iStartRow = lrintf( (iSegStart - iStartIndex) * fScale ) + iStartIndex;
+			t.SetRow(lrintf( (iSegStart - iStartIndex) * fScale ) + iStartIndex);
 	}
 	
 	for ( unsigned i = 0; i < m_ComboSegments.size(); i++ )
@@ -1209,9 +1210,9 @@ void TimingData::InsertRows( int iStartRow, int iRowsToAdd )
 	for( unsigned i = 0; i < m_TickcountSegments.size(); i++ )
 	{
 		TickcountSegment &tick = m_TickcountSegments[i];
-		if( tick.m_iStartRow < iStartRow )
+		if( tick.GetRow() < iStartRow )
 			continue;
-		tick.m_iStartRow += iRowsToAdd;
+		tick.SetRow(tick.GetRow() + iRowsToAdd);
 	}
 	
 	for( unsigned i = 0; i < m_ComboSegments.size(); i++ )
@@ -1354,13 +1355,13 @@ void TimingData::DeleteRows( int iStartRow, int iRowsToDelete )
 	for( unsigned i = 0; i < m_TickcountSegments.size(); i++ )
 	{
 		TickcountSegment &tick = m_TickcountSegments[i];
-		
+		int keyRow = tick.GetRow();
 		// Before deleted region:
-		if( tick.m_iStartRow < iStartRow )
+		if( keyRow < iStartRow )
 			continue;
 		
 		// Inside deleted region:
-		if( tick.m_iStartRow < iStartRow+iRowsToDelete )
+		if( keyRow < iStartRow+iRowsToDelete )
 		{
 			m_TickcountSegments.erase( m_TickcountSegments.begin()+i, m_TickcountSegments.begin()+i+1 );
 			--i;
@@ -1368,7 +1369,7 @@ void TimingData::DeleteRows( int iStartRow, int iRowsToDelete )
 		}
 		
 		// After deleted region:
-		tick.m_iStartRow -= iRowsToDelete;
+		tick.SetRow(keyRow - iRowsToDelete);
 	}
 	
 	for( unsigned i = 0; i < m_ComboSegments.size(); i++ )
