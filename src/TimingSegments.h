@@ -10,51 +10,115 @@
 #define COMPARE(x) if(x!=other.x) return false;
 
 /**
- * @brief The general TimingSegment for all of the changing glory.
- *
- * Each segment is supposed to derive from this one. */
-struct TimingSegment
+ * @brief The base timing segment for all of the changing glory.
+ * 
+ * Do not derive from this class!! Instead, derive from TimingSegment<DerivedClass>!
+ */
+struct BaseTimingSegment
 {
-	/** @brief Set up a TimingSegment with default values. */
-	TimingSegment();
-	/**
-	 * @brief Set up a TimingSegment with specified values.
-	 * @param s the starting row. */
-	TimingSegment(int s);
-	/**
-	 * @brief Set up a TimingSegment with specified values.
-	 * @param s the starting beat. */
-	TimingSegment(float s);
-	
-	virtual ~TimingSegment();
+
+	/** @brief Set up a BaseTimingSegment with default values. */
+	BaseTimingSegment():
+		startingRow(-1) {};
 	
 	/**
-	 * @brief Set the starting row of the TimingSegment.
+	 * @brief Set up a BaseTimingSegment with specified values.
+	 * @param s the starting row / beat. */
+	template <typename StartType>
+	BaseTimingSegment(StartType s):
+		startingRow(ToNoteRow(s)) {};
+	
+	virtual ~BaseTimingSegment();
+	
+	/**
+	 * @brief Set the starting row of the BaseTimingSegment.
 	 *
 	 * This is virtual to allow other segments to implement validation
 	 * as required by them.
 	 * @param s the supplied row. */
 	virtual void SetRow( const int s );
+	
 	/**
-	 * @brief Set the starting beat of the TimingSegment.
+	 * @brief Set the starting beat of the BaseTimingSegment.
 	 *
-	 * This is virtual to allow other segments to implement validation
-	 * as required by them.
 	 * @param s the supplied beat. */
-	virtual void SetBeat( const float s );
+	void SetBeat( const float s );
+	
 	/**
-	 * @brief Get the starting row of the TimingSegment.
+	 * @brief Get the starting row of the BaseTimingSegment.
 	 * @return the starting row. */
 	int GetRow() const;
+	
 	/**
-	 * @brief Get the starting beat of the TimingSegment.
+	 * @brief Get the starting beat of the BaseTimingSegment.
 	 * @return the starting beat. */
 	float GetBeat() const;
-	
-private:
+
+protected:
 	/** @brief The row in which this segment activates. */
 	int startingRow;
+	
 };
+
+/**
+ * @brief The general TimingSegment for all of the changing glory.
+ *
+ * Each segment is supposed to derive from this one. */
+template <class DerivedSegment>
+struct TimingSegment: public BaseTimingSegment
+{
+
+	TimingSegment(): BaseTimingSegment() {};
+	
+	template <typename StartType>
+	TimingSegment(StartType s): BaseTimingSegment(s) {};
+
+	/**
+	 * @brief Compares two DrivedSegments to see if one is less than the other.
+	 * @param other the other TimingSegments to compare to.
+	 * @return the truth/falsehood of if the first is less than the second.
+	 *
+	 * This is virtual to allow other segments to implement comparison
+	 * as required by them.
+	 */
+	virtual bool operator<( const DerivedSegment &other ) const;
+
+	/**
+	 * @brief Compares two DrivedSegments to see if they are equal to each other.
+	 * @param other the other FakeSegment to compare to.
+	 * @return the equality of the two segments.
+	 *
+	 * This is virtual to allow other segments to implement comparison
+	 * as required by them.
+	 */
+	bool operator==( const DerivedSegment &other ) const { return !this->operator<(other) && !other.operator<(*static_cast<const DerivedSegment *>(this)); };	
+	/**
+	 * @brief Compares two DrivedSegments to see if they are not equal to each other.
+	 * @param other the other DrivedSegments to compare to.
+	 * @return the inequality of the two segments.
+	 */
+	bool operator!=( const DerivedSegment &other ) const { return !this->operator==(other); };
+	/**
+	 * @brief Compares two DrivedSegments to see if one is less than or equal to the other.
+	 * @param other the other DrivedSegments to compare to.
+	 * @return the truth/falsehood of if the first is less or equal to than the second.
+	 */
+	bool operator<=( const DerivedSegment &other ) const { return !this->operator>(other); };
+	/**
+	 * @brief Compares two DrivedSegments to see if one is greater than the other.
+	 * @param other the other DrivedSegments to compare to.
+	 * @return the truth/falsehood of if the first is greater than the second.
+	 */
+	bool operator>( const DerivedSegment &other ) const { return other.operator<(*static_cast<const DerivedSegment *>(this)); };
+	/**
+	 * @brief Compares two DrivedSegments to see if one is greater than or equal to the other.
+	 * @param other the other DrivedSegments to compare to.
+	 * @return the truth/falsehood of if the first is greater than or equal to the second.
+	 */
+	bool operator>=( const DerivedSegment &other ) const { return !this->operator<(other); };
+	
+};
+
 
 /**
  * @brief Identifies when a whole region of arrows is to be ignored.
@@ -67,38 +131,24 @@ private:
  * drawn normally.
  *
  * These were inspired by the Pump It Up series. */
-struct FakeSegment : public TimingSegment
+struct FakeSegment : public TimingSegment<FakeSegment>
 {
 	/**
 	 * @brief Create a simple Fake Segment with default values.
 	 *
 	 * It is best to override the values as soon as possible.
 	 */
-	FakeSegment();
+	FakeSegment():
+		TimingSegment<FakeSegment>(), lengthBeats(-1) {};
+	
 	/**
 	 * @brief Create a Fake Segment with the specified values.
 	 * @param s the starting row of this segment.
 	 * @param r the number of rows this segment lasts.
 	 */
-	FakeSegment( int s, int r );
-	/**
-	 * @brief Creates a Fake Segment with the specified values.
-	 * @param s the starting row of this segment.
-	 * @param b the number of beats this segment lasts.
-	 */
-	FakeSegment( int s, float b );
-	/**
-	 * @brief Create a Fake Segment with the specified values.
-	 * @param s the starting beat in this segment.
-	 * @param r the number of rows this segment lasts.
-	 */
-	FakeSegment( float s, int r );
-	/**
-	 * @brief Creates a Fake Segment with the specified values.
-	 * @param s the starting beat of this segment.
-	 * @param b the number of beats this segment lasts.
-	 */
-	FakeSegment( float s, float b );
+	template <typename StartType, typename LengthType>
+	FakeSegment( StartType s, LengthType r ):
+		TimingSegment<FakeSegment>(max((StartType)0, s)), lengthBeats(ToBeat(max((LengthType)0, r))) {};
 	
 	/**
 	 * @brief Get the length in beats of the FakeSegment.
@@ -117,35 +167,12 @@ struct FakeSegment : public TimingSegment
 	 */
 	bool operator==( const FakeSegment &other ) const;
 	/**
-	 * @brief Compares two FakeSegments to see if they are not equal to each other.
-	 * @param other the other FakeSegment to compare to.
-	 * @return the inequality of the two segments.
-	 */
-	bool operator!=( const FakeSegment &other ) const;
-	/**
 	 * @brief Compares two FakeSegments to see if one is less than the other.
 	 * @param other the other FakeSegment to compare to.
 	 * @return the truth/falsehood of if the first is less than the second.
 	 */
 	bool operator<( const FakeSegment &other ) const;
-	/**
-	 * @brief Compares two FakeSegments to see if one is less than or equal to the other.
-	 * @param other the other FakeSegment to compare to.
-	 * @return the truth/falsehood of if the first is less or equal to than the second.
-	 */
-	bool operator<=( const FakeSegment &other ) const;
-	/**
-	 * @brief Compares two FakeSegments to see if one is greater than the other.
-	 * @param other the other FakeSegment to compare to.
-	 * @return the truth/falsehood of if the first is greater than the second.
-	 */
-	bool operator>( const FakeSegment &other ) const;
-	/**
-	 * @brief Compares two FakeSegments to see if one is greater than or equal to the other.
-	 * @param other the other FakeSegment to compare to.
-	 * @return the truth/falsehood of if the first is greater than or equal to the second.
-	 */
-	bool operator>=( const FakeSegment &other ) const;
+	
 private:
 	/**
 	 * @brief The number of beats the FakeSegment is alive for.
@@ -161,34 +188,30 @@ private:
  * system used by various based video games. The number is used to 
  * represent how many ticks can be counted in one beat.
  */
-struct TickcountSegment : public TimingSegment
+struct TickcountSegment : public TimingSegment<TickcountSegment>
 {
 	/**
 	 * @brief Creates a simple Tickcount Segment with default values.
 	 *
 	 * It is best to override the values as soon as possible.
 	 */
-	TickcountSegment();
+	TickcountSegment():
+		TimingSegment<TickcountSegment>(), ticks(4) {};
+	
 	/**
 	 * @brief Creates a TickcountSegment with specified values.
-	 * @param s the starting row. */
-	TickcountSegment(int s);
+	 * @param s the starting row / beat. */
+	template <typename StartType>
+	TickcountSegment( StartType s ):
+		TimingSegment<TickcountSegment>(max((StartType)0, s)), ticks(4) {};
+	
 	/**
 	 * @brief Creates a TickcountSegment with specified values.
-	 * @param s the starting beat. */
-	TickcountSegment(float s);
-	/**
-	 * @brief Creates a Tickcount Segment with the specified values.
-	 * @param s the starting row.
-	 * @param t the amount of ticks counted per beat.
-	 */
-	TickcountSegment( int s, int t );
-	/**
-	 * @brief Creates a Tickcount Segment with the specified values.
-	 * @param s the starting beat.
-	 * @param t the amount of ticks counted per beat.
-	 */
-	TickcountSegment( float s, int t );
+	 * @param s the starting row / beat.
+	 * @param t the amount of ticks counted per beat. */
+	template <typename StartType>
+	TickcountSegment( StartType s, int t ):
+		TimingSegment<TickcountSegment>(max((StartType)0, s)), ticks(max(0, t)) {};
 	
 	/**
 	 * @brief Get the number of ticks in this TickcountSegment.
@@ -207,35 +230,11 @@ struct TickcountSegment : public TimingSegment
 	 */
 	bool operator==( const TickcountSegment &other ) const;
 	/**
-	 * @brief Compares two TickcountSegments to see if they are not equal to each other.
-	 * @param other the other TickcountSegment to compare to.
-	 * @return the inequality of the two segments.
-	 */
-	bool operator!=( const TickcountSegment &other ) const;
-	/**
 	 * @brief Compares two TickcountSegments to see if one is less than the other.
 	 * @param other the other TickcountSegment to compare to.
 	 * @return the truth/falsehood of if the first is less than the second.
 	 */
 	bool operator<( const TickcountSegment &other ) const;
-	/**
-	 * @brief Compares two TickcountSegments to see if one is less than or equal to the other.
-	 * @param other the other TickcountSegment to compare to.
-	 * @return the truth/falsehood of if the first is less or equal to than the second.
-	 */
-	bool operator<=( const TickcountSegment &other ) const;
-	/**
-	 * @brief Compares two TickcountSegments to see if one is greater than the other.
-	 * @param other the other TickcountSegment to compare to.
-	 * @return the truth/falsehood of if the first is greater than the second.
-	 */
-	bool operator>( const TickcountSegment &other ) const;
-	/**
-	 * @brief Compares two TickcountSegments to see if one is greater than or equal to the other.
-	 * @param other the other TickcountSegment to compare to.
-	 * @return the truth/falsehood of if the first is greater than or equal to the second.
-	 */
-	bool operator>=( const TickcountSegment &other ) const;
 	
 private:
 	/**

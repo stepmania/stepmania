@@ -1,49 +1,40 @@
 #include "TimingSegments.h"
 
-TimingSegment::TimingSegment() : 
-	startingRow(-1) {}
+#define LTCOMPARE(x)      if(this->x < other.x) return true; if(this->x > other.x) return false;
 
-TimingSegment::TimingSegment(int s) : 
-	startingRow(s) {}
+BaseTimingSegment::~BaseTimingSegment() {}
 
-TimingSegment::TimingSegment(float s) : 
-	startingRow(BeatToNoteRow(s)) {}
 
-TimingSegment::~TimingSegment() {}
-
-void TimingSegment::SetRow(const int s)
+void BaseTimingSegment::SetRow(const int s)
 {
 	this->startingRow = s;
 }
-void TimingSegment::SetBeat(const float s)
+
+void BaseTimingSegment::SetBeat(const float s)
 {
-	this->startingRow = BeatToNoteRow(s);
+	SetRow(BeatToNoteRow(s));
 }
 
-int TimingSegment::GetRow() const
+int BaseTimingSegment::GetRow() const
 {
 	return this->startingRow;
 }
 
-float TimingSegment::GetBeat() const
+float BaseTimingSegment::GetBeat() const
 {
-	return NoteRowToBeat(this->startingRow);
+	return NoteRowToBeat(GetRow());
 }
 
-FakeSegment::FakeSegment():
-	TimingSegment(), lengthBeats(-1) {}
+template <class DerivedSegment>
+bool TimingSegment<DerivedSegment>::operator<( const DerivedSegment &other ) const
+{ 
+	LTCOMPARE(GetRow());
+	return false;
+}
 
-FakeSegment::FakeSegment( int s, int r ):
-	TimingSegment(max(0, s)), lengthBeats(NoteRowToBeat(max(0, r))) {}
 
-FakeSegment::FakeSegment( int s, float b ):
-	TimingSegment(max(0, s)), lengthBeats(max(0, b)) {}
-
-FakeSegment::FakeSegment( float s, int r ):
-	TimingSegment(max(0, s)), lengthBeats(max(0, NoteRowToBeat(r))) {}
-
-FakeSegment::FakeSegment( float s, float b ):
-	TimingSegment(max(0, s)), lengthBeats(max(0, b)) {}
+/* ======================================================
+   Here comes the actual timing segments implementation!! */
 
 float FakeSegment::GetLength() const
 {
@@ -55,54 +46,14 @@ void FakeSegment::SetLength(const float b)
 	this->lengthBeats = b;
 }
 
-bool FakeSegment::operator==( const FakeSegment &other ) const
-{
-	if (this->GetRow() != other.GetRow()) return false;
-	if (this->GetLength() != other.GetLength()) return false;
-	return true;
-}
-
-bool FakeSegment::operator!=( const FakeSegment &other ) const
-{
-	return !this->operator==(other);
-}
-
 bool FakeSegment::operator<( const FakeSegment &other ) const
 { 
-	if (this->GetRow() < other.GetRow()) return true;
-	if (this->GetRow() > other.GetRow()) return false;
-	return this->GetLength() < other.GetLength();
+	LTCOMPARE(GetRow());
+	LTCOMPARE(GetLength());
+	return false;
 }
 
-bool FakeSegment::operator<=( const FakeSegment &other ) const
-{
-	return ( this->operator<(other) || this->operator==(other) );
-}
 
-bool FakeSegment::operator>( const FakeSegment &other ) const
-{
-	return !this->operator<=(other);
-}
-
-bool FakeSegment::operator>=( const FakeSegment &other ) const
-{
-	return !this->operator<(other);
-}
-
-TickcountSegment::TickcountSegment() :
-	TimingSegment(), ticks(4) {}
-
-TickcountSegment::TickcountSegment(int s) :
-	TimingSegment(s), ticks(4) {}
-
-TickcountSegment::TickcountSegment(float s) :
-	TimingSegment(s), ticks(4) {}
-
-TickcountSegment::TickcountSegment( int s, int t ):
-	TimingSegment(max(0, s)), ticks(max(0, t)) {}
-
-TickcountSegment::TickcountSegment( float s, int t ):
-	TimingSegment(max(0, s)), ticks(max(0, t)) {}
 
 int TickcountSegment::GetTicks() const
 {
@@ -114,38 +65,11 @@ void TickcountSegment::SetTicks(const int i)
 	this->ticks = i;
 }
 
-bool TickcountSegment::operator==( const TickcountSegment &other ) const
-{
-	if (this->GetRow() != other.GetRow()) return false;
-	if (this->GetTicks() != other.GetTicks()) return false;
-	return true;
-}
-
-bool TickcountSegment::operator!=( const TickcountSegment &other ) const
-{
-	return !this->operator==(other);
-}
-
 bool TickcountSegment::operator<( const TickcountSegment &other ) const
 {
-	if (this->GetRow() < other.GetRow()) return true;
-	if (this->GetRow() > other.GetRow()) return false;
-	return this->GetTicks() < other.GetTicks();
-}
-
-bool TickcountSegment::operator<=( const TickcountSegment &other ) const
-{
-	return ( this->operator<(other) || this->operator==(other) );
-}
-
-bool TickcountSegment::operator>( const TickcountSegment &other ) const
-{
-	return !this->operator<=(other);
-}
-
-bool TickcountSegment::operator>=( const TickcountSegment &other ) const
-{
-	return !this->operator<(other);
+	LTCOMPARE(GetRow());
+	LTCOMPARE(GetTicks());
+	return false;
 }
 
 /**
