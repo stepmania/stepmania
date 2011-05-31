@@ -525,6 +525,116 @@ private:
 	int denominator;
 };
 
+/**
+ * @brief Identifies when the arrow scroll changes.
+ *
+ * SpeedSegments take a Player's scrolling BPM (Step's BPM * speed mod),
+ * and then multiplies it with the percentage value. No matter the player's
+ * speed mod, the ratio will be the same. Unlike forced attacks, these
+ * cannot be turned off at a set time: reset it by setting the precentage
+ * back to 1.
+ *
+ * These were inspired by the Pump It Up series. */
+struct SpeedSegment : public TimingSegment<SpeedSegment>
+{
+	/** @brief Sets up the SpeedSegment with default values. */
+	SpeedSegment():
+		TimingSegment<SpeedSegment>(0), 
+	ratio(1), length(0), unit(0) {}
+	
+	/**
+	 * @brief Sets up the SpeedSegment with specified values.
+	 * @param r The row / beat this activates.
+	 * @param p The percentage to use. */
+	template <typename StartType>
+	SpeedSegment( StartType r, float p): 
+		TimingSegment<SpeedSegment>(max((StartType)0, r)), 
+	ratio(p), length(0), unit(0) {}
+	
+	/**
+	 * @brief Sets up the SpeedSegment with specified values.
+	 * @param r The row / beat this activates.
+	 * @param p The percentage to use.
+	 * @param w The number of beats to wait. */
+	template <typename StartType>
+	SpeedSegment(StartType r, float p, float w):
+		TimingSegment<SpeedSegment>(max((StartType)0, r)),
+	ratio(p), length(w), unit(0) {}
+
+	
+	/**
+	 * @brief Sets up the SpeedSegment with specified values.
+	 * @param r The row / beat this activates.
+	 * @param p The percentage to use.
+	 * @param w The number of beats/seconds to wait.
+	 * @param k The mode used for the wait variable. */
+	template <typename StartType>
+	SpeedSegment(StartType r, float p, float w, unsigned short k): 
+		TimingSegment<SpeedSegment>(max((StartType)0, r)),
+		ratio(p), length(w), unit(k) {}
+	
+	/**
+	 * @brief Get the ratio in this SpeedSegment.
+	 * @return the ratio. */
+	float GetRatio() const;
+	
+	/**
+	 * @brief Set the ratio in this SpeedSegment.
+	 * @param i the ratio. */
+	void SetRatio(const float i);
+	
+	/**
+	 * @brief Get the length in this SpeedSegment.
+	 * @return the length. */
+	float GetLength() const;
+	
+	/**
+	 * @brief Set the length in this SpeedSegment.
+	 * @param i the length. */
+	void SetLength(const float i);
+	
+	/**
+	 * @brief Get the unit in this SpeedSegment.
+	 * @return the unit. */
+	unsigned short GetUnit() const;
+	
+	/**
+	 * @brief Set the unit in this SpeedSegment.
+	 * @param i the unit. */
+	void SetUnit(const unsigned short i);
+	
+	/**
+	 * @brief Set the unit in this SpeedSegment.
+	 *
+	 * This one is offered for quicker compatibility.
+	 * @param i the unit. */
+	void SetUnit(const int i);
+	
+	/**
+	 * @brief Compares two SpeedSegments to see if one is less than the other.
+	 * @param other the other SpeedSegment to compare to.
+	 * @return the truth/falsehood of if the first is less than the second.
+	 */
+	bool operator<( const SpeedSegment &other ) const;
+private:
+	/** @brief The percentage (ratio) to use when multiplying the Player's BPM. */
+	float ratio;
+	/** 
+	 * @brief The number of beats or seconds to wait for the change to take place.
+	 *
+	 * A value of 0 means this is immediate. */
+	float length;
+	/**
+	 * @brief The mode that this segment uses for the math.
+	 *
+	 * 0: beats
+	 * 1: seconds
+	 * other
+	 */
+	unsigned short unit;
+	
+};
+
 #endif
 
 /**

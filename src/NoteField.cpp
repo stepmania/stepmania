@@ -984,11 +984,12 @@ void NoteField::DrawPrimitives()
 		{
 			FOREACH_CONST( SpeedSegment, timing.m_SpeedSegments, seg )
 			{
-				if( seg->m_iStartRow >= iFirstRowToDraw && seg->m_iStartRow <= iLastRowToDraw )
+				if( seg->GetRow() >= iFirstRowToDraw && seg->GetRow() <= iLastRowToDraw )
 				{
-					float fBeat = NoteRowToBeat(seg->m_iStartRow);
+					float fBeat = seg->GetBeat();
 					if( IS_ON_SCREEN(fBeat) )
-						DrawSpeedText( fBeat, seg->m_fPercent, seg->m_fWait, seg->m_usMode );
+						DrawSpeedText(fBeat, seg->GetRatio(), 
+							      seg->GetLength(), seg->GetUnit() );
 				}
 			}
 		}

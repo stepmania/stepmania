@@ -269,27 +269,27 @@ void TimingData::SetSpeedAtRow( int iRow, float fPercent, float fWait, unsigned 
 	unsigned i;
 	for( i = 0; i < m_SpeedSegments.size(); i++ )
 	{
-		if( m_SpeedSegments[i].m_iStartRow >= iRow)
+		if( m_SpeedSegments[i].GetRow() >= iRow)
 			break;
 	}
 	
-	if ( i == m_SpeedSegments.size() || m_SpeedSegments[i].m_iStartRow != iRow )
+	if ( i == m_SpeedSegments.size() || m_SpeedSegments[i].GetRow() != iRow )
 	{
 		// the core mod itself matters the most for comparisons.
-		if( i == 0 || m_SpeedSegments[i-1].m_fPercent != fPercent )
+		if( i == 0 || m_SpeedSegments[i-1].GetRatio() != fPercent )
 			AddSpeedSegment( SpeedSegment(iRow, fPercent, fWait, usMode) );
 	}
 	else
 	{
 		// The others aren't compared: only the mod itself matters.
-		if( i > 0  && m_SpeedSegments[i-1].m_fPercent == fPercent )
+		if( i > 0  && m_SpeedSegments[i-1].GetRatio() == fPercent )
 			m_SpeedSegments.erase( m_SpeedSegments.begin()+i,
 					       m_SpeedSegments.begin()+i+1 );
 		else
 		{
-			m_SpeedSegments[i].m_fPercent = fPercent;
-			m_SpeedSegments[i].m_fWait = fWait;
-			m_SpeedSegments[i].m_usMode = usMode;
+			m_SpeedSegments[i].SetRatio(fPercent);
+			m_SpeedSegments[i].SetLength(fWait);
+			m_SpeedSegments[i].SetUnit(usMode);
 		}
 	}
 }
@@ -351,23 +351,23 @@ void TimingData::SetSpeedPercentAtRow( int iRow, float fPercent )
 {
 	SetSpeedAtRow( iRow, 
 		      fPercent, 
-		      GetSpeedSegmentAtBeat( NoteRowToBeat( iRow ) ).m_fWait,
-		      GetSpeedSegmentAtBeat( NoteRowToBeat( iRow ) ).m_usMode);
+		      GetSpeedSegmentAtBeat( NoteRowToBeat( iRow ) ).GetLength(),
+		      GetSpeedSegmentAtBeat( NoteRowToBeat( iRow ) ).GetUnit());
 }
 
 void TimingData::SetSpeedWaitAtRow( int iRow, float fWait )
 {
 	SetSpeedAtRow( iRow, 
-		      GetSpeedSegmentAtBeat( NoteRowToBeat( iRow ) ).m_fPercent,
+		      GetSpeedSegmentAtBeat( NoteRowToBeat( iRow ) ).GetRatio(),
 		      fWait,
-		      GetSpeedSegmentAtBeat( NoteRowToBeat( iRow ) ).m_usMode);
+		      GetSpeedSegmentAtBeat( NoteRowToBeat( iRow ) ).GetUnit());
 }
 
 void TimingData::SetSpeedModeAtRow( int iRow, unsigned short usMode )
 {
 	SetSpeedAtRow( iRow, 
-		      GetSpeedSegmentAtBeat( NoteRowToBeat( iRow ) ).m_fPercent,
-		      GetSpeedSegmentAtBeat( NoteRowToBeat( iRow ) ).m_fWait,
+		      GetSpeedSegmentAtBeat( NoteRowToBeat( iRow ) ).GetRatio(),
+		      GetSpeedSegmentAtBeat( NoteRowToBeat( iRow ) ).GetLength(),
 		      usMode );
 }
 
@@ -419,17 +419,17 @@ float TimingData::GetWarpAtRow( int iWarpRow ) const
 
 float TimingData::GetSpeedPercentAtRow( int iRow )
 {
-	return GetSpeedSegmentAtRow( iRow ).m_fPercent;
+	return GetSpeedSegmentAtRow( iRow ).GetRatio();
 }
 
 float TimingData::GetSpeedWaitAtRow( int iRow )
 {
-	return GetSpeedSegmentAtRow( iRow ).m_fWait;
+	return GetSpeedSegmentAtRow( iRow ).GetLength();
 }
 
 unsigned short TimingData::GetSpeedModeAtRow( int iRow )
 {
-	return GetSpeedSegmentAtRow( iRow ).m_usMode;
+	return GetSpeedSegmentAtRow( iRow ).GetUnit();
 }
 
 float TimingData::GetScrollAtRow( int iRow )
@@ -619,7 +619,7 @@ int TimingData::GetSpeedSegmentIndexAtRow( int iRow ) const
 {
 	unsigned i;
 	for (i=0; i < m_SpeedSegments.size() - 1; i++ )
-		if( m_SpeedSegments[i+1].m_iStartRow > iRow )
+		if( m_SpeedSegments[i+1].GetRow() > iRow )
 			break;
 	return static_cast<int>(i);
 }
@@ -656,7 +656,7 @@ SpeedSegment& TimingData::GetSpeedSegmentAtRow( int iRow )
 {
 	unsigned i;
 	for( i=0; i<m_SpeedSegments.size()-1; i++ )
-		if( m_SpeedSegments[i+1].m_iStartRow > iRow )
+		if( m_SpeedSegments[i+1].GetRow() > iRow )
 			break;
 	return m_SpeedSegments[i];
 }
@@ -1113,13 +1113,13 @@ void TimingData::ScaleRegion( float fScale, int iStartIndex, int iEndIndex, bool
 	for ( unsigned i = 0; i < m_SpeedSegments.size(); i++ )
 	{
 		SpeedSegment &s = m_SpeedSegments[i];
-		const int iSegStart = s.m_iStartRow;
+		const int iSegStart = s.GetRow();
 		if( iSegStart < iStartIndex )
 			continue;
 		else if( iSegStart > iEndIndex )
-			s.m_iStartRow += lrintf( (iEndIndex - iStartIndex) * (fScale - 1) );
+			s.SetRow(s.GetRow() + lrintf( (iEndIndex - iStartIndex) * (fScale - 1) ));
 		else
-			s.m_iStartRow = lrintf( (iSegStart - iStartIndex) * fScale ) + iStartIndex;
+			s.SetRow(lrintf( (iSegStart - iStartIndex) * fScale ) + iStartIndex);
 	}
 	
 	for( unsigned i = 0; i < m_FakeSegments.size(); i++ )
@@ -1242,9 +1242,9 @@ void TimingData::InsertRows( int iStartRow, int iRowsToAdd )
 	for( unsigned i = 0; i < m_SpeedSegments.size(); i++ )
 	{
 		SpeedSegment &sped = m_SpeedSegments[i];
-		if( sped.m_iStartRow < iStartRow )
+		if( sped.GetRow() < iStartRow )
 			continue;
-		sped.m_iStartRow += iRowsToAdd;
+		sped.SetRow(sped.GetRow() + iRowsToAdd);
 	}
 	
 	for( unsigned i = 0; i < m_FakeSegments.size(); i++ )
@@ -1420,17 +1420,17 @@ void TimingData::DeleteRows( int iStartRow, int iRowsToDelete )
 	for( unsigned i = 0; i < m_SpeedSegments.size(); i++ )
 	{
 		SpeedSegment &sped = m_SpeedSegments[i];
-		
-		if( sped.m_iStartRow < iStartRow )
+		int keyRow = sped.GetRow();
+		if( keyRow < iStartRow )
 			continue;
 		
-		if( sped.m_iStartRow < iStartRow+iRowsToDelete )
+		if( keyRow < iStartRow+iRowsToDelete )
 		{
 			m_SpeedSegments.erase( m_SpeedSegments.begin()+i, m_SpeedSegments.begin()+i+1 );
 			--i;
 			continue;
 		}
-		sped.m_iStartRow -= iRowsToDelete;
+		sped.SetRow(keyRow - iRowsToDelete);
 	}
 	
 	for( unsigned i = 0; i < m_FakeSegments.size(); i++ )
@@ -1477,38 +1477,39 @@ float TimingData::GetDisplayedSpeedPercent( float fSongBeat, float fMusicSeconds
 	const int index = GetSpeedSegmentIndexAtBeat( fSongBeat );
 	
 	const SpeedSegment &seg = m_SpeedSegments[index];
-	float fStartBeat = NoteRowToBeat(seg.m_iStartRow);
+	float fStartBeat = seg.GetBeat();
 	float fStartTime = GetElapsedTimeFromBeat( fStartBeat ) - GetDelayAtBeat( fStartBeat );
 	float fEndTime;
 	float fCurTime = fMusicSeconds;
 	
-	if( seg.m_usMode == 1 ) // seconds
+	if( seg.GetUnit() == 1 ) // seconds
 	{
-		fEndTime = fStartTime + seg.m_fWait;
+		fEndTime = fStartTime + seg.GetLength();
 	}
 	else
 	{
-		fEndTime = GetElapsedTimeFromBeat( fStartBeat + seg.m_fWait ) - GetDelayAtBeat( fStartBeat + seg.m_fWait );
+		fEndTime = GetElapsedTimeFromBeat( fStartBeat + seg.GetLength() ) 
+		- GetDelayAtBeat( fStartBeat + seg.GetLength() );
 	}
 	
-	if( ( index == 0 && m_SpeedSegments[0].m_fWait > 0.0 ) && fCurTime < fStartTime )
+	if( ( index == 0 && m_SpeedSegments[0].GetLength() > 0.0 ) && fCurTime < fStartTime )
 	{
 		return 1.0;
 	}
-	else if( fEndTime >= fCurTime && ( index > 0 || m_SpeedSegments[0].m_fWait > 0.0 ) )
+	else if( fEndTime >= fCurTime && ( index > 0 || m_SpeedSegments[0].GetLength() > 0.0 ) )
 	{
-		const float fPriorSpeed = ( index == 0 ? 1 : m_SpeedSegments[index - 1].m_fPercent );
+		const float fPriorSpeed = ( index == 0 ? 1 : m_SpeedSegments[index - 1].GetRatio() );
 		float fTimeUsed = fCurTime - fStartTime;
 		float fDuration = fEndTime - fStartTime;
 		float fRatioUsed = fDuration == 0.0 ? 1 : fTimeUsed / fDuration;
 		
-		float fDistance = fPriorSpeed - seg.m_fPercent;
+		float fDistance = fPriorSpeed - seg.GetRatio();
 		float fRatioNeed = fRatioUsed * -fDistance;
 		return (fPriorSpeed + fRatioNeed);
 	}
 	else 
 	{
-		return seg.m_fPercent;
+		return seg.GetRatio();
 	}
 
 }

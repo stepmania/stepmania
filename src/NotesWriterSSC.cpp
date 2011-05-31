@@ -134,7 +134,7 @@ static void GetTimingTags( vector<RString> &lines, TimingData timing, bool bIsSo
 	// Song Timing should only have the initial value.
 	w.Init( "SPEEDS" );
 	FOREACH_CONST( SpeedSegment, timing.m_SpeedSegments, ss )
-		w.Write( ss->m_iStartRow, ss->m_fPercent, ss->m_fWait, ss->m_usMode );
+		w.Write( ss->GetRow(), ss->GetRatio(), ss->GetLength(), ss->GetUnit() );
 	w.Finish();
 	
 	w.Init( "SCROLLS" );

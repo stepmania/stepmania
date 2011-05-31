@@ -3224,7 +3224,7 @@ void ScreenEdit::DisplayTimingMenu()
 {
 	float fBeat = GetBeat();
 	TimingData &pTime = GetAppropriateTiming();
-	bool bHasSpeedOnThisRow = pTime.GetSpeedSegmentAtBeat( fBeat ).m_iStartRow == BeatToNoteRow( fBeat );
+	bool bHasSpeedOnThisRow = pTime.GetSpeedSegmentAtBeat( fBeat ).GetBeat() == fBeat;
 	
 	g_TimingDataInformation.rows[beat_0_offset].SetOneUnthemedChoice( ssprintf("%.5f", pTime.m_fBeat0OffsetInSeconds) );
 	g_TimingDataInformation.rows[bpm].SetOneUnthemedChoice( ssprintf("%.5f", pTime.GetBPMAtBeat( fBeat ) ) );
@@ -4015,7 +4015,7 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 		ScreenTextEntry::TextEntry(
 		   SM_BackFromSpeedPercentChange,
 		   ENTER_SPEED_PERCENT_VALUE,
-		   ssprintf( "%.5f", GetAppropriateTiming().GetSpeedSegmentAtBeat( GetBeat() ).m_fPercent ),
+		   ssprintf( "%.5f", GetAppropriateTiming().GetSpeedSegmentAtBeat( GetBeat() ).GetRatio() ),
 		   10
 		   );
 		break;
@@ -4031,7 +4031,7 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 		ScreenTextEntry::TextEntry(
 		   SM_BackFromSpeedWaitChange,
 		   ENTER_SPEED_WAIT_VALUE,
-		   ssprintf( "%.5f", GetAppropriateTiming().GetSpeedSegmentAtBeat( GetBeat() ).m_fWait ),
+		   ssprintf( "%.5f", GetAppropriateTiming().GetSpeedSegmentAtBeat( GetBeat() ).GetLength() ),
 		   10
 		   );
 		break;

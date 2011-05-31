@@ -195,7 +195,50 @@ bool TimeSignatureSegment::operator<( const TimeSignatureSegment &other ) const
 	return false;
 }
 
+float SpeedSegment::GetRatio() const
+{
+	return this->ratio;
+}
 
+void SpeedSegment::SetRatio(const float i)
+{
+	this->ratio = i;
+}
+
+float SpeedSegment::GetLength() const
+{
+	return this->length;
+}
+
+void SpeedSegment::SetLength(const float i)
+{
+	this->length = i;
+}
+
+
+unsigned short SpeedSegment::GetUnit() const
+{
+	return this->unit;
+}
+
+void SpeedSegment::SetUnit(const unsigned short i)
+{
+	this->unit = i;
+}
+
+void SpeedSegment::SetUnit(const int i)
+{
+	this->unit = static_cast<unsigned short>(i);
+}
+
+bool SpeedSegment::operator<( const SpeedSegment &other ) const
+{
+	LTCOMPARE(GetRow());
+	LTCOMPARE(GetRatio());
+	LTCOMPARE(GetLength());
+	LTCOMPARE(GetUnit());
+	return false;
+}
 
 
 /**

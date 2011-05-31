@@ -340,7 +340,8 @@ void SMALoader::ProcessSpeeds( TimingData &out, const int iRowsPerBeat, const RS
 		unsigned short tmp = ( (vs2[2].find("s") || vs2[2].find("S") )
 				      ? 1 : 0);
 		
-		SpeedSegment seg( fBeat, StringToFloat( vs2[1] ), StringToFloat( vs2[2] ), tmp);
+		SpeedSegment seg(fBeat, StringToFloat( vs2[1] ), StringToFloat(vs2[2]));
+		seg.SetUnit(tmp);
 		
 		if( fBeat < 0 )
 		{
@@ -348,9 +349,9 @@ void SMALoader::ProcessSpeeds( TimingData &out, const int iRowsPerBeat, const RS
 			continue;
 		}
 		
-		if( seg.m_fWait < 0 )
+		if( seg.GetLength() < 0 )
 		{
-			LOG->UserLog( "Song file", "(UNKNOWN)", "has an speed change with beat %f, fWait %f.", fBeat, seg.m_fWait );
+			LOG->UserLog( "Song file", "(UNKNOWN)", "has an speed change with beat %f, length %f.", fBeat, seg.GetLength() );
 			continue;
 		}
 		
