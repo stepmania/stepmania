@@ -13,7 +13,7 @@ struct BaseTimingSegment
 
 	/** @brief Set up a BaseTimingSegment with default values. */
 	BaseTimingSegment():
-		startingRow(-1) {};
+		startingRow(static_cast<int>(-1)) {};
 
 	BaseTimingSegment(const BaseTimingSegment &b)
 	{
@@ -22,10 +22,11 @@ struct BaseTimingSegment
 	
 	/**
 	 * @brief Set up a BaseTimingSegment with specified values.
-	 * @param s the starting row / beat. */
+	 * @param s the starting row / beat.
+	 *
+	 * NOTE: On Windows, it's passing in the Segments, not ints or floats. */
 	template <typename StartType>
-	BaseTimingSegment(StartType s):
-		startingRow(ToNoteRow(s)) {};
+	BaseTimingSegment(StartType s): startingRow(ToNoteRow(s)) {}
 	
 	virtual ~BaseTimingSegment();
 	
@@ -67,7 +68,7 @@ template <class DerivedSegment>
 struct TimingSegment: public BaseTimingSegment
 {
 
-	TimingSegment(): BaseTimingSegment() {};
+	TimingSegment(): BaseTimingSegment(static_cast<int>(-1)) {};
 	
 	template <typename StartType>
 	TimingSegment(StartType s): BaseTimingSegment(s) {};
@@ -399,7 +400,10 @@ struct BPMSegment : public TimingSegment<BPMSegment>
 	 * It is best to override the values as soon as possible.
 	 */
 	BPMSegment() :
-		TimingSegment<BPMSegment>(), bps(-1.0f) { }
+		TimingSegment<BPMSegment>(static_cast<int>(-1)), bps(-1.0f) { }
+	
+	operator int() const { return 1; }
+	operator float() const { return 2.0f; }
 
 	/**
 	 * @brief Creates a BPM Segment with the specified starting row and beats per second.
@@ -408,7 +412,7 @@ struct BPMSegment : public TimingSegment<BPMSegment>
 	 */
 	template <typename StartType>
 	BPMSegment( StartType s, float bpm ):
-		TimingSegment<BPMSegment>(max((StartType)0, s)), bps(0.0f) { SetBPM(bpm); }
+		TimingSegment<BPMSegment>(max((StartType)0, ToNoteRow(s))), bps(0.0f) { SetBPM(bpm); }
 
 	/**
 	 * @brief Get the label in this LabelSegment.
