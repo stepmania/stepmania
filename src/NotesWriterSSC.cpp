@@ -93,7 +93,7 @@ static void GetTimingTags( vector<RString> &lines, TimingData timing, bool bIsSo
 
 	w.Init( "BPMS" );
 	FOREACH_CONST( BPMSegment, timing.m_BPMSegments, bs )
-		w.Write( bs->m_iStartRow, bs->GetBPM() );
+		w.Write( bs->GetRow(), bs->GetBPM() );
 	w.Finish();
 	
 	w.Init( "STOPS" );

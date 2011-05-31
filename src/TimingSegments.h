@@ -383,6 +383,64 @@ private:
 
 
 
+/**
+ * @brief Identifies when a song changes its BPM.
+ */
+struct BPMSegment : public TimingSegment<BPMSegment>
+{
+	/**
+	 * @brief Creates a simple BPM Segment with default values.
+	 *
+	 * It is best to override the values as soon as possible.
+	 */
+	BPMSegment() :
+		TimingSegment<BPMSegment>(), bps(-1.0f) { }
+
+	/**
+	 * @brief Creates a BPM Segment with the specified starting row and beats per second.
+	 * @param s the starting row / beat of this segment.
+	 * @param b the beats per minute to be turned into beats per second.
+	 */
+	template <typename StartType>
+	BPMSegment( StartType s, float bpm ):
+		TimingSegment<BPMSegment>(max((StartType)0, s)), bps(0.0f) { SetBPM(bpm); }
+
+	/**
+	 * @brief Get the label in this LabelSegment.
+	 * @return the label. */
+	float GetBPM() const;
+	
+	/**
+	 * @brief Set the label in this LabelSegment.
+	 * @param l the label. */
+	void SetBPM(const float bpm);
+	
+	/**
+	 * @brief Get the label in this LabelSegment.
+	 * @return the label. */
+	float GetBPS() const;
+	
+	/**
+	 * @brief Set the label in this LabelSegment.
+	 * @param l the label. */
+	void SetBPS(const float newBPS);
+	
+	/**
+	 * @brief Compares two LabelSegments to see if one is less than the other.
+	 * @param other the other LabelSegment to compare to.
+	 * @return the truth/falsehood of if the first is less than the second.
+	 */
+	bool operator<( const BPMSegment &other ) const;
+
+private:
+	/**
+	 * @brief The label/section name for this point.
+	 */
+	float bps;
+};
+
+
+
 
 #undef COMPARE
 

@@ -86,25 +86,24 @@ void TimingData::AddFakeSegment( const FakeSegment &seg )
 /* Change an existing BPM segment, merge identical segments together or insert a new one. */
 void TimingData::SetBPMAtRow( int iNoteRow, float fBPM )
 {
-	float fBPS = fBPM / 60.0f;
 	unsigned i;
 	for( i=0; i<m_BPMSegments.size(); i++ )
-		if( m_BPMSegments[i].m_iStartRow >= iNoteRow )
+		if( m_BPMSegments[i].GetRow() >= iNoteRow )
 			break;
 
-	if( i == m_BPMSegments.size() || m_BPMSegments[i].m_iStartRow != iNoteRow )
+	if( i == m_BPMSegments.size() || m_BPMSegments[i].GetRow() != iNoteRow )
 	{
 		// There is no BPMSegment at the specified beat.  If the BPM being set differs
 		// from the last BPMSegment's BPM, create a new BPMSegment.
-		if( i == 0 || fabsf(m_BPMSegments[i-1].m_fBPS - fBPS) > 1e-5f )
+		if( i == 0 || fabsf(m_BPMSegments[i-1].GetBPM() - fBPM) > 1e-5f )
 			AddBPMSegment( BPMSegment(iNoteRow, fBPM) );
 	}
 	else	// BPMSegment being modified is m_BPMSegments[i]
 	{
-		if( i > 0  &&  fabsf(m_BPMSegments[i-1].m_fBPS - fBPS) < 1e-5f )
+		if( i > 0  &&  fabsf(m_BPMSegments[i-1].GetBPM() - fBPM) < 1e-5f )
 			m_BPMSegments.erase( m_BPMSegments.begin()+i, m_BPMSegments.begin()+i+1 );
 		else
-			m_BPMSegments[i].m_fBPS = fBPS;
+			m_BPMSegments[i].SetBPM(fBPM);
 	}
 }
 
@@ -456,9 +455,9 @@ void TimingData::MultiplyBPMInBeatRange( int iStartIndex, int iEndIndex, float f
 	// Change all other BPM segments in this range.
 	for( unsigned i=0; i<m_BPMSegments.size(); i++ )
 	{
-		const int iStartIndexThisSegment = m_BPMSegments[i].m_iStartRow;
+		const int iStartIndexThisSegment = m_BPMSegments[i].GetRow();
 		const bool bIsLastBPMSegment = i==m_BPMSegments.size()-1;
-		const int iStartIndexNextSegment = bIsLastBPMSegment ? INT_MAX : m_BPMSegments[i+1].m_iStartRow;
+		const int iStartIndexNextSegment = bIsLastBPMSegment ? INT_MAX : m_BPMSegments[i+1].GetRow();
 
 		if( iStartIndexThisSegment <= iStartIndex && iStartIndexNextSegment <= iStartIndex )
 			continue;
@@ -468,7 +467,7 @@ void TimingData::MultiplyBPMInBeatRange( int iStartIndex, int iEndIndex, float f
 		if( iStartIndexThisSegment < iStartIndex && iStartIndexNextSegment > iStartIndex )
 		{
 			BPMSegment b = m_BPMSegments[i];
-			b.m_iStartRow = iStartIndexNextSegment;
+			b.SetRow(iStartIndexNextSegment);
 			m_BPMSegments.insert( m_BPMSegments.begin()+i+1, b );
 
 			/* Don't apply the BPM change to the first half of the segment we
@@ -480,13 +479,13 @@ void TimingData::MultiplyBPMInBeatRange( int iStartIndex, int iEndIndex, float f
 		if( iStartIndexThisSegment < iEndIndex && iStartIndexNextSegment > iEndIndex )
 		{
 			BPMSegment b = m_BPMSegments[i];
-			b.m_iStartRow = iEndIndex;
+			b.SetRow(iEndIndex);
 			m_BPMSegments.insert( m_BPMSegments.begin()+i+1, b );
 		}
 		else if( iStartIndexNextSegment > iEndIndex )
 			continue;
 
-		m_BPMSegments[i].m_fBPS = m_BPMSegments[i].m_fBPS * fFactor;
+		m_BPMSegments[i].SetBPM(m_BPMSegments[i].GetBPM() * fFactor);
 	}
 }
 
@@ -494,7 +493,7 @@ float TimingData::GetBPMAtRow( int iNoteRow ) const
 {
 	unsigned i;
 	for( i=0; i<m_BPMSegments.size()-1; i++ )
-		if( m_BPMSegments[i+1].m_iStartRow > iNoteRow )
+		if( m_BPMSegments[i+1].GetRow() > iNoteRow )
 			break;
 	return m_BPMSegments[i].GetBPM();
 }
@@ -503,7 +502,7 @@ int TimingData::GetBPMSegmentIndexAtRow( int iNoteRow ) const
 {
 	unsigned i;
 	for( i=0; i<m_BPMSegments.size()-1; i++ )
-		if( m_BPMSegments[i+1].m_iStartRow > iNoteRow )
+		if( m_BPMSegments[i+1].GetRow() > iNoteRow )
 			break;
 	return static_cast<int>(i);
 }
@@ -835,9 +834,9 @@ void TimingData::GetBeatAndBPSFromElapsedTimeNoOffset( float fElapsedTime, float
 			iEventRow = BeatToNoteRow(fWarpDestination);
 			iEventType = FOUND_WARP_DESTINATION;
 		}
-		if( itBPMS != m_BPMSegments.end() && itBPMS->m_iStartRow < iEventRow )
+		if( itBPMS != m_BPMSegments.end() && itBPMS->GetRow() < iEventRow )
 		{
-			iEventRow = itBPMS->m_iStartRow;
+			iEventRow = itBPMS->GetRow();
 			iEventType = FOUND_BPM_CHANGE;
 		}
 		if( itSS != m_StopSegments.end() && itSS->m_iStartRow < iEventRow )
@@ -867,7 +866,7 @@ void TimingData::GetBeatAndBPSFromElapsedTimeNoOffset( float fElapsedTime, float
 			bIsWarping = false;
 			break;
 		case FOUND_BPM_CHANGE:
-			fBPS = itBPMS->m_fBPS;
+			fBPS = itBPMS->GetBPS();
 			itBPMS ++;
 			break;
 		case FOUND_STOP:
@@ -937,9 +936,9 @@ float TimingData::GetElapsedTimeFromBeatNoOffset( float fBeat ) const
 			iEventRow = BeatToNoteRow(fWarpDestination);
 			iEventType = FOUND_WARP_DESTINATION;
 		}
-		if( itBPMS != m_BPMSegments.end() && itBPMS->m_iStartRow < iEventRow )
+		if( itBPMS != m_BPMSegments.end() && itBPMS->GetRow() < iEventRow )
 		{
-			iEventRow = itBPMS->m_iStartRow;
+			iEventRow = itBPMS->GetRow();
 			iEventType = FOUND_BPM_CHANGE;
 		}
 		if( itSS != m_StopSegments.end() && itSS->m_bDelay && itSS->m_iStartRow < iEventRow ) // delays (come before marker)
@@ -971,7 +970,7 @@ float TimingData::GetElapsedTimeFromBeatNoOffset( float fBeat ) const
 			bIsWarping = false;
 			break;
 		case FOUND_BPM_CHANGE:
-			fBPS = itBPMS->m_fBPS;
+			fBPS = itBPMS->GetBPS();
 			itBPMS ++;
 			break;
 		case FOUND_STOP:
@@ -1020,13 +1019,13 @@ void TimingData::ScaleRegion( float fScale, int iStartIndex, int iEndIndex, bool
 	
 	for ( unsigned i = 0; i < m_BPMSegments.size(); i++ )
 	{
-		const int iSegStart = m_BPMSegments[i].m_iStartRow;
+		const int iSegStart = m_BPMSegments[i].GetRow();
 		if( iSegStart < iStartIndex )
 			continue;
 		else if( iSegStart > iEndIndex )
-			m_BPMSegments[i].m_iStartRow += lrintf( (iEndIndex - iStartIndex) * (fScale - 1) );
+			m_BPMSegments[i].SetRow( m_BPMSegments[i].GetRow() + lrintf( (iEndIndex - iStartIndex) * (fScale - 1) ) );
 		else
-			m_BPMSegments[i].m_iStartRow = lrintf( (iSegStart - iStartIndex) * fScale ) + iStartIndex;
+			m_BPMSegments[i].SetRow( lrintf( (iSegStart - iStartIndex) * fScale ) + iStartIndex );
 	}
 	
 	for( unsigned i = 0; i < m_StopSegments.size(); i++ )
@@ -1161,13 +1160,13 @@ void TimingData::ScaleRegion( float fScale, int iStartIndex, int iEndIndex, bool
 		// adjust BPM changes "between" iStartIndex and iNewEndIndex
 		for ( unsigned i = 0; i < m_BPMSegments.size(); i++ )
 		{
-			const int iSegStart = m_BPMSegments[i].m_iStartRow;
+			const int iSegStart = m_BPMSegments[i].GetRow();
 			if( iSegStart <= iStartIndex )
 				continue;
 			else if( iSegStart >= iNewEndIndex )
 				continue;
 			else
-				m_BPMSegments[i].m_fBPS *= fScale;
+				m_BPMSegments[i].SetBPM( m_BPMSegments[i].GetBPM() * fScale );
 		}
 		
 		// set BPM at iStartIndex and iNewEndIndex.
@@ -1183,9 +1182,9 @@ void TimingData::InsertRows( int iStartRow, int iRowsToAdd )
 	for( unsigned i = 0; i < m_BPMSegments.size(); i++ )
 	{
 		BPMSegment &bpm = m_BPMSegments[i];
-		if( bpm.m_iStartRow < iStartRow )
+		if( bpm.GetRow() < iStartRow )
 			continue;
-		bpm.m_iStartRow += iRowsToAdd;
+		bpm.SetRow( bpm.GetRow() + iRowsToAdd );
 	}
 
 	for( unsigned i = 0; i < m_StopSegments.size(); i++ )
@@ -1264,7 +1263,7 @@ void TimingData::InsertRows( int iStartRow, int iRowsToAdd )
 		/* If we're shifting up at the beginning, we just shifted up the first
 		 * BPMSegment. That segment must always begin at 0. */
 		ASSERT( m_BPMSegments.size() > 0 );
-		m_BPMSegments[0].m_iStartRow = 0;
+		m_BPMSegments[0].SetRow(0);
 	}
 }
 
@@ -1281,11 +1280,11 @@ void TimingData::DeleteRows( int iStartRow, int iRowsToDelete )
 		BPMSegment &bpm = m_BPMSegments[i];
 
 		// Before deleted region:
-		if( bpm.m_iStartRow < iStartRow )
+		if( bpm.GetRow() < iStartRow )
 			continue;
 
 		// Inside deleted region:
-		if( bpm.m_iStartRow < iStartRow+iRowsToDelete )
+		if( bpm.GetRow() < iStartRow+iRowsToDelete )
 		{
 			m_BPMSegments.erase( m_BPMSegments.begin()+i, m_BPMSegments.begin()+i+1 );
 			--i;
@@ -1293,7 +1292,7 @@ void TimingData::DeleteRows( int iStartRow, int iRowsToDelete )
 		}
 
 		// After deleted region:
-		bpm.m_iStartRow -= iRowsToDelete;
+		bpm.SetRow( bpm.GetRow() - iRowsToDelete );
 	}
 
 	for( unsigned i = 0; i < m_StopSegments.size(); i++ )
@@ -1520,8 +1519,8 @@ void TimingData::TidyUpData()
 	}
 
 	// Make sure the first BPM segment starts at beat 0.
-	if( m_BPMSegments[0].m_iStartRow != 0 )
-		m_BPMSegments[0].m_iStartRow = 0;
+	if( m_BPMSegments[0].GetRow() != 0 )
+		m_BPMSegments[0].SetRow(0);
 
 	// If no time signature specified, assume 4/4 time for the whole song.
 	if( m_vTimeSignatureSegments.empty() )
@@ -1707,7 +1706,7 @@ public:
 		vector<RString> vBPMs;
 		FOREACH_CONST( BPMSegment, p->m_BPMSegments, seg )
 		{
-			const float fStartRow = NoteRowToBeat(seg->m_iStartRow);
+			const float fStartRow = seg->GetBeat();
 			const float fBPM = seg->GetBPM();
 			vBPMs.push_back( ssprintf("%f=%f", fStartRow, fBPM) );
 		}

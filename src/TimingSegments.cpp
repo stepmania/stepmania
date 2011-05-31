@@ -53,6 +53,9 @@ bool FakeSegment::operator<( const FakeSegment &other ) const
 	return false;
 }
 
+
+
+
 float WarpSegment::GetLength() const
 {
 	return this->lengthBeats;
@@ -69,6 +72,7 @@ bool WarpSegment::operator<( const WarpSegment &other ) const
 	LTCOMPARE(GetLength());
 	return false;
 }
+
 
 
 
@@ -89,6 +93,9 @@ bool TickcountSegment::operator<( const TickcountSegment &other ) const
 	return false;
 }
 
+
+
+
 int ComboSegment::GetCombo() const
 {
 	return this->combo;
@@ -106,6 +113,9 @@ bool ComboSegment::operator<( const ComboSegment &other ) const
 	return false;
 }
 
+
+
+
 RString LabelSegment::GetLabel() const
 {
 	return this->label;
@@ -122,6 +132,38 @@ bool LabelSegment::operator<( const LabelSegment &other ) const
 	LTCOMPARE(GetLabel());
 	return false;
 }
+
+
+
+float BPMSegment::GetBPM() const
+{
+	return this->bps * 60.0f;
+}
+
+void BPMSegment::SetBPM(const float bpm)
+{
+	this->bps = bpm / 60.0f;
+}
+
+float BPMSegment::GetBPS() const
+{
+	return this->bps;
+}
+
+void BPMSegment::SetBPS(const float newBPS)
+{
+	this->bps = newBPS;
+}
+
+bool BPMSegment::operator<( const BPMSegment &other ) const
+{ 
+	LTCOMPARE(GetRow());
+	LTCOMPARE(GetBPM());
+	return false;
+}
+
+
+
 
 /**
  * @file

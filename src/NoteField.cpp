@@ -899,9 +899,9 @@ void NoteField::DrawPrimitives()
 		// BPM text
 		FOREACH_CONST( BPMSegment, timing.m_BPMSegments, seg )
 		{
-			if( seg->m_iStartRow >= iFirstRowToDraw && seg->m_iStartRow <= iLastRowToDraw )
+			if( seg->GetRow() >= iFirstRowToDraw && seg->GetRow() <= iLastRowToDraw )
 			{
-				float fBeat = NoteRowToBeat(seg->m_iStartRow);
+				float fBeat = seg->GetBeat();
 				if( IS_ON_SCREEN(fBeat) )
 					DrawBPMText( fBeat, seg->GetBPM() );
 			}

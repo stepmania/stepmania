@@ -678,9 +678,9 @@ static bool LoadFromMidi( const RString &sPath, Song &songOut )
 	FOREACH_CONST( MidiFileIn::TempoChange, midi.tempoEvents_, iter )
 	{
 		BPMSegment bpmSeg;
-		bpmSeg.m_iStartRow = MidiCountToNoteRow( iter->count );
+		bpmSeg.SetRow( MidiCountToNoteRow( iter->count ) );
 		double fSecondsPerBeat = (iter->tickSeconds * GUITAR_MIDI_COUNTS_PER_BEAT);
-		bpmSeg.m_fBPS = float( 1. / fSecondsPerBeat );
+		bpmSeg.SetBPS( float( 1. / fSecondsPerBeat ) );
 
 		songOut.m_SongTiming.AddBPMSegment( bpmSeg );
 	}
