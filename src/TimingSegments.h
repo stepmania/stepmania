@@ -439,6 +439,91 @@ private:
 	float bps;
 };
 
+/**
+ * @brief Identifies when a song changes its time signature.
+ *
+ * This only supports simple time signatures. The upper number
+ * (called the numerator here, though this isn't properly a 
+ * fraction) is the number of beats per measure. The lower number
+ * (denominator here) is the note value representing one beat. */
+struct TimeSignatureSegment : public TimingSegment<TimeSignatureSegment>
+{
+	/**
+	 * @brief Creates a simple Time Signature Segment with default values.
+	 */
+	TimeSignatureSegment():
+		TimingSegment<TimeSignatureSegment>(),
+		numerator(4), denominator(4)  { }
+	/**
+	 * @brief Creates a Time Signature Segment with supplied values.
+	 *
+	 * The denominator will be 4 if this is called.
+	 * @param r the starting row / beat of the segment.
+	 * @param n the numerator for the segment.
+	 */
+	template <typename StartType>
+	TimeSignatureSegment( StartType r, int n ):
+		TimingSegment<TimeSignatureSegment>(max((StartType)0, r)),
+		numerator(max(1, n)), denominator(4) {}
+	/**
+	 * @brief Creates a Time Signature Segment with supplied values.
+	 * @param r the starting row of the segment.
+	 * @param n the numerator for the segment.
+	 * @param d the denonimator for the segment.
+	 */
+	template <typename StartType>
+	TimeSignatureSegment( StartType r, int n, int d ):
+		TimingSegment<TimeSignatureSegment>(max((StartType)0, r)),
+		numerator(max(1, n)), denominator(max(1, d)) {}
+	
+	/**
+	 * @brief Get the numerator in this TimeSignatureSegment.
+	 * @return the numerator. */
+	int GetNum() const;
+	
+	/**
+	 * @brief Set the numerator in this TimeSignatureSegment.
+	 * @param i the numerator. */
+	void SetNum(const int i);
+	
+	/**
+	 * @brief Get the denominator in this TimeSignatureSegment.
+	 * @return the denominator. */
+	int GetDen() const;
+	
+	/**
+	 * @brief Set the denominator in this TimeSignatureSegment.
+	 * @param i the denominator. */
+	void SetDen(const int i);
+	
+	/**
+	 * @brief Retrieve the number of note rows per measure within the TimeSignatureSegment.
+	 * 
+	 * With BeatToNoteRow(1) rows per beat, then we should have BeatToNoteRow(1)*m_iNumerator
+	 * beats per measure. But if we assume that every BeatToNoteRow(1) rows is a quarter note,
+	 * and we want the beats to be 1/m_iDenominator notes, then we should have
+	 * BeatToNoteRow(1)*4 is rows per whole note and thus BeatToNoteRow(1)*4/m_iDenominator is
+	 * rows per beat. Multiplying by m_iNumerator gives rows per measure.
+	 * @returns the number of note rows per measure.
+	 */
+	int GetNoteRowsPerMeasure() const;
+
+	/**
+	 * @brief Compares two TimeSignatureSegments to see if one is less than the other.
+	 * @param other the other TimeSignatureSegment to compare to.
+	 * @return the truth/falsehood of if the first is less than the second.
+	 */
+	bool operator<( const TimeSignatureSegment &other ) const;
+private:
+	/**
+	 * @brief The numerator of the TimeSignatureSegment.
+	 */
+	int numerator;
+	/**
+	 * @brief The denominator of the TimeSignatureSegment.
+	 */
+	int denominator;
+};
 
 
 

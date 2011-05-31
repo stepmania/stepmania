@@ -138,40 +138,40 @@ void TimingData::SetTimeSignatureAtRow( int iRow, int iNumerator, int iDenominat
 	unsigned i;
 	for( i = 0; i < m_vTimeSignatureSegments.size(); i++ )
 	{
-		if( m_vTimeSignatureSegments[i].m_iStartRow >= iRow)
+		if( m_vTimeSignatureSegments[i].GetRow() >= iRow)
 			break; // We found our segment.
 	}
 	
-	if ( i == m_vTimeSignatureSegments.size() || m_vTimeSignatureSegments[i].m_iStartRow != iRow )
+	if ( i == m_vTimeSignatureSegments.size() || m_vTimeSignatureSegments[i].GetRow() != iRow )
 	{
 		// No specific segmeent here: place one if it differs.
 		if( i == 0 || 
-		   ( m_vTimeSignatureSegments[i-1].m_iNumerator != iNumerator
-		    || m_vTimeSignatureSegments[i-1].m_iDenominator != iDenominator ) )
+		   ( m_vTimeSignatureSegments[i-1].GetNum() != iNumerator
+		    || m_vTimeSignatureSegments[i-1].GetDen() != iDenominator ) )
 			AddTimeSignatureSegment( TimeSignatureSegment(iRow, iNumerator, iDenominator) );
 	}
 	else	// TimeSignatureSegment being modified is m_vTimeSignatureSegments[i]
 	{
-		if( i > 0  && m_vTimeSignatureSegments[i-1].m_iNumerator == iNumerator
-		   && m_vTimeSignatureSegments[i-1].m_iDenominator == iDenominator )
+		if( i > 0  && m_vTimeSignatureSegments[i-1].GetNum() == iNumerator
+		   && m_vTimeSignatureSegments[i-1].GetDen() == iDenominator )
 			m_vTimeSignatureSegments.erase( m_vTimeSignatureSegments.begin()+i,
 						       m_vTimeSignatureSegments.begin()+i+1 );
 		else
 		{
-			m_vTimeSignatureSegments[i].m_iNumerator = iNumerator;
-			m_vTimeSignatureSegments[i].m_iDenominator = iDenominator;
+			m_vTimeSignatureSegments[i].SetNum(iNumerator);
+			m_vTimeSignatureSegments[i].SetDen(iDenominator);
 		}
 	}
 }
 
 void TimingData::SetTimeSignatureNumeratorAtRow( int iRow, int iNumerator )
 {
-	SetTimeSignatureAtRow( iRow, iNumerator, GetTimeSignatureSegmentAtBeat( NoteRowToBeat( iRow ) ).m_iDenominator );
+	SetTimeSignatureAtRow( iRow, iNumerator, GetTimeSignatureSegmentAtBeat( NoteRowToBeat( iRow ) ).GetDen() );
 }
 
 void TimingData::SetTimeSignatureDenominatorAtRow( int iRow, int iDenominator )
 {
-	SetTimeSignatureAtRow( iRow, GetTimeSignatureSegmentAtBeat( NoteRowToBeat( iRow ) ).m_iNumerator, iDenominator );
+	SetTimeSignatureAtRow( iRow, GetTimeSignatureSegmentAtBeat( NoteRowToBeat( iRow ) ).GetNum(), iDenominator );
 }
 
 void TimingData::SetWarpAtRow( int iRow, float fNew )
@@ -586,7 +586,7 @@ int TimingData::GetTimeSignatureSegmentIndexAtRow( int iRow ) const
 {
 	unsigned i;
 	for (i=0; i < m_vTimeSignatureSegments.size() - 1; i++ )
-		if( m_vTimeSignatureSegments[i+1].m_iStartRow > iRow )
+		if( m_vTimeSignatureSegments[i+1].GetRow() > iRow )
 			break;
 	return static_cast<int>(i);
 }
@@ -647,7 +647,7 @@ TimeSignatureSegment& TimingData::GetTimeSignatureSegmentAtRow( int iRow )
 {
 	unsigned i;
 	for( i=0; i<m_vTimeSignatureSegments.size()-1; i++ )
-		if( m_vTimeSignatureSegments[i+1].m_iStartRow > iRow )
+		if( m_vTimeSignatureSegments[i+1].GetRow() > iRow )
 			break;
 	return m_vTimeSignatureSegments[i];
 }
@@ -672,12 +672,12 @@ ScrollSegment& TimingData::GetScrollSegmentAtRow( int iRow )
 
 int TimingData::GetTimeSignatureNumeratorAtRow( int iRow )
 {
-	return GetTimeSignatureSegmentAtRow( iRow ).m_iNumerator;
+	return GetTimeSignatureSegmentAtRow( iRow ).GetNum();
 }
 
 int TimingData::GetTimeSignatureDenominatorAtRow( int iRow )
 {
-	return GetTimeSignatureSegmentAtRow( iRow ).m_iDenominator;
+	return GetTimeSignatureSegmentAtRow( iRow ).GetDen();
 }
 
 ComboSegment& TimingData::GetComboSegmentAtRow( int iRow )
@@ -1044,13 +1044,13 @@ void TimingData::ScaleRegion( float fScale, int iStartIndex, int iEndIndex, bool
 	for( unsigned i = 0; i < m_vTimeSignatureSegments.size(); i++ )
 	{
 		TimeSignatureSegment &t = m_vTimeSignatureSegments[i];
-		const int iSegStartRow = t.m_iStartRow;
+		const int iSegStartRow = t.GetRow();
 		if( iSegStartRow < iStartIndex )
 			continue;
 		else if( iSegStartRow > iEndIndex )
-			t.m_iStartRow += lrintf((iEndIndex - iStartIndex) * (fScale - 1));
+			t.SetRow(t.GetRow() + lrintf((iEndIndex - iStartIndex) * (fScale - 1)));
 		else
-			t.m_iStartRow = lrintf((iSegStartRow - iStartIndex) * fScale) + iStartIndex;
+			t.SetRow(lrintf((iSegStartRow - iStartIndex) * fScale) + iStartIndex);
 	}
 	
 	for( unsigned i = 0; i < m_WarpSegments.size(); i++ )
@@ -1211,9 +1211,9 @@ void TimingData::InsertRows( int iStartRow, int iRowsToAdd )
 	for( unsigned i = 0; i < m_vTimeSignatureSegments.size(); i++ )
 	{
 		TimeSignatureSegment &time = m_vTimeSignatureSegments[i];
-		if( time.m_iStartRow < iStartRow )
+		if( time.GetRow() < iStartRow )
 			continue;
-		time.m_iStartRow += iRowsToAdd;
+		time.SetRow(time.GetRow() + iRowsToAdd);
 	}
 	
 	for( unsigned i = 0; i < m_TickcountSegments.size(); i++ )
@@ -1340,13 +1340,13 @@ void TimingData::DeleteRows( int iStartRow, int iRowsToDelete )
 	for( unsigned i = 0; i < m_vTimeSignatureSegments.size(); i++ )
 	{
 		TimeSignatureSegment &time = m_vTimeSignatureSegments[i];
-		
+		int keyRow = time.GetRow();
 		// Before deleted region:
-		if( time.m_iStartRow < iStartRow )
+		if( keyRow < iStartRow )
 			continue;
 		
 		// Inside deleted region:
-		if( time.m_iStartRow < iStartRow+iRowsToDelete )
+		if( keyRow < iStartRow+iRowsToDelete )
 		{
 			m_vTimeSignatureSegments.erase( 
 				m_vTimeSignatureSegments.begin()+i, 
@@ -1358,7 +1358,7 @@ void TimingData::DeleteRows( int iStartRow, int iRowsToDelete )
 		// After deleted region:
 		
 		
-		time.m_iStartRow -= iRowsToDelete;
+		time.SetRow(keyRow - iRowsToDelete);
 	}
 	
 	for( unsigned i = 0; i < m_TickcountSegments.size(); i++ )
@@ -1614,14 +1614,14 @@ void TimingData::NoteRowToMeasureAndBeat( int iNoteRow, int &iMeasureIndexOut, i
 	{
 		vector<TimeSignatureSegment>::const_iterator next = iter;
 		next++;
-		int iSegmentEndRow = (next == m_vTimeSignatureSegments.end()) ? INT_MAX : next->m_iStartRow;
+		int iSegmentEndRow = (next == m_vTimeSignatureSegments.end()) ? INT_MAX : next->GetRow();
 
 		int iRowsPerMeasureThisSegment = iter->GetNoteRowsPerMeasure();
 
-		if( iNoteRow >= iter->m_iStartRow )
+		if( iNoteRow >= iter->GetRow() )
 		{
 			// iNoteRow lands in this segment
-			int iNumRowsThisSegment = iNoteRow - iter->m_iStartRow;
+			int iNumRowsThisSegment = iNoteRow - iter->GetRow();
 			int iNumMeasuresThisSegment = (iNumRowsThisSegment) / iRowsPerMeasureThisSegment;	// don't round up
 			iMeasureIndexOut += iNumMeasuresThisSegment;
 			iBeatIndexOut = iNumRowsThisSegment / iRowsPerMeasureThisSegment;
@@ -1631,7 +1631,7 @@ void TimingData::NoteRowToMeasureAndBeat( int iNoteRow, int &iMeasureIndexOut, i
 		else
 		{
 			// iNoteRow lands after this segment
-			int iNumRowsThisSegment = iSegmentEndRow - iter->m_iStartRow;
+			int iNumRowsThisSegment = iSegmentEndRow - iter->GetRow();
 			int iNumMeasuresThisSegment = (iNumRowsThisSegment + iRowsPerMeasureThisSegment - 1) / iRowsPerMeasureThisSegment;	// round up
 			iMeasureIndexOut += iNumMeasuresThisSegment;
 		}

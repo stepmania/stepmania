@@ -382,15 +382,15 @@ void SMLoader::ProcessTimeSignatures( TimingData &out, const RString sParam )
 			continue;
 		}
 		
-		if( seg.m_iNumerator < 1 )
+		if( seg.GetNum() < 1 )
 		{
-			LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid time signature change with beat %f, iNumerator %i.", fBeat, seg.m_iNumerator );
+			LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid time signature change with beat %f, iNumerator %i.", fBeat, seg.GetNum() );
 			continue;
 		}
 		
-		if( seg.m_iDenominator < 1 )
+		if( seg.GetDen() < 1 )
 		{
-			LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid time signature change with beat %f, iDenominator %i.", fBeat, seg.m_iDenominator );
+			LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid time signature change with beat %f, iDenominator %i.", fBeat, seg.GetDen() );
 			continue;
 		}
 		

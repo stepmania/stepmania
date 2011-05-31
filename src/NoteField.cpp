@@ -857,16 +857,16 @@ void NoteField::DrawPrimitives()
 		{
 			vector<TimeSignatureSegment>::const_iterator next = iter;
 			next++;
-			int iSegmentEndRow = (next == vTimeSignatureSegments.end()) ? iLastRowToDraw : next->m_iStartRow;
+			int iSegmentEndRow = (next == vTimeSignatureSegments.end()) ? iLastRowToDraw : next->GetRow();
 
 			// beat bars every 16th note
-			int iDrawBeatBarsEveryRows = BeatToNoteRow( ((float)iter->m_iDenominator) / 4 ) / 4;
+			int iDrawBeatBarsEveryRows = BeatToNoteRow( ((float)iter->GetDen()) / 4 ) / 4;
 
 			// In 4/4, every 16th beat bar is a measure
-			int iMeasureBarFrequency =  iter->m_iNumerator * 4;
+			int iMeasureBarFrequency =  iter->GetNum() * 4;
 			int iBeatBarsDrawn = 0;
 
-			for( int i=iter->m_iStartRow; i < iSegmentEndRow; i += iDrawBeatBarsEveryRows )
+			for( int i=iter->GetRow(); i < iSegmentEndRow; i += iDrawBeatBarsEveryRows )
 			{
 				bool bMeasureBar = iBeatBarsDrawn % iMeasureBarFrequency == 0;
 				BeatBarType type = quarter_beat;
@@ -933,11 +933,11 @@ void NoteField::DrawPrimitives()
 		// Time Signature text
 		FOREACH_CONST( TimeSignatureSegment, timing.m_vTimeSignatureSegments, seg )
 		{
-			if( seg->m_iStartRow >= iFirstRowToDraw && seg->m_iStartRow <= iLastRowToDraw )
+			if( seg->GetRow() >= iFirstRowToDraw && seg->GetRow() <= iLastRowToDraw )
 			{
-				float fBeat = NoteRowToBeat(seg->m_iStartRow);
+				float fBeat = seg->GetBeat();
 				if( IS_ON_SCREEN(fBeat) )
-					DrawTimeSignatureText( fBeat, seg->m_iNumerator, seg->m_iDenominator );
+					DrawTimeSignatureText( fBeat, seg->GetNum(), seg->GetDen() );
 			}
 		}
 		

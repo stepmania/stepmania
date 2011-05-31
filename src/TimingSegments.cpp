@@ -162,6 +162,39 @@ bool BPMSegment::operator<( const BPMSegment &other ) const
 	return false;
 }
 
+int TimeSignatureSegment::GetNum() const
+{
+	return this->numerator;
+}
+
+void TimeSignatureSegment::SetNum(const int i)
+{
+	this->numerator = i;
+}
+
+int TimeSignatureSegment::GetDen() const
+{
+	return this->denominator;
+}
+
+void TimeSignatureSegment::SetDen(const int i)
+{
+	this->denominator = i;
+}
+
+int TimeSignatureSegment::GetNoteRowsPerMeasure() const
+{
+	return BeatToNoteRow(1) * 4 * numerator / denominator;
+}
+
+bool TimeSignatureSegment::operator<( const TimeSignatureSegment &other ) const
+{ 
+	LTCOMPARE(GetRow());
+	LTCOMPARE(GetNum());
+	LTCOMPARE(GetDen());
+	return false;
+}
+
 
 
 

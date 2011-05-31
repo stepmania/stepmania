@@ -687,10 +687,9 @@ static bool LoadFromMidi( const RString &sPath, Song &songOut )
 
 	FOREACH_CONST( MidiFileIn::TimeSignatureChange, midi.timeSignatureEvents_, iter )
 	{
-		TimeSignatureSegment seg;
-		seg.m_iStartRow = MidiCountToNoteRow( iter->count );
-		seg.m_iNumerator = iter->numerator;
-		seg.m_iDenominator = iter->denominator;
+		TimeSignatureSegment seg(MidiCountToNoteRow( iter->count ),
+					 iter->numerator,
+					 iter->denominator);
 
 		songOut.m_SongTiming.AddTimeSignatureSegment( seg );
 	}

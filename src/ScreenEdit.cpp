@@ -1307,7 +1307,9 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			m_iShiftAnchor = -1;
 		return;
 	}
-	int beatsPerMeasure = GAMESTATE->m_pCurSong->m_SongTiming.GetTimeSignatureSegmentAtBeat( GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat ).m_iNumerator;
+	TimingData &sTiming = GAMESTATE->m_pCurSong->m_SongTiming;
+	float playerBeat = GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat;
+	int beatsPerMeasure = sTiming.GetTimeSignatureSegmentAtBeat( playerBeat ).GetNum();
 	
 	switch( EditB )
 	{
@@ -3967,13 +3969,16 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 		);
 		break;
 	case time_signature:
+	{
+		TimeSignatureSegment &ts = GetAppropriateTiming().GetTimeSignatureSegmentAtBeat( GetBeat() );
 		ScreenTextEntry::TextEntry(
 			SM_BackFromTimeSignatureChange,
 			ENTER_TIME_SIGNATURE_VALUE,
-			ssprintf( "%d/%d", GetAppropriateTiming().GetTimeSignatureSegmentAtBeat( GetBeat() ).m_iNumerator, GetAppropriateTiming().GetTimeSignatureSegmentAtBeat( GetBeat() ).m_iDenominator ),
+			ssprintf( "%d/%d", ts.GetNum(), ts.GetDen() ),
 			8
 			);
 		break;
+	}
 	case tickcount:
 		ScreenTextEntry::TextEntry(
 			SM_BackFromTickcountChange,
@@ -4259,7 +4264,7 @@ void ScreenEdit::CheckNumberOfNotesAndUndo()
 		return;
 	
 	TimeSignatureSegment curTime = GAMESTATE->m_pCurSong->m_SongTiming.GetTimeSignatureSegmentAtBeat( GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat );
-	int rowsPerMeasure = curTime.m_iDenominator * curTime.m_iNumerator;
+	int rowsPerMeasure = curTime.GetDen() * curTime.GetNum();
 
 	for( int row=0; row<=m_NoteDataEdit.GetLastRow(); row+=rowsPerMeasure )
 	{
@@ -4310,7 +4315,9 @@ float ScreenEdit::GetMaximumBeatForNewNote() const
 			/* Round up to the next measure end.  Some songs end on weird beats 
 			 * mid-measure, and it's odd to have movement capped to these weird
 			 * beats. */
-			int beatsPerMeasure = GAMESTATE->m_pCurSong->m_SongTiming.GetTimeSignatureSegmentAtBeat( GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat ).m_iNumerator;
+			TimingData &songTiming = GAMESTATE->m_pCurSong->m_SongTiming;
+			float playerBeat = GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat;
+			int beatsPerMeasure = songTiming.GetTimeSignatureSegmentAtBeat( playerBeat ).GetNum();
 			fEndBeat += beatsPerMeasure;
 			fEndBeat = ftruncf( fEndBeat, (float)beatsPerMeasure );
 

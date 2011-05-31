@@ -116,7 +116,7 @@ static void GetTimingTags( vector<RString> &lines, TimingData timing, bool bIsSo
 	ASSERT( !timing.m_vTimeSignatureSegments.empty() );
 	w.Init( "TIMESIGNATURES" );
 	FOREACH_CONST( TimeSignatureSegment, timing.m_vTimeSignatureSegments, iter )
-		w.Write( iter->m_iStartRow, iter->m_iNumerator, iter->m_iDenominator );
+		w.Write( iter->GetRow(), iter->GetNum(), iter->GetDen() );
 	w.Finish();
 
 	ASSERT( !timing.m_TickcountSegments.empty() );

@@ -2881,7 +2881,7 @@ void Player::CrossedRows( int iLastRowCrossed, const RageTimer &now )
 			TimeSignatureSegment tSignature = m_Timing->GetTimeSignatureSegmentAtBeat( NoteRowToBeat( iLastRowCrossed ) );
 
 			// Most songs are in 4/4 time. The frequency for checking tick counts should reflect that.
-			iCheckpointFrequencyRows = ROWS_PER_BEAT * tSignature.m_iDenominator / (tSignature.m_iNumerator * 4);
+			iCheckpointFrequencyRows = ROWS_PER_BEAT * tSignature.GetDen() / (tSignature.GetNum() * 4);
 		}
 
 		if( iCheckpointFrequencyRows > 0 )
