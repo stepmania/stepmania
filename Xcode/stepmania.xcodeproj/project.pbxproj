@@ -25,6 +25,8 @@
 		1215D7A208C6559A00B87D8B /* ScreenGameplayNormal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1215D7A008C6559A00B87D8B /* ScreenGameplayNormal.cpp */; };
 		2B30D6821315EA7E00044B68 /* MouseDevice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2B30D6801315EA7E00044B68 /* MouseDevice.cpp */; };
 		2B30D6831315EA7E00044B68 /* MouseDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B30D6811315EA7E00044B68 /* MouseDevice.h */; };
+		2B43509513949F37006FA051 /* TimingSegments.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B43509313949F37006FA051 /* TimingSegments.h */; };
+		2B43509613949F37006FA051 /* TimingSegments.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2B43509413949F37006FA051 /* TimingSegments.cpp */; };
 		2B76698B132FF71500586512 /* NotesLoaderSMA.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B766989132FF71500586512 /* NotesLoaderSMA.h */; };
 		2B76698C132FF71500586512 /* NotesLoaderSMA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2B76698A132FF71500586512 /* NotesLoaderSMA.cpp */; };
 		2B9C2E8D137A138B004C92F3 /* NotesLoaderJson.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2B9C2E89137A138B004C92F3 /* NotesLoaderJson.cpp */; };
@@ -1802,6 +1804,8 @@
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		2B30D6801315EA7E00044B68 /* MouseDevice.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MouseDevice.cpp; sourceTree = "<group>"; };
 		2B30D6811315EA7E00044B68 /* MouseDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MouseDevice.h; sourceTree = "<group>"; };
+		2B43509313949F37006FA051 /* TimingSegments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TimingSegments.h; path = ../src/TimingSegments.h; sourceTree = SOURCE_ROOT; };
+		2B43509413949F37006FA051 /* TimingSegments.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TimingSegments.cpp; path = ../src/TimingSegments.cpp; sourceTree = SOURCE_ROOT; };
 		2B766989132FF71500586512 /* NotesLoaderSMA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NotesLoaderSMA.h; path = ../src/NotesLoaderSMA.h; sourceTree = SOURCE_ROOT; };
 		2B76698A132FF71500586512 /* NotesLoaderSMA.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NotesLoaderSMA.cpp; path = ../src/NotesLoaderSMA.cpp; sourceTree = SOURCE_ROOT; };
 		2B9C2E89137A138B004C92F3 /* NotesLoaderJson.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NotesLoaderJson.cpp; path = ../src/NotesLoaderJson.cpp; sourceTree = SOURCE_ROOT; };
@@ -3961,6 +3965,8 @@
 				AA21D5A10712AE16008B825F /* ThemeMetric.h */,
 				AA729C420599B50D00779F33 /* TimingData.cpp */,
 				AA729C430599B50D00779F33 /* TimingData.h */,
+				2B43509413949F37006FA051 /* TimingSegments.cpp */,
+				2B43509313949F37006FA051 /* TimingSegments.h */,
 				AA6EFE0E04770C79005F316C /* TitleSubstitution.cpp */,
 				AA6EFE0F04770C79005F316C /* TitleSubstitution.h */,
 				AA70E3650663112800DAE1FD /* Trail.cpp */,
@@ -5065,6 +5071,7 @@
 				B75CE3B5137963350076A82D /* SongPosition.h in Headers */,
 				2B9C2E8E137A138B004C92F3 /* NotesLoaderJson.h in Headers */,
 				2B9C2E90137A138B004C92F3 /* NotesWriterJson.h in Headers */,
+				2B43509513949F37006FA051 /* TimingSegments.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6328,6 +6335,7 @@
 				2BC6133813773C8E00CC8BBD /* pngwrite.c in Sources */,
 				2BC6133913773C8E00CC8BBD /* pngwtran.c in Sources */,
 				2BC6133A13773C8E00CC8BBD /* pngwutil.c in Sources */,
+				2B43509613949F37006FA051 /* TimingSegments.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

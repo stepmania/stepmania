@@ -507,6 +507,9 @@
     <ClCompile Include="TimingData.cpp">
       <Filter>Data Structures</Filter>
     </ClCompile>
+    <ClCompile Include="TimingSegments.cpp">
+      <Filter>Data Structures</Filter>
+    </ClCompile>
     <ClCompile Include="TitleSubstitution.cpp">
       <Filter>Data Structures</Filter>
     </ClCompile>
@@ -2025,6 +2028,9 @@
       <Filter>Data Structures</Filter>
     </ClInclude>
     <ClInclude Include="TimingData.h">
+      <Filter>Data Structures</Filter>
+    </ClInclude>
+    <ClInclude Include="TimingSegments.h">
       <Filter>Data Structures</Filter>
     </ClInclude>
     <ClInclude Include="TitleSubstitution.h">
