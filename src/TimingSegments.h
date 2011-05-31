@@ -525,10 +525,6 @@ private:
 	int denominator;
 };
 
-
-
-#undef COMPARE
-
 #endif
 
 /**
