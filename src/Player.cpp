@@ -198,6 +198,9 @@ ThemeMetric<int> COMBO_STOPPED_AT ( "Player", "ComboStoppedAt" );
 ThemeMetric<float> ATTACK_RUN_TIME_RANDOM ( "Player", "AttackRunTimeRandom" );
 ThemeMetric<float> ATTACK_RUN_TIME_MINE ( "Player", "AttackRunTimeMine" );
 
+/** @brief Will battle modes have their steps mirrored or kept the same? */
+ThemeMetric<bool> BATTLE_RAVE_MIRROR ( "Player", "BattleRaveMirror" );
+
 float Player::GetWindowSeconds( TimingWindow tw )
 {
 	float fSecs = m_fTimingWindowSeconds[tw];
@@ -558,23 +561,26 @@ void Player::Load()
 			StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
 			NoteDataUtil::TransformNoteData( m_NoteData, m_pPlayerState->m_PlayerOptions.GetStage(), st );
 
-			// shuffle either p1 or p2
-			static int count = 0;
-			switch( count )
+			if (BATTLE_RAVE_MIRROR)
 			{
-			case 0:
-			case 3:
-				NoteDataUtil::Turn( m_NoteData, st, NoteDataUtil::left);
-				break;
-			case 1:
-			case 2:
-				NoteDataUtil::Turn( m_NoteData, st, NoteDataUtil::right);
-				break;
-			default:
-				ASSERT(0);
+				// shuffle either p1 or p2
+				static int count = 0;
+				switch( count )
+				{
+				case 0:
+				case 3:
+					NoteDataUtil::Turn( m_NoteData, st, NoteDataUtil::left);
+					break;
+				case 1:
+				case 2:
+					NoteDataUtil::Turn( m_NoteData, st, NoteDataUtil::right);
+					break;
+				default:
+					ASSERT(0);
+				}
+				count++;
+				count %= 4;
 			}
-			count++;
-			count %= 4;
 		}
 		break;
 	}
