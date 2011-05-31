@@ -179,7 +179,7 @@ void TimingData::SetWarpAtRow( int iRow, float fNew )
 {
 	unsigned i;
 	for( i=0; i<m_WarpSegments.size(); i++ )
-		if( m_WarpSegments[i].m_iStartRow == iRow )
+		if( m_WarpSegments[i].GetRow() == iRow )
 			break;
 	bool valid = iRow > 0 && fNew > 0;
 	if( i == m_WarpSegments.size() )
@@ -193,7 +193,7 @@ void TimingData::SetWarpAtRow( int iRow, float fNew )
 	{
 		if( valid )
 		{
-			m_WarpSegments[i].m_fLengthBeats = fNew;
+			m_WarpSegments[i].SetLength(fNew);
 		}
 		else
 			m_WarpSegments.erase( m_WarpSegments.begin()+i, m_WarpSegments.begin()+i+1 );
@@ -410,9 +410,9 @@ float TimingData::GetWarpAtRow( int iWarpRow ) const
 {
 	for( unsigned i=0; i<m_WarpSegments.size(); i++ )
 	{
-		if( m_WarpSegments[i].m_iStartRow == iWarpRow )
+		if( m_WarpSegments[i].GetRow() == iWarpRow )
 		{
-			return m_WarpSegments[i].m_fLengthBeats;
+			return m_WarpSegments[i].GetLength();
 		}
 	}
 	return 0;
@@ -526,7 +526,7 @@ int TimingData::GetWarpSegmentIndexAtRow( int iNoteRow ) const
 	for( i=0; i<m_WarpSegments.size()-1; i++ )
 	{
 		const WarpSegment& s = m_WarpSegments[i+1];
-		if( s.m_iStartRow > iNoteRow )
+		if( s.GetRow() > iNoteRow )
 			break;
 	}
 	return static_cast<int>(i);
@@ -551,7 +551,8 @@ bool TimingData::IsWarpAtRow( int iNoteRow ) const
 	
 	int i = GetWarpSegmentIndexAtRow( iNoteRow );
 	const WarpSegment& s = m_WarpSegments[i];
-	if( s.m_iStartRow <= iNoteRow && iNoteRow < (s.m_iStartRow + BeatToNoteRow(s.m_fLengthBeats) ) )
+	float beatRow = NoteRowToBeat(iNoteRow);
+	if( s.GetBeat() <= beatRow && beatRow < (s.GetBeat() + s.GetLength() ) )
 	{
 		// Allow stops inside warps to allow things like stop, warp, stop, warp, stop, and so on.
 		if( m_StopSegments.empty() )
@@ -844,9 +845,9 @@ void TimingData::GetBeatAndBPSFromElapsedTimeNoOffset( float fElapsedTime, float
 			iEventRow = itSS->m_iStartRow;
 			iEventType = FOUND_STOP;
 		}
-		if( itWS != m_WarpSegments.end() && itWS->m_iStartRow < iEventRow )
+		if( itWS != m_WarpSegments.end() && itWS->GetRow() < iEventRow )
 		{
-			iEventRow = itWS->m_iStartRow;
+			iEventRow = itWS->GetRow();
 			iEventType = FOUND_WARP;
 		}
 		if( iEventType == NOT_FOUND )
@@ -889,7 +890,7 @@ void TimingData::GetBeatAndBPSFromElapsedTimeNoOffset( float fElapsedTime, float
 		case FOUND_WARP:
 			{
 				bIsWarping = true;
-				float fWarpSum = itWS->m_fLengthBeats + NoteRowToBeat( itWS->m_iStartRow );
+				float fWarpSum = itWS->GetLength() + itWS->GetBeat();
 				if( fWarpSum > fWarpDestination )
 				{
 					fWarpDestination = fWarpSum;
@@ -956,9 +957,9 @@ float TimingData::GetElapsedTimeFromBeatNoOffset( float fBeat ) const
 			iEventRow = itSS->m_iStartRow;
 			iEventType = FOUND_STOP;
 		}
-		if( itWS != m_WarpSegments.end() && itWS->m_iStartRow < iEventRow )
+		if( itWS != m_WarpSegments.end() && itWS->GetRow() < iEventRow )
 		{
-			iEventRow = itWS->m_iStartRow;
+			iEventRow = itWS->GetRow();
 			iEventType = FOUND_WARP;
 		}
 		float fTimeToNextEvent = bIsWarping ? 0 : NoteRowToBeat( iEventRow - iLastRow ) / fBPS;
@@ -984,7 +985,7 @@ float TimingData::GetElapsedTimeFromBeatNoOffset( float fBeat ) const
 		case FOUND_WARP:
 			{
 				bIsWarping = true;
-				float fWarpSum = itWS->m_fLengthBeats + NoteRowToBeat( itWS->m_iStartRow );
+				float fWarpSum = itWS->GetLength() + itWS->GetBeat();
 				if( fWarpSum > fWarpDestination )
 				{
 					fWarpDestination = fWarpSum;
@@ -1052,21 +1053,23 @@ void TimingData::ScaleRegion( float fScale, int iStartIndex, int iEndIndex, bool
 	
 	for( unsigned i = 0; i < m_WarpSegments.size(); i++ )
 	{
-		const int iSegStartRow = m_WarpSegments[i].m_iStartRow;
-		const int iSegEndRow = iSegStartRow + BeatToNoteRow( m_WarpSegments[i].m_fLengthBeats );
+		WarpSegment &w = m_WarpSegments[i];
+		const int iSegStartRow = w.GetRow();
+		const int iSegEndRow = iSegStartRow + BeatToNoteRow( w.GetLength() );
 		if( iSegEndRow >= iStartIndex )
 		{
 			if( iSegEndRow > iEndIndex )
-				m_WarpSegments[i].m_fLengthBeats += NoteRowToBeat(lrintf((iEndIndex - iStartIndex) * (fScale - 1)));
+				w.SetLength(w.GetLength() +
+					    NoteRowToBeat(lrintf((iEndIndex - iStartIndex) * (fScale - 1))));
 			else
-				m_WarpSegments[i].m_fLengthBeats = NoteRowToBeat(lrintf((iSegEndRow - iStartIndex) * fScale));
+				w.SetLength(NoteRowToBeat(lrintf((iSegEndRow - iStartIndex) * fScale)));
 		}
 		if( iSegStartRow < iStartIndex )
 			continue;
 		else if( iSegStartRow > iEndIndex )
-			m_WarpSegments[i].m_iStartRow += lrintf((iEndIndex - iStartIndex) * (fScale - 1));
+			w.SetRow(w.GetRow() + lrintf((iEndIndex - iStartIndex) * (fScale - 1)));
 		else
-			m_WarpSegments[i].m_iStartRow = lrintf((iSegStartRow - iStartIndex) * fScale) + iStartIndex;
+			w.SetRow(lrintf((iSegStartRow - iStartIndex) * fScale) + iStartIndex);
 	}
 	
 	for ( unsigned i = 0; i < m_TickcountSegments.size(); i++ )
@@ -1194,9 +1197,9 @@ void TimingData::InsertRows( int iStartRow, int iRowsToAdd )
 	for( unsigned i = 0; i < m_WarpSegments.size(); i++ )
 	{
 		WarpSegment &warp = m_WarpSegments[i];
-		if( warp.m_iStartRow < iStartRow )
+		if( warp.GetRow() < iStartRow )
 			continue;
-		warp.m_iStartRow += iRowsToAdd;
+		warp.SetRow(warp.GetRow() + iRowsToAdd);
 	}
 	
 	for( unsigned i = 0; i < m_vTimeSignatureSegments.size(); i++ )
@@ -1314,18 +1317,18 @@ void TimingData::DeleteRows( int iStartRow, int iRowsToDelete )
 	for( unsigned i = 0; i < m_WarpSegments.size(); i++ )
 	{
 		WarpSegment &warp = m_WarpSegments[i];
-		
-		if( warp.m_iStartRow < iStartRow )
+		int keyRow = warp.GetRow();
+		if( keyRow < iStartRow )
 			continue;
 		
-		if( warp.m_iStartRow < iStartRow+iRowsToDelete )
+		if( keyRow < iStartRow+iRowsToDelete )
 		{
 			m_WarpSegments.erase( m_WarpSegments.begin()+i, m_WarpSegments.begin()+i+1 );
 			--i;
 			continue;
 		}
 		
-		warp.m_iStartRow -= iRowsToDelete;
+		warp.SetRow(keyRow - iRowsToDelete);
 	}
 	
 	for( unsigned i = 0; i < m_vTimeSignatureSegments.size(); i++ )

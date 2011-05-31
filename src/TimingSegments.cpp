@@ -53,6 +53,23 @@ bool FakeSegment::operator<( const FakeSegment &other ) const
 	return false;
 }
 
+float WarpSegment::GetLength() const
+{
+	return this->lengthBeats;
+}
+
+void WarpSegment::SetLength(const float b)
+{
+	this->lengthBeats = b;
+}
+
+bool WarpSegment::operator<( const WarpSegment &other ) const
+{ 
+	LTCOMPARE(GetRow());
+	LTCOMPARE(GetLength());
+	return false;
+}
+
 
 
 int TickcountSegment::GetTicks() const

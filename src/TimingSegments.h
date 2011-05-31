@@ -3,12 +3,6 @@
 
 #include "NoteTypes.h" // Converting rows to beats and vice~versa.
 
-/** 
- * @brief Compare a TimingData segment's properties with one another.
- *
- * This will be removed once we start respecting public & private data.*/
-#define COMPARE(x) if(x!=other.x) return false;
-
 /**
  * @brief The base timing segment for all of the changing glory.
  * 
@@ -91,7 +85,11 @@ struct TimingSegment: public BaseTimingSegment
 	 * This is virtual to allow other segments to implement comparison
 	 * as required by them.
 	 */
-	bool operator==( const DerivedSegment &other ) const { return !this->operator<(other) && !other.operator<(*static_cast<const DerivedSegment *>(this)); };	
+	bool operator==( const DerivedSegment &other ) const
+	{
+		return !this->operator<(other) && 
+		!other.operator<(*static_cast<const DerivedSegment *>(this));
+	};	
 	/**
 	 * @brief Compares two DrivedSegments to see if they are not equal to each other.
 	 * @param other the other DrivedSegments to compare to.
@@ -109,7 +107,10 @@ struct TimingSegment: public BaseTimingSegment
 	 * @param other the other DrivedSegments to compare to.
 	 * @return the truth/falsehood of if the first is greater than the second.
 	 */
-	bool operator>( const DerivedSegment &other ) const { return other.operator<(*static_cast<const DerivedSegment *>(this)); };
+	bool operator>( const DerivedSegment &other ) const
+	{
+		return other.operator<(*static_cast<const DerivedSegment *>(this));
+	};
 	/**
 	 * @brief Compares two DrivedSegments to see if one is greater than or equal to the other.
 	 * @param other the other DrivedSegments to compare to.
@@ -148,7 +149,8 @@ struct FakeSegment : public TimingSegment<FakeSegment>
 	 */
 	template <typename StartType, typename LengthType>
 	FakeSegment( StartType s, LengthType r ):
-		TimingSegment<FakeSegment>(max((StartType)0, s)), lengthBeats(ToBeat(max((LengthType)0, r))) {};
+		TimingSegment<FakeSegment>(max((StartType)0, s)), 
+		lengthBeats(ToBeat(max((LengthType)0, r))) {};
 	
 	/**
 	 * @brief Get the length in beats of the FakeSegment.
@@ -173,6 +175,62 @@ struct FakeSegment : public TimingSegment<FakeSegment>
 	 */
 	bool operator<( const FakeSegment &other ) const;
 	
+private:
+	/**
+	 * @brief The number of beats the FakeSegment is alive for.
+	 */
+	float lengthBeats;
+};
+
+/**
+ * @brief Identifies when a song needs to warp to a new beat.
+ *
+ * A warp segment is used to replicate the effects of Negative BPMs without
+ * abusing negative BPMs. Negative BPMs should be converted to warp segments.
+ * WarpAt=WarpToRelative is the format, where both are in beats.
+ * (Technically they're both rows though.) */
+struct WarpSegment : public TimingSegment<WarpSegment>
+{
+	/**
+	 * @brief Create a simple Warp Segment with default values.
+	 *
+	 * It is best to override the values as soon as possible.
+	 */
+	WarpSegment():
+		TimingSegment<WarpSegment>(), lengthBeats(-1) {};
+	
+	/**
+	 * @brief Create a Warp Segment with the specified values.
+	 * @param s the starting row of this segment.
+	 * @param r the number of rows this segment lasts.
+	 */
+	template <typename StartType, typename LengthType>
+	WarpSegment( StartType s, LengthType r ):
+		TimingSegment<WarpSegment>(max((StartType)0, s)), 
+		lengthBeats(ToBeat(max((LengthType)0, r))) {};
+
+	/**
+	 * @brief Get the length in beats of the WarpSegment.
+	 * @return the length in beats. */
+	float GetLength() const;
+	
+	/**
+	 * @brief Set the length in beats of the WarpSegment.
+	 * @param b the length in beats. */
+	void SetLength(const float b);
+	
+	/**
+	 * @brief Compares two WarpSegments to see if they are equal to each other.
+	 * @param other the other WarpSegment to compare to.
+	 * @return the equality of the two segments.
+	 */
+	bool operator==( const WarpSegment &other ) const;
+	/*
+	 * @brief Compares two WarpSegments to see if one is less than the other.
+	 * @param other the other WarpSegment to compare to.
+	 * @return the truth/falsehood of if the first is less than the second.
+	 */
+	bool operator<( const WarpSegment &other ) const;
 private:
 	/**
 	 * @brief The number of beats the FakeSegment is alive for.

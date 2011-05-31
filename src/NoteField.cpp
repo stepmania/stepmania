@@ -921,11 +921,11 @@ void NoteField::DrawPrimitives()
 		// Warp text
 		FOREACH_CONST( WarpSegment, timing.m_WarpSegments, seg )
 		{
-			if( seg->m_iStartRow >= iFirstRowToDraw && seg->m_iStartRow <= iLastRowToDraw )
+			if( seg->GetRow() >= iFirstRowToDraw && seg->GetRow() <= iLastRowToDraw )
 			{
-				float fBeat = NoteRowToBeat(seg->m_iStartRow);
+				float fBeat = seg->GetBeat();
 				if( IS_ON_SCREEN(fBeat) )
-					DrawWarpText( fBeat, seg->m_fLengthBeats );
+					DrawWarpText( fBeat, seg->GetLength() );
 			}
 		}
 		
