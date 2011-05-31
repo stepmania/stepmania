@@ -283,6 +283,56 @@ private:
 	int ticks;
 };
 
+/**
+ * @brief Identifies when a chart is entering a different section.
+ * 
+ * This is meant for helping to identify different sections of a chart
+ * versus relying on measures and beats alone.
+ */
+struct LabelSegment : public TimingSegment<LabelSegment>
+{
+	/**
+	 * @brief Creates a simple Label Segment with default values.
+	 *
+	 * It is best to override the values as soon as possible.
+	 */
+	LabelSegment() : 
+		TimingSegment<LabelSegment>(), label("") { }
+	/**
+	 * @brief Creates a Label Segment with the specified values.
+	 * @param s the starting row / beat of this segment.
+	 * @param l the label for this section.
+	 */
+	template <typename StartType>
+	LabelSegment( StartType s, RString l ):
+		TimingSegment<LabelSegment>(max((StartType)0, s)),
+		label(l) {}
+
+	/**
+	 * @brief Get the label in this LabelSegment.
+	 * @return the label. */
+	RString GetLabel() const;
+	
+	/**
+	 * @brief Set the label in this LabelSegment.
+	 * @param l the label. */
+	void SetLabel(const RString l);
+	
+	/**
+	 * @brief Compares two LabelSegments to see if one is less than the other.
+	 * @param other the other LabelSegment to compare to.
+	 * @return the truth/falsehood of if the first is less than the second.
+	 */
+	bool operator<( const LabelSegment &other ) const;
+
+private:
+	/**
+	 * @brief The label/section name for this point.
+	 */
+	RString label;
+};
+
+
 
 
 #undef COMPARE

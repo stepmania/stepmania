@@ -89,6 +89,23 @@ bool TickcountSegment::operator<( const TickcountSegment &other ) const
 	return false;
 }
 
+RString LabelSegment::GetLabel() const
+{
+	return this->label;
+}
+
+void LabelSegment::SetLabel(const RString l)
+{
+	this->label = l;
+}
+
+bool LabelSegment::operator<( const LabelSegment &other ) const
+{ 
+	LTCOMPARE(GetRow());
+	LTCOMPARE(GetLabel());
+	return false;
+}
+
 /**
  * @file
  * @author Jason Felds (c) 2011 

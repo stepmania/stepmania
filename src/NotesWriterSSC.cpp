@@ -152,7 +152,7 @@ static void GetTimingTags( vector<RString> &lines, TimingData timing, bool bIsSo
 	
 	w.Init( "LABELS" );
 	FOREACH_CONST( LabelSegment, timing.m_LabelSegments, ls )
-		w.Write( ls->m_iStartRow, ls->m_sLabel.c_str() );
+		w.Write( ls->GetRow(), ls->GetLabel().c_str() );
 	w.Finish();
 }
 

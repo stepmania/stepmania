@@ -972,11 +972,11 @@ void NoteField::DrawPrimitives()
 		// Label text
 		FOREACH_CONST( LabelSegment, timing.m_LabelSegments, seg )
 		{
-			if( seg->m_iStartRow >= iFirstRowToDraw && seg->m_iStartRow <= iLastRowToDraw )
+			if( seg->GetRow() >= iFirstRowToDraw && seg->GetRow() <= iLastRowToDraw )
 			{
-				float fBeat = NoteRowToBeat(seg->m_iStartRow);
+				float fBeat = seg->GetBeat();
 				if( IS_ON_SCREEN(fBeat) )
-					DrawLabelText( fBeat, seg->m_sLabel );
+					DrawLabelText( fBeat, seg->GetLabel() );
 			}
 		}
 		

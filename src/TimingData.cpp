@@ -248,20 +248,20 @@ void TimingData::SetLabelAtRow( int iRow, const RString sLabel )
 {
 	unsigned i;
 	for( i=0; i<m_LabelSegments.size(); i++ )
-		if( m_LabelSegments[i].m_iStartRow >= iRow )
+		if( m_LabelSegments[i].GetRow() >= iRow )
 			break;
 	
-	if( i == m_LabelSegments.size() || m_LabelSegments[i].m_iStartRow != iRow )
+	if( i == m_LabelSegments.size() || m_LabelSegments[i].GetRow() != iRow )
 	{
-		if( i == 0 || m_LabelSegments[i-1].m_sLabel != sLabel )
+		if( i == 0 || m_LabelSegments[i-1].GetLabel() != sLabel )
 			AddLabelSegment( LabelSegment(iRow, sLabel ) );
 	}
 	else
 	{
-		if( i > 0 && ( m_LabelSegments[i-1].m_sLabel == sLabel || sLabel == "" ) )
+		if( i > 0 && ( m_LabelSegments[i-1].GetLabel() == sLabel || sLabel == "" ) )
 			m_LabelSegments.erase( m_LabelSegments.begin()+i, m_LabelSegments.begin()+i+1 );
 		else
-			m_LabelSegments[i].m_sLabel = sLabel;
+			m_LabelSegments[i].SetLabel(sLabel);
 	}
 }
 
@@ -403,7 +403,7 @@ int TimingData::GetComboAtRow( int iNoteRow ) const
 
 RString TimingData::GetLabelAtRow( int iRow ) const
 {
-	return m_LabelSegments[GetLabelSegmentIndexAtRow( iRow )].m_sLabel;
+	return m_LabelSegments[GetLabelSegmentIndexAtRow( iRow )].GetLabel();
 }
 
 float TimingData::GetWarpAtRow( int iWarpRow ) const
@@ -610,7 +610,7 @@ int TimingData::GetLabelSegmentIndexAtRow( int iRow ) const
 	for( i=0; i<m_LabelSegments.size()-1; i++ )
 	{
 		const LabelSegment& s = m_LabelSegments[i+1];
-		if( s.m_iStartRow > iRow )
+		if( s.GetRow() > iRow )
 			break;
 	}
 	return static_cast<int>(i);
@@ -694,7 +694,7 @@ LabelSegment& TimingData::GetLabelSegmentAtRow( int iRow )
 {
 	unsigned i;
 	for( i=0; i<m_LabelSegments.size()-1; i++ )
-		if( m_LabelSegments[i+1].m_iStartRow > iRow )
+		if( m_LabelSegments[i+1].GetRow() > iRow )
 			break;
 	return m_LabelSegments[i];
 }
@@ -758,11 +758,11 @@ float TimingData::GetPreviousLabelSegmentBeatAtRow( int iRow ) const
 	float backup = -1;
 	for (unsigned i = 0; i < m_LabelSegments.size(); i++ )
 	{
-		if( m_LabelSegments[i].m_iStartRow >= iRow )
+		if( m_LabelSegments[i].GetRow() >= iRow )
 		{
 			break;
 		}
-		backup = NoteRowToBeat(m_LabelSegments[i].m_iStartRow);
+		backup = m_LabelSegments[i].GetBeat();
 	}
 	return (backup > -1) ? backup : NoteRowToBeat(iRow);
 }
@@ -771,11 +771,11 @@ float TimingData::GetNextLabelSegmentBeatAtRow( int iRow ) const
 {
 	for (unsigned i = 0; i < m_LabelSegments.size(); i++ )
 	{
-		if( m_LabelSegments[i].m_iStartRow <= iRow )
+		if( m_LabelSegments[i].GetRow() <= iRow )
 		{
 			continue;
 		}
-		return NoteRowToBeat(m_LabelSegments[i].m_iStartRow);
+		return m_LabelSegments[i].GetBeat();
 	}
 	return NoteRowToBeat(iRow);
 }
@@ -784,7 +784,7 @@ bool TimingData::DoesLabelExist( RString sLabel ) const
 {
 	FOREACH_CONST( LabelSegment, m_LabelSegments, seg )
 	{
-		if( seg->m_sLabel == sLabel )
+		if( seg->GetLabel() == sLabel )
 			return true;
 	}
 	return false;
@@ -1097,13 +1097,14 @@ void TimingData::ScaleRegion( float fScale, int iStartIndex, int iEndIndex, bool
 	
 	for ( unsigned i = 0; i < m_LabelSegments.size(); i++ )
 	{
-		const int iSegStart = m_LabelSegments[i].m_iStartRow;
+		LabelSegment &l = m_LabelSegments[i];
+		const int iSegStart = l.GetRow();
 		if( iSegStart < iStartIndex )
 			continue;
 		else if( iSegStart > iEndIndex )
-			m_LabelSegments[i].m_iStartRow += lrintf( (iEndIndex - iStartIndex) * (fScale - 1) );
+			l.SetRow(l.GetRow() + lrintf( (iEndIndex - iStartIndex) * (fScale - 1) ));
 		else
-			m_LabelSegments[i].m_iStartRow = lrintf( (iSegStart - iStartIndex) * fScale ) + iStartIndex;
+			l.SetRow(lrintf( (iSegStart - iStartIndex) * fScale ) + iStartIndex);
 	}
 	
 	for ( unsigned i = 0; i < m_SpeedSegments.size(); i++ )
@@ -1228,9 +1229,9 @@ void TimingData::InsertRows( int iStartRow, int iRowsToAdd )
 	for( unsigned i = 0; i < m_LabelSegments.size(); i++ )
 	{
 		LabelSegment &labl = m_LabelSegments[i];
-		if( labl.m_iStartRow < iStartRow )
+		if( labl.GetRow() < iStartRow )
 			continue;
-		labl.m_iStartRow += iRowsToAdd;
+		labl.SetRow(labl.GetRow() + iRowsToAdd);
 	}
 	
 	for( unsigned i = 0; i < m_SpeedSegments.size(); i++ )
@@ -1398,17 +1399,17 @@ void TimingData::DeleteRows( int iStartRow, int iRowsToDelete )
 	for( unsigned i = 0; i < m_LabelSegments.size(); i++ )
 	{
 		LabelSegment &labl = m_LabelSegments[i];
-		
-		if( labl.m_iStartRow < iStartRow )
+		int keyRow = labl.GetRow();
+		if( keyRow < iStartRow )
 			continue;
 		
-		if( labl.m_iStartRow < iStartRow+iRowsToDelete )
+		if( keyRow < iStartRow+iRowsToDelete )
 		{
 			m_LabelSegments.erase( m_LabelSegments.begin()+i, m_LabelSegments.begin()+i+1 );
 			--i;
 			continue;
 		}
-		labl.m_iStartRow -= iRowsToDelete;
+		labl.SetRow(keyRow - iRowsToDelete);
 	}
 	
 	for( unsigned i = 0; i < m_SpeedSegments.size(); i++ )
@@ -1693,8 +1694,8 @@ public:
 		vector<RString> vLabels;
 		FOREACH_CONST( LabelSegment, p->m_LabelSegments, seg )
 		{
-			const float fStartRow = NoteRowToBeat(seg->m_iStartRow);
-			const RString sLabel = seg->m_sLabel;
+			const float fStartRow = seg->GetBeat();
+			const RString sLabel = seg->GetLabel();
 			vLabels.push_back( ssprintf("%f=%s", fStartRow, sLabel.c_str()) );
 		}
 		LuaHelpers::CreateTableFromArray(vLabels, L);
