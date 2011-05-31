@@ -158,7 +158,7 @@ void BPMSegment::SetBPS(const float newBPS)
 bool BPMSegment::operator<( const BPMSegment &other ) const
 { 
 	LTCOMPARE(GetRow());
-	LTCOMPARE(GetBPM());
+	LTCOMPARE(GetBPS());
 	return false;
 }
 

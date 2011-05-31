@@ -1019,35 +1019,38 @@ void TimingData::ScaleRegion( float fScale, int iStartIndex, int iEndIndex, bool
 	
 	for ( unsigned i = 0; i < m_BPMSegments.size(); i++ )
 	{
-		const int iSegStart = m_BPMSegments[i].GetRow();
+		BPMSegment &b = m_BPMSegments[i];
+		const int iSegStart = b.GetRow();
 		if( iSegStart < iStartIndex )
 			continue;
 		else if( iSegStart > iEndIndex )
-			m_BPMSegments[i].SetRow( m_BPMSegments[i].GetRow() + lrintf( (iEndIndex - iStartIndex) * (fScale - 1) ) );
+			b.SetRow( b.GetRow() + lrintf( (iEndIndex - iStartIndex) * (fScale - 1) ) );
 		else
-			m_BPMSegments[i].SetRow( lrintf( (iSegStart - iStartIndex) * fScale ) + iStartIndex );
+			b.SetRow( lrintf( (iSegStart - iStartIndex) * fScale ) + iStartIndex );
 	}
 	
 	for( unsigned i = 0; i < m_StopSegments.size(); i++ )
 	{
-		const int iSegStartRow = m_StopSegments[i].m_iStartRow;
+		StopSegment &s = m_StopSegments[i];
+		const int iSegStartRow = s.m_iStartRow;
 		if( iSegStartRow < iStartIndex )
 			continue;
 		else if( iSegStartRow > iEndIndex )
-			m_StopSegments[i].m_iStartRow += lrintf((iEndIndex - iStartIndex) * (fScale - 1));
+			s.m_iStartRow += lrintf((iEndIndex - iStartIndex) * (fScale - 1));
 		else
-			m_StopSegments[i].m_iStartRow = lrintf((iSegStartRow - iStartIndex) * fScale) + iStartIndex;
+			s.m_iStartRow = lrintf((iSegStartRow - iStartIndex) * fScale) + iStartIndex;
 	}
 	
 	for( unsigned i = 0; i < m_vTimeSignatureSegments.size(); i++ )
 	{
-		const int iSegStartRow = m_vTimeSignatureSegments[i].m_iStartRow;
+		TimeSignatureSegment &t = m_vTimeSignatureSegments[i];
+		const int iSegStartRow = t.m_iStartRow;
 		if( iSegStartRow < iStartIndex )
 			continue;
 		else if( iSegStartRow > iEndIndex )
-			m_vTimeSignatureSegments[i].m_iStartRow += lrintf((iEndIndex - iStartIndex) * (fScale - 1));
+			t.m_iStartRow += lrintf((iEndIndex - iStartIndex) * (fScale - 1));
 		else
-			m_vTimeSignatureSegments[i].m_iStartRow = lrintf((iSegStartRow - iStartIndex) * fScale) + iStartIndex;
+			t.m_iStartRow = lrintf((iSegStartRow - iStartIndex) * fScale) + iStartIndex;
 	}
 	
 	for( unsigned i = 0; i < m_WarpSegments.size(); i++ )
@@ -1109,13 +1112,14 @@ void TimingData::ScaleRegion( float fScale, int iStartIndex, int iEndIndex, bool
 	
 	for ( unsigned i = 0; i < m_SpeedSegments.size(); i++ )
 	{
-		const int iSegStart = m_SpeedSegments[i].m_iStartRow;
+		SpeedSegment &s = m_SpeedSegments[i];
+		const int iSegStart = s.m_iStartRow;
 		if( iSegStart < iStartIndex )
 			continue;
 		else if( iSegStart > iEndIndex )
-			m_SpeedSegments[i].m_iStartRow += lrintf( (iEndIndex - iStartIndex) * (fScale - 1) );
+			s.m_iStartRow += lrintf( (iEndIndex - iStartIndex) * (fScale - 1) );
 		else
-			m_SpeedSegments[i].m_iStartRow = lrintf( (iSegStart - iStartIndex) * fScale ) + iStartIndex;
+			s.m_iStartRow = lrintf( (iSegStart - iStartIndex) * fScale ) + iStartIndex;
 	}
 	
 	for( unsigned i = 0; i < m_FakeSegments.size(); i++ )
@@ -1142,13 +1146,14 @@ void TimingData::ScaleRegion( float fScale, int iStartIndex, int iEndIndex, bool
 	
 	for( unsigned i = 0; i < m_ScrollSegments.size(); i++ )
 	{
-		const int iSegStartRow = m_ScrollSegments[i].m_iStartRow;
+		ScrollSegment &s = m_ScrollSegments[i];
+		const int iSegStartRow = s.m_iStartRow;
 		if( iSegStartRow < iStartIndex )
 			continue;
 		else if( iSegStartRow > iEndIndex )
-			m_ScrollSegments[i].m_iStartRow += lrintf((iEndIndex - iStartIndex) * (fScale - 1));
+			s.m_iStartRow += lrintf((iEndIndex - iStartIndex) * (fScale - 1));
 		else
-			m_ScrollSegments[i].m_iStartRow = lrintf((iSegStartRow - iStartIndex) * fScale) + iStartIndex;
+			s.m_iStartRow = lrintf((iSegStartRow - iStartIndex) * fScale) + iStartIndex;
 	}
 	
 	// adjust BPM changes to preserve timing
