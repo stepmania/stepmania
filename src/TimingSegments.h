@@ -163,12 +163,6 @@ struct FakeSegment : public TimingSegment<FakeSegment>
 	void SetLength(const float b);
 	
 	/**
-	 * @brief Compares two FakeSegments to see if they are equal to each other.
-	 * @param other the other FakeSegment to compare to.
-	 * @return the equality of the two segments.
-	 */
-	bool operator==( const FakeSegment &other ) const;
-	/**
 	 * @brief Compares two FakeSegments to see if one is less than the other.
 	 * @param other the other FakeSegment to compare to.
 	 * @return the truth/falsehood of if the first is less than the second.
@@ -219,12 +213,6 @@ struct WarpSegment : public TimingSegment<WarpSegment>
 	 * @param b the length in beats. */
 	void SetLength(const float b);
 	
-	/**
-	 * @brief Compares two WarpSegments to see if they are equal to each other.
-	 * @param other the other WarpSegment to compare to.
-	 * @return the equality of the two segments.
-	 */
-	bool operator==( const WarpSegment &other ) const;
 	/*
 	 * @brief Compares two WarpSegments to see if one is less than the other.
 	 * @param other the other WarpSegment to compare to.
@@ -281,12 +269,6 @@ struct TickcountSegment : public TimingSegment<TickcountSegment>
 	 * @param i the tickcount. */
 	void SetTicks(const int i);
 	
-	/**
-	 * @brief Compares two TickcountSegments to see if they are equal to each other.
-	 * @param other the other TickcountSegment to compare to.
-	 * @return the equality of the two segments.
-	 */
-	bool operator==( const TickcountSegment &other ) const;
 	/**
 	 * @brief Compares two TickcountSegments to see if one is less than the other.
 	 * @param other the other TickcountSegment to compare to.
