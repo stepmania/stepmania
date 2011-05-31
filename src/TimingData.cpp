@@ -327,7 +327,7 @@ void TimingData::SetFakeAtRow( int iRow, float fNew )
 {
 	unsigned i;
 	for( i=0; i<m_FakeSegments.size(); i++ )
-		if( m_FakeSegments[i].m_iStartRow == iRow )
+		if( m_FakeSegments[i].GetRow() == iRow )
 			break;
 	bool valid = iRow > 0 && fNew > 0;
 	if( i == m_FakeSegments.size() )
@@ -341,7 +341,7 @@ void TimingData::SetFakeAtRow( int iRow, float fNew )
 	{
 		if( valid )
 		{
-			m_FakeSegments[i].m_fLengthBeats = fNew;
+			m_FakeSegments[i].SetLength(fNew);
 		}
 		else
 			m_FakeSegments.erase( m_FakeSegments.begin()+i, m_FakeSegments.begin()+i+1 );
@@ -442,9 +442,9 @@ float TimingData::GetFakeAtRow( int iFakeRow ) const
 {
 	for( unsigned i=0; i<m_FakeSegments.size(); i++ )
 	{
-		if( m_FakeSegments[i].m_iStartRow == iFakeRow )
+		if( m_FakeSegments[i].GetRow() == iFakeRow )
 		{
-			return m_FakeSegments[i].m_fLengthBeats;
+			return m_FakeSegments[i].GetLength();
 		}
 	}
 	return 0;
@@ -538,7 +538,7 @@ int TimingData::GetFakeSegmentIndexAtRow( int iNoteRow ) const
 	for( i=0; i<m_FakeSegments.size()-1; i++ )
 	{
 		const FakeSegment& s = m_FakeSegments[i+1];
-		if( s.m_iStartRow > iNoteRow )
+		if( s.GetRow() > iNoteRow )
 			break;
 	}
 	return static_cast<int>(i);
@@ -574,7 +574,8 @@ bool TimingData::IsFakeAtRow( int iNoteRow ) const
 	
 	int i = GetFakeSegmentIndexAtRow( iNoteRow );
 	const FakeSegment& s = m_FakeSegments[i];
-	if( s.m_iStartRow <= iNoteRow && iNoteRow < ( s.m_iStartRow + BeatToNoteRow(s.m_fLengthBeats) ) )
+	float beatRow = NoteRowToBeat(iNoteRow);
+	if( s.GetBeat() <= beatRow && beatRow < ( s.GetBeat() + s.GetLength() ) )
 	{
 		return true;
 	}
@@ -1114,21 +1115,24 @@ void TimingData::ScaleRegion( float fScale, int iStartIndex, int iEndIndex, bool
 	
 	for( unsigned i = 0; i < m_FakeSegments.size(); i++ )
 	{
-		const int iSegStartRow = m_FakeSegments[i].m_iStartRow;
-		const int iSegEndRow = iSegStartRow + BeatToNoteRow( m_FakeSegments[i].m_fLengthBeats );
+		FakeSegment &f = m_FakeSegments[i];
+		const int iSegStartRow = f.GetRow();
+		const int iSegEndRow = iSegStartRow + BeatToNoteRow( f.GetLength() );
 		if( iSegEndRow >= iStartIndex )
 		{
 			if( iSegEndRow > iEndIndex )
-				m_FakeSegments[i].m_fLengthBeats += NoteRowToBeat(lrintf((iEndIndex - iStartIndex) * (fScale - 1)));
+				f.SetLength(f.GetLength() 
+					    + NoteRowToBeat(lrintf((iEndIndex - iStartIndex) * (fScale - 1))));
 			else
-				m_FakeSegments[i].m_fLengthBeats = NoteRowToBeat(lrintf((iSegEndRow - iStartIndex) * fScale));
+				f.SetLength(NoteRowToBeat(lrintf((iSegEndRow - iStartIndex) * fScale)));
 		}
 		if( iSegStartRow < iStartIndex )
 			continue;
 		else if( iSegStartRow > iEndIndex )
-			m_FakeSegments[i].m_iStartRow += lrintf((iEndIndex - iStartIndex) * (fScale - 1));
+			f.SetRow(f.GetRow() 
+				 + lrintf((iEndIndex - iStartIndex) * (fScale - 1)));
 		else
-			m_FakeSegments[i].m_iStartRow = lrintf((iSegStartRow - iStartIndex) * fScale) + iStartIndex;
+			f.SetRow(lrintf((iSegStartRow - iStartIndex) * fScale) + iStartIndex);
 	}
 	
 	for( unsigned i = 0; i < m_ScrollSegments.size(); i++ )
@@ -1236,9 +1240,9 @@ void TimingData::InsertRows( int iStartRow, int iRowsToAdd )
 	for( unsigned i = 0; i < m_FakeSegments.size(); i++ )
 	{
 		FakeSegment &fake = m_FakeSegments[i];
-		if( fake.m_iStartRow < iStartRow )
+		if( fake.GetRow() < iStartRow )
 			continue;
-		fake.m_iStartRow += iRowsToAdd;
+		fake.SetRow(fake.GetRow() + iRowsToAdd);
 	}
 	
 	for( unsigned i = 0; i < m_ScrollSegments.size(); i++ )
@@ -1422,18 +1426,18 @@ void TimingData::DeleteRows( int iStartRow, int iRowsToDelete )
 	for( unsigned i = 0; i < m_FakeSegments.size(); i++ )
 	{
 		FakeSegment &fake = m_FakeSegments[i];
-		
-		if( fake.m_iStartRow < iStartRow )
+		int keyRow = fake.GetRow();
+		if( keyRow < iStartRow )
 			continue;
 		
-		if( fake.m_iStartRow < iStartRow+iRowsToDelete )
+		if( keyRow < iStartRow+iRowsToDelete )
 		{
 			m_FakeSegments.erase( m_FakeSegments.begin()+i, m_FakeSegments.begin()+i+1 );
 			--i;
 			continue;
 		}
 		
-		fake.m_iStartRow -= iRowsToDelete;
+		fake.SetRow(keyRow - iRowsToDelete);
 	}
 	
 	for( unsigned i = 0; i < m_ScrollSegments.size(); i++ )

@@ -56,6 +56,104 @@ private:
 	int startingRow;
 };
 
+/**
+ * @brief Identifies when a whole region of arrows is to be ignored.
+ *
+ * FakeSegments are similar to the Fake Tap Notes in that the contents
+ * inside are neither for nor against the player. They can be useful for
+ * mission modes, in conjunction with WarpSegments, or perhaps other
+ * uses not thought up at the time of this comment. Unlike the Warp
+ * Segments, these are not magically jumped over: instead, these are
+ * drawn normally.
+ *
+ * These were inspired by the Pump It Up series. */
+struct FakeSegment : public TimingSegment
+{
+	/**
+	 * @brief Create a simple Fake Segment with default values.
+	 *
+	 * It is best to override the values as soon as possible.
+	 */
+	FakeSegment();
+	/**
+	 * @brief Create a Fake Segment with the specified values.
+	 * @param s the starting row of this segment.
+	 * @param r the number of rows this segment lasts.
+	 */
+	FakeSegment( int s, int r );
+	/**
+	 * @brief Creates a Fake Segment with the specified values.
+	 * @param s the starting row of this segment.
+	 * @param b the number of beats this segment lasts.
+	 */
+	FakeSegment( int s, float b );
+	/**
+	 * @brief Create a Fake Segment with the specified values.
+	 * @param s the starting beat in this segment.
+	 * @param r the number of rows this segment lasts.
+	 */
+	FakeSegment( float s, int r );
+	/**
+	 * @brief Creates a Fake Segment with the specified values.
+	 * @param s the starting beat of this segment.
+	 * @param b the number of beats this segment lasts.
+	 */
+	FakeSegment( float s, float b );
+	
+	/**
+	 * @brief Get the length in beats of the FakeSegment.
+	 * @return the length in beats. */
+	float GetLength() const;
+	
+	/**
+	 * @brief Set the length in beats of the FakeSegment.
+	 * @param b the length in beats. */
+	void SetLength(const float b);
+	
+	/**
+	 * @brief Compares two FakeSegments to see if they are equal to each other.
+	 * @param other the other FakeSegment to compare to.
+	 * @return the equality of the two segments.
+	 */
+	bool operator==( const FakeSegment &other ) const;
+	/**
+	 * @brief Compares two FakeSegments to see if they are not equal to each other.
+	 * @param other the other FakeSegment to compare to.
+	 * @return the inequality of the two segments.
+	 */
+	bool operator!=( const FakeSegment &other ) const;
+	/**
+	 * @brief Compares two FakeSegments to see if one is less than the other.
+	 * @param other the other FakeSegment to compare to.
+	 * @return the truth/falsehood of if the first is less than the second.
+	 */
+	bool operator<( const FakeSegment &other ) const;
+	/**
+	 * @brief Compares two FakeSegments to see if one is less than or equal to the other.
+	 * @param other the other FakeSegment to compare to.
+	 * @return the truth/falsehood of if the first is less or equal to than the second.
+	 */
+	bool operator<=( const FakeSegment &other ) const;
+	/**
+	 * @brief Compares two FakeSegments to see if one is greater than the other.
+	 * @param other the other FakeSegment to compare to.
+	 * @return the truth/falsehood of if the first is greater than the second.
+	 */
+	bool operator>( const FakeSegment &other ) const;
+	/**
+	 * @brief Compares two FakeSegments to see if one is greater than or equal to the other.
+	 * @param other the other FakeSegment to compare to.
+	 * @return the truth/falsehood of if the first is greater than or equal to the second.
+	 */
+	bool operator>=( const FakeSegment &other ) const;
+private:
+	/**
+	 * @brief The number of beats the FakeSegment is alive for.
+	 */
+	float lengthBeats;
+};
+
+
 #undef COMPARE
 
 #endif

@@ -1,10 +1,13 @@
 #include "TimingSegments.h"
 
-TimingSegment::TimingSegment() : startingRow(-1) {}
+TimingSegment::TimingSegment() : 
+	startingRow(-1) {}
 
-TimingSegment::TimingSegment(int s) : startingRow(s) {}
+TimingSegment::TimingSegment(int s) : 
+	startingRow(s) {}
 
-TimingSegment::TimingSegment(float s) : startingRow(BeatToNoteRow(s)) {}
+TimingSegment::TimingSegment(float s) : 
+	startingRow(BeatToNoteRow(s)) {}
 
 TimingSegment::~TimingSegment() {}
 
@@ -25,6 +28,65 @@ int TimingSegment::GetRow() const
 float TimingSegment::GetBeat() const
 {
 	return NoteRowToBeat(this->startingRow);
+}
+
+FakeSegment::FakeSegment():
+	TimingSegment(-1), lengthBeats(-1) {}
+
+FakeSegment::FakeSegment( int s, int r ):
+	TimingSegment(max(0, s)), lengthBeats(NoteRowToBeat(max(0, r))) {}
+
+FakeSegment::FakeSegment( int s, float b ):
+	TimingSegment(max(0, s)), lengthBeats(max(0, b)) {}
+
+FakeSegment::FakeSegment( float s, int r ):
+	TimingSegment(max(0, s)), lengthBeats(max(0, NoteRowToBeat(r))) {}
+
+FakeSegment::FakeSegment( float s, float b ):
+	TimingSegment(max(0, s)), lengthBeats(max(0, b)) {}
+
+float FakeSegment::GetLength() const
+{
+	return this->lengthBeats;
+}
+
+void FakeSegment::SetLength(const float b)
+{
+	this->lengthBeats = b;
+}
+
+bool FakeSegment::operator==( const FakeSegment &other ) const
+{
+	if (this->GetRow() != other.GetRow()) return false;
+	if (this->GetLength() != other.GetLength()) return false;
+	return true;
+}
+
+bool FakeSegment::operator!=( const FakeSegment &other ) const
+{
+	return !this->operator==(other);
+}
+
+bool FakeSegment::operator<( const FakeSegment &other ) const
+{ 
+	if (this->GetRow() < other.GetRow()) return true;
+	if (this->GetRow() > other.GetRow()) return false;
+	return this->GetLength() < other.GetLength();
+}
+
+bool FakeSegment::operator<=( const FakeSegment &other ) const
+{
+	return ( this->operator<(other) || this->operator==(other) );
+}
+
+bool FakeSegment::operator>( const FakeSegment &other ) const
+{
+	return !this->operator<=(other);
+}
+
+bool FakeSegment::operator>=( const FakeSegment &other ) const
+{
+	return !this->operator<(other);
 }
 
 /**

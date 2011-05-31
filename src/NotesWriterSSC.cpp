@@ -146,7 +146,7 @@ static void GetTimingTags( vector<RString> &lines, TimingData timing, bool bIsSo
 	{	
 		w.Init( "FAKES" );
 		FOREACH_CONST( FakeSegment, timing.m_FakeSegments, fs )
-			w.Write( fs->m_iStartRow, fs->m_fLengthBeats );
+			w.Write( fs->GetRow(), fs->GetLength() );
 		w.Finish();
 	}
 	

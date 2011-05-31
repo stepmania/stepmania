@@ -1012,11 +1012,11 @@ void NoteField::DrawPrimitives()
 		{
 			FOREACH_CONST( FakeSegment, timing.m_FakeSegments, seg )
 			{
-				if( seg->m_iStartRow >= iFirstRowToDraw && seg->m_iStartRow <= iLastRowToDraw )
+				if( seg->GetRow() >= iFirstRowToDraw && seg->GetRow() <= iLastRowToDraw )
 				{
-					float fBeat = NoteRowToBeat(seg->m_iStartRow);
+					float fBeat = seg->GetBeat();
 					if( IS_ON_SCREEN(fBeat) )
-						DrawFakeText( fBeat, seg->m_fLengthBeats );
+						DrawFakeText( fBeat, seg->GetLength() );
 				}
 			}
 		}
