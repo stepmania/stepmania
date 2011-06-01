@@ -65,7 +65,7 @@ template <class DerivedSegment>
 struct TimingSegment: public BaseTimingSegment
 {
 
-	TimingSegment(): BaseTimingSegment() {};
+	TimingSegment(): BaseTimingSegment(-1) {};
 	TimingSegment(const DerivedSegment &other): BaseTimingSegment(other) {};
 
 	template <typename StartType>
@@ -206,7 +206,7 @@ struct WarpSegment : public TimingSegment<WarpSegment>
 	 * It is best to override the values as soon as possible.
 	 */
 	WarpSegment():
-		TimingSegment<WarpSegment>(), lengthBeats(-1) {};
+		TimingSegment<WarpSegment>(-1), lengthBeats(-1) {};
 	
 	/**
 	 * @brief Create a copy of another Warp Segment.
@@ -265,7 +265,7 @@ struct TickcountSegment : public TimingSegment<TickcountSegment>
 	 * It is best to override the values as soon as possible.
 	 */
 	TickcountSegment():
-		TimingSegment<TickcountSegment>(), ticks(4) {};
+		TimingSegment<TickcountSegment>(-1), ticks(4) {};
 	
 	/**
 	 * @brief Create a copy of another Tickcount Segment.
@@ -328,7 +328,7 @@ struct ComboSegment : public TimingSegment<ComboSegment>
 	 * It is best to override the values as soon as possible.
 	 */
 	ComboSegment() : 
-		TimingSegment<ComboSegment>(), combo(1) { }
+		TimingSegment<ComboSegment>(-1), combo(1) { }
 
 	ComboSegment(const ComboSegment &other) : 
 		TimingSegment<ComboSegment>(other),
@@ -382,7 +382,7 @@ struct LabelSegment : public TimingSegment<LabelSegment>
 	 * It is best to override the values as soon as possible.
 	 */
 	LabelSegment() : 
-		TimingSegment<LabelSegment>(), label("") { }
+		TimingSegment<LabelSegment>(-1), label("") { }
 
 	LabelSegment(const LabelSegment &other) :
 		TimingSegment<LabelSegment>(other),
@@ -500,7 +500,7 @@ struct TimeSignatureSegment : public TimingSegment<TimeSignatureSegment>
 	 * @brief Creates a simple Time Signature Segment with default values.
 	 */
 	TimeSignatureSegment():
-		TimingSegment<TimeSignatureSegment>(),
+		TimingSegment<TimeSignatureSegment>(-1),
 		numerator(4), denominator(4)  { }
 		
 	TimeSignatureSegment(const TimeSignatureSegment &other) :
