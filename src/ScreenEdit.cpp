@@ -2509,7 +2509,7 @@ void ScreenEdit::ScrollTo( float fDestinationBeat )
 	CLAMP( fDestinationBeat, 0, GetMaximumBeatForMoving() );
 
 	// Don't play the sound and do the hold note logic below if our position didn't change.
-	const float fOriginalBeat = GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat;
+	const float fOriginalBeat = GetAppropriatePosition().m_fSongBeat;
 	if( fOriginalBeat == fDestinationBeat )
 		return;
 
