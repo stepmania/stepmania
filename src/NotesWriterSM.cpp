@@ -102,7 +102,7 @@ static void WriteGlobalTags( RageFile &f, Song &out )
 	{
 		const BPMSegment &bs = out.m_SongTiming.m_BPMSegments[i];
 
-		f.PutLine( ssprintf( "%.3f=%.3f", NoteRowToBeat(bs.m_iStartRow), bs.GetBPM() ) );
+		f.PutLine( ssprintf( "%.3f=%.3f", bs.GetBeat(), bs.GetBPM() ) );
 		if( i != out.m_SongTiming.m_BPMSegments.size()-1 )
 			f.Write( "," );
 	}
@@ -113,9 +113,9 @@ static void WriteGlobalTags( RageFile &f, Song &out )
 	{
 		for( unsigned i=0; i < wSize; i++ )
 		{
-			int iRow = out.m_SongTiming.m_WarpSegments[i].m_iStartRow;
+			int iRow = out.m_SongTiming.m_WarpSegments[i].GetRow();
 			float fBPS = 60 / out.m_SongTiming.GetBPMAtRow(iRow);
-			float fSkip = fBPS * out.m_SongTiming.m_WarpSegments[i].m_fLengthBeats;
+			float fSkip = fBPS * out.m_SongTiming.m_WarpSegments[i].GetLength();
 			StopSegment ss;
 			ss.m_iStartRow = iRow;
 			ss.m_fStopSeconds = -fSkip;

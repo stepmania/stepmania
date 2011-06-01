@@ -1524,6 +1524,8 @@
 				RelativePath="TimingData.h"
 				>
 			</File>
+			<File RelativePath="TimingSegments.cpp"></File>
+			<File RelativePath="TimingSegments.h"></File>
 			<File
 				RelativePath="TitleSubstitution.cpp"
 				>

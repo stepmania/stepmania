@@ -857,16 +857,16 @@ void NoteField::DrawPrimitives()
 		{
 			vector<TimeSignatureSegment>::const_iterator next = iter;
 			next++;
-			int iSegmentEndRow = (next == vTimeSignatureSegments.end()) ? iLastRowToDraw : next->m_iStartRow;
+			int iSegmentEndRow = (next == vTimeSignatureSegments.end()) ? iLastRowToDraw : next->GetRow();
 
 			// beat bars every 16th note
-			int iDrawBeatBarsEveryRows = BeatToNoteRow( ((float)iter->m_iDenominator) / 4 ) / 4;
+			int iDrawBeatBarsEveryRows = BeatToNoteRow( ((float)iter->GetDen()) / 4 ) / 4;
 
 			// In 4/4, every 16th beat bar is a measure
-			int iMeasureBarFrequency =  iter->m_iNumerator * 4;
+			int iMeasureBarFrequency =  iter->GetNum() * 4;
 			int iBeatBarsDrawn = 0;
 
-			for( int i=iter->m_iStartRow; i < iSegmentEndRow; i += iDrawBeatBarsEveryRows )
+			for( int i=iter->GetRow(); i < iSegmentEndRow; i += iDrawBeatBarsEveryRows )
 			{
 				bool bMeasureBar = iBeatBarsDrawn % iMeasureBarFrequency == 0;
 				BeatBarType type = quarter_beat;
@@ -899,9 +899,9 @@ void NoteField::DrawPrimitives()
 		// BPM text
 		FOREACH_CONST( BPMSegment, timing.m_BPMSegments, seg )
 		{
-			if( seg->m_iStartRow >= iFirstRowToDraw && seg->m_iStartRow <= iLastRowToDraw )
+			if( seg->GetRow() >= iFirstRowToDraw && seg->GetRow() <= iLastRowToDraw )
 			{
-				float fBeat = NoteRowToBeat(seg->m_iStartRow);
+				float fBeat = seg->GetBeat();
 				if( IS_ON_SCREEN(fBeat) )
 					DrawBPMText( fBeat, seg->GetBPM() );
 			}
@@ -921,11 +921,11 @@ void NoteField::DrawPrimitives()
 		// Warp text
 		FOREACH_CONST( WarpSegment, timing.m_WarpSegments, seg )
 		{
-			if( seg->m_iStartRow >= iFirstRowToDraw && seg->m_iStartRow <= iLastRowToDraw )
+			if( seg->GetRow() >= iFirstRowToDraw && seg->GetRow() <= iLastRowToDraw )
 			{
-				float fBeat = NoteRowToBeat(seg->m_iStartRow);
+				float fBeat = seg->GetBeat();
 				if( IS_ON_SCREEN(fBeat) )
-					DrawWarpText( fBeat, seg->m_fLengthBeats );
+					DrawWarpText( fBeat, seg->GetLength() );
 			}
 		}
 		
@@ -933,11 +933,11 @@ void NoteField::DrawPrimitives()
 		// Time Signature text
 		FOREACH_CONST( TimeSignatureSegment, timing.m_vTimeSignatureSegments, seg )
 		{
-			if( seg->m_iStartRow >= iFirstRowToDraw && seg->m_iStartRow <= iLastRowToDraw )
+			if( seg->GetRow() >= iFirstRowToDraw && seg->GetRow() <= iLastRowToDraw )
 			{
-				float fBeat = NoteRowToBeat(seg->m_iStartRow);
+				float fBeat = seg->GetBeat();
 				if( IS_ON_SCREEN(fBeat) )
-					DrawTimeSignatureText( fBeat, seg->m_iNumerator, seg->m_iDenominator );
+					DrawTimeSignatureText( fBeat, seg->GetNum(), seg->GetDen() );
 			}
 		}
 		
@@ -946,11 +946,11 @@ void NoteField::DrawPrimitives()
 			// Tickcount text
 			FOREACH_CONST( TickcountSegment, timing.m_TickcountSegments, seg )
 			{
-				if( seg->m_iStartRow >= iFirstRowToDraw && seg->m_iStartRow <= iLastRowToDraw )
+				if( seg->GetRow() >= iFirstRowToDraw && seg->GetRow() <= iLastRowToDraw )
 				{
-					float fBeat = NoteRowToBeat(seg->m_iStartRow);
+					float fBeat = seg->GetBeat();
 					if( IS_ON_SCREEN(fBeat) )
-						DrawTickcountText( fBeat, seg->m_iTicks );
+						DrawTickcountText( fBeat, seg->GetTicks() );
 				}
 			}
 		}
@@ -960,11 +960,11 @@ void NoteField::DrawPrimitives()
 			// Combo text
 			FOREACH_CONST( ComboSegment, timing.m_ComboSegments, seg )
 			{
-				if( seg->m_iStartRow >= iFirstRowToDraw && seg->m_iStartRow <= iLastRowToDraw )
+				if( seg->GetRow() >= iFirstRowToDraw && seg->GetRow() <= iLastRowToDraw )
 				{
-					float fBeat = NoteRowToBeat(seg->m_iStartRow);
+					float fBeat = seg->GetBeat();
 					if( IS_ON_SCREEN(fBeat) )
-						DrawComboText( fBeat, seg->m_iCombo );
+						DrawComboText( fBeat, seg->GetCombo() );
 				}
 			}
 		}
@@ -972,11 +972,11 @@ void NoteField::DrawPrimitives()
 		// Label text
 		FOREACH_CONST( LabelSegment, timing.m_LabelSegments, seg )
 		{
-			if( seg->m_iStartRow >= iFirstRowToDraw && seg->m_iStartRow <= iLastRowToDraw )
+			if( seg->GetRow() >= iFirstRowToDraw && seg->GetRow() <= iLastRowToDraw )
 			{
-				float fBeat = NoteRowToBeat(seg->m_iStartRow);
+				float fBeat = seg->GetBeat();
 				if( IS_ON_SCREEN(fBeat) )
-					DrawLabelText( fBeat, seg->m_sLabel );
+					DrawLabelText( fBeat, seg->GetLabel() );
 			}
 		}
 		
@@ -984,11 +984,12 @@ void NoteField::DrawPrimitives()
 		{
 			FOREACH_CONST( SpeedSegment, timing.m_SpeedSegments, seg )
 			{
-				if( seg->m_iStartRow >= iFirstRowToDraw && seg->m_iStartRow <= iLastRowToDraw )
+				if( seg->GetRow() >= iFirstRowToDraw && seg->GetRow() <= iLastRowToDraw )
 				{
-					float fBeat = NoteRowToBeat(seg->m_iStartRow);
+					float fBeat = seg->GetBeat();
 					if( IS_ON_SCREEN(fBeat) )
-						DrawSpeedText( fBeat, seg->m_fPercent, seg->m_fWait, seg->m_usMode );
+						DrawSpeedText(fBeat, seg->GetRatio(), 
+							      seg->GetLength(), seg->GetUnit() );
 				}
 			}
 		}
@@ -998,11 +999,11 @@ void NoteField::DrawPrimitives()
 		{
 			FOREACH_CONST( ScrollSegment, timing.m_ScrollSegments, seg )
 			{
-				if( seg->m_iStartRow >= iFirstRowToDraw && seg->m_iStartRow <= iLastRowToDraw )
+				if( seg->GetRow() >= iFirstRowToDraw && seg->GetRow() <= iLastRowToDraw )
 				{
-					float fBeat = NoteRowToBeat(seg->m_iStartRow);
+					float fBeat = seg->GetBeat();
 					if( IS_ON_SCREEN(fBeat) )
-						DrawScrollText( fBeat, seg->m_fPercent );
+						DrawScrollText( fBeat, seg->GetRatio() );
 				}
 			}
 		}
@@ -1012,11 +1013,11 @@ void NoteField::DrawPrimitives()
 		{
 			FOREACH_CONST( FakeSegment, timing.m_FakeSegments, seg )
 			{
-				if( seg->m_iStartRow >= iFirstRowToDraw && seg->m_iStartRow <= iLastRowToDraw )
+				if( seg->GetRow() >= iFirstRowToDraw && seg->GetRow() <= iLastRowToDraw )
 				{
-					float fBeat = NoteRowToBeat(seg->m_iStartRow);
+					float fBeat = seg->GetBeat();
 					if( IS_ON_SCREEN(fBeat) )
-						DrawFakeText( fBeat, seg->m_fLengthBeats );
+						DrawFakeText( fBeat, seg->GetLength() );
 				}
 			}
 		}

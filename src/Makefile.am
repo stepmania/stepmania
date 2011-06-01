@@ -182,7 +182,7 @@ SongOptions.cpp SongOptions.h SongUtil.cpp SongUtil.h StageStats.cpp StageStats.
 SoundEffectControl.cpp SoundEffectControl.h \
 StepsUtil.cpp StepsUtil.h Style.cpp Style.h StyleUtil.cpp StyleUtil.h \
 SubscriptionManager.h \
-TimingData.cpp TimingData.h \
+TimingData.cpp TimingData.h TimingSegments.cpp TimingSegments.h \
 ThemeMetric.h \
 Trail.cpp Trail.h TrailUtil.cpp TrailUtil.h TitleSubstitution.cpp TitleSubstitution.h \
 Tween.cpp Tween.h

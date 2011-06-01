@@ -502,6 +502,7 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)</Command>
     <ClCompile Include="Style.cpp" />
     <ClCompile Include="StyleUtil.cpp" />
     <ClCompile Include="TimingData.cpp" />
+    <ClCompile Include="TimingSegments.cpp" />
     <ClCompile Include="TitleSubstitution.cpp" />
     <ClCompile Include="Trail.cpp" />
     <ClCompile Include="TrailUtil.cpp" />
@@ -1822,6 +1823,7 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)</Command>
     <ClInclude Include="SubscriptionManager.h" />
     <ClInclude Include="ThemeMetric.h" />
     <ClInclude Include="TimingData.h" />
+    <ClInclude Include="TimingSegments.h" />
     <ClInclude Include="TitleSubstitution.h" />
     <ClInclude Include="Trail.h" />
     <ClInclude Include="TrailUtil.h" />
