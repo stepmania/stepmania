@@ -1475,8 +1475,13 @@ void TimingData::DeleteRows( int iStartRow, int iRowsToDelete )
 
 float TimingData::GetDisplayedSpeedPercent( float fSongBeat, float fMusicSeconds ) const
 {
+	/* HACK: Somehow we get called into this function when there is no
+	 * TimingData to work with. This seems to happen the most upon
+	 * leaving the editor. Still, cover our butts in case this instance
+	 * isn't existing. */
+	if (!this) return 1.0f;
 	if( m_SpeedSegments.size() == 0 )
-		return 1.0;
+		return 1.0f;
 
 	const int index = GetSpeedSegmentIndexAtBeat( fSongBeat );
 	
