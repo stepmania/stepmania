@@ -139,7 +139,7 @@ static void GetTimingTags( vector<RString> &lines, TimingData timing, bool bIsSo
 	
 	w.Init( "SCROLLS" );
 	FOREACH_CONST( ScrollSegment, timing.m_ScrollSegments, ss )
-		w.Write( ss->m_iStartRow, ss->m_fPercent );
+		w.Write( ss->GetRow(), ss->GetRatio() );
 	w.Finish();
 	
 	if( !bIsSong )

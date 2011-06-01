@@ -999,11 +999,11 @@ void NoteField::DrawPrimitives()
 		{
 			FOREACH_CONST( ScrollSegment, timing.m_ScrollSegments, seg )
 			{
-				if( seg->m_iStartRow >= iFirstRowToDraw && seg->m_iStartRow <= iLastRowToDraw )
+				if( seg->GetRow() >= iFirstRowToDraw && seg->GetRow() <= iLastRowToDraw )
 				{
-					float fBeat = NoteRowToBeat(seg->m_iStartRow);
+					float fBeat = seg->GetBeat();
 					if( IS_ON_SCREEN(fBeat) )
-						DrawScrollText( fBeat, seg->m_fPercent );
+						DrawScrollText( fBeat, seg->GetRatio() );
 				}
 			}
 		}

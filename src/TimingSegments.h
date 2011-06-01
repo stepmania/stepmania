@@ -688,10 +688,58 @@ private:
 	 *
 	 * 0: beats
 	 * 1: seconds
-	 * other
+	 * other values are undetermined at this time, but we're prepared this way.
 	 */
 	unsigned short unit;
 	
+};
+
+/**
+ * @brief Identifies when the chart scroll changes.
+ *
+ * ScrollSegments adjusts the scrolling speed of the note field.
+ * Unlike forced attacks, these cannot be turned off at a set time:
+ * reset it by setting the precentage back to 1.
+ *
+ * These were inspired by the Pump It Up series. */
+struct ScrollSegment : public TimingSegment<ScrollSegment>
+{
+	/** @brief Sets up the ScrollSegment with default values. */
+	ScrollSegment(): TimingSegment<ScrollSegment>(0),
+		ratio(1) {}
+	
+	/**
+	 * @brief Sets up the ScrollSegment with specified values.
+	 * @param s The row / beat this activates.
+	 * @param p The percentage to use. */
+	template <typename StartType>
+	ScrollSegment( StartType s, float p): 
+		TimingSegment<ScrollSegment>(max((StartType)0, s)),
+		ratio(p) {}
+	
+	ScrollSegment(const ScrollSegment &other) :
+		TimingSegment<ScrollSegment>(other),
+		ratio(other.GetRatio()) {}
+	
+	/**
+	 * @brief Get the ratio in this SpeedSegment.
+	 * @return the ratio. */
+	float GetRatio() const;
+	
+	/**
+	 * @brief Set the ratio in this SpeedSegment.
+	 * @param i the ratio. */
+	void SetRatio(const float i);
+	
+	/**
+	 * @brief Compares two ScrollSegment to see if one is less than the other.
+	 * @param other the other ScrollSegment to compare to.
+	 * @return the truth/falsehood of if the first is less than the second.
+	 */
+	bool operator<( const ScrollSegment &other ) const;
+private:
+	/** @brief The ratio / percentage to use when multiplying the chart's scroll rate. */
+	float ratio;
 };
 
 #endif

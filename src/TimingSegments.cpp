@@ -234,6 +234,22 @@ bool SpeedSegment::operator<( const SpeedSegment &other ) const
 	return false;
 }
 
+float ScrollSegment::GetRatio() const
+{
+	return this->ratio;
+}
+
+void ScrollSegment::SetRatio(const float i)
+{
+	this->ratio = i;
+}
+
+bool ScrollSegment::operator<( const ScrollSegment &other ) const
+{
+	LTCOMPARE(GetRow());
+	LTCOMPARE(GetRatio());
+	return false;
+}
 
 /**
  * @file

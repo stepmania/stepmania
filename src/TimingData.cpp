@@ -299,25 +299,25 @@ void TimingData::SetScrollAtRow( int iRow, float fPercent )
 	unsigned i;
 	for( i = 0; i < m_ScrollSegments.size(); i++ )
 	{
-		if( m_ScrollSegments[i].m_iStartRow >= iRow)
+		if( m_ScrollSegments[i].GetRow() >= iRow)
 			break;
 	}
 	
-	if ( i == m_ScrollSegments.size() || m_ScrollSegments[i].m_iStartRow != iRow )
+	if ( i == m_ScrollSegments.size() || m_ScrollSegments[i].GetRow() != iRow )
 	{
 		// the core mod itself matters the most for comparisons.
-		if( i == 0 || m_ScrollSegments[i-1].m_fPercent != fPercent )
+		if( i == 0 || m_ScrollSegments[i-1].GetRatio() != fPercent )
 			AddScrollSegment( ScrollSegment(iRow, fPercent) );
 	}
 	else
 	{
 		// The others aren't compared: only the mod itself matters.
-		if( i > 0  && m_ScrollSegments[i-1].m_fPercent == fPercent )
+		if( i > 0  && m_ScrollSegments[i-1].GetRatio() == fPercent )
 			m_ScrollSegments.erase( m_ScrollSegments.begin()+i,
 					       m_ScrollSegments.begin()+i+1 );
 		else
 		{
-			m_ScrollSegments[i].m_fPercent = fPercent;
+			m_ScrollSegments[i].SetRatio(fPercent);
 		}
 	}
 }
@@ -434,7 +434,7 @@ unsigned short TimingData::GetSpeedModeAtRow( int iRow )
 
 float TimingData::GetScrollAtRow( int iRow )
 {
-	return GetScrollSegmentAtRow( iRow ).m_fPercent;
+	return GetScrollSegmentAtRow( iRow ).GetRatio();
 }
 
 float TimingData::GetFakeAtRow( int iFakeRow ) const
@@ -628,7 +628,7 @@ int TimingData::GetScrollSegmentIndexAtRow( int iRow ) const
 {
 	unsigned i;
 	for (i=0; i < m_ScrollSegments.size() - 1; i++ )
-		if( m_ScrollSegments[i+1].m_iStartRow > iRow )
+		if( m_ScrollSegments[i+1].GetRow() > iRow )
 			break;
 	return static_cast<int>(i);
 }
@@ -665,7 +665,7 @@ ScrollSegment& TimingData::GetScrollSegmentAtRow( int iRow )
 {
 	unsigned i;
 	for( i=0; i<m_ScrollSegments.size()-1; i++ )
-		if( m_ScrollSegments[i+1].m_iStartRow > iRow )
+		if( m_ScrollSegments[i+1].GetRow() > iRow )
 			break;
 	return m_ScrollSegments[i];
 }
@@ -1003,10 +1003,13 @@ float TimingData::GetElapsedTimeFromBeatNoOffset( float fBeat ) const
 float TimingData::GetDisplayedBeat( float fBeat ) const
 {
 	unsigned index = GetScrollSegmentIndexAtBeat(fBeat);
-	float fOutBeat = ( fBeat - NoteRowToBeat(m_ScrollSegments[index].m_iStartRow) ) * m_ScrollSegments[index].m_fPercent;
+	const ScrollSegment &s = m_ScrollSegments[index];
+	float fOutBeat = ( fBeat - s.GetBeat() ) * s.GetRatio();
 	for( unsigned i = 0; i < index; i ++ )
 	{
-		fOutBeat += ( NoteRowToBeat(m_ScrollSegments[i + 1].m_iStartRow) - NoteRowToBeat(m_ScrollSegments[i].m_iStartRow) ) * m_ScrollSegments[i].m_fPercent;
+		const ScrollSegment &future = m_ScrollSegments[i+1];
+		const ScrollSegment &current = m_ScrollSegments[i];
+		fOutBeat += ( future.GetBeat() - current.GetBeat() ) * current.GetRatio();
 	}
 	return fOutBeat;
 }
@@ -1147,13 +1150,13 @@ void TimingData::ScaleRegion( float fScale, int iStartIndex, int iEndIndex, bool
 	for( unsigned i = 0; i < m_ScrollSegments.size(); i++ )
 	{
 		ScrollSegment &s = m_ScrollSegments[i];
-		const int iSegStartRow = s.m_iStartRow;
+		const int iSegStartRow = s.GetRow();
 		if( iSegStartRow < iStartIndex )
 			continue;
 		else if( iSegStartRow > iEndIndex )
-			s.m_iStartRow += lrintf((iEndIndex - iStartIndex) * (fScale - 1));
+			s.SetRow(s.GetRow() + lrintf((iEndIndex - iStartIndex) * (fScale - 1)));
 		else
-			s.m_iStartRow = lrintf((iSegStartRow - iStartIndex) * fScale) + iStartIndex;
+			s.SetRow(lrintf((iSegStartRow - iStartIndex) * fScale) + iStartIndex);
 	}
 	
 	// adjust BPM changes to preserve timing
@@ -1258,9 +1261,9 @@ void TimingData::InsertRows( int iStartRow, int iRowsToAdd )
 	for( unsigned i = 0; i < m_ScrollSegments.size(); i++ )
 	{
 		ScrollSegment &scrl = m_ScrollSegments[i];
-		if( scrl.m_iStartRow < iStartRow )
+		if( scrl.GetRow() < iStartRow )
 			continue;
-		scrl.m_iStartRow += iRowsToAdd;
+		scrl.SetRow(scrl.GetRow() + iRowsToAdd);
 	}
 
 	if( iStartRow == 0 )
@@ -1453,17 +1456,17 @@ void TimingData::DeleteRows( int iStartRow, int iRowsToDelete )
 	for( unsigned i = 0; i < m_ScrollSegments.size(); i++ )
 	{
 		ScrollSegment &scrl = m_ScrollSegments[i];
-		
-		if( scrl.m_iStartRow < iStartRow )
+		int keyRow = scrl.GetRow();
+		if( keyRow < iStartRow )
 			continue;
 		
-		if( scrl.m_iStartRow < iStartRow+iRowsToDelete )
+		if( keyRow < iStartRow+iRowsToDelete )
 		{
 			m_ScrollSegments.erase( m_ScrollSegments.begin()+i, m_ScrollSegments.begin()+i+1 );
 			--i;
 			continue;
 		}
-		scrl.m_iStartRow -= iRowsToDelete;
+		scrl.SetRow(keyRow - iRowsToDelete);
 	}
 
 	this->SetBPMAtRow( iStartRow, fNewBPM );
