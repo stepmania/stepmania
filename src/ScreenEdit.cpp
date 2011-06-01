@@ -1527,11 +1527,11 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 		break;
 	case EDIT_BUTTON_LAY_SELECT:
 		{
-			const int iCurrentRow = BeatToNoteRow(GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat);
+			const int iCurrentRow = BeatToNoteRow(GetAppropriatePosition().m_fSongBeat);
 			if( m_NoteFieldEdit.m_iBeginMarker==-1 && m_NoteFieldEdit.m_iEndMarker==-1 )
 			{
 				// lay begin marker
-				m_NoteFieldEdit.m_iBeginMarker = BeatToNoteRow(GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat);
+				m_NoteFieldEdit.m_iBeginMarker = BeatToNoteRow(GetAppropriatePosition().m_fSongBeat);
 			}
 			else if( m_NoteFieldEdit.m_iEndMarker==-1 )	// only begin marker is laid
 			{
@@ -3144,6 +3144,15 @@ TimingData & ScreenEdit::GetAppropriateTiming() const
 		return m_pSteps->m_Timing;
 	}
 	return m_pSong->m_SongTiming;
+}
+
+SongPosition & ScreenEdit::GetAppropriatePosition() const
+{
+	if (GAMESTATE->m_bIsUsingStepTiming)
+	{
+		return GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position;
+	}
+	return GAMESTATE->m_Position;
 }
 
 inline void ScreenEdit::SetBeat(float fBeat)

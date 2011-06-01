@@ -580,6 +580,10 @@ private:
 	 * @brief Retrieve the appropriate TimingData based on GAMESTATE.
 	 * @return the proper TimingData. */
 	TimingData & GetAppropriateTiming() const;
+	/**
+	 * @brief Retrieve the appropriate SongPosition data based on GAMESTATE.
+	 * @return the proper SongPosition. */
+	SongPosition & GetAppropriatePosition() const;
 	void SetBeat(float fBeat);
 	float GetBeat();
 	int GetRow();
