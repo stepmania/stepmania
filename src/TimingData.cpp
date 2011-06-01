@@ -1659,6 +1659,7 @@ public:
 	static int HasWarps( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasWarps()); return 1; }
 	static int HasFakes( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasFakes()); return 1; }
 	static int HasSpeedChanges( T* p, lua_State *L )	{ lua_pushboolean(L, p->HasSpeedChanges()); return 1; }
+	static int HasScrollChanges( T* p, lua_State *L )	{ lua_pushboolean(L, p->HasScrollChanges()); return 1; }
 	static int GetStops( T* p, lua_State *L )
 	{
 		vector<RString> vStops;
@@ -1748,6 +1749,7 @@ public:
 		ADD_METHOD( HasWarps );
 		ADD_METHOD( HasFakes );
 		ADD_METHOD( HasSpeedChanges );
+		ADD_METHOD( HasScrollChanges );
 		ADD_METHOD( GetStops );
 		ADD_METHOD( GetDelays );
 		ADD_METHOD( GetBPMs );
