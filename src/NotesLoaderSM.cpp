@@ -342,10 +342,10 @@ void SMLoader::ProcessDelays( TimingData &out, const RString sParam )
 		const float fFreezeBeat = StringToFloat( arrayDelayValues[0] );
 		const float fFreezeSeconds = StringToFloat( arrayDelayValues[1] );
 		
-		StopSegment new_seg( BeatToNoteRow(fFreezeBeat), fFreezeSeconds, true );
+		StopSegment new_seg( fFreezeBeat, fFreezeSeconds, true );
 		// XXX: Remove Negatives Bug?
-		new_seg.m_iStartRow = BeatToNoteRow(fFreezeBeat);
-		new_seg.m_fStopSeconds = fFreezeSeconds;
+		new_seg.SetBeat(fFreezeBeat);
+		new_seg.SetPause(fFreezeSeconds);
 		
 		// LOG->Trace( "Adding a delay segment: beat: %f, seconds = %f", new_seg.m_fStartBeat, new_seg.m_fStopSeconds );
 		

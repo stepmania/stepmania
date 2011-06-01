@@ -910,11 +910,11 @@ void NoteField::DrawPrimitives()
 		// Freeze text
 		FOREACH_CONST( StopSegment, timing.m_StopSegments, seg )
 		{
-			if( seg->m_iStartRow >= iFirstRowToDraw && seg->m_iStartRow <= iLastRowToDraw )
+			if( seg->GetRow() >= iFirstRowToDraw && seg->GetRow() <= iLastRowToDraw )
 			{
-				float fBeat = NoteRowToBeat(seg->m_iStartRow);
+				float fBeat = seg->GetBeat();
 				if( IS_ON_SCREEN(fBeat) )
-					DrawFreezeText( fBeat, seg->m_fStopSeconds, seg->m_bDelay );
+					DrawFreezeText( fBeat, seg->GetPause(), seg->GetDelay() );
 			}
 		}
 		

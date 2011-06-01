@@ -722,12 +722,12 @@ struct ScrollSegment : public TimingSegment<ScrollSegment>
 		ratio(other.GetRatio()) {}
 	
 	/**
-	 * @brief Get the ratio in this SpeedSegment.
+	 * @brief Get the ratio in this ScrollSegment.
 	 * @return the ratio. */
 	float GetRatio() const;
 	
 	/**
-	 * @brief Set the ratio in this SpeedSegment.
+	 * @brief Set the ratio in this ScrollSegment.
 	 * @param i the ratio. */
 	void SetRatio(const float i);
 	
@@ -740,6 +740,95 @@ struct ScrollSegment : public TimingSegment<ScrollSegment>
 private:
 	/** @brief The ratio / percentage to use when multiplying the chart's scroll rate. */
 	float ratio;
+};
+
+/**
+ * @brief Identifies when a song has a stop or a delay.
+ *
+ * It is hopeful that stops and delays can be made into their own segments at some point.
+ */
+struct StopSegment : public TimingSegment<StopSegment>
+{
+	/**
+	 * @brief Creates a simple Stop Segment with default values.
+	 *
+	 * It is best to override the values as soon as possible.
+	 */
+	StopSegment() : TimingSegment<StopSegment>(-1),
+		pauseSeconds(-1.0f), isDelay(false) {}
+	
+	StopSegment (const StopSegment &other):
+		TimingSegment<StopSegment>(other),
+		pauseSeconds(other.GetPause()),
+		isDelay(other.GetDelay()) {}
+	
+	/**
+	 * @brief Creates a Stop Segment with specified values.
+	 *
+	 * This will not create a dedicated delay segment.
+	 * Use the third constructor for making delays.
+	 * @param s the starting row / beat of this segment.
+	 * @param f the length of time to pause the note scrolling.
+	 */
+	template <typename StartType>
+	StopSegment( StartType s, float f ):
+		TimingSegment<StopSegment>(max((StartType)0, s)),
+		pauseSeconds(f), isDelay(false) {}
+	/**
+	 * @brief Creates a Stop/Delay Segment with specified values.
+	 * @param s the starting row / beat of this segment.
+	 * @param f the length of time to pause the note scrolling.
+	 * @param d the flag that makes this Stop Segment a Delay Segment.
+	 */
+	template <typename StartType>
+	StopSegment( StartType s, float f, bool d ):
+		TimingSegment<StopSegment>(max((StartType)0, s)),
+		pauseSeconds(f), isDelay(d) {}
+
+	/**
+	 * @brief Get the pause length in this StopSegment.
+	 * @return the pause length. */
+	float GetPause() const;
+	
+	/**
+	 * @brief Set the pause length in this StopSegment.
+	 * @param i the pause length. */
+	void SetPause(const float i);
+	
+	/**
+	 * @brief Get the behavior in this StopSegment.
+	 * @return the behavior. */
+	bool GetDelay() const;
+	
+	/**
+	 * @brief Set the behavior in this StopSegment.
+	 * @param i the behavior. */
+	void SetDelay(const bool i);
+
+	/**
+	 * @brief Compares two StopSegments to see if one is less than the other.
+	 *
+	 * It should be observed that Delay Segments have to come before Stop Segments.
+	 * Otherwise, it will act like a Stop Segment with extra time from the Delay at
+	 * the same row.
+	 * @param other the other StopSegment to compare to.
+	 * @return the truth/falsehood of if the first is less than the second.
+	 */
+	bool operator<( const StopSegment &other ) const;
+private:
+	/**
+	 * @brief The amount of time to complete the pause at the given row.
+	 */
+	float pauseSeconds;
+	/**
+	 * @brief How does this StopSegment behave?
+	 *
+	 * If true, the Stop Segment is treated as a Delay Segment, similar to the Pump It Up series.
+	 * If false, this behaves similar to the DDR/ITG style games.
+	 *
+	 * TODO: Separate out DelaySegments in the future.
+	 */
+	bool isDelay;
 };
 
 #endif

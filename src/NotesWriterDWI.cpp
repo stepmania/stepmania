@@ -381,8 +381,8 @@ bool NotesWriterDWI::Write( RString sPath, const Song &out )
 		for( unsigned i=0; i<out.m_SongTiming.m_StopSegments.size(); i++ )
 		{
 			const StopSegment &fs = out.m_SongTiming.m_StopSegments[i];
-			f.Write( ssprintf("%.3f=%.3f", fs.m_iStartRow * 4.0f / ROWS_PER_BEAT,
-				roundf(fs.m_fStopSeconds*1000)) );
+			f.Write( ssprintf("%.3f=%.3f", fs.GetRow() * 4.0f / ROWS_PER_BEAT,
+				roundf(fs.GetPause()*1000)) );
 			if( i != out.m_SongTiming.m_StopSegments.size()-1 )
 				f.Write( "," );
 		}

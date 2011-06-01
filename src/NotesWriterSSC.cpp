@@ -98,14 +98,14 @@ static void GetTimingTags( vector<RString> &lines, TimingData timing, bool bIsSo
 	
 	w.Init( "STOPS" );
 	FOREACH_CONST( StopSegment, timing.m_StopSegments, ss )
-		if( !ss->m_bDelay )
-			w.Write( ss->m_iStartRow, ss->m_fStopSeconds );
+		if( !ss->GetDelay() )
+			w.Write( ss->GetRow(), ss->GetPause() );
 	w.Finish();
 	
 	w.Init( "DELAYS" );
 	FOREACH_CONST( StopSegment, timing.m_StopSegments, ss )
-		if( ss->m_bDelay )
-			w.Write( ss->m_iStartRow, ss->m_fStopSeconds );
+		if( ss->GetDelay() )
+			w.Write( ss->GetRow(), ss->GetPause() );
 	w.Finish();
 	
 	w.Init( "WARPS" );

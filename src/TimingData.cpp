@@ -111,7 +111,7 @@ void TimingData::SetStopAtRow( int iRow, float fSeconds, bool bDelay )
 {
 	unsigned i;
 	for( i=0; i<m_StopSegments.size(); i++ )
-		if( m_StopSegments[i].m_iStartRow == iRow && m_StopSegments[i].m_bDelay == bDelay )
+		if( m_StopSegments[i].GetRow() == iRow && m_StopSegments[i].GetDelay() == bDelay )
 			break;
 
 	if( i == m_StopSegments.size() )	// there is no Stop/Delay Segment at the current beat
@@ -126,7 +126,7 @@ void TimingData::SetStopAtRow( int iRow, float fSeconds, bool bDelay )
 	{
 		if( fSeconds > 0 )
 		{
-			m_StopSegments[i].m_fStopSeconds = fSeconds;
+			m_StopSegments[i].SetPause(fSeconds);
 		}
 		else
 			m_StopSegments.erase( m_StopSegments.begin()+i, m_StopSegments.begin()+i+1 );
@@ -376,9 +376,10 @@ float TimingData::GetStopAtRow( int iNoteRow, bool bDelay ) const
 {
 	for( unsigned i=0; i<m_StopSegments.size(); i++ )
 	{
-		if( m_StopSegments[i].m_bDelay == bDelay && m_StopSegments[i].m_iStartRow == iNoteRow )
+		const StopSegment &s = m_StopSegments[i];
+		if( s.GetDelay() == bDelay && s.GetRow() == iNoteRow )
 		{
-			return m_StopSegments[i].m_fStopSeconds;
+			return s.GetPause();
 		}
 	}
 	return 0;
@@ -513,7 +514,7 @@ int TimingData::GetStopSegmentIndexAtRow( int iNoteRow, bool bDelay ) const
 	for( i=0; i<m_StopSegments.size()-1; i++ )
 	{
 		const StopSegment& s = m_StopSegments[i+1];
-		if( s.m_iStartRow > iNoteRow && s.m_bDelay == bDelay )
+		if( s.GetRow() > iNoteRow && s.GetDelay() == bDelay )
 			break;
 	}
 	return static_cast<int>(i);
@@ -839,9 +840,9 @@ void TimingData::GetBeatAndBPSFromElapsedTimeNoOffset( float fElapsedTime, float
 			iEventRow = itBPMS->GetRow();
 			iEventType = FOUND_BPM_CHANGE;
 		}
-		if( itSS != m_StopSegments.end() && itSS->m_iStartRow < iEventRow )
+		if( itSS != m_StopSegments.end() && itSS->GetRow() < iEventRow )
 		{
-			iEventRow = itSS->m_iStartRow;
+			iEventRow = itSS->GetRow();
 			iEventType = FOUND_STOP;
 		}
 		if( itWS != m_WarpSegments.end() && itWS->GetRow() < iEventRow )
@@ -871,14 +872,14 @@ void TimingData::GetBeatAndBPSFromElapsedTimeNoOffset( float fElapsedTime, float
 			break;
 		case FOUND_STOP:
 			{
-				fTimeToNextEvent = itSS->m_fStopSeconds;
+				fTimeToNextEvent = itSS->GetPause();
 				fNextEventTime   = fLastTime + fTimeToNextEvent;
-				const bool bIsDelay = itSS->m_bDelay;
+				const bool bIsDelay = itSS->GetDelay();
 				if ( fElapsedTime < fNextEventTime )
 				{
 					bFreezeOut = !bIsDelay;
 					bDelayOut  = bIsDelay;
-					fBeatOut   = NoteRowToBeat( itSS->m_iStartRow );
+					fBeatOut   = itSS->GetBeat();
 					fBPSOut    = fBPS;
 					return;
 				}
@@ -941,9 +942,9 @@ float TimingData::GetElapsedTimeFromBeatNoOffset( float fBeat ) const
 			iEventRow = itBPMS->GetRow();
 			iEventType = FOUND_BPM_CHANGE;
 		}
-		if( itSS != m_StopSegments.end() && itSS->m_bDelay && itSS->m_iStartRow < iEventRow ) // delays (come before marker)
+		if( itSS != m_StopSegments.end() && itSS->GetDelay() && itSS->GetRow() < iEventRow ) // delays (come before marker)
 		{
-			iEventRow = itSS->m_iStartRow;
+			iEventRow = itSS->GetRow();
 			iEventType = FOUND_STOP;
 		}
 		if( BeatToNoteRow(fBeat) < iEventRow )
@@ -951,9 +952,9 @@ float TimingData::GetElapsedTimeFromBeatNoOffset( float fBeat ) const
 			iEventRow = BeatToNoteRow(fBeat);
 			iEventType = FOUND_MARKER;
 		}
-		if( itSS != m_StopSegments.end() && !itSS->m_bDelay && itSS->m_iStartRow < iEventRow ) // stops (come after marker)
+		if( itSS != m_StopSegments.end() && !itSS->GetDelay() && itSS->GetRow() < iEventRow ) // stops (come after marker)
 		{
-			iEventRow = itSS->m_iStartRow;
+			iEventRow = itSS->GetRow();
 			iEventType = FOUND_STOP;
 		}
 		if( itWS != m_WarpSegments.end() && itWS->GetRow() < iEventRow )
@@ -974,7 +975,7 @@ float TimingData::GetElapsedTimeFromBeatNoOffset( float fBeat ) const
 			itBPMS ++;
 			break;
 		case FOUND_STOP:
-			fTimeToNextEvent = itSS->m_fStopSeconds;
+			fTimeToNextEvent = itSS->GetPause();
 			fNextEventTime   = fLastTime + fTimeToNextEvent;
 			fLastTime = fNextEventTime;
 			itSS ++;
@@ -1035,13 +1036,13 @@ void TimingData::ScaleRegion( float fScale, int iStartIndex, int iEndIndex, bool
 	for( unsigned i = 0; i < m_StopSegments.size(); i++ )
 	{
 		StopSegment &s = m_StopSegments[i];
-		const int iSegStartRow = s.m_iStartRow;
+		const int iSegStartRow = s.GetRow();
 		if( iSegStartRow < iStartIndex )
 			continue;
 		else if( iSegStartRow > iEndIndex )
-			s.m_iStartRow += lrintf((iEndIndex - iStartIndex) * (fScale - 1));
+			s.SetRow(s.GetRow() + lrintf((iEndIndex - iStartIndex) * (fScale - 1)));
 		else
-			s.m_iStartRow = lrintf((iSegStartRow - iStartIndex) * fScale) + iStartIndex;
+			s.SetRow(lrintf((iSegStartRow - iStartIndex) * fScale) + iStartIndex);
 	}
 	
 	for( unsigned i = 0; i < m_vTimeSignatureSegments.size(); i++ )
@@ -1198,9 +1199,9 @@ void TimingData::InsertRows( int iStartRow, int iRowsToAdd )
 	for( unsigned i = 0; i < m_StopSegments.size(); i++ )
 	{
 		StopSegment &stop = m_StopSegments[i];
-		if( stop.m_iStartRow < iStartRow )
+		if( stop.GetRow() < iStartRow )
 			continue;
-		stop.m_iStartRow += iRowsToAdd;
+		stop.SetRow(stop.GetRow() + iRowsToAdd);
 	}
 	
 	for( unsigned i = 0; i < m_WarpSegments.size(); i++ )
@@ -1306,13 +1307,13 @@ void TimingData::DeleteRows( int iStartRow, int iRowsToDelete )
 	for( unsigned i = 0; i < m_StopSegments.size(); i++ )
 	{
 		StopSegment &stop = m_StopSegments[i];
-
+		int keyRow = stop.GetRow();
 		// Before deleted region:
-		if( stop.m_iStartRow < iStartRow )
+		if( keyRow < iStartRow )
 			continue;
 
 		// Inside deleted region:
-		if( stop.m_iStartRow < iStartRow+iRowsToDelete )
+		if( keyRow < iStartRow+iRowsToDelete )
 		{
 			m_StopSegments.erase( m_StopSegments.begin()+i, m_StopSegments.begin()+i+1 );
 			--i;
@@ -1320,7 +1321,7 @@ void TimingData::DeleteRows( int iStartRow, int iRowsToDelete )
 		}
 
 		// After deleted region:
-		stop.m_iStartRow -= iRowsToDelete;
+		stop.SetRow(keyRow - iRowsToDelete);
 	}
 	
 	for( unsigned i = 0; i < m_WarpSegments.size(); i++ )
@@ -1663,10 +1664,10 @@ public:
 		vector<RString> vStops;
 		FOREACH_CONST( StopSegment, p->m_StopSegments, seg )
 		{
-			const float fStartRow = NoteRowToBeat(seg->m_iStartRow);
-			const float fStopLength = seg->m_fStopSeconds;
-			if(!seg->m_bDelay)
-				vStops.push_back( ssprintf("%f=%f", fStartRow, fStopLength) );
+			const float fStartBeat = seg->GetBeat();
+			const float fStopLength = seg->GetPause();
+			if(!seg->GetDelay())
+				vStops.push_back( ssprintf("%f=%f", fStartBeat, fStopLength) );
 		}
 
 		LuaHelpers::CreateTableFromArray(vStops, L);
@@ -1677,10 +1678,10 @@ public:
 		vector<RString> vDelays;
 		FOREACH_CONST( StopSegment, p->m_StopSegments, seg )
 		{
-			const float fStartRow = NoteRowToBeat(seg->m_iStartRow);
-			const float fStopLength = seg->m_fStopSeconds;
-			if(seg->m_bDelay)
-				vDelays.push_back( ssprintf("%f=%f", fStartRow, fStopLength) );
+			const float fStartBeat = seg->GetBeat();
+			const float fStopLength = seg->GetPause();
+			if(seg->GetDelay())
+				vDelays.push_back( ssprintf("%f=%f", fStartBeat, fStopLength) );
 		}
 
 		LuaHelpers::CreateTableFromArray(vDelays, L);

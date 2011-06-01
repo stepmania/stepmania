@@ -269,11 +269,11 @@ void AdjustSync::AutosyncTempo()
 		FOREACH( BPMSegment, GAMESTATE->m_pCurSong->m_SongTiming.m_BPMSegments, i )
 			i->SetBPM( i->GetBPM() * fScaleBPM );
 
-		// We assume that the stops were measured as a number of beats.
-		// Therefore, if we change the bpms, we need to make a similar
-		// change to the stops.
+		/* We assume that the stops were measured as a number of beats.
+		 * Therefore, if we change the bpms, we need to make a similar
+		 * change to the stops. */
 		FOREACH( StopSegment, GAMESTATE->m_pCurSong->m_SongTiming.m_StopSegments, i )
-			i->m_fStopSeconds *= 1.0f - fSlope;
+			i->SetPause(i->GetPause() * (1.0f - fSlope));
 
 		SCREENMAN->SystemMessage( AUTOSYNC_CORRECTION_APPLIED.GetValue() );
 	}
@@ -366,8 +366,8 @@ void AdjustSync::GetSyncChangeTextSong( vector<RString> &vsAddTo )
 
 		for( unsigned i=0; i< testing.m_StopSegments.size(); i++ )
 		{
-			float fOld = Quantize( original.m_StopSegments[i].m_fStopSeconds, 0.001f );
-			float fNew = Quantize( testing.m_StopSegments[i].m_fStopSeconds, 0.001f );
+			float fOld = Quantize( original.m_StopSegments[i].GetPause(), 0.001f );
+			float fNew = Quantize( testing.m_StopSegments[i].GetPause(), 0.001f );
 			float fDelta = fNew - fOld;
 
 			if( fabsf(fDelta) > 0.0001f )
