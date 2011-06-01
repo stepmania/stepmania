@@ -1719,53 +1719,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			SetDirty( true );
 		}
 		break;
-	/*
-	case EDIT_BUTTON_DELAY_UP:
-	case EDIT_BUTTON_DELAY_DOWN:
-		{
-			float fDelta;
-			switch( EditB )
-			{
-			DEFAULT_FAIL( EditB );
-			case EDIT_BUTTON_STOP_UP:	fDelta = +0.020f;	break;
-			case EDIT_BUTTON_STOP_DOWN:	fDelta = -0.020f;	break;
-			}
-			if( EditIsBeingPressed( EDIT_BUTTON_ADJUST_FINE ) )
-			{
-				fDelta /= 20; // 1ms
-			}
-			else if( input.type == IET_REPEAT )
-			{
-				if( INPUTFILTER->GetSecsHeld(input.DeviceI) < 1.0f )
-					fDelta *= 10;
-				else
-					fDelta *= 40;
-			}
-			unsigned i;
-			for( i=0; i<GetAppropriateTiming().m_StopSegments.size(); i++ )
-			{
-				if( GetAppropriateTiming().m_StopSegments[i].m_iStartRow == BeatToNoteRow(GAMESTATE->m_Position.m_fSongBeat) )
-					break;
-			}
 
-			if( i == GetAppropriateTiming().m_StopSegments.size() )	// there is no delay segment at the current beat
-			{
-				// create a new delay segment
-				if( fDelta > 0 )
-					m_pSong->AddStopSegment( StopSegment(BeatToNoteRow(GAMESTATE->m_Position.m_fSongBeat), fDelta, true) );
-			}
-			else	// delay segment being modified is m_SongTiming.m_StopSegments[i]
-			{
-				GetAppropriateTiming().m_StopSegments[i].m_fStopSeconds += fDelta;
-				if( GetAppropriateTiming().m_StopSegments[i].m_fStopSeconds <= 0 )
-					GetAppropriateTiming().m_StopSegments.erase( GetAppropriateTiming().m_StopSegments.begin()+i,
-													  GetAppropriateTiming().m_StopSegments.begin()+i+1);
-			}
-			(fDelta>0 ? m_soundValueIncrease : m_soundValueDecrease).Play();
-			SetDirty( true );
-		}
-		break;
-	*/
 	case EDIT_BUTTON_OFFSET_UP:
 	case EDIT_BUTTON_OFFSET_DOWN:
 		{
