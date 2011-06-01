@@ -213,7 +213,7 @@ struct WarpSegment : public TimingSegment<WarpSegment>
 	 * @param other the other warp segment
 	 */
 	WarpSegment(const WarpSegment &other):
-		TimingSegment<WarpSegment>(other.GetRow()),
+		TimingSegment<WarpSegment>(other),
 		lengthBeats(other.GetLength()) {};
 
 	/**
