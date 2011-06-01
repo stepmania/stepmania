@@ -2354,12 +2354,16 @@ void ScreenEdit::TransitionEditState( EditState em )
 
 		case STATE_PLAYING:
 			AdjustSync::HandleSongEnd();
+			if (!GAMESTATE->m_bIsUsingStepTiming)
+				GAMESTATE->m_pCurSteps[PLAYER_1]->m_Timing = backupStepTiming;
 			if( AdjustSync::IsSyncDataChanged() )
 				ScreenSaveSync::PromptSaveSync();
 			break;
 
 		case STATE_RECORDING:
 			SetDirty( true );
+			if (!GAMESTATE->m_bIsUsingStepTiming)
+				GAMESTATE->m_pCurSteps[PLAYER_1]->m_Timing = backupStepTiming;
 			SaveUndo();
 
 			// delete old TapNotes in the range
@@ -2410,6 +2414,12 @@ void ScreenEdit::TransitionEditState( EditState em )
 		GAMESTATE->UpdateSongPosition( fSeconds, GetAppropriateTiming(), RageZeroTimer, true );
 
 		GAMESTATE->m_bGameplayLeadIn.Set( false );
+		
+		if (!GAMESTATE->m_bIsUsingStepTiming)
+		{
+			backupStepTiming = GetAppropriateTiming();
+			GAMESTATE->m_pCurSteps[PLAYER_1]->m_Timing = GAMESTATE->m_pCurSong->m_SongTiming;
+		}
 
 		/* Reset the note skin, in case preferences have changed. */
 		// XXX
