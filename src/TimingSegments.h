@@ -15,18 +15,15 @@ struct BaseTimingSegment
 	BaseTimingSegment():
 		startingRow(-1) {};
 
-	BaseTimingSegment(const BaseTimingSegment &b)
-	{
-		*this = b;
-	}
-	
 	/**
 	 * @brief Set up a BaseTimingSegment with specified values.
-	 * @param s the starting row / beat.
-	 *
-	 * NOTE: On Windows, it's passing in the Segments, not ints or floats. */
-	template <typename StartType>
-	BaseTimingSegment(StartType s): startingRow(s) {}
+	 * @param s the starting row / beat. */
+	BaseTimingSegment(int   s): startingRow(ToNoteRow(s)) {}
+	BaseTimingSegment(float s): startingRow(ToNoteRow(s)) {}
+
+	template <class DerivedSegment>
+	BaseTimingSegment(const DerivedSegment &other):
+		startingRow(other.GetRow()) {};
 	
 	virtual ~BaseTimingSegment();
 	
@@ -68,11 +65,11 @@ template <class DerivedSegment>
 struct TimingSegment: public BaseTimingSegment
 {
 
-	TimingSegment(): BaseTimingSegment(-1) {};
-	
-	TimingSegment(int s): BaseTimingSegment(s) {};
-	
-	TimingSegment(float s): BaseTimingSegment(ToNoteRow(s)) {};
+	TimingSegment(): BaseTimingSegment() {};
+	TimingSegment(const DerivedSegment &other): BaseTimingSegment(other) {};
+
+	template <typename StartType>
+	TimingSegment(StartType s): BaseTimingSegment(s) {};
 
 	/**
 	 * @brief Compares two DrivedSegments to see if one is less than the other.
@@ -82,7 +79,10 @@ struct TimingSegment: public BaseTimingSegment
 	 * This is virtual to allow other segments to implement comparison
 	 * as required by them.
 	 */
-	virtual bool operator<( const DerivedSegment &other ) const;
+	virtual bool operator<( const DerivedSegment &other ) const
+	{ 
+		return this->GetRow() < other.GetRow();
+	};
 
 	/**
 	 * @brief Compares two DrivedSegments to see if they are equal to each other.
@@ -150,6 +150,14 @@ struct FakeSegment : public TimingSegment<FakeSegment>
 		TimingSegment<FakeSegment>(-1), lengthBeats(-1) {};
 	
 	/**
+	 * @brief Create a copy of another Fake Segment.
+	 * @param other the other fake segment
+	 */
+	FakeSegment(const FakeSegment &other):
+		TimingSegment<FakeSegment>(other),
+		lengthBeats(other.GetLength()) {};
+
+	/**
 	 * @brief Create a Fake Segment with the specified values.
 	 * @param s the starting row of this segment.
 	 * @param r the number of rows this segment lasts.
@@ -201,13 +209,21 @@ struct WarpSegment : public TimingSegment<WarpSegment>
 		TimingSegment<WarpSegment>(), lengthBeats(-1) {};
 	
 	/**
+	 * @brief Create a copy of another Warp Segment.
+	 * @param other the other warp segment
+	 */
+	WarpSegment(const WarpSegment &other):
+		TimingSegment<WarpSegment>(other.GetRow()),
+		lengthBeats(other.GetLength()) {};
+
+	/**
 	 * @brief Create a Warp Segment with the specified values.
 	 * @param s the starting row of this segment.
 	 * @param r the number of rows this segment lasts.
 	 */
 	template <typename StartType, typename LengthType>
 	WarpSegment( StartType s, LengthType r ):
-		TimingSegment<WarpSegment>(max((StartType)0, s)), 
+		TimingSegment<WarpSegment>(s),
 		lengthBeats(ToBeat(max((LengthType)0, r))) {};
 
 	/**
@@ -251,6 +267,14 @@ struct TickcountSegment : public TimingSegment<TickcountSegment>
 	TickcountSegment():
 		TimingSegment<TickcountSegment>(), ticks(4) {};
 	
+	/**
+	 * @brief Create a copy of another Tickcount Segment.
+	 * @param other the other tickcount segment
+	 */
+	TickcountSegment(const TickcountSegment &other):
+		TimingSegment<TickcountSegment>(other),
+		ticks(other.GetTicks()) {};
+
 	/**
 	 * @brief Creates a TickcountSegment with specified values.
 	 * @param s the starting row / beat. */
@@ -305,6 +329,11 @@ struct ComboSegment : public TimingSegment<ComboSegment>
 	 */
 	ComboSegment() : 
 		TimingSegment<ComboSegment>(), combo(1) { }
+
+	ComboSegment(const ComboSegment &other) : 
+		TimingSegment<ComboSegment>(other),
+		combo(other.GetCombo()) {};
+
 	/**
 	 * @brief Creates a Combo Segment with the specified values.
 	 * @param s the starting row / beat of this segment.
@@ -354,6 +383,11 @@ struct LabelSegment : public TimingSegment<LabelSegment>
 	 */
 	LabelSegment() : 
 		TimingSegment<LabelSegment>(), label("") { }
+
+	LabelSegment(const LabelSegment &other) :
+		TimingSegment<LabelSegment>(other),
+		label(other.GetLabel()) {};
+
 	/**
 	 * @brief Creates a Label Segment with the specified values.
 	 * @param s the starting row / beat of this segment.
@@ -403,6 +437,10 @@ struct BPMSegment : public TimingSegment<BPMSegment>
 	BPMSegment() :
 		TimingSegment<BPMSegment>(-1), bps(-1.0f) { }
 	
+	BPMSegment(const BPMSegment &other) :
+		TimingSegment<BPMSegment>(other),
+		bps(other.GetBPS()) {};
+
 	operator int() const { return 1; }
 	operator float() const { return 2.0f; }
 
@@ -464,6 +502,11 @@ struct TimeSignatureSegment : public TimingSegment<TimeSignatureSegment>
 	TimeSignatureSegment():
 		TimingSegment<TimeSignatureSegment>(),
 		numerator(4), denominator(4)  { }
+		
+	TimeSignatureSegment(const TimeSignatureSegment &other) :
+		TimingSegment<TimeSignatureSegment>(other),
+		numerator(other.GetNum()),
+		denominator(other.GetDen()) {};
 	/**
 	 * @brief Creates a Time Signature Segment with supplied values.
 	 *
@@ -552,6 +595,12 @@ struct SpeedSegment : public TimingSegment<SpeedSegment>
 		TimingSegment<SpeedSegment>(0), 
 	ratio(1), length(0), unit(0) {}
 	
+	SpeedSegment(const SpeedSegment &other) :
+		TimingSegment<SpeedSegment>(other),
+		ratio(other.GetRatio()),
+		length(other.GetLength()),
+		unit(other.GetUnit()) {};
+
 	/**
 	 * @brief Sets up the SpeedSegment with specified values.
 	 * @param s The row / beat this activates.

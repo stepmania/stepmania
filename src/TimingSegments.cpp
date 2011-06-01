@@ -26,13 +26,6 @@ float BaseTimingSegment::GetBeat() const
 	return NoteRowToBeat(GetRow());
 }
 
-template <class DerivedSegment>
-bool TimingSegment<DerivedSegment>::operator<( const DerivedSegment &other ) const
-{ 
-	LTCOMPARE(GetRow());
-	return false;
-}
-
 
 /* ======================================================
    Here comes the actual timing segments implementation!! */
