@@ -17,8 +17,8 @@ void Serialize(const BPMSegment &seg, Json::Value &root)
 
 static void Serialize(const StopSegment &seg, Json::Value &root)
 {
-	root["Beat"] = NoteRowToBeat(seg.m_iStartRow);
-	root["Seconds"] = seg.m_fStopSeconds;
+	root["Beat"] = seg.GetBeat();
+	root["Seconds"] = seg.GetPause();
 }
 
 static void Serialize(const TimingData &td, Json::Value &root)

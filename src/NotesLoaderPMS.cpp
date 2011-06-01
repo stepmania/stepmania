@@ -722,7 +722,7 @@ static void ReadGlobalTags( const NameToData_t &mapNameToData, Song &out, Measur
 
 						StopSegment newSeg( BeatToNoteRow(fBeat), fFreezeSecs );
 						out.m_SongTiming.AddStopSegment( newSeg );
-						LOG->Trace( "Inserting new Freeze at beat %f, secs %f", fBeat, newSeg.m_fStopSeconds );
+						LOG->Trace( "Inserting new Freeze at beat %f, secs %f", fBeat, newSeg.GetPause() );
 					}
 					else
 					{

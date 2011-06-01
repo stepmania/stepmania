@@ -1428,6 +1428,7 @@
 			<Function name='HasFakes'/>
 			<Function name='HasNegativeBPMs'/>
 			<Function name='HasSpeedChanges'/>
+			<Function name='HasScrollChanges'/>
 			<Function name='HasStops'/>
 			<Function name='HasWarps'/>
 		</Class>

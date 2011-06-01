@@ -637,7 +637,7 @@ void NoteField::DrawScrollText( const float fBeat, float fPercent )
 	m_textMeasureNumber.SetHorizAlign( SCROLL_IS_LEFT_SIDE ? align_right : align_left );
 	m_textMeasureNumber.SetDiffuse( SCROLL_COLOR );
 	m_textMeasureNumber.SetGlow( RageColor(1,1,1,RageFastCos(RageTimer::GetTimeSinceStartFast()*2)/2+0.5f) );
-	m_textMeasureNumber.SetText( ssprintf("%.3fx", fPercent) );
+	m_textMeasureNumber.SetText( ssprintf("%.3f", fPercent) );
 	m_textMeasureNumber.SetXY( (SCROLL_IS_LEFT_SIDE ? -xBase - xOffset : xBase + xOffset), fYPos );
 	m_textMeasureNumber.Draw();
 }
@@ -896,6 +896,20 @@ void NoteField::DrawPrimitives()
 
 		const TimingData &timing = *pTiming;
 		
+		// Scroll text
+		if( GAMESTATE->m_bIsUsingStepTiming )
+		{
+			FOREACH_CONST( ScrollSegment, timing.m_ScrollSegments, seg )
+			{
+				if( seg->GetRow() >= iFirstRowToDraw && seg->GetRow() <= iLastRowToDraw )
+				{
+					float fBeat = seg->GetBeat();
+					if( IS_ON_SCREEN(fBeat) )
+						DrawScrollText( fBeat, seg->GetRatio() );
+				}
+			}
+		}
+		
 		// BPM text
 		FOREACH_CONST( BPMSegment, timing.m_BPMSegments, seg )
 		{
@@ -910,11 +924,11 @@ void NoteField::DrawPrimitives()
 		// Freeze text
 		FOREACH_CONST( StopSegment, timing.m_StopSegments, seg )
 		{
-			if( seg->m_iStartRow >= iFirstRowToDraw && seg->m_iStartRow <= iLastRowToDraw )
+			if( seg->GetRow() >= iFirstRowToDraw && seg->GetRow() <= iLastRowToDraw )
 			{
-				float fBeat = NoteRowToBeat(seg->m_iStartRow);
+				float fBeat = seg->GetBeat();
 				if( IS_ON_SCREEN(fBeat) )
-					DrawFreezeText( fBeat, seg->m_fStopSeconds, seg->m_bDelay );
+					DrawFreezeText( fBeat, seg->GetPause(), seg->GetDelay() );
 			}
 		}
 		
@@ -990,20 +1004,6 @@ void NoteField::DrawPrimitives()
 					if( IS_ON_SCREEN(fBeat) )
 						DrawSpeedText(fBeat, seg->GetRatio(), 
 							      seg->GetLength(), seg->GetUnit() );
-				}
-			}
-		}
-		
-		// Scroll text
-		if( GAMESTATE->m_bIsUsingStepTiming )
-		{
-			FOREACH_CONST( ScrollSegment, timing.m_ScrollSegments, seg )
-			{
-				if( seg->GetRow() >= iFirstRowToDraw && seg->GetRow() <= iLastRowToDraw )
-				{
-					float fBeat = seg->GetBeat();
-					if( IS_ON_SCREEN(fBeat) )
-						DrawScrollText( fBeat, seg->GetRatio() );
 				}
 			}
 		}
