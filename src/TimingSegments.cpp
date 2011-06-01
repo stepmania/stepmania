@@ -1,3 +1,4 @@
+#include "global.h"
 #include "TimingSegments.h"
 
 #define LTCOMPARE(x)      if(this->x < other.x) return true; if(this->x > other.x) return false;
