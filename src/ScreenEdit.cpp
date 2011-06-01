@@ -3509,14 +3509,12 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 		case paste_at_current_beat:
 		case paste_at_begin_marker:
 			{
-				// TODO: Song/Step Timing checks?
-				
 				int iDestFirstRow = -1;
 				switch( c )
 				{
 					DEFAULT_FAIL( c );
 					case paste_at_current_beat:
-						iDestFirstRow = BeatToNoteRow( GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat );
+						iDestFirstRow = BeatToNoteRow( GetAppropriatePosition().m_fSongBeat );
 						break;
 					case paste_at_begin_marker:
 						ASSERT( m_NoteFieldEdit.m_iBeginMarker!=-1 );
