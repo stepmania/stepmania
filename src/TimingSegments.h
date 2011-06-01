@@ -13,7 +13,7 @@ struct BaseTimingSegment
 
 	/** @brief Set up a BaseTimingSegment with default values. */
 	BaseTimingSegment():
-		startingRow(static_cast<int>(-1)) {};
+		startingRow(-1) {};
 
 	BaseTimingSegment(const BaseTimingSegment &b)
 	{
@@ -26,7 +26,7 @@ struct BaseTimingSegment
 	 *
 	 * NOTE: On Windows, it's passing in the Segments, not ints or floats. */
 	template <typename StartType>
-	BaseTimingSegment(StartType s): startingRow(ToNoteRow(s)) {}
+	BaseTimingSegment(StartType s): startingRow(s) {}
 	
 	virtual ~BaseTimingSegment();
 	
@@ -68,10 +68,11 @@ template <class DerivedSegment>
 struct TimingSegment: public BaseTimingSegment
 {
 
-	TimingSegment(): BaseTimingSegment(static_cast<int>(-1)) {};
+	TimingSegment(): BaseTimingSegment(-1) {};
 	
-	template <typename StartType>
-	TimingSegment(StartType s): BaseTimingSegment(s) {};
+	TimingSegment(int s): BaseTimingSegment(s) {};
+	
+	TimingSegment(float s): BaseTimingSegment(ToNoteRow(s)) {};
 
 	/**
 	 * @brief Compares two DrivedSegments to see if one is less than the other.
@@ -146,7 +147,7 @@ struct FakeSegment : public TimingSegment<FakeSegment>
 	 * It is best to override the values as soon as possible.
 	 */
 	FakeSegment():
-		TimingSegment<FakeSegment>(), lengthBeats(-1) {};
+		TimingSegment<FakeSegment>(-1), lengthBeats(-1) {};
 	
 	/**
 	 * @brief Create a Fake Segment with the specified values.
@@ -400,7 +401,7 @@ struct BPMSegment : public TimingSegment<BPMSegment>
 	 * It is best to override the values as soon as possible.
 	 */
 	BPMSegment() :
-		TimingSegment<BPMSegment>(static_cast<int>(-1)), bps(-1.0f) { }
+		TimingSegment<BPMSegment>(-1), bps(-1.0f) { }
 	
 	operator int() const { return 1; }
 	operator float() const { return 2.0f; }
@@ -412,7 +413,7 @@ struct BPMSegment : public TimingSegment<BPMSegment>
 	 */
 	template <typename StartType>
 	BPMSegment( StartType s, float bpm ):
-		TimingSegment<BPMSegment>(max((StartType)0, ToNoteRow(s))), bps(0.0f) { SetBPM(bpm); }
+		TimingSegment<BPMSegment>(max((StartType)0, s)), bps(0.0f) { SetBPM(bpm); }
 
 	/**
 	 * @brief Get the label in this LabelSegment.
@@ -467,22 +468,22 @@ struct TimeSignatureSegment : public TimingSegment<TimeSignatureSegment>
 	 * @brief Creates a Time Signature Segment with supplied values.
 	 *
 	 * The denominator will be 4 if this is called.
-	 * @param r the starting row / beat of the segment.
+	 * @param s the starting row / beat of the segment.
 	 * @param n the numerator for the segment.
 	 */
 	template <typename StartType>
-	TimeSignatureSegment( StartType r, int n ):
-		TimingSegment<TimeSignatureSegment>(max((StartType)0, r)),
+	TimeSignatureSegment( StartType s, int n ):
+		TimingSegment<TimeSignatureSegment>(max((StartType)0, s)),
 		numerator(max(1, n)), denominator(4) {}
 	/**
 	 * @brief Creates a Time Signature Segment with supplied values.
-	 * @param r the starting row of the segment.
+	 * @param s the starting row of the segment.
 	 * @param n the numerator for the segment.
 	 * @param d the denonimator for the segment.
 	 */
 	template <typename StartType>
-	TimeSignatureSegment( StartType r, int n, int d ):
-		TimingSegment<TimeSignatureSegment>(max((StartType)0, r)),
+	TimeSignatureSegment( StartType s, int n, int d ):
+		TimingSegment<TimeSignatureSegment>(max((StartType)0, s)),
 		numerator(max(1, n)), denominator(max(1, d)) {}
 	
 	/**
@@ -553,33 +554,33 @@ struct SpeedSegment : public TimingSegment<SpeedSegment>
 	
 	/**
 	 * @brief Sets up the SpeedSegment with specified values.
-	 * @param r The row / beat this activates.
+	 * @param s The row / beat this activates.
 	 * @param p The percentage to use. */
 	template <typename StartType>
-	SpeedSegment( StartType r, float p): 
-		TimingSegment<SpeedSegment>(max((StartType)0, r)), 
+	SpeedSegment( StartType s, float p): 
+		TimingSegment<SpeedSegment>(max((StartType)0, s)), 
 	ratio(p), length(0), unit(0) {}
 	
 	/**
 	 * @brief Sets up the SpeedSegment with specified values.
-	 * @param r The row / beat this activates.
+	 * @param s The row / beat this activates.
 	 * @param p The percentage to use.
 	 * @param w The number of beats to wait. */
 	template <typename StartType>
-	SpeedSegment(StartType r, float p, float w):
-		TimingSegment<SpeedSegment>(max((StartType)0, r)),
+	SpeedSegment(StartType s, float p, float w):
+		TimingSegment<SpeedSegment>(max((StartType)0, s)),
 	ratio(p), length(w), unit(0) {}
 
 	
 	/**
 	 * @brief Sets up the SpeedSegment with specified values.
-	 * @param r The row / beat this activates.
+	 * @param s The row / beat this activates.
 	 * @param p The percentage to use.
 	 * @param w The number of beats/seconds to wait.
 	 * @param k The mode used for the wait variable. */
 	template <typename StartType>
-	SpeedSegment(StartType r, float p, float w, unsigned short k): 
-		TimingSegment<SpeedSegment>(max((StartType)0, r)),
+	SpeedSegment(StartType s, float p, float w, unsigned short k): 
+		TimingSegment<SpeedSegment>(max((StartType)0, s)),
 		ratio(p), length(w), unit(k) {}
 	
 	/**
