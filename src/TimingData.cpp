@@ -1603,12 +1603,12 @@ bool TimingData::HasFakes() const
 
 bool TimingData::HasSpeedChanges() const
 {
-	return m_SpeedSegments.size()>1;
+	return m_SpeedSegments.size()>1 || m_SpeedSegments[0].GetRatio() != 1;
 }
 
 bool TimingData::HasScrollChanges() const
 {
-	return m_ScrollSegments.size()>1;
+	return m_ScrollSegments.size()>1 || m_ScrollSegments[0].GetRatio() != 1;
 }
 
 void TimingData::NoteRowToMeasureAndBeat( int iNoteRow, int &iMeasureIndexOut, int &iBeatIndexOut, int &iRowsRemainder ) const
