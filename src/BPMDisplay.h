@@ -6,6 +6,7 @@
 #include "ThemeMetric.h"
 #include "LocalizedString.h"
 class Song;
+class Steps;
 class Course;
 struct DisplayBpms;
 
@@ -30,6 +31,11 @@ public:
 	 * @param pSong the song in question.
 	 */
 	void SetBpmFromSong( const Song* pSong );
+	/**
+	 * @brief Use the BPM[s] from a steps.
+	 * @param pSteps the steps in question.
+	 */
+	void SetBpmFromSteps( const Steps* pSteps );
 	/**
 	 * @brief Use the BPM[s] from a course.
 	 * @param pCourse the course in question.

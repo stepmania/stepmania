@@ -9,6 +9,7 @@
 #include "CommonMetrics.h"
 #include "LocalizedString.h"
 #include "Song.h"
+#include "Steps.h"
 
 #include <limits.h>
 
@@ -198,6 +199,17 @@ void BPMDisplay::SetBpmFromSong( const Song* pSong )
 	}
 }
 
+void BPMDisplay::SetBpmFromSteps( const Steps* pSteps )
+{
+	ASSERT( pSteps );
+	DisplayBpms bpms;
+	float fMinBPM, fMaxBPM;
+	pSteps->m_Timing.GetActualBPM( fMinBPM, fMaxBPM );
+	bpms.Add( fMinBPM );
+	bpms.Add( fMaxBPM );
+	m_fCycleTime = 1.0f;
+}
+
 void BPMDisplay::SetBpmFromCourse( const Course* pCourse )
 {
 	ASSERT( pCourse );
@@ -307,6 +319,16 @@ public:
 		}
 		return 0;
 	}
+	static int SetFromSteps( T* p, lua_State *L )
+	{
+		if( lua_isnil(L,1) ) { p->NoBPM(); }
+		else
+		{
+			const Steps* pSteps = Luna<Steps>::check( L, 1, true );
+			p->SetBpmFromSteps(pSteps);
+		}
+		return 0;
+	}
 	static int SetFromCourse( T* p, lua_State *L )
 	{
 		if( lua_isnil(L,1) ) { p->NoBPM(); }
@@ -323,6 +345,7 @@ public:
 	{
 		ADD_METHOD( SetFromGameState );
 		ADD_METHOD( SetFromSong );
+		ADD_METHOD( SetFromSteps );
 		ADD_METHOD( SetFromCourse );
 		ADD_METHOD( GetText );
 	}

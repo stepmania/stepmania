@@ -251,6 +251,13 @@ protected:
 
 	BitmapText		m_textInputTips;
 	
+	/**
+	 * @brief Keep a backup of the present Step TimingData when
+	 * entering a playing or recording state.
+	 *
+	 * This is mainly to allow playing a chart with Song Timing. */
+	TimingData		backupStepTiming;
+	
 	/** @brief The current TapNote that would be inserted. */
 	TapNote			m_selectedTap;
 
