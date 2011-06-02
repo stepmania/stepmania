@@ -1578,6 +1578,9 @@
 		The second argument is optional. Apply the GameCommand represented by <code>sCommand</code>
 		for <code>pn</code>, if given. See <Link class='GameCommand' />.
 	</Function>
+	<Function name='ClearStageModifiersIllegalForCourse' return='void' arguments=''>
+		Removes any stage modifiers that are illegal for course play.
+	</Function>
 	<Function name='EnoughCreditsToJoin' return='bool' arguments=''>
 		Returns <code>true</code> if enough credits have been inserted to join.
 	</Function>
@@ -1681,11 +1684,17 @@
 	<Function name='GetHumanPlayers' return='{PlayerNumber}' arguments=''>
 		Returns an array of <Link class='PlayerNumber' />s corresponding to Human players.
 	</Function>
+	<Function name='GetLoadingCourseSongIndex' return='int' arguments=''>
+		Returns the index of the next song in the course.
+	</Function>
 	<Function name='GetMasterPlayerNumber' return='PlayerNumber' arguments=''>
 		Returns the master player number.
 	</Function>
 	<Function name='GetMultiplayer' return='bool' arguments=''>
 		Returns <code>true</code> if the game is Multiplayer.
+	</Function>
+	<Function name='GetMultiPlayerState' return='PlayerState' arguments='MultiPlayer mp'>
+		Returns the PlayerState for the specified MultiPlayer.
 	</Function>
 	<Function name='GetNumMultiplayerNoteFields' return='int' arguments=''>
 		Returns the number of active multiplayer NoteFields.
@@ -1723,21 +1732,27 @@
 	<Function name='GetPremium' return='Premium' arguments=''>
 		Returns the current Premium.
 	</Function>
-	<Function name='GetSongBeat' return='float' arguments=''>
-		<!-- XXX: Not exactly sure on this. -->
-		Returns the current beat of the song.
+	<Function name='GetSmallestNumStagesLeftForAnyHumanPlayer' return='int' arguments=''>
+		<!-- Returns the smallest number of stages left for any human player. -->
+		Kind of does what it says on the tin.
+	</Function>
+	<Function name='GetSongBeat' theme='_fallback'  return='float' arguments=''>
+		[01 compat.lua] Returns the current beat of the song.
+	</Function>
+	<Function name='GetSongBeatNoOffset' theme='_fallback'  return='float' arguments=''>
+		[01 compat.lua] Returns the current beat of the song without an offset.
 	</Function>
 	<Function name='GetSongBeatVisible' return='float' arguments=''>
 		Returns the current visible beat of the song.
 	</Function>
-	<Function name='GetSongBPS' return='float' arguments=''>
-		Returns the song's current beats per second.
+	<Function name='GetSongBPS' theme='_fallback' return='float' arguments=''>
+		[01 compat.lua] Returns the song's current beats per second.
 	</Function>
-	<Function name='GetSongDelay' sm-ssc='true' return='bool' arguments=''>
-		Returns <code>true</code> if a delay is active in the song.
+	<Function name='GetSongDelay' theme='_fallback' return='bool' arguments=''>
+		[01 compat.lua] Returns <code>true</code> if a delay is active in the song.
 	</Function>
-	<Function name='GetSongFreeze' return='bool' arguments=''>
-		Returns <code>true</code> if the song is currently in a freeze.
+	<Function name='GetSongFreeze' theme='_fallback' return='bool' arguments=''>
+		[01 compat.lua] Returns <code>true</code> if the song is currently in a freeze.
 	</Function>
 	<Function name='GetSongOptions' return='string' arguments='ModsLevel ml'>
 		Returns the song options for the specified ModsLevel as a string.
@@ -1749,7 +1764,7 @@
 		Returns how much of the song is through at beat <code>fBeat</code>.
 	</Function>
 	<Function name='GetSongPosition' sm-ssc='true' return='SongPosition' arguments=''>
-		<!-- todo -->
+		Returns the current SongPosition.
 	</Function>
 	<Function name='GetSortOrder' return='SortOrder' arguments=''>
 		Returns the current SortOrder.
