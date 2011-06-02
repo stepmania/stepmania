@@ -68,7 +68,7 @@ David Santamaría Rogado (howl)
  * Various patches (see Changelog_sm-ssc.txt for more details and links)
 
 Kita K./D. Trucks
- * sm-ssc default theme music
+ * default theme music
 
 kurisu
  * Dance-threepanel gametype code (3.9; re-adapted for sm-ssc)
