@@ -522,6 +522,7 @@
 			<Function name='SetFromCourse'/>
 			<Function name='SetFromGameState'/>
 			<Function name='SetFromSong'/>
+			<Function name='SetFromSteps'/>
 		</Class>
 		<Class base='Sprite' name='Banner'>
 			<Function name='GetPercentScrolling'/>
@@ -627,6 +628,7 @@
 		<Class name='CryptManager'>
 			<Function name='MD5File'/>
 			<Function name='MD5String'/>
+			<Function name='SHA1File'/>
 			<Function name='SHA1String'/>
 		</Class>
 		<Class base='Sprite' name='DifficultyIcon'>
@@ -1427,8 +1429,8 @@
 			<Function name='HasBPMChanges'/>
 			<Function name='HasFakes'/>
 			<Function name='HasNegativeBPMs'/>
-			<Function name='HasSpeedChanges'/>
 			<Function name='HasScrollChanges'/>
+			<Function name='HasSpeedChanges'/>
 			<Function name='HasStops'/>
 			<Function name='HasWarps'/>
 		</Class>
@@ -2103,6 +2105,6 @@
 		<Constant name='sGame' value='&apos;dance&apos;'/>
 		<Constant name='top' value='&apos;VertAlign_Top&apos;'/>
 	</Constants>
-	<Version>sm-ssc v1.2.5</Version>
-	<Date>2011-05-19</Date>
+	<Version>StepMania 5 v5.0 Preview 1</Version>
+	<Date>2011-06-02</Date>
 </Lua>
