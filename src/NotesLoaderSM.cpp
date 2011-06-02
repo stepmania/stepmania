@@ -84,20 +84,6 @@ void SMLoader::GetApplicableFiles( const RString &sPath, vector<RString> &out )
 	GetDirListing( sPath + RString("*.sm"), out );
 }
 
-bool SMLoader::LoadTimingFromFile( const RString &fn, TimingData &out )
-{
-	MsdFile msd;
-	if( !msd.ReadFile( fn, true ) )  // unescape
-	{
-		LOG->UserLog( "Song file", fn, "couldn't be loaded: %s", msd.GetError().c_str() );
-		return false;
-	}
-
-	out.m_sFile = fn;
-	LoadTimingFromSMFile( msd, out );
-	return true;
-}
-
 void SMLoader::ProcessBGChanges( Song &out, const RString &sValueName, const RString &sPath, const RString &sParam )
 {
 	BackgroundLayer iLayer = BACKGROUND_LAYER_1;
@@ -423,53 +409,6 @@ void SMLoader::ProcessTickcounts( TimingData &out, const RString sParam )
 	}
 }
 
-void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
-{
-	out.m_fBeat0OffsetInSeconds = 0;
-	out.m_BPMSegments.clear();
-	out.m_StopSegments.clear();
-	out.m_WarpSegments.clear();
-	out.m_vTimeSignatureSegments.clear();
-
-	for( unsigned i=0; i<msd.GetNumValues(); i++ )
-	{
-		const MsdFile::value_t &sParams = msd.GetValue(i);
-		RString sValueName = sParams[0];
-		sValueName.MakeUpper();
-
-		if( sValueName=="OFFSET" )
-		{
-			out.m_fBeat0OffsetInSeconds = StringToFloat( sParams[1] );
-		}
-		else if( sValueName=="BPMS" )
-		{
-			ProcessBPMs(out, sParams[1]);
-		}
-
-		else if( sValueName=="STOPS" || sValueName=="FREEZES" )
-		{
-			ProcessStops(out, sParams[1]);
-		}
-
-		else if( sValueName=="DELAYS" )
-		{
-			ProcessDelays(out, sParams[1]);
-		}
-
-		else if( sValueName=="TIMESIGNATURES" )
-		{
-			ProcessTimeSignatures(out, sParams[1]);
-		}
-
-		else if( sValueName=="TICKCOUNTS" )
-		{
-			ProcessTickcounts(out, sParams[1]);
-		}
-		// Ensure all of the warps are handled right.
-		sort(out.m_WarpSegments.begin(), out.m_WarpSegments.end());
-	}
-}
-
 bool SMLoader::LoadFromBGChangesString( BackgroundChange &change, const RString &sBGChangeExpression )
 {
 	vector<RString> aBGChangeValues;
@@ -568,7 +507,6 @@ bool SMLoader::LoadFromSMFile( const RString &sPath, Song &out, bool bFromCache 
 	}
 
 	out.m_SongTiming.m_sFile = sPath;
-	LoadTimingFromSMFile( msd, out.m_SongTiming );
 
 	for( unsigned i=0; i<msd.GetNumValues(); i++ )
 	{
@@ -620,6 +558,36 @@ bool SMLoader::LoadFromSMFile( const RString &sPath, Song &out, bool bFromCache 
 		else if( sValueName=="MUSIC" )
 			out.m_sMusicFile = sParams[1];
 
+		else if( sValueName=="OFFSET" )
+		{
+			out.m_fBeat0OffsetInSeconds = StringToFloat( sParams[1] );
+		}
+		else if( sValueName=="BPMS" )
+		{
+			ProcessBPMs(out.m_SongTiming, sParams[1]);
+		}
+		
+		else if( sValueName=="STOPS" || sValueName=="FREEZES" )
+		{
+			ProcessStops(out.m_SongTiming, sParams[1]);
+		}
+		
+		else if( sValueName=="DELAYS" )
+		{
+			ProcessDelays(out.m_SongTiming, sParams[1]);
+		}
+		
+		else if( sValueName=="TIMESIGNATURES" )
+		{
+			ProcessTimeSignatures(out.m_SongTiming, sParams[1]);
+		}
+		
+		else if( sValueName=="TICKCOUNTS" )
+		{
+			ProcessTickcounts(out.m_SongTiming, sParams[1]);
+		}
+		
+		
 		else if( sValueName=="INSTRUMENTTRACK" )
 		{
 			ProcessInstrumentTracks( out, sParams[1] );
@@ -762,15 +730,15 @@ bool SMLoader::LoadFromSMFile( const RString &sPath, Song &out, bool bFromCache 
 
 			out.AddSteps( pNewNotes );
 		}
-		/*
-		 * We used to check for timing data in this section. That has
-		 * since been moved to a dedicated function.
-		 */
-		else if( sValueName=="OFFSET" || sValueName=="BPMS" || sValueName=="STOPS" || sValueName=="FREEZES" || sValueName=="DELAYS" || sValueName=="TIMESIGNATURES" || sValueName=="LEADTRACK" || sValueName=="TICKCOUNTS" )
+		// XXX: Does anyone know what LEADTRACK is for? -Wolfman2000
+		else if( sValueName=="LEADTRACK" )
 			;
 		else
 			LOG->UserLog( "Song file", sPath, "has an unexpected value named \"%s\".", sValueName.c_str() );
 	}
+	
+	// Ensure all warps from negative time changes are in order.
+	sort(out.m_SongTiming.m_WarpSegments.begin(), out.m_SongTiming.m_WarpSegments.end());
 	TidyUpData( out, bFromCache );
 	return true;
 }
