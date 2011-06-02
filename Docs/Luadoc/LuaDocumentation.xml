@@ -1273,6 +1273,9 @@
 	<Function name='SetFromSong' sm-ssc='true' return='void' arguments='Song s'>
 		Sets the BPMDisplay from the specified Song.
 	</Function>
+	<Function name='SetFromSteps' sm-ssc='true' return='void' arguments='Steps s'>
+		Sets the BPMDisplay from the specified Steps.
+	</Function>
 </Class>
 <Class name='Character'>
 	<Function name='GetCardPath' return='string' arguments=''>

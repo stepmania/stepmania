@@ -5,10 +5,15 @@ from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
 ================================================================================
-StepMania 5.0 ????????? | 20110???
+StepMania 5.0 Preview 2 | 20110???
 --------------------------------------------------------------------------------
 
-2011/05/31
+2011/06/02
+----------
+* [BPMDisplay] Added SetFromSteps Lua binding. [AJ]
+
+2011/06/01
+----------
 * [TimingData] Added the HasScrollChanges lua binding. [Wolfman2000]
 
 2011/05/31
@@ -16,6 +21,7 @@ StepMania 5.0 ????????? | 20110???
 * [Player] Added the BattleRaveMirror metric. This determines if Battle and
   Rave mode will have the two players with mirrored charts or not. By default,
   this is set to true, preserving the ITG style behavior. [Wolfman2000]
+* [TimingData] Added the HasScrollChanges lua binding. [Wolfman2000]
 
 ================================================================================
 StepMania 5.0 Preview 1 | 20110529
