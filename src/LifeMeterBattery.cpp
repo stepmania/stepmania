@@ -106,7 +106,7 @@ void LifeMeterBattery::ChangeLife( TapNoteScore score )
 	if( m_iLivesLeft == 0 )
 		return;
 
-	// xxx: This is hardcoded; we should use metrics for this. -aj
+	// todo: let the themer decide how this is handled. -aj
 	switch( score )
 	{
 	case TNS_W1:
@@ -153,7 +153,7 @@ void LifeMeterBattery::ChangeLife( HoldNoteScore score, TapNoteScore tscore )
 	case HNS_Held:
 		break;
 	case HNS_LetGo:
-		ChangeLife( TNS_Miss );		// LetGo is the same as a miss
+		ChangeLife( TNS_Miss ); // LetGo is the same as a miss
 		break;
 	default:
 		ASSERT(0);
