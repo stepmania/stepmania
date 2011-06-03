@@ -42,7 +42,7 @@ else
 			local pState = GAMESTATE:GetPlayerState(pn);
 			local songPosition = pState:GetSongPosition()
 			local bpm = songPosition:GetCurBPS() * 60
-			bpmDisplay:SetText( string.format(%.2f,bpm) )
+			bpmDisplay:settext( string.format(%.2f,bpm) )
 		end
 	end
 
