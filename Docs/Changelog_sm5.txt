@@ -14,6 +14,7 @@ StepMania 5.0 Preview 2 | 20110???
 * [ScreenDebugOverlay] Switch the R and T keys to be Volume Down and Up
   respectively. I have to admit, it makes more sense to have volume up be
   on the right instead of the left. [Wolfman2000]
+* [SongManager] Make autogen courses have "Autogen" as the Scripter. [AJ]
 
 2011/06/01
 ----------
