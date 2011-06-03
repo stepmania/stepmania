@@ -69,7 +69,7 @@ void ArchHooks::MountUserFilesystems( const RString &sDirOfExecutable )
 
 	FILEMAN->Mount( "dir", sAppDataDir + "/Logs", "/Logs" );
 	FILEMAN->Mount( "dir", sAppDataDir + "/Save", "/Save" );
-	FILEMAN->Mount( "dir", sPicturesDir + "/Screenshots", "/Screenshots" );
+	FILEMAN->Mount( "dir", sPicturesDir + " Screenshots", "/Screenshots" );
 	FILEMAN->Mount( "dir", sAppDataDir + "/Packages", "/" + SpecialFiles::USER_PACKAGES_DIR );
 }
 
