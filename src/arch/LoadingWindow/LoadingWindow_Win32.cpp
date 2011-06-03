@@ -7,6 +7,7 @@
 #include "archutils/win32/WindowIcon.h"
 #include "archutils/win32/ErrorStrings.h"
 #include <windows.h>
+#include "CommCtrl.h"
 #include "RageSurface_Load.h"
 #include "RageSurface.h"
 #include "RageSurfaceUtils.h"
@@ -16,6 +17,9 @@
 
 #include "RageSurfaceUtils_Zoom.h"
 static HBITMAP g_hBitmap = NULL;
+
+#pragma comment(linker,"\"/manifestdependency:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
+
 
 /* Load a RageSurface into a GDI surface. */
 static HBITMAP LoadWin32Surface( RageSurface *&s )
@@ -118,6 +122,11 @@ void LoadingWindow_Win32::SetIcon( const RageSurface *pIcon )
 
 LoadingWindow_Win32::LoadingWindow_Win32()
 {
+	INITCOMMONCONTROLSEX cceData;
+	cceData.dwSize=sizeof(INITCOMMONCONTROLSEX);
+	cceData.dwICC=ICC_PROGRESS_CLASS;
+	InitCommonControlsEx(&cceData);
+
 	m_hIcon = NULL;
 	hwnd = CreateDialog( handle.Get(), MAKEINTRESOURCE(IDD_LOADING_DIALOG), NULL, WndProc );
 	for( unsigned i = 0; i < 3; ++i )
@@ -166,6 +175,20 @@ void LoadingWindow_Win32::SetText( RString sText )
 		
 		::SetWindowText( hwndItem, ConvertUTF8ToACP(asMessageLines[i]).c_str() );
 	}
+}
+
+void LoadingWindow_Win32::SetProgress(const int progress)
+{
+	m_progress=progress;
+	HWND hwndItem = ::GetDlgItem( hwnd, IDC_PROGRESS );
+	::SendMessage(hwndItem,PBM_SETPOS,progress,0);
+}
+
+void LoadingWindow_Win32::SetTotalWork(const int totalWork)
+{
+	m_totalWork=totalWork;
+	HWND hwndItem = ::GetDlgItem( hwnd, IDC_PROGRESS );
+	::SendMessage(hwndItem,PBM_SETRANGE32,0,totalWork);
 }
 
 /*

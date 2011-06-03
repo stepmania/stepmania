@@ -14,6 +14,12 @@ public:
 	virtual void Paint() { }
 	virtual void SetText( RString str ) = 0;
 	virtual void SetIcon( const RageSurface *pIcon ) { }
+	virtual void SetProgress( const int progress ) { m_progress=progress; }
+	virtual void SetTotalWork( const int totalWork ) { m_totalWork=totalWork; }
+
+protected:
+	int m_progress;
+	int m_totalWork;
 };
 
 #endif

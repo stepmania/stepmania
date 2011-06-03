@@ -16,6 +16,8 @@ public:
 	void SetText( RString sText );
 	void Paint();
 	void SetIcon( const RageSurface *pIcon );
+	void SetProgress( const int progress );
+	void SetTotalWork( const int totalWork );
 
 private:
 	AppInstance handle;
