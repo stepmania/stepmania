@@ -8,6 +8,10 @@ ________________________________________________________________________________
 StepMania 5.0 Preview 2 | 20110???
 --------------------------------------------------------------------------------
 
+2011/06/03
+----------
+* [LifeMeterBattery] Added LivesLeft param to LifeChanged message. [AJ]
+
 2011/06/02
 ----------
 * [BPMDisplay] Added SetFromSteps Lua binding. [AJ]

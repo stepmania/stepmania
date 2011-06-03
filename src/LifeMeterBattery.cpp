@@ -142,6 +142,7 @@ void LifeMeterBattery::ChangeLife( TapNoteScore score )
 	Message msg( "LifeChanged" );
 	msg.SetParam( "Player", m_pPlayerState->m_PlayerNumber );
 	msg.SetParam( "LifeMeter", LuaReference::CreateFromPush(*this) );
+	msg.SetParam( "LivesLeft", GetLivesLeft() );
 	MESSAGEMAN->Broadcast( msg );
 }
 
