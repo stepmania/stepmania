@@ -11,6 +11,7 @@ StepMania 5.0 Preview 2 | 20110???
 2011/06/04
 ----------
 * Changed default MusicWheelSwitchSpeed to 15 (was 10). [AJ]
+* [AnnouncerManager] Fixed a bug where no announcers would be loaded. [AJ]
 
 ================================================================================
 StepMania 5.0 Preview 1a | 20110603
