@@ -2,8 +2,9 @@
 #define SCREEN_RELOAD_SONGS_H
 
 #include "Screen.h"
-#include "BitmapText.h"
-class LoadingWindow;
+#include "RageThreads.h"
+
+class InGameLoadingWindow;
 
 class ScreenReloadSongs: public Screen
 {
@@ -11,10 +12,10 @@ public:
 	virtual void Init();
 	~ScreenReloadSongs();
 	void Update( float fDeltaTime );
-
 private:
-	int m_iUpdates;
-	BitmapText m_Loading;
+	InGameLoadingWindow *loadWin;
+	RageThread m_loadingThread;
+	static int loadingThreadProc(void *thisAsVoidPtr);
 };
 
 #endif
