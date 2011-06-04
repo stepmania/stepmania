@@ -1002,11 +1002,19 @@ float TimingData::GetElapsedTimeFromBeatNoOffset( float fBeat ) const
 
 float TimingData::GetDisplayedBeat( float fBeat ) const
 {
-	unsigned index = GetScrollSegmentIndexAtBeat(fBeat);
-	float fOutBeat = ( fBeat - NoteRowToBeat(m_ScrollSegments[index].m_iStartRow) ) * m_ScrollSegments[index].m_fPercent;
-	for( unsigned i = 0; i < index; i ++ )
+	vector<ScrollSegment>::const_iterator it = m_ScrollSegments.begin(), end = m_ScrollSegments.end();
+	float fOutBeat = 0.0;
+	for( ; it != end; it++ )
 	{
-		fOutBeat += ( NoteRowToBeat(m_ScrollSegments[i + 1].m_iStartRow) - NoteRowToBeat(m_ScrollSegments[i].m_iStartRow) ) * m_ScrollSegments[i].m_fPercent;
+		if( it+1 == end || BeatToNoteRow(fBeat) <= (it+1)->m_iStartRow )
+		{
+			fOutBeat += ( fBeat - NoteRowToBeat((it)->m_iStartRow) ) * (it)->m_fPercent;
+			break;
+		}
+		else
+		{
+			fOutBeat += ( NoteRowToBeat((it+1)->m_iStartRow) - NoteRowToBeat((it)->m_iStartRow) ) * (it)->m_fPercent;
+		}
 	}
 	return fOutBeat;
 }
