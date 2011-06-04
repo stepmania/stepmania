@@ -5,12 +5,14 @@ from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
 ================================================================================
-StepMania 5.0 Preview 2 | 20110???
+StepMania 5.0 Preview 1a | 20110603
 --------------------------------------------------------------------------------
 
 2011/06/03
 ----------
 * [LifeMeterBattery] Added LivesLeft param to LifeChanged message. [AJ]
+* [Windows] Set up directories for pictures and app data in their proper
+  location. [Henke]
 
 2011/06/02
 ----------
