@@ -560,7 +560,7 @@ bool SMLoader::LoadFromSMFile( const RString &sPath, Song &out, bool bFromCache 
 
 		else if( sValueName=="OFFSET" )
 		{
-			out.m_fBeat0OffsetInSeconds = StringToFloat( sParams[1] );
+			out.m_SongTiming.m_fBeat0OffsetInSeconds = StringToFloat( sParams[1] );
 		}
 		else if( sValueName=="BPMS" )
 		{
