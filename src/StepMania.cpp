@@ -1037,7 +1037,7 @@ int main(int argc, char* argv[])
 	// Switch to the last used game type, and set up the theme and announcer.
 	SwitchToLastPlayedGame();
 
-	CommandLineActions::Handle(pLoadingWindow);
+	CommandLineActions::Handle();
 
 	if( GetCommandlineArgument("dopefish") )
 		GAMESTATE->m_bDopefish = true;
