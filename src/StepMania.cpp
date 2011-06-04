@@ -1054,19 +1054,26 @@ int main(int argc, char* argv[])
 
 	if( PREFSMAN->m_iSoundWriteAhead )
 		LOG->Info( "Sound writeahead has been overridden to %i", PREFSMAN->m_iSoundWriteAhead.Get() );
+
+	pLoadingWindow->SetText("Starting sound subsystem...");
 	SOUNDMAN	= new RageSoundManager;
 	SOUNDMAN->Init();
 	SOUNDMAN->SetMixVolume();
 	SOUND		= new GameSoundManager;
+	pLoadingWindow->SetText("Initializing bookkeeper...");
 	BOOKKEEPER	= new Bookkeeper;
+	pLoadingWindow->SetText("Starting lights subsystem...");
 	LIGHTSMAN	= new LightsManager;
 	INPUTFILTER	= new InputFilter;
 	INPUTMAPPER	= new InputMapper;
 
+	pLoadingWindow->SetText("Loading game type...");
 	StepMania::ChangeCurrentGame( GAMESTATE->GetCurrentGame() );
 
 	INPUTQUEUE	= new InputQueue;
+	pLoadingWindow->SetText("Building song cache index...");
 	SONGINDEX	= new SongCacheIndex;
+	pLoadingWindow->SetText("Building banner cache...");
 	BANNERCACHE	= new BannerCache;
 	//BACKGROUNDCACHE	= new BackgroundCache;
 
@@ -1076,16 +1083,22 @@ int main(int argc, char* argv[])
 	CRYPTMAN	= new CryptManager;		// need to do this before ProfileMan
 	if( PREFSMAN->m_bSignProfileData )
 		CRYPTMAN->GenerateGlobalKeys();
+	pLoadingWindow->SetText("Initializing memory card system...");
 	MEMCARDMAN	= new MemoryCardManager;
+	pLoadingWindow->SetText("Initializing character system...");
 	CHARMAN		= new CharacterManager;
+	pLoadingWindow->SetText("Initializing profile system...");
 	PROFILEMAN	= new ProfileManager;
 	PROFILEMAN->Init();				// must load after SONGMAN
 	UNLOCKMAN	= new UnlockManager;
+	pLoadingWindow->SetText("Updating popular song list...");
 	SONGMAN->UpdatePopular();
 	SONGMAN->UpdatePreferredSort();
 
 	NSMAN 		= new NetworkSyncManager( pLoadingWindow ); 
+	pLoadingWindow->SetText("Initializing message system...");
 	MESSAGEMAN	= new MessageManager;
+	pLoadingWindow->SetText("Initializing statics manager...");
 	STATSMAN	= new StatsManager;
 
 	SAFE_DELETE( pLoadingWindow );		// destroy this before init'ing Display
