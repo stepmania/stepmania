@@ -40,12 +40,12 @@ bool NotesLoader::LoadFromDir( const RString &sPath, Song &out, set<RString> &Bl
 		SSCLoader::TidyUpData( out, false );
 		return true;
 	}
-	SMLoader::GetApplicableFiles( sPath, list );
-	if (!list.empty() )
-		return SMLoader::LoadFromDir( sPath, out );
 	SMALoader::GetApplicableFiles( sPath, list );
 	if (!list.empty() )
 		return SMALoader::LoadFromDir( sPath, out );
+	SMLoader::GetApplicableFiles( sPath, list );
+	if (!list.empty() )
+		return SMLoader::LoadFromDir( sPath, out );
 	DWILoader::GetApplicableFiles( sPath, list );
 	if( !list.empty() )
 		return DWILoader::LoadFromDir( sPath, out, BlacklistedImages );
