@@ -21,6 +21,8 @@ protected:
 	int m_totalWork;
 };
 
+extern LoadingWindow *pLoadingWindow;
+
 #endif
 
 /**
