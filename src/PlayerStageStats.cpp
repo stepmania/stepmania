@@ -583,7 +583,7 @@ float PlayerStageStats::GetPercentageOfTaps( TapNoteScore tns ) const
 
 void PlayerStageStats::CalcAwards( PlayerNumber p, bool bGaveUp, bool bUsedAutoplay )
 {
-	LOG->Trace( "hand out awards" );
+	//LOG->Trace( "hand out awards" );
 
 	m_PeakComboAward = PeakComboAward_Invalid;
 
@@ -592,7 +592,7 @@ void PlayerStageStats::CalcAwards( PlayerNumber p, bool bGaveUp, bool bUsedAutop
 
 	deque<StageAward> &vPdas = GAMESTATE->m_vLastStageAwards[p];
 
-	LOG->Trace( "per difficulty awards" );
+	//LOG->Trace( "per difficulty awards" );
 
 	// per-difficulty awards
 	// don't give per-difficutly awards if using easy mods
@@ -632,7 +632,7 @@ void PlayerStageStats::CalcAwards( PlayerNumber p, bool bGaveUp, bool bUsedAutop
 	else
 		m_StageAward = StageAward_Invalid;
 
-	LOG->Trace( "done with per difficulty awards" );
+	//LOG->Trace( "done with per difficulty awards" );
 
 	// DO give peak combo awards if using easy mods
 	int iComboAtStartOfStage = GetComboAtStartOfStage();
@@ -642,7 +642,7 @@ void PlayerStageStats::CalcAwards( PlayerNumber p, bool bGaveUp, bool bUsedAutop
 	{
 		int iLevel = 1000 * (pca+1);
 		bool bCrossedLevel = iComboAtStartOfStage < iLevel && iPeakCombo >= iLevel;
-		LOG->Trace( "pca = %d, iLevel = %d, bCrossedLevel = %d", pca, iLevel, bCrossedLevel );
+		//LOG->Trace( "pca = %d, iLevel = %d, bCrossedLevel = %d", pca, iLevel, bCrossedLevel );
 		if( bCrossedLevel )
 			GAMESTATE->m_vLastPeakComboAwards[p].push_back( pca );
 	}
@@ -652,7 +652,7 @@ void PlayerStageStats::CalcAwards( PlayerNumber p, bool bGaveUp, bool bUsedAutop
 	else
 		m_PeakComboAward = PeakComboAward_Invalid;
 
-	LOG->Trace( "done with per combo awards" );
+	//LOG->Trace( "done with per combo awards" );
 
 }
 

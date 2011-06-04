@@ -776,9 +776,7 @@ void SongManager::InitCoursesFromDisk( LoadingWindow *ld )
 
 void SongManager::InitAutogenCourses()
 {
-	//
 	// Create group courses for Endless and Nonstop
-	//
 	vector<RString> saGroupNames;
 	this->GetSongGroupNames( saGroupNames );
 	Course* pCourse;
@@ -789,10 +787,12 @@ void SongManager::InitAutogenCourses()
 		// Generate random courses from each group.
 		pCourse = new Course;
 		CourseUtil::AutogenEndlessFromGroup( sGroupName, Difficulty_Medium, *pCourse );
+		pCourse->m_sScripter = "Autogen";
 		m_pCourses.push_back( pCourse );
 
 		pCourse = new Course;
 		CourseUtil::AutogenNonstopFromGroup( sGroupName, Difficulty_Medium, *pCourse );
+		pCourse->m_sScripter = "Autogen";
 		m_pCourses.push_back( pCourse );
 	}
 
@@ -801,6 +801,7 @@ void SongManager::InitAutogenCourses()
 	// Generate "All Songs" endless course.
 	pCourse = new Course;
 	CourseUtil::AutogenEndlessFromGroup( "", Difficulty_Medium, *pCourse );
+	pCourse->m_sScripter = "Autogen";
 	m_pCourses.push_back( pCourse );
 
 	/* Generate Oni courses from artists. Only create courses if we have at least
@@ -836,6 +837,7 @@ void SongManager::InitAutogenCourses()
 			{
 				pCourse = new Course;
 				CourseUtil::AutogenOniFromArtist( sCurArtist, sCurArtistTranslit, aSongs, Difficulty_Hard, *pCourse );
+				pCourse->m_sScripter = "Autogen";
 				m_pCourses.push_back( pCourse );
 			}
 

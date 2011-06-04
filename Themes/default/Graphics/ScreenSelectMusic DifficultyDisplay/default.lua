@@ -8,7 +8,7 @@ local function GetEdits( in_Song, in_StepsType )
 		if sSong:HasEdits( sStepsType ) then
 			local tAllSteps = sSong:GetAllSteps();
 			for i,Step in pairs(tAllSteps) do
-				if Step:IsAnEdit() and s:GetStepsType() == sStepsType then
+				if Step:IsAnEdit() and Step:GetStepsType() == sStepsType then
 					iNumEdits = iNumEdits + 1;
 				end
 			end

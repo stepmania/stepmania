@@ -234,6 +234,51 @@ bool SpeedSegment::operator<( const SpeedSegment &other ) const
 	return false;
 }
 
+float ScrollSegment::GetRatio() const
+{
+	return this->ratio;
+}
+
+void ScrollSegment::SetRatio(const float i)
+{
+	this->ratio = i;
+}
+
+bool ScrollSegment::operator<( const ScrollSegment &other ) const
+{
+	LTCOMPARE(GetRow());
+	LTCOMPARE(GetRatio());
+	return false;
+}
+
+float StopSegment::GetPause() const
+{
+	return this->pauseSeconds;
+}
+
+void StopSegment::SetPause(const float i)
+{
+	this->pauseSeconds = i;
+}
+
+bool StopSegment::GetDelay() const
+{
+	return this->isDelay;
+}
+
+void StopSegment::SetDelay(const bool i)
+{
+	this->isDelay = i;
+}
+
+bool StopSegment::operator<( const StopSegment &other ) const
+{
+	LTCOMPARE(GetRow());
+	if (this->GetDelay() && !other.GetDelay()) return true;
+	if (!this->GetDelay() && other.GetDelay()) return false;
+	LTCOMPARE(GetPause());
+	return false;
+}
 
 /**
  * @file

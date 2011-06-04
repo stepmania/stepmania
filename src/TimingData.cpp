@@ -111,7 +111,7 @@ void TimingData::SetStopAtRow( int iRow, float fSeconds, bool bDelay )
 {
 	unsigned i;
 	for( i=0; i<m_StopSegments.size(); i++ )
-		if( m_StopSegments[i].m_iStartRow == iRow && m_StopSegments[i].m_bDelay == bDelay )
+		if( m_StopSegments[i].GetRow() == iRow && m_StopSegments[i].GetDelay() == bDelay )
 			break;
 
 	if( i == m_StopSegments.size() )	// there is no Stop/Delay Segment at the current beat
@@ -126,7 +126,7 @@ void TimingData::SetStopAtRow( int iRow, float fSeconds, bool bDelay )
 	{
 		if( fSeconds > 0 )
 		{
-			m_StopSegments[i].m_fStopSeconds = fSeconds;
+			m_StopSegments[i].SetPause(fSeconds);
 		}
 		else
 			m_StopSegments.erase( m_StopSegments.begin()+i, m_StopSegments.begin()+i+1 );
@@ -299,25 +299,25 @@ void TimingData::SetScrollAtRow( int iRow, float fPercent )
 	unsigned i;
 	for( i = 0; i < m_ScrollSegments.size(); i++ )
 	{
-		if( m_ScrollSegments[i].m_iStartRow >= iRow)
+		if( m_ScrollSegments[i].GetRow() >= iRow)
 			break;
 	}
 	
-	if ( i == m_ScrollSegments.size() || m_ScrollSegments[i].m_iStartRow != iRow )
+	if ( i == m_ScrollSegments.size() || m_ScrollSegments[i].GetRow() != iRow )
 	{
 		// the core mod itself matters the most for comparisons.
-		if( i == 0 || m_ScrollSegments[i-1].m_fPercent != fPercent )
+		if( i == 0 || m_ScrollSegments[i-1].GetRatio() != fPercent )
 			AddScrollSegment( ScrollSegment(iRow, fPercent) );
 	}
 	else
 	{
 		// The others aren't compared: only the mod itself matters.
-		if( i > 0  && m_ScrollSegments[i-1].m_fPercent == fPercent )
+		if( i > 0  && m_ScrollSegments[i-1].GetRatio() == fPercent )
 			m_ScrollSegments.erase( m_ScrollSegments.begin()+i,
 					       m_ScrollSegments.begin()+i+1 );
 		else
 		{
-			m_ScrollSegments[i].m_fPercent = fPercent;
+			m_ScrollSegments[i].SetRatio(fPercent);
 		}
 	}
 }
@@ -376,9 +376,10 @@ float TimingData::GetStopAtRow( int iNoteRow, bool bDelay ) const
 {
 	for( unsigned i=0; i<m_StopSegments.size(); i++ )
 	{
-		if( m_StopSegments[i].m_bDelay == bDelay && m_StopSegments[i].m_iStartRow == iNoteRow )
+		const StopSegment &s = m_StopSegments[i];
+		if( s.GetDelay() == bDelay && s.GetRow() == iNoteRow )
 		{
-			return m_StopSegments[i].m_fStopSeconds;
+			return s.GetPause();
 		}
 	}
 	return 0;
@@ -434,7 +435,7 @@ unsigned short TimingData::GetSpeedModeAtRow( int iRow )
 
 float TimingData::GetScrollAtRow( int iRow )
 {
-	return GetScrollSegmentAtRow( iRow ).m_fPercent;
+	return GetScrollSegmentAtRow( iRow ).GetRatio();
 }
 
 float TimingData::GetFakeAtRow( int iFakeRow ) const
@@ -513,7 +514,7 @@ int TimingData::GetStopSegmentIndexAtRow( int iNoteRow, bool bDelay ) const
 	for( i=0; i<m_StopSegments.size()-1; i++ )
 	{
 		const StopSegment& s = m_StopSegments[i+1];
-		if( s.m_iStartRow > iNoteRow && s.m_bDelay == bDelay )
+		if( s.GetRow() > iNoteRow && s.GetDelay() == bDelay )
 			break;
 	}
 	return static_cast<int>(i);
@@ -628,7 +629,7 @@ int TimingData::GetScrollSegmentIndexAtRow( int iRow ) const
 {
 	unsigned i;
 	for (i=0; i < m_ScrollSegments.size() - 1; i++ )
-		if( m_ScrollSegments[i+1].m_iStartRow > iRow )
+		if( m_ScrollSegments[i+1].GetRow() > iRow )
 			break;
 	return static_cast<int>(i);
 }
@@ -665,7 +666,7 @@ ScrollSegment& TimingData::GetScrollSegmentAtRow( int iRow )
 {
 	unsigned i;
 	for( i=0; i<m_ScrollSegments.size()-1; i++ )
-		if( m_ScrollSegments[i+1].m_iStartRow > iRow )
+		if( m_ScrollSegments[i+1].GetRow() > iRow )
 			break;
 	return m_ScrollSegments[i];
 }
@@ -839,9 +840,9 @@ void TimingData::GetBeatAndBPSFromElapsedTimeNoOffset( float fElapsedTime, float
 			iEventRow = itBPMS->GetRow();
 			iEventType = FOUND_BPM_CHANGE;
 		}
-		if( itSS != m_StopSegments.end() && itSS->m_iStartRow < iEventRow )
+		if( itSS != m_StopSegments.end() && itSS->GetRow() < iEventRow )
 		{
-			iEventRow = itSS->m_iStartRow;
+			iEventRow = itSS->GetRow();
 			iEventType = FOUND_STOP;
 		}
 		if( itWS != m_WarpSegments.end() && itWS->GetRow() < iEventRow )
@@ -871,14 +872,14 @@ void TimingData::GetBeatAndBPSFromElapsedTimeNoOffset( float fElapsedTime, float
 			break;
 		case FOUND_STOP:
 			{
-				fTimeToNextEvent = itSS->m_fStopSeconds;
+				fTimeToNextEvent = itSS->GetPause();
 				fNextEventTime   = fLastTime + fTimeToNextEvent;
-				const bool bIsDelay = itSS->m_bDelay;
+				const bool bIsDelay = itSS->GetDelay();
 				if ( fElapsedTime < fNextEventTime )
 				{
 					bFreezeOut = !bIsDelay;
 					bDelayOut  = bIsDelay;
-					fBeatOut   = NoteRowToBeat( itSS->m_iStartRow );
+					fBeatOut   = itSS->GetBeat();
 					fBPSOut    = fBPS;
 					return;
 				}
@@ -941,9 +942,9 @@ float TimingData::GetElapsedTimeFromBeatNoOffset( float fBeat ) const
 			iEventRow = itBPMS->GetRow();
 			iEventType = FOUND_BPM_CHANGE;
 		}
-		if( itSS != m_StopSegments.end() && itSS->m_bDelay && itSS->m_iStartRow < iEventRow ) // delays (come before marker)
+		if( itSS != m_StopSegments.end() && itSS->GetDelay() && itSS->GetRow() < iEventRow ) // delays (come before marker)
 		{
-			iEventRow = itSS->m_iStartRow;
+			iEventRow = itSS->GetRow();
 			iEventType = FOUND_STOP;
 		}
 		if( BeatToNoteRow(fBeat) < iEventRow )
@@ -951,9 +952,9 @@ float TimingData::GetElapsedTimeFromBeatNoOffset( float fBeat ) const
 			iEventRow = BeatToNoteRow(fBeat);
 			iEventType = FOUND_MARKER;
 		}
-		if( itSS != m_StopSegments.end() && !itSS->m_bDelay && itSS->m_iStartRow < iEventRow ) // stops (come after marker)
+		if( itSS != m_StopSegments.end() && !itSS->GetDelay() && itSS->GetRow() < iEventRow ) // stops (come after marker)
 		{
-			iEventRow = itSS->m_iStartRow;
+			iEventRow = itSS->GetRow();
 			iEventType = FOUND_STOP;
 		}
 		if( itWS != m_WarpSegments.end() && itWS->GetRow() < iEventRow )
@@ -974,7 +975,7 @@ float TimingData::GetElapsedTimeFromBeatNoOffset( float fBeat ) const
 			itBPMS ++;
 			break;
 		case FOUND_STOP:
-			fTimeToNextEvent = itSS->m_fStopSeconds;
+			fTimeToNextEvent = itSS->GetPause();
 			fNextEventTime   = fLastTime + fTimeToNextEvent;
 			fLastTime = fNextEventTime;
 			itSS ++;
@@ -1006,14 +1007,14 @@ float TimingData::GetDisplayedBeat( float fBeat ) const
 	float fOutBeat = 0.0;
 	for( ; it != end; it++ )
 	{
-		if( it+1 == end || BeatToNoteRow(fBeat) <= (it+1)->m_iStartRow )
+		if( it+1 == end || fBeat <= (it+1)->GetBeat() )
 		{
-			fOutBeat += ( fBeat - NoteRowToBeat((it)->m_iStartRow) ) * (it)->m_fPercent;
+			fOutBeat += ( fBeat - (it)->GetBeat() ) * (it)->GetRatio();
 			break;
 		}
 		else
 		{
-			fOutBeat += ( NoteRowToBeat((it+1)->m_iStartRow) - NoteRowToBeat((it)->m_iStartRow) ) * (it)->m_fPercent;
+			fOutBeat += ( (it+1)->GetBeat() - (it)->GetBeat() ) * (it)->GetRatio();
 		}
 	}
 	return fOutBeat;
@@ -1040,13 +1041,13 @@ void TimingData::ScaleRegion( float fScale, int iStartIndex, int iEndIndex, bool
 	for( unsigned i = 0; i < m_StopSegments.size(); i++ )
 	{
 		StopSegment &s = m_StopSegments[i];
-		const int iSegStartRow = s.m_iStartRow;
+		const int iSegStartRow = s.GetRow();
 		if( iSegStartRow < iStartIndex )
 			continue;
 		else if( iSegStartRow > iEndIndex )
-			s.m_iStartRow += lrintf((iEndIndex - iStartIndex) * (fScale - 1));
+			s.SetRow(s.GetRow() + lrintf((iEndIndex - iStartIndex) * (fScale - 1)));
 		else
-			s.m_iStartRow = lrintf((iSegStartRow - iStartIndex) * fScale) + iStartIndex;
+			s.SetRow(lrintf((iSegStartRow - iStartIndex) * fScale) + iStartIndex);
 	}
 	
 	for( unsigned i = 0; i < m_vTimeSignatureSegments.size(); i++ )
@@ -1155,13 +1156,13 @@ void TimingData::ScaleRegion( float fScale, int iStartIndex, int iEndIndex, bool
 	for( unsigned i = 0; i < m_ScrollSegments.size(); i++ )
 	{
 		ScrollSegment &s = m_ScrollSegments[i];
-		const int iSegStartRow = s.m_iStartRow;
+		const int iSegStartRow = s.GetRow();
 		if( iSegStartRow < iStartIndex )
 			continue;
 		else if( iSegStartRow > iEndIndex )
-			s.m_iStartRow += lrintf((iEndIndex - iStartIndex) * (fScale - 1));
+			s.SetRow(s.GetRow() + lrintf((iEndIndex - iStartIndex) * (fScale - 1)));
 		else
-			s.m_iStartRow = lrintf((iSegStartRow - iStartIndex) * fScale) + iStartIndex;
+			s.SetRow(lrintf((iSegStartRow - iStartIndex) * fScale) + iStartIndex);
 	}
 	
 	// adjust BPM changes to preserve timing
@@ -1203,9 +1204,9 @@ void TimingData::InsertRows( int iStartRow, int iRowsToAdd )
 	for( unsigned i = 0; i < m_StopSegments.size(); i++ )
 	{
 		StopSegment &stop = m_StopSegments[i];
-		if( stop.m_iStartRow < iStartRow )
+		if( stop.GetRow() < iStartRow )
 			continue;
-		stop.m_iStartRow += iRowsToAdd;
+		stop.SetRow(stop.GetRow() + iRowsToAdd);
 	}
 	
 	for( unsigned i = 0; i < m_WarpSegments.size(); i++ )
@@ -1266,9 +1267,9 @@ void TimingData::InsertRows( int iStartRow, int iRowsToAdd )
 	for( unsigned i = 0; i < m_ScrollSegments.size(); i++ )
 	{
 		ScrollSegment &scrl = m_ScrollSegments[i];
-		if( scrl.m_iStartRow < iStartRow )
+		if( scrl.GetRow() < iStartRow )
 			continue;
-		scrl.m_iStartRow += iRowsToAdd;
+		scrl.SetRow(scrl.GetRow() + iRowsToAdd);
 	}
 
 	if( iStartRow == 0 )
@@ -1311,13 +1312,13 @@ void TimingData::DeleteRows( int iStartRow, int iRowsToDelete )
 	for( unsigned i = 0; i < m_StopSegments.size(); i++ )
 	{
 		StopSegment &stop = m_StopSegments[i];
-
+		int keyRow = stop.GetRow();
 		// Before deleted region:
-		if( stop.m_iStartRow < iStartRow )
+		if( keyRow < iStartRow )
 			continue;
 
 		// Inside deleted region:
-		if( stop.m_iStartRow < iStartRow+iRowsToDelete )
+		if( keyRow < iStartRow+iRowsToDelete )
 		{
 			m_StopSegments.erase( m_StopSegments.begin()+i, m_StopSegments.begin()+i+1 );
 			--i;
@@ -1325,7 +1326,7 @@ void TimingData::DeleteRows( int iStartRow, int iRowsToDelete )
 		}
 
 		// After deleted region:
-		stop.m_iStartRow -= iRowsToDelete;
+		stop.SetRow(keyRow - iRowsToDelete);
 	}
 	
 	for( unsigned i = 0; i < m_WarpSegments.size(); i++ )
@@ -1461,17 +1462,17 @@ void TimingData::DeleteRows( int iStartRow, int iRowsToDelete )
 	for( unsigned i = 0; i < m_ScrollSegments.size(); i++ )
 	{
 		ScrollSegment &scrl = m_ScrollSegments[i];
-		
-		if( scrl.m_iStartRow < iStartRow )
+		int keyRow = scrl.GetRow();
+		if( keyRow < iStartRow )
 			continue;
 		
-		if( scrl.m_iStartRow < iStartRow+iRowsToDelete )
+		if( keyRow < iStartRow+iRowsToDelete )
 		{
 			m_ScrollSegments.erase( m_ScrollSegments.begin()+i, m_ScrollSegments.begin()+i+1 );
 			--i;
 			continue;
 		}
-		scrl.m_iStartRow -= iRowsToDelete;
+		scrl.SetRow(keyRow - iRowsToDelete);
 	}
 
 	this->SetBPMAtRow( iStartRow, fNewBPM );
@@ -1479,8 +1480,13 @@ void TimingData::DeleteRows( int iStartRow, int iRowsToDelete )
 
 float TimingData::GetDisplayedSpeedPercent( float fSongBeat, float fMusicSeconds ) const
 {
+	/* HACK: Somehow we get called into this function when there is no
+	 * TimingData to work with. This seems to happen the most upon
+	 * leaving the editor. Still, cover our butts in case this instance
+	 * isn't existing. */
+	if (!this) return 1.0f;
 	if( m_SpeedSegments.size() == 0 )
-		return 1.0;
+		return 1.0f;
 
 	const int index = GetSpeedSegmentIndexAtBeat( fSongBeat );
 	
@@ -1607,12 +1613,12 @@ bool TimingData::HasFakes() const
 
 bool TimingData::HasSpeedChanges() const
 {
-	return m_SpeedSegments.size()>1;
+	return m_SpeedSegments.size()>1 || m_SpeedSegments[0].GetRatio() != 1;
 }
 
 bool TimingData::HasScrollChanges() const
 {
-	return m_ScrollSegments.size()>1;
+	return m_ScrollSegments.size()>1 || m_ScrollSegments[0].GetRatio() != 1;
 }
 
 void TimingData::NoteRowToMeasureAndBeat( int iNoteRow, int &iMeasureIndexOut, int &iBeatIndexOut, int &iRowsRemainder ) const
@@ -1663,15 +1669,16 @@ public:
 	static int HasWarps( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasWarps()); return 1; }
 	static int HasFakes( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasFakes()); return 1; }
 	static int HasSpeedChanges( T* p, lua_State *L )	{ lua_pushboolean(L, p->HasSpeedChanges()); return 1; }
+	static int HasScrollChanges( T* p, lua_State *L )	{ lua_pushboolean(L, p->HasScrollChanges()); return 1; }
 	static int GetStops( T* p, lua_State *L )
 	{
 		vector<RString> vStops;
 		FOREACH_CONST( StopSegment, p->m_StopSegments, seg )
 		{
-			const float fStartRow = NoteRowToBeat(seg->m_iStartRow);
-			const float fStopLength = seg->m_fStopSeconds;
-			if(!seg->m_bDelay)
-				vStops.push_back( ssprintf("%f=%f", fStartRow, fStopLength) );
+			const float fStartBeat = seg->GetBeat();
+			const float fStopLength = seg->GetPause();
+			if(!seg->GetDelay())
+				vStops.push_back( ssprintf("%f=%f", fStartBeat, fStopLength) );
 		}
 
 		LuaHelpers::CreateTableFromArray(vStops, L);
@@ -1682,10 +1689,10 @@ public:
 		vector<RString> vDelays;
 		FOREACH_CONST( StopSegment, p->m_StopSegments, seg )
 		{
-			const float fStartRow = NoteRowToBeat(seg->m_iStartRow);
-			const float fStopLength = seg->m_fStopSeconds;
-			if(seg->m_bDelay)
-				vDelays.push_back( ssprintf("%f=%f", fStartRow, fStopLength) );
+			const float fStartBeat = seg->GetBeat();
+			const float fStopLength = seg->GetPause();
+			if(seg->GetDelay())
+				vDelays.push_back( ssprintf("%f=%f", fStartBeat, fStopLength) );
 		}
 
 		LuaHelpers::CreateTableFromArray(vDelays, L);
@@ -1752,6 +1759,7 @@ public:
 		ADD_METHOD( HasWarps );
 		ADD_METHOD( HasFakes );
 		ADD_METHOD( HasSpeedChanges );
+		ADD_METHOD( HasScrollChanges );
 		ADD_METHOD( GetStops );
 		ADD_METHOD( GetDelays );
 		ADD_METHOD( GetBPMs );

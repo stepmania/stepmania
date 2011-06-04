@@ -664,7 +664,7 @@ static bool LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNameTo
 
 					StopSegment newSeg( BeatToNoteRow(fBeat), fFreezeSecs );
 					out.m_Timing.AddStopSegment( newSeg );
-					LOG->Trace( "Inserting new Freeze at beat %f, secs %f", fBeat, newSeg.m_fStopSeconds );
+					LOG->Trace( "Inserting new Freeze at beat %f, secs %f", fBeat, newSeg.GetPause() );
 				}
 				else
 				{

@@ -5,14 +5,38 @@ from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
 ================================================================================
-StepMania 5.0 ????????? | 20110???
+StepMania 5.0 Preview 1a | 20110603
 --------------------------------------------------------------------------------
+
+Date Forgotten
+--------------
+* [ScreenEdit] Fix Song Timing behaviors. [Wolfman2000]
+* [NotesLoaderSM] Fix an Offset load bug. [Wolfman2000]
+
+2011/06/03
+----------
+* [LifeMeterBattery] Added LivesLeft param to LifeChanged message. [AJ]
+* [Windows] Set up directories for pictures and app data in their proper
+  location. [Henke]
+
+2011/06/02
+----------
+* [BPMDisplay] Added SetFromSteps Lua binding. [AJ]
+* [ScreenDebugOverlay] Switch the R and T keys to be Volume Down and Up
+  respectively. I have to admit, it makes more sense to have volume up be
+  on the right instead of the left. [Wolfman2000]
+* [SongManager] Make autogen courses have "Autogen" as the Scripter. [AJ]
+
+2011/06/01
+----------
+* [TimingData] Added the HasScrollChanges lua binding. [Wolfman2000]
 
 2011/05/31
 ----------
 * [Player] Added the BattleRaveMirror metric. This determines if Battle and
   Rave mode will have the two players with mirrored charts or not. By default,
   this is set to true, preserving the ITG style behavior. [Wolfman2000]
+* [TimingData] Added the HasScrollChanges lua binding. [Wolfman2000]
 
 ================================================================================
 StepMania 5.0 Preview 1 | 20110529

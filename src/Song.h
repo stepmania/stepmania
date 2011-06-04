@@ -287,9 +287,6 @@ public:
 	/** @brief The Song's TimingData. */
 	TimingData m_SongTiming;
 
-	/** @brief The initial offset of a song. */
-	float	m_fBeat0OffsetInSeconds;
-
 	typedef vector<BackgroundChange> 	VBackgroundChange;
 private:
 	/**

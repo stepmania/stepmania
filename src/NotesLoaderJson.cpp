@@ -23,8 +23,8 @@ void Deserialize(BPMSegment &seg, const Json::Value &root)
 
 static void Deserialize(StopSegment &seg, const Json::Value &root)
 {
-	seg.m_iStartRow = BeatToNoteRow((float)(root["Beat"].asDouble()));
-	seg.m_fStopSeconds = (float)root["Seconds"].asDouble();
+	seg.SetBeat((float)(root["Beat"].asDouble()));
+	seg.SetPause((float)(root["Seconds"].asDouble()));
 }
 
 static void Deserialize(TimingData &td, const Json::Value &root)

@@ -78,16 +78,6 @@
 				margin: 1px 2px 1px 2px;
 				border: 1px solid #777;
 			}
-			.sm-ssc{
-				text-align: justify;
-				vertical-align: text-top;
-				background: #FFDDEE url(./bgline.png) repeat-x scroll 0 0;
-				padding: 1px;
-			}
-			fieldset div.sm-ssc{
-				margin: 1px 2px 1px 2px;
-				border: 1px solid #777;
-			}
 			._fallbackTheme{
 				text-align: justify;
 				vertical-align: text-top;
@@ -243,9 +233,8 @@
 	<div>
 		<fieldset>
 		<legend>Function Colors</legend>
-		<div class="descriptionCell">Available in SM4 alphas, sm-ssc, and StepMania 5</div>
+		<div class="descriptionCell">Available in sm-ssc and StepMania 5</div>
 		<div class="renamed">Renamed or changed from StepMania 4 alphas</div>
-		<div class="sm-ssc">New bindings (since StepMania 4 alphas)</div>
 		<div class="_fallbackTheme">Defined in the _fallback theme</div>
 		<div class="defaultTheme">Defined in the default theme</div>
 		</fieldset>
@@ -487,7 +476,6 @@
 				<xsl:choose>
 					<!-- "renamed" also covers functions with modified behavior -->
 					<xsl:when test="$elmt/@renamed='true'">renamed</xsl:when>
-					<xsl:when test="$elmt/@sm-ssc='true'">sm-ssc</xsl:when>
 					<xsl:when test="$elmt/@theme='_fallback'">_fallbackTheme</xsl:when>
 					<xsl:when test="$elmt/@theme='default'">defaultTheme</xsl:when>
 					<xsl:otherwise>descriptionCell</xsl:otherwise>
@@ -524,7 +512,6 @@
 			<td>
 			<xsl:attribute name="class">
 				<xsl:choose>
-					<xsl:when test="$elmt/@sm-ssc='true'">sm-ssc</xsl:when>
 					<xsl:otherwise>descriptionCell</xsl:otherwise>
 				</xsl:choose>
 			</xsl:attribute>
