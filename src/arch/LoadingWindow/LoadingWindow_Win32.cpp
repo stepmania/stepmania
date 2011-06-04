@@ -120,10 +120,15 @@ INT_PTR CALLBACK LoadingWindow_Win32::DlgProc( HWND hWnd, UINT msg, WPARAM wPara
 	case WM_DESTROY:
 		DeleteObject( g_hBitmap );
 		g_hBitmap = NULL;
+		self->runMessageLoop=false;
+		return TRUE;
 		break;
 
-	case WM_ENTERIDLE:
-		SetEvent(self->guiReadyEvent);
+	case WM_APP:
+		DestroyWindow(hWnd);
+		self->runMessageLoop=false;
+		return TRUE;
+		break;
 	}
 
 	return FALSE;
@@ -148,11 +153,13 @@ LoadingWindow_Win32::LoadingWindow_Win32()
 
 	m_hIcon = NULL;
 	
+	runMessageLoop=true;
+
 	guiReadyEvent=CreateEvent(NULL,FALSE,FALSE,NULL);
 
 	CreateThread(NULL, NULL,	MessagePump, (void *)this, 0,	NULL);
 
-	WaitForSingleObject(guiReadyEvent,0);
+	WaitForSingleObject(guiReadyEvent,INFINITE);
 
 	for( unsigned i = 0; i < 3; ++i )
 		text[i] = "ABC"; /* always set on first call */
@@ -161,10 +168,10 @@ LoadingWindow_Win32::LoadingWindow_Win32()
 
 LoadingWindow_Win32::~LoadingWindow_Win32()
 {
+	SendMessage(hwnd,WM_APP,0,0);
+	WaitForSingleObject(guiReadyEvent,INFINITE);
 	if(guiReadyEvent) 
 		CloseHandle(guiReadyEvent);
-	if( hwnd )
-		DestroyWindow( hwnd );
 	if( m_hIcon != NULL )
 		DestroyIcon( m_hIcon );
 }
@@ -175,13 +182,17 @@ DWORD WINAPI LoadingWindow_Win32::MessagePump(LPVOID thisAsVoidPtr)
 
 	self->hwnd = CreateDialogParam( self->handle.Get(), MAKEINTRESOURCE(IDD_LOADING_DIALOG), NULL, DlgProc, (LPARAM)thisAsVoidPtr);
 
+	SetEvent(self->guiReadyEvent);
+
 	// Run the message loop in a separate thread to keep the gui responsive during the loading
 	MSG msg;
-	while( GetMessage(&msg, self->hwnd, 0, 0 ) )
+	while(self->runMessageLoop && GetMessage(&msg, self->hwnd, 0, 0 ) )
 	{
 		if(IsDialogMessage(self->hwnd,&msg)) continue;
 		DispatchMessage( &msg );
 	}
+
+	SetEvent(self->guiReadyEvent);
 
 	return msg.wParam;
 }

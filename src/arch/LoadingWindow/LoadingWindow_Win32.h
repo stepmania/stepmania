@@ -26,6 +26,8 @@ private:
 	HANDLE pumpThread;
 	HANDLE guiReadyEvent;
 
+	volatile bool runMessageLoop;
+
 	static DWORD WINAPI MessagePump(LPVOID thisAsVoidPtr);
 
 	static INT_PTR CALLBACK DlgProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam );
