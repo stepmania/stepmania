@@ -5,19 +5,23 @@ from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
 ================================================================================
-StepMania 5.0 Preview 1a | 20110603
+StepMania 5.0 Preview 2 | 20110???
 --------------------------------------------------------------------------------
 
-Date Forgotten
---------------
-* [ScreenEdit] Fix Song Timing behaviors. [Wolfman2000]
-* [NotesLoaderSM] Fix an Offset load bug. [Wolfman2000]
+2011/06/04
+----------
+* Changed default MusicWheelSwitchSpeed to 15 (was 10). [AJ]
+
+================================================================================
+StepMania 5.0 Preview 1a | 20110603
+--------------------------------------------------------------------------------
 
 2011/06/03
 ----------
 * [LifeMeterBattery] Added LivesLeft param to LifeChanged message. [AJ]
 * [Windows] Set up directories for pictures and app data in their proper
   location. [Henke]
+* [NotesLoaderSM] Fix an Offset load bug. [Wolfman2000]
 
 2011/06/02
 ----------
@@ -30,6 +34,7 @@ Date Forgotten
 2011/06/01
 ----------
 * [TimingData] Added the HasScrollChanges lua binding. [Wolfman2000]
+* [ScreenEdit] Fix Song Timing behaviors. [Wolfman2000]
 
 2011/05/31
 ----------

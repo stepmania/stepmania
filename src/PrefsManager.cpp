@@ -205,7 +205,7 @@ PrefsManager::PrefsManager() :
 	m_bShowNativeLanguage		( "ShowNativeLanguage",		true ),
 	m_iArcadeOptionsNavigation	( "ArcadeOptionsNavigation",	0 ),
 	m_MusicWheelUsesSections	( "MusicWheelUsesSections",	MusicWheelUsesSections_ALWAYS ),
-	m_iMusicWheelSwitchSpeed	( "MusicWheelSwitchSpeed",	10 ),
+	m_iMusicWheelSwitchSpeed	( "MusicWheelSwitchSpeed",	15 ),
 	m_AllowW1			( "AllowW1",			ALLOW_W1_EVERYWHERE ),
 	m_bEventMode			( "EventMode",			true ),
 	m_iCoinsPerCredit		( "CoinsPerCredit",		1 ),
