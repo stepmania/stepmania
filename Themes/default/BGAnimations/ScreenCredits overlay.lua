@@ -49,7 +49,7 @@ local contrib = {
 	"Kaox", -- pump/default noteskin
 	"NitroX72", -- pump/frame noteskin
 	"sy567", -- beginner helper fix
-	"Thai Pangsakulyanont (theDtTvB)",
+	"Thai Pangsakulyanont (theDtTvB)", -- BMS, Split Timing, optimization
 	"v1toko", -- x-mode from StepNXA
 }
 
