@@ -266,7 +266,6 @@ void SongManager::LoadStepManiaSongDir( RString sDir, LoadingWindow *ld )
 				ld->SetText( LOADING_SONGS.GetValue()+ssprintf("\n%s\n%s",
 									  Basename(sGroupDirName).c_str(),
 									  Basename(sSongDirName).c_str()));
-				ld->Paint();
 			}
 			Song* pNewSong = new Song;
 			if( !pNewSong->LoadFromSongDir( sSongDirName ) )
@@ -755,7 +754,6 @@ void SongManager::InitCoursesFromDisk( LoadingWindow *ld )
 				ld->SetText( LOADING_COURSES.GetValue()+ssprintf("\n%s\n%s",
 					Basename(*sCourseGroup).c_str(),
 					Basename(*sCoursePath).c_str()));
-				ld->Paint();
 			}
 
 			Course* pCourse = new Course;

@@ -7,10 +7,7 @@
 //
 // Generated from the TEXTINCLUDE 2 resource.
 //
-
-#define _WIN32_WINNT 0x0501
 #include "winres.h"
-#include "CommCtrl.h"
 
 /////////////////////////////////////////////////////////////////////////////
 #undef APSTUDIO_READONLY_SYMBOLS
@@ -45,15 +42,16 @@ BEGIN
 END
 
 IDD_LOADING_DIALOG DIALOGEX 0, 0, 317, 94
-STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTER | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+STYLE DS_SETFONT | DS_CENTER | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_APPWINDOW
+CAPTION "Stepmania"
 FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
     CTEXT           "line1",IDC_STATIC_MESSAGE1,0,67,310,10,SS_NOPREFIX | SS_CENTERIMAGE
     CTEXT           "line2",IDC_STATIC_MESSAGE2,0,76,310,10,SS_NOPREFIX | SS_CENTERIMAGE
     CTEXT           "line3",IDC_STATIC_MESSAGE3,0,84,310,10,SS_NOPREFIX | SS_CENTERIMAGE
     CONTROL         "",IDC_SPLASH,"Static",SS_BITMAP,0,0,310,25
-    CONTROL         "",IDC_PROGRESS,"msctls_progress32",PBS_MARQUEE,7,51,298,14
+    CONTROL         "",IDC_PROGRESS,"msctls_progress32",0x0,7,51,298,14
 END
 
 IDD_DISASM_CRASH DIALOGEX 0, 0, 332, 114

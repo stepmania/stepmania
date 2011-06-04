@@ -80,8 +80,18 @@ static HBITMAP LoadWin32Surface( RString sFile, HWND hWnd )
 	return ret;
 }
 
-BOOL CALLBACK LoadingWindow_Win32::WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
+INT_PTR CALLBACK LoadingWindow_Win32::DlgProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
 {
+
+	LoadingWindow_Win32 *self;
+
+	if(msg==WM_INITDIALOG) {
+		self=(LoadingWindow_Win32 *)lParam;
+		SetWindowLong(hWnd,DWL_USER,(LONG)self);
+	} else {
+		self=(LoadingWindow_Win32 *)GetWindowLong(hWnd,DWL_USER);
+	}
+
 	switch( msg )
 	{
 	case WM_INITDIALOG:
@@ -99,12 +109,21 @@ BOOL CALLBACK LoadingWindow_Win32::WndProc( HWND hWnd, UINT msg, WPARAM wParam, 
 			(WPARAM) IMAGE_BITMAP, 
 			(LPARAM) (HANDLE) g_hBitmap );
 		SetWindowTextA( hWnd, PRODUCT_ID );
+
+		{
+			HWND progressCtrl=GetDlgItem( hWnd, IDC_PROGRESS );
+			SetWindowLong(progressCtrl,GWL_STYLE, PBS_MARQUEE | GetWindowLong(progressCtrl,GWL_STYLE));
+			SendMessage(progressCtrl,PBM_SETMARQUEE,1,0);
+		}
 		break;
 
 	case WM_DESTROY:
 		DeleteObject( g_hBitmap );
 		g_hBitmap = NULL;
 		break;
+
+	case WM_ENTERIDLE:
+		SetEvent(self->guiReadyEvent);
 	}
 
 	return FALSE;
@@ -128,33 +147,43 @@ LoadingWindow_Win32::LoadingWindow_Win32()
 	InitCommonControlsEx(&cceData);
 
 	m_hIcon = NULL;
-	hwnd = CreateDialog( handle.Get(), MAKEINTRESOURCE(IDD_LOADING_DIALOG), NULL, WndProc );
+	
+	guiReadyEvent=CreateEvent(NULL,FALSE,FALSE,NULL);
+
+	CreateThread(NULL, NULL,	MessagePump, (void *)this, 0,	NULL);
+
+	WaitForSingleObject(guiReadyEvent,0);
+
 	for( unsigned i = 0; i < 3; ++i )
 		text[i] = "ABC"; /* always set on first call */
 	SetText( "" );
-	Paint();
 }
 
 LoadingWindow_Win32::~LoadingWindow_Win32()
 {
+	if(guiReadyEvent) 
+		CloseHandle(guiReadyEvent);
 	if( hwnd )
 		DestroyWindow( hwnd );
 	if( m_hIcon != NULL )
 		DestroyIcon( m_hIcon );
 }
 
-void LoadingWindow_Win32::Paint()
+DWORD WINAPI LoadingWindow_Win32::MessagePump(LPVOID thisAsVoidPtr)
 {
-	SendMessage( hwnd, WM_PAINT, 0, 0 );
+	LoadingWindow_Win32 *self=(LoadingWindow_Win32 *)thisAsVoidPtr;
 
-	/* Process all queued messages since the last paint.  This allows the window to
-	 * come back if it loses focus during load. */
+	self->hwnd = CreateDialogParam( self->handle.Get(), MAKEINTRESOURCE(IDD_LOADING_DIALOG), NULL, DlgProc, (LPARAM)thisAsVoidPtr);
+
+	// Run the message loop in a separate thread to keep the gui responsive during the loading
 	MSG msg;
-	while( PeekMessage( &msg, hwnd, 0, 0, PM_NOREMOVE ) )
+	while( GetMessage(&msg, self->hwnd, 0, 0 ) )
 	{
-		GetMessage(&msg, hwnd, 0, 0 );
+		if(IsDialogMessage(self->hwnd,&msg)) continue;
 		DispatchMessage( &msg );
 	}
+
+	return msg.wParam;
 }
 
 void LoadingWindow_Win32::SetText( RString sText )
