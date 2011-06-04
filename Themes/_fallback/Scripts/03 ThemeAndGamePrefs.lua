@@ -434,7 +434,7 @@ function GamePrefComboUnderField()
 	return t;
 end
 
-function GamePrefAutoSetStyle()
+function UserPrefAutoSetStyle()
 	local t = {
 		Name = "UserPrefAutoSetStyle";
 		LayoutType = "ShowAllInRow";
