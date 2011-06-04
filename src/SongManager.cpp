@@ -98,7 +98,7 @@ void SongManager::InitAll()
 }
 
 static LocalizedString RELOADING ( "SongManager", "Reloading..." );
-void SongManager::Reload( bool bAllowFastLoad, LoadingWindow *ld )
+void SongManager::Reload( bool bAllowFastLoad )
 {
 	FILEMAN->FlushDirCache( SpecialFiles::SONGS_DIR );
 	FILEMAN->FlushDirCache( ADDITIONAL_SONGS_DIR );
@@ -106,8 +106,8 @@ void SongManager::Reload( bool bAllowFastLoad, LoadingWindow *ld )
 	FILEMAN->FlushDirCache( ADDITIONAL_COURSES_DIR );
 	FILEMAN->FlushDirCache( EDIT_SUBDIR );
 
-	if( ld )
-		ld->SetText( RELOADING );
+	if( pLoadingWindow )
+		pLoadingWindow->SetText( RELOADING );
 
 	// save scores before unloading songs, of the scores will be lost
 	PROFILEMAN->SaveMachineProfile();
@@ -119,7 +119,7 @@ void SongManager::Reload( bool bAllowFastLoad, LoadingWindow *ld )
 	if( !bAllowFastLoad )
 		PREFSMAN->m_bFastLoad.Set( false );
 
-	InitAll( ld );
+	InitAll();
 
 	// reload scores and unlocks afterward
 	PROFILEMAN->LoadMachineProfile();
