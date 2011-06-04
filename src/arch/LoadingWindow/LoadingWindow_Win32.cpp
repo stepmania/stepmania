@@ -121,12 +121,14 @@ INT_PTR CALLBACK LoadingWindow_Win32::DlgProc( HWND hWnd, UINT msg, WPARAM wPara
 		DeleteObject( g_hBitmap );
 		g_hBitmap = NULL;
 		self->runMessageLoop=false;
+		self->hwnd=NULL;
 		return TRUE;
 		break;
 
 	case WM_APP:
 		DestroyWindow(hWnd);
 		self->runMessageLoop=false;
+		ExitThread(0);
 		return TRUE;
 		break;
 	}
@@ -157,7 +159,7 @@ LoadingWindow_Win32::LoadingWindow_Win32()
 
 	guiReadyEvent=CreateEvent(NULL,FALSE,FALSE,NULL);
 
-	CreateThread(NULL, NULL,	MessagePump, (void *)this, 0,	NULL);
+	pumpThread=CreateThread(NULL, NULL,	MessagePump, (void *)this, 0,	&pumpThreadId);
 
 	WaitForSingleObject(guiReadyEvent,INFINITE);
 
@@ -169,7 +171,8 @@ LoadingWindow_Win32::LoadingWindow_Win32()
 LoadingWindow_Win32::~LoadingWindow_Win32()
 {
 	SendMessage(hwnd,WM_APP,0,0);
-	WaitForSingleObject(guiReadyEvent,INFINITE);
+	//SendMessage(hwnd,WM_NULL,0,0);
+	WaitForSingleObject(pumpThread,INFINITE);
 	if(guiReadyEvent) 
 		CloseHandle(guiReadyEvent);
 	if( m_hIcon != NULL )
@@ -191,8 +194,6 @@ DWORD WINAPI LoadingWindow_Win32::MessagePump(LPVOID thisAsVoidPtr)
 		if(IsDialogMessage(self->hwnd,&msg)) continue;
 		DispatchMessage( &msg );
 	}
-
-	SetEvent(self->guiReadyEvent);
 
 	return msg.wParam;
 }

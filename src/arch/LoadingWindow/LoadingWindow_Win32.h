@@ -24,6 +24,7 @@ private:
 	RString text[3];
 	HICON m_hIcon;
 	HANDLE pumpThread;
+	DWORD pumpThreadId;
 	HANDLE guiReadyEvent;
 
 	volatile bool runMessageLoop;
