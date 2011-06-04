@@ -436,21 +436,21 @@ end
 
 function GamePrefAutoSetStyle()
 	local t = {
-		Name = "GamePrefAutoSetStyle";
+		Name = "UserPrefAutoSetStyle";
 		LayoutType = "ShowAllInRow";
 		SelectType = "SelectOne";
 		OneChoiceForAllPlayers = true;
 		ExportOnChange = false;
 		Choices = { 'Off','On' };
 		LoadSelections = function(self, list, pn)
-			if ReadGamePrefFromFile("AutoSetStyle") ~= nil then
-				if GetGamePrefB("AutoSetStyle") then
+			if ReadPrefFromFile("UserPrefAutoSetStyle") ~= nil then
+				if GetUserPrefB("UserPrefAutoSetStyle") then
 					list[2] = true;
 				else
 					list[1] = true;
 				end;
 			else
-				WriteGamePrefToFile("AutoSetStyle",false);
+				WritePrefToFile("UserPrefAutoSetStyle",false);
 				list[1] = true;
 			end;
 		end;
@@ -461,7 +461,7 @@ function GamePrefAutoSetStyle()
 			else
 				val = false;
 			end;
-			WriteGamePrefToFile("AutoSetStyle",val);
+			WritePrefToFile("UserPrefAutoSetStyle",val);
 			MESSAGEMAN:Broadcast("PreferenceSet", { Message == "Set Preference" } );
 			THEME:ReloadMetrics();
 		end;
