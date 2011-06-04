@@ -1073,7 +1073,7 @@ int main(int argc, char* argv[])
 	INPUTQUEUE	= new InputQueue;
 	pLoadingWindow->SetText("Building song cache index...");
 	SONGINDEX	= new SongCacheIndex;
-	pLoadingWindow->SetText("Building banner cache...");
+	pLoadingWindow->SetText("Loading banner cache...");
 	BANNERCACHE	= new BannerCache;
 	//BACKGROUNDCACHE	= new BackgroundCache;
 
