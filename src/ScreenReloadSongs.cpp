@@ -56,12 +56,12 @@ void ScreenReloadSongs::Init()
 	m_Loading.SetXY( SCREEN_CENTER_X, SCREEN_CENTER_Y );
 	this->AddChild( &m_Loading );
 
-	m_LoadingWindow = new ScreenReloadSongsLoadingWindow( m_Loading );
+	pLoadingWindow = new ScreenReloadSongsLoadingWindow( m_Loading );
 }
 
 ScreenReloadSongs::~ScreenReloadSongs()
 {
-	delete m_LoadingWindow;
+	delete pLoadingWindow;
 }
 
 
@@ -75,7 +75,7 @@ void ScreenReloadSongs::Update( float fDeltaTime )
 		return;
 	ASSERT( !IsFirstUpdate() );
 
-	SONGMAN->Reload( false, m_LoadingWindow );
+	SONGMAN->Reload( false );
 
 	SCREENMAN->PostMessageToTopScreen( SM_GoToNextScreen, 0 );
 }

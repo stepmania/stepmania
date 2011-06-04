@@ -14,7 +14,6 @@ public:
 
 private:
 	int m_iUpdates;
-	LoadingWindow *m_LoadingWindow;
 	BitmapText m_Loading;
 };
 
