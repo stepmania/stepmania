@@ -8,6 +8,11 @@ ________________________________________________________________________________
 StepMania 5.0 Preview 1a | 20110603
 --------------------------------------------------------------------------------
 
+Date Forgotten
+--------------
+* [ScreenEdit] Fix Song Timing behaviors. [Wolfman2000]
+* [NotesLoaderSM] Fix an Offset load bug. [Wolfman2000]
+
 2011/06/03
 ----------
 * [LifeMeterBattery] Added LivesLeft param to LifeChanged message. [AJ]
