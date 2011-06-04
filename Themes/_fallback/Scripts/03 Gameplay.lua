@@ -27,7 +27,7 @@ function GameCompatibleModes()
 	sGame = GAMESTATE:GetCurrentGame():GetName()
 	local Modes = {
 		dance = "Single,Double,Solo,Versus,Couple",
-		pump = "Single,Double,HalfDouble,Versus,Couple",
+		pump = "Single,Double,HalfDouble,Versus,Couple,Routine",
 		beat = "5Keys,7Keys,10Keys,14Keys",
 		kb7 = "KB7",
 		para = "Single",
