@@ -932,7 +932,7 @@ void SMLoader::TidyUpData( Song &song, bool bFromCache )
 			bg.push_back( BackgroundChange(song.m_fLastBeat,song.m_sBackgroundFile) );
 		} while(0);
 	}
-	song.TidyUpData();
+	song.TidyUpData( bFromCache );
 }
 
 /*

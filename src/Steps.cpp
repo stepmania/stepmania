@@ -31,7 +31,8 @@ Steps::Steps(): m_StepsType(StepsType_Invalid),
 	m_sNoteDataCompressed(""), m_sFilename(""), m_bSavedToDisk(false), 
 	m_LoadedFromProfile(ProfileSlot_Invalid), m_iHash(0),
 	m_sDescription(""), m_sChartStyle(""), 
-	m_Difficulty(Difficulty_Invalid), m_iMeter(0), m_sCredit("") {}
+	m_Difficulty(Difficulty_Invalid), m_iMeter(0), m_sCredit(""),
+	m_bAreCachedRadarValuesJustLoaded(false) {}
 
 Steps::~Steps()
 {
@@ -170,6 +171,12 @@ void Steps::CalculateRadarValues( float fMusicLengthSeconds )
 	// If we're autogen, don't calculate values.  GetRadarValues will take from our parent.
 	if( parent != NULL )
 		return;
+
+	if( m_bAreCachedRadarValuesJustLoaded )
+	{
+		m_bAreCachedRadarValuesJustLoaded = false;
+		return;
+	}
 
 	// Do write radar values, and leave it up to the reading app whether they want to trust
 	// the cached values without recalculating them.
@@ -422,6 +429,7 @@ void Steps::SetCachedRadarValues( const RadarValues v[NUM_PLAYERS] )
 {
 	DeAutogen();
 	copy( v, v + NUM_PLAYERS, m_CachedRadarValues );
+	m_bAreCachedRadarValuesJustLoaded = true;
 }
 
 bool Steps::UsesSplitTiming() const

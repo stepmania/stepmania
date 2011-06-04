@@ -180,6 +180,7 @@ private:
 	int				m_iMeter;
 	/** @brief The radar values used for each player. */
 	RadarValues			m_CachedRadarValues[NUM_PLAYERS];
+	bool                m_bAreCachedRadarValuesJustLoaded;
 	/** @brief The name of the person who created the Steps. */
 	RString				m_sCredit;
 };

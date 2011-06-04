@@ -97,13 +97,13 @@ public:
 	bool ReloadFromSongDir( RString sDir );
 
 	/** @brief Call this after loading a song to clean up invalid data. */
-	void TidyUpData();
+	void TidyUpData( bool bFromCache = false );
 	
 	/**
 	 * @brief Get the new radar values, and determine the last beat at the same time.
 	 *
 	 * This is called by TidyUpData, after saving the Song. */
-	void ReCalculateRadarValuesAndLastBeat();
+	void ReCalculateRadarValuesAndLastBeat( bool bFromCache = false );
 	/**
 	 * @brief Translate any titles that aren't in english.
 	 *

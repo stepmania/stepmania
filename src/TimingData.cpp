@@ -1003,14 +1003,19 @@ float TimingData::GetElapsedTimeFromBeatNoOffset( float fBeat ) const
 
 float TimingData::GetDisplayedBeat( float fBeat ) const
 {
-	unsigned index = GetScrollSegmentIndexAtBeat(fBeat);
-	const ScrollSegment &s = m_ScrollSegments[index];
-	float fOutBeat = ( fBeat - s.GetBeat() ) * s.GetRatio();
-	for( unsigned i = 0; i < index; i ++ )
+	vector<ScrollSegment>::const_iterator it = m_ScrollSegments.begin(), end = m_ScrollSegments.end();
+	float fOutBeat = 0.0;
+	for( ; it != end; it++ )
 	{
-		const ScrollSegment &future = m_ScrollSegments[i+1];
-		const ScrollSegment &current = m_ScrollSegments[i];
-		fOutBeat += ( future.GetBeat() - current.GetBeat() ) * current.GetRatio();
+		if( it+1 == end || fBeat <= (it+1)->GetBeat() )
+		{
+			fOutBeat += ( fBeat - (it)->GetBeat() ) * (it)->GetRatio();
+			break;
+		}
+		else
+		{
+			fOutBeat += ( (it+1)->GetBeat() - (it)->GetBeat() ) * (it)->GetRatio();
+		}
 	}
 	return fOutBeat;
 }
