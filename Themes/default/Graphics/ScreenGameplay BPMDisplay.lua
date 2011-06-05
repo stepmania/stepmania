@@ -1,14 +1,35 @@
 -- check if players are playing steps with different timingdata.
 local numPlayers = GAMESTATE:GetNumPlayersEnabled()
 
-local displaySingle = Def.SongBPMDisplay {
-	File=THEME:GetPathF("BPMDisplay", "bpm");
-	Name="BPMDisplay";
-	InitCommand=cmd(zoom,0.675;shadowlength,1);
-	SetCommand=function(self) self:SetFromGameState() end;
-	CurrentSongChangedMessageCommand=cmd(playcommand,"Set");
-	CurrentCourseChangedMessageCommand=cmd(playcommand,"Set");
+local function UpdateSingleBPM(self)
+	local bpmDisplay = self:GetChild("BPMDisplay")
+	local pn = GAMESTATE:GetMasterPlayerNumber()
+	local pState = GAMESTATE:GetPlayerState(pn);
+	local songPosition = pState:GetSongPosition()
+	local bpm = songPosition:GetCurBPS() * 60
+	bpmDisplay:settext( string.format("%03.2f",bpm) )
+end
+
+local displaySingle = Def.ActorFrame{
+	-- manual bpm displays
+	LoadFont("BPMDisplay", "bpm")..{
+		Name="BPMDisplay";
+		InitCommand=cmd(zoom,0.675;shadowlength,1);
+	};
+
+	--[[
+	Def.SongBPMDisplay {
+		File=THEME:GetPathF("BPMDisplay", "bpm");
+		Name="BPMDisplay";
+		InitCommand=cmd(zoom,0.675;shadowlength,1);
+		SetCommand=function(self) self:SetFromGameState() end;
+		CurrentSongChangedMessageCommand=cmd(playcommand,"Set");
+		CurrentCourseChangedMessageCommand=cmd(playcommand,"Set");
+	};
+	--]]
 };
+
+displaySingle.InitCommand=cmd(SetUpdateFunction,UpdateSingleBPM);
 
 if numPlayers == 1 then
 	return displaySingle
@@ -23,16 +44,19 @@ else
 	local diffP1 = stepsP1:GetDifficulty()
 	local diffP2 = stepsP2:GetDifficulty()
 
-	if stP1 == stP2 and diffP1 == diffP2 then
-		-- both players are using the same steps; only need one.
+	-- get timing data...
+	local timingP1 = stepsP1:GetTimingData()
+	local timingP2 = stepsP2:GetTimingData()
+
+	--if stP1 == stP2 and diffP1 == diffP2 then
+	if timingP1 == timingP2 then
+		-- both players are steps with the same TimingData; only need one.
 		return displaySingle
 	end
 
 	-- otherwise, we have some more work to do.
-	local timingP1 = stepsP1:GetTimingData()
-	local timingP2 = stepsP2:GetTimingData()
 
-	local function UpdateBPM(self)
+	local function Update2PBPM(self)
 		local dispP1 = self:GetChild("DisplayP1")
 		local dispP2 = self:GetChild("DisplayP2")
 
@@ -42,7 +66,7 @@ else
 			local pState = GAMESTATE:GetPlayerState(pn);
 			local songPosition = pState:GetSongPosition()
 			local bpm = songPosition:GetCurBPS() * 60
-			bpmDisplay:settext( string.format("%.2f",bpm) )
+			bpmDisplay:settext( string.format("%03.2f",bpm) )
 		end
 	end
 
@@ -50,15 +74,15 @@ else
 		-- manual bpm displays
 		LoadFont("BPMDisplay", "bpm")..{
 			Name="DisplayP1";
-			InitCommand=cmd(x,-32;zoom,0.625;shadowlength,1);
+			InitCommand=cmd(x,-28;zoom,0.6;shadowlength,1);
 		};
 		LoadFont("BPMDisplay", "bpm")..{
 			Name="DisplayP2";
-			InitCommand=cmd(x,32;zoom,0.625;shadowlength,1);
+			InitCommand=cmd(x,28;zoom,0.6;shadowlength,1);
 		};
 	};
 
-	displayTwoPlayers.InitCommand=cmd(SetUpdateFunction,UpdateBPM);
+	displayTwoPlayers.InitCommand=cmd(SetUpdateFunction,Update2PBPM);
 
 	return displayTwoPlayers
 end
