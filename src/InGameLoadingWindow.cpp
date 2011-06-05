@@ -19,5 +19,13 @@ InGameLoadingWindow::~InGameLoadingWindow() {
 }
 
 void InGameLoadingWindow::SetText( RString str )	{
-	m_Text.SetText( str );
+	textChanged=true;
+	currentText=str;
+}
+
+void InGameLoadingWindow::Update(float delta) {
+	if(textChanged) {
+		m_Text.SetText( currentText );
+		textChanged=false;
+	}
 }

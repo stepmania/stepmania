@@ -11,9 +11,11 @@ public:
 	~InGameLoadingWindow();
 
 	void SetText( RString str );
+	void Update ( float delta );
 
 private:
-	RageTimer m_LastDraw;
+	bool textChanged;
+	RString currentText;
 	BitmapText m_Text;
 };
 
