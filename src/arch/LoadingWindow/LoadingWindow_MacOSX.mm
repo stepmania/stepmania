@@ -15,6 +15,7 @@
 - (void) setupWindow:(NSImage *)image;
 - (void) setProgress:(NSNumber *)progress;
 - (void) setTotalWork:(NSNumber *)totalWork;
+- (void) setIndeterminate:(NSNumber *)indeterminate;
 @end
 
 @implementation LoadingWindowHelper
@@ -96,6 +97,11 @@
 	[m_ProgressIndicator setMaxValue:[totalWork doubleValue]];
 }
 
+- (void) setIndeterminate:(NSNumber *)indeterminate
+{
+	[m_ProgressIndicator setIndeterminate:(indeterminate > 0 ? YES : NO)];
+}
+
 @end
 
 static LoadingWindowHelper *g_Helper = nil;
@@ -158,6 +164,12 @@ void LoadingWindow_MacOSX::SetProgress( const int progress )
 void LoadingWindow_MacOSX::SetTotalWork( const int totalWork )
 {
 	[g_Helper performSelectorOnMainThread:@selector(setTotalWork:) withObject:[NSNumber numberWithDouble:(double)totalWork] waitUntilDone:NO];
+}
+
+void LoadingWindow_MacOSX::SetIndeterminate( bool indeterminate )
+{
+	double tmp = indeterminate ? 1 : 0;
+	[g_Helper performSelectorOnMainThread:@selector(setIndeterminate:) withObject:[NSNumber numberWithDouble:tmp] waitUntilDone:NO];
 }
 
 /*
