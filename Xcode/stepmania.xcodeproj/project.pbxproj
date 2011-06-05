@@ -3058,8 +3058,8 @@
 		AAFF55220549F43A00D02EE9 /* ComboGraph.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ComboGraph.h; path = ../src/ComboGraph.h; sourceTree = "<group>"; };
 		AAFF5541054E736D00D02EE9 /* Attack.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = Attack.cpp; path = ../src/Attack.cpp; sourceTree = "<group>"; };
 		AAFF5542054E736D00D02EE9 /* Attack.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = Attack.h; path = ../src/Attack.h; sourceTree = "<group>"; };
-		B71A60BE139B41DB00183A27 /* InGameLoadingWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InGameLoadingWindow.cpp; sourceTree = "<group>"; };
-		B71A60BF139B41DB00183A27 /* InGameLoadingWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InGameLoadingWindow.h; sourceTree = "<group>"; };
+		B71A60BE139B41DB00183A27 /* InGameLoadingWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = InGameLoadingWindow.cpp; path = ../src/InGameLoadingWindow.cpp; sourceTree = "<group>"; };
+		B71A60BF139B41DB00183A27 /* InGameLoadingWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InGameLoadingWindow.h; path = ../src/InGameLoadingWindow.h; sourceTree = "<group>"; };
 		B75CE3B3137963350076A82D /* SongPosition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SongPosition.h; path = ../src/SongPosition.h; sourceTree = SOURCE_ROOT; };
 		B75CE3B4137963350076A82D /* SongPosition.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SongPosition.cpp; path = ../src/SongPosition.cpp; sourceTree = SOURCE_ROOT; };
 		EE2153A710A75BEE0074B01B /* NotesLoaderPMS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NotesLoaderPMS.cpp; path = ../src/NotesLoaderPMS.cpp; sourceTree = SOURCE_ROOT; };
@@ -3283,8 +3283,6 @@
 		29B97315FDCFA39411CA2CEA /* Other Source */ = {
 			isa = PBXGroup;
 			children = (
-				B71A60BE139B41DB00183A27 /* InGameLoadingWindow.cpp */,
-				B71A60BF139B41DB00183A27 /* InGameLoadingWindow.h */,
 				AA70E3640663112800DAE1FD /* Foreach.h */,
 				3659B56D0F902143002B6B68 /* CommandLineActions.cpp */,
 				3659B56E0F902143002B6B68 /* CommandLineActions.h */,
@@ -4100,6 +4098,8 @@
 				AA6EFE9104770E7C005F316C /* GrooveRadar.h */,
 				AA6EFE9404770E7C005F316C /* HelpDisplay.cpp */,
 				AA6EFE9504770E7C005F316C /* HelpDisplay.h */,
+				B71A60BE139B41DB00183A27 /* InGameLoadingWindow.cpp */,
+				B71A60BF139B41DB00183A27 /* InGameLoadingWindow.h */,
 				AA729C460599B54D00779F33 /* MemoryCardDisplay.cpp */,
 				AA729C470599B54D00779F33 /* MemoryCardDisplay.h */,
 				AA6EFE9A04770E7C005F316C /* MenuTimer.cpp */,
