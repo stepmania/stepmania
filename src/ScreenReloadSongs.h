@@ -11,7 +11,6 @@ class ScreenReloadSongs: public Screen
 public:
 	virtual void Init();
 	~ScreenReloadSongs();
-	void Update( float fDeltaTime );
 private:
 	InGameLoadingWindow *loadWin;
 	RageThread m_loadingThread;

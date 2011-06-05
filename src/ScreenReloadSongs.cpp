@@ -21,11 +21,11 @@ void ScreenReloadSongs::Init()
 
 	loadWin=new InGameLoadingWindow( );
 
-	loadWin->SetXY( SCREEN_CENTER_X, SCREEN_CENTER_Y );
-	
 	AddChild( loadWin );
 
-	pLoadingWindow = new InGameLoadingWindow( );
+	loadWin->SetXY( SCREEN_CENTER_X, SCREEN_CENTER_Y );
+	
+	pLoadingWindow=loadWin;
 
 	m_loadingThread.SetName("Song reload work thread");
 	m_loadingThread.Create(loadingThreadProc,this);
@@ -33,17 +33,10 @@ void ScreenReloadSongs::Init()
 
 ScreenReloadSongs::~ScreenReloadSongs()
 {
-	delete pLoadingWindow;
+	//m_loadingThread.Halt(true);
+	RemoveChild(loadWin);
+	delete loadWin;
 }
-
-void ScreenReloadSongs::Update( float fDeltaTime ) {
-	Screen::Update( fDeltaTime );
-
-	//SCREENMAN->Draw();
-}
-
-
-
 
 int ScreenReloadSongs::loadingThreadProc(void *thisAsVoidPtr) {
 
