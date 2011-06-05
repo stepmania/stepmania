@@ -25,7 +25,8 @@ local ssc = {
 }
 
 local sm_ssc = {
-	"Jason Felds (wolfman2000)",
+	"Jason Felds (wolfman2000)", -- Timing Segments, Split Timing, optimization
+	"Thai Pangsakulyanont (theDtTvB)", -- BMS, Split Timing, optimization
 	"Alberto Ramos (Daisuke Master)",
 	"Jack Walstrom (FSX)",
 }
@@ -49,7 +50,6 @@ local contrib = {
 	"Kaox", -- pump/default noteskin
 	"NitroX72", -- pump/frame noteskin
 	"sy567", -- beginner helper fix
-	"Thai Pangsakulyanont (theDtTvB)", -- BMS, Split Timing, optimization
 	"v1toko", -- x-mode from StepNXA
 }
 

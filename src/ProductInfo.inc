@@ -9,8 +9,8 @@
 !define PRODUCT_DISPLAY "${PRODUCT_ID} ${PRODUCT_VER}"
 !define PRODUCT_BITMAP "ssc"
 
-!define PRODUCT_URL "http://code.google.com/p/sm-ssc/"
-!define UPDATES_URL "http://code.google.com/p/sm-ssc/"
+!define PRODUCT_URL "http://www.stepmania.com/"
+!define UPDATES_URL "http://www.stepmania.com/"
 
 ;!define INSTALL_EXTERNAL_PCKS
 ;!define INSTALL_INTERNAL_PCKS

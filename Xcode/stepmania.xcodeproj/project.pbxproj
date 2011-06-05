@@ -1524,7 +1524,7 @@
 		AAA071940CE7B50B005A3060 /* decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = AAA070C00CE7B3AD005A3060 /* decoder.c */; };
 		AAA071950CE7B50C005A3060 /* bit.h in Headers */ = {isa = PBXBuildFile; fileRef = AAA070B50CE7B3AD005A3060 /* bit.h */; };
 		AAA071960CE7B50D005A3060 /* bit.c in Sources */ = {isa = PBXBuildFile; fileRef = AAA070B40CE7B3AD005A3060 /* bit.c */; };
-		AAA071B40CE7C9C9005A3060 /* libmad.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AAA070A90CE7B0DF005A3060 /* libmad.a */; };
+		AAA071B40CE7C9C9005A3060 /* libmad-sm5.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AAA070A90CE7B0DF005A3060 /* libmad-sm5.a */; };
 		AAA372D40909934500141131 /* MovieTexture_Generic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAA372D00909934500141131 /* MovieTexture_Generic.cpp */; };
 		AAA372D60909934500141131 /* MovieTexture_Theora.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAA372D20909934500141131 /* MovieTexture_Theora.cpp */; };
 		AAA6BFEC0644AB3700AFBBC8 /* ScreenWithMenuElements.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAA6BFEA0644AB3700AFBBC8 /* ScreenWithMenuElements.cpp */; };
@@ -2776,7 +2776,7 @@
 		AA9EC2F0055F5126007E5098 /* RageTextureID.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = RageTextureID.cpp; path = ../src/RageTextureID.cpp; sourceTree = "<group>"; };
 		AA9EC2F1055F5126007E5098 /* RageTextureID.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = RageTextureID.h; path = ../src/RageTextureID.h; sourceTree = "<group>"; };
 		AAA0704D0CE5082D005A3060 /* libffmpeg_link.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libffmpeg_link.a; sourceTree = "<group>"; };
-		AAA070A90CE7B0DF005A3060 /* libmad.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libmad.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		AAA070A90CE7B0DF005A3060 /* libmad-sm5.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libmad-sm5.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		AAA070B40CE7B3AD005A3060 /* bit.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bit.c; sourceTree = "<group>"; };
 		AAA070B50CE7B3AD005A3060 /* bit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bit.h; sourceTree = "<group>"; };
 		AAA070C00CE7B3AD005A3060 /* decoder.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = decoder.c; sourceTree = "<group>"; };
@@ -3126,7 +3126,7 @@
 				AA7C8D1F0B6748E300FD9940 /* libtommath.a in Frameworks */,
 				AA059E2C0B8F0C67006F8139 /* libz_link.a in Frameworks */,
 				AAA0704E0CE5082E005A3060 /* libffmpeg_link.a in Frameworks */,
-				AAA071B40CE7C9C9005A3060 /* libmad.a in Frameworks */,
+				AAA071B40CE7C9C9005A3060 /* libmad-sm5.a in Frameworks */,
 				2B17AB9F13981271001AE57D /* libpng-1.5.1sm0.1.a in Frameworks */,
 				2B17ABCF139815E0001AE57D /* libglew.a in Frameworks */,
 				2B17ABFC139817D5001AE57D /* libpcre.a in Frameworks */,
@@ -3244,7 +3244,7 @@
 				AA7A2BAB0AE09CD50054C5BA /* luac */,
 				AA7C895F0B67444700FD9940 /* libtommath.a */,
 				AA7C8B8B0B67460600FD9940 /* libtomcrypt.a */,
-				AAA070A90CE7B0DF005A3060 /* libmad.a */,
+				AAA070A90CE7B0DF005A3060 /* libmad-sm5.a */,
 				2B17AB7213980FDF001AE57D /* libpng-1.5.1sm0.1.a */,
 				2B17ABC013981521001AE57D /* libglew.a */,
 				2B17ABE013981756001AE57D /* libpcre.a */,
@@ -5856,7 +5856,7 @@
 			);
 			name = mad;
 			productName = mad;
-			productReference = AAA070A90CE7B0DF005A3060 /* libmad.a */;
+			productReference = AAA070A90CE7B0DF005A3060 /* libmad-sm5.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 		AAE7817D0AC7E37B00AEFC64 /* lua-5.1 */ = {
@@ -7381,7 +7381,7 @@
 				INSTALL_PATH = /usr/local/lib;
 				OTHER_LDFLAGS = "";
 				PREBINDING = NO;
-				PRODUCT_NAME = png;
+				PRODUCT_NAME = "png-1.5.1sm0.1";
 				USER_HEADER_SEARCH_PATHS = "";
 			};
 			name = Native;
@@ -7424,7 +7424,7 @@
 				INSTALL_PATH = /usr/local/lib;
 				OTHER_LDFLAGS = "";
 				PREBINDING = NO;
-				PRODUCT_NAME = png;
+				PRODUCT_NAME = "png-1.5.1sm0.1";
 				USER_HEADER_SEARCH_PATHS = "";
 			};
 			name = PerformanceDebug;
@@ -7467,7 +7467,7 @@
 				INSTALL_PATH = /usr/local/lib;
 				OTHER_LDFLAGS = "";
 				PREBINDING = NO;
-				PRODUCT_NAME = png;
+				PRODUCT_NAME = "png-1.5.1sm0.1";
 				USER_HEADER_SEARCH_PATHS = "";
 			};
 			name = Universal;
@@ -8385,7 +8385,7 @@
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/../src/mad-0.15.1b";
 				INSTALL_PATH = /usr/local/lib;
 				PREBINDING = NO;
-				PRODUCT_NAME = mad;
+				PRODUCT_NAME = "mad-sm5";
 			};
 			name = Native;
 		};
@@ -8421,7 +8421,7 @@
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/../src/mad-0.15.1b";
 				INSTALL_PATH = /usr/local/lib;
 				PREBINDING = NO;
-				PRODUCT_NAME = mad;
+				PRODUCT_NAME = "mad-sm5";
 			};
 			name = PerformanceDebug;
 		};
@@ -8457,7 +8457,7 @@
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/../src/mad-0.15.1b";
 				INSTALL_PATH = /usr/local/lib;
 				PREBINDING = NO;
-				PRODUCT_NAME = mad;
+				PRODUCT_NAME = "mad-sm5";
 			};
 			name = Universal;
 		};
@@ -8496,7 +8496,7 @@
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/../src/mad-0.15.1b";
 				INSTALL_PATH = /usr/local/lib;
 				PREBINDING = NO;
-				PRODUCT_NAME = mad;
+				PRODUCT_NAME = "mad-sm5";
 			};
 			name = Debug;
 		};

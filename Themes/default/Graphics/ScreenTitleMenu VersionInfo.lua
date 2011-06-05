@@ -1,20 +1,17 @@
 return Def.ActorFrame {
 	LoadActor(THEME:GetPathG("ScreenTitleMenu","PreferenceFrame")) .. {
-		OnCommand=cmd(diffuse,Color("Orange");diffusetopedge,Color("Yellow");diffusealpha,0.25);
+		OnCommand=cmd(diffuse,color("#f7941d");diffusetopedge,color("#fff200");diffusealpha,0.25);
 	};
 	LoadFont("Common Normal") .. {
 		Text=ProductID();
 		AltText="";
-		InitCommand=cmd(x,-72;y,-1;horizalign,left;zoom,0.75);
+		InitCommand=cmd(y,-5;zoom,0.6);
 		OnCommand=cmd(shadowlength,1);
 	};
 	LoadFont("Common Normal") .. {
-		Text=ProductVersion() .. "\n" .. VersionDate(); 
+		Text=ProductVersion() .. " (".. VersionDate() ..")";
 		AltText="";
-		InitCommand=cmd(x,72*0.35;zoom,0.5);
+		InitCommand=cmd(y,8;zoom,0.45);
 		OnCommand=cmd(shadowlength,1;skewx,-0.125);
 	};
---[[ 	LoadFont("Common Normal") .. {
-		OnCommand=cmd(settext,"You're using " ..ProductID().." "..ProductVersion().."\nBuilt on "..VersionDate().." at "..VersionTime();horizalign,right;vertalign,bottom;zoom,0.5;);
-	}; --]]
 };

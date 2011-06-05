@@ -1458,7 +1458,7 @@ float Song::GetStepsSeconds() const
 
 bool Song::IsLong() const
 {
-	return !IsMarathon() && m_fMusicLengthSeconds > g_fLongVerSongSeconds;
+	return !IsMarathon() && m_fMusicLengthSeconds >= g_fLongVerSongSeconds;
 }
 
 bool Song::IsMarathon() const
