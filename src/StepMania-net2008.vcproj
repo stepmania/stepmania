@@ -2810,6 +2810,8 @@
 				RelativePath="HelpDisplay.h"
 				>
 			</File>
+			<File RelativePath="InGameLoadingWindow.cpp"></File>
+			<File RelativePath="InGameLoadingWindow.h"></File>
 			<File
 				RelativePath="MemoryCardDisplay.cpp"
 				>

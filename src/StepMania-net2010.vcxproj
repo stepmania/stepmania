@@ -371,7 +371,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="InGameLoadingWindow.cpp" />
     <ClCompile Include="Screen.cpp" />
     <ClCompile Include="ScreenAttract.cpp" />
     <ClCompile Include="ScreenBookkeeping.cpp" />
@@ -644,6 +643,7 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)</Command>
     <ClCompile Include="GraphDisplay.cpp" />
     <ClCompile Include="GrooveRadar.cpp" />
     <ClCompile Include="HelpDisplay.cpp" />
+    <ClCompile Include="InGameLoadingWindow.cpp" />
     <ClCompile Include="MemoryCardDisplay.cpp" />
     <ClCompile Include="MenuTimer.cpp" />
     <ClCompile Include="ModIcon.cpp" />
