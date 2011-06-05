@@ -98,6 +98,8 @@ void SongManager::InitAll()
 }
 
 static LocalizedString RELOADING ( "SongManager", "Reloading..." );
+static LocalizedString UNLOADING_SONGS ( "SongManager", "Unloading songs..." );
+static LocalizedString UNLOADING_COURSES ( "SongManager", "Unloading courses..." );
 void SongManager::Reload( bool bAllowFastLoad )
 {
 	FILEMAN->FlushDirCache( SpecialFiles::SONGS_DIR );
@@ -112,7 +114,13 @@ void SongManager::Reload( bool bAllowFastLoad )
 	// save scores before unloading songs, of the scores will be lost
 	PROFILEMAN->SaveMachineProfile();
 
+	if( pLoadingWindow )
+		pLoadingWindow->SetText( UNLOADING_COURSES );
+
 	FreeCourses();
+
+	if( pLoadingWindow )
+		pLoadingWindow->SetText( UNLOADING_SONGS );
 	FreeSongs();
 
 	const bool OldVal = PREFSMAN->m_bFastLoad;
