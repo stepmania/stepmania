@@ -237,11 +237,16 @@ void SongManager::LoadStepManiaSongDir( RString sDir )
 	SortRStringArray( arrayGroupDirs );
 	StripCvsAndSvn( arrayGroupDirs );
 	StripMacResourceForks( arrayGroupDirs );
-
+	
+	vector< vector<RString> > arrayGroupSongDirs;
+	int groupIndex, songCount, songIndex;
+	
+	groupIndex = 0;
+	songCount = 0;
 	FOREACH_CONST( RString, arrayGroupDirs, s )	// foreach dir in /Songs/
 	{
+	
 		RString sGroupDirName = *s;
-
 		SanityCheckGroupDir(sDir+sGroupDirName);
 
 		// Find all Song folders in this group directory
@@ -250,6 +255,21 @@ void SongManager::LoadStepManiaSongDir( RString sDir )
 		StripCvsAndSvn( arraySongDirs );
 		StripMacResourceForks( arraySongDirs );
 		SortRStringArray( arraySongDirs );
+		
+		arrayGroupSongDirs.push_back(arraySongDirs);
+		songCount += arraySongDirs.size();
+
+	}
+	
+	if( pLoadingWindow )
+		pLoadingWindow->SetTotalWork( songCount );
+	
+	groupIndex = 0;
+	songIndex = 0;
+	FOREACH_CONST( RString, arrayGroupDirs, s )	// foreach dir in /Songs/
+	{
+		RString sGroupDirName = *s;	
+		vector<RString> &arraySongDirs = arrayGroupSongDirs[groupIndex++];
 
 		LOG->Trace("Attempting to load %i songs from \"%s\"", int(arraySongDirs.size()),
 				   (sDir+sGroupDirName).c_str() );
@@ -264,6 +284,7 @@ void SongManager::LoadStepManiaSongDir( RString sDir )
 			// this is a song directory. Load a new song.
 			if( pLoadingWindow )
 			{
+				pLoadingWindow->SetProgress(songIndex);
 				pLoadingWindow->SetText( LOADING_SONGS.GetValue()+ssprintf("\n%s\n%s",
 									  Basename(sGroupDirName).c_str(),
 									  Basename(sSongDirName).c_str()));
@@ -279,6 +300,7 @@ void SongManager::LoadStepManiaSongDir( RString sDir )
 			m_pSongs.push_back( pNewSong );
 			index_entry.push_back( pNewSong );
 			loaded++;
+			songIndex++;
 		}
 
 		LOG->Trace("Loaded %i songs from \"%s\"", loaded, (sDir+sGroupDirName).c_str() );
