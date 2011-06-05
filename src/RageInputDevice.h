@@ -221,6 +221,8 @@ enum DeviceButton
 	KEY_LSUPER,
 	KEY_RSUPER,
 	KEY_MENU,
+	
+	KEY_FN, // Laptop function keys.
 
 	KEY_NUMLOCK,
 	KEY_SCRLLOCK,

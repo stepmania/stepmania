@@ -63,6 +63,8 @@ static void InitNames()
 	g_mapNamesToString[KEY_LSUPER] = "left super";
 	g_mapNamesToString[KEY_RSUPER] = "right super";
 	g_mapNamesToString[KEY_MENU] = "menu";
+	
+	g_mapNamesToString[KEY_FN] = "function";
 
 	g_mapNamesToString[KEY_NUMLOCK] = "num lock";
 	g_mapNamesToString[KEY_SCRLLOCK] = "scroll lock";
