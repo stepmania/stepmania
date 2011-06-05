@@ -86,6 +86,13 @@ r['DDR Extreme'] = function(params, pss)
 	local radarValues = steps:GetRadarValues(params.Player);
 	local baseScore = (steps:IsAnEdit() and 
 		5 or steps:GetMeter()) * 1000000;
+	if (GAMESTATE:GetCurrentSong():IsMarathon()) then
+		baseScore = baseScore * 3;
+	else
+		if (GAMESTATE:GetCurrentSong():IsLong()) then
+			baseScore = baseScore * 2;
+		end;
+	end;
 	local totalItems = GetTotalItems(radarValues);
 	local singleStep = (1 + totalItems) * totalItems / 2;
 	if (not Shared.CurrentStep) then
