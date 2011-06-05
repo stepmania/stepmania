@@ -7373,7 +7373,7 @@
 				INSTALL_PATH = /usr/local/lib;
 				OTHER_LDFLAGS = "";
 				PREBINDING = NO;
-				PRODUCT_NAME = png;
+				PRODUCT_NAME = "png-1.5.1sm0.1";
 				USER_HEADER_SEARCH_PATHS = "";
 			};
 			name = Native;
@@ -7416,7 +7416,7 @@
 				INSTALL_PATH = /usr/local/lib;
 				OTHER_LDFLAGS = "";
 				PREBINDING = NO;
-				PRODUCT_NAME = png;
+				PRODUCT_NAME = "png-1.5.1sm0.1";
 				USER_HEADER_SEARCH_PATHS = "";
 			};
 			name = PerformanceDebug;
@@ -7459,7 +7459,7 @@
 				INSTALL_PATH = /usr/local/lib;
 				OTHER_LDFLAGS = "";
 				PREBINDING = NO;
-				PRODUCT_NAME = png;
+				PRODUCT_NAME = "png-1.5.1sm0.1";
 				USER_HEADER_SEARCH_PATHS = "";
 			};
 			name = Universal;
