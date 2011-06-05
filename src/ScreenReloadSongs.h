@@ -9,9 +9,11 @@ class InGameLoadingWindow;
 class ScreenReloadSongs: public Screen
 {
 public:
+	ScreenReloadSongs();
 	virtual void Init();
 	~ScreenReloadSongs();
 private:
+	bool loadComplete;
 	InGameLoadingWindow *loadWin;
 	RageThread m_loadingThread;
 	static int loadingThreadProc(void *thisAsVoidPtr);
