@@ -1681,6 +1681,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 		{
 			m_pSoundMusic->StopPlaying();
 			SCREENMAN->PostMessageToTopScreen( SM_NotesEnded, 0 );
+			// todo: stop lyrics (m_LyricDisplay) from animating -aj
 		}
 
 		// Update living players' alive time
