@@ -260,9 +260,13 @@ void SongManager::LoadStepManiaSongDir( RString sDir )
 		songCount += arraySongDirs.size();
 
 	}
+
+	if( songCount==0 ) return;
 	
-	if( pLoadingWindow )
+	if( pLoadingWindow ) {
+		pLoadingWindow->SetIndeterminate( false );
 		pLoadingWindow->SetTotalWork( songCount );
+	}
 	
 	groupIndex = 0;
 	songIndex = 0;
@@ -316,6 +320,10 @@ void SongManager::LoadStepManiaSongDir( RString sDir )
 
 		// Load the group sym links (if any)
 		LoadGroupSymLinks(sDir, sGroupDirName);
+	}
+
+	if( pLoadingWindow ) {
+		pLoadingWindow->SetIndeterminate( true );
 	}
 
 	LoadEnabledSongsFromPref();

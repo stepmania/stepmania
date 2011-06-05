@@ -17,6 +17,7 @@ public:
 	void SetIcon( const RageSurface *pIcon );
 	void SetProgress( const int progress );
 	void SetTotalWork( const int totalWork );
+	void SetIndeterminate( bool indeterminate );
 
 private:
 	AppInstance handle;

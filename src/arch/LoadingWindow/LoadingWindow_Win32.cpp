@@ -110,12 +110,10 @@ INT_PTR CALLBACK LoadingWindow_Win32::DlgProc( HWND hWnd, UINT msg, WPARAM wPara
 			(LPARAM) (HANDLE) g_hBitmap );
 		SetWindowTextA( hWnd, PRODUCT_ID );
 
-		{
-			HWND progressCtrl=GetDlgItem( hWnd, IDC_PROGRESS );
-			SetWindowLong(progressCtrl,GWL_STYLE, PBS_MARQUEE | GetWindowLong(progressCtrl,GWL_STYLE));
-			SendMessage(progressCtrl,PBM_SETMARQUEE,1,0);
-		}
 		break;
+
+	case WM_CLOSE:
+		return FALSE;
 
 	case WM_DESTROY:
 		DeleteObject( g_hBitmap );
@@ -229,7 +227,22 @@ void LoadingWindow_Win32::SetTotalWork(const int totalWork)
 {
 	m_totalWork=totalWork;
 	HWND hwndItem = ::GetDlgItem( hwnd, IDC_PROGRESS );
-	::SendMessage(hwndItem,PBM_SETRANGE32,0,totalWork);
+	SendMessage(hwndItem,PBM_SETRANGE32,0,totalWork);
+}
+
+void LoadingWindow_Win32::SetIndeterminate(bool indeterminate) {
+	m_indeterminate=indeterminate;
+
+	HWND hwndItem = ::GetDlgItem( hwnd, IDC_PROGRESS );
+
+	if(indeterminate) {
+		SetWindowLong(hwndItem,GWL_STYLE, PBS_MARQUEE | GetWindowLong(hwndItem,GWL_STYLE));
+		SendMessage(hwndItem,PBM_SETMARQUEE,1,0);
+	} else {
+		SendMessage(hwndItem,PBM_SETMARQUEE,0,0);
+		SetWindowLong(hwndItem,GWL_STYLE, (~PBS_MARQUEE) & GetWindowLong(hwndItem,GWL_STYLE));
+	}
+	
 }
 
 /*

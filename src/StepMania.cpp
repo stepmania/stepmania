@@ -1101,6 +1101,10 @@ int main(int argc, char* argv[])
 	pLoadingWindow->SetText("Initializing statics manager...");
 	STATSMAN	= new StatsManager;
 
+	// Initialize which courses are ranking courses here.
+	pLoadingWindow->SetText("Updating cource rankings...");
+	SONGMAN->UpdateRankingCourses();
+
 	SAFE_DELETE( pLoadingWindow );		// destroy this before init'ing Display
 
 	/* If the user has tried to quit during the loading, do it before creating
@@ -1139,9 +1143,6 @@ int main(int argc, char* argv[])
 		SCREENMAN->SystemMessage( sMessage );
 
 	CodeDetector::RefreshCacheItems();
-
-	// Initialize which courses are ranking courses here.
-	SONGMAN->UpdateRankingCourses();
 
 	if( GetCommandlineArgument("netip") )
 		NSMAN->DisplayStartupStatus();	// If we're using networking show what happened
