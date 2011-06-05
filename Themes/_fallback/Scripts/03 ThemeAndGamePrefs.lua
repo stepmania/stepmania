@@ -7,10 +7,8 @@ function InitGamePrefs()
 	
 	local BPrefs =
 	{
-		{ "AutoSetStyle",	false },
-		{ "NotePosition",	true },
 		{ "ComboOnRolls",	false },
-		{ "ComboUnderField",	true },
+		
 	};
 
 	for idx,pref in ipairs(Prefs) do
@@ -41,6 +39,9 @@ function InitUserPrefs()
 
 	local BPrefs = 
 	{
+		{ "UserPrefComboUnderField",	true },
+		{ "UserPrefAutoSetStyle",	false },
+		{ "UserPrefNotePosition",	true },
 		{ "UserPrefShowLotsaOptions",		true},
 		{ "UserPrefLongFail",			false},
 		{ "UserPrefProtimingP1",		false},
@@ -398,23 +399,23 @@ function GamePrefComboOnRolls()
 	setmetatable( t, t );
 	return t;
 end
-function GamePrefComboUnderField()
+function UserPrefComboUnderField()
 	local t = {
-		Name = "GamePrefComboUnderField";
+		Name = "UserPrefComboUnderField";
 		LayoutType = "ShowAllInRow";
 		SelectType = "SelectOne";
 		OneChoiceForAllPlayers = true;
 		ExportOnChange = false;
 		Choices = { 'Off','On' };
 		LoadSelections = function(self, list, pn)
-			if ReadGamePrefFromFile("ComboUnderField") ~= nil then
-				if GetGamePrefB("ComboUnderField") then
+			if ReadPrefFromFile("UserPrefComboUnderField") ~= nil then
+				if GetUserPrefB("UserPrefComboUnderField") then
 					list[2] = true;
 				else
 					list[1] = true;
 				end;
 			else
-				WriteGamePrefToFile("ComboUnderField",true);
+				WritePrefToFile("UserPrefComboUnderField",true);
 				list[2] = true;
 			end;
 		end;
@@ -425,7 +426,7 @@ function GamePrefComboUnderField()
 			else
 				val = false;
 			end;
-			WriteGamePrefToFile("ComboUnderField",val);
+			WritePrefToFile("UserPrefComboUnderField",val);
 			MESSAGEMAN:Broadcast("PreferenceSet", { Message == "Set Preference" } );
 			THEME:ReloadMetrics();
 		end;
@@ -434,23 +435,23 @@ function GamePrefComboUnderField()
 	return t;
 end
 
-function GamePrefAutoSetStyle()
+function UserPrefAutoSetStyle()
 	local t = {
-		Name = "GamePrefAutoSetStyle";
+		Name = "UserPrefAutoSetStyle";
 		LayoutType = "ShowAllInRow";
 		SelectType = "SelectOne";
 		OneChoiceForAllPlayers = true;
 		ExportOnChange = false;
 		Choices = { 'Off','On' };
 		LoadSelections = function(self, list, pn)
-			if ReadGamePrefFromFile("AutoSetStyle") ~= nil then
-				if GetGamePrefB("AutoSetStyle") then
+			if ReadPrefFromFile("UserPrefAutoSetStyle") ~= nil then
+				if GetUserPrefB("UserPrefAutoSetStyle") then
 					list[2] = true;
 				else
 					list[1] = true;
 				end;
 			else
-				WriteGamePrefToFile("AutoSetStyle",false);
+				WritePrefToFile("UserPrefAutoSetStyle",false);
 				list[1] = true;
 			end;
 		end;
@@ -461,7 +462,7 @@ function GamePrefAutoSetStyle()
 			else
 				val = false;
 			end;
-			WriteGamePrefToFile("AutoSetStyle",val);
+			WritePrefToFile("UserPrefAutoSetStyle",val);
 			MESSAGEMAN:Broadcast("PreferenceSet", { Message == "Set Preference" } );
 			THEME:ReloadMetrics();
 		end;
@@ -469,23 +470,23 @@ function GamePrefAutoSetStyle()
 	setmetatable( t, t );
 	return t;
 end
-function GamePrefNotePosition()
+function UserPrefNotePosition()
 	local t = {
-		Name = "GamePrefNotePosition";
+		Name = "UserPrefNotePosition";
 		LayoutType = "ShowAllInRow";
 		SelectType = "SelectOne";
 		OneChoiceForAllPlayers = true;
 		ExportOnChange = false;
 		Choices = { 'Normal','Lower' };
 		LoadSelections = function(self, list, pn)
-			if ReadGamePrefFromFile("NotePosition") ~= nil then
-				if GetGamePrefB("NotePosition") then
+			if ReadPrefFromFile("UserPrefNotePosition") ~= nil then
+				if GetUserPrefB("UserPrefNotePosition") then
 					list[1] = true;
 				else
 					list[2] = true;
 				end;
 			else
-				WriteGamePrefToFile("NotePosition",false);
+				WritePrefToFile("UserPrefNotePosition",false);
 				list[1] = true;
 			end;
 		end;
@@ -496,7 +497,7 @@ function GamePrefNotePosition()
 			else
 				val = false;
 			end;
-			WriteGamePrefToFile("NotePosition",val);
+			WritePrefToFile("UserPrefNotePosition",val);
 			MESSAGEMAN:Broadcast("PreferenceSet", { Message == "Set Preference" } );
 			THEME:ReloadMetrics();
 		end;

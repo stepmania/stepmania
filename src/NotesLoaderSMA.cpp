@@ -337,11 +337,14 @@ void SMALoader::ProcessSpeeds( TimingData &out, const int iRowsPerBeat, const RS
 		
 		const float fBeat = RowToBeat( vs2[0], iRowsPerBeat );
 		
-		unsigned short tmp = ( (vs2[2].find("s") || vs2[2].find("S") )
-				      ? 1 : 0);
+		RString backup = vs2[2];
+		Trim(vs2[2], "s");
+		Trim(vs2[2], "S");
 		
-		SpeedSegment seg(fBeat, StringToFloat( vs2[1] ), StringToFloat(vs2[2]));
-		seg.SetUnit(tmp);
+		unsigned short tmp = ((backup != vs2[2]) ? 1 : 0);
+		
+		SpeedSegment seg(fBeat, StringToFloat( vs2[1] ), StringToFloat(vs2[2]), tmp);
+		//seg.SetUnit(tmp);
 		
 		if( fBeat < 0 )
 		{
