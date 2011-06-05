@@ -76,7 +76,7 @@
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='FastDebug|Win32'">$(TargetDir)</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='FastDebug|Win32'">$(SolutionDir)/build-$(SolutionName)/$(ProjectName)/$(Configuration)\</IntDir>
-    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='FastDebug|Win32'">false</LinkIncremental>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='FastDebug|Win32'">true</LinkIncremental>
     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='FastDebug|Win32'">true</GenerateManifest>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release-SSE2|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release-SSE2|Win32'">$(Configuration)\</IntDir>
@@ -268,7 +268,7 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)</Command>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <DisableSpecificWarnings>4063;4100;4127;4201;4244;4275;4355;4505;4512;4702;4786;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
-      <WholeProgramOptimization>true</WholeProgramOptimization>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
@@ -295,7 +295,7 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)</Command>
       <DataExecutionPrevention>
       </DataExecutionPrevention>
       <LinkErrorReporting>SendErrorReport</LinkErrorReporting>
-      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
+      <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
     </Link>
     <PostBuildEvent>
       <Command>archutils\Win32\mapconv "$(IntDir)$(TargetName).map" "$(TargetDir)\StepMania-fastdebug.vdi"</Command>
@@ -371,6 +371,7 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="InGameLoadingWindow.cpp" />
     <ClCompile Include="Screen.cpp" />
     <ClCompile Include="ScreenAttract.cpp" />
     <ClCompile Include="ScreenBookkeeping.cpp" />
@@ -1689,6 +1690,7 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)</Command>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="InGameLoadingWindow.h" />
     <ClInclude Include="Screen.h" />
     <ClInclude Include="ScreenAttract.h" />
     <ClInclude Include="ScreenBookkeeping.h" />
