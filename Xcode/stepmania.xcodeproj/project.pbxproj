@@ -45,7 +45,7 @@
 		2B17AB8A13980FF6001AE57D /* pngwrite.c in Sources */ = {isa = PBXBuildFile; fileRef = 2BC6132113773C8E00CC8BBD /* pngwrite.c */; };
 		2B17AB8B13980FF6001AE57D /* pngwtran.c in Sources */ = {isa = PBXBuildFile; fileRef = 2BC6132213773C8E00CC8BBD /* pngwtran.c */; };
 		2B17AB8C13980FF6001AE57D /* pngwutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 2BC6132313773C8E00CC8BBD /* pngwutil.c */; };
-		2B17AB9F13981271001AE57D /* libpng.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B17AB7213980FDF001AE57D /* libpng.a */; };
+		2B17AB9F13981271001AE57D /* libpng-1.5.1sm0.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B17AB7213980FDF001AE57D /* libpng-1.5.1sm0.1.a */; };
 		2B17ABC51398153F001AE57D /* glew.c in Sources */ = {isa = PBXBuildFile; fileRef = EE879BAA132E06C50078FDDC /* glew.c */; };
 		2B17ABCF139815E0001AE57D /* libglew.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B17ABC013981521001AE57D /* libglew.a */; };
 		2B17ABE51398179E001AE57D /* chartables.c in Sources */ = {isa = PBXBuildFile; fileRef = AA8B6C7904AFD87300D02EE9 /* chartables.c */; };
@@ -1824,7 +1824,7 @@
 		1215D7A108C6559A00B87D8B /* ScreenGameplayNormal.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ScreenGameplayNormal.h; path = ../src/ScreenGameplayNormal.h; sourceTree = "<group>"; };
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
-		2B17AB7213980FDF001AE57D /* libpng.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libpng.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		2B17AB7213980FDF001AE57D /* libpng-1.5.1sm0.1.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libpng-1.5.1sm0.1.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2B17ABC013981521001AE57D /* libglew.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libglew.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		2B17ABE013981756001AE57D /* libpcre.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libpcre.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		2B30D6801315EA7E00044B68 /* MouseDevice.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MouseDevice.cpp; sourceTree = "<group>"; };
@@ -3123,7 +3123,7 @@
 				AA059E2C0B8F0C67006F8139 /* libz_link.a in Frameworks */,
 				AAA0704E0CE5082E005A3060 /* libffmpeg_link.a in Frameworks */,
 				AAA071B40CE7C9C9005A3060 /* libmad.a in Frameworks */,
-				2B17AB9F13981271001AE57D /* libpng.a in Frameworks */,
+				2B17AB9F13981271001AE57D /* libpng-1.5.1sm0.1.a in Frameworks */,
 				2B17ABCF139815E0001AE57D /* libglew.a in Frameworks */,
 				2B17ABFC139817D5001AE57D /* libpcre.a in Frameworks */,
 			);
@@ -3241,7 +3241,7 @@
 				AA7C895F0B67444700FD9940 /* libtommath.a */,
 				AA7C8B8B0B67460600FD9940 /* libtomcrypt.a */,
 				AAA070A90CE7B0DF005A3060 /* libmad.a */,
-				2B17AB7213980FDF001AE57D /* libpng.a */,
+				2B17AB7213980FDF001AE57D /* libpng-1.5.1sm0.1.a */,
 				2B17ABC013981521001AE57D /* libglew.a */,
 				2B17ABE013981756001AE57D /* libpcre.a */,
 			);
@@ -5673,7 +5673,7 @@
 			);
 			name = png;
 			productName = png;
-			productReference = 2B17AB7213980FDF001AE57D /* libpng.a */;
+			productReference = 2B17AB7213980FDF001AE57D /* libpng-1.5.1sm0.1.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 		2B17ABBF13981521001AE57D /* glew */ = {
@@ -7505,7 +7505,7 @@
 				INSTALL_PATH = /usr/local/lib;
 				OTHER_LDFLAGS = "";
 				PREBINDING = NO;
-				PRODUCT_NAME = png;
+				PRODUCT_NAME = "png-1.5.1sm0.1";
 				USER_HEADER_SEARCH_PATHS = "";
 			};
 			name = Debug;
