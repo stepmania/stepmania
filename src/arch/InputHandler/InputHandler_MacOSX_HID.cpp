@@ -347,6 +347,7 @@ RString InputHandler_MacOSX_HID::GetDeviceSpecificInputString( const DeviceInput
 		case OTHER(48): return "non US backslash";
 		case OTHER(49): return "application";
 		case OTHER(50): return "prior";
+		default: break;
 		}
 #undef OTHER
 	}
@@ -365,6 +366,7 @@ RString InputHandler_MacOSX_HID::GetDeviceSpecificInputString( const DeviceInput
 		case JOY_BUTTON_9:  return "P2 MID";
 		case JOY_BUTTON_10: return "P2 DL";
 		case JOY_BUTTON_11: return "P2 DR";
+		default: break;
 		}
 	}
 
