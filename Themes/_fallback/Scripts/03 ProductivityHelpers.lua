@@ -224,10 +224,10 @@ end;
 --[[ ----------------------------------------------------------------------- ]]
 
 --[[ profile stuff ]]
--- Profile(pn)
+-- GetPlayerOrMachineProfile(pn)
 -- This returns a profile, preferably a player one.
 -- If there isn't one, we fall back on the machine profile.
-function Profile(pn)
+function GetPlayerOrMachineProfile(pn)
 	if PROFILEMAN:IsPersistentProfile(pn) then
 		-- player profile
 		return PROFILEMAN:GetProfile(pn);
