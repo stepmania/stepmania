@@ -241,6 +241,7 @@ void ScreenEdit::InitEditMappings()
 		m_EditMappingsDeviceInput.hold[EDIT_BUTTON_DELETE_SHIFT_PAUSES][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL);
 		m_EditMappingsDeviceInput.hold[EDIT_BUTTON_DELETE_SHIFT_PAUSES][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL);
 		break;
+	default: break;
 	}
 
 	m_EditMappingsDeviceInput.button[EDIT_BUTTON_COLUMN_0][0] = DeviceInput(DEVICE_KEYBOARD, KEY_C1);
@@ -2114,6 +2115,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 		GAMESTATE->m_bIsUsingStepTiming = !GAMESTATE->m_bIsUsingStepTiming;
 		m_soundSwitchTiming.Play();
 		break;
+	default: break;
 	}
 }
 
@@ -2221,6 +2223,7 @@ void ScreenEdit::InputRecordPaused( const InputEventPlus &input, EditButton Edit
 	case EDIT_BUTTON_RETURN_TO_EDIT:
 		TransitionEditState( STATE_EDITING );
 		break;
+	default: break;
 	}
 }
 
@@ -2269,6 +2272,7 @@ void ScreenEdit::InputPlay( const InputEventPlus &input, EditButton EditB )
 				}
 			}
 			break;
+		default: break;
 		}
 	}
 
@@ -2307,6 +2311,7 @@ void ScreenEdit::InputPlay( const InputEventPlus &input, EditButton EditB )
 			GetAppropriateTiming().m_fBeat0OffsetInSeconds += fOffsetDelta;
 		}
 			break;
+		default: break;
 		}
 	}
 }
@@ -2373,6 +2378,7 @@ void ScreenEdit::TransitionEditState( EditState em )
 
 			CheckNumberOfNotesAndUndo();
 			break;
+		default: break;
 		}
 	}
 
@@ -2473,6 +2479,7 @@ void ScreenEdit::TransitionEditState( EditState em )
 		m_NoteFieldRecord.m_iEndMarker = m_iStopPlayingAt;
 
 		break;
+	default: break;
 	}
 
 	// Show/hide depending on edit state (em)
@@ -2499,6 +2506,7 @@ void ScreenEdit::TransitionEditState( EditState em )
 	{
 	case STATE_PLAYING:
 	case STATE_RECORDING:
+		{
 		const float fStartSeconds = GetAppropriateTiming().GetElapsedTimeFromBeat( GetBeat() );
 		LOG->Trace( "Starting playback at %f", fStartSeconds );
 
@@ -2509,6 +2517,8 @@ void ScreenEdit::TransitionEditState( EditState em )
 		m_pSoundMusic->SetProperty( "AccurateSync", true );
 		m_pSoundMusic->Play( &p );
 		break;
+		}
+	default: break;
 	}
 
 	m_EditState = em;
@@ -3886,6 +3896,7 @@ void ScreenEdit::HandleSongInformationChoice( SongInformationChoice c, const vec
 					   ssprintf("%.5f", pSong->m_fSpecifiedBPMMax), 20,
 					   ScreenTextEntry::FloatValidate, ChangeMaxBPM, NULL );
 		break;
+	default: break;
 	};
 }
 
