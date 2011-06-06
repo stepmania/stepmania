@@ -254,7 +254,7 @@ int EditMenu::GetRowSize( EditMenuRow er ) const
 	case ROW_SOURCE_STEPS_TYPE:	return m_StepsTypes.size();
 	case ROW_SOURCE_STEPS:	return m_vpSourceSteps.size();
 	case ROW_ACTION:		return m_Actions.size();
-	default: FAIL_M( ssprintf("%i", er) );
+	default: FAIL_M( ssprintf("Non-existant EditMenuRow %i", er) );
 	}
 }
 

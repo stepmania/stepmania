@@ -426,9 +426,9 @@ void BackgroundImpl::LoadFromRandom( float fFirstBeat, float fEndBeat, const Bac
 	{
 		vector<TimeSignatureSegment>::const_iterator next = iter;
 		next++;
-		int iSegmentEndRow = (next == timing.m_vTimeSignatureSegments.end()) ? iEndRow : next->m_iStartRow;
+		int iSegmentEndRow = (next == timing.m_vTimeSignatureSegments.end()) ? iEndRow : next->GetRow();
 
-		for( int i=max(iter->m_iStartRow,iStartRow); i<min(iEndRow,iSegmentEndRow); i+=4*iter->GetNoteRowsPerMeasure() )
+		for( int i=max(iter->GetRow(),iStartRow); i<min(iEndRow,iSegmentEndRow); i+=4*iter->GetNoteRowsPerMeasure() )
 		{
 			// Don't fade. It causes frame rate dip, especially on slower machines.
 			BackgroundDef bd = m_Layer[0].CreateRandomBGA( m_pSong, change.m_def.m_sEffect, m_RandomBGAnimations, this );
@@ -450,7 +450,7 @@ void BackgroundImpl::LoadFromRandom( float fFirstBeat, float fEndBeat, const Bac
 		bool bAtBeginningOfMeasure = false;
 		FOREACH_CONST( TimeSignatureSegment, timing.m_vTimeSignatureSegments, iter )
 		{
-			if( (bpmseg.m_iStartRow - iter->m_iStartRow) % iter->GetNoteRowsPerMeasure() == 0 )
+			if( (bpmseg.GetRow() - iter->GetRow()) % iter->GetNoteRowsPerMeasure() == 0 )
 			{
 				bAtBeginningOfMeasure = true;
 				break;
@@ -461,7 +461,7 @@ void BackgroundImpl::LoadFromRandom( float fFirstBeat, float fEndBeat, const Bac
 			continue; // skip
 
 		// start so that we don't create a BGChange right on top of fEndBeat
-		bool bInRange = bpmseg.m_iStartRow >= iStartRow && bpmseg.m_iStartRow < iEndRow;
+		bool bInRange = bpmseg.GetRow() >= iStartRow && bpmseg.GetRow() < iEndRow;
 		if( !bInRange )
 			continue; // skip
 
@@ -471,7 +471,7 @@ void BackgroundImpl::LoadFromRandom( float fFirstBeat, float fEndBeat, const Bac
 			BackgroundChange c = change;
 			c.m_def.m_sFile1 = bd.m_sFile1;
 			c.m_def.m_sFile2 = bd.m_sFile2;
-			c.m_fStartBeat = NoteRowToBeat(bpmseg.m_iStartRow);
+			c.m_fStartBeat = bpmseg.GetBeat();
 			m_Layer[0].m_aBGChanges.push_back( c );
 		}
 	}

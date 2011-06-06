@@ -251,7 +251,7 @@ static const Style g_Style_Dance_Double =
 static const Style g_Style_Dance_Couple =
 {	// STYLE_DANCE_COUPLE
 	true,				// m_bUsedForGameplay
-	false,				// m_bUsedForEdit
+	true,				// m_bUsedForEdit
 	false,				// m_bUsedForDemonstration
 	false,				// m_bUsedForHowToPlay
 	"couple",			// m_szName
@@ -359,50 +359,6 @@ static const Style g_Style_Dance_ThreePanel =
 	false, // m_bLockDifficulties
 };
 
-static const Style g_Style_Dance_Couple_Edit =
-{	// STYLE_DANCE_EDIT_COUPLE
-	false,				// m_bUsedForGameplay
-	true,				// m_bUsedForEdit
-	false,				// m_bUsedForDemonstration
-	false,				// m_bUsedForHowToPlay
-	"couple-edit",			// m_szName
-	StepsType_dance_couple,	// m_StepsType
-	StyleType_OnePlayerOneSide,		// m_StyleType
-	8,				// m_iColsPerPlayer
-	{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
-		{	// PLAYER_1
-			{ TRACK_1,	-DANCE_COL_SPACING*4.0f, NULL },
-			{ TRACK_2,	-DANCE_COL_SPACING*3.0f, NULL },
-			{ TRACK_3,	-DANCE_COL_SPACING*2.0f, NULL },
-			{ TRACK_4,	-DANCE_COL_SPACING*1.0f, NULL },
-			{ TRACK_5,	+DANCE_COL_SPACING*1.0f, NULL },
-			{ TRACK_6,	+DANCE_COL_SPACING*2.0f, NULL },
-			{ TRACK_7,	+DANCE_COL_SPACING*3.0f, NULL },
-			{ TRACK_8,	+DANCE_COL_SPACING*4.0f, NULL },
-		},
-		{	// PLAYER_2
-			{ TRACK_1,	-DANCE_COL_SPACING*4.0f, NULL },
-			{ TRACK_2,	-DANCE_COL_SPACING*3.0f, NULL },
-			{ TRACK_3,	-DANCE_COL_SPACING*2.0f, NULL },
-			{ TRACK_4,	-DANCE_COL_SPACING*1.0f, NULL },
-			{ TRACK_5,	+DANCE_COL_SPACING*1.0f, NULL },
-			{ TRACK_6,	+DANCE_COL_SPACING*2.0f, NULL },
-			{ TRACK_7,	+DANCE_COL_SPACING*3.0f, NULL },
-			{ TRACK_8,	+DANCE_COL_SPACING*4.0f, NULL },
-		},
-	},
-	{	// m_iInputColumn[NUM_GameController][NUM_GameButton]
-		{ 0, 1, 2, 3, Style::END_MAPPING },
-		{ 4, 5, 6, 7, Style::END_MAPPING },
-	},
-	{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
-		0,1,2,3,4,5,6,7
-	},
-	false, // m_bNeedsZoomOutWith2Players
-	false, // m_bCanUseBeginnerHelper
-	false, // m_bLockDifficulties
-};
-
 // todo: re-enable? (lol)
 /*
 static const Style g_Style_Dance_Solo_Versus =
@@ -493,7 +449,6 @@ static const Style *g_apGame_Dance_Styles[] =
 	&g_Style_Dance_Double,
 	&g_Style_Dance_Couple,
 	&g_Style_Dance_Solo,
-	&g_Style_Dance_Couple_Edit,
 	&g_Style_Dance_Routine,
 	&g_Style_Dance_ThreePanel,
 	NULL
@@ -2980,7 +2935,7 @@ const Style* GameManager::GetEditorStyleForStepsType( StepsType st )
 		}
 	}
 
-	ASSERT(0);	// this Game is missing a Style that can be used with the editor
+	ASSERT_M(0, ssprintf("The current game cannot use this Style with the editor!"));
 	return NULL;
 }
 

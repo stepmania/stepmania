@@ -118,7 +118,10 @@ public:
 	void TidyUpData();
 	void CalculateRadarValues( float fMusicLengthSeconds );
 
-	/** @brief Timing data */
+	/** 
+	 * @brief The TimingData used by the Steps.
+	 *
+	 * This is required to allow Split Timing. */
 	TimingData m_Timing;
 	
 	/**
@@ -132,6 +135,11 @@ public:
 	StepsType			m_StepsType;
 
 	CachedObject<Steps> m_CachedObject;
+	
+	/**
+	 * @brief Determine if the Steps use Split Timing by comparing the Song it's in.
+	 * @return true if the Step and Song use different timings, false otherwise. */
+	bool UsesSplitTiming() const;
 
 private:
 	inline const Steps *Real() const		{ return parent ? parent : this; }
@@ -172,6 +180,7 @@ private:
 	int				m_iMeter;
 	/** @brief The radar values used for each player. */
 	RadarValues			m_CachedRadarValues[NUM_PLAYERS];
+	bool                m_bAreCachedRadarValuesJustLoaded;
 	/** @brief The name of the person who created the Steps. */
 	RString				m_sCredit;
 };

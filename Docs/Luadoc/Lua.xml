@@ -130,6 +130,7 @@
 		<Function name='PrintTable'/>
 		<Function name='ProductID'/>
 		<Function name='ProductVersion'/>
+		<Function name='Profile'/>
 		<Function name='RadarCategoryToLocalizedString'/>
 		<Function name='ReadGamePrefFromFile'/>
 		<Function name='ReadPrefFromFile'/>
@@ -522,6 +523,7 @@
 			<Function name='SetFromCourse'/>
 			<Function name='SetFromGameState'/>
 			<Function name='SetFromSong'/>
+			<Function name='SetFromSteps'/>
 		</Class>
 		<Class base='Sprite' name='Banner'>
 			<Function name='GetPercentScrolling'/>
@@ -627,6 +629,7 @@
 		<Class name='CryptManager'>
 			<Function name='MD5File'/>
 			<Function name='MD5String'/>
+			<Function name='SHA1File'/>
 			<Function name='SHA1String'/>
 		</Class>
 		<Class base='Sprite' name='DifficultyIcon'>
@@ -1023,52 +1026,6 @@
 			<Function name='SetPreference'/>
 			<Function name='SetPreferenceToDefault'/>
 		</Class>
-		<Class name='Profile'>
-			<Function name='GetCaloriesBurnedToday'/>
-			<Function name='GetCharacter'/>
-			<Function name='GetCoursesActual'/>
-			<Function name='GetCoursesPercentComplete'/>
-			<Function name='GetCoursesPossible'/>
-			<Function name='GetDisplayName'/>
-			<Function name='GetDisplayTotalCaloriesBurned'/>
-			<Function name='GetGoalCalories'/>
-			<Function name='GetGoalSeconds'/>
-			<Function name='GetGoalType'/>
-			<Function name='GetHighScoreList'/>
-			<Function name='GetLastUsedHighScoreName'/>
-			<Function name='GetMostPopularCourse'/>
-			<Function name='GetMostPopularSong'/>
-			<Function name='GetNumToasties'/>
-			<Function name='GetNumTotalSongsPlayed'/>
-			<Function name='GetSongNumTimesPlayed'/>
-			<Function name='GetSongsActual'/>
-			<Function name='GetSongsAndCoursesPercentCompleteAllDifficulties'/>
-			<Function name='GetSongsPercentComplete'/>
-			<Function name='GetSongsPossible'/>
-			<Function name='GetTotalCaloriesBurned'/>
-			<Function name='GetTotalGameplaySeconds'/>
-			<Function name='GetTotalHands'/>
-			<Function name='GetTotalHolds'/>
-			<Function name='GetTotalJumps'/>
-			<Function name='GetTotalLifts'/>
-			<Function name='GetTotalMines'/>
-			<Function name='GetTotalNumSongsPlayed'/>
-			<Function name='GetTotalRolls'/>
-			<Function name='GetTotalSessionSeconds'/>
-			<Function name='GetTotalSessions'/>
-			<Function name='GetTotalStepsWithTopGrade'/>
-			<Function name='GetTotalTapsAndHolds'/>
-			<Function name='GetTotalTrailsWithTopGrade'/>
-			<Function name='GetUserData'/>
-			<Function name='GetWeightPounds'/>
-			<Function name='HasPassedAnyStepsInSong'/>
-			<Function name='IsCodeUnlocked'/>
-			<Function name='SetCharacter'/>
-			<Function name='SetGoalCalories'/>
-			<Function name='SetGoalSeconds'/>
-			<Function name='SetGoalType'/>
-			<Function name='SetWeightPounds'/>
-		</Class>
 		<Class name='ProfileManager'>
 			<Function name='GetLocalProfile'/>
 			<Function name='GetLocalProfileFromIndex'/>
@@ -1374,6 +1331,7 @@
 			<Function name='IsAPlayerEdit'/>
 			<Function name='IsAnEdit'/>
 			<Function name='IsAutogen'/>
+			<Function name='UsesSplitTiming'/>
 		</Class>
 		<Class base='ActorFrame' name='StepsDisplay'>
 			<Function name='Load'/>
@@ -1426,6 +1384,7 @@
 			<Function name='HasBPMChanges'/>
 			<Function name='HasFakes'/>
 			<Function name='HasNegativeBPMs'/>
+			<Function name='HasScrollChanges'/>
 			<Function name='HasSpeedChanges'/>
 			<Function name='HasStops'/>
 			<Function name='HasWarps'/>
@@ -2101,6 +2060,6 @@
 		<Constant name='sGame' value='&apos;dance&apos;'/>
 		<Constant name='top' value='&apos;VertAlign_Top&apos;'/>
 	</Constants>
-	<Version>sm-ssc v1.2.5</Version>
-	<Date>2011-05-19</Date>
+	<Version>StepMania 5 v5.0 Preview 1a</Version>
+	<Date>2011-06-04</Date>
 </Lua>

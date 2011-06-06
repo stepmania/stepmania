@@ -804,7 +804,11 @@ void ScreenGameplay::InitSongQueues()
 			// In a survival course, override stored mods
 			if( pCourse->GetCourseType() == COURSE_TYPE_SURVIVAL )
 			{
-				pi->GetPlayerState()->m_PlayerOptions.FromString( ModsLevel_Stage, "clearall,"+CommonMetrics::DEFAULT_MODIFIERS.GetValue() );
+				pi->GetPlayerState()->m_PlayerOptions.FromString( ModsLevel_Stage, 
+										 "clearall,"
+										 + CommonMetrics::DEFAULT_NOTESKIN_NAME.GetValue()
+										 + ","
+										 + CommonMetrics::DEFAULT_MODIFIERS.GetValue() );
 				pi->GetPlayerState()->RebuildPlayerOptionsFromActiveAttacks();
 			}
 		}
@@ -1386,9 +1390,12 @@ void ScreenGameplay::PauseGame( bool bPause, GameController gc )
 // play assist ticks
 void ScreenGameplay::PlayTicks()
 {
+	/* TODO: Allow all players to have ticks. Not as simple as it looks.
+	 * If a loop takes place, it could make one player's ticks come later
+	 * than intended. Any help here would be appreciated. -Wolfman2000 */
 	Player &player = *m_vPlayerInfo[0].m_pPlayer;
 	const NoteData &nd = player.GetNoteData();
-	m_GameplayAssist.PlayTicks( nd );
+	m_GameplayAssist.PlayTicks( nd, player.GetPlayerState() );
 }
 
 /* Play announcer "type" if it's been at least fSeconds since the last announcer. */
@@ -1674,6 +1681,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 		{
 			m_pSoundMusic->StopPlaying();
 			SCREENMAN->PostMessageToTopScreen( SM_NotesEnded, 0 );
+			// todo: stop lyrics (m_LyricDisplay) from animating -aj
 		}
 
 		// Update living players' alive time

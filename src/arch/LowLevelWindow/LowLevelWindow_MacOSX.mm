@@ -428,8 +428,7 @@ RString LowLevelWindow_MacOSX::TryVideoMode( const VideoModeParams& p, bool& new
 	
 	if( bChangeVsync )
 	{
-		long swap = p.vsync ? 1 : 0;
-
+		GLint swap = p.vsync ? 1 : 0;
 		[m_Context setValues:&swap forParameter:NSOpenGLCPSwapInterval];
 		m_CurrentParams.vsync = p.vsync;
 	}
@@ -515,8 +514,7 @@ void LowLevelWindow_MacOSX::SetActualParamsFromMode( CFDictionaryRef mode )
 
 	if( !m_CurrentParams.windowed )
 	{
-		long swap;
-
+		GLint swap;
 		m_CurrentParams.width = CGDisplayPixelsWide( kCGDirectMainDisplay );
 		m_CurrentParams.height = CGDisplayPixelsHigh( kCGDirectMainDisplay );
 		CGLGetParameter( CGLGetCurrentContext(), kCGLCPSwapInterval, &swap );

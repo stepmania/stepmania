@@ -209,10 +209,10 @@ void SMALoader::ProcessDelays( TimingData &out, const int iRowsPerBeat, const RS
 		const float fFreezeBeat = RowToBeat( arrayDelayValues[0], iRowsPerBeat );
 		const float fFreezeSeconds = StringToFloat( arrayDelayValues[1] );
 		
-		StopSegment new_seg( BeatToNoteRow(fFreezeBeat), fFreezeSeconds, true );
+		StopSegment new_seg( fFreezeBeat, fFreezeSeconds, true );
 		// XXX: Remove Negatives Bug?
-		new_seg.m_iStartRow = BeatToNoteRow(fFreezeBeat);
-		new_seg.m_fStopSeconds = fFreezeSeconds;
+		new_seg.SetBeat(fFreezeBeat);
+		new_seg.SetPause(fFreezeSeconds);
 		
 		// LOG->Trace( "Adding a delay segment: beat: %f, seconds = %f", new_seg.m_fStartBeat, new_seg.m_fStopSeconds );
 		
@@ -296,9 +296,9 @@ void SMALoader::ProcessBeatsPerMeasure( TimingData &out, const RString sParam )
 			continue;
 		}
 		
-		if( seg.m_iNumerator < 1 )
+		if( seg.GetNum() < 1 )
 		{
-			LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid time signature change with beat %f, iNumerator %i.", fBeat, seg.m_iNumerator );
+			LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid time signature change with beat %f, iNumerator %i.", fBeat, seg.GetNum() );
 			continue;
 		}
 		
@@ -319,9 +319,12 @@ void SMALoader::ProcessSpeeds( TimingData &out, const int iRowsPerBeat, const RS
 	FOREACH_CONST( RString, vs1, s1 )
 	{
 		vector<RString> vs2;
-		split( *s1, "=", vs2 );
+		vs2.clear(); // trying something.
+		RString loopTmp = *s1;
+		Trim( loopTmp );
+		split( loopTmp, "=", vs2 );
 		
-		if( RowToBeat(vs2[0], iRowsPerBeat) == 0 && vs2.size() == 2 ) // First one always seems to have 2.
+		if( vs2.size() == 2 ) // First one always seems to have 2.
 		{
 			vs2.push_back("0");
 		}
@@ -334,10 +337,14 @@ void SMALoader::ProcessSpeeds( TimingData &out, const int iRowsPerBeat, const RS
 		
 		const float fBeat = RowToBeat( vs2[0], iRowsPerBeat );
 		
-		unsigned short tmp = ( (vs2[2].find("s") || vs2[2].find("S") )
-				      ? 1 : 0);
+		RString backup = vs2[2];
+		Trim(vs2[2], "s");
+		Trim(vs2[2], "S");
 		
-		SpeedSegment seg( fBeat, StringToFloat( vs2[1] ), StringToFloat( vs2[2] ), tmp);
+		unsigned short tmp = ((backup != vs2[2]) ? 1 : 0);
+		
+		SpeedSegment seg(fBeat, StringToFloat( vs2[1] ), StringToFloat(vs2[2]), tmp);
+		//seg.SetUnit(tmp);
 		
 		if( fBeat < 0 )
 		{
@@ -345,9 +352,9 @@ void SMALoader::ProcessSpeeds( TimingData &out, const int iRowsPerBeat, const RS
 			continue;
 		}
 		
-		if( seg.m_fWait < 0 )
+		if( seg.GetLength() < 0 )
 		{
-			LOG->UserLog( "Song file", "(UNKNOWN)", "has an speed change with beat %f, fWait %f.", fBeat, seg.m_fWait );
+			LOG->UserLog( "Song file", "(UNKNOWN)", "has an speed change with beat %f, length %f.", fBeat, seg.GetLength() );
 			continue;
 		}
 		
@@ -656,12 +663,16 @@ bool SMALoader::LoadFromSMAFile( const RString &sPath, Song &out )
 		{
 			TimingData &timing = (state == SMA_GETTING_STEP_INFO 
 					      ? pNewNotes->m_Timing : out.m_SongTiming);
-			ProcessSpeeds( timing, iRowsPerBeat, sParams[1] );
+			RString tmp = sParams[1];
+			Trim( tmp );
+			ProcessSpeeds( timing, iRowsPerBeat, tmp );
 		}
 		
 		else if( sValueName=="MULTIPLIER" )
 		{
-			ProcessMultipliers( pNewNotes->m_Timing, iRowsPerBeat, sParams[1] );
+			TimingData &timing = (state == SMA_GETTING_STEP_INFO 
+					      ? pNewNotes->m_Timing : out.m_SongTiming);
+			ProcessMultipliers( timing, iRowsPerBeat, sParams[1] );
 		}
 		
 		else if( sValueName=="FAKES" )

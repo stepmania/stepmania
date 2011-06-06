@@ -34,6 +34,7 @@ class ScoreKeeperNormal: public ScoreKeeper
 	int	m_iNumNotesHitThisRow;	// Used by Custom Scoring only
 
 	ThemeMetric<bool>		m_ComboIsPerRow;
+	ThemeMetric<bool>		m_MissComboIsPerRow;
 	ThemeMetric<TapNoteScore>	m_MinScoreToContinueCombo;
 	ThemeMetric<TapNoteScore>	m_MinScoreToMaintainCombo;
 	ThemeMetric<TapNoteScore>	m_MaxScoreToIncrementMissCombo;

@@ -76,7 +76,7 @@
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='FastDebug|Win32'">$(TargetDir)</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='FastDebug|Win32'">$(SolutionDir)/build-$(SolutionName)/$(ProjectName)/$(Configuration)\</IntDir>
-    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='FastDebug|Win32'">true</LinkIncremental>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='FastDebug|Win32'">false</LinkIncremental>
     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='FastDebug|Win32'">true</GenerateManifest>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release-SSE2|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release-SSE2|Win32'">$(Configuration)\</IntDir>
@@ -93,12 +93,23 @@
     <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
     <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
     <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\Program Files (x86)\Microsoft DirectX 9.0 SDK (Summer 2004)\Include;$(IncludePath)</IncludePath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\Program Files (x86)\Microsoft DirectX 9.0 SDK (Summer 2004)\Lib;$(LibraryPath)</LibraryPath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='FastDebug|Win32'">C:\Program Files (x86)\Microsoft DirectX 9.0 SDK (Summer 2004)\Include;$(IncludePath)</IncludePath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release-SSE2|Win32'">C:\Program Files (x86)\Microsoft DirectX 9.0 SDK (Summer 2004)\Include;$(IncludePath)</IncludePath>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">StepMania</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='FastDebug|Win32'">StepMania</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release-SSE2|Win32'">StepMania</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">StepMania</TargetName>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\Program Files (x86)\Microsoft DirectX 9.0 SDK (Summer 2004)\Include;$(IncludePath)</IncludePath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='FastDebug|Win32'">C:\Program Files (x86)\Microsoft DirectX 9.0 SDK (Summer 2004)\Lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release-SSE2|Win32'">C:\Program Files (x86)\Microsoft DirectX 9.0 SDK (Summer 2004)\Lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\Program Files (x86)\Microsoft DirectX 9.0 SDK (Summer 2004)\Lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <PreBuildEvent>
       <Command>archutils\Win32\verinc
-cl /Zl /nologo /c verstub.cpp /Fo"$(IntDir)"\
-</Command>
+cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)</Command>
     </PreBuildEvent>
     <Midl>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -109,7 +120,7 @@ cl /Zl /nologo /c verstub.cpp /Fo"$(IntDir)"\
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>.;..\extern\lua-5.1\src;ffmpeg\modern_working\include;BaseClasses;..\extern\jsoncpp\include;..\extern\glew-1.5.8\include;..\extern\pcre;..\extern\mad-0.15.1b;..\extern\libpng;..\extern\libjpeg;..\extern\zlib;..\extern\vorbis;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;..\extern\lua-5.1\src;ffmpeg\modern_working\include;BaseClasses;..\extern\jsoncpp\include;..\extern\glew-1.5.8\include;..\extern\pcre;..\extern\mad-0.15.1b;..\extern\libpng\lib;..\extern\libpng\include;..\extern\libjpeg;..\extern\zlib;..\extern\vorbis;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;WINDOWS;DEBUG;GLEW_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>
       </ExceptionHandling>
@@ -127,6 +138,10 @@ cl /Zl /nologo /c verstub.cpp /Fo"$(IntDir)"\
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <DisableSpecificWarnings>4063;4100;4127;4201;4244;4275;4355;4505;4512;4702;4786;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <MinimalRebuild>true</MinimalRebuild>
+      <AdditionalOptions>/EHsc %(AdditionalOptions)</AdditionalOptions>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -137,7 +152,7 @@ cl /Zl /nologo /c verstub.cpp /Fo"$(IntDir)"\
       <AdditionalDependencies>shell32.lib;gdi32.lib;user32.lib;ole32.lib;advapi32.lib;ffmpeg/modern_working/lib/avcodec.lib;ffmpeg/modern_working/lib/avformat.lib;ffmpeg/modern_working/lib/avutil.lib;ffmpeg/modern_working/lib/swscale.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>../Program/StepMania-debug.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>ffmpeg\lib;..\extern\libjpeg\;..\extern\zlib\;..\extern\mad-0.15.1b\msvc++\Release\%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\extern\libpng\lib;ffmpeg\lib;..\extern\libjpeg\;..\extern\zlib\;..\extern\mad-0.15.1b\msvc++\Release\%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>wininet.lib;msimg32.lib;libci.lib;msvcrt.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(IntDir)StepMania.pdb</ProgramDatabaseFile>
@@ -148,6 +163,7 @@ cl /Zl /nologo /c verstub.cpp /Fo"$(IntDir)"\
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention>
       </DataExecutionPrevention>
+      <LinkErrorReporting>SendErrorReport</LinkErrorReporting>
     </Link>
     <PostBuildEvent>
       <Command>archutils\Win32\mapconv "$(IntDir)$(TargetName).map" "$(TargetDir)\StepMania-debug.vdi"</Command>
@@ -156,8 +172,7 @@ cl /Zl /nologo /c verstub.cpp /Fo"$(IntDir)"\
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <PreBuildEvent>
       <Command>archutils\Win32\verinc
-cl /Zl /nologo /c verstub.cpp /Fo"$(IntDir)"\
-</Command>
+cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)</Command>
     </PreBuildEvent>
     <Midl>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -172,12 +187,11 @@ cl /Zl /nologo /c verstub.cpp /Fo"$(IntDir)"\
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
-      <AdditionalIncludeDirectories>.;..\extern\lua-5.1\src;ffmpeg\modern_working\include;BaseClasses;..\extern\jsoncpp\include;..\extern\glew-1.5.8\include;..\extern\pcre;..\extern\mad-0.15.1b;..\extern\libpng;..\extern\libjpeg;..\extern\zlib;..\extern\vorbis;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;..\extern\lua-5.1\src;ffmpeg\modern_working\include;BaseClasses;..\extern\jsoncpp\include;..\extern\glew-1.5.8\include;..\extern\pcre;..\extern\mad-0.15.1b;..\extern\libpng\lib;..\extern\libpng\include;..\extern\libjpeg;..\extern\zlib;..\extern\vorbis;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;WINDOWS;RELEASE;GLEW_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <MinimalRebuild>false</MinimalRebuild>
-      <ExceptionHandling>
-      </ExceptionHandling>
+      <ExceptionHandling>Sync</ExceptionHandling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <FunctionLevelLinking>false</FunctionLevelLinking>
@@ -193,6 +207,8 @@ cl /Zl /nologo /c verstub.cpp /Fo"$(IntDir)"\
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <DisableSpecificWarnings>4063;4100;4127;4201;4244;4275;4355;4505;4512;4702;4786;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <WholeProgramOptimization>true</WholeProgramOptimization>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -203,7 +219,7 @@ cl /Zl /nologo /c verstub.cpp /Fo"$(IntDir)"\
       <AdditionalDependencies>shell32.lib;gdi32.lib;user32.lib;ole32.lib;advapi32.lib;ffmpeg/modern_working/lib/avcodec.lib;ffmpeg/modern_working/lib/avformat.lib;ffmpeg/modern_working/lib/avutil.lib;ffmpeg/modern_working/lib/swscale.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>../Program/StepMania.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>ffmpeg\lib;..\extern\libjpeg\;..\extern\zlib\;..\extern\mad-0.15.1b\msvc++\Release\%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\extern\libpng\lib;ffmpeg\lib;..\extern\libjpeg\;..\extern\zlib\;..\extern\mad-0.15.1b\msvc++\Release\%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>wininet.lib;msimg32.lib;libci.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ProgramDatabaseFile>$(IntDir)StepMania.pdb</ProgramDatabaseFile>
       <GenerateMapFile>true</GenerateMapFile>
@@ -211,8 +227,10 @@ cl /Zl /nologo /c verstub.cpp /Fo"$(IntDir)"\
       <MapExports>true</MapExports>
       <SubSystem>Windows</SubSystem>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
-      <DataExecutionPrevention>
-      </DataExecutionPrevention>
+      <DataExecutionPrevention>true</DataExecutionPrevention>
+      <LinkErrorReporting>SendErrorReport</LinkErrorReporting>
+      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
       <Command>archutils\Win32\mapconv "$(IntDir)$(TargetName).map" "$(TargetDir)\StepMania.vdi"
@@ -222,8 +240,7 @@ cl /Zl /nologo /c verstub.cpp /Fo"$(IntDir)"\
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='FastDebug|Win32'">
     <PreBuildEvent>
       <Command>archutils\Win32\verinc
-cl /Zl /nologo /c verstub.cpp /Fo"$(IntDir)"\
-</Command>
+cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)</Command>
     </PreBuildEvent>
     <Midl>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -233,11 +250,10 @@ cl /Zl /nologo /c verstub.cpp /Fo"$(IntDir)"\
       <TypeLibraryName>../StepMania.tlb</TypeLibraryName>
     </Midl>
     <ClCompile>
-      <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>.;..\extern\lua-5.1\src;ffmpeg\modern_working\include;BaseClasses;..\extern\jsoncpp\include;..\extern\glew-1.5.8\include;..\extern\pcre;..\extern\mad-0.15.1b;..\extern\libpng;..\extern\libjpeg;..\extern\zlib;..\extern\vorbis;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <Optimization>MaxSpeed</Optimization>
+      <AdditionalIncludeDirectories>.;..\extern\lua-5.1\src;ffmpeg\modern_working\include;BaseClasses;..\extern\jsoncpp\include;..\extern\glew-1.5.8\include;..\extern\pcre;..\extern\mad-0.15.1b;..\extern\libpng\lib;..\extern\libpng\include;..\extern\libjpeg;..\extern\zlib;..\extern\vorbis;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;WINDOWS;DEBUG;GLEW_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ExceptionHandling>
-      </ExceptionHandling>
+      <ExceptionHandling>Sync</ExceptionHandling>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <PrecompiledHeader>Use</PrecompiledHeader>
@@ -250,8 +266,13 @@ cl /Zl /nologo /c verstub.cpp /Fo"$(IntDir)"\
       </BrowseInformation>
       <WarningLevel>Level4</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <DisableSpecificWarnings>4063;4100;4127;4201;4244;4275;4355;4505;4512;4702;4786;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <WholeProgramOptimization>true</WholeProgramOptimization>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -259,10 +280,10 @@ cl /Zl /nologo /c verstub.cpp /Fo"$(IntDir)"\
     </ResourceCompile>
     <Link>
       <AdditionalOptions>/MACHINE:I386 "$(IntDir)verstub.obj" %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>shell32.lib;gdi32.lib;user32.lib;ole32.lib;advapi32.lib;ffmpeg/modern_working/lib/avcodec.lib;ffmpeg/lib/avformat.lib;ffmpeg/lib/avutil.lib;ffmpeg/lib/swscale.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>shell32.lib;gdi32.lib;user32.lib;ole32.lib;advapi32.lib;avcodec.lib;avformat.lib;avutil.lib;swscale.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>../Program/StepMania-fastdebug.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>ffmpeg\lib;..\extern\libjpeg\;..\extern\zlib\;..\extern\mad-0.15.1b\msvc++\Release\%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\extern\libpng\lib;ffmpeg\modern_working\lib;..\extern\libjpeg\;..\extern\zlib\;..\extern\mad-0.15.1b\msvc++\Release\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>wininet.lib;msimg32.lib;libci.lib;msvcrt.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(IntDir)StepMania.pdb</ProgramDatabaseFile>
@@ -273,6 +294,8 @@ cl /Zl /nologo /c verstub.cpp /Fo"$(IntDir)"\
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention>
       </DataExecutionPrevention>
+      <LinkErrorReporting>SendErrorReport</LinkErrorReporting>
+      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
     </Link>
     <PostBuildEvent>
       <Command>archutils\Win32\mapconv "$(IntDir)$(TargetName).map" "$(TargetDir)\StepMania-fastdebug.vdi"</Command>
@@ -281,8 +304,7 @@ cl /Zl /nologo /c verstub.cpp /Fo"$(IntDir)"\
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release-SSE2|Win32'">
     <PreBuildEvent>
       <Command>archutils\Win32\verinc
-cl /Zl /nologo /c verstub.cpp /Fo"$(IntDir)"\
-</Command>
+cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)</Command>
     </PreBuildEvent>
     <Midl>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -297,7 +319,7 @@ cl /Zl /nologo /c verstub.cpp /Fo"$(IntDir)"\
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <AdditionalIncludeDirectories>.;..\extern\lua-5.1\src;ffmpeg\modern_working\include;BaseClasses;..\extern\jsoncpp\include;..\extern\glew-1.5.8\include;..\extern\pcre;..\extern\mad-0.15.1b;..\extern\libpng;..\extern\libjpeg;..\extern\zlib;..\extern\vorbis;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;..\extern\lua-5.1\src;ffmpeg\modern_working\include;BaseClasses;..\extern\jsoncpp\include;..\extern\glew-1.5.8\include;..\extern\pcre;..\extern\mad-0.15.1b;..\extern\libpng\lib;..\extern\libpng\include;..\extern\libjpeg;..\extern\zlib;..\extern\vorbis;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;WINDOWS;RELEASE;GLEW_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <MinimalRebuild>false</MinimalRebuild>
@@ -319,6 +341,7 @@ cl /Zl /nologo /c verstub.cpp /Fo"$(IntDir)"\
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <DisableSpecificWarnings>4063;4100;4127;4201;4244;4275;4355;4505;4512;4702;4786;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -329,7 +352,7 @@ cl /Zl /nologo /c verstub.cpp /Fo"$(IntDir)"\
       <AdditionalDependencies>shell32.lib;gdi32.lib;user32.lib;ole32.lib;advapi32.lib;ffmpeg/modern_working/lib/avcodec.lib;ffmpeg/modern_working/lib/avformat.lib;ffmpeg/modern_working/lib/avutil.lib;ffmpeg/modern_working/lib/swscale.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>..\Program/StepMania-SSE2.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>ffmpeg\lib;..\extern\libjpeg\;..\extern\zlib\;..\extern\mad-0.15.1b\msvc++\Release\%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\extern\libpng\lib;ffmpeg\lib;..\extern\libjpeg\;..\extern\zlib\;..\extern\mad-0.15.1b\msvc++\Release\%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>wininet.lib;msimg32.lib;libci.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ProgramDatabaseFile>$(IntDir)StepMania-SSE2.pdb</ProgramDatabaseFile>
       <GenerateMapFile>true</GenerateMapFile>
@@ -340,6 +363,7 @@ cl /Zl /nologo /c verstub.cpp /Fo"$(IntDir)"\
       <DataExecutionPrevention>
       </DataExecutionPrevention>
       <TargetMachine>NotSet</TargetMachine>
+      <LinkErrorReporting>SendErrorReport</LinkErrorReporting>
     </Link>
     <PostBuildEvent>
       <Command>archutils\Win32\mapconv "$(IntDir)$(TargetName)-SSE2.map" "$(TargetDir)\StepMania-SSE2.vdi"
@@ -469,6 +493,7 @@ cl /Zl /nologo /c verstub.cpp /Fo"$(IntDir)"\
     <ClCompile Include="Song.cpp" />
     <ClCompile Include="SongCacheIndex.cpp" />
     <ClCompile Include="SongOptions.cpp" />
+    <ClCompile Include="SongPosition.cpp" />
     <ClCompile Include="SongUtil.cpp" />
     <ClCompile Include="SoundEffectControl.cpp" />
     <ClCompile Include="StageStats.cpp" />
@@ -477,6 +502,7 @@ cl /Zl /nologo /c verstub.cpp /Fo"$(IntDir)"\
     <ClCompile Include="Style.cpp" />
     <ClCompile Include="StyleUtil.cpp" />
     <ClCompile Include="TimingData.cpp" />
+    <ClCompile Include="TimingSegments.cpp" />
     <ClCompile Include="TitleSubstitution.cpp" />
     <ClCompile Include="Trail.cpp" />
     <ClCompile Include="TrailUtil.cpp" />
@@ -1192,94 +1218,94 @@ cl /Zl /nologo /c verstub.cpp /Fo"$(IntDir)"\
       </PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\extern\libpng\include\png.c">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-      </PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release-SSE2|Win32'">
-      </PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release-SSE2|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='FastDebug|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\extern\libpng\include\pngerror.c">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-      </PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release-SSE2|Win32'">
-      </PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release-SSE2|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='FastDebug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\extern\libpng\include\pngget.c">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-      </PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release-SSE2|Win32'">
-      </PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release-SSE2|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='FastDebug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\extern\libpng\include\pngmem.c">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-      </PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release-SSE2|Win32'">
-      </PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release-SSE2|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='FastDebug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\extern\libpng\include\pngpread.c">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-      </PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release-SSE2|Win32'">
-      </PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release-SSE2|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='FastDebug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\extern\libpng\include\pngread.c">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-      </PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release-SSE2|Win32'">
-      </PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release-SSE2|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='FastDebug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\extern\libpng\include\pngrio.c">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-      </PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release-SSE2|Win32'">
-      </PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release-SSE2|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='FastDebug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\extern\libpng\include\pngrtran.c">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-      </PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release-SSE2|Win32'">
-      </PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release-SSE2|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='FastDebug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\extern\libpng\include\pngrutil.c">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-      </PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release-SSE2|Win32'">
-      </PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release-SSE2|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='FastDebug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\extern\libpng\include\pngset.c">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-      </PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release-SSE2|Win32'">
-      </PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release-SSE2|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='FastDebug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\extern\libpng\include\pngtrans.c">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-      </PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release-SSE2|Win32'">
-      </PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release-SSE2|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='FastDebug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\extern\libpng\include\pngwio.c">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-      </PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release-SSE2|Win32'">
-      </PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release-SSE2|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='FastDebug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\extern\libpng\include\pngwrite.c">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-      </PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release-SSE2|Win32'">
-      </PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release-SSE2|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='FastDebug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\extern\libpng\include\pngwtran.c">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-      </PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release-SSE2|Win32'">
-      </PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release-SSE2|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='FastDebug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\extern\libpng\include\pngwutil.c">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-      </PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release-SSE2|Win32'">
-      </PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release-SSE2|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='FastDebug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\extern\pcre\chartables.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -1786,6 +1812,7 @@ cl /Zl /nologo /c verstub.cpp /Fo"$(IntDir)"\
     <ClInclude Include="Song.h" />
     <ClInclude Include="SongCacheIndex.h" />
     <ClInclude Include="SongOptions.h" />
+    <ClInclude Include="SongPosition.h" />
     <ClInclude Include="SongUtil.h" />
     <ClInclude Include="SoundEffectControl.h" />
     <ClInclude Include="StageStats.h" />
@@ -1796,6 +1823,7 @@ cl /Zl /nologo /c verstub.cpp /Fo"$(IntDir)"\
     <ClInclude Include="SubscriptionManager.h" />
     <ClInclude Include="ThemeMetric.h" />
     <ClInclude Include="TimingData.h" />
+    <ClInclude Include="TimingSegments.h" />
     <ClInclude Include="TitleSubstitution.h" />
     <ClInclude Include="Trail.h" />
     <ClInclude Include="TrailUtil.h" />

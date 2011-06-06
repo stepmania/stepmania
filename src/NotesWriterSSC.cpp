@@ -93,61 +93,66 @@ static void GetTimingTags( vector<RString> &lines, TimingData timing, bool bIsSo
 
 	w.Init( "BPMS" );
 	FOREACH_CONST( BPMSegment, timing.m_BPMSegments, bs )
-		w.Write( bs->m_iStartRow, bs->GetBPM() );
+		w.Write( bs->GetRow(), bs->GetBPM() );
 	w.Finish();
 	
 	w.Init( "STOPS" );
 	FOREACH_CONST( StopSegment, timing.m_StopSegments, ss )
-		if( !ss->m_bDelay )
-			w.Write( ss->m_iStartRow, ss->m_fStopSeconds );
+		if( !ss->GetDelay() )
+			w.Write( ss->GetRow(), ss->GetPause() );
 	w.Finish();
 	
 	w.Init( "DELAYS" );
 	FOREACH_CONST( StopSegment, timing.m_StopSegments, ss )
-		if( ss->m_bDelay )
-			w.Write( ss->m_iStartRow, ss->m_fStopSeconds );
+		if( ss->GetDelay() )
+			w.Write( ss->GetRow(), ss->GetPause() );
 	w.Finish();
 	
 	w.Init( "WARPS" );
 	FOREACH_CONST( WarpSegment, timing.m_WarpSegments, ws )
-		w.Write( ws->m_iStartRow, ws->m_fLengthBeats );
+		w.Write( ws->GetRow(), ws->GetLength() );
 	w.Finish();
 	
 	ASSERT( !timing.m_vTimeSignatureSegments.empty() );
 	w.Init( "TIMESIGNATURES" );
 	FOREACH_CONST( TimeSignatureSegment, timing.m_vTimeSignatureSegments, iter )
-		w.Write( iter->m_iStartRow, iter->m_iNumerator, iter->m_iDenominator );
+		w.Write( iter->GetRow(), iter->GetNum(), iter->GetDen() );
 	w.Finish();
 
 	ASSERT( !timing.m_TickcountSegments.empty() );
 	w.Init( "TICKCOUNTS" );
 	FOREACH_CONST( TickcountSegment, timing.m_TickcountSegments, ts )
-		w.Write( ts->m_iStartRow, ts->m_iTicks );
+		w.Write( ts->GetRow(), ts->GetTicks() );
 	w.Finish();
 	
 	ASSERT( !timing.m_ComboSegments.empty() );
 	w.Init( "COMBOS" );
 	FOREACH_CONST( ComboSegment, timing.m_ComboSegments, cs )
-		w.Write( cs->m_iStartRow, cs->m_iCombo );
+		w.Write( cs->GetRow(), cs->GetCombo() );
 	w.Finish();
 	
 	// Song Timing should only have the initial value.
 	w.Init( "SPEEDS" );
 	FOREACH_CONST( SpeedSegment, timing.m_SpeedSegments, ss )
-		w.Write( ss->m_iStartRow, ss->m_fPercent, ss->m_fWait, ss->m_usMode );
+		w.Write( ss->GetRow(), ss->GetRatio(), ss->GetLength(), ss->GetUnit() );
+	w.Finish();
+	
+	w.Init( "SCROLLS" );
+	FOREACH_CONST( ScrollSegment, timing.m_ScrollSegments, ss )
+		w.Write( ss->GetRow(), ss->GetRatio() );
 	w.Finish();
 	
 	if( !bIsSong )
 	{	
 		w.Init( "FAKES" );
 		FOREACH_CONST( FakeSegment, timing.m_FakeSegments, fs )
-			w.Write( fs->m_iStartRow, fs->m_fLengthBeats );
+			w.Write( fs->GetRow(), fs->GetLength() );
 		w.Finish();
 	}
 	
 	w.Init( "LABELS" );
 	FOREACH_CONST( LabelSegment, timing.m_LabelSegments, ls )
-		w.Write( ls->m_iStartRow, ls->m_sLabel.c_str() );
+		w.Write( ls->GetRow(), ls->GetLabel().c_str() );
 	w.Finish();
 }
 

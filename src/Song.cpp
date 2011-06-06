@@ -41,7 +41,7 @@
  * @brief The internal version of the cache for StepMania.
  *
  * Increment this value to invalidate the current cache. */
-const int FILE_CACHE_VERSION = 176;
+const int FILE_CACHE_VERSION = 178;
 
 /** @brief How long does a song sample last by default? */
 const float DEFAULT_MUSIC_SAMPLE_LENGTH = 12.f;
@@ -236,9 +236,7 @@ bool Song::LoadFromSongDir( RString sDir )
 	{
 //		LOG->Trace( "Loading '%s' from cache file '%s'.", m_sSongDir.c_str(), GetCacheFilePath().c_str() );
 		bool bLoadedFromSSC = SSCLoader::LoadFromSSCFile( sCacheFilePath, *this, true );
-		if( bLoadedFromSSC )
-			SSCLoader::TidyUpData( *this, true );
-		else
+		if( !bLoadedFromSSC )
 		{
 			// load from .sm
 			SMLoader::LoadFromSMFile( sCacheFilePath, *this, true );
@@ -390,7 +388,7 @@ void FixupPath( RString &path, const RString &sSongPath )
 }
 
 // Songs in BlacklistImages will never be autodetected as song images.
-void Song::TidyUpData()
+void Song::TidyUpData( bool bFromCache )
 {
 	// We need to do this before calling any of HasMusic, HasHasCDTitle, etc.
 	ASSERT_M( m_sSongDir.Left(3) != "../", m_sSongDir ); // meaningless
@@ -481,7 +479,7 @@ void Song::TidyUpData()
 
 	/* Generate these before we autogen notes, so the new notes can inherit
 	 * their source's values. */
-	ReCalculateRadarValuesAndLastBeat();
+	ReCalculateRadarValuesAndLastBeat( bFromCache );
 
 	Trim( m_sMainTitle );
 	Trim( m_sSubTitle );
@@ -791,8 +789,16 @@ void Song::TranslateTitles()
 	title.SaveToStrings( m_sMainTitle, m_sSubTitle, m_sArtist, m_sMainTitleTranslit, m_sSubTitleTranslit, m_sArtistTranslit );
 }
 
-void Song::ReCalculateRadarValuesAndLastBeat()
+void Song::ReCalculateRadarValuesAndLastBeat( bool bFromCache )
 {
+	if( bFromCache && m_fFirstBeat >= 0 && m_fLastBeat > 0 )
+	{
+		// this is loaded from cache, then we just have to calculate the radar values.
+		for( unsigned i=0; i<m_vpSteps.size(); i++ )
+			m_vpSteps[i]->CalculateRadarValues( m_fMusicLengthSeconds );
+		return;
+	}
+
 	float fFirstBeat = FLT_MAX; // inf
 	float fLastBeat = m_fSpecifiedLastBeat; // Make sure we're at least as long as the specified amount.
 
@@ -1452,7 +1458,7 @@ float Song::GetStepsSeconds() const
 
 bool Song::IsLong() const
 {
-	return !IsMarathon() && m_fMusicLengthSeconds > g_fLongVerSongSeconds;
+	return !IsMarathon() && m_fMusicLengthSeconds >= g_fLongVerSongSeconds;
 }
 
 bool Song::IsMarathon() const
@@ -1493,7 +1499,14 @@ public:
 	static int GetSongDir( T* p, lua_State *L )		{ lua_pushstring(L, p->GetSongDir() ); return 1; }
 	static int GetMusicPath( T* p, lua_State *L )	{ RString s = p->GetMusicPath(); if( s.empty() ) return 0; lua_pushstring(L, s); return 1; }
 	static int GetBannerPath( T* p, lua_State *L )		{ RString s = p->GetBannerPath(); if( s.empty() ) return 0; LuaHelpers::Push(L, s); return 1; }
-	static int GetBackgroundPath( T* p, lua_State *L )	{ RString s = p->GetBackgroundPath(); if( s.empty() ) return 0; lua_pushstring(L, s); return 1; }
+	static int GetBackgroundPath( T* p, lua_State *L )
+	{
+		RString s = p->GetBackgroundPath();
+		if( s.empty() ) 
+			s = ""; 
+		lua_pushstring(L, s); 
+		return 1; 
+	}
 	static int GetCDTitlePath( T* p, lua_State *L )		{ RString s = p->GetCDTitlePath(); if( s.empty() ) return 0; LuaHelpers::Push(L, s); return 1; }
 	static int GetLyricsPath( T* p, lua_State *L )	{ RString s = p->GetLyricsPath(); if( s.empty() ) return 0; lua_pushstring(L, s); return 1; }
 	static int GetSongFilePath(  T* p, lua_State *L )	{ lua_pushstring(L, p->GetSongFilePath() ); return 1; }

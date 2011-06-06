@@ -5,8 +5,73 @@ from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
 ================================================================================
-StepMania 5.0 $NEXT | 20110xyy
+StepMania 5.0 Preview 2 | 20110???
 --------------------------------------------------------------------------------
+
+2011/06/04
+----------
+* Changed default MusicWheelSwitchSpeed to 15 (was 10). [AJ]
+* [AnnouncerManager] Fixed a bug where no announcers would be loaded. [AJ]
+* Restored the UserPrefAutoSetStyle behavior. [Wolfman2000]
+* [NotesLoaderSMA] Better way of identifying beats and seconds. [Wolfman2000]
+
+================================================================================
+StepMania 5.0 Preview 1a | 20110603
+--------------------------------------------------------------------------------
+
+2011/06/03
+----------
+* [LifeMeterBattery] Added LivesLeft param to LifeChanged message. [AJ]
+* [Windows] Set up directories for pictures and app data in their proper
+  location. [Henke]
+* [NotesLoaderSM] Fix an Offset load bug. [Wolfman2000]
+
+2011/06/02
+----------
+* [BPMDisplay] Added SetFromSteps Lua binding. [AJ]
+* [ScreenDebugOverlay] Switch the R and T keys to be Volume Down and Up
+  respectively. I have to admit, it makes more sense to have volume up be
+  on the right instead of the left. [Wolfman2000]
+* [SongManager] Make autogen courses have "Autogen" as the Scripter. [AJ]
+
+2011/06/01
+----------
+* [TimingData] Added the HasScrollChanges lua binding. [Wolfman2000]
+* [ScreenEdit] Fix Song Timing behaviors. [Wolfman2000]
+
+2011/05/31
+----------
+* [Player] Added the BattleRaveMirror metric. This determines if Battle and
+  Rave mode will have the two players with mirrored charts or not. By default,
+  this is set to true, preserving the ITG style behavior. [Wolfman2000]
+* [TimingData] Added the HasScrollChanges lua binding. [Wolfman2000]
+
+================================================================================
+StepMania 5.0 Preview 1 | 20110529
+--------------------------------------------------------------------------------
+
+2011/05/27
+----------
+* [ScreenEdit] Added the LoopOnChartEnd metric. Once you get to the end of
+  the chart while playing it in the editor, this controls whether it loops and
+  plays again, or simply stops. By default, this is true, replicating current
+  behavior. Set to false to replicate older StepMania behavior. [Wolfman2000]
+
+2011/05/26
+----------
+* [ScoreKeeperNormal] Added the MissComboIsPerRow metric. Similar to the
+  ComboIsPerRow metric, this determines how much miss combo is earned on missing
+  a row of notes. By default, this is true. Set to false to replicate Pump Pro
+  behavior. [Wolfman2000]
+
+2011/05/25
+----------
+* [NotesLoaderSSC/NotesWriterSSC] Added the ScrollSegments. Think BPM change,
+  but not. [theDtTvB]
+
+2011/05/23
+----------
+* [Steps] Added the UsesSplitTiming Lua binding. [Wolfman2000]
 
 2011/05/20
 ----------
@@ -50,6 +115,12 @@ StepMania 5.0 $NEXT | 20110xyy
 * [MusicWheel] Added ShowSectionsInBPMSort and ShowSectionsInLengthSort metrics. [AJ]
 * [ScreenEvaluation] Stop the Bonus bars from overflowing in course modes. [AJ]
 * [Banner] Added ScrollMode and ScrollSortOrder metrics. [AJ]
+
+2011/05/13
+----------
+* Added Split Timing to .SSC files. All older .SSC files and other file
+  formats are converted to split timing on cache load. We are no longer bound
+  by Song Timing for everything. [theDtTvB, Wolfman2000, TeruFSX]
 
 2011/05/11
 ----------

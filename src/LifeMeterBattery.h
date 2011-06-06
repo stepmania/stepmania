@@ -43,7 +43,6 @@ private:
 	float		m_fBatteryBlinkTime;	// if > 0 battery is blinking
 
 	// theme metrics added for sm-ssc
-	//ThemeMetric<> METRIC_NAME;
 	ThemeMetric<float> BATTERY_BLINK_TIME;
 
 	AutoActor	m_sprFrame;

@@ -102,7 +102,7 @@ static void WriteGlobalTags( RageFile &f, Song &out )
 	{
 		const BPMSegment &bs = out.m_SongTiming.m_BPMSegments[i];
 
-		f.PutLine( ssprintf( "%.3f=%.3f", NoteRowToBeat(bs.m_iStartRow), bs.GetBPM() ) );
+		f.PutLine( ssprintf( "%.3f=%.3f", bs.GetBeat(), bs.GetBPM() ) );
 		if( i != out.m_SongTiming.m_BPMSegments.size()-1 )
 			f.Write( "," );
 	}
@@ -113,13 +113,10 @@ static void WriteGlobalTags( RageFile &f, Song &out )
 	{
 		for( unsigned i=0; i < wSize; i++ )
 		{
-			int iRow = out.m_SongTiming.m_WarpSegments[i].m_iStartRow;
+			int iRow = out.m_SongTiming.m_WarpSegments[i].GetRow();
 			float fBPS = 60 / out.m_SongTiming.GetBPMAtRow(iRow);
-			float fSkip = fBPS * out.m_SongTiming.m_WarpSegments[i].m_fLengthBeats;
-			StopSegment ss;
-			ss.m_iStartRow = iRow;
-			ss.m_fStopSeconds = -fSkip;
-			ss.m_bDelay = false; // Best to be sure.
+			float fSkip = fBPS * out.m_SongTiming.m_WarpSegments[i].GetLength();
+			StopSegment ss(iRow, -fSkip, false);
 			out.m_SongTiming.AddStopSegment( ss );
 		}
 	}
@@ -128,21 +125,18 @@ static void WriteGlobalTags( RageFile &f, Song &out )
 	for( unsigned i=0; i<out.m_SongTiming.m_StopSegments.size(); i++ )
 	{
 		const StopSegment &fs = out.m_SongTiming.m_StopSegments[i];
-		int iRow = fs.m_iStartRow;
-		float fBeat = NoteRowToBeat(!fs.m_bDelay ? iRow : iRow - 1);
+		float fBeat = fs.GetBeat();
+		if (fs.GetDelay()) fBeat--;
 		
-		if(!fs.m_bDelay)
+		f.PutLine( ssprintf( "%.3f=%.3f", fBeat, fs.GetPause() ) );
+		if( i != out.m_SongTiming.m_StopSegments.size()-1 )
+			f.Write( "," );
+		if( fs.GetPause() < 0 )
 		{
-			f.PutLine( ssprintf( "%.3f=%.3f", fBeat, fs.m_fStopSeconds ) );
-			if( i != out.m_SongTiming.m_StopSegments.size()-1 )
-				f.Write( "," );
-			if( fs.m_fStopSeconds < 0 )
-			{
-				out.m_SongTiming.m_StopSegments.erase( 
-						     out.m_SongTiming.m_StopSegments.begin()+i,
-						     out.m_SongTiming.m_StopSegments.begin()+i+1 );
-				i--;
-			}
+			out.m_SongTiming.m_StopSegments.erase( 
+					     out.m_SongTiming.m_StopSegments.begin()+i,
+					     out.m_SongTiming.m_StopSegments.begin()+i+1 );
+			i--;
 		}
 	}
 	f.PutLine( ";" );

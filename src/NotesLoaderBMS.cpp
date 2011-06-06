@@ -664,7 +664,7 @@ static bool LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNameTo
 
 					StopSegment newSeg( BeatToNoteRow(fBeat), fFreezeSecs );
 					out.m_Timing.AddStopSegment( newSeg );
-					LOG->Trace( "Inserting new Freeze at beat %f, secs %f", fBeat, newSeg.m_fStopSeconds );
+					LOG->Trace( "Inserting new Freeze at beat %f, secs %f", fBeat, newSeg.GetPause() );
 				}
 				else
 				{
@@ -1183,13 +1183,16 @@ bool BMSLoader::LoadFromDir( const RString &sDir, Song &out )
 		Steps* pNewNotes = apSteps[i];
 		const bool ok = LoadFromBMSFile( out.GetSongDir() + arrayBMSFileNames[i], aBMSData[i], *pNewNotes, out, mapFilenameToKeysoundIndex );
 		if( ok )
+		{
+			// set song's timing data to the main file.
+			if( i == static_cast<unsigned>(iMainDataIndex) )
+				out.m_SongTiming = pNewNotes->m_Timing;
+				
 			out.AddSteps( pNewNotes );
+		}
 		else
 			delete pNewNotes;
 	}
-
-	// set song's timing data to the main file.
-	out.m_SongTiming = apSteps[iMainDataIndex]->m_Timing;
 
 	SlideDuplicateDifficulties( out );
 

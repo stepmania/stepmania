@@ -4,6 +4,9 @@
 namespace SpecialDirs
 {
 	RString GetAppDataDir();
+	RString GetLocalAppDataDir();
+	RString GetCommonAppDataDir();
+	RString GetPicturesDir();
 	RString GetDesktopDir();
 };
 

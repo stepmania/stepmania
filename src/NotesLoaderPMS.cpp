@@ -722,7 +722,7 @@ static void ReadGlobalTags( const NameToData_t &mapNameToData, Song &out, Measur
 
 						StopSegment newSeg( BeatToNoteRow(fBeat), fFreezeSecs );
 						out.m_SongTiming.AddStopSegment( newSeg );
-						LOG->Trace( "Inserting new Freeze at beat %f, secs %f", fBeat, newSeg.m_fStopSeconds );
+						LOG->Trace( "Inserting new Freeze at beat %f, secs %f", fBeat, newSeg.GetPause() );
 					}
 					else
 					{
@@ -751,7 +751,7 @@ static void ReadGlobalTags( const NameToData_t &mapNameToData, Song &out, Measur
 					{
 						BPMSegment newSeg( iStepIndex, fBPM );
 						out.m_SongTiming.AddBPMSegment( newSeg );
-						LOG->Trace( "Inserting new BPM change at beat %f, BPM %f", NoteRowToBeat(newSeg.m_iStartRow), newSeg.GetBPM() );
+						LOG->Trace( "Inserting new BPM change at beat %f, BPM %f", newSeg.GetBeat(), newSeg.GetBPM() );
 				
 					}
 					else

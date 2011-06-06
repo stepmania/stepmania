@@ -17,14 +17,14 @@ void NotesLoaderJson::GetApplicableFiles( const RString &sPath, vector<RString> 
 
 void Deserialize(BPMSegment &seg, const Json::Value &root)
 {
-	seg.m_iStartRow = BeatToNoteRow((float)root["Beat"].asDouble());
-	seg.m_fBPS = (float)(root["BPM"].asDouble() / 60);
+	seg.SetBeat((float)(root["Beat"].asDouble()));
+	seg.SetBPM((float)(root["BPM"].asDouble()));
 }
 
 static void Deserialize(StopSegment &seg, const Json::Value &root)
 {
-	seg.m_iStartRow = BeatToNoteRow((float)(root["Beat"].asDouble()));
-	seg.m_fStopSeconds = (float)root["Seconds"].asDouble();
+	seg.SetBeat((float)(root["Beat"].asDouble()));
+	seg.SetPause((float)(root["Seconds"].asDouble()));
 }
 
 static void Deserialize(TimingData &td, const Json::Value &root)

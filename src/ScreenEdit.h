@@ -251,6 +251,13 @@ protected:
 
 	BitmapText		m_textInputTips;
 	
+	/**
+	 * @brief Keep a backup of the present Step TimingData when
+	 * entering a playing or recording state.
+	 *
+	 * This is mainly to allow playing a chart with Song Timing. */
+	TimingData		backupStepTiming;
+	
 	/** @brief The current TapNote that would be inserted. */
 	TapNote			m_selectedTap;
 
@@ -498,6 +505,7 @@ public:
 		speed_percent,
 		speed_wait,
 		speed_mode,
+		scroll,
 		fake,
 		erase_step_timing,
 		NUM_TIMING_DATA_INFORMATION_CHOICES
@@ -579,8 +587,13 @@ private:
 	 * @brief Retrieve the appropriate TimingData based on GAMESTATE.
 	 * @return the proper TimingData. */
 	TimingData & GetAppropriateTiming() const;
+	/**
+	 * @brief Retrieve the appropriate SongPosition data based on GAMESTATE.
+	 * @return the proper SongPosition. */
+	SongPosition & GetAppropriatePosition() const;
 	void SetBeat(float fBeat);
 	float GetBeat();
+	int GetRow();
 	
 };
 

@@ -5,6 +5,7 @@
 
 #include "GameConstantsAndTypes.h"
 #include "PlayerNumber.h"
+#include "RageLog.h"
 
 class XNode;
 
@@ -159,7 +160,14 @@ struct TapNote
 		pn(PLAYER_INVALID), bHopoPossible(false),
 		sAttackModifiers(sAttackModifiers_),
 		fAttackDurationSeconds(fAttackDurationSeconds_),
-		iKeysoundIndex(iKeysoundIndex_), iDuration(0), HoldResult() {}
+		iKeysoundIndex(iKeysoundIndex_), iDuration(0), HoldResult()
+	{
+		if (type_ > TapNote::fake )
+		{
+			LOG->Trace(ssprintf("Invalid tap note type %d (most likely) due to random vanish issues. Assume it doesn't need judging.", type_ ) );
+			type = TapNote::empty;
+		}
+	}
 
 	/**
 	 * @brief Determine if the two TapNotes are equal to each other.
@@ -298,6 +306,35 @@ inline int   BeatToNoteRowNotRounded( float fBeatNum )	{ return (int)( fBeatNum 
  * @param iRow the row to convert.
  * @return the beat. */
 inline float NoteRowToBeat( int iRow )			{ return iRow / (float)ROWS_PER_BEAT; }
+
+// These functions can be useful for function templates,
+// where both rows and beats can be specified.
+
+/**
+ * @brief Convert the note row to note row (returns itself).
+ * @param row the row to convert.
+ */
+static inline int ToNoteRow(int row)    { return row; }
+
+/**
+ * @brief Convert the beat to note row.
+ * @param beat the beat to convert.
+ */
+static inline int ToNoteRow(float beat) { return BeatToNoteRow(beat); }
+
+/**
+ * @brief Convert the note row to beat.
+ * @param row the row to convert.
+ */
+static inline float ToBeat(int row)    { return NoteRowToBeat(row); }
+
+/**
+ * @brief Convert the beat row to beat (return itself).
+ * @param beat the beat to convert.
+ */
+static inline float ToBeat(float beat) { return beat; }
+
+
 
 #endif
 

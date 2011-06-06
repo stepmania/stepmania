@@ -26,8 +26,6 @@ namespace SMLoader
 
 	bool LoadFromSMFile( const RString &sPath, Song &out, bool bFromCache = false );
 	void GetApplicableFiles( const RString &sPath, vector<RString> &out );
-	bool LoadTimingFromFile( const RString &fn, TimingData &out );
-	void LoadTimingFromSMFile( const MsdFile &msd, TimingData &out );
 	bool LoadEditFromFile( RString sEditFilePath, ProfileSlot slot, bool bAddStepsToSong );
 	bool LoadEditFromBuffer( const RString &sBuffer, const RString &sEditFilePath, ProfileSlot slot );
 	bool LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePath, ProfileSlot slot, bool bAddStepsToSong );

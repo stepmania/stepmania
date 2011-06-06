@@ -1,4 +1,25 @@
 local t = Def.ActorFrame {};
+local function GetEdits( in_Song, in_StepsType )
+	if in_Song then
+		local sSong = in_Song;
+		local sCurrentStyle = GAMESTATE:GetCurrentStyle();
+		local sStepsType = in_StepsType;
+		local iNumEdits = 0;
+		if sSong:HasEdits( sStepsType ) then
+			local tAllSteps = sSong:GetAllSteps();
+			for i,Step in pairs(tAllSteps) do
+				if Step:IsAnEdit() and Step:GetStepsType() == sStepsType then
+					iNumEdits = iNumEdits + 1;
+				end
+			end
+			return iNumEdits;
+		else
+			return iNumEdits;
+		end
+	else
+		return 0;
+	end
+end;
 t[#t+1] = Def.ActorFrame {
 	LoadActor("_Background");
 };
@@ -6,12 +27,12 @@ t[#t+1] = Def.ActorFrame {
 for idx,diff in pairs(Difficulty) do
 	local sDifficulty = ToEnumShortString( diff );
 	local tLocation = {
-		Beginner	= 16,
-		Easy 		= 16*2,
-		Medium		= 16*3,
-		Hard		= 16*4,
-		Challenge	= 16*5,
-		Edit 		= 16*7,
+		Beginner	= 32*-1.25,
+		Easy 		= 32*-0.25,
+		Medium		= 32*0.75,
+		Hard		= 32*1.75,
+		Challenge	= 32*2.75,
+		Edit 		= 32*4.75,
 	};
 	t[#t+1] = Def.ActorFrame {
 		SetCommand=function(self)
@@ -27,14 +48,12 @@ for idx,diff in pairs(Difficulty) do
 				local steps = song:GetOneSteps( st, diff );
 				if steps then
 					meter = steps:GetMeter();
-					if meter >= 50 then
-						meter = "!";
-					end;
+					--
 					if diff == 'Difficulty_Edit' then
-						meter = meter .. " Edit";
-					end;
-				end;
-			end;
+					meter = GetEdits( song, st ) .. ' Edit';
+					end
+				end
+			end
 			c.Meter:settext( meter );
 			self:playcommand( bHasStepsTypeAndDifficulty and "Show" or "Hide" );
 		end;

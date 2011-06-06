@@ -50,7 +50,7 @@
 	<Function name='clamp' return='float' arguments='float fValue, float fLow, float fHigh'>
 		CLAMP is an all-female Japanese mangaka group that formed in the mid 1980s. Erm, I mean... Clamps <code>fValue</code> between <code>fLow</code> and <code>fHigh</code>.
 	</Function>
-	<Function name='CloseConnection' sm-ssc='true' return='void' arguments=''>
+	<Function name='CloseConnection' return='void' arguments=''>
 		Closes any connection to an online server.
 	</Function>
 	<Function name='collectgarbage' return='void' arguments='string opt, float arg'>
@@ -110,7 +110,7 @@
 	<Function name='GetLifeDifficulty' return='int' arguments=''>
 		Returns the current Life Difficulty.
 	</Function>
-	<Function name='GetOSName' sm-ssc='true' return='string' arguments=''>
+	<Function name='GetOSName' return='string' arguments=''>
 		Returns a string representing the name of the operating system being used. (e.g. "Windows", "Linux", "Mac, "Unknown")
 	</Function>
 	<Function name='GetProTiming' theme='default' return='bool' arguments='PlayerNumber pn'>
@@ -119,7 +119,7 @@
 	<Function name='GetRandomSongBackground' theme='_fallback' return='string' arguments=''>
 		[02 Utilities.lua] Returns a path to a random song background.
 	</Function>
-	<Function name='GetServerName' sm-ssc='true' return='string' arguments=''>
+	<Function name='GetServerName' return='string' arguments=''>
 		Returns the name of the currently connected server.
 	</Function>
 	<Function name='GetSongBackground' theme='_fallback' return='string' arguments=''>
@@ -251,22 +251,22 @@
 	<Function name='Second' return='int' arguments=''>
 		Returns the current second.
 	</Function>
-	<Function name='SecondsToHHMMSS' sm-ssc='true' return='string' arguments='float fSecs'>
+	<Function name='SecondsToHHMMSS' return='string' arguments='float fSecs'>
 		Converts <code>fSecs</code> to Minutes:Seconds:Milliseconds format using two digits for each section.
 	</Function>
-	<Function name='SecondsToMSS' sm-ssc='true' return='string' arguments='float fSecs'>
+	<Function name='SecondsToMSS' return='string' arguments='float fSecs'>
 		Converts <code>fSecs</code> to Minutes:Seconds.Milliseconds format using two digits for each section except Minutes (uses 1).
 	</Function>
-	<Function name='SecondsToMMSS' sm-ssc='true' return='string' arguments='float fSecs'>
+	<Function name='SecondsToMMSS' return='string' arguments='float fSecs'>
 		Converts <code>fSecs</code> to Minutes:Seconds format.
 	</Function>
 	<Function name='SecondsToMSSMsMs' return='string' arguments='float fSecs'>
 		Converts <code>fSecs</code> to Minutes:Seconds.Milliseconds format.
 	</Function>
-	<Function name='SecondsToMMSSMsMs' sm-ssc='true' return='string' arguments='float fSecs'>
+	<Function name='SecondsToMMSSMsMs' return='string' arguments='float fSecs'>
 		Converts <code>fSecs</code> to Minutes:Seconds.Milliseconds format using two digits for each section.
 	</Function>
-	<Function name='SecondsToMMSSMsMsMs' sm-ssc='true' return='string' arguments='float fSecs'>
+	<Function name='SecondsToMMSSMsMsMs' return='string' arguments='float fSecs'>
 		Converts <code>fSecs</code> to Minutes:Seconds.Milliseconds format using two digits for each section except Milliseconds (uses 3).
 	</Function>
 	<Function name='SelectMusicOrCourse' theme='_fallback' return='string' arguments=''>
@@ -314,7 +314,7 @@
 	<Function name='Trace' theme='_fallback' return='void' arguments='string sString'>
 		[00 init.lua] Alias for <Link class='lua' function='Trace' />.
 	</Function>
-	<Function name='URLEncode' sm-ssc='true' return='string' arguments='string sInput'>
+	<Function name='URLEncode' return='string' arguments='string sInput'>
 		Returns a string with characters escaped for URLs. (e.g. a space becomes '%20')
 	</Function>
 	<Function name='Var' theme='_fallback' return='ThreadVariable' arguments=''>
@@ -490,13 +490,13 @@
 	<Function name='accelerate' return='void' arguments='float fRate'>
 		Plays the commands that follow at an accelerated rate (<code>fRate</code> * <code>fRate</code>), where <code>fRate</code> is in seconds.
 	</Function>
-	<Function name='addrotationx' sm-ssc='true' return='void' arguments='float rot'>
+	<Function name='addrotationx' return='void' arguments='float rot'>
 		Adds <code>rot</code> to the Actor's current x rotation.
 	</Function>
-	<Function name='addrotationy' sm-ssc='true' return='void' arguments='float rot'>
+	<Function name='addrotationy' return='void' arguments='float rot'>
 		Adds <code>rot</code> to the Actor's current y rotation.
 	</Function>
-	<Function name='addrotationz' sm-ssc='true' return='void' arguments='float rot'>
+	<Function name='addrotationz' return='void' arguments='float rot'>
 		Adds <code>rot</code> to the Actor's current z rotation.
 	</Function>
 	<Function name='addx' return='void' arguments='float xPos'>
@@ -532,7 +532,7 @@
 	<Function name='baserotationz' return='void' arguments='float rot'>
 		Sets the Actor's base Z rotation to <code>rot</code>.
 	</Function>
-	<Function name='basezoom' sm-ssc='true' return='void' arguments='float zoom'>
+	<Function name='basezoom' return='void' arguments='float zoom'>
 		Sets the Actor's base zoom to <code>zoom</code>.
 	</Function>
 	<Function name='basezoomx' return='void' arguments='float zoom'>
@@ -541,7 +541,7 @@
 	<Function name='basezoomy' return='void' arguments='float zoom'>
 		Sets the Actor's base Y zoom to <code>zoom</code>.
 	</Function>
-	<Function name='basezoomz' sm-ssc='true' return='void' arguments='float zoom'>
+	<Function name='basezoomz' return='void' arguments='float zoom'>
 		Sets the Actor's base Z zoom to <code>zoom</code>.
 	</Function>
 	<Function name='blend' return='void' arguments='BlendMode mode'>
@@ -667,16 +667,16 @@
 	<Function name='GetBaseZoomX' return='float' arguments=''>
 		Returns the Actor's base X zoom value.
 	</Function>
-	<Function name='GetBaseZoomY' sm-ssc='true' return='float' arguments=''>
+	<Function name='GetBaseZoomY' return='float' arguments=''>
 		Returns the Actor's base Y zoom value.
 	</Function>
-	<Function name='GetBaseZoomZ' sm-ssc='true' return='float' arguments=''>
+	<Function name='GetBaseZoomZ' return='float' arguments=''>
 		Returns the Actor's base Z zoom value.
 	</Function>
 	<Function name='GetCommand' return='bool' arguments='string sCmdName'>
 		Returns <code>true</code> if the Actor has a command named <code>sCmdName</code>.
 	</Function>
-	<Function name='GetDiffuse' sm-ssc='true' return='color' arguments=''>
+	<Function name='GetDiffuse' return='color' arguments=''>
 		Returns the Actor's current diffuse color.
 	</Function>
 	<Function name='GetDiffuseAlpha' return='float' arguments=''>
@@ -688,10 +688,10 @@
 	<Function name='geteffectmagnitude' return='float' arguments=''>
 		Returns the Actor's current effect magnitude as three floats (not one; I hate Lua.xsd).
 	</Function>
-	<Function name='GetGlow' sm-ssc='true' return='color' arguments=''>
+	<Function name='GetGlow' return='color' arguments=''>
 		Returns the Actor's current glow color.
 	</Function>
-	<Function name='GetHAlign' sm-ssc='true' return='float' arguments=''>
+	<Function name='GetHAlign' return='float' arguments=''>
 		Returns the Actor's horizontal alignment as a number in the range 0..1.
 	</Function>
 	<Function name='GetName' return='string' arguments=''>
@@ -703,13 +703,13 @@
 	<Function name='GetHeight' return='float' arguments=''>
 		Returns the Actor's current height.
 	</Function>
-	<Function name='GetRotationX' sm-ssc='true' return='float' arguments=''>
+	<Function name='GetRotationX' return='float' arguments=''>
 		Returns the Actor's current X rotation.
 	</Function>
 	<Function name='GetRotationY' return='float' arguments=''>
 		Returns the Actor's current Y rotation.
 	</Function>
-	<Function name='GetRotationZ' sm-ssc='true' return='float' arguments=''>
+	<Function name='GetRotationZ' return='float' arguments=''>
 		Returns the Actor's current Z rotation.
 	</Function>
 	<Function name='GetSecsIntoEffect' return='float' arguments=''>
@@ -718,7 +718,7 @@
 	<Function name='GetTweenTimeLeft' return='float' arguments=''>
 		Returns how much time is remaining for the current tween.
 	</Function>
-	<Function name='GetVAlign' sm-ssc='true' return='float' arguments=''>
+	<Function name='GetVAlign' return='float' arguments=''>
 		Returns the Actor's vertical alignment as a number in the range 0..1.
 	</Function>
 	<Function name='GetWidth' return='float' arguments=''>
@@ -733,7 +733,7 @@
 	<Function name='glow' return='void' arguments='color c'>
 		Sets the Actor's glow color.
 	</Function>
-	<Function name='glowramp' sm-ssc='true' return='void' arguments=''>
+	<Function name='glowramp' return='void' arguments=''>
 		<!-- oh shit how do I document this -aj -->
 	</Function>
 	<Function name='halign' return='void' arguments='float fAlign'>
@@ -838,7 +838,7 @@
 	<Function name='skewx' return='void' arguments='float fAmount'>
 		Skews the Actor on the x axis by <code>fAmount</code>.
 	</Function>
-	<Function name='skewy' sm-ssc='true' return='void' arguments='float fAmount'>
+	<Function name='skewy' return='void' arguments='float fAmount'>
 		Skews the Actor on the y axis by <code>fAmount</code>.
 	</Function>
 	<Function name='sleep' return='void' arguments='float fSeconds'>
@@ -902,11 +902,17 @@
 	<Function name='bezier' theme='_fallback' return='void' arguments=''>
 		[02 Actor.lua]
 	</Function>
+	<Function name='Center' theme='_fallback' return='void' arguments=''>
+		[02 Actor.lua] Centers an Actor on the screen. (equivalent to <code>x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y</code>)
+	</Function>
 	<Function name='CenterX' theme='_fallback' return='void' arguments=''>
 		[03 ProductivityHelpers.lua] Centers an Actor on the X axis. (equivalent to <code>x,SCREEN_CENTER_X</code>)
 	</Function>
 	<Function name='CenterY' theme='_fallback' return='void' arguments=''>
 		[03 ProductivityHelpers.lua] Centers an Actor on the y axis. (equivalent to <code>y,SCREEN_CENTER_Y</code>)
+	</Function>
+	<Function name='FullScreen' theme='_fallback' return='void' arguments=''>
+		[02 Actor.lua] Stretches an Actor to cover the screen. (equivalent to <code>stretchto,0,0,SCREEN_WIDTH,SCREEN_HEIGHT</code>)
 	</Function>
 	<Function name='heartbeat' theme='_fallback' return='void' arguments='float fEffectPeriod'>
 		[03 ProductivityHelpers.lua] A customized version of pulse that is more appealing for on-beat effects.
@@ -964,10 +970,10 @@
 	<Function name='runcommandsonleaves' return='void' arguments='LuaReference cmds'>
 		Runs the commands in <code>cmds</code> on the ActorFrame's leaves.
 	</Function>
-	<Function name='SetAmbientLightColor' sm-ssc='true' return='void' arguments='Color c'>
+	<Function name='SetAmbientLightColor' return='void' arguments='Color c'>
 		Sets the ActorFrame's ambient light color to <code>c</code>.
 	</Function>
-	<Function name='SetDiffuseLightColor' sm-ssc='true' return='void' arguments='Color c'>
+	<Function name='SetDiffuseLightColor' return='void' arguments='Color c'>
 		Sets the ActorFrame's diffuse light color to <code>c</code>.
 	</Function>
 	<Function name='SetDrawByZPosition' return='void' arguments='bool b'>
@@ -979,10 +985,10 @@
 	<Function name='SetFOV' return='void' arguments='float fFOV'>
 		Sets the field of view for the ActorFrame.
 	</Function>
-	<Function name='SetLightDirection' sm-ssc='true' return='void' arguments='float x, float y, float z'>
+	<Function name='SetLightDirection' return='void' arguments='float x, float y, float z'>
 		Currently unimplemented since it does not handle errors correctly. Arguments must be passed in as a table.
 	</Function>
-	<Function name='SetSpecularLightColor' sm-ssc='true' return='void' arguments='Color c'>
+	<Function name='SetSpecularLightColor' return='void' arguments='Color c'>
 		Sets the ActorFrame's specular light color to <code>c</code>.
 	</Function>
 	<Function name='SetUpdateFunction' return='void' arguments='LuaReference UpdateFunction'>
@@ -1018,16 +1024,16 @@
 	</Function>
 </Class>
 <Class name='ActorScroller'>
-	<Function name='GetCurrentItem' sm-ssc='true' return='float' arguments=''>
+	<Function name='GetCurrentItem' return='float' arguments=''>
 		Returns the scroller's current item.
 	</Function>
-	<Function name='GetDestinationItem' sm-ssc='true' return='float' arguments=''>
+	<Function name='GetDestinationItem' return='float' arguments=''>
 		Returns the item the scroller's going to.
 	</Function>
-	<Function name='GetFullScrollLengthSeconds' sm-ssc='true' return='float' arguments=''>
+	<Function name='GetFullScrollLengthSeconds' return='float' arguments=''>
 		Returns how long it will take for the scroller to completely scroll through all its items.
 	</Function>
-	<Function name='GetNumItems' sm-ssc='true' return='int' arguments=''>
+	<Function name='GetNumItems' return='int' arguments=''>
 		Returns the number of items in the ActorScroller.
 	</Function>
 	<Function name='GetSecondsToDestination' renamed='true' return='float' arguments=''>
@@ -1069,7 +1075,7 @@
 	<Function name='SetMask' return='void' arguments='float fWidth, float fHeight'>
 		Sets the scroller's mask to a Quad that is <code>fWidth</code> by <code>fHeight</code> pixels.
 	</Function>
-	<Function name='SetNumItemsToDraw' sm-ssc='true' return='void' arguments='float fNumItems'>
+	<Function name='SetNumItemsToDraw' return='void' arguments='float fNumItems'>
 		Sets the scroller to draw <code>fNumItems</code> items.
 	</Function>
 	<Function name='SetNumSubdivisions' renamed='true' return='void' arguments='int iNumSubdivisions'>
@@ -1113,7 +1119,7 @@
 	<Function name='load' return='void' arguments='string sPath'>
 		Loads the sound at <code>sPath</code>.
 	</Function>
-	<Function name='pause' sm-ssc='true' return='void' arguments='bool bPause'>
+	<Function name='pause' return='void' arguments='bool bPause'>
 		Pauses or unpauses the sound based on <code>bPause</code>.
 	</Function>
 	<Function name='play' return='void' arguments=''>
@@ -1122,29 +1128,29 @@
 	<Function name='playforplayer' theme='_fallback' return='void' arguments='PlayerNumber pn'>
 		[02 Sound.lua] Plays the sound on the given player's side. You must set <code>SupportPan = true</code> on load.
 	</Function>
-	<Function name='stop' sm-ssc='true' return='void' arguments=''>
+	<Function name='stop' return='void' arguments=''>
 		Stops the sound.
 	</Function>
 </Class>
 <Class name='AnnouncerManager'>
-	<Function name='DoesAnnouncerExist' sm-ssc='true' return='bool' arguments='string sAnnonucer'>
+	<Function name='DoesAnnouncerExist' return='bool' arguments='string sAnnonucer'>
 		Returns true if Announcer <code>sAnnouncer</code> exists.
 	</Function>
-	<Function name='GetAnnouncerNames' sm-ssc='true' return='{string}' arguments=''>
+	<Function name='GetAnnouncerNames' return='{string}' arguments=''>
 		Returns a table of installed announcers.
 	</Function>
-	<Function name='GetCurrentAnnouncer' sm-ssc='true' return='string' arguments=''>
+	<Function name='GetCurrentAnnouncer' return='string' arguments=''>
 		Returns the current announcer's name.
 	</Function>
-	<Function name='SetCurrentAnnouncer' sm-ssc='true' return='void' arguments='string sNewAnnouncer'>
+	<Function name='SetCurrentAnnouncer' return='void' arguments='string sNewAnnouncer'>
 		Sets the announcer to <code>sNewAnnouncer</code>.
 	</Function>
 </Class>
 <Class name='Banner'>
-	<Function name='GetScrolling' sm-ssc='true' return='bool' arguments=''>
+	<Function name='GetScrolling' return='bool' arguments=''>
 		Returns <code>true</code> if the Banner is currently scrolling.
 	</Function>
-	<Function name='GetPercentScrolling' sm-ssc='true' return='float' arguments=''>
+	<Function name='GetPercentScrolling' return='float' arguments=''>
 		<!-- todo -->
 	</Function>
 	<Function name='LoadBackgroundFromUnlockEntry' return='void' arguments='UnlockEntry pUE'>
@@ -1180,7 +1186,7 @@
 	<Function name='ScaleToClipped' return='void' arguments='float fWidth, float fHeight'>
 		See <Link class='Sprite' function='scaletoclipped' />.
 	</Function>
-	<Function name='SetScrolling' sm-ssc='true' return='void' arguments='bool bScroll'>
+	<Function name='SetScrolling' return='void' arguments='bool bScroll'>
 		<!-- todo -->
 	</Function>
 </Class>
@@ -1241,7 +1247,7 @@
 	<Function name='strokecolor' return='void' arguments='color c'>
 		Sets the stroke color to <code>c</code>.
 	</Function>
-	<Function name='textglowmode' sm-ssc='true' return='void' arguments='TextGlowMode tgm'>
+	<Function name='textglowmode' return='void' arguments='TextGlowMode tgm'>
 		If the text is glowing, specify if just the stroke layer, just the inner layer, or both are affected by the glow.
 	</Function>
 	<Function name='uppercase' return='void' arguments='bool b'>
@@ -1255,42 +1261,45 @@
 	</Function>
 </Class>
 <Class name='BPMDisplay'>
-	<Function name='GetText' sm-ssc='true' return='string' arguments=''>
+	<Function name='GetText' return='string' arguments=''>
 		Returns the text that is currently set at the exact moment you call it. This is likely only going to be useful in an Update command.
 	</Function>
-	<Function name='SetFromCourse' sm-ssc='true' return='void' arguments='Course c'>
+	<Function name='SetFromCourse' return='void' arguments='Course c'>
 		Sets the BPMDisplay from the specified Course.
 	</Function>
 	<Function name='SetFromGameState' return='void' arguments=''>
 		Sets the BPMDisplay from the GameState.
 	</Function>
-	<Function name='SetFromSong' sm-ssc='true' return='void' arguments='Song s'>
+	<Function name='SetFromSong' return='void' arguments='Song s'>
 		Sets the BPMDisplay from the specified Song.
+	</Function>
+	<Function name='SetFromSteps' return='void' arguments='Steps s'>
+		Sets the BPMDisplay from the specified Steps.
 	</Function>
 </Class>
 <Class name='Character'>
 	<Function name='GetCardPath' return='string' arguments=''>
 		Returns the path to the character's card graphic.
 	</Function>
-	<Function name='GetCharacterDir' sm-ssc='true' return='string' arguments=''>
+	<Function name='GetCharacterDir' return='string' arguments=''>
 		Returns this character's directory.
 	</Function>
-	<Function name='GetCharacterID' sm-ssc='true' return='string' arguments=''>
+	<Function name='GetCharacterID' return='string' arguments=''>
 		Returns this character's ID.
 	</Function>
-	<Function name='GetDanceAnimationPath' sm-ssc='true' return='string' arguments=''>
+	<Function name='GetDanceAnimationPath' return='string' arguments=''>
 		Returns the path of the dancing animation of this character.
 	</Function>
-	<Function name='GetDisplayName' sm-ssc='true' return='string' arguments=''>
+	<Function name='GetDisplayName' return='string' arguments=''>
 		Returns the character's display name.
 	</Function>
 	<Function name='GetIconPath' return='string' arguments=''>
 		Returns the path to the character's icon.
 	</Function>
-	<Function name='GetModelPath' sm-ssc='true' return='string' arguments=''>
+	<Function name='GetModelPath' return='string' arguments=''>
 		Returns the path of the model of this character.
 	</Function>
-	<Function name='GetRestAnimationPath' sm-ssc='true' return='string' arguments=''>
+	<Function name='GetRestAnimationPath' return='string' arguments=''>
 		Returns the path of the rest animation of this character.
 	</Function>
 	<Function name='GetSongSelectIconPath' return='string' arguments=''>
@@ -1299,18 +1308,18 @@
 	<Function name='GetStageIconPath' return='string' arguments=''>
 		Returns the path to the character's ScreenStage icon.
 	</Function>
-	<Function name='GetWarmUpAnimationPath' sm-ssc='true' return='string' arguments=''>
+	<Function name='GetWarmUpAnimationPath' return='string' arguments=''>
 		Returns the path of the warm-up animation of this character.
 	</Function>
 </Class>
 <Class name='CharacterManager'>
-	<Function name='GetAllCharacters' sm-ssc='true' return='{Character}' arguments=''>
+	<Function name='GetAllCharacters' return='{Character}' arguments=''>
 		Returns a table of all characters installed.
 	</Function>
 	<Function name='GetCharacter' return='Character' arguments='string sID'>
 		Return the <Link class='Character' /> corresponding to <code>sID</code>.
 	</Function>
-	<Function name='GetRandomCharacter' sm-ssc='true' return='Character' arguments=''>
+	<Function name='GetRandomCharacter' return='Character' arguments=''>
 		Returns a random character.
 	</Function>
 </Class>
@@ -1334,16 +1343,16 @@
 	<Function name='GetAllTrails' return='{Trail}' arguments=''>
 		Returns a table of all the Trails in the Course.
 	</Function>
-	<Function name='GetBackgroundPath' sm-ssc='true' return='string' arguments=''>
+	<Function name='GetBackgroundPath' return='string' arguments=''>
 		Returns the path to the Course's background.
 	</Function>
 	<Function name='GetBannerPath' return='string' arguments=''>
 		Returns the path to the Course's banner.
 	</Function>
-	<Function name='GetCourseDir' sm-ssc='true' return='string' arguments=''>
+	<Function name='GetCourseDir' return='string' arguments=''>
 		Returns the Course's directory.
 	</Function>
-	<Function name='GetCourseEntries' sm-ssc='true' return='{CourseEntry}' arguments=''>
+	<Function name='GetCourseEntries' return='{CourseEntry}' arguments=''>
 		Returns a table of CourseEntry items.
 	</Function>
 	<Function name='GetCourseEntry' return='CourseEntry' arguments='int iIndex'>
@@ -1367,7 +1376,7 @@
 	<Function name='GetPlayMode' renamed='true' return='PlayMode' arguments=''>
 		Returns the Course's <Link class='ENUM' function='PlayMode' />. (Returns PlayMode in sm-ssc; integer in SM4)
 	</Function>
-	<Function name='GetScripter' sm-ssc='true' return='string' arguments=''>
+	<Function name='GetScripter' return='string' arguments=''>
 		Returns the name of the person who scripted the Course.
 	</Function>
 	<Function name='GetTotalSeconds' return='float' arguments='StepsType st'>
@@ -1376,10 +1385,10 @@
 	<Function name='GetTranslitFullTitle' return='string' arguments=''>
 		Returns the full transliterated title of the Course.
 	</Function>
-	<Function name='HasBackground' sm-ssc='true' return='bool' arguments=''>
+	<Function name='HasBackground' return='bool' arguments=''>
 		Returns <code>true</code> if the Course has a background.
 	</Function>
-	<Function name='HasBanner' sm-ssc='true' return='bool' arguments=''>
+	<Function name='HasBanner' return='bool' arguments=''>
 		Returns <code>true</code> if the Course has a banner.
 	</Function>
 	<Function name='HasMods' return='bool' arguments=''>
@@ -1388,7 +1397,7 @@
 	<Function name='HasTimedMods' return='bool' arguments=''>
 		Returns <code>true</code> if the Course has timed modifiers.
 	</Function>
-	<Function name='IsAnEdit' sm-ssc='true' return='bool' arguments=''>
+	<Function name='IsAnEdit' return='bool' arguments=''>
 		Returns <code>true</code> if the Course is an edit.
 	</Function>
 	<Function name='IsAutogen' return='bool' arguments=''>
@@ -1397,10 +1406,10 @@
 	<Function name='IsEndless' return='bool' arguments=''>
 		Returns <code>true</code> if the Course is Endless.
 	</Function>
-	<Function name='IsNonstop' sm-ssc='true' return='bool' arguments=''>
+	<Function name='IsNonstop' return='bool' arguments=''>
 		Returns <code>true</code> if the Course is Nonstop.
 	</Function>
-	<Function name='IsOni' sm-ssc='true' return='bool' arguments=''>
+	<Function name='IsOni' return='bool' arguments=''>
 		Returns <code>true</code> if the Course is Oni.
 	</Function>
 </Class>
@@ -1414,36 +1423,36 @@
 		Returns the Song that this CourseEntry corresponds to.
 	</Function>
 	<!-- sm-ssc additions -->
-	<Function name='GetGainLives' sm-ssc='true' return='int' arguments=''>
+	<Function name='GetGainLives' return='int' arguments=''>
 		Returns the number of lives gained after completing the song.
 	</Function>
-	<Function name='GetGainSeconds' sm-ssc='true' return='float' arguments=''>
+	<Function name='GetGainSeconds' return='float' arguments=''>
 		Returns the number of seconds gained after completing the song.
 	</Function>
-	<Function name='GetNormalModifiers' sm-ssc='true' return='string' arguments=''>
+	<Function name='GetNormalModifiers' return='string' arguments=''>
 		Returns any stage (non-timed) modifiers.
 	</Function>
-	<Function name='GetNumModChanges' sm-ssc='true' return='int' arguments=''>
+	<Function name='GetNumModChanges' return='int' arguments=''>
 		Returns the number of modifier changes in this CourseEntry.
 	</Function>
-	<Function name='GetTextDescription' sm-ssc='true' return='string' arguments=''>
+	<Function name='GetTextDescription' return='string' arguments=''>
 		Returns a comma-delimited string representing various facts about the CourseEntry.
 	</Function>
-	<Function name='IsFixedSong' sm-ssc='true' return='bool' arguments=''>
+	<Function name='IsFixedSong' return='bool' arguments=''>
 		Returns <code>true</code> if this CourseEntry is a fixed song.
 	</Function>
-	<Function name='IsSecret' sm-ssc='true' return='bool' arguments=''>
+	<Function name='IsSecret' return='bool' arguments=''>
 		Returns <code>true</code> if this CourseEntry is secret.
 	</Function>
 </Class>
 <Class name='CryptManager'>
-	<Function name='MD5File' sm-ssc='true' return='string' arguments='string sPath'>
+	<Function name='MD5File' return='string' arguments='string sPath'>
 		Returns the MD5 hash for the file at <code>sPath</code>.
 	</Function>
-	<Function name='MD5String' sm-ssc='true' return='string' arguments='string s'>
+	<Function name='MD5String' return='string' arguments='string s'>
 		Returns the MD5 hash for <code>s</code>.
 	</Function>
-	<Function name='SHA1String' sm-ssc='true' return='string' arguments='string s'>
+	<Function name='SHA1String' return='string' arguments='string s'>
 		Returns the SHA-1 hash for <code>s</code>.
 	</Function>
 </Class>
@@ -1467,7 +1476,7 @@
 	</Function>
 </Class>
 <Class name='FadingBanner'>
-	<Function name='GetLatestIndex' sm-ssc='true' return='int' arguments=''>
+	<Function name='GetLatestIndex' return='int' arguments=''>
 		Returns the index of the last banner loaded.
 	</Function>
 	<Function name='LoadFromCourse' return='void' arguments='Course c'>
@@ -1491,10 +1500,10 @@
 	</Function>
 </Class>
 <Class name='GameCommand'>
-	<Function name='GetCharacter' sm-ssc='true' return='Character' arguments=''>
+	<Function name='GetCharacter' return='Character' arguments=''>
 		Returns any Character associated with this item (or <code>nil</code> if there isn't one).
 	</Function>
-	<Function name='GetCourse' sm-ssc='true' return='Course' arguments=''>
+	<Function name='GetCourse' return='Course' arguments=''>
 		Returns any Course that may have been set.
 	</Function>
 	<Function name='GetIndex' return='int' arguments=''>
@@ -1509,7 +1518,7 @@
 	<Function name='GetProfileID' return='string' arguments=''>
 		Returns any Profile ID that may have been set.
 	</Function>
-	<Function name='GetScreen' sm-ssc='true' return='string' arguments=''>
+	<Function name='GetScreen' return='string' arguments=''>
 		Returns any screen that may have been set as a string.
 	</Function>
 	<Function name='GetSong' return='Song' arguments=''>
@@ -1518,7 +1527,7 @@
 	<Function name='GetSongGroup' return='string' arguments=''>
 		Returns the name of any song group that may have been set.
 	</Function>
-	<Function name='GetSteps' sm-ssc='true' return='Steps' arguments=''>
+	<Function name='GetSteps' return='Steps' arguments=''>
 		Returns any Steps that may have been set.
 	</Function>
 	<Function name='GetStyle' return='Style' arguments=''>
@@ -1527,10 +1536,10 @@
 	<Function name='GetText' return='string' arguments=''>
 		Returns the display text.
 	</Function>
-	<Function name='GetTrail' sm-ssc='true' return='Trail' arguments=''>
+	<Function name='GetTrail' return='Trail' arguments=''>
 		Returns any Trail that may have been set.
 	</Function>
-	<Function name='GetUrl' sm-ssc='true' return='string' arguments=''>
+	<Function name='GetUrl' return='string' arguments=''>
 		Returns any Url that may have been set.
 	</Function>
 </Class>
@@ -1538,7 +1547,7 @@
 	<Function name='GetFirstStepsTypeForGame' return='StepsType' arguments='Game game'>
 		Return the first <Link class='StepsType' /> for the specified <code>game</code>.
 	</Function>
-	<Function name='IsGameEnabled' sm-ssc='true' return='bool' arguments='string s'>
+	<Function name='IsGameEnabled' return='bool' arguments='string s'>
 		Returns <code>true</code> if any noteskins exist for the specified Game <code>s</code>.
 	</Function>
 	<Function name='StepsTypeToLocalizedString' return='string' arguments='StepsType st'>
@@ -1554,7 +1563,7 @@
 		          to the right. -->
 		Return the sound balance for <code>pn</code>.
 	</Function>
-	<Function name='PlayAnnouncer' sm-ssc='true' return='void' arguments='string sPath'>
+	<Function name='PlayAnnouncer' return='void' arguments='string sPath'>
 		Plays a sound from the current announcer.
 	</Function>
 	<Function name='PlayOnce' return='void' arguments='string sPath'>
@@ -1569,16 +1578,19 @@
 		The second argument is optional. Apply the GameCommand represented by <code>sCommand</code>
 		for <code>pn</code>, if given. See <Link class='GameCommand' />.
 	</Function>
+	<Function name='ClearStageModifiersIllegalForCourse' return='void' arguments=''>
+		Removes any stage modifiers that are illegal for course play.
+	</Function>
 	<Function name='EnoughCreditsToJoin' return='bool' arguments=''>
 		Returns <code>true</code> if enough credits have been inserted to join.
 	</Function>
-	<Function name='Dopefish' sm-ssc='true' return='bool' arguments=''>
+	<Function name='Dopefish' return='bool' arguments=''>
 		fishpolk.mid; See also: Rise of the Triad
 	</Function>
 	<Function name='Env' return='table' arguments=''>
 		Returns the environment table. See <Link class='GameCommand' />.
 	</Function>
-	<Function name='GetCharacter' sm-ssc='true' return='Character' arguments='PlayerNumber pn'>
+	<Function name='GetCharacter' return='Character' arguments='PlayerNumber pn'>
 		Returns the current <Link class='Character' /> for the specified <Link class='ENUM' function='PlayerNumber' />.
 	</Function>
 	<Function name='GetCoinMode' return='CoinMode'>
@@ -1597,7 +1609,7 @@
 		The <Link class='Song' />s in a <Link class='Course' /> are numbered sequentially
 		starting from 0. Return the number of the current <Link class='Song' />.
 	</Function>
-	<Function name='GetCurMusicSeconds' sm-ssc='true' return='float' arguments=''>
+	<Function name='GetCurMusicSeconds' return='float' arguments=''>
 		Return the current number of seconds that have passed in the current song. This value can be negative.
 	</Function>
 	<Function name='GetCurrentCourse' return='Course' arguments=''>
@@ -1663,7 +1675,7 @@
 		Return <code>true</code> if the gameplay lead in is enabled. If
 		<code>false</code>, gameplay begins immediately. <!-- XXX: I think. -->
 	</Function>
-	<Function name='GetHardestStepsDifficulty' sm-ssc='true' return='Difficulty' arguments=''>
+	<Function name='GetHardestStepsDifficulty' return='Difficulty' arguments=''>
 		Return the hardest <Link class='ENUM' function='Difficulty' /> of the
 		currently selected steps by all players. For example, if player 1 has
 		selected Hard steps and player 2 has selected Medium steps, Hard will
@@ -1672,11 +1684,17 @@
 	<Function name='GetHumanPlayers' return='{PlayerNumber}' arguments=''>
 		Returns an array of <Link class='PlayerNumber' />s corresponding to Human players.
 	</Function>
+	<Function name='GetLoadingCourseSongIndex' return='int' arguments=''>
+		Returns the index of the next song in the course.
+	</Function>
 	<Function name='GetMasterPlayerNumber' return='PlayerNumber' arguments=''>
 		Returns the master player number.
 	</Function>
 	<Function name='GetMultiplayer' return='bool' arguments=''>
 		Returns <code>true</code> if the game is Multiplayer.
+	</Function>
+	<Function name='GetMultiPlayerState' return='PlayerState' arguments='MultiPlayer mp'>
+		Returns the PlayerState for the specified MultiPlayer.
 	</Function>
 	<Function name='GetNumMultiplayerNoteFields' return='int' arguments=''>
 		Returns the number of active multiplayer NoteFields.
@@ -1714,21 +1732,27 @@
 	<Function name='GetPremium' return='Premium' arguments=''>
 		Returns the current Premium.
 	</Function>
-	<Function name='GetSongBeat' return='float' arguments=''>
-		<!-- XXX: Not exactly sure on this. -->
-		Returns the current beat of the song.
+	<Function name='GetSmallestNumStagesLeftForAnyHumanPlayer' return='int' arguments=''>
+		<!-- Returns the smallest number of stages left for any human player. -->
+		Kind of does what it says on the tin.
+	</Function>
+	<Function name='GetSongBeat' theme='_fallback' return='float' arguments=''>
+		[01 compat.lua] Returns the current beat of the song.
+	</Function>
+	<Function name='GetSongBeatNoOffset' theme='_fallback' return='float' arguments=''>
+		[01 compat.lua] Returns the current beat of the song without an offset.
 	</Function>
 	<Function name='GetSongBeatVisible' return='float' arguments=''>
 		Returns the current visible beat of the song.
 	</Function>
-	<Function name='GetSongBPS' return='float' arguments=''>
-		Returns the song's current beats per second.
+	<Function name='GetSongBPS' theme='_fallback' return='float' arguments=''>
+		[01 compat.lua] Returns the song's current beats per second.
 	</Function>
-	<Function name='GetSongDelay' sm-ssc='true' return='bool' arguments=''>
-		Returns <code>true</code> if a delay is active in the song.
+	<Function name='GetSongDelay' theme='_fallback' return='bool' arguments=''>
+		[01 compat.lua] Returns <code>true</code> if a delay is active in the song.
 	</Function>
-	<Function name='GetSongFreeze' return='bool' arguments=''>
-		Returns <code>true</code> if the song is currently in a freeze.
+	<Function name='GetSongFreeze' theme='_fallback' return='bool' arguments=''>
+		[01 compat.lua] Returns <code>true</code> if the song is currently in a freeze.
 	</Function>
 	<Function name='GetSongOptions' return='string' arguments='ModsLevel ml'>
 		Returns the song options for the specified ModsLevel as a string.
@@ -1736,11 +1760,11 @@
 	<Function name='GetSongOptionsString' return='string' arguments=''>
 		Returns the song options as a string.
 	</Function>
-	<Function name='GetSongPercent' sm-ssc='true' return='float' arguments='float fBeat'>
+	<Function name='GetSongPercent' return='float' arguments='float fBeat'>
 		Returns how much of the song is through at beat <code>fBeat</code>.
 	</Function>
-	<Function name='GetSongPosition' sm-ssc='true' return='SongPosition' arguments=''>
-		<!-- todo -->
+	<Function name='GetSongPosition' return='SongPosition' arguments=''>
+		Returns the current SongPosition.
 	</Function>
 	<Function name='GetSortOrder' return='SortOrder' arguments=''>
 		Returns the current SortOrder.
@@ -1763,7 +1787,7 @@
 	<Function name='IsAnyHumanPlayerUsingMemoryCard' return='bool' arguments=''>
 		Returns <code>true</code> if any human player is using a memory card.
 	</Function>
-	<Function name='IsBattleMode' sm-ssc='true' return='bool' arguments=''>
+	<Function name='IsBattleMode' return='bool' arguments=''>
 		Returns <code>true</code> if playing in Battle mode.
 	</Function>
 	<Function name='IsCourseMode' return='bool' arguments=''>
@@ -1799,7 +1823,7 @@
 	<Function name='IsWinner' return='bool' arguments='PlayerNumber pn'>
 		Returns <code>true</code> if player <code>pn</code> is the winner.
 	</Function>
-	<Function name='JoinPlayer' sm-ssc='true' return='void' arguments='PlayerNumber pn'>
+	<Function name='JoinPlayer' return='void' arguments='PlayerNumber pn'>
 		Joins player <code>pn</code>.
 	</Function>
 	<Function name='PlayerIsUsingModifier' return='bool' arguments='PlayerNumber pn, string sModifier'>
@@ -1814,7 +1838,7 @@
 	<Function name='SaveLocalData' return='void' arguments=''>
 		Saves the bookkeeping and machine profile data.
 	</Function>
-	<Function name='SetCharacter' sm-ssc='true' return='void' arguments='PlayerNumber pn, string sCharID'>
+	<Function name='SetCharacter' return='void' arguments='PlayerNumber pn, string sCharID'>
 		Sets the current <Link class='Character' /> for the specified <Link class='ENUM' function='PlayerNumber' />.
 	</Function>
 	<Function name='SetCurrentCourse' return='void' arguments='Course course'>
@@ -1832,7 +1856,7 @@
 	<Function name='SetJukeboxUsesModifiers' return='void' arguments='bool bUseMods'>
 		Sets if the Jukebox should use modifiers.
 	</Function>
-	<Function name='SetMultiplayer' sm-ssc='true' return='void' arguments='bool b'>
+	<Function name='SetMultiplayer' return='void' arguments='bool b'>
 		
 	</Function>
 	<Function name='SetNumMultiplayerNoteFields' return='void' arguments='int iFields'>
@@ -1856,7 +1880,7 @@
 	<Function name='ShowW1' return='void' arguments='bool bOn'>
 		Determines if Judgment W1 should be shown based on <code>bOn</code>.
 	</Function>
-	<Function name='UnjoinPlayer' sm-ssc='true' return='void' arguments='PlayerNumber pn'>
+	<Function name='UnjoinPlayer' return='void' arguments='PlayerNumber pn'>
 		Unjoins player <code>pn</code>.
 	</Function>
 </Class>
@@ -1894,6 +1918,9 @@
 	<Function name='gettips' return='{string}' arguments=''>
 		Returns two tables representing the tips and alternate tips in the HelpDisplay.
 	</Function>
+	<Function name='setfromsongorcourse' theme='_fallback' return='void' arguments=''>
+		[02 HelpDisplay.lua] Sets the tips from a Song or Course.
+	</Function>
 	<Function name='SetSecsBetweenSwitches' return='void' arguments='float fSeconds'>
 		Sets the seconds between switches of tips to <code>fSeconds</code>.
 	</Function>
@@ -1911,10 +1938,10 @@
 	<Function name='GetGrade' return='Grade' arguments=''>
 		Returns the Grade of this high score.
 	</Function>
-	<Function name='GetHoldNoteScore' sm-ssc='true' return='int' arguments='HoldNoteScore hns'>
+	<Function name='GetHoldNoteScore' return='int' arguments='HoldNoteScore hns'>
 		Return the number of HoldNoteScores that match <code>hns</code>.
 	</Function>
-	<Function name='GetModifiers' sm-ssc='true' return='string' arguments=''>
+	<Function name='GetModifiers' return='string' arguments=''>
 		Returns the modifiers used for this HighScore.
 	</Function>
 	<Function name='GetName' return='string' arguments=''>
@@ -1923,7 +1950,7 @@
 	<Function name='GetPercentDP' return='float' arguments=''>
 		Returns the percentage of dance points associated with the high score.
 	</Function>
-	<Function name='GetRadarValues' sm-ssc='true' return='RadarValues' arguments=''>
+	<Function name='GetRadarValues' return='RadarValues' arguments=''>
 		Returns the RadarValues for this HighScore.
 	</Function>
 	<Function name='GetScore' return='int' arguments=''>
@@ -1932,7 +1959,7 @@
 	<Function name='GetSurvivalSeconds' return='float' arguments=''>
 		Returns the number of seconds survived associated with the high score.
 	</Function>
-	<Function name='GetTapNoteScore' sm-ssc='true' return='int' arguments='TapNoteScore tns'>
+	<Function name='GetTapNoteScore' return='int' arguments='TapNoteScore tns'>
 		Return the number of TapNoteScores that match <code>tns</code>.
 	</Function>
 	<Function name="IsFillInMarker" return='bool' arguments=''>
@@ -1953,12 +1980,12 @@
 	</Function>
 </Class>
 <Class name='InputFilter'>
-	<Function name='GetMouseWheel' sm-ssc='true' return='float' arguments=''>
+	<Function name='GetMouseWheel' return='float' arguments=''>
 	</Function>
-	<Function name='GetMouseX' sm-ssc='true' return='float' arguments=''>
+	<Function name='GetMouseX' return='float' arguments=''>
 		Returns the X position of the mouse.
 	</Function>
-	<Function name='GetMouseY' sm-ssc='true' return='float' arguments=''>
+	<Function name='GetMouseY' return='float' arguments=''>
 		Returns the Y position of the mouse.
 	</Function>
 </Class>
@@ -1977,29 +2004,29 @@
 	</Function>
 </Class>
 <Class name='LifeMeterBattery'>
-	<Function name='GetLivesLeft' sm-ssc='true' return='int' arguments=''>
+	<Function name='GetLivesLeft' return='int' arguments=''>
 		Returns the number of lives remaining.
 	</Function>
-	<Function name='GetTotalLives' sm-ssc='true' return='int' arguments=''>
+	<Function name='GetTotalLives' return='int' arguments=''>
 		Returns the number of total lives.
 	</Function>
 </Class>
 <Class name='MemoryCardManager'>
-	<Function name='GetCardLocked' sm-ssc='true' return='bool' arguments='PlayerNumber pn'>
+	<Function name='GetCardLocked' return='bool' arguments='PlayerNumber pn'>
 		Returns <code>true</code> if player <code>pn</code>'s card is locked.
 	</Function>
 	<Function name='GetCardState' return='MemoryCardState' arguments='PlayerNumber pn'>
 		Return the state for player <code>pn</code>.
 	</Function>
-	<Function name='GetName' sm-ssc='true' return='string' arguments='PlayerNumber pn'>
+	<Function name='GetName' return='string' arguments='PlayerNumber pn'>
 		Returns the name of the storage device.
 	</Function>
-	<Function name='IsNameAvailable' sm-ssc='true' return='bool' arguments='PlayerNumber pn'>
+	<Function name='IsNameAvailable' return='bool' arguments='PlayerNumber pn'>
 		Returns <code>true</code> if player <code>pn</code>'s name is available.
 	</Function>
 </Class>
 <Class name='MenuTimer'>
-	<Function name='GetSeconds' sm-ssc='true' return='float' arguments=''>
+	<Function name='GetSeconds' return='float' arguments=''>
 		Returns the current MenuTimer's value.
 	</Function>
 	<Function name='pause' return='void' arguments=''>
@@ -2048,7 +2075,7 @@
 		Sets the model's default animation to <code>sAnimation</code> at <code>fPlayRate</code> speed (default 1.0).
 	</Function>
 	<!-- sm-ssc additions -->
-	<Function name='GetNumStates' sm-ssc='true' return='int' arguments=''>
+	<Function name='GetNumStates' return='int' arguments=''>
 		Returns the number of states the Model has.
 	</Function>
 </Class>
@@ -2095,39 +2122,39 @@
 		Returns the actor for the specified <code>sButton sElement</code> using NoteSkin <code>sNoteSkin</code>.
 	</Function>
 	<!-- sm-ssc additions -->
-	<Function name='DoesNoteSkinExist' sm-ssc='true' return='bool' arguments='string strName'>
+	<Function name='DoesNoteSkinExist' return='bool' arguments='string strName'>
 		Returns <code>true</code> if the <code>strName</code> noteskin exists in the current gametype.
 	</Function>
-	<Function name='GetNoteSkinNames' sm-ssc='true' return='{string}' arguments=''>
+	<Function name='GetNoteSkinNames' return='{string}' arguments=''>
 		Returns a table of noteskin names for the current gametype.
 	</Function>
 </Class>
 <Class name='OptionRow'>
-	<Function name='FirstItemGoesDown' sm-ssc='true' return='bool' arguments=''>
+	<Function name='FirstItemGoesDown' return='bool' arguments=''>
 		Returns <code>true</code> if the first item in the row goes down.
 	</Function>
-	<Function name='GetChoiceInRowWithFocus' sm-ssc='true' return='int' arguments='PlayerNumber pn'>
+	<Function name='GetChoiceInRowWithFocus' return='int' arguments='PlayerNumber pn'>
 		Returns an index of the choice in the row that player <code>pn</code> is on.
 	</Function>
-	<Function name='GetLayoutType' sm-ssc='true' return='LayoutType' arguments=''>
+	<Function name='GetLayoutType' return='LayoutType' arguments=''>
 		Returns the OptionRow's layout type.
 	</Function>
-	<Function name='GetName' sm-ssc='true' return='string' arguments=''>
+	<Function name='GetName' return='string' arguments=''>
 		Returns the name of the OptionRow.
 	</Function>
-	<Function name='GetNumChoices' sm-ssc='true' return='int' arguments=''>
+	<Function name='GetNumChoices' return='int' arguments=''>
 		Returns the number of choices in this OptionRow.
 	</Function>
-	<Function name='GetRowTitle' sm-ssc='true' return='string' arguments=''>
+	<Function name='GetRowTitle' return='string' arguments=''>
 		Returns the row title string.
 	</Function>
-	<Function name='GetSelectType' sm-ssc='true' return='SelectType' arguments=''>
+	<Function name='GetSelectType' return='SelectType' arguments=''>
 		Returns the OptionRow's select type.
 	</Function>
-	<Function name='HasFocus' sm-ssc='true' return='bool' arguments='PlayerNumber pn'>
+	<Function name='HasFocus' return='bool' arguments='PlayerNumber pn'>
 		Returns <code>true</code> if this row is focused by player <code>pn</code>.
 	</Function>
-	<Function name='OneChoiceForAllPlayers' sm-ssc='true' return='bool' arguments=''>
+	<Function name='OneChoiceForAllPlayers' return='bool' arguments=''>
 		Returns <code>true</code> if this row forces one choice on all players.
 	</Function>
 </Class>
@@ -2147,230 +2174,230 @@
 		Returns the <Link class='LifeMeter' /> of player <code>pn</code>.
 	</Function>
 	<Function name='GetStepsQueueWrapped' return='Steps' arguments='int index'>
-		
+		Returns the Steps located at <code>index</code> in the current steps queue.
 	</Function>
 </Class>
 <Class name='PlayerOptions'>
-	<Function name='GetAlternate' sm-ssc='true' return='float' arguments=''>
+	<Function name='GetAlternate' return='float' arguments=''>
 		
 	</Function>
-	<Function name='GetAttackMines' sm-ssc='true' return='bool' arguments=''>
+	<Function name='GetAttackMines' return='bool' arguments=''>
 		
 	</Function>
-	<Function name='GetBeat' sm-ssc='true' return='float' arguments=''>
+	<Function name='GetBeat' return='float' arguments=''>
 		
 	</Function>
-	<Function name='GetBig' sm-ssc='true' return='bool' arguments=''>
+	<Function name='GetBig' return='bool' arguments=''>
 		
 	</Function>
-	<Function name='GetBlind' sm-ssc='true' return='float' arguments=''>
+	<Function name='GetBlind' return='float' arguments=''>
 		
 	</Function>
-	<Function name='GetBlink' sm-ssc='true' return='float' arguments=''>
+	<Function name='GetBlink' return='float' arguments=''>
 		
 	</Function>
-	<Function name='GetBMRize' sm-ssc='true' return='bool' arguments=''>
+	<Function name='GetBMRize' return='bool' arguments=''>
 		
 	</Function>
-	<Function name='GetBoomerang' sm-ssc='true' return='float' arguments=''>
+	<Function name='GetBoomerang' return='float' arguments=''>
 		
 	</Function>
-	<Function name='GetBoost' sm-ssc='true' return='float' arguments=''>
+	<Function name='GetBoost' return='float' arguments=''>
 		
 	</Function>
-	<Function name='GetBrake' sm-ssc='true' return='float' arguments=''>
+	<Function name='GetBrake' return='float' arguments=''>
 		
 	</Function>
-	<Function name='GetBumpy' sm-ssc='true' return='float' arguments=''>
+	<Function name='GetBumpy' return='float' arguments=''>
 		
 	</Function>
-	<Function name='GetCentered' sm-ssc='true' return='float' arguments=''>
+	<Function name='GetCentered' return='float' arguments=''>
 		
 	</Function>
-	<Function name='GetCMod' sm-ssc='true' return='float' arguments=''>
+	<Function name='GetCMod' return='float' arguments=''>
 		
 	</Function>
-	<Function name='GetConfusion' sm-ssc='true' return='float' arguments=''>
+	<Function name='GetConfusion' return='float' arguments=''>
 		
 	</Function>
-	<Function name='GetCover' sm-ssc='true' return='float' arguments=''>
+	<Function name='GetCover' return='float' arguments=''>
 		
 	</Function>
-	<Function name='GetCross' sm-ssc='true' return='float' arguments=''>
+	<Function name='GetCross' return='float' arguments=''>
 		
 	</Function>
-	<Function name='GetDark' sm-ssc='true' return='float' arguments=''>
+	<Function name='GetDark' return='float' arguments=''>
 		
 	</Function>
-	<Function name='GetDizzy' sm-ssc='true' return='float' arguments=''>
+	<Function name='GetDizzy' return='float' arguments=''>
 		
 	</Function>
-	<Function name='GetDrunk' sm-ssc='true' return='float' arguments=''>
+	<Function name='GetDrunk' return='float' arguments=''>
 		
 	</Function>
-	<Function name='GetEcho' sm-ssc='true' return='bool' arguments=''>
+	<Function name='GetEcho' return='bool' arguments=''>
 		
 	</Function>
-	<Function name='GetExpand' sm-ssc='true' return='float' arguments=''>
+	<Function name='GetExpand' return='float' arguments=''>
 		
 	</Function>
-	<Function name='GetFlip' sm-ssc='true' return='float' arguments=''>
+	<Function name='GetFlip' return='float' arguments=''>
 		
 	</Function>
-	<Function name='GetFloored' sm-ssc='true' return='bool' arguments=''>
+	<Function name='GetFloored' return='bool' arguments=''>
 		
 	</Function>
-	<Function name='GetHidden' sm-ssc='true' return='float' arguments=''>
+	<Function name='GetHidden' return='float' arguments=''>
 		
 	</Function>
-	<Function name='GetHiddenOffset' sm-ssc='true' return='float' arguments=''>
+	<Function name='GetHiddenOffset' return='float' arguments=''>
 		
 	</Function>
-	<Function name='GetHoldRolls' sm-ssc='true' return='bool' arguments=''>
+	<Function name='GetHoldRolls' return='bool' arguments=''>
 		
 	</Function>
-	<Function name='GetInvert' sm-ssc='true' return='float' arguments=''>
+	<Function name='GetInvert' return='float' arguments=''>
 		
 	</Function>
-	<Function name='GetLeft' sm-ssc='true' return='bool' arguments=''>
+	<Function name='GetLeft' return='bool' arguments=''>
 		
 	</Function>
-	<Function name='GetLittle' sm-ssc='true' return='bool' arguments=''>
+	<Function name='GetLittle' return='bool' arguments=''>
 		
 	</Function>
-	<Function name='GetMines' sm-ssc='true' return='bool' arguments=''>
+	<Function name='GetMines' return='bool' arguments=''>
 		
 	</Function>
-	<Function name='GetMini' sm-ssc='true' return='float' arguments=''>
+	<Function name='GetMini' return='float' arguments=''>
 		
 	</Function>
-	<Function name='GetMirror' sm-ssc='true' return='bool' arguments=''>
+	<Function name='GetMirror' return='bool' arguments=''>
 		
 	</Function>
-	<Function name='GetNoFakes' sm-ssc='true' return='bool' arguments=''>
+	<Function name='GetNoFakes' return='bool' arguments=''>
 		
 	</Function>
-	<Function name='GetNoHands' sm-ssc='true' return='bool' arguments=''>
+	<Function name='GetNoHands' return='bool' arguments=''>
 		
 	</Function>
-	<Function name='GetNoHolds' sm-ssc='true' return='bool' arguments=''>
+	<Function name='GetNoHolds' return='bool' arguments=''>
 		
 	</Function>
-	<Function name='GetNoJumps' sm-ssc='true' return='bool' arguments=''>
+	<Function name='GetNoJumps' return='bool' arguments=''>
 		
 	</Function>
-	<Function name='GetNoLifts' sm-ssc='true' return='bool' arguments=''>
+	<Function name='GetNoLifts' return='bool' arguments=''>
 		
 	</Function>
-	<Function name='GetNoMines' sm-ssc='true' return='bool' arguments=''>
+	<Function name='GetNoMines' return='bool' arguments=''>
 		
 	</Function>
-	<Function name='GetNoQuads' sm-ssc='true' return='bool' arguments=''>
+	<Function name='GetNoQuads' return='bool' arguments=''>
 		
 	</Function>
-	<Function name='GetNoRolls' sm-ssc='true' return='bool' arguments=''>
+	<Function name='GetNoRolls' return='bool' arguments=''>
 		
 	</Function>
-	<Function name='GetNoStretch' sm-ssc='true' return='bool' arguments=''>
+	<Function name='GetNoStretch' return='bool' arguments=''>
 		
 	</Function>
-	<Function name='GetNoteSkin' sm-ssc='true' return='string' arguments=''>
+	<Function name='GetNoteSkin' return='string' arguments=''>
 		Returns the current NoteSkin set in the PlayerOptions.
 	</Function>
-	<Function name='GetPassmark' sm-ssc='true' return='float' arguments=''>
+	<Function name='GetPassmark' return='float' arguments=''>
 		
 	</Function>
-	<Function name='GetPlanted' sm-ssc='true' return='bool' arguments=''>
+	<Function name='GetPlanted' return='bool' arguments=''>
 		
 	</Function>
-	<Function name='GetQuick' sm-ssc='true' return='bool' arguments=''>
+	<Function name='GetQuick' return='bool' arguments=''>
 		
 	</Function>
-	<Function name='GetRandomAttacks' sm-ssc='true' return='float' arguments=''>
+	<Function name='GetRandomAttacks' return='float' arguments=''>
 		
 	</Function>
-	<Function name='GetRandomSpeed' sm-ssc='true' return='float' arguments=''>
+	<Function name='GetRandomSpeed' return='float' arguments=''>
 		
 	</Function>
-	<Function name='GetRandomVanish' sm-ssc='true' return='float' arguments=''>
+	<Function name='GetRandomVanish' return='float' arguments=''>
 		
 	</Function>
-	<Function name='GetReverse' sm-ssc='true' return='float' arguments=''>
+	<Function name='GetReverse' return='float' arguments=''>
 		
 	</Function>
-	<Function name='GetReversePercentForColumn' sm-ssc='true' return='float' arguments='int col'>
+	<Function name='GetReversePercentForColumn' return='float' arguments='int col'>
 		
 	</Function>
-	<Function name='GetRight' sm-ssc='true' return='bool' arguments=''>
+	<Function name='GetRight' return='bool' arguments=''>
 		
 	</Function>
-	<Function name='GetRoll' sm-ssc='true' return='float' arguments=''>
+	<Function name='GetRoll' return='float' arguments=''>
 		
 	</Function>
-	<Function name='GetShuffle' sm-ssc='true' return='bool' arguments=''>
+	<Function name='GetShuffle' return='bool' arguments=''>
 		
 	</Function>
-	<Function name='GetSkew' sm-ssc='true' return='float' arguments=''>
+	<Function name='GetSkew' return='float' arguments=''>
 		
 	</Function>
-	<Function name='GetSkippy' sm-ssc='true' return='bool' arguments=''>
+	<Function name='GetSkippy' return='bool' arguments=''>
 		
 	</Function>
-	<Function name='GetSoftShuffle' sm-ssc='true' return='bool' arguments=''>
+	<Function name='GetSoftShuffle' return='bool' arguments=''>
 		
 	</Function>
-	<Function name='GetSongAttacks' sm-ssc='true' return='float' arguments=''>
+	<Function name='GetSongAttacks' return='float' arguments=''>
 		
 	</Function>
-	<Function name='GetSplit' sm-ssc='true' return='float' arguments=''>
+	<Function name='GetSplit' return='float' arguments=''>
 		
 	</Function>
-	<Function name='GetStealth' sm-ssc='true' return='float' arguments=''>
+	<Function name='GetStealth' return='float' arguments=''>
 		
 	</Function>
-	<Function name='GetStomp' sm-ssc='true' return='bool' arguments=''>
+	<Function name='GetStomp' return='bool' arguments=''>
 		
 	</Function>
-	<Function name='GetSudden' sm-ssc='true' return='float' arguments=''>
+	<Function name='GetSudden' return='float' arguments=''>
 		
 	</Function>
-	<Function name='GetSuddenOffset' sm-ssc='true' return='float' arguments=''>
+	<Function name='GetSuddenOffset' return='float' arguments=''>
 		
 	</Function>
-	<Function name='GetSuperShuffle' sm-ssc='true' return='bool' arguments=''>
+	<Function name='GetSuperShuffle' return='bool' arguments=''>
 		
 	</Function>
-	<Function name='GetTiny' sm-ssc='true' return='float' arguments=''>
+	<Function name='GetTiny' return='float' arguments=''>
 		
 	</Function>
-	<Function name='GetTipsy' sm-ssc='true' return='float' arguments=''>
+	<Function name='GetTipsy' return='float' arguments=''>
 		
 	</Function>
-	<Function name='GetTornado' sm-ssc='true' return='float' arguments=''>
+	<Function name='GetTornado' return='float' arguments=''>
 		
 	</Function>
-	<Function name='GetTwirl' sm-ssc='true' return='float' arguments=''>
+	<Function name='GetTwirl' return='float' arguments=''>
 		
 	</Function>
-	<Function name='GetTwister' sm-ssc='true' return='bool' arguments=''>
+	<Function name='GetTwister' return='bool' arguments=''>
 		
 	</Function>
-	<Function name='GetWave' sm-ssc='true' return='float' arguments=''>
+	<Function name='GetWave' return='float' arguments=''>
 		
 	</Function>
-	<Function name='GetWide' sm-ssc='true' return='bool' arguments=''>
+	<Function name='GetWide' return='bool' arguments=''>
 		
 	</Function>
-	<Function name='GetXMod' sm-ssc='true' return='float' arguments=''>
+	<Function name='GetXMod' return='float' arguments=''>
 		
 	</Function>
-	<Function name='GetXMode' sm-ssc='true' return='float' arguments=''>
+	<Function name='GetXMode' return='float' arguments=''>
 		
 	</Function>
-	<Function name='SetNoteSkin' sm-ssc='true' return='void' arguments='string noteskin'>
+	<Function name='SetNoteSkin' return='void' arguments='string noteskin'>
 		Changes the player's noteskin to <code>noteskin</code>.
 	</Function>
-	<Function name='UsingReverse' sm-ssc='true' return='bool' arguments=''>
+	<Function name='UsingReverse' return='bool' arguments=''>
 		Returns <code>true</code> if the player is using reverse. (equivalent to <code>GetReverse() == 1</code>)
 	</Function>
 </Class>
@@ -2378,13 +2405,13 @@
 	<Function name='FullCombo' return='bool' arguments=''>
 		Returns <code>true</code> if a full combo (TNS_W3 and up) was obtained.
 	</Function>
-	<Function name='FullComboOfScore' sm-ssc='true' return='bool' arguments='TapNoteScore tns'>
+	<Function name='FullComboOfScore' return='bool' arguments='TapNoteScore tns'>
 		Returns <code>true</code> if a full combo (<code>tns</code> and up) was obtained.
 	</Function>
 	<Function name='GetActualDancePoints' return='int' arguments=''>
 		Returns the number of Dance Points obtained by the player.
 	</Function>
-	<Function name='GetAliveSeconds' sm-ssc='true' return='float' arguments=''>
+	<Function name='GetAliveSeconds' return='float' arguments=''>
 		Returns how long the player has been alive.
 	</Function>
 	<Function name='GetBestFullComboTapNoteScore' return='TapNoteScore' arguments=''>
@@ -2393,7 +2420,7 @@
 	<Function name='GetCaloriesBurned' return='float' arguments=''>
 		Returns the number of calories burned.
 	</Function>
-	<Function name='GetCurMaxScore' sm-ssc='true' return='int' arguments=''>
+	<Function name='GetCurMaxScore' return='int' arguments=''>
 		Returns the current possible maximum score.
 	</Function>
 	<Function name='GetCurrentCombo' return='int' arguments=''>
@@ -2402,10 +2429,10 @@
 	<Function name='GetCurrentLife' return='float' arguments=''>
 		Returns the player's current life from 0..1.
 	</Function>
-	<Function name='GetCurrentMissCombo' sm-ssc='true' return='int' arguments=''>
+	<Function name='GetCurrentMissCombo' return='int' arguments=''>
 		Returns the player's current miss combo.
 	</Function>
-	<Function name='GetCurrentPossibleDancePoints' sm-ssc='true' return='int' arguments=''>
+	<Function name='GetCurrentPossibleDancePoints' return='int' arguments=''>
 		Returns the number of Dance Points possible to be obtained by the player.
 	</Function>
 	<Function name='GetCurrentScoreMultiplier' return='int' arguments=''>
@@ -2438,7 +2465,7 @@
 	<Function name='GetPlayedSteps' return='{Steps}' arguments=''>
 		Returns a table of played steps.
 	</Function>
-	<Function name='GetPercentageOfTaps' sm-ssc='true' return='float' arguments='TapNoteScore tns'>
+	<Function name='GetPercentageOfTaps' return='float' arguments='TapNoteScore tns'>
 		Gets the percentage of taps that were scored as <code>tns</code>.
 	</Function>
 	<Function name='GetPercentDancePoints' return='float' arguments=''>
@@ -2450,10 +2477,10 @@
 	<Function name='GetPossibleSteps' return='{Steps}' arguments=''>
 		Returns a table of possible steps.
 	</Function>
-	<Function name='GetRadarActual' sm-ssc='true' return='RadarValues' arguments=''>
+	<Function name='GetRadarActual' return='RadarValues' arguments=''>
 		Returns a RadarValues object representing the player's actual performance.
 	</Function>
-	<Function name='GetRadarPossible' sm-ssc='true' return='RadarValues' arguments=''>
+	<Function name='GetRadarPossible' return='RadarValues' arguments=''>
 		Returns a RadarValues object representing the total values for the song.
 	</Function>
 	<Function name='GetScore' return='int' arguments=''>
@@ -2488,24 +2515,24 @@
 	<Function name='IsDisqualified' return='bool' arguments=''>
 		Returns <code>true</code> if the player was disqualified from ranking.
 	</Function>
-	<Function name='SetCurMaxScore' sm-ssc='true' return='int' arguments=''>
+	<Function name='SetCurMaxScore' return='int' arguments=''>
 		Sets the current possible maximum score.
 	</Function>
-	<Function name='SetScore' sm-ssc='true' return='void' arguments='int iScore'>
+	<Function name='SetScore' return='void' arguments='int iScore'>
 		Sets the Player's score to <code>iScore</code>.
 	</Function>
 </Class>
 <Class name='PlayerState'>
-	<Function name='GetCurrentPlayerOptions' sm-ssc='true' return='PlayerOptions' arguments='' >
+	<Function name='GetCurrentPlayerOptions' return='PlayerOptions' arguments='' >
 		Returns the current PlayerOptions for this PlayerState.
 	</Function>
-	<Function name='GetHealthState' sm-ssc='true' return='HealthState' arguments=''>
+	<Function name='GetHealthState' return='HealthState' arguments=''>
 		Returns the HealthState for this PlayerState.
 	</Function>
-	<Function name='GetMultiPlayerNumber' sm-ssc='true' return='MultiPlayer' arguments=''>
+	<Function name='GetMultiPlayerNumber' return='MultiPlayer' arguments=''>
 		Returns the multiplayer number for this PlayerState.
 	</Function>
-	<Function name='GetPlayerController' sm-ssc='true' return='PlayerController' arguments=''>
+	<Function name='GetPlayerController' return='PlayerController' arguments=''>
 		Returns the PlayerController for this PlayerState.
 	</Function>
 	<Function name='GetPlayerNumber' return='PlayerNumber' arguments=''>
@@ -2514,13 +2541,13 @@
 	<Function name='GetPlayerOptions' renamed='true' return='PlayerOptions' arguments='ModsLevel ml'>
 		Returns a PlayerOptions object for the specified ModsLevel.
 	</Function>
-	<Function name='GetPlayerOptionsString' sm-ssc='true' return='string' arguments='ModsLevel ml'>
+	<Function name='GetPlayerOptionsString' return='string' arguments='ModsLevel ml'>
 		Returns a string of player options for the specified ModsLevel. (was GetPlayerOptions in v1.2.2 and prior)
 	</Function>
 	<Function name='GetPlayerOptionsArray' return='{string}' arguments='ModsLevel ml'>
 		Returns a table of strings, containing the player options for the specified ModsLevel.
 	</Function>
-	<Function name='GetSongPosition' sm-ssc='true' return='SongPosition' arguments=''>
+	<Function name='GetSongPosition' return='SongPosition' arguments=''>
 		Returns the SongPosition for this PlayerState.
 	</Function>
 	<Function name='SetPlayerOptions' return='string' arguments='ModsLevel ml, string sPlayerOptions'>
@@ -2531,7 +2558,7 @@
 	<Function name='GetPreference' return='various' arguments='string sPreference'>
 		Return the value of the preference <code>sPreference</code>.
 	</Function>
-	<Function name='PreferenceExists' sm-ssc='true' return='bool' arguments='string sPreference'>
+	<Function name='PreferenceExists' return='bool' arguments='string sPreference'>
 		Return true if preference <code>sPreference</code> exists.
 	</Function>
 	<Function name='SetPreference' return='void' arguments='string sPreference, various value'>
@@ -2575,6 +2602,9 @@
 	<Function name='GetHighScoreList' return='HighScoreList' arguments='Song s, Steps st'>
 		Gets the profile's HighScoreList for a specified Song and Steps. (Alternate arguments for Courses: <code>Course c, Trail t</code>)
 	</Function>
+	<Function name='GetLastUsedHighScoreName' return='string' arguments=''>
+		Returns the last used high score name.
+	</Function>
 	<Function name='GetNumToasties' return='int' arguments=''>
 		Returns the number of Toasties gotten using the specified profile.
 	</Function>
@@ -2614,7 +2644,7 @@
 	<Function name='GetTotalJumps' return='int' arguments=''>
 		Returns the number of Jumps stepped on.
 	</Function>
-	<Function name='GetTotalLifts' sm-ssc='true' return='int' arguments=''>
+	<Function name='GetTotalLifts' return='int' arguments=''>
 		Returns the number of successful Lifts.
 	</Function>
 	<Function name='GetTotalMines' return='int' arguments=''>
@@ -2644,7 +2674,7 @@
 	<Function name='IsCodeUnlocked' return='bool' arguments='string sUnlockEntryID'>
 		Returns <code>true</code> if the specified code <code>sUnlockEntryID</code> is unlocked.
 	</Function>
-	<Function name='SetCharacter' sm-ssc='true' return='void' arguments='string sCharID'>
+	<Function name='SetCharacter' return='void' arguments='string sCharID'>
 		Sets the current <Link class='Character' /> for the Profile.
 	</Function>
 	<Function name='SetGoalCalories' return='void' arguments='int iCals'>
@@ -2660,13 +2690,13 @@
 		Sets how much the player weighs (in pounds) to <code>weightPounds</code>.
 	</Function>
 	<!-- sm-ssc additions -->
-	<Function name='GetTotalGameplaySeconds' sm-ssc='true' return='int' arguments=''>
+	<Function name='GetTotalGameplaySeconds' return='int' arguments=''>
 		Returns the amount of time this profile has spent in gameplay (in seconds).
 	</Function>
-	<Function name='GetTotalSessions' sm-ssc='true' return='int' arguments=''>
+	<Function name='GetTotalSessions' return='int' arguments=''>
 		Returns the number of sessions this profile has had.
 	</Function>
-	<Function name='GetTotalSessionSeconds' sm-ssc='true' return='int' arguments=''>
+	<Function name='GetTotalSessionSeconds' return='int' arguments=''>
 		Returns the total session length (in seconds) of this profile.
 	</Function>
 </Class>
@@ -2684,19 +2714,19 @@
 	<Function name='GetProfile' return='Profile' arguments='PlayerNumber pn'>
 		Returns the profile for player <code>pn</code>.
 	</Function>
-	<Function name='GetProfileDir' sm-ssc='true' return='string' arguments='ProfileSlot slot'>
+	<Function name='GetProfileDir' return='string' arguments='ProfileSlot slot'>
 		Returns the profile directory of the specified <code>ProfileSlot</code>.
 	</Function>
 	<Function name='IsPersistentProfile' return='bool' arguments='PlayerNumber pn'>
 		Returns <code>true</code> if player <code>pn</code>'s profile is persistent.
 	</Function>
-	<Function name='IsSongNew' sm-ssc='true' return='bool' arguments='Song s'>
+	<Function name='IsSongNew' return='bool' arguments='Song s'>
 		Returns <code>true</code> if Song <code>s</code> has never been played before (according to the machine profile).
 	</Function>
-	<Function name='LastLoadWasFromLastGood' sm-ssc='true' return='bool' arguments='PlayerNumber pn'>
+	<Function name='LastLoadWasFromLastGood' return='bool' arguments='PlayerNumber pn'>
 		Returns <code>true</code> if the last load of player <code>pn</code>'s profile was a LastGood copy of the profile.
 	</Function>
-	<Function name='LastLoadWasTamperedOrCorrupt' sm-ssc='true' return='bool' arguments='PlayerNumber pn'>
+	<Function name='LastLoadWasTamperedOrCorrupt' return='bool' arguments='PlayerNumber pn'>
 		Returns <code>true</code> if the last load of player <code>pn</code>'s profile resulted in a tampered or corrupt profile.
 	</Function>
 	<Function name='SaveMachineProfile' return='void' arguments=''>
@@ -2721,7 +2751,7 @@
 		These commands require a RageFile handle. You can create one using
 		<Link class='RageFileUtil' />.
 	</Description>
-	<Function name='AtEOF' sm-ssc='true' return='bool' arguments=''>
+	<Function name='AtEOF' return='bool' arguments=''>
 		Returns <code>true</code> if the current position within the file is the end. (EOF = End of File)
 	</Function>
 	<Function name='ClearError' return='void' arguments=''>
@@ -2750,13 +2780,13 @@
 	<Function name='Read' return='string' arguments=''>
 		Returns a string containing the entire contents of the file.
 	</Function>
-	<Function name='ReadBytes' sm-ssc='true' return='string' arguments='int length'>
+	<Function name='ReadBytes' return='string' arguments='int length'>
 		Returns <code>length</code> bytes from the RageFile's current position.
 	</Function>
 	<Function name='Seek' return='int' arguments=''>
 		Seeks to a position in the file and returns the new position.
 	</Function>
-	<Function name='Tell' sm-ssc='true' return='int' arguments=''>
+	<Function name='Tell' return='int' arguments=''>
 		Returns the current position in the file.
 	</Function>
 	<Function name='Write' return='int' arguments='string str'>
@@ -2764,16 +2794,16 @@
 	</Function>
 </Class>
 <Class name='RageFileManager'>
-	<Function name='DoesFileExist' sm-ssc='true' return='bool' arguments='string sPath'>
+	<Function name='DoesFileExist' return='bool' arguments='string sPath'>
 		Returns <code>true</code> if a file exists at <code>sPath</code>.
 	</Function>
-	<Function name='GetDirListing' sm-ssc='true' return='{string}' arguments='string sPath, bool bOnlyDirs, bool bReturnPathToo'>
+	<Function name='GetDirListing' return='{string}' arguments='string sPath, bool bOnlyDirs, bool bReturnPathToo'>
 		Returns a listing of files from <code>sPath</code>. The last two arguments are optional (and default to false).
 	</Function>
-	<Function name='GetFileSizeBytes' sm-ssc='true' return='int' arguments='string sPath'>
+	<Function name='GetFileSizeBytes' return='int' arguments='string sPath'>
 		Returns a file's size in bytes.
 	</Function>
-	<Function name='GetHashForFile' sm-ssc='true' return='int' arguments='string sPath'>
+	<Function name='GetHashForFile' return='int' arguments='string sPath'>
 		Returns the hash of the file at <code>sPath</code>.
 	</Function>
 </Class>
@@ -2795,7 +2825,7 @@
 	<Function name='speed' return='void' arguments='float fSpeed'>
 		Sets the speed (that is, the rate at which the sound plays) to <code>fSpeed</code>. The associated <Link class='ActorSound' /> must have <code>SupportsRateChanging = true</code> on load.
 	</Function>
-	<Function name='volume' sm-ssc='true' return='void' arguments='float fVolume'>
+	<Function name='volume' return='void' arguments='float fVolume'>
 		Sets the volume to <code>fVolume</code>, which is between 0..1.
 	</Function>
 </Class>
@@ -2814,7 +2844,7 @@
 	</Function>
 </Class>
 <Class name='RollingNumbers'>
-	<Function name='Load' sm-ssc='true' return='void' arguments='string sGroupName'>
+	<Function name='Load' return='void' arguments='string sGroupName'>
 		Loads the metrics for this RollingNumbers from <code>sGroupName</code>.
 	</Function>
 	<Function name='targetnumber' return='void' arguments='float f'>
@@ -2825,7 +2855,7 @@
 	<Function name='GetNextScreenName' return='string' arguments=''>
 		Returns the name of the next Screen.
 	</Function>
-	<Function name='GetPrevScreenName' sm-ssc='true' return='string' arguments=''>
+	<Function name='GetPrevScreenName' return='string' arguments=''>
 		Returns the name of the previous Screen.
 	</Function>
 	<Function name='lockinput' return='void' arguments='float f'>
@@ -2836,7 +2866,7 @@
 	</Function>
 </Class>
 <Class name='ScreenEdit'>
-	<Function name='GetEditState' sm-ssc='true' return='EditState' arguments=''>
+	<Function name='GetEditState' return='EditState' arguments=''>
 		Returns the current <Link class='ENUM' function='EditState' />.
 	</Function>
 </Class>
@@ -2864,10 +2894,10 @@
 	<Function name='SetNewScreen' return='void' arguments='string s'>
 		Sets the next Screen to be loaded.
 	</Function>
-	<Function name='IsPaused' sm-ssc='true' return='bool' arguments=''>
+	<Function name='IsPaused' return='bool' arguments=''>
 		Returns <code>true</code> if the game is paused.
 	</Function>
-	<Function name='PauseGame' sm-ssc='true' return='void' arguments='bool bPause'>
+	<Function name='PauseGame' return='void' arguments='bool bPause'>
 		Pauses or unpauses the game, depending on the value of <code>bPause</code>.
 	</Function>
 </Class>
@@ -2877,13 +2907,13 @@
 	</Function>
 </Class>
 <Class name='ScreenManager'>
-	<Function name='AddNewScreenToTop' sm-ssc='true' return='void' arguments='string sScreenName'>
+	<Function name='AddNewScreenToTop' return='void' arguments='string sScreenName'>
 		Adds a screen at the top of the screen stack.
 	</Function>
 	<Function name='GetTopScreen' return='Screen' arguments=''>
 		Gets the screen at the top of the screen stack.
 	</Function>
-	<Function name='ReloadOverlayScreens' sm-ssc='true' return='void' arguments=''>
+	<Function name='ReloadOverlayScreens' return='void' arguments=''>
 		Reloads any loaded overlay screens.
 	</Function>
 	<Function name='ScreenClassExists' return='bool' arguments='string s'>
@@ -2928,21 +2958,21 @@
 	</Function>
 </Class>
 <Class name='ScreenNetEvaluation'>
-	<Function name='GetNumActivePlayers' sm-ssc='true' return='int' arguments=''>
+	<Function name='GetNumActivePlayers' return='int' arguments=''>
 		Returns the number of active players.
 	</Function>
 </Class>
 <Class name='ScreenOptions'>
-	<Function name='AllAreOnLastRow' return='bool' sm-ssc='true' arguments=''>
+	<Function name='AllAreOnLastRow' return='bool'  arguments=''>
 		Returns <code>true</code> if all active players are on the last options row.
 	</Function>
-	<Function name='FocusedItemEndsScreen' return='bool' sm-ssc='true' arguments='PlayerNumber pn'>
+	<Function name='FocusedItemEndsScreen' return='bool'  arguments='PlayerNumber pn'>
 		Returns <code>true</code> if the specified player is on an items that ends the screen.
 	</Function>
 	<Function name='GetCurrentRowIndex' renamed='true' return='int' arguments='PlayerNumber pn'>
 		Returns the current row that player <code>pn</code> is on. (Was previously <code>GetCurrentRow</code>.)
 	</Function>
-	<Function name='GetOptionRow' sm-ssc='true' return='OptionRow' arguments='int iRow'>
+	<Function name='GetOptionRow' return='OptionRow' arguments='int iRow'>
 		Returns the specified OptionRow.
 	</Function>
 </Class>
@@ -2968,7 +2998,7 @@
 	</Function>
 </Class>
 <Class name='ScreenSelectMaster'>
-	<Function name='GetSelectionIndex' sm-ssc='true' return='int' arguments='PlayerNumber pn'>
+	<Function name='GetSelectionIndex' return='int' arguments='PlayerNumber pn'>
 		Returns player <code>pn</code>'s current selected item as an integer.
 	</Function>
 </Class>
@@ -2976,10 +3006,10 @@
 	<Function name='GetGoToOptions' return='bool' arguments=''>
 		Returns <code>true</code> if the player is going to the options screen.
 	</Function>
-	<Function name='GetMusicWheel' sm-ssc='true' return='MusicWheel' arguments=''>
+	<Function name='GetMusicWheel' return='MusicWheel' arguments=''>
 		Returns the MusicWheel used on this screen.
 	</Function>
-	<Function name='OpenOptionsList' sm-ssc='true' return='void' arguments='PlayerNumber pn'>
+	<Function name='OpenOptionsList' return='void' arguments='PlayerNumber pn'>
 		Opens the OptionsList for Player <code>pn</code>
 	</Function>
 	<Function name='setupcoursestagemods' theme='_fallback' return='void' arguments=''>
@@ -3008,7 +3038,7 @@
 	<Description>
 		See the Changelog for details on TextEntrySetting's format.
 	</Description>
-	<Function name='Load' sm-ssc='true' return='void' arguments='TextEntrySettings args'>
+	<Function name='Load' return='void' arguments='TextEntrySettings args'>
 		Sets up a ScreenTextEntry's values.
 	</Function>
 </Class>
@@ -3027,13 +3057,13 @@
 	<Function name='GetBannerPath' return='string' arguments=''>
 		Returns the path to the song's banner.
 	</Function>
-	<Function name='GetCDTitlePath' sm-ssc='true' return='string' arguments=''>
+	<Function name='GetCDTitlePath' return='string' arguments=''>
 		Gets the path to the CDTitle.
 	</Function>
 	<Function name='GetDisplayArtist' return='string' arguments=''>
 		Returns the displayed artist of the song.
 	</Function>
-	<Function name='GetDisplayBpms' sm-ssc='true' return='{float}' arguments=''>
+	<Function name='GetDisplayBpms' return='{float}' arguments=''>
 		Returns a table of 2 floats containing the display BPMs.
 	</Function>
 	<Function name='GetDisplayFullTitle' return='string' arguments=''>
@@ -3057,28 +3087,28 @@
 	<Function name='GetLastBeat' return='float' arguments=''>
 		Returns the last beat of the song.
 	</Function>
-	<Function name='GetLyricsPath' sm-ssc='true' return='string' arguments=''>
+	<Function name='GetLyricsPath' return='string' arguments=''>
 		Gets the path to the lyrics.
 	</Function>
-	<Function name='GetMusicPath' sm-ssc='true' return='string' arguments=''>
+	<Function name='GetMusicPath' return='string' arguments=''>
 		Gets the path to the music file.
 	</Function>
 	<Function name='GetOneSteps' return='Steps' arguments='StepsType st, Difficulty d'>
 		Returns a Step object if the StepType and Difficulty exist.
 	</Function>
-	<Function name='GetOrigin' sm-ssc='true' return='string' arguments=''>
+	<Function name='GetOrigin' return='string' arguments=''>
 		Gets the Song's origin.
 	</Function>
 	<Function name='GetSongDir' return='string' arguments=''>
 		Returns the song's directory.
 	</Function>
-	<Function name='GetSongFilePath' sm-ssc='true' return='string' arguments=''>
+	<Function name='GetSongFilePath' return='string' arguments=''>
 		Returns the songfile path.
 	</Function>
 	<Function name='GetStepsByStepsType' return='{Steps}' arguments='StepsType st'>
 		Returns a table of Steps that have StepsType <code>st</code>.
 	</Function>
-	<Function name='GetStepsSeconds' sm-ssc='true' return='float' arguments=''>
+	<Function name='GetStepsSeconds' return='float' arguments=''>
 		Returns how long the longest stepchart is in seconds.
 	</Function>
 	<Function name='GetTimingData' return='TimingData' arguments=''>
@@ -3099,49 +3129,49 @@
 	<Function name='HasStepsTypeAndDifficulty' return='bool' arguments='StepsType st, Difficulty d'>
 		Returns <code>true</code> if the song has steps for the specified difficulty in <code>st</code>.
 	</Function>
-	<Function name='HasAttacks' sm-ssc='true' return='bool' arguments=''>
+	<Function name='HasAttacks' return='bool' arguments=''>
 		Returns <code>true</code> if the song has attacks.
 	</Function>
-	<Function name='HasBackground' sm-ssc='true' return='bool' arguments=''>
+	<Function name='HasBackground' return='bool' arguments=''>
 		Returns <code>true</code> if the song has a background.
 	</Function>
-	<Function name='HasBanner' sm-ssc='true' return='bool' arguments=''>
+	<Function name='HasBanner' return='bool' arguments=''>
 		Returns <code>true</code> if the song has a banner.
 	</Function>
-	<Function name='HasBGChanges' sm-ssc='true' return='bool' arguments=''>
+	<Function name='HasBGChanges' return='bool' arguments=''>
 		Returns <code>true</code> if the song has BGChanges.
 	</Function>
-	<Function name='HasCDTitle' sm-ssc='true' return='bool' arguments=''>
+	<Function name='HasCDTitle' return='bool' arguments=''>
 		Returns <code>true</code> if the song has a CDTitle.
 	</Function>
-	<Function name='HasEdits' sm-ssc='true' return='bool' arguments=''>
+	<Function name='HasEdits' return='bool' arguments=''>
 		Returns <code>true</code> if the song has edits.
 	</Function>
-	<Function name='HasLyrics' sm-ssc='true' return='bool' arguments=''>
+	<Function name='HasLyrics' return='bool' arguments=''>
 		Returns <code>true</code> if the song has lyrics.
 	</Function>
-	<Function name='HasMusic' sm-ssc='true' return='bool' arguments=''>
+	<Function name='HasMusic' return='bool' arguments=''>
 		Returns <code>true</code> if the song has music.
 	</Function>
-	<Function name='HasSignificantBPMChangesOrStops' sm-ssc='true' return='bool' arguments=''>
+	<Function name='HasSignificantBPMChangesOrStops' return='bool' arguments=''>
 		Returns <code>true</code> if the song has significant elephants or bison.
 	</Function>
-	<Function name='HasStepsType' sm-ssc='true' return='bool' arguments=''>
+	<Function name='HasStepsType' return='bool' arguments=''>
 		Returns <code>true</code> if the song has .
 	</Function>
-	<Function name='IsDisplayBpmConstant' sm-ssc='true' return='bool' arguments=''>
+	<Function name='IsDisplayBpmConstant' return='bool' arguments=''>
 		Returns <code>true</code> if the song's DisplayBPM is constant.
 	</Function>
-	<Function name='IsDisplayBpmRandom' sm-ssc='true' return='bool' arguments=''>
+	<Function name='IsDisplayBpmRandom' return='bool' arguments=''>
 		Returns <code>true</code> if the song's DisplayBPM is random.
 	</Function>
-	<Function name='IsDisplayBpmSecret' sm-ssc='true' return='bool' arguments=''>
+	<Function name='IsDisplayBpmSecret' return='bool' arguments=''>
 		Returns <code>true</code> if the song's DisplayBPM is secret.
 	</Function>
-	<Function name='IsEasy' sm-ssc='true' return='bool' arguments=''>
+	<Function name='IsEasy' return='bool' arguments=''>
 		Returns <code>true</code> if the song is considered easy.
 	</Function>
-	<Function name='IsEnabled' sm-ssc='true' return='bool' arguments=''>
+	<Function name='IsEnabled' return='bool' arguments=''>
 		Returns <code>true</code> if the song is enabled.
 	</Function>
 	<Function name='IsLong' return='bool' arguments=''>
@@ -3156,7 +3186,7 @@
 	<Function name='MusicLengthSeconds' return='float' arguments=''>
 		Returns the length of the song in seconds.
 	</Function>
-	<Function name='NormallyDisplayed' sm-ssc='true' return='bool' arguments=''>
+	<Function name='NormallyDisplayed' return='bool' arguments=''>
 		Returns true if the song is normally displayed.
 	</Function>
 </Class>
@@ -3176,7 +3206,7 @@
 	<Function name='GetCourseColor' return='color' arguments='Course c'>
 		Returns the course color of Course <code>c</code>.
 	</Function>
-	<Function name='GetCourseGroupNames' sm-ssc='true' return='{string}' arguments=''>
+	<Function name='GetCourseGroupNames' return='{string}' arguments=''>
 		Returns a table containing all of the course group names.
 	</Function>
 	<Function name='GetExtraStageInfo' return='various' arguments='bool bExtra2, Style s'>
@@ -3222,54 +3252,54 @@
 		Returns the song group color of <code>sGroupName</code>.
 	</Function>
 	<!-- sm-ssc additions: -->
-	<Function name='GetSongGroupNames' sm-ssc='true' return='{string}' arguments=''>
+	<Function name='GetSongGroupNames' return='{string}' arguments=''>
 		Returns a table containing all of the song group names.
 	</Function>
-	<Function name='GetSongRank' sm-ssc='true' return='int' arguments='Song s'>
+	<Function name='GetSongRank' return='int' arguments='Song s'>
 		Returns the rank (popularity) of Song <code>s</code>.
 	</Function>
-	<Function name='GetSongsInGroup' sm-ssc='true' return='{Song}' arguments='string sGroupName'>
+	<Function name='GetSongsInGroup' return='{Song}' arguments='string sGroupName'>
 		Returns a table containing all of the songs in group <code>sGroupName</code>.
 	</Function>
-	<Function name='ShortenGroupName' sm-ssc='true' return='string' arguments='string sGroupName'>
+	<Function name='ShortenGroupName' return='string' arguments='string sGroupName'>
 		Returns the shortened group name (based on entries in Translations.xml).
 	</Function>
-	<Function name='SetPreferredCourses' sm-ssc='true' return='void' arguments='string sListName'>
+	<Function name='SetPreferredCourses' return='void' arguments='string sListName'>
 		Loads preferred courses from <code>{theme}/Other/SongManager sListName.txt</code>.
 	</Function>
-	<Function name='SetPreferredSongs' sm-ssc='true' return='void' arguments='string sListName'>
+	<Function name='SetPreferredSongs' return='void' arguments='string sListName'>
 		Loads preferred songs from <code>{theme}/Other/SongManager sListName.txt</code>.
 	</Function>
 </Class>
 <Class name='SongPosition'>
-	<Function name='GetCurBPS' sm-ssc='true' return='float' arguments=''>
+	<Function name='GetCurBPS' return='float' arguments=''>
 		Returns the current beats per second.
 	</Function>
-	<Function name='GetDelay' sm-ssc='true' return='bool' arguments=''>
+	<Function name='GetDelay' return='bool' arguments=''>
 		Returns <code>true</code> if a Delay is active.
 	</Function>
-	<Function name='GetFreeze' sm-ssc='true' return='bool' arguments=''>
+	<Function name='GetFreeze' return='bool' arguments=''>
 		Returns <code>true</code> if a Freeze is active.
 	</Function>
-	<Function name='GetMusicSeconds' sm-ssc='true' return='float' arguments=''>
+	<Function name='GetMusicSeconds' return='float' arguments=''>
 		<!-- todo -->
 	</Function>
-	<Function name='GetMusicSecondsVisible' sm-ssc='true' return='float' arguments=''>
+	<Function name='GetMusicSecondsVisible' return='float' arguments=''>
 		<!-- todo -->
 	</Function>
-	<Function name='GetSongBeat' sm-ssc='true' return='float' arguments=''>
+	<Function name='GetSongBeat' return='float' arguments=''>
 		<!-- todo -->
 	</Function>
-	<Function name='GetSongBeatNoOffset' sm-ssc='true' return='float' arguments=''>
+	<Function name='GetSongBeatNoOffset' return='float' arguments=''>
 		<!-- todo -->
 	</Function>
-	<Function name='GetSongBeatVisible' sm-ssc='true' return='float' arguments=''>
+	<Function name='GetSongBeatVisible' return='float' arguments=''>
 		<!-- todo -->
 	</Function>
-	<Function name='GetWarpBeginRow' sm-ssc='true' return='int' arguments=''>
+	<Function name='GetWarpBeginRow' return='int' arguments=''>
 		Returns the row where a warp appears.
 	</Function>
-	<Function name='GetWarpDestination' sm-ssc='true' return='float' arguments=''>
+	<Function name='GetWarpDestination' return='float' arguments=''>
 		Returns the warp destination length.
 	</Function>
 </Class>
@@ -3277,10 +3307,10 @@
 	<Function name='GetAnimationLengthSeconds' return='float' arguments=''>
 		Returns the length of the animation in seconds.
 	</Function>
-	<Function name='GetNumStates' sm-ssc='true' return='int' arguments=''>
+	<Function name='GetNumStates' return='int' arguments=''>
 		Return the number of states this Sprite has.
 	</Function>
-	<Function name='GetState' sm-ssc='true' return='int' arguments=''>
+	<Function name='GetState' return='int' arguments=''>
 		Returns the Sprite's current state (frame number in a multi-frame sprite).
 	</Function>
 	<Function name='GetTexture' return='RageTexture' arguments=''>
@@ -3341,13 +3371,13 @@
 		Set the texture coordinate velocity which controls how the Sprite changes as it animates. <!-- XXX: Can we be more specific? -->
 	</Function>
 	<!-- sm-ssc addons -->
-	<Function name='CropTo' sm-ssc='true' return='void' arguments='float fWidth, float fHeight'>
+	<Function name='CropTo' return='void' arguments='float fWidth, float fHeight'>
 		Crops the Sprite to <code>fWidth</code>x<code>fHeight</code>.
 	</Function>
 	<Function name='cropto' theme='_fallback' return='void' arguments='float fWidth, float fHeight'>
 		[01 alias.lua] Alias for CropTo.
 	</Function>
-	<Function name='SetAllStateDelays' sm-ssc='true' return='void' arguments='float fRate'>
+	<Function name='SetAllStateDelays' return='void' arguments='float fRate'>
 		Sets all the state delays to <code>fRate</code>. Useful for Sprites that need to change by BPM (e.g. Tran from DDR 5th Mix, the cube from DS EuroMix 2).
 	</Function>
 </Class>
@@ -3415,7 +3445,7 @@
 	<Function name='GetAuthorCredit' return='string' arguments=''>
 		Returns the author that made that particular Steps pattern.
 	</Function>
-	<Function name='GetChartStyle' sm-ssc='true' return='string' arguments=''>
+	<Function name='GetChartStyle' return='string' arguments=''>
 		Returns the Chart Style for this Steps.
 	</Function>
 	<Function name='GetDescription' return='string' arguments=''>
@@ -3427,14 +3457,14 @@
 	<Function name='GetFilename' return='string' arguments=''>
 		Returns the Steps filename from the Cache.
 	</Function>
-	<Function name='GetHash' sm-ssc='true' return='unsigned' arguments=''>
+	<Function name='GetHash' return='unsigned' arguments=''>
 		Returns a hash of the Steps.
 	</Function>
 	<Function name='GetMeter' return='int' arguments=''>
 		Returns the numerical difficulty of the Steps.
 	</Function>
-        <Function name='HasSignificantTimingChanges' sm-ssc='true' return='bool' arguments=''>
-                Returns <code>true</code> if the song has significant timing changes.
+        <Function name='HasSignificantTimingChanges' return='bool' arguments=''>
+               returns <code>true</code> if the song has significant timing changes.
         </Function>
 	<Function name='GetRadarValues' return='RadarValues' arguments='PlayerNumber pn'>
 		Returns the complete list of RadarValues for player <code>pn</code>. Use <Link class='RadarValues' function='GetValue' /> to grab a specific value.
@@ -3442,17 +3472,20 @@
 	<Function name='GetStepsType' return='StepsType' arguments=''>
 		Returns the Steps type.
 	</Function>
-	<Function name='GetTimingData' sm-ssc='true' return='TimingData' arguments=''>
+	<Function name='GetTimingData' return='TimingData' arguments=''>
 		Returns the TimingData for the Steps.
 	</Function>
-	<Function name='IsAnEdit' sm-ssc='true' return='bool' arguments=''>
+	<Function name='IsAnEdit' return='bool' arguments=''>
 		Returns <code>true</code> if the Steps are an edit.
 	</Function>
-	<Function name='IsAPlayerEdit' sm-ssc='true' return='bool' arguments=''>
+	<Function name='IsAPlayerEdit' return='bool' arguments=''>
 		Returns <code>true</code> if the Steps are a player edit (loaded from a profile).
 	</Function>
 	<Function name='IsAutogen' return='bool' arguments=''>
 		Returns <code>true</code> if the steps were automatically generated.
+	</Function>
+	<Function name='UsesSplitTiming' return='bool'  arguments=''>
+		Returns <code>true</code> if the Steps use different <code>TimingData</code> from the Song.
 	</Function>
 </Class>
 <Class name='StepsDisplay'>
@@ -3473,7 +3506,7 @@
 	</Function>
 </Class>
 <Class name='Style'>
-	<Function name='ColumnsPerPlayer' sm-ssc='true' return='int' arguments=''>
+	<Function name='ColumnsPerPlayer' return='int' arguments=''>
 		Returns the number of total tracks this Style contains (e.g. 4 for dance-versus, but 8 for dance-double).
 	</Function>
 	<Function name='GetName' return='string' arguments=''>
@@ -3485,7 +3518,7 @@
 	<Function name='GetStyleType' return='StyleType' arguments=''>
 		Returns the StyleType for this Style.
 	</Function>
-	<Function name='NeedsZoomOutWith2Players' sm-ssc='true' return='bool' arguments=''>
+	<Function name='NeedsZoomOutWith2Players' return='bool' arguments=''>
 		Returns <code>true</code> if the Style needs to be zoomed out with two players.
 	</Function>
 </Class>
@@ -3501,10 +3534,10 @@
 	</Function>
 </Class>
 <Class name='ThemeManager'>
-	<Function name='GetCurLanguage' sm-ssc='true' return='string' arguments=''>
+	<Function name='GetCurLanguage' return='string' arguments=''>
 		Returns the current language.
 	</Function>
-	<Function name='GetCurrentThemeDirectory' sm-ssc='true' return='string' arguments=''>
+	<Function name='GetCurrentThemeDirectory' return='string' arguments=''>
 		Returns the theme's current directory.
 	</Function>
 	<Function name='GetMetric' return='string' arguments='string ClassName, string Element'>
@@ -3525,73 +3558,76 @@
 	<Function name='GetPathInfoB' return='string' arguments='string ClassName, string Element'>
 		returns three strings: BGAnimation ResolvedPath, MatchingMetricsGroup, MatchingElement. Used in <Link class='GLOBAL' function='LoadFallbackB'>LoadFallbackB</Link> in themes/_fallback/02 Other.lua. (Lua.xsd sucks)
 	</Function>
-	<Function name='GetPathO' sm-ssc='true' return='string' arguments='string ClassName, string Element'>
+	<Function name='GetPathO' return='string' arguments='string ClassName, string Element'>
 		Returns the path of an element in the Other folder.
 	</Function>
 	<Function name='GetPathS' return='string' arguments='string ClassName, string Element'>
 		Returns the path of an element in the Sounds folder.
 	</Function>
-	<Function name='GetSelectableThemeNames' sm-ssc='true' return='{string}' arguments=''>
+	<Function name='GetSelectableThemeNames' return='{string}' arguments=''>
 		Returns a table of selectable theme directories.
 	</Function>
 	<Function name='GetString' return='string' arguments='string ClassName, string Element'>
 		Returns the value of <code>Element</code> in <code>Class</code> for the currently loaded language.
 	</Function>
-	<Function name='GetThemeAuthor' sm-ssc='true' return='string' arguments=''>
+	<Function name='GetThemeAuthor' return='string' arguments=''>
 		Returns the author of the current theme or "[unknown author]".
 	</Function>
-	<Function name='GetThemeDisplayName' sm-ssc='true' return='string' arguments=''>
+	<Function name='GetThemeDisplayName' return='string' arguments=''>
 		Returns the display name of the current theme.
 	</Function>
-	<Function name='ReloadMetrics' sm-ssc='true' return='void' arguments=''>
+	<Function name='ReloadMetrics' return='void' arguments=''>
 		Reloads the current theme's metrics.
 	</Function>
 </Class>
 <Class name='TimingData'>
-	<Function name='GetActualBPM' sm-ssc='true' return='{float}' arguments=''>
+	<Function name='GetActualBPM' return='{float}' arguments=''>
 		Returns the minimum and maximum BPM of the song in a table (in that order).
 	</Function>
-	<Function name='GetBeatFromElapsedTime' sm-ssc='true' return='float' arguments='float fElapsedTime'>
+	<Function name='GetBeatFromElapsedTime' return='float' arguments='float fElapsedTime'>
 		Returns the beat from <code>fElapsedTime</code>.
 	</Function>
-	<Function name='GetBPMAtBeat' sm-ssc='true' return='float' arguments='float fBeat'>
+	<Function name='GetBPMAtBeat' return='float' arguments='float fBeat'>
 		Returns the BPM at <code>fBeat</code>.
 	</Function>
-	<Function name='GetBPMs' sm-ssc='true' return='{string}' arguments=''>
+	<Function name='GetBPMs' return='{string}' arguments=''>
 		Returns a table of the BPMs as strings.
 	</Function>
-	<Function name='GetBPMsAndTimes' sm-ssc='true' return='{string}' arguments=''>
+	<Function name='GetBPMsAndTimes' return='{string}' arguments=''>
 		Returns a table of the BPMs and the times they happen as strings with the format "<code>beat=BPM</code>".
 	</Function>
 	<Function name='GetElapsedTimeFromBeat' return='float' arguments='float fBeat'>
 		Returns the elapsed time from <code>fBeat</code>.
 	</Function>
-	<Function name='GetStops' sm-ssc='true' return='{string}' arguments=''>
+	<Function name='GetStops' return='{string}' arguments=''>
 		Returns a table of the Stops and the times they happen as strings with the format "<code>beat=stop seconds</code>".
 	</Function>
-	<Function name='GetDelays' sm-ssc='true' return='{string}' arguments=''>
+	<Function name='GetDelays' return='{string}' arguments=''>
 		Returns a table of the Delays and the times they happen as strings with the format "<code>beat=stop seconds</code>".
 	</Function>
-	<Function name='GetLabels' sm-ssc='true' return='{string}' arguments=''>
+	<Function name='GetLabels' return='{string}' arguments=''>
 		Returns a table of the Labels and the times they happen as strings with the format "<code>beat=label name</code>."
 	</Function>
-	<Function name='HasBPMChanges' sm-ssc='true' return='bool' arguments=''>
+	<Function name='HasBPMChanges' return='bool' arguments=''>
 		Returns <code>true</code> if the TimingData contains BPM changes.
 	</Function>
-	<Function name='HasNegativeBPMs' sm-ssc='true' return='bool' arguments=''>
+	<Function name='HasNegativeBPMs' return='bool' arguments=''>
 		Returns <code>true</code> if the TimingData contains any BPM changes with a negative BPM.
 	</Function>
 	<Function name='HasStops' return='bool' arguments=''>
 		Returns <code>true</code> if the TimingData contains stops.
 	</Function>
-	<Function name='HasWarps' sm-ssc='true' return='bool' arguments=''>
+	<Function name='HasWarps' return='bool' arguments=''>
 		Returns <code>true</code> if the TimingData contains warps.
 	</Function>
-        <Function name='HasFakes' sm-ssc='true' return='bool' arguments=''>
-                Returns <code>true</code> if the TimingData contains fake segments.
+        <Function name='HasFakes' return='bool' arguments=''>
+               returns <code>true</code> if the TimingData contains fake segments.
         </Function>
-	<Function name='HasSpeedChanges' sm-ssc='true' return='bool' arguments=''>
+	<Function name='HasSpeedChanges' return='bool' arguments=''>
 		Returns <code>true</code> if the TimingData contains speed scrolling changes.
+	</Function>
+	<Function name='HasScrollChanges' return='bool' arguments=''>
+		Returns <code>true</code> if the TimingData contains general scrolling changes.
 	</Function>
 </Class>
 <Class name='Trail'>
@@ -3601,7 +3637,7 @@
 	<Function name='GetDifficulty' return='Difficulty' arguments=''>
 		Returns the Trail's difficulty.
 	</Function>
-	<Function name='GetTrailEntries' sm-ssc='true' return='{TrailEntry}' arguments=''>
+	<Function name='GetTrailEntries' return='{TrailEntry}' arguments=''>
 		Returns a table of TrailEntry items.
 	</Function>
 	<Function name='GetMeter' return='int' arguments=''>
@@ -3613,21 +3649,21 @@
 	<Function name='GetStepsType' return='StepsType' arguments=''>
 		Returns the Trail's StepsType.
 	</Function>
-	<Function name='GetTrailEntry' sm-ssc='true' return='TrailEntry' arguments='int iEntry'>
+	<Function name='GetTrailEntry' return='TrailEntry' arguments='int iEntry'>
 		Returns the TrailEntry at index <code>iEntry</code>.
 	</Function>
 </Class>
 <Class name='TrailEntry'>
-	<Function name='GetNormalModifiers' sm-ssc='true' return='string' arguments=''>
+	<Function name='GetNormalModifiers' return='string' arguments=''>
 		Returns a string of modifiers used in this TrailEntry.
 	</Function>
 	<Function name='GetSong' return='Song' arguments=''>
 		Returns the Song used in this TrailEntry.
 	</Function>
-	<Function name='GetSteps' sm-ssc='true' return='Steps' arguments=''>
+	<Function name='GetSteps' return='Steps' arguments=''>
 		Returns the Steps used in this TrailEntry.
 	</Function>
-	<Function name='IsSecret' sm-ssc='true' return='bool' arguments=''>
+	<Function name='IsSecret' return='bool' arguments=''>
 		(why'd I think this was a good idea when we have <Link class='CourseEntry' function='IsSecret' />?)
 	</Function>
 </Class>
@@ -3639,10 +3675,10 @@
 		Sets the UnlockEntry's course to <code>sCourseName</code>.<br />
 		Example: <code>course,"Driven"</code>
 	</Function>
-	<Function name='GetCode' sm-ssc='true' return='string' arguments=''>
+	<Function name='GetCode' return='string' arguments=''>
 		Returns the code for this unlock.
 	</Function>
-	<Function name='GetCourse' sm-ssc='true' return='Course' arguments=''>
+	<Function name='GetCourse' return='Course' arguments=''>
 		Returns the Course for this unlock.
 	</Function>
 	<Function name='GetDescription' return='string' arguments=''>
@@ -3698,10 +3734,10 @@
 	<Function name='GetNumUnlocks' return='int' arguments=''>
 		Returns the number of all unlock items, regardless of status.
 	</Function>
-	<Function name='GetPoints' sm-ssc='true' return='float' arguments='UnlockRequirement ur' >
+	<Function name='GetPoints' return='float' arguments='UnlockRequirement ur' >
 		Returns the number of points for the machine profile based on the specified UnlockRequirement.
 	</Function>
-	<Function name='GetPointsForProfile' sm-ssc='true' return='float' arguments='Profile p, UnlockRequirement ur' >
+	<Function name='GetPointsForProfile' return='float' arguments='Profile p, UnlockRequirement ur' >
 		Returns the number of points for the specified profile based on the specified UnlockRequirement.
 	</Function>
 	<Function name='GetPointsUntilNextUnlock' return='float' arguments='UnlockRequirement ut'>
@@ -3728,25 +3764,25 @@
 	</Function>
 </Class>
 <Class name='WheelBase'>
-	<Function name='GetCurrentIndex' sm-ssc='true' return='int' arguments=''>
+	<Function name='GetCurrentIndex' return='int' arguments=''>
 		Returns the wheel's current index.
 	</Function>
-	<Function name='GetNumItems' sm-ssc='true' return='int' arguments=''>
+	<Function name='GetNumItems' return='int' arguments=''>
 		Returns the total number of items in the wheel.
 	</Function>
 	<Function name='GetWheelItem' return='WheelItemBaseData' arguments='int iIndex'>
 		Returns the WheelItem at index <code>iIndex</code>.
 	</Function>
-	<Function name='IsLocked' sm-ssc='true' return='bool' arguments=''>
+	<Function name='IsLocked' return='bool' arguments=''>
 		Returns <code>true</code> if the wheel is locked.
 	</Function>
-	<Function name='IsSettled' sm-ssc='true' return='bool' arguments=''>
+	<Function name='IsSettled' return='bool' arguments=''>
 		Returns <code>true</code> if the wheel is settled/stopped moving.
 	</Function>
-	<Function name='Move' sm-ssc='true' return='void' arguments='int n'>
+	<Function name='Move' return='void' arguments='int n'>
 		Moves the wheel by <code>n</code>.
 	</Function>
-	<Function name='SetOpenSection' sm-ssc='true' return='void' arguments='string sSection'>
+	<Function name='SetOpenSection' return='void' arguments='string sSection'>
 		Attempts to set the open section to <code>sSection</code>.
 	</Function>
 </Class>

@@ -350,7 +350,7 @@ bool NotesWriterDWI::Write( RString sPath, const Song &out )
 	/* Write transliterations, if we have them, since DWI doesn't support UTF-8. */
 	f.PutLine( ssprintf("#TITLE:%s;", DwiEscape(out.GetTranslitFullTitle()).c_str()) );
 	f.PutLine( ssprintf("#ARTIST:%s;", DwiEscape(out.GetTranslitArtist()).c_str()) );
-	ASSERT( out.m_SongTiming.m_BPMSegments[0].m_iStartRow == 0 );
+	ASSERT( out.m_SongTiming.m_BPMSegments[0].GetRow() == 0 );
 	f.PutLine( ssprintf("#FILE:%s;", DwiEscape(out.m_sMusicFile).c_str()) );
 	f.PutLine( ssprintf("#BPM:%.3f;", out.m_SongTiming.m_BPMSegments[0].GetBPM()) );
 	f.PutLine( ssprintf("#GAP:%ld;", -lrintf( out.m_SongTiming.m_fBeat0OffsetInSeconds*1000 )) );
@@ -381,8 +381,8 @@ bool NotesWriterDWI::Write( RString sPath, const Song &out )
 		for( unsigned i=0; i<out.m_SongTiming.m_StopSegments.size(); i++ )
 		{
 			const StopSegment &fs = out.m_SongTiming.m_StopSegments[i];
-			f.Write( ssprintf("%.3f=%.3f", fs.m_iStartRow * 4.0f / ROWS_PER_BEAT,
-				roundf(fs.m_fStopSeconds*1000)) );
+			f.Write( ssprintf("%.3f=%.3f", fs.GetRow() * 4.0f / ROWS_PER_BEAT,
+				roundf(fs.GetPause()*1000)) );
 			if( i != out.m_SongTiming.m_StopSegments.size()-1 )
 				f.Write( "," );
 		}
@@ -395,7 +395,7 @@ bool NotesWriterDWI::Write( RString sPath, const Song &out )
 		for( unsigned i=1; i<out.m_SongTiming.m_BPMSegments.size(); i++ )
 		{
 			const BPMSegment &bs = out.m_SongTiming.m_BPMSegments[i];
-			f.Write( ssprintf("%.3f=%.3f", bs.m_iStartRow * 4.0f / ROWS_PER_BEAT, bs.GetBPM() ) );
+			f.Write( ssprintf("%.3f=%.3f", bs.GetRow() * 4.0f / ROWS_PER_BEAT, bs.GetBPM() ) );
 			if( i != out.m_SongTiming.m_BPMSegments.size()-1 )
 				f.Write( "," );
 		}

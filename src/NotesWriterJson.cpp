@@ -11,14 +11,14 @@
 
 void Serialize(const BPMSegment &seg, Json::Value &root)
 {
-	root["Beat"] = NoteRowToBeat(seg.m_iStartRow);
-	root["BPM"] = seg.m_fBPS * 60;
+	root["Beat"] = seg.GetBeat();
+	root["BPM"] = seg.GetBPM();
 }
 
 static void Serialize(const StopSegment &seg, Json::Value &root)
 {
-	root["Beat"] = NoteRowToBeat(seg.m_iStartRow);
-	root["Seconds"] = seg.m_fStopSeconds;
+	root["Beat"] = seg.GetBeat();
+	root["Seconds"] = seg.GetPause();
 }
 
 static void Serialize(const TimingData &td, Json::Value &root)

@@ -49,7 +49,7 @@ Thai Pangsakulyanont (theDtTvB)
 Jason Felds (Wolfman2000)
  * [Player] PercentUntilColorCombo metric
  * Mac OS X maintainer
- * Various fixes/changes. (see Changelog_sm-ssc.txt for more details)
+ * Various fixes/changes. (see Changelogs for more details)
 
 ==other contributors==
 (in no particular order, aside from having SM team at the top)
@@ -68,7 +68,7 @@ David Santamaría Rogado (howl)
  * Various patches (see Changelog_sm-ssc.txt for more details and links)
 
 Kita K./D. Trucks
- * sm-ssc default theme music
+ * default theme music
 
 kurisu
  * Dance-threepanel gametype code (3.9; re-adapted for sm-ssc)

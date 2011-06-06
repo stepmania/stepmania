@@ -263,13 +263,16 @@ void PlayerOptions::FromString( const RString &sMultipleMods )
 	RString sThrowAway;
 	FOREACH( RString, vs, s )
 	{
-		FromOneModString( *s, sThrowAway );
+		if (!FromOneModString( *s, sThrowAway ))
+		{
+			LOG->Trace( "Attempted to load a non-existing mod \'%s\' for the Player. Ignoring.", (*s).c_str() );
+		}
 	}
 }
 
 bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut )
 {
-	ASSERT( NOTESKIN );
+	ASSERT_M( NOTESKIN, "The Noteskin Manager must be loaded in order to process mods." );
 
 	RString sBit = sOneMod;
 	sBit.MakeLower();
@@ -297,8 +300,8 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 			 * they meant "*123". */
 			if( s->Right(1) == "*" )
 			{
-				/* XXX We know what they want, is there any reason not to handle it? */
-				/* Yes.  We should be strict in handling the format. -Chris */
+				// XXX: We know what they want, is there any reason not to handle it?
+				// Yes. We should be strict in handling the format. -Chris
 				sErrorOut = ssprintf("Invalid player options \"%s\"; did you mean '*%d'?", s->c_str(), StringToInt(*s) );
 				return false;
 			}

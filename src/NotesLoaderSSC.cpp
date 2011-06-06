@@ -158,7 +158,8 @@ void SSCLoader::ProcessSpeeds( TimingData &out, const RString sParam )
 		
 		const float fBeat = StringToFloat( vs2[0] );
 		
-		SpeedSegment seg( fBeat, StringToFloat( vs2[1] ), StringToFloat( vs2[2] ), static_cast<unsigned short>(StringToInt(vs2[3])));
+		SpeedSegment seg( fBeat, StringToFloat( vs2[1] ), StringToFloat( vs2[2] ));
+		seg.SetUnit(StringToInt(vs2[3]));
 		
 		if( fBeat < 0 )
 		{
@@ -166,13 +167,43 @@ void SSCLoader::ProcessSpeeds( TimingData &out, const RString sParam )
 			continue;
 		}
 		
-		if( seg.m_fWait < 0 )
+		if( seg.GetLength() < 0 )
 		{
-			LOG->UserLog( "Song file", "(UNKNOWN)", "has an speed change with beat %f, fWait %f.", fBeat, seg.m_fWait );
+			LOG->UserLog( "Song file", "(UNKNOWN)", "has an speed change with beat %f, length %f.", fBeat, seg.GetLength() );
 			continue;
 		}
 		
 		out.AddSpeedSegment( seg );
+	}
+}
+
+void SSCLoader::ProcessScrolls( TimingData &out, const RString sParam )
+{
+	vector<RString> vs1;
+	split( sParam, ",", vs1 );
+	
+	FOREACH_CONST( RString, vs1, s1 )
+	{
+		vector<RString> vs2;
+		split( *s1, "=", vs2 );
+		
+		if( vs2.size() < 2 )
+		{
+			LOG->UserLog( "Song file", "(UNKNOWN)", "has an scroll change with %i values.", (int)vs2.size() );
+			continue;
+		}
+		
+		const float fBeat = StringToFloat( vs2[0] );
+		
+		ScrollSegment seg( fBeat, StringToFloat( vs2[1] ) );
+		
+		if( fBeat < 0 )
+		{
+			LOG->UserLog( "Song file", "(UNKNOWN)", "has an scroll change with beat %f.", fBeat );
+			continue;
+		}
+		
+		out.AddScrollSegment( seg );
 	}
 }
 
@@ -599,6 +630,11 @@ bool SSCLoader::LoadFromSSCFile( const RString &sPath, Song &out, bool bFromCach
 				else if( sValueName=="SPEEDS" )
 				{
 					ProcessSpeeds( stepsTiming, sParams[1] );
+				}
+				
+				else if( sValueName=="SCROLLS" )
+				{
+					ProcessScrolls( stepsTiming, sParams[1] );
 				}
 				
 				else if( sValueName=="FAKES" )
