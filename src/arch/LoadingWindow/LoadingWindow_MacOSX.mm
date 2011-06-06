@@ -29,7 +29,7 @@
 	progressIndicatorRect = NSMakeRect(0, 0, size.width, 0);
 	m_ProgressIndicator = [[NSProgressIndicator alloc] initWithFrame:progressIndicatorRect];
 	[m_ProgressIndicator sizeToFit];
-	[m_ProgressIndicator setIndeterminate:NO];
+	[m_ProgressIndicator setIndeterminate:YES];
 	[m_ProgressIndicator setMinValue:0];
 	[m_ProgressIndicator setMaxValue:1];
 	[m_ProgressIndicator setDoubleValue:0];
@@ -99,7 +99,7 @@
 
 - (void) setIndeterminate:(NSNumber *)indeterminate
 {
-	[m_ProgressIndicator setIndeterminate:(indeterminate > 0 ? YES : NO)];
+	[m_ProgressIndicator setIndeterminate:([indeterminate doubleValue] > 0 ? YES : NO)];
 }
 
 @end
