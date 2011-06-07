@@ -45,7 +45,6 @@ void PlayerOptions::Init()
 	ZERO( m_bTransforms );
 	m_bMuteOnError = false;
 	m_FailType = FAIL_IMMEDIATE;
-	m_ScoreDisplay = SCORING_ADD;
 	m_sNoteSkin = "";
 }
 
@@ -85,7 +84,6 @@ void PlayerOptions::Approach( const PlayerOptions& other, float fDeltaSeconds )
 	for( int i=0; i<NUM_TRANSFORMS; i++ )
 		DO_COPY( m_bTransforms[i] );
 	DO_COPY( m_bMuteOnError );
-	DO_COPY( m_ScoreDisplay );
 	DO_COPY( m_FailType );
 	DO_COPY( m_sNoteSkin );
 #undef APPROACH
@@ -439,9 +437,6 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 		GAMESTATE->GetDefaultPlayerOptions( po );
 		m_FailType = po.m_FailType;
 	}
-	else if( sBit == "addscore" )				m_ScoreDisplay = SCORING_ADD;
-	else if( sBit == "subtractscore" )			m_ScoreDisplay = SCORING_SUBTRACT;
-	else if( sBit == "averagescore" )			m_ScoreDisplay = SCORING_AVERAGE;
 	else if( sBit == "muteonerror" )			m_bMuteOnError = on;
 	else if( sBit == "random" )				ChooseRandomModifiers();
 	// deprecated mods/left in for compatibility
@@ -653,7 +648,6 @@ bool PlayerOptions::operator==( const PlayerOptions &other ) const
 	COMPARE(m_fScrollSpeed);
 	COMPARE(m_fScrollBPM);
 	COMPARE(m_fRandomSpeed);
-	COMPARE(m_ScoreDisplay);
 	COMPARE(m_FailType);
 	COMPARE(m_bMuteOnError);
 	COMPARE(m_fDark);
@@ -798,7 +792,6 @@ RString PlayerOptions::GetSavedPrefsString() const
 	SAVE( m_bTransforms[TRANSFORM_NOSTRETCH] );
 	SAVE( m_bTransforms[TRANSFORM_NOLIFTS] );
 	SAVE( m_bTransforms[TRANSFORM_NOFAKES] );
-	SAVE( m_ScoreDisplay );
 	SAVE( m_bMuteOnError );
 	SAVE( m_sNoteSkin );
 #undef SAVE

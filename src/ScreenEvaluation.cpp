@@ -99,7 +99,7 @@ void ScreenEvaluation::Init()
 		ss.m_Stage = Stage_1st;
 		enum_add( ss.m_Stage, rand()%3 );
 		ss.m_EarnedExtraStage = (EarnedExtraStage)(rand() % NUM_EarnedExtraStage);
-		GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
+		GAMESTATE->SetMasterPlayerNumber(PLAYER_1);
 		GAMESTATE->m_pCurSong.Set( SONGMAN->GetRandomSong() );
 		ss.m_vpPlayedSongs.push_back( GAMESTATE->m_pCurSong );
 		ss.m_vpPossibleSongs.push_back( GAMESTATE->m_pCurSong );
@@ -635,7 +635,7 @@ void ScreenEvaluation::Init()
 			{
 			case PLAY_MODE_BATTLE:
 				{
-					bool bWon = GAMESTATE->GetStageResult(GAMESTATE->m_MasterPlayerNumber) == RESULT_WIN;
+					bool bWon = GAMESTATE->GetStageResult(GAMESTATE->GetMasterPlayerNumber()) == RESULT_WIN;
 					if( bWon )
 						SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation win") );
 					else

@@ -111,7 +111,7 @@ void ScreenOptionsMemoryCard::AfterChangeRow( PlayerNumber pn )
 	}
 	else
 	{
-		int iRow = m_iCurrentRow[GAMESTATE->m_MasterPlayerNumber];
+		int iRow = m_iCurrentRow[GAMESTATE->GetMasterPlayerNumber()];
 		m_textOsMountDir.SetText( m_CurrentUsbStorageDevices[iRow].sOsMountDir );
 	}
 }
@@ -124,7 +124,7 @@ void ScreenOptionsMemoryCard::HandleMessage( const Message &msg )
 		{
 			/* Remember the old mountpoint. */
 			const vector<UsbStorageDevice> &v = m_CurrentUsbStorageDevices;
-			int iRow = m_iCurrentRow[GAMESTATE->m_MasterPlayerNumber];
+			int iRow = m_iCurrentRow[GAMESTATE->GetMasterPlayerNumber()];
 			RString sOldMountPoint;
 			if( iRow < int(v.size()) )
 			{
@@ -158,7 +158,7 @@ void ScreenOptionsMemoryCard::ExportOptions( int iRow, const vector<PlayerNumber
 	if( row.GetRowType() == OptionRow::RowType_Exit )
 		return;
 
-	PlayerNumber pn = GAMESTATE->m_MasterPlayerNumber;
+	PlayerNumber pn = GAMESTATE->GetMasterPlayerNumber();
 	if( m_iCurrentRow[pn] == iRow )
 	{
 		const vector<UsbStorageDevice> &v = m_CurrentUsbStorageDevices;
@@ -192,7 +192,7 @@ void ScreenOptionsMemoryCard::ProcessMenuStart( const InputEventPlus &input )
 	if( IsTransitioning() )
 		return;
 
-	int iCurRow = m_iCurrentRow[GAMESTATE->m_MasterPlayerNumber];
+	int iCurRow = m_iCurrentRow[GAMESTATE->GetMasterPlayerNumber()];
 
 	const vector<UsbStorageDevice> &v = m_CurrentUsbStorageDevices;
 	if( iCurRow < int(v.size()) )	// a card

@@ -179,7 +179,7 @@ void ScreenJukebox::Init()
 
 //	ASSERT( GAMESTATE->m_pCurSong );
 
-	GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
+	GAMESTATE->SetMasterPlayerNumber(PLAYER_1);
 
 	// choose some cool options
 	int Benchmark = 0;

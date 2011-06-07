@@ -33,11 +33,7 @@ end
 
 Branch = {
 	Init = function()
-		if GAMESTATE:GetCoinMode() == 'CoinMode_Home' then
-			return "ScreenInit"
-		else
-			return "ScreenInit"
-		end
+		return "ScreenInit"
 	end,
 	AfterInit = function()
 		if GAMESTATE:GetCoinMode() == 'CoinMode_Home' then

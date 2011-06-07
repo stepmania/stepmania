@@ -137,26 +137,6 @@ void PercentageDisplay::Refresh()
 	else
 	{
 		float fPercentDancePoints = m_pPlayerStageStats->GetPercentDancePoints();
-		float fCurMaxPercentDancePoints = m_pPlayerStageStats->GetCurMaxPercentDancePoints();
-
-		if( m_bApplyScoreDisplayOptions )
-		{
-			switch( m_pPlayerState->m_PlayerOptions.GetCurrent().m_ScoreDisplay )
-			{
-			case PlayerOptions::SCORING_ADD:
-				// nothing to do
-				break;
-			case PlayerOptions::SCORING_SUBTRACT:
-				fPercentDancePoints = 1.0f - ( fCurMaxPercentDancePoints - fPercentDancePoints );
-				break;
-			case PlayerOptions::SCORING_AVERAGE:
-				if( fCurMaxPercentDancePoints == 0.0f ) // don't divide by zero fats
-					fPercentDancePoints = 0.0f;
-				else
-					fPercentDancePoints = fPercentDancePoints / fCurMaxPercentDancePoints;
-				break;
-			}
-		}
 
 		// clamp percentage - feedback is that negative numbers look weird here.
 		CLAMP( fPercentDancePoints, 0.f, 1.f );

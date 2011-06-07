@@ -969,7 +969,7 @@ void MusicWheel::FilterWheelItemDatas(vector<MusicWheelItemData *> &aUnFilteredD
 			}
 
 			/* If the song has no steps for the current style, remove it. */
-			if( !pSong->HasStepsType(GAMESTATE->GetCurrentStyle()->m_StepsType) )
+			if( !CommonMetrics::AUTO_SET_STYLE && !pSong->HasStepsType(GAMESTATE->GetCurrentStyle()->m_StepsType) )
 			{
 				aiRemove[i] = true;
 				continue;

@@ -46,36 +46,6 @@ void ScoreDisplayNormal::SetScore( int iNewScore )
 {
 	float fScore = (float)iNewScore;
 
-	// TODO: Remove use of PlayerNumber.
-	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
-
-	// Play some games to display the correct score -- the actual internal 
-	// score does not change at all but the displayed one can (ie: displayed 
-	// score for subtractive is MaxScore - score).
-
-	int iMaxScore = STATSMAN->m_CurStageStats.m_player[pn].m_iMaxScore;
-	int iCurMaxScore = STATSMAN->m_CurStageStats.m_player[pn].m_iCurMaxScore;
-
-	switch( m_pPlayerState->m_PlayerOptions.GetCurrent().m_ScoreDisplay )
-	{
-	case PlayerOptions::SCORING_ADD:
-		// nothing to do
-		break;
-	case PlayerOptions::SCORING_SUBTRACT:
-		fScore = iMaxScore - ( iCurMaxScore - fScore );
-		break;
-	case PlayerOptions::SCORING_AVERAGE:
-		if( iCurMaxScore == 0 ) // don't divide by zero fats
-		{
-			fScore = 0;
-		}
-		else
-		{
-			float fScoreRatio = fScore / (float)iCurMaxScore;
-			fScore = fScoreRatio * iMaxScore;
-		}
-	}
-
 	m_text.SetTargetNumber( fScore );
 }
 

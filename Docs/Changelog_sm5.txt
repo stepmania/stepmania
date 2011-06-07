@@ -8,6 +8,17 @@ ________________________________________________________________________________
 StepMania 5.0 Preview 2 | 20110???
 --------------------------------------------------------------------------------
 
+2011/06/06
+----------
+* [PlayerOptions] Removed the ScoreDisplay mod choices. Use lua to make your
+  own scoring formulas that work in reverse instead. [Wolfman2000]
+* [ScreenGameplay] Fix an assist tick bug if there was no Player 1. Note that
+  this changes the behavior slightly: it is the first enabled player, or
+  master player, that gets the ticks now. A better solution will be looked at
+  in the future. [Wolfman2000]
+* [NoteDataUtil] Fix a radar issue involving hands. Unfortunately, this means
+  yet another cache reload for accuracy purposes. [Wolfman2000]
+
 2011/06/04
 ----------
 * Changed default MusicWheelSwitchSpeed to 15 (was 10). [AJ]

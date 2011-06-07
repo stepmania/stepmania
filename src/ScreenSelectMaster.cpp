@@ -294,7 +294,7 @@ void ScreenSelectMaster::HandleScreenMessage( const ScreenMessage SM )
 
 	if( SM == SM_PlayPostSwitchPage )
 	{
-		int iNewChoice = m_iChoice[ GAMESTATE->m_MasterPlayerNumber ];
+		int iNewChoice = m_iChoice[ GAMESTATE->GetMasterPlayerNumber() ];
 		Page newPage = GetPage( iNewChoice );
 
 		Message msg("PostSwitchPage");
@@ -516,7 +516,7 @@ void ScreenSelectMaster::MenuDown( const InputEventPlus &input )
 
 bool ScreenSelectMaster::ChangePage( int iNewChoice )
 {
-	Page oldPage = GetPage( m_iChoice[GAMESTATE->m_MasterPlayerNumber] );
+	Page oldPage = GetPage( m_iChoice[GAMESTATE->GetMasterPlayerNumber()] );
 	Page newPage = GetPage( iNewChoice );
 
 	// If anyone has already chosen, don't allow changing of pages
@@ -710,8 +710,8 @@ bool ScreenSelectMaster::ChangeSelection( PlayerNumber pn, MenuDir dir, int iNew
 
 PlayerNumber ScreenSelectMaster::GetSharedPlayer()
 {
-	if( GAMESTATE->m_MasterPlayerNumber != PLAYER_INVALID )
-		return GAMESTATE->m_MasterPlayerNumber;
+	if( GAMESTATE->GetMasterPlayerNumber() != PLAYER_INVALID )
+		return GAMESTATE->GetMasterPlayerNumber();
 
 	return PLAYER_1;
 }

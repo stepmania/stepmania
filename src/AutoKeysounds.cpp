@@ -49,7 +49,7 @@ void AutoKeysounds::LoadAutoplaySoundsInto( RageSoundReader_Chain *pChain )
 	 * Add all current autoplay sounds in both players to the chain.  If a sound is
 	 * common to both players, don't pan it; otherwise pan it to that player's side.
 	 */
-	int iNumTracks = m_ndAutoKeysoundsOnly[GAMESTATE->m_MasterPlayerNumber].GetNumTracks();
+	int iNumTracks = m_ndAutoKeysoundsOnly[GAMESTATE->GetMasterPlayerNumber()].GetNumTracks();
 	for( int t = 0; t < iNumTracks; t++ )
 	{
 		int iRow = -1;
@@ -297,7 +297,7 @@ void AutoKeysounds::FinishLoading()
 		apSounds.push_back( m_pPlayerSounds[1] );
 	}
 
-	if( GAMESTATE->GetNumPlayersEnabled() == 1 && GAMESTATE->m_MasterPlayerNumber == PLAYER_2 )
+	if( GAMESTATE->GetNumPlayersEnabled() == 1 && GAMESTATE->GetMasterPlayerNumber() == PLAYER_2 )
 		swap( m_pPlayerSounds[PLAYER_1], m_pPlayerSounds[PLAYER_2] );
 
 	if( apSounds.size() > 1 )

@@ -35,6 +35,8 @@ class Trail;
 /** @brief Holds game data that is not saved between sessions. */
 class GameState
 {
+	/** @brief The player number used with Styles where one player controls both sides. */
+	PlayerNumber	masterPlayerNumber;
 public:
 	/** @brief Set up the GameState with initial values. */
 	GameState();
@@ -91,8 +93,6 @@ public:
 	 * to get one credit, only to have to put in another four coins to get
 	 * the three credits needed to begin the game. */
 	BroadcastOnChange<int>			m_iCoins;
-	/** @brief The player number used with Styles where one player controls both sides. */
-	PlayerNumber	m_MasterPlayerNumber;
 	bool			m_bMultiplayer;
 	int				m_iNumMultiplayerNoteFields;
 	bool DifficultiesLocked() const;
@@ -139,6 +139,16 @@ public:
 	PlayerNumber GetFirstDisabledPlayer() const;
 	bool IsCpuPlayer( PlayerNumber pn ) const;
 	bool AnyPlayersAreCpu() const;
+	
+	/**
+	 * @brief Retrieve the present master player number.
+	 * @return The master player number. */
+	PlayerNumber GetMasterPlayerNumber() const;
+	
+	/**
+	 * @brief Set the master player number.
+	 * @param p the master player number. */
+	void SetMasterPlayerNumber(const PlayerNumber p);
 
 	bool IsCourseMode() const;
 	bool IsBattleMode() const; // not Rave

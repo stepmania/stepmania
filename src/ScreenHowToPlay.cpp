@@ -172,7 +172,7 @@ void ScreenHowToPlay::Init()
 
 		// Don't show judgment
 		PO_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions, ModsLevel_Stage, m_fBlind, 1.0f );
-		GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
+		GAMESTATE->SetMasterPlayerNumber(PLAYER_1);
 		GAMESTATE->m_bDemonstrationOrJukebox = true;
 	}
 

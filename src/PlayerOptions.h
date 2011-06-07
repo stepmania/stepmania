@@ -34,8 +34,7 @@ public:
 		m_fSkew(0), m_SpeedfSkew(1.0f),
 		m_fPassmark(0), m_SpeedfPassmark(1.0f),
 		m_fRandomSpeed(0), m_SpeedfRandomSpeed(1.0f),
-		m_bMuteOnError(false), m_FailType(FAIL_IMMEDIATE),
-		m_ScoreDisplay(SCORING_ADD)
+		m_bMuteOnError(false), m_FailType(FAIL_IMMEDIATE)
 	{
 		m_sNoteSkin = "";
 		ZERO( m_fAccels );	ONE( m_SpeedfAccels );
@@ -151,12 +150,6 @@ public:
 		SCROLL_CENTERED,
 		NUM_SCROLLS
 	};
-	enum ScoreDisplay {
-		SCORING_ADD=0,
-		SCORING_SUBTRACT,
-		SCORING_AVERAGE,
-		NUM_SCOREDISPLAYS
-	};
 
 	float GetReversePercentForColumn( int iCol ) const; // accounts for all Directions
 
@@ -198,7 +191,6 @@ public:
 	};
 	/** @brief The method for which a player can fail a song. */
 	FailType m_FailType;
-	ScoreDisplay m_ScoreDisplay;
 
 	/**
 	 * @brief The Noteskin to use.

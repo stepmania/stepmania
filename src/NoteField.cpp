@@ -303,7 +303,7 @@ void NoteField::Update( float fDeltaTime )
 	// TODO: Remove use of PlayerNumber.
 
 	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
-	if( pn == GAMESTATE->m_MasterPlayerNumber )
+	if( pn == GAMESTATE->GetMasterPlayerNumber() )
 		NoteDisplay::Update( fDeltaTime );
 }
 
