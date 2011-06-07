@@ -12,6 +12,10 @@ StepMania 5.0 Preview 2 | 20110???
 ----------
 * [PlayerOptions] Removed the ScoreDisplay mod choices. Use lua to make your
   own scoring formulas that work in reverse instead. [Wolfman2000]
+* [ScreenGameplay] Fix an assist tick bug if there was no Player 1. Note that
+  this changes the behavior slightly: it is the first enabled player, or
+  master player, that gets the ticks now. A better solution will be looked at
+  in the future. [Wolfman2000]
 
 2011/06/04
 ----------

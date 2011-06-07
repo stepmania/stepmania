@@ -139,6 +139,14 @@ public:
 	PlayerNumber GetFirstDisabledPlayer() const;
 	bool IsCpuPlayer( PlayerNumber pn ) const;
 	bool AnyPlayersAreCpu() const;
+	
+	/**
+	 * @brief Retrieve the present master player number.
+	 * @return The master player number. */
+	PlayerNumber GetMasterPlayerNumber() const
+	{
+		return m_MasterPlayerNumber;
+	}
 
 	bool IsCourseMode() const;
 	bool IsBattleMode() const; // not Rave
