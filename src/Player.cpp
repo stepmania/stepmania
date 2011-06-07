@@ -1375,7 +1375,7 @@ void Player::DrawPrimitives()
 
 	// May have both players in doubles (for battle play); only draw primary player.
 	if( GAMESTATE->GetCurrentStyle()->m_StyleType == StyleType_OnePlayerTwoSides  &&
-		pn != GAMESTATE->m_MasterPlayerNumber )
+		pn != GAMESTATE->GetMasterPlayerNumber() )
 		return;
 
 	// Draw these below everything else.

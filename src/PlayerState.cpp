@@ -162,7 +162,7 @@ void PlayerState::RebuildPlayerOptionsFromActiveAttacks()
 		so.FromString( m_ActiveAttacks[s].sModifiers );
 	}
 	m_PlayerOptions.Assign( ModsLevel_Song, po );
-	if( m_PlayerNumber == GAMESTATE->m_MasterPlayerNumber )
+	if( m_PlayerNumber == GAMESTATE->GetMasterPlayerNumber() )
 		GAMESTATE->m_SongOptions.Assign( ModsLevel_Song, so );
 
 	int iSumOfAttackLevels = GetSumOfActiveAttackLevels();

@@ -119,7 +119,7 @@ void ScreenOptionsCourseOverview::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if( SM == SM_GoToNextScreen )
 	{
-		int iRow = m_iCurrentRow[GAMESTATE->m_MasterPlayerNumber];
+		int iRow = m_iCurrentRow[GAMESTATE->GetMasterPlayerNumber()];
 		switch( iRow )
 		{
 		case CourseOverviewRow_Play:
@@ -191,7 +191,7 @@ void ScreenOptionsCourseOverview::ProcessMenuStart( const InputEventPlus &input 
 	if( IsTransitioning() )
 		return;
 
-	int iRow = m_iCurrentRow[GAMESTATE->m_MasterPlayerNumber];
+	int iRow = m_iCurrentRow[GAMESTATE->GetMasterPlayerNumber()];
 	switch( iRow )
 	{
 	case CourseOverviewRow_Play:

@@ -147,7 +147,7 @@ void ScreenOptionsExportPackage::ProcessMenuStart( const InputEventPlus &input )
 	if( IsTransitioning() )
 		return;
 
-	int iCurRow = m_iCurrentRow[GAMESTATE->m_MasterPlayerNumber];
+	int iCurRow = m_iCurrentRow[GAMESTATE->GetMasterPlayerNumber()];
 	if( m_pRows[iCurRow]->GetRowType() == OptionRow::RowType_Exit )
 	{
 		ScreenOptions::ProcessMenuStart( input );

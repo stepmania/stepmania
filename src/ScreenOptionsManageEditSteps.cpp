@@ -125,7 +125,7 @@ void ScreenOptionsManageEditSteps::HandleScreenMessage( const ScreenMessage SM )
 {
 	if( SM == SM_GoToNextScreen )
 	{
-		int iCurRow = m_iCurrentRow[GAMESTATE->m_MasterPlayerNumber];
+		int iCurRow = m_iCurrentRow[GAMESTATE->GetMasterPlayerNumber()];
 
 		if( iCurRow == 0 )	// "create new"
 		{
@@ -245,7 +245,7 @@ void ScreenOptionsManageEditSteps::ProcessMenuStart( const InputEventPlus &input
 	if( IsTransitioning() )
 		return;
 
-	int iCurRow = m_iCurrentRow[GAMESTATE->m_MasterPlayerNumber];
+	int iCurRow = m_iCurrentRow[GAMESTATE->GetMasterPlayerNumber()];
 
 	if( iCurRow == 0 )	// "create new"
 	{
@@ -292,7 +292,7 @@ void ScreenOptionsManageEditSteps::ExportOptions( int iRow, const vector<PlayerN
 
 Steps *ScreenOptionsManageEditSteps::GetStepsWithFocus() const
 {
-	int iCurRow = m_iCurrentRow[GAMESTATE->m_MasterPlayerNumber];
+	int iCurRow = m_iCurrentRow[GAMESTATE->GetMasterPlayerNumber()];
 	if( iCurRow == 0 )
 		return NULL;
 	else if( m_pRows[iCurRow]->GetRowType() == OptionRow::RowType_Exit )

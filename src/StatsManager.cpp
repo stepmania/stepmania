@@ -275,7 +275,7 @@ void StatsManager::CommitStatsToProfiles( const StageStats *pSS )
 			{
 				if( pSS->m_multiPlayer[mp].m_HighScore.IsEmpty() )
 					continue;
-				recent->AppendChild( MakeRecentScoreNode( *pSS, GAMESTATE->m_pCurTrail[GAMESTATE->m_MasterPlayerNumber], pSS->m_multiPlayer[mp], mp ) );
+				recent->AppendChild( MakeRecentScoreNode( *pSS, GAMESTATE->m_pCurTrail[GAMESTATE->GetMasterPlayerNumber()], pSS->m_multiPlayer[mp], mp ) );
 			}
 		}
 

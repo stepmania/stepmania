@@ -531,7 +531,7 @@ void ScreenOptions::HandleScreenMessage( const ScreenMessage SM )
 			return; // already transitioning
 
 		// If the selected option sets a screen, honor it.
-		RString sThisScreen = GetNextScreenForFocusedItem( GAMESTATE->m_MasterPlayerNumber );
+		RString sThisScreen = GetNextScreenForFocusedItem( GAMESTATE->GetMasterPlayerNumber() );
 		if( sThisScreen != "" )
 			m_sNextScreen = sThisScreen;
 

@@ -776,7 +776,7 @@ void ScreenGameplay::InitSongQueues()
 		ASSERT( pCourse );
 
 		m_apSongsQueue.clear();
-		PlayerNumber pnMaster = GAMESTATE->m_MasterPlayerNumber;
+		PlayerNumber pnMaster = GAMESTATE->GetMasterPlayerNumber();
 		Trail *pTrail = GAMESTATE->m_pCurTrail[pnMaster];
 		ASSERT( pTrail );
 		FOREACH_CONST( TrailEntry, pTrail->m_vEntries, e )
@@ -1227,7 +1227,7 @@ void ScreenGameplay::LoadNextSong()
 	FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
 	{
 		RageSoundReader *pPlayerSound = m_AutoKeysounds.GetPlayerSound(pi->m_pn);
-		if( pPlayerSound == NULL && pi->m_pn == GAMESTATE->m_MasterPlayerNumber )
+		if( pPlayerSound == NULL && pi->m_pn == GAMESTATE->GetMasterPlayerNumber() )
 			pPlayerSound = m_AutoKeysounds.GetSharedSound();
 		pi->m_SoundEffectControl.SetSoundReader( pPlayerSound );
 	}

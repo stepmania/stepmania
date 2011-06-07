@@ -488,7 +488,7 @@ void ScreenOptionsEditCourse::ProcessMenuStart( const InputEventPlus &input )
 	if( IsTransitioning() )
 		return;
 
-	int iRow = m_iCurrentRow[GAMESTATE->m_MasterPlayerNumber];
+	int iRow = m_iCurrentRow[GAMESTATE->GetMasterPlayerNumber()];
 
 	unsigned iSongCount = GAMESTATE->m_pCurCourse->m_vEntries.size();
 

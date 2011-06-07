@@ -107,7 +107,7 @@ void ScreenMiniMenu::AfterChangeValueOrRow( PlayerNumber pn )
 			OptionRow &optrow = *m_pRows[i];
 			optrow.GetRowDef().m_vEnabledForPlayers.clear();
 			if( mr.pfnEnabled() )
-				optrow.GetRowDef().m_vEnabledForPlayers.insert( GAMESTATE->m_MasterPlayerNumber );
+				optrow.GetRowDef().m_vEnabledForPlayers.insert( GAMESTATE->GetMasterPlayerNumber() );
 		}
 		m_pRows[i]->UpdateEnabledDisabled();
 	}

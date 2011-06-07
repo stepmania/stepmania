@@ -11,7 +11,7 @@ REGISTER_SCREEN_CLASS( ScreenGameplayShared );
 
 void ScreenGameplayShared::FillPlayerInfo( vector<PlayerInfo> &vPlayerInfoOut )
 {
-	const PlayerNumber master = GAMESTATE->m_MasterPlayerNumber;
+	const PlayerNumber master = GAMESTATE->GetMasterPlayerNumber();
 	const PlayerNumber other = (master == PLAYER_1? PLAYER_2:PLAYER_1);
 
 	/* The master player is where all of the real work takes place.  The other player exists
@@ -23,7 +23,7 @@ void ScreenGameplayShared::FillPlayerInfo( vector<PlayerInfo> &vPlayerInfoOut )
 
 PlayerInfo &ScreenGameplayShared::GetPlayerInfoForInput( const InputEventPlus& iep )
 {
-	return m_vPlayerInfo[GAMESTATE->m_MasterPlayerNumber];
+	return m_vPlayerInfo[GAMESTATE->GetMasterPlayerNumber()];
 }
 
 /*
