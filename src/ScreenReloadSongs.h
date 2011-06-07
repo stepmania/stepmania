@@ -13,7 +13,6 @@ public:
 	virtual void Init();
 	~ScreenReloadSongs();
 private:
-	bool loadComplete;
 	InGameLoadingWindow *loadWin;
 	RageThread m_loadingThread;
 	static int loadingThreadProc(void *thisAsVoidPtr);

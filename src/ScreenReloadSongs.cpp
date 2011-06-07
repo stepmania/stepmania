@@ -15,7 +15,7 @@
  * computer while songs load. */
 REGISTER_SCREEN_CLASS( ScreenReloadSongs );
 
-ScreenReloadSongs::ScreenReloadSongs() : loadComplete(false) {}
+ScreenReloadSongs::ScreenReloadSongs() {}
 
 void ScreenReloadSongs::Init()
 {
@@ -35,11 +35,7 @@ void ScreenReloadSongs::Init()
 
 ScreenReloadSongs::~ScreenReloadSongs()
 {
-	if(!loadComplete) {
-		//we where going to crash if we let this one lose, so "only" 
-		//leaving stuff possibly corrupted isn't worse.
-		m_loadingThread.Halt(true);
-	}
+	m_loadingThread.Wait();
 	RemoveChild(loadWin);
 	delete loadWin;
 }
@@ -51,7 +47,6 @@ int ScreenReloadSongs::loadingThreadProc(void *thisAsVoidPtr) {
 	SONGMAN->Reload( false );
 
 	SCREENMAN->PostMessageToTopScreen( SM_GoToNextScreen, 0 );
-	self->loadComplete=true;
 
 	return 0;
 }
