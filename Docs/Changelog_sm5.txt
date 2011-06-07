@@ -16,6 +16,8 @@ StepMania 5.0 Preview 2 | 20110???
   this changes the behavior slightly: it is the first enabled player, or
   master player, that gets the ticks now. A better solution will be looked at
   in the future. [Wolfman2000]
+* [NoteDataUtil] Fix a radar issue involving hands. Unfortunately, this means
+  yet another cache reload for accuracy purposes. [Wolfman2000]
 
 2011/06/04
 ----------

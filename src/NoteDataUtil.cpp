@@ -886,7 +886,7 @@ void NoteDataUtil::CalculateRadarValues( const NoteData &in, float fSongSeconds,
 		case RadarCategory_Jumps:			out[rc] = (float) stats.jumps;				break;
 		case RadarCategory_Holds:			out[rc] = (float) in.GetNumHoldNotes();		break;
 		case RadarCategory_Mines:			out[rc] = (float) in.GetNumMines();			break;
-		case RadarCategory_Hands:			out[rc] = (float) stats.hands;				break;
+		case RadarCategory_Hands:			out[rc] = (float) in.GetNumHands();			break;
 		case RadarCategory_Rolls:			out[rc] = (float) in.GetNumRolls();			break;
 		case RadarCategory_Lifts:			out[rc] = (float) in.GetNumLifts();			break;
 		case RadarCategory_Fakes:			out[rc] = (float) in.GetNumFakes();			break;
