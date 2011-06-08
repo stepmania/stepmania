@@ -148,23 +148,39 @@ end;
 r['DDR SuperNOVA 2'] = function(params, pss)
 	local multLookup =
 	{
-		['TapNoteScore_W1'] = 1,
-		['TapNoteScore_W2'] = 1,
-		['TapNoteScore_W3'] = 0.5
+		['TapNoteScore_W1'] = 10,
+		['TapNoteScore_W2'] = 10,
+		['TapNoteScore_W3'] = 5
 	};
 	setmetatable(multLookup, ZeroIfNotFound);
 	local radarValues = GetDirectRadar(params.Player);
-	local totalItems = GetTotalItems(radarValues); 
-	local base = 100000 / totalItems;
-	local hold = base * (params.HoldNoteScore == 'HoldNoteScore_Held' and 1 or 0);
-	local maxScore = (base * multLookup['TapNoteScore_W1']) + hold;
-	pss:SetCurMaxScore(pss:GetCurMaxScore() + (math.round(maxScore) * 10));
-	local preW1 = base * multLookup[params.TapNoteScore];
-	local buildScore = (preW1 - (IsW1Allowed(params.TapNoteScore) and 10 or 0)) + hold;
-	pss:SetScore(pss:GetScore() + (math.round(buildScore) * 10));
+	local numLifts = radarValues:GetCategory('RadarCategory_Lifts')
+	local numFakes = radarValues:GetCategory('RadarCategory_Fakes')
+	local totalItems = GetTotalItems(radarValues) - (numLifts + numFakes);
+
+	-- handle freezes
+	local maxAdd = 0
+	if params.HoldNoteScore == 'HoldNoteScore_Held' then
+		maxAdd = 10
+	else
+		if params.HoldNoteScore == 'HoldNoteScore_LetGo' then
+			maxAdd = 0
+		else
+			maxAdd = multLookup[params.TapNoteScore]
+			if params.TapNoteScore == 'TapNoteScore_W2' then
+				pss:SetCurMaxScore( pss:GetCurMaxScore() + 1000000 )
+			end
+		end
+	end
+	pss:SetCurMaxScore(pss:GetCurMaxScore() + maxAdd);
+
+	local scoreDiv = pss:GetCurMaxScore() % 1000000
+	local w2 = math.floor( pss:GetCurMaxScore()/1000000 )
+
+	pss:SetScore( math.floor( 1000*(scoreDiv/totalItems) * (1000 - (w2*100)) ) );
 end;
 -----------------------------------------------------------
---Radar Master (doesn't work in 1.2.1, disabled)
+--Radar Master (doesn't work in sm-ssc 1.2.1, disabled)
 --don't try to "fix it up", either. you *cannot* make it work in 1.2.1.
 -----------------------------------------------------------
 r['[SSC] Radar Master'] = function(params, pss)
