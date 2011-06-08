@@ -206,9 +206,9 @@ TimingData * GameState::GetProcessedTimingData() const
 	return this->processedTiming;
 }
 
-void GameState::SetProcessedTimingData(TimingData t)
+void GameState::SetProcessedTimingData(TimingData * t)
 {
-	this->processedTiming = &t;
+	this->processedTiming = t;
 }
 
 void GameState::ApplyGameCommand( const RString &sCommand, PlayerNumber pn )

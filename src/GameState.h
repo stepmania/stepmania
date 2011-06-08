@@ -160,7 +160,7 @@ public:
 	/**
 	 * @brief Set the timing data to be used with processing.
 	 * @param t the timing data. */
-	void SetProcessedTimingData(TimingData t);
+	void SetProcessedTimingData(TimingData * t);
 
 	bool IsCourseMode() const;
 	bool IsBattleMode() const; // not Rave

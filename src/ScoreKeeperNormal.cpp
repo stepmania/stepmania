@@ -120,6 +120,7 @@ void ScoreKeeperNormal::Load(
 		 * forced and not chosen by the user. */
 		NoteDataUtil::TransformNoteData( nd, aa, pSteps->m_StepsType, pSong );
 		RadarValues rvPre;
+		GAMESTATE->SetProcessedTimingData(&pSteps->m_Timing);
 		NoteDataUtil::CalculateRadarValues( nd, pSong->m_fMusicLengthSeconds, rvPre );
 
 		/* Apply user transforms to find out how the notes will really look.
@@ -132,6 +133,7 @@ void ScoreKeeperNormal::Load(
 		NoteDataUtil::TransformNoteData( nd, m_pPlayerState->m_PlayerOptions.GetStage(), pSteps->m_StepsType );
 		RadarValues rvPost;
 		NoteDataUtil::CalculateRadarValues( nd, pSong->m_fMusicLengthSeconds, rvPost );
+		GAMESTATE->SetProcessedTimingData(NULL);
 
 		iTotalPossibleDancePoints += this->GetPossibleDancePoints( rvPre, rvPost );
 		iTotalPossibleGradePoints += this->GetPossibleGradePoints( rvPre, rvPost );
