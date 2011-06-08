@@ -3242,6 +3242,7 @@ static LocalizedString SAVE_CHANGES_BEFORE_EXITING	( "ScreenEdit", "Do you want 
 
 void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAnswers )
 {
+	GAMESTATE->SetProcessedTimingData(&m_pSteps->m_Timing);
 	switch( c )
 	{
 		DEFAULT_FAIL( c );
@@ -3460,6 +3461,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 			}
 			break;
 	};
+	GAMESTATE->SetProcessedTimingData(NULL);
 }
 
 void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAnswers, bool bAllowUndo )
