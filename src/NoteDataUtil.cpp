@@ -799,6 +799,11 @@ RadarStats CalculateRadarStatsFast( const NoteData &in, RadarStats &out )
 	{
 		FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( in, t, r, 0, MAX_NOTE_ROW )
 		{
+			/* This function deals strictly with taps, jumps, hands, and quads.
+			 * As such, all rows in here have to be judgable. */
+			if (!GAMESTATE->GetProcessedTimingData()->IsJudgableAtRow(r))
+				continue;
+			
 			const TapNote &tn = in.GetTapNote(t, r);
 			switch( tn.type )
 			{

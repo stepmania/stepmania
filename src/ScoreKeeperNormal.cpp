@@ -219,6 +219,8 @@ void ScoreKeeperNormal::OnNextSong( int iSongInCourseIndex, const Steps* pSteps,
 	ASSERT( m_iMaxPossiblePoints >= 0 );
 	m_iMaxScoreSoFar += m_iMaxPossiblePoints;
 
+	GAMESTATE->SetProcessedTimingData(const_cast<TimingData *>(&pSteps->m_Timing));
+	
 	m_iNumTapsAndHolds = pNoteData->GetNumRowsWithTapOrHoldHead() + pNoteData->GetNumHoldNotes()
 		+ pNoteData->GetNumRolls();
 
@@ -232,6 +234,8 @@ void ScoreKeeperNormal::OnNextSong( int iSongInCourseIndex, const Steps* pSteps,
 	ASSERT( m_iPointBonus >= 0 );
 
 	m_iTapNotesHit = 0;
+	
+	GAMESTATE->SetProcessedTimingData(NULL);
 }
 
 static int GetScore(int p, int Z, int S, int n)

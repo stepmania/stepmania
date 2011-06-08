@@ -1152,6 +1152,9 @@ void ScreenEdit::UpdateTextInfo()
 		sText += ssprintf( TAP_NOTE_TYPE_FORMAT.GetValue(), TAP_NOTE_TYPE.GetValue().c_str(), TapNoteTypeToString( m_selectedTap.type ).c_str() );
 		break;
 	}
+	
+	GAMESTATE->SetProcessedTimingData(&m_pSteps->m_Timing);
+	
 	sText += ssprintf( NUM_STEPS_FORMAT.GetValue(), TAP_STEPS.GetValue().c_str(), m_NoteDataEdit.GetNumTapNotes() );
 	sText += ssprintf( NUM_JUMPS_FORMAT.GetValue(), JUMPS.GetValue().c_str(), m_NoteDataEdit.GetNumJumps() );
 	sText += ssprintf( NUM_HANDS_FORMAT.GetValue(), HANDS.GetValue().c_str(), m_NoteDataEdit.GetNumHands() );
@@ -1182,6 +1185,8 @@ void ScreenEdit::UpdateTextInfo()
 	}
 
 	m_textInfo.SetText( sText );
+	
+	GAMESTATE->SetProcessedTimingData(NULL);
 }
 
 void ScreenEdit::DrawPrimitives()

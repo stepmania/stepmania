@@ -2299,9 +2299,9 @@ void ScreenGameplay::SaveStats()
 		GAMESTATE->SetProcessedTimingData(&GAMESTATE->m_pCurSteps[pn]->m_Timing);
 		NoteDataUtil::CalculateRadarValues( nd, fMusicLen, rv );
 		pss.m_radarPossible += rv;
-		GAMESTATE->SetProcessedTimingData(NULL);
 		NoteDataWithScoring::GetActualRadarValues( nd, pss, fMusicLen, rv );
 		pss.m_radarActual += rv;
+		GAMESTATE->SetProcessedTimingData(NULL);
 	}
 }
 
