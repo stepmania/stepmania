@@ -122,6 +122,48 @@ r['DDR Extreme'] = function(params, pss)
 		Shared.CurrentStep[pn] = 0; -- Reset for the next song.
 	end;
 end;
+
+-----------------------------------------------------------
+--HYBRID Scoring
+-----------------------------------------------------------
+r['HYBRID'] = function(params, pss)
+	local multLookup =
+	{
+		['TapNoteScore_W1'] = 10,
+		['TapNoteScore_W2'] = 9,
+		['TapNoteScore_W3'] = 5
+	};
+	setmetatable(multLookup, ZeroIfNotFound);
+	local radarValues = GetDirectRadar(params.Player);
+	local totalItems = GetTotalItems(radarValues)
+		- radarValues:GetValue('RadarCategory_Lifts');
+	-- 1+2+3+...+totalItems の値
+	local sTotal = (totalItems+1)*totalItems/2;
+	-- [en] Score for one song
+	-- [ja] 1つあたりのスコア
+	local sOne = math.floor(100000000/sTotal);
+	-- [ja] 端数は最後の1ステップで加算するのでその値を取得
+	local sLast = 100000000-(sOne*sTotal);
+	-- [ja] 現在何個目の譜面か
+	pss:SetCurMaxScore(pss:GetCurMaxScore()+1);
+	-- [en] current score
+	-- [ja] 今回のスコア
+	local vScore = sOne*(pss:GetCurMaxScore());
+	if (params.HoldNoteScore == 'HoldNoteScore_Held') then
+		vScore = vScore;
+	else
+		if (params.HoldNoteScore == 'HoldNoteScore_LetGo') then
+			vScore = 0;
+		else
+			vScore = vScore*multLookup[params.TapNoteScore]/10;
+		end;
+	end;
+	if ((vScore > 0) and (pss:GetCurMaxScore() == totalItems)) then
+		vScore = vScore+sLast;
+	end;
+	pss:SetScore(pss:GetScore()+vScore);
+end;
+
 -----------------------------------------------------------
 --DDR SuperNOVA(-esque) scoring
 -----------------------------------------------------------
@@ -158,7 +200,7 @@ r['DDR SuperNOVA 2'] = function(params, pss)
 	local numFakes = radarValues:GetCategory('RadarCategory_Fakes')
 	local totalItems = GetTotalItems(radarValues) - (numLifts + numFakes);
 
-	-- handle freezes
+	-- handle holds
 	local maxAdd = 0
 	if params.HoldNoteScore == 'HoldNoteScore_Held' then
 		maxAdd = 10
@@ -167,21 +209,28 @@ r['DDR SuperNOVA 2'] = function(params, pss)
 			maxAdd = 0
 		else
 			maxAdd = multLookup[params.TapNoteScore]
-			if params.TapNoteScore == 'TapNoteScore_W2' then
+			if params.TapNoteScore == 'TapNoteScore_W2' or 'TapNoteScore_W3' then
+				-- [ja] 超最終手段
 				pss:SetCurMaxScore( pss:GetCurMaxScore() + 1000000 )
 			end
 		end
 	end
 	pss:SetCurMaxScore(pss:GetCurMaxScore() + maxAdd);
 
-	local scoreDiv = pss:GetCurMaxScore() % 1000000
-	local w2 = math.floor( pss:GetCurMaxScore()/1000000 )
+	--[[
+	[ja] パフェ数取得 この方法で取得するとロングノートの場合2つカウントされる そのため使えない
+	pss:GetTapNoteScores('TapNoteScore_W2')
+	仕方がないのでパフェ数を 1000000 単位で GetCurMaxScore に記録
+	その後、情報を分解して取り出す 
+	--]]
 
-	pss:SetScore( math.floor( 1000*(scoreDiv/totalItems) * (1000 - (w2*100)) ) );
+	local vScore = pss:GetCurMaxScore() % 1000000
+	local vSub = math.floor( pss:GetCurMaxScore()/1000000 )
+	pss:SetScore( math.floor(10000*vScore/totalItems) * 10 - (vSub*10) );
 end;
 -----------------------------------------------------------
 --Radar Master (doesn't work in sm-ssc 1.2.1, disabled)
---don't try to "fix it up", either. you *cannot* make it work in 1.2.1.
+--todo: get this working with StepMania 5
 -----------------------------------------------------------
 r['[SSC] Radar Master'] = function(params, pss)
 	local masterTable = {
