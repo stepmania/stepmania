@@ -150,7 +150,7 @@ function InitUserPrefs()
 end;
 
 function UserPrefScoringMode()
-	local baseChoices = { 'DDR 1stMIX', 'DDR 4thMIX', 'DDR Extreme', 'DDR SuperNOVA', 'DDR SuperNOVA 2', 'MIGS' }; --'[SSC] Radar Master'
+	local baseChoices = { 'DDR 1stMIX', 'DDR 4thMIX', 'DDR Extreme', 'DDR SuperNOVA', 'DDR SuperNOVA 2', 'MIGS', 'HYBRID' }; --'[SSC] Radar Master'
 	local t = {
 		Name = "UserPrefScoringMode";
 		LayoutType = "ShowAllInRow";
