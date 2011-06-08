@@ -851,7 +851,9 @@ public:
 	 * @return true if the row can be judged, false otherwise. */
 	bool IsJudgableAtRow( int row ) const
 	{
-		return !(IsWarpAtRow(row) && IsFakeAtRow(row));
+		if (IsWarpAtRow(row)) return false;
+		if (IsFakeAtRow(row)) return false;
+		return true;
 	}
 	/**
 	 * @brief Determine if this notes on this beat can be judged.
