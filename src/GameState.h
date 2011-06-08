@@ -37,6 +37,8 @@ class GameState
 {
 	/** @brief The player number used with Styles where one player controls both sides. */
 	PlayerNumber	masterPlayerNumber;
+	/** @brief The TimingData that is used for processing certain functions. */
+	TimingData * processedTiming;
 public:
 	/** @brief Set up the GameState with initial values. */
 	GameState();
@@ -149,6 +151,16 @@ public:
 	 * @brief Set the master player number.
 	 * @param p the master player number. */
 	void SetMasterPlayerNumber(const PlayerNumber p);
+	
+	/**
+	 * @brief Retrieve the present timing data being processed.
+	 * @return the timing data pointer. */
+	TimingData * GetProcessedTimingData() const;
+	
+	/**
+	 * @brief Set the timing data to be used with processing.
+	 * @param t the timing data. */
+	void SetProcessedTimingData(TimingData t);
 
 	bool IsCourseMode() const;
 	bool IsBattleMode() const; // not Rave
