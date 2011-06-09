@@ -94,11 +94,6 @@ void SMLoader::LoadFromTokens(
 	out.TidyUpData();
 }
 
-void SMLoader::GetApplicableFiles( const RString &sPath, vector<RString> &out )
-{
-	GetDirListing( sPath + RString("*.sm"), out );
-}
-
 void SMLoader::ProcessBGChanges( Song &out, const RString &sValueName, const RString &sPath, const RString &sParam )
 {
 	BackgroundLayer iLayer = BACKGROUND_LAYER_1;
@@ -357,10 +352,10 @@ void SMLoader::ProcessDelays( TimingData &out, const RString line, const int row
 	}
 }
 
-void SMLoader::ProcessTimeSignatures( TimingData &out, const RString sParam )
+void SMLoader::ProcessTimeSignatures( TimingData &out, const RString line, const int rowsPerBeat )
 {
 	vector<RString> vs1;
-	split( sParam, ",", vs1 );
+	split( line, ",", vs1 );
 	
 	FOREACH_CONST( RString, vs1, s1 )
 	{
@@ -373,9 +368,9 @@ void SMLoader::ProcessTimeSignatures( TimingData &out, const RString sParam )
 			continue;
 		}
 		
-		const float fBeat = StringToFloat( vs2[0] );
+		const float fBeat = RowToBeat( vs2[0], rowsPerBeat );
 		
-		TimeSignatureSegment seg( BeatToNoteRow( fBeat ), StringToInt( vs2[1] ), StringToInt( vs2[2] ));
+		TimeSignatureSegment seg( fBeat, StringToInt( vs2[1] ), StringToInt( vs2[2] ));
 		
 		if( fBeat < 0 )
 		{
@@ -399,10 +394,10 @@ void SMLoader::ProcessTimeSignatures( TimingData &out, const RString sParam )
 	}
 }
 
-void SMLoader::ProcessTickcounts( TimingData &out, const RString sParam )
+void SMLoader::ProcessTickcounts( TimingData &out, const RString line, const int rowsPerBeat )
 {
 	vector<RString> arrayTickcountExpressions;
-	split( sParam, ",", arrayTickcountExpressions );
+	split( line, ",", arrayTickcountExpressions );
 	
 	for( unsigned f=0; f<arrayTickcountExpressions.size(); f++ )
 	{
@@ -416,13 +411,14 @@ void SMLoader::ProcessTickcounts( TimingData &out, const RString sParam )
 			continue;
 		}
 		
-		const float fTickcountBeat = StringToFloat( arrayTickcountValues[0] );
+		const float fTickcountBeat = RowToBeat( arrayTickcountValues[0], rowsPerBeat );
 		int iTicks = clamp(atoi( arrayTickcountValues[1] ), 0, ROWS_PER_BEAT);
 		
-		TickcountSegment new_seg( BeatToNoteRow(fTickcountBeat), iTicks );
+		TickcountSegment new_seg( fTickcountBeat, iTicks );
 		out.AddTickcountSegment( new_seg );
 	}
 }
+
 
 bool SMLoader::LoadFromBGChangesString( BackgroundChange &change, const RString &sBGChangeExpression )
 {
@@ -894,6 +890,11 @@ bool SMLoader::LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePath
 
 	return true;
 
+}
+
+void SMLoader::GetApplicableFiles( const RString &sPath, vector<RString> &out )
+{
+	GetDirListing( sPath + RString("*.sm"), out );
 }
 
 void SMLoader::TidyUpData( Song &song, bool bFromCache )

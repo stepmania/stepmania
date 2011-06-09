@@ -24,18 +24,11 @@ enum SMALoadingStates
 struct SMALoader : public SMLoader
 {	
 	bool LoadFromDir( const RString &sPath, Song &out );
-	void TidyUpData( Song &song, bool bFromCache );
 	
 	bool LoadFromSMAFile( const RString &sPath, Song &out );
 	void GetApplicableFiles( const RString &sPath, vector<RString> &out );
 	
-	bool LoadEditFromFile( RString sEditFilePath, ProfileSlot slot, bool bAddStepsToSong );
-	bool LoadEditFromBuffer( const RString &sBuffer, const RString &sEditFilePath, ProfileSlot slot );
-	bool LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePath, ProfileSlot slot, bool bAddStepsToSong );
-	bool LoadFromBGChangesString( BackgroundChange &change, const RString &sBGChangeExpression );
-	
 	void ProcessBeatsPerMeasure( TimingData &out, const RString sParam );
-	void ProcessTickcounts( TimingData &out, const int iRowsPerBeat, const RString sParam );
 	void ProcessMultipliers( TimingData &out, const int iRowsPerBeat, const RString sParam );
 	void ProcessSpeeds( TimingData &out, const int iRowsPerBeat, const RString sParam );
 	void ProcessFakes( TimingData &out, const int iRowsPerBeat, const RString sParam );

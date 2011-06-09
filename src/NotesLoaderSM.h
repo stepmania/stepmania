@@ -21,13 +21,13 @@ struct SMLoader
 	virtual ~SMLoader() {}
 	
 	bool LoadFromDir( const RString &sPath, Song &out );
-	void TidyUpData( Song &song, bool bFromCache );
+	virtual void TidyUpData( Song &song, bool bFromCache );
 
 	bool LoadFromSMFile( const RString &sPath, Song &out, bool bFromCache = false );
 	void GetApplicableFiles( const RString &sPath, vector<RString> &out );
-	bool LoadEditFromFile( RString sEditFilePath, ProfileSlot slot, bool bAddStepsToSong );
-	bool LoadEditFromBuffer( const RString &sBuffer, const RString &sEditFilePath, ProfileSlot slot );
-	bool LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePath, ProfileSlot slot, bool bAddStepsToSong );
+	virtual bool LoadEditFromFile( RString sEditFilePath, ProfileSlot slot, bool bAddStepsToSong );
+	virtual bool LoadEditFromBuffer( const RString &sBuffer, const RString &sEditFilePath, ProfileSlot slot );
+	virtual bool LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePath, ProfileSlot slot, bool bAddStepsToSong );
 	virtual bool LoadFromBGChangesString(BackgroundChange &change, 
 					     const RString &sBGChangeExpression );
 	
@@ -49,15 +49,29 @@ struct SMLoader
 			  const RString line,
 			  const int rowsPerBeat = -1);
 	/**
-	 * @brief Process the Stop Segments from the string.
+	 * @brief Process the Delay Segments from the string.
 	 * @param out the TimingData being modified.
 	 * @param line the string in question.
 	 * @param rowsPerBeat the number of rows per beat for this purpose. */
 	void ProcessDelays(TimingData & out,
 			  const RString line,
 			  const int rowsPerBeat = -1);
-	void ProcessTimeSignatures( TimingData & out, const RString line );
-	void ProcessTickcounts( TimingData & out, const RString line );
+	/**
+	 * @brief Process the Time Signature Segments from the string.
+	 * @param out the TimingData being modified.
+	 * @param line the string in question.
+	 * @param rowsPerBeat the number of rows per beat for this purpose. */
+	void ProcessTimeSignatures(TimingData & out,
+			   const RString line,
+			   const int rowsPerBeat = -1);
+	/**
+	 * @brief Process the Tickcount Segments from the string.
+	 * @param out the TimingData being modified.
+	 * @param line the string in question.
+	 * @param rowsPerBeat the number of rows per beat for this purpose. */
+	void ProcessTickcounts(TimingData & out,
+				   const RString line,
+				   const int rowsPerBeat = -1);
 	void ProcessBGChanges( Song &out, const RString &sValueName, 
 			      const RString &sPath, const RString &sParam );
 	void ProcessAttacks( Song &out, MsdFile::value_t sParams );

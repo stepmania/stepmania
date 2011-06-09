@@ -19,12 +19,6 @@
  */
 const int MAX_EDIT_STEPS_SIZE_BYTES = 60*1024; // 60 KB
 
-bool SMALoader::LoadFromBGChangesString( BackgroundChange &change, 
-					const RString &sBGChangeExpression )
-{
-	return SMLoader::LoadFromBGChangesString(change, sBGChangeExpression);
-}
-
 bool SMALoader::LoadFromDir( const RString &sPath, Song &out )
 {
 	vector<RString> aFileNames;
@@ -37,31 +31,6 @@ bool SMALoader::LoadFromDir( const RString &sPath, Song &out )
 	}
 	ASSERT( aFileNames.size() == 1 );
 	return LoadFromSMAFile( sPath + aFileNames[0], out );
-}
-
-void SMALoader::ProcessTickcounts( TimingData &out, const int iRowsPerBeat, const RString sParam )
-{
-	vector<RString> arrayTickcountExpressions;
-	split( sParam, ",", arrayTickcountExpressions );
-	
-	for( unsigned f=0; f<arrayTickcountExpressions.size(); f++ )
-	{
-		vector<RString> arrayTickcountValues;
-		split( arrayTickcountExpressions[f], "=", arrayTickcountValues );
-		if( arrayTickcountValues.size() != 2 )
-		{
-			// XXX: Hard to tell which file caused this.
-			LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid #TICKCOUNTS value \"%s\" (must have exactly one '='), ignored.",
-				     arrayTickcountExpressions[f].c_str() );
-			continue;
-		}
-		
-		const float fTickcountBeat = RowToBeat( arrayTickcountValues[0], iRowsPerBeat );
-		int iTicks = clamp(atoi( arrayTickcountValues[1] ), 0, ROWS_PER_BEAT);
-		
-		TickcountSegment new_seg( BeatToNoteRow(fTickcountBeat), iTicks );
-		out.AddTickcountSegment( new_seg );
-	}
 }
 
 void SMALoader::ProcessMultipliers( TimingData &out, const int iRowsPerBeat, const RString sParam )
@@ -205,11 +174,6 @@ void SMALoader::ProcessFakes( TimingData &out, const int iRowsPerBeat, const RSt
 			LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid Fake at beat %f, BPM %f.", fBeat, fNewBeat );
 		}
 	}
-}
-
-void SMALoader::TidyUpData( Song &song, bool bFromCache )
-{
-	SMLoader::TidyUpData( song, bFromCache );
 }
 
 bool SMALoader::LoadFromSMAFile( const RString &sPath, Song &out )
@@ -456,7 +420,7 @@ bool SMALoader::LoadFromSMAFile( const RString &sPath, Song &out )
 		{
 			TimingData &timing = (state == SMA_GETTING_STEP_INFO 
 					      ? pNewNotes->m_Timing : out.m_SongTiming);
-			ProcessTickcounts( timing, iRowsPerBeat, sParams[1] );
+			ProcessTickcounts( timing, sParams[1], iRowsPerBeat );
 		}
 		
 		else if( sValueName=="SPEED" )
@@ -530,116 +494,6 @@ bool SMALoader::LoadFromSMAFile( const RString &sPath, Song &out )
 void SMALoader::GetApplicableFiles( const RString &sPath, vector<RString> &out )
 {
 	GetDirListing( sPath + RString("*.sma"), out );
-}
-
-bool SMALoader::LoadEditFromFile( RString sEditFilePath, ProfileSlot slot, bool bAddStepsToSong )
-{
-	LOG->Trace( "SMALoader::LoadEditFromFile(%s)", sEditFilePath.c_str() );
-	
-	int iBytes = FILEMAN->GetFileSizeInBytes( sEditFilePath );
-	if( iBytes > MAX_EDIT_STEPS_SIZE_BYTES )
-	{
-		LOG->UserLog( "Edit file", sEditFilePath, "is unreasonably large. It won't be loaded." );
-		return false;
-	}
-	
-	MsdFile msd;
-	if( !msd.ReadFile( sEditFilePath, true ) ) // unescape
-	{
-		LOG->UserLog( "Edit file", sEditFilePath, "couldn't be opened: %s", msd.GetError().c_str() );
-		return false;
-	}
-	
-	return LoadEditFromMsd( msd, sEditFilePath, slot, bAddStepsToSong );
-}
-
-bool SMALoader::LoadEditFromBuffer( const RString &sBuffer, const RString &sEditFilePath, ProfileSlot slot )
-{
-	MsdFile msd;
-	msd.ReadFromString( sBuffer, true ); // unescape
-	return LoadEditFromMsd( msd, sEditFilePath, slot, true );
-}
-
-bool SMALoader::LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePath, ProfileSlot slot, bool bAddStepsToSong )
-{
-	Song* pSong = NULL;
-	
-	for( unsigned i=0; i<msd.GetNumValues(); i++ )
-	{
-		int iNumParams = msd.GetNumParams(i);
-		const MsdFile::value_t &sParams = msd.GetValue(i);
-		RString sValueName = sParams[0];
-		sValueName.MakeUpper();
-		
-		// handle the data
-		if( sValueName=="SONG" )
-		{
-			if( pSong )
-			{
-				LOG->UserLog( "Edit file", sEditFilePath, "has more than one #SONG tag." );
-				return false;
-			}
-			
-			RString sSongFullTitle = sParams[1];
-			sSongFullTitle.Replace( '\\', '/' );
-			
-			pSong = SONGMAN->FindSong( sSongFullTitle );
-			if( pSong == NULL )
-			{
-				LOG->UserLog( "Edit file", sEditFilePath, "requires a song \"%s\" that isn't present.", sSongFullTitle.c_str() );
-				return false;
-			}
-			
-			if( pSong->GetNumStepsLoadedFromProfile(slot) >= MAX_EDITS_PER_SONG_PER_PROFILE )
-			{
-				LOG->UserLog( "Song file", sSongFullTitle, "already has the maximum number of edits allowed for ProfileSlotP%d.", slot+1 );
-				return false;
-			}
-		}
-		
-		else if( sValueName=="NOTES" )
-		{
-			if( pSong == NULL )
-			{
-				LOG->UserLog( "Edit file", sEditFilePath, "doesn't have a #SONG tag preceeding the first #NOTES tag." );
-				return false;
-			}
-			
-			if( iNumParams < 7 )
-			{
-				LOG->UserLog( "Edit file", sEditFilePath, "has %d fields in a #NOTES tag, but should have at least 7.", iNumParams );
-				continue;
-			}
-			
-			if( !bAddStepsToSong )
-				return true;
-			
-			Steps* pNewNotes = pSong->CreateSteps();
-			LoadFromTokens( 
-					 sParams[1], sParams[2], sParams[3], sParams[4], sParams[5], sParams[6],
-					 *pNewNotes);
-			
-			pNewNotes->SetLoadedFromProfile( slot );
-			pNewNotes->SetDifficulty( Difficulty_Edit );
-			pNewNotes->SetFilename( sEditFilePath );
-			
-			if( pSong->IsEditAlreadyLoaded(pNewNotes) )
-			{
-				LOG->UserLog( "Edit file", sEditFilePath, "is a duplicate of another edit that was already loaded." );
-				SAFE_DELETE( pNewNotes );
-				return false;
-			}
-			
-			pSong->AddSteps( pNewNotes );
-			return true; // Only allow one Steps per edit file!
-		}
-		else
-		{
-			LOG->UserLog( "Edit file", sEditFilePath, "has an unexpected value \"%s\".", sValueName.c_str() );
-		}
-	}
-	
-	return true;
 }
 
 /**
