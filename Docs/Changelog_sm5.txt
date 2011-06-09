@@ -8,6 +8,10 @@ ________________________________________________________________________________
 StepMania 5.0 Preview 2 | 20110???
 --------------------------------------------------------------------------------
 
+2011/06/09
+* [ScreenSyncOverlay] Ensure that F11 / F12 work with all charts due to Split
+  Timing. [Wolfman2000]
+
 2011/06/08
 ----------
 * Any notes in a fake segment or warp segment are completely ignored for
