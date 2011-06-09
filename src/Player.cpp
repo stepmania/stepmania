@@ -2878,7 +2878,7 @@ void Player::CrossedRows( int iLastRowCrossed, const RageTimer &now )
 		}
 		else if( CHECKPOINTS_USE_TIME_SIGNATURES )
 		{
-			TimeSignatureSegment tSignature = m_Timing->GetTimeSignatureSegmentAtBeat( NoteRowToBeat( iLastRowCrossed ) );
+			TimeSignatureSegment & tSignature = m_Timing->GetTimeSignatureSegmentAtRow( iLastRowCrossed );
 
 			// Most songs are in 4/4 time. The frequency for checking tick counts should reflect that.
 			iCheckpointFrequencyRows = ROWS_PER_BEAT * tSignature.GetDen() / (tSignature.GetNum() * 4);
@@ -2921,8 +2921,11 @@ void Player::CrossedRows( int iLastRowCrossed, const RageTimer &now )
 					bool bHoldOverlapsRow = iFirstCheckpointOfHold <= r  &&   r <= iLastCheckpointOfHold;
 					if( !bHoldOverlapsRow )
 						continue;
+					
+					
 
 					viColsWithHold.push_back( iTrack );
+					
 					if( tn.HoldResult.fLife > 0 )
 					{
 						++iNumHoldsHeldThisRow;
