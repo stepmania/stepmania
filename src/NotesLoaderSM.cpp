@@ -25,19 +25,9 @@ bool SMLoader::LoadFromDir( const RString &sPath, Song &out )
 	{
 		LOG->UserLog( "Song", sPath, "has more than one SM file. There can be only one (unless you are using TougaKiryuu's AnimeMix files somehow, which assume a different version of StepMania)!" );
 		return false;
-		/*
-		 for( unsigned i=0; i<aFileNames.size(); i++ )
-		 {
-		 if(!LoadFromSMFile( sPath + aFileNames[i], out ))
-		 return false;
-		 }
-		 return true;
-		 */
 	}
 	
 	ASSERT( aFileNames.size() == 1 );
-	/* We should have at least one; if we had none, we shouldn't have been
-	 * called to begin with. */
 	//ASSERT( aFileNames.size() >= 1 );
 	
 	return LoadFromSMFile( sPath + aFileNames[0], out );

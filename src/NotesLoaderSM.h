@@ -29,7 +29,12 @@ struct SMLoader
 	virtual void TidyUpData( Song &song, bool bFromCache );
 
 	bool LoadFromSMFile( const RString &sPath, Song &out, bool bFromCache = false );
-	void GetApplicableFiles( const RString &sPath, vector<RString> &out );
+	/**
+	 * @brief Retrieve the list of .sm files.
+	 * @param sPath a const reference to the path on the hard drive to check.
+	 * @param out a vector of files found in the path.
+	 */
+	virtual void GetApplicableFiles( const RString &sPath, vector<RString> &out );
 	virtual bool LoadEditFromFile( RString sEditFilePath, ProfileSlot slot, bool bAddStepsToSong );
 	virtual bool LoadEditFromBuffer( const RString &sBuffer, const RString &sEditFilePath, ProfileSlot slot );
 	virtual bool LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePath, ProfileSlot slot, bool bAddStepsToSong );

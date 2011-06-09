@@ -52,7 +52,7 @@ struct SSCLoader : public SMLoader
 	 * @param sPath a const reference to the path on the hard drive to check.
 	 * @param out a vector of files found in the path.
 	 */
-	void GetApplicableFiles( const RString &sPath, vector<RString> &out );
+	virtual void GetApplicableFiles( const RString &sPath, vector<RString> &out );
 	/**
 	 * @brief Attempt to load an edit from the hard drive.
 	 * @param sEditFilePath a path on the hard drive to check.

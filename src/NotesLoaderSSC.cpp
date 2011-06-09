@@ -30,8 +30,7 @@ bool SSCLoader::LoadFromDir( const RString &sPath, Song &out )
 		return false;
 	}
 
-	ASSERT( aFileNames.size() == 1 ); // Ensure one was found entirely.
-
+	ASSERT( aFileNames.size() == 1 );
 	return LoadFromSSCFile( sPath + aFileNames[0], out );
 }
 

@@ -26,10 +26,20 @@ struct SMALoader : public SMLoader
 	bool LoadFromDir( const RString &sPath, Song &out );
 	
 	bool LoadFromSMAFile( const RString &sPath, Song &out );
-	void GetApplicableFiles( const RString &sPath, vector<RString> &out );
+	/**
+	 * @brief Retrieve the list of .sma files.
+	 * @param sPath a const reference to the path on the hard drive to check.
+	 * @param out a vector of files found in the path.
+	 */
+	virtual void GetApplicableFiles( const RString &sPath, vector<RString> &out );
 	
 	void ProcessBeatsPerMeasure( TimingData &out, const RString sParam );
 	void ProcessMultipliers( TimingData &out, const int iRowsPerBeat, const RString sParam );
+	/**
+	 * @brief Process the Speed Segments from the string.
+	 * @param out the TimingData being modified.
+	 * @param line the string in question.
+	 * @param rowsPerBeat the number of rows per beat for this purpose. */
 	virtual void ProcessSpeeds( TimingData &out, const RString line, const int rowsPerBeat );
 };
 
