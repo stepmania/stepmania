@@ -16,8 +16,9 @@ class TimingData;
 const float FAST_BPM_WARP = 9999999.f;
 
 /** @brief Reads a Song from an .SM file. */
-namespace SMLoader
+struct SMLoader
 {
+	virtual ~SMLoader() {}
 	void LoadFromSMTokens( RString sStepsType, RString sDescription, RString sDifficulty,
 			      RString sMeter, RString sRadarValues, RString sNoteData, Steps &out );
 	
@@ -29,7 +30,8 @@ namespace SMLoader
 	bool LoadEditFromFile( RString sEditFilePath, ProfileSlot slot, bool bAddStepsToSong );
 	bool LoadEditFromBuffer( const RString &sBuffer, const RString &sEditFilePath, ProfileSlot slot );
 	bool LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePath, ProfileSlot slot, bool bAddStepsToSong );
-	bool LoadFromBGChangesString( BackgroundChange &change, const RString &sBGChangeExpression );
+	virtual bool LoadFromBGChangesString(BackgroundChange &change, 
+					     const RString &sBGChangeExpression );
 	
 	
 	bool ProcessBPMs( TimingData &, const RString );
@@ -41,7 +43,7 @@ namespace SMLoader
 			      const RString &sPath, const RString &sParam );
 	void ProcessAttacks( Song &out, MsdFile::value_t sParams );
 	void ProcessInstrumentTracks( Song &out, const RString &sParam );
-}
+};
 
 #endif
 

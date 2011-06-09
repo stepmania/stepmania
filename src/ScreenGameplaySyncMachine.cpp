@@ -21,10 +21,12 @@ void ScreenGameplaySyncMachine::Init()
 
 	RString sFile = THEME->GetPathO("ScreenGameplaySyncMachine","music");
 	// Allow themers to use either a .ssc or .sm file for this. -aj
+	SSCLoader loaderSSC;
+	SMLoader loaderSM;
 	if(sFile.Right(4) == ".ssc")
-		SSCLoader::LoadFromSSCFile( sFile, m_Song );
+		loaderSSC.LoadFromSSCFile( sFile, m_Song );
 	else
-		SMLoader::LoadFromSMFile( sFile, m_Song );
+		loaderSM.LoadFromSMFile( sFile, m_Song );
 
 	m_Song.SetSongDir( Dirname(sFile) );
 	m_Song.TidyUpData();

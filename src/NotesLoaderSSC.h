@@ -3,6 +3,7 @@
 #define NotesLoaderSSC_H
 
 #include "GameConstantsAndTypes.h"
+#include "NotesLoaderSM.h"
 
 class MsdFile;
 class Song;
@@ -29,7 +30,7 @@ const float VERSION_SPLIT_TIMING = 0.7f;
 /**
  * @brief The SSCLoader handles all of the parsing needed for .ssc files.
  */
-namespace SSCLoader
+struct SSCLoader : public SMLoader
 {
 	/**
 	 * @brief Attempt to load a song from a specified path.
@@ -83,7 +84,8 @@ namespace SSCLoader
 	void ProcessSpeeds( TimingData &, const RString );
 	void ProcessScrolls( TimingData &, const RString );
 	void ProcessFakes( TimingData &, const RString );
-}
+};
+
 #endif
 /**
  * @file

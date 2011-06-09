@@ -2,6 +2,7 @@
 #define NOTES_LOADER_SMA_H
 
 #include "GameConstantsAndTypes.h"
+#include "NotesLoaderSM.h"
 #include "BackgroundUtil.h"
 
 class MsdFile;
@@ -20,7 +21,7 @@ enum SMALoadingStates
 };
 
 /** @brief Reads a Song from a .SMA file. */
-namespace SMALoader
+struct SMALoader : public SMLoader
 {
 	void LoadFromSMATokens( RString sStepsType,
 			       RString sDescription,

@@ -19,17 +19,6 @@
  */
 const int MAX_EDIT_STEPS_SIZE_BYTES = 60*1024; // 60 KB
 
-/**
- * @brief Attempt to load any background changes in use by this song.
- * @param change a reference to the background change.
- * @param sBGChangeExpression a reference to the list of changes to be made.
- * @return its success or failure.
- */
-bool LoadFromBGSSCChangesString( BackgroundChange &change, const RString &sBGChangeExpression )
-{
-	return SMLoader::LoadFromBGChangesString( change, sBGChangeExpression );
-}
-
 bool SSCLoader::LoadFromDir( const RString &sPath, Song &out )
 {
 	vector<RString> aFileNames;
@@ -421,7 +410,7 @@ bool SSCLoader::LoadFromSSCFile( const RString &sPath, Song &out, bool bFromCach
 					for( unsigned b=0; b<aFGChangeExpressions.size(); b++ )
 					{
 						BackgroundChange change;
-						if( LoadFromBGSSCChangesString( change, aFGChangeExpressions[b] ) )
+						if( LoadFromBGChangesString( change, aFGChangeExpressions[b] ) )
 							out.AddForegroundChange( change );
 					}
 				}
