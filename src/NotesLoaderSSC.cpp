@@ -872,9 +872,13 @@ bool SSCLoader::LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePat
 			else
 			{
 				pNewNotes = pSong->CreateSteps();
-				SMLoader::LoadFromSMTokens( 
-						 sParams[1], sParams[2], sParams[3], sParams[4], sParams[5], sParams[6],
-						 *pNewNotes);
+				LoadFromTokens(sParams[1],
+					       sParams[2],
+					       sParams[3],
+					       sParams[4],
+					       sParams[5],
+					       sParams[6],
+					       *pNewNotes);
 			}
 
 			pNewNotes->SetLoadedFromProfile( slot );

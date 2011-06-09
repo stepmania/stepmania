@@ -16,7 +16,22 @@
 /** @brief The maximum file size for edits. */
 const int MAX_EDIT_STEPS_SIZE_BYTES		= 60*1024;	// 60KB
 
-void SMLoader::LoadFromSMTokens( 
+float SMLoader::RowToBeat( RString line, const int rowsPerBeat )
+{
+	RString backup = line;
+	Trim(line, "r");
+	Trim(line, "R");
+	if( backup != line )
+	{
+		return StringToFloat( line ) / rowsPerBeat;
+	}
+	else
+	{
+		return StringToFloat( line );
+	}
+}
+
+void SMLoader::LoadFromTokens( 
 			     RString sStepsType, 
 			     RString sDescription,
 			     RString sDifficulty,
@@ -34,7 +49,7 @@ void SMLoader::LoadFromSMTokens(
 	Trim( sDifficulty );
 	Trim( sNoteData );
 
-	//	LOG->Trace( "Steps::LoadFromSMTokens()" );
+	//	LOG->Trace( "Steps::LoadFromTokens()" );
 
 	// insert stepstype hacks from GameManager.cpp here? -aj
 	out.m_StepsType = GAMEMAN->StringToStepsType( sStepsType );
@@ -719,7 +734,7 @@ bool SMLoader::LoadFromSMFile( const RString &sPath, Song &out, bool bFromCache 
 			}
 
 			Steps* pNewNotes = out.CreateSteps();
-			LoadFromSMTokens( 
+			LoadFromTokens( 
 				sParams[1], 
 				sParams[2], 
 				sParams[3], 
@@ -853,7 +868,7 @@ bool SMLoader::LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePath
 				return true;
 
 			Steps* pNewNotes = pSong->CreateSteps();
-			LoadFromSMTokens( 
+			LoadFromTokens( 
 				sParams[1], sParams[2], sParams[3], sParams[4], sParams[5], sParams[6],
 				*pNewNotes);
 

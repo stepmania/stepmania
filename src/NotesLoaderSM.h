@@ -19,8 +19,6 @@ const float FAST_BPM_WARP = 9999999.f;
 struct SMLoader
 {
 	virtual ~SMLoader() {}
-	void LoadFromSMTokens( RString sStepsType, RString sDescription, RString sDifficulty,
-			      RString sMeter, RString sRadarValues, RString sNoteData, Steps &out );
 	
 	bool LoadFromDir( const RString &sPath, Song &out );
 	void TidyUpData( Song &song, bool bFromCache );
@@ -43,6 +41,33 @@ struct SMLoader
 			      const RString &sPath, const RString &sParam );
 	void ProcessAttacks( Song &out, MsdFile::value_t sParams );
 	void ProcessInstrumentTracks( Song &out, const RString &sParam );
+	
+	/**
+	 * @brief Convert a row value to the proper beat value.
+	 * 
+	 * This is primarily used for assistance with converting SMA files.
+	 * @param line The line that contains the value.
+	 * @param rowsPerBeat the number of rows per beat according to the original file.
+	 * @return the converted beat value. */
+	float RowToBeat(RString line, const int rowsPerBeat);
+	
+protected:
+	/**
+	 * @brief Process the different tokens we have available to get NoteData.
+	 * @param stepsType The current StepsType.
+	 * @param description The description of the chart.
+	 * @param difficulty The difficulty (in words) of the chart.
+	 * @param meter the difficulty (in numbers) of the chart.
+	 * @param radarValues the calculated radar values.
+	 * @param noteData the note data itself.
+	 * @param out the Steps getting the data. */
+	virtual void LoadFromTokens(RString sStepsType, 
+				    RString sDescription,
+				    RString sDifficulty,
+				    RString sMeter,
+				    RString sRadarValues,
+				    RString sNoteData,
+				    Steps &out);
 };
 
 #endif

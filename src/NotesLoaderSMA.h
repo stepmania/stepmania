@@ -22,15 +22,7 @@ enum SMALoadingStates
 
 /** @brief Reads a Song from a .SMA file. */
 struct SMALoader : public SMLoader
-{
-	void LoadFromSMATokens( RString sStepsType,
-			       RString sDescription,
-			       RString sDifficulty,
-			       RString sMeter,
-			       RString sRadarValues,
-			       RString sNoteData,
-			       Steps &out );
-	
+{	
 	bool LoadFromDir( const RString &sPath, Song &out );
 	void TidyUpData( Song &song, bool bFromCache );
 	
@@ -50,8 +42,6 @@ struct SMALoader : public SMLoader
 	void ProcessMultipliers( TimingData &out, const int iRowsPerBeat, const RString sParam );
 	void ProcessSpeeds( TimingData &out, const int iRowsPerBeat, const RString sParam );
 	void ProcessFakes( TimingData &out, const int iRowsPerBeat, const RString sParam );
-	
-	float RowToBeat( RString sLine, const int iRowsPerBeat );
 };
 
 #endif

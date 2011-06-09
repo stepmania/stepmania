@@ -39,19 +39,6 @@ bool SMALoader::LoadFromDir( const RString &sPath, Song &out )
 	return LoadFromSMAFile( sPath + aFileNames[0], out );
 }
 
-float SMALoader::RowToBeat( RString sLine, const int iRowsPerBeat )
-{
-	if( sLine.find("R") || sLine.find("r") )
-	{
-		sLine = sLine.Left(sLine.size()-1);
-		return StringToFloat( sLine ) / iRowsPerBeat;
-	}
-	else
-	{
-		return StringToFloat( sLine );
-	}
-}
-
 bool SMALoader::ProcessBPMs( TimingData &out, const int iRowsPerBeat, const RString sParam )
 {
 	vector<RString> arrayBPMChangeExpressions;
@@ -391,22 +378,6 @@ void SMALoader::ProcessFakes( TimingData &out, const int iRowsPerBeat, const RSt
 	}
 }
 
-
-void SMALoader::LoadFromSMATokens(
-				  RString sStepsType,
-				  RString sDescription,
-				  RString sDifficulty,
-				  RString sMeter,
-				  RString sRadarValues,
-				  RString sNoteData,
-				  Steps &out
-)
-{
-	SMLoader::LoadFromSMTokens( sStepsType, sDescription,
-				    sDifficulty, sMeter, sRadarValues,
-				    sNoteData, out );
-}
-
 void SMALoader::TidyUpData( Song &song, bool bFromCache )
 {
 	SMLoader::TidyUpData( song, bFromCache );
@@ -706,7 +677,7 @@ bool SMALoader::LoadFromSMAFile( const RString &sPath, Song &out )
 				continue;
 			}
 			
-			LoadFromSMATokens( 
+			LoadFromTokens( 
 					 sParams[1], 
 					 sParams[2], 
 					 sParams[3], 
@@ -815,7 +786,7 @@ bool SMALoader::LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePat
 				return true;
 			
 			Steps* pNewNotes = pSong->CreateSteps();
-			LoadFromSMATokens( 
+			LoadFromTokens( 
 					 sParams[1], sParams[2], sParams[3], sParams[4], sParams[5], sParams[6],
 					 *pNewNotes);
 			
