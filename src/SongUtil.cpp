@@ -871,13 +871,15 @@ void SongUtil::GetAllSongGenres( vector<RString> &vsOut )
 	}
 }
 
-void SongUtil::FilterSongs( const SongCriteria &sc, const vector<Song*> &in, vector<Song*> &out )
+void SongUtil::FilterSongs( const SongCriteria &sc, const vector<Song*> &in,
+			   vector<Song*> &out, bool doCareAboutGame )
 {
 	out.reserve( in.size() );
 	FOREACH_CONST( Song*, in, s )
 	{
-		if( sc.Matches( *s ) )
+		if( sc.Matches( *s ) && (!doCareAboutGame || IsSongPlayable(*s) ) )
 		{
+			
 			out.push_back( *s );
 		}
 	}
@@ -961,6 +963,21 @@ bool SongUtil::IsStepsPlayable( Song *pSong, Steps *pSteps )
 	vector<Steps*> vpSteps;
 	GetPlayableSteps( pSong, vpSteps );
 	return find( vpSteps.begin(), vpSteps.end(), pSteps ) != vpSteps.end();
+}
+
+bool SongUtil::IsSongPlayable( Song *s )
+{
+	const vector<Steps*> & steps = s->GetAllSteps();
+	// I'm sure there is a foreach loop, but I don't
+	FOREACH( Steps*, const_cast<vector<Steps*>&>(steps), step )
+	{
+		if (IsStepsPlayable(s, *step))
+		{
+			return true;
+		}
+	}
+	
+	return false;
 }
 
 bool SongUtil::GetStepsTypeAndDifficultyFromSortOrder( SortOrder so, StepsType &stOut, Difficulty &dcOut )
