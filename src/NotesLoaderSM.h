@@ -31,12 +31,33 @@ struct SMLoader
 	virtual bool LoadFromBGChangesString(BackgroundChange &change, 
 					     const RString &sBGChangeExpression );
 	
-	
-	bool ProcessBPMs( TimingData &, const RString );
-	void ProcessStops( TimingData &, const RString );
-	void ProcessDelays( TimingData &, const RString );
-	void ProcessTimeSignatures( TimingData &, const RString );
-	void ProcessTickcounts( TimingData &, const RString );
+	/**
+	 * @brief Process the BPM Segments from the string.
+	 * @param out the TimingData being modified.
+	 * @param line the string in question.
+	 * @param rowsPerBeat the number of rows per beat for this purpose.
+	 * @return true if there was at least one segment found, false otherwise. */
+	bool ProcessBPMs(TimingData & out,
+			 const RString line,
+			 const int rowsPerBeat = -1);
+	/**
+	 * @brief Process the Stop Segments from the string.
+	 * @param out the TimingData being modified.
+	 * @param line the string in question.
+	 * @param rowsPerBeat the number of rows per beat for this purpose. */
+	void ProcessStops(TimingData & out,
+			  const RString line,
+			  const int rowsPerBeat = -1);
+	/**
+	 * @brief Process the Stop Segments from the string.
+	 * @param out the TimingData being modified.
+	 * @param line the string in question.
+	 * @param rowsPerBeat the number of rows per beat for this purpose. */
+	void ProcessDelays(TimingData & out,
+			  const RString line,
+			  const int rowsPerBeat = -1);
+	void ProcessTimeSignatures( TimingData & out, const RString line );
+	void ProcessTickcounts( TimingData & out, const RString line );
 	void ProcessBGChanges( Song &out, const RString &sValueName, 
 			      const RString &sPath, const RString &sParam );
 	void ProcessAttacks( Song &out, MsdFile::value_t sParams );

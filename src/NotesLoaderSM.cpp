@@ -186,10 +186,10 @@ void SMLoader::ProcessInstrumentTracks( Song &out, const RString &sParam )
 	}
 }
 
-bool SMLoader::ProcessBPMs( TimingData &out, const RString sParam )
+bool SMLoader::ProcessBPMs( TimingData &out, const RString line, const int rowsPerBeat )
 {
 	vector<RString> arrayBPMChangeExpressions;
-	split( sParam, ",", arrayBPMChangeExpressions );
+	split( line, ",", arrayBPMChangeExpressions );
 	
 	// prepare storage variables for negative BPMs -> Warps.
 	float negBeat = -1;
@@ -211,7 +211,7 @@ bool SMLoader::ProcessBPMs( TimingData &out, const RString sParam )
 		
 		bNotEmpty = true;
 		
-		const float fBeat = StringToFloat( arrayBPMChangeValues[0] );
+		const float fBeat = RowToBeat( arrayBPMChangeValues[0], rowsPerBeat );
 		const float fNewBPM = StringToFloat( arrayBPMChangeValues[1] );
 		
 		if( fNewBPM < 0.0f )
@@ -257,10 +257,10 @@ bool SMLoader::ProcessBPMs( TimingData &out, const RString sParam )
 	return bNotEmpty;
 }
 
-void SMLoader::ProcessStops( TimingData &out, const RString sParam )
+void SMLoader::ProcessStops( TimingData &out, const RString line, const int rowsPerBeat )
 {
 	vector<RString> arrayFreezeExpressions;
-	split( sParam, ",", arrayFreezeExpressions );
+	split( line, ",", arrayFreezeExpressions );
 	
 	// Prepare variables for negative stop conversion.
 	float negBeat = -1;
@@ -278,7 +278,7 @@ void SMLoader::ProcessStops( TimingData &out, const RString sParam )
 			continue;
 		}
 		
-		const float fFreezeBeat = StringToFloat( arrayFreezeValues[0] );
+		const float fFreezeBeat = RowToBeat( arrayFreezeValues[0], rowsPerBeat );
 		const float fFreezeSeconds = StringToFloat( arrayFreezeValues[1] );
 		
 		// Process the prior stop.
@@ -323,10 +323,10 @@ void SMLoader::ProcessStops( TimingData &out, const RString sParam )
 	}
 }
 
-void SMLoader::ProcessDelays( TimingData &out, const RString sParam )
+void SMLoader::ProcessDelays( TimingData &out, const RString line, const int rowsPerBeat )
 {
 	vector<RString> arrayDelayExpressions;
-	split( sParam, ",", arrayDelayExpressions );
+	split( line, ",", arrayDelayExpressions );
 	
 	for( unsigned f=0; f<arrayDelayExpressions.size(); f++ )
 	{
@@ -340,7 +340,7 @@ void SMLoader::ProcessDelays( TimingData &out, const RString sParam )
 			continue;
 		}
 		
-		const float fFreezeBeat = StringToFloat( arrayDelayValues[0] );
+		const float fFreezeBeat = RowToBeat( arrayDelayValues[0], rowsPerBeat );
 		const float fFreezeSeconds = StringToFloat( arrayDelayValues[1] );
 		
 		StopSegment new_seg( fFreezeBeat, fFreezeSeconds, true );

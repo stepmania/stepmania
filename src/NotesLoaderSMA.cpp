@@ -39,177 +39,6 @@ bool SMALoader::LoadFromDir( const RString &sPath, Song &out )
 	return LoadFromSMAFile( sPath + aFileNames[0], out );
 }
 
-bool SMALoader::ProcessBPMs( TimingData &out, const int iRowsPerBeat, const RString sParam )
-{
-	vector<RString> arrayBPMChangeExpressions;
-	split( sParam, ",", arrayBPMChangeExpressions );
-	
-	// prepare storage variables for negative BPMs -> Warps.
-	float negBeat = -1;
-	float negBPM = 1;
-	float highspeedBeat = -1;
-	bool bNotEmpty = false;
-	
-	for( unsigned b=0; b<arrayBPMChangeExpressions.size(); b++ )
-	{
-		vector<RString> arrayBPMChangeValues;
-		split( arrayBPMChangeExpressions[b], "=", arrayBPMChangeValues );
-		// XXX: Hard to tell which file caused this.
-		if( arrayBPMChangeValues.size() != 2 )
-		{
-			LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid #BPMs value \"%s\" (must have exactly one '='), ignored.",
-				     arrayBPMChangeExpressions[b].c_str() );
-			continue;
-		}
-		
-		bNotEmpty = true;
-		
-		const float fBeat = RowToBeat( arrayBPMChangeValues[0], iRowsPerBeat );
-		const float fNewBPM = StringToFloat( arrayBPMChangeValues[1] );
-		
-		if( fNewBPM < 0.0f )
-		{
-			out.m_bHasNegativeBpms = true;
-			negBeat = fBeat;
-			negBPM = fNewBPM;
-		}
-		else if( fNewBPM > 0.0f )
-		{
-			// add in a warp.
-			if( negBPM < 0 )
-			{
-				float endBeat = fBeat + (fNewBPM / -negBPM) * (fBeat - negBeat);
-				WarpSegment new_seg(negBeat, endBeat - negBeat);
-				out.AddWarpSegment( new_seg );
-				
-				negBeat = -1;
-				negBPM = 1;
-			}
-			// too fast. make it a warp.
-			if( fNewBPM > FAST_BPM_WARP )
-			{
-				highspeedBeat = fBeat;
-			}
-			else
-			{
-				// add in a warp.
-				if( highspeedBeat > 0 )
-				{
-					WarpSegment new_seg(highspeedBeat, fBeat - highspeedBeat);
-					out.AddWarpSegment( new_seg );
-					highspeedBeat = -1;
-				}
-				{
-					BPMSegment new_seg( BeatToNoteRow( fBeat ), fNewBPM );
-					out.AddBPMSegment( new_seg );
-				}
-			}
-		}
-	}
-	
-	return bNotEmpty;
-}
-
-void SMALoader::ProcessStops( TimingData &out, const int iRowsPerBeat, const RString sParam )
-{
-	vector<RString> arrayFreezeExpressions;
-	split( sParam, ",", arrayFreezeExpressions );
-	
-	// Prepare variables for negative stop conversion.
-	float negBeat = -1;
-	float negPause = 0;
-	
-	for( unsigned f=0; f<arrayFreezeExpressions.size(); f++ )
-	{
-		vector<RString> arrayFreezeValues;
-		split( arrayFreezeExpressions[f], "=", arrayFreezeValues );
-		if( arrayFreezeValues.size() != 2 )
-		{
-			// XXX: Hard to tell which file caused this.
-			LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid #STOPS value \"%s\" (must have exactly one '='), ignored.",
-				     arrayFreezeExpressions[f].c_str() );
-			continue;
-		}
-		
-		const float fFreezeBeat = RowToBeat( arrayFreezeValues[0], iRowsPerBeat );
-		const float fFreezeSeconds = StringToFloat( arrayFreezeValues[1] );
-		
-		// Process the prior stop.
-		if( negPause > 0 )
-		{
-			BPMSegment oldBPM = out.GetBPMSegmentAtRow(BeatToNoteRow(negBeat));
-			float fSecondsPerBeat = 60 / oldBPM.GetBPM();
-			float fSkipBeats = negPause / fSecondsPerBeat;
-			
-			if( negBeat + fSkipBeats > fFreezeBeat )
-				fSkipBeats = fFreezeBeat - negBeat;
-			
-			WarpSegment ws( negBeat, fSkipBeats);
-			out.AddWarpSegment( ws );
-			
-			negBeat = -1;
-			negPause = 0;
-		}
-		
-		if( fFreezeSeconds < 0.0f )
-		{
-			negBeat = fFreezeBeat;
-			negPause = -fFreezeSeconds;
-		}
-		else if( fFreezeSeconds > 0.0f )
-		{
-			StopSegment ss( BeatToNoteRow(fFreezeBeat), fFreezeSeconds );
-			out.AddStopSegment( ss );
-		}
-		
-	}
-	
-	// Process the prior stop if there was one.
-	if( negPause > 0 )
-	{
-		BPMSegment oldBPM = out.GetBPMSegmentAtRow(BeatToNoteRow(negBeat));
-		float fSecondsPerBeat = 60 / oldBPM.GetBPM();
-		float fSkipBeats = negPause / fSecondsPerBeat;
-		
-		WarpSegment ws( negBeat, fSkipBeats);
-		out.AddWarpSegment( ws );
-	}
-}
-
-void SMALoader::ProcessDelays( TimingData &out, const int iRowsPerBeat, const RString sParam )
-{
-	vector<RString> arrayDelayExpressions;
-	split( sParam, ",", arrayDelayExpressions );
-	
-	for( unsigned f=0; f<arrayDelayExpressions.size(); f++ )
-	{
-		vector<RString> arrayDelayValues;
-		split( arrayDelayExpressions[f], "=", arrayDelayValues );
-		if( arrayDelayValues.size() != 2 )
-		{
-			// XXX: Hard to tell which file caused this.
-			LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid #DELAYS value \"%s\" (must have exactly one '='), ignored.",
-				     arrayDelayExpressions[f].c_str() );
-			continue;
-		}
-		
-		const float fFreezeBeat = RowToBeat( arrayDelayValues[0], iRowsPerBeat );
-		const float fFreezeSeconds = StringToFloat( arrayDelayValues[1] );
-		
-		StopSegment new_seg( fFreezeBeat, fFreezeSeconds, true );
-		// XXX: Remove Negatives Bug?
-		new_seg.SetBeat(fFreezeBeat);
-		new_seg.SetPause(fFreezeSeconds);
-		
-		// LOG->Trace( "Adding a delay segment: beat: %f, seconds = %f", new_seg.m_fStartBeat, new_seg.m_fStopSeconds );
-		
-		if(fFreezeSeconds > 0.0f)
-			out.AddStopSegment( new_seg );
-		else
-			LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid delay at beat %f, length %f.", fFreezeBeat, fFreezeSeconds );
-	}
-}
-
 void SMALoader::ProcessTickcounts( TimingData &out, const int iRowsPerBeat, const RString sParam )
 {
 	vector<RString> arrayTickcountExpressions;
@@ -606,21 +435,21 @@ bool SMALoader::LoadFromSMAFile( const RString &sPath, Song &out )
 		{
 			TimingData &timing = (state == SMA_GETTING_STEP_INFO 
 					      ? pNewNotes->m_Timing : out.m_SongTiming);
-			ProcessBPMs( timing, iRowsPerBeat, sParams[1] );
+			ProcessBPMs( timing, sParams[1], iRowsPerBeat );
 		}
 		
 		else if( sValueName=="STOPS" || sValueName=="FREEZES" )
 		{
 			TimingData &timing = (state == SMA_GETTING_STEP_INFO 
 					      ? pNewNotes->m_Timing : out.m_SongTiming);
-			ProcessStops( timing, iRowsPerBeat, sParams[1] );
+			ProcessStops( timing, sParams[1], iRowsPerBeat );
 		}
 		
 		else if( sValueName=="DELAYS" )
 		{
 			TimingData &timing = (state == SMA_GETTING_STEP_INFO 
 					      ? pNewNotes->m_Timing : out.m_SongTiming);
-			ProcessDelays( timing, iRowsPerBeat, sParams[1] );
+			ProcessDelays( timing, sParams[1], iRowsPerBeat );
 		}
 		
 		else if( sValueName=="TICKCOUNT" )
