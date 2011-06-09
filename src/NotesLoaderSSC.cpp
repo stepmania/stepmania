@@ -149,35 +149,6 @@ void SSCLoader::ProcessScrolls( TimingData &out, const RString sParam )
 	}
 }
 
-void SSCLoader::ProcessFakes( TimingData &out, const RString sParam )
-{
-	vector<RString> arrayFakeExpressions;
-	split( sParam, ",", arrayFakeExpressions );
-	
-	for( unsigned b=0; b<arrayFakeExpressions.size(); b++ )
-	{
-		vector<RString> arrayFakeValues;
-		split( arrayFakeExpressions[b], "=", arrayFakeValues );
-		// XXX: Hard to tell which file caused this.
-		if( arrayFakeValues.size() != 2 )
-		{
-			LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid #FAKES value \"%s\" (must have exactly one '='), ignored.",
-				     arrayFakeExpressions[b].c_str() );
-			continue;
-		}
-		
-		const float fBeat = StringToFloat( arrayFakeValues[0] );
-		const float fNewBeat = StringToFloat( arrayFakeValues[1] );
-		
-		if(fNewBeat > 0)
-			out.AddFakeSegment( FakeSegment(fBeat, fNewBeat) );
-		else
-		{
-			LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid Fake at beat %f, BPM %f.", fBeat, fNewBeat );
-		}
-	}
-}
-
 
 bool SSCLoader::LoadFromSSCFile( const RString &sPath, Song &out, bool bFromCache )
 {

@@ -142,35 +142,6 @@ void SMALoader::ProcessSpeeds( TimingData &out, const RString line, const int ro
 	}
 }
 
-void SMALoader::ProcessFakes( TimingData &out, const int iRowsPerBeat, const RString sParam )
-{
-	vector<RString> arrayFakeExpressions;
-	split( sParam, ",", arrayFakeExpressions );
-	
-	for( unsigned b=0; b<arrayFakeExpressions.size(); b++ )
-	{
-		vector<RString> arrayFakeValues;
-		split( arrayFakeExpressions[b], "=", arrayFakeValues );
-		// XXX: Hard to tell which file caused this.
-		if( arrayFakeValues.size() != 2 )
-		{
-			LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid #FAKES value \"%s\" (must have exactly one '='), ignored.",
-				     arrayFakeExpressions[b].c_str() );
-			continue;
-		}
-		
-		const float fBeat = RowToBeat( arrayFakeValues[0], iRowsPerBeat );
-		const float fNewBeat = StringToFloat( arrayFakeValues[1] );
-		
-		if(fNewBeat > 0)
-			out.AddFakeSegment( FakeSegment(fBeat, fNewBeat) );
-		else
-		{
-			LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid Fake at beat %f, BPM %f.", fBeat, fNewBeat );
-		}
-	}
-}
-
 bool SMALoader::LoadFromSMAFile( const RString &sPath, Song &out )
 {
 	LOG->Trace( "Song::LoadFromSMAFile(%s)", sPath.c_str() );
@@ -438,7 +409,7 @@ bool SMALoader::LoadFromSMAFile( const RString &sPath, Song &out )
 		{
 			TimingData &timing = (state == SMA_GETTING_STEP_INFO 
 					      ? pNewNotes->m_Timing : out.m_SongTiming);
-			ProcessFakes( timing, iRowsPerBeat, sParams[1] );
+			ProcessFakes( timing, sParams[1], iRowsPerBeat );
 		}
 		
 		else if( sValueName=="METERTYPE" )

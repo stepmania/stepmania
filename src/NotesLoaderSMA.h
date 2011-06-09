@@ -31,7 +31,6 @@ struct SMALoader : public SMLoader
 	void ProcessBeatsPerMeasure( TimingData &out, const RString sParam );
 	void ProcessMultipliers( TimingData &out, const int iRowsPerBeat, const RString sParam );
 	virtual void ProcessSpeeds( TimingData &out, const RString line, const int rowsPerBeat );
-	void ProcessFakes( TimingData &out, const int iRowsPerBeat, const RString sParam );
 };
 
 #endif

@@ -91,6 +91,15 @@ struct SMLoader
 				   const RString line,
 				   const int rowsPerBeat = -1) {}
 	
+	/**
+	 * @brief Process the Fake Segments from the string.
+	 * @param out the TimingData being modified.
+	 * @param line the string in question.
+	 * @param rowsPerBeat the number of rows per beat for this purpose. */
+	virtual void ProcessFakes(TimingData & out,
+				  const RString line,
+				  const int rowsPerBeat = -1);
+	
 	virtual void ProcessBGChanges( Song &out, const RString &sValueName, 
 			      const RString &sPath, const RString &sParam );
 	void ProcessAttacks( Song &out, MsdFile::value_t sParams );

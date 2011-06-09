@@ -493,6 +493,35 @@ void SMLoader::ProcessSpeeds( TimingData &out, const RString line, const int row
 	}
 }
 
+void SMLoader::ProcessFakes( TimingData &out, const RString line, const int rowsPerBeat )
+{
+	vector<RString> arrayFakeExpressions;
+	split( line, ",", arrayFakeExpressions );
+	
+	for( unsigned b=0; b<arrayFakeExpressions.size(); b++ )
+	{
+		vector<RString> arrayFakeValues;
+		split( arrayFakeExpressions[b], "=", arrayFakeValues );
+		// XXX: Hard to tell which file caused this.
+		if( arrayFakeValues.size() != 2 )
+		{
+			LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid #FAKES value \"%s\" (must have exactly one '='), ignored.",
+				     arrayFakeExpressions[b].c_str() );
+			continue;
+		}
+		
+		const float fBeat = RowToBeat( arrayFakeValues[0], rowsPerBeat );
+		const float fNewBeat = StringToFloat( arrayFakeValues[1] );
+		
+		if(fNewBeat > 0)
+			out.AddFakeSegment( FakeSegment(fBeat, fNewBeat) );
+		else
+		{
+			LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid Fake at beat %f, BPM %f.", fBeat, fNewBeat );
+		}
+	}
+}
+
 bool SMLoader::LoadFromBGChangesString( BackgroundChange &change, const RString &sBGChangeExpression )
 {
 	vector<RString> aBGChangeValues;
