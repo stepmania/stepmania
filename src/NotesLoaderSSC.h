@@ -70,18 +70,11 @@ struct SSCLoader : public SMLoader
 	 * @return its success or failure.
 	 */
 	bool LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePath, ProfileSlot slot, bool bAddStepsToSong );
-	/**
-	 * @brief Perform some cleanup on the loaded song.
-	 * @param song a reference to the song that may need cleaning up.
-	 * @param bFromCache a flag to determine if this song is loaded from a cache file.
-	 */
-	void TidyUpData( Song &song, bool bFromCache );
 	
 	
 	void ProcessWarps( TimingData &, const RString, const float );
 	void ProcessLabels( TimingData &, const RString );
-	void ProcessCombos( TimingData &, const RString );
-	void ProcessSpeeds( TimingData &, const RString );
+	virtual void ProcessCombos( TimingData &, const RString, const int = -1 );
 	void ProcessScrolls( TimingData &, const RString );
 	void ProcessFakes( TimingData &, const RString );
 };

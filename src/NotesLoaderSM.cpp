@@ -16,6 +16,33 @@
 /** @brief The maximum file size for edits. */
 const int MAX_EDIT_STEPS_SIZE_BYTES		= 60*1024;	// 60KB
 
+bool SMLoader::LoadFromDir( const RString &sPath, Song &out )
+{
+	vector<RString> aFileNames;
+	GetApplicableFiles( sPath, aFileNames );
+	
+	if( aFileNames.size() > 1 )
+	{
+		LOG->UserLog( "Song", sPath, "has more than one SM file. There can be only one (unless you are using TougaKiryuu's AnimeMix files somehow, which assume a different version of StepMania)!" );
+		return false;
+		/*
+		 for( unsigned i=0; i<aFileNames.size(); i++ )
+		 {
+		 if(!LoadFromSMFile( sPath + aFileNames[i], out ))
+		 return false;
+		 }
+		 return true;
+		 */
+	}
+	
+	ASSERT( aFileNames.size() == 1 );
+	/* We should have at least one; if we had none, we shouldn't have been
+	 * called to begin with. */
+	//ASSERT( aFileNames.size() >= 1 );
+	
+	return LoadFromSMFile( sPath + aFileNames[0], out );
+}
+
 float SMLoader::RowToBeat( RString line, const int rowsPerBeat )
 {
 	RString backup = line;
@@ -419,6 +446,52 @@ void SMLoader::ProcessTickcounts( TimingData &out, const RString line, const int
 	}
 }
 
+void SMLoader::ProcessSpeeds( TimingData &out, const RString line, const int rowsPerBeat )
+{
+	vector<RString> vs1;
+	split( line, ",", vs1 );
+	
+	FOREACH_CONST( RString, vs1, s1 )
+	{
+		vector<RString> vs2;
+		split( *s1, "=", vs2 );
+		
+		if( vs2[0] == 0 && vs2.size() == 2 ) // First one always seems to have 2.
+		{
+			vs2.push_back("0");
+		}
+		
+		if( vs2.size() == 3 ) // use beats by default.
+		{
+			vs2.push_back("0");
+		}
+		
+		if( vs2.size() < 4 )
+		{
+			LOG->UserLog( "Song file", "(UNKNOWN)", "has an speed change with %i values.", (int)vs2.size() );
+			continue;
+		}
+		
+		const float fBeat = RowToBeat( vs2[0], rowsPerBeat );
+		
+		SpeedSegment seg( fBeat, StringToFloat( vs2[1] ), StringToFloat( vs2[2] ));
+		seg.SetUnit(StringToInt(vs2[3]));
+		
+		if( fBeat < 0 )
+		{
+			LOG->UserLog( "Song file", "(UNKNOWN)", "has an speed change with beat %f.", fBeat );
+			continue;
+		}
+		
+		if( seg.GetLength() < 0 )
+		{
+			LOG->UserLog( "Song file", "(UNKNOWN)", "has an speed change with beat %f, length %f.", fBeat, seg.GetLength() );
+			continue;
+		}
+		
+		out.AddSpeedSegment( seg );
+	}
+}
 
 bool SMLoader::LoadFromBGChangesString( BackgroundChange &change, const RString &sBGChangeExpression )
 {
@@ -752,33 +825,6 @@ bool SMLoader::LoadFromSMFile( const RString &sPath, Song &out, bool bFromCache 
 	sort(out.m_SongTiming.m_WarpSegments.begin(), out.m_SongTiming.m_WarpSegments.end());
 	TidyUpData( out, bFromCache );
 	return true;
-}
-
-bool SMLoader::LoadFromDir( const RString &sPath, Song &out )
-{
-	vector<RString> aFileNames;
-	GetApplicableFiles( sPath, aFileNames );
-
-	if( aFileNames.size() > 1 )
-	{
-		LOG->UserLog( "Song", sPath, "has more than one SM file. There can be only one (unless you are using TougaKiryuu's AnimeMix files somehow, which assume a different version of StepMania)!" );
-		return false;
-		/*
-		for( unsigned i=0; i<aFileNames.size(); i++ )
-		{
-			if(!LoadFromSMFile( sPath + aFileNames[i], out ))
-				return false;
-		}
-		return true;
-		*/
-	}
-
-	ASSERT( aFileNames.size() == 1 );
-	/* We should have at least one; if we had none, we shouldn't have been
-	 * called to begin with. */
-	//ASSERT( aFileNames.size() >= 1 );
-
-	return LoadFromSMFile( sPath + aFileNames[0], out );
 }
 
 bool SMLoader::LoadEditFromFile( RString sEditFilePath, ProfileSlot slot, bool bAddStepsToSong )

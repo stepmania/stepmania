@@ -21,6 +21,11 @@ struct SMLoader
 	virtual ~SMLoader() {}
 	
 	bool LoadFromDir( const RString &sPath, Song &out );
+	/**
+	 * @brief Perform some cleanup on the loaded song.
+	 * @param song a reference to the song that may need cleaning up.
+	 * @param bFromCache a flag to determine if this song is loaded from a cache file.
+	 */
 	virtual void TidyUpData( Song &song, bool bFromCache );
 
 	bool LoadFromSMFile( const RString &sPath, Song &out, bool bFromCache = false );
@@ -72,7 +77,21 @@ struct SMLoader
 	void ProcessTickcounts(TimingData & out,
 				   const RString line,
 				   const int rowsPerBeat = -1);
-	void ProcessBGChanges( Song &out, const RString &sValueName, 
+	
+	/**
+	 * @brief Process the Speed Segments from the string.
+	 * @param out the TimingData being modified.
+	 * @param line the string in question.
+	 * @param rowsPerBeat the number of rows per beat for this purpose. */
+	virtual void ProcessSpeeds(TimingData & out,
+				   const RString line,
+				   const int rowsPerBeat = -1);
+	
+	virtual void ProcessCombos(TimingData & out,
+				   const RString line,
+				   const int rowsPerBeat = -1) {}
+	
+	virtual void ProcessBGChanges( Song &out, const RString &sValueName, 
 			      const RString &sPath, const RString &sParam );
 	void ProcessAttacks( Song &out, MsdFile::value_t sParams );
 	void ProcessInstrumentTracks( Song &out, const RString &sParam );

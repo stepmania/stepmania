@@ -97,10 +97,10 @@ void SSCLoader::ProcessLabels( TimingData &out, const RString sParam )
 	}
 }
 
-void SSCLoader::ProcessCombos( TimingData &out, const RString sParam )
+void SSCLoader::ProcessCombos( TimingData &out, const RString line, const int rowsPerBeat )
 {
 	vector<RString> arrayComboExpressions;
-	split( sParam, ",", arrayComboExpressions );
+	split( line, ",", arrayComboExpressions );
 	
 	for( unsigned f=0; f<arrayComboExpressions.size(); f++ )
 	{
@@ -116,53 +116,6 @@ void SSCLoader::ProcessCombos( TimingData &out, const RString sParam )
 		const int iCombos = StringToInt( arrayComboValues[1] );
 		ComboSegment new_seg( BeatToNoteRow( fComboBeat ), iCombos );
 		out.AddComboSegment( new_seg );
-	}
-}
-
-void SSCLoader::ProcessSpeeds( TimingData &out, const RString sParam )
-{
-	vector<RString> vs1;
-	split( sParam, ",", vs1 );
-	
-	FOREACH_CONST( RString, vs1, s1 )
-	{
-		vector<RString> vs2;
-		split( *s1, "=", vs2 );
-		
-		if( vs2[0] == 0 && vs2.size() == 2 ) // First one always seems to have 2.
-		{
-			vs2.push_back("0");
-		}
-		
-		if( vs2.size() == 3 ) // use beats by default.
-		{
-			vs2.push_back("0");
-		}
-		
-		if( vs2.size() < 4 )
-		{
-			LOG->UserLog( "Song file", "(UNKNOWN)", "has an speed change with %i values.", (int)vs2.size() );
-			continue;
-		}
-		
-		const float fBeat = StringToFloat( vs2[0] );
-		
-		SpeedSegment seg( fBeat, StringToFloat( vs2[1] ), StringToFloat( vs2[2] ));
-		seg.SetUnit(StringToInt(vs2[3]));
-		
-		if( fBeat < 0 )
-		{
-			LOG->UserLog( "Song file", "(UNKNOWN)", "has an speed change with beat %f.", fBeat );
-			continue;
-		}
-		
-		if( seg.GetLength() < 0 )
-		{
-			LOG->UserLog( "Song file", "(UNKNOWN)", "has an speed change with beat %f, length %f.", fBeat, seg.GetLength() );
-			continue;
-		}
-		
-		out.AddSpeedSegment( seg );
 	}
 }
 
@@ -904,11 +857,6 @@ bool SSCLoader::LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePat
 	//return true;
 	// only load a SSC edit if it passes the checks. -aj
 	return bSSCFormat;
-}
-
-void SSCLoader::TidyUpData( Song &song, bool bFromCache )
-{
-	SMLoader::TidyUpData(song, bFromCache);
 }
 
 /*

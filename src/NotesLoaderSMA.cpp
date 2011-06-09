@@ -91,15 +91,10 @@ void SMALoader::ProcessBeatsPerMeasure( TimingData &out, const RString sParam )
 	}
 }
 
-float BeatToSeconds(float fromBeat, RString toSomething)
-{
-	return 0;
-}
-
-void SMALoader::ProcessSpeeds( TimingData &out, const int iRowsPerBeat, const RString sParam )
+void SMALoader::ProcessSpeeds( TimingData &out, const RString line, const int rowsPerBeat )
 {
 	vector<RString> vs1;
-	split( sParam, ",", vs1 );
+	split( line, ",", vs1 );
 	
 	FOREACH_CONST( RString, vs1, s1 )
 	{
@@ -120,7 +115,7 @@ void SMALoader::ProcessSpeeds( TimingData &out, const int iRowsPerBeat, const RS
 			continue;
 		}
 		
-		const float fBeat = RowToBeat( vs2[0], iRowsPerBeat );
+		const float fBeat = RowToBeat( vs2[0], rowsPerBeat );
 		
 		RString backup = vs2[2];
 		Trim(vs2[2], "s");
@@ -429,7 +424,7 @@ bool SMALoader::LoadFromSMAFile( const RString &sPath, Song &out )
 					      ? pNewNotes->m_Timing : out.m_SongTiming);
 			RString tmp = sParams[1];
 			Trim( tmp );
-			ProcessSpeeds( timing, iRowsPerBeat, tmp );
+			ProcessSpeeds( timing, tmp, iRowsPerBeat );
 		}
 		
 		else if( sValueName=="MULTIPLIER" )
