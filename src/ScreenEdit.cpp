@@ -537,7 +537,9 @@ static MenuDef g_AlterMenu(
    MenuRowDef(ScreenEdit::record,			"Record in selection",			true, 
 	      EditMode_Practice, true, true, 0, NULL ),
    MenuRowDef(ScreenEdit::convert_to_pause,		"Convert selection to pause",		true, 
-	      EditMode_Full, true, true, 0, NULL )
+	      EditMode_Full, true, true, 0, NULL ),
+   MenuRowDef(ScreenEdit::convert_to_warp,		"Convert selection to warp",		true, 
+	      EditMode_Full, true, true, 0, NULL )			   
 );
 
 static MenuDef g_AreaMenu(
@@ -3692,6 +3694,37 @@ void ScreenEdit::HandleAlterMenuChoice(AlterMenuChoice c, const vector<int> &iAn
 			m_iStopPlayingAt = m_NoteFieldEdit.m_iEndMarker;
 			TransitionEditState( STATE_RECORDING );
 			break;
+		case convert_to_pause:
+		{
+			ASSERT_M( m_NoteFieldEdit.m_iBeginMarker!=-1 && m_NoteFieldEdit.m_iEndMarker!=-1, "Attempted to convert beats outside the notefield to pauses!" );
+			float fMarkerStart = GetAppropriateTiming().GetElapsedTimeFromBeat( NoteRowToBeat(m_NoteFieldEdit.m_iBeginMarker) );
+			float fMarkerEnd = GetAppropriateTiming().GetElapsedTimeFromBeat( NoteRowToBeat(m_NoteFieldEdit.m_iEndMarker) );
+			
+			// The length of the stop segment we're going to create.  This includes time spent in any
+			// stops in the selection, which will be deleted and subsumed into the new stop.
+			float fStopLength = fMarkerEnd - fMarkerStart;
+			
+			// be sure not to clobber the row at the start - a row at the end
+			// can be dropped safely, though
+			NoteDataUtil::DeleteRows( m_NoteDataEdit, 
+						 m_NoteFieldEdit.m_iBeginMarker + 1,
+						 m_NoteFieldEdit.m_iEndMarker-m_NoteFieldEdit.m_iBeginMarker
+						 );
+			GetAppropriateTiming().DeleteRows( m_NoteFieldEdit.m_iBeginMarker + 1,
+							  m_NoteFieldEdit.m_iEndMarker-m_NoteFieldEdit.m_iBeginMarker );
+			GetAppropriateTiming().SetStopAtRow( m_NoteFieldEdit.m_iBeginMarker, fStopLength );
+			m_NoteFieldEdit.m_iBeginMarker = -1;
+			m_NoteFieldEdit.m_iEndMarker = -1;
+			break;
+		}
+		case convert_to_warp:
+		{
+			float startBeat = NoteRowToBeat(m_NoteFieldEdit.m_iBeginMarker);
+			float lengthBeat = NoteRowToBeat(m_NoteFieldEdit.m_iEndMarker) - startBeat;
+			GetAppropriateTiming().SetWarpAtBeat(startBeat,lengthBeat);
+			SetDirty(true);
+			break;
+		}
 			
 	}
 	
@@ -3758,29 +3791,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 		case shift_pauses_backward:
 			GetAppropriateTiming().DeleteRows( GetRow() + 1, BeatToNoteRow(1) );
 			break;
-		case convert_to_pause:
-			{
-				ASSERT_M( m_NoteFieldEdit.m_iBeginMarker!=-1 && m_NoteFieldEdit.m_iEndMarker!=-1, "Attempted to convert beats outside the notefield to pauses!" );
-				float fMarkerStart = GetAppropriateTiming().GetElapsedTimeFromBeat( NoteRowToBeat(m_NoteFieldEdit.m_iBeginMarker) );
-				float fMarkerEnd = GetAppropriateTiming().GetElapsedTimeFromBeat( NoteRowToBeat(m_NoteFieldEdit.m_iEndMarker) );
 
-				// The length of the stop segment we're going to create.  This includes time spent in any
-				// stops in the selection, which will be deleted and subsumed into the new stop.
-				float fStopLength = fMarkerEnd - fMarkerStart;
-
-				// be sure not to clobber the row at the start - a row at the end
-				// can be dropped safely, though
-				NoteDataUtil::DeleteRows( m_NoteDataEdit, 
-						m_NoteFieldEdit.m_iBeginMarker + 1,
-						m_NoteFieldEdit.m_iEndMarker-m_NoteFieldEdit.m_iBeginMarker
-					);
-				GetAppropriateTiming().DeleteRows( m_NoteFieldEdit.m_iBeginMarker + 1,
-						m_NoteFieldEdit.m_iEndMarker-m_NoteFieldEdit.m_iBeginMarker );
-				GetAppropriateTiming().SetStopAtRow( m_NoteFieldEdit.m_iBeginMarker, fStopLength );
-				m_NoteFieldEdit.m_iBeginMarker = -1;
-				m_NoteFieldEdit.m_iEndMarker = -1;
-				break;
-			}
 		case convert_pause_to_beat:
 			{
 				// TODO: Convert both Delays and Stops at once.

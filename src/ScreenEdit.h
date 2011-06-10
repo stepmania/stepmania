@@ -385,6 +385,7 @@ public:
 		play,
 		record,
 		convert_to_pause,
+		convert_to_warp,
 		NUM_ALTER_MENU_CHOICES
 		
 	};
