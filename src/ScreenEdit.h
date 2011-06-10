@@ -377,7 +377,6 @@ public:
 		cut,
 		copy,
 		clear,
-		// clear_undo,
 		quantize,
 		turn,
 		transform,
@@ -400,6 +399,7 @@ public:
 		shift_pauses_backward,
 		convert_pause_to_beat,
 		undo,
+		clear_clipboard,
 		NUM_AREA_MENU_CHOICES
 	};
 	void HandleAlterMenuChoice(AlterMenuChoice c,

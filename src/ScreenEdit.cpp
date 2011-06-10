@@ -550,7 +550,10 @@ static MenuDef g_AreaMenu(
 	MenuRowDef( ScreenEdit::shift_pauses_backward,	"Shift all timing changes up",		true, EditMode_Full, true, true, 0, NULL ),
 	MenuRowDef(ScreenEdit::convert_pause_to_beat,	"Convert pause to beats",		true, 
 	     EditMode_Full, true, true, 0, NULL ),
-	MenuRowDef( ScreenEdit::undo,			"Undo",					true, EditMode_Practice, true, true, 0, NULL )
+	MenuRowDef( ScreenEdit::undo,			"Undo",					true, EditMode_Practice, true, true, 0, NULL ),
+  MenuRowDef(ScreenEdit::clear_clipboard,		"Clear clipboard",			true,
+	     EditMode_Practice, true, true, 0, NULL )
+			  
 );
 
 static MenuDef g_StepsInformation(
@@ -3501,6 +3504,8 @@ void ScreenEdit::HandleAlterMenuChoice(AlterMenuChoice c, const vector<int> &iAn
 	bool bSaveUndo = true;
 	switch (c)
 	{
+		case play:
+		case record:
 		case cut:
 		case copy:
 		{
@@ -3694,24 +3699,14 @@ void ScreenEdit::HandleAlterMenuChoice(AlterMenuChoice c, const vector<int> &iAn
 
 void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAnswers, bool bAllowUndo )
 {
-	bool bSaveUndo = false;
+	bool bSaveUndo = true;
 	switch( c )
 	{
-		DEFAULT_FAIL( c );
-		case play:
-		case record:
+		case clear_clipboard:
 		case undo:
 			bSaveUndo = false;
 			break;
-		case paste_at_current_beat:
-		case paste_at_begin_marker:
-		case insert_and_shift:
-		case delete_and_shift:
-		case shift_pauses_forward:
-		case shift_pauses_backward:
-		case convert_to_pause:
-		case convert_pause_to_beat:
-			bSaveUndo = true;
+		default:
 			break;
 	}
 
@@ -3802,6 +3797,11 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 		case undo:
 			Undo();
 			break;
+		case clear_clipboard:
+		{
+			m_Clipboard.ClearAll();
+			break;
+		}
 	};
 
 	if( bSaveUndo )
