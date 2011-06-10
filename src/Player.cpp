@@ -2852,7 +2852,8 @@ void Player::CrossedRows( int iLastRowCrossed, const RageTimer &now )
 			// check to see if there's a note at the crossed row
 			if( m_pPlayerState->m_PlayerController != PC_HUMAN )
 			{
-				if( tn.type != TapNote::empty && tn.type != TapNote::fake && tn.result.tns == TNS_None )
+				if(tn.type != TapNote::empty && tn.type != TapNote::fake && tn.result.tns == TNS_None
+				   && this->m_Timing->IsJudgableAtRow(iRow) )
 				{
 					Step( iTrack, iRow, now, false, false );
 					if( m_pPlayerState->m_PlayerController == PC_AUTOPLAY )
