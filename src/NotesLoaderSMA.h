@@ -2,6 +2,7 @@
 #define NOTES_LOADER_SMA_H
 
 #include "GameConstantsAndTypes.h"
+#include "NotesLoaderSM.h"
 #include "BackgroundUtil.h"
 
 class MsdFile;
@@ -20,37 +21,21 @@ enum SMALoadingStates
 };
 
 /** @brief Reads a Song from a .SMA file. */
-namespace SMALoader
-{
-	void LoadFromSMATokens( RString sStepsType,
-			       RString sDescription,
-			       RString sDifficulty,
-			       RString sMeter,
-			       RString sRadarValues,
-			       RString sNoteData,
-			       Steps &out );
+struct SMALoader : public SMLoader
+{	
+	SMALoader() : SMLoader(".sma") {}
 	
-	bool LoadFromDir( const RString &sPath, Song &out );
-	void TidyUpData( Song &song, bool bFromCache );
-	
-	bool LoadFromSMAFile( const RString &sPath, Song &out );
-	void GetApplicableFiles( const RString &sPath, vector<RString> &out );
-	
-	bool LoadEditFromFile( RString sEditFilePath, ProfileSlot slot, bool bAddStepsToSong );
-	bool LoadEditFromBuffer( const RString &sBuffer, const RString &sEditFilePath, ProfileSlot slot );
-	bool LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePath, ProfileSlot slot, bool bAddStepsToSong );
-	bool LoadFromBGChangesString( BackgroundChange &change, const RString &sBGChangeExpression );
+	virtual bool LoadFromSimfile( const RString &sPath, Song &out, bool bFromCache = false );
+
 	
 	void ProcessBeatsPerMeasure( TimingData &out, const RString sParam );
-	bool ProcessBPMs( TimingData &out, const int iRowsPerBeat, const RString sParam );
-	void ProcessStops( TimingData &out, const int iRowsPerBeat, const RString sParam );
-	void ProcessDelays( TimingData &out, const int iRowsPerBeat, const RString sParam );
-	void ProcessTickcounts( TimingData &out, const int iRowsPerBeat, const RString sParam );
 	void ProcessMultipliers( TimingData &out, const int iRowsPerBeat, const RString sParam );
-	void ProcessSpeeds( TimingData &out, const int iRowsPerBeat, const RString sParam );
-	void ProcessFakes( TimingData &out, const int iRowsPerBeat, const RString sParam );
-	
-	float RowToBeat( RString sLine, const int iRowsPerBeat );
+	/**
+	 * @brief Process the Speed Segments from the string.
+	 * @param out the TimingData being modified.
+	 * @param line the string in question.
+	 * @param rowsPerBeat the number of rows per beat for this purpose. */
+	virtual void ProcessSpeeds( TimingData &out, const RString line, const int rowsPerBeat );
 };
 
 #endif

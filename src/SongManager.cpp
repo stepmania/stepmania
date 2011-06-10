@@ -1655,12 +1655,15 @@ void SongManager::LoadStepEditsFromProfileDir( const RString &sProfileDir, Profi
 		for( int i=0; i<size; i++ )
 		{
 			RString fn = vsFiles[i];
-
-			bool bLoadedFromSSC = SSCLoader::LoadEditFromFile( fn, slot, true );
+			SSCLoader loaderSSC;
+			bool bLoadedFromSSC = loaderSSC.LoadEditFromFile( fn, slot, true );
 			// If we don't load the edit from a .ssc-style .edit, then we should
 			// also try the .sm-style edit file. -aj
 			if( !bLoadedFromSSC )
-				SMLoader::LoadEditFromFile( fn, slot, true );
+			{
+				SMLoader loaderSM;
+				loaderSM.LoadEditFromFile( fn, slot, true );
+			}
 		}
 	}
 }

@@ -135,10 +135,12 @@ void ScreenHowToPlay::Init()
 
 		// Allow themers to use either a .ssc or .sm file for this. -aj
 		RString sStepsPath = THEME->GetPathO(m_sName, "steps");
+		SSCLoader loaderSSC;
+		SMLoader loaderSM;
 		if( sStepsPath.Right(4) == ".ssc" )
-			SSCLoader::LoadFromSSCFile( sStepsPath, m_Song, false );
+			loaderSSC.LoadFromSimfile( sStepsPath, m_Song, false );
 		else
-			SMLoader::LoadFromSMFile( sStepsPath, m_Song, false );
+			loaderSM.LoadFromSimfile( sStepsPath, m_Song, false );
 		m_Song.AddAutoGenNotes();
 
 		const Style* pStyle = GAMESTATE->GetCurrentStyle();

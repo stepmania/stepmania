@@ -15,33 +15,157 @@ class TimingData;
  * This was brought in from StepMania 4's recent betas. */
 const float FAST_BPM_WARP = 9999999.f;
 
-/** @brief Reads a Song from an .SM file. */
-namespace SMLoader
-{
-	void LoadFromSMTokens( RString sStepsType, RString sDescription, RString sDifficulty,
-			      RString sMeter, RString sRadarValues, RString sNoteData, Steps &out );
-	
-	bool LoadFromDir( const RString &sPath, Song &out );
-	void TidyUpData( Song &song, bool bFromCache );
+/** @brief The maximum file size for edits. */
+const int MAX_EDIT_STEPS_SIZE_BYTES		= 60*1024;	// 60KB
 
-	bool LoadFromSMFile( const RString &sPath, Song &out, bool bFromCache = false );
-	void GetApplicableFiles( const RString &sPath, vector<RString> &out );
-	bool LoadEditFromFile( RString sEditFilePath, ProfileSlot slot, bool bAddStepsToSong );
-	bool LoadEditFromBuffer( const RString &sBuffer, const RString &sEditFilePath, ProfileSlot slot );
-	bool LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePath, ProfileSlot slot, bool bAddStepsToSong );
-	bool LoadFromBGChangesString( BackgroundChange &change, const RString &sBGChangeExpression );
+/** @brief Reads a Song from an .SM file. */
+struct SMLoader
+{
+	SMLoader() : fileExt(".sm") {}
 	
+	SMLoader(RString ext) : fileExt(ext) {}
 	
-	bool ProcessBPMs( TimingData &, const RString );
-	void ProcessStops( TimingData &, const RString );
-	void ProcessDelays( TimingData &, const RString );
-	void ProcessTimeSignatures( TimingData &, const RString );
-	void ProcessTickcounts( TimingData &, const RString );
-	void ProcessBGChanges( Song &out, const RString &sValueName, 
+	virtual ~SMLoader() {}
+	
+	/**
+	 * @brief Attempt to load a song from a specified path.
+	 * @param sPath a const reference to the path on the hard drive to check.
+	 * @param out a reference to the Song that will retrieve the song information.
+	 * @return its success or failure.
+	 */
+	virtual bool LoadFromDir( const RString &sPath, Song &out );
+	/**
+	 * @brief Perform some cleanup on the loaded song.
+	 * @param song a reference to the song that may need cleaning up.
+	 * @param bFromCache a flag to determine if this song is loaded from a cache file.
+	 */
+	virtual void TidyUpData( Song &song, bool bFromCache );
+
+	/**
+	 * @brief Attempt to load the specified sm file.
+	 * @param sPath a const reference to the path on the hard drive to check.
+	 * @param out a reference to the Song that will retrieve the song information.
+	 * @param bFromCache a check to see if we are getting certain information from the cache file.
+	 * @return its success or failure.
+	 */
+	virtual bool LoadFromSimfile( const RString &sPath, Song &out, bool bFromCache = false );
+	/**
+	 * @brief Retrieve the list of .sm files.
+	 * @param sPath a const reference to the path on the hard drive to check.
+	 * @param out a vector of files found in the path.
+	 */
+	virtual void GetApplicableFiles( const RString &sPath, vector<RString> &out );
+	virtual bool LoadEditFromFile( RString sEditFilePath, ProfileSlot slot, bool bAddStepsToSong );
+	virtual bool LoadEditFromBuffer( const RString &sBuffer, const RString &sEditFilePath, ProfileSlot slot );
+	virtual bool LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePath, ProfileSlot slot, bool bAddStepsToSong );
+	virtual bool LoadFromBGChangesString(BackgroundChange &change, 
+					     const RString &sBGChangeExpression );
+	
+	/**
+	 * @brief Process the BPM Segments from the string.
+	 * @param out the TimingData being modified.
+	 * @param line the string in question.
+	 * @param rowsPerBeat the number of rows per beat for this purpose.
+	 * @return true if there was at least one segment found, false otherwise. */
+	bool ProcessBPMs(TimingData & out,
+			 const RString line,
+			 const int rowsPerBeat = -1);
+	/**
+	 * @brief Process the Stop Segments from the string.
+	 * @param out the TimingData being modified.
+	 * @param line the string in question.
+	 * @param rowsPerBeat the number of rows per beat for this purpose. */
+	void ProcessStops(TimingData & out,
+			  const RString line,
+			  const int rowsPerBeat = -1);
+	/**
+	 * @brief Process the Delay Segments from the string.
+	 * @param out the TimingData being modified.
+	 * @param line the string in question.
+	 * @param rowsPerBeat the number of rows per beat for this purpose. */
+	void ProcessDelays(TimingData & out,
+			  const RString line,
+			  const int rowsPerBeat = -1);
+	/**
+	 * @brief Process the Time Signature Segments from the string.
+	 * @param out the TimingData being modified.
+	 * @param line the string in question.
+	 * @param rowsPerBeat the number of rows per beat for this purpose. */
+	void ProcessTimeSignatures(TimingData & out,
+			   const RString line,
+			   const int rowsPerBeat = -1);
+	/**
+	 * @brief Process the Tickcount Segments from the string.
+	 * @param out the TimingData being modified.
+	 * @param line the string in question.
+	 * @param rowsPerBeat the number of rows per beat for this purpose. */
+	void ProcessTickcounts(TimingData & out,
+				   const RString line,
+				   const int rowsPerBeat = -1);
+	
+	/**
+	 * @brief Process the Speed Segments from the string.
+	 * @param out the TimingData being modified.
+	 * @param line the string in question.
+	 * @param rowsPerBeat the number of rows per beat for this purpose. */
+	virtual void ProcessSpeeds(TimingData & out,
+				   const RString line,
+				   const int rowsPerBeat = -1);
+	
+	virtual void ProcessCombos(TimingData & out,
+				   const RString line,
+				   const int rowsPerBeat = -1) {}
+	
+	/**
+	 * @brief Process the Fake Segments from the string.
+	 * @param out the TimingData being modified.
+	 * @param line the string in question.
+	 * @param rowsPerBeat the number of rows per beat for this purpose. */
+	virtual void ProcessFakes(TimingData & out,
+				  const RString line,
+				  const int rowsPerBeat = -1);
+	
+	virtual void ProcessBGChanges( Song &out, const RString &sValueName, 
 			      const RString &sPath, const RString &sParam );
 	void ProcessAttacks( Song &out, MsdFile::value_t sParams );
 	void ProcessInstrumentTracks( Song &out, const RString &sParam );
-}
+	
+	/**
+	 * @brief Convert a row value to the proper beat value.
+	 * 
+	 * This is primarily used for assistance with converting SMA files.
+	 * @param line The line that contains the value.
+	 * @param rowsPerBeat the number of rows per beat according to the original file.
+	 * @return the converted beat value. */
+	float RowToBeat(RString line, const int rowsPerBeat);
+	
+protected:
+	/**
+	 * @brief Process the different tokens we have available to get NoteData.
+	 * @param stepsType The current StepsType.
+	 * @param description The description of the chart.
+	 * @param difficulty The difficulty (in words) of the chart.
+	 * @param meter the difficulty (in numbers) of the chart.
+	 * @param radarValues the calculated radar values.
+	 * @param noteData the note data itself.
+	 * @param out the Steps getting the data. */
+	virtual void LoadFromTokens(RString sStepsType, 
+				    RString sDescription,
+				    RString sDifficulty,
+				    RString sMeter,
+				    RString sRadarValues,
+				    RString sNoteData,
+				    Steps &out);
+	
+	/**
+	 * @brief Retrieve the file extension associated with this loader.
+	 * @return the file extension. */
+	RString GetFileExtension() const { return fileExt; }
+	
+private:
+	/** @brief The file extension in use. */
+	const RString fileExt;
+};
 
 #endif
 

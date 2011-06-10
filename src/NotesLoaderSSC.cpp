@@ -14,38 +14,6 @@
 #include "Attack.h"
 #include "PrefsManager.h"
 
-/**
- * @brief A custom .edit file can only be so big before we have to reject it.
- */
-const int MAX_EDIT_STEPS_SIZE_BYTES = 60*1024; // 60 KB
-
-/**
- * @brief Attempt to load any background changes in use by this song.
- * @param change a reference to the background change.
- * @param sBGChangeExpression a reference to the list of changes to be made.
- * @return its success or failure.
- */
-bool LoadFromBGSSCChangesString( BackgroundChange &change, const RString &sBGChangeExpression )
-{
-	return SMLoader::LoadFromBGChangesString( change, sBGChangeExpression );
-}
-
-bool SSCLoader::LoadFromDir( const RString &sPath, Song &out )
-{
-	vector<RString> aFileNames;
-	GetApplicableFiles( sPath,  aFileNames );
-
-	if( aFileNames.size() > 1 )
-	{
-		LOG->UserLog( "Song", sPath, "has more than one SSC file. Only one SSC file is allowed per song." );
-		return false;
-	}
-
-	ASSERT( aFileNames.size() == 1 ); // Ensure one was found entirely.
-
-	return LoadFromSSCFile( sPath + aFileNames[0], out );
-}
-
 void SSCLoader::ProcessWarps( TimingData &out, const RString sParam, const float fVersion )
 {
 	vector<RString> arrayWarpExpressions;
@@ -108,10 +76,10 @@ void SSCLoader::ProcessLabels( TimingData &out, const RString sParam )
 	}
 }
 
-void SSCLoader::ProcessCombos( TimingData &out, const RString sParam )
+void SSCLoader::ProcessCombos( TimingData &out, const RString line, const int rowsPerBeat )
 {
 	vector<RString> arrayComboExpressions;
-	split( sParam, ",", arrayComboExpressions );
+	split( line, ",", arrayComboExpressions );
 	
 	for( unsigned f=0; f<arrayComboExpressions.size(); f++ )
 	{
@@ -127,53 +95,6 @@ void SSCLoader::ProcessCombos( TimingData &out, const RString sParam )
 		const int iCombos = StringToInt( arrayComboValues[1] );
 		ComboSegment new_seg( BeatToNoteRow( fComboBeat ), iCombos );
 		out.AddComboSegment( new_seg );
-	}
-}
-
-void SSCLoader::ProcessSpeeds( TimingData &out, const RString sParam )
-{
-	vector<RString> vs1;
-	split( sParam, ",", vs1 );
-	
-	FOREACH_CONST( RString, vs1, s1 )
-	{
-		vector<RString> vs2;
-		split( *s1, "=", vs2 );
-		
-		if( vs2[0] == 0 && vs2.size() == 2 ) // First one always seems to have 2.
-		{
-			vs2.push_back("0");
-		}
-		
-		if( vs2.size() == 3 ) // use beats by default.
-		{
-			vs2.push_back("0");
-		}
-		
-		if( vs2.size() < 4 )
-		{
-			LOG->UserLog( "Song file", "(UNKNOWN)", "has an speed change with %i values.", (int)vs2.size() );
-			continue;
-		}
-		
-		const float fBeat = StringToFloat( vs2[0] );
-		
-		SpeedSegment seg( fBeat, StringToFloat( vs2[1] ), StringToFloat( vs2[2] ));
-		seg.SetUnit(StringToInt(vs2[3]));
-		
-		if( fBeat < 0 )
-		{
-			LOG->UserLog( "Song file", "(UNKNOWN)", "has an speed change with beat %f.", fBeat );
-			continue;
-		}
-		
-		if( seg.GetLength() < 0 )
-		{
-			LOG->UserLog( "Song file", "(UNKNOWN)", "has an speed change with beat %f, length %f.", fBeat, seg.GetLength() );
-			continue;
-		}
-		
-		out.AddSpeedSegment( seg );
 	}
 }
 
@@ -207,37 +128,8 @@ void SSCLoader::ProcessScrolls( TimingData &out, const RString sParam )
 	}
 }
 
-void SSCLoader::ProcessFakes( TimingData &out, const RString sParam )
-{
-	vector<RString> arrayFakeExpressions;
-	split( sParam, ",", arrayFakeExpressions );
-	
-	for( unsigned b=0; b<arrayFakeExpressions.size(); b++ )
-	{
-		vector<RString> arrayFakeValues;
-		split( arrayFakeExpressions[b], "=", arrayFakeValues );
-		// XXX: Hard to tell which file caused this.
-		if( arrayFakeValues.size() != 2 )
-		{
-			LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid #FAKES value \"%s\" (must have exactly one '='), ignored.",
-				     arrayFakeExpressions[b].c_str() );
-			continue;
-		}
-		
-		const float fBeat = StringToFloat( arrayFakeValues[0] );
-		const float fNewBeat = StringToFloat( arrayFakeValues[1] );
-		
-		if(fNewBeat > 0)
-			out.AddFakeSegment( FakeSegment(fBeat, fNewBeat) );
-		else
-		{
-			LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid Fake at beat %f, BPM %f.", fBeat, fNewBeat );
-		}
-	}
-}
 
-
-bool SSCLoader::LoadFromSSCFile( const RString &sPath, Song &out, bool bFromCache )
+bool SSCLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCache )
 {
 	LOG->Trace( "Song::LoadFromSSCFile(%s)", sPath.c_str() );
 
@@ -421,7 +313,7 @@ bool SSCLoader::LoadFromSSCFile( const RString &sPath, Song &out, bool bFromCach
 					for( unsigned b=0; b<aFGChangeExpressions.size(); b++ )
 					{
 						BackgroundChange change;
-						if( LoadFromBGSSCChangesString( change, aFGChangeExpressions[b] ) )
+						if( LoadFromBGChangesString( change, aFGChangeExpressions[b] ) )
 							out.AddForegroundChange( change );
 					}
 				}
@@ -665,11 +557,6 @@ bool SSCLoader::LoadFromSSCFile( const RString &sPath, Song &out, bool bFromCach
 	return true;
 }
 
-void SSCLoader::GetApplicableFiles( const RString &sPath, vector<RString> &out )
-{
-	GetDirListing( sPath + RString("*.ssc"), out );
-}
-
 bool SSCLoader::LoadEditFromFile( RString sEditFilePath, ProfileSlot slot, bool bAddStepsToSong )
 {
 	LOG->Trace( "SSCLoader::LoadEditFromFile(%s)", sEditFilePath.c_str() );
@@ -883,9 +770,13 @@ bool SSCLoader::LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePat
 			else
 			{
 				pNewNotes = pSong->CreateSteps();
-				SMLoader::LoadFromSMTokens( 
-						 sParams[1], sParams[2], sParams[3], sParams[4], sParams[5], sParams[6],
-						 *pNewNotes);
+				LoadFromTokens(sParams[1],
+					       sParams[2],
+					       sParams[3],
+					       sParams[4],
+					       sParams[5],
+					       sParams[6],
+					       *pNewNotes);
 			}
 
 			pNewNotes->SetLoadedFromProfile( slot );
@@ -911,11 +802,6 @@ bool SSCLoader::LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePat
 	//return true;
 	// only load a SSC edit if it passes the checks. -aj
 	return bSSCFormat;
-}
-
-void SSCLoader::TidyUpData( Song &song, bool bFromCache )
-{
-	SMLoader::TidyUpData(song, bFromCache);
 }
 
 /*

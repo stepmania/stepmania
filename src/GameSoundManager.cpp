@@ -142,8 +142,10 @@ static void StartMusic( MusicToPlay &ToPlay )
 	{
 		LOG->Trace( "Found '%s'", ToPlay.m_sTimingFile.c_str() );
 		Song song;
-		if( GetExtension(ToPlay.m_sTimingFile) == ".ssc" &&
-			SSCLoader::LoadFromSSCFile(ToPlay.m_sTimingFile, song) )
+		SSCLoader loaderSSC;
+		SMLoader loaderSM;
+		if(GetExtension(ToPlay.m_sTimingFile) == ".ssc" &&
+		   loaderSSC.LoadFromSimfile(ToPlay.m_sTimingFile, song) )
 		{
 			ToPlay.HasTiming = true;
 			ToPlay.m_TimingData = song.m_SongTiming;
@@ -152,8 +154,8 @@ static void StartMusic( MusicToPlay &ToPlay )
 			if( pStepsCabinetLights )
 				pStepsCabinetLights->GetNoteData( ToPlay.m_LightsData );
 		}
-		else if( GetExtension(ToPlay.m_sTimingFile) == ".sm" &&
-			SMLoader::LoadFromSMFile(ToPlay.m_sTimingFile, song) )
+		else if(GetExtension(ToPlay.m_sTimingFile) == ".sm" &&
+			loaderSM.LoadFromSimfile(ToPlay.m_sTimingFile, song) )
 		{
 			ToPlay.HasTiming = true;
 			ToPlay.m_TimingData = song.m_SongTiming;

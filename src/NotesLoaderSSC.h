@@ -3,6 +3,7 @@
 #define NotesLoaderSSC_H
 
 #include "GameConstantsAndTypes.h"
+#include "NotesLoaderSM.h"
 
 class MsdFile;
 class Song;
@@ -29,15 +30,10 @@ const float VERSION_SPLIT_TIMING = 0.7f;
 /**
  * @brief The SSCLoader handles all of the parsing needed for .ssc files.
  */
-namespace SSCLoader
+struct SSCLoader : public SMLoader
 {
-	/**
-	 * @brief Attempt to load a song from a specified path.
-	 * @param sPath a const reference to the path on the hard drive to check.
-	 * @param out a reference to the Song that will retrieve the song information.
-	 * @return its success or failure.
-	 */
-	bool LoadFromDir( const RString &sPath, Song &out );
+	SSCLoader() : SMLoader(".ssc") {}
+	
 	/**
 	 * @brief Attempt to load the specified ssc file.
 	 * @param sPath a const reference to the path on the hard drive to check.
@@ -45,13 +41,8 @@ namespace SSCLoader
 	 * @param bFromCache a check to see if we are getting certain information from the cache file.
 	 * @return its success or failure.
 	 */
-	bool LoadFromSSCFile( const RString &sPath, Song &out, bool bFromCache = false );
-	/**
-	 * @brief Retrieve the list of .ssc files.
-	 * @param sPath a const reference to the path on the hard drive to check.
-	 * @param out a vector of files found in the path.
-	 */
-	void GetApplicableFiles( const RString &sPath, vector<RString> &out );
+	virtual bool LoadFromSimfile( const RString &sPath, Song &out, bool bFromCache = false );
+	
 	/**
 	 * @brief Attempt to load an edit from the hard drive.
 	 * @param sEditFilePath a path on the hard drive to check.
@@ -69,21 +60,14 @@ namespace SSCLoader
 	 * @return its success or failure.
 	 */
 	bool LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePath, ProfileSlot slot, bool bAddStepsToSong );
-	/**
-	 * @brief Perform some cleanup on the loaded song.
-	 * @param song a reference to the song that may need cleaning up.
-	 * @param bFromCache a flag to determine if this song is loaded from a cache file.
-	 */
-	void TidyUpData( Song &song, bool bFromCache );
 	
 	
 	void ProcessWarps( TimingData &, const RString, const float );
 	void ProcessLabels( TimingData &, const RString );
-	void ProcessCombos( TimingData &, const RString );
-	void ProcessSpeeds( TimingData &, const RString );
+	virtual void ProcessCombos( TimingData &, const RString, const int = -1 );
 	void ProcessScrolls( TimingData &, const RString );
-	void ProcessFakes( TimingData &, const RString );
-}
+};
+
 #endif
 /**
  * @file

@@ -242,11 +242,13 @@ void Steps::Decompress() const
 	{
 		// We have data on disk and not in memory. Load it.
 		Song s;
-		bool bLoadedFromSSC = SSCLoader::LoadFromSSCFile(m_sFilename, s, true);
+		SSCLoader loaderSSC;
+		bool bLoadedFromSSC = loaderSSC.LoadFromSimfile(m_sFilename, s, true);
 		if( !bLoadedFromSSC )
 		{
 			// try reading from .sm instead
-			if( !SMLoader::LoadFromSMFile(m_sFilename, s, true) )
+			SMLoader loaderSM;
+			if( !loaderSM.LoadFromSimfile(m_sFilename, s, true) )
 			{
 				LOG->Warn( "Couldn't load \"%s\"", m_sFilename.c_str() );
 				return;
