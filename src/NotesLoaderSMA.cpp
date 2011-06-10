@@ -14,25 +14,6 @@
 #include "Steps.h"
 #include "Attack.h"
 
-/**
- * @brief A custom .edit file can only be so big before we have to reject it.
- */
-const int MAX_EDIT_STEPS_SIZE_BYTES = 60*1024; // 60 KB
-
-bool SMALoader::LoadFromDir( const RString &sPath, Song &out )
-{
-	vector<RString> aFileNames;
-	GetApplicableFiles( sPath, aFileNames );
-	
-	if( aFileNames.size() > 1 )
-	{
-		LOG->UserLog( "Song", sPath, "has more than one SMA file. Only one SMA file is allowed per song." );
-		return false;
-	}
-	ASSERT( aFileNames.size() == 1 );
-	return LoadFromSimfile( sPath + aFileNames[0], out );
-}
-
 void SMALoader::ProcessMultipliers( TimingData &out, const int iRowsPerBeat, const RString sParam )
 {
 	vector<RString> arrayMultiplierExpressions;

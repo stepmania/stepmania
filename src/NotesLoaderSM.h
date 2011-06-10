@@ -15,6 +15,9 @@ class TimingData;
  * This was brought in from StepMania 4's recent betas. */
 const float FAST_BPM_WARP = 9999999.f;
 
+/** @brief The maximum file size for edits. */
+const int MAX_EDIT_STEPS_SIZE_BYTES		= 60*1024;	// 60KB
+
 /** @brief Reads a Song from an .SM file. */
 struct SMLoader
 {
@@ -24,7 +27,13 @@ struct SMLoader
 	
 	virtual ~SMLoader() {}
 	
-	bool LoadFromDir( const RString &sPath, Song &out );
+	/**
+	 * @brief Attempt to load a song from a specified path.
+	 * @param sPath a const reference to the path on the hard drive to check.
+	 * @param out a reference to the Song that will retrieve the song information.
+	 * @return its success or failure.
+	 */
+	virtual bool LoadFromDir( const RString &sPath, Song &out );
 	/**
 	 * @brief Perform some cleanup on the loaded song.
 	 * @param song a reference to the song that may need cleaning up.

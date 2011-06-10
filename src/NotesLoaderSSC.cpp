@@ -14,26 +14,6 @@
 #include "Attack.h"
 #include "PrefsManager.h"
 
-/**
- * @brief A custom .edit file can only be so big before we have to reject it.
- */
-const int MAX_EDIT_STEPS_SIZE_BYTES = 60*1024; // 60 KB
-
-bool SSCLoader::LoadFromDir( const RString &sPath, Song &out )
-{
-	vector<RString> aFileNames;
-	GetApplicableFiles( sPath,  aFileNames );
-
-	if( aFileNames.size() > 1 )
-	{
-		LOG->UserLog( "Song", sPath, "has more than one SSC file. Only one SSC file is allowed per song." );
-		return false;
-	}
-
-	ASSERT( aFileNames.size() == 1 );
-	return LoadFromSimfile( sPath + aFileNames[0], out );
-}
-
 void SSCLoader::ProcessWarps( TimingData &out, const RString sParam, const float fVersion )
 {
 	vector<RString> arrayWarpExpressions;

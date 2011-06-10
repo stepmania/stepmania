@@ -35,13 +35,6 @@ struct SSCLoader : public SMLoader
 	SSCLoader() : SMLoader(".ssc") {}
 	
 	/**
-	 * @brief Attempt to load a song from a specified path.
-	 * @param sPath a const reference to the path on the hard drive to check.
-	 * @param out a reference to the Song that will retrieve the song information.
-	 * @return its success or failure.
-	 */
-	bool LoadFromDir( const RString &sPath, Song &out );
-	/**
 	 * @brief Attempt to load the specified ssc file.
 	 * @param sPath a const reference to the path on the hard drive to check.
 	 * @param out a reference to the Song that will retrieve the song information.
