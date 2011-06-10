@@ -539,7 +539,9 @@ static MenuDef g_AlterMenu(
    MenuRowDef(ScreenEdit::convert_to_pause,		"Convert selection to pause",		true, 
 	      EditMode_Full, true, true, 0, NULL ),
    MenuRowDef(ScreenEdit::convert_to_warp,		"Convert selection to warp",		true, 
-	      EditMode_Full, true, true, 0, NULL )			   
+	      EditMode_Full, true, true, 0, NULL ),
+   MenuRowDef(ScreenEdit::convert_to_fake,		"Convert selection to fake",		true, 
+	      EditMode_Full, true, true, 0, NULL )
 );
 
 static MenuDef g_AreaMenu(
@@ -3722,6 +3724,14 @@ void ScreenEdit::HandleAlterMenuChoice(AlterMenuChoice c, const vector<int> &iAn
 			float startBeat = NoteRowToBeat(m_NoteFieldEdit.m_iBeginMarker);
 			float lengthBeat = NoteRowToBeat(m_NoteFieldEdit.m_iEndMarker) - startBeat;
 			GetAppropriateTiming().SetWarpAtBeat(startBeat,lengthBeat);
+			SetDirty(true);
+			break;
+		}
+		case convert_to_fake:
+		{
+			float startBeat = NoteRowToBeat(m_NoteFieldEdit.m_iBeginMarker);
+			float lengthBeat = NoteRowToBeat(m_NoteFieldEdit.m_iEndMarker) - startBeat;
+			GetAppropriateTiming().SetFakeAtBeat(startBeat,lengthBeat);
 			SetDirty(true);
 			break;
 		}
