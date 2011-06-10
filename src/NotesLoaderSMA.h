@@ -25,7 +25,7 @@ struct SMALoader : public SMLoader
 {	
 	bool LoadFromDir( const RString &sPath, Song &out );
 	
-	bool LoadFromSMAFile( const RString &sPath, Song &out );
+	virtual bool LoadFromSimfile( const RString &sPath, Song &out, bool bFromCache = false );
 	/**
 	 * @brief Retrieve the list of .sma files.
 	 * @param sPath a const reference to the path on the hard drive to check.

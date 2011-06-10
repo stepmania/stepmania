@@ -31,7 +31,7 @@ bool SSCLoader::LoadFromDir( const RString &sPath, Song &out )
 	}
 
 	ASSERT( aFileNames.size() == 1 );
-	return LoadFromSSCFile( sPath + aFileNames[0], out );
+	return LoadFromSimfile( sPath + aFileNames[0], out );
 }
 
 void SSCLoader::ProcessWarps( TimingData &out, const RString sParam, const float fVersion )
@@ -149,7 +149,7 @@ void SSCLoader::ProcessScrolls( TimingData &out, const RString sParam )
 }
 
 
-bool SSCLoader::LoadFromSSCFile( const RString &sPath, Song &out, bool bFromCache )
+bool SSCLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCache )
 {
 	LOG->Trace( "Song::LoadFromSSCFile(%s)", sPath.c_str() );
 

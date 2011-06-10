@@ -46,7 +46,7 @@ struct SSCLoader : public SMLoader
 	 * @param bFromCache a check to see if we are getting certain information from the cache file.
 	 * @return its success or failure.
 	 */
-	bool LoadFromSSCFile( const RString &sPath, Song &out, bool bFromCache = false );
+	virtual bool LoadFromSimfile( const RString &sPath, Song &out, bool bFromCache = false );
 	/**
 	 * @brief Retrieve the list of .ssc files.
 	 * @param sPath a const reference to the path on the hard drive to check.

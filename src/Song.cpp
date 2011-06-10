@@ -236,12 +236,12 @@ bool Song::LoadFromSongDir( RString sDir )
 	{
 //		LOG->Trace( "Loading '%s' from cache file '%s'.", m_sSongDir.c_str(), GetCacheFilePath().c_str() );
 		SSCLoader loaderSSC;
-		bool bLoadedFromSSC = loaderSSC.LoadFromSSCFile( sCacheFilePath, *this, true );
+		bool bLoadedFromSSC = loaderSSC.LoadFromSimfile( sCacheFilePath, *this, true );
 		if( !bLoadedFromSSC )
 		{
 			// load from .sm
 			SMLoader loaderSM;
-			loaderSM.LoadFromSMFile( sCacheFilePath, *this, true );
+			loaderSM.LoadFromSimfile( sCacheFilePath, *this, true );
 			loaderSM.TidyUpData( *this, true );
 		}
 	}

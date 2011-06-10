@@ -138,9 +138,9 @@ void ScreenHowToPlay::Init()
 		SSCLoader loaderSSC;
 		SMLoader loaderSM;
 		if( sStepsPath.Right(4) == ".ssc" )
-			loaderSSC.LoadFromSSCFile( sStepsPath, m_Song, false );
+			loaderSSC.LoadFromSimfile( sStepsPath, m_Song, false );
 		else
-			loaderSM.LoadFromSMFile( sStepsPath, m_Song, false );
+			loaderSM.LoadFromSimfile( sStepsPath, m_Song, false );
 		m_Song.AddAutoGenNotes();
 
 		const Style* pStyle = GAMESTATE->GetCurrentStyle();

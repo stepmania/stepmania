@@ -30,7 +30,7 @@ bool SMLoader::LoadFromDir( const RString &sPath, Song &out )
 	ASSERT( aFileNames.size() == 1 );
 	//ASSERT( aFileNames.size() >= 1 );
 	
-	return LoadFromSMFile( sPath + aFileNames[0], out );
+	return LoadFromSimfile( sPath + aFileNames[0], out );
 }
 
 float SMLoader::RowToBeat( RString line, const int rowsPerBeat )
@@ -598,7 +598,7 @@ bool SMLoader::LoadFromBGChangesString( BackgroundChange &change, const RString 
 	return aBGChangeValues.size() >= 2;
 }
 
-bool SMLoader::LoadFromSMFile( const RString &sPath, Song &out, bool bFromCache )
+bool SMLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCache )
 {
 	LOG->Trace( "Song::LoadFromSMFile(%s)", sPath.c_str() );
 

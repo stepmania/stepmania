@@ -24,9 +24,9 @@ void ScreenGameplaySyncMachine::Init()
 	SSCLoader loaderSSC;
 	SMLoader loaderSM;
 	if(sFile.Right(4) == ".ssc")
-		loaderSSC.LoadFromSSCFile( sFile, m_Song );
+		loaderSSC.LoadFromSimfile( sFile, m_Song );
 	else
-		loaderSM.LoadFromSMFile( sFile, m_Song );
+		loaderSM.LoadFromSimfile( sFile, m_Song );
 
 	m_Song.SetSongDir( Dirname(sFile) );
 	m_Song.TidyUpData();

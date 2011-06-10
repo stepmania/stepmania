@@ -30,7 +30,7 @@ bool SMALoader::LoadFromDir( const RString &sPath, Song &out )
 		return false;
 	}
 	ASSERT( aFileNames.size() == 1 );
-	return LoadFromSMAFile( sPath + aFileNames[0], out );
+	return LoadFromSimfile( sPath + aFileNames[0], out );
 }
 
 void SMALoader::ProcessMultipliers( TimingData &out, const int iRowsPerBeat, const RString sParam )
@@ -142,7 +142,7 @@ void SMALoader::ProcessSpeeds( TimingData &out, const RString line, const int ro
 	}
 }
 
-bool SMALoader::LoadFromSMAFile( const RString &sPath, Song &out )
+bool SMALoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCache )
 {
 	LOG->Trace( "Song::LoadFromSMAFile(%s)", sPath.c_str() );
 	

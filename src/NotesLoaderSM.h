@@ -28,7 +28,14 @@ struct SMLoader
 	 */
 	virtual void TidyUpData( Song &song, bool bFromCache );
 
-	bool LoadFromSMFile( const RString &sPath, Song &out, bool bFromCache = false );
+	/**
+	 * @brief Attempt to load the specified sm file.
+	 * @param sPath a const reference to the path on the hard drive to check.
+	 * @param out a reference to the Song that will retrieve the song information.
+	 * @param bFromCache a check to see if we are getting certain information from the cache file.
+	 * @return its success or failure.
+	 */
+	virtual bool LoadFromSimfile( const RString &sPath, Song &out, bool bFromCache = false );
 	/**
 	 * @brief Retrieve the list of .sm files.
 	 * @param sPath a const reference to the path on the hard drive to check.

@@ -145,7 +145,7 @@ static void StartMusic( MusicToPlay &ToPlay )
 		SSCLoader loaderSSC;
 		SMLoader loaderSM;
 		if(GetExtension(ToPlay.m_sTimingFile) == ".ssc" &&
-		   loaderSSC.LoadFromSSCFile(ToPlay.m_sTimingFile, song) )
+		   loaderSSC.LoadFromSimfile(ToPlay.m_sTimingFile, song) )
 		{
 			ToPlay.HasTiming = true;
 			ToPlay.m_TimingData = song.m_SongTiming;
@@ -155,7 +155,7 @@ static void StartMusic( MusicToPlay &ToPlay )
 				pStepsCabinetLights->GetNoteData( ToPlay.m_LightsData );
 		}
 		else if(GetExtension(ToPlay.m_sTimingFile) == ".sm" &&
-			loaderSM.LoadFromSMFile(ToPlay.m_sTimingFile, song) )
+			loaderSM.LoadFromSimfile(ToPlay.m_sTimingFile, song) )
 		{
 			ToPlay.HasTiming = true;
 			ToPlay.m_TimingData = song.m_SongTiming;
