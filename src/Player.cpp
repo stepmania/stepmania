@@ -2938,6 +2938,7 @@ void Player::CrossedRows( int iLastRowCrossed, const RageTimer &now )
 						++tn.HoldResult.iCheckpointsMissed;
 					}
 				}
+				GAMESTATE->SetProcessedTimingData(this->m_Timing);
 
 				// TODO: Find a better way of handling hold checkpoints with other taps.
 				if( !viColsWithHold.empty() && ( CHECKPOINTS_TAPS_SEPARATE_JUDGMENT || m_NoteData.GetNumTapNotesInRow( iLastRowCrossed ) == 0 ) )
