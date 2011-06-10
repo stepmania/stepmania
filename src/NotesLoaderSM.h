@@ -18,6 +18,10 @@ const float FAST_BPM_WARP = 9999999.f;
 /** @brief Reads a Song from an .SM file. */
 struct SMLoader
 {
+	SMLoader() : fileExt(".sm") {}
+	
+	SMLoader(RString ext) : fileExt(ext) {}
+	
 	virtual ~SMLoader() {}
 	
 	bool LoadFromDir( const RString &sPath, Song &out );
@@ -143,6 +147,15 @@ protected:
 				    RString sRadarValues,
 				    RString sNoteData,
 				    Steps &out);
+	
+	/**
+	 * @brief Retrieve the file extension associated with this loader.
+	 * @return the file extension. */
+	RString GetFileExtension() const { return fileExt; }
+	
+private:
+	/** @brief The file extension in use. */
+	const RString fileExt;
 };
 
 #endif

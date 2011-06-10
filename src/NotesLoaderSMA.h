@@ -23,6 +23,7 @@ enum SMALoadingStates
 /** @brief Reads a Song from a .SMA file. */
 struct SMALoader : public SMLoader
 {	
+	SMALoader() : SMLoader(".sma") {}
 	bool LoadFromDir( const RString &sPath, Song &out );
 	
 	virtual bool LoadFromSimfile( const RString &sPath, Song &out, bool bFromCache = false );

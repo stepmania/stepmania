@@ -32,6 +32,8 @@ const float VERSION_SPLIT_TIMING = 0.7f;
  */
 struct SSCLoader : public SMLoader
 {
+	SSCLoader() : SMLoader(".ssc") {}
+	
 	/**
 	 * @brief Attempt to load a song from a specified path.
 	 * @param sPath a const reference to the path on the hard drive to check.
