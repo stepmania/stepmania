@@ -538,6 +538,8 @@ static MenuDef g_AlterMenu(
 	      EditMode_Practice, true, true, 0, NULL ),
    MenuRowDef(ScreenEdit::convert_to_pause,		"Convert selection to pause",		true, 
 	      EditMode_Full, true, true, 0, NULL ),
+   MenuRowDef(ScreenEdit::convert_to_delay,		"Convert selection to delay",		true, 
+	      EditMode_Full, true, true, 0, NULL ),
    MenuRowDef(ScreenEdit::convert_to_warp,		"Convert selection to warp",		true, 
 	      EditMode_Full, true, true, 0, NULL ),
    MenuRowDef(ScreenEdit::convert_to_fake,		"Convert selection to fake",		true, 
@@ -3715,6 +3717,27 @@ void ScreenEdit::HandleAlterMenuChoice(AlterMenuChoice c, const vector<int> &iAn
 			GetAppropriateTiming().DeleteRows( m_NoteFieldEdit.m_iBeginMarker + 1,
 							  m_NoteFieldEdit.m_iEndMarker-m_NoteFieldEdit.m_iBeginMarker );
 			GetAppropriateTiming().SetStopAtRow( m_NoteFieldEdit.m_iBeginMarker, fStopLength );
+			m_NoteFieldEdit.m_iBeginMarker = -1;
+			m_NoteFieldEdit.m_iEndMarker = -1;
+			break;
+		}
+		case convert_to_delay:
+		{
+			ASSERT_M( m_NoteFieldEdit.m_iBeginMarker!=-1 && m_NoteFieldEdit.m_iEndMarker!=-1, "Attempted to convert beats outside the notefield to pauses!" );
+			float fMarkerStart = GetAppropriateTiming().GetElapsedTimeFromBeat( NoteRowToBeat(m_NoteFieldEdit.m_iBeginMarker) );
+			float fMarkerEnd = GetAppropriateTiming().GetElapsedTimeFromBeat( NoteRowToBeat(m_NoteFieldEdit.m_iEndMarker) );
+			
+			// The length of the delay segment we're going to create.  This includes time spent in any
+			// stops in the selection, which will be deleted and subsumed into the new stop.
+			float fStopLength = fMarkerEnd - fMarkerStart;
+			
+			NoteDataUtil::DeleteRows( m_NoteDataEdit, 
+						 m_NoteFieldEdit.m_iBeginMarker,
+						 m_NoteFieldEdit.m_iEndMarker-m_NoteFieldEdit.m_iBeginMarker
+						 );
+			GetAppropriateTiming().DeleteRows( m_NoteFieldEdit.m_iBeginMarker,
+							  m_NoteFieldEdit.m_iEndMarker-m_NoteFieldEdit.m_iBeginMarker );
+			GetAppropriateTiming().SetDelayAtRow( m_NoteFieldEdit.m_iBeginMarker, fStopLength );
 			m_NoteFieldEdit.m_iBeginMarker = -1;
 			m_NoteFieldEdit.m_iEndMarker = -1;
 			break;

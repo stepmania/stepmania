@@ -385,6 +385,7 @@ public:
 		play,
 		record,
 		convert_to_pause,
+		convert_to_delay,
 		convert_to_warp,
 		convert_to_fake,
 		NUM_ALTER_MENU_CHOICES
