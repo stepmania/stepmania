@@ -438,11 +438,6 @@ bool SMALoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 	return true;
 }
 
-void SMALoader::GetApplicableFiles( const RString &sPath, vector<RString> &out )
-{
-	GetDirListing( sPath + RString("*.sma"), out );
-}
-
 /**
  * @file
  * @author Aldo Fregoso, Jason Felds (c) 2009-2011

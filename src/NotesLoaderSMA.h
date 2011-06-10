@@ -26,12 +26,7 @@ struct SMALoader : public SMLoader
 	SMALoader() : SMLoader(".sma") {}
 	
 	virtual bool LoadFromSimfile( const RString &sPath, Song &out, bool bFromCache = false );
-	/**
-	 * @brief Retrieve the list of .sma files.
-	 * @param sPath a const reference to the path on the hard drive to check.
-	 * @param out a vector of files found in the path.
-	 */
-	virtual void GetApplicableFiles( const RString &sPath, vector<RString> &out );
+
 	
 	void ProcessBeatsPerMeasure( TimingData &out, const RString sParam );
 	void ProcessMultipliers( TimingData &out, const int iRowsPerBeat, const RString sParam );

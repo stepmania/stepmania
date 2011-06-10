@@ -557,11 +557,6 @@ bool SSCLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 	return true;
 }
 
-void SSCLoader::GetApplicableFiles( const RString &sPath, vector<RString> &out )
-{
-	GetDirListing( sPath + RString("*.ssc"), out );
-}
-
 bool SSCLoader::LoadEditFromFile( RString sEditFilePath, ProfileSlot slot, bool bAddStepsToSong )
 {
 	LOG->Trace( "SSCLoader::LoadEditFromFile(%s)", sEditFilePath.c_str() );

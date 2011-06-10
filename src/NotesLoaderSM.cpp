@@ -956,7 +956,7 @@ bool SMLoader::LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePath
 
 void SMLoader::GetApplicableFiles( const RString &sPath, vector<RString> &out )
 {
-	GetDirListing( sPath + RString("*.sm"), out );
+	GetDirListing( sPath + RString("*" + this->GetFileExtension() ), out );
 }
 
 void SMLoader::TidyUpData( Song &song, bool bFromCache )

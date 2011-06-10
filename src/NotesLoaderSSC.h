@@ -42,12 +42,7 @@ struct SSCLoader : public SMLoader
 	 * @return its success or failure.
 	 */
 	virtual bool LoadFromSimfile( const RString &sPath, Song &out, bool bFromCache = false );
-	/**
-	 * @brief Retrieve the list of .ssc files.
-	 * @param sPath a const reference to the path on the hard drive to check.
-	 * @param out a vector of files found in the path.
-	 */
-	virtual void GetApplicableFiles( const RString &sPath, vector<RString> &out );
+	
 	/**
 	 * @brief Attempt to load an edit from the hard drive.
 	 * @param sEditFilePath a path on the hard drive to check.
