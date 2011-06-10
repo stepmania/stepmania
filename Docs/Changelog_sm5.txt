@@ -14,6 +14,8 @@ StepMania 5.0 Preview 2 | 20110???
   "A" key to enter the Alter Menu when a selection of notes/rows are
   highlighted. Use the Enter key to enter the old Area Menu for the options that
   do not depend on selecting NoteData. [Wolfman2000]
+* [ScreenEdit] Allow converting selections to Delays, Warps, or Fakes as well
+  as Stops. Remember, use the Alter Menu for this. [Wolfman2000]
 
 2011/06/09
 ----------
