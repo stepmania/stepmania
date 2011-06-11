@@ -14,6 +14,7 @@
 #include "global.h"
 #include "Steps.h"
 #include "StepsUtil.h"
+#include "GameState.h"
 #include "Song.h"
 #include "RageUtil.h"
 #include "RageLog.h"
@@ -192,6 +193,7 @@ void Steps::CalculateRadarValues( float fMusicLengthSeconds )
 	FOREACH_PlayerNumber( pn )
 		m_CachedRadarValues[pn].Zero();
 
+	GAMESTATE->SetProcessedTimingData(&this->m_Timing);
 	if( tempNoteData.IsComposite() )
 	{
 		vector<NoteData> vParts;
@@ -205,6 +207,7 @@ void Steps::CalculateRadarValues( float fMusicLengthSeconds )
 		NoteDataUtil::CalculateRadarValues( tempNoteData, fMusicLengthSeconds, m_CachedRadarValues[0] );
 		fill_n( m_CachedRadarValues + 1, NUM_PLAYERS-1, m_CachedRadarValues[0] );
 	}
+	GAMESTATE->SetProcessedTimingData(NULL);
 }
 
 void Steps::Decompress() const
@@ -239,11 +242,13 @@ void Steps::Decompress() const
 	{
 		// We have data on disk and not in memory. Load it.
 		Song s;
-		bool bLoadedFromSSC = SSCLoader::LoadFromSSCFile(m_sFilename, s, true);
+		SSCLoader loaderSSC;
+		bool bLoadedFromSSC = loaderSSC.LoadFromSimfile(m_sFilename, s, true);
 		if( !bLoadedFromSSC )
 		{
 			// try reading from .sm instead
-			if( !SMLoader::LoadFromSMFile(m_sFilename, s, true) )
+			SMLoader loaderSM;
+			if( !loaderSM.LoadFromSimfile(m_sFilename, s, true) )
 			{
 				LOG->Warn( "Couldn't load \"%s\"", m_sFilename.c_str() );
 				return;

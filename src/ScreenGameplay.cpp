@@ -2294,12 +2294,14 @@ void ScreenGameplay::SaveStats()
 		RadarValues rv;
 		PlayerStageStats &pss = *pi->GetPlayerStageStats();
 		const NoteData &nd = pi->m_pPlayer->GetNoteData();
+		PlayerNumber pn = pi->m_pn;
 
+		GAMESTATE->SetProcessedTimingData(&GAMESTATE->m_pCurSteps[pn]->m_Timing);
 		NoteDataUtil::CalculateRadarValues( nd, fMusicLen, rv );
 		pss.m_radarPossible += rv;
-
 		NoteDataWithScoring::GetActualRadarValues( nd, pss, fMusicLen, rv );
 		pss.m_radarActual += rv;
+		GAMESTATE->SetProcessedTimingData(NULL);
 	}
 }
 

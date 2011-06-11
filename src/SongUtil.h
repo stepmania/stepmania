@@ -163,12 +163,25 @@ namespace SongUtil
 	bool ValidateCurrentStepsCredit( const RString &sAnswer, RString &sErrorOut );
 
 	void GetAllSongGenres( vector<RString> &vsOut );
-	void FilterSongs( const SongCriteria &sc, const vector<Song*> &in, vector<Song*> &out );
+	/**
+	 * @brief Filter the selection of songs to only match certain criteria.
+	 * @param sc the intended song criteria.
+	 * @param in the starting batch of songs.
+	 * @param out the resulting batch.
+	 * @param doCareAboutGame a flag to see if we should only get playable steps. */
+	void FilterSongs( const SongCriteria &sc, const vector<Song*> &in, vector<Song*> &out,
+			 bool doCareAboutGame = false );
 
 	void GetPlayableStepsTypes( const Song *pSong, set<StepsType> &vOut );
 	void GetPlayableSteps( const Song *pSong, vector<Steps*> &vOut );
 	bool IsStepsTypePlayable( Song *pSong, StepsType st );
 	bool IsStepsPlayable( Song *pSong, Steps *pSteps );
+	
+	/**
+	 * @brief Determine if the song has any playable steps in the present game.
+	 * @param s the current song.
+	 * @return true if the song has playable steps, false otherwise. */
+	bool IsSongPlayable( Song *s );
 
 	bool GetStepsTypeAndDifficultyFromSortOrder( SortOrder so, StepsType &st, Difficulty &dc );
 }

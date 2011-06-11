@@ -32,20 +32,23 @@ bool NotesLoader::LoadFromDir( const RString &sPath, Song &out, set<RString> &Bl
 	vector<RString> list;
 
 	BlacklistedImages.clear();
-	SSCLoader::GetApplicableFiles( sPath, list );
+	SSCLoader loaderSSC;
+	loaderSSC.GetApplicableFiles( sPath, list );
 	if( !list.empty() )
 	{
-		if( !SSCLoader::LoadFromDir( sPath, out ) )
+		if( !loaderSSC.LoadFromDir( sPath, out ) )
 			return false;
-		SSCLoader::TidyUpData( out, false );
+		loaderSSC.TidyUpData( out, false );
 		return true;
 	}
-	SMALoader::GetApplicableFiles( sPath, list );
+	SMALoader loaderSMA;
+	loaderSMA.GetApplicableFiles( sPath, list );
 	if (!list.empty() )
-		return SMALoader::LoadFromDir( sPath, out );
-	SMLoader::GetApplicableFiles( sPath, list );
+		return loaderSMA.LoadFromDir( sPath, out );
+	SMLoader loaderSM;
+	loaderSM.GetApplicableFiles( sPath, list );
 	if (!list.empty() )
-		return SMLoader::LoadFromDir( sPath, out );
+		return loaderSM.LoadFromDir( sPath, out );
 	DWILoader::GetApplicableFiles( sPath, list );
 	if( !list.empty() )
 		return DWILoader::LoadFromDir( sPath, out, BlacklistedImages );

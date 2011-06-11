@@ -8,6 +8,26 @@ ________________________________________________________________________________
 StepMania 5.0 Preview 2 | 20110???
 --------------------------------------------------------------------------------
 
+2011/06/10
+----------
+* [ScreenEdit] Split the Area Menu into the Area Menu and Alter Menu. Use the
+  "A" key to enter the Alter Menu when a selection of notes/rows are
+  highlighted. Use the Enter key to enter the old Area Menu for the options that
+  do not depend on selecting NoteData. [Wolfman2000]
+* [ScreenEdit] Allow converting selections to Delays, Warps, or Fakes as well
+  as Stops. Remember, use the Alter Menu for this. [Wolfman2000]
+
+2011/06/09
+----------
+* [ScreenSyncOverlay] Ensure that F11 / F12 work with all charts due to Split
+  Timing. [Wolfman2000]
+
+2011/06/08
+----------
+* Any notes in a fake segment or warp segment are completely ignored for
+  scoring purposes. Now you can get 100% on your warping goodness!
+  [Wolfman2000]
+
 2011/06/06
 ----------
 * [PlayerOptions] Removed the ScoreDisplay mod choices. Use lua to make your

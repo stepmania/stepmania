@@ -845,6 +845,20 @@ public:
 	 */
 	void AddFakeSegment( const FakeSegment &seg );
 	
+	/**
+	 * @brief Determine if this notes on this row can be judged.
+	 * @param row the row to focus on.
+	 * @return true if the row can be judged, false otherwise. */
+	bool IsJudgableAtRow( int row ) const
+	{
+		return !(IsWarpAtRow(row) || IsFakeAtRow(row));
+	}
+	/**
+	 * @brief Determine if this notes on this beat can be judged.
+	 * @param beat the beat to focus on.
+	 * @return true if the row can be judged, false otherwise. */
+	bool IsJudgableAtBeat( float beat ) const { return IsJudgableAtRow( BeatToNoteRow( beat ) ); }
+	
 	
 	
 	void MultiplyBPMInBeatRange( int iStartIndex, int iEndIndex, float fFactor );

@@ -164,7 +164,7 @@ struct TapNote
 	{
 		if (type_ > TapNote::fake )
 		{
-			LOG->Trace(ssprintf("Invalid tap note type %d (most likely) due to random vanish issues. Assume it doesn't need judging.", type_ ) );
+			LOG->Trace("Invalid tap note type %d (most likely) due to random vanish issues. Assume it doesn't need judging.", (int)type_ );
 			type = TapNote::empty;
 		}
 	}

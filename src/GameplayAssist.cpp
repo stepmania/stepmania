@@ -47,7 +47,7 @@ void GameplayAssist::PlayTicks( const NoteData &nd, const PlayerState *ps )
 			if( nd.IsThereATapOrHoldHeadAtRow( r ) )
 				iClapRow = r;
 
-		if( iClapRow != -1 && !timing.IsWarpAtRow( iClapRow ) && !timing.IsFakeAtRow( iClapRow ) )
+		if( iClapRow != -1 && timing.IsJudgableAtRow(iClapRow))
 		{
 			const float fTickBeat = NoteRowToBeat( iClapRow );
 			const float fTickSecond = timing.GetElapsedTimeFromBeatNoOffset( fTickBeat );

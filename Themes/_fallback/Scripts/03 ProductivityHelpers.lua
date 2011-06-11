@@ -148,7 +148,9 @@ end
 -- MaskSource([clearzbuffer])
 -- Sets an actor up as the source for a mask. Clears zBuffer by default.
 function Actor:MaskSource(noclear)
-	self:clearzbuffer(noclear or true)
+	if noclear == true then
+		self:clearzbuffer(true)
+	end
 	self:zwrite(true)
 	self:blend('BlendMode_NoEffect')
 end

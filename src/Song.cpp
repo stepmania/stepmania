@@ -41,7 +41,7 @@
  * @brief The internal version of the cache for StepMania.
  *
  * Increment this value to invalidate the current cache. */
-const int FILE_CACHE_VERSION = 179;
+const int FILE_CACHE_VERSION = 180;
 
 /** @brief How long does a song sample last by default? */
 const float DEFAULT_MUSIC_SAMPLE_LENGTH = 12.f;
@@ -235,12 +235,14 @@ bool Song::LoadFromSongDir( RString sDir )
 	if( bUseCache )
 	{
 //		LOG->Trace( "Loading '%s' from cache file '%s'.", m_sSongDir.c_str(), GetCacheFilePath().c_str() );
-		bool bLoadedFromSSC = SSCLoader::LoadFromSSCFile( sCacheFilePath, *this, true );
+		SSCLoader loaderSSC;
+		bool bLoadedFromSSC = loaderSSC.LoadFromSimfile( sCacheFilePath, *this, true );
 		if( !bLoadedFromSSC )
 		{
 			// load from .sm
-			SMLoader::LoadFromSMFile( sCacheFilePath, *this, true );
-			SMLoader::TidyUpData( *this, true );
+			SMLoader loaderSM;
+			loaderSM.LoadFromSimfile( sCacheFilePath, *this, true );
+			loaderSM.TidyUpData( *this, true );
 		}
 	}
 	else
@@ -1502,9 +1504,10 @@ public:
 	static int GetBackgroundPath( T* p, lua_State *L )
 	{
 		RString s = p->GetBackgroundPath();
-		if( s.empty() ) 
-			s = ""; 
-		lua_pushstring(L, s); 
+		if( !s.empty() ) 
+			lua_pushstring(L, s);
+		else
+			lua_pushnil(L);
 		return 1; 
 	}
 	static int GetCDTitlePath( T* p, lua_State *L )		{ RString s = p->GetCDTitlePath(); if( s.empty() ) return 0; LuaHelpers::Push(L, s); return 1; }

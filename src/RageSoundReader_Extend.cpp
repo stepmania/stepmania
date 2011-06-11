@@ -15,6 +15,7 @@
 RageSoundReader_Extend::RageSoundReader_Extend( RageSoundReader *pSource ):
 	RageSoundReader_Filter( pSource )
 {
+	ASSERT_M(pSource, "The music file was not found! Was it deleted or moved while the game was on?");
 	m_iPositionFrames = pSource->GetNextSourceFrame();
 
 	m_StopMode = M_STOP;

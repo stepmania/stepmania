@@ -61,6 +61,7 @@ const float RECORD_HOLD_SECONDS = 0.3f;
 AutoScreenMessage( SM_UpdateTextInfo );
 AutoScreenMessage( SM_BackFromMainMenu );
 AutoScreenMessage( SM_BackFromAreaMenu );
+AutoScreenMessage( SM_BackFromAlterMenu );
 AutoScreenMessage( SM_BackFromStepsInformation );
 AutoScreenMessage( SM_BackFromOptions );
 AutoScreenMessage( SM_BackFromSongInformation );
@@ -170,6 +171,7 @@ void ScreenEdit::InitEditMappings()
 		m_EditMappingsMenuButton.button   [EDIT_BUTTON_OPEN_EDIT_MENU][0]    = GAME_BUTTON_START;
 		m_EditMappingsMenuButton.button   [EDIT_BUTTON_OPEN_EDIT_MENU][1]    = GAME_BUTTON_BACK;
 
+			
 		// Escape, Enter = exit play/record
 		m_PlayMappingsDeviceInput.button   [EDIT_BUTTON_RETURN_TO_EDIT][0]    = DeviceInput(DEVICE_KEYBOARD, KEY_ENTER);
 		m_PlayMappingsDeviceInput.button   [EDIT_BUTTON_RETURN_TO_EDIT][1]    = DeviceInput(DEVICE_KEYBOARD, KEY_ESC);
@@ -280,6 +282,7 @@ void ScreenEdit::InitEditMappings()
 	m_EditMappingsMenuButton.button[EDIT_BUTTON_OPEN_EDIT_MENU][0] = GAME_BUTTON_START;
 	m_EditMappingsMenuButton.button[EDIT_BUTTON_OPEN_EDIT_MENU][1] = GAME_BUTTON_BACK;
 	m_EditMappingsDeviceInput.button[EDIT_BUTTON_OPEN_AREA_MENU][0] = DeviceInput(DEVICE_KEYBOARD, KEY_ENTER);
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_OPEN_ALTER_MENU][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Ca);
 	m_EditMappingsDeviceInput.button[EDIT_BUTTON_OPEN_INPUT_HELP][0] = DeviceInput(DEVICE_KEYBOARD, KEY_F1);
 
 	m_EditMappingsDeviceInput.button[EDIT_BUTTON_BAKE_RANDOM_FROM_SONG_GROUP][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cb);
@@ -505,27 +508,58 @@ static MenuDef g_MainMenu(
 	MenuRowDef( ScreenEdit::exit,				"Exit Edit Mode",		true, EditMode_Practice, true, true, 0, NULL )
 );
 
+static MenuDef g_AlterMenu(
+	"ScreenMiniMenuAlterMenu",
+   MenuRowDef(ScreenEdit::cut,				"Cut",					true, 
+	      EditMode_Practice, true, true, 0, NULL ),
+   MenuRowDef(ScreenEdit::copy,				"Copy",					true, 
+	      EditMode_Practice, true, true, 0, NULL ),
+   MenuRowDef(ScreenEdit::clear,			"Clear area",				true, 
+	      EditMode_Practice, true, true, 0, NULL ),
+   MenuRowDef(ScreenEdit::quantize,			"Quantize",				true, 
+	      EditMode_Practice, true, true, 0, 
+	      "4th","8th","12th","16th","24th","32nd","48th","64th","192nd"),
+   MenuRowDef(ScreenEdit::turn,				"Turn",					true, 
+	      EditMode_Practice, true, true, 0, "Left","Right","Mirror","Shuffle","SuperShuffle" ),
+   MenuRowDef(ScreenEdit::transform,			"Transform",				true, 
+	      EditMode_Practice, true, true, 0, "NoHolds","NoMines","Little","Wide",
+	      "Big","Quick","Skippy","Mines","Echo","Stomp","Planted","Floored",
+	      "Twister","NoJumps","NoHands","NoQuads","NoStretch" ),
+   MenuRowDef(ScreenEdit::alter,			"Alter",				true, 
+	      EditMode_Practice, true, true, 0, "Autogen To Fill Width","Backwards","Swap Sides",
+	      "Copy Left To Right","Copy Right To Left","Clear Left","Clear Right",
+	      "Collapse To One","Collapse Left","Shift Left","Shift Right" ),
+   MenuRowDef(ScreenEdit::tempo,			"Tempo",				true, 
+	      EditMode_Full, true, true, 0, "Compress 2x","Compress 3->2",
+	      "Compress 4->3","Expand 3->4","Expand 2->3","Expand 2x" ),
+   MenuRowDef(ScreenEdit::play,				"Play selection",			true, 
+	      EditMode_Practice, true, true, 0, NULL ),
+   MenuRowDef(ScreenEdit::record,			"Record in selection",			true, 
+	      EditMode_Practice, true, true, 0, NULL ),
+   MenuRowDef(ScreenEdit::convert_to_pause,		"Convert selection to pause",		true, 
+	      EditMode_Full, true, true, 0, NULL ),
+   MenuRowDef(ScreenEdit::convert_to_delay,		"Convert selection to delay",		true, 
+	      EditMode_Full, true, true, 0, NULL ),
+   MenuRowDef(ScreenEdit::convert_to_warp,		"Convert selection to warp",		true, 
+	      EditMode_Full, true, true, 0, NULL ),
+   MenuRowDef(ScreenEdit::convert_to_fake,		"Convert selection to fake",		true, 
+	      EditMode_Full, true, true, 0, NULL )
+);
+
 static MenuDef g_AreaMenu(
 	"ScreenMiniMenuAreaMenu",
-	MenuRowDef( ScreenEdit::cut,			"Cut",					true, EditMode_Practice, true, true, 0, NULL ),
-	MenuRowDef( ScreenEdit::copy,			"Copy",					true, EditMode_Practice, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::paste_at_current_beat,	"Paste at current beat",		true, EditMode_Practice, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::paste_at_begin_marker,	"Paste at begin marker",		true, EditMode_Practice, true, true, 0, NULL ),
-	MenuRowDef( ScreenEdit::clear,			"Clear area",				true, EditMode_Practice, true, true, 0, NULL ),
-	MenuRowDef( ScreenEdit::quantize,		"Quantize",				true, EditMode_Practice, true, true, 0, "4th","8th","12th","16th","24th","32nd","48th","64th","192nd"),
-	MenuRowDef( ScreenEdit::turn,			"Turn",					true, EditMode_Practice, true, true, 0, "Left","Right","Mirror","Shuffle","SuperShuffle" ),
-	MenuRowDef( ScreenEdit::transform,		"Transform",				true, EditMode_Practice, true, true, 0, "NoHolds","NoMines","Little","Wide","Big","Quick","Skippy","Mines","Echo","Stomp","Planted","Floored","Twister","NoJumps","NoHands","NoQuads","NoStretch" ),
-	MenuRowDef( ScreenEdit::alter,			"Alter",				true, EditMode_Practice, true, true, 0, "Autogen To Fill Width","Backwards","Swap Sides","Copy Left To Right","Copy Right To Left","Clear Left","Clear Right","Collapse To One","Collapse Left","Shift Left","Shift Right" ),
-	MenuRowDef( ScreenEdit::tempo,			"Tempo",				true, EditMode_Full, true, true, 0, "Compress 2x","Compress 3->2","Compress 4->3","Expand 3->4","Expand 2->3","Expand 2x" ),
-	MenuRowDef( ScreenEdit::play,			"Play selection",			true, EditMode_Practice, true, true, 0, NULL ),
-	MenuRowDef( ScreenEdit::record,			"Record in selection",			true, EditMode_Practice, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::insert_and_shift,	"Insert beat and shift down",		true, EditMode_Practice, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::delete_and_shift,	"Delete beat and shift up",		true, EditMode_Practice, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::shift_pauses_forward,	"Shift all timing changes down",	true, EditMode_Full, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::shift_pauses_backward,	"Shift all timing changes up",		true, EditMode_Full, true, true, 0, NULL ),
-	MenuRowDef( ScreenEdit::convert_to_pause,	"Convert selection to pause",		true, EditMode_Full, true, true, 0, NULL ),
-	MenuRowDef( ScreenEdit::convert_pause_to_beat,	"Convert pause to beats",		true, EditMode_Full, true, true, 0, NULL ),
-	MenuRowDef( ScreenEdit::undo,			"Undo",					true, EditMode_Practice, true, true, 0, NULL )
+	MenuRowDef(ScreenEdit::convert_pause_to_beat,	"Convert pause to beats",		true, 
+	     EditMode_Full, true, true, 0, NULL ),
+	MenuRowDef( ScreenEdit::undo,			"Undo",					true, EditMode_Practice, true, true, 0, NULL ),
+  MenuRowDef(ScreenEdit::clear_clipboard,		"Clear clipboard",			true,
+	     EditMode_Practice, true, true, 0, NULL )
+			  
 );
 
 static MenuDef g_StepsInformation(
@@ -1152,6 +1186,9 @@ void ScreenEdit::UpdateTextInfo()
 		sText += ssprintf( TAP_NOTE_TYPE_FORMAT.GetValue(), TAP_NOTE_TYPE.GetValue().c_str(), TapNoteTypeToString( m_selectedTap.type ).c_str() );
 		break;
 	}
+	
+	GAMESTATE->SetProcessedTimingData(&m_pSteps->m_Timing);
+	
 	sText += ssprintf( NUM_STEPS_FORMAT.GetValue(), TAP_STEPS.GetValue().c_str(), m_NoteDataEdit.GetNumTapNotes() );
 	sText += ssprintf( NUM_JUMPS_FORMAT.GetValue(), JUMPS.GetValue().c_str(), m_NoteDataEdit.GetNumJumps() );
 	sText += ssprintf( NUM_HANDS_FORMAT.GetValue(), HANDS.GetValue().c_str(), m_NoteDataEdit.GetNumHands() );
@@ -1182,6 +1219,8 @@ void ScreenEdit::UpdateTextInfo()
 	}
 
 	m_textInfo.SetText( sText );
+	
+	GAMESTATE->SetProcessedTimingData(NULL);
 }
 
 void ScreenEdit::DrawPrimitives()
@@ -1294,7 +1333,7 @@ static int FindAttackAtTime( const AttackArray& attacks, float fStartTime )
 }
 
 static LocalizedString BG_CHANGE_STEP_TIMING	( "ScreenEdit", "You must be in Song Timing Mode to edit BG Changes." );
-
+static LocalizedString ALTER_MENU_NO_SELECTION	( "ScreenEdit", "You must have an area selected to enter the Alter Menu." );
 static LocalizedString SWITCHED_TO		( "ScreenEdit", "Switched to" );
 static LocalizedString NO_BACKGROUNDS_AVAILABLE	( "ScreenEdit", "No backgrounds available" );
 static ThemeMetric<bool> INVERT_SCROLL_BUTTONS	( "ScreenEdit", "InvertScrollSpeedButtons" );
@@ -1556,24 +1595,27 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 	case EDIT_BUTTON_OPEN_AREA_MENU:
 		{
 			// update enabled/disabled in g_AreaMenu
-			bool bAreaSelected = m_NoteFieldEdit.m_iBeginMarker!=-1 && m_NoteFieldEdit.m_iEndMarker!=-1;
-			g_AreaMenu.rows[cut].bEnabled = bAreaSelected;
-			g_AreaMenu.rows[copy].bEnabled = bAreaSelected;
 			g_AreaMenu.rows[paste_at_current_beat].bEnabled = !m_Clipboard.IsEmpty();
 			g_AreaMenu.rows[paste_at_begin_marker].bEnabled = !m_Clipboard.IsEmpty() != 0 && m_NoteFieldEdit.m_iBeginMarker!=-1;
-			g_AreaMenu.rows[clear].bEnabled = bAreaSelected;
-			g_AreaMenu.rows[quantize].bEnabled = bAreaSelected;
-			g_AreaMenu.rows[turn].bEnabled = bAreaSelected;
-			g_AreaMenu.rows[transform].bEnabled = bAreaSelected;
-			g_AreaMenu.rows[alter].bEnabled = bAreaSelected;
-			g_AreaMenu.rows[tempo].bEnabled = bAreaSelected;
-			g_AreaMenu.rows[play].bEnabled = bAreaSelected;
-			g_AreaMenu.rows[record].bEnabled = bAreaSelected;
-			g_AreaMenu.rows[convert_to_pause].bEnabled = bAreaSelected;
 			g_AreaMenu.rows[undo].bEnabled = m_bHasUndo;
 			EditMiniMenu( &g_AreaMenu, SM_BackFromAreaMenu );
 		}
 		break;
+	case EDIT_BUTTON_OPEN_ALTER_MENU:
+		{
+			bool bAreaSelected = m_NoteFieldEdit.m_iBeginMarker!=-1 && m_NoteFieldEdit.m_iEndMarker!=-1;
+			if (!bAreaSelected)
+			{
+				SCREENMAN->SystemMessage( ALTER_MENU_NO_SELECTION );
+				SCREENMAN->PlayInvalidSound();
+			}
+			else 
+			{
+				EditMiniMenu(&g_AlterMenu, SM_BackFromAlterMenu);
+			}
+			break;
+
+		}
 	case EDIT_BUTTON_OPEN_EDIT_MENU:
 		EditMiniMenu( &g_MainMenu, SM_BackFromMainMenu );
 		break;
@@ -2039,7 +2081,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 	case EDIT_BUTTON_RECORD_SELECTION:
 		if( m_NoteFieldEdit.m_iBeginMarker!=-1 && m_NoteFieldEdit.m_iEndMarker!=-1 )
 		{
-			HandleAreaMenuChoice( record );
+			HandleAlterMenuChoice( record );
 		}
 		else
 		{
@@ -2639,6 +2681,10 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	{
 		HandleAreaMenuChoice( (AreaMenuChoice)ScreenMiniMenu::s_iLastRowCode, ScreenMiniMenu::s_viLastAnswers );
 	}
+	else if( SM == SM_BackFromAlterMenu )
+	{
+		HandleAlterMenuChoice( (AlterMenuChoice)ScreenMiniMenu::s_iLastRowCode, ScreenMiniMenu::s_viLastAnswers );
+	}
 	else if( SM == SM_BackFromStepsInformation )
 	{
 		HandleStepsInformationChoice( (StepsInformationChoice)ScreenMiniMenu::s_iLastRowCode, ScreenMiniMenu::s_viLastAnswers );
@@ -3237,12 +3283,13 @@ static LocalizedString SAVE_CHANGES_BEFORE_EXITING	( "ScreenEdit", "Do you want 
 
 void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAnswers )
 {
+	GAMESTATE->SetProcessedTimingData(&m_pSteps->m_Timing);
 	switch( c )
 	{
 		DEFAULT_FAIL( c );
 		case play_selection:
 			if( m_NoteFieldEdit.m_iBeginMarker!=-1 && m_NoteFieldEdit.m_iEndMarker!=-1 )
-				HandleAreaMenuChoice( play );
+				HandleAlterMenuChoice( play );
 			else if( m_NoteFieldEdit.m_iBeginMarker!=-1 )
 				HandleMainMenuChoice( play_selection_start_to_end );
 			else
@@ -3455,36 +3502,277 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 			}
 			break;
 	};
+	GAMESTATE->SetProcessedTimingData(NULL);
+}
+
+void ScreenEdit::HandleAlterMenuChoice(AlterMenuChoice c, const vector<int> &iAnswers, bool bAllowUndo)
+{
+	bool bSaveUndo = true;
+	switch (c)
+	{
+		case play:
+		case record:
+		case cut:
+		case copy:
+		{
+			bSaveUndo = false;
+		}
+		default:
+			break;
+	}
+	
+	if( bSaveUndo )
+		SetDirty( true );
+	
+	/* We call HandleAreaMenuChoice recursively. Only the outermost
+	 * HandleAreaMenuChoice should allow Undo so that the inner calls don't
+	 * also save Undo and mess up the outermost */
+	if( !bAllowUndo )
+		bSaveUndo = false;
+	
+	if( bSaveUndo )
+		SaveUndo();
+	
+	switch(c)
+	{
+		case cut:
+		{
+			HandleAlterMenuChoice( copy );
+			HandleAlterMenuChoice( clear );
+		}
+			break;
+		case copy:
+		{
+			ASSERT( m_NoteFieldEdit.m_iBeginMarker!=-1 && m_NoteFieldEdit.m_iEndMarker!=-1 );
+			m_Clipboard.ClearAll();
+			m_Clipboard.CopyRange( m_NoteDataEdit, m_NoteFieldEdit.m_iBeginMarker, m_NoteFieldEdit.m_iEndMarker );
+		}
+			break;
+		case clear:
+		{
+			ASSERT( m_NoteFieldEdit.m_iBeginMarker!=-1 && m_NoteFieldEdit.m_iEndMarker!=-1 );
+			m_NoteDataEdit.ClearRange( m_NoteFieldEdit.m_iBeginMarker, m_NoteFieldEdit.m_iEndMarker );
+		}
+			break;
+		case quantize:
+		{
+			NoteType nt = (NoteType)iAnswers[c];
+			NoteDataUtil::SnapToNearestNoteType(m_NoteDataEdit, nt, nt,
+							    m_NoteFieldEdit.m_iBeginMarker,
+							    m_NoteFieldEdit.m_iEndMarker );
+			break;
+		}
+		case turn:
+		{
+			const NoteData OldClipboard( m_Clipboard );
+			HandleAlterMenuChoice( cut );
+			
+			StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
+			TurnType tt = (TurnType)iAnswers[c];
+			switch( tt )
+			{
+				DEFAULT_FAIL( tt );
+				case left:		NoteDataUtil::Turn( m_Clipboard, st, NoteDataUtil::left );		break;
+				case right:		NoteDataUtil::Turn( m_Clipboard, st, NoteDataUtil::right );		break;
+				case mirror:		NoteDataUtil::Turn( m_Clipboard, st, NoteDataUtil::mirror );		break;
+				case shuffle:		NoteDataUtil::Turn( m_Clipboard, st, NoteDataUtil::shuffle );		break;
+				case super_shuffle:	NoteDataUtil::Turn( m_Clipboard, st, NoteDataUtil::super_shuffle );	break;
+			}
+			
+			HandleAreaMenuChoice( paste_at_begin_marker );
+			m_Clipboard = OldClipboard;
+		}
+			break;
+		case transform:
+		{
+			int iBeginRow = m_NoteFieldEdit.m_iBeginMarker;
+			int iEndRow = m_NoteFieldEdit.m_iEndMarker;
+			TransformType tt = (TransformType)iAnswers[c];
+			StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
+			
+			switch( tt )
+			{
+					DEFAULT_FAIL( tt );
+				case noholds:		NoteDataUtil::RemoveHoldNotes( m_NoteDataEdit, iBeginRow, iEndRow );	break;
+				case nomines:		NoteDataUtil::RemoveMines( m_NoteDataEdit, iBeginRow, iBeginRow );	break;
+				case little:		NoteDataUtil::Little( m_NoteDataEdit, iBeginRow, iEndRow );		break;
+				case wide:		NoteDataUtil::Wide( m_NoteDataEdit, iBeginRow, iEndRow );		break;
+				case big:		NoteDataUtil::Big( m_NoteDataEdit, iBeginRow, iEndRow );		break;
+				case quick:		NoteDataUtil::Quick( m_NoteDataEdit, iBeginRow, iEndRow );		break;
+				case skippy:		NoteDataUtil::Skippy( m_NoteDataEdit, iBeginRow, iEndRow );		break;
+				case add_mines:		NoteDataUtil::AddMines( m_NoteDataEdit, iBeginRow, iEndRow );		break;
+				case echo:		NoteDataUtil::Echo( m_NoteDataEdit, iBeginRow, iEndRow );		break;
+				case stomp:		NoteDataUtil::Stomp( m_NoteDataEdit, st, iBeginRow, iEndRow );		break;
+				case planted:		NoteDataUtil::Planted( m_NoteDataEdit, iBeginRow, iEndRow );		break;
+				case floored:		NoteDataUtil::Floored( m_NoteDataEdit, iBeginRow, iEndRow );		break;
+				case twister:		NoteDataUtil::Twister( m_NoteDataEdit, iBeginRow, iEndRow );		break;
+				case nojumps:		NoteDataUtil::RemoveJumps( m_NoteDataEdit, iBeginRow, iEndRow );	break;
+				case nohands:		NoteDataUtil::RemoveHands( m_NoteDataEdit, iBeginRow, iEndRow );	break;
+				case noquads:		NoteDataUtil::RemoveQuads( m_NoteDataEdit, iBeginRow, iEndRow );	break;
+				case nostretch:		NoteDataUtil::RemoveStretch( m_NoteDataEdit, st, iBeginRow, iBeginRow );break;
+			}
+			
+			// bake in the additions
+			NoteDataUtil::ConvertAdditionsToRegular( m_NoteDataEdit );
+			break;
+		}
+		case alter:
+		{
+			const NoteData OldClipboard( m_Clipboard );
+			HandleAlterMenuChoice( cut );
+			
+			AlterType at = (AlterType)iAnswers[c];
+			switch( at )
+			{
+				DEFAULT_FAIL( at );
+				case autogen_to_fill_width:
+				{
+					NoteData temp( m_Clipboard );
+					int iMaxNonEmptyTrack = NoteDataUtil::GetMaxNonEmptyTrack( temp );
+					if( iMaxNonEmptyTrack == -1 )
+						break;
+					temp.SetNumTracks( iMaxNonEmptyTrack+1 );
+					NoteDataUtil::LoadTransformedSlidingWindow( temp, m_Clipboard, m_Clipboard.GetNumTracks() );
+					NoteDataUtil::RemoveStretch( m_Clipboard, GAMESTATE->m_pCurSteps[0]->m_StepsType );
+				}
+					break;
+				case backwards:			NoteDataUtil::Backwards( m_Clipboard );			break;
+				case swap_sides:		NoteDataUtil::SwapSides( m_Clipboard );			break;
+				case copy_left_to_right:	NoteDataUtil::CopyLeftToRight( m_Clipboard );		break;
+				case copy_right_to_left:	NoteDataUtil::CopyRightToLeft( m_Clipboard );		break;
+				case clear_left:		NoteDataUtil::ClearLeft( m_Clipboard );			break;
+				case clear_right:		NoteDataUtil::ClearRight( m_Clipboard );		break;
+				case collapse_to_one:		NoteDataUtil::CollapseToOne( m_Clipboard );		break;
+				case collapse_left:		NoteDataUtil::CollapseLeft( m_Clipboard );		break;
+				case shift_left:		NoteDataUtil::ShiftLeft( m_Clipboard );			break;
+				case shift_right:		NoteDataUtil::ShiftRight( m_Clipboard );		break;
+			}
+			
+			HandleAreaMenuChoice( paste_at_begin_marker );
+			m_Clipboard = OldClipboard;
+			break;
+		}
+		case tempo:
+		{
+			// This affects all steps.
+			AlterType at = (AlterType)iAnswers[c];
+			float fScale = -1;
+			
+			switch( at )
+			{
+					DEFAULT_FAIL( at );
+				case compress_2x:	fScale = 0.5f;		break;
+				case compress_3_2:	fScale = 2.0f/3;	break;
+				case compress_4_3:	fScale = 0.75f;		break;
+				case expand_4_3:	fScale = 4.0f/3;	break;
+				case expand_3_2:	fScale = 1.5f;		break;
+				case expand_2x:		fScale = 2;		break;
+			}
+			
+			int iStartIndex  = m_NoteFieldEdit.m_iBeginMarker;
+			int iEndIndex    = m_NoteFieldEdit.m_iEndMarker;
+			int iNewEndIndex = iEndIndex + lrintf( (iEndIndex - iStartIndex) * (fScale - 1) );
+			
+			// scale currently editing notes
+			NoteDataUtil::ScaleRegion( m_NoteDataEdit, fScale, iStartIndex, iEndIndex );
+			
+			// scale timing data
+			GetAppropriateTiming().ScaleRegion(fScale, 
+							   m_NoteFieldEdit.m_iBeginMarker, 
+							   m_NoteFieldEdit.m_iEndMarker, true );
+			
+			m_NoteFieldEdit.m_iEndMarker = iNewEndIndex;
+			break;
+			
+		}
+			
+		case play:
+			ASSERT( m_NoteFieldEdit.m_iBeginMarker!=-1 && m_NoteFieldEdit.m_iEndMarker!=-1 );
+			m_iStartPlayingAt = m_NoteFieldEdit.m_iBeginMarker;
+			m_iStopPlayingAt = m_NoteFieldEdit.m_iEndMarker;
+			TransitionEditState( STATE_PLAYING );
+			break;
+		case record:
+			ASSERT( m_NoteFieldEdit.m_iBeginMarker!=-1 && m_NoteFieldEdit.m_iEndMarker!=-1 );
+			m_iStartPlayingAt = m_NoteFieldEdit.m_iBeginMarker;
+			m_iStopPlayingAt = m_NoteFieldEdit.m_iEndMarker;
+			TransitionEditState( STATE_RECORDING );
+			break;
+		case convert_to_pause:
+		{
+			ASSERT_M( m_NoteFieldEdit.m_iBeginMarker!=-1 && m_NoteFieldEdit.m_iEndMarker!=-1, "Attempted to convert beats outside the notefield to pauses!" );
+			float fMarkerStart = GetAppropriateTiming().GetElapsedTimeFromBeat( NoteRowToBeat(m_NoteFieldEdit.m_iBeginMarker) );
+			float fMarkerEnd = GetAppropriateTiming().GetElapsedTimeFromBeat( NoteRowToBeat(m_NoteFieldEdit.m_iEndMarker) );
+			
+			// The length of the stop segment we're going to create.  This includes time spent in any
+			// stops in the selection, which will be deleted and subsumed into the new stop.
+			float fStopLength = fMarkerEnd - fMarkerStart;
+			
+			// be sure not to clobber the row at the start - a row at the end
+			// can be dropped safely, though
+			NoteDataUtil::DeleteRows( m_NoteDataEdit, 
+						 m_NoteFieldEdit.m_iBeginMarker + 1,
+						 m_NoteFieldEdit.m_iEndMarker-m_NoteFieldEdit.m_iBeginMarker
+						 );
+			GetAppropriateTiming().DeleteRows( m_NoteFieldEdit.m_iBeginMarker + 1,
+							  m_NoteFieldEdit.m_iEndMarker-m_NoteFieldEdit.m_iBeginMarker );
+			GetAppropriateTiming().SetStopAtRow( m_NoteFieldEdit.m_iBeginMarker, fStopLength );
+			m_NoteFieldEdit.m_iBeginMarker = -1;
+			m_NoteFieldEdit.m_iEndMarker = -1;
+			break;
+		}
+		case convert_to_delay:
+		{
+			ASSERT_M( m_NoteFieldEdit.m_iBeginMarker!=-1 && m_NoteFieldEdit.m_iEndMarker!=-1, "Attempted to convert beats outside the notefield to pauses!" );
+			float fMarkerStart = GetAppropriateTiming().GetElapsedTimeFromBeat( NoteRowToBeat(m_NoteFieldEdit.m_iBeginMarker) );
+			float fMarkerEnd = GetAppropriateTiming().GetElapsedTimeFromBeat( NoteRowToBeat(m_NoteFieldEdit.m_iEndMarker) );
+			
+			// The length of the delay segment we're going to create.  This includes time spent in any
+			// stops in the selection, which will be deleted and subsumed into the new stop.
+			float fStopLength = fMarkerEnd - fMarkerStart;
+			
+			NoteDataUtil::DeleteRows( m_NoteDataEdit, 
+						 m_NoteFieldEdit.m_iBeginMarker,
+						 m_NoteFieldEdit.m_iEndMarker-m_NoteFieldEdit.m_iBeginMarker
+						 );
+			GetAppropriateTiming().DeleteRows( m_NoteFieldEdit.m_iBeginMarker,
+							  m_NoteFieldEdit.m_iEndMarker-m_NoteFieldEdit.m_iBeginMarker );
+			GetAppropriateTiming().SetDelayAtRow( m_NoteFieldEdit.m_iBeginMarker, fStopLength );
+			m_NoteFieldEdit.m_iBeginMarker = -1;
+			m_NoteFieldEdit.m_iEndMarker = -1;
+			break;
+		}
+		case convert_to_warp:
+		{
+			float startBeat = NoteRowToBeat(m_NoteFieldEdit.m_iBeginMarker);
+			float lengthBeat = NoteRowToBeat(m_NoteFieldEdit.m_iEndMarker) - startBeat;
+			GetAppropriateTiming().SetWarpAtBeat(startBeat,lengthBeat);
+			SetDirty(true);
+			break;
+		}
+		case convert_to_fake:
+		{
+			float startBeat = NoteRowToBeat(m_NoteFieldEdit.m_iBeginMarker);
+			float lengthBeat = NoteRowToBeat(m_NoteFieldEdit.m_iEndMarker) - startBeat;
+			GetAppropriateTiming().SetFakeAtBeat(startBeat,lengthBeat);
+			SetDirty(true);
+			break;
+		}
+			
+	}
+	
 }
 
 void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAnswers, bool bAllowUndo )
 {
-	bool bSaveUndo = false;
+	bool bSaveUndo = true;
 	switch( c )
 	{
-		DEFAULT_FAIL( c );
-		case cut:
-		case copy:
-		case play:
-		case record:
+		case clear_clipboard:
 		case undo:
 			bSaveUndo = false;
 			break;
-		case paste_at_current_beat:
-		case paste_at_begin_marker:
-		case clear:
-		case quantize:
-		case turn:
-		case transform:
-		case alter:
-		case tempo:
-		case insert_and_shift:
-		case delete_and_shift:
-		case shift_pauses_forward:
-		case shift_pauses_backward:
-		case convert_to_pause:
-		case convert_pause_to_beat:
-			bSaveUndo = true;
+		default:
 			break;
 	}
 
@@ -3503,19 +3791,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 	switch( c )
 	{
 		DEFAULT_FAIL( c );
-		case cut:
-			{
-				HandleAreaMenuChoice( copy );
-				HandleAreaMenuChoice( clear );
-			}
-			break;
-		case copy:
-			{
-				ASSERT( m_NoteFieldEdit.m_iBeginMarker!=-1 && m_NoteFieldEdit.m_iEndMarker!=-1 );
-				m_Clipboard.ClearAll();
-				m_Clipboard.CopyRange( m_NoteDataEdit, m_NoteFieldEdit.m_iBeginMarker, m_NoteFieldEdit.m_iEndMarker );
-			}
-			break;
+		
 		case paste_at_current_beat:
 		case paste_at_begin_marker:
 			{
@@ -3536,172 +3812,6 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 				m_NoteDataEdit.CopyRange( m_Clipboard, 0, iRowsToCopy, iDestFirstRow );
 			}
 			break;
-		case clear:
-			{
-				ASSERT( m_NoteFieldEdit.m_iBeginMarker!=-1 && m_NoteFieldEdit.m_iEndMarker!=-1 );
-				m_NoteDataEdit.ClearRange( m_NoteFieldEdit.m_iBeginMarker, m_NoteFieldEdit.m_iEndMarker );
-			}
-			break;
-		case quantize:
-			{
-				NoteType nt = (NoteType)iAnswers[c];
-				NoteDataUtil::SnapToNearestNoteType( m_NoteDataEdit, nt, nt, m_NoteFieldEdit.m_iBeginMarker, m_NoteFieldEdit.m_iEndMarker );
-			}
-			break;
-		case turn:
-			{
-				const NoteData OldClipboard( m_Clipboard );
-				HandleAreaMenuChoice( cut );
-
-				StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
-				TurnType tt = (TurnType)iAnswers[c];
-				switch( tt )
-				{
-				DEFAULT_FAIL( tt );
-				case left:		NoteDataUtil::Turn( m_Clipboard, st, NoteDataUtil::left );		break;
-				case right:		NoteDataUtil::Turn( m_Clipboard, st, NoteDataUtil::right );		break;
-				case mirror:		NoteDataUtil::Turn( m_Clipboard, st, NoteDataUtil::mirror );		break;
-				case shuffle:		NoteDataUtil::Turn( m_Clipboard, st, NoteDataUtil::shuffle );		break;
-				case super_shuffle:	NoteDataUtil::Turn( m_Clipboard, st, NoteDataUtil::super_shuffle );	break;
-				}
-
-				HandleAreaMenuChoice( paste_at_begin_marker );
-				m_Clipboard = OldClipboard;
-			}
-			break;
-		case transform:
-			{
-				int iBeginRow = m_NoteFieldEdit.m_iBeginMarker;
-				int iEndRow = m_NoteFieldEdit.m_iEndMarker;
-				TransformType tt = (TransformType)iAnswers[c];
-				StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
-
-				switch( tt )
-				{
-				DEFAULT_FAIL( tt );
-				case noholds:		NoteDataUtil::RemoveHoldNotes( m_NoteDataEdit, iBeginRow, iEndRow );	break;
-				case nomines:		NoteDataUtil::RemoveMines( m_NoteDataEdit, iBeginRow, iBeginRow );	break;
-				case little:		NoteDataUtil::Little( m_NoteDataEdit, iBeginRow, iEndRow );		break;
-				case wide:		NoteDataUtil::Wide( m_NoteDataEdit, iBeginRow, iEndRow );		break;
-				case big:		NoteDataUtil::Big( m_NoteDataEdit, iBeginRow, iEndRow );		break;
-				case quick:		NoteDataUtil::Quick( m_NoteDataEdit, iBeginRow, iEndRow );		break;
-				case skippy:		NoteDataUtil::Skippy( m_NoteDataEdit, iBeginRow, iEndRow );		break;
-				case add_mines:		NoteDataUtil::AddMines( m_NoteDataEdit, iBeginRow, iEndRow );		break;
-				case echo:		NoteDataUtil::Echo( m_NoteDataEdit, iBeginRow, iEndRow );		break;
-				case stomp:		NoteDataUtil::Stomp( m_NoteDataEdit, st, iBeginRow, iEndRow );		break;
-				case planted:		NoteDataUtil::Planted( m_NoteDataEdit, iBeginRow, iEndRow );		break;
-				case floored:		NoteDataUtil::Floored( m_NoteDataEdit, iBeginRow, iEndRow );		break;
-				case twister:		NoteDataUtil::Twister( m_NoteDataEdit, iBeginRow, iEndRow );		break;
-				case nojumps:		NoteDataUtil::RemoveJumps( m_NoteDataEdit, iBeginRow, iEndRow );	break;
-				case nohands:		NoteDataUtil::RemoveHands( m_NoteDataEdit, iBeginRow, iEndRow );	break;
-				case noquads:		NoteDataUtil::RemoveQuads( m_NoteDataEdit, iBeginRow, iEndRow );	break;
-				case nostretch:		NoteDataUtil::RemoveStretch( m_NoteDataEdit, st, iBeginRow, iBeginRow );break;
-				}
-
-				// bake in the additions
-				NoteDataUtil::ConvertAdditionsToRegular( m_NoteDataEdit );
-			}
-			break;
-		case alter:
-			{
-				const NoteData OldClipboard( m_Clipboard );
-				HandleAreaMenuChoice( cut );
-
-				AlterType at = (AlterType)iAnswers[c];
-				switch( at )
-				{
-				DEFAULT_FAIL( at );
-				case autogen_to_fill_width:
-					{
-						NoteData temp( m_Clipboard );
-						int iMaxNonEmptyTrack = NoteDataUtil::GetMaxNonEmptyTrack( temp );
-						if( iMaxNonEmptyTrack == -1 )
-							break;
-						temp.SetNumTracks( iMaxNonEmptyTrack+1 );
-						NoteDataUtil::LoadTransformedSlidingWindow( temp, m_Clipboard, m_Clipboard.GetNumTracks() );
-						NoteDataUtil::RemoveStretch( m_Clipboard, GAMESTATE->m_pCurSteps[0]->m_StepsType );
-					}
-					break;
-				case backwards:		NoteDataUtil::Backwards( m_Clipboard );			break;
-				case swap_sides:		NoteDataUtil::SwapSides( m_Clipboard );			break;
-				case copy_left_to_right:	NoteDataUtil::CopyLeftToRight( m_Clipboard );		break;
-				case copy_right_to_left:	NoteDataUtil::CopyRightToLeft( m_Clipboard );		break;
-				case clear_left:		NoteDataUtil::ClearLeft( m_Clipboard );			break;
-				case clear_right:		NoteDataUtil::ClearRight( m_Clipboard );		break;
-				case collapse_to_one:	NoteDataUtil::CollapseToOne( m_Clipboard );		break;
-				case collapse_left:	NoteDataUtil::CollapseLeft( m_Clipboard );		break;
-				case shift_left:		NoteDataUtil::ShiftLeft( m_Clipboard );			break;
-				case shift_right:		NoteDataUtil::ShiftRight( m_Clipboard );		break;
-				}
-
-				HandleAreaMenuChoice( paste_at_begin_marker );
-				m_Clipboard = OldClipboard;
-			}
-			break;
-		case tempo:
-			{
-				// This affects all steps.
-				AlterType at = (AlterType)iAnswers[c];
-				float fScale = -1;
-				
-				switch( at )
-				{
-				DEFAULT_FAIL( at );
-				case compress_2x:	fScale = 0.5f;		break;
-				case compress_3_2:	fScale = 2.0f/3;	break;
-				case compress_4_3:	fScale = 0.75f;		break;
-				case expand_4_3:	fScale = 4.0f/3;	break;
-				case expand_3_2:	fScale = 1.5f;		break;
-				case expand_2x:		fScale = 2;		break;
-				}
-				
-				int iStartIndex  = m_NoteFieldEdit.m_iBeginMarker;
-				int iEndIndex    = m_NoteFieldEdit.m_iEndMarker;
-				int iNewEndIndex = iEndIndex + lrintf( (iEndIndex - iStartIndex) * (fScale - 1) );
-				
-				// scale currently editing notes
-				NoteDataUtil::ScaleRegion( m_NoteDataEdit, fScale, iStartIndex, iEndIndex );
-				
-				// scale timing data
-				GetAppropriateTiming().ScaleRegion( fScale, m_NoteFieldEdit.m_iBeginMarker, m_NoteFieldEdit.m_iEndMarker, true );
-
-				// scale all other steps.
-				/*
-				const vector<Steps*> sIter = m_pSong->GetAllSteps();
-				RString sTempStyle, sTempDiff;
-				for( unsigned i = 0; i < sIter.size(); i++ )
-				{
-					if( sIter[i]->IsAutogen() )
-						continue;
-
-					// XXX: Edits are distinguished by description.
-					// Compare vs m_pSteps.
-					if( (sIter[i]->m_StepsType == GAMESTATE->m_pCurSteps[PLAYER_1]->m_StepsType) &&
-						(sIter[i]->GetDifficulty() == GAMESTATE->m_pCurSteps[PLAYER_1]->GetDifficulty()) )
-						continue;
-
-					NoteData ndTemp;
-					sIter[i]->GetNoteData( ndTemp );
-					NoteDataUtil::ScaleRegion( ndTemp, fScale, m_NoteFieldEdit.m_iBeginMarker, m_NoteFieldEdit.m_iEndMarker );
-					sIter[i]->SetNoteData( ndTemp );
-				}
-				*/
-				m_NoteFieldEdit.m_iEndMarker = iNewEndIndex;
-				
-			}
-			break;
-		case play:
-			ASSERT( m_NoteFieldEdit.m_iBeginMarker!=-1 && m_NoteFieldEdit.m_iEndMarker!=-1 );
-			m_iStartPlayingAt = m_NoteFieldEdit.m_iBeginMarker;
-			m_iStopPlayingAt = m_NoteFieldEdit.m_iEndMarker;
-			TransitionEditState( STATE_PLAYING );
-			break;
-		case record:
-			ASSERT( m_NoteFieldEdit.m_iBeginMarker!=-1 && m_NoteFieldEdit.m_iEndMarker!=-1 );
-			m_iStartPlayingAt = m_NoteFieldEdit.m_iBeginMarker;
-			m_iStopPlayingAt = m_NoteFieldEdit.m_iEndMarker;
-			TransitionEditState( STATE_RECORDING );
-			break;
 		case insert_and_shift:
 			NoteDataUtil::InsertRows( m_NoteDataEdit, BeatToNoteRow( GetBeat() ), BeatToNoteRow(1) );
 			break;
@@ -3714,29 +3824,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 		case shift_pauses_backward:
 			GetAppropriateTiming().DeleteRows( GetRow() + 1, BeatToNoteRow(1) );
 			break;
-		case convert_to_pause:
-			{
-				ASSERT_M( m_NoteFieldEdit.m_iBeginMarker!=-1 && m_NoteFieldEdit.m_iEndMarker!=-1, "Attempted to convert beats outside the notefield to pauses!" );
-				float fMarkerStart = GetAppropriateTiming().GetElapsedTimeFromBeat( NoteRowToBeat(m_NoteFieldEdit.m_iBeginMarker) );
-				float fMarkerEnd = GetAppropriateTiming().GetElapsedTimeFromBeat( NoteRowToBeat(m_NoteFieldEdit.m_iEndMarker) );
 
-				// The length of the stop segment we're going to create.  This includes time spent in any
-				// stops in the selection, which will be deleted and subsumed into the new stop.
-				float fStopLength = fMarkerEnd - fMarkerStart;
-
-				// be sure not to clobber the row at the start - a row at the end
-				// can be dropped safely, though
-				NoteDataUtil::DeleteRows( m_NoteDataEdit, 
-						m_NoteFieldEdit.m_iBeginMarker + 1,
-						m_NoteFieldEdit.m_iEndMarker-m_NoteFieldEdit.m_iBeginMarker
-					);
-				GetAppropriateTiming().DeleteRows( m_NoteFieldEdit.m_iBeginMarker + 1,
-						m_NoteFieldEdit.m_iEndMarker-m_NoteFieldEdit.m_iBeginMarker );
-				GetAppropriateTiming().SetStopAtRow( m_NoteFieldEdit.m_iBeginMarker, fStopLength );
-				m_NoteFieldEdit.m_iBeginMarker = -1;
-				m_NoteFieldEdit.m_iEndMarker = -1;
-				break;
-			}
 		case convert_pause_to_beat:
 			{
 				// TODO: Convert both Delays and Stops at once.
@@ -3753,6 +3841,11 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 		case undo:
 			Undo();
 			break;
+		case clear_clipboard:
+		{
+			m_Clipboard.ClearAll();
+			break;
+		}
 	};
 
 	if( bSaveUndo )

@@ -39,11 +39,8 @@
 		<Function name='FormatNumberAndSuffix'/>
 		<Function name='FormatPercentScore'/>
 		<Function name='GameCompatibleModes'/>
-		<Function name='GamePrefAutoSetStyle'/>
 		<Function name='GamePrefComboOnRolls'/>
-		<Function name='GamePrefComboUnderField'/>
 		<Function name='GamePrefDefaultFail'/>
-		<Function name='GamePrefNotePosition'/>
 		<Function name='GetCoursesToShowRanking'/>
 		<Function name='GetCustomDifficulty'/>
 		<Function name='GetDefaultOptionLines'/>
@@ -57,6 +54,7 @@
 		<Function name='GetGradeFromPercent'/>
 		<Function name='GetLifeDifficulty'/>
 		<Function name='GetOSName'/>
+		<Function name='GetPlayerOrMachineProfile'/>
 		<Function name='GetProTiming'/>
 		<Function name='GetRandomSongBackground'/>
 		<Function name='GetReal'/>
@@ -130,7 +128,6 @@
 		<Function name='PrintTable'/>
 		<Function name='ProductID'/>
 		<Function name='ProductVersion'/>
-		<Function name='Profile'/>
 		<Function name='RadarCategoryToLocalizedString'/>
 		<Function name='ReadGamePrefFromFile'/>
 		<Function name='ReadPrefFromFile'/>
@@ -143,6 +140,8 @@
 		<Function name='Saturation'/>
 		<Function name='ScoreKeeperClass'/>
 		<Function name='ScoreMissedHoldsAndRolls'/>
+		<Function name='ScreenMetric'/>
+		<Function name='ScreenString'/>
 		<Function name='Second'/>
 		<Function name='SecondsToHHMMSS'/>
 		<Function name='SecondsToMMSS'/>
@@ -1026,6 +1025,52 @@
 			<Function name='SetPreference'/>
 			<Function name='SetPreferenceToDefault'/>
 		</Class>
+		<Class name='Profile'>
+			<Function name='GetCaloriesBurnedToday'/>
+			<Function name='GetCharacter'/>
+			<Function name='GetCoursesActual'/>
+			<Function name='GetCoursesPercentComplete'/>
+			<Function name='GetCoursesPossible'/>
+			<Function name='GetDisplayName'/>
+			<Function name='GetDisplayTotalCaloriesBurned'/>
+			<Function name='GetGoalCalories'/>
+			<Function name='GetGoalSeconds'/>
+			<Function name='GetGoalType'/>
+			<Function name='GetHighScoreList'/>
+			<Function name='GetLastUsedHighScoreName'/>
+			<Function name='GetMostPopularCourse'/>
+			<Function name='GetMostPopularSong'/>
+			<Function name='GetNumToasties'/>
+			<Function name='GetNumTotalSongsPlayed'/>
+			<Function name='GetSongNumTimesPlayed'/>
+			<Function name='GetSongsActual'/>
+			<Function name='GetSongsAndCoursesPercentCompleteAllDifficulties'/>
+			<Function name='GetSongsPercentComplete'/>
+			<Function name='GetSongsPossible'/>
+			<Function name='GetTotalCaloriesBurned'/>
+			<Function name='GetTotalGameplaySeconds'/>
+			<Function name='GetTotalHands'/>
+			<Function name='GetTotalHolds'/>
+			<Function name='GetTotalJumps'/>
+			<Function name='GetTotalLifts'/>
+			<Function name='GetTotalMines'/>
+			<Function name='GetTotalNumSongsPlayed'/>
+			<Function name='GetTotalRolls'/>
+			<Function name='GetTotalSessionSeconds'/>
+			<Function name='GetTotalSessions'/>
+			<Function name='GetTotalStepsWithTopGrade'/>
+			<Function name='GetTotalTapsAndHolds'/>
+			<Function name='GetTotalTrailsWithTopGrade'/>
+			<Function name='GetUserData'/>
+			<Function name='GetWeightPounds'/>
+			<Function name='HasPassedAnyStepsInSong'/>
+			<Function name='IsCodeUnlocked'/>
+			<Function name='SetCharacter'/>
+			<Function name='SetGoalCalories'/>
+			<Function name='SetGoalSeconds'/>
+			<Function name='SetGoalType'/>
+			<Function name='SetWeightPounds'/>
+		</Class>
 		<Class name='ProfileManager'>
 			<Function name='GetLocalProfile'/>
 			<Function name='GetLocalProfileFromIndex'/>
@@ -1093,6 +1138,13 @@
 		</Class>
 		<Class base='BitmapText' name='ScoreDisplayAliveTime'/>
 		<Class base='BitmapText' name='ScoreDisplayCalories'/>
+		<Class base='ActorFrame' name='Screen'>
+			<Function name='GetNextScreenName'/>
+			<Function name='GetPrevScreenName'/>
+			<Function name='GetScreenType'/>
+			<Function name='PostScreenMessage'/>
+			<Function name='lockinput'/>
+		</Class>
 		<Class base='ScreenWithMenuElements' name='ScreenAttract'/>
 		<Class base='ScreenWithMenuElements' name='ScreenEdit'>
 			<Function name='GetEditState'/>
@@ -2061,5 +2113,5 @@
 		<Constant name='top' value='&apos;VertAlign_Top&apos;'/>
 	</Constants>
 	<Version>StepMania 5 v5.0 Preview 1a</Version>
-	<Date>2011-06-04</Date>
+	<Date>2011-06-11</Date>
 </Lua>
