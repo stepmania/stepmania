@@ -395,7 +395,12 @@
 				$type='bool' or
 				$type='table' or
 				$type='color' or
-				$type='Enum'">
+				$type='Enum' or
+				$type='ThreadVariable' or
+				$type='LuaOptionRow' or
+				$type='ActorDef' or
+				$type='chunk' or
+				$type='various'">
 			<span class="primitiveType">
 				<xsl:value-of select="$type" />
 			</span>
