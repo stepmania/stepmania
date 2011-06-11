@@ -6,7 +6,10 @@ t[#t+1] = Def.ActorFrame {
 		Condition=not GAMESTATE:IsCourseMode();
 		OnCommand=function(self)
 			if GAMESTATE:GetCurrentSong() then
-				self:LoadBackground( GAMESTATE:GetCurrentSong():GetBackgroundPath() );
+				local song = GAMESTATE:GetCurrentSong();
+				if song:HasBackground() then
+					self:LoadBackground(song:GetBackgroundPath());
+				end;
 				self:scaletoclipped( SCREEN_WIDTH+1,SCREEN_HEIGHT );
 				(cmd(fadebottom,0.25;fadetop,0.25;croptop,48/480;cropbottom,48/480))(self);
 			else
