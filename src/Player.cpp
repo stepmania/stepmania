@@ -3339,11 +3339,17 @@ class LunaPlayer: public Luna<Player>
 public:
 	static int SetActorWithJudgmentPosition( T* p, lua_State *L )	{ Actor *pActor = Luna<Actor>::check(L, 1); p->SetActorWithJudgmentPosition(pActor); return 0; }
 	static int SetActorWithComboPosition( T* p, lua_State *L )	{ Actor *pActor = Luna<Actor>::check(L, 1); p->SetActorWithComboPosition(pActor); return 0; }
-
+	static int GetPlayerTimingData( T* p, lua_State *L )
+	{
+		p->GetPlayerTimingData().PushSelf(L);
+		return 1;
+	}
+	
 	LunaPlayer()
 	{
 		ADD_METHOD( SetActorWithJudgmentPosition );
 		ADD_METHOD( SetActorWithComboPosition );
+		ADD_METHOD( GetPlayerTimingData );
 	}
 };
 
