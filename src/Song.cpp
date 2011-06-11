@@ -1504,9 +1504,10 @@ public:
 	static int GetBackgroundPath( T* p, lua_State *L )
 	{
 		RString s = p->GetBackgroundPath();
-		if( s.empty() ) 
-			return 0; 
-		lua_pushstring(L, s); 
+		if( !s.empty() ) 
+			lua_pushstring(L, s);
+		else
+			lua_pushnil(L);
 		return 1; 
 	}
 	static int GetCDTitlePath( T* p, lua_State *L )		{ RString s = p->GetCDTitlePath(); if( s.empty() ) return 0; LuaHelpers::Push(L, s); return 1; }
