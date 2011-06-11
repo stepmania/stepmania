@@ -11,18 +11,10 @@
 #include "SongUtil.h"
 #include "XmlFile.h"
 
-// MAX_METERS was previously set to NUM_Difficulty + MAX_EDITS_PER_SONG.
-// This was all fine and well until AutoSetStyle was created. In certain
-// gametypes (technomotion for example), if autogen is on, the number of
-// available stepcharts exceeds MAX_METERS, resulting in a crash.
-// My first thought to fix this was:
-// (NUM_Difficulty (6) * NUM_StepsType (32)) + MAX_EDITS_PER_SONG (5*profileSlot (2)) = 202
-// However, 202 rows may be a bit overkill.
-// Dance has 6 stepstypes counting 3panel, Pump and Techno have 5.
-// (6 difficulties * 6 stepstypes) + MAX_EDITS_PER_SONG (which is 5 * profileSlots) = 46 rows
-// 46 seems to be a good enough number for this. If we get a crash again, up the
-// "magic" 6. -aj
-#define MAX_METERS (NUM_Difficulty * 6) + MAX_EDITS_PER_SONG
+/** @brief Specifies the max number of charts available for a song.
+ *
+ * This includes autogenned charts. */
+#define MAX_METERS (NUM_Difficulty * NUM_StepsType) + MAX_EDITS_PER_SONG
 
 REGISTER_ACTOR_CLASS( StepsDisplayList );
 

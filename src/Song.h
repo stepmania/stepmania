@@ -20,9 +20,9 @@ struct BackgroundChange;
 const static float STEPFILE_VERSION_NUMBER = 0.7f;
 
 /** @brief How many edits for this song can each profile have? */
-const int MAX_EDITS_PER_SONG_PER_PROFILE	= 5;
+const int MAX_EDITS_PER_SONG_PER_PROFILE = 15;
 /** @brief How many edits for this song can be available? */
-const int MAX_EDITS_PER_SONG			= 5*NUM_ProfileSlot;
+const int MAX_EDITS_PER_SONG = MAX_EDITS_PER_SONG_PER_PROFILE * NUM_ProfileSlot;
 
 extern const int FILE_CACHE_VERSION;
 
