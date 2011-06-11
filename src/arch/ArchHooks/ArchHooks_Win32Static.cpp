@@ -55,14 +55,13 @@ static RString GetMountDir( const RString &sDirOfExecutable )
 void ArchHooks::MountInitialFilesystems( const RString &sDirOfExecutable )
 {
 	RString sDir = GetMountDir( sDirOfExecutable );
-	RString sCommonAppDataDir = SpecialDirs::GetCommonAppDataDir() + PRODUCT_ID;
+	
 	FILEMAN->Mount( "dir", sDir, "/" );
-	FILEMAN->Mount( "dir", sCommonAppDataDir, "/" );
-	FILEMAN->Mount( "dir", sCommonAppDataDir + "/Cache", "/Cache" );
 }
 
 void ArchHooks::MountUserFilesystems( const RString &sDirOfExecutable )
 {
+	RString sCommonAppDataDir = SpecialDirs::GetCommonAppDataDir() + PRODUCT_ID;
 	RString sAppDataDir = SpecialDirs::GetAppDataDir() + PRODUCT_ID;
 	RString sLocalAppDataDir = SpecialDirs::GetLocalAppDataDir() + PRODUCT_ID;
 	RString sPicturesDir = SpecialDirs::GetPicturesDir() + PRODUCT_ID;
@@ -70,6 +69,8 @@ void ArchHooks::MountUserFilesystems( const RString &sDirOfExecutable )
 	FILEMAN->Mount( "dir", sAppDataDir + "/Logs", "/Logs" );
 	FILEMAN->Mount( "dir", sAppDataDir + "/Save", "/Save" );
 	FILEMAN->Mount( "dir", sPicturesDir + " Screenshots", "/Screenshots" );
+	FILEMAN->Mount( "dir", sCommonAppDataDir, "/" );
+	FILEMAN->Mount( "dir", sCommonAppDataDir + "/Cache", "/Cache" );
 	FILEMAN->Mount( "dir", sAppDataDir + "/Packages", "/" + SpecialFiles::USER_PACKAGES_DIR );
 }
 
