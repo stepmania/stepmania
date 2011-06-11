@@ -15,11 +15,11 @@ class NoteData;
 struct lua_State;
 
 /** 
- * @brief Allow only 12 characters for the length of edits.
+ * @brief Enforce a limit on the number of chars for the description.
  *
- * This is a holdover from In The Groove: this may perhaps be not needed in the future.
+ * In In The Groove, this limit was 12: we do not need such a limit now.
  */
-const int MAX_EDIT_STEPS_DESCRIPTION_LENGTH = 12;
+const int MAX_STEPS_DESCRIPTION_LENGTH = 255;
 
 /** 
  * @brief Holds note information for a Song.

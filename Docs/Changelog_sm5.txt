@@ -14,6 +14,8 @@ StepMania 5.0 Preview 2 | 20110???
   your area, enter the menu, and choose "Designate as Music Preview". No more
   math calculations needed! [Wolfman2000]
 * [SongUtil] Added GetPlayableSteps(Song) Lua binding. [AJ]
+* [Steps] Allow 255 characters for all chart descriptions, including edits.
+  We are no longer bound by In The Groove I think. [Wolfman2000]
 
 2011/06/10
 ----------

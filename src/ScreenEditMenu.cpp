@@ -297,7 +297,7 @@ void ScreenEditMenu::MenuStart( const InputEventPlus &input )
 					SM_BackFromEditDescription,
 					ENTER_EDIT_DESCRIPTION,
 					GAMESTATE->m_pCurSteps[0]->GetDescription(),
-					MAX_EDIT_STEPS_DESCRIPTION_LENGTH,
+					MAX_STEPS_DESCRIPTION_LENGTH,
 					SongUtil::ValidateCurrentStepsDescription,
 					SetCurrentStepsDescription,
 					DeleteCurrentSteps );

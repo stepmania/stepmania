@@ -3880,7 +3880,7 @@ void ScreenEdit::HandleStepsInformationChoice( StepsInformationChoice c, const v
 			SM_None, 
 			ENTER_NEW_DESCRIPTION, 
 			m_pSteps->GetDescription(), 
-			(dc == Difficulty_Edit) ? MAX_EDIT_STEPS_DESCRIPTION_LENGTH : 255,
+			MAX_STEPS_DESCRIPTION_LENGTH,
 			SongUtil::ValidateCurrentStepsDescription,
 			ChangeDescription, 
 			NULL 

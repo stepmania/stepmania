@@ -402,9 +402,9 @@ void Steps::SetChartStyle( RString sChartStyle )
 
 bool Steps::MakeValidEditDescription( RString &sPreferredDescription )
 {
-	if( int(sPreferredDescription.size()) > MAX_EDIT_STEPS_DESCRIPTION_LENGTH )
+	if( int(sPreferredDescription.size()) > MAX_STEPS_DESCRIPTION_LENGTH )
 	{
-		sPreferredDescription = sPreferredDescription.Left( MAX_EDIT_STEPS_DESCRIPTION_LENGTH );
+		sPreferredDescription = sPreferredDescription.Left( MAX_STEPS_DESCRIPTION_LENGTH );
 		return true;
 	}
 	return false;

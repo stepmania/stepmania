@@ -203,7 +203,7 @@ void ScreenOptionsManageEditSteps::HandleScreenMessage( const ScreenMessage SM )
 						SM_BackFromRename, 
 						ENTER_NAME_FOR_STEPS, 
 						GAMESTATE->m_pCurSteps[PLAYER_1]->GetDescription(), 
-						MAX_EDIT_STEPS_DESCRIPTION_LENGTH, 
+						MAX_STEPS_DESCRIPTION_LENGTH, 
 						SongUtil::ValidateCurrentEditStepsDescription );
 				}
 				break;

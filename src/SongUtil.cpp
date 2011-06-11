@@ -760,7 +760,7 @@ RString SongUtil::MakeUniqueEditDescription( const Song *pSong, StepsType st, co
 	{
 		// make name "My Edit" -> "My Edit2"
 		RString sNum = ssprintf("%d", i+1);
-		sTemp = sPreferredDescription.Left( MAX_EDIT_STEPS_DESCRIPTION_LENGTH - sNum.size() ) + sNum;
+		sTemp = sPreferredDescription.Left( MAX_STEPS_DESCRIPTION_LENGTH - sNum.size() ) + sNum;
 
 		if( IsEditDescriptionUnique(pSong, st, sTemp, NULL) )
 			return sTemp;
