@@ -56,6 +56,21 @@ void LoadingWindow_Gtk::SetText( RString s )
 	Module_SetText( s );
 }
 
+void LoadingWindow_Gtk::SetProgress( const int progress )
+{
+	; // stub, needs to be finished.
+}
+
+void LoadingWindow_Gtk::SetTotalWork( const int totalWork )
+{
+	; // stub, needs to be finished.
+}
+
+void LoadingWindow_Gtk::SetIndeterminate( bool indeterminate )
+{
+	; // stub, needs to be finished.
+}
+
 /*
  * (c) 2003-2004 Glenn Maynard, Sean Burke
  * All rights reserved.
