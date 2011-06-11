@@ -536,6 +536,8 @@ static MenuDef g_AlterMenu(
 	      EditMode_Practice, true, true, 0, NULL ),
    MenuRowDef(ScreenEdit::record,			"Record in selection",			true, 
 	      EditMode_Practice, true, true, 0, NULL ),
+   MenuRowDef(ScreenEdit::preview_designation,		"Designate as Music Preview",		true,
+	      EditMode_Full, true, true, 0, NULL ),
    MenuRowDef(ScreenEdit::convert_to_pause,		"Convert selection to pause",		true, 
 	      EditMode_Full, true, true, 0, NULL ),
    MenuRowDef(ScreenEdit::convert_to_delay,		"Convert selection to delay",		true, 
@@ -3698,6 +3700,15 @@ void ScreenEdit::HandleAlterMenuChoice(AlterMenuChoice c, const vector<int> &iAn
 			m_iStopPlayingAt = m_NoteFieldEdit.m_iEndMarker;
 			TransitionEditState( STATE_RECORDING );
 			break;
+		case preview_designation:
+		{
+			ASSERT( m_NoteFieldEdit.m_iBeginMarker!=-1 && m_NoteFieldEdit.m_iEndMarker!=-1 );
+			float fMarkerStart = GetAppropriateTiming().GetElapsedTimeFromBeat( NoteRowToBeat(m_NoteFieldEdit.m_iBeginMarker) );
+			float fMarkerEnd = GetAppropriateTiming().GetElapsedTimeFromBeat( NoteRowToBeat(m_NoteFieldEdit.m_iEndMarker) );
+			GAMESTATE->m_pCurSong->m_fMusicSampleStartSeconds = fMarkerStart;
+			GAMESTATE->m_pCurSong->m_fMusicSampleLengthSeconds = fMarkerEnd - fMarkerStart;
+			break;
+		}
 		case convert_to_pause:
 		{
 			ASSERT_M( m_NoteFieldEdit.m_iBeginMarker!=-1 && m_NoteFieldEdit.m_iEndMarker!=-1, "Attempted to convert beats outside the notefield to pauses!" );

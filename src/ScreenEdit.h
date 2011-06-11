@@ -384,6 +384,7 @@ public:
 		tempo,
 		play,
 		record,
+		preview_designation,
 		convert_to_pause,
 		convert_to_delay,
 		convert_to_warp,
