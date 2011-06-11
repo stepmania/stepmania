@@ -525,7 +525,7 @@ static set<int> *g_FreeMutexIDs = NULL;
 #endif
 
 RageMutex::RageMutex( const RString &name ):
-	m_sName( name ), m_pMutex( MakeMutex (this ) ), 
+	m_pMutex( MakeMutex (this ) ), m_sName(name), 
 	m_LockedBy(GetInvalidThreadId()), m_LockCnt(0)
 {
 
@@ -732,7 +732,7 @@ bool RageEvent::WaitTimeoutSupported() const
 }
 
 RageSemaphore::RageSemaphore( RString sName, int iInitialValue ):
-	m_sName( sName ), m_pSema(MakeSemaphore( iInitialValue )) {}
+	m_pSema(MakeSemaphore( iInitialValue )), m_sName(sName) {}
 
 RageSemaphore::~RageSemaphore()
 {
