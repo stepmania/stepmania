@@ -13,13 +13,11 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// English (U.S.) resources
+// English (United States) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
-#ifdef _WIN32
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 #pragma code_page(1252)
-#endif //_WIN32
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -43,14 +41,17 @@ BEGIN
     CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDFRAME,0,34,332,1
 END
 
-IDD_LOADING_DIALOG DIALOG  0, 0, 312, 82
-STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_VISIBLE
-FONT 8, "MS Sans Serif"
+IDD_LOADING_DIALOG DIALOGEX 0, 0, 317, 94
+STYLE DS_SETFONT | DS_CENTER | WS_MINIMIZEBOX | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_APPWINDOW
+CAPTION "Stepmania"
+FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
-    CTEXT           "line1",IDC_STATIC_MESSAGE1,0,41,310,10,SS_NOPREFIX | SS_CENTERIMAGE
-    CTEXT           "line2",IDC_STATIC_MESSAGE2,0,54,310,10,SS_NOPREFIX | SS_CENTERIMAGE
-    CTEXT           "line3",IDC_STATIC_MESSAGE3,0,65,310,10,SS_NOPREFIX | SS_CENTERIMAGE
+    CTEXT           "line1",IDC_STATIC_MESSAGE1,0,67,310,10,SS_NOPREFIX | SS_CENTERIMAGE
+    CTEXT           "line2",IDC_STATIC_MESSAGE2,0,76,310,10,SS_NOPREFIX | SS_CENTERIMAGE
+    CTEXT           "line3",IDC_STATIC_MESSAGE3,0,84,310,10,SS_NOPREFIX | SS_CENTERIMAGE
     CONTROL         "",IDC_SPLASH,"Static",SS_BITMAP,0,0,310,25
+    CONTROL         "",IDC_PROGRESS,"msctls_progress32",0x0,7,51,298,14
 END
 
 IDD_DISASM_CRASH DIALOGEX 0, 0, 332, 114
@@ -102,14 +103,14 @@ END
 //
 
 #ifdef APSTUDIO_INVOKED
-GUIDELINES DESIGNINFO 
+GUIDELINES DESIGNINFO
 BEGIN
     IDD_LOADING_DIALOG, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 305
+        RIGHTMARGIN, 310
         TOPMARGIN, 7
-        BOTTOMMARGIN, 75
+        BOTTOMMARGIN, 87
     END
 
     IDD_DISASM_CRASH, DIALOG
@@ -212,7 +213,7 @@ BEGIN
     END
 END
 
-#endif    // English (U.S.) resources
+#endif    // English (United States) resources
 /////////////////////////////////////////////////////////////////////////////
 
 

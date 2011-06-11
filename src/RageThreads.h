@@ -15,6 +15,9 @@ public:
 	RString GetName() const { return m_sName; }
 	void Create( int (*fn)(void *), void *data );
 
+	void Halt( bool Kill=false);
+	void Resume();
+
 	/* For crash handlers: kill or suspend all threads (except for
 	 * the running one) immediately. */ 
 	static void HaltAllThreads( bool Kill=false );

@@ -9,6 +9,9 @@ public:
 	LoadingWindow_MacOSX();
 	~LoadingWindow_MacOSX();
 	void SetText( RString str );
+	void SetProgress( const int progress );
+	void SetTotalWork( const int totalWork );
+	void SetIndeterminate( bool indeterminate );
 };
 #define USE_LOADING_WINDOW_MACOSX
 

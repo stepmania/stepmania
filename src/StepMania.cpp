@@ -1011,7 +1011,7 @@ int main(int argc, char* argv[])
 	GAMESTATE	= new GameState;
 
 	// This requires PREFSMAN, for PREFSMAN->m_bShowLoadingWindow.
-	LoadingWindow *pLoadingWindow = LoadingWindow::Create();
+	pLoadingWindow = LoadingWindow::Create();
 	if(pLoadingWindow == NULL)
 		RageException::Throw("%s", COULDNT_OPEN_LOADING_WINDOW.GetValue().c_str());
 
@@ -1037,7 +1037,7 @@ int main(int argc, char* argv[])
 	// Switch to the last used game type, and set up the theme and announcer.
 	SwitchToLastPlayedGame();
 
-	CommandLineActions::Handle(pLoadingWindow);
+	CommandLineActions::Handle();
 
 	if( GetCommandlineArgument("dopefish") )
 		GAMESTATE->m_bDopefish = true;
@@ -1054,39 +1054,56 @@ int main(int argc, char* argv[])
 
 	if( PREFSMAN->m_iSoundWriteAhead )
 		LOG->Info( "Sound writeahead has been overridden to %i", PREFSMAN->m_iSoundWriteAhead.Get() );
+
+	pLoadingWindow->SetText("Starting sound subsystem...");
 	SOUNDMAN	= new RageSoundManager;
 	SOUNDMAN->Init();
 	SOUNDMAN->SetMixVolume();
 	SOUND		= new GameSoundManager;
+	pLoadingWindow->SetText("Initializing bookkeeper...");
 	BOOKKEEPER	= new Bookkeeper;
+	pLoadingWindow->SetText("Starting lights subsystem...");
 	LIGHTSMAN	= new LightsManager;
 	INPUTFILTER	= new InputFilter;
 	INPUTMAPPER	= new InputMapper;
 
+	pLoadingWindow->SetText("Loading game type...");
 	StepMania::ChangeCurrentGame( GAMESTATE->GetCurrentGame() );
 
 	INPUTQUEUE	= new InputQueue;
+	pLoadingWindow->SetText("Building song cache index...");
 	SONGINDEX	= new SongCacheIndex;
+	pLoadingWindow->SetText("Loading banner cache...");
 	BANNERCACHE	= new BannerCache;
 	//BACKGROUNDCACHE	= new BackgroundCache;
 
 	// depends on SONGINDEX:
 	SONGMAN		= new SongManager;
-	SONGMAN->InitAll( pLoadingWindow );	// this takes a long time
+	SONGMAN->InitAll();	// this takes a long time
 	CRYPTMAN	= new CryptManager;		// need to do this before ProfileMan
 	if( PREFSMAN->m_bSignProfileData )
 		CRYPTMAN->GenerateGlobalKeys();
+	pLoadingWindow->SetText("Initializing memory card system...");
 	MEMCARDMAN	= new MemoryCardManager;
+	pLoadingWindow->SetText("Initializing character system...");
 	CHARMAN		= new CharacterManager;
+	pLoadingWindow->SetText("Initializing profile system...");
 	PROFILEMAN	= new ProfileManager;
 	PROFILEMAN->Init();				// must load after SONGMAN
 	UNLOCKMAN	= new UnlockManager;
+	pLoadingWindow->SetText("Updating popular song list...");
 	SONGMAN->UpdatePopular();
 	SONGMAN->UpdatePreferredSort();
 
 	NSMAN 		= new NetworkSyncManager( pLoadingWindow ); 
+	pLoadingWindow->SetText("Initializing message system...");
 	MESSAGEMAN	= new MessageManager;
+	pLoadingWindow->SetText("Initializing statics manager...");
 	STATSMAN	= new StatsManager;
+
+	// Initialize which courses are ranking courses here.
+	pLoadingWindow->SetText("Updating cource rankings...");
+	SONGMAN->UpdateRankingCourses();
 
 	SAFE_DELETE( pLoadingWindow );		// destroy this before init'ing Display
 
@@ -1126,9 +1143,6 @@ int main(int argc, char* argv[])
 		SCREENMAN->SystemMessage( sMessage );
 
 	CodeDetector::RefreshCacheItems();
-
-	// Initialize which courses are ranking courses here.
-	SONGMAN->UpdateRankingCourses();
 
 	if( GetCommandlineArgument("netip") )
 		NSMAN->DisplayStartupStatus();	// If we're using networking show what happened

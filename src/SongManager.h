@@ -1,7 +1,6 @@
 #ifndef SONGMANAGER_H
 #define SONGMANAGER_H
 
-class LoadingWindow;
 class Song;
 class Style;
 class Steps;
@@ -31,7 +30,7 @@ public:
 	SongManager();
 	~SongManager();
 
-	void InitSongsFromDisk( LoadingWindow *ld );
+	void InitSongsFromDisk();
 	void FreeSongs();
 	void Cleanup();
 
@@ -49,7 +48,7 @@ public:
 
 	void LoadGroupSymLinks( RString sDir, RString sGroupFolder );
 
-	void InitCoursesFromDisk( LoadingWindow *ld );
+	void InitCoursesFromDisk();
 	void InitAutogenCourses();
 	void InitRandomAttacks();
 	void FreeCourses();
@@ -59,8 +58,8 @@ public:
 	void DeleteAutogenCourses();
 	void InvalidateCachedTrails();
 
-	void InitAll( LoadingWindow *ld );	// songs, courses, groups - everything.
-	void Reload( bool bAllowFastLoad, LoadingWindow *ld=NULL );	// songs, courses, groups - everything.
+	void InitAll();	// songs, courses, groups - everything.
+	void Reload( bool bAllowFastLoad);	// songs, courses, groups - everything.
 	void PreloadSongImages();
 
 	RString GetSongGroupBannerPath( RString sSongGroup ) const;
@@ -166,7 +165,7 @@ public:
 	void PushSelf( lua_State *L );
 
 protected:
-	void LoadStepManiaSongDir( RString sDir, LoadingWindow *ld );
+	void LoadStepManiaSongDir( RString sDir );
 	void LoadDWISongDir( RString sDir );
 	bool GetExtraStageInfoFromCourse( bool bExtra2, RString sPreferredGroup, Song*& pSongOut, Steps*& pStepsOut );
 	void SanityCheckGroupDir( RString sDir ) const;

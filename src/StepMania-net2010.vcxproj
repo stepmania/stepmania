@@ -76,7 +76,7 @@
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='FastDebug|Win32'">$(TargetDir)</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='FastDebug|Win32'">$(SolutionDir)/build-$(SolutionName)/$(ProjectName)/$(Configuration)\</IntDir>
-    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='FastDebug|Win32'">false</LinkIncremental>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='FastDebug|Win32'">true</LinkIncremental>
     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='FastDebug|Win32'">true</GenerateManifest>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release-SSE2|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release-SSE2|Win32'">$(Configuration)\</IntDir>
@@ -149,7 +149,7 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)</Command>
     </ResourceCompile>
     <Link>
       <AdditionalOptions>/MACHINE:I386 "$(IntDir)verstub.obj" %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>shell32.lib;gdi32.lib;user32.lib;ole32.lib;advapi32.lib;ffmpeg/modern_working/lib/avcodec.lib;ffmpeg/modern_working/lib/avformat.lib;ffmpeg/modern_working/lib/avutil.lib;ffmpeg/modern_working/lib/swscale.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>shell32.lib;gdi32.lib;user32.lib;ole32.lib;advapi32.lib;Comctl32.lib;ffmpeg/modern_working/lib/avcodec.lib;ffmpeg/modern_working/lib/avformat.lib;ffmpeg/modern_working/lib/avutil.lib;ffmpeg/modern_working/lib/swscale.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>../Program/StepMania-debug.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\extern\libpng\lib;ffmpeg\lib;..\extern\libjpeg\;..\extern\zlib\;..\extern\mad-0.15.1b\msvc++\Release\%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -216,7 +216,7 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)</Command>
     </ResourceCompile>
     <Link>
       <AdditionalOptions>/MACHINE:I386 "$(IntDir)verstub.obj" %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>shell32.lib;gdi32.lib;user32.lib;ole32.lib;advapi32.lib;ffmpeg/modern_working/lib/avcodec.lib;ffmpeg/modern_working/lib/avformat.lib;ffmpeg/modern_working/lib/avutil.lib;ffmpeg/modern_working/lib/swscale.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>shell32.lib;gdi32.lib;user32.lib;ole32.lib;advapi32.lib;Comctl32.lib;ffmpeg/modern_working/lib/avcodec.lib;ffmpeg/modern_working/lib/avformat.lib;ffmpeg/modern_working/lib/avutil.lib;ffmpeg/modern_working/lib/swscale.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>../Program/StepMania.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\extern\libpng\lib;ffmpeg\lib;..\extern\libjpeg\;..\extern\zlib\;..\extern\mad-0.15.1b\msvc++\Release\%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -268,7 +268,7 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)</Command>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <DisableSpecificWarnings>4063;4100;4127;4201;4244;4275;4355;4505;4512;4702;4786;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
-      <WholeProgramOptimization>true</WholeProgramOptimization>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
@@ -280,7 +280,7 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)</Command>
     </ResourceCompile>
     <Link>
       <AdditionalOptions>/MACHINE:I386 "$(IntDir)verstub.obj" %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>shell32.lib;gdi32.lib;user32.lib;ole32.lib;advapi32.lib;avcodec.lib;avformat.lib;avutil.lib;swscale.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>shell32.lib;gdi32.lib;user32.lib;ole32.lib;advapi32.lib;Comctl32.lib;avcodec.lib;avformat.lib;avutil.lib;swscale.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>../Program/StepMania-fastdebug.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\extern\libpng\lib;ffmpeg\modern_working\lib;..\extern\libjpeg\;..\extern\zlib\;..\extern\mad-0.15.1b\msvc++\Release\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -295,7 +295,7 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)</Command>
       <DataExecutionPrevention>
       </DataExecutionPrevention>
       <LinkErrorReporting>SendErrorReport</LinkErrorReporting>
-      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
+      <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
     </Link>
     <PostBuildEvent>
       <Command>archutils\Win32\mapconv "$(IntDir)$(TargetName).map" "$(TargetDir)\StepMania-fastdebug.vdi"</Command>
@@ -349,7 +349,7 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)</Command>
     </ResourceCompile>
     <Link>
       <AdditionalOptions>/MACHINE:I386 "$(IntDir)verstub.obj" %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>shell32.lib;gdi32.lib;user32.lib;ole32.lib;advapi32.lib;ffmpeg/modern_working/lib/avcodec.lib;ffmpeg/modern_working/lib/avformat.lib;ffmpeg/modern_working/lib/avutil.lib;ffmpeg/modern_working/lib/swscale.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>shell32.lib;gdi32.lib;user32.lib;ole32.lib;advapi32.lib;Comctl32.lib;ffmpeg/modern_working/lib/avcodec.lib;ffmpeg/modern_working/lib/avformat.lib;ffmpeg/modern_working/lib/avutil.lib;ffmpeg/modern_working/lib/swscale.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>..\Program/StepMania-SSE2.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\extern\libpng\lib;ffmpeg\lib;..\extern\libjpeg\;..\extern\zlib\;..\extern\mad-0.15.1b\msvc++\Release\%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -643,6 +643,7 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)</Command>
     <ClCompile Include="GraphDisplay.cpp" />
     <ClCompile Include="GrooveRadar.cpp" />
     <ClCompile Include="HelpDisplay.cpp" />
+    <ClCompile Include="InGameLoadingWindow.cpp" />
     <ClCompile Include="MemoryCardDisplay.cpp" />
     <ClCompile Include="MenuTimer.cpp" />
     <ClCompile Include="ModIcon.cpp" />
@@ -1689,6 +1690,7 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)</Command>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="InGameLoadingWindow.h" />
     <ClInclude Include="Screen.h" />
     <ClInclude Include="ScreenAttract.h" />
     <ClInclude Include="ScreenBookkeeping.h" />

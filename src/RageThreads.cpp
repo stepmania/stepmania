@@ -322,6 +322,17 @@ int RageThread::Wait()
 	return ret;
 }
 
+void RageThread::Halt(bool Kill) {
+	ASSERT( m_pSlot != NULL );
+	ASSERT( m_pSlot->m_pImpl != NULL );
+	m_pSlot->m_pImpl->Halt(Kill);
+}
+
+void RageThread::Resume() {
+	ASSERT( m_pSlot != NULL );
+	ASSERT( m_pSlot->m_pImpl != NULL );
+	m_pSlot->m_pImpl->Resume();
+}
 
 void RageThread::HaltAllThreads( bool Kill )
 {

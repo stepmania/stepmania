@@ -360,7 +360,7 @@ void ScreenInstallOverlay::Update( float fDeltaTime )
 	}
 
 	if( playAfterLaunchInfo.bAnySongChanged )
-		SONGMAN->Reload( false, NULL );
+		SONGMAN->Reload( false );
 
 	if( !playAfterLaunchInfo.sSongDir.empty() )
 	{

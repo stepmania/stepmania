@@ -7,6 +7,7 @@
 #include "archutils/win32/WindowIcon.h"
 #include "archutils/win32/ErrorStrings.h"
 #include <windows.h>
+#include "CommCtrl.h"
 #include "RageSurface_Load.h"
 #include "RageSurface.h"
 #include "RageSurfaceUtils.h"
@@ -16,6 +17,9 @@
 
 #include "RageSurfaceUtils_Zoom.h"
 static HBITMAP g_hBitmap = NULL;
+
+#pragma comment(linker,"\"/manifestdependency:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
+
 
 /* Load a RageSurface into a GDI surface. */
 static HBITMAP LoadWin32Surface( RageSurface *&s )
@@ -76,8 +80,18 @@ static HBITMAP LoadWin32Surface( RString sFile, HWND hWnd )
 	return ret;
 }
 
-BOOL CALLBACK LoadingWindow_Win32::WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
+INT_PTR CALLBACK LoadingWindow_Win32::DlgProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
 {
+
+	LoadingWindow_Win32 *self;
+
+	if(msg==WM_INITDIALOG) {
+		self=(LoadingWindow_Win32 *)lParam;
+		SetWindowLong(hWnd,DWL_USER,(LONG)self);
+	} else {
+		self=(LoadingWindow_Win32 *)GetWindowLong(hWnd,DWL_USER);
+	}
+
 	switch( msg )
 	{
 	case WM_INITDIALOG:
@@ -95,11 +109,25 @@ BOOL CALLBACK LoadingWindow_Win32::WndProc( HWND hWnd, UINT msg, WPARAM wParam, 
 			(WPARAM) IMAGE_BITMAP, 
 			(LPARAM) (HANDLE) g_hBitmap );
 		SetWindowTextA( hWnd, PRODUCT_ID );
+
 		break;
+
+	case WM_CLOSE:
+		return FALSE;
 
 	case WM_DESTROY:
 		DeleteObject( g_hBitmap );
 		g_hBitmap = NULL;
+		self->runMessageLoop=false;
+		self->hwnd=NULL;
+		return TRUE;
+		break;
+
+	case WM_APP:
+		DestroyWindow(hWnd);
+		self->runMessageLoop=false;
+		ExitThread(0);
+		return TRUE;
 		break;
 	}
 
@@ -118,34 +146,54 @@ void LoadingWindow_Win32::SetIcon( const RageSurface *pIcon )
 
 LoadingWindow_Win32::LoadingWindow_Win32()
 {
+	INITCOMMONCONTROLSEX cceData;
+	cceData.dwSize=sizeof(INITCOMMONCONTROLSEX);
+	cceData.dwICC=ICC_PROGRESS_CLASS;
+	InitCommonControlsEx(&cceData);
+
 	m_hIcon = NULL;
-	hwnd = CreateDialog( handle.Get(), MAKEINTRESOURCE(IDD_LOADING_DIALOG), NULL, WndProc );
+	
+	runMessageLoop=true;
+
+	guiReadyEvent=CreateEvent(NULL,FALSE,FALSE,NULL);
+
+	pumpThread=CreateThread(NULL, NULL,	MessagePump, (void *)this, 0,	&pumpThreadId);
+
+	WaitForSingleObject(guiReadyEvent,INFINITE);
+
 	for( unsigned i = 0; i < 3; ++i )
 		text[i] = "ABC"; /* always set on first call */
 	SetText( "" );
-	Paint();
 }
 
 LoadingWindow_Win32::~LoadingWindow_Win32()
 {
-	if( hwnd )
-		DestroyWindow( hwnd );
+	SendMessage(hwnd,WM_APP,0,0);
+	//SendMessage(hwnd,WM_NULL,0,0);
+	WaitForSingleObject(pumpThread,INFINITE);
+	if(guiReadyEvent) 
+		CloseHandle(guiReadyEvent);
 	if( m_hIcon != NULL )
 		DestroyIcon( m_hIcon );
 }
 
-void LoadingWindow_Win32::Paint()
+DWORD WINAPI LoadingWindow_Win32::MessagePump(LPVOID thisAsVoidPtr)
 {
-	SendMessage( hwnd, WM_PAINT, 0, 0 );
+	LoadingWindow_Win32 *self=(LoadingWindow_Win32 *)thisAsVoidPtr;
 
-	/* Process all queued messages since the last paint.  This allows the window to
-	 * come back if it loses focus during load. */
+	self->hwnd = CreateDialogParam( self->handle.Get(), MAKEINTRESOURCE(IDD_LOADING_DIALOG), NULL, DlgProc, (LPARAM)thisAsVoidPtr);
+
+	SetEvent(self->guiReadyEvent);
+
+	// Run the message loop in a separate thread to keep the gui responsive during the loading
 	MSG msg;
-	while( PeekMessage( &msg, hwnd, 0, 0, PM_NOREMOVE ) )
+	while(self->runMessageLoop && GetMessage(&msg, self->hwnd, 0, 0 ) )
 	{
-		GetMessage(&msg, hwnd, 0, 0 );
+		if(IsDialogMessage(self->hwnd,&msg)) continue;
 		DispatchMessage( &msg );
 	}
+
+	return msg.wParam;
 }
 
 void LoadingWindow_Win32::SetText( RString sText )
@@ -166,6 +214,35 @@ void LoadingWindow_Win32::SetText( RString sText )
 		
 		::SetWindowText( hwndItem, ConvertUTF8ToACP(asMessageLines[i]).c_str() );
 	}
+}
+
+void LoadingWindow_Win32::SetProgress(const int progress)
+{
+	m_progress=progress;
+	HWND hwndItem = ::GetDlgItem( hwnd, IDC_PROGRESS );
+	::SendMessage(hwndItem,PBM_SETPOS,progress,0);
+}
+
+void LoadingWindow_Win32::SetTotalWork(const int totalWork)
+{
+	m_totalWork=totalWork;
+	HWND hwndItem = ::GetDlgItem( hwnd, IDC_PROGRESS );
+	SendMessage(hwndItem,PBM_SETRANGE32,0,totalWork);
+}
+
+void LoadingWindow_Win32::SetIndeterminate(bool indeterminate) {
+	m_indeterminate=indeterminate;
+
+	HWND hwndItem = ::GetDlgItem( hwnd, IDC_PROGRESS );
+
+	if(indeterminate) {
+		SetWindowLong(hwndItem,GWL_STYLE, PBS_MARQUEE | GetWindowLong(hwndItem,GWL_STYLE));
+		SendMessage(hwndItem,PBM_SETMARQUEE,1,0);
+	} else {
+		SendMessage(hwndItem,PBM_SETMARQUEE,0,0);
+		SetWindowLong(hwndItem,GWL_STYLE, (~PBS_MARQUEE) & GetWindowLong(hwndItem,GWL_STYLE));
+	}
+	
 }
 
 /*

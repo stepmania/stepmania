@@ -11,10 +11,19 @@ public:
 	virtual RString Init() { return RString(); }
 	virtual ~LoadingWindow() { }
 
-	virtual void Paint() { }
 	virtual void SetText( RString str ) = 0;
 	virtual void SetIcon( const RageSurface *pIcon ) { }
+	virtual void SetProgress( const int progress ) { m_progress=progress; }
+	virtual void SetTotalWork( const int totalWork ) { m_totalWork=totalWork; }
+	virtual void SetIndeterminate( bool indeterminate ) { m_indeterminate=indeterminate; }
+
+protected:
+	int m_progress;
+	int m_totalWork;
+	bool m_indeterminate;
 };
+
+extern LoadingWindow *pLoadingWindow;
 
 #endif
 
