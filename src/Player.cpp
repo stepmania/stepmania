@@ -2867,7 +2867,9 @@ void Player::CrossedRows( int iLastRowCrossed, const RageTimer &now )
 	}
 
 
-	// Update hold checkpoints
+	/* Update hold checkpoints
+	 *
+	 * TODO: Move this to a separate function. */
 	if( HOLD_CHECKPOINTS )
 	{
 		int iCheckpointFrequencyRows = ROWS_PER_BEAT/2;
@@ -2943,7 +2945,10 @@ void Player::CrossedRows( int iLastRowCrossed, const RageTimer &now )
 				// TODO: Find a better way of handling hold checkpoints with other taps.
 				if( !viColsWithHold.empty() && ( CHECKPOINTS_TAPS_SEPARATE_JUDGMENT || m_NoteData.GetNumTapNotesInRow( iLastRowCrossed ) == 0 ) )
 				{
-					HandleHoldCheckpoint( r, iNumHoldsHeldThisRow, iNumHoldsMissedThisRow, viColsWithHold );
+					HandleHoldCheckpoint(r, 
+							     iNumHoldsHeldThisRow, 
+							     iNumHoldsMissedThisRow, 
+							     viColsWithHold );
 				}
 			}
 		}
@@ -3091,7 +3096,10 @@ void Player::HandleTapRowScore( unsigned row )
 	ChangeLife( scoreOfLastTap );
 }
 
-void Player::HandleHoldCheckpoint( int iRow, int iNumHoldsHeldThisRow, int iNumHoldsMissedThisRow, const vector<int> &viColsWithHold )
+void Player::HandleHoldCheckpoint(int iRow, 
+				  int iNumHoldsHeldThisRow, 
+				  int iNumHoldsMissedThisRow, 
+				  const vector<int> &viColsWithHold )
 {
 	bool bNoCheating = true;
 #ifdef DEBUG
@@ -3110,9 +3118,15 @@ void Player::HandleHoldCheckpoint( int iRow, int iNumHoldsHeldThisRow, int iNumH
 	const int iOldMissCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurMissCombo : 0;
 
 	if( m_pPrimaryScoreKeeper )
-		m_pPrimaryScoreKeeper->HandleHoldCheckpointScore( m_NoteData, iRow, iNumHoldsHeldThisRow, iNumHoldsMissedThisRow );
+		m_pPrimaryScoreKeeper->HandleHoldCheckpointScore(m_NoteData, 
+								 iRow, 
+								 iNumHoldsHeldThisRow, 
+								 iNumHoldsMissedThisRow );
 	if( m_pSecondaryScoreKeeper )
-		m_pSecondaryScoreKeeper->HandleHoldCheckpointScore( m_NoteData, iRow, iNumHoldsHeldThisRow, iNumHoldsMissedThisRow );
+		m_pSecondaryScoreKeeper->HandleHoldCheckpointScore(m_NoteData, 
+								   iRow, 
+								   iNumHoldsHeldThisRow, 
+								   iNumHoldsMissedThisRow );
 
 	if( iNumHoldsMissedThisRow == 0 )
 	{
@@ -3121,7 +3135,8 @@ void Player::HandleHoldCheckpoint( int iRow, int iNumHoldsHeldThisRow, int iNumH
 		{
 			FOREACH_CONST( int, viColsWithHold, i )
 			{
-				bool bBright = m_pPlayerStageStats && m_pPlayerStageStats->m_iCurCombo>(int)BRIGHT_GHOST_COMBO_THRESHOLD;
+				bool bBright = m_pPlayerStageStats 
+					&& m_pPlayerStageStats->m_iCurCombo>(int)BRIGHT_GHOST_COMBO_THRESHOLD;
 				if( m_pNoteField )
 					m_pNoteField->DidHoldNote( *i, HNS_Held, bBright );
 			}
@@ -3290,12 +3305,14 @@ void Player::SetCombo( int iCombo, int iMisses )
 	if( GAMESTATE->IsCourseMode() )
 	{
 		int iSongIndexStartColoring = GAMESTATE->m_pCurCourse->GetEstimatedNumStages();
-		iSongIndexStartColoring = static_cast<int>(floor(iSongIndexStartColoring*PERCENT_UNTIL_COLOR_COMBO));
+		iSongIndexStartColoring = 
+			static_cast<int>(floor(iSongIndexStartColoring*PERCENT_UNTIL_COLOR_COMBO));
 		bPastBeginning = GAMESTATE->GetCourseSongIndex() >= iSongIndexStartColoring;
 	}
 	else
 	{
-		bPastBeginning = m_pPlayerState->m_Position.m_fMusicSeconds > GAMESTATE->m_pCurSong->m_fMusicLengthSeconds * PERCENT_UNTIL_COLOR_COMBO;
+		bPastBeginning = m_pPlayerState->m_Position.m_fMusicSeconds 
+			> GAMESTATE->m_pCurSong->m_fMusicLengthSeconds * PERCENT_UNTIL_COLOR_COMBO;
 	}
 
 	if( m_bSendJudgmentAndComboMessages )
@@ -3337,8 +3354,18 @@ RString Player::ApplyRandomAttack()
 class LunaPlayer: public Luna<Player>
 {
 public:
-	static int SetActorWithJudgmentPosition( T* p, lua_State *L )	{ Actor *pActor = Luna<Actor>::check(L, 1); p->SetActorWithJudgmentPosition(pActor); return 0; }
-	static int SetActorWithComboPosition( T* p, lua_State *L )	{ Actor *pActor = Luna<Actor>::check(L, 1); p->SetActorWithComboPosition(pActor); return 0; }
+	static int SetActorWithJudgmentPosition( T* p, lua_State *L )
+	{ 
+		Actor *pActor = Luna<Actor>::check(L, 1); 
+		p->SetActorWithJudgmentPosition(pActor); 
+		return 0;
+	}
+	static int SetActorWithComboPosition( T* p, lua_State *L )
+	{ 
+		Actor *pActor = Luna<Actor>::check(L, 1); 
+		p->SetActorWithComboPosition(pActor); 
+		return 0; 
+	}
 	static int GetPlayerTimingData( T* p, lua_State *L )
 	{
 		p->GetPlayerTimingData().PushSelf(L);
