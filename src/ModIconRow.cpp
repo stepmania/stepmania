@@ -72,30 +72,12 @@ struct OptionColumnEntry
 	//void FromStack( lua_State *L, int iPos );
 };
 
-/*
-void OptionColumnEntry::FromStack( lua_State *L, int iPos )
-{
-	if( lua_type(L, iPos) != LUA_TTABLE )
-		return;
-
-	lua_pushvalue( L, iPos );
-	const int iTab = lua_gettop( L );
-
-	// option name
-	lua_getfield( L, iTab, "Name" );
-	RString sName = lua_tostring( L, -1 );
-	szString = const_cast<char *>(sName.c_str());
-	lua_settop( L, iTab );
-
-	// option icon index
-	lua_getfield( L, iTab, "IconIndex" );
-	iSlotIndex = lua_tointeger( L, -1 );
-	lua_settop( L, iTab );
-}
-static vector<OptionColumnEntry> g_OptionColumnEntries;
-*/
-
 // todo: metric these? -aj
+/*
+ * May be a good idea to do so at some point. GCC gives plenty of warnings
+ * About the code below, something about turning string constants into
+ * char * items. Gotta love the many compilers we use. -Wolfman2000
+ */
 static const OptionColumnEntry g_OptionColumnEntries[] =
 {
 	{"Boost",		0},
