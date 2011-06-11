@@ -123,14 +123,14 @@ GameState::GameState() :
 	m_pCurTrail(			Message_CurrentTrailP1Changed ),
 	m_bGameplayLeadIn(		Message_GameplayLeadInChanged ),
 	m_bDidModeChangeNoteSkin(	false ),
+	m_bIsUsingStepTiming(		true ),
+	m_bInStepEditor(		false ),
 	m_stEdit(				Message_EditStepsTypeChanged ),
 	m_cdEdit(				Message_EditCourseDifficultyChanged ),
 	m_pEditSourceSteps(		Message_EditSourceStepsChanged ),
 	m_stEditSource(			Message_EditSourceStepsTypeChanged ),
 	m_iEditCourseEntryIndex(	Message_EditCourseEntryIndexChanged ),
-	m_sEditLocalProfileID(		Message_EditLocalProfileIDChanged ),
-	m_bIsUsingStepTiming(		true ),
-	m_bInStepEditor(            false )
+	m_sEditLocalProfileID(		Message_EditLocalProfileIDChanged )
 {
 	g_pImpl = new GameStateImpl;
 

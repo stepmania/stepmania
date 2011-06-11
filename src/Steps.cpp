@@ -32,8 +32,9 @@ Steps::Steps(): m_StepsType(StepsType_Invalid),
 	m_sNoteDataCompressed(""), m_sFilename(""), m_bSavedToDisk(false), 
 	m_LoadedFromProfile(ProfileSlot_Invalid), m_iHash(0),
 	m_sDescription(""), m_sChartStyle(""), 
-	m_Difficulty(Difficulty_Invalid), m_iMeter(0), m_sCredit(""),
-	m_bAreCachedRadarValuesJustLoaded(false) {}
+	m_Difficulty(Difficulty_Invalid), m_iMeter(0),
+	m_bAreCachedRadarValuesJustLoaded(false),
+	m_sCredit("") {}
 
 Steps::~Steps()
 {

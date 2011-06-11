@@ -1476,11 +1476,11 @@ RString MusicWheel::JumpToPrevGroup()
 		// in case it wasn't found above:
 		for( unsigned int i = m_CurWheelItemData.size()-1; i > 0; --i )
 		{
-			LOG->Trace( ssprintf("JumpToPrevGroup iteration 2 | i = %u",i) );
+			LOG->Trace( "JumpToPrevGroup iteration 2 | i = %u",i );
 			if( m_CurWheelItemData[i]->m_Type == TYPE_SECTION )
 			{
 				m_iSelection = i;
-				LOG->Trace( ssprintf("finding it in #2 | i = %u | text = %s",i, m_CurWheelItemData[i]->m_sText.c_str()) );
+				LOG->Trace( "finding it in #2 | i = %u | text = %s",i, m_CurWheelItemData[i]->m_sText.c_str() );
 				return m_CurWheelItemData[i]->m_sText;
 			}
 		}
