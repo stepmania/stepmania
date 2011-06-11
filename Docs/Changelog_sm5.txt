@@ -13,6 +13,7 @@ StepMania 5.0 Preview 2 | 20110???
 * [ScreenEdit] Allow setting the Music Preview via the Alter Menu. Just select
   your area, enter the menu, and choose "Designate as Music Preview". No more
   math calculations needed! [Wolfman2000]
+* [SongUtil] Added GetPlayableSteps(Song) Lua binding. [AJ]
 
 2011/06/10
 ----------

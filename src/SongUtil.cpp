@@ -1097,6 +1097,14 @@ bool SongID::IsValid() const
 
 namespace
 {
+	int GetPlayableSteps( lua_State *L )
+	{
+		const Song *pSong = Luna<Song>::check( L, 1, true );
+		vector<Steps*> vSteps;
+		SongUtil::GetPlayableSteps(pSong,vSteps);
+		LuaHelpers::CreateTableFromArray<Steps*>( vSteps, L );
+		return 1;
+	}
 	int IsStepsTypePlayable( lua_State *L )
 	{
 		Song *pSong = Luna<Song>::check( L, 1, true );
@@ -1116,6 +1124,7 @@ namespace
 
 	const luaL_Reg SongUtilTable[] =
 	{
+		LIST_METHOD( GetPlayableSteps ),
 		LIST_METHOD( IsStepsTypePlayable ),
 		LIST_METHOD( IsStepsPlayable ),
 		{ NULL, NULL }
