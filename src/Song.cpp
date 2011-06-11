@@ -1505,7 +1505,7 @@ public:
 	{
 		RString s = p->GetBackgroundPath();
 		if( s.empty() ) 
-			s = ""; 
+			return 0; 
 		lua_pushstring(L, s); 
 		return 1; 
 	}
