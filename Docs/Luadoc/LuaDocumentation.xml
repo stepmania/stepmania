@@ -437,6 +437,9 @@
 	</Function>
 </Namespace>
 <Namespace name='SongUtil'>
+	<Function name='GetPlayableSteps' return='Steps' arguments='Song so'>
+		Gets the playable Steps for the present Song based on the present Game.
+	</Function>
 	<Function name='IsStepsPlayable' return='bool' arguments='Song so, Steps st'>
 		Returns true if the song's steps (<code>st</code>) are playable.
 	</Function>

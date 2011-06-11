@@ -16,6 +16,7 @@ StepMania 5.0 Preview 2 | 20110???
 * [SongUtil] Added GetPlayableSteps(Song) Lua binding. [AJ]
 * [Steps] Allow 255 characters for all chart descriptions, including edits.
   We are no longer bound by In The Groove I think. [Wolfman2000]
+* [Player] Add GetPlayerTimingData() Lua binding. [Wolfman2000]
 
 2011/06/10
 ----------

@@ -890,6 +890,7 @@
 		<Class base='ActorFrame' name='Player'>
 			<Function name='SetActorWithComboPosition'/>
 			<Function name='SetActorWithJudgmentPosition'/>
+			<Function name='GetPlayerTimingData'/>
 		</Class>
 		<Class name='PlayerInfo'>
 			<Function name='GetLifeMeter'/>
@@ -1522,6 +1523,7 @@
 			<Function name='GetCreditsMessage'/>
 		</Namespace>
 		<Namespace name='SongUtil'>
+			<Function name='GetStepsPlayable'/>
 			<Function name='IsStepsPlayable'/>
 			<Function name='IsStepsTypePlayable'/>
 		</Namespace>
