@@ -778,13 +778,6 @@ void NoteDataUtil::LoadTransformedLightsFromTwo( const NoteData &marquee, const 
 	NoteDataUtil::RemoveMines( out );
 }
 
-struct RadarStats {
-	int taps;
-	int jumps;
-	int hands;
-	int quads;
-};
-
 RadarStats CalculateRadarStatsFast( const NoteData &in, RadarStats &out )
 {
 	out.taps = 0;

@@ -28,6 +28,8 @@ extern const char *const version_date;
 extern const char *const version_time;
 #endif
 
+bool child_read( int fd, void *p, int size );
+
 const char *g_pCrashHandlerArgv0 = NULL;
 
 

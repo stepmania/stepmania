@@ -11,6 +11,10 @@ class XNode;
 class CourseEntry;
 class Song;
 
+bool CompareCoursePointersBySortValueAscending( const Course *pSong1, const Course *pSong2 );
+bool CompareCoursePointersBySortValueDescending( const Course *pSong1, const Course *pSong2 );
+bool CompareCoursePointersByTitle( const Course *pCourse1, const Course *pCourse2 );
+
 /** @brief Utility functions that deal with Courses. */
 namespace CourseUtil
 {

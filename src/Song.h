@@ -16,6 +16,9 @@ class StepsID;
 struct lua_State;
 struct BackgroundChange;
 
+void FixupPath( RString &path, const RString &sSongPath );
+RString GetSongAssetPath( RString sPath, const RString &sSongPath );
+
 /** @brief The version of the .ssc file format. */
 const static float STEPFILE_VERSION_NUMBER = 0.7f;
 

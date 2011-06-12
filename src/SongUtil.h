@@ -13,6 +13,8 @@ class Steps;
 class Profile;
 class XNode;
 
+void AppendOctal( int n, int digits, RString &out );
+
 /** @brief The criteria for dealing with songs. */
 class SongCriteria
 {

@@ -4,6 +4,8 @@
 #include "Actor.h"
 #include "RageTextureID.h"
 
+void TexCoordArrayFromRect( float fImageCoords[8], const RectF &rect );
+
 class RageTexture;
 /** @brief A bitmap Actor that animates and moves around. */
 class Sprite: public Actor
