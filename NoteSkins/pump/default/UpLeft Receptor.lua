@@ -1,5 +1,5 @@
-
 local function Beat(self)
+	-- too many locals
 	local this = self:GetChildren()
 	local player = GAMESTATE:GetMasterPlayerNumber()
 	local playerstate = GAMESTATE:GetPlayerState( player )
