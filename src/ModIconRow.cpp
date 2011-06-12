@@ -10,6 +10,8 @@
 #include "LuaManager.h"
 #include "Foreach.h"
 
+int OptionToPreferredColumn( RString sOptionText );
+
 REGISTER_ACTOR_CLASS( ModIconRow );
 
 ModIconRow::ModIconRow()

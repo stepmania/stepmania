@@ -31,6 +31,13 @@ using namespace RageDisplay_Legacy_Helpers;
 #define glFlush()
 #endif
 
+RString GetInfoLog( GLhandleARB h );
+GLhandleARB CompileShader( GLenum ShaderType, RString sFile, vector<RString> asDefines );
+GLhandleARB LoadShader( GLenum ShaderType, RString sFile, vector<RString> asDefines );
+void InitShaders();
+void SetupExtensions();
+void SetPixelMapForSurface( int glImageFormat, int glTexFormat, const RageSurfacePalette *palette );
+
 //
 // Globals
 //
