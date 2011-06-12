@@ -220,9 +220,11 @@ inline bool MyLua_checkintboolean( lua_State *L, int iArg )
 #define FArg(n) ((float) luaL_checknumber(L,(n)))
 
 #define LuaFunction( func, expr ) \
+int LuaFunc_##func( lua_State *L ); \
 int LuaFunc_##func( lua_State *L ) { \
 	LuaHelpers::Push( L, expr ); return 1; \
 } \
+void LuaFunc_Register_##func( lua_State *L ); \
 void LuaFunc_Register_##func( lua_State *L ) { lua_register( L, #func, LuaFunc_##func ); } \
 REGISTER_WITH_LUA_FUNCTION( LuaFunc_Register_##func );
 

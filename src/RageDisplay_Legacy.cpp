@@ -2561,7 +2561,7 @@ RString RageDisplay_Legacy::GetTextureDiagnostics(unsigned iTexture) const
 void RageDisplay_Legacy::SetAlphaTest(bool b)
 {
 	// Previously this was 0.01, rather than 0x01.
-	glAlphaFunc(GL_GREATER, 0.00390625 /* 1/256 */);
+	glAlphaFunc(GL_GREATER, 0.00390625f /* 1/256 */);
 	if (b)
 		glEnable(GL_ALPHA_TEST);
 	else

@@ -11,6 +11,8 @@
 #include "PrefsManager.h"
 #include "Model.h"
 
+int Neg1OrPos1();
+
 #define DC_X( choice )	THEME->GetMetricF("DancingCharacters",ssprintf("2DCharacterXP%d",choice+1))
 #define DC_Y( choice )	THEME->GetMetricF("DancingCharacters",ssprintf("2DCharacterYP%d",choice+1))
 
@@ -344,7 +346,7 @@ void DancingCharacters::DrawPrimitives()
 			ambient, 
 			diffuse,
 			specular,
-			RageVector3(-3, -7.5, +9) );
+			RageVector3(-3, -7.5f, +9) );
 
 		if( PREFSMAN->m_bCelShadeModels )
 		{

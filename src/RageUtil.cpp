@@ -16,6 +16,8 @@
 #include <sys/stat.h>
 #include <math.h>
 
+bool HexToBinary(const RString&, RString&);
+
 RandomGen g_RandomNumberGenerator;
 
 MersenneTwister::MersenneTwister( int iSeed ) : m_iNext(0)
