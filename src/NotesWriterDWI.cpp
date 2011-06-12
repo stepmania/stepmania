@@ -11,6 +11,8 @@
 #include "Song.h"
 #include "Steps.h"
 
+RString OptimizeDWIString( RString holds, RString taps );
+
 /**
  * @brief Optimize an individual pair of characters whenever possible.
  * @param c1 the first character.

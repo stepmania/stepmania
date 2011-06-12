@@ -5,6 +5,8 @@
 #include "RageTextureID.h"
 #include "ActorUtil.h"
 
+RString GetRandomFileInDir( RString sDir );
+
 Character::Character(): m_sCharDir(""), m_sCharacterID(""),
 	m_sDisplayName(""), m_sCardPath(""), m_sIconPath(""),
 	m_bUsableInRave(false), m_iPreloadRefcount(0) {}
