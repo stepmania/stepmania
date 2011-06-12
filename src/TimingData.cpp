@@ -821,10 +821,10 @@ void TimingData::GetBeatAndBPSFromElapsedTimeNoOffset( float fElapsedTime, float
 	
 	int iLastRow = 0;
 	float fLastTime = -m_fBeat0OffsetInSeconds;
-	float fBPS = GetBPMAtRow(0) / 60.0;
+	float fBPS = GetBPMAtRow(0) / 60.0f;
 	
 	float bIsWarping = false;
-	float fWarpDestination = 0.0;
+	float fWarpDestination = 0;
 	
 	for( ;; )
 	{
@@ -923,10 +923,10 @@ float TimingData::GetElapsedTimeFromBeatNoOffset( float fBeat ) const
 	
 	int iLastRow = 0;
 	float fLastTime = -m_fBeat0OffsetInSeconds;
-	float fBPS = GetBPMAtRow(0) / 60.0;
+	float fBPS = GetBPMAtRow(0) / 60.0f;
 	
 	float bIsWarping = false;
-	float fWarpDestination = 0.0;
+	float fWarpDestination = 0;
 	
 	for( ;; )
 	{
@@ -1004,7 +1004,7 @@ float TimingData::GetElapsedTimeFromBeatNoOffset( float fBeat ) const
 float TimingData::GetDisplayedBeat( float fBeat ) const
 {
 	vector<ScrollSegment>::const_iterator it = m_ScrollSegments.begin(), end = m_ScrollSegments.end();
-	float fOutBeat = 0.0;
+	float fOutBeat = 0;
 	for( ; it != end; it++ )
 	{
 		if( it+1 == end || fBeat <= (it+1)->GetBeat() )
@@ -1508,7 +1508,7 @@ float TimingData::GetDisplayedSpeedPercent( float fSongBeat, float fMusicSeconds
 	
 	if( ( index == 0 && m_SpeedSegments[0].GetLength() > 0.0 ) && fCurTime < fStartTime )
 	{
-		return 1.0;
+		return 1.0f;
 	}
 	else if( fEndTime >= fCurTime && ( index > 0 || m_SpeedSegments[0].GetLength() > 0.0 ) )
 	{

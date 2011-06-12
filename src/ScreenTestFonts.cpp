@@ -49,7 +49,7 @@ void ScreenTestFonts::Init()
 	
 	font.SetXY( SCREEN_CENTER_X, SCREEN_CENTER_Y+100 );
 	font.LoadFromFont( THEME->GetPathF("Common", "normal") );
-	font.SetZoom(.5);
+	font.SetZoom(.5f);
 	this->AddChild(&font);
 
 	txt.SetName( "Text" );

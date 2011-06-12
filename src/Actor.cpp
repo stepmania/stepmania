@@ -105,9 +105,9 @@ void Actor::InitState()
 #endif
 	m_fSecsIntoEffect = 0;
 	m_fEffectDelta = 0;
-	m_fEffectRampUp = 0.5;
+	m_fEffectRampUp = 0.5f;
 	m_fEffectHoldAtHalf = 0;
-	m_fEffectRampDown = 0.5;
+	m_fEffectRampDown = 0.5f;
 	m_fEffectHoldAtZero = 0;
 	m_fEffectOffset = 0;
 	m_EffectClock = CLOCK_TIMER;
@@ -118,7 +118,7 @@ void Actor::InitState()
 	m_bVisible = true;
 	m_fShadowLengthX = 0;
 	m_fShadowLengthY = 0;
-	m_ShadowColor = RageColor(0,0,0,0.5);
+	m_ShadowColor = RageColor(0,0,0,0.5f);
 	m_bIsAnimating = true;
 	m_fHibernateSecondsLeft = 0;
 	m_iDrawOrder = 0;

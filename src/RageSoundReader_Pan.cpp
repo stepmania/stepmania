@@ -5,7 +5,7 @@
 RageSoundReader_Pan::RageSoundReader_Pan( RageSoundReader *pSource ):
 	RageSoundReader_Filter( pSource )
 {
-	m_fPan = 0.0;
+	m_fPan = 0;
 }
 
 

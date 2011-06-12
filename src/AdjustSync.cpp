@@ -256,7 +256,7 @@ void AdjustSync::AutosyncTempo()
 		// keep only a fraction of the data, such as the 80% with the lowest
 		// error.  However, throwing away the ones with high error should
 		// be enough in most cases.
-		float fFilteredError = 0.0;
+		float fFilteredError = 0;
 		s_iStepsFiltered = s_vAutosyncTempoData.size();
 		FilterHighErrorPoints( s_vAutosyncTempoData, fSlope, fIntercept, ERROR_TOO_HIGH );
 		s_iStepsFiltered -= s_vAutosyncTempoData.size();
