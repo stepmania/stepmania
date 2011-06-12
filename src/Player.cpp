@@ -1328,7 +1328,7 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 		{
 			float factor = (tn.subType == TapNote::hold_head_roll ? 2 : 10.0f - 8.5f);
 			factor *= fLifeFraction;
-			m_vKeysounds[tn.iKeysoundIndex].SetProperty ("Volume", max(0.0, min(1.0, factor)));
+			m_vKeysounds[tn.iKeysoundIndex].SetProperty ("Volume", max(0.0f, min(1.0f, factor)));
 		}
 	}
 
