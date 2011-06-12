@@ -8,6 +8,10 @@ ________________________________________________________________________________
 StepMania 5.0 Preview 2 | 20110???
 --------------------------------------------------------------------------------
 
+2011/06/12
+----------
+* [ScreenNetSelectMusic] Add PlayerOptionsScreen metric. [AJ]
+
 2011/06/11
 ----------
 * [ScreenEdit] Allow setting the Music Preview via the Alter Menu. Just select
