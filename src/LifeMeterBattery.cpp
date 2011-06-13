@@ -26,6 +26,13 @@ void LifeMeterBattery::Load( const PlayerState *pPlayerState, PlayerStageStats *
 	const RString sType = "LifeMeterBattery";
 	PlayerNumber pn = pPlayerState->m_PlayerNumber;
 
+	MIN_SCORE_TO_KEEP_LIFE.Load(sType, "MinScoreToKeepLife");
+	SUBTRACT_LIVES.Load(sType, "SubtractLives");
+	MINES_SUBTRACT_LIVES.Load(sType, "MinesSubtractLives");
+	HELD_ADD_LIVES.Load(sType, "HeldAddLives");
+	LET_GO_SUBTRACT_LIVES.Load(sType, "LetGoSubtractLives");
+
+	LIVES_FORMAT.Load(sType, "NumLivesFormat");
 	BATTERY_BLINK_TIME.Load(sType, "BatteryBlinkTime"); // 1.2f by default
 
 	bool bPlayerEnabled = GAMESTATE->IsPlayerEnabled( pPlayerState );
@@ -101,42 +108,46 @@ void LifeMeterBattery::OnSongEnded()
 	Refresh();
 }
 
+void LifeMeterBattery::SubtractLives( int iLives )
+{
+	m_iTrailingLivesLeft = m_iLivesLeft;
+	m_iLivesLeft -= iLives;
+	m_soundLoseLife.Play();
+
+	m_textNumLives.PlayCommand("LoseLife");
+	/*
+	m_textNumLives.SetZoom( 1.5f );
+	m_textNumLives.BeginTweening( 0.15f );
+	m_textNumLives.SetZoom( 1.0f );
+	*/
+
+	Refresh();
+	m_fBatteryBlinkTime = BATTERY_BLINK_TIME;
+}
+
+void LifeMeterBattery::AddLives( int iLives )
+{
+	m_iTrailingLivesLeft = m_iLivesLeft;
+	m_iLivesLeft += iLives;
+	m_soundGainLife.Play();
+	m_textNumLives.PlayCommand("GainLife");
+
+	Refresh();
+	m_fBatteryBlinkTime = 0;
+}
+
 void LifeMeterBattery::ChangeLife( TapNoteScore score )
 {
 	if( m_iLivesLeft == 0 )
 		return;
 
-	// todo: let the themer decide how this is handled. -aj
-	switch( score )
+	// this probably doesn't handle hold checkpoints. -aj
+	if( score == TNS_HitMine && MINES_SUBTRACT_LIVES > 0 )
+		SubtractLives(MINES_SUBTRACT_LIVES);
+	else
 	{
-	case TNS_W1:
-	case TNS_W2:
-	case TNS_W3:
-		break;
-	case TNS_W4:
-	case TNS_W5:
-	case TNS_Miss:
-	case TNS_HitMine:
-		m_iTrailingLivesLeft = m_iLivesLeft;
-		m_iLivesLeft--;
-		m_soundLoseLife.Play();
-
-		m_textNumLives.PlayCommand("LoseLife");
-		/*
-		m_textNumLives.SetZoom( 1.5f );
-		m_textNumLives.BeginTweening( 0.15f );
-		m_textNumLives.SetZoom( 1.0f );
-		*/
-
-		Refresh();
-		m_fBatteryBlinkTime = BATTERY_BLINK_TIME;
-		break;
-	default:
-		break;
-		/*
-		// xxx: this doesn't handle hold checkpoints.
-		ASSERT(0);
-		*/
+		if( score < MIN_SCORE_TO_KEEP_LIFE && SUBTRACT_LIVES > 0 )
+			SubtractLives(SUBTRACT_LIVES);
 	}
 
 	Message msg( "LifeChanged" );
@@ -148,16 +159,10 @@ void LifeMeterBattery::ChangeLife( TapNoteScore score )
 
 void LifeMeterBattery::ChangeLife( HoldNoteScore score, TapNoteScore tscore )
 {
-	switch( score )
-	{
-	case HNS_Held:
-		break;
-	case HNS_LetGo:
-		ChangeLife( TNS_Miss ); // LetGo is the same as a miss
-		break;
-	default:
-		ASSERT(0);
-	}
+	if( score == HNS_Held && HELD_ADD_LIVES > 0 )
+		AddLives(HELD_ADD_LIVES);
+	if( score == HNS_LetGo && LET_GO_SUBTRACT_LIVES > 0 )
+		SubtractLives(LET_GO_SUBTRACT_LIVES);
 }
 
 void LifeMeterBattery::HandleTapScoreNone()
@@ -208,7 +213,8 @@ void LifeMeterBattery::Refresh()
 	}
 	else
 	{
-		m_textNumLives.SetText( ssprintf("x%d", m_iLivesLeft-1) );
+		//m_textNumLives.SetText( ssprintf("x%d", m_iLivesLeft-1) );
+		m_textNumLives.SetText( ssprintf(LIVES_FORMAT.GetValue(), m_iLivesLeft-1) );
 		m_sprBattery.SetState( 3 );
 	}
 }
