@@ -15,6 +15,7 @@ StepMania 5.0 Preview 2 | 20110???
  * TapHoldRollOnRowMeansHold: bool, true means hold and false means roll
  * No noteskins should require updating, as these were placed in common/common
    for ease of use. [Wolfman2000]
+* [LifeMeterBattery] Added ChangeLives(int) Lua binding. [AJ]
 * [LifeMeterBattery] Added DangerThreshold metric. [AJ]
 * [LifeMeterBattery] Added some important metrics. [AJ]
  * MinScoreToKeepLife='TapNoteScore_*' - any score below this = loss of life.
