@@ -1260,9 +1260,27 @@ void NoteField::DrawPrimitives()
 			{
 				for( int c2=0; c2<m_pNoteData->GetNumTracks(); c2++ )
 				{
-					if( m_pNoteData->GetTapNote(c2, q).type == TapNote::hold_head)
+					const TapNote &tmp = m_pNoteData->GetTapNote(c2, q);
+					if(tmp.type == TapNote::hold_head &&
+					   tmp.subType == TapNote::hold_head_hold)
 					{
 						bHoldNoteBeginsOnThisBeat = true;
+						break;
+					}
+				}
+			}
+			
+			// do the same for a roll.
+			bool bRollNoteBeginsOnThisBeat = false;
+			if (m_pCurDisplay->display[c].DrawRollHeadForTapsOnSameRow() )
+			{
+				for( int c2=0; c2<m_pNoteData->GetNumTracks(); c2++ )
+				{
+					const TapNote &tmp = m_pNoteData->GetTapNote(c2, q);
+					if(tmp.type == TapNote::hold_head &&
+					   tmp.subType == TapNote::hold_head_roll)
+					{
+						bRollNoteBeginsOnThisBeat = true;
 						break;
 					}
 				}
@@ -1276,7 +1294,8 @@ void NoteField::DrawPrimitives()
 			bool bIsHopoPossible = (tn.bHopoPossible);
 			bool bUseAdditionColoring = bIsAddition || bIsHopoPossible;
 			NoteDisplayCols *displayCols = tn.pn == PLAYER_INVALID ? m_pCurDisplay : m_pDisplays[tn.pn];
-			displayCols->display[c].DrawTap( tn, c, NoteRowToVisibleBeat(m_pPlayerState, q), bHoldNoteBeginsOnThisBeat, 
+			displayCols->display[c].DrawTap(tn, c, NoteRowToVisibleBeat(m_pPlayerState, q),
+							bHoldNoteBeginsOnThisBeat, bRollNoteBeginsOnThisBeat,
 					bUseAdditionColoring, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail, 
 					m_fYReverseOffsetPixels, iDrawDistanceAfterTargetsPixels, iDrawDistanceBeforeTargetsPixels, 
 					FADE_BEFORE_TARGETS_PERCENT );
