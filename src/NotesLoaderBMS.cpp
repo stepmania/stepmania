@@ -548,6 +548,7 @@ static bool LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNameTo
 {
 
 	map<RString, int> mapIdToKeysoundIndex;
+	map<int, float> mapNoteRowToBPM;
 	MeasureToTimeSig_t sigAdjustments;
 
 	LOG->Trace( "Steps::LoadFromBMSFile( '%s' )", sPath.c_str() );
@@ -622,7 +623,7 @@ static bool LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNameTo
 			case BMS_TRACK_BPM:
 				if( iVal > 0 )
 				{
-					out.m_Timing.SetBPMAtBeat( fBeat, (float) iVal );
+					mapNoteRowToBPM[ BeatToNoteRow(fBeat) ] = iVal;
 					LOG->Trace( "Inserting new BPM change at beat %f, BPM %i", fBeat, iVal );
 				}
 				else
@@ -639,7 +640,7 @@ static bool LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNameTo
 				if( GetTagFromMap( mapNameToData, sTagToLookFor, sBPM ) )
 				{
 					float fBPM = StringToFloat( sBPM );
-					out.m_Timing.SetBPMAtBeat( fBeat, fBPM );
+					mapNoteRowToBPM[ BeatToNoteRow(fBeat) ] = fBPM;
 				}
 				else
 				{
@@ -675,6 +676,11 @@ static bool LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNameTo
 			}
 		}
 
+	}
+	
+	for( map<int, float>::iterator it = mapNoteRowToBPM.begin(); it != mapNoteRowToBPM.end(); it ++ )
+	{
+		out.m_Timing.SetBPMAtRow( it->first, it->second );
 	}
 
 	// Now that we're done reading BPMs, factor out weird time signatures.
