@@ -62,7 +62,7 @@ extern "C" void SetProgress( int progress, int totalWork )
 
 extern "C" void SetIndeterminate( bool indeterminate )
 {
-	gtk_progress_bar_pulse();
+	gtk_progress_bar_pulse(GTK_PROGRESS_BAR(progressBar));
 	gtk_main_iteration_do(FALSE);
 }
 
