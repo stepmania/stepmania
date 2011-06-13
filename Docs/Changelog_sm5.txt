@@ -10,6 +10,10 @@ StepMania 5.0 Preview 2 | 20110???
 
 2011/06/13
 ----------
+* [InputMapper] Modify default mappings. Use the Hyphen key instead of the
+  Numlock key for Player 2's GAME_BUTTON_BACK. This should address some
+  issues with Player 2 being unable to back out if they use a laptop.
+  [Wolfman2000]
 * [NoteDisplay] Add two new metrics.
  * DrawRollHeadForTapsOnSameRow: bool, similar to DrawHoldHeadForTapsOnSameRow
  * TapHoldRollOnRowMeansHold: bool, true means hold and false means roll
