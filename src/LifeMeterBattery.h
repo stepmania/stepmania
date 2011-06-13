@@ -47,6 +47,7 @@ private:
 
 	ThemeMetric<float> BATTERY_BLINK_TIME;
 	ThemeMetric<TapNoteScore>	MIN_SCORE_TO_KEEP_LIFE;
+	ThemeMetric<int>	DANGER_THRESHOLD;
 	ThemeMetric<int>	SUBTRACT_LIVES;
 	ThemeMetric<int>	MINES_SUBTRACT_LIVES;
 	ThemeMetric<int>	HELD_ADD_LIVES;

@@ -27,6 +27,7 @@ void LifeMeterBattery::Load( const PlayerState *pPlayerState, PlayerStageStats *
 	PlayerNumber pn = pPlayerState->m_PlayerNumber;
 
 	MIN_SCORE_TO_KEEP_LIFE.Load(sType, "MinScoreToKeepLife");
+	DANGER_THRESHOLD.Load(sType, "DangerThreshold");
 	SUBTRACT_LIVES.Load(sType, "SubtractLives");
 	MINES_SUBTRACT_LIVES.Load(sType, "MinesSubtractLives");
 	HELD_ADD_LIVES.Load(sType, "HeldAddLives");
@@ -110,16 +111,13 @@ void LifeMeterBattery::OnSongEnded()
 
 void LifeMeterBattery::SubtractLives( int iLives )
 {
+	if( iLives <= 0 )
+		return;
+
 	m_iTrailingLivesLeft = m_iLivesLeft;
 	m_iLivesLeft -= iLives;
 	m_soundLoseLife.Play();
-
 	m_textNumLives.PlayCommand("LoseLife");
-	/*
-	m_textNumLives.SetZoom( 1.5f );
-	m_textNumLives.BeginTweening( 0.15f );
-	m_textNumLives.SetZoom( 1.0f );
-	*/
 
 	Refresh();
 	m_fBatteryBlinkTime = BATTERY_BLINK_TIME;
@@ -127,6 +125,9 @@ void LifeMeterBattery::SubtractLives( int iLives )
 
 void LifeMeterBattery::AddLives( int iLives )
 {
+	if( iLives <= 0 )
+		return;
+
 	m_iTrailingLivesLeft = m_iLivesLeft;
 	m_iLivesLeft += iLives;
 	m_soundGainLife.Play();
@@ -159,6 +160,9 @@ void LifeMeterBattery::ChangeLife( TapNoteScore score )
 
 void LifeMeterBattery::ChangeLife( HoldNoteScore score, TapNoteScore tscore )
 {
+	if( m_iLivesLeft == 0 )
+		return;
+
 	if( score == HNS_Held && HELD_ADD_LIVES > 0 )
 		AddLives(HELD_ADD_LIVES);
 	if( score == HNS_LetGo && LET_GO_SUBTRACT_LIVES > 0 )
@@ -176,12 +180,12 @@ void LifeMeterBattery::ChangeLife( float fDeltaLifePercent )
 
 bool LifeMeterBattery::IsInDanger() const
 {
-	return false;
+	return m_iLivesLeft < DANGER_THRESHOLD;
 }
 
 bool LifeMeterBattery::IsHot() const
 {
-	return false;
+	return m_iLivesLeft == GAMESTATE->m_SongOptions.GetSong().m_iBatteryLives;
 }
 
 bool LifeMeterBattery::IsFailing() const
