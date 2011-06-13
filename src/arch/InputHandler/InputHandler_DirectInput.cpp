@@ -384,6 +384,10 @@ void InputHandler_DInput::UpdatePolled( DIDevice &device, const RageTimer &tm )
 		if( hr == DIERR_INPUTLOST || hr == DIERR_NOTACQUIRED )
 			return;
 
+		// reset mousewheel
+		ButtonPressed( DeviceInput(device.dev, MOUSE_WHEELUP, 0, tm) );
+		ButtonPressed( DeviceInput(device.dev, MOUSE_WHEELDOWN, 0, tm) );
+
 		for( unsigned i = 0; i < device.Inputs.size(); ++i )
 		{
 			const input_t &in = device.Inputs[i];
@@ -476,6 +480,12 @@ void InputHandler_DInput::UpdateBuffered( DIDevice &device, const RageTimer &tm 
 		return;
 	}
 
+	// reset mousewheel
+	DeviceInput diUp = DeviceInput(device.dev, MOUSE_WHEELUP, 0.0f, tm);
+	ButtonPressed( diUp );
+	DeviceInput diDown = DeviceInput(device.dev, MOUSE_WHEELDOWN, 0.0f, tm);
+	ButtonPressed( diDown );
+
 	for( int i = 0; i < (int) numevents; ++i )
 	{
 		for(unsigned j = 0; j < device.Inputs.size(); ++j)
@@ -522,6 +532,7 @@ void InputHandler_DInput::UpdateBuffered( DIDevice &device, const RageTimer &tm 
 						GetCursorPos(&cursorPos);
 						// convert screen coordinates to client
 						ScreenToClient(GraphicsWindow::GetHwnd(), &cursorPos);
+
 						switch(in.ofs)
 						{
 							case DIMOFS_X:

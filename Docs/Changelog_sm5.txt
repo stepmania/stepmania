@@ -10,6 +10,7 @@ StepMania 5.0 Preview 2 | 20110???
 
 2011/06/13
 ----------
+* [InputHandler_DirectInput] Fixed MouseWheel input not resetting. [AJ]
 * [ScreenTextEntry] Make it so only the keyboard's Enter key can finish the
   screen. Should fix issues with buttons whose secondary function is MenuStart. [AJ]
 * [InputMapper] Modify default mappings. Use the Hyphen key instead of the
