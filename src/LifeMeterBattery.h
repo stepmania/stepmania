@@ -32,6 +32,7 @@ public:
 
 	void Refresh();
 	int GetLivesLeft() { return m_iLivesLeft; }
+	void ChangeLives(int iLifeDiff);
 
 	// Lua
 	virtual void PushSelf( lua_State *L );

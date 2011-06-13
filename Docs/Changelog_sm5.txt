@@ -10,6 +10,7 @@ StepMania 5.0 Preview 2 | 20110???
 
 2011/06/13
 ----------
+* [LifeMeterBattery] Added ChangeLives(int) Lua binding. [AJ]
 * [LifeMeterBattery] Added DangerThreshold metric. [AJ]
 * [LifeMeterBattery] Added some important metrics. [AJ]
  * MinScoreToKeepLife='TapNoteScore_*' - any score below this = loss of life.

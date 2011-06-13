@@ -137,6 +137,14 @@ void LifeMeterBattery::AddLives( int iLives )
 	m_fBatteryBlinkTime = 0;
 }
 
+void LifeMeterBattery::ChangeLives(int iLifeDiff)
+{
+	if( iLifeDiff < 0 )
+		SubtractLives( abs(iLifeDiff) );
+	else if( iLifeDiff > 0 )
+		AddLives(iLifeDiff);
+}
+
 void LifeMeterBattery::ChangeLife( TapNoteScore score )
 {
 	if( m_iLivesLeft == 0 )
@@ -254,13 +262,14 @@ class LunaLifeMeterBattery: public Luna<LifeMeterBattery>
 {
 public:
 	static int GetLivesLeft( T* p, lua_State *L )	{ lua_pushnumber( L, p->GetLivesLeft() ); return 1; }
-	// is this right? wtf -q2x
 	static int GetTotalLives( T* p, lua_State *L )	{ lua_pushnumber( L, GAMESTATE->m_SongOptions.GetSong().m_iBatteryLives ); return 1; }
+	static int ChangeLives( T* p, lua_State *L )	{ p->ChangeLives(IArg(1)); return 0; }
 
 	LunaLifeMeterBattery()
 	{
 		ADD_METHOD( GetLivesLeft );
 		ADD_METHOD( GetTotalLives );
+		ADD_METHOD( ChangeLives );
 	}
 };
 
