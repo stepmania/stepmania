@@ -8,6 +8,16 @@ ________________________________________________________________________________
 StepMania 5.0 Preview 2 | 20110???
 --------------------------------------------------------------------------------
 
+2011/06/13
+----------
+* [LifeMeterBattery] Added DangerThreshold metric. [AJ]
+* [LifeMeterBattery] Added some important metrics. [AJ]
+ * MinScoreToKeepLife='TapNoteScore_*' - any score below this = loss of life.
+ * SubtractLives=1 - how many lives are lost when going below MinScoreToKeepLife.
+ * MinesSubtractLives=1 - how many lives are lost when hitting a mine.
+ * HeldAddLives=0 - how many lives are gained when a hold is completed.
+ * LetGoSubtractLives=1 - how many lives are lost on a dropped hold.
+
 2011/06/12
 ----------
 * [ScreenNetSelectMusic] Add PlayerOptionsScreen metric. [AJ]
