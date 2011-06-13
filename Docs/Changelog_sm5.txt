@@ -11,6 +11,9 @@ StepMania 5.0 Preview 2 | 20110???
 2011/06/12
 ----------
 * [ScreenNetSelectMusic] Add PlayerOptionsScreen metric. [AJ]
+* [ScreenEdit] Restore the old PageUp/PageDown behavior, added Control + 
+  PageUp/PageDown to use recent time signature behavior. Laptop users, that
+  includes you guys too: semicolon and apostrophe are still good. [Wolfman2000]
 
 2011/06/11
 ----------

@@ -128,6 +128,17 @@ void ScreenEdit::InitEditMappings()
 	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SCROLL_UP_PAGE][1] = DeviceInput(DEVICE_KEYBOARD, KEY_SEMICOLON);
 	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SCROLL_DOWN_PAGE][0] = DeviceInput(DEVICE_KEYBOARD, KEY_PGDN);
 	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SCROLL_DOWN_PAGE][1] = DeviceInput(DEVICE_KEYBOARD, KEY_SQUOTE);
+	
+	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_SCROLL_UP_TS][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL);
+	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_SCROLL_UP_TS][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL);
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SCROLL_UP_TS][0] = DeviceInput(DEVICE_KEYBOARD, KEY_PGUP);
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SCROLL_UP_TS][1] = DeviceInput(DEVICE_KEYBOARD, KEY_SEMICOLON);
+	
+	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_SCROLL_DOWN_TS][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL);
+	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_SCROLL_DOWN_TS][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL);
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SCROLL_DOWN_TS][0] = DeviceInput(DEVICE_KEYBOARD, KEY_PGDN);
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SCROLL_DOWN_TS][1] = DeviceInput(DEVICE_KEYBOARD, KEY_SQUOTE);
+	
 	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SCROLL_HOME][0] = DeviceInput(DEVICE_KEYBOARD, KEY_HOME);
 	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SCROLL_END][0] = DeviceInput(DEVICE_KEYBOARD, KEY_END);
 	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SCROLL_NEXT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_PERIOD);
@@ -1490,8 +1501,10 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 		break;
 	case EDIT_BUTTON_SCROLL_UP_LINE:
 	case EDIT_BUTTON_SCROLL_UP_PAGE:
+	case EDIT_BUTTON_SCROLL_UP_TS:
 	case EDIT_BUTTON_SCROLL_DOWN_LINE:
 	case EDIT_BUTTON_SCROLL_DOWN_PAGE:
+	case EDIT_BUTTON_SCROLL_DOWN_TS:
 		{
 			float fBeatsToMove=0.f;
 			switch( EditB )
@@ -1505,8 +1518,14 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 				break;
 			case EDIT_BUTTON_SCROLL_UP_PAGE:
 			case EDIT_BUTTON_SCROLL_DOWN_PAGE:
-				fBeatsToMove = beatsPerMeasure;
+				fBeatsToMove = 4;
 				if( EditB == EDIT_BUTTON_SCROLL_UP_PAGE )
+					fBeatsToMove *= -1;
+				break;
+			case EDIT_BUTTON_SCROLL_UP_TS:
+			case EDIT_BUTTON_SCROLL_DOWN_TS:
+				fBeatsToMove = beatsPerMeasure;
+				if( EditB == EDIT_BUTTON_SCROLL_UP_TS )
 					fBeatsToMove *= -1;
 				break;
 			}
