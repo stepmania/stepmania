@@ -2868,7 +2868,7 @@ void Player::CrossedRows( int iLastRowCrossed, const RageTimer &now )
 	/* Update hold checkpoints
 	 *
 	 * TODO: Move this to a separate function. */
-	if( HOLD_CHECKPOINTS )
+	if( HOLD_CHECKPOINTS && m_pPlayerState->m_PlayerController != PC_AUTOPLAY )
 	{
 		int iCheckpointFrequencyRows = ROWS_PER_BEAT/2;
 		if( CHECKPOINTS_USE_TICKCOUNTS )
