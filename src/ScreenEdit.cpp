@@ -41,7 +41,7 @@
 static Preference<float> g_iDefaultRecordLength( "DefaultRecordLength", 4 );
 static Preference<bool> g_bEditorShowBGChangesPlay( "EditorShowBGChangesPlay", true );
 
-// Defines specific to ScreenEdit
+/** @brief How long must the button be held to generate a hold in record mode? */
 const float RECORD_HOLD_SECONDS = 0.3f;
 
 #define PLAYER_X		(SCREEN_CENTER_X)
