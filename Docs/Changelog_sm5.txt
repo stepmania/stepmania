@@ -10,6 +10,8 @@ StepMania 5.0 Preview 2 | 20110???
 
 2011/06/13
 ----------
+* [ScreenTextEntry] Make it so only the keyboard's Enter key can finish the
+  screen. Should fix issues with buttons whose secondary function is MenuStart. [AJ]
 * [InputMapper] Modify default mappings. Use the Hyphen key instead of the
   Numlock key for Player 2's GAME_BUTTON_BACK. This should address some
   issues with Player 2 being unable to back out if they use a laptop.
