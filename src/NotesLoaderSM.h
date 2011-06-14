@@ -42,6 +42,12 @@ struct SMLoader
 	virtual void TidyUpData( Song &song, bool bFromCache );
 
 	/**
+	 * @brief Retrieve the relevant notedata from the simfile.
+	 * @param path the path where the simfile lives.
+	 * @param out the Steps we are loading the data into. */
+	virtual bool LoadNotedataFromSimfile(const RString &path, Steps &out );
+	
+	/**
 	 * @brief Attempt to load the specified sm file.
 	 * @param sPath a const reference to the path on the hard drive to check.
 	 * @param out a reference to the Song that will retrieve the song information.

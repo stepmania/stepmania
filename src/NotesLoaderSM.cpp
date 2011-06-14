@@ -638,6 +638,12 @@ bool SMLoader::LoadFromBGChangesString( BackgroundChange &change, const RString 
 	return aBGChangeValues.size() >= 2;
 }
 
+bool SMLoader::LoadNotedataFromSimfile( const RString &path, Steps &out )
+{
+	// stub: do this later.
+	return false;
+}
+
 bool SMLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCache )
 {
 	LOG->Trace( "Song::LoadFromSMFile(%s)", sPath.c_str() );
