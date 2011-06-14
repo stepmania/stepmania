@@ -641,6 +641,48 @@ bool SMLoader::LoadFromBGChangesString( BackgroundChange &change, const RString 
 bool SMLoader::LoadNotedataFromSimfile( const RString &path, Steps &out )
 {
 	// stub: do this later.
+	MsdFile msd;
+	if( !msd.ReadFile( path, true ) )  // unescape
+	{
+		LOG->UserLog("Song file",
+			     path,
+			     "couldn't be opened: %s",
+			     msd.GetError().c_str() );
+		return false;
+	}
+	for (unsigned i = 0; i<msd.GetNumValues(); i++)
+	{
+		int iNumParams = msd.GetNumParams(i);
+		const MsdFile::value_t &sParams = msd.GetValue(i);
+		RString sValueName = sParams[0];
+		sValueName.MakeUpper();
+		
+		// The only tag we care about is the #NOTES tag.
+		if( sValueName=="NOTES" || sValueName=="NOTES2" )
+		{
+			if( iNumParams < 7 )
+			{
+				LOG->UserLog("Song file",
+					     path,
+					     "has %d fields in a #NOTES tag, but should have at least 7.",
+					     iNumParams );
+				continue;
+			}
+			/*
+			Steps* pNewNotes = out.CreateSteps();
+			LoadFromTokens( 
+				       sParams[1], 
+				       sParams[2], 
+				       sParams[3], 
+				       sParams[4], 
+				       sParams[5], 
+				       sParams[6],
+				       *pNewNotes );
+			
+			out.AddSteps( pNewNotes );
+			 */
+		}
+	}
 	return false;
 }
 
