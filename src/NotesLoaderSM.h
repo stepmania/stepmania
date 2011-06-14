@@ -21,9 +21,9 @@ const int MAX_EDIT_STEPS_SIZE_BYTES		= 60*1024;	// 60KB
 /** @brief Reads a Song from an .SM file. */
 struct SMLoader
 {
-	SMLoader() : fileExt(".sm") {}
+	SMLoader() : fileExt(".sm"), songTitle() {}
 	
-	SMLoader(RString ext) : fileExt(ext) {}
+	SMLoader(RString ext) : fileExt(ext), songTitle() {}
 	
 	virtual ~SMLoader() {}
 	
@@ -162,9 +162,21 @@ protected:
 	 * @return the file extension. */
 	RString GetFileExtension() const { return fileExt; }
 	
+	/**
+	 * @brief Set the song title.
+	 * @param t the song title. */
+	virtual void SetSongTitle(const RString & title);
+	
+	/**
+	 * @brief Get the song title.
+	 * @return the song title. */
+	virtual RString GetSongTitle() const;
+	
 private:
 	/** @brief The file extension in use. */
 	const RString fileExt;
+	/** @brief The song title that is being processed. */
+	RString songTitle;
 };
 
 #endif

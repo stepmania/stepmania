@@ -13,6 +13,16 @@
 #include "Attack.h"
 #include "PrefsManager.h"
 
+void SMLoader::SetSongTitle(const RString & title)
+{
+	this->songTitle = title;
+}
+
+RString SMLoader::GetSongTitle() const
+{
+	return this->songTitle;
+}
+
 bool SMLoader::LoadFromDir( const RString &sPath, Song &out )
 {
 	vector<RString> aFileNames;
@@ -210,10 +220,11 @@ bool SMLoader::ProcessBPMs( TimingData &out, const RString line, const int rowsP
 	{
 		vector<RString> arrayBPMChangeValues;
 		split( arrayBPMChangeExpressions[b], "=", arrayBPMChangeValues );
-		// XXX: Hard to tell which file caused this.
 		if( arrayBPMChangeValues.size() != 2 )
 		{
-			LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid #BPMs value \"%s\" (must have exactly one '='), ignored.",
+			LOG->UserLog("Song file",
+				     this->GetSongTitle(),
+				     "has an invalid #BPMs value \"%s\" (must have exactly one '='), ignored.",
 				     arrayBPMChangeExpressions[b].c_str() );
 			continue;
 		}
@@ -281,8 +292,9 @@ void SMLoader::ProcessStops( TimingData &out, const RString line, const int rows
 		split( arrayFreezeExpressions[f], "=", arrayFreezeValues );
 		if( arrayFreezeValues.size() != 2 )
 		{
-			// XXX: Hard to tell which file caused this.
-			LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid #STOPS value \"%s\" (must have exactly one '='), ignored.",
+			LOG->UserLog("Song file",
+				     this->GetSongTitle(),
+				     "has an invalid #STOPS value \"%s\" (must have exactly one '='), ignored.",
 				     arrayFreezeExpressions[f].c_str() );
 			continue;
 		}
@@ -343,8 +355,9 @@ void SMLoader::ProcessDelays( TimingData &out, const RString line, const int row
 		split( arrayDelayExpressions[f], "=", arrayDelayValues );
 		if( arrayDelayValues.size() != 2 )
 		{
-			// XXX: Hard to tell which file caused this.
-			LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid #DELAYS value \"%s\" (must have exactly one '='), ignored.",
+			LOG->UserLog("Song file",
+				     this->GetSongTitle(),
+				     "has an invalid #DELAYS value \"%s\" (must have exactly one '='), ignored.",
 				     arrayDelayExpressions[f].c_str() );
 			continue;
 		}
@@ -362,7 +375,11 @@ void SMLoader::ProcessDelays( TimingData &out, const RString line, const int row
 		if(fFreezeSeconds > 0.0f)
 			out.AddStopSegment( new_seg );
 		else
-			LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid delay at beat %f, length %f.", fFreezeBeat, fFreezeSeconds );
+			LOG->UserLog(
+				     "Song file",
+				     this->GetSongTitle(),
+				     "has an invalid delay at beat %f, length %f.",
+				     fFreezeBeat, fFreezeSeconds );
 	}
 }
 
@@ -378,7 +395,10 @@ void SMLoader::ProcessTimeSignatures( TimingData &out, const RString line, const
 		
 		if( vs2.size() < 3 )
 		{
-			LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid time signature change with %i values.", (int)vs2.size() );
+			LOG->UserLog("Song file",
+				     this->GetSongTitle(),
+				     "has an invalid time signature change with %i values.",
+				     static_cast<int>(vs2.size()) );
 			continue;
 		}
 		
@@ -388,19 +408,28 @@ void SMLoader::ProcessTimeSignatures( TimingData &out, const RString line, const
 		
 		if( fBeat < 0 )
 		{
-			LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid time signature change with beat %f.", fBeat );
+			LOG->UserLog("Song file",
+				     this->GetSongTitle(),
+				     "has an invalid time signature change with beat %f.",
+				     fBeat );
 			continue;
 		}
 		
 		if( seg.GetNum() < 1 )
 		{
-			LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid time signature change with beat %f, iNumerator %i.", fBeat, seg.GetNum() );
+			LOG->UserLog("Song file",
+				     this->GetSongTitle(),
+				     "has an invalid time signature change with beat %f, iNumerator %i.",
+				     fBeat, seg.GetNum() );
 			continue;
 		}
 		
 		if( seg.GetDen() < 1 )
 		{
-			LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid time signature change with beat %f, iDenominator %i.", fBeat, seg.GetDen() );
+			LOG->UserLog("Song file",
+				     this->GetSongTitle(),
+				     "has an invalid time signature change with beat %f, iDenominator %i.",
+				     fBeat, seg.GetDen() );
 			continue;
 		}
 		
@@ -419,8 +448,9 @@ void SMLoader::ProcessTickcounts( TimingData &out, const RString line, const int
 		split( arrayTickcountExpressions[f], "=", arrayTickcountValues );
 		if( arrayTickcountValues.size() != 2 )
 		{
-			// XXX: Hard to tell which file caused this.
-			LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid #TICKCOUNTS value \"%s\" (must have exactly one '='), ignored.",
+			LOG->UserLog("Song file",
+				     this->GetSongTitle(),
+				     "has an invalid #TICKCOUNTS value \"%s\" (must have exactly one '='), ignored.",
 				     arrayTickcountExpressions[f].c_str() );
 			continue;
 		}
@@ -455,7 +485,10 @@ void SMLoader::ProcessSpeeds( TimingData &out, const RString line, const int row
 		
 		if( vs2.size() < 4 )
 		{
-			LOG->UserLog( "Song file", "(UNKNOWN)", "has an speed change with %i values.", (int)vs2.size() );
+			LOG->UserLog("Song file",
+				     this->GetSongTitle(),
+				     "has an speed change with %i values.",
+				     static_cast<int>(vs2.size()) );
 			continue;
 		}
 		
@@ -466,13 +499,19 @@ void SMLoader::ProcessSpeeds( TimingData &out, const RString line, const int row
 		
 		if( fBeat < 0 )
 		{
-			LOG->UserLog( "Song file", "(UNKNOWN)", "has an speed change with beat %f.", fBeat );
+			LOG->UserLog("Song file",
+				     this->GetSongTitle(),
+				     "has an speed change with beat %f.", 
+				     fBeat );
 			continue;
 		}
 		
 		if( seg.GetLength() < 0 )
 		{
-			LOG->UserLog( "Song file", "(UNKNOWN)", "has an speed change with beat %f, length %f.", fBeat, seg.GetLength() );
+			LOG->UserLog("Song file",
+				     this->GetSongTitle(),
+				     "has an speed change with beat %f, length %f.",
+				     fBeat, seg.GetLength() );
 			continue;
 		}
 		
@@ -489,10 +528,11 @@ void SMLoader::ProcessFakes( TimingData &out, const RString line, const int rows
 	{
 		vector<RString> arrayFakeValues;
 		split( arrayFakeExpressions[b], "=", arrayFakeValues );
-		// XXX: Hard to tell which file caused this.
 		if( arrayFakeValues.size() != 2 )
 		{
-			LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid #FAKES value \"%s\" (must have exactly one '='), ignored.",
+			LOG->UserLog("Song file",
+				     this->GetSongTitle(),
+				     "has an invalid #FAKES value \"%s\" (must have exactly one '='), ignored.",
 				     arrayFakeExpressions[b].c_str() );
 			continue;
 		}
@@ -504,7 +544,10 @@ void SMLoader::ProcessFakes( TimingData &out, const RString line, const int rows
 			out.AddFakeSegment( FakeSegment(fBeat, fNewBeat) );
 		else
 		{
-			LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid Fake at beat %f, BPM %f.", fBeat, fNewBeat );
+			LOG->UserLog("Song file",
+				     this->GetSongTitle(),
+				     "has an invalid Fake at beat %f, BPM %f.",
+				     fBeat, fNewBeat );
 		}
 	}
 }
@@ -619,7 +662,10 @@ bool SMLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCache
 		/* Don't use GetMainAndSubTitlesFromFullTitle; that's only for heuristically
 		 * splitting other formats that *don't* natively support #SUBTITLE. */
 		if( sValueName=="TITLE" )
+		{
 			out.m_sMainTitle = sParams[1];
+			this->SetSongTitle(sParams[1]);
+		}
 
 		else if( sValueName=="SUBTITLE" )
 			out.m_sSubTitle = sParams[1];
@@ -892,6 +938,7 @@ bool SMLoader::LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePath
 			}
 
 			RString sSongFullTitle = sParams[1];
+			this->SetSongTitle(sParams[1]);
 			sSongFullTitle.Replace( '\\', '/' );
 
 			pSong = SONGMAN->FindSong( sSongFullTitle );
