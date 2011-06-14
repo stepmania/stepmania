@@ -72,6 +72,10 @@
 #include <windows.h>
 #endif
 
+void ShutdownGame();
+bool HandleGlobalInputs( const InputEventPlus &input );
+void HandleInputEvents(float fDeltaTime);
+
 static Preference<bool> g_bAllowMultipleInstances( "AllowMultipleInstances", false );
 
 void StepMania::GetPreferredVideoModeParams( VideoModeParams &paramsOut )

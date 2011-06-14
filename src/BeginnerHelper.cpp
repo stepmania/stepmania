@@ -242,7 +242,7 @@ void BeginnerHelper::DrawPrimitives()
 			DISPLAY->SetLighting( true );
 			DISPLAY->SetLightDirectional( 
 				0, 
-				RageColor(0.5,0.5,0.5,1), 
+				RageColor(0.5f,0.5f,0.5f,1), 
 				RageColor(1,1,1,1),
 				RageColor(0,0,0,1),
 				RageVector3(0, 0, 1) );
@@ -271,7 +271,7 @@ void BeginnerHelper::DrawPrimitives()
 		DISPLAY->SetLighting( true );
 		DISPLAY->SetLightDirectional( 
 			0, 
-			RageColor(0.5,0.5,0.5,1), 
+			RageColor(0.5f,0.5f,0.5f,1), 
 			RageColor(1,1,1,1),
 			RageColor(0,0,0,1),
 			RageVector3(0, 0, 1) );

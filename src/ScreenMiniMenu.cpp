@@ -10,6 +10,9 @@
 #include "OptionRowHandler.h"
 #include "PrefsManager.h"
 
+void PrepareToLoadScreen( const RString &sScreenName );
+void FinishedLoadingScreen();
+
 AutoScreenMessage( SM_GoToOK );
 AutoScreenMessage( SM_GoToCancel );
 

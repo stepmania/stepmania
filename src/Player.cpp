@@ -42,6 +42,9 @@
 #include "LocalizedString.h"
 #include "AdjustSync.h"
 
+RString ATTACK_DISPLAY_X_NAME( size_t p, size_t both_sides );
+void TimingWindowSecondsInit( size_t /*TimingWindow*/ i, RString &sNameOut, float &defaultValueOut );
+
 /**
  * @brief Helper class to ensure that each row is only judged once without taking too much memory.
  */
@@ -1323,14 +1326,9 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 		// Possibly fixed.
 		if( tn.iKeysoundIndex >= 0 && tn.iKeysoundIndex < (int) m_vKeysounds.size() )
 		{
-			if( tn.subType == TapNote::hold_head_roll )
-			{
-				m_vKeysounds[tn.iKeysoundIndex].SetProperty ("Volume", max(0.0, min(1.0, fLifeFraction * 2.0)));
-			}
-			else
-			{
-				m_vKeysounds[tn.iKeysoundIndex].SetProperty ("Volume", max(0.0, min(1.0, fLifeFraction * 10.0 - 8.5)));				
-			}
+			float factor = (tn.subType == TapNote::hold_head_roll ? 2 : 10.0f - 8.5f);
+			factor *= fLifeFraction;
+			m_vKeysounds[tn.iKeysoundIndex].SetProperty ("Volume", max(0.0f, min(1.0f, factor)));
 		}
 	}
 
@@ -2870,7 +2868,7 @@ void Player::CrossedRows( int iLastRowCrossed, const RageTimer &now )
 	/* Update hold checkpoints
 	 *
 	 * TODO: Move this to a separate function. */
-	if( HOLD_CHECKPOINTS )
+	if( HOLD_CHECKPOINTS && m_pPlayerState->m_PlayerController != PC_AUTOPLAY )
 	{
 		int iCheckpointFrequencyRows = ROWS_PER_BEAT/2;
 		if( CHECKPOINTS_USE_TICKCOUNTS )

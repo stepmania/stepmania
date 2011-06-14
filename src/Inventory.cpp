@@ -11,6 +11,7 @@
 #include "ThemeMetric.h"
 #include "PlayerState.h"
 
+void ReloadItems();
 
 #define NUM_ITEM_TYPES			THEME->GetMetricF("Inventory","NumItemTypes")
 #define ITEM_DURATION_SECONDS	THEME->GetMetricF("Inventory","ItemDurationSeconds")

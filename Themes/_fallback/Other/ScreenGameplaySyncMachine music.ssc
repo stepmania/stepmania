@@ -10,7 +10,7 @@
 #BACKGROUND:;
 #LYRICSPATH:;
 #CDTITLE:;
-#MUSIC:ScreenGameplaySyncMachine music.ogg;
+#MUSIC:_sync music.ogg;
 #OFFSET:-0.012;
 #SAMPLESTART:0.000;
 #SAMPLELENGTH:12.000;

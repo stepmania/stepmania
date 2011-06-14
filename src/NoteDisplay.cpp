@@ -46,6 +46,8 @@ static const NoteType MAX_DISPLAY_NOTE_TYPE = (NoteType)7;
 struct NoteMetricCache_t
 {
 	bool m_bDrawHoldHeadForTapsOnSameRow;
+	bool m_bDrawRollHeadForTapsOnSameRow;
+	bool m_bTapHoldRollOnRowMeansHold;
 	float m_fAnimationLength[NUM_NotePart];
 	bool m_bAnimationIsVivid[NUM_NotePart];
 	RageVector2 m_fAdditionTextureCoordOffset[NUM_NotePart];
@@ -69,6 +71,8 @@ struct NoteMetricCache_t
 void NoteMetricCache_t::Load( const RString &sButton )
 {
 	m_bDrawHoldHeadForTapsOnSameRow = NOTESKIN->GetMetricB(sButton,"DrawHoldHeadForTapsOnSameRow");
+	m_bDrawRollHeadForTapsOnSameRow = NOTESKIN->GetMetricB(sButton,"DrawRollHeadForTapsOnSameRow");
+	m_bTapHoldRollOnRowMeansHold = NOTESKIN->GetMetricB(sButton,"TapHoldRollOnRowMeansHold");
 	FOREACH_NotePart( p )
 	{
 		const RString &s = NotePartToString(p);
@@ -269,6 +273,11 @@ void NoteDisplay::Load( int iColNum, const PlayerState* pPlayerState, float fYRe
 bool NoteDisplay::DrawHoldHeadForTapsOnSameRow() const
 {
 	return cache->m_bDrawHoldHeadForTapsOnSameRow;
+}
+
+bool NoteDisplay::DrawRollHeadForTapsOnSameRow() const
+{
+	return cache->m_bDrawRollHeadForTapsOnSameRow;
 }
 
 void NoteDisplay::Update( float fDeltaTime )
@@ -718,7 +727,13 @@ void NoteDisplay::DrawActor( const TapNote& tn, Actor* pActor, NotePart part, in
 	}
 }
 
-void NoteDisplay::DrawTap( const TapNote& tn, int iCol, float fBeat, bool bOnSameRowAsHoldStart, bool bIsAddition, float fPercentFadeToFail, float fReverseOffsetPixels, float fDrawDistanceAfterTargetsPixels, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar )
+void NoteDisplay::DrawTap(const TapNote& tn, int iCol, float fBeat,
+			  bool bOnSameRowAsHoldStart, bool bOnSameRowAsRollStart,
+			  bool bIsAddition, float fPercentFadeToFail, 
+			  float fReverseOffsetPixels, 
+			  float fDrawDistanceAfterTargetsPixels, 
+			  float fDrawDistanceBeforeTargetsPixels, 
+			  float fFadeInPercentOfDrawFar)
 {
 	Actor* pActor = NULL;
 	NotePart part = NotePart_Tap;
@@ -738,10 +753,40 @@ void NoteDisplay::DrawTap( const TapNote& tn, int iCol, float fBeat, bool bOnSam
 		pActor = GetTapActor( m_TapFake, NotePart_Fake, fBeat );
 		part = NotePart_Fake;
 	}
+	// TODO: Simplify all of the below.
+	else if (bOnSameRowAsHoldStart && bOnSameRowAsRollStart)
+	{
+		if (cache->m_bDrawHoldHeadForTapsOnSameRow && cache->m_bDrawRollHeadForTapsOnSameRow)
+		{
+			if (cache->m_bTapHoldRollOnRowMeansHold) // another new metric?
+			{
+				pActor = GetHoldActor( m_HoldHead, NotePart_HoldHead, fBeat, false, false );
+			}
+			else
+			{
+				pActor = GetHoldActor( m_HoldHead, NotePart_HoldHead, fBeat, true, false );
+			}
+		}
+		else if (cache->m_bDrawHoldHeadForTapsOnSameRow)
+		{
+			pActor = GetHoldActor( m_HoldHead, NotePart_HoldHead, fBeat, false, false );
+		}
+		else if (cache->m_bDrawRollHeadForTapsOnSameRow)
+		{
+			pActor = GetHoldActor( m_HoldHead, NotePart_HoldHead, fBeat, true, false );
+		}
+	}
+	
 	else if( bOnSameRowAsHoldStart  &&  cache->m_bDrawHoldHeadForTapsOnSameRow )
 	{
 		pActor = GetHoldActor( m_HoldHead, NotePart_HoldHead, fBeat, false, false );
 	}
+	
+	else if( bOnSameRowAsRollStart  &&  cache->m_bDrawRollHeadForTapsOnSameRow )
+	{
+		pActor = GetHoldActor( m_HoldHead, NotePart_HoldHead, fBeat, true, false );
+	}
+	
 	else
 	{
 		pActor = GetTapActor( m_TapNote, NotePart_Tap, fBeat );

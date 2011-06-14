@@ -14,6 +14,8 @@
 
 #include <map>
 
+Difficulty DwiCompatibleStringToDifficulty( const RString& sDC );
+
 static std::map<int,int> g_mapDanceNoteToNoteDataColumn;
 
 /** @brief The different types of core DWI arrows and pads. */

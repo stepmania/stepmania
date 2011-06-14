@@ -46,6 +46,7 @@ void ScreenNetSelectMusic::Init()
 
 	SAMPLE_MUSIC_PREVIEW_MODE.Load( m_sName, "SampleMusicPreviewMode" );
 	MUSIC_WHEEL_TYPE.Load( m_sName, "MusicWheelType" );
+	PLAYER_OPTIONS_SCREEN.Load( m_sName, "PlayerOptionsScreen" );
 
 	FOREACH_EnabledPlayer (p)
 	{
@@ -331,7 +332,7 @@ void ScreenNetSelectMusic::MenuUp( const InputEventPlus &input )
 {
 	NSMAN->ReportNSSOnOff(3);
 	GAMESTATE->m_EditMode = EditMode_Full;
-	SCREENMAN->AddNewScreenToTop( "ScreenPlayerOptions", SM_BackFromPlayerOptions );
+	SCREENMAN->AddNewScreenToTop( PLAYER_OPTIONS_SCREEN, SM_BackFromPlayerOptions );
 }
 
 void ScreenNetSelectMusic::MenuDown( const InputEventPlus &input )

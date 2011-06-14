@@ -31,6 +31,13 @@ using namespace RageDisplay_Legacy_Helpers;
 #define glFlush()
 #endif
 
+RString GetInfoLog( GLhandleARB h );
+GLhandleARB CompileShader( GLenum ShaderType, RString sFile, vector<RString> asDefines );
+GLhandleARB LoadShader( GLenum ShaderType, RString sFile, vector<RString> asDefines );
+void InitShaders();
+void SetupExtensions();
+void SetPixelMapForSurface( int glImageFormat, int glTexFormat, const RageSurfacePalette *palette );
+
 //
 // Globals
 //
@@ -2561,7 +2568,7 @@ RString RageDisplay_Legacy::GetTextureDiagnostics(unsigned iTexture) const
 void RageDisplay_Legacy::SetAlphaTest(bool b)
 {
 	// Previously this was 0.01, rather than 0x01.
-	glAlphaFunc(GL_GREATER, 0.00390625 /* 1/256 */);
+	glAlphaFunc(GL_GREATER, 0.00390625f /* 1/256 */);
 	if (b)
 		glEnable(GL_ALPHA_TEST);
 	else

@@ -7889,6 +7889,7 @@
 				GCC_PREFIX_HEADER = "$(SRCROOT)/../src/archutils/Darwin/StepMania.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = "DEBUG=1";
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = "";
 				HEADER_SEARCH_PATHS = (
 					"$(SRCROOT)/../src",
 					"$(SRCROOT)/../src/ffmpeg/include",
@@ -7911,7 +7912,6 @@
 				OTHER_CPLUSPLUSFLAGS = (
 					"-finline-limit=300",
 					"-fconstant-cfstrings",
-					"-fsingle-precision-constant",
 					"-fno-exceptions",
 					"-falign-loops=16",
 				);
@@ -7946,7 +7946,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = "DEBUG=1";
 				GCC_STRICT_ALIASING = YES;
 				GCC_UNROLL_LOOPS = YES;
-				GCC_VERSION = 4.0;
+				GCC_VERSION = "";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
 				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
@@ -8523,7 +8523,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_STRICT_ALIASING = YES;
 				GCC_UNROLL_LOOPS = YES;
-				GCC_VERSION = 4.0;
+				GCC_VERSION = "";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
 				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
@@ -8576,6 +8576,7 @@
 				GCC_PREFIX_HEADER = "$(SRCROOT)/../src/archutils/Darwin/StepMania.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = "DEBUG=1";
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = "";
 				HEADER_SEARCH_PATHS = (
 					"$(SRCROOT)/../src",
 					"$(SRCROOT)/../src/ffmpeg/include",
@@ -8598,7 +8599,6 @@
 				OTHER_CPLUSPLUSFLAGS = (
 					"-finline-limit=300",
 					"-fconstant-cfstrings",
-					"-fsingle-precision-constant",
 					"-fno-exceptions",
 					"-falign-loops=16",
 				);
@@ -8815,6 +8815,7 @@
 				GCC_ENABLE_SSE3_EXTENSIONS = NO;
 				GCC_PREFIX_HEADER = "$(SRCROOT)/../src/archutils/Darwin/StepMania.pch";
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = "";
 				HEADER_SEARCH_PATHS = (
 					"$(SRCROOT)/../src",
 					"$(SRCROOT)/../src/ffmpeg/include",
@@ -8837,7 +8838,6 @@
 				OTHER_CPLUSPLUSFLAGS = (
 					"-finline-limit=300",
 					"-fconstant-cfstrings",
-					"-fsingle-precision-constant",
 					"-fno-exceptions",
 					"-falign-loops=16",
 				);
@@ -8870,7 +8870,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_STRICT_ALIASING = YES;
 				GCC_UNROLL_LOOPS = YES;
-				GCC_VERSION = 4.0;
+				GCC_VERSION = "";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
 				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
@@ -8944,6 +8944,7 @@
 				GCC_ENABLE_OBJC_EXCEPTIONS = NO;
 				GCC_PREFIX_HEADER = "$(SRCROOT)/../src/archutils/Darwin/StepMania.pch";
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = "";
 				HEADER_SEARCH_PATHS = (
 					"$(SRCROOT)/../src",
 					"$(SRCROOT)/../src/ffmpeg/include",
@@ -8966,7 +8967,6 @@
 				OTHER_CPLUSPLUSFLAGS = (
 					"-finline-limit=300",
 					"-fconstant-cfstrings",
-					"-fsingle-precision-constant",
 					"-fno-exceptions",
 					"-falign-loops=16",
 				);
@@ -9000,7 +9000,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_STRICT_ALIASING = YES;
 				GCC_UNROLL_LOOPS = YES;
-				GCC_VERSION = 4.0;
+				GCC_VERSION = "";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
 				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;

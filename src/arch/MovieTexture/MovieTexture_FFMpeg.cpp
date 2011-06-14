@@ -28,6 +28,10 @@ namespace avcodec
 #endif
 };
 
+int URLRageFile_open( avcodec::URLContext *h, const char *filename, int flags );
+int URLRageFile_read( avcodec::URLContext *h, unsigned char *buf, int size );
+int URLRageFile_close( avcodec::URLContext *h );
+
 /*
 #if defined(_MSC_VER)
 	#pragma comment(lib, "ffmpeg/lib/avcodec.lib")

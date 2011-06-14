@@ -258,7 +258,8 @@ void ScreenTextEntry::BackspaceInAnswer()
 
 void ScreenTextEntry::MenuStart( const InputEventPlus &input )
 {
-	if( input.type==IET_FIRST_PRESS )
+	// HACK: Only allow the screen to end on the Enter key.-aj
+	if( input.DeviceI == DeviceInput(DEVICE_KEYBOARD, KEY_ENTER) && input.type==IET_FIRST_PRESS )
 		End( false );
 }
 

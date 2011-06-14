@@ -4,6 +4,8 @@
 #include "EnumHelper.h"
 #include <ctime>
 
+int StringToDayInYear( RString sDayInYear );
+
 /** @brief The number of days we check for previously. */
 const int NUM_LAST_DAYS = 7;
 /** @brief The number of weeks we check for previously. */

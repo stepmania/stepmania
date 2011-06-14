@@ -9,7 +9,7 @@
 #include "NoteData.h"
 #include "GameManager.h"
 
-void Serialize(const BPMSegment &seg, Json::Value &root)
+static void Serialize(const BPMSegment &seg, Json::Value &root)
 {
 	root["Beat"] = seg.GetBeat();
 	root["BPM"] = seg.GetBPM();

@@ -10,6 +10,24 @@ class NoteData;
 class Song;
 struct AttackArray;
 
+/** @brief A limited selection of the RadarValues. */
+struct RadarStats
+{
+	/** @brief The number of tap notes in the song. */
+	int taps;
+	/** @brief The number of jumps in the song. */
+	int jumps;
+	/** @brief The number of 3 panel hits in the song. */
+	int hands;
+	/** @brief The number of 4 panel hits in the song. */
+	int quads;
+};
+
+void PlaceAutoKeysound( NoteData &out, int row, TapNote akTap );
+int FindLongestOverlappingHoldNoteForAnyTrack( const NoteData &in, int iRow );
+void LightTransformHelper( const NoteData &in, NoteData &out, const vector<int> &aiTracks );
+RadarStats CalculateRadarStatsFast( const NoteData &in, RadarStats &out );
+
 /**
  * @brief Utility functions that deal with NoteData.
  *

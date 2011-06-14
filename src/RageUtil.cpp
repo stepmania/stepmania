@@ -16,6 +16,10 @@
 #include <sys/stat.h>
 #include <math.h>
 
+bool HexToBinary(const RString&, RString&);
+void utf8_sanitize(RString &);
+void UnicodeUpperLower(wchar_t *, size_t, const unsigned char *);
+
 RandomGen g_RandomNumberGenerator;
 
 MersenneTwister::MersenneTwister( int iSeed ) : m_iNext(0)

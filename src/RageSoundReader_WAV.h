@@ -7,6 +7,9 @@
 #include "RageFile.h"
 
 struct WavReader;
+
+RString ReadString( RageFileBasic &f, int iSize, RString &sError );
+
 class RageSoundReader_WAV: public RageSoundReader_FileReader
 {
 public:

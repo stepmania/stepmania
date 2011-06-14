@@ -32,6 +32,8 @@ class Style;
 class TimingData;
 class Trail;
 
+SortOrder GetDefaultSort();
+
 /** @brief Holds game data that is not saved between sessions. */
 class GameState
 {

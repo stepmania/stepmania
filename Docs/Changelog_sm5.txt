@@ -8,6 +8,36 @@ ________________________________________________________________________________
 StepMania 5.0 Preview 2 | 20110???
 --------------------------------------------------------------------------------
 
+2011/06/13
+----------
+* [InputHandler_DirectInput] Fixed MouseWheel input not resetting. [AJ]
+* [ScreenTextEntry] Make it so only the keyboard's Enter key can finish the
+  screen. Should fix issues with buttons whose secondary function is MenuStart. [AJ]
+* [InputMapper] Modify default mappings. Use the Hyphen key instead of the
+  Numlock key for Player 2's GAME_BUTTON_BACK. This should address some
+  issues with Player 2 being unable to back out if they use a laptop.
+  [Wolfman2000]
+* [NoteDisplay] Add two new metrics.
+ * DrawRollHeadForTapsOnSameRow: bool, similar to DrawHoldHeadForTapsOnSameRow
+ * TapHoldRollOnRowMeansHold: bool, true means hold and false means roll
+ * No noteskins should require updating, as these were placed in common/common
+   for ease of use. [Wolfman2000]
+* [LifeMeterBattery] Added ChangeLives(int) Lua binding. [AJ]
+* [LifeMeterBattery] Added DangerThreshold metric. [AJ]
+* [LifeMeterBattery] Added some important metrics. [AJ]
+ * MinScoreToKeepLife='TapNoteScore_*' - any score below this = loss of life.
+ * SubtractLives=1 - how many lives are lost when going below MinScoreToKeepLife.
+ * MinesSubtractLives=1 - how many lives are lost when hitting a mine.
+ * HeldAddLives=0 - how many lives are gained when a hold is completed.
+ * LetGoSubtractLives=1 - how many lives are lost on a dropped hold.
+
+2011/06/12
+----------
+* [ScreenNetSelectMusic] Add PlayerOptionsScreen metric. [AJ]
+* [ScreenEdit] Restore the old PageUp/PageDown behavior, added Control + 
+  PageUp/PageDown to use recent time signature behavior. Laptop users, that
+  includes you guys too: semicolon and apostrophe are still good. [Wolfman2000]
+
 2011/06/11
 ----------
 * [ScreenEdit] Allow setting the Music Preview via the Alter Menu. Just select

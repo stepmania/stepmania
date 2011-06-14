@@ -21,11 +21,3 @@ local _screen = {
 	cx = SCREEN_CENTER_X,
 	cy = SCREEN_CENTER_Y
 }
-
-if Screen.String then
-	ScreenString = Screen.String
-end
-
-if Screen.Metric then
-	ScreenMetric = Screen.Metric
-end

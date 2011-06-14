@@ -10,6 +10,10 @@ namespace RageFileManagerUtil
 class RageFileDriver;
 class RageFileBasic;
 struct lua_State;
+
+bool ilt( const RString &a, const RString &b );
+bool ieq( const RString &a, const RString &b );
+
 /** @brief File utilities and high-level manager for RageFile objects. */
 class RageFileManager
 {

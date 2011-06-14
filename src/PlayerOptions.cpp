@@ -12,6 +12,9 @@
 #include "CommonMetrics.h"
 #include <float.h>
 
+void NextFloat( float fValues[], int size );
+void NextBool( bool bValues[], int size );
+
 ThemeMetric<float> RANDOM_SPEED_CHANCE		( "PlayerOptions", "RandomSpeedChance" );
 ThemeMetric<float> RANDOM_REVERSE_CHANCE	( "PlayerOptions", "RandomReverseChance" );
 ThemeMetric<float> RANDOM_DARK_CHANCE		( "PlayerOptions", "RandomDarkChance" );

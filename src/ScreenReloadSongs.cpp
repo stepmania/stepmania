@@ -40,14 +40,10 @@ ScreenReloadSongs::~ScreenReloadSongs()
 	delete loadWin;
 }
 
-int ScreenReloadSongs::loadingThreadProc(void *thisAsVoidPtr) {
-
-	ScreenReloadSongs *self=(ScreenReloadSongs *)thisAsVoidPtr;
-
+int ScreenReloadSongs::loadingThreadProc(void *thisAsVoidPtr)
+{
 	SONGMAN->Reload( false );
-
 	SCREENMAN->PostMessageToTopScreen( SM_GoToNextScreen, 0 );
-
 	return 0;
 }
 

@@ -11,6 +11,7 @@
 #include "PlayerNumber.h"
 #include <float.h>
 
+RString StepsTypeToString( StepsType st );
 
 static vector<RString> GenerateRankingToFillInMarker()
 {

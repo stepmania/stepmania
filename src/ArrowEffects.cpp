@@ -60,6 +60,8 @@ static ThemeMetric<float>	MINI_PERCENT_BASE( "ArrowEffects", "MiniPercentBase" )
 static ThemeMetric<float>	MINI_PERCENT_GATE( "ArrowEffects", "MiniPercentGate" );
 static ThemeMetric<bool>	DIZZY_HOLD_HEADS( "ArrowEffects", "DizzyHoldHeads" );
 
+float ArrowGetPercentVisible( const PlayerState* pPlayerState, float fYPosWithoutReverse );
+
 static float GetNoteFieldHeight( const PlayerState* pPlayerState )
 {
 	return SCREEN_HEIGHT + fabsf(pPlayerState->m_PlayerOptions.GetCurrent().m_fPerspectiveTilt)*200;
@@ -236,7 +238,10 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 		if( bShowEffects )
 			fBeatsUntilStep = pCurSteps->m_Timing.GetDisplayedBeat(fNoteBeat) - pCurSteps->m_Timing.GetDisplayedBeat(fSongBeat);
 		float fYOffsetBeatSpacing = fBeatsUntilStep;
-		float fSpeedMultiplier = bShowEffects ? pCurSteps->m_Timing.GetDisplayedSpeedPercent( position.m_fSongBeatVisible, position.m_fMusicSecondsVisible ) : 1.0;
+		float fSpeedMultiplier = bShowEffects ? 
+			pCurSteps->m_Timing.GetDisplayedSpeedPercent(
+								     position.m_fSongBeatVisible,
+								     position.m_fMusicSecondsVisible ) : 1.0f;
 		fYOffset += fSpeedMultiplier * fYOffsetBeatSpacing * (1-pPlayerState->m_PlayerOptions.GetCurrent().m_fTimeSpacing);
 	}
 
