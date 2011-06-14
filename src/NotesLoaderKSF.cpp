@@ -23,6 +23,11 @@ static void HandleBunki( TimingData &timing, const float fEarlyBPM,
 static bool HandlePipeChars( TimingData &timing, const RString sNoteRow, 
 			    const float fCurBeat, int &iTickCount )
 {
+	// gotta do something tricky here: if the bpm is below one then a couple of calculations
+	// for scrollsegments will be made, example, bpm 0.2, tick 4000, the scrollsegment will
+	// be 0. if the tickcount is non a stepmania standard then it will be adapted, a scroll
+	// segment will then be added based on approximations.
+
 	RString temp = sNoteRow.substr(2,sNoteRow.size()-3);
 	float numTemp = StringToFloat(temp);
 	if (BeginsWith(sNoteRow, "|T")) 
@@ -49,6 +54,27 @@ static bool HandlePipeChars( TimingData &timing, const RString sNoteRow,
 		float fCurDelay = timing.GetStopAtRow(BeatToNoteRow(fCurBeat) );
 		fCurDelay += numTemp / 1000;
 		timing.SetStopAtBeat( fCurBeat, fCurDelay, true );
+		return true;
+	}
+	else if (BeginsWith(sNoteRow, "|M") || BeginsWith(sNoteRow, "|C"))
+	{
+		// multipliers/combo
+		timing.SetComboAtBeat( fCurBeat, static_cast<int>(numTemp) );
+		return true;
+	}
+	else if (BeginsWith(sNoteRow, "|S"))
+	{
+		return false;
+	}
+	else if (BeginsWith(sNoteRow, "|F"))
+	{
+		//
+		return false;
+	}
+	
+	else if (BeginsWith(sNoteRow, "|X"))
+	{
+		timing.SetScrollAtBeat( fCurBeat, numTemp );
 		return true;
 	}
 	return false;
