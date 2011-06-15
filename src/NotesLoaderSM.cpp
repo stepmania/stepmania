@@ -668,19 +668,31 @@ bool SMLoader::LoadNotedataFromSimfile( const RString &path, Steps &out )
 					     iNumParams );
 				continue;
 			}
-			/*
-			Steps* pNewNotes = out.CreateSteps();
-			LoadFromTokens( 
-				       sParams[1], 
-				       sParams[2], 
-				       sParams[3], 
-				       sParams[4], 
-				       sParams[5], 
-				       sParams[6],
-				       *pNewNotes );
 			
-			out.AddSteps( pNewNotes );
-			 */
+			RString stepsType = sParams[1];
+			RString description = sParams[2];
+			RString difficulty = sParams[3];
+			Trim(stepsType);
+			Trim(description);
+			Trim(difficulty);
+			// Remember our old versions.
+			if (difficulty.CompareNoCase("smaniac") == 0)
+			{
+				difficulty = "Challenge";
+			}
+			
+			if(!(out.m_StepsType == GAMEMAN->StringToStepsType( stepsType ) &&
+			     out.GetDescription() == description &&
+			     out.GetDifficulty() == StringToDifficulty(difficulty)))
+			{
+				continue;
+			}
+			
+			RString noteData = sParams[6];
+			Trim( noteData );
+			out.SetSMNoteData( noteData );
+			
+			return true;
 		}
 	}
 	return false;
