@@ -6,6 +6,7 @@
 #include "LoadingWindow.h"
 #include <windows.h>
 #include "archutils/Win32/AppInstance.h"
+#include "Shobjidl.h"
 
 class LoadingWindow_Win32: public LoadingWindow
 {
@@ -27,6 +28,8 @@ private:
 	HANDLE pumpThread;
 	DWORD pumpThreadId;
 	HANDLE guiReadyEvent;
+	UINT taskbarCreatedEvent;
+	ITaskbarList3 *pTaskbarList;
 
 	volatile bool runMessageLoop;
 
