@@ -189,6 +189,7 @@ GameState::~GameState()
 
 	SAFE_DELETE( m_Environment );
 	SAFE_DELETE( g_pImpl );
+	SAFE_DELETE( processedTiming );
 }
 
 PlayerNumber GameState::GetMasterPlayerNumber() const
