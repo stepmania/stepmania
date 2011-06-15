@@ -3611,6 +3611,27 @@
 	<Function name='GetLabels' return='{string}' arguments=''>
 		Returns a table of the Labels and the times they happen as strings with the format "<code>beat=label name</code>."
 	</Function>
+	<Function name='GetWarps' return='{string}' arguments=''>
+		Returns a table of the Warps and the times they happen as strings with the format "<code>beat=number of beats warped over</code>."
+	</Function>
+	<Function name='GetCombos' return='{string}' arguments=''>
+		Returns a table of the Combos and the times they happen as strings with the format "<code>beat=combo value</code>."
+	</Function>
+	<Function name='GetTimeSignatures' return='{string}' arguments=''>
+		Returns a table of the Time Signatures and the times they happen as strings with the format "<code>beat=beats per measure (numerator)=denominator</code>."
+	</Function>
+	<Function name='GetTickcounts' return='{string}' arguments=''>
+		Returns a table of the Tickcountss and the times they happen as strings with the format "<code>beat=number of ticks per beat</code>."
+	</Function>
+	<Function name='GetFakes' return='{string}' arguments=''>
+		Returns a table of the Fakes and the times they happen as strings with the format "<code>beat=number of beats to not judge</code>."
+	</Function>
+	<Function name='GetScrolls' return='{string}' arguments=''>
+		Returns a table of the Scrolls and the times they happen as strings with the format "<code>beat=scroll rate ratio</code>."
+	</Function>
+	<Function name='GetSpeeds' return='{string}' arguments=''>
+		Returns a table of the Speeds and the times they happen as strings with the format "<code>beat=scroll rate ratio=length of time to fully activate=unit of activation (0 for beats, 1 for seconds)</code>."
+	</Function>
 	<Function name='HasBPMChanges' return='bool' arguments=''>
 		Returns <code>true</code> if the TimingData contains BPM changes.
 	</Function>

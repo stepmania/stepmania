@@ -8,6 +8,12 @@ ________________________________________________________________________________
 StepMania 5.0 Preview 2 | 20110???
 --------------------------------------------------------------------------------
 
+2011/06/15
+----------
+* [TimingData] Added many lua bindings for the other timing segments. GetWarps,
+  GetCombos, GetTimeSignatures, GetTickcounts, GetFakes, GetScrolls, GetSpeeds.
+  This should cover all of them now. [Wolfman2000]
+
 2011/06/13
 ----------
 * [InputHandler_DirectInput] Fixed MouseWheel input not resetting. [AJ]
