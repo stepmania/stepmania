@@ -731,6 +731,42 @@ int RageFileManager::GetFileHash( const RString &sPath_ )
 	return iRet;
 }
 
+RString RageFileManager::ResolvePath(const RString &path)
+{
+	RString tmpPath = path;
+	NormalizePath(tmpPath);
+	
+	RString resolvedPath = tmpPath;
+	
+	vector<LoadedDriver *> apDriverList;
+	ReferenceAllDrivers( apDriverList );
+	
+	for( unsigned i = 0; i < apDriverList.size(); ++i )
+	{
+		LoadedDriver *pDriver = apDriverList[i];
+		const RString driverPath = pDriver->GetPath( tmpPath );
+		
+		if ( driverPath.empty() || pDriver->m_sRoot.empty() )
+			continue;
+		
+		if ( pDriver->m_sType != "dir" && pDriver->m_sType != "dirro" )
+			continue;
+		
+		int iMountPointLen = pDriver->m_sMountPoint.length();
+		if( tmpPath.substr(0, iMountPointLen) != pDriver->m_sMountPoint )
+			continue;
+		
+		resolvedPath = pDriver->m_sRoot + "/" + RString(tmpPath.substr(iMountPointLen));
+		break;
+	}
+	
+	UnreferenceAllDrivers( apDriverList );
+	
+	NormalizePath( resolvedPath );
+	
+	return resolvedPath;
+}
+
 static bool SortBySecond( const pair<int,int> &a, const pair<int,int> &b )
 {
 	return a.second < b.second;
