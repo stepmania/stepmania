@@ -295,7 +295,7 @@ void UnlockManager::GetPoints( const Profile *pProfile, float fScores[NUM_Unlock
 	fScores[UnlockRequirement_SongPoints] = GetSongPoints( pProfile );
 	fScores[UnlockRequirement_DancePoints] = (float) pProfile->m_iTotalDancePoints;
 	fScores[UnlockRequirement_StagesCleared] = (float) pProfile->GetTotalNumSongsPassed();
-	fScores[UnlockRequirement_NumUnlocked] = (float) GetNumUnlocked();
+	//fScores[UnlockRequirement_NumUnlocked] = (float) GetNumUnlocked();
 }
 
 /* Return true if all songs and/or courses referenced by an unlock are available. */
@@ -330,8 +330,13 @@ UnlockEntryStatus UnlockEntry::GetUnlockEntryStatus() const
 	UNLOCKMAN->GetPoints( PROFILEMAN->GetMachineProfile(), fScores );
 
 	for( int i = 0; i < NUM_UnlockRequirement; ++i )
+	{
+		if( i == UnlockRequirement_NumUnlocked )
+			continue;
+
 		if( m_fRequirement[i] && fScores[i] >= m_fRequirement[i] )
 			return UnlockEntryStatus_RequirementsMet;
+	}
 
 	if( m_bRequirePassHardSteps && m_Song.IsValid() )
 	{
@@ -347,7 +352,6 @@ UnlockEntryStatus UnlockEntry::GetUnlockEntryStatus() const
 			if( PROFILEMAN->GetMachineProfile()->HasPassedSteps(pSong, *s) )
 				return UnlockEntryStatus_RequirementsMet;
 	}
-
 
 	return UnlockEntryStatus_RequrementsNotMet;
 }
@@ -601,7 +605,7 @@ int UnlockManager::GetNumUnlocked() const
 	int count = 0;
 	FOREACH_CONST( UnlockEntry, m_UnlockEntries, ue )
 	{
-		if( ue->GetUnlockEntryStatus() == UnlockEntryStatus_Unlocked )
+		if( !ue->IsLocked() )
 			count++;
 	}
 	return count;
