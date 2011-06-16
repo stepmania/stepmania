@@ -733,22 +733,27 @@ bool KSFLoader::LoadFromDir( const RString &sDir, Song &out )
 	// We shouldn't have been called to begin with if there were no KSFs.
 	ASSERT( arrayKSFFileNames.size() );
 
-	bool bKIUCompliant = false;
+	//bool bKIUCompliant = false;
 	/* With Split Timing, there has to be a backup Song Timing in case
 	 * anything goes wrong. As these files are kept in alphabetical
 	 * order (hopefully), it is best to use the LAST file for timing 
 	 * purposes, for that is the "normal", or easiest difficulty.
 	 * Usually. */
-	// IT'S SCREWY DON'T DO IT!!
+	// Nevermind, kiu compilancy is screwing things up
+	// about the "normal" thing, my simfiles uses non-standard naming so the last
+	// chart is usually nightmare or normal, I use easy and normal indistinctly
+	// for SM so it shouldn't matter, I use piu fiesta/ex naming for directmove
+	// though, and we're just gathering basic info anyway, and most of the time
+	// all the KSF files have the same info in the #TITLE:; section
 	unsigned files = arrayKSFFileNames.size();
-	if( !LoadGlobalData(out.GetSongDir() + arrayKSFFileNames[0], out, bKIUCompliant) )
+	if( !LoadGlobalData(out.GetSongDir() + arrayKSFFileNames[0], out, false) )
 		return false;
 
 	// load the Steps from the rest of the KSF files
 	for( unsigned i=0; i<files; i++ ) 
 	{
 		Steps* pNewNotes = out.CreateSteps();
-		if( !LoadFromKSFFile(out.GetSongDir() + arrayKSFFileNames[i], *pNewNotes, out, bKIUCompliant) )
+		if( !LoadFromKSFFile(out.GetSongDir() + arrayKSFFileNames[i], *pNewNotes, out, false) )
 		{
 			delete pNewNotes;
 			continue;
