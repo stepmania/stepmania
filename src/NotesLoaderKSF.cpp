@@ -516,7 +516,7 @@ static void LoadTags( const RString &str, Song &out )
 		out.m_sArtist = artist;
 }
 
-static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant )
+static bool LoadGlobalData( const RString &sPath, Song &out, bool bKIUCompliant )
 {
 	MsdFile msd;
 	if( !msd.ReadFile( sPath, false ) )  // don't unescape
