@@ -739,12 +739,17 @@ bool KSFLoader::LoadFromDir( const RString &sDir, Song &out )
 	 * order (hopefully), it is best to use the LAST file for timing 
 	 * purposes, for that is the "normal", or easiest difficulty.
 	 * Usually. */
-	// Nevermind, kiu compilancy is screwing things up
-	// about the "normal" thing, my simfiles uses non-standard naming so the last
-	// chart is usually nightmare or normal, I use easy and normal indistinctly
-	// for SM so it shouldn't matter, I use piu fiesta/ex naming for directmove
-	// though, and we're just gathering basic info anyway, and most of the time
-	// all the KSF files have the same info in the #TITLE:; section
+	// Nevermind, kiu compilancy is screwing things up:
+	// IE, I have two simfiles, oh wich each have four ksf files, the first one has
+	// the first ksf with directmove timing changes, and the rest are not, everything
+	// goes fine. In the other hand I have my second simfile with the first ksf file
+	// without directmove timing changes and the rest have changes, changes are not
+	// loaded due to kiucompilancy in the first ksf file.
+	// About the "normal" thing, my simfiles' ksfs uses non-standard naming so
+	// the last chart is usually nightmare or normal, I use easy and normal
+	// indistinctly for SM so it shouldn't matter, I use piu fiesta/ex naming
+	// for directmove though, and we're just gathering basic info anyway, and
+	// most of the time all the KSF files have the same info in the #TITLE:; section
 	unsigned files = arrayKSFFileNames.size();
 	if( !LoadGlobalData(out.GetSongDir() + arrayKSFFileNames[0], out, false) )
 		return false;
