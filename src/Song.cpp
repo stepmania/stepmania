@@ -190,7 +190,9 @@ RString Song::GetCacheFilePath() const
 // Get a path to the SM containing data for this song. It might be a cache file.
 const RString &Song::GetSongFilePath() const
 {
-	ASSERT( !m_sSongFileName.empty() );
+	ASSERT_M( !m_sSongFileName.empty(),
+		 ssprintf("The song %s has no filename associated with it!",
+			  this->m_sMainTitle.c_str()));
 	return m_sSongFileName;
 }
 
