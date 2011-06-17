@@ -5,8 +5,13 @@ from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
 ================================================================================
-StepMania 5.0 Preview 2 | 20110???
+StepMania 5.0 Preview 2 | 201106??
 --------------------------------------------------------------------------------
+
+2011/06/17
+----------
+* [LifeMeterBattery] Fixed a bug where MinesSubtractLives was not being honored.
+  Also added LifeChanged message to changing of life on holds. [AJ]
 
 2011/06/15
 ----------
