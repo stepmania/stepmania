@@ -60,7 +60,7 @@ void EditMenu::GetSongsToShowForGroup( const RString &sGroup, vector<Song*> &vpS
 		for( int i=vpSongsOut.size()-1; i>=0; i-- )
 		{
 			const Song* pSong = vpSongsOut[i];
-			if( !pSong->NormallyDisplayed()  ||  pSong->IsTutorial()  ||  SONGMAN->WasLoadedFromAdditionalSongs(pSong) )
+			if( !pSong->NormallyDisplayed()  ||  pSong->IsTutorial() )
 				vpSongsOut.erase( vpSongsOut.begin()+i );
 		}
 		break;
