@@ -42,7 +42,7 @@
 
 	; don't forget to change this before releasing a new verson.
 	; wish this could be automated, but it requires "X.Y.Z.a" format. -aj
-	VIProductVersion "1.2.3.0"
+	VIProductVersion "5.0.0.3"
 	VIAddVersionKey "ProductName" "${PRODUCT_ID}"
 	VIAddVersionKey "FileVersion" "${PRODUCT_VER}"
 	VIAddVersionKey "FileDescription" "${PRODUCT_ID} Installer"
