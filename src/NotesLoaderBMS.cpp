@@ -999,7 +999,7 @@ static bool LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNameTo
 			}
 			else
 			{
-				LOG->UserLog( "Song file", sPath, "has too much simultenous autokeysound tracks." );
+				LOG->UserLog( "Song file", sPath, "has too much simultaneous autokeysound tracks." );
 			}
 		}
 	}
