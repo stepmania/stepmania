@@ -973,7 +973,7 @@ static bool LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNameTo
 		iTransformNewToOld[15] = BMS_P2_TURN;
 		break;
 	default:
-		ASSERT(0);
+		ASSERT_M(0, ssprintf("Invalid StepsType when parsing BMS file %s!", sPath.c_str()));
 	}
 
 	// shift all of the autokeysound tracks onto the main tracks
