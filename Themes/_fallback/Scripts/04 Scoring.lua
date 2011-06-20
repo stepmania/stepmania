@@ -84,14 +84,19 @@ r['DDR Extreme'] = function(params, pss)
 	setmetatable(judgmentBase, ZeroIfNotFound);
 	local steps = GAMESTATE:GetCurrentSteps(params.Player);
 	local radarValues = steps:GetRadarValues(params.Player);
-	local baseScore = (steps:IsAnEdit() and 
-		5 or steps:GetMeter()) * 1000000;
+	local meter = steps:GetMeter();
+	if (steps:IsAnEdit()) then
+		meter = 5;
+	elseif (meter < 1) then
+		meter = 1;
+	elseif (meter > 10) then
+		meter = 10;
+	end;
+	local baseScore = meter * 1000000;
 	if (GAMESTATE:GetCurrentSong():IsMarathon()) then
 		baseScore = baseScore * 3;
-	else
-		if (GAMESTATE:GetCurrentSong():IsLong()) then
-			baseScore = baseScore * 2;
-		end;
+	elseif (GAMESTATE:GetCurrentSong():IsLong()) then
+		baseScore = baseScore * 2;
 	end;
 	local totalItems = GetTotalItems(radarValues);
 	local singleStep = (1 + totalItems) * totalItems / 2;
