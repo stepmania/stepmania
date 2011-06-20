@@ -696,6 +696,8 @@ static bool LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNameTo
 	}
 
 	NameToData_t::const_iterator it;
+	
+	bool hasBGM = false;
 	for( it = mapNameToData.lower_bound("#00000"); it != mapNameToData.end(); ++it )
 	{
 		const RString &sName = it->first;
@@ -745,6 +747,7 @@ static bool LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNameTo
 				{
 					if( bmsTrack == BMS_AUTO_KEYSOUND_1 )
 					{
+						hasBGM = true;
 						// shift the auto keysound as far right as possible
 						int iLastEmptyTrack = -1;
 						if( ndNotes.GetTapLastEmptyTrack(row, iLastEmptyTrack)  &&
@@ -770,6 +773,12 @@ static bool LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNameTo
 					ndNotes.SetTapNote( bmsTrack, row, tn );
 			}
 		}
+	}
+	
+	if (!hasBGM)
+	{
+		LOG->Warn("The song at %s is missing a #XXX01 tag! We're unable to load.", sPath.c_str());
+		return false;
 	}
 	
 	/* Handles hold notes like uBMPlay.
