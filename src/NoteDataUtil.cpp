@@ -803,6 +803,7 @@ RadarStats CalculateRadarStatsFast( const NoteData &in, RadarStats &out )
 			case TapNote::mine:
 			case TapNote::empty:
 			case TapNote::fake:
+			case TapNote::autoKeysound:
 				continue;	// skip these types - they don't count
 			}
 
