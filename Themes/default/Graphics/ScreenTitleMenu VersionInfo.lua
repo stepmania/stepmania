@@ -3,8 +3,8 @@ return Def.ActorFrame {
 		OnCommand=cmd(diffuse,color("#f7941d");diffusetopedge,color("#fff200");diffusealpha,0.25);
 	};
 	LoadFont("Common Normal") .. {
-		Text=ProductID();
-		AltText="";
+		Text="StepMania";
+		AltText="StepMania";
 		InitCommand=cmd(y,-5;zoom,0.6);
 		OnCommand=cmd(shadowlength,1);
 	};
