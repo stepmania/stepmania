@@ -999,11 +999,14 @@ void SongManager::Cleanup()
 	for( unsigned i=0; i<m_pSongs.size(); i++ )
 	{
 		Song* pSong = m_pSongs[i];
-		const vector<Steps*>& vpSteps = pSong->GetAllSteps();
-		for( unsigned n=0; n<vpSteps.size(); n++ )
+		if (pSong)
 		{
-			Steps* pSteps = vpSteps[n];
-			pSteps->Compress();
+			const vector<Steps*>& vpSteps = pSong->GetAllSteps();
+			for( unsigned n=0; n<vpSteps.size(); n++ )
+			{
+				Steps* pSteps = vpSteps[n];
+				pSteps->Compress();
+			}
 		}
 	}
 }

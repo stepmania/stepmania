@@ -10,6 +10,7 @@
 #include "EnumHelper.h"
 #include "ThemeMetric.h"
 
+/** @brief What type of row is needed for the EditMenu? */
 enum EditMenuRow 
 { 
 	ROW_GROUP, 
@@ -19,11 +20,19 @@ enum EditMenuRow
 	ROW_SOURCE_STEPS_TYPE, 
 	ROW_SOURCE_STEPS, 
 	ROW_ACTION, 
-	NUM_EditMenuRow 
+	NUM_EditMenuRow /**< The number of EditMenuRows available. */
 };
 /** @brief Loop through each EditMenuRow. */
 #define FOREACH_EditMenuRow( r ) FOREACH_ENUM( EditMenuRow, r )
+/**
+ * @brief Turn the EditMenuRow into a string.
+ * @param r the row.
+ * @return the string. */
 const RString& EditMenuRowToString( EditMenuRow r );
+/**
+ * @brief Turn the EditMenuRow into a localized string.
+ * @param r the row.
+ * @return the localized string. */
 const RString& EditMenuRowToLocalizedString( EditMenuRow r );
 
 /** @brief The different actions one can take on a step. */
@@ -38,9 +47,18 @@ enum EditMenuAction
 };
 /** @brief Loop through each EditMenuAction. */
 #define FOREACH_EditMenuAction( ema ) FOREACH_ENUM( EditMenuAction, ema )
+/**
+ * @brief Turn the EditMenuAction into a string.
+ * @param ema the action.
+ * @return the string. */
 const RString& EditMenuActionToString( EditMenuAction ema );
+/**
+ * @brief Turn the EditMenuAction into a localized string.
+ * @param ema the action.
+ * @return the localized string. */
 const RString& EditMenuActionToLocalizedString( EditMenuAction ema );
 
+/** @brief How many arrows are used for the EditMenu? */
 const int NUM_ARROWS = 2;
 
 /**
@@ -50,39 +68,110 @@ const int NUM_ARROWS = 2;
 class EditMenu: public ActorFrame 
 {
 public:
+	/** @brief Set up the EditMenu. */
 	EditMenu();
+	/** @brief Destroy the EditMenu. */
 	~EditMenu();
 	void Load( const RString &sType );
 
+	/** @brief Determine if we can move up.
+	 * @return true if we can, false otherwise. */
 	bool CanGoUp();
+	/** @brief Determine if we can move down.
+	 * @return true if we can, false otherwise. */
 	bool CanGoDown();
+	/** @brief Determine if we can move left.
+	 * @return true if we can, false otherwise. */
 	bool CanGoLeft();
+	/** @brief Determine if we can move right.
+	 * @return true if we can, false otherwise. */
 	bool CanGoRight();
+	/** @brief Determine if the EditMenuRow is selectable.
+	 * @param row the row in question.
+	 * @return true if it can be selected, false otherwise. */
 	bool RowIsSelectable( EditMenuRow row );
 
+	/** @brief Move up to the next selection. */
 	void Up();
+	/** @brief Move down to the next selection. */
 	void Down();
+	/** @brief Move left to the next selection. */
 	void Left();
+	/** @brief Move right to the next selection. */
 	void Right();
 
 	void RefreshAll();
 
-	RString		GetSelectedGroup() const
+	/** @brief Retrieve the currently selected group.
+	 * @return the current group. */
+	RString	GetSelectedGroup() const
 	{ 
 		if( !SHOW_GROUPS.GetValue() ) return GROUP_ALL; 
-		ASSERT_M((int)m_iSelection[ROW_GROUP] < (int)m_sGroups.size(),
-			 ssprintf("Group selection %d < Number of groups %d", m_iSelection[ROW_GROUP], (int)m_sGroups.size())); 
+		int groups = static_cast<int>(m_sGroups.size());
+		ASSERT_M(m_iSelection[ROW_GROUP] < groups,
+			 ssprintf("Group selection %d < Number of groups %d",
+				  m_iSelection[ROW_GROUP],
+				  groups)); 
 		return m_sGroups[m_iSelection[ROW_GROUP]]; 
 	}
-	Song*		GetSelectedSong() const			{ ASSERT(m_iSelection[ROW_SONG]			< (int)m_pSongs.size());	return m_pSongs[m_iSelection[ROW_SONG]]; }
-	StepsType	GetSelectedStepsType() const		{ ASSERT(m_iSelection[ROW_STEPS_TYPE]		< (int)m_StepsTypes.size());	return m_StepsTypes[m_iSelection[ROW_STEPS_TYPE]]; }
-	Steps*		GetSelectedSteps() const		{ ASSERT(m_iSelection[ROW_STEPS]		< (int)m_vpSteps.size());	return m_vpSteps[m_iSelection[ROW_STEPS]].pSteps; }
-	Difficulty	GetSelectedDifficulty() const		{ ASSERT(m_iSelection[ROW_STEPS]		< (int)m_vpSteps.size());	return m_vpSteps[m_iSelection[ROW_STEPS]].dc; }
-	StepsType	GetSelectedSourceStepsType() const	{ ASSERT(m_iSelection[ROW_SOURCE_STEPS_TYPE]	< (int)m_StepsTypes.size());	return m_StepsTypes[m_iSelection[ROW_SOURCE_STEPS_TYPE]]; }
-	Steps*		GetSelectedSourceSteps() const		{ ASSERT(m_iSelection[ROW_SOURCE_STEPS]		< (int)m_vpSourceSteps.size());	return m_vpSourceSteps[m_iSelection[ROW_SOURCE_STEPS]].pSteps; }
-	Difficulty	GetSelectedSourceDifficulty() const	{ ASSERT(m_iSelection[ROW_SOURCE_STEPS]		< (int)m_vpSourceSteps.size());	return m_vpSourceSteps[m_iSelection[ROW_SOURCE_STEPS]].dc; }
-	EditMenuAction	GetSelectedAction() const		{ ASSERT(m_iSelection[ROW_ACTION]		< (int)m_Actions.size());	return m_Actions[m_iSelection[ROW_ACTION]]; }
-
+	/** @brief Retrieve the currently selected song.
+	 * @return the current song. */
+	Song*	GetSelectedSong() const	
+	{
+		ASSERT(m_iSelection[ROW_SONG] < (int)m_pSongs.size());	
+		return m_pSongs[m_iSelection[ROW_SONG]]; 
+	}
+	/** @brief Retrieve the currently selected steps type.
+	 * @return the current steps type. */
+	StepsType GetSelectedStepsType() const
+	{
+		ASSERT(m_iSelection[ROW_STEPS_TYPE] < (int)m_StepsTypes.size());
+		return m_StepsTypes[m_iSelection[ROW_STEPS_TYPE]];
+	}
+	/** @brief Retrieve the currently selected steps.
+	 * @return the current steps. */
+	Steps*	GetSelectedSteps() const
+	{
+		ASSERT(m_iSelection[ROW_STEPS] < (int)m_vpSteps.size());
+		return m_vpSteps[m_iSelection[ROW_STEPS]].pSteps; 
+	}
+	/** @brief Retrieve the currently selected difficulty.
+	 * @return the current difficulty. */
+	Difficulty GetSelectedDifficulty() const
+	{
+		ASSERT(m_iSelection[ROW_STEPS] < (int)m_vpSteps.size());
+		return m_vpSteps[m_iSelection[ROW_STEPS]].dc;
+	}
+	/** @brief Retrieve the currently selected source steps type.
+	 * @return the current source steps type. */
+	StepsType GetSelectedSourceStepsType() const
+	{
+		ASSERT(m_iSelection[ROW_SOURCE_STEPS_TYPE] < (int)m_StepsTypes.size());	
+		return m_StepsTypes[m_iSelection[ROW_SOURCE_STEPS_TYPE]];
+	}
+	/** @brief Retrieve the currently selected source steps.
+	 * @return the current source steps. */
+	Steps* GetSelectedSourceSteps() const 
+	{
+		ASSERT(m_iSelection[ROW_SOURCE_STEPS] < (int)m_vpSourceSteps.size());	
+		return m_vpSourceSteps[m_iSelection[ROW_SOURCE_STEPS]].pSteps; 
+	}
+	/** @brief Retrieve the currently selected difficulty.
+	 * @return the current difficulty. */
+	Difficulty GetSelectedSourceDifficulty() const
+	{
+		ASSERT(m_iSelection[ROW_SOURCE_STEPS] < (int)m_vpSourceSteps.size());
+		return m_vpSourceSteps[m_iSelection[ROW_SOURCE_STEPS]].dc;
+	}
+	/** @brief Retrieve the currently selected action.
+	 * @return the current action. */
+	EditMenuAction GetSelectedAction() const
+	{
+		ASSERT(m_iSelection[ROW_ACTION]	< (int)m_Actions.size());
+		return m_Actions[m_iSelection[ROW_ACTION]]; 
+	}
+	/** @brief Retrieve the currently selected row.
+	 * @return the current row. */
 	EditMenuRow GetSelectedRow() const { return m_SelectedRow; }
 
 private:

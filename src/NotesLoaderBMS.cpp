@@ -696,6 +696,8 @@ static bool LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNameTo
 	}
 
 	NameToData_t::const_iterator it;
+	
+	bool hasBGM = false;
 	for( it = mapNameToData.lower_bound("#00000"); it != mapNameToData.end(); ++it )
 	{
 		const RString &sName = it->first;
@@ -745,6 +747,7 @@ static bool LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNameTo
 				{
 					if( bmsTrack == BMS_AUTO_KEYSOUND_1 )
 					{
+						hasBGM = true;
 						// shift the auto keysound as far right as possible
 						int iLastEmptyTrack = -1;
 						if( ndNotes.GetTapLastEmptyTrack(row, iLastEmptyTrack)  &&
@@ -770,6 +773,12 @@ static bool LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNameTo
 					ndNotes.SetTapNote( bmsTrack, row, tn );
 			}
 		}
+	}
+	
+	if (!hasBGM)
+	{
+		LOG->Warn("The song at %s is missing a #XXX01 tag! We're unable to load.", sPath.c_str());
+		return false;
 	}
 	
 	/* Handles hold notes like uBMPlay.
@@ -964,7 +973,7 @@ static bool LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNameTo
 		iTransformNewToOld[15] = BMS_P2_TURN;
 		break;
 	default:
-		ASSERT(0);
+		ASSERT_M(0, ssprintf("Invalid StepsType when parsing BMS file %s!", sPath.c_str()));
 	}
 
 	// shift all of the autokeysound tracks onto the main tracks
@@ -990,7 +999,7 @@ static bool LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNameTo
 			}
 			else
 			{
-				LOG->UserLog( "Song file", sPath, "has too much simultenous autokeysound tracks." );
+				LOG->UserLog( "Song file", sPath, "has too much simultaneous autokeysound tracks." );
 			}
 		}
 	}

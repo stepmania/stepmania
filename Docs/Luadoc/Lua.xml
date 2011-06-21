@@ -1430,10 +1430,17 @@
 			<Function name='GetBPMs'/>
 			<Function name='GetBPMsAndTimes'/>
 			<Function name='GetBeatFromElapsedTime'/>
+			<Function name='GetCombos'/>
 			<Function name='GetDelays'/>
 			<Function name='GetElapsedTimeFromBeat'/>
+			<Function name='GetFakes'/>
 			<Function name='GetLabels'/>
+			<Function name='GetScrolls'/>
+			<Function name='GetSpeeds'/>
 			<Function name='GetStops'/>
+			<Function name='GetTickcounts'/>
+			<Function name='GetTimeSignatures'/>
+			<Function name='GetWarps'/>
 			<Function name='HasBPMChanges'/>
 			<Function name='HasFakes'/>
 			<Function name='HasNegativeBPMs'/>

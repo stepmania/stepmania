@@ -41,7 +41,7 @@
  * @brief The internal version of the cache for StepMania.
  *
  * Increment this value to invalidate the current cache. */
-const int FILE_CACHE_VERSION = 180;
+const int FILE_CACHE_VERSION = 182;
 
 /** @brief How long does a song sample last by default? */
 const float DEFAULT_MUSIC_SAMPLE_LENGTH = 12.f;
@@ -190,7 +190,9 @@ RString Song::GetCacheFilePath() const
 // Get a path to the SM containing data for this song. It might be a cache file.
 const RString &Song::GetSongFilePath() const
 {
-	ASSERT( !m_sSongFileName.empty() );
+	ASSERT_M( !m_sSongFileName.empty(),
+		 ssprintf("The song %s has no filename associated with it!",
+			  this->m_sMainTitle.c_str()));
 	return m_sSongFileName;
 }
 

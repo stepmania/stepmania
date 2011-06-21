@@ -1670,6 +1670,93 @@ public:
 	static int HasFakes( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasFakes()); return 1; }
 	static int HasSpeedChanges( T* p, lua_State *L )	{ lua_pushboolean(L, p->HasSpeedChanges()); return 1; }
 	static int HasScrollChanges( T* p, lua_State *L )	{ lua_pushboolean(L, p->HasScrollChanges()); return 1; }
+	static int GetWarps( T* p, lua_State *L )
+	{
+		vector<RString> vWarps;
+		FOREACH_CONST( WarpSegment, p->m_WarpSegments, seg )
+		{
+			const float length = seg->GetLength();
+			const float beat = seg->GetBeat();
+			vWarps.push_back( ssprintf("%f=%f", beat, length) );
+		}
+		LuaHelpers::CreateTableFromArray(vWarps, L);
+		return 1;
+	}
+	static int GetFakes( T* p, lua_State *L )
+	{
+		vector<RString> vFakes;
+		FOREACH_CONST( FakeSegment, p->m_FakeSegments, seg )
+		{
+			const float length = seg->GetLength();
+			const float beat = seg->GetBeat();
+			vFakes.push_back( ssprintf("%f=%f", beat, length) );
+		}
+		LuaHelpers::CreateTableFromArray(vFakes, L);
+		return 1;
+	}
+	static int GetScrolls( T* p, lua_State *L )
+	{
+		vector<RString> vScrolls;
+		FOREACH_CONST( ScrollSegment, p->m_ScrollSegments, seg )
+		{
+			const float ratio = seg->GetRatio();
+			const float beat = seg->GetBeat();
+			vScrolls.push_back( ssprintf("%f=%f", beat, ratio) );
+		}
+		LuaHelpers::CreateTableFromArray(vScrolls, L);
+		return 1;
+	}
+	static int GetSpeeds( T* p, lua_State *L )
+	{
+		vector<RString> vSpeeds;
+		FOREACH_CONST( SpeedSegment, p->m_SpeedSegments, seg )
+		{
+			const float length = seg->GetLength();
+			const float ratio = seg->GetRatio();
+			const unsigned short unit = seg->GetUnit();
+			const float beat = seg->GetBeat();
+			vSpeeds.push_back( ssprintf("%f=%f=%f=%uh", beat, ratio, length, unit) );
+		}
+		LuaHelpers::CreateTableFromArray(vSpeeds, L);
+		return 1;
+	}
+	static int GetTimeSignatures( T* p, lua_State *L )
+	{
+		vector<RString> vTimes;
+		FOREACH_CONST( TimeSignatureSegment, p->m_vTimeSignatureSegments, seg )
+		{
+			const int numerator = seg->GetNum();
+			const int denominator = seg->GetDen();
+			const float beat = seg->GetBeat();
+			vTimes.push_back( ssprintf("%f=%d=%d", beat, numerator, denominator) );
+		}
+		LuaHelpers::CreateTableFromArray(vTimes, L);
+		return 1;
+	}
+	static int GetCombos( T* p, lua_State *L )
+	{
+		vector<RString> vCombos;
+		FOREACH_CONST( ComboSegment, p->m_ComboSegments, seg )
+		{
+			const int combo = seg->GetCombo();
+			const float beat = seg->GetBeat();
+			vCombos.push_back( ssprintf("%f=%d", beat, combo) );
+		}
+		LuaHelpers::CreateTableFromArray(vCombos, L);
+		return 1;
+	}
+	static int GetTickcounts( T* p, lua_State *L )
+	{
+		vector<RString> vTicks;
+		FOREACH_CONST( TickcountSegment, p->m_TickcountSegments, seg )
+		{
+			const int ticks = seg->GetTicks();
+			const float beat = seg->GetBeat();
+			vTicks.push_back( ssprintf("%f=%d", beat, ticks) );
+		}
+		LuaHelpers::CreateTableFromArray(vTicks, L);
+		return 1;
+	}
 	static int GetStops( T* p, lua_State *L )
 	{
 		vector<RString> vStops;
@@ -1763,6 +1850,13 @@ public:
 		ADD_METHOD( GetStops );
 		ADD_METHOD( GetDelays );
 		ADD_METHOD( GetBPMs );
+		ADD_METHOD( GetWarps );
+		ADD_METHOD( GetFakes );
+		ADD_METHOD( GetTimeSignatures );
+		ADD_METHOD( GetTickcounts );
+		ADD_METHOD( GetSpeeds );
+		ADD_METHOD( GetScrolls );
+		ADD_METHOD( GetCombos );
 		ADD_METHOD( GetLabels );
 		ADD_METHOD( GetBPMsAndTimes );
 		ADD_METHOD( GetActualBPM );

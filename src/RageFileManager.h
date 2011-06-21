@@ -37,6 +37,12 @@ public:
 
 	int GetFileSizeInBytes( const RString &sPath );
 	int GetFileHash( const RString &sPath );
+	
+	/**
+	 * @brief Get the absolte path from the VPS.
+	 * @param path the VPS path.
+	 * @return the absolute path. */
+	RString ResolvePath(const RString &path);
 
 	bool Mount( const RString &sType, const RString &sRealPath, const RString &sMountPoint, bool bAddToEnd = true );
 	void Mount( RageFileDriver *pDriver, const RString &sMountPoint, bool bAddToEnd = true );

@@ -155,7 +155,7 @@ void LifeMeterBattery::ChangeLife( TapNoteScore score )
 		SubtractLives(MINES_SUBTRACT_LIVES);
 	else
 	{
-		if( score < MIN_SCORE_TO_KEEP_LIFE && SUBTRACT_LIVES > 0 )
+		if( score < MIN_SCORE_TO_KEEP_LIFE && score > TNS_CheckpointMiss && SUBTRACT_LIVES > 0 )
 			SubtractLives(SUBTRACT_LIVES);
 	}
 
@@ -175,6 +175,12 @@ void LifeMeterBattery::ChangeLife( HoldNoteScore score, TapNoteScore tscore )
 		AddLives(HELD_ADD_LIVES);
 	if( score == HNS_LetGo && LET_GO_SUBTRACT_LIVES > 0 )
 		SubtractLives(LET_GO_SUBTRACT_LIVES);
+
+	Message msg( "LifeChanged" );
+	msg.SetParam( "Player", m_pPlayerState->m_PlayerNumber );
+	msg.SetParam( "LifeMeter", LuaReference::CreateFromPush(*this) );
+	msg.SetParam( "LivesLeft", GetLivesLeft() );
+	MESSAGEMAN->Broadcast( msg );
 }
 
 void LifeMeterBattery::HandleTapScoreNone()

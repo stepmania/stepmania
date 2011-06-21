@@ -5,8 +5,24 @@ from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
 ================================================================================
-StepMania 5.0 Preview 2 | 20110???
+StepMania 5.0 Preview 2 | 201106??
 --------------------------------------------------------------------------------
+
+2011/06/19
+* [EditMenu] Allow all songs to work in Practice Mode, regardless of folder
+  location. This fixes a crash if everyone had songs in AdditionalSongs.
+  [Wolfman2000]
+
+2011/06/17
+----------
+* [LifeMeterBattery] Fixed a bug where MinesSubtractLives was not being honored.
+  Also added LifeChanged message to changing of life on holds. [AJ]
+
+2011/06/15
+----------
+* [TimingData] Added many lua bindings for the other timing segments. GetWarps,
+  GetCombos, GetTimeSignatures, GetTickcounts, GetFakes, GetScrolls, GetSpeeds.
+  This should cover all of them now. [Wolfman2000]
 
 2011/06/13
 ----------

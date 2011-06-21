@@ -20,66 +20,6 @@ static void HandleBunki( TimingData &timing, const float fEarlyBPM,
 	timing.AddBPMSegment( BPMSegment(BeatToNoteRow(beat), fCurBPM) );
 }
 
-static bool HandlePipeChars( TimingData &timing, const RString sNoteRow, 
-			    const float fCurBeat, int &iTickCount )
-{
-	// gotta do something tricky here: if the bpm is below one then a couple of calculations
-	// for scrollsegments will be made, example, bpm 0.2, tick 4000, the scrollsegment will
-	// be 0. if the tickcount is non a stepmania standard then it will be adapted, a scroll
-	// segment will then be added based on approximations.
-
-	RString temp = sNoteRow.substr(2,sNoteRow.size()-3);
-	float numTemp = StringToFloat(temp);
-	if (BeginsWith(sNoteRow, "|T")) 
-	{
-		iTickCount = static_cast<int>(numTemp);
-		timing.SetTickcountAtBeat( fCurBeat, clamp(iTickCount, 0, ROWS_PER_BEAT) );
-		return true;
-	}
-	else if (BeginsWith(sNoteRow, "|B")) 
-	{
-		timing.SetBPMAtBeat( fCurBeat, numTemp );
-		return true;
-	}
-	else if (BeginsWith(sNoteRow, "|E"))
-	{
-		// Finally! the |E| tag is working as it should. I can die happy now -DaisuMaster
-		float fCurDelay = 60 / timing.GetBPMAtBeat(fCurBeat) * numTemp / iTickCount;
-		fCurDelay += timing.GetDelayAtRow(BeatToNoteRow(fCurBeat) );
-		timing.SetStopAtBeat( fCurBeat, fCurDelay, true );
-		return true;
-	}
-	else if (BeginsWith(sNoteRow, "|D"))
-	{
-		float fCurDelay = timing.GetStopAtRow(BeatToNoteRow(fCurBeat) );
-		fCurDelay += numTemp / 1000;
-		timing.SetStopAtBeat( fCurBeat, fCurDelay, true );
-		return true;
-	}
-	else if (BeginsWith(sNoteRow, "|M") || BeginsWith(sNoteRow, "|C"))
-	{
-		// multipliers/combo
-		timing.SetComboAtBeat( fCurBeat, static_cast<int>(numTemp) );
-		return true;
-	}
-	else if (BeginsWith(sNoteRow, "|S"))
-	{
-		return false;
-	}
-	else if (BeginsWith(sNoteRow, "|F"))
-	{
-		//
-		return false;
-	}
-	
-	else if (BeginsWith(sNoteRow, "|X"))
-	{
-		timing.SetScrollAtBeat( fCurBeat, numTemp );
-		return true;
-	}
-	return false;
-}
-
 static bool LoadFromKSFFile( const RString &sPath, Steps &out, const Song &song, bool bKIUCompliant )
 {
 	LOG->Trace( "Steps::LoadFromKSFFile( '%s' )", sPath.c_str() );
@@ -91,7 +31,10 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, const Song &song,
 		return false;
 	}
 
-	int iTickCount = -1;	// this is the value we read for TICKCOUNT
+	// this is the value we read for TICKCOUNT
+	int iTickCount = -1;
+	// used to adapt weird tickcounts
+	float fScrollRatio = 1.0f;
 	vector<RString> vNoteRows;
 
 	// According to Aldo_MX, there is a default BPM and it's 60. -aj
@@ -350,21 +293,109 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, const Song &song,
 				// Log an error, ignore the line.
 				continue;
 			}
-			if ( !HandlePipeChars( stepsTiming, sRowString, fCurBeat, iTickCount ) )
-			{
-				// LOG it first.
-			}
-			continue;
+			// gotta do something tricky here: if the bpm is below one then a couple of calculations
+			// for scrollsegments will be made, example, bpm 0.2, tick 4000, the scrollsegment will
+			// be 0. if the tickcount is non a stepmania standard then it will be adapted, a scroll
+			// segment will then be added based on approximations. -DaisuMaster
+			// eh better do it considering the tickcount (high tickcounts)
 			
-		}
-		
-		else
-		{
-			// Is this why improper ksf or some kiucompilant ksf mixed with dm05 ksf are ignored?? -DaisuMaster
-			//LOG->UserLog( "Song file", sPath, "has a RowString with an improper length \"%s\"; corrupt notes ignored.",
-			//	      sRowString.c_str() );
-			//return false;
-			//continue;
+			// I'm making some experiments, please spare me...
+
+			RString temp = sRowString.substr(2,sRowString.size()-3);
+			float numTemp = StringToFloat(temp);
+			if (BeginsWith(sRowString, "|T")) 
+			{
+				// duh
+				iTickCount = static_cast<int>(numTemp);
+				//if( iTickCount > ROWS_PER_BEAT )
+
+				/* adapt tickcounts //
+				// valid tickcounts for SM: 1, 2, 3, 4, 6, 8, 12, 16, 24, 32, 64, ROWS_PER_BEAT
+				// put this inside the tickcount handling condition yes/no
+
+				if( iTickCount > ROWS_PER_BEAT ) // beyond 48
+				{
+					// clamp/scale/whatever and use scroll segments
+				}
+				else if( iTickCount > 32 || iTickCount < ROWS_PER_BEAT ) // ranging from 33 to 48, approximate to 32
+				{
+					fScrollRatio = 32;
+					iTickCount = 32;
+				}
+				else if( iTickCount > 24 || iTickCount < 32 ) // ranging from 25 to 31, approximate to 24
+				{
+					fScrollRatio = 24;
+					iTickCount = 24;
+				}
+				else if( iTickCount > 16 || iTickCount < 24 ) // ranging from 17 to 23, approximate to 16
+				{
+					fScrollRatio = 16;
+					iTickCount = 16;
+				}
+				else if( iTickCount > 12 || iTickCount < 16 ) // ranging from 13 to 15, approximate to 12
+				{
+					fScrollRatio = 12;
+					iTickCount = 12;
+				}
+				else if( iTickCount > 8 || iTickCount < 12 ) // ranging from 9 to 11, approximate to 8
+				{
+					fScrollRatio = 8;
+					iTickCount = 8;
+				}
+				else if( iTickCount > 6 || iTickCount < 8 ) // 7, approximate to 6
+				{
+					fScrollRatio = 6 / iTickCountt;
+					iTickCount = 6;
+				}
+				else if( iTickCount > 4 || iTickCount < 6 ) // 5, approximate to 4
+				{
+					fScrollRatio = iTickCount / 4;
+					iTickCount = 4;
+				}
+				//*/
+
+				stepsTiming.SetTickcountAtBeat( fCurBeat, clamp(iTickCount, 0, ROWS_PER_BEAT) );
+			}
+			else if (BeginsWith(sRowString, "|B")) 
+			{
+				// BPM
+				stepsTiming.SetBPMAtBeat( fCurBeat, numTemp );
+			}
+			else if (BeginsWith(sRowString, "|E"))
+			{
+				// DelayBeat
+				float fCurDelay = 60 / stepsTiming.GetBPMAtBeat(fCurBeat) * numTemp / iTickCount;
+				fCurDelay += stepsTiming.GetDelayAtRow(BeatToNoteRow(fCurBeat) );
+				stepsTiming.SetStopAtBeat( fCurBeat, fCurDelay, true );
+			}
+			else if (BeginsWith(sRowString, "|D"))
+			{
+				// Delays
+				float fCurDelay = stepsTiming.GetStopAtRow(BeatToNoteRow(fCurBeat) );
+				fCurDelay += numTemp / 1000;
+				stepsTiming.SetStopAtBeat( fCurBeat, fCurDelay, true );
+			}
+			else if (BeginsWith(sRowString, "|M") || BeginsWith(sRowString, "|C"))
+			{
+				// multipliers/combo
+				stepsTiming.SetComboAtBeat( fCurBeat, static_cast<int>(numTemp) );
+			}
+			else if (BeginsWith(sRowString, "|S"))
+			{
+				// speed segments
+			}
+			else if (BeginsWith(sRowString, "|F"))
+			{
+				// fakes
+			}
+			else if (BeginsWith(sRowString, "|X"))
+			{
+				// scroll segments
+				stepsTiming.SetScrollAtBeat( fCurBeat, numTemp );
+				return true;
+			}
+
+			continue;
 		}
 
 		// Half-doubles is offset; "0011111100000".
@@ -485,7 +516,7 @@ static void LoadTags( const RString &str, Song &out )
 		out.m_sArtist = artist;
 }
 
-static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant )
+static bool LoadGlobalData( const RString &sPath, Song &out, bool bKIUCompliant )
 {
 	MsdFile msd;
 	if( !msd.ReadFile( sPath, false ) )  // don't unescape
@@ -658,14 +689,11 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 			}
 
 			// This is where the DMRequired test will take place.
-			if (BeginsWith(NoteRowString, "|T") || BeginsWith(NoteRowString, "|B") ||
-				BeginsWith(NoteRowString, "|D") || BeginsWith(NoteRowString, "|E") )
+			//if (BeginsWith(NoteRowString, "|T") || BeginsWith(NoteRowString, "|B") || BeginsWith(NoteRowString, "|D") || BeginsWith(NoteRowString, "|E") )
+			if ( BeginsWith( NoteRowString, "|" ) )
 			{
+				// have a static timing for everything
 				bDMRequired = true;
-				if ( !HandlePipeChars( out.m_SongTiming, NoteRowString, fCurBeat, iTickCount ) )
-				{
-					// LOG it first.
-				}
 				continue;
 			}
 			else
@@ -705,21 +733,32 @@ bool KSFLoader::LoadFromDir( const RString &sDir, Song &out )
 	// We shouldn't have been called to begin with if there were no KSFs.
 	ASSERT( arrayKSFFileNames.size() );
 
-	bool bKIUCompliant = false;
+	//bool bKIUCompliant = false;
 	/* With Split Timing, there has to be a backup Song Timing in case
 	 * anything goes wrong. As these files are kept in alphabetical
 	 * order (hopefully), it is best to use the LAST file for timing 
 	 * purposes, for that is the "normal", or easiest difficulty.
 	 * Usually. */
+	// Nevermind, kiu compilancy is screwing things up:
+	// IE, I have two simfiles, oh wich each have four ksf files, the first one has
+	// the first ksf with directmove timing changes, and the rest are not, everything
+	// goes fine. In the other hand I have my second simfile with the first ksf file
+	// without directmove timing changes and the rest have changes, changes are not
+	// loaded due to kiucompilancy in the first ksf file.
+	// About the "normal" thing, my simfiles' ksfs uses non-standard naming so
+	// the last chart is usually nightmare or normal, I use easy and normal
+	// indistinctly for SM so it shouldn't matter, I use piu fiesta/ex naming
+	// for directmove though, and we're just gathering basic info anyway, and
+	// most of the time all the KSF files have the same info in the #TITLE:; section
 	unsigned files = arrayKSFFileNames.size();
-	if( !LoadGlobalData(out.GetSongDir() + arrayKSFFileNames[files - 1], out, bKIUCompliant) )
+	if( !LoadGlobalData(out.GetSongDir() + arrayKSFFileNames[0], out, false) )
 		return false;
 
 	// load the Steps from the rest of the KSF files
 	for( unsigned i=0; i<files; i++ ) 
 	{
 		Steps* pNewNotes = out.CreateSteps();
-		if( !LoadFromKSFFile(out.GetSongDir() + arrayKSFFileNames[i], *pNewNotes, out, bKIUCompliant) )
+		if( !LoadFromKSFFile(out.GetSongDir() + arrayKSFFileNames[i], *pNewNotes, out, false) )
 		{
 			delete pNewNotes;
 			continue;

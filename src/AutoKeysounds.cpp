@@ -63,6 +63,10 @@ void AutoKeysounds::LoadAutoplaySoundsInto( RageSoundReader_Chain *pChain )
 				if( t >= m_ndAutoKeysoundsOnly[pn].GetNumTracks() )
 					continue;
 				int iNextRowForPlayer = iRow;
+				/* XXX: If a BMS file only has one tap note per track,
+				 * this will prevent any keysounds from loading.
+				 * This leads to failure later on.
+				 * We need a better way to prevent this. */
 				if( m_ndAutoKeysoundsOnly[pn].GetNextTapNoteRowForTrack( t, iNextRowForPlayer ) )
 					iNextRow = min( iNextRow, iNextRowForPlayer );
 			}
@@ -274,7 +278,7 @@ void AutoKeysounds::FinishLoading()
 			delete pChain;
 		}
 	}
-	ASSERT( m_pSharedSound );
+	ASSERT_M( m_pSharedSound, ssprintf("No keysounds were loaded for the song %s!", pSong->m_sMainTitle.c_str() ));
 
 	m_pSharedSound = new RageSoundReader_PitchChange( m_pSharedSound );
 	m_pSharedSound = new RageSoundReader_PostBuffering( m_pSharedSound );
