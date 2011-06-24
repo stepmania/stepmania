@@ -434,7 +434,7 @@ RString ConvertI64FormatString( const RString &sStr )
 RString ConvertI64FormatString( const RString &sStr ) { return sStr; }
 #endif
 
-/* ISO-639-1 codes: http://www.loc.gov/standards/iso639-2/langcodes.html
+/* ISO-639-1 codes: http://www.loc.gov/standards/iso639-2/php/code_list.php
  * native forms: http://people.w3.org/rishida/names/languages.html
  * We don't use 3-letter codes, so we don't bother supporting them. */
 static const LanguageInfo g_langs[] =
