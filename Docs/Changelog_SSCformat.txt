@@ -9,6 +9,9 @@ change to JSON, but it is unsure if this will be done.
 Implement .ssc at your own risk.
 ________________________________________________________________________________
 
+[v0.71] - Wolfman2000
+* Have #ATTACKS work per step as well.
+
 [v0.7] - theDtTvB, Wolfman2000
 * Split Timing officially implemented.
 * #SPEEDS tag for modified scroll speeds.

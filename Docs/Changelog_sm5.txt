@@ -17,6 +17,9 @@ StepMania 5.0 Preview 2 | 201106??
   song to use this on besides Uprock. [Wolfman2000]
 * [ScreenEdit] Fix a crash if you don't save any steps on a new song.
   [Wolfman2000]
+* [NotesLoader/WriterSSC] Add support for Step #ATTACKS. Furthermore, Song
+  Attacks (or rather, Step Attacks as it should be called now) are turned on
+  by default instead of off. [Wolfman2000]
 
 2011/06/19
 ----------

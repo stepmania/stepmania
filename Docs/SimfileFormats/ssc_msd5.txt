@@ -61,7 +61,7 @@
 #SCROLLS:;
 #FAKES:;
 #LABELS:;
-#ATTACKS:; // Not yet in use.
+#ATTACKS:;
 #OFFSET:;
 
 // actual step data
