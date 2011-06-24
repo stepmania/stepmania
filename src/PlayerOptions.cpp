@@ -712,6 +712,10 @@ bool PlayerOptions::IsEasierForSongAndSteps( Song* pSong, Steps* pSteps, PlayerN
 	// This makes songs with sparse notes easier.
 	if( m_bTransforms[TRANSFORM_ECHO] )	return true;
 	
+	// Removing attacks is easier in general.
+	if (!m_fSongAttack && !m_fRandAttack && pSong->HasAttacks())
+		return true;
+	
 	if( m_fCover )	return true;
 	if( m_fPlayerAutoPlay )	return true;
 	return false;
