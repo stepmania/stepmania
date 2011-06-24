@@ -40,6 +40,11 @@ Steps::~Steps()
 {
 }
 
+bool Steps::HasAttacks() const
+{
+	return !this->m_Attacks.empty();
+}
+
 unsigned Steps::GetHash() const
 {
 	if( parent )
@@ -463,7 +468,18 @@ public:
 	DEFINE_METHOD( IsAPlayerEdit,	IsAPlayerEdit() )
 	DEFINE_METHOD( UsesSplitTiming, UsesSplitTiming() )
 
-	static int HasSignificantTimingChanges( T* p, lua_State *L )	{ lua_pushboolean(L, p->HasSignificantTimingChanges()); return 1; }
+	static int HasSignificantTimingChanges( T* p, lua_State *L )
+	{
+		lua_pushboolean(L, p->HasSignificantTimingChanges()); 
+		return 1; 
+	}
+	
+	static int HasAttacks( T* p, lua_State *L )
+	{ 
+		lua_pushboolean(L, p->HasAttacks()); 
+		return 1; 
+	}
+	
 	
 	static int GetRadarValues( T* p, lua_State *L )
 	{
@@ -500,6 +516,7 @@ public:
 		ADD_METHOD( GetHash );
 		ADD_METHOD( GetMeter );
 		ADD_METHOD( HasSignificantTimingChanges );
+		ADD_METHOD( HasAttacks );
 		ADD_METHOD( GetRadarValues );
 		ADD_METHOD( GetTimingData );
 		//ADD_METHOD( GetSMNoteData );

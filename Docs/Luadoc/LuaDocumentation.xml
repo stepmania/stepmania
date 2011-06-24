@@ -3466,8 +3466,11 @@
 	<Function name='GetMeter' return='int' arguments=''>
 		Returns the numerical difficulty of the Steps.
 	</Function>
+	<Function name='HasAttacks' return='bool' arguments=''>
+		Returns <code>true</code> if the Steps has any attacks.
+	</Function>
         <Function name='HasSignificantTimingChanges' return='bool' arguments=''>
-               returns <code>true</code> if the song has significant timing changes.
+        	Returns <code>true</code> if the Steps pattern has significant timing changes.
         </Function>
 	<Function name='GetRadarValues' return='RadarValues' arguments='PlayerNumber pn'>
 		Returns the complete list of RadarValues for player <code>pn</code>. Use <Link class='RadarValues' function='GetValue' /> to grab a specific value.

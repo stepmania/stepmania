@@ -1380,6 +1380,7 @@
 			<Function name='GetRadarValues'/>
 			<Function name='GetStepsType'/>
 			<Function name='GetTimingData'/>
+			<Function name='HasAttacks'/>
 			<Function name='HasSignificantTimingChanges'/>
 			<Function name='IsAPlayerEdit'/>
 			<Function name='IsAnEdit'/>
