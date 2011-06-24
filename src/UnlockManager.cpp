@@ -7,6 +7,7 @@
 #include "RageUtil.h"
 #include "SongManager.h"
 #include "GameState.h"
+#include "GameConstantsAndTypes.h" // StepsTypeToString
 #include "ProfileManager.h"
 #include "Profile.h"
 #include "ThemeManager.h"
@@ -44,6 +45,7 @@ static const char *UnlockRewardTypeNames[] =
 {
 	"Song",
 	"Steps",
+	"StepsType",
 	"Course",
 	"Modifier",
 };
@@ -171,6 +173,18 @@ bool UnlockManager::StepsIsLocked( const Song *pSong, const Steps *pSteps ) cons
 	return p->IsLocked();
 }
 
+bool UnlockManager::StepsTypeIsLocked(const Song *pSong, const Steps *pSteps, const StepsType *pSType) const
+{
+	if( !PREFSMAN->m_bUseUnlockSystem )
+		return false;
+	
+	const UnlockEntry *p = FindStepsType( pSong, pSteps, pSType );
+	if( p == NULL )
+		return false;
+	
+	return p->IsLocked();
+}
+
 bool UnlockManager::ModifierIsLocked( const RString &sOneMod ) const
 {
 	if( !PREFSMAN->m_bUseUnlockSystem )
@@ -197,6 +211,19 @@ const UnlockEntry *UnlockManager::FindSteps( const Song *pSong, const Steps *pSt
 	FOREACH_CONST( UnlockEntry, m_UnlockEntries, e )
 		if( e->m_Song.ToSong() == pSong  &&  e->m_dc == pSteps->GetDifficulty() )
 			return &(*e);
+	return NULL;
+}
+
+const UnlockEntry *UnlockManager::FindStepsType(const Song *pSong,
+						const Steps *pSteps,
+						const StepsType *pSType ) const
+{
+	ASSERT( pSong && pSteps && pSType );
+	FOREACH_CONST( UnlockEntry, m_UnlockEntries, e )
+	if(e->m_Song.ToSong() == pSong && 
+	   e->m_dc == pSteps->GetDifficulty() &&
+	   e->m_StepsType == pSteps->m_StepsType)
+		return &(*e);
 	return NULL;
 }
 
@@ -309,6 +336,11 @@ bool UnlockEntry::IsValid() const
 	case UnlockRewardType_Steps:
 		return m_Song.IsValid() && m_dc != Difficulty_Invalid;
 
+	case UnlockRewardType_Steps_Type:
+	{
+		return m_Song.IsValid() && m_dc != Difficulty_Invalid && m_StepsType != StepsType_Invalid;
+	}
+			
 	case UnlockRewardType_Course:
 		return m_Course.IsValid();
 
@@ -323,7 +355,9 @@ bool UnlockEntry::IsValid() const
 
 UnlockEntryStatus UnlockEntry::GetUnlockEntryStatus() const
 {
-	if( !m_sEntryID.empty() && PROFILEMAN->GetMachineProfile()->m_UnlockedEntryIDs.find(m_sEntryID) != PROFILEMAN->GetMachineProfile()->m_UnlockedEntryIDs.end() )
+	set<RString> &ids = PROFILEMAN->GetMachineProfile()->m_UnlockedEntryIDs;
+	if(!m_sEntryID.empty() && 
+	   ids.find(m_sEntryID) != ids.end() )
 		return UnlockEntryStatus_Unlocked;
 
 	float fScores[NUM_UnlockRequirement];
@@ -367,10 +401,16 @@ RString UnlockEntry::GetDescription() const
 	case UnlockRewardType_Song:
 		return pSong ? pSong->GetDisplayFullTitle() : "";
 	case UnlockRewardType_Steps:
-		{
-			StepsType st = GAMEMAN->GetHowToPlayStyleForGame( GAMESTATE->m_pCurGame )->m_StepsType;	// TODO: Is this the best thing we can do here?
-			return (pSong ? pSong->GetDisplayFullTitle() : "") + ", " + CustomDifficultyToLocalizedString( GetCustomDifficulty(st, m_dc, CourseType_Invalid) );
-		}
+	{
+		StepsType st = GAMEMAN->GetHowToPlayStyleForGame( GAMESTATE->m_pCurGame )->m_StepsType;	// TODO: Is this the best thing we can do here?
+		return (pSong ? pSong->GetDisplayFullTitle() : "") + ", " + CustomDifficultyToLocalizedString( GetCustomDifficulty(st, m_dc, CourseType_Invalid) );
+	}
+	case UnlockRewardType_Steps_Type:
+	{
+		RString ret = (pSong ? pSong->GetDisplayFullTitle() : "");
+		ret += "," + CustomDifficultyToLocalizedString( GetCustomDifficulty(m_StepsType, m_dc, CourseType_Invalid) );
+		return ret + "," + StringConversion::ToString(m_StepsType); // yeah, bit strange.
+	}
 	case UnlockRewardType_Course:
 		return m_Course.IsValid() ? m_Course.ToCourse()->GetDisplayFullTitle() : "";
 	case UnlockRewardType_Modifier:
@@ -388,6 +428,7 @@ RString	UnlockEntry::GetBannerFile() const
 		return "";
 	case UnlockRewardType_Song:
 	case UnlockRewardType_Steps:
+	case UnlockRewardType_Steps_Type:
 		return pSong ? pSong->GetBannerPath() : "";
 	case UnlockRewardType_Course:
 		return m_Course.ToCourse() ? m_Course.ToCourse()->GetBannerPath() : "";
@@ -406,6 +447,7 @@ RString	UnlockEntry::GetBackgroundFile() const
 		return "";
 	case UnlockRewardType_Song:
 	case UnlockRewardType_Steps:
+	case UnlockRewardType_Steps_Type:
 		return pSong ? pSong->GetBackgroundPath() : "";
 	case UnlockRewardType_Course:
 		return "";
@@ -507,6 +549,30 @@ void UnlockManager::Load()
 			}
 
 			break;
+		case UnlockRewardType_Steps_Type:
+		{
+			e->m_Song.FromSong( SONGMAN->FindSong( e->m_cmd.GetArg(0).s ) );
+			if( !e->m_Song.IsValid() )
+			{
+				LOG->Warn( "Unlock: Cannot find song matching \"%s\"", e->m_cmd.GetArg(0).s.c_str() );
+				break;
+			}
+			
+			e->m_dc = StringToDifficulty( e->m_cmd.GetArg(1).s );
+			if( e->m_dc == Difficulty_Invalid )
+			{
+				LOG->Warn( "Unlock: Invalid difficulty \"%s\"", e->m_cmd.GetArg(1).s.c_str() );
+				break;
+			}
+			
+			e->m_StepsType = GAMEMAN->StringToStepsType(e->m_cmd.GetArg(2).s);
+			if (e->m_StepsType == StepsType_Invalid)
+			{
+				LOG->Warn( "Unlock: Invalid steps type \"%s\"", e->m_cmd.GetArg(2).s.c_str() );
+				break;
+			}
+			break;
+		}
 		case UnlockRewardType_Course:
 			e->m_Course.FromCourse( SONGMAN->FindCourse(e->m_cmd.GetArg(0).s) );
 			if( !e->m_Course.IsValid() )
@@ -701,6 +767,7 @@ public:
 
 	static int song( T* p, lua_State *L )	{ GetArgs( p, L ); p->m_Type = UnlockRewardType_Song; return 0; }
 	static int steps( T* p, lua_State *L )	{ GetArgs( p, L ); p->m_Type = UnlockRewardType_Steps; return 0; }
+	static int steps_type(T* p, lua_State *L) { GetArgs(p, L); p->m_Type = UnlockRewardType_Steps_Type; return 0; }
 	static int course( T* p, lua_State *L ) { GetArgs( p, L ); p->m_Type = UnlockRewardType_Course; return 0; }
 	static int mod( T* p, lua_State *L )	{ GetArgs( p, L ); p->m_Type = UnlockRewardType_Modifier; return 0; }
 	static int code( T* p, lua_State *L )	{ p->m_sEntryID = SArg(1); return 0; }
@@ -726,6 +793,7 @@ public:
 		ADD_METHOD( GetCourse );
 		ADD_METHOD( song );
 		ADD_METHOD( steps );
+		ADD_METHOD( steps_type );
 		ADD_METHOD( course );
 		ADD_METHOD( mod );
 		ADD_METHOD( code );

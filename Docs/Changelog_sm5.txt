@@ -8,7 +8,14 @@ ________________________________________________________________________________
 StepMania 5.0 Preview 2 | 201106??
 --------------------------------------------------------------------------------
 
+2011/06/24
+----------
+* [UnlockManager] Add a new unlock reward: StepsType. This is similar to
+  unlocking Steps, but it is targeted for one step in one stepstype rather
+  than one step in all stepstypes. This needs testing. [Wolfman2000]
+
 2011/06/19
+----------
 * [EditMenu] Allow all songs to work in Practice Mode, regardless of folder
   location. This fixes a crash if everyone had songs in AdditionalSongs.
   [Wolfman2000]
