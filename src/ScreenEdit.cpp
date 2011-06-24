@@ -4289,7 +4289,9 @@ void ScreenEdit::SetupCourseAttacks()
 		{
 			FOREACH(Attack, attacks, attack)
 			{
-				GAMESTATE->m_pPlayerState[PLAYER_1]->LaunchAttack( *attack );
+				float fBeat = GetAppropriateTiming().GetBeatFromElapsedTime(attack->fStartSecond);
+				if (fBeat >= GetBeat())
+					GAMESTATE->m_pPlayerState[PLAYER_1]->LaunchAttack( *attack );
 			}
 		}
 	}
