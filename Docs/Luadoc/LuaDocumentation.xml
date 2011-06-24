@@ -2350,6 +2350,9 @@
 		
 	</Function>
 	<Function name='GetSongAttacks' return='float' arguments=''>
+		This function is deprecated. Please use GetStepAttacks() instead.
+	</Function>
+	<Function name='GetStepAttacks' return='float' arguments=''>
 		
 	</Function>
 	<Function name='GetSplit' return='float' arguments=''>

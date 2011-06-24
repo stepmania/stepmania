@@ -954,6 +954,7 @@
 			<Function name='GetSkippy'/>
 			<Function name='GetSoftShuffle'/>
 			<Function name='GetSongAttacks'/>
+			<Function name='GetStepAttacks'/>
 			<Function name='GetSplit'/>
 			<Function name='GetStealth'/>
 			<Function name='GetStomp'/>
