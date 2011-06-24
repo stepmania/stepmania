@@ -822,7 +822,7 @@ void ScreenGameplay::InitSongQueues()
 			pi->m_vpStepsQueue.push_back( pSteps );
 
 			if(	pi->GetPlayerState()->m_PlayerOptions.GetCurrent().m_fSongAttack != 0 &&
-				GAMESTATE->m_pCurSong->m_Attacks.size() > 0 )
+				pSteps->m_Attacks.size() > 0 )
 			{
 				pi->m_asModifiersQueue.push_back( pSteps->m_Attacks );
 			}
