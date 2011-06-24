@@ -404,6 +404,7 @@ public:
 		shift_pauses_forward,
 		shift_pauses_backward,
 		convert_pause_to_beat,
+		convert_delay_to_beat,
 		undo,
 		clear_clipboard,
 		NUM_AREA_MENU_CHOICES

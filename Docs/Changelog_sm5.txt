@@ -13,6 +13,8 @@ StepMania 5.0 Preview 2 | 201106??
 * [UnlockManager] Add a new unlock reward: StepsType. This is similar to
   unlocking Steps, but it is targeted for one step in one stepstype rather
   than one step in all stepstypes. This needs testing. [Wolfman2000]
+* [ScreenEdit] Add the option to convert delays to beats. Just find a better
+  song to use this on besides Uprock. [Wolfman2000]
 
 2011/06/19
 ----------
