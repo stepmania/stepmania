@@ -4278,6 +4278,22 @@ void ScreenEdit::SetupCourseAttacks()
 		FOREACH( Attack, Attacks, attack )
 			GAMESTATE->m_pPlayerState[PLAYER_1]->LaunchAttack( *attack );
 	}
+	else if (GAMESTATE->m_pCurSong && 
+		 GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.GetCurrent().m_fStepAttack != 0 )
+	{
+		AttackArray &attacks = GAMESTATE->m_bIsUsingStepTiming ?
+			GAMESTATE->m_pCurSteps[PLAYER_1]->m_Attacks :
+			GAMESTATE->m_pCurSong->m_Attacks;
+		
+		if (attacks.size() > 0)
+		{
+			FOREACH(Attack, attacks, attack)
+			{
+				GAMESTATE->m_pPlayerState[PLAYER_1]->LaunchAttack( *attack );
+			}
+		}
+	}
+	
 	GAMESTATE->m_pPlayerState[PLAYER_1]->RebuildPlayerOptionsFromActiveAttacks();
 }
 
