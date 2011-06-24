@@ -344,7 +344,8 @@ bool SSCLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 				// Attacks loaded from file
 				else if( sValueName=="ATTACKS" )
 				{
-					SMLoader::ProcessAttacks( out, sParams );
+					ProcessAttackString(out.m_sAttackString, sParams);
+					ProcessAttacks(out.m_Attacks, sParams);
 				}
 
 				else if( sValueName=="OFFSET" )
@@ -559,7 +560,8 @@ bool SSCLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 				
 				else if( sValueName=="ATTACKS" )
 				{
-					// Step Attacks aren't in yet.
+					ProcessAttackString(pNewNotes->m_sAttackString, sParams);
+					ProcessAttacks(pNewNotes->m_Attacks, sParams);
 				}
 				
 				else if( sValueName=="OFFSET" )

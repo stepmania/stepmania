@@ -320,8 +320,17 @@ static RString GetSSCNoteData( const Song &song, const Steps &in, bool bSavingCa
 
 	GetTimingTags( lines, in.m_Timing );
 	
-	// For now, attacks are NOT in use for the step.
-	lines.push_back( "#ATTACKS:;" );
+	RString attacks = "";
+	for( unsigned a=0; a < in.m_sAttackString.size(); a++ )
+	{
+		RString sData = in.m_sAttackString[a];
+		attacks += sData;
+		
+		if( a != (in.m_sAttackString.size() - 1) )
+			attacks += ":"; // Not the end, so write a divider ':'
+	}
+	lines.push_back( ssprintf( "#ATTACKS:%s;", attacks.c_str()));
+	
 	lines.push_back( ssprintf( "#OFFSET:%.6f;", in.m_Timing.m_fBeat0OffsetInSeconds ) );
 	
 	RString sNoteData;

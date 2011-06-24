@@ -10,7 +10,6 @@
 #include "Song.h"
 #include "SongManager.h"
 #include "Steps.h"
-#include "Attack.h"
 #include "PrefsManager.h"
 
 void SMLoader::SetSongTitle(const RString & title)
@@ -143,19 +142,21 @@ void SMLoader::ProcessBGChanges( Song &out, const RString &sValueName, const RSt
 	}
 }
 
-void SMLoader::ProcessAttacks( Song &out, MsdFile::value_t sParams )
+void SMLoader::ProcessAttackString( vector<RString> & attacks, MsdFile::value_t params )
 {
-	// Build the RString vector here so we can write it to file again later
-	for( unsigned s=1; s < sParams.params.size(); ++s )
-		out.m_sAttackString.push_back( sParams[s] );
-	
+	for( unsigned s=1; s < params.params.size(); ++s )
+		attacks.push_back( params[s] );
+}
+
+void SMLoader::ProcessAttacks( AttackArray &attacks, MsdFile::value_t params )
+{
 	Attack attack;
 	float end = -9999;
 	
-	for( unsigned j=1; j < sParams.params.size(); ++j )
+	for( unsigned j=1; j < params.params.size(); ++j )
 	{
 		vector<RString> sBits;
-		split( sParams[j], "=", sBits, false );
+		split( params[j], "=", sBits, false );
 		
 		// Need an identifer and a value for this to work
 		if( sBits.size() < 2 )
@@ -183,7 +184,7 @@ void SMLoader::ProcessAttacks( Song &out, MsdFile::value_t sParams )
 			if( attack.fSecsRemaining < 0.0f )
 				attack.fSecsRemaining = 0.0f;
 			
-			out.m_Attacks.push_back( attack );
+			attacks.push_back( attack );
 		}
 	}
 }
@@ -913,7 +914,8 @@ bool SMLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCache
 		// Attacks loaded from file
 		else if( sValueName=="ATTACKS" )
 		{
-			ProcessAttacks( out, sParams );
+			ProcessAttackString(out.m_sAttackString, sParams);
+			ProcessAttacks(out.m_Attacks, sParams);
 		}
 
 		else if( sValueName=="NOTES" || sValueName=="NOTES2" )
