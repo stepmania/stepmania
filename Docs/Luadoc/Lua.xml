@@ -322,6 +322,7 @@
 			<Function name='bouncebegin'/>
 			<Function name='bounceend'/>
 			<Function name='clearzbuffer'/>
+			<Function name='compound'/>
 			<Function name='cropbottom'/>
 			<Function name='cropleft'/>
 			<Function name='cropright'/>
@@ -958,6 +959,7 @@
 			<Function name='GetSongAttacks'/>
 			<Function name='GetSplit'/>
 			<Function name='GetStealth'/>
+			<Function name='GetStepAttacks'/>
 			<Function name='GetStomp'/>
 			<Function name='GetSudden'/>
 			<Function name='GetSuddenOffset'/>
@@ -1384,6 +1386,7 @@
 			<Function name='GetRadarValues'/>
 			<Function name='GetStepsType'/>
 			<Function name='GetTimingData'/>
+			<Function name='HasAttacks'/>
 			<Function name='HasSignificantTimingChanges'/>
 			<Function name='IsAPlayerEdit'/>
 			<Function name='IsAnEdit'/>
