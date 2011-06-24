@@ -3750,6 +3750,9 @@
 		Sets the UnlockEntry to unlock a specified song's steps.<br />
 		Example: <code>steps,"In The Groove/Pandemonium","expert"</code>
 	</Function>
+	<Function name='steps_type' return='void' arguments='string sSong, string sSteps, string sStepsType'>
+		Sets the UnlockEntry to unlock a specified song's stepstype.
+	</Function>
 </Class>
 <Class name='UnlockManager'>
 	<Function name='AnyUnlocksToCelebrate' return='bool' arguments=''>
