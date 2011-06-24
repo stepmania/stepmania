@@ -53,7 +53,6 @@ protected:
 	Page GetPage( int iChoiceIndex ) const;
 	Page GetCurrentPage() const;
 
-	ThemeMetric<bool>	USE_TWO_SCROLLERS;
 	ThemeMetric<bool>	DO_SWITCH_ANYWAYS;
 	ThemeMetric<bool>	DOUBLE_PRESS_TO_SELECT;
 	ThemeMetric<bool>	SHOW_ICON;
@@ -68,7 +67,6 @@ protected:
 	ThemeMetric<float>	PRE_SWITCH_PAGE_SECONDS;
 	ThemeMetric<float>	POST_SWITCH_PAGE_SECONDS;
 	ThemeMetric1D<RString>	OPTION_ORDER;
-	ThemeMetric1D<RString>	OPTION_ORDER2;
 	ThemeMetric<bool>	WRAP_CURSOR;
 	ThemeMetric<bool>	WRAP_SCROLLER;
 	ThemeMetric<bool>	LOOP_SCROLLER;
