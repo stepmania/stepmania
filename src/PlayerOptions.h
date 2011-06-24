@@ -27,7 +27,7 @@ public:
 		m_fBlind(0), m_SpeedfBlind(1.0f),
 		m_fCover(0), m_SpeedfCover(1.0f),
 		m_fRandAttack(0), m_SpeedfRandAttack(1.0f),
-		m_fSongAttack(0), m_SpeedfSongAttack(1.0f),
+		m_fSongAttack(1), m_SpeedfSongAttack(1.0f),
 		m_fPlayerAutoPlay(0), m_SpeedfPlayerAutoPlay(1.0f),
 		m_bSetTiltOrSkew(false),
 		m_fPerspectiveTilt(0), m_SpeedfPerspectiveTilt(1.0f),
