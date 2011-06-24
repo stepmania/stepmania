@@ -83,6 +83,44 @@ local DropBezier =
 function Actor:drop(t)
 	self:tween( t, "TweenType_Bezier", DropBezier );
 end
+
+-- compound tweens "combine multiple interpolators to allow generating more
+-- complex tweens." length is how long to span the animation for, while
+-- ... is either a string (e.g. "linear,0.25,accelerate,0.75") or a table
+-- with the tween information.
+function Actor:compound(length,...)
+	local tweens = ...
+
+	if type(tweens) == "string" then
+		local parsed = split(";",tweens)
+		tweens = {} -- convert to table
+		for i,s in pairs(parsed) do
+			local res = split(",",s)
+
+			tweens[i] = {
+				Type = res[1],
+				Percent = res[2],
+				Bezier = res[3] or nil
+			}
+		end
+	end
+
+	for i,t in pairs(tweens) do
+		if t.Type == "linear" then self:linear(t.Percent*length)
+		elseif t.Type == "accelerate" then self:accelerate(t.Percent*length)
+		elseif t.Type == "decelerate" then self:decelerate(t.Percent*length)
+		elseif t.Type == "spring" then self:spring(t.Percent*length)
+		elseif t.Type == "bouncebegin" then self:bouncebegin(t.Percent*length)
+		elseif t.Type == "bounceend" then self:bounceend(t.Percent*length)
+		elseif t.Type == "smooth" then self:smooth(t.Percent*length)
+		elseif t.Type == "drop" then self:smooth(t.Percent*length)
+		--elseif t.Type == "ease" then self:ease(t.Percent*length)
+		elseif t.Type == "bezier" then
+			-- todo: handle using tween and 'TweenType_Bezier'
+		end
+	end
+end
+
 -- Hide if b is true, but don't unhide if b is false.
 function Actor:hide_if(b)
 	if b then
