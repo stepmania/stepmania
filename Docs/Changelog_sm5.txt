@@ -15,6 +15,8 @@ StepMania 5.0 Preview 2 | 201106??
   than one step in all stepstypes. This needs testing. [Wolfman2000]
 * [ScreenEdit] Add the option to convert delays to beats. Just find a better
   song to use this on besides Uprock. [Wolfman2000]
+* [ScreenEdit] Fix a crash if you don't save any steps on a new song.
+  [Wolfman2000]
 
 2011/06/19
 ----------

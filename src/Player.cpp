@@ -960,8 +960,10 @@ void Player::Update( float fDeltaTime )
 	UpdateJudgedRows();
 
 	// Check for TapNote misses
-	UpdateTapNotesMissedOlderThan( GetMaxStepDistanceSeconds() );
-
+	if (!GAMESTATE->m_bInStepEditor)
+	{
+		UpdateTapNotesMissedOlderThan( GetMaxStepDistanceSeconds() );
+	}
 	// process transforms that are waiting to be applied
 	ApplyWaitingTransforms();
 }
