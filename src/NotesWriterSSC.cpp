@@ -329,7 +329,8 @@ static RString GetSSCNoteData( const Song &song, const Steps &in, bool bSavingCa
 		if( a != (in.m_sAttackString.size() - 1) )
 			attacks += ":"; // Not the end, so write a divider ':'
 	}
-	lines.push_back( ssprintf( "#ATTACKS%s;", attacks.c_str()));
+	Trim(attacks, ":"); // just in case something screwy happens.
+	lines.push_back( ssprintf( "#ATTACKS:%s;", attacks.c_str()));
 	
 	lines.push_back( ssprintf( "#OFFSET:%.6f;", in.m_Timing.m_fBeat0OffsetInSeconds ) );
 	

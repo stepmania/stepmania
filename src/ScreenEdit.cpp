@@ -3525,6 +3525,12 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 
 				// copy edit into current Steps
 				m_pSteps->SetNoteData( m_NoteDataEdit );
+				
+				// don't forget the attacks.
+				m_pSong->m_Attacks = GAMESTATE->m_pCurSong->m_Attacks;
+				m_pSong->m_sAttackString = GAMESTATE->m_pCurSong->m_Attacks.ToVectorString();
+				m_pSteps->m_Attacks = GAMESTATE->m_pCurSteps[PLAYER_1]->m_Attacks;
+				m_pSteps->m_sAttackString = GAMESTATE->m_pCurSteps[PLAYER_1]->m_Attacks.ToVectorString();
 
 				switch( EDIT_MODE.GetValue() )
 				{
