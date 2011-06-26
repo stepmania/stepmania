@@ -12,7 +12,7 @@ StepMania 5.0 Preview 2 | 201106??
 ----------
 * [UnlockManager] New metric: AutoLockEditSteps. Use this to hide bonus charts
   until the Expert steps are beaten. No guarantee that this works with no
-  challenge steps in the song. [Wolfman2000]
+  challenge steps in the song. This defaults to false. [Wolfman2000]
 * [UnlockManager] New metric: SongsNotAdditional. Set to true to keep the
   default behavior, false to have the AdditionalSongs folder contain
   unlockable material. This is set to true to start. [Wolfman2000]
