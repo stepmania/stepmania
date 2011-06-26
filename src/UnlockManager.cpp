@@ -25,6 +25,7 @@ UnlockManager*	UNLOCKMAN = NULL;	// global and accessable from anywhere in our p
 #define UNLOCK(x)		THEME->GetMetricR("UnlockManager", ssprintf("Unlock%sCommand",x.c_str()));
 
 static ThemeMetric<bool> AUTO_LOCK_CHALLENGE_STEPS( "UnlockManager", "AutoLockChallengeSteps" );
+static ThemeMetric<bool> AUTO_LOCK_EDIT_STEPS( "UnlockManager", "AutoLockEditSteps" );
 
 static const char *UnlockRequirementNames[] =
 {
@@ -386,6 +387,21 @@ UnlockEntryStatus UnlockEntry::GetUnlockEntryStatus() const
 			if( PROFILEMAN->GetMachineProfile()->HasPassedSteps(pSong, *s) )
 				return UnlockEntryStatus_RequirementsMet;
 	}
+	
+	if (m_bRequirePassChallengeSteps && m_Song.IsValid())
+	{
+		Song *pSong = m_Song.ToSong();
+		vector<Steps*> vp;
+		SongUtil::GetSteps(pSong,
+				   vp,
+				   StepsType_Invalid,
+				   Difficulty_Challenge);
+		FOREACH_CONST(Steps*, vp, s)
+		{
+			if (PROFILEMAN->GetMachineProfile()->HasPassedSteps(pSong, *s))
+				return UnlockEntryStatus_RequirementsMet;
+		}
+	}
 
 	return UnlockEntryStatus_RequrementsNotMet;
 }
@@ -516,6 +532,33 @@ void UnlockManager::Load()
 			m_UnlockEntries.push_back( ue );
 		}
 	}
+	
+	if (AUTO_LOCK_EDIT_STEPS)
+	{
+		FOREACH_CONST( Song*, SONGMAN->GetAllSongs(), s )
+		{
+			// no challenge steps to play: skip.
+			if (SongUtil::GetOneSteps(*s, StepsType_Invalid, Difficulty_Challenge) == NULL)
+				continue;
+			
+			// no edit steps to unlock: skip.
+			if (SongUtil::GetOneSteps(*s, StepsType_Invalid, Difficulty_Edit) == NULL)
+				continue;
+			
+			// don't add additional songs.
+			if (SONGMAN->WasLoadedFromAdditionalSongs(*s))
+				continue;
+			
+			UnlockEntry ue;
+			ue.m_sEntryID = "_edit_" + (*s)->GetSongDir();
+			ue.m_Type = UnlockRewardType_Steps;
+			ue.m_cmd.Load( (*s)->m_sGroupName+"/"+(*s)->GetTranslitFullTitle()+",edit" );
+			ue.m_bRequirePassChallengeSteps = true;
+			
+			m_UnlockEntries.push_back(ue);
+			
+		}
+	}
 
 	// Make sure that we don't have duplicate unlock IDs. This can cause problems
 	// with UnlockCelebrate and with codes.
@@ -595,6 +638,8 @@ void UnlockManager::Load()
 				str += ssprintf( "%s = %f; ", UnlockRequirementToString(j).c_str(), e->m_fRequirement[j] );
 		if( e->m_bRequirePassHardSteps )
 			str += "RequirePassHardSteps; ";
+		if (e->m_bRequirePassChallengeSteps)
+			str += "RequirePassChallengeSteps; ";
 
 		str += ssprintf( "entryID = %s ", e->m_sEntryID.c_str() );
 		str += e->IsLocked()? "locked":"unlocked";
@@ -737,6 +782,11 @@ public:
 	static int GetUnlockRewardType( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_Type ); return 1; }
 	static int GetRequirement( T* p, lua_State *L )		{ UnlockRequirement i = Enum::Check<UnlockRequirement>( L, 1 ); lua_pushnumber(L, p->m_fRequirement[i] ); return 1; }
 	static int GetRequirePassHardSteps( T* p, lua_State *L ){ lua_pushboolean(L, p->m_bRequirePassHardSteps); return 1; }
+	static int GetRequirePassChallengeSteps( T* p, lua_State *L )
+	{ 
+		lua_pushboolean(L, p->m_bRequirePassChallengeSteps);
+		return 1;
+	}
 	static int GetSong( T* p, lua_State *L )
 	{
 		Song *pSong = p->m_Song.ToSong();
@@ -789,6 +839,7 @@ public:
 		ADD_METHOD( GetUnlockRewardType );
 		ADD_METHOD( GetRequirement );
 		ADD_METHOD( GetRequirePassHardSteps );
+		ADD_METHOD( GetRequirePassChallengeSteps );
 		ADD_METHOD( GetSong );
 		ADD_METHOD( GetCourse );
 		ADD_METHOD( song );

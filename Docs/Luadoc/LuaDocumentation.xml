@@ -3720,6 +3720,9 @@
 	<Function name='GetRequirePassHardSteps' return='bool' arguments=''>
 		Returns <code>true</code> if the UnlockEntry requires you to pass Hard steps.
 	</Function>
+	<Function name='GetRequirePassChallengeSteps' return='bool' arguments=''>
+		Returns <code>true</code> if the UnlockEntry requires you to pass Challenge steps.
+	</Function>
 	<Function name='GetSong' return='Song' arguments=''>
 		Returns the Song related to the UnlockEntry.
 	</Function>

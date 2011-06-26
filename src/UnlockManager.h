@@ -63,7 +63,8 @@ public:
 	UnlockEntry(): m_Type(UnlockRewardType_Invalid), m_cmd(),
 		m_Song(), m_dc(Difficulty_Invalid), m_Course(),
 		m_StepsType(StepsType_Invalid), m_bRequirePassHardSteps(false),
-		m_bRoulette(false), m_sEntryID(RString(""))
+		m_bRequirePassChallengeSteps(false), m_bRoulette(false),
+		m_sEntryID(RString(""))
 	{
 		ZERO( m_fRequirement );
 	}
@@ -79,7 +80,10 @@ public:
 	StepsType m_StepsType;
 
 	float	m_fRequirement[NUM_UnlockRequirement];	// unlocked if any of of these are met
+	/** @brief Must the hard steps be passed to unlock a higher level? */
 	bool	m_bRequirePassHardSteps;
+	/** @brief Must the challenge steps be passed to unlock a higher level? */
+	bool	m_bRequirePassChallengeSteps;
 	bool	m_bRoulette;
 	RString	m_sEntryID;
 
