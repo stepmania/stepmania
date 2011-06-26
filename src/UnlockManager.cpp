@@ -26,6 +26,7 @@ UnlockManager*	UNLOCKMAN = NULL;	// global and accessable from anywhere in our p
 
 static ThemeMetric<bool> AUTO_LOCK_CHALLENGE_STEPS( "UnlockManager", "AutoLockChallengeSteps" );
 static ThemeMetric<bool> AUTO_LOCK_EDIT_STEPS( "UnlockManager", "AutoLockEditSteps" );
+static ThemeMetric<bool> SONGS_NOT_ADDITIONAL( "UnlockManager", "SongsNotAdditional" );
 
 static const char *UnlockRequirementNames[] =
 {
@@ -520,7 +521,7 @@ void UnlockManager::Load()
 			if( SongUtil::GetOneSteps(*s, StepsType_Invalid, Difficulty_Challenge) == NULL )
 				continue;
 
-			if( SONGMAN->WasLoadedFromAdditionalSongs(*s) )
+			if( SONGS_NOT_ADDITIONAL && SONGMAN->WasLoadedFromAdditionalSongs(*s) )
 				continue;
 				
 			UnlockEntry ue;			
@@ -546,7 +547,7 @@ void UnlockManager::Load()
 				continue;
 			
 			// don't add additional songs.
-			if (SONGMAN->WasLoadedFromAdditionalSongs(*s))
+			if (SONGS_NOT_ADDITIONAL && SONGMAN->WasLoadedFromAdditionalSongs(*s))
 				continue;
 			
 			UnlockEntry ue;
