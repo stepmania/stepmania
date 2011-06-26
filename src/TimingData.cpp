@@ -1026,149 +1026,43 @@ void TimingData::ScaleRegion( float fScale, int iStartIndex, int iEndIndex, bool
 	ASSERT( iStartIndex >= 0 );
 	ASSERT( iStartIndex < iEndIndex );
 	
+	int length = iEndIndex - iStartIndex;
+	int newLength = lrintf( fScale * length );
+	
 	for ( unsigned i = 0; i < m_BPMSegments.size(); i++ )
-	{
-		BPMSegment &b = m_BPMSegments[i];
-		const int iSegStart = b.GetRow();
-		if( iSegStart < iStartIndex )
-			continue;
-		else if( iSegStart > iEndIndex )
-			b.SetRow( b.GetRow() + lrintf( (iEndIndex - iStartIndex) * (fScale - 1) ) );
-		else
-			b.SetRow( lrintf( (iSegStart - iStartIndex) * fScale ) + iStartIndex );
-	}
+		m_BPMSegments[i].Scale( iStartIndex, length, newLength );
 	
 	for( unsigned i = 0; i < m_StopSegments.size(); i++ )
-	{
-		StopSegment &s = m_StopSegments[i];
-		const int iSegStartRow = s.GetRow();
-		if( iSegStartRow < iStartIndex )
-			continue;
-		else if( iSegStartRow > iEndIndex )
-			s.SetRow(s.GetRow() + lrintf((iEndIndex - iStartIndex) * (fScale - 1)));
-		else
-			s.SetRow(lrintf((iSegStartRow - iStartIndex) * fScale) + iStartIndex);
-	}
+		m_StopSegments[i].Scale( iStartIndex, length, newLength );
 	
 	for( unsigned i = 0; i < m_vTimeSignatureSegments.size(); i++ )
-	{
-		TimeSignatureSegment &t = m_vTimeSignatureSegments[i];
-		const int iSegStartRow = t.GetRow();
-		if( iSegStartRow < iStartIndex )
-			continue;
-		else if( iSegStartRow > iEndIndex )
-			t.SetRow(t.GetRow() + lrintf((iEndIndex - iStartIndex) * (fScale - 1)));
-		else
-			t.SetRow(lrintf((iSegStartRow - iStartIndex) * fScale) + iStartIndex);
-	}
+		m_vTimeSignatureSegments[i].Scale( iStartIndex, length, newLength );
 	
 	for( unsigned i = 0; i < m_WarpSegments.size(); i++ )
-	{
-		WarpSegment &w = m_WarpSegments[i];
-		const int iSegStartRow = w.GetRow();
-		const int iSegEndRow = iSegStartRow + BeatToNoteRow( w.GetLength() );
-		if( iSegEndRow >= iStartIndex )
-		{
-			if( iSegEndRow > iEndIndex )
-				w.SetLength(w.GetLength() +
-					    NoteRowToBeat(lrintf((iEndIndex - iStartIndex) * (fScale - 1))));
-			else
-				w.SetLength(NoteRowToBeat(lrintf((iSegEndRow - iStartIndex) * fScale)));
-		}
-		if( iSegStartRow < iStartIndex )
-			continue;
-		else if( iSegStartRow > iEndIndex )
-			w.SetRow(w.GetRow() + lrintf((iEndIndex - iStartIndex) * (fScale - 1)));
-		else
-			w.SetRow(lrintf((iSegStartRow - iStartIndex) * fScale) + iStartIndex);
-	}
+		m_WarpSegments[i].Scale( iStartIndex, length, newLength );
 	
 	for ( unsigned i = 0; i < m_TickcountSegments.size(); i++ )
-	{
-		TickcountSegment &t = m_TickcountSegments[i];
-		const int iSegStart = t.GetRow();
-		if( iSegStart < iStartIndex )
-			continue;
-		else if( iSegStart > iEndIndex )
-			t.SetRow(t.GetRow() + lrintf( (iEndIndex - iStartIndex) * (fScale - 1) ));
-		else
-			t.SetRow(lrintf( (iSegStart - iStartIndex) * fScale ) + iStartIndex);
-	}
+		m_TickcountSegments[i].Scale( iStartIndex, length, newLength );
 	
 	for ( unsigned i = 0; i < m_ComboSegments.size(); i++ )
-	{
-		ComboSegment &c = m_ComboSegments[i];
-		const int iSegStart = c.GetRow();
-		if( iSegStart < iStartIndex )
-			continue;
-		else if( iSegStart > iEndIndex )
-			c.SetRow(c.GetRow() + lrintf( (iEndIndex - iStartIndex) * (fScale - 1) ));
-		else
-			c.SetRow(lrintf( (iSegStart - iStartIndex) * fScale ) + iStartIndex);
-	}
+		m_ComboSegments[i].Scale( iStartIndex, length, newLength );
 	
 	for ( unsigned i = 0; i < m_LabelSegments.size(); i++ )
-	{
-		LabelSegment &l = m_LabelSegments[i];
-		const int iSegStart = l.GetRow();
-		if( iSegStart < iStartIndex )
-			continue;
-		else if( iSegStart > iEndIndex )
-			l.SetRow(l.GetRow() + lrintf( (iEndIndex - iStartIndex) * (fScale - 1) ));
-		else
-			l.SetRow(lrintf( (iSegStart - iStartIndex) * fScale ) + iStartIndex);
-	}
+		m_LabelSegments[i].Scale( iStartIndex, length, newLength );
 	
 	for ( unsigned i = 0; i < m_SpeedSegments.size(); i++ )
-	{
-		SpeedSegment &s = m_SpeedSegments[i];
-		const int iSegStart = s.GetRow();
-		if( iSegStart < iStartIndex )
-			continue;
-		else if( iSegStart > iEndIndex )
-			s.SetRow(s.GetRow() + lrintf( (iEndIndex - iStartIndex) * (fScale - 1) ));
-		else
-			s.SetRow(lrintf( (iSegStart - iStartIndex) * fScale ) + iStartIndex);
-	}
+		m_SpeedSegments[i].Scale( iStartIndex, length, newLength );
 	
 	for( unsigned i = 0; i < m_FakeSegments.size(); i++ )
-	{
-		FakeSegment &f = m_FakeSegments[i];
-		const int iSegStartRow = f.GetRow();
-		const int iSegEndRow = iSegStartRow + BeatToNoteRow( f.GetLength() );
-		if( iSegEndRow >= iStartIndex )
-		{
-			if( iSegEndRow > iEndIndex )
-				f.SetLength(f.GetLength() 
-					    + NoteRowToBeat(lrintf((iEndIndex - iStartIndex) * (fScale - 1))));
-			else
-				f.SetLength(NoteRowToBeat(lrintf((iSegEndRow - iStartIndex) * fScale)));
-		}
-		if( iSegStartRow < iStartIndex )
-			continue;
-		else if( iSegStartRow > iEndIndex )
-			f.SetRow(f.GetRow() 
-				 + lrintf((iEndIndex - iStartIndex) * (fScale - 1)));
-		else
-			f.SetRow(lrintf((iSegStartRow - iStartIndex) * fScale) + iStartIndex);
-	}
+		m_FakeSegments[i].Scale( iStartIndex, length, newLength );
 	
 	for( unsigned i = 0; i < m_ScrollSegments.size(); i++ )
-	{
-		ScrollSegment &s = m_ScrollSegments[i];
-		const int iSegStartRow = s.GetRow();
-		if( iSegStartRow < iStartIndex )
-			continue;
-		else if( iSegStartRow > iEndIndex )
-			s.SetRow(s.GetRow() + lrintf((iEndIndex - iStartIndex) * (fScale - 1)));
-		else
-			s.SetRow(lrintf((iSegStartRow - iStartIndex) * fScale) + iStartIndex);
-	}
+		m_ScrollSegments[i].Scale( iStartIndex, length, newLength );
 	
 	// adjust BPM changes to preserve timing
 	if( bAdjustBPM )
 	{
-		int iNewEndIndex = lrintf( (iEndIndex - iStartIndex) * fScale ) + iStartIndex;
+		int iNewEndIndex = iStartIndex + newLength;
 		float fEndBPMBeforeScaling = GetBPMAtRow(iNewEndIndex);
 		
 		// adjust BPM changes "between" iStartIndex and iNewEndIndex
@@ -1186,7 +1080,6 @@ void TimingData::ScaleRegion( float fScale, int iStartIndex, int iEndIndex, bool
 		// set BPM at iStartIndex and iNewEndIndex.
 		SetBPMAtRow( iStartIndex, GetBPMAtRow(iStartIndex) * fScale );
 		SetBPMAtRow( iNewEndIndex, fEndBPMBeforeScaling );
-		
 	}
 	
 }

@@ -5,7 +5,6 @@
 
 BaseTimingSegment::~BaseTimingSegment() {}
 
-
 void BaseTimingSegment::SetRow(const int s)
 {
 	this->startingRow = s;
@@ -26,6 +25,11 @@ float BaseTimingSegment::GetBeat() const
 	return NoteRowToBeat(GetRow());
 }
 
+void BaseTimingSegment::Scale( int start, int length, int newLength )
+{
+	SetRow( ScalePosition( start, length, newLength, GetRow() ) );
+}
+
 
 /* ======================================================
    Here comes the actual timing segments implementation!! */
@@ -38,6 +42,16 @@ float FakeSegment::GetLength() const
 void FakeSegment::SetLength(const float b)
 {
 	this->lengthBeats = b;
+}
+
+void FakeSegment::Scale( int start, int length, int newLength )
+{
+	float startBeat    = GetBeat();
+	float endBeat      = startBeat + GetLength();
+	float newStartBeat = ScalePosition( NoteRowToBeat(start), NoteRowToBeat(length), NoteRowToBeat(newLength), startBeat );
+	float newEndBeat   = ScalePosition( NoteRowToBeat(start), NoteRowToBeat(length), NoteRowToBeat(newLength), endBeat );
+	SetLength( newEndBeat - newStartBeat );
+	TimingSegment<FakeSegment>::Scale( start, length, newLength );
 }
 
 bool FakeSegment::operator<( const FakeSegment &other ) const
@@ -60,8 +74,19 @@ void WarpSegment::SetLength(const float b)
 	this->lengthBeats = b;
 }
 
+void WarpSegment::Scale( int start, int length, int newLength )
+{
+	// XXX: this function is duplicated, there should be a better way
+	float startBeat    = GetBeat();
+	float endBeat      = startBeat + GetLength();
+	float newStartBeat = ScalePosition( NoteRowToBeat(start), NoteRowToBeat(length), NoteRowToBeat(newLength), startBeat );
+	float newEndBeat   = ScalePosition( NoteRowToBeat(start), NoteRowToBeat(length), NoteRowToBeat(newLength), endBeat );
+	SetLength( newEndBeat - newStartBeat );
+	TimingSegment<WarpSegment>::Scale( start, length, newLength );
+}
+
 bool WarpSegment::operator<( const WarpSegment &other ) const
-{ 
+{
 	LTCOMPARE(GetRow());
 	LTCOMPARE(GetLength());
 	return false;
