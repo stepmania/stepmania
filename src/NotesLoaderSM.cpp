@@ -145,7 +145,11 @@ void SMLoader::ProcessBGChanges( Song &out, const RString &sValueName, const RSt
 void SMLoader::ProcessAttackString( vector<RString> & attacks, MsdFile::value_t params )
 {
 	for( unsigned s=1; s < params.params.size(); ++s )
-		attacks.push_back( params[s] );
+	{
+		RString tmp = params[s];
+		Trim(tmp);
+		attacks.push_back( tmp );
+	}
 }
 
 void SMLoader::ProcessAttacks( AttackArray &attacks, MsdFile::value_t params )
@@ -173,6 +177,7 @@ void SMLoader::ProcessAttacks( AttackArray &attacks, MsdFile::value_t params )
 			end = strtof( sBits[1], NULL );
 		else if( !sBits[0].CompareNoCase("MODS") )
 		{
+			Trim(sBits[1]);
 			attack.sModifiers = sBits[1];
 			
 			if( end != -9999 )
