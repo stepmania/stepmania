@@ -1658,6 +1658,9 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			// don't keep undo when changing Steps
 			ClearUndo();
 
+			// get the second of the current step.
+			float curSecond = GetAppropriateTiming().GetElapsedTimeFromBeat(GetBeat());
+			
 			// save current steps
 			Steps* pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
 			ASSERT( pSteps );
@@ -1710,6 +1713,8 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 				int(vSteps.size()) );
 			SCREENMAN->SystemMessage( s );
 			m_soundSwitchSteps.Play();
+			
+			ScrollTo( GetAppropriateTiming().GetBeatFromElapsedTime(curSecond) );
 		}
 		break;
 	case EDIT_BUTTON_BPM_UP:
