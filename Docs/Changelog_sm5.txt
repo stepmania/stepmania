@@ -8,6 +8,12 @@ ________________________________________________________________________________
 StepMania 5.0 Preview 2 | 201106??
 --------------------------------------------------------------------------------
 
+2011/06/26
+----------
+* [UnlockManager] New metric: AutoLockEditSteps. Use this to hide bonus charts
+  until the Expert steps are beaten. No guarantee that this works with no
+  challenge steps in the song. [Wolfman2000]
+
 2011/06/24
 ----------
 * [Actor] Implement compound(length,tweens) in _fallback/02 Actor.lua. [AJ]
