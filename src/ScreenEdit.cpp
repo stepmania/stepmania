@@ -146,13 +146,13 @@ void ScreenEdit::InitEditMappings()
 	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SCROLL_NEXT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_PERIOD);
 	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SCROLL_PREV][0] = DeviceInput(DEVICE_KEYBOARD, KEY_COMMA);
 
-	m_EditMappingsDeviceInput.button[EDIT_BUTTON_LABEL_NEXT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_PERIOD);
-	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_LABEL_NEXT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL);
-	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_LABEL_NEXT][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL);
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SEGMENT_NEXT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_PERIOD);
+	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_SEGMENT_NEXT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL);
+	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_SEGMENT_NEXT][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL);
 	
-	m_EditMappingsDeviceInput.button[EDIT_BUTTON_LABEL_PREV][0] = DeviceInput(DEVICE_KEYBOARD, KEY_COMMA);
-	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_LABEL_PREV][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL);
-	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_LABEL_PREV][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL);
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SEGMENT_PREV][0] = DeviceInput(DEVICE_KEYBOARD, KEY_COMMA);
+	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_SEGMENT_PREV][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL);
+	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_SEGMENT_PREV][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL);
 	
 	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SCROLL_SELECT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT);
 	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SCROLL_SELECT][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT);
@@ -277,6 +277,14 @@ void ScreenEdit::InitEditMappings()
 	m_EditMappingsDeviceInput.button[EDIT_BUTTON_CYCLE_TAP_LEFT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cn);
 	m_EditMappingsDeviceInput.button[EDIT_BUTTON_CYCLE_TAP_RIGHT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cm);
 
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_CYCLE_SEGMENT_LEFT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cn);
+	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_CYCLE_SEGMENT_LEFT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL);
+	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_CYCLE_SEGMENT_LEFT][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL);
+	
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_CYCLE_SEGMENT_RIGHT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cm);
+	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_CYCLE_SEGMENT_RIGHT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL);
+	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_CYCLE_SEGMENT_RIGHT][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL);
+	
 	m_EditMappingsDeviceInput.button    [EDIT_BUTTON_SCROLL_SPEED_UP][0] = DeviceInput(DEVICE_KEYBOARD, KEY_UP);
 	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_SCROLL_SPEED_UP][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL);
 	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_SCROLL_SPEED_UP][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL);
@@ -772,6 +780,8 @@ void ScreenEdit::Init()
 	ScreenWithMenuElements::Init();
 
 	InitEditMappings();
+	
+	currentCycleSegment = "label";
 
 	// save the originals for reverting later
 	CopyToLastSave();
@@ -1103,6 +1113,7 @@ static LocalizedString CHART_STYLE("ScreenEdit", "Chart Style");
 static LocalizedString MAIN_TITLE("ScreenEdit", "Main title");
 static LocalizedString SUBTITLE("ScreenEdit", "Subtitle");
 static LocalizedString TAP_NOTE_TYPE("ScreenEdit", "Tap Note");
+static LocalizedString SEGMENT_TYPE("ScreenEdit", "Segment");
 static LocalizedString TAP_STEPS("ScreenEdit", "Tap Steps");
 static LocalizedString JUMPS("ScreenEdit", "Jumps");
 static LocalizedString HANDS("ScreenEdit", "Hands");
@@ -1131,6 +1142,7 @@ static ThemeMetric<RString> CHART_STYLE_FORMAT("ScreenEdit", "ChartStyleFormat")
 static ThemeMetric<RString> MAIN_TITLE_FORMAT("ScreenEdit", "MainTitleFormat");
 static ThemeMetric<RString> SUBTITLE_FORMAT("ScreenEdit", "SubtitleFormat");
 static ThemeMetric<RString> TAP_NOTE_TYPE_FORMAT("ScreenEdit", "TapNoteTypeFormat");
+static ThemeMetric<RString> SEGMENT_TYPE_FORMAT("ScreenEdit", "SegmentTypeFormat");
 static ThemeMetric<RString> NUM_STEPS_FORMAT("ScreenEdit", "NumStepsFormat");
 static ThemeMetric<RString> NUM_JUMPS_FORMAT("ScreenEdit", "NumJumpsFormat");
 static ThemeMetric<RString> NUM_HOLDS_FORMAT("ScreenEdit", "NumHoldsFormat");
@@ -1200,8 +1212,9 @@ void ScreenEdit::UpdateTextInfo()
 		sText += ssprintf( MAIN_TITLE_FORMAT.GetValue(), MAIN_TITLE.GetValue().c_str(), m_pSong->m_sMainTitle.c_str() );
 		if( m_pSong->m_sSubTitle.size() )
 			sText += ssprintf( SUBTITLE_FORMAT.GetValue(), SUBTITLE.GetValue().c_str(), m_pSong->m_sSubTitle.c_str() );
+		sText += ssprintf( SEGMENT_TYPE_FORMAT.GetValue(), SEGMENT_TYPE.GetValue().c_str(), currentCycleSegment.c_str() );
 		sText += ssprintf( TAP_NOTE_TYPE_FORMAT.GetValue(), TAP_NOTE_TYPE.GetValue().c_str(), TapNoteTypeToString( m_selectedTap.type ).c_str() );
-		break;
+			break;
 	}
 	
 	GAMESTATE->SetProcessedTimingData(&m_pSteps->m_Timing);
@@ -1457,6 +1470,62 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			}
 			break;
 		}
+	case EDIT_BUTTON_CYCLE_SEGMENT_LEFT:
+	{
+		if (this->currentCycleSegment == "label")
+			this->currentCycleSegment = "fake";
+		else if (this->currentCycleSegment == "fake")
+			this->currentCycleSegment = "scroll";
+		else if (this->currentCycleSegment == "scroll")
+			this->currentCycleSegment = "speed";
+		else if (this->currentCycleSegment == "speed")
+			this->currentCycleSegment = "combo";
+		else if (this->currentCycleSegment == "combo")
+			this->currentCycleSegment = "tickcount";
+		else if (this->currentCycleSegment == "tickcount")
+			this->currentCycleSegment = "timeSig";
+		else if (this->currentCycleSegment == "timeSig")
+			this->currentCycleSegment = "warp";
+		else if (this->currentCycleSegment == "warp")
+			this->currentCycleSegment = "delay";
+		else if (this->currentCycleSegment == "delay")
+			this->currentCycleSegment = "stop";
+		else if (this->currentCycleSegment == "stop")
+			this->currentCycleSegment = "bpm";
+		else if (this->currentCycleSegment == "bpm")
+			this->currentCycleSegment = "label";
+		// fallback gracefully instead of assert.
+		else this->currentCycleSegment = "label";
+		break;
+	}		
+	case EDIT_BUTTON_CYCLE_SEGMENT_RIGHT:
+	{
+		if (this->currentCycleSegment == "label")
+			this->currentCycleSegment = "bpm";
+		else if (this->currentCycleSegment == "bpm")
+			this->currentCycleSegment = "stop";
+		else if (this->currentCycleSegment == "stop")
+			this->currentCycleSegment = "delay";
+		else if (this->currentCycleSegment == "delay")
+			this->currentCycleSegment = "warp";
+		else if (this->currentCycleSegment == "warp")
+			this->currentCycleSegment = "timeSig";
+		else if (this->currentCycleSegment == "timeSig")
+			this->currentCycleSegment = "tickcount";
+		else if (this->currentCycleSegment == "tickcount")
+			this->currentCycleSegment = "combo";
+		else if (this->currentCycleSegment == "combo")
+			this->currentCycleSegment = "speed";
+		else if (this->currentCycleSegment == "speed")
+			this->currentCycleSegment = "scroll";
+		else if (this->currentCycleSegment == "scroll")
+			this->currentCycleSegment = "fake";
+		else if (this->currentCycleSegment == "fake")
+			this->currentCycleSegment = "label";
+		// fallback gracefully instead of assert.
+		else this->currentCycleSegment = "label";
+		break;
+	}
 	case EDIT_BUTTON_SCROLL_SPEED_UP:
 	case EDIT_BUTTON_SCROLL_SPEED_DOWN:
 		{
@@ -1571,16 +1640,60 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			ScrollTo( NoteRowToBeat(iRow) );
 		}
 		break;
-	case EDIT_BUTTON_LABEL_NEXT:
-		{
-			ScrollTo( GetAppropriateTiming().GetNextLabelSegmentBeatAtBeat( GetBeat() ) );
-		}
-		break;
-	case EDIT_BUTTON_LABEL_PREV:
-		{
-			ScrollTo( GetAppropriateTiming().GetPreviousLabelSegmentBeatAtBeat( GetBeat() ) );
-		}
-		break;
+	case EDIT_BUTTON_SEGMENT_NEXT:
+	{
+		TimingData &timing = GetAppropriateTiming();
+		if (this->currentCycleSegment == "label")
+			ScrollTo(timing.GetNextLabelSegmentBeatAtBeat(GetBeat()));
+		else if (this->currentCycleSegment == "bpm")
+			ScrollTo(timing.GetNextBPMSegmentBeatAtBeat(GetBeat()));
+		else if (this->currentCycleSegment == "stop")
+			ScrollTo(timing.GetNextStopSegmentBeatAtBeat(GetBeat()));
+		else if (this->currentCycleSegment == "delay")
+			ScrollTo(timing.GetNextDelaySegmentBeatAtBeat(GetBeat()));
+		else if (this->currentCycleSegment == "warp")
+			ScrollTo(timing.GetNextWarpSegmentBeatAtBeat(GetBeat()));
+		else if (this->currentCycleSegment == "timeSig")
+			ScrollTo(timing.GetNextTimeSignatureSegmentBeatAtBeat(GetBeat()));
+		else if (this->currentCycleSegment == "tickcount")
+			ScrollTo(timing.GetNextTickcountSegmentBeatAtBeat(GetBeat()));
+		else if (this->currentCycleSegment == "combo")
+			ScrollTo(timing.GetNextComboSegmentBeatAtBeat(GetBeat()));
+		else if (this->currentCycleSegment == "speed")
+			ScrollTo(timing.GetNextSpeedSegmentBeatAtBeat(GetBeat()));
+		else if (this->currentCycleSegment == "scroll")
+			ScrollTo(timing.GetNextScrollSegmentBeatAtBeat(GetBeat()));
+		else if (this->currentCycleSegment == "fake")
+			ScrollTo(timing.GetNextFakeSegmentBeatAtBeat(GetBeat()));
+	}
+	break;
+	case EDIT_BUTTON_SEGMENT_PREV:
+	{
+		TimingData &timing = GetAppropriateTiming();
+		if (this->currentCycleSegment == "label")
+			ScrollTo(timing.GetPreviousLabelSegmentBeatAtBeat(GetBeat()));
+		else if (this->currentCycleSegment == "bpm")
+			ScrollTo(timing.GetPreviousBPMSegmentBeatAtBeat(GetBeat()));
+		else if (this->currentCycleSegment == "stop")
+			ScrollTo(timing.GetPreviousStopSegmentBeatAtBeat(GetBeat()));
+		else if (this->currentCycleSegment == "delay")
+			ScrollTo(timing.GetPreviousDelaySegmentBeatAtBeat(GetBeat()));
+		else if (this->currentCycleSegment == "warp")
+			ScrollTo(timing.GetPreviousWarpSegmentBeatAtBeat(GetBeat()));
+		else if (this->currentCycleSegment == "timeSig")
+			ScrollTo(timing.GetPreviousTimeSignatureSegmentBeatAtBeat(GetBeat()));
+		else if (this->currentCycleSegment == "tickcount")
+			ScrollTo(timing.GetPreviousTickcountSegmentBeatAtBeat(GetBeat()));
+		else if (this->currentCycleSegment == "combo")
+			ScrollTo(timing.GetPreviousComboSegmentBeatAtBeat(GetBeat()));
+		else if (this->currentCycleSegment == "speed")
+			ScrollTo(timing.GetPreviousSpeedSegmentBeatAtBeat(GetBeat()));
+		else if (this->currentCycleSegment == "scroll")
+			ScrollTo(timing.GetPreviousScrollSegmentBeatAtBeat(GetBeat()));
+		else if (this->currentCycleSegment == "fake")
+			ScrollTo(timing.GetPreviousFakeSegmentBeatAtBeat(GetBeat()));
+	}
+	break;
 	case EDIT_BUTTON_SNAP_NEXT:
 		if( m_SnapDisplay.PrevSnapMode() )
 			OnSnapModeChange();

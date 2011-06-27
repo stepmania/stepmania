@@ -16,6 +16,9 @@ StepMania 5.0 Preview 2 | 201106??
 * [UnlockManager] New metric: SongsNotAdditional. Set to true to keep the
   default behavior, false to have the AdditionalSongs folder contain
   unlockable material. This is set to true to start. [Wolfman2000]
+* [ScreenEdit] Allow jumping between all segments, not just Label segments.
+  You still use Ctrl + ,/. to jump, but now you use Ctrl + N/M to cycle the
+  segments. By default, it starts with Label. [Wolfman2000]
 
 2011/06/24
 ----------

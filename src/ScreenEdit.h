@@ -60,6 +60,9 @@ enum EditButton
 	EDIT_BUTTON_CYCLE_TAP_LEFT, /**< Rotate the available tap notes once to the "left". */
 	EDIT_BUTTON_CYCLE_TAP_RIGHT, /**< Rotate the available tap notes once to the "right". */
 
+	EDIT_BUTTON_CYCLE_SEGMENT_LEFT, /**< Select one segment to the left for jumping. */
+	EDIT_BUTTON_CYCLE_SEGMENT_RIGHT, /**< Select one segment to the right for jumping. */
+	
 	EDIT_BUTTON_SCROLL_UP_LINE,
 	EDIT_BUTTON_SCROLL_UP_PAGE,
 	EDIT_BUTTON_SCROLL_UP_TS,
@@ -73,8 +76,8 @@ enum EditButton
 	EDIT_BUTTON_SCROLL_NEXT,
 	EDIT_BUTTON_SCROLL_PREV,
 
-	EDIT_BUTTON_LABEL_NEXT, /**< Jump to the start of the next label downward. */
-	EDIT_BUTTON_LABEL_PREV, /**< Jump to the start of the previous label upward. */
+	EDIT_BUTTON_SEGMENT_NEXT, /**< Jump to the start of the next segment downward. */
+	EDIT_BUTTON_SEGMENT_PREV, /**< Jump to the start of the previous segment upward. */
 	
 	// These are modifiers to EDIT_BUTTON_SCROLL_*.
 	EDIT_BUTTON_SCROLL_SELECT,
@@ -273,6 +276,9 @@ protected:
 	/** @brief The current TapNote that would be inserted. */
 	TapNote			m_selectedTap;
 
+	/** @brief The type of segment users will jump back and forth between. */
+	RString			currentCycleSegment;
+	
 	void UpdateTextInfo();
 	BitmapText		m_textInfo; // status information that changes
 	bool			m_bTextInfoNeedsUpdate;
