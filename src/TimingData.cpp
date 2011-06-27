@@ -786,11 +786,12 @@ float TimingData::GetPreviousStopSegmentBeatAtRow( int iRow ) const
 	for (unsigned i = 0; i < m_StopSegments.size(); i++ )
 	{
 		const StopSegment &s = m_StopSegments[i];
-		if( !s.GetDelay() && s.GetRow() >= iRow )
+		if( s.GetRow() >= iRow )
 		{
 			break;
 		}
-		backup = s.GetBeat();
+		if (!s.GetDelay())
+			backup = s.GetBeat();
 	}
 	return (backup > -1) ? backup : NoteRowToBeat(iRow);
 }
@@ -800,11 +801,12 @@ float TimingData::GetNextStopSegmentBeatAtRow( int iRow ) const
 	for (unsigned i = 0; i < m_StopSegments.size(); i++ )
 	{
 		const StopSegment &s = m_StopSegments[i];
-		if( !s.GetDelay() && s.GetRow() <= iRow )
+		if( s.GetRow() <= iRow )
 		{
 			continue;
 		}
-		return s.GetBeat();
+		if (!s.GetDelay())
+			return s.GetBeat();
 	}
 	return NoteRowToBeat(iRow);
 }
@@ -815,11 +817,12 @@ float TimingData::GetPreviousDelaySegmentBeatAtRow( int iRow ) const
 	for (unsigned i = 0; i < m_StopSegments.size(); i++ )
 	{
 		const StopSegment &s = m_StopSegments[i];
-		if( s.GetDelay() && s.GetRow() >= iRow )
+		if( s.GetRow() >= iRow )
 		{
 			break;
 		}
-		backup = s.GetBeat();
+		if (s.GetDelay())
+			backup = s.GetBeat();
 	}
 	return (backup > -1) ? backup : NoteRowToBeat(iRow);
 }
@@ -829,11 +832,12 @@ float TimingData::GetNextDelaySegmentBeatAtRow( int iRow ) const
 	for (unsigned i = 0; i < m_StopSegments.size(); i++ )
 	{
 		const StopSegment &s = m_StopSegments[i];
-		if( s.GetDelay() && s.GetRow() <= iRow )
+		if( s.GetRow() <= iRow )
 		{
 			continue;
 		}
-		return s.GetBeat();
+		if (s.GetDelay())
+			return s.GetBeat();
 	}
 	return NoteRowToBeat(iRow);
 }
