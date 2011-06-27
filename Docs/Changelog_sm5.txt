@@ -19,6 +19,8 @@ StepMania 5.0 Preview 2 | 201106??
 * [ScreenEdit] Allow jumping between all segments, not just Label segments.
   You still use Ctrl + ,/. to jump, but now you use Ctrl + N/M to cycle the
   segments. By default, it starts with Label. [Wolfman2000]
+* [PlayerOptions] No longer display StepAttacks in the player's list.
+  Instead, show NoAttacks if attacks are disabled. [Wolfman2000]
 
 2011/06/24
 ----------
