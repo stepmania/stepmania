@@ -11,6 +11,8 @@ StepMania 5.0 Preview 2 | 201106??
 2011/06/27
 ----------
 * [Steps] Make sure #ATTACKS are copied when requested. [Wolfman2000]
+* [ScreenEdit] Have Step Author up front instead of Chart Style. This is
+  probably going to be better overall. [Wolfman2000]
 
 2011/06/26
 ----------
