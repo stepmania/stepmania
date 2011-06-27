@@ -1332,7 +1332,12 @@ void TimingData::ScaleRegion( float fScale, int iStartIndex, int iEndIndex, bool
 		m_LabelSegments[i].Scale( iStartIndex, length, newLength );
 	
 	for ( unsigned i = 0; i < m_SpeedSegments.size(); i++ )
-		m_SpeedSegments[i].Scale( iStartIndex, length, newLength );
+	{
+		SpeedSegment &s = m_SpeedSegments[i];
+		s.Scale( iStartIndex, length, newLength );
+		if (s.GetUnit() == 0) // beats
+			s.SetLength(s.GetLength() * fScale);
+	}
 	
 	for( unsigned i = 0; i < m_FakeSegments.size(); i++ )
 		m_FakeSegments[i].Scale( iStartIndex, length, newLength );
