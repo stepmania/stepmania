@@ -753,6 +753,283 @@ int TimingData::GetTickcountAtRow( int iRow ) const
 	return m_TickcountSegments[GetTickcountSegmentIndexAtRow( iRow )].GetTicks();
 }
 
+float TimingData::GetPreviousBPMSegmentBeatAtRow( int iRow ) const
+{
+	float backup = -1;
+	for (unsigned i = 0; i < m_BPMSegments.size(); i++ )
+	{
+		if( m_BPMSegments[i].GetRow() >= iRow )
+		{
+			break;
+		}
+		backup = m_BPMSegments[i].GetBeat();
+	}
+	return (backup > -1) ? backup : NoteRowToBeat(iRow);
+}
+
+float TimingData::GetNextBPMSegmentBeatAtRow( int iRow ) const
+{
+	for (unsigned i = 0; i < m_BPMSegments.size(); i++ )
+	{
+		if( m_BPMSegments[i].GetRow() <= iRow )
+		{
+			continue;
+		}
+		return m_BPMSegments[i].GetBeat();
+	}
+	return NoteRowToBeat(iRow);
+}
+
+float TimingData::GetPreviousStopSegmentBeatAtRow( int iRow ) const
+{
+	float backup = -1;
+	for (unsigned i = 0; i < m_StopSegments.size(); i++ )
+	{
+		const StopSegment &s = m_StopSegments[i];
+		if( !s.GetDelay() && s.GetRow() >= iRow )
+		{
+			break;
+		}
+		backup = s.GetBeat();
+	}
+	return (backup > -1) ? backup : NoteRowToBeat(iRow);
+}
+
+float TimingData::GetNextStopSegmentBeatAtRow( int iRow ) const
+{
+	for (unsigned i = 0; i < m_StopSegments.size(); i++ )
+	{
+		const StopSegment &s = m_StopSegments[i];
+		if( !s.GetDelay() && s.GetRow() <= iRow )
+		{
+			continue;
+		}
+		return s.GetBeat();
+	}
+	return NoteRowToBeat(iRow);
+}
+
+float TimingData::GetPreviousDelaySegmentBeatAtRow( int iRow ) const
+{
+	float backup = -1;
+	for (unsigned i = 0; i < m_StopSegments.size(); i++ )
+	{
+		const StopSegment &s = m_StopSegments[i];
+		if( s.GetDelay() && s.GetRow() >= iRow )
+		{
+			break;
+		}
+		backup = s.GetBeat();
+	}
+	return (backup > -1) ? backup : NoteRowToBeat(iRow);
+}
+
+float TimingData::GetNextDelaySegmentBeatAtRow( int iRow ) const
+{
+	for (unsigned i = 0; i < m_StopSegments.size(); i++ )
+	{
+		const StopSegment &s = m_StopSegments[i];
+		if( s.GetDelay() && s.GetRow() <= iRow )
+		{
+			continue;
+		}
+		return s.GetBeat();
+	}
+	return NoteRowToBeat(iRow);
+}
+
+float TimingData::GetPreviousTimeSignatureSegmentBeatAtRow( int iRow ) const
+{
+	float backup = -1;
+	for (unsigned i = 0; i < m_vTimeSignatureSegments.size(); i++ )
+	{
+		if( m_vTimeSignatureSegments[i].GetRow() >= iRow )
+		{
+			break;
+		}
+		backup = m_vTimeSignatureSegments[i].GetBeat();
+	}
+	return (backup > -1) ? backup : NoteRowToBeat(iRow);
+}
+
+float TimingData::GetNextTimeSignatureSegmentBeatAtRow( int iRow ) const
+{
+	for (unsigned i = 0; i < m_vTimeSignatureSegments.size(); i++ )
+	{
+		if( m_vTimeSignatureSegments[i].GetRow() <= iRow )
+		{
+			continue;
+		}
+		return m_vTimeSignatureSegments[i].GetBeat();
+	}
+	return NoteRowToBeat(iRow);
+}
+
+
+float TimingData::GetPreviousTickcountSegmentBeatAtRow( int iRow ) const
+{
+	float backup = -1;
+	for (unsigned i = 0; i < m_TickcountSegments.size(); i++ )
+	{
+		if( m_TickcountSegments[i].GetRow() >= iRow )
+		{
+			break;
+		}
+		backup = m_TickcountSegments[i].GetBeat();
+	}
+	return (backup > -1) ? backup : NoteRowToBeat(iRow);
+}
+
+float TimingData::GetNextTickcountSegmentBeatAtRow( int iRow ) const
+{
+	for (unsigned i = 0; i < m_TickcountSegments.size(); i++ )
+	{
+		if( m_TickcountSegments[i].GetRow() <= iRow )
+		{
+			continue;
+		}
+		return m_TickcountSegments[i].GetBeat();
+	}
+	return NoteRowToBeat(iRow);
+}
+
+float TimingData::GetPreviousComboSegmentBeatAtRow( int iRow ) const
+{
+	float backup = -1;
+	for (unsigned i = 0; i < m_ComboSegments.size(); i++ )
+	{
+		if( m_ComboSegments[i].GetRow() >= iRow )
+		{
+			break;
+		}
+		backup = m_ComboSegments[i].GetBeat();
+	}
+	return (backup > -1) ? backup : NoteRowToBeat(iRow);
+}
+
+float TimingData::GetNextComboSegmentBeatAtRow( int iRow ) const
+{
+	for (unsigned i = 0; i < m_ComboSegments.size(); i++ )
+	{
+		if( m_ComboSegments[i].GetRow() <= iRow )
+		{
+			continue;
+		}
+		return m_ComboSegments[i].GetBeat();
+	}
+	return NoteRowToBeat(iRow);
+}
+
+
+
+float TimingData::GetPreviousWarpSegmentBeatAtRow( int iRow ) const
+{
+	float backup = -1;
+	for (unsigned i = 0; i < m_WarpSegments.size(); i++ )
+	{
+		if( m_WarpSegments[i].GetRow() >= iRow )
+		{
+			break;
+		}
+		backup = m_WarpSegments[i].GetBeat();
+	}
+	return (backup > -1) ? backup : NoteRowToBeat(iRow);
+}
+
+float TimingData::GetNextWarpSegmentBeatAtRow( int iRow ) const
+{
+	for (unsigned i = 0; i < m_WarpSegments.size(); i++ )
+	{
+		if( m_WarpSegments[i].GetRow() <= iRow )
+		{
+			continue;
+		}
+		return m_WarpSegments[i].GetBeat();
+	}
+	return NoteRowToBeat(iRow);
+}
+
+float TimingData::GetPreviousFakeSegmentBeatAtRow( int iRow ) const
+{
+	float backup = -1;
+	for (unsigned i = 0; i < m_FakeSegments.size(); i++ )
+	{
+		if( m_FakeSegments[i].GetRow() >= iRow )
+		{
+			break;
+		}
+		backup = m_FakeSegments[i].GetBeat();
+	}
+	return (backup > -1) ? backup : NoteRowToBeat(iRow);
+}
+
+float TimingData::GetNextFakeSegmentBeatAtRow( int iRow ) const
+{
+	for (unsigned i = 0; i < m_FakeSegments.size(); i++ )
+	{
+		if( m_FakeSegments[i].GetRow() <= iRow )
+		{
+			continue;
+		}
+		return m_FakeSegments[i].GetBeat();
+	}
+	return NoteRowToBeat(iRow);
+}
+
+float TimingData::GetPreviousSpeedSegmentBeatAtRow( int iRow ) const
+{
+	float backup = -1;
+	for (unsigned i = 0; i < m_SpeedSegments.size(); i++ )
+	{
+		if( m_SpeedSegments[i].GetRow() >= iRow )
+		{
+			break;
+		}
+		backup = m_SpeedSegments[i].GetBeat();
+	}
+	return (backup > -1) ? backup : NoteRowToBeat(iRow);
+}
+
+float TimingData::GetNextSpeedSegmentBeatAtRow( int iRow ) const
+{
+	for (unsigned i = 0; i < m_SpeedSegments.size(); i++ )
+	{
+		if( m_SpeedSegments[i].GetRow() <= iRow )
+		{
+			continue;
+		}
+		return m_SpeedSegments[i].GetBeat();
+	}
+	return NoteRowToBeat(iRow);
+}
+
+float TimingData::GetPreviousScrollSegmentBeatAtRow( int iRow ) const
+{
+	float backup = -1;
+	for (unsigned i = 0; i < m_ScrollSegments.size(); i++ )
+	{
+		if( m_ScrollSegments[i].GetRow() >= iRow )
+		{
+			break;
+		}
+		backup = m_ScrollSegments[i].GetBeat();
+	}
+	return (backup > -1) ? backup : NoteRowToBeat(iRow);
+}
+
+float TimingData::GetNextScrollSegmentBeatAtRow( int iRow ) const
+{
+	for (unsigned i = 0; i < m_ScrollSegments.size(); i++ )
+	{
+		if( m_ScrollSegments[i].GetRow() <= iRow )
+		{
+			continue;
+		}
+		return m_ScrollSegments[i].GetBeat();
+	}
+	return NoteRowToBeat(iRow);
+}
+
 float TimingData::GetPreviousLabelSegmentBeatAtRow( int iRow ) const
 {
 	float backup = -1;

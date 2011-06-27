@@ -84,6 +84,38 @@ public:
 	void AddBPMSegment( const BPMSegment &seg );
 	
 	/**
+	 * @brief Retrieve the next beat that contains a BPMSegment.
+	 * @param iRow the present row.
+	 * @return the next beat with a BPMSegment, or fBeat if there is none ahead.
+	 */
+	float GetNextBPMSegmentBeatAtRow( int iRow ) const;
+	/**
+	 * @brief Retrieve the previous beat that contains a BPMSegment.
+	 * @param fBeat the present beat.
+	 * @return the next beat with a BPMSegment, or fBeat if there is none ahead.
+	 */
+	float GetNextBPMSegmentBeatAtBeat( float fBeat ) const
+	{ 
+		return this->GetNextBPMSegmentBeatAtRow( BeatToNoteRow(fBeat) ); 
+	}
+	/**
+	 * @brief Retrieve the previous beat that contains a BPMSegment.
+	 * @param iRow the present row.
+	 * @return the previous beat with a BPMSegment, or fBeat if there is none prior.
+	 */
+	float GetPreviousBPMSegmentBeatAtRow( int iRow ) const;
+	/**
+	 * @brief Retrieve the previous beat that contains a BPMSegment.
+	 * @param fBeat the present beat.
+	 * @return the previous beat with a BPMSegment, or fBeat if there is none prior.
+	 */
+	float GetPreviousBPMSegmentBeatAtBeat( float fBeat ) const
+	{ 
+		return this->GetPreviousBPMSegmentBeatAtRow( BeatToNoteRow(fBeat) ); 
+	}
+	
+	
+	/**
 	 * @brief Retrieve the Stop/Delay at the given row.
 	 * @param iNoteRow the row in question.
 	 * @param bDelayOut A flag to determine if we are getting a delay or not.
@@ -250,6 +282,68 @@ public:
 	void AddStopSegment( const StopSegment &seg );
 	
 	/**
+	 * @brief Retrieve the next beat that contains a StopSegment.
+	 * @param iRow the present row.
+	 * @return the next beat with a StopSegment, or fBeat if there is none ahead.
+	 */
+	float GetNextStopSegmentBeatAtRow( int iRow ) const;
+	/**
+	 * @brief Retrieve the previous beat that contains a StopSegment.
+	 * @param fBeat the present beat.
+	 * @return the next beat with a StopSegment, or fBeat if there is none ahead.
+	 */
+	float GetNextStopSegmentBeatAtBeat( float fBeat ) const
+	{ 
+		return this->GetNextStopSegmentBeatAtRow( BeatToNoteRow(fBeat) ); 
+	}
+	/**
+	 * @brief Retrieve the previous beat that contains a StopSegment.
+	 * @param iRow the present row.
+	 * @return the previous beat with a StopSegment, or fBeat if there is none prior.
+	 */
+	float GetPreviousStopSegmentBeatAtRow( int iRow ) const;
+	/**
+	 * @brief Retrieve the previous beat that contains a StopSegment.
+	 * @param fBeat the present beat.
+	 * @return the previous beat with a StopSegment, or fBeat if there is none prior.
+	 */
+	float GetPreviousStopSegmentBeatAtBeat( float fBeat ) const
+	{ 
+		return this->GetPreviousStopSegmentBeatAtRow( BeatToNoteRow(fBeat) ); 
+	}
+	
+	/**
+	 * @brief Retrieve the next beat that contains a DelaySegment.
+	 * @param iRow the present row.
+	 * @return the next beat with a DelaySegment, or fBeat if there is none ahead.
+	 */
+	float GetNextDelaySegmentBeatAtRow( int iRow ) const;
+	/**
+	 * @brief Retrieve the previous beat that contains a DelaySegment.
+	 * @param fBeat the present beat.
+	 * @return the next beat with a DelaySegment, or fBeat if there is none ahead.
+	 */
+	float GetNextDelaySegmentBeatAtBeat( float fBeat ) const
+	{ 
+		return this->GetNextDelaySegmentBeatAtRow( BeatToNoteRow(fBeat) ); 
+	}
+	/**
+	 * @brief Retrieve the previous beat that contains a DelaySegment.
+	 * @param iRow the present row.
+	 * @return the previous beat with a DelaySegment, or fBeat if there is none prior.
+	 */
+	float GetPreviousDelaySegmentBeatAtRow( int iRow ) const;
+	/**
+	 * @brief Retrieve the previous beat that contains a DelaySegment.
+	 * @param fBeat the present beat.
+	 * @return the previous beat with a DelaySegment, or fBeat if there is none prior.
+	 */
+	float GetPreviousDelaySegmentBeatAtBeat( float fBeat ) const
+	{ 
+		return this->GetPreviousDelaySegmentBeatAtRow( BeatToNoteRow(fBeat) ); 
+	}
+	
+	/**
 	 * @brief Retrieve the Time Signature's numerator at the given row.
 	 * @param iNoteRow the row in question.
 	 * @return the numerator.
@@ -345,6 +439,39 @@ public:
 	 * @param iRow The row you start on.
 	 * @return the beat you warp to.
 	 */
+	
+	/**
+	 * @brief Retrieve the next beat that contains a TimeSignatureSegment.
+	 * @param iRow the present row.
+	 * @return the next beat with a TimeSignatureSegment, or fBeat if there is none ahead.
+	 */
+	float GetNextTimeSignatureSegmentBeatAtRow( int iRow ) const;
+	/**
+	 * @brief Retrieve the previous beat that contains a TimeSignatureSegment.
+	 * @param fBeat the present beat.
+	 * @return the next beat with a TimeSignatureSegment, or fBeat if there is none ahead.
+	 */
+	float GetNextTimeSignatureSegmentBeatAtBeat( float fBeat ) const
+	{ 
+		return this->GetNextTimeSignatureSegmentBeatAtRow( BeatToNoteRow(fBeat) ); 
+	}
+	/**
+	 * @brief Retrieve the previous beat that contains a TimeSignatureSegment.
+	 * @param iRow the present row.
+	 * @return the previous beat with a TimeSignatureSegment, or fBeat if there is none prior.
+	 */
+	float GetPreviousTimeSignatureSegmentBeatAtRow( int iRow ) const;
+	/**
+	 * @brief Retrieve the previous beat that contains a TimeSignatureSegment.
+	 * @param fBeat the present beat.
+	 * @return the previous beat with a TimeSignatureSegment, or fBeat if there is none prior.
+	 */
+	float GetPreviousTimeSignatureSegmentBeatAtBeat( float fBeat ) const
+	{ 
+		return this->GetPreviousTimeSignatureSegmentBeatAtRow( BeatToNoteRow(fBeat) ); 
+	}
+	
+	
 	float GetWarpAtRow( int iRow ) const;
 	/**
 	 * @brief Determine the beat to warp to.
@@ -405,6 +532,39 @@ public:
 	 * @param seg the new WarpSegment.
 	 */
 	void AddWarpSegment( const WarpSegment &seg );
+	
+	
+	/**
+	 * @brief Retrieve the next beat that contains a WarpSegment.
+	 * @param iRow the present row.
+	 * @return the next beat with a WarpSegment, or fBeat if there is none ahead.
+	 */
+	float GetNextWarpSegmentBeatAtRow( int iRow ) const;
+	/**
+	 * @brief Retrieve the previous beat that contains a WarpSegment.
+	 * @param fBeat the present beat.
+	 * @return the next beat with a WarpSegment, or fBeat if there is none ahead.
+	 */
+	float GetNextWarpSegmentBeatAtBeat( float fBeat ) const
+	{ 
+		return this->GetNextWarpSegmentBeatAtRow( BeatToNoteRow(fBeat) ); 
+	}
+	/**
+	 * @brief Retrieve the previous beat that contains a WarpSegment.
+	 * @param iRow the present row.
+	 * @return the previous beat with a WarpSegment, or fBeat if there is none prior.
+	 */
+	float GetPreviousWarpSegmentBeatAtRow( int iRow ) const;
+	/**
+	 * @brief Retrieve the previous beat that contains a WarpSegment.
+	 * @param fBeat the present beat.
+	 * @return the previous beat with a WarpSegment, or fBeat if there is none prior.
+	 */
+	float GetPreviousWarpSegmentBeatAtBeat( float fBeat ) const
+	{ 
+		return this->GetPreviousWarpSegmentBeatAtRow( BeatToNoteRow(fBeat) ); 
+	}
+	
 	/**
 	 * @brief Retrieve the Tickcount at the given row.
 	 * @param iNoteRow the row in question.
@@ -460,6 +620,38 @@ public:
 	void AddTickcountSegment( const TickcountSegment &seg );
 	
 	/**
+	 * @brief Retrieve the next beat that contains a TickcountSegment.
+	 * @param iRow the present row.
+	 * @return the next beat with a TickcountSegment, or fBeat if there is none ahead.
+	 */
+	float GetNextTickcountSegmentBeatAtRow( int iRow ) const;
+	/**
+	 * @brief Retrieve the previous beat that contains a TickcountSegment.
+	 * @param fBeat the present beat.
+	 * @return the next beat with a TickcountSegment, or fBeat if there is none ahead.
+	 */
+	float GetNextTickcountSegmentBeatAtBeat( float fBeat ) const
+	{ 
+		return this->GetNextTickcountSegmentBeatAtRow( BeatToNoteRow(fBeat) ); 
+	}
+	/**
+	 * @brief Retrieve the previous beat that contains a TickcountSegment.
+	 * @param iRow the present row.
+	 * @return the previous beat with a TickcountSegment, or fBeat if there is none prior.
+	 */
+	float GetPreviousTickcountSegmentBeatAtRow( int iRow ) const;
+	/**
+	 * @brief Retrieve the previous beat that contains a TickcountSegment.
+	 * @param fBeat the present beat.
+	 * @return the previous beat with a TickcountSegment, or fBeat if there is none prior.
+	 */
+	float GetPreviousTickcountSegmentBeatAtBeat( float fBeat ) const
+	{ 
+		return this->GetPreviousTickcountSegmentBeatAtRow( BeatToNoteRow(fBeat) ); 
+	}
+	
+	
+	/**
 	 * @brief Retrieve the Combo at the given row.
 	 * @param iNoteRow the row in question.
 	 * @return the Combo.
@@ -512,6 +704,38 @@ public:
 	 * @param seg the new ComboSegment.
 	 */
 	void AddComboSegment( const ComboSegment &seg );
+	
+	/**
+	 * @brief Retrieve the next beat that contains a ComboSegment.
+	 * @param iRow the present row.
+	 * @return the next beat with a ComboSegment, or fBeat if there is none ahead.
+	 */
+	float GetNextComboSegmentBeatAtRow( int iRow ) const;
+	/**
+	 * @brief Retrieve the previous beat that contains a ComboSegment.
+	 * @param fBeat the present beat.
+	 * @return the next beat with a ComboSegment, or fBeat if there is none ahead.
+	 */
+	float GetNextComboSegmentBeatAtBeat( float fBeat ) const
+	{ 
+		return this->GetNextComboSegmentBeatAtRow( BeatToNoteRow(fBeat) ); 
+	}
+	/**
+	 * @brief Retrieve the previous beat that contains a ComboSegment.
+	 * @param iRow the present row.
+	 * @return the previous beat with a ComboSegment, or fBeat if there is none prior.
+	 */
+	float GetPreviousComboSegmentBeatAtRow( int iRow ) const;
+	/**
+	 * @brief Retrieve the previous beat that contains a ComboSegment.
+	 * @param fBeat the present beat.
+	 * @return the previous beat with a ComboSegment, or fBeat if there is none prior.
+	 */
+	float GetPreviousComboSegmentBeatAtBeat( float fBeat ) const
+	{ 
+		return this->GetPreviousComboSegmentBeatAtRow( BeatToNoteRow(fBeat) ); 
+	}
+	
 	
 	/**
 	 * @brief Retrieve the Label at the given row.
@@ -578,7 +802,10 @@ public:
 	 * @param fBeat the present beat.
 	 * @return the previous beat with a LabelSegment, or fBeat if there is none prior.
 	 */
-	float GetPreviousLabelSegmentBeatAtBeat( float fBeat ) const { return GetPreviousLabelSegmentBeatAtRow( BeatToNoteRow(fBeat) ); }
+	float GetPreviousLabelSegmentBeatAtBeat( float fBeat ) const
+	{ 
+		return this->GetPreviousLabelSegmentBeatAtRow( BeatToNoteRow(fBeat) ); 
+	}
 
 	/**
 	 * @brief Determine if the requisite label already exists.
@@ -597,7 +824,10 @@ public:
 	 * @param fBeat the present beat.
 	 * @return the next beat with a LabelSegment, or fBeat if there is none ahead.
 	 */
-	float GetNextLabelSegmentBeatAtBeat( float fBeat ) const { return GetNextLabelSegmentBeatAtRow( BeatToNoteRow(fBeat) ); }
+	float GetNextLabelSegmentBeatAtBeat( float fBeat ) const
+	{ 
+		return this->GetNextLabelSegmentBeatAtRow( BeatToNoteRow(fBeat) ); 
+	}
 	
 	
 	/**
@@ -721,6 +951,38 @@ public:
 	float GetDisplayedSpeedPercent( float fBeat, float fMusicSeconds ) const;
 	
 	/**
+	 * @brief Retrieve the next beat that contains a SpeedSegment.
+	 * @param iRow the present row.
+	 * @return the next beat with a SpeedSegment, or fBeat if there is none ahead.
+	 */
+	float GetNextSpeedSegmentBeatAtRow( int iRow ) const;
+	/**
+	 * @brief Retrieve the previous beat that contains a SpeedSegment.
+	 * @param fBeat the present beat.
+	 * @return the next beat with a SpeedSegment, or fBeat if there is none ahead.
+	 */
+	float GetNextSpeedSegmentBeatAtBeat( float fBeat ) const
+	{ 
+		return this->GetNextSpeedSegmentBeatAtRow( BeatToNoteRow(fBeat) ); 
+	}
+	/**
+	 * @brief Retrieve the previous beat that contains a SpeedSegment.
+	 * @param iRow the present row.
+	 * @return the previous beat with a SpeedSegment, or fBeat if there is none prior.
+	 */
+	float GetPreviousSpeedSegmentBeatAtRow( int iRow ) const;
+	/**
+	 * @brief Retrieve the previous beat that contains a SpeedSegment.
+	 * @param fBeat the present beat.
+	 * @return the previous beat with a SpeedSegment, or fBeat if there is none prior.
+	 */
+	float GetPreviousSpeedSegmentBeatAtBeat( float fBeat ) const
+	{ 
+		return this->GetPreviousSpeedSegmentBeatAtRow( BeatToNoteRow(fBeat) ); 
+	}
+	
+	
+	/**
 	 * @brief Retrieve the scrolling factor at the given row.
 	 * @param iNoteRow the row in question.
 	 * @return the percent.
@@ -777,6 +1039,37 @@ public:
 	 * @param seg the new ScrollSegment.
 	 */
 	void AddScrollSegment( const ScrollSegment &seg );
+	
+	/**
+	 * @brief Retrieve the next beat that contains a ScrollSegment.
+	 * @param iRow the present row.
+	 * @return the next beat with a ScrollSegment, or fBeat if there is none ahead.
+	 */
+	float GetNextScrollSegmentBeatAtRow( int iRow ) const;
+	/**
+	 * @brief Retrieve the previous beat that contains a ScrollSegment.
+	 * @param fBeat the present beat.
+	 * @return the next beat with a ScrollSegment, or fBeat if there is none ahead.
+	 */
+	float GetNextScrollSegmentBeatAtBeat( float fBeat ) const
+	{ 
+		return this->GetNextScrollSegmentBeatAtRow( BeatToNoteRow(fBeat) ); 
+	}
+	/**
+	 * @brief Retrieve the previous beat that contains a ScrollSegment.
+	 * @param iRow the present row.
+	 * @return the previous beat with a ScrollSegment, or fBeat if there is none prior.
+	 */
+	float GetPreviousScrollSegmentBeatAtRow( int iRow ) const;
+	/**
+	 * @brief Retrieve the previous beat that contains a ScrollSegment.
+	 * @param fBeat the present beat.
+	 * @return the previous beat with a ScrollSegment, or fBeat if there is none prior.
+	 */
+	float GetPreviousScrollSegmentBeatAtBeat( float fBeat ) const
+	{ 
+		return this->GetPreviousScrollSegmentBeatAtRow( BeatToNoteRow(fBeat) ); 
+	}
 	
 	
 	/**
@@ -844,6 +1137,38 @@ public:
 	 * @param seg the new FakeSegment.
 	 */
 	void AddFakeSegment( const FakeSegment &seg );
+	
+	/**
+	 * @brief Retrieve the next beat that contains a FakeSegment.
+	 * @param iRow the present row.
+	 * @return the next beat with a FakeSegment, or fBeat if there is none ahead.
+	 */
+	float GetNextFakeSegmentBeatAtRow( int iRow ) const;
+	/**
+	 * @brief Retrieve the previous beat that contains a FakeSegment.
+	 * @param fBeat the present beat.
+	 * @return the next beat with a FakeSegment, or fBeat if there is none ahead.
+	 */
+	float GetNextFakeSegmentBeatAtBeat( float fBeat ) const
+	{ 
+		return this->GetNextFakeSegmentBeatAtRow( BeatToNoteRow(fBeat) ); 
+	}
+	/**
+	 * @brief Retrieve the previous beat that contains a FakeSegment.
+	 * @param iRow the present row.
+	 * @return the previous beat with a FakeSegment, or fBeat if there is none prior.
+	 */
+	float GetPreviousFakeSegmentBeatAtRow( int iRow ) const;
+	/**
+	 * @brief Retrieve the previous beat that contains a FakeSegment.
+	 * @param fBeat the present beat.
+	 * @return the previous beat with a FakeSegment, or fBeat if there is none prior.
+	 */
+	float GetPreviousFakeSegmentBeatAtBeat( float fBeat ) const
+	{ 
+		return this->GetPreviousFakeSegmentBeatAtRow( BeatToNoteRow(fBeat) ); 
+	}
+	
 	
 	/**
 	 * @brief Determine if this notes on this row can be judged.
