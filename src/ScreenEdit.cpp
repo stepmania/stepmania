@@ -4522,7 +4522,7 @@ void ScreenEdit::SetupCourseAttacks()
 	else 
 	{
 		const PlayerOptions &p = GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.GetCurrent();
-		if (GAMESTATE->m_pCurSong && p.m_fNoAttack != 0 && p.m_fRandAttack != 0 )
+		if (GAMESTATE->m_pCurSong && p.m_fNoAttack == 0 && p.m_fRandAttack == 0 )
 		{
 			AttackArray &attacks = GAMESTATE->m_bIsUsingStepTiming ?
 				GAMESTATE->m_pCurSteps[PLAYER_1]->m_Attacks :
