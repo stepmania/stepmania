@@ -643,6 +643,8 @@ static MenuDef g_TimingDataInformation(
         MenuRowDef( ScreenEdit::speed_mode,			"Edit speed (mode)",		true, EditMode_Full, true, true, 0, "Beats", "Seconds" ),
         MenuRowDef( ScreenEdit::scroll,			"Edit scrolling factor",		true, EditMode_Full, true, true, 0, NULL ),
         MenuRowDef( ScreenEdit::fake,				"Edit fake",			true, EditMode_Full, true, true, 0, NULL ),
+        MenuRowDef( ScreenEdit::copy_timing,		"Copy timing data",			true, EditMode_Full, true, true, 0, NULL ),
+        MenuRowDef( ScreenEdit::paste_timing,		"Paste timing data",			true, EditMode_Full, true, true, 0, NULL ),
         MenuRowDef( ScreenEdit::erase_step_timing,		"Erase step timing",		true, EditMode_Full, true, true, 0, NULL )
 );
 
@@ -873,6 +875,8 @@ void ScreenEdit::Init()
 	m_bRemoveNoteButtonDown = false;
 
 	m_Clipboard.SetNumTracks( m_NoteDataEdit.GetNumTracks() );
+	
+	clipboardTiming = GAMESTATE->m_pCurSong->m_SongTiming; // always have a backup.
 
 	m_bHasUndo = false;
 	m_Undo.SetNumTracks( m_NoteDataEdit.GetNumTracks() );
@@ -4404,6 +4408,24 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 			);
 			break;
 		}
+	case copy_timing:
+	{
+		clipboardTiming = GetAppropriateTiming();
+		break;
+	}
+	case paste_timing:
+	{
+		if (GAMESTATE->m_bIsUsingStepTiming)
+		{
+			GAMESTATE->m_pCurSteps[PLAYER_1]->m_Timing = clipboardTiming;
+		}
+		else
+		{
+			GAMESTATE->m_pCurSong->m_SongTiming = clipboardTiming;
+		}
+		SetDirty(true);
+		break;
+	}
 	case erase_step_timing:
 		ScreenPrompt::Prompt( SM_DoEraseStepTiming, CONFIRM_TIMING_ERASE , PROMPT_YES_NO, ANSWER_NO );
 	break;

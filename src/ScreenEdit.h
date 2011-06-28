@@ -273,6 +273,12 @@ protected:
 	 * This is mainly to allow playing a chart with Song Timing. */
 	TimingData		backupStepTiming;
 	
+	/**
+	 * @brief Have a backup of the TimingData of the player's choice.
+	 *
+	 * This will be used for copying and pasting as required. */
+	TimingData		clipboardTiming;
+	
 	/** @brief The current TapNote that would be inserted. */
 	TapNote			m_selectedTap;
 
@@ -550,6 +556,8 @@ public:
 		speed_mode,
 		scroll,
 		fake,
+		copy_timing,
+		paste_timing,
 		erase_step_timing,
 		NUM_TIMING_DATA_INFORMATION_CHOICES
 	};
