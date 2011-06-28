@@ -317,7 +317,8 @@ static RString GetSSCNoteData( const Song &song, const Steps &in, bool bSavingCa
 	lines.push_back( ssprintf( "#RADARVALUES:%s;", join(",",asRadarValues).c_str() ) );
 
 	lines.push_back( ssprintf( "#CREDIT:%s;", SmEscape(in.GetCredit()).c_str() ) );
-
+	lines.push_back( ssprintf( "#OFFSET:%.6f;", in.m_Timing.m_fBeat0OffsetInSeconds ) );
+	
 	GetTimingTags( lines, in.m_Timing );
 	
 	RString attacks = "";
@@ -331,8 +332,6 @@ static RString GetSSCNoteData( const Song &song, const Steps &in, bool bSavingCa
 	}
 	Trim(attacks, ":"); // just in case something screwy happens.
 	lines.push_back( ssprintf( "#ATTACKS:%s;", attacks.c_str()));
-	
-	lines.push_back( ssprintf( "#OFFSET:%.6f;", in.m_Timing.m_fBeat0OffsetInSeconds ) );
 	
 	RString sNoteData;
 	in.GetSMNoteData( sNoteData );

@@ -9,6 +9,9 @@ change to JSON, but it is unsure if this will be done.
 Implement .ssc at your own risk.
 ________________________________________________________________________________
 
+[v0.72] - Wolfman2000
+* Have #OFFSET come before #ATTACKS in the Step data.
+
 [v0.71] - Wolfman2000
 * Have #ATTACKS work per step as well.
 

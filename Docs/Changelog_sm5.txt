@@ -15,6 +15,8 @@ StepMania 5.0 Preview 2 | 201106??
   probably going to be better overall. [Wolfman2000]
 * [TimingData] Preserve the length of time for Speed Segment scaling when using
   beats. [Wolfman2000]
+* [NotesLoader/WriterSSC] #OFFSET is to be before #ATTACKS. This is required if
+  we pursue beat based attacks and not just second based. [Wolfman2000]
 
 2011/06/26
 ----------
