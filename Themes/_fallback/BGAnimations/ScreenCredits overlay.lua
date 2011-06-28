@@ -51,6 +51,7 @@ local contrib = {
 	"sy567", -- beginner helper fix
 	"Thai Pangsakulyanont (theDtTvB)",
 	"v1toko", -- x-mode from StepNXA
+	"Christophe Goulet-LeBlanc (Kommisar)"
 }
 
 local thanks = {
@@ -74,6 +75,7 @@ local shoutout = {
 	"NAKET Coder",
 	"Ciera Boyd", -- you bet your ass I'm putting my girlfriend in the credits
 	--Image(), -- we should have some logos probably to look super pro
+	"#KBO",
 	"You showed us... your ultimate dance",
 	-- "Can't stop crying... buckets of tears!"
 }
