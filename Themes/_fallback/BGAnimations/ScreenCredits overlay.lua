@@ -51,7 +51,7 @@ local contrib = {
 	"sy567", -- beginner helper fix
 	"Thai Pangsakulyanont (theDtTvB)",
 	"v1toko", -- x-mode from StepNXA
-	"Christophe Goulet-LeBlanc (Kommisar)"
+	"Christophe Goulet-LeBlanc (Kommisar)",
 }
 
 local thanks = {
