@@ -5,11 +5,11 @@
 #SUBTITLETRANSLIT:;
 #ARTISTTRANSLIT:;
 #CREDIT:Graphics - Noon;
-#BANNER:../Mecha-Tribe Assault (Wyde)/mechatribeassaultbn.png;
-#BACKGROUND:../Mecha-Tribe Assault (Wyde)/mechatribeassaultbg.png;
+#BANNER:../MechaTribe Assault/mechatribeassaultbn.png;
+#BACKGROUND:../Mecha-Tribe Assault/mechatribeassaultbg.png;
 #LYRICSPATH:;
 #CDTITLE:wyde cd-tital.png;
-#MUSIC:../Mecha-Tribe Assault (Wyde)/Mecha-Tribe Assault.ogg;
+#MUSIC:../MechaTribe Assault/Mecha-Tribe Assault.ogg;
 #OFFSET:-0.028;
 #SAMPLESTART:48.018;
 #SAMPLELENGTH:16.040;
