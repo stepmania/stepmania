@@ -166,8 +166,7 @@ void SMLoader::ProcessAttacks( AttackArray &attacks, MsdFile::value_t params )
 		if( sBits.size() < 2 )
 			continue;
 		
-		TrimLeft( sBits[0] );
-		TrimRight( sBits[0] );
+		Trim( sBits[0] );
 		
 		if( !sBits[0].CompareNoCase("TIME") )
 			attack.fStartSecond = strtof( sBits[1], NULL );
