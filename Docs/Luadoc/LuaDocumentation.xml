@@ -2350,6 +2350,9 @@
 		
 	</Function>
 	<Function name='GetSongAttacks' return='float' arguments=''>
+		This function is deprecated. Please use GetStepAttacks() instead.
+	</Function>
+	<Function name='GetStepAttacks' return='float' arguments=''>
 		
 	</Function>
 	<Function name='GetSplit' return='float' arguments=''>
@@ -3466,8 +3469,11 @@
 	<Function name='GetMeter' return='int' arguments=''>
 		Returns the numerical difficulty of the Steps.
 	</Function>
+	<Function name='HasAttacks' return='bool' arguments=''>
+		Returns <code>true</code> if the Steps has any attacks.
+	</Function>
         <Function name='HasSignificantTimingChanges' return='bool' arguments=''>
-               returns <code>true</code> if the song has significant timing changes.
+        	Returns <code>true</code> if the Steps pattern has significant timing changes.
         </Function>
 	<Function name='GetRadarValues' return='RadarValues' arguments='PlayerNumber pn'>
 		Returns the complete list of RadarValues for player <code>pn</code>. Use <Link class='RadarValues' function='GetValue' /> to grab a specific value.
@@ -3714,6 +3720,9 @@
 	<Function name='GetRequirePassHardSteps' return='bool' arguments=''>
 		Returns <code>true</code> if the UnlockEntry requires you to pass Hard steps.
 	</Function>
+	<Function name='GetRequirePassChallengeSteps' return='bool' arguments=''>
+		Returns <code>true</code> if the UnlockEntry requires you to pass Challenge steps.
+	</Function>
 	<Function name='GetSong' return='Song' arguments=''>
 		Returns the Song related to the UnlockEntry.
 	</Function>
@@ -3743,6 +3752,9 @@
 	<Function name='steps' return='void' arguments='string sSong, string sSteps'>
 		Sets the UnlockEntry to unlock a specified song's steps.<br />
 		Example: <code>steps,"In The Groove/Pandemonium","expert"</code>
+	</Function>
+	<Function name='steps_type' return='void' arguments='string sSong, string sSteps, string sStepsType'>
+		Sets the UnlockEntry to unlock a specified song's stepstype.
 	</Function>
 </Class>
 <Class name='UnlockManager'>

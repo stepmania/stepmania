@@ -317,12 +317,21 @@ static RString GetSSCNoteData( const Song &song, const Steps &in, bool bSavingCa
 	lines.push_back( ssprintf( "#RADARVALUES:%s;", join(",",asRadarValues).c_str() ) );
 
 	lines.push_back( ssprintf( "#CREDIT:%s;", SmEscape(in.GetCredit()).c_str() ) );
-
+	lines.push_back( ssprintf( "#OFFSET:%.6f;", in.m_Timing.m_fBeat0OffsetInSeconds ) );
+	
 	GetTimingTags( lines, in.m_Timing );
 	
-	// For now, attacks are NOT in use for the step.
-	lines.push_back( "#ATTACKS:;" );
-	lines.push_back( ssprintf( "#OFFSET:%.6f;", in.m_Timing.m_fBeat0OffsetInSeconds ) );
+	RString attacks = "";
+	for( unsigned a=0; a < in.m_sAttackString.size(); a++ )
+	{
+		RString sData = in.m_sAttackString[a];
+		attacks += sData;
+		
+		if( a != (in.m_sAttackString.size() - 1) )
+			attacks += ":\r\n"; // Not the end, so write a divider ':'
+	}
+	Trim(attacks, ":"); // just in case something screwy happens.
+	lines.push_back( ssprintf( "#ATTACKS:%s;", attacks.c_str()));
 	
 	RString sNoteData;
 	in.GetSMNoteData( sNoteData );

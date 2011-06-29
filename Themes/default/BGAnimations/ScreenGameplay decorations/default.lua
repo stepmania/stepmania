@@ -1,4 +1,4 @@
-local function CreateStops()
+local function CreateStops(Player)
 	local t = Def.ActorFrame { };
 	local bars = Def.ActorFrame{ };
 	local bpmFrame = Def.ActorFrame{ Name="BPMFrame"; };
@@ -7,10 +7,13 @@ local function CreateStops()
 	local fFrameWidth = 380;
 	local fFrameHeight = 8;
 	-- XXX: doesn't work in course mode -aj
-	if not GAMESTATE:IsCourseMode() then
+	if not GAMESTATE:IsSideJoined( Player ) then
+		return t
+	elseif not GAMESTATE:IsCourseMode() then
 	-- Straight rip off NCRX
 		local song = GAMESTATE:GetCurrentSong();
-		local timingData = song:GetTimingData();
+		local steps = GAMESTATE:GetCurrentSteps( Player );
+		local timingData = steps:GetTimingData();
 		-- if we're using SSC, might as well use the StepsSeconds, which will
 		-- almost always be more proper than a r21'd file.
 		if song then
@@ -84,9 +87,10 @@ local function CreateStops()
 	return t
 end
 local t = LoadFallbackB()
+t[#t+1] = StandardDecorationFromFileOptional("ScoreFrame","ScoreFrame");
 for pn in ivalues(PlayerNumber) do
--- 	local MetricsName = "SongMeterDisplay" .. PlayerNumberToString(pn);
---[[ 	t[#t+1] = Def.ActorFrame {
+ 	local MetricsName = "SongMeterDisplay" .. PlayerNumberToString(pn);
+ 	t[#t+1] = Def.ActorFrame {
 		InitCommand=function(self) 
 			self:player(pn); 
 			self:name(MetricsName); 
@@ -117,8 +121,10 @@ for pn in ivalues(PlayerNumber) do
 			};
 			Tip=LoadActor( THEME:GetPathG( 'SongMeterDisplay', 'tip ' .. PlayerNumberToString(pn) ) ) .. { InitCommand=cmd(visible,false); };
 		};
-		CreateStops();
-	}; --]]
+		CreateStops(pn) .. {
+-- 			InitCommand=cmd(draworder,10);
+		};
+	};
 end;
 for pn in ivalues(PlayerNumber) do
 	local MetricsName = "ToastyDisplay" .. PlayerNumberToString(pn);
@@ -131,12 +137,12 @@ for pn in ivalues(PlayerNumber) do
 	};
 end;
 
-t[#t+1] = StandardDecorationFromFileOptional("ScoreFrame","ScoreFrame");
+
 t[#t+1] = StandardDecorationFromFileOptional("BPMDisplay","BPMDisplay");
 t[#t+1] = StandardDecorationFromFileOptional("StageDisplay","StageDisplay");
 t[#t+1] = StandardDecorationFromFileOptional("SongTitle","SongTitle");
 
-t[#t+1] = Def.ActorFrame {
+--[[ t[#t+1] = Def.ActorFrame {
 	InitCommand=function(self)
 		self:name("SongMeterDisplay"); 
 		ActorUtil.LoadAllCommandsAndSetXY(self,Var "LoadingScreen"); 
@@ -167,7 +173,7 @@ t[#t+1] = Def.ActorFrame {
 		Tip=LoadActor( THEME:GetPathG( 'SongMeterDisplay', 'tip ' .. PlayerNumberToString(PLAYER_1) ) ) .. { InitCommand=cmd(visible,false); };
 	};
 	CreateStops();
-};
+}; --]]
 if( not GAMESTATE:IsCourseMode() ) then
 t[#t+1] = Def.Actor{
 	JudgmentMessageCommand = function(self, params)

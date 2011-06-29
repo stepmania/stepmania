@@ -3,6 +3,7 @@
 
 <Lua xmlns='http://www.stepmania.com' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='http://www.stepmania.com Lua.xsd'>
 	<GlobalFunctions>
+		<Function name='Alpha'/>
 		<Function name='AreStagePlayerModsForced'/>
 		<Function name='AreStageSongModsForced'/>
 		<Function name='Basename'/>
@@ -321,6 +322,7 @@
 			<Function name='bouncebegin'/>
 			<Function name='bounceend'/>
 			<Function name='clearzbuffer'/>
+			<Function name='compound'/>
 			<Function name='cropbottom'/>
 			<Function name='cropleft'/>
 			<Function name='cropright'/>
@@ -822,6 +824,7 @@
 			<Function name='IsInDanger'/>
 		</Class>
 		<Class base='LifeMeter' name='LifeMeterBattery'>
+			<Function name='ChangeLives'/>
 			<Function name='GetLivesLeft'/>
 			<Function name='GetTotalLives'/>
 		</Class>
@@ -888,9 +891,9 @@
 			<Function name='LoadFromStats'/>
 		</Class>
 		<Class base='ActorFrame' name='Player'>
+			<Function name='GetPlayerTimingData'/>
 			<Function name='SetActorWithComboPosition'/>
 			<Function name='SetActorWithJudgmentPosition'/>
-			<Function name='GetPlayerTimingData'/>
 		</Class>
 		<Class name='PlayerInfo'>
 			<Function name='GetLifeMeter'/>
@@ -956,6 +959,7 @@
 			<Function name='GetSongAttacks'/>
 			<Function name='GetSplit'/>
 			<Function name='GetStealth'/>
+			<Function name='GetStepAttacks'/>
 			<Function name='GetStomp'/>
 			<Function name='GetSudden'/>
 			<Function name='GetSuddenOffset'/>
@@ -1143,7 +1147,9 @@
 			<Function name='GetNextScreenName'/>
 			<Function name='GetPrevScreenName'/>
 			<Function name='GetScreenType'/>
+			<Function name='Metric'/>
 			<Function name='PostScreenMessage'/>
+			<Function name='String'/>
 			<Function name='lockinput'/>
 		</Class>
 		<Class base='ScreenWithMenuElements' name='ScreenAttract'/>
@@ -1380,6 +1386,7 @@
 			<Function name='GetRadarValues'/>
 			<Function name='GetStepsType'/>
 			<Function name='GetTimingData'/>
+			<Function name='HasAttacks'/>
 			<Function name='HasSignificantTimingChanges'/>
 			<Function name='IsAPlayerEdit'/>
 			<Function name='IsAnEdit'/>
@@ -1469,6 +1476,7 @@
 			<Function name='GetCourse'/>
 			<Function name='GetDescription'/>
 			<Function name='GetRequirePassHardSteps'/>
+			<Function name='GetRequirePassChallengeSteps'/>
 			<Function name='GetRequirement'/>
 			<Function name='GetSong'/>
 			<Function name='GetUnlockRewardType'/>
@@ -1481,6 +1489,7 @@
 			<Function name='roulette'/>
 			<Function name='song'/>
 			<Function name='steps'/>
+			<Function name='steps_type'/>
 		</Class>
 		<Class name='UnlockManager'>
 			<Function name='AnyUnlocksToCelebrate'/>
@@ -1530,7 +1539,7 @@
 			<Function name='GetCreditsMessage'/>
 		</Namespace>
 		<Namespace name='SongUtil'>
-			<Function name='GetStepsPlayable'/>
+			<Function name='GetPlayableSteps'/>
 			<Function name='IsStepsPlayable'/>
 			<Function name='IsStepsTypePlayable'/>
 		</Namespace>
@@ -2085,8 +2094,9 @@
 		<Enum name='UnlockRewardType'>
 			<EnumValue name='&apos;UnlockRewardType_Song&apos;' value='0'/>
 			<EnumValue name='&apos;UnlockRewardType_Steps&apos;' value='1'/>
-			<EnumValue name='&apos;UnlockRewardType_Course&apos;' value='2'/>
-			<EnumValue name='&apos;UnlockRewardType_Modifier&apos;' value='3'/>
+			<EnumValue name='&apos;UnlockRewardType_StepsType&apos;' value='2'/>
+			<EnumValue name='&apos;UnlockRewardType_Course&apos;' value='3'/>
+			<EnumValue name='&apos;UnlockRewardType_Modifier&apos;' value='4'/>
 		</Enum>
 		<Enum name='VertAlign'>
 			<EnumValue name='&apos;VertAlign_Top&apos;' value='0'/>
@@ -2118,9 +2128,9 @@
 		<Constant name='left' value='&apos;HorizAlign_Left&apos;'/>
 		<Constant name='middle' value='&apos;VertAlign_Middle&apos;'/>
 		<Constant name='right' value='&apos;HorizAlign_Right&apos;'/>
-		<Constant name='sGame' value='&apos;dance&apos;'/>
+		<Constant name='sGame' value='&apos;pump&apos;'/>
 		<Constant name='top' value='&apos;VertAlign_Top&apos;'/>
 	</Constants>
 	<Version>StepMania 5 v5.0 Preview 1a</Version>
-	<Date>2011-06-11</Date>
+	<Date>2011-06-24</Date>
 </Lua>

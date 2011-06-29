@@ -432,7 +432,8 @@ bool SMALoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 		// Attacks loaded from file
 		else if( sValueName=="ATTACKS" )
 		{
-			SMLoader::ProcessAttacks( out, sParams );
+			ProcessAttackString(out.m_sAttackString, sParams);
+			ProcessAttacks(out.m_Attacks, sParams);
 		}
 		
 		else if( sValueName=="NOTES" || sValueName=="NOTES2" )

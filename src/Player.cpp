@@ -960,8 +960,10 @@ void Player::Update( float fDeltaTime )
 	UpdateJudgedRows();
 
 	// Check for TapNote misses
-	UpdateTapNotesMissedOlderThan( GetMaxStepDistanceSeconds() );
-
+	if (!GAMESTATE->m_bInStepEditor)
+	{
+		UpdateTapNotesMissedOlderThan( GetMaxStepDistanceSeconds() );
+	}
 	// process transforms that are waiting to be applied
 	ApplyWaitingTransforms();
 }
@@ -2972,10 +2974,6 @@ void Player::RandomizeNotes( int iNoteRow )
 			continue;
 
 		const int iSwapWith = RandomInt( iNumOfTracks );
-		
-		// Make sure we're not swapping with ourselves.
-		if( t == iSwapWith )
-			continue;
 		
 		// Make sure this is empty.
 		if( m_NoteData.FindTapNote(iSwapWith, iNewNoteRow) != m_NoteData.end(iSwapWith) )

@@ -51,6 +51,7 @@
 #CREDIT:;
 
 // steps-based timingdata
+#OFFSET:;
 #BPMS:;
 #STOPS:;
 #DELAYS:;
@@ -61,8 +62,7 @@
 #SCROLLS:;
 #FAKES:;
 #LABELS:;
-#ATTACKS:; // Not yet in use.
-#OFFSET:;
+#ATTACKS:;
 
 // actual step data
 #NOTES:;

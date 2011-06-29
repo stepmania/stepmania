@@ -70,7 +70,7 @@ for idx,diff in pairs(Difficulty) do
 			Text=(sDifficulty == "Edit") and "0 Edits" or "0";
 			ShowCommand=cmd(stoptweening;linear,0.1;diffuse,CustomDifficultyToColor( sDifficulty ));
 			HideCommand=cmd(stoptweening;decelerate,0.2;diffuse,CustomDifficultyToDarkColor( sDifficulty ));
-			InitCommand=cmd(x,-64-8+tLocation[sDifficulty];shadowlength,1;zoom,0.5;diffuse,CustomDifficultyToColor( sDifficulty ));
+			InitCommand=cmd(x,-64-8+tLocation[sDifficulty];shadowlength,1;zoom,0.75;diffuse,CustomDifficultyToColor( sDifficulty ));
 		};
 	};
 end

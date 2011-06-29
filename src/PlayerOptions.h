@@ -27,7 +27,7 @@ public:
 		m_fBlind(0), m_SpeedfBlind(1.0f),
 		m_fCover(0), m_SpeedfCover(1.0f),
 		m_fRandAttack(0), m_SpeedfRandAttack(1.0f),
-		m_fSongAttack(0), m_SpeedfSongAttack(1.0f),
+		m_fNoAttack(0), m_SpeedfNoAttack(1.0f),
 		m_fPlayerAutoPlay(0), m_SpeedfPlayerAutoPlay(1.0f),
 		m_bSetTiltOrSkew(false),
 		m_fPerspectiveTilt(0), m_SpeedfPerspectiveTilt(1.0f),
@@ -167,7 +167,7 @@ public:
 	float	m_fBlind,			m_SpeedfBlind;
 	float	m_fCover,			m_SpeedfCover;	// hide the background per-player--can't think of a good name
 	float	m_fRandAttack,			m_SpeedfRandAttack;
-	float	m_fSongAttack,			m_SpeedfSongAttack;
+	float	m_fNoAttack,			m_SpeedfNoAttack;
 	float	m_fPlayerAutoPlay,		m_SpeedfPlayerAutoPlay;
 	bool	m_bSetTiltOrSkew;				// true if the tilt or skew was set by FromString
 	float	m_fPerspectiveTilt,		m_SpeedfPerspectiveTilt;		// -1 = near, 0 = overhead, +1 = space

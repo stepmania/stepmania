@@ -37,7 +37,7 @@ void PlayerOptions::Init()
 	m_fBlind = 0;			m_SpeedfBlind = 1.0f;
 	m_fCover = 0;			m_SpeedfCover = 1.0f;
 	m_fRandAttack = 0;		m_SpeedfRandAttack = 1.0f;
-	m_fSongAttack = 0;		m_SpeedfSongAttack = 1.0f;
+	m_fNoAttack = 0;		m_SpeedfNoAttack = 1.0f;
 	m_fPlayerAutoPlay = 0;		m_SpeedfPlayerAutoPlay = 1.0f;
 	m_bSetTiltOrSkew = false;
 	m_fPerspectiveTilt = 0;		m_SpeedfPerspectiveTilt = 1.0f;
@@ -73,7 +73,7 @@ void PlayerOptions::Approach( const PlayerOptions& other, float fDeltaSeconds )
 	APPROACH( fBlind );
 	APPROACH( fCover );
 	APPROACH( fRandAttack );
-	APPROACH( fSongAttack );
+	APPROACH( fNoAttack );
 	APPROACH( fPlayerAutoPlay );
 	APPROACH( fPerspectiveTilt );
 	APPROACH( fSkew );
@@ -180,7 +180,7 @@ void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
 	AddPart( AddTo, m_fCover,	"Cover" );
 
 	AddPart( AddTo, m_fRandAttack,		"RandomAttacks" );
-	AddPart( AddTo, m_fSongAttack,		"SongAttacks" );
+	AddPart( AddTo, m_fNoAttack,		"NoAttacks" );
 	AddPart( AddTo, m_fPlayerAutoPlay,	"PlayerAutoPlay" );
 
 	AddPart( AddTo, m_fPassmark,	"Passmark" );
@@ -417,7 +417,7 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 	else if( sBit == "blind" )				SET_FLOAT( fBlind )
 	else if( sBit == "cover" )				SET_FLOAT( fCover )
 	else if( sBit == "randomattacks" )			SET_FLOAT( fRandAttack )
-	else if( sBit == "songattacks" )			SET_FLOAT( fSongAttack )
+	else if( sBit == "noattacks" )				SET_FLOAT( fNoAttack )
 	else if( sBit == "playerautoplay" )			SET_FLOAT( fPlayerAutoPlay )
 	else if( sBit == "passmark" )				SET_FLOAT( fPassmark )
 	else if( sBit == "overhead" )				{ m_bSetTiltOrSkew = true; m_fSkew = 0;		m_fPerspectiveTilt = 0;		m_SpeedfSkew = m_SpeedfPerspectiveTilt = speed; }
@@ -657,7 +657,7 @@ bool PlayerOptions::operator==( const PlayerOptions &other ) const
 	COMPARE(m_fBlind);
 	COMPARE(m_fCover);
 	COMPARE(m_fRandAttack);
-	COMPARE(m_fSongAttack);
+	COMPARE(m_fNoAttack);
 	COMPARE(m_fPlayerAutoPlay);
 	COMPARE(m_fPerspectiveTilt);
 	COMPARE(m_fSkew);
@@ -711,6 +711,10 @@ bool PlayerOptions::IsEasierForSongAndSteps( Song* pSong, Steps* pSteps, PlayerN
 
 	// This makes songs with sparse notes easier.
 	if( m_bTransforms[TRANSFORM_ECHO] )	return true;
+	
+	// Removing attacks is easier in general.
+	if (m_fNoAttack || (!m_fRandAttack && pSteps->HasAttacks()))
+		return true;
 	
 	if( m_fCover )	return true;
 	if( m_fPlayerAutoPlay )	return true;
@@ -957,7 +961,20 @@ public:
 	DEFINE_METHOD( GetBlind, m_fBlind )
 	DEFINE_METHOD( GetCover, m_fCover )
 	DEFINE_METHOD( GetRandomAttacks, m_fRandAttack )
-	DEFINE_METHOD( GetSongAttacks, m_fSongAttack )
+	
+	static int GetStepAttacks( T *p, lua_State *L )
+	{
+		lua_pushnumber(L,
+			       (p->m_fNoAttack > 0 || p->m_fRandAttack > 0 ? 0 : 1 ));
+		return 1;
+	}
+	
+	// This one is deprecated.
+	static int GetSongAttacks( T *p, lua_State *L )
+	{
+		return GetStepAttacks(p, L);
+	}
+	DEFINE_METHOD( GetNoAttacks, m_fNoAttack )
 	DEFINE_METHOD( GetSkew, m_fSkew )
 	DEFINE_METHOD( GetPassmark, m_fPassmark )
 	DEFINE_METHOD( GetRandomSpeed, m_fRandomSpeed )
@@ -984,6 +1001,8 @@ public:
 		// SetSkew
 		ADD_METHOD( GetSongAttacks );
 		// SetSongAttacks
+		ADD_METHOD( GetStepAttacks );
+		ADD_METHOD( GetNoAttacks );
 		ADD_METHOD( GetCMod );
 		ADD_METHOD( GetXMod );
 

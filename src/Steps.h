@@ -1,6 +1,7 @@
 #ifndef STEPS_H
 #define STEPS_H
 
+#include "Attack.h"
 #include "GameConstantsAndTypes.h"
 #include "PlayerNumber.h"
 #include "Grade.h"
@@ -92,6 +93,11 @@ public:
 	 */
 	RString GetCredit() const			{ return Real()->m_sCredit; }
 
+	/** @brief The list of attacks. */
+	AttackArray m_Attacks;
+	/** @brief The stringified list of attacks. */
+	vector<RString> m_sAttackString;
+	
 	void SetFilename( RString fn )			{ m_sFilename = fn; }
 	RString GetFilename() const			{ return m_sFilename; }
 	void SetSavedToDisk( bool b )			{ DeAutogen(); m_bSavedToDisk = b; }
@@ -128,6 +134,11 @@ public:
 	 * @brief Determine if the Steps have any major timing changes during gameplay.
 	 * @return true if it does, or false otherwise. */
 	bool HasSignificantTimingChanges() const;
+	
+	/**
+	 * @brief Determine if the Steps have any attacks.
+	 * @return true if it does, or false otherwise. */
+	bool HasAttacks() const;
 
 	// Lua
 	void PushSelf( lua_State *L );

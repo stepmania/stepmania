@@ -26,6 +26,8 @@ const float VERSION_RADAR_FAKE = 0.53f;
 const float VERSION_WARP_SEGMENT = 0.56f;
 /** @brief The version that formally introduced Split Timing. */
 const float VERSION_SPLIT_TIMING = 0.7f;
+/** @brief The version that moved the step's Offset higher up. */
+const float VERSION_OFFSET_BEFORE_ATTACK = 0.72f;
 
 /**
  * @brief The SSCLoader handles all of the parsing needed for .ssc files.

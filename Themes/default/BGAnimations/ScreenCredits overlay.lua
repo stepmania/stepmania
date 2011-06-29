@@ -50,7 +50,9 @@ local contrib = {
 	"Kaox", -- pump/default noteskin
 	"NitroX72", -- pump/frame noteskin
 	"sy567", -- beginner helper fix
+	"Thai Pangsakulyanont (theDtTvB)",
 	"v1toko", -- x-mode from StepNXA
+	"Christophe Goulet-LeBlanc (Kommisar)",
 }
 
 local thanks = {
@@ -76,6 +78,7 @@ local shoutout = {
 	"Ciera Boyd", -- you bet your ass I'm putting my girlfriend in the credits
 	--Image(), -- we should have some logos probably to look super pro
 	-- "Can't stop crying... buckets of tears!"
+	"#KBO",
 	"AJ Kelly, without which this game would have never been.",
 	"You showed us... your ultimate dance",
 }

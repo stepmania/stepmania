@@ -8,7 +8,53 @@ ________________________________________________________________________________
 StepMania 5.0 Preview 2 | 201106??
 --------------------------------------------------------------------------------
 
+2011/06/28
+----------
+* [ScreenEdit] Add a function to copy/paste the TimingData of a player's
+  choice. Remember to be in the appropriate mode when copying and pasting.
+  By default, the song timing is already located in the clipboard, ready for
+  use. [Wolfman2000]
+
+2011/06/27
+----------
+* [Steps] Make sure #ATTACKS are copied when requested. [Wolfman2000]
+* [ScreenEdit] Have Step Author up front instead of Chart Style. This is
+  probably going to be better overall. [Wolfman2000]
+* [TimingData] Preserve the length of time for Speed Segment scaling when using
+  beats. [Wolfman2000]
+* [NotesLoader/WriterSSC] #OFFSET is to be before #ATTACKS. This is required if
+  we pursue beat based attacks and not just second based. [Wolfman2000]
+
+2011/06/26
+----------
+* [UnlockManager] New metric: AutoLockEditSteps. Use this to hide bonus charts
+  until the Expert steps are beaten. No guarantee that this works with no
+  challenge steps in the song. This defaults to false. [Wolfman2000]
+* [UnlockManager] New metric: SongsNotAdditional. Set to true to keep the
+  default behavior, false to have the AdditionalSongs folder contain
+  unlockable material. This is set to true to start. [Wolfman2000]
+* [ScreenEdit] Allow jumping between all segments, not just Label segments.
+  You still use Ctrl + ,/. to jump, but now you use Ctrl + N/M to cycle the
+  segments. By default, it starts with Label. [Wolfman2000]
+* [PlayerOptions] No longer display StepAttacks in the player's list.
+  Instead, show NoAttacks if attacks are disabled. [Wolfman2000]
+
+2011/06/24
+----------
+* [Actor] Implement compound(length,tweens) in _fallback/02 Actor.lua. [AJ]
+* [UnlockManager] Add a new unlock reward: StepsType. This is similar to
+  unlocking Steps, but it is targeted for one step in one stepstype rather
+  than one step in all stepstypes. This needs testing. [Wolfman2000]
+* [ScreenEdit] Add the option to convert delays to beats. Just find a better
+  song to use this on besides Uprock. [Wolfman2000]
+* [ScreenEdit] Fix a crash if you don't save any steps on a new song.
+  [Wolfman2000]
+* [NotesLoader/WriterSSC] Add support for Step #ATTACKS. Furthermore, Song
+  Attacks (or rather, Step Attacks as it should be called now) are turned on
+  by default instead of off. [Wolfman2000]
+
 2011/06/19
+----------
 * [EditMenu] Allow all songs to work in Practice Mode, regardless of folder
   location. This fixes a crash if everyone had songs in AdditionalSongs.
   [Wolfman2000]

@@ -1045,6 +1045,22 @@ void NoteField::DrawPrimitives()
 				}
 			}
 		}
+		else
+		{
+			AttackArray &attacks = GAMESTATE->m_bIsUsingStepTiming ?
+				GAMESTATE->m_pCurSteps[PLAYER_1]->m_Attacks :
+				GAMESTATE->m_pCurSong->m_Attacks;
+			FOREACH_CONST(Attack, attacks, a)
+			{
+				float fBeat = timing.GetBeatFromElapsedTime(a->fStartSecond);
+				if (BeatToNoteRow(fBeat) >= iFirstRowToDraw &&
+				    BeatToNoteRow(fBeat) <= iLastRowToDraw &&
+				    IS_ON_SCREEN(fBeat))
+				{
+					this->DrawAttackText(fBeat, *a);
+				}
+			}
+		}
 		
 		if( !GAMESTATE->m_bIsUsingStepTiming )
 		{

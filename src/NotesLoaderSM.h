@@ -3,6 +3,7 @@
 
 #include "GameConstantsAndTypes.h"
 #include "BackgroundUtil.h"
+#include "Attack.h"
 #include "MsdFile.h" // we require the struct from here.
 
 class Song;
@@ -133,7 +134,18 @@ struct SMLoader
 	
 	virtual void ProcessBGChanges( Song &out, const RString &sValueName, 
 			      const RString &sPath, const RString &sParam );
-	void ProcessAttacks( Song &out, MsdFile::value_t sParams );
+	
+	/**
+	 * @brief Put the attacks in the attacks string.
+	 * @param attacks the attack string.
+	 * @param params the params from the simfile. */
+	virtual void ProcessAttackString(vector<RString> &attacks, MsdFile::value_t params);
+	
+	/**
+	 * @brief Put the attacks in the attacks array.
+	 * @param attacks the attacks array.
+	 * @param params the params from the simfile. */
+	void ProcessAttacks( AttackArray &attacks, MsdFile::value_t params );
 	void ProcessInstrumentTracks( Song &out, const RString &sParam );
 	
 	/**

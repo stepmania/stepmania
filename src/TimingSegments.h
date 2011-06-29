@@ -28,6 +28,14 @@ struct BaseTimingSegment
 	virtual ~BaseTimingSegment();
 	
 	/**
+	 * @brief Scales itself.
+	 * @param start Starting row
+	 * @param length Length in rows
+	 * @param newLength The new length in rows
+	 */
+	virtual void Scale( int start, int length, int newLength );
+	
+	/**
 	 * @brief Set the starting row of the BaseTimingSegment.
 	 *
 	 * This is virtual to allow other segments to implement validation
@@ -177,6 +185,8 @@ struct FakeSegment : public TimingSegment<FakeSegment>
 	 * @param b the length in beats. */
 	void SetLength(const float b);
 	
+	void Scale( int start, int length, int newLength );
+	
 	/**
 	 * @brief Compares two FakeSegments to see if one is less than the other.
 	 * @param other the other FakeSegment to compare to.
@@ -235,6 +245,8 @@ struct WarpSegment : public TimingSegment<WarpSegment>
 	 * @brief Set the length in beats of the WarpSegment.
 	 * @param b the length in beats. */
 	void SetLength(const float b);
+	
+	void Scale( int start, int length, int newLength );
 	
 	/*
 	 * @brief Compares two WarpSegments to see if one is less than the other.

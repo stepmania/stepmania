@@ -68,6 +68,8 @@ AutoScreenMessage( SM_BackFromSongInformation );
 AutoScreenMessage( SM_BackFromBGChange );
 AutoScreenMessage( SM_BackFromInsertTapAttack );
 AutoScreenMessage( SM_BackFromInsertTapAttackPlayerOptions );
+AutoScreenMessage( SM_BackFromInsertStepAttack );
+AutoScreenMessage( SM_BackFromInsertStepAttackPlayerOptions );
 AutoScreenMessage( SM_BackFromInsertCourseAttack );
 AutoScreenMessage( SM_BackFromInsertCourseAttackPlayerOptions );
 AutoScreenMessage( SM_BackFromCourseModeMenu );
@@ -144,13 +146,13 @@ void ScreenEdit::InitEditMappings()
 	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SCROLL_NEXT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_PERIOD);
 	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SCROLL_PREV][0] = DeviceInput(DEVICE_KEYBOARD, KEY_COMMA);
 
-	m_EditMappingsDeviceInput.button[EDIT_BUTTON_LABEL_NEXT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_PERIOD);
-	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_LABEL_NEXT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL);
-	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_LABEL_NEXT][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL);
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SEGMENT_NEXT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_PERIOD);
+	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_SEGMENT_NEXT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL);
+	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_SEGMENT_NEXT][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL);
 	
-	m_EditMappingsDeviceInput.button[EDIT_BUTTON_LABEL_PREV][0] = DeviceInput(DEVICE_KEYBOARD, KEY_COMMA);
-	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_LABEL_PREV][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL);
-	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_LABEL_PREV][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL);
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SEGMENT_PREV][0] = DeviceInput(DEVICE_KEYBOARD, KEY_COMMA);
+	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_SEGMENT_PREV][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL);
+	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_SEGMENT_PREV][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL);
 	
 	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SCROLL_SELECT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT);
 	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SCROLL_SELECT][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT);
@@ -244,8 +246,8 @@ void ScreenEdit::InitEditMappings()
 		m_EditMappingsDeviceInput.button[EDIT_BUTTON_OPEN_BGCHANGE_LAYER2_MENU][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cb);
 		m_EditMappingsDeviceInput.hold[EDIT_BUTTON_OPEN_BGCHANGE_LAYER2_MENU][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT);
 		m_EditMappingsDeviceInput.hold[EDIT_BUTTON_OPEN_BGCHANGE_LAYER2_MENU][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT);
-		m_EditMappingsDeviceInput.button[EDIT_BUTTON_OPEN_COURSE_MENU][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cc);
-		m_EditMappingsDeviceInput.button[EDIT_BUTTON_OPEN_COURSE_ATTACK_MENU][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cv);
+		m_EditMappingsDeviceInput.button[EDIT_BUTTON_ADD_STEP_MODS][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cc);
+		m_EditMappingsDeviceInput.button[EDIT_BUTTON_OPEN_STEP_ATTACK_MENU][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cv);
 
 		m_EditMappingsDeviceInput.button[EDIT_BUTTON_INSERT_SHIFT_PAUSES][0] = DeviceInput(DEVICE_KEYBOARD, KEY_INSERT);
 		m_EditMappingsDeviceInput.hold[EDIT_BUTTON_INSERT_SHIFT_PAUSES][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL);
@@ -275,6 +277,14 @@ void ScreenEdit::InitEditMappings()
 	m_EditMappingsDeviceInput.button[EDIT_BUTTON_CYCLE_TAP_LEFT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cn);
 	m_EditMappingsDeviceInput.button[EDIT_BUTTON_CYCLE_TAP_RIGHT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cm);
 
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_CYCLE_SEGMENT_LEFT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cn);
+	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_CYCLE_SEGMENT_LEFT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL);
+	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_CYCLE_SEGMENT_LEFT][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL);
+	
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_CYCLE_SEGMENT_RIGHT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cm);
+	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_CYCLE_SEGMENT_RIGHT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL);
+	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_CYCLE_SEGMENT_RIGHT][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL);
+	
 	m_EditMappingsDeviceInput.button    [EDIT_BUTTON_SCROLL_SPEED_UP][0] = DeviceInput(DEVICE_KEYBOARD, KEY_UP);
 	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_SCROLL_SPEED_UP][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL);
 	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_SCROLL_SPEED_UP][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL);
@@ -569,6 +579,8 @@ static MenuDef g_AreaMenu(
 	MenuRowDef( ScreenEdit::shift_pauses_backward,	"Shift all timing changes up",		true, EditMode_Full, true, true, 0, NULL ),
 	MenuRowDef(ScreenEdit::convert_pause_to_beat,	"Convert pause to beats",		true, 
 	     EditMode_Full, true, true, 0, NULL ),
+	MenuRowDef(ScreenEdit::convert_delay_to_beat, "Convert delay to beats",		true,
+	     EditMode_Full, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::undo,			"Undo",					true, EditMode_Practice, true, true, 0, NULL ),
   MenuRowDef(ScreenEdit::clear_clipboard,		"Clear clipboard",			true,
 	     EditMode_Practice, true, true, 0, NULL )
@@ -631,6 +643,8 @@ static MenuDef g_TimingDataInformation(
         MenuRowDef( ScreenEdit::speed_mode,			"Edit speed (mode)",		true, EditMode_Full, true, true, 0, "Beats", "Seconds" ),
         MenuRowDef( ScreenEdit::scroll,			"Edit scrolling factor",		true, EditMode_Full, true, true, 0, NULL ),
         MenuRowDef( ScreenEdit::fake,				"Edit fake",			true, EditMode_Full, true, true, 0, NULL ),
+        MenuRowDef( ScreenEdit::copy_timing,		"Copy timing data",			true, EditMode_Full, true, true, 0, NULL ),
+        MenuRowDef( ScreenEdit::paste_timing,		"Paste timing data",			true, EditMode_Full, true, true, 0, NULL ),
         MenuRowDef( ScreenEdit::erase_step_timing,		"Erase step timing",		true, EditMode_Full, true, true, 0, NULL )
 );
 
@@ -768,6 +782,8 @@ void ScreenEdit::Init()
 	ScreenWithMenuElements::Init();
 
 	InitEditMappings();
+	
+	currentCycleSegment = "label";
 
 	// save the originals for reverting later
 	CopyToLastSave();
@@ -859,6 +875,8 @@ void ScreenEdit::Init()
 	m_bRemoveNoteButtonDown = false;
 
 	m_Clipboard.SetNumTracks( m_NoteDataEdit.GetNumTracks() );
+	
+	clipboardTiming = GAMESTATE->m_pCurSong->m_SongTiming; // always have a backup.
 
 	m_bHasUndo = false;
 	m_Undo.SetNumTracks( m_NoteDataEdit.GetNumTracks() );
@@ -1096,9 +1114,11 @@ static LocalizedString DIFFICULTY("ScreenEdit", "Difficulty");
 static LocalizedString ROUTINE_PLAYER("ScreenEdit", "Routine Player");
 static LocalizedString DESCRIPTION("ScreenEdit", "Description");
 static LocalizedString CHART_STYLE("ScreenEdit", "Chart Style");
+static LocalizedString STEP_AUTHOR("ScreenEdit", "Step Author");
 static LocalizedString MAIN_TITLE("ScreenEdit", "Main title");
 static LocalizedString SUBTITLE("ScreenEdit", "Subtitle");
 static LocalizedString TAP_NOTE_TYPE("ScreenEdit", "Tap Note");
+static LocalizedString SEGMENT_TYPE("ScreenEdit", "Segment");
 static LocalizedString TAP_STEPS("ScreenEdit", "Tap Steps");
 static LocalizedString JUMPS("ScreenEdit", "Jumps");
 static LocalizedString HANDS("ScreenEdit", "Hands");
@@ -1124,9 +1144,11 @@ static ThemeMetric<RString> DIFFICULTY_FORMAT("ScreenEdit", "DifficultyFormat");
 static ThemeMetric<RString> ROUTINE_PLAYER_FORMAT("ScreenEdit", "RoutinePlayerFormat");
 static ThemeMetric<RString> DESCRIPTION_FORMAT("ScreenEdit", "DescriptionFormat");
 static ThemeMetric<RString> CHART_STYLE_FORMAT("ScreenEdit", "ChartStyleFormat");
+static ThemeMetric<RString> STEP_AUTHOR_FORMAT("ScreenEdit", "StepAuthorFormat");
 static ThemeMetric<RString> MAIN_TITLE_FORMAT("ScreenEdit", "MainTitleFormat");
 static ThemeMetric<RString> SUBTITLE_FORMAT("ScreenEdit", "SubtitleFormat");
 static ThemeMetric<RString> TAP_NOTE_TYPE_FORMAT("ScreenEdit", "TapNoteTypeFormat");
+static ThemeMetric<RString> SEGMENT_TYPE_FORMAT("ScreenEdit", "SegmentTypeFormat");
 static ThemeMetric<RString> NUM_STEPS_FORMAT("ScreenEdit", "NumStepsFormat");
 static ThemeMetric<RString> NUM_JUMPS_FORMAT("ScreenEdit", "NumJumpsFormat");
 static ThemeMetric<RString> NUM_HOLDS_FORMAT("ScreenEdit", "NumHoldsFormat");
@@ -1192,12 +1214,14 @@ void ScreenEdit::UpdateTextInfo()
 		if ( m_InputPlayerNumber != PLAYER_INVALID )
 			sText += ssprintf( ROUTINE_PLAYER_FORMAT.GetValue(), ROUTINE_PLAYER.GetValue().c_str(), m_InputPlayerNumber + 1 );
 		sText += ssprintf( DESCRIPTION_FORMAT.GetValue(), DESCRIPTION.GetValue().c_str(), m_pSteps->GetDescription().c_str() );
-		sText += ssprintf( CHART_STYLE_FORMAT.GetValue(), CHART_STYLE.GetValue().c_str(), m_pSteps->GetChartStyle().c_str() );
+		sText += ssprintf( STEP_AUTHOR_FORMAT.GetValue(), STEP_AUTHOR.GetValue().c_str(), m_pSteps->GetCredit().c_str() );
+		//sText += ssprintf( CHART_STYLE_FORMAT.GetValue(), CHART_STYLE.GetValue().c_str(), m_pSteps->GetChartStyle().c_str() );
 		sText += ssprintf( MAIN_TITLE_FORMAT.GetValue(), MAIN_TITLE.GetValue().c_str(), m_pSong->m_sMainTitle.c_str() );
 		if( m_pSong->m_sSubTitle.size() )
 			sText += ssprintf( SUBTITLE_FORMAT.GetValue(), SUBTITLE.GetValue().c_str(), m_pSong->m_sSubTitle.c_str() );
+		sText += ssprintf( SEGMENT_TYPE_FORMAT.GetValue(), SEGMENT_TYPE.GetValue().c_str(), currentCycleSegment.c_str() );
 		sText += ssprintf( TAP_NOTE_TYPE_FORMAT.GetValue(), TAP_NOTE_TYPE.GetValue().c_str(), TapNoteTypeToString( m_selectedTap.type ).c_str() );
-		break;
+			break;
 	}
 	
 	GAMESTATE->SetProcessedTimingData(&m_pSteps->m_Timing);
@@ -1453,6 +1477,62 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			}
 			break;
 		}
+	case EDIT_BUTTON_CYCLE_SEGMENT_LEFT:
+	{
+		if (this->currentCycleSegment == "label")
+			this->currentCycleSegment = "fake";
+		else if (this->currentCycleSegment == "fake")
+			this->currentCycleSegment = "scroll";
+		else if (this->currentCycleSegment == "scroll")
+			this->currentCycleSegment = "speed";
+		else if (this->currentCycleSegment == "speed")
+			this->currentCycleSegment = "combo";
+		else if (this->currentCycleSegment == "combo")
+			this->currentCycleSegment = "tickcount";
+		else if (this->currentCycleSegment == "tickcount")
+			this->currentCycleSegment = "timeSig";
+		else if (this->currentCycleSegment == "timeSig")
+			this->currentCycleSegment = "warp";
+		else if (this->currentCycleSegment == "warp")
+			this->currentCycleSegment = "delay";
+		else if (this->currentCycleSegment == "delay")
+			this->currentCycleSegment = "stop";
+		else if (this->currentCycleSegment == "stop")
+			this->currentCycleSegment = "bpm";
+		else if (this->currentCycleSegment == "bpm")
+			this->currentCycleSegment = "label";
+		// fallback gracefully instead of assert.
+		else this->currentCycleSegment = "label";
+		break;
+	}		
+	case EDIT_BUTTON_CYCLE_SEGMENT_RIGHT:
+	{
+		if (this->currentCycleSegment == "label")
+			this->currentCycleSegment = "bpm";
+		else if (this->currentCycleSegment == "bpm")
+			this->currentCycleSegment = "stop";
+		else if (this->currentCycleSegment == "stop")
+			this->currentCycleSegment = "delay";
+		else if (this->currentCycleSegment == "delay")
+			this->currentCycleSegment = "warp";
+		else if (this->currentCycleSegment == "warp")
+			this->currentCycleSegment = "timeSig";
+		else if (this->currentCycleSegment == "timeSig")
+			this->currentCycleSegment = "tickcount";
+		else if (this->currentCycleSegment == "tickcount")
+			this->currentCycleSegment = "combo";
+		else if (this->currentCycleSegment == "combo")
+			this->currentCycleSegment = "speed";
+		else if (this->currentCycleSegment == "speed")
+			this->currentCycleSegment = "scroll";
+		else if (this->currentCycleSegment == "scroll")
+			this->currentCycleSegment = "fake";
+		else if (this->currentCycleSegment == "fake")
+			this->currentCycleSegment = "label";
+		// fallback gracefully instead of assert.
+		else this->currentCycleSegment = "label";
+		break;
+	}
 	case EDIT_BUTTON_SCROLL_SPEED_UP:
 	case EDIT_BUTTON_SCROLL_SPEED_DOWN:
 		{
@@ -1567,16 +1647,60 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			ScrollTo( NoteRowToBeat(iRow) );
 		}
 		break;
-	case EDIT_BUTTON_LABEL_NEXT:
-		{
-			ScrollTo( GetAppropriateTiming().GetNextLabelSegmentBeatAtBeat( GetBeat() ) );
-		}
-		break;
-	case EDIT_BUTTON_LABEL_PREV:
-		{
-			ScrollTo( GetAppropriateTiming().GetPreviousLabelSegmentBeatAtBeat( GetBeat() ) );
-		}
-		break;
+	case EDIT_BUTTON_SEGMENT_NEXT:
+	{
+		TimingData &timing = GetAppropriateTiming();
+		if (this->currentCycleSegment == "label")
+			ScrollTo(timing.GetNextLabelSegmentBeatAtBeat(GetBeat()));
+		else if (this->currentCycleSegment == "bpm")
+			ScrollTo(timing.GetNextBPMSegmentBeatAtBeat(GetBeat()));
+		else if (this->currentCycleSegment == "stop")
+			ScrollTo(timing.GetNextStopSegmentBeatAtBeat(GetBeat()));
+		else if (this->currentCycleSegment == "delay")
+			ScrollTo(timing.GetNextDelaySegmentBeatAtBeat(GetBeat()));
+		else if (this->currentCycleSegment == "warp")
+			ScrollTo(timing.GetNextWarpSegmentBeatAtBeat(GetBeat()));
+		else if (this->currentCycleSegment == "timeSig")
+			ScrollTo(timing.GetNextTimeSignatureSegmentBeatAtBeat(GetBeat()));
+		else if (this->currentCycleSegment == "tickcount")
+			ScrollTo(timing.GetNextTickcountSegmentBeatAtBeat(GetBeat()));
+		else if (this->currentCycleSegment == "combo")
+			ScrollTo(timing.GetNextComboSegmentBeatAtBeat(GetBeat()));
+		else if (this->currentCycleSegment == "speed")
+			ScrollTo(timing.GetNextSpeedSegmentBeatAtBeat(GetBeat()));
+		else if (this->currentCycleSegment == "scroll")
+			ScrollTo(timing.GetNextScrollSegmentBeatAtBeat(GetBeat()));
+		else if (this->currentCycleSegment == "fake")
+			ScrollTo(timing.GetNextFakeSegmentBeatAtBeat(GetBeat()));
+	}
+	break;
+	case EDIT_BUTTON_SEGMENT_PREV:
+	{
+		TimingData &timing = GetAppropriateTiming();
+		if (this->currentCycleSegment == "label")
+			ScrollTo(timing.GetPreviousLabelSegmentBeatAtBeat(GetBeat()));
+		else if (this->currentCycleSegment == "bpm")
+			ScrollTo(timing.GetPreviousBPMSegmentBeatAtBeat(GetBeat()));
+		else if (this->currentCycleSegment == "stop")
+			ScrollTo(timing.GetPreviousStopSegmentBeatAtBeat(GetBeat()));
+		else if (this->currentCycleSegment == "delay")
+			ScrollTo(timing.GetPreviousDelaySegmentBeatAtBeat(GetBeat()));
+		else if (this->currentCycleSegment == "warp")
+			ScrollTo(timing.GetPreviousWarpSegmentBeatAtBeat(GetBeat()));
+		else if (this->currentCycleSegment == "timeSig")
+			ScrollTo(timing.GetPreviousTimeSignatureSegmentBeatAtBeat(GetBeat()));
+		else if (this->currentCycleSegment == "tickcount")
+			ScrollTo(timing.GetPreviousTickcountSegmentBeatAtBeat(GetBeat()));
+		else if (this->currentCycleSegment == "combo")
+			ScrollTo(timing.GetPreviousComboSegmentBeatAtBeat(GetBeat()));
+		else if (this->currentCycleSegment == "speed")
+			ScrollTo(timing.GetPreviousSpeedSegmentBeatAtBeat(GetBeat()));
+		else if (this->currentCycleSegment == "scroll")
+			ScrollTo(timing.GetPreviousScrollSegmentBeatAtBeat(GetBeat()));
+		else if (this->currentCycleSegment == "fake")
+			ScrollTo(timing.GetPreviousFakeSegmentBeatAtBeat(GetBeat()));
+	}
+	break;
 	case EDIT_BUTTON_SNAP_NEXT:
 		if( m_SnapDisplay.PrevSnapMode() )
 			OnSnapModeChange();
@@ -1654,6 +1778,9 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			// don't keep undo when changing Steps
 			ClearUndo();
 
+			// get the second of the current step.
+			float curSecond = GetAppropriateTiming().GetElapsedTimeFromBeat(GetBeat());
+			
 			// save current steps
 			Steps* pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
 			ASSERT( pSteps );
@@ -1706,6 +1833,8 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 				int(vSteps.size()) );
 			SCREENMAN->SystemMessage( s );
 			m_soundSwitchSteps.Play();
+			
+			ScrollTo( GetAppropriateTiming().GetBeatFromElapsedTime(curSecond) );
 		}
 		break;
 	case EDIT_BUTTON_BPM_UP:
@@ -1988,6 +2117,35 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			EditMiniMenu( &g_CourseMode, SM_BackFromCourseModeMenu );
 		}
 		break;
+	case EDIT_BUTTON_OPEN_STEP_ATTACK_MENU:
+	{
+		TimingData &timing = GetAppropriateTiming();
+		float startTime = timing.GetElapsedTimeFromBeat(GetBeat());
+		AttackArray &attacks = 
+			(GAMESTATE->m_bIsUsingStepTiming ? m_pSteps->m_Attacks : m_pSong->m_Attacks);
+		int index = FindAttackAtTime(attacks, startTime);
+		
+		if (index >= 0)
+		{
+			const RString sDuration = ssprintf( "%.5f", attacks[index].fSecsRemaining );
+			
+			g_InsertCourseAttack.rows[remove].bEnabled = true;
+			if( g_InsertCourseAttack.rows[duration].choices.size() == 9 )
+				g_InsertCourseAttack.rows[duration].choices.push_back( sDuration );
+			else
+				g_InsertCourseAttack.rows[duration].choices.back() = sDuration;
+			g_InsertCourseAttack.rows[duration].iDefaultChoice = 9;
+		}
+		else
+		{
+			if( g_InsertCourseAttack.rows[duration].choices.size() == 10 )
+				g_InsertCourseAttack.rows[duration].choices.pop_back();
+			g_InsertCourseAttack.rows[duration].iDefaultChoice = 3;
+		}
+		EditMiniMenu( &g_InsertCourseAttack, SM_BackFromInsertStepAttack );
+		
+		break;
+	}
 	case EDIT_BUTTON_OPEN_COURSE_ATTACK_MENU:
 		{
 			// TODO: Give Song/Step Timing switches/functions here?
@@ -2019,6 +2177,44 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			EditMiniMenu( &g_InsertCourseAttack, SM_BackFromInsertCourseAttack );
 		}
 		break;
+	case EDIT_BUTTON_ADD_STEP_MODS:
+	{
+		float start = -1;
+		float end = -1;
+		PlayerOptions po;
+		
+		if (m_NoteFieldEdit.m_iBeginMarker == -1) // not highlighted
+		{
+			po.FromString("");
+		}
+		else
+		{
+			TimingData &timing = GetAppropriateTiming();
+			start = timing.GetElapsedTimeFromBeat(NoteRowToBeat(m_NoteFieldEdit.m_iBeginMarker));
+			AttackArray &attacks = 
+				(GAMESTATE->m_bIsUsingStepTiming ? m_pSteps->m_Attacks : m_pSong->m_Attacks);
+			int index = FindAttackAtTime(attacks, start);
+			
+			if (index >= 0)
+			{
+				po.FromString("");
+			}
+			if (m_NoteFieldEdit.m_iEndMarker == -1)
+			{
+				end = m_pSong->m_fMusicLengthSeconds;
+			}
+			else
+			{
+				end = timing.GetElapsedTimeFromBeat(NoteRowToBeat(m_NoteFieldEdit.m_iEndMarker));
+			}
+			
+		}
+		g_fLastInsertAttackPositionSeconds = start;
+		g_fLastInsertAttackDurationSeconds = end - start;
+		GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.Assign( ModsLevel_Stage, po );
+		SCREENMAN->AddNewScreenToTop( "ScreenPlayerOptions", SM_BackFromInsertStepAttackPlayerOptions );
+		break;
+	}
 	case EDIT_BUTTON_ADD_COURSE_MODS:
 		{
 			float fStart, fEnd;
@@ -2910,6 +3106,30 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		m_NoteDataEdit.SetTapNote( g_iLastInsertTapAttackTrack, row, tn );
 		CheckNumberOfNotesAndUndo();
 	}
+	else if (SM == SM_BackFromInsertStepAttack)
+	{
+		int iDurationChoice = ScreenMiniMenu::s_viLastAnswers[0];
+		TimingData &timing = GetAppropriateTiming();
+		g_fLastInsertAttackPositionSeconds = timing.GetElapsedTimeFromBeat( GetBeat() );
+		g_fLastInsertAttackDurationSeconds = StringToFloat( g_InsertCourseAttack.rows[0].choices[iDurationChoice] );
+		AttackArray &attacks = GAMESTATE->m_bIsUsingStepTiming ? m_pSteps->m_Attacks : m_pSong->m_Attacks;
+		int iAttack = FindAttackAtTime(attacks, g_fLastInsertAttackPositionSeconds);
+		
+		if (ScreenMiniMenu::s_iLastRowCode == ScreenEdit::remove )
+		{
+			ASSERT(iAttack >= 0);
+			attacks.erase(attacks.begin() + iAttack);
+		}
+		else
+		{
+			PlayerOptions po;
+			if (iAttack >= 0)
+				po.FromString(attacks[iAttack].sModifiers);
+			
+			GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.Assign( ModsLevel_Preferred, po );
+			SCREENMAN->AddNewScreenToTop( "ScreenPlayerOptions", SM_BackFromInsertStepAttackPlayerOptions );
+		}
+	}
 	else if( SM == SM_BackFromInsertCourseAttack )
 	{
 		int iDurationChoice = ScreenMiniMenu::s_viLastAnswers[0];
@@ -2937,6 +3157,27 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 
 			GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.Assign( ModsLevel_Preferred, po );
 			SCREENMAN->AddNewScreenToTop( "ScreenPlayerOptions", SM_BackFromInsertCourseAttackPlayerOptions );
+		}
+	}
+	else if (SM == SM_BackFromInsertStepAttackPlayerOptions)
+	{
+		PlayerOptions poChosen = GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.GetPreferred();
+		RString mods = poChosen.GetString();
+		
+		if (g_fLastInsertAttackPositionSeconds >= 0)
+		{
+			Attack a(ATTACK_LEVEL_1,
+				 g_fLastInsertAttackPositionSeconds,
+				 g_fLastInsertAttackDurationSeconds,
+				 mods,
+				 false,
+				 false);
+			AttackArray &attacks = GAMESTATE->m_bIsUsingStepTiming ? m_pSteps->m_Attacks : m_pSong->m_Attacks;
+			int index = FindAttackAtTime(attacks, g_fLastInsertAttackPositionSeconds);
+			if (index >= 0)
+				attacks[index] = a;
+			else
+				attacks.push_back(a);
 		}
 	}
 	else if( SM == SM_BackFromInsertCourseAttackPlayerOptions )
@@ -3409,6 +3650,12 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 
 				// copy edit into current Steps
 				m_pSteps->SetNoteData( m_NoteDataEdit );
+				
+				// don't forget the attacks.
+				m_pSong->m_Attacks = GAMESTATE->m_pCurSong->m_Attacks;
+				m_pSong->m_sAttackString = GAMESTATE->m_pCurSong->m_Attacks.ToVectorString();
+				m_pSteps->m_Attacks = GAMESTATE->m_pCurSteps[PLAYER_1]->m_Attacks;
+				m_pSteps->m_sAttackString = GAMESTATE->m_pCurSteps[PLAYER_1]->m_Attacks.ToVectorString();
 
 				switch( EDIT_MODE.GetValue() )
 				{
@@ -3856,18 +4103,29 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 			break;
 
 		case convert_pause_to_beat:
-			{
-				// TODO: Convert both Delays and Stops at once.
-				float fStopSeconds = GetAppropriateTiming().GetStopAtRow( BeatToNoteRow( GetBeat() ) );
-				GetAppropriateTiming().SetStopAtBeat( GetBeat() , 0 );
+		{
+			float fStopSeconds = GetAppropriateTiming().GetStopAtRow(GetRow());
+			GetAppropriateTiming().SetStopAtBeat( GetBeat() , 0 );
 
-				float fStopBeats = fStopSeconds * GetAppropriateTiming().GetBPMAtBeat( GetBeat() ) / 60;
+			float fStopBeats = fStopSeconds * GetAppropriateTiming().GetBPMAtBeat( GetBeat() ) / 60;
 
-				// don't move the step from where it is, just move everything later
-				NoteDataUtil::InsertRows( m_NoteDataEdit, BeatToNoteRow( GetBeat() ) + 1, BeatToNoteRow(fStopBeats) );
-				GetAppropriateTiming().InsertRows( BeatToNoteRow( GetBeat() ) + 1, BeatToNoteRow(fStopBeats) );
-			}
+			// don't move the step from where it is, just move everything later
+			NoteDataUtil::InsertRows( m_NoteDataEdit, GetRow() + 1, BeatToNoteRow(fStopBeats) );
+			GetAppropriateTiming().InsertRows( GetRow() + 1, BeatToNoteRow(fStopBeats) );
+		}
+		break;
+		case convert_delay_to_beat:
+		{
+			TimingData &timing = GetAppropriateTiming();
+			float pause = timing.GetDelayAtRow(GetRow());
+			timing.SetDelayAtRow(GetRow(), 0);
+			
+			float pauseBeats = pause * timing.GetBPMAtBeat(GetBeat()) / 60;
+			
+			NoteDataUtil::InsertRows(m_NoteDataEdit, GetRow(), BeatToNoteRow(pauseBeats));
+			timing.InsertRows(GetRow(), BeatToNoteRow(pauseBeats));
 			break;
+		}
 		case undo:
 			Undo();
 			break;
@@ -4150,6 +4408,24 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 			);
 			break;
 		}
+	case copy_timing:
+	{
+		clipboardTiming = GetAppropriateTiming();
+		break;
+	}
+	case paste_timing:
+	{
+		if (GAMESTATE->m_bIsUsingStepTiming)
+		{
+			GAMESTATE->m_pCurSteps[PLAYER_1]->m_Timing = clipboardTiming;
+		}
+		else
+		{
+			GAMESTATE->m_pCurSong->m_SongTiming = clipboardTiming;
+		}
+		SetDirty(true);
+		break;
+	}
 	case erase_step_timing:
 		ScreenPrompt::Prompt( SM_DoEraseStepTiming, CONFIRM_TIMING_ERASE , PROMPT_YES_NO, ANSWER_NO );
 	break;
@@ -4265,6 +4541,27 @@ void ScreenEdit::SetupCourseAttacks()
 		FOREACH( Attack, Attacks, attack )
 			GAMESTATE->m_pPlayerState[PLAYER_1]->LaunchAttack( *attack );
 	}
+	else 
+	{
+		const PlayerOptions &p = GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.GetCurrent();
+		if (GAMESTATE->m_pCurSong && p.m_fNoAttack == 0 && p.m_fRandAttack == 0 )
+		{
+			AttackArray &attacks = GAMESTATE->m_bIsUsingStepTiming ?
+				GAMESTATE->m_pCurSteps[PLAYER_1]->m_Attacks :
+				GAMESTATE->m_pCurSong->m_Attacks;
+			
+			if (attacks.size() > 0)
+			{
+				FOREACH(Attack, attacks, attack)
+				{
+					float fBeat = GetAppropriateTiming().GetBeatFromElapsedTime(attack->fStartSecond);
+					if (fBeat >= GetBeat())
+						GAMESTATE->m_pPlayerState[PLAYER_1]->LaunchAttack( *attack );
+				}
+			}
+		}
+	}
+	
 	GAMESTATE->m_pPlayerState[PLAYER_1]->RebuildPlayerOptionsFromActiveAttacks();
 }
 

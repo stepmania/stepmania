@@ -65,7 +65,11 @@ Branch = {
 		if SONGMAN:GetNumSongs() == 0 and SONGMAN:GetNumAdditionalSongs() == 0 then
 			return "ScreenHowToInstallSongs";
 		end;
-		return "ScreenSelectProfile";
+		if PROFILEMAN:GetNumLocalProfiles() >= 2 then
+			return "ScreenSelectProfile";
+		else
+			return Branch.AfterSelectProfile();
+		end
 	end,
 	OptionsEdit = function()
 		-- Similar to above, don't let anyone in here with 0 songs.
