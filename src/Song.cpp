@@ -41,7 +41,7 @@
  * @brief The internal version of the cache for StepMania.
  *
  * Increment this value to invalidate the current cache. */
-const int FILE_CACHE_VERSION = 185;
+const int FILE_CACHE_VERSION = 186;
 
 /** @brief How long does a song sample last by default? */
 const float DEFAULT_MUSIC_SAMPLE_LENGTH = 12.f;
@@ -511,7 +511,8 @@ void Song::TidyUpData( bool bFromCache )
 
 		if( m_fMusicSampleStartSeconds+m_fMusicSampleLengthSeconds > this->m_fMusicLengthSeconds )
 		{
-			int iBeat = lrintf( m_fLastBeat/2 );
+			// Attempt to get a reasonable default.
+			int iBeat = lrintf(this->m_SongTiming.GetBeatFromElapsedTime(this->lastSecond)/2);
 			iBeat -= iBeat%4;
 			m_fMusicSampleStartSeconds = timing.GetElapsedTimeFromBeat( (float)iBeat );
 		}
@@ -800,7 +801,7 @@ void Song::TranslateTitles()
 
 void Song::ReCalculateRadarValuesAndLastBeat( bool bFromCache )
 {
-	if( bFromCache && m_fFirstBeat >= 0 && m_fLastBeat > 0 )
+	if( bFromCache && this->firstSecond >= 0 && this->lastSecond > 0 )
 	{
 		// this is loaded from cache, then we just have to calculate the radar values.
 		for( unsigned i=0; i<m_vpSteps.size(); i++ )
@@ -808,8 +809,8 @@ void Song::ReCalculateRadarValuesAndLastBeat( bool bFromCache )
 		return;
 	}
 
-	float fFirstBeat = FLT_MAX; // inf
-	float fLastBeat = m_fSpecifiedLastBeat; // Make sure we're at least as long as the specified amount.
+	float localFirst = FLT_MAX; // inf
+	float localLast = this->specifiedLastSecond; // Make sure we're at least as long as the specified amount.
 
 	for( unsigned i=0; i<m_vpSteps.size(); i++ )
 	{
@@ -817,7 +818,7 @@ void Song::ReCalculateRadarValuesAndLastBeat( bool bFromCache )
 
 		pSteps->CalculateRadarValues( m_fMusicLengthSeconds );
 
-		// calculate lastBeat
+		// calculate lastSecond
 
 		// If it's autogen, then first/last beat will come from the parent.
 		if( pSteps->IsAutogen() )
@@ -842,12 +843,14 @@ void Song::ReCalculateRadarValuesAndLastBeat( bool bFromCache )
 		if( tempNoteData.GetLastRow() == 0 )
 			continue;
 
-		fFirstBeat = min( fFirstBeat, m_SongTiming.GetBeatFromElapsedTime(pSteps->m_Timing.GetElapsedTimeFromBeat(tempNoteData.GetFirstBeat())) );
-		fLastBeat  = max( fLastBeat,  m_SongTiming.GetBeatFromElapsedTime(pSteps->m_Timing.GetElapsedTimeFromBeat(tempNoteData.GetLastBeat())) );
+		localFirst = min(localFirst,
+				 pSteps->m_Timing.GetElapsedTimeFromBeat(tempNoteData.GetFirstBeat()));
+		localLast = max(localLast,
+				pSteps->m_Timing.GetElapsedTimeFromBeat(tempNoteData.GetLastBeat()));
 	}
 
-	m_fFirstBeat = fFirstBeat;
-	m_fLastBeat = fLastBeat;
+	this->firstSecond = localFirst;
+	this->lastSecond = localLast;
 }
 
 // Return whether the song is playable in the given style.
@@ -1461,8 +1464,7 @@ bool Song::HasSignificantBpmChangesOrStops() const
 
 float Song::GetStepsSeconds() const
 {
-	const TimingData &timing = this->m_SongTiming;
-	return timing.GetElapsedTimeFromBeat( m_fLastBeat ) - timing.GetElapsedTimeFromBeat( m_fFirstBeat );
+	return this->lastSecond - this->firstSecond;
 }
 
 bool Song::IsLong() const
@@ -1579,8 +1581,26 @@ public:
 	}
 	static int GetStepsSeconds( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetStepsSeconds()); return 1; }
 	static int NormallyDisplayed( T* p, lua_State *L ){ lua_pushboolean(L, p->NormallyDisplayed()); return 1; }
-	static int GetFirstBeat( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_fFirstBeat); return 1; }
-	static int GetLastBeat( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_fLastBeat); return 1; }
+	static int GetFirstSecond(T* p, lua_State *L)
+	{
+		lua_pushnumber(L, p->firstSecond);
+		return 1;
+	}
+	static int GetLastSecond(T* p, lua_State *L)
+	{
+		lua_pushnumber(L, p->lastSecond);
+		return 1;
+	}
+	static int GetFirstBeat( T* p, lua_State *L )
+	{ 
+		lua_pushnumber(L, p->m_SongTiming.GetBeatFromElapsedTime(p->firstSecond));
+		return 1;
+	}
+	static int GetLastBeat( T* p, lua_State *L )
+	{
+		lua_pushnumber(L, p->m_SongTiming.GetBeatFromElapsedTime(p->lastSecond));
+		return 1;
+	}
 	static int HasAttacks( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasAttacks()); return 1; }
 	static int GetDisplayBpms( T* p, lua_State *L )
 	{
@@ -1657,7 +1677,9 @@ public:
 		ADD_METHOD( GetStepsSeconds );
 		ADD_METHOD( NormallyDisplayed );
 		ADD_METHOD( GetFirstBeat );
+		ADD_METHOD( GetFirstSecond );
 		ADD_METHOD( GetLastBeat );
+		ADD_METHOD( GetLastSecond );
 		ADD_METHOD( HasAttacks );
 		ADD_METHOD( GetDisplayBpms );
 		ADD_METHOD( IsDisplayBpmSecret );

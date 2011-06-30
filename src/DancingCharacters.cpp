@@ -166,7 +166,8 @@ void DancingCharacters::LoadNextSong()
 	m_fThisCameraEndBeat = 0;
 
 	ASSERT( GAMESTATE->m_pCurSong );
-	m_fThisCameraEndBeat = GAMESTATE->m_pCurSong->m_fFirstBeat;
+	Song &s = *GAMESTATE->m_pCurSong;
+	m_fThisCameraEndBeat = s.m_SongTiming.GetBeatFromElapsedTime(s.firstSecond);
 
 	FOREACH_PlayerNumber( p )
 		if( GAMESTATE->IsPlayerEnabled(p) )
@@ -212,9 +213,10 @@ void DancingCharacters::Update( float fDelta )
 	bWasGameplayStarting = bGameplayStarting;
 
 	static float fLastBeat = GAMESTATE->m_Position.m_fSongBeat;
+	Song &s = *GAMESTATE->m_pCurSong;
+	float firstBeat = s.m_SongTiming.GetBeatFromElapsedTime(s.firstSecond);
 	float fThisBeat = GAMESTATE->m_Position.m_fSongBeat;
-	if( fLastBeat < GAMESTATE->m_pCurSong->m_fFirstBeat &&
-		fThisBeat >= GAMESTATE->m_pCurSong->m_fFirstBeat )
+	if( fLastBeat < firstBeat && fThisBeat >= firstBeat )
 	{
 		FOREACH_PlayerNumber( p )
 			m_pCharacter[p]->PlayAnimation( "dance" );

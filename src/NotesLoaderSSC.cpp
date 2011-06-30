@@ -265,7 +265,12 @@ bool SSCLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 
 				else if( sValueName=="LASTBEATHINT" )
 				{
-					out.m_fSpecifiedLastBeat = StringToFloat( sParams[1] );
+					// unable to parse due to tag position. Ignore.
+				}
+				
+				else if (sValueName == "LASTSECONDHINT")
+				{
+					out.specifiedLastSecond = StringToFloat(sParams[1]);
 				}
 
 				else if( sValueName=="MUSICBYTES" )
@@ -395,16 +400,20 @@ bool SSCLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 
 				/* The following are cache tags. Never fill their values
 				 * directly: only from the cached version. */
-				else if( sValueName=="FIRSTBEAT" )
+				else if( sValueName=="FIRSTBEAT" || sValueName=="LASTBEAT" )
+				{
+					// no longer used.
+				}
+				else if (sValueName=="FIRSTSECOND")
 				{
 					if( bFromCache )
-						out.m_fFirstBeat = StringToFloat( sParams[1] );
+						out.firstSecond = StringToFloat( sParams[1] );
 				}
 
 				else if( sValueName=="LASTBEAT" )
 				{
 					if( bFromCache )
-						out.m_fLastBeat = StringToFloat( sParams[1] );
+						out.lastSecond = StringToFloat( sParams[1] );
 				}
 
 				else if( sValueName=="SONGFILENAME" )

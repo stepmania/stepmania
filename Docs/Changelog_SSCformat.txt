@@ -9,6 +9,11 @@ change to JSON, but it is unsure if this will be done.
 Implement .ssc at your own risk.
 ________________________________________________________________________________
 
+[v0.73] - Wolfman2000
+* Use #FIRSTSECOND, #LASTSECOND, and #LASTSECONDHINT instead of the BEAT
+  equivalents.
+* Move #LASTSECONDHINT to after the Timing tags.
+
 [v0.72] - Wolfman2000
 * Have #OFFSET come before #ATTACKS in the Step data.
 

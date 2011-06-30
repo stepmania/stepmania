@@ -8,6 +8,12 @@ ________________________________________________________________________________
 StepMania 5.0 Preview 2 | 201106??
 --------------------------------------------------------------------------------
 
+2011/06/30
+----------
+* [NotesAll] Use #FIRSTSECOND, #LASTSECOND, and #LASTSECONDHINT instead of the
+  former BEAT equivalents. Split Timing has made this a necessity thanks to
+  certain files that abuse Stops/Delays more than usual. [Wolfman2000]
+
 2011/06/28
 ----------
 * [ScreenEdit] Add a function to copy/paste the TimingData of a player's

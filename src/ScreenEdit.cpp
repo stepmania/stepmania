@@ -618,7 +618,7 @@ static MenuDef g_SongInformation(
 	MenuRowDef( ScreenEdit::main_title_transliteration,	"Main title transliteration",	true, EditMode_Practice, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::sub_title_transliteration,	"Sub title transliteration",	true, EditMode_Practice, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::artist_transliteration,		"Artist transliteration",	true, EditMode_Practice, true, true, 0, NULL ),
-	MenuRowDef( ScreenEdit::last_beat_hint,			"Last beat hint",		true, EditMode_Full, true, true, 0, NULL ),
+	MenuRowDef( ScreenEdit::last_second_hint,		"Last second hint",		true, EditMode_Full, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::preview_start,			"Preview Start",		true, EditMode_Full, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::preview_length,			"Preview Length",		true, EditMode_Full, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::display_bpm,			"Display BPM",			true, EditMode_Full, true, true, 0, "Actual", "Specified", "Random" ),
@@ -2127,7 +2127,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 		
 		if (index >= 0)
 		{
-			const RString sDuration = ssprintf( "%.5f", attacks[index].fSecsRemaining );
+			const RString sDuration = ssprintf( "%.6f", attacks[index].fSecsRemaining );
 			
 			g_InsertCourseAttack.rows[remove].bEnabled = true;
 			if( g_InsertCourseAttack.rows[duration].choices.size() == 9 )
@@ -2158,7 +2158,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 
 			if( iAttack >= 0 )
 			{
-				const RString sDuration = ssprintf( "%.5f", ce.attacks[iAttack].fSecsRemaining );
+				const RString sDuration = ssprintf( "%.6f", ce.attacks[iAttack].fSecsRemaining );
 
 				g_InsertCourseAttack.rows[remove].bEnabled = true;
 				if( g_InsertCourseAttack.rows[duration].choices.size() == 9 )
@@ -3426,13 +3426,19 @@ static void ChangeArtistTranslit( const RString &sNew )
 
 static void ChangeBeat0Offset( const RString &sNew )
 {
-	TimingData &timing = GAMESTATE->m_bIsUsingStepTiming ? GAMESTATE->m_pCurSteps[PLAYER_1]->m_Timing : GAMESTATE->m_pCurSong->m_SongTiming;
+	TimingData &timing = (GAMESTATE->m_bIsUsingStepTiming ? 
+			      GAMESTATE->m_pCurSteps[PLAYER_1]->m_Timing : 
+			      GAMESTATE->m_pCurSong->m_SongTiming);
 	timing.m_fBeat0OffsetInSeconds = StringToFloat( sNew );
 }
 
-static void ChangeLastBeatHint( const RString &sNew )
+static void ChangeLastSecondHint( const RString &sNew )
 {
-	GAMESTATE->m_pCurSong->m_fSpecifiedLastBeat = StringToFloat( sNew );
+	Song &s = *GAMESTATE->m_pCurSong;
+	TimingData &timing = (GAMESTATE->m_bIsUsingStepTiming ?
+			      GAMESTATE->m_pCurSteps[PLAYER_1]->m_Timing :
+			      s.m_SongTiming);
+	s.specifiedLastSecond = StringToFloat(sNew);
 }
 
 static void ChangePreviewStart( const RString &sNew )
@@ -3507,23 +3513,23 @@ void ScreenEdit::DisplayTimingMenu()
 	TimingData &pTime = GetAppropriateTiming();
 	bool bHasSpeedOnThisRow = pTime.GetSpeedSegmentAtBeat( fBeat ).GetBeat() == fBeat;
 	
-	g_TimingDataInformation.rows[beat_0_offset].SetOneUnthemedChoice( ssprintf("%.5f", pTime.m_fBeat0OffsetInSeconds) );
-	g_TimingDataInformation.rows[bpm].SetOneUnthemedChoice( ssprintf("%.5f", pTime.GetBPMAtBeat( fBeat ) ) );
-	g_TimingDataInformation.rows[stop].SetOneUnthemedChoice( ssprintf("%.5f", pTime.GetStopAtBeat( fBeat ) ) ) ;
-	g_TimingDataInformation.rows[delay].SetOneUnthemedChoice( ssprintf("%.5f", pTime.GetDelayAtBeat( fBeat ) ) );
+	g_TimingDataInformation.rows[beat_0_offset].SetOneUnthemedChoice( ssprintf("%.6f", pTime.m_fBeat0OffsetInSeconds) );
+	g_TimingDataInformation.rows[bpm].SetOneUnthemedChoice( ssprintf("%.6f", pTime.GetBPMAtBeat( fBeat ) ) );
+	g_TimingDataInformation.rows[stop].SetOneUnthemedChoice( ssprintf("%.6f", pTime.GetStopAtBeat( fBeat ) ) ) ;
+	g_TimingDataInformation.rows[delay].SetOneUnthemedChoice( ssprintf("%.6f", pTime.GetDelayAtBeat( fBeat ) ) );
 	g_TimingDataInformation.rows[time_signature].SetOneUnthemedChoice( ssprintf("%d / %d", pTime.GetTimeSignatureNumeratorAtBeat( fBeat ), pTime.GetTimeSignatureDenominatorAtBeat( fBeat ) ) );
 	g_TimingDataInformation.rows[label].SetOneUnthemedChoice( pTime.GetLabelAtBeat( fBeat ).c_str() );
 	g_TimingDataInformation.rows[tickcount].SetOneUnthemedChoice( ssprintf("%d", pTime.GetTickcountAtBeat( fBeat ) ) );
 	g_TimingDataInformation.rows[combo].SetOneUnthemedChoice( ssprintf("%d", pTime.GetComboAtBeat( fBeat ) ) );
-	g_TimingDataInformation.rows[warp].SetOneUnthemedChoice( ssprintf("%.5f", pTime.GetWarpAtBeat( fBeat ) ) );
-	g_TimingDataInformation.rows[speed_percent].SetOneUnthemedChoice( bHasSpeedOnThisRow ? ssprintf("%.5f", pTime.GetSpeedPercentAtBeat( fBeat ) ) : "---" );
-	g_TimingDataInformation.rows[speed_wait].SetOneUnthemedChoice( bHasSpeedOnThisRow ? ssprintf("%.5f", pTime.GetSpeedWaitAtBeat( fBeat ) ) : "---" );
+	g_TimingDataInformation.rows[warp].SetOneUnthemedChoice( ssprintf("%.6f", pTime.GetWarpAtBeat( fBeat ) ) );
+	g_TimingDataInformation.rows[speed_percent].SetOneUnthemedChoice( bHasSpeedOnThisRow ? ssprintf("%.6f", pTime.GetSpeedPercentAtBeat( fBeat ) ) : "---" );
+	g_TimingDataInformation.rows[speed_wait].SetOneUnthemedChoice( bHasSpeedOnThisRow ? ssprintf("%.6f", pTime.GetSpeedWaitAtBeat( fBeat ) ) : "---" );
 	
 	RString starting = ( pTime.GetSpeedModeAtBeat( fBeat ) == 1 ? "Seconds" : "Beats" );
 	g_TimingDataInformation.rows[speed_mode].SetOneUnthemedChoice( starting.c_str() );
 	
-	g_TimingDataInformation.rows[scroll].SetOneUnthemedChoice( ssprintf("%.5f", pTime.GetScrollAtBeat( fBeat ) ) );
-	g_TimingDataInformation.rows[fake].SetOneUnthemedChoice( ssprintf("%.5f", pTime.GetFakeAtBeat( fBeat ) ) );
+	g_TimingDataInformation.rows[scroll].SetOneUnthemedChoice( ssprintf("%.6f", pTime.GetScrollAtBeat( fBeat ) ) );
+	g_TimingDataInformation.rows[fake].SetOneUnthemedChoice( ssprintf("%.6f", pTime.GetFakeAtBeat( fBeat ) ) );
 	
 	g_TimingDataInformation.rows[tickcount].bEnabled = GAMESTATE->m_bIsUsingStepTiming;
 	g_TimingDataInformation.rows[combo].bEnabled = GAMESTATE->m_bIsUsingStepTiming;
@@ -3733,12 +3739,12 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 				g_SongInformation.rows[main_title_transliteration].SetOneUnthemedChoice( pSong->m_sMainTitleTranslit );
 				g_SongInformation.rows[sub_title_transliteration].SetOneUnthemedChoice( pSong->m_sSubTitleTranslit );
 				g_SongInformation.rows[artist_transliteration].SetOneUnthemedChoice( pSong->m_sArtistTranslit );
-				g_SongInformation.rows[last_beat_hint].SetOneUnthemedChoice( ssprintf("%.5f", pSong->m_fSpecifiedLastBeat) );
-				g_SongInformation.rows[preview_start].SetOneUnthemedChoice( ssprintf("%.5f", pSong->m_fMusicSampleStartSeconds) );
-				g_SongInformation.rows[preview_length].SetOneUnthemedChoice( ssprintf("%.5f", pSong->m_fMusicSampleLengthSeconds) );
+				g_SongInformation.rows[last_second_hint].SetOneUnthemedChoice( ssprintf("%.6f", pSong->specifiedLastSecond) );
+				g_SongInformation.rows[preview_start].SetOneUnthemedChoice( ssprintf("%.6f", pSong->m_fMusicSampleStartSeconds) );
+				g_SongInformation.rows[preview_length].SetOneUnthemedChoice( ssprintf("%.6f", pSong->m_fMusicSampleLengthSeconds) );
 				g_SongInformation.rows[display_bpm].iDefaultChoice = pSong->m_DisplayBPMType;
-				g_SongInformation.rows[min_bpm].SetOneUnthemedChoice( ssprintf("%.5f", pSong->m_fSpecifiedBPMMin) );
-				g_SongInformation.rows[max_bpm].SetOneUnthemedChoice( ssprintf("%.5f", pSong->m_fSpecifiedBPMMax) );
+				g_SongInformation.rows[min_bpm].SetOneUnthemedChoice( ssprintf("%.6f", pSong->m_fSpecifiedBPMMin) );
+				g_SongInformation.rows[max_bpm].SetOneUnthemedChoice( ssprintf("%.6f", pSong->m_fSpecifiedBPMMax) );
 
 				EditMiniMenu( &g_SongInformation, SM_BackFromSongInformation );
 			}
@@ -4206,7 +4212,7 @@ static LocalizedString ENTER_CREDIT			("ScreenEdit","Enter a new credit.");
 static LocalizedString ENTER_MAIN_TITLE_TRANSLIT	("ScreenEdit","Enter a new main title transliteration.");
 static LocalizedString ENTER_SUB_TITLE_TRANSLIT		("ScreenEdit","Enter a new sub title transliteration.");
 static LocalizedString ENTER_ARTIST_TRANSLIT		("ScreenEdit","Enter a new artist transliteration.");
-static LocalizedString ENTER_LAST_BEAT_HINT		("ScreenEdit","Enter a new last beat hint.");
+static LocalizedString ENTER_LAST_SECOND_HINT		("ScreenEdit","Enter a new last second hint.");
 static LocalizedString ENTER_PREVIEW_START		("ScreenEdit","Enter a new preview start.");
 static LocalizedString ENTER_PREVIEW_LENGTH		("ScreenEdit","Enter a new preview length.");
 static LocalizedString ENTER_MIN_BPM			("ScreenEdit","Enter a new min BPM.");
@@ -4242,29 +4248,29 @@ void ScreenEdit::HandleSongInformationChoice( SongInformationChoice c, const vec
 	case artist_transliteration:
 		ScreenTextEntry::TextEntry( SM_None, ENTER_ARTIST_TRANSLIT, pSong->m_sArtistTranslit, 100, NULL, ChangeArtistTranslit, NULL );
 		break;
-	case last_beat_hint:
-		ScreenTextEntry::TextEntry( SM_None, ENTER_LAST_BEAT_HINT, 
-					   ssprintf("%.5f", pSong->m_fSpecifiedLastBeat), 20, 
-					   ScreenTextEntry::FloatValidate, ChangeLastBeatHint, NULL );
+	case last_second_hint:
+		ScreenTextEntry::TextEntry( SM_None, ENTER_LAST_SECOND_HINT, 
+					   ssprintf("%.6f", pSong->specifiedLastSecond), 20, 
+					   ScreenTextEntry::FloatValidate, ChangeLastSecondHint, NULL );
 		break;
 	case preview_start:
 		ScreenTextEntry::TextEntry( SM_None, ENTER_PREVIEW_START,
-					   ssprintf("%.5f", pSong->m_fMusicSampleStartSeconds), 20,
+					   ssprintf("%.6f", pSong->m_fMusicSampleStartSeconds), 20,
 					   ScreenTextEntry::FloatValidate, ChangePreviewStart, NULL );
 		break;
 	case preview_length:
 		ScreenTextEntry::TextEntry( SM_None, ENTER_PREVIEW_LENGTH,
-					   ssprintf("%.5f", pSong->m_fMusicSampleLengthSeconds), 20,
+					   ssprintf("%.6f", pSong->m_fMusicSampleLengthSeconds), 20,
 					   ScreenTextEntry::FloatValidate, ChangePreviewLength, NULL );
 		break;
 	case min_bpm:
 		ScreenTextEntry::TextEntry( SM_None, ENTER_MIN_BPM,
-					   ssprintf("%.5f", pSong->m_fSpecifiedBPMMin), 20,
+					   ssprintf("%.6f", pSong->m_fSpecifiedBPMMin), 20,
 					   ScreenTextEntry::FloatValidate, ChangeMinBPM, NULL );
 		break;
 	case max_bpm:
 		ScreenTextEntry::TextEntry( SM_None, ENTER_MAX_BPM,
-					   ssprintf("%.5f", pSong->m_fSpecifiedBPMMax), 20,
+					   ssprintf("%.6f", pSong->m_fSpecifiedBPMMax), 20,
 					   ScreenTextEntry::FloatValidate, ChangeMaxBPM, NULL );
 		break;
 	};
@@ -4293,7 +4299,7 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 	DEFAULT_FAIL( c );
 	case beat_0_offset:
 		ScreenTextEntry::TextEntry( SM_None, ENTER_BEAT_0_OFFSET,
-					   ssprintf("%.5f", GetAppropriateTiming().m_fBeat0OffsetInSeconds), 20,
+					   ssprintf("%.6f", GetAppropriateTiming().m_fBeat0OffsetInSeconds), 20,
 					   ScreenTextEntry::FloatValidate, ChangeBeat0Offset, NULL );
 		break;
 		case bpm:
@@ -4359,7 +4365,7 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 		ScreenTextEntry::TextEntry( 
 		   SM_BackFromWarpChange, 
 		   ENTER_WARP_VALUE, 
-		   ssprintf( "%.4f", GetAppropriateTiming().GetWarpAtBeat( GetBeat() ) ),
+		   ssprintf( "%.6f", GetAppropriateTiming().GetWarpAtBeat( GetBeat() ) ),
 		   10
 		   );
 		break;
@@ -4367,7 +4373,7 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 		ScreenTextEntry::TextEntry(
 		   SM_BackFromSpeedPercentChange,
 		   ENTER_SPEED_PERCENT_VALUE,
-		   ssprintf( "%.5f", GetAppropriateTiming().GetSpeedSegmentAtBeat( GetBeat() ).GetRatio() ),
+		   ssprintf( "%.6f", GetAppropriateTiming().GetSpeedSegmentAtBeat( GetBeat() ).GetRatio() ),
 		   10
 		   );
 		break;
@@ -4375,7 +4381,7 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 		ScreenTextEntry::TextEntry(
 		   SM_BackFromScrollChange,
 		   ENTER_SCROLL_VALUE,
-		   ssprintf( "%.5f", GetAppropriateTiming().GetScrollSegmentAtBeat( GetBeat() ).GetRatio() ),
+		   ssprintf( "%.6f", GetAppropriateTiming().GetScrollSegmentAtBeat( GetBeat() ).GetRatio() ),
 		   10
 		   );
 		break;
@@ -4383,7 +4389,7 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 		ScreenTextEntry::TextEntry(
 		   SM_BackFromSpeedWaitChange,
 		   ENTER_SPEED_WAIT_VALUE,
-		   ssprintf( "%.5f", GetAppropriateTiming().GetSpeedSegmentAtBeat( GetBeat() ).GetLength() ),
+		   ssprintf( "%.6f", GetAppropriateTiming().GetSpeedSegmentAtBeat( GetBeat() ).GetLength() ),
 		   10
 		   );
 		break;
@@ -4403,7 +4409,7 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 			ScreenTextEntry::TextEntry(
 				SM_BackFromFakeChange,
 				ENTER_FAKE_VALUE,
-			        ssprintf("%.5f", GetAppropriateTiming().GetFakeAtBeat( GetBeat() ) ),
+			        ssprintf("%.6f", GetAppropriateTiming().GetFakeAtBeat( GetBeat() ) ),
 				10
 			);
 			break;
@@ -4701,14 +4707,15 @@ float ScreenEdit::GetMaximumBeatForNewNote() const
 	case EditMode_CourseMods:
 	case EditMode_Home:
 		{
-			float fEndBeat = GAMESTATE->m_pCurSong->m_fLastBeat;
+			Song &s = *GAMESTATE->m_pCurSong;
+			TimingData &timing = s.m_SongTiming;
+			float fEndBeat = timing.GetBeatFromElapsedTime(s.lastSecond);
 
 			/* Round up to the next measure end.  Some songs end on weird beats 
 			 * mid-measure, and it's odd to have movement capped to these weird
 			 * beats. */
-			TimingData &songTiming = GAMESTATE->m_pCurSong->m_SongTiming;
 			float playerBeat = GetAppropriatePosition().m_fSongBeat;
-			int beatsPerMeasure = songTiming.GetTimeSignatureSegmentAtBeat( playerBeat ).GetNum();
+			int beatsPerMeasure = timing.GetTimeSignatureSegmentAtBeat( playerBeat ).GetNum();
 			fEndBeat += beatsPerMeasure;
 			fEndBeat = ftruncf( fEndBeat, (float)beatsPerMeasure );
 
@@ -4723,7 +4730,7 @@ float ScreenEdit::GetMaximumBeatForMoving() const
 {
 	float fEndBeat = GetMaximumBeatForNewNote();
 
-	/* Jump to GetLastBeat even if it's past m_pCurSong->m_fLastBeat
+	/* Jump to GetLastBeat even if it's past the song's last beat
 	 * so that users can delete garbage steps past then end that they have 
 	 * have inserted in a text editor.  Once they delete all steps on 
 	 * GetLastBeat() and move off of that beat, they won't be able to return. */

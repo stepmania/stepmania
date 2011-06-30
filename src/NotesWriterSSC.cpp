@@ -203,8 +203,6 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 	f.PutLine( ssprintf( "#OFFSET:%.6f;", out.m_SongTiming.m_fBeat0OffsetInSeconds ) );
 	f.PutLine( ssprintf( "#SAMPLESTART:%.6f;", out.m_fMusicSampleStartSeconds ) );
 	f.PutLine( ssprintf( "#SAMPLELENGTH:%.6f;", out.m_fMusicSampleLengthSeconds ) );
-	if( out.m_fSpecifiedLastBeat > 0 )
-		f.PutLine( ssprintf("#LASTBEATHINT:%.6f;", out.m_fSpecifiedLastBeat) );
 
 	f.Write( "#SELECTABLE:" );
 	switch(out.m_SelectionDisplay)
@@ -233,6 +231,9 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 	}
 
 	WriteTimingTags( f, out.m_SongTiming, true );
+	
+	if( out.specifiedLastSecond > 0 )
+		f.PutLine( ssprintf("#LASTSECONDHINT:%.6f;", out.specifiedLastSecond) );
 	
 	FOREACH_BackgroundLayer( b )
 	{
@@ -367,8 +368,8 @@ bool NotesWriterSSC::Write( RString sPath, const Song &out, const vector<Steps*>
 	if( bSavingCache )
 	{
 		f.PutLine( ssprintf( "// cache tags:" ) );
-		f.PutLine( ssprintf( "#FIRSTBEAT:%.6f;", out.m_fFirstBeat ) );
-		f.PutLine( ssprintf( "#LASTBEAT:%.6f;", out.m_fLastBeat ) );
+		f.PutLine( ssprintf( "#FIRSTSECOND:%.6f;", out.firstSecond ) );
+		f.PutLine( ssprintf( "#LASTSECOND:%.6f;", out.lastSecond ) );
 		f.PutLine( ssprintf( "#SONGFILENAME:%s;", out.m_sSongFileName.c_str() ) );
 		f.PutLine( ssprintf( "#HASMUSIC:%i;", out.m_bHasMusic ) );
 		f.PutLine( ssprintf( "#HASBANNER:%i;", out.m_bHasBanner ) );

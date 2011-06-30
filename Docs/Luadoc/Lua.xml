@@ -1244,9 +1244,11 @@
 			<Function name='GetDisplayMainTitle'/>
 			<Function name='GetDisplaySubTitle'/>
 			<Function name='GetFirstBeat'/>
+			<Function name='GetFirstSecond'/>
 			<Function name='GetGenre'/>
 			<Function name='GetGroupName'/>
 			<Function name='GetLastBeat'/>
+			<Function name='GetLastSecond'/>
 			<Function name='GetLyricsPath'/>
 			<Function name='GetMusicPath'/>
 			<Function name='GetOneSteps'/>

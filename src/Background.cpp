@@ -577,13 +577,16 @@ void BackgroundImpl::LoadFromSong( const Song* pSong )
 	else	// pSong doesn't have an animation plan
 	{
 		Layer &layer = m_Layer[0];
+		const TimingData &t = pSong->m_SongTiming;
+		float firstBeat = t.GetBeatFromElapsedTime(pSong->firstSecond);
+		float lastBeat = t.GetBeatFromElapsedTime(pSong->lastSecond);
 
-		LoadFromRandom( pSong->m_fFirstBeat, pSong->m_fLastBeat, BackgroundChange() );
+		LoadFromRandom( firstBeat, lastBeat, BackgroundChange() );
 
 		// end showing the static song background
 		BackgroundChange change;
 		change.m_def = m_StaticBackgroundDef;
-		change.m_fStartBeat = pSong->m_fLastBeat;
+		change.m_fStartBeat = lastBeat;
 		layer.m_aBGChanges.push_back( change );
 	}
 
@@ -642,7 +645,7 @@ void BackgroundImpl::LoadFromSong( const Song* pSong )
 			continue;
 
 		float fStartBeat = change.m_fStartBeat;
-		float fEndBeat = pSong->m_fLastBeat;
+		float fEndBeat = pSong->m_SongTiming.GetBeatFromElapsedTime(pSong->lastSecond);
 		if( i+1 < mainlayer.m_aBGChanges.size() )
 			fEndBeat = mainlayer.m_aBGChanges[i+1].m_fStartBeat;
 

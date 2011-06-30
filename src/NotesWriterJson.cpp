@@ -147,8 +147,8 @@ bool NotesWriterJson::WriteSong( const RString &sFile, const Song &out, bool bWr
 	else
 		root["Selectable"] = "YES";
 
-	root["FirstBeat"] = out.m_fFirstBeat;
-	root["LastBeat"] = out.m_fLastBeat;
+	root["FirstBeat"] = out.m_SongTiming.GetBeatFromElapsedTime(out.firstSecond);
+	root["LastBeat"] = out.m_SongTiming.GetBeatFromElapsedTime(out.lastSecond);
 	root["SongFileName"] = out.m_sSongFileName;
 	root["HasMusic"] = out.m_bHasMusic;
 	root["HasBanner"] = out.m_bHasBanner;

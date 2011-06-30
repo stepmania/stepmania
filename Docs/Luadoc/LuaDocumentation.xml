@@ -3084,6 +3084,9 @@
 	<Function name='GetFirstBeat' return='float' arguments=''>
 		Returns the first beat of the song.
 	</Function>
+	<Function name='GetFirstSecond' return='float' arguments=''>
+		Returns the first second of the song.
+	</Function>
 	<Function name='GetGenre' return='string' arguments=''>
 		Returns the genre of the song.
 	</Function>
@@ -3092,6 +3095,9 @@
 	</Function>
 	<Function name='GetLastBeat' return='float' arguments=''>
 		Returns the last beat of the song.
+	</Function>
+	<Function name='GetLastSecond' return='float' arguments=''>
+		Returns the last second of the song.
 	</Function>
 	<Function name='GetLyricsPath' return='string' arguments=''>
 		Gets the path to the lyrics.

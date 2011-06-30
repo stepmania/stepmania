@@ -1329,8 +1329,7 @@ void ScreenGameplay::StartPlayingSong( float fMinTimeToNotes, float fMinTimeToMu
 	p.StopMode = RageSoundParams::M_CONTINUE;
 
 	{
-		const float fFirstBeat = GAMESTATE->m_pCurSong->m_fFirstBeat;
-		const float fFirstSecond = GAMESTATE->m_pCurSong->m_SongTiming.GetElapsedTimeFromBeat( fFirstBeat );
+		const float fFirstSecond = GAMESTATE->m_pCurSong->firstSecond;
 		float fStartDelay = fMinTimeToNotes - fFirstSecond;
 		fStartDelay = max( fStartDelay, fMinTimeToMusic );
 		p.m_StartSecond = -fStartDelay;
@@ -1412,8 +1411,9 @@ void ScreenGameplay::PlayAnnouncer( RString type, float fSeconds )
 	/* Don't play before the first beat, or after we're finished. */
 	if( m_DancingState != STATE_DANCING )
 		return;
-	if( GAMESTATE->m_pCurSong == NULL  ||	// this will be true on ScreenDemonstration sometimes
-		GAMESTATE->m_Position.m_fSongBeat < GAMESTATE->m_pCurSong->m_fFirstBeat )
+	if(GAMESTATE->m_pCurSong == NULL  ||	// this will be true on ScreenDemonstration sometimes
+	   GAMESTATE->m_Position.m_fSongBeat < 
+	   GAMESTATE->m_pCurSong->m_SongTiming.GetBeatFromElapsedTime(GAMESTATE->m_pCurSong->firstSecond) )
 		return;
 
 	if( m_fTimeSinceLastDancingComment < fSeconds )
@@ -1488,7 +1488,7 @@ bool ScreenGameplay::AllAreFailing()
 
 void ScreenGameplay::GetMusicEndTiming( float &fSecondsToStartFadingOutMusic, float &fSecondsToStartTransitioningOut )
 {
-	float fLastStepSeconds = GAMESTATE->m_pCurSong->m_SongTiming.GetElapsedTimeFromBeat( GAMESTATE->m_pCurSong->m_fLastBeat );
+	float fLastStepSeconds = GAMESTATE->m_pCurSong->lastSecond;
 	fLastStepSeconds += Player::GetMaxStepDistanceSeconds();
 
 	float fTransitionLength;
@@ -1697,7 +1697,11 @@ void ScreenGameplay::Update( float fDeltaTime )
 		// update fGameplaySeconds
 		STATSMAN->m_CurStageStats.m_fGameplaySeconds += fUnscaledDeltaTime;
 		float curBeat = GAMESTATE->m_Position.m_fSongBeat;
-		if( curBeat >= GAMESTATE->m_pCurSong->m_fFirstBeat && curBeat < GAMESTATE->m_pCurSong->m_fLastBeat )
+		Song &s = *GAMESTATE->m_pCurSong;
+		TimingData &timing = s.m_SongTiming;
+		
+			
+		if( curBeat >= timing.GetBeatFromElapsedTime(s.firstSecond) && curBeat < timing.GetBeatFromElapsedTime(s.lastSecond) )
 		{
 			STATSMAN->m_CurStageStats.m_fStepsSeconds += fUnscaledDeltaTime;
 
@@ -1978,7 +1982,8 @@ void ScreenGameplay::UpdateLights()
 	}
 
 	// Before the first beat of the song, all cabinet lights solid on (except for menu buttons).
-	bool bOverrideCabinetBlink = (GAMESTATE->m_Position.m_fSongBeat < GAMESTATE->m_pCurSong->m_fFirstBeat);
+	Song &s = *GAMESTATE->m_pCurSong;
+	bool bOverrideCabinetBlink = (GAMESTATE->m_Position.m_fSongBeat < s.m_SongTiming.GetBeatFromElapsedTime(s.firstSecond));
 	FOREACH_CabinetLight( cl )
 		bBlinkCabinetLight[cl] |= bOverrideCabinetBlink;
 

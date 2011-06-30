@@ -119,10 +119,10 @@ void Inventory::Update( float fDelta )
 		}
 	}
 
-
+	Song &song = *GAMESTATE->m_pCurSong;
 	// use items if this player is CPU-controlled
 	if( m_pPlayerState->m_PlayerController != PC_HUMAN &&
-		GAMESTATE->m_Position.m_fSongBeat < GAMESTATE->m_pCurSong->m_fLastBeat )
+		GAMESTATE->m_Position.m_fSongBeat < song.m_SongTiming.GetBeatFromElapsedTime(song.lastSecond) )
 	{
 		// every 1 seconds, try to use an item
 		int iLastSecond = (int)(RageTimer::GetTimeSinceStartFast() - fDelta);

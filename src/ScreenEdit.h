@@ -529,7 +529,7 @@ public:
 		main_title_transliteration,
 		sub_title_transliteration,
 		artist_transliteration,
-		last_beat_hint,
+		last_second_hint,
 		preview_start,
 		preview_length,
 		display_bpm,
