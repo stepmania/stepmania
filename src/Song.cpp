@@ -100,6 +100,26 @@ void Song::DetachSteps()
 		m_vpStepsByType[st].clear();
 }
 
+float Song::GetFirstSecond() const
+{
+	return this->firstSecond;
+}
+
+float Song::GetFirstBeat() const
+{
+	return this->m_SongTiming.GetBeatFromElapsedTime(this->firstSecond);
+}
+
+float Song::GetLastSecond() const
+{
+	return this->lastSecond;
+}
+
+float Song::GetLastBeat() const
+{
+	return this->m_SongTiming.GetBeatFromElapsedTime(this->lastSecond);
+}
+
 // Reset to an empty song.
 void Song::Reset()
 {
@@ -1580,22 +1600,22 @@ public:
 	static int NormallyDisplayed( T* p, lua_State *L ){ lua_pushboolean(L, p->NormallyDisplayed()); return 1; }
 	static int GetFirstSecond(T* p, lua_State *L)
 	{
-		lua_pushnumber(L, p->firstSecond);
+		lua_pushnumber(L, p->GetFirstSecond());
 		return 1;
 	}
 	static int GetLastSecond(T* p, lua_State *L)
 	{
-		lua_pushnumber(L, p->lastSecond);
+		lua_pushnumber(L, p->GetLastSecond());
 		return 1;
 	}
 	static int GetFirstBeat( T* p, lua_State *L )
 	{ 
-		lua_pushnumber(L, p->m_SongTiming.GetBeatFromElapsedTime(p->firstSecond));
+		lua_pushnumber(L, p->GetFirstBeat());
 		return 1;
 	}
 	static int GetLastBeat( T* p, lua_State *L )
 	{
-		lua_pushnumber(L, p->m_SongTiming.GetBeatFromElapsedTime(p->lastSecond));
+		lua_pushnumber(L, p->GetLastBeat());
 		return 1;
 	}
 	static int HasAttacks( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasAttacks()); return 1; }
