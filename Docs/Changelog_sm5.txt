@@ -5,8 +5,17 @@ from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
 ================================================================================
-StepMania 5.0 Preview 2 | 201106??
+StepMania 5.0 Preview 2 | 201107??
 --------------------------------------------------------------------------------
+
+2011/06/30
+----------
+* [NotesAll] Use #FIRSTSECOND, #LASTSECOND, and #LASTSECONDHINT instead of the
+  former BEAT equivalents. Split Timing has made this a necessity thanks to
+  certain files that abuse Stops/Delays more than usual. [Wolfman2000]
+* [ScreenEdit] Add a function in the Area Menu to designate the current beat
+  as the last second of the song. Please try to be smart and not use this too
+  early. [Wolfman2000]
 
 2011/06/28
 ----------

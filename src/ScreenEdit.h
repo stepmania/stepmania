@@ -421,6 +421,7 @@ public:
 		shift_pauses_backward,
 		convert_pause_to_beat,
 		convert_delay_to_beat,
+		last_second_at_beat,
 		undo,
 		clear_clipboard,
 		NUM_AREA_MENU_CHOICES
@@ -529,7 +530,7 @@ public:
 		main_title_transliteration,
 		sub_title_transliteration,
 		artist_transliteration,
-		last_beat_hint,
+		last_second_hint,
 		preview_start,
 		preview_length,
 		display_bpm,

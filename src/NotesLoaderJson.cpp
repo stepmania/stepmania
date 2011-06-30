@@ -150,8 +150,6 @@ static void Deserialize( Song &out, const Json::Value &root )
 	else if( sSelectable.EqualsNoCase("NO") )
 		out.m_SelectionDisplay = out.SHOW_NEVER;
 
-	out.m_fFirstBeat = (float)root["FirstBeat"].asDouble();
-	out.m_fLastBeat = (float)root["LastBeat"].asDouble();
 	out.m_sSongFileName = root["SongFileName"].asString();
 	out.m_bHasMusic = root["HasMusic"].asBool();
 	out.m_bHasBanner = root["HasBanner"].asBool();

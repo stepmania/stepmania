@@ -812,37 +812,19 @@ bool SMLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCache
 		}
 
 		else if( sValueName=="LASTBEATHINT" )
-			out.m_fSpecifiedLastBeat = StringToFloat( sParams[1] );
+		{
+			// unable to identify at this point: ignore
+		}
 
 		else if( sValueName=="MUSICBYTES" )
 			; /* ignore */
 
-		/* We calculate these.  Some SMs in circulation have bogus values for
-		 * these, so make sure we always calculate it ourself. */
-		else if( sValueName=="FIRSTBEAT" )
+		// cache tags from older SM files: ignore.
+		else if(sValueName=="FIRSTBEAT" || sValueName=="LASTBEAT" ||
+			sValueName=="SONGFILENAME" || sValueName=="HASMUSIC" ||
+			sValueName=="HASBANNER")
 		{
-			if( bFromCache )
-				out.m_fFirstBeat = StringToFloat( sParams[1] );
-		}
-		else if( sValueName=="LASTBEAT" )
-		{
-			if( bFromCache )
-				out.m_fLastBeat = StringToFloat( sParams[1] );
-		}
-		else if( sValueName=="SONGFILENAME" )
-		{
-			if( bFromCache )
-				out.m_sSongFileName = sParams[1];
-		}
-		else if( sValueName=="HASMUSIC" )
-		{
-			if( bFromCache )
-				out.m_bHasMusic = StringToInt( sParams[1] ) != 0;
-		}
-		else if( sValueName=="HASBANNER" )
-		{
-			if( bFromCache )
-				out.m_bHasBanner = StringToInt( sParams[1] ) != 0;
+			;
 		}
 
 		else if( sValueName=="SAMPLESTART" )
@@ -1108,9 +1090,10 @@ void SMLoader::TidyUpData( Song &song, bool bFromCache )
 			if( bFromCache )
 				break;
 
+			float lastBeat = song.GetLastBeat();
 			/* If BGChanges already exist after the last beat, don't add the
 			 * background in the middle. */
-			if( !bg.empty() && bg.back().m_fStartBeat-0.0001f >= song.m_fLastBeat )
+			if( !bg.empty() && bg.back().m_fStartBeat-0.0001f >= lastBeat )
 				break;
 
 			// If the last BGA is already the song BGA, don't add a duplicate.
@@ -1120,7 +1103,8 @@ void SMLoader::TidyUpData( Song &song, bool bFromCache )
 			if( !IsAFile( song.GetBackgroundPath() ) )
 				break;
 
-			bg.push_back( BackgroundChange(song.m_fLastBeat,song.m_sBackgroundFile) );
+			
+			bg.push_back( BackgroundChange(lastBeat,song.m_sBackgroundFile) );
 		} while(0);
 	}
 	song.TidyUpData( bFromCache );

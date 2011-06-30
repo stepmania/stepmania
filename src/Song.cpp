@@ -41,7 +41,7 @@
  * @brief The internal version of the cache for StepMania.
  *
  * Increment this value to invalidate the current cache. */
-const int FILE_CACHE_VERSION = 185;
+const int FILE_CACHE_VERSION = 187;
 
 /** @brief How long does a song sample last by default? */
 const float DEFAULT_MUSIC_SAMPLE_LENGTH = 12.f;
@@ -69,9 +69,9 @@ Song::Song()
 	m_fMusicSampleStartSeconds = -1;
 	m_fMusicSampleLengthSeconds = DEFAULT_MUSIC_SAMPLE_LENGTH;
 	m_fMusicLengthSeconds = 0;
-	m_fFirstBeat = -1;
-	m_fLastBeat = -1;
-	m_fSpecifiedLastBeat = -1;
+	firstSecond = -1;
+	lastSecond = -1;
+	specifiedLastSecond = -1;
 	m_SelectionDisplay = SHOW_ALWAYS;
 	m_bEnabled = true;
 	m_DisplayBPMType = DISPLAY_BPM_ACTUAL;
@@ -98,6 +98,51 @@ void Song::DetachSteps()
 	m_vpSteps.clear();
 	FOREACH_ENUM( StepsType, st )
 		m_vpStepsByType[st].clear();
+}
+
+float Song::GetFirstSecond() const
+{
+	return this->firstSecond;
+}
+
+float Song::GetFirstBeat() const
+{
+	return this->m_SongTiming.GetBeatFromElapsedTime(this->firstSecond);
+}
+
+float Song::GetLastSecond() const
+{
+	return this->lastSecond;
+}
+
+float Song::GetLastBeat() const
+{
+	return this->m_SongTiming.GetBeatFromElapsedTime(this->lastSecond);
+}
+
+float Song::GetSpecifiedLastSecond() const
+{
+	return this->specifiedLastSecond;
+}
+
+float Song::GetSpecifiedLastBeat() const
+{
+	return this->m_SongTiming.GetBeatFromElapsedTime(this->specifiedLastSecond);
+}
+
+void Song::SetFirstSecond(const float f)
+{
+	this->firstSecond = f;
+}
+
+void Song::SetLastSecond(const float f)
+{
+	this->lastSecond = f;
+}
+
+void Song::SetSpecifiedLastSecond(const float f)
+{
+	this->specifiedLastSecond = f;
 }
 
 // Reset to an empty song.
@@ -508,7 +553,8 @@ void Song::TidyUpData( bool bFromCache )
 
 		if( m_fMusicSampleStartSeconds+m_fMusicSampleLengthSeconds > this->m_fMusicLengthSeconds )
 		{
-			int iBeat = lrintf( m_fLastBeat/2 );
+			// Attempt to get a reasonable default.
+			int iBeat = lrintf(this->m_SongTiming.GetBeatFromElapsedTime(this->GetLastSecond())/2);
 			iBeat -= iBeat%4;
 			m_fMusicSampleStartSeconds = timing.GetElapsedTimeFromBeat( (float)iBeat );
 		}
@@ -797,7 +843,7 @@ void Song::TranslateTitles()
 
 void Song::ReCalculateRadarValuesAndLastBeat( bool bFromCache )
 {
-	if( bFromCache && m_fFirstBeat >= 0 && m_fLastBeat > 0 )
+	if( bFromCache && this->GetFirstSecond() >= 0 && this->GetLastSecond() > 0 )
 	{
 		// this is loaded from cache, then we just have to calculate the radar values.
 		for( unsigned i=0; i<m_vpSteps.size(); i++ )
@@ -805,8 +851,8 @@ void Song::ReCalculateRadarValuesAndLastBeat( bool bFromCache )
 		return;
 	}
 
-	float fFirstBeat = FLT_MAX; // inf
-	float fLastBeat = m_fSpecifiedLastBeat; // Make sure we're at least as long as the specified amount.
+	float localFirst = FLT_MAX; // inf
+	float localLast = this->specifiedLastSecond; // Make sure we're at least as long as the specified amount.
 
 	for( unsigned i=0; i<m_vpSteps.size(); i++ )
 	{
@@ -814,7 +860,7 @@ void Song::ReCalculateRadarValuesAndLastBeat( bool bFromCache )
 
 		pSteps->CalculateRadarValues( m_fMusicLengthSeconds );
 
-		// calculate lastBeat
+		// calculate lastSecond
 
 		// If it's autogen, then first/last beat will come from the parent.
 		if( pSteps->IsAutogen() )
@@ -839,12 +885,14 @@ void Song::ReCalculateRadarValuesAndLastBeat( bool bFromCache )
 		if( tempNoteData.GetLastRow() == 0 )
 			continue;
 
-		fFirstBeat = min( fFirstBeat, m_SongTiming.GetBeatFromElapsedTime(pSteps->m_Timing.GetElapsedTimeFromBeat(tempNoteData.GetFirstBeat())) );
-		fLastBeat  = max( fLastBeat,  m_SongTiming.GetBeatFromElapsedTime(pSteps->m_Timing.GetElapsedTimeFromBeat(tempNoteData.GetLastBeat())) );
+		localFirst = min(localFirst,
+				 pSteps->m_Timing.GetElapsedTimeFromBeat(tempNoteData.GetFirstBeat()));
+		localLast = max(localLast,
+				pSteps->m_Timing.GetElapsedTimeFromBeat(tempNoteData.GetLastBeat()));
 	}
 
-	m_fFirstBeat = fFirstBeat;
-	m_fLastBeat = fLastBeat;
+	this->firstSecond = localFirst;
+	this->lastSecond = localLast;
 }
 
 // Return whether the song is playable in the given style.
@@ -1458,8 +1506,7 @@ bool Song::HasSignificantBpmChangesOrStops() const
 
 float Song::GetStepsSeconds() const
 {
-	const TimingData &timing = this->m_SongTiming;
-	return timing.GetElapsedTimeFromBeat( m_fLastBeat ) - timing.GetElapsedTimeFromBeat( m_fFirstBeat );
+	return this->GetLastSecond() - this->GetFirstSecond();
 }
 
 bool Song::IsLong() const
@@ -1576,8 +1623,26 @@ public:
 	}
 	static int GetStepsSeconds( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetStepsSeconds()); return 1; }
 	static int NormallyDisplayed( T* p, lua_State *L ){ lua_pushboolean(L, p->NormallyDisplayed()); return 1; }
-	static int GetFirstBeat( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_fFirstBeat); return 1; }
-	static int GetLastBeat( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_fLastBeat); return 1; }
+	static int GetFirstSecond(T* p, lua_State *L)
+	{
+		lua_pushnumber(L, p->GetFirstSecond());
+		return 1;
+	}
+	static int GetLastSecond(T* p, lua_State *L)
+	{
+		lua_pushnumber(L, p->GetLastSecond());
+		return 1;
+	}
+	static int GetFirstBeat( T* p, lua_State *L )
+	{ 
+		lua_pushnumber(L, p->GetFirstBeat());
+		return 1;
+	}
+	static int GetLastBeat( T* p, lua_State *L )
+	{
+		lua_pushnumber(L, p->GetLastBeat());
+		return 1;
+	}
 	static int HasAttacks( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasAttacks()); return 1; }
 	static int GetDisplayBpms( T* p, lua_State *L )
 	{
@@ -1654,7 +1719,9 @@ public:
 		ADD_METHOD( GetStepsSeconds );
 		ADD_METHOD( NormallyDisplayed );
 		ADD_METHOD( GetFirstBeat );
+		ADD_METHOD( GetFirstSecond );
 		ADD_METHOD( GetLastBeat );
+		ADD_METHOD( GetLastSecond );
 		ADD_METHOD( HasAttacks );
 		ADD_METHOD( GetDisplayBpms );
 		ADD_METHOD( IsDisplayBpmSecret );

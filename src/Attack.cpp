@@ -104,6 +104,14 @@ vector<RString> AttackArray::ToVectorString() const
 	return ret;
 }
 
+void AttackArray::UpdateStartTimes(float delta)
+{
+	FOREACH(Attack, *this, a)
+	{
+		a->fStartSecond += delta;
+	}
+}
+
 /*
  * (c) 2003-2004 Chris Danford
  * All rights reserved.

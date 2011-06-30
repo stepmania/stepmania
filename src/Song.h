@@ -20,7 +20,7 @@ void FixupPath( RString &path, const RString &sSongPath );
 RString GetSongAssetPath( RString sPath, const RString &sSongPath );
 
 /** @brief The version of the .ssc file format. */
-const static float STEPFILE_VERSION_NUMBER = 0.72f;
+const static float STEPFILE_VERSION_NUMBER = 0.73f;
 
 /** @brief How many edits for this song can each profile have? */
 const int MAX_EDITS_PER_SONG_PER_PROFILE = 15;
@@ -231,10 +231,8 @@ public:
 	RString	m_sMusicFile;
 	RString	m_sInstrumentTrackFile[NUM_InstrumentTrack];
 
+	/** @brief The length of the music file. */
 	float	m_fMusicLengthSeconds;
-	float	m_fFirstBeat;	// beat of first note
-	float	m_fLastBeat;	// beat of last note
-	float	m_fSpecifiedLastBeat;	// specified last beat of the song
 	float	m_fMusicSampleStartSeconds;
 	float	m_fMusicSampleLengthSeconds;
 	DisplayBPM m_DisplayBPMType;
@@ -289,9 +287,26 @@ public:
 
 	/** @brief The Song's TimingData. */
 	TimingData m_SongTiming;
+	
+	float GetFirstBeat() const;
+	float GetFirstSecond() const;
+	float GetLastBeat() const;
+	float GetLastSecond() const;
+	float GetSpecifiedLastBeat() const;
+	float GetSpecifiedLastSecond() const;
+	
+	void SetFirstSecond(const float f);
+	void SetLastSecond(const float f);
+	void SetSpecifiedLastSecond(const float f);
 
 	typedef vector<BackgroundChange> 	VBackgroundChange;
 private:
+	/** @brief The first second that a note is hit. */
+	float firstSecond;
+	/** @brief The last second that a note is hit. */
+	float lastSecond;
+	/** @brief The last second of the song for playing purposes. */
+	float specifiedLastSecond;
 	/**
 	 * @brief The background changes (sorted by layer) that are for this Song.
 	 *

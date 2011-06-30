@@ -225,30 +225,16 @@ bool SMALoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 		}
 		
 		else if( sValueName=="LASTBEATHINT" )
-			out.m_fSpecifiedLastBeat = StringToFloat( sParams[1] );
-		
+		{
+			// can't identify at this position: ignore.
+		}
 		else if( sValueName=="MUSICBYTES" )
 			; /* ignore */
 		
-		/* We calculate these.  Some SMs in circulation have bogus values for
-		 * these, so make sure we always calculate it ourself. */
-		else if( sValueName=="FIRSTBEAT" )
-		{
-			;
-		}
-		else if( sValueName=="LASTBEAT" )
-		{
-			;
-		}
-		else if( sValueName=="SONGFILENAME" )
-		{
-			;
-		}
-		else if( sValueName=="HASMUSIC" )
-		{
-			;
-		}
-		else if( sValueName=="HASBANNER" )
+		// Cache tags: ignore.
+		else if (sValueName=="FIRSTBEAT" || sValueName=="LASTBEAT" ||
+			 sValueName=="SONGFILENAME" || sValueName=="HASMUSIC" ||
+			 sValueName=="HASBANNER" )
 		{
 			;
 		}
