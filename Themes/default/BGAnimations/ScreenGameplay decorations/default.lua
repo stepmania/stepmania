@@ -4,6 +4,7 @@ local function CreateStops(Player)
 	local bpmFrame = Def.ActorFrame{ Name="BPMFrame"; };
 	local stopFrame = Def.ActorFrame{ Name="StopFrame"; };
 	local delayFrame = Def.ActorFrame{ Name="DelayFrame"; };
+	local warpFrame = Def.ActorFrame{ Name="WarpFrame"; };
 
 	local fFrameWidth = 380;
 	local fFrameHeight = 8;
@@ -27,6 +28,7 @@ local function CreateStops(Player)
 
 			local stops = timingData:GetStops();
 			local delays = timingData:GetDelays();
+			local warps = timingData:GetWarps();
 			
 			local function CreateLine(beat, secs, firstShadow, firstDiffuse, secondShadow, firstEffect, secondEffect)
 				local beatTime = timingData:GetElapsedTimeFromBeat(beat);
@@ -42,7 +44,7 @@ local function CreateStops(Player)
 							self:x((scale(beatTime,firstBeatSecs,lastBeatSecs,-fFrameWidth/2,fFrameWidth/2)));
 						end;
 						OnCommand=function(self)
-							self:diffuse(Color(firstDiffuse));
+							self:diffuse(color(firstDiffuse));
 							self:sleep(beatTime+1);
 							self:linear(2);
 							self:diffusealpha(0);
@@ -61,8 +63,8 @@ local function CreateStops(Player)
 						OnCommand=function(self)
 							self:diffusealpha(1);
 							self:diffuseshift();
-							self:effectcolor1(Color(firstEffect));
-							self:effectcolor2(Color(secondEffect));
+							self:effectcolor1(color(firstEffect));
+							self:effectcolor2(color(secondEffect));
 							self:effectclock('beat');
 							self:effectperiod(1/8);
 							--
@@ -78,16 +80,25 @@ local function CreateStops(Player)
 			
 			for i=1,#delays do
 				local data = split("=",delays[i]);
-				delayFrame[#delayFrame+1] = CreateLine(data[1], data[2], "#FFFF0077", "Yellow", "#FFFF0077", "Green", "Red");
+				delayFrame[#delayFrame+1] = CreateLine(data[1], data[2],
+					"#FFFF0077", "#FFFF0077", "#FFFF0077", "#00FF0077", "#FF000077");
 			end;
 			
 			for i=1,#stops do
 				local data = split("=",stops[i]);
-				stopFrame[#stopFrame+1] = CreateLine(data[1], data[2], "#FFFFFF77", "White", "#FFFFFF77", "Orange", "Red");
+				stopFrame[#stopFrame+1] = CreateLine(data[1], data[2],
+					"#FFFFFF77", "#FFFFFF77", "#FFFFFF77", "#FFA50077", "#FF000077");
+			end;
+			
+			for i=1,#warps do
+				local data = split("=",warps[i]);
+				warpFrame[#warpFrame+1] = CreateLine(data[1], 0,
+					"#CC00CC77", "#CC00CC77", "#CC00CC77", "#FF33CC77", "#FF000077");
 			end;
 		end;
 		bars[#bars+1] = stopFrame;
 		bars[#bars+1] = delayFrame;
+		bars[#bars+1] = warpFrame;
 		t[#t+1] = bars;
 	end
 	return t
