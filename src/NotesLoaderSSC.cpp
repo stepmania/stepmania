@@ -410,7 +410,7 @@ bool SSCLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 						out.firstSecond = StringToFloat( sParams[1] );
 				}
 
-				else if( sValueName=="LASTBEAT" )
+				else if( sValueName=="LASTSECOND" )
 				{
 					if( bFromCache )
 						out.lastSecond = StringToFloat( sParams[1] );

@@ -992,7 +992,7 @@ float GameState::GetSongPercent( float beat ) const
 {
 	// 0 = first step; 1 = last step
 	float curTime = this->m_pCurSong->m_SongTiming.GetElapsedTimeFromBeat(beat);
-	return (curTime - m_pCurSong->firstSecond) / m_pCurSong->lastSecond;
+	return (curTime - m_pCurSong->GetFirstSecond()) / m_pCurSong->GetLastSecond();
 }
 
 int GameState::GetNumStagesLeft( PlayerNumber pn ) const

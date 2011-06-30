@@ -368,8 +368,8 @@ bool NotesWriterSSC::Write( RString sPath, const Song &out, const vector<Steps*>
 	if( bSavingCache )
 	{
 		f.PutLine( ssprintf( "// cache tags:" ) );
-		f.PutLine( ssprintf( "#FIRSTSECOND:%.6f;", out.firstSecond ) );
-		f.PutLine( ssprintf( "#LASTSECOND:%.6f;", out.lastSecond ) );
+		f.PutLine( ssprintf( "#FIRSTSECOND:%.6f;", out.GetFirstSecond() ) );
+		f.PutLine( ssprintf( "#LASTSECOND:%.6f;", out.GetLastSecond() ) );
 		f.PutLine( ssprintf( "#SONGFILENAME:%s;", out.m_sSongFileName.c_str() ) );
 		f.PutLine( ssprintf( "#HASMUSIC:%i;", out.m_bHasMusic ) );
 		f.PutLine( ssprintf( "#HASBANNER:%i;", out.m_bHasBanner ) );

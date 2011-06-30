@@ -73,8 +73,8 @@ void SongMeterDisplay::Update( float fDeltaTime )
 {
 	if( GAMESTATE->m_pCurSong )
 	{
-		float fSongStartSeconds = GAMESTATE->m_pCurSong->firstSecond;
-		float fSongEndSeconds = GAMESTATE->m_pCurSong->lastSecond;
+		float fSongStartSeconds = GAMESTATE->m_pCurSong->GetFirstSecond();
+		float fSongEndSeconds = GAMESTATE->m_pCurSong->GetLastSecond();
 		float fPercentPositionSong = SCALE( GAMESTATE->m_Position.m_fMusicSeconds, fSongStartSeconds, fSongEndSeconds, 0.0f, 1.0f );
 		CLAMP( fPercentPositionSong, 0, 1 );
 

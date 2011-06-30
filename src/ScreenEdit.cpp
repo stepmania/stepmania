@@ -4713,12 +4713,12 @@ float ScreenEdit::GetMaximumBeatForNewNote() const
 	case EditMode_Home:
 		{
 			Song &s = *GAMESTATE->m_pCurSong;
-			TimingData &timing = s.m_SongTiming;
-			float fEndBeat = timing.GetBeatFromElapsedTime(s.lastSecond);
+			float fEndBeat = s.GetLastBeat();
 
 			/* Round up to the next measure end.  Some songs end on weird beats 
 			 * mid-measure, and it's odd to have movement capped to these weird
 			 * beats. */
+			TimingData &timing = s.m_SongTiming;
 			float playerBeat = GetAppropriatePosition().m_fSongBeat;
 			int beatsPerMeasure = timing.GetTimeSignatureSegmentAtBeat( playerBeat ).GetNum();
 			fEndBeat += beatsPerMeasure;

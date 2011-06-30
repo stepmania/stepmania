@@ -1090,7 +1090,7 @@ void SMLoader::TidyUpData( Song &song, bool bFromCache )
 			if( bFromCache )
 				break;
 
-			float lastBeat = song.m_SongTiming.GetBeatFromElapsedTime(song.lastSecond);
+			float lastBeat = song.GetLastBeat();
 			/* If BGChanges already exist after the last beat, don't add the
 			 * background in the middle. */
 			if( !bg.empty() && bg.back().m_fStartBeat-0.0001f >= lastBeat )

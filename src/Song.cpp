@@ -529,7 +529,7 @@ void Song::TidyUpData( bool bFromCache )
 		if( m_fMusicSampleStartSeconds+m_fMusicSampleLengthSeconds > this->m_fMusicLengthSeconds )
 		{
 			// Attempt to get a reasonable default.
-			int iBeat = lrintf(this->m_SongTiming.GetBeatFromElapsedTime(this->lastSecond)/2);
+			int iBeat = lrintf(this->m_SongTiming.GetBeatFromElapsedTime(this->GetLastSecond())/2);
 			iBeat -= iBeat%4;
 			m_fMusicSampleStartSeconds = timing.GetElapsedTimeFromBeat( (float)iBeat );
 		}
@@ -818,7 +818,7 @@ void Song::TranslateTitles()
 
 void Song::ReCalculateRadarValuesAndLastBeat( bool bFromCache )
 {
-	if( bFromCache && this->firstSecond >= 0 && this->lastSecond > 0 )
+	if( bFromCache && this->GetFirstSecond() >= 0 && this->GetLastSecond() > 0 )
 	{
 		// this is loaded from cache, then we just have to calculate the radar values.
 		for( unsigned i=0; i<m_vpSteps.size(); i++ )
@@ -1481,7 +1481,7 @@ bool Song::HasSignificantBpmChangesOrStops() const
 
 float Song::GetStepsSeconds() const
 {
-	return this->lastSecond - this->firstSecond;
+	return this->GetLastSecond() - this->GetFirstSecond();
 }
 
 bool Song::IsLong() const
