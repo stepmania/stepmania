@@ -1,4 +1,4 @@
-local function CreateStops(Player)
+local function CreateSegments(Player)
 	local t = Def.ActorFrame { };
 	local bars = Def.ActorFrame{ };
 	local bpmFrame = Def.ActorFrame{ Name="BPMFrame"; };
@@ -172,7 +172,7 @@ for pn in ivalues(PlayerNumber) do
 			};
 			Tip=LoadActor( THEME:GetPathG( 'SongMeterDisplay', 'tip ' .. PlayerNumberToString(pn) ) ) .. { InitCommand=cmd(visible,false); };
 		};
-		CreateStops(pn) .. {
+		CreateSegments(pn) .. {
 -- 			InitCommand=cmd(draworder,10);
 		};
 	};
@@ -223,7 +223,7 @@ t[#t+1] = StandardDecorationFromFileOptional("SongTitle","SongTitle");
 		};
 		Tip=LoadActor( THEME:GetPathG( 'SongMeterDisplay', 'tip ' .. PlayerNumberToString(PLAYER_1) ) ) .. { InitCommand=cmd(visible,false); };
 	};
-	CreateStops();
+	CreateSegments();
 }; --]]
 if( not GAMESTATE:IsCourseMode() ) then
 t[#t+1] = Def.Actor{
