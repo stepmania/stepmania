@@ -193,38 +193,6 @@ t[#t+1] = StandardDecorationFromFileOptional("BPMDisplay","BPMDisplay");
 t[#t+1] = StandardDecorationFromFileOptional("StageDisplay","StageDisplay");
 t[#t+1] = StandardDecorationFromFileOptional("SongTitle","SongTitle");
 
---[[ t[#t+1] = Def.ActorFrame {
-	InitCommand=function(self)
-		self:name("SongMeterDisplay"); 
-		ActorUtil.LoadAllCommandsAndSetXY(self,Var "LoadingScreen"); 
-	end;
-	LoadActor( THEME:GetPathG( 'SongMeterDisplay', 'frame ' .. PlayerNumberToString(PLAYER_1) ) ) .. {
-		InitCommand=function(self)
-			self:name('Frame'); 
-			ActorUtil.LoadAllCommandsAndSetXY(self,"SongMeterDisplay"); 
-		end;
-	};
-	Def.Quad {
-		InitCommand=cmd(zoomto,2,8);
-		OnCommand=cmd(x,scale(0.25,0,1,-380/2,380/2);diffuse,Color("Orange");diffusealpha,0.5);
-	};
-	Def.Quad {
-		InitCommand=cmd(zoomto,2,8);
-		OnCommand=cmd(x,scale(0.5,0,1,-380/2,380/2);diffuse,Color("Orange");diffusealpha,0.5);
-	};
-	Def.Quad {
-		InitCommand=cmd(zoomto,2,8);
-		OnCommand=cmd(x,scale(0.75,0,1,-380/2,380/2);diffuse,Color("Orange");diffusealpha,0.5);
-	};
-	Def.SongMeterDisplay {
-		InitCommand=cmd(SetStreamWidth,THEME:GetMetric( "SongMeterDisplay", 'StreamWidth' ));
-		Stream=LoadActor( THEME:GetPathG( 'SongMeterDisplay', 'stream ' .. PlayerNumberToString(PLAYER_1) ) )..{
-			InitCommand=cmd(diffuse,Color("Orange");diffusealpha,0.5;blend,Blend.Add;);
-		};
-		Tip=LoadActor( THEME:GetPathG( 'SongMeterDisplay', 'tip ' .. PlayerNumberToString(PLAYER_1) ) ) .. { InitCommand=cmd(visible,false); };
-	};
-	CreateSegments();
-}; --]]
 if( not GAMESTATE:IsCourseMode() ) then
 t[#t+1] = Def.Actor{
 	JudgmentMessageCommand = function(self, params)
