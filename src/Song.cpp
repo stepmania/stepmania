@@ -69,6 +69,9 @@ Song::Song()
 	m_fMusicSampleStartSeconds = -1;
 	m_fMusicSampleLengthSeconds = DEFAULT_MUSIC_SAMPLE_LENGTH;
 	m_fMusicLengthSeconds = 0;
+	firstSecond = -1;
+	lastSecond = -1;
+	specifiedLastSecond = -1;
 	m_fFirstBeat = -1;
 	m_fLastBeat = -1;
 	m_fSpecifiedLastBeat = -1;
