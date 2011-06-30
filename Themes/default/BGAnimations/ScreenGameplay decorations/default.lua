@@ -3,6 +3,7 @@ local function CreateStops(Player)
 	local bars = Def.ActorFrame{ };
 	local bpmFrame = Def.ActorFrame{ Name="BPMFrame"; };
 	local stopFrame = Def.ActorFrame{ Name="StopFrame"; };
+	local delayFrame = Def.ActorFrame{ Name="DelayFrame"; };
 
 	local fFrameWidth = 380;
 	local fFrameHeight = 8;
@@ -25,6 +26,61 @@ local function CreateStops(Player)
 			local bpms = timingData:GetBPMs();
 
 			local stops = timingData:GetStops();
+			local delays = timingData:GetDelays();
+			
+			for i=1,#delays do
+				local data = split("=",delays[i]);
+				local beat = data[1];
+				local secs = data[2];
+				local beatTime = timingData:GetElapsedTimeFromBeat(beat);
+				if beatTime < 0 then beatTime = 0; end;
+				
+				delayFrame[#delayFrame+1] = Def.ActorFrame {
+					Def.Quad {
+						InitCommand=function(self)
+							--self:diffuse(HSVA(192,1,0.8,0.8));
+							self:shadowlength(0);
+							self:shadowcolor( color("#FFFF0077") );
+							-- set width
+							self:zoomto( math.max((secs/songLen)*fFrameWidth, 1), fFrameHeight );
+							-- find location
+							self:x( ( scale(beatTime, firstBeatSecs,lastBeatSecs, -fFrameWidth/2,fFrameWidth/2) ) );
+						end;
+						OnCommand=function(self)
+							self:diffuse(Color("Yellow"));
+							self:sleep(beatTime+1);
+							self:linear(2);
+							self:diffusealpha(0);
+						end;
+					};
+					Def.Quad {
+						InitCommand=function(self)
+							--self:diffuse(HSVA(192,1,0.8,0.8));
+							self:shadowlength(0);
+							self:shadowcolor( color("#FFFF0077") );
+							-- set width
+							self:zoomto( math.max((secs/songLen)*fFrameWidth, 1), fFrameHeight );
+							-- find location
+							self:x( ( scale(beatTime, firstBeatSecs,lastBeatSecs, -fFrameWidth/2,fFrameWidth/2) ) );
+						end;
+						OnCommand=function(self)
+							self:diffusealpha(1);
+							self:diffuseshift();
+							self:effectcolor1(Color("Green"));
+							self:effectcolor2(Color("Red"));
+							self:effectclock('beat');
+							self:effectperiod(1/8);
+							--
+							self:diffusealpha(0);
+							self:sleep(beatTime+1);
+							self:diffusealpha(1);
+							self:linear(4);
+							self:diffusealpha(0);
+						end;
+					};
+				};
+			end;
+			
 			for i=1,#stops do
 				local data = split("=",stops[i]);
 				local beat = data[1];
@@ -70,18 +126,16 @@ local function CreateStops(Player)
 							--
 							self:diffusealpha(0);
 							self:sleep(beatTime+1);
-	-- 						self:linear(1);
 							self:diffusealpha(1);
 							self:linear(4);
 							self:diffusealpha(0);
 						end;
 					};
-					--OnCommand=cmd(diffuse,Color("White");sleep,math.min(0.00001+(secs-5),0.00001);linear,1;diffuse,Color("Orange");sleep,4;linear,2;diffusealpha,0);
-					--OnCommand=cmd(diffuse,Color("White");linear,1;diffuse,Color("Orange"););
 				};
 			end;
 		end;
 		bars[#bars+1] = stopFrame;
+		bars[#bars+1] = delayFrame;
 		t[#t+1] = bars;
 	end
 	return t
