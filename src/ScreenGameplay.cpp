@@ -1696,7 +1696,8 @@ void ScreenGameplay::Update( float fDeltaTime )
 
 		// update fGameplaySeconds
 		STATSMAN->m_CurStageStats.m_fGameplaySeconds += fUnscaledDeltaTime;
-		if( GAMESTATE->m_Position.m_fSongBeat >= GAMESTATE->m_pCurSong->m_fFirstBeat && GAMESTATE->m_Position.m_fSongBeat < GAMESTATE->m_pCurSong->m_fLastBeat )
+		float curBeat = GAMESTATE->m_Position.m_fSongBeat;
+		if( curBeat >= GAMESTATE->m_pCurSong->m_fFirstBeat && curBeat < GAMESTATE->m_pCurSong->m_fLastBeat )
 		{
 			STATSMAN->m_CurStageStats.m_fStepsSeconds += fUnscaledDeltaTime;
 
