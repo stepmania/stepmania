@@ -28,26 +28,21 @@ local function CreateStops(Player)
 			local stops = timingData:GetStops();
 			local delays = timingData:GetDelays();
 			
-			for i=1,#delays do
-				local data = split("=",delays[i]);
-				local beat = data[1];
-				local secs = data[2];
+			local function CreateLine(beat, secs, firstShadow, firstDiffuse, secondShadow, firstEffect, secondEffect)
 				local beatTime = timingData:GetElapsedTimeFromBeat(beat);
 				if beatTime < 0 then beatTime = 0; end;
-				
-				delayFrame[#delayFrame+1] = Def.ActorFrame {
+				return Def.ActorFrame {
 					Def.Quad {
 						InitCommand=function(self)
-							--self:diffuse(HSVA(192,1,0.8,0.8));
 							self:shadowlength(0);
-							self:shadowcolor( color("#FFFF0077") );
+							self:shadowcolor(color(firstShadow));
 							-- set width
-							self:zoomto( math.max((secs/songLen)*fFrameWidth, 1), fFrameHeight );
+							self:zoomto(math.max((secs/songLen)*fFrameWidth, 1), fFrameHeight);
 							-- find location
-							self:x( ( scale(beatTime, firstBeatSecs,lastBeatSecs, -fFrameWidth/2,fFrameWidth/2) ) );
+							self:x((scale(beatTime,firstBeatSecs,lastBeatSecs,-fFrameWidth/2,fFrameWidth/2)));
 						end;
 						OnCommand=function(self)
-							self:diffuse(Color("Yellow"));
+							self:diffuse(Color(firstDiffuse));
 							self:sleep(beatTime+1);
 							self:linear(2);
 							self:diffusealpha(0);
@@ -57,17 +52,17 @@ local function CreateStops(Player)
 						InitCommand=function(self)
 							--self:diffuse(HSVA(192,1,0.8,0.8));
 							self:shadowlength(0);
-							self:shadowcolor( color("#FFFF0077") );
+							self:shadowcolor(color(secondShadow));
 							-- set width
-							self:zoomto( math.max((secs/songLen)*fFrameWidth, 1), fFrameHeight );
+							self:zoomto(math.max((secs/songLen)*fFrameWidth, 1),fFrameHeight);
 							-- find location
-							self:x( ( scale(beatTime, firstBeatSecs,lastBeatSecs, -fFrameWidth/2,fFrameWidth/2) ) );
+							self:x((scale(beatTime,firstBeatSecs,lastBeatSecs,-fFrameWidth/2,fFrameWidth/2)));
 						end;
 						OnCommand=function(self)
 							self:diffusealpha(1);
 							self:diffuseshift();
-							self:effectcolor1(Color("Green"));
-							self:effectcolor2(Color("Red"));
+							self:effectcolor1(Color(firstEffect));
+							self:effectcolor2(Color(secondEffect));
 							self:effectclock('beat');
 							self:effectperiod(1/8);
 							--
@@ -81,57 +76,14 @@ local function CreateStops(Player)
 				};
 			end;
 			
+			for i=1,#delays do
+				local data = split("=",delays[i]);
+				delayFrame[#delayFrame+1] = CreateLine(data[1], data[2], "#FFFF0077", "Yellow", "#FFFF0077", "Green", "Red");
+			end;
+			
 			for i=1,#stops do
 				local data = split("=",stops[i]);
-				local beat = data[1];
-				local secs = data[2];
-				local beatTime = timingData:GetElapsedTimeFromBeat(beat);
-				if beatTime < 0 then beatTime = 0; end;
-
-				stopFrame[#stopFrame+1] = Def.ActorFrame {
-					Def.Quad {
-						InitCommand=function(self)
-							--self:diffuse(HSVA(192,1,0.8,0.8));
-							self:shadowlength(0);
-							self:shadowcolor( color("#FFFFFF77") );
-							-- set width
-							self:zoomto( math.max((secs/songLen)*fFrameWidth, 1), fFrameHeight );
-							-- find location
-							self:x( ( scale(beatTime, firstBeatSecs,lastBeatSecs, -fFrameWidth/2,fFrameWidth/2) ) );
-						end;
-						OnCommand=function(self)
-							self:diffuse(Color("White"));
-							self:sleep(beatTime+1);
-							self:linear(2);
-							self:diffusealpha(0);
-						end;
-					};
-					Def.Quad {
-						InitCommand=function(self)
-							--self:diffuse(HSVA(192,1,0.8,0.8));
-							self:shadowlength(0);
-							self:shadowcolor( color("#FFFFFF77") );
-							-- set width
-							self:zoomto( math.max((secs/songLen)*fFrameWidth, 1), fFrameHeight );
-							-- find location
-							self:x( ( scale(beatTime, firstBeatSecs,lastBeatSecs, -fFrameWidth/2,fFrameWidth/2) ) );
-						end;
-						OnCommand=function(self)
-							self:diffusealpha(1);
-							self:diffuseshift();
-							self:effectcolor1(Color("Orange"));
-							self:effectcolor2(Color("Red"));
-							self:effectclock('beat');
-							self:effectperiod(1/8);
-							--
-							self:diffusealpha(0);
-							self:sleep(beatTime+1);
-							self:diffusealpha(1);
-							self:linear(4);
-							self:diffusealpha(0);
-						end;
-					};
-				};
+				stopFrame[#stopFrame+1] = CreateLine(data[1], data[2], "#FFFFFF77", "White", "#FFFFFF77", "Orange", "Red");
 			end;
 		end;
 		bars[#bars+1] = stopFrame;
