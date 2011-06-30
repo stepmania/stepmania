@@ -3435,9 +3435,6 @@ static void ChangeBeat0Offset( const RString &sNew )
 static void ChangeLastSecondHint( const RString &sNew )
 {
 	Song &s = *GAMESTATE->m_pCurSong;
-	TimingData &timing = (GAMESTATE->m_bIsUsingStepTiming ?
-			      GAMESTATE->m_pCurSteps[PLAYER_1]->m_Timing :
-			      s.m_SongTiming);
 	s.specifiedLastSecond = StringToFloat(sNew);
 }
 
