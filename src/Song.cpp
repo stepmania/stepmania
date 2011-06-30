@@ -72,9 +72,6 @@ Song::Song()
 	firstSecond = -1;
 	lastSecond = -1;
 	specifiedLastSecond = -1;
-	m_fFirstBeat = -1;
-	m_fLastBeat = -1;
-	m_fSpecifiedLastBeat = -1;
 	m_SelectionDisplay = SHOW_ALWAYS;
 	m_bEnabled = true;
 	m_DisplayBPMType = DISPLAY_BPM_ACTUAL;

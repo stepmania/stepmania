@@ -235,9 +235,6 @@ public:
 	float firstSecond;
 	float lastSecond;
 	float specifiedLastSecond;
-	float	m_fFirstBeat;	// beat of first note
-	float	m_fLastBeat;	// beat of last note
-	float	m_fSpecifiedLastBeat;	// specified last beat of the song
 	float	m_fMusicSampleStartSeconds;
 	float	m_fMusicSampleLengthSeconds;
 	DisplayBPM m_DisplayBPMType;
