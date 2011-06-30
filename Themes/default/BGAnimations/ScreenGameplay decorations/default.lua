@@ -5,6 +5,9 @@ local function CreateStops(Player)
 	local stopFrame = Def.ActorFrame{ Name="StopFrame"; };
 	local delayFrame = Def.ActorFrame{ Name="DelayFrame"; };
 	local warpFrame = Def.ActorFrame{ Name="WarpFrame"; };
+	local fakeFrame = Def.ActorFrame{ Name="FakeFrame"; };
+	local scrollFrame = Def.ActorFrame{ Name="ScrollFrame"; };
+	local speedFrame = Def.ActorFrame{ Name="SpeedFrame"; };
 
 	local fFrameWidth = 380;
 	local fFrameHeight = 8;
@@ -24,11 +27,13 @@ local function CreateStops(Player)
 			local firstBeatSecs = song:GetFirstSecond();
 			local lastBeatSecs = song:GetLastSecond();
 
-			local bpms = timingData:GetBPMs();
-
+			local bpms = timingData:GetBPMsAndTimes();
 			local stops = timingData:GetStops();
 			local delays = timingData:GetDelays();
 			local warps = timingData:GetWarps();
+			local fakes = timingData:GetFakes();
+			local scrolls = timingData:GetScrolls();
+			local speeds = timingData:GetSpeeds();
 			
 			local function CreateLine(beat, secs, firstShadow, firstDiffuse, secondShadow, firstEffect, secondEffect)
 				local beatTime = timingData:GetElapsedTimeFromBeat(beat);
@@ -78,6 +83,12 @@ local function CreateStops(Player)
 				};
 			end;
 			
+			for i=1,#bpms do
+				local data = split("=",bpms[i]);
+				bpmFrame[#bpmFrame+1] = CreateLine(data[1], 0,
+					"#00808077", "#00808077", "#00808077", "#FF634777", "#FF000077");
+			end;
+			
 			for i=1,#delays do
 				local data = split("=",delays[i]);
 				delayFrame[#delayFrame+1] = CreateLine(data[1], data[2],
@@ -90,15 +101,38 @@ local function CreateStops(Player)
 					"#FFFFFF77", "#FFFFFF77", "#FFFFFF77", "#FFA50077", "#FF000077");
 			end;
 			
+			for i=1,#scrolls do
+				local data = split("=",scrolls[i]);
+				scrollFrame[#scrollFrame+1] = CreateLine(data[1], 0,
+					"#4169E177", "#4169E177", "#4169E177", "#0000FF77", "#FF000077");
+			end;
+			
+			for i=1,#speeds do
+				local data = split("=",speeds[i]);
+				-- TODO: Turn beats into seconds for this calculation?
+				speedFrame[#speedFrame+1] = CreateLine(data[1], 0,
+					"#ADFF2F77", "#ADFF2F77", "#ADFF2F77", "#7CFC0077", "#FF000077");
+			end;
+			
 			for i=1,#warps do
 				local data = split("=",warps[i]);
 				warpFrame[#warpFrame+1] = CreateLine(data[1], 0,
 					"#CC00CC77", "#CC00CC77", "#CC00CC77", "#FF33CC77", "#FF000077");
 			end;
+			
+			for i=1,#fakes do
+				local data = split("=",fakes[i]);
+				fakeFrame[#fakeFrame+1] = CreateLine(data[1], 0,
+					"#BC8F8F77", "#BC8F8F77", "#BC8F8F77", "#F4A46077", "#FF000077");
+			end;
 		end;
+		bars[#bars+1] = bpmFrame;
+		bars[#bars+1] = scrollFrame;
+		bars[#bars+1] = speedFrame;
 		bars[#bars+1] = stopFrame;
 		bars[#bars+1] = delayFrame;
 		bars[#bars+1] = warpFrame;
+		bars[#bars+1] = fakeFrame;
 		t[#t+1] = bars;
 	end
 	return t
