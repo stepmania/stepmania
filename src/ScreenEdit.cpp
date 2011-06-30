@@ -581,8 +581,9 @@ static MenuDef g_AreaMenu(
 	     EditMode_Full, true, true, 0, NULL ),
 	MenuRowDef(ScreenEdit::convert_delay_to_beat, "Convert delay to beats",		true,
 	     EditMode_Full, true, true, 0, NULL ),
+	  MenuRowDef(ScreenEdit::last_second_at_beat,	"Designate last second at current beat", true, EditMode_Full, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::undo,			"Undo",					true, EditMode_Practice, true, true, 0, NULL ),
-  MenuRowDef(ScreenEdit::clear_clipboard,		"Clear clipboard",			true,
+	MenuRowDef(ScreenEdit::clear_clipboard,		"Clear clipboard",			true,
 	     EditMode_Practice, true, true, 0, NULL )
 			  
 );
@@ -4127,6 +4128,13 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 			
 			NoteDataUtil::InsertRows(m_NoteDataEdit, GetRow(), BeatToNoteRow(pauseBeats));
 			timing.InsertRows(GetRow(), BeatToNoteRow(pauseBeats));
+			break;
+		}
+		case last_second_at_beat:
+		{
+			TimingData &timing = GetAppropriateTiming();
+			Song &s = *GAMESTATE->m_pCurSong;
+			s.specifiedLastSecond = timing.GetElapsedTimeFromBeat(GetBeat());
 			break;
 		}
 		case undo:
