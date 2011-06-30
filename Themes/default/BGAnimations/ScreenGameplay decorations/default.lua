@@ -19,8 +19,8 @@ local function CreateStops(Player)
 		if song then
 			local songLen = song:MusicLengthSeconds();
 
-			local firstBeatSecs = timingData:GetElapsedTimeFromBeat(song:GetFirstBeat());
-			local lastBeatSecs = timingData:GetElapsedTimeFromBeat(song:GetLastBeat());
+			local firstBeatSecs = song:GetFirstSecond();
+			local lastBeatSecs = song:GetLastSecond();
 
 			local bpms = timingData:GetBPMs();
 
