@@ -76,6 +76,11 @@ struct AttackArray : public vector<Attack>
 	 * @brief Return a string representation used for simfiles.
 	 * @return the string representation. */
 	vector<RString> ToVectorString() const;
+	
+	/**
+	 * @brief Adjust the starting time of all attacks.
+	 * @param delta the amount to change. */
+	void UpdateStartTimes(float delta);
 };
 
 #endif

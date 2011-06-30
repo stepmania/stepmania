@@ -1936,6 +1936,14 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			}
 			GetAppropriateTiming().m_fBeat0OffsetInSeconds += fDelta;
 			(fDelta>0 ? m_soundValueIncrease : m_soundValueDecrease).Play();
+			if (GAMESTATE->m_bIsUsingStepTiming)
+			{
+				GAMESTATE->m_pCurSteps[PLAYER_1]->m_Attacks.UpdateStartTimes(fDelta);
+			}
+			else
+			{
+				GAMESTATE->m_pCurSong->m_Attacks.UpdateStartTimes(fDelta);
+			}
 			SetDirty( true );
 		}
 		break;
@@ -3430,7 +3438,17 @@ static void ChangeBeat0Offset( const RString &sNew )
 	TimingData &timing = (GAMESTATE->m_bIsUsingStepTiming ? 
 			      GAMESTATE->m_pCurSteps[PLAYER_1]->m_Timing : 
 			      GAMESTATE->m_pCurSong->m_SongTiming);
+	float old = timing.m_fBeat0OffsetInSeconds;
 	timing.m_fBeat0OffsetInSeconds = StringToFloat( sNew );
+	float delta = timing.m_fBeat0OffsetInSeconds - old;
+	if (GAMESTATE->m_bIsUsingStepTiming)
+	{
+		GAMESTATE->m_pCurSteps[PLAYER_1]->m_Attacks.UpdateStartTimes(delta);
+	}
+	else
+	{
+		GAMESTATE->m_pCurSong->m_Attacks.UpdateStartTimes(delta);
+	}
 }
 
 static void ChangeLastSecondHint( const RString &sNew )
