@@ -270,7 +270,7 @@ bool SSCLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 				
 				else if (sValueName == "LASTSECONDHINT")
 				{
-					out.specifiedLastSecond = StringToFloat(sParams[1]);
+					out.SetSpecifiedLastSecond(StringToFloat(sParams[1]));
 				}
 
 				else if( sValueName=="MUSICBYTES" )
@@ -407,13 +407,13 @@ bool SSCLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 				else if (sValueName=="FIRSTSECOND")
 				{
 					if( bFromCache )
-						out.firstSecond = StringToFloat( sParams[1] );
+						out.SetFirstSecond(StringToFloat(sParams[1]));
 				}
 
 				else if( sValueName=="LASTSECOND" )
 				{
 					if( bFromCache )
-						out.lastSecond = StringToFloat( sParams[1] );
+						out.SetLastSecond(StringToFloat(sParams[1]));
 				}
 
 				else if( sValueName=="SONGFILENAME" )

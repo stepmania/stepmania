@@ -120,6 +120,31 @@ float Song::GetLastBeat() const
 	return this->m_SongTiming.GetBeatFromElapsedTime(this->lastSecond);
 }
 
+float Song::GetSpecifiedLastSecond() const
+{
+	return this->specifiedLastSecond;
+}
+
+float Song::GetSpecifiedLastBeat() const
+{
+	return this->m_SongTiming.GetBeatFromElapsedTime(this->specifiedLastSecond);
+}
+
+void Song::SetFirstSecond(const float f)
+{
+	this->firstSecond = f;
+}
+
+void Song::SetLastSecond(const float f)
+{
+	this->lastSecond = f;
+}
+
+void Song::SetSpecifiedLastSecond(const float f)
+{
+	this->specifiedLastSecond = f;
+}
+
 // Reset to an empty song.
 void Song::Reset()
 {

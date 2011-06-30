@@ -232,8 +232,8 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 
 	WriteTimingTags( f, out.m_SongTiming, true );
 	
-	if( out.specifiedLastSecond > 0 )
-		f.PutLine( ssprintf("#LASTSECONDHINT:%.6f;", out.specifiedLastSecond) );
+	if( out.GetSpecifiedLastSecond() > 0 )
+		f.PutLine( ssprintf("#LASTSECONDHINT:%.6f;", out.GetSpecifiedLastSecond()) );
 	
 	FOREACH_BackgroundLayer( b )
 	{

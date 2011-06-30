@@ -3436,7 +3436,7 @@ static void ChangeBeat0Offset( const RString &sNew )
 static void ChangeLastSecondHint( const RString &sNew )
 {
 	Song &s = *GAMESTATE->m_pCurSong;
-	s.specifiedLastSecond = StringToFloat(sNew);
+	s.SetSpecifiedLastSecond(StringToFloat(sNew));
 }
 
 static void ChangePreviewStart( const RString &sNew )
@@ -3737,7 +3737,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 				g_SongInformation.rows[main_title_transliteration].SetOneUnthemedChoice( pSong->m_sMainTitleTranslit );
 				g_SongInformation.rows[sub_title_transliteration].SetOneUnthemedChoice( pSong->m_sSubTitleTranslit );
 				g_SongInformation.rows[artist_transliteration].SetOneUnthemedChoice( pSong->m_sArtistTranslit );
-				g_SongInformation.rows[last_second_hint].SetOneUnthemedChoice( ssprintf("%.6f", pSong->specifiedLastSecond) );
+				g_SongInformation.rows[last_second_hint].SetOneUnthemedChoice( ssprintf("%.6f", pSong->GetSpecifiedLastSecond()) );
 				g_SongInformation.rows[preview_start].SetOneUnthemedChoice( ssprintf("%.6f", pSong->m_fMusicSampleStartSeconds) );
 				g_SongInformation.rows[preview_length].SetOneUnthemedChoice( ssprintf("%.6f", pSong->m_fMusicSampleLengthSeconds) );
 				g_SongInformation.rows[display_bpm].iDefaultChoice = pSong->m_DisplayBPMType;
@@ -4134,7 +4134,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 		{
 			TimingData &timing = GetAppropriateTiming();
 			Song &s = *GAMESTATE->m_pCurSong;
-			s.specifiedLastSecond = timing.GetElapsedTimeFromBeat(GetBeat());
+			s.SetSpecifiedLastSecond(timing.GetElapsedTimeFromBeat(GetBeat()));
 			break;
 		}
 		case undo:
@@ -4255,7 +4255,7 @@ void ScreenEdit::HandleSongInformationChoice( SongInformationChoice c, const vec
 		break;
 	case last_second_hint:
 		ScreenTextEntry::TextEntry( SM_None, ENTER_LAST_SECOND_HINT, 
-					   ssprintf("%.6f", pSong->specifiedLastSecond), 20, 
+					   ssprintf("%.6f", pSong->GetSpecifiedLastSecond()), 20, 
 					   ScreenTextEntry::FloatValidate, ChangeLastSecondHint, NULL );
 		break;
 	case preview_start:

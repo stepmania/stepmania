@@ -233,12 +233,6 @@ public:
 
 	/** @brief The length of the music file. */
 	float	m_fMusicLengthSeconds;
-	/** @brief The first second that a note is hit. */
-	float firstSecond;
-	/** @brief The last second that a note is hit. */
-	float lastSecond;
-	/** @brief The last second of the song for playing purposes. */
-	float specifiedLastSecond;
 	float	m_fMusicSampleStartSeconds;
 	float	m_fMusicSampleLengthSeconds;
 	DisplayBPM m_DisplayBPMType;
@@ -298,9 +292,21 @@ public:
 	float GetFirstSecond() const;
 	float GetLastBeat() const;
 	float GetLastSecond() const;
+	float GetSpecifiedLastBeat() const;
+	float GetSpecifiedLastSecond() const;
+	
+	void SetFirstSecond(const float f);
+	void SetLastSecond(const float f);
+	void SetSpecifiedLastSecond(const float f);
 
 	typedef vector<BackgroundChange> 	VBackgroundChange;
 private:
+	/** @brief The first second that a note is hit. */
+	float firstSecond;
+	/** @brief The last second that a note is hit. */
+	float lastSecond;
+	/** @brief The last second of the song for playing purposes. */
+	float specifiedLastSecond;
 	/**
 	 * @brief The background changes (sorted by layer) that are for this Song.
 	 *
