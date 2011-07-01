@@ -93,6 +93,7 @@ INT_PTR CALLBACK LoadingWindow_Win32::DlgProc( HWND hWnd, UINT msg, WPARAM wPara
 		self=(LoadingWindow_Win32 *)GetWindowLong(hWnd,DWL_USER);
 	}
 
+#if(WINVER >= 0x0601)
 	if (self && msg == self->taskbarCreatedEvent && !self->pTaskbarList) {
 		HRESULT hr = CoCreateInstance(CLSID_TaskbarList, NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&self->pTaskbarList));
 		if (SUCCEEDED(hr)) {
@@ -114,6 +115,7 @@ INT_PTR CALLBACK LoadingWindow_Win32::DlgProc( HWND hWnd, UINT msg, WPARAM wPara
 
 
 	}
+#endif
 
 	switch( msg )
 	{
@@ -140,10 +142,12 @@ INT_PTR CALLBACK LoadingWindow_Win32::DlgProc( HWND hWnd, UINT msg, WPARAM wPara
 
 	case WM_DESTROY:
 
+#if(WINVER >= 0x0601)
 		if (self->pTaskbarList) {
 			self->pTaskbarList->Release();
 			self->pTaskbarList = NULL;
 		}
+#endif
 
 		DeleteObject( g_hBitmap );
 		g_hBitmap = NULL;
@@ -173,14 +177,19 @@ void LoadingWindow_Win32::SetIcon( const RageSurface *pIcon )
 		SetClassLong( hwnd, GCL_HICON, (LONG) m_hIcon );
 }
 
-LoadingWindow_Win32::LoadingWindow_Win32() : pTaskbarList(NULL)
-{
+LoadingWindow_Win32::LoadingWindow_Win32()
+{	
+
 	INITCOMMONCONTROLSEX cceData;
 	cceData.dwSize=sizeof(INITCOMMONCONTROLSEX);
 	cceData.dwICC=ICC_PROGRESS_CLASS;
 	InitCommonControlsEx(&cceData);
 
+#if(WINVER >= 0x0601)
+	pTaskbarList=NULL;
+
 	taskbarCreatedEvent=RegisterWindowMessage("TaskbarButtonCreated");
+#endif
 
 	m_hIcon = NULL;
 	
@@ -252,7 +261,11 @@ void LoadingWindow_Win32::SetProgress(const int progress)
 	m_progress=progress;
 	HWND hwndItem = ::GetDlgItem( hwnd, IDC_PROGRESS );
 	::SendMessage(hwndItem,PBM_SETPOS,progress,0);
-	pTaskbarList->SetProgressValue(hwnd, m_progress, m_totalWork);
+#if(WINVER >= 0x0601)
+	if(pTaskbarList) {
+		pTaskbarList->SetProgressValue(hwnd, m_progress, m_totalWork);
+	}
+#endif
 }
 
 void LoadingWindow_Win32::SetTotalWork(const int totalWork)
@@ -260,7 +273,11 @@ void LoadingWindow_Win32::SetTotalWork(const int totalWork)
 	m_totalWork=totalWork;
 	HWND hwndItem = ::GetDlgItem( hwnd, IDC_PROGRESS );
 	SendMessage(hwndItem,PBM_SETRANGE32,0,totalWork);
-	pTaskbarList->SetProgressValue(hwnd, m_progress, m_totalWork);
+#if(WINVER >= 0x0601)
+	if(pTaskbarList) {
+		pTaskbarList->SetProgressValue(hwnd, m_progress, m_totalWork);
+	}
+#endif
 }
 
 void LoadingWindow_Win32::SetIndeterminate(bool indeterminate) {
@@ -269,17 +286,21 @@ void LoadingWindow_Win32::SetIndeterminate(bool indeterminate) {
 	HWND hwndItem = ::GetDlgItem( hwnd, IDC_PROGRESS );
 
 	if(indeterminate) {
+#if(WINVER >= 0x0601)
 		if(pTaskbarList) {
 			pTaskbarList->SetProgressState(hwnd, TBPF_INDETERMINATE);
 		}
+#endif
 		SetWindowLong(hwndItem,GWL_STYLE, PBS_MARQUEE | GetWindowLong(hwndItem,GWL_STYLE));
 		SendMessage(hwndItem,PBM_SETMARQUEE,1,0);
 	} else {
 		SendMessage(hwndItem,PBM_SETMARQUEE,0,0);
 		SetWindowLong(hwndItem,GWL_STYLE, (~PBS_MARQUEE) & GetWindowLong(hwndItem,GWL_STYLE));
+#if(WINVER >= 0x0601)
 		if(pTaskbarList) {
 			pTaskbarList->SetProgressState(hwnd, TBPF_NORMAL);
 		}
+#endif
 	}
 	
 }
