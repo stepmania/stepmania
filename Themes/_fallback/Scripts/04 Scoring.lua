@@ -140,8 +140,7 @@ r['HYBRID'] = function(params, pss)
 	};
 	setmetatable(multLookup, ZeroIfNotFound);
 	local radarValues = GetDirectRadar(params.Player);
-	local totalItems = GetTotalItems(radarValues)
-		- radarValues:GetValue('RadarCategory_Lifts');
+	local totalItems = GetTotalItems(radarValues);
 	-- 1+2+3+...+totalItems の値
 	local sTotal = (totalItems+1)*totalItems/2;
 	-- [en] Score for one song
@@ -201,8 +200,7 @@ r['DDR SuperNOVA 2'] = function(params, pss)
 	};
 	setmetatable(multLookup, ZeroIfNotFound);
 	local radarValues = GetDirectRadar(params.Player);
-	local numLifts = radarValues:GetValue('RadarCategory_Lifts');
-	local totalItems = GetTotalItems(radarValues) - numLifts;
+	local totalItems = GetTotalItems(radarValues);
 
 	-- handle holds
 	local maxAdd = 0;
