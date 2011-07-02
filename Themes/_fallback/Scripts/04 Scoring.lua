@@ -142,15 +142,17 @@ r['HYBRID'] = function(params, pss)
 	local radarValues = GetDirectRadar(params.Player);
 	local totalItems = GetTotalItems(radarValues)
 		- radarValues:GetValue('RadarCategory_Lifts');
-	-- the number of items to calculate.
+	-- 1+2+3+...+totalItems の値
 	local sTotal = (totalItems+1)*totalItems/2;
 	-- [en] Score for one song
+	-- [ja] 1つあたりのスコア
 	local sOne = math.floor(100000000/sTotal);
-	-- Get the fractional value to add since the last step.
+	-- [ja] 端数は最後の1ステップで加算するのでその値を取得
 	local sLast = 100000000-(sOne*sTotal);
-	-- ...what's the reason for this line?
+	-- [ja] 現在何個目の譜面か
 	pss:SetCurMaxScore(pss:GetCurMaxScore()+1);
 	-- [en] current score
+	-- [ja] 今回のスコア
 	local vScore = sOne*(pss:GetCurMaxScore());
 	if (params.HoldNoteScore == 'HoldNoteScore_Held') then
 		vScore = vScore;
@@ -199,29 +201,31 @@ r['DDR SuperNOVA 2'] = function(params, pss)
 	};
 	setmetatable(multLookup, ZeroIfNotFound);
 	local radarValues = GetDirectRadar(params.Player);
-	local numLifts = radarValues:GetCategory('RadarCategory_Lifts')
-	local numFakes = radarValues:GetCategory('RadarCategory_Fakes')
-	local totalItems = GetTotalItems(radarValues) - (numLifts + numFakes);
+	local numLifts = radarValues:GetValue('RadarCategory_Lifts');
+	local totalItems = GetTotalItems(radarValues) - numLifts;
 
 	-- handle holds
-	local maxAdd = 0
+	local maxAdd = 0;
 	if params.HoldNoteScore == 'HoldNoteScore_Held' then
-		maxAdd = 10
+		maxAdd = 10;
+	elseif params.HoldNoteScore == 'HoldNoteScore_LetGo' then
+		maxAdd = 0;
 	else
-		if params.HoldNoteScore == 'HoldNoteScore_LetGo' then
-			maxAdd = 0
-		else
-			maxAdd = multLookup[params.TapNoteScore]
-			if params.TapNoteScore == 'TapNoteScore_W2' or 'TapNoteScore_W3' then
-				-- use this only on last resort
-				pss:SetCurMaxScore( pss:GetCurMaxScore() + 1000000 )
-			end
-		end
-	end
+		maxAdd = multLookup[params.TapNoteScore];
+		if params.TapNoteScore == 'TapNoteScore_W2' or 'TapNoteScore_W3' then
+			-- [ja] 超最終手段
+			pss:SetCurMaxScore( pss:GetCurMaxScore() + 1000000 );
+		end;
+	end;
 	pss:SetCurMaxScore(pss:GetCurMaxScore() + maxAdd);
-	
-	-- remember to deal with hold notes when calculating max score.
-	
+
+	--[[
+	[ja] パフェ数取得 この方法で取得するとロングノートの場合2つカウントされる そのため使えない
+	pss:GetTapNoteScores('TapNoteScore_W2')
+	仕方がないのでパフェ数を 1000000 単位で GetCurMaxScore に記録
+	その後、情報を分解して取り出す 
+	--]]
+
 	local vScore = pss:GetCurMaxScore() % 1000000
 	local vSub = math.floor( pss:GetCurMaxScore()/1000000 )
 	pss:SetScore( math.floor(10000*vScore/totalItems) * 10 - (vSub*10) );
