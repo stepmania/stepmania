@@ -67,7 +67,7 @@ r['DDR 4thMIX'] = function(params, pss)
 	local capScore = 999999999;
 	local bestPoints = scoreLookupTable['TapNoteScore_W1'];
 	local bestCombo = bestPoints and comboBonusForThisStep or 0;
-	pss:SeCurMaxScore(clamp(pss:GeCurMaxScore()+bestPoints+bestCombo,0,capScore));
+	pss:SetCurMaxScore(clamp(pss:GetCurMaxScore()+bestPoints+bestCombo,0,capScore));
 	local localPoints = scoreLookupTable[params.TapNoteScore];
 	local localCombo = localPoints and comboBonusForThisStep or 0;
 	pss:SetScore(clamp(pss:GetScore()+localPoints+localCombo,0,capScore));
