@@ -8,6 +8,10 @@ ________________________________________________________________________________
 StepMania 5.0 Preview 2 | 201107??
 --------------------------------------------------------------------------------
 
+2011/07/02
+----------
+* [ScreenEdit] Fixed a crash when hitting Enter in the F1 help menu. [AJ]
+
 2011/06/30
 ----------
 * [NotesAll] Use #FIRSTSECOND, #LASTSECOND, and #LASTSECONDHINT instead of the
