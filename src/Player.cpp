@@ -404,7 +404,7 @@ void Player::Init(
 /*
 	// calculate M-mod speed here, so we can adjust properly on a per-song basis.
 	// XXX: can we find a better location for this?
-	if( m_pPlayerState->m_PlayerOptions.m_fMaxScrollBPM != 0 )
+	if( m_pPlayerState->m_PlayerOptions.GetCurrent().m_fMaxScrollBPM != 0 )
 	{
 		DisplayBpms bpms;
 
@@ -440,21 +440,22 @@ void Player::Init(
 				FOREACH_CONST( TrailEntry, GAMESTATE->m_pCurTrail[pn]->m_vEntries, e )
 				{
 					float fMaxForEntry;
-					e->pSong->m_Timing.GetActualBPM( fThrowAway, fMaxForEntry );
+					e->pSong->m_SongTiming.GetActualBPM( fThrowAway, fMaxForEntry );
 					fMaxBPM = max( fMaxForEntry, fMaxBPM );
 				}
 			}
 			else
 			{
-				GAMESTATE->m_pCurSong->m_Timing.GetActualBPM( fThrowAway, fMaxBPM );
+				GAMESTATE->m_pCurSong->m_SongTiming.GetActualBPM( fThrowAway, fMaxBPM );
 			}
 		}
 
 		ASSERT( fMaxBPM > 0 );
 
 		// set an X-mod equal to Mnum / fMaxBPM (e.g. M600 with 150 becomes 4x)
-		m_pPlayerState->m_StoredPlayerOptions.m_fScrollSpeed =
-			( m_pPlayerState->m_StoredPlayerOptions.m_fMaxScrollBPM / fMaxBPM );
+		
+		m_pPlayerState->m_PlayerOptions.GetCurrent().m_fScrollSpeed =
+			( m_pPlayerState->m_PlayerOptions.GetPreferred().m_fMaxScrollBPM / fMaxBPM );
 	}
 */
 
