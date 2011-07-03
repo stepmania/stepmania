@@ -251,7 +251,7 @@ static const Style g_Style_Dance_Double =
 static const Style g_Style_Dance_Couple =
 {	// STYLE_DANCE_COUPLE
 	true,				// m_bUsedForGameplay
-	true,				// m_bUsedForEdit
+	false,				// m_bUsedForEdit
 	false,				// m_bUsedForDemonstration
 	false,				// m_bUsedForHowToPlay
 	"couple",			// m_szName
@@ -318,6 +318,50 @@ static const Style g_Style_Dance_Solo =
 	},
 	{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
 		0,1,2,3,4,5
+	},
+	false, // m_bNeedsZoomOutWith2Players
+	false, // m_bCanUseBeginnerHelper
+	false, // m_bLockDifficulties
+};
+
+static const Style g_Style_Dance_Couple_Edit =
+{	// STYLE_DANCE_COUPLE
+	false,				// m_bUsedForGameplay
+	true,				// m_bUsedForEdit
+	false,				// m_bUsedForDemonstration
+	false,				// m_bUsedForHowToPlay
+	"couple",			// m_szName
+	StepsType_dance_couple,	// m_StepsType
+	StyleType_OnePlayerOneSide,		// m_StyleType
+	4,				// m_iColsPerPlayer
+	{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
+		{	// PLAYER_1
+			{ TRACK_1,	-DANCE_COL_SPACING*4.f, NULL },
+			{ TRACK_2,	-DANCE_COL_SPACING*3.f, NULL },
+			{ TRACK_3,	-DANCE_COL_SPACING*2.f, NULL },
+			{ TRACK_4,	-DANCE_COL_SPACING*1.f, NULL },
+			{ TRACK_5,	+DANCE_COL_SPACING*1.f, NULL },
+			{ TRACK_6,	+DANCE_COL_SPACING*2.f, NULL },
+			{ TRACK_7,	+DANCE_COL_SPACING*3.f, NULL },
+			{ TRACK_8,	+DANCE_COL_SPACING*4.f, NULL },
+		},
+		{	// PLAYER_2
+			{ TRACK_1,	-DANCE_COL_SPACING*4.f, NULL },
+			{ TRACK_2,	-DANCE_COL_SPACING*3.f, NULL },
+			{ TRACK_3,	-DANCE_COL_SPACING*2.f, NULL },
+			{ TRACK_4,	-DANCE_COL_SPACING*1.f, NULL },
+			{ TRACK_5,	+DANCE_COL_SPACING*1.f, NULL },
+			{ TRACK_6,	+DANCE_COL_SPACING*2.f, NULL },
+			{ TRACK_7,	+DANCE_COL_SPACING*3.f, NULL },
+			{ TRACK_8,	+DANCE_COL_SPACING*4.f, NULL },
+		},
+	},
+	{	// m_iInputColumn[NUM_GameController][NUM_GameButton]
+		{ 0, 3, 2, 1, Style::END_MAPPING },
+		{ 4, 5, 6, 7, Style::END_MAPPING }
+	},
+	{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
+		0,1,2,3,4,5,6,7
 	},
 	false, // m_bNeedsZoomOutWith2Players
 	false, // m_bCanUseBeginnerHelper
@@ -449,6 +493,7 @@ static const Style *g_apGame_Dance_Styles[] =
 	&g_Style_Dance_Double,
 	&g_Style_Dance_Couple,
 	&g_Style_Dance_Solo,
+	&g_Style_Dance_Couple_Edit,
 	&g_Style_Dance_Routine,
 	&g_Style_Dance_ThreePanel,
 	NULL
