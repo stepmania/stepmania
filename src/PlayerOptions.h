@@ -157,6 +157,7 @@ public:
 	 * PlayerOptions::Approach approaches. */
 	bool	m_bSetScrollSpeed;				// true if the scroll speed was set by FromString
 	float	m_fTimeSpacing,			m_SpeedfTimeSpacing;	// instead of Beat spacing (CMods, mMods)
+	float	m_fMaxScrollBPM,		m_SpeedfMaxScrollBPM;
 	float	m_fScrollSpeed,			m_SpeedfScrollSpeed;	// used if !m_bTimeSpacing (xMods)
 	float	m_fScrollBPM,			m_SpeedfScrollBPM;		// used if m_bTimeSpacing (CMod)
 	float	m_fAccels[NUM_ACCELS],		m_SpeedfAccels[NUM_ACCELS];

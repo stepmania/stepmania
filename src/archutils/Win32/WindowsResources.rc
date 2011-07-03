@@ -181,8 +181,8 @@ IDI_ICON1               ICON                    "smzip.ico"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 5,0,0,2
- PRODUCTVERSION 5,0,0,2
+ FILEVERSION 5,0,0,3
+ PRODUCTVERSION 5,0,0,3
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -199,12 +199,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "StepMania Team\nhttp://www.stepmania.com/"
             VALUE "FileDescription", "StepMania"
-            VALUE "FileVersion", "5, 0, 0, 2"
-            VALUE "InternalName", "sm-ssc"
+            VALUE "FileVersion", "5, 0, 0, 3"
+            VALUE "InternalName", "sm-ssc v1.3.1"
             VALUE "LegalCopyright", "Copyright © 2001-2011"
             VALUE "OriginalFilename", "StepMania.exe"
             VALUE "ProductName", "StepMania"
-            VALUE "ProductVersion", "5, 0, 0, 2"
+            VALUE "ProductVersion", "5, 0, 0, 3"
         END
     END
     BLOCK "VarFileInfo"

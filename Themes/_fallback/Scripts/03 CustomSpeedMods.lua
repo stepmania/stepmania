@@ -68,7 +68,7 @@ local function ParseSpeedModFile(path)
 		return mods
 	else
 		-- error; write a fallback mod file and return it
-		local fallbackString = "0.5x,1x,1.5x,2x,3x,4x,8x,C200,C400"
+		local fallbackString = "0.5x,1x,1.5x,2x,3x,4x,8x,C200,C400,m550"
 		Trace("[CustomSpeedMods]: Could not read SpeedMods; writing fallback to "..path)
 		file:Open(path, 2)
 		file:Write(fallbackString)
@@ -148,6 +148,7 @@ end
 
 local function SpeedModSort(tab)
 	local xMods = {}
+	local mMods = {}
 	local cMods = {}
 	--local mMods = {}
 
@@ -159,10 +160,9 @@ local function SpeedModSort(tab)
 		if string.find(tab[i],"C%d") then
 			typ = cMods
 			val = string.gsub(tab[i], "C", "")
-		elseif string.find(tab[i],"M%d") then
-			Trace("[CustomSpeedMods] OpenITG's M-Mods are not supported yet in sm-ssc.")
-			--typ = mMods
-			--val = string.gsub(tab[i], "M", "")
+		elseif string.find(tab[i],"m%d") then
+			typ = mMods
+			val = string.gsub(tab[i], "m", "")
 		else
 			typ = xMods
 			val = string.gsub(tab[i], "x", "")
@@ -175,7 +175,7 @@ local function SpeedModSort(tab)
 	-- sort cMods
 	cMods = AnonSort(cMods)
 	-- sort mMods
-	--mMods = AnonSort(mMods)
+	mMods = AnonSort(mMods)
 	local fin = {}
 	-- convert it back to a string since that's what it expects
 	for i=1,#xMods do
@@ -183,6 +183,9 @@ local function SpeedModSort(tab)
 	end
 	for i=1,#cMods do
 		table.insert(fin, "C"..cMods[i])
+	end
+	for i=1,#mMods do
+		table.insert(fin, "m"..mMods[i])
 	end
 	--for i=1,#mMods do table.insert(fin, "M"..mMods[i]); end;
 	return fin

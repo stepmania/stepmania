@@ -67,7 +67,7 @@ r['DDR 4thMIX'] = function(params, pss)
 	local capScore = 999999999;
 	local bestPoints = scoreLookupTable['TapNoteScore_W1'];
 	local bestCombo = bestPoints and comboBonusForThisStep or 0;
-	pss:SeCurMaxScore(clamp(pss:GeCurMaxScore()+bestPoints+bestCombo,0,capScore));
+	pss:SetCurMaxScore(clamp(pss:GetCurMaxScore()+bestPoints+bestCombo,0,capScore));
 	local localPoints = scoreLookupTable[params.TapNoteScore];
 	local localCombo = localPoints and comboBonusForThisStep or 0;
 	pss:SetScore(clamp(pss:GetScore()+localPoints+localCombo,0,capScore));
@@ -140,8 +140,7 @@ r['HYBRID'] = function(params, pss)
 	};
 	setmetatable(multLookup, ZeroIfNotFound);
 	local radarValues = GetDirectRadar(params.Player);
-	local totalItems = GetTotalItems(radarValues)
-		- radarValues:GetValue('RadarCategory_Lifts');
+	local totalItems = GetTotalItems(radarValues);
 	-- 1+2+3+...+totalItems の値
 	local sTotal = (totalItems+1)*totalItems/2;
 	-- [en] Score for one song
@@ -201,25 +200,21 @@ r['DDR SuperNOVA 2'] = function(params, pss)
 	};
 	setmetatable(multLookup, ZeroIfNotFound);
 	local radarValues = GetDirectRadar(params.Player);
-	local numLifts = radarValues:GetCategory('RadarCategory_Lifts')
-	local numFakes = radarValues:GetCategory('RadarCategory_Fakes')
-	local totalItems = GetTotalItems(radarValues) - (numLifts + numFakes);
+	local totalItems = GetTotalItems(radarValues);
 
 	-- handle holds
-	local maxAdd = 0
+	local maxAdd = 0;
 	if params.HoldNoteScore == 'HoldNoteScore_Held' then
-		maxAdd = 10
+		maxAdd = 10;
+	elseif params.HoldNoteScore == 'HoldNoteScore_LetGo' then
+		maxAdd = 0;
 	else
-		if params.HoldNoteScore == 'HoldNoteScore_LetGo' then
-			maxAdd = 0
-		else
-			maxAdd = multLookup[params.TapNoteScore]
-			if params.TapNoteScore == 'TapNoteScore_W2' or 'TapNoteScore_W3' then
-				-- [ja] 超最終手段
-				pss:SetCurMaxScore( pss:GetCurMaxScore() + 1000000 )
-			end
-		end
-	end
+		maxAdd = multLookup[params.TapNoteScore];
+		if params.TapNoteScore == 'TapNoteScore_W2' or 'TapNoteScore_W3' then
+			-- [ja] 超最終手段
+			pss:SetCurMaxScore( pss:GetCurMaxScore() + 1000000 );
+		end;
+	end;
 	pss:SetCurMaxScore(pss:GetCurMaxScore() + maxAdd);
 
 	--[[

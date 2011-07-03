@@ -361,11 +361,16 @@ float DisplayBpms::GetMin() const
 
 float DisplayBpms::GetMax() const
 {
+	return this->GetMaxWithin();
+}
+
+float DisplayBpms::GetMaxWithin(float highest) const
+{
 	float fMax = 0;
 	FOREACH_CONST( float, vfBpms, f )
 	{
 		if( *f != -1 )
-			fMax = max( fMax, *f );
+			fMax = clamp(max( fMax, *f ), 0, highest);
 	}
 	return fMax;
 }

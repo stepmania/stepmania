@@ -250,6 +250,20 @@ void SpeedSegment::SetUnit(const int i)
 	this->unit = static_cast<unsigned short>(i);
 }
 
+void SpeedSegment::Scale( int start, int length, int newLength )
+{
+	if( GetUnit() == 0 )
+	{
+		// XXX: this function is duplicated, there should be a better way
+		float startBeat    = GetBeat();
+		float endBeat      = startBeat + GetLength();
+		float newStartBeat = ScalePosition( NoteRowToBeat(start), NoteRowToBeat(length), NoteRowToBeat(newLength), startBeat );
+		float newEndBeat   = ScalePosition( NoteRowToBeat(start), NoteRowToBeat(length), NoteRowToBeat(newLength), endBeat );
+		SetLength( newEndBeat - newStartBeat );
+	}
+	TimingSegment<SpeedSegment>::Scale( start, length, newLength );
+}
+
 bool SpeedSegment::operator<( const SpeedSegment &other ) const
 {
 	LTCOMPARE(GetRow());

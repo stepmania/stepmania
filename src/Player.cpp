@@ -201,6 +201,12 @@ ThemeMetric<int> COMBO_STOPPED_AT ( "Player", "ComboStoppedAt" );
 ThemeMetric<float> ATTACK_RUN_TIME_RANDOM ( "Player", "AttackRunTimeRandom" );
 ThemeMetric<float> ATTACK_RUN_TIME_MINE ( "Player", "AttackRunTimeMine" );
 
+/**
+ * @brief What is our highest cap for mMods?
+ *
+ * If set to 0 or less, assume the song takes over. */
+ThemeMetric<float> M_MOD_HIGH_CAP("Player", "MModHighCap");
+
 /** @brief Will battle modes have their steps mirrored or kept the same? */
 ThemeMetric<bool> BATTLE_RAVE_MIRROR ( "Player", "BattleRaveMirror" );
 
@@ -401,6 +407,69 @@ void Player::Init(
 		break;
 	}
 
+	// calculate M-mod speed here, so we can adjust properly on a per-song basis.
+	// XXX: can we find a better location for this?
+	if( m_pPlayerState->m_PlayerOptions.GetCurrent().m_fMaxScrollBPM != 0 )
+	{
+		DisplayBpms bpms;
+
+		if( GAMESTATE->IsCourseMode() )
+		{
+			ASSERT( GAMESTATE->m_pCurTrail[pn] );
+			GAMESTATE->m_pCurTrail[pn]->GetDisplayBpms( bpms );
+		}
+		else
+		{
+			ASSERT( GAMESTATE->m_pCurSong );
+			GAMESTATE->m_pCurSong->GetDisplayBpms( bpms );
+		}
+
+		float fMaxBPM = 0;
+
+		/* TODO: Find a way to not go above a certain BPM range 
+		 * for getting the max BPM. Otherwise, you get songs
+		 * like Tsuhsuixamush, M550, 0.18x speed. Even slow
+		 * speed readers would not generally find this fun.
+		 * -Wolfman2000
+		 */
+		
+		// all BPMs are listed and available, so try them first.
+		// get the maximum listed value for the song or course.
+		// if the BPMs are < 0, reset and get the actual values.
+		if( !bpms.IsSecret() )
+		{
+			fMaxBPM = (M_MOD_HIGH_CAP > 0 ? 
+				   bpms.GetMaxWithin(M_MOD_HIGH_CAP) : 
+				   bpms.GetMax());
+			fMaxBPM = max( 0, fMaxBPM );
+		}
+
+		// we can't rely on the displayed BPMs, so manually calculate.
+		if( fMaxBPM == 0 )
+		{
+			float fThrowAway = 0;
+
+			if( GAMESTATE->IsCourseMode() )
+			{
+				FOREACH_CONST( TrailEntry, GAMESTATE->m_pCurTrail[pn]->m_vEntries, e )
+				{
+					float fMaxForEntry;
+					e->pSong->m_SongTiming.GetActualBPM( fThrowAway, fMaxForEntry );
+					fMaxBPM = max( fMaxForEntry, fMaxBPM );
+				}
+			}
+			else
+			{
+				GAMESTATE->m_pCurSong->m_SongTiming.GetActualBPM( fThrowAway, fMaxBPM );
+			}
+		}
+
+		ASSERT( fMaxBPM > 0 );
+
+		// set an X-mod equal to Mnum / fMaxBPM (e.g. M600 with 150 becomes 4x)	
+		PO_GROUP_ASSIGN(m_pPlayerState->m_PlayerOptions, ModsLevel_Preferred, m_fScrollSpeed,
+				m_pPlayerState->m_PlayerOptions.GetPreferred().m_fMaxScrollBPM / fMaxBPM);
+	}
 
 	float fBalance = GameSoundManager::GetPlayerBalance( pn );
 	m_soundMine.SetProperty( "Pan", fBalance );

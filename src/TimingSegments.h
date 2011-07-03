@@ -681,6 +681,8 @@ struct SpeedSegment : public TimingSegment<SpeedSegment>
 	 * @param i the unit. */
 	void SetUnit(const int i);
 	
+	void Scale( int start, int length, int newLength );
+
 	/**
 	 * @brief Compares two SpeedSegments to see if one is less than the other.
 	 * @param other the other SpeedSegment to compare to.
