@@ -400,8 +400,7 @@ void Player::Init(
 		m_soundAttackEnding.Load( THEME->GetPathS(sType,"course attack ending"), true, &SoundParams );
 		break;
 	}
-// XXX: Fix errors for m-mod support!
-/*
+
 	// calculate M-mod speed here, so we can adjust properly on a per-song basis.
 	// XXX: can we find a better location for this?
 	if( m_pPlayerState->m_PlayerOptions.GetCurrent().m_fMaxScrollBPM != 0 )
@@ -421,6 +420,13 @@ void Player::Init(
 
 		float fMaxBPM = 0;
 
+		/* TODO: Find a way to not go above a certain BPM range 
+		 * for getting the max BPM. Otherwise, you get songs
+		 * like Tsuhsuixamush, M550, 0.18x speed. Even slow
+		 * speed readers would not generally find this fun.
+		 * -Wolfman2000
+		 */
+		
 		// all BPMs are listed and available, so try them first.
 		// get the maximum listed value for the song or course.
 		// if the BPMs are < 0, reset and get the actual values.
@@ -452,12 +458,10 @@ void Player::Init(
 
 		ASSERT( fMaxBPM > 0 );
 
-		// set an X-mod equal to Mnum / fMaxBPM (e.g. M600 with 150 becomes 4x)
-		
-		m_pPlayerState->m_PlayerOptions.GetCurrent().m_fScrollSpeed =
-			( m_pPlayerState->m_PlayerOptions.GetPreferred().m_fMaxScrollBPM / fMaxBPM );
+		// set an X-mod equal to Mnum / fMaxBPM (e.g. M600 with 150 becomes 4x)	
+		PO_GROUP_ASSIGN(m_pPlayerState->m_PlayerOptions, ModsLevel_Preferred, m_fScrollSpeed,
+				m_pPlayerState->m_PlayerOptions.GetPreferred().m_fMaxScrollBPM / fMaxBPM);
 	}
-*/
 
 	float fBalance = GameSoundManager::GetPlayerBalance( pn );
 	m_soundMine.SetProperty( "Pan", fBalance );
