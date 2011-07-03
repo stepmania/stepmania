@@ -55,7 +55,6 @@ local function CreateStats( pnPlayer )
 	return t
 end;
 
--- xxx: this only currently works for player 1. -aj
 local t = Def.ActorFrame {};
 GAMESTATE:IsPlayerEnabled(PLAYER_1)
 t[#t+1] = Def.ActorFrame {
