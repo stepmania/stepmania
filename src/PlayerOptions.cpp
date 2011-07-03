@@ -61,7 +61,7 @@ void PlayerOptions::Approach( const PlayerOptions& other, float fDeltaSeconds )
 
 	APPROACH( fTimeSpacing );
 	APPROACH( fScrollSpeed );
-	APPROACH( fMaxScrollBPM );
+	//APPROACH( fMaxScrollBPM );
 	fapproach( m_fScrollBPM, other.m_fScrollBPM, fDeltaSeconds * other.m_SpeedfScrollBPM*150 );
 	for( int i=0; i<NUM_ACCELS; i++ )
 		APPROACH( fAccels[i] );
