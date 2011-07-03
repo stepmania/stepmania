@@ -454,13 +454,19 @@ void Player::Init(
 				FOREACH_CONST( TrailEntry, GAMESTATE->m_pCurTrail[pn]->m_vEntries, e )
 				{
 					float fMaxForEntry;
-					e->pSong->m_SongTiming.GetActualBPM( fThrowAway, fMaxForEntry );
+					if (M_MOD_HIGH_CAP > 0)
+						e->pSong->m_SongTiming.GetActualBPM( fThrowAway, fMaxForEntry, M_MOD_HIGH_CAP );
+					else 
+						e->pSong->m_SongTiming.GetActualBPM( fThrowAway, fMaxForEntry );
 					fMaxBPM = max( fMaxForEntry, fMaxBPM );
 				}
 			}
 			else
 			{
-				GAMESTATE->m_pCurSong->m_SongTiming.GetActualBPM( fThrowAway, fMaxBPM );
+				if (M_MOD_HIGH_CAP > 0)
+					GAMESTATE->m_pCurSong->m_SongTiming.GetActualBPM( fThrowAway, fMaxBPM, M_MOD_HIGH_CAP );
+				else
+					GAMESTATE->m_pCurSong->m_SongTiming.GetActualBPM( fThrowAway, fMaxBPM );
 			}
 		}
 
