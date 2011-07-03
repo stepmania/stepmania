@@ -35,7 +35,7 @@
  * </li></ul>
  */
 #ifndef PRODUCT_VER_BARE
-#define PRODUCT_VER_BARE v5.0 Preview 1a
+#define PRODUCT_VER_BARE v5.0 Preview 2
 #endif
 
 /**
@@ -54,7 +54,7 @@
 #define PRODUCT_VER		PRODUCT_XSTRINGIFY(PRODUCT_VER_BARE)
 #define PRODUCT_ID_VER		PRODUCT_XSTRINGIFY(PRODUCT_ID_VER_BARE)
 
-#define VIDEO_TROUBLESHOOTING_URL "http://www.stepmania.com/stepmania/mediawiki.php?title=Video_Driver_Troubleshooting"
+#define VIDEO_TROUBLESHOOTING_URL "http://www.stepmania.com/stepmaniawiki.php?title=Video_Driver_Troubleshooting"
 /** @brief The URL to report bugs on the program. */
 #define REPORT_BUG_URL "http://ssc.ajworld.net/sm-ssc/bugtracker/"
 

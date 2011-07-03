@@ -372,7 +372,7 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				AdditionalIncludeDirectories=".;&quot;..\extern\lua-5.1\src&quot;;ffmpeg\modern_working\include;BaseClasses;..\extern\jsoncpp\include;&quot;..\extern\glew-1.5.8\include&quot;;..\extern\pcre;&quot;..\extern\mad-0.15.1b&quot;;..\extern\libpng\include;..\extern\libjpeg;..\extern\zlib;..\extern\vorbis"
-				PreprocessorDefinitions="WIN32,NDEBUG,_WINDOWS,WINDOWS,RELEASE,GLEW_STATIC"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;WINDOWS;RELEASE;GLEW_STATIC"
 				StringPooling="true"
 				MinimalRebuild="false"
 				ExceptionHandling="0"
