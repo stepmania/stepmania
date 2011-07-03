@@ -8,6 +8,13 @@ ________________________________________________________________________________
 StepMania 5.0 Preview 2 | 201107??
 --------------------------------------------------------------------------------
 
+2011/07/03
+----------
+* [Player] Bring mMods from OpenITG over. Also, a metric was added,
+  "MModHighCap", to cap the speed mod if required for playing songs like
+  Tsuhsuixamush. Set the metric to 0 or less to remove the cap. [AJ, sharksoda,
+  Wolfman2000]
+
 2011/07/02
 ----------
 * [ScreenEdit] Fixed a crash when hitting Enter in the F1 help menu. [AJ]

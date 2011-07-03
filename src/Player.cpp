@@ -201,6 +201,12 @@ ThemeMetric<int> COMBO_STOPPED_AT ( "Player", "ComboStoppedAt" );
 ThemeMetric<float> ATTACK_RUN_TIME_RANDOM ( "Player", "AttackRunTimeRandom" );
 ThemeMetric<float> ATTACK_RUN_TIME_MINE ( "Player", "AttackRunTimeMine" );
 
+/**
+ * @brief What is our highest cap for mMods?
+ *
+ * If set to 0 or less, assume the song takes over. */
+ThemeMetric<float> M_MOD_HIGH_CAP("Player", "MModHighCap");
+
 /** @brief Will battle modes have their steps mirrored or kept the same? */
 ThemeMetric<bool> BATTLE_RAVE_MIRROR ( "Player", "BattleRaveMirror" );
 
@@ -432,7 +438,9 @@ void Player::Init(
 		// if the BPMs are < 0, reset and get the actual values.
 		if( !bpms.IsSecret() )
 		{
-			fMaxBPM = bpms.GetMaxWithin(600);
+			fMaxBPM = (M_MOD_HIGH_CAP > 0 ? 
+				   bpms.GetMaxWithin(M_MOD_HIGH_CAP) : 
+				   bpms.GetMax());
 			fMaxBPM = max( 0, fMaxBPM );
 		}
 
