@@ -1242,14 +1242,14 @@ bool GetFileContents( const RString &sPath, RString &sOut, bool bOneLine )
 	/* Don't warn if the file doesn't exist, but do warn if it exists and fails to open. */
 	if( !IsAFile(sPath) )
 		return false;
-	
+
 	RageFile file;
 	if( !file.Open(sPath) )
 	{
 		LOG->Warn( "GetFileContents(%s): %s", sPath.c_str(), file.GetError().c_str() );
 		return false;
 	}
-	
+
 	RString sData;
 	int iGot;
 	if( bOneLine )
@@ -1265,7 +1265,7 @@ bool GetFileContents( const RString &sPath, RString &sOut, bool bOneLine )
 
 	if( bOneLine )
 		StripCrnl( sData );
-	
+
 	sOut = sData;
 	return true;
 }
