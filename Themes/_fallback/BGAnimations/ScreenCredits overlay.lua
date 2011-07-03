@@ -52,6 +52,7 @@ local contrib = {
 	"NitroX72", -- pump/frame noteskin
 	"sy567", -- beginner helper fix
 	"v1toko", -- x-mode from StepNXA
+	"waiei", -- custom scoring fixes + Hybrid scoring
 }
 
 local thanks = {
