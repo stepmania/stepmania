@@ -35,7 +35,7 @@ local stepmania = {
 	"Chris Danford",
 	"Glenn Maynard",
 	"Steve Checkoway",
-	-- and various other contributors whom I don't remember at the moment. -aj
+	-- and various other contributors
 }
 
 local contrib = {
