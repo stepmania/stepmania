@@ -295,6 +295,7 @@ Section "Main Section" SecMain
 	RMDir /r "$INSTDIR\NoteSkins\dance\midi"
 	; we may also want to remove the new ones.
 	RMDir /r "$INSTDIR\NoteSkins\dance\midi-note"
+	RMDir /r "$INSTDIR\NoteSkins\dance\midi-note-3d"
 	RMDir /r "$INSTDIR\NoteSkins\dance\midi-solo"
 	RMDir /r "$INSTDIR\NoteSkins\dance\midi-vivid"
 	RMDir /r "$INSTDIR\NoteSkins\dance\midi-rhythm-p1"
@@ -456,6 +457,7 @@ Section "Main Section" SecMain
 	File "Docs\Changelog_sm5.txt"
 	File "Docs\Changelog_SSCformat.txt"
 	File "Docs\CommandLineArgs.txt"
+	File "Docs\CourseFormat.txt"
 	File /r /x CVS /x .svn "Docs\license-ext"
 	File /r /x CVS /x .svn "Docs\Luadoc"
 	File /r /x CVS /x .svn "Docs\Themerdocs"
@@ -532,21 +534,21 @@ Function ShowAutorun
 	IfFileExists "$R1" show_play_and_reinstall
 
 	show_only_install:
-	GetDlgItem $1 $hwnd 1201 ; Second cutom control
+	GetDlgItem $1 $hwnd 1201 ; Second custom control
 	ShowWindow $1 0
-	GetDlgItem $1 $hwnd 1202 ; Third cutom control
+	GetDlgItem $1 $hwnd 1202 ; Third custom control
 	ShowWindow $1 0
 	Goto done
 
 	show_play_and_reinstall:
-	GetDlgItem $1 $hwnd 1200 ; First cutom control
+	GetDlgItem $1 $hwnd 1200 ; First custom control
 	ShowWindow $1 0
 
 	done:
 
 	; Now show the dialog and wait for it to finish
 	InstallOptions::show
-	
+
 	; Finally fetch the InstallOptions status value (we don't care what it is though)
 	Pop $0
 
@@ -574,7 +576,7 @@ Function LeaveAutorun
 	play_error:
 	MessageBox MB_ICONEXCLAMATION "$(TEXT_IO_COULD_NOT_EXECUTE)"
 	abort
-	
+
 	proceed:
 	GetDlgItem $1 $HWNDPARENT 1 ; Next button
 	ShowWindow $1 1
@@ -741,6 +743,7 @@ Section "Uninstall"
 	RMDir /r "$INSTDIR\NoteSkins\dance\default"
 	RMDir /r "$INSTDIR\NoteSkins\dance\Delta"
 	RMDir /r "$INSTDIR\NoteSkins\dance\midi-note"
+	RMDir /r "$INSTDIR\NoteSkins\dance\midi-note-3d"
 	RMDir /r "$INSTDIR\NoteSkins\dance\midi-routine-p1"
 	RMDir /r "$INSTDIR\NoteSkins\dance\midi-routine-p2"
 	RMDir /r "$INSTDIR\NoteSkins\dance\midi-solo"
@@ -751,8 +754,13 @@ Section "Uninstall"
 	RMDir "$INSTDIR\NoteSkins\dance"
 
 	RMDir /r "$INSTDIR\NoteSkins\pump\cmd"
+	RMDir /r "$INSTDIR\NoteSkins\pump\cmd-routine-p1"
+	RMDir /r "$INSTDIR\NoteSkins\pump\cmd-routine-p2"
 	RMDir /r "$INSTDIR\NoteSkins\pump\complex"
 	RMDir /r "$INSTDIR\NoteSkins\pump\default"
+	RMDir /r "$INSTDIR\NoteSkins\pump\frame5p"
+	RMDir /r "$INSTDIR\NoteSkins\pump\newextra"
+	RMDir /r "$INSTDIR\NoteSkins\pump\rhythm"
 	RMDir /r "$INSTDIR\NoteSkins\pump\simple"
 	RMDir "$INSTDIR\NoteSkins\pump"
 
@@ -824,7 +832,7 @@ Section "Uninstall"
 	Delete "$INSTDIR\Program\zlib1.dll"
 	RMDir "$INSTDIR\Program"
 
-	Delete "$INSTDIR\Licenses.txt"
+	Delete "$INSTDIR\Docs\Licenses.txt"
 	RMDir /r "$INSTDIR\Manual"
 !endif
 
