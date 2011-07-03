@@ -432,7 +432,7 @@ void Player::Init(
 		// if the BPMs are < 0, reset and get the actual values.
 		if( !bpms.IsSecret() )
 		{
-			fMaxBPM = bpms.GetMax();
+			fMaxBPM = bpms.GetMaxWithin(600);
 			fMaxBPM = max( 0, fMaxBPM );
 		}
 
