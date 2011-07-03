@@ -20,14 +20,14 @@ TimingData::TimingData(float fOffset) :
 {	
 }
 
-void TimingData::GetActualBPM( float &fMinBPMOut, float &fMaxBPMOut ) const
+void TimingData::GetActualBPM( float &fMinBPMOut, float &fMaxBPMOut, float highest ) const
 {
 	fMinBPMOut = FLT_MAX;
 	fMaxBPMOut = 0;
 	FOREACH_CONST( BPMSegment, m_BPMSegments, seg )
 	{
 		const float fBPM = seg->GetBPM();
-		fMaxBPMOut = max( fBPM, fMaxBPMOut );
+		fMaxBPMOut = clamp(max( fBPM, fMaxBPMOut ), 0, highest);
 		fMinBPMOut = min( fBPM, fMinBPMOut );
 	}
 }

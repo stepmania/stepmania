@@ -4,6 +4,7 @@
 #include "NoteTypes.h"
 #include "TimingSegments.h"
 #include "PrefsManager.h"
+#include <float.h> // max float
 struct lua_State;
 
 /** @brief Compare a TimingData segment's properties with one another. */
@@ -24,11 +25,15 @@ public:
 	 * @param fOffset the offset from the 0th beat. */
 	TimingData(float fOffset);
 	/**
-	 * @brief Gets the actual BPM of the song.
+	 * @brief Gets the actual BPM of the song,
+	 * while respecting a limit.
+	 *
+	 * The high limit is due to the implementation of mMods.
 	 * @param fMinBPMOut the minimium specified BPM.
 	 * @param fMaxBPMOut the maximum specified BPM.
+	 * @param highest the highest allowed max BPM.
 	 */
-	void GetActualBPM( float &fMinBPMOut, float &fMaxBPMOut ) const;
+	void GetActualBPM( float &fMinBPMOut, float &fMaxBPMOut, float highest = FLT_MAX ) const;
 	/**
 	 * @brief Retrieve the BPM at the given row.
 	 * @param iNoteRow the row in question.
