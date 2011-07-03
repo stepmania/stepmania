@@ -26,6 +26,7 @@ ThemeMetric<float> RANDOM_SUDDEN_CHANCE		( "PlayerOptions", "RandomSuddenChance"
 void PlayerOptions::Init()
 {
 	m_bSetScrollSpeed = false;
+	m_fMaxScrollBPM = 0;		m_SpeedfMaxScrollBPM = 1.0f;
 	m_fTimeSpacing = 0;		m_SpeedfTimeSpacing = 1.0f;
 	m_fScrollSpeed = 1.0f;		m_SpeedfScrollSpeed = 1.0f;
 	m_fScrollBPM = 200;		m_SpeedfScrollBPM = 1.0f;
@@ -60,6 +61,7 @@ void PlayerOptions::Approach( const PlayerOptions& other, float fDeltaSeconds )
 
 	APPROACH( fTimeSpacing );
 	APPROACH( fScrollSpeed );
+	APPROACH( fMaxScrollBPM );
 	fapproach( m_fScrollBPM, other.m_fScrollBPM, fDeltaSeconds * other.m_SpeedfScrollBPM*150 );
 	for( int i=0; i<NUM_ACCELS; i++ )
 		APPROACH( fAccels[i] );
@@ -116,6 +118,11 @@ void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
 
 	if( !m_fTimeSpacing )
 	{
+		if( m_fMaxScrollBPM )
+		{
+			RString s = ssprintf( "m%.0f", m_fMaxScrollBPM );
+			AddTo.push_back( s );
+		}
 		if( m_bSetScrollSpeed || m_fScrollSpeed != 1 )
 		{
 			/* -> 1.00 */
@@ -332,6 +339,7 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 		SET_FLOAT( fScrollSpeed )
 		SET_FLOAT( fTimeSpacing )
 		m_fTimeSpacing = 0;
+		m_fMaxScrollBPM = 0;
 	}
 	else if( sscanf( sBit, "c%f", &level ) == 1 )
 	{
@@ -340,17 +348,18 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 		SET_FLOAT( fScrollBPM )
 		SET_FLOAT( fTimeSpacing )
 		m_fTimeSpacing = 1;
+		m_fMaxScrollBPM = 0;
 	}
-	/* Port M-Mods from OpenITG, starting from r537 */
-	// Midiman
+	// oITG's m-mods
+	// XXX: will not properly tween, I don't think.
 	else if( sscanf( sBit, "m%f", &level ) == 1 )
 	{
 		if( !isfinite(level) || level <= 0.0f )
-			level = 200.0f; // Just pick some value.
-		SET_FLOAT( fScrollBPM )
-		SET_FLOAT( fTimeSpacing )
-		m_fTimeSpacing = 1;
+			level = 200.0f;
+		SET_FLOAT( fMaxScrollBPM )
+		m_fTimeSpacing = 0;
 	}
+
 	else if( sBit == "clearall" )				Init();
 	else if( sBit == "boost" )				SET_FLOAT( fAccels[ACCEL_BOOST] )
 	else if( sBit == "brake" || sBit == "land" )		SET_FLOAT( fAccels[ACCEL_BRAKE] )
@@ -650,6 +659,7 @@ bool PlayerOptions::operator==( const PlayerOptions &other ) const
 	COMPARE(m_fTimeSpacing);
 	COMPARE(m_fScrollSpeed);
 	COMPARE(m_fScrollBPM);
+	COMPARE(m_fMaxScrollBPM);
 	COMPARE(m_fRandomSpeed);
 	COMPARE(m_FailType);
 	COMPARE(m_bMuteOnError);
@@ -717,6 +727,31 @@ bool PlayerOptions::IsEasierForSongAndSteps( Song* pSong, Steps* pSteps, PlayerN
 		return true;
 	
 	if( m_fCover )	return true;
+	
+	// M-mods make songs with indefinite BPMs easier because
+	// they ensure that the song has a scrollable speed.
+	if( m_fMaxScrollBPM != 0 )
+	{
+		// BPM display is obfuscated
+//		if( pSong->m_DisplayBPMType == DISPLAY_BPM_RANDOM )
+//			return true;
+
+		DisplayBpms bpms;
+		if( GAMESTATE->IsCourseMode() )
+		{
+			Trail *pTrail = GAMESTATE->m_pCurCourse->GetTrail( GAMESTATE->GetCurrentStyle()->m_StepsType );
+			pTrail->GetDisplayBpms( bpms );
+		}
+		else
+		{
+			GAMESTATE->m_pCurSong->GetDisplayBpms( bpms );
+		}
+		pSong->GetDisplayBpms( bpms );
+
+		// maximum BPM is obfuscated, so M-mods will set a playable speed.
+		if( bpms.GetMax() <= 0 )
+			return true;
+	}
 	if( m_fPlayerAutoPlay )	return true;
 	return false;
 }
@@ -788,6 +823,7 @@ RString PlayerOptions::GetSavedPrefsString() const
 	SAVE( m_fTimeSpacing );
 	SAVE( m_fScrollSpeed );
 	SAVE( m_fScrollBPM );
+	SAVE( m_fMaxScrollBPM );
 	SAVE( m_fScrolls[SCROLL_REVERSE] );
 	SAVE( m_fPerspectiveTilt );
 	SAVE( m_bTransforms[TRANSFORM_NOHOLDS] );
@@ -816,6 +852,7 @@ void PlayerOptions::ResetPrefs( ResetPrefsType type )
 		CPY( m_fTimeSpacing );
 		CPY( m_fScrollSpeed );
 		CPY( m_fScrollBPM );
+		CPY( m_fMaxScrollBPM );
 		break;
 	case saved_prefs_invalid_for_course:
 		break;

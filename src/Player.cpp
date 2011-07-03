@@ -400,7 +400,63 @@ void Player::Init(
 		m_soundAttackEnding.Load( THEME->GetPathS(sType,"course attack ending"), true, &SoundParams );
 		break;
 	}
+// XXX: Fix errors for m-mod support!
+/*
+	// calculate M-mod speed here, so we can adjust properly on a per-song basis.
+	// XXX: can we find a better location for this?
+	if( m_pPlayerState->m_PlayerOptions.m_fMaxScrollBPM != 0 )
+	{
+		DisplayBpms bpms;
 
+		if( GAMESTATE->IsCourseMode() )
+		{
+			ASSERT( GAMESTATE->m_pCurTrail[pn] );
+			GAMESTATE->m_pCurTrail[pn]->GetDisplayBpms( bpms );
+		}
+		else
+		{
+			ASSERT( GAMESTATE->m_pCurSong );
+			GAMESTATE->m_pCurSong->GetDisplayBpms( bpms );
+		}
+
+		float fMaxBPM = 0;
+
+		// all BPMs are listed and available, so try them first.
+		// get the maximum listed value for the song or course.
+		// if the BPMs are < 0, reset and get the actual values.
+		if( !bpms.IsSecret() )
+		{
+			fMaxBPM = bpms.GetMax();
+			fMaxBPM = max( 0, fMaxBPM );
+		}
+
+		// we can't rely on the displayed BPMs, so manually calculate.
+		if( fMaxBPM == 0 )
+		{
+			float fThrowAway = 0;
+
+			if( GAMESTATE->IsCourseMode() )
+			{
+				FOREACH_CONST( TrailEntry, GAMESTATE->m_pCurTrail[pn]->m_vEntries, e )
+				{
+					float fMaxForEntry;
+					e->pSong->m_Timing.GetActualBPM( fThrowAway, fMaxForEntry );
+					fMaxBPM = max( fMaxForEntry, fMaxBPM );
+				}
+			}
+			else
+			{
+				GAMESTATE->m_pCurSong->m_Timing.GetActualBPM( fThrowAway, fMaxBPM );
+			}
+		}
+
+		ASSERT( fMaxBPM > 0 );
+
+		// set an X-mod equal to Mnum / fMaxBPM (e.g. M600 with 150 becomes 4x)
+		m_pPlayerState->m_StoredPlayerOptions.m_fScrollSpeed =
+			( m_pPlayerState->m_StoredPlayerOptions.m_fMaxScrollBPM / fMaxBPM );
+	}
+*/
 
 	float fBalance = GameSoundManager::GetPlayerBalance( pn );
 	m_soundMine.SetProperty( "Pan", fBalance );
