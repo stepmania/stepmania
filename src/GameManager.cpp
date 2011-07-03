@@ -330,7 +330,7 @@ static const Style g_Style_Dance_Couple_Edit =
 	true,				// m_bUsedForEdit
 	false,				// m_bUsedForDemonstration
 	false,				// m_bUsedForHowToPlay
-	"couple",			// m_szName
+	"couple-edit",			// m_szName
 	StepsType_dance_couple,	// m_StepsType
 	StyleType_OnePlayerOneSide,		// m_StyleType
 	8,				// m_iColsPerPlayer
