@@ -92,7 +92,7 @@ int MersenneTwister::operator()()
 
 void fapproach( float& val, float other_val, float to_move )
 {
-	ASSERT_M( to_move >= 0, ssprintf("to_move: %f", to_move) );
+	ASSERT_M( to_move >= 0, ssprintf("to_move: %f < 0", to_move) );
 	if( val == other_val )
 		return;
 	float fDelta = other_val - val;
