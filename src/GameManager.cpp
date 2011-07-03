@@ -333,7 +333,7 @@ static const Style g_Style_Dance_Couple_Edit =
 	"couple",			// m_szName
 	StepsType_dance_couple,	// m_StepsType
 	StyleType_OnePlayerOneSide,		// m_StyleType
-	4,				// m_iColsPerPlayer
+	8,				// m_iColsPerPlayer
 	{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
 		{	// PLAYER_1
 			{ TRACK_1,	-DANCE_COL_SPACING*4.f, NULL },
@@ -357,8 +357,8 @@ static const Style g_Style_Dance_Couple_Edit =
 		},
 	},
 	{	// m_iInputColumn[NUM_GameController][NUM_GameButton]
-		{ 0, 3, 2, 1, Style::END_MAPPING },
-		{ 4, 5, 6, 7, Style::END_MAPPING }
+		{ 0, 1, 2, 3, 4, 5, 6, 7, Style::END_MAPPING },
+		{ 0, 1, 2, 3, 4, 5, 6, 7, Style::END_MAPPING },
 	},
 	{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
 		0,1,2,3,4,5,6,7
