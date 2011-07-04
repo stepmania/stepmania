@@ -566,6 +566,8 @@ static MenuDef g_AlterMenu(
    MenuRowDef(ScreenEdit::convert_to_warp,		"Convert selection to warp",		true, 
 	      EditMode_Full, true, true, 0, NULL ),
    MenuRowDef(ScreenEdit::convert_to_fake,		"Convert selection to fake",		true, 
+	      EditMode_Full, true, true, 0, NULL ),
+   MenuRowDef(ScreenEdit::routine_invert_notes,		"Invert notes' player",			true,
 	      EditMode_Full, true, true, 0, NULL )
 );
 
@@ -1757,6 +1759,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			}
 			else 
 			{
+				g_AlterMenu.rows[routine_invert_notes].bEnabled = (m_InputPlayerNumber != PLAYER_INVALID);
 				EditMiniMenu(&g_AlterMenu, SM_BackFromAlterMenu);
 			}
 			break;
@@ -4055,6 +4058,28 @@ void ScreenEdit::HandleAlterMenuChoice(AlterMenuChoice c, const vector<int> &iAn
 			float lengthBeat = NoteRowToBeat(m_NoteFieldEdit.m_iEndMarker) - startBeat;
 			GetAppropriateTiming().SetFakeAtBeat(startBeat,lengthBeat);
 			SetDirty(true);
+			break;
+		}
+		case routine_invert_notes:
+		{
+			NoteData &nd = this->m_NoteDataEdit;
+			NoteField &nf = this->m_NoteFieldEdit;
+			FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE(nd, r,
+							      nf.m_iBeginMarker,
+							      nf.m_iEndMarker)
+			{
+				for (int t = 0; t < nd.GetNumTracks(); t++)
+				{
+					const TapNote &tn = nd.GetTapNote(t, r);
+					if (tn.type != TapNote::empty)
+					{
+						TapNote nTap = tn;
+						nTap.pn = (tn.pn == PLAYER_1 ?
+							   PLAYER_2 : PLAYER_1);
+						m_NoteDataEdit.SetTapNote(t, r, nTap);
+					}
+				}
+			}
 			break;
 		}
 			
