@@ -407,6 +407,7 @@ public:
 		convert_to_delay,
 		convert_to_warp,
 		convert_to_fake,
+		routine_invert_notes,
 		NUM_ALTER_MENU_CHOICES
 		
 	};
