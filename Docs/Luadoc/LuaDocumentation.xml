@@ -338,6 +338,9 @@
 	<Function name='ReadPrefFromFile' theme='_fallback' return='string' arguments='string prefName'>
 		[03 UserPreferences2.lua] (internal) Reads the specified user preference from its config file.
 	</Function>
+	<Function name='ReportStyle' return='void' arguments=''>
+		Sends the current style to the server.
+	</Function>
 	<Function name='round' theme='_fallback' return='int' arguments='float val, int decimal'>
 		[02 Utilities.lua] Round a number.
 	</Function>
@@ -346,6 +349,12 @@
 	</Function>
 	<Function name='ScoreKeeperClass' theme='_fallback' return='string' arguments=''>
 		[03 Gameplay.lua] Returns the primary ScoreKeeper class to use.
+	</Function>
+	<Function name='ScreenMetric' theme='_fallback' return='string' arguments='string s'>
+		[00 alias.lua, 02 Other.lua] alias for <Link class='Screen' function='Metric' />.
+	</Function>
+	<Function name='ScreenString' theme='_fallback' return='string' arguments='string s'>
+		[00 alias.lua, 02 Other.lua] alias for <Link class='Screen' function='String' />.
 	</Function>
 	<Function name='Second' return='int' arguments=''>
 		Returns the current second.
@@ -421,6 +430,12 @@
 	</Function>
 	<Function name='Var' theme='_fallback' return='ThreadVariable' arguments=''>
 		[01 base.lua] Alias for <Link class="lua" function="GetThreadVariable">lua.GetThreadVariable</Link>.
+	</Function>
+	<Function name='VersionDate' return='string' arguments=''>
+		Returns the current version's build date.
+	</Function>
+	<Function name='VersionTime' return='string' arguments=''>
+		Returns the current version's build time.
 	</Function>
 	<Function name='Warn' theme='_fallback' return='void' arguments='string sString'>
 		[00 init.lua] Alias for <Link class='lua' function='Warn' />.
