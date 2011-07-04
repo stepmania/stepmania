@@ -390,24 +390,25 @@ public:
 	void HandleMainMenuChoice( MainMenuChoice c ) { const vector<int> v; HandleMainMenuChoice( c, v ); }
 	MainMenuChoice m_CurrentAction;
 
+	/** @brief How does one alter a selection of NoteData? */
 	enum AlterMenuChoice
 	{
-		cut,
-		copy,
-		clear,
-		quantize,
-		turn,
-		transform,
-		alter,
-		tempo,
-		play,
-		record,
-		preview_designation,
-		convert_to_pause,
-		convert_to_delay,
-		convert_to_warp,
-		convert_to_fake,
-		routine_invert_notes,
+		cut, /**< Cut the notes. */
+		copy, /**< Copy the notes. */
+		clear, /**< Erase the notes, without putting them in the clipboard. */
+		quantize, /**< Sync the notes to an exact level. */
+		turn, /**< Rotate the notes. */
+		transform, /**< Activate a specific mod. */
+		alter, /**< Perform other transformations. */
+		tempo, /**< Modify the tempo of the notes. */
+		play, /**< Play the notes in the range. */
+		record, /**< Record new notes in the range. */
+		preview_designation, /**< Set the area as the music preview. */
+		convert_to_pause, /**< Convert the range into a StopSegment. */
+		convert_to_delay, /**< Convert the range into a DelaySegment. */
+		convert_to_warp, /**< Convert the range into a WarpSegment. */
+		convert_to_fake, /**< Convert the range into a FakeSegment. */
+		routine_invert_notes, /**< Switch which player hits the note. */
 		NUM_ALTER_MENU_CHOICES
 		
 	};
