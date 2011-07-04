@@ -15,9 +15,7 @@ return Def.ActorFrame {
 	--tap
 	NOTESKIN:LoadActor(Var "Button", "Ready Receptor")..{
 		Name="Tap";
-		Frames = { { Frame = 2 } };
 		TapCommand=cmd(finishtweening;diffusealpha,1;zoom,1;linear,0.2;diffusealpha,0;zoom,1.2);
-		
 		InitCommand=cmd(playcommand,"Tap");
 		HeldCommand=cmd(playcommand,"Tap");
 		ColumnJudgmentMessageCommand=cmd(playcommand,"Tap");
