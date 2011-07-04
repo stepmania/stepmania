@@ -3126,8 +3126,8 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		
 		if (ScreenMiniMenu::s_iLastRowCode == ScreenEdit::remove )
 		{
-			ASSERT(iAttack >= 0);
-			attacks.erase(attacks.begin() + iAttack);
+			if (iAttack > 0)
+				attacks.erase(attacks.begin() + iAttack);
 		}
 		else
 		{
