@@ -13,6 +13,11 @@ StepMania 5.0 ????????? | 20110???
 * [ScreenEdit] Add a function to switch the notes the routine players have to
   hit. In simple terms, Player 1's notes are now Player 2's and vice~versa.
   Check it out in the Alter Menu. [Wolfman2000]
+* [ScreenEdit] Add two routine mirroring functions. Now you can build sections
+  of a chart for one player, and mirror the effect for the other player when
+  finished. For Pump players, it is not a straight mirror, but is more akin
+  to what is found via normal routine charts. In other words, you'll be happy.
+  Check it out in the Alter Menu. [Wolfman2000]
 
 2011/07/03
 ----------

@@ -568,6 +568,10 @@ static MenuDef g_AlterMenu(
    MenuRowDef(ScreenEdit::convert_to_fake,		"Convert selection to fake",		true, 
 	      EditMode_Full, true, true, 0, NULL ),
    MenuRowDef(ScreenEdit::routine_invert_notes,		"Invert notes' player",			true,
+	      EditMode_Full, true, true, 0, NULL ),
+   MenuRowDef(ScreenEdit::routine_mirror_1_to_2,	"Mirror Player 1 to 2",			true,
+	      EditMode_Full, true, true, 0, NULL ),
+   MenuRowDef(ScreenEdit::routine_mirror_2_to_1,	"Mirror Player 2 to 1",			true,
 	      EditMode_Full, true, true, 0, NULL )
 );
 
@@ -1759,7 +1763,10 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			}
 			else 
 			{
-				g_AlterMenu.rows[routine_invert_notes].bEnabled = (m_InputPlayerNumber != PLAYER_INVALID);
+				bool isRoutine = (m_InputPlayerNumber != PLAYER_INVALID);
+				g_AlterMenu.rows[routine_invert_notes].bEnabled = isRoutine;
+				g_AlterMenu.rows[routine_mirror_1_to_2].bEnabled = isRoutine;
+				g_AlterMenu.rows[routine_mirror_2_to_1].bEnabled = isRoutine;
 				EditMiniMenu(&g_AlterMenu, SM_BackFromAlterMenu);
 			}
 			break;
@@ -4082,7 +4089,56 @@ void ScreenEdit::HandleAlterMenuChoice(AlterMenuChoice c, const vector<int> &iAn
 			}
 			break;
 		}
-			
+		case routine_mirror_1_to_2:
+		case routine_mirror_2_to_1:
+		{
+			PlayerNumber oPN = (c == routine_mirror_1_to_2 ?
+					    PLAYER_1 : PLAYER_2);
+			PlayerNumber nPN = (c == routine_mirror_1_to_2 ?
+					    PLAYER_2 : PLAYER_1);
+			int nTrack = -1;
+			NoteData &nd = this->m_NoteDataEdit;
+			NoteField &nf = this->m_NoteFieldEdit;
+			int tracks = nd.GetNumTracks();
+			FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE(nd, r,
+							      nf.m_iBeginMarker,
+							      nf.m_iEndMarker)
+			{
+				for (int t = 0; t < tracks; t++)
+				{
+					const TapNote &tn = nd.GetTapNote(t, r);
+					if (tn.type != TapNote::empty && tn.pn == oPN)
+					{
+						TapNote nTap = tn;
+						nTap.pn = nPN;
+						StepsType curType = GAMESTATE->m_pCurSteps[PLAYER_1]->m_StepsType;
+						if (curType == StepsType_dance_routine)
+						{
+							nTrack = tracks - t - 1;
+						}
+						else if (curType == StepsType_pump_routine)
+						{
+							switch (t)
+							{
+								case 0: nTrack = 8; break;
+								case 1: nTrack = 9; break;
+								case 2: nTrack = 7; break;
+								case 3: nTrack = 5; break;
+								case 4: nTrack = 6; break;
+								case 5: nTrack = 3; break;
+								case 6: nTrack = 4; break;
+								case 7: nTrack = 2; break;
+								case 8: nTrack = 0; break;
+								case 9: nTrack = 1; break;
+								default: FAIL_M(ssprintf("Invalid column %d for pump-routine", t)); break;
+							}
+						}
+						m_NoteDataEdit.SetTapNote(nTrack, r, nTap);
+					}
+				}
+			}
+			break;
+		}
 	}
 	
 }
