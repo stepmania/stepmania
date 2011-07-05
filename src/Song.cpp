@@ -283,7 +283,11 @@ bool Song::LoadFromSongDir( RString sDir )
 
 	if( bUseCache )
 	{
-//		LOG->Trace( "Loading '%s' from cache file '%s'.", m_sSongDir.c_str(), GetCacheFilePath().c_str() );
+		/*
+		LOG->Trace("Loading '%s' from cache file '%s'.",
+				   m_sSongDir.c_str(),
+				   GetCacheFilePath().c_str());
+		*/
 		SSCLoader loaderSSC;
 		bool bLoadedFromSSC = loaderSSC.LoadFromSimfile( sCacheFilePath, *this, true );
 		if( !bLoadedFromSSC )
@@ -379,13 +383,13 @@ bool Song::ReloadFromSongDir( RString sDir )
 	FOREACH_ENUM( StepsType, i )
 		m_vpStepsByType[i].clear();
 
-	// Then we copy as many Steps as possible on top of the old pointers.
-	// The only pointers that change are pointers to Steps that are not in the
-	// reverted file, which we delete, and pointers to Steps that are in the
-	// reverted file but not the original *this, which we create new copies of.
-	// We have to go through these hoops because many places assume the Steps
-	// pointers don't change - even though there are other ways they can change,
-	// such as deleting a Steps via the editor.
+	/* Then we copy as many Steps as possible on top of the old pointers.
+	 * The only pointers that change are pointers to Steps that are not in the
+	 * reverted file, which we delete, and pointers to Steps that are in the
+	 * reverted file but not the original *this, which we create new copies of.
+	 * We have to go through these hoops because many places assume the Steps
+	 * pointers don't change - even though there are other ways they can change,
+	 * such as deleting a Steps via the editor. */
 	for( vector<Steps*>::const_iterator itOld = vOldSteps.begin(); itOld != vOldSteps.end(); ++itOld )
 	{
 		StepsID id;
@@ -512,12 +516,18 @@ void Song::TidyUpData( bool bFromCache )
 	else	// ! HasMusic()
 	{
 		m_fMusicLengthSeconds = 100; // guess
-		LOG->UserLog( "Song", GetSongDir(), "has no music file; guessing at %f seconds", m_fMusicLengthSeconds );
+		LOG->UserLog("Song",
+					 GetSongDir(),
+					 "has no music file; guessing at %f seconds",
+					 m_fMusicLengthSeconds);
 	}
 
 	if( m_fMusicLengthSeconds < 0 )
 	{
-		LOG->UserLog( "Sound file", GetMusicPath(), "has a negative length %f.", m_fMusicLengthSeconds );
+		LOG->UserLog("Sound file",
+					 GetMusicPath(),
+					 "has a negative length %f.",
+					 m_fMusicLengthSeconds);
 		m_fMusicLengthSeconds = 0;
 	}
 
@@ -538,7 +548,8 @@ void Song::TidyUpData( bool bFromCache )
 
 	// Fall back on the song directory name.
 	if( m_sMainTitle == "" )
-		NotesLoader::GetMainAndSubTitlesFromFullTitle( Basename(this->GetSongDir()), m_sMainTitle, m_sSubTitle );
+		NotesLoader::GetMainAndSubTitlesFromFullTitle(Basename(this->GetSongDir()),
+													  m_sMainTitle, m_sSubTitle );
 
 	if( m_sArtist == "" )
 		m_sArtist = "Unknown artist";
@@ -652,7 +663,8 @@ void Song::TidyUpData( bool bFromCache )
 			m_sLyricsFile = arrayLyricFiles[0];
 	}
 
-	// Now, For the images we still haven't found, look at the image dimensions of the remaining unclassified images.
+	/* Now, For the images we still haven't found,
+	 * look at the image dimensions of the remaining unclassified images. */
 	vector<RString> arrayImages;
 	GetImageDirListing( m_sSongDir + "*", arrayImages );
 
@@ -763,7 +775,12 @@ void Song::TidyUpData( bool bFromCache )
 		/* Use this->GetBeatFromElapsedTime(0) instead of 0 to start when the
 		 * music starts. */
 		if( arrayPossibleMovies.size() == 1 )
-			this->AddBackgroundChange( BACKGROUND_LAYER_1, BackgroundChange(0,arrayPossibleMovies[0],"",1.f,SBE_StretchNoLoop) );
+			this->AddBackgroundChange(BACKGROUND_LAYER_1,
+									  BackgroundChange(0,
+													   arrayPossibleMovies[0],
+													   "",
+													   1.f,
+													   SBE_StretchNoLoop));
 	}
 
 
@@ -836,9 +853,11 @@ void Song::TranslateTitles()
 	static TitleSubst tsub("Songs");
 
 	TitleFields title;
-	title.LoadFromStrings( m_sMainTitle, m_sSubTitle, m_sArtist, m_sMainTitleTranslit, m_sSubTitleTranslit, m_sArtistTranslit );
+	title.LoadFromStrings(m_sMainTitle, m_sSubTitle, m_sArtist,
+						  m_sMainTitleTranslit, m_sSubTitleTranslit, m_sArtistTranslit );
 	tsub.Subst( title );
-	title.SaveToStrings( m_sMainTitle, m_sSubTitle, m_sArtist, m_sMainTitleTranslit, m_sSubTitleTranslit, m_sArtistTranslit );
+	title.SaveToStrings(m_sMainTitle, m_sSubTitle, m_sArtist,
+						m_sMainTitleTranslit, m_sSubTitleTranslit, m_sArtistTranslit );
 }
 
 void Song::ReCalculateRadarValuesAndLastBeat( bool bFromCache )
@@ -852,7 +871,8 @@ void Song::ReCalculateRadarValuesAndLastBeat( bool bFromCache )
 	}
 
 	float localFirst = FLT_MAX; // inf
-	float localLast = this->specifiedLastSecond; // Make sure we're at least as long as the specified amount.
+	// Make sure we're at least as long as the specified amount below.
+	float localLast = this->specifiedLastSecond;
 
 	for( unsigned i=0; i<m_vpSteps.size(); i++ )
 	{
@@ -1222,14 +1242,26 @@ bool Song::HasMusic() const
 
 	return m_sMusicFile != "" && IsAFile(GetMusicPath());
 }
-bool Song::HasBanner() const 		{return m_sBannerFile != ""		&& IsAFile(GetBannerPath()); }
+bool Song::HasBanner() const
+{
+	return m_sBannerFile != "" && IsAFile(GetBannerPath());
+}
 bool Song::HasInstrumentTrack( InstrumentTrack it ) const
 {
-	return m_sInstrumentTrackFile[it] != ""  &&  IsAFile(GetInstrumentTrackPath(it));
+	return m_sInstrumentTrackFile[it] != "" && IsAFile(GetInstrumentTrackPath(it));
 }
-bool Song::HasLyrics() const		{return m_sLyricsFile != ""		&& IsAFile(GetLyricsPath()); }
-bool Song::HasBackground() const 	{return m_sBackgroundFile != ""		&& IsAFile(GetBackgroundPath()); }
-bool Song::HasCDTitle() const 	{return m_sCDTitleFile != ""		&& IsAFile(GetCDTitlePath()); }
+bool Song::HasLyrics() const
+{
+	return m_sLyricsFile != "" && IsAFile(GetLyricsPath());
+}
+bool Song::HasBackground() const
+{
+	return m_sBackgroundFile != "" && IsAFile(GetBackgroundPath());
+}
+bool Song::HasCDTitle() const
+{
+	return m_sCDTitleFile != ""	&& IsAFile(GetCDTitlePath());
+}
 bool Song::HasBGChanges() const
 {
 	FOREACH_BackgroundLayer( i )
