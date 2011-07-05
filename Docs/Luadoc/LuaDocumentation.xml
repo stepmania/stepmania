@@ -1540,6 +1540,9 @@
 	<Function name='GetRandomCharacter' return='Character' arguments=''>
 		Returns a random character.
 	</Function>
+	<Function name='GetCharacterCount' return='int' arguments=''>
+		Returns the number of characters available.
+	</Function>
 </Class>
 <Class name='ComboGraph'>
 	<Function name='Load' return='void' arguments='string sMetricsGroup'>

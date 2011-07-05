@@ -580,6 +580,7 @@
 			<Function name='GetAllCharacters'/>
 			<Function name='GetCharacter'/>
 			<Function name='GetRandomCharacter'/>
+			<Function name='GetCharacterCount'/>
 		</Class>
 		<Class base='ActorFrame' name='ComboGraph'>
 			<Function name='Load'/>
