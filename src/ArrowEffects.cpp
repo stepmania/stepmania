@@ -489,12 +489,13 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 
 	fPixelOffsetFromCenter += pCols[iColNum].fXOffset;
 
-	if( fEffects[PlayerOptions::EFFECT_TINY] != 0 )
+	// XXX: Mini and tiny have names swapped! Fix this. -shakesoda
+	if( fEffects[PlayerOptions::EFFECT_MINI] != 0 )
 	{
 		// Allow Mini to pull tracks together, but not to push them apart.
-		float fTinyPercent = fEffects[PlayerOptions::EFFECT_TINY];
-		fTinyPercent = min( powf(TINY_PERCENT_BASE, fTinyPercent), (float)TINY_PERCENT_GATE );
-		fPixelOffsetFromCenter *= fTinyPercent;
+		float fMiniPercent = fEffects[PlayerOptions::EFFECT_MINI];
+		fMiniPercent = min( powf(TINY_PERCENT_BASE, fMiniPercent), (float)TINY_PERCENT_GATE );
+		fPixelOffsetFromCenter *= fMiniPercent;
 	}
 
 	return fPixelOffsetFromCenter;

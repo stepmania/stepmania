@@ -155,8 +155,8 @@ void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
 	AddPart( AddTo, m_fEffects[EFFECT_DRUNK],		"Drunk" );
 	AddPart( AddTo, m_fEffects[EFFECT_DIZZY],		"Dizzy" );
 	AddPart( AddTo, m_fEffects[EFFECT_CONFUSION],	"Confusion" );
-	AddPart( AddTo, m_fEffects[EFFECT_MINI],		"Mini" );
-	AddPart( AddTo, m_fEffects[EFFECT_TINY],		"Tiny" );
+	AddPart( AddTo, m_fEffects[EFFECT_MINI],		"Tiny" );
+	AddPart( AddTo, m_fEffects[EFFECT_TINY],		"Mini" );
 	AddPart( AddTo, m_fEffects[EFFECT_FLIP],		"Flip" );
 	AddPart( AddTo, m_fEffects[EFFECT_INVERT],		"Invert" );
 	AddPart( AddTo, m_fEffects[EFFECT_TORNADO],	"Tornado" );
