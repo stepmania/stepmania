@@ -103,10 +103,10 @@ public:
 	void TidyUpData( bool bFromCache = false );
 	
 	/**
-	 * @brief Get the new radar values, and determine the last beat at the same time.
+	 * @brief Get the new radar values, and determine the last second at the same time.
 	 *
 	 * This is called by TidyUpData, after saving the Song. */
-	void ReCalculateRadarValuesAndLastBeat( bool bFromCache = false );
+	void ReCalculateRadarValuesAndLastSecond( bool bFromCache = false );
 	/**
 	 * @brief Translate any titles that aren't in english.
 	 *

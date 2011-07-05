@@ -540,7 +540,7 @@ void Song::TidyUpData( bool bFromCache )
 
 	/* Generate these before we autogen notes, so the new notes can inherit
 	 * their source's values. */
-	ReCalculateRadarValuesAndLastBeat( bFromCache );
+	ReCalculateRadarValuesAndLastSecond( bFromCache );
 
 	Trim( m_sMainTitle );
 	Trim( m_sSubTitle );
@@ -860,7 +860,7 @@ void Song::TranslateTitles()
 						m_sMainTitleTranslit, m_sSubTitleTranslit, m_sArtistTranslit );
 }
 
-void Song::ReCalculateRadarValuesAndLastBeat( bool bFromCache )
+void Song::ReCalculateRadarValuesAndLastSecond( bool bFromCache )
 {
 	if( bFromCache && this->GetFirstSecond() >= 0 && this->GetLastSecond() > 0 )
 	{
@@ -935,7 +935,7 @@ void Song::Save()
 {
 	LOG->Trace( "Song::SaveToSongFile()" );
 
-	ReCalculateRadarValuesAndLastBeat();
+	ReCalculateRadarValuesAndLastSecond();
 	TranslateTitles();
 	
 	// TODO: Figure out a better way to save to Song's timing data.
