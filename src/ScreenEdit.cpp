@@ -2731,7 +2731,7 @@ void ScreenEdit::TransitionEditState( EditState em )
 			Steps* pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
 			ASSERT( pSteps );
 			pSteps->SetNoteData( m_NoteDataEdit );
-			m_pSong->ReCalculateRadarValuesAndLastBeat();
+			m_pSong->ReCalculateRadarValuesAndLastSecond();
 
 			m_Background.Unload();
 			m_Background.LoadFromSong( m_pSong );
