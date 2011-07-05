@@ -867,7 +867,7 @@ void Player::Update( float fDeltaTime )
 			Actor::TweenState::MakeWeightedAverage( m_pActorWithComboPosition->DestTweenState(), ts1, ts2, fPercentCentered );
 		}
 
-		float fNoteFieldZoom = 1 - fTinyPercent*0.5f;
+		float fNoteFieldZoom = 1 - fMiniPercent*0.5f;
 		if( m_pNoteField )
 			m_pNoteField->SetZoom( fNoteFieldZoom );
 		if( m_pActorWithJudgmentPosition != NULL )

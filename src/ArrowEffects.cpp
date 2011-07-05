@@ -56,8 +56,8 @@ static ThemeMetric<float>	DRUNK_OFFSET_FREQUENCY( "ArrowEffects", "DrunkOffsetFr
 static ThemeMetric<float>	DRUNK_ARROW_MAGNITUDE( "ArrowEffects", "DrunkArrowMagnitude" );
 static ThemeMetric<float>	BEAT_OFFSET_HEIGHT( "ArrowEffects", "BeatOffsetHeight" );
 static ThemeMetric<float>	BEAT_PI_HEIGHT( "ArrowEffects", "BeatPIHeight" );
-static ThemeMetric<float>	MINI_PERCENT_BASE( "ArrowEffects", "MiniPercentBase" );
-static ThemeMetric<float>	MINI_PERCENT_GATE( "ArrowEffects", "MiniPercentGate" );
+static ThemeMetric<float>	TINY_PERCENT_BASE( "ArrowEffects", "TinyPercentBase" );
+static ThemeMetric<float>	TINY_PERCENT_GATE( "ArrowEffects", "TinyPercentGate" );
 static ThemeMetric<bool>	DIZZY_HOLD_HEADS( "ArrowEffects", "DizzyHoldHeads" );
 
 float ArrowGetPercentVisible( const PlayerState* pPlayerState, float fYPosWithoutReverse );
@@ -489,12 +489,12 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 
 	fPixelOffsetFromCenter += pCols[iColNum].fXOffset;
 
-	if( fEffects[PlayerOptions::EFFECT_MINI] != 0 )
+	if( fEffects[PlayerOptions::EFFECT_TINY] != 0 )
 	{
 		// Allow Mini to pull tracks together, but not to push them apart.
-		float fMiniPercent = fEffects[PlayerOptions::EFFECT_MINI];
-		fMiniPercent = min( powf(MINI_PERCENT_BASE, fMiniPercent), (float)MINI_PERCENT_GATE );
-		fPixelOffsetFromCenter *= fMiniPercent;
+		float fTinyPercent = fEffects[PlayerOptions::EFFECT_TINY];
+		fTinyPercent = min( powf(TINY_PERCENT_BASE, fTinyPercent), (float)TINY_PERCENT_GATE );
+		fPixelOffsetFromCenter *= fTinyPercent;
 	}
 
 	return fPixelOffsetFromCenter;
