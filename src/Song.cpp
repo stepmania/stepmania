@@ -1551,7 +1551,15 @@ public:
 	}
 	static int GetSongDir( T* p, lua_State *L )		{ lua_pushstring(L, p->GetSongDir() ); return 1; }
 	static int GetMusicPath( T* p, lua_State *L )	{ RString s = p->GetMusicPath(); if( s.empty() ) return 0; lua_pushstring(L, s); return 1; }
-	static int GetBannerPath( T* p, lua_State *L )		{ RString s = p->GetBannerPath(); if( s.empty() ) return 0; LuaHelpers::Push(L, s); return 1; }
+	static int GetBannerPath( T* p, lua_State *L )
+	{
+		RString s = p->GetBannerPath();
+		if( !s.empty() )
+			lua_pushstring(L, s);
+		else
+			lua_pushnil(L);
+		return 1;
+	}
 	static int GetBackgroundPath( T* p, lua_State *L )
 	{
 		RString s = p->GetBackgroundPath();
