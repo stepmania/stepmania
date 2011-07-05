@@ -1488,7 +1488,7 @@ void Player::DrawPrimitives()
 
 		float fTiltDegrees = SCALE(fTilt,-1.f,+1.f,+30,-30) * (bReverse?-1:1);
 
-		float fZoom = SCALE( m_pPlayerState->m_PlayerOptions.GetCurrent().m_fEffects[PlayerOptions::EFFECT_TINY], 0.f, 1.f, 1.f, 0.5f );
+		float fZoom = SCALE( m_pPlayerState->m_PlayerOptions.GetCurrent().m_fEffects[PlayerOptions::EFFECT_MINI], 0.f, 1.f, 1.f, 0.5f );
 		if( fTilt > 0 )
 			fZoom *= SCALE( fTilt, 0.f, 1.f, 1.f, 0.9f );
 		else
