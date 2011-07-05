@@ -1526,16 +1526,46 @@ bool Song::IsMarathon() const
 class LunaSong: public Luna<Song>
 {
 public:
-	static int GetDisplayFullTitle( T* p, lua_State *L )	{ lua_pushstring(L, p->GetDisplayFullTitle() ); return 1; }
-	static int GetTranslitFullTitle( T* p, lua_State *L )	{ lua_pushstring(L, p->GetTranslitFullTitle() ); return 1; }
-	static int GetDisplayMainTitle( T* p, lua_State *L )	{ lua_pushstring(L, p->GetDisplayMainTitle() ); return 1; }
-	static int GetTranslitMainTitle( T* p, lua_State *L )	{ lua_pushstring(L, p->GetTranslitMainTitle() ); return 1; }
-	static int GetDisplaySubTitle( T* p, lua_State *L )	{ lua_pushstring(L, p->GetDisplaySubTitle() ); return 1; }
-	static int GetTranslitSubTitle( T* p, lua_State *L )	{ lua_pushstring(L, p->GetTranslitSubTitle() ); return 1; }
-	static int GetDisplayArtist( T* p, lua_State *L )	{ lua_pushstring(L, p->GetDisplayArtist() ); return 1; }
-	static int GetTranslitArtist( T* p, lua_State *L )	{ lua_pushstring(L, p->GetTranslitArtist() ); return 1; }
-	static int GetGenre( T* p, lua_State *L )		{ lua_pushstring(L, p->m_sGenre ); return 1; }
-	static int GetOrigin( T* p, lua_State *L )		{ lua_pushstring(L, p->m_sOrigin ); return 1; }
+	static int GetDisplayFullTitle( T* p, lua_State *L )
+	{
+		lua_pushstring(L, p->GetDisplayFullTitle() ); return 1;
+	}
+	static int GetTranslitFullTitle( T* p, lua_State *L )
+	{
+		lua_pushstring(L, p->GetTranslitFullTitle() ); return 1;
+	}
+	static int GetDisplayMainTitle( T* p, lua_State *L )
+	{
+		lua_pushstring(L, p->GetDisplayMainTitle() ); return 1;
+	}
+	static int GetTranslitMainTitle( T* p, lua_State *L )
+	{
+		lua_pushstring(L, p->GetTranslitMainTitle() ); return 1;
+	}
+	static int GetDisplaySubTitle( T* p, lua_State *L )
+	{
+		lua_pushstring(L, p->GetDisplaySubTitle() ); return 1;
+	}
+	static int GetTranslitSubTitle( T* p, lua_State *L )
+	{
+		lua_pushstring(L, p->GetTranslitSubTitle() ); return 1;
+	}
+	static int GetDisplayArtist( T* p, lua_State *L )
+	{
+		lua_pushstring(L, p->GetDisplayArtist() ); return 1;
+	}
+	static int GetTranslitArtist( T* p, lua_State *L )
+	{
+		lua_pushstring(L, p->GetTranslitArtist() ); return 1;
+	}
+	static int GetGenre( T* p, lua_State *L )
+	{
+		lua_pushstring(L, p->m_sGenre ); return 1;
+	}
+	static int GetOrigin( T* p, lua_State *L )
+	{
+		lua_pushstring(L, p->m_sOrigin ); return 1;
+	}
 	static int GetAllSteps( T* p, lua_State *L )
 	{
 		const vector<Steps*> &v = p->GetAllSteps();
@@ -1549,8 +1579,20 @@ public:
 		LuaHelpers::CreateTableFromArray<Steps*>( v, L );
 		return 1;
 	}
-	static int GetSongDir( T* p, lua_State *L )		{ lua_pushstring(L, p->GetSongDir() ); return 1; }
-	static int GetMusicPath( T* p, lua_State *L )	{ RString s = p->GetMusicPath(); if( s.empty() ) return 0; lua_pushstring(L, s); return 1; }
+	static int GetSongDir( T* p, lua_State *L )	
+	{ 
+		lua_pushstring(L, p->GetSongDir() );
+		return 1; 
+	}
+	static int GetMusicPath( T* p, lua_State *L )
+	{
+		RString s = p->GetMusicPath();
+		if( !s.empty() )
+			lua_pushstring(L, s);
+		else
+			lua_pushnil(L);
+		return 1;
+	}
 	static int GetBannerPath( T* p, lua_State *L )
 	{
 		RString s = p->GetBannerPath();
@@ -1569,15 +1611,59 @@ public:
 			lua_pushnil(L);
 		return 1; 
 	}
-	static int GetCDTitlePath( T* p, lua_State *L )		{ RString s = p->GetCDTitlePath(); if( s.empty() ) return 0; LuaHelpers::Push(L, s); return 1; }
-	static int GetLyricsPath( T* p, lua_State *L )	{ RString s = p->GetLyricsPath(); if( s.empty() ) return 0; lua_pushstring(L, s); return 1; }
-	static int GetSongFilePath(  T* p, lua_State *L )	{ lua_pushstring(L, p->GetSongFilePath() ); return 1; }
-	static int IsTutorial( T* p, lua_State *L )		{ lua_pushboolean(L, p->IsTutorial()); return 1; }
-	static int IsEnabled( T* p, lua_State *L )		{ lua_pushboolean(L, p->GetEnabled()); return 1; }
-	static int GetGroupName( T* p, lua_State *L )		{ lua_pushstring(L, p->m_sGroupName); return 1; }
-	static int MusicLengthSeconds( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_fMusicLengthSeconds); return 1; }
-	static int IsLong( T* p, lua_State *L )			{ lua_pushboolean(L, p->IsLong()); return 1; }
-	static int IsMarathon( T* p, lua_State *L )		{ lua_pushboolean(L, p->IsMarathon()); return 1; }
+	static int GetCDTitlePath( T* p, lua_State *L )
+	{ 
+		RString s = p->GetCDTitlePath();
+		if( !s.empty() )
+			lua_pushstring(L, s);
+		else
+			lua_pushnil(L);
+		return 1;
+	}
+	static int GetLyricsPath( T* p, lua_State *L )
+	{
+		RString s = p->GetLyricsPath();
+		if( !s.empty() )
+			lua_pushstring(L, s);
+		else
+			lua_pushnil(L);
+		return 1;
+	}
+	static int GetSongFilePath(  T* p, lua_State *L )
+	{
+		lua_pushstring(L, p->GetSongFilePath() );
+		return 1;
+	}
+	static int IsTutorial( T* p, lua_State *L )	
+	{
+		lua_pushboolean(L, p->IsTutorial());
+		return 1;
+	}
+	static int IsEnabled( T* p, lua_State *L )	
+	{
+		lua_pushboolean(L, p->GetEnabled());
+		return 1;
+	}
+	static int GetGroupName( T* p, lua_State *L )
+	{
+		lua_pushstring(L, p->m_sGroupName);
+		return 1;
+	}
+	static int MusicLengthSeconds( T* p, lua_State *L )
+	{
+		lua_pushnumber(L, p->m_fMusicLengthSeconds);
+		return 1;
+	}
+	static int IsLong( T* p, lua_State *L )	
+	{
+		lua_pushboolean(L, p->IsLong());
+		return 1;
+	}
+	static int IsMarathon( T* p, lua_State *L )
+	{
+		lua_pushboolean(L, p->IsMarathon());
+		return 1;
+	}
 	static int HasStepsType( T* p, lua_State *L )
 	{
 		StepsType st = Enum::Check<StepsType>(L, 1);
@@ -1591,7 +1677,8 @@ public:
 		lua_pushboolean( L, p->HasStepsTypeAndDifficulty(st, dc) );
 		return 1;
 	}
-	// TODO: HasStepsTypeAndDifficulty and GetOneSteps should be in a SongUtil Lua table and a method of Steps.
+	/* TODO: HasStepsTypeAndDifficulty and GetOneSteps should be in
+	 * a SongUtil Lua table and a method of Steps. */
 	static int GetOneSteps( T* p, lua_State *L )
 	{
 		StepsType st = Enum::Check<StepsType>(L, 1);
@@ -1609,14 +1696,42 @@ public:
 		return 1;
 	}
 	// has functions
-	static int HasMusic( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasMusic()); return 1; }
-	static int HasBanner( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasBanner()); return 1; }
-	static int HasBackground( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasBackground()); return 1; }
-	static int HasCDTitle( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasCDTitle()); return 1; }
-	static int HasBGChanges( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasBGChanges()); return 1; }
-	static int HasLyrics( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasLyrics()); return 1; }
+	static int HasMusic( T* p, lua_State *L )
+	{
+		lua_pushboolean(L, p->HasMusic());
+		return 1;
+	}
+	static int HasBanner( T* p, lua_State *L )
+	{
+		lua_pushboolean(L, p->HasBanner());
+		return 1;
+	}
+	static int HasBackground( T* p, lua_State *L )
+	{
+		lua_pushboolean(L, p->HasBackground());
+		return 1;
+	}
+	static int HasCDTitle( T* p, lua_State *L )
+	{
+		lua_pushboolean(L, p->HasCDTitle());
+		return 1;
+	}
+	static int HasBGChanges( T* p, lua_State *L )
+	{
+		lua_pushboolean(L, p->HasBGChanges());
+		return 1;
+	}
+	static int HasLyrics( T* p, lua_State *L )
+	{
+		lua_pushboolean(L, p->HasLyrics());
+		return 1;
+	}
 	// functions that AJ loves
-	static int HasSignificantBPMChangesOrStops( T* p, lua_State *L )	{ lua_pushboolean(L, p->HasSignificantBpmChangesOrStops()); return 1; }
+	static int HasSignificantBPMChangesOrStops( T* p, lua_State *L )
+	{
+		lua_pushboolean(L, p->HasSignificantBpmChangesOrStops());
+		return 1;
+	}
 	static int HasEdits( T* p, lua_State *L )
 	{
 		StepsType st = Enum::Check<StepsType>(L, 1);
@@ -1629,8 +1744,16 @@ public:
 		lua_pushboolean(L, p->IsEasy( st ));
 		return 1;
 	}
-	static int GetStepsSeconds( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetStepsSeconds()); return 1; }
-	static int NormallyDisplayed( T* p, lua_State *L ){ lua_pushboolean(L, p->NormallyDisplayed()); return 1; }
+	static int GetStepsSeconds( T* p, lua_State *L )
+	{
+		lua_pushnumber(L, p->GetStepsSeconds());
+		return 1;
+	}
+	static int NormallyDisplayed( T* p, lua_State *L )
+	{
+		lua_pushboolean(L, p->NormallyDisplayed());
+		return 1;
+	}
 	static int GetFirstSecond(T* p, lua_State *L)
 	{
 		lua_pushnumber(L, p->GetFirstSecond());
@@ -1651,7 +1774,11 @@ public:
 		lua_pushnumber(L, p->GetLastBeat());
 		return 1;
 	}
-	static int HasAttacks( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasAttacks()); return 1; }
+	static int HasAttacks( T* p, lua_State *L )	
+	{
+		lua_pushboolean(L, p->HasAttacks());
+		return 1;
+	}
 	static int GetDisplayBpms( T* p, lua_State *L )
 	{
 		DisplayBpms temp;
