@@ -12,6 +12,8 @@ StepMania 5.0 ????????? | 20110???
 ----------
 * [ScreenEdit] Restore dance-couple and pump-couple for editing purposes.
   Saving should still work, but this was never tested yet. [Wolfman2000]
+* [ScreenOptions] Mini is now ITG Mini, and Tiny is now Pump Pro Mini.
+  This will prevent many prior courses from breaking. [sharksoda, Wolfman2000]
 
 2011/07/04
 ----------
