@@ -302,6 +302,9 @@
 	<Function name='MissCombo' theme='_fallback' return='int' arguments=''>
 		[03 Gameplay.lua] Returns the value to start showing the miss combo at.
 	</Function>
+	<Function name='module' return='' arguments='string name, ...'>
+		Creates a module. See the Lua manual for more details.
+	</Function>
 	<Function name='MonthOfYear' return='int' arguments=''>
 		Returns the current month of the year.
 	</Function>
@@ -310,6 +313,20 @@
 	</Function>
 	<Function name='MonthToString' return='string' arguments='Month m'>
 		Returns Month <code>m</code> as a string.
+	</Function>
+	<Function name='next' return='' arguments='table t, int index'>
+		"Allows a program to traverse all fields of a table. Its first argument is a
+		table and its second argument is an index in this table.
+		<code>next</code> returns the next index of the table and its associated value."
+		See the Lua manual for more details.
+	</Function>
+	<Function name='OptionRowProTiming' theme='default' return='LuaOptionRow' arguments=''>
+		[03 ThemePrefs.lua] Returns a Lua option row for ProTiming.
+	</Function>
+	<Function name='pairs' return='' arguments='table t'>
+		"Returns three values: the <Link class='GLOBAL' function='next' /> function, the table <code>t</code>, and <code>nil</code>,
+		so that the construction <code>for k,v in pairs(t) do body end</code>
+		will iterate over all key–value pairs of table <code>t</code>."
 	</Function>
 	<Function name='pname' theme='_fallback' return='string' arguments='PlayerNumber pn'>
 		[03 ProductivityHelpers.lua] Converts a PlayerNumber into a short string (e.g. "P1", "P2").
@@ -329,6 +346,16 @@
 	<Function name='ProductVersion' return='string' arguments=''>
 		Returns the product version.
 	</Function>
+	<Function name='rawequal' return='bool' arguments='various v1, varoius v2'>
+		"Checks whether <code>v1</code> is equal to <code>v2</code>, without invoking any metamethod."
+	</Function>
+	<Function name='rawget' return='various' arguments='table t, various index'>
+		"Gets the real value of <code>t[index]</code>, without invoking any metamethod."
+	</Function>
+	<Function name='rawset' return='table' arguments='table t, int index, various value'>
+		"Sets the real value of <code>t[index]</code> to <code>value</code>, without invoking any metamethod."
+		The modified <code>t</code> is then returned.
+	</Function>
 	<Function name='ResolveRelativePath' theme='_fallback' return='string' arguments='string path, int level'>
 		[02 ActorDef.lua]
 	</Function>
@@ -340,6 +367,9 @@
 	</Function>
 	<Function name='ReportStyle' return='void' arguments=''>
 		Sends the current style to the server.
+	</Function>
+	<Function name='require' return='' arguments='string modname'>
+		Loads the specified module. See the Lua manual for more information.
 	</Function>
 	<Function name='round' theme='_fallback' return='int' arguments='float val, int decimal'>
 		[02 Utilities.lua] Round a number.
@@ -377,6 +407,11 @@
 	<Function name='SecondsToMMSSMsMsMs' return='string' arguments='float fSecs'>
 		Converts <code>fSecs</code> to Minutes:Seconds.Milliseconds format using two digits for each section except Milliseconds (uses 3).
 	</Function>
+	<Function name='select' return='various' arguments='various index, ...'>
+		"If <code>index</code> is a number, returns all arguments after argument
+		number <code>index</code>. Otherwise, <code>index</code> must be the string
+		<code>"#"</code>, and [it] returns the total number of extra arguments it received."
+	</Function>
 	<Function name='SelectMusicOrCourse' theme='_fallback' return='string' arguments=''>
 		[02 Branches.lua] Determines the correct music/course selection screen to use and returns it.
 	</Function>
@@ -410,6 +445,12 @@
 	<Function name='StandardDecorationFromFileOptional' theme='_fallback' return='Actor' arguments='string sMetricsName, string sFileName'>
 		[02 ActorDef.lua] 
 	</Function>
+	<Function name='tableshuffle' theme='_fallback' return='table' arguments='table t'>
+		[02 Utilities.lua] Returns a shuffled version of <code>t</code>.
+	</Function>
+	<Function name='tableslice' theme='_fallback' return='table' arguments='table t, int num'>
+		[02 Utilities.lua] Returns a slice of the specified table of size <code>num</code>.
+	</Function>
 	<Function name='TableStringLookup' theme='_fallback' return='table' arguments='table t, string group'>
 		[02 Utilities.lua] Look up each value in a table, returning a table with the resulting strings.
 	</Function>
@@ -419,11 +460,26 @@
 	<Function name='tobool' theme='_fallback' return='bool' arguments='various v'>
 		[03 ProductivityHelpers.lua] Converts a string or number to a bool.
 	</Function>
+	<Function name='tonumber' return='float' arguments='various e, int base'>
+		Tries to convert <code>e</code> to a number. Returns <code>nil</code> if
+		it can't convert the input to a number. (<code>base</code> is optional.)
+	</Function>
+	<Function name='tostring' return='string' arguments='various e'>
+		Converts <code>e</code> to a string.
+	</Function>
 	<Function name='ToEnumShortString' theme='_fallback' return='string' arguments='enum e'>
 		[02 Enum.lua] Returns a string representing an enum starting from '_'. For example, passing <Link class='ENUM' function='PlayerNumber'>PlayerNumber_P1</Link> to this function will return <code>P1</code>.
 	</Function>
 	<Function name='Trace' theme='_fallback' return='void' arguments='string sString'>
 		[00 init.lua] Alias for <Link class='lua' function='Trace' />.
+	</Function>
+	<Function name='type' return='string' arguments='various v'>
+		Returns the type of the object as a string. See the Lua manual for valid return values.
+	</Function>
+	<Function name='unpack' return='' arguments='table list, int i, int j'>
+		"Returns the elements from the given table.
+		This function is equivalent to <code>return list[i], list[i+1], ···, list[j]</code>"
+		(<code>i</code> and <code>j</code> are optional; "by default, i is 1 and j is the length of the list.")
 	</Function>
 	<Function name='URLEncode' return='string' arguments='string sInput'>
 		Returns a string with characters escaped for URLs. (e.g. a space becomes '%20')
@@ -443,11 +499,17 @@
 	<Function name='WideScale' theme='_fallback' return='float' arguments='float ar43, float ar169'>
 		[04 WidescreenHelpers.lua] Depending on the screen width, scales between <code>ar43</code> (4:3; 640px) and <code>ar169</code> (16:9; 854px).
 	</Function>
+	<Function name='wrap' theme='_fallback' return='float' arguments='float val, float n'>
+		[02 Utilities.lua]
+	</Function>
 	<Function name='WrapInActorFrame' theme='_fallback' return='ActorFrame' arguments='table children'>
 		[02 ActorDef.lua] Wraps the children in an ActorFrame.
 	</Function>
 	<Function name='WriteFile' theme='_fallback' return='bool' arguments='string path, string buf'>
 		[04 FileUtils.lua] Writes <code>buf</code> to the file at <code>path</code>.
+	</Function>
+	<Function name='WriteGamePrefToFile' theme='_fallback' return='' arguments='string name'>
+		[03 GamePreferences.lua]
 	</Function>
 	<Function name='WritePrefToFile' theme='_fallback' return='bool' arguments='string prefName, various value'>
 		[03 UserPreferences2.lua] (internal) Writes user preference <code>prefName</code> to its config file with <code>value</code> being <code>tostring</code>'d.
@@ -455,12 +517,7 @@
 	<Function name='Year' return='int' arguments=''>
 		Returns the current year.
 	</Function>
-	<!-- new sm-ssc additions here -->
 
-	<!-- default theme preferences -->
-	<Function name='OptionRowProTiming' theme='default' return='LuaOptionRow' arguments=''>
-		[03 ThemePrefs.lua] Returns a Lua option row for ProTiming.
-	</Function>
 	<Function name='UserPrefAutoSetStyle' theme='default' return='LuaOptionRow' arguments=''>
 		[03 ThemePrefs.lua] Returns a Lua option row for toggling AutoSetStyle.
 	</Function>
