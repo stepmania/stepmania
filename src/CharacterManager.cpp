@@ -89,7 +89,7 @@ Character* CharacterManager::GetDefaultCharacter()
 	}
 
 	/* We always have the default character. */
-	ASSERT(0);
+	FAIL_M("There must be a default character available!");
 	return NULL;
 }
 
