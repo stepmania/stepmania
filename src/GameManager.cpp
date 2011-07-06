@@ -332,7 +332,7 @@ static const Style g_Style_Dance_Couple_Edit =
 	false,				// m_bUsedForHowToPlay
 	"couple-edit",			// m_szName
 	StepsType_dance_couple,	// m_StepsType
-	StyleType_OnePlayerOneSide,		// m_StyleType
+	StyleType_OnePlayerTwoSides,		// m_StyleType
 	8,				// m_iColsPerPlayer
 	{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
 		{	// PLAYER_1
@@ -357,8 +357,8 @@ static const Style g_Style_Dance_Couple_Edit =
 		},
 	},
 	{	// m_iInputColumn[NUM_GameController][NUM_GameButton]
-		{ 0, 1, 2, 3, 4, 5, 6, 7, Style::END_MAPPING },
-		{ 0, 1, 2, 3, 4, 5, 6, 7, Style::END_MAPPING },
+		{ 0, 3, 2, 1, Style::END_MAPPING },
+		{ 4, 7, 6, 5, Style::END_MAPPING },
 	},
 	{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
 		0,1,2,3,4,5,6,7
@@ -770,7 +770,7 @@ static const Style g_Style_Pump_Couple_Edit =
 	false,				// m_bUsedForHowToPlay
 	"couple-edit",			// m_szName
 	StepsType_pump_couple,		// m_StepsType
-	StyleType_OnePlayerOneSide,		// m_StyleType
+	StyleType_OnePlayerTwoSides,		// m_StyleType
 	10,				// m_iColsPerPlayer
 	{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
 		{	// PLAYER_1
@@ -786,19 +786,24 @@ static const Style g_Style_Pump_Couple_Edit =
 			{ TRACK_10,	+PUMP_COL_SPACING*5.0f+4, NULL },
 		},
 		{	// PLAYER_2
-			{ TRACK_1,	-PUMP_COL_SPACING*2.0f, NULL },
-			{ TRACK_2,	-PUMP_COL_SPACING*1.0f, NULL },
-			{ TRACK_3,	+PUMP_COL_SPACING*0.0f, NULL },
-			{ TRACK_4,	+PUMP_COL_SPACING*1.0f, NULL },
-			{ TRACK_5,	+PUMP_COL_SPACING*2.0f, NULL },
+			{ TRACK_1,	-PUMP_COL_SPACING*5.0f-4, NULL },
+			{ TRACK_2,	-PUMP_COL_SPACING*4.0f-4, NULL },
+			{ TRACK_3,	-PUMP_COL_SPACING*3.0f-4, NULL },
+			{ TRACK_4,	-PUMP_COL_SPACING*2.0f-4, NULL },
+			{ TRACK_5,	-PUMP_COL_SPACING*1.0f-4, NULL },
+			{ TRACK_6,	+PUMP_COL_SPACING*1.0f+4, NULL },
+			{ TRACK_7,	+PUMP_COL_SPACING*2.0f+4, NULL },
+			{ TRACK_8,	+PUMP_COL_SPACING*3.0f+4, NULL },
+			{ TRACK_9,	+PUMP_COL_SPACING*4.0f+4, NULL },
+			{ TRACK_10,	+PUMP_COL_SPACING*5.0f+4, NULL },
 		},
 	},
 	{	// m_iInputColumn[NUM_GameController][NUM_GameButton]
-		{ 1, 3, 2, 0, 4, 6, 8, 7, 5, 9, Style::END_MAPPING },
-		{ 1, 3, 2, 0, 4, 6, 8, 7, 5, 9, Style::END_MAPPING },
+		{ 1, 3, 2, 0, 4, Style::END_MAPPING },
+		{ 6, 8, 7, 5, 9, Style::END_MAPPING },
 	},
 	{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
-		2,1,3,0,4
+		2,1,3,0,4, 2+5,1+5,3+5,0+5,4+5
 	},
 	false, // m_bNeedsZoomOutWith2Players
 	false, // m_bCanUseBeginnerHelper

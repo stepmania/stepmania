@@ -400,6 +400,7 @@
 				$type='LuaOptionRow' or
 				$type='ActorDef' or
 				$type='chunk' or
+				$type='unsigned' or
 				$type='various'">
 			<span class="primitiveType">
 				<xsl:value-of select="$type" />

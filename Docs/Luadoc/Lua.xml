@@ -153,6 +153,7 @@
 		<Function name='SelectMusicOrCourse'/>
 		<Function name='SelectProfileKeys'/>
 		<Function name='Serialize'/>
+		<Function name='SetFail'/>
 		<Function name='SetGamePref'/>
 		<Function name='SetThemePref'/>
 		<Function name='SetUserPref'/>
@@ -579,6 +580,7 @@
 			<Function name='GetAllCharacters'/>
 			<Function name='GetCharacter'/>
 			<Function name='GetRandomCharacter'/>
+			<Function name='GetCharacterCount'/>
 		</Class>
 		<Class base='ActorFrame' name='ComboGraph'>
 			<Function name='Load'/>
@@ -932,6 +934,7 @@
 			<Function name='GetMines'/>
 			<Function name='GetMini'/>
 			<Function name='GetMirror'/>
+			<Function name='GetNoAttacks'/>
 			<Function name='GetNoFakes'/>
 			<Function name='GetNoHands'/>
 			<Function name='GetNoHolds'/>
@@ -1477,8 +1480,8 @@
 			<Function name='GetCode'/>
 			<Function name='GetCourse'/>
 			<Function name='GetDescription'/>
-			<Function name='GetRequirePassHardSteps'/>
 			<Function name='GetRequirePassChallengeSteps'/>
+			<Function name='GetRequirePassHardSteps'/>
 			<Function name='GetRequirement'/>
 			<Function name='GetSong'/>
 			<Function name='GetUnlockRewardType'/>
@@ -2130,9 +2133,9 @@
 		<Constant name='left' value='&apos;HorizAlign_Left&apos;'/>
 		<Constant name='middle' value='&apos;VertAlign_Middle&apos;'/>
 		<Constant name='right' value='&apos;HorizAlign_Right&apos;'/>
-		<Constant name='sGame' value='&apos;pump&apos;'/>
+		<Constant name='sGame' value='&apos;dance&apos;'/>
 		<Constant name='top' value='&apos;VertAlign_Top&apos;'/>
 	</Constants>
-	<Version>StepMania 5 v5.0 Preview 1a</Version>
-	<Date>2011-06-24</Date>
+	<Version>StepMania 5 v5.0 Preview 2</Version>
+	<Date>2011-07-04</Date>
 </Lua>
