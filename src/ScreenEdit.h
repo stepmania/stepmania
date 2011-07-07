@@ -380,6 +380,7 @@ public:
 		options, /**< Modify the PlayerOptions and SongOptions. */
 		edit_song_info, /**< Edit some general information about the song. */
 		edit_timing_data, /**< Edit the chart's timing data. */
+		view_steps_data, /**< View step statistics. */
 		play_preview_music, /**< Play the song's preview music. */
 		exit,
 		save_on_exit,
@@ -510,6 +511,12 @@ public:
 		chartstyle, /**< How is this chart meant to be played? */
 		step_credit, /**< Who wrote this individual chart? */
 		predict_meter, /**< What does the game think this chart's rating should be? */
+		NUM_STEPS_INFORMATION_CHOICES
+	};
+	void HandleStepsInformationChoice( StepsInformationChoice c, const vector<int> &iAnswers );
+	
+	enum StepsDataChoice
+	{
 		tap_notes,
 		jumps,
 		hands,
@@ -521,9 +528,9 @@ public:
 		air,
 		freeze,
 		chaos,
-		NUM_STEPS_INFORMATION_CHOICES
+		NUM_STEPS_DATA_CHOICES
 	};
-	void HandleStepsInformationChoice( StepsInformationChoice c, const vector<int> &iAnswers );
+	void HandleStepsDataChoice(StepsDataChoice c, const vector<int> &answers);
 
 	enum SongInformationChoice
 	{

@@ -63,6 +63,7 @@ AutoScreenMessage( SM_BackFromMainMenu );
 AutoScreenMessage( SM_BackFromAreaMenu );
 AutoScreenMessage( SM_BackFromAlterMenu );
 AutoScreenMessage( SM_BackFromStepsInformation );
+AutoScreenMessage( SM_BackFromStepsData );
 AutoScreenMessage( SM_BackFromOptions );
 AutoScreenMessage( SM_BackFromSongInformation );
 AutoScreenMessage( SM_BackFromBGChange );
@@ -527,6 +528,7 @@ static MenuDef g_MainMenu(
 	MenuRowDef( ScreenEdit::edit_song_info,			"Edit song info",		true, EditMode_Full, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::edit_steps_information,		"Edit steps information",	true, EditMode_Practice, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::edit_timing_data,		"Edit Timing Data",		true, EditMode_Full, true, true, 0, NULL ),
+	MenuRowDef( ScreenEdit::view_steps_data,	"View steps data",	true,	EditMode_Practice, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::play_preview_music,		"Play preview music",		true, EditMode_Full, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::exit,				"Exit Edit Mode",		true, EditMode_Practice, true, true, 0, NULL )
 );
@@ -600,22 +602,27 @@ static MenuDef g_StepsInformation(
 	"ScreenMiniMenuStepsInformation",
 	MenuRowDef( ScreenEdit::difficulty,	"Difficulty",		true, EditMode_Practice, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::meter,		"Meter",		true, EditMode_Practice, true, false, 0, NULL ),
+	MenuRowDef( ScreenEdit::predict_meter,	"Predicted Meter",	false, EditMode_Full, true, true, 0, NULL ),
     MenuRowDef( ScreenEdit::chartname,	"Chart Name",	true, EditMode_Practice, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::description,	"Description",		true, EditMode_Practice, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::chartstyle,	"Chart Style",		true, EditMode_Practice, true, true, 0, NULL ),
-	MenuRowDef( ScreenEdit::step_credit,	"Step Author",		true, EditMode_Practice, true, true, 0, NULL ),
-	MenuRowDef( ScreenEdit::predict_meter,	"Predicted Meter",	false, EditMode_Full, true, true, 0, NULL ),
-	MenuRowDef( ScreenEdit::tap_notes,	"Tap Steps",		false, EditMode_Full, true, true, 0, NULL ),
-	MenuRowDef( ScreenEdit::jumps,		"Jumps",		false, EditMode_Full, true, true, 0, NULL ),
-	MenuRowDef( ScreenEdit::hands,		"Hands",		false, EditMode_Full, true, true, 0, NULL ),
-	MenuRowDef( ScreenEdit::quads,		"Quads",		false, EditMode_Full, true, true, 0, NULL ),
-	MenuRowDef( ScreenEdit::holds,		"Holds",		false, EditMode_Full, true, true, 0, NULL ),
-	MenuRowDef( ScreenEdit::mines,		"Mines",		false, EditMode_Full, true, true, 0, NULL ),
-	MenuRowDef( ScreenEdit::stream,		"Stream",		false, EditMode_Full, true, true, 0, NULL ),
-	MenuRowDef( ScreenEdit::voltage,	"Voltage",		false, EditMode_Full, true, true, 0, NULL ),
-	MenuRowDef( ScreenEdit::air,		"Air",			false, EditMode_Full, true, true, 0, NULL ),
-	MenuRowDef( ScreenEdit::freeze,		"Freeze",		false, EditMode_Full, true, true, 0, NULL ),
-	MenuRowDef( ScreenEdit::chaos,		"Chaos",		false, EditMode_Full, true, true, 0, NULL )
+	MenuRowDef( ScreenEdit::step_credit,	"Step Author",		true, EditMode_Practice, true, true, 0, NULL )
+	
+);
+
+static MenuDef g_StepsData(
+	"ScreenMiniMenuStepsData",
+   MenuRowDef( ScreenEdit::tap_notes,	"Tap Steps",	false, EditMode_Full, true, true, 0, NULL ),
+   MenuRowDef( ScreenEdit::jumps,		"Jumps",		false, EditMode_Full, true, true, 0, NULL ),
+   MenuRowDef( ScreenEdit::hands,		"Hands",		false, EditMode_Full, true, true, 0, NULL ),
+   MenuRowDef( ScreenEdit::quads,		"Quads",		false, EditMode_Full, true, true, 0, NULL ),
+   MenuRowDef( ScreenEdit::holds,		"Holds",		false, EditMode_Full, true, true, 0, NULL ),
+   MenuRowDef( ScreenEdit::mines,		"Mines",		false, EditMode_Full, true, true, 0, NULL ),
+   MenuRowDef( ScreenEdit::stream,		"Stream",		false, EditMode_Full, true, true, 0, NULL ),
+   MenuRowDef( ScreenEdit::voltage,		"Voltage",		false, EditMode_Full, true, true, 0, NULL ),
+   MenuRowDef( ScreenEdit::air,			"Air",			false, EditMode_Full, true, true, 0, NULL ),
+   MenuRowDef( ScreenEdit::freeze,		"Freeze",		false, EditMode_Full, true, true, 0, NULL ),
+   MenuRowDef( ScreenEdit::chaos,		"Chaos",		false, EditMode_Full, true, true, 0, NULL )
 );
 
 static MenuDef g_SongInformation(
@@ -2931,6 +2938,12 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	{
 		HandleStepsInformationChoice( (StepsInformationChoice)ScreenMiniMenu::s_iLastRowCode, ScreenMiniMenu::s_viLastAnswers );
 	}
+	else if (SM == SM_BackFromStepsData)
+	{
+		HandleStepsDataChoice((StepsDataChoice)ScreenMiniMenu::s_iLastRowCode,
+							  ScreenMiniMenu::s_viLastAnswers);
+	}
+	
 	else if( SM == SM_BackFromSongInformation )
 	{
 		HandleSongInformationChoice( (SongInformationChoice)ScreenMiniMenu::s_iLastRowCode, ScreenMiniMenu::s_viLastAnswers );
@@ -3655,7 +3668,6 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 				/* XXX: If the difficulty is changed from EDIT, and pSteps->WasLoadedFromProfile()
 				 * is true, we should warn that the steps will no longer be saved to the profile. */
 				Steps* pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
-				float fMusicSeconds = m_pSoundMusic->GetLengthSeconds();
 
 				g_StepsInformation.rows[difficulty].choices.clear();
 				FOREACH_ENUM( Difficulty, dc )
@@ -3675,20 +3687,26 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 				g_StepsInformation.rows[chartstyle].SetOneUnthemedChoice( pSteps->GetChartStyle() );
 				g_StepsInformation.rows[step_credit].bEnabled = (EDIT_MODE.GetValue() >= EditMode_Full);
 				g_StepsInformation.rows[step_credit].SetOneUnthemedChoice( pSteps->GetCredit() );
-				g_StepsInformation.rows[tap_notes].SetOneUnthemedChoice( ssprintf("%d", m_NoteDataEdit.GetNumTapNotes()) );
-				g_StepsInformation.rows[jumps].SetOneUnthemedChoice( ssprintf("%d", m_NoteDataEdit.GetNumJumps()) );
-				g_StepsInformation.rows[hands].SetOneUnthemedChoice( ssprintf("%d", m_NoteDataEdit.GetNumHands()) );
-				g_StepsInformation.rows[quads].SetOneUnthemedChoice( ssprintf("%d", m_NoteDataEdit.GetNumQuads()) );
-				g_StepsInformation.rows[holds].SetOneUnthemedChoice( ssprintf("%d", m_NoteDataEdit.GetNumHoldNotes()) );
-				g_StepsInformation.rows[mines].SetOneUnthemedChoice( ssprintf("%d", m_NoteDataEdit.GetNumMines()) );
-				g_StepsInformation.rows[stream].SetOneUnthemedChoice( ssprintf("%.2f", NoteDataUtil::GetStreamRadarValue(m_NoteDataEdit,fMusicSeconds)) );
-				g_StepsInformation.rows[voltage].SetOneUnthemedChoice( ssprintf("%.2f", NoteDataUtil::GetVoltageRadarValue(m_NoteDataEdit,fMusicSeconds)) );
-				g_StepsInformation.rows[air].SetOneUnthemedChoice( ssprintf("%.2f", NoteDataUtil::GetAirRadarValue(m_NoteDataEdit,fMusicSeconds)) );
-				g_StepsInformation.rows[freeze].SetOneUnthemedChoice( ssprintf("%.2f", NoteDataUtil::GetFreezeRadarValue(m_NoteDataEdit,fMusicSeconds)) );
-				g_StepsInformation.rows[chaos].SetOneUnthemedChoice( ssprintf("%.2f", NoteDataUtil::GetChaosRadarValue(m_NoteDataEdit,fMusicSeconds)) );
 				EditMiniMenu( &g_StepsInformation, SM_BackFromStepsInformation, SM_None );
 			}
 			break;
+		case view_steps_data:
+		{
+			float fMusicSeconds = m_pSoundMusic->GetLengthSeconds();
+			g_StepsData.rows[tap_notes].SetOneUnthemedChoice( ssprintf("%d", m_NoteDataEdit.GetNumTapNotes()) );
+			g_StepsData.rows[jumps].SetOneUnthemedChoice( ssprintf("%d", m_NoteDataEdit.GetNumJumps()) );
+			g_StepsData.rows[hands].SetOneUnthemedChoice( ssprintf("%d", m_NoteDataEdit.GetNumHands()) );
+			g_StepsData.rows[quads].SetOneUnthemedChoice( ssprintf("%d", m_NoteDataEdit.GetNumQuads()) );
+			g_StepsData.rows[holds].SetOneUnthemedChoice( ssprintf("%d", m_NoteDataEdit.GetNumHoldNotes()) );
+			g_StepsData.rows[mines].SetOneUnthemedChoice( ssprintf("%d", m_NoteDataEdit.GetNumMines()) );
+			g_StepsData.rows[stream].SetOneUnthemedChoice( ssprintf("%.2f", NoteDataUtil::GetStreamRadarValue(m_NoteDataEdit,fMusicSeconds)) );
+			g_StepsData.rows[voltage].SetOneUnthemedChoice( ssprintf("%.2f", NoteDataUtil::GetVoltageRadarValue(m_NoteDataEdit,fMusicSeconds)) );
+			g_StepsData.rows[air].SetOneUnthemedChoice( ssprintf("%.2f", NoteDataUtil::GetAirRadarValue(m_NoteDataEdit,fMusicSeconds)) );
+			g_StepsData.rows[freeze].SetOneUnthemedChoice( ssprintf("%.2f", NoteDataUtil::GetFreezeRadarValue(m_NoteDataEdit,fMusicSeconds)) );
+			g_StepsData.rows[chaos].SetOneUnthemedChoice( ssprintf("%.2f", NoteDataUtil::GetChaosRadarValue(m_NoteDataEdit,fMusicSeconds)) );
+			EditMiniMenu( &g_StepsData, SM_BackFromStepsData, SM_None );
+			break;
+		}
 		case save:
 		case save_on_exit:
 			{
@@ -4262,6 +4280,11 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 
 	if( bSaveUndo )
 		CheckNumberOfNotesAndUndo();
+}
+
+void ScreenEdit::HandleStepsDataChoice( StepsDataChoice c, const vector<int> &iAnswers )
+{
+	return; // nothing is done with the choices. Yet.
 }
 
 static LocalizedString ENTER_NEW_DESCRIPTION( "ScreenEdit", "Enter a new description." );
