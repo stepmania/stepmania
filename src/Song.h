@@ -39,14 +39,6 @@ enum BackgroundLayer
 	BACKGROUND_LAYER_Invalid
 };
 
-/** @brief The different ways of displaying the BPM. */
-enum DisplayBPM
-{
-	DISPLAY_BPM_ACTUAL, /**< Display the song's actual BPM. */
-	DISPLAY_BPM_SPECIFIED, /**< Display a specified value or values. */
-	DISPLAY_BPM_RANDOM /**< Display a random selection of BPMs. */
-};
-
 /** @brief A custom foreach loop for the different background layers. */
 #define FOREACH_BackgroundLayer( bl ) FOREACH_ENUM( BackgroundLayer, bl )
 

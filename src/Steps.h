@@ -22,6 +22,14 @@ struct lua_State;
  */
 const int MAX_STEPS_DESCRIPTION_LENGTH = 255;
 
+/** @brief The different ways of displaying the BPM. */
+enum DisplayBPM
+{
+	DISPLAY_BPM_ACTUAL, /**< Display the song's actual BPM. */
+	DISPLAY_BPM_SPECIFIED, /**< Display a specified value or values. */
+	DISPLAY_BPM_RANDOM /**< Display a random selection of BPMs. */
+};
+
 /** 
  * @brief Holds note information for a Song.
  *
