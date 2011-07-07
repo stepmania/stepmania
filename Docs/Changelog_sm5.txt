@@ -11,6 +11,8 @@ StepMania 5.0 ????????? | 20110???
 2011/07/07
 ----------
 * [ScreenEdit] Fix the NoMines transformation bug, issue 363. [Wolfman2000]
+* [CourseLoaderCRS] Don't load BEST# and WORST# where # is greater than the
+  number of songs installed. Fixes issue 373. [AJ]
 
 2011/07/06
 ----------

@@ -163,18 +163,39 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 			// infer entry::Type from the first param
 			// todo: make sure these aren't generating bogus entries due
 			// to a lack of songs. -aj
+			int iNumSongs = SONGMAN->GetNumSongs();
 			LOG->Trace("[CourseLoaderCRS] sParams[1] = %s",sParams[1].c_str());
 			// most played
 			if( sParams[1].Left(strlen("BEST")) == "BEST" )
 			{
-				new_entry.iChooseIndex = StringToInt( sParams[1].Right(sParams[1].size()-strlen("BEST")) ) - 1;
+				int iChooseIndex = StringToInt( sParams[1].Right(sParams[1].size()-strlen("BEST")) ) - 1;
+				if( iChooseIndex > iNumSongs )
+				{
+					// looking up a song that doesn't exist.
+					LOG->UserLog( "Course file", sPath, "is trying to load BEST%i with only %i songs installed. "
+						      "This entry will be ignored.", iChooseIndex, iNumSongs);
+					out.m_bIncomplete = true;
+					continue; // skip this #SONG
+				}
+
+				new_entry.iChooseIndex = iChooseIndex;
 				CLAMP( new_entry.iChooseIndex, 0, 500 );
 				new_entry.songSort = SongSort_MostPlays;
 			}
 			// least played
 			else if( sParams[1].Left(strlen("WORST")) == "WORST" )
 			{
-				new_entry.iChooseIndex = StringToInt( sParams[1].Right(sParams[1].size()-strlen("WORST")) ) - 1;
+				int iChooseIndex = StringToInt( sParams[1].Right(sParams[1].size()-strlen("BEST")) ) - 1;
+				if( iChooseIndex > iNumSongs )
+				{
+					// looking up a song that doesn't exist.
+					LOG->UserLog( "Course file", sPath, "is trying to load WORST%i with only %i songs installed. "
+						      "This entry will be ignored.", iChooseIndex, iNumSongs);
+					out.m_bIncomplete = true;
+					continue; // skip this #SONG
+				}
+
+				new_entry.iChooseIndex = iChooseIndex;
 				CLAMP( new_entry.iChooseIndex, 0, 500 );
 				new_entry.songSort = SongSort_FewestPlays;
 			}
