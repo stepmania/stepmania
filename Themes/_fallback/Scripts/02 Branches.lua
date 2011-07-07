@@ -68,7 +68,7 @@ Branch = {
 		if PROFILEMAN:GetNumLocalProfiles() >= 2 then
 			return "ScreenSelectProfile";
 		else
-			return Branch.AfterSelectProfile();
+			return "ScreenProfileLoad";
 		end
 	end,
 	OptionsEdit = function()
@@ -79,7 +79,7 @@ Branch = {
 		return "ScreenOptionsEdit";
 	end,
 	AfterProfileLoad = function()
-		return "ScreenSelectProfile"
+		return Branch.AfterSelectProfile()
 	end,
 	AfterSelectProfile = function()
 		if ( THEME:GetMetric("Common","AutoSetStyle") == true ) then
