@@ -78,6 +78,7 @@ void SMLoader::LoadFromTokens(
 	out.m_StepsType = GAMEMAN->StringToStepsType( sStepsType );
 	out.SetDescription( sDescription );
 	out.SetCredit( sDescription ); // this is often used for both.
+	out.SetChartName(sDescription); // yeah, one more for good measure.
 	out.SetDifficulty( StringToDifficulty(sDifficulty) );
 
 	// Handle hacks that originated back when StepMania didn't have

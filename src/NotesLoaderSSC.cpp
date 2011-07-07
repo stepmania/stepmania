@@ -461,6 +461,11 @@ bool SSCLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 
 				else if( sValueName=="DESCRIPTION" )
 				{
+					if (out.m_fVersion < VERSION_CHART_NAME_TAG)
+					{
+						pNewNotes->SetChartName(sParams[1]);
+					}
+					// TODO: Make this the else clause?
 					pNewNotes->SetDescription( sParams[1] );
 				}
 
