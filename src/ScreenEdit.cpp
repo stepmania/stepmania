@@ -600,6 +600,7 @@ static MenuDef g_StepsInformation(
 	"ScreenMiniMenuStepsInformation",
 	MenuRowDef( ScreenEdit::difficulty,	"Difficulty",		true, EditMode_Practice, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::meter,		"Meter",		true, EditMode_Practice, true, false, 0, NULL ),
+    MenuRowDef( ScreenEdit::chartname,	"Chart Name",	true, EditMode_Practice, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::description,	"Description",		true, EditMode_Practice, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::chartstyle,	"Chart Style",		true, EditMode_Practice, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::step_credit,	"Step Author",		true, EditMode_Practice, true, true, 0, NULL ),
@@ -1121,6 +1122,7 @@ static LocalizedString NOTES("ScreenEdit", "%s notes");
 static LocalizedString SELECTION_BEAT("ScreenEdit", "Selection beat");
 static LocalizedString DIFFICULTY("ScreenEdit", "Difficulty");
 static LocalizedString ROUTINE_PLAYER("ScreenEdit", "Routine Player");
+static LocalizedString CHART_NAME("ScreenEdit", "Chart Name");
 static LocalizedString DESCRIPTION("ScreenEdit", "Description");
 static LocalizedString CHART_STYLE("ScreenEdit", "Chart Style");
 static LocalizedString STEP_AUTHOR("ScreenEdit", "Step Author");
@@ -1151,6 +1153,7 @@ static ThemeMetric<RString> SELECTION_BEAT_UNFINISHED_FORMAT("ScreenEdit", "Sele
 static ThemeMetric<RString> SELECTION_BEAT_END_FORMAT("ScreenEdit", "SelectionBeatEndFormat");
 static ThemeMetric<RString> DIFFICULTY_FORMAT("ScreenEdit", "DifficultyFormat");
 static ThemeMetric<RString> ROUTINE_PLAYER_FORMAT("ScreenEdit", "RoutinePlayerFormat");
+static ThemeMetric<RString> CHART_NAME_FORMAT("ScreenEdit", "ChartNameFormat");
 static ThemeMetric<RString> DESCRIPTION_FORMAT("ScreenEdit", "DescriptionFormat");
 static ThemeMetric<RString> CHART_STYLE_FORMAT("ScreenEdit", "ChartStyleFormat");
 static ThemeMetric<RString> STEP_AUTHOR_FORMAT("ScreenEdit", "StepAuthorFormat");
@@ -1222,7 +1225,8 @@ void ScreenEdit::UpdateTextInfo()
 		sText += ssprintf( DIFFICULTY_FORMAT.GetValue(), DIFFICULTY.GetValue().c_str(), DifficultyToString( m_pSteps->GetDifficulty() ).c_str() );
 		if ( m_InputPlayerNumber != PLAYER_INVALID )
 			sText += ssprintf( ROUTINE_PLAYER_FORMAT.GetValue(), ROUTINE_PLAYER.GetValue().c_str(), m_InputPlayerNumber + 1 );
-		sText += ssprintf( DESCRIPTION_FORMAT.GetValue(), DESCRIPTION.GetValue().c_str(), m_pSteps->GetDescription().c_str() );
+		//sText += ssprintf( DESCRIPTION_FORMAT.GetValue(), DESCRIPTION.GetValue().c_str(), m_pSteps->GetDescription().c_str() );
+		sText += ssprintf( CHART_NAME_FORMAT.GetValue(), CHART_NAME.GetValue().c_str(), m_pSteps->GetChartName().c_str() );
 		sText += ssprintf( STEP_AUTHOR_FORMAT.GetValue(), STEP_AUTHOR.GetValue().c_str(), m_pSteps->GetCredit().c_str() );
 		//sText += ssprintf( CHART_STYLE_FORMAT.GetValue(), CHART_STYLE.GetValue().c_str(), m_pSteps->GetChartStyle().c_str() );
 		sText += ssprintf( MAIN_TITLE_FORMAT.GetValue(), MAIN_TITLE.GetValue().c_str(), m_pSong->m_sMainTitle.c_str() );
@@ -3385,6 +3389,12 @@ static void ChangeDescription( const RString &sNew )
 	pSteps->SetDescription(sNew);
 }
 
+static void ChangeChartName( const RString &sNew )
+{
+	Steps *pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
+	pSteps->SetChartName(sNew);
+}
+
 static void ChangeChartStyle( const RString &sNew )
 {
 	Steps* pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
@@ -3657,6 +3667,8 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 				g_StepsInformation.rows[meter].SetOneUnthemedChoice( ssprintf("%d", pSteps->GetMeter()) );
 				g_StepsInformation.rows[meter].bEnabled = (EDIT_MODE.GetValue() >= EditMode_Home);
 				g_StepsInformation.rows[predict_meter].SetOneUnthemedChoice( ssprintf("%.2f",pSteps->PredictMeter()) );
+				g_StepsInformation.rows[chartname].bEnabled = (EDIT_MODE.GetValue() >= EditMode_Full);
+				g_StepsInformation.rows[chartname].SetOneUnthemedChoice(pSteps->GetChartName());
 				g_StepsInformation.rows[description].bEnabled = (EDIT_MODE.GetValue() >= EditMode_Full);
 				g_StepsInformation.rows[description].SetOneUnthemedChoice( pSteps->GetDescription() );
 				g_StepsInformation.rows[chartstyle].bEnabled = (EDIT_MODE.GetValue() >= EditMode_Full);
@@ -4253,6 +4265,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 }
 
 static LocalizedString ENTER_NEW_DESCRIPTION( "ScreenEdit", "Enter a new description." );
+static LocalizedString ENTER_NEW_CHART_NAME("ScreenEdit", "Enter a new chart name.");
 static LocalizedString ENTER_NEW_CHART_STYLE( "ScreenEdit", "Enter a new chart style." );
 static LocalizedString ENTER_NEW_STEP_AUTHOR( "ScreenEdit", "Enter the author who made this step pattern." );
 static LocalizedString ENTER_NEW_METER( "ScreenEdit", "Enter a new meter." );
@@ -4264,17 +4277,27 @@ void ScreenEdit::HandleStepsInformationChoice( StepsInformationChoice c, const v
 	
 	switch( c )
 	{
-	case description:
-		ScreenTextEntry::TextEntry( 
-			SM_None, 
-			ENTER_NEW_DESCRIPTION, 
-			m_pSteps->GetDescription(), 
-			MAX_STEPS_DESCRIPTION_LENGTH,
-			SongUtil::ValidateCurrentStepsDescription,
-			ChangeDescription, 
-			NULL 
-			);
-		break;
+		case chartname:
+		{
+			ScreenTextEntry::TextEntry(SM_None,
+									   ENTER_NEW_CHART_NAME,
+									   m_pSteps->GetChartName(),
+									   MAX_STEPS_DESCRIPTION_LENGTH,
+									   SongUtil::ValidateCurrentStepsChartName,
+									   ChangeChartName,
+									   NULL);
+			break;
+		}
+		case description:
+		{
+			ScreenTextEntry::TextEntry(SM_None,
+									   ENTER_NEW_DESCRIPTION,
+									   m_pSteps->GetDescription(),
+									   MAX_STEPS_DESCRIPTION_LENGTH,
+									   SongUtil::ValidateCurrentStepsDescription,
+									   ChangeDescription,NULL);
+			break;
+		}
 	case chartstyle:
 		ScreenTextEntry::TextEntry( 
 			SM_None, 

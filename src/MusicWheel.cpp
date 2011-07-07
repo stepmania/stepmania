@@ -1405,12 +1405,8 @@ RString MusicWheel::JumpToNextGroup()
 
 		for(unsigned i = 0 ; i < iNumGroups ; i++)
 		{
-			RString sCurSongGroup = SONGMAN->GetSongGroupByIndex(i);
-
-			if( m_sExpandedSectionName == sCurSongGroup )
+			if( m_sExpandedSectionName == SONGMAN->GetSongGroupByIndex(i) )
 			{
-				if( SONGMAN->GetSongsOfCurrentGame(sCurSongGroup).size() == 0 ) continue;
-
 				if ( i < iNumGroups - 1 )
 					return SONGMAN->GetSongGroupByIndex(i+1);
 				else
@@ -1455,12 +1451,8 @@ RString MusicWheel::JumpToPrevGroup()
 
 		for(unsigned i = 0 ; i < iNumGroups ; i++)
 		{
-			RString sCurSongGroup = SONGMAN->GetSongGroupByIndex(i);
-
-			if( m_sExpandedSectionName == sCurSongGroup )
+			if( m_sExpandedSectionName == SONGMAN->GetSongGroupByIndex(i) )
 			{
-				if( SONGMAN->GetSongsOfCurrentGame(sCurSongGroup).size() == 0 ) continue;
-
 				if ( i > 0 )
 					return SONGMAN->GetSongGroupByIndex(i-1);
 				else

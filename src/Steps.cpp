@@ -34,10 +34,27 @@ Steps::Steps(): m_StepsType(StepsType_Invalid),
 	m_sDescription(""), m_sChartStyle(""), 
 	m_Difficulty(Difficulty_Invalid), m_iMeter(0),
 	m_bAreCachedRadarValuesJustLoaded(false),
-	m_sCredit("") {}
+	m_sCredit(""), displayBPMType(DISPLAY_BPM_ACTUAL),
+	specifiedBPMMin(0), specifiedBPMMax(0) {}
 
 Steps::~Steps()
 {
+}
+
+void Steps::GetDisplayBpms( DisplayBpms &AddTo ) const
+{
+	if( this->GetDisplayBPM() == DISPLAY_BPM_SPECIFIED )
+	{
+		AddTo.Add( this->GetMinBPM() );
+		AddTo.Add( this->GetMaxBPM() );
+	}
+	else
+	{
+		float fMinBPM, fMaxBPM;
+		this->m_Timing.GetActualBPM( fMinBPM, fMaxBPM );
+		AddTo.Add( fMinBPM );
+		AddTo.Add( fMaxBPM );
+	}
 }
 
 bool Steps::HasAttacks() const
@@ -507,6 +524,44 @@ public:
 		lua_pushstring( L, out );
 		return 1;
 	}
+	
+	static int GetChartName(T *p, lua_State *L)
+	{
+		lua_pushstring(L, p->GetChartName());
+		return 1;
+	}
+	
+	static int GetDisplayBpms( T* p, lua_State *L )
+	{
+		DisplayBpms temp;
+		p->GetDisplayBpms(temp);
+		float fMin = temp.GetMin();
+		float fMax = temp.GetMax();
+		vector<float> fBPMs;
+		fBPMs.push_back( fMin );
+		fBPMs.push_back( fMax );
+		LuaHelpers::CreateTableFromArray(fBPMs, L);
+		return 1;
+	}
+	static int IsDisplayBpmSecret( T* p, lua_State *L )
+	{
+		DisplayBpms temp;
+		p->GetDisplayBpms(temp);
+		lua_pushboolean( L, temp.IsSecret() );
+		return 1;
+	}
+	static int IsDisplayBpmConstant( T* p, lua_State *L )
+	{
+		DisplayBpms temp;
+		p->GetDisplayBpms(temp);
+		lua_pushboolean( L, temp.BpmIsConstant() );
+		return 1;
+	}
+	static int IsDisplayBpmRandom( T* p, lua_State *L )
+	{
+		lua_pushboolean( L, p->GetDisplayBPM() == DISPLAY_BPM_RANDOM );
+		return 1;
+	}
 
 	LunaSteps()
 	{
@@ -521,12 +576,17 @@ public:
 		ADD_METHOD( HasAttacks );
 		ADD_METHOD( GetRadarValues );
 		ADD_METHOD( GetTimingData );
+		ADD_METHOD( GetChartName );
 		//ADD_METHOD( GetSMNoteData );
 		ADD_METHOD( GetStepsType );
 		ADD_METHOD( IsAnEdit );
 		ADD_METHOD( IsAutogen );
 		ADD_METHOD( IsAPlayerEdit );
 		ADD_METHOD( UsesSplitTiming );
+		ADD_METHOD( GetDisplayBpms );
+		ADD_METHOD( IsDisplayBpmSecret );
+		ADD_METHOD( IsDisplayBpmConstant );
+		ADD_METHOD( IsDisplayBpmRandom );
 	}
 };
 

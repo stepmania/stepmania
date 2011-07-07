@@ -20,7 +20,7 @@ void FixupPath( RString &path, const RString &sSongPath );
 RString GetSongAssetPath( RString sPath, const RString &sSongPath );
 
 /** @brief The version of the .ssc file format. */
-const static float STEPFILE_VERSION_NUMBER = 0.73f;
+const static float STEPFILE_VERSION_NUMBER = 0.74f;
 
 /** @brief How many edits for this song can each profile have? */
 const int MAX_EDITS_PER_SONG_PER_PROFILE = 15;
@@ -37,14 +37,6 @@ enum BackgroundLayer
 	//BACKGROUND_LAYER_3, // StepCollection get
 	NUM_BackgroundLayer,
 	BACKGROUND_LAYER_Invalid
-};
-
-/** @brief The different ways of displaying the BPM. */
-enum DisplayBPM
-{
-	DISPLAY_BPM_ACTUAL, /**< Display the song's actual BPM. */
-	DISPLAY_BPM_SPECIFIED, /**< Display a specified value or values. */
-	DISPLAY_BPM_RANDOM /**< Display a random selection of BPMs. */
 };
 
 /** @brief A custom foreach loop for the different background layers. */

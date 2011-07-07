@@ -3701,6 +3701,9 @@
 	<Function name='GetAuthorCredit' return='string' arguments=''>
 		Returns the author that made that particular Steps pattern.
 	</Function>
+	<Function name='GetChartName' return='string' arguments=''>
+		Returns the Steps chart name.
+	</Function>
 	<Function name='GetChartStyle' return='string' arguments=''>
 		Returns the Chart Style for this Steps.
 	</Function>

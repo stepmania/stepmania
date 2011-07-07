@@ -1382,6 +1382,7 @@
 		</Class>
 		<Class name='Steps'>
 			<Function name='GetAuthorCredit'/>
+			<Function name='GetChartName'/>
 			<Function name='GetChartStyle'/>
 			<Function name='GetDescription'/>
 			<Function name='GetDifficulty'/>

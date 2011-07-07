@@ -145,7 +145,6 @@ void SSCLoader::ProcessScrolls( TimingData &out, const RString sParam )
 	}
 }
 
-
 bool SSCLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCache )
 {
 	LOG->Trace( "Song::LoadFromSSCFile(%s)", sPath.c_str() );
@@ -446,6 +445,10 @@ bool SSCLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 			}
 			case GETTING_STEP_INFO:
 			{
+				if (sValueName == "CHARTNAME")
+				{
+					pNewNotes->SetChartName(sParams[1]);
+				}
 				if( sValueName=="STEPSTYPE" )
 				{
 					pNewNotes->m_StepsType = GAMEMAN->StringToStepsType( sParams[1] );
@@ -458,6 +461,11 @@ bool SSCLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 
 				else if( sValueName=="DESCRIPTION" )
 				{
+					if (out.m_fVersion < VERSION_CHART_NAME_TAG)
+					{
+						pNewNotes->SetChartName(sParams[1]);
+					}
+					// TODO: Make this the else clause?
 					pNewNotes->SetDescription( sParams[1] );
 				}
 
