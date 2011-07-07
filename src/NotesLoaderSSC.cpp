@@ -587,6 +587,23 @@ bool SSCLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 				{
 					stepsTiming.m_fBeat0OffsetInSeconds = StringToFloat( sParams[1] );
 				}
+				
+				else if( sValueName=="DISPLAYBPM" )
+				{
+					// #DISPLAYBPM:[xxx][xxx:xxx]|[*]; 
+					if( sParams[1] == "*" )
+						pNewNotes->SetDisplayBPM(DISPLAY_BPM_RANDOM);
+					else 
+					{
+						pNewNotes->SetDisplayBPM(DISPLAY_BPM_SPECIFIED);
+						float min = StringToFloat(sParams[1]);
+						pNewNotes->SetMinBPM(min);
+						if(sParams[2].empty())
+							pNewNotes->SetMaxBPM(min);
+						else
+							pNewNotes->SetMaxBPM(StringToFloat(sParams[2]));
+					}
+				}
 				break;
 			}
 		}
