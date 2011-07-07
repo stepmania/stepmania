@@ -68,6 +68,8 @@ struct SSCLoader : public SMLoader
 	void ProcessLabels( TimingData &, const RString );
 	virtual void ProcessCombos( TimingData &, const RString, const int = -1 );
 	void ProcessScrolls( TimingData &, const RString );
+	
+	void ProcessWarnings( Steps *out, const RString param);
 };
 
 #endif

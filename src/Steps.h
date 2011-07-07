@@ -98,6 +98,35 @@ public:
 	/** @brief The stringified list of attacks. */
 	vector<RString> m_sAttackString;
 	
+	set<RString> GetWarnings() const
+	{
+		return this->chartWarnings;
+	}
+	
+	RString GetWarningsToSetString() const
+	{
+		RString ret = "";
+		set<RString> tmp = this->GetWarnings();
+		unsigned index = 0;
+		FOREACHS_CONST(RString, tmp, s)
+		{
+			ret += *s;
+			if (++index < tmp.size())
+				ret += ",";
+		}
+		return ret;
+	}
+	
+	void SetWarning(const RString warning)
+	{
+		this->chartWarnings.insert(warning);
+	}
+	
+	void EraseWarnings()
+	{
+		this->chartWarnings.clear();
+	}
+	
 	void SetFilename( RString fn )			{ m_sFilename = fn; }
 	RString GetFilename() const			{ return m_sFilename; }
 	void SetSavedToDisk( bool b )			{ DeAutogen(); m_bSavedToDisk = b; }
@@ -194,6 +223,9 @@ private:
 	bool                m_bAreCachedRadarValuesJustLoaded;
 	/** @brief The name of the person who created the Steps. */
 	RString				m_sCredit;
+	
+	/** @brief The list of warnings found in a chart. */
+	set<RString> chartWarnings;
 };
 
 #endif

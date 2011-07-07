@@ -507,6 +507,12 @@ public:
 		lua_pushstring( L, out );
 		return 1;
 	}
+	
+	static int GetWarnings(T *p, lua_State *L)
+	{
+		lua_pushstring(L, p->GetWarningsToSetString());
+		return 1;
+	}
 
 	LunaSteps()
 	{
@@ -521,6 +527,7 @@ public:
 		ADD_METHOD( HasAttacks );
 		ADD_METHOD( GetRadarValues );
 		ADD_METHOD( GetTimingData );
+		ADD_METHOD( GetWarnings );
 		//ADD_METHOD( GetSMNoteData );
 		ADD_METHOD( GetStepsType );
 		ADD_METHOD( IsAnEdit );
