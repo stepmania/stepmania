@@ -145,17 +145,6 @@ void SSCLoader::ProcessScrolls( TimingData &out, const RString sParam )
 	}
 }
 
-void SSCLoader::ProcessWarnings( Steps *out, const RString param)
-{
-	vector<RString> splitWarnings;
-	split(param, ",", splitWarnings);
-	
-	FOREACH(RString, splitWarnings, s)
-	{
-		out->SetWarning(*s);
-	}
-}
-
 bool SSCLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCache )
 {
 	LOG->Trace( "Song::LoadFromSSCFile(%s)", sPath.c_str() );
@@ -456,9 +445,9 @@ bool SSCLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 			}
 			case GETTING_STEP_INFO:
 			{
-				if (sValueName=="WARNINGS")
+				if (sValueName == "CHARTNAME")
 				{
-					ProcessWarnings(pNewNotes, sParams[1]);
+					pNewNotes->SetChartName(sParams[1]);
 				}
 				if( sValueName=="STEPSTYPE" )
 				{

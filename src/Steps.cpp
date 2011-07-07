@@ -508,9 +508,9 @@ public:
 		return 1;
 	}
 	
-	static int GetWarnings(T *p, lua_State *L)
+	static int GetChartName(T *p, lua_State *L)
 	{
-		lua_pushstring(L, p->GetWarningsToSetString());
+		lua_pushstring(L, p->GetChartName());
 		return 1;
 	}
 
@@ -527,7 +527,7 @@ public:
 		ADD_METHOD( HasAttacks );
 		ADD_METHOD( GetRadarValues );
 		ADD_METHOD( GetTimingData );
-		ADD_METHOD( GetWarnings );
+		ADD_METHOD( GetChartName );
 		//ADD_METHOD( GetSMNoteData );
 		ADD_METHOD( GetStepsType );
 		ADD_METHOD( IsAnEdit );

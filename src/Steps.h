@@ -98,33 +98,14 @@ public:
 	/** @brief The stringified list of attacks. */
 	vector<RString> m_sAttackString;
 	
-	set<RString> GetWarnings() const
+	RString GetChartName() const
 	{
-		return this->chartWarnings;
+		return parent ? Real()->GetChartName() : this->chartName;
 	}
 	
-	RString GetWarningsToSetString() const
+	void SetChartName(const RString name)
 	{
-		RString ret = "";
-		set<RString> tmp = this->GetWarnings();
-		unsigned index = 0;
-		FOREACHS_CONST(RString, tmp, s)
-		{
-			ret += *s;
-			if (++index < tmp.size())
-				ret += ",";
-		}
-		return ret;
-	}
-	
-	void SetWarning(const RString warning)
-	{
-		this->chartWarnings.insert(warning);
-	}
-	
-	void EraseWarnings()
-	{
-		this->chartWarnings.clear();
+		this->chartName = name;
 	}
 	
 	void SetFilename( RString fn )			{ m_sFilename = fn; }
@@ -224,8 +205,8 @@ private:
 	/** @brief The name of the person who created the Steps. */
 	RString				m_sCredit;
 	
-	/** @brief The list of warnings found in a chart. */
-	set<RString> chartWarnings;
+	/** @brief The name of the chart. */
+	RString chartName;
 };
 
 #endif
