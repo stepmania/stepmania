@@ -833,6 +833,21 @@ bool SongUtil::ValidateCurrentStepsDescription( const RString &sAnswer, RString 
 	return true;
 }
 
+bool SongUtil::ValidateCurrentStepsChartName(const RString &answer, RString &error)
+{
+	if (answer.empty()) return true;
+	
+	/* Don't allow duplicate title names within the same StepsType.
+	 * We need some way of identifying the unique charts. */
+	Steps *pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
+	
+	if (pSteps->GetChartName() == answer) return true;
+	
+	// TODO next commit: borrow code from EditStepsDescription.
+	
+	return true;
+}
+
 static LocalizedString AUTHOR_NAME_CANNOT_CONTAIN( "SongUtil", "The step author's name cannot contain any of the following characters: %s" );
 
 bool SongUtil::ValidateCurrentStepsCredit( const RString &sAnswer, RString &sErrorOut )
