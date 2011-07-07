@@ -465,8 +465,10 @@ bool SSCLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 					{
 						pNewNotes->SetChartName(sParams[1]);
 					}
-					// TODO: Make this the else clause?
-					pNewNotes->SetDescription( sParams[1] );
+					else
+					{
+						pNewNotes->SetDescription(sParams[1]);
+					}
 				}
 
 				else if( sValueName=="DIFFICULTY" )
