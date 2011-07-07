@@ -169,6 +169,34 @@ public:
 	 * @brief Determine if the Steps use Split Timing by comparing the Song it's in.
 	 * @return true if the Step and Song use different timings, false otherwise. */
 	bool UsesSplitTiming() const;
+	
+	void SetDisplayBPM(const DisplayBPM type)
+	{
+		this->displayBPMType = type;
+	}
+	
+	DisplayBPM GetDisplayBPM() const
+	{
+		return this->displayBPMType;
+	}
+	
+	void SetMinBPM(const float f)
+	{
+		this->specifiedBPMMin = f;
+	}
+	float GetMinBPM() const
+	{
+		return this->specifiedBPMMin;
+	}
+	
+	void SetMaxBPM(const float f)
+	{
+		this->specifiedBPMMax = f;
+	}
+	float GetMaxBPM() const
+	{
+		return this->specifiedBPMMax;
+	}
 
 private:
 	inline const Steps *Real() const		{ return parent ? parent : this; }
@@ -215,6 +243,16 @@ private:
 	
 	/** @brief The name of the chart. */
 	RString chartName;
+	
+	/** @brief How is the BPM displayed for this chart? */
+	DisplayBPM displayBPMType;
+	/** @brief What is the minimum specified BPM? */
+	float	specifiedBPMMin;
+	/**
+	 * @brief What is the maximum specified BPM?
+	 *
+	 * If this is a range, then min should not be equal to max. */
+	float	specifiedBPMMax;
 };
 
 #endif
