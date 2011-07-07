@@ -606,8 +606,10 @@ static MenuDef g_StepsInformation(
     MenuRowDef( ScreenEdit::chartname,	"Chart Name",	true, EditMode_Practice, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::description,	"Description",		true, EditMode_Practice, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::chartstyle,	"Chart Style",		true, EditMode_Practice, true, true, 0, NULL ),
-	MenuRowDef( ScreenEdit::step_credit,	"Step Author",		true, EditMode_Practice, true, true, 0, NULL )
-	
+	MenuRowDef( ScreenEdit::step_credit,	"Step Author",		true, EditMode_Practice, true, true, 0, NULL ),
+    MenuRowDef( ScreenEdit::step_display_bpm,		"Display BPM",			true, EditMode_Full, true, true, 0, "Actual", "Specified", "Random" ),
+    MenuRowDef( ScreenEdit::step_min_bpm,			"Min BPM",			true, EditMode_Full, true, true, 0, NULL ),
+    MenuRowDef( ScreenEdit::step_max_bpm,			"Max BPM",			true, EditMode_Full, true, true, 0, NULL )
 );
 
 static MenuDef g_StepsData(
@@ -3507,9 +3509,21 @@ static void ChangeMinBPM( const RString &sNew )
 	GAMESTATE->m_pCurSong->m_fSpecifiedBPMMin = StringToFloat( sNew );
 }
 
+static void ChangeStepsMinBPM(const RString &sNew)
+{
+	Steps *step = GAMESTATE->m_pCurSteps[PLAYER_1];
+	step->SetMinBPM(StringToFloat(sNew));
+}
+
 static void ChangeMaxBPM( const RString &sNew )
 {
 	GAMESTATE->m_pCurSong->m_fSpecifiedBPMMax = StringToFloat( sNew );
+}
+
+static void ChangeStepsMaxBPM(const RString &sNew)
+{
+	Steps *step = GAMESTATE->m_pCurSteps[PLAYER_1];
+	step->SetMaxBPM(StringToFloat(sNew));
 }
 
 TimingData & ScreenEdit::GetAppropriateTiming() const
@@ -3687,6 +3701,9 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 				g_StepsInformation.rows[chartstyle].SetOneUnthemedChoice( pSteps->GetChartStyle() );
 				g_StepsInformation.rows[step_credit].bEnabled = (EDIT_MODE.GetValue() >= EditMode_Full);
 				g_StepsInformation.rows[step_credit].SetOneUnthemedChoice( pSteps->GetCredit() );
+				g_SongInformation.rows[step_display_bpm].iDefaultChoice = pSteps->GetDisplayBPM();
+				g_SongInformation.rows[step_min_bpm].SetOneUnthemedChoice( ssprintf("%.6f", pSteps->GetMinBPM()));
+				g_SongInformation.rows[step_max_bpm].SetOneUnthemedChoice( ssprintf("%.6f", pSteps->GetMaxBPM()));
 				EditMiniMenu( &g_StepsInformation, SM_BackFromStepsInformation, SM_None );
 			}
 			break;
@@ -4292,11 +4309,14 @@ static LocalizedString ENTER_NEW_CHART_NAME("ScreenEdit", "Enter a new chart nam
 static LocalizedString ENTER_NEW_CHART_STYLE( "ScreenEdit", "Enter a new chart style." );
 static LocalizedString ENTER_NEW_STEP_AUTHOR( "ScreenEdit", "Enter the author who made this step pattern." );
 static LocalizedString ENTER_NEW_METER( "ScreenEdit", "Enter a new meter." );
+static LocalizedString ENTER_MIN_BPM			("ScreenEdit","Enter a new min BPM.");
+static LocalizedString ENTER_MAX_BPM			("ScreenEdit","Enter a new max BPM.");
 void ScreenEdit::HandleStepsInformationChoice( StepsInformationChoice c, const vector<int> &iAnswers )
 {
 	Steps* pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
 	Difficulty dc = (Difficulty)iAnswers[difficulty];
 	pSteps->SetDifficulty( dc );
+	pSteps->SetDisplayBPM(static_cast<DisplayBPM>(iAnswers[step_display_bpm]));
 	
 	switch( c )
 	{
@@ -4351,6 +4371,18 @@ void ScreenEdit::HandleStepsInformationChoice( StepsInformationChoice c, const v
 			   4
 			   );
 		break;
+		case step_min_bpm:
+			ScreenTextEntry::TextEntry(SM_None, ENTER_MIN_BPM,
+									   ssprintf("%.6f", pSteps->GetMinBPM()), 20,
+									   ScreenTextEntry::FloatValidate,
+									   ChangeStepsMinBPM, NULL );
+			break;
+		case step_max_bpm:
+			ScreenTextEntry::TextEntry(SM_None, ENTER_MAX_BPM,
+									   ssprintf("%.6f", pSteps->GetMaxBPM()), 20,
+									   ScreenTextEntry::FloatValidate,
+									   ChangeStepsMaxBPM, NULL );
+			break;
 	default:
 		break;
 	}
@@ -4367,8 +4399,6 @@ static LocalizedString ENTER_ARTIST_TRANSLIT		("ScreenEdit","Enter a new artist 
 static LocalizedString ENTER_LAST_SECOND_HINT		("ScreenEdit","Enter a new last second hint.");
 static LocalizedString ENTER_PREVIEW_START		("ScreenEdit","Enter a new preview start.");
 static LocalizedString ENTER_PREVIEW_LENGTH		("ScreenEdit","Enter a new preview length.");
-static LocalizedString ENTER_MIN_BPM			("ScreenEdit","Enter a new min BPM.");
-static LocalizedString ENTER_MAX_BPM			("ScreenEdit","Enter a new max BPM.");
 void ScreenEdit::HandleSongInformationChoice( SongInformationChoice c, const vector<int> &iAnswers )
 {
 	Song* pSong = GAMESTATE->m_pCurSong;

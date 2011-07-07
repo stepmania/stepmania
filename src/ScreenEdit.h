@@ -511,6 +511,9 @@ public:
 		chartstyle, /**< How is this chart meant to be played? */
 		step_credit, /**< Who wrote this individual chart? */
 		predict_meter, /**< What does the game think this chart's rating should be? */
+		step_display_bpm,
+		step_min_bpm,
+		step_max_bpm,
 		NUM_STEPS_INFORMATION_CHOICES
 	};
 	void HandleStepsInformationChoice( StepsInformationChoice c, const vector<int> &iAnswers );
