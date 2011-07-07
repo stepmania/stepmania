@@ -711,7 +711,7 @@ void GameState::BeginStage()
 
 	if( !ARE_STAGE_PLAYER_MODS_FORCED )
 	{
-		FOREACH_PlayerNumber( p )
+		FOREACH_EnabledPlayer( p )
 		{
 			ModsGroup<PlayerOptions> &po = m_pPlayerState[p]->m_PlayerOptions;
 			po.Assign(ModsLevel_Stage,
