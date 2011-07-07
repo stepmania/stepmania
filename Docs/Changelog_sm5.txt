@@ -13,6 +13,10 @@ StepMania 5.0 ????????? | 20110???
 * [ScreenEdit] Fix the NoMines transformation bug, issue 363. [Wolfman2000]
 * [CourseLoaderCRS] Don't load BEST# and WORST# where # is greater than the
   number of songs installed. Fixes issue 373. [AJ]
+* [NotesAllSSC] Add the #CHARTNAME tag to the Steps. #DESCRIPTION is now for
+  more detailed descriptions, or perhaps some short hand lingo. All files
+  that used #DESCRIPTION will have their values copied to #CHARTNAME on
+  load. [Wolfman2000]
 
 2011/07/06
 ----------
