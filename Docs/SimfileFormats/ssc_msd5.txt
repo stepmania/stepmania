@@ -64,6 +64,7 @@
 #FAKES:;
 #LABELS:;
 #ATTACKS:;
+#DISPLAYBPM:;
 
 // actual step data
 #NOTES:;

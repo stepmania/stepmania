@@ -20,6 +20,9 @@ StepMania 5.0 ????????? | 20110???
 * [ScreenEdit] Add a Steps Data menu for getting numerical step data on the
   chart. This is a read only menu. Edit Steps Information contains writable
   information. [Wolfman2000]
+* [NotesAllSSC] Add the Steps version of #DISPLAYBPM. The Song version is
+  still there, so themes should not have to worry about breakage.
+  [Wolfman2000]
 
 2011/07/06
 ----------
