@@ -173,6 +173,7 @@ my @files = (
 	"NoteSkins/pump/default",
 	"NoteSkins/pump/frame5p",
 	"NoteSkins/pump/newextra",
+	"NoteSkins/pump/pad",
 	"NoteSkins/pump/rhythm",
 	"NoteSkins/pump/simple",
 	# kb7 noteskins

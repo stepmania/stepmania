@@ -383,6 +383,7 @@ Section "Main Section" SecMain
 	CreateDirectory "$INSTDIR\Songs"
 	SetOutPath "$INSTDIR\Songs"
 	;File "Songs\Instructions.txt"
+	File /r /x CVS /x .svn "Songs\*"
 
 	; remove and install themes
 	RMDir /r "$INSTDIR\Themes\_fallback"

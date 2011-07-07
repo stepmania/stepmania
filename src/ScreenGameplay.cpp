@@ -1784,7 +1784,22 @@ void ScreenGameplay::Update( float fDeltaTime )
 
 		// update give up
 		bool bGiveUpTimerFired = !m_GiveUpTimer.IsZero() && m_GiveUpTimer.Ago() > 2.5f;
-		bool bAllHumanHaveBigMissCombo = FAIL_ON_MISS_COMBO.GetValue() != -1 && STATSMAN->m_CurStageStats.GetMinimumMissCombo() >= FAIL_ON_MISS_COMBO;
+		
+			
+		bool bAllHumanHaveBigMissCombo = true;
+		FOREACH_EnabledPlayerNumberInfo( m_vPlayerInfo, pi )
+		{
+			if (pi->GetPlayerState()->m_PlayerOptions.GetCurrent().m_FailType == PlayerOptions::FAIL_OFF ||
+			    pi->GetPlayerState()->m_HealthState < HealthState_Dead )
+			{
+				bAllHumanHaveBigMissCombo = false;
+				break;
+			}
+		}
+		if (bAllHumanHaveBigMissCombo) // possible to get in here.
+		{
+			bAllHumanHaveBigMissCombo = FAIL_ON_MISS_COMBO.GetValue() != -1 && STATSMAN->m_CurStageStats.GetMinimumMissCombo() >= FAIL_ON_MISS_COMBO;
+		}
 		if( bGiveUpTimerFired || bAllHumanHaveBigMissCombo )
 		{
 			STATSMAN->m_CurStageStats.m_bGaveUp = true;

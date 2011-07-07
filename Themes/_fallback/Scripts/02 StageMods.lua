@@ -17,22 +17,32 @@ function SetFail()
 	local sFail = "";
 	
 	if GetGamePref("DefaultFail") then
-		sFail = string.format("fail%s", string.lower( GetGamePref("DefaultFail") ));
+		sFail = string.format("Fail%s", GetGamePref("DefaultFail"));
 	else
-		sFail = "failoff";
+		sFail = "FailOff";
 	end
 
-	sFail = sFail .. ",failimmediate,suddendeath";
-	SCREENMAN:SystemMessage( 'NEW FAIL IS: ' .. tostring(sFail) );
-
-	GAMESTATE:SetSongOptions( "ModsLevel_Song", sFail );
+	sFail = tostring(sFail);
+-- 	SCREENMAN:SystemMessage( 'NEW FAIL IS: ' .. tostring(sFail) );
+	
+	for pn in ivalues(GAMESTATE:GetHumanPlayers()) do
+-- 		GAMESTATE:ApplyGameCommand( "stagemod,FailImmediateContinue", pn );
+-- 		GAMESTATE:GetPlayerState(pn):SetPlayerOptions( "ModsLevel_Song", 'mod,FailImmediateContinue' );
+		MESSAGEMAN:Broadcast( "PlayerOptionsChanged", {PlayerNumber = pn} );
+	end
+	
+-- 	GAMESTATE:SetSongOptions( "ModsLevel_Preferred", 'mod,FailImmediateContinue'  );
+-- 	GAMESTATE:SetSongOptions( "ModsLevel_Stage", 'mod,FailImmediateContinue' );
+-- 	GAMESTATE:SetSongOptions( "ModsLevel_Song",'mod,FailImmediateContinue'  );
+	GAMESTATE:ApplyGameCommand( "mod," .. sFail);
+-- 	GAMESTATE:ApplyGameCommand( "stagemod,FailImmediateContinue");
 	MESSAGEMAN:Broadcast( "SongOptionsChanged" );
 end
 
 function ScreenSelectMusic:setupmusicstagemods()
 	Trace( "setupmusicstagemods" )
 	local pm = GAMESTATE:GetPlayMode()
-
+	
 	if pm == "PlayMode_Battle" or pm == "PlayMode_Rave" then
 		local so = GAMESTATE:GetDefaultSongOptions();
 		GAMESTATE:SetSongOptions( "ModsLevel_Stage", so );
@@ -54,8 +64,6 @@ function ScreenSelectMusic:setupmusicstagemods()
 			po = THEME:GetMetric("SongManager","ExtraStagePlayerModifiers");
 			so = THEME:GetMetric("SongManager","ExtraStageStageModifiers");
 		end
-		
-		so = so .. "," .. sFail;
 		
 		local difficulty = steps:GetDifficulty()
 		local Reverse = PlayerNumber:Reverse()

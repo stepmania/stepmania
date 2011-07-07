@@ -38,6 +38,10 @@ else
 	local stepsP1 = GAMESTATE:GetCurrentSteps(PLAYER_1)
 	local stepsP2 = GAMESTATE:GetCurrentSteps(PLAYER_2)
 
+	if not stepsP1 or not stepsP2 then
+		return displaySingle
+	end
+
 	local stP1 = stepsP1:GetStepsType()
 	local stP2 = stepsP2:GetStepsType()
 
