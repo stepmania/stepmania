@@ -749,6 +749,22 @@ bool SongUtil::IsEditDescriptionUnique( const Song* pSong, StepsType st, const R
 	return true;
 }
 
+bool SongUtil::IsChartNameUnique( const Song* pSong, StepsType st, const RString &name, const Steps *pExclude )
+{
+	FOREACH_CONST( Steps*, pSong->GetAllSteps(), s )
+	{
+		Steps *pSteps = *s;
+		
+		if( pSteps->m_StepsType != st )
+			continue;
+		if( pSteps == pExclude )
+			continue;
+		if( pSteps->GetChartName() == name )
+			return false;
+	}
+	return true;
+}
+
 RString SongUtil::MakeUniqueEditDescription( const Song *pSong, StepsType st, const RString &sPreferredDescription )
 {
 	if( IsEditDescriptionUnique( pSong, st, sPreferredDescription, NULL ) )
@@ -772,8 +788,11 @@ RString SongUtil::MakeUniqueEditDescription( const Song *pSong, StepsType st, co
 }
 
 static LocalizedString YOU_MUST_SUPPLY_NAME	( "SongUtil", "You must supply a name for your new edit." );
+static LocalizedString CHART_NAME_CONFLICTS ("SongUtil", "The name you chose conflicts with another chart. Please use a different name.");
 static LocalizedString EDIT_NAME_CONFLICTS	( "SongUtil", "The name you chose conflicts with another edit. Please use a different name." );
+static LocalizedString CHART_NAME_CANNOT_CONTAIN ("SongUtil", "The chart name cannot contain any of the following characters: %s" );
 static LocalizedString EDIT_NAME_CANNOT_CONTAIN	( "SongUtil", "The edit name cannot contain any of the following characters: %s" );
+
 bool SongUtil::ValidateCurrentEditStepsDescription( const RString &sAnswer, RString &sErrorOut )
 {
 	Steps *pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
@@ -837,6 +856,13 @@ bool SongUtil::ValidateCurrentStepsChartName(const RString &answer, RString &err
 {
 	if (answer.empty()) return true;
 	
+	static const RString sInvalidChars = "\\/:*?\"<>|";
+	if( strpbrk(answer, sInvalidChars) != NULL )
+	{
+		error = ssprintf( CHART_NAME_CANNOT_CONTAIN.GetValue(), sInvalidChars.c_str() );
+		return false;
+	}
+	
 	/* Don't allow duplicate title names within the same StepsType.
 	 * We need some way of identifying the unique charts. */
 	Steps *pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
@@ -844,8 +870,11 @@ bool SongUtil::ValidateCurrentStepsChartName(const RString &answer, RString &err
 	if (pSteps->GetChartName() == answer) return true;
 	
 	// TODO next commit: borrow code from EditStepsDescription.
-	
-	return true;
+	bool result = SongUtil::IsChartNameUnique(GAMESTATE->m_pCurSong, pSteps->m_StepsType,
+											  answer, pSteps);
+	if (!result)
+		error = CHART_NAME_CONFLICTS;
+	return result;
 }
 
 static LocalizedString AUTHOR_NAME_CANNOT_CONTAIN( "SongUtil", "The step author's name cannot contain any of the following characters: %s" );
