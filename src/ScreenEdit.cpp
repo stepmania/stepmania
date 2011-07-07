@@ -4265,7 +4265,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 }
 
 static LocalizedString ENTER_NEW_DESCRIPTION( "ScreenEdit", "Enter a new description." );
-static LocalizedString ENTER_NEW_CHART_NAME("SCreenEdit", "Enter a new chart name.");
+static LocalizedString ENTER_NEW_CHART_NAME("ScreenEdit", "Enter a new chart name.");
 static LocalizedString ENTER_NEW_CHART_STYLE( "ScreenEdit", "Enter a new chart style." );
 static LocalizedString ENTER_NEW_STEP_AUTHOR( "ScreenEdit", "Enter the author who made this step pattern." );
 static LocalizedString ENTER_NEW_METER( "ScreenEdit", "Enter a new meter." );
