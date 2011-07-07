@@ -197,6 +197,8 @@ public:
 	{
 		return this->specifiedBPMMax;
 	}
+	
+	void GetDisplayBpms( DisplayBpms &addTo) const;
 
 private:
 	inline const Steps *Real() const		{ return parent ? parent : this; }
