@@ -1,8 +1,11 @@
 --[[
-Custom Speed Mods v2.0 (for sm-ssc)
+Custom Speed Mods v2.1 (for StepMania 5)
 by AJ Kelly of KKI Labs ( http://kki.ajworld.net/ )
 
 changelog:
+
+v2.1 (StepMania 5 Preview 2)
+* Added support for m-Mods.
 
 v2.0 (for sm-ssc)
 Giant rewrite of the speed mod parser.
@@ -38,9 +41,6 @@ v1.2
 
 v1.1
 * Cleaned up code some, I think.
-________________________________________________________________________________
-anticipated future changes:
-* M-Mod support (when sm-ssc integrates it)
 ]]
 
 -- ProfileDir(slot): gets the profile dir for slot,
@@ -150,7 +150,6 @@ local function SpeedModSort(tab)
 	local xMods = {}
 	local mMods = {}
 	local cMods = {}
-	--local mMods = {}
 
 	-- convert to numbers so sorting works:
 	for i=1,#tab do
@@ -160,7 +159,8 @@ local function SpeedModSort(tab)
 		if string.find(tab[i],"C%d") then
 			typ = cMods
 			val = string.gsub(tab[i], "C", "")
-		elseif string.find(tab[i],"m%d") then
+		-- support both cases because I want to hit people -freem
+		elseif string.find(tab[i],"m%d") or string.find(tab[i],"M%d") then
 			typ = mMods
 			val = string.gsub(tab[i], "m", "")
 		else
@@ -187,7 +187,6 @@ local function SpeedModSort(tab)
 	for i=1,#mMods do
 		table.insert(fin, "m"..mMods[i])
 	end
-	--for i=1,#mMods do table.insert(fin, "M"..mMods[i]); end;
 	return fin
 end
 
@@ -298,7 +297,7 @@ function SpeedMods()
 end
 
 --[[
-Copyright © 2008-2009 AJ Kelly/KKI Labs.
+Copyright © 2008-2011 AJ Kelly/KKI Labs.
 Use freely, so long this notice and the above documentation remains.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
