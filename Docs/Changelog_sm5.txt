@@ -12,6 +12,7 @@ StepMania 5.0 ????????? | 20110???
 ----------
 * [ScreenEdit] Fix the bug where hitting Enter during playing wouldn't take
   the user back to the editor. [Wolfman2000]
+* [Gameplay] Fix Fail mods being dishonored. [Midiman]
 
 2011/07/05
 ----------
