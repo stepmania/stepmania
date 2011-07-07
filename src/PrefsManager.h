@@ -115,8 +115,8 @@ enum CourseSortOrders
 enum DefaultFailType
 {
 	FAIL_IMMEDIATE,
-	FAIL_IMMEDIATE_CONTINUE,
-	FAIL_AT_END,
+	FAIL_IMMEDIATECONTINUE,
+	FAIL_ENDOFSONG,
 	FAIL_OFF,
 	NUM_DefaultFailType,
 	DefaultFailType_Invalid
@@ -286,9 +286,7 @@ public:
 
 	/** @brief Enable some quirky behavior used by some older versions of StepMania. */
 	Preference<bool>	m_bQuirksMode;
-	
-	/** @brief The specific failure type to use at the beginning. */
-	Preference<DefaultFailType> m_sDefaultFailType;
+	// Preference<RString> m_sDefaultFailType; // XXX: Fix fail bug?
 
 	// Debug:
 	Preference<bool>	m_bLogToDisk;

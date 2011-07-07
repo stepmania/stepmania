@@ -716,8 +716,6 @@ void GameState::BeginStage()
 			ModsGroup<PlayerOptions> &po = m_pPlayerState[p]->m_PlayerOptions;
 			po.Assign(ModsLevel_Stage,
 					  m_pPlayerState[p]->m_PlayerOptions.GetPreferred());
-			// Note: at this point, fail type should already be set.
-			PO_GROUP_ASSIGN(po, ModsLevel_Preferred, m_FailType, po.GetPreferred().m_FailType);
 		}
 	}
 	if( !ARE_STAGE_SONG_MODS_FORCED )

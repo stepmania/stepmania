@@ -125,15 +125,16 @@ XToString( CourseSortOrders );
 StringToX( CourseSortOrders );
 LuaXType( CourseSortOrders );
 
-static const char *DefaultFailTypeNames[] = {
+// XXX: Fix fail bug?
+/* static const char *DefaultFailTypeNames[] = {
 	"Immediate",
 	"ImmediateContinue",
-	"AtEnd",
+	"EndOfSong",
 	"Off",
 };
 XToString( DefaultFailType );
 StringToX( DefaultFailType );
-LuaXType( DefaultFailType );
+LuaXType( DefaultFailType ); */
 
 bool g_bAutoRestart = false;
 #ifdef DEBUG
@@ -189,8 +190,6 @@ PrefsManager::PrefsManager() :
 	m_bMenuTimer		( "MenuTimer",			false ),
 
 	m_fLifeDifficultyScale	( "LifeDifficultyScale",	1.0f ),
-
-	m_sDefaultFailType ("DefaultFailType", FAIL_IMMEDIATE),
 
 
 	m_iRegenComboAfterMiss		( "RegenComboAfterMiss",	5 ),
