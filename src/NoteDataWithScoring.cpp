@@ -349,7 +349,7 @@ void NoteDataWithScoring::GetActualRadarValues( const NoteData &in, const Player
 		case RadarCategory_Hands:		out[rc] = (float) GetSuccessfulHands( in );						break;
 		case RadarCategory_Rolls:		out[rc] = (float) GetNumHoldNotesWithScore( in, TapNote::hold_head_roll, HNS_Held );	break;
 		case RadarCategory_Lifts:		out[rc] = (float) GetSuccessfulLifts( in, TNS_W4 );					break;
-		case RadarCategory_Fakes:		out[rc] = (float) in.GetNumLifts();							break;
+		case RadarCategory_Fakes:		out[rc] = (float) in.GetNumFakes();							break;
 		//case RadarCategory_Minefields:	out[rc] = (float) GetNumMinefieldsWithScore( in, TapNote::hold_head_mine, HNS_Held );	break;
 		DEFAULT_FAIL( rc );
 		}
