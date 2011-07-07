@@ -42,6 +42,7 @@
 // begin
 #NOTEDATA# // marks a new note data section
 // information from #NOTES moved here
+#CHARTNAME:;
 #STEPSTYPE:;
 #DESCRIPTION:;
 #CHARTSTYLE:;
