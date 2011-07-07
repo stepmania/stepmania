@@ -202,6 +202,9 @@ void Song::InitSteps(Steps *pSteps)
 	pSteps->m_Timing = this->m_SongTiming;
 	pSteps->m_sAttackString = this->m_sAttackString;
 	pSteps->m_Attacks = this->m_Attacks;
+	pSteps->SetDisplayBPM(this->m_DisplayBPMType);
+	pSteps->SetMinBPM(this->m_fSpecifiedBPMMin);
+	pSteps->SetMaxBPM(this->m_fSpecifiedBPMMax);
 }
 
 void Song::GetDisplayBpms( DisplayBpms &AddTo ) const
