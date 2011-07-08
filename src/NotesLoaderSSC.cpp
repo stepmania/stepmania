@@ -465,8 +465,10 @@ bool SSCLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 					{
 						pNewNotes->SetChartName(sParams[1]);
 					}
-					// TODO: Make this the else clause?
-					pNewNotes->SetDescription( sParams[1] );
+					else
+					{
+						pNewNotes->SetDescription(sParams[1]);
+					}
 				}
 
 				else if( sValueName=="DIFFICULTY" )
@@ -584,6 +586,23 @@ bool SSCLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 				else if( sValueName=="OFFSET" )
 				{
 					stepsTiming.m_fBeat0OffsetInSeconds = StringToFloat( sParams[1] );
+				}
+				
+				else if( sValueName=="DISPLAYBPM" )
+				{
+					// #DISPLAYBPM:[xxx][xxx:xxx]|[*]; 
+					if( sParams[1] == "*" )
+						pNewNotes->SetDisplayBPM(DISPLAY_BPM_RANDOM);
+					else 
+					{
+						pNewNotes->SetDisplayBPM(DISPLAY_BPM_SPECIFIED);
+						float min = StringToFloat(sParams[1]);
+						pNewNotes->SetMinBPM(min);
+						if(sParams[2].empty())
+							pNewNotes->SetMaxBPM(min);
+						else
+							pNewNotes->SetMaxBPM(StringToFloat(sParams[2]));
+					}
 				}
 				break;
 			}

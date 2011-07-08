@@ -63,6 +63,7 @@ AutoScreenMessage( SM_BackFromMainMenu );
 AutoScreenMessage( SM_BackFromAreaMenu );
 AutoScreenMessage( SM_BackFromAlterMenu );
 AutoScreenMessage( SM_BackFromStepsInformation );
+AutoScreenMessage( SM_BackFromStepsData );
 AutoScreenMessage( SM_BackFromOptions );
 AutoScreenMessage( SM_BackFromSongInformation );
 AutoScreenMessage( SM_BackFromBGChange );
@@ -521,12 +522,13 @@ static MenuDef g_MainMenu(
 	MenuRowDef( ScreenEdit::play_selection,			"Play selection",		true, EditMode_Practice, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::set_selection_start,		"Set selection start",		true, EditMode_Practice, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::set_selection_end,		"Set selection end",		true, EditMode_Practice, true, true, 0, NULL ),
-	MenuRowDef( ScreenEdit::edit_steps_information,		"Edit steps information",	true, EditMode_Practice, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::revert_to_last_save,		"Revert to last save",		true, EditMode_Home, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::revert_from_disk,		"Revert from disk",		true, EditMode_Full, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::options,			"Editor options",		true, EditMode_Practice, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::edit_song_info,			"Edit song info",		true, EditMode_Full, true, true, 0, NULL ),
+	MenuRowDef( ScreenEdit::edit_steps_information,		"Edit steps information",	true, EditMode_Practice, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::edit_timing_data,		"Edit Timing Data",		true, EditMode_Full, true, true, 0, NULL ),
+	MenuRowDef( ScreenEdit::view_steps_data,	"View steps data",	true,	EditMode_Practice, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::play_preview_music,		"Play preview music",		true, EditMode_Full, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::exit,				"Exit Edit Mode",		true, EditMode_Practice, true, true, 0, NULL )
 );
@@ -569,6 +571,8 @@ static MenuDef g_AlterMenu(
 	      EditMode_Full, true, true, 0, NULL ),
    MenuRowDef(ScreenEdit::convert_to_fake,		"Convert selection to fake",		true, 
 	      EditMode_Full, true, true, 0, NULL ),
+   MenuRowDef(ScreenEdit::convert_to_attack,	"Convert selection to attack",		true,
+			  EditMode_Full, true, true, 0, NULL),
    MenuRowDef(ScreenEdit::routine_invert_notes,		"Invert notes' player",			true,
 	      EditMode_Full, true, true, 0, NULL ),
    MenuRowDef(ScreenEdit::routine_mirror_1_to_2,	"Mirror Player 1 to 2",			true,
@@ -600,22 +604,32 @@ static MenuDef g_StepsInformation(
 	"ScreenMiniMenuStepsInformation",
 	MenuRowDef( ScreenEdit::difficulty,	"Difficulty",		true, EditMode_Practice, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::meter,		"Meter",		true, EditMode_Practice, true, false, 0, NULL ),
+	MenuRowDef( ScreenEdit::predict_meter,	"Predicted Meter",	false, EditMode_Full, true, true, 0, NULL ),
     MenuRowDef( ScreenEdit::chartname,	"Chart Name",	true, EditMode_Practice, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::description,	"Description",		true, EditMode_Practice, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::chartstyle,	"Chart Style",		true, EditMode_Practice, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::step_credit,	"Step Author",		true, EditMode_Practice, true, true, 0, NULL ),
-	MenuRowDef( ScreenEdit::predict_meter,	"Predicted Meter",	false, EditMode_Full, true, true, 0, NULL ),
-	MenuRowDef( ScreenEdit::tap_notes,	"Tap Steps",		false, EditMode_Full, true, true, 0, NULL ),
-	MenuRowDef( ScreenEdit::jumps,		"Jumps",		false, EditMode_Full, true, true, 0, NULL ),
-	MenuRowDef( ScreenEdit::hands,		"Hands",		false, EditMode_Full, true, true, 0, NULL ),
-	MenuRowDef( ScreenEdit::quads,		"Quads",		false, EditMode_Full, true, true, 0, NULL ),
-	MenuRowDef( ScreenEdit::holds,		"Holds",		false, EditMode_Full, true, true, 0, NULL ),
-	MenuRowDef( ScreenEdit::mines,		"Mines",		false, EditMode_Full, true, true, 0, NULL ),
-	MenuRowDef( ScreenEdit::stream,		"Stream",		false, EditMode_Full, true, true, 0, NULL ),
-	MenuRowDef( ScreenEdit::voltage,	"Voltage",		false, EditMode_Full, true, true, 0, NULL ),
-	MenuRowDef( ScreenEdit::air,		"Air",			false, EditMode_Full, true, true, 0, NULL ),
-	MenuRowDef( ScreenEdit::freeze,		"Freeze",		false, EditMode_Full, true, true, 0, NULL ),
-	MenuRowDef( ScreenEdit::chaos,		"Chaos",		false, EditMode_Full, true, true, 0, NULL )
+    MenuRowDef( ScreenEdit::step_display_bpm,		"Display BPM",			true, EditMode_Full, true, true, 0, "Actual", "Specified", "Random" ),
+    MenuRowDef( ScreenEdit::step_min_bpm,			"Min BPM",			true, EditMode_Full, true, true, 0, NULL ),
+    MenuRowDef( ScreenEdit::step_max_bpm,			"Max BPM",			true, EditMode_Full, true, true, 0, NULL )
+);
+
+static MenuDef g_StepsData(
+	"ScreenMiniMenuStepsData",
+   MenuRowDef( ScreenEdit::tap_notes,	"Tap Steps",	false, EditMode_Full, true, true, 0, NULL ),
+   MenuRowDef( ScreenEdit::jumps,		"Jumps",		false, EditMode_Full, true, true, 0, NULL ),
+   MenuRowDef( ScreenEdit::hands,		"Hands",		false, EditMode_Full, true, true, 0, NULL ),
+   MenuRowDef( ScreenEdit::quads,		"Quads",		false, EditMode_Full, true, true, 0, NULL ),
+   MenuRowDef( ScreenEdit::holds,		"Holds",		false, EditMode_Full, true, true, 0, NULL ),
+   MenuRowDef( ScreenEdit::mines,		"Mines",		false, EditMode_Full, true, true, 0, NULL ),
+   MenuRowDef(ScreenEdit::rolls,		"Rolls",		false, EditMode_Full, true, true, 0, NULL ),
+   MenuRowDef(ScreenEdit::lifts,		"Lifts",		false, EditMode_Full, true, true, 0, NULL ),
+   MenuRowDef(ScreenEdit::fakes,		"Fakes",		false, EditMode_Full, true, true, 0, NULL ),
+   MenuRowDef( ScreenEdit::stream,		"Stream",		false, EditMode_Full, true, true, 0, NULL ),
+   MenuRowDef( ScreenEdit::voltage,		"Voltage",		false, EditMode_Full, true, true, 0, NULL ),
+   MenuRowDef( ScreenEdit::air,			"Air",			false, EditMode_Full, true, true, 0, NULL ),
+   MenuRowDef( ScreenEdit::freeze,		"Freeze",		false, EditMode_Full, true, true, 0, NULL ),
+   MenuRowDef( ScreenEdit::chaos,		"Chaos",		false, EditMode_Full, true, true, 0, NULL )
 );
 
 static MenuDef g_SongInformation(
@@ -2931,6 +2945,12 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	{
 		HandleStepsInformationChoice( (StepsInformationChoice)ScreenMiniMenu::s_iLastRowCode, ScreenMiniMenu::s_viLastAnswers );
 	}
+	else if (SM == SM_BackFromStepsData)
+	{
+		HandleStepsDataChoice((StepsDataChoice)ScreenMiniMenu::s_iLastRowCode,
+							  ScreenMiniMenu::s_viLastAnswers);
+	}
+	
 	else if( SM == SM_BackFromSongInformation )
 	{
 		HandleSongInformationChoice( (SongInformationChoice)ScreenMiniMenu::s_iLastRowCode, ScreenMiniMenu::s_viLastAnswers );
@@ -3494,9 +3514,21 @@ static void ChangeMinBPM( const RString &sNew )
 	GAMESTATE->m_pCurSong->m_fSpecifiedBPMMin = StringToFloat( sNew );
 }
 
+static void ChangeStepsMinBPM(const RString &sNew)
+{
+	Steps *step = GAMESTATE->m_pCurSteps[PLAYER_1];
+	step->SetMinBPM(StringToFloat(sNew));
+}
+
 static void ChangeMaxBPM( const RString &sNew )
 {
 	GAMESTATE->m_pCurSong->m_fSpecifiedBPMMax = StringToFloat( sNew );
+}
+
+static void ChangeStepsMaxBPM(const RString &sNew)
+{
+	Steps *step = GAMESTATE->m_pCurSteps[PLAYER_1];
+	step->SetMaxBPM(StringToFloat(sNew));
 }
 
 TimingData & ScreenEdit::GetAppropriateTiming() const
@@ -3655,7 +3687,6 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 				/* XXX: If the difficulty is changed from EDIT, and pSteps->WasLoadedFromProfile()
 				 * is true, we should warn that the steps will no longer be saved to the profile. */
 				Steps* pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
-				float fMusicSeconds = m_pSoundMusic->GetLengthSeconds();
 
 				g_StepsInformation.rows[difficulty].choices.clear();
 				FOREACH_ENUM( Difficulty, dc )
@@ -3675,20 +3706,32 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 				g_StepsInformation.rows[chartstyle].SetOneUnthemedChoice( pSteps->GetChartStyle() );
 				g_StepsInformation.rows[step_credit].bEnabled = (EDIT_MODE.GetValue() >= EditMode_Full);
 				g_StepsInformation.rows[step_credit].SetOneUnthemedChoice( pSteps->GetCredit() );
-				g_StepsInformation.rows[tap_notes].SetOneUnthemedChoice( ssprintf("%d", m_NoteDataEdit.GetNumTapNotes()) );
-				g_StepsInformation.rows[jumps].SetOneUnthemedChoice( ssprintf("%d", m_NoteDataEdit.GetNumJumps()) );
-				g_StepsInformation.rows[hands].SetOneUnthemedChoice( ssprintf("%d", m_NoteDataEdit.GetNumHands()) );
-				g_StepsInformation.rows[quads].SetOneUnthemedChoice( ssprintf("%d", m_NoteDataEdit.GetNumQuads()) );
-				g_StepsInformation.rows[holds].SetOneUnthemedChoice( ssprintf("%d", m_NoteDataEdit.GetNumHoldNotes()) );
-				g_StepsInformation.rows[mines].SetOneUnthemedChoice( ssprintf("%d", m_NoteDataEdit.GetNumMines()) );
-				g_StepsInformation.rows[stream].SetOneUnthemedChoice( ssprintf("%.2f", NoteDataUtil::GetStreamRadarValue(m_NoteDataEdit,fMusicSeconds)) );
-				g_StepsInformation.rows[voltage].SetOneUnthemedChoice( ssprintf("%.2f", NoteDataUtil::GetVoltageRadarValue(m_NoteDataEdit,fMusicSeconds)) );
-				g_StepsInformation.rows[air].SetOneUnthemedChoice( ssprintf("%.2f", NoteDataUtil::GetAirRadarValue(m_NoteDataEdit,fMusicSeconds)) );
-				g_StepsInformation.rows[freeze].SetOneUnthemedChoice( ssprintf("%.2f", NoteDataUtil::GetFreezeRadarValue(m_NoteDataEdit,fMusicSeconds)) );
-				g_StepsInformation.rows[chaos].SetOneUnthemedChoice( ssprintf("%.2f", NoteDataUtil::GetChaosRadarValue(m_NoteDataEdit,fMusicSeconds)) );
+				g_StepsInformation.rows[step_display_bpm].iDefaultChoice = pSteps->GetDisplayBPM();
+				g_StepsInformation.rows[step_min_bpm].SetOneUnthemedChoice( ssprintf("%.6f", pSteps->GetMinBPM()));
+				g_StepsInformation.rows[step_max_bpm].SetOneUnthemedChoice( ssprintf("%.6f", pSteps->GetMaxBPM()));
 				EditMiniMenu( &g_StepsInformation, SM_BackFromStepsInformation, SM_None );
 			}
 			break;
+		case view_steps_data:
+		{
+			float fMusicSeconds = m_pSoundMusic->GetLengthSeconds();
+			g_StepsData.rows[tap_notes].SetOneUnthemedChoice( ssprintf("%d", m_NoteDataEdit.GetNumTapNotes()) );
+			g_StepsData.rows[jumps].SetOneUnthemedChoice( ssprintf("%d", m_NoteDataEdit.GetNumJumps()) );
+			g_StepsData.rows[hands].SetOneUnthemedChoice( ssprintf("%d", m_NoteDataEdit.GetNumHands()) );
+			g_StepsData.rows[quads].SetOneUnthemedChoice( ssprintf("%d", m_NoteDataEdit.GetNumQuads()) );
+			g_StepsData.rows[holds].SetOneUnthemedChoice( ssprintf("%d", m_NoteDataEdit.GetNumHoldNotes()) );
+			g_StepsData.rows[mines].SetOneUnthemedChoice( ssprintf("%d", m_NoteDataEdit.GetNumMines()) );
+			g_StepsData.rows[rolls].SetOneUnthemedChoice( ssprintf("%d", m_NoteDataEdit.GetNumRolls()) );
+			g_StepsData.rows[lifts].SetOneUnthemedChoice( ssprintf("%d", m_NoteDataEdit.GetNumLifts()) );
+			g_StepsData.rows[fakes].SetOneUnthemedChoice( ssprintf("%d", m_NoteDataEdit.GetNumFakes()) );
+			g_StepsData.rows[stream].SetOneUnthemedChoice( ssprintf("%.2f", NoteDataUtil::GetStreamRadarValue(m_NoteDataEdit,fMusicSeconds)) );
+			g_StepsData.rows[voltage].SetOneUnthemedChoice( ssprintf("%.2f", NoteDataUtil::GetVoltageRadarValue(m_NoteDataEdit,fMusicSeconds)) );
+			g_StepsData.rows[air].SetOneUnthemedChoice( ssprintf("%.2f", NoteDataUtil::GetAirRadarValue(m_NoteDataEdit,fMusicSeconds)) );
+			g_StepsData.rows[freeze].SetOneUnthemedChoice( ssprintf("%.2f", NoteDataUtil::GetFreezeRadarValue(m_NoteDataEdit,fMusicSeconds)) );
+			g_StepsData.rows[chaos].SetOneUnthemedChoice( ssprintf("%.2f", NoteDataUtil::GetChaosRadarValue(m_NoteDataEdit,fMusicSeconds)) );
+			EditMiniMenu( &g_StepsData, SM_BackFromStepsData, SM_None );
+			break;
+		}
 		case save:
 		case save_on_exit:
 			{
@@ -4073,6 +4116,29 @@ void ScreenEdit::HandleAlterMenuChoice(AlterMenuChoice c, const vector<int> &iAn
 			SetDirty(true);
 			break;
 		}
+		case convert_to_attack:
+		{
+			float startBeat = NoteRowToBeat(m_NoteFieldEdit.m_iBeginMarker);
+			float endBeat = NoteRowToBeat(m_NoteFieldEdit.m_iEndMarker);
+			TimingData &timing = GetAppropriateTiming();
+			float &start = g_fLastInsertAttackPositionSeconds;
+			float &length = g_fLastInsertAttackDurationSeconds;
+			start = timing.GetElapsedTimeFromBeat(startBeat);
+			length = timing.GetElapsedTimeFromBeat(endBeat) - start;
+			
+			AttackArray &attacks = GAMESTATE->m_bIsUsingStepTiming ?
+				m_pSteps->m_Attacks : m_pSong->m_Attacks;
+			int iAttack = FindAttackAtTime(attacks, start);
+			
+			PlayerOptions po;
+			if (iAttack >= 0)
+				po.FromString(attacks[iAttack].sModifiers);
+				
+			GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.Assign( ModsLevel_Preferred, po );
+			SCREENMAN->AddNewScreenToTop( "ScreenPlayerOptions", SM_BackFromInsertStepAttackPlayerOptions );
+			SetDirty(true);
+			break;
+		}
 		case convert_to_fake:
 		{
 			float startBeat = NoteRowToBeat(m_NoteFieldEdit.m_iBeginMarker);
@@ -4264,16 +4330,24 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 		CheckNumberOfNotesAndUndo();
 }
 
+void ScreenEdit::HandleStepsDataChoice( StepsDataChoice c, const vector<int> &iAnswers )
+{
+	return; // nothing is done with the choices. Yet.
+}
+
 static LocalizedString ENTER_NEW_DESCRIPTION( "ScreenEdit", "Enter a new description." );
 static LocalizedString ENTER_NEW_CHART_NAME("ScreenEdit", "Enter a new chart name.");
 static LocalizedString ENTER_NEW_CHART_STYLE( "ScreenEdit", "Enter a new chart style." );
 static LocalizedString ENTER_NEW_STEP_AUTHOR( "ScreenEdit", "Enter the author who made this step pattern." );
 static LocalizedString ENTER_NEW_METER( "ScreenEdit", "Enter a new meter." );
+static LocalizedString ENTER_MIN_BPM			("ScreenEdit","Enter a new min BPM.");
+static LocalizedString ENTER_MAX_BPM			("ScreenEdit","Enter a new max BPM.");
 void ScreenEdit::HandleStepsInformationChoice( StepsInformationChoice c, const vector<int> &iAnswers )
 {
 	Steps* pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
 	Difficulty dc = (Difficulty)iAnswers[difficulty];
 	pSteps->SetDifficulty( dc );
+	pSteps->SetDisplayBPM(static_cast<DisplayBPM>(iAnswers[step_display_bpm]));
 	
 	switch( c )
 	{
@@ -4295,42 +4369,60 @@ void ScreenEdit::HandleStepsInformationChoice( StepsInformationChoice c, const v
 									   m_pSteps->GetDescription(),
 									   MAX_STEPS_DESCRIPTION_LENGTH,
 									   SongUtil::ValidateCurrentStepsDescription,
-									   ChangeDescription,NULL);
+									   ChangeDescription,
+									   NULL);
 			break;
 		}
-	case chartstyle:
-		ScreenTextEntry::TextEntry( 
-			SM_None, 
-			ENTER_NEW_CHART_STYLE,
-			m_pSteps->GetChartStyle(), 
-			255,
-			NULL,
-			ChangeChartStyle, 
-			NULL 
-			);
-		break;
-	case step_credit:
-		ScreenTextEntry::TextEntry(
-			SM_None,
-			ENTER_NEW_STEP_AUTHOR,
-			m_pSteps->GetCredit(),
-			255,
-			SongUtil::ValidateCurrentStepsCredit,
-			ChangeStepCredit,
-			NULL
-			);
-		break;
-	case meter:
-		ScreenTextEntry::TextEntry(
-			   SM_BackFromDifficultyMeterChange,
-			   ENTER_NEW_METER,
-			   ssprintf("%d", m_pSteps->GetMeter()),
-			   4
-			   );
-		break;
+		case chartstyle:
+		{
+			ScreenTextEntry::TextEntry(SM_None, 
+									   ENTER_NEW_CHART_STYLE,
+									   m_pSteps->GetChartStyle(), 
+									   255,
+									   NULL,
+									   ChangeChartStyle, 
+									   NULL);
+			break;
+		}
+		case step_credit:
+		{
+			ScreenTextEntry::TextEntry(SM_None,
+									   ENTER_NEW_STEP_AUTHOR,
+									   m_pSteps->GetCredit(),
+									   255,
+									   SongUtil::ValidateCurrentStepsCredit,
+									   ChangeStepCredit,
+									   NULL);
+			break;
+		}
+		case meter:
+		{
+			ScreenTextEntry::TextEntry(SM_BackFromDifficultyMeterChange,
+									   ENTER_NEW_METER,
+									   ssprintf("%d", m_pSteps->GetMeter()),
+									   4);
+			break;
+		}
+		case step_min_bpm:
+		{
+			ScreenTextEntry::TextEntry(SM_None, ENTER_MIN_BPM,
+									   ssprintf("%.6f", pSteps->GetMinBPM()), 20,
+									   ScreenTextEntry::FloatValidate,
+									   ChangeStepsMinBPM, NULL);
+			break;
+		}
+		case step_max_bpm:
+		{
+			ScreenTextEntry::TextEntry(SM_None, ENTER_MAX_BPM,
+									   ssprintf("%.6f", pSteps->GetMaxBPM()), 20,
+									   ScreenTextEntry::FloatValidate,
+									   ChangeStepsMaxBPM, NULL);
+			break;
+		}
 	default:
 		break;
 	}
+	SetDirty(true);
 }
 
 static LocalizedString ENTER_MAIN_TITLE			("ScreenEdit","Enter a new main title.");
@@ -4344,8 +4436,6 @@ static LocalizedString ENTER_ARTIST_TRANSLIT		("ScreenEdit","Enter a new artist 
 static LocalizedString ENTER_LAST_SECOND_HINT		("ScreenEdit","Enter a new last second hint.");
 static LocalizedString ENTER_PREVIEW_START		("ScreenEdit","Enter a new preview start.");
 static LocalizedString ENTER_PREVIEW_LENGTH		("ScreenEdit","Enter a new preview length.");
-static LocalizedString ENTER_MIN_BPM			("ScreenEdit","Enter a new min BPM.");
-static LocalizedString ENTER_MAX_BPM			("ScreenEdit","Enter a new max BPM.");
 void ScreenEdit::HandleSongInformationChoice( SongInformationChoice c, const vector<int> &iAnswers )
 {
 	Song* pSong = GAMESTATE->m_pCurSong;
@@ -4403,6 +4493,7 @@ void ScreenEdit::HandleSongInformationChoice( SongInformationChoice c, const vec
 					   ScreenTextEntry::FloatValidate, ChangeMaxBPM, NULL );
 		break;
 	};
+	SetDirty(true);
 }
 
 

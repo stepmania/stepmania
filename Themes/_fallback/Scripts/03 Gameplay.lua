@@ -11,7 +11,7 @@ function GetExtraColorThreshold()
 	sGame = GAMESTATE:GetCurrentGame():GetName()
 	local Modes = {
 		dance = 10,
-		pump = 15,
+		pump = 21,
 		beat = 12,
 		kb7 = 10,
 		para = 10,

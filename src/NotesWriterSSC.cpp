@@ -335,6 +335,26 @@ static RString GetSSCNoteData( const Song &song, const Steps &in, bool bSavingCa
 	Trim(attacks, ":"); // just in case something screwy happens.
 	lines.push_back( ssprintf( "#ATTACKS:%s;", attacks.c_str()));
 	
+	switch( in.GetDisplayBPM() )
+	{
+		case DISPLAY_BPM_ACTUAL:
+			// write nothing
+			break;
+		case DISPLAY_BPM_SPECIFIED:
+		{
+			float small = in.GetMinBPM();
+			float big = in.GetMaxBPM();
+			if (small == big)
+				lines.push_back( ssprintf( "#DISPLAYBPM:%.6f;", small ) );
+			else
+				lines.push_back( ssprintf( "#DISPLAYBPM:%.6f:%.6f;", small, big ) );
+			break;
+		}
+		case DISPLAY_BPM_RANDOM:
+			lines.push_back( ssprintf( "#DISPLAYBPM:*;" ) );
+			break;
+	}
+	
 	RString sNoteData;
 	in.GetSMNoteData( sNoteData );
 

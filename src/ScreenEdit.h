@@ -380,6 +380,7 @@ public:
 		options, /**< Modify the PlayerOptions and SongOptions. */
 		edit_song_info, /**< Edit some general information about the song. */
 		edit_timing_data, /**< Edit the chart's timing data. */
+		view_steps_data, /**< View step statistics. */
 		play_preview_music, /**< Play the song's preview music. */
 		exit,
 		save_on_exit,
@@ -408,6 +409,7 @@ public:
 		convert_to_delay, /**< Convert the range into a DelaySegment. */
 		convert_to_warp, /**< Convert the range into a WarpSegment. */
 		convert_to_fake, /**< Convert the range into a FakeSegment. */
+		convert_to_attack, /**< Convert the range into an Attack. */
 		routine_invert_notes, /**< Switch which player hits the note. */
 		routine_mirror_1_to_2, /**< Mirror Player 1's notes for Player 2. */
 		routine_mirror_2_to_1, /**< Mirror Player 2's notes for Player 1. */
@@ -510,20 +512,32 @@ public:
 		chartstyle, /**< How is this chart meant to be played? */
 		step_credit, /**< Who wrote this individual chart? */
 		predict_meter, /**< What does the game think this chart's rating should be? */
+		step_display_bpm,
+		step_min_bpm,
+		step_max_bpm,
+		NUM_STEPS_INFORMATION_CHOICES
+	};
+	void HandleStepsInformationChoice( StepsInformationChoice c, const vector<int> &iAnswers );
+	
+	enum StepsDataChoice
+	{
 		tap_notes,
 		jumps,
 		hands,
 		quads,
 		holds,
 		mines,
+		rolls,
+		lifts,
+		fakes,
 		stream,
 		voltage,
 		air,
 		freeze,
 		chaos,
-		NUM_STEPS_INFORMATION_CHOICES
+		NUM_STEPS_DATA_CHOICES
 	};
-	void HandleStepsInformationChoice( StepsInformationChoice c, const vector<int> &iAnswers );
+	void HandleStepsDataChoice(StepsDataChoice c, const vector<int> &answers);
 
 	enum SongInformationChoice
 	{
