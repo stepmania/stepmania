@@ -4344,54 +4344,60 @@ void ScreenEdit::HandleStepsInformationChoice( StepsInformationChoice c, const v
 									   m_pSteps->GetDescription(),
 									   MAX_STEPS_DESCRIPTION_LENGTH,
 									   SongUtil::ValidateCurrentStepsDescription,
-									   ChangeDescription,NULL);
+									   ChangeDescription,
+									   NULL);
 			break;
 		}
-	case chartstyle:
-		ScreenTextEntry::TextEntry( 
-			SM_None, 
-			ENTER_NEW_CHART_STYLE,
-			m_pSteps->GetChartStyle(), 
-			255,
-			NULL,
-			ChangeChartStyle, 
-			NULL 
-			);
-		break;
-	case step_credit:
-		ScreenTextEntry::TextEntry(
-			SM_None,
-			ENTER_NEW_STEP_AUTHOR,
-			m_pSteps->GetCredit(),
-			255,
-			SongUtil::ValidateCurrentStepsCredit,
-			ChangeStepCredit,
-			NULL
-			);
-		break;
-	case meter:
-		ScreenTextEntry::TextEntry(
-			   SM_BackFromDifficultyMeterChange,
-			   ENTER_NEW_METER,
-			   ssprintf("%d", m_pSteps->GetMeter()),
-			   4
-			   );
-		break;
+		case chartstyle:
+		{
+			ScreenTextEntry::TextEntry(SM_None, 
+									   ENTER_NEW_CHART_STYLE,
+									   m_pSteps->GetChartStyle(), 
+									   255,
+									   NULL,
+									   ChangeChartStyle, 
+									   NULL);
+			break;
+		}
+		case step_credit:
+		{
+			ScreenTextEntry::TextEntry(SM_None,
+									   ENTER_NEW_STEP_AUTHOR,
+									   m_pSteps->GetCredit(),
+									   255,
+									   SongUtil::ValidateCurrentStepsCredit,
+									   ChangeStepCredit,
+									   NULL);
+			break;
+		}
+		case meter:
+		{
+			ScreenTextEntry::TextEntry(SM_BackFromDifficultyMeterChange,
+									   ENTER_NEW_METER,
+									   ssprintf("%d", m_pSteps->GetMeter()),
+									   4);
+			break;
+		}
 		case step_min_bpm:
+		{
 			ScreenTextEntry::TextEntry(SM_None, ENTER_MIN_BPM,
 									   ssprintf("%.6f", pSteps->GetMinBPM()), 20,
 									   ScreenTextEntry::FloatValidate,
-									   ChangeStepsMinBPM, NULL );
+									   ChangeStepsMinBPM, NULL);
 			break;
+		}
 		case step_max_bpm:
+		{
 			ScreenTextEntry::TextEntry(SM_None, ENTER_MAX_BPM,
 									   ssprintf("%.6f", pSteps->GetMaxBPM()), 20,
 									   ScreenTextEntry::FloatValidate,
-									   ChangeStepsMaxBPM, NULL );
+									   ChangeStepsMaxBPM, NULL);
 			break;
+		}
 	default:
 		break;
 	}
+	SetDirty(true);
 }
 
 static LocalizedString ENTER_MAIN_TITLE			("ScreenEdit","Enter a new main title.");
@@ -4462,6 +4468,7 @@ void ScreenEdit::HandleSongInformationChoice( SongInformationChoice c, const vec
 					   ScreenTextEntry::FloatValidate, ChangeMaxBPM, NULL );
 		break;
 	};
+	SetDirty(true);
 }
 
 
