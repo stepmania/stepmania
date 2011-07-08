@@ -571,6 +571,8 @@ static MenuDef g_AlterMenu(
 	      EditMode_Full, true, true, 0, NULL ),
    MenuRowDef(ScreenEdit::convert_to_fake,		"Convert selection to fake",		true, 
 	      EditMode_Full, true, true, 0, NULL ),
+   MenuRowDef(ScreenEdit::convert_to_attack,	"Convert selection to attack",		true,
+			  EditMode_Full, true, true, 0, NULL),
    MenuRowDef(ScreenEdit::routine_invert_notes,		"Invert notes' player",			true,
 	      EditMode_Full, true, true, 0, NULL ),
    MenuRowDef(ScreenEdit::routine_mirror_1_to_2,	"Mirror Player 1 to 2",			true,
@@ -4111,6 +4113,29 @@ void ScreenEdit::HandleAlterMenuChoice(AlterMenuChoice c, const vector<int> &iAn
 			float startBeat = NoteRowToBeat(m_NoteFieldEdit.m_iBeginMarker);
 			float lengthBeat = NoteRowToBeat(m_NoteFieldEdit.m_iEndMarker) - startBeat;
 			GetAppropriateTiming().SetWarpAtBeat(startBeat,lengthBeat);
+			SetDirty(true);
+			break;
+		}
+		case convert_to_attack:
+		{
+			float startBeat = NoteRowToBeat(m_NoteFieldEdit.m_iBeginMarker);
+			float endBeat = NoteRowToBeat(m_NoteFieldEdit.m_iEndMarker);
+			TimingData &timing = GetAppropriateTiming();
+			float &start = g_fLastInsertAttackPositionSeconds;
+			float &length = g_fLastInsertAttackDurationSeconds;
+			start = timing.GetElapsedTimeFromBeat(startBeat);
+			length = timing.GetElapsedTimeFromBeat(endBeat) - start;
+			
+			AttackArray &attacks = GAMESTATE->m_bIsUsingStepTiming ?
+				m_pSteps->m_Attacks : m_pSong->m_Attacks;
+			int iAttack = FindAttackAtTime(attacks, start);
+			
+			PlayerOptions po;
+			if (iAttack >= 0)
+				po.FromString(attacks[iAttack].sModifiers);
+				
+			GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.Assign( ModsLevel_Preferred, po );
+			SCREENMAN->AddNewScreenToTop( "ScreenPlayerOptions", SM_BackFromInsertStepAttackPlayerOptions );
 			SetDirty(true);
 			break;
 		}

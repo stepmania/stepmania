@@ -409,6 +409,7 @@ public:
 		convert_to_delay, /**< Convert the range into a DelaySegment. */
 		convert_to_warp, /**< Convert the range into a WarpSegment. */
 		convert_to_fake, /**< Convert the range into a FakeSegment. */
+		convert_to_attack, /**< Convert the range into an Attack. */
 		routine_invert_notes, /**< Switch which player hits the note. */
 		routine_mirror_1_to_2, /**< Mirror Player 1's notes for Player 2. */
 		routine_mirror_2_to_1, /**< Mirror Player 2's notes for Player 1. */
