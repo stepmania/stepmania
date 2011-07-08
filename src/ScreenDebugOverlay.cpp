@@ -569,6 +569,7 @@ static LocalizedString WRITE_PREFERENCES	( "ScreenDebugOverlay", "Write Preferen
 static LocalizedString MENU_TIMER		( "ScreenDebugOverlay", "Menu Timer" );
 static LocalizedString FLUSH_LOG		( "ScreenDebugOverlay", "Flush Log" );
 static LocalizedString PULL_BACK_CAMERA	( "ScreenDebugOverlay", "Pull Back Camera" );
+static LocalizedString ZOOM_IN_CAMERA	( "ScreenDebugOverlay", "Zoom In Camera" );
 static LocalizedString VISUAL_DELAY_UP		( "ScreenDebugOverlay", "Visual Delay Up" );
 static LocalizedString VISUAL_DELAY_DOWN	( "ScreenDebugOverlay", "Visual Delay Down" );
 static LocalizedString VOLUME_UP		( "ScreenDebugOverlay", "Volume Up" );
@@ -1101,11 +1102,26 @@ class DebugLinePullBackCamera : public IDebugLine
 {
 	virtual RString GetDisplayTitle() { return PULL_BACK_CAMERA.GetValue(); }
 	virtual RString GetDisplayValue() { return RString(); }
-	virtual bool IsEnabled() { return g_fImageScaleDestination != 1; }
+	virtual bool IsEnabled() { return g_fImageScaleDestination < 1.0f; }
 	virtual void DoAndLog( RString &sMessageOut )
 	{
 		if( g_fImageScaleDestination == 1 )
 			g_fImageScaleDestination = 0.5f;
+		else
+			g_fImageScaleDestination = 1;
+		IDebugLine::DoAndLog( sMessageOut );
+	}
+};
+
+class DebugLineZoomInCamera : public IDebugLine
+{
+	virtual RString GetDisplayTitle() { return ZOOM_IN_CAMERA.GetValue(); }
+	virtual RString GetDisplayValue() { return RString(); }
+	virtual bool IsEnabled() { return g_fImageScaleDestination > 1.0f; }
+	virtual void DoAndLog( RString &sMessageOut )
+	{
+		if( g_fImageScaleDestination == 1 )
+			g_fImageScaleDestination = 2.0f;
 		else
 			g_fImageScaleDestination = 1;
 		IDebugLine::DoAndLog( sMessageOut );
@@ -1226,6 +1242,7 @@ DECLARE_ONE( DebugLineWritePreferences );
 DECLARE_ONE( DebugLineMenuTimer );
 DECLARE_ONE( DebugLineFlushLog );
 DECLARE_ONE( DebugLinePullBackCamera );
+DECLARE_ONE( DebugLineZoomInCamera );
 DECLARE_ONE( DebugLineVolumeUp );
 DECLARE_ONE( DebugLineVolumeDown );
 DECLARE_ONE( DebugLineVisualDelayUp );
