@@ -620,6 +620,9 @@ static MenuDef g_StepsData(
    MenuRowDef( ScreenEdit::quads,		"Quads",		false, EditMode_Full, true, true, 0, NULL ),
    MenuRowDef( ScreenEdit::holds,		"Holds",		false, EditMode_Full, true, true, 0, NULL ),
    MenuRowDef( ScreenEdit::mines,		"Mines",		false, EditMode_Full, true, true, 0, NULL ),
+   MenuRowDef(ScreenEdit::rolls,		"Rolls",		false, EditMode_Full, true, true, 0, NULL ),
+   MenuRowDef(ScreenEdit::lifts,		"Lifts",		false, EditMode_Full, true, true, 0, NULL ),
+   MenuRowDef(ScreenEdit::fakes,		"Fakes",		false, EditMode_Full, true, true, 0, NULL ),
    MenuRowDef( ScreenEdit::stream,		"Stream",		false, EditMode_Full, true, true, 0, NULL ),
    MenuRowDef( ScreenEdit::voltage,		"Voltage",		false, EditMode_Full, true, true, 0, NULL ),
    MenuRowDef( ScreenEdit::air,			"Air",			false, EditMode_Full, true, true, 0, NULL ),
@@ -3716,6 +3719,9 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 			g_StepsData.rows[quads].SetOneUnthemedChoice( ssprintf("%d", m_NoteDataEdit.GetNumQuads()) );
 			g_StepsData.rows[holds].SetOneUnthemedChoice( ssprintf("%d", m_NoteDataEdit.GetNumHoldNotes()) );
 			g_StepsData.rows[mines].SetOneUnthemedChoice( ssprintf("%d", m_NoteDataEdit.GetNumMines()) );
+			g_StepsData.rows[rolls].SetOneUnthemedChoice( ssprintf("%d", m_NoteDataEdit.GetNumRolls()) );
+			g_StepsData.rows[lifts].SetOneUnthemedChoice( ssprintf("%d", m_NoteDataEdit.GetNumLifts()) );
+			g_StepsData.rows[fakes].SetOneUnthemedChoice( ssprintf("%d", m_NoteDataEdit.GetNumFakes()) );
 			g_StepsData.rows[stream].SetOneUnthemedChoice( ssprintf("%.2f", NoteDataUtil::GetStreamRadarValue(m_NoteDataEdit,fMusicSeconds)) );
 			g_StepsData.rows[voltage].SetOneUnthemedChoice( ssprintf("%.2f", NoteDataUtil::GetVoltageRadarValue(m_NoteDataEdit,fMusicSeconds)) );
 			g_StepsData.rows[air].SetOneUnthemedChoice( ssprintf("%.2f", NoteDataUtil::GetAirRadarValue(m_NoteDataEdit,fMusicSeconds)) );
