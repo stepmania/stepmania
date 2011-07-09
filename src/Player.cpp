@@ -201,6 +201,9 @@ ThemeMetric<int> COMBO_STOPPED_AT ( "Player", "ComboStoppedAt" );
 ThemeMetric<float> ATTACK_RUN_TIME_RANDOM ( "Player", "AttackRunTimeRandom" );
 ThemeMetric<float> ATTACK_RUN_TIME_MINE ( "Player", "AttackRunTimeMine" );
 
+ThemeMetric<TapNoteScore> MIN_SCORE_TO_CONTINUE_COMBO ("Gameplay", "MinScoreToContinueCombo");
+ThemeMetric<TapNoteScore> MIN_SCORE_TO_MAINTAIN_COMBO ("Gameplay", "MinScoreToMaintainCombo");
+
 /**
  * @brief What is our highest cap for mMods?
  *
