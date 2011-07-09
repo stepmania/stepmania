@@ -201,9 +201,6 @@ ThemeMetric<int> COMBO_STOPPED_AT ( "Player", "ComboStoppedAt" );
 ThemeMetric<float> ATTACK_RUN_TIME_RANDOM ( "Player", "AttackRunTimeRandom" );
 ThemeMetric<float> ATTACK_RUN_TIME_MINE ( "Player", "AttackRunTimeMine" );
 
-ThemeMetric<TapNoteScore> MIN_SCORE_TO_CONTINUE_COMBO ("Gameplay", "MinScoreToContinueCombo");
-ThemeMetric<TapNoteScore> MIN_SCORE_TO_MAINTAIN_COMBO ("Gameplay", "MinScoreToMaintainCombo");
-
 /**
  * @brief What is our highest cap for mMods?
  *
@@ -2497,8 +2494,6 @@ done_checking_hopo:
 
 		if( score != TNS_None )
 		{
-			ComboSegment &cs = m_Timing->GetComboSegmentAtRow(row);
-			
 			switch( pbt )
 			{
 			DEFAULT_FAIL(pbt);
@@ -2510,45 +2505,15 @@ done_checking_hopo:
 					{
 						tn.result.tns = score;
 						tn.result.fTapNoteOffset = -fNoteOffset;
-						
-						if (score > MIN_SCORE_TO_CONTINUE_COMBO)
-						{
-							tn.result.numJudgments = cs.GetCombo();
-						}
-						else if (score < MIN_SCORE_TO_MAINTAIN_COMBO)
-						{
-							tn.result.numJudgments = cs.GetMissCombo();
-						}
-						else
-						{
-							tn.result.numJudgments = 1; // sanity check
-						}
-						
 						m_NoteData.SetTapNote( t, iRowOfOverlappingNoteOrRow, tn );
 					}
 				}
 				break;
 			case ButtonType_Hopo:
 			case ButtonType_Step:
-				{
-					pTN->result.tns = score;
-					pTN->result.fTapNoteOffset = -fNoteOffset;
-						
-					if (score > MIN_SCORE_TO_CONTINUE_COMBO)
-					{
-						pTN->result.numJudgments = cs.GetCombo();
-					}
-					else if (score < MIN_SCORE_TO_MAINTAIN_COMBO)
-					{
-						pTN->result.numJudgments = cs.GetMissCombo();
-					}
-					else
-					{
-						pTN->result.numJudgments = 1; // sanity check
-					}
-						
-					break;
-				}
+				pTN->result.tns = score;
+				pTN->result.fTapNoteOffset = -fNoteOffset;
+				break;
 			}
 		}
 
