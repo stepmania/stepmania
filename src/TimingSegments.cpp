@@ -125,10 +125,21 @@ void ComboSegment::SetCombo(const int i)
 	this->combo = i;
 }
 
+int ComboSegment::GetMissCombo() const
+{
+	return this->missCombo;
+}
+
+void ComboSegment::SetMissCombo(const int i)
+{
+	this->missCombo = i;
+}
+
 bool ComboSegment::operator<( const ComboSegment &other ) const
 {
 	LTCOMPARE(GetRow());
 	LTCOMPARE(GetCombo());
+	LTCOMPARE(GetMissCombo());
 	return false;
 }
 

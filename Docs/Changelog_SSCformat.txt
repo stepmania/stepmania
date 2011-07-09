@@ -9,6 +9,11 @@ change to JSON, but it is unsure if this will be done.
 Implement .ssc at your own risk.
 ________________________________________________________________________________
 
+[v0.76] - Wolfman2000
+* Expand the #COMBOS tag to allow for Miss Combos. Anyone that is crazy enough
+  to put in a 51 miss combo in their tags should be...oh wait: it's already
+  been done.
+
 [v0.75] - Wolfman2000
 * Add Step based #DISPLAYBPM for those songs that have...very varied syncing.
 

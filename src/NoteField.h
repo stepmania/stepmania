@@ -62,7 +62,7 @@ protected:
 	void DrawWarpText( const float fBeat, const float fNewBeat );
 	void DrawTimeSignatureText( const float fBeat, int iNumerator, int iDenominator );
 	void DrawTickcountText( const float fBeat, int iTicks );
-	void DrawComboText( const float fBeat, int iCombo );
+	void DrawComboText( const float fBeat, int iCombo, int iMiss );
 	void DrawLabelText( const float fBeat, RString sLabel );
 	void DrawSpeedText( const float fBeat, float fPercent, float fWait, unsigned short usMode );
 	void DrawScrollText( const float fBeat, float fPercent );

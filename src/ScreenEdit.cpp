@@ -3006,10 +3006,10 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if ( SM == SM_BackFromComboChange && !ScreenTextEntry::s_bCancelledLast )
 	{
-		int iCombo = StringToInt( ScreenTextEntry::s_sLastAnswer );
-		if ( iCombo >= 0 )
+		int iCombo, iMiss;
+		if (sscanf(ScreenTextEntry::s_sLastAnswer.c_str(), " %d / %d ", &iCombo, &iMiss) == 2)
 		{
-			GetAppropriateTiming().SetComboAtBeat( GetBeat(), iCombo );
+			GetAppropriateTiming().SetComboAtBeat( GetBeat(), iCombo, iMiss );
 		}
 		SetDirty( true );
 	}
@@ -3587,10 +3587,14 @@ void ScreenEdit::DisplayTimingMenu()
 	g_TimingDataInformation.rows[bpm].SetOneUnthemedChoice( ssprintf("%.6f", pTime.GetBPMAtBeat( fBeat ) ) );
 	g_TimingDataInformation.rows[stop].SetOneUnthemedChoice( ssprintf("%.6f", pTime.GetStopAtBeat( fBeat ) ) ) ;
 	g_TimingDataInformation.rows[delay].SetOneUnthemedChoice( ssprintf("%.6f", pTime.GetDelayAtBeat( fBeat ) ) );
-	g_TimingDataInformation.rows[time_signature].SetOneUnthemedChoice( ssprintf("%d / %d", pTime.GetTimeSignatureNumeratorAtBeat( fBeat ), pTime.GetTimeSignatureDenominatorAtBeat( fBeat ) ) );
+	g_TimingDataInformation.rows[time_signature].SetOneUnthemedChoice(ssprintf("%d / %d",
+																			   pTime.GetTimeSignatureNumeratorAtBeat( fBeat ),
+																			   pTime.GetTimeSignatureDenominatorAtBeat( fBeat ) ) );
 	g_TimingDataInformation.rows[label].SetOneUnthemedChoice( pTime.GetLabelAtBeat( fBeat ).c_str() );
 	g_TimingDataInformation.rows[tickcount].SetOneUnthemedChoice( ssprintf("%d", pTime.GetTickcountAtBeat( fBeat ) ) );
-	g_TimingDataInformation.rows[combo].SetOneUnthemedChoice( ssprintf("%d", pTime.GetComboAtBeat( fBeat ) ) );
+	g_TimingDataInformation.rows[combo].SetOneUnthemedChoice( ssprintf("%d / %d",
+																	   pTime.GetComboAtBeat( fBeat ),
+																	   pTime.GetMissComboAtBeat( fBeat ) ) );
 	g_TimingDataInformation.rows[warp].SetOneUnthemedChoice( ssprintf("%.6f", pTime.GetWarpAtBeat( fBeat ) ) );
 	g_TimingDataInformation.rows[speed_percent].SetOneUnthemedChoice( bHasSpeedOnThisRow ? ssprintf("%.6f", pTime.GetSpeedPercentAtBeat( fBeat ) ) : "---" );
 	g_TimingDataInformation.rows[speed_wait].SetOneUnthemedChoice( bHasSpeedOnThisRow ? ssprintf("%.6f", pTime.GetSpeedWaitAtBeat( fBeat ) ) : "---" );
@@ -4566,13 +4570,16 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 			);
 		break;
 	case combo:
-		ScreenTextEntry::TextEntry(
-		   SM_BackFromComboChange,
-		   ENTER_COMBO_VALUE,
-		   ssprintf( "%d", GetAppropriateTiming().GetComboAtBeat( GetBeat() ) ),
-		   4
-		   );
-	break;
+	{
+		ComboSegment &cs = GetAppropriateTiming().GetComboSegmentAtBeat(GetBeat());
+		ScreenTextEntry::TextEntry(SM_BackFromComboChange,
+								   ENTER_COMBO_VALUE,
+								   ssprintf( "%d/%d",
+											cs.GetCombo(),
+											cs.GetMissCombo()),
+								   7);
+		break;
+	}
 	case label:
 		ScreenTextEntry::TextEntry(
 		   SM_BackFromLabelChange,

@@ -23,17 +23,22 @@ void SMALoader::ProcessMultipliers( TimingData &out, const int iRowsPerBeat, con
 	{
 		vector<RString> arrayMultiplierValues;
 		split( arrayMultiplierExpressions[f], "=", arrayMultiplierValues );
-		if( arrayMultiplierValues.size() != 2 )
+		unsigned size = arrayMultiplierValues.size();
+		if( size < 2 )
 		{
 			LOG->UserLog("Song file",
 				     this->GetSongTitle(),
-				     "has an invalid #MULTIPLIER value \"%s\" (must have exactly one '='), ignored.",
+				     "has an invalid #MULTIPLIER value \"%s\" (must have at least one '='), ignored.",
 				     arrayMultiplierExpressions[f].c_str() );
 			continue;
 		}
 		const float fComboBeat = RowToBeat( arrayMultiplierValues[0], iRowsPerBeat );
-		const int iCombos = StringToInt( arrayMultiplierValues[1] );
-		ComboSegment new_seg( fComboBeat, iCombos );
+		const int iCombos = StringToInt( arrayMultiplierValues[1] ); // always true.
+		// hoping I'm right here: SMA files can use 6 values after the row/beat.
+		const int iMisses = (size == 2 || size == 4 ?
+							 iCombos : 
+							 StringToInt(arrayMultiplierValues[2]));
+		ComboSegment new_seg( fComboBeat, iCombos, iMisses );
 		out.AddComboSegment( new_seg );
 	}
 }

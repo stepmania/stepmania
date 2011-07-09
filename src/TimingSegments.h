@@ -344,7 +344,8 @@ struct ComboSegment : public TimingSegment<ComboSegment>
 
 	ComboSegment(const ComboSegment &other) : 
 		TimingSegment<ComboSegment>(other),
-		combo(other.GetCombo()) {};
+		combo(other.GetCombo()),
+		missCombo(other.GetMissCombo()) {};
 
 	/**
 	 * @brief Creates a Combo Segment with the specified values.
@@ -354,7 +355,18 @@ struct ComboSegment : public TimingSegment<ComboSegment>
 	template <typename StartType>
 	ComboSegment( StartType s, int t ):
 		TimingSegment<ComboSegment>(max((StartType)0, s)),
-		combo(max(0,t)) {}
+		combo(max(0,t)), missCombo(max(0,t)) {}
+	
+	/**
+	 * @brief Creates a Combo Segment with the specified values.
+	 * @param s the starting row / beat of this segment.
+	 * @param t the amount the combo increases on a succesful hit.
+	 * @param m the amount the miss combo increases on missing.
+	 */
+	template <typename StartType>
+	ComboSegment(StartType s, int t, int m):
+		TimingSegment<ComboSegment>(max((StartType)0, s)),
+		combo(max(0,t)), missCombo(max(0,m)) {}
 	
 	/**
 	 * @brief Get the combo in this ComboSegment.
@@ -362,9 +374,19 @@ struct ComboSegment : public TimingSegment<ComboSegment>
 	int GetCombo() const;
 	
 	/**
+	 * @brief Get the miss combo in this ComboSegment.
+	 * @return the miss combo. */
+	int GetMissCombo() const;
+	
+	/**
 	 * @brief Set the combo in this ComboSegment.
 	 * @param i the combo. */
 	void SetCombo(const int i);
+	
+	/**
+	 * @brief Set the miss combo in this ComboSegment.
+	 * @param i the miss combo. */
+	void SetMissCombo(const int i);
 	
 	/**
 	 * @brief Compares two ComboSegments to see if one is less than the other.
@@ -377,6 +399,8 @@ private:
 	 * @brief The amount the combo increases at this point.
 	 */
 	int combo;
+	/** @brief The amount of miss combos given at this point. */
+	int missCombo;
 };
 
 

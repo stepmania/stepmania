@@ -94,17 +94,19 @@ void SSCLoader::ProcessCombos( TimingData &out, const RString line, const int ro
 	{
 		vector<RString> arrayComboValues;
 		split( arrayComboExpressions[f], "=", arrayComboValues );
-		if( arrayComboValues.size() != 2 )
+		unsigned size = arrayComboValues.size();
+		if( size < 2 )
 		{
 			LOG->UserLog("Song file",
 				     this->GetSongTitle(),
-				     "has an invalid #COMBOS value \"%s\" (must have exactly one '='), ignored.",
+				     "has an invalid #COMBOS value \"%s\" (must have at least one '='), ignored.",
 				     arrayComboExpressions[f].c_str() );
 			continue;
 		}
 		const float fComboBeat = StringToFloat( arrayComboValues[0] );
 		const int iCombos = StringToInt( arrayComboValues[1] );
-		ComboSegment new_seg( fComboBeat, iCombos );
+		const int iMisses = (size == 2 ? iCombos : StringToInt(arrayComboValues[2]));
+		ComboSegment new_seg( fComboBeat, iCombos, iMisses );
 		out.AddComboSegment( new_seg );
 	}
 }

@@ -577,7 +577,7 @@ void NoteField::DrawTickcountText( const float fBeat, int iTicks )
 	m_textMeasureNumber.Draw();
 }
 
-void NoteField::DrawComboText( const float fBeat, int iCombo )
+void NoteField::DrawComboText( const float fBeat, int iCombo, int iMiss )
 {
 	const float fYOffset	= ArrowEffects::GetYOffset( m_pPlayerState, 0, fBeat );
  	const float fYPos	= ArrowEffects::GetYPos(    m_pPlayerState, 0, fYOffset, m_fYReverseOffsetPixels );
@@ -589,7 +589,7 @@ void NoteField::DrawComboText( const float fBeat, int iCombo )
 	m_textMeasureNumber.SetHorizAlign( COMBO_IS_LEFT_SIDE ? align_right : align_left );
 	m_textMeasureNumber.SetDiffuse( COMBO_COLOR );
 	m_textMeasureNumber.SetGlow( RageColor(1,1,1,RageFastCos(RageTimer::GetTimeSinceStartFast()*2)/2+0.5f) );
-	m_textMeasureNumber.SetText( ssprintf("%d", iCombo) );
+	m_textMeasureNumber.SetText( ssprintf("%d/%d", iCombo, iMiss) );
 	m_textMeasureNumber.SetXY( (COMBO_IS_LEFT_SIDE ? -xBase - xOffset : xBase + xOffset), fYPos );
 	m_textMeasureNumber.Draw();
 }
@@ -981,7 +981,7 @@ void NoteField::DrawPrimitives()
 				{
 					float fBeat = seg->GetBeat();
 					if( IS_ON_SCREEN(fBeat) )
-						DrawComboText( fBeat, seg->GetCombo() );
+						DrawComboText( fBeat, seg->GetCombo(), seg->GetMissCombo() );
 				}
 			}
 		}
