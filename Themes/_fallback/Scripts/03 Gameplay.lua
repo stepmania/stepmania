@@ -105,6 +105,10 @@ function ComboPerRow()
 	end
 end
 
+function EvalUsesCheckpointsWithJudgments()
+	return (GAMESTATE:GetCurrentGame():GetName() == "pump") and true or false
+end
+
 -- these need cleanup really.
 function HitCombo()
 	sGame = GAMESTATE:GetCurrentGame():GetName()
