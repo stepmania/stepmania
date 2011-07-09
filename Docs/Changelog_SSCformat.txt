@@ -9,6 +9,9 @@ change to JSON, but it is unsure if this will be done.
 Implement .ssc at your own risk.
 ________________________________________________________________________________
 
+[v0.75] - Wolfman2000
+* Add Step based #DISPLAYBPM for those songs that have...very varied syncing.
+
 [v0.74] - Wolfman2000
 * Add #CHARTNAME tag for the title of the chart.
 * Older files will have their #DESCRIPTION tag content copied to #CHARTNAME
