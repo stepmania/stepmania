@@ -13,7 +13,8 @@ class XNode;
 struct TapNoteResult
 {
 	/** @brief Set up the TapNoteResult with default values. */
-	TapNoteResult() : tns(TNS_None), fTapNoteOffset(0.f), bHidden(false) { }
+	TapNoteResult() : tns(TNS_None), fTapNoteOffset(0.f),
+		bHidden(false), numJudgments(1) { }
 	/** @brief The TapNoteScore that was achieved by the player. */
 	TapNoteScore	tns;
 
@@ -27,6 +28,12 @@ struct TapNoteResult
 
 	/** @brief If the whole row has been judged, all taps on the row will be set to hidden. */
 	bool		bHidden;
+	
+	/**
+	 * @brief How many judgments is this really worth?
+	 *
+	 * This is based off of the Combo Segment value. */
+	int numJudgments;
 
 	// XML
 	XNode* CreateNode() const;
@@ -35,7 +42,10 @@ struct TapNoteResult
 /** @brief The result of holding (or letting go of) a hold note. */
 struct HoldNoteResult
 {
-	HoldNoteResult() : hns(HNS_None), fLife(1.f), fOverlappedTime(0), iLastHeldRow(0), iCheckpointsHit(0), iCheckpointsMissed(0), bHeld(false), bActive(false) { }
+	HoldNoteResult(): hns(HNS_None), fLife(1.f),
+		fOverlappedTime(0), iLastHeldRow(0),
+		iCheckpointsHit(0), iCheckpointsMissed(0),
+		bHeld(false), bActive(false) { }
 	float GetLastHeldBeat() const;
 
 	HoldNoteScore	hns;
