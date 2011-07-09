@@ -416,18 +416,32 @@ void ScoreKeeperNormal::HandleTapScore( const TapNote &tn )
 
 void ScoreKeeperNormal::HandleHoldCheckpointScore( const NoteData &nd, int iRow, int iNumHoldsHeldThisRow, int iNumHoldsMissedThisRow )
 {
-	HandleTapNoteScoreInternal( iNumHoldsMissedThisRow == 0? TNS_CheckpointHit:TNS_CheckpointMiss, TNS_CheckpointHit );
+	HandleTapNoteScoreInternal(iNumHoldsMissedThisRow == 0 ? TNS_CheckpointHit:TNS_CheckpointMiss,
+							   TNS_CheckpointHit, iRow);
 	HandleComboInternal( iNumHoldsHeldThisRow, 0, iNumHoldsMissedThisRow, iRow );
 }
 
-void ScoreKeeperNormal::HandleTapNoteScoreInternal( TapNoteScore tns, TapNoteScore maximum )
+void ScoreKeeperNormal::HandleTapNoteScoreInternal( TapNoteScore tns, TapNoteScore maximum, int row )
 {
 	// Update dance points.
 	if( !m_pPlayerStageStats->m_bFailed )
 		m_pPlayerStageStats->m_iActualDancePoints += TapNoteScoreToDancePoints( tns );
 
-	// update judged row totals
-	m_pPlayerStageStats->m_iTapNoteScores[tns] += 1;
+	// update judged row totals. Respect Combo segments here.
+	TimingData &td = GAMESTATE->m_pCurSteps[m_pPlayerState->m_PlayerNumber]->m_Timing;
+	ComboSegment &cs = td.GetComboSegmentAtRow(row);
+	if (tns >= m_MinScoreToContinueCombo)
+	{
+		m_pPlayerStageStats->m_iTapNoteScores[tns] += cs.GetCombo();
+	}
+	else if (tns < m_MinScoreToMaintainCombo)
+	{
+		m_pPlayerStageStats->m_iTapNoteScores[tns] += cs.GetMissCombo();
+	}
+	else
+	{	
+		m_pPlayerStageStats->m_iTapNoteScores[tns] += 1;
+	}
 
 	// increment the current total possible dance score
 	m_pPlayerStageStats->m_iCurPossibleDancePoints += TapNoteScoreToDancePoints( maximum );
@@ -519,7 +533,7 @@ void ScoreKeeperNormal::HandleTapRowScore( const NoteData &nd, int iRow )
 	m_iNumNotesHitThisRow = iNumTapsInRow;
 
 	TapNoteScore scoreOfLastTap = NoteDataWithScoring::LastTapNoteWithResult( nd, iRow ).result.tns;
-	HandleTapNoteScoreInternal( scoreOfLastTap, TNS_W1 );
+	HandleTapNoteScoreInternal( scoreOfLastTap, TNS_W1, iRow );
 	
 	if ( GAMESTATE->GetCurrentGame()->m_bCountNotesSeparately )
 	{
