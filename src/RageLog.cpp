@@ -262,7 +262,7 @@ void RageLog::Write( int where, const RString &sLine )
 			sStr.insert( 0, sWarning );
 
 		if( m_bShowLogOutput || (where&WRITE_TO_INFO) )
-			puts( sStr );
+			_putws( (const wchar_t *)sStr.c_str() );
 		if( where & WRITE_TO_INFO )
 			AddToInfo( sStr );
 		if( m_bLogToDisk && (where&WRITE_TO_INFO) && g_fileInfo->IsOpen() )
