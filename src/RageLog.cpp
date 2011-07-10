@@ -10,7 +10,6 @@
 #if defined(_WINDOWS)
 #include <windows.h>
 #endif
-#include <wchar.h>
 #include <map>
 
 RageLog* LOG;		// global and accessable from anywhere in the program
