@@ -475,14 +475,14 @@ void SongUtil::SortSongPointerArrayByGrades( vector<Song*> &vpSongsInOut, bool b
 	{
 		Song *pSong = vpSongsInOut[i];
 
-		int iCounts[Grade_NoData + 1];
+		int iCounts[NUM_Grade];
 		const Profile *pProfile = PROFILEMAN->GetMachineProfile();
 		ASSERT( pProfile );
 		pProfile->GetGrades( pSong, GAMESTATE->GetCurrentStyle()->m_StepsType, iCounts );
 
 		RString foo;
 		foo.reserve(256);
-		for( int g=Grade_Tier01; g<=Grade_NoData; ++g )
+		for( int g=Grade_Tier01; g<=NUM_Grade; ++g )
 			AppendOctal( iCounts[g], 3, foo );
 		vals.push_back( val(pSong, foo) );
 	}
