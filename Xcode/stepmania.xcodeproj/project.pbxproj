@@ -7928,7 +7928,7 @@
 					"-fno-exceptions",
 					"-falign-loops=16",
 				);
-				PRODUCT_NAME = StepMania;
+				PRODUCT_NAME = "StepMania-debug";
 				SYMROOT = "$(SRCROOT)/..";
 				WRAPPER_EXTENSION = app;
 			};
@@ -8639,7 +8639,7 @@
 					"-fno-exceptions",
 					"-falign-loops=16",
 				);
-				PRODUCT_NAME = StepMania;
+				PRODUCT_NAME = "StepMania-FastDebug";
 				STRIP_INSTALLED_PRODUCT = NO;
 				SYMROOT = "$(SRCROOT)/..";
 				WRAPPER_EXTENSION = app;
