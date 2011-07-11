@@ -6,6 +6,7 @@
 #include "archutils/win32/WindowsResources.h"
 #include "archutils/win32/WindowIcon.h"
 #include "archutils/win32/ErrorStrings.h"
+#include "arch/ArchHooks/ArchHooks.h"
 #include <windows.h>
 #include "CommCtrl.h"
 #include "RageSurface_Load.h"
@@ -138,6 +139,7 @@ INT_PTR CALLBACK LoadingWindow_Win32::DlgProc( HWND hWnd, UINT msg, WPARAM wPara
 		break;
 
 	case WM_CLOSE:
+		HOOKS->SetUserQuit();
 		return FALSE;
 
 	case WM_DESTROY:
