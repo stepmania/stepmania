@@ -378,7 +378,7 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, const Song &song,
 			else if (BeginsWith(sRowString, "|M") || BeginsWith(sRowString, "|C"))
 			{
 				// multipliers/combo
-				stepsTiming.SetComboAtBeat( fCurBeat, static_cast<int>(numTemp) );
+				stepsTiming.SetHitComboAtBeat( fCurBeat, static_cast<int>(numTemp) );
 			}
 			else if (BeginsWith(sRowString, "|S"))
 			{

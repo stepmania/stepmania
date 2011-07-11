@@ -669,6 +669,18 @@ public:
 	 */
 	int GetComboAtBeat( float fBeat ) const { return GetComboAtRow( BeatToNoteRow(fBeat) ); }
 	/**
+	 * @brief Retrieve the Miss Combo at the given row.
+	 * @param iNoteRow the row in question.
+	 * @return the Miss Combo.
+	 */
+	int GetMissComboAtRow( int iNoteRow ) const;
+	/**
+	 * @brief Retrieve the Miss Combo at the given beat.
+	 * @param fBeat the beat in question.
+	 * @return the Miss Combo.
+	 */
+	int GetMissComboAtBeat( float fBeat ) const { return GetMissComboAtRow( BeatToNoteRow(fBeat) ); }
+	/**
 	 * @brief Set the row to have the new Combo.
 	 * @param iNoteRow the row to have the new Combo.
 	 * @param iCombo the Combo.
@@ -680,6 +692,44 @@ public:
 	 * @param iCombo the Combo.
 	 */
 	void SetComboAtBeat( float fBeat, int iCombo ) { SetComboAtRow( BeatToNoteRow( fBeat ), iCombo ); }
+	/**
+	 * @brief Set the row to have the new Combo and Miss Combo.
+	 * @param iNoteRow the row to have the new Combo and Miss Combo.
+	 * @param iCombo the Combo.
+	 * @param iMiss the Miss Combo.
+	 */
+	void SetComboAtRow( int iNoteRow, int iCombo, int iMiss );
+	/**
+	 * @brief Set the beat to have the new Combo and Miss Combo.
+	 * @param fBeat the beat to have the new Combo and Miss Combo.
+	 * @param iCombo the Combo.
+	 * @param iMiss the Miss Combo.
+	 */
+	void SetComboAtBeat( float fBeat, int iCombo, int iMiss ) { SetComboAtRow( BeatToNoteRow( fBeat ), iCombo, iMiss ); }
+	/**
+	 * @brief Set the row to have the new Combo.
+	 * @param iNoteRow the row to have the new Combo.
+	 * @param iCombo the Combo.
+	 */
+	void SetHitComboAtRow( int iNoteRow, int iCombo );
+	/**
+	 * @brief Set the beat to have the new Combo.
+	 * @param fBeat the beat to have the new Combo.
+	 * @param iCombo the Combo.
+	 */
+	void SetHitComboAtBeat( float fBeat, int iCombo ) { SetHitComboAtRow( BeatToNoteRow( fBeat ), iCombo ); }
+	/**
+	 * @brief Set the row to have the new Miss Combo.
+	 * @param iNoteRow the row to have the new Miss Combo.
+	 * @param iCombo the Miss Combo.
+	 */
+	void SetMissComboAtRow( int iNoteRow, int iCombo );
+	/**
+	 * @brief Set the beat to have the new Miss Combo.
+	 * @param fBeat the beat to have the new Miss Combo.
+	 * @param iCombo the Miss Combo.
+	 */
+	void SetMissComboAtBeat( float fBeat, int iCombo ) { SetMissComboAtRow( BeatToNoteRow( fBeat ), iCombo ); }
 	/**
 	 * @brief Retrieve the ComboSegment at the specified row.
 	 * @param iNoteRow the row that has a ComboSegment.

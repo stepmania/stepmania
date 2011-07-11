@@ -196,8 +196,8 @@ void ScreenDebugOverlay::Init()
 		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, KEY_Cq);
 		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, KEY_Cw);
 		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, KEY_Ce);
-		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, KEY_Ct);
 		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, KEY_Cr);
+		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, KEY_Ct);
 		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, KEY_Cy);
 		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, KEY_Cu);
 		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, KEY_Ci);
@@ -1226,10 +1226,10 @@ DECLARE_ONE( DebugLineWritePreferences );
 DECLARE_ONE( DebugLineMenuTimer );
 DECLARE_ONE( DebugLineFlushLog );
 DECLARE_ONE( DebugLinePullBackCamera );
-DECLARE_ONE( DebugLineVolumeUp );
 DECLARE_ONE( DebugLineVolumeDown );
-DECLARE_ONE( DebugLineVisualDelayUp );
+DECLARE_ONE( DebugLineVolumeUp );
 DECLARE_ONE( DebugLineVisualDelayDown );
+DECLARE_ONE( DebugLineVisualDelayUp );
 DECLARE_ONE( DebugLineForceCrash );
 DECLARE_ONE( DebugLineUptime );
 

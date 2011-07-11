@@ -8,6 +8,17 @@ ________________________________________________________________________________
 StepMania 5.0 ????????? | 20110???
 --------------------------------------------------------------------------------
 
+2011/07/09
+----------
+* [NotesTheUsual] Update the #COMBOS tag to allow for a Miss Combo attribute.
+  Any files that only use the Combo attribute will have that value copied to
+  miss combo on next launch. [Wolfman2000]
+* [ScoreKeeperNormal] Better match #COMBOS with eval. Scoring formulas should
+  not be affected, but it may require more testing. [Wolfman2000]
+* [Metrics] Have Pump mode lump the checkpoint judgments with Flawless and
+  Miss judgments on eval. Of course, this goes down to Perfect and Miss if
+  that is disabled. [Wolfman2000]
+
 2011/07/07
 ----------
 * [ScreenEdit] Fix the NoMines transformation bug, issue 363. [Wolfman2000]

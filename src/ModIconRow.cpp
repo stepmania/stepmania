@@ -68,18 +68,13 @@ void ModIconRow::HandleMessage( const Message &msg )
 
 struct OptionColumnEntry
 {
-	char *szString;
+	const char *szString;
 	int iSlotIndex;
 
 	//void FromStack( lua_State *L, int iPos );
 };
 
 // todo: metric these? -aj
-/*
- * May be a good idea to do so at some point. GCC gives plenty of warnings
- * About the code below, something about turning string constants into
- * char * items. Gotta love the many compilers we use. -Wolfman2000
- */
 static const OptionColumnEntry g_OptionColumnEntries[] =
 {
 	{"Boost",		0},

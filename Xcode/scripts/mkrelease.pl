@@ -9,7 +9,9 @@ use Cwd;
 
 my @docs = (
 	"Licenses.txt",
+	"Changelog_sm5.txt",
 	"Changelog_sm-ssc.txt",
+	"Changelog_SSCformat.txt",
 	"CommandLineArgs.txt",
 	"credits.txt",
 	"Themerdocs/"

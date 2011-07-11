@@ -128,7 +128,12 @@ static void GetTimingTags( vector<RString> &lines, TimingData timing, bool bIsSo
 	ASSERT( !timing.m_ComboSegments.empty() );
 	w.Init( "COMBOS" );
 	FOREACH_CONST( ComboSegment, timing.m_ComboSegments, cs )
-		w.Write( cs->GetRow(), cs->GetCombo() );
+	{
+		if (cs->GetCombo() == cs->GetMissCombo())
+			w.Write( cs->GetRow(), cs->GetCombo() );
+		else
+			w.Write( cs->GetRow(), cs->GetCombo(), cs->GetMissCombo() );
+	}
 	w.Finish();
 	
 	// Song Timing should only have the initial value.

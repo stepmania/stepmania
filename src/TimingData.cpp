@@ -166,12 +166,16 @@ void TimingData::SetTimeSignatureAtRow( int iRow, int iNumerator, int iDenominat
 
 void TimingData::SetTimeSignatureNumeratorAtRow( int iRow, int iNumerator )
 {
-	SetTimeSignatureAtRow( iRow, iNumerator, GetTimeSignatureSegmentAtBeat( NoteRowToBeat( iRow ) ).GetDen() );
+	this->SetTimeSignatureAtRow(iRow,
+								iNumerator,
+								GetTimeSignatureSegmentAtRow(iRow).GetDen());
 }
 
 void TimingData::SetTimeSignatureDenominatorAtRow( int iRow, int iDenominator )
 {
-	SetTimeSignatureAtRow( iRow, GetTimeSignatureSegmentAtBeat( NoteRowToBeat( iRow ) ).GetNum(), iDenominator );
+	this->SetTimeSignatureAtRow(iRow,
+								GetTimeSignatureSegmentAtRow(iRow).GetNum(),
+								iDenominator);
 }
 
 void TimingData::SetWarpAtRow( int iRow, float fNew )
@@ -222,7 +226,7 @@ void TimingData::SetTickcountAtRow( int iRow, int iTicks )
 	}
 }
 
-void TimingData::SetComboAtRow( int iRow, int iCombo )
+void TimingData::SetComboAtRow( int iRow, int iCombo, int iMiss )
 {
 	unsigned i;
 	for( i=0; i<m_ComboSegments.size(); i++ )
@@ -231,16 +235,35 @@ void TimingData::SetComboAtRow( int iRow, int iCombo )
 	
 	if( i == m_ComboSegments.size() || m_ComboSegments[i].GetRow() != iRow )
 	{
-		if( i == 0 || m_ComboSegments[i-1].GetCombo() != iCombo )
+		if(i == 0 || m_ComboSegments[i-1].GetCombo() != iCombo ||
+		   m_ComboSegments[i-1].GetMissCombo() != iMiss)
 			AddComboSegment( ComboSegment(iRow, iCombo ) );
 	}
 	else
 	{
-		if( i > 0 && m_ComboSegments[i-1].GetCombo() == iCombo )
+		if(i > 0 && m_ComboSegments[i-1].GetCombo() == iCombo &&
+		   m_ComboSegments[i-1].GetMissCombo() == iMiss)
 			m_ComboSegments.erase( m_ComboSegments.begin()+i, m_ComboSegments.begin()+i+1 );
 		else
+		{
 			m_ComboSegments[i].SetCombo(iCombo);
+			m_ComboSegments[i].SetMissCombo(iMiss);
+		}
 	}
+}
+
+void TimingData::SetHitComboAtRow(int iRow, int iCombo)
+{
+	this->SetComboAtRow(iRow,
+						iCombo,
+						this->GetComboSegmentAtRow(iRow).GetMissCombo());
+}
+
+void TimingData::SetMissComboAtRow(int iRow, int iMiss)
+{
+	this->SetComboAtRow(iRow,
+						this->GetComboSegmentAtRow(iRow).GetCombo(),
+						iMiss);
 }
 
 void TimingData::SetLabelAtRow( int iRow, const RString sLabel )
@@ -398,7 +421,12 @@ float TimingData::GetDelayAtRow( int iRow ) const
 
 int TimingData::GetComboAtRow( int iNoteRow ) const
 {
-	return m_ComboSegments[GetComboSegmentIndexAtRow( iNoteRow )].GetCombo();
+	return m_ComboSegments[this->GetComboSegmentIndexAtRow(iNoteRow)].GetCombo();
+}
+
+int TimingData::GetMissComboAtRow(int iNoteRow) const
+{
+	return m_ComboSegments[this->GetComboSegmentIndexAtRow(iNoteRow)].GetMissCombo();
 }
 
 RString TimingData::GetLabelAtRow( int iRow ) const
@@ -1735,7 +1763,7 @@ void TimingData::TidyUpData()
 	// Have a default combo segment of one just in case.
 	if( m_ComboSegments.empty() )
 	{
-		ComboSegment seg(0, 1);
+		ComboSegment seg(0, 1, 1);
 		m_ComboSegments.push_back( seg );
 	}
 	
@@ -1913,8 +1941,9 @@ public:
 		FOREACH_CONST( ComboSegment, p->m_ComboSegments, seg )
 		{
 			const int combo = seg->GetCombo();
+			const int miss = seg->GetMissCombo();
 			const float beat = seg->GetBeat();
-			vCombos.push_back( ssprintf("%f=%d", beat, combo) );
+			vCombos.push_back( ssprintf("%f=%d=%d", beat, combo, miss) );
 		}
 		LuaHelpers::CreateTableFromArray(vCombos, L);
 		return 1;
