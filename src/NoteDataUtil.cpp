@@ -786,7 +786,6 @@ RadarStats CalculateRadarStatsFast( const NoteData &in, RadarStats &out )
 	out.quads = 0;
 	map<int, int> simultaneousMap;
 	map<int, int> simultaneousMapNoHold;
-	map<int, int> simultaneousMapTapHoldHead;
 	map<int, int>::iterator itr;
 	for( int t=0; t<in.GetNumTracks(); t++ )
 	{
@@ -816,11 +815,6 @@ RadarStats CalculateRadarStatsFast( const NoteData &in, RadarStats &out )
 				simultaneousMapNoHold[r] = 1;
 			else
 				itr->second++;
-			
-			if( tn.type == TapNote::tap || tn.type == TapNote::lift || tn.type == TapNote::hold_head )
-			{
-				simultaneousMapTapHoldHead[r] = 1;
-			}
 
 			if( tn.type == TapNote::hold_head )
 			{
@@ -856,12 +850,12 @@ RadarStats CalculateRadarStatsFast( const NoteData &in, RadarStats &out )
 	}
 	for( itr = simultaneousMapNoHold.begin(); itr != simultaneousMapNoHold.end(); itr ++ )
 	{
+		out.taps++;
 		if( itr->second >= 2 )
 		{
 			out.jumps ++;
 		}
 	}
-	out.taps = simultaneousMapTapHoldHead.size();
 	return out;
 }
 
