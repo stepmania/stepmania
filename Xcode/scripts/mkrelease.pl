@@ -48,8 +48,8 @@ $destname =~ s/\s+/-/g;
 my $tmp = tempdir;
 
 # Copy StepMania and make smzip
-system 'cp', '-r', "$srcdir/sm-ssc.app", $tmp and die "cp -r failed: $!\n";
-system 'strip', '-x', "$tmp/sm-ssc.app/Contents/MacOS/sm-ssc";
+system 'cp', '-r', "$srcdir/StepMania.app", $tmp and die "cp -r failed: $!\n";
+system 'strip', '-x', "$tmp/StepMania.app/Contents/MacOS/StepMania";
 
 mkdir "$tmp/Packages";
 system "$srcdir/Utils/CreatePackage.pl", $srcdir, "$tmp/Packages" and die "mksmdata.pl failed: $!\n";
