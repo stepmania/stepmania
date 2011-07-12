@@ -453,6 +453,7 @@ class OptionRowHandlerListSteps : public OptionRowHandlerList
 				if (STEPS_USE_CHART_NAME)
 				{
 					s = pSteps->GetChartName();
+					// TODO: find a way to make this use lua.
 					if (!(s == "" || s == "blank" || s == "Blank"))
 					{
 						goto nameGotten;
