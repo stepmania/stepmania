@@ -14,6 +14,9 @@ StepMania 5.0 ????????? | 20110???
   StepsUseChartName. Use this if you want your charts to have a unique name
   in the options menu. If there is no #CHARTNAME or it is "Blank", it reverts
   to the original behavior. This metric is false by default. [Wolfman2000]
+* [ScreenEdit] Fixed a bug involving #ATTACKS. Now when you set an attack,
+  the mods are reverted back to how they were prior to the attack being set.
+  [Wolfman2000]
 
 2011/07/09
 ----------

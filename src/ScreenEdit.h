@@ -266,6 +266,9 @@ protected:
 
 	BitmapText		m_textInputTips;
 	
+	/** @brief The player options before messing with attacks. */
+	ModsGroup<PlayerOptions>	originalPlayerOptions;
+	
 	/**
 	 * @brief Keep a backup of the present Step TimingData when
 	 * entering a playing or recording state.
