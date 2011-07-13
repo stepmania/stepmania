@@ -8,6 +8,11 @@ ________________________________________________________________________________
 StepMania 5.0 ????????? | 20110???
 --------------------------------------------------------------------------------
 
+2011/07/13
+----------
+* [Difficulty] Allow ALL StepsTypes to use CustomDifficulty properly.
+  There was some unfair targeting of Couple and Routine. [Wolfman2000]
+
 2011/07/12
 ----------
 * [OptionRowHandler] Add a new metric to ScreenOptionsMaster:
