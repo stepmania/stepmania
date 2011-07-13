@@ -1512,7 +1512,7 @@ void Player::DrawPrimitives()
 	DISPLAY->PopMatrix();
 
 	// m_pNoteField->m_sprBoard->GetVisible()
-	if( !(bool)COMBO_UNDER_FIELD && m_pPlayerState->m_PlayerOptions.GetCurrent().m_fBlind == 0 )
+	if( !COMBO_UNDER_FIELD && m_pPlayerState->m_PlayerOptions.GetCurrent().m_fBlind == 0 )
 		if( m_sprCombo )
 			m_sprCombo->Draw();
 
