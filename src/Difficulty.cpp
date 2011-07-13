@@ -67,8 +67,6 @@ RString GetCustomDifficulty( StepsType st, Difficulty dc, CourseType ct )
 		return DifficultyToString( dc );
 	}
 
-	const StepsTypeInfo &sti = GAMEMAN->GetStepsTypeInfo( st );
-
 	if( dc == Difficulty_Edit )
 	{
 		return "Edit";
