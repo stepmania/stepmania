@@ -1980,6 +1980,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			else
 			{
 				GAMESTATE->m_pCurSong->m_Attacks.UpdateStartTimes(fDelta);
+				GAMESTATE->m_pCurSong->m_fMusicSampleStartSeconds += fDelta;
 			}
 			SetDirty( true );
 		}
@@ -2612,6 +2613,10 @@ void ScreenEdit::InputPlay( const InputEventPlus &input, EditButton EditB )
 			}
 
 			GetAppropriateTiming().m_fBeat0OffsetInSeconds += fOffsetDelta;
+			if (!GAMESTATE->m_bIsUsingStepTiming)
+			{
+				GAMESTATE->m_pCurSong->m_fMusicSampleStartSeconds += fOffsetDelta;
+			}
 		}
 			break;
 		}
@@ -3503,6 +3508,7 @@ static void ChangeBeat0Offset( const RString &sNew )
 	else
 	{
 		GAMESTATE->m_pCurSong->m_Attacks.UpdateStartTimes(delta);
+		GAMESTATE->m_pCurSong->m_fMusicSampleStartSeconds += delta;
 	}
 }
 
