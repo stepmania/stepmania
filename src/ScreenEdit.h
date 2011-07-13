@@ -510,11 +510,11 @@ public:
 	{
 		difficulty, /**< What is the difficulty of this chart? */
 		meter, /**< What is the numerical rating of this chart? */
+		predict_meter, /**< What does the game think this chart's rating should be? */
 		chartname, /**< What is the name of this chart? */
 		description, /**< What is the description of this chart? */
 		chartstyle, /**< How is this chart meant to be played? */
 		step_credit, /**< Who wrote this individual chart? */
-		predict_meter, /**< What does the game think this chart's rating should be? */
 		step_display_bpm,
 		step_min_bpm,
 		step_max_bpm,
