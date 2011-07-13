@@ -34,7 +34,7 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, const Song &song,
 	// this is the value we read for TICKCOUNT
 	int iTickCount = -1;
 	// used to adapt weird tickcounts
-	float fScrollRatio = 1.0f;
+	//float fScrollRatio = 1.0f; -- uncomment when ready to use.
 	vector<RString> vNoteRows;
 
 	// According to Aldo_MX, there is a default BPM and it's 60. -aj

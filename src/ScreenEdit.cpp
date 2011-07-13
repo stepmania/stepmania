@@ -757,6 +757,11 @@ static MenuDef g_InsertCourseAttack(
 	MenuRowDef( ScreenEdit::remove,		"Remove",		true, EditMode_Practice, true, true, 0, "Press Start" )
 );
 
+static MenuDef g_InsertStepAttack("ScreenMiniMenuInsertCourseAttack",
+								  MenuRowDef( ScreenEdit::sa_duration,	"Duration seconds",	true, EditMode_Practice, true, false, 3, "5","10","15","20","25","30","35","40","45" ),
+								  MenuRowDef( ScreenEdit::sa_set_mods,	"Set modifiers",	true, EditMode_Practice, true, true, 0, "Press Start" ),
+								  MenuRowDef( ScreenEdit::sa_remove,		"Remove",		true, EditMode_Practice, true, true, 0, "Press Start" ));
+
 static MenuDef g_CourseMode(
 	"ScreenMiniMenuCourseDisplay",
 	MenuRowDef( -1, "Play mods from course",	true, EditMode_Practice, true, false, 0, NULL )
@@ -879,6 +884,8 @@ void ScreenEdit::Init()
 		PO_GROUP_ASSIGN( m_PlayerStateEdit.m_PlayerOptions, ModsLevel_Stage, m_sNoteSkin, GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.GetStage().m_sNoteSkin );
 	}
 	m_PlayerStateEdit.m_PlayerOptions.FromString( ModsLevel_Stage, EDIT_MODIFIERS );
+	
+	this->originalPlayerOptions.FromString(ModsLevel_Stage, EDIT_MODIFIERS);
 
 	m_pSteps->GetNoteData( m_NoteDataEdit );
 	m_NoteFieldEdit.SetXY( EDIT_X, EDIT_Y );
@@ -1973,6 +1980,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			else
 			{
 				GAMESTATE->m_pCurSong->m_Attacks.UpdateStartTimes(fDelta);
+				GAMESTATE->m_pCurSong->m_fMusicSampleStartSeconds += fDelta;
 			}
 			SetDirty( true );
 		}
@@ -2168,20 +2176,20 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 		{
 			const RString sDuration = ssprintf( "%.6f", attacks[index].fSecsRemaining );
 			
-			g_InsertCourseAttack.rows[remove].bEnabled = true;
-			if( g_InsertCourseAttack.rows[duration].choices.size() == 9 )
-				g_InsertCourseAttack.rows[duration].choices.push_back( sDuration );
+			g_InsertStepAttack.rows[sa_remove].bEnabled = true;
+			if( g_InsertStepAttack.rows[sa_duration].choices.size() == 9 )
+				g_InsertStepAttack.rows[sa_duration].choices.push_back( sDuration );
 			else
-				g_InsertCourseAttack.rows[duration].choices.back() = sDuration;
-			g_InsertCourseAttack.rows[duration].iDefaultChoice = 9;
+				g_InsertStepAttack.rows[sa_duration].choices.back() = sDuration;
+			g_InsertStepAttack.rows[sa_duration].iDefaultChoice = 9;
 		}
 		else
 		{
-			if( g_InsertCourseAttack.rows[duration].choices.size() == 10 )
-				g_InsertCourseAttack.rows[duration].choices.pop_back();
-			g_InsertCourseAttack.rows[duration].iDefaultChoice = 3;
+			if( g_InsertStepAttack.rows[sa_duration].choices.size() == 10 )
+				g_InsertStepAttack.rows[sa_duration].choices.pop_back();
+			g_InsertStepAttack.rows[sa_duration].iDefaultChoice = 3;
 		}
-		EditMiniMenu( &g_InsertCourseAttack, SM_BackFromInsertStepAttack );
+		EditMiniMenu( &g_InsertStepAttack, SM_BackFromInsertStepAttack );
 		
 		break;
 	}
@@ -2248,9 +2256,11 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			}
 			
 		}
+		ModsGroup<PlayerOptions> &toEdit = GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions;
+		this->originalPlayerOptions.Assign(ModsLevel_Preferred, toEdit.GetPreferred());
 		g_fLastInsertAttackPositionSeconds = start;
 		g_fLastInsertAttackDurationSeconds = end - start;
-		GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.Assign( ModsLevel_Stage, po );
+		toEdit.Assign( ModsLevel_Stage, po );
 		SCREENMAN->AddNewScreenToTop( "ScreenPlayerOptions", SM_BackFromInsertStepAttackPlayerOptions );
 		break;
 	}
@@ -2603,6 +2613,10 @@ void ScreenEdit::InputPlay( const InputEventPlus &input, EditButton EditB )
 			}
 
 			GetAppropriateTiming().m_fBeat0OffsetInSeconds += fOffsetDelta;
+			if (!GAMESTATE->m_bIsUsingStepTiming)
+			{
+				GAMESTATE->m_pCurSong->m_fMusicSampleStartSeconds += fOffsetDelta;
+			}
 		}
 			break;
 		}
@@ -3156,7 +3170,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		int iDurationChoice = ScreenMiniMenu::s_viLastAnswers[0];
 		TimingData &timing = GetAppropriateTiming();
 		g_fLastInsertAttackPositionSeconds = timing.GetElapsedTimeFromBeat( GetBeat() );
-		g_fLastInsertAttackDurationSeconds = StringToFloat( g_InsertCourseAttack.rows[0].choices[iDurationChoice] );
+		g_fLastInsertAttackDurationSeconds = StringToFloat( g_InsertStepAttack.rows[0].choices[iDurationChoice] );
 		AttackArray &attacks = GAMESTATE->m_bIsUsingStepTiming ? m_pSteps->m_Attacks : m_pSong->m_Attacks;
 		int iAttack = FindAttackAtTime(attacks, g_fLastInsertAttackPositionSeconds);
 		
@@ -3167,11 +3181,13 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		}
 		else
 		{
+			ModsGroup<PlayerOptions> &toEdit = GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions;
+			this->originalPlayerOptions.Assign(ModsLevel_Preferred, toEdit.GetPreferred());
 			PlayerOptions po;
 			if (iAttack >= 0)
 				po.FromString(attacks[iAttack].sModifiers);
 			
-			GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.Assign( ModsLevel_Preferred, po );
+			toEdit.Assign( ModsLevel_Preferred, po );
 			SCREENMAN->AddNewScreenToTop( "ScreenPlayerOptions", SM_BackFromInsertStepAttackPlayerOptions );
 		}
 	}
@@ -3206,7 +3222,8 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if (SM == SM_BackFromInsertStepAttackPlayerOptions)
 	{
-		PlayerOptions poChosen = GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.GetPreferred();
+		ModsGroup<PlayerOptions> &toRestore = GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions;
+		PlayerOptions poChosen = toRestore.GetPreferred();
 		RString mods = poChosen.GetString();
 		
 		if (g_fLastInsertAttackPositionSeconds >= 0)
@@ -3224,6 +3241,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 			else
 				attacks.push_back(a);
 		}
+		toRestore.Assign(ModsLevel_Preferred, this->originalPlayerOptions.GetPreferred());
 	}
 	else if( SM == SM_BackFromInsertCourseAttackPlayerOptions )
 	{
@@ -3490,6 +3508,7 @@ static void ChangeBeat0Offset( const RString &sNew )
 	else
 	{
 		GAMESTATE->m_pCurSong->m_Attacks.UpdateStartTimes(delta);
+		GAMESTATE->m_pCurSong->m_fMusicSampleStartSeconds += delta;
 	}
 }
 
@@ -4134,11 +4153,13 @@ void ScreenEdit::HandleAlterMenuChoice(AlterMenuChoice c, const vector<int> &iAn
 				m_pSteps->m_Attacks : m_pSong->m_Attacks;
 			int iAttack = FindAttackAtTime(attacks, start);
 			
+			ModsGroup<PlayerOptions> &toEdit = GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions;
+			this->originalPlayerOptions.Assign(ModsLevel_Preferred, toEdit.GetPreferred());
 			PlayerOptions po;
 			if (iAttack >= 0)
 				po.FromString(attacks[iAttack].sModifiers);
 				
-			GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.Assign( ModsLevel_Preferred, po );
+			toEdit.Assign( ModsLevel_Preferred, po );
 			SCREENMAN->AddNewScreenToTop( "ScreenPlayerOptions", SM_BackFromInsertStepAttackPlayerOptions );
 			SetDirty(true);
 			break;
