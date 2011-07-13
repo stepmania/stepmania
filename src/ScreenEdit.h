@@ -634,6 +634,14 @@ public:
 		remove,
 		NUM_CourseAttackChoice
 	};
+	
+	enum StepAttackChoice
+	{
+		sa_duration,
+		sa_set_mods,
+		sa_remove,
+		NUM_StepAttackChoice
+	};
 
 	void InitEditMappings();
 	EditButton DeviceToEdit( const DeviceInput &DeviceI ) const;

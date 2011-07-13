@@ -757,6 +757,11 @@ static MenuDef g_InsertCourseAttack(
 	MenuRowDef( ScreenEdit::remove,		"Remove",		true, EditMode_Practice, true, true, 0, "Press Start" )
 );
 
+static MenuDef g_InsertStepAttack("ScreenMiniMenuInsertCourseAttack",
+								  MenuRowDef( ScreenEdit::sa_duration,	"Duration seconds",	true, EditMode_Practice, true, false, 3, "5","10","15","20","25","30","35","40","45" ),
+								  MenuRowDef( ScreenEdit::sa_set_mods,	"Set modifiers",	true, EditMode_Practice, true, true, 0, "Press Start" ),
+								  MenuRowDef( ScreenEdit::sa_remove,		"Remove",		true, EditMode_Practice, true, true, 0, "Press Start" ));
+
 static MenuDef g_CourseMode(
 	"ScreenMiniMenuCourseDisplay",
 	MenuRowDef( -1, "Play mods from course",	true, EditMode_Practice, true, false, 0, NULL )
@@ -2168,20 +2173,20 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 		{
 			const RString sDuration = ssprintf( "%.6f", attacks[index].fSecsRemaining );
 			
-			g_InsertCourseAttack.rows[remove].bEnabled = true;
-			if( g_InsertCourseAttack.rows[duration].choices.size() == 9 )
-				g_InsertCourseAttack.rows[duration].choices.push_back( sDuration );
+			g_InsertStepAttack.rows[sa_remove].bEnabled = true;
+			if( g_InsertStepAttack.rows[sa_duration].choices.size() == 9 )
+				g_InsertStepAttack.rows[sa_duration].choices.push_back( sDuration );
 			else
-				g_InsertCourseAttack.rows[duration].choices.back() = sDuration;
-			g_InsertCourseAttack.rows[duration].iDefaultChoice = 9;
+				g_InsertStepAttack.rows[sa_duration].choices.back() = sDuration;
+			g_InsertStepAttack.rows[sa_duration].iDefaultChoice = 9;
 		}
 		else
 		{
-			if( g_InsertCourseAttack.rows[duration].choices.size() == 10 )
-				g_InsertCourseAttack.rows[duration].choices.pop_back();
-			g_InsertCourseAttack.rows[duration].iDefaultChoice = 3;
+			if( g_InsertStepAttack.rows[sa_duration].choices.size() == 10 )
+				g_InsertStepAttack.rows[sa_duration].choices.pop_back();
+			g_InsertStepAttack.rows[sa_duration].iDefaultChoice = 3;
 		}
-		EditMiniMenu( &g_InsertCourseAttack, SM_BackFromInsertStepAttack );
+		EditMiniMenu( &g_InsertStepAttack, SM_BackFromInsertStepAttack );
 		
 		break;
 	}
@@ -3156,7 +3161,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		int iDurationChoice = ScreenMiniMenu::s_viLastAnswers[0];
 		TimingData &timing = GetAppropriateTiming();
 		g_fLastInsertAttackPositionSeconds = timing.GetElapsedTimeFromBeat( GetBeat() );
-		g_fLastInsertAttackDurationSeconds = StringToFloat( g_InsertCourseAttack.rows[0].choices[iDurationChoice] );
+		g_fLastInsertAttackDurationSeconds = StringToFloat( g_InsertStepAttack.rows[0].choices[iDurationChoice] );
 		AttackArray &attacks = GAMESTATE->m_bIsUsingStepTiming ? m_pSteps->m_Attacks : m_pSong->m_Attacks;
 		int iAttack = FindAttackAtTime(attacks, g_fLastInsertAttackPositionSeconds);
 		
