@@ -225,6 +225,22 @@ void Steps::CalculateRadarValues( float fMusicLengthSeconds )
 		for( size_t pn = 0; pn < min(vParts.size(), size_t(NUM_PLAYERS)); ++pn )
 			NoteDataUtil::CalculateRadarValues( vParts[pn], fMusicLengthSeconds, m_CachedRadarValues[pn] );
 	}
+	else if (GAMEMAN->GetStepsTypeInfo(this->m_StepsType).m_StepsTypeCategory == StepsTypeCategory_Couple)
+	{
+		NoteData p1 = tempNoteData;
+		// XXX: Assumption that couple will always have an even number of notes.
+		const int tracks = tempNoteData.GetNumTracks() / 2;
+		p1.SetNumTracks(tracks);
+		NoteDataUtil::CalculateRadarValues(p1,
+										   fMusicLengthSeconds,
+										   m_CachedRadarValues[PLAYER_1]);
+		// at this point, p2 is tempNoteData.
+		NoteDataUtil::ShiftTracks(tempNoteData, tracks);
+		tempNoteData.SetNumTracks(tracks);
+		NoteDataUtil::CalculateRadarValues(tempNoteData,
+										   fMusicLengthSeconds,
+										   m_CachedRadarValues[PLAYER_2]);
+	}
 	else
 	{
 		NoteDataUtil::CalculateRadarValues( tempNoteData, fMusicLengthSeconds, m_CachedRadarValues[0] );

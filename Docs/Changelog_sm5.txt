@@ -12,6 +12,7 @@ StepMania 5.0 ????????? | 20110???
 ----------
 * [Difficulty] Allow ALL StepsTypes to use CustomDifficulty properly.
   There was some unfair targeting of Couple and Routine. [Wolfman2000]
+* [Steps] Calculate accurate radar values for Couple charts. [Wolfman2000]
 
 2011/07/12
 ----------
