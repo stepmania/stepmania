@@ -90,7 +90,46 @@ private:
 	// There's no point in inserting empty notes into the map.
 	// Any blank space in the map is defined to be empty.
 	vector<TrackMap>	m_TapNotes;
+	
+	/**
+	 * @brief Determine whether this note is for Player 1 or Player 2.
+	 * @param track the track/column the note is in.
+	 * @param tn the note in question. Required for routine mode.
+	 * @return true if it's for player 1, false for player 2. */
+	bool IsPlayer1(const int track, const TapNote &tn) const;
+	
+	/**
+	 * @brief Determine if the note in questino should be counted as a tap.
+	 * @param tn the note in question.
+	 * @param row the row it lives in.
+	 * @return true if it's a tap, false otherwise. */
+	bool IsTap(const TapNote &tn, const int row) const;
+	
+	/**
+	 * @brief Determine if the note in questino should be counted as a mine.
+	 * @param tn the note in question.
+	 * @param row the row it lives in.
+	 * @return true if it's a mine, false otherwise. */
+	bool IsMine(const TapNote &tn, const int row) const;
+	
+	/**
+	 * @brief Determine if the note in questino should be counted as a lift.
+	 * @param tn the note in question.
+	 * @param row the row it lives in.
+	 * @return true if it's a lift, false otherwise. */
+	bool IsLift(const TapNote &tn, const int row) const;
+	
+	/**
+	 * @brief Determine if the note in questino should be counted as a fake.
+	 * @param tn the note in question.
+	 * @param row the row it lives in.
+	 * @return true if it's a fake, false otherwise. */
+	bool IsFake(const TapNote &tn, const int row) const;
 
+	pair<int, int> GetNumRowsWithSimultaneousTapsTwoPlayer(int minTaps = 2,
+														   int startRow = 0,
+														   int endRow = MAX_NOTE_ROW) const;
+	
 public:
 	void Init();
 
@@ -241,6 +280,8 @@ public:
 	{
 		return GetNumRowsWithSimultaneousTaps( 2, iStartIndex, iEndIndex );
 	}
+	
+	
 
 	// This row needs at least iMinSimultaneousPresses either tapped or held.
 	bool RowNeedsAtLeastSimultaneousPresses( int iMinSimultaneousPresses, int row ) const;
@@ -261,6 +302,34 @@ public:
 	int GetNumLifts( int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW ) const;
 	int GetNumFakes( int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW ) const;
 
+	// the couple/routine style variants of the above.
+	pair<int, int> GetNumTapNotesTwoPlayer(int startRow = 0,
+										   int endRow = MAX_NOTE_ROW) const;
+	
+	pair<int, int> GetNumJumpsTwoPlayer(int startRow = 0,
+										int endRow = MAX_NOTE_ROW) const;
+	
+	pair<int, int> GetNumHandsTwoPlayer(int startRow = 0,
+										int endRow = MAX_NOTE_ROW) const;
+	
+	pair<int, int> GetNumQuadsTwoPlayer(int startRow = 0,
+										int endRow = MAX_NOTE_ROW) const;
+	
+	pair<int, int> GetNumHoldNotesTwoPlayer(int startRow = 0,
+											int endRow = MAX_NOTE_ROW) const;
+	
+	pair<int, int> GetNumMinesTwoPlayer(int startRow = 0,
+										int endRow = MAX_NOTE_ROW) const;
+	
+	pair<int, int> GetNumRollsTwoPlayer(int startRow = 0,
+										int endRow = MAX_NOTE_ROW) const;
+	
+	pair<int, int> GetNumLiftsTwoPlayer(int startRow = 0,
+										int endRow = MAX_NOTE_ROW) const;
+	
+	pair<int, int> GetNumFakesTwoPlayer(int startRow = 0,
+										int endRow = MAX_NOTE_ROW) const;
+	
 	// Transformations
 	void LoadTransformed(const NoteData& original,
 						 int iNewNumTracks,
