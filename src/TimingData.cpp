@@ -14,6 +14,15 @@ TimingData::TimingData(float fOffset) :
 	// allTimingSegments[SEGMENT_BPM] = new vector<BPMSegment>();
 }
 
+TimingData::~TimingData()
+{
+	for (unsigned i = 0; i < NUM_TimingSegmentTypes; i++)
+	{
+		this->allTimingSegments[i].clear();
+	}
+	delete [] this->allTimingSegments;
+}
+
 void TimingData::GetActualBPM( float &fMinBPMOut, float &fMaxBPMOut, float highest ) const
 {
 	fMinBPMOut = FLT_MAX;
