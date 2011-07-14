@@ -3,31 +3,31 @@
 
 #define LTCOMPARE(x)      if(this->x < other.x) return true; if(this->x > other.x) return false;
 
-BaseTimingSegment::~BaseTimingSegment() {}
+TimingSegment::~TimingSegment() {}
 
-void BaseTimingSegment::SetRow(const int s)
+void TimingSegment::SetRow(const int s)
 {
 	this->startingRow = s;
 }
 
-void BaseTimingSegment::SetBeat(const float s)
+void TimingSegment::SetBeat(const float s)
 {
 	SetRow(BeatToNoteRow(s));
 }
 
-int BaseTimingSegment::GetRow() const
+int TimingSegment::GetRow() const
 {
 	return this->startingRow;
 }
 
-float BaseTimingSegment::GetBeat() const
+float TimingSegment::GetBeat() const
 {
 	return NoteRowToBeat(GetRow());
 }
 
-void BaseTimingSegment::Scale( int start, int length, int newLength )
+void TimingSegment::Scale( int start, int length, int newLength )
 {
-	SetRow( ScalePosition( start, length, newLength, GetRow() ) );
+	SetRow( ScalePosition( start, length, newLength, this->GetRow() ) );
 }
 
 
@@ -51,7 +51,7 @@ void FakeSegment::Scale( int start, int length, int newLength )
 	float newStartBeat = ScalePosition( NoteRowToBeat(start), NoteRowToBeat(length), NoteRowToBeat(newLength), startBeat );
 	float newEndBeat   = ScalePosition( NoteRowToBeat(start), NoteRowToBeat(length), NoteRowToBeat(newLength), endBeat );
 	SetLength( newEndBeat - newStartBeat );
-	TimingSegment<FakeSegment>::Scale( start, length, newLength );
+	TimingSegment::Scale( start, length, newLength );
 }
 
 bool FakeSegment::operator<( const FakeSegment &other ) const
@@ -82,7 +82,7 @@ void WarpSegment::Scale( int start, int length, int newLength )
 	float newStartBeat = ScalePosition( NoteRowToBeat(start), NoteRowToBeat(length), NoteRowToBeat(newLength), startBeat );
 	float newEndBeat   = ScalePosition( NoteRowToBeat(start), NoteRowToBeat(length), NoteRowToBeat(newLength), endBeat );
 	SetLength( newEndBeat - newStartBeat );
-	TimingSegment<WarpSegment>::Scale( start, length, newLength );
+	TimingSegment::Scale( start, length, newLength );
 }
 
 bool WarpSegment::operator<( const WarpSegment &other ) const
@@ -278,7 +278,7 @@ void SpeedSegment::Scale( int start, int oldLength, int newLength )
 						   endBeat);
 		SetLength( newEndBeat - newStartBeat );
 	}
-	TimingSegment<SpeedSegment>::Scale( start, oldLength, newLength );
+	TimingSegment::Scale( start, oldLength, newLength );
 }
 
 bool SpeedSegment::operator<( const SpeedSegment &other ) const
