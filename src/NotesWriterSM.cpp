@@ -50,6 +50,7 @@ static RString BackgroundChangeToString( const BackgroundChange &bgc )
  * @param out the Song in question. */
 static void WriteGlobalTags( RageFile &f, Song &out )
 {
+	TimingData &timing = out.m_SongTiming;
 	f.PutLine( ssprintf( "#TITLE:%s;", SmEscape(out.m_sMainTitle).c_str() ) );
 	f.PutLine( ssprintf( "#SUBTITLE:%s;", SmEscape(out.m_sSubTitle).c_str() ) );
 	f.PutLine( ssprintf( "#ARTIST:%s;", SmEscape(out.m_sArtist).c_str() ) );
@@ -99,44 +100,46 @@ static void WriteGlobalTags( RageFile &f, Song &out )
 
 
 	f.Write( "#BPMS:" );
-	for( unsigned i=0; i<out.m_SongTiming.m_BPMSegments.size(); i++ )
+	vector<TimingSegment *> &bpms = timing.allTimingSegments[SEGMENT_BPM];
+	for( unsigned i=0; i<bpms.size(); i++ )
 	{
-		const BPMSegment &bs = out.m_SongTiming.m_BPMSegments[i];
+		const BPMSegment *bs = static_cast<BPMSegment *>(bpms[i]);
 
-		f.PutLine( ssprintf( "%.3f=%.3f", bs.GetBeat(), bs.GetBPM() ) );
-		if( i != out.m_SongTiming.m_BPMSegments.size()-1 )
+		f.PutLine( ssprintf( "%.3f=%.3f", bs->GetBeat(), bs->GetBPM() ) );
+		if( i != bpms.size()-1 )
 			f.Write( "," );
 	}
 	f.PutLine( ";" );
 	
-	unsigned wSize = out.m_SongTiming.m_WarpSegments.size();
+	vector<TimingSegment *> &warps = timing.allTimingSegments[SEGMENT_WARP];
+	unsigned wSize = warps.size();
 	if( wSize > 0 )
 	{
 		for( unsigned i=0; i < wSize; i++ )
 		{
-			int iRow = out.m_SongTiming.m_WarpSegments[i].GetRow();
+			const WarpSegment *ws = static_cast<WarpSegment *>(warps[i]);
+			int iRow = ws->GetRow();
 			float fBPS = 60 / out.m_SongTiming.GetBPMAtRow(iRow);
-			float fSkip = fBPS * out.m_SongTiming.m_WarpSegments[i].GetLength();
+			float fSkip = fBPS * ws->GetLength();
 			StopSegment ss(iRow, -fSkip, false);
 			out.m_SongTiming.AddStopSegment( ss );
 		}
 	}
 
 	f.Write( "#STOPS:" );
-	for( unsigned i=0; i<out.m_SongTiming.m_StopSegments.size(); i++ )
+	vector<TimingSegment *> &stops = timing.allTimingSegments[SEGMENT_STOP_DELAY];
+	for( unsigned i=0; i<stops.size(); i++ )
 	{
-		const StopSegment &fs = out.m_SongTiming.m_StopSegments[i];
-		float fBeat = fs.GetBeat();
-		if (fs.GetDelay()) fBeat--;
+		const StopSegment *fs = static_cast<StopSegment *>(stops[i]);
+		float fBeat = fs->GetBeat();
+		if (fs->GetDelay()) fBeat--;
 		
-		f.PutLine( ssprintf( "%.3f=%.3f", fBeat, fs.GetPause() ) );
-		if( i != out.m_SongTiming.m_StopSegments.size()-1 )
+		f.PutLine( ssprintf( "%.3f=%.3f", fBeat, fs->GetPause() ) );
+		if( i != stops.size()-1 )
 			f.Write( "," );
-		if( fs.GetPause() < 0 )
+		if( fs->GetPause() < 0 )
 		{
-			out.m_SongTiming.m_StopSegments.erase( 
-					     out.m_SongTiming.m_StopSegments.begin()+i,
-					     out.m_SongTiming.m_StopSegments.begin()+i+1 );
+			stops.erase(stops.begin()+i,stops.begin()+i+1 );
 			i--;
 		}
 	}

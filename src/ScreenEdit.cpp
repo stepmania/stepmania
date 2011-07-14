@@ -1972,13 +1972,14 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 					fDelta *= 40;
 			}
 			unsigned i;
-			for( i=0; i<GetAppropriateTiming().m_StopSegments.size(); i++ )
+			vector<TimingSegment *> &stops = GetAppropriateTiming().allTimingSegments[SEGMENT_STOP_DELAY];
+			for( i=0; i<stops.size(); i++ )
 			{
-				if( GetAppropriateTiming().m_StopSegments[i].GetRow() == GetRow() )
+				if( stops[i]->GetRow() == GetRow() )
 					break;
 			}
 
-			if( i == GetAppropriateTiming().m_StopSegments.size() )	// there is no StopSegment at the current beat
+			if( i == stops.size() )	// there is no StopSegment at the current beat
 			{
 				// create a new StopSegment
 				if( fDelta > 0 )
@@ -1986,10 +1987,10 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			}
 			else	// StopSegment being modified is m_SongTiming.m_StopSegments[i]
 			{
-				vector<StopSegment> &s = GetAppropriateTiming().m_StopSegments;
-				s[i].SetPause(s[i].GetPause() + fDelta);
-				if( s[i].GetPause() <= 0 )
-					s.erase( s.begin()+i, s.begin()+i+1);
+				StopSegment *s = static_cast<StopSegment *>(stops[i]);
+				s->SetPause(s->GetPause() + fDelta);
+				if( s->GetPause() <= 0 )
+					stops.erase( stops.begin()+i, stops.begin()+i+1);
 			}
 			(fDelta>0 ? m_soundValueIncrease : m_soundValueDecrease).Play();
 			SetDirty( true );
