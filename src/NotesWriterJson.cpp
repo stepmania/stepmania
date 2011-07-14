@@ -23,8 +23,8 @@ static void Serialize(const StopSegment &seg, Json::Value &root)
 
 static void Serialize(const TimingData &td, Json::Value &root)
 {
-	JsonUtil::SerializeVectorObjects( td.m_BPMSegments, Serialize, root["BpmSegments"] );
-	JsonUtil::SerializeVectorObjects( td.m_StopSegments, Serialize, root["StopSegments"] );
+//	JsonUtil::SerializeVectorObjects( td.m_BPMSegments, Serialize, root["BpmSegments"] );
+//	JsonUtil::SerializeVectorObjects( td.m_StopSegments, Serialize, root["StopSegments"] );
 }
 
 static void Serialize(const LyricSegment &o, Json::Value &root)
