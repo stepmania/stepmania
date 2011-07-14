@@ -515,14 +515,16 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, set<RString> &Bla
 			
 			if( PREFSMAN->m_bQuirksMode )
 			{
-				out.m_SongTiming.AddBPMSegment( BPMSegment(0, fBPM) );
+				out.m_SongTiming.AddSegment( SEGMENT_BPM, new BPMSegment(0, fBPM) );
 			}
 			else{
 				if( fBPM > 0.0f )
-					out.m_SongTiming.AddBPMSegment( BPMSegment(0, fBPM) );
+					out.m_SongTiming.AddSegment( SEGMENT_BPM, new BPMSegment(0, fBPM) );
 				else
-					LOG->UserLog( "Song file", sPath, "has an invalid BPM change at beat %f, BPM %f.",
-							  NoteRowToBeat(0), fBPM );
+					LOG->UserLog("Song file",
+								 sPath,
+								 "has an invalid BPM change at beat %f, BPM %f.",
+								 0.0f, fBPM );
 			}
 		}
 		else if( sValueName.EqualsNoCase("DISPLAYBPM") )
@@ -576,7 +578,7 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, set<RString> &Bla
 				int iFreezeRow = BeatToNoteRow( StringToFloat(arrayFreezeValues[0]) / 4.0f );
 				float fFreezeSeconds = StringToFloat( arrayFreezeValues[1] ) / 1000.0f;
 				
-				out.m_SongTiming.AddStopSegment( StopSegment(iFreezeRow, fFreezeSeconds) );
+				out.m_SongTiming.AddSegment( SEGMENT_STOP_DELAY, new StopSegment(iFreezeRow, fFreezeSeconds) );
 //				LOG->Trace( "Adding a freeze segment: beat: %f, seconds = %f", fFreezeBeat, fFreezeSeconds );
 			}
 		}
@@ -600,8 +602,8 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, set<RString> &Bla
 				float fBPM = StringToFloat( arrayBPMChangeValues[1] );
 				if( fBPM > 0.0f )
 				{
-					BPMSegment bs( iStartIndex, fBPM );
-					out.m_SongTiming.AddBPMSegment( bs );
+					BPMSegment * bs = new BPMSegment( iStartIndex, fBPM );
+					out.m_SongTiming.AddSegment( SEGMENT_BPM, bs );
 				}
 				else
 				{

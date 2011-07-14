@@ -17,7 +17,7 @@ static void HandleBunki( TimingData &timing, const float fEarlyBPM,
 	const float beat = (fPos + fGap) * BeatsPerSecond;
 	LOG->Trace( "BPM %f, BPS %f, BPMPos %f, beat %f",
 		   fEarlyBPM, BeatsPerSecond, fPos, beat );
-	timing.AddBPMSegment( BPMSegment(BeatToNoteRow(beat), fCurBPM) );
+	timing.AddSegment( SEGMENT_BPM, new BPMSegment(beat, fCurBPM) );
 }
 
 static bool LoadFromKSFFile( const RString &sPath, Steps &out, const Song &song, bool bKIUCompliant )
@@ -60,7 +60,7 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, const Song &song,
 		else if( sValueName=="BPM" )
 		{
 			BPM1 = StringToFloat(sParams[1]);
-			stepsTiming.AddBPMSegment( BPMSegment(0, BPM1) );
+			stepsTiming.AddSegment( SEGMENT_BPM, new BPMSegment(0, BPM1) );
 		}
 		else if( sValueName=="BPM2" )
 		{
@@ -137,7 +137,7 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, const Song &song,
 				LOG->UserLog( "Song file", sPath, "has an invalid tick count: %d.", iTickCount );
 				return false;
 			}
-			stepsTiming.AddTickcountSegment(TickcountSegment(0, iTickCount));
+			stepsTiming.AddSegment( SEGMENT_TICKCOUNT, new TickcountSegment(0, iTickCount));
 		}
 		
 		else if( sValueName=="DIFFICULTY" )
@@ -554,7 +554,7 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool bKIUCompliant 
 		else if( sValueName=="BPM" )
 		{
 			BPM1 = StringToFloat(sParams[1]);
-			out.m_SongTiming.AddBPMSegment( BPMSegment(0, BPM1) );
+			out.m_SongTiming.AddSegment( SEGMENT_BPM, new BPMSegment(0, BPM1) );
 		}
 		else if( sValueName=="BPM2" )
 		{
@@ -602,9 +602,9 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool bKIUCompliant 
 			// add a tickcount for those using the [Player]
 			// CheckpointsUseTimeSignatures metric. -aj
 			// It's not with timesigs now -DaisuMaster
-			TickcountSegment tcs(0);
-			tcs.SetTicks(iTickCount > ROWS_PER_BEAT ? ROWS_PER_BEAT : iTickCount);
-			out.m_SongTiming.AddTickcountSegment( tcs );
+			TickcountSegment * tcs = new TickcountSegment(0);
+			tcs->SetTicks(iTickCount > ROWS_PER_BEAT ? ROWS_PER_BEAT : iTickCount);
+			out.m_SongTiming.AddSegment( SEGMENT_TICKCOUNT, tcs );
 		}
 		else if ( sValueName=="STEP" )
 		{

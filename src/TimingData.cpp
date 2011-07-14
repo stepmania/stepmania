@@ -28,56 +28,11 @@ void TimingData::GetActualBPM( float &fMinBPMOut, float &fMaxBPMOut, float highe
 	}
 }
 
-
-void TimingData::AddBPMSegment( const BPMSegment &seg )
+void TimingData::AddSegment(TimingSegmentType tst, TimingSegment * seg)
 {
-	const vector<TimingSegment *> &segs = this->allTimingSegments[SEGMENT_BPM];
-	segs.insert( upper_bound(segs.begin(), segs.end(), seg), seg );
-}
-
-void TimingData::AddStopSegment( const StopSegment &seg )
-{
-	m_StopSegments.insert( upper_bound(m_StopSegments.begin(), m_StopSegments.end(), seg), seg );
-}
-
-void TimingData::AddTimeSignatureSegment( const TimeSignatureSegment &seg )
-{
-	m_vTimeSignatureSegments.insert( upper_bound(m_vTimeSignatureSegments.begin(), m_vTimeSignatureSegments.end(), seg), seg );
-}
-
-void TimingData::AddWarpSegment( const WarpSegment &seg )
-{
-	m_WarpSegments.insert( upper_bound(m_WarpSegments.begin(), m_WarpSegments.end(), seg), seg );
-}
-
-void TimingData::AddTickcountSegment( const TickcountSegment &seg )
-{
-	m_TickcountSegments.insert( upper_bound(m_TickcountSegments.begin(), m_TickcountSegments.end(), seg), seg );
-}
-
-void TimingData::AddComboSegment( const ComboSegment &seg )
-{
-	m_ComboSegments.insert( upper_bound(m_ComboSegments.begin(), m_ComboSegments.end(), seg), seg );
-}
-
-void TimingData::AddLabelSegment( const LabelSegment &seg )
-{
-	m_LabelSegments.insert( upper_bound(m_LabelSegments.begin(), m_LabelSegments.end(), seg), seg );
-}
-
-void TimingData::AddSpeedSegment( const SpeedSegment &seg )
-{
-	m_SpeedSegments.insert( upper_bound(m_SpeedSegments.begin(), m_SpeedSegments.end(), seg), seg );
-}
-
-void TimingData::AddScrollSegment( const ScrollSegment &seg )
-{
-	m_ScrollSegments.insert( upper_bound(m_ScrollSegments.begin(), m_ScrollSegments.end(), seg), seg );
-}
-
-void TimingData::AddFakeSegment( const FakeSegment &seg )
-{
-	m_FakeSegments.insert( upper_bound(m_FakeSegments.begin(), m_FakeSegments.end(), seg), seg );
+	vector<TimingSegment *> &segs = this->allTimingSegments[tst];
+	// Unsure if this uses the proper comparison.
+	segs.insert(upper_bound(segs.begin(), segs.end(), seg), seg);
 }
 
 /* Change an existing BPM segment, merge identical segments together or insert a new one. */

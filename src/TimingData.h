@@ -16,6 +16,8 @@ struct lua_State;
 class TimingData
 {
 public:
+	void AddSegment(TimingSegmentType tst, TimingSegment * seg);
+	
 	/**
 	 * @brief Sets up initial timing data with a defined offset.
 	 * @param fOffset the offset from the 0th beat. */
@@ -78,12 +80,7 @@ public:
 	 * @return the BPMSegment's index in question.
 	 */
 	int GetBPMSegmentIndexAtBeat( float fBeat ) const { return GetBPMSegmentIndexAtRow( BeatToNoteRow(fBeat)); }
-	/**
-	 * @brief Add the BPMSegment to the TimingData.
-	 * @param seg the new BPMSegment.
-	 */
-	void AddBPMSegment( const BPMSegment &seg );
-	
+		
 	/**
 	 * @brief Retrieve the next beat that contains a BPMSegment.
 	 * @param iRow the present row.
@@ -276,11 +273,6 @@ public:
 	 * @return the StopSegment's index in question.
 	 */
 	int GetDelaySegmentIndexAtBeat( float fBeat ) const { return GetStopSegmentIndexAtRow( BeatToNoteRow(fBeat), true ); }
-	/**
-	 * @brief Add the StopSegment to the TimingData.
-	 * @param seg the new StopSegment.
-	 */
-	void AddStopSegment( const StopSegment &seg );
 	
 	/**
 	 * @brief Retrieve the next beat that contains a StopSegment.
@@ -430,16 +422,7 @@ public:
 	 * @return the TimeSignatureSegment's index in question.
 	 */
 	int GetTimeSignatureSegmentIndexAtBeat( float fBeat ) const { return GetTimeSignatureSegmentIndexAtRow( BeatToNoteRow(fBeat) ); }
-	/**
-	 * @brief Add the TimeSignatureSegment to the TimingData.
-	 * @param seg the new TimeSignatureSegment.
-	 */
-	void AddTimeSignatureSegment( const TimeSignatureSegment &seg );
-	/**
-	 * @brief Determine the beat to warp to.
-	 * @param iRow The row you start on.
-	 * @return the beat you warp to.
-	 */
+		
 	
 	/**
 	 * @brief Retrieve the next beat that contains a TimeSignatureSegment.
@@ -472,7 +455,11 @@ public:
 		return this->GetPreviousTimeSignatureSegmentBeatAtRow( BeatToNoteRow(fBeat) ); 
 	}
 	
-	
+	/**
+	 * @brief Determine the beat to warp to.
+	 * @param iRow The row you start on.
+	 * @return the beat you warp to.
+	 */
 	float GetWarpAtRow( int iRow ) const;
 	/**
 	 * @brief Determine the beat to warp to.
@@ -528,11 +515,6 @@ public:
 	 * @return true if the row is inside a warp, false otherwise.
 	 */
 	bool IsWarpAtBeat( float fBeat ) const { return IsWarpAtRow( BeatToNoteRow( fBeat ) ); }
-	/**
-	 * @brief Add the WarpSegment to the TimingData.
-	 * @param seg the new WarpSegment.
-	 */
-	void AddWarpSegment( const WarpSegment &seg );
 	
 	
 	/**
@@ -614,11 +596,6 @@ public:
 	 * @return the TickcountSegment's index in question.
 	 */
 	int GetTickcountSegmentIndexAtBeat( float fBeat ) const { return GetTickcountSegmentIndexAtRow( BeatToNoteRow(fBeat) ); }
-	/**
-	 * @brief Add the TickcountSegment to the TimingData.
-	 * @param seg the new TickcountSegment.
-	 */
-	void AddTickcountSegment( const TickcountSegment &seg );
 	
 	/**
 	 * @brief Retrieve the next beat that contains a TickcountSegment.
@@ -750,11 +727,6 @@ public:
 	 * @return the ComboSegment's index in question.
 	 */
 	int GetComboSegmentIndexAtBeat( float fBeat ) const { return GetComboSegmentIndexAtRow( BeatToNoteRow(fBeat) ); }
-	/**
-	 * @brief Add the ComboSegment to the TimingData.
-	 * @param seg the new ComboSegment.
-	 */
-	void AddComboSegment( const ComboSegment &seg );
 	
 	/**
 	 * @brief Retrieve the next beat that contains a ComboSegment.
@@ -836,11 +808,6 @@ public:
 	 * @return the LabelSegment's index in question.
 	 */
 	int GetLabelSegmentIndexAtBeat( float fBeat ) const { return GetLabelSegmentIndexAtRow( BeatToNoteRow(fBeat) ); }
-	/**
-	 * @brief Add the LabelSegment to the TimingData.
-	 * @param seg the new LabelSegment.
-	 */
-	void AddLabelSegment( const LabelSegment &seg );
 	
 	/**
 	 * @brief Retrieve the previous beat that contains a LabelSegment.
@@ -993,11 +960,6 @@ public:
 	 * @return the SpeedSegment's index in question.
 	 */
 	int GetSpeedSegmentIndexAtBeat( float fBeat ) const { return GetSpeedSegmentIndexAtRow( BeatToNoteRow(fBeat) ); }
-	/**
-	 * @brief Add the SpeedSegment to the TimingData.
-	 * @param seg the new SpeedSegment.
-	 */
-	void AddSpeedSegment( const SpeedSegment &seg );
 	
 	float GetDisplayedSpeedPercent( float fBeat, float fMusicSeconds ) const;
 	
@@ -1084,12 +1046,6 @@ public:
 	 * @return the ScrollSegment's index in question.
 	 */
 	int GetScrollSegmentIndexAtBeat( float fBeat ) const { return GetScrollSegmentIndexAtRow( BeatToNoteRow(fBeat) ); }
-	
-	/**
-	 * @brief Add the ScrollSegment to the TimingData.
-	 * @param seg the new ScrollSegment.
-	 */
-	void AddScrollSegment( const ScrollSegment &seg );
 	
 	/**
 	 * @brief Retrieve the next beat that contains a ScrollSegment.
@@ -1183,11 +1139,6 @@ public:
 	 * @return true if the row is inside a fake, false otherwise.
 	 */
 	bool IsFakeAtBeat( float fBeat ) const { return IsFakeAtRow( BeatToNoteRow( fBeat ) ); }
-	/**
-	 * @brief Add the FakeSegment to the TimingData.
-	 * @param seg the new FakeSegment.
-	 */
-	void AddFakeSegment( const FakeSegment &seg );
 	
 	/**
 	 * @brief Retrieve the next beat that contains a FakeSegment.
