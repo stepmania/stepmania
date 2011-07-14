@@ -9,14 +9,12 @@
 
 
 TimingData::TimingData() : 
-	m_fBeat0OffsetInSeconds(0), 
-	m_bHasNegativeBpms(false)
+	m_fBeat0OffsetInSeconds(0)
 {
 }
 
 TimingData::TimingData(float fOffset) : 
-	m_fBeat0OffsetInSeconds(fOffset),
-	m_bHasNegativeBpms(false)
+	m_fBeat0OffsetInSeconds(fOffset)
 {	
 }
 

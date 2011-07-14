@@ -242,7 +242,6 @@ bool SMLoader::ProcessBPMs( TimingData &out, const RString line, const int rowsP
 		
 		if( fNewBPM < 0.0f )
 		{
-			out.m_bHasNegativeBpms = true;
 			negBeat = fBeat;
 			negBPM = fNewBPM;
 		}

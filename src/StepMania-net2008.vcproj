@@ -1056,14 +1056,6 @@
 				Name="Test"
 				>
 				<File
-					RelativePath="ScreenTestFonts.cpp"
-					>
-				</File>
-				<File
-					RelativePath="ScreenTestFonts.h"
-					>
-				</File>
-				<File
 					RelativePath="ScreenTestInput.cpp"
 					>
 				</File>

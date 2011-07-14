@@ -264,9 +264,6 @@
     <ClCompile Include="ScreenSystemLayer.cpp">
       <Filter>Screens</Filter>
     </ClCompile>
-    <ClCompile Include="ScreenTestFonts.cpp">
-      <Filter>Screens</Filter>
-    </ClCompile>
     <ClCompile Include="ScreenTestInput.cpp">
       <Filter>Screens</Filter>
     </ClCompile>
@@ -1779,9 +1776,6 @@
       <Filter>Screens</Filter>
     </ClInclude>
     <ClInclude Include="ScreenSystemLayer.h">
-      <Filter>Screens</Filter>
-    </ClInclude>
-    <ClInclude Include="ScreenTestFonts.h">
       <Filter>Screens</Filter>
     </ClInclude>
     <ClInclude Include="ScreenTestInput.h">

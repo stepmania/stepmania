@@ -1395,17 +1395,11 @@ public:
 	vector<ScrollSegment>		m_ScrollSegments;
 	/** @brief The collection of FakeSegments. */
 	vector<FakeSegment>		m_FakeSegments;
+	
 	/**
 	 * @brief The initial offset of a song.
 	 */
 	float	m_fBeat0OffsetInSeconds;
-	/**
-	 * @brief A flag to see if negative BPMs are used in this song.
-	 *
-	 * This is only used for Lua bindings in the Song, with the intentions that
-	 * this is moved into TimingData at a future point in time.
-	 */
-	bool	m_bHasNegativeBpms;
 };
 
 #undef COMPARE

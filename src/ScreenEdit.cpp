@@ -1190,6 +1190,14 @@ static ThemeMetric<RString> NUM_HANDS_FORMAT("ScreenEdit", "NumHandsFormat");
 static ThemeMetric<RString> NUM_ROLLS_FORMAT("ScreenEdit", "NumRollsFormat");
 static ThemeMetric<RString> NUM_LIFTS_FORMAT("ScreenEdit", "NumLiftsFormat");
 static ThemeMetric<RString> NUM_FAKES_FORMAT("ScreenEdit", "NumFakesFormat");
+static ThemeMetric<RString> NUM_STEPS_FORMAT_TWO_PLAYER("ScreenEdit", "NumStepsFormatTwoPlayer");
+static ThemeMetric<RString> NUM_JUMPS_FORMAT_TWO_PLAYER("ScreenEdit", "NumJumpsFormatTwoPlayer");
+static ThemeMetric<RString> NUM_HOLDS_FORMAT_TWO_PLAYER("ScreenEdit", "NumHoldsFormatTwoPlayer");
+static ThemeMetric<RString> NUM_MINES_FORMAT_TWO_PLAYER("ScreenEdit", "NumMinesFormatTwoPlayer");
+static ThemeMetric<RString> NUM_HANDS_FORMAT_TWO_PLAYER("ScreenEdit", "NumHandsFormatTwoPlayer");
+static ThemeMetric<RString> NUM_ROLLS_FORMAT_TWO_PLAYER("ScreenEdit", "NumRollsFormatTwoPlayer");
+static ThemeMetric<RString> NUM_LIFTS_FORMAT_TWO_PLAYER("ScreenEdit", "NumLiftsFormatTwoPlayer");
+static ThemeMetric<RString> NUM_FAKES_FORMAT_TWO_PLAYER("ScreenEdit", "NumFakesFormatTwoPlayer");
 static ThemeMetric<RString> TIMING_MODE_FORMAT("ScreenEdit", "TimingModeFormat");
 static ThemeMetric<RString> BEAT_0_OFFSET_FORMAT("ScreenEdit", "Beat0OffsetFormat");
 static ThemeMetric<RString> PREVIEW_START_FORMAT("ScreenEdit", "PreviewStartFormat");
@@ -1259,15 +1267,53 @@ void ScreenEdit::UpdateTextInfo()
 	}
 	
 	GAMESTATE->SetProcessedTimingData(&m_pSteps->m_Timing);
-	
-	sText += ssprintf( NUM_STEPS_FORMAT.GetValue(), TAP_STEPS.GetValue().c_str(), m_NoteDataEdit.GetNumTapNotes() );
-	sText += ssprintf( NUM_JUMPS_FORMAT.GetValue(), JUMPS.GetValue().c_str(), m_NoteDataEdit.GetNumJumps() );
-	sText += ssprintf( NUM_HANDS_FORMAT.GetValue(), HANDS.GetValue().c_str(), m_NoteDataEdit.GetNumHands() );
-	sText += ssprintf( NUM_HOLDS_FORMAT.GetValue(), HOLDS.GetValue().c_str(), m_NoteDataEdit.GetNumHoldNotes() );
-	sText += ssprintf( NUM_MINES_FORMAT.GetValue(), MINES.GetValue().c_str(), m_NoteDataEdit.GetNumMines() );
-	sText += ssprintf( NUM_ROLLS_FORMAT.GetValue(), ROLLS.GetValue().c_str(), m_NoteDataEdit.GetNumRolls() );
-	sText += ssprintf( NUM_LIFTS_FORMAT.GetValue(), LIFTS.GetValue().c_str(), m_NoteDataEdit.GetNumLifts() );
-	sText += ssprintf( NUM_FAKES_FORMAT.GetValue(), FAKES.GetValue().c_str(), m_NoteDataEdit.GetNumFakes() );
+	const StepsTypeCategory &cat = GAMEMAN->GetStepsTypeInfo(m_pSteps->m_StepsType).m_StepsTypeCategory;
+	if (cat == StepsTypeCategory_Couple || cat == StepsTypeCategory_Routine)
+	{
+		pair<int, int> tmp = m_NoteDataEdit.GetNumTapNotesTwoPlayer();
+		sText += ssprintf(NUM_STEPS_FORMAT_TWO_PLAYER.GetValue(),
+						  TAP_STEPS.GetValue().c_str(),
+						  tmp.first, tmp.second);
+		tmp = m_NoteDataEdit.GetNumJumpsTwoPlayer();
+		sText += ssprintf(NUM_JUMPS_FORMAT_TWO_PLAYER.GetValue(),
+						  JUMPS.GetValue().c_str(),
+						  tmp.first, tmp.second);
+		tmp = m_NoteDataEdit.GetNumHandsTwoPlayer();
+		sText += ssprintf(NUM_HANDS_FORMAT_TWO_PLAYER.GetValue(),
+						  HANDS.GetValue().c_str(),
+						  tmp.first, tmp.second);
+		tmp = m_NoteDataEdit.GetNumHoldNotesTwoPlayer();
+		sText += ssprintf(NUM_HOLDS_FORMAT_TWO_PLAYER.GetValue(),
+						  HOLDS.GetValue().c_str(),
+						  tmp.first, tmp.second);
+		tmp = m_NoteDataEdit.GetNumMinesTwoPlayer();
+		sText += ssprintf(NUM_MINES_FORMAT_TWO_PLAYER.GetValue(),
+						  MINES.GetValue().c_str(),
+						  tmp.first, tmp.second);
+		tmp = m_NoteDataEdit.GetNumRollsTwoPlayer();
+		sText += ssprintf(NUM_ROLLS_FORMAT_TWO_PLAYER.GetValue(),
+						  ROLLS.GetValue().c_str(),
+						  tmp.first, tmp.second);
+		tmp = m_NoteDataEdit.GetNumLiftsTwoPlayer();
+		sText += ssprintf(NUM_LIFTS_FORMAT_TWO_PLAYER.GetValue(),
+						  LIFTS.GetValue().c_str(),
+						  tmp.first, tmp.second);
+		tmp = m_NoteDataEdit.GetNumFakesTwoPlayer();
+		sText += ssprintf(NUM_FAKES_FORMAT_TWO_PLAYER.GetValue(),
+						  FAKES.GetValue().c_str(),
+						  tmp.first, tmp.second);
+	}
+	else
+	{
+		sText += ssprintf( NUM_STEPS_FORMAT.GetValue(), TAP_STEPS.GetValue().c_str(), m_NoteDataEdit.GetNumTapNotes() );
+		sText += ssprintf( NUM_JUMPS_FORMAT.GetValue(), JUMPS.GetValue().c_str(), m_NoteDataEdit.GetNumJumps() );
+		sText += ssprintf( NUM_HANDS_FORMAT.GetValue(), HANDS.GetValue().c_str(), m_NoteDataEdit.GetNumHands() );
+		sText += ssprintf( NUM_HOLDS_FORMAT.GetValue(), HOLDS.GetValue().c_str(), m_NoteDataEdit.GetNumHoldNotes() );
+		sText += ssprintf( NUM_MINES_FORMAT.GetValue(), MINES.GetValue().c_str(), m_NoteDataEdit.GetNumMines() );
+		sText += ssprintf( NUM_ROLLS_FORMAT.GetValue(), ROLLS.GetValue().c_str(), m_NoteDataEdit.GetNumRolls() );
+		sText += ssprintf( NUM_LIFTS_FORMAT.GetValue(), LIFTS.GetValue().c_str(), m_NoteDataEdit.GetNumLifts() );
+		sText += ssprintf( NUM_FAKES_FORMAT.GetValue(), FAKES.GetValue().c_str(), m_NoteDataEdit.GetNumFakes() );
+	}
 	switch( EDIT_MODE.GetValue() )
 	{
 	DEFAULT_FAIL( EDIT_MODE.GetValue() );
@@ -3738,15 +3784,41 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 		case view_steps_data:
 		{
 			float fMusicSeconds = m_pSoundMusic->GetLengthSeconds();
-			g_StepsData.rows[tap_notes].SetOneUnthemedChoice( ssprintf("%d", m_NoteDataEdit.GetNumTapNotes()) );
-			g_StepsData.rows[jumps].SetOneUnthemedChoice( ssprintf("%d", m_NoteDataEdit.GetNumJumps()) );
-			g_StepsData.rows[hands].SetOneUnthemedChoice( ssprintf("%d", m_NoteDataEdit.GetNumHands()) );
-			g_StepsData.rows[quads].SetOneUnthemedChoice( ssprintf("%d", m_NoteDataEdit.GetNumQuads()) );
-			g_StepsData.rows[holds].SetOneUnthemedChoice( ssprintf("%d", m_NoteDataEdit.GetNumHoldNotes()) );
-			g_StepsData.rows[mines].SetOneUnthemedChoice( ssprintf("%d", m_NoteDataEdit.GetNumMines()) );
-			g_StepsData.rows[rolls].SetOneUnthemedChoice( ssprintf("%d", m_NoteDataEdit.GetNumRolls()) );
-			g_StepsData.rows[lifts].SetOneUnthemedChoice( ssprintf("%d", m_NoteDataEdit.GetNumLifts()) );
-			g_StepsData.rows[fakes].SetOneUnthemedChoice( ssprintf("%d", m_NoteDataEdit.GetNumFakes()) );
+			Steps* pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
+			const StepsTypeCategory &cat = GAMEMAN->GetStepsTypeInfo(pSteps->m_StepsType).m_StepsTypeCategory;
+			if (cat == StepsTypeCategory_Couple || cat == StepsTypeCategory_Routine)
+			{
+				pair<int, int> tmp = m_NoteDataEdit.GetNumTapNotesTwoPlayer();
+				g_StepsData.rows[tap_notes].SetOneUnthemedChoice( ssprintf("%d / %d", tmp.first, tmp.second) );
+				tmp = m_NoteDataEdit.GetNumJumpsTwoPlayer();
+				g_StepsData.rows[jumps].SetOneUnthemedChoice( ssprintf("%d / %d", tmp.first, tmp.second) );
+				tmp = m_NoteDataEdit.GetNumHandsTwoPlayer();
+				g_StepsData.rows[hands].SetOneUnthemedChoice( ssprintf("%d / %d", tmp.first, tmp.second) );
+				tmp = m_NoteDataEdit.GetNumQuadsTwoPlayer();
+				g_StepsData.rows[quads].SetOneUnthemedChoice( ssprintf("%d / %d", tmp.first, tmp.second) );
+				tmp = m_NoteDataEdit.GetNumHoldNotesTwoPlayer();
+				g_StepsData.rows[holds].SetOneUnthemedChoice( ssprintf("%d / %d", tmp.first, tmp.second) );
+				tmp = m_NoteDataEdit.GetNumMinesTwoPlayer();
+				g_StepsData.rows[mines].SetOneUnthemedChoice( ssprintf("%d / %d", tmp.first, tmp.second) );
+				tmp = m_NoteDataEdit.GetNumRollsTwoPlayer();
+				g_StepsData.rows[rolls].SetOneUnthemedChoice( ssprintf("%d / %d", tmp.first, tmp.second) );
+				tmp = m_NoteDataEdit.GetNumLiftsTwoPlayer();
+				g_StepsData.rows[lifts].SetOneUnthemedChoice( ssprintf("%d / %d", tmp.first, tmp.second) );
+				tmp = m_NoteDataEdit.GetNumFakesTwoPlayer();
+				g_StepsData.rows[fakes].SetOneUnthemedChoice( ssprintf("%d / %d", tmp.first, tmp.second) );
+			}
+			else
+			{
+				g_StepsData.rows[tap_notes].SetOneUnthemedChoice( ssprintf("%d", m_NoteDataEdit.GetNumTapNotes()) );
+				g_StepsData.rows[jumps].SetOneUnthemedChoice( ssprintf("%d", m_NoteDataEdit.GetNumJumps()) );
+				g_StepsData.rows[hands].SetOneUnthemedChoice( ssprintf("%d", m_NoteDataEdit.GetNumHands()) );
+				g_StepsData.rows[quads].SetOneUnthemedChoice( ssprintf("%d", m_NoteDataEdit.GetNumQuads()) );
+				g_StepsData.rows[holds].SetOneUnthemedChoice( ssprintf("%d", m_NoteDataEdit.GetNumHoldNotes()) );
+				g_StepsData.rows[mines].SetOneUnthemedChoice( ssprintf("%d", m_NoteDataEdit.GetNumMines()) );
+				g_StepsData.rows[rolls].SetOneUnthemedChoice( ssprintf("%d", m_NoteDataEdit.GetNumRolls()) );
+				g_StepsData.rows[lifts].SetOneUnthemedChoice( ssprintf("%d", m_NoteDataEdit.GetNumLifts()) );
+				g_StepsData.rows[fakes].SetOneUnthemedChoice( ssprintf("%d", m_NoteDataEdit.GetNumFakes()) );
+			}
 			g_StepsData.rows[stream].SetOneUnthemedChoice( ssprintf("%.2f", NoteDataUtil::GetStreamRadarValue(m_NoteDataEdit,fMusicSeconds)) );
 			g_StepsData.rows[voltage].SetOneUnthemedChoice( ssprintf("%.2f", NoteDataUtil::GetVoltageRadarValue(m_NoteDataEdit,fMusicSeconds)) );
 			g_StepsData.rows[air].SetOneUnthemedChoice( ssprintf("%.2f", NoteDataUtil::GetAirRadarValue(m_NoteDataEdit,fMusicSeconds)) );
@@ -5123,7 +5195,7 @@ void ScreenEdit::DoHelp()
 		RString sDescription = THEME->GetString( "EditHelpDescription", hl.szEnglishDescription );
 		
 		// TODO: Better way of hiding routine only key on non-routine.
-		if( sDescription.Left(13) == "Switch player" && m_InputPlayerNumber == PLAYER_INVALID )
+		if( hl.veb[0] == EDIT_BUTTON_SWITCH_PLAYERS && m_InputPlayerNumber == PLAYER_INVALID )
 		{
 			continue;
 		}
