@@ -8,14 +8,10 @@
 #include <float.h>
 
 
-TimingData::TimingData() : 
-	m_fBeat0OffsetInSeconds(0)
-{
-}
-
 TimingData::TimingData(float fOffset) : 
 	m_fBeat0OffsetInSeconds(fOffset)
-{	
+{
+	// allTimingSegments[SEGMENT_BPM] = new vector<BPMSegment>();
 }
 
 void TimingData::GetActualBPM( float &fMinBPMOut, float &fMaxBPMOut, float highest ) const

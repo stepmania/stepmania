@@ -17,13 +17,9 @@ class TimingData
 {
 public:
 	/**
-	 * @brief Sets up initial timing data.
-	 */
-	TimingData();
-	/**
 	 * @brief Sets up initial timing data with a defined offset.
 	 * @param fOffset the offset from the 0th beat. */
-	TimingData(float fOffset);
+	TimingData(float fOffset = 0);
 	/**
 	 * @brief Gets the actual BPM of the song,
 	 * while respecting a limit.
@@ -1303,36 +1299,14 @@ public:
 	 */
 	bool operator==( const TimingData &other )
 	{
-		COMPARE( m_BPMSegments.size() );
-		for( unsigned i=0; i<m_BPMSegments.size(); i++ )
-			COMPARE( m_BPMSegments[i] );
-		COMPARE( m_StopSegments.size() );
-		for( unsigned i=0; i<m_StopSegments.size(); i++ )
-			COMPARE( m_StopSegments[i] );
-		COMPARE( m_WarpSegments.size() );
-		for( unsigned i=0; i<m_WarpSegments.size(); i++ )
-			COMPARE( m_WarpSegments[i] );
-		COMPARE( m_vTimeSignatureSegments.size() );
-		for( unsigned i=0; i<m_vTimeSignatureSegments.size(); i++)
-			COMPARE( m_vTimeSignatureSegments[i] );
-		COMPARE( m_TickcountSegments.size() );
-		for( unsigned i=0; i<m_TickcountSegments.size(); i++ )
-			COMPARE( m_TickcountSegments[i] );
-		COMPARE( m_ComboSegments.size() );
-		for( unsigned i=0; i<m_ComboSegments.size(); i++ )
-			COMPARE( m_ComboSegments[i] );
-		COMPARE( m_LabelSegments.size() );
-		for( unsigned i=0; i<m_LabelSegments.size(); i++ )
-			COMPARE( m_LabelSegments[i] );
-		COMPARE( m_SpeedSegments.size() );
-		for( unsigned i=0; i<m_SpeedSegments.size(); i++ )
-			COMPARE( m_SpeedSegments[i] );
-		COMPARE( m_ScrollSegments.size() );
-		for( unsigned i=0; i<m_ScrollSegments.size(); i++ )
-			COMPARE( m_ScrollSegments[i] );
-		COMPARE( m_FakeSegments.size() );
-		for( unsigned i=0; i<m_FakeSegments.size(); i++ )
-			COMPARE( m_FakeSegments[i] );
+		for (int i = 0; i < NUM_TimingSegmentTypes; i++)
+		{
+			COMPARE(allTimingSegments[i].size());
+			for (unsigned j=0; j < allTimingSegments[i].size(); j++)
+			{
+				COMPARE(allTimingSegments[i][j]);
+			}
+		}
 		COMPARE( m_fBeat0OffsetInSeconds );
 		return true;
 	}
@@ -1361,40 +1335,9 @@ public:
 	 */
 	RString					m_sFile;
 	// All of the following vectors must be sorted before gameplay.
-	/**
-	 * @brief The collection of BPMSegments.
-	 */
-	vector<BPMSegment>		m_BPMSegments;
-	/**
-	 * @brief The collection of StopSegments & DelaySegments.
-	 */
-	vector<StopSegment>		m_StopSegments;
-	/**
-	 * @brief The collection of TimeSignatureSegments.
-	 */
-	vector<TimeSignatureSegment>	m_vTimeSignatureSegments;
-	/**
-	 * @brief The collection of WarpSegments.
-	 */
-	vector<WarpSegment>		m_WarpSegments;
-	/**
-	 * @brief The collection of TickcountSegments.
-	 */
-	vector<TickcountSegment>	m_TickcountSegments;
-	/**
-	 * @brief The collection of ComboSegments.
-	 */
-	vector<ComboSegment>		m_ComboSegments;
-	/**
-	 * @brief The collection of LabelSegments.
-	 */
-	vector<LabelSegment>		m_LabelSegments;
-	/** @brief The collection of SpeedSegments. */
-	vector<SpeedSegment>		m_SpeedSegments;
-	/** @brief The collection of ScrollSegments. */
-	vector<ScrollSegment>		m_ScrollSegments;
-	/** @brief The collection of FakeSegments. */
-	vector<FakeSegment>		m_FakeSegments;
+
+	
+	vector<TimingSegment *> allTimingSegments[NUM_TimingSegmentTypes];
 	
 	/**
 	 * @brief The initial offset of a song.

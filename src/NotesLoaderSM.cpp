@@ -932,7 +932,8 @@ bool SMLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCache
 	}
 	
 	// Ensure all warps from negative time changes are in order.
-	sort(out.m_SongTiming.m_WarpSegments.begin(), out.m_SongTiming.m_WarpSegments.end());
+	vector<TimingSegment *> &warps = out.m_SongTiming.allTimingSegments[SEGMENT_WARP];
+	sort(warps.begin(), warps.end());
 	TidyUpData( out, bFromCache );
 	return true;
 }
