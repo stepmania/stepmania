@@ -420,7 +420,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)</Command>
     <ClCompile Include="ScreenStatsOverlay.cpp" />
     <ClCompile Include="ScreenSyncOverlay.cpp" />
     <ClCompile Include="ScreenSystemLayer.cpp" />
-    <ClCompile Include="ScreenTestFonts.cpp" />
     <ClCompile Include="ScreenTestInput.cpp" />
     <ClCompile Include="ScreenTestLights.cpp" />
     <ClCompile Include="ScreenTestSound.cpp" />
@@ -1740,7 +1739,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)</Command>
     <ClInclude Include="ScreenStatsOverlay.h" />
     <ClInclude Include="ScreenSyncOverlay.h" />
     <ClInclude Include="ScreenSystemLayer.h" />
-    <ClInclude Include="ScreenTestFonts.h" />
     <ClInclude Include="ScreenTestInput.h" />
     <ClInclude Include="ScreenTestLights.h" />
     <ClInclude Include="ScreenTestSound.h" />
