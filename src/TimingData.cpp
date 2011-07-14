@@ -44,6 +44,8 @@ void TimingData::AddSegment(TimingSegmentType tst, TimingSegment * seg)
 	segs.insert(upper_bound(segs.begin(), segs.end(), seg), seg);
 }
 
+// TODO: Find a way to combine all of these SetAtRows to one.
+
 /* Change an existing BPM segment, merge identical segments together or insert a new one. */
 void TimingData::SetBPMAtRow( int iNoteRow, float fBPM )
 {
@@ -58,71 +60,78 @@ void TimingData::SetBPMAtRow( int iNoteRow, float fBPM )
 	{
 		// There is no BPMSegment at the specified beat.  If the BPM being set differs
 		// from the last BPMSegment's BPM, create a new BPMSegment.
-		if( i == 0 || fabsf(m_BPMSegments[i-1].GetBPM() - fBPM) > 1e-5f )
-			AddBPMSegment( BPMSegment(iNoteRow, fBPM) );
+		if (i == 0 ||
+			fabsf(static_cast<BPMSegment *>(bpms[i-1])->GetBPM() - fBPM) > 1e-5f )
+			AddSegment( SEGMENT_BPM, new BPMSegment(iNoteRow, fBPM) );
 	}
 	else	// BPMSegment being modified is m_BPMSegments[i]
 	{
-		if( i > 0  &&  fabsf(m_BPMSegments[i-1].GetBPM() - fBPM) < 1e-5f )
-			m_BPMSegments.erase( m_BPMSegments.begin()+i, m_BPMSegments.begin()+i+1 );
+		if (i > 0 &&
+			fabsf(static_cast<BPMSegment *>(bpms[i-1])->GetBPM() - fBPM) < 1e-5f )
+			bpms.erase( bpms.begin()+i, bpms.begin()+i+1 );
 		else
-			m_BPMSegments[i].SetBPM(fBPM);
+			bs->SetBPM(fBPM);
 	}
 }
 
 void TimingData::SetStopAtRow( int iRow, float fSeconds, bool bDelay )
 {
 	unsigned i;
-	for( i=0; i<m_StopSegments.size(); i++ )
-		if( m_StopSegments[i].GetRow() == iRow && m_StopSegments[i].GetDelay() == bDelay )
+	vector<TimingSegment *> &stops = this->allTimingSegments[SEGMENT_STOP_DELAY];
+	for( i=0; i<stops.size(); i++ )
+		if (stops[i]->GetRow() == iRow &&
+			static_cast<StopSegment *>(stops[i])->GetDelay() == bDelay )
 			break;
 
-	if( i == m_StopSegments.size() )	// there is no Stop/Delay Segment at the current beat
+	StopSegment *ss = static_cast<StopSegment *>(stops[i]);
+	if( i == stops.size() )	// there is no Stop/Delay Segment at the current beat
 	{
 		// create a new StopSegment
 		if( fSeconds > 0 )
 		{
-			AddStopSegment( StopSegment(iRow, fSeconds, bDelay) );
+			AddSegment( SEGMENT_STOP_DELAY, new StopSegment(iRow, fSeconds, bDelay) );
 		}
 	}
 	else	// StopSegment being modified is m_StopSegments[i]
 	{
 		if( fSeconds > 0 )
 		{
-			m_StopSegments[i].SetPause(fSeconds);
+			ss->SetPause(fSeconds);
 		}
 		else
-			m_StopSegments.erase( m_StopSegments.begin()+i, m_StopSegments.begin()+i+1 );
+			stops.erase( stops.begin()+i, stops.begin()+i+1 );
 	}
 }
 
 void TimingData::SetTimeSignatureAtRow( int iRow, int iNumerator, int iDenominator )
 {
 	unsigned i;
-	for( i = 0; i < m_vTimeSignatureSegments.size(); i++ )
+	vector<TimingSegment *> &tSigs = this->allTimingSegments[SEGMENT_TIME_SIG];
+	for( i = 0; i < tSigs.size(); i++ )
 	{
-		if( m_vTimeSignatureSegments[i].GetRow() >= iRow)
+		if( tSigs[i]->GetRow() >= iRow)
 			break; // We found our segment.
 	}
 	
-	if ( i == m_vTimeSignatureSegments.size() || m_vTimeSignatureSegments[i].GetRow() != iRow )
+	TimeSignatureSegment *ts = static_cast<TimeSignatureSegment *>(tSigs[i]);
+	if ( i == tSigs.size() || ts->GetRow() != iRow )
 	{
-		// No specific segmeent here: place one if it differs.
-		if( i == 0 || 
-		   ( m_vTimeSignatureSegments[i-1].GetNum() != iNumerator
-		    || m_vTimeSignatureSegments[i-1].GetDen() != iDenominator ) )
-			AddTimeSignatureSegment( TimeSignatureSegment(iRow, iNumerator, iDenominator) );
+		// No specific segment here: place one if it differs.
+		if (i == 0 || 
+		   (static_cast<TimeSignatureSegment *>(tSigs[i-1])->GetNum() != iNumerator ||
+			static_cast<TimeSignatureSegment *>(tSigs[i-1])->GetDen() != iDenominator ) )
+			AddSegment( SEGMENT_TIME_SIG, new TimeSignatureSegment(iRow, iNumerator, iDenominator) );
 	}
 	else	// TimeSignatureSegment being modified is m_vTimeSignatureSegments[i]
 	{
-		if( i > 0  && m_vTimeSignatureSegments[i-1].GetNum() == iNumerator
-		   && m_vTimeSignatureSegments[i-1].GetDen() == iDenominator )
-			m_vTimeSignatureSegments.erase( m_vTimeSignatureSegments.begin()+i,
-						       m_vTimeSignatureSegments.begin()+i+1 );
+		if (i > 0 &&
+			static_cast<TimeSignatureSegment *>(tSigs[i-1])->GetNum() == iNumerator &&
+			static_cast<TimeSignatureSegment *>(tSigs[i-1])->GetDen() == iDenominator )
+			tSigs.erase( tSigs.begin()+i, tSigs.begin()+i+1 );
 		else
 		{
-			m_vTimeSignatureSegments[i].SetNum(iNumerator);
-			m_vTimeSignatureSegments[i].SetDen(iDenominator);
+			ts->SetNum(iNumerator);
+			ts->SetDen(iDenominator);
 		}
 	}
 }
@@ -144,25 +153,26 @@ void TimingData::SetTimeSignatureDenominatorAtRow( int iRow, int iDenominator )
 void TimingData::SetWarpAtRow( int iRow, float fNew )
 {
 	unsigned i;
-	for( i=0; i<m_WarpSegments.size(); i++ )
-		if( m_WarpSegments[i].GetRow() == iRow )
+	vector<TimingSegment *> &warps = this->allTimingSegments[SEGMENT_WARP];
+	for( i=0; i<warps.size(); i++ )
+		if( warps[i]->GetRow() == iRow )
 			break;
 	bool valid = iRow > 0 && fNew > 0;
-	if( i == m_WarpSegments.size() )
+	if( i == warps.size() )
 	{
 		if( valid )
 		{
-			AddWarpSegment( WarpSegment(iRow, fNew) );
+			AddSegment( SEGMENT_WARP, new WarpSegment(iRow, fNew) );
 		}
 	}
 	else
 	{
 		if( valid )
 		{
-			m_WarpSegments[i].SetLength(fNew);
+			static_cast<WarpSegment *>(warps[i])->SetLength(fNew);
 		}
 		else
-			m_WarpSegments.erase( m_WarpSegments.begin()+i, m_WarpSegments.begin()+i+1 );
+			warps.erase( warps.begin()+i, warps.begin()+i+1 );
 	}
 }
 
@@ -170,22 +180,26 @@ void TimingData::SetWarpAtRow( int iRow, float fNew )
 void TimingData::SetTickcountAtRow( int iRow, int iTicks )
 {
 	unsigned i;
-	for( i=0; i<m_TickcountSegments.size(); i++ )
-		if( m_TickcountSegments[i].GetRow() >= iRow )
+	vector<TimingSegment *> &ticks = this->allTimingSegments[SEGMENT_TICKCOUNT];
+	for( i=0; i<ticks.size(); i++ )
+		if( ticks[i]->GetRow() >= iRow )
 			break;
 
-	if( i == m_TickcountSegments.size() || m_TickcountSegments[i].GetRow() != iRow )
+	TickcountSegment *ts = static_cast<TickcountSegment *>(ticks[i]);
+	if( i == ticks.size() || ts->GetRow() != iRow )
 	{
 		// No TickcountSegment here. Make a new segment if required.
-		if( i == 0 || m_TickcountSegments[i-1].GetTicks() != iTicks )
-			AddTickcountSegment( TickcountSegment(iRow, iTicks ) );
+		if (i == 0 ||
+			static_cast<TickcountSegment *>(ticks[i-1])->GetTicks() != iTicks )
+			AddSegment( SEGMENT_TICKCOUNT, new TickcountSegment(iRow, iTicks ) );
 	}
 	else	// TickcountSegment being modified is m_TickcountSegments[i]
 	{
-		if( i > 0  && m_TickcountSegments[i-1].GetTicks() == iTicks )
-			m_TickcountSegments.erase( m_TickcountSegments.begin()+i, m_TickcountSegments.begin()+i+1 );
+		if (i > 0 &&
+			static_cast<TickcountSegment *>(ticks[i-1])->GetTicks() == iTicks )
+			ticks.erase( ticks.begin()+i, ticks.begin()+i+1 );
 		else
-			m_TickcountSegments[i].SetTicks(iTicks);
+			ts->SetTicks(iTicks);
 	}
 }
 
