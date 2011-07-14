@@ -697,10 +697,11 @@ void NoteDisplay::DrawActor( const TapNote& tn, Actor* pActor, NotePart part, in
 
 	bool bIsHoldHead = tn.type == tn.hold_head;
 	bool bIsHoldCap = bIsHoldHead || tn.type == tn.hold_tail;
+	
+	fRotationZ = ArrowEffects::GetRotationZ( m_pPlayerState, fBeat, bIsHoldHead );
 	if( !bIsHoldCap )
 	{
 		fRotationX = ArrowEffects::GetRotationX( m_pPlayerState, fYOffset );
-		fRotationZ = ArrowEffects::GetRotationZ( m_pPlayerState, fBeat, bIsHoldHead );
 	}
 
 	if( tn.type != tn.hold_head )
