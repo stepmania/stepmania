@@ -2992,8 +2992,8 @@ void Player::CrossedRows( int iLastRowCrossed, const RageTimer &now )
 					int iTrack = nIter.Track();
 
 					// "the first row after the hold head that lands on a beat"
-					int iFirstCheckpointOfHold = QuantizeDown(iStartRow+iCheckpointFrequencyRows,
-															  iCheckpointFrequencyRows);
+					int iFirstCheckpointOfHold = QuantizeUp(iStartRow,
+															iCheckpointFrequencyRows);
 
 					// "the end row or the first earlier row that lands on a beat"
 					int iLastCheckpointOfHold = QuantizeDown(iEndRow,
