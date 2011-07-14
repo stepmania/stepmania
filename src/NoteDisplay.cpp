@@ -692,11 +692,17 @@ void NoteDisplay::DrawActor( const TapNote& tn, Actor* pActor, NotePart part, in
 	const float fGlow	= ArrowEffects::GetGlow(	m_pPlayerState, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
 	const RageColor diffuse	= RageColor(fColorScale,fColorScale,fColorScale,fAlpha);
 	const RageColor glow	= RageColor(1,1,1,fGlow);
-	float fRotationX	= 0, fRotationY	= 0, fRotationZ	= 0;
+	float fRotationX	= 0, fRotationZ	= 0;
+	const float fRotationY = ArrowEffects::GetRotationY( m_pPlayerState, fYOffset );
 
-	fRotationX		= ArrowEffects::GetRotationX( m_pPlayerState, fYOffset );
-	fRotationY		= ArrowEffects::GetRotationY( m_pPlayerState, fYOffset );
-	fRotationZ		= ArrowEffects::GetRotationZ( m_pPlayerState, fBeat, tn.type == tn.hold_head );
+	bool bIsHoldHead = tn.type == tn.hold_head;
+	bool bIsHoldCap = bIsHoldHead || tn.type == tn.hold_tail;
+	if( !bIsHoldCap )
+	{
+		fRotationX = ArrowEffects::GetRotationX( m_pPlayerState, fYOffset );
+		fRotationZ = ArrowEffects::GetRotationZ( m_pPlayerState, fBeat, bIsHoldHead );
+	}
+
 	if( tn.type != tn.hold_head )
 		fColorScale		*= ArrowEffects::GetBrightness(	m_pPlayerState, fBeat );
 
