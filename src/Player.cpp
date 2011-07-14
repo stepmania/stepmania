@@ -2965,8 +2965,8 @@ void Player::CrossedRows( int iLastRowCrossed, const RageTimer &now )
 		if( iCheckpointFrequencyRows > 0 )
 		{
 			// "the first row after the start of the range that lands on a beat"
-			int iFirstCheckpointInRange = QuantizeDown(m_iFirstUncrossedRow+iCheckpointFrequencyRows-1,
-													   iCheckpointFrequencyRows);
+			int iFirstCheckpointInRange = QuantizeUp(m_iFirstUncrossedRow,
+													 iCheckpointFrequencyRows);
 
 			// "the last row or first row earlier that lands on a beat"
 			int iLastCheckpointInRange = QuantizeDown(iLastRowCrossed,
