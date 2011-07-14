@@ -453,7 +453,7 @@ class OptionRowHandlerListSteps : public OptionRowHandlerList
 				if (STEPS_USE_CHART_NAME)
 				{
 					s = pSteps->GetChartName();
-					// TODO: find a way to make this use lua.
+					// TODO: find a way to make this use lua or metrics.
 					if (!(s == "" || s == "blank" || s == "Blank"))
 					{
 						goto nameGotten;
@@ -461,12 +461,18 @@ class OptionRowHandlerListSteps : public OptionRowHandlerList
 				}
 				if( pSteps->GetDifficulty() == Difficulty_Edit )
 				{
-					s = pSteps->GetDescription();
+					s = pSteps->GetChartName();
+					if (s == "" || s == "blank" || s == "Blank")
+						s = pSteps->GetDescription();
 				}
 				else
 				{
 					if( pSteps->IsAnEdit() )
-						s = pSteps->GetDescription();
+					{
+						s = pSteps->GetChartName();
+						if (s == "" || s == "blank" || s == "Blank")
+							s = pSteps->GetDescription();
+					}
 					else
 						s = CustomDifficultyToLocalizedString( GetCustomDifficulty( pSteps->m_StepsType, pSteps->GetDifficulty(), CourseType_Invalid ) );
 				}
