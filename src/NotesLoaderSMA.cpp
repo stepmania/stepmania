@@ -38,8 +38,8 @@ void SMALoader::ProcessMultipliers( TimingData &out, const int iRowsPerBeat, con
 		const int iMisses = (size == 2 || size == 4 ?
 							 iCombos : 
 							 StringToInt(arrayMultiplierValues[2]));
-		ComboSegment new_seg( fComboBeat, iCombos, iMisses );
-		out.AddComboSegment( new_seg );
+		out.AddSegment(SEGMENT_COMBO,
+					   new ComboSegment( fComboBeat, iCombos, iMisses ));
 	}
 }
 
@@ -64,7 +64,9 @@ void SMALoader::ProcessBeatsPerMeasure( TimingData &out, const RString sParam )
 		
 		const float fBeat = StringToFloat( vs2[0] );
 		
-		TimeSignatureSegment seg( fBeat, StringToInt( vs2[1] ), 4 );
+		TimeSignatureSegment * seg = new TimeSignatureSegment(fBeat,
+															  StringToInt(vs2[1]),
+															  4 );
 		
 		if( fBeat < 0 )
 		{
@@ -75,16 +77,16 @@ void SMALoader::ProcessBeatsPerMeasure( TimingData &out, const RString sParam )
 			continue;
 		}
 		
-		if( seg.GetNum() < 1 )
+		if( seg->GetNum() < 1 )
 		{
 			LOG->UserLog("Song file",
 				     this->GetSongTitle(),
 				     "has an invalid time signature change with beat %f, iNumerator %i.",
-				     fBeat, seg.GetNum() );
+				     fBeat, seg->GetNum() );
 			continue;
 		}
 		
-		out.AddTimeSignatureSegment( seg );
+		out.AddSegment( SEGMENT_TIME_SIG, seg );
 	}
 }
 
@@ -123,8 +125,10 @@ void SMALoader::ProcessSpeeds( TimingData &out, const RString line, const int ro
 		
 		unsigned short tmp = ((backup != vs2[2]) ? 1 : 0);
 		
-		SpeedSegment seg(fBeat, StringToFloat( vs2[1] ), StringToFloat(vs2[2]), tmp);
-		//seg.SetUnit(tmp);
+		SpeedSegment * seg = new SpeedSegment(fBeat,
+											  StringToFloat( vs2[1] ),
+											  StringToFloat(vs2[2]),
+											  tmp);
 		
 		if( fBeat < 0 )
 		{
@@ -135,16 +139,16 @@ void SMALoader::ProcessSpeeds( TimingData &out, const RString line, const int ro
 			continue;
 		}
 		
-		if( seg.GetLength() < 0 )
+		if( seg->GetLength() < 0 )
 		{
 			LOG->UserLog("Song file",
 				     this->GetSongTitle(),
 				     "has an speed change with beat %f, length %f.",
-				     fBeat, seg.GetLength() );
+				     fBeat, seg->GetLength() );
 			continue;
 		}
 		
-		out.AddSpeedSegment( seg );
+		out.AddSegment( SEGMENT_SPEED, seg );
 	}
 }
 

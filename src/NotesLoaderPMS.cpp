@@ -590,8 +590,7 @@ static void ReadGlobalTags( const NameToData_t &mapNameToData, Song &out, Measur
 
 		if( fBPM > 0.0f )
 		{
-			BPMSegment newSeg( 0, fBPM );
-			out.m_SongTiming.AddBPMSegment( newSeg );
+			out.m_SongTiming.AddSegment( SEGMENT_BPM, new BPMSegment(0, fBPM) );
 			LOG->Trace( "Inserting new BPM change at beat %f, BPM %f", NoteRowToBeat(0), fBPM );
 		}
 		else
@@ -693,9 +692,9 @@ static void ReadGlobalTags( const NameToData_t &mapNameToData, Song &out, Measur
 
 						if( fBPM > 0.0f )
 						{
-							BPMSegment newSeg( BeatToNoteRow(fBeat), fBPM );
-							out.m_SongTiming.AddBPMSegment( newSeg );
-							LOG->Trace( "Inserting new BPM change at beat %f, BPM %f", fBeat, newSeg.GetBPM() );
+							BPMSegment * newSeg = new BPMSegment( fBeat, fBPM );
+							out.m_SongTiming.AddSegment( SEGMENT_BPM, newSeg );
+							LOG->Trace( "Inserting new BPM change at beat %f, BPM %f", fBeat, newSeg->GetBPM() );
 						}
 						else
 						{
@@ -720,9 +719,9 @@ static void ReadGlobalTags( const NameToData_t &mapNameToData, Song &out, Measur
 						float fBeats = StringToFloat( sBeats ) / 48.0f;
 						float fFreezeSecs = fBeats / fBPS;
 
-						StopSegment newSeg( BeatToNoteRow(fBeat), fFreezeSecs );
-						out.m_SongTiming.AddStopSegment( newSeg );
-						LOG->Trace( "Inserting new Freeze at beat %f, secs %f", fBeat, newSeg.GetPause() );
+						StopSegment * newSeg = new StopSegment( fBeat, fFreezeSecs );
+						out.m_SongTiming.AddSegment( SEGMENT_STOP_DELAY, newSeg );
+						LOG->Trace( "Inserting new Freeze at beat %f, secs %f", fBeat, newSeg->GetPause() );
 					}
 					else
 					{
@@ -749,9 +748,11 @@ static void ReadGlobalTags( const NameToData_t &mapNameToData, Song &out, Measur
 
 					if( fBPM > 0.0f )
 					{
-						BPMSegment newSeg( iStepIndex, fBPM );
-						out.m_SongTiming.AddBPMSegment( newSeg );
-						LOG->Trace( "Inserting new BPM change at beat %f, BPM %f", newSeg.GetBeat(), newSeg.GetBPM() );
+						BPMSegment * newSeg = new BPMSegment( iStepIndex, fBPM );
+						out.m_SongTiming.AddSegment( SEGMENT_BPM, newSeg );
+						LOG->Trace("Inserting new BPM change at beat %f, BPM %f",
+								   newSeg->GetBeat(),
+								   newSeg->GetBPM() );
 				
 					}
 					else

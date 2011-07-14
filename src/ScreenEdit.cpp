@@ -1983,7 +1983,8 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			{
 				// create a new StopSegment
 				if( fDelta > 0 )
-					GetAppropriateTiming().AddStopSegment( StopSegment( GetRow(), fDelta) );
+					GetAppropriateTiming().AddSegment(SEGMENT_STOP_DELAY,
+													  new StopSegment( GetRow(), fDelta) );
 			}
 			else	// StopSegment being modified is m_SongTiming.m_StopSegments[i]
 			{

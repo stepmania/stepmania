@@ -251,8 +251,8 @@ bool SMLoader::ProcessBPMs( TimingData &out, const RString line, const int rowsP
 			if( negBPM < 0 )
 			{
 				float endBeat = fBeat + (fNewBPM / -negBPM) * (fBeat - negBeat);
-				WarpSegment new_seg(negBeat, endBeat - negBeat);
-				out.AddWarpSegment( new_seg );
+				out.AddSegment(SEGMENT_WARP,
+							   new WarpSegment(negBeat, endBeat - negBeat));
 				
 				negBeat = -1;
 				negBPM = 1;
@@ -267,13 +267,13 @@ bool SMLoader::ProcessBPMs( TimingData &out, const RString line, const int rowsP
 				// add in a warp.
 				if( highspeedBeat > 0 )
 				{
-					WarpSegment new_seg(highspeedBeat, fBeat - highspeedBeat);
-					out.AddWarpSegment( new_seg );
+					out.AddSegment(SEGMENT_WARP,
+								   new WarpSegment(highspeedBeat, fBeat - highspeedBeat) );
 					highspeedBeat = -1;
 				}
 				{
-					BPMSegment new_seg( BeatToNoteRow( fBeat ), fNewBPM );
-					out.AddBPMSegment( new_seg );
+					out.AddSegment(SEGMENT_BPM,
+								   new BPMSegment(fBeat, fNewBPM));
 				}
 			}
 		}
@@ -317,8 +317,7 @@ void SMLoader::ProcessStops( TimingData &out, const RString line, const int rows
 			if( negBeat + fSkipBeats > fFreezeBeat )
 				fSkipBeats = fFreezeBeat - negBeat;
 			
-			WarpSegment ws( negBeat, fSkipBeats);
-			out.AddWarpSegment( ws );
+			out.AddSegment(SEGMENT_WARP, new WarpSegment(negBeat, fSkipBeats));
 			
 			negBeat = -1;
 			negPause = 0;
@@ -331,8 +330,8 @@ void SMLoader::ProcessStops( TimingData &out, const RString line, const int rows
 		}
 		else if( fFreezeSeconds > 0.0f )
 		{
-			StopSegment ss( BeatToNoteRow(fFreezeBeat), fFreezeSeconds );
-			out.AddStopSegment( ss );
+			out.AddSegment(SEGMENT_STOP_DELAY,
+						   new StopSegment(fFreezeBeat, fFreezeSeconds));
 		}
 		
 	}
@@ -340,12 +339,11 @@ void SMLoader::ProcessStops( TimingData &out, const RString line, const int rows
 	// Process the prior stop if there was one.
 	if( negPause > 0 )
 	{
-		BPMSegment oldBPM = out.GetBPMSegmentAtRow(BeatToNoteRow(negBeat));
+		BPMSegment oldBPM = out.GetBPMSegmentAtBeat(negBeat);
 		float fSecondsPerBeat = 60 / oldBPM.GetBPM();
 		float fSkipBeats = negPause / fSecondsPerBeat;
 		
-		WarpSegment ws( negBeat, fSkipBeats);
-		out.AddWarpSegment( ws );
+		out.AddSegment(SEGMENT_WARP, new WarpSegment(negBeat, fSkipBeats));
 	}
 }
 
@@ -370,15 +368,14 @@ void SMLoader::ProcessDelays( TimingData &out, const RString line, const int row
 		const float fFreezeBeat = RowToBeat( arrayDelayValues[0], rowsPerBeat );
 		const float fFreezeSeconds = StringToFloat( arrayDelayValues[1] );
 		
-		StopSegment new_seg( fFreezeBeat, fFreezeSeconds, true );
-		// XXX: Remove Negatives Bug?
-		new_seg.SetBeat(fFreezeBeat);
-		new_seg.SetPause(fFreezeSeconds);
+		StopSegment * new_seg = new StopSegment(fFreezeBeat,
+												fFreezeSeconds,
+												true);
 		
 		// LOG->Trace( "Adding a delay segment: beat: %f, seconds = %f", new_seg.m_fStartBeat, new_seg.m_fStopSeconds );
 		
 		if(fFreezeSeconds > 0.0f)
-			out.AddStopSegment( new_seg );
+			out.AddSegment( SEGMENT_STOP_DELAY, new_seg );
 		else
 			LOG->UserLog(
 				     "Song file",
@@ -409,7 +406,10 @@ void SMLoader::ProcessTimeSignatures( TimingData &out, const RString line, const
 		
 		const float fBeat = RowToBeat( vs2[0], rowsPerBeat );
 		
-		TimeSignatureSegment seg( fBeat, StringToInt( vs2[1] ), StringToInt( vs2[2] ));
+		TimeSignatureSegment * seg =
+			new TimeSignatureSegment(fBeat,
+									 StringToInt( vs2[1] ),
+									 StringToInt( vs2[2] ));
 		
 		if( fBeat < 0 )
 		{
@@ -420,25 +420,25 @@ void SMLoader::ProcessTimeSignatures( TimingData &out, const RString line, const
 			continue;
 		}
 		
-		if( seg.GetNum() < 1 )
+		if( seg->GetNum() < 1 )
 		{
 			LOG->UserLog("Song file",
 				     this->GetSongTitle(),
 				     "has an invalid time signature change with beat %f, iNumerator %i.",
-				     fBeat, seg.GetNum() );
+				     fBeat, seg->GetNum() );
 			continue;
 		}
 		
-		if( seg.GetDen() < 1 )
+		if( seg->GetDen() < 1 )
 		{
 			LOG->UserLog("Song file",
 				     this->GetSongTitle(),
 				     "has an invalid time signature change with beat %f, iDenominator %i.",
-				     fBeat, seg.GetDen() );
+				     fBeat, seg->GetDen() );
 			continue;
 		}
 		
-		out.AddTimeSignatureSegment( seg );
+		out.AddSegment( SEGMENT_TIME_SIG, seg );
 	}
 }
 
@@ -463,8 +463,8 @@ void SMLoader::ProcessTickcounts( TimingData &out, const RString line, const int
 		const float fTickcountBeat = RowToBeat( arrayTickcountValues[0], rowsPerBeat );
 		int iTicks = clamp(atoi( arrayTickcountValues[1] ), 0, ROWS_PER_BEAT);
 		
-		TickcountSegment new_seg( fTickcountBeat, iTicks );
-		out.AddTickcountSegment( new_seg );
+		out.AddSegment( SEGMENT_TICKCOUNT,
+					   new TickcountSegment(fTickcountBeat, iTicks) );
 	}
 }
 
@@ -499,8 +499,10 @@ void SMLoader::ProcessSpeeds( TimingData &out, const RString line, const int row
 		
 		const float fBeat = RowToBeat( vs2[0], rowsPerBeat );
 		
-		SpeedSegment seg( fBeat, StringToFloat( vs2[1] ), StringToFloat( vs2[2] ));
-		seg.SetUnit(StringToInt(vs2[3]));
+		SpeedSegment * seg = new SpeedSegment(fBeat,
+											  StringToFloat( vs2[1] ),
+											  StringToFloat( vs2[2] ));
+		seg->SetUnit(StringToInt(vs2[3]));
 		
 		if( fBeat < 0 )
 		{
@@ -511,16 +513,16 @@ void SMLoader::ProcessSpeeds( TimingData &out, const RString line, const int row
 			continue;
 		}
 		
-		if( seg.GetLength() < 0 )
+		if( seg->GetLength() < 0 )
 		{
 			LOG->UserLog("Song file",
 				     this->GetSongTitle(),
 				     "has an speed change with beat %f, length %f.",
-				     fBeat, seg.GetLength() );
+				     fBeat, seg->GetLength() );
 			continue;
 		}
 		
-		out.AddSpeedSegment( seg );
+		out.AddSegment( SEGMENT_SPEED, seg );
 	}
 }
 
@@ -546,7 +548,7 @@ void SMLoader::ProcessFakes( TimingData &out, const RString line, const int rows
 		const float fNewBeat = StringToFloat( arrayFakeValues[1] );
 		
 		if(fNewBeat > 0)
-			out.AddFakeSegment( FakeSegment(fBeat, fNewBeat) );
+			out.AddSegment( SEGMENT_FAKE, new FakeSegment(fBeat, fNewBeat) );
 		else
 		{
 			LOG->UserLog("Song file",

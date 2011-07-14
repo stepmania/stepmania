@@ -121,8 +121,8 @@ static void WriteGlobalTags( RageFile &f, Song &out )
 			int iRow = ws->GetRow();
 			float fBPS = 60 / out.m_SongTiming.GetBPMAtRow(iRow);
 			float fSkip = fBPS * ws->GetLength();
-			StopSegment ss(iRow, -fSkip, false);
-			out.m_SongTiming.AddStopSegment( ss );
+			out.m_SongTiming.AddSegment(SEGMENT_STOP_DELAY,
+										new StopSegment(iRow, -fSkip, false) );
 		}
 	}
 
