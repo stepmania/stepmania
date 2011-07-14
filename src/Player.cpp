@@ -2965,10 +2965,12 @@ void Player::CrossedRows( int iLastRowCrossed, const RageTimer &now )
 		if( iCheckpointFrequencyRows > 0 )
 		{
 			// "the first row after the start of the range that lands on a beat"
-			int iFirstCheckpointInRange = ((m_iFirstUncrossedRow+iCheckpointFrequencyRows-1)/iCheckpointFrequencyRows) * iCheckpointFrequencyRows;
+			int iFirstCheckpointInRange = QuantizeDown(m_iFirstUncrossedRow+iCheckpointFrequencyRows-1,
+													   iCheckpointFrequencyRows);
 
 			// "the last row or first row earlier that lands on a beat"
-			int iLastCheckpointInRange = ((iLastRowCrossed)/iCheckpointFrequencyRows) * iCheckpointFrequencyRows;
+			int iLastCheckpointInRange = QuantizeDown(iLastRowCrossed,
+													  iCheckpointFrequencyRows);
 
 			for( int r = iFirstCheckpointInRange; r <= iLastCheckpointInRange; r += iCheckpointFrequencyRows )
 			{
@@ -2990,10 +2992,12 @@ void Player::CrossedRows( int iLastRowCrossed, const RageTimer &now )
 					int iTrack = nIter.Track();
 
 					// "the first row after the hold head that lands on a beat"
-					int iFirstCheckpointOfHold = ((iStartRow+iCheckpointFrequencyRows)/iCheckpointFrequencyRows) * iCheckpointFrequencyRows;
+					int iFirstCheckpointOfHold = QuantizeDown(iStartRow+iCheckpointFrequencyRows,
+															  iCheckpointFrequencyRows);
 
 					// "the end row or the first earlier row that lands on a beat"
-					int iLastCheckpointOfHold = ((iEndRow)/iCheckpointFrequencyRows) * iCheckpointFrequencyRows;
+					int iLastCheckpointOfHold = QuantizeDown(iEndRow,
+															 iCheckpointFrequencyRows);
 
 					// count the end of the hold as a checkpoint
 					bool bHoldOverlapsRow = iFirstCheckpointOfHold <= r  &&   r <= iLastCheckpointOfHold;
