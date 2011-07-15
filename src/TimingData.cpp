@@ -206,25 +206,30 @@ void TimingData::SetTickcountAtRow( int iRow, int iTicks )
 void TimingData::SetComboAtRow( int iRow, int iCombo, int iMiss )
 {
 	unsigned i;
-	for( i=0; i<m_ComboSegments.size(); i++ )
-		if( m_ComboSegments[i].GetRow() >= iRow )
+	vector<TimingSegment *> &combos = this->allTimingSegments[SEGMENT_COMBO];
+	for( i=0; i<combos.size(); i++ )
+		if( combos[i]->GetRow() >= iRow )
 			break;
 	
-	if( i == m_ComboSegments.size() || m_ComboSegments[i].GetRow() != iRow )
+	ComboSegment *cs = static_cast<ComboSegment *>(combos[i]);
+	
+	if( i == combos.size() || cs->GetRow() != iRow )
 	{
-		if(i == 0 || m_ComboSegments[i-1].GetCombo() != iCombo ||
-		   m_ComboSegments[i-1].GetMissCombo() != iMiss)
-			AddComboSegment( ComboSegment(iRow, iCombo ) );
+		if (i == 0 ||
+			static_cast<ComboSegment *>(combos[i-1])->GetCombo() != iCombo ||
+			static_cast<ComboSegment *>(combos[i-1])->GetMissCombo() != iMiss)
+			AddSegment( SEGMENT_COMBO, new ComboSegment(iRow, iCombo, iMiss ) );
 	}
 	else
 	{
-		if(i > 0 && m_ComboSegments[i-1].GetCombo() == iCombo &&
-		   m_ComboSegments[i-1].GetMissCombo() == iMiss)
-			m_ComboSegments.erase( m_ComboSegments.begin()+i, m_ComboSegments.begin()+i+1 );
+		if (i > 0 &&
+			static_cast<ComboSegment *>(combos[i-1])->GetCombo() == iCombo &&
+			static_cast<ComboSegment *>(combos[i-1])->GetMissCombo() == iMiss)
+			combos.erase( combos.begin()+i, combos.begin()+i+1 );
 		else
 		{
-			m_ComboSegments[i].SetCombo(iCombo);
-			m_ComboSegments[i].SetMissCombo(iMiss);
+			cs->SetCombo(iCombo);
+			cs->SetMissCombo(iMiss);
 		}
 	}
 }
@@ -246,50 +251,60 @@ void TimingData::SetMissComboAtRow(int iRow, int iMiss)
 void TimingData::SetLabelAtRow( int iRow, const RString sLabel )
 {
 	unsigned i;
-	for( i=0; i<m_LabelSegments.size(); i++ )
-		if( m_LabelSegments[i].GetRow() >= iRow )
+	vector<TimingSegment *> &labels = this->allTimingSegments[SEGMENT_LABEL];
+	for( i=0; i<labels.size(); i++ )
+		if( labels[i]->GetRow() >= iRow )
 			break;
 	
-	if( i == m_LabelSegments.size() || m_LabelSegments[i].GetRow() != iRow )
+	LabelSegment *ls = static_cast<LabelSegment *>(labels[i]);
+	
+	if( i == labels.size() || ls->GetRow() != iRow )
 	{
-		if( i == 0 || m_LabelSegments[i-1].GetLabel() != sLabel )
-			AddLabelSegment( LabelSegment(iRow, sLabel ) );
+		if (i == 0 ||
+			static_cast<LabelSegment *>(labels[i-1])->GetLabel() != sLabel )
+			AddSegment( SEGMENT_LABEL, new LabelSegment(iRow, sLabel ) );
 	}
 	else
 	{
-		if( i > 0 && ( m_LabelSegments[i-1].GetLabel() == sLabel || sLabel == "" ) )
-			m_LabelSegments.erase( m_LabelSegments.begin()+i, m_LabelSegments.begin()+i+1 );
+		if (i > 0 &&
+			( static_cast<LabelSegment *>(labels[i-1])->GetLabel() == sLabel ||
+			 sLabel == "" ) )
+			labels.erase( labels.begin()+i, labels.begin()+i+1 );
 		else
-			m_LabelSegments[i].SetLabel(sLabel);
+			ls->SetLabel(sLabel);
 	}
 }
 
 void TimingData::SetSpeedAtRow( int iRow, float fPercent, float fWait, unsigned short usMode )
 {
 	unsigned i;
-	for( i = 0; i < m_SpeedSegments.size(); i++ )
+	vector<TimingSegment *> &speeds = this->allTimingSegments[SEGMENT_SPEED];
+	for( i = 0; i < speeds.size(); i++ )
 	{
-		if( m_SpeedSegments[i].GetRow() >= iRow)
+		if( speeds[i]->GetRow() >= iRow)
 			break;
 	}
 	
-	if ( i == m_SpeedSegments.size() || m_SpeedSegments[i].GetRow() != iRow )
+	SpeedSegment *ss = static_cast<SpeedSegment *>(speeds[i]);
+	
+	if ( i == speeds.size() || ss->GetRow() != iRow )
 	{
 		// the core mod itself matters the most for comparisons.
-		if( i == 0 || m_SpeedSegments[i-1].GetRatio() != fPercent )
-			AddSpeedSegment( SpeedSegment(iRow, fPercent, fWait, usMode) );
+		if (i == 0 ||
+			static_cast<SpeedSegment *>(speeds[i-1])->GetRatio() != fPercent )
+			AddSegment( SEGMENT_SPEED, new SpeedSegment(iRow, fPercent, fWait, usMode) );
 	}
 	else
 	{
 		// The others aren't compared: only the mod itself matters.
-		if( i > 0  && m_SpeedSegments[i-1].GetRatio() == fPercent )
-			m_SpeedSegments.erase( m_SpeedSegments.begin()+i,
-					       m_SpeedSegments.begin()+i+1 );
+		if (i > 0 &&
+			static_cast<SpeedSegment *>(speeds[i-1])->GetRatio() == fPercent )
+			speeds.erase( speeds.begin()+i, speeds.begin()+i+1 );
 		else
 		{
-			m_SpeedSegments[i].SetRatio(fPercent);
-			m_SpeedSegments[i].SetLength(fWait);
-			m_SpeedSegments[i].SetUnit(usMode);
+			ss->SetRatio(fPercent);
+			ss->SetLength(fWait);
+			ss->SetUnit(usMode);
 		}
 	}
 }
@@ -297,27 +312,30 @@ void TimingData::SetSpeedAtRow( int iRow, float fPercent, float fWait, unsigned 
 void TimingData::SetScrollAtRow( int iRow, float fPercent )
 {
 	unsigned i;
-	for( i = 0; i < m_ScrollSegments.size(); i++ )
+	vector<TimingSegment *> &scrolls = this->allTimingSegments[SEGMENT_SCROLL];
+	for( i = 0; i < scrolls.size(); i++ )
 	{
-		if( m_ScrollSegments[i].GetRow() >= iRow)
+		if( scrolls[i]->GetRow() >= iRow)
 			break;
 	}
 	
-	if ( i == m_ScrollSegments.size() || m_ScrollSegments[i].GetRow() != iRow )
+	ScrollSegment *ss = static_cast<ScrollSegment *>(scrolls[i]);
+	if ( i == scrolls.size() || ss->GetRow() != iRow )
 	{
 		// the core mod itself matters the most for comparisons.
-		if( i == 0 || m_ScrollSegments[i-1].GetRatio() != fPercent )
-			AddScrollSegment( ScrollSegment(iRow, fPercent) );
+		if (i == 0 ||
+			static_cast<ScrollSegment *>(scrolls[i-1])->GetRatio() != fPercent )
+			AddSegment( SEGMENT_SCROLL, new ScrollSegment(iRow, fPercent) );
 	}
 	else
 	{
 		// The others aren't compared: only the mod itself matters.
-		if( i > 0  && m_ScrollSegments[i-1].GetRatio() == fPercent )
-			m_ScrollSegments.erase( m_ScrollSegments.begin()+i,
-					       m_ScrollSegments.begin()+i+1 );
+		if (i > 0 &&
+			static_cast<ScrollSegment *>(scrolls[i-1])->GetRatio() == fPercent )
+			scrolls.erase( scrolls.begin()+i, scrolls.begin()+i+1 );
 		else
 		{
-			m_ScrollSegments[i].SetRatio(fPercent);
+			ss->SetRatio(fPercent);
 		}
 	}
 }
@@ -325,25 +343,26 @@ void TimingData::SetScrollAtRow( int iRow, float fPercent )
 void TimingData::SetFakeAtRow( int iRow, float fNew )
 {
 	unsigned i;
-	for( i=0; i<m_FakeSegments.size(); i++ )
-		if( m_FakeSegments[i].GetRow() == iRow )
+	vector<TimingSegment *> &fakes = this->allTimingSegments[SEGMENT_FAKE];
+	for( i=0; i<fakes.size(); i++ )
+		if( fakes[i]->GetRow() == iRow )
 			break;
 	bool valid = iRow > 0 && fNew > 0;
-	if( i == m_FakeSegments.size() )
+	if( i == fakes.size() )
 	{
 		if( valid )
 		{
-			AddFakeSegment( FakeSegment(iRow, fNew) );
+			AddSegment( SEGMENT_FAKE, new FakeSegment(iRow, fNew) );
 		}
 	}
 	else
 	{
 		if( valid )
 		{
-			m_FakeSegments[i].SetLength(fNew);
+			static_cast<FakeSegment *>(fakes[i])->SetLength(fNew);
 		}
 		else
-			m_FakeSegments.erase( m_FakeSegments.begin()+i, m_FakeSegments.begin()+i+1 );
+			fakes.erase( fakes.begin()+i, fakes.begin()+i+1 );
 	}
 }
 
