@@ -19,6 +19,7 @@ enum TimingSegmentType
 	SEGMENT_SCROLL,
 	SEGMENT_FAKE,
 	NUM_TimingSegmentType,
+	TimingSegmentType_Invalid,
 };
 
 const RString& TimingSegmentTypeToString( TimingSegmentType tst );
@@ -76,7 +77,10 @@ struct TimingSegment
 	 * @return the starting beat. */
 	float GetBeat() const;
 	
-	virtual TimingSegmentType GetType() const = 0;
+	virtual TimingSegmentType GetType() const
+	{
+		return TimingSegmentType_Invalid;
+	}
 	
 	/**
 	 * @brief Compares two DrivedSegments to see if one is less than the other.
