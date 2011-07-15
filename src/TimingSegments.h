@@ -18,8 +18,10 @@ enum TimingSegmentType
 	SEGMENT_SPEED,
 	SEGMENT_SCROLL,
 	SEGMENT_FAKE,
-	NUM_TimingSegmentTypes
+	NUM_TimingSegmentTypes,
 };
+
+const RString& TimingSegmentTypeToString( TimingSegmentType tst );
 
 /**
  * @brief The base timing segment for all of the changing glory.

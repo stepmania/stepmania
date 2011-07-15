@@ -812,7 +812,7 @@ void ScreenEdit::Init()
 
 	InitEditMappings();
 	
-	currentCycleSegment = "label";
+	currentCycleSegment = SEGMENT_LABEL;
 
 	// save the originals for reverting later
 	CopyToLastSave();
@@ -1261,7 +1261,7 @@ void ScreenEdit::UpdateTextInfo()
 		sText += ssprintf( MAIN_TITLE_FORMAT.GetValue(), MAIN_TITLE.GetValue().c_str(), m_pSong->m_sMainTitle.c_str() );
 		if( m_pSong->m_sSubTitle.size() )
 			sText += ssprintf( SUBTITLE_FORMAT.GetValue(), SUBTITLE.GetValue().c_str(), m_pSong->m_sSubTitle.c_str() );
-		sText += ssprintf( SEGMENT_TYPE_FORMAT.GetValue(), SEGMENT_TYPE.GetValue().c_str(), currentCycleSegment.c_str() );
+		sText += ssprintf( SEGMENT_TYPE_FORMAT.GetValue(), SEGMENT_TYPE.GetValue().c_str(), TimingSegmentTypeToString(currentCycleSegment).c_str() );
 		sText += ssprintf( TAP_NOTE_TYPE_FORMAT.GetValue(), TAP_NOTE_TYPE.GetValue().c_str(), TapNoteTypeToString( m_selectedTap.type ).c_str() );
 			break;
 	}
@@ -1559,60 +1559,15 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 		}
 	case EDIT_BUTTON_CYCLE_SEGMENT_LEFT:
 	{
-		if (this->currentCycleSegment == "label")
-			this->currentCycleSegment = "fake";
-		else if (this->currentCycleSegment == "fake")
-			this->currentCycleSegment = "scroll";
-		else if (this->currentCycleSegment == "scroll")
-			this->currentCycleSegment = "speed";
-		else if (this->currentCycleSegment == "speed")
-			this->currentCycleSegment = "combo";
-		else if (this->currentCycleSegment == "combo")
-			this->currentCycleSegment = "tickcount";
-		else if (this->currentCycleSegment == "tickcount")
-			this->currentCycleSegment = "timeSig";
-		else if (this->currentCycleSegment == "timeSig")
-			this->currentCycleSegment = "warp";
-		else if (this->currentCycleSegment == "warp")
-			this->currentCycleSegment = "delay";
-		else if (this->currentCycleSegment == "delay")
-			this->currentCycleSegment = "stop";
-		else if (this->currentCycleSegment == "stop")
-			this->currentCycleSegment = "bpm";
-		else if (this->currentCycleSegment == "bpm")
-			this->currentCycleSegment = "label";
-		// fallback gracefully instead of assert.
-		else this->currentCycleSegment = "label";
+		int tmp = enum_add2( this->currentCycleSegment, -1 );
+		wrap( *ConvertValue<int>(&tmp), NUM_TimingSegmentTypes );
 		break;
 	}		
 	case EDIT_BUTTON_CYCLE_SEGMENT_RIGHT:
 	{
-		if (this->currentCycleSegment == "label")
-			this->currentCycleSegment = "bpm";
-		else if (this->currentCycleSegment == "bpm")
-			this->currentCycleSegment = "stop";
-		else if (this->currentCycleSegment == "stop")
-			this->currentCycleSegment = "delay";
-		else if (this->currentCycleSegment == "delay")
-			this->currentCycleSegment = "warp";
-		else if (this->currentCycleSegment == "warp")
-			this->currentCycleSegment = "timeSig";
-		else if (this->currentCycleSegment == "timeSig")
-			this->currentCycleSegment = "tickcount";
-		else if (this->currentCycleSegment == "tickcount")
-			this->currentCycleSegment = "combo";
-		else if (this->currentCycleSegment == "combo")
-			this->currentCycleSegment = "speed";
-		else if (this->currentCycleSegment == "speed")
-			this->currentCycleSegment = "scroll";
-		else if (this->currentCycleSegment == "scroll")
-			this->currentCycleSegment = "fake";
-		else if (this->currentCycleSegment == "fake")
-			this->currentCycleSegment = "label";
-		// fallback gracefully instead of assert.
-		else this->currentCycleSegment = "label";
-		break;
-	}
+		int tmp = enum_add2( this->currentCycleSegment, +1 );
+		wrap( *ConvertValue<int>(&tmp), NUM_TimingSegmentTypes );
+		break;	}
 	case EDIT_BUTTON_SCROLL_SPEED_UP:
 	case EDIT_BUTTON_SCROLL_SPEED_DOWN:
 		{
@@ -1729,56 +1684,18 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 		break;
 	case EDIT_BUTTON_SEGMENT_NEXT:
 	{
+		// TODO: Work around Stops and Delays. We MAY have to separate them.
 		TimingData &timing = GetAppropriateTiming();
-		if (this->currentCycleSegment == "label")
-			ScrollTo(timing.GetNextLabelSegmentBeatAtBeat(GetBeat()));
-		else if (this->currentCycleSegment == "bpm")
-			ScrollTo(timing.GetNextBPMSegmentBeatAtBeat(GetBeat()));
-		else if (this->currentCycleSegment == "stop")
-			ScrollTo(timing.GetNextStopSegmentBeatAtBeat(GetBeat()));
-		else if (this->currentCycleSegment == "delay")
-			ScrollTo(timing.GetNextDelaySegmentBeatAtBeat(GetBeat()));
-		else if (this->currentCycleSegment == "warp")
-			ScrollTo(timing.GetNextWarpSegmentBeatAtBeat(GetBeat()));
-		else if (this->currentCycleSegment == "timeSig")
-			ScrollTo(timing.GetNextTimeSignatureSegmentBeatAtBeat(GetBeat()));
-		else if (this->currentCycleSegment == "tickcount")
-			ScrollTo(timing.GetNextTickcountSegmentBeatAtBeat(GetBeat()));
-		else if (this->currentCycleSegment == "combo")
-			ScrollTo(timing.GetNextComboSegmentBeatAtBeat(GetBeat()));
-		else if (this->currentCycleSegment == "speed")
-			ScrollTo(timing.GetNextSpeedSegmentBeatAtBeat(GetBeat()));
-		else if (this->currentCycleSegment == "scroll")
-			ScrollTo(timing.GetNextScrollSegmentBeatAtBeat(GetBeat()));
-		else if (this->currentCycleSegment == "fake")
-			ScrollTo(timing.GetNextFakeSegmentBeatAtBeat(GetBeat()));
+		ScrollTo(timing.GetNextSegmentBeatAtBeat(this->currentCycleSegment,
+												 GetBeat()));
 	}
 	break;
 	case EDIT_BUTTON_SEGMENT_PREV:
 	{
+		// TODO: Work around Stops and Delays. We MAY have to separate them.
 		TimingData &timing = GetAppropriateTiming();
-		if (this->currentCycleSegment == "label")
-			ScrollTo(timing.GetPreviousLabelSegmentBeatAtBeat(GetBeat()));
-		else if (this->currentCycleSegment == "bpm")
-			ScrollTo(timing.GetPreviousBPMSegmentBeatAtBeat(GetBeat()));
-		else if (this->currentCycleSegment == "stop")
-			ScrollTo(timing.GetPreviousStopSegmentBeatAtBeat(GetBeat()));
-		else if (this->currentCycleSegment == "delay")
-			ScrollTo(timing.GetPreviousDelaySegmentBeatAtBeat(GetBeat()));
-		else if (this->currentCycleSegment == "warp")
-			ScrollTo(timing.GetPreviousWarpSegmentBeatAtBeat(GetBeat()));
-		else if (this->currentCycleSegment == "timeSig")
-			ScrollTo(timing.GetPreviousTimeSignatureSegmentBeatAtBeat(GetBeat()));
-		else if (this->currentCycleSegment == "tickcount")
-			ScrollTo(timing.GetPreviousTickcountSegmentBeatAtBeat(GetBeat()));
-		else if (this->currentCycleSegment == "combo")
-			ScrollTo(timing.GetPreviousComboSegmentBeatAtBeat(GetBeat()));
-		else if (this->currentCycleSegment == "speed")
-			ScrollTo(timing.GetPreviousSpeedSegmentBeatAtBeat(GetBeat()));
-		else if (this->currentCycleSegment == "scroll")
-			ScrollTo(timing.GetPreviousScrollSegmentBeatAtBeat(GetBeat()));
-		else if (this->currentCycleSegment == "fake")
-			ScrollTo(timing.GetPreviousFakeSegmentBeatAtBeat(GetBeat()));
+		ScrollTo(timing.GetPreviousSegmentBeatAtBeat(this->currentCycleSegment,
+													 GetBeat()));
 	}
 	break;
 	case EDIT_BUTTON_SNAP_NEXT:
