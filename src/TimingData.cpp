@@ -44,6 +44,26 @@ void TimingData::AddSegment(TimingSegmentType tst, TimingSegment * seg)
 	segs.insert(upper_bound(segs.begin(), segs.end(), seg), seg);
 }
 
+int TimingData::GetSegmentIndexAtRow(TimingSegmentType tst,
+									 int row, bool isDelay) const
+{
+	const vector<TimingSegment *> &segs = this->allTimingSegments[tst];
+	unsigned i = 0;
+	for (; i < segs.size() - 1; i++)
+	{
+		TimingSegment *seg = segs[i+1];
+		if (seg->GetRow() > row)
+		{
+			// put conditions here for individual segments.
+			if (tst == SEGMENT_STOP_DELAY &&
+				static_cast<StopSegment *>(seg)->GetDelay() != isDelay)
+				continue;
+			break;
+		}
+	}
+	return static_cast<int>(i);
+}
+
 // TODO: Find a way to combine all of these SetAtRows to one.
 
 /* Change an existing BPM segment, merge identical segments together or insert a new one. */
@@ -417,17 +437,17 @@ float TimingData::GetDelayAtRow( int iRow ) const
 
 int TimingData::GetComboAtRow( int iNoteRow ) const
 {
-	return m_ComboSegments[this->GetComboSegmentIndexAtRow(iNoteRow)].GetCombo();
+	return m_ComboSegments[this->GetSegmentIndexAtRow(SEGMENT_COMBO, iNoteRow)].GetCombo();
 }
 
 int TimingData::GetMissComboAtRow(int iNoteRow) const
 {
-	return m_ComboSegments[this->GetComboSegmentIndexAtRow(iNoteRow)].GetMissCombo();
+	return m_ComboSegments[this->GetSegmentIndexAtRow(SEGMENT_COMBO, iNoteRow)].GetMissCombo();
 }
 
 RString TimingData::GetLabelAtRow( int iRow ) const
 {
-	return m_LabelSegments[GetLabelSegmentIndexAtRow( iRow )].GetLabel();
+	return m_LabelSegments[GetSegmentIndexAtRow(SEGMENT_LABEL, iRow)].GetLabel();
 }
 
 float TimingData::GetWarpAtRow( int iWarpRow ) const
@@ -523,57 +543,12 @@ float TimingData::GetBPMAtRow( int iNoteRow ) const
 	return m_BPMSegments[i].GetBPM();
 }
 
-int TimingData::GetBPMSegmentIndexAtRow( int iNoteRow ) const
-{
-	unsigned i;
-	for( i=0; i<m_BPMSegments.size()-1; i++ )
-		if( m_BPMSegments[i+1].GetRow() > iNoteRow )
-			break;
-	return static_cast<int>(i);
-}
-
-int TimingData::GetStopSegmentIndexAtRow( int iNoteRow, bool bDelay ) const
-{
-	unsigned i;
-	for( i=0; i<m_StopSegments.size()-1; i++ )
-	{
-		const StopSegment& s = m_StopSegments[i+1];
-		if( s.GetRow() > iNoteRow && s.GetDelay() == bDelay )
-			break;
-	}
-	return static_cast<int>(i);
-}
-
-int TimingData::GetWarpSegmentIndexAtRow( int iNoteRow ) const
-{
-	unsigned i;
-	for( i=0; i<m_WarpSegments.size()-1; i++ )
-	{
-		const WarpSegment& s = m_WarpSegments[i+1];
-		if( s.GetRow() > iNoteRow )
-			break;
-	}
-	return static_cast<int>(i);
-}
-
-int TimingData::GetFakeSegmentIndexAtRow( int iNoteRow ) const
-{
-	unsigned i;
-	for( i=0; i<m_FakeSegments.size()-1; i++ )
-	{
-		const FakeSegment& s = m_FakeSegments[i+1];
-		if( s.GetRow() > iNoteRow )
-			break;
-	}
-	return static_cast<int>(i);
-}
-
 bool TimingData::IsWarpAtRow( int iNoteRow ) const
 {
 	if( m_WarpSegments.empty() )
 		return false;
 	
-	int i = GetWarpSegmentIndexAtRow( iNoteRow );
+	int i = GetSegmentIndexAtRow( SEGMENT_WARP, iNoteRow );
 	const WarpSegment& s = m_WarpSegments[i];
 	float beatRow = NoteRowToBeat(iNoteRow);
 	if( s.GetBeat() <= beatRow && beatRow < (s.GetBeat() + s.GetLength() ) )
@@ -597,7 +572,7 @@ bool TimingData::IsFakeAtRow( int iNoteRow ) const
 	if( m_FakeSegments.empty() )
 		return false;
 	
-	int i = GetFakeSegmentIndexAtRow( iNoteRow );
+	int i = GetSegmentIndexAtRow( SEGMENT_FAKE, iNoteRow );
 	const FakeSegment& s = m_FakeSegments[i];
 	float beatRow = NoteRowToBeat(iNoteRow);
 	if( s.GetBeat() <= beatRow && beatRow < ( s.GetBeat() + s.GetLength() ) )
@@ -607,64 +582,13 @@ bool TimingData::IsFakeAtRow( int iNoteRow ) const
 	return false;
 }
 
-int TimingData::GetTimeSignatureSegmentIndexAtRow( int iRow ) const
-{
-	unsigned i;
-	for (i=0; i < m_vTimeSignatureSegments.size() - 1; i++ )
-		if( m_vTimeSignatureSegments[i+1].GetRow() > iRow )
-			break;
-	return static_cast<int>(i);
-}
-
-int TimingData::GetComboSegmentIndexAtRow( int iRow ) const
-{
-	unsigned i;
-	for( i=0; i<m_ComboSegments.size()-1; i++ )
-	{
-		const ComboSegment& s = m_ComboSegments[i+1];
-		if( s.GetRow() > iRow )
-			break;
-	}
-	return static_cast<int>(i);
-}
-
-int TimingData::GetLabelSegmentIndexAtRow( int iRow ) const
-{
-	unsigned i;
-	for( i=0; i<m_LabelSegments.size()-1; i++ )
-	{
-		const LabelSegment& s = m_LabelSegments[i+1];
-		if( s.GetRow() > iRow )
-			break;
-	}
-	return static_cast<int>(i);
-}
-
-int TimingData::GetSpeedSegmentIndexAtRow( int iRow ) const
-{
-	unsigned i;
-	for (i=0; i < m_SpeedSegments.size() - 1; i++ )
-		if( m_SpeedSegments[i+1].GetRow() > iRow )
-			break;
-	return static_cast<int>(i);
-}
-
-int TimingData::GetScrollSegmentIndexAtRow( int iRow ) const
-{
-	unsigned i;
-	for (i=0; i < m_ScrollSegments.size() - 1; i++ )
-		if( m_ScrollSegments[i+1].GetRow() > iRow )
-			break;
-	return static_cast<int>(i);
-}
-
 BPMSegment& TimingData::GetBPMSegmentAtRow( int iNoteRow )
 {
 	static BPMSegment empty;
 	if( m_BPMSegments.empty() )
 		return empty;
 
-	int i = GetBPMSegmentIndexAtRow( iNoteRow );
+	int i = GetSegmentIndexAtRow( SEGMENT_BPM, iNoteRow );
 	return m_BPMSegments[i];
 }
 
@@ -729,7 +653,7 @@ StopSegment& TimingData::GetStopSegmentAtRow( int iNoteRow, bool bDelay )
 	if( m_StopSegments.empty() )
 		return empty;
 	
-	int i = GetStopSegmentIndexAtRow( iNoteRow, bDelay );
+	int i = GetSegmentIndexAtRow( SEGMENT_STOP_DELAY, iNoteRow, bDelay );
 	return m_StopSegments[i];
 }
 
@@ -739,7 +663,7 @@ WarpSegment& TimingData::GetWarpSegmentAtRow( int iRow )
 	if( m_WarpSegments.empty() )
 		return empty;
 	
-	int i = GetWarpSegmentIndexAtRow( iRow );
+	int i = GetSegmentIndexAtRow( SEGMENT_WARP, iRow );
 	return m_WarpSegments[i];
 }
 
@@ -749,17 +673,8 @@ FakeSegment& TimingData::GetFakeSegmentAtRow( int iRow )
 	if( m_FakeSegments.empty() )
 		return empty;
 	
-	int i = GetFakeSegmentIndexAtRow( iRow );
+	int i = GetSegmentIndexAtRow( SEGMENT_FAKE, iRow );
 	return m_FakeSegments[i];
-}
-
-int TimingData::GetTickcountSegmentIndexAtRow( int iRow ) const
-{
-	unsigned i;
-	for (i=0; i < m_TickcountSegments.size() - 1; i++ )
-		if( m_TickcountSegments[i+1].GetRow() > iRow )
-			break;
-	return static_cast<int>(i);
 }
 
 TickcountSegment& TimingData::GetTickcountSegmentAtRow( int iRow )
@@ -768,13 +683,13 @@ TickcountSegment& TimingData::GetTickcountSegmentAtRow( int iRow )
 	if( m_TickcountSegments.empty() )
 		return empty;
 	
-	int i = GetTickcountSegmentIndexAtBeat( iRow );
+	int i = GetSegmentIndexAtRow( SEGMENT_TICKCOUNT, iRow );
 	return m_TickcountSegments[i];
 }
 
 int TimingData::GetTickcountAtRow( int iRow ) const
 {
-	return m_TickcountSegments[GetTickcountSegmentIndexAtRow( iRow )].GetTicks();
+	return m_TickcountSegments[GetSegmentIndexAtRow( SEGMENT_TICKCOUNT, iRow )].GetTicks();
 }
 
 float TimingData::GetPreviousBPMSegmentBeatAtRow( int iRow ) const
@@ -1457,7 +1372,7 @@ float TimingData::GetDisplayedSpeedPercent( float fSongBeat, float fMusicSeconds
 	if( m_SpeedSegments.size() == 0 )
 		return 1.0f;
 
-	const int index = GetSpeedSegmentIndexAtBeat( fSongBeat );
+	const int index = GetSegmentIndexAtBeat( SEGMENT_SPEED, fSongBeat );
 	
 	const SpeedSegment &seg = m_SpeedSegments[index];
 	float fStartBeat = seg.GetBeat();

@@ -18,6 +18,15 @@ class TimingData
 public:
 	void AddSegment(TimingSegmentType tst, TimingSegment * seg);
 	
+	int GetSegmentIndexAtRow(TimingSegmentType tst,
+							 int row, bool isDelay = false) const;
+	
+	int GetSegmentIndexAtBeat(TimingSegmentType tst,
+							  float beat, bool isDelay = false) const
+	{
+		return this->GetSegmentIndexAtRow(tst, BeatToNoteRow(beat), isDelay);
+	}
+	
 	/**
 	 * @brief Sets up initial timing data with a defined offset.
 	 * @param fOffset the offset from the 0th beat. */
@@ -70,18 +79,6 @@ public:
 	 * @return the BPMSegment in question.
 	 */
 	BPMSegment& GetBPMSegmentAtBeat( float fBeat ) { return GetBPMSegmentAtRow( (int)BeatToNoteRow(fBeat)); }
-	/**
-	 * @brief Retrieve the index of the BPMSegments at the specified row.
-	 * @param iNoteRow the row that has a BPMSegment.
-	 * @return the BPMSegment's index in question.
-	 */
-	int GetBPMSegmentIndexAtRow( int iNoteRow ) const;
-	/**
-	 * @brief Retrieve the index of the BPMSegments at the specified beat.
-	 * @param fBeat the beat that has a BPMSegment.
-	 * @return the BPMSegment's index in question.
-	 */
-	int GetBPMSegmentIndexAtBeat( float fBeat ) const { return GetBPMSegmentIndexAtRow( BeatToNoteRow(fBeat)); }
 		
 	/**
 	 * @brief Retrieve the next beat that contains a BPMSegment.
@@ -242,45 +239,6 @@ public:
 	 * @param iNoteRow the row that has a StopSegment.
 	 * @return the StopSegment's index in question.
 	 */
-	int GetStopSegmentIndexAtRow( int iNoteRow ) const { return GetStopSegmentIndexAtRow( iNoteRow, false ); }
-	/**
-	 * @brief Retrieve the index of the StopSegments at the specified beat.
-	 * @param fBeat the beat that has a StopSegment.
-	 * @return the StopSegment's index in question.
-	 */
-	int GetStopSegmentIndexAtBeat( float fBeat ) const { return GetStopSegmentIndexAtRow( BeatToNoteRow(fBeat), false ); }
-	/**
-	 * @brief Retrieve the index of the StopSegments at the specified row.
-	 * @param iNoteRow the row that has a StopSegment.
-	 * @param bDelay If true, it's a Delay Segment. Otherwise, it's a StopSegment.
-	 * @return the StopSegment's index in question.
-	 */
-	int GetStopSegmentIndexAtRow( int iNoteRow, bool bDelay ) const;
-	/**
-	 * @brief Retrieve the index of the StopSegments at the specified beat.
-	 * @param fBeat the beat that has a StopSegment.
-	 * @param bDelay If true, it's a Delay Segment. Otherwise, it's a StopSegment.
-	 * @return the StopSegment's index in question.
-	 */
-	int GetStopSegmentIndexAtBeat( float fBeat, bool bDelay ) const { return GetStopSegmentIndexAtRow( BeatToNoteRow(fBeat), bDelay ); }
-	/**
-	 * @brief Retrieve the index of the Delay Segments at the specified row.
-	 * @param iNoteRow the row that has a Delay Segment.
-	 * @return the StopSegment's index in question.
-	 */
-	int GetDelaySegmentIndexAtRow( int iNoteRow ) const { return GetStopSegmentIndexAtRow( iNoteRow, true ); }
-	/**
-	 * @brief Retrieve the index of the Delay Segments at the specified beat.
-	 * @param fBeat the beat that has a Delay Segment.
-	 * @return the StopSegment's index in question.
-	 */
-	int GetDelaySegmentIndexAtBeat( float fBeat ) const { return GetStopSegmentIndexAtRow( BeatToNoteRow(fBeat), true ); }
-	
-	/**
-	 * @brief Retrieve the next beat that contains a StopSegment.
-	 * @param iRow the present row.
-	 * @return the next beat with a StopSegment, or fBeat if there is none ahead.
-	 */
 	float GetNextStopSegmentBeatAtRow( int iRow ) const;
 	/**
 	 * @brief Retrieve the previous beat that contains a StopSegment.
@@ -412,18 +370,6 @@ public:
 	 * @return the TimeSignatureSegment in question.
 	 */
 	TimeSignatureSegment& GetTimeSignatureSegmentAtBeat( float fBeat ) { return GetTimeSignatureSegmentAtRow( BeatToNoteRow(fBeat) ); }
-	/**
-	 * @brief Retrieve the index of the TimeSignatureSegments at the specified row.
-	 * @param iNoteRow the row that has a TimeSignatureSegment.
-	 * @return the TimeSignatureSegment's index in question.
-	 */
-	int GetTimeSignatureSegmentIndexAtRow( int iNoteRow ) const;
-	/**
-	 * @brief Retrieve the index of the TimeSignatureSegments at the specified beat.
-	 * @param fBeat the beat that has a TimeSignatureSegment.
-	 * @return the TimeSignatureSegment's index in question.
-	 */
-	int GetTimeSignatureSegmentIndexAtBeat( float fBeat ) const { return GetTimeSignatureSegmentIndexAtRow( BeatToNoteRow(fBeat) ); }
 		
 	
 	/**
@@ -493,18 +439,6 @@ public:
 	 * @return the WarpSegment in question.
 	 */
 	WarpSegment& GetWarpSegmentAtBeat( float fBeat ) { return GetWarpSegmentAtRow( BeatToNoteRow( fBeat ) ); }
-	/**
-	 * @brief Retrieve the index of the WarpSegment at the specified row.
-	 * @param iRow the row to focus on.
-	 * @return the index in question.
-	 */
-	int GetWarpSegmentIndexAtRow( int iRow ) const;
-	/**
-	 * @brief Retrieve the index of the WarpSegment at the specified beat.
-	 * @param fBeat the beat to focus on.
-	 * @return the index in question.
-	 */
-	int GetWarpSegmentIndexAtBeat( float fBeat ) const { return GetWarpSegmentIndexAtRow( BeatToNoteRow( fBeat ) ); }
 	/**
 	 * @brief Checks if the row is inside a warp.
 	 * @param iRow the row to focus on.
@@ -586,18 +520,6 @@ public:
 	 * @return the TickcountSegment in question.
 	 */
 	TickcountSegment& GetTickcountSegmentAtBeat( float fBeat ) { return GetTickcountSegmentAtRow( BeatToNoteRow(fBeat) ); }
-	/**
-	 * @brief Retrieve the index of the TickcountSegments at the specified row.
-	 * @param iNoteRow the row that has a TickcountSegment.
-	 * @return the TickcountSegment's index in question.
-	 */
-	int GetTickcountSegmentIndexAtRow( int iNoteRow ) const;
-	/**
-	 * @brief Retrieve the index of the TickcountSegments at the specified beat.
-	 * @param fBeat the beat that has a TickcountSegment.
-	 * @return the TickcountSegment's index in question.
-	 */
-	int GetTickcountSegmentIndexAtBeat( float fBeat ) const { return GetTickcountSegmentIndexAtRow( BeatToNoteRow(fBeat) ); }
 	
 	/**
 	 * @brief Retrieve the next beat that contains a TickcountSegment.
@@ -717,18 +639,6 @@ public:
 	 * @return the ComboSegment in question.
 	 */
 	ComboSegment& GetComboSegmentAtBeat( float fBeat ) { return GetComboSegmentAtRow( BeatToNoteRow(fBeat) ); }
-	/**
-	 * @brief Retrieve the index of the ComboSegments at the specified row.
-	 * @param iNoteRow the row that has a ComboSegment.
-	 * @return the ComboSegment's index in question.
-	 */
-	int GetComboSegmentIndexAtRow( int iNoteRow ) const;
-	/**
-	 * @brief Retrieve the index of the ComboSegments at the specified beat.
-	 * @param fBeat the beat that has a ComboSegment.
-	 * @return the ComboSegment's index in question.
-	 */
-	int GetComboSegmentIndexAtBeat( float fBeat ) const { return GetComboSegmentIndexAtRow( BeatToNoteRow(fBeat) ); }
 	
 	/**
 	 * @brief Retrieve the next beat that contains a ComboSegment.
@@ -798,18 +708,6 @@ public:
 	 * @return the LabelSegment in question.
 	 */
 	LabelSegment& GetLabelSegmentAtBeat( float fBeat ) { return GetLabelSegmentAtRow( BeatToNoteRow(fBeat) ); }
-	/**
-	 * @brief Retrieve the index of the LabelSegments at the specified row.
-	 * @param iNoteRow the row that has a LabelSegment.
-	 * @return the LabelSegment's index in question.
-	 */
-	int GetLabelSegmentIndexAtRow( int iNoteRow ) const;
-	/**
-	 * @brief Retrieve the index of the LabelSegments at the specified beat.
-	 * @param fBeat the beat that has a LabelSegment.
-	 * @return the LabelSegment's index in question.
-	 */
-	int GetLabelSegmentIndexAtBeat( float fBeat ) const { return GetLabelSegmentIndexAtRow( BeatToNoteRow(fBeat) ); }
 	
 	/**
 	 * @brief Retrieve the previous beat that contains a LabelSegment.
@@ -950,18 +848,6 @@ public:
 	 * @return the SpeedSegment in question.
 	 */
 	SpeedSegment& GetSpeedSegmentAtBeat( float fBeat ) { return GetSpeedSegmentAtRow( BeatToNoteRow(fBeat) ); }
-	/**
-	 * @brief Retrieve the index of the SpeedSegments at the specified row.
-	 * @param iNoteRow the row that has a SpeedSegment.
-	 * @return the SpeedSegment's index in question.
-	 */
-	int GetSpeedSegmentIndexAtRow( int iNoteRow ) const;
-	/**
-	 * @brief Retrieve the index of the SpeedSegments at the specified beat.
-	 * @param fBeat the beat that has a SpeedSegment.
-	 * @return the SpeedSegment's index in question.
-	 */
-	int GetSpeedSegmentIndexAtBeat( float fBeat ) const { return GetSpeedSegmentIndexAtRow( BeatToNoteRow(fBeat) ); }
 	
 	float GetDisplayedSpeedPercent( float fBeat, float fMusicSeconds ) const;
 	
@@ -1037,19 +923,6 @@ public:
 	ScrollSegment& GetScrollSegmentAtBeat( float fBeat ) { return GetScrollSegmentAtRow( BeatToNoteRow(fBeat) ); }
 	
 	/**
-	 * @brief Retrieve the index of the ScrollSegment at the specified row.
-	 * @param iNoteRow the row that has a ScrollSegment.
-	 * @return the ScrollSegment's index in question.
-	 */
-	int GetScrollSegmentIndexAtRow( int iNoteRow ) const;
-	/**
-	 * @brief Retrieve the index of the ScrollSegment at the specified beat.
-	 * @param fBeat the beat that has a ScrollSegment.
-	 * @return the ScrollSegment's index in question.
-	 */
-	int GetScrollSegmentIndexAtBeat( float fBeat ) const { return GetScrollSegmentIndexAtRow( BeatToNoteRow(fBeat) ); }
-	
-	/**
 	 * @brief Retrieve the next beat that contains a ScrollSegment.
 	 * @param iRow the present row.
 	 * @return the next beat with a ScrollSegment, or fBeat if there is none ahead.
@@ -1117,18 +990,6 @@ public:
 	 * @return the FakeSegment in question.
 	 */
 	FakeSegment& GetFakeSegmentAtBeat( float fBeat ) { return GetFakeSegmentAtRow( BeatToNoteRow( fBeat ) ); }
-	/**
-	 * @brief Retrieve the index of the FakeSegment at the specified row.
-	 * @param iRow the row to focus on.
-	 * @return the index in question.
-	 */
-	int GetFakeSegmentIndexAtRow( int iRow ) const;
-	/**
-	 * @brief Retrieve the index of the FakeSegment at the specified beat.
-	 * @param fBeat the beat to focus on.
-	 * @return the index in question.
-	 */
-	int GetFakeSegmentIndexAtBeat( float fBeat ) const { return GetFakeSegmentIndexAtRow( BeatToNoteRow( fBeat ) ); }
 	/**
 	 * @brief Checks if the row is inside a fake.
 	 * @param iRow the row to focus on.
