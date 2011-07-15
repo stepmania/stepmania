@@ -781,7 +781,7 @@ public:
 	 */
 	bool operator==( const TimingData &other )
 	{
-		for (int i = 0; i < NUM_TimingSegmentTypes; i++)
+		for (int i = 0; i < NUM_TimingSegmentType; i++)
 		{
 			COMPARE(allTimingSegments[i].size());
 			for (unsigned j=0; j < allTimingSegments[i].size(); j++)
@@ -819,7 +819,7 @@ public:
 	// All of the following vectors must be sorted before gameplay.
 
 	
-	vector<TimingSegment *> allTimingSegments[NUM_TimingSegmentTypes];
+	vector<TimingSegment *> allTimingSegments[NUM_TimingSegmentType];
 	
 	/**
 	 * @brief The initial offset of a song.

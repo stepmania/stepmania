@@ -18,7 +18,7 @@ enum TimingSegmentType
 	SEGMENT_SPEED,
 	SEGMENT_SCROLL,
 	SEGMENT_FAKE,
-	NUM_TimingSegmentTypes,
+	NUM_TimingSegmentType,
 };
 
 const RString& TimingSegmentTypeToString( TimingSegmentType tst );

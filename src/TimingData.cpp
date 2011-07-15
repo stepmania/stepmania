@@ -16,7 +16,7 @@ TimingData::TimingData(float fOffset) :
 
 TimingData::~TimingData()
 {
-	for (unsigned i = 0; i < NUM_TimingSegmentTypes; i++)
+	for (unsigned i = 0; i < NUM_TimingSegmentType; i++)
 	{
 		this->allTimingSegments[i].clear();
 	}
@@ -1001,7 +1001,7 @@ void TimingData::ScaleRegion( float fScale, int iStartIndex, int iEndIndex, bool
 	int newLength = lrintf( fScale * length );
 	
 	// TODO: Confirm this works as intended.
-	for (unsigned i = 0; i < NUM_TimingSegmentTypes; i++)
+	for (unsigned i = 0; i < NUM_TimingSegmentType; i++)
 	{
 		vector<TimingSegment *> &segs = this->allTimingSegments[i];
 		for (unsigned j = 0; j < segs.size(); j++)
@@ -1037,7 +1037,7 @@ void TimingData::ScaleRegion( float fScale, int iStartIndex, int iEndIndex, bool
 
 void TimingData::InsertRows( int iStartRow, int iRowsToAdd )
 {
-	for (unsigned i = 0; i < NUM_TimingSegmentTypes; i++)
+	for (unsigned i = 0; i < NUM_TimingSegmentType; i++)
 	{
 		vector<TimingSegment *> &segs = this->allTimingSegments[i];
 		for (unsigned j = 0; j < segs.size(); j++)
@@ -1067,7 +1067,7 @@ void TimingData::DeleteRows( int iStartRow, int iRowsToDelete )
 
 	/* We're moving rows up. Delete any BPM changes and stops in the region
 	 * being deleted. */
-	for (unsigned i = 0; i < NUM_TimingSegmentTypes; i++)
+	for (unsigned i = 0; i < NUM_TimingSegmentType; i++)
 	{
 		vector<TimingSegment *> &segs = this->allTimingSegments[i];
 		for (unsigned j = 0; j < segs.size(); j++)
