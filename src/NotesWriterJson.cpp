@@ -9,22 +9,23 @@
 #include "NoteData.h"
 #include "GameManager.h"
 
-static void Serialize(const BPMSegment &seg, Json::Value &root)
+static void Serialize(const TimingSegment *seg, Json::Value &root)
 {
-	root["Beat"] = seg.GetBeat();
-	root["BPM"] = seg.GetBPM();
-}
-
-static void Serialize(const StopSegment &seg, Json::Value &root)
-{
-	root["Beat"] = seg.GetBeat();
-	root["Seconds"] = seg.GetPause();
+	root["Beat"] = seg->GetBeat();
+	if (seg->GetType() == SEGMENT_BPM)
+	{
+		root["BPM"] = static_cast<BPMSegment *>(const_cast<TimingSegment *>(seg))->GetBPM();
+	}
+	else
+	{
+		root["Seconds"] = static_cast<StopSegment *>(const_cast<TimingSegment *>(seg))->GetPause();
+	}
 }
 
 static void Serialize(const TimingData &td, Json::Value &root)
 {
-//	JsonUtil::SerializeVectorObjects( td.m_BPMSegments, Serialize, root["BpmSegments"] );
-//	JsonUtil::SerializeVectorObjects( td.m_StopSegments, Serialize, root["StopSegments"] );
+	JsonUtil::SerializeVectorPointers( td.allTimingSegments[SEGMENT_BPM], Serialize, root["BpmSegments"] );
+	JsonUtil::SerializeVectorPointers( td.allTimingSegments[SEGMENT_STOP_DELAY], Serialize, root["StopSegments"] );
 }
 
 static void Serialize(const LyricSegment &o, Json::Value &root)
