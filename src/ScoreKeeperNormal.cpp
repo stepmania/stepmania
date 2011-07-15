@@ -429,14 +429,14 @@ void ScoreKeeperNormal::HandleTapNoteScoreInternal( TapNoteScore tns, TapNoteSco
 
 	// update judged row totals. Respect Combo segments here.
 	TimingData &td = GAMESTATE->m_pCurSteps[m_pPlayerState->m_PlayerNumber]->m_Timing;
-	ComboSegment &cs = td.GetComboSegmentAtRow(row);
+	ComboSegment *cs = td.GetComboSegmentAtRow(row);
 	if (tns == TNS_CheckpointHit || tns >= m_MinScoreToContinueCombo)
 	{
-		m_pPlayerStageStats->m_iTapNoteScores[tns] += cs.GetCombo();
+		m_pPlayerStageStats->m_iTapNoteScores[tns] += cs->GetCombo();
 	}
 	else if (tns == TNS_CheckpointMiss || tns < m_MinScoreToMaintainCombo)
 	{
-		m_pPlayerStageStats->m_iTapNoteScores[tns] += cs.GetMissCombo();
+		m_pPlayerStageStats->m_iTapNoteScores[tns] += cs->GetMissCombo();
 	}
 	else
 	{	
@@ -464,13 +464,13 @@ void ScoreKeeperNormal::HandleComboInternal( int iNumHitContinueCombo, int iNumH
 	TimingData td = GAMESTATE->m_pCurSteps[m_pPlayerState->m_PlayerNumber]->m_Timing;
 	if( iNumBreakCombo == 0 )
 	{
-		int multiplier = ( iRow == -1 ? 1 : td.GetComboSegmentAtRow( iRow ).GetCombo() );
+		int multiplier = ( iRow == -1 ? 1 : td.GetComboSegmentAtRow( iRow )->GetCombo() );
 		m_pPlayerStageStats->m_iCurCombo += iNumHitContinueCombo * multiplier;
 	}
 	else
 	{
 		m_pPlayerStageStats->m_iCurCombo = 0;
-		int multiplier = ( iRow == -1 ? 1 : td.GetComboSegmentAtRow(iRow).GetMissCombo());
+		int multiplier = ( iRow == -1 ? 1 : td.GetComboSegmentAtRow(iRow)->GetMissCombo());
 		m_pPlayerStageStats->m_iCurMissCombo += ( m_MissComboIsPerRow ? 1 : iNumBreakCombo ) * multiplier;
 	}
 }
@@ -485,7 +485,7 @@ void ScoreKeeperNormal::HandleRowComboInternal( TapNoteScore tns, int iNumTapsIn
 	if ( tns >= m_MinScoreToContinueCombo )
 	{
 		m_pPlayerStageStats->m_iCurMissCombo = 0;
-		int multiplier = ( iRow == -1 ? 1 : td.GetComboSegmentAtRow( iRow ).GetCombo() );
+		int multiplier = ( iRow == -1 ? 1 : td.GetComboSegmentAtRow( iRow )->GetCombo() );
 		m_pPlayerStageStats->m_iCurCombo += iNumTapsInRow * multiplier;
 	}
 	else if ( tns < m_MinScoreToMaintainCombo )
@@ -494,7 +494,7 @@ void ScoreKeeperNormal::HandleRowComboInternal( TapNoteScore tns, int iNumTapsIn
 
 		if( tns <= m_MaxScoreToIncrementMissCombo )
 		{
-			int multiplier = ( iRow == -1 ? 1 : td.GetComboSegmentAtRow(iRow).GetMissCombo());
+			int multiplier = ( iRow == -1 ? 1 : td.GetComboSegmentAtRow(iRow)->GetMissCombo());
 			m_pPlayerStageStats->m_iCurMissCombo += ( m_MissComboIsPerRow ? 1 : iNumTapsInRow ) * multiplier;
 		}
 	}

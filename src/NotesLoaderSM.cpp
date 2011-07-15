@@ -310,8 +310,8 @@ void SMLoader::ProcessStops( TimingData &out, const RString line, const int rows
 		// Process the prior stop.
 		if( negPause > 0 )
 		{
-			BPMSegment oldBPM = out.GetBPMSegmentAtRow(BeatToNoteRow(negBeat));
-			float fSecondsPerBeat = 60 / oldBPM.GetBPM();
+			BPMSegment * oldBPM = out.GetBPMSegmentAtRow(BeatToNoteRow(negBeat));
+			float fSecondsPerBeat = 60 / oldBPM->GetBPM();
 			float fSkipBeats = negPause / fSecondsPerBeat;
 			
 			if( negBeat + fSkipBeats > fFreezeBeat )
@@ -339,8 +339,8 @@ void SMLoader::ProcessStops( TimingData &out, const RString line, const int rows
 	// Process the prior stop if there was one.
 	if( negPause > 0 )
 	{
-		BPMSegment oldBPM = out.GetBPMSegmentAtBeat(negBeat);
-		float fSecondsPerBeat = 60 / oldBPM.GetBPM();
+		BPMSegment * oldBPM = out.GetBPMSegmentAtBeat(negBeat);
+		float fSecondsPerBeat = 60 / oldBPM->GetBPM();
 		float fSkipBeats = negPause / fSecondsPerBeat;
 		
 		out.AddSegment(SEGMENT_WARP, new WarpSegment(negBeat, fSkipBeats));

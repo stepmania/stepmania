@@ -72,13 +72,13 @@ public:
 	 * @param iNoteRow the row that has a BPMSegment.
 	 * @return the BPMSegment in question.
 	 */
-	BPMSegment& GetBPMSegmentAtRow( int iNoteRow );
+	BPMSegment* GetBPMSegmentAtRow( int iNoteRow );
 	/**
 	 * @brief Retrieve the BPMSegment at the specified beat.
 	 * @param fBeat the beat that has a BPMSegment.
 	 * @return the BPMSegment in question.
 	 */
-	BPMSegment& GetBPMSegmentAtBeat( float fBeat ) { return GetBPMSegmentAtRow( (int)BeatToNoteRow(fBeat)); }
+	BPMSegment* GetBPMSegmentAtBeat( float fBeat ) { return GetBPMSegmentAtRow( (int)BeatToNoteRow(fBeat)); }
 		
 	/**
 	 * @brief Retrieve the next beat that contains a BPMSegment.
@@ -201,39 +201,39 @@ public:
 	 * @param iNoteRow the row that has a StopSegment.
 	 * @return the StopSegment in question.
 	 */
-	StopSegment& GetStopSegmentAtRow( int iNoteRow ) { return GetStopSegmentAtRow( iNoteRow, false ); }
+	StopSegment* GetStopSegmentAtRow( int iNoteRow ) { return GetStopSegmentAtRow( iNoteRow, false ); }
 	/**
 	 * @brief Retrieve the StopSegment at the specified beat.
 	 * @param fBeat the beat that has a StopSegment.
 	 * @return the StopSegment in question.
 	 */
-	StopSegment& GetStopSegmentAtBeat( float fBeat ) { return GetStopSegmentAtRow( BeatToNoteRow(fBeat), false); }
+	StopSegment* GetStopSegmentAtBeat( float fBeat ) { return GetStopSegmentAtRow( BeatToNoteRow(fBeat), false); }
 	/**
 	 * @brief Retrieve the StopSegment at the specified row.
 	 * @param iNoteRow the row that has a StopSegment.
 	 * @param bDelay If true, this is actually a DelaySegment.
 	 * @return the StopSegment in question.
 	 */
-	StopSegment& GetStopSegmentAtRow( int iNoteRow, bool bDelay );
+	StopSegment* GetStopSegmentAtRow( int iNoteRow, bool bDelay );
 	/**
 	 * @brief Retrieve the StopSegment at the specified beat.
 	 * @param fBeat the beat that has a StopSegment.
 	 * @param bDelay If true, this is actually a DelaySegment.
 	 * @return the StopSegment in question.
 	 */
-	StopSegment& GetStopSegmentAtBeat( float fBeat, bool bDelay ) { return GetStopSegmentAtRow( BeatToNoteRow(fBeat), bDelay ); }
+	StopSegment* GetStopSegmentAtBeat( float fBeat, bool bDelay ) { return GetStopSegmentAtRow( BeatToNoteRow(fBeat), bDelay ); }
 	/**
 	 * @brief Retrieve the DelaySegment at the specified row.
 	 * @param iNoteRow the row that has a DelaySegment.
 	 * @return the DelaySegment in question.
 	 */
-	StopSegment& GetDelaySegmentAtRow( int iNoteRow ) { return GetStopSegmentAtRow( iNoteRow, true ); }
+	StopSegment* GetDelaySegmentAtRow( int iNoteRow ) { return GetStopSegmentAtRow( iNoteRow, true ); }
 	/**
 	 * @brief Retrieve the DelaySegment at the specified beat.
 	 * @param fBeat the beat that has a DelaySegment.
 	 * @return the DelaySegment in question.
 	 */
-	StopSegment& GetDelaySegmentAtBeat( float fBeat ) { return GetStopSegmentAtRow( BeatToNoteRow(fBeat), true); }
+	StopSegment* GetDelaySegmentAtBeat( float fBeat ) { return GetStopSegmentAtRow( BeatToNoteRow(fBeat), true); }
 	/**
 	 * @brief Retrieve the index of the StopSegments at the specified row.
 	 * @param iNoteRow the row that has a StopSegment.
@@ -363,13 +363,13 @@ public:
 	 * @param iNoteRow the row that has a TimeSignatureSegment.
 	 * @return the TimeSignatureSegment in question.
 	 */
-	TimeSignatureSegment& GetTimeSignatureSegmentAtRow( int iNoteRow );
+	TimeSignatureSegment* GetTimeSignatureSegmentAtRow( int iNoteRow );
 	/**
 	 * @brief Retrieve the TimeSignatureSegment at the specified beat.
 	 * @param fBeat the beat that has a TimeSignatureSegment.
 	 * @return the TimeSignatureSegment in question.
 	 */
-	TimeSignatureSegment& GetTimeSignatureSegmentAtBeat( float fBeat ) { return GetTimeSignatureSegmentAtRow( BeatToNoteRow(fBeat) ); }
+	TimeSignatureSegment* GetTimeSignatureSegmentAtBeat( float fBeat ) { return GetTimeSignatureSegmentAtRow( BeatToNoteRow(fBeat) ); }
 		
 	
 	/**
@@ -432,13 +432,13 @@ public:
 	 * @param iRow the row to focus on.
 	 * @return the WarpSegment in question.
 	 */
-	WarpSegment& GetWarpSegmentAtRow( int iRow );
+	WarpSegment* GetWarpSegmentAtRow( int iRow );
 	/**
 	 * @brief Retrieve the WarpSegment at the specified beat.
 	 * @param fBeat the beat to focus on.
 	 * @return the WarpSegment in question.
 	 */
-	WarpSegment& GetWarpSegmentAtBeat( float fBeat ) { return GetWarpSegmentAtRow( BeatToNoteRow( fBeat ) ); }
+	WarpSegment* GetWarpSegmentAtBeat( float fBeat ) { return GetWarpSegmentAtRow( BeatToNoteRow( fBeat ) ); }
 	/**
 	 * @brief Checks if the row is inside a warp.
 	 * @param iRow the row to focus on.
@@ -513,13 +513,13 @@ public:
 	 * @param iNoteRow the row that has a TickcountSegment.
 	 * @return the TickcountSegment in question.
 	 */
-	TickcountSegment& GetTickcountSegmentAtRow( int iNoteRow );
+	TickcountSegment* GetTickcountSegmentAtRow( int iNoteRow );
 	/**
 	 * @brief Retrieve the TickcountSegment at the specified beat.
 	 * @param fBeat the beat that has a TickcountSegment.
 	 * @return the TickcountSegment in question.
 	 */
-	TickcountSegment& GetTickcountSegmentAtBeat( float fBeat ) { return GetTickcountSegmentAtRow( BeatToNoteRow(fBeat) ); }
+	TickcountSegment* GetTickcountSegmentAtBeat( float fBeat ) { return GetTickcountSegmentAtRow( BeatToNoteRow(fBeat) ); }
 	
 	/**
 	 * @brief Retrieve the next beat that contains a TickcountSegment.
@@ -632,13 +632,13 @@ public:
 	 * @param iNoteRow the row that has a ComboSegment.
 	 * @return the ComboSegment in question.
 	 */
-	ComboSegment& GetComboSegmentAtRow( int iNoteRow );
+	ComboSegment* GetComboSegmentAtRow( int iNoteRow );
 	/**
 	 * @brief Retrieve the ComboSegment at the specified beat.
 	 * @param fBeat the beat that has a ComboSegment.
 	 * @return the ComboSegment in question.
 	 */
-	ComboSegment& GetComboSegmentAtBeat( float fBeat ) { return GetComboSegmentAtRow( BeatToNoteRow(fBeat) ); }
+	ComboSegment* GetComboSegmentAtBeat( float fBeat ) { return GetComboSegmentAtRow( BeatToNoteRow(fBeat) ); }
 	
 	/**
 	 * @brief Retrieve the next beat that contains a ComboSegment.
@@ -701,13 +701,13 @@ public:
 	 * @param iNoteRow the row that has a LabelSegment.
 	 * @return the LabelSegment in question.
 	 */
-	LabelSegment& GetLabelSegmentAtRow( int iNoteRow );
+	LabelSegment* GetLabelSegmentAtRow( int iNoteRow );
 	/**
 	 * @brief Retrieve the LabelSegment at the specified beat.
 	 * @param fBeat the beat that has a LabelSegment.
 	 * @return the LabelSegment in question.
 	 */
-	LabelSegment& GetLabelSegmentAtBeat( float fBeat ) { return GetLabelSegmentAtRow( BeatToNoteRow(fBeat) ); }
+	LabelSegment* GetLabelSegmentAtBeat( float fBeat ) { return GetLabelSegmentAtRow( BeatToNoteRow(fBeat) ); }
 	
 	/**
 	 * @brief Retrieve the previous beat that contains a LabelSegment.
@@ -841,13 +841,13 @@ public:
 	 * @param iNoteRow the row that has a SpeedSegment.
 	 * @return the SpeedSegment in question.
 	 */
-	SpeedSegment& GetSpeedSegmentAtRow( int iNoteRow );
+	SpeedSegment* GetSpeedSegmentAtRow( int iNoteRow );
 	/**
 	 * @brief Retrieve the SpeedSegment at the specified beat.
 	 * @param fBeat the beat that has a SpeedSegment.
 	 * @return the SpeedSegment in question.
 	 */
-	SpeedSegment& GetSpeedSegmentAtBeat( float fBeat ) { return GetSpeedSegmentAtRow( BeatToNoteRow(fBeat) ); }
+	SpeedSegment* GetSpeedSegmentAtBeat( float fBeat ) { return GetSpeedSegmentAtRow( BeatToNoteRow(fBeat) ); }
 	
 	float GetDisplayedSpeedPercent( float fBeat, float fMusicSeconds ) const;
 	
@@ -914,13 +914,13 @@ public:
 	 * @param iNoteRow the row that has a ScrollSegment.
 	 * @return the ScrollSegment in question.
 	 */
-	ScrollSegment& GetScrollSegmentAtRow( int iNoteRow );
+	ScrollSegment* GetScrollSegmentAtRow( int iNoteRow );
 	/**
 	 * @brief Retrieve the ScrollSegment at the specified beat.
 	 * @param fBeat the beat that has a ScrollSegment.
 	 * @return the ScrollSegment in question.
 	 */
-	ScrollSegment& GetScrollSegmentAtBeat( float fBeat ) { return GetScrollSegmentAtRow( BeatToNoteRow(fBeat) ); }
+	ScrollSegment* GetScrollSegmentAtBeat( float fBeat ) { return GetScrollSegmentAtRow( BeatToNoteRow(fBeat) ); }
 	
 	/**
 	 * @brief Retrieve the next beat that contains a ScrollSegment.
@@ -983,13 +983,13 @@ public:
 	 * @param iRow the row to focus on.
 	 * @return the FakeSegment in question.
 	 */
-	FakeSegment& GetFakeSegmentAtRow( int iRow );
+	FakeSegment* GetFakeSegmentAtRow( int iRow );
 	/**
 	 * @brief Retrieve the FakeSegment at the specified beat.
 	 * @param fBeat the beat to focus on.
 	 * @return the FakeSegment in question.
 	 */
-	FakeSegment& GetFakeSegmentAtBeat( float fBeat ) { return GetFakeSegmentAtRow( BeatToNoteRow( fBeat ) ); }
+	FakeSegment* GetFakeSegmentAtBeat( float fBeat ) { return GetFakeSegmentAtRow( BeatToNoteRow( fBeat ) ); }
 	/**
 	 * @brief Checks if the row is inside a fake.
 	 * @param iRow the row to focus on.

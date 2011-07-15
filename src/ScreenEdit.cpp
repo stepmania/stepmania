@@ -1465,7 +1465,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 	}
 	TimingData &sTiming = GetAppropriateTiming();
 	float playerBeat = GetAppropriatePosition().m_fSongBeat;
-	int beatsPerMeasure = sTiming.GetTimeSignatureSegmentAtBeat( playerBeat ).GetNum();
+	int beatsPerMeasure = sTiming.GetTimeSignatureSegmentAtBeat( playerBeat )->GetNum();
 	
 	switch( EditB )
 	{
@@ -3648,7 +3648,7 @@ void ScreenEdit::DisplayTimingMenu()
 {
 	float fBeat = GetBeat();
 	TimingData &pTime = GetAppropriateTiming();
-	bool bHasSpeedOnThisRow = pTime.GetSpeedSegmentAtBeat( fBeat ).GetBeat() == fBeat;
+	bool bHasSpeedOnThisRow = pTime.GetSpeedSegmentAtBeat( fBeat )->GetBeat() == fBeat;
 	
 	g_TimingDataInformation.rows[beat_0_offset].SetOneUnthemedChoice( ssprintf("%.6f", pTime.m_fBeat0OffsetInSeconds) );
 	g_TimingDataInformation.rows[bpm].SetOneUnthemedChoice( ssprintf("%.6f", pTime.GetBPMAtBeat( fBeat ) ) );
@@ -4647,11 +4647,11 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 		break;
 	case time_signature:
 	{
-		TimeSignatureSegment &ts = GetAppropriateTiming().GetTimeSignatureSegmentAtBeat( GetBeat() );
+		TimeSignatureSegment * ts = GetAppropriateTiming().GetTimeSignatureSegmentAtBeat( GetBeat() );
 		ScreenTextEntry::TextEntry(
 			SM_BackFromTimeSignatureChange,
 			ENTER_TIME_SIGNATURE_VALUE,
-			ssprintf( "%d/%d", ts.GetNum(), ts.GetDen() ),
+			ssprintf( "%d/%d", ts->GetNum(), ts->GetDen() ),
 			8
 			);
 		break;
@@ -4666,12 +4666,12 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 		break;
 	case combo:
 	{
-		ComboSegment &cs = GetAppropriateTiming().GetComboSegmentAtBeat(GetBeat());
+		ComboSegment *cs = GetAppropriateTiming().GetComboSegmentAtBeat(GetBeat());
 		ScreenTextEntry::TextEntry(SM_BackFromComboChange,
 								   ENTER_COMBO_VALUE,
 								   ssprintf( "%d/%d",
-											cs.GetCombo(),
-											cs.GetMissCombo()),
+											cs->GetCombo(),
+											cs->GetMissCombo()),
 								   7);
 		break;
 	}
@@ -4695,7 +4695,7 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 		ScreenTextEntry::TextEntry(
 		   SM_BackFromSpeedPercentChange,
 		   ENTER_SPEED_PERCENT_VALUE,
-		   ssprintf( "%.6f", GetAppropriateTiming().GetSpeedSegmentAtBeat( GetBeat() ).GetRatio() ),
+		   ssprintf( "%.6f", GetAppropriateTiming().GetSpeedSegmentAtBeat( GetBeat() )->GetRatio() ),
 		   10
 		   );
 		break;
@@ -4703,7 +4703,7 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 		ScreenTextEntry::TextEntry(
 		   SM_BackFromScrollChange,
 		   ENTER_SCROLL_VALUE,
-		   ssprintf( "%.6f", GetAppropriateTiming().GetScrollSegmentAtBeat( GetBeat() ).GetRatio() ),
+		   ssprintf( "%.6f", GetAppropriateTiming().GetScrollSegmentAtBeat( GetBeat() )->GetRatio() ),
 		   10
 		   );
 		break;
@@ -4711,7 +4711,7 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 		ScreenTextEntry::TextEntry(
 		   SM_BackFromSpeedWaitChange,
 		   ENTER_SPEED_WAIT_VALUE,
-		   ssprintf( "%.6f", GetAppropriateTiming().GetSpeedSegmentAtBeat( GetBeat() ).GetLength() ),
+		   ssprintf( "%.6f", GetAppropriateTiming().GetSpeedSegmentAtBeat( GetBeat() )->GetLength() ),
 		   10
 		   );
 		break;
@@ -4982,8 +4982,8 @@ void ScreenEdit::CheckNumberOfNotesAndUndo()
 	if( EDIT_MODE.GetValue() != EditMode_Home )
 		return;
 	
-	TimeSignatureSegment &curTime = GAMESTATE->m_pCurSong->m_SongTiming.GetTimeSignatureSegmentAtBeat( GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat );
-	int rowsPerMeasure = curTime.GetDen() * curTime.GetNum();
+	TimeSignatureSegment * curTime = GAMESTATE->m_pCurSong->m_SongTiming.GetTimeSignatureSegmentAtBeat( GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat );
+	int rowsPerMeasure = curTime->GetDen() * curTime->GetNum();
 
 	for( int row=0; row<=m_NoteDataEdit.GetLastRow(); row+=rowsPerMeasure )
 	{
@@ -5037,7 +5037,7 @@ float ScreenEdit::GetMaximumBeatForNewNote() const
 			 * beats. */
 			TimingData &timing = s.m_SongTiming;
 			float playerBeat = GetAppropriatePosition().m_fSongBeat;
-			int beatsPerMeasure = timing.GetTimeSignatureSegmentAtBeat( playerBeat ).GetNum();
+			int beatsPerMeasure = timing.GetTimeSignatureSegmentAtBeat( playerBeat )->GetNum();
 			fEndBeat += beatsPerMeasure;
 			fEndBeat = ftruncf( fEndBeat, (float)beatsPerMeasure );
 
