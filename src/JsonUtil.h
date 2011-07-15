@@ -149,6 +149,19 @@ namespace JsonUtil
 			fn(*v[i], root[i]);
 		}
 	}
+	
+	template<class T>
+	static void DeserializeVectorPointers(vector<T*> &v, void fn(T *, const Json::Value &), const Json::Value &root)
+	{
+		for(unsigned i=0; i<v.size(); i++)
+			SAFE_DELETE(v[i]);
+		v.resize(root.size());
+		for(unsigned i=0; i<v.size(); i++)
+		{
+			v[i] = new T;
+			fn(*v[i], root[i]);
+		}
+	}
 
 	template<class T>
 	static void DeserializeArrayValues(vector<T> &v, const Json::Value &root)

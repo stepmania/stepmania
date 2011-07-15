@@ -15,16 +15,26 @@ void NotesLoaderJson::GetApplicableFiles( const RString &sPath, vector<RString> 
 	GetDirListing( sPath + RString("*.json"), out );
 }
 
-static void Deserialize(TimingSegment &seg, const Json::Value &root)
+static void Deserialize(TimingSegment &seg_, const Json::Value &root)
 {
-	seg.SetBeat((float)(root["Beat"].asDouble()));
-	if (seg.GetType() == SEGMENT_BPM)
+	TimingSegment *seg = &seg_;
+	
+	float fBeat = root["Beat"].asDouble();
+	seg->SetBeat(fBeat);
+	switch (seg->GetType())
 	{
-		static_cast<BPMSegment &>(seg).SetBPM((float)(root["BPM"].asDouble()));
-	}
-	else
-	{
-		static_cast<StopSegment &>(seg).SetPause((float)(root["Seconds"].asDouble()));
+		case SEGMENT_BPM:
+		{
+			float fBPM = root["BPM"].asDouble();
+			static_cast<BPMSegment *>(seg)->SetBPM(fBPM);
+			break;
+		}
+		case SEGMENT_STOP_DELAY:
+		{
+			float fStop = root["Seconds"].asDouble();
+			static_cast<StopSegment *>(seg)->SetPause(fStop);
+			break;
+		}
 	}
 }
 
