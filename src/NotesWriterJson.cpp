@@ -11,14 +11,14 @@
 
 static void Serialize(const TimingSegment &seg, Json::Value &root)
 {
-	root["Beat"] = (&seg)->GetBeat();
-	if ((&seg)->GetType() == SEGMENT_BPM)
+	root["Beat"] = seg.GetBeat();
+	if (seg.GetType() == SEGMENT_BPM)
 	{
-		root["BPM"] = static_cast<BPMSegment *>(const_cast<TimingSegment *>(&seg))->GetBPM();
+		root["BPM"] = static_cast<BPMSegment &>(const_cast<TimingSegment &>(seg)).GetBPM();
 	}
 	else
 	{
-		root["Seconds"] = static_cast<StopSegment *>(const_cast<TimingSegment *>(&seg))->GetPause();
+		root["Seconds"] = static_cast<StopSegment &>(const_cast<TimingSegment &>(seg)).GetPause();
 	}
 }
 
