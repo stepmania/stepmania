@@ -10,30 +10,28 @@
 #include "Steps.h"
 #include "GameManager.h"
 
-void Deserialize(BPMSegment &seg, const Json::Value &root);
-
 void NotesLoaderJson::GetApplicableFiles( const RString &sPath, vector<RString> &out )
 {
 	GetDirListing( sPath + RString("*.json"), out );
 }
 
-void Deserialize(BPMSegment &seg, const Json::Value &root)
+static void Deserialize(TimingSegment *seg, const Json::Value &root)
 {
-	seg.SetBeat((float)(root["Beat"].asDouble()));
-	seg.SetBPM((float)(root["BPM"].asDouble()));
-}
-
-static void Deserialize(StopSegment &seg, const Json::Value &root)
-{
-	seg.SetBeat((float)(root["Beat"].asDouble()));
-	seg.SetPause((float)(root["Seconds"].asDouble()));
+	seg->SetBeat((float)(root["Beat"].asDouble()));
+	if (seg->GetType() == SEGMENT_BPM)
+	{
+		static_cast<BPMSegment *>(seg)->SetBPM((float)(root["BPM"].asDouble()));
+	}
+	else
+	{
+		static_cast<StopSegment *>(seg)->SetPause((float)(root["Seconds"].asDouble()));
+	}
 }
 
 static void Deserialize(TimingData &td, const Json::Value &root)
 {
-	vector<TimingSegment *> &bpms = td.allTimingSegments[SEGMENT_BPM];
-//	JsonUtil::DeserializeVectorObjects( &bpms, Deserialize, root["BpmSegments"] );
-//	JsonUtil::DeserializeVectorObjects( *(td).allTimingSegments[SEGMENT_STOP_DELAY], Deserialize, root["StopSegments"] );
+	JsonUtil::DeserializeVectorPointers( td.allTimingSegments[SEGMENT_BPM], Deserialize, root["BpmSegments"] );
+	JsonUtil::DeserializeVectorPointers( td.allTimingSegments[SEGMENT_STOP_DELAY], Deserialize, root["StopSegments"] );
 }
 
 static void Deserialize(LyricSegment &o, const Json::Value &root)
