@@ -242,10 +242,14 @@ void StatsManager::CommitStatsToProfiles( const StageStats *pSS )
 				pPlayerProfile->m_iNumTotalSongsPlayed += pSS->m_vpPlayedSongs.size();
 			}
 
+			LOG->Trace("Adding stats to machine profile...");
 			AddPlayerStatsToProfile( pMachineProfile, *pSS, pn );
 
 			if( pPlayerProfile )
+			{
+				LOG->Trace("Adding stats to player profile...");
 				AddPlayerStatsToProfile( pPlayerProfile, *pSS, pn );
+			}
 
 			CHECKPOINT;
 		}

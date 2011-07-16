@@ -11,7 +11,6 @@
 
 // main page (group list)
 REGISTER_SCREEN_CLASS( ScreenOptionsToggleSongs );
-REGISTER_SCREEN_CLASS( ScreenOptionsToggleSongsSubPage );
 
 void ScreenOptionsToggleSongs::BeginScreen()
 {
@@ -49,8 +48,7 @@ void ScreenOptionsToggleSongs::ProcessMenuStart( const InputEventPlus &input )
 
 	// switch to the subpage with the specified group
 	int iRow = GetCurrentRow();
-	OptionRow &row = *m_pRows[iRow];
-	if( row.GetRowType() == OptionRow::RowType_Exit )
+	if( m_pRows[iRow]->GetRowType() == OptionRow::RowType_Exit )
 	{
 		ScreenOptions::ProcessMenuStart( input );
 		return;
@@ -70,6 +68,7 @@ void ScreenOptionsToggleSongs::ExportOptions( int row, const vector<PlayerNumber
 }
 
 // subpage (has the songs in a specific group)
+REGISTER_SCREEN_CLASS( ScreenOptionsToggleSongsSubPage );
 void ScreenOptionsToggleSongsSubPage::BeginScreen()
 {
 	m_apSongs.clear();
