@@ -187,7 +187,11 @@ function HoldTiming()
 end
 
 function ShowHoldJudgments()
-	return not GAMESTATE:GetCurrentGame():GetName() == "pump"
+	if GAMESTATE:GetCurrentGame():GetName() == "pump" then
+		return false
+	else
+		return true
+	end
 end
 
 function HoldHeadStep()
