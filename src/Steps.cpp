@@ -24,6 +24,11 @@
 #include "NoteDataUtil.h"
 #include "NotesLoaderSSC.h"
 #include "NotesLoaderSM.h"
+#include "NotesLoaderSMA.h"
+#include "NotesLoaderDWI.h"
+#include "NotesLoaderKSF.h"
+#include "NotesLoaderBMS.h"
+#include "NotesLoaderPMS.h"
 
 #include <algorithm>
 
@@ -78,6 +83,11 @@ unsigned Steps::GetHash() const
 	return m_iHash;
 }
 
+bool Steps::IsNoteDataEmpty() const
+{
+	return this->m_sNoteDataCompressed.empty();
+}
+
 void Steps::SetNoteData( const NoteData& noteDataNew )
 {
 	ASSERT( noteDataNew.GetNumTracks() == GAMEMAN->GetStepsTypeInfo(m_StepsType).iNumTracks );
@@ -89,7 +99,6 @@ void Steps::SetNoteData( const NoteData& noteDataNew )
 	
 	m_sNoteDataCompressed = RString();
 	m_iHash = 0;
-	m_sFilename = RString(); // We can no longer read from the file because it has changed in memory.
 }
 
 void Steps::GetNoteData( NoteData& noteDataOut ) const
@@ -250,6 +259,11 @@ void Steps::CalculateRadarValues( float fMusicLengthSeconds )
 }
 
 void Steps::Decompress() const
+{
+	const_cast<Steps *>(this)->Decompress();
+}
+
+void Steps::Decompress()
 {
 	if( m_bNoteDataIsFilled )
 		return;	// already decompressed
