@@ -1,5 +1,20 @@
 #include "global.h"
 #include "TimingSegments.h"
+#include "EnumHelper.h"
+
+static const char *TimingSegmentTypeNames[] = {
+	"BPM",
+	"Stop/Delay", // TODO: separate when stops and delays are separate.
+	"Time Sig",
+	"Warp",
+	"Label",
+	"Tickcount",
+	"Combo",
+	"Speed",
+	"Scroll",
+	"Fake"
+};
+XToString( TimingSegmentType );
 
 #define LTCOMPARE(x)      if(this->x < other.x) return true; if(this->x > other.x) return false;
 

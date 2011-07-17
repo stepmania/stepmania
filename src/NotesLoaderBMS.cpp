@@ -573,8 +573,8 @@ static bool LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNameTo
 
 		if( fBPM > 0.0f )
 		{
-			BPMSegment newSeg( 0, fBPM );
-			out.m_Timing.AddBPMSegment( newSeg );
+			BPMSegment * newSeg = new BPMSegment( 0, fBPM );
+			out.m_Timing.AddSegment(SEGMENT_BPM, newSeg );
 			LOG->Trace( "Inserting new BPM change at beat %f, BPM %f", NoteRowToBeat(0), fBPM );
 		}
 		else
@@ -663,9 +663,9 @@ static bool LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNameTo
 					float fBeats = StringToFloat( sBeats ) / 48.0f;
 					float fFreezeSecs = fBeats / fBPS;
 
-					StopSegment newSeg( BeatToNoteRow(fBeat), fFreezeSecs );
-					out.m_Timing.AddStopSegment( newSeg );
-					LOG->Trace( "Inserting new Freeze at beat %f, secs %f", fBeat, newSeg.GetPause() );
+					StopSegment * newSeg = new StopSegment( fBeat, fFreezeSecs );
+					out.m_Timing.AddSegment( SEGMENT_STOP_DELAY, newSeg );
+					LOG->Trace( "Inserting new Freeze at beat %f, secs %f", fBeat, newSeg->GetPause() );
 				}
 				else
 				{

@@ -286,7 +286,7 @@ protected:
 	TapNote			m_selectedTap;
 
 	/** @brief The type of segment users will jump back and forth between. */
-	RString			currentCycleSegment;
+	TimingSegmentType	currentCycleSegment;
 	
 	void UpdateTextInfo();
 	BitmapText		m_textInfo; // status information that changes

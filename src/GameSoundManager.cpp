@@ -60,8 +60,8 @@ struct MusicPlaying
 	RageSound *m_Music;
 	MusicPlaying( RageSound *Music )
 	{
-		m_Timing.AddBPMSegment( BPMSegment(0,120) );
-		m_NewTiming.AddBPMSegment( BPMSegment(0,120) );
+		m_Timing.AddSegment( SEGMENT_BPM, new BPMSegment(0,120) );
+		m_NewTiming.AddSegment( SEGMENT_BPM, new BPMSegment(0,120) );
 		m_bHasTiming = false;
 		m_bTimingDelayed = false;
 		m_bApplyMusicRate = false;

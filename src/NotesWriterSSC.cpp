@@ -90,45 +90,71 @@ static void GetTimingTags( vector<RString> &lines, TimingData timing, bool bIsSo
 	TimingTagWriter w ( &lines );
 	
 	timing.TidyUpData();
+	unsigned i = 0;
 
 	w.Init( "BPMS" );
-	FOREACH_CONST( BPMSegment, timing.m_BPMSegments, bs )
+	vector<TimingSegment *> &bpms = timing.allTimingSegments[SEGMENT_BPM];
+	for (; i < bpms.size(); i++)
+	{
+		BPMSegment *bs = static_cast<BPMSegment *>(bpms[i]);
 		w.Write( bs->GetRow(), bs->GetBPM() );
+	}
 	w.Finish();
 	
 	w.Init( "STOPS" );
-	FOREACH_CONST( StopSegment, timing.m_StopSegments, ss )
+	vector<TimingSegment *> &stops = timing.allTimingSegments[SEGMENT_STOP_DELAY];
+	for (i = 0; i < stops.size(); i++)
+	{
+		StopSegment *ss = static_cast<StopSegment *>(stops[i]);
 		if( !ss->GetDelay() )
 			w.Write( ss->GetRow(), ss->GetPause() );
+	}
 	w.Finish();
 	
 	w.Init( "DELAYS" );
-	FOREACH_CONST( StopSegment, timing.m_StopSegments, ss )
+	for (i = 0; i < stops.size(); i++)
+	{
+		StopSegment *ss = static_cast<StopSegment *>(stops[i]);
 		if( ss->GetDelay() )
 			w.Write( ss->GetRow(), ss->GetPause() );
+	}
 	w.Finish();
 	
 	w.Init( "WARPS" );
-	FOREACH_CONST( WarpSegment, timing.m_WarpSegments, ws )
+	vector<TimingSegment *> &warps = timing.allTimingSegments[SEGMENT_WARP];
+	for (i = 0; i < warps.size(); i++)
+	{
+		WarpSegment *ws = static_cast<WarpSegment *>(warps[i]);
 		w.Write( ws->GetRow(), ws->GetLength() );
+	}
 	w.Finish();
 	
-	ASSERT( !timing.m_vTimeSignatureSegments.empty() );
+	vector<TimingSegment *> &tSigs = timing.allTimingSegments[SEGMENT_TIME_SIG];
+	ASSERT( !tSigs.empty() );
 	w.Init( "TIMESIGNATURES" );
-	FOREACH_CONST( TimeSignatureSegment, timing.m_vTimeSignatureSegments, iter )
-		w.Write( iter->GetRow(), iter->GetNum(), iter->GetDen() );
+	for (i = 0; i < tSigs.size(); i++)
+	{
+		TimeSignatureSegment *ts = static_cast<TimeSignatureSegment *>(tSigs[i]);
+		w.Write( ts->GetRow(), ts->GetNum(), ts->GetDen() );
+	}
 	w.Finish();
 
-	ASSERT( !timing.m_TickcountSegments.empty() );
+	vector<TimingSegment *> &ticks = timing.allTimingSegments[SEGMENT_TICKCOUNT];
+	ASSERT( !ticks.empty() );
 	w.Init( "TICKCOUNTS" );
-	FOREACH_CONST( TickcountSegment, timing.m_TickcountSegments, ts )
+	for (i = 0; i < ticks.size(); i++)
+	{
+		TickcountSegment *ts = static_cast<TickcountSegment *>(ticks[i]);
 		w.Write( ts->GetRow(), ts->GetTicks() );
+	}
 	w.Finish();
 	
-	ASSERT( !timing.m_ComboSegments.empty() );
+	vector<TimingSegment *> &combos = timing.allTimingSegments[SEGMENT_COMBO];
+	ASSERT( !combos.empty() );
 	w.Init( "COMBOS" );
-	FOREACH_CONST( ComboSegment, timing.m_ComboSegments, cs )
+	for (i = 0; i < combos.size(); i++)
 	{
+		ComboSegment *cs = static_cast<ComboSegment *>(combos[i]);
 		if (cs->GetCombo() == cs->GetMissCombo())
 			w.Write( cs->GetRow(), cs->GetCombo() );
 		else
@@ -137,27 +163,43 @@ static void GetTimingTags( vector<RString> &lines, TimingData timing, bool bIsSo
 	w.Finish();
 	
 	// Song Timing should only have the initial value.
+	vector<TimingSegment *> &speeds = timing.allTimingSegments[SEGMENT_SPEED];
 	w.Init( "SPEEDS" );
-	FOREACH_CONST( SpeedSegment, timing.m_SpeedSegments, ss )
+	for (i = 0; i < speeds.size(); i++)
+	{
+		SpeedSegment *ss = static_cast<SpeedSegment *>(speeds[i]);
 		w.Write( ss->GetRow(), ss->GetRatio(), ss->GetLength(), ss->GetUnit() );
+	}
 	w.Finish();
 	
 	w.Init( "SCROLLS" );
-	FOREACH_CONST( ScrollSegment, timing.m_ScrollSegments, ss )
+	vector<TimingSegment *> &scrolls = timing.allTimingSegments[SEGMENT_SCROLL];
+	for (i = 0; i < scrolls.size(); i++)
+	{
+		ScrollSegment *ss = static_cast<ScrollSegment *>(scrolls[i]);
 		w.Write( ss->GetRow(), ss->GetRatio() );
+	}
 	w.Finish();
 	
 	if( !bIsSong )
 	{	
+		vector<TimingSegment *> &fakes = timing.allTimingSegments[SEGMENT_FAKE];
 		w.Init( "FAKES" );
-		FOREACH_CONST( FakeSegment, timing.m_FakeSegments, fs )
+		for (i = 0; i < fakes.size(); i++)
+		{
+			FakeSegment *fs = static_cast<FakeSegment *>(fakes[i]);
 			w.Write( fs->GetRow(), fs->GetLength() );
+		}
 		w.Finish();
 	}
 	
 	w.Init( "LABELS" );
-	FOREACH_CONST( LabelSegment, timing.m_LabelSegments, ls )
+	vector<TimingSegment *> &labels = timing.allTimingSegments[SEGMENT_LABEL];
+	for (i = 0; i < labels.size(); i++)
+	{
+		LabelSegment *ls = static_cast<LabelSegment *>(labels[i]);
 		w.Write( ls->GetRow(), ls->GetLabel().c_str() );
+	}
 	w.Finish();
 }
 
