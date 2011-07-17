@@ -19,7 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectName>sm-ssc</ProjectName>
+    <ProjectName>StepMania</ProjectName>
     <ProjectGuid>{AF209DBD-24BD-4356-8DFE-41751B221195}</ProjectGuid>
     <RootNamespace>StepMania</RootNamespace>
     <Keyword>MFCProj</Keyword>
