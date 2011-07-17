@@ -787,7 +787,7 @@ struct SpeedSegment : public TimingSegment
 	{
 		const RString str = "%.0" + IntToString(dec)
 			+ "f=%.0" + IntToString(dec) + "f=%.0"
-			+ IntToString(dec) + "f=%uh";
+			+ IntToString(dec) + "f=%u";
 		return ssprintf(str.c_str(), this->GetBeat(), this->GetRatio(),
 						this->GetLength(), this->GetUnit());
 	}
