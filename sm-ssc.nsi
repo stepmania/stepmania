@@ -52,8 +52,16 @@
 	SetDateSave on ; (can be on to have files restored to their orginal date)
 
 	; I think it may need actual admin privs for writing to the registry... -aj
-	; RequestExecutionLevel user
-	; this folder may not be the best idea for Windows Vista/7. -aj
+	;RequestExecutionLevel user
+
+	;GetVersion::WindowsServicePackMajor
+	;Pop $R0
+	;${If} $R0 >= 6
+	;	vista & 7
+	;${Else}
+	;	xp and below
+	;${EndIf}
+
 	InstallDir "$PROGRAMFILES\${PRODUCT_ID}"
 	InstallDirRegKey HKEY_LOCAL_MACHINE "SOFTWARE\${PRODUCT_ID}" ""
 
@@ -846,8 +854,37 @@ Section "Uninstall"
 	RMDir "$INSTDIR"	; will delete only if empty
 
 	SetShellVarContext current
-	Delete "$DESKTOP\Play StepMania CVS.lnk"
-	Delete "$DESKTOP\${PRODUCT_DISPLAY}.lnk"
+
+	; kill shortcuts
+	!ifdef MAKE_DESKTOP_SHORTCUT
+		Delete "$DESKTOP\$(TEXT_IO_RUN).lnk"
+	!endif
+	!ifdef MAKE_DESKTOP_SHORTCUT
+		Delete "$DESKTOP\$(TEXT_IO_RUN).lnk"
+	!endif
+
+	Delete "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_RUN).lnk"
+	Delete "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_RUN_WITHOUT_SSE2).lnk"
+
+	!ifdef MAKE_OPEN_PROGRAM_FOLDER_SHORTCUT
+		Delete "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_OPEN_PROGRAM_FOLDER).lnk"
+	!endif
+	!ifdef MAKE_OPEN_SETTINGS_FOLDER_SHORTCUT
+		Delete "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_OPEN_SETTINGS_FOLDER).lnk"
+	!endif
+
+	;Delete "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_VIEW_STATISTICS).lnk"
+	;Delete "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_TOOLS).lnk"
+	Delete "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_MANUAL).lnk"
+	Delete "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_UNINSTALL).lnk"
+	Delete "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_WEB_SITE).lnk"
+	Delete "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_TEXTURE_FONT_GENERATOR).lnk"
+	!ifdef MAKE_UPDATES_SHORTCUT
+		Delete "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_CHECK_FOR_UPDATES).lnk"
+	!endif
+	Delete "$INSTDIR\${PRODUCT_ID}.lnk"
+	Delete "$INSTDIR\${PRODUCT_ID} (non-SSE2).lnk"
+
 	; I'm being paranoid here:
 	Delete "$SMPROGRAMS\${PRODUCT_ID}\*.*"
 	RMDir "$SMPROGRAMS\${PRODUCT_ID}"
