@@ -350,7 +350,7 @@ struct ComboSegment : public TimingSegment
 	 * It is best to override the values as soon as possible.
 	 */
 	ComboSegment() : 
-		TimingSegment(-1), combo(1) { }
+		TimingSegment(-1), combo(1), missCombo(1) { }
 
 	ComboSegment(const ComboSegment &other) : 
 		TimingSegment(other.GetRow()),
