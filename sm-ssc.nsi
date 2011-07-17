@@ -52,8 +52,16 @@
 	SetDateSave on ; (can be on to have files restored to their orginal date)
 
 	; I think it may need actual admin privs for writing to the registry... -aj
-	; RequestExecutionLevel user
-	; this folder may not be the best idea for Windows Vista/7. -aj
+	;RequestExecutionLevel user
+
+	;GetVersion::WindowsServicePackMajor
+	;Pop $R0
+	;${If} $R0 >= 6
+	;	vista & 7
+	;${Else}
+	;	xp and below
+	;${EndIf}
+
 	InstallDir "$PROGRAMFILES\${PRODUCT_ID}"
 	InstallDirRegKey HKEY_LOCAL_MACHINE "SOFTWARE\${PRODUCT_ID}" ""
 
