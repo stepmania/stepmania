@@ -17,31 +17,6 @@
 #include "Steps.h"
 
 /**
- * @brief Turn the BackgroundChange into a string.
- * @param bgc the BackgroundChange in question.
- * @return the converted string. */
-static RString BackgroundChangeToString( const BackgroundChange &bgc )
-{
-	// TODO: Technically we need to double-escape the filename (because it might contain '=') and then
-	// unescape the value returned by the MsdFile.
-	RString s = ssprintf( 
-		"%.3f=%s=%.3f=%d=%d=%d=%s=%s=%s=%s=%s", 
-		bgc.m_fStartBeat, 
-		SmEscape(bgc.m_def.m_sFile1).c_str(), 
-		bgc.m_fRate, 
-		bgc.m_sTransition == SBT_CrossFade,		// backward compat
-		bgc.m_def.m_sEffect == SBE_StretchRewind, 	// backward compat
-		bgc.m_def.m_sEffect != SBE_StretchNoLoop, 	// backward compat
-		bgc.m_def.m_sEffect.c_str(), 
-		bgc.m_def.m_sFile2.c_str(), 
-		bgc.m_sTransition.c_str(),
-		SmEscape(RageColor::NormalizeColorString(bgc.m_def.m_sColor1)).c_str(),
-		SmEscape(RageColor::NormalizeColorString(bgc.m_def.m_sColor2)).c_str()
-		);
-	return s;
-}
-
-/**
  * @brief Turn a vector of lines into a single line joined by newline characters.
  * @param lines the list of lines to join.
  * @return the joined lines. */
@@ -292,7 +267,7 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 			f.Write( ssprintf("#BGCHANGES%d:", b+1) );
 
 		FOREACH_CONST( BackgroundChange, out.GetBackgroundChanges(b), bgc )
-			f.PutLine( BackgroundChangeToString(*bgc)+"," );
+			f.PutLine( (*bgc).ToString() +"," );
 
 		/* If there's an animation plan at all, add a dummy "-nosongbg-" tag to
 		 * indicate that this file doesn't want a song BG entry added at the end.
@@ -308,7 +283,7 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 		f.Write( "#FGCHANGES:" );
 		FOREACH_CONST( BackgroundChange, out.GetForegroundChanges(), bgc )
 		{
-			f.PutLine( BackgroundChangeToString(*bgc)+"," );
+			f.PutLine( (*bgc).ToString() +"," );
 		}
 		f.PutLine( ";" );
 	}
