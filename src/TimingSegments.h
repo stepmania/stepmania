@@ -81,6 +81,11 @@ struct TimingSegment
 	{
 		return TimingSegmentType_Invalid;
 	}
+	// TODO: Remove isDelay optional param and split Stops and Delays.
+	virtual RString ToString(int dec) const
+	{
+		return FloatToString(this->GetBeat());
+	}
 	
 	/**
 	 * @brief Compares two DrivedSegments to see if one is less than the other.
@@ -206,6 +211,13 @@ struct FakeSegment : public TimingSegment
 	
 	TimingSegmentType GetType() const { return SEGMENT_FAKE; }
 	
+	virtual RString ToString(int dec) const
+	{
+		RString str = "%.0" + IntToString(dec)
+		+ "f=%.0" + IntToString(dec) + "f";
+		return ssprintf(str.c_str(), this->GetBeat(), this->GetLength());
+	}
+	
 private:
 	/**
 	 * @brief The number of beats the FakeSegment is alive for.
@@ -259,6 +271,13 @@ struct WarpSegment : public TimingSegment
 	void SetLength(const float b);
 	
 	void Scale( int start, int length, int newLength );
+	
+	virtual RString ToString(int dec) const
+	{
+		RString str = "%.0" + IntToString(dec)
+		+ "f=%.0" + IntToString(dec) + "f";
+		return ssprintf(str.c_str(), this->GetBeat(), this->GetLength());
+	}
 	
 	/*
 	 * @brief Compares two WarpSegments to see if one is less than the other.
@@ -325,6 +344,12 @@ struct TickcountSegment : public TimingSegment
 	 * @brief Set the number of ticks in this TickcountSegment.
 	 * @param i the tickcount. */
 	void SetTicks(const int i);
+	
+	virtual RString ToString(int dec) const
+	{
+		const RString str = "%.0" + IntToString(dec) + "f=%i";
+		return ssprintf(str.c_str(), this->GetBeat(), this->GetTicks());
+	}
 	
 	/**
 	 * @brief Compares two TickcountSegments to see if one is less than the other.
@@ -404,6 +429,17 @@ struct ComboSegment : public TimingSegment
 	 * @param i the miss combo. */
 	void SetMissCombo(const int i);
 	
+	virtual RString ToString(int dec) const
+	{
+		RString str = "%.0" + IntToString(dec) + "f=%i";
+		if (this->GetCombo() == this->GetMissCombo())
+		{
+			return ssprintf(str.c_str(), this->GetBeat(), this->GetCombo());
+		}
+		str += "=%i";
+		return ssprintf(str.c_str(), this->GetBeat(), this->GetCombo(), this->GetMissCombo());
+	}
+	
 	/**
 	 * @brief Compares two ComboSegments to see if one is less than the other.
 	 * @param other the other ComboSegment to compare to.
@@ -461,6 +497,12 @@ struct LabelSegment : public TimingSegment
 	 * @brief Set the label in this LabelSegment.
 	 * @param l the label. */
 	void SetLabel(const RString l);
+	
+	virtual RString ToString(int dec) const
+	{
+		const RString str = "%.0" + IntToString(dec) + "f=%s";
+		return ssprintf(str.c_str(), this->GetBeat(), this->GetLabel().c_str());
+	}
 	
 	/**
 	 * @brief Compares two LabelSegments to see if one is less than the other.
@@ -525,6 +567,13 @@ struct BPMSegment : public TimingSegment
 	 * @brief Set the label in this LabelSegment.
 	 * @param l the label. */
 	void SetBPS(const float newBPS);
+	
+	virtual RString ToString(int dec) const
+	{
+		const RString str = "%.0" + IntToString(dec)
+		+ "f=%.0" + IntToString(dec) + "f";
+		return ssprintf(str.c_str(), this->GetBeat(), this->GetBPM());
+	}
 	
 	/**
 	 * @brief Compares two LabelSegments to see if one is less than the other.
@@ -603,6 +652,12 @@ struct TimeSignatureSegment : public TimingSegment
 	 * @brief Set the denominator in this TimeSignatureSegment.
 	 * @param i the denominator. */
 	void SetDen(const int i);
+	
+	virtual RString ToString(int dec) const
+	{
+		const RString str = "%.0" + IntToString(dec) + "f=%i=%i";
+		return ssprintf(str.c_str(), this->GetBeat(), this->GetNum(), this->GetDen());
+	}
 	
 	/**
 	 * @brief Retrieve the number of note rows per measure within the TimeSignatureSegment.
@@ -727,6 +782,15 @@ struct SpeedSegment : public TimingSegment
 	void SetUnit(const int i);
 	
 	void Scale( int start, int length, int newLength );
+	
+	virtual RString ToString(int dec) const
+	{
+		const RString str = "%.0" + IntToString(dec)
+			+ "f=%.0" + IntToString(dec) + "f=%.0"
+			+ IntToString(dec) + "f=%uh";
+		return ssprintf(str.c_str(), this->GetBeat(), this->GetRatio(),
+						this->GetLength(), this->GetUnit());
+	}
 
 	/**
 	 * @brief Compares two SpeedSegments to see if one is less than the other.
@@ -791,6 +855,13 @@ struct ScrollSegment : public TimingSegment
 	 * @brief Set the ratio in this ScrollSegment.
 	 * @param i the ratio. */
 	void SetRatio(const float i);
+	
+	virtual RString ToString(int dec) const
+	{
+		const RString str = "%.0" + IntToString(dec)
+			+ "f=%.0" + IntToString(dec) + "f";
+		return ssprintf(str.c_str(), this->GetBeat(), this->GetRatio());
+	}
 	
 	/**
 	 * @brief Compares two ScrollSegment to see if one is less than the other.
@@ -867,6 +938,13 @@ struct StopSegment : public TimingSegment
 	 * @brief Set the behavior in this StopSegment.
 	 * @param i the behavior. */
 	void SetDelay(const bool i);
+	
+	virtual RString ToString(int dec) const
+	{
+		const RString str = "%.0" + IntToString(dec)
+		+ "f=%.0" + IntToString(dec) + "f";
+		return ssprintf(str.c_str(), this->GetPause());
+	}
 
 	/**
 	 * @brief Compares two StopSegments to see if one is less than the other.

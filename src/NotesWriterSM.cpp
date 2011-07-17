@@ -160,16 +160,7 @@ static void WriteGlobalTags( RageFile &f, Song &out )
 	}
 	f.PutLine( ";" );
 
-	f.Write( "#ATTACKS:" );
-	for( unsigned a=0; a < out.m_sAttackString.size(); a++ )
-	{
-		RString sData = out.m_sAttackString[a];
-		f.Write( ssprintf( "%s", sData.c_str() ) );
-
-		if( a != (out.m_sAttackString.size() - 1) )
-			f.Write( ":" );	// Not the end, so write a divider ':'
-	}
-	f.PutLine( ";" );
+	f.PutLine( ssprintf("#ATTACKS:%s;", out.GetAttackString().c_str()) );
 }
 
 /**

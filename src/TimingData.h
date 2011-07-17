@@ -825,6 +825,8 @@ public:
 	 * @brief The initial offset of a song.
 	 */
 	float	m_fBeat0OffsetInSeconds;
+	
+	vector<RString> ToVectorString(TimingSegmentType tst, bool isDelay = false, int dec = 6) const;	
 };
 
 #undef COMPARE

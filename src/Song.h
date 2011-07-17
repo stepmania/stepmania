@@ -20,7 +20,7 @@ void FixupPath( RString &path, const RString &sSongPath );
 RString GetSongAssetPath( RString sPath, const RString &sSongPath );
 
 /** @brief The version of the .ssc file format. */
-const static float STEPFILE_VERSION_NUMBER = 0.76f;
+const static float STEPFILE_VERSION_NUMBER = 0.77f;
 
 /** @brief How many edits for this song can each profile have? */
 const int MAX_EDITS_PER_SONG_PER_PROFILE = 15;
@@ -100,7 +100,9 @@ public:
 	/**
 	 * @brief Get the new radar values, and determine the last second at the same time.
 	 *
-	 * This is called by TidyUpData, after saving the Song. */
+	 * This is called by TidyUpData, after saving the Song.
+	 * @param fromCache was this data loaded from the cache file?
+	 * @param duringCache was this data loaded during the cache process? */
 	void ReCalculateRadarValuesAndLastSecond(bool fromCache = false, bool duringCache = false);
 	/**
 	 * @brief Translate any titles that aren't in english.

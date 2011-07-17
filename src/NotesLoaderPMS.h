@@ -2,11 +2,13 @@
 #define NOTES_LOADER_PMS_H
 
 class Song;
+class Steps;
 /** @brief Reads a Song from a set of .PMS files. */
 namespace PMSLoader
 {
 	void GetApplicableFiles( const RString &sPath, vector<RString> &out );
 	bool LoadFromDir( const RString &sDir, Song &out );
+	bool LoadNoteDataFromSimfile(const RString & cachePath, Steps & out);
 }
 
 #endif

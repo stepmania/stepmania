@@ -41,7 +41,7 @@
  * @brief The internal version of the cache for StepMania.
  *
  * Increment this value to invalidate the current cache. */
-const int FILE_CACHE_VERSION = 191;
+const int FILE_CACHE_VERSION = 192;
 
 /** @brief How long does a song sample last by default? */
 const float DEFAULT_MUSIC_SAMPLE_LENGTH = 12.f;
@@ -860,7 +860,9 @@ void Song::ReCalculateRadarValuesAndLastSecond(bool fromCache, bool duringCache)
 	wipe_notedata:
 		if (duringCache)
 		{
-			// update this when at that point.
+			NoteData dummy;
+			dummy.SetNumTracks(tempNoteData.GetNumTracks());
+			pSteps->SetNoteData(dummy);
 		}
 	}
 

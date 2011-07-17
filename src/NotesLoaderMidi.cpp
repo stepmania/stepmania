@@ -956,7 +956,7 @@ bool MidiLoader::LoadFromDir( const RString &sDir, Song &out )
 	if( !LoadFromMidi(sDir+vsFiles[0], out) )
 		return false;
 
-	out.TidyUpData();
+	out.TidyUpData(false, true);
 	return true;
 }
 

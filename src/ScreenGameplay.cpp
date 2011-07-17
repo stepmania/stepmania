@@ -393,9 +393,33 @@ void ScreenGameplay::Init()
 	/* Called once per stage (single song or single course). */
 	GAMESTATE->BeginStage();
 
+	int player = 1;
+	FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
+	{
+		unsigned int count = pi->m_vpStepsQueue.size();
+		
+		for (unsigned int i = 0; i < count; i++)
+		{
+			Steps *curSteps = pi->m_vpStepsQueue[i];
+			if (curSteps->IsNoteDataEmpty())
+			{
+				if (curSteps->GetNoteDataFromSimfile())
+				{
+					LOG->Trace("Notes should be loaded for player %d", player);
+				}
+				else 
+				{
+					LOG->Trace("Error loading notes for player %d", player);
+				}
+			}
+		}
+		player++;
+	}
+	
 	if(!GAMESTATE->IsCourseMode() && !GAMESTATE->m_bDemonstrationOrJukebox)
 	{
 		// fill in difficulty of CPU players with that of the first human player
+		// this should not need to worry about step content.
 		FOREACH_PotentialCpuPlayer(p)
 			GAMESTATE->m_pCurSteps[p].Set( GAMESTATE->m_pCurSteps[ GAMESTATE->GetFirstHumanPlayer() ] );
 

@@ -25,15 +25,15 @@
 #SAMPLELENGTH:;
 #DISPLAYBPM:[xxx][xxx:xxx]|[*];
 #SELECTABLE:;
-#LASTBEATHINT:;
+#LASTSECONDHINT:;
 #BGCHANGES:;
 #FGCHANGES:;
 #KEYSOUNDS:;
 #ATTACKS:;
 
 // stored in cache
-#FIRSTBEAT:;			// calculated
-#LASTBEAT:;			// calculated
+#FIRSTSECOND:;			// calculated
+#LASTSECOND:;			// calculated
 #SONGFILENAME:;
 #MUSICBYTES:;			// ignored by loader
 #HASMUSIC:;
@@ -66,5 +66,8 @@
 #ATTACKS:;
 #DISPLAYBPM:;
 
-// actual step data
+// only in cache files
+#STEPFILENAME:;
+
+// actual step data (not in cache files)
 #NOTES:;

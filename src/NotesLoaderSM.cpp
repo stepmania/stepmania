@@ -10,6 +10,7 @@
 #include "Song.h"
 #include "SongManager.h"
 #include "Steps.h"
+#include "Attack.h"
 #include "PrefsManager.h"
 
 void SMLoader::SetSongTitle(const RString & title)
@@ -95,23 +96,6 @@ void SMLoader::LoadFromTokens(
 	}
 
 	out.SetMeter( StringToInt(sMeter) );
-	vector<RString> saValues;
-	split( sRadarValues, ",", saValues, true );
-	int categories = NUM_RadarCategory - 1; // Fakes aren't counted in the radar values.
-	if( saValues.size() == (unsigned)categories * NUM_PLAYERS )
-	{
-		RadarValues v[NUM_PLAYERS];
-		FOREACH_PlayerNumber( pn )
-		{
-			// Can't use the foreach anymore due to flexible radar lines.
-			for( RadarCategory rc = (RadarCategory)0; rc < categories; 
-			    enum_add<RadarCategory>( rc, 1 ) )
-			{
-				v[pn][rc] = StringToFloat( saValues[pn*categories + rc] );
-			}
-		}
-		out.SetCachedRadarValues( v );
-	}
 
 	out.SetSMNoteData( sNoteData );
 
@@ -645,9 +629,8 @@ bool SMLoader::LoadFromBGChangesString( BackgroundChange &change, const RString 
 	return aBGChangeValues.size() >= 2;
 }
 
-bool SMLoader::LoadNotedataFromSimfile( const RString &path, Steps &out )
+bool SMLoader::LoadNoteDataFromSimfile( const RString &path, Steps &out )
 {
-	// stub: do this later.
 	MsdFile msd;
 	if( !msd.ReadFile( path, true ) )  // unescape
 	{
@@ -698,7 +681,7 @@ bool SMLoader::LoadNotedataFromSimfile( const RString &path, Steps &out )
 			RString noteData = sParams[6];
 			Trim( noteData );
 			out.SetSMNoteData( noteData );
-			
+			out.TidyUpData();
 			return true;
 		}
 	}
@@ -717,6 +700,7 @@ bool SMLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCache
 	}
 
 	out.m_SongTiming.m_sFile = sPath;
+	out.m_sSongFileName = sPath;
 
 	for( unsigned i=0; i<msd.GetNumValues(); i++ )
 	{
@@ -924,6 +908,7 @@ bool SMLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCache
 				sParams[6],
 				*pNewNotes );
 
+			pNewNotes->SetFilename(sPath);
 			out.AddSteps( pNewNotes );
 		}
 		// XXX: Does anyone know what LEADTRACK is for? -Wolfman2000
@@ -1110,7 +1095,10 @@ void SMLoader::TidyUpData( Song &song, bool bFromCache )
 			bg.push_back( BackgroundChange(lastBeat,song.m_sBackgroundFile) );
 		} while(0);
 	}
-	song.TidyUpData( bFromCache );
+	if (bFromCache)
+	{
+		song.TidyUpData( bFromCache, true );
+	}
 }
 
 /*

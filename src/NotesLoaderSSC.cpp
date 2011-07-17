@@ -146,6 +146,95 @@ void SSCLoader::ProcessScrolls( TimingData &out, const RString sParam )
 	}
 }
 
+bool SSCLoader::LoadNoteDataFromSimfile( const RString & cachePath, Steps &out )
+{
+	LOG->Trace( "Loading notes from %s", cachePath.c_str() );
+	
+	MsdFile msd;
+	if (!msd.ReadFile(cachePath, true))
+	{
+		LOG->UserLog("Unable to load any notes from",
+			     cachePath,
+			     "for this reason: %s",
+			     msd.GetError().c_str());
+		return false;
+	}
+	
+	bool tryingSteps = false;
+	float storedVersion;
+	const unsigned values = msd.GetNumValues();
+	
+	for (unsigned i = 0; i < values; i++)
+	{
+		const MsdFile::value_t &params = msd.GetValue(i);
+		RString valueName = params[0];
+		valueName.MakeUpper();
+		RString matcher = params[1]; // mainly for debugging.
+		Trim(matcher);
+		
+		if (valueName=="VERSION")
+		{
+			storedVersion = StringToFloat(matcher);
+		}
+		if (tryingSteps)
+		{
+			if( valueName=="STEPSTYPE" )
+			{
+				if (out.m_StepsType != GAMEMAN->StringToStepsType(matcher))
+					tryingSteps = false;
+			}
+			else if( valueName=="CHARTNAME")
+			{
+				if (storedVersion >= VERSION_CHART_NAME_TAG && out.GetChartName() != matcher)
+					tryingSteps = false;
+			}
+			else if( valueName=="DESCRIPTION" )
+			{
+				if (storedVersion < VERSION_CHART_NAME_TAG)
+				{
+					if (out.GetChartName() != matcher)
+						tryingSteps = false;
+				}
+				else if (out.GetDescription() != matcher)
+					tryingSteps = false;
+			}
+			
+			else if( valueName=="DIFFICULTY" )
+			{
+				if (out.GetDifficulty() != StringToDifficulty(matcher))
+					tryingSteps = false;
+			}
+			
+			else if( valueName=="METER" )
+			{
+				if (out.GetMeter() != StringToInt(matcher))
+					tryingSteps = false;
+			}
+			
+			else if( valueName=="CREDIT" )
+			{
+				if (out.GetCredit() != matcher)
+					tryingSteps = false;
+			}
+			
+			else if( valueName=="NOTES" || valueName=="NOTES2" )
+			{
+				out.SetSMNoteData(matcher);
+				out.TidyUpData();
+				return true;
+			}
+		}
+		else
+		{
+			if(valueName == "NOTEDATA")
+			{
+				tryingSteps = true;
+			}
+		}
+	}
+	return false;
+}
+
 bool SSCLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCache )
 {
 	LOG->Trace( "Song::LoadFromSSCFile(%s)", sPath.c_str() );
@@ -158,6 +247,7 @@ bool SSCLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 	}
 
 	out.m_SongTiming.m_sFile = sPath; // songs still have their fallback timing.
+	out.m_sSongFileName = sPath;
 
 	int state = GETTING_SONG_INFO;
 	const unsigned values = msd.GetNumValues();
@@ -484,27 +574,35 @@ bool SSCLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 
 				else if( sValueName=="RADARVALUES" )
 				{
-					vector<RString> saValues;
-					split( sParams[1], ",", saValues, true );
-					
-					int categories = NUM_RadarCategory;
-					if( out.m_fVersion < VERSION_RADAR_FAKE )
-						categories -= 1;
-					
-					if( saValues.size() == (unsigned)categories * NUM_PLAYERS )
+					if (bFromCache)
 					{
-						RadarValues v[NUM_PLAYERS];
-						FOREACH_PlayerNumber( pn )
+						vector<RString> saValues;
+						split( sParams[1], ",", saValues, true );
+						
+						int categories = NUM_RadarCategory;
+						if( out.m_fVersion < VERSION_RADAR_FAKE )
+							categories -= 1;
+						
+						if( saValues.size() == (unsigned)categories * NUM_PLAYERS )
 						{
-							// Can't use the foreach anymore due to flexible radar lines.
-							for( RadarCategory rc = (RadarCategory)0; rc < categories; 
-							    enum_add<RadarCategory>( rc, +1 ) )
+							RadarValues v[NUM_PLAYERS];
+							FOREACH_PlayerNumber( pn )
 							{
-								v[pn][rc] = StringToFloat( saValues[pn*categories + rc] );
+								// Can't use the foreach anymore due to flexible radar lines.
+								for( RadarCategory rc = (RadarCategory)0; rc < categories; 
+								    enum_add<RadarCategory>( rc, +1 ) )
+								{
+									v[pn][rc] = StringToFloat( saValues[pn*categories + rc] );
+								}
 							}
+							pNewNotes->SetCachedRadarValues( v );
 						}
-						pNewNotes->SetCachedRadarValues( v );
 					}
+					else 
+					{
+						// just recalc at time.
+					}
+
 				}
 
 				else if( sValueName=="CREDIT" )
@@ -519,6 +617,7 @@ bool SSCLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 						pNewNotes->m_Timing = stepsTiming;
 					pNewNotes->SetSMNoteData( sParams[1] );
 					pNewNotes->TidyUpData();
+					pNewNotes->SetFilename(sPath);
 					out.AddSteps( pNewNotes );
 				}
 				
@@ -604,6 +703,14 @@ bool SSCLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 						else
 							pNewNotes->SetMaxBPM(StringToFloat(sParams[2]));
 					}
+				}
+				else if( sValueName=="STEPFILENAME" )
+				{
+					state = GETTING_SONG_INFO;
+					if( bHasOwnTiming )
+						pNewNotes->m_Timing = stepsTiming;
+					pNewNotes->SetFilename(sParams[1]);
+					out.AddSteps( pNewNotes );
 				}
 				break;
 			}
