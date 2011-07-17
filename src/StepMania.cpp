@@ -1106,7 +1106,7 @@ int main(int argc, char* argv[])
 	STATSMAN	= new StatsManager;
 
 	// Initialize which courses are ranking courses here.
-	pLoadingWindow->SetText("Updating cource rankings...");
+	pLoadingWindow->SetText("Updating course rankings...");
 	SONGMAN->UpdateRankingCourses();
 
 	SAFE_DELETE( pLoadingWindow );		// destroy this before init'ing Display
