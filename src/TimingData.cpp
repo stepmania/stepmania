@@ -32,11 +32,17 @@ void TimingData::GetActualBPM( float &fMinBPMOut, float &fMaxBPMOut, float highe
 	}
 }
 
+struct ts_less : binary_function <TimingSegment *, TimingSegment *, bool> {
+	bool operator() (const TimingSegment *x, const TimingSegment *y) const {
+		return (*x) < (*y);
+	}
+};
+
 void TimingData::AddSegment(TimingSegmentType tst, TimingSegment * seg)
 {
 	vector<TimingSegment *> &segs = this->allTimingSegments[tst];
 	// Unsure if this uses the proper comparison.
-	segs.insert(upper_bound(segs.begin(), segs.end(), seg), seg);
+	segs.insert(upper_bound(segs.begin(), segs.end(), seg, ts_less()), seg);
 }
 
 int TimingData::GetSegmentIndexAtRow(TimingSegmentType tst,
@@ -984,6 +990,11 @@ float TimingData::GetDisplayedBeat( float fBeat ) const
 	const vector<TimingSegment *> &scrolls = this->allTimingSegments[SEGMENT_SCROLL];
 	vector<TimingSegment *>::const_iterator it = scrolls.begin(), end = scrolls.end();
 	float fOutBeat = 0;
+	for( it = it + 1; it != end; it++ )
+	{
+		ASSERT((*(it-1))->GetBeat() <= (*it)->GetBeat());
+	}
+	it = scrolls.begin();
 	for( ; it != end; it++ )
 	{
 		if( it+1 == end || fBeat <= (*(it+1))->GetBeat() )
