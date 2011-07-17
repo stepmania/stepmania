@@ -91,14 +91,17 @@ public:
 	// This one takes the effort to reuse Steps pointers as best as it can
 	bool ReloadFromSongDir( RString sDir );
 
-	/** @brief Call this after loading a song to clean up invalid data. */
-	void TidyUpData( bool bFromCache = false );
+	/**
+	 * @brief Call this after loading a song to clean up invalid data.
+	 * @param fromCache was this data loaded from the cache file?
+	 * @param duringCache was this data loaded during the cache process? */
+	void TidyUpData( bool fromCache = false, bool duringCache = false );
 	
 	/**
 	 * @brief Get the new radar values, and determine the last second at the same time.
 	 *
 	 * This is called by TidyUpData, after saving the Song. */
-	void ReCalculateRadarValuesAndLastSecond( bool bFromCache = false );
+	void ReCalculateRadarValuesAndLastSecond(bool fromCache = false, bool duringCache = false);
 	/**
 	 * @brief Translate any titles that aren't in english.
 	 *
@@ -180,7 +183,6 @@ public:
 	RString GetDisplaySubTitle() const;
 	RString GetDisplayArtist() const;
 
-	// Returns the transliterated titles, if any; otherwise returns the main titles.
 	/**
 	 * @brief Retrieve the transliterated title, or the main title if there is no translit.
 	 * @return the proper title. */
@@ -315,12 +317,20 @@ private:
 	 *
 	 * This must be sorted before gameplay. */
 	AutoPtrCopyOnWrite<VBackgroundChange>	m_ForegroundChanges;
+	
+	vector<RString> GetChangesToVectorString(const vector<BackgroundChange> & changes) const;
 public:
 	const vector<BackgroundChange>	&GetBackgroundChanges( BackgroundLayer bl ) const;
 	vector<BackgroundChange>	&GetBackgroundChanges( BackgroundLayer bl );
 	const vector<BackgroundChange>	&GetForegroundChanges() const;
 	vector<BackgroundChange>	&GetForegroundChanges();
 
+	vector<RString> GetBGChanges1ToVectorString() const;
+	vector<RString> GetBGChanges2ToVectorString() const;
+	vector<RString> GetFGChanges1ToVectorString() const;
+	
+	vector<RString> GetInstrumentTracksToVectorString() const;
+	
 	/**
 	 * @brief The list of LyricSegments.
 	 *
@@ -426,6 +436,11 @@ public:
 
 	CachedObject<Song> m_CachedObject;
 
+	RString GetAttackString() const
+	{
+		return join(":", this->m_sAttackString);
+	}
+	
 	// Lua
 	void PushSelf( lua_State *L );
 
