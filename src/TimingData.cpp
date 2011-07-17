@@ -16,11 +16,6 @@ TimingData::TimingData(float fOffset) :
 
 TimingData::~TimingData()
 {
-	for (unsigned i = 0; i < NUM_TimingSegmentType; i++)
-	{
-		this->allTimingSegments[i].clear();
-	}
-	delete [] this->allTimingSegments;
 }
 
 void TimingData::GetActualBPM( float &fMinBPMOut, float &fMaxBPMOut, float highest ) const
