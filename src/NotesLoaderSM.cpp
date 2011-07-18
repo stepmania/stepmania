@@ -133,7 +133,8 @@ void SMLoader::ProcessAttackString( vector<RString> & attacks, MsdFile::value_t 
 	{
 		RString tmp = params[s];
 		Trim(tmp);
-		attacks.push_back( tmp );
+		if (tmp.size() > 0)
+			attacks.push_back( tmp );
 	}
 }
 
