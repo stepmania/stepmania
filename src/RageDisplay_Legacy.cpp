@@ -340,7 +340,7 @@ GLhandleARB CompileShader( GLenum ShaderType, RString sFile, vector<RString> asD
 GLhandleARB LoadShader( GLenum ShaderType, RString sFile, vector<RString> asDefines )
 {
 	// Don't do anything here if not the hardware/driver can't do it!
-	if (!GLEW_ARB_fragment_program && GLEW_ARB_shading_language_100 && ShaderType == GL_FRAGMENT_SHADER_ARB)
+	if (!GLEW_ARB_fragment_shader && ShaderType == GL_FRAGMENT_SHADER_ARB)
 		return 0;
 	if (!GLEW_ARB_vertex_shader && ShaderType == GL_VERTEX_SHADER_ARB)
 		return 0;
@@ -1662,7 +1662,7 @@ void RageDisplay_Legacy::SetTextureFiltering( TextureUnit tu, bool b )
 
 void RageDisplay_Legacy::SetEffectMode( EffectMode effect )
 {
-	if (!GLEW_ARB_fragment_program && !GLEW_ARB_shading_language_100)
+	if (!GLEW_ARB_fragment_shader)
 		return;
 
 	GLhandleARB hShader = 0;
@@ -2648,11 +2648,9 @@ void RageDisplay_Legacy::SetSphereEnvironmentMapping(TextureUnit tu, bool b)
 	}
 }
 
-GLint iCelTexture1, iCelTexture2 = 0;
-
 void RageDisplay_Legacy::SetCelShaded( int stage )
 {
-	if (!GLEW_ARB_fragment_program && !GL_ARB_shading_language_100)
+	if (!GLEW_ARB_fragment_shader)
 		return; // not supported
 
 	switch (stage)
