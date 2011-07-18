@@ -943,7 +943,7 @@ struct StopSegment : public TimingSegment
 	{
 		const RString str = "%.0" + IntToString(dec)
 		+ "f=%.0" + IntToString(dec) + "f";
-		return ssprintf(str.c_str(), this->GetPause());
+		return ssprintf(str.c_str(), this->GetBeat(), this->GetPause());
 	}
 
 	/**

@@ -1310,7 +1310,7 @@ vector<RString> TimingData::ToVectorString(TimingSegmentType tst,
 		if (tst == SEGMENT_STOP_DELAY)
 		{
 			StopSegment *seg = static_cast<StopSegment *>(segs[i]);
-			if (seg->GetDelay() == isDelay)
+			if (seg->GetDelay() != isDelay)
 				continue;
 		}
 		ret.push_back(segs[i]->ToString(dec));
