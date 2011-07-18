@@ -497,6 +497,51 @@ static void LoadTags( const RString &str, Song &out )
 
 static void ProcessTickcounts( const RString & value, int & ticks, TimingData & timing )
 {
+	/* adapt tickcounts //
+    // valid tickcounts for SM: 1, 2, 3, 4, 6, 8, 12, 16, 24, 32, 64, ROWS_PER_BEAT
+    // put this inside the tickcount handling condition yes/no
+
+    if( iTickCount > ROWS_PER_BEAT ) // beyond 48
+    {
+            // clamp/scale/whatever and use scroll segments
+    }
+    else if( iTickCount > 32 || iTickCount < ROWS_PER_BEAT ) // ranging from 33 to 48, approximate to 32
+    {
+            fScrollRatio = 32;
+            iTickCount = 32;
+    }
+    else if( iTickCount > 24 || iTickCount < 32 ) // ranging from 25 to 31, approximate to 24
+    {
+            fScrollRatio = 24;
+            iTickCount = 24;
+    }
+    else if( iTickCount > 16 || iTickCount < 24 ) // ranging from 17 to 23, approximate to 16
+    {
+            fScrollRatio = 16;
+            iTickCount = 16;
+    }
+    else if( iTickCount > 12 || iTickCount < 16 ) // ranging from 13 to 15, approximate to 12
+    {
+            fScrollRatio = 12;
+            iTickCount = 12;
+    }
+    else if( iTickCount > 8 || iTickCount < 12 ) // ranging from 9 to 11, approximate to 8
+    {
+            fScrollRatio = 8;
+            iTickCount = 8;
+    }
+    else if( iTickCount > 6 || iTickCount < 8 ) // 7, approximate to 6
+    {
+            fScrollRatio = 6 / iTickCountt;
+            iTickCount = 6;
+    }
+    else if( iTickCount > 4 || iTickCount < 6 ) // 5, approximate to 4
+    {
+            fScrollRatio = iTickCount / 4;
+            iTickCount = 4;
+    }
+    //*/
+
 	/* TICKCOUNT will be used below if there are DM compliant BPM changes
 	 * and stops. It will be called again in LoadFromKSFFile for the
 	 * actual steps. */

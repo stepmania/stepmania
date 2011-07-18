@@ -161,7 +161,7 @@ bool SSCLoader::LoadNoteDataFromSimfile( const RString & cachePath, Steps &out )
 	}
 	
 	bool tryingSteps = false;
-	float storedVersion;
+	float storedVersion = 0;
 	const unsigned values = msd.GetNumValues();
 	
 	for (unsigned i = 0; i < values; i++)

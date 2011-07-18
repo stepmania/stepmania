@@ -677,7 +677,7 @@ static bool LoadFromMidi( const RString &sPath, Song &songOut )
 	
 	FOREACH_CONST( MidiFileIn::TempoChange, midi.tempoEvents_, iter )
 	{
-		BPMSegment * bpmSeg;
+		BPMSegment * bpmSeg = NULL;
 		bpmSeg->SetRow( MidiCountToNoteRow( iter->count ) );
 		double fSecondsPerBeat = (iter->tickSeconds * GUITAR_MIDI_COUNTS_PER_BEAT);
 		bpmSeg->SetBPS( float( 1. / fSecondsPerBeat ) );
