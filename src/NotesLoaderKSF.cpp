@@ -54,9 +54,8 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, const Song &song,
 		if (sValueName=="TITLE" || EndsWith(sValueName, "INTRO")
 		    || EndsWith(sValueName, "FILE") )
 		{
-			;
+
 		}
-		
 		else if( sValueName=="BPM" )
 		{
 			BPM1 = StringToFloat(sParams[1]);
@@ -333,6 +332,7 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, const Song &song,
 			{
 				// duh
 				iTickCount = static_cast<int>(numTemp);
+				// I have been owned by the man -DaisuMaster
 				stepsTiming.SetTickcountAtBeat( fCurBeat, clamp(iTickCount, 0, ROWS_PER_BEAT) );
 			}
 			else if (BeginsWith(sRowString, "|B")) 
@@ -371,7 +371,7 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, const Song &song,
 			{
 				// scroll segments
 				stepsTiming.SetScrollAtBeat( fCurBeat, numTemp );
-				return true;
+				//return true;
 			}
 
 			continue;
@@ -495,7 +495,7 @@ static void LoadTags( const RString &str, Song &out )
 		out.m_sArtist = artist;
 }
 
-static void ProcessTickcounts( const RString & value, int & ticks, TimingData & timing )
+static void ProcessTickcounts( const RString & tempValue, int & ticks, TimingData & timing )
 {
 	/* adapt tickcounts //
     // valid tickcounts for SM: 1, 2, 3, 4, 6, 8, 12, 16, 24, 32, 64, ROWS_PER_BEAT
@@ -545,7 +545,7 @@ static void ProcessTickcounts( const RString & value, int & ticks, TimingData & 
 	/* TICKCOUNT will be used below if there are DM compliant BPM changes
 	 * and stops. It will be called again in LoadFromKSFFile for the
 	 * actual steps. */
-	ticks = StringToInt( value );
+	ticks = StringToInt( tempValue );
 	ticks = ticks > 0 ? ticks : 4;
 	// add a tickcount for those using the [Player]
 	// CheckpointsUseTimeSignatures metric. -aj
@@ -642,10 +642,10 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 			TrimLeft( theSteps );
 			split( theSteps, "\n", vNoteRows, true );
 		}
-
-		else if( sValueName=="DIFFICULTY" )
+		else if( sValueName=="DIFFICULTY" || sValueName=="PLAYER" )
 		{
-			/* DIFFICULTY is handled only in LoadFromKSFFile.  Ignore it here. */
+			/* DIFFICULTY and PLAYER are handled only in LoadFromKSFFile.
+			Ignore those here. */
 			continue;
 		}
 		// New cases noted in Aldo_MX's code:
