@@ -70,7 +70,6 @@
 
 #if defined(WIN32)
 #include <windows.h>
-#include "archutils/Win32/AppInstance.h"	// used by SetWindowsHookEx -Aldo
 #endif
 
 void ShutdownGame();
@@ -935,32 +934,6 @@ static void ApplyLogPreferences()
 
 static LocalizedString COULDNT_OPEN_LOADING_WINDOW( "StepMania", "Couldn't open any loading windows." );
 
-#if defined(WIN32)
-// Low Level hooks go here, I only added Windows Key, but letting the player choose which system shortcuts
-// wants to get disabled via PREFSMAN would be nice -Aldo
-LRESULT CALLBACK SpecialKeysHook(int code,WPARAM wparam,LPARAM lparam)
-{
-	if( HOOKS->AppHasFocus() )	// only disable system shortcuts when the game has focus
-	{
-		PKBDLLHOOKSTRUCT key = (PKBDLLHOOKSTRUCT)lparam;
-
-		switch(wparam)
-		{
-		case WM_KEYDOWN:
-		case WM_KEYUP:
-		case WM_SYSKEYDOWN:
-		case WM_SYSKEYUP:
-			if(key->vkCode==VK_LWIN || key->vkCode==VK_RWIN)
-			{
-				return 1;
-			}
-		}
-	}
-
-	return CallNextHookEx(0,code,wparam,lparam);
-}
-#endif
-
 int main(int argc, char* argv[])
 {
 	RageThreadRegister thread( "Main thread" );
@@ -1074,13 +1047,14 @@ int main(int argc, char* argv[])
 		GAMESTATE->m_bDopefish = true;
 
 	{
-		/* Now that THEME is loaded, load the icon for the current theme into
-		 * the loading window. */
+		/* Now that THEME is loaded, load the icon and splash for the current
+		 * theme into the loading window. */
 		RString sError;
 		RageSurface *pIcon = RageSurfaceUtils::LoadFile( THEME->GetPathG( "Common", "window icon" ), sError );
 		if( pIcon )
 			pLoadingWindow->SetIcon( pIcon );
 		delete pIcon;
+		pLoadingWindow->SetSplash( THEME->GetPathG("Common","splash") );
 	}
 
 	if( PREFSMAN->m_iSoundWriteAhead )
@@ -1150,23 +1124,6 @@ int main(int argc, char* argv[])
 
 	StoreActualGraphicOptions();
 	LOG->Info( "%s", GetActualGraphicOptionsString().c_str() );
-
-#if defined(WIN32)
-	// Apply Low Level hooks just after creating the display, so we have a valid
-	// HINSTANCE, rather than a NULL one -Aldo
-	AppInstance inst;
-	HHOOK hook;
-	hook = SetWindowsHookEx(
-		WH_KEYBOARD_LL,
-		SpecialKeysHook,
-		inst.Get(),
-		0
-	);
-	if(!hook)
-	{
-		LOG->Warn("SetWindowsHookEx: Could not create hook (Error %d).", GetLastError());
-	}
-#endif
 
 	SONGMAN->PreloadSongImages();
 

@@ -13,6 +13,7 @@ public:
 
 	virtual void SetText( RString str ) = 0;
 	virtual void SetIcon( const RageSurface *pIcon ) { }
+	virtual void SetSplash( const RString sPath ) { }
 	virtual void SetProgress( const int progress ) { m_progress=progress; }
 	virtual void SetTotalWork( const int totalWork ) { m_totalWork=totalWork; }
 	virtual void SetIndeterminate( bool indeterminate ) { m_indeterminate=indeterminate; }
