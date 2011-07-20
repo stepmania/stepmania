@@ -20,36 +20,12 @@
 ThemeMetric<bool> USE_CREDIT	( "NotesWriterSM", "DescriptionUsesCreditField" );
 
 /**
- * @brief Turn the BackgroundChange into a string.
- * @param bgc the BackgroundChange in question.
- * @return the converted string. */
-static RString BackgroundChangeToString( const BackgroundChange &bgc )
-{
-	// TODO: Technically we need to double-escape the filename (because it might
-	// contain '=') and then unescape the value returned by the MsdFile.
-	RString s = ssprintf( 
-		"%.3f=%s=%.3f=%d=%d=%d=%s=%s=%s=%s=%s", 
-		bgc.m_fStartBeat, 
-		SmEscape(bgc.m_def.m_sFile1).c_str(), 
-		bgc.m_fRate, 
-		bgc.m_sTransition == SBT_CrossFade,		// backward compat
-		bgc.m_def.m_sEffect == SBE_StretchRewind, 	// backward compat
-		bgc.m_def.m_sEffect != SBE_StretchNoLoop, 	// backward compat
-		bgc.m_def.m_sEffect.c_str(), 
-		bgc.m_def.m_sFile2.c_str(), 
-		bgc.m_sTransition.c_str(),
-		SmEscape(RageColor::NormalizeColorString(bgc.m_def.m_sColor1)).c_str(),
-		SmEscape(RageColor::NormalizeColorString(bgc.m_def.m_sColor2)).c_str()
-		);
-	return s;
-}
-
-/**
  * @brief Write out the common tags for .SM files.
  * @param f the file in question.
  * @param out the Song in question. */
 static void WriteGlobalTags( RageFile &f, Song &out )
 {
+	TimingData &timing = out.m_SongTiming;
 	f.PutLine( ssprintf( "#TITLE:%s;", SmEscape(out.m_sMainTitle).c_str() ) );
 	f.PutLine( ssprintf( "#SUBTITLE:%s;", SmEscape(out.m_sSubTitle).c_str() ) );
 	f.PutLine( ssprintf( "#ARTIST:%s;", SmEscape(out.m_sArtist).c_str() ) );
@@ -66,8 +42,9 @@ static void WriteGlobalTags( RageFile &f, Song &out )
 	f.PutLine( ssprintf( "#OFFSET:%.3f;", out.m_SongTiming.m_fBeat0OffsetInSeconds ) );
 	f.PutLine( ssprintf( "#SAMPLESTART:%.3f;", out.m_fMusicSampleStartSeconds ) );
 	f.PutLine( ssprintf( "#SAMPLELENGTH:%.3f;", out.m_fMusicSampleLengthSeconds ) );
-	if( out.m_fSpecifiedLastBeat > 0 )
-		f.PutLine( ssprintf("#LASTBEATHINT:%.3f;", out.m_fSpecifiedLastBeat) );
+	float specBeat = out.GetSpecifiedLastBeat();
+	if( specBeat > 0 )
+		f.PutLine( ssprintf("#LASTBEATHINT:%.3f;", specBeat) );
 
 	f.Write( "#SELECTABLE:" );
 	switch(out.m_SelectionDisplay)
@@ -98,44 +75,46 @@ static void WriteGlobalTags( RageFile &f, Song &out )
 
 
 	f.Write( "#BPMS:" );
-	for( unsigned i=0; i<out.m_SongTiming.m_BPMSegments.size(); i++ )
+	vector<TimingSegment *> &bpms = timing.allTimingSegments[SEGMENT_BPM];
+	for( unsigned i=0; i<bpms.size(); i++ )
 	{
-		const BPMSegment &bs = out.m_SongTiming.m_BPMSegments[i];
+		const BPMSegment *bs = static_cast<BPMSegment *>(bpms[i]);
 
-		f.PutLine( ssprintf( "%.3f=%.3f", bs.GetBeat(), bs.GetBPM() ) );
-		if( i != out.m_SongTiming.m_BPMSegments.size()-1 )
+		f.PutLine( ssprintf( "%.3f=%.3f", bs->GetBeat(), bs->GetBPM() ) );
+		if( i != bpms.size()-1 )
 			f.Write( "," );
 	}
 	f.PutLine( ";" );
 	
-	unsigned wSize = out.m_SongTiming.m_WarpSegments.size();
+	vector<TimingSegment *> &warps = timing.allTimingSegments[SEGMENT_WARP];
+	unsigned wSize = warps.size();
 	if( wSize > 0 )
 	{
 		for( unsigned i=0; i < wSize; i++ )
 		{
-			int iRow = out.m_SongTiming.m_WarpSegments[i].GetRow();
+			const WarpSegment *ws = static_cast<WarpSegment *>(warps[i]);
+			int iRow = ws->GetRow();
 			float fBPS = 60 / out.m_SongTiming.GetBPMAtRow(iRow);
-			float fSkip = fBPS * out.m_SongTiming.m_WarpSegments[i].GetLength();
-			StopSegment ss(iRow, -fSkip, false);
-			out.m_SongTiming.AddStopSegment( ss );
+			float fSkip = fBPS * ws->GetLength();
+			out.m_SongTiming.AddSegment(SEGMENT_STOP_DELAY,
+										new StopSegment(iRow, -fSkip, false) );
 		}
 	}
 
 	f.Write( "#STOPS:" );
-	for( unsigned i=0; i<out.m_SongTiming.m_StopSegments.size(); i++ )
+	vector<TimingSegment *> &stops = timing.allTimingSegments[SEGMENT_STOP_DELAY];
+	for( unsigned i=0; i<stops.size(); i++ )
 	{
-		const StopSegment &fs = out.m_SongTiming.m_StopSegments[i];
-		float fBeat = fs.GetBeat();
-		if (fs.GetDelay()) fBeat--;
+		const StopSegment *fs = static_cast<StopSegment *>(stops[i]);
+		float fBeat = fs->GetBeat();
+		if (fs->GetDelay()) fBeat--;
 		
-		f.PutLine( ssprintf( "%.3f=%.3f", fBeat, fs.GetPause() ) );
-		if( i != out.m_SongTiming.m_StopSegments.size()-1 )
+		f.PutLine( ssprintf( "%.3f=%.3f", fBeat, fs->GetPause() ) );
+		if( i != stops.size()-1 )
 			f.Write( "," );
-		if( fs.GetPause() < 0 )
+		if( fs->GetPause() < 0 )
 		{
-			out.m_SongTiming.m_StopSegments.erase( 
-					     out.m_SongTiming.m_StopSegments.begin()+i,
-					     out.m_SongTiming.m_StopSegments.begin()+i+1 );
+			stops.erase(stops.begin()+i,stops.begin()+i+1 );
 			i--;
 		}
 	}
@@ -151,7 +130,7 @@ static void WriteGlobalTags( RageFile &f, Song &out )
 			f.Write( ssprintf("#BGCHANGES%d:", b+1) );
 
 		FOREACH_CONST( BackgroundChange, out.GetBackgroundChanges(b), bgc )
-			f.PutLine( BackgroundChangeToString(*bgc)+"," );
+			f.PutLine( (*bgc).ToString() +"," );
 
 		/* If there's an animation plan at all, add a dummy "-nosongbg-" tag to indicate that
 		 * this file doesn't want a song BG entry added at the end.  See SMLoader::TidyUpData.
@@ -167,7 +146,7 @@ static void WriteGlobalTags( RageFile &f, Song &out )
 		f.Write( "#FGCHANGES:" );
 		FOREACH_CONST( BackgroundChange, out.GetForegroundChanges(), bgc )
 		{
-			f.PutLine( BackgroundChangeToString(*bgc)+"," );
+			f.PutLine( (*bgc).ToString() +"," );
 		}
 		f.PutLine( ";" );
 	}
@@ -181,16 +160,7 @@ static void WriteGlobalTags( RageFile &f, Song &out )
 	}
 	f.PutLine( ";" );
 
-	f.Write( "#ATTACKS:" );
-	for( unsigned a=0; a < out.m_sAttackString.size(); a++ )
-	{
-		RString sData = out.m_sAttackString[a];
-		f.Write( ssprintf( "%s", sData.c_str() ) );
-
-		if( a != (out.m_sAttackString.size() - 1) )
-			f.Write( ":" );	// Not the end, so write a divider ':'
-	}
-	f.PutLine( ";" );
+	f.PutLine( ssprintf("#ATTACKS:%s;", out.GetAttackString().c_str()) );
 }
 
 /**
@@ -225,7 +195,7 @@ static RString GetSMNotesTag( const Song &song, const Steps &in )
 		GAMEMAN->GetStepsTypeInfo(in.m_StepsType).szName, SmEscape(in.GetDescription()).c_str()) );
 	lines.push_back( song.m_vsKeysoundFile.empty() ? "#NOTES:" : "#NOTES2:" );
 	lines.push_back( ssprintf( "     %s:", GAMEMAN->GetStepsTypeInfo(in.m_StepsType).szName ) );
-	RString desc = (USE_CREDIT ? in.GetCredit() : in.GetDescription());
+	RString desc = (USE_CREDIT ? in.GetCredit() : in.GetChartName());
 	lines.push_back( ssprintf( "     %s:", SmEscape(desc).c_str() ) );
 	lines.push_back( ssprintf( "     %s:", DifficultyToString(in.GetDifficulty()).c_str() ) );
 	lines.push_back( ssprintf( "     %d:", in.GetMeter() ) );

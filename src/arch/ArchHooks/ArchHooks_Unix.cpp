@@ -278,7 +278,7 @@ void ArchHooks::MountInitialFilesystems( const RString &sDirOfExecutable )
 	const char *szHome = getenv( "HOME" );
 	RString sProductId = PRODUCT_ID;
 	sProductId.MakeLower();
-	RString sUserDataPath = ssprintf( "%s/.%s", szHome? szHome:".", sProductId.c_str() );
+	RString sUserDataPath = ssprintf( "%s/.%s", szHome? szHome:".", "stepmania5" );
 	FILEMAN->Mount( "dir", sUserDataPath + "/Cache", "/Cache" );
 	FILEMAN->Mount( "dir", sUserDataPath + "/Logs", "/Logs" );
 	FILEMAN->Mount( "dir", sUserDataPath + "/Save", "/Save" );

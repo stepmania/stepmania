@@ -16,16 +16,17 @@ class Steps;
 class Profile;
 struct lua_State;
 
+/** @brief What is needed to unlock an item? */
 enum UnlockRequirement
 {
-	UnlockRequirement_ArcadePoints,
-	UnlockRequirement_DancePoints,
-	UnlockRequirement_SongPoints,
-	UnlockRequirement_ExtraCleared,
-	UnlockRequirement_ExtraFailed,
-	UnlockRequirement_Toasties,
-	UnlockRequirement_StagesCleared,
-	UnlockRequirement_NumUnlocked,
+	UnlockRequirement_ArcadePoints, /**< Get a certain number of arcade points. */
+	UnlockRequirement_DancePoints, /**< Get a certain number of dance points. */
+	UnlockRequirement_SongPoints, /**< Get a certain number of song points. */
+	UnlockRequirement_ExtraCleared, /**< Pass the extra stage. */
+	UnlockRequirement_ExtraFailed, /**< Fail the extra stage. */
+	UnlockRequirement_Toasties, /**< Get a number of toasties. */
+	UnlockRequirement_StagesCleared, /**< Clear a number of stages. */
+	UnlockRequirement_NumUnlocked, /**< Have a number of locked items already unlocked. */
 	NUM_UnlockRequirement,
 	UnlockRequirement_Invalid,
 };
@@ -33,10 +34,11 @@ LuaDeclareType( UnlockRequirement );
 
 
 enum UnlockRewardType {
-	UnlockRewardType_Song, 
-	UnlockRewardType_Steps, 
-	UnlockRewardType_Course, 
-	UnlockRewardType_Modifier, 
+	UnlockRewardType_Song, /**< A song is unlocked. */
+	UnlockRewardType_Steps, /**< A step pattern for all styles is unlocked. */
+	UnlockRewardType_Steps_Type, /**< A step pattern for a specific style is unlocked. */
+	UnlockRewardType_Course, /**< A course is unlocked. */
+	UnlockRewardType_Modifier, /**< A modifier is unlocked. */
 	NUM_UnlockRewardType, 
 	UnlockRewardType_Invalid
 };
@@ -60,7 +62,8 @@ public:
 	 * if not specified. */
 	UnlockEntry(): m_Type(UnlockRewardType_Invalid), m_cmd(),
 		m_Song(), m_dc(Difficulty_Invalid), m_Course(),
-		m_bRequirePassHardSteps(false), m_bRoulette(false),
+		m_StepsType(StepsType_Invalid), m_bRequirePassHardSteps(false),
+		m_bRequirePassChallengeSteps(false), m_bRoulette(false),
 		m_sEntryID(RString(""))
 	{
 		ZERO( m_fRequirement );
@@ -74,9 +77,13 @@ public:
 	SongID	m_Song;
 	Difficulty m_dc;
 	CourseID m_Course;
+	StepsType m_StepsType;
 
 	float	m_fRequirement[NUM_UnlockRequirement];	// unlocked if any of of these are met
+	/** @brief Must the hard steps be passed to unlock a higher level? */
 	bool	m_bRequirePassHardSteps;
+	/** @brief Must the challenge steps be passed to unlock a higher level? */
+	bool	m_bRequirePassChallengeSteps;
 	bool	m_bRoulette;
 	RString	m_sEntryID;
 
@@ -117,6 +124,7 @@ public:
 	float PointsUntilNextUnlock( UnlockRequirement t ) const;
 	int SongIsLocked( const Song *pSong ) const;
 	bool StepsIsLocked( const Song *pSong, const Steps *pSteps ) const;
+	bool StepsTypeIsLocked( const Song *pSong, const Steps *pSteps, const StepsType *pSType ) const;
 	int CourseIsLocked( const Course *course ) const;
 	bool ModifierIsLocked( const RString &sOneMod ) const;
 
@@ -153,6 +161,7 @@ public:
 
 	const UnlockEntry *FindSong( const Song *pSong ) const;
 	const UnlockEntry *FindSteps( const Song *pSong, const Steps *pSteps ) const;
+	const UnlockEntry *FindStepsType( const Song *pSong, const Steps *pSteps, const StepsType *pSType ) const;
 	const UnlockEntry *FindCourse( const Course *pCourse ) const;
 	const UnlockEntry *FindModifier( const RString &sOneMod ) const;
 

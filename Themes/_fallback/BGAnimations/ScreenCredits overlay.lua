@@ -25,7 +25,8 @@ local ssc = {
 }
 
 local sm_ssc = {
-	"Jason Felds (wolfman2000)",
+	"Jason Felds (wolfman2000)", -- Timing Segments, Split Timing, optimization
+	"Thai Pangsakulyanont (theDtTvB)", -- BMS, Split Timing, optimization
 	"Alberto Ramos (Daisuke Master)",
 	"Jack Walstrom (FSX)",
 }
@@ -39,9 +40,10 @@ local stepmania = {
 
 local contrib = {
 	"Aldo Fregoso (Aldo_MX)", -- delays
-	"Chris Eldridge (kurisu)", -- dance-threepanel
 	"cerbo",
 	"cesarmades", -- pump/cmd* noteskins
+	"Chris Eldridge (kurisu)", -- dance-threepanel
+	"Christophe Goulet-LeBlanc (Kommisar)",
 	"corec", -- various fixes
 	"galopin", -- piu PlayStation2 usb mat support
 	"gholms", -- automake 1.11 support
@@ -49,8 +51,8 @@ local contrib = {
 	"Kaox", -- pump/default noteskin
 	"NitroX72", -- pump/frame noteskin
 	"sy567", -- beginner helper fix
-	"Thai Pangsakulyanont (theDtTvB)",
 	"v1toko", -- x-mode from StepNXA
+	"waiei", -- custom scoring fixes + Hybrid scoring
 }
 
 local thanks = {
@@ -70,10 +72,11 @@ local thanks = {
 
 local shoutout = {
 	"The Lua team", -- lua project lead or some shit. super nerdy but oh hell.
-	"Mojang", -- minecraft forever -freem
+	"Mojang AB", -- minecraft forever -freem
 	"NAKET Coder",
 	"Ciera Boyd", -- you bet your ass I'm putting my girlfriend in the credits
 	--Image(), -- we should have some logos probably to look super pro
+	"#KBO",
 	"You showed us... your ultimate dance",
 	-- "Can't stop crying... buckets of tears!"
 }

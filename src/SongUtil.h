@@ -13,6 +13,8 @@ class Steps;
 class Profile;
 class XNode;
 
+void AppendOctal( int n, int digits, RString &out );
+
 /** @brief The criteria for dealing with songs. */
 class SongCriteria
 {
@@ -157,18 +159,33 @@ namespace SongUtil
 	 * @return true if it is unique, false otherwise.
 	 */
 	bool IsEditDescriptionUnique( const Song* pSong, StepsType st, const RString &sPreferredDescription, const Steps *pExclude );
+	bool IsChartNameUnique( const Song* pSong, StepsType st, const RString &name, const Steps *pExclude );
 	RString MakeUniqueEditDescription( const Song* pSong, StepsType st, const RString &sPreferredDescription );
 	bool ValidateCurrentEditStepsDescription( const RString &sAnswer, RString &sErrorOut );
 	bool ValidateCurrentStepsDescription( const RString &sAnswer, RString &sErrorOut );
 	bool ValidateCurrentStepsCredit( const RString &sAnswer, RString &sErrorOut );
+	bool ValidateCurrentStepsChartName(const RString &answer, RString &error);
 
 	void GetAllSongGenres( vector<RString> &vsOut );
-	void FilterSongs( const SongCriteria &sc, const vector<Song*> &in, vector<Song*> &out );
+	/**
+	 * @brief Filter the selection of songs to only match certain criteria.
+	 * @param sc the intended song criteria.
+	 * @param in the starting batch of songs.
+	 * @param out the resulting batch.
+	 * @param doCareAboutGame a flag to see if we should only get playable steps. */
+	void FilterSongs( const SongCriteria &sc, const vector<Song*> &in, vector<Song*> &out,
+			 bool doCareAboutGame = false );
 
 	void GetPlayableStepsTypes( const Song *pSong, set<StepsType> &vOut );
 	void GetPlayableSteps( const Song *pSong, vector<Steps*> &vOut );
 	bool IsStepsTypePlayable( Song *pSong, StepsType st );
 	bool IsStepsPlayable( Song *pSong, Steps *pSteps );
+	
+	/**
+	 * @brief Determine if the song has any playable steps in the present game.
+	 * @param s the current song.
+	 * @return true if the song has playable steps, false otherwise. */
+	bool IsSongPlayable( Song *s );
 
 	bool GetStepsTypeAndDifficultyFromSortOrder( SortOrder so, StepsType &st, Difficulty &dc );
 }

@@ -127,7 +127,7 @@ void ScreenUnlockStatus::Init()
 				break;
 			default:
 				text->SetText( "" );
-				text->SetDiffuse( RageColor(0.5,0,0,1) );
+				text->SetDiffuse( RageColor(0.5f,0,0,1) );
 				break;
 			}
 

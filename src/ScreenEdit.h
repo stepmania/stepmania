@@ -60,10 +60,15 @@ enum EditButton
 	EDIT_BUTTON_CYCLE_TAP_LEFT, /**< Rotate the available tap notes once to the "left". */
 	EDIT_BUTTON_CYCLE_TAP_RIGHT, /**< Rotate the available tap notes once to the "right". */
 
+	EDIT_BUTTON_CYCLE_SEGMENT_LEFT, /**< Select one segment to the left for jumping. */
+	EDIT_BUTTON_CYCLE_SEGMENT_RIGHT, /**< Select one segment to the right for jumping. */
+	
 	EDIT_BUTTON_SCROLL_UP_LINE,
 	EDIT_BUTTON_SCROLL_UP_PAGE,
+	EDIT_BUTTON_SCROLL_UP_TS,
 	EDIT_BUTTON_SCROLL_DOWN_LINE,
 	EDIT_BUTTON_SCROLL_DOWN_PAGE,
+	EDIT_BUTTON_SCROLL_DOWN_TS,
 	EDIT_BUTTON_SCROLL_NEXT_MEASURE,
 	EDIT_BUTTON_SCROLL_PREV_MEASURE,
 	EDIT_BUTTON_SCROLL_HOME,
@@ -71,8 +76,8 @@ enum EditButton
 	EDIT_BUTTON_SCROLL_NEXT,
 	EDIT_BUTTON_SCROLL_PREV,
 
-	EDIT_BUTTON_LABEL_NEXT, /**< Jump to the start of the next label downward. */
-	EDIT_BUTTON_LABEL_PREV, /**< Jump to the start of the previous label upward. */
+	EDIT_BUTTON_SEGMENT_NEXT, /**< Jump to the start of the next segment downward. */
+	EDIT_BUTTON_SEGMENT_PREV, /**< Jump to the start of the previous segment upward. */
 	
 	// These are modifiers to EDIT_BUTTON_SCROLL_*.
 	EDIT_BUTTON_SCROLL_SELECT,
@@ -87,13 +92,18 @@ enum EditButton
 
 	EDIT_BUTTON_OPEN_EDIT_MENU,
 	EDIT_BUTTON_OPEN_TIMING_MENU,
+	EDIT_BUTTON_OPEN_ALTER_MENU,
 	EDIT_BUTTON_OPEN_AREA_MENU,
 	EDIT_BUTTON_OPEN_BGCHANGE_LAYER1_MENU,
 	EDIT_BUTTON_OPEN_BGCHANGE_LAYER2_MENU,
 	EDIT_BUTTON_OPEN_COURSE_MENU,
 	EDIT_BUTTON_OPEN_COURSE_ATTACK_MENU,
+	
+	EDIT_BUTTON_OPEN_STEP_ATTACK_MENU, /**< Open up the Step Attacks menu. */
+	EDIT_BUTTON_ADD_STEP_MODS, /**< Add a mod attack to the row. */
+	
 	EDIT_BUTTON_OPEN_INPUT_HELP,
-
+	
 	EDIT_BUTTON_BAKE_RANDOM_FROM_SONG_GROUP,
 	EDIT_BUTTON_BAKE_RANDOM_FROM_SONG_GROUP_AND_GENRE,
 
@@ -209,7 +219,12 @@ public:
 	virtual void PushSelf( lua_State *L );
 
 protected:
-	virtual ScreenType GetScreenType() const { return m_EditState==STATE_PLAYING ? gameplay : ScreenWithMenuElements::GetScreenType(); }
+	virtual ScreenType GetScreenType() const
+	{ 
+		return m_EditState==STATE_PLAYING ? 
+		gameplay : 
+		ScreenWithMenuElements::GetScreenType();
+	}
 
 	void TransitionEditState( EditState em );
 	void ScrollTo( float fDestinationBeat );
@@ -251,6 +266,9 @@ protected:
 
 	BitmapText		m_textInputTips;
 	
+	/** @brief The player options before messing with attacks. */
+	ModsGroup<PlayerOptions>	originalPlayerOptions;
+	
 	/**
 	 * @brief Keep a backup of the present Step TimingData when
 	 * entering a playing or recording state.
@@ -258,9 +276,18 @@ protected:
 	 * This is mainly to allow playing a chart with Song Timing. */
 	TimingData		backupStepTiming;
 	
+	/**
+	 * @brief Have a backup of the TimingData of the player's choice.
+	 *
+	 * This will be used for copying and pasting as required. */
+	TimingData		clipboardTiming;
+	
 	/** @brief The current TapNote that would be inserted. */
 	TapNote			m_selectedTap;
 
+	/** @brief The type of segment users will jump back and forth between. */
+	TimingSegmentType	currentCycleSegment;
+	
 	void UpdateTextInfo();
 	BitmapText		m_textInfo; // status information that changes
 	bool			m_bTextInfoNeedsUpdate;
@@ -268,7 +295,8 @@ protected:
 	BitmapText		m_textPlayRecordHelp;
 
 	// keep track of where we are and what we're doing
-	float			m_fTrailingBeat; // this approaches GAMESTATE->m_fSongBeat, which is the actual beat
+	float			m_fTrailingBeat;
+	// the above approaches GAMESTATE->m_fSongBeat, which is the actual beat
 	/**
 	 * @brief The location we were at when shift was pressed.
 	 *
@@ -355,6 +383,7 @@ public:
 		options, /**< Modify the PlayerOptions and SongOptions. */
 		edit_song_info, /**< Edit some general information about the song. */
 		edit_timing_data, /**< Edit the chart's timing data. */
+		view_steps_data, /**< View step statistics. */
 		play_preview_music, /**< Play the song's preview music. */
 		exit,
 		save_on_exit,
@@ -365,31 +394,61 @@ public:
 	void HandleMainMenuChoice( MainMenuChoice c ) { const vector<int> v; HandleMainMenuChoice( c, v ); }
 	MainMenuChoice m_CurrentAction;
 
+	/** @brief How does one alter a selection of NoteData? */
+	enum AlterMenuChoice
+	{
+		cut, /**< Cut the notes. */
+		copy, /**< Copy the notes. */
+		clear, /**< Erase the notes, without putting them in the clipboard. */
+		quantize, /**< Sync the notes to an exact level. */
+		turn, /**< Rotate the notes. */
+		transform, /**< Activate a specific mod. */
+		alter, /**< Perform other transformations. */
+		tempo, /**< Modify the tempo of the notes. */
+		play, /**< Play the notes in the range. */
+		record, /**< Record new notes in the range. */
+		preview_designation, /**< Set the area as the music preview. */
+		convert_to_pause, /**< Convert the range into a StopSegment. */
+		convert_to_delay, /**< Convert the range into a DelaySegment. */
+		convert_to_warp, /**< Convert the range into a WarpSegment. */
+		convert_to_fake, /**< Convert the range into a FakeSegment. */
+		convert_to_attack, /**< Convert the range into an Attack. */
+		routine_invert_notes, /**< Switch which player hits the note. */
+		routine_mirror_1_to_2, /**< Mirror Player 1's notes for Player 2. */
+		routine_mirror_2_to_1, /**< Mirror Player 2's notes for Player 1. */
+		NUM_ALTER_MENU_CHOICES
+		
+	};
+	
 	enum AreaMenuChoice
 	{
-		cut,
-		copy,
 		paste_at_current_beat,
 		paste_at_begin_marker,
-		clear,
-		quantize,
-		turn,
-		transform,
-		alter,
-		tempo,
-		play,
-		record,
 		insert_and_shift,
 		delete_and_shift,
 		shift_pauses_forward,
 		shift_pauses_backward,
-		convert_to_pause,
 		convert_pause_to_beat,
+		convert_delay_to_beat,
+		last_second_at_beat,
 		undo,
+		clear_clipboard,
 		NUM_AREA_MENU_CHOICES
 	};
+	void HandleAlterMenuChoice(AlterMenuChoice c,
+				   const vector<int> &iAnswers,
+				   bool bAllowUndo = true);
+	void HandleAlterMenuChoice(AlterMenuChoice c,
+				   bool bAllowUndo = true)
+	{
+		const vector<int> v; HandleAlterMenuChoice(c, v, bAllowUndo);
+	}
+	
 	void HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAnswers, bool bAllowUndo = true );
-	void HandleAreaMenuChoice( AreaMenuChoice c, bool bAllowUndo = true ) { const vector<int> v; HandleAreaMenuChoice( c, v, bAllowUndo ); }
+	void HandleAreaMenuChoice( AreaMenuChoice c, bool bAllowUndo = true )
+	{ 
+		const vector<int> v; HandleAreaMenuChoice( c, v, bAllowUndo );
+	}
 	/** @brief How should the selected notes be transformed? */
 	enum TurnType
 	{
@@ -449,26 +508,39 @@ public:
 
 	enum StepsInformationChoice
 	{
-		difficulty,
-		meter,
+		difficulty, /**< What is the difficulty of this chart? */
+		meter, /**< What is the numerical rating of this chart? */
+		predict_meter, /**< What does the game think this chart's rating should be? */
+		chartname, /**< What is the name of this chart? */
 		description, /**< What is the description of this chart? */
 		chartstyle, /**< How is this chart meant to be played? */
 		step_credit, /**< Who wrote this individual chart? */
-		predict_meter, /**< What does the game think this chart's rating should be? */
+		step_display_bpm,
+		step_min_bpm,
+		step_max_bpm,
+		NUM_STEPS_INFORMATION_CHOICES
+	};
+	void HandleStepsInformationChoice( StepsInformationChoice c, const vector<int> &iAnswers );
+	
+	enum StepsDataChoice
+	{
 		tap_notes,
 		jumps,
 		hands,
 		quads,
 		holds,
 		mines,
+		rolls,
+		lifts,
+		fakes,
 		stream,
 		voltage,
 		air,
 		freeze,
 		chaos,
-		NUM_STEPS_INFORMATION_CHOICES
+		NUM_STEPS_DATA_CHOICES
 	};
-	void HandleStepsInformationChoice( StepsInformationChoice c, const vector<int> &iAnswers );
+	void HandleStepsDataChoice(StepsDataChoice c, const vector<int> &answers);
 
 	enum SongInformationChoice
 	{
@@ -480,7 +552,7 @@ public:
 		main_title_transliteration,
 		sub_title_transliteration,
 		artist_transliteration,
-		last_beat_hint,
+		last_second_hint,
 		preview_start,
 		preview_length,
 		display_bpm,
@@ -507,11 +579,14 @@ public:
 		speed_mode,
 		scroll,
 		fake,
+		copy_timing,
+		paste_timing,
 		erase_step_timing,
 		NUM_TIMING_DATA_INFORMATION_CHOICES
 	};
 	
-	void HandleTimingDataInformationChoice ( TimingDataInformationChoice c, const vector<int> &iAnswers );
+	void HandleTimingDataInformationChoice (TimingDataInformationChoice c, 
+						const vector<int> &iAnswers );
 
 	enum BGChangeChoice
 	{
@@ -562,6 +637,14 @@ public:
 		remove,
 		NUM_CourseAttackChoice
 	};
+	
+	enum StepAttackChoice
+	{
+		sa_duration,
+		sa_set_mods,
+		sa_remove,
+		NUM_StepAttackChoice
+	};
 
 	void InitEditMappings();
 	EditButton DeviceToEdit( const DeviceInput &DeviceI ) const;
@@ -581,7 +664,9 @@ public:
 	MapEditButtonToMenuButton m_RecordPausedMappingsMenuButton;
 
 	void MakeFilteredMenuDef( const MenuDef* pDef, MenuDef &menu );
-	void EditMiniMenu( const MenuDef* pDef, ScreenMessage SM_SendOnOK = SM_None, ScreenMessage SM_SendOnCancel = SM_None );
+	void EditMiniMenu(const MenuDef* pDef, 
+			  ScreenMessage SM_SendOnOK = SM_None, 
+			  ScreenMessage SM_SendOnCancel = SM_None );
 private:
 	/**
 	 * @brief Retrieve the appropriate TimingData based on GAMESTATE.

@@ -7,6 +7,8 @@
 #include "RageFileManager.h"
 #include "RageFile.h"
 #include "Sprite.h"
+
+#if !defined(WITHOUT_NETWORKING)
 /** @brief Parses JSON for downloadable content. */
 class ScreenPackagesSSC : public ScreenWithMenuElements
 {
@@ -24,6 +26,7 @@ public:
 private:
 	RString JSONParse( const RString &string_in );
 };
+#endif // WITHOUT_NETWORKING?
 
 #endif
 

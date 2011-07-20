@@ -64,6 +64,11 @@ struct BackgroundChange
 	RString m_sTransition;
 
 	RString GetTextDescription() const;
+	
+	/**
+	 * @brief Get the string representation of the change.
+	 * @return the string representation. */
+	RString ToString() const;
 };
 /** @brief Shared background-related routines. */
 namespace BackgroundUtil

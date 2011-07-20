@@ -83,6 +83,44 @@ local DropBezier =
 function Actor:drop(t)
 	self:tween( t, "TweenType_Bezier", DropBezier );
 end
+
+-- compound tweens "combine multiple interpolators to allow generating more
+-- complex tweens." length is how long to span the animation for, while
+-- ... is either a string (e.g. "linear,0.25,accelerate,0.75") or a table
+-- with the tween information.
+function Actor:compound(length,...)
+	local tweens = ...
+
+	if type(tweens) == "string" then
+		local parsed = split(";",tweens)
+		tweens = {} -- convert to table
+		for i,s in pairs(parsed) do
+			local res = split(",",s)
+
+			tweens[i] = {
+				Type = res[1],
+				Percent = res[2],
+				Bezier = res[3] or nil
+			}
+		end
+	end
+
+	for i,t in pairs(tweens) do
+		if t.Type == "linear" then self:linear(t.Percent*length)
+		elseif t.Type == "accelerate" then self:accelerate(t.Percent*length)
+		elseif t.Type == "decelerate" then self:decelerate(t.Percent*length)
+		elseif t.Type == "spring" then self:spring(t.Percent*length)
+		elseif t.Type == "bouncebegin" then self:bouncebegin(t.Percent*length)
+		elseif t.Type == "bounceend" then self:bounceend(t.Percent*length)
+		elseif t.Type == "smooth" then self:smooth(t.Percent*length)
+		elseif t.Type == "drop" then self:smooth(t.Percent*length)
+		--elseif t.Type == "ease" then self:ease(t.Percent*length)
+		elseif t.Type == "bezier" then
+			-- todo: handle using tween and 'TweenType_Bezier'
+		end
+	end
+end
+
 -- Hide if b is true, but don't unhide if b is false.
 function Actor:hide_if(b)
 	if b then
@@ -114,17 +152,32 @@ function Actor:FullScreen()
 end
 
 --[[ Typical background sizes:
-320x240 - DDR 1st-Extreme, most NVLM_ZK songs
-640x480 - most simfiles in distribution today are this big.
-768x480 - 16:10 aspect ratio backgrounds
-854x480 - pump it up pro
+320x240 - [4:3]
+640x480 - [4:3] (most simfiles in distribution today use this res.)
+768x480 - [16:10]
+854x480 - [16:9]
 ]]
--- "Most backgrounds are 640x480. Some are 768x480. Stretch the 4:3 ones."
 function Actor:scale_or_crop_background()
-	if (self:GetWidth() * 3) / 4 == self:GetHeight() then
+	local gw = self:GetWidth()
+	local gh = self:GetHeight()
+
+	local graphicAspect = gw/gh
+	local displayAspect = DISPLAY:GetDisplayWidth()/DISPLAY:GetDisplayHeight()
+
+	if graphicAspect == displayAspect then
+		-- bga matches the current aspect, we can stretch it.
 		self:stretchto( 0,0,SCREEN_WIDTH,SCREEN_HEIGHT );
 	else
+		-- temp
 		self:scaletocover( 0,0,SCREEN_WIDTH,SCREEN_HEIGHT );
+		--[[
+		-- bga doesn't match the aspect.
+		if displayAspect > graphicAspect then
+			-- the graphic is smaller than the display aspect ratio
+		else
+			-- the graphic is bigger than the display aspect ratio; crop me
+		end
+		--]]
 	end
 end
 

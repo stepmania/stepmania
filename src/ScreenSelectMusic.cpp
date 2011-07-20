@@ -68,7 +68,7 @@ void ScreenSelectMusic::Init()
 		GAMESTATE->m_PlayMode.Set( PLAY_MODE_REGULAR );
 		GAMESTATE->SetCurrentStyle( GAMEMAN->GameAndStringToStyle(GAMEMAN->GetDefaultGame(),"versus") );
 		GAMESTATE->JoinPlayer( PLAYER_1 );
-		GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
+		GAMESTATE->SetMasterPlayerNumber(PLAYER_1);
 	}
 
 	SAMPLE_MUSIC_DELAY_INIT.Load( m_sName, "SampleMusicDelayInit" );
@@ -1020,7 +1020,7 @@ void ScreenSelectMusic::HandleMessage( const Message &msg )
 
 		// TODO: Invalidate the CurSteps only if they are no longer playable.
 		// That way, after music change will clamp to the nearest in the StepsDisplayList.
-		GAMESTATE->m_pCurSteps[GAMESTATE->m_MasterPlayerNumber].SetWithoutBroadcast( NULL );
+		GAMESTATE->m_pCurSteps[GAMESTATE->GetMasterPlayerNumber()].SetWithoutBroadcast( NULL );
 		FOREACH_ENUM( PlayerNumber, p )
 			GAMESTATE->m_pCurSteps[p].SetWithoutBroadcast( NULL );
 
@@ -1392,7 +1392,7 @@ void ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 			if( pStyle == NULL )
 			{
 				StepsType stCurrent;
-				PlayerNumber pn = GAMESTATE->m_MasterPlayerNumber;
+				PlayerNumber pn = GAMESTATE->GetMasterPlayerNumber();
 				if( GAMESTATE->IsCourseMode() )
 				{
 					ASSERT( GAMESTATE->m_pCurTrail[pn] );
@@ -1615,7 +1615,7 @@ void ScreenSelectMusic::SwitchToPreferredDifficulty()
 	if( GAMESTATE->DifficultiesLocked() )
 	{
 		FOREACH_HumanPlayer( p )
-			m_iSelection[p] = m_iSelection[GAMESTATE->m_MasterPlayerNumber];
+			m_iSelection[p] = m_iSelection[GAMESTATE->GetMasterPlayerNumber()];
 	}
 }
 

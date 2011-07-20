@@ -256,7 +256,7 @@ void AdjustSync::AutosyncTempo()
 		// keep only a fraction of the data, such as the 80% with the lowest
 		// error.  However, throwing away the ones with high error should
 		// be enough in most cases.
-		float fFilteredError = 0.0;
+		float fFilteredError = 0;
 		s_iStepsFiltered = s_vAutosyncTempoData.size();
 		FilterHighErrorPoints( s_vAutosyncTempoData, fSlope, fIntercept, ERROR_TOO_HIGH );
 		s_iStepsFiltered -= s_vAutosyncTempoData.size();
@@ -266,14 +266,23 @@ void AdjustSync::AutosyncTempo()
 
 		GAMESTATE->m_pCurSong->m_SongTiming.m_fBeat0OffsetInSeconds += fIntercept;
 		const float fScaleBPM = 1.0f/(1.0f - fSlope);
-		FOREACH( BPMSegment, GAMESTATE->m_pCurSong->m_SongTiming.m_BPMSegments, i )
-			i->SetBPM( i->GetBPM() * fScaleBPM );
+		TimingData &timing = GAMESTATE->m_pCurSong->m_SongTiming;
+		vector<TimingSegment *> &bpms = timing.allTimingSegments[SEGMENT_BPM];
+		for (unsigned i = 0; i < bpms.size(); i++)
+		{
+			BPMSegment *b = static_cast<BPMSegment *>(bpms[i]);
+			b->SetBPM(b->GetBPM() * fScaleBPM);
+		}
 
 		/* We assume that the stops were measured as a number of beats.
 		 * Therefore, if we change the bpms, we need to make a similar
 		 * change to the stops. */
-		FOREACH( StopSegment, GAMESTATE->m_pCurSong->m_SongTiming.m_StopSegments, i )
-			i->SetPause(i->GetPause() * (1.0f - fSlope));
+		vector<TimingSegment *> &stops = timing.allTimingSegments[SEGMENT_STOP_DELAY];
+		for (unsigned i = 0; i < stops.size(); i++)
+		{
+			StopSegment *s = static_cast<StopSegment *>(stops[i]);
+			s->SetPause(s->GetPause() * (1.0f - fSlope));
+		}
 
 		SCREENMAN->SystemMessage( AUTOSYNC_CORRECTION_APPLIED.GetValue() );
 	}
@@ -343,10 +352,14 @@ void AdjustSync::GetSyncChangeTextSong( vector<RString> &vsAddTo )
 			}
 		}
 
-		for( unsigned i=0; i< testing.m_BPMSegments.size(); i++ )
+		vector<TimingSegment *> &bpmTest = testing.allTimingSegments[SEGMENT_BPM];
+		vector<TimingSegment *> &bpmOrig = original.allTimingSegments[SEGMENT_BPM];
+		for( unsigned i=0; i< bpmTest.size(); i++ )
 		{
-			float fOld = Quantize( original.m_BPMSegments[i].GetBPM(), 0.001f );
-			float fNew = Quantize( testing.m_BPMSegments[i].GetBPM(), 0.001f );
+			BPMSegment *bT = static_cast<BPMSegment *>(bpmTest[i]);
+			BPMSegment *bO = static_cast<BPMSegment *>(bpmOrig[i]);
+			float fOld = Quantize( bO->GetBPM(), 0.001f );
+			float fNew = Quantize( bT->GetBPM(), 0.001f );
 			float fDelta = fNew - fOld;
 
 			if( fabsf(fDelta) > 0.0001f )
@@ -364,10 +377,14 @@ void AdjustSync::GetSyncChangeTextSong( vector<RString> &vsAddTo )
 			}
 		}
 
-		for( unsigned i=0; i< testing.m_StopSegments.size(); i++ )
+		vector<TimingSegment *> &stopTest = testing.allTimingSegments[SEGMENT_STOP_DELAY];
+		vector<TimingSegment *> &stopOrig = original.allTimingSegments[SEGMENT_STOP_DELAY];
+		for( unsigned i=0; i< stopTest.size(); i++ )
 		{
-			float fOld = Quantize( original.m_StopSegments[i].GetPause(), 0.001f );
-			float fNew = Quantize( testing.m_StopSegments[i].GetPause(), 0.001f );
+			StopSegment *sT = static_cast<StopSegment *>(stopTest[i]);
+			StopSegment *sO = static_cast<StopSegment *>(stopOrig[i]);
+			float fOld = Quantize( sO->GetPause(), 0.001f );
+			float fNew = Quantize( sT->GetPause(), 0.001f );
 			float fDelta = fNew - fOld;
 
 			if( fabsf(fDelta) > 0.0001f )

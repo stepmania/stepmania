@@ -59,8 +59,8 @@ void LyricDisplay::Update( float fDeltaTime )
 	if( m_iCurLyricNumber+1 < GAMESTATE->m_pCurSong->m_LyricSegments.size() )
 		fEndTime = pSong->m_LyricSegments[m_iCurLyricNumber+1].m_fStartTime;
 	else
-		fEndTime = pSong->m_SongTiming.GetElapsedTimeFromBeat( pSong->m_fLastBeat );
-
+		fEndTime = pSong->GetLastSecond();
+	
 	const float fDistance = fEndTime - pSong->m_LyricSegments[m_iCurLyricNumber].m_fStartTime;
 	const float fTweenBufferTime = IN_LENGTH.GetValue() + OUT_LENGTH.GetValue();
 

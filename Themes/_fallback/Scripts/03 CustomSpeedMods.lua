@@ -1,8 +1,11 @@
 --[[
-Custom Speed Mods v2.0 (for sm-ssc)
+Custom Speed Mods v2.1 (for StepMania 5)
 by AJ Kelly of KKI Labs ( http://kki.ajworld.net/ )
 
 changelog:
+
+v2.1 (StepMania 5 Preview 2)
+* Added support for m-Mods.
 
 v2.0 (for sm-ssc)
 Giant rewrite of the speed mod parser.
@@ -38,9 +41,6 @@ v1.2
 
 v1.1
 * Cleaned up code some, I think.
-________________________________________________________________________________
-anticipated future changes:
-* M-Mod support (when sm-ssc integrates it)
 ]]
 
 -- ProfileDir(slot): gets the profile dir for slot,
@@ -68,7 +68,7 @@ local function ParseSpeedModFile(path)
 		return mods
 	else
 		-- error; write a fallback mod file and return it
-		local fallbackString = "0.5x,1x,1.5x,2x,3x,4x,8x,C200,C400"
+		local fallbackString = "0.5x,1x,1.5x,2x,3x,4x,8x,C250,C450,m550"
 		Trace("[CustomSpeedMods]: Could not read SpeedMods; writing fallback to "..path)
 		file:Open(path, 2)
 		file:Write(fallbackString)
@@ -148,8 +148,8 @@ end
 
 local function SpeedModSort(tab)
 	local xMods = {}
+	local mMods = {}
 	local cMods = {}
-	--local mMods = {}
 
 	-- convert to numbers so sorting works:
 	for i=1,#tab do
@@ -159,10 +159,10 @@ local function SpeedModSort(tab)
 		if string.find(tab[i],"C%d") then
 			typ = cMods
 			val = string.gsub(tab[i], "C", "")
-		elseif string.find(tab[i],"M%d") then
-			Trace("[CustomSpeedMods] OpenITG's M-Mods are not supported yet in sm-ssc.")
-			--typ = mMods
-			--val = string.gsub(tab[i], "M", "")
+		-- support both cases because I want to hit people -freem
+		elseif string.find(tab[i],"m%d") or string.find(tab[i],"M%d") then
+			typ = mMods
+			val = string.gsub(tab[i], "m", "")
 		else
 			typ = xMods
 			val = string.gsub(tab[i], "x", "")
@@ -175,7 +175,7 @@ local function SpeedModSort(tab)
 	-- sort cMods
 	cMods = AnonSort(cMods)
 	-- sort mMods
-	--mMods = AnonSort(mMods)
+	mMods = AnonSort(mMods)
 	local fin = {}
 	-- convert it back to a string since that's what it expects
 	for i=1,#xMods do
@@ -184,7 +184,9 @@ local function SpeedModSort(tab)
 	for i=1,#cMods do
 		table.insert(fin, "C"..cMods[i])
 	end
-	--for i=1,#mMods do table.insert(fin, "M"..mMods[i]); end;
+	for i=1,#mMods do
+		table.insert(fin, "m"..mMods[i])
+	end
 	return fin
 end
 
@@ -295,7 +297,7 @@ function SpeedMods()
 end
 
 --[[
-Copyright © 2008-2009 AJ Kelly/KKI Labs.
+Copyright © 2008-2011 AJ Kelly/KKI Labs.
 Use freely, so long this notice and the above documentation remains.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"

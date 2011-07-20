@@ -247,3 +247,15 @@ function Hue(color,newHue)
 	c.Hue = newHue
 	return HSVToColor(c)
 end;
+
+function Alpha(color,percent)
+	local c = ColorToHSV(color);
+	-- error checking
+	if percent < 0 then
+		percent = 0.0;
+	elseif percent > 1 then
+		percent = 1.0;
+	end;
+	c.Alpha = percent;
+	return HSVToColor(c);
+end;

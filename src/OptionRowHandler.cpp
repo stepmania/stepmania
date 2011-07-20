@@ -28,6 +28,7 @@
 #define ENTRY_MODE(s,i)		THEME->GetMetric ("ScreenOptionsMaster",ssprintf("%s,%i",(s).c_str(),(i+1)))
 #define ENTRY_DEFAULT(s)	THEME->GetMetric ("ScreenOptionsMaster",(s) + "Default")
 #define NOTE_SKIN_SORT_ORDER	THEME->GetMetric ("ScreenOptionsMaster","NoteSkinSortOrder")
+#define STEPS_USE_CHART_NAME THEME->GetMetricB("ScreenOptionsMaster","StepsUseChartName")
 
 static const char *SelectTypeNames[] = {
 	"SelectOne",
@@ -449,17 +450,33 @@ class OptionRowHandlerListSteps : public OptionRowHandlerList
 				Steps* pSteps = vpSteps[i];
 
 				RString s;
+				if (STEPS_USE_CHART_NAME)
+				{
+					s = pSteps->GetChartName();
+					// TODO: find a way to make this use lua or metrics.
+					if (!(s == "" || s == "blank" || s == "Blank"))
+					{
+						goto nameGotten;
+					}
+				}
 				if( pSteps->GetDifficulty() == Difficulty_Edit )
 				{
-					s = pSteps->GetDescription();
+					s = pSteps->GetChartName();
+					if (s == "" || s == "blank" || s == "Blank")
+						s = pSteps->GetDescription();
 				}
 				else
 				{
 					if( pSteps->IsAnEdit() )
-						s = pSteps->GetDescription();
+					{
+						s = pSteps->GetChartName();
+						if (s == "" || s == "blank" || s == "Blank")
+							s = pSteps->GetDescription();
+					}
 					else
 						s = CustomDifficultyToLocalizedString( GetCustomDifficulty( pSteps->m_StepsType, pSteps->GetDifficulty(), CourseType_Invalid ) );
 				}
+			nameGotten:
 				s += ssprintf( " %d", pSteps->GetMeter() );
 				m_Def.m_vsChoices.push_back( s );
 				GameCommand mc;

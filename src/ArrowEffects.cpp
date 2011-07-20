@@ -56,9 +56,11 @@ static ThemeMetric<float>	DRUNK_OFFSET_FREQUENCY( "ArrowEffects", "DrunkOffsetFr
 static ThemeMetric<float>	DRUNK_ARROW_MAGNITUDE( "ArrowEffects", "DrunkArrowMagnitude" );
 static ThemeMetric<float>	BEAT_OFFSET_HEIGHT( "ArrowEffects", "BeatOffsetHeight" );
 static ThemeMetric<float>	BEAT_PI_HEIGHT( "ArrowEffects", "BeatPIHeight" );
-static ThemeMetric<float>	MINI_PERCENT_BASE( "ArrowEffects", "MiniPercentBase" );
-static ThemeMetric<float>	MINI_PERCENT_GATE( "ArrowEffects", "MiniPercentGate" );
+static ThemeMetric<float>	TINY_PERCENT_BASE( "ArrowEffects", "TinyPercentBase" );
+static ThemeMetric<float>	TINY_PERCENT_GATE( "ArrowEffects", "TinyPercentGate" );
 static ThemeMetric<bool>	DIZZY_HOLD_HEADS( "ArrowEffects", "DizzyHoldHeads" );
+
+float ArrowGetPercentVisible( const PlayerState* pPlayerState, float fYPosWithoutReverse );
 
 static float GetNoteFieldHeight( const PlayerState* pPlayerState )
 {
@@ -236,7 +238,10 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 		if( bShowEffects )
 			fBeatsUntilStep = pCurSteps->m_Timing.GetDisplayedBeat(fNoteBeat) - pCurSteps->m_Timing.GetDisplayedBeat(fSongBeat);
 		float fYOffsetBeatSpacing = fBeatsUntilStep;
-		float fSpeedMultiplier = bShowEffects ? pCurSteps->m_Timing.GetDisplayedSpeedPercent( position.m_fSongBeatVisible, position.m_fMusicSecondsVisible ) : 1.0;
+		float fSpeedMultiplier = bShowEffects ? 
+			pCurSteps->m_Timing.GetDisplayedSpeedPercent(
+								     position.m_fSongBeatVisible,
+								     position.m_fMusicSecondsVisible ) : 1.0f;
 		fYOffset += fSpeedMultiplier * fYOffsetBeatSpacing * (1-pPlayerState->m_PlayerOptions.GetCurrent().m_fTimeSpacing);
 	}
 
@@ -340,8 +345,8 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 static void ArrowGetReverseShiftAndScale( const PlayerState* pPlayerState, int iCol, float fYReverseOffsetPixels, float &fShiftOut, float &fScaleOut )
 {
 	// XXX: Hack: we need to scale the reverse shift by the zoom.
-	float fTinyPercent = pPlayerState->m_PlayerOptions.GetCurrent().m_fEffects[PlayerOptions::EFFECT_TINY];
-	float fZoom = 1 - fTinyPercent*0.5f;
+	float fMiniPercent = pPlayerState->m_PlayerOptions.GetCurrent().m_fEffects[PlayerOptions::EFFECT_MINI];
+	float fZoom = 1 - fMiniPercent*0.5f;
 
 	// don't divide by 0
 	if( fabsf(fZoom) < 0.01 )
@@ -484,12 +489,12 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 
 	fPixelOffsetFromCenter += pCols[iColNum].fXOffset;
 
-	if( fEffects[PlayerOptions::EFFECT_MINI] != 0 )
+	if( fEffects[PlayerOptions::EFFECT_TINY] != 0 )
 	{
-		// Allow Mini to pull tracks together, but not to push them apart.
-		float fMiniPercent = fEffects[PlayerOptions::EFFECT_MINI];
-		fMiniPercent = min( powf(MINI_PERCENT_BASE, fMiniPercent), (float)MINI_PERCENT_GATE );
-		fPixelOffsetFromCenter *= fMiniPercent;
+		// Allow Tiny to pull tracks together, but not to push them apart.
+		float fTinyPercent = fEffects[PlayerOptions::EFFECT_TINY];
+		fTinyPercent = min( powf(TINY_PERCENT_BASE, fTinyPercent), (float)TINY_PERCENT_GATE );
+		fPixelOffsetFromCenter *= fTinyPercent;
 	}
 
 	return fPixelOffsetFromCenter;
@@ -560,7 +565,7 @@ static float GetCenterLine( const PlayerState* pPlayerState )
 {
 	/* Another mini hack: if EFFECT_MINI is on, then our center line is at
 	 * eg. 320, not 160. */
-	const float fMiniPercent = pPlayerState->m_PlayerOptions.GetCurrent().m_fEffects[PlayerOptions::EFFECT_TINY];
+	const float fMiniPercent = pPlayerState->m_PlayerOptions.GetCurrent().m_fEffects[PlayerOptions::EFFECT_MINI];
 	const float fZoom = 1 - fMiniPercent*0.5f;
 	return CENTER_LINE_Y / fZoom;
 }
@@ -736,11 +741,11 @@ float ArrowEffects::GetZoom( const PlayerState* pPlayerState )
 		(GAMESTATE->GetNumSidesJoined()==2 || GAMESTATE->AnyPlayersAreCpu()) )
 		fZoom *= 0.6f;
 
-	float fMiniPercent = pPlayerState->m_PlayerOptions.GetCurrent().m_fEffects[PlayerOptions::EFFECT_MINI];
-	if( fMiniPercent != 0 )
+	float fTinyPercent = pPlayerState->m_PlayerOptions.GetCurrent().m_fEffects[PlayerOptions::EFFECT_TINY];
+	if( fTinyPercent != 0 )
 	{
-		fMiniPercent = powf( 0.5f, fMiniPercent );
-		fZoom *= fMiniPercent;
+		fTinyPercent = powf( 0.5f, fTinyPercent );
+		fZoom *= fTinyPercent;
 	}
 	return fZoom;
 }

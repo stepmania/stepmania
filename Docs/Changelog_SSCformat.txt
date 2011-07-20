@@ -9,6 +9,34 @@ change to JSON, but it is unsure if this will be done.
 Implement .ssc at your own risk.
 ________________________________________________________________________________
 
+[v0.77] - Wolfman2000
+* Add the cache tag #STEPFILENAME to gain access to the proper #NOTES when
+  required.
+
+[v0.76] - Wolfman2000
+* Expand the #COMBOS tag to allow for Miss Combos. Anyone that is crazy enough
+  to put in a 51 miss combo in their tags should be...oh wait: it's already
+  been done.
+
+[v0.75] - Wolfman2000
+* Add Step based #DISPLAYBPM for those songs that have...very varied syncing.
+
+[v0.74] - Wolfman2000
+* Add #CHARTNAME tag for the title of the chart.
+* Older files will have their #DESCRIPTION tag content copied to #CHARTNAME
+  on load.
+
+[v0.73] - Wolfman2000
+* Use #FIRSTSECOND, #LASTSECOND, and #LASTSECONDHINT instead of the BEAT
+  equivalents.
+* Move #LASTSECONDHINT to after the Timing tags.
+
+[v0.72] - Wolfman2000
+* Have #OFFSET come before #ATTACKS in the Step data.
+
+[v0.71] - Wolfman2000
+* Have #ATTACKS work per step as well.
+
 [v0.7] - theDtTvB, Wolfman2000
 * Split Timing officially implemented.
 * #SPEEDS tag for modified scroll speeds.

@@ -1,34 +1,36 @@
 AC_DEFUN([SM_X_WITH_OPENGL],
 [
-    AC_PATH_X
-    
-    XCFLAGS=
-    XLIBS=
+	AC_PATH_X
 
-    if test "$no_x" != "yes"; then
+	XCFLAGS=
+	XLIBS=
+
+	if test "$no_x" != "yes"; then
 	if test -n "$x_includes"; then
-	    XCFLAGS="-I$x_includes"
+		XCFLAGS="-I$x_includes"
 	fi
 
 	if test -n "$x_libraries"; then
-	    XLIBS="-L$x_libraries -lX11"
+		XLIBS="-L$x_libraries"
 	fi
 
+	XLIBS+="-lX11"
+
 	if test -n "$x_includes"; then
-	    # See if we can compile X applications without using $XCFLAGS.
-	    AC_MSG_CHECKING(if $XCFLAGS is really necessary)
-	    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <X11/Xos.h>]], [[]])],[XCFLAGS=
+		# See if we can compile X applications without using $XCFLAGS.
+		AC_MSG_CHECKING(if $XCFLAGS is really necessary)
+		AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <X11/Xos.h>]], [[]])],[XCFLAGS=
 		AC_MSG_RESULT(no)],[AC_MSG_RESULT(yes)])
 	fi
 
 	# Check for libXtst.
 	AC_CHECK_LIB(Xtst, XTestQueryExtension, 
-	    XLIBS="$XLIBS -lXtst"
-	    [AC_DEFINE(HAVE_LIBXTST, 1, [libXtst available])],
-	    ,
-	    [$XLIBS])
+		XLIBS="$XLIBS -lXtst"
+		[AC_DEFINE(HAVE_LIBXTST, 1, [libXtst available])],
+		,
+		[$XLIBS])
 	AC_DEFINE(HAVE_X11, 1, [X11 libraries present])
-    fi
+	fi
 
 	# Check for Xrandr
 	# Can someone fix this for me? This is producing bizarre warnings from
@@ -53,15 +55,15 @@ AC_DEFUN([SM_X_WITH_OPENGL],
 
 	AM_CONDITIONAL(HAVE_X11, test "$no_x" != "yes")
 
-    AC_SUBST(XCFLAGS)
-    AC_SUBST(XLIBS)
+	AC_SUBST(XCFLAGS)
+	AC_SUBST(XLIBS)
 
-    # Check for libGL and libGLU.
-    AC_CHECK_LIB(GL, glPushMatrix, XLIBS="$XLIBS -lGL",
+	# Check for libGL and libGLU.
+	AC_CHECK_LIB(GL, glPushMatrix, XLIBS="$XLIBS -lGL",
 	AC_MSG_ERROR([No OpenGL library could be found.]), [$XLIBS])
-    AC_CHECK_LIB(GLU, gluGetString, XLIBS="$XLIBS -lGLU",
+	AC_CHECK_LIB(GLU, gluGetString, XLIBS="$XLIBS -lGLU",
 	AC_MSG_ERROR([No GLU library could be found.]), [$XLIBS])
 
-    AC_SUBST(XLIBS)
+	AC_SUBST(XLIBS)
 ])
 

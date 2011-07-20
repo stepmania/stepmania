@@ -20,14 +20,14 @@ ret.Redir = function(sButton, sElement)
 	if sElement == "Hold Head Active" or
 	   sElement == "Roll Head Active"
 	then
-		sElement = "Hold Head Active";
+		sElement = "Tap Note";
 	end
 	
 	-- Test
 	if sElement == "Hold Head Inactive" or
 	   sElement == "Roll Head Inactive"
 	then
-		sElement = "Hold Head Inactive";
+		sElement = "Tap Note";
 	end
 	
 	if sElement == "Tap Fake"

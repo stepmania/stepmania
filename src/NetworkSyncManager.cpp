@@ -237,7 +237,7 @@ void NetworkSyncManager::ReportScore(int playerID, int step, int score, int comb
 	if( !useSMserver ) //Make sure that we are using the network
 		return;
 
-	LOG->Trace( ssprintf("Player ID %i combo = %i", playerID, combo) );
+	LOG->Trace( "Player ID %i combo = %i", playerID, combo );
 	m_packet.ClearPacket();
 
 	m_packet.Write1( NSCGSU );

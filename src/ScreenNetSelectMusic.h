@@ -44,6 +44,7 @@ protected:
 	RString m_sRandomMusicPath;
 
 	ThemeMetric<RString>	MUSIC_WHEEL_TYPE;
+	ThemeMetric<RString>	PLAYER_OPTIONS_SCREEN;
 
 private:
 	MusicWheel m_MusicWheel;

@@ -14,8 +14,7 @@ bool JsonUtil::LoadFromString(Json::Value &root, RString sData, RString &sErrorO
 	if (!parsingSuccessful)
 	{
 		RString err = reader.getFormatedErrorMessages();
-		sErrorOut = ssprintf("JSON: LoadFromFileShowErrors failed: %s", err.c_str());
-		LOG->Warn(sErrorOut);
+		LOG->Warn("JSON: LoadFromFileShowErrors failed: %s", err.c_str());
 		return false;
 	}
 	return true;

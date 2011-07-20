@@ -31,6 +31,13 @@ using namespace RageDisplay_Legacy_Helpers;
 #define glFlush()
 #endif
 
+RString GetInfoLog( GLhandleARB h );
+GLhandleARB CompileShader( GLenum ShaderType, RString sFile, vector<RString> asDefines );
+GLhandleARB LoadShader( GLenum ShaderType, RString sFile, vector<RString> asDefines );
+void InitShaders();
+void SetupExtensions();
+void SetPixelMapForSurface( int glImageFormat, int glTexFormat, const RageSurfacePalette *palette );
+
 //
 // Globals
 //
@@ -333,7 +340,7 @@ GLhandleARB CompileShader( GLenum ShaderType, RString sFile, vector<RString> asD
 GLhandleARB LoadShader( GLenum ShaderType, RString sFile, vector<RString> asDefines )
 {
 	// Don't do anything here if not the hardware/driver can't do it!
-	if (!GLEW_ARB_fragment_program && GLEW_ARB_shading_language_100 && ShaderType == GL_FRAGMENT_SHADER_ARB)
+	if (!GLEW_ARB_fragment_shader && ShaderType == GL_FRAGMENT_SHADER_ARB)
 		return 0;
 	if (!GLEW_ARB_vertex_shader && ShaderType == GL_VERTEX_SHADER_ARB)
 		return 0;
@@ -1655,7 +1662,7 @@ void RageDisplay_Legacy::SetTextureFiltering( TextureUnit tu, bool b )
 
 void RageDisplay_Legacy::SetEffectMode( EffectMode effect )
 {
-	if (!GLEW_ARB_fragment_program && !GLEW_ARB_shading_language_100)
+	if (!GLEW_ARB_fragment_shader)
 		return;
 
 	GLhandleARB hShader = 0;
@@ -2561,7 +2568,7 @@ RString RageDisplay_Legacy::GetTextureDiagnostics(unsigned iTexture) const
 void RageDisplay_Legacy::SetAlphaTest(bool b)
 {
 	// Previously this was 0.01, rather than 0x01.
-	glAlphaFunc(GL_GREATER, 0.00390625 /* 1/256 */);
+	glAlphaFunc(GL_GREATER, 0.00390625f /* 1/256 */);
 	if (b)
 		glEnable(GL_ALPHA_TEST);
 	else
@@ -2641,11 +2648,9 @@ void RageDisplay_Legacy::SetSphereEnvironmentMapping(TextureUnit tu, bool b)
 	}
 }
 
-GLint iCelTexture1, iCelTexture2 = 0;
-
 void RageDisplay_Legacy::SetCelShaded( int stage )
 {
-	if (!GLEW_ARB_fragment_program && !GL_ARB_shading_language_100)
+	if (!GLEW_ARB_fragment_shader)
 		return; // not supported
 
 	switch (stage)

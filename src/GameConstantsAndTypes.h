@@ -4,6 +4,7 @@
 #define GAME_CONSTANTS_AND_TYPES_H
 
 #include "EnumHelper.h"
+#include <float.h> // need the max for default.
 
 // Note definitions
 /** @brief Define the mininum difficulty value allowed. */
@@ -513,6 +514,13 @@ struct DisplayBpms
 	 * @return the maximum BPM.
 	 */
 	float GetMax() const;
+	/**
+	 * @brief Retrieve the maximum BPM of the set,
+	 * but no higher than a certain value.
+	 * @param highest the highest BPM to use.
+	 * @return the maximum BPM.
+	 */
+	float GetMaxWithin(float highest = FLT_MAX) const;
 	/**
 	 * @brief Determine if the BPM is really constant.
 	 * @return Whether the BPM is constant or not.

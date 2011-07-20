@@ -8,6 +8,11 @@
 
 struct madlib_t;
 
+typedef unsigned long id3_length_t;
+
+signed long id3_tag_query( const unsigned char *data, id3_length_t length );
+void fill_frame_index_cache( madlib_t *mad );
+
 class RageSoundReader_MP3: public RageSoundReader_FileReader
 {
 public:

@@ -5,6 +5,8 @@
 
 #include "ScreenPrompt.h"
 
+RString ClearMachineStats();
+
 class ScreenServiceAction : public ScreenPrompt
 {
 public:

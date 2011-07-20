@@ -172,7 +172,7 @@ void LifeMeterBar::ChangeLife( HoldNoteScore score, TapNoteScore tscore )
 		switch( score )
 		{
 		case HNS_Held:		fDeltaLife = +0;	break;
-		case HNS_LetGo:	fDeltaLife = -1.0;	break;
+		case HNS_LetGo:	fDeltaLife = -1.0f;	break;
 		default:
 			ASSERT(0);
 		}

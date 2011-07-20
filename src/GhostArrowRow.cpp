@@ -88,7 +88,9 @@ void GhostArrowRow::Update( float fDeltaTime )
 void GhostArrowRow::DrawPrimitives()
 {
 	for( unsigned c=0; c<m_Ghost.size(); c++ )
+	{
 		m_Ghost[c]->Draw();
+	}
 }
 
 void GhostArrowRow::DidTapNote( int iCol, TapNoteScore tns, bool bBright )

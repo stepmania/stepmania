@@ -14,6 +14,8 @@
 
 #include <map>
 
+Difficulty DwiCompatibleStringToDifficulty( const RString& sDC );
+
 static std::map<int,int> g_mapDanceNoteToNoteDataColumn;
 
 /** @brief The different types of core DWI arrows and pads. */
@@ -168,6 +170,238 @@ Difficulty DwiCompatibleStringToDifficulty( const RString& sDC )
 	else							return Difficulty_Invalid;
 }
 
+static StepsType GetTypeFromMode(const RString &mode)
+{
+	if( mode == "SINGLE" )
+		return StepsType_dance_single;
+	else if( mode == "DOUBLE" )
+		return StepsType_dance_double;
+	else if( mode == "COUPLE" )
+		return StepsType_dance_couple;
+	else if( mode == "SOLO" )
+		return StepsType_dance_solo;
+	ASSERT_M(0, "Unrecognized DWI notes format " + mode + "!");
+	return StepsType_Invalid; // just in case.
+}
+
+static NoteData ParseNoteData(RString &step1, RString &step2,
+			      Steps &out, const RString &path)
+{
+	g_mapDanceNoteToNoteDataColumn.clear();
+	switch( out.m_StepsType )
+	{
+		case StepsType_dance_single:
+			g_mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_LEFT] = 0;
+			g_mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_DOWN] = 1;
+			g_mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_UP] = 2;
+			g_mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_RIGHT] = 3;
+			break;
+		case StepsType_dance_double:
+		case StepsType_dance_couple:
+			g_mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_LEFT] = 0;
+			g_mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_DOWN] = 1;
+			g_mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_UP] = 2;
+			g_mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_RIGHT] = 3;
+			g_mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD2_LEFT] = 4;
+			g_mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD2_DOWN] = 5;
+			g_mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD2_UP] = 6;
+			g_mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD2_RIGHT] = 7;
+			break;
+		case StepsType_dance_solo:
+			g_mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_LEFT] = 0;
+			g_mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_UPLEFT] = 1;
+			g_mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_DOWN] = 2;
+			g_mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_UP] = 3;
+			g_mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_UPRIGHT] = 4;
+			g_mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_RIGHT] = 5;
+			break;
+			DEFAULT_FAIL( out.m_StepsType );
+	}
+	
+	NoteData newNoteData;
+	newNoteData.SetNumTracks( g_mapDanceNoteToNoteDataColumn.size() );
+	
+	for( int pad=0; pad<2; pad++ )		// foreach pad
+	{
+		RString sStepData;
+		switch( pad )
+		{
+			case 0:
+				sStepData = step1;
+				break;
+			case 1:
+				if( step2 == "" )	// no data
+					continue;	// skip
+				sStepData = step2;
+				break;
+				DEFAULT_FAIL( pad );
+		}
+		
+		sStepData.Replace("\n", "");
+		sStepData.Replace("\r", "");
+		sStepData.Replace("\t", "");
+		sStepData.Replace(" ", "");
+		
+		double fCurrentBeat = 0;
+		double fCurrentIncrementer = 1.0/8 * BEATS_PER_MEASURE;
+		
+		for( size_t i=0; i<sStepData.size(); )
+		{
+			char c = sStepData[i++];
+			switch( c )
+			{
+					// begins a series
+				case '(':
+					fCurrentIncrementer = 1.0/16 * BEATS_PER_MEASURE;
+					break;
+				case '[':
+					fCurrentIncrementer = 1.0/24 * BEATS_PER_MEASURE;
+					break;
+				case '{':
+					fCurrentIncrementer = 1.0/64 * BEATS_PER_MEASURE;
+					break;
+				case '`':
+					fCurrentIncrementer = 1.0/192 * BEATS_PER_MEASURE;
+					break;
+					
+					// ends a series
+				case ')':
+				case ']':
+				case '}':
+				case '\'':
+				case '>':
+					fCurrentIncrementer = 1.0/8 * BEATS_PER_MEASURE;
+					break;
+					
+				default:	// this is a note character
+				{
+					if( c == '!' )
+					{
+						LOG->UserLog(
+							     "Song file",
+							     path,
+							     "has an unexpected character: '!'." );
+						continue;
+					}
+					
+					bool jump = false;
+					if( c == '<' )
+					{
+						/* Arr.  Is this a jump or a 1/192 marker? */
+						if( Is192( sStepData, i ) )
+						{
+							fCurrentIncrementer = 1.0/192 * BEATS_PER_MEASURE;
+							break;
+						}
+						
+						/* It's a jump.
+						 * We need to keep reading notes until we hit a >. */
+						jump = true;
+						i++;
+					}
+					
+					const int iIndex = BeatToNoteRow( (float)fCurrentBeat );
+					i--;
+					do {
+						c = sStepData[i++];
+						
+						if( jump && c == '>' )
+							break;
+						
+						int iCol1, iCol2;
+						DWIcharToNoteCol(
+								 c,
+								 (GameController)pad,
+								 iCol1,
+								 iCol2,
+								 path );
+						
+						if( iCol1 != -1 )
+							newNoteData.SetTapNote(iCol1,
+									       iIndex,
+									       TAP_ORIGINAL_TAP);
+						if( iCol2 != -1 )
+							newNoteData.SetTapNote(iCol2,
+									       iIndex,
+									       TAP_ORIGINAL_TAP);
+						
+						if(i>=sStepData.length())
+						{
+							break;
+							//we ran out of data
+							//while looking for the ending > mark
+						}
+						
+						if( sStepData[i] == '!' )
+						{
+							i++;
+							const char holdChar = sStepData[i++];
+							
+							DWIcharToNoteCol(holdChar,
+									 (GameController)pad,
+									 iCol1,
+									 iCol2,
+									 path );
+							
+							if( iCol1 != -1 )
+								newNoteData.SetTapNote(iCol1,
+										       iIndex,
+										       TAP_ORIGINAL_HOLD_HEAD);
+							if( iCol2 != -1 )
+								newNoteData.SetTapNote(iCol2,
+										       iIndex,
+										       TAP_ORIGINAL_HOLD_HEAD);
+						}
+					}
+					while( jump );
+					fCurrentBeat += fCurrentIncrementer;
+				}
+					break;
+			}
+		}
+	}
+	
+	/* Fill in iDuration. */
+	for( int t=0; t<newNoteData.GetNumTracks(); ++t )
+	{
+		FOREACH_NONEMPTY_ROW_IN_TRACK( newNoteData, t, iHeadRow )
+		{
+			TapNote tn = newNoteData.GetTapNote( t, iHeadRow  );
+			if( tn.type != TapNote::hold_head )
+				continue;
+			
+			int iTailRow = iHeadRow;
+			bool bFound = false;
+			while( !bFound && newNoteData.GetNextTapNoteRowForTrack(t, iTailRow) )
+			{
+				const TapNote &TailTap = newNoteData.GetTapNote( t, iTailRow );
+				if( TailTap.type == TapNote::empty )
+					continue;
+				
+				newNoteData.SetTapNote( t, iTailRow, TAP_EMPTY );
+				tn.iDuration = iTailRow - iHeadRow;
+				newNoteData.SetTapNote( t, iHeadRow, tn );
+				bFound = true;
+			}
+			
+			if( !bFound )
+			{
+				/* The hold was never closed.  */
+				LOG->UserLog("Song file",
+					     path,
+					     "failed to close a hold note in \"%s\" on track %i", 
+					     DifficultyToString(out.GetDifficulty()).c_str(),
+					     t);
+				
+				newNoteData.SetTapNote( t, iHeadRow, TAP_EMPTY );
+			}
+		}
+	}
+	
+	ASSERT( newNoteData.GetNumTracks() > 0 );
+	return newNoteData;
+}
+
 /**
  * @brief Look through the notes tag to extract the data.
  * @param sMode the steps type.
@@ -190,216 +424,17 @@ static bool LoadFromDWITokens(
 {
 	CHECKPOINT_M( "DWILoader::LoadFromDWITokens()" );
 
-	out.m_StepsType = StepsType_Invalid;
+	out.m_StepsType = GetTypeFromMode(sMode);
 
-	if( sMode == "SINGLE" )			out.m_StepsType = StepsType_dance_single;
-	else if( sMode == "DOUBLE" )		out.m_StepsType = StepsType_dance_double;
-	else if( sMode == "COUPLE" )		out.m_StepsType = StepsType_dance_couple;
-	else if( sMode == "SOLO" )		out.m_StepsType = StepsType_dance_solo;
-	else	
-	{
-		ASSERT_M(0, "Unrecognized DWI notes format " + sMode + "!");
-		out.m_StepsType = StepsType_dance_single;
-	}
+	out.SetMeter(StringToInt(sNumFeet));
 
-
-	g_mapDanceNoteToNoteDataColumn.clear();
-	switch( out.m_StepsType )
-	{
-	case StepsType_dance_single:
-		g_mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_LEFT] = 0;
-		g_mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_DOWN] = 1;
-		g_mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_UP] = 2;
-		g_mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_RIGHT] = 3;
-		break;
-	case StepsType_dance_double:
-	case StepsType_dance_couple:
-		g_mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_LEFT] = 0;
-		g_mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_DOWN] = 1;
-		g_mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_UP] = 2;
-		g_mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_RIGHT] = 3;
-		g_mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD2_LEFT] = 4;
-		g_mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD2_DOWN] = 5;
-		g_mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD2_UP] = 6;
-		g_mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD2_RIGHT] = 7;
-		break;
-	case StepsType_dance_solo:
-		g_mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_LEFT] = 0;
-		g_mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_UPLEFT] = 1;
-		g_mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_DOWN] = 2;
-		g_mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_UP] = 3;
-		g_mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_UPRIGHT] = 4;
-		g_mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_RIGHT] = 5;
-		break;
-	DEFAULT_FAIL( out.m_StepsType );
-	}
-
-	int iNumFeet = StringToInt(sNumFeet);
-	// out.SetDescription(sDescription); // Don't put garbage in the description.
-	out.SetMeter(iNumFeet);
 	out.SetDifficulty( DwiCompatibleStringToDifficulty(sDescription) );
-
-	NoteData newNoteData;
-	newNoteData.SetNumTracks( g_mapDanceNoteToNoteDataColumn.size() );
-
-	for( int pad=0; pad<2; pad++ )		// foreach pad
-	{
-		RString sStepData;
-		switch( pad )
-		{
-		case 0:
-			sStepData = sStepData1;
-			break;
-		case 1:
-			if( sStepData2 == "" )	// no data
-				continue;	// skip
-			sStepData = sStepData2;
-			break;
-		DEFAULT_FAIL( pad );
-		}
-
-		sStepData.Replace("\n", "");
-		sStepData.Replace("\r", "");
-		sStepData.Replace("\t", "");
-		sStepData.Replace(" ", "");
-
-		double fCurrentBeat = 0;
-		double fCurrentIncrementer = 1.0/8 * BEATS_PER_MEASURE;
-
-		for( size_t i=0; i<sStepData.size(); )
-		{
-			char c = sStepData[i++];
-			switch( c )
-			{
-			// begins a series
-			case '(':
-				fCurrentIncrementer = 1.0/16 * BEATS_PER_MEASURE;
-				break;
-			case '[':
-				fCurrentIncrementer = 1.0/24 * BEATS_PER_MEASURE;
-				break;
-			case '{':
-				fCurrentIncrementer = 1.0/64 * BEATS_PER_MEASURE;
-				break;
-			case '`':
-				fCurrentIncrementer = 1.0/192 * BEATS_PER_MEASURE;
-				break;
-
-			// ends a series
-			case ')':
-			case ']':
-			case '}':
-			case '\'':
-			case '>':
-				fCurrentIncrementer = 1.0/8 * BEATS_PER_MEASURE;
-				break;
-
-			default:	// this is a note character
-			{
-				if( c == '!' )
-				{
-					LOG->UserLog( "Song file", sPath, "has an unexpected character: '!'." );
-					continue;
-				}
-
-				bool jump = false;
-				if( c == '<' )
-				{
-					/* Arr.  Is this a jump or a 1/192 marker? */
-					if( Is192( sStepData, i ) )
-					{
-						fCurrentIncrementer = 1.0/192 * BEATS_PER_MEASURE;
-						break;
-					}
-					
-					/* It's a jump.  We need to keep reading notes until we hit a >. */
-					jump = true;
-					i++;
-				}
-				
-				const int iIndex = BeatToNoteRow( (float)fCurrentBeat );
-				i--;
-				do {
-					c = sStepData[i++];
-
-					if( jump && c == '>' )
-						break;
-
-					int iCol1, iCol2;
-					DWIcharToNoteCol( c, (GameController)pad, iCol1, iCol2, sPath );
-
-					if( iCol1 != -1 )
-						newNoteData.SetTapNote(iCol1, iIndex, TAP_ORIGINAL_TAP);
-					if( iCol2 != -1 )
-						newNoteData.SetTapNote(iCol2, iIndex, TAP_ORIGINAL_TAP);
-
-					if(i>=sStepData.length()) {
-						break;//we ran out of data while looking for the ending > mark
-					}
-
-					if( sStepData[i] == '!' )
-					{
-						i++;
-						const char holdChar = sStepData[i++];
-						
-						DWIcharToNoteCol( holdChar, (GameController)pad, iCol1, iCol2, sPath );
-
-						if( iCol1 != -1 )
-							newNoteData.SetTapNote(iCol1, iIndex, TAP_ORIGINAL_HOLD_HEAD);
-						if( iCol2 != -1 )
-							newNoteData.SetTapNote(iCol2, iIndex, TAP_ORIGINAL_HOLD_HEAD);
-					}
-				}
-				while( jump );
-				fCurrentBeat += fCurrentIncrementer;
-			}
-			break;
-		}
-		}
-	}
-
-	/* Fill in iDuration. */
-	for( int t=0; t<newNoteData.GetNumTracks(); ++t )
-	{
-		FOREACH_NONEMPTY_ROW_IN_TRACK( newNoteData, t, iHeadRow )
-		{
-			TapNote tn = newNoteData.GetTapNote( t, iHeadRow  );
-			if( tn.type != TapNote::hold_head )
-				continue;
-
-			int iTailRow = iHeadRow;
-			bool bFound = false;
-			while( !bFound && newNoteData.GetNextTapNoteRowForTrack(t, iTailRow) )
-			{
-				const TapNote &TailTap = newNoteData.GetTapNote( t, iTailRow );
-				if( TailTap.type == TapNote::empty )
-					continue;
-
-				newNoteData.SetTapNote( t, iTailRow, TAP_EMPTY );
-				tn.iDuration = iTailRow - iHeadRow;
-				newNoteData.SetTapNote( t, iHeadRow, tn );
-				bFound = true;
-			}
-
-			if( !bFound )
-			{
-				/* The hold was never closed.  */
-				LOG->UserLog( "Song file", sPath, "failed to close a hold note in \"%s\" on track %i", 
-					      sDescription.c_str(), t );
-
-				newNoteData.SetTapNote( t, iHeadRow, TAP_EMPTY );
-			}
-		}
-	}
-
-	ASSERT( newNoteData.GetNumTracks() > 0 );
-
-	out.SetNoteData( newNoteData );
+	
+	out.SetNoteData( ParseNoteData(sStepData1, sStepData2, out, sPath) );
 
 	out.TidyUpData();
 
 	out.SetSavedToDisk( true );	// we're loading from disk, so this is by definintion already saved
-
 	return true;
 }
 
@@ -442,17 +477,55 @@ void DWILoader::GetApplicableFiles( const RString &sPath, vector<RString> &out )
 	GetDirListing( sPath + RString("*.dwi"), out );
 }
 
+bool DWILoader::LoadNoteDataFromSimfile( const RString &path, Steps &out )
+{
+	MsdFile msd;
+	if( !msd.ReadFile( path, false ) )  // don't unescape
+	{
+		LOG->UserLog("Song file",
+			     path,
+			     "couldn't be opened: %s",
+			     msd.GetError().c_str() );
+		return false;
+	}
+	
+	for( unsigned i=0; i<msd.GetNumValues(); i++ )
+	{
+		int iNumParams = msd.GetNumParams(i);
+		const MsdFile::value_t &params = msd.GetValue(i);
+		RString valueName = params[0];
+		
+		if(valueName.EqualsNoCase("SINGLE")  || 
+		   valueName.EqualsNoCase("DOUBLE")  ||
+		   valueName.EqualsNoCase("COUPLE")  || 
+		   valueName.EqualsNoCase("SOLO") )
+		{
+			if (out.m_StepsType != GetTypeFromMode(valueName))
+				continue;
+			if (out.GetDifficulty() != DwiCompatibleStringToDifficulty(params[1]))
+				continue;
+			if (out.GetMeter() != StringToInt(params[2]))
+				continue;
+			RString step1 = params[3];
+			RString step2 = (iNumParams==5) ? params[4] : RString("");
+			out.SetNoteData(ParseNoteData(step1, step2, out, path));
+			return true;
+		}
+	}
+	return false;
+}
+
 bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, set<RString> &BlacklistedImages )
 {
 	vector<RString> aFileNames;
 	GetApplicableFiles( sPath_, aFileNames );
-	
+
 	if( aFileNames.size() > 1 )
 	{
 		LOG->UserLog( "Song", sPath_, "has more than one DWI file. There should be only one!" );
 		return false;
 	}
-	
+
 	/* We should have exactly one; if we had none, we shouldn't have been called to begin with. */
 	ASSERT( aFileNames.size() == 1 );
 	const RString sPath = sPath_ + aFileNames[0];
@@ -465,6 +538,8 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, set<RString> &Bla
 		LOG->UserLog( "Song file", sPath, "couldn't be opened: %s", msd.GetError().c_str() );
 		return false;
 	}
+
+	out.m_sSongFileName = sPath;
 
 	for( unsigned i=0; i<msd.GetNumValues(); i++ )
 	{
@@ -513,14 +588,16 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, set<RString> &Bla
 			
 			if( PREFSMAN->m_bQuirksMode )
 			{
-				out.m_SongTiming.AddBPMSegment( BPMSegment(0, fBPM) );
+				out.m_SongTiming.AddSegment( SEGMENT_BPM, new BPMSegment(0, fBPM) );
 			}
 			else{
 				if( fBPM > 0.0f )
-					out.m_SongTiming.AddBPMSegment( BPMSegment(0, fBPM) );
+					out.m_SongTiming.AddSegment( SEGMENT_BPM, new BPMSegment(0, fBPM) );
 				else
-					LOG->UserLog( "Song file", sPath, "has an invalid BPM change at beat %f, BPM %f.",
-							  NoteRowToBeat(0), fBPM );
+					LOG->UserLog("Song file",
+								 sPath,
+								 "has an invalid BPM change at beat %f, BPM %f.",
+								 0.0f, fBPM );
 			}
 		}
 		else if( sValueName.EqualsNoCase("DISPLAYBPM") )
@@ -574,7 +651,7 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, set<RString> &Bla
 				int iFreezeRow = BeatToNoteRow( StringToFloat(arrayFreezeValues[0]) / 4.0f );
 				float fFreezeSeconds = StringToFloat( arrayFreezeValues[1] ) / 1000.0f;
 				
-				out.m_SongTiming.AddStopSegment( StopSegment(iFreezeRow, fFreezeSeconds) );
+				out.m_SongTiming.AddSegment( SEGMENT_STOP_DELAY, new StopSegment(iFreezeRow, fFreezeSeconds) );
 //				LOG->Trace( "Adding a freeze segment: beat: %f, seconds = %f", fFreezeBeat, fFreezeSeconds );
 			}
 		}
@@ -598,8 +675,8 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, set<RString> &Bla
 				float fBPM = StringToFloat( arrayBPMChangeValues[1] );
 				if( fBPM > 0.0f )
 				{
-					BPMSegment bs( iStartIndex, fBPM );
-					out.m_SongTiming.AddBPMSegment( bs );
+					BPMSegment * bs = new BPMSegment( iStartIndex, fBPM );
+					out.m_SongTiming.AddSegment( SEGMENT_BPM, bs );
 				}
 				else
 				{
@@ -625,7 +702,10 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, set<RString> &Bla
 				sPath
 				);
 			if( pNewNotes->m_StepsType != StepsType_Invalid )
+			{
+				pNewNotes->SetFilename( sPath );
 				out.AddSteps( pNewNotes );
+			}
 			else
 				delete pNewNotes;
 		}
@@ -660,7 +740,6 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, set<RString> &Bla
 			// do nothing.  We don't care about this value name
 		}
 	}
-	out.TidyUpData();
 	return true;
 }
 

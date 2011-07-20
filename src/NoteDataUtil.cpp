@@ -778,13 +778,6 @@ void NoteDataUtil::LoadTransformedLightsFromTwo( const NoteData &marquee, const 
 	NoteDataUtil::RemoveMines( out );
 }
 
-struct RadarStats {
-	int taps;
-	int jumps;
-	int hands;
-	int quads;
-};
-
 RadarStats CalculateRadarStatsFast( const NoteData &in, RadarStats &out )
 {
 	out.taps = 0;
@@ -799,12 +792,18 @@ RadarStats CalculateRadarStatsFast( const NoteData &in, RadarStats &out )
 	{
 		FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( in, t, r, 0, MAX_NOTE_ROW )
 		{
+			/* This function deals strictly with taps, jumps, hands, and quads.
+			 * As such, all rows in here have to be judgable. */
+			if (!GAMESTATE->GetProcessedTimingData()->IsJudgableAtRow(r))
+				continue;
+			
 			const TapNote &tn = in.GetTapNote(t, r);
 			switch( tn.type )
 			{
 			case TapNote::mine:
 			case TapNote::empty:
 			case TapNote::fake:
+			case TapNote::autoKeysound:
 				continue;	// skip these types - they don't count
 			}
 
@@ -886,7 +885,7 @@ void NoteDataUtil::CalculateRadarValues( const NoteData &in, float fSongSeconds,
 		case RadarCategory_Jumps:			out[rc] = (float) stats.jumps;				break;
 		case RadarCategory_Holds:			out[rc] = (float) in.GetNumHoldNotes();		break;
 		case RadarCategory_Mines:			out[rc] = (float) in.GetNumMines();			break;
-		case RadarCategory_Hands:			out[rc] = (float) stats.hands;				break;
+		case RadarCategory_Hands:			out[rc] = (float) in.GetNumHands();			break;
 		case RadarCategory_Rolls:			out[rc] = (float) in.GetNumRolls();			break;
 		case RadarCategory_Lifts:			out[rc] = (float) in.GetNumLifts();			break;
 		case RadarCategory_Fakes:			out[rc] = (float) in.GetNumFakes();			break;

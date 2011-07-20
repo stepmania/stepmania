@@ -21,19 +21,19 @@
 #DELAYS:;
 #LABELS:;
 #TIMESIGNATURES:;
-#LASTBEATHINT:;
 #SAMPLESTART:;
 #SAMPLELENGTH:;
 #DISPLAYBPM:[xxx][xxx:xxx]|[*];
 #SELECTABLE:;
+#LASTSECONDHINT:;
 #BGCHANGES:;
 #FGCHANGES:;
 #KEYSOUNDS:;
 #ATTACKS:;
 
 // stored in cache
-#FIRSTBEAT:;			// calculated
-#LASTBEAT:;			// calculated
+#FIRSTSECOND:;			// calculated
+#LASTSECOND:;			// calculated
 #SONGFILENAME:;
 #MUSICBYTES:;			// ignored by loader
 #HASMUSIC:;
@@ -42,6 +42,7 @@
 // begin
 #NOTEDATA# // marks a new note data section
 // information from #NOTES moved here
+#CHARTNAME:;
 #STEPSTYPE:;
 #DESCRIPTION:;
 #CHARTSTYLE:;
@@ -51,6 +52,7 @@
 #CREDIT:;
 
 // steps-based timingdata
+#OFFSET:;
 #BPMS:;
 #STOPS:;
 #DELAYS:;
@@ -61,8 +63,11 @@
 #SCROLLS:;
 #FAKES:;
 #LABELS:;
-#ATTACKS:; // Not yet in use.
-#OFFSET:;
+#ATTACKS:;
+#DISPLAYBPM:;
 
-// actual step data
+// only in cache files
+#STEPFILENAME:;
+
+// actual step data (not in cache files)
 #NOTES:;

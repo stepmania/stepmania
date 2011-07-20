@@ -3,6 +3,7 @@
 
 <Lua xmlns='http://www.stepmania.com' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='http://www.stepmania.com Lua.xsd'>
 	<GlobalFunctions>
+		<Function name='Alpha'/>
 		<Function name='AreStagePlayerModsForced'/>
 		<Function name='AreStageSongModsForced'/>
 		<Function name='Basename'/>
@@ -39,11 +40,8 @@
 		<Function name='FormatNumberAndSuffix'/>
 		<Function name='FormatPercentScore'/>
 		<Function name='GameCompatibleModes'/>
-		<Function name='GamePrefAutoSetStyle'/>
 		<Function name='GamePrefComboOnRolls'/>
-		<Function name='GamePrefComboUnderField'/>
 		<Function name='GamePrefDefaultFail'/>
-		<Function name='GamePrefNotePosition'/>
 		<Function name='GetCoursesToShowRanking'/>
 		<Function name='GetCustomDifficulty'/>
 		<Function name='GetDefaultOptionLines'/>
@@ -57,6 +55,7 @@
 		<Function name='GetGradeFromPercent'/>
 		<Function name='GetLifeDifficulty'/>
 		<Function name='GetOSName'/>
+		<Function name='GetPlayerOrMachineProfile'/>
 		<Function name='GetProTiming'/>
 		<Function name='GetRandomSongBackground'/>
 		<Function name='GetReal'/>
@@ -130,7 +129,6 @@
 		<Function name='PrintTable'/>
 		<Function name='ProductID'/>
 		<Function name='ProductVersion'/>
-		<Function name='Profile'/>
 		<Function name='RadarCategoryToLocalizedString'/>
 		<Function name='ReadGamePrefFromFile'/>
 		<Function name='ReadPrefFromFile'/>
@@ -143,6 +141,8 @@
 		<Function name='Saturation'/>
 		<Function name='ScoreKeeperClass'/>
 		<Function name='ScoreMissedHoldsAndRolls'/>
+		<Function name='ScreenMetric'/>
+		<Function name='ScreenString'/>
 		<Function name='Second'/>
 		<Function name='SecondsToHHMMSS'/>
 		<Function name='SecondsToMMSS'/>
@@ -153,6 +153,7 @@
 		<Function name='SelectMusicOrCourse'/>
 		<Function name='SelectProfileKeys'/>
 		<Function name='Serialize'/>
+		<Function name='SetFail'/>
 		<Function name='SetGamePref'/>
 		<Function name='SetThemePref'/>
 		<Function name='SetUserPref'/>
@@ -322,6 +323,7 @@
 			<Function name='bouncebegin'/>
 			<Function name='bounceend'/>
 			<Function name='clearzbuffer'/>
+			<Function name='compound'/>
 			<Function name='cropbottom'/>
 			<Function name='cropleft'/>
 			<Function name='cropright'/>
@@ -578,6 +580,7 @@
 			<Function name='GetAllCharacters'/>
 			<Function name='GetCharacter'/>
 			<Function name='GetRandomCharacter'/>
+			<Function name='GetCharacterCount'/>
 		</Class>
 		<Class base='ActorFrame' name='ComboGraph'>
 			<Function name='Load'/>
@@ -823,6 +826,7 @@
 			<Function name='IsInDanger'/>
 		</Class>
 		<Class base='LifeMeter' name='LifeMeterBattery'>
+			<Function name='ChangeLives'/>
 			<Function name='GetLivesLeft'/>
 			<Function name='GetTotalLives'/>
 		</Class>
@@ -889,6 +893,7 @@
 			<Function name='LoadFromStats'/>
 		</Class>
 		<Class base='ActorFrame' name='Player'>
+			<Function name='GetPlayerTimingData'/>
 			<Function name='SetActorWithComboPosition'/>
 			<Function name='SetActorWithJudgmentPosition'/>
 		</Class>
@@ -929,6 +934,7 @@
 			<Function name='GetMines'/>
 			<Function name='GetMini'/>
 			<Function name='GetMirror'/>
+			<Function name='GetNoAttacks'/>
 			<Function name='GetNoFakes'/>
 			<Function name='GetNoHands'/>
 			<Function name='GetNoHolds'/>
@@ -956,6 +962,7 @@
 			<Function name='GetSongAttacks'/>
 			<Function name='GetSplit'/>
 			<Function name='GetStealth'/>
+			<Function name='GetStepAttacks'/>
 			<Function name='GetStomp'/>
 			<Function name='GetSudden'/>
 			<Function name='GetSuddenOffset'/>
@@ -1026,6 +1033,52 @@
 			<Function name='SetPreference'/>
 			<Function name='SetPreferenceToDefault'/>
 		</Class>
+		<Class name='Profile'>
+			<Function name='GetCaloriesBurnedToday'/>
+			<Function name='GetCharacter'/>
+			<Function name='GetCoursesActual'/>
+			<Function name='GetCoursesPercentComplete'/>
+			<Function name='GetCoursesPossible'/>
+			<Function name='GetDisplayName'/>
+			<Function name='GetDisplayTotalCaloriesBurned'/>
+			<Function name='GetGoalCalories'/>
+			<Function name='GetGoalSeconds'/>
+			<Function name='GetGoalType'/>
+			<Function name='GetHighScoreList'/>
+			<Function name='GetLastUsedHighScoreName'/>
+			<Function name='GetMostPopularCourse'/>
+			<Function name='GetMostPopularSong'/>
+			<Function name='GetNumToasties'/>
+			<Function name='GetNumTotalSongsPlayed'/>
+			<Function name='GetSongNumTimesPlayed'/>
+			<Function name='GetSongsActual'/>
+			<Function name='GetSongsAndCoursesPercentCompleteAllDifficulties'/>
+			<Function name='GetSongsPercentComplete'/>
+			<Function name='GetSongsPossible'/>
+			<Function name='GetTotalCaloriesBurned'/>
+			<Function name='GetTotalGameplaySeconds'/>
+			<Function name='GetTotalHands'/>
+			<Function name='GetTotalHolds'/>
+			<Function name='GetTotalJumps'/>
+			<Function name='GetTotalLifts'/>
+			<Function name='GetTotalMines'/>
+			<Function name='GetTotalNumSongsPlayed'/>
+			<Function name='GetTotalRolls'/>
+			<Function name='GetTotalSessionSeconds'/>
+			<Function name='GetTotalSessions'/>
+			<Function name='GetTotalStepsWithTopGrade'/>
+			<Function name='GetTotalTapsAndHolds'/>
+			<Function name='GetTotalTrailsWithTopGrade'/>
+			<Function name='GetUserData'/>
+			<Function name='GetWeightPounds'/>
+			<Function name='HasPassedAnyStepsInSong'/>
+			<Function name='IsCodeUnlocked'/>
+			<Function name='SetCharacter'/>
+			<Function name='SetGoalCalories'/>
+			<Function name='SetGoalSeconds'/>
+			<Function name='SetGoalType'/>
+			<Function name='SetWeightPounds'/>
+		</Class>
 		<Class name='ProfileManager'>
 			<Function name='GetLocalProfile'/>
 			<Function name='GetLocalProfileFromIndex'/>
@@ -1093,6 +1146,15 @@
 		</Class>
 		<Class base='BitmapText' name='ScoreDisplayAliveTime'/>
 		<Class base='BitmapText' name='ScoreDisplayCalories'/>
+		<Class base='ActorFrame' name='Screen'>
+			<Function name='GetNextScreenName'/>
+			<Function name='GetPrevScreenName'/>
+			<Function name='GetScreenType'/>
+			<Function name='Metric'/>
+			<Function name='PostScreenMessage'/>
+			<Function name='String'/>
+			<Function name='lockinput'/>
+		</Class>
 		<Class base='ScreenWithMenuElements' name='ScreenAttract'/>
 		<Class base='ScreenWithMenuElements' name='ScreenEdit'>
 			<Function name='GetEditState'/>
@@ -1185,9 +1247,11 @@
 			<Function name='GetDisplayMainTitle'/>
 			<Function name='GetDisplaySubTitle'/>
 			<Function name='GetFirstBeat'/>
+			<Function name='GetFirstSecond'/>
 			<Function name='GetGenre'/>
 			<Function name='GetGroupName'/>
 			<Function name='GetLastBeat'/>
+			<Function name='GetLastSecond'/>
 			<Function name='GetLyricsPath'/>
 			<Function name='GetMusicPath'/>
 			<Function name='GetOneSteps'/>
@@ -1318,6 +1382,7 @@
 		</Class>
 		<Class name='Steps'>
 			<Function name='GetAuthorCredit'/>
+			<Function name='GetChartName'/>
 			<Function name='GetChartStyle'/>
 			<Function name='GetDescription'/>
 			<Function name='GetDifficulty'/>
@@ -1327,6 +1392,7 @@
 			<Function name='GetRadarValues'/>
 			<Function name='GetStepsType'/>
 			<Function name='GetTimingData'/>
+			<Function name='HasAttacks'/>
 			<Function name='HasSignificantTimingChanges'/>
 			<Function name='IsAPlayerEdit'/>
 			<Function name='IsAnEdit'/>
@@ -1377,10 +1443,17 @@
 			<Function name='GetBPMs'/>
 			<Function name='GetBPMsAndTimes'/>
 			<Function name='GetBeatFromElapsedTime'/>
+			<Function name='GetCombos'/>
 			<Function name='GetDelays'/>
 			<Function name='GetElapsedTimeFromBeat'/>
+			<Function name='GetFakes'/>
 			<Function name='GetLabels'/>
+			<Function name='GetScrolls'/>
+			<Function name='GetSpeeds'/>
 			<Function name='GetStops'/>
+			<Function name='GetTickcounts'/>
+			<Function name='GetTimeSignatures'/>
+			<Function name='GetWarps'/>
 			<Function name='HasBPMChanges'/>
 			<Function name='HasFakes'/>
 			<Function name='HasNegativeBPMs'/>
@@ -1408,6 +1481,7 @@
 			<Function name='GetCode'/>
 			<Function name='GetCourse'/>
 			<Function name='GetDescription'/>
+			<Function name='GetRequirePassChallengeSteps'/>
 			<Function name='GetRequirePassHardSteps'/>
 			<Function name='GetRequirement'/>
 			<Function name='GetSong'/>
@@ -1421,6 +1495,7 @@
 			<Function name='roulette'/>
 			<Function name='song'/>
 			<Function name='steps'/>
+			<Function name='steps_type'/>
 		</Class>
 		<Class name='UnlockManager'>
 			<Function name='AnyUnlocksToCelebrate'/>
@@ -1470,6 +1545,7 @@
 			<Function name='GetCreditsMessage'/>
 		</Namespace>
 		<Namespace name='SongUtil'>
+			<Function name='GetPlayableSteps'/>
 			<Function name='IsStepsPlayable'/>
 			<Function name='IsStepsTypePlayable'/>
 		</Namespace>
@@ -2024,8 +2100,9 @@
 		<Enum name='UnlockRewardType'>
 			<EnumValue name='&apos;UnlockRewardType_Song&apos;' value='0'/>
 			<EnumValue name='&apos;UnlockRewardType_Steps&apos;' value='1'/>
-			<EnumValue name='&apos;UnlockRewardType_Course&apos;' value='2'/>
-			<EnumValue name='&apos;UnlockRewardType_Modifier&apos;' value='3'/>
+			<EnumValue name='&apos;UnlockRewardType_StepsType&apos;' value='2'/>
+			<EnumValue name='&apos;UnlockRewardType_Course&apos;' value='3'/>
+			<EnumValue name='&apos;UnlockRewardType_Modifier&apos;' value='4'/>
 		</Enum>
 		<Enum name='VertAlign'>
 			<EnumValue name='&apos;VertAlign_Top&apos;' value='0'/>
@@ -2060,6 +2137,6 @@
 		<Constant name='sGame' value='&apos;dance&apos;'/>
 		<Constant name='top' value='&apos;VertAlign_Top&apos;'/>
 	</Constants>
-	<Version>StepMania 5 v5.0 Preview 1a</Version>
-	<Date>2011-06-04</Date>
+	<Version>StepMania 5 v5.0 Preview 2</Version>
+	<Date>2011-07-04</Date>
 </Lua>

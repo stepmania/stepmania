@@ -135,10 +135,12 @@ void ScreenHowToPlay::Init()
 
 		// Allow themers to use either a .ssc or .sm file for this. -aj
 		RString sStepsPath = THEME->GetPathO(m_sName, "steps");
+		SSCLoader loaderSSC;
+		SMLoader loaderSM;
 		if( sStepsPath.Right(4) == ".ssc" )
-			SSCLoader::LoadFromSSCFile( sStepsPath, m_Song, false );
+			loaderSSC.LoadFromSimfile( sStepsPath, m_Song, false );
 		else
-			SMLoader::LoadFromSMFile( sStepsPath, m_Song, false );
+			loaderSM.LoadFromSimfile( sStepsPath, m_Song, false );
 		m_Song.AddAutoGenNotes();
 
 		const Style* pStyle = GAMESTATE->GetCurrentStyle();
@@ -172,7 +174,7 @@ void ScreenHowToPlay::Init()
 
 		// Don't show judgment
 		PO_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions, ModsLevel_Stage, m_fBlind, 1.0f );
-		GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
+		GAMESTATE->SetMasterPlayerNumber(PLAYER_1);
 		GAMESTATE->m_bDemonstrationOrJukebox = true;
 	}
 

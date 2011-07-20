@@ -91,6 +91,27 @@ bool AttackArray::ContainsTransformOrTurn() const
 	return false;
 }
 
+vector<RString> AttackArray::ToVectorString() const
+{
+	vector<RString> ret;
+	FOREACH_CONST( Attack, *this, a )
+	{
+		ret.push_back(ssprintf("TIME=%f:LEN=%f:MODS=%s",
+				       a->fStartSecond,
+				       a->fSecsRemaining,
+				       a->sModifiers.c_str()));
+	}
+	return ret;
+}
+
+void AttackArray::UpdateStartTimes(float delta)
+{
+	FOREACH(Attack, *this, a)
+	{
+		a->fStartSecond += delta;
+	}
+}
+
 /*
  * (c) 2003-2004 Chris Danford
  * All rights reserved.

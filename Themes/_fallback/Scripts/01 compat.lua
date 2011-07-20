@@ -56,15 +56,6 @@ function ActorScroller:setfastcatchup(bFastCatchup)
 	self:SetFastCatchup(bFastCatchup)
 end
 
--- renaming various StepMania functions to sm-ssc ones:
-if ScreenString then
-	ScreenString = Screen.String
-end
-
-if ScreenMetric then
-	ScreenMetric = Screen.Metric
-end
-
 --[[ GameState ]]
 --Aliases for old GAMESTATE timing functions.
 --These have been converted to SongPosition, but most themes still use these old functions.

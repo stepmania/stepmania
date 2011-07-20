@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
-	Name="sm-ssc"
+	Name="StepMania"
 	ProjectGUID="{AF209DBD-24BD-4356-8DFE-41751B221195}"
 	RootNamespace="StepMania"
 	Keyword="MFCProj"
@@ -81,7 +81,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386 &quot;$(intdir)\verstub.obj&quot;"
-				AdditionalDependencies="shell32.lib gdi32.lib user32.lib ole32.lib advapi32.lib ffmpeg/modern_working/lib/avcodec.lib ffmpeg/modern_working/lib/avformat.lib ffmpeg/modern_working/lib/avutil.lib ffmpeg/modern_working/lib/swscale.lib"
+				AdditionalDependencies="shell32.lib gdi32.lib user32.lib ole32.lib advapi32.lib Comctl32.lib ffmpeg/modern_working/lib/avcodec.lib ffmpeg/modern_working/lib/avformat.lib ffmpeg/modern_working/lib/avutil.lib ffmpeg/modern_working/lib/swscale.lib"
 				OutputFile="../Program/StepMania-debug.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
@@ -192,7 +192,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386 &quot;$(intdir)\verstub.obj&quot;"
-				AdditionalDependencies="shell32.lib gdi32.lib user32.lib ole32.lib advapi32.lib ffmpeg/modern_working/lib/avcodec.lib ffmpeg/modern_working/lib/avformat.lib ffmpeg/modern_working/lib/avutil.lib ffmpeg/modern_working/lib/swscale.lib"
+				AdditionalDependencies="shell32.lib gdi32.lib user32.lib ole32.lib advapi32.lib Comctl32.lib ffmpeg/modern_working/lib/avcodec.lib ffmpeg/modern_working/lib/avformat.lib ffmpeg/modern_working/lib/avutil.lib ffmpeg/modern_working/lib/swscale.lib"
 				OutputFile="../Program/StepMania.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
@@ -294,7 +294,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386 &quot;$(intdir)\verstub.obj&quot;"
-				AdditionalDependencies="shell32.lib gdi32.lib user32.lib ole32.lib advapi32.lib ffmpeg/modern_working/lib/avcodec.lib ffmpeg/lib/avformat.lib ffmpeg/lib/avutil.lib ffmpeg/lib/swscale.lib"
+				AdditionalDependencies="shell32.lib gdi32.lib user32.lib ole32.lib advapi32.lib Comctl32.lib ffmpeg/modern_working/lib/avcodec.lib ffmpeg/lib/avformat.lib ffmpeg/lib/avutil.lib ffmpeg/lib/swscale.lib"
 				OutputFile="../Program/StepMania-fastdebug.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
@@ -406,7 +406,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386 &quot;$(intdir)\verstub.obj&quot;"
-				AdditionalDependencies="shell32.lib gdi32.lib user32.lib ole32.lib advapi32.lib ffmpeg/modern_working/lib/avcodec.lib ffmpeg/modern_working/lib/avformat.lib ffmpeg/modern_working/lib/avutil.lib ffmpeg/modern_working/lib/swscale.lib"
+				AdditionalDependencies="shell32.lib gdi32.lib user32.lib ole32.lib advapi32.lib Comctl32.lib ffmpeg/modern_working/lib/avcodec.lib ffmpeg/modern_working/lib/avformat.lib ffmpeg/modern_working/lib/avutil.lib ffmpeg/modern_working/lib/swscale.lib"
 				OutputFile="..\Program/StepMania-SSE2.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
@@ -461,14 +461,6 @@
 				>
 			</File>
 			<File
-				RelativePath="ScreenAttract.cpp"
-				>
-			</File>
-			<File
-				RelativePath="ScreenAttract.h"
-				>
-			</File>
-			<File
 				RelativePath="ScreenBookkeeping.cpp"
 				>
 			</File>
@@ -482,38 +474,6 @@
 			</File>
 			<File
 				RelativePath="ScreenContinue.h"
-				>
-			</File>
-			<File
-				RelativePath="ScreenDebugOverlay.cpp"
-				>
-			</File>
-			<File
-				RelativePath="ScreenDebugOverlay.h"
-				>
-			</File>
-			<File
-				RelativePath="ScreenDemonstration.cpp"
-				>
-			</File>
-			<File
-				RelativePath="ScreenDemonstration.h"
-				>
-			</File>
-			<File
-				RelativePath="ScreenEdit.cpp"
-				>
-			</File>
-			<File
-				RelativePath="ScreenEdit.h"
-				>
-			</File>
-			<File
-				RelativePath="ScreenEditMenu.cpp"
-				>
-			</File>
-			<File
-				RelativePath="ScreenEditMenu.h"
 				>
 			</File>
 			<File
@@ -541,27 +501,11 @@
 				>
 			</File>
 			<File
-				RelativePath="ScreenHighScores.cpp"
-				>
-			</File>
-			<File
-				RelativePath="ScreenHighScores.h"
-				>
-			</File>
-			<File
 				RelativePath="ScreenHowToPlay.cpp"
 				>
 			</File>
 			<File
 				RelativePath="ScreenHowToPlay.h"
-				>
-			</File>
-			<File
-				RelativePath="ScreenInstallOverlay.cpp"
-				>
-			</File>
-			<File
-				RelativePath="ScreenInstallOverlay.h"
 				>
 			</File>
 			<File
@@ -578,14 +522,6 @@
 			</File>
 			<File
 				RelativePath="ScreenJukebox.h"
-				>
-			</File>
-			<File
-				RelativePath="ScreenMapControllers.cpp"
-				>
-			</File>
-			<File
-				RelativePath="ScreenMapControllers.h"
 				>
 			</File>
 			<File
@@ -621,46 +557,6 @@
 				>
 			</File>
 			<File
-				RelativePath="ScreenNetEvaluation.cpp"
-				>
-			</File>
-			<File
-				RelativePath="ScreenNetEvaluation.h"
-				>
-			</File>
-			<File
-				RelativePath="ScreenNetRoom.cpp"
-				>
-			</File>
-			<File
-				RelativePath="ScreenNetRoom.h"
-				>
-			</File>
-			<File
-				RelativePath="ScreenNetSelectBase.cpp"
-				>
-			</File>
-			<File
-				RelativePath="ScreenNetSelectBase.h"
-				>
-			</File>
-			<File
-				RelativePath="ScreenNetSelectMusic.cpp"
-				>
-			</File>
-			<File
-				RelativePath="ScreenNetSelectMusic.h"
-				>
-			</File>
-			<File
-				RelativePath="ScreenNetworkOptions.cpp"
-				>
-			</File>
-			<File
-				RelativePath="ScreenNetworkOptions.h"
-				>
-			</File>
-			<File
 				RelativePath="ScreenPackages.cpp"
 				>
 			</File>
@@ -677,35 +573,11 @@
 				>
 			</File>
 			<File
-				RelativePath="ScreenProfileLoad.cpp"
-				>
-			</File>
-			<File
-				RelativePath="ScreenProfileLoad.h"
-				>
-			</File>
-			<File
-				RelativePath="ScreenProfileSave.cpp"
-				>
-			</File>
-			<File
-				RelativePath="ScreenProfileSave.h"
-				>
-			</File>
-			<File
 				RelativePath="ScreenPrompt.cpp"
 				>
 			</File>
 			<File
 				RelativePath="ScreenPrompt.h"
-				>
-			</File>
-			<File
-				RelativePath="ScreenRanking.cpp"
-				>
-			</File>
-			<File
-				RelativePath="ScreenRanking.h"
 				>
 			</File>
 			<File
@@ -797,14 +669,6 @@
 				>
 			</File>
 			<File
-				RelativePath="ScreenSMOnlineLogin.cpp"
-				>
-			</File>
-			<File
-				RelativePath="ScreenSMOnlineLogin.h"
-				>
-			</File>
-			<File
 				RelativePath="ScreenSongOptions.cpp"
 				>
 			</File>
@@ -821,59 +685,11 @@
 				>
 			</File>
 			<File
-				RelativePath="ScreenStatsOverlay.cpp"
-				>
-			</File>
-			<File
-				RelativePath="ScreenStatsOverlay.h"
-				>
-			</File>
-			<File
-				RelativePath="ScreenSyncOverlay.cpp"
-				>
-			</File>
-			<File
-				RelativePath="ScreenSyncOverlay.h"
-				>
-			</File>
-			<File
 				RelativePath="ScreenSystemLayer.cpp"
 				>
 			</File>
 			<File
 				RelativePath="ScreenSystemLayer.h"
-				>
-			</File>
-			<File
-				RelativePath="ScreenTestFonts.cpp"
-				>
-			</File>
-			<File
-				RelativePath="ScreenTestFonts.h"
-				>
-			</File>
-			<File
-				RelativePath="ScreenTestInput.cpp"
-				>
-			</File>
-			<File
-				RelativePath="ScreenTestInput.h"
-				>
-			</File>
-			<File
-				RelativePath="ScreenTestLights.cpp"
-				>
-			</File>
-			<File
-				RelativePath="ScreenTestLights.h"
-				>
-			</File>
-			<File
-				RelativePath="ScreenTestSound.cpp"
-				>
-			</File>
-			<File
-				RelativePath="ScreenTestSound.h"
 				>
 			</File>
 			<File
@@ -968,6 +784,14 @@
 				Name="Options"
 				>
 				<File
+					RelativePath="ScreenMapControllers.cpp"
+					>
+				</File>
+				<File
+					RelativePath="ScreenMapControllers.h"
+					>
+				</File>
+				<File
 					RelativePath="ScreenOptions.cpp"
 					>
 				</File>
@@ -1061,6 +885,198 @@
 				</File>
 				<File
 					RelativePath="ScreenOptionsToggleSongs.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Network"
+				>
+				<File
+					RelativePath="ScreenNetEvaluation.cpp"
+					>
+				</File>
+				<File
+					RelativePath="ScreenNetEvaluation.h"
+					>
+				</File>
+				<File
+					RelativePath="ScreenNetRoom.cpp"
+					>
+				</File>
+				<File
+					RelativePath="ScreenNetRoom.h"
+					>
+				</File>
+				<File
+					RelativePath="ScreenNetSelectBase.cpp"
+					>
+				</File>
+				<File
+					RelativePath="ScreenNetSelectBase.h"
+					>
+				</File>
+				<File
+					RelativePath="ScreenNetSelectMusic.cpp"
+					>
+				</File>
+				<File
+					RelativePath="ScreenNetSelectMusic.h"
+					>
+				</File>
+				<File
+					RelativePath="ScreenNetworkOptions.cpp"
+					>
+				</File>
+				<File
+					RelativePath="ScreenNetworkOptions.h"
+					>
+				</File>
+				<File
+					RelativePath="ScreenSMOnlineLogin.cpp"
+					>
+				</File>
+				<File
+					RelativePath="ScreenSMOnlineLogin.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Edit"
+				>
+				<File
+					RelativePath="ScreenEdit.cpp"
+					>
+				</File>
+				<File
+					RelativePath="ScreenEdit.h"
+					>
+				</File>
+				<File
+					RelativePath="ScreenEditMenu.cpp"
+					>
+				</File>
+				<File
+					RelativePath="ScreenEditMenu.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Overlays"
+				>
+				<File
+					RelativePath="ScreenDebugOverlay.cpp"
+					>
+				</File>
+				<File
+					RelativePath="ScreenDebugOverlay.h"
+					>
+				</File>
+				<File
+					RelativePath="ScreenInstallOverlay.cpp"
+					>
+				</File>
+				<File
+					RelativePath="ScreenInstallOverlay.h"
+					>
+				</File>
+				<File
+					RelativePath="ScreenStatsOverlay.cpp"
+					>
+				</File>
+				<File
+					RelativePath="ScreenStatsOverlay.h"
+					>
+				</File>
+				<File
+					RelativePath="ScreenSyncOverlay.cpp"
+					>
+				</File>
+				<File
+					RelativePath="ScreenSyncOverlay.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Attract"
+				>
+				<File
+					RelativePath="ScreenAttract.cpp"
+					>
+				</File>
+				<File
+					RelativePath="ScreenAttract.h"
+					>
+				</File>
+				<File
+					RelativePath="ScreenDemonstration.cpp"
+					>
+				</File>
+				<File
+					RelativePath="ScreenDemonstration.h"
+					>
+				</File>
+				<File
+					RelativePath="ScreenHighScores.cpp"
+					>
+				</File>
+				<File
+					RelativePath="ScreenHighScores.h"
+					>
+				</File>
+				<File
+					RelativePath="ScreenRanking.cpp"
+					>
+				</File>
+				<File
+					RelativePath="ScreenRanking.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Profile"
+				>
+				<File
+					RelativePath="ScreenProfileLoad.cpp"
+					>
+				</File>
+				<File
+					RelativePath="ScreenProfileLoad.h"
+					>
+				</File>
+				<File
+					RelativePath="ScreenProfileSave.cpp"
+					>
+				</File>
+				<File
+					RelativePath="ScreenProfileSave.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Test"
+				>
+				<File
+					RelativePath="ScreenTestInput.cpp"
+					>
+				</File>
+				<File
+					RelativePath="ScreenTestInput.h"
+					>
+				</File>
+				<File
+					RelativePath="ScreenTestLights.cpp"
+					>
+				</File>
+				<File
+					RelativePath="ScreenTestLights.h"
+					>
+				</File>
+				<File
+					RelativePath="ScreenTestSound.cpp"
+					>
+				</File>
+				<File
+					RelativePath="ScreenTestSound.h"
 					>
 				</File>
 			</Filter>
@@ -1524,8 +1540,14 @@
 				RelativePath="TimingData.h"
 				>
 			</File>
-			<File RelativePath="TimingSegments.cpp"></File>
-			<File RelativePath="TimingSegments.h"></File>
+			<File
+				RelativePath="TimingSegments.cpp"
+				>
+			</File>
+			<File
+				RelativePath="TimingSegments.h"
+				>
+			</File>
 			<File
 				RelativePath="TitleSubstitution.cpp"
 				>
@@ -2808,6 +2830,14 @@
 			</File>
 			<File
 				RelativePath="HelpDisplay.h"
+				>
+			</File>
+			<File
+				RelativePath="InGameLoadingWindow.cpp"
+				>
+			</File>
+			<File
+				RelativePath="InGameLoadingWindow.h"
 				>
 			</File>
 			<File

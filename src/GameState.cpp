@@ -106,6 +106,7 @@ static Preference<Premium> g_Premium( "Premium", Premium_Off );
 Preference<bool> GameState::m_bAutoJoin( "AutoJoin", false );
 
 GameState::GameState() :
+	processedTiming( NULL ),
 	m_pCurGame(				Message_CurrentGameChanged ),
 	m_pCurStyle(			Message_CurrentStyleChanged ),
 	m_PlayMode(				Message_PlayModeChanged ),
@@ -122,14 +123,14 @@ GameState::GameState() :
 	m_pCurTrail(			Message_CurrentTrailP1Changed ),
 	m_bGameplayLeadIn(		Message_GameplayLeadInChanged ),
 	m_bDidModeChangeNoteSkin(	false ),
+	m_bIsUsingStepTiming(		true ),
+	m_bInStepEditor(		false ),
 	m_stEdit(				Message_EditStepsTypeChanged ),
 	m_cdEdit(				Message_EditCourseDifficultyChanged ),
 	m_pEditSourceSteps(		Message_EditSourceStepsChanged ),
 	m_stEditSource(			Message_EditSourceStepsTypeChanged ),
 	m_iEditCourseEntryIndex(	Message_EditCourseEntryIndexChanged ),
-	m_sEditLocalProfileID(		Message_EditLocalProfileIDChanged ),
-	m_bIsUsingStepTiming(		true ),
-	m_bInStepEditor(            false )
+	m_sEditLocalProfileID(		Message_EditLocalProfileIDChanged )
 {
 	g_pImpl = new GameStateImpl;
 
@@ -188,6 +189,27 @@ GameState::~GameState()
 
 	SAFE_DELETE( m_Environment );
 	SAFE_DELETE( g_pImpl );
+	SAFE_DELETE( processedTiming );
+}
+
+PlayerNumber GameState::GetMasterPlayerNumber() const
+{
+	return this->masterPlayerNumber;
+}
+
+void GameState::SetMasterPlayerNumber(const PlayerNumber p)
+{
+	this->masterPlayerNumber = p;
+}
+
+TimingData * GameState::GetProcessedTimingData() const
+{
+	return this->processedTiming;
+}
+
+void GameState::SetProcessedTimingData(TimingData * t)
+{
+	this->processedTiming = t;
 }
 
 void GameState::ApplyGameCommand( const RString &sCommand, PlayerNumber pn )
@@ -244,7 +266,7 @@ void GameState::ResetPlayer( PlayerNumber pn )
 
 void GameState::Reset()
 {
-	m_MasterPlayerNumber = PLAYER_INVALID; // must initialize for UnjoinPlayer
+	this->SetMasterPlayerNumber(PLAYER_INVALID); // must initialize for UnjoinPlayer
 
 	FOREACH_PlayerNumber( pn )
 		UnjoinPlayer( pn );
@@ -334,14 +356,14 @@ void GameState::JoinPlayer( PlayerNumber pn )
 	 * give the new player the same number of stage tokens that the old player
 	 * has. */
 	if( GetCoinMode() == CoinMode_Pay && GetPremium() == Premium_2PlayersFor1Credit && GetNumSidesJoined() == 1 )
-		m_iPlayerStageTokens[pn] = m_iPlayerStageTokens[m_MasterPlayerNumber];
+		m_iPlayerStageTokens[pn] = m_iPlayerStageTokens[this->GetMasterPlayerNumber()];
 	else
 		m_iPlayerStageTokens[pn] = PREFSMAN->m_iSongsPerPlay;
 
 	m_bSideIsJoined[pn] = true;
 
-	if( m_MasterPlayerNumber == PLAYER_INVALID )
-		m_MasterPlayerNumber = pn;
+	if( this->GetMasterPlayerNumber() == PLAYER_INVALID )
+		this->SetMasterPlayerNumber(pn);
 
 	// if first player to join, set start time
 	if( GetNumSidesJoined() == 1 )
@@ -385,8 +407,8 @@ void GameState::UnjoinPlayer( PlayerNumber pn )
 
 	ResetPlayer( pn );
 
-	if( m_MasterPlayerNumber == pn )
-		m_MasterPlayerNumber = GetFirstHumanPlayer();
+	if( this->GetMasterPlayerNumber() == pn )
+		this->SetMasterPlayerNumber(GetFirstHumanPlayer());
 
 	/* Unjoin STATSMAN first, so steps used by this player are released
 	 * and can be released by PROFILEMAN. */
@@ -398,7 +420,7 @@ void GameState::UnjoinPlayer( PlayerNumber pn )
 	MESSAGEMAN->Broadcast( msg );
 
 	// If there are no players left, reset some non-player-specific stuff, too.
-	if( m_MasterPlayerNumber == PLAYER_INVALID )
+	if( this->GetMasterPlayerNumber() == PLAYER_INVALID )
 	{
 		SongOptions so;
 		GetDefaultSongOptions( so );
@@ -635,8 +657,8 @@ int GameState::GetNumStagesForCurrentSongAndStepsOrCourse() const
 		if( pStyle == NULL )
 		{
 			const Steps *pSteps = NULL;
-			if( m_MasterPlayerNumber != PlayerNumber_Invalid )
-				pSteps = m_pCurSteps[m_MasterPlayerNumber];
+			if( this->GetMasterPlayerNumber() != PlayerNumber_Invalid )
+				pSteps = m_pCurSteps[this->GetMasterPlayerNumber()];
 			// Don't call GetFirstCompatibleStyle if numSidesJoined == 0.
 			// This happens because on SContinue when players are unjoined,
 			// pCurSteps will still be set while no players are joined. -Chris
@@ -690,7 +712,11 @@ void GameState::BeginStage()
 	if( !ARE_STAGE_PLAYER_MODS_FORCED )
 	{
 		FOREACH_PlayerNumber( p )
-			m_pPlayerState[p]->m_PlayerOptions.Assign( ModsLevel_Stage, m_pPlayerState[p]->m_PlayerOptions.GetPreferred() );
+		{
+			ModsGroup<PlayerOptions> &po = m_pPlayerState[p]->m_PlayerOptions;
+			po.Assign(ModsLevel_Stage,
+					  m_pPlayerState[p]->m_PlayerOptions.GetPreferred());
+		}
 	}
 	if( !ARE_STAGE_SONG_MODS_FORCED )
 		m_SongOptions.Assign( ModsLevel_Stage, m_SongOptions.GetPreferred() );
@@ -969,7 +995,8 @@ update player position code goes here
 float GameState::GetSongPercent( float beat ) const
 {
 	// 0 = first step; 1 = last step
-	return (beat - m_pCurSong->m_fFirstBeat) / m_pCurSong->m_fLastBeat;
+	float curTime = this->m_pCurSong->m_SongTiming.GetElapsedTimeFromBeat(beat);
+	return (curTime - m_pCurSong->GetFirstSecond()) / m_pCurSong->GetLastSecond();
 }
 
 int GameState::GetNumStagesLeft( PlayerNumber pn ) const
@@ -994,9 +1021,9 @@ bool GameState::IsFinalStageForAnyHumanPlayer() const
 
 bool GameState::IsAnExtraStage() const
 {
-	if( m_MasterPlayerNumber == PlayerNumber_Invalid )
+	if( this->GetMasterPlayerNumber() == PlayerNumber_Invalid )
 		return false;
-	return !IsEventMode() && !IsCourseMode() && m_iAwardedExtraStages[m_MasterPlayerNumber] > 0;
+	return !IsEventMode() && !IsCourseMode() && m_iAwardedExtraStages[this->GetMasterPlayerNumber()] > 0;
 }
 
 static ThemeMetric<bool> LOCK_EXTRA_STAGE_SELECTION("GameState","LockExtraStageSelection");
@@ -1007,16 +1034,16 @@ bool GameState::IsAnExtraStageAndSelectionLocked() const
 
 bool GameState::IsExtraStage() const
 {
-	if( m_MasterPlayerNumber == PlayerNumber_Invalid )
+	if( this->GetMasterPlayerNumber() == PlayerNumber_Invalid )
 		return false;
-	return !IsEventMode() && !IsCourseMode() && m_iAwardedExtraStages[m_MasterPlayerNumber] == 1;
+	return !IsEventMode() && !IsCourseMode() && m_iAwardedExtraStages[this->GetMasterPlayerNumber()] == 1;
 }
 
 bool GameState::IsExtraStage2() const
 {
-	if( m_MasterPlayerNumber == PlayerNumber_Invalid )
+	if( this->GetMasterPlayerNumber() == PlayerNumber_Invalid )
 		return false;
-	return !IsEventMode() && !IsCourseMode() && m_iAwardedExtraStages[m_MasterPlayerNumber] == 2;
+	return !IsEventMode() && !IsCourseMode() && m_iAwardedExtraStages[this->GetMasterPlayerNumber()] == 2;
 }
 
 Stage GameState::GetCurrentStage() const
@@ -1059,7 +1086,7 @@ int GameState::GetCourseSongIndex() const
 	}
 	else
 	{
-		return STATSMAN->m_CurStageStats.m_player[m_MasterPlayerNumber].m_iSongsPlayed-1;
+		return STATSMAN->m_CurStageStats.m_player[this->GetMasterPlayerNumber()].m_iSongsPlayed-1;
 	}
 }
 
@@ -1131,7 +1158,7 @@ void GameState::SetCurrentStyle( const Style *pStyle )
 	if( INPUTMAPPER )
 	{
 		if( GetCurrentStyle() && GetCurrentStyle()->m_StyleType == StyleType_OnePlayerTwoSides )
-			INPUTMAPPER->SetJoinControllers( m_MasterPlayerNumber );
+			INPUTMAPPER->SetJoinControllers( this->GetMasterPlayerNumber() );
 		else
 			INPUTMAPPER->SetJoinControllers( PLAYER_INVALID );
 	}
@@ -1192,7 +1219,7 @@ bool GameState::IsHumanPlayer( PlayerNumber pn ) const
 		return true;
 	case StyleType_OnePlayerOneSide:
 	case StyleType_OnePlayerTwoSides:
-		return pn == m_MasterPlayerNumber;
+		return pn == this->GetMasterPlayerNumber();
 	default:
 		ASSERT(0);		// invalid style type
 		return false;
@@ -1276,7 +1303,7 @@ EarnedExtraStage GameState::CalculateEarnedExtraStage() const
 	if( GetSmallestNumStagesLeftForAnyHumanPlayer() > 0 )
 		return EarnedExtraStage_No;
 
-	if( m_iAwardedExtraStages[m_MasterPlayerNumber] >= 2 )
+	if( m_iAwardedExtraStages[this->GetMasterPlayerNumber()] >= 2 )
 		return EarnedExtraStage_No;
 
 	FOREACH_EnabledPlayer( pn )
@@ -2124,7 +2151,7 @@ public:
 	DEFINE_METHOD( IsPlayerEnabled,			IsPlayerEnabled(Enum::Check<PlayerNumber>(L, 1)) )
 	DEFINE_METHOD( IsHumanPlayer,			IsHumanPlayer(Enum::Check<PlayerNumber>(L, 1)) )
 	DEFINE_METHOD( GetPlayerDisplayName,		GetPlayerDisplayName(Enum::Check<PlayerNumber>(L, 1)) )
-	DEFINE_METHOD( GetMasterPlayerNumber,		m_MasterPlayerNumber )
+	DEFINE_METHOD( GetMasterPlayerNumber,		GetMasterPlayerNumber() )
 	DEFINE_METHOD( GetMultiplayer,			m_bMultiplayer )
 	static int SetMultiplayer( T* p, lua_State *L )
 	{

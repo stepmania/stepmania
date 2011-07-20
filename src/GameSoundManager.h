@@ -6,6 +6,9 @@
 class TimingData;
 class RageSound;
 struct lua_State;
+
+int MusicThread_start( void *p );
+
 /** @brief High-level sound utilities. */
 class GameSoundManager
 {

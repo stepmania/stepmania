@@ -1,29 +1,48 @@
 #include "global.h"
 #include "TimingSegments.h"
+#include "EnumHelper.h"
+
+static const char *TimingSegmentTypeNames[] = {
+	"BPM",
+	"Stop/Delay", // TODO: separate when stops and delays are separate.
+	"Time Sig",
+	"Warp",
+	"Label",
+	"Tickcount",
+	"Combo",
+	"Speed",
+	"Scroll",
+	"Fake"
+};
+XToString( TimingSegmentType );
 
 #define LTCOMPARE(x)      if(this->x < other.x) return true; if(this->x > other.x) return false;
 
-BaseTimingSegment::~BaseTimingSegment() {}
+TimingSegment::~TimingSegment() {}
 
-
-void BaseTimingSegment::SetRow(const int s)
+void TimingSegment::SetRow(const int s)
 {
 	this->startingRow = s;
 }
 
-void BaseTimingSegment::SetBeat(const float s)
+void TimingSegment::SetBeat(const float s)
 {
 	SetRow(BeatToNoteRow(s));
 }
 
-int BaseTimingSegment::GetRow() const
+int TimingSegment::GetRow() const
 {
 	return this->startingRow;
 }
 
-float BaseTimingSegment::GetBeat() const
+float TimingSegment::GetBeat() const
 {
 	return NoteRowToBeat(GetRow());
+}
+
+void TimingSegment::Scale( int start, int length, int newLength )
+{
+	SetRow( ScalePosition( start, length, newLength, this->GetRow() ) );
 }
 
 
@@ -38,6 +57,16 @@ float FakeSegment::GetLength() const
 void FakeSegment::SetLength(const float b)
 {
 	this->lengthBeats = b;
+}
+
+void FakeSegment::Scale( int start, int length, int newLength )
+{
+	float startBeat    = GetBeat();
+	float endBeat      = startBeat + GetLength();
+	float newStartBeat = ScalePosition( NoteRowToBeat(start), NoteRowToBeat(length), NoteRowToBeat(newLength), startBeat );
+	float newEndBeat   = ScalePosition( NoteRowToBeat(start), NoteRowToBeat(length), NoteRowToBeat(newLength), endBeat );
+	SetLength( newEndBeat - newStartBeat );
+	TimingSegment::Scale( start, length, newLength );
 }
 
 bool FakeSegment::operator<( const FakeSegment &other ) const
@@ -60,8 +89,19 @@ void WarpSegment::SetLength(const float b)
 	this->lengthBeats = b;
 }
 
+void WarpSegment::Scale( int start, int length, int newLength )
+{
+	// XXX: this function is duplicated, there should be a better way
+	float startBeat    = GetBeat();
+	float endBeat      = startBeat + GetLength();
+	float newStartBeat = ScalePosition( NoteRowToBeat(start), NoteRowToBeat(length), NoteRowToBeat(newLength), startBeat );
+	float newEndBeat   = ScalePosition( NoteRowToBeat(start), NoteRowToBeat(length), NoteRowToBeat(newLength), endBeat );
+	SetLength( newEndBeat - newStartBeat );
+	TimingSegment::Scale( start, length, newLength );
+}
+
 bool WarpSegment::operator<( const WarpSegment &other ) const
-{ 
+{
 	LTCOMPARE(GetRow());
 	LTCOMPARE(GetLength());
 	return false;
@@ -100,10 +140,21 @@ void ComboSegment::SetCombo(const int i)
 	this->combo = i;
 }
 
+int ComboSegment::GetMissCombo() const
+{
+	return this->missCombo;
+}
+
+void ComboSegment::SetMissCombo(const int i)
+{
+	this->missCombo = i;
+}
+
 bool ComboSegment::operator<( const ComboSegment &other ) const
 {
 	LTCOMPARE(GetRow());
 	LTCOMPARE(GetCombo());
+	LTCOMPARE(GetMissCombo());
 	return false;
 }
 
@@ -223,6 +274,26 @@ void SpeedSegment::SetUnit(const unsigned short i)
 void SpeedSegment::SetUnit(const int i)
 {
 	this->unit = static_cast<unsigned short>(i);
+}
+
+void SpeedSegment::Scale( int start, int oldLength, int newLength )
+{
+	if( GetUnit() == 0 )
+	{
+		// XXX: this function is duplicated, there should be a better way
+		float startBeat    = GetBeat();
+		float endBeat      = startBeat + GetLength();
+		float newStartBeat = ScalePosition(NoteRowToBeat(start),
+						   NoteRowToBeat(oldLength),
+						   NoteRowToBeat(newLength),
+						   startBeat);
+		float newEndBeat   = ScalePosition(NoteRowToBeat(start),
+						   NoteRowToBeat(oldLength),
+						   NoteRowToBeat(newLength),
+						   endBeat);
+		SetLength( newEndBeat - newStartBeat );
+	}
+	TimingSegment::Scale( start, oldLength, newLength );
 }
 
 bool SpeedSegment::operator<( const SpeedSegment &other ) const

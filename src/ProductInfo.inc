@@ -5,12 +5,12 @@
 
 ; see ProductInfo.h for use descriptions
 !define PRODUCT_ID "StepMania"
-!define PRODUCT_VER "v5.0 Preview 1a"
+!define PRODUCT_VER "v5.0 Preview 2"
 !define PRODUCT_DISPLAY "${PRODUCT_ID} ${PRODUCT_VER}"
-!define PRODUCT_BITMAP "ssc"
+!define PRODUCT_BITMAP "sm5"
 
 !define PRODUCT_URL "http://www.stepmania.com/"
-!define UPDATES_URL "http://www.stepmania.com/"
+!define UPDATES_URL "http://code.google.com/p/sm-ssc/downloads/list"
 
 ;!define INSTALL_EXTERNAL_PCKS
 ;!define INSTALL_INTERNAL_PCKS

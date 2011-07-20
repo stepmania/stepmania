@@ -1,4 +1,6 @@
 #include "global.h"
+
+#if !defined(WITHOUT_NETWORKING)
 #include "ScreenPackagesSSC.h"
 #include "ThemeManager.h"
 #include "RageDisplay.h"
@@ -50,6 +52,7 @@ RString ScreenPackagesSSC::JSONParse( const RString &string_in )
 	return "";
 }
 
+#endif
 /*
  * (c) 2009 Colby Klein
  * All rights reserved.

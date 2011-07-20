@@ -7,7 +7,7 @@ t[#t+1] = Def.Sprite {
 	BeforeLoadingNextCourseSongMessageCommand=function(self) self:LoadFromSongBackground( SCREENMAN:GetTopScreen():GetNextCourseSong() ) end;
 	ChangeCourseSongInMessageCommand=cmd(scaletoclipped,SCREEN_WIDTH,SCREEN_HEIGHT);
 	StartCommand=cmd(diffusealpha,0;decelerate,0.5;diffusealpha,1;);
-	FinishCommand=cmd(linear,0.1;glow,Colors.Alpha(Color("White"),0.5);decelerate,0.4;glow,Color("Invisible");diffusealpha,0);
+	FinishCommand=cmd(linear,0.1;glow,Color.Alpha(Color("White"),0.5);decelerate,0.4;glow,Color("Invisible");diffusealpha,0);
 };
 
 t[#t+1] = Def.ActorFrame {

@@ -6,6 +6,9 @@
 #include "RageLog.h"
 #include "UnlockManager.h"
 
+RString COLUMN_DIFFICULTY_NAME( size_t i );
+RString COLUMN_STEPS_TYPE_NAME( size_t i );
+
 static const char *HighScoresTypeNames[] = {
 	"AllSteps",
 	"NonstopCourses",

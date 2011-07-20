@@ -11,6 +11,7 @@
 #include "ThemeMetric.h"
 #include "PlayerState.h"
 
+void ReloadItems();
 
 #define NUM_ITEM_TYPES			THEME->GetMetricF("Inventory","NumItemTypes")
 #define ITEM_DURATION_SECONDS	THEME->GetMetricF("Inventory","ItemDurationSeconds")
@@ -118,10 +119,10 @@ void Inventory::Update( float fDelta )
 		}
 	}
 
-
+	Song &song = *GAMESTATE->m_pCurSong;
 	// use items if this player is CPU-controlled
 	if( m_pPlayerState->m_PlayerController != PC_HUMAN &&
-		GAMESTATE->m_Position.m_fSongBeat < GAMESTATE->m_pCurSong->m_fLastBeat )
+		GAMESTATE->m_Position.m_fSongBeat < song.GetLastBeat() )
 	{
 		// every 1 seconds, try to use an item
 		int iLastSecond = (int)(RageTimer::GetTimeSinceStartFast() - fDelta);

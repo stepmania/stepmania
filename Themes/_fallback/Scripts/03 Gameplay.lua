@@ -11,7 +11,7 @@ function GetExtraColorThreshold()
 	sGame = GAMESTATE:GetCurrentGame():GetName()
 	local Modes = {
 		dance = 10,
-		pump = 15,
+		pump = 21,
 		beat = 12,
 		kb7 = 10,
 		para = 10,
@@ -105,6 +105,10 @@ function ComboPerRow()
 	end
 end
 
+function EvalUsesCheckpointsWithJudgments()
+	return (GAMESTATE:GetCurrentGame():GetName() == "pump") and true or false
+end
+
 -- these need cleanup really.
 function HitCombo()
 	sGame = GAMESTATE:GetCurrentGame():GetName()
@@ -183,7 +187,11 @@ function HoldTiming()
 end
 
 function ShowHoldJudgments()
-	return not GAMESTATE:GetCurrentGame():GetName() == "pump"
+	if GAMESTATE:GetCurrentGame():GetName() == "pump" then
+		return false
+	else
+		return true
+	end
 end
 
 function HoldHeadStep()

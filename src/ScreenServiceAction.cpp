@@ -197,7 +197,8 @@ static void CopyEdits( const RString &sFromProfileDir, const RString &sToProfile
 				iNumErrored++;
 
 			// Test whether the song we need for this edit is present and ignore this edit if not present.
-			if( !SSCLoader::LoadEditFromFile( sFromDir+*i, ProfileSlot_Machine, false ) )
+			SSCLoader loaderSSC;
+			if( !loaderSSC.LoadEditFromFile( sFromDir+*i, ProfileSlot_Machine, false ) )
 			{
 				iNumIgnored++;
 				continue;

@@ -145,8 +145,8 @@ void ScreenSelect::HandleScreenMessage( const ScreenMessage SM )
 		 * same choice, and  if so, call ApplyToAll instead.
 		 * TODO: Think of a better way to handle this.
 		 */
-		ASSERT( GAMESTATE->m_MasterPlayerNumber != PlayerNumber_Invalid );
-		int iMastersIndex = this->GetSelectionIndex( GAMESTATE->m_MasterPlayerNumber );
+		ASSERT( GAMESTATE->GetMasterPlayerNumber() != PlayerNumber_Invalid );
+		int iMastersIndex = this->GetSelectionIndex( GAMESTATE->GetMasterPlayerNumber() );
 		bool bAllPlayersChoseTheSame = true;
 		FOREACH_HumanPlayer( p )
 		{

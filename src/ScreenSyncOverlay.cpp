@@ -221,8 +221,8 @@ bool ScreenSyncOverlay::OverlayInput( const InputEventPlus &input )
 			}
 			if( GAMESTATE->m_pCurSong != NULL )
 			{
-				BPMSegment& seg = GAMESTATE->m_pCurSong->m_SongTiming.GetBPMSegmentAtBeat( GAMESTATE->m_Position.m_fSongBeat );
-				seg.SetBPS( seg.GetBPS() + fDelta );
+				BPMSegment * seg = GAMESTATE->m_pCurSong->m_SongTiming.GetBPMSegmentAtBeat( GAMESTATE->m_Position.m_fSongBeat );
+				seg->SetBPS( seg->GetBPS() + fDelta );
 			}
 		}
 		break;
@@ -253,7 +253,14 @@ bool ScreenSyncOverlay::OverlayInput( const InputEventPlus &input )
 
 			case ChangeSongOffset:
 				if( GAMESTATE->m_pCurSong != NULL )
+				{
 					GAMESTATE->m_pCurSong->m_SongTiming.m_fBeat0OffsetInSeconds += fDelta;
+					const vector<Steps *>& vpSteps = GAMESTATE->m_pCurSong->GetAllSteps();
+					FOREACH( Steps*, const_cast<vector<Steps *>&>(vpSteps), s )
+					{
+						(*s)->m_Timing.m_fBeat0OffsetInSeconds += fDelta;
+					}
+				}
 				break;
 			}
 		}

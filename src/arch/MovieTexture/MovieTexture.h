@@ -5,6 +5,8 @@
 #include "arch/RageDriver.h"
 #include <map>
 
+void ForceToAscii( RString &str );
+
 class RageMovieTexture : public RageTexture
 {
 public:

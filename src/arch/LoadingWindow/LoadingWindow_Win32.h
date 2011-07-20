@@ -14,16 +14,26 @@ public:
 	~LoadingWindow_Win32();
 
 	void SetText( RString sText );
-	void Paint();
 	void SetIcon( const RageSurface *pIcon );
+	void SetSplash( const RString sPath );
+	void SetProgress( const int progress );
+	void SetTotalWork( const int totalWork );
+	void SetIndeterminate( bool indeterminate );
 
 private:
 	AppInstance handle;
 	HWND hwnd;
 	RString text[3];
 	HICON m_hIcon;
+	HANDLE pumpThread;
+	DWORD pumpThreadId;
+	HANDLE guiReadyEvent;
 
-	static BOOL CALLBACK WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam );
+	volatile bool runMessageLoop;
+
+	static DWORD WINAPI MessagePump(LPVOID thisAsVoidPtr);
+
+	static INT_PTR CALLBACK DlgProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam );
 };
 #define USE_LOADING_WINDOW_WIN32
 

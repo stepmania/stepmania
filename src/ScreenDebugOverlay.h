@@ -7,6 +7,9 @@
 #include "BitmapText.h"
 #include "Quad.h"
 
+void ChangeVolume( float fDelta );
+void ChangeVisualDelay( float fDelta );
+
 class ScreenDebugOverlay : public Screen
 {
 public:

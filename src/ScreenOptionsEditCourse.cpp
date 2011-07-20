@@ -145,7 +145,7 @@ void ScreenOptionsEditCourse::Init()
 	sc.m_Tutorial = SongCriteria::Tutorial_No;
 	sc.m_Locked = SongCriteria::Locked_Unlocked;
 
-	SongUtil::FilterSongs( sc, SONGMAN->GetAllSongs(), m_vpSongs );
+	SongUtil::FilterSongs( sc, SONGMAN->GetAllSongs(), m_vpSongs, true );
 
 	SongUtil::SortSongPointerArrayByTitle( m_vpSongs );
 }
@@ -488,7 +488,7 @@ void ScreenOptionsEditCourse::ProcessMenuStart( const InputEventPlus &input )
 	if( IsTransitioning() )
 		return;
 
-	int iRow = m_iCurrentRow[GAMESTATE->m_MasterPlayerNumber];
+	int iRow = m_iCurrentRow[GAMESTATE->GetMasterPlayerNumber()];
 
 	unsigned iSongCount = GAMESTATE->m_pCurCourse->m_vEntries.size();
 
