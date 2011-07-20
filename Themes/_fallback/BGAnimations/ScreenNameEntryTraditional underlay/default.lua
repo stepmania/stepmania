@@ -46,26 +46,30 @@ function MakeScoreList(StagesAgo)
 			OffCommand=cmd(linear,0.3;addx,150;diffusealpha,0);
 		};
 
-		LoadFont( "_regra bold 30px" ) .. {
+		LoadFont( "Common Normal" ) .. {
+-- 		LoadFont( "_regra bold 30px" ) .. {
 			Name="PlayerScoreP1";
 			InitCommand=cmd(x,-135;diffuse,color("#fdf991");shadowlength,0;zoom,0.6);
 			OnCommand=cmd(x,-135;addx,50;zoom,0;diffusealpha,0;sleep,0.1;accelerate,0.3;addx,-50;diffusealpha,1;zoom,0.6);
 			OffCommand=cmd(linear,0.3;diffusealpha,0);
 		};
-		LoadFont( "_regra bold 30px" ) .. {
+		LoadFont( "Common Normal" ) .. {
+-- 		LoadFont( "_regra bold 30px" ) .. {
 			Name="PlayerScoreP2";
 			InitCommand=cmd(x,135;diffuse,color("#abfe8e");shadowlength,0;zoom,0.6);
 			OnCommand=cmd(x,135;addx,-50;zoom,0;diffusealpha,0;sleep,0.1;accelerate,0.3;addx,50;diffusealpha,1;zoom,0.6);
 			OffCommand=cmd(linear,0.3;diffusealpha,0);
 		};
 
-		LoadFont( "_regra bold 30px" ) .. {
+		LoadFont( "Common Normal" ) .. {
+-- 		LoadFont( "_regra bold 30px" ) .. {
 			Name="MachineBestP1";
 			InitCommand=cmd(diffuse,color("#ffffff");shadowlength,0;zoom,0.5);
 			OnCommand=cmd(x,-250;addx,-250;diffusealpha,1;decelerate,0.3;addx,250);
 			OffCommand=cmd(linear,0.3;addx,-150;diffusealpha,0);
 		};
-		LoadFont( "_regra bold 30px" ) .. {
+		LoadFont( "Common Normal" ) .. {
+-- 		LoadFont( "_regra bold 30px" ) .. {
 			Name="MachineBestP2";
 			InitCommand=cmd(diffuse,color("#ffffff");shadowlength,0;zoom,0.5);
 			OnCommand=cmd(x,250;addx,250;diffusealpha,1;decelerate,0.3;addx,-250);
@@ -130,7 +134,7 @@ function MakeScoreList(StagesAgo)
 				if visible then
 					assert(CurrentPart[pn]);
 
-					c.Difficulty[pn]:SetDifficultyAndStepsTypeFrame( CurrentPart[pn] );
+-- 					c.Difficulty[pn]:SetDifficultyAndStepsTypeFrame( CurrentPart[pn] );
 
 					local hsl = MachineProfile:GetHighScoreList( Current, CurrentPart[pn] );
 					assert( hsl );
@@ -198,8 +202,8 @@ for i = 1,5 do
 		};
 end
 
-children[#children+1] =
-	LoadActor( THEME:GetPathB("","_shared underlay") ) .. { OnCommand=cmd(); };
+--[[ children[#children+1] =
+	LoadActor( THEME:GetPathB("","_shared underlay") ) .. { OnCommand=cmd(); }; --]]
 
 children[#children+1] = LoadActor( "keyboard" ) .. {
 	InitCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y+80);
@@ -217,7 +221,8 @@ for pn in ivalues(PlayerNumber) do
 		OffCommand=cmd(stoptweening;bouncebegin,0.3;zoom,0;addx,-200*P1);
 	};
 
-	children[#children+1] = LoadFont( "_regra bold 30px" ) .. {
+	children[#children+1] = LoadFont( "Common Normal" ) .. {
+-- 	children[#children+1] = LoadFont( "_regra bold 30px" ) .. {
 		Name="PlayerText";
 		InitCommand=cmd(x,pn == PLAYER_1 and (SCREEN_CENTER_X-WideScale(310,330)) or (SCREEN_CENTER_X+WideScale(198,204));
 			halign,0;
