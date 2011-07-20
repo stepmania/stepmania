@@ -7790,6 +7790,10 @@
 					"-fno-exceptions",
 					"-falign-loops=16",
 				);
+				OTHER_LDFLAGS = (
+					"-read_only_relocs",
+					suppress,
+				);
 				PRODUCT_NAME = StepMania;
 				SYMROOT = "$(SRCROOT)/..";
 				WRAPPER_EXTENSION = app;
@@ -8331,6 +8335,10 @@
 					"-fno-exceptions",
 					"-falign-loops=16",
 				);
+				OTHER_LDFLAGS = (
+					"-read_only_relocs",
+					suppress,
+				);
 				PRODUCT_NAME = StepMania;
 				STRIP_INSTALLED_PRODUCT = NO;
 				SYMROOT = "$(SRCROOT)/..";
@@ -8577,6 +8585,10 @@
 					"-fconstant-cfstrings",
 					"-fno-exceptions",
 					"-falign-loops=16",
+				);
+				OTHER_LDFLAGS = (
+					"-read_only_relocs",
+					suppress,
 				);
 				PRODUCT_NAME = StepMania;
 				SYMROOT = "$(SRCROOT)/..";
