@@ -1,12 +1,11 @@
 -- SSC Color Module and Library
-local nilColor = color("0,0,0,0")
+
 -- Original Color Module.
 Color = {
 -- Color Library
 -- These colors are pure swatch colors and are here purely to be used
 -- on demand without having to type color("stuff") or dig through 
 -- a palette to get the color you want.
-	__call(_color)	=	function(self, _color) return self[_color] end,
 	Black		=	color("0,0,0,1"),
 	White		=	color("1,1,1,1"),
 	Red			=	color("#ed1c24"),
@@ -17,7 +16,7 @@ Color = {
 	Purple		=	color("#92278f"),
 	Outline		=	color("0,0,0,0.5"),
 	Invisible	=	color("1,1,1,0"),
-	Stealth		=	nilColor,
+	Stealth		=	color("0,0,0,0"),
 -- Color Functions
 -- These functions alter colors in a certain way so that you can make
 -- new ones without having to copy a color or find a new one.
@@ -31,6 +30,9 @@ Color = {
 		return { c[1],c[2],c[3],fAlpha };
 	end
 }
+
+setmetatable(Color, { __call = function(self, c) return self[c] end })
+
 -- Remapped Color Module, since some themes are crazy
 -- Colors = Color;
 
@@ -96,10 +98,6 @@ GameColor.Difficulty["Nightmare"] = GameColor.Difficulty["Challenge"];
 GameColor.Difficulty["HalfDouble"] = GameColor.Difficulty["Medium"];
 
 --[[ Fallbacks ]]
-function Color( in_c )
-	return __call(in_c)
-end --]]
-
 function BoostColor( cColor, fBoost )
 	local c = cColor
 	return { c[1]*fBoost, c[2]*fBoost, c[3]*fBoost, c[4] }
