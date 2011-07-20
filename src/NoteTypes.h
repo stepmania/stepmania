@@ -217,16 +217,26 @@ inline const RString TapNoteTypeToString( TapNote::Type tn )
 {
 	switch( tn )
 	{
-		case TapNote::empty:		return RString("empty");
-		case TapNote::tap:		return RString("tap");
-		case TapNote::hold_head:	return RString("hold_head");
-		case TapNote::hold_tail:	return RString("hold_tail");
-		case TapNote::mine:		return RString("mine");
-		case TapNote::lift:		return RString("lift");
-		case TapNote::attack:		return RString("attack");
-		case TapNote::autoKeysound:	return RString("autoKeysound");
-		case TapNote::fake:		return RString("fake");
-		default:			return RString();
+		case TapNote::empty:
+			return RString("empty");
+		case TapNote::tap:
+			return RString("tap");
+		case TapNote::hold_head:
+			return RString("hold_head");
+		case TapNote::hold_tail:
+			return RString("hold_tail");
+		case TapNote::mine:	
+			return RString("mine");
+		case TapNote::lift:	
+			return RString("lift");
+		case TapNote::attack:
+			return RString("attack");
+		case TapNote::autoKeysound:
+			return RString("autoKeysound");
+		case TapNote::fake:
+			return RString("fake");
+		default:
+			return RString("");
 	}
 }
 
