@@ -67,17 +67,18 @@ RageSoundReader_FileReader *RageSoundReader_FileReader::TryOpenFile( RageFileBas
 	bKeepTrying = (ret != OPEN_FATAL_ERROR);
 	switch( ret )
 	{
-	case OPEN_UNKNOWN_FILE_FORMAT:
-		bKeepTrying = true;
-		error = "Unknown file format";
-		break;
+		case OPEN_UNKNOWN_FILE_FORMAT:
+			bKeepTrying = true;
+			error = "Unknown file format";
+			break;
 
-	case OPEN_FATAL_ERROR:
-		/* The file matched, but failed to load.  We know it's this type of data;
-		 * don't bother trying the other file types. */
-		bKeepTrying = false;
-		error = err;
-		break;
+		case OPEN_FATAL_ERROR:
+			/* The file matched, but failed to load.  We know it's this type of data;
+			 * don't bother trying the other file types. */
+			bKeepTrying = false;
+			error = err;
+			break;
+		default: break;
 	}
 
 	return NULL;

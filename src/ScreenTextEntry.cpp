@@ -200,10 +200,11 @@ void ScreenTextEntry::Input( const InputEventPlus &input )
 	{
 		switch( input.type )
 		{
-		case IET_FIRST_PRESS:
-		case IET_REPEAT:
-			BackspaceInAnswer();
-			break;
+			case IET_FIRST_PRESS:
+			case IET_REPEAT:
+				BackspaceInAnswer();
+			default:
+				break;
 		}
 	}
 	else if( input.type == IET_FIRST_PRESS )

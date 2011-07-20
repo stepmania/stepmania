@@ -182,25 +182,26 @@ void ScreenEvaluation::Init()
 			{
 				switch( rc )
 				{
-				case RadarCategory_Stream:
-				case RadarCategory_Voltage:
-				case RadarCategory_Air:
-				case RadarCategory_Freeze:
-				case RadarCategory_Chaos:
-					ss.m_player[p].m_radarPossible[rc] = randomf( 0, 1 );
-					ss.m_player[p].m_radarActual[rc] = randomf( 0, ss.m_player[p].m_radarPossible[rc] );
-					break;
-				case RadarCategory_TapsAndHolds:
-				case RadarCategory_Jumps:
-				case RadarCategory_Holds:
-				case RadarCategory_Mines:
-				case RadarCategory_Hands:
-				case RadarCategory_Rolls:
-				case RadarCategory_Lifts:
-				case RadarCategory_Fakes:
-					ss.m_player[p].m_radarPossible[rc] = 1 + (rand() % 200);
-					ss.m_player[p].m_radarActual[rc] = rand() % (int)(ss.m_player[p].m_radarPossible[rc]);
-					break;
+					case RadarCategory_Stream:
+					case RadarCategory_Voltage:
+					case RadarCategory_Air:
+					case RadarCategory_Freeze:
+					case RadarCategory_Chaos:
+						ss.m_player[p].m_radarPossible[rc] = randomf( 0, 1 );
+						ss.m_player[p].m_radarActual[rc] = randomf( 0, ss.m_player[p].m_radarPossible[rc] );
+						break;
+					case RadarCategory_TapsAndHolds:
+					case RadarCategory_Jumps:
+					case RadarCategory_Holds:
+					case RadarCategory_Mines:
+					case RadarCategory_Hands:
+					case RadarCategory_Rolls:
+					case RadarCategory_Lifts:
+					case RadarCategory_Fakes:
+						ss.m_player[p].m_radarPossible[rc] = 1 + (rand() % 200);
+						ss.m_player[p].m_radarActual[rc] = rand() % (int)(ss.m_player[p].m_radarPossible[rc]);
+						break;
+					default: break;
 				}
 
 				;	// filled in by ScreenGameplay on start of notes
@@ -651,11 +652,12 @@ void ScreenEvaluation::Init()
 
 	switch( best_grade )
 	{
-	case Grade_Tier01:
-	case Grade_Tier02:
-	case Grade_Tier03:
-		this->PostScreenMessage( SM_PlayCheer, CHEER_DELAY_SECONDS );
-		break;
+		case Grade_Tier01:
+		case Grade_Tier02:
+		case Grade_Tier03:
+			this->PostScreenMessage( SM_PlayCheer, CHEER_DELAY_SECONDS );
+		default:
+			break;
 	}
 }
 

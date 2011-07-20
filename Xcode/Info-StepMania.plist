@@ -47,6 +47,8 @@
 	<string>Step</string>
 	<key>CFBundleVersion</key>
 	<string>PRODUCT_VER_BARE</string>
+	<key>LSApplicationCategoryType</key>
+	<string>public.app-category.music-games</string>
 	<key>LSMinimumSystemVersion</key>
 	<string>10.4.10</string>
 	<key>NSHumanReadableCopyright</key>

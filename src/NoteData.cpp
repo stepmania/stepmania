@@ -547,10 +547,12 @@ bool NoteData::RowNeedsAtLeastSimultaneousPresses( int iMinSimultaneousPresses, 
 		const TapNote &tn = GetTapNote(t, row);
 		switch( tn.type )
 		{
-		case TapNote::mine:
-		case TapNote::empty:
-		case TapNote::fake:
-			continue;	// skip these types - they don't count
+			case TapNote::mine:
+			case TapNote::empty:
+			case TapNote::fake:
+			case TapNote::lift: // you don't "press" on a lift.
+				continue;	// skip these types - they don't count
+			default: break;
 		}
 		++iNumNotesThisIndex;
 	}

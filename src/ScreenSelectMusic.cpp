@@ -528,21 +528,22 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 		{
 			switch( input.MenuI )
 			{
-			case GAME_BUTTON_LEFT:
-				ChangeSteps( input.pn, -1 );
-				m_bAcceptSelectRelease[input.pn] = false;
-				break;
-			case GAME_BUTTON_RIGHT:
-				ChangeSteps( input.pn, +1 );
-				m_bAcceptSelectRelease[input.pn] = false;
-				break;
-			case GAME_BUTTON_START:
-				m_bAcceptSelectRelease[input.pn] = false;
-				if( MODE_MENU_AVAILABLE )
-					m_MusicWheel.NextSort();
-				else
-					m_soundLocked.Play();
-				break;
+				case GAME_BUTTON_LEFT:
+					ChangeSteps( input.pn, -1 );
+					m_bAcceptSelectRelease[input.pn] = false;
+					break;
+				case GAME_BUTTON_RIGHT:
+					ChangeSteps( input.pn, +1 );
+					m_bAcceptSelectRelease[input.pn] = false;
+					break;
+				case GAME_BUTTON_START:
+					m_bAcceptSelectRelease[input.pn] = false;
+					if( MODE_MENU_AVAILABLE )
+						m_MusicWheel.NextSort();
+					else
+						m_soundLocked.Play();
+					break;
+				default: break;
 			}
 		}
 		else if( input.type == IET_FIRST_PRESS && input.MenuI != GAME_BUTTON_SELECT )

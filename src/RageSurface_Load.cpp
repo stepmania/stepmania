@@ -57,16 +57,17 @@ static RageSurface *TryOpenFile( RString sPath, bool bHeaderOnly, RString &error
 	bKeepTrying = (result != RageSurfaceUtils::OPEN_FATAL_ERROR);
 	switch( result )
 	{
-	case RageSurfaceUtils::OPEN_UNKNOWN_FILE_FORMAT:
-		bKeepTrying = true;
-		error = "Unknown file format";
-		break;
+		case RageSurfaceUtils::OPEN_UNKNOWN_FILE_FORMAT:
+			bKeepTrying = true;
+			error = "Unknown file format";
+			break;
 
-	case RageSurfaceUtils::OPEN_FATAL_ERROR:
-		/* The file matched, but failed to load.  We know it's this type of data;
-		 * don't bother trying the other file types. */
-		bKeepTrying = false;
-		break;
+		case RageSurfaceUtils::OPEN_FATAL_ERROR:
+			/* The file matched, but failed to load.  We know it's this type of data;
+			 * don't bother trying the other file types. */
+			bKeepTrying = false;
+			break;
+		default: break;
 	}
 
 	return NULL;

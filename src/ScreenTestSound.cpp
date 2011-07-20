@@ -137,68 +137,69 @@ void ScreenTestSound::Input( const InputEventPlus &input )
 	case DEVICE_KEYBOARD:
 		switch( input.DeviceI.button )
 		{
-		case '1':
-		case '2':
-		case '3':
-		case '4':
-		case '5': selected = input.DeviceI.button - '0'-1; break;
-		case 'p':
-		{
-			/* We want to be able to read the position of copied sounds; if we let
-			 * RageSound copy itself, then the copy will be owned by RageSoundManager
-			 * and we won't be allowed to touch it.  Copy it ourself. */
-			RageSound *pCopy = new RageSound( s[selected].s );
-			m_sSoundCopies[selected].push_back( pCopy );
-			pCopy->Play();
-			break;
-		}
-		case 's':
-			for( int i = 0; i < nsounds; ++i )
+			case '1':
+			case '2':
+			case '3':
+			case '4':
+			case '5': selected = input.DeviceI.button - '0'-1; break;
+			case 'p':
 			{
-				/* Stop copied sounds. */
-				vector<RageSound *> &snds = m_sSoundCopies[i];
-				for( unsigned j = 0; j < snds.size(); ++j )
-					snds[j]->Stop();
+				/* We want to be able to read the position of copied sounds; if we let
+				 * RageSound copy itself, then the copy will be owned by RageSoundManager
+				 * and we won't be allowed to touch it.  Copy it ourself. */
+				RageSound *pCopy = new RageSound( s[selected].s );
+				m_sSoundCopies[selected].push_back( pCopy );
+				pCopy->Play();
+				break;
 			}
-			break;
-		case 'l':
+			case 's':
+			{
+				for( int i = 0; i < nsounds; ++i )
+				{
+					/* Stop copied sounds. */
+					vector<RageSound *> &snds = m_sSoundCopies[i];
+					for( unsigned j = 0; j < snds.size(); ++j )
+						snds[j]->Stop();
+				}
+				break;
+			}
+			case 'l':
 			{
 				RageSoundParams p = s[selected].s.GetParams();
 				p.StopMode = RageSoundParams::M_LOOP;
 				s[selected].s.SetParams( p );
+				break;
 			}
-
-			break;
-		case 'a':
+			case 'a':
 			{
 				RageSoundParams p = s[selected].s.GetParams();
 				p.StopMode = RageSoundParams::M_STOP;
 				s[selected].s.SetParams( p );
+				break;
 			}
-			break;
-		case 'c':
+			case 'c':
 			{
 				RageSoundParams p = s[selected].s.GetParams();
 				p.StopMode = RageSoundParams::M_CONTINUE;
 				s[selected].s.SetParams( p );
+				break;
 			}
-			break;
-
-/*		case KEY_LEFT:
-			obj.SetX(obj.GetX() - 10);
-			break;
-		case KEY_RIGHT:
-			obj.SetX(obj.GetX() + 10);
-			break;
-		case KEY_UP:
-			obj.SetY(obj.GetY() - 10);
-			break;
-		case KEY_DOWN:
-			obj.SetY(obj.GetY() + 10);
-			break;
+/*			case KEY_LEFT:
+				obj.SetX(obj.GetX() - 10);
+				break;
+			case KEY_RIGHT:
+				obj.SetX(obj.GetX() + 10);
+				break;
+			case KEY_UP:
+				obj.SetY(obj.GetY() - 10);
+				break;
+			case KEY_DOWN:
+				obj.SetY(obj.GetY() + 10);
+				break;
 */
+			default: break;
 		}
-
+		default: break;
 	}
 
 }

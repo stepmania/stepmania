@@ -274,6 +274,7 @@ float PlayerStageStats::GetCurMaxPercentDancePoints() const
 	return fCurMaxPercentDancePoints;
 }
 
+// TODO: Make this use lua. Let more judgments be possible. -Wolfman2000
 int PlayerStageStats::GetLessonScoreActual() const
 {
 	int iScore = 0;
@@ -282,14 +283,15 @@ int PlayerStageStats::GetLessonScoreActual() const
 	{
 		switch( tns )
 		{
-		case TNS_AvoidMine:
-		case TNS_W5:
-		case TNS_W4:
-		case TNS_W3:
-		case TNS_W2:
-		case TNS_W1:
-			iScore += m_iTapNoteScores[tns];
-			break;
+			case TNS_AvoidMine:
+			case TNS_W5:
+			case TNS_W4:
+			case TNS_W3:
+			case TNS_W2:
+			case TNS_W1:
+				iScore += m_iTapNoteScores[tns];
+			default:
+				break;
 		}
 	}
 
@@ -297,9 +299,10 @@ int PlayerStageStats::GetLessonScoreActual() const
 	{
 		switch( hns )
 		{
-		case HNS_Held:
-			iScore += m_iHoldNoteScores[hns];
-			break;
+			case HNS_Held:
+				iScore += m_iHoldNoteScores[hns];
+			default:
+				break;
 		}
 	}
 

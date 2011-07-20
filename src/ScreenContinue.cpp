@@ -63,18 +63,21 @@ void ScreenContinue::Input( const InputEventPlus &input )
 	{
 		switch( input.MenuI )
 		{
-		case GAME_BUTTON_START:
-		case GAME_BUTTON_UP:
-		case GAME_BUTTON_DOWN:
-		case GAME_BUTTON_LEFT:
-		case GAME_BUTTON_RIGHT:
-			float fSeconds = floorf(m_MenuTimer->GetSeconds()) - 0.0001f;
-			fSeconds = max( fSeconds, 0.0001f ); // don't set to 0
-			m_MenuTimer->SetSeconds( fSeconds );
-			Message msg("HurryTimer");
-			msg.SetParam( "PlayerNumber", input.pn );
-			this->HandleMessage( msg );
-			return;	// handled
+			case GAME_BUTTON_START:
+			case GAME_BUTTON_UP:
+			case GAME_BUTTON_DOWN:
+			case GAME_BUTTON_LEFT:
+			case GAME_BUTTON_RIGHT:
+			{
+				float fSeconds = floorf(m_MenuTimer->GetSeconds()) - 0.0001f;
+				fSeconds = max( fSeconds, 0.0001f ); // don't set to 0
+				m_MenuTimer->SetSeconds( fSeconds );
+				Message msg("HurryTimer");
+				msg.SetParam( "PlayerNumber", input.pn );
+				this->HandleMessage( msg );
+				return;	// handled
+			}
+			default: break;
 		}
 	}
 
