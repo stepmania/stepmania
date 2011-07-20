@@ -235,6 +235,8 @@ void TimingData::SetWarpAtRow( int iRow, float fNew )
 /* Change an existing Tickcount segment, merge identical segments together or insert a new one. */
 void TimingData::SetTickcountAtRow( int iRow, int iTicks )
 {
+	LOG->Trace( "TimingData::SetTickcountAtRow( '%i' , '%i' )", iRow, iTicks );
+
 	unsigned i;
 	vector<TimingSegment *> &ticks = this->allTimingSegments[SEGMENT_TICKCOUNT];
 	for( i=0; i<ticks.size(); i++ )

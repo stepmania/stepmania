@@ -313,11 +313,13 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, const Song &song,
 
 		else if( BeginsWith(sRowString, "|") )
 		{
+			/*
 			if (bKIUCompliant)
 			{
 				// Log an error, ignore the line.
 				continue;
 			}
+			*/
 			// gotta do something tricky here: if the bpm is below one then a couple of calculations
 			// for scrollsegments will be made, example, bpm 0.2, tick 4000, the scrollsegment will
 			// be 0. if the tickcount is non a stepmania standard then it will be adapted, a scroll
@@ -325,6 +327,7 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, const Song &song,
 			// eh better do it considering the tickcount (high tickcounts)
 			
 			// I'm making some experiments, please spare me...
+			//continue;
 
 			RString temp = sRowString.substr(2,sRowString.size()-3);
 			float numTemp = StringToFloat(temp);
@@ -583,11 +586,11 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 		else if ( sValueName=="STARTTIME3" )
 		{
 			// STARTTIME3 only ensures this is a KIU compliant simfile.
-			bKIUCompliant = true;
+			//bKIUCompliant = true;
 		}
 		else if ( sValueName=="TICKCOUNT" )
 		{
-			ProcessTickcounts(sParams[1], iTickCount, out.m_SongTiming);
+			//ProcessTickcounts(sParams[1], iTickCount, out.m_SongTiming);
 		}
 		else if ( sValueName=="STEP" )
 		{
