@@ -3,9 +3,15 @@
 #ifndef LOADING_WINDOW_WIN32_H
 #define LOADING_WINDOW_WIN32_H
 
+#include "global.h"
+
 #include "LoadingWindow.h"
 #include <windows.h>
 #include "archutils/Win32/AppInstance.h"
+
+#if(WINVER >= 0x0601)
+#include "Shobjidl.h"
+#endif
 
 class LoadingWindow_Win32: public LoadingWindow
 {
@@ -28,6 +34,11 @@ private:
 	HANDLE pumpThread;
 	DWORD pumpThreadId;
 	HANDLE guiReadyEvent;
+
+#if(WINVER >= 0x0601)
+	UINT taskbarCreatedEvent;
+	ITaskbarList3 *pTaskbarList;
+#endif
 
 	volatile bool runMessageLoop;
 
