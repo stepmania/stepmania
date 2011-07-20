@@ -139,7 +139,6 @@ void TimingData::SetStopAtRow( int iRow, float fSeconds, bool bDelay )
 			static_cast<StopSegment *>(stops[i])->GetDelay() == bDelay )
 			break;
 
-	StopSegment *ss = static_cast<StopSegment *>(stops[i]);
 	if( i == stops.size() )	// there is no Stop/Delay Segment at the current beat
 	{
 		// create a new StopSegment
@@ -150,6 +149,7 @@ void TimingData::SetStopAtRow( int iRow, float fSeconds, bool bDelay )
 	}
 	else	// StopSegment being modified is m_StopSegments[i]
 	{
+		StopSegment *ss = static_cast<StopSegment *>(stops[i]);
 		if( fSeconds > 0 )
 		{
 			ss->SetPause(fSeconds);
