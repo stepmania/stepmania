@@ -7,7 +7,7 @@ class LoadingWindow_Null: public LoadingWindow
 {
 public:
 	void SetText( RString str ) { }
-	void SetSplash( RString str ) { }
+	void SetSplash( const RString str ) { }
 };
 #define USE_LOADING_WINDOW_NULL
 
