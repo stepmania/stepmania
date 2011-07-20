@@ -19,7 +19,7 @@
      * used to compile RageFileDriverZip.o, I have no idea how it's happening.
      * --Steve
      */
-	#include "/usr/include/zlib.h"
+	#include "zlib.h"
 #else
         #include <zlib.h>
 #endif
