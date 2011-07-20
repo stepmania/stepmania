@@ -151,10 +151,11 @@ void PlayerInfo::Load( PlayerNumber pn, MultiPlayer mp, bool bShowNoteField, int
 
 	switch( GAMESTATE->m_PlayMode )
 	{
-	case PLAY_MODE_RAVE:
-		m_pSecondaryScoreDisplay = new ScoreDisplayRave;
-		m_pSecondaryScoreDisplay->SetName( "ScoreDisplayRave" );
-		break;
+		case PLAY_MODE_RAVE:
+			m_pSecondaryScoreDisplay = new ScoreDisplayRave;
+			m_pSecondaryScoreDisplay->SetName( "ScoreDisplayRave" );
+		default:
+			break;
 	}
 
 	if( m_pSecondaryScoreDisplay )
@@ -164,9 +165,10 @@ void PlayerInfo::Load( PlayerNumber pn, MultiPlayer mp, bool bShowNoteField, int
 
 	switch( GAMESTATE->m_PlayMode )
 	{
-	case PLAY_MODE_RAVE:
-		m_pSecondaryScoreKeeper = new ScoreKeeperRave( pPlayerState, pPlayerStageStats );
-		break;
+		case PLAY_MODE_RAVE:
+			m_pSecondaryScoreKeeper = new ScoreKeeperRave( pPlayerState, pPlayerStageStats );
+		default:
+			break;
 	}
 
 	m_ptextPlayerOptions = NULL;
@@ -393,9 +395,33 @@ void ScreenGameplay::Init()
 	/* Called once per stage (single song or single course). */
 	GAMESTATE->BeginStage();
 
+	int player = 1;
+	FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
+	{
+		unsigned int count = pi->m_vpStepsQueue.size();
+		
+		for (unsigned int i = 0; i < count; i++)
+		{
+			Steps *curSteps = pi->m_vpStepsQueue[i];
+			if (curSteps->IsNoteDataEmpty())
+			{
+				if (curSteps->GetNoteDataFromSimfile())
+				{
+					LOG->Trace("Notes should be loaded for player %d", player);
+				}
+				else 
+				{
+					LOG->Trace("Error loading notes for player %d", player);
+				}
+			}
+		}
+		player++;
+	}
+	
 	if(!GAMESTATE->IsCourseMode() && !GAMESTATE->m_bDemonstrationOrJukebox)
 	{
 		// fill in difficulty of CPU players with that of the first human player
+		// this should not need to worry about step content.
 		FOREACH_PotentialCpuPlayer(p)
 			GAMESTATE->m_pCurSteps[p].Set( GAMESTATE->m_pCurSteps[ GAMESTATE->GetFirstHumanPlayer() ] );
 
@@ -498,13 +524,14 @@ void ScreenGameplay::Init()
 	// Add combined life meter
 	switch( GAMESTATE->m_PlayMode )
 	{
-	case PLAY_MODE_BATTLE:
-	case PLAY_MODE_RAVE:
-		m_pCombinedLifeMeter = new CombinedLifeMeterTug;
-		m_pCombinedLifeMeter->SetName( "CombinedLife" );
-		LOAD_ALL_COMMANDS_AND_SET_XY( *m_pCombinedLifeMeter );
-		this->AddChild( m_pCombinedLifeMeter );
-		break;
+		case PLAY_MODE_BATTLE:
+		case PLAY_MODE_RAVE:
+			m_pCombinedLifeMeter = new CombinedLifeMeterTug;
+			m_pCombinedLifeMeter->SetName( "CombinedLife" );
+			LOAD_ALL_COMMANDS_AND_SET_XY( *m_pCombinedLifeMeter );
+			this->AddChild( m_pCombinedLifeMeter );
+		default:
+			break;
 	}
 
 	// Before the lifemeter loads, if Networking is required
@@ -517,25 +544,26 @@ void ScreenGameplay::Init()
 	// Add individual life meter
 	switch( GAMESTATE->m_PlayMode )
 	{
-	case PLAY_MODE_REGULAR:
-	case PLAY_MODE_ONI:
-	case PLAY_MODE_NONSTOP:
-	case PLAY_MODE_ENDLESS:
-		FOREACH_PlayerNumberInfo( m_vPlayerInfo, pi )
-		{
-			if( !GAMESTATE->IsPlayerEnabled(pi->m_pn) && !SHOW_LIFE_METER_FOR_DISABLED_PLAYERS )
-				continue;	// skip
+		case PLAY_MODE_REGULAR:
+		case PLAY_MODE_ONI:
+		case PLAY_MODE_NONSTOP:
+		case PLAY_MODE_ENDLESS:
+			FOREACH_PlayerNumberInfo( m_vPlayerInfo, pi )
+			{
+				if( !GAMESTATE->IsPlayerEnabled(pi->m_pn) && !SHOW_LIFE_METER_FOR_DISABLED_PLAYERS )
+					continue;	// skip
 
-			pi->m_pLifeMeter = LifeMeter::MakeLifeMeter( GAMESTATE->m_SongOptions.GetStage().m_LifeType );
-			pi->m_pLifeMeter->Load( pi->GetPlayerState(), pi->GetPlayerStageStats() );
-			pi->m_pLifeMeter->SetName( ssprintf("Life%s",pi->GetName().c_str()) );
-			LOAD_ALL_COMMANDS_AND_SET_XY( pi->m_pLifeMeter );
-			this->AddChild( pi->m_pLifeMeter );
-		}
-		break;
-	case PLAY_MODE_BATTLE:
-	case PLAY_MODE_RAVE:
-		break;
+				pi->m_pLifeMeter = LifeMeter::MakeLifeMeter( GAMESTATE->m_SongOptions.GetStage().m_LifeType );
+				pi->m_pLifeMeter->Load( pi->GetPlayerState(), pi->GetPlayerStageStats() );
+				pi->m_pLifeMeter->SetName( ssprintf("Life%s",pi->GetName().c_str()) );
+				LOAD_ALL_COMMANDS_AND_SET_XY( pi->m_pLifeMeter );
+				this->AddChild( pi->m_pLifeMeter );
+			}
+			break;
+		case PLAY_MODE_BATTLE:
+		case PLAY_MODE_RAVE:
+		default:
+			break;
 	}
 
 	m_bShowScoreboard = false;
@@ -694,11 +722,12 @@ void ScreenGameplay::Init()
 
 		switch( GAMESTATE->m_PlayMode )
 		{
-		case PLAY_MODE_BATTLE:
-			m_soundBattleTrickLevel1.Load(	THEME->GetPathS(m_sName,"battle trick level1"), true );
-			m_soundBattleTrickLevel2.Load(	THEME->GetPathS(m_sName,"battle trick level2"), true );
-			m_soundBattleTrickLevel3.Load(	THEME->GetPathS(m_sName,"battle trick level3"), true );
-			break;
+			case PLAY_MODE_BATTLE:
+				m_soundBattleTrickLevel1.Load(	THEME->GetPathS(m_sName,"battle trick level1"), true );
+				m_soundBattleTrickLevel2.Load(	THEME->GetPathS(m_sName,"battle trick level2"), true );
+				m_soundBattleTrickLevel3.Load(	THEME->GetPathS(m_sName,"battle trick level3"), true );
+			default:
+				break;
 		}
 	}
 
@@ -972,9 +1001,10 @@ void ScreenGameplay::SetupSong( int iSongIndex )
 			RString sType;
 			switch( GAMESTATE->m_SongOptions.GetCurrent().m_SoundEffectType )
 			{
-			case SongOptions::SOUNDEFFECT_OFF:	sType = "SoundEffectControl_Off";	break;
-			case SongOptions::SOUNDEFFECT_SPEED:	sType = "SoundEffectControl_Speed";	break;
-			case SongOptions::SOUNDEFFECT_PITCH:	sType = "SoundEffectControl_Pitch";	break;
+				case SongOptions::SOUNDEFFECT_OFF:	sType = "SoundEffectControl_Off";	break;
+				case SongOptions::SOUNDEFFECT_SPEED:	sType = "SoundEffectControl_Speed";	break;
+				case SongOptions::SOUNDEFFECT_PITCH:	sType = "SoundEffectControl_Pitch";	break;
+				default: break;
 			}
 
 			pi->m_SoundEffectControl.Load( sType, pi->GetPlayerState(), &pi->m_NoteData );
@@ -1606,246 +1636,250 @@ void ScreenGameplay::Update( float fDeltaTime )
 
 	switch( m_DancingState )
 	{
-	case STATE_DANCING:
-		/* Set STATSMAN->m_CurStageStats.bFailed for failed players.  In, FAIL_IMMEDIATE, send
-		 * SM_BeginFailed if all players failed, and kill dead Oni players. */
-		FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
+		case STATE_DANCING:
 		{
-			PlayerNumber pn = pi->GetStepsAndTrailIndex();
-
-			PlayerOptions::FailType ft = GAMESTATE->GetPlayerFailType( pi->GetPlayerState() );
-			SongOptions::LifeType lt = GAMESTATE->m_SongOptions.GetCurrent().m_LifeType;
-
-			if( ft == PlayerOptions::FAIL_OFF || ft == PlayerOptions::FAIL_AT_END )
-				continue;
-
-			// check for individual fail
-			if( pi->m_pLifeMeter == NULL || !pi->m_pLifeMeter->IsFailing() )
-				continue; /* isn't failing */
-			if( pi->GetPlayerStageStats()->m_bFailed )
-				continue; /* failed and is already dead */
-
-			LOG->Trace("Player %d failed", (int)pn);
-			pi->GetPlayerStageStats()->m_bFailed = true;	// fail
-
+			/* Set STATSMAN->m_CurStageStats.bFailed for failed players.  In, FAIL_IMMEDIATE, send
+			 * SM_BeginFailed if all players failed, and kill dead Oni players. */
+			FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
 			{
-				Message msg("PlayerFailed");
-				msg.SetParam( "PlayerNumber", pi->m_pn );
-				MESSAGEMAN->Broadcast( msg );
-			}
+				PlayerNumber pn = pi->GetStepsAndTrailIndex();
 
-			// Check for and do Oni die.
-			bool bAllowOniDie = false;
-			switch( lt )
-			{
-			case SongOptions::LIFE_BATTERY:
-				bAllowOniDie = true;
-				break;
-			}
-			if( bAllowOniDie && ft == PlayerOptions::FAIL_IMMEDIATE )
-			{
-				if( !STATSMAN->m_CurStageStats.AllFailed() )	// if not the last one to fail
+				PlayerOptions::FailType ft = GAMESTATE->GetPlayerFailType( pi->GetPlayerState() );
+				SongOptions::LifeType lt = GAMESTATE->m_SongOptions.GetCurrent().m_LifeType;
+
+				if( ft == PlayerOptions::FAIL_OFF || ft == PlayerOptions::FAIL_AT_END )
+					continue;
+
+				// check for individual fail
+				if( pi->m_pLifeMeter == NULL || !pi->m_pLifeMeter->IsFailing() )
+					continue; /* isn't failing */
+				if( pi->GetPlayerStageStats()->m_bFailed )
+					continue; /* failed and is already dead */
+
+				LOG->Trace("Player %d failed", (int)pn);
+				pi->GetPlayerStageStats()->m_bFailed = true;	// fail
+
 				{
-					// kill them!
-					SOUND->PlayOnceFromDir( THEME->GetPathS(m_sName,"oni die") );
-					pi->ShowOniGameOver();
-					pi->m_NoteData.Init();		// remove all notes and scoring
-					pi->m_pPlayer->FadeToFail();	// tell the NoteField to fade to white
+					Message msg("PlayerFailed");
+					msg.SetParam( "PlayerNumber", pi->m_pn );
+					MESSAGEMAN->Broadcast( msg );
+				}
+
+				// Check for and do Oni die.
+				bool bAllowOniDie = false;
+				switch( lt )
+				{
+					case SongOptions::LIFE_BATTERY:
+						bAllowOniDie = true;
+					default:
+						break;
+				}
+				if( bAllowOniDie && ft == PlayerOptions::FAIL_IMMEDIATE )
+				{
+					if( !STATSMAN->m_CurStageStats.AllFailed() )	// if not the last one to fail
+					{
+						// kill them!
+						SOUND->PlayOnceFromDir( THEME->GetPathS(m_sName,"oni die") );
+						pi->ShowOniGameOver();
+						pi->m_NoteData.Init();		// remove all notes and scoring
+						pi->m_pPlayer->FadeToFail();	// tell the NoteField to fade to white
+					}
 				}
 			}
-		}
 
-		bool bAllFailed = true;
-		FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
-		{
-			PlayerOptions::FailType ft = GAMESTATE->GetPlayerFailType( pi->GetPlayerState() );
-			switch( ft )
+			bool bAllFailed = true;
+			FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
 			{
-			case PlayerOptions::FAIL_IMMEDIATE:
-				if( pi->m_pLifeMeter == NULL  ||  (pi->m_pLifeMeter && !pi->m_pLifeMeter->IsFailing()) )
-					bAllFailed = false;
-				break;
-			case PlayerOptions::FAIL_IMMEDIATE_CONTINUE:
-			case PlayerOptions::FAIL_AT_END:
-				bAllFailed = false;	// wait until the end of the song to fail.
-				break;
-			case PlayerOptions::FAIL_OFF:
-				bAllFailed = false;	// never fail.
-				break;
-			default:
-				ASSERT(0);
-			}
-		}
-
-		if( bAllFailed )
-		{
-			m_pSoundMusic->StopPlaying();
-			SCREENMAN->PostMessageToTopScreen( SM_NotesEnded, 0 );
-			// todo: stop lyrics (m_LyricDisplay) from animating -aj
-		}
-
-		// Update living players' alive time
-		// HACK: Don't scale alive time when using tab/tilde.  Instead of accumulating time from a timer, 
-		// this time should instead be tied to the music position.
-		float fUnscaledDeltaTime = m_timerGameplaySeconds.GetDeltaTime();
-
-		FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
-			if( !pi->GetPlayerStageStats()->m_bFailed )
-				pi->GetPlayerStageStats()->m_fAliveSeconds += fUnscaledDeltaTime * GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate;
-
-		// update fGameplaySeconds
-		STATSMAN->m_CurStageStats.m_fGameplaySeconds += fUnscaledDeltaTime;
-		float curBeat = GAMESTATE->m_Position.m_fSongBeat;
-		Song &s = *GAMESTATE->m_pCurSong;
-		
-		if( curBeat >= s.GetFirstBeat() && curBeat < s.GetLastBeat() )
-		{
-			STATSMAN->m_CurStageStats.m_fStepsSeconds += fUnscaledDeltaTime;
-
-			if( GAMESTATE->m_SongOptions.GetCurrent().m_fHaste != 0.0f )
-			{
-				float fHasteRate = GetHasteRate();
-				GAMESTATE->m_fAccumulatedHasteSeconds += (fUnscaledDeltaTime * fHasteRate) - fUnscaledDeltaTime;
-			}
-		}
-
-		// Check for end of song
-		{
-			float fSecondsToStartFadingOutMusic, fSecondsToStartTransitioningOut;
-			GetMusicEndTiming( fSecondsToStartFadingOutMusic, fSecondsToStartTransitioningOut );
-
-			bool bAllReallyFailed = STATSMAN->m_CurStageStats.AllFailed();
-			if( bAllReallyFailed )
-				fSecondsToStartTransitioningOut += BEGIN_FAILED_DELAY;
-
-			if( GAMESTATE->m_Position.m_fMusicSeconds >= fSecondsToStartTransitioningOut && !m_NextSong.IsTransitioning() )
-				this->PostScreenMessage( SM_NotesEnded, 0 );
-		}
-
-		// update 2d dancing characters
-		FOREACH_EnabledPlayerNumberInfo( m_vPlayerInfo, pi )
-		{
-			DancingCharacters *pCharacter = NULL;
-			if( m_pSongBackground )
-				pCharacter = m_pSongBackground->GetDancingCharacters();
-			if( pCharacter != NULL )
-			{
-				TapNoteScore tns = pi->m_pPlayer->GetLastTapNoteScore();
-
-				ANIM_STATES_2D state = AS2D_MISS;
-
-				switch( tns )
+				PlayerOptions::FailType ft = GAMESTATE->GetPlayerFailType( pi->GetPlayerState() );
+				switch( ft )
 				{
-				case TNS_W4:
-				case TNS_W3:
-					state = AS2D_GOOD;
+				case PlayerOptions::FAIL_IMMEDIATE:
+					if( pi->m_pLifeMeter == NULL  ||  (pi->m_pLifeMeter && !pi->m_pLifeMeter->IsFailing()) )
+						bAllFailed = false;
 					break;
-				case TNS_W2:
-				case TNS_W1:
-					state = AS2D_GREAT;
+				case PlayerOptions::FAIL_IMMEDIATE_CONTINUE:
+				case PlayerOptions::FAIL_AT_END:
+					bAllFailed = false;	// wait until the end of the song to fail.
+					break;
+				case PlayerOptions::FAIL_OFF:
+					bAllFailed = false;	// never fail.
 					break;
 				default:
-					state = AS2D_MISS;
-					break;
-				}
-
-				if( state == AS2D_GREAT && pi->GetPlayerState()->m_HealthState == HealthState_Hot )
-					state = AS2D_FEVER;
-
-				pCharacter->Change2DAnimState( pi->m_pn, state );
-			}
-		}
-
-		// Check for enemy death in enemy battle
-		static float fLastSeenEnemyHealth = 1;
-		if( fLastSeenEnemyHealth != GAMESTATE->m_fOpponentHealthPercent )
-		{
-			fLastSeenEnemyHealth = GAMESTATE->m_fOpponentHealthPercent;
-
-			if( GAMESTATE->m_fOpponentHealthPercent == 0 )
-			{
-				// HACK:  Load incorrect directory on purpose for now.
-				PlayAnnouncer( "gameplay battle damage level3", 0 );
-
-				GAMESTATE->RemoveAllActiveAttacks();
-
-				FOREACH_EnabledPlayerNumberInfo( m_vPlayerInfo, pi )
-				{
-					if( !GAMESTATE->IsCpuPlayer(pi->m_pn) )
-						continue;
-
-					SOUND->PlayOnceFromDir( THEME->GetPathS(m_sName,"oni die") );
-					pi->ShowOniGameOver();
-					pi->m_NoteData.Init(); // remove all notes and scoring
-					pi->m_pPlayer->FadeToFail(); // tell the NoteField to fade to white
+					FAIL_M("Invalid fail type! Aborting...");
 				}
 			}
-		}
 
-		// update give up
-		bool bGiveUpTimerFired = !m_GiveUpTimer.IsZero() && m_GiveUpTimer.Ago() > 2.5f;
-		
-			
-		bool bAllHumanHaveBigMissCombo = true;
-		FOREACH_EnabledPlayerNumberInfo( m_vPlayerInfo, pi )
-		{
-			if (pi->GetPlayerState()->m_PlayerOptions.GetCurrent().m_FailType == PlayerOptions::FAIL_OFF ||
-			    pi->GetPlayerState()->m_HealthState < HealthState_Dead )
-			{
-				bAllHumanHaveBigMissCombo = false;
-				break;
-			}
-		}
-		if (bAllHumanHaveBigMissCombo) // possible to get in here.
-		{
-			bAllHumanHaveBigMissCombo = FAIL_ON_MISS_COMBO.GetValue() != -1 && STATSMAN->m_CurStageStats.GetMinimumMissCombo() >= FAIL_ON_MISS_COMBO;
-		}
-		if( bGiveUpTimerFired || bAllHumanHaveBigMissCombo )
-		{
-			STATSMAN->m_CurStageStats.m_bGaveUp = true;
-			FOREACH_EnabledPlayerNumberInfo( m_vPlayerInfo, pi )
-			{
-				pi->GetPlayerStageStats()->m_bFailed |= bAllHumanHaveBigMissCombo;
-				pi->GetPlayerStageStats()->m_bDisqualified |= bGiveUpTimerFired;    // Don't disqualify if failing for miss combo.  The player should still be eligable for a high score on courses.
-			}
-
-			AbortGiveUp( false );
-
-			if( GIVING_UP_GOES_TO_PREV_SCREEN )
-			{
-				BeginBackingOutFromGameplay();
-			}
-			else
+			if( bAllFailed )
 			{
 				m_pSoundMusic->StopPlaying();
-				this->PostScreenMessage( SM_NotesEnded, 0 );
+				SCREENMAN->PostMessageToTopScreen( SM_NotesEnded, 0 );
+				// todo: stop lyrics (m_LyricDisplay) from animating -aj
 			}
-			return;
-		}
 
-		// Check to see if it's time to play a ScreenGameplay comment
-		m_fTimeSinceLastDancingComment += fDeltaTime;
+			// Update living players' alive time
+			// HACK: Don't scale alive time when using tab/tilde.  Instead of accumulating time from a timer, 
+			// this time should instead be tied to the music position.
+			float fUnscaledDeltaTime = m_timerGameplaySeconds.GetDeltaTime();
 
-		switch( GAMESTATE->m_PlayMode )
-		{
-		case PLAY_MODE_REGULAR:
-		case PLAY_MODE_BATTLE:
-		case PLAY_MODE_RAVE:
-			if( GAMESTATE->OneIsHot() )
-				PlayAnnouncer( "gameplay comment hot", SECONDS_BETWEEN_COMMENTS );
-			else if( GAMESTATE->AllAreInDangerOrWorse() )
-				PlayAnnouncer( "gameplay comment danger", SECONDS_BETWEEN_COMMENTS );
-			else
-				PlayAnnouncer( "gameplay comment good", SECONDS_BETWEEN_COMMENTS );
-			break;
-		case PLAY_MODE_NONSTOP:
-		case PLAY_MODE_ONI:
-		case PLAY_MODE_ENDLESS:
-			PlayAnnouncer( "gameplay comment oni", SECONDS_BETWEEN_COMMENTS );
-			break;
-		default:
-			ASSERT(0);
-		}
+			FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
+				if( !pi->GetPlayerStageStats()->m_bFailed )
+					pi->GetPlayerStageStats()->m_fAliveSeconds += fUnscaledDeltaTime * GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate;
+
+			// update fGameplaySeconds
+			STATSMAN->m_CurStageStats.m_fGameplaySeconds += fUnscaledDeltaTime;
+			float curBeat = GAMESTATE->m_Position.m_fSongBeat;
+			Song &s = *GAMESTATE->m_pCurSong;
+			
+			if( curBeat >= s.GetFirstBeat() && curBeat < s.GetLastBeat() )
+			{
+				STATSMAN->m_CurStageStats.m_fStepsSeconds += fUnscaledDeltaTime;
+
+				if( GAMESTATE->m_SongOptions.GetCurrent().m_fHaste != 0.0f )
+				{
+					float fHasteRate = GetHasteRate();
+					GAMESTATE->m_fAccumulatedHasteSeconds += (fUnscaledDeltaTime * fHasteRate) - fUnscaledDeltaTime;
+				}
+			}
+
+			// Check for end of song
+			{
+				float fSecondsToStartFadingOutMusic, fSecondsToStartTransitioningOut;
+				GetMusicEndTiming( fSecondsToStartFadingOutMusic, fSecondsToStartTransitioningOut );
+
+				bool bAllReallyFailed = STATSMAN->m_CurStageStats.AllFailed();
+				if( bAllReallyFailed )
+					fSecondsToStartTransitioningOut += BEGIN_FAILED_DELAY;
+
+				if( GAMESTATE->m_Position.m_fMusicSeconds >= fSecondsToStartTransitioningOut && !m_NextSong.IsTransitioning() )
+					this->PostScreenMessage( SM_NotesEnded, 0 );
+			}
+
+			// update 2d dancing characters
+			FOREACH_EnabledPlayerNumberInfo( m_vPlayerInfo, pi )
+			{
+				DancingCharacters *pCharacter = NULL;
+				if( m_pSongBackground )
+					pCharacter = m_pSongBackground->GetDancingCharacters();
+				if( pCharacter != NULL )
+				{
+					TapNoteScore tns = pi->m_pPlayer->GetLastTapNoteScore();
+
+					ANIM_STATES_2D state = AS2D_MISS;
+
+					switch( tns )
+					{
+					case TNS_W4:
+					case TNS_W3:
+						state = AS2D_GOOD;
+						break;
+					case TNS_W2:
+					case TNS_W1:
+						state = AS2D_GREAT;
+						break;
+					default:
+						state = AS2D_MISS;
+						break;
+					}
+
+					if( state == AS2D_GREAT && pi->GetPlayerState()->m_HealthState == HealthState_Hot )
+						state = AS2D_FEVER;
+
+					pCharacter->Change2DAnimState( pi->m_pn, state );
+				}
+			}
+
+			// Check for enemy death in enemy battle
+			static float fLastSeenEnemyHealth = 1;
+			if( fLastSeenEnemyHealth != GAMESTATE->m_fOpponentHealthPercent )
+			{
+				fLastSeenEnemyHealth = GAMESTATE->m_fOpponentHealthPercent;
+
+				if( GAMESTATE->m_fOpponentHealthPercent == 0 )
+				{
+					// HACK:  Load incorrect directory on purpose for now.
+					PlayAnnouncer( "gameplay battle damage level3", 0 );
+
+					GAMESTATE->RemoveAllActiveAttacks();
+
+					FOREACH_EnabledPlayerNumberInfo( m_vPlayerInfo, pi )
+					{
+						if( !GAMESTATE->IsCpuPlayer(pi->m_pn) )
+							continue;
+
+						SOUND->PlayOnceFromDir( THEME->GetPathS(m_sName,"oni die") );
+						pi->ShowOniGameOver();
+						pi->m_NoteData.Init(); // remove all notes and scoring
+						pi->m_pPlayer->FadeToFail(); // tell the NoteField to fade to white
+					}
+				}
+			}
+
+			// update give up
+			bool bGiveUpTimerFired = !m_GiveUpTimer.IsZero() && m_GiveUpTimer.Ago() > 2.5f;
+			
+				
+			bool bAllHumanHaveBigMissCombo = true;
+			FOREACH_EnabledPlayerNumberInfo( m_vPlayerInfo, pi )
+			{
+				if (pi->GetPlayerState()->m_PlayerOptions.GetCurrent().m_FailType == PlayerOptions::FAIL_OFF ||
+					pi->GetPlayerState()->m_HealthState < HealthState_Dead )
+				{
+					bAllHumanHaveBigMissCombo = false;
+					break;
+				}
+			}
+			if (bAllHumanHaveBigMissCombo) // possible to get in here.
+			{
+				bAllHumanHaveBigMissCombo = FAIL_ON_MISS_COMBO.GetValue() != -1 && STATSMAN->m_CurStageStats.GetMinimumMissCombo() >= FAIL_ON_MISS_COMBO;
+			}
+			if( bGiveUpTimerFired || bAllHumanHaveBigMissCombo )
+			{
+				STATSMAN->m_CurStageStats.m_bGaveUp = true;
+				FOREACH_EnabledPlayerNumberInfo( m_vPlayerInfo, pi )
+				{
+					pi->GetPlayerStageStats()->m_bFailed |= bAllHumanHaveBigMissCombo;
+					pi->GetPlayerStageStats()->m_bDisqualified |= bGiveUpTimerFired;    // Don't disqualify if failing for miss combo.  The player should still be eligable for a high score on courses.
+				}
+
+				AbortGiveUp( false );
+
+				if( GIVING_UP_GOES_TO_PREV_SCREEN )
+				{
+					BeginBackingOutFromGameplay();
+				}
+				else
+				{
+					m_pSoundMusic->StopPlaying();
+					this->PostScreenMessage( SM_NotesEnded, 0 );
+				}
+				return;
+			}
+
+			// Check to see if it's time to play a ScreenGameplay comment
+			m_fTimeSinceLastDancingComment += fDeltaTime;
+
+			switch( GAMESTATE->m_PlayMode )
+			{
+				case PLAY_MODE_REGULAR:
+				case PLAY_MODE_BATTLE:
+				case PLAY_MODE_RAVE:
+					if( GAMESTATE->OneIsHot() )
+						PlayAnnouncer( "gameplay comment hot", SECONDS_BETWEEN_COMMENTS );
+					else if( GAMESTATE->AllAreInDangerOrWorse() )
+						PlayAnnouncer( "gameplay comment danger", SECONDS_BETWEEN_COMMENTS );
+					else
+						PlayAnnouncer( "gameplay comment good", SECONDS_BETWEEN_COMMENTS );
+					break;
+				case PLAY_MODE_NONSTOP:
+				case PLAY_MODE_ONI:
+				case PLAY_MODE_ENDLESS:
+					PlayAnnouncer( "gameplay comment oni", SECONDS_BETWEEN_COMMENTS );
+					break;
+				default:
+					ASSERT(0);
+			}
+	}
+		default: break;
 	}
 
 	PlayTicks();

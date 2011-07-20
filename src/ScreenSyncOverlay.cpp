@@ -212,17 +212,21 @@ bool ScreenSyncOverlay::OverlayInput( const InputEventPlus &input )
 			}
 			switch( input.type )
 			{
-			case IET_RELEASE:	fDelta *= 0;	break;
-			case IET_REPEAT:
-				if( INPUTFILTER->GetSecsHeld(input.DeviceI) < 1.0f )
-					fDelta *= 0;
-				else
-					fDelta *= 10;
+				case IET_RELEASE:	fDelta *= 0;	break;
+				case IET_REPEAT:
+				{
+					if( INPUTFILTER->GetSecsHeld(input.DeviceI) < 1.0f )
+						fDelta *= 0;
+					else
+						fDelta *= 10;
+					break;
+				}
+				default: break;
 			}
 			if( GAMESTATE->m_pCurSong != NULL )
 			{
-				BPMSegment& seg = GAMESTATE->m_pCurSong->m_SongTiming.GetBPMSegmentAtBeat( GAMESTATE->m_Position.m_fSongBeat );
-				seg.SetBPS( seg.GetBPS() + fDelta );
+				BPMSegment * seg = GAMESTATE->m_pCurSong->m_SongTiming.GetBPMSegmentAtBeat( GAMESTATE->m_Position.m_fSongBeat );
+				seg->SetBPS( seg->GetBPS() + fDelta );
 			}
 		}
 		break;
@@ -237,31 +241,39 @@ bool ScreenSyncOverlay::OverlayInput( const InputEventPlus &input )
 			}
 			switch( input.type )
 			{
-			case IET_RELEASE:	fDelta *= 0;	break;
-			case IET_REPEAT:
-				if( INPUTFILTER->GetSecsHeld(input.DeviceI) < 1.0f )
-					fDelta *= 0;
-				else
-					fDelta *= 10;
+				case IET_RELEASE:	fDelta *= 0;	break;
+				case IET_REPEAT:
+				{
+					if( INPUTFILTER->GetSecsHeld(input.DeviceI) < 1.0f )
+						fDelta *= 0;
+					else
+						fDelta *= 10;
+				}
+				default: break;
 			}
 
 			switch( a )
 			{
-			case ChangeGlobalOffset:
+				case ChangeGlobalOffset:
+				{
 				PREFSMAN->m_fGlobalOffsetSeconds.Set( PREFSMAN->m_fGlobalOffsetSeconds + fDelta );
 				break;
-
-			case ChangeSongOffset:
-				if( GAMESTATE->m_pCurSong != NULL )
-				{
-					GAMESTATE->m_pCurSong->m_SongTiming.m_fBeat0OffsetInSeconds += fDelta;
-					const vector<Steps *>& vpSteps = GAMESTATE->m_pCurSong->GetAllSteps();
-					FOREACH( Steps*, const_cast<vector<Steps *>&>(vpSteps), s )
-					{
-						(*s)->m_Timing.m_fBeat0OffsetInSeconds += fDelta;
-					}
 				}
-				break;
+
+				case ChangeSongOffset:
+				{
+					if( GAMESTATE->m_pCurSong != NULL )
+					{
+						GAMESTATE->m_pCurSong->m_SongTiming.m_fBeat0OffsetInSeconds += fDelta;
+						const vector<Steps *>& vpSteps = GAMESTATE->m_pCurSong->GetAllSteps();
+						FOREACH( Steps*, const_cast<vector<Steps *>&>(vpSteps), s )
+						{
+							(*s)->m_Timing.m_fBeat0OffsetInSeconds += fDelta;
+						}
+					}
+					break;
+				}
+				default: break;
 			}
 		}
 		break;

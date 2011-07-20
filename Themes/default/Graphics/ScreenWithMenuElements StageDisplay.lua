@@ -69,7 +69,7 @@ else
 				self:settextf( "Stage %03i", RealStage);
 				self:diffuse( StageToColor('Stage_1st') );
 				self:diffusebottomedge( ColorMidTone(StageToColor('Stage_1st')) );
-				self:strokecolor( Colors.Alpha( ColorDarkTone(StageToColor('Stage_1st')), 0.75) );
+				self:strokecolor( Color.Alpha( ColorDarkTone(StageToColor('Stage_1st')), 0.75) );
 			end;
 		end;
 	}

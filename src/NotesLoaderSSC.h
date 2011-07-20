@@ -30,6 +30,8 @@ const float VERSION_SPLIT_TIMING = 0.7f;
 const float VERSION_OFFSET_BEFORE_ATTACK = 0.72f;
 /** @brief The version that introduced the Chart Name tag. */
 const float VERSION_CHART_NAME_TAG = 0.74f;
+/** @brief The version that introduced the cache switch tag. */
+const float VERSION_CACHE_SWITCH_TAG = 0.77f;
 
 /**
  * @brief The SSCLoader handles all of the parsing needed for .ssc files.
@@ -65,6 +67,12 @@ struct SSCLoader : public SMLoader
 	 */
 	bool LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePath, ProfileSlot slot, bool bAddStepsToSong );
 	
+	/**
+	 * @brief Retrieve the specific NoteData from the file.
+	 * @param cachePath the path to the cache file.
+	 * @param out the Steps to receive just the particular notedata.
+	 * @return true if successful, false otherwise. */
+	virtual bool LoadNoteDataFromSimfile( const RString &cachePath, Steps &out );
 	
 	void ProcessWarps( TimingData &, const RString, const float );
 	void ProcessLabels( TimingData &, const RString );

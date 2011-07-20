@@ -1060,13 +1060,14 @@ int main(int argc, char* argv[])
 		GAMESTATE->m_bDopefish = true;
 
 	{
-		/* Now that THEME is loaded, load the icon for the current theme into
-		 * the loading window. */
+		/* Now that THEME is loaded, load the icon and splash for the current
+		 * theme into the loading window. */
 		RString sError;
 		RageSurface *pIcon = RageSurfaceUtils::LoadFile( THEME->GetPathG( "Common", "window icon" ), sError );
 		if( pIcon )
 			pLoadingWindow->SetIcon( pIcon );
 		delete pIcon;
+		pLoadingWindow->SetSplash( THEME->GetPathG("Common","splash") );
 	}
 
 	if( PREFSMAN->m_iSoundWriteAhead )
@@ -1296,28 +1297,29 @@ bool HandleGlobalInputs( const InputEventPlus &input )
 
 	switch( input.MenuI )
 	{
-	case GAME_BUTTON_OPERATOR:
-		/* Global operator key, to get quick access to the options menu. Don't
-		 * do this if we're on a "system menu", which includes the editor
-		 * (to prevent quitting without storing changes). */
-		if( SCREENMAN->AllowOperatorMenuButton() )
-		{
-			SCREENMAN->SystemMessage( SERVICE_SWITCH_PRESSED );
-			SCREENMAN->PopAllScreens();
-			GAMESTATE->Reset();
-			SCREENMAN->SetNewScreen( CommonMetrics::OPERATOR_MENU_SCREEN );
-		}
-		return true;
+		case GAME_BUTTON_OPERATOR:
+			/* Global operator key, to get quick access to the options menu. Don't
+			 * do this if we're on a "system menu", which includes the editor
+			 * (to prevent quitting without storing changes). */
+			if( SCREENMAN->AllowOperatorMenuButton() )
+			{
+				SCREENMAN->SystemMessage( SERVICE_SWITCH_PRESSED );
+				SCREENMAN->PopAllScreens();
+				GAMESTATE->Reset();
+				SCREENMAN->SetNewScreen( CommonMetrics::OPERATOR_MENU_SCREEN );
+			}
+			return true;
 
-	case GAME_BUTTON_COIN:
-		// Handle a coin insertion.
-		if( GAMESTATE->IsEditing() )	// no coins while editing
-		{
-			LOG->Trace( "Ignored coin insertion (editing)" );
-			break;
-		}
-		StepMania::InsertCoin();
-		return false; // Attract needs to know because it goes to TitleMenu on > 1 credit
+		case GAME_BUTTON_COIN:
+			// Handle a coin insertion.
+			if( GAMESTATE->IsEditing() )	// no coins while editing
+			{
+				LOG->Trace( "Ignored coin insertion (editing)" );
+				break;
+			}
+			StepMania::InsertCoin();
+			return false; // Attract needs to know because it goes to TitleMenu on > 1 credit
+		default: break;
 	}
 
 	/* Re-added for StepMania 3.9 theming veterans, plus it's just faster than

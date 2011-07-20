@@ -340,7 +340,7 @@ GLhandleARB CompileShader( GLenum ShaderType, RString sFile, vector<RString> asD
 GLhandleARB LoadShader( GLenum ShaderType, RString sFile, vector<RString> asDefines )
 {
 	// Don't do anything here if not the hardware/driver can't do it!
-	if (!GLEW_ARB_fragment_program && GLEW_ARB_shading_language_100 && ShaderType == GL_FRAGMENT_SHADER_ARB)
+	if (!GLEW_ARB_fragment_shader && ShaderType == GL_FRAGMENT_SHADER_ARB)
 		return 0;
 	if (!GLEW_ARB_vertex_shader && ShaderType == GL_VERTEX_SHADER_ARB)
 		return 0;
@@ -1625,6 +1625,7 @@ void RageDisplay_Legacy::SetTextureMode( TextureUnit tu, TextureMode tm )
 		glTexEnvi(GL_TEXTURE_ENV, GLenum(GL_OPERAND1_ALPHA_EXT), GL_SRC_ALPHA);
 		glTexEnvi(GL_TEXTURE_ENV, GLenum(GL_SOURCE1_ALPHA_EXT), GL_TEXTURE);
 		break;
+	default: break;
 	}
 }
 
@@ -1662,21 +1663,22 @@ void RageDisplay_Legacy::SetTextureFiltering( TextureUnit tu, bool b )
 
 void RageDisplay_Legacy::SetEffectMode( EffectMode effect )
 {
-	if (!GLEW_ARB_fragment_program && !GLEW_ARB_shading_language_100)
+	if (!GLEW_ARB_fragment_shader)
 		return;
 
 	GLhandleARB hShader = 0;
 	switch (effect)
 	{
-	case EffectMode_Normal:		hShader = 0; break;
-	case EffectMode_Unpremultiply:	hShader = g_bUnpremultiplyShader; break;
-	case EffectMode_ColorBurn:	hShader = g_bColorBurnShader; break;
-	case EffectMode_ColorDodge:	hShader = g_bColorDodgeShader; break;
-	case EffectMode_VividLight:	hShader = g_bVividLightShader; break;
-	case EffectMode_HardMix:	hShader = g_hHardMixShader; break;
-	case EffectMode_Overlay:	hShader = g_hOverlayShader; break;
-	case EffectMode_Screen:	hShader = g_hScreenShader; break;
-	case EffectMode_YUYV422:	hShader = g_hYUYV422Shader; break;
+		case EffectMode_Normal:		hShader = 0; break;
+		case EffectMode_Unpremultiply:	hShader = g_bUnpremultiplyShader; break;
+		case EffectMode_ColorBurn:	hShader = g_bColorBurnShader; break;
+		case EffectMode_ColorDodge:	hShader = g_bColorDodgeShader; break;
+		case EffectMode_VividLight:	hShader = g_bVividLightShader; break;
+		case EffectMode_HardMix:	hShader = g_hHardMixShader; break;
+		case EffectMode_Overlay:	hShader = g_hOverlayShader; break;
+		case EffectMode_Screen:	hShader = g_hScreenShader; break;
+		case EffectMode_YUYV422:	hShader = g_hYUYV422Shader; break;
+		default: break;
 	}
 
 	DebugFlushGLErrors();
@@ -1703,18 +1705,17 @@ bool RageDisplay_Legacy::IsEffectModeSupported( EffectMode effect )
 {
 	switch( effect )
 	{
-	case EffectMode_Normal:		return true;
-	case EffectMode_Unpremultiply:	return g_bUnpremultiplyShader != 0;
-	case EffectMode_ColorBurn:	return g_bColorBurnShader != 0;
-	case EffectMode_ColorDodge:	return g_bColorDodgeShader != 0;
-	case EffectMode_VividLight:	return g_bVividLightShader != 0;
-	case EffectMode_HardMix:	return g_hHardMixShader != 0;
-	case EffectMode_Overlay:		return g_hOverlayShader != 0;
-	case EffectMode_Screen:		return g_hScreenShader != 0;
-	case EffectMode_YUYV422:	return g_hYUYV422Shader != 0;
+		case EffectMode_Normal:		return true;
+		case EffectMode_Unpremultiply:	return g_bUnpremultiplyShader != 0;
+		case EffectMode_ColorBurn:	return g_bColorBurnShader != 0;
+		case EffectMode_ColorDodge:	return g_bColorDodgeShader != 0;
+		case EffectMode_VividLight:	return g_bVividLightShader != 0;
+		case EffectMode_HardMix:	return g_hHardMixShader != 0;
+		case EffectMode_Overlay:		return g_hOverlayShader != 0;
+		case EffectMode_Screen:		return g_hScreenShader != 0;
+		case EffectMode_YUYV422:	return g_hYUYV422Shader != 0;
+		default: return false;
 	}
-
-	return false;
 }
 
 void RageDisplay_Legacy::SetBlendMode( BlendMode mode )
@@ -2648,11 +2649,9 @@ void RageDisplay_Legacy::SetSphereEnvironmentMapping(TextureUnit tu, bool b)
 	}
 }
 
-GLint iCelTexture1, iCelTexture2 = 0;
-
 void RageDisplay_Legacy::SetCelShaded( int stage )
 {
-	if (!GLEW_ARB_fragment_program && !GL_ARB_shading_language_100)
+	if (!GLEW_ARB_fragment_shader)
 		return; // not supported
 
 	switch (stage)

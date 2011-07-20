@@ -54,7 +54,7 @@ void ScreenNetSelectMusic::Init()
 
 		m_StepsDisplays[p].SetName( ssprintf("StepsDisplayP%d",p+1) );
 		m_StepsDisplays[p].Load( "StepsDisplayNet", NULL );
-		LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_StepsDisplays[p] );
+		LOAD_ALL_COMMANDS_AND_SET_XY( m_StepsDisplays[p] );
 		this->AddChild( &m_StepsDisplays[p] );
 	}
 
@@ -67,19 +67,12 @@ void ScreenNetSelectMusic::Init()
 	this->MoveToHead( &m_MusicWheel );
 
 	// todo: handle me theme-side -aj
-	m_BPMDisplay.SetName( "BPMDisplay" );
-	m_BPMDisplay.LoadFromFont( THEME->GetPathF("BPMDisplay","bpm") );
-	m_BPMDisplay.Load();
-	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_BPMDisplay );
-	this->AddChild( &m_BPMDisplay );
-
-	// todo: handle me theme-side -aj
 	FOREACH_EnabledPlayer( p )
 	{
 		m_ModIconRow[p].SetName( ssprintf("ModIconsP%d",p+1) );
 		m_ModIconRow[p].Load( "ModIconRowSelectMusic", p );
 		m_ModIconRow[p].SetFromGameState();
-		LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_ModIconRow[p] );
+		LOAD_ALL_COMMANDS_AND_SET_XY( m_ModIconRow[p] );
 		this->AddChild( &m_ModIconRow[p] );
 	}
 
@@ -435,8 +428,6 @@ void ScreenNetSelectMusic::TweenOffScreen()
 
 	OFF_COMMAND( m_MusicWheel );
 
-	OFF_COMMAND( m_BPMDisplay );
-
 	FOREACH_EnabledPlayer (pn)
 	{
 		OFF_COMMAND( m_StepsDisplays[pn] );
@@ -495,7 +486,6 @@ void ScreenNetSelectMusic::MusicChanged()
 {
 	if( GAMESTATE->m_pCurSong == NULL )
 	{
-		m_BPMDisplay.NoBPM();
 		FOREACH_EnabledPlayer (pn)
 			UpdateDifficulties( pn );
 
@@ -504,7 +494,6 @@ void ScreenNetSelectMusic::MusicChanged()
 		// SOUND->PlayMusic( m_sSectionMusicPath, NULL, true, 0, -1 );
 		return;
 	} 
-	m_BPMDisplay.SetBpmFromSong( GAMESTATE->m_pCurSong );
 
 	FOREACH_EnabledPlayer (pn)
 	{

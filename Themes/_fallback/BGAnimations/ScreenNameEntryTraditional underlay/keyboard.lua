@@ -19,7 +19,8 @@ end
 
 local MapNameToLetter = {};
 local MapLetterToName = {};
-local letter = LoadFont( "_regra bold 30px" ) .. {
+local letter = LoadFont( "Common Normal" ) .. {
+-- local letter = LoadFont( "_regra bold 30px" ) .. {
 	InitCommand=cmd(zoom,0.8;shadowlength,0);
 	PulseCommand = function(self)
 		self:finishtweening();
@@ -37,13 +38,18 @@ for l in ivalues(Letters) do
 		Text = l;
 	};
 	if l == "BACK" or l == "ENTER" then
-		children[#children].File = THEME:GetPathF("", "_venacti 26px normal");
+		children[#children].File = THEME:GetPathF("", "Common Normal");
+-- 		children[#children].File = THEME:GetPathF("", "_venacti 26px normal");
 	end;
 end;
-children[#children+1] = LoadActor( THEME:GetPathS(Var "LoadingScreen", "type key") ) .. { Name = "Type"; SupportPan = true; }
+--[[ children[#children+1] = LoadActor( THEME:GetPathS(Var "LoadingScreen", "type key") ) .. { Name = "Type"; SupportPan = true; }
 children[#children+1] = LoadActor( THEME:GetPathS(Var "LoadingScreen", "back") ) .. { Name = "Back"; SupportPan = true; }
 children[#children+1] = LoadActor( THEME:GetPathS(Var "LoadingScreen", "enter") ) .. { Name = "Enter"; SupportPan = true; }
-children[#children+1] = LoadActor( THEME:GetPathS(Var "LoadingScreen", "move cursor") ) .. { Name = "Move"; SupportPan = true; }
+children[#children+1] = LoadActor( THEME:GetPathS(Var "LoadingScreen", "move cursor") ) .. { Name = "Move"; SupportPan = true; } --]]
+children[#children+1] = LoadActor( THEME:GetPathS("Common", "value") ) .. { Name = "Type"; SupportPan = true; }
+children[#children+1] = LoadActor( THEME:GetPathS("Common", "cancel") ) .. { Name = "Back"; SupportPan = true; }
+children[#children+1] = LoadActor( THEME:GetPathS("Common", "start") ).. { Name = "Enter"; SupportPan = true; }
+children[#children+1] = LoadActor( THEME:GetPathS("MusicWheel", "change") ) .. { Name = "Move"; SupportPan = true; }
 
 local CursorFiles = {
 	[PLAYER_1] = "Cursor P1",

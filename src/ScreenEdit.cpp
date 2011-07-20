@@ -257,6 +257,7 @@ void ScreenEdit::InitEditMappings()
 		m_EditMappingsDeviceInput.hold[EDIT_BUTTON_DELETE_SHIFT_PAUSES][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL);
 		m_EditMappingsDeviceInput.hold[EDIT_BUTTON_DELETE_SHIFT_PAUSES][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL);
 		break;
+	default: break;
 	}
 
 	m_EditMappingsDeviceInput.button[EDIT_BUTTON_COLUMN_0][0] = DeviceInput(DEVICE_KEYBOARD, KEY_C1);
@@ -812,7 +813,7 @@ void ScreenEdit::Init()
 
 	InitEditMappings();
 	
-	currentCycleSegment = "label";
+	currentCycleSegment = SEGMENT_LABEL;
 
 	// save the originals for reverting later
 	CopyToLastSave();
@@ -1261,7 +1262,7 @@ void ScreenEdit::UpdateTextInfo()
 		sText += ssprintf( MAIN_TITLE_FORMAT.GetValue(), MAIN_TITLE.GetValue().c_str(), m_pSong->m_sMainTitle.c_str() );
 		if( m_pSong->m_sSubTitle.size() )
 			sText += ssprintf( SUBTITLE_FORMAT.GetValue(), SUBTITLE.GetValue().c_str(), m_pSong->m_sSubTitle.c_str() );
-		sText += ssprintf( SEGMENT_TYPE_FORMAT.GetValue(), SEGMENT_TYPE.GetValue().c_str(), currentCycleSegment.c_str() );
+		sText += ssprintf( SEGMENT_TYPE_FORMAT.GetValue(), SEGMENT_TYPE.GetValue().c_str(), TimingSegmentTypeToString(currentCycleSegment).c_str() );
 		sText += ssprintf( TAP_NOTE_TYPE_FORMAT.GetValue(), TAP_NOTE_TYPE.GetValue().c_str(), TapNoteTypeToString( m_selectedTap.type ).c_str() );
 			break;
 	}
@@ -1465,7 +1466,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 	}
 	TimingData &sTiming = GetAppropriateTiming();
 	float playerBeat = GetAppropriatePosition().m_fSongBeat;
-	int beatsPerMeasure = sTiming.GetTimeSignatureSegmentAtBeat( playerBeat ).GetNum();
+	int beatsPerMeasure = sTiming.GetTimeSignatureSegmentAtBeat( playerBeat )->GetNum();
 	
 	switch( EditB )
 	{
@@ -1559,60 +1560,15 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 		}
 	case EDIT_BUTTON_CYCLE_SEGMENT_LEFT:
 	{
-		if (this->currentCycleSegment == "label")
-			this->currentCycleSegment = "fake";
-		else if (this->currentCycleSegment == "fake")
-			this->currentCycleSegment = "scroll";
-		else if (this->currentCycleSegment == "scroll")
-			this->currentCycleSegment = "speed";
-		else if (this->currentCycleSegment == "speed")
-			this->currentCycleSegment = "combo";
-		else if (this->currentCycleSegment == "combo")
-			this->currentCycleSegment = "tickcount";
-		else if (this->currentCycleSegment == "tickcount")
-			this->currentCycleSegment = "timeSig";
-		else if (this->currentCycleSegment == "timeSig")
-			this->currentCycleSegment = "warp";
-		else if (this->currentCycleSegment == "warp")
-			this->currentCycleSegment = "delay";
-		else if (this->currentCycleSegment == "delay")
-			this->currentCycleSegment = "stop";
-		else if (this->currentCycleSegment == "stop")
-			this->currentCycleSegment = "bpm";
-		else if (this->currentCycleSegment == "bpm")
-			this->currentCycleSegment = "label";
-		// fallback gracefully instead of assert.
-		else this->currentCycleSegment = "label";
+		int tmp = enum_add2( this->currentCycleSegment, -1 );
+		wrap( *ConvertValue<int>(&tmp), NUM_TimingSegmentType );
 		break;
 	}		
 	case EDIT_BUTTON_CYCLE_SEGMENT_RIGHT:
 	{
-		if (this->currentCycleSegment == "label")
-			this->currentCycleSegment = "bpm";
-		else if (this->currentCycleSegment == "bpm")
-			this->currentCycleSegment = "stop";
-		else if (this->currentCycleSegment == "stop")
-			this->currentCycleSegment = "delay";
-		else if (this->currentCycleSegment == "delay")
-			this->currentCycleSegment = "warp";
-		else if (this->currentCycleSegment == "warp")
-			this->currentCycleSegment = "timeSig";
-		else if (this->currentCycleSegment == "timeSig")
-			this->currentCycleSegment = "tickcount";
-		else if (this->currentCycleSegment == "tickcount")
-			this->currentCycleSegment = "combo";
-		else if (this->currentCycleSegment == "combo")
-			this->currentCycleSegment = "speed";
-		else if (this->currentCycleSegment == "speed")
-			this->currentCycleSegment = "scroll";
-		else if (this->currentCycleSegment == "scroll")
-			this->currentCycleSegment = "fake";
-		else if (this->currentCycleSegment == "fake")
-			this->currentCycleSegment = "label";
-		// fallback gracefully instead of assert.
-		else this->currentCycleSegment = "label";
-		break;
-	}
+		int tmp = enum_add2( this->currentCycleSegment, +1 );
+		wrap( *ConvertValue<int>(&tmp), NUM_TimingSegmentType );
+		break;	}
 	case EDIT_BUTTON_SCROLL_SPEED_UP:
 	case EDIT_BUTTON_SCROLL_SPEED_DOWN:
 		{
@@ -1729,56 +1685,18 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 		break;
 	case EDIT_BUTTON_SEGMENT_NEXT:
 	{
+		// TODO: Work around Stops and Delays. We MAY have to separate them.
 		TimingData &timing = GetAppropriateTiming();
-		if (this->currentCycleSegment == "label")
-			ScrollTo(timing.GetNextLabelSegmentBeatAtBeat(GetBeat()));
-		else if (this->currentCycleSegment == "bpm")
-			ScrollTo(timing.GetNextBPMSegmentBeatAtBeat(GetBeat()));
-		else if (this->currentCycleSegment == "stop")
-			ScrollTo(timing.GetNextStopSegmentBeatAtBeat(GetBeat()));
-		else if (this->currentCycleSegment == "delay")
-			ScrollTo(timing.GetNextDelaySegmentBeatAtBeat(GetBeat()));
-		else if (this->currentCycleSegment == "warp")
-			ScrollTo(timing.GetNextWarpSegmentBeatAtBeat(GetBeat()));
-		else if (this->currentCycleSegment == "timeSig")
-			ScrollTo(timing.GetNextTimeSignatureSegmentBeatAtBeat(GetBeat()));
-		else if (this->currentCycleSegment == "tickcount")
-			ScrollTo(timing.GetNextTickcountSegmentBeatAtBeat(GetBeat()));
-		else if (this->currentCycleSegment == "combo")
-			ScrollTo(timing.GetNextComboSegmentBeatAtBeat(GetBeat()));
-		else if (this->currentCycleSegment == "speed")
-			ScrollTo(timing.GetNextSpeedSegmentBeatAtBeat(GetBeat()));
-		else if (this->currentCycleSegment == "scroll")
-			ScrollTo(timing.GetNextScrollSegmentBeatAtBeat(GetBeat()));
-		else if (this->currentCycleSegment == "fake")
-			ScrollTo(timing.GetNextFakeSegmentBeatAtBeat(GetBeat()));
+		ScrollTo(timing.GetNextSegmentBeatAtBeat(this->currentCycleSegment,
+												 GetBeat()));
 	}
 	break;
 	case EDIT_BUTTON_SEGMENT_PREV:
 	{
+		// TODO: Work around Stops and Delays. We MAY have to separate them.
 		TimingData &timing = GetAppropriateTiming();
-		if (this->currentCycleSegment == "label")
-			ScrollTo(timing.GetPreviousLabelSegmentBeatAtBeat(GetBeat()));
-		else if (this->currentCycleSegment == "bpm")
-			ScrollTo(timing.GetPreviousBPMSegmentBeatAtBeat(GetBeat()));
-		else if (this->currentCycleSegment == "stop")
-			ScrollTo(timing.GetPreviousStopSegmentBeatAtBeat(GetBeat()));
-		else if (this->currentCycleSegment == "delay")
-			ScrollTo(timing.GetPreviousDelaySegmentBeatAtBeat(GetBeat()));
-		else if (this->currentCycleSegment == "warp")
-			ScrollTo(timing.GetPreviousWarpSegmentBeatAtBeat(GetBeat()));
-		else if (this->currentCycleSegment == "timeSig")
-			ScrollTo(timing.GetPreviousTimeSignatureSegmentBeatAtBeat(GetBeat()));
-		else if (this->currentCycleSegment == "tickcount")
-			ScrollTo(timing.GetPreviousTickcountSegmentBeatAtBeat(GetBeat()));
-		else if (this->currentCycleSegment == "combo")
-			ScrollTo(timing.GetPreviousComboSegmentBeatAtBeat(GetBeat()));
-		else if (this->currentCycleSegment == "speed")
-			ScrollTo(timing.GetPreviousSpeedSegmentBeatAtBeat(GetBeat()));
-		else if (this->currentCycleSegment == "scroll")
-			ScrollTo(timing.GetPreviousScrollSegmentBeatAtBeat(GetBeat()));
-		else if (this->currentCycleSegment == "fake")
-			ScrollTo(timing.GetPreviousFakeSegmentBeatAtBeat(GetBeat()));
+		ScrollTo(timing.GetPreviousSegmentBeatAtBeat(this->currentCycleSegment,
+													 GetBeat()));
 	}
 	break;
 	case EDIT_BUTTON_SNAP_NEXT:
@@ -1972,24 +1890,26 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 					fDelta *= 40;
 			}
 			unsigned i;
-			for( i=0; i<GetAppropriateTiming().m_StopSegments.size(); i++ )
+			vector<TimingSegment *> &stops = GetAppropriateTiming().allTimingSegments[SEGMENT_STOP_DELAY];
+			for( i=0; i<stops.size(); i++ )
 			{
-				if( GetAppropriateTiming().m_StopSegments[i].GetRow() == GetRow() )
+				if( stops[i]->GetRow() == GetRow() )
 					break;
 			}
 
-			if( i == GetAppropriateTiming().m_StopSegments.size() )	// there is no StopSegment at the current beat
+			if( i == stops.size() )	// there is no StopSegment at the current beat
 			{
 				// create a new StopSegment
 				if( fDelta > 0 )
-					GetAppropriateTiming().AddStopSegment( StopSegment( GetRow(), fDelta) );
+					GetAppropriateTiming().AddSegment(SEGMENT_STOP_DELAY,
+													  new StopSegment( GetRow(), fDelta) );
 			}
 			else	// StopSegment being modified is m_SongTiming.m_StopSegments[i]
 			{
-				vector<StopSegment> &s = GetAppropriateTiming().m_StopSegments;
-				s[i].SetPause(s[i].GetPause() + fDelta);
-				if( s[i].GetPause() <= 0 )
-					s.erase( s.begin()+i, s.begin()+i+1);
+				StopSegment *s = static_cast<StopSegment *>(stops[i]);
+				s->SetPause(s->GetPause() + fDelta);
+				if( s->GetPause() <= 0 )
+					stops.erase( stops.begin()+i, stops.begin()+i+1);
 			}
 			(fDelta>0 ? m_soundValueIncrease : m_soundValueDecrease).Play();
 			SetDirty( true );
@@ -2468,6 +2388,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 		GAMESTATE->m_bIsUsingStepTiming = !GAMESTATE->m_bIsUsingStepTiming;
 		m_soundSwitchTiming.Play();
 		break;
+	default: break;
 	}
 }
 
@@ -2575,6 +2496,7 @@ void ScreenEdit::InputRecordPaused( const InputEventPlus &input, EditButton Edit
 	case EDIT_BUTTON_RETURN_TO_EDIT:
 		TransitionEditState( STATE_EDITING );
 		break;
+	default: break;
 	}
 }
 
@@ -2623,6 +2545,7 @@ void ScreenEdit::InputPlay( const InputEventPlus &input, EditButton EditB )
 				}
 			}
 			break;
+		default: break;
 		}
 	}
 
@@ -2665,6 +2588,7 @@ void ScreenEdit::InputPlay( const InputEventPlus &input, EditButton EditB )
 			}
 		}
 			break;
+		default: break;
 		}
 	}
 }
@@ -2731,6 +2655,7 @@ void ScreenEdit::TransitionEditState( EditState em )
 
 			CheckNumberOfNotesAndUndo();
 			break;
+		default: break;
 		}
 	}
 
@@ -2831,6 +2756,7 @@ void ScreenEdit::TransitionEditState( EditState em )
 		m_NoteFieldRecord.m_iEndMarker = m_iStopPlayingAt;
 
 		break;
+	default: break;
 	}
 
 	// Show/hide depending on edit state (em)
@@ -2857,6 +2783,7 @@ void ScreenEdit::TransitionEditState( EditState em )
 	{
 	case STATE_PLAYING:
 	case STATE_RECORDING:
+		{
 		const float fStartSeconds = GetAppropriateTiming().GetElapsedTimeFromBeat( GetBeat() );
 		LOG->Trace( "Starting playback at %f", fStartSeconds );
 
@@ -2867,6 +2794,8 @@ void ScreenEdit::TransitionEditState( EditState em )
 		m_pSoundMusic->SetProperty( "AccurateSync", true );
 		m_pSoundMusic->Play( &p );
 		break;
+		}
+	default: break;
 	}
 
 	m_EditState = em;
@@ -3646,7 +3575,7 @@ void ScreenEdit::DisplayTimingMenu()
 {
 	float fBeat = GetBeat();
 	TimingData &pTime = GetAppropriateTiming();
-	bool bHasSpeedOnThisRow = pTime.GetSpeedSegmentAtBeat( fBeat ).GetBeat() == fBeat;
+	bool bHasSpeedOnThisRow = pTime.GetSpeedSegmentAtBeat( fBeat )->GetBeat() == fBeat;
 	
 	g_TimingDataInformation.rows[beat_0_offset].SetOneUnthemedChoice( ssprintf("%.6f", pTime.m_fBeat0OffsetInSeconds) );
 	g_TimingDataInformation.rows[bpm].SetOneUnthemedChoice( ssprintf("%.6f", pTime.GetBPMAtBeat( fBeat ) ) );
@@ -4316,6 +4245,7 @@ void ScreenEdit::HandleAlterMenuChoice(AlterMenuChoice c, const vector<int> &iAn
 			}
 			break;
 		}
+		default: break;
 	}
 	
 }
@@ -4589,6 +4519,7 @@ void ScreenEdit::HandleSongInformationChoice( SongInformationChoice c, const vec
 					   ssprintf("%.6f", pSong->m_fSpecifiedBPMMax), 20,
 					   ScreenTextEntry::FloatValidate, ChangeMaxBPM, NULL );
 		break;
+	default: break;
 	};
 	SetDirty(true);
 }
@@ -4645,11 +4576,11 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 		break;
 	case time_signature:
 	{
-		TimeSignatureSegment &ts = GetAppropriateTiming().GetTimeSignatureSegmentAtBeat( GetBeat() );
+		TimeSignatureSegment * ts = GetAppropriateTiming().GetTimeSignatureSegmentAtBeat( GetBeat() );
 		ScreenTextEntry::TextEntry(
 			SM_BackFromTimeSignatureChange,
 			ENTER_TIME_SIGNATURE_VALUE,
-			ssprintf( "%d/%d", ts.GetNum(), ts.GetDen() ),
+			ssprintf( "%d/%d", ts->GetNum(), ts->GetDen() ),
 			8
 			);
 		break;
@@ -4664,12 +4595,12 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 		break;
 	case combo:
 	{
-		ComboSegment &cs = GetAppropriateTiming().GetComboSegmentAtBeat(GetBeat());
+		ComboSegment *cs = GetAppropriateTiming().GetComboSegmentAtBeat(GetBeat());
 		ScreenTextEntry::TextEntry(SM_BackFromComboChange,
 								   ENTER_COMBO_VALUE,
 								   ssprintf( "%d/%d",
-											cs.GetCombo(),
-											cs.GetMissCombo()),
+											cs->GetCombo(),
+											cs->GetMissCombo()),
 								   7);
 		break;
 	}
@@ -4693,7 +4624,7 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 		ScreenTextEntry::TextEntry(
 		   SM_BackFromSpeedPercentChange,
 		   ENTER_SPEED_PERCENT_VALUE,
-		   ssprintf( "%.6f", GetAppropriateTiming().GetSpeedSegmentAtBeat( GetBeat() ).GetRatio() ),
+		   ssprintf( "%.6f", GetAppropriateTiming().GetSpeedSegmentAtBeat( GetBeat() )->GetRatio() ),
 		   10
 		   );
 		break;
@@ -4701,7 +4632,7 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 		ScreenTextEntry::TextEntry(
 		   SM_BackFromScrollChange,
 		   ENTER_SCROLL_VALUE,
-		   ssprintf( "%.6f", GetAppropriateTiming().GetScrollSegmentAtBeat( GetBeat() ).GetRatio() ),
+		   ssprintf( "%.6f", GetAppropriateTiming().GetScrollSegmentAtBeat( GetBeat() )->GetRatio() ),
 		   10
 		   );
 		break;
@@ -4709,7 +4640,7 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 		ScreenTextEntry::TextEntry(
 		   SM_BackFromSpeedWaitChange,
 		   ENTER_SPEED_WAIT_VALUE,
-		   ssprintf( "%.6f", GetAppropriateTiming().GetSpeedSegmentAtBeat( GetBeat() ).GetLength() ),
+		   ssprintf( "%.6f", GetAppropriateTiming().GetSpeedSegmentAtBeat( GetBeat() )->GetLength() ),
 		   10
 		   );
 		break;
@@ -4980,8 +4911,8 @@ void ScreenEdit::CheckNumberOfNotesAndUndo()
 	if( EDIT_MODE.GetValue() != EditMode_Home )
 		return;
 	
-	TimeSignatureSegment &curTime = GAMESTATE->m_pCurSong->m_SongTiming.GetTimeSignatureSegmentAtBeat( GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat );
-	int rowsPerMeasure = curTime.GetDen() * curTime.GetNum();
+	TimeSignatureSegment * curTime = GAMESTATE->m_pCurSong->m_SongTiming.GetTimeSignatureSegmentAtBeat( GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat );
+	int rowsPerMeasure = curTime->GetDen() * curTime->GetNum();
 
 	for( int row=0; row<=m_NoteDataEdit.GetLastRow(); row+=rowsPerMeasure )
 	{
@@ -5035,7 +4966,7 @@ float ScreenEdit::GetMaximumBeatForNewNote() const
 			 * beats. */
 			TimingData &timing = s.m_SongTiming;
 			float playerBeat = GetAppropriatePosition().m_fSongBeat;
-			int beatsPerMeasure = timing.GetTimeSignatureSegmentAtBeat( playerBeat ).GetNum();
+			int beatsPerMeasure = timing.GetTimeSignatureSegmentAtBeat( playerBeat )->GetNum();
 			fEndBeat += beatsPerMeasure;
 			fEndBeat = ftruncf( fEndBeat, (float)beatsPerMeasure );
 

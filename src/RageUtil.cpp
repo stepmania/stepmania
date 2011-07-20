@@ -1731,6 +1731,13 @@ bool StringToFloat( const RString &sString, float &fOut )
 	return sString.size() && *endPtr == '\0' && isfinite( fOut );
 }
 
+RString FloatToString( const float &num )
+{
+	stringstream ss;
+	ss << num;
+	return ss.str();
+}
+
 const wchar_t INVALID_CHAR = 0xFFFD; /* U+FFFD REPLACEMENT CHARACTER */
 
 wstring RStringToWstring( const RString &s )

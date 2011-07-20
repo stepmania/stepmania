@@ -46,7 +46,7 @@ struct SMLoader
 	 * @brief Retrieve the relevant notedata from the simfile.
 	 * @param path the path where the simfile lives.
 	 * @param out the Steps we are loading the data into. */
-	virtual bool LoadNotedataFromSimfile(const RString &path, Steps &out );
+	virtual bool LoadNoteDataFromSimfile(const RString &path, Steps &out );
 	
 	/**
 	 * @brief Attempt to load the specified sm file.

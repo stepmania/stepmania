@@ -429,12 +429,14 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 {
 	trail.Init();
 
+	// XXX: Why are beginner and challenge excluded here? -Wolfman2000
 	switch( cd )
 	{
-	case Difficulty_Beginner:
-		return false;
-	case Difficulty_Challenge:
-		return false;
+		case Difficulty_Beginner:
+			return false;
+		case Difficulty_Challenge:
+			return false;
+		default: break;
 	}
 
 	// Construct a new Trail, add it to the cache, then return it.

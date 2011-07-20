@@ -205,10 +205,11 @@ void ScreenSelectCharacter::BeforeRowChange( PlayerNumber pn )
 	PlayerNumber pnAffected = GetAffectedPlayerNumber(pn);
 	switch( m_SelectionRow[pn] )
 	{
-	case CHOOSING_CPU_CHARACTER:
-	case CHOOSING_HUMAN_CHARACTER:
-		m_sprCardArrows[pnAffected].StopEffect();
-		break;
+		case CHOOSING_CPU_CHARACTER:
+		case CHOOSING_HUMAN_CHARACTER:
+			m_sprCardArrows[pnAffected].StopEffect();
+			break;
+		default: break;
 	}
 }
 
@@ -217,10 +218,11 @@ void ScreenSelectCharacter::AfterRowChange( PlayerNumber pn )
 	PlayerNumber pnAffected = GetAffectedPlayerNumber(pn);
 	switch( m_SelectionRow[pn] )
 	{
-	case CHOOSING_CPU_CHARACTER:
-	case CHOOSING_HUMAN_CHARACTER:
-		m_sprCardArrows[pnAffected].SetEffectGlowShift();
-		break;
+		case CHOOSING_CPU_CHARACTER:
+		case CHOOSING_HUMAN_CHARACTER:
+			m_sprCardArrows[pnAffected].SetEffectGlowShift();
+			break;
+		default: break;
 	}
 }
 
@@ -297,15 +299,18 @@ void ScreenSelectCharacter::Move( PlayerNumber pn, int deltaValue )
 	PlayerNumber pnAffected = GetAffectedPlayerNumber(pn);
 	switch( m_SelectionRow[pn] )
 	{
-	case CHOOSING_CPU_CHARACTER:
-	case CHOOSING_HUMAN_CHARACTER:
-		vector<Character*> apCharacters;
-		CHARMAN->GetCharacters( apCharacters );
-		m_iSelectedCharacter[pnAffected] += deltaValue;
-		wrap( m_iSelectedCharacter[pnAffected], apCharacters.size() );
-		AfterValueChange(pn);
-		m_soundChange.Play();
-		break;
+		case CHOOSING_CPU_CHARACTER:
+		case CHOOSING_HUMAN_CHARACTER:
+		{
+			vector<Character*> apCharacters;
+			CHARMAN->GetCharacters( apCharacters );
+			m_iSelectedCharacter[pnAffected] += deltaValue;
+			wrap( m_iSelectedCharacter[pnAffected], apCharacters.size() );
+			AfterValueChange(pn);
+			m_soundChange.Play();
+			break;
+		}
+		default: break;
 	}
 }
 
@@ -332,12 +337,13 @@ void ScreenSelectCharacter::MakeSelection( PlayerNumber pn )
 	BeforeRowChange(pn);
 	switch( m_SelectionRow[pn] )
 	{
-	case CHOOSING_HUMAN_CHARACTER:
-		m_SelectionRow[pn] = GAMESTATE->AnyPlayersAreCpu() ? CHOOSING_CPU_CHARACTER : FINISHED_CHOOSING;
-		break;
-	case CHOOSING_CPU_CHARACTER:
-		m_SelectionRow[pn] = FINISHED_CHOOSING;
-		break;
+		case CHOOSING_HUMAN_CHARACTER:
+			m_SelectionRow[pn] = GAMESTATE->AnyPlayersAreCpu() ? CHOOSING_CPU_CHARACTER : FINISHED_CHOOSING;
+			break;
+		case CHOOSING_CPU_CHARACTER:
+			m_SelectionRow[pn] = FINISHED_CHOOSING;
+			break;
+		default: break;
 	}
 	AfterRowChange(pn);
 	AfterValueChange(pn);

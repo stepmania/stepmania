@@ -22,8 +22,7 @@ static HBITMAP g_hBitmap = NULL;
 
 #pragma comment(linker,"\"/manifestdependency:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 
-
-/* Load a RageSurface into a GDI surface. */
+// Load a RageSurface into a GDI surface.
 static HBITMAP LoadWin32Surface( RageSurface *&s )
 {
 	RageSurfaceUtils::ConvertSurface( s, s->w, s->h, 32, 0xFF000000, 0x00FF0000, 0x0000FF00, 0 );
@@ -37,14 +36,14 @@ static HBITMAP LoadWin32Surface( RageSurface *&s )
 	HDC BitmapDC = CreateCompatibleDC( hScreen );
 	SelectObject( BitmapDC, bitmap );
 
-	/* This is silly, but simple.  We only do this once, on a small image. */
+	// This is silly, but simple. We only do this once, on a small image.
 	for( int y = 0; y < s->h; ++y )
 	{
 		unsigned const char *line = ((unsigned char *) s->pixels) + (y * s->pitch);
 		for( int x = 0; x < s->w; ++x )
 		{
 			unsigned const char *data = line + (x*s->format->BytesPerPixel);
-			
+
 			SetPixelV( BitmapDC, x, y, RGB( data[3], data[2], data[1] ) );
 		}
 	}
@@ -64,7 +63,7 @@ static HBITMAP LoadWin32Surface( RString sFile, HWND hWnd )
 	if( pSurface == NULL )
 		return NULL;
 
-	/* Resize the splash image to fit the dialog.  Stretch to fit horizontally,
+	/* Resize the splash image to fit the dialog. Stretch to fit horizontally,
 	 * maintaining aspect ratio. */
 	{
 		RECT r;
@@ -84,7 +83,6 @@ static HBITMAP LoadWin32Surface( RString sFile, HWND hWnd )
 
 INT_PTR CALLBACK LoadingWindow_Win32::DlgProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
 {
-
 	LoadingWindow_Win32 *self;
 
 	if(msg==WM_INITDIALOG) {
@@ -171,12 +169,32 @@ INT_PTR CALLBACK LoadingWindow_Win32::DlgProc( HWND hWnd, UINT msg, WPARAM wPara
 
 void LoadingWindow_Win32::SetIcon( const RageSurface *pIcon )
 {
-	if( m_hIcon != NULL )
+	if( g_hBitmap != NULL )
 		DestroyIcon( m_hIcon );
 
 	m_hIcon = IconFromSurface( pIcon );
 	if( m_hIcon != NULL )
 		SetClassLong( hwnd, GCL_HICON, (LONG) m_hIcon );
+}
+
+void LoadingWindow_Win32::SetSplash( const RString sPath )
+{
+	if( g_hBitmap != NULL )
+	{
+		DeleteObject( g_hBitmap );
+		g_hBitmap = NULL;
+	}
+
+	g_hBitmap = LoadWin32Surface( sPath, hwnd );
+	if( g_hBitmap != NULL )
+	{
+		SendDlgItemMessage(
+			hwnd, IDC_SPLASH,
+			STM_SETIMAGE,
+			(WPARAM) IMAGE_BITMAP,
+			(LPARAM) (HANDLE) g_hBitmap
+		);
+	}
 }
 
 LoadingWindow_Win32::LoadingWindow_Win32()
@@ -194,7 +212,7 @@ LoadingWindow_Win32::LoadingWindow_Win32()
 #endif
 
 	m_hIcon = NULL;
-	
+
 	runMessageLoop=true;
 
 	guiReadyEvent=CreateEvent(NULL,FALSE,FALSE,NULL);

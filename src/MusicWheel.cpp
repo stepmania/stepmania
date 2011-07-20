@@ -42,23 +42,23 @@ static SortOrder ForceAppropriateSort( PlayMode pm, SortOrder so )
 {
 	switch( pm )
 	{
-	// in course modes, force a particular sort
-	case PLAY_MODE_ONI:	return SORT_ONI_COURSES;
-	case PLAY_MODE_NONSTOP:	return SORT_NONSTOP_COURSES;
-	case PLAY_MODE_ENDLESS:	return SORT_ENDLESS_COURSES;
+		// in course modes, force a particular sort
+		case PLAY_MODE_ONI:	return SORT_ONI_COURSES;
+		case PLAY_MODE_NONSTOP:	return SORT_NONSTOP_COURSES;
+		case PLAY_MODE_ENDLESS:	return SORT_ENDLESS_COURSES;
+		default: break;
 	}
 
 	// If we're not in a course mode, don't start in a course sort.
 	switch( so )
 	{
-	case SORT_ONI_COURSES:
-	case SORT_NONSTOP_COURSES:
-	case SORT_ENDLESS_COURSES:
-		so = SortOrder_Invalid;
-		break;
+		case SORT_ONI_COURSES:
+		case SORT_NONSTOP_COURSES:
+		case SORT_ENDLESS_COURSES:
+			so = SortOrder_Invalid;
+		default:
+			return so;
 	}
-
-	return so;
 }
 
 MusicWheelItem *MusicWheel::MakeItem()
@@ -490,7 +490,7 @@ void MusicWheel::BuildWheelItemDatas( vector<MusicWheelItemData *> &arrayWheelIt
 {
 	switch( so )
 	{
-	case SORT_MODE_MENU:
+		case SORT_MODE_MENU:
 		{
 			arrayWheelItemDatas.clear();	// clear out the previous wheel items 
 			vector<RString> vsNames;
@@ -510,22 +510,22 @@ void MusicWheel::BuildWheelItemDatas( vector<MusicWheelItemData *> &arrayWheelIt
 			}
 			break;
 		}
-	case SORT_PREFERRED:
-	case SORT_ROULETTE:
-	case SORT_GROUP:
-	case SORT_TITLE:
-	case SORT_BPM:
-	case SORT_POPULARITY:
-	case SORT_TOP_GRADES:
-	case SORT_ARTIST:
-	case SORT_GENRE:
-	case SORT_BEGINNER_METER:
-	case SORT_EASY_METER:
-	case SORT_MEDIUM_METER:
-	case SORT_HARD_METER:
-	case SORT_CHALLENGE_METER:
-	case SORT_LENGTH:
-	case SORT_RECENT:
+		case SORT_PREFERRED:
+		case SORT_ROULETTE:
+		case SORT_GROUP:
+		case SORT_TITLE:
+		case SORT_BPM:
+		case SORT_POPULARITY:
+		case SORT_TOP_GRADES:
+		case SORT_ARTIST:
+		case SORT_GENRE:
+		case SORT_BEGINNER_METER:
+		case SORT_EASY_METER:
+		case SORT_MEDIUM_METER:
+		case SORT_HARD_METER:
+		case SORT_CHALLENGE_METER:
+		case SORT_LENGTH:
+		case SORT_RECENT:
 		{
 			// Make an array of Song*, then sort them
 			vector<Song*> arraySongs;
@@ -536,72 +536,72 @@ void MusicWheel::BuildWheelItemDatas( vector<MusicWheelItemData *> &arrayWheelIt
 			// sort the songs
 			switch( so )
 			{
-			case SORT_PREFERRED:
-				// obey order specified by the preferred sort list
-				break;
-			case SORT_ROULETTE:
-			{
-				StepsType st;
-				Difficulty dc;
-				SongUtil::GetStepsTypeAndDifficultyFromSortOrder( SORT_EASY_METER, st, dc );
-				SongUtil::SortSongPointerArrayByStepsTypeAndMeter( arraySongs, st, dc );
-				if( (bool)PREFSMAN->m_bPreferredSortUsesGroups )
-					stable_sort( arraySongs.begin(), arraySongs.end(), SongUtil::CompareSongPointersByGroup );
-				bUseSections = false;
-				break;
-			}
-			case SORT_GROUP:
-				SongUtil::SortSongPointerArrayByGroupAndTitle( arraySongs );
-				if(USE_SECTIONS_WITH_PREFERRED_GROUP)
-					bUseSections = true;
-				else
-					bUseSections = GAMESTATE->m_sPreferredSongGroup == GROUP_ALL;
-				break;
-			case SORT_TITLE:
-				SongUtil::SortSongPointerArrayByTitle( arraySongs );
-				break;
-			case SORT_BPM:
-				SongUtil::SortSongPointerArrayByBPM( arraySongs );
-				break;
-			case SORT_POPULARITY:
-				if( (int) arraySongs.size() > MOST_PLAYED_SONGS_TO_SHOW )
-					arraySongs.erase( arraySongs.begin()+MOST_PLAYED_SONGS_TO_SHOW, arraySongs.end() );
-				bUseSections = false;
-				break;
-			case SORT_TOP_GRADES:
-				SongUtil::SortSongPointerArrayByGrades( arraySongs, true );
-				break;
-			case SORT_ARTIST:
-				SongUtil::SortSongPointerArrayByArtist( arraySongs );
-				break;
-			case SORT_GENRE:
-				SongUtil::SortSongPointerArrayByGenre( arraySongs );
-				break;
-			case SORT_LENGTH:
-				SongUtil::SortSongPointerArrayByLength( arraySongs );
-				break;
-			case SORT_RECENT:
-				SongUtil::SortByMostRecentlyPlayedForMachine( arraySongs );
-				if( (int) arraySongs.size() > RECENT_SONGS_TO_SHOW )
-					arraySongs.erase( arraySongs.begin()+RECENT_SONGS_TO_SHOW, arraySongs.end() );
-				bUseSections = false;
-				break;
-			case SORT_BEGINNER_METER:
-			case SORT_EASY_METER:
-			case SORT_MEDIUM_METER:
-			case SORT_HARD_METER:
-			case SORT_CHALLENGE_METER:
-			case SORT_DOUBLE_EASY_METER:
-			case SORT_DOUBLE_MEDIUM_METER:
-			case SORT_DOUBLE_HARD_METER:
-			case SORT_DOUBLE_CHALLENGE_METER:
-				StepsType st;
-				Difficulty dc;
-				SongUtil::GetStepsTypeAndDifficultyFromSortOrder( so, st, dc );
-				SongUtil::SortSongPointerArrayByStepsTypeAndMeter( arraySongs, st, dc );
-				break;
-			default:
-				ASSERT(0);	// unhandled SortOrder
+				case SORT_PREFERRED:
+					// obey order specified by the preferred sort list
+					break;
+				case SORT_ROULETTE:
+				{
+					StepsType st;
+					Difficulty dc;
+					SongUtil::GetStepsTypeAndDifficultyFromSortOrder( SORT_EASY_METER, st, dc );
+					SongUtil::SortSongPointerArrayByStepsTypeAndMeter( arraySongs, st, dc );
+					if( (bool)PREFSMAN->m_bPreferredSortUsesGroups )
+						stable_sort( arraySongs.begin(), arraySongs.end(), SongUtil::CompareSongPointersByGroup );
+					bUseSections = false;
+					break;
+				}
+				case SORT_GROUP:
+					SongUtil::SortSongPointerArrayByGroupAndTitle( arraySongs );
+					if(USE_SECTIONS_WITH_PREFERRED_GROUP)
+						bUseSections = true;
+					else
+						bUseSections = GAMESTATE->m_sPreferredSongGroup == GROUP_ALL;
+					break;
+				case SORT_TITLE:
+					SongUtil::SortSongPointerArrayByTitle( arraySongs );
+					break;
+				case SORT_BPM:
+					SongUtil::SortSongPointerArrayByBPM( arraySongs );
+					break;
+				case SORT_POPULARITY:
+					if( (int) arraySongs.size() > MOST_PLAYED_SONGS_TO_SHOW )
+						arraySongs.erase( arraySongs.begin()+MOST_PLAYED_SONGS_TO_SHOW, arraySongs.end() );
+					bUseSections = false;
+					break;
+				case SORT_TOP_GRADES:
+					SongUtil::SortSongPointerArrayByGrades( arraySongs, true );
+					break;
+				case SORT_ARTIST:
+					SongUtil::SortSongPointerArrayByArtist( arraySongs );
+					break;
+				case SORT_GENRE:
+					SongUtil::SortSongPointerArrayByGenre( arraySongs );
+					break;
+				case SORT_LENGTH:
+					SongUtil::SortSongPointerArrayByLength( arraySongs );
+					break;
+				case SORT_RECENT:
+					SongUtil::SortByMostRecentlyPlayedForMachine( arraySongs );
+					if( (int) arraySongs.size() > RECENT_SONGS_TO_SHOW )
+						arraySongs.erase( arraySongs.begin()+RECENT_SONGS_TO_SHOW, arraySongs.end() );
+					bUseSections = false;
+					break;
+				case SORT_BEGINNER_METER:
+				case SORT_EASY_METER:
+				case SORT_MEDIUM_METER:
+				case SORT_HARD_METER:
+				case SORT_CHALLENGE_METER:
+				case SORT_DOUBLE_EASY_METER:
+				case SORT_DOUBLE_MEDIUM_METER:
+				case SORT_DOUBLE_HARD_METER:
+				case SORT_DOUBLE_CHALLENGE_METER:
+					StepsType st;
+					Difficulty dc;
+					SongUtil::GetStepsTypeAndDifficultyFromSortOrder( so, st, dc );
+					SongUtil::SortSongPointerArrayByStepsTypeAndMeter( arraySongs, st, dc );
+					break;
+				default:
+					FAIL_M("Unhandled sort order! Aborting...");
 			}
 
 			// Build an array of WheelItemDatas from the sorted list of Song*'s
@@ -610,13 +610,15 @@ void MusicWheel::BuildWheelItemDatas( vector<MusicWheelItemData *> &arrayWheelIt
 
 			switch( PREFSMAN->m_MusicWheelUsesSections )
 			{
-			case MusicWheelUsesSections_NEVER:
-				bUseSections = false;
-				break;
-			case MusicWheelUsesSections_ABC_ONLY:
-				if( so != SORT_TITLE && so != SORT_GROUP )
+				case MusicWheelUsesSections_NEVER:
 					bUseSections = false;
-				break;
+					break;
+				case MusicWheelUsesSections_ABC_ONLY:
+					if( so != SORT_TITLE && so != SORT_GROUP )
+						bUseSections = false;
+					break;
+				default:
+					break;
 			}
 
 			if( bUseSections )
@@ -630,13 +632,13 @@ void MusicWheel::BuildWheelItemDatas( vector<MusicWheelItemData *> &arrayWheelIt
 				/* We're using sections, so use the section name as the top-level sort. */
 				switch( so )
 				{
-				case SORT_PREFERRED:
-				case SORT_TOP_GRADES:
-				case SORT_BPM:
-					break;	// don't sort by section
-				default:
-					SongUtil::SortSongPointerArrayBySectionName(arraySongs, so);
-					break;
+					case SORT_PREFERRED:
+					case SORT_TOP_GRADES:
+					case SORT_BPM:
+						break;	// don't sort by section
+					default:
+						SongUtil::SortSongPointerArrayBySectionName(arraySongs, so);
+						break;
 				}
 			}
 
@@ -731,10 +733,10 @@ void MusicWheel::BuildWheelItemDatas( vector<MusicWheelItemData *> &arrayWheelIt
 			}
 			break;
 		}
-	case SORT_ALL_COURSES:
-	case SORT_NONSTOP_COURSES:
-	case SORT_ONI_COURSES:
-	case SORT_ENDLESS_COURSES:
+		case SORT_ALL_COURSES:
+		case SORT_NONSTOP_COURSES:
+		case SORT_ONI_COURSES:
+		case SORT_ENDLESS_COURSES:
 		{
 			bool bOnlyPreferred = PREFSMAN->m_CourseSortOrder == COURSE_SORT_PREFERRED;
 
@@ -769,21 +771,21 @@ void MusicWheel::BuildWheelItemDatas( vector<MusicWheelItemData *> &arrayWheelIt
 
 			switch( PREFSMAN->m_CourseSortOrder )
 			{
-			case COURSE_SORT_SONGS:
-				CourseUtil::SortCoursePointerArrayByDifficulty( apCourses );
-				break;
-			case COURSE_SORT_PREFERRED:
-				break;
-			case COURSE_SORT_METER:
-				CourseUtil::SortCoursePointerArrayByAvgDifficulty( apCourses );
-				break;
-			case COURSE_SORT_METER_SUM:
-				CourseUtil::SortCoursePointerArrayByTotalDifficulty( apCourses );
-				break;
-			case COURSE_SORT_RANK:
-				CourseUtil::SortCoursePointerArrayByRanking( apCourses );
-				break;
-			default:	ASSERT(0);
+				case COURSE_SORT_SONGS:
+					CourseUtil::SortCoursePointerArrayByDifficulty( apCourses );
+					break;
+				case COURSE_SORT_PREFERRED:
+					break;
+				case COURSE_SORT_METER:
+					CourseUtil::SortCoursePointerArrayByAvgDifficulty( apCourses );
+					break;
+				case COURSE_SORT_METER_SUM:
+					CourseUtil::SortCoursePointerArrayByTotalDifficulty( apCourses );
+					break;
+				case COURSE_SORT_RANK:
+					CourseUtil::SortCoursePointerArrayByRanking( apCourses );
+					break;
+				default:	FAIL_M("Impossible to sort the courses! Aborting...");
 			}
 
 			// since we can't agree, make it an option
@@ -810,9 +812,10 @@ void MusicWheel::BuildWheelItemDatas( vector<MusicWheelItemData *> &arrayWheelIt
 				{
 					switch( pCourse->GetPlayMode() )
 					{
-					case PLAY_MODE_ONI:	sThisSection = "Oni";		break;
-					case PLAY_MODE_NONSTOP:	sThisSection = "Nonstop";	break;
-					case PLAY_MODE_ENDLESS:	sThisSection = "Endless";	break;
+						case PLAY_MODE_ONI:	sThisSection = "Oni";		break;
+						case PLAY_MODE_NONSTOP:	sThisSection = "Nonstop";	break;
+						case PLAY_MODE_ENDLESS:	sThisSection = "Endless";	break;
+						default: break;
 					}
 				}
 
@@ -833,6 +836,8 @@ void MusicWheel::BuildWheelItemDatas( vector<MusicWheelItemData *> &arrayWheelIt
 			}
 			break;
 		}
+		default:
+			break;
 	}
 
 	// init music status icons
@@ -1227,23 +1232,24 @@ bool MusicWheel::Select()	// return true if this selection ends the screen
 
 	switch( m_WheelState )
 	{
-	case STATE_FLYING_OFF_BEFORE_NEXT_SORT:
-	case STATE_ROULETTE_SLOWING_DOWN:
-		return false;
-	case STATE_ROULETTE_SPINNING:
-		m_WheelState = STATE_ROULETTE_SLOWING_DOWN;
-		m_iSwitchesLeftInSpinDown = ROULETTE_SLOW_DOWN_SWITCHES/2+1 + RandomInt( ROULETTE_SLOW_DOWN_SWITCHES/2 );
-		m_fTimeLeftInState = 0.1f;
-		return false;
-	case STATE_RANDOM_SPINNING:
-		m_fPositionOffsetFromSelection = max(m_fPositionOffsetFromSelection, 0.3f);
-		m_WheelState = STATE_LOCKED;
-		SCREENMAN->PlayStartSound();
-		m_fLockedWheelVelocity = 0;
-		// Set m_Moving to zero to stop the sounds from playing.
-		m_Moving = 0;
-		SCREENMAN->PostMessageToTopScreen( SM_SongChanged, 0 );
-		return true;
+		case STATE_FLYING_OFF_BEFORE_NEXT_SORT:
+		case STATE_ROULETTE_SLOWING_DOWN:
+			return false;
+		case STATE_ROULETTE_SPINNING:
+			m_WheelState = STATE_ROULETTE_SLOWING_DOWN;
+			m_iSwitchesLeftInSpinDown = ROULETTE_SLOW_DOWN_SWITCHES/2+1 + RandomInt( ROULETTE_SLOW_DOWN_SWITCHES/2 );
+			m_fTimeLeftInState = 0.1f;
+			return false;
+		case STATE_RANDOM_SPINNING:
+			m_fPositionOffsetFromSelection = max(m_fPositionOffsetFromSelection, 0.3f);
+			m_WheelState = STATE_LOCKED;
+			SCREENMAN->PlayStartSound();
+			m_fLockedWheelVelocity = 0;
+			// Set m_Moving to zero to stop the sounds from playing.
+			m_Moving = 0;
+			SCREENMAN->PostMessageToTopScreen( SM_SongChanged, 0 );
+			return true;
+		default: break;
 	}
 
 	if( !WheelBase::Select() )
@@ -1251,29 +1257,25 @@ bool MusicWheel::Select()	// return true if this selection ends the screen
 
 	switch( m_CurWheelItemData[m_iSelection]->m_Type )
 	{
-	case TYPE_ROULETTE:  
-		StartRoulette();
-		return false;
-	case TYPE_RANDOM:
-		StartRandom();
-		return false;
-	case TYPE_SONG:
-	case TYPE_COURSE:
-	case TYPE_PORTAL:
-		break;
-	case TYPE_SORT:
-		GetCurWheelItemData(m_iSelection)->m_pAction->ApplyToAllPlayers();
-		ChangeSort( GAMESTATE->m_PreferredSortOrder );
-		m_sLastModeMenuItem = GetCurWheelItemData(m_iSelection)->m_pAction->m_sName;
-		return false;
-	case TYPE_CUSTOM:
-		GetCurWheelItemData(m_iSelection)->m_pAction->ApplyToAllPlayers();
-		if( GetCurWheelItemData(m_iSelection)->m_pAction->m_sScreen != "" )
-			return true;
-		else
+		case TYPE_ROULETTE:  
+			StartRoulette();
 			return false;
+		case TYPE_RANDOM:
+			StartRandom();
+			return false;
+		case TYPE_SORT:
+			GetCurWheelItemData(m_iSelection)->m_pAction->ApplyToAllPlayers();
+			ChangeSort( GAMESTATE->m_PreferredSortOrder );
+			m_sLastModeMenuItem = GetCurWheelItemData(m_iSelection)->m_pAction->m_sName;
+			return false;
+		case TYPE_CUSTOM:
+			GetCurWheelItemData(m_iSelection)->m_pAction->ApplyToAllPlayers();
+			if( GetCurWheelItemData(m_iSelection)->m_pAction->m_sScreen != "" )
+				return true;
+			else
+				return false;
+		default: return true;
 	}
-	return true;
 }
 
 void MusicWheel::StartRoulette() 
@@ -1517,11 +1519,11 @@ Song* MusicWheel::GetSelectedSong()
 {
 	switch( m_CurWheelItemData[m_iSelection]->m_Type )
 	{
-	case TYPE_PORTAL:
-		return GetPreferredSelectionForRandomOrPortal();
+		case TYPE_PORTAL:
+			return GetPreferredSelectionForRandomOrPortal();
+		default:
+			return GetCurWheelItemData(m_iSelection)->m_pSong;
 	}
-
-	return GetCurWheelItemData(m_iSelection)->m_pSong;
 }
 
 /* Find a random song.  If possible, find one that has the preferred difficulties of

@@ -193,33 +193,38 @@ void ScreenEditMenu::MenuStart( const InputEventPlus &input )
 
 	switch( m_Selector.EDIT_MODE )
 	{
-	case EditMode_Full:
-	{
-		RString sDir = pSong->GetSongDir();
-		RString sTempFile = sDir + TEMP_FILE_NAME;
-		RageFile file;
-		if( !file.Open( sTempFile, RageFile::WRITE ) )
+		case EditMode_Full:
 		{
-			ScreenPrompt::Prompt( SM_None, SONG_DIR_READ_ONLY );
-			return;
-		}
+			RString sDir = pSong->GetSongDir();
+			RString sTempFile = sDir + TEMP_FILE_NAME;
+			RageFile file;
+			if( !file.Open( sTempFile, RageFile::WRITE ) )
+			{
+				ScreenPrompt::Prompt( SM_None, SONG_DIR_READ_ONLY );
+				return;
+			}
 
-		file.Close();
-		FILEMAN->Remove( sTempFile );
-		break;
-	}
+			file.Close();
+			FILEMAN->Remove( sTempFile );
+			break;
+		}
+		default:
+			break;
 	}
 
 	switch( action )
 	{
-	case EditMenuAction_Delete:
-		ASSERT( pSteps );
-		if( pSteps->IsAutogen() )
+		case EditMenuAction_Delete:
 		{
-			SCREENMAN->PlayInvalidSound();
-			SCREENMAN->SystemMessage( DELETED_AUTOGEN_STEPS.GetValue() );
-			return;
+			ASSERT( pSteps );
+			if( pSteps->IsAutogen() )
+			{
+				SCREENMAN->PlayInvalidSound();
+				SCREENMAN->SystemMessage( DELETED_AUTOGEN_STEPS.GetValue() );
+				return;
+			}
 		}
+		default: break;
 	}
 
 	// Do work

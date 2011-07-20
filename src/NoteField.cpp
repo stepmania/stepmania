@@ -849,27 +849,26 @@ void NoteField::DrawPrimitives()
 	}
 
 	const TimingData *pTiming = GetDisplayedTiming(m_pPlayerState);
-	
+	const vector<TimingSegment *> *segs = pTiming->allTimingSegments;
+	unsigned i = 0;
 	// Draw beat bars
 	if( ( GAMESTATE->IsEditing() || SHOW_BEAT_BARS ) && pTiming != NULL )
 	{
-		const TimingData &timing = *pTiming;
-		const vector<TimeSignatureSegment> &vTimeSignatureSegments = timing.m_vTimeSignatureSegments;
+		const vector<TimingSegment *> &tSigs = segs[SEGMENT_TIME_SIG];
 		int iMeasureIndex = 0;
-		FOREACH_CONST( TimeSignatureSegment, vTimeSignatureSegments, iter )
+		for (i = 0; i < tSigs.size(); i++)
 		{
-			vector<TimeSignatureSegment>::const_iterator next = iter;
-			next++;
-			int iSegmentEndRow = (next == vTimeSignatureSegments.end()) ? iLastRowToDraw : next->GetRow();
-
+			TimeSignatureSegment *ts = static_cast<TimeSignatureSegment *>(tSigs[i]);
+			int iSegmentEndRow = (i + 1 == tSigs.size()) ? iLastRowToDraw : tSigs[i+1]->GetRow();
+		
 			// beat bars every 16th note
-			int iDrawBeatBarsEveryRows = BeatToNoteRow( ((float)iter->GetDen()) / 4 ) / 4;
+			int iDrawBeatBarsEveryRows = BeatToNoteRow( ((float)ts->GetDen()) / 4 ) / 4;
 
 			// In 4/4, every 16th beat bar is a measure
-			int iMeasureBarFrequency =  iter->GetNum() * 4;
+			int iMeasureBarFrequency =  ts->GetNum() * 4;
 			int iBeatBarsDrawn = 0;
 
-			for( int i=iter->GetRow(); i < iSegmentEndRow; i += iDrawBeatBarsEveryRows )
+			for( int j=ts->GetRow(); j < iSegmentEndRow; j += iDrawBeatBarsEveryRows )
 			{
 				bool bMeasureBar = iBeatBarsDrawn % iMeasureBarFrequency == 0;
 				BeatBarType type = quarter_beat;
@@ -879,7 +878,7 @@ void NoteField::DrawPrimitives()
 					type = beat;
 				else if( iBeatBarsDrawn % 2 == 0 )
 					type = half_beat;
-				float fBeat = NoteRowToBeat(i);
+				float fBeat = NoteRowToBeat(j);
 
 				if( IS_ON_SCREEN(fBeat) )
 				{
@@ -902,8 +901,9 @@ void NoteField::DrawPrimitives()
 		// Scroll text
 		if( GAMESTATE->m_bIsUsingStepTiming )
 		{
-			FOREACH_CONST( ScrollSegment, timing.m_ScrollSegments, seg )
+			for (i = 0; i < segs[SEGMENT_SCROLL].size(); i++)
 			{
+				ScrollSegment *seg = static_cast<ScrollSegment *>(segs[SEGMENT_SCROLL][i]);
 				if( seg->GetRow() >= iFirstRowToDraw && seg->GetRow() <= iLastRowToDraw )
 				{
 					float fBeat = seg->GetBeat();
@@ -914,8 +914,9 @@ void NoteField::DrawPrimitives()
 		}
 		
 		// BPM text
-		FOREACH_CONST( BPMSegment, timing.m_BPMSegments, seg )
+		for (i = 0; i < segs[SEGMENT_BPM].size(); i++)
 		{
+			BPMSegment *seg = static_cast<BPMSegment *>(segs[SEGMENT_BPM][i]);
 			if( seg->GetRow() >= iFirstRowToDraw && seg->GetRow() <= iLastRowToDraw )
 			{
 				float fBeat = seg->GetBeat();
@@ -925,8 +926,9 @@ void NoteField::DrawPrimitives()
 		}
 
 		// Freeze text
-		FOREACH_CONST( StopSegment, timing.m_StopSegments, seg )
+		for (i = 0; i < segs[SEGMENT_STOP_DELAY].size(); i++)
 		{
+			StopSegment *seg = static_cast<StopSegment *>(segs[SEGMENT_STOP_DELAY][i]);
 			if( seg->GetRow() >= iFirstRowToDraw && seg->GetRow() <= iLastRowToDraw )
 			{
 				float fBeat = seg->GetBeat();
@@ -936,8 +938,9 @@ void NoteField::DrawPrimitives()
 		}
 		
 		// Warp text
-		FOREACH_CONST( WarpSegment, timing.m_WarpSegments, seg )
+		for (i = 0; i < segs[SEGMENT_WARP].size(); i++)
 		{
+			WarpSegment *seg = static_cast<WarpSegment *>(segs[SEGMENT_WARP][i]);
 			if( seg->GetRow() >= iFirstRowToDraw && seg->GetRow() <= iLastRowToDraw )
 			{
 				float fBeat = seg->GetBeat();
@@ -948,8 +951,9 @@ void NoteField::DrawPrimitives()
 		
 		
 		// Time Signature text
-		FOREACH_CONST( TimeSignatureSegment, timing.m_vTimeSignatureSegments, seg )
+		for (i = 0; i < segs[SEGMENT_TIME_SIG].size(); i++)
 		{
+			TimeSignatureSegment *seg = static_cast<TimeSignatureSegment *>(segs[SEGMENT_TIME_SIG][i]);
 			if( seg->GetRow() >= iFirstRowToDraw && seg->GetRow() <= iLastRowToDraw )
 			{
 				float fBeat = seg->GetBeat();
@@ -961,8 +965,9 @@ void NoteField::DrawPrimitives()
 		if( GAMESTATE->m_bIsUsingStepTiming )
 		{
 			// Tickcount text
-			FOREACH_CONST( TickcountSegment, timing.m_TickcountSegments, seg )
+			for (i = 0; i < segs[SEGMENT_TICKCOUNT].size(); i++)
 			{
+				TickcountSegment *seg = static_cast<TickcountSegment *>(segs[SEGMENT_TICKCOUNT][i]);
 				if( seg->GetRow() >= iFirstRowToDraw && seg->GetRow() <= iLastRowToDraw )
 				{
 					float fBeat = seg->GetBeat();
@@ -975,8 +980,9 @@ void NoteField::DrawPrimitives()
 		if( GAMESTATE->m_bIsUsingStepTiming )
 		{
 			// Combo text
-			FOREACH_CONST( ComboSegment, timing.m_ComboSegments, seg )
+			for (i = 0; i < segs[SEGMENT_COMBO].size(); i++)
 			{
+				ComboSegment *seg = static_cast<ComboSegment *>(segs[SEGMENT_COMBO][i]);
 				if( seg->GetRow() >= iFirstRowToDraw && seg->GetRow() <= iLastRowToDraw )
 				{
 					float fBeat = seg->GetBeat();
@@ -987,8 +993,9 @@ void NoteField::DrawPrimitives()
 		}
 		
 		// Label text
-		FOREACH_CONST( LabelSegment, timing.m_LabelSegments, seg )
+		for (i = 0; i < segs[SEGMENT_LABEL].size(); i++)
 		{
+			LabelSegment *seg = static_cast<LabelSegment *>(segs[SEGMENT_LABEL][i]);
 			if( seg->GetRow() >= iFirstRowToDraw && seg->GetRow() <= iLastRowToDraw )
 			{
 				float fBeat = seg->GetBeat();
@@ -999,8 +1006,10 @@ void NoteField::DrawPrimitives()
 		
 		if( GAMESTATE->m_bIsUsingStepTiming )
 		{
-			FOREACH_CONST( SpeedSegment, timing.m_SpeedSegments, seg )
+			// Speed text
+			for (i = 0; i < segs[SEGMENT_SPEED].size(); i++)
 			{
+				SpeedSegment *seg = static_cast<SpeedSegment *>(segs[SEGMENT_SPEED][i]);
 				if( seg->GetRow() >= iFirstRowToDraw && seg->GetRow() <= iLastRowToDraw )
 				{
 					float fBeat = seg->GetBeat();
@@ -1011,11 +1020,12 @@ void NoteField::DrawPrimitives()
 			}
 		}
 		
-		// Speed text
+		// Fake text
 		if( GAMESTATE->m_bIsUsingStepTiming )
 		{
-			FOREACH_CONST( FakeSegment, timing.m_FakeSegments, seg )
+			for (i = 0; i < segs[SEGMENT_FAKE].size(); i++)
 			{
+				FakeSegment *seg = static_cast<FakeSegment *>(segs[SEGMENT_FAKE][i]);
 				if( seg->GetRow() >= iFirstRowToDraw && seg->GetRow() <= iLastRowToDraw )
 				{
 					float fBeat = seg->GetBeat();
@@ -1074,55 +1084,55 @@ void NoteField::DrawPrimitives()
 				case EditMode_Full:
 					{
 						vector<BackgroundChange>::iterator iter[NUM_BackgroundLayer];
-						FOREACH_BackgroundLayer( i )
-							iter[i] = GAMESTATE->m_pCurSong->GetBackgroundChanges(i).begin();
+						FOREACH_BackgroundLayer( j )
+							iter[j] = GAMESTATE->m_pCurSong->GetBackgroundChanges(j).begin();
 		
 						while( 1 )
 						{
 							float fLowestBeat = FLT_MAX;
 							vector<BackgroundLayer> viLowestIndex;
 		
-							FOREACH_BackgroundLayer( i )
+							FOREACH_BackgroundLayer( j )
 							{
-								if( iter[i] == GAMESTATE->m_pCurSong->GetBackgroundChanges(i).end() )
+								if( iter[j] == GAMESTATE->m_pCurSong->GetBackgroundChanges(j).end() )
 									continue;
 		
-								float fBeat = iter[i]->m_fStartBeat;
+								float fBeat = iter[j]->m_fStartBeat;
 								if( fBeat < fLowestBeat )
 								{
 									fLowestBeat = fBeat;
 									viLowestIndex.clear();
-									viLowestIndex.push_back( i );
+									viLowestIndex.push_back( j );
 								}
 								else if( fBeat == fLowestBeat )
 								{
-									viLowestIndex.push_back( i );
+									viLowestIndex.push_back( j );
 								}
 							}
 		
 							if( viLowestIndex.empty() )
 							{
-								FOREACH_BackgroundLayer( i )
-									ASSERT( iter[i] == GAMESTATE->m_pCurSong->GetBackgroundChanges(i).end() );
+								FOREACH_BackgroundLayer( j )
+									ASSERT( iter[j] == GAMESTATE->m_pCurSong->GetBackgroundChanges(j).end() );
 								break;
 							}
 		
 							if( IS_ON_SCREEN(fLowestBeat) )
 							{
 								vector<RString> vsBGChanges;
-								FOREACH_CONST( BackgroundLayer, viLowestIndex, i )
+								FOREACH_CONST( BackgroundLayer, viLowestIndex, bl )
 								{
-									ASSERT( iter[*i] != GAMESTATE->m_pCurSong->GetBackgroundChanges(*i).end() );
-									const BackgroundChange& change = *iter[*i];
+									ASSERT( iter[*bl] != GAMESTATE->m_pCurSong->GetBackgroundChanges(*bl).end() );
+									const BackgroundChange& change = *iter[*bl];
 									RString s = change.GetTextDescription();
-									if( *i!=0 )
-										s = ssprintf("%d: ",*i) + s;
+									if( *bl!=0 )
+										s = ssprintf("%d: ",*bl) + s;
 									vsBGChanges.push_back( s );
 								}
 								DrawBGChangeText( fLowestBeat, join("\n",vsBGChanges) );
 							}
-							FOREACH_CONST( BackgroundLayer, viLowestIndex, i )
-								iter[*i]++;
+							FOREACH_CONST( BackgroundLayer, viLowestIndex, bl )
+								iter[*bl]++;
 						}
 					}
 					break;
@@ -1166,9 +1176,9 @@ void NoteField::DrawPrimitives()
 		 ssprintf("NumTracks %d = ColsPerPlayer %d",m_pNoteData->GetNumTracks(), 
 			  GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer));
 
-	for( int i=0; i<m_pNoteData->GetNumTracks(); i++ )	// for each arrow column
+	for( int j=0; j<m_pNoteData->GetNumTracks(); j++ )	// for each arrow column
 	{
-		const int c = pStyle->m_iColumnDrawOrder[i];
+		const int c = pStyle->m_iColumnDrawOrder[j];
 
 		bool bAnyUpcomingInThisCol = false;
 
@@ -1179,7 +1189,7 @@ void NoteField::DrawPrimitives()
 
 			for( ; begin != end; ++begin )
 			{
-				const TapNote &tn = begin->second; //m_pNoteData->GetTapNote(c, i);
+				const TapNote &tn = begin->second; //m_pNoteData->GetTapNote(c, j);
 				if( tn.type != TapNote::hold_head )
 					continue; // skip
 
@@ -1255,6 +1265,7 @@ void NoteField::DrawPrimitives()
 					//if (tn.subType == TapNote::hold_head_roll)
 						continue; // skip
 				}
+				default: break;
 			}
 
 			// Don't draw hidden (fully judged) steps.

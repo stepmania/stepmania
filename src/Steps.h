@@ -49,6 +49,7 @@ public:
 
 	void Compress() const;
 	void Decompress() const;
+	void Decompress();
 	/** 
 	 * @brief Determine if these steps were created by the autogenerator.
 	 * @return true if they were, false otherwise.
@@ -138,6 +139,18 @@ public:
 	void SetNoteData( const NoteData& noteDataNew );
 	void SetSMNoteData( const RString &notes_comp );
 	void GetSMNoteData( RString &notes_comp_out ) const;
+	
+	/**
+	 * @brief Retrieve the NoteData from the original source.
+	 * @return true if successful, false for failure. */
+	bool GetNoteDataFromSimfile();
+	
+	/**
+	 * @brief Determine if we are missing any note data.
+	 *
+	 * This takes advantage of the fact that we usually compress our data.
+	 * @return true if our notedata is empty, false otherwise. */
+	bool IsNoteDataEmpty() const;
 
 	void TidyUpData();
 	void CalculateRadarValues( float fMusicLengthSeconds );
@@ -199,6 +212,11 @@ public:
 	}
 	
 	void GetDisplayBpms( DisplayBpms &addTo) const;
+
+	RString GetAttackString() const
+	{
+		return join(":", this->m_sAttackString);
+	}
 
 private:
 	inline const Steps *Real() const		{ return parent ? parent : this; }

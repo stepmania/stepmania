@@ -13,6 +13,7 @@ end
 
 for s in ivalues(Stage) do
 	stages[#stages+1] = MakeBitmapTest() .. {
+		InitCommand=cmd(shadowlength,2);
 		SetCommand=function(self, params)
 			local Stage = GAMESTATE:GetCurrentStage();
 			local StageIndex = GAMESTATE:GetCurrentStageIndex();

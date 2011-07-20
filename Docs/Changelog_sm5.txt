@@ -8,6 +8,18 @@ ________________________________________________________________________________
 StepMania 5.0 ????????? | 20110???
 --------------------------------------------------------------------------------
 
+2011/07/19
+----------
+* [LoadingWindow] Added the ability for themes to have custom splash banners.
+  (Currently Windows-only.) [AJ]
+
+2011/07/17
+----------
+* [Cache] No longer store #NOTES in the cache. This should speed things up
+  on the first load if there is not much to write. (General note: this was
+  taken from another branch, but results at that point were great.)
+  [Wolfman2000]
+
 2011/07/13
 ----------
 * [Difficulty] Allow ALL StepsTypes to use CustomDifficulty properly.

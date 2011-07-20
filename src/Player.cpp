@@ -628,8 +628,8 @@ void Player::Load()
 
 	switch( GAMESTATE->m_PlayMode )
 	{
-	case PLAY_MODE_RAVE:
-	case PLAY_MODE_BATTLE:
+		case PLAY_MODE_RAVE:
+		case PLAY_MODE_BATTLE:
 		{
 			// ugly, ugly, ugly.  Works only w/ dance.
 			// Why does this work only with dance? - Steve
@@ -659,8 +659,9 @@ void Player::Load()
 				count++;
 				count %= 4;
 			}
+			break;
 		}
-		break;
+		default: break;
 	}
 
 	int iDrawDistanceAfterTargetsPixels = GAMESTATE->IsEditing() ? -100 : DRAW_DISTANCE_AFTER_TARGET_PIXELS;
@@ -2879,41 +2880,46 @@ void Player::CrossedRows( int iLastRowCrossed, const RageTimer &now )
 		int iTrack = iter.Track();
 		switch( tn.type )
 		{
-		case TapNote::hold_head:
-			tn.HoldResult.fLife = INITIAL_HOLD_LIFE;
-			if( !REQUIRE_STEP_ON_HOLD_HEADS )
+			case TapNote::hold_head:
 			{
+				tn.HoldResult.fLife = INITIAL_HOLD_LIFE;
+				if( !REQUIRE_STEP_ON_HOLD_HEADS )
+				{
+					PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
+					GameInput GameI = GAMESTATE->GetCurrentStyle()->StyleInputToGameInput( iTrack, pn );
+					if( PREFSMAN->m_fPadStickSeconds > 0.f )
+					{
+						float fSecsHeld = INPUTMAPPER->GetSecsHeld( GameI, m_pPlayerState->m_mp );
+						if( fSecsHeld >= PREFSMAN->m_fPadStickSeconds )
+							Step( iTrack, -1, now - PREFSMAN->m_fPadStickSeconds, true, false );
+					}
+					else if( INPUTMAPPER->IsBeingPressed(GameI, m_pPlayerState->m_mp) )
+					{
+						Step( iTrack, -1, now, true, false );
+					}
+				}
+				break;
+			}
+			case TapNote::mine:
+			{
+				// Hold the panel while crossing a mine will cause the mine to explode
+				// TODO: Remove use of PlayerNumber.
 				PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
 				GameInput GameI = GAMESTATE->GetCurrentStyle()->StyleInputToGameInput( iTrack, pn );
-				if( PREFSMAN->m_fPadStickSeconds > 0.f )
+				if( PREFSMAN->m_fPadStickSeconds > 0 )
 				{
 					float fSecsHeld = INPUTMAPPER->GetSecsHeld( GameI, m_pPlayerState->m_mp );
 					if( fSecsHeld >= PREFSMAN->m_fPadStickSeconds )
 						Step( iTrack, -1, now - PREFSMAN->m_fPadStickSeconds, true, false );
 				}
-				else if( INPUTMAPPER->IsBeingPressed(GameI, m_pPlayerState->m_mp) )
+				else
 				{
-					Step( iTrack, -1, now, true, false );
+					if( INPUTMAPPER->IsBeingPressed(GameI, m_pPlayerState->m_mp) )
+						Step( iTrack, iRow, now, true, false );
 				}
+				break;
 			}
-			break;
-		case TapNote::mine:
-			// Hold the panel while crossing a mine will cause the mine to explode
-			// TODO: Remove use of PlayerNumber.
-			PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
-			GameInput GameI = GAMESTATE->GetCurrentStyle()->StyleInputToGameInput( iTrack, pn );
-			if( PREFSMAN->m_fPadStickSeconds > 0 )
-			{
-				float fSecsHeld = INPUTMAPPER->GetSecsHeld( GameI, m_pPlayerState->m_mp );
-				if( fSecsHeld >= PREFSMAN->m_fPadStickSeconds )
-					Step( iTrack, -1, now - PREFSMAN->m_fPadStickSeconds, true, false );
-			}
-			else
-			{
-				if( INPUTMAPPER->IsBeingPressed(GameI, m_pPlayerState->m_mp) )
-					Step( iTrack, iRow, now, true, false );
-			}
-			break;
+			default: break;
 		}
 
 		if( iRow != iLastSeenRow )
@@ -2956,21 +2962,21 @@ void Player::CrossedRows( int iLastRowCrossed, const RageTimer &now )
 		}
 		else if( CHECKPOINTS_USE_TIME_SIGNATURES )
 		{
-			TimeSignatureSegment & tSignature = m_Timing->GetTimeSignatureSegmentAtRow( iLastRowCrossed );
+			TimeSignatureSegment * tSignature = m_Timing->GetTimeSignatureSegmentAtRow( iLastRowCrossed );
 
 			// Most songs are in 4/4 time. The frequency for checking tick counts should reflect that.
-			iCheckpointFrequencyRows = ROWS_PER_BEAT * tSignature.GetDen() / (tSignature.GetNum() * 4);
+			iCheckpointFrequencyRows = ROWS_PER_BEAT * tSignature->GetDen() / (tSignature->GetNum() * 4);
 		}
 
 		if( iCheckpointFrequencyRows > 0 )
 		{
 			// "the first row after the start of the range that lands on a beat"
-			int iFirstCheckpointInRange = QuantizeUp(m_iFirstUncrossedRow,
-													 iCheckpointFrequencyRows);
+			int iFirstCheckpointInRange = ((m_iFirstUncrossedRow+iCheckpointFrequencyRows-1)
+				/iCheckpointFrequencyRows) * iCheckpointFrequencyRows;
 
 			// "the last row or first row earlier that lands on a beat"
-			int iLastCheckpointInRange = QuantizeDown(iLastRowCrossed,
-													  iCheckpointFrequencyRows);
+			int iLastCheckpointInRange = ((iLastRowCrossed)/iCheckpointFrequencyRows)
+				* iCheckpointFrequencyRows;
 
 			for( int r = iFirstCheckpointInRange; r <= iLastCheckpointInRange; r += iCheckpointFrequencyRows )
 			{
@@ -2992,12 +2998,12 @@ void Player::CrossedRows( int iLastRowCrossed, const RageTimer &now )
 					int iTrack = nIter.Track();
 
 					// "the first row after the hold head that lands on a beat"
-					int iFirstCheckpointOfHold = QuantizeUp(iStartRow,
-															iCheckpointFrequencyRows);
+					int iFirstCheckpointOfHold = ((iStartRow+iCheckpointFrequencyRows)/iCheckpointFrequencyRows)
+						* iCheckpointFrequencyRows;
 
 					// "the end row or the first earlier row that lands on a beat"
-					int iLastCheckpointOfHold = QuantizeDown(iEndRow,
-															 iCheckpointFrequencyRows);
+					int iLastCheckpointOfHold = ((iEndRow)/iCheckpointFrequencyRows)
+						* iCheckpointFrequencyRows;
 
 					// count the end of the hold as a checkpoint
 					bool bHoldOverlapsRow = iFirstCheckpointOfHold <= r  &&   r <= iLastCheckpointOfHold;

@@ -800,11 +800,12 @@ RadarStats CalculateRadarStatsFast( const NoteData &in, RadarStats &out )
 			const TapNote &tn = in.GetTapNote(t, r);
 			switch( tn.type )
 			{
-			case TapNote::mine:
-			case TapNote::empty:
-			case TapNote::fake:
-			case TapNote::autoKeysound:
-				continue;	// skip these types - they don't count
+				case TapNote::mine:
+				case TapNote::empty:
+				case TapNote::fake:
+				case TapNote::autoKeysound:
+					continue;	// skip these types - they don't count
+				default: break;
 			}
 
 			if( (itr = simultaneousMap.find(r)) == simultaneousMap.end() )
@@ -830,10 +831,11 @@ RadarStats CalculateRadarStatsFast( const NoteData &in, RadarStats &out )
 				{
 					switch( in.GetTapNote(t, rr).type )
 					{
-					case TapNote::mine:
-					case TapNote::empty:
-					case TapNote::fake:
-						continue;	// skip these types - they don't count
+						case TapNote::mine:
+						case TapNote::empty:
+						case TapNote::fake:
+							continue;	// skip these types - they don't count
+						default: break;
 					}
 					if( (itr = simultaneousMap.find(rr)) == simultaneousMap.end() )
 						simultaneousMap[rr] = 1;

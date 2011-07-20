@@ -6,8 +6,30 @@
 
 class Course;
 
+// Can this be done any better? -aj
+namespace ExportPackages
+{
+	RString m_sPackageType;
+	RString m_sFolder; // used for more subpages
+}
+
 /** @brief A menu for exporting packages. */
 class ScreenOptionsExportPackage : public ScreenOptions
+{
+public:
+	void Init();
+	virtual void BeginScreen();
+
+protected:
+	virtual void ImportOptions( int iRow, const vector<PlayerNumber> &vpns );
+	virtual void ExportOptions( int iRow, const vector<PlayerNumber> &vpns );
+
+	virtual void ProcessMenuStart( const InputEventPlus &input );
+
+	vector<RString> m_vsPackageTypes;
+};
+
+class ScreenOptionsExportPackageSubPage : public ScreenOptions
 {
 public:
 	void Init();
