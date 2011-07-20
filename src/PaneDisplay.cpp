@@ -137,13 +137,14 @@ void PaneDisplay::SetContent( PaneCategory c )
 		{
 			switch( c )
 			{
-			case PaneCategory_MachineHighName:
-				str = EMPTY_MACHINE_HIGH_SCORE_NAME;
-				break;
-			case PaneCategory_MachineHighScore:
-			case PaneCategory_ProfileHighScore:
-				str = NOT_AVAILABLE;
-				break;
+				case PaneCategory_MachineHighName:
+					str = EMPTY_MACHINE_HIGH_SCORE_NAME;
+					break;
+				case PaneCategory_MachineHighScore:
+				case PaneCategory_ProfileHighScore:
+					str = NOT_AVAILABLE;
+					break;
+				default: break;
 			}
 		}
 
@@ -157,13 +158,14 @@ void PaneDisplay::SetContent( PaneCategory c )
 		{
 			switch( c )
 			{
-			case PaneCategory_MachineHighName:
-				str = EMPTY_MACHINE_HIGH_SCORE_NAME;
-				break;
-			case PaneCategory_MachineHighScore:
-			case PaneCategory_ProfileHighScore:
-				str = NOT_AVAILABLE;
-				break;
+				case PaneCategory_MachineHighName:
+					str = EMPTY_MACHINE_HIGH_SCORE_NAME;
+					break;
+				case PaneCategory_MachineHighScore:
+				case PaneCategory_ProfileHighScore:
+					str = NOT_AVAILABLE;
+					break;
+				default: break;
 			}
 		}
 
@@ -184,8 +186,9 @@ void PaneDisplay::SetContent( PaneCategory c )
 		ProfileSlot slot = ProfileSlot_Machine;
 		switch( c )
 		{
-		case PaneCategory_ProfileHighScore:
-			slot = (ProfileSlot) m_PlayerNumber;
+			case PaneCategory_ProfileHighScore:
+				slot = (ProfileSlot) m_PlayerNumber;
+			default: break;
 		}
 
 		if( pSteps )
@@ -201,55 +204,58 @@ void PaneDisplay::SetContent( PaneCategory c )
 
 		switch( c )
 		{
-		case PaneCategory_NumSteps:	val = rv[RadarCategory_TapsAndHolds]; break;
-		case PaneCategory_Jumps:		val = rv[RadarCategory_Jumps]; break;
-		case PaneCategory_Holds:		val = rv[RadarCategory_Holds]; break;
-		case PaneCategory_Rolls:		val = rv[RadarCategory_Rolls]; break;
-		case PaneCategory_Mines:		val = rv[RadarCategory_Mines]; break;
-		case PaneCategory_Hands:		val = rv[RadarCategory_Hands]; break;
-		case PaneCategory_Lifts:		val = rv[RadarCategory_Lifts]; break;
-		case PaneCategory_Fakes:		val = rv[RadarCategory_Fakes]; break;
-		case PaneCategory_ProfileHighScore:
-		case PaneCategory_MachineHighName: // set val for color
-		case PaneCategory_MachineHighScore:
-			CHECKPOINT;
-			val = pHSL->GetTopScore().GetPercentDP();
-			break;
+			case PaneCategory_NumSteps:	val = rv[RadarCategory_TapsAndHolds]; break;
+			case PaneCategory_Jumps:		val = rv[RadarCategory_Jumps]; break;
+			case PaneCategory_Holds:		val = rv[RadarCategory_Holds]; break;
+			case PaneCategory_Rolls:		val = rv[RadarCategory_Rolls]; break;
+			case PaneCategory_Mines:		val = rv[RadarCategory_Mines]; break;
+			case PaneCategory_Hands:		val = rv[RadarCategory_Hands]; break;
+			case PaneCategory_Lifts:		val = rv[RadarCategory_Lifts]; break;
+			case PaneCategory_Fakes:		val = rv[RadarCategory_Fakes]; break;
+			case PaneCategory_ProfileHighScore:
+			case PaneCategory_MachineHighName: // set val for color
+			case PaneCategory_MachineHighScore:
+				CHECKPOINT;
+				val = pHSL->GetTopScore().GetPercentDP();
+				break;
+			default: break;
 		};
 
 		if( val != RADAR_VAL_UNKNOWN )
 		{
 			switch( c )
 			{
-			case PaneCategory_MachineHighName:
-				if( pHSL->vHighScores.empty() )
-				{
-					str = EMPTY_MACHINE_HIGH_SCORE_NAME;
-				}
-				else
-				{
-					str = pHSL->GetTopScore().GetName();
-					if( str.empty() )
-						str = "????";
-				}
-				break;
-			case PaneCategory_MachineHighScore:
-			case PaneCategory_ProfileHighScore:
-				// Don't show or save machine high scores for edits loaded from a player profile.
-				if( bIsPlayerEdit )
-					str = NOT_AVAILABLE;
-				else
-					str = PlayerStageStats::FormatPercentScore( val );
-				break;
-			case PaneCategory_NumSteps:
-			case PaneCategory_Jumps:
-			case PaneCategory_Holds:
-			case PaneCategory_Rolls:
-			case PaneCategory_Mines:
-			case PaneCategory_Hands:
-			case PaneCategory_Lifts:
-			case PaneCategory_Fakes:
-				str = ssprintf( COUNT_FORMAT.GetValue(), val );
+				case PaneCategory_MachineHighName:
+					if( pHSL->vHighScores.empty() )
+					{
+						str = EMPTY_MACHINE_HIGH_SCORE_NAME;
+					}
+					else
+					{
+						str = pHSL->GetTopScore().GetName();
+						if( str.empty() )
+							str = "????";
+					}
+					break;
+				case PaneCategory_MachineHighScore:
+				case PaneCategory_ProfileHighScore:
+					// Don't show or save machine high scores for edits loaded from a player profile.
+					if( bIsPlayerEdit )
+						str = NOT_AVAILABLE;
+					else
+						str = PlayerStageStats::FormatPercentScore( val );
+					break;
+				case PaneCategory_NumSteps:
+				case PaneCategory_Jumps:
+				case PaneCategory_Holds:
+				case PaneCategory_Rolls:
+				case PaneCategory_Mines:
+				case PaneCategory_Hands:
+				case PaneCategory_Lifts:
+				case PaneCategory_Fakes:
+					str = ssprintf( COUNT_FORMAT.GetValue(), val );
+					break;
+				default: break;
 			}
 		}
 	}

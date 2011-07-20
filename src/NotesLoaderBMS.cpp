@@ -1111,9 +1111,9 @@ bool BMSLoader::LoadNoteDataFromSimfile( const RString & cachePath, Steps & out 
 	if( commonSubstring == "" )
 	{
 		copy->SetDifficulty(Difficulty_Medium);
-		RString sTag;
-		if (GetTagFromMap(BMSData[0], "#title#", sTag))
-			SearchForDifficulty(sTag, copy);
+		RString localTag;
+		if (GetTagFromMap(BMSData[0], "#title#", localTag))
+			SearchForDifficulty(localTag, copy);
 	}
 	ReadGlobalTags( BMSData[0], dummy );
 	if( commonSubstring.size() > 2 && commonSubstring[commonSubstring.size() - 2] == ' ' )

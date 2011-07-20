@@ -497,7 +497,7 @@ RageColor SongManager::GetSongColor( const Song* pSong ) const
 		int i = m_vPreferredSongSort.size();
 		return SONG_GROUP_COLOR.GetValue( i%NUM_SONG_GROUP_COLORS );
 	}
-	else
+	else // TODO: Have a better fallback plan with colors?
 	{
 		/* XXX: Previously, this matched all notes, which set a song to "extra"
 		 * if it had any 10-foot steps at all, even edits or doubles.
@@ -516,9 +516,10 @@ RageColor SongManager::GetSongColor( const Song* pSong ) const
 			const Steps* pSteps = vpSteps[i];
 			switch( pSteps->GetDifficulty() )
 			{
-			case Difficulty_Challenge:
-			case Difficulty_Edit:
-				continue;
+				case Difficulty_Challenge:
+				case Difficulty_Edit:
+					continue;
+				default: break;
 			}
 
 			//if(pSteps->m_StepsType != st)
@@ -527,7 +528,7 @@ RageColor SongManager::GetSongColor( const Song* pSong ) const
 			if( pSteps->GetMeter() >= EXTRA_COLOR_METER )
 				return (RageColor)EXTRA_COLOR;
 		}
-		if( pSong->m_sMainTitle == "DVNO")
+		if( pSong->m_sMainTitle == "DVNO") // XXX: What IS this? An easter egg? -Wolfman2000
 		{
 			return RageColor(1.0f,0.8f,0.0f,1.0f);
 		}

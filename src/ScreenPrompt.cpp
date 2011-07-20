@@ -118,12 +118,13 @@ void ScreenPrompt::Input( const InputEventPlus &input )
 	{
 		switch( input.DeviceI.button )
 		{
-		case KEY_LEFT:
-			this->MenuLeft( input );
-			return;
-		case KEY_RIGHT:
-			this->MenuRight( input );
-			return;
+			case KEY_LEFT:
+				this->MenuLeft( input );
+				return;
+			case KEY_RIGHT:
+				this->MenuRight( input );
+				return;
+			default: break;
 		}
 	}
 
@@ -198,12 +199,13 @@ void ScreenPrompt::End( bool bCancelled )
 {
 	switch( m_Answer )
 	{
-	case ANSWER_YES:
-		m_smSendOnPop = SM_Success;
-		break;
-	case ANSWER_NO:
-		m_smSendOnPop = SM_Failure;
-		break;
+		case ANSWER_YES:
+			m_smSendOnPop = SM_Success;
+			break;
+		case ANSWER_NO:
+			m_smSendOnPop = SM_Failure;
+			break;
+		default: break;
 	}
 
 	if( bCancelled )
@@ -218,14 +220,15 @@ void ScreenPrompt::End( bool bCancelled )
 
 	switch( m_Answer )
 	{
-	case ANSWER_YES:
-		if( g_pOnYes )
-			g_pOnYes(g_pCallbackData);
-		break;
-	case ANSWER_NO:
-		if( g_pOnNo )
-			g_pOnNo(g_pCallbackData);
-		break;
+		case ANSWER_YES:
+			if( g_pOnYes )
+				g_pOnYes(g_pCallbackData);
+			break;
+		case ANSWER_NO:
+			if( g_pOnNo )
+				g_pOnNo(g_pCallbackData);
+			break;
+		default: break;
 	}
 
 	s_LastAnswer = bCancelled ? ANSWER_CANCEL : m_Answer;

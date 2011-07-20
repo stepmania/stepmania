@@ -75,34 +75,36 @@ void ScreenAttract::AttractInput( const InputEventPlus &input, ScreenWithMenuEle
 
 	switch( input.MenuI )
 	{
-	case GAME_BUTTON_BACK:
-		if( !(bool)BACK_GOES_TO_START_SCREEN )
-			break;
-		// fall through
-	case GAME_BUTTON_START:
-	case GAME_BUTTON_COIN:
-		switch( GAMESTATE->GetCoinMode() )
-		{
-		case CoinMode_Pay:
-			LOG->Trace("ScreenAttract::AttractInput: COIN_PAY (%i/%i, %i)", GAMESTATE->m_iCoins.Get(), PREFSMAN->m_iCoinsPerCredit.Get(), GAMESTATE->GetNumSidesJoined() );
-			if( GAMESTATE->m_iCoins < PREFSMAN->m_iCoinsPerCredit && GAMESTATE->GetNumSidesJoined() == 0 )
-				break;	// don't fall through
+		case GAME_BUTTON_BACK:
+			if( !BACK_GOES_TO_START_SCREEN )
+				break;
 			// fall through
-		case CoinMode_Home:
-		case CoinMode_Free:
-			if( pScreen->IsTransitioning() )
-				return;
+		case GAME_BUTTON_START:
+		case GAME_BUTTON_COIN:
+			switch( GAMESTATE->GetCoinMode() )
+			{
+				case CoinMode_Pay:
+					LOG->Trace("ScreenAttract::AttractInput: COIN_PAY (%i/%i, %i)",
+							   GAMESTATE->m_iCoins.Get(),
+							   PREFSMAN->m_iCoinsPerCredit.Get(),
+							   GAMESTATE->GetNumSidesJoined() );
+					if( GAMESTATE->m_iCoins < PREFSMAN->m_iCoinsPerCredit && GAMESTATE->GetNumSidesJoined() == 0 )
+						break;	// don't fall through
+					// fall through
+				case CoinMode_Home:
+				case CoinMode_Free:
+					if( pScreen->IsTransitioning() )
+						return;
 
-			// HandleGlobalInputs() already played the coin sound. Don't play it again.
-			if( input.MenuI != GAME_BUTTON_COIN )
-				SCREENMAN->PlayStartSound();
+					// HandleGlobalInputs() already played the coin sound. Don't play it again.
+					if( input.MenuI != GAME_BUTTON_COIN )
+						SCREENMAN->PlayStartSound();
 
-			pScreen->Cancel( SM_GoToStartScreen );
-			break;
-		default:
-			ASSERT(0);
-		}
-		break;
+					pScreen->Cancel( SM_GoToStartScreen );
+					break;
+				default: FAIL_M("Invalid Coin Mode! Aborting...");
+			}
+		default: break;
 	}
 
 	if( pScreen->IsTransitioning() )
@@ -110,10 +112,11 @@ void ScreenAttract::AttractInput( const InputEventPlus &input, ScreenWithMenuEle
 
 	switch( input.MenuI )
 	{
-	case GAME_BUTTON_LEFT:
-	case GAME_BUTTON_RIGHT:
-		SCREENMAN->PostMessageToTopScreen( SM_BeginFadingOut, 0 );
-		break;
+		case GAME_BUTTON_LEFT:
+		case GAME_BUTTON_RIGHT:
+			SCREENMAN->PostMessageToTopScreen( SM_BeginFadingOut, 0 );
+		default:
+			break;
 	}
 
 //	Screen::Input( input );

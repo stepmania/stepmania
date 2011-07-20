@@ -226,6 +226,7 @@ void Screen::Input( const InputEventPlus &input )
 		case GAME_BUTTON_START:	this->MenuStart	( input );	return;
 		case GAME_BUTTON_SELECT:this->MenuSelect( input );	return;
 		case GAME_BUTTON_COIN:	this->MenuCoin	( input );	return;
+		default: return;
 	}
 }
 

@@ -4245,6 +4245,7 @@ void ScreenEdit::HandleAlterMenuChoice(AlterMenuChoice c, const vector<int> &iAn
 			}
 			break;
 		}
+		default: break;
 	}
 	
 }

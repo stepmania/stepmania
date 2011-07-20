@@ -465,12 +465,13 @@ void ScreenOptions::TweenCursor( PlayerNumber pn )
 	bool bCanGoRight = false;
 	switch( row.GetRowDef().m_layoutType  )
 	{
-	case LAYOUT_SHOW_ONE_IN_ROW:
-		bCanGoLeft = iChoiceWithFocus > 0;
-		bCanGoRight = iChoiceWithFocus >= 0 && iChoiceWithFocus < (int) row.GetRowDef().m_vsChoices.size()-1;
-		break;
-	case LAYOUT_SHOW_ALL_IN_ROW:
-		break;
+		case LAYOUT_SHOW_ONE_IN_ROW:
+			bCanGoLeft = iChoiceWithFocus > 0;
+			bCanGoRight = iChoiceWithFocus >= 0 && iChoiceWithFocus < (int) row.GetRowDef().m_vsChoices.size()-1;
+			break;
+		case LAYOUT_SHOW_ALL_IN_ROW:
+			break;
+		default: break;
 	}
 	cursor.SetCanGo( bCanGoLeft, bCanGoRight );
 
@@ -505,13 +506,15 @@ void ScreenOptions::Input( const InputEventPlus &input )
 	{
 		switch( input.MenuI )
 		{
-		case GAME_BUTTON_START:
-		case GAME_BUTTON_SELECT:
-		case GAME_BUTTON_MENURIGHT:
-		case GAME_BUTTON_MENULEFT:
-			INPUTMAPPER->ResetKeyRepeat( GAME_BUTTON_START, input.pn );
-			INPUTMAPPER->ResetKeyRepeat( GAME_BUTTON_RIGHT, input.pn );
-			INPUTMAPPER->ResetKeyRepeat( GAME_BUTTON_LEFT, input.pn );
+			case GAME_BUTTON_START:
+			case GAME_BUTTON_SELECT:
+			case GAME_BUTTON_MENURIGHT:
+			case GAME_BUTTON_MENULEFT:
+				INPUTMAPPER->ResetKeyRepeat( GAME_BUTTON_START, input.pn );
+				INPUTMAPPER->ResetKeyRepeat( GAME_BUTTON_RIGHT, input.pn );
+				INPUTMAPPER->ResetKeyRepeat( GAME_BUTTON_LEFT, input.pn );
+			default:
+				break;
 		}
 	}
 
@@ -736,12 +739,13 @@ void ScreenOptions::AfterChangeValueOrRow( PlayerNumber pn )
 	BitmapText *pText = NULL;
 	switch( m_InputMode )
 	{
-	case INPUTMODE_INDIVIDUAL:
-		pText = &m_textExplanation[pn];
-		break;
-	case INPUTMODE_SHARE_CURSOR:
-		pText = &m_textExplanationTogether;
-		break;
+		case INPUTMODE_INDIVIDUAL:
+			pText = &m_textExplanation[pn];
+			break;
+		case INPUTMODE_SHARE_CURSOR:
+			pText = &m_textExplanationTogether;
+			break;
+		default: break;
 	}
 	if( pText->GetText() != text )
 	{
@@ -787,8 +791,8 @@ void ScreenOptions::MenuStart( const InputEventPlus &input )
 	 * GAME_BUTTON_RIGHT are being held. */
 	switch( m_OptionsNavigation )
 	{
-	case NAV_THREE_KEY:
-	case NAV_TOGGLE_THREE_KEY:
+		case NAV_THREE_KEY:
+		case NAV_TOGGLE_THREE_KEY:
 		{
 			bool bHoldingLeftAndRight =
 				INPUTMAPPER->IsBeingPressed( GAME_BUTTON_RIGHT, pn ) &&
@@ -800,6 +804,7 @@ void ScreenOptions::MenuStart( const InputEventPlus &input )
 				return;
 			}
 		}
+		default: break;
 	}
 
 	this->ProcessMenuStart( input );
@@ -1170,23 +1175,26 @@ void ScreenOptions::AfterChangeRow( PlayerNumber pn )
 		OptionRow &row = *m_pRows[iRow];
 		switch( m_OptionsNavigation )
 		{
-		case NAV_TOGGLE_FIVE_KEY:
-			if( row.GetRowDef().m_layoutType != LAYOUT_SHOW_ONE_IN_ROW )
+			case NAV_TOGGLE_FIVE_KEY:
 			{
-				int iSelectionDist = -1;
-				for( unsigned i = 0; i < row.GetTextItemsSize(); ++i )
+				if( row.GetRowDef().m_layoutType != LAYOUT_SHOW_ONE_IN_ROW )
 				{
-					int iWidth, iX, iY;
-					GetWidthXY( pn, m_iCurrentRow[pn], i, iWidth, iX, iY );
-					const int iDist = abs( iX-m_iFocusX[pn] );
-					if( iSelectionDist == -1 || iDist < iSelectionDist )
+					int iSelectionDist = -1;
+					for( unsigned i = 0; i < row.GetTextItemsSize(); ++i )
 					{
-						iSelectionDist = iDist;
-						row.SetChoiceInRowWithFocus( pn, i );
+						int iWidth, iX, iY;
+						GetWidthXY( pn, m_iCurrentRow[pn], i, iWidth, iX, iY );
+						const int iDist = abs( iX-m_iFocusX[pn] );
+						if( iSelectionDist == -1 || iDist < iSelectionDist )
+						{
+							iSelectionDist = iDist;
+							row.SetChoiceInRowWithFocus( pn, i );
+						}
 					}
 				}
+				break;
 			}
-			break;
+			default: break;
 		}
 
 		if( row.GetFirstItemGoesDown() )

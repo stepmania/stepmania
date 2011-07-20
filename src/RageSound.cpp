@@ -576,15 +576,16 @@ void RageSound::ApplyParams()
 
 	switch( GetStopMode() )
 	{
-	case RageSoundParams::M_LOOP:
-		m_pSource->SetProperty( "Loop", 1.0f );
-		break;
-	case RageSoundParams::M_STOP:
-		m_pSource->SetProperty( "Stop", 1.0f );
-		break;
-	case RageSoundParams::M_CONTINUE:
-		m_pSource->SetProperty( "Continue", 1.0f );
-		break;
+		case RageSoundParams::M_LOOP:
+			m_pSource->SetProperty( "Loop", 1.0f );
+			break;
+		case RageSoundParams::M_STOP:
+			m_pSource->SetProperty( "Stop", 1.0f );
+			break;
+		case RageSoundParams::M_CONTINUE:
+			m_pSource->SetProperty( "Continue", 1.0f );
+			break;
+		default: break;
 	}
 }
 

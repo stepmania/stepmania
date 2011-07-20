@@ -212,14 +212,15 @@ float ScreenRanking::SetPage( const PageToShow &pts )
 	bool bShowTime = false;
 	switch( RANKING_TYPE )
 	{
-	case RankingType_Category:
-		bShowScores = true;
-		break;
-	case RankingType_SpecificTrail:
-		bShowScores = !pts.pCourse->IsOni();
-		bShowPoints = pts.pCourse->IsOni();
-		bShowTime = pts.pCourse->IsOni();
-		break;
+		case RankingType_Category:
+			bShowScores = true;
+			break;
+		case RankingType_SpecificTrail:
+			bShowScores = !pts.pCourse->IsOni();
+			bShowPoints = pts.pCourse->IsOni();
+			bShowTime = pts.pCourse->IsOni();
+			break;
+		default: break;
 	}
 
 	for( int l=0; l<NUM_RANKING_LINES; l++ )

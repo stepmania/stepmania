@@ -1273,28 +1273,29 @@ bool HandleGlobalInputs( const InputEventPlus &input )
 
 	switch( input.MenuI )
 	{
-	case GAME_BUTTON_OPERATOR:
-		/* Global operator key, to get quick access to the options menu. Don't
-		 * do this if we're on a "system menu", which includes the editor
-		 * (to prevent quitting without storing changes). */
-		if( SCREENMAN->AllowOperatorMenuButton() )
-		{
-			SCREENMAN->SystemMessage( SERVICE_SWITCH_PRESSED );
-			SCREENMAN->PopAllScreens();
-			GAMESTATE->Reset();
-			SCREENMAN->SetNewScreen( CommonMetrics::OPERATOR_MENU_SCREEN );
-		}
-		return true;
+		case GAME_BUTTON_OPERATOR:
+			/* Global operator key, to get quick access to the options menu. Don't
+			 * do this if we're on a "system menu", which includes the editor
+			 * (to prevent quitting without storing changes). */
+			if( SCREENMAN->AllowOperatorMenuButton() )
+			{
+				SCREENMAN->SystemMessage( SERVICE_SWITCH_PRESSED );
+				SCREENMAN->PopAllScreens();
+				GAMESTATE->Reset();
+				SCREENMAN->SetNewScreen( CommonMetrics::OPERATOR_MENU_SCREEN );
+			}
+			return true;
 
-	case GAME_BUTTON_COIN:
-		// Handle a coin insertion.
-		if( GAMESTATE->IsEditing() )	// no coins while editing
-		{
-			LOG->Trace( "Ignored coin insertion (editing)" );
-			break;
-		}
-		StepMania::InsertCoin();
-		return false; // Attract needs to know because it goes to TitleMenu on > 1 credit
+		case GAME_BUTTON_COIN:
+			// Handle a coin insertion.
+			if( GAMESTATE->IsEditing() )	// no coins while editing
+			{
+				LOG->Trace( "Ignored coin insertion (editing)" );
+				break;
+			}
+			StepMania::InsertCoin();
+			return false; // Attract needs to know because it goes to TitleMenu on > 1 credit
+		default: break;
 	}
 
 	/* Re-added for StepMania 3.9 theming veterans, plus it's just faster than

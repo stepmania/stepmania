@@ -72,16 +72,19 @@ void Inventory::Load( PlayerState* pPlayerState )
 	// don't load battle sounds if they're not going to be used
 	switch( GAMESTATE->m_PlayMode )
 	{
-	case PLAY_MODE_BATTLE:
-		m_soundAcquireItem.Load( THEME->GetPathS("Inventory","aquire item") );
-		for( unsigned i=0; i<g_Items.size(); i++ )
+		case PLAY_MODE_BATTLE:
 		{
-			RageSound* pSound = new RageSound;
-			pSound->Load( THEME->GetPathS("Inventory",ssprintf("use item %u",i+1)) );
-			m_vpSoundUseItem.push_back( pSound );
+			m_soundAcquireItem.Load( THEME->GetPathS("Inventory","aquire item") );
+			for( unsigned i=0; i<g_Items.size(); i++ )
+			{
+				RageSound* pSound = new RageSound;
+				pSound->Load( THEME->GetPathS("Inventory",ssprintf("use item %u",i+1)) );
+				m_vpSoundUseItem.push_back( pSound );
+			}
+			m_soundItemEnding.Load( THEME->GetPathS("Inventory","item ending") );
+			break;
 		}
-		m_soundItemEnding.Load( THEME->GetPathS("Inventory","item ending") );
-		break;
+		default: break;
 	}
 }
 
