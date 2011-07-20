@@ -232,7 +232,7 @@ end
 
 function GetDefaultOptionLines()
 	local LineSets = { -- none of these include characters yet.
-		"1,8,14,2,3,4,5,6,R,7,9,10,11,12,13,16,17", -- All
+		"1,8,14,2,3A,3B,4,5,6,R,7,9,10,11,12,13,16,17", -- All
 		"1,8,14,2,7,13,16,17", -- DDR Essentials ( no turns, fx )
 	};
 	local function IsExtra()
