@@ -12,97 +12,147 @@
 #include "Song.h"
 #include "SongManager.h"
 #include "Steps.h"
+#include "Attack.h"
 
-/**
- * @brief A custom .edit file can only be so big before we have to reject it.
- */
-const int MAX_EDIT_STEPS_SIZE_BYTES = 60*1024; // 60 KB
-
-void SMALoader::LoadFromSMATokens(
-				  RString sStepsType,
-				  RString sDescription,
-				  RString sDifficulty,
-				  RString sMeter,
-				  RString sRadarValues,
-				  RString sNoteData,
-				  Steps &out
-)
+void SMALoader::ProcessMultipliers( TimingData &out, const int iRowsPerBeat, const RString sParam )
 {
-	// we're loading from disk, so this is by definition already saved:
-	out.SetSavedToDisk( true );
+	vector<RString> arrayMultiplierExpressions;
+	split( sParam, ",", arrayMultiplierExpressions );
 	
-	Trim( sStepsType );
-	Trim( sDescription );
-	Trim( sDifficulty );
-	Trim( sNoteData );
-	
-	//	LOG->Trace( "Steps::LoadFromSMTokens()" );
-	
-	// insert stepstype hacks from GameManager.cpp here? -aj
-	out.m_StepsType = GAMEMAN->StringToStepsType( sStepsType );
-	out.SetDescription( sDescription );
-	out.SetCredit( sDescription ); // this is often used for both.
-	out.SetDifficulty( DwiCompatibleStringToDifficulty(sDifficulty) );
-	
-	sDescription.MakeLower();
-	
-	// Handle hacks that originated back when StepMania didn't have
-	// Difficulty_Challenge. (At least v1.64, possibly v3.0 final...)
-	if( out.GetDifficulty() == Difficulty_Hard )
+	for( unsigned f=0; f<arrayMultiplierExpressions.size(); f++ )
 	{
-		// HACK: SMANIAC used to be Difficulty_Hard with a special description.
-		if( sDescription == "smaniac" ) 
-			out.SetDifficulty( Difficulty_Challenge );
-		
-		// HACK: CHALLENGE used to be Difficulty_Hard with a special description.
-		if( sDescription == "challenge" ) 
-			out.SetDifficulty( Difficulty_Challenge );
-	}
-	
-	out.SetMeter( StringToInt(sMeter) );
-	vector<RString> saValues;
-	split( sRadarValues, ",", saValues, true );
-	int categories = NUM_RadarCategory - 1; // Fakes aren't counted in the radar values.
-	if( saValues.size() == (unsigned)categories * NUM_PLAYERS )
-	{
-		RadarValues v[NUM_PLAYERS];
-		FOREACH_PlayerNumber( pn )
+		vector<RString> arrayMultiplierValues;
+		split( arrayMultiplierExpressions[f], "=", arrayMultiplierValues );
+		unsigned size = arrayMultiplierValues.size();
+		if( size < 2 )
 		{
-			// Can't use the foreach anymore due to flexible radar lines.
-			for( RadarCategory rc = (RadarCategory)0; rc < categories; 
-			    enum_add<RadarCategory>( rc, 1 ) )
-			{
-				v[pn][rc] = StringToFloat( saValues[pn*categories + rc] );
-			}
+			LOG->UserLog("Song file",
+				     this->GetSongTitle(),
+				     "has an invalid #MULTIPLIER value \"%s\" (must have at least one '='), ignored.",
+				     arrayMultiplierExpressions[f].c_str() );
+			continue;
 		}
-		out.SetCachedRadarValues( v );
+		const float fComboBeat = RowToBeat( arrayMultiplierValues[0], iRowsPerBeat );
+		const int iCombos = StringToInt( arrayMultiplierValues[1] ); // always true.
+		// hoping I'm right here: SMA files can use 6 values after the row/beat.
+		const int iMisses = (size == 2 || size == 4 ?
+							 iCombos : 
+							 StringToInt(arrayMultiplierValues[2]));
+		out.AddSegment(SEGMENT_COMBO,
+					   new ComboSegment( fComboBeat, iCombos, iMisses ));
 	}
-	
-	out.SetSMNoteData( sNoteData );
-	
-	out.TidyUpData();
 }
 
-bool SMALoader::LoadFromDir( const RString &sPath, Song &out )
+void SMALoader::ProcessBeatsPerMeasure( TimingData &out, const RString sParam )
 {
-	vector<RString> aFileNames;
-	GetApplicableFiles( sPath, aFileNames );
+	vector<RString> vs1;
+	split( sParam, ",", vs1 );
 	
-	if( aFileNames.size() > 1 )
+	FOREACH_CONST( RString, vs1, s1 )
 	{
-		LOG->UserLog( "Song", sPath, "has more than one SMA file. There can be only one!" );
-		return false;
+		vector<RString> vs2;
+		split( *s1, "=", vs2 );
+		
+		if( vs2.size() < 2 )
+		{
+			LOG->UserLog("Song file",
+				     this->GetSongTitle(),
+				     "has an invalid beats per measure change with %i values.",
+				     static_cast<int>(vs2.size()) );
+			continue;
+		}
+		
+		const float fBeat = StringToFloat( vs2[0] );
+		
+		TimeSignatureSegment * seg = new TimeSignatureSegment(fBeat,
+															  StringToInt(vs2[1]),
+															  4 );
+		
+		if( fBeat < 0 )
+		{
+			LOG->UserLog("Song file",
+				     this->GetSongTitle(), 
+				     "has an invalid time signature change with beat %f.",
+				     fBeat );
+			continue;
+		}
+		
+		if( seg->GetNum() < 1 )
+		{
+			LOG->UserLog("Song file",
+				     this->GetSongTitle(),
+				     "has an invalid time signature change with beat %f, iNumerator %i.",
+				     fBeat, seg->GetNum() );
+			continue;
+		}
+		
+		out.AddSegment( SEGMENT_TIME_SIG, seg );
 	}
-	ASSERT( aFileNames.size() == 1 );
-	return LoadFromSMAFile( sPath + aFileNames[0], out );
 }
 
-void SMALoader::TidyUpData( Song &song, bool bFromCache )
+void SMALoader::ProcessSpeeds( TimingData &out, const RString line, const int rowsPerBeat )
 {
-	SMLoader::TidyUpData( song, bFromCache );
+	vector<RString> vs1;
+	split( line, ",", vs1 );
+	
+	FOREACH_CONST( RString, vs1, s1 )
+	{
+		vector<RString> vs2;
+		vs2.clear(); // trying something.
+		RString loopTmp = *s1;
+		Trim( loopTmp );
+		split( loopTmp, "=", vs2 );
+		
+		if( vs2.size() == 2 ) // First one always seems to have 2.
+		{
+			vs2.push_back("0");
+		}
+		
+		if( vs2.size() < 3 )
+		{
+			LOG->UserLog("Song file",
+				     this->GetSongTitle(),
+				     "has an speed change with %i values.",
+				     static_cast<int>(vs2.size()) );
+			continue;
+		}
+		
+		const float fBeat = RowToBeat( vs2[0], rowsPerBeat );
+		
+		RString backup = vs2[2];
+		Trim(vs2[2], "s");
+		Trim(vs2[2], "S");
+		
+		unsigned short tmp = ((backup != vs2[2]) ? 1 : 0);
+		
+		SpeedSegment * seg = new SpeedSegment(fBeat,
+											  StringToFloat( vs2[1] ),
+											  StringToFloat(vs2[2]),
+											  tmp);
+		
+		if( fBeat < 0 )
+		{
+			LOG->UserLog("Song file",
+				     this->GetSongTitle(),
+				     "has an speed change with beat %f.",
+				     fBeat );
+			continue;
+		}
+		
+		if( seg->GetLength() < 0 )
+		{
+			LOG->UserLog("Song file",
+				     this->GetSongTitle(),
+				     "has an speed change with beat %f, length %f.",
+				     fBeat, seg->GetLength() );
+			continue;
+		}
+		
+		out.AddSegment( SEGMENT_SPEED, seg );
+	}
 }
 
-bool SMALoader::LoadFromSMAFile( const RString &sPath, Song &out )
+bool SMALoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCache )
 {
 	LOG->Trace( "Song::LoadFromSMAFile(%s)", sPath.c_str() );
 	
@@ -113,8 +163,13 @@ bool SMALoader::LoadFromSMAFile( const RString &sPath, Song &out )
 		return false;
 	}
 	
-	out.m_Timing.m_sFile = sPath;
-	LoadTimingFromSMAFile( msd, out.m_Timing );
+	out.m_SongTiming.m_sFile = sPath; // songs still have their fallback timing.
+	out.m_sSongFileName = sPath;
+	
+	int state = SMA_GETTING_SONG_INFO;
+	Steps* pNewNotes = NULL;
+	TimingData stepsTiming;
+	int iRowsPerBeat = -1; // Start with an invalid value: needed for checking.
 	
 	for( unsigned i=0; i<msd.GetNumValues(); i++ )
 	{
@@ -127,7 +182,10 @@ bool SMALoader::LoadFromSMAFile( const RString &sPath, Song &out )
 		/* Don't use GetMainAndSubTitlesFromFullTitle; that's only for heuristically
 		 * splitting other formats that *don't* natively support #SUBTITLE. */
 		if( sValueName=="TITLE" )
+		{
 			out.m_sMainTitle = sParams[1];
+			this->SetSongTitle(sParams[1]);
+		}
 		
 		else if( sValueName=="SUBTITLE" )
 			out.m_sSubTitle = sParams[1];
@@ -168,19 +226,7 @@ bool SMALoader::LoadFromSMAFile( const RString &sPath, Song &out )
 		
 		else if( sValueName=="INSTRUMENTTRACK" )
 		{
-			vector<RString> vs1;
-			split( sParams[1], ",", vs1 );
-			FOREACH_CONST( RString, vs1, s )
-			{
-				vector<RString> vs2;
-				split( *s, "=", vs2 );
-				if( vs2.size() >= 2 )
-				{
-					InstrumentTrack it = StringToInstrumentTrack( vs2[0] );
-					if( it != InstrumentTrack_Invalid )
-						out.m_sInstrumentTrackFile[it] = vs2[1];
-				}
-			}
+			SMLoader::ProcessInstrumentTracks( out, sParams[1] );
 		}
 		
 		else if( sValueName=="MUSICLENGTH" )
@@ -189,29 +235,16 @@ bool SMALoader::LoadFromSMAFile( const RString &sPath, Song &out )
 		}
 		
 		else if( sValueName=="LASTBEATHINT" )
-			out.m_fSpecifiedLastBeat = StringToFloat( sParams[1] );
-		
+		{
+			// can't identify at this position: ignore.
+		}
 		else if( sValueName=="MUSICBYTES" )
 			; /* ignore */
 		
-		/* We calculate these.  Some SMs in circulation have bogus values for
-		 * these, so make sure we always calculate it ourself. */
-		else if( sValueName=="FIRSTBEAT" )
-		{
-			;
-		}
-		else if( sValueName=="LASTBEAT" )
-		{
-			;		}
-		else if( sValueName=="SONGFILENAME" )
-		{
-			;
-		}
-		else if( sValueName=="HASMUSIC" )
-		{
-			;
-		}
-		else if( sValueName=="HASBANNER" )
+		// Cache tags: ignore.
+		else if (sValueName=="FIRSTBEAT" || sValueName=="LASTBEAT" ||
+			 sValueName=="SONGFILENAME" || sValueName=="HASMUSIC" ||
+			 sValueName=="HASBANNER" )
 		{
 			;
 		}
@@ -225,6 +258,11 @@ bool SMALoader::LoadFromSMAFile( const RString &sPath, Song &out )
 		// SamplePath is used when the song has a separate preview clip. -aj
 		//else if( sValueName=="SAMPLEPATH" )
 		//out.m_sMusicSamplePath = sParams[1];
+		
+		else if( sValueName=="LISTSORT" )
+		{
+			;
+		}
 		
 		else if( sValueName=="DISPLAYBPM" )
 		{
@@ -240,6 +278,41 @@ bool SMALoader::LoadFromSMAFile( const RString &sPath, Song &out )
 				else
 					out.m_fSpecifiedBPMMax = StringToFloat( sParams[2] );
 			}
+		}
+		
+		else if( sValueName=="SMAVERSION" )
+		{
+			; // ignore it.
+		}
+		
+		else if( sValueName=="ROWSPERBEAT" )
+		{
+			/* This value is used to help translate the timings
+			 * the SMA format uses. Starting with the second
+			 * appearance, it delimits NoteData. Right now, this
+			 * value doesn't seem to be editable in SMA. When it
+			 * becomes so, make adjustments to this code. */
+			if( iRowsPerBeat < 0 )
+			{
+				vector<RString> arrayBeatChangeExpressions;
+				split( sParams[1], ",", arrayBeatChangeExpressions );
+				
+				vector<RString> arrayBeatChangeValues;
+				split( arrayBeatChangeExpressions[0], "=", arrayBeatChangeValues );
+				iRowsPerBeat = StringToInt(arrayBeatChangeValues[1]);
+			}
+			else
+			{
+				state = SMA_GETTING_STEP_INFO;
+				pNewNotes = new Steps;
+			}
+		}
+		
+		else if( sValueName=="BEATSPERMEASURE" )
+		{
+			TimingData &timing = (state == SMA_GETTING_STEP_INFO 
+					      ? pNewNotes->m_Timing : out.m_SongTiming);
+			ProcessBeatsPerMeasure( timing, sParams[1] );
 		}
 		
 		else if( sValueName=="SELECTABLE" )
@@ -260,32 +333,15 @@ bool SMALoader::LoadFromSMAFile( const RString &sPath, Song &out )
 			else if( StringToInt(sParams[1]) > 0 )
 				out.m_SelectionDisplay = out.SHOW_ALWAYS;
 			else
-				LOG->UserLog( "Song file", sPath, "has an unknown #SELECTABLE value, \"%s\"; ignored.", sParams[1].c_str() );
+				LOG->UserLog("Song file",
+					     sPath,
+					     "has an unknown #SELECTABLE value, \"%s\"; ignored.",
+					     sParams[1].c_str() );
 		}
 		
 		else if( sValueName.Left(strlen("BGCHANGES"))=="BGCHANGES" || sValueName=="ANIMATIONS" )
 		{
-			BackgroundLayer iLayer = BACKGROUND_LAYER_1;
-			if( sscanf(sValueName, "BGCHANGES%d", &*ConvertValue<int>(&iLayer)) == 1 )
-				enum_add(iLayer, -1);	// #BGCHANGES2 = BACKGROUND_LAYER_2
-			
-			bool bValid = iLayer>=0 && iLayer<NUM_BackgroundLayer;
-			if( !bValid )
-			{
-				LOG->UserLog( "Song file", sPath, "has a #BGCHANGES tag \"%s\" that is out of range.", sValueName.c_str() );
-			}
-			else
-			{
-				vector<RString> aBGChangeExpressions;
-				split( sParams[1], ",", aBGChangeExpressions );
-				
-				for( unsigned b=0; b<aBGChangeExpressions.size(); b++ )
-				{
-					BackgroundChange change;
-					if( LoadFromBGChangesString( change, aBGChangeExpressions[b] ) )
-						out.AddBackgroundChange( iLayer, change );
-				}
-			}
+			SMLoader::ProcessBGChanges( out, sValueName, sPath, sParams[1]);
 		}
 		
 		else if( sValueName=="FGCHANGES" )
@@ -301,6 +357,69 @@ bool SMALoader::LoadFromSMAFile( const RString &sPath, Song &out )
 			}
 		}
 		
+		else if( sValueName=="OFFSET" )
+		{
+			TimingData &timing = (state == SMA_GETTING_STEP_INFO 
+					      ? pNewNotes->m_Timing : out.m_SongTiming);
+			timing.m_fBeat0OffsetInSeconds = StringToFloat( sParams[1] );
+		}
+		
+		else if( sValueName=="BPMS" )
+		{
+			TimingData &timing = (state == SMA_GETTING_STEP_INFO 
+					      ? pNewNotes->m_Timing : out.m_SongTiming);
+			ProcessBPMs( timing, sParams[1], iRowsPerBeat );
+		}
+		
+		else if( sValueName=="STOPS" || sValueName=="FREEZES" )
+		{
+			TimingData &timing = (state == SMA_GETTING_STEP_INFO 
+					      ? pNewNotes->m_Timing : out.m_SongTiming);
+			ProcessStops( timing, sParams[1], iRowsPerBeat );
+		}
+		
+		else if( sValueName=="DELAYS" )
+		{
+			TimingData &timing = (state == SMA_GETTING_STEP_INFO 
+					      ? pNewNotes->m_Timing : out.m_SongTiming);
+			ProcessDelays( timing, sParams[1], iRowsPerBeat );
+		}
+		
+		else if( sValueName=="TICKCOUNT" )
+		{
+			TimingData &timing = (state == SMA_GETTING_STEP_INFO 
+					      ? pNewNotes->m_Timing : out.m_SongTiming);
+			ProcessTickcounts( timing, sParams[1], iRowsPerBeat );
+		}
+		
+		else if( sValueName=="SPEED" )
+		{
+			TimingData &timing = (state == SMA_GETTING_STEP_INFO 
+					      ? pNewNotes->m_Timing : out.m_SongTiming);
+			RString tmp = sParams[1];
+			Trim( tmp );
+			ProcessSpeeds( timing, tmp, iRowsPerBeat );
+		}
+		
+		else if( sValueName=="MULTIPLIER" )
+		{
+			TimingData &timing = (state == SMA_GETTING_STEP_INFO 
+					      ? pNewNotes->m_Timing : out.m_SongTiming);
+			ProcessMultipliers( timing, iRowsPerBeat, sParams[1] );
+		}
+		
+		else if( sValueName=="FAKES" )
+		{
+			TimingData &timing = (state == SMA_GETTING_STEP_INFO 
+					      ? pNewNotes->m_Timing : out.m_SongTiming);
+			ProcessFakes( timing, sParams[1], iRowsPerBeat );
+		}
+		
+		else if( sValueName=="METERTYPE" )
+		{
+			; // We don't use this...yet.
+		}
+		
 		else if( sValueName=="KEYSOUNDS" )
 		{
 			split( sParams[1], ",", out.m_vsKeysoundFile );
@@ -309,59 +428,22 @@ bool SMALoader::LoadFromSMAFile( const RString &sPath, Song &out )
 		// Attacks loaded from file
 		else if( sValueName=="ATTACKS" )
 		{
-			// Build the RString vector here so we can write it to file again later
-			for( unsigned s=1; s < sParams.params.size(); ++s )
-				out.m_sAttackString.push_back( sParams[s] );
-			
-			Attack attack;
-			float end = -9999;
-			
-			for( unsigned j=1; j < sParams.params.size(); ++j )
-			{
-				vector<RString> sBits;
-				split( sParams[j], "=", sBits, false );
-				
-				// Need an identifer and a value for this to work
-				if( sBits.size() < 2 )
-					continue;
-				
-				TrimLeft( sBits[0] );
-				TrimRight( sBits[0] );
-				
-				if( !sBits[0].CompareNoCase("TIME") )
-					attack.fStartSecond = strtof( sBits[1], NULL );
-				else if( !sBits[0].CompareNoCase("LEN") )
-					attack.fSecsRemaining = strtof( sBits[1], NULL );
-				else if( !sBits[0].CompareNoCase("END") )
-					end = strtof( sBits[1], NULL );
-				else if( !sBits[0].CompareNoCase("MODS") )
-				{
-					attack.sModifiers = sBits[1];
-					
-					if( end != -9999 )
-					{
-						attack.fSecsRemaining = end - attack.fStartSecond;
-						end = -9999;
-					}
-					
-					if( attack.fSecsRemaining < 0.0f )
-						attack.fSecsRemaining = 0.0f;
-					
-					out.m_Attacks.push_back( attack );
-				}
-			}
+			ProcessAttackString(out.m_sAttackString, sParams);
+			ProcessAttacks(out.m_Attacks, sParams);
 		}
 		
 		else if( sValueName=="NOTES" || sValueName=="NOTES2" )
 		{
 			if( iNumParams < 7 )
 			{
-				LOG->UserLog( "Song file", sPath, "has %d fields in a #NOTES tag, but should have at least 7.", iNumParams );
+				LOG->UserLog("Song file",
+					     sPath,
+					     "has %d fields in a #NOTES tag, but should have at least 7.",
+					     iNumParams );
 				continue;
 			}
 			
-			Steps* pNewNotes = new Steps;
-			LoadFromSMATokens( 
+			LoadFromTokens( 
 					 sParams[1], 
 					 sParams[2], 
 					 sParams[3], 
@@ -369,371 +451,20 @@ bool SMALoader::LoadFromSMAFile( const RString &sPath, Song &out )
 					 sParams[5], 
 					 sParams[6],
 					 *pNewNotes );
-			
+			pNewNotes->SetFilename(sPath);
 			out.AddSteps( pNewNotes );
 		}
-		/*
-		 * We used to check for timing data in this section. That has
-		 * since been moved to a dedicated function.
-		 */
-		else if( sValueName=="OFFSET" || sValueName=="BPMS" || sValueName=="STOPS" || sValueName=="FREEZES" || sValueName=="DELAYS" || sValueName=="TIMESIGNATURES" || sValueName=="LEADTRACK" || sValueName=="TICKCOUNTS" )
+		else if( sValueName=="TIMESIGNATURES" || sValueName=="LEADTRACK"  )
 			;
 		else
-			LOG->UserLog( "Song file", sPath, "has an unexpected value named \"%s\".", sValueName.c_str() );
+			LOG->UserLog("Song file",
+				     sPath,
+				     "has an unexpected value named \"%s\".",
+				     sValueName.c_str() );
 	}
-	
+	TidyUpData(out, false);
+	out.TidyUpData(false, true);
 	return true;
-}
-
-void SMALoader::GetApplicableFiles( const RString &sPath, vector<RString> &out )
-{
-	GetDirListing( sPath + RString("*.sma"), out );
-}
-
-bool SMALoader::LoadTimingFromFile( const RString &fn, TimingData &out )
-{
-	MsdFile msd;
-	if( !msd.ReadFile( fn, true ) )  // unescape
-	{
-		LOG->UserLog( "Song file", fn, "couldn't be loaded: %s", msd.GetError().c_str() );
-		return false;
-	}
-	
-	out.m_sFile = fn;
-	LoadTimingFromSMAFile( msd, out );
-	return true;
-}
-
-void SMALoader::LoadTimingFromSMAFile( const MsdFile &msd, TimingData &out )
-{
-	out.m_fBeat0OffsetInSeconds = 0;
-	out.m_BPMSegments.clear();
-	out.m_StopSegments.clear();
-	out.m_WarpSegments.clear();
-	out.m_vTimeSignatureSegments.clear();
-	
-	vector<WarpSegment> arrayWarpsFromNegativeBPMs;
-	//vector<WarpSegment> arrayWarpsFromNegativeStops;
-	int rowsPerMeasure = 0;
-	bool encountered = false;
-	
-	for( unsigned i=0; i<msd.GetNumValues(); i++ )
-	{
-		const MsdFile::value_t &sParams = msd.GetValue(i);
-		RString sValueName = sParams[0];
-		sValueName.MakeUpper();
-		
-		if( sValueName=="ROWSPERBEAT")
-		{
-			if( encountered )
-			{
-				break;
-			}
-			encountered = true;
-			rowsPerMeasure = StringToInt( sParams[1] );
-		}
-		else if( sValueName=="BEATSPERMEASURE" )
-		{
-			TimeSignatureSegment new_seg;
-			new_seg.m_iStartRow = 0;
-			new_seg.m_iNumerator = StringToInt( sParams[1] );
-			new_seg.m_iDenominator = 4;
-			out.AddTimeSignatureSegment( new_seg );
-		}
-		else if( sValueName=="OFFSET" )
-		{
-			out.m_fBeat0OffsetInSeconds = StringToFloat( sParams[1] );
-		}
-		else if( sValueName=="STOPS" )
-		{
-			vector<RString> arrayFreezeExpressions;
-			split( sParams[1], ",", arrayFreezeExpressions );
-			
-			for( unsigned f=0; f<arrayFreezeExpressions.size(); f++ )
-			{
-				vector<RString> arrayFreezeValues;
-				split( arrayFreezeExpressions[f], "=", arrayFreezeValues );
-				if( arrayFreezeValues.size() != 2 )
-				{
-					// XXX: Hard to tell which file caused this.
-					LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid #%s value \"%s\" (must have exactly one '='), ignored.",
-						     sValueName.c_str(), arrayFreezeExpressions[f].c_str() );
-					continue;
-				}
-				
-				float fFreezeBeat = 0;
-				RString beat = arrayFreezeValues[0];
-				if( beat.Right(0).MakeUpper() == "R" )
-				{
-					beat = beat.Left(beat.size()-1);
-					fFreezeBeat = StringToFloat( beat ) / rowsPerMeasure;
-				}
-				else
-				{
-					fFreezeBeat = StringToFloat(beat);
-				}
-				
-				//float fFreezeBeat = StringToFloat( arrayBPMChangeValues[0] );
-				const float fFreezeSeconds = StringToFloat( arrayFreezeValues[1] );
-				StopSegment new_seg( BeatToNoteRow(fFreezeBeat), fFreezeSeconds );
-				// XXX: Remove Negatives Bug?
-				new_seg.m_iStartRow = BeatToNoteRow(fFreezeBeat);
-				new_seg.m_fStopSeconds = fFreezeSeconds;
-				
-				if(fFreezeSeconds > 0.0f)
-				{
-					// LOG->Trace( "Adding a freeze segment: beat: %f, seconds = %f", new_seg.m_fStartBeat, new_seg.m_fStopSeconds );
-					out.AddStopSegment( new_seg );
-				}
-				else
-				{
-					// negative stops (hi JS!) -aj
-					if( PREFSMAN->m_bQuirksMode )
-					{
-						// LOG->Trace( "Adding a negative freeze segment: beat: %f, seconds = %f", new_seg.m_fStartBeat, new_seg.m_fStopSeconds );
-						out.AddStopSegment( new_seg );
-					}
-					else
-						LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid stop at beat %f, length %f.", fFreezeBeat, fFreezeSeconds );
-				}
-			}
-		}
-		
-		else if( sValueName=="BPMS" )
-		{
-			vector<RString> arrayBPMChangeExpressions;
-			split( sParams[1], ",", arrayBPMChangeExpressions );
-			
-			for( unsigned b=0; b<arrayBPMChangeExpressions.size(); b++ )
-			{
-				vector<RString> arrayBPMChangeValues;
-				split( arrayBPMChangeExpressions[b], "=", arrayBPMChangeValues );
-				// XXX: Hard to tell which file caused this.
-				if( arrayBPMChangeValues.size() != 2 )
-				{
-					LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid #%s value \"%s\" (must have exactly one '='), ignored.",
-						     sValueName.c_str(), arrayBPMChangeExpressions[b].c_str() );
-					continue;
-				}
-				
-				float fBeat = 0;
-				RString beat = arrayBPMChangeValues[0];
-				if( beat.Right(0).MakeUpper() == "R" )
-				{
-					beat = beat.Left(beat.size()-1);
-					fBeat = StringToFloat( beat ) / rowsPerMeasure;
-				}
-				else
-				{
-					fBeat = StringToFloat(beat);
-				}
-				
-				//float fBeat = StringToFloat( arrayBPMChangeValues[0] );
-				const float fNewBPM = StringToFloat( arrayBPMChangeValues[1] );
-				// XXX: Remove Negatives Bug?
-				BPMSegment new_seg;
-				new_seg.m_iStartRow = BeatToNoteRow(fBeat);
-				new_seg.SetBPM( fNewBPM );
-				
-				// convert negative BPMs into Warp segments
-				if( fNewBPM < 0.0f )
-				{
-					vector<RString> arrayNextBPMChangeValues;
-					// get next bpm in sequence
-					if((b+1) < arrayBPMChangeExpressions.size())
-					{
-						split( arrayBPMChangeExpressions[b+1], "=", arrayNextBPMChangeValues );
-						const float fNextPositiveBeat = StringToFloat( arrayNextBPMChangeValues[0] );
-						const float fNextPositiveBPM  = StringToFloat( arrayNextBPMChangeValues[1] );
-						
-						// tJumpPos = (tPosBPS-abs(negBPS)) + (gPosBPMPosition - fNegPosition)
-						float fDeltaBeat = ((fNextPositiveBPM/60.0f)-abs(fNewBPM/60.0f)) + (fNextPositiveBeat-fBeat);
-						//float fWarpLengthBeats = fNextPositiveBeat + fDeltaBeat;
-						WarpSegment wsTemp(BeatToNoteRow(fBeat),fDeltaBeat);
-						arrayWarpsFromNegativeBPMs.push_back(wsTemp);
-						
-						/*
-						 LOG->Trace( ssprintf("==NotesLoSM negbpm==\nfnextposbeat = %f, fnextposbpm = %f,\nfdelta = %f, fwarpto = %f",
-						 fNextPositiveBeat,
-						 fNextPositiveBPM,
-						 fDeltaBeat,
-						 fWarpToBeat
-						 ) );
-						 */
-						/*
-						 LOG->Trace( ssprintf("==Negative/Subtractive BPM in NotesLoader==\nNegBPM has noterow = %i, BPM = %f\nNextBPM @ noterow %i\nDelta value = %i noterows\nThis warp will have us end up at noterow %i",
-						 BeatToNoteRow(fBeat), fNewBPM,
-						 BeatToNoteRow(fNextPositiveBeat),
-						 BeatToNoteRow(fDeltaBeat),
-						 BeatToNoteRow(fWarpToBeat))
-						 );
-						 */
-						//float fDeltaBeat = ((fNextPositiveBPM/60.0f)-abs(fNewBPM/60.0f)) + (fNextPositiveBeat-fBeat);
-						/*
-						 LOG->Trace( ssprintf("==NotesLoader Delta as NoteRows==\nfDeltaBeat = %f (beat)\nfDeltaBeat = (NextBPMSeg %f - abs(fBPS %f)) + (nextStartRow %i - thisRow %i)",
-						 fDeltaBeat,(fNextPositiveBPM/60.0f),abs(fNewBPM/60.0f),BeatToNoteRow(fNextPositiveBeat),BeatToNoteRow(fBeat))
-						 );
-						 */
-						
-						out.AddBPMSegment( new_seg );
-						
-						continue;
-					}
-					else
-					{
-						// last BPM is a negative one? ugh. -aj (MAX_NOTE_ROW exists btw)
-						out.AddBPMSegment( new_seg );
-					}
-				}
-				
-				if(fNewBPM > 0.0f)
-					out.AddBPMSegment( new_seg );
-				else
-				{
-					out.m_bHasNegativeBpms = true;
-					// only add Negative BPMs in quirks mode -aj
-					if( PREFSMAN->m_bQuirksMode )
-						out.AddBPMSegment( new_seg );
-					else
-						LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid BPM change at beat %f, BPM %f.", fBeat, fNewBPM );
-				}
-			}
-		}
-		
-		
-		// Note: Even though it is possible to have Negative BPMs and Stops in
-		// a song along with Warps, we should not support files that contain
-		// both styles of warp tricks (Negatives vs. #WARPS).
-		// If Warps have been populated from Negative BPMs, then go through that
-		// instead of using the data in the Warps tag. This should be above,
-		// but it breaks compiling so...
-		if(arrayWarpsFromNegativeBPMs.size() > 0)
-		{
-			// zomg we already have some warps...
-			for( unsigned j=0; j<arrayWarpsFromNegativeBPMs.size(); j++ )
-			{
-				out.AddWarpSegment( arrayWarpsFromNegativeBPMs[j] );
-			}
-		}
-		// warp sorting will need to take place.
-		//sort(out.m_WarpSegments.begin(), out.m_WarpSegments.end());
-	}
-}
-
-bool SMALoader::LoadEditFromFile( RString sEditFilePath, ProfileSlot slot, bool bAddStepsToSong )
-{
-	LOG->Trace( "SMALoader::LoadEditFromFile(%s)", sEditFilePath.c_str() );
-	
-	int iBytes = FILEMAN->GetFileSizeInBytes( sEditFilePath );
-	if( iBytes > MAX_EDIT_STEPS_SIZE_BYTES )
-	{
-		LOG->UserLog( "Edit file", sEditFilePath, "is unreasonably large. It won't be loaded." );
-		return false;
-	}
-	
-	MsdFile msd;
-	if( !msd.ReadFile( sEditFilePath, true ) ) // unescape
-	{
-		LOG->UserLog( "Edit file", sEditFilePath, "couldn't be opened: %s", msd.GetError().c_str() );
-		return false;
-	}
-	
-	return LoadEditFromMsd( msd, sEditFilePath, slot, bAddStepsToSong );
-}
-
-bool SMALoader::LoadEditFromBuffer( const RString &sBuffer, const RString &sEditFilePath, ProfileSlot slot )
-{
-	MsdFile msd;
-	msd.ReadFromString( sBuffer, true ); // unescape
-	return LoadEditFromMsd( msd, sEditFilePath, slot, true );
-}
-
-bool SMALoader::LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePath, ProfileSlot slot, bool bAddStepsToSong )
-{
-	Song* pSong = NULL;
-	
-	for( unsigned i=0; i<msd.GetNumValues(); i++ )
-	{
-		int iNumParams = msd.GetNumParams(i);
-		const MsdFile::value_t &sParams = msd.GetValue(i);
-		RString sValueName = sParams[0];
-		sValueName.MakeUpper();
-		
-		// handle the data
-		if( sValueName=="SONG" )
-		{
-			if( pSong )
-			{
-				LOG->UserLog( "Edit file", sEditFilePath, "has more than one #SONG tag." );
-				return false;
-			}
-			
-			RString sSongFullTitle = sParams[1];
-			sSongFullTitle.Replace( '\\', '/' );
-			
-			pSong = SONGMAN->FindSong( sSongFullTitle );
-			if( pSong == NULL )
-			{
-				LOG->UserLog( "Edit file", sEditFilePath, "requires a song \"%s\" that isn't present.", sSongFullTitle.c_str() );
-				return false;
-			}
-			
-			if( pSong->GetNumStepsLoadedFromProfile(slot) >= MAX_EDITS_PER_SONG_PER_PROFILE )
-			{
-				LOG->UserLog( "Song file", sSongFullTitle, "already has the maximum number of edits allowed for ProfileSlotP%d.", slot+1 );
-				return false;
-			}
-		}
-		
-		else if( sValueName=="NOTES" )
-		{
-			if( pSong == NULL )
-			{
-				LOG->UserLog( "Edit file", sEditFilePath, "doesn't have a #SONG tag preceeding the first #NOTES tag." );
-				return false;
-			}
-			
-			if( iNumParams < 7 )
-			{
-				LOG->UserLog( "Edit file", sEditFilePath, "has %d fields in a #NOTES tag, but should have at least 7.", iNumParams );
-				continue;
-			}
-			
-			if( !bAddStepsToSong )
-				return true;
-			
-			Steps* pNewNotes = new Steps;
-			LoadFromSMATokens( 
-					 sParams[1], sParams[2], sParams[3], sParams[4], sParams[5], sParams[6],
-					 *pNewNotes);
-			
-			pNewNotes->SetLoadedFromProfile( slot );
-			pNewNotes->SetDifficulty( Difficulty_Edit );
-			pNewNotes->SetFilename( sEditFilePath );
-			
-			if( pSong->IsEditAlreadyLoaded(pNewNotes) )
-			{
-				LOG->UserLog( "Edit file", sEditFilePath, "is a duplicate of another edit that was already loaded." );
-				SAFE_DELETE( pNewNotes );
-				return false;
-			}
-			
-			pSong->AddSteps( pNewNotes );
-			return true; // Only allow one Steps per edit file!
-		}
-		else
-		{
-			LOG->UserLog( "Edit file", sEditFilePath, "has an unexpected value \"%s\".", sValueName.c_str() );
-		}
-	}
-	
-	return true;
-}
-
-bool SMALoader::LoadFromBGChangesString( BackgroundChange &change, 
-					const RString &sBGChangeExpression )
-{
-	return SMLoader::LoadFromBGChangesString(change, sBGChangeExpression);
 }
 
 /**

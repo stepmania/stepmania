@@ -24,7 +24,7 @@ static void GetStepsForSong( Song *pSong, vector<Steps*> &vpStepsOut )
 }
 
 // XXX: very similar to OptionRowHandlerSteps
-class OptionRowHandlerSteps : public OptionRowHandler
+class EditCourseOptionRowHandlerSteps : public OptionRowHandler
 {
 public:
 	void Load( int iEntryIndex )
@@ -145,7 +145,7 @@ void ScreenOptionsEditCourse::Init()
 	sc.m_Tutorial = SongCriteria::Tutorial_No;
 	sc.m_Locked = SongCriteria::Locked_Unlocked;
 
-	SongUtil::FilterSongs( sc, SONGMAN->GetAllSongs(), m_vpSongs );
+	SongUtil::FilterSongs( sc, SONGMAN->GetAllSongs(), m_vpSongs, true );
 
 	SongUtil::SortSongPointerArrayByTitle( m_vpSongs );
 }
@@ -213,7 +213,7 @@ void ScreenOptionsEditCourse::BeginScreen()
 		}
 		
 		{
-			OptionRowHandlerSteps *pHand = new OptionRowHandlerSteps;
+			EditCourseOptionRowHandlerSteps *pHand = new EditCourseOptionRowHandlerSteps;
 			pHand->Load( i );
 			pHand->m_Def.m_vsChoices.push_back( "n/a" );
 			pHand->m_Def.m_sName = ssprintf(STEPS.GetValue() + " %d",i+1);
@@ -411,7 +411,7 @@ void ScreenOptionsEditCourse::SetCurrentSteps()
 		int iEntryIndex = RowToEntryIndex( iRow );
 		OptionRow &row = *m_pRows[ EntryIndexAndRowTypeToRow(iEntryIndex, RowType_Steps) ];
 		int iStepsIndex = row.GetOneSharedSelection();
-		const OptionRowHandlerSteps *pHand = dynamic_cast<const OptionRowHandlerSteps *>( row.GetHandler() );
+		const EditCourseOptionRowHandlerSteps *pHand = dynamic_cast<const EditCourseOptionRowHandlerSteps *>( row.GetHandler() );
 		ASSERT( pHand );
 		Steps *pSteps = pHand->GetSteps( iStepsIndex );
 		GAMESTATE->m_pCurSteps[PLAYER_1].Set( pSteps );
@@ -488,7 +488,7 @@ void ScreenOptionsEditCourse::ProcessMenuStart( const InputEventPlus &input )
 	if( IsTransitioning() )
 		return;
 
-	int iRow = m_iCurrentRow[GAMESTATE->m_MasterPlayerNumber];
+	int iRow = m_iCurrentRow[GAMESTATE->GetMasterPlayerNumber()];
 
 	unsigned iSongCount = GAMESTATE->m_pCurCourse->m_vEntries.size();
 

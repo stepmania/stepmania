@@ -435,9 +435,125 @@ static void ReadTimeSigs( const NameToData_t &mapNameToData, MeasureToTimeSig_t 
 static const int BEATS_PER_MEASURE = 4;
 static const int ROWS_PER_MEASURE = ROWS_PER_BEAT * BEATS_PER_MEASURE;
 
-static bool LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNameToData, Steps &out,
-			     const MeasureToTimeSig_t &sigAdjustments, const map<RString,int> &idToKeySoundIndex )
+static bool SearchForKeysound( const RString &sPath, RString nDataOriginal, map<RString, int> &mapFilenameToKeysoundIndex, Song &out, int &outKeysoundIndex )
 {
+
+	// Search for memoized file names:
+	{
+		RString nDataToSearchFor = nDataOriginal;
+		nDataToSearchFor.MakeLower();
+		map<RString, int>::iterator it = mapFilenameToKeysoundIndex.find(nDataToSearchFor);
+		if (it != mapFilenameToKeysoundIndex.end()) {
+			outKeysoundIndex = it->second;
+			return true;
+		}
+	}
+
+	// FIXME: garbled song names seem to crash the app.
+	// this might not be the best place to put this code.
+	if( !utf8_is_valid(nDataOriginal) )
+		return false;
+	
+	/* Due to bugs in some programs, many BMS files have a "WAV" extension
+	 * on files in the BMS for files that actually have some other extension.
+	 * Do a search. Don't do a wildcard search; if sData is "song.wav",
+	 * we might also have "song.png", which we shouldn't match. */
+	RString nData = nDataOriginal;
+	RString dir = out.GetSongDir();
+	if (dir.empty())
+		dir = Dirname(sPath);
+	if( !IsAFile(dir+nData) )
+	{
+		const char *exts[] = { "oga", "ogg", "wav", "mp3", NULL }; // XXX: stop duplicating these everywhere
+		for( unsigned i = 0; exts[i] != NULL; ++i )
+		{
+			RString fn = SetExtension( nData, exts[i] );
+			if( IsAFile(dir+fn) )
+			{
+				nData = fn;
+				break;
+			}
+		}
+	}
+	
+	if( !IsAFile(dir+nData) )
+	{
+		LOG->UserLog( "Song file", dir, "references key \"%s\" that can't be found", nData.c_str() );
+		return false;
+	}
+	
+	// Let's again search for memoized file names (we got the normalized one!):
+	{
+		RString nDataToSearchFor = nData;
+		nDataToSearchFor.MakeLower();
+		map<RString, int>::iterator it = mapFilenameToKeysoundIndex.find(nDataToSearchFor);
+		if (it != mapFilenameToKeysoundIndex.end()) {
+			outKeysoundIndex = it->second;
+			
+			{
+				RString nDataToAdd = nDataOriginal;
+				nDataToAdd.MakeLower();
+				mapFilenameToKeysoundIndex[nDataToAdd] = outKeysoundIndex;
+			}
+			
+			return true;
+		}
+	}
+
+	// Now this is a new sample.
+	out.m_vsKeysoundFile.push_back( nData );
+	outKeysoundIndex = out.m_vsKeysoundFile.size() - 1;
+	
+	{
+		RString nDataToAdd = nDataOriginal;
+		nDataToAdd.MakeLower();
+		mapFilenameToKeysoundIndex[nDataToAdd] = outKeysoundIndex;
+	}
+	
+	{
+		RString nDataToAdd = nData;
+		nDataToAdd.MakeLower();
+		mapFilenameToKeysoundIndex[nDataToAdd] = outKeysoundIndex;
+	}
+	
+	return true;
+
+}
+
+static bool SearchForKeysound( const RString &sPath, RString sNoteId, const NameToData_t &mapNameToData, map<RString, int> &mapIdToKeysoundIndex, map<RString, int> &mapFilenameToKeysoundIndex, Song &out, int &outKeysoundIndex )
+{
+
+	sNoteId.MakeLower();
+	{
+		map<RString, int>::iterator it = mapIdToKeysoundIndex.find(sNoteId);
+		if (it != mapIdToKeysoundIndex.end())
+		{
+			outKeysoundIndex = it->second;
+			return outKeysoundIndex >= 0;
+		}
+	}
+
+	RString sTagToLookFor = ssprintf( "#wav%s", sNoteId.c_str() );
+	RString nDataOriginal;
+	if( !GetTagFromMap( mapNameToData, sTagToLookFor, nDataOriginal ) )
+	{
+		LOG->UserLog( "Song file", sPath.c_str(), "has tag \"%s\" which cannot be found.", sTagToLookFor.c_str() );
+		return false;
+	}
+	
+	bool retval = SearchForKeysound(sPath, nDataOriginal, mapFilenameToKeysoundIndex, out, outKeysoundIndex);
+	mapIdToKeysoundIndex[sNoteId] = outKeysoundIndex;
+	return retval;
+	
+}
+
+static bool LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNameToData, Steps &out, Song &outSong, map<RString, int> &mapFilenameToKeysoundIndex )
+{
+
+	map<RString, int> mapIdToKeysoundIndex;
+	map<int, float> mapNoteRowToBPM;
+	MeasureToTimeSig_t sigAdjustments;
+
 	LOG->Trace( "Steps::LoadFromBMSFile( '%s' )", sPath.c_str() );
 
 	out.m_StepsType = StepsType_Invalid;
@@ -453,10 +569,125 @@ static bool LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNameTo
 	NoteData ndNotes;
 	ndNotes.SetNumTracks( NUM_BMS_TRACKS );
 
+	// Read BPM
+	if( GetTagFromMap(mapNameToData, "#bpm", sData) )
+	{
+		const float fBPM = StringToFloat( sData );
+
+		if( fBPM > 0.0f )
+		{
+			BPMSegment * newSeg = new BPMSegment( 0, fBPM );
+			out.m_Timing.AddSegment(SEGMENT_BPM, newSeg );
+			LOG->Trace( "Inserting new BPM change at beat %f, BPM %f", NoteRowToBeat(0), fBPM );
+		}
+		else
+		{
+			LOG->UserLog( "Song file", sPath.c_str(), "has an invalid BPM change at beat %f, BPM %f.",
+					  NoteRowToBeat(0), fBPM );
+		}
+	}
+
+
 	/* Read time signatures. Note that these can differ across files in the same
 	 * song. */
 	MeasureToTimeSig_t mapMeasureToTimeSig;
 	ReadTimeSigs( mapNameToData, mapMeasureToTimeSig );
+
+	for( NameToData_t::const_iterator it = mapNameToData.lower_bound("#00000"); it != mapNameToData.end(); ++it )
+	{
+		const RString &sName = it->first;
+		if( sName.size() != 6 || sName[0] != '#' || !IsAnInt( sName.substr(1,5) ) )
+			 continue;
+		// this is step or offset data.  Looks like "#00705"
+		int iMeasureNo	= atoi( sName.substr(1, 3).c_str() );
+		int iBMSTrackNo	= atoi( sName.substr(4, 2).c_str() );
+		int iStepIndex = GetMeasureStartRow( mapMeasureToTimeSig, iMeasureNo, sigAdjustments );
+		float fBeatsPerMeasure = GetBeatsPerMeasure( mapMeasureToTimeSig, iMeasureNo, sigAdjustments );
+		int iRowsPerMeasure = BeatToNoteRow( fBeatsPerMeasure );
+
+		RString nData = it->second;
+		int totalPairs = nData.size() / 2;
+		for( int i = 0; i < totalPairs; ++i )
+		{
+			RString sPair = nData.substr( i*2, 2 );
+
+			int iRow = iStepIndex + (i * iRowsPerMeasure) / totalPairs;
+			float fBeat = NoteRowToBeat( iRow );			
+			int iVal = 0;
+			sscanf( sPair, "%x", &iVal );
+
+			if (sPair == "00")
+			{
+				continue;
+			}
+			
+			switch( iBMSTrackNo )
+			{
+			case BMS_TRACK_BPM:
+				if( iVal > 0 )
+				{
+					mapNoteRowToBPM[ BeatToNoteRow(fBeat) ] = iVal;
+					LOG->Trace( "Inserting new BPM change at beat %f, BPM %i", fBeat, iVal );
+				}
+				else
+				{
+					LOG->UserLog( "Song file", sPath.c_str(), "has an invalid BPM change at beat %f, BPM %d.",
+						      fBeat, iVal );
+				}
+				break;
+
+			case BMS_TRACK_BPM_REF:
+			{
+				RString sTagToLookFor = ssprintf( "#bpm%s", sPair.c_str() );
+				RString sBPM;
+				if( GetTagFromMap( mapNameToData, sTagToLookFor, sBPM ) )
+				{
+					float fBPM = StringToFloat( sBPM );
+					mapNoteRowToBPM[ BeatToNoteRow(fBeat) ] = fBPM;
+				}
+				else
+				{
+					LOG->UserLog( "Song file", sPath.c_str(), "has tag \"%s\" which cannot be found.", sTagToLookFor.c_str() );
+				}
+				break;
+			}
+			case BMS_TRACK_STOP:
+			{
+				if( iVal == 0 )
+				{
+					break;
+				}
+				RString sTagToLookFor = ssprintf( "#stop%02x", iVal );
+				RString sBeats;
+				if( GetTagFromMap( mapNameToData, sTagToLookFor, sBeats ) )
+				{
+					// find the BPM at the time of this freeze
+					float fBPS = out.m_Timing.GetBPMAtBeat(fBeat) / 60.0f;
+					float fBeats = StringToFloat( sBeats ) / 48.0f;
+					float fFreezeSecs = fBeats / fBPS;
+
+					StopSegment * newSeg = new StopSegment( fBeat, fFreezeSecs );
+					out.m_Timing.AddSegment( SEGMENT_STOP_DELAY, newSeg );
+					LOG->Trace( "Inserting new Freeze at beat %f, secs %f", fBeat, newSeg->GetPause() );
+				}
+				else
+				{
+					LOG->UserLog( "Song file", sPath.c_str(), "has tag \"%s\" which cannot be found.", sTagToLookFor.c_str() );
+				}
+				break;
+			}
+			}
+		}
+
+	}
+	
+	for( map<int, float>::iterator it = mapNoteRowToBPM.begin(); it != mapNoteRowToBPM.end(); it ++ )
+	{
+		out.m_Timing.SetBPMAtRow( it->first, it->second );
+	}
+
+	// Now that we're done reading BPMs, factor out weird time signatures.
+	SetTimeSigAdjustments( mapMeasureToTimeSig, outSong, sigAdjustments );
 
 	int iHoldStarts[NUM_BMS_TRACKS];
 	TapNote iHoldHeads[NUM_BMS_TRACKS];
@@ -468,6 +699,8 @@ static bool LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNameTo
 	}
 
 	NameToData_t::const_iterator it;
+	
+	bool hasBGM = false;
 	for( it = mapNameToData.lower_bound("#00000"); it != mapNameToData.end(); ++it )
 	{
 		const RString &sName = it->first;
@@ -487,10 +720,9 @@ static bool LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNameTo
 			RString sNoteId = sNoteData.substr( i, 2 );
 			if( sNoteId != "00" )
 			{
-				vTapNotes.push_back( TAP_ORIGINAL_TAP );
-				map<RString,int>::const_iterator rInt = idToKeySoundIndex.find( sNoteId );
-				if( rInt != idToKeySoundIndex.end() )
-					vTapNotes.back().iKeysoundIndex = rInt->second;
+				TapNote tn = TAP_ORIGINAL_TAP;
+				SearchForKeysound( sPath, sNoteId, mapNameToData, mapIdToKeysoundIndex, mapFilenameToKeysoundIndex, outSong, tn.iKeysoundIndex );
+				vTapNotes.push_back( tn );
 			}
 			else
 			{
@@ -518,6 +750,7 @@ static bool LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNameTo
 				{
 					if( bmsTrack == BMS_AUTO_KEYSOUND_1 )
 					{
+						hasBGM = true;
 						// shift the auto keysound as far right as possible
 						int iLastEmptyTrack = -1;
 						if( ndNotes.GetTapLastEmptyTrack(row, iLastEmptyTrack)  &&
@@ -543,6 +776,12 @@ static bool LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNameTo
 					ndNotes.SetTapNote( bmsTrack, row, tn );
 			}
 		}
+	}
+	
+	if (!hasBGM)
+	{
+		LOG->Warn("The song at %s is missing a #XXX01 tag! We're unable to load.", sPath.c_str());
+		return false;
 	}
 	
 	/* Handles hold notes like uBMPlay.
@@ -737,7 +976,7 @@ static bool LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNameTo
 		iTransformNewToOld[15] = BMS_P2_TURN;
 		break;
 	default:
-		ASSERT(0);
+		ASSERT_M(0, ssprintf("Invalid StepsType when parsing BMS file %s!", sPath.c_str()));
 	}
 
 	// shift all of the autokeysound tracks onto the main tracks
@@ -763,7 +1002,7 @@ static bool LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNameTo
 			}
 			else
 			{
-				LOG->UserLog( "Song file", sPath, "has too much simultenous autokeysound tracks." );
+				LOG->UserLog( "Song file", sPath, "has too much simultaneous autokeysound tracks." );
 			}
 		}
 	}
@@ -781,7 +1020,7 @@ static bool LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNameTo
 	return true;
 }
 
-static void ReadGlobalTags( const NameToData_t &mapNameToData, Song &out, MeasureToTimeSig_t &sigAdjustmentsOut, map<RString,int> &idToKeySoundIndexOut )
+static void ReadGlobalTags( const NameToData_t &mapNameToData, Song &out )
 {
 	RString sData;
 	if( GetTagFromMap(mapNameToData, "#title", sData) )
@@ -792,172 +1031,6 @@ static void ReadGlobalTags( const NameToData_t &mapNameToData, Song &out, Measur
 	GetTagFromMap( mapNameToData, "#backbmp", out.m_sBackgroundFile );
 	GetTagFromMap( mapNameToData, "#wav", out.m_sMusicFile );
 
-	if( GetTagFromMap(mapNameToData, "#bpm", sData) )
-	{
-		const float fBPM = StringToFloat( sData );
-
-		if( PREFSMAN->m_bQuirksMode )
-		{
-			BPMSegment newSeg( 0, fBPM );
-			out.AddBPMSegment( newSeg );
-			if( fBPM > 0.0f )
-				LOG->Trace( "Inserting new positive BPM change at beat %f, BPM %f", NoteRowToBeat(0), fBPM );
-			else
-				LOG->Trace( "Inserting new negative BPM change at beat %f, BPM %f", NoteRowToBeat(0), fBPM );
-		}
-		else
-		{
-			if( fBPM > 0.0f )
-			{
-				BPMSegment newSeg( 0, fBPM );
-				out.AddBPMSegment( newSeg );
-				LOG->Trace( "Inserting new BPM change at beat %f, BPM %f", NoteRowToBeat(0), fBPM );
-			}
-			else
-			{
-				LOG->UserLog( "Song file", out.GetSongDir(), "has an invalid BPM change at beat %f, BPM %f.",
-						  NoteRowToBeat(0), fBPM );
-			}
-		}
-	}
-
-	NameToData_t::const_iterator it;
-	for( it = mapNameToData.lower_bound("#wav"); it != mapNameToData.end(); ++it )
-	{
-		const RString &sName = it->first;
-
-		if( sName.size() != 6 || sName.Left(4) != "#wav" )
-			continue;
-
-		// this is keysound file name.  Looks like "#WAV1A"
-		RString nData = it->second;
-		RString sWavID = sName.Right(2);
-		
-		// FIXME: garbled song names seem to crash the app.
-		// this might not be the best place to put this code.
-		if( !utf8_is_valid(nData) )
-			continue;
-		
-		/* Due to bugs in some programs, many BMS files have a "WAV" extension
-		 * on files in the BMS for files that actually have some other extension.
-		 * Do a search. Don't do a wildcard search; if sData is "song.wav",
-		 * we might also have "song.png", which we shouldn't match. */
-		if( !IsAFile(out.GetSongDir()+nData) )
-		{
-			const char *exts[] = { "oga", "ogg", "wav", "mp3", NULL }; // XXX: stop duplicating these everywhere
-			for( unsigned i = 0; exts[i] != NULL; ++i )
-			{
-				RString fn = SetExtension( nData, exts[i] );
-				if( IsAFile(out.GetSongDir()+fn) )
-				{
-					nData = fn;
-					break;
-				}
-			}
-		}
-		if( !IsAFile(out.GetSongDir()+nData) )
-			LOG->UserLog( "Song file", out.GetSongDir(), "references key \"%s\" that can't be found", nData.c_str() );
-
-		sWavID.MakeUpper();		// HACK: undo the MakeLower()
-		out.m_vsKeysoundFile.push_back( nData );
-		idToKeySoundIndexOut[ sWavID ] = out.m_vsKeysoundFile.size()-1;
-		LOG->Trace( "Inserting keysound index %u '%s'", unsigned(out.m_vsKeysoundFile.size()-1), sWavID.c_str() );
-	}
-		
-	// Time signature tags affect all other global timing tags, so read them first.
-	MeasureToTimeSig_t mapMeasureToTimeSig;
-	ReadTimeSigs( mapNameToData, mapMeasureToTimeSig );
-
-	for( it = mapNameToData.lower_bound("#00000"); it != mapNameToData.end(); ++it )
-	{
-		const RString &sName = it->first;
-		if( sName.size() != 6 || sName[0] != '#' || !IsAnInt( sName.substr(1,5) ) )
-			 continue;
-		// this is step or offset data.  Looks like "#00705"
-		int iMeasureNo	= atoi( sName.substr(1, 3).c_str() );
-		int iBMSTrackNo	= atoi( sName.substr(4, 2).c_str() );
-		int iStepIndex = GetMeasureStartRow( mapMeasureToTimeSig, iMeasureNo, sigAdjustmentsOut );
-		float fBeatsPerMeasure = GetBeatsPerMeasure( mapMeasureToTimeSig, iMeasureNo, sigAdjustmentsOut );
-		int iRowsPerMeasure = BeatToNoteRow( fBeatsPerMeasure );
-
-		RString nData = it->second;
-		int totalPairs = nData.size() / 2;
-		for( int i = 0; i < totalPairs; ++i )
-		{
-			RString sPair = nData.substr( i*2, 2 );
-
-			int iRow = iStepIndex + (i * iRowsPerMeasure) / totalPairs;
-			float fBeat = NoteRowToBeat( iRow );			
-			int iVal = 0;
-			sscanf( sPair, "%x", &iVal );
-
-			if (sPair == "00")
-			{
-				continue;
-			}
-			
-			switch( iBMSTrackNo )
-			{
-			case BMS_TRACK_BPM:
-				if( iVal > 0 )
-				{
-					out.SetBPMAtBeat( fBeat, (float) iVal );
-					LOG->Trace( "Inserting new BPM change at beat %f, BPM %i", fBeat, iVal );
-				}
-				else
-				{
-					LOG->UserLog( "Song file", out.GetSongDir(), "has an invalid BPM change at beat %f, BPM %d.",
-						      fBeat, iVal );
-				}
-				break;
-
-			case BMS_TRACK_BPM_REF:
-			{
-				RString sTagToLookFor = ssprintf( "#bpm%s", sPair.c_str() );
-				RString sBPM;
-				if( GetTagFromMap( mapNameToData, sTagToLookFor, sBPM ) )
-				{
-					float fBPM = StringToFloat( sBPM );
-					out.SetBPMAtBeat( fBeat, fBPM );
-				}
-				else
-				{
-					LOG->UserLog( "Song file", out.GetSongDir(), "has tag \"%s\" which cannot be found.", sTagToLookFor.c_str() );
-				}
-				break;
-			}
-			case BMS_TRACK_STOP:
-			{
-				if( iVal == 0 )
-				{
-					break;
-				}
-				RString sTagToLookFor = ssprintf( "#stop%02x", iVal );
-				RString sBeats;
-				if( GetTagFromMap( mapNameToData, sTagToLookFor, sBeats ) )
-				{
-					// find the BPM at the time of this freeze
-					float fBPS = out.m_Timing.GetBPMAtBeat(fBeat) / 60.0f;
-					float fBeats = StringToFloat( sBeats ) / 48.0f;
-					float fFreezeSecs = fBeats / fBPS;
-
-					StopSegment newSeg( BeatToNoteRow(fBeat), fFreezeSecs );
-					out.AddStopSegment( newSeg );
-					LOG->Trace( "Inserting new Freeze at beat %f, secs %f", fBeat, newSeg.m_fStopSeconds );
-				}
-				else
-				{
-					LOG->UserLog( "Song file", out.GetSongDir(), "has tag \"%s\" which cannot be found.", sTagToLookFor.c_str() );
-				}
-				break;
-			}
-			}
-		}
-
-	}
-
-	// Now that we're done reading BPMs, factor out weird time signatures.
-	SetTimeSigAdjustments( mapMeasureToTimeSig, out, sigAdjustmentsOut );
 }
 
 static void SlideDuplicateDifficulties( Song &p )
@@ -997,6 +1070,75 @@ void BMSLoader::GetApplicableFiles( const RString &sPath, vector<RString> &out )
 	GetDirListing( sPath + RString("*.bml"), out );
 }
 
+bool BMSLoader::LoadNoteDataFromSimfile( const RString & cachePath, Steps & out )
+{
+	Song dummy;
+	// TODO: Simplify this copy/paste from LoadFromDir.
+	
+	vector<NameToData_t> BMSData;
+	BMSData.push_back(NameToData_t());
+	ReadBMSFile(cachePath, BMSData.back());
+	
+	RString commonSubstring;
+	GetCommonTagFromMapList( BMSData, "#title", commonSubstring );
+	
+	Steps *copy = dummy.CreateSteps();
+	
+	copy->SetDifficulty( Difficulty_Medium );
+	RString sTag;
+	if( GetTagFromMap( BMSData[0], "#title", sTag ) && sTag.size() != commonSubstring.size() )
+	{
+		sTag = sTag.substr( commonSubstring.size(), sTag.size() - commonSubstring.size() );
+		sTag.MakeLower();
+		
+		if( sTag.find('l') != sTag.npos )
+		{
+			unsigned lPos = sTag.find('l');
+			if( lPos > 2 && sTag.substr(lPos-2,4) == "solo" )
+			{
+				copy->SetDifficulty( Difficulty_Edit );
+			}
+			else
+			{
+				copy->SetDifficulty( Difficulty_Easy );
+			}
+		}
+		else if( sTag.find('a') != sTag.npos )
+			copy->SetDifficulty( Difficulty_Hard );
+		else if( sTag.find('b') != sTag.npos )
+			copy->SetDifficulty( Difficulty_Beginner );
+	}
+	if( commonSubstring == "" )
+	{
+		copy->SetDifficulty(Difficulty_Medium);
+		RString sTag;
+		if (GetTagFromMap(BMSData[0], "#title#", sTag))
+			SearchForDifficulty(sTag, copy);
+	}
+	ReadGlobalTags( BMSData[0], dummy );
+	if( commonSubstring.size() > 2 && commonSubstring[commonSubstring.size() - 2] == ' ' )
+	{
+		switch( commonSubstring[commonSubstring.size() - 1] )
+		{
+			case '[':
+			case '(':
+			case '<':
+				commonSubstring = commonSubstring.substr(0, commonSubstring.size() - 2);
+			default:
+				break;
+		}
+	}
+	map<RString, int> mapFilenameToKeysoundIndex;
+
+	
+	const bool ok = LoadFromBMSFile( cachePath, BMSData[0], *copy, dummy, mapFilenameToKeysoundIndex );
+	if( ok )
+	{
+		out.SetNoteData(copy->GetNoteData());
+	}
+	return ok;
+}
+
 bool BMSLoader::LoadFromDir( const RString &sDir, Song &out )
 {
 	LOG->Trace( "Song::LoadFromBMSDir(%s)", sDir.c_str() );
@@ -1031,7 +1173,7 @@ bool BMSLoader::LoadFromDir( const RString &sDir, Song &out )
 	// Create a Steps for each.
 	vector<Steps*> apSteps;
 	for( unsigned i=0; i<arrayBMSFileNames.size(); i++ )
-		apSteps.push_back( new Steps );
+		apSteps.push_back( out.CreateSteps() );
 
 	// Now, with our fancy little substring, trim the titles and
 	// figure out where each goes.
@@ -1100,9 +1242,8 @@ bool BMSLoader::LoadFromDir( const RString &sDir, Song &out )
 		if( apSteps[i]->GetDifficulty() == Difficulty_Medium )
 			iMainDataIndex = i;
 
-	MeasureToTimeSig_t sigAdjustments;
-	map<RString,int> idToKeysoundIndex;
-	ReadGlobalTags( aBMSData[iMainDataIndex], out, sigAdjustments, idToKeysoundIndex );
+	ReadGlobalTags( aBMSData[iMainDataIndex], out );
+	out.m_sSongFileName = out.GetSongDir() + arrayBMSFileNames[iMainDataIndex];
 
 	// The brackets before the difficulty are in common substring, so remove them if it's found.
 	if( commonSubstring.size() > 2 && commonSubstring[commonSubstring.size() - 2] == ' ' )
@@ -1124,12 +1265,20 @@ bool BMSLoader::LoadFromDir( const RString &sDir, Song &out )
 
 	// Now that we've parsed the keysound data, load the Steps from the rest 
 	// of the .bms files.
+	map<RString, int> mapFilenameToKeysoundIndex;
 	for( unsigned i=0; i<arrayBMSFileNames.size(); i++ )
 	{
 		Steps* pNewNotes = apSteps[i];
-		const bool ok = LoadFromBMSFile( out.GetSongDir() + arrayBMSFileNames[i], aBMSData[i], *pNewNotes, sigAdjustments, idToKeysoundIndex );
+		const bool ok = LoadFromBMSFile( out.GetSongDir() + arrayBMSFileNames[i], aBMSData[i], *pNewNotes, out, mapFilenameToKeysoundIndex );
 		if( ok )
+		{
+			// set song's timing data to the main file.
+			if( i == static_cast<unsigned>(iMainDataIndex) )
+				out.m_SongTiming = pNewNotes->m_Timing;
+				
+			pNewNotes->SetFilename(out.GetSongDir() + arrayBMSFileNames[i]);
 			out.AddSteps( pNewNotes );
+		}
 		else
 			delete pNewNotes;
 	}

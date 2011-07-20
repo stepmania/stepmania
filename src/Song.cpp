@@ -41,7 +41,7 @@
  * @brief The internal version of the cache for StepMania.
  *
  * Increment this value to invalidate the current cache. */
-const int FILE_CACHE_VERSION = 171;
+const int FILE_CACHE_VERSION = 195;
 
 /** @brief How long does a song sample last by default? */
 const float DEFAULT_MUSIC_SAMPLE_LENGTH = 12.f;
@@ -69,9 +69,9 @@ Song::Song()
 	m_fMusicSampleStartSeconds = -1;
 	m_fMusicSampleLengthSeconds = DEFAULT_MUSIC_SAMPLE_LENGTH;
 	m_fMusicLengthSeconds = 0;
-	m_fFirstBeat = -1;
-	m_fLastBeat = -1;
-	m_fSpecifiedLastBeat = -1;
+	firstSecond = -1;
+	lastSecond = -1;
+	specifiedLastSecond = -1;
 	m_SelectionDisplay = SHOW_ALWAYS;
 	m_bEnabled = true;
 	m_DisplayBPMType = DISPLAY_BPM_ACTUAL;
@@ -98,6 +98,51 @@ void Song::DetachSteps()
 	m_vpSteps.clear();
 	FOREACH_ENUM( StepsType, st )
 		m_vpStepsByType[st].clear();
+}
+
+float Song::GetFirstSecond() const
+{
+	return this->firstSecond;
+}
+
+float Song::GetFirstBeat() const
+{
+	return this->m_SongTiming.GetBeatFromElapsedTime(this->firstSecond);
+}
+
+float Song::GetLastSecond() const
+{
+	return this->lastSecond;
+}
+
+float Song::GetLastBeat() const
+{
+	return this->m_SongTiming.GetBeatFromElapsedTime(this->lastSecond);
+}
+
+float Song::GetSpecifiedLastSecond() const
+{
+	return this->specifiedLastSecond;
+}
+
+float Song::GetSpecifiedLastBeat() const
+{
+	return this->m_SongTiming.GetBeatFromElapsedTime(this->specifiedLastSecond);
+}
+
+void Song::SetFirstSecond(const float f)
+{
+	this->firstSecond = f;
+}
+
+void Song::SetLastSecond(const float f)
+{
+	this->lastSecond = f;
+}
+
+void Song::SetSpecifiedLastSecond(const float f)
+{
+	this->specifiedLastSecond = f;
 }
 
 // Reset to an empty song.
@@ -145,6 +190,23 @@ void Song::AddLyricSegment( LyricSegment seg )
 	m_LyricSegments.push_back( seg );
 }
 
+Steps *Song::CreateSteps()
+{
+	Steps *pSteps = new Steps;
+	InitSteps( pSteps );
+	return pSteps;
+}
+
+void Song::InitSteps(Steps *pSteps)
+{
+	pSteps->m_Timing = this->m_SongTiming;
+	pSteps->m_sAttackString = this->m_sAttackString;
+	pSteps->m_Attacks = this->m_Attacks;
+	pSteps->SetDisplayBPM(this->m_DisplayBPMType);
+	pSteps->SetMinBPM(this->m_fSpecifiedBPMMin);
+	pSteps->SetMaxBPM(this->m_fSpecifiedBPMMax);
+}
+
 void Song::GetDisplayBpms( DisplayBpms &AddTo ) const
 {
 	if( m_DisplayBPMType == DISPLAY_BPM_SPECIFIED )
@@ -155,7 +217,7 @@ void Song::GetDisplayBpms( DisplayBpms &AddTo ) const
 	else
 	{
 		float fMinBPM, fMaxBPM;
-		m_Timing.GetActualBPM( fMinBPM, fMaxBPM );
+		m_SongTiming.GetActualBPM( fMinBPM, fMaxBPM );
 		AddTo.Add( fMinBPM );
 		AddTo.Add( fMaxBPM );
 	}
@@ -178,7 +240,9 @@ RString Song::GetCacheFilePath() const
 // Get a path to the SM containing data for this song. It might be a cache file.
 const RString &Song::GetSongFilePath() const
 {
-	ASSERT( !m_sSongFileName.empty() );
+	ASSERT_M( !m_sSongFileName.empty(),
+		 ssprintf("The song %s has no filename associated with it!",
+			  this->m_sMainTitle.c_str()));
 	return m_sSongFileName;
 }
 
@@ -194,7 +258,7 @@ static set<RString> BlacklistedImages;
 bool Song::LoadFromSongDir( RString sDir )
 {
 //	LOG->Trace( "Song::LoadFromSongDir(%s)", sDir.c_str() );
-	ASSERT( sDir != "" );
+	ASSERT_M( sDir != "", "Songs can't be loaded from an empty directory!" );
 
 	// make sure there is a trailing slash at the end of sDir
 	if( sDir.Right(1) != "/" )
@@ -222,15 +286,19 @@ bool Song::LoadFromSongDir( RString sDir )
 
 	if( bUseCache )
 	{
-//		LOG->Trace( "Loading '%s' from cache file '%s'.", m_sSongDir.c_str(), GetCacheFilePath().c_str() );
-		bool bLoadedFromSSC = SSCLoader::LoadFromSSCFile( sCacheFilePath, *this, true );
-		if( bLoadedFromSSC )
-			SSCLoader::TidyUpData( *this, true );
-		else
+		/*
+		LOG->Trace("Loading '%s' from cache file '%s'.",
+				   m_sSongDir.c_str(),
+				   GetCacheFilePath().c_str());
+		*/
+		SSCLoader loaderSSC;
+		bool bLoadedFromSSC = loaderSSC.LoadFromSimfile( sCacheFilePath, *this, true );
+		if( !bLoadedFromSSC )
 		{
 			// load from .sm
-			SMLoader::LoadFromSMFile( sCacheFilePath, *this, true );
-			SMLoader::TidyUpData( *this, true );
+			SMLoader loaderSM;
+			loaderSM.LoadFromSimfile( sCacheFilePath, *this, true );
+			loaderSM.TidyUpData( *this, true );
 		}
 	}
 	else
@@ -240,7 +308,7 @@ bool Song::LoadFromSongDir( RString sDir )
 
 		if( !NotesLoader::LoadFromDir(sDir, *this, BlacklistedImages) )
 		{
-			LOG->UserLog( "Song", sDir, "has no SM, DWI, BMS, or KSF files." );
+			LOG->UserLog( "Song", sDir, "has no SSC, SM, SMA, DWI, BMS, or KSF files." );
 
 			vector<RString> vs;
 			GetDirListing( sDir + "*.mp3", vs, false, false ); 
@@ -253,10 +321,14 @@ bool Song::LoadFromSongDir( RString sDir )
 				LOG->UserLog( "Song", sDir, "has no music file either. Ignoring this song directory." );
 				return false;
 			}
-
+			// Make sure we have a future filename figured out.
+			vector<RString> folders;
+			split(sDir, "/", folders);
+			RString songName = folders[2] + ".ssc";
+			this->m_sSongFileName = sDir + songName;
 			// Continue on with a blank Song so that people can make adjustments using the editor.
 		}
-		TidyUpData();
+		TidyUpData(false, true);
 
 		// save a cache file so we don't have to parse it all over again next time
 		if( !SaveToCacheFile() )
@@ -265,8 +337,6 @@ bool Song::LoadFromSongDir( RString sDir )
 
 	FOREACH( Steps*, m_vpSteps, s )
 	{
-		(*s)->SetFilename( sCacheFilePath );
-
 		/* Compress all Steps. During initial caching, this will remove cached
 		 * NoteData; during cached loads, this will just remove cached SMData. */
 		(*s)->Compress();
@@ -318,13 +388,13 @@ bool Song::ReloadFromSongDir( RString sDir )
 	FOREACH_ENUM( StepsType, i )
 		m_vpStepsByType[i].clear();
 
-	// Then we copy as many Steps as possible on top of the old pointers.
-	// The only pointers that change are pointers to Steps that are not in the
-	// reverted file, which we delete, and pointers to Steps that are in the
-	// reverted file but not the original *this, which we create new copies of.
-	// We have to go through these hoops because many places assume the Steps
-	// pointers don't change - even though there are other ways they can change,
-	// such as deleting a Steps via the editor.
+	/* Then we copy as many Steps as possible on top of the old pointers.
+	 * The only pointers that change are pointers to Steps that are not in the
+	 * reverted file, which we delete, and pointers to Steps that are in the
+	 * reverted file but not the original *this, which we create new copies of.
+	 * We have to go through these hoops because many places assume the Steps
+	 * pointers don't change - even though there are other ways they can change,
+	 * such as deleting a Steps via the editor. */
 	for( vector<Steps*>::const_iterator itOld = vOldSteps.begin(); itOld != vOldSteps.end(); ++itOld )
 	{
 		StepsID id;
@@ -378,7 +448,7 @@ void FixupPath( RString &path, const RString &sSongPath )
 }
 
 // Songs in BlacklistImages will never be autodetected as song images.
-void Song::TidyUpData()
+void Song::TidyUpData( bool fromCache, bool duringCache )
 {
 	// We need to do this before calling any of HasMusic, HasHasCDTitle, etc.
 	ASSERT_M( m_sSongDir.Left(3) != "../", m_sSongDir ); // meaningless
@@ -451,18 +521,31 @@ void Song::TidyUpData()
 	else	// ! HasMusic()
 	{
 		m_fMusicLengthSeconds = 100; // guess
-		LOG->UserLog( "Song", GetSongDir(), "has no music file; guessing at %f seconds", m_fMusicLengthSeconds );
+		LOG->UserLog("Song",
+					 GetSongDir(),
+					 "has no music file; guessing at %f seconds",
+					 m_fMusicLengthSeconds);
 	}
 
 	if( m_fMusicLengthSeconds < 0 )
 	{
-		LOG->UserLog( "Sound file", GetMusicPath(), "has a negative length %f.", m_fMusicLengthSeconds );
+		LOG->UserLog("Sound file",
+					 GetMusicPath(),
+					 "has a negative length %f.",
+					 m_fMusicLengthSeconds);
 		m_fMusicLengthSeconds = 0;
+	}
+
+	m_SongTiming.TidyUpData();
+	
+	FOREACH( Steps *, m_vpSteps, s )
+	{
+		(*s)->m_Timing.TidyUpData();
 	}
 
 	/* Generate these before we autogen notes, so the new notes can inherit
 	 * their source's values. */
-	ReCalculateRadarValuesAndLastBeat();
+	ReCalculateRadarValuesAndLastSecond( fromCache, true );
 
 	Trim( m_sMainTitle );
 	Trim( m_sSubTitle );
@@ -470,35 +553,26 @@ void Song::TidyUpData()
 
 	// Fall back on the song directory name.
 	if( m_sMainTitle == "" )
-		NotesLoader::GetMainAndSubTitlesFromFullTitle( Basename(this->GetSongDir()), m_sMainTitle, m_sSubTitle );
+		NotesLoader::GetMainAndSubTitlesFromFullTitle(Basename(this->GetSongDir()),
+													  m_sMainTitle, m_sSubTitle );
 
 	if( m_sArtist == "" )
 		m_sArtist = "Unknown artist";
 	TranslateTitles();
 
-	if( m_Timing.m_BPMSegments.empty() )
-	{
-		LOG->UserLog( "Song file", m_sSongDir + m_sSongFileName, "has no BPM segments, default provided." );
-
-		m_Timing.AddBPMSegment( BPMSegment(0, 60) );
-	}
-
-	// Make sure the first BPM segment starts at beat 0.
-	if( m_Timing.m_BPMSegments[0].m_iStartRow != 0 )
-		m_Timing.m_BPMSegments[0].m_iStartRow = 0;
-
-
 	if( m_fMusicSampleStartSeconds == -1 ||
 		m_fMusicSampleStartSeconds == 0 ||
 		m_fMusicSampleStartSeconds+m_fMusicSampleLengthSeconds > this->m_fMusicLengthSeconds )
 	{
-		m_fMusicSampleStartSeconds = this->GetElapsedTimeFromBeat( 100 );
+		const TimingData &timing = this->m_SongTiming;
+		m_fMusicSampleStartSeconds = timing.GetElapsedTimeFromBeat( 100 );
 
 		if( m_fMusicSampleStartSeconds+m_fMusicSampleLengthSeconds > this->m_fMusicLengthSeconds )
 		{
-			int iBeat = lrintf( m_fLastBeat/2 );
+			// Attempt to get a reasonable default.
+			int iBeat = lrintf(this->m_SongTiming.GetBeatFromElapsedTime(this->GetLastSecond())/2);
 			iBeat -= iBeat%4;
-			m_fMusicSampleStartSeconds = this->GetElapsedTimeFromBeat( (float)iBeat );
+			m_fMusicSampleStartSeconds = timing.GetElapsedTimeFromBeat( (float)iBeat );
 		}
 	}
 
@@ -594,7 +668,8 @@ void Song::TidyUpData()
 			m_sLyricsFile = arrayLyricFiles[0];
 	}
 
-	// Now, For the images we still haven't found, look at the image dimensions of the remaining unclassified images.
+	/* Now, For the images we still haven't found,
+	 * look at the image dimensions of the remaining unclassified images. */
 	vector<RString> arrayImages;
 	GetImageDirListing( m_sSongDir + "*", arrayImages );
 
@@ -640,12 +715,6 @@ void Song::TidyUpData()
 		if( !HasBackground()  &&  width >= 320  &&  height >= 240 )
 		{
 			m_sBackgroundFile = arrayImages[i];
-			continue;
-		}
-
-		if( !HasBanner() && Sprite::IsDiagonalBanner(width, height) )
-		{
-			m_sBannerFile = arrayImages[i];
 			continue;
 		}
 
@@ -711,7 +780,12 @@ void Song::TidyUpData()
 		/* Use this->GetBeatFromElapsedTime(0) instead of 0 to start when the
 		 * music starts. */
 		if( arrayPossibleMovies.size() == 1 )
-			this->AddBackgroundChange( BACKGROUND_LAYER_1, BackgroundChange(0,arrayPossibleMovies[0],"",1.f,SBE_StretchNoLoop) );
+			this->AddBackgroundChange(BACKGROUND_LAYER_1,
+									BackgroundChange(0,
+									arrayPossibleMovies[0],
+									"",
+									1.f,
+									SBE_StretchNoLoop));
 	}
 
 
@@ -719,96 +793,6 @@ void Song::TidyUpData()
 	 * for edits). We should be able to use difficulty names as unique
 	 * identifiers for steps. */
 	SongUtil::AdjustDuplicateSteps( this );
-
-	{
-		/* Generated filename; this doesn't always point to a loadable file,
-		 * but instead points to the file we should write changed files to,
-		 * and will always be a .SSC.
-		 *
-		 * This is a little tricky. We can't always use the song title directly,
-		 * since it might contain characters we can't store in filenames. Two
-		 * easy options: we could manually filter out invalid characters, or we
-		 * could use the name of the directory, which is always a valid filename
-		 * and should always be the same as the song. The former might not catch
-		 * everything--filename restrictions are platform-specific; we might even
-		 * be on an 8.3 filesystem, so let's do the latter.
-		 *
-		 * We can't rely on searching for other data filenames; it works for DWIs,
-		 * but not KSFs and BMSs.
-		 *
-		 * So, let's do this (by priority):
-		 * 1. If there's a .SSC file, use that filename. No reason to use anything
-		 *    else; it's the filename in use.
-		 * 2. If there's an .SM, use it with a changed extension.
-		 * 3. If there's a .DWI, use it with a changed extension.
-		 * 4. Otherwise, use the name of the directory, since it's definitely a valid
-		 *    filename, and should always be the title of the song (unlike KSFs). */
-		m_sSongFileName = m_sSongDir;
-		vector<RString> asFileNames;
-		do
-		{
-			GetDirListing( m_sSongDir+"*.ssc", asFileNames );
-			if( !asFileNames.empty() )
-			{
-				m_sSongFileName += asFileNames[0];
-				break;
-			}
-			
-			GetDirListing( m_sSongDir+"*.sma", asFileNames );
-			if (!asFileNames.empty() )
-			{
-				m_sSongFileName += SetExtension( asFileNames[0], "ssc" );
-				break;
-			}
-			
-			GetDirListing( m_sSongDir+"*.sm", asFileNames );
-			if( !asFileNames.empty() )
-			{
-				m_sSongFileName += SetExtension( asFileNames[0], "ssc" );
-				break;
-			}
-			
-			GetDirListing( m_sSongDir+"*.dwi", asFileNames );
-			if( !asFileNames.empty() ) {
-				m_sSongFileName += SetExtension( asFileNames[0], "ssc" );
-				break;
-			}
-			m_sSongFileName += Basename(m_sSongDir);
-			m_sSongFileName += ".ssc";
-		} while(0);
-	}
-
-	// If no time signature specified, assume 4/4 time for the whole song.
-	if( m_Timing.m_vTimeSignatureSegments.empty() )
-	{
-		TimeSignatureSegment seg(0, 4, 4);
-		m_Timing.m_vTimeSignatureSegments.push_back( seg );
-	}
-	
-	/*
-	 * Likewise, if no tickcount signature is specified, assume 2 ticks
-	 * per beat for the entire song. The default of 2 is chosen more
-	 * for compatibility with the Pump Pro series than anything else.
-	 */
-	if( m_Timing.m_TickcountSegments.empty() )
-	{
-		TickcountSegment seg(0, 2);
-		m_Timing.m_TickcountSegments.push_back( seg );
-	}
-	
-	// Have a default combo segment of one just in case.
-	if( m_Timing.m_ComboSegments.empty() )
-	{
-		ComboSegment seg(0, 1);
-		m_Timing.m_ComboSegments.push_back( seg );
-	}
-	
-	// Have a default label segment just in case.
-	if( m_Timing.m_LabelSegments.empty() )
-	{
-		LabelSegment seg(0, "Song Start");
-		m_Timing.m_LabelSegments.push_back( seg );
-	}
 }
 
 void Song::TranslateTitles()
@@ -816,15 +800,26 @@ void Song::TranslateTitles()
 	static TitleSubst tsub("Songs");
 
 	TitleFields title;
-	title.LoadFromStrings( m_sMainTitle, m_sSubTitle, m_sArtist, m_sMainTitleTranslit, m_sSubTitleTranslit, m_sArtistTranslit );
+	title.LoadFromStrings(m_sMainTitle, m_sSubTitle, m_sArtist,
+						  m_sMainTitleTranslit, m_sSubTitleTranslit, m_sArtistTranslit );
 	tsub.Subst( title );
-	title.SaveToStrings( m_sMainTitle, m_sSubTitle, m_sArtist, m_sMainTitleTranslit, m_sSubTitleTranslit, m_sArtistTranslit );
+	title.SaveToStrings(m_sMainTitle, m_sSubTitle, m_sArtist,
+						m_sMainTitleTranslit, m_sSubTitleTranslit, m_sArtistTranslit );
 }
 
-void Song::ReCalculateRadarValuesAndLastBeat()
+void Song::ReCalculateRadarValuesAndLastSecond(bool fromCache, bool duringCache)
 {
-	float fFirstBeat = FLT_MAX; // inf
-	float fLastBeat = m_fSpecifiedLastBeat; // Make sure we're at least as long as the specified amount.
+	if( fromCache && this->GetFirstSecond() >= 0 && this->GetLastSecond() > 0 )
+	{
+		// this is loaded from cache, then we just have to calculate the radar values.
+		for( unsigned i=0; i<m_vpSteps.size(); i++ )
+			m_vpSteps[i]->CalculateRadarValues( m_fMusicLengthSeconds );
+		return;
+	}
+
+	float localFirst = FLT_MAX; // inf
+	// Make sure we're at least as long as the specified amount below.
+	float localLast = this->specifiedLastSecond;
 
 	for( unsigned i=0; i<m_vpSteps.size(); i++ )
 	{
@@ -832,37 +827,47 @@ void Song::ReCalculateRadarValuesAndLastBeat()
 
 		pSteps->CalculateRadarValues( m_fMusicLengthSeconds );
 
-		// calculate lastBeat
+		// Must initialize before the gotos.
+		NoteData tempNoteData;
+		pSteps->GetNoteData( tempNoteData );
+		
+		// calculate lastSecond
 
 		// If it's autogen, then first/last beat will come from the parent.
 		if( pSteps->IsAutogen() )
-			continue;
+			goto wipe_notedata;
 
 		/* Don't calculate with edits unless the song only contains an edit
 		 * chart, like those in Mungyodance 3. Otherwise, edits installed on
 		 * the machine could extend the length of the song. */
 		if( pSteps->IsAnEdit() && m_vpSteps.size() > 1 )
-			continue;
+			goto wipe_notedata;
 
 		// Don't set first/last beat based on lights.  They often start very 
 		// early and end very late.
 		if( pSteps->m_StepsType == StepsType_lights_cabinet )
-			continue;
-
-		NoteData tempNoteData;
-		pSteps->GetNoteData( tempNoteData );
+			continue; // no need to wipe this.
 
 		/* Many songs have stray, empty song patterns. Ignore them, so they
 		 * don't force the first beat of the whole song to 0. */
-		if( tempNoteData.GetLastRow() == 0 )
-			continue;
-
-		fFirstBeat = min( fFirstBeat, tempNoteData.GetFirstBeat() );
-		fLastBeat = max( fLastBeat, tempNoteData.GetLastBeat() );
+		if( tempNoteData.GetLastRow() != 0 )
+		{
+			localFirst = min(localFirst,
+				 pSteps->m_Timing.GetElapsedTimeFromBeat(tempNoteData.GetFirstBeat()));
+			localLast = max(localLast,
+				pSteps->m_Timing.GetElapsedTimeFromBeat(tempNoteData.GetLastBeat()));
+		}
+	wipe_notedata:
+		if (duringCache)
+		{
+			NoteData dummy;
+			dummy.SetNumTracks(tempNoteData.GetNumTracks());
+			pSteps->SetNoteData(dummy);
+		}
 	}
 
-	m_fFirstBeat = fFirstBeat;
-	m_fLastBeat = fLastBeat;
+	this->firstSecond = localFirst;
+	this->lastSecond = localLast;
 }
 
 // Return whether the song is playable in the given style.
@@ -885,8 +890,14 @@ void Song::Save()
 {
 	LOG->Trace( "Song::SaveToSongFile()" );
 
-	ReCalculateRadarValuesAndLastBeat();
+	ReCalculateRadarValuesAndLastSecond();
 	TranslateTitles();
+	
+	// TODO: Figure out a better way to save to Song's timing data.
+	if( m_vpSteps.size() == 1 )
+	{
+		m_SongTiming = m_vpSteps[0]->m_Timing;
+	}
 
 	// Save the new files. These calls make backups on their own.
 	if( !SaveToSSCFile(GetSongFilePath(), false) )
@@ -946,11 +957,15 @@ bool Song::SaveToSMFile()
 
 bool Song::SaveToSSCFile( RString sPath, bool bSavingCache )
 {
-	LOG->Trace( "Song::SaveToSSCFile('%s')", sPath.c_str() );
+	RString path = sPath;
+	if (!bSavingCache)
+		path = SetExtension(sPath, "ssc");
+	
+	LOG->Trace( "Song::SaveToSSCFile('%s')", path.c_str() );
 
 	// If the file exists, make a backup.
-	if( !bSavingCache && IsAFile(sPath) )
-		FileCopy( sPath, sPath + ".old" );
+	if( !bSavingCache && IsAFile(path) )
+		FileCopy( path, path + ".old" );
 
 	vector<Steps*> vpStepsToSave;
 	FOREACH_CONST( Steps*, m_vpSteps, s ) 
@@ -963,16 +978,23 @@ bool Song::SaveToSSCFile( RString sPath, bool bSavingCache )
 		if( pSteps->WasLoadedFromProfile() )
 			continue;
 
+		if (!bSavingCache)
+			pSteps->SetFilename(path);
 		vpStepsToSave.push_back( pSteps );
 	}
+	
+	if (bSavingCache)
+	{
+		return NotesWriterSSC::Write(path, *this, vpStepsToSave, bSavingCache);
+	}
 
-	if( !NotesWriterSSC::Write(sPath, *this, vpStepsToSave, bSavingCache) )
+	if( !NotesWriterSSC::Write(path, *this, vpStepsToSave, bSavingCache) )
 		return false;
 
-	if( !bSavingCache && g_BackUpAllSongSaves.Get() )
+	if( g_BackUpAllSongSaves.Get() )
 	{
-		RString sExt = GetExtension( sPath );
-		RString sBackupFile = SetExtension( sPath, "" );
+		RString sExt = GetExtension( path );
+		RString sBackupFile = SetExtension( path, "" );
 
 		time_t cur_time;
 		time( &cur_time );
@@ -984,18 +1006,15 @@ bool Song::SaveToSSCFile( RString sPath, bool bSavingCache )
 		sBackupFile = SetExtension( sBackupFile, sExt );
 		sBackupFile += ssprintf( ".old" );
 
-		if( FileCopy(sPath, sBackupFile) )
-			LOG->Trace( "Backed up %s to %s", sPath.c_str(), sBackupFile.c_str() );
+		if( FileCopy(path, sBackupFile) )
+			LOG->Trace( "Backed up %s to %s", path.c_str(), sBackupFile.c_str() );
 		else
-			LOG->Trace( "Failed to back up %s to %s", sPath.c_str(), sBackupFile.c_str() );
+			LOG->Trace( "Failed to back up %s to %s", path.c_str(), sBackupFile.c_str() );
 	}
 
-	if( !bSavingCache )
-	{
-		// Mark these steps saved to disk.
-		FOREACH( Steps*, vpStepsToSave, s )
-			(*s)->SetSavedToDisk( true );
-	}
+	// Mark these steps saved to disk.
+	FOREACH( Steps*, vpStepsToSave, s )
+		(*s)->SetSavedToDisk( true );
 
 	return true;
 }
@@ -1004,13 +1023,7 @@ bool Song::SaveToCacheFile()
 {
 	SONGINDEX->AddCacheIndex(m_sSongDir, GetHashForDirectory(m_sSongDir));
 	const RString sPath = GetCacheFilePath();
-	if( !SaveToSSCFile(sPath, true) )
-		return false;
-
-	FOREACH( Steps*, m_vpSteps, pSteps )
-		(*pSteps)->SetFilename( sPath );
-
-	return true;
+	return SaveToSSCFile(sPath, true);
 }
 
 bool Song::SaveToDWIFile()
@@ -1169,9 +1182,6 @@ bool Song::HasEdits( StepsType st ) const
 	return false;
 }
 
-/* Return false if the song should not be displayed for selection in normal
- * gameplay (but may still be available in random selection, during extra
- * stages, or in other special conditions). */
 bool Song::NormallyDisplayed() const
 {
 	return UNLOCKMAN == NULL || !UNLOCKMAN->SongIsLocked(this);
@@ -1189,14 +1199,26 @@ bool Song::HasMusic() const
 
 	return m_sMusicFile != "" && IsAFile(GetMusicPath());
 }
-bool Song::HasBanner() const 		{return m_sBannerFile != ""		&& IsAFile(GetBannerPath()); }
+bool Song::HasBanner() const
+{
+	return m_sBannerFile != "" && IsAFile(GetBannerPath());
+}
 bool Song::HasInstrumentTrack( InstrumentTrack it ) const
 {
-	return m_sInstrumentTrackFile[it] != ""  &&  IsAFile(GetInstrumentTrackPath(it));
+	return m_sInstrumentTrackFile[it] != "" && IsAFile(GetInstrumentTrackPath(it));
 }
-bool Song::HasLyrics() const		{return m_sLyricsFile != ""		&& IsAFile(GetLyricsPath()); }
-bool Song::HasBackground() const 	{return m_sBackgroundFile != ""		&& IsAFile(GetBackgroundPath()); }
-bool Song::HasCDTitle() const 	{return m_sCDTitleFile != ""		&& IsAFile(GetCDTitlePath()); }
+bool Song::HasLyrics() const
+{
+	return m_sLyricsFile != "" && IsAFile(GetLyricsPath());
+}
+bool Song::HasBackground() const
+{
+	return m_sBackgroundFile != "" && IsAFile(GetBackgroundPath());
+}
+bool Song::HasCDTitle() const
+{
+	return m_sCDTitleFile != ""	&& IsAFile(GetCDTitlePath());
+}
 bool Song::HasBGChanges() const
 {
 	FOREACH_BackgroundLayer( i )
@@ -1227,6 +1249,45 @@ vector<BackgroundChange> &Song::GetForegroundChanges()
 	return *m_ForegroundChanges.Get();
 }
 
+vector<RString> Song::GetChangesToVectorString(const vector<BackgroundChange> & changes) const
+{
+	vector<RString> ret;
+	FOREACH_CONST( BackgroundChange, changes, bgc )
+	{
+		ret.push_back((*bgc).ToString());
+	}
+	return ret;
+}
+
+vector<RString> Song::GetBGChanges1ToVectorString() const
+{
+	return this->GetChangesToVectorString(this->GetBackgroundChanges(BACKGROUND_LAYER_1));
+}
+
+vector<RString> Song::GetBGChanges2ToVectorString() const
+{
+	return this->GetChangesToVectorString(this->GetBackgroundChanges(BACKGROUND_LAYER_2));
+}
+
+vector<RString> Song::GetFGChanges1ToVectorString() const
+{
+	return this->GetChangesToVectorString(this->GetForegroundChanges());
+}
+
+vector<RString> Song::GetInstrumentTracksToVectorString() const
+{
+	vector<RString> ret;
+	FOREACH_ENUM(InstrumentTrack, it)
+	{
+		if (this->HasInstrumentTrack(it))
+		{
+			ret.push_back(InstrumentTrackToString(it)
+				      + "="
+				      + this->m_sInstrumentTrackFile[it]);
+		}
+	}
+	return ret;
+}
 
 RString GetSongAssetPath( RString sPath, const RString &sSongPath )
 {
@@ -1453,7 +1514,7 @@ bool Song::IsEditAlreadyLoaded( Steps* pSteps ) const
 
 bool Song::HasSignificantBpmChangesOrStops() const
 {
-	if( m_Timing.HasStops() )
+	if( m_SongTiming.HasStops() )
 		return true;
 
 	// Don't consider BPM changes that only are only for maintaining sync as 
@@ -1463,7 +1524,7 @@ bool Song::HasSignificantBpmChangesOrStops() const
 		if( m_fSpecifiedBPMMin != m_fSpecifiedBPMMax )
 			return true;
 	}
-	else if( m_Timing.HasBpmChanges() )
+	else if( m_SongTiming.HasBpmChanges() )
 	{
 		return true;
 	}
@@ -1473,12 +1534,12 @@ bool Song::HasSignificantBpmChangesOrStops() const
 
 float Song::GetStepsSeconds() const
 {
-	return GetElapsedTimeFromBeat( m_fLastBeat ) - GetElapsedTimeFromBeat( m_fFirstBeat );
+	return this->GetLastSecond() - this->GetFirstSecond();
 }
 
 bool Song::IsLong() const
 {
-	return !IsMarathon() && m_fMusicLengthSeconds > g_fLongVerSongSeconds;
+	return !IsMarathon() && m_fMusicLengthSeconds >= g_fLongVerSongSeconds;
 }
 
 bool Song::IsMarathon() const
@@ -1493,16 +1554,46 @@ bool Song::IsMarathon() const
 class LunaSong: public Luna<Song>
 {
 public:
-	static int GetDisplayFullTitle( T* p, lua_State *L )	{ lua_pushstring(L, p->GetDisplayFullTitle() ); return 1; }
-	static int GetTranslitFullTitle( T* p, lua_State *L )	{ lua_pushstring(L, p->GetTranslitFullTitle() ); return 1; }
-	static int GetDisplayMainTitle( T* p, lua_State *L )	{ lua_pushstring(L, p->GetDisplayMainTitle() ); return 1; }
-	static int GetTranslitMainTitle( T* p, lua_State *L )	{ lua_pushstring(L, p->GetTranslitMainTitle() ); return 1; }
-	static int GetDisplaySubTitle( T* p, lua_State *L )	{ lua_pushstring(L, p->GetDisplaySubTitle() ); return 1; }
-	static int GetTranslitSubTitle( T* p, lua_State *L )	{ lua_pushstring(L, p->GetTranslitSubTitle() ); return 1; }
-	static int GetDisplayArtist( T* p, lua_State *L )	{ lua_pushstring(L, p->GetDisplayArtist() ); return 1; }
-	static int GetTranslitArtist( T* p, lua_State *L )	{ lua_pushstring(L, p->GetTranslitArtist() ); return 1; }
-	static int GetGenre( T* p, lua_State *L )		{ lua_pushstring(L, p->m_sGenre ); return 1; }
-	static int GetOrigin( T* p, lua_State *L )		{ lua_pushstring(L, p->m_sOrigin ); return 1; }
+	static int GetDisplayFullTitle( T* p, lua_State *L )
+	{
+		lua_pushstring(L, p->GetDisplayFullTitle() ); return 1;
+	}
+	static int GetTranslitFullTitle( T* p, lua_State *L )
+	{
+		lua_pushstring(L, p->GetTranslitFullTitle() ); return 1;
+	}
+	static int GetDisplayMainTitle( T* p, lua_State *L )
+	{
+		lua_pushstring(L, p->GetDisplayMainTitle() ); return 1;
+	}
+	static int GetTranslitMainTitle( T* p, lua_State *L )
+	{
+		lua_pushstring(L, p->GetTranslitMainTitle() ); return 1;
+	}
+	static int GetDisplaySubTitle( T* p, lua_State *L )
+	{
+		lua_pushstring(L, p->GetDisplaySubTitle() ); return 1;
+	}
+	static int GetTranslitSubTitle( T* p, lua_State *L )
+	{
+		lua_pushstring(L, p->GetTranslitSubTitle() ); return 1;
+	}
+	static int GetDisplayArtist( T* p, lua_State *L )
+	{
+		lua_pushstring(L, p->GetDisplayArtist() ); return 1;
+	}
+	static int GetTranslitArtist( T* p, lua_State *L )
+	{
+		lua_pushstring(L, p->GetTranslitArtist() ); return 1;
+	}
+	static int GetGenre( T* p, lua_State *L )
+	{
+		lua_pushstring(L, p->m_sGenre ); return 1;
+	}
+	static int GetOrigin( T* p, lua_State *L )
+	{
+		lua_pushstring(L, p->m_sOrigin ); return 1;
+	}
 	static int GetAllSteps( T* p, lua_State *L )
 	{
 		const vector<Steps*> &v = p->GetAllSteps();
@@ -1516,19 +1607,91 @@ public:
 		LuaHelpers::CreateTableFromArray<Steps*>( v, L );
 		return 1;
 	}
-	static int GetSongDir( T* p, lua_State *L )		{ lua_pushstring(L, p->GetSongDir() ); return 1; }
-	static int GetMusicPath( T* p, lua_State *L )	{ RString s = p->GetMusicPath(); if( s.empty() ) return 0; lua_pushstring(L, s); return 1; }
-	static int GetBannerPath( T* p, lua_State *L )		{ RString s = p->GetBannerPath(); if( s.empty() ) return 0; LuaHelpers::Push(L, s); return 1; }
-	static int GetBackgroundPath( T* p, lua_State *L )	{ RString s = p->GetBackgroundPath(); if( s.empty() ) return 0; lua_pushstring(L, s); return 1; }
-	static int GetCDTitlePath( T* p, lua_State *L )		{ RString s = p->GetCDTitlePath(); if( s.empty() ) return 0; LuaHelpers::Push(L, s); return 1; }
-	static int GetLyricsPath( T* p, lua_State *L )	{ RString s = p->GetLyricsPath(); if( s.empty() ) return 0; lua_pushstring(L, s); return 1; }
-	static int GetSongFilePath(  T* p, lua_State *L )	{ lua_pushstring(L, p->GetSongFilePath() ); return 1; }
-	static int IsTutorial( T* p, lua_State *L )		{ lua_pushboolean(L, p->IsTutorial()); return 1; }
-	static int IsEnabled( T* p, lua_State *L )		{ lua_pushboolean(L, p->GetEnabled()); return 1; }
-	static int GetGroupName( T* p, lua_State *L )		{ lua_pushstring(L, p->m_sGroupName); return 1; }
-	static int MusicLengthSeconds( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_fMusicLengthSeconds); return 1; }
-	static int IsLong( T* p, lua_State *L )			{ lua_pushboolean(L, p->IsLong()); return 1; }
-	static int IsMarathon( T* p, lua_State *L )		{ lua_pushboolean(L, p->IsMarathon()); return 1; }
+	static int GetSongDir( T* p, lua_State *L )	
+	{ 
+		lua_pushstring(L, p->GetSongDir() );
+		return 1; 
+	}
+	static int GetMusicPath( T* p, lua_State *L )
+	{
+		RString s = p->GetMusicPath();
+		if( !s.empty() )
+			lua_pushstring(L, s);
+		else
+			lua_pushnil(L);
+		return 1;
+	}
+	static int GetBannerPath( T* p, lua_State *L )
+	{
+		RString s = p->GetBannerPath();
+		if( !s.empty() )
+			lua_pushstring(L, s);
+		else
+			lua_pushnil(L);
+		return 1;
+	}
+	static int GetBackgroundPath( T* p, lua_State *L )
+	{
+		RString s = p->GetBackgroundPath();
+		if( !s.empty() ) 
+			lua_pushstring(L, s);
+		else
+			lua_pushnil(L);
+		return 1; 
+	}
+	static int GetCDTitlePath( T* p, lua_State *L )
+	{ 
+		RString s = p->GetCDTitlePath();
+		if( !s.empty() )
+			lua_pushstring(L, s);
+		else
+			lua_pushnil(L);
+		return 1;
+	}
+	static int GetLyricsPath( T* p, lua_State *L )
+	{
+		RString s = p->GetLyricsPath();
+		if( !s.empty() )
+			lua_pushstring(L, s);
+		else
+			lua_pushnil(L);
+		return 1;
+	}
+	static int GetSongFilePath(  T* p, lua_State *L )
+	{
+		lua_pushstring(L, p->GetSongFilePath() );
+		return 1;
+	}
+	static int IsTutorial( T* p, lua_State *L )	
+	{
+		lua_pushboolean(L, p->IsTutorial());
+		return 1;
+	}
+	static int IsEnabled( T* p, lua_State *L )	
+	{
+		lua_pushboolean(L, p->GetEnabled());
+		return 1;
+	}
+	static int GetGroupName( T* p, lua_State *L )
+	{
+		lua_pushstring(L, p->m_sGroupName);
+		return 1;
+	}
+	static int MusicLengthSeconds( T* p, lua_State *L )
+	{
+		lua_pushnumber(L, p->m_fMusicLengthSeconds);
+		return 1;
+	}
+	static int IsLong( T* p, lua_State *L )	
+	{
+		lua_pushboolean(L, p->IsLong());
+		return 1;
+	}
+	static int IsMarathon( T* p, lua_State *L )
+	{
+		lua_pushboolean(L, p->IsMarathon());
+		return 1;
+	}
 	static int HasStepsType( T* p, lua_State *L )
 	{
 		StepsType st = Enum::Check<StepsType>(L, 1);
@@ -1542,7 +1705,8 @@ public:
 		lua_pushboolean( L, p->HasStepsTypeAndDifficulty(st, dc) );
 		return 1;
 	}
-	// TODO: HasStepsTypeAndDifficulty and GetOneSteps should be in a SongUtil Lua table and a method of Steps.
+	/* TODO: HasStepsTypeAndDifficulty and GetOneSteps should be in
+	 * a SongUtil Lua table and a method of Steps. */
 	static int GetOneSteps( T* p, lua_State *L )
 	{
 		StepsType st = Enum::Check<StepsType>(L, 1);
@@ -1556,18 +1720,46 @@ public:
 	}
 	static int GetTimingData( T* p, lua_State *L )
 	{
-		p->m_Timing.PushSelf(L);
+		p->m_SongTiming.PushSelf(L);
 		return 1;
 	}
 	// has functions
-	static int HasMusic( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasMusic()); return 1; }
-	static int HasBanner( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasBanner()); return 1; }
-	static int HasBackground( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasBackground()); return 1; }
-	static int HasCDTitle( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasCDTitle()); return 1; }
-	static int HasBGChanges( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasBGChanges()); return 1; }
-	static int HasLyrics( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasLyrics()); return 1; }
+	static int HasMusic( T* p, lua_State *L )
+	{
+		lua_pushboolean(L, p->HasMusic());
+		return 1;
+	}
+	static int HasBanner( T* p, lua_State *L )
+	{
+		lua_pushboolean(L, p->HasBanner());
+		return 1;
+	}
+	static int HasBackground( T* p, lua_State *L )
+	{
+		lua_pushboolean(L, p->HasBackground());
+		return 1;
+	}
+	static int HasCDTitle( T* p, lua_State *L )
+	{
+		lua_pushboolean(L, p->HasCDTitle());
+		return 1;
+	}
+	static int HasBGChanges( T* p, lua_State *L )
+	{
+		lua_pushboolean(L, p->HasBGChanges());
+		return 1;
+	}
+	static int HasLyrics( T* p, lua_State *L )
+	{
+		lua_pushboolean(L, p->HasLyrics());
+		return 1;
+	}
 	// functions that AJ loves
-	static int HasSignificantBPMChangesOrStops( T* p, lua_State *L )	{ lua_pushboolean(L, p->HasSignificantBpmChangesOrStops()); return 1; }
+	static int HasSignificantBPMChangesOrStops( T* p, lua_State *L )
+	{
+		lua_pushboolean(L, p->HasSignificantBpmChangesOrStops());
+		return 1;
+	}
 	static int HasEdits( T* p, lua_State *L )
 	{
 		StepsType st = Enum::Check<StepsType>(L, 1);
@@ -1580,11 +1772,41 @@ public:
 		lua_pushboolean(L, p->IsEasy( st ));
 		return 1;
 	}
-	static int GetStepsSeconds( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetStepsSeconds()); return 1; }
-	static int NormallyDisplayed( T* p, lua_State *L ){ lua_pushboolean(L, p->NormallyDisplayed()); return 1; }
-	static int GetFirstBeat( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_fFirstBeat); return 1; }
-	static int GetLastBeat( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_fLastBeat); return 1; }
-	static int HasAttacks( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasAttacks()); return 1; }
+	static int GetStepsSeconds( T* p, lua_State *L )
+	{
+		lua_pushnumber(L, p->GetStepsSeconds());
+		return 1;
+	}
+	static int NormallyDisplayed( T* p, lua_State *L )
+	{
+		lua_pushboolean(L, p->NormallyDisplayed());
+		return 1;
+	}
+	static int GetFirstSecond(T* p, lua_State *L)
+	{
+		lua_pushnumber(L, p->GetFirstSecond());
+		return 1;
+	}
+	static int GetLastSecond(T* p, lua_State *L)
+	{
+		lua_pushnumber(L, p->GetLastSecond());
+		return 1;
+	}
+	static int GetFirstBeat( T* p, lua_State *L )
+	{ 
+		lua_pushnumber(L, p->GetFirstBeat());
+		return 1;
+	}
+	static int GetLastBeat( T* p, lua_State *L )
+	{
+		lua_pushnumber(L, p->GetLastBeat());
+		return 1;
+	}
+	static int HasAttacks( T* p, lua_State *L )	
+	{
+		lua_pushboolean(L, p->HasAttacks());
+		return 1;
+	}
 	static int GetDisplayBpms( T* p, lua_State *L )
 	{
 		DisplayBpms temp;
@@ -1660,7 +1882,9 @@ public:
 		ADD_METHOD( GetStepsSeconds );
 		ADD_METHOD( NormallyDisplayed );
 		ADD_METHOD( GetFirstBeat );
+		ADD_METHOD( GetFirstSecond );
 		ADD_METHOD( GetLastBeat );
+		ADD_METHOD( GetLastSecond );
 		ADD_METHOD( HasAttacks );
 		ADD_METHOD( GetDisplayBpms );
 		ADD_METHOD( IsDisplayBpmSecret );

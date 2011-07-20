@@ -393,9 +393,33 @@ void ScreenGameplay::Init()
 	/* Called once per stage (single song or single course). */
 	GAMESTATE->BeginStage();
 
+	int player = 1;
+	FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
+	{
+		unsigned int count = pi->m_vpStepsQueue.size();
+		
+		for (unsigned int i = 0; i < count; i++)
+		{
+			Steps *curSteps = pi->m_vpStepsQueue[i];
+			if (curSteps->IsNoteDataEmpty())
+			{
+				if (curSteps->GetNoteDataFromSimfile())
+				{
+					LOG->Trace("Notes should be loaded for player %d", player);
+				}
+				else 
+				{
+					LOG->Trace("Error loading notes for player %d", player);
+				}
+			}
+		}
+		player++;
+	}
+	
 	if(!GAMESTATE->IsCourseMode() && !GAMESTATE->m_bDemonstrationOrJukebox)
 	{
 		// fill in difficulty of CPU players with that of the first human player
+		// this should not need to worry about step content.
 		FOREACH_PotentialCpuPlayer(p)
 			GAMESTATE->m_pCurSteps[p].Set( GAMESTATE->m_pCurSteps[ GAMESTATE->GetFirstHumanPlayer() ] );
 
@@ -776,7 +800,7 @@ void ScreenGameplay::InitSongQueues()
 		ASSERT( pCourse );
 
 		m_apSongsQueue.clear();
-		PlayerNumber pnMaster = GAMESTATE->m_MasterPlayerNumber;
+		PlayerNumber pnMaster = GAMESTATE->GetMasterPlayerNumber();
 		Trail *pTrail = GAMESTATE->m_pCurTrail[pnMaster];
 		ASSERT( pTrail );
 		FOREACH_CONST( TrailEntry, pTrail->m_vEntries, e )
@@ -804,7 +828,11 @@ void ScreenGameplay::InitSongQueues()
 			// In a survival course, override stored mods
 			if( pCourse->GetCourseType() == COURSE_TYPE_SURVIVAL )
 			{
-				pi->GetPlayerState()->m_PlayerOptions.FromString( ModsLevel_Stage, "clearall,"+CommonMetrics::DEFAULT_MODIFIERS.GetValue() );
+				pi->GetPlayerState()->m_PlayerOptions.FromString( ModsLevel_Stage, 
+										 "clearall,"
+										 + CommonMetrics::DEFAULT_NOTESKIN_NAME.GetValue()
+										 + ","
+										 + CommonMetrics::DEFAULT_MODIFIERS.GetValue() );
 				pi->GetPlayerState()->RebuildPlayerOptionsFromActiveAttacks();
 			}
 		}
@@ -816,11 +844,12 @@ void ScreenGameplay::InitSongQueues()
 		{
 			Steps *pSteps = GAMESTATE->m_pCurSteps[ pi->GetStepsAndTrailIndex() ];
 			pi->m_vpStepsQueue.push_back( pSteps );
-
-			if(	pi->GetPlayerState()->m_PlayerOptions.GetCurrent().m_fSongAttack != 0 &&
-				GAMESTATE->m_pCurSong->m_Attacks.size() > 0 )
+			const PlayerOptions &p = pi->GetPlayerState()->m_PlayerOptions.GetCurrent();
+			
+			if (p.m_fNoAttack == 0 && p.m_fRandAttack == 0 &&
+			    pSteps->m_Attacks.size() > 0 )
 			{
-				pi->m_asModifiersQueue.push_back( GAMESTATE->m_pCurSong->m_Attacks );
+				pi->m_asModifiersQueue.push_back( pSteps->m_Attacks );
 			}
 			else
 			{
@@ -1223,7 +1252,7 @@ void ScreenGameplay::LoadNextSong()
 	FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
 	{
 		RageSoundReader *pPlayerSound = m_AutoKeysounds.GetPlayerSound(pi->m_pn);
-		if( pPlayerSound == NULL && pi->m_pn == GAMESTATE->m_MasterPlayerNumber )
+		if( pPlayerSound == NULL && pi->m_pn == GAMESTATE->GetMasterPlayerNumber() )
 			pPlayerSound = m_AutoKeysounds.GetSharedSound();
 		pi->m_SoundEffectControl.SetSoundReader( pPlayerSound );
 	}
@@ -1324,8 +1353,7 @@ void ScreenGameplay::StartPlayingSong( float fMinTimeToNotes, float fMinTimeToMu
 	p.StopMode = RageSoundParams::M_CONTINUE;
 
 	{
-		const float fFirstBeat = GAMESTATE->m_pCurSong->m_fFirstBeat;
-		const float fFirstSecond = GAMESTATE->m_pCurSong->GetElapsedTimeFromBeat( fFirstBeat );
+		const float fFirstSecond = GAMESTATE->m_pCurSong->GetFirstSecond();
 		float fStartDelay = fMinTimeToNotes - fFirstSecond;
 		fStartDelay = max( fStartDelay, fMinTimeToMusic );
 		p.m_StartSecond = -fStartDelay;
@@ -1347,10 +1375,10 @@ void ScreenGameplay::StartPlayingSong( float fMinTimeToNotes, float fMinTimeToMu
 		m_pSoundMusic->Pause( true );
 
 	/* Make sure GAMESTATE->m_fMusicSeconds is set up. */
-	GAMESTATE->m_fMusicSeconds = -5000;
+	GAMESTATE->m_Position.m_fMusicSeconds = -5000;
 	UpdateSongPosition(0);
 
-	ASSERT( GAMESTATE->m_fMusicSeconds > -4000 ); /* make sure the "fake timer" code doesn't trigger */
+	ASSERT( GAMESTATE->m_Position.m_fMusicSeconds > -4000 ); /* make sure the "fake timer" code doesn't trigger */
 }
 
 
@@ -1386,9 +1414,12 @@ void ScreenGameplay::PauseGame( bool bPause, GameController gc )
 // play assist ticks
 void ScreenGameplay::PlayTicks()
 {
-	Player &player = *m_vPlayerInfo[0].m_pPlayer;
+	/* TODO: Allow all players to have ticks. Not as simple as it looks.
+	 * If a loop takes place, it could make one player's ticks come later
+	 * than intended. Any help here would be appreciated. -Wolfman2000 */
+	Player &player = *m_vPlayerInfo[GAMESTATE->GetMasterPlayerNumber()].m_pPlayer;
 	const NoteData &nd = player.GetNoteData();
-	m_GameplayAssist.PlayTicks( nd );
+	m_GameplayAssist.PlayTicks( nd, player.GetPlayerState() );
 }
 
 /* Play announcer "type" if it's been at least fSeconds since the last announcer. */
@@ -1404,8 +1435,8 @@ void ScreenGameplay::PlayAnnouncer( RString type, float fSeconds )
 	/* Don't play before the first beat, or after we're finished. */
 	if( m_DancingState != STATE_DANCING )
 		return;
-	if( GAMESTATE->m_pCurSong == NULL  ||	// this will be true on ScreenDemonstration sometimes
-		GAMESTATE->m_fSongBeat < GAMESTATE->m_pCurSong->m_fFirstBeat )
+	if(GAMESTATE->m_pCurSong == NULL  ||	// this will be true on ScreenDemonstration sometimes
+	   GAMESTATE->m_Position.m_fSongBeat < GAMESTATE->m_pCurSong->GetFirstBeat())
 		return;
 
 	if( m_fTimeSinceLastDancingComment < fSeconds )
@@ -1423,7 +1454,7 @@ void ScreenGameplay::UpdateSongPosition( float fDeltaTime )
 	RageTimer tm;
 	const float fSeconds = m_pSoundMusic->GetPositionSeconds( NULL, &tm );
 	const float fAdjust = SOUND->GetFrameTimingAdjustment( fDeltaTime );
-	GAMESTATE->UpdateSongPosition( fSeconds+fAdjust, GAMESTATE->m_pCurSong->m_Timing, tm+fAdjust );
+	GAMESTATE->UpdateSongPosition( fSeconds+fAdjust, GAMESTATE->m_pCurSong->m_SongTiming, tm+fAdjust, true );
 }
 
 void ScreenGameplay::BeginScreen()
@@ -1480,7 +1511,7 @@ bool ScreenGameplay::AllAreFailing()
 
 void ScreenGameplay::GetMusicEndTiming( float &fSecondsToStartFadingOutMusic, float &fSecondsToStartTransitioningOut )
 {
-	float fLastStepSeconds = GAMESTATE->m_pCurSong->GetElapsedTimeFromBeat( GAMESTATE->m_pCurSong->m_fLastBeat );
+	float fLastStepSeconds = GAMESTATE->m_pCurSong->GetLastSecond();
 	fLastStepSeconds += Player::GetMaxStepDistanceSeconds();
 
 	float fTransitionLength;
@@ -1674,6 +1705,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 		{
 			m_pSoundMusic->StopPlaying();
 			SCREENMAN->PostMessageToTopScreen( SM_NotesEnded, 0 );
+			// todo: stop lyrics (m_LyricDisplay) from animating -aj
 		}
 
 		// Update living players' alive time
@@ -1687,7 +1719,10 @@ void ScreenGameplay::Update( float fDeltaTime )
 
 		// update fGameplaySeconds
 		STATSMAN->m_CurStageStats.m_fGameplaySeconds += fUnscaledDeltaTime;
-		if( GAMESTATE->m_fSongBeat >= GAMESTATE->m_pCurSong->m_fFirstBeat && GAMESTATE->m_fSongBeat < GAMESTATE->m_pCurSong->m_fLastBeat )
+		float curBeat = GAMESTATE->m_Position.m_fSongBeat;
+		Song &s = *GAMESTATE->m_pCurSong;
+		
+		if( curBeat >= s.GetFirstBeat() && curBeat < s.GetLastBeat() )
 		{
 			STATSMAN->m_CurStageStats.m_fStepsSeconds += fUnscaledDeltaTime;
 
@@ -1707,7 +1742,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 			if( bAllReallyFailed )
 				fSecondsToStartTransitioningOut += BEGIN_FAILED_DELAY;
 
-			if( GAMESTATE->m_fMusicSeconds >= fSecondsToStartTransitioningOut && !m_NextSong.IsTransitioning() )
+			if( GAMESTATE->m_Position.m_fMusicSeconds >= fSecondsToStartTransitioningOut && !m_NextSong.IsTransitioning() )
 				this->PostScreenMessage( SM_NotesEnded, 0 );
 		}
 
@@ -1773,7 +1808,22 @@ void ScreenGameplay::Update( float fDeltaTime )
 
 		// update give up
 		bool bGiveUpTimerFired = !m_GiveUpTimer.IsZero() && m_GiveUpTimer.Ago() > 2.5f;
-		bool bAllHumanHaveBigMissCombo = FAIL_ON_MISS_COMBO.GetValue() != -1 && STATSMAN->m_CurStageStats.GetMinimumMissCombo() >= FAIL_ON_MISS_COMBO;
+		
+			
+		bool bAllHumanHaveBigMissCombo = true;
+		FOREACH_EnabledPlayerNumberInfo( m_vPlayerInfo, pi )
+		{
+			if (pi->GetPlayerState()->m_PlayerOptions.GetCurrent().m_FailType == PlayerOptions::FAIL_OFF ||
+			    pi->GetPlayerState()->m_HealthState < HealthState_Dead )
+			{
+				bAllHumanHaveBigMissCombo = false;
+				break;
+			}
+		}
+		if (bAllHumanHaveBigMissCombo) // possible to get in here.
+		{
+			bAllHumanHaveBigMissCombo = FAIL_ON_MISS_COMBO.GetValue() != -1 && STATSMAN->m_CurStageStats.GetMinimumMissCombo() >= FAIL_ON_MISS_COMBO;
+		}
 		if( bGiveUpTimerFired || bAllHumanHaveBigMissCombo )
 		{
 			STATSMAN->m_CurStageStats.m_bGaveUp = true;
@@ -1843,8 +1893,8 @@ void ScreenGameplay::Update( float fDeltaTime )
 
 float ScreenGameplay::GetHasteRate()
 {
-	if( GAMESTATE->m_fMusicSeconds < GAMESTATE->m_fLastHasteUpdateMusicSeconds || // new song
-		GAMESTATE->m_fMusicSeconds > GAMESTATE->m_fLastHasteUpdateMusicSeconds + 4 )
+	if( GAMESTATE->m_Position.m_fMusicSeconds < GAMESTATE->m_fLastHasteUpdateMusicSeconds || // new song
+		GAMESTATE->m_Position.m_fMusicSeconds > GAMESTATE->m_fLastHasteUpdateMusicSeconds + 4 )
 	{
 		bool bAnyPlayerHitAllNotes = false;
 		FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
@@ -1865,7 +1915,7 @@ float ScreenGameplay::GetHasteRate()
 			GAMESTATE->m_fHasteRate += 0.1f;
 		CLAMP( GAMESTATE->m_fHasteRate, -1.0f, +1.0f );
 
-		GAMESTATE->m_fLastHasteUpdateMusicSeconds = GAMESTATE->m_fMusicSeconds;
+		GAMESTATE->m_fLastHasteUpdateMusicSeconds = GAMESTATE->m_Position.m_fMusicSeconds;
 	}
 
 	/* If the life meter is less than half full, push the haste rate down to let
@@ -1914,7 +1964,7 @@ void ScreenGameplay::UpdateLights()
 	ZERO( bBlinkGameButton );
 	bool bCrossedABeat = false;
 	{
-		const float fSongBeat = GAMESTATE->m_fLightSongBeat;
+		const float fSongBeat = GAMESTATE->m_Position.m_fLightSongBeat;
 		const int iSongRow = BeatToNoteRowNotRounded( fSongBeat );
 
 		static int iRowLastCrossed = 0;
@@ -1968,7 +2018,8 @@ void ScreenGameplay::UpdateLights()
 	}
 
 	// Before the first beat of the song, all cabinet lights solid on (except for menu buttons).
-	bool bOverrideCabinetBlink = (GAMESTATE->m_fSongBeat < GAMESTATE->m_pCurSong->m_fFirstBeat);
+	Song &s = *GAMESTATE->m_pCurSong;
+	bool bOverrideCabinetBlink = (GAMESTATE->m_Position.m_fSongBeat < s.GetFirstBeat());
 	FOREACH_CabinetLight( cl )
 		bBlinkCabinetLight[cl] |= bOverrideCabinetBlink;
 
@@ -1994,8 +2045,8 @@ void ScreenGameplay::SendCrossedMessages()
 	{
 		static int iRowLastCrossed = 0;
 
-		float fPositionSeconds = GAMESTATE->m_fMusicSeconds;
-		float fSongBeat = GAMESTATE->m_pCurSong->GetBeatFromElapsedTime( fPositionSeconds );
+		float fPositionSeconds = GAMESTATE->m_Position.m_fMusicSeconds;
+		float fSongBeat = GAMESTATE->m_pCurSong->m_SongTiming.GetBeatFromElapsedTime( fPositionSeconds );
 
 		int iRowNow = BeatToNoteRowNotRounded( fSongBeat );
 		iRowNow = max( 0, iRowNow );
@@ -2032,8 +2083,8 @@ void ScreenGameplay::SendCrossedMessages()
 		{
 			float fNoteWillCrossInSeconds = MESSAGE_SPACING_SECONDS * i;
 
-			float fPositionSeconds = GAMESTATE->m_fMusicSeconds + fNoteWillCrossInSeconds;
-			float fSongBeat = GAMESTATE->m_pCurSong->GetBeatFromElapsedTime( fPositionSeconds );
+			float fPositionSeconds = GAMESTATE->m_Position.m_fMusicSeconds + fNoteWillCrossInSeconds;
+			float fSongBeat = GAMESTATE->m_pCurSong->m_SongTiming.GetBeatFromElapsedTime( fPositionSeconds );
 
 			int iRowNow = BeatToNoteRowNotRounded( fSongBeat );
 			iRowNow = max( 0, iRowNow );
@@ -2156,11 +2207,7 @@ void ScreenGameplay::Input( const InputEventPlus &input )
 			else if( input.type==IET_FIRST_PRESS && m_GiveUpTimer.IsZero() )
 			{
 				m_textDebug.SetText( GIVE_UP_START_TEXT );
-				// todo: un-hardcode commands and move to metrics -aj
-				m_textDebug.StopTweening();
-				m_textDebug.SetDiffuse( RageColor(1,1,1,0) );
-				m_textDebug.BeginTweening( 1/8.f );
-				m_textDebug.SetDiffuse( RageColor(1,1,1,1) );
+				m_textDebug.PlayCommand( "StartOn" );
 				m_GiveUpTimer.Touch(); // start the timer
 			}
 
@@ -2187,18 +2234,11 @@ void ScreenGameplay::Input( const InputEventPlus &input )
 			else if( PREFSMAN->m_bDelayedBack && input.type==IET_FIRST_PRESS )
 			{
 				m_textDebug.SetText( GIVE_UP_BACK_TEXT );
-				// todo: un-hardcode commands and move to metrics -aj
-				m_textDebug.StopTweening();
-				m_textDebug.SetDiffuse( RageColor(1,1,1,0) );
-				m_textDebug.BeginTweening( 1/8.f );
-				m_textDebug.SetDiffuse( RageColor(1,1,1,1) );
+				m_textDebug.PlayCommand( "BackOn" );
 			}
 			else if( PREFSMAN->m_bDelayedBack && input.type==IET_RELEASE )
 			{
-				// todo: un-hardcode commands and move to metrics -aj
-				m_textDebug.StopTweening();
-				m_textDebug.BeginTweening( 1/8.f );
-				m_textDebug.SetDiffuse( RageColor(1,1,1,0) );
+				m_textDebug.PlayCommand( "TweenOff" );
 			}
 
 			return;
@@ -2297,12 +2337,14 @@ void ScreenGameplay::SaveStats()
 		RadarValues rv;
 		PlayerStageStats &pss = *pi->GetPlayerStageStats();
 		const NoteData &nd = pi->m_pPlayer->GetNoteData();
+		PlayerNumber pn = pi->m_pn;
 
+		GAMESTATE->SetProcessedTimingData(&GAMESTATE->m_pCurSteps[pn]->m_Timing);
 		NoteDataUtil::CalculateRadarValues( nd, fMusicLen, rv );
 		pss.m_radarPossible += rv;
-
 		NoteDataWithScoring::GetActualRadarValues( nd, pss, fMusicLen, rv );
 		pss.m_radarActual += rv;
+		GAMESTATE->SetProcessedTimingData(NULL);
 	}
 }
 

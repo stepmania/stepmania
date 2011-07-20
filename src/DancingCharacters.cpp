@@ -11,6 +11,8 @@
 #include "PrefsManager.h"
 #include "Model.h"
 
+int Neg1OrPos1();
+
 #define DC_X( choice )	THEME->GetMetricF("DancingCharacters",ssprintf("2DCharacterXP%d",choice+1))
 #define DC_Y( choice )	THEME->GetMetricF("DancingCharacters",ssprintf("2DCharacterYP%d",choice+1))
 
@@ -164,7 +166,7 @@ void DancingCharacters::LoadNextSong()
 	m_fThisCameraEndBeat = 0;
 
 	ASSERT( GAMESTATE->m_pCurSong );
-	m_fThisCameraEndBeat = GAMESTATE->m_pCurSong->m_fFirstBeat;
+	m_fThisCameraEndBeat = GAMESTATE->m_pCurSong->GetFirstBeat();
 
 	FOREACH_PlayerNumber( p )
 		if( GAMESTATE->IsPlayerEnabled(p) )
@@ -175,7 +177,7 @@ int Neg1OrPos1() { return RandomInt( 2 ) ? -1 : +1; }
 
 void DancingCharacters::Update( float fDelta )
 {
-	if( GAMESTATE->m_bFreeze || GAMESTATE->m_bDelay )
+	if( GAMESTATE->m_Position.m_bFreeze || GAMESTATE->m_Position.m_bDelay )
 	{
 		// spin the camera Matrix-style
 		m_CameraPanYStart += fDelta*40;
@@ -184,7 +186,7 @@ void DancingCharacters::Update( float fDelta )
 	else
 	{
 		// make the characters move
-		float fBPM = GAMESTATE->m_fCurBPS*60;
+		float fBPM = GAMESTATE->m_Position.m_fCurBPS*60;
 		float fUpdateScale = SCALE( fBPM, 60.f, 300.f, 0.75f, 1.5f );
 		CLAMP( fUpdateScale, 0.75f, 1.5f );
 
@@ -209,10 +211,10 @@ void DancingCharacters::Update( float fDelta )
 	}
 	bWasGameplayStarting = bGameplayStarting;
 
-	static float fLastBeat = GAMESTATE->m_fSongBeat;
-	float fThisBeat = GAMESTATE->m_fSongBeat;
-	if( fLastBeat < GAMESTATE->m_pCurSong->m_fFirstBeat &&
-		fThisBeat >= GAMESTATE->m_pCurSong->m_fFirstBeat )
+	static float fLastBeat = GAMESTATE->m_Position.m_fSongBeat;
+	float firstBeat = GAMESTATE->m_pCurSong->GetFirstBeat();
+	float fThisBeat = GAMESTATE->m_Position.m_fSongBeat;
+	if( fLastBeat < firstBeat && fThisBeat >= firstBeat )
 	{
 		FOREACH_PlayerNumber( p )
 			m_pCharacter[p]->PlayAnimation( "dance" );
@@ -220,7 +222,7 @@ void DancingCharacters::Update( float fDelta )
 	fLastBeat = fThisBeat;
 
 	// time for a new sweep?
-	if( GAMESTATE->m_fSongBeat > m_fThisCameraEndBeat )
+	if( GAMESTATE->m_Position.m_fSongBeat > m_fThisCameraEndBeat )
 	{
 		if( RandomInt(6) >= 4 )
 		{
@@ -248,7 +250,7 @@ void DancingCharacters::Update( float fDelta )
 			m_fLookAtHeight = CAMERA_STILL_LOOK_AT_HEIGHT;
 		}
 
-		int iCurBeat = (int)GAMESTATE->m_fSongBeat;
+		int iCurBeat = (int)GAMESTATE->m_Position.m_fSongBeat;
 		iCurBeat -= iCurBeat%8;
 
 		m_fThisCameraStartBeat = (float) iCurBeat;
@@ -313,7 +315,7 @@ void DancingCharacters::DrawPrimitives()
 	if(m_fThisCameraStartBeat == m_fThisCameraEndBeat)
 		fPercentIntoSweep = 0;
 	else 
-		fPercentIntoSweep = SCALE(GAMESTATE->m_fSongBeat, m_fThisCameraStartBeat, m_fThisCameraEndBeat, 0.f, 1.f );
+		fPercentIntoSweep = SCALE(GAMESTATE->m_Position.m_fSongBeat, m_fThisCameraStartBeat, m_fThisCameraEndBeat, 0.f, 1.f );
 	float fCameraPanY = SCALE( fPercentIntoSweep, 0.f, 1.f, m_CameraPanYStart, m_CameraPanYEnd );
 	float fCameraHeight = SCALE( fPercentIntoSweep, 0.f, 1.f, m_fCameraHeightStart, m_fCameraHeightEnd );
 
@@ -344,7 +346,7 @@ void DancingCharacters::DrawPrimitives()
 			ambient, 
 			diffuse,
 			specular,
-			RageVector3(-3, -7.5, +9) );
+			RageVector3(-3, -7.5f, +9) );
 
 		if( PREFSMAN->m_bCelShadeModels )
 		{

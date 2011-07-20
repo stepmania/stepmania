@@ -68,7 +68,7 @@ void ScreenSelectMusic::Init()
 		GAMESTATE->m_PlayMode.Set( PLAY_MODE_REGULAR );
 		GAMESTATE->SetCurrentStyle( GAMEMAN->GameAndStringToStyle(GAMEMAN->GetDefaultGame(),"versus") );
 		GAMESTATE->JoinPlayer( PLAYER_1 );
-		GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
+		GAMESTATE->SetMasterPlayerNumber(PLAYER_1);
 	}
 
 	SAMPLE_MUSIC_DELAY_INIT.Load( m_sName, "SampleMusicDelayInit" );
@@ -1020,7 +1020,7 @@ void ScreenSelectMusic::HandleMessage( const Message &msg )
 
 		// TODO: Invalidate the CurSteps only if they are no longer playable.
 		// That way, after music change will clamp to the nearest in the StepsDisplayList.
-		GAMESTATE->m_pCurSteps[GAMESTATE->m_MasterPlayerNumber].SetWithoutBroadcast( NULL );
+		GAMESTATE->m_pCurSteps[GAMESTATE->GetMasterPlayerNumber()].SetWithoutBroadcast( NULL );
 		FOREACH_ENUM( PlayerNumber, p )
 			GAMESTATE->m_pCurSteps[p].SetWithoutBroadcast( NULL );
 
@@ -1392,7 +1392,7 @@ void ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 			if( pStyle == NULL )
 			{
 				StepsType stCurrent;
-				PlayerNumber pn = GAMESTATE->m_MasterPlayerNumber;
+				PlayerNumber pn = GAMESTATE->GetMasterPlayerNumber();
 				if( GAMESTATE->IsCourseMode() )
 				{
 					ASSERT( GAMESTATE->m_pCurTrail[pn] );
@@ -1455,7 +1455,9 @@ void ScreenSelectMusic::MenuBack( const InputEventPlus &input )
 	// Handle unselect song (ffff)
 	// todo: this isn't right at all. -aj
 	/*
-	if( m_SelectionState == SelectionState_SelectingSteps  &&  !m_bStepsChosen[input.pn]  &&  input.MenuI == GAME_BUTTON_BACK  &&  input.type == IET_FIRST_PRESS )
+	if( m_SelectionState == SelectionState_SelectingSteps &&
+		!m_bStepsChosen[input.pn] && input.MenuI == GAME_BUTTON_BACK &&
+		input.type == IET_FIRST_PRESS )
 	{
 		// if a player has chosen their steps already, don't unchoose song.
 		FOREACH_HumanPlayer( p )
@@ -1530,7 +1532,6 @@ void ScreenSelectMusic::AfterStepsOrTrailChange( const vector<PlayerNumber> &vpn
 		else
 		{
 			// The numbers shouldn't stay if the current selection is NULL.
-			// todo: Let themers set the text value instead of just using 0. -aj
 			m_textHighScore[pn].SetText( NULL_SCORE_STRING );
 		}
 	}
@@ -1614,7 +1615,7 @@ void ScreenSelectMusic::SwitchToPreferredDifficulty()
 	if( GAMESTATE->DifficultiesLocked() )
 	{
 		FOREACH_HumanPlayer( p )
-			m_iSelection[p] = m_iSelection[GAMESTATE->m_MasterPlayerNumber];
+			m_iSelection[p] = m_iSelection[GAMESTATE->GetMasterPlayerNumber()];
 	}
 }
 
@@ -1763,7 +1764,7 @@ void ScreenSelectMusic::AfterMusicChange()
 			case SampleMusicPreviewMode_LastSong: // fall through
 				// play the sample music
 				m_sSampleMusicToPlay = pSong->GetMusicPath();
-				m_pSampleMusicTimingData = &pSong->m_Timing;
+				m_pSampleMusicTimingData = &pSong->m_SongTiming;
 				m_fSampleStartSeconds = pSong->m_fMusicSampleStartSeconds;
 				m_fSampleLengthSeconds = pSong->m_fMusicSampleLengthSeconds;
 				break;

@@ -10,8 +10,12 @@
 	NSWindow *m_Window;
 	NSTextView *m_Text;
 	NSAutoreleasePool *m_Pool;
+	NSProgressIndicator *m_ProgressIndicator;
 }
 - (void) setupWindow:(NSImage *)image;
+- (void) setProgress:(NSNumber *)progress;
+- (void) setTotalWork:(NSNumber *)totalWork;
+- (void) setIndeterminate:(NSNumber *)indeterminate;
 @end
 
 @implementation LoadingWindowHelper
@@ -21,14 +25,25 @@
 	NSRect viewRect, windowRect;
 	float height = 0.0f;
 	
+	NSRect progressIndicatorRect;
+	progressIndicatorRect = NSMakeRect(0, 0, size.width, 0);
+	m_ProgressIndicator = [[NSProgressIndicator alloc] initWithFrame:progressIndicatorRect];
+	[m_ProgressIndicator sizeToFit];
+	[m_ProgressIndicator setIndeterminate:YES];
+	[m_ProgressIndicator setMinValue:0];
+	[m_ProgressIndicator setMaxValue:1];
+	[m_ProgressIndicator setDoubleValue:0];
+	progressIndicatorRect = [m_ProgressIndicator frame];
+	float progressHeight = progressIndicatorRect.size.height;
+	
 	NSFont *font = [NSFont systemFontOfSize:0.0f];
 	NSRect textRect;
 	// Just give it a size until it is created.
-	textRect = NSMakeRect( 0, 0, size.width, size.height );
+	textRect = NSMakeRect( 0, progressHeight, size.width, size.height );
 	m_Text = [[NSTextView alloc] initWithFrame:textRect];
 	[m_Text setFont:font];
 	height = [[m_Text layoutManager] defaultLineHeightForFont:font]*3 + 4;
-	textRect = NSMakeRect( 0, 0, size.width, height );
+	textRect = NSMakeRect( 0, progressHeight, size.width, height );
 	
 	[m_Text setFrame:textRect];
 	[m_Text setEditable:NO];
@@ -40,12 +55,12 @@
 	[m_Text setVerticallyResizable:NO];
 	[m_Text setString:@"Initializing Hardware..."];
 	
-	viewRect = NSMakeRect( 0, height, size.width, size.height );
+	viewRect = NSMakeRect( 0, height + progressHeight, size.width, size.height );
 	NSImageView *iView = [[NSImageView alloc] initWithFrame:viewRect];
 	[iView setImage:image];
 	[iView setImageFrameStyle:NSImageFrameNone];
 	
-	windowRect = NSMakeRect( 0, 0, size.width, size.height + height );
+	windowRect = NSMakeRect( 0, 0, size.width, size.height + height + progressHeight);
 	m_Window = [[NSWindow alloc] initWithContentRect:windowRect
 					       styleMask:NSTitledWindowMask
 						 backing:NSBackingStoreBuffered
@@ -66,10 +81,27 @@
 	[view addSubview:iView];
 	[m_Text release];
 	[iView release];
+	[view addSubview:m_ProgressIndicator];
 
 	// Display the window.
 	[m_Window makeKeyAndOrderFront:nil];
 }	
+
+- (void) setProgress:(NSNumber *)progress
+{
+	[m_ProgressIndicator setDoubleValue:[progress doubleValue]];
+}
+
+- (void) setTotalWork:(NSNumber *)totalWork
+{
+	[m_ProgressIndicator setMaxValue:[totalWork doubleValue]];
+}
+
+- (void) setIndeterminate:(NSNumber *)indeterminate
+{
+	[m_ProgressIndicator setIndeterminate:([indeterminate doubleValue] > 0 ? YES : NO)];
+}
+
 @end
 
 static LoadingWindowHelper *g_Helper = nil;
@@ -122,6 +154,22 @@ void LoadingWindow_MacOSX::SetText( RString str )
 	NSString *s = [[NSString alloc] initWithUTF8String:str];
 	[g_Helper->m_Text performSelectorOnMainThread:@selector(setString:) withObject:(s ? s : @"") waitUntilDone:NO];
 	[s release];
+}
+
+void LoadingWindow_MacOSX::SetProgress( const int progress )
+{
+	[g_Helper performSelectorOnMainThread:@selector(setProgress:) withObject:[NSNumber numberWithDouble:(double)progress] waitUntilDone:NO];
+}
+
+void LoadingWindow_MacOSX::SetTotalWork( const int totalWork )
+{
+	[g_Helper performSelectorOnMainThread:@selector(setTotalWork:) withObject:[NSNumber numberWithDouble:(double)totalWork] waitUntilDone:NO];
+}
+
+void LoadingWindow_MacOSX::SetIndeterminate( bool indeterminate )
+{
+	double tmp = indeterminate ? 1 : 0;
+	[g_Helper performSelectorOnMainThread:@selector(setIndeterminate:) withObject:[NSNumber numberWithDouble:tmp] waitUntilDone:NO];
 }
 
 /*

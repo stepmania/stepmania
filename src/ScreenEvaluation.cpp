@@ -99,7 +99,7 @@ void ScreenEvaluation::Init()
 		ss.m_Stage = Stage_1st;
 		enum_add( ss.m_Stage, rand()%3 );
 		ss.m_EarnedExtraStage = (EarnedExtraStage)(rand() % NUM_EarnedExtraStage);
-		GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
+		GAMESTATE->SetMasterPlayerNumber(PLAYER_1);
 		GAMESTATE->m_pCurSong.Set( SONGMAN->GetRandomSong() );
 		ss.m_vpPlayedSongs.push_back( GAMESTATE->m_pCurSong );
 		ss.m_vpPossibleSongs.push_back( GAMESTATE->m_pCurSong );
@@ -357,7 +357,7 @@ void ScreenEvaluation::Init()
 			SET_XY( m_sprPercentFrame[p] );
 			this->AddChild( m_sprPercentFrame[p] );
 
-			/* Use "ScreenEvaluation Percent" for the [metric set], but position and
+			/* Use "ScreenEvaluation Percent" in the [metrics], but position and
 			 * tween it with "PercentP1X", etc. */
 			m_Percent[p].SetName( ssprintf("PercentP%d",p+1) );
 			m_Percent[p].Load( GAMESTATE->m_pPlayerState[p], &m_pStageStats->m_player[p], "ScreenEvaluation Percent", true );
@@ -370,6 +370,11 @@ void ScreenEvaluation::Init()
 	// init bonus area
 	if( SHOW_BONUS_AREA )
 	{
+		// In course mode, we need to make sure the bar doesn't overflow. -aj
+		float fDivider = 1.0f;
+		if( GAMESTATE->IsCourseMode() )
+			fDivider = fDivider / GAMESTATE->m_pCurCourse->m_vEntries.size();
+
 		FOREACH_EnabledPlayer( p )
 		{
 			m_sprBonusFrame[p].Load( THEME->GetPathG(m_sName,ssprintf("BonusFrame p%d",p+1)) );
@@ -382,7 +387,7 @@ void ScreenEvaluation::Init()
 			for( int r=0; r<NUM_SHOWN_RADAR_CATEGORIES; r++ )	// foreach line
 			{
 				m_sprPossibleBar[p][r].Load( THEME->GetPathG(m_sName,ssprintf("BarPossible p%d",p+1)) );
-				m_sprPossibleBar[p][r].SetWidth( m_sprPossibleBar[p][r].GetUnzoomedWidth() * m_pStageStats->m_player[p].m_radarPossible[r] );
+				m_sprPossibleBar[p][r].SetWidth( m_sprPossibleBar[p][r].GetUnzoomedWidth() * m_pStageStats->m_player[p].m_radarPossible[r] * fDivider );
 				m_sprPossibleBar[p][r].SetName( ssprintf("BarPossible%dP%d",r+1,p+1) );
 				ActorUtil::LoadAllCommands( m_sprPossibleBar[p][r], m_sName );
 				SET_XY( m_sprPossibleBar[p][r] );
@@ -390,7 +395,7 @@ void ScreenEvaluation::Init()
 
 				m_sprActualBar[p][r].Load( THEME->GetPathG(m_sName,ssprintf("BarActual p%d",p+1)) );
 				// should be out of the possible bar, not actual (whatever value that is at)
-				m_sprActualBar[p][r].SetWidth( m_sprPossibleBar[p][r].GetUnzoomedWidth() * m_pStageStats->m_player[p].m_radarActual[r] );
+				m_sprActualBar[p][r].SetWidth( m_sprPossibleBar[p][r].GetUnzoomedWidth() * m_pStageStats->m_player[p].m_radarActual[r] * fDivider );
 
 				float value = (float)100 * m_sprActualBar[p][r].GetUnzoomedWidth() / m_sprPossibleBar[p][r].GetUnzoomedWidth();
 				LOG->Trace("Radar bar %d of 5 - %f percent", r,  value);
@@ -399,7 +404,8 @@ void ScreenEvaluation::Init()
 				ActorUtil::LoadAllCommands( m_sprActualBar[p][r], m_sName );
 				SET_XY( m_sprActualBar[p][r] );
 
-				// .99999 is fairly close to 1.00, so we use that 
+				// .99999 is fairly close to 1.00, so we use that.
+				// todo: allow extra commands for AAA/AAAA? -aj
 				if( m_pStageStats->m_player[p].m_radarActual[r] > 0.99999f )
 					m_sprActualBar[p][r].RunCommands( BAR_ACTUAL_MAX_COMMAND );
 				this->AddChild( &m_sprActualBar[p][r] );
@@ -541,12 +547,12 @@ void ScreenEvaluation::Init()
 				SET_XY( m_textDetailText[l][p] );
 				this->AddChild( &m_textDetailText[l][p] );
 
-				static const int indeces[NUM_DetailLine] =
+				static const int indices[NUM_DetailLine] =
 				{
 					RadarCategory_TapsAndHolds, RadarCategory_Jumps, RadarCategory_Holds, RadarCategory_Mines, 
 					RadarCategory_Hands, RadarCategory_Rolls, RadarCategory_Lifts, RadarCategory_Fakes
 				};
-				const int ind = indeces[l];
+				const int ind = indices[l];
 				const int iActual = lrintf(m_pStageStats->m_player[p].m_radarActual[ind]);
 				const int iPossible = lrintf(m_pStageStats->m_player[p].m_radarPossible[ind]);
 
@@ -629,7 +635,7 @@ void ScreenEvaluation::Init()
 			{
 			case PLAY_MODE_BATTLE:
 				{
-					bool bWon = GAMESTATE->GetStageResult(GAMESTATE->m_MasterPlayerNumber) == RESULT_WIN;
+					bool bWon = GAMESTATE->GetStageResult(GAMESTATE->GetMasterPlayerNumber()) == RESULT_WIN;
 					if( bWon )
 						SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation win") );
 					else

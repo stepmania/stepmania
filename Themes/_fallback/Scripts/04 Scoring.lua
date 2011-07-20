@@ -67,7 +67,7 @@ r['DDR 4thMIX'] = function(params, pss)
 	local capScore = 999999999;
 	local bestPoints = scoreLookupTable['TapNoteScore_W1'];
 	local bestCombo = bestPoints and comboBonusForThisStep or 0;
-	pss:SeCurMaxScore(clamp(pss:GeCurMaxScore()+bestPoints+bestCombo,0,capScore));
+	pss:SetCurMaxScore(clamp(pss:GetCurMaxScore()+bestPoints+bestCombo,0,capScore));
 	local localPoints = scoreLookupTable[params.TapNoteScore];
 	local localCombo = localPoints and comboBonusForThisStep or 0;
 	pss:SetScore(clamp(pss:GetScore()+localPoints+localCombo,0,capScore));
@@ -84,16 +84,31 @@ r['DDR Extreme'] = function(params, pss)
 	setmetatable(judgmentBase, ZeroIfNotFound);
 	local steps = GAMESTATE:GetCurrentSteps(params.Player);
 	local radarValues = steps:GetRadarValues(params.Player);
-	local baseScore = (steps:IsAnEdit() and 
-		5 or steps:GetMeter()) * 1000000;
+	local meter = steps:GetMeter();
+	if (steps:IsAnEdit()) then
+		meter = 5;
+	elseif (meter < 1) then
+		meter = 1;
+	elseif (meter > 10) then
+		meter = 10;
+	end;
+	local baseScore = meter * 1000000;
+	if (GAMESTATE:GetCurrentSong():IsMarathon()) then
+		baseScore = baseScore * 3;
+	elseif (GAMESTATE:GetCurrentSong():IsLong()) then
+		baseScore = baseScore * 2;
+	end;
 	local totalItems = GetTotalItems(radarValues);
 	local singleStep = (1 + totalItems) * totalItems / 2;
 	if (not Shared.CurrentStep) then
-		Shared.CurrentStep = 0
+		Shared.CurrentStep = {};
+		Shared.CurrentStep["P1"] = 0;
+		Shared.CurrentStep["P2"] = 0;
 	end;
-	Shared.CurrentStep = Shared.CurrentStep + 1;
+	local pn = PlayerNumberToString(params.Player);
+	Shared.CurrentStep[pn] = Shared.CurrentStep[pn] + 1;
 	local stepValue = math.floor(baseScore /singleStep);
-	local stepLast = stepValue * Shared.CurrentStep;
+	local stepLast = stepValue * Shared.CurrentStep[pn];
 	pss:SetCurMaxScore(pss:GetCurMaxScore() + 
 		(stepLast * judgmentBase['TapNoteScore_W1']));
 	local judgeScore = 0;
@@ -107,11 +122,52 @@ r['DDR Extreme'] = function(params, pss)
 	end;
 	local stepScore = judgeScore * stepLast;
 	pss:SetScore(pss:GetScore() + stepScore);
-	if (Shared.CurrentStep >= totalItems) then -- Just in case.
+	if (Shared.CurrentStep[pn] >= totalItems) then -- Just in case.
 		-- TODO: Implement the bonus for the last step?
-		Shared.CurrentStep = 0; -- Reset for the next song.
+		Shared.CurrentStep[pn] = 0; -- Reset for the next song.
 	end;
 end;
+
+-----------------------------------------------------------
+--HYBRID Scoring
+-----------------------------------------------------------
+r['HYBRID'] = function(params, pss)
+	local multLookup =
+	{
+		['TapNoteScore_W1'] = 10,
+		['TapNoteScore_W2'] = 9,
+		['TapNoteScore_W3'] = 5
+	};
+	setmetatable(multLookup, ZeroIfNotFound);
+	local radarValues = GetDirectRadar(params.Player);
+	local totalItems = GetTotalItems(radarValues);
+	-- 1+2+3+...+totalItems の値
+	local sTotal = (totalItems+1)*totalItems/2;
+	-- [en] Score for one song
+	-- [ja] 1つあたりのスコア
+	local sOne = math.floor(100000000/sTotal);
+	-- [ja] 端数は最後の1ステップで加算するのでその値を取得
+	local sLast = 100000000-(sOne*sTotal);
+	-- [ja] 現在何個目の譜面か
+	pss:SetCurMaxScore(pss:GetCurMaxScore()+1);
+	-- [en] current score
+	-- [ja] 今回のスコア
+	local vScore = sOne*(pss:GetCurMaxScore());
+	if (params.HoldNoteScore == 'HoldNoteScore_Held') then
+		vScore = vScore;
+	else
+		if (params.HoldNoteScore == 'HoldNoteScore_LetGo') then
+			vScore = 0;
+		else
+			vScore = vScore*multLookup[params.TapNoteScore]/10;
+		end;
+	end;
+	if ((vScore > 0) and (pss:GetCurMaxScore() == totalItems)) then
+		vScore = vScore+sLast;
+	end;
+	pss:SetScore(pss:GetScore()+vScore);
+end;
+
 -----------------------------------------------------------
 --DDR SuperNOVA(-esque) scoring
 -----------------------------------------------------------
@@ -138,24 +194,43 @@ end;
 r['DDR SuperNOVA 2'] = function(params, pss)
 	local multLookup =
 	{
-		['TapNoteScore_W1'] = 1,
-		['TapNoteScore_W2'] = 1,
-		['TapNoteScore_W3'] = 0.5
+		['TapNoteScore_W1'] = 10,
+		['TapNoteScore_W2'] = 10,
+		['TapNoteScore_W3'] = 5
 	};
 	setmetatable(multLookup, ZeroIfNotFound);
 	local radarValues = GetDirectRadar(params.Player);
-	local totalItems = GetTotalItems(radarValues); 
-	local base = 100000 / totalItems;
-	local hold = base * (params.HoldNoteScore == 'HoldNoteScore_Held' and 1 or 0);
-	local maxScore = (base * multLookup['TapNoteScore_W1']) + hold;
-	pss:SetCurMaxScore(pss:GetCurMaxScore() + (math.round(maxScore) * 10));
-	local preW1 = base * multLookup[params.TapNoteScore];
-	local buildScore = (preW1 - (IsW1Allowed(params.TapNoteScore) and 10 or 0)) + hold;
-	pss:SetScore(pss:GetScore() + (math.round(buildScore) * 10));
+	local totalItems = GetTotalItems(radarValues);
+
+	-- handle holds
+	local maxAdd = 0;
+	if params.HoldNoteScore == 'HoldNoteScore_Held' then
+		maxAdd = 10;
+	elseif params.HoldNoteScore == 'HoldNoteScore_LetGo' then
+		maxAdd = 0;
+	else
+		maxAdd = multLookup[params.TapNoteScore];
+		if params.TapNoteScore == 'TapNoteScore_W2' or 'TapNoteScore_W3' then
+			-- [ja] 超最終手段
+			pss:SetCurMaxScore( pss:GetCurMaxScore() + 1000000 );
+		end;
+	end;
+	pss:SetCurMaxScore(pss:GetCurMaxScore() + maxAdd);
+
+	--[[
+	[ja] パフェ数取得 この方法で取得するとロングノートの場合2つカウントされる そのため使えない
+	pss:GetTapNoteScores('TapNoteScore_W2')
+	仕方がないのでパフェ数を 1000000 単位で GetCurMaxScore に記録
+	その後、情報を分解して取り出す 
+	--]]
+
+	local vScore = pss:GetCurMaxScore() % 1000000
+	local vSub = math.floor( pss:GetCurMaxScore()/1000000 )
+	pss:SetScore( math.floor(10000*vScore/totalItems) * 10 - (vSub*10) );
 end;
 -----------------------------------------------------------
---Radar Master (doesn't work in 1.2.1, disabled)
---don't try to "fix it up", either. you *cannot* make it work in 1.2.1.
+--Radar Master (doesn't work in sm-ssc 1.2.1, disabled)
+--todo: get this working with StepMania 5
 -----------------------------------------------------------
 r['[SSC] Radar Master'] = function(params, pss)
 	local masterTable = {

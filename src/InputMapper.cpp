@@ -64,7 +64,7 @@ static const AutoMappings g_DefaultKeyMappings = AutoMappings(
 	AutoMappingEntry( 0, KEY_KP_C2,	GAME_BUTTON_MENUDOWN,	true ),
 	AutoMappingEntry( 0, KEY_KP_ENTER,	GAME_BUTTON_START,	true ),
 	AutoMappingEntry( 0, KEY_KP_C0,	GAME_BUTTON_SELECT,	true ),
-	AutoMappingEntry( 0, KEY_NUMLOCK,	GAME_BUTTON_BACK,	true ),
+	AutoMappingEntry( 0, KEY_HYPHEN,	GAME_BUTTON_BACK,	true ), // laptop keyboards.
 	AutoMappingEntry( 0, KEY_F1,	GAME_BUTTON_COIN,	false ),
 	AutoMappingEntry( 0, KEY_SCRLLOCK,	GAME_BUTTON_OPERATOR,	false )
 );
@@ -948,7 +948,7 @@ MultiPlayer InputMapper::InputDeviceToMultiPlayer( InputDevice id )
 GameButton InputScheme::ButtonNameToIndex( const RString &sButtonName ) const
 {
 	for( GameButton gb=(GameButton) 0; gb<m_iButtonsPerController; gb=(GameButton)(gb+1) ) 
-		if( sButtonName.EqualsNoCase(GetGameButtonName(gb)) )
+		if( stricmp(GetGameButtonName(gb), sButtonName) == 0 )
 			return gb;
 
 	return GameButton_Invalid;

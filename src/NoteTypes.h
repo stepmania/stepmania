@@ -5,6 +5,7 @@
 
 #include "GameConstantsAndTypes.h"
 #include "PlayerNumber.h"
+#include "RageLog.h"
 
 class XNode;
 
@@ -159,7 +160,14 @@ struct TapNote
 		pn(PLAYER_INVALID), bHopoPossible(false),
 		sAttackModifiers(sAttackModifiers_),
 		fAttackDurationSeconds(fAttackDurationSeconds_),
-		iKeysoundIndex(iKeysoundIndex_), iDuration(0), HoldResult() {}
+		iKeysoundIndex(iKeysoundIndex_), iDuration(0), HoldResult()
+	{
+		if (type_ > TapNote::fake )
+		{
+			LOG->Trace("Invalid tap note type %d (most likely) due to random vanish issues. Assume it doesn't need judging.", (int)type_ );
+			type = TapNote::empty;
+		}
+	}
 
 	/**
 	 * @brief Determine if the two TapNotes are equal to each other.
@@ -298,6 +306,51 @@ inline int   BeatToNoteRowNotRounded( float fBeatNum )	{ return (int)( fBeatNum 
  * @param iRow the row to convert.
  * @return the beat. */
 inline float NoteRowToBeat( int iRow )			{ return iRow / (float)ROWS_PER_BEAT; }
+
+// These functions can be useful for function templates,
+// where both rows and beats can be specified.
+
+/**
+ * @brief Convert the note row to note row (returns itself).
+ * @param row the row to convert.
+ */
+static inline int ToNoteRow(int row)    { return row; }
+
+/**
+ * @brief Convert the beat to note row.
+ * @param beat the beat to convert.
+ */
+static inline int ToNoteRow(float beat) { return BeatToNoteRow(beat); }
+
+/**
+ * @brief Convert the note row to beat.
+ * @param row the row to convert.
+ */
+static inline float ToBeat(int row)    { return NoteRowToBeat(row); }
+
+/**
+ * @brief Convert the beat row to beat (return itself).
+ * @param beat the beat to convert.
+ */
+static inline float ToBeat(float beat) { return beat; }
+
+/**
+ * @brief Scales the position.
+ * @param T start - the starting row of the scaling region
+ * @param T length - the length of the scaling region
+ * @param T newLength - the new length of the scaling region
+ * @param T position - the position to scale
+ * @return T the scaled position
+ */
+template<typename T>
+inline T ScalePosition( T start, T length, T newLength, T position )
+{
+	if( position < start )
+		return position;
+	if( position >= start + length )
+		return position - length + newLength;
+	return start + (position - start) * newLength / length;
+}
 
 #endif
 

@@ -14,6 +14,9 @@ class OptionRowHandler;
 class GameCommand;
 struct OptionRowDefinition;
 
+RString ITEMS_LONG_ROW_X_NAME( size_t p );
+RString MOD_ICON_X_NAME( size_t p );
+
 class OptionRowType
 {
 public:

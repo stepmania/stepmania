@@ -2,6 +2,7 @@
 #define StatsManager_H
 
 #include "StageStats.h"
+
 /** @brief Managed non-persisted statistics. */
 class StatsManager
 {

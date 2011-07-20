@@ -293,21 +293,12 @@ RageTextureID BannerCache::LoadCachedBanner( RString sBannerPath )
 	ASSERT( pImage );
 
 	int iSourceWidth = 0, iSourceHeight = 0;
-	bool bWasRotatedBanner = false;
 	BannerData.GetValue( sBannerPath, "Width", iSourceWidth );
 	BannerData.GetValue( sBannerPath, "Height", iSourceHeight );
-	BannerData.GetValue( sBannerPath, "Rotated", bWasRotatedBanner );
 	if( iSourceWidth == 0 || iSourceHeight == 0 )
 	{
 		LOG->UserLog( "Cache file", sBannerPath, "couldn't be loaded." );
 		return ID;
-	}
-
-	if( bWasRotatedBanner )
-	{
-		/* We need to tell Sprite that this was originally a rotated
-		 * sprite. */
-		ID.filename += "(was rotated)";
 	}
 
 	/* Is the banner already in a texture? */
@@ -381,50 +372,6 @@ void BannerCache::CacheBannerInternal( RString sBannerPath )
 	{
 		LOG->UserLog( "Cache file", sBannerPath, "couldn't be loaded: %s", sError.c_str() );
 		return;
-	}
-
-	bool bWasRotatedBanner = false;
-
-	if( Sprite::IsDiagonalBanner(pImage->w , pImage->h) )
-	{
-		/* Ack.  It's a diagonal banner.  Problem: if we resize a diagonal banner, we
-		 * get ugly checker patterns.  We need to un-rotate it.
-		 *
-		 * If we spin the banner by hand, we need to do a linear filter, or the
-		 * fade to the full resolution banner is misaligned, which looks strange.
-		 *
-		 * To do a linear filter, we need to lose the palette.  Oh well.
-		 *
-		 * This also makes the banner take less memory, though that could also be
-		 * done by RLEing the surface.
-		 */
-		//RageSurfaceUtils::ApplyHotPinkColorKey( pImage );
-
-		RageSurfaceUtils::ConvertSurface(pImage, pImage->w, pImage->h, 32, 0x000000FF, 0x0000FF00, 0x00FF0000, 0xFF000000);
-		
-		RageSurface *dst = CreateSurface(
-			256, 64, pImage->format->BitsPerPixel, 
-			pImage->format->Rmask, pImage->format->Gmask, pImage->format->Bmask, pImage->format->Amask );
-
-		if( pImage->format->BitsPerPixel == 8 ) 
-		{
-			ASSERT( pImage->format->palette );
-			dst->fmt.palette = pImage->fmt.palette;
-		}
-
-		const float fCustomImageCoords[8] = {
-			0.02f,	0.78f,	// top left
-			0.22f,	0.98f,	// bottom left
-			0.98f,	0.22f,	// bottom right
-			0.78f,	0.02f,	// top right
-		};
-
-		RageSurfaceUtils::BlitTransform( pImage, dst, fCustomImageCoords );
-
-		delete pImage;
-		pImage = dst;
-
-		bWasRotatedBanner = true;
 	}
 
 	const int iSourceWidth = pImage->w, iSourceHeight = pImage->h;
@@ -504,8 +451,6 @@ void BannerCache::CacheBannerInternal( RString sBannerPath )
 	BannerData.SetValue( sBannerPath, "Width", iSourceWidth );
 	BannerData.SetValue( sBannerPath, "Height", iSourceHeight );
 	BannerData.SetValue( sBannerPath, "FullHash", GetHashForFile( sBannerPath ) );
-	/* Remember this, so we can hint Sprite. */
-	BannerData.SetValue( sBannerPath, "Rotated", bWasRotatedBanner );
 	BannerData.WriteFile( BANNER_CACHE_INDEX );
 }
 

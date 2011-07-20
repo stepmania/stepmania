@@ -3,6 +3,7 @@
 #ifndef PlayerState_H
 #define PlayerState_H
 
+#include "SongPosition.h"
 #include "Attack.h"
 #include "ModsGroup.h"
 #include "PlayerNumber.h"
@@ -37,6 +38,9 @@ public:
 	 * This is only used if GAMESTATE->m_bMultiplayer is true.
 	 */
 	MultiPlayer		m_mp;
+
+	// Music statistics:
+	SongPosition m_Position;
 
 	/**
 	 * @brief Change the PlayerOptions to their default.

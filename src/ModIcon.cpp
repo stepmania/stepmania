@@ -39,12 +39,11 @@ void ModIcon::Load( RString sMetricsGroup )
 	this->AddChild( &m_text );
 
 	CROP_TEXT_TO_WIDTH.Load( sMetricsGroup, "CropTextToWidth" );
+
 	// stop words
-	/*
 	STOP_WORDS.Load( sMetricsGroup, "StopWords" );
 	m_vStopWords.empty();
 	split(STOP_WORDS, ",", m_vStopWords);
-	*/
 
 	Set("");
 }
@@ -53,17 +52,8 @@ void ModIcon::Set( const RString &_sText )
 {
 	RString sText = _sText;
 
-	// todo: make these metricable -aj
-	static const RString sStopWords[] = 
-	{
-		"1X",
-		"DEFAULT",
-		"OVERHEAD",
-		"OFF",
-	};
-
-	for( unsigned i=0; i<ARRAYLEN(sStopWords); i++ )
-		if( sText.EqualsNoCase(sStopWords[i]) )
+	for( unsigned i = 0; i < m_vStopWords.size(); i++ )
+		if( sText.EqualsNoCase(m_vStopWords[i]) )
 			sText = "";
 
 	sText.Replace( " ", "\n" );

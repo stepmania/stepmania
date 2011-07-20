@@ -16,6 +16,10 @@
 #include <sys/stat.h>
 #include <math.h>
 
+bool HexToBinary(const RString&, RString&);
+void utf8_sanitize(RString &);
+void UnicodeUpperLower(wchar_t *, size_t, const unsigned char *);
+
 RandomGen g_RandomNumberGenerator;
 
 MersenneTwister::MersenneTwister( int iSeed ) : m_iNext(0)
@@ -88,7 +92,7 @@ int MersenneTwister::operator()()
 
 void fapproach( float& val, float other_val, float to_move )
 {
-	ASSERT_M( to_move >= 0, ssprintf("to_move: %f", to_move) );
+	ASSERT_M( to_move >= 0, ssprintf("to_move: %f < 0", to_move) );
 	if( val == other_val )
 		return;
 	float fDelta = other_val - val;
@@ -430,7 +434,7 @@ RString ConvertI64FormatString( const RString &sStr )
 RString ConvertI64FormatString( const RString &sStr ) { return sStr; }
 #endif
 
-/* ISO-639-1 codes: http://www.loc.gov/standards/iso639-2/langcodes.html
+/* ISO-639-1 codes: http://www.loc.gov/standards/iso639-2/php/code_list.php
  * native forms: http://people.w3.org/rishida/names/languages.html
  * We don't use 3-letter codes, so we don't bother supporting them. */
 static const LanguageInfo g_langs[] =
@@ -1238,14 +1242,14 @@ bool GetFileContents( const RString &sPath, RString &sOut, bool bOneLine )
 	/* Don't warn if the file doesn't exist, but do warn if it exists and fails to open. */
 	if( !IsAFile(sPath) )
 		return false;
-	
+
 	RageFile file;
 	if( !file.Open(sPath) )
 	{
 		LOG->Warn( "GetFileContents(%s): %s", sPath.c_str(), file.GetError().c_str() );
 		return false;
 	}
-	
+
 	RString sData;
 	int iGot;
 	if( bOneLine )
@@ -1261,7 +1265,7 @@ bool GetFileContents( const RString &sPath, RString &sOut, bool bOneLine )
 
 	if( bOneLine )
 		StripCrnl( sData );
-	
+
 	sOut = sData;
 	return true;
 }
@@ -1725,6 +1729,13 @@ bool StringToFloat( const RString &sString, float &fOut )
 
 	fOut = strtof( sString, &endPtr );
 	return sString.size() && *endPtr == '\0' && isfinite( fOut );
+}
+
+RString FloatToString( const float &num )
+{
+	stringstream ss;
+	ss << num;
+	return ss.str();
 }
 
 const wchar_t INVALID_CHAR = 0xFFFD; /* U+FFFD REPLACEMENT CHARACTER */

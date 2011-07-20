@@ -5,6 +5,7 @@
 
 static GtkWidget *label;
 static GtkWidget *window;
+static GtkWidget *progressBar;
 
 extern "C" const char *Init( int *argc, char ***argv )
 {
@@ -22,9 +23,12 @@ extern "C" const char *Init( int *argc, char ***argv )
 	loadimage = gtk_image_new_from_file(splash_image_path);
 	label = gtk_label_new(NULL);
 	gtk_label_set_justify(GTK_LABEL(label),GTK_JUSTIFY_CENTER);
+	progressBar = gtk_progress_bar_new();
+	gtk_progress_bar_set_fraction( GTK_PROGRESS_BAR(progressBar), 0.0 );
 	vbox = gtk_vbox_new(FALSE,5);
 	gtk_container_add(GTK_CONTAINER(window),vbox);
 	gtk_box_pack_start(GTK_BOX(vbox),loadimage,FALSE,FALSE,0);
+	gtk_box_pack_end(GTK_BOX(vbox),progressBar,TRUE,TRUE,0);
 	gtk_box_pack_end(GTK_BOX(vbox),label,TRUE,TRUE,0);
 
 	gtk_widget_show_all(window);
@@ -44,6 +48,21 @@ extern "C" void SetText( const char *s )
 {
 	gtk_label_set_text(GTK_LABEL(label), s);
 	gtk_widget_show(label);
+	gtk_main_iteration_do(FALSE);
+}
+
+extern "C" void SetProgress( int progress, int totalWork )
+{
+	gdouble fraction = ( totalWork > 0 ? progress / (gdouble)totalWork : 0 );
+	if( fraction > 1.0 ) fraction = 1.0;
+	if( fraction < 0.0 ) fraction = 0.0;
+	gtk_progress_bar_set_fraction( GTK_PROGRESS_BAR(progressBar), fraction );
+	gtk_main_iteration_do(FALSE);
+}
+
+extern "C" void SetIndeterminate( bool indeterminate )
+{
+	gtk_progress_bar_pulse(GTK_PROGRESS_BAR(progressBar));
 	gtk_main_iteration_do(FALSE);
 }
 

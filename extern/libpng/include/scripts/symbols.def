@@ -5,7 +5,7 @@
 LIBRARY
 
 EXPORTS
-;Version 1.5.2
+;Version 1.5.1
  png_access_version_number @1
  png_set_sig_bytes @2
  png_sig_cmp @3
@@ -226,4 +226,3 @@ EXPORTS
  png_get_current_pass_number @218
  png_process_data_pause @219
  png_process_data_skip @220
- png_set_expand_16 @221

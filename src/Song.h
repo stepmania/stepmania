@@ -8,21 +8,24 @@
 #include "RageUtil_AutoPtr.h"
 #include "RageUtil_CachedObject.h"
 #include "RageTypes.h"
+#include "Steps.h"
 #include <set>
 
-class Steps;
 class Style;
 class StepsID;
 struct lua_State;
 struct BackgroundChange;
 
+void FixupPath( RString &path, const RString &sSongPath );
+RString GetSongAssetPath( RString sPath, const RString &sSongPath );
+
 /** @brief The version of the .ssc file format. */
-const static float STEPFILE_VERSION_NUMBER = 0.59f;
+const static float STEPFILE_VERSION_NUMBER = 0.77f;
 
 /** @brief How many edits for this song can each profile have? */
-const int MAX_EDITS_PER_SONG_PER_PROFILE	= 5;
+const int MAX_EDITS_PER_SONG_PER_PROFILE = 15;
 /** @brief How many edits for this song can be available? */
-const int MAX_EDITS_PER_SONG			= 5*NUM_ProfileSlot;
+const int MAX_EDITS_PER_SONG = MAX_EDITS_PER_SONG_PER_PROFILE * NUM_ProfileSlot;
 
 extern const int FILE_CACHE_VERSION;
 
@@ -34,14 +37,6 @@ enum BackgroundLayer
 	//BACKGROUND_LAYER_3, // StepCollection get
 	NUM_BackgroundLayer,
 	BACKGROUND_LAYER_Invalid
-};
-
-/** @brief The different ways of displaying the BPM. */
-enum DisplayBPM
-{
-	DISPLAY_BPM_ACTUAL, /**< Display the song's actual BPM. */
-	DISPLAY_BPM_SPECIFIED, /**< Display a specified value or values. */
-	DISPLAY_BPM_RANDOM /**< Display a random selection of BPMs. */
 };
 
 /** @brief A custom foreach loop for the different background layers. */
@@ -96,14 +91,19 @@ public:
 	// This one takes the effort to reuse Steps pointers as best as it can
 	bool ReloadFromSongDir( RString sDir );
 
-	/** @brief Call this after loading a song to clean up invalid data. */
-	void TidyUpData();
+	/**
+	 * @brief Call this after loading a song to clean up invalid data.
+	 * @param fromCache was this data loaded from the cache file?
+	 * @param duringCache was this data loaded during the cache process? */
+	void TidyUpData( bool fromCache = false, bool duringCache = false );
 	
 	/**
-	 * @brief Get the new radar values, and determine the last beat at the same time.
+	 * @brief Get the new radar values, and determine the last second at the same time.
 	 *
-	 * This is called by TidyUpData, after saving the Song. */
-	void ReCalculateRadarValuesAndLastBeat();
+	 * This is called by TidyUpData, after saving the Song.
+	 * @param fromCache was this data loaded from the cache file?
+	 * @param duringCache was this data loaded during the cache process? */
+	void ReCalculateRadarValuesAndLastSecond(bool fromCache = false, bool duringCache = false);
 	/**
 	 * @brief Translate any titles that aren't in english.
 	 *
@@ -185,7 +185,6 @@ public:
 	RString GetDisplaySubTitle() const;
 	RString GetDisplayArtist() const;
 
-	// Returns the transliterated titles, if any; otherwise returns the main titles.
 	/**
 	 * @brief Retrieve the transliterated title, or the main title if there is no translit.
 	 * @return the proper title. */
@@ -228,10 +227,8 @@ public:
 	RString	m_sMusicFile;
 	RString	m_sInstrumentTrackFile[NUM_InstrumentTrack];
 
+	/** @brief The length of the music file. */
 	float	m_fMusicLengthSeconds;
-	float	m_fFirstBeat;	// beat of first note
-	float	m_fLastBeat;	// beat of last note
-	float	m_fSpecifiedLastBeat;	// specified last beat of the song
 	float	m_fMusicSampleStartSeconds;
 	float	m_fMusicSampleLengthSeconds;
 	DisplayBPM m_DisplayBPMType;
@@ -285,10 +282,27 @@ public:
 	bool Matches(RString sGroup, RString sSong) const;
 
 	/** @brief The Song's TimingData. */
-	TimingData m_Timing;
+	TimingData m_SongTiming;
+	
+	float GetFirstBeat() const;
+	float GetFirstSecond() const;
+	float GetLastBeat() const;
+	float GetLastSecond() const;
+	float GetSpecifiedLastBeat() const;
+	float GetSpecifiedLastSecond() const;
+	
+	void SetFirstSecond(const float f);
+	void SetLastSecond(const float f);
+	void SetSpecifiedLastSecond(const float f);
 
 	typedef vector<BackgroundChange> 	VBackgroundChange;
 private:
+	/** @brief The first second that a note is hit. */
+	float firstSecond;
+	/** @brief The last second that a note is hit. */
+	float lastSecond;
+	/** @brief The last second of the song for playing purposes. */
+	float specifiedLastSecond;
 	/**
 	 * @brief The background changes (sorted by layer) that are for this Song.
 	 *
@@ -305,21 +319,31 @@ private:
 	 *
 	 * This must be sorted before gameplay. */
 	AutoPtrCopyOnWrite<VBackgroundChange>	m_ForegroundChanges;
+	
+	vector<RString> GetChangesToVectorString(const vector<BackgroundChange> & changes) const;
 public:
 	const vector<BackgroundChange>	&GetBackgroundChanges( BackgroundLayer bl ) const;
 	vector<BackgroundChange>	&GetBackgroundChanges( BackgroundLayer bl );
 	const vector<BackgroundChange>	&GetForegroundChanges() const;
 	vector<BackgroundChange>	&GetForegroundChanges();
 
+	vector<RString> GetBGChanges1ToVectorString() const;
+	vector<RString> GetBGChanges2ToVectorString() const;
+	vector<RString> GetFGChanges1ToVectorString() const;
+	
+	vector<RString> GetInstrumentTracksToVectorString() const;
+	
 	/**
 	 * @brief The list of LyricSegments.
 	 *
 	 * This must be sorted before gameplay. */
 	vector<LyricSegment>			m_LyricSegments;
 
+/* [splittiming]
 	void AddBPMSegment( const BPMSegment &seg ) { m_Timing.AddBPMSegment( seg ); }
 	void AddStopSegment( const StopSegment &seg ) { m_Timing.AddStopSegment( seg ); }
 	void AddWarpSegment( const WarpSegment &seg ) { m_Timing.AddWarpSegment( seg ); }
+*/
 	void AddBackgroundChange( BackgroundLayer blLayer, BackgroundChange seg );
 	void AddForegroundChange( BackgroundChange seg );
 	void AddLyricSegment( LyricSegment seg );
@@ -327,18 +351,43 @@ public:
 	void GetDisplayBpms( DisplayBpms &AddTo ) const;
 	const BackgroundChange &GetBackgroundAtBeat( BackgroundLayer iLayer, float fBeat ) const;
 
+/* [splittiming]
 	float GetBPMAtBeat( float fBeat ) const { return m_Timing.GetBPMAtBeat( fBeat ); }
 	void SetBPMAtBeat( float fBeat, float fBPM ) { m_Timing.SetBPMAtBeat( fBeat, fBPM ); }
 	BPMSegment& GetBPMSegmentAtBeat( float fBeat ) { return m_Timing.GetBPMSegmentAtBeat( fBeat ); }
-	/**
-	 * @brief Retrieve the beat based on the specified time.
-	 * @param fElapsedTime the amount of time since the Song started.
-	 * @return the appropriate beat. */
+*/
+	
+	Steps *CreateSteps();
+	void InitSteps(Steps *pSteps);
+
+	/* [splittiming]
+	float SongGetBeatFromElapsedTime( float fElapsedTime ) const 
+	{
+		return m_SongTiming.GetBeatFromElapsedTime( fElapsedTime );
+	}
+	float StepsGetBeatFromElapsedTime( float fElapsedTime, const Steps &steps ) const 
+	{
+		return steps.m_Timing.GetBeatFromElapsedTime( fElapsedTime );
+	}
+	
+	float SongGetElapsedTimeFromBeat( float fBeat ) const
+	{
+		return m_SongTiming.GetElapsedTimeFromBeat( fBeat );
+	}
+	float StepsGetElapsedTimeFromBeat( float fBeat, const Steps &steps ) const
+	{
+		return steps.m_Timing.GetElapsedTimeFromBeat( fBeat );
+	}
+	*/
+	
+	/* [splittiming]
 	float GetBeatFromElapsedTime( float fElapsedTime ) const 
 	{ 
 		return m_Timing.GetBeatFromElapsedTime( fElapsedTime );
 	}
 	float GetElapsedTimeFromBeat( float fBeat ) const { return m_Timing.GetElapsedTimeFromBeat( fBeat ); }
+	*/
+	
 	bool HasSignificantBpmChangesOrStops() const;
 	float GetStepsSeconds() const;
 	bool IsLong() const;
@@ -355,6 +404,12 @@ public:
 
 	void SetEnabled( bool b ) { m_bEnabled = b; }
 	bool GetEnabled() const { return m_bEnabled; }
+	/**
+	 * @brief Determine if the song should be shown on the MusicWheel normally.
+	 *
+	 * Songs that are not displayed normally may still be available during
+	 * random selection, extra stages, or other special conditions.
+	 * @return true if displayed normally, false otherwise. */
 	bool NormallyDisplayed() const;
 	bool ShowInDemonstrationAndRanking() const;
 
@@ -383,6 +438,11 @@ public:
 
 	CachedObject<Song> m_CachedObject;
 
+	RString GetAttackString() const
+	{
+		return join(":", this->m_sAttackString);
+	}
+	
 	// Lua
 	void PushSelf( lua_State *L );
 

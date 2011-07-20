@@ -191,7 +191,7 @@ void BeginnerHelper::ShowStepCircle( PlayerNumber pn, int CSTEP )
 	m_sStepCircle[pn][isc].StopEffect();
 	m_sStepCircle[pn][isc].SetZoom( 2 );
 	m_sStepCircle[pn][isc].StopTweening();
-	m_sStepCircle[pn][isc].BeginTweening( GAMESTATE->m_fCurBPS/3, TWEEN_LINEAR );
+	m_sStepCircle[pn][isc].BeginTweening( GAMESTATE->m_Position.m_fCurBPS/3, TWEEN_LINEAR );
 	m_sStepCircle[pn][isc].SetZoom( 0 );
 }
 
@@ -242,7 +242,7 @@ void BeginnerHelper::DrawPrimitives()
 			DISPLAY->SetLighting( true );
 			DISPLAY->SetLightDirectional( 
 				0, 
-				RageColor(0.5,0.5,0.5,1), 
+				RageColor(0.5f,0.5f,0.5f,1), 
 				RageColor(1,1,1,1),
 				RageColor(0,0,0,1),
 				RageVector3(0, 0, 1) );
@@ -271,7 +271,7 @@ void BeginnerHelper::DrawPrimitives()
 		DISPLAY->SetLighting( true );
 		DISPLAY->SetLightDirectional( 
 			0, 
-			RageColor(0.5,0.5,0.5,1), 
+			RageColor(0.5f,0.5f,0.5f,1), 
 			RageColor(1,1,1,1),
 			RageColor(0,0,0,1),
 			RageVector3(0, 0, 1) );
@@ -318,19 +318,19 @@ void BeginnerHelper::Step( PlayerNumber pn, int CSTEP )
 		ShowStepCircle( pn, ST_DOWN );
 		m_pDancer[pn]->StopTweening();
 		m_pDancer[pn]->PlayAnimation( "Step-JUMPLR", 1.5f );
-		m_pDancer[pn]->BeginTweening( GAMESTATE->m_fCurBPS/8, TWEEN_LINEAR );
+		m_pDancer[pn]->BeginTweening( GAMESTATE->m_Position.m_fCurBPS/8, TWEEN_LINEAR );
 		m_pDancer[pn]->SetRotationY( 90 );
-		m_pDancer[pn]->BeginTweening( 1/(GAMESTATE->m_fCurBPS * 2) ); //sleep between jump-frames
-		m_pDancer[pn]->BeginTweening( GAMESTATE->m_fCurBPS /6, TWEEN_LINEAR );
+		m_pDancer[pn]->BeginTweening( 1/(GAMESTATE->m_Position.m_fCurBPS * 2) ); //sleep between jump-frames
+		m_pDancer[pn]->BeginTweening( GAMESTATE->m_Position.m_fCurBPS /6, TWEEN_LINEAR );
 		m_pDancer[pn]->SetRotationY( 0 );
 		break;
 	}
 
 	m_sFlash.StopEffect();
 	m_sFlash.StopTweening();
-	m_sFlash.Sleep( GAMESTATE->m_fCurBPS/16 );
+	m_sFlash.Sleep( GAMESTATE->m_Position.m_fCurBPS/16 );
 	m_sFlash.SetDiffuseAlpha( 1 );
-	m_sFlash.BeginTweening( 1/GAMESTATE->m_fCurBPS * 0.5f );
+	m_sFlash.BeginTweening( 1/GAMESTATE->m_Position.m_fCurBPS * 0.5f );
 	m_sFlash.SetDiffuseAlpha( 0 );
 }
 
@@ -340,7 +340,7 @@ void BeginnerHelper::Update( float fDeltaTime )
 		return;
 
 	// the row we want to check on this update
-	int iCurRow = BeatToNoteRowNotRounded( GAMESTATE->m_fSongBeat + 0.4f );
+	int iCurRow = BeatToNoteRowNotRounded( GAMESTATE->m_Position.m_fSongBeat + 0.4f );
 	FOREACH_EnabledPlayer( pn )
 	{
 		for( int iRow=m_iLastRowChecked; iRow<iCurRow; iRow++ )
@@ -369,7 +369,7 @@ void BeginnerHelper::Update( float fDeltaTime )
 	m_pDancePad->Update( fDeltaTime );
 	m_sFlash.Update( fDeltaTime );
 
-	float beat = fDeltaTime*GAMESTATE->m_fCurBPS;
+	float beat = fDeltaTime*GAMESTATE->m_Position.m_fCurBPS;
 	// If this is not a human player, the dancer is not shown
 	FOREACH_HumanPlayer( pu )
 	{

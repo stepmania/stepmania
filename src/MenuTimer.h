@@ -9,6 +9,8 @@
 #include "ThemeMetric.h"
 #include "AutoActor.h"
 
+RString WARNING_COMMAND_NAME( size_t i );
+
 class MenuTimer : public ActorFrame
 {
 public:

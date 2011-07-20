@@ -6,6 +6,8 @@
 #include "GameConstantsAndTypes.h"	// for TapNoteScore
 #include "RageTexturePreloader.h"
 
+RString GetAttackPieceName( const RString &sAttack );
+
 class PlayerState;
 /** @brief A graphical display for attacks. */
 class AttackDisplay : public ActorFrame

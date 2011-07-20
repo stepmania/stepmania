@@ -41,6 +41,9 @@ struct PlayAfterLaunchInfo
 	}
 };
 
+void InstallSmzipOsArg( const RString &sOsZipFile, PlayAfterLaunchInfo &out );
+PlayAfterLaunchInfo DoInstalls( CommandLineActions::CommandLineArgs args );
+
 static void Parse( const RString &sDir, PlayAfterLaunchInfo &out )
 {
 	vector<RString> vsDirParts;
@@ -360,7 +363,7 @@ void ScreenInstallOverlay::Update( float fDeltaTime )
 	}
 
 	if( playAfterLaunchInfo.bAnySongChanged )
-		SONGMAN->Reload( false, NULL );
+		SONGMAN->Reload( false );
 
 	if( !playAfterLaunchInfo.sSongDir.empty() )
 	{
@@ -375,7 +378,7 @@ void ScreenInstallOverlay::Update( float fDeltaTime )
 			GAMEMAN->GetStylesForGame( GAMESTATE->m_pCurGame, vpStyle, false );
 			GAMESTATE->m_PlayMode.Set( PLAY_MODE_REGULAR );
 			GAMESTATE->m_bSideIsJoined[0] = true;
-			GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
+			GAMESTATE->SetMasterPlayerNumber(PLAYER_1);
 			GAMESTATE->m_pCurStyle.Set( vpStyle[0] );
 			GAMESTATE->m_pCurSong.Set( pSong );
 			GAMESTATE->m_pPreferredSong = pSong;

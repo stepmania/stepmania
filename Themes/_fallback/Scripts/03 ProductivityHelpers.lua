@@ -148,7 +148,9 @@ end
 -- MaskSource([clearzbuffer])
 -- Sets an actor up as the source for a mask. Clears zBuffer by default.
 function Actor:MaskSource(noclear)
-	self:clearzbuffer(noclear or true)
+	if noclear == true then
+		self:clearzbuffer(true)
+	end
 	self:zwrite(true)
 	self:blend('BlendMode_NoEffect')
 end
@@ -220,6 +222,23 @@ function BitmapText:DiffuseAndStroke(diffuseC,strokeC)
 	self:strokecolor(strokeC)
 end;
 --[[ end BitmapText commands ]]
+
+--[[ ----------------------------------------------------------------------- ]]
+
+--[[ profile stuff ]]
+-- GetPlayerOrMachineProfile(pn)
+-- This returns a profile, preferably a player one.
+-- If there isn't one, we fall back on the machine profile.
+function GetPlayerOrMachineProfile(pn)
+	if PROFILEMAN:IsPersistentProfile(pn) then
+		-- player profile
+		return PROFILEMAN:GetProfile(pn);
+	else
+		-- machine profile
+		return PROFILEMAN:GetMachineProfile();
+	end;
+end;
+--[[ end profile stuff]]
 
 --[[ ----------------------------------------------------------------------- ]]
 

@@ -230,12 +230,12 @@ void LightsManager::Update( float fDeltaTime )
 			static float fLastBeat;
 			static int iLight;
 
-			if( fracf(GAMESTATE->m_fLightSongBeat) < fracf(fLastBeat) )
+			if( fracf(GAMESTATE->m_Position.m_fLightSongBeat) < fracf(fLastBeat) )
 			{
 				++iLight;
 				wrap( iLight, 4 );
 			}
-			fLastBeat = GAMESTATE->m_fLightSongBeat;
+			fLastBeat = GAMESTATE->m_Position.m_fLightSongBeat;
 			switch( iLight )
 			{
 			case 0:	m_LightsState.m_bCabinetLights[LIGHT_MARQUEE_UP_LEFT]  = true;	break;
@@ -405,7 +405,7 @@ void LightsManager::Update( float fDeltaTime )
 	// If not joined, has enough credits, and not too late to join, then 
 	// blink the menu buttons rapidly so they'll press Start
 	{
-		int iBeat = (int)(GAMESTATE->m_fLightSongBeat*4);
+		int iBeat = (int)(GAMESTATE->m_Position.m_fLightSongBeat*4);
 		bool bBlinkOn = (iBeat%2)==0;
 		FOREACH_PlayerNumber( pn )
 		{

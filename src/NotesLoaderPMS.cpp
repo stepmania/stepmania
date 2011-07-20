@@ -573,7 +573,7 @@ static bool LoadFromPMSFile( const RString &sPath, const NameToData_t &mapNameTo
 	return true;
 }
 
-static void ReadGlobalTags( const NameToData_t &mapNameToData, Song &out, MeasureToTimeSig_t &sigAdjustmentsOut, map<RString,int> &idToKeySoundIndexOut )
+static void ReadGlobalTags( const RString &sPath, const NameToData_t &mapNameToData, Song &out, MeasureToTimeSig_t &sigAdjustmentsOut, map<RString,int> &idToKeySoundIndexOut )
 {
 	RString sData;
 	if( GetTagFromMap(mapNameToData, "#title", sData) )
@@ -590,8 +590,7 @@ static void ReadGlobalTags( const NameToData_t &mapNameToData, Song &out, Measur
 
 		if( fBPM > 0.0f )
 		{
-			BPMSegment newSeg( 0, fBPM );
-			out.AddBPMSegment( newSeg );
+			out.m_SongTiming.AddSegment( SEGMENT_BPM, new BPMSegment(0, fBPM) );
 			LOG->Trace( "Inserting new BPM change at beat %f, BPM %f", NoteRowToBeat(0), fBPM );
 		}
 		else
@@ -612,26 +611,29 @@ static void ReadGlobalTags( const NameToData_t &mapNameToData, Song &out, Measur
 		// this is keysound file name.  Looks like "#WAV1A"
 		RString nData = it->second;
 		RString sWavID = sName.Right(2);
+		RString dir = out.GetSongDir();
+		if (dir.empty())
+			dir = Dirname(sPath);
 
 		/* Due to bugs in some programs, many PMS files have a "WAV" extension
 		 * on files in the PMS for files that actually have some other extension.
 		 * Do a search.  Don't do a wildcard search; if sData is "song.wav",
 		 * we might also have "song.png", which we shouldn't match. */
-		if( !IsAFile(out.GetSongDir()+nData) )
+		if( !IsAFile(dir+nData) )
 		{
 			const char *exts[] = { "oga", "ogg", "wav", "mp3", NULL }; // XXX: stop duplicating these everywhere
 			for( unsigned i = 0; exts[i] != NULL; ++i )
 			{
 				RString fn = SetExtension( nData, exts[i] );
-				if( IsAFile(out.GetSongDir()+fn) )
+				if( IsAFile(dir+fn) )
 				{
 					nData = fn;
 					break;
 				}
 			}
 		}
-		if( !IsAFile(out.GetSongDir()+nData) )
-			LOG->UserLog( "Song file", out.GetSongDir(), "references key \"%s\" that can't be found", nData.c_str() );
+		if( !IsAFile(dir+nData) )
+			LOG->UserLog( "Song file", dir, "references key \"%s\" that can't be found", nData.c_str() );
 
 		sWavID.MakeUpper();		// HACK: undo the MakeLower()
 		out.m_vsKeysoundFile.push_back( nData );
@@ -673,7 +675,7 @@ static void ReadGlobalTags( const NameToData_t &mapNameToData, Song &out, Measur
 				case PMS_TRACK_BPM:
 					if( iVal > 0 )
 					{
-						out.SetBPMAtBeat( fBeat, (float) iVal );
+						out.m_SongTiming.SetBPMAtBeat( fBeat, (float) iVal );
 						LOG->Trace( "Inserting new BPM change at beat %f, BPM %i", fBeat, iVal );
 					}
 					else
@@ -693,9 +695,9 @@ static void ReadGlobalTags( const NameToData_t &mapNameToData, Song &out, Measur
 
 						if( fBPM > 0.0f )
 						{
-							BPMSegment newSeg( BeatToNoteRow(fBeat), fBPM );
-							out.AddBPMSegment( newSeg );
-							LOG->Trace( "Inserting new BPM change at beat %f, BPM %f", fBeat, newSeg.GetBPM() );
+							BPMSegment * newSeg = new BPMSegment( fBeat, fBPM );
+							out.m_SongTiming.AddSegment( SEGMENT_BPM, newSeg );
+							LOG->Trace( "Inserting new BPM change at beat %f, BPM %f", fBeat, newSeg->GetBPM() );
 						}
 						else
 						{
@@ -716,13 +718,13 @@ static void ReadGlobalTags( const NameToData_t &mapNameToData, Song &out, Measur
 					if( GetTagFromMap( mapNameToData, sTagToLookFor, sBeats ) )
 					{
 						// find the BPM at the time of this freeze
-						float fBPS = out.m_Timing.GetBPMAtBeat(fBeat) / 60.0f;
+						float fBPS = out.m_SongTiming.GetBPMAtBeat(fBeat) / 60.0f;
 						float fBeats = StringToFloat( sBeats ) / 48.0f;
 						float fFreezeSecs = fBeats / fBPS;
 
-						StopSegment newSeg( BeatToNoteRow(fBeat), fFreezeSecs );
-						out.AddStopSegment( newSeg );
-						LOG->Trace( "Inserting new Freeze at beat %f, secs %f", fBeat, newSeg.m_fStopSeconds );
+						StopSegment * newSeg = new StopSegment( fBeat, fFreezeSecs );
+						out.m_SongTiming.AddSegment( SEGMENT_STOP_DELAY, newSeg );
+						LOG->Trace( "Inserting new Freeze at beat %f, secs %f", fBeat, newSeg->GetPause() );
 					}
 					else
 					{
@@ -749,9 +751,11 @@ static void ReadGlobalTags( const NameToData_t &mapNameToData, Song &out, Measur
 
 					if( fBPM > 0.0f )
 					{
-						BPMSegment newSeg( iStepIndex, fBPM );
-						out.AddBPMSegment( newSeg );
-						LOG->Trace( "Inserting new BPM change at beat %f, BPM %f", NoteRowToBeat(newSeg.m_iStartRow), newSeg.GetBPM() );
+						BPMSegment * newSeg = new BPMSegment( iStepIndex, fBPM );
+						out.m_SongTiming.AddSegment( SEGMENT_BPM, newSeg );
+						LOG->Trace("Inserting new BPM change at beat %f, BPM %f",
+								   newSeg->GetBeat(),
+								   newSeg->GetBPM() );
 				
 					}
 					else
@@ -809,6 +813,64 @@ void PMSLoader::GetApplicableFiles( const RString &sPath, vector<RString> &out )
 	GetDirListing( sPath + RString("*.pms"), out );
 }
 
+bool PMSLoader::LoadNoteDataFromSimfile(const RString &cachePath, Steps &out)
+{
+	Song dummy;
+	// TODO: Simplify this copy/paste from LoadFromDir.
+	
+	vector<NameToData_t> BMSData;
+	BMSData.push_back(NameToData_t());
+	ReadPMSFile(cachePath, BMSData.back());
+	
+	RString commonSubstring;
+	GetCommonTagFromMapList( BMSData, "#title", commonSubstring );
+	
+	Steps *copy = dummy.CreateSteps();
+	
+	copy->SetDifficulty( Difficulty_Medium );
+	RString sTag;
+	if( GetTagFromMap( BMSData[0], "#title", sTag ) && sTag.size() != commonSubstring.size() )
+	{
+		sTag = sTag.substr( commonSubstring.size(), sTag.size() - commonSubstring.size() );
+		sTag.MakeLower();
+		
+		if( sTag.find('l') != sTag.npos )
+		{
+			unsigned lPos = sTag.find('l');
+			if( lPos > 2 && sTag.substr(lPos-2,4) == "solo" )
+			{
+				copy->SetDifficulty( Difficulty_Edit );
+			}
+			else
+			{
+				copy->SetDifficulty( Difficulty_Easy );
+			}
+		}
+		else if( sTag.find('a') != sTag.npos )
+			copy->SetDifficulty( Difficulty_Hard );
+		else if( sTag.find('b') != sTag.npos )
+			copy->SetDifficulty( Difficulty_Beginner );
+	}
+	if( commonSubstring == "" )
+	{
+		copy->SetDifficulty(Difficulty_Medium);
+		RString unused;
+		if (GetTagFromMap(BMSData[0], "#title#", sTag))
+			SearchForDifficulty(unused, copy);
+	}
+	MeasureToTimeSig_t sigAdjustments;
+	map<RString,int> idToKeysoundIndex;
+	ReadGlobalTags( cachePath, BMSData[0], dummy, sigAdjustments, idToKeysoundIndex );
+	
+	const bool ok = LoadFromPMSFile( cachePath, BMSData[0], *copy, sigAdjustments, idToKeysoundIndex );
+	if( ok )
+	{
+		out.SetNoteData(copy->GetNoteData());
+	}
+	return ok;
+	
+}
+
 bool PMSLoader::LoadFromDir( const RString &sDir, Song &out )
 {
 	LOG->Trace( "Song::LoadFromPMSDir(%s)", sDir.c_str() );
@@ -843,7 +905,7 @@ bool PMSLoader::LoadFromDir( const RString &sDir, Song &out )
 	/* Create a Steps for each. */
 	vector<Steps*> apSteps;
 	for( unsigned i=0; i<arrayPMSFileNames.size(); i++ )
-		apSteps.push_back( new Steps );
+		apSteps.push_back( out.CreateSteps() );
 
 	// Now, with our fancy little substring, trim the titles and
 	// figure out where each goes.
@@ -914,7 +976,8 @@ bool PMSLoader::LoadFromDir( const RString &sDir, Song &out )
 
 	MeasureToTimeSig_t sigAdjustments;
 	map<RString,int> idToKeysoundIndex;
-	ReadGlobalTags( aPMSData[iMainDataIndex], out, sigAdjustments, idToKeysoundIndex );
+	ReadGlobalTags( sDir, aPMSData[iMainDataIndex], out, sigAdjustments, idToKeysoundIndex );
+	out.m_sSongFileName = out.GetSongDir() + arrayPMSFileNames[iMainDataIndex];
 
 	// Override what that global tag said about the title if we have a good substring.
 	// Prevents clobbering and catches "MySong (7keys)" / "MySong (Another) (7keys)"
@@ -929,7 +992,10 @@ bool PMSLoader::LoadFromDir( const RString &sDir, Song &out )
 		Steps* pNewNotes = apSteps[i];
 		const bool ok = LoadFromPMSFile( out.GetSongDir() + arrayPMSFileNames[i], aPMSData[i], *pNewNotes, sigAdjustments, idToKeysoundIndex );
 		if( ok )
+		{
+			pNewNotes->SetFilename(out.GetSongDir() + arrayPMSFileNames[i]);
 			out.AddSteps( pNewNotes );
+		}
 		else
 			delete pNewNotes;
 	}
@@ -940,7 +1006,7 @@ bool PMSLoader::LoadFromDir( const RString &sDir, Song &out )
 	ConvertString( out.m_sArtist, "utf-8,japanese" );
 	ConvertString( out.m_sGenre, "utf-8,japanese" );
 
-
+	out.TidyUpData(false, true);
 	return true;
 }
 

@@ -49,7 +49,7 @@ void AutoKeysounds::LoadAutoplaySoundsInto( RageSoundReader_Chain *pChain )
 	 * Add all current autoplay sounds in both players to the chain.  If a sound is
 	 * common to both players, don't pan it; otherwise pan it to that player's side.
 	 */
-	int iNumTracks = m_ndAutoKeysoundsOnly[GAMESTATE->m_MasterPlayerNumber].GetNumTracks();
+	int iNumTracks = m_ndAutoKeysoundsOnly[GAMESTATE->GetMasterPlayerNumber()].GetNumTracks();
 	for( int t = 0; t < iNumTracks; t++ )
 	{
 		int iRow = -1;
@@ -63,6 +63,10 @@ void AutoKeysounds::LoadAutoplaySoundsInto( RageSoundReader_Chain *pChain )
 				if( t >= m_ndAutoKeysoundsOnly[pn].GetNumTracks() )
 					continue;
 				int iNextRowForPlayer = iRow;
+				/* XXX: If a BMS file only has one tap note per track,
+				 * this will prevent any keysounds from loading.
+				 * This leads to failure later on.
+				 * We need a better way to prevent this. */
 				if( m_ndAutoKeysoundsOnly[pn].GetNextTapNoteRowForTrack( t, iNextRowForPlayer ) )
 					iNextRow = min( iNextRow, iNextRowForPlayer );
 			}
@@ -99,7 +103,7 @@ void AutoKeysounds::LoadAutoplaySoundsInto( RageSoundReader_Chain *pChain )
 				if( tn[pn].iKeysoundIndex >= 0 )
 				{
 					RString sKeysoundFilePath = sSongDir + pSong->m_vsKeysoundFile[tn[pn].iKeysoundIndex];
-					float fSeconds = pSong->m_Timing.GetElapsedTimeFromBeatNoOffset( NoteRowToBeat(iRow) ) + SOUNDMAN->GetPlayLatency();
+					float fSeconds = GAMESTATE->m_pCurSteps[pn]->m_Timing.GetElapsedTimeFromBeatNoOffset( NoteRowToBeat(iRow) ) + SOUNDMAN->GetPlayLatency();
 
 					float fPan = 0;
 					if( !bSoundIsGlobal )
@@ -274,7 +278,7 @@ void AutoKeysounds::FinishLoading()
 			delete pChain;
 		}
 	}
-	ASSERT( m_pSharedSound );
+	ASSERT_M( m_pSharedSound, ssprintf("No keysounds were loaded for the song %s!", pSong->m_sMainTitle.c_str() ));
 
 	m_pSharedSound = new RageSoundReader_PitchChange( m_pSharedSound );
 	m_pSharedSound = new RageSoundReader_PostBuffering( m_pSharedSound );
@@ -297,7 +301,7 @@ void AutoKeysounds::FinishLoading()
 		apSounds.push_back( m_pPlayerSounds[1] );
 	}
 
-	if( GAMESTATE->GetNumPlayersEnabled() == 1 && GAMESTATE->m_MasterPlayerNumber == PLAYER_2 )
+	if( GAMESTATE->GetNumPlayersEnabled() == 1 && GAMESTATE->GetMasterPlayerNumber() == PLAYER_2 )
 		swap( m_pPlayerSounds[PLAYER_1], m_pPlayerSounds[PLAYER_2] );
 
 	if( apSounds.size() > 1 )

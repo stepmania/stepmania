@@ -1,6 +1,7 @@
 #ifndef STEPS_H
 #define STEPS_H
 
+#include "Attack.h"
 #include "GameConstantsAndTypes.h"
 #include "PlayerNumber.h"
 #include "Grade.h"
@@ -8,16 +9,26 @@
 #include "Difficulty.h"
 #include "RageUtil_AutoPtr.h"
 #include "RageUtil_CachedObject.h"
+#include "TimingData.h"
+
 class Profile;
 class NoteData;
 struct lua_State;
 
 /** 
- * @brief Allow only 12 characters for the length of edits.
+ * @brief Enforce a limit on the number of chars for the description.
  *
- * This is a holdover from In The Groove: this may perhaps be not needed in the future.
+ * In In The Groove, this limit was 12: we do not need such a limit now.
  */
-const int MAX_EDIT_STEPS_DESCRIPTION_LENGTH = 12;
+const int MAX_STEPS_DESCRIPTION_LENGTH = 255;
+
+/** @brief The different ways of displaying the BPM. */
+enum DisplayBPM
+{
+	DISPLAY_BPM_ACTUAL, /**< Display the song's actual BPM. */
+	DISPLAY_BPM_SPECIFIED, /**< Display a specified value or values. */
+	DISPLAY_BPM_RANDOM /**< Display a random selection of BPMs. */
+};
 
 /** 
  * @brief Holds note information for a Song.
@@ -38,6 +49,7 @@ public:
 
 	void Compress() const;
 	void Decompress() const;
+	void Decompress();
 	/** 
 	 * @brief Determine if these steps were created by the autogenerator.
 	 * @return true if they were, false otherwise.
@@ -90,6 +102,21 @@ public:
 	 */
 	RString GetCredit() const			{ return Real()->m_sCredit; }
 
+	/** @brief The list of attacks. */
+	AttackArray m_Attacks;
+	/** @brief The stringified list of attacks. */
+	vector<RString> m_sAttackString;
+	
+	RString GetChartName() const
+	{
+		return parent ? Real()->GetChartName() : this->chartName;
+	}
+	
+	void SetChartName(const RString name)
+	{
+		this->chartName = name;
+	}
+	
 	void SetFilename( RString fn )			{ m_sFilename = fn; }
 	RString GetFilename() const			{ return m_sFilename; }
 	void SetSavedToDisk( bool b )			{ DeAutogen(); m_bSavedToDisk = b; }
@@ -112,9 +139,37 @@ public:
 	void SetNoteData( const NoteData& noteDataNew );
 	void SetSMNoteData( const RString &notes_comp );
 	void GetSMNoteData( RString &notes_comp_out ) const;
+	
+	/**
+	 * @brief Retrieve the NoteData from the original source.
+	 * @return true if successful, false for failure. */
+	bool GetNoteDataFromSimfile();
+	
+	/**
+	 * @brief Determine if we are missing any note data.
+	 *
+	 * This takes advantage of the fact that we usually compress our data.
+	 * @return true if our notedata is empty, false otherwise. */
+	bool IsNoteDataEmpty() const;
 
 	void TidyUpData();
 	void CalculateRadarValues( float fMusicLengthSeconds );
+
+	/** 
+	 * @brief The TimingData used by the Steps.
+	 *
+	 * This is required to allow Split Timing. */
+	TimingData m_Timing;
+	
+	/**
+	 * @brief Determine if the Steps have any major timing changes during gameplay.
+	 * @return true if it does, or false otherwise. */
+	bool HasSignificantTimingChanges() const;
+	
+	/**
+	 * @brief Determine if the Steps have any attacks.
+	 * @return true if it does, or false otherwise. */
+	bool HasAttacks() const;
 
 	// Lua
 	void PushSelf( lua_State *L );
@@ -122,6 +177,46 @@ public:
 	StepsType			m_StepsType;
 
 	CachedObject<Steps> m_CachedObject;
+	
+	/**
+	 * @brief Determine if the Steps use Split Timing by comparing the Song it's in.
+	 * @return true if the Step and Song use different timings, false otherwise. */
+	bool UsesSplitTiming() const;
+	
+	void SetDisplayBPM(const DisplayBPM type)
+	{
+		this->displayBPMType = type;
+	}
+	
+	DisplayBPM GetDisplayBPM() const
+	{
+		return this->displayBPMType;
+	}
+	
+	void SetMinBPM(const float f)
+	{
+		this->specifiedBPMMin = f;
+	}
+	float GetMinBPM() const
+	{
+		return this->specifiedBPMMin;
+	}
+	
+	void SetMaxBPM(const float f)
+	{
+		this->specifiedBPMMax = f;
+	}
+	float GetMaxBPM() const
+	{
+		return this->specifiedBPMMax;
+	}
+	
+	void GetDisplayBpms( DisplayBpms &addTo) const;
+
+	RString GetAttackString() const
+	{
+		return join(":", this->m_sAttackString);
+	}
 
 private:
 	inline const Steps *Real() const		{ return parent ? parent : this; }
@@ -162,8 +257,22 @@ private:
 	int				m_iMeter;
 	/** @brief The radar values used for each player. */
 	RadarValues			m_CachedRadarValues[NUM_PLAYERS];
+	bool                m_bAreCachedRadarValuesJustLoaded;
 	/** @brief The name of the person who created the Steps. */
 	RString				m_sCredit;
+	
+	/** @brief The name of the chart. */
+	RString chartName;
+	
+	/** @brief How is the BPM displayed for this chart? */
+	DisplayBPM displayBPMType;
+	/** @brief What is the minimum specified BPM? */
+	float	specifiedBPMMin;
+	/**
+	 * @brief What is the maximum specified BPM?
+	 *
+	 * If this is a range, then min should not be equal to max. */
+	float	specifiedBPMMax;
 };
 
 #endif

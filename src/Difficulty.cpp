@@ -21,35 +21,6 @@ XToString( Difficulty );
 StringToX( Difficulty );
 LuaXType( Difficulty );
 
-/* We prefer the above names; recognize a number of others, too. (They'll get
- * normalized when written to SMs, etc.) TODO: Format specific hacks should be
- * moved into the file loader for that format. We don't want to carry these
- * hacks forward to file formats that don't need them. */
-Difficulty DwiCompatibleStringToDifficulty( const RString& sDC )
-{
-	RString s2 = sDC;
-	s2.MakeLower();
-	if( s2 == "beginner" )			return Difficulty_Beginner;
-	else if( s2 == "easy" )		return Difficulty_Easy;
-	else if( s2 == "basic" )		return Difficulty_Easy;
-	else if( s2 == "light" )		return Difficulty_Easy;
-	else if( s2 == "medium" )		return Difficulty_Medium;
-	else if( s2 == "another" )		return Difficulty_Medium;
-	else if( s2 == "trick" )		return Difficulty_Medium;
-	else if( s2 == "standard" )	return Difficulty_Medium;
-	else if( s2 == "difficult")	return Difficulty_Medium;
-	else if( s2 == "hard" )		return Difficulty_Hard;
-	else if( s2 == "ssr" )			return Difficulty_Hard;
-	else if( s2 == "maniac" )		return Difficulty_Hard;
-	else if( s2 == "heavy" )		return Difficulty_Hard;
-	else if( s2 == "smaniac" )		return Difficulty_Challenge;
-	else if( s2 == "challenge" )	return Difficulty_Challenge;
-	else if( s2 == "expert" )		return Difficulty_Challenge;
-	else if( s2 == "oni" )			return Difficulty_Challenge;
-	else if( s2 == "edit" )		return Difficulty_Edit;
-	else							return Difficulty_Invalid;
-}
-
 const RString &CourseDifficultyToLocalizedString( CourseDifficulty x )
 {
 	static auto_ptr<LocalizedString> g_CourseDifficultyName[NUM_Difficulty];
@@ -96,49 +67,34 @@ RString GetCustomDifficulty( StepsType st, Difficulty dc, CourseType ct )
 		return DifficultyToString( dc );
 	}
 
-	const StepsTypeInfo &sti = GAMEMAN->GetStepsTypeInfo( st );
-
-	switch( sti.m_StepsTypeCategory )
+	if( dc == Difficulty_Edit )
 	{
-	DEFAULT_FAIL(sti.m_StepsTypeCategory);
-	case StepsTypeCategory_Single:
-	case StepsTypeCategory_Double:
-		if( dc == Difficulty_Edit )
+		return "Edit";
+	}
+	// OPTIMIZATION OPPORTUNITY: cache these metrics and cache the splitting
+	vector<RString> vsNames;
+	split( NAMES, ",", vsNames );
+	FOREACH( RString, vsNames, sName )
+	{
+		ThemeMetric<StepsType> STEPS_TYPE("CustomDifficulty",(*sName)+"StepsType");
+		if( STEPS_TYPE == StepsType_Invalid  ||  st == STEPS_TYPE )	// match
 		{
-			return "Edit";
-		}
-		else
-		{
-			// OPTIMIZATION OPPORTUNITY: cache these metrics and cache the splitting
-			vector<RString> vsNames;
-			split( NAMES, ",", vsNames );
-			FOREACH( RString, vsNames, sName )
+			ThemeMetric<Difficulty> DIFFICULTY("CustomDifficulty",(*sName)+"Difficulty");
+			if( DIFFICULTY == Difficulty_Invalid  ||  dc == DIFFICULTY )	// match
 			{
-				ThemeMetric<StepsType> STEPS_TYPE("CustomDifficulty",(*sName)+"StepsType");
-				if( STEPS_TYPE == StepsType_Invalid  ||  st == STEPS_TYPE )	// match
+				ThemeMetric<CourseType> COURSE_TYPE("CustomDifficulty",(*sName)+"CourseType");
+				if( COURSE_TYPE == CourseType_Invalid  ||  ct == COURSE_TYPE )	// match
 				{
-					ThemeMetric<Difficulty> DIFFICULTY("CustomDifficulty",(*sName)+"Difficulty");
-					if( DIFFICULTY == Difficulty_Invalid  ||  dc == DIFFICULTY )	// match
-					{
-						ThemeMetric<CourseType> COURSE_TYPE("CustomDifficulty",(*sName)+"CourseType");
-						if( COURSE_TYPE == CourseType_Invalid  ||  ct == COURSE_TYPE )	// match
-						{
-							ThemeMetric<RString> STRING("CustomDifficulty",(*sName)+"String");
-							return STRING.GetValue();
-						}
-					}
+					ThemeMetric<RString> STRING("CustomDifficulty",(*sName)+"String");
+					return STRING.GetValue();
 				}
 			}
-			// no matching CustomDifficulty, so use a regular difficulty name
-			if( dc == Difficulty_Invalid )
-				return RString();
-			return DifficultyToString( dc );
 		}
-	case StepsTypeCategory_Couple:
-		return "Couple";
-	case StepsTypeCategory_Routine:
-		return "Routine";
 	}
+	// no matching CustomDifficulty, so use a regular difficulty name
+	if( dc == Difficulty_Invalid )
+		return RString();
+	return DifficultyToString( dc );
 }
 
 LuaFunction( GetCustomDifficulty, GetCustomDifficulty(Enum::Check<StepsType>(L,1), Enum::Check<Difficulty>(L, 2), Enum::Check<CourseType>(L, 3, true)) );

@@ -7,7 +7,7 @@
 
 
 RageTexture::RageTexture( RageTextureID name ):
-	m_ID(name), m_iRefCount(1), m_bWasUsed(false),
+	m_iRefCount(1), m_bWasUsed(false), m_ID(name),
 	m_iSourceWidth(0), m_iSourceHeight(0),
 	m_iTextureWidth(0), m_iTextureHeight(0),
 	m_iImageWidth(0), m_iImageHeight(0),

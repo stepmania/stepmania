@@ -2,6 +2,7 @@
 #define GameplayAssist_H
 
 #include "RageSound.h"
+#include "PlayerState.h"
 
 class NoteData;
 /** @brief The handclaps and metronomes ready to assist the player. */
@@ -12,8 +13,9 @@ public:
 	void Init();
 	/**
 	 * @brief Play the sounds in question for the particular chart.
-	 * @param nd the note data used for playing the ticks. */
-	void PlayTicks( const NoteData &nd );
+	 * @param nd the note data used for playing the ticks.
+	 * @param ps the player's state (and number) for Split Timing. */
+	void PlayTicks( const NoteData &nd, const PlayerState *ps );
 	/** @brief Stop playing the sounds. */
 	void StopPlaying();
 private:

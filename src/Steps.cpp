@@ -14,14 +14,21 @@
 #include "global.h"
 #include "Steps.h"
 #include "StepsUtil.h"
+#include "GameState.h"
 #include "Song.h"
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "NoteData.h"
 #include "GameManager.h"
+#include "SongManager.h"
 #include "NoteDataUtil.h"
 #include "NotesLoaderSSC.h"
 #include "NotesLoaderSM.h"
+#include "NotesLoaderSMA.h"
+#include "NotesLoaderDWI.h"
+#include "NotesLoaderKSF.h"
+#include "NotesLoaderBMS.h"
+#include "NotesLoaderPMS.h"
 
 #include <algorithm>
 
@@ -30,10 +37,34 @@ Steps::Steps(): m_StepsType(StepsType_Invalid),
 	m_sNoteDataCompressed(""), m_sFilename(""), m_bSavedToDisk(false), 
 	m_LoadedFromProfile(ProfileSlot_Invalid), m_iHash(0),
 	m_sDescription(""), m_sChartStyle(""), 
-	m_Difficulty(Difficulty_Invalid), m_iMeter(0), m_sCredit("") {}
+	m_Difficulty(Difficulty_Invalid), m_iMeter(0),
+	m_bAreCachedRadarValuesJustLoaded(false),
+	m_sCredit(""), displayBPMType(DISPLAY_BPM_ACTUAL),
+	specifiedBPMMin(0), specifiedBPMMax(0) {}
 
 Steps::~Steps()
 {
+}
+
+void Steps::GetDisplayBpms( DisplayBpms &AddTo ) const
+{
+	if( this->GetDisplayBPM() == DISPLAY_BPM_SPECIFIED )
+	{
+		AddTo.Add( this->GetMinBPM() );
+		AddTo.Add( this->GetMaxBPM() );
+	}
+	else
+	{
+		float fMinBPM, fMaxBPM;
+		this->m_Timing.GetActualBPM( fMinBPM, fMaxBPM );
+		AddTo.Add( fMinBPM );
+		AddTo.Add( fMaxBPM );
+	}
+}
+
+bool Steps::HasAttacks() const
+{
+	return !this->m_Attacks.empty();
 }
 
 unsigned Steps::GetHash() const
@@ -52,6 +83,50 @@ unsigned Steps::GetHash() const
 	return m_iHash;
 }
 
+bool Steps::IsNoteDataEmpty() const
+{
+	return this->m_sNoteDataCompressed.empty();
+}
+
+bool Steps::GetNoteDataFromSimfile()
+{
+	// Replace the line below with the Steps' cache file.
+	RString stepFile = this->GetFilename();
+	RString extension = GetExtension(stepFile);
+	if (extension.empty() || extension == "ssc") // remember cache files.
+	{
+		SSCLoader loader;
+		return loader.LoadNoteDataFromSimfile(stepFile, *this);
+	}
+	else if (extension == "sm")
+	{
+		SMLoader loader;
+		return loader.LoadNoteDataFromSimfile(stepFile, *this);
+	}
+	else if (extension == "sma")
+	{
+		SMALoader loader;
+		return loader.LoadNoteDataFromSimfile(stepFile, *this);
+	}
+	else if (extension == "dwi")
+	{
+		return DWILoader::LoadNoteDataFromSimfile(stepFile, *this);
+	}
+	else if (extension == "ksf")
+	{
+		return KSFLoader::LoadNoteDataFromSimfile(stepFile, *this);
+	}
+	else if (extension == "bms" || extension == "bml" || extension == "bme")
+	{
+		return BMSLoader::LoadNoteDataFromSimfile(stepFile, *this);
+	}
+	else if (extension == "pms")
+	{
+		return PMSLoader::LoadNoteDataFromSimfile(stepFile, *this);
+	}
+	return false;
+}
+
 void Steps::SetNoteData( const NoteData& noteDataNew )
 {
 	ASSERT( noteDataNew.GetNumTracks() == GAMEMAN->GetStepsTypeInfo(m_StepsType).iNumTracks );
@@ -63,7 +138,6 @@ void Steps::SetNoteData( const NoteData& noteDataNew )
 	
 	m_sNoteDataCompressed = RString();
 	m_iHash = 0;
-	m_sFilename = RString(); // We can no longer read from the file because it has changed in memory.
 }
 
 void Steps::GetNoteData( NoteData& noteDataOut ) const
@@ -95,7 +169,6 @@ void Steps::SetSMNoteData( const RString &notes_comp_ )
 
 	m_sNoteDataCompressed = notes_comp_;
 	m_iHash = 0;
-	m_sFilename = RString(); // We can no longer read from the file because it has changed in memory.
 }
 
 /* XXX: this function should pull data from m_sFilename, like Decompress() */
@@ -170,6 +243,12 @@ void Steps::CalculateRadarValues( float fMusicLengthSeconds )
 	if( parent != NULL )
 		return;
 
+	if( m_bAreCachedRadarValuesJustLoaded )
+	{
+		m_bAreCachedRadarValuesJustLoaded = false;
+		return;
+	}
+
 	// Do write radar values, and leave it up to the reading app whether they want to trust
 	// the cached values without recalculating them.
 	/*
@@ -184,6 +263,7 @@ void Steps::CalculateRadarValues( float fMusicLengthSeconds )
 	FOREACH_PlayerNumber( pn )
 		m_CachedRadarValues[pn].Zero();
 
+	GAMESTATE->SetProcessedTimingData(&this->m_Timing);
 	if( tempNoteData.IsComposite() )
 	{
 		vector<NoteData> vParts;
@@ -192,14 +272,36 @@ void Steps::CalculateRadarValues( float fMusicLengthSeconds )
 		for( size_t pn = 0; pn < min(vParts.size(), size_t(NUM_PLAYERS)); ++pn )
 			NoteDataUtil::CalculateRadarValues( vParts[pn], fMusicLengthSeconds, m_CachedRadarValues[pn] );
 	}
+	else if (GAMEMAN->GetStepsTypeInfo(this->m_StepsType).m_StepsTypeCategory == StepsTypeCategory_Couple)
+	{
+		NoteData p1 = tempNoteData;
+		// XXX: Assumption that couple will always have an even number of notes.
+		const int tracks = tempNoteData.GetNumTracks() / 2;
+		p1.SetNumTracks(tracks);
+		NoteDataUtil::CalculateRadarValues(p1,
+										   fMusicLengthSeconds,
+										   m_CachedRadarValues[PLAYER_1]);
+		// at this point, p2 is tempNoteData.
+		NoteDataUtil::ShiftTracks(tempNoteData, tracks);
+		tempNoteData.SetNumTracks(tracks);
+		NoteDataUtil::CalculateRadarValues(tempNoteData,
+										   fMusicLengthSeconds,
+										   m_CachedRadarValues[PLAYER_2]);
+	}
 	else
 	{
 		NoteDataUtil::CalculateRadarValues( tempNoteData, fMusicLengthSeconds, m_CachedRadarValues[0] );
 		fill_n( m_CachedRadarValues + 1, NUM_PLAYERS-1, m_CachedRadarValues[0] );
 	}
+	GAMESTATE->SetProcessedTimingData(NULL);
 }
 
 void Steps::Decompress() const
+{
+	const_cast<Steps *>(this)->Decompress();
+}
+
+void Steps::Decompress()
 {
 	if( m_bNoteDataIsFilled )
 		return;	// already decompressed
@@ -229,36 +331,14 @@ void Steps::Decompress() const
 
 	if( !m_sFilename.empty() && m_sNoteDataCompressed.empty() )
 	{
-		// We have data on disk and not in memory. Load it.
-		Song s;
-		bool bLoadedFromSSC = SSCLoader::LoadFromSSCFile(m_sFilename, s, true);
-		if( !bLoadedFromSSC )
+		// We have NoteData on disk and not in memory. Load it.
+		if (!this->GetNoteDataFromSimfile())
 		{
-			// try reading from .sm instead
-			if( !SMLoader::LoadFromSMFile(m_sFilename, s, true) )
-			{
-				LOG->Warn( "Couldn't load \"%s\"", m_sFilename.c_str() );
-				return;
-			}
-		}
-
-		/* Find the steps. */
-		StepsID ID;
-		ID.FromSteps( this );
-
-		/* We're using a StepsID to search in a different copy of a Song than
-		 * the one it was created with.  Clear the cache before doing this,
-		 * or search results will come from cache and point to the original
-		 * copy. */
-		CachedObject<Steps>::ClearCacheAll();
-		Steps *pSteps = ID.ToSteps( &s, true );
-		if( pSteps == NULL )
-		{
-			LOG->Warn( "Couldn't find %s in \"%s\"", ID.ToString().c_str(), m_sFilename.c_str() );
+			LOG->Warn("Couldn't load \"%s\"", m_sFilename.c_str());
 			return;
 		}
 
-		pSteps->GetSMNoteData( m_sNoteDataCompressed );
+		this->GetSMNoteData( m_sNoteDataCompressed );
 	}
 
 	if( m_sNoteDataCompressed.empty() )
@@ -339,6 +419,7 @@ void Steps::AutogenFrom( const Steps *parent_, StepsType ntTo )
 {
 	parent = parent_;
 	m_StepsType = ntTo;
+	m_Timing = parent->m_Timing;
 }
 
 void Steps::CopyFrom( Steps* pSource, StepsType ntTo, float fMusicLengthSeconds )	// pSource does not have to be of the same StepsType
@@ -348,6 +429,9 @@ void Steps::CopyFrom( Steps* pSource, StepsType ntTo, float fMusicLengthSeconds 
 	pSource->GetNoteData( noteData );
 	noteData.SetNumTracks( GAMEMAN->GetStepsTypeInfo(ntTo).iNumTracks );
 	parent = NULL;
+	m_Timing = pSource->m_Timing;
+	this->m_Attacks = pSource->m_Attacks;
+	this->m_sAttackString = pSource->m_sAttackString;
 	this->SetNoteData( noteData );
 	this->SetDescription( pSource->GetDescription() );
 	this->SetDifficulty( pSource->GetDifficulty() );
@@ -386,9 +470,9 @@ void Steps::SetChartStyle( RString sChartStyle )
 
 bool Steps::MakeValidEditDescription( RString &sPreferredDescription )
 {
-	if( int(sPreferredDescription.size()) > MAX_EDIT_STEPS_DESCRIPTION_LENGTH )
+	if( int(sPreferredDescription.size()) > MAX_STEPS_DESCRIPTION_LENGTH )
 	{
-		sPreferredDescription = sPreferredDescription.Left( MAX_EDIT_STEPS_DESCRIPTION_LENGTH );
+		sPreferredDescription = sPreferredDescription.Left( MAX_STEPS_DESCRIPTION_LENGTH );
 		return true;
 	}
 	return false;
@@ -400,10 +484,32 @@ void Steps::SetMeter( int meter )
 	m_iMeter = meter;
 }
 
+bool Steps::HasSignificantTimingChanges() const
+{
+	if( m_Timing.HasStops() )
+		return true;
+	
+	/* TODO: Deal with DisplayBPM here...if possible?
+	 * Song's version may still be useful. */
+	
+	else if( m_Timing.HasBpmChanges() || m_Timing.HasWarps() || m_Timing.HasSpeedChanges() )
+	{
+		return true;
+	}
+	return false;
+}
+
 void Steps::SetCachedRadarValues( const RadarValues v[NUM_PLAYERS] )
 {
 	DeAutogen();
 	copy( v, v + NUM_PLAYERS, m_CachedRadarValues );
+	m_bAreCachedRadarValuesJustLoaded = true;
+}
+
+bool Steps::UsesSplitTiming() const
+{
+	Song *song = SONGMAN->GetSongFromSteps(const_cast<Steps *>(this));
+	return song->m_SongTiming != this->m_Timing;
 }
 
 
@@ -423,12 +529,32 @@ public:
 	DEFINE_METHOD( IsAutogen,	IsAutogen() )
 	DEFINE_METHOD( IsAnEdit,	IsAnEdit() )
 	DEFINE_METHOD( IsAPlayerEdit,	IsAPlayerEdit() )
+	DEFINE_METHOD( UsesSplitTiming, UsesSplitTiming() )
 
+	static int HasSignificantTimingChanges( T* p, lua_State *L )
+	{
+		lua_pushboolean(L, p->HasSignificantTimingChanges()); 
+		return 1; 
+	}
+	
+	static int HasAttacks( T* p, lua_State *L )
+	{ 
+		lua_pushboolean(L, p->HasAttacks()); 
+		return 1; 
+	}
+	
+	
 	static int GetRadarValues( T* p, lua_State *L )
 	{
 		PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);
 		RadarValues &rv = const_cast<RadarValues &>(p->GetRadarValues(pn));
 		rv.PushSelf(L);
+		return 1;
+	}
+
+	static int GetTimingData( T* p, lua_State *L )
+	{
+		p->m_Timing.PushSelf(L);
 		return 1;
 	}
 
@@ -442,6 +568,44 @@ public:
 		lua_pushstring( L, out );
 		return 1;
 	}
+	
+	static int GetChartName(T *p, lua_State *L)
+	{
+		lua_pushstring(L, p->GetChartName());
+		return 1;
+	}
+	
+	static int GetDisplayBpms( T* p, lua_State *L )
+	{
+		DisplayBpms temp;
+		p->GetDisplayBpms(temp);
+		float fMin = temp.GetMin();
+		float fMax = temp.GetMax();
+		vector<float> fBPMs;
+		fBPMs.push_back( fMin );
+		fBPMs.push_back( fMax );
+		LuaHelpers::CreateTableFromArray(fBPMs, L);
+		return 1;
+	}
+	static int IsDisplayBpmSecret( T* p, lua_State *L )
+	{
+		DisplayBpms temp;
+		p->GetDisplayBpms(temp);
+		lua_pushboolean( L, temp.IsSecret() );
+		return 1;
+	}
+	static int IsDisplayBpmConstant( T* p, lua_State *L )
+	{
+		DisplayBpms temp;
+		p->GetDisplayBpms(temp);
+		lua_pushboolean( L, temp.BpmIsConstant() );
+		return 1;
+	}
+	static int IsDisplayBpmRandom( T* p, lua_State *L )
+	{
+		lua_pushboolean( L, p->GetDisplayBPM() == DISPLAY_BPM_RANDOM );
+		return 1;
+	}
 
 	LunaSteps()
 	{
@@ -452,12 +616,21 @@ public:
 		ADD_METHOD( GetFilename );
 		ADD_METHOD( GetHash );
 		ADD_METHOD( GetMeter );
+		ADD_METHOD( HasSignificantTimingChanges );
+		ADD_METHOD( HasAttacks );
 		ADD_METHOD( GetRadarValues );
+		ADD_METHOD( GetTimingData );
+		ADD_METHOD( GetChartName );
 		//ADD_METHOD( GetSMNoteData );
 		ADD_METHOD( GetStepsType );
 		ADD_METHOD( IsAnEdit );
 		ADD_METHOD( IsAutogen );
 		ADD_METHOD( IsAPlayerEdit );
+		ADD_METHOD( UsesSplitTiming );
+		ADD_METHOD( GetDisplayBpms );
+		ADD_METHOD( IsDisplayBpmSecret );
+		ADD_METHOD( IsDisplayBpmConstant );
+		ADD_METHOD( IsDisplayBpmRandom );
 	}
 };
 

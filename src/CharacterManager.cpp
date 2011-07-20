@@ -89,7 +89,7 @@ Character* CharacterManager::GetDefaultCharacter()
 	}
 
 	/* We always have the default character. */
-	ASSERT(0);
+	FAIL_M("There must be a default character available!");
 	return NULL;
 }
 
@@ -152,6 +152,13 @@ public:
 		LuaHelpers::CreateTableFromArray(vChars, L);
 		return 1;
 	}
+	static int GetCharacterCount(T* p, lua_State *L)
+	{
+		vector<Character*> chars;
+		p->GetCharacters(chars);
+		lua_pushnumber(L, chars.size());
+		return 1;
+	}
 
 	LunaCharacterManager()
 	{
@@ -159,6 +166,7 @@ public:
 		// sm-ssc adds:
 		ADD_METHOD( GetRandomCharacter );
 		ADD_METHOD( GetAllCharacters );
+		ADD_METHOD( GetCharacterCount );
 	}
 };
 

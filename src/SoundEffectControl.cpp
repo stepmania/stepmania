@@ -44,7 +44,7 @@ void SoundEffectControl::Update( float fDeltaTime )
 
 	if( LOCK_TO_HOLD )
 	{
-		int iRow = BeatToNoteRow( GAMESTATE->m_fSongBeat );
+		int iRow = BeatToNoteRow( GAMESTATE->m_Position.m_fSongBeat );
 		int iHoldsHeld, iHoldsLetGo;
 		HoldsBeingHeld( iRow, iHoldsHeld, iHoldsLetGo );
 

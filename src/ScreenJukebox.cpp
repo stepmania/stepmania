@@ -179,7 +179,7 @@ void ScreenJukebox::Init()
 
 //	ASSERT( GAMESTATE->m_pCurSong );
 
-	GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
+	GAMESTATE->SetMasterPlayerNumber(PLAYER_1);
 
 	// choose some cool options
 	int Benchmark = 0;
@@ -194,7 +194,7 @@ void ScreenJukebox::Init()
 			PO_GROUP_CALL( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions, ModsLevel_Stage, Init );
 			PO_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions, ModsLevel_Stage, m_fScrollSpeed, .25f );
 			PO_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions, ModsLevel_Stage, m_fPerspectiveTilt, -1.0f );
-			PO_GROUP_ASSIGN_N( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions, ModsLevel_Stage, m_fEffects, PlayerOptions::EFFECT_MINI, 1.0f );
+			PO_GROUP_ASSIGN_N( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions, ModsLevel_Stage, m_fEffects, PlayerOptions::EFFECT_TINY, 1.0f );
 		}
 		SO_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Stage, m_LifeType, SongOptions::LIFE_BATTERY );
 	}

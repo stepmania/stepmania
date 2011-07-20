@@ -1,6 +1,7 @@
 #ifndef ACTOR_H
 #define ACTOR_H
 
+#include "PlayerNumber.h"
 #include "RageTypes.h"
 #include "RageUtil_AutoPtr.h"
 #include "LuaReference.h"
@@ -109,6 +110,7 @@ public:
 	virtual void LoadFromNode( const XNode* pNode );
 
 	static void SetBGMTime( float fTime, float fBeat, float fTimeNoOffset, float fBeatNoOffset );
+	static void SetPlayerBGMBeat( PlayerNumber pn, float fBeat, float fBeatNoOffset );
 	static void SetBGMLight( int iLightNumber, float fCabinetLights );
 
 	/**
@@ -131,6 +133,8 @@ public:
 		CLOCK_BGM_BEAT,
 		CLOCK_BGM_TIME_NO_OFFSET,
 		CLOCK_BGM_BEAT_NO_OFFSET,
+		CLOCK_BGM_BEAT_PLAYER1,
+		CLOCK_BGM_BEAT_PLAYER2,
 		CLOCK_LIGHT_1 = 1000,
 		CLOCK_LIGHT_LAST = 1100,
 		NUM_CLOCKS
@@ -713,6 +717,8 @@ protected:
 	// global state
 	static float g_fCurrentBGMTime, g_fCurrentBGMBeat;
 	static float g_fCurrentBGMTimeNoOffset, g_fCurrentBGMBeatNoOffset;
+	static vector<float> g_vfCurrentBGMBeatPlayer;
+	static vector<float> g_vfCurrentBGMBeatPlayerNoOffset;
 
 private:
 	// commands

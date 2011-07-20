@@ -88,16 +88,19 @@ SongManager::~SongManager()
 	FreeSongs();
 }
 
-void SongManager::InitAll( LoadingWindow *ld )
+void SongManager::InitAll()
 {
-	InitSongsFromDisk( ld );
-	InitCoursesFromDisk( ld );
+	InitSongsFromDisk();
+
+	InitCoursesFromDisk();
 	InitAutogenCourses();
 	InitRandomAttacks();
 }
 
 static LocalizedString RELOADING ( "SongManager", "Reloading..." );
-void SongManager::Reload( bool bAllowFastLoad, LoadingWindow *ld )
+static LocalizedString UNLOADING_SONGS ( "SongManager", "Unloading songs..." );
+static LocalizedString UNLOADING_COURSES ( "SongManager", "Unloading courses..." );
+void SongManager::Reload( bool bAllowFastLoad )
 {
 	FILEMAN->FlushDirCache( SpecialFiles::SONGS_DIR );
 	FILEMAN->FlushDirCache( ADDITIONAL_SONGS_DIR );
@@ -105,20 +108,26 @@ void SongManager::Reload( bool bAllowFastLoad, LoadingWindow *ld )
 	FILEMAN->FlushDirCache( ADDITIONAL_COURSES_DIR );
 	FILEMAN->FlushDirCache( EDIT_SUBDIR );
 
-	if( ld )
-		ld->SetText( RELOADING );
+	if( pLoadingWindow )
+		pLoadingWindow->SetText( RELOADING );
 
 	// save scores before unloading songs, of the scores will be lost
 	PROFILEMAN->SaveMachineProfile();
 
+	if( pLoadingWindow )
+		pLoadingWindow->SetText( UNLOADING_COURSES );
+
 	FreeCourses();
+
+	if( pLoadingWindow )
+		pLoadingWindow->SetText( UNLOADING_SONGS );
 	FreeSongs();
 
 	const bool OldVal = PREFSMAN->m_bFastLoad;
 	if( !bAllowFastLoad )
 		PREFSMAN->m_bFastLoad.Set( false );
 
-	InitAll( ld );
+	InitAll();
 
 	// reload scores and unlocks afterward
 	PROFILEMAN->LoadMachineProfile();
@@ -130,14 +139,14 @@ void SongManager::Reload( bool bAllowFastLoad, LoadingWindow *ld )
 	UpdatePreferredSort();
 }
 
-void SongManager::InitSongsFromDisk( LoadingWindow *ld )
+void SongManager::InitSongsFromDisk()
 {
 	RageTimer tm;
-	LoadStepManiaSongDir( SpecialFiles::SONGS_DIR, ld );
+	LoadStepManiaSongDir( SpecialFiles::SONGS_DIR);
 
 	const bool bOldVal = PREFSMAN->m_bFastLoad;
 	PREFSMAN->m_bFastLoad.Set( PREFSMAN->m_bFastLoadAdditionalSongs );
-	LoadStepManiaSongDir( ADDITIONAL_SONGS_DIR, ld );
+	LoadStepManiaSongDir( ADDITIONAL_SONGS_DIR );
 	PREFSMAN->m_bFastLoad.Set( bOldVal );
 
 	LOG->Trace( "Found %d songs in %f seconds.", (int)m_pSongs.size(), tm.GetDeltaTime() );
@@ -224,7 +233,7 @@ void SongManager::AddGroup( RString sDir, RString sGroupDirName )
 }
 
 static LocalizedString LOADING_SONGS ( "SongManager", "Loading songs..." );
-void SongManager::LoadStepManiaSongDir( RString sDir, LoadingWindow *ld )
+void SongManager::LoadStepManiaSongDir( RString sDir )
 {
 	// Make sure sDir has a trailing slash.
 	if( sDir.Right(1) != "/" )
@@ -236,11 +245,16 @@ void SongManager::LoadStepManiaSongDir( RString sDir, LoadingWindow *ld )
 	SortRStringArray( arrayGroupDirs );
 	StripCvsAndSvn( arrayGroupDirs );
 	StripMacResourceForks( arrayGroupDirs );
-
+	
+	vector< vector<RString> > arrayGroupSongDirs;
+	int groupIndex, songCount, songIndex;
+	
+	groupIndex = 0;
+	songCount = 0;
 	FOREACH_CONST( RString, arrayGroupDirs, s )	// foreach dir in /Songs/
 	{
+	
 		RString sGroupDirName = *s;
-
 		SanityCheckGroupDir(sDir+sGroupDirName);
 
 		// Find all Song folders in this group directory
@@ -249,6 +263,25 @@ void SongManager::LoadStepManiaSongDir( RString sDir, LoadingWindow *ld )
 		StripCvsAndSvn( arraySongDirs );
 		StripMacResourceForks( arraySongDirs );
 		SortRStringArray( arraySongDirs );
+		
+		arrayGroupSongDirs.push_back(arraySongDirs);
+		songCount += arraySongDirs.size();
+
+	}
+
+	if( songCount==0 ) return;
+	
+	if( pLoadingWindow ) {
+		pLoadingWindow->SetIndeterminate( false );
+		pLoadingWindow->SetTotalWork( songCount );
+	}
+	
+	groupIndex = 0;
+	songIndex = 0;
+	FOREACH_CONST( RString, arrayGroupDirs, s )	// foreach dir in /Songs/
+	{
+		RString sGroupDirName = *s;	
+		vector<RString> &arraySongDirs = arrayGroupSongDirs[groupIndex++];
 
 		LOG->Trace("Attempting to load %i songs from \"%s\"", int(arraySongDirs.size()),
 				   (sDir+sGroupDirName).c_str() );
@@ -261,12 +294,12 @@ void SongManager::LoadStepManiaSongDir( RString sDir, LoadingWindow *ld )
 			RString sSongDirName = arraySongDirs[j];
 
 			// this is a song directory. Load a new song.
-			if( ld )
+			if( pLoadingWindow )
 			{
-				ld->SetText( LOADING_SONGS.GetValue()+ssprintf("\n%s\n%s",
+				pLoadingWindow->SetProgress(songIndex);
+				pLoadingWindow->SetText( LOADING_SONGS.GetValue()+ssprintf("\n%s\n%s",
 									  Basename(sGroupDirName).c_str(),
 									  Basename(sSongDirName).c_str()));
-				ld->Paint();
 			}
 			Song* pNewSong = new Song;
 			if( !pNewSong->LoadFromSongDir( sSongDirName ) )
@@ -279,6 +312,7 @@ void SongManager::LoadStepManiaSongDir( RString sDir, LoadingWindow *ld )
 			m_pSongs.push_back( pNewSong );
 			index_entry.push_back( pNewSong );
 			loaded++;
+			songIndex++;
 		}
 
 		LOG->Trace("Loaded %i songs from \"%s\"", loaded, (sDir+sGroupDirName).c_str() );
@@ -294,6 +328,10 @@ void SongManager::LoadStepManiaSongDir( RString sDir, LoadingWindow *ld )
 
 		// Load the group sym links (if any)
 		LoadGroupSymLinks(sDir, sGroupDirName);
+	}
+
+	if( pLoadingWindow ) {
+		pLoadingWindow->SetIndeterminate( true );
 	}
 
 	LoadEnabledSongsFromPref();
@@ -720,7 +758,7 @@ RString SongManager::ShortenGroupName( RString sLongGroupName )
 }
 
 static LocalizedString LOADING_COURSES ( "SongManager", "Loading courses..." );
-void SongManager::InitCoursesFromDisk( LoadingWindow *ld )
+void SongManager::InitCoursesFromDisk()
 {
 	LOG->Trace( "Loading courses." );
 
@@ -750,12 +788,11 @@ void SongManager::InitCoursesFromDisk( LoadingWindow *ld )
 
 		FOREACH_CONST( RString, vsCoursePaths, sCoursePath )
 		{
-			if( ld )
+			if( pLoadingWindow )
 			{
-				ld->SetText( LOADING_COURSES.GetValue()+ssprintf("\n%s\n%s",
+				pLoadingWindow->SetText( LOADING_COURSES.GetValue()+ssprintf("\n%s\n%s",
 					Basename(*sCourseGroup).c_str(),
 					Basename(*sCoursePath).c_str()));
-				ld->Paint();
 			}
 
 			Course* pCourse = new Course;
@@ -776,9 +813,7 @@ void SongManager::InitCoursesFromDisk( LoadingWindow *ld )
 
 void SongManager::InitAutogenCourses()
 {
-	//
 	// Create group courses for Endless and Nonstop
-	//
 	vector<RString> saGroupNames;
 	this->GetSongGroupNames( saGroupNames );
 	Course* pCourse;
@@ -789,10 +824,12 @@ void SongManager::InitAutogenCourses()
 		// Generate random courses from each group.
 		pCourse = new Course;
 		CourseUtil::AutogenEndlessFromGroup( sGroupName, Difficulty_Medium, *pCourse );
+		pCourse->m_sScripter = "Autogen";
 		m_pCourses.push_back( pCourse );
 
 		pCourse = new Course;
 		CourseUtil::AutogenNonstopFromGroup( sGroupName, Difficulty_Medium, *pCourse );
+		pCourse->m_sScripter = "Autogen";
 		m_pCourses.push_back( pCourse );
 	}
 
@@ -801,6 +838,7 @@ void SongManager::InitAutogenCourses()
 	// Generate "All Songs" endless course.
 	pCourse = new Course;
 	CourseUtil::AutogenEndlessFromGroup( "", Difficulty_Medium, *pCourse );
+	pCourse->m_sScripter = "Autogen";
 	m_pCourses.push_back( pCourse );
 
 	/* Generate Oni courses from artists. Only create courses if we have at least
@@ -836,6 +874,7 @@ void SongManager::InitAutogenCourses()
 			{
 				pCourse = new Course;
 				CourseUtil::AutogenOniFromArtist( sCurArtist, sCurArtistTranslit, aSongs, Difficulty_Hard, *pCourse );
+				pCourse->m_sScripter = "Autogen";
 				m_pCourses.push_back( pCourse );
 			}
 
@@ -960,11 +999,14 @@ void SongManager::Cleanup()
 	for( unsigned i=0; i<m_pSongs.size(); i++ )
 	{
 		Song* pSong = m_pSongs[i];
-		const vector<Steps*>& vpSteps = pSong->GetAllSteps();
-		for( unsigned n=0; n<vpSteps.size(); n++ )
+		if (pSong)
 		{
-			Steps* pSteps = vpSteps[n];
-			pSteps->Compress();
+			const vector<Steps*>& vpSteps = pSong->GetAllSteps();
+			for( unsigned n=0; n<vpSteps.size(); n++ )
+			{
+				Steps* pSteps = vpSteps[n];
+				pSteps->Compress();
+			}
 		}
 	}
 }
@@ -1653,12 +1695,15 @@ void SongManager::LoadStepEditsFromProfileDir( const RString &sProfileDir, Profi
 		for( int i=0; i<size; i++ )
 		{
 			RString fn = vsFiles[i];
-
-			bool bLoadedFromSSC = SSCLoader::LoadEditFromFile( fn, slot, true );
+			SSCLoader loaderSSC;
+			bool bLoadedFromSSC = loaderSSC.LoadEditFromFile( fn, slot, true );
 			// If we don't load the edit from a .ssc-style .edit, then we should
 			// also try the .sm-style edit file. -aj
 			if( !bLoadedFromSSC )
-				SMLoader::LoadEditFromFile( fn, slot, true );
+			{
+				SMLoader loaderSM;
+				loaderSM.LoadEditFromFile( fn, slot, true );
+			}
 		}
 	}
 }

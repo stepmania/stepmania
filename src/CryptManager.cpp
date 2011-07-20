@@ -404,6 +404,23 @@ RString CryptManager::GetSHA1ForString( RString sData )
 	return RString( (const char *) digest, sizeof(digest) );
 }
 
+RString CryptManager::GetSHA1ForFile( RString fn )
+{
+	RageFile file;
+	if( !file.Open( fn, RageFile::READ ) )
+	{
+		LOG->Warn( "GetSHA1: Failed to open file '%s'", fn.c_str() );
+		return RString();
+	}
+	int iHash = register_hash( &sha1_desc );
+	ASSERT( iHash >= 0 );
+
+	unsigned char digest[20];
+	HashFile( file, digest, iHash );
+
+	return RString( (const char *) digest, sizeof(digest) );
+}
+
 RString CryptManager::GetPublicKeyFileName()
 {
 	return PUBLIC_KEY_PATH;
@@ -455,12 +472,20 @@ public:
 		lua_pushstring( L, sha1out );
 		return 1;
 	}
+	static int SHA1File( T* p, lua_State *L )
+	{
+		RString sha1fout;
+		sha1fout = p->GetSHA1ForFile(SArg(1));
+		lua_pushstring( L, sha1fout );
+		return 1;
+	}
 
 	LunaCryptManager()
 	{
 		ADD_METHOD( MD5String );
 		ADD_METHOD( MD5File );
 		ADD_METHOD( SHA1String );
+		ADD_METHOD( SHA1File );
 	}
 };
 

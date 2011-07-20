@@ -8,7 +8,7 @@
  *
  * As an example, use "StepMania" here, not "StepMania4".
  */
-#define PRODUCT_FAMILY_BARE sm-ssc
+#define PRODUCT_FAMILY_BARE StepMania
 
 /**
  * @brief A unique name for each application that you might want installed side-by-side with other applications.
@@ -16,7 +16,7 @@
  * As an example, use "StepMania4" here, not "StepMania". 
  * It would cause a conflict with older versions such as StepMania 3.X.
  */
-#define PRODUCT_ID_BARE sm-ssc
+#define PRODUCT_ID_BARE StepMania 5
 
 /**
  * @brief Version info displayed to the user.
@@ -35,7 +35,7 @@
  * </li></ul>
  */
 #ifndef PRODUCT_VER_BARE
-#define PRODUCT_VER_BARE v1.2.5
+#define PRODUCT_VER_BARE v5.0 Preview 2
 #endif
 
 /**
@@ -54,7 +54,7 @@
 #define PRODUCT_VER		PRODUCT_XSTRINGIFY(PRODUCT_VER_BARE)
 #define PRODUCT_ID_VER		PRODUCT_XSTRINGIFY(PRODUCT_ID_VER_BARE)
 
-#define VIDEO_TROUBLESHOOTING_URL "http://www.stepmania.com/stepmania/mediawiki.php?title=Video_Driver_Troubleshooting"
+#define VIDEO_TROUBLESHOOTING_URL "http://www.stepmania.com/stepmaniawiki.php?title=Video_Driver_Troubleshooting"
 /** @brief The URL to report bugs on the program. */
 #define REPORT_BUG_URL "http://ssc.ajworld.net/sm-ssc/bugtracker/"
 

@@ -41,9 +41,9 @@ void Foreground::LoadFromSong( const Song *pSong )
 		bga.m_fStartBeat = change.m_fStartBeat;
 		bga.m_bFinished = false;
 
-		const float fStartSecond = pSong->m_Timing.GetElapsedTimeFromBeat( bga.m_fStartBeat );
+		const float fStartSecond = pSong->m_SongTiming.GetElapsedTimeFromBeat( bga.m_fStartBeat );
 		const float fStopSecond = fStartSecond + bga.m_bga->GetTweenTimeLeft();
-		bga.m_fStopBeat = pSong->m_Timing.GetBeatFromElapsedTime( fStopSecond );
+		bga.m_fStopBeat = pSong->m_SongTiming.GetBeatFromElapsedTime( fStopSecond );
 
 		bga.m_bga->SetVisible( false );
 
@@ -65,7 +65,7 @@ void Foreground::Update( float fDeltaTime )
 	{
 		LoadedBGA &bga = m_BGAnimations[i];
 
-		if( GAMESTATE->m_fSongBeat < bga.m_fStartBeat )
+		if( GAMESTATE->m_Position.m_fSongBeat < bga.m_fStartBeat )
 		{
 			// The animation hasn't started yet.
 			continue;
@@ -82,12 +82,12 @@ void Foreground::Update( float fDeltaTime )
 			bga.m_bga->SetVisible( true );
 			bga.m_bga->PlayCommand( "On" );
 
-			const float fStartSecond = m_pSong->m_Timing.GetElapsedTimeFromBeat( bga.m_fStartBeat );
-			lDeltaTime = GAMESTATE->m_fMusicSeconds - fStartSecond;
+			const float fStartSecond = m_pSong->m_SongTiming.GetElapsedTimeFromBeat( bga.m_fStartBeat );
+			lDeltaTime = GAMESTATE->m_Position.m_fMusicSeconds - fStartSecond;
 		}
 		else
 		{
-			lDeltaTime = GAMESTATE->m_fMusicSeconds - m_fLastMusicSeconds;
+			lDeltaTime = GAMESTATE->m_Position.m_fMusicSeconds - m_fLastMusicSeconds;
 		}
 
 		// This shouldn't go down, but be safe:
@@ -95,7 +95,7 @@ void Foreground::Update( float fDeltaTime )
 
 		bga.m_bga->Update( lDeltaTime / fRate );
 
-		if( GAMESTATE->m_fSongBeat > bga.m_fStopBeat )
+		if( GAMESTATE->m_Position.m_fSongBeat > bga.m_fStopBeat )
 		{
 			// Finished.
 			bga.m_bga->SetVisible( false );
@@ -104,7 +104,7 @@ void Foreground::Update( float fDeltaTime )
 		}
 	}
 
-	m_fLastMusicSeconds = GAMESTATE->m_fMusicSeconds;
+	m_fLastMusicSeconds = GAMESTATE->m_Position.m_fMusicSeconds;
 }
 
 /*

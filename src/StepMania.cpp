@@ -68,26 +68,15 @@
 #include "SpecialFiles.h"
 #include "Profile.h"
 
-#if defined(XBOX)
-#include "Archutils/Xbox/VirtualMemory.h"
-#endif
-
-#if defined(WIN32) && !defined(XBOX)
+#if defined(WIN32)
 #include <windows.h>
 #endif
 
-// since the XBOX SDK only works with VS.Net 2003, this doesn't exist yet.
-// see http://old.nabble.com/Linking-Error-with-MSVC%2B%2B-6.0-td21608559.html
-// for more information. -aj
-#if defined(XBOX)
-	extern "C"
-	{
-		int _get_output_format( void ){ return 0; }
-	}
-#endif
+void ShutdownGame();
+bool HandleGlobalInputs( const InputEventPlus &input );
+void HandleInputEvents(float fDeltaTime);
 
 static Preference<bool> g_bAllowMultipleInstances( "AllowMultipleInstances", false );
-
 
 void StepMania::GetPreferredVideoModeParams( VideoModeParams &paramsOut )
 {
@@ -421,7 +410,7 @@ static void AdjustForChangedSystemCapabilities()
 }
 
 #if defined(WIN32)
-//#include "RageDisplay_D3D.h"
+#include "RageDisplay_D3D.h"
 #include "archutils/Win32/VideoDriverInfo.h"
 #endif
 
@@ -469,14 +458,6 @@ struct VideoCardDefaults
 	}
 } const g_VideoCardDefaults[] = 
 {
-	VideoCardDefaults(
-		"Xbox",
-		"d3d",
-		600,400,
-		32,32,32,
-		2048,
-		true
-	),
 	VideoCardDefaults(
 		"Voodoo *5",
 		"d3d,opengl",	// received 3 reports of opengl crashing. -Chris
@@ -636,8 +617,6 @@ static RString GetVideoDriverName()
 {
 #if defined(_WINDOWS)
 	return GetPrimaryVideoDriverName();
-#elif defined(_XBOX)
-	return "Xbox";
 #else
 	return "OpenGL";
 #endif
@@ -768,9 +747,9 @@ RageDisplay *CreateDisplay()
 		else if( sRenderer.CompareNoCase("d3d")==0 )
 		{
 // TODO: ANGLE/RageDisplay_Modern
-//#if defined(SUPPORT_D3D)
-//			pRet = new RageDisplay_D3D;
-//#endif
+#if defined(SUPPORT_D3D)
+			pRet = new RageDisplay_D3D;
+#endif
 		}
 		else if( sRenderer.CompareNoCase("null")==0 )
 		{
@@ -880,11 +859,8 @@ static void MountTreeOfZips( const RString &dir )
 		RString path = dirs.back();
 		dirs.pop_back();
 
-#if !defined(XBOX)
-		// Xbox doesn't detect directories properly, so we'll ignore this
 		if( !IsADirectory(path) )
 			continue;
-#endif
 
 		vector<RString> zips;
 		GetDirListing( path + "/*.zip", zips, false, true );
@@ -998,10 +974,6 @@ int main(int argc, char* argv[])
 
 	ApplyLogPreferences();
 
-#if defined(XBOX)
-	vmem_Manager.Init();
-#endif
-
 	WriteLogHeader();
 
 	// Set up alternative filesystem trees.
@@ -1043,7 +1015,7 @@ int main(int argc, char* argv[])
 	GAMESTATE	= new GameState;
 
 	// This requires PREFSMAN, for PREFSMAN->m_bShowLoadingWindow.
-	LoadingWindow *pLoadingWindow = LoadingWindow::Create();
+	pLoadingWindow = LoadingWindow::Create();
 	if(pLoadingWindow == NULL)
 		RageException::Throw("%s", COULDNT_OPEN_LOADING_WINDOW.GetValue().c_str());
 
@@ -1069,56 +1041,74 @@ int main(int argc, char* argv[])
 	// Switch to the last used game type, and set up the theme and announcer.
 	SwitchToLastPlayedGame();
 
-	CommandLineActions::Handle(pLoadingWindow);
+	CommandLineActions::Handle();
 
 	if( GetCommandlineArgument("dopefish") )
 		GAMESTATE->m_bDopefish = true;
 
 	{
-		/* Now that THEME is loaded, load the icon for the current theme into
-		 * the loading window. */
+		/* Now that THEME is loaded, load the icon and splash for the current
+		 * theme into the loading window. */
 		RString sError;
 		RageSurface *pIcon = RageSurfaceUtils::LoadFile( THEME->GetPathG( "Common", "window icon" ), sError );
 		if( pIcon )
 			pLoadingWindow->SetIcon( pIcon );
 		delete pIcon;
+		pLoadingWindow->SetSplash( THEME->GetPathG("Common","splash") );
 	}
 
 	if( PREFSMAN->m_iSoundWriteAhead )
 		LOG->Info( "Sound writeahead has been overridden to %i", PREFSMAN->m_iSoundWriteAhead.Get() );
+
+	pLoadingWindow->SetText("Starting sound subsystem...");
 	SOUNDMAN	= new RageSoundManager;
 	SOUNDMAN->Init();
 	SOUNDMAN->SetMixVolume();
 	SOUND		= new GameSoundManager;
+	pLoadingWindow->SetText("Initializing bookkeeper...");
 	BOOKKEEPER	= new Bookkeeper;
+	pLoadingWindow->SetText("Starting lights subsystem...");
 	LIGHTSMAN	= new LightsManager;
 	INPUTFILTER	= new InputFilter;
 	INPUTMAPPER	= new InputMapper;
 
+	pLoadingWindow->SetText("Loading game type...");
 	StepMania::ChangeCurrentGame( GAMESTATE->GetCurrentGame() );
 
 	INPUTQUEUE	= new InputQueue;
+	pLoadingWindow->SetText("Building song cache index...");
 	SONGINDEX	= new SongCacheIndex;
+	pLoadingWindow->SetText("Loading banner cache...");
 	BANNERCACHE	= new BannerCache;
 	//BACKGROUNDCACHE	= new BackgroundCache;
 
 	// depends on SONGINDEX:
 	SONGMAN		= new SongManager;
-	SONGMAN->InitAll( pLoadingWindow );	// this takes a long time
+	SONGMAN->InitAll();	// this takes a long time
 	CRYPTMAN	= new CryptManager;		// need to do this before ProfileMan
 	if( PREFSMAN->m_bSignProfileData )
 		CRYPTMAN->GenerateGlobalKeys();
+	pLoadingWindow->SetText("Initializing memory card system...");
 	MEMCARDMAN	= new MemoryCardManager;
+	pLoadingWindow->SetText("Initializing character system...");
 	CHARMAN		= new CharacterManager;
+	pLoadingWindow->SetText("Initializing profile system...");
 	PROFILEMAN	= new ProfileManager;
 	PROFILEMAN->Init();				// must load after SONGMAN
 	UNLOCKMAN	= new UnlockManager;
+	pLoadingWindow->SetText("Updating popular song list...");
 	SONGMAN->UpdatePopular();
 	SONGMAN->UpdatePreferredSort();
 
 	NSMAN 		= new NetworkSyncManager( pLoadingWindow ); 
+	pLoadingWindow->SetText("Initializing message system...");
 	MESSAGEMAN	= new MessageManager;
+	pLoadingWindow->SetText("Initializing statics manager...");
 	STATSMAN	= new StatsManager;
+
+	// Initialize which courses are ranking courses here.
+	pLoadingWindow->SetText("Updating course rankings...");
+	SONGMAN->UpdateRankingCourses();
 
 	SAFE_DELETE( pLoadingWindow );		// destroy this before init'ing Display
 
@@ -1158,9 +1148,6 @@ int main(int argc, char* argv[])
 		SCREENMAN->SystemMessage( sMessage );
 
 	CodeDetector::RefreshCacheItems();
-
-	// Initialize which courses are ranking courses here.
-	SONGMAN->UpdateRankingCourses();
 
 	if( GetCommandlineArgument("netip") )
 		NSMAN->DisplayStartupStatus();	// If we're using networking show what happened

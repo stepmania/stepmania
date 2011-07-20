@@ -1,12 +1,16 @@
 local function Beat(self)
+	-- too many locals
 	local this = self:GetChildren()
+	local player = GAMESTATE:GetMasterPlayerNumber()
+	local playerstate = GAMESTATE:GetPlayerState( player )
+	local songposition = playerstate:GetSongPosition() -- GAMESTATE:GetSongPosition()
 	
-	local beat = GAMESTATE:GetSongBeat()
+	local beat = songposition:GetSongBeat() -- GAMESTATE:GetSongBeat()
 	
 	local part = beat%1
 	part = clamp(part,0,0.5)
 	local eff = scale(part,0,0.5,1,0)
-	if (GAMESTATE:GetSongDelay() or false) and part == 0 then eff = 0 end
+	if (songposition:GetDelay() or false) and part == 0 then eff = 0 end
 	if beat < 0 then
 		eff = 0
 	end

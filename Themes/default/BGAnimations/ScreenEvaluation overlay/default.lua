@@ -55,10 +55,14 @@ local function CreateStats( pnPlayer )
 	return t
 end;
 
--- xxx: this only currently works for player 1. -aj
 local t = Def.ActorFrame {};
+GAMESTATE:IsPlayerEnabled(PLAYER_1)
 t[#t+1] = Def.ActorFrame {
-	InitCommand=cmd(x,WideScale(math.floor(SCREEN_CENTER_X*0.3)-8,math.floor(SCREEN_CENTER_X*0.5)-8);y,SCREEN_CENTER_Y);
+	InitCommand=cmd(hide_if,not GAMESTATE:IsPlayerEnabled(PLAYER_1);x,WideScale(math.floor(SCREEN_CENTER_X*0.3)-8,math.floor(SCREEN_CENTER_X*0.5)-8);y,SCREEN_CENTER_Y-34);
 	CreateStats( PLAYER_1 );
+};
+t[#t+1] = Def.ActorFrame {
+	InitCommand=cmd(hide_if,not GAMESTATE:IsPlayerEnabled(PLAYER_2);x,WideScale(math.floor(SCREEN_CENTER_X*1.7)+8,math.floor(SCREEN_CENTER_X*1.5)+8);y,SCREEN_CENTER_Y-34);
+	CreateStats( PLAYER_2 );
 };
 return t

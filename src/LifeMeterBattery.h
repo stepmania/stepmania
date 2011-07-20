@@ -32,19 +32,28 @@ public:
 
 	void Refresh();
 	int GetLivesLeft() { return m_iLivesLeft; }
+	void ChangeLives(int iLifeDiff);
 
 	// Lua
 	virtual void PushSelf( lua_State *L );
 
 private:
+	void SubtractLives( int iLives );
+	void AddLives( int iLives );
+
 	int			m_iLivesLeft;			// dead when 0
 	int			m_iTrailingLivesLeft;	// lags m_iLivesLeft
 
 	float		m_fBatteryBlinkTime;	// if > 0 battery is blinking
 
-	// theme metrics added for sm-ssc
-	//ThemeMetric<> METRIC_NAME;
 	ThemeMetric<float> BATTERY_BLINK_TIME;
+	ThemeMetric<TapNoteScore>	MIN_SCORE_TO_KEEP_LIFE;
+	ThemeMetric<int>	DANGER_THRESHOLD;
+	ThemeMetric<int>	SUBTRACT_LIVES;
+	ThemeMetric<int>	MINES_SUBTRACT_LIVES;
+	ThemeMetric<int>	HELD_ADD_LIVES;
+	ThemeMetric<int>	LET_GO_SUBTRACT_LIVES;
+	ThemeMetric<RString> LIVES_FORMAT;
 
 	AutoActor	m_sprFrame;
 	Sprite		m_sprBattery;

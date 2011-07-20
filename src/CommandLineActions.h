@@ -7,9 +7,8 @@ class LoadingWindow;
 namespace CommandLineActions
 {
 	/**
-	 * @brief Perform a utility function, then exit.
-	 * @param pLW the LoadingWindow that is presently not used? */
-	void Handle(LoadingWindow* pLW);
+	 * @brief Perform a utility function, then exit. */
+	void Handle();
 
 	/** @brief The housing for the command line arguments. */
 	class CommandLineArgs

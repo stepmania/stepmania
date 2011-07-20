@@ -42,9 +42,9 @@ void CourseContentsList::SetFromGameState()
 {
 	RemoveAllChildren();
 
-	if( GAMESTATE->m_MasterPlayerNumber == PlayerNumber_Invalid )
+	if( GAMESTATE->GetMasterPlayerNumber() == PlayerNumber_Invalid )
 		return;
-	const Trail *pMasterTrail = GAMESTATE->m_pCurTrail[GAMESTATE->m_MasterPlayerNumber];
+	const Trail *pMasterTrail = GAMESTATE->m_pCurTrail[GAMESTATE->GetMasterPlayerNumber()];
 	if( pMasterTrail == NULL )
 		return;
 	unsigned uNumEntriesToShow = pMasterTrail->m_vEntries.size(); 

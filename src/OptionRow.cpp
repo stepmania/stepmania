@@ -196,7 +196,7 @@ RString OptionRow::GetRowTitle() const
 
 		if( GAMESTATE->m_pCurCourse )
 		{
-			const Trail* pTrail = GAMESTATE->m_pCurTrail[GAMESTATE->m_MasterPlayerNumber];
+			const Trail* pTrail = GAMESTATE->m_pCurTrail[GAMESTATE->GetMasterPlayerNumber()];
 			ASSERT( pTrail != NULL );
 			const int iNumCourseEntries = pTrail->m_vEntries.size();
 			if( iNumCourseEntries > CommonMetrics::MAX_COURSE_ENTRIES_BEFORE_VARIOUS )
@@ -417,8 +417,8 @@ void OptionRow::AfterImportOptions( PlayerNumber pn )
 	// we need to copy p2 to p1, not p1 to p2.
 	if( m_pHand->m_Def.m_bOneChoiceForAllPlayers )
 	{
-		PlayerNumber pnCopyFrom = GAMESTATE->m_MasterPlayerNumber;
-		if( GAMESTATE->m_MasterPlayerNumber == PLAYER_INVALID )
+		PlayerNumber pnCopyFrom = GAMESTATE->GetMasterPlayerNumber();
+		if( GAMESTATE->GetMasterPlayerNumber() == PLAYER_INVALID )
 			pnCopyFrom = PLAYER_1;
 		FOREACH_PlayerNumber( p )
 			m_vbSelected[p] = m_vbSelected[pnCopyFrom];

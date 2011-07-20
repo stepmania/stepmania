@@ -9,6 +9,7 @@
 #include "CommonMetrics.h"
 #include "LocalizedString.h"
 #include "Song.h"
+#include "Steps.h"
 
 #include <limits.h>
 
@@ -32,6 +33,7 @@ void BPMDisplay::Load()
 	SET_EXTRA_COMMAND.Load( m_sName, "SetExtraCommand" );
 	CYCLE.Load( m_sName, "Cycle" );
 	RANDOM_CYCLE_SPEED.Load( m_sName, "RandomCycleSpeed" );
+	COURSE_CYCLE_SPEED.Load( m_sName, "CourseCycleSpeed" );
 	SEPARATOR.Load( m_sName, "Separator" );
 	SHOW_QMARKS.Load( m_sName, "ShowQMarksInRandomCycle" );
 	NO_BPM_TEXT.Load( m_sName, "NoBpmText" );
@@ -197,6 +199,17 @@ void BPMDisplay::SetBpmFromSong( const Song* pSong )
 	}
 }
 
+void BPMDisplay::SetBpmFromSteps( const Steps* pSteps )
+{
+	ASSERT( pSteps );
+	DisplayBpms bpms;
+	float fMinBPM, fMaxBPM;
+	pSteps->m_Timing.GetActualBPM( fMinBPM, fMaxBPM );
+	bpms.Add( fMinBPM );
+	bpms.Add( fMaxBPM );
+	m_fCycleTime = 1.0f;
+}
+
 void BPMDisplay::SetBpmFromCourse( const Course* pCourse )
 {
 	ASSERT( pCourse );
@@ -207,7 +220,8 @@ void BPMDisplay::SetBpmFromCourse( const Course* pCourse )
 	// GetTranslitFullTitle because "Crashinfo.txt is garbled because of the ANSI output as usual." -f
 	ASSERT_M( pTrail, ssprintf("Course '%s' has no trail for StepsType '%s'", pCourse->GetTranslitFullTitle().c_str(), StringConversion::ToString(st).c_str() ) );
 
-	m_fCycleTime = 0.2f;
+	// todo: let themers define this. -aj
+	m_fCycleTime = (float)COURSE_CYCLE_SPEED;
 
 	if( (int)pTrail->m_vEntries.size() > CommonMetrics::MAX_COURSE_ENTRIES_BEFORE_VARIOUS )
 	{
@@ -277,7 +291,7 @@ SongBPMDisplay::SongBPMDisplay()
 
 void SongBPMDisplay::Update( float fDeltaTime ) 
 {
-	float fGameStateBPM = GAMESTATE->m_fCurBPS * 60.0f;
+	float fGameStateBPM = GAMESTATE->m_Position.m_fCurBPS * 60.0f;
 	if( m_fLastGameStateBPM != fGameStateBPM )
 	{
 		m_fLastGameStateBPM = fGameStateBPM;
@@ -305,6 +319,16 @@ public:
 		}
 		return 0;
 	}
+	static int SetFromSteps( T* p, lua_State *L )
+	{
+		if( lua_isnil(L,1) ) { p->NoBPM(); }
+		else
+		{
+			const Steps* pSteps = Luna<Steps>::check( L, 1, true );
+			p->SetBpmFromSteps(pSteps);
+		}
+		return 0;
+	}
 	static int SetFromCourse( T* p, lua_State *L )
 	{
 		if( lua_isnil(L,1) ) { p->NoBPM(); }
@@ -321,6 +345,7 @@ public:
 	{
 		ADD_METHOD( SetFromGameState );
 		ADD_METHOD( SetFromSong );
+		ADD_METHOD( SetFromSteps );
 		ADD_METHOD( SetFromCourse );
 		ADD_METHOD( GetText );
 	}

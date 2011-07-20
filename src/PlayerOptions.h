@@ -27,16 +27,16 @@ public:
 		m_fBlind(0), m_SpeedfBlind(1.0f),
 		m_fCover(0), m_SpeedfCover(1.0f),
 		m_fRandAttack(0), m_SpeedfRandAttack(1.0f),
-		m_fSongAttack(0), m_SpeedfSongAttack(1.0f),
+		m_fNoAttack(0), m_SpeedfNoAttack(1.0f),
 		m_fPlayerAutoPlay(0), m_SpeedfPlayerAutoPlay(1.0f),
 		m_bSetTiltOrSkew(false),
 		m_fPerspectiveTilt(0), m_SpeedfPerspectiveTilt(1.0f),
 		m_fSkew(0), m_SpeedfSkew(1.0f),
 		m_fPassmark(0), m_SpeedfPassmark(1.0f),
 		m_fRandomSpeed(0), m_SpeedfRandomSpeed(1.0f),
-		m_bMuteOnError(false), m_FailType(FAIL_IMMEDIATE),
-		m_ScoreDisplay(SCORING_ADD), m_sNoteSkin("")
+		m_bMuteOnError(false), m_FailType(FAIL_IMMEDIATE)
 	{
+		m_sNoteSkin = "";
 		ZERO( m_fAccels );	ONE( m_SpeedfAccels );
 		ZERO( m_fEffects );	ONE( m_SpeedfEffects );
 		ZERO( m_fAppearances );	ONE( m_SpeedfAppearances );
@@ -150,12 +150,6 @@ public:
 		SCROLL_CENTERED,
 		NUM_SCROLLS
 	};
-	enum ScoreDisplay {
-		SCORING_ADD=0,
-		SCORING_SUBTRACT,
-		SCORING_AVERAGE,
-		NUM_SCOREDISPLAYS
-	};
 
 	float GetReversePercentForColumn( int iCol ) const; // accounts for all Directions
 
@@ -163,6 +157,7 @@ public:
 	 * PlayerOptions::Approach approaches. */
 	bool	m_bSetScrollSpeed;				// true if the scroll speed was set by FromString
 	float	m_fTimeSpacing,			m_SpeedfTimeSpacing;	// instead of Beat spacing (CMods, mMods)
+	float	m_fMaxScrollBPM,		m_SpeedfMaxScrollBPM;
 	float	m_fScrollSpeed,			m_SpeedfScrollSpeed;	// used if !m_bTimeSpacing (xMods)
 	float	m_fScrollBPM,			m_SpeedfScrollBPM;		// used if m_bTimeSpacing (CMod)
 	float	m_fAccels[NUM_ACCELS],		m_SpeedfAccels[NUM_ACCELS];
@@ -173,7 +168,7 @@ public:
 	float	m_fBlind,			m_SpeedfBlind;
 	float	m_fCover,			m_SpeedfCover;	// hide the background per-player--can't think of a good name
 	float	m_fRandAttack,			m_SpeedfRandAttack;
-	float	m_fSongAttack,			m_SpeedfSongAttack;
+	float	m_fNoAttack,			m_SpeedfNoAttack;
 	float	m_fPlayerAutoPlay,		m_SpeedfPlayerAutoPlay;
 	bool	m_bSetTiltOrSkew;				// true if the tilt or skew was set by FromString
 	float	m_fPerspectiveTilt,		m_SpeedfPerspectiveTilt;		// -1 = near, 0 = overhead, +1 = space
@@ -197,7 +192,6 @@ public:
 	};
 	/** @brief The method for which a player can fail a song. */
 	FailType m_FailType;
-	ScoreDisplay m_ScoreDisplay;
 
 	/**
 	 * @brief The Noteskin to use.

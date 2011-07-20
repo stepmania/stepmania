@@ -80,13 +80,33 @@ public:
 
 	static void Update( float fDeltaTime );
 
-	void DrawTap( const TapNote& tn, int iCol, float fBeat, bool bOnSameRowAsHoldStart, bool bIsAddition,
-		float fPercentFadeToFail, float fReverseOffsetPixels, float fDrawDistanceAfterTargetsPixels, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar );
+	/**
+	 * @brief Draw the TapNote onto the NoteField.
+	 * @param tn the TapNote in question.
+	 * @param iCol the column.
+	 * @param float fBeat the beat to draw them on.
+	 * @param bOnSameRowAsHoldStart a flag to see if a hold is on the same beat.
+	 * @param bOnSameRowAsRollStart a flag to see if a roll is on the same beat.
+	 * @param bIsAddition a flag to see if this note was added via mods.
+	 * @param fPercentFadeToFail at what point do the notes fade on failure?
+	 * @param fReverseOffsetPixels How are the notes adjusted on Reverse? 
+	 * @param fDrawDistanceAfterTargetsPixels how much to draw after the receptors.
+	 * @param fDrawDistanceBeforeTargetsPixels how much ot draw before the receptors.
+	 * @param fFadeInPercentOfDrawFar when to start fading in. */
+	void DrawTap(const TapNote& tn, int iCol, float fBeat, 
+		     bool bOnSameRowAsHoldStart, bool bOnSameRowAsRollBeat,
+		     bool bIsAddition, float fPercentFadeToFail,
+		     float fReverseOffsetPixels,
+		     float fDrawDistanceAfterTargetsPixels,
+		     float fDrawDistanceBeforeTargetsPixels,
+		     float fFadeInPercentOfDrawFar );
 	void DrawHold( const TapNote& tn, int iCol, int iRow, bool bIsBeingHeld, const HoldNoteResult &Result, 
 		bool bIsAddition, float fPercentFadeToFail, float fReverseOffsetPixels, float fDrawDistanceAfterTargetsPixels, float fDrawDistanceBeforeTargetsPixels, 
 		float fDrawDistanceBeforeTargetsPixels2, float fFadeInPercentOfDrawFar );
 	
 	bool DrawHoldHeadForTapsOnSameRow() const;
+	
+	bool DrawRollHeadForTapsOnSameRow() const;
 
 private:
 	void SetActiveFrame( float fNoteBeat, Actor &actorToSet, float fAnimationLength, bool bVivid );

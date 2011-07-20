@@ -18,6 +18,21 @@ RString SpecialDirs::GetAppDataDir()
 	return GetSpecialFolderPath( CSIDL_APPDATA );
 }
 
+RString SpecialDirs::GetLocalAppDataDir()
+{
+	return GetSpecialFolderPath( CSIDL_LOCAL_APPDATA );
+}
+
+RString SpecialDirs::GetCommonAppDataDir()
+{
+	return GetSpecialFolderPath( CSIDL_COMMON_APPDATA );
+}
+
+RString SpecialDirs::GetPicturesDir()
+{
+	return GetSpecialFolderPath( CSIDL_MYPICTURES );
+}
+
 RString SpecialDirs::GetDesktopDir()
 {
 	return GetSpecialFolderPath( CSIDL_DESKTOP );

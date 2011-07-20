@@ -60,7 +60,7 @@ void EditMenu::GetSongsToShowForGroup( const RString &sGroup, vector<Song*> &vpS
 		for( int i=vpSongsOut.size()-1; i>=0; i-- )
 		{
 			const Song* pSong = vpSongsOut[i];
-			if( !pSong->NormallyDisplayed()  ||  pSong->IsTutorial()  ||  SONGMAN->WasLoadedFromAdditionalSongs(pSong) )
+			if( !pSong->NormallyDisplayed()  ||  pSong->IsTutorial() )
 				vpSongsOut.erase( vpSongsOut.begin()+i );
 		}
 		break;
@@ -254,7 +254,7 @@ int EditMenu::GetRowSize( EditMenuRow er ) const
 	case ROW_SOURCE_STEPS_TYPE:	return m_StepsTypes.size();
 	case ROW_SOURCE_STEPS:	return m_vpSourceSteps.size();
 	case ROW_ACTION:		return m_Actions.size();
-	default: FAIL_M( ssprintf("%i", er) );
+	default: FAIL_M( ssprintf("Non-existant EditMenuRow %i", er) );
 	}
 }
 

@@ -90,7 +90,46 @@ private:
 	// There's no point in inserting empty notes into the map.
 	// Any blank space in the map is defined to be empty.
 	vector<TrackMap>	m_TapNotes;
+	
+	/**
+	 * @brief Determine whether this note is for Player 1 or Player 2.
+	 * @param track the track/column the note is in.
+	 * @param tn the note in question. Required for routine mode.
+	 * @return true if it's for player 1, false for player 2. */
+	bool IsPlayer1(const int track, const TapNote &tn) const;
+	
+	/**
+	 * @brief Determine if the note in questino should be counted as a tap.
+	 * @param tn the note in question.
+	 * @param row the row it lives in.
+	 * @return true if it's a tap, false otherwise. */
+	bool IsTap(const TapNote &tn, const int row) const;
+	
+	/**
+	 * @brief Determine if the note in questino should be counted as a mine.
+	 * @param tn the note in question.
+	 * @param row the row it lives in.
+	 * @return true if it's a mine, false otherwise. */
+	bool IsMine(const TapNote &tn, const int row) const;
+	
+	/**
+	 * @brief Determine if the note in questino should be counted as a lift.
+	 * @param tn the note in question.
+	 * @param row the row it lives in.
+	 * @return true if it's a lift, false otherwise. */
+	bool IsLift(const TapNote &tn, const int row) const;
+	
+	/**
+	 * @brief Determine if the note in questino should be counted as a fake.
+	 * @param tn the note in question.
+	 * @param row the row it lives in.
+	 * @return true if it's a fake, false otherwise. */
+	bool IsFake(const TapNote &tn, const int row) const;
 
+	pair<int, int> GetNumRowsWithSimultaneousTapsTwoPlayer(int minTaps = 2,
+														   int startRow = 0,
+														   int endRow = MAX_NOTE_ROW) const;
+	
 public:
 	void Init();
 
@@ -130,7 +169,8 @@ public:
 	 * @param iEndRow the ending point.
 	 * @param begin the eventual beginning point of the range.
 	 * @param end the eventual end point of the range. */
-	void GetTapNoteRange( int iTrack, int iStartRow, int iEndRow, TrackMap::const_iterator &begin, TrackMap::const_iterator &end ) const;
+	void GetTapNoteRange(int iTrack, int iStartRow, int iEndRow,
+						 TrackMap::const_iterator &begin, TrackMap::const_iterator &end ) const;
 	/**
 	 * @brief Return a constant iterator range for [rowBegin,rowEnd).
 	 * @param iTrack the column to use.
@@ -158,13 +198,17 @@ public:
 
 	/* Return an iterator range include iStartRow to iEndRow.  Extend the range to include
 	 * hold notes overlapping the boundary. */
-	void GetTapNoteRangeInclusive( int iTrack, int iStartRow, int iEndRow, TrackMap::const_iterator &begin, TrackMap::const_iterator &end, bool bIncludeAdjacent=false ) const;
-	void GetTapNoteRangeInclusive( int iTrack, int iStartRow, int iEndRow, TrackMap::iterator &begin, TrackMap::iterator &end, bool bIncludeAdjacent=false );
+	void GetTapNoteRangeInclusive(int iTrack, int iStartRow, int iEndRow,
+								  TrackMap::const_iterator &begin, TrackMap::const_iterator &end, bool bIncludeAdjacent=false ) const;
+	void GetTapNoteRangeInclusive(int iTrack, int iStartRow, int iEndRow,
+								  TrackMap::iterator &begin, TrackMap::iterator &end, bool bIncludeAdjacent=false );
 
 	/* Return an iterator range include iStartRow to iEndRow.  Shrink the range to exclude
 	 * hold notes overlapping the boundary. */
-	void GetTapNoteRangeExclusive( int iTrack, int iStartRow, int iEndRow, TrackMap::const_iterator &begin, TrackMap::const_iterator &end ) const;
-	void GetTapNoteRangeExclusive( int iTrack, int iStartRow, int iEndRow, TrackMap::iterator &begin, TrackMap::iterator &end );
+	void GetTapNoteRangeExclusive(int iTrack, int iStartRow, int iEndRow,
+								  TrackMap::const_iterator &begin, TrackMap::const_iterator &end ) const;
+	void GetTapNoteRangeExclusive(int iTrack, int iStartRow, int iEndRow,
+								  TrackMap::iterator &begin, TrackMap::iterator &end );
 
 
 	/* Returns the row of the first TapNote on the track that has a row greater than rowInOut. */
@@ -175,7 +219,17 @@ public:
 
 	void MoveTapNoteTrack( int dest, int src );
 	void SetTapNote( int track, int row, const TapNote& tn );
-	void AddHoldNote( int iTrack, int iStartRow, int iEndRow, TapNote tn ); // add note hold note merging overlapping HoldNotes and destroying TapNotes underneath
+	/**
+	 * @brief Add a hold note, merging other overlapping holds and destroying
+	 * tap notes underneath.
+	 * @param iTrack the column to work with.
+	 * @param iStartRow the starting row.
+	 * @param iEndRow the ending row.
+	 * @param tn the tap note. */
+	void AddHoldNote(int iTrack,
+					 int iStartRow,
+					 int iEndRow,
+					 TapNote tn );
 
 	void ClearRangeForTrack( int rowBegin, int rowEnd, int iTrack );
 	void ClearRange( int rowBegin, int rowEnd );
@@ -222,7 +276,12 @@ public:
 
 	// Count rows that contain iMinTaps or more taps.
 	int GetNumRowsWithSimultaneousTaps( int iMinTaps, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW ) const;
-	int GetNumJumps( int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW ) const { return GetNumRowsWithSimultaneousTaps( 2, iStartIndex, iEndIndex ); }
+	int GetNumJumps( int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW ) const
+	{
+		return GetNumRowsWithSimultaneousTaps( 2, iStartIndex, iEndIndex );
+	}
+	
+	
 
 	// This row needs at least iMinSimultaneousPresses either tapped or held.
 	bool RowNeedsAtLeastSimultaneousPresses( int iMinSimultaneousPresses, int row ) const;
@@ -230,15 +289,51 @@ public:
 
 	// Count rows that need iMinSimultaneousPresses either tapped or held.
 	int GetNumRowsWithSimultaneousPresses( int iMinSimultaneousPresses, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW ) const;
-	int GetNumHands( int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW ) const { return GetNumRowsWithSimultaneousPresses( 3, iStartIndex, iEndIndex ); }
-	int GetNumQuads( int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW ) const { return GetNumRowsWithSimultaneousPresses( 4, iStartIndex, iEndIndex ); }
+	int GetNumHands( int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW ) const
+	{
+		return GetNumRowsWithSimultaneousPresses( 3, iStartIndex, iEndIndex );
+	}
+	int GetNumQuads( int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW ) const
+	{
+		return GetNumRowsWithSimultaneousPresses( 4, iStartIndex, iEndIndex );
+	}
 
 	// and the other notetypes
 	int GetNumLifts( int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW ) const;
 	int GetNumFakes( int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW ) const;
 
+	// the couple/routine style variants of the above.
+	pair<int, int> GetNumTapNotesTwoPlayer(int startRow = 0,
+										   int endRow = MAX_NOTE_ROW) const;
+	
+	pair<int, int> GetNumJumpsTwoPlayer(int startRow = 0,
+										int endRow = MAX_NOTE_ROW) const;
+	
+	pair<int, int> GetNumHandsTwoPlayer(int startRow = 0,
+										int endRow = MAX_NOTE_ROW) const;
+	
+	pair<int, int> GetNumQuadsTwoPlayer(int startRow = 0,
+										int endRow = MAX_NOTE_ROW) const;
+	
+	pair<int, int> GetNumHoldNotesTwoPlayer(int startRow = 0,
+											int endRow = MAX_NOTE_ROW) const;
+	
+	pair<int, int> GetNumMinesTwoPlayer(int startRow = 0,
+										int endRow = MAX_NOTE_ROW) const;
+	
+	pair<int, int> GetNumRollsTwoPlayer(int startRow = 0,
+										int endRow = MAX_NOTE_ROW) const;
+	
+	pair<int, int> GetNumLiftsTwoPlayer(int startRow = 0,
+										int endRow = MAX_NOTE_ROW) const;
+	
+	pair<int, int> GetNumFakesTwoPlayer(int startRow = 0,
+										int endRow = MAX_NOTE_ROW) const;
+	
 	// Transformations
-	void LoadTransformed( const NoteData& original, int iNewNumTracks, const int iOriginalTrackToTakeFrom[] );	// -1 for iOriginalTracksToTakeFrom means no track
+	void LoadTransformed(const NoteData& original,
+						 int iNewNumTracks,
+						 const int iOriginalTrackToTakeFrom[] );	// -1 for iOriginalTracksToTakeFrom means no track
 
 	// XML
 	XNode* CreateNode() const;

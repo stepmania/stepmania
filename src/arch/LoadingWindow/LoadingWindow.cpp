@@ -47,11 +47,16 @@ LoadingWindow *LoadingWindow::Create()
 		}
 	}
 
-	if( ret )
+	if( ret ) {
 		LOG->Info( "Loading window: %s", Driver.c_str() );
+
+		ret->SetIndeterminate(true);
+	}
 
 	return ret;
 }
+
+LoadingWindow *pLoadingWindow;
 
 /*
  * (c) 2002-2005 Glenn Maynard

@@ -143,7 +143,6 @@
 	<xs:group ref="DocumentationGroup" minOccurs="0" maxOccurs="unbounded" />
 	<xs:attribute name="name" type="Identifier" use="required" />
 	<xs:attribute name="renamed" type="Identifier" use="optional" />
-	<xs:attribute name="sm-ssc" type="Identifier" use="optional" />
 	<xs:attribute name="theme" type="Identifier" use="optional" />
 	<xs:attribute name="return" type="IdentifierOrTable" use="optional" />
 	<xs:attribute name="arguments" type="ArgumentList" use="optional" />

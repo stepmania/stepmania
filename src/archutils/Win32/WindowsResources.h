@@ -29,7 +29,6 @@
 #define IDC_BUTTON_CLOSE                1011
 #define IDC_VIEW_LOG                    1012
 #define IDC_STATIC_MESSAGE3             1013
-#define IDC_PROGRESS1                   1014
 #define IDC_PROGRESS                    1014
 #define IDC_HUSH                        1016
 #define IDC_MESSAGE                     1017

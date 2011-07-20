@@ -531,7 +531,7 @@ void ScreenOptions::HandleScreenMessage( const ScreenMessage SM )
 			return; // already transitioning
 
 		// If the selected option sets a screen, honor it.
-		RString sThisScreen = GetNextScreenForFocusedItem( GAMESTATE->m_MasterPlayerNumber );
+		RString sThisScreen = GetNextScreenForFocusedItem( GAMESTATE->GetMasterPlayerNumber() );
 		if( sThisScreen != "" )
 			m_sNextScreen = sThisScreen;
 
@@ -808,7 +808,17 @@ void ScreenOptions::MenuStart( const InputEventPlus &input )
 void ScreenOptions::ProcessMenuStart( const InputEventPlus &input )
 {
 	PlayerNumber pn = input.pn;
+
 	int iCurRow = m_iCurrentRow[pn];
+
+	if( iCurRow < 0 )
+	{
+		// this shouldn't be happening, but it is, so we need to bail out. -aj
+		SCREENMAN->PlayStartSound();
+		this->BeginFadingOut();
+		return;
+	}
+
 	OptionRow &row = *m_pRows[iCurRow];
 
 	if( m_OptionsNavigation == NAV_THREE_KEY_MENU && row.GetRowType() != OptionRow::RowType_Exit )

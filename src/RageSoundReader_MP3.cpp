@@ -12,7 +12,7 @@
 #if defined(_WINDOWS) || defined(MACOSX)
 #include "../extern/mad-0.15.1b/mad.h"
 #ifdef _MSC_VER
-#pragma comment(lib, "../extern/mad-0.15.1b/msvc++/Release/libmad.lib")
+#pragma comment(lib, "libmad.lib")
 #endif //_MSC_VER
 #else
 #include <mad.h>
@@ -26,7 +26,6 @@ enum tagtype {
   TAGTYPE_ID3V2_FOOTER
 };
 
-typedef unsigned long id3_length_t;
 static const int ID3_TAG_FLAG_FOOTERPRESENT = 0x10;
 
 static tagtype tagtype( const unsigned char *data, id3_length_t length )

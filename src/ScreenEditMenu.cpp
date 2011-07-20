@@ -236,7 +236,7 @@ void ScreenEditMenu::MenuStart( const InputEventPlus &input )
 	case EditMenuAction_Create:
 		ASSERT( !pSteps );
 		{
-			pSteps = new Steps;
+			pSteps = pSong->CreateSteps();
 
 			switch( m_Selector.EDIT_MODE )
 			{
@@ -297,7 +297,7 @@ void ScreenEditMenu::MenuStart( const InputEventPlus &input )
 					SM_BackFromEditDescription,
 					ENTER_EDIT_DESCRIPTION,
 					GAMESTATE->m_pCurSteps[0]->GetDescription(),
-					MAX_EDIT_STEPS_DESCRIPTION_LENGTH,
+					MAX_STEPS_DESCRIPTION_LENGTH,
 					SongUtil::ValidateCurrentStepsDescription,
 					SetCurrentStepsDescription,
 					DeleteCurrentSteps );

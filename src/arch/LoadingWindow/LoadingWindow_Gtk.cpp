@@ -11,6 +11,8 @@ static void *Handle = NULL;
 static INIT Module_Init;
 static SHUTDOWN Module_Shutdown;
 static SETTEXT Module_SetText;
+static SETPROGRESS Module_SetProgress;
+static SETINDETERMINATE Module_SetIndeterminate;
 
 LoadingWindow_Gtk::LoadingWindow_Gtk()
 {
@@ -33,6 +35,12 @@ RString LoadingWindow_Gtk::Init()
 	Module_SetText = (SETTEXT) dlsym(Handle, "SetText");
 	if( !Module_SetText )
 		return "Couldn't load symbol Module_SetText";
+	Module_SetProgress = (SETPROGRESS) dlsym(Handle, "SetProgress");
+	if( !Module_SetProgress )
+		return "Couldn't load symbol Module_SetProgress";
+	Module_SetIndeterminate = (SETINDETERMINATE) dlsym(Handle, "SetIndeterminate");
+	if( !Module_SetIndeterminate )
+		return "Couldn't load symbol Module_SetIndeterminate";
 
 	const char *ret = Module_Init( &g_argc, &g_argv );
 	if( ret != NULL )
@@ -54,6 +62,24 @@ LoadingWindow_Gtk::~LoadingWindow_Gtk()
 void LoadingWindow_Gtk::SetText( RString s )
 {
 	Module_SetText( s );
+}
+
+void LoadingWindow_Gtk::SetProgress( const int progress )
+{
+	LoadingWindow::SetProgress( progress );
+	Module_SetProgress( m_progress, m_totalWork );
+}
+
+void LoadingWindow_Gtk::SetTotalWork( const int totalWork )
+{
+	LoadingWindow::SetTotalWork( totalWork );
+	Module_SetProgress( m_progress, m_totalWork );
+}
+
+void LoadingWindow_Gtk::SetIndeterminate( bool indeterminate )
+{
+	LoadingWindow::SetIndeterminate( indeterminate );
+	Module_SetIndeterminate( m_indeterminate );
 }
 
 /*

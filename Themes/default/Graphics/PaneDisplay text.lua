@@ -83,8 +83,8 @@ local function CreatePaneDisplayGraph( _pnPlayer, _sLabel, _rcRadarCategory )
 			end;
 		};
 		LoadFont("Common Normal") .. {
-			InitCommand=cmd(x,40;zoom,0.5;);
-			OnCommand=cmd(shadowlength,1;);
+			InitCommand=cmd(x,14;zoom,0.45;halign,0;);
+			OnCommand=cmd(shadowlength,1;strokecolor,color("0.15,0.15,0.15,0.625"));
 			CurrentSongChangedMessageCommand=cmd(playcommand,"Set");
 			CurrentStepsP1ChangedMessageCommand=cmd(playcommand,"Set");
 			CurrentStepsP2ChangedMessageCommand=cmd(playcommand,"Set");

@@ -19,6 +19,9 @@ class Style;
 class Game;
 struct lua_State;
 
+int GetNumCreditsPaid();
+int GetCreditsRequiredToPlayStyle( const Style *style );
+
 class GameCommand
 {
 public:

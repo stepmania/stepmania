@@ -778,27 +778,117 @@ void NoteDataUtil::LoadTransformedLightsFromTwo( const NoteData &marquee, const 
 	NoteDataUtil::RemoveMines( out );
 }
 
+RadarStats CalculateRadarStatsFast( const NoteData &in, RadarStats &out )
+{
+	out.taps = 0;
+	out.jumps = 0;
+	out.hands = 0;
+	out.quads = 0;
+	map<int, int> simultaneousMap;
+	map<int, int> simultaneousMapNoHold;
+	map<int, int> simultaneousMapTapHoldHead;
+	map<int, int>::iterator itr;
+	for( int t=0; t<in.GetNumTracks(); t++ )
+	{
+		FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( in, t, r, 0, MAX_NOTE_ROW )
+		{
+			/* This function deals strictly with taps, jumps, hands, and quads.
+			 * As such, all rows in here have to be judgable. */
+			if (!GAMESTATE->GetProcessedTimingData()->IsJudgableAtRow(r))
+				continue;
+			
+			const TapNote &tn = in.GetTapNote(t, r);
+			switch( tn.type )
+			{
+			case TapNote::mine:
+			case TapNote::empty:
+			case TapNote::fake:
+			case TapNote::autoKeysound:
+				continue;	// skip these types - they don't count
+			}
+
+			if( (itr = simultaneousMap.find(r)) == simultaneousMap.end() )
+				simultaneousMap[r] = 1;
+			else
+				itr->second++;
+
+			if( (itr = simultaneousMapNoHold.find(r)) == simultaneousMapNoHold.end() )
+				simultaneousMapNoHold[r] = 1;
+			else
+				itr->second++;
+			
+			if( tn.type == TapNote::tap || tn.type == TapNote::lift || tn.type == TapNote::hold_head )
+			{
+				simultaneousMapTapHoldHead[r] = 1;
+			}
+
+			if( tn.type == TapNote::hold_head )
+			{
+				int searchStartRow = r + 1;
+				int searchEndRow   = r + tn.iDuration;
+				FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( in, rr, searchStartRow, searchEndRow )
+				{
+					switch( in.GetTapNote(t, rr).type )
+					{
+					case TapNote::mine:
+					case TapNote::empty:
+					case TapNote::fake:
+						continue;	// skip these types - they don't count
+					}
+					if( (itr = simultaneousMap.find(rr)) == simultaneousMap.end() )
+						simultaneousMap[rr] = 1;
+					else
+						itr->second++;
+				}
+			}
+		}
+	}
+	for( itr = simultaneousMap.begin(); itr != simultaneousMap.end(); itr ++ )
+	{
+		if( itr->second >= 3 )
+		{
+			out.hands ++;
+			if( itr->second >= 4 )
+			{
+				out.quads ++;
+			}
+		}
+	}
+	for( itr = simultaneousMapNoHold.begin(); itr != simultaneousMapNoHold.end(); itr ++ )
+	{
+		if( itr->second >= 2 )
+		{
+			out.jumps ++;
+		}
+	}
+	out.taps = simultaneousMapTapHoldHead.size();
+	return out;
+}
+
 void NoteDataUtil::CalculateRadarValues( const NoteData &in, float fSongSeconds, RadarValues& out )
 {
+	RadarStats stats;
+	CalculateRadarStatsFast( in, stats );
+	
 	// The for loop and the assert are used to ensure that all fields of 
 	// RadarValue get set in here.
 	FOREACH_ENUM( RadarCategory, rc )
 	{
 		switch( rc )
 		{
-		case RadarCategory_Stream:		out[rc] = GetStreamRadarValue( in, fSongSeconds );	break;	
-		case RadarCategory_Voltage:	out[rc] = GetVoltageRadarValue( in, fSongSeconds );	break;
-		case RadarCategory_Air:		out[rc] = GetAirRadarValue( in, fSongSeconds );		break;
-		case RadarCategory_Freeze:		out[rc] = GetFreezeRadarValue( in, fSongSeconds );	break;
-		case RadarCategory_Chaos:		out[rc] = GetChaosRadarValue( in, fSongSeconds );	break;
-		case RadarCategory_TapsAndHolds:	out[rc] = (float) in.GetNumRowsWithTapOrHoldHead();	break;
-		case RadarCategory_Jumps:		out[rc] = (float) in.GetNumJumps();			break;
-		case RadarCategory_Holds:		out[rc] = (float) in.GetNumHoldNotes();			break;
-		case RadarCategory_Mines:		out[rc] = (float) in.GetNumMines();			break;
-		case RadarCategory_Hands:		out[rc] = (float) in.GetNumHands();			break;
-		case RadarCategory_Rolls:		out[rc] = (float) in.GetNumRolls();			break;
-		case RadarCategory_Lifts:		out[rc] = (float) in.GetNumLifts();			break;
-		case RadarCategory_Fakes:		out[rc] = (float) in.GetNumFakes();			break;
+		case RadarCategory_Stream:			out[rc] = GetStreamRadarValue( in, fSongSeconds );	break;	
+		case RadarCategory_Voltage:			out[rc] = GetVoltageRadarValue( in, fSongSeconds );	break;
+		case RadarCategory_Air:				out[rc] = GetAirRadarValue( in, fSongSeconds );		break;
+		case RadarCategory_Freeze:			out[rc] = GetFreezeRadarValue( in, fSongSeconds );	break;
+		case RadarCategory_Chaos:			out[rc] = GetChaosRadarValue( in, fSongSeconds );	break;
+		case RadarCategory_TapsAndHolds:	out[rc] = (float) stats.taps;				break;
+		case RadarCategory_Jumps:			out[rc] = (float) stats.jumps;				break;
+		case RadarCategory_Holds:			out[rc] = (float) in.GetNumHoldNotes();		break;
+		case RadarCategory_Mines:			out[rc] = (float) in.GetNumMines();			break;
+		case RadarCategory_Hands:			out[rc] = (float) in.GetNumHands();			break;
+		case RadarCategory_Rolls:			out[rc] = (float) in.GetNumRolls();			break;
+		case RadarCategory_Lifts:			out[rc] = (float) in.GetNumLifts();			break;
+		case RadarCategory_Fakes:			out[rc] = (float) in.GetNumFakes();			break;
 		default:	ASSERT(0);
 		}
 	}
@@ -1359,6 +1449,7 @@ static void SuperShuffleTaps( NoteData &inout, int iStartIndex, int iEndIndex )
 				case TapNote::mine:
 				case TapNote::attack:
 				case TapNote::lift:
+				case TapNote::fake:
 					break;	// ok to swap with this
 				DEFAULT_FAIL( tn2.type );
 				}
@@ -2215,7 +2306,7 @@ void NoteDataUtil::AddTapAttacks( NoteData &nd, Song* pSong )
 
 	for( float sec=15; sec<pSong->m_fMusicLengthSeconds; sec+=30 )
 	{
-		float fBeat = pSong->GetBeatFromElapsedTime( sec );
+		float fBeat = pSong->m_SongTiming.GetBeatFromElapsedTime( sec );
 		int iBeat = (int)fBeat;
 		int iTrack = iBeat % nd.GetNumTracks();	// deterministically calculates track
 		TapNote tn(
@@ -2448,7 +2539,7 @@ void NoteDataUtil::SetHopoPossibleFlags( const Song *pSong, NoteData& ndInOut )
 	FOREACH_NONEMPTY_ROW_ALL_TRACKS( ndInOut, r )
 	{
 		float fBeat = NoteRowToBeat( r );
-		float fSeconds = pSong->GetElapsedTimeFromBeat( fBeat );
+		float fSeconds = pSong->m_SongTiming.GetElapsedTimeFromBeat( fBeat );
 
 		int iLastTapTrack = ndInOut.GetLastTrackWithTapOrHoldHead( r );
 		if( iLastTapTrack != -1  &&  fSeconds <= fLastRowMusicSeconds + g_fTimingWindowHopo )

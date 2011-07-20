@@ -21,6 +21,8 @@
 
 ThemeMetric<int> SORT_BPM_DIVISION ( "MusicWheel", "SortBPMDivision" );
 ThemeMetric<int> SORT_LENGTH_DIVISION ( "MusicWheel", "SortLengthDivision" );
+ThemeMetric<bool> SHOW_SECTIONS_IN_BPM_SORT ( "MusicWheel", "ShowSectionsInBPMSort" );
+ThemeMetric<bool> SHOW_SECTIONS_IN_LENGTH_SORT ( "MusicWheel", "ShowSectionsInLengthSort" );
 
 bool SongCriteria::Matches( const Song *pSong ) const
 {
@@ -480,7 +482,7 @@ void SongUtil::SortSongPointerArrayByGrades( vector<Song*> &vpSongsInOut, bool b
 
 		RString foo;
 		foo.reserve(256);
-		for( int g=Grade_Tier01; g<=Grade_NoData; ++g )
+		for( int g=Grade_Tier01; g<NUM_Grade; ++g )
 			AppendOctal( iCounts[g], 3, foo );
 		vals.push_back( val(pSong, foo) );
 	}
@@ -598,20 +600,30 @@ RString SongUtil::GetSectionNameFromSongAndSort( const Song* pSong, SortOrder so
 		return SORT_NOT_AVAILABLE.GetValue();
 	case SORT_BPM:
 		{
-			const int iBPMGroupSize = SORT_BPM_DIVISION;
-			DisplayBpms bpms;
-			pSong->GetDisplayBpms( bpms );
-			int iMaxBPM = (int)bpms.GetMax();
-			iMaxBPM += iBPMGroupSize - (iMaxBPM%iBPMGroupSize) - 1;
-			return ssprintf("%03d-%03d",iMaxBPM-(iBPMGroupSize-1), iMaxBPM);
+			if( SHOW_SECTIONS_IN_BPM_SORT )
+			{
+				const int iBPMGroupSize = SORT_BPM_DIVISION;
+				DisplayBpms bpms;
+				pSong->GetDisplayBpms( bpms );
+				int iMaxBPM = (int)bpms.GetMax();
+				iMaxBPM += iBPMGroupSize - (iMaxBPM%iBPMGroupSize) - 1;
+				return ssprintf("%03d-%03d",iMaxBPM-(iBPMGroupSize-1), iMaxBPM);
+			}
+			else
+				return RString();
 		}
 	case SORT_LENGTH:
 		{
-			const int iSortLengthSize = SORT_LENGTH_DIVISION;
-			int iMaxLength = (int)pSong->m_fMusicLengthSeconds;
-			iMaxLength += (iSortLengthSize - (iMaxLength%iSortLengthSize) - 1);
-			int iMinLength = iMaxLength - (iSortLengthSize-1);
-			return ssprintf( "%s-%s", SecondsToMMSS(iMinLength).c_str(), SecondsToMMSS(iMaxLength).c_str() );
+			if( SHOW_SECTIONS_IN_LENGTH_SORT )
+			{
+				const int iSortLengthSize = SORT_LENGTH_DIVISION;
+				int iMaxLength = (int)pSong->m_fMusicLengthSeconds;
+				iMaxLength += (iSortLengthSize - (iMaxLength%iSortLengthSize) - 1);
+				int iMinLength = iMaxLength - (iSortLengthSize-1);
+				return ssprintf( "%s-%s", SecondsToMMSS(iMinLength).c_str(), SecondsToMMSS(iMaxLength).c_str() );
+			}
+			else
+				return RString();
 		}
 	case SORT_POPULARITY:
 	case SORT_RECENT:
@@ -737,6 +749,22 @@ bool SongUtil::IsEditDescriptionUnique( const Song* pSong, StepsType st, const R
 	return true;
 }
 
+bool SongUtil::IsChartNameUnique( const Song* pSong, StepsType st, const RString &name, const Steps *pExclude )
+{
+	FOREACH_CONST( Steps*, pSong->GetAllSteps(), s )
+	{
+		Steps *pSteps = *s;
+		
+		if( pSteps->m_StepsType != st )
+			continue;
+		if( pSteps == pExclude )
+			continue;
+		if( pSteps->GetChartName() == name )
+			return false;
+	}
+	return true;
+}
+
 RString SongUtil::MakeUniqueEditDescription( const Song *pSong, StepsType st, const RString &sPreferredDescription )
 {
 	if( IsEditDescriptionUnique( pSong, st, sPreferredDescription, NULL ) )
@@ -748,7 +776,7 @@ RString SongUtil::MakeUniqueEditDescription( const Song *pSong, StepsType st, co
 	{
 		// make name "My Edit" -> "My Edit2"
 		RString sNum = ssprintf("%d", i+1);
-		sTemp = sPreferredDescription.Left( MAX_EDIT_STEPS_DESCRIPTION_LENGTH - sNum.size() ) + sNum;
+		sTemp = sPreferredDescription.Left( MAX_STEPS_DESCRIPTION_LENGTH - sNum.size() ) + sNum;
 
 		if( IsEditDescriptionUnique(pSong, st, sTemp, NULL) )
 			return sTemp;
@@ -760,8 +788,11 @@ RString SongUtil::MakeUniqueEditDescription( const Song *pSong, StepsType st, co
 }
 
 static LocalizedString YOU_MUST_SUPPLY_NAME	( "SongUtil", "You must supply a name for your new edit." );
+static LocalizedString CHART_NAME_CONFLICTS ("SongUtil", "The name you chose conflicts with another chart. Please use a different name.");
 static LocalizedString EDIT_NAME_CONFLICTS	( "SongUtil", "The name you chose conflicts with another edit. Please use a different name." );
+static LocalizedString CHART_NAME_CANNOT_CONTAIN ("SongUtil", "The chart name cannot contain any of the following characters: %s" );
 static LocalizedString EDIT_NAME_CANNOT_CONTAIN	( "SongUtil", "The edit name cannot contain any of the following characters: %s" );
+
 bool SongUtil::ValidateCurrentEditStepsDescription( const RString &sAnswer, RString &sErrorOut )
 {
 	Steps *pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
@@ -821,6 +852,31 @@ bool SongUtil::ValidateCurrentStepsDescription( const RString &sAnswer, RString 
 	return true;
 }
 
+bool SongUtil::ValidateCurrentStepsChartName(const RString &answer, RString &error)
+{
+	if (answer.empty()) return true;
+	
+	static const RString sInvalidChars = "\\/:*?\"<>|";
+	if( strpbrk(answer, sInvalidChars) != NULL )
+	{
+		error = ssprintf( CHART_NAME_CANNOT_CONTAIN.GetValue(), sInvalidChars.c_str() );
+		return false;
+	}
+	
+	/* Don't allow duplicate title names within the same StepsType.
+	 * We need some way of identifying the unique charts. */
+	Steps *pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
+	
+	if (pSteps->GetChartName() == answer) return true;
+	
+	// TODO next commit: borrow code from EditStepsDescription.
+	bool result = SongUtil::IsChartNameUnique(GAMESTATE->m_pCurSong, pSteps->m_StepsType,
+											  answer, pSteps);
+	if (!result)
+		error = CHART_NAME_CONFLICTS;
+	return result;
+}
+
 static LocalizedString AUTHOR_NAME_CANNOT_CONTAIN( "SongUtil", "The step author's name cannot contain any of the following characters: %s" );
 
 bool SongUtil::ValidateCurrentStepsCredit( const RString &sAnswer, RString &sErrorOut )
@@ -859,13 +915,15 @@ void SongUtil::GetAllSongGenres( vector<RString> &vsOut )
 	}
 }
 
-void SongUtil::FilterSongs( const SongCriteria &sc, const vector<Song*> &in, vector<Song*> &out )
+void SongUtil::FilterSongs( const SongCriteria &sc, const vector<Song*> &in,
+			   vector<Song*> &out, bool doCareAboutGame )
 {
 	out.reserve( in.size() );
 	FOREACH_CONST( Song*, in, s )
 	{
-		if( sc.Matches( *s ) )
+		if( sc.Matches( *s ) && (!doCareAboutGame || IsSongPlayable(*s) ) )
 		{
+			
 			out.push_back( *s );
 		}
 	}
@@ -915,7 +973,9 @@ void SongUtil::GetPlayableStepsTypes( const Song *pSong, set<StepsType> &vOut )
 		iNumPlayers = max( iNumPlayers, 1 );
 
 		const Style *pStyle = GAMEMAN->GetFirstCompatibleStyle( GAMESTATE->m_pCurGame, iNumPlayers, *st );
-		bool bEnoughStages = GAMESTATE->IsAnExtraStage() || GAMESTATE->GetSmallestNumStagesLeftForAnyHumanPlayer() >= GAMESTATE->GetNumStagesForSongAndStyleType(pSong, pStyle->m_StyleType);
+		bool bEnoughStages = GAMESTATE->IsAnExtraStage() || 
+			GAMESTATE->GetSmallestNumStagesLeftForAnyHumanPlayer() >= 
+			GAMESTATE->GetNumStagesForSongAndStyleType(pSong, pStyle->m_StyleType);
 
 		if( bShowThisStepsType && bEnoughStages )
 			vOut.insert( *st );
@@ -947,6 +1007,21 @@ bool SongUtil::IsStepsPlayable( Song *pSong, Steps *pSteps )
 	vector<Steps*> vpSteps;
 	GetPlayableSteps( pSong, vpSteps );
 	return find( vpSteps.begin(), vpSteps.end(), pSteps ) != vpSteps.end();
+}
+
+bool SongUtil::IsSongPlayable( Song *s )
+{
+	const vector<Steps*> & steps = s->GetAllSteps();
+	// I'm sure there is a foreach loop, but I don't
+	FOREACH( Steps*, const_cast<vector<Steps*>&>(steps), step )
+	{
+		if (IsStepsPlayable(s, *step))
+		{
+			return true;
+		}
+	}
+	
+	return false;
 }
 
 bool SongUtil::GetStepsTypeAndDifficultyFromSortOrder( SortOrder so, StepsType &stOut, Difficulty &dcOut )
@@ -1066,6 +1141,14 @@ bool SongID::IsValid() const
 
 namespace
 {
+	int GetPlayableSteps( lua_State *L )
+	{
+		const Song *pSong = Luna<Song>::check( L, 1, true );
+		vector<Steps*> vSteps;
+		SongUtil::GetPlayableSteps(pSong,vSteps);
+		LuaHelpers::CreateTableFromArray<Steps*>( vSteps, L );
+		return 1;
+	}
 	int IsStepsTypePlayable( lua_State *L )
 	{
 		Song *pSong = Luna<Song>::check( L, 1, true );
@@ -1085,6 +1168,7 @@ namespace
 
 	const luaL_Reg SongUtilTable[] =
 	{
+		LIST_METHOD( GetPlayableSteps ),
 		LIST_METHOD( IsStepsTypePlayable ),
 		LIST_METHOD( IsStepsPlayable ),
 		{ NULL, NULL }

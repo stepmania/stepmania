@@ -1,7 +1,6 @@
 #ifndef SONGMANAGER_H
 #define SONGMANAGER_H
 
-class LoadingWindow;
 class Song;
 class Style;
 class Steps;
@@ -19,6 +18,10 @@ struct lua_State;
 #include "RageTexturePreloader.h"
 #include "RageUtil.h"
 
+RString SONG_GROUP_COLOR_NAME( size_t i );
+RString COURSE_GROUP_COLOR_NAME( size_t i );
+bool CompareNotesPointersForExtra(const Steps *n1, const Steps *n2);
+
 /** @brief The max number of edit steps a profile can have. */
 const int MAX_EDIT_STEPS_PER_PROFILE	= 200;
 /** @brief The max number of edit courses a profile can have. */
@@ -31,7 +34,7 @@ public:
 	SongManager();
 	~SongManager();
 
-	void InitSongsFromDisk( LoadingWindow *ld );
+	void InitSongsFromDisk();
 	void FreeSongs();
 	void Cleanup();
 
@@ -49,7 +52,7 @@ public:
 
 	void LoadGroupSymLinks( RString sDir, RString sGroupFolder );
 
-	void InitCoursesFromDisk( LoadingWindow *ld );
+	void InitCoursesFromDisk();
 	void InitAutogenCourses();
 	void InitRandomAttacks();
 	void FreeCourses();
@@ -59,8 +62,8 @@ public:
 	void DeleteAutogenCourses();
 	void InvalidateCachedTrails();
 
-	void InitAll( LoadingWindow *ld );	// songs, courses, groups - everything.
-	void Reload( bool bAllowFastLoad, LoadingWindow *ld=NULL );	// songs, courses, groups - everything.
+	void InitAll();	// songs, courses, groups - everything.
+	void Reload( bool bAllowFastLoad);	// songs, courses, groups - everything.
 	void PreloadSongImages();
 
 	RString GetSongGroupBannerPath( RString sSongGroup ) const;
@@ -82,9 +85,35 @@ public:
 	static RString ShortenGroupName( RString sLongGroupName );
 
 	// Lookup
+	/**
+	 * @brief Retrieve all of the songs that belong to a particular group.
+	 * @param sGroupName the name of the group.
+	 * @return the songs that belong in the group. */
 	const vector<Song*> &GetSongs( const RString &sGroupName ) const;
+	/**
+	 * @brief Retrieve all of the songs in the game.
+	 * @return all of the songs. */
 	const vector<Song*> &GetAllSongs() const { return GetSongs(GROUP_ALL); }
+	/**
+	 * @brief Retrieve all of the popular songs.
+	 *
+	 * Popularity is determined specifically by the number of times
+	 * a song is chosen.
+	 * @return all of the popular songs. */
 	const vector<Song*> &GetPopularSongs() const { return m_pPopularSongs; }
+	
+	/**
+	 * @brief Retrieve all of the songs in a group that have at least one
+	 * valid step for the current gametype.
+	 * @param sGroupName the name of the group.
+	 * @return the songs within the group that have at least one valid Step. */
+	const vector<Song *> & GetSongsOfCurrentGame( const RString &sGroupName ) const;
+	/**
+	 * @brief Retrieve all of the songs in the game that have at least one
+	 * valid step for the current gametype.
+	 * @return the songs within the game that have at least one valid Step. */
+	const vector<Song *> & GetAllSongsOfCurrentGame() const;
+	
 	void GetPreferredSortSongs( vector<Song*> &AddTo ) const;
 	RString SongToPreferredSortSectionName( const Song *pSong ) const;
 	const vector<Course*> &GetPopularCourses( CourseType ct ) const { return m_pPopularCourses[ct]; }
@@ -92,11 +121,17 @@ public:
 	Song *FindSong( RString sGroup, RString sSong ) const;
 	Course *FindCourse( RString sPath ) const;
 	Course *FindCourse( RString sGroup, RString sName ) const;
+	/**
+	 * @brief Retrieve the number of songs in the game.
+	 * @return the number of songs. */
 	int GetNumSongs() const;
 	int GetNumUnlockedSongs() const;
 	int GetNumSelectableAndUnlockedSongs() const;
 	int GetNumAdditionalSongs() const;
 	int GetNumSongGroups() const;
+	/**
+	 * @brief Retrieve the number of courses in the game.
+	 * @return the number of courses. */
 	int GetNumCourses() const;
 	int GetNumAdditionalCourses() const;
 	int GetNumCourseGroups() const;
@@ -134,7 +169,7 @@ public:
 	void PushSelf( lua_State *L );
 
 protected:
-	void LoadStepManiaSongDir( RString sDir, LoadingWindow *ld );
+	void LoadStepManiaSongDir( RString sDir );
 	void LoadDWISongDir( RString sDir );
 	bool GetExtraStageInfoFromCourse( bool bExtra2, RString sPreferredGroup, Song*& pSongOut, Steps*& pStepsOut );
 	void SanityCheckGroupDir( RString sDir ) const;

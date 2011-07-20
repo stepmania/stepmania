@@ -112,7 +112,7 @@ public:
 		bpp(0), rate(0), vsync(false), interlaced(false),
 		bSmoothLines(false), bTrilinearFiltering(false),
 		bAnisotropicFiltering(false), sWindowTitle(RString()),
-		sIconFile(RString()), PAL(false), fDisplayAspectRatio(0.0) {}
+		sIconFile(RString()), PAL(false), fDisplayAspectRatio(0.0f) {}
 
 	bool windowed;
 	int width;

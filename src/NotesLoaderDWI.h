@@ -6,6 +6,7 @@
 #include <set>
 
 class Song;
+class Steps;
 
 /** @brief The DWILoader handles parsing the .dwi file. */
 namespace DWILoader
@@ -24,6 +25,8 @@ namespace DWILoader
 	 * @return its success or failure.
 	 */
 	bool LoadFromDir( const RString &sPath, Song &out, set<RString> &BlacklistedImages );
+	
+	bool LoadNoteDataFromSimfile( const RString &path, Steps &out );
 }
 
 #endif

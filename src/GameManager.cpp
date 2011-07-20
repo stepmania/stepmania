@@ -324,6 +324,50 @@ static const Style g_Style_Dance_Solo =
 	false, // m_bLockDifficulties
 };
 
+static const Style g_Style_Dance_Couple_Edit =
+{	// STYLE_DANCE_COUPLE
+	false,				// m_bUsedForGameplay
+	true,				// m_bUsedForEdit
+	false,				// m_bUsedForDemonstration
+	false,				// m_bUsedForHowToPlay
+	"couple-edit",			// m_szName
+	StepsType_dance_couple,	// m_StepsType
+	StyleType_OnePlayerTwoSides,		// m_StyleType
+	8,				// m_iColsPerPlayer
+	{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
+		{	// PLAYER_1
+			{ TRACK_1,	-DANCE_COL_SPACING*4.f, NULL },
+			{ TRACK_2,	-DANCE_COL_SPACING*3.f, NULL },
+			{ TRACK_3,	-DANCE_COL_SPACING*2.f, NULL },
+			{ TRACK_4,	-DANCE_COL_SPACING*1.f, NULL },
+			{ TRACK_5,	+DANCE_COL_SPACING*1.f, NULL },
+			{ TRACK_6,	+DANCE_COL_SPACING*2.f, NULL },
+			{ TRACK_7,	+DANCE_COL_SPACING*3.f, NULL },
+			{ TRACK_8,	+DANCE_COL_SPACING*4.f, NULL },
+		},
+		{	// PLAYER_2
+			{ TRACK_1,	-DANCE_COL_SPACING*4.f, NULL },
+			{ TRACK_2,	-DANCE_COL_SPACING*3.f, NULL },
+			{ TRACK_3,	-DANCE_COL_SPACING*2.f, NULL },
+			{ TRACK_4,	-DANCE_COL_SPACING*1.f, NULL },
+			{ TRACK_5,	+DANCE_COL_SPACING*1.f, NULL },
+			{ TRACK_6,	+DANCE_COL_SPACING*2.f, NULL },
+			{ TRACK_7,	+DANCE_COL_SPACING*3.f, NULL },
+			{ TRACK_8,	+DANCE_COL_SPACING*4.f, NULL },
+		},
+	},
+	{	// m_iInputColumn[NUM_GameController][NUM_GameButton]
+		{ 0, 3, 2, 1, Style::END_MAPPING },
+		{ 4, 7, 6, 5, Style::END_MAPPING },
+	},
+	{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
+		0,1,2,3,4,5,6,7
+	},
+	false, // m_bNeedsZoomOutWith2Players
+	false, // m_bCanUseBeginnerHelper
+	false, // m_bLockDifficulties
+};
+
 static const Style g_Style_Dance_ThreePanel =
 {	// STYLE_DANCE_THREEPANEL
 	true,				// m_bUsedForGameplay
@@ -353,50 +397,6 @@ static const Style g_Style_Dance_ThreePanel =
 	},
 	{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
 		0,1,2
-	},
-	false, // m_bNeedsZoomOutWith2Players
-	false, // m_bCanUseBeginnerHelper
-	false, // m_bLockDifficulties
-};
-
-static const Style g_Style_Dance_Couple_Edit =
-{	// STYLE_DANCE_EDIT_COUPLE
-	false,				// m_bUsedForGameplay
-	true,				// m_bUsedForEdit
-	false,				// m_bUsedForDemonstration
-	false,				// m_bUsedForHowToPlay
-	"couple-edit",			// m_szName
-	StepsType_dance_couple,	// m_StepsType
-	StyleType_OnePlayerOneSide,		// m_StyleType
-	8,				// m_iColsPerPlayer
-	{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
-		{	// PLAYER_1
-			{ TRACK_1,	-DANCE_COL_SPACING*4.0f, NULL },
-			{ TRACK_2,	-DANCE_COL_SPACING*3.0f, NULL },
-			{ TRACK_3,	-DANCE_COL_SPACING*2.0f, NULL },
-			{ TRACK_4,	-DANCE_COL_SPACING*1.0f, NULL },
-			{ TRACK_5,	+DANCE_COL_SPACING*1.0f, NULL },
-			{ TRACK_6,	+DANCE_COL_SPACING*2.0f, NULL },
-			{ TRACK_7,	+DANCE_COL_SPACING*3.0f, NULL },
-			{ TRACK_8,	+DANCE_COL_SPACING*4.0f, NULL },
-		},
-		{	// PLAYER_2
-			{ TRACK_1,	-DANCE_COL_SPACING*4.0f, NULL },
-			{ TRACK_2,	-DANCE_COL_SPACING*3.0f, NULL },
-			{ TRACK_3,	-DANCE_COL_SPACING*2.0f, NULL },
-			{ TRACK_4,	-DANCE_COL_SPACING*1.0f, NULL },
-			{ TRACK_5,	+DANCE_COL_SPACING*1.0f, NULL },
-			{ TRACK_6,	+DANCE_COL_SPACING*2.0f, NULL },
-			{ TRACK_7,	+DANCE_COL_SPACING*3.0f, NULL },
-			{ TRACK_8,	+DANCE_COL_SPACING*4.0f, NULL },
-		},
-	},
-	{	// m_iInputColumn[NUM_GameController][NUM_GameButton]
-		{ 0, 1, 2, 3, Style::END_MAPPING },
-		{ 4, 5, 6, 7, Style::END_MAPPING },
-	},
-	{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
-		0,1,2,3,4,5,6,7
 	},
 	false, // m_bNeedsZoomOutWith2Players
 	false, // m_bCanUseBeginnerHelper
@@ -770,7 +770,7 @@ static const Style g_Style_Pump_Couple_Edit =
 	false,				// m_bUsedForHowToPlay
 	"couple-edit",			// m_szName
 	StepsType_pump_couple,		// m_StepsType
-	StyleType_OnePlayerOneSide,		// m_StyleType
+	StyleType_OnePlayerTwoSides,		// m_StyleType
 	10,				// m_iColsPerPlayer
 	{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
 		{	// PLAYER_1
@@ -786,19 +786,24 @@ static const Style g_Style_Pump_Couple_Edit =
 			{ TRACK_10,	+PUMP_COL_SPACING*5.0f+4, NULL },
 		},
 		{	// PLAYER_2
-			{ TRACK_1,	-PUMP_COL_SPACING*2.0f, NULL },
-			{ TRACK_2,	-PUMP_COL_SPACING*1.0f, NULL },
-			{ TRACK_3,	+PUMP_COL_SPACING*0.0f, NULL },
-			{ TRACK_4,	+PUMP_COL_SPACING*1.0f, NULL },
-			{ TRACK_5,	+PUMP_COL_SPACING*2.0f, NULL },
+			{ TRACK_1,	-PUMP_COL_SPACING*5.0f-4, NULL },
+			{ TRACK_2,	-PUMP_COL_SPACING*4.0f-4, NULL },
+			{ TRACK_3,	-PUMP_COL_SPACING*3.0f-4, NULL },
+			{ TRACK_4,	-PUMP_COL_SPACING*2.0f-4, NULL },
+			{ TRACK_5,	-PUMP_COL_SPACING*1.0f-4, NULL },
+			{ TRACK_6,	+PUMP_COL_SPACING*1.0f+4, NULL },
+			{ TRACK_7,	+PUMP_COL_SPACING*2.0f+4, NULL },
+			{ TRACK_8,	+PUMP_COL_SPACING*3.0f+4, NULL },
+			{ TRACK_9,	+PUMP_COL_SPACING*4.0f+4, NULL },
+			{ TRACK_10,	+PUMP_COL_SPACING*5.0f+4, NULL },
 		},
 	},
 	{	// m_iInputColumn[NUM_GameController][NUM_GameButton]
-		{ 1, 3, 2, 0, 4, 6, 8, 7, 5, 9, Style::END_MAPPING },
-		{ 1, 3, 2, 0, 4, 6, 8, 7, 5, 9, Style::END_MAPPING },
+		{ 1, 3, 2, 0, 4, Style::END_MAPPING },
+		{ 6, 8, 7, 5, 9, Style::END_MAPPING },
 	},
 	{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
-		2,1,3,0,4
+		2,1,3,0,4, 2+5,1+5,3+5,0+5,4+5
 	},
 	false, // m_bNeedsZoomOutWith2Players
 	false, // m_bCanUseBeginnerHelper
@@ -2980,7 +2985,7 @@ const Style* GameManager::GetEditorStyleForStepsType( StepsType st )
 		}
 	}
 
-	ASSERT(0);	// this Game is missing a Style that can be used with the editor
+	ASSERT_M(0, ssprintf("The current game cannot use this Style with the editor!"));
 	return NULL;
 }
 

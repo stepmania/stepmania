@@ -4,6 +4,8 @@
 #include "Actor.h"
 #include "RageTextureID.h"
 
+void TexCoordArrayFromRect( float fImageCoords[8], const RectF &rect );
+
 class RageTexture;
 /** @brief A bitmap Actor that animates and moves around. */
 class Sprite: public Actor
@@ -67,7 +69,6 @@ public:
 	 * @param fHeight the new height. */
 	void ScaleToClipped( float fWidth, float fHeight );
 	void CropTo( float fWidth, float fHeight );
-	static bool IsDiagonalBanner( int iWidth, int iHeight );
 
 	// Commands
 	virtual void PushSelf( lua_State *L );

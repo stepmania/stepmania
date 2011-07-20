@@ -11,9 +11,10 @@ void Attack::GetAttackBeats( const Song *pSong, float &fStartBeat, float &fEndBe
 {
 	ASSERT( pSong );
 	ASSERT_M( fStartSecond >= 0, ssprintf("StartSecond: %f",fStartSecond) );
-
-	fStartBeat = pSong->GetBeatFromElapsedTime( fStartSecond );
-	fEndBeat = pSong->GetBeatFromElapsedTime( fStartSecond+fSecsRemaining );
+	
+	const TimingData &timing = pSong->m_SongTiming;
+	fStartBeat = timing.GetBeatFromElapsedTime( fStartSecond );
+	fEndBeat = timing.GetBeatFromElapsedTime( fStartSecond+fSecsRemaining );
 }
 
 /* Get the range for an attack that's being applied in realtime, eg. during battle
@@ -31,12 +32,13 @@ void Attack::GetRealtimeAttackBeats( const Song *pSong, const PlayerState* pPlay
 	ASSERT( pSong );
 
 	/* If reasonable, push the attack forward 8 beats so that notes on screen don't change suddenly. */
-	fStartBeat = min( GAMESTATE->m_fSongBeat+8, pPlayerState->m_fLastDrawnBeat );
+	fStartBeat = min( GAMESTATE->m_Position.m_fSongBeat+8, pPlayerState->m_fLastDrawnBeat );
 	fStartBeat = truncf(fStartBeat)+1;
 
-	const float lStartSecond = pSong->GetElapsedTimeFromBeat( fStartBeat );
+	const TimingData &timing = pSong->m_SongTiming;
+	const float lStartSecond = timing.GetElapsedTimeFromBeat( fStartBeat );
 	const float fEndSecond = lStartSecond + fSecsRemaining;
-	fEndBeat = pSong->GetBeatFromElapsedTime( fEndSecond );
+	fEndBeat = timing.GetBeatFromElapsedTime( fEndSecond );
 	fEndBeat = truncf(fEndBeat)+1;
 
 	// loading the course should have caught this.
@@ -87,6 +89,27 @@ bool AttackArray::ContainsTransformOrTurn() const
 			return true;
 	}
 	return false;
+}
+
+vector<RString> AttackArray::ToVectorString() const
+{
+	vector<RString> ret;
+	FOREACH_CONST( Attack, *this, a )
+	{
+		ret.push_back(ssprintf("TIME=%f:LEN=%f:MODS=%s",
+				       a->fStartSecond,
+				       a->fSecsRemaining,
+				       a->sModifiers.c_str()));
+	}
+	return ret;
+}
+
+void AttackArray::UpdateStartTimes(float delta)
+{
+	FOREACH(Attack, *this, a)
+	{
+		a->fStartSecond += delta;
+	}
 }
 
 /*

@@ -68,6 +68,25 @@ RString BackgroundChange::GetTextDescription() const
 	return s;
 }
 
+RString BackgroundChange::ToString() const
+{
+	/* TODO:  Technically we need to double-escape the filename
+	 * (because it might contain '=') and then unescape the value
+	 * returned by the MsdFile. */
+	return ssprintf("%.3f=%s=%.3f=%d=%d=%d=%s=%s=%s=%s=%s",
+			this->m_fStartBeat,
+			SmEscape(this->m_def.m_sFile1).c_str(),
+			this->m_fRate,
+			this->m_sTransition == SBT_CrossFade,		// backward compat
+			this->m_def.m_sEffect == SBE_StretchRewind, 	// backward compat
+			this->m_def.m_sEffect != SBE_StretchNoLoop, 	// backward compat
+			this->m_def.m_sEffect.c_str(),
+			this->m_def.m_sFile2.c_str(),
+			this->m_sTransition.c_str(),
+			SmEscape(RageColor::NormalizeColorString(this->m_def.m_sColor1)).c_str(),
+			SmEscape(RageColor::NormalizeColorString(this->m_def.m_sColor2)).c_str());
+}
+
 
 const RString BACKGROUND_EFFECTS_DIR =		"BackgroundEffects/";
 const RString BACKGROUND_TRANSITIONS_DIR =	"BackgroundTransitions/";
@@ -133,7 +152,8 @@ void BackgroundUtil::GetBackgroundTransitions( const RString &_sName, vector<RSt
 		sName = "*";
 
 	vsPathsOut.clear();
-	GetDirListing( BACKGROUND_TRANSITIONS_DIR+sName+".xml", vsPathsOut, false, true );
+	if( true )
+		GetDirListing( BACKGROUND_TRANSITIONS_DIR+sName+".xml", vsPathsOut, false, true );
 	GetDirListing( BACKGROUND_TRANSITIONS_DIR+sName+".lua", vsPathsOut, false, true );
 
 	vsNamesOut.clear();
@@ -241,7 +261,8 @@ void BackgroundUtil::GetGlobalBGAnimations( const Song *pSong, const RString &sM
 {
 	vsPathsOut.clear();
 	GetDirListing( BG_ANIMS_DIR+sMatch+"*", vsPathsOut, true, true );
-	GetDirListing( BG_ANIMS_DIR+sMatch+"*.xml", vsPathsOut, false, true );
+	if( true )
+		GetDirListing( BG_ANIMS_DIR+sMatch+"*.xml", vsPathsOut, false, true );
 
 	vsNamesOut.clear();
 	FOREACH_CONST( RString, vsPathsOut, s )

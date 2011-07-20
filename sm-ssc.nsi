@@ -42,7 +42,7 @@
 
 	; don't forget to change this before releasing a new verson.
 	; wish this could be automated, but it requires "X.Y.Z.a" format. -aj
-	VIProductVersion "1.2.3.0"
+	VIProductVersion "5.0.0.3"
 	VIAddVersionKey "ProductName" "${PRODUCT_ID}"
 	VIAddVersionKey "FileVersion" "${PRODUCT_VER}"
 	VIAddVersionKey "FileDescription" "${PRODUCT_ID} Installer"
@@ -52,8 +52,16 @@
 	SetDateSave on ; (can be on to have files restored to their orginal date)
 
 	; I think it may need actual admin privs for writing to the registry... -aj
-	; RequestExecutionLevel user
-	; this folder may not be the best idea for Windows Vista/7. -aj
+	;RequestExecutionLevel user
+
+	;GetVersion::WindowsServicePackMajor
+	;Pop $R0
+	;${If} $R0 >= 6
+	;	vista & 7
+	;${Else}
+	;	xp and below
+	;${EndIf}
+
 	InstallDir "$PROGRAMFILES\${PRODUCT_ID}"
 	InstallDirRegKey HKEY_LOCAL_MACHINE "SOFTWARE\${PRODUCT_ID}" ""
 
@@ -211,8 +219,8 @@ Section "Main Section" SecMain
 	WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\${PRODUCT_ID}" "" "$INSTDIR"
 	WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_ID}" "DisplayName" "$(TEXT_IO_REMOVE_ONLY)"
 	WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_ID}" "DisplayVersion" "$(PRODUCT_VER)"
-	WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_ID}" "Comments" "sm-ssc is a rhythm game simulator (forked from StepMania)."
-	WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_ID}" "Publisher" "the spinal shark collective"
+	WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_ID}" "Comments" "StepMania 5 is a rhythm game simulator."
+	WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_ID}" "Publisher" "StepMania Team"
 	WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_ID}" "URLInfoAbout" "http://code.google.com/p/sm-ssc/"
 	WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_ID}" "URLUpdateInfo" "http://code.google.com/p/sm-ssc/"
 	WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_ID}" "UninstallString" '"$INSTDIR\uninstall.exe"'
@@ -295,6 +303,7 @@ Section "Main Section" SecMain
 	RMDir /r "$INSTDIR\NoteSkins\dance\midi"
 	; we may also want to remove the new ones.
 	RMDir /r "$INSTDIR\NoteSkins\dance\midi-note"
+	RMDir /r "$INSTDIR\NoteSkins\dance\midi-note-3d"
 	RMDir /r "$INSTDIR\NoteSkins\dance\midi-solo"
 	RMDir /r "$INSTDIR\NoteSkins\dance\midi-vivid"
 	RMDir /r "$INSTDIR\NoteSkins\dance\midi-rhythm-p1"
@@ -382,6 +391,7 @@ Section "Main Section" SecMain
 	CreateDirectory "$INSTDIR\Songs"
 	SetOutPath "$INSTDIR\Songs"
 	;File "Songs\Instructions.txt"
+	File /r /x CVS /x .svn "Songs\*"
 
 	; remove and install themes
 	RMDir /r "$INSTDIR\Themes\_fallback"
@@ -456,6 +466,7 @@ Section "Main Section" SecMain
 	File "Docs\Changelog_sm5.txt"
 	File "Docs\Changelog_SSCformat.txt"
 	File "Docs\CommandLineArgs.txt"
+	File "Docs\CourseFormat.txt"
 	File /r /x CVS /x .svn "Docs\license-ext"
 	File /r /x CVS /x .svn "Docs\Luadoc"
 	File /r /x CVS /x .svn "Docs\Themerdocs"
@@ -532,21 +543,21 @@ Function ShowAutorun
 	IfFileExists "$R1" show_play_and_reinstall
 
 	show_only_install:
-	GetDlgItem $1 $hwnd 1201 ; Second cutom control
+	GetDlgItem $1 $hwnd 1201 ; Second custom control
 	ShowWindow $1 0
-	GetDlgItem $1 $hwnd 1202 ; Third cutom control
+	GetDlgItem $1 $hwnd 1202 ; Third custom control
 	ShowWindow $1 0
 	Goto done
 
 	show_play_and_reinstall:
-	GetDlgItem $1 $hwnd 1200 ; First cutom control
+	GetDlgItem $1 $hwnd 1200 ; First custom control
 	ShowWindow $1 0
 
 	done:
 
 	; Now show the dialog and wait for it to finish
 	InstallOptions::show
-	
+
 	; Finally fetch the InstallOptions status value (we don't care what it is though)
 	Pop $0
 
@@ -574,7 +585,7 @@ Function LeaveAutorun
 	play_error:
 	MessageBox MB_ICONEXCLAMATION "$(TEXT_IO_COULD_NOT_EXECUTE)"
 	abort
-	
+
 	proceed:
 	GetDlgItem $1 $HWNDPARENT 1 ; Next button
 	ShowWindow $1 1
@@ -741,6 +752,7 @@ Section "Uninstall"
 	RMDir /r "$INSTDIR\NoteSkins\dance\default"
 	RMDir /r "$INSTDIR\NoteSkins\dance\Delta"
 	RMDir /r "$INSTDIR\NoteSkins\dance\midi-note"
+	RMDir /r "$INSTDIR\NoteSkins\dance\midi-note-3d"
 	RMDir /r "$INSTDIR\NoteSkins\dance\midi-routine-p1"
 	RMDir /r "$INSTDIR\NoteSkins\dance\midi-routine-p2"
 	RMDir /r "$INSTDIR\NoteSkins\dance\midi-solo"
@@ -751,8 +763,13 @@ Section "Uninstall"
 	RMDir "$INSTDIR\NoteSkins\dance"
 
 	RMDir /r "$INSTDIR\NoteSkins\pump\cmd"
+	RMDir /r "$INSTDIR\NoteSkins\pump\cmd-routine-p1"
+	RMDir /r "$INSTDIR\NoteSkins\pump\cmd-routine-p2"
 	RMDir /r "$INSTDIR\NoteSkins\pump\complex"
 	RMDir /r "$INSTDIR\NoteSkins\pump\default"
+	RMDir /r "$INSTDIR\NoteSkins\pump\frame5p"
+	RMDir /r "$INSTDIR\NoteSkins\pump\newextra"
+	RMDir /r "$INSTDIR\NoteSkins\pump\rhythm"
 	RMDir /r "$INSTDIR\NoteSkins\pump\simple"
 	RMDir "$INSTDIR\NoteSkins\pump"
 
@@ -824,7 +841,7 @@ Section "Uninstall"
 	Delete "$INSTDIR\Program\zlib1.dll"
 	RMDir "$INSTDIR\Program"
 
-	Delete "$INSTDIR\Licenses.txt"
+	Delete "$INSTDIR\Docs\Licenses.txt"
 	RMDir /r "$INSTDIR\Manual"
 !endif
 
@@ -837,8 +854,37 @@ Section "Uninstall"
 	RMDir "$INSTDIR"	; will delete only if empty
 
 	SetShellVarContext current
-	Delete "$DESKTOP\Play StepMania CVS.lnk"
-	Delete "$DESKTOP\${PRODUCT_DISPLAY}.lnk"
+
+	; kill shortcuts
+	!ifdef MAKE_DESKTOP_SHORTCUT
+		Delete "$DESKTOP\$(TEXT_IO_RUN).lnk"
+	!endif
+	!ifdef MAKE_DESKTOP_SHORTCUT
+		Delete "$DESKTOP\$(TEXT_IO_RUN).lnk"
+	!endif
+
+	Delete "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_RUN).lnk"
+	Delete "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_RUN_WITHOUT_SSE2).lnk"
+
+	!ifdef MAKE_OPEN_PROGRAM_FOLDER_SHORTCUT
+		Delete "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_OPEN_PROGRAM_FOLDER).lnk"
+	!endif
+	!ifdef MAKE_OPEN_SETTINGS_FOLDER_SHORTCUT
+		Delete "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_OPEN_SETTINGS_FOLDER).lnk"
+	!endif
+
+	;Delete "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_VIEW_STATISTICS).lnk"
+	;Delete "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_TOOLS).lnk"
+	Delete "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_MANUAL).lnk"
+	Delete "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_UNINSTALL).lnk"
+	Delete "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_WEB_SITE).lnk"
+	Delete "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_TEXTURE_FONT_GENERATOR).lnk"
+	!ifdef MAKE_UPDATES_SHORTCUT
+		Delete "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_CHECK_FOR_UPDATES).lnk"
+	!endif
+	Delete "$INSTDIR\${PRODUCT_ID}.lnk"
+	Delete "$INSTDIR\${PRODUCT_ID} (non-SSE2).lnk"
+
 	; I'm being paranoid here:
 	Delete "$SMPROGRAMS\${PRODUCT_ID}\*.*"
 	RMDir "$SMPROGRAMS\${PRODUCT_ID}"

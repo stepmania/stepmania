@@ -231,9 +231,9 @@ function UserPrefShowLotsaOptions()
 end
 
 function GetDefaultOptionLines()
-	local LineSets = {
-		"1,8,14,2,3,4,5,6,R,7,9,10,11,12,13,15,16,17,18", -- All
-		"1,8,14,2,7,13,16,17,18", -- DDR Essentials ( no turns, fx )
+	local LineSets = { -- none of these include characters yet.
+		"1,8,14,2,3,4,5,6,R,7,9,10,11,12,13,16,17", -- All
+		"1,8,14,2,7,13,16,17", -- DDR Essentials ( no turns, fx )
 	};
 	local function IsExtra()
 		if GAMESTATE:IsExtraStage() or GAMESTATE:IsExtraStage2() then
@@ -242,15 +242,22 @@ function GetDefaultOptionLines()
 			return false
 		end
 	end
-	if not IsExtra() then
-		if GetUserPrefB("UserPrefShowLotsaOptions") then
-			return GetUserPrefB("UserPrefShowLotsaOptions") and LineSets[1] or LineSets[2];
-		else
-			return LineSets[2]; -- Just make sure!
+	
+	local function CheckCharacters(mods)
+		if CHARMAN:GetCharacterCount() > 0 then
+			return mods .. ",18"; --TODO: Better line name.
 		end
-	else
-		return "1,8,14,2,7,13,16,17,18" -- "failsafe" list
+		return mods;
 	end
+	
+	modLines = LineSets[2];
+	
+	if not IsExtra() then
+		modLines = GetUserPrefB("UserPrefShowLotsaOptions")
+			and LineSets[1] or LineSets[2];
+	end
+	
+	return CheckCharacters(modLines);
 end;
 
 function UserPrefAutoSetStyle()

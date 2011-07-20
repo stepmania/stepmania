@@ -10,6 +10,8 @@
 #include "LuaManager.h"
 #include "Foreach.h"
 
+int OptionToPreferredColumn( RString sOptionText );
+
 REGISTER_ACTOR_CLASS( ModIconRow );
 
 ModIconRow::ModIconRow()
@@ -66,8 +68,10 @@ void ModIconRow::HandleMessage( const Message &msg )
 
 struct OptionColumnEntry
 {
-	char szString[30];
+	const char *szString;
 	int iSlotIndex;
+
+	//void FromStack( lua_State *L, int iPos );
 };
 
 // todo: metric these? -aj

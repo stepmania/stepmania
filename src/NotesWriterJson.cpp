@@ -9,22 +9,23 @@
 #include "NoteData.h"
 #include "GameManager.h"
 
-void Serialize(const BPMSegment &seg, Json::Value &root)
+static void Serialize(const TimingSegment &seg, Json::Value &root)
 {
-	root["Beat"] = NoteRowToBeat(seg.m_iStartRow);
-	root["BPM"] = seg.m_fBPS * 60;
-}
-
-static void Serialize(const StopSegment &seg, Json::Value &root)
-{
-	root["Beat"] = NoteRowToBeat(seg.m_iStartRow);
-	root["Seconds"] = seg.m_fStopSeconds;
+	root["Beat"] = seg.GetBeat();
+	if (seg.GetType() == SEGMENT_BPM)
+	{
+		root["BPM"] = static_cast<BPMSegment &>(const_cast<TimingSegment &>(seg)).GetBPM();
+	}
+	else
+	{
+		root["Seconds"] = static_cast<StopSegment &>(const_cast<TimingSegment &>(seg)).GetPause();
+	}
 }
 
 static void Serialize(const TimingData &td, Json::Value &root)
 {
-	JsonUtil::SerializeVectorObjects( td.m_BPMSegments, Serialize, root["BpmSegments"] );
-	JsonUtil::SerializeVectorObjects( td.m_StopSegments, Serialize, root["StopSegments"] );
+	JsonUtil::SerializeVectorPointers( td.allTimingSegments[SEGMENT_BPM], Serialize, root["BpmSegments"] );
+	JsonUtil::SerializeVectorPointers( td.allTimingSegments[SEGMENT_STOP_DELAY], Serialize, root["StopSegments"] );
 }
 
 static void Serialize(const LyricSegment &o, Json::Value &root)
@@ -137,7 +138,7 @@ bool NotesWriterJson::WriteSong( const RString &sFile, const Song &out, bool bWr
 	root["LyricsFile"] = out.m_sLyricsFile;
 	root["CDTitle"] = out.m_sCDTitleFile;
 	root["Music"] = out.m_sMusicFile;
-	root["Offset"] = out.m_Timing.m_fBeat0OffsetInSeconds;
+	root["Offset"] = out.m_SongTiming.m_fBeat0OffsetInSeconds;
 	root["SampleStart"] = out.m_fMusicSampleStartSeconds;
 	root["SampleLength"] = out.m_fMusicSampleLengthSeconds;
 	if( out.m_SelectionDisplay == Song::SHOW_ALWAYS )
@@ -147,8 +148,8 @@ bool NotesWriterJson::WriteSong( const RString &sFile, const Song &out, bool bWr
 	else
 		root["Selectable"] = "YES";
 
-	root["FirstBeat"] = out.m_fFirstBeat;
-	root["LastBeat"] = out.m_fLastBeat;
+	root["FirstBeat"] = out.GetFirstBeat();
+	root["LastBeat"] = out.GetLastBeat();
 	root["SongFileName"] = out.m_sSongFileName;
 	root["HasMusic"] = out.m_bHasMusic;
 	root["HasBanner"] = out.m_bHasBanner;
@@ -161,7 +162,7 @@ bool NotesWriterJson::WriteSong( const RString &sFile, const Song &out, bool bWr
 		root["SpecifiedBpmMax"] = out.m_fSpecifiedBPMMax;
 	}
 
-	Serialize( out.m_Timing, root["TimingData"] );
+	Serialize( out.m_SongTiming, root["TimingData"] );
 	JsonUtil::SerializeVectorObjects( out.m_LyricSegments, Serialize, root["LyricSegments"] );
 
 	{

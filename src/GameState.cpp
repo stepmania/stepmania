@@ -106,6 +106,7 @@ static Preference<Premium> g_Premium( "Premium", Premium_Off );
 Preference<bool> GameState::m_bAutoJoin( "AutoJoin", false );
 
 GameState::GameState() :
+	processedTiming( NULL ),
 	m_pCurGame(				Message_CurrentGameChanged ),
 	m_pCurStyle(			Message_CurrentStyleChanged ),
 	m_PlayMode(				Message_PlayModeChanged ),
@@ -122,6 +123,8 @@ GameState::GameState() :
 	m_pCurTrail(			Message_CurrentTrailP1Changed ),
 	m_bGameplayLeadIn(		Message_GameplayLeadInChanged ),
 	m_bDidModeChangeNoteSkin(	false ),
+	m_bIsUsingStepTiming(		true ),
+	m_bInStepEditor(		false ),
 	m_stEdit(				Message_EditStepsTypeChanged ),
 	m_cdEdit(				Message_EditCourseDifficultyChanged ),
 	m_pEditSourceSteps(		Message_EditSourceStepsChanged ),
@@ -186,6 +189,27 @@ GameState::~GameState()
 
 	SAFE_DELETE( m_Environment );
 	SAFE_DELETE( g_pImpl );
+	SAFE_DELETE( processedTiming );
+}
+
+PlayerNumber GameState::GetMasterPlayerNumber() const
+{
+	return this->masterPlayerNumber;
+}
+
+void GameState::SetMasterPlayerNumber(const PlayerNumber p)
+{
+	this->masterPlayerNumber = p;
+}
+
+TimingData * GameState::GetProcessedTimingData() const
+{
+	return this->processedTiming;
+}
+
+void GameState::SetProcessedTimingData(TimingData * t)
+{
+	this->processedTiming = t;
 }
 
 void GameState::ApplyGameCommand( const RString &sCommand, PlayerNumber pn )
@@ -242,7 +266,7 @@ void GameState::ResetPlayer( PlayerNumber pn )
 
 void GameState::Reset()
 {
-	m_MasterPlayerNumber = PLAYER_INVALID; // must initialize for UnjoinPlayer
+	this->SetMasterPlayerNumber(PLAYER_INVALID); // must initialize for UnjoinPlayer
 
 	FOREACH_PlayerNumber( pn )
 		UnjoinPlayer( pn );
@@ -332,14 +356,14 @@ void GameState::JoinPlayer( PlayerNumber pn )
 	 * give the new player the same number of stage tokens that the old player
 	 * has. */
 	if( GetCoinMode() == CoinMode_Pay && GetPremium() == Premium_2PlayersFor1Credit && GetNumSidesJoined() == 1 )
-		m_iPlayerStageTokens[pn] = m_iPlayerStageTokens[m_MasterPlayerNumber];
+		m_iPlayerStageTokens[pn] = m_iPlayerStageTokens[this->GetMasterPlayerNumber()];
 	else
 		m_iPlayerStageTokens[pn] = PREFSMAN->m_iSongsPerPlay;
 
 	m_bSideIsJoined[pn] = true;
 
-	if( m_MasterPlayerNumber == PLAYER_INVALID )
-		m_MasterPlayerNumber = pn;
+	if( this->GetMasterPlayerNumber() == PLAYER_INVALID )
+		this->SetMasterPlayerNumber(pn);
 
 	// if first player to join, set start time
 	if( GetNumSidesJoined() == 1 )
@@ -383,8 +407,8 @@ void GameState::UnjoinPlayer( PlayerNumber pn )
 
 	ResetPlayer( pn );
 
-	if( m_MasterPlayerNumber == pn )
-		m_MasterPlayerNumber = GetFirstHumanPlayer();
+	if( this->GetMasterPlayerNumber() == pn )
+		this->SetMasterPlayerNumber(GetFirstHumanPlayer());
 
 	/* Unjoin STATSMAN first, so steps used by this player are released
 	 * and can be released by PROFILEMAN. */
@@ -396,7 +420,7 @@ void GameState::UnjoinPlayer( PlayerNumber pn )
 	MESSAGEMAN->Broadcast( msg );
 
 	// If there are no players left, reset some non-player-specific stuff, too.
-	if( m_MasterPlayerNumber == PLAYER_INVALID )
+	if( this->GetMasterPlayerNumber() == PLAYER_INVALID )
 	{
 		SongOptions so;
 		GetDefaultSongOptions( so );
@@ -633,8 +657,8 @@ int GameState::GetNumStagesForCurrentSongAndStepsOrCourse() const
 		if( pStyle == NULL )
 		{
 			const Steps *pSteps = NULL;
-			if( m_MasterPlayerNumber != PlayerNumber_Invalid )
-				pSteps = m_pCurSteps[m_MasterPlayerNumber];
+			if( this->GetMasterPlayerNumber() != PlayerNumber_Invalid )
+				pSteps = m_pCurSteps[this->GetMasterPlayerNumber()];
 			// Don't call GetFirstCompatibleStyle if numSidesJoined == 0.
 			// This happens because on SContinue when players are unjoined,
 			// pCurSteps will still be set while no players are joined. -Chris
@@ -688,7 +712,11 @@ void GameState::BeginStage()
 	if( !ARE_STAGE_PLAYER_MODS_FORCED )
 	{
 		FOREACH_PlayerNumber( p )
-			m_pPlayerState[p]->m_PlayerOptions.Assign( ModsLevel_Stage, m_pPlayerState[p]->m_PlayerOptions.GetPreferred() );
+		{
+			ModsGroup<PlayerOptions> &po = m_pPlayerState[p]->m_PlayerOptions;
+			po.Assign(ModsLevel_Stage,
+					  m_pPlayerState[p]->m_PlayerOptions.GetPreferred());
+		}
 	}
 	if( !ARE_STAGE_SONG_MODS_FORCED )
 		m_SongOptions.Assign( ModsLevel_Stage, m_SongOptions.GetPreferred() );
@@ -893,22 +921,15 @@ const float GameState::MUSIC_SECONDS_INVALID = -5000.0f;
 
 void GameState::ResetMusicStatistics()
 {
-	m_fMusicSeconds = 0; // MUSIC_SECONDS_INVALID;
-	// todo: move me to FOREACH_EnabledPlayer( p ) after [NUM_PLAYERS]ing
-	m_fSongBeat = 0;
-	m_fSongBeatNoOffset = 0;
-	m_fCurBPS = 10;
-	//m_bStop = false;
-	m_bFreeze = false;
-	m_bDelay = false;
-	m_iWarpBeginRow = -1; // Set to -1 because some song may want to warp to row 0. -aj
-	m_fWarpDestination = -1; // Set when a warp is encountered. also see above. -aj
-	m_fMusicSecondsVisible = 0;
-	m_fSongBeatVisible = 0;
+	m_Position.Reset();
+
 	Actor::SetBGMTime( 0, 0, 0, 0 );
 
 	FOREACH_PlayerNumber( p )
+	{
 		m_pPlayerState[p]->ClearHopoState();
+		m_pPlayerState[p]->m_Position.Reset();
+	}
 }
 
 void GameState::ResetStageStatistics()
@@ -947,57 +968,23 @@ void GameState::ResetStageStatistics()
 	m_iStageSeed = rand();
 }
 
-static Preference<float> g_fVisualDelaySeconds( "VisualDelaySeconds", 0.0f );
-
-void GameState::UpdateSongPosition( float fPositionSeconds, const TimingData &timing, const RageTimer &timestamp )
+void GameState::UpdateSongPosition( float fPositionSeconds, const TimingData &timing, const RageTimer &timestamp, bool bUpdatePlayers )
 {
-	if( !timestamp.IsZero() )
-		m_LastBeatUpdate = timestamp;
-	else
-		m_LastBeatUpdate.Touch();
+	
+	m_Position.UpdateSongPosition( fPositionSeconds, timing, timestamp );
 
-	// xxx testing: only do this on monotune survivor
-	/*
-	if( m_pCurSong && m_pCurSong->GetDisplayFullTitle() == "monotune survivor" )
-		LOG->Trace( ssprintf("[GameState::UpdateSongPosition] cur BPS = %f, fPositionSeconds = %f",m_fCurBPS,fPositionSeconds) );
-	*/
-
-	timing.GetBeatAndBPSFromElapsedTime( fPositionSeconds, m_fSongBeat, m_fCurBPS, m_bFreeze, m_bDelay, m_iWarpBeginRow, m_fWarpDestination );
-	// "Crash reason : -243478.890625 -48695.773438"
-	ASSERT_M( m_fSongBeat > -2000, ssprintf("Song beat %f at %f seconds", m_fSongBeat, fPositionSeconds) );
-
-	m_fMusicSeconds = fPositionSeconds;
-
-	m_fLightSongBeat = timing.GetBeatFromElapsedTime( fPositionSeconds + g_fLightsAheadSeconds );
-
-	m_fSongBeatNoOffset = timing.GetBeatFromElapsedTimeNoOffset( fPositionSeconds );
-
-	m_fMusicSecondsVisible = fPositionSeconds - g_fVisualDelaySeconds.Get();
-	float fThrowAway, fThrowAway2;
-	bool bThrowAway;
-	int iThrowAway;
-	timing.GetBeatAndBPSFromElapsedTime( m_fMusicSecondsVisible, m_fSongBeatVisible, fThrowAway, bThrowAway, bThrowAway, iThrowAway, fThrowAway2 );
-
-	/*
-	// xxx testing: only do this on monotune survivor
-	if( m_pCurSong && m_pCurSong->GetDisplayFullTitle() == "monotune survivor" )
+	if( bUpdatePlayers )
 	{
-		// and only do it in the known negative bpm region. HACKITY HACK
-		if(m_fSongBeat >= 445.490f && m_fSongBeat <= 453.72f)
+		FOREACH_EnabledPlayer( pn )
 		{
-			LOG->Trace( ssprintf("fPositionSeconds = %f",fPositionSeconds) );
-			LOG->Trace( ssprintf("Song beat: %f (%f seconds), BPS = %f (%f BPM)",m_fSongBeat,m_fMusicSecondsVisible,m_fCurBPS,m_fCurBPS*60.0f) );
-			//LOG->Trace( ssprintf("Music seconds visible %f = fPositionSeconds %f - g_fVisualDelaySeconds %f", m_fMusicSecondsVisible,fPositionSeconds,g_fVisualDelaySeconds.Get()) );
-		}
-		else if(m_fSongBeat == 445.500f)
-		{
-			LOG->Trace( ssprintf("[beat 445.500] fPositionSeconds = %f",fPositionSeconds) );
-			LOG->Trace( ssprintf("Song beat: %f (%f seconds), BPS = %f (%f BPM)",m_fSongBeat,m_fMusicSecondsVisible,m_fCurBPS,m_fCurBPS*60.0f) );
+			if( m_pCurSteps[pn] )
+			{
+				m_pPlayerState[pn]->m_Position.UpdateSongPosition( fPositionSeconds, m_pCurSteps[pn]->m_Timing, timestamp );
+				Actor::SetPlayerBGMBeat( pn, m_pPlayerState[pn]->m_Position.m_fSongBeatVisible, m_pPlayerState[pn]->m_Position.m_fSongBeatNoOffset );
+			}
 		}
 	}
-	*/
-
-	Actor::SetBGMTime( m_fMusicSecondsVisible, m_fSongBeatVisible, fPositionSeconds, m_fSongBeatNoOffset );
+	Actor::SetBGMTime( GAMESTATE->m_Position.m_fMusicSecondsVisible, GAMESTATE->m_Position.m_fSongBeatVisible, fPositionSeconds, GAMESTATE->m_Position.m_fSongBeatNoOffset );
 //	LOG->Trace( "m_fMusicSeconds = %f, m_fSongBeat = %f, m_fCurBPS = %f, m_bFreeze = %f", m_fMusicSeconds, m_fSongBeat, m_fCurBPS, m_bFreeze );
 }
 
@@ -1008,7 +995,8 @@ update player position code goes here
 float GameState::GetSongPercent( float beat ) const
 {
 	// 0 = first step; 1 = last step
-	return (beat - m_pCurSong->m_fFirstBeat) / m_pCurSong->m_fLastBeat;
+	float curTime = this->m_pCurSong->m_SongTiming.GetElapsedTimeFromBeat(beat);
+	return (curTime - m_pCurSong->GetFirstSecond()) / m_pCurSong->GetLastSecond();
 }
 
 int GameState::GetNumStagesLeft( PlayerNumber pn ) const
@@ -1033,9 +1021,9 @@ bool GameState::IsFinalStageForAnyHumanPlayer() const
 
 bool GameState::IsAnExtraStage() const
 {
-	if( m_MasterPlayerNumber == PlayerNumber_Invalid )
+	if( this->GetMasterPlayerNumber() == PlayerNumber_Invalid )
 		return false;
-	return !IsEventMode() && !IsCourseMode() && m_iAwardedExtraStages[m_MasterPlayerNumber] > 0;
+	return !IsEventMode() && !IsCourseMode() && m_iAwardedExtraStages[this->GetMasterPlayerNumber()] > 0;
 }
 
 static ThemeMetric<bool> LOCK_EXTRA_STAGE_SELECTION("GameState","LockExtraStageSelection");
@@ -1046,16 +1034,16 @@ bool GameState::IsAnExtraStageAndSelectionLocked() const
 
 bool GameState::IsExtraStage() const
 {
-	if( m_MasterPlayerNumber == PlayerNumber_Invalid )
+	if( this->GetMasterPlayerNumber() == PlayerNumber_Invalid )
 		return false;
-	return !IsEventMode() && !IsCourseMode() && m_iAwardedExtraStages[m_MasterPlayerNumber] == 1;
+	return !IsEventMode() && !IsCourseMode() && m_iAwardedExtraStages[this->GetMasterPlayerNumber()] == 1;
 }
 
 bool GameState::IsExtraStage2() const
 {
-	if( m_MasterPlayerNumber == PlayerNumber_Invalid )
+	if( this->GetMasterPlayerNumber() == PlayerNumber_Invalid )
 		return false;
-	return !IsEventMode() && !IsCourseMode() && m_iAwardedExtraStages[m_MasterPlayerNumber] == 2;
+	return !IsEventMode() && !IsCourseMode() && m_iAwardedExtraStages[this->GetMasterPlayerNumber()] == 2;
 }
 
 Stage GameState::GetCurrentStage() const
@@ -1098,7 +1086,7 @@ int GameState::GetCourseSongIndex() const
 	}
 	else
 	{
-		return STATSMAN->m_CurStageStats.m_player[m_MasterPlayerNumber].m_iSongsPlayed-1;
+		return STATSMAN->m_CurStageStats.m_player[this->GetMasterPlayerNumber()].m_iSongsPlayed-1;
 	}
 }
 
@@ -1170,7 +1158,7 @@ void GameState::SetCurrentStyle( const Style *pStyle )
 	if( INPUTMAPPER )
 	{
 		if( GetCurrentStyle() && GetCurrentStyle()->m_StyleType == StyleType_OnePlayerTwoSides )
-			INPUTMAPPER->SetJoinControllers( m_MasterPlayerNumber );
+			INPUTMAPPER->SetJoinControllers( this->GetMasterPlayerNumber() );
 		else
 			INPUTMAPPER->SetJoinControllers( PLAYER_INVALID );
 	}
@@ -1231,7 +1219,7 @@ bool GameState::IsHumanPlayer( PlayerNumber pn ) const
 		return true;
 	case StyleType_OnePlayerOneSide:
 	case StyleType_OnePlayerTwoSides:
-		return pn == m_MasterPlayerNumber;
+		return pn == this->GetMasterPlayerNumber();
 	default:
 		ASSERT(0);		// invalid style type
 		return false;
@@ -1315,7 +1303,7 @@ EarnedExtraStage GameState::CalculateEarnedExtraStage() const
 	if( GetSmallestNumStagesLeftForAnyHumanPlayer() > 0 )
 		return EarnedExtraStage_No;
 
-	if( m_iAwardedExtraStages[m_MasterPlayerNumber] >= 2 )
+	if( m_iAwardedExtraStages[this->GetMasterPlayerNumber()] >= 2 )
 		return EarnedExtraStage_No;
 
 	FOREACH_EnabledPlayer( pn )
@@ -2163,7 +2151,7 @@ public:
 	DEFINE_METHOD( IsPlayerEnabled,			IsPlayerEnabled(Enum::Check<PlayerNumber>(L, 1)) )
 	DEFINE_METHOD( IsHumanPlayer,			IsHumanPlayer(Enum::Check<PlayerNumber>(L, 1)) )
 	DEFINE_METHOD( GetPlayerDisplayName,		GetPlayerDisplayName(Enum::Check<PlayerNumber>(L, 1)) )
-	DEFINE_METHOD( GetMasterPlayerNumber,		m_MasterPlayerNumber )
+	DEFINE_METHOD( GetMasterPlayerNumber,		GetMasterPlayerNumber() )
 	DEFINE_METHOD( GetMultiplayer,			m_bMultiplayer )
 	static int SetMultiplayer( T* p, lua_State *L )
 	{
@@ -2291,11 +2279,16 @@ public:
 	DEFINE_METHOD( GetHardestStepsDifficulty,	GetHardestStepsDifficulty() )
 	DEFINE_METHOD( IsEventMode,			IsEventMode() )
 	DEFINE_METHOD( GetNumPlayersEnabled,		GetNumPlayersEnabled() )
-	DEFINE_METHOD( GetSongBeat,			m_fSongBeat )
-	DEFINE_METHOD( GetSongBeatVisible,		m_fSongBeatVisible )
-	DEFINE_METHOD( GetSongBPS,			m_fCurBPS )
-	DEFINE_METHOD( GetSongFreeze,			m_bFreeze )
-	DEFINE_METHOD( GetSongDelay,			m_bDelay )
+	/*DEFINE_METHOD( GetSongBeat,			m_Position.m_fSongBeat )
+	DEFINE_METHOD( GetSongBeatVisible,		m_Position.m_fSongBeatVisible )
+	DEFINE_METHOD( GetSongBPS,			m_Position.m_fCurBPS )
+	DEFINE_METHOD( GetSongFreeze,			m_Position.m_bFreeze )
+	DEFINE_METHOD( GetSongDelay,			m_Position.m_bDelay )*/
+	static int GetSongPosition( T* p, lua_State *L )
+	{
+		p->m_Position.PushSelf(L);
+		return 1;
+	}
 	DEFINE_METHOD( GetGameplayLeadIn,		m_bGameplayLeadIn )
 	DEFINE_METHOD( GetCoins,			m_iCoins )
 	DEFINE_METHOD( IsSideJoined,			m_bSideIsJoined[Enum::Check<PlayerNumber>(L, 1)] )
@@ -2434,7 +2427,7 @@ public:
 	static int JoinPlayer( T* p, lua_State *L )				{ p->JoinPlayer(Enum::Check<PlayerNumber>(L, 1)); return 0; }
 	static int UnjoinPlayer( T* p, lua_State *L )				{ p->UnjoinPlayer(Enum::Check<PlayerNumber>(L, 1)); return 0; }
 	static int GetSongPercent( T* p, lua_State *L )				{ lua_pushnumber(L, p->GetSongPercent(FArg(1))); return 1; }
-	DEFINE_METHOD( GetCurMusicSeconds,	m_fMusicSeconds )
+	DEFINE_METHOD( GetCurMusicSeconds,	m_Position.m_fMusicSeconds )
 
 	DEFINE_METHOD( GetWorkoutGoalComplete,		m_bWorkoutGoalComplete )
 	static int GetCharacter( T* p, lua_State *L )				{ p->m_pCurCharacters[Enum::Check<PlayerNumber>(L, 1)]->PushSelf(L); return 1; }
@@ -2500,11 +2493,12 @@ public:
 		ADD_METHOD( GetHardestStepsDifficulty );
 		ADD_METHOD( IsEventMode );
 		ADD_METHOD( GetNumPlayersEnabled );
-		ADD_METHOD( GetSongBeat );
+		/*ADD_METHOD( GetSongBeat );
 		ADD_METHOD( GetSongBeatVisible );
 		ADD_METHOD( GetSongBPS );
 		ADD_METHOD( GetSongFreeze );
-		ADD_METHOD( GetSongDelay );
+		ADD_METHOD( GetSongDelay );*/
+		ADD_METHOD( GetSongPosition );
 		ADD_METHOD( GetGameplayLeadIn );
 		ADD_METHOD( GetCoins );
 		ADD_METHOD( IsSideJoined );

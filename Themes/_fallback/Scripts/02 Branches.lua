@@ -33,11 +33,7 @@ end
 
 Branch = {
 	Init = function()
-		if GAMESTATE:GetCoinMode() == 'CoinMode_Home' then
-			return "ScreenInit"
-		else
-			return "ScreenInit"
-		end
+		return "ScreenInit"
 	end,
 	AfterInit = function()
 		if GAMESTATE:GetCoinMode() == 'CoinMode_Home' then
@@ -69,7 +65,11 @@ Branch = {
 		if SONGMAN:GetNumSongs() == 0 and SONGMAN:GetNumAdditionalSongs() == 0 then
 			return "ScreenHowToInstallSongs";
 		end;
-		return "ScreenSelectProfile";
+		if PROFILEMAN:GetNumLocalProfiles() >= 2 then
+			return "ScreenSelectProfile";
+		else
+			return "ScreenProfileLoad";
+		end
 	end,
 	OptionsEdit = function()
 		-- Similar to above, don't let anyone in here with 0 songs.
@@ -79,7 +79,7 @@ Branch = {
 		return "ScreenOptionsEdit";
 	end,
 	AfterProfileLoad = function()
-		return "ScreenSelectProfile"
+		return Branch.AfterSelectProfile()
 	end,
 	AfterSelectProfile = function()
 		if ( THEME:GetMetric("Common","AutoSetStyle") == true ) then
@@ -192,5 +192,8 @@ Branch = {
 	AfterSummary = "ScreenProfileSaveSummary",
 	Network = function()
 		return IsNetConnected() and "ScreenTitleMenu" or "ScreenTitleMenu"
+	end,
+ 	AfterSaveSummary = function()
+		return GAMESTATE:AnyPlayerHasRankingFeats() and "ScreenNameEntryTraditional" or "ScreenGameOver"
 	end,
 }

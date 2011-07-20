@@ -98,16 +98,17 @@ end
 
 -- Get a metric from the currently-loading screen.  This is only valid while loading
 -- an actor, such as from File or InitCommand attributes; not from commands.
-Screen = {
-	Metric = function ( sName )
-		local sClass = Var "LoadingScreen"
-		return THEME:GetMetric( sClass, sName )
-	end,
-	String = function ( sName )
-		local sClass = Var "LoadingScreen";
-	        return THEME:GetString( sClass, sName )
-	end
-};
+Screen.Metric = function ( sName )
+	local sClass = Var "LoadingScreen"
+	return THEME:GetMetric( sClass, sName )
+end
+ScreenMetric = Screen.Metric
+
+Screen.String = function ( sName )
+	local sClass = Var "LoadingScreen";
+	return THEME:GetString( sClass, sName )
+end
+ScreenString = Screen.String
 
 function TextBannerAfterSet(self,param) 
 	local Title=self:GetChild("Title"); 

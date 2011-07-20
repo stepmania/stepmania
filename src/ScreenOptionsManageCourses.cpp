@@ -143,18 +143,18 @@ void ScreenOptionsManageCourses::BeginScreen()
 		if( iter != m_vpCourses.end() )
 		{
 			iIndex = iter - m_vpCourses.begin();
-			this->MoveRowAbsolute( GAMESTATE->m_MasterPlayerNumber, 1 + iIndex );
+			this->MoveRowAbsolute( GAMESTATE->GetMasterPlayerNumber(), 1 + iIndex );
 		}
 	}
 
-	AfterChangeRow( GAMESTATE->m_MasterPlayerNumber );
+	AfterChangeRow( GAMESTATE->GetMasterPlayerNumber() );
 }
 
 void ScreenOptionsManageCourses::HandleScreenMessage( const ScreenMessage SM )
 {
 	if( SM == SM_GoToNextScreen )
 	{
-		int iCurRow = m_iCurrentRow[GAMESTATE->m_MasterPlayerNumber];
+		int iCurRow = m_iCurrentRow[GAMESTATE->GetMasterPlayerNumber()];
 
 		if( iCurRow == 0 )	// "create new"
 		{
@@ -218,7 +218,7 @@ void ScreenOptionsManageCourses::ProcessMenuStart( const InputEventPlus &input )
 	if( IsTransitioning() )
 		return;
 
-	int iCurRow = m_iCurrentRow[GAMESTATE->m_MasterPlayerNumber];
+	int iCurRow = m_iCurrentRow[GAMESTATE->GetMasterPlayerNumber()];
 
 	if( iCurRow == 0 )	// "create new"
 	{
@@ -259,7 +259,7 @@ void ScreenOptionsManageCourses::ExportOptions( int iRow, const vector<PlayerNum
 
 Course *ScreenOptionsManageCourses::GetCourseWithFocus() const
 {
-	int iCurRow = m_iCurrentRow[GAMESTATE->m_MasterPlayerNumber];
+	int iCurRow = m_iCurrentRow[GAMESTATE->GetMasterPlayerNumber()];
 	if( iCurRow == 0 )
 		return NULL;
 	else if( m_pRows[iCurRow]->GetRowType() == OptionRow::RowType_Exit )

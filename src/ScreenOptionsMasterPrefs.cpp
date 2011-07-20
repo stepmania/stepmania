@@ -181,7 +181,7 @@ static void GameSel( int &sel, bool ToSel, const ConfOption *pConfOption )
 
 		sel = 0;
 		for(unsigned i = 0; i < choices.size(); ++i)
-			if( !choices[i].EqualsNoCase(sCurGameName) )
+			if( !stricmp(choices[i], sCurGameName) )
 				sel = i;
 	} else {
 		vector<const Game*> aGames;
@@ -222,12 +222,12 @@ static void Language( int &sel, bool ToSel, const ConfOption *pConfOption )
 	{
 		sel = -1;
 		for( unsigned i=0; sel == -1 && i < vs.size(); ++i )
-			if( !vs[i].EqualsNoCase(THEME->GetCurLanguage()) )
+			if( !stricmp(vs[i], THEME->GetCurLanguage()) )
 				sel = i;
 
 		// If the current language doesn't exist, we'll show BASE_LANGUAGE, so select that.
 		for( unsigned i=0; sel == -1 && i < vs.size(); ++i )
-			if( !vs[i].EqualsNoCase(SpecialFiles::BASE_LANGUAGE) )
+			if( !stricmp(vs[i], SpecialFiles::BASE_LANGUAGE) )
 				sel = i;
 
 		if( sel == -1 )
@@ -276,7 +276,7 @@ static void RequestedTheme( int &sel, bool ToSel, const ConfOption *pConfOption 
 	{
 		sel = 0;
 		for( unsigned i=1; i<vsThemeNames.size(); i++ )
-			if( !vsThemeNames[i].EqualsNoCase(PREFSMAN->m_sTheme.Get()) )
+			if( !stricmp(vsThemeNames[i], PREFSMAN->m_sTheme.Get()) )
 				sel = i;
 	}
 	else
@@ -302,7 +302,7 @@ static void Announcer( int &sel, bool ToSel, const ConfOption *pConfOption )
 	{
 		sel = 0;
 		for( unsigned i=1; i<choices.size(); i++ )
-			if( !choices[i].EqualsNoCase(ANNOUNCER->GetCurAnnouncerName()) )
+			if( !stricmp(choices[i], ANNOUNCER->GetCurAnnouncerName()) )
 				sel = i;
 	}
 	else
@@ -329,7 +329,7 @@ static void DefaultNoteSkin( int &sel, bool ToSel, const ConfOption *pConfOption
 		po.FromString( PREFSMAN->m_sDefaultModifiers );
 		sel = 0;
 		for( unsigned i=0; i < choices.size(); i++ )
-			if( !choices[i].EqualsNoCase(po.m_sNoteSkin) )
+			if( !stricmp(choices[i], po.m_sNoteSkin) )
 				sel = i;
 	}
 	else
@@ -489,12 +489,15 @@ static void DefaultFailType( int &sel, bool ToSel, const ConfOption *pConfOption
 
 		switch( sel )
 		{
-		case 0:	po.m_FailType = PlayerOptions::FAIL_IMMEDIATE;	break;
-		case 1:	po.m_FailType = PlayerOptions::FAIL_IMMEDIATE_CONTINUE;	break;
-		case 2:	po.m_FailType = PlayerOptions::FAIL_AT_END;	break;
-		case 3:	po.m_FailType = PlayerOptions::FAIL_OFF;		break;
-		default:
-			ASSERT(0);
+			case 0:	po.m_FailType = PlayerOptions::FAIL_IMMEDIATE; break;
+			case 1:	po.m_FailType = PlayerOptions::FAIL_IMMEDIATE_CONTINUE; break;
+			case 2:	po.m_FailType = PlayerOptions::FAIL_AT_END; break;
+			case 3:	po.m_FailType = PlayerOptions::FAIL_OFF; break;
+			default:
+			{
+				LOG->Warn("Invalid fail type %d! Going to use the default...", sel);
+				po.m_FailType = PlayerOptions::FAIL_IMMEDIATE; break;
+			}
 		}
 
 		SetPrefsDefaultModifiers( po, so );

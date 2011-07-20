@@ -10,6 +10,7 @@
 #include "ScreenMessage.h"
 #include "ThemeMetric.h"
 #include "InputEventPlus.h"
+#include "TimingData.h"
 
 class ScoreDisplay;
 class LifeMeter;
@@ -68,6 +69,16 @@ public:
 	void Load();
 	void CrossedRows( int iLastRowCrossed, const RageTimer &now );
 	bool IsOniDead() const;
+	
+	/**
+	 * @brief Retrieve the Player's TimingData.
+	 *
+	 * This is primarily for a lua hook.
+	 * @return the TimingData in question. */
+	TimingData GetPlayerTimingData() const
+	{
+		return *(this->m_Timing);
+	}
 
 	// Called when a fret, step, or strum type button changes
 	void Fret( int col, int row, const RageTimer &tm, bool bHeld, bool bRelease );
@@ -106,6 +117,8 @@ public:
 
 	// Lua
 	virtual void PushSelf( lua_State *L );
+	
+	PlayerState * GetPlayerState() { return this->m_pPlayerState; }
 
 protected:
 	void UpdateTapNotesMissedOlderThan( float fMissIfOlderThanThisBeat );
@@ -147,6 +160,7 @@ protected:
 	PlayerState		*m_pPlayerState;
 	/** @brief The player's present stage stats. */
 	PlayerStageStats	*m_pPlayerStageStats;
+	TimingData      *m_Timing;
 	float			m_fNoteFieldHeight;
 
 	bool			m_bPaused;

@@ -81,6 +81,7 @@ void ScoreKeeperNormal::Load(
 
 	// True if a jump is one to combo, false if combo is purely based on tap count.
 	m_ComboIsPerRow.Load( "Gameplay", "ComboIsPerRow" );
+	m_MissComboIsPerRow.Load( "Gameplay", "MissComboIsPerRow" );
 	m_MinScoreToContinueCombo.Load( "Gameplay", "MinScoreToContinueCombo" );
 	m_MinScoreToMaintainCombo.Load( "Gameplay", "MinScoreToMaintainCombo" );
 	m_MaxScoreToIncrementMissCombo.Load( "Gameplay", "MaxScoreToIncrementMissCombo" );
@@ -119,6 +120,7 @@ void ScoreKeeperNormal::Load(
 		 * forced and not chosen by the user. */
 		NoteDataUtil::TransformNoteData( nd, aa, pSteps->m_StepsType, pSong );
 		RadarValues rvPre;
+		GAMESTATE->SetProcessedTimingData(&pSteps->m_Timing);
 		NoteDataUtil::CalculateRadarValues( nd, pSong->m_fMusicLengthSeconds, rvPre );
 
 		/* Apply user transforms to find out how the notes will really look.
@@ -131,6 +133,7 @@ void ScoreKeeperNormal::Load(
 		NoteDataUtil::TransformNoteData( nd, m_pPlayerState->m_PlayerOptions.GetStage(), pSteps->m_StepsType );
 		RadarValues rvPost;
 		NoteDataUtil::CalculateRadarValues( nd, pSong->m_fMusicLengthSeconds, rvPost );
+		GAMESTATE->SetProcessedTimingData(NULL);
 
 		iTotalPossibleDancePoints += this->GetPossibleDancePoints( rvPre, rvPost );
 		iTotalPossibleGradePoints += this->GetPossibleGradePoints( rvPre, rvPost );
@@ -216,6 +219,8 @@ void ScoreKeeperNormal::OnNextSong( int iSongInCourseIndex, const Steps* pSteps,
 	ASSERT( m_iMaxPossiblePoints >= 0 );
 	m_iMaxScoreSoFar += m_iMaxPossiblePoints;
 
+	GAMESTATE->SetProcessedTimingData(const_cast<TimingData *>(&pSteps->m_Timing));
+	
 	m_iNumTapsAndHolds = pNoteData->GetNumRowsWithTapOrHoldHead() + pNoteData->GetNumHoldNotes()
 		+ pNoteData->GetNumRolls();
 
@@ -229,6 +234,8 @@ void ScoreKeeperNormal::OnNextSong( int iSongInCourseIndex, const Steps* pSteps,
 	ASSERT( m_iPointBonus >= 0 );
 
 	m_iTapNotesHit = 0;
+	
+	GAMESTATE->SetProcessedTimingData(NULL);
 }
 
 static int GetScore(int p, int Z, int S, int n)
@@ -360,14 +367,14 @@ void ScoreKeeperNormal::AddScoreInternal( TapNoteScore score )
 		
 	}
 
-	ASSERT( iScore >= 0 );
+	ASSERT_M( iScore >= 0, "iScore < 0 before re-rounding" );
 
 	// Undo rounding from the last tap, and re-round.
 	iScore += m_iScoreRemainder;
 	m_iScoreRemainder = (iScore % m_iRoundTo);
 	iScore = iScore - m_iScoreRemainder;
 
-	ASSERT( iScore >= 0 );
+	ASSERT_M( iScore >= 0, "iScore < 0 after re-rounding" );
 
 	// LOG->Trace( "score: %i", iScore );
 }
@@ -409,18 +416,32 @@ void ScoreKeeperNormal::HandleTapScore( const TapNote &tn )
 
 void ScoreKeeperNormal::HandleHoldCheckpointScore( const NoteData &nd, int iRow, int iNumHoldsHeldThisRow, int iNumHoldsMissedThisRow )
 {
-	HandleTapNoteScoreInternal( iNumHoldsMissedThisRow == 0? TNS_CheckpointHit:TNS_CheckpointMiss, TNS_CheckpointHit );
+	HandleTapNoteScoreInternal(iNumHoldsMissedThisRow == 0 ? TNS_CheckpointHit:TNS_CheckpointMiss,
+							   TNS_CheckpointHit, iRow);
 	HandleComboInternal( iNumHoldsHeldThisRow, 0, iNumHoldsMissedThisRow, iRow );
 }
 
-void ScoreKeeperNormal::HandleTapNoteScoreInternal( TapNoteScore tns, TapNoteScore maximum )
+void ScoreKeeperNormal::HandleTapNoteScoreInternal( TapNoteScore tns, TapNoteScore maximum, int row )
 {
 	// Update dance points.
 	if( !m_pPlayerStageStats->m_bFailed )
 		m_pPlayerStageStats->m_iActualDancePoints += TapNoteScoreToDancePoints( tns );
 
-	// update judged row totals
-	m_pPlayerStageStats->m_iTapNoteScores[tns] += 1;
+	// update judged row totals. Respect Combo segments here.
+	TimingData &td = GAMESTATE->m_pCurSteps[m_pPlayerState->m_PlayerNumber]->m_Timing;
+	ComboSegment *cs = td.GetComboSegmentAtRow(row);
+	if (tns == TNS_CheckpointHit || tns >= m_MinScoreToContinueCombo)
+	{
+		m_pPlayerStageStats->m_iTapNoteScores[tns] += cs->GetCombo();
+	}
+	else if (tns == TNS_CheckpointMiss || tns < m_MinScoreToMaintainCombo)
+	{
+		m_pPlayerStageStats->m_iTapNoteScores[tns] += cs->GetMissCombo();
+	}
+	else
+	{	
+		m_pPlayerStageStats->m_iTapNoteScores[tns] += 1;
+	}
 
 	// increment the current total possible dance score
 	m_pPlayerStageStats->m_iCurPossibleDancePoints += TapNoteScoreToDancePoints( maximum );
@@ -440,17 +461,17 @@ void ScoreKeeperNormal::HandleComboInternal( int iNumHitContinueCombo, int iNumH
 	{
 		m_pPlayerStageStats->m_iCurMissCombo = 0;
 	}
-
+	TimingData td = GAMESTATE->m_pCurSteps[m_pPlayerState->m_PlayerNumber]->m_Timing;
 	if( iNumBreakCombo == 0 )
 	{
-		TimingData td = GAMESTATE->m_pCurSong->m_Timing;
-		int multiplier = ( iRow == -1 ? 1 : td.GetComboSegmentAtRow( iRow ).m_iCombo );
+		int multiplier = ( iRow == -1 ? 1 : td.GetComboSegmentAtRow( iRow )->GetCombo() );
 		m_pPlayerStageStats->m_iCurCombo += iNumHitContinueCombo * multiplier;
 	}
 	else
 	{
 		m_pPlayerStageStats->m_iCurCombo = 0;
-		m_pPlayerStageStats->m_iCurMissCombo += iNumBreakCombo;
+		int multiplier = ( iRow == -1 ? 1 : td.GetComboSegmentAtRow(iRow)->GetMissCombo());
+		m_pPlayerStageStats->m_iCurMissCombo += ( m_MissComboIsPerRow ? 1 : iNumBreakCombo ) * multiplier;
 	}
 }
 
@@ -460,11 +481,11 @@ void ScoreKeeperNormal::HandleRowComboInternal( TapNoteScore tns, int iNumTapsIn
 	{
 		iNumTapsInRow = min( iNumTapsInRow, 1);
 	}
+	TimingData td = GAMESTATE->m_pCurSteps[m_pPlayerState->m_PlayerNumber]->m_Timing;
 	if ( tns >= m_MinScoreToContinueCombo )
 	{
 		m_pPlayerStageStats->m_iCurMissCombo = 0;
-		TimingData td = GAMESTATE->m_pCurSong->m_Timing;
-		int multiplier = ( iRow == -1 ? 1 : td.GetComboSegmentAtRow( iRow ).m_iCombo );
+		int multiplier = ( iRow == -1 ? 1 : td.GetComboSegmentAtRow( iRow )->GetCombo() );
 		m_pPlayerStageStats->m_iCurCombo += iNumTapsInRow * multiplier;
 	}
 	else if ( tns < m_MinScoreToMaintainCombo )
@@ -472,7 +493,10 @@ void ScoreKeeperNormal::HandleRowComboInternal( TapNoteScore tns, int iNumTapsIn
 		m_pPlayerStageStats->m_iCurCombo = 0;
 
 		if( tns <= m_MaxScoreToIncrementMissCombo )
-			m_pPlayerStageStats->m_iCurMissCombo += iNumTapsInRow;
+		{
+			int multiplier = ( iRow == -1 ? 1 : td.GetComboSegmentAtRow(iRow)->GetMissCombo());
+			m_pPlayerStageStats->m_iCurMissCombo += ( m_MissComboIsPerRow ? 1 : iNumTapsInRow ) * multiplier;
+		}
 	}
 }
 
@@ -509,7 +533,7 @@ void ScoreKeeperNormal::HandleTapRowScore( const NoteData &nd, int iRow )
 	m_iNumNotesHitThisRow = iNumTapsInRow;
 
 	TapNoteScore scoreOfLastTap = NoteDataWithScoring::LastTapNoteWithResult( nd, iRow ).result.tns;
-	HandleTapNoteScoreInternal( scoreOfLastTap, TNS_W1 );
+	HandleTapNoteScoreInternal( scoreOfLastTap, TNS_W1, iRow );
 	
 	if ( GAMESTATE->GetCurrentGame()->m_bCountNotesSeparately )
 	{

@@ -71,6 +71,16 @@ struct AttackArray : public vector<Attack>
 	 * @brief Determine if the list of attacks contains a transform or turn mod.
 	 * @return true if it does, or false otherwise. */
 	bool ContainsTransformOrTurn() const;
+	
+	/**
+	 * @brief Return a string representation used for simfiles.
+	 * @return the string representation. */
+	vector<RString> ToVectorString() const;
+	
+	/**
+	 * @brief Adjust the starting time of all attacks.
+	 * @param delta the amount to change. */
+	void UpdateStartTimes(float delta);
 };
 
 #endif

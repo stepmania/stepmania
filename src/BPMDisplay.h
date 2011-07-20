@@ -6,6 +6,7 @@
 #include "ThemeMetric.h"
 #include "LocalizedString.h"
 class Song;
+class Steps;
 class Course;
 struct DisplayBpms;
 
@@ -30,6 +31,11 @@ public:
 	 * @param pSong the song in question.
 	 */
 	void SetBpmFromSong( const Song* pSong );
+	/**
+	 * @brief Use the BPM[s] from a steps.
+	 * @param pSteps the steps in question.
+	 */
+	void SetBpmFromSteps( const Steps* pSteps );
 	/**
 	 * @brief Use the BPM[s] from a course.
 	 * @param pCourse the course in question.
@@ -82,6 +88,7 @@ protected:
 	ThemeMetric<bool> SHOW_QMARKS;
 	/** @brief How often the random BPMs cycle themselves. */
 	ThemeMetric<float> RANDOM_CYCLE_SPEED;
+	ThemeMetric<float> COURSE_CYCLE_SPEED;
 	/** @brief The text used to separate the low and high BPMs. */
 	ThemeMetric<RString> SEPARATOR;
 	/** @brief The text used when there is no BPM. */
