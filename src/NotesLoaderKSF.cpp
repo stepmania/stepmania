@@ -20,7 +20,7 @@ static void HandleBunki( TimingData &timing, const float fEarlyBPM,
 	timing.AddSegment( SEGMENT_BPM, new BPMSegment(beat, fCurBPM) );
 }
 
-static bool LoadFromKSFFile( const RString &sPath, Steps &out, const Song &song, bool bKIUCompliant )
+static bool LoadFromKSFFile( const RString &sPath, Steps &out, Song &song, bool bKIUCompliant )
 {
 	LOG->Trace( "Steps::LoadFromKSFFile( '%s' )", sPath.c_str() );
 
@@ -307,6 +307,13 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, const Song &song,
 								     BeatToNoteRow(prevBeat),
 								     TAP_ORIGINAL_HOLD_HEAD );
 				}
+			}
+			/* have this row be the last moment in the song, unless
+			 * a future step ends later. */
+			float curTime = stepsTiming.GetElapsedTimeFromBeat(fCurBeat);
+			if (curTime > song.GetSpecifiedLastSecond())
+			{
+				song.SetSpecifiedLastSecond(curTime);
 			}
 			break;
 		}
