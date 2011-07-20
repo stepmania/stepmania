@@ -590,7 +590,7 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 		}
 		else if ( sValueName=="TICKCOUNT" )
 		{
-			//ProcessTickcounts(sParams[1], iTickCount, out.m_SongTiming);
+			ProcessTickcounts(sParams[1], iTickCount, out.m_SongTiming);
 		}
 		else if ( sValueName=="STEP" )
 		{
