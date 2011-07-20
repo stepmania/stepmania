@@ -35,10 +35,12 @@ private:
 	DWORD pumpThreadId;
 	HANDLE guiReadyEvent;
 
-#if(WINVER >= 0x0601)
+/*
+#if WINVER >= 0x0601
 	UINT taskbarCreatedEvent;
 	ITaskbarList3 *pTaskbarList;
 #endif
+*/
 
 	volatile bool runMessageLoop;
 
