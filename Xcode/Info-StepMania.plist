@@ -45,6 +45,8 @@
 	<string>PRODUCT_VER_BARE</string>
 	<key>CFBundleSignature</key>
 	<string>Step</string>
+	<key>CFBundleURLTypes</key>
+	<array/>
 	<key>CFBundleVersion</key>
 	<string>PRODUCT_VER_BARE</string>
 	<key>LSApplicationCategoryType</key>
@@ -55,5 +57,11 @@
 	<string>Copyright 2001-2011</string>
 	<key>NSPrincipalClass</key>
 	<string>SMApplication</string>
+	<key>NSServices</key>
+	<array/>
+	<key>UTExportedTypeDeclarations</key>
+	<array/>
+	<key>UTImportedTypeDeclarations</key>
+	<array/>
 </dict>
 </plist>
