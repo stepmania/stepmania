@@ -817,8 +817,8 @@ skip_track:
 				// Check for termination of a sustain note
 				switch( midiEventType )
 				{
-				case note_off:
-				case note_on:
+					case note_off:
+					case note_on:
 					if( bNonTerminatedNote )
 					{
 						if( length >= 240 )
@@ -833,14 +833,15 @@ skip_track:
 
 						bNonTerminatedNote = false;
 						bNoteHandled = true;
+						break;
 					}
-					break;
+					default: break;
 				}
 
 
 				switch( midiEventType )
 				{
-				case note_on:
+					case note_on:
 					{
 						TapNote tn = TAP_ORIGINAL_TAP;
 
@@ -867,7 +868,9 @@ skip_track:
 		
 						bNonTerminatedNote = true;
 						bNoteHandled = true;
+						break;
 					}
+					default: break;
 				}
 
 				countOfLastNote = count;

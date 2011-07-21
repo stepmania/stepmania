@@ -275,12 +275,12 @@ bool EditMenu::RowIsSelectable( EditMenuRow row )
 	{
 		switch( row )
 		{
-		case ROW_SOURCE_STEPS_TYPE:
-		case ROW_SOURCE_STEPS:
-			return false;
+			case ROW_SOURCE_STEPS_TYPE:
+			case ROW_SOURCE_STEPS:
+				return false;
+			default: return true;
 		}
 	}
-
 	return true;
 }
 

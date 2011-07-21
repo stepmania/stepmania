@@ -426,15 +426,18 @@ void OptionRow::AfterImportOptions( PlayerNumber pn )
 
 	switch( m_pHand->m_Def.m_selectType )
 	{
-	case SELECT_ONE:
-		// Make sure the row actually has a selection.
-		int iSelection = GetOneSelection(pn, true);
-		if( iSelection == -1 )
+		case SELECT_ONE:
 		{
-			ASSERT( !m_vbSelected[pn].empty() );
-			m_vbSelected[pn][0] = true;
+			// Make sure the row actually has a selection.
+			int iSelection = GetOneSelection(pn, true);
+			if( iSelection == -1 )
+			{
+				ASSERT( !m_vbSelected[pn].empty() );
+				m_vbSelected[pn][0] = true;
+			}
 		}
-		break;
+		default:
+			break;
 	}
 
 	ResetFocusFromSelection( pn );
@@ -503,7 +506,7 @@ void OptionRow::UpdateText( PlayerNumber p )
 {
 	switch( m_pHand->m_Def.m_layoutType )
 	{
-	case LAYOUT_SHOW_ONE_IN_ROW:
+		case LAYOUT_SHOW_ONE_IN_ROW:
 		{
 			unsigned pn = m_pHand->m_Def.m_bOneChoiceForAllPlayers ? 0 : p;
 			int iChoiceWithFocus = m_iChoiceInRowWithFocus[pn];
@@ -519,7 +522,7 @@ void OptionRow::UpdateText( PlayerNumber p )
 
 			m_textItems[index]->SetText( sText );
 		}
-		break;
+		default: break;
 	}
 }
 
@@ -757,10 +760,11 @@ void OptionRow::ResetFocusFromSelection( PlayerNumber pn )
 	int iSelection = -1;
 	switch( m_pHand->m_Def.m_selectType )
 	{
-	case SELECT_ONE:
-		// Import the focus from the selected option.
-		iSelection = GetOneSelection( pn, true );
-		break;
+		case SELECT_ONE:
+			// Import the focus from the selected option.
+			iSelection = GetOneSelection( pn, true );
+		default:
+			break;
 	}
 
 	// HACK: Set focus to one item in the row, which is "go down"

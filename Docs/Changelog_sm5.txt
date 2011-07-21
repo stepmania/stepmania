@@ -8,6 +8,12 @@ ________________________________________________________________________________
 StepMania 5.0 ????????? | 20110???
 --------------------------------------------------------------------------------
 
+2011/07/20
+----------
+* [Win32/CrashHandlerChild] Crashlog and log now open in the player's default
+  text editor. Also, the Show Log button works again, including for people using
+  Portable.ini. [AJ]
+
 2011/07/19
 ----------
 * [LoadingWindow] Added the ability for themes to have custom splash banners.

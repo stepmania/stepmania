@@ -722,12 +722,13 @@ void Actor::UpdateInternal( float fDeltaTime )
 	// todo: account for SSC_FUTURES -aj
 	switch( m_Effect )
 	{
-	case spin:
-		m_current.rotation += m_fEffectDelta*m_vEffectMagnitude;
-		wrap( m_current.rotation.x, 360 );
-		wrap( m_current.rotation.y, 360 );
-		wrap( m_current.rotation.z, 360 );
-		break;
+		case spin:
+			m_current.rotation += m_fEffectDelta*m_vEffectMagnitude;
+			wrap( m_current.rotation.x, 360 );
+			wrap( m_current.rotation.y, 360 );
+			wrap( m_current.rotation.z, 360 );
+			break;
+		default: break;
 	}
 
 	UpdateTweening( fDeltaTime );

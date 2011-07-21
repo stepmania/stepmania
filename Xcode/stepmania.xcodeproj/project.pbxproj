@@ -78,6 +78,34 @@
 		2BD06FF2137242680018CB9F /* json_value.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2BD06FE1137240CF0018CB9F /* json_value.cpp */; };
 		2BD06FF3137242680018CB9F /* json_valueiterator.inl in Resources */ = {isa = PBXBuildFile; fileRef = 2BD06FE2137240CF0018CB9F /* json_valueiterator.inl */; };
 		2BD06FF4137242680018CB9F /* json_writer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2BD06FE3137240CF0018CB9F /* json_writer.cpp */; };
+		2BD6E11B13D78BAE008443DB /* zconf.h in Headers */ = {isa = PBXBuildFile; fileRef = 2BD6E11713D78BAE008443DB /* zconf.h */; };
+		2BD6E11D13D78BAE008443DB /* zlib.h in Headers */ = {isa = PBXBuildFile; fileRef = 2BD6E11913D78BAE008443DB /* zlib.h */; };
+		2BD6E14313D78FAE008443DB /* adler32.c in Sources */ = {isa = PBXBuildFile; fileRef = 2BD6E12913D78FAD008443DB /* adler32.c */; };
+		2BD6E14413D78FAE008443DB /* compress.c in Sources */ = {isa = PBXBuildFile; fileRef = 2BD6E12A13D78FAD008443DB /* compress.c */; };
+		2BD6E14513D78FAE008443DB /* crc32.c in Sources */ = {isa = PBXBuildFile; fileRef = 2BD6E12B13D78FAD008443DB /* crc32.c */; };
+		2BD6E14613D78FAE008443DB /* crc32.h in Headers */ = {isa = PBXBuildFile; fileRef = 2BD6E12C13D78FAD008443DB /* crc32.h */; };
+		2BD6E14713D78FAE008443DB /* deflate.c in Sources */ = {isa = PBXBuildFile; fileRef = 2BD6E12D13D78FAD008443DB /* deflate.c */; };
+		2BD6E14813D78FAE008443DB /* deflate.h in Headers */ = {isa = PBXBuildFile; fileRef = 2BD6E12E13D78FAD008443DB /* deflate.h */; };
+		2BD6E14913D78FAE008443DB /* example.c in Sources */ = {isa = PBXBuildFile; fileRef = 2BD6E12F13D78FAD008443DB /* example.c */; };
+		2BD6E14A13D78FAE008443DB /* gzclose.c in Sources */ = {isa = PBXBuildFile; fileRef = 2BD6E13013D78FAD008443DB /* gzclose.c */; };
+		2BD6E14B13D78FAE008443DB /* gzguts.h in Headers */ = {isa = PBXBuildFile; fileRef = 2BD6E13113D78FAD008443DB /* gzguts.h */; };
+		2BD6E14C13D78FAE008443DB /* gzlib.c in Sources */ = {isa = PBXBuildFile; fileRef = 2BD6E13213D78FAD008443DB /* gzlib.c */; };
+		2BD6E14D13D78FAE008443DB /* gzread.c in Sources */ = {isa = PBXBuildFile; fileRef = 2BD6E13313D78FAD008443DB /* gzread.c */; };
+		2BD6E14E13D78FAE008443DB /* gzwrite.c in Sources */ = {isa = PBXBuildFile; fileRef = 2BD6E13413D78FAD008443DB /* gzwrite.c */; };
+		2BD6E14F13D78FAE008443DB /* infback.c in Sources */ = {isa = PBXBuildFile; fileRef = 2BD6E13513D78FAD008443DB /* infback.c */; };
+		2BD6E15013D78FAE008443DB /* inffast.c in Sources */ = {isa = PBXBuildFile; fileRef = 2BD6E13613D78FAD008443DB /* inffast.c */; };
+		2BD6E15113D78FAE008443DB /* inffast.h in Headers */ = {isa = PBXBuildFile; fileRef = 2BD6E13713D78FAD008443DB /* inffast.h */; };
+		2BD6E15213D78FAE008443DB /* inffixed.h in Headers */ = {isa = PBXBuildFile; fileRef = 2BD6E13813D78FAD008443DB /* inffixed.h */; };
+		2BD6E15313D78FAE008443DB /* inflate.c in Sources */ = {isa = PBXBuildFile; fileRef = 2BD6E13913D78FAD008443DB /* inflate.c */; };
+		2BD6E15413D78FAE008443DB /* inflate.h in Headers */ = {isa = PBXBuildFile; fileRef = 2BD6E13A13D78FAD008443DB /* inflate.h */; };
+		2BD6E15513D78FAE008443DB /* inftrees.c in Sources */ = {isa = PBXBuildFile; fileRef = 2BD6E13B13D78FAD008443DB /* inftrees.c */; };
+		2BD6E15613D78FAE008443DB /* inftrees.h in Headers */ = {isa = PBXBuildFile; fileRef = 2BD6E13C13D78FAD008443DB /* inftrees.h */; };
+		2BD6E15713D78FAE008443DB /* minigzip.c in Sources */ = {isa = PBXBuildFile; fileRef = 2BD6E13D13D78FAD008443DB /* minigzip.c */; };
+		2BD6E15813D78FAE008443DB /* trees.c in Sources */ = {isa = PBXBuildFile; fileRef = 2BD6E13E13D78FAD008443DB /* trees.c */; };
+		2BD6E15913D78FAE008443DB /* trees.h in Headers */ = {isa = PBXBuildFile; fileRef = 2BD6E13F13D78FAD008443DB /* trees.h */; };
+		2BD6E15A13D78FAE008443DB /* uncompr.c in Sources */ = {isa = PBXBuildFile; fileRef = 2BD6E14013D78FAD008443DB /* uncompr.c */; };
+		2BD6E15B13D78FAE008443DB /* zutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 2BD6E14113D78FAD008443DB /* zutil.c */; };
+		2BD6E15C13D78FAE008443DB /* zutil.h in Headers */ = {isa = PBXBuildFile; fileRef = 2BD6E14213D78FAD008443DB /* zutil.h */; };
 		2BDB88E9137201F700E6FD3A /* lapi.c in Sources */ = {isa = PBXBuildFile; fileRef = 2BDB88B2137201F700E6FD3A /* lapi.c */; };
 		2BDB88EA137201F700E6FD3A /* lapi.h in Headers */ = {isa = PBXBuildFile; fileRef = 2BDB88B3137201F700E6FD3A /* lapi.h */; };
 		2BDB88EB137201F700E6FD3A /* lauxlib.c in Sources */ = {isa = PBXBuildFile; fileRef = 2BDB88B4137201F700E6FD3A /* lauxlib.c */; };
@@ -1703,6 +1731,13 @@
 			remoteGlobalIDString = 2B17ABDF13981756001AE57D;
 			remoteInfo = pcre;
 		};
+		2BD6E12613D78D59008443DB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2BD6E10B13D78B36008443DB /* zlib */;
+			remoteInfo = zlib;
+		};
 		AA30C61907F5E2EF0066F398 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
@@ -1869,6 +1904,36 @@
 		2BD06FE1137240CF0018CB9F /* json_value.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = json_value.cpp; path = ../extern/jsoncpp/src/lib_json/json_value.cpp; sourceTree = SOURCE_ROOT; };
 		2BD06FE2137240CF0018CB9F /* json_valueiterator.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = json_valueiterator.inl; path = ../extern/jsoncpp/src/lib_json/json_valueiterator.inl; sourceTree = SOURCE_ROOT; };
 		2BD06FE3137240CF0018CB9F /* json_writer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = json_writer.cpp; path = ../extern/jsoncpp/src/lib_json/json_writer.cpp; sourceTree = SOURCE_ROOT; };
+		2BD6E10C13D78B36008443DB /* libzlib-sm5.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libzlib-sm5.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		2BD6E11713D78BAE008443DB /* zconf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = zconf.h; sourceTree = "<group>"; };
+		2BD6E11913D78BAE008443DB /* zlib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = zlib.h; sourceTree = "<group>"; };
+		2BD6E11E13D78C67008443DB /* zdll.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = zdll.lib; sourceTree = "<group>"; };
+		2BD6E12913D78FAD008443DB /* adler32.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = adler32.c; sourceTree = "<group>"; };
+		2BD6E12A13D78FAD008443DB /* compress.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = compress.c; sourceTree = "<group>"; };
+		2BD6E12B13D78FAD008443DB /* crc32.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = crc32.c; sourceTree = "<group>"; };
+		2BD6E12C13D78FAD008443DB /* crc32.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crc32.h; sourceTree = "<group>"; };
+		2BD6E12D13D78FAD008443DB /* deflate.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = deflate.c; sourceTree = "<group>"; };
+		2BD6E12E13D78FAD008443DB /* deflate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = deflate.h; sourceTree = "<group>"; };
+		2BD6E12F13D78FAD008443DB /* example.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = example.c; sourceTree = "<group>"; };
+		2BD6E13013D78FAD008443DB /* gzclose.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gzclose.c; sourceTree = "<group>"; };
+		2BD6E13113D78FAD008443DB /* gzguts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gzguts.h; sourceTree = "<group>"; };
+		2BD6E13213D78FAD008443DB /* gzlib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gzlib.c; sourceTree = "<group>"; };
+		2BD6E13313D78FAD008443DB /* gzread.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gzread.c; sourceTree = "<group>"; };
+		2BD6E13413D78FAD008443DB /* gzwrite.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gzwrite.c; sourceTree = "<group>"; };
+		2BD6E13513D78FAD008443DB /* infback.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = infback.c; sourceTree = "<group>"; };
+		2BD6E13613D78FAD008443DB /* inffast.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = inffast.c; sourceTree = "<group>"; };
+		2BD6E13713D78FAD008443DB /* inffast.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = inffast.h; sourceTree = "<group>"; };
+		2BD6E13813D78FAD008443DB /* inffixed.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = inffixed.h; sourceTree = "<group>"; };
+		2BD6E13913D78FAD008443DB /* inflate.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = inflate.c; sourceTree = "<group>"; };
+		2BD6E13A13D78FAD008443DB /* inflate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = inflate.h; sourceTree = "<group>"; };
+		2BD6E13B13D78FAD008443DB /* inftrees.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = inftrees.c; sourceTree = "<group>"; };
+		2BD6E13C13D78FAD008443DB /* inftrees.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = inftrees.h; sourceTree = "<group>"; };
+		2BD6E13D13D78FAD008443DB /* minigzip.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = minigzip.c; sourceTree = "<group>"; };
+		2BD6E13E13D78FAD008443DB /* trees.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = trees.c; sourceTree = "<group>"; };
+		2BD6E13F13D78FAD008443DB /* trees.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = trees.h; sourceTree = "<group>"; };
+		2BD6E14013D78FAD008443DB /* uncompr.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = uncompr.c; sourceTree = "<group>"; };
+		2BD6E14113D78FAD008443DB /* zutil.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = zutil.c; sourceTree = "<group>"; };
+		2BD6E14213D78FAD008443DB /* zutil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = zutil.h; sourceTree = "<group>"; };
 		2BDB88B2137201F700E6FD3A /* lapi.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = lapi.c; path = "../extern/lua-5.1/src/lapi.c"; sourceTree = SOURCE_ROOT; };
 		2BDB88B3137201F700E6FD3A /* lapi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = lapi.h; path = "../extern/lua-5.1/src/lapi.h"; sourceTree = SOURCE_ROOT; };
 		2BDB88B4137201F700E6FD3A /* lauxlib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = lauxlib.c; path = "../extern/lua-5.1/src/lauxlib.c"; sourceTree = SOURCE_ROOT; };
@@ -3098,6 +3163,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		2BD6E10A13D78B36008443DB /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		AA29CE3B0558741A00961A51 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -3243,6 +3315,7 @@
 				2B17AB7213980FDF001AE57D /* libpng-1.5.1-sm5.a */,
 				2B17ABC013981521001AE57D /* libglew-sm5.a */,
 				2B17ABE013981756001AE57D /* libpcre-sm5.a */,
+				2BD6E10C13D78B36008443DB /* libzlib-sm5.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -3371,6 +3444,43 @@
 			path = ../extern/libpng;
 			sourceTree = "<group>";
 		};
+		2BD6E11413D78BAE008443DB /* zlib */ = {
+			isa = PBXGroup;
+			children = (
+				2BD6E12913D78FAD008443DB /* adler32.c */,
+				2BD6E12A13D78FAD008443DB /* compress.c */,
+				2BD6E12B13D78FAD008443DB /* crc32.c */,
+				2BD6E12C13D78FAD008443DB /* crc32.h */,
+				2BD6E12D13D78FAD008443DB /* deflate.c */,
+				2BD6E12E13D78FAD008443DB /* deflate.h */,
+				2BD6E12F13D78FAD008443DB /* example.c */,
+				2BD6E13013D78FAD008443DB /* gzclose.c */,
+				2BD6E13113D78FAD008443DB /* gzguts.h */,
+				2BD6E13213D78FAD008443DB /* gzlib.c */,
+				2BD6E13313D78FAD008443DB /* gzread.c */,
+				2BD6E13413D78FAD008443DB /* gzwrite.c */,
+				2BD6E13513D78FAD008443DB /* infback.c */,
+				2BD6E13613D78FAD008443DB /* inffast.c */,
+				2BD6E13713D78FAD008443DB /* inffast.h */,
+				2BD6E13813D78FAD008443DB /* inffixed.h */,
+				2BD6E13913D78FAD008443DB /* inflate.c */,
+				2BD6E13A13D78FAD008443DB /* inflate.h */,
+				2BD6E13B13D78FAD008443DB /* inftrees.c */,
+				2BD6E13C13D78FAD008443DB /* inftrees.h */,
+				2BD6E13D13D78FAD008443DB /* minigzip.c */,
+				2BD6E13E13D78FAD008443DB /* trees.c */,
+				2BD6E13F13D78FAD008443DB /* trees.h */,
+				2BD6E14013D78FAD008443DB /* uncompr.c */,
+				2BD6E14113D78FAD008443DB /* zutil.c */,
+				2BD6E14213D78FAD008443DB /* zutil.h */,
+				2BD6E11E13D78C67008443DB /* zdll.lib */,
+				2BD6E11713D78BAE008443DB /* zconf.h */,
+				2BD6E11913D78BAE008443DB /* zlib.h */,
+			);
+			name = zlib;
+			path = ../extern/zlib;
+			sourceTree = SOURCE_ROOT;
+		};
 		2BDB87261371F7FF00E6FD3A /* extern */ = {
 			isa = PBXGroup;
 			children = (
@@ -3382,6 +3492,7 @@
 				AAE781870AC7E46E00AEFC64 /* lua-5.1 */,
 				AAA070B20CE7B3AD005A3060 /* mad-0.15.1b */,
 				AA8B6C7804AFD82B00D02EE9 /* pcre */,
+				2BD6E11413D78BAE008443DB /* zlib */,
 			);
 			name = extern;
 			sourceTree = "<group>";
@@ -5121,6 +5232,24 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		2BD6E10813D78B36008443DB /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2BD6E11B13D78BAE008443DB /* zconf.h in Headers */,
+				2BD6E11D13D78BAE008443DB /* zlib.h in Headers */,
+				2BD6E14613D78FAE008443DB /* crc32.h in Headers */,
+				2BD6E14813D78FAE008443DB /* deflate.h in Headers */,
+				2BD6E14B13D78FAE008443DB /* gzguts.h in Headers */,
+				2BD6E15113D78FAE008443DB /* inffast.h in Headers */,
+				2BD6E15213D78FAE008443DB /* inffixed.h in Headers */,
+				2BD6E15413D78FAE008443DB /* inflate.h in Headers */,
+				2BD6E15613D78FAE008443DB /* inftrees.h in Headers */,
+				2BD6E15913D78FAE008443DB /* trees.h in Headers */,
+				2BD6E15C13D78FAE008443DB /* zutil.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		AA29CC270558741A00961A51 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -5709,6 +5838,23 @@
 			productReference = 2B17ABE013981756001AE57D /* libpcre-sm5.a */;
 			productType = "com.apple.product-type.library.static";
 		};
+		2BD6E10B13D78B36008443DB /* zlib */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2BD6E11313D78B8D008443DB /* Build configuration list for PBXNativeTarget "zlib" */;
+			buildPhases = (
+				2BD6E10813D78B36008443DB /* Headers */,
+				2BD6E10913D78B36008443DB /* Sources */,
+				2BD6E10A13D78B36008443DB /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = zlib;
+			productName = zlib;
+			productReference = 2BD6E10C13D78B36008443DB /* libzlib-sm5.a */;
+			productType = "com.apple.product-type.library.static";
+		};
 		AA29CC240558741A00961A51 /* stepmania */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = AAC8450F0856A19700A9FEAB /* Build configuration list for PBXNativeTarget "stepmania" */;
@@ -5726,6 +5872,7 @@
 			dependencies = (
 				AAE781FE0AC7E61900AEFC64 /* PBXTargetDependency */,
 				2B17ABD1139815EB001AE57D /* PBXTargetDependency */,
+				2BD6E12713D78D59008443DB /* PBXTargetDependency */,
 				AA7C8D180B6748B800FD9940 /* PBXTargetDependency */,
 				AA7C8D160B6748B800FD9940 /* PBXTargetDependency */,
 				2B17AB8E13981009001AE57D /* PBXTargetDependency */,
@@ -5906,6 +6053,7 @@
 				2B17AB7113980FDF001AE57D /* png */,
 				2B17ABBF13981521001AE57D /* glew */,
 				2B17ABDF13981756001AE57D /* pcre */,
+				2BD6E10B13D78B36008443DB /* zlib */,
 			);
 		};
 /* End PBXProject section */
@@ -6074,6 +6222,30 @@
 				2B17ABE81398179E001AE57D /* maketables.c in Sources */,
 				2B17ABE91398179E001AE57D /* pcre.c in Sources */,
 				2B17ABEB1398179E001AE57D /* study.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2BD6E10913D78B36008443DB /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2BD6E14313D78FAE008443DB /* adler32.c in Sources */,
+				2BD6E14413D78FAE008443DB /* compress.c in Sources */,
+				2BD6E14513D78FAE008443DB /* crc32.c in Sources */,
+				2BD6E14713D78FAE008443DB /* deflate.c in Sources */,
+				2BD6E14913D78FAE008443DB /* example.c in Sources */,
+				2BD6E14A13D78FAE008443DB /* gzclose.c in Sources */,
+				2BD6E14C13D78FAE008443DB /* gzlib.c in Sources */,
+				2BD6E14D13D78FAE008443DB /* gzread.c in Sources */,
+				2BD6E14E13D78FAE008443DB /* gzwrite.c in Sources */,
+				2BD6E14F13D78FAE008443DB /* infback.c in Sources */,
+				2BD6E15013D78FAE008443DB /* inffast.c in Sources */,
+				2BD6E15313D78FAE008443DB /* inflate.c in Sources */,
+				2BD6E15513D78FAE008443DB /* inftrees.c in Sources */,
+				2BD6E15713D78FAE008443DB /* minigzip.c in Sources */,
+				2BD6E15813D78FAE008443DB /* trees.c in Sources */,
+				2BD6E15A13D78FAE008443DB /* uncompr.c in Sources */,
+				2BD6E15B13D78FAE008443DB /* zutil.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7249,6 +7421,11 @@
 			target = 2B17ABDF13981756001AE57D /* pcre */;
 			targetProxy = 2B17ABFE139817DF001AE57D /* PBXContainerItemProxy */;
 		};
+		2BD6E12713D78D59008443DB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2BD6E10B13D78B36008443DB /* zlib */;
+			targetProxy = 2BD6E12613D78D59008443DB /* PBXContainerItemProxy */;
+		};
 		AA30C61A07F5E2EF0066F398 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = AA30C60F07F5E24A0066F398 /* version */;
@@ -7851,6 +8028,125 @@
 				OTHER_LDFLAGS = "";
 				PREBINDING = NO;
 				PRODUCT_NAME = "pcre-sm5";
+			};
+			name = Debug;
+		};
+		2BD6E10D13D78B37008443DB /* Native */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				INSTALL_PATH = /usr/local/lib;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../extern/zlib\"",
+				);
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = zlib;
+			};
+			name = Native;
+		};
+		2BD6E10E13D78B37008443DB /* PerformanceDebug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				INSTALL_PATH = /usr/local/lib;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../extern/zlib\"",
+				);
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = zlib;
+			};
+			name = PerformanceDebug;
+		};
+		2BD6E10F13D78B37008443DB /* Universal */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				INSTALL_PATH = /usr/local/lib;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../extern/zlib\"",
+				);
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = zlib;
+			};
+			name = Universal;
+		};
+		2BD6E11013D78B37008443DB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = "";
+				GCC_PREFIX_HEADER = "";
+				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
+				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
+				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = NO;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = NO;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
+				GCC_WARN_ABOUT_POINTER_SIGNEDNESS = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = NO;
+				GCC_WARN_ALLOW_INCOMPLETE_PROTOCOL = NO;
+				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = NO;
+				GCC_WARN_MISSING_PARENTHESES = NO;
+				GCC_WARN_PROTOTYPE_CONVERSION = NO;
+				GCC_WARN_SHADOW = NO;
+				GCC_WARN_SIGN_COMPARE = NO;
+				GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = NO;
+				GCC_WARN_UNDECLARED_SELECTOR = NO;
+				GCC_WARN_UNKNOWN_PRAGMAS = NO;
+				GCC_WARN_UNUSED_FUNCTION = NO;
+				GCC_WARN_UNUSED_LABEL = NO;
+				GCC_WARN_UNUSED_VALUE = NO;
+				GCC_WARN_UNUSED_VARIABLE = NO;
+				INSTALL_PATH = /usr/local/lib;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../extern/zlib\"",
+				);
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = "zlib-sm5";
 			};
 			name = Debug;
 		};
@@ -9186,6 +9482,17 @@
 				2B17ABE213981757001AE57D /* PerformanceDebug */,
 				2B17ABE313981757001AE57D /* Universal */,
 				2B17ABE413981757001AE57D /* Debug */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Native;
+		};
+		2BD6E11313D78B8D008443DB /* Build configuration list for PBXNativeTarget "zlib" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2BD6E10D13D78B37008443DB /* Native */,
+				2BD6E10E13D78B37008443DB /* PerformanceDebug */,
+				2BD6E10F13D78B37008443DB /* Universal */,
+				2BD6E11013D78B37008443DB /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Native;

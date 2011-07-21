@@ -48,7 +48,7 @@ Docs/doxygen
 PBProject/build
 Xcode/build
 *.xcodeproj/xcuserdata
-*.xcodeproj/project.xcworkspace/xcuserdata
+*.xcodeproj/project.xcworkspace
 src/build-*
 src/Release-*
 src/libtomcrypt/build-*

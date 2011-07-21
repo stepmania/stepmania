@@ -7,21 +7,14 @@
 #include <memory>
 
 #if defined(_WINDOWS)
-        #include "zlib.h"
+#include "zlib.h"
 #if defined(_MSC_VER)
-        #pragma comment(lib, "zdll.lib")
+#pragma comment(lib, "zdll.lib")
 #endif
 #elif defined(MACOSX)
-    /* Since crypto++ was added to the repository, <zlib.h> includes the zlib.h
-     * in there rather than the correct system one. I don't know why it would do
-     * this since crypto51 is not being listed as one of the include directories.
-     * I've never run into this problem before and looking at the command line
-     * used to compile RageFileDriverZip.o, I have no idea how it's happening.
-     * --Steve
-     */
-	#include "/usr/include/zlib.h"
+#include "zlib.h"
 #else
-        #include <zlib.h>
+#include <zlib.h>
 #endif
 
 RageFileObjInflate::RageFileObjInflate( RageFileBasic *pFile, int iUncompressedSize )

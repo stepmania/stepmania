@@ -8,6 +8,7 @@
 #include "archutils/Win32/ddk/dbghelp.h"
 #include <io.h>
 #include <fcntl.h>
+#include <shellapi.h>
 
 #include "arch/ArchHooks/ArchHooks.h"
 #include "archutils/Win32/WindowsResources.h"
@@ -17,6 +18,7 @@
 #include "archutils/Win32/RestartProgram.h"
 #include "archutils/Win32/CrashHandlerNetworking.h"
 #include "archutils/Win32/WindowsDialogBox.h"
+#include "archutils/Win32/SpecialDirs.h"
 #include "ProductInfo.h"
 #include "RageUtil.h"
 #include "XmlFile.h"
@@ -79,7 +81,6 @@ namespace VDDebugInfo
 
 			pctx->sRawBlock = sBufOut;
 		}
-
 
 		const unsigned char *src = (const unsigned char *) pctx->sRawBlock.data();
 
@@ -252,7 +253,6 @@ bool ReadFromParent( int fd, void *p, int size )
 	return true;
 }
 
-
 // General symbol lookup; uses VDDebugInfo for detailed information within the
 // process, and DbgHelp for simpler information about loaded DLLs.
 namespace SymbolLookup
@@ -356,7 +356,6 @@ namespace SymbolLookup
 			return;
 		}
 
-		
 		RString sName = CrashChildGetModuleBaseName( (HMODULE)meminfo.AllocationBase );
 
 		DWORD64 disp;
@@ -444,7 +443,7 @@ static void MakeCrashReport( const CompleteCrashData &Data, RString &sOut )
 	// Dump thread stacks
 	static char buf[1024*32];
 	sOut += ssprintf( "%s\n", join("\n", Data.m_asCheckpoints).c_str() );
-	
+
 	sOut += ReportCallStack( Data.m_CrashInfo.m_BacktracePointers );
 	sOut += ssprintf( "\n" );
 
@@ -490,33 +489,6 @@ static void DoSave( const RString &sReport )
 	// Discourage changing crashinfo.txt.
 	SetFileAttributes( sName, FILE_ATTRIBUTE_READONLY );
 }
-
-void ViewWithNotepad(const char *str)
-{
-	char buf[256] = "";
-	strcat( buf, "notepad.exe " );
-	strcat( buf, str );
-
-	RString cwd = SpliceProgramPath( "" );
-
-	PROCESS_INFORMATION pi;
-	STARTUPINFO si;
-	ZeroMemory( &si, sizeof(si) );
-
-	CreateProcess(
-		NULL,		// pointer to name of executable module
-		buf,		// pointer to command line string
-		NULL,  // process security attributes
-		NULL,   // thread security attributes
-		false,  // handle inheritance flag
-		0, // creation flags
-		NULL,  // pointer to new environment block
-		cwd,   // pointer to current directory name
-		&si,  // pointer to STARTUPINFO
-		&pi  // pointer to PROCESS_INFORMATION
-	);
-}
-
 
 bool ReadCrashDataFromParent( int iFD, CompleteCrashData &Data )
 {
@@ -723,10 +695,22 @@ BOOL CrashDialog::HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam )
 			// EndDialog(hDlg, TRUE); // don't always exit on ENTER
 			return TRUE;
 		case IDC_VIEW_LOG:
-			ViewWithNotepad("../log.txt");
+			{
+				RString sLogPath;
+				FILE *pFile = fopen( SpliceProgramPath("../Portable.ini"), "r" );
+				if(pFile != NULL)
+				{
+					sLogPath = SpliceProgramPath("../Logs/log.txt");
+					fclose( pFile );
+				}
+				else
+					sLogPath = SpecialDirs::GetAppDataDir() + PRODUCT_ID +"/Logs/log.txt";
+
+				ShellExecute( NULL, "open", sLogPath, "", "", SW_SHOWNORMAL );
+			}
 			break;
 		case IDC_CRASH_SAVE:
-			ViewWithNotepad("../crashinfo.txt");
+			ShellExecute( NULL, "open", SpliceProgramPath("../crashinfo.txt"), "", "", SW_SHOWNORMAL );
 			return TRUE;
 		case IDC_BUTTON_RESTART:
 			Win32RestartProgram();

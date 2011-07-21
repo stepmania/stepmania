@@ -139,7 +139,6 @@ void TimingData::SetStopAtRow( int iRow, float fSeconds, bool bDelay )
 			static_cast<StopSegment *>(stops[i])->GetDelay() == bDelay )
 			break;
 
-	StopSegment *ss = static_cast<StopSegment *>(stops[i]);
 	if( i == stops.size() )	// there is no Stop/Delay Segment at the current beat
 	{
 		// create a new StopSegment
@@ -150,6 +149,7 @@ void TimingData::SetStopAtRow( int iRow, float fSeconds, bool bDelay )
 	}
 	else	// StopSegment being modified is m_StopSegments[i]
 	{
+		StopSegment *ss = static_cast<StopSegment *>(stops[i]);
 		if( fSeconds > 0 )
 		{
 			ss->SetPause(fSeconds);
@@ -237,15 +237,19 @@ void TimingData::SetTickcountAtRow( int iRow, int iTicks )
 {
 	LOG->Trace( "TimingData::SetTickcountAtRow( '%i' , '%i' )", iRow, iTicks );
 
-	unsigned i;
+	unsigned i = 0;
 	vector<TimingSegment *> &ticks = this->allTimingSegments[SEGMENT_TICKCOUNT];
 	for( i=0; i<ticks.size(); i++ )
 		if( ticks[i]->GetRow() >= iRow )
 			break;
 
+	// this thing causes an invalid parameter crash
 	TickcountSegment *ts = static_cast<TickcountSegment *>(ticks[i]);
+	LOG->Trace( "Done with that thing again" );
+
 	if( i == ticks.size() || ts->GetRow() != iRow )
 	{
+		LOG->Trace( "New TickSegment" );
 		// No TickcountSegment here. Make a new segment if required.
 		if (i == 0 ||
 			static_cast<TickcountSegment *>(ticks[i-1])->GetTicks() != iTicks )
@@ -253,12 +257,15 @@ void TimingData::SetTickcountAtRow( int iRow, int iTicks )
 	}
 	else	// TickcountSegment being modified is m_TickcountSegments[i]
 	{
+		LOG->Trace( "Editing TickSegment" );
 		if (i > 0 &&
 			static_cast<TickcountSegment *>(ticks[i-1])->GetTicks() == iTicks )
 			ticks.erase( ticks.begin()+i, ticks.begin()+i+1 );
 		else
 			ts->SetTicks(iTicks);
 	}
+
+	LOG->Trace( "DONE" );
 }
 
 void TimingData::SetComboAtRow( int iRow, int iCombo, int iMiss )
