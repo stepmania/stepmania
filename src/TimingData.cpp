@@ -111,8 +111,7 @@ void TimingData::SetBPMAtRow( int iNoteRow, float fBPM )
 		if( bpms[i]->GetRow() >= iNoteRow )
 			break;
 
-	BPMSegment *bs = static_cast<BPMSegment *>(bpms[i]);
-	if( i == bpms.size() || bs->GetRow() != iNoteRow )
+	if( i == bpms.size() || bpms[i]->GetRow() != iNoteRow )
 	{
 		// There is no BPMSegment at the specified beat.  If the BPM being set differs
 		// from the last BPMSegment's BPM, create a new BPMSegment.
@@ -126,7 +125,7 @@ void TimingData::SetBPMAtRow( int iNoteRow, float fBPM )
 			fabsf(static_cast<BPMSegment *>(bpms[i-1])->GetBPM() - fBPM) < 1e-5f )
 			bpms.erase( bpms.begin()+i, bpms.begin()+i+1 );
 		else
-			bs->SetBPM(fBPM);
+			static_cast<BPMSegment *>(bpms[i])->SetBPM(fBPM);
 	}
 }
 
@@ -169,8 +168,7 @@ void TimingData::SetTimeSignatureAtRow( int iRow, int iNumerator, int iDenominat
 			break; // We found our segment.
 	}
 	
-	TimeSignatureSegment *ts = static_cast<TimeSignatureSegment *>(tSigs[i]);
-	if ( i == tSigs.size() || ts->GetRow() != iRow )
+	if ( i == tSigs.size() || tSigs[i]->GetRow() != iRow )
 	{
 		// No specific segment here: place one if it differs.
 		if (i == 0 || 
@@ -186,8 +184,8 @@ void TimingData::SetTimeSignatureAtRow( int iRow, int iNumerator, int iDenominat
 			tSigs.erase( tSigs.begin()+i, tSigs.begin()+i+1 );
 		else
 		{
-			ts->SetNum(iNumerator);
-			ts->SetDen(iDenominator);
+			static_cast<TimeSignatureSegment *>(tSigs[i])->SetNum(iNumerator);
+			static_cast<TimeSignatureSegment *>(tSigs[i])->SetDen(iDenominator);
 		}
 	}
 }
@@ -235,21 +233,14 @@ void TimingData::SetWarpAtRow( int iRow, float fNew )
 /* Change an existing Tickcount segment, merge identical segments together or insert a new one. */
 void TimingData::SetTickcountAtRow( int iRow, int iTicks )
 {
-	LOG->Trace( "TimingData::SetTickcountAtRow( '%i' , '%i' )", iRow, iTicks );
-
 	unsigned i = 0;
 	vector<TimingSegment *> &ticks = this->allTimingSegments[SEGMENT_TICKCOUNT];
 	for( i=0; i<ticks.size(); i++ )
 		if( ticks[i]->GetRow() >= iRow )
 			break;
 
-	// this thing causes an invalid parameter crash
-	TickcountSegment *ts = static_cast<TickcountSegment *>(ticks[i]);
-	LOG->Trace( "Done with that thing again" );
-
-	if( i == ticks.size() || ts->GetRow() != iRow )
+	if( i == ticks.size() || ticks[i]->GetRow() != iRow )
 	{
-		LOG->Trace( "New TickSegment" );
 		// No TickcountSegment here. Make a new segment if required.
 		if (i == 0 ||
 			static_cast<TickcountSegment *>(ticks[i-1])->GetTicks() != iTicks )
@@ -257,15 +248,12 @@ void TimingData::SetTickcountAtRow( int iRow, int iTicks )
 	}
 	else	// TickcountSegment being modified is m_TickcountSegments[i]
 	{
-		LOG->Trace( "Editing TickSegment" );
 		if (i > 0 &&
 			static_cast<TickcountSegment *>(ticks[i-1])->GetTicks() == iTicks )
 			ticks.erase( ticks.begin()+i, ticks.begin()+i+1 );
 		else
-			ts->SetTicks(iTicks);
+			static_cast<TickcountSegment *>(ticks[i])->SetTicks(iTicks);
 	}
-
-	LOG->Trace( "DONE" );
 }
 
 void TimingData::SetComboAtRow( int iRow, int iCombo, int iMiss )
@@ -276,9 +264,7 @@ void TimingData::SetComboAtRow( int iRow, int iCombo, int iMiss )
 		if( combos[i]->GetRow() >= iRow )
 			break;
 	
-	ComboSegment *cs = static_cast<ComboSegment *>(combos[i]);
-	
-	if( i == combos.size() || cs->GetRow() != iRow )
+	if( i == combos.size() || combos[i]->GetRow() != iRow )
 	{
 		if (i == 0 ||
 			static_cast<ComboSegment *>(combos[i-1])->GetCombo() != iCombo ||
@@ -293,8 +279,8 @@ void TimingData::SetComboAtRow( int iRow, int iCombo, int iMiss )
 			combos.erase( combos.begin()+i, combos.begin()+i+1 );
 		else
 		{
-			cs->SetCombo(iCombo);
-			cs->SetMissCombo(iMiss);
+			static_cast<ComboSegment *>(combos[i])->SetCombo(iCombo);
+			static_cast<ComboSegment *>(combos[i])->SetMissCombo(iMiss);
 		}
 	}
 }
@@ -321,9 +307,7 @@ void TimingData::SetLabelAtRow( int iRow, const RString sLabel )
 		if( labels[i]->GetRow() >= iRow )
 			break;
 	
-	LabelSegment *ls = static_cast<LabelSegment *>(labels[i]);
-	
-	if( i == labels.size() || ls->GetRow() != iRow )
+	if( i == labels.size() || labels[i]->GetRow() != iRow )
 	{
 		if (i == 0 ||
 			static_cast<LabelSegment *>(labels[i-1])->GetLabel() != sLabel )
@@ -336,7 +320,7 @@ void TimingData::SetLabelAtRow( int iRow, const RString sLabel )
 			 sLabel == "" ) )
 			labels.erase( labels.begin()+i, labels.begin()+i+1 );
 		else
-			ls->SetLabel(sLabel);
+			static_cast<LabelSegment *>(labels[i])->SetLabel(sLabel);
 	}
 }
 
@@ -350,9 +334,7 @@ void TimingData::SetSpeedAtRow( int iRow, float fPercent, float fWait, unsigned 
 			break;
 	}
 	
-	SpeedSegment *ss = static_cast<SpeedSegment *>(speeds[i]);
-	
-	if ( i == speeds.size() || ss->GetRow() != iRow )
+	if ( i == speeds.size() || speeds[i]->GetRow() != iRow )
 	{
 		// the core mod itself matters the most for comparisons.
 		if (i == 0 ||
@@ -367,9 +349,9 @@ void TimingData::SetSpeedAtRow( int iRow, float fPercent, float fWait, unsigned 
 			speeds.erase( speeds.begin()+i, speeds.begin()+i+1 );
 		else
 		{
-			ss->SetRatio(fPercent);
-			ss->SetLength(fWait);
-			ss->SetUnit(usMode);
+			static_cast<SpeedSegment *>(speeds[i])->SetRatio(fPercent);
+			static_cast<SpeedSegment *>(speeds[i])->SetLength(fWait);
+			static_cast<SpeedSegment *>(speeds[i])->SetUnit(usMode);
 		}
 	}
 }
@@ -384,8 +366,7 @@ void TimingData::SetScrollAtRow( int iRow, float fPercent )
 			break;
 	}
 	
-	ScrollSegment *ss = static_cast<ScrollSegment *>(scrolls[i]);
-	if ( i == scrolls.size() || ss->GetRow() != iRow )
+	if ( i == scrolls.size() || scrolls[i]->GetRow() != iRow )
 	{
 		// the core mod itself matters the most for comparisons.
 		if (i == 0 ||
@@ -400,7 +381,7 @@ void TimingData::SetScrollAtRow( int iRow, float fPercent )
 			scrolls.erase( scrolls.begin()+i, scrolls.begin()+i+1 );
 		else
 		{
-			ss->SetRatio(fPercent);
+			static_cast<ScrollSegment *>(scrolls[i])->SetRatio(fPercent);
 		}
 	}
 }
