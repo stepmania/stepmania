@@ -11,7 +11,10 @@ StepMania 5.0 ????????? | 20110???
 2011/07/21
 ----------
 * [BeginnerHelper] Removed DancePadAngle metric in favor of DancePadOnCommand.
-  The same goes for PlayerAngle, rotation is now handled in PlayerP1/2OnCommand. [AJ]
+  The same goes for PlayerAngle, dancer rotation is now handled in
+  PlayerP1/2OnCommand. [AJ]
+* [Course] Bumped up max edit course title length to 16 (still feels too short).
+  Also added #DESCRIPTION tag and Course:GetDescription() Lua binding. [AJ]
 
 2011/07/20
 ----------
