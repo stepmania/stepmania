@@ -90,7 +90,7 @@ int CourseEntry::GetNumModChanges() const
 
 Course::Course(): m_bIsAutogen(false), m_sPath(""), m_sMainTitle(""),
 	m_sMainTitleTranslit(""), m_sSubTitle(""), m_sSubTitleTranslit(""),
-	m_sScripter(""), m_sBannerPath(""), m_sBackgroundPath(""),
+	m_sScripter(""), m_sDescription(""), m_sBannerPath(""), m_sBackgroundPath(""),
 	m_sCDTitlePath(""), m_sGroupName(""), m_bRepeat(false), m_fGoalSeconds(0), 
 	m_bShuffle(false), m_iLives(-1), m_bSortByMeter(false),
 	m_bIncomplete(false), m_vEntries(), m_SortOrder_TotalDifficulty(0),
@@ -176,6 +176,7 @@ void Course::Init()
 	m_sSubTitle = "";
 	m_sSubTitleTranslit = "";
 	m_sScripter = "";
+	m_sDescription = "";
 
 	m_sBannerPath = "";
 	m_sBackgroundPath = "";
@@ -1095,6 +1096,7 @@ public:
 	static int IsAutogen( T* p, lua_State *L )		{ lua_pushboolean(L, p->m_bIsAutogen ); return 1; }
 	static int GetEstimatedNumStages( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetEstimatedNumStages() ); return 1; }
 	static int GetScripter( T* p, lua_State *L )		{ lua_pushstring(L, p->m_sScripter ); return 1; }
+	static int GetDescription( T* p, lua_State *L )		{ lua_pushstring(L, p->m_sDescription ); return 1; }
 	static int GetTotalSeconds( T* p, lua_State *L )
 	{
 		StepsType st = Enum::Check<StepsType>(L, 1);
@@ -1131,6 +1133,7 @@ public:
 		ADD_METHOD( IsAutogen );
 		ADD_METHOD( GetEstimatedNumStages );
 		ADD_METHOD( GetScripter ); 
+		ADD_METHOD( GetDescription ); 
 		ADD_METHOD( GetTotalSeconds );
 		ADD_METHOD( IsEndless );
 		ADD_METHOD( IsNonstop );
