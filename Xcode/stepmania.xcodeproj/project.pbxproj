@@ -1735,7 +1735,7 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 2BD6E10B13D78B36008443DB /* zlib */;
+			remoteGlobalIDString = 2BD6E10B13D78B36008443DB;
 			remoteInfo = zlib;
 		};
 		AA30C61907F5E2EF0066F398 /* PBXContainerItemProxy */ = {
@@ -1904,7 +1904,7 @@
 		2BD06FE1137240CF0018CB9F /* json_value.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = json_value.cpp; path = ../extern/jsoncpp/src/lib_json/json_value.cpp; sourceTree = SOURCE_ROOT; };
 		2BD06FE2137240CF0018CB9F /* json_valueiterator.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = json_valueiterator.inl; path = ../extern/jsoncpp/src/lib_json/json_valueiterator.inl; sourceTree = SOURCE_ROOT; };
 		2BD06FE3137240CF0018CB9F /* json_writer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = json_writer.cpp; path = ../extern/jsoncpp/src/lib_json/json_writer.cpp; sourceTree = SOURCE_ROOT; };
-		2BD6E10C13D78B36008443DB /* libzlib-sm5.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libzlib-sm5.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		2BD6E10C13D78B36008443DB /* libzlib.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libzlib.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		2BD6E11713D78BAE008443DB /* zconf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = zconf.h; sourceTree = "<group>"; };
 		2BD6E11913D78BAE008443DB /* zlib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = zlib.h; sourceTree = "<group>"; };
 		2BD6E11E13D78C67008443DB /* zdll.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = zdll.lib; sourceTree = "<group>"; };
@@ -3315,7 +3315,7 @@
 				2B17AB7213980FDF001AE57D /* libpng-1.5.1-sm5.a */,
 				2B17ABC013981521001AE57D /* libglew-sm5.a */,
 				2B17ABE013981756001AE57D /* libpcre-sm5.a */,
-				2BD6E10C13D78B36008443DB /* libzlib-sm5.a */,
+				2BD6E10C13D78B36008443DB /* libzlib.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -5852,7 +5852,7 @@
 			);
 			name = zlib;
 			productName = zlib;
-			productReference = 2BD6E10C13D78B36008443DB /* libzlib-sm5.a */;
+			productReference = 2BD6E10C13D78B36008443DB /* libzlib.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 		AA29CC240558741A00961A51 /* stepmania */ = {
@@ -8037,8 +8037,6 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INSTALL_PATH = /usr/local/lib;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -8061,8 +8059,6 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INSTALL_PATH = /usr/local/lib;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -8085,8 +8081,6 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INSTALL_PATH = /usr/local/lib;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -8112,8 +8106,6 @@
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PRECOMPILE_PREFIX_HEADER = "";
-				GCC_PREFIX_HEADER = "";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = NO;
@@ -8245,7 +8237,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = "DEBUG=1";
 				GCC_STRICT_ALIASING = YES;
 				GCC_UNROLL_LOOPS = YES;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_VERSION = "";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
 				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
@@ -8845,7 +8837,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_STRICT_ALIASING = YES;
 				GCC_UNROLL_LOOPS = YES;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_VERSION = "";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
 				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
@@ -9201,7 +9193,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_STRICT_ALIASING = YES;
 				GCC_UNROLL_LOOPS = YES;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_VERSION = "";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
 				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
@@ -9333,7 +9325,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_STRICT_ALIASING = YES;
 				GCC_UNROLL_LOOPS = YES;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_VERSION = "";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
 				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
