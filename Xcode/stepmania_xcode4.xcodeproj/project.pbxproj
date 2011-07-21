@@ -1873,7 +1873,7 @@
 		2B7DA68C13D7AEF10045BBD6 /* zlib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = zlib.h; sourceTree = "<group>"; };
 		2B7DA68E13D7AEF10045BBD6 /* zlibPriv.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = zlibPriv.h; sourceTree = "<group>"; };
 		2B7DA68F13D7AEF10045BBD6 /* zlib.cp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = zlib.cp; sourceTree = "<group>"; };
-		2B7DA69913D7AF5B0045BBD6 /* libzlib.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libzlib.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		2B7DA69913D7AF5B0045BBD6 /* libzlib.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = libzlib.a; path = "libzlib-sm5.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2B7DA69E13D7B0620045BBD6 /* adler32.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = adler32.c; path = ../extern/zlib/adler32.c; sourceTree = "<group>"; };
 		2B7DA69F13D7B0620045BBD6 /* compress.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = compress.c; path = ../extern/zlib/compress.c; sourceTree = "<group>"; };
 		2B7DA6A013D7B0620045BBD6 /* crc32.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = crc32.c; path = ../extern/zlib/crc32.c; sourceTree = "<group>"; };
@@ -8099,7 +8099,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				ONLY_LINK_ESSENTIAL_SYMBOLS = YES;
 				PRESERVE_DEAD_CODE_INITS_AND_TERMS = YES;
-				SDKROOT = macosx;
+				SDKROOT = macosx10.5;
 				SHARED_PRECOMPS_DIR = "/Library/Caches/com.apple.Xcode.$(UID)/SharedPrecompiledHeaders/$(PRODUCT_NAME)/$(CONFIGURATION)";
 				STRIP_INSTALLED_PRODUCT = NO;
 				STRIP_STYLE = "non-global";
@@ -8527,7 +8527,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				ONLY_LINK_ESSENTIAL_SYMBOLS = YES;
 				PRESERVE_DEAD_CODE_INITS_AND_TERMS = YES;
-				SDKROOT = macosx;
+				SDKROOT = macosx10.5;
 				SHARED_PRECOMPS_DIR = "/Library/Caches/com.apple.Xcode.$(UID)/SharedPrecompiledHeaders/$(PRODUCT_NAME)/$(CONFIGURATION)";
 				STRIP_INSTALLED_PRODUCT = YES;
 				STRIP_STYLE = "non-global";
@@ -8885,7 +8885,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				ONLY_LINK_ESSENTIAL_SYMBOLS = YES;
 				PRESERVE_DEAD_CODE_INITS_AND_TERMS = YES;
-				SDKROOT = macosx;
+				SDKROOT = macosx10.5;
 				SHARED_PRECOMPS_DIR = "/Library/Caches/com.apple.Xcode.$(UID)/SharedPrecompiledHeaders/$(PRODUCT_NAME)/$(CONFIGURATION)";
 				STRIP_INSTALLED_PRODUCT = YES;
 				STRIP_STYLE = "non-global";
@@ -8986,6 +8986,7 @@
 				2B7DA69D13D7AF5B0045BBD6 /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Native;
 		};
 		AA40D52709A08D650068C0D5 /* Build configuration list for PBXNativeTarget "stepmania-bare" */ = {
 			isa = XCConfigurationList;
