@@ -4,9 +4,6 @@ sm-ssc is copyright © AJ Kelly, Midiman, shakesoda (referred to as
 "the spinal shark collective" hereafter), and other contributors.
 All rights reserved.
 
-"sm-ssc" is defined as the changes made to StepMania that do not make their
-way back into the main StepMania repository for various reasons.
-
 Permission is hereby granted, free of charge, to any person obtaining a
 copy of this software and associated documentation files (the
 "Software"), to deal in the Software without restriction, including
