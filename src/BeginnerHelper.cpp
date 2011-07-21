@@ -12,12 +12,14 @@
 #include "ScreenDimensions.h"
 #include "ThemeManager.h"
 
-// "PLAYER_X" offsets are relative to the pad. ex: Setting this to 10, and the HELPER to 300, will put the dancer at 310
+// "PLAYER_X" offsets are relative to the pad.
+// ex: Setting this to 10, and the HELPER to 300, will put the dancer at 310.
 #define PLAYER_X( px )		THEME->GetMetricF("BeginnerHelper",ssprintf("Player%dX",px+1))
 #define PLAYER_ANGLE		THEME->GetMetricF("BeginnerHelper","PlayerAngle")
 #define DANCEPAD_ANGLE		THEME->GetMetricF("BeginnerHelper","DancePadAngle")
 
-// "HELPER" offsets effect the pad/dancer as a whole. Their relative Y cooridinates are hard-coded for each other.
+// "HELPER" offsets effect the pad/dancer as a whole.
+// Their relative Y cooridinates are hard-coded for each other.
 #define HELPER_X			THEME->GetMetricF("BeginnerHelper","HelperX")
 #define HELPER_Y			THEME->GetMetricF("BeginnerHelper","HelperY")
 
@@ -166,11 +168,12 @@ bool BeginnerHelper::Init( int iDancePadType )
 		m_pDancer[pl]->LoadMilkshapeAsciiBones( "rest",		Character->GetRestAnimationPath() );
 		m_pDancer[pl]->SetDefaultAnimation( "rest" );		// Stay bouncing after a step has finished animating
 		m_pDancer[pl]->PlayAnimation( "rest" );
+		m_pDancer[pl]->SetCullMode( CULL_NONE );		// many of the models floating around have the vertex order flipped
+		// todo: remove these hardcoded commands -aj
 		m_pDancer[pl]->SetRotationX( PLAYER_ANGLE );
 		m_pDancer[pl]->SetX( HELPER_X+PLAYER_X(pl) );
 		m_pDancer[pl]->SetY( HELPER_Y+10 );
 		m_pDancer[pl]->SetZoom( 20 );
-		m_pDancer[pl]->SetCullMode( CULL_NONE );		// many of the models floating around have the vertex order flipped
 	}
 
 	m_bInitialized = true;
