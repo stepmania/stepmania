@@ -1904,7 +1904,7 @@
 		2BD06FE1137240CF0018CB9F /* json_value.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = json_value.cpp; path = ../extern/jsoncpp/src/lib_json/json_value.cpp; sourceTree = SOURCE_ROOT; };
 		2BD06FE2137240CF0018CB9F /* json_valueiterator.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = json_valueiterator.inl; path = ../extern/jsoncpp/src/lib_json/json_valueiterator.inl; sourceTree = SOURCE_ROOT; };
 		2BD06FE3137240CF0018CB9F /* json_writer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = json_writer.cpp; path = ../extern/jsoncpp/src/lib_json/json_writer.cpp; sourceTree = SOURCE_ROOT; };
-		2BD6E10C13D78B36008443DB /* libzlib.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libzlib.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		2BD6E10C13D78B36008443DB /* libzlib-sm5.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libzlib-sm5.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2BD6E11713D78BAE008443DB /* zconf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = zconf.h; sourceTree = "<group>"; };
 		2BD6E11913D78BAE008443DB /* zlib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = zlib.h; sourceTree = "<group>"; };
 		2BD6E11E13D78C67008443DB /* zdll.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = zdll.lib; sourceTree = "<group>"; };
@@ -3315,7 +3315,7 @@
 				2B17AB7213980FDF001AE57D /* libpng-1.5.1-sm5.a */,
 				2B17ABC013981521001AE57D /* libglew-sm5.a */,
 				2B17ABE013981756001AE57D /* libpcre-sm5.a */,
-				2BD6E10C13D78B36008443DB /* libzlib.a */,
+				2BD6E10C13D78B36008443DB /* libzlib-sm5.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -5852,7 +5852,7 @@
 			);
 			name = zlib;
 			productName = zlib;
-			productReference = 2BD6E10C13D78B36008443DB /* libzlib.a */;
+			productReference = 2BD6E10C13D78B36008443DB /* libzlib-sm5.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 		AA29CC240558741A00961A51 /* stepmania */ = {
