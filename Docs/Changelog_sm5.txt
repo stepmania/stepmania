@@ -8,6 +8,11 @@ ________________________________________________________________________________
 StepMania 5.0 ????????? | 20110???
 --------------------------------------------------------------------------------
 
+2011/07/21
+----------
+* [BeginnerHelper] Removed DancePadAngle metric in favor of DancePadOnCommand.
+  The same goes for PlayerAngle, rotation is now handled in PlayerP1/2OnCommand. [AJ]
+
 2011/07/20
 ----------
 * [Win32/CrashHandlerChild] Crashlog and log now open in the player's default
