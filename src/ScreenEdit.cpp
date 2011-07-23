@@ -2700,7 +2700,7 @@ void ScreenEdit::TransitionEditState( EditState em )
 		
 		if (!GAMESTATE->m_bIsUsingStepTiming)
 		{
-			backupStepTiming = GetAppropriateTiming();
+			backupStepTiming = GAMESTATE->m_pCurSteps[PLAYER_1]->m_Timing;
 			GAMESTATE->m_pCurSteps[PLAYER_1]->m_Timing = GAMESTATE->m_pCurSong->m_SongTiming;
 		}
 
