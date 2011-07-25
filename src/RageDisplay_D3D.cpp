@@ -13,17 +13,16 @@
 #include "DisplayResolutions.h"
 #include "LocalizedString.h"
 
-#include <D3D8.h>
-#include <D3dx8math.h>
-#include <D3DX8Core.h>
+#include <d3d8.h>
+#include <dxerr8.h>
 
 #include "archutils/Win32/GraphicsWindow.h"
 
 // Static libraries
 // load Windows D3D8 dynamically
 #if defined(_MSC_VER)
-	#pragma comment(lib, "D3dx8.lib")
-	#pragma comment(lib, "Dxerr8.lib")
+	#pragma comment(lib, "d3d8.lib")
+	#pragma comment(lib, "DxErr8.lib")
 #endif
 
 #include <math.h>
@@ -31,9 +30,7 @@
 
 RString GetErrorString( HRESULT hr )
 {
-	char szError[1024] = "";
-	D3DXGetErrorString( hr, szError, sizeof(szError) );
-	return szError;
+	return DXGetErrorString8(hr);
 }
 
 // Globals
@@ -639,8 +636,11 @@ RageSurface* RageDisplay_D3D::CreateScreenshot()
 	// Copy the back buffer into a surface of a type we support.
 	IDirect3DSurface8* pCopy;
 	g_pd3dDevice->CreateImageSurface( desc.Width, desc.Height, D3DFMT_A8R8G8B8, &pCopy );
-
-	D3DXLoadSurfaceFromSurface( pCopy, NULL, NULL, pSurface, NULL, NULL, D3DX_DEFAULT, 0 );
+	
+	// Aldo_MX: D3DXLoadSurfaceFromSurface requires d3dx8core.h, I replaced it with CopyRects to
+	// remove this dependency so its possible to compile SM with any DirectX SDK up to Aug 2007
+	//D3DXLoadSurfaceFromSurface( pCopy, NULL, NULL, pSurface, NULL, NULL, D3DX_DEFAULT, 0 );
+	g_pd3dDevice->CopyRects( pSurface, NULL, 0, pCopy, NULL );
 
 	pSurface->Release();
 
