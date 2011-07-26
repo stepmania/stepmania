@@ -1861,7 +1861,6 @@
 		2B17AB7213980FDF001AE57D /* libpng-1.5.1-sm5.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libpng-1.5.1-sm5.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2B17ABC013981521001AE57D /* libglew-sm5.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libglew-sm5.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2B17ABE013981756001AE57D /* libpcre-sm5.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libpcre-sm5.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		2B23246213DE001D005FA074 /* sm-ssc.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = "sm-ssc.app"; path = "/Users/wolfman2000/Repositories/sm-ssc/sm-ssc.app"; sourceTree = "<absolute>"; };
 		2B30D6801315EA7E00044B68 /* MouseDevice.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MouseDevice.cpp; sourceTree = "<group>"; };
 		2B30D6811315EA7E00044B68 /* MouseDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MouseDevice.h; sourceTree = "<group>"; };
 		2B43509313949F37006FA051 /* TimingSegments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TimingSegments.h; path = ../src/TimingSegments.h; sourceTree = SOURCE_ROOT; };
@@ -3118,6 +3117,7 @@
 		AAFF55220549F43A00D02EE9 /* ComboGraph.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ComboGraph.h; path = ../src/ComboGraph.h; sourceTree = "<group>"; };
 		AAFF5541054E736D00D02EE9 /* Attack.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = Attack.cpp; path = ../src/Attack.cpp; sourceTree = "<group>"; };
 		AAFF5542054E736D00D02EE9 /* Attack.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = Attack.h; path = ../src/Attack.h; sourceTree = "<group>"; };
+		B7055CE913DF263F00732AED /* sm-ssc.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "sm-ssc.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B71A60BE139B41DB00183A27 /* InGameLoadingWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = InGameLoadingWindow.cpp; path = ../src/InGameLoadingWindow.cpp; sourceTree = "<group>"; };
 		B71A60BF139B41DB00183A27 /* InGameLoadingWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InGameLoadingWindow.h; path = ../src/InGameLoadingWindow.h; sourceTree = "<group>"; };
 		B75CE3B3137963350076A82D /* SongPosition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SongPosition.h; path = ../src/SongPosition.h; sourceTree = SOURCE_ROOT; };
@@ -3315,6 +3315,7 @@
 				2B17ABC013981521001AE57D /* libglew-sm5.a */,
 				2B17ABE013981756001AE57D /* libpcre-sm5.a */,
 				2BD6E10C13D78B36008443DB /* libzlib-sm5.a */,
+				B7055CE913DF263F00732AED /* sm-ssc.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -5909,7 +5910,7 @@
 			name = "stepmania-bare";
 			productInstallPath = "$(HOME)/Applications";
 			productName = "SDL App";
-			productReference = 2B23246213DE001D005FA074 /* sm-ssc.app */;
+			productReference = B7055CE913DF263F00732AED /* sm-ssc.app */;
 			productType = "com.apple.product-type.application";
 		};
 		AA7A2B930AE09B520054C5BA /* lua */ = {

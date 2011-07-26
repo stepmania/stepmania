@@ -977,28 +977,16 @@ float TimingData::GetElapsedTimeFromBeatNoOffset( float fBeat ) const
 
 float TimingData::GetDisplayedBeat( float fBeat ) const
 {
-	const vector<TimingSegment *> &scrolls = this->allTimingSegments[SEGMENT_SCROLL];
-	vector<TimingSegment *>::const_iterator it = scrolls.begin(), end = scrolls.end();
 	float fOutBeat = 0;
-	for( it = it + 1; it != end; it++ )
+	unsigned i;
+	const vector<TimingSegment *> &scrolls = this->allTimingSegments[SEGMENT_SCROLL];
+	for( i=0; i<scrolls.size()-1; i++ )
 	{
-		ASSERT((*(it-1))->GetBeat() <= (*it)->GetBeat());
-	}
-	it = scrolls.begin();
-	for( ; it != end; it++ )
-	{
-		if( it+1 == end || fBeat <= (*(it+1))->GetBeat() )
-		{
-			fOutBeat += ( fBeat - (*it)->GetBeat() ) *
-				static_cast<ScrollSegment *>(*it)->GetRatio();
+		if( scrolls[i+1]->GetBeat() > fBeat )
 			break;
-		}
-		else
-		{
-			fOutBeat += ( (*(it+1))->GetBeat() - (*it)->GetBeat() ) *
-				static_cast<ScrollSegment *>(*it)->GetRatio();
-		}
+		fOutBeat += (scrolls[i+1]->GetBeat() - scrolls[i]->GetBeat()) * static_cast<ScrollSegment *>(scrolls[i])->GetRatio();
 	}
+	fOutBeat += (fBeat - scrolls[i]->GetBeat()) * static_cast<ScrollSegment *>(scrolls[i])->GetRatio();
 	return fOutBeat;
 }
 
