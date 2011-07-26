@@ -17,6 +17,18 @@ TimingData::~TimingData()
 {
 }
 
+bool TimingData::empty() const
+{
+	for (unsigned i = 0; i < NUM_TimingSegmentType; i++)
+	{
+		for (unsigned j = 0; j < this->allTimingSegments[i].size(); j++)
+		{
+			return false;
+		}
+	}
+	return true;
+}
+
 TimingData TimingData::CopyRange(int startRow, int endRow)
 {
 	TimingData tmp;

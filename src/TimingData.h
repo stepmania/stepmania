@@ -45,6 +45,8 @@ public:
 		return this->GetPreviousSegmentBeatAtRow(tst, BeatToNoteRow(beat), isDelay);
 	}
 	
+	bool empty() const;
+	
 	/**
 	 * @brief Sets up initial timing data with a defined offset.
 	 * @param fOffset the offset from the 0th beat. */
