@@ -1011,13 +1011,11 @@ void TimingData::ScaleRegion( float fScale, int iStartIndex, int iEndIndex, bool
 	int length = iEndIndex - iStartIndex;
 	int newLength = lrintf( fScale * length );
 	
-	// TODO: Confirm this works as intended.
 	for (unsigned i = 0; i < NUM_TimingSegmentType; i++)
 	{
-		vector<TimingSegment *> &segs = this->allTimingSegments[i];
-		for (unsigned j = 0; j < segs.size(); j++)
+		for (unsigned j = 0; j < this->allTimingSegments[i].size(); j++)
 		{
-			segs[i][j].Scale(iStartIndex, length, newLength);
+			this->allTimingSegments[i][j]->Scale(iStartIndex, length, newLength);
 		}
 	}
 	
