@@ -21,10 +21,8 @@ bool TimingData::empty() const
 {
 	for (unsigned i = 0; i < NUM_TimingSegmentType; i++)
 	{
-		for (unsigned j = 0; j < this->allTimingSegments[i].size(); j++)
-		{
+		if (this->allTimingSegments[i].size() > 0)
 			return false;
-		}
 	}
 	return true;
 }
