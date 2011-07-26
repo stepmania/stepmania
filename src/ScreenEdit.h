@@ -280,6 +280,8 @@ protected:
 	 * @brief Allow for copying and pasting a song's (or steps's) full Timing Data. */
 	TimingData		clipboardFullTiming;
 	
+	TimingData clipboardTiming;
+	
 	/** @brief The current TapNote that would be inserted. */
 	TapNote			m_selectedTap;
 
@@ -397,6 +399,7 @@ public:
 	{
 		cut, /**< Cut the notes. */
 		copy, /**< Copy the notes. */
+		copy_partial_timing, /**< Copy selected timing data. */
 		clear, /**< Erase the notes, without putting them in the clipboard. */
 		quantize, /**< Sync the notes to an exact level. */
 		turn, /**< Rotate the notes. */
@@ -577,8 +580,8 @@ public:
 		speed_mode,
 		scroll,
 		fake,
-		copy_timing,
-		paste_timing,
+		copy_full_timing,
+		paste_full_timing,
 		erase_step_timing,
 		NUM_TIMING_DATA_INFORMATION_CHOICES
 	};

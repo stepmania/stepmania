@@ -540,6 +540,8 @@ static MenuDef g_AlterMenu(
 	      EditMode_Practice, true, true, 0, NULL ),
    MenuRowDef(ScreenEdit::copy,				"Copy",					true, 
 	      EditMode_Practice, true, true, 0, NULL ),
+   MenuRowDef(ScreenEdit::copy_partial_timing,	"Copy Partial Timing",	true, 
+		  EditMode_Practice, true, true, 0, NULL ),					   
    MenuRowDef(ScreenEdit::clear,			"Clear area",				true, 
 	      EditMode_Practice, true, true, 0, NULL ),
    MenuRowDef(ScreenEdit::quantize,			"Quantize",				true, 
@@ -668,8 +670,8 @@ static MenuDef g_TimingDataInformation(
         MenuRowDef( ScreenEdit::speed_mode,			"Edit speed (mode)",		true, EditMode_Full, true, true, 0, "Beats", "Seconds" ),
         MenuRowDef( ScreenEdit::scroll,			"Edit scrolling factor",		true, EditMode_Full, true, true, 0, NULL ),
         MenuRowDef( ScreenEdit::fake,				"Edit fake",			true, EditMode_Full, true, true, 0, NULL ),
-        MenuRowDef( ScreenEdit::copy_timing,		"Copy timing data",			true, EditMode_Full, true, true, 0, NULL ),
-        MenuRowDef( ScreenEdit::paste_timing,		"Paste timing data",			true, EditMode_Full, true, true, 0, NULL ),
+        MenuRowDef( ScreenEdit::copy_full_timing,		"Copy timing data",			true, EditMode_Full, true, true, 0, NULL ),
+        MenuRowDef( ScreenEdit::paste_full_timing,		"Paste timing data",			true, EditMode_Full, true, true, 0, NULL ),
         MenuRowDef( ScreenEdit::erase_step_timing,		"Erase step timing",		true, EditMode_Full, true, true, 0, NULL )
 );
 
@@ -3888,6 +3890,9 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 
 void ScreenEdit::HandleAlterMenuChoice(AlterMenuChoice c, const vector<int> &iAnswers, bool bAllowUndo)
 {
+	ASSERT_M(m_NoteFieldEdit.m_iBeginMarker!=-1 && m_NoteFieldEdit.m_iEndMarker!=-1,
+			 "You can only alter a selection of notes with a selection to begin with!");
+	
 	bool bSaveUndo = true;
 	switch (c)
 	{
@@ -3924,14 +3929,19 @@ void ScreenEdit::HandleAlterMenuChoice(AlterMenuChoice c, const vector<int> &iAn
 			break;
 		case copy:
 		{
-			ASSERT( m_NoteFieldEdit.m_iBeginMarker!=-1 && m_NoteFieldEdit.m_iEndMarker!=-1 );
+			
 			m_Clipboard.ClearAll();
 			m_Clipboard.CopyRange( m_NoteDataEdit, m_NoteFieldEdit.m_iBeginMarker, m_NoteFieldEdit.m_iEndMarker );
 		}
 			break;
+		case copy_partial_timing:
+		{
+			this->clipboardTiming = GetAppropriateTiming().CopyRange(m_NoteFieldEdit.m_iBeginMarker,
+																	 m_NoteFieldEdit.m_iEndMarker);
+			break;
+		}
 		case clear:
 		{
-			ASSERT( m_NoteFieldEdit.m_iBeginMarker!=-1 && m_NoteFieldEdit.m_iEndMarker!=-1 );
 			m_NoteDataEdit.ClearRange( m_NoteFieldEdit.m_iBeginMarker, m_NoteFieldEdit.m_iEndMarker );
 		}
 			break;
@@ -4068,20 +4078,17 @@ void ScreenEdit::HandleAlterMenuChoice(AlterMenuChoice c, const vector<int> &iAn
 		}
 			
 		case play:
-			ASSERT( m_NoteFieldEdit.m_iBeginMarker!=-1 && m_NoteFieldEdit.m_iEndMarker!=-1 );
 			m_iStartPlayingAt = m_NoteFieldEdit.m_iBeginMarker;
 			m_iStopPlayingAt = m_NoteFieldEdit.m_iEndMarker;
 			TransitionEditState( STATE_PLAYING );
 			break;
 		case record:
-			ASSERT( m_NoteFieldEdit.m_iBeginMarker!=-1 && m_NoteFieldEdit.m_iEndMarker!=-1 );
 			m_iStartPlayingAt = m_NoteFieldEdit.m_iBeginMarker;
 			m_iStopPlayingAt = m_NoteFieldEdit.m_iEndMarker;
 			TransitionEditState( STATE_RECORDING );
 			break;
 		case preview_designation:
 		{
-			ASSERT( m_NoteFieldEdit.m_iBeginMarker!=-1 && m_NoteFieldEdit.m_iEndMarker!=-1 );
 			float fMarkerStart = GetAppropriateTiming().GetElapsedTimeFromBeat( NoteRowToBeat(m_NoteFieldEdit.m_iBeginMarker) );
 			float fMarkerEnd = GetAppropriateTiming().GetElapsedTimeFromBeat( NoteRowToBeat(m_NoteFieldEdit.m_iEndMarker) );
 			GAMESTATE->m_pCurSong->m_fMusicSampleStartSeconds = fMarkerStart;
@@ -4090,7 +4097,6 @@ void ScreenEdit::HandleAlterMenuChoice(AlterMenuChoice c, const vector<int> &iAn
 		}
 		case convert_to_pause:
 		{
-			ASSERT_M( m_NoteFieldEdit.m_iBeginMarker!=-1 && m_NoteFieldEdit.m_iEndMarker!=-1, "Attempted to convert beats outside the notefield to pauses!" );
 			float fMarkerStart = GetAppropriateTiming().GetElapsedTimeFromBeat( NoteRowToBeat(m_NoteFieldEdit.m_iBeginMarker) );
 			float fMarkerEnd = GetAppropriateTiming().GetElapsedTimeFromBeat( NoteRowToBeat(m_NoteFieldEdit.m_iEndMarker) );
 			
@@ -4113,7 +4119,6 @@ void ScreenEdit::HandleAlterMenuChoice(AlterMenuChoice c, const vector<int> &iAn
 		}
 		case convert_to_delay:
 		{
-			ASSERT_M( m_NoteFieldEdit.m_iBeginMarker!=-1 && m_NoteFieldEdit.m_iEndMarker!=-1, "Attempted to convert beats outside the notefield to pauses!" );
 			float fMarkerStart = GetAppropriateTiming().GetElapsedTimeFromBeat( NoteRowToBeat(m_NoteFieldEdit.m_iBeginMarker) );
 			float fMarkerEnd = GetAppropriateTiming().GetElapsedTimeFromBeat( NoteRowToBeat(m_NoteFieldEdit.m_iEndMarker) );
 			
@@ -4218,6 +4223,7 @@ void ScreenEdit::HandleAlterMenuChoice(AlterMenuChoice c, const vector<int> &iAn
 						TapNote nTap = tn;
 						nTap.pn = nPN;
 						StepsType curType = GAMESTATE->m_pCurSteps[PLAYER_1]->m_StepsType;
+						// TODO: Find a better way to do this.
 						if (curType == StepsType_dance_routine)
 						{
 							nTrack = tracks - t - 1;
@@ -4665,12 +4671,12 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 			);
 			break;
 		}
-	case copy_timing:
+	case copy_full_timing:
 	{
 		clipboardFullTiming = GetAppropriateTiming();
 		break;
 	}
-	case paste_timing:
+	case paste_full_timing:
 	{
 		if (GAMESTATE->m_bIsUsingStepTiming)
 		{
