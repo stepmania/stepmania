@@ -29,22 +29,83 @@ bool TimingData::empty() const
 
 TimingData TimingData::CopyRange(int startRow, int endRow) const
 {
-	TimingData tmp;
+	TimingData ret;
 	
-	for (unsigned i = 0; i < NUM_TimingSegmentType; i++)
+	FOREACH_ENUM(TimingSegmentType, tst)
 	{
-		for (unsigned j = 0; j < this->allTimingSegments[i].size(); j++)
+		unsigned cnt = 0;
+		for (unsigned j = 0; j < this->allTimingSegments[tst].size(); j++)
 		{
-			int row = this->allTimingSegments[i][j]->GetRow();
+			int row = this->allTimingSegments[tst][j]->GetRow();
 			if (row >= startRow && row < endRow)
 			{
-				tmp.AddSegment(static_cast<TimingSegmentType>(i),
-							   this->allTimingSegments[i][j]);
+				// TODO: This REALLY needs improving.
+				TimingSegment * org = this->allTimingSegments[tst][j];
+				TimingSegment * cpy;
+				
+				switch (tst)
+				{
+					case SEGMENT_BPM:
+					{
+						cpy = new BPMSegment(*(static_cast<BPMSegment *>(org)));
+						break;
+					}
+					case SEGMENT_STOP_DELAY:
+					{
+						cpy = new StopSegment(*(static_cast<StopSegment *>(org)));
+						break;
+					}
+					case SEGMENT_TIME_SIG:
+					{
+						cpy = new TimeSignatureSegment(*(static_cast<TimeSignatureSegment *>(org)));
+						break;
+					}
+					case SEGMENT_WARP:
+					{
+						cpy = new WarpSegment(*(static_cast<WarpSegment *>(org)));
+						break;
+					}
+					case SEGMENT_LABEL:
+					{
+						cpy = new LabelSegment(*(static_cast<LabelSegment *>(org)));
+						break;
+					}
+					case SEGMENT_TICKCOUNT:
+					{
+						cpy = new TickcountSegment(*(static_cast<TickcountSegment *>(org)));
+						break;
+					}
+					case SEGMENT_COMBO:
+					{
+						cpy = new ComboSegment(*(static_cast<ComboSegment *>(org)));
+						break;
+					}
+					case SEGMENT_SPEED:
+					{
+						cpy = new SpeedSegment(*(static_cast<SpeedSegment *>(org)));
+						break;
+					}
+					case SEGMENT_SCROLL:
+					{
+						cpy = new ScrollSegment(*(static_cast<ScrollSegment *>(org)));
+						break;
+					}
+					case SEGMENT_FAKE:
+					{
+						cpy = new FakeSegment(*(static_cast<FakeSegment *>(org)));
+						break;
+					}
+					default: FAIL_M(ssprintf("An unknown timing segment type %d can't be copied over!", tst));
+				}
+				// reset the rows as if startRow was beat 0.
+				cpy->SetRow(org->GetRow() - startRow);
+				ret.AddSegment(tst, cpy);
+				cnt++;
 			}
 		}
 	}
 	
-	return tmp;
+	return ret;
 }
 
 void TimingData::GetActualBPM( float &fMinBPMOut, float &fMaxBPMOut, float highest ) const
@@ -655,7 +716,6 @@ bool TimingData::IsFakeAtRow( int iNoteRow ) const
 BPMSegment* TimingData::GetBPMSegmentAtRow( int iNoteRow )
 {
 	vector<TimingSegment *> &bpms = this->allTimingSegments[SEGMENT_BPM];
-	static BPMSegment empty;
 	if( bpms.empty() )
 		return new BPMSegment();
 

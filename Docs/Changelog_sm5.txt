@@ -8,6 +8,12 @@ ________________________________________________________________________________
 StepMania 5.0 ????????? | 20110???
 --------------------------------------------------------------------------------
 
+2011/07/26
+----------
+* [ScreenEdit] Add a semi working implementation of the often requested
+  copy/paste selected timing data feature. This should make it easier for
+  some charters. [Wolfman2000]
+
 2011/07/21
 ----------
 * [BeginnerHelper] Removed DancePadAngle metric in favor of DancePadOnCommand.
