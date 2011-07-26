@@ -29,7 +29,7 @@ bool TimingData::empty() const
 	return true;
 }
 
-TimingData TimingData::CopyRange(int startRow, int endRow)
+TimingData TimingData::CopyRange(int startRow, int endRow) const
 {
 	TimingData tmp;
 	

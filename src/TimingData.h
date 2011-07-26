@@ -54,7 +54,7 @@ public:
 	
 	~TimingData();
 	
-	TimingData CopyRange(int startRow, int endRow);
+	TimingData CopyRange(int startRow, int endRow) const;
 	/**
 	 * @brief Gets the actual BPM of the song,
 	 * while respecting a limit.
