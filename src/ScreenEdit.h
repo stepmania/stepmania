@@ -277,10 +277,8 @@ protected:
 	TimingData		backupStepTiming;
 	
 	/**
-	 * @brief Have a backup of the TimingData of the player's choice.
-	 *
-	 * This will be used for copying and pasting as required. */
-	TimingData		clipboardTiming;
+	 * @brief Allow for copying and pasting a song's (or steps's) full Timing Data. */
+	TimingData		clipboardFullTiming;
 	
 	/** @brief The current TapNote that would be inserted. */
 	TapNote			m_selectedTap;

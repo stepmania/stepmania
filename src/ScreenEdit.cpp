@@ -908,7 +908,7 @@ void ScreenEdit::Init()
 
 	m_Clipboard.SetNumTracks( m_NoteDataEdit.GetNumTracks() );
 	
-	clipboardTiming = GAMESTATE->m_pCurSong->m_SongTiming; // always have a backup.
+	clipboardFullTiming = GAMESTATE->m_pCurSong->m_SongTiming; // always have a backup.
 
 	m_bHasUndo = false;
 	m_Undo.SetNumTracks( m_NoteDataEdit.GetNumTracks() );
@@ -4667,18 +4667,18 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 		}
 	case copy_timing:
 	{
-		clipboardTiming = GetAppropriateTiming();
+		clipboardFullTiming = GetAppropriateTiming();
 		break;
 	}
 	case paste_timing:
 	{
 		if (GAMESTATE->m_bIsUsingStepTiming)
 		{
-			GAMESTATE->m_pCurSteps[PLAYER_1]->m_Timing = clipboardTiming;
+			GAMESTATE->m_pCurSteps[PLAYER_1]->m_Timing = clipboardFullTiming;
 		}
 		else
 		{
-			GAMESTATE->m_pCurSong->m_SongTiming = clipboardTiming;
+			GAMESTATE->m_pCurSong->m_SongTiming = clipboardFullTiming;
 		}
 		SetDirty(true);
 		break;
