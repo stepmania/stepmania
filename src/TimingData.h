@@ -51,6 +51,8 @@ public:
 	TimingData(float fOffset = 0);
 	
 	~TimingData();
+	
+	TimingData CopyRange(int startRow, int endRow);
 	/**
 	 * @brief Gets the actual BPM of the song,
 	 * while respecting a limit.

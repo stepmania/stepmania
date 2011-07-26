@@ -17,6 +17,26 @@ TimingData::~TimingData()
 {
 }
 
+TimingData TimingData::CopyRange(int startRow, int endRow)
+{
+	TimingData tmp;
+	
+	for (unsigned i = 0; i < NUM_TimingSegmentType; i++)
+	{
+		for (unsigned j = 0; j < this->allTimingSegments[i].size(); j++)
+		{
+			int row = this->allTimingSegments[i][j]->GetRow();
+			if (row >= startRow && row < endRow)
+			{
+				tmp.AddSegment(static_cast<TimingSegmentType>(i),
+							   this->allTimingSegments[i][j]);
+			}
+		}
+	}
+	
+	return tmp;
+}
+
 void TimingData::GetActualBPM( float &fMinBPMOut, float &fMaxBPMOut, float highest ) const
 {
 	fMinBPMOut = FLT_MAX;
