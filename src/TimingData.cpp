@@ -11,7 +11,6 @@
 TimingData::TimingData(float fOffset) : 
 	m_fBeat0OffsetInSeconds(fOffset)
 {
-	// allTimingSegments[SEGMENT_BPM] = new vector<BPMSegment>();
 }
 
 TimingData::~TimingData()
