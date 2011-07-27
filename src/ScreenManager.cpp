@@ -829,41 +829,22 @@ void ScreenManager::ZeroNextUpdate()
 	DISPLAY->ResetStats();
 }
 
-void ScreenManager::PlayInvalidSound()
-{
-	RageSoundParams p;
-	p.m_bIsCriticalSound = true;
-	m_soundInvalid.Play( &p );
+/** @brief Offer a quick way to play any critical sound. */
+#define PLAY_CRITICAL(snd) \
+{ \
+	RageSoundParams p; \
+	p.m_bIsCriticalSound = true; \
+	snd.Play(&p); \
 }
 
 /* Always play these sounds, even if we're in a silent attract loop. */
-void ScreenManager::PlayStartSound()
-{
-	RageSoundParams p;
-	p.m_bIsCriticalSound = true;
-	m_soundStart.Play( &p );
-}
+void ScreenManager::PlayInvalidSound()  { PLAY_CRITICAL(m_soundInvalid); }
+void ScreenManager::PlayStartSound()  { PLAY_CRITICAL(m_soundStart); }
+void ScreenManager::PlayCoinSound()    { PLAY_CRITICAL(m_soundCoin); }
+void ScreenManager::PlayCancelSound()  { PLAY_CRITICAL(m_soundCancel); }
+void ScreenManager::PlayScreenshotSound() { PLAY_CRITICAL(m_soundScreenshot); }
 
-void ScreenManager::PlayCoinSound()
-{
-	RageSoundParams p;
-	p.m_bIsCriticalSound = true;
-	m_soundCoin.Play( &p );
-}
-
-void ScreenManager::PlayCancelSound()
-{
-	RageSoundParams p;
-	p.m_bIsCriticalSound = true;
-	m_soundCancel.Play( &p );
-}
-
-void ScreenManager::PlayScreenshotSound()
-{
-	RageSoundParams p;
-	p.m_bIsCriticalSound = true;
-	m_soundScreenshot.Play( &p );
-}
+#undef PLAY_CRITICAL
 
 void ScreenManager::PlaySharedBackgroundOffCommand()
 {
