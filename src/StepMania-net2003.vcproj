@@ -1111,12 +1111,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="ScoreKeeper.h">
 			</File>
 			<File
-				RelativePath="ScoreKeeperGuitar.cpp">
-			</File>
-			<File
-				RelativePath="ScoreKeeperGuitar.h">
-			</File>
-			<File
 				RelativePath="ScoreKeeperNormal.cpp">
 			</File>
 			<File

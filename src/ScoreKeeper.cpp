@@ -29,7 +29,6 @@ void ScoreKeeper::GetScoreOfLastTapInRow( const NoteData &nd, int iRow,
 
 #include "ScoreKeeperNormal.h"
 #include "ScoreKeeperRave.h"
-#include "ScoreKeeperGuitar.h"
 #include "ScoreKeeperShared.h"
 
 ScoreKeeper* ScoreKeeper::MakeScoreKeeper( RString sClassName, PlayerState *pPlayerState, PlayerStageStats *pPlayerStageStats )
@@ -38,11 +37,9 @@ ScoreKeeper* ScoreKeeper::MakeScoreKeeper( RString sClassName, PlayerState *pPla
 		return new ScoreKeeperNormal( pPlayerState, pPlayerStageStats );
 	else if( sClassName == "ScoreKeeperRave" )
 		return new ScoreKeeperRave( pPlayerState, pPlayerStageStats );
-	else if( sClassName == "ScoreKeeperGuitar" )
-		return new ScoreKeeperGuitar( pPlayerState, pPlayerStageStats );
 	else if( sClassName == "ScoreKeeperShared" )
 		return new ScoreKeeperShared( pPlayerState, pPlayerStageStats );
-	FAIL_M( sClassName );
+	FAIL_M( ssprintf("Invalid ScoreKeeper named %s!", sClassName.c_str() ));
 }
 
 
