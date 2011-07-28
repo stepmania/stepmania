@@ -500,27 +500,35 @@ void NoteField::DrawBPMText( const float fBeat, const float fBPM )
 	m_textMeasureNumber.Draw();
 }
 
-void NoteField::DrawFreezeText( const float fBeat, const float fSecs, const float bDelay )
+void NoteField::DrawFreezeText( const float fBeat, const float fSecs )
 {
 	const float fYOffset	= ArrowEffects::GetYOffset( m_pPlayerState, 0, fBeat );
  	const float fYPos	= ArrowEffects::GetYPos(    m_pPlayerState, 0, fYOffset, m_fYReverseOffsetPixels );
 	const float fZoom	= ArrowEffects::GetZoom(    m_pPlayerState );
 	const float xBase	= GetWidth()/2.f;
-	const float xOffset	= (bDelay ? DELAY_OFFSETX : STOP_OFFSETX) * fZoom;
+	const float xOffset	= STOP_OFFSETX * fZoom;
 
 	m_textMeasureNumber.SetZoom( fZoom );
-	if(bDelay)
-	{
-		m_textMeasureNumber.SetHorizAlign( DELAY_IS_LEFT_SIDE ? align_right : align_left );
-		m_textMeasureNumber.SetDiffuse( DELAY_COLOR );
-		m_textMeasureNumber.SetXY( (DELAY_IS_LEFT_SIDE ? -xBase - xOffset : xBase + xOffset), fYPos );
-	}
-	else
-	{
-		m_textMeasureNumber.SetHorizAlign( STOP_IS_LEFT_SIDE ? align_right : align_left );
-		m_textMeasureNumber.SetDiffuse( STOP_COLOR );
-		m_textMeasureNumber.SetXY( (STOP_IS_LEFT_SIDE ? -xBase - xOffset : xBase + xOffset), fYPos );
-	}
+	m_textMeasureNumber.SetHorizAlign( STOP_IS_LEFT_SIDE ? align_right : align_left );
+	m_textMeasureNumber.SetDiffuse( STOP_COLOR );
+	m_textMeasureNumber.SetXY( (STOP_IS_LEFT_SIDE ? -xBase - xOffset : xBase + xOffset), fYPos );
+	m_textMeasureNumber.SetGlow( RageColor(1,1,1,RageFastCos(RageTimer::GetTimeSinceStartFast()*2)/2+0.5f) );
+	m_textMeasureNumber.SetText( ssprintf("%.3f", fSecs) );
+	m_textMeasureNumber.Draw();
+}
+
+void NoteField::DrawDelayText( const float fBeat, const float fSecs )
+{
+	const float fYOffset	= ArrowEffects::GetYOffset( m_pPlayerState, 0, fBeat );
+ 	const float fYPos	= ArrowEffects::GetYPos(    m_pPlayerState, 0, fYOffset, m_fYReverseOffsetPixels );
+	const float fZoom	= ArrowEffects::GetZoom(    m_pPlayerState );
+	const float xBase	= GetWidth()/2.f;
+	const float xOffset	= DELAY_OFFSETX * fZoom;
+	
+	m_textMeasureNumber.SetZoom( fZoom );
+	m_textMeasureNumber.SetHorizAlign( DELAY_IS_LEFT_SIDE ? align_right : align_left );
+	m_textMeasureNumber.SetDiffuse( DELAY_COLOR );
+	m_textMeasureNumber.SetXY( (DELAY_IS_LEFT_SIDE ? -xBase - xOffset : xBase + xOffset), fYPos );
 	m_textMeasureNumber.SetGlow( RageColor(1,1,1,RageFastCos(RageTimer::GetTimeSinceStartFast()*2)/2+0.5f) );
 	m_textMeasureNumber.SetText( ssprintf("%.3f", fSecs) );
 	m_textMeasureNumber.Draw();
@@ -926,14 +934,26 @@ void NoteField::DrawPrimitives()
 		}
 
 		// Freeze text
-		for (i = 0; i < segs[SEGMENT_STOP_DELAY].size(); i++)
+		for (i = 0; i < segs[SEGMENT_STOP].size(); i++)
 		{
-			StopSegment *seg = static_cast<StopSegment *>(segs[SEGMENT_STOP_DELAY][i]);
+			StopSegment *seg = static_cast<StopSegment *>(segs[SEGMENT_STOP][i]);
 			if( seg->GetRow() >= iFirstRowToDraw && seg->GetRow() <= iLastRowToDraw )
 			{
 				float fBeat = seg->GetBeat();
 				if( IS_ON_SCREEN(fBeat) )
-					DrawFreezeText( fBeat, seg->GetPause(), seg->GetDelay() );
+					DrawFreezeText( fBeat, seg->GetPause() );
+			}
+		}
+		
+		// Delay text
+		for (i = 0; i < segs[SEGMENT_DELAY].size(); i++)
+		{
+			DelaySegment *seg = static_cast<DelaySegment *>(segs[SEGMENT_DELAY][i]);
+			if( seg->GetRow() >= iFirstRowToDraw && seg->GetRow() <= iLastRowToDraw )
+			{
+				float fBeat = seg->GetBeat();
+				if( IS_ON_SCREEN(fBeat) )
+					DrawFreezeText( fBeat, seg->GetPause() );
 			}
 		}
 		
