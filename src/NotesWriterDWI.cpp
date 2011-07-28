@@ -123,9 +123,10 @@ static RString NotesToDWIString( const TapNote tnCols[6] )
 	{
 		switch( tnCols[col].type )
 		{
-		case TapNote::empty:
-		case TapNote::mine:
-			continue;
+			case TapNote::empty:
+			case TapNote::mine:
+				continue;
+			default: break;
 		}
 
 		if( tnCols[col].type == TapNote::hold_head )

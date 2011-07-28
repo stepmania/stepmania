@@ -813,12 +813,11 @@ class DebugLineProfileSlot : public IDebugLine
 	{
 		switch( g_ProfileSlot )
 		{
-		case ProfileSlot_Machine: return "Machine";
-		case ProfileSlot_Player1: return "Player 1";
-		case ProfileSlot_Player2: return "Player 2";
+			case ProfileSlot_Machine: return "Machine";
+			case ProfileSlot_Player1: return "Player 1";
+			case ProfileSlot_Player2: return "Player 2";
+			default: return RString();
 		}
-
-		return RString();
 	}
 	virtual bool IsEnabled() { return IsSelectProfilePersistent(); }
 	virtual RString GetPageName() const { return "Profiles"; }

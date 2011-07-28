@@ -932,7 +932,20 @@ static void ApplyLogPreferences()
 	Checkpoints::LogCheckpoints( PREFSMAN->m_bLogCheckpoints );
 }
 
-static LocalizedString COULDNT_OPEN_LOADING_WINDOW( "StepMania", "Couldn't open any loading windows." );
+static LocalizedString COULDNT_OPEN_LOADING_WINDOW( "LoadingWindow", "Couldn't open any loading windows." );
+static LocalizedString STARTING_SOUND ( "LoadingWindow", "Starting sound subsystem...");
+static LocalizedString INIT_BOOKKEEPER ( "LoadingWindow", "Initializing bookkeeper...");
+static LocalizedString START_LIGHTS ( "LoadingWindow", "Starting lights subsystem...");
+static LocalizedString LOAD_GAMETYPE ( "LoadingWindow", "Loading game type...");
+static LocalizedString BUILD_SONG_CACHE_INDEX ( "LoadingWindow", "Building song cache index...");
+static LocalizedString LOAD_BANNER_CACHE ( "LoadingWindow", "Loading banner cache...");
+static LocalizedString INIT_MEMCARD ( "LoadingWindow", "Initializing memory card system...");
+static LocalizedString INIT_CHARS ( "LoadingWindow", "Initializing character system...");
+static LocalizedString INIT_PROFILES ( "LoadingWindow", "Initializing profile system...");
+static LocalizedString UPDATE_POPULAR ( "LoadingWindow", "Updating popular song list...");
+static LocalizedString UPDATE_COURSE_RANKS ( "LoadingWindow", "Updating course rankings...");
+static LocalizedString INIT_STATICS ( "LoadingWindow", "Initializing statics manager...");
+static LocalizedString INIT_MESSAGE ( "LoadingWindow", "Initializing message system...");
 
 int main(int argc, char* argv[])
 {
@@ -1047,77 +1060,89 @@ int main(int argc, char* argv[])
 		GAMESTATE->m_bDopefish = true;
 
 	{
-		/* Now that THEME is loaded, load the icon for the current theme into
-		 * the loading window. */
+		/* Now that THEME is loaded, load the icon and splash for the current
+		 * theme into the loading window. */
 		RString sError;
 		RageSurface *pIcon = RageSurfaceUtils::LoadFile( THEME->GetPathG( "Common", "window icon" ), sError );
 		if( pIcon )
 			pLoadingWindow->SetIcon( pIcon );
 		delete pIcon;
+		pLoadingWindow->SetSplash( THEME->GetPathG("Common","splash") );
 	}
 
 	if( PREFSMAN->m_iSoundWriteAhead )
 		LOG->Info( "Sound writeahead has been overridden to %i", PREFSMAN->m_iSoundWriteAhead.Get() );
 
-	pLoadingWindow->SetText("Starting sound subsystem...");
+	pLoadingWindow->SetText(STARTING_SOUND);
 	SOUNDMAN	= new RageSoundManager;
 	SOUNDMAN->Init();
 	SOUNDMAN->SetMixVolume();
 	SOUND		= new GameSoundManager;
-	pLoadingWindow->SetText("Initializing bookkeeper...");
+	pLoadingWindow->SetText(INIT_BOOKKEEPER);
 	BOOKKEEPER	= new Bookkeeper;
-	pLoadingWindow->SetText("Starting lights subsystem...");
+	pLoadingWindow->SetText(START_LIGHTS);
 	LIGHTSMAN	= new LightsManager;
 	INPUTFILTER	= new InputFilter;
 	INPUTMAPPER	= new InputMapper;
 
-	pLoadingWindow->SetText("Loading game type...");
+	pLoadingWindow->SetText(LOAD_GAMETYPE);
 	StepMania::ChangeCurrentGame( GAMESTATE->GetCurrentGame() );
 
 	INPUTQUEUE	= new InputQueue;
-	pLoadingWindow->SetText("Building song cache index...");
+	pLoadingWindow->SetText(BUILD_SONG_CACHE_INDEX);
 	SONGINDEX	= new SongCacheIndex;
-	pLoadingWindow->SetText("Loading banner cache...");
+	pLoadingWindow->SetText(LOAD_BANNER_CACHE);
 	BANNERCACHE	= new BannerCache;
 	//BACKGROUNDCACHE	= new BackgroundCache;
+
+#define earlyBail if( ArchHooks::UserQuit() ) { \
+		ShutdownGame(); \
+		SAFE_DELETE( pLoadingWindow ); \
+		return 0; \
+	} \
 
 	// depends on SONGINDEX:
 	SONGMAN		= new SongManager;
 	SONGMAN->InitAll();	// this takes a long time
+	earlyBail
 	CRYPTMAN	= new CryptManager;		// need to do this before ProfileMan
 	if( PREFSMAN->m_bSignProfileData )
 		CRYPTMAN->GenerateGlobalKeys();
-	pLoadingWindow->SetText("Initializing memory card system...");
+	earlyBail
+	pLoadingWindow->SetText(INIT_MEMCARD);
 	MEMCARDMAN	= new MemoryCardManager;
-	pLoadingWindow->SetText("Initializing character system...");
+	earlyBail
+	pLoadingWindow->SetText(INIT_CHARS);
+	earlyBail
 	CHARMAN		= new CharacterManager;
-	pLoadingWindow->SetText("Initializing profile system...");
+	pLoadingWindow->SetText(INIT_PROFILES);
+	earlyBail
 	PROFILEMAN	= new ProfileManager;
 	PROFILEMAN->Init();				// must load after SONGMAN
+	earlyBail
 	UNLOCKMAN	= new UnlockManager;
-	pLoadingWindow->SetText("Updating popular song list...");
+	pLoadingWindow->SetText(UPDATE_POPULAR);
+	earlyBail
 	SONGMAN->UpdatePopular();
 	SONGMAN->UpdatePreferredSort();
+	earlyBail
 
 	NSMAN 		= new NetworkSyncManager( pLoadingWindow ); 
-	pLoadingWindow->SetText("Initializing message system...");
+	pLoadingWindow->SetText(INIT_MESSAGE);
 	MESSAGEMAN	= new MessageManager;
-	pLoadingWindow->SetText("Initializing statics manager...");
+	pLoadingWindow->SetText(INIT_STATICS);
 	STATSMAN	= new StatsManager;
+	earlyBail
 
 	// Initialize which courses are ranking courses here.
-	pLoadingWindow->SetText("Updating course rankings...");
+	pLoadingWindow->SetText(UPDATE_COURSE_RANKS);
 	SONGMAN->UpdateRankingCourses();
+	earlyBail
 
-	SAFE_DELETE( pLoadingWindow );		// destroy this before init'ing Display
-
-	/* If the user has tried to quit during the loading, do it before creating
-	 * the main window. This prevents going to full screen just to quit. */
-	if( ArchHooks::UserQuit() )
-	{
-		ShutdownGame();
-		return 0;
-	}
+	// destroy this before init'ing Display, for now
+	// we will lose the rights to be focused, but that's not too important
+	// when we are going fullscreen
+	SAFE_DELETE( pLoadingWindow );
 
 	StartDisplay();
 
@@ -1272,28 +1297,29 @@ bool HandleGlobalInputs( const InputEventPlus &input )
 
 	switch( input.MenuI )
 	{
-	case GAME_BUTTON_OPERATOR:
-		/* Global operator key, to get quick access to the options menu. Don't
-		 * do this if we're on a "system menu", which includes the editor
-		 * (to prevent quitting without storing changes). */
-		if( SCREENMAN->AllowOperatorMenuButton() )
-		{
-			SCREENMAN->SystemMessage( SERVICE_SWITCH_PRESSED );
-			SCREENMAN->PopAllScreens();
-			GAMESTATE->Reset();
-			SCREENMAN->SetNewScreen( CommonMetrics::OPERATOR_MENU_SCREEN );
-		}
-		return true;
+		case GAME_BUTTON_OPERATOR:
+			/* Global operator key, to get quick access to the options menu. Don't
+			 * do this if we're on a "system menu", which includes the editor
+			 * (to prevent quitting without storing changes). */
+			if( SCREENMAN->AllowOperatorMenuButton() )
+			{
+				SCREENMAN->SystemMessage( SERVICE_SWITCH_PRESSED );
+				SCREENMAN->PopAllScreens();
+				GAMESTATE->Reset();
+				SCREENMAN->SetNewScreen( CommonMetrics::OPERATOR_MENU_SCREEN );
+			}
+			return true;
 
-	case GAME_BUTTON_COIN:
-		// Handle a coin insertion.
-		if( GAMESTATE->IsEditing() )	// no coins while editing
-		{
-			LOG->Trace( "Ignored coin insertion (editing)" );
-			break;
-		}
-		StepMania::InsertCoin();
-		return false; // Attract needs to know because it goes to TitleMenu on > 1 credit
+		case GAME_BUTTON_COIN:
+			// Handle a coin insertion.
+			if( GAMESTATE->IsEditing() )	// no coins while editing
+			{
+				LOG->Trace( "Ignored coin insertion (editing)" );
+				break;
+			}
+			StepMania::InsertCoin();
+			return false; // Attract needs to know because it goes to TitleMenu on > 1 credit
+		default: break;
 	}
 
 	/* Re-added for StepMania 3.9 theming veterans, plus it's just faster than

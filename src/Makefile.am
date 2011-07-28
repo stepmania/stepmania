@@ -173,7 +173,6 @@ RandomSample.cpp RandomSample.h RadarValues.cpp RadarValues.h \
 SampleHistory.cpp SampleHistory.h \
 ScreenDimensions.h ScreenDimensions.cpp \
 ScoreKeeper.h ScoreKeeper.cpp \
-ScoreKeeperGuitar.cpp ScoreKeeperGuitar.h \
 ScoreKeeperNormal.cpp ScoreKeeperNormal.h \
 ScoreKeeperRave.cpp ScoreKeeperRave.h \
 ScoreKeeperShared.cpp ScoreKeeperShared.h \

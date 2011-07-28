@@ -45,12 +45,16 @@ public:
 		return this->GetPreviousSegmentBeatAtRow(tst, BeatToNoteRow(beat), isDelay);
 	}
 	
+	bool empty() const;
+	
 	/**
 	 * @brief Sets up initial timing data with a defined offset.
 	 * @param fOffset the offset from the 0th beat. */
 	TimingData(float fOffset = 0);
 	
 	~TimingData();
+	
+	TimingData CopyRange(int startRow, int endRow) const;
 	/**
 	 * @brief Gets the actual BPM of the song,
 	 * while respecting a limit.
@@ -825,6 +829,8 @@ public:
 	 * @brief The initial offset of a song.
 	 */
 	float	m_fBeat0OffsetInSeconds;
+	
+	vector<RString> ToVectorString(TimingSegmentType tst, bool isDelay = false, int dec = 6) const;	
 };
 
 #undef COMPARE

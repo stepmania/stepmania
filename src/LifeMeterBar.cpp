@@ -212,12 +212,13 @@ void LifeMeterBar::ChangeLife( float fDeltaLife )
 
 	switch( GAMESTATE->m_SongOptions.GetSong().m_DrainType )
 	{
-	case SongOptions::DRAIN_NORMAL:
-	case SongOptions::DRAIN_NO_RECOVER:
-		if( fDeltaLife > 0 )
-			fDeltaLife *= m_fLifeDifficulty;
-		else
-			fDeltaLife /= m_fLifeDifficulty;
+		case SongOptions::DRAIN_NORMAL:
+		case SongOptions::DRAIN_NO_RECOVER:
+			if( fDeltaLife > 0 )
+				fDeltaLife *= m_fLifeDifficulty;
+			else
+				fDeltaLife /= m_fLifeDifficulty;
+		default:
 		break;
 	}
 

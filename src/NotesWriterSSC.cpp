@@ -17,31 +17,6 @@
 #include "Steps.h"
 
 /**
- * @brief Turn the BackgroundChange into a string.
- * @param bgc the BackgroundChange in question.
- * @return the converted string. */
-static RString BackgroundChangeToString( const BackgroundChange &bgc )
-{
-	// TODO: Technically we need to double-escape the filename (because it might contain '=') and then
-	// unescape the value returned by the MsdFile.
-	RString s = ssprintf( 
-		"%.3f=%s=%.3f=%d=%d=%d=%s=%s=%s=%s=%s", 
-		bgc.m_fStartBeat, 
-		SmEscape(bgc.m_def.m_sFile1).c_str(), 
-		bgc.m_fRate, 
-		bgc.m_sTransition == SBT_CrossFade,		// backward compat
-		bgc.m_def.m_sEffect == SBE_StretchRewind, 	// backward compat
-		bgc.m_def.m_sEffect != SBE_StretchNoLoop, 	// backward compat
-		bgc.m_def.m_sEffect.c_str(), 
-		bgc.m_def.m_sFile2.c_str(), 
-		bgc.m_sTransition.c_str(),
-		SmEscape(RageColor::NormalizeColorString(bgc.m_def.m_sColor1)).c_str(),
-		SmEscape(RageColor::NormalizeColorString(bgc.m_def.m_sColor2)).c_str()
-		);
-	return s;
-}
-
-/**
  * @brief Turn a vector of lines into a single line joined by newline characters.
  * @param lines the list of lines to join.
  * @return the joined lines. */
@@ -205,12 +180,29 @@ static void GetTimingTags( vector<RString> &lines, TimingData timing, bool bIsSo
 
 static void WriteTimingTags( RageFile &f, const TimingData &timing, bool bIsSong = false )
 {
-
-	vector<RString> lines;
-	
-	GetTimingTags( lines, timing, bIsSong );
-	
-	f.PutLine( JoinLineList( lines ) );
+	f.PutLine(ssprintf("#BPMS:%s;",
+			   join(",\r\n", timing.ToVectorString(SEGMENT_BPM)).c_str()));
+	f.PutLine(ssprintf("#STOPS:%s;",
+			   join(",\r\n", timing.ToVectorString(SEGMENT_STOP_DELAY, false)).c_str()));
+	f.PutLine(ssprintf("#DELAYS:%s;",
+			   join(",\r\n", timing.ToVectorString(SEGMENT_STOP_DELAY, true)).c_str()));
+	f.PutLine(ssprintf("#WARPS:%s;",
+			   join(",\r\n", timing.ToVectorString(SEGMENT_WARP)).c_str()));
+	f.PutLine(ssprintf("#TIMESIGNATURES:%s;",
+			   join(",\r\n", timing.ToVectorString(SEGMENT_TIME_SIG)).c_str()));
+	f.PutLine(ssprintf("#TICKCOUNTS:%s;",
+			   join(",\r\n", timing.ToVectorString(SEGMENT_TICKCOUNT)).c_str()));
+	f.PutLine(ssprintf("#COMBOS:%s;",
+			   join(",\r\n", timing.ToVectorString(SEGMENT_COMBO)).c_str()));
+	f.PutLine(ssprintf("#SPEEDS:%s;",
+			   join(",\r\n", timing.ToVectorString(SEGMENT_SPEED)).c_str()));
+	f.PutLine(ssprintf("#SCROLLS:%s;",
+			   join(",\r\n", timing.ToVectorString(SEGMENT_SCROLL)).c_str()));
+	if (!bIsSong)
+		f.PutLine(ssprintf("#FAKES:%s;",
+				   join(",\r\n", timing.ToVectorString(SEGMENT_FAKE)).c_str()));
+	f.PutLine(ssprintf("#LABELS:%s;",
+			   join(",\r\n", timing.ToVectorString(SEGMENT_LABEL)).c_str()));
 
 }
 
@@ -237,10 +229,7 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 	f.PutLine( ssprintf( "#MUSIC:%s;", SmEscape(out.m_sMusicFile).c_str() ) );
 
 	{
-		vector<RString> vs;
-		FOREACH_ENUM( InstrumentTrack, it )
-			if( out.HasInstrumentTrack(it) )
-				vs.push_back( InstrumentTrackToString(it) + "=" + out.m_sInstrumentTrackFile[it] );
+		vector<RString> vs = out.GetInstrumentTracksToVectorString();
 		if( !vs.empty() )
 		{
 			RString s = join( ",", vs );
@@ -254,7 +243,7 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 	f.Write( "#SELECTABLE:" );
 	switch(out.m_SelectionDisplay)
 	{
-		default: ASSERT(0); // fall through
+		default: ASSERT_M(0, "An invalid selectable value was found for this song!"); // fall through
 		case Song::SHOW_ALWAYS:	f.Write( "YES" );		break;
 		//case Song::SHOW_NONSTOP:	f.Write( "NONSTOP" );	break;
 		case Song::SHOW_NEVER:		f.Write( "NO" );		break;
@@ -292,7 +281,7 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 			f.Write( ssprintf("#BGCHANGES%d:", b+1) );
 
 		FOREACH_CONST( BackgroundChange, out.GetBackgroundChanges(b), bgc )
-			f.PutLine( BackgroundChangeToString(*bgc)+"," );
+			f.PutLine( (*bgc).ToString() +"," );
 
 		/* If there's an animation plan at all, add a dummy "-nosongbg-" tag to
 		 * indicate that this file doesn't want a song BG entry added at the end.
@@ -308,7 +297,7 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 		f.Write( "#FGCHANGES:" );
 		FOREACH_CONST( BackgroundChange, out.GetForegroundChanges(), bgc )
 		{
-			f.PutLine( BackgroundChangeToString(*bgc)+"," );
+			f.PutLine( (*bgc).ToString() +"," );
 		}
 		f.PutLine( ";" );
 	}
@@ -322,16 +311,7 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 	}
 	f.PutLine( ";" );
 
-	f.Write( "#ATTACKS:" );
-	for( unsigned a=0; a < out.m_sAttackString.size(); a++ )
-	{
-		RString sData = out.m_sAttackString[a];
-		f.Write( ssprintf( "%s", sData.c_str() ) );
-
-		if( a != (out.m_sAttackString.size() - 1) )
-			f.Write( ":" ); // Not the end, so write a divider ':'
-	}
-	f.PutLine( ";" );
+	f.PutLine( ssprintf("#ATTACKS:%s;", out.GetAttackString().c_str()) );
 }
 
 /**
@@ -349,7 +329,7 @@ static RString GetSSCNoteData( const Song &song, const Steps &in, bool bSavingCa
 	lines.push_back( ssprintf("//---------------%s - %s----------------",
 		GAMEMAN->GetStepsTypeInfo(in.m_StepsType).szName, SmEscape(in.GetDescription()).c_str()) );
 	lines.push_back( "#NOTEDATA:;" ); // our new separator.
-	lines.push_back( ssprintf( "#CHARTNAME:%s:", SmEscape(in.GetChartName()).c_str()));
+	lines.push_back( ssprintf( "#CHARTNAME:%s;", SmEscape(in.GetChartName()).c_str()));
 	lines.push_back( ssprintf( "#STEPSTYPE:%s;", GAMEMAN->GetStepsTypeInfo(in.m_StepsType).szName ) );
 	lines.push_back( ssprintf( "#DESCRIPTION:%s;", SmEscape(in.GetDescription()).c_str() ) );
 	lines.push_back( ssprintf( "#CHARTSTYLE:%s;", SmEscape(in.GetChartStyle()).c_str() ) );
@@ -370,17 +350,7 @@ static RString GetSSCNoteData( const Song &song, const Steps &in, bool bSavingCa
 	
 	GetTimingTags( lines, in.m_Timing );
 	
-	RString attacks = "";
-	for( unsigned a=0; a < in.m_sAttackString.size(); a++ )
-	{
-		RString sData = in.m_sAttackString[a];
-		attacks += sData;
-		
-		if( a != (in.m_sAttackString.size() - 1) )
-			attacks += ":\r\n"; // Not the end, so write a divider ':'
-	}
-	Trim(attacks, ":"); // just in case something screwy happens.
-	lines.push_back( ssprintf( "#ATTACKS:%s;", attacks.c_str()));
+	lines.push_back( ssprintf("#ATTACKS:%s;", in.GetAttackString().c_str()));
 	
 	switch( in.GetDisplayBPM() )
 	{
@@ -401,16 +371,21 @@ static RString GetSSCNoteData( const Song &song, const Steps &in, bool bSavingCa
 			lines.push_back( ssprintf( "#DISPLAYBPM:*;" ) );
 			break;
 	}
-	
-	RString sNoteData;
-	in.GetSMNoteData( sNoteData );
+	if (bSavingCache)
+	{
+		lines.push_back(ssprintf("#STEPFILENAME:%s;", in.GetFilename().c_str()));
+	}
+	else
+	{
+		RString sNoteData;
+		in.GetSMNoteData( sNoteData );
 
-	lines.push_back( song.m_vsKeysoundFile.empty() ? "#NOTES:" : "#NOTES2:" );
+		lines.push_back( song.m_vsKeysoundFile.empty() ? "#NOTES:" : "#NOTES2:" );
 
-	TrimLeft(sNoteData);
-	split( sNoteData, "\n", lines, true );
-	lines.push_back( ";" );
-
+		TrimLeft(sNoteData);
+		split( sNoteData, "\n", lines, true );
+		lines.push_back( ";" );
+	}
 	return JoinLineList( lines );
 }
 

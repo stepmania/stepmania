@@ -39,7 +39,7 @@ public:
 	static void GetSyncChangeTextSong( vector<RString> &vsAddTo );
 
 	/** @brief The minimum number of steps to hit for syncing purposes. */
-	static const int OFFSET_SAMPLE_COUNT = 56;
+	static const int OFFSET_SAMPLE_COUNT = 24;
 
 	static float s_fAutosyncOffset[OFFSET_SAMPLE_COUNT];
 	static int s_iAutosyncOffsetSample;

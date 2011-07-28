@@ -268,18 +268,20 @@ static float GetArcadePoints( const Profile *pProfile )
 	{
 		switch(pm)
 		{
-		case PLAY_MODE_NONSTOP:
-		case PLAY_MODE_ONI:
-		case PLAY_MODE_ENDLESS:
-			fAP += pProfile->m_iNumSongsPlayedByPlayMode[pm];
-			break;
+			case PLAY_MODE_NONSTOP:
+			case PLAY_MODE_ONI:
+			case PLAY_MODE_ENDLESS:
+			{
+				fAP += pProfile->m_iNumSongsPlayedByPlayMode[pm];
+			}
+			default: break;
 		}
-
 	}
 
 	return fAP;
 }
 
+// TODO: Make this more flexible for games with many grade tiers. Lua-ize it? -Wolfman2000
 static float GetSongPoints( const Profile *pProfile )
 {
 	float fSP =	0;
@@ -297,6 +299,7 @@ static float GetSongPoints( const Profile *pProfile )
 		case Grade_Tier07:/*D*/		fSP += 1* pProfile->m_iNumStagesPassedByGrade[g];	break;
 		case Grade_Failed:
 		case Grade_NoData:
+		default:
 			;	// no points
 			break;
 		}
@@ -306,11 +309,13 @@ static float GetSongPoints( const Profile *pProfile )
 	{
 		switch(pm)
 		{
-		case PLAY_MODE_NONSTOP:
-		case PLAY_MODE_ONI:
-		case PLAY_MODE_ENDLESS:
+			case PLAY_MODE_NONSTOP:
+			case PLAY_MODE_ONI:
+			case PLAY_MODE_ENDLESS:
+			{
 			fSP += pProfile->m_iNumSongsPlayedByPlayMode[pm];
-			break;
+			}
+			default: break;
 		}
 
 	}

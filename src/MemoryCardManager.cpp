@@ -449,22 +449,23 @@ void MemoryCardManager::CheckStateChanges()
 		{
 			switch( new_device.m_State )
 			{
-			case UsbStorageDevice::STATE_NONE:
-				state = MemoryCardState_NoCard;
-				break;
+				case UsbStorageDevice::STATE_NONE:
+					state = MemoryCardState_NoCard;
+					break;
 
-			case UsbStorageDevice::STATE_CHECKING:
-				state = MemoryCardState_Checking;
-				break;
+				case UsbStorageDevice::STATE_CHECKING:
+					state = MemoryCardState_Checking;
+					break;
 
-			case UsbStorageDevice::STATE_ERROR:
-				state = MemoryCardState_Error;
-				sError = new_device.m_sError;
-				break;
+				case UsbStorageDevice::STATE_ERROR:
+					state = MemoryCardState_Error;
+					sError = new_device.m_sError;
+					break;
 
-			case UsbStorageDevice::STATE_READY:
-				state = MemoryCardState_Ready;
-				break;
+				case UsbStorageDevice::STATE_READY:
+					state = MemoryCardState_Ready;
+					break;
+				default: break;
 			}
 		}
 
@@ -476,23 +477,24 @@ void MemoryCardManager::CheckStateChanges()
 			params.m_bIsCriticalSound = true;
 			switch( state )
 			{
-			case MemoryCardState_NoCard:
-			case MemoryCardState_Removed:
-				if( LastState == MemoryCardState_Ready )
-				{
-					m_soundDisconnect.Play( &params );
-					MESSAGEMAN->Broadcast( (MessageID)(Message_CardRemovedP1+p) );
-				}
-				break;
-			case MemoryCardState_Ready:
-				m_soundReady.Play( &params );
-				break;
-			case MemoryCardState_TooLate:
-				m_soundTooLate.Play( &params );
-				break;
-			case MemoryCardState_Error:
-				m_soundError.Play( &params );
-				break;
+				case MemoryCardState_NoCard:
+				case MemoryCardState_Removed:
+					if( LastState == MemoryCardState_Ready )
+					{
+						m_soundDisconnect.Play( &params );
+						MESSAGEMAN->Broadcast( (MessageID)(Message_CardRemovedP1+p) );
+					}
+					break;
+				case MemoryCardState_Ready:
+					m_soundReady.Play( &params );
+					break;
+				case MemoryCardState_TooLate:
+					m_soundTooLate.Play( &params );
+					break;
+				case MemoryCardState_Error:
+					m_soundError.Play( &params );
+					break;
+				default: break;
 			}
 
 			m_State[p] = state;

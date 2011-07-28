@@ -166,9 +166,10 @@ void StageStats::FinalizeScores( bool bSummary )
 {
 	switch( GAMESTATE->m_PlayMode )
 	{
-	case PLAY_MODE_BATTLE:
-	case PLAY_MODE_RAVE:
-		return; // don't save scores in battle
+		case PLAY_MODE_BATTLE:
+		case PLAY_MODE_RAVE:
+			return; // don't save scores in battle
+		default: break;
 	}
 
 	if( PREFSMAN->m_sTestInitialScreen.Get() != "" )

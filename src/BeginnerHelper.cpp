@@ -12,12 +12,12 @@
 #include "ScreenDimensions.h"
 #include "ThemeManager.h"
 
-// "PLAYER_X" offsets are relative to the pad. ex: Setting this to 10, and the HELPER to 300, will put the dancer at 310
+// "PLAYER_X" offsets are relative to the pad.
+// ex: Setting this to 10, and the HELPER to 300, will put the dancer at 310.
 #define PLAYER_X( px )		THEME->GetMetricF("BeginnerHelper",ssprintf("Player%dX",px+1))
-#define PLAYER_ANGLE		THEME->GetMetricF("BeginnerHelper","PlayerAngle")
-#define DANCEPAD_ANGLE		THEME->GetMetricF("BeginnerHelper","DancePadAngle")
 
-// "HELPER" offsets effect the pad/dancer as a whole. Their relative Y cooridinates are hard-coded for each other.
+// "HELPER" offsets effect the pad/dancer as a whole.
+// Their relative Y cooridinates are hard-coded for each other.
 #define HELPER_X			THEME->GetMetricF("BeginnerHelper","HelperX")
 #define HELPER_Y			THEME->GetMetricF("BeginnerHelper","HelperY")
 
@@ -135,12 +135,10 @@ bool BeginnerHelper::Init( int iDancePadType )
 		case 2: m_pDancePad->LoadMilkshapeAscii(GetAnimPath(ANIM_DANCE_PADS)); break;
 		}
 
-		m_pDancePad->SetHorizAlign( align_left ); // xxx: hardcoded -aj
-		m_pDancePad->SetRotationX( DANCEPAD_ANGLE );
+		m_pDancePad->SetName("DancePad");
 		m_pDancePad->SetX( HELPER_X );
 		m_pDancePad->SetY( HELPER_Y );
-		// xxx: hardcoded -aj
-		m_pDancePad->SetZoom( 23 );	// Pad should always be 3 units bigger in zoom than the dancer.
+		ActorUtil::LoadAllCommands( m_pDancePad, "BeginnerHelper" );
 	}
 
 	for( int pl=0; pl<NUM_PLAYERS; pl++ )	// Load players
@@ -153,8 +151,9 @@ bool BeginnerHelper::Init( int iDancePadType )
 		const Character *Character = GAMESTATE->m_pCurCharacters[pl];
 		ASSERT( Character != NULL );
 
+		m_pDancer[pl]->SetName( ssprintf("PlayerP%d",pl+1) );
+
 		// Load textures
-		m_pDancer[pl]->SetHorizAlign( align_left );
 		m_pDancer[pl]->LoadMilkshapeAscii( Character->GetModelPath() );
 
 		// Load needed animations
@@ -166,11 +165,11 @@ bool BeginnerHelper::Init( int iDancePadType )
 		m_pDancer[pl]->LoadMilkshapeAsciiBones( "rest",		Character->GetRestAnimationPath() );
 		m_pDancer[pl]->SetDefaultAnimation( "rest" );		// Stay bouncing after a step has finished animating
 		m_pDancer[pl]->PlayAnimation( "rest" );
-		m_pDancer[pl]->SetRotationX( PLAYER_ANGLE );
 		m_pDancer[pl]->SetX( HELPER_X+PLAYER_X(pl) );
 		m_pDancer[pl]->SetY( HELPER_Y+10 );
-		m_pDancer[pl]->SetZoom( 20 );
-		m_pDancer[pl]->SetCullMode( CULL_NONE );		// many of the models floating around have the vertex order flipped
+		ActorUtil::LoadAllCommands( m_pDancer[pl], "BeginnerHelper" );
+		// many of the models floating around have the vertex order flipped, so force this.
+		m_pDancer[pl]->SetCullMode( CULL_NONE );
 	}
 
 	m_bInitialized = true;

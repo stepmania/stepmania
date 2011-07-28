@@ -677,7 +677,7 @@ static bool LoadFromMidi( const RString &sPath, Song &songOut )
 	
 	FOREACH_CONST( MidiFileIn::TempoChange, midi.tempoEvents_, iter )
 	{
-		BPMSegment * bpmSeg;
+		BPMSegment * bpmSeg = NULL;
 		bpmSeg->SetRow( MidiCountToNoteRow( iter->count ) );
 		double fSecondsPerBeat = (iter->tickSeconds * GUITAR_MIDI_COUNTS_PER_BEAT);
 		bpmSeg->SetBPS( float( 1. / fSecondsPerBeat ) );
@@ -817,8 +817,8 @@ skip_track:
 				// Check for termination of a sustain note
 				switch( midiEventType )
 				{
-				case note_off:
-				case note_on:
+					case note_off:
+					case note_on:
 					if( bNonTerminatedNote )
 					{
 						if( length >= 240 )
@@ -833,14 +833,15 @@ skip_track:
 
 						bNonTerminatedNote = false;
 						bNoteHandled = true;
+						break;
 					}
-					break;
+					default: break;
 				}
 
 
 				switch( midiEventType )
 				{
-				case note_on:
+					case note_on:
 					{
 						TapNote tn = TAP_ORIGINAL_TAP;
 
@@ -867,7 +868,9 @@ skip_track:
 		
 						bNonTerminatedNote = true;
 						bNoteHandled = true;
+						break;
 					}
+					default: break;
 				}
 
 				countOfLastNote = count;
@@ -956,7 +959,7 @@ bool MidiLoader::LoadFromDir( const RString &sDir, Song &out )
 	if( !LoadFromMidi(sDir+vsFiles[0], out) )
 		return false;
 
-	out.TidyUpData();
+	out.TidyUpData(false, true);
 	return true;
 }
 

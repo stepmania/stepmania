@@ -8,6 +8,38 @@ ________________________________________________________________________________
 StepMania 5.0 ????????? | 20110???
 --------------------------------------------------------------------------------
 
+2011/07/26
+----------
+* [ScreenEdit] Add a semi working implementation of the often requested
+  copy/paste selected timing data feature. This should make it easier for
+  some charters. [Wolfman2000]
+
+2011/07/21
+----------
+* [BeginnerHelper] Removed DancePadAngle metric in favor of DancePadOnCommand.
+  The same goes for PlayerAngle, dancer rotation is now handled in
+  PlayerP1/2OnCommand. [AJ]
+* [Course] Bumped up max edit course title length to 16 (still feels too short).
+  Also added #DESCRIPTION tag and Course:GetDescription() Lua binding. [AJ]
+
+2011/07/20
+----------
+* [Win32/CrashHandlerChild] Crashlog and log now open in the player's default
+  text editor. Also, the Show Log button works again, including for people using
+  Portable.ini. [AJ]
+
+2011/07/19
+----------
+* [LoadingWindow] Added the ability for themes to have custom splash banners.
+  (Currently Windows-only.) [AJ]
+
+2011/07/17
+----------
+* [Cache] No longer store #NOTES in the cache. This should speed things up
+  on the first load if there is not much to write. (General note: this was
+  taken from another branch, but results at that point were great.)
+  [Wolfman2000]
+
 2011/07/13
 ----------
 * [Difficulty] Allow ALL StepsTypes to use CustomDifficulty properly.

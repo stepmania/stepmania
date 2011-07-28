@@ -35,6 +35,7 @@ static void Deserialize(TimingSegment &seg_, const Json::Value &root)
 			static_cast<StopSegment *>(seg)->SetPause(fStop);
 			break;
 		}
+		default: break; // The rest are unused.
 	}
 }
 

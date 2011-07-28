@@ -67,15 +67,15 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(TargetDir)</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/build-$(SolutionName)/$(ProjectName)/$(Configuration)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(Configuration)\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</GenerateManifest>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(TargetDir)</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/build-$(SolutionName)/$(ProjectName)/$(Configuration)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(Configuration)\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='FastDebug|Win32'">$(TargetDir)</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='FastDebug|Win32'">$(SolutionDir)/build-$(SolutionName)/$(ProjectName)/$(Configuration)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='FastDebug|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='FastDebug|Win32'">$(Configuration)\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='FastDebug|Win32'">true</LinkIncremental>
     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='FastDebug|Win32'">true</GenerateManifest>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release-SSE2|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
@@ -534,7 +534,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)</Command>
     <ClCompile Include="NotesWriterSM.cpp" />
     <ClCompile Include="NotesWriterSSC.cpp" />
     <ClCompile Include="ScoreKeeper.cpp" />
-    <ClCompile Include="ScoreKeeperGuitar.cpp" />
     <ClCompile Include="ScoreKeeperNormal.cpp" />
     <ClCompile Include="ScoreKeeperRave.cpp" />
     <ClCompile Include="ScoreKeeperShared.cpp" />
@@ -1856,7 +1855,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)</Command>
     <ClInclude Include="NotesWriterSM.h" />
     <ClInclude Include="NotesWriterSSC.h" />
     <ClInclude Include="ScoreKeeper.h" />
-    <ClInclude Include="ScoreKeeperGuitar.h" />
     <ClInclude Include="ScoreKeeperNormal.h" />
     <ClInclude Include="ScoreKeeperRave.h" />
     <ClInclude Include="ScoreKeeperShared.h" />

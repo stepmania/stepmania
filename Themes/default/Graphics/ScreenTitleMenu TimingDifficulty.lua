@@ -2,7 +2,7 @@ return Def.ActorFrame {
 --[[ 	LoadActor(THEME:GetPathG("ScreenTitleMenu","PreferenceFrame")) .. {
 		OnCommand=function(self)
 			if GetTimingDifficulty() == 7 then
-				(cmd(glowshift;diffuse,Color("Yellow");diffuserightedge,Color("Red");effectcolor1,Colors.Alpha( Color("Red"), 0.5 );effectcolor2,Color("Invisible");effectperiod,1.25/2))(self);
+				(cmd(glowshift;diffuse,Color("Yellow");diffuserightedge,Color("Red");effectcolor1,Color.Alpha( Color("Red"), 0.5 );effectcolor2,Color("Invisible");effectperiod,1.25/2))(self);
 			elseif GetTimingDifficulty() < 4 then
 				(cmd(diffuseshift;effectcolor1,Color("Blue");effectcolor2,ColorDarkTone(Color("Blue"));effectperiod,1.25))(self);
 			elseif GetTimingDifficulty() > 4 and GetTimingDifficulty < 6 then

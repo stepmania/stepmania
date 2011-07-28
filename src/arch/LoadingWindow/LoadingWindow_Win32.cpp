@@ -6,6 +6,7 @@
 #include "archutils/win32/WindowsResources.h"
 #include "archutils/win32/WindowIcon.h"
 #include "archutils/win32/ErrorStrings.h"
+#include "arch/ArchHooks/ArchHooks.h"
 #include <windows.h>
 #include "CommCtrl.h"
 #include "RageSurface_Load.h"
@@ -15,13 +16,13 @@
 #include "ProductInfo.h"
 #include "LocalizedString.h"
 
+
 #include "RageSurfaceUtils_Zoom.h"
 static HBITMAP g_hBitmap = NULL;
 
 #pragma comment(linker,"\"/manifestdependency:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 
-
-/* Load a RageSurface into a GDI surface. */
+// Load a RageSurface into a GDI surface.
 static HBITMAP LoadWin32Surface( RageSurface *&s )
 {
 	RageSurfaceUtils::ConvertSurface( s, s->w, s->h, 32, 0xFF000000, 0x00FF0000, 0x0000FF00, 0 );
@@ -35,14 +36,14 @@ static HBITMAP LoadWin32Surface( RageSurface *&s )
 	HDC BitmapDC = CreateCompatibleDC( hScreen );
 	SelectObject( BitmapDC, bitmap );
 
-	/* This is silly, but simple.  We only do this once, on a small image. */
+	// This is silly, but simple. We only do this once, on a small image.
 	for( int y = 0; y < s->h; ++y )
 	{
 		unsigned const char *line = ((unsigned char *) s->pixels) + (y * s->pitch);
 		for( int x = 0; x < s->w; ++x )
 		{
 			unsigned const char *data = line + (x*s->format->BytesPerPixel);
-			
+
 			SetPixelV( BitmapDC, x, y, RGB( data[3], data[2], data[1] ) );
 		}
 	}
@@ -62,7 +63,7 @@ static HBITMAP LoadWin32Surface( RString sFile, HWND hWnd )
 	if( pSurface == NULL )
 		return NULL;
 
-	/* Resize the splash image to fit the dialog.  Stretch to fit horizontally,
+	/* Resize the splash image to fit the dialog. Stretch to fit horizontally,
 	 * maintaining aspect ratio. */
 	{
 		RECT r;
@@ -82,7 +83,6 @@ static HBITMAP LoadWin32Surface( RString sFile, HWND hWnd )
 
 INT_PTR CALLBACK LoadingWindow_Win32::DlgProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
 {
-
 	LoadingWindow_Win32 *self;
 
 	if(msg==WM_INITDIALOG) {
@@ -91,6 +91,32 @@ INT_PTR CALLBACK LoadingWindow_Win32::DlgProc( HWND hWnd, UINT msg, WPARAM wPara
 	} else {
 		self=(LoadingWindow_Win32 *)GetWindowLong(hWnd,DWL_USER);
 	}
+
+/*
+#if WINVER >= 0x0601
+	if (self && msg == self->taskbarCreatedEvent && !self->pTaskbarList) {
+		HRESULT hr = CoCreateInstance(CLSID_TaskbarList, NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&self->pTaskbarList));
+		if (SUCCEEDED(hr)) {
+			self->pTaskbarList->HrInit();
+			if (FAILED(hr))	{
+				self->pTaskbarList->Release();
+				self->pTaskbarList = NULL;
+			} else {
+
+
+				if(self->m_indeterminate) {
+					self->pTaskbarList->SetProgressState(hWnd, TBPF_INDETERMINATE);
+				} else {
+					self->pTaskbarList->SetProgressState(hWnd, TBPF_NORMAL);
+					self->pTaskbarList->SetProgressValue(hWnd, self->m_progress, self->m_totalWork);
+				}
+			}
+		}
+
+
+	}
+#endif
+*/
 
 	switch( msg )
 	{
@@ -113,9 +139,20 @@ INT_PTR CALLBACK LoadingWindow_Win32::DlgProc( HWND hWnd, UINT msg, WPARAM wPara
 		break;
 
 	case WM_CLOSE:
+		HOOKS->SetUserQuit();
 		return FALSE;
 
 	case WM_DESTROY:
+
+/*
+#if(WINVER >= 0x0601)
+		if (self->pTaskbarList) {
+			self->pTaskbarList->Release();
+			self->pTaskbarList = NULL;
+		}
+#endif
+*/
+
 		DeleteObject( g_hBitmap );
 		g_hBitmap = NULL;
 		self->runMessageLoop=false;
@@ -136,7 +173,7 @@ INT_PTR CALLBACK LoadingWindow_Win32::DlgProc( HWND hWnd, UINT msg, WPARAM wPara
 
 void LoadingWindow_Win32::SetIcon( const RageSurface *pIcon )
 {
-	if( m_hIcon != NULL )
+	if( g_hBitmap != NULL )
 		DestroyIcon( m_hIcon );
 
 	m_hIcon = IconFromSurface( pIcon );
@@ -144,15 +181,44 @@ void LoadingWindow_Win32::SetIcon( const RageSurface *pIcon )
 		SetClassLong( hwnd, GCL_HICON, (LONG) m_hIcon );
 }
 
-LoadingWindow_Win32::LoadingWindow_Win32()
+void LoadingWindow_Win32::SetSplash( const RString sPath )
 {
+	if( g_hBitmap != NULL )
+	{
+		DeleteObject( g_hBitmap );
+		g_hBitmap = NULL;
+	}
+
+	g_hBitmap = LoadWin32Surface( sPath, hwnd );
+	if( g_hBitmap != NULL )
+	{
+		SendDlgItemMessage(
+			hwnd, IDC_SPLASH,
+			STM_SETIMAGE,
+			(WPARAM) IMAGE_BITMAP,
+			(LPARAM) (HANDLE) g_hBitmap
+		);
+	}
+}
+
+LoadingWindow_Win32::LoadingWindow_Win32()
+{	
+
 	INITCOMMONCONTROLSEX cceData;
 	cceData.dwSize=sizeof(INITCOMMONCONTROLSEX);
 	cceData.dwICC=ICC_PROGRESS_CLASS;
 	InitCommonControlsEx(&cceData);
 
+/*
+#if(WINVER >= 0x0601)
+	pTaskbarList=NULL;
+
+	taskbarCreatedEvent=RegisterWindowMessage("TaskbarButtonCreated");
+#endif
+*/
+
 	m_hIcon = NULL;
-	
+
 	runMessageLoop=true;
 
 	guiReadyEvent=CreateEvent(NULL,FALSE,FALSE,NULL);
@@ -221,6 +287,13 @@ void LoadingWindow_Win32::SetProgress(const int progress)
 	m_progress=progress;
 	HWND hwndItem = ::GetDlgItem( hwnd, IDC_PROGRESS );
 	::SendMessage(hwndItem,PBM_SETPOS,progress,0);
+/*
+#if(WINVER >= 0x0601)
+	if(pTaskbarList) {
+		pTaskbarList->SetProgressValue(hwnd, m_progress, m_totalWork);
+	}
+#endif
+*/
 }
 
 void LoadingWindow_Win32::SetTotalWork(const int totalWork)
@@ -228,6 +301,13 @@ void LoadingWindow_Win32::SetTotalWork(const int totalWork)
 	m_totalWork=totalWork;
 	HWND hwndItem = ::GetDlgItem( hwnd, IDC_PROGRESS );
 	SendMessage(hwndItem,PBM_SETRANGE32,0,totalWork);
+/*
+#if(WINVER >= 0x0601)
+	if(pTaskbarList) {
+		pTaskbarList->SetProgressValue(hwnd, m_progress, m_totalWork);
+	}
+#endif
+*/
 }
 
 void LoadingWindow_Win32::SetIndeterminate(bool indeterminate) {
@@ -236,11 +316,25 @@ void LoadingWindow_Win32::SetIndeterminate(bool indeterminate) {
 	HWND hwndItem = ::GetDlgItem( hwnd, IDC_PROGRESS );
 
 	if(indeterminate) {
+/*
+#if(WINVER >= 0x0601)
+		if(pTaskbarList) {
+			pTaskbarList->SetProgressState(hwnd, TBPF_INDETERMINATE);
+		}
+#endif
+*/
 		SetWindowLong(hwndItem,GWL_STYLE, PBS_MARQUEE | GetWindowLong(hwndItem,GWL_STYLE));
 		SendMessage(hwndItem,PBM_SETMARQUEE,1,0);
 	} else {
 		SendMessage(hwndItem,PBM_SETMARQUEE,0,0);
 		SetWindowLong(hwndItem,GWL_STYLE, (~PBS_MARQUEE) & GetWindowLong(hwndItem,GWL_STYLE));
+/*
+#if(WINVER >= 0x0601)
+		if(pTaskbarList) {
+			pTaskbarList->SetProgressState(hwnd, TBPF_NORMAL);
+		}
+#endif
+*/
 	}
 	
 }

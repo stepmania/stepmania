@@ -1,6 +1,7 @@
 #include "global.h"
 #include "SongManager.h"
 #include "arch/LoadingWindow/LoadingWindow.h"
+#include "arch/ArchHooks/ArchHooks.h"
 #include "AnnouncerManager.h"
 #include "BackgroundUtil.h"
 #include "BannerCache.h"
@@ -253,7 +254,7 @@ void SongManager::LoadStepManiaSongDir( RString sDir )
 	songCount = 0;
 	FOREACH_CONST( RString, arrayGroupDirs, s )	// foreach dir in /Songs/
 	{
-	
+		if(HOOKS->UserQuit()) break;
 		RString sGroupDirName = *s;
 		SanityCheckGroupDir(sDir+sGroupDirName);
 
@@ -291,6 +292,7 @@ void SongManager::LoadStepManiaSongDir( RString sDir )
 
 		for( unsigned j=0; j< arraySongDirs.size(); ++j )	// for each song dir
 		{
+			if(HOOKS->UserQuit()) break;
 			RString sSongDirName = arraySongDirs[j];
 
 			// this is a song directory. Load a new song.
@@ -497,7 +499,7 @@ RageColor SongManager::GetSongColor( const Song* pSong ) const
 		int i = m_vPreferredSongSort.size();
 		return SONG_GROUP_COLOR.GetValue( i%NUM_SONG_GROUP_COLORS );
 	}
-	else
+	else // TODO: Have a better fallback plan with colors?
 	{
 		/* XXX: Previously, this matched all notes, which set a song to "extra"
 		 * if it had any 10-foot steps at all, even edits or doubles.
@@ -516,9 +518,10 @@ RageColor SongManager::GetSongColor( const Song* pSong ) const
 			const Steps* pSteps = vpSteps[i];
 			switch( pSteps->GetDifficulty() )
 			{
-			case Difficulty_Challenge:
-			case Difficulty_Edit:
-				continue;
+				case Difficulty_Challenge:
+				case Difficulty_Edit:
+					continue;
+				default: break;
 			}
 
 			//if(pSteps->m_StepsType != st)
@@ -527,7 +530,7 @@ RageColor SongManager::GetSongColor( const Song* pSong ) const
 			if( pSteps->GetMeter() >= EXTRA_COLOR_METER )
 				return (RageColor)EXTRA_COLOR;
 		}
-		if( pSong->m_sMainTitle == "DVNO")
+		if( pSong->m_sMainTitle == "DVNO") // XXX: What IS this? An easter egg? -Wolfman2000
 		{
 			return RageColor(1.0f,0.8f,0.0f,1.0f);
 		}
@@ -769,6 +772,7 @@ void SongManager::InitCoursesFromDisk()
 	vector<RString> vsCourseGroupNames;
 	FOREACH_CONST( RString, vsCourseDirs, sDir )
 	{
+		if(HOOKS->UserQuit()) break;
 		// Find all group directories in Courses dir
 		GetDirListing( *sDir + "*", vsCourseGroupNames, true, true );
 		StripCvsAndSvn( vsCourseGroupNames );
@@ -781,6 +785,7 @@ void SongManager::InitCoursesFromDisk()
 
 	FOREACH_CONST( RString, vsCourseGroupNames, sCourseGroup )	// for each dir in /Courses/
 	{
+		if(HOOKS->UserQuit()) break;
 		// Find all CRS files in this group directory
 		vector<RString> vsCoursePaths;
 		GetDirListing( *sCourseGroup + "/*.crs", vsCoursePaths, false, true );
@@ -819,6 +824,7 @@ void SongManager::InitAutogenCourses()
 	Course* pCourse;
 	for( unsigned g=0; g<saGroupNames.size(); g++ )	// foreach Group
 	{
+		if(HOOKS->UserQuit()) break;
 		RString sGroupName = saGroupNames[g];
 
 		// Generate random courses from each group.
@@ -857,6 +863,7 @@ void SongManager::InitAutogenCourses()
 		vector<Song *> aSongs;
 		unsigned i = 0;
 		do {
+			if(HOOKS->UserQuit()) break;
 			RString sArtist = i >= apSongs.size()? RString(""): apSongs[i]->GetDisplayArtist();
 			RString sTranslitArtist = i >= apSongs.size()? RString(""): apSongs[i]->GetTranslitArtist();
 			if( i < apSongs.size() && !sCurArtist.CompareNoCase(sArtist) )

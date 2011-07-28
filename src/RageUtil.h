@@ -416,6 +416,7 @@ int StringToInt( const RString &sString );
  * @return the string we are after. */
 RString IntToString( const int &iNum );
 float StringToFloat( const RString &sString );
+RString FloatToString( const float &num );
 bool StringToFloat( const RString &sString, float &fOut );
 
 RString WStringToRString( const wstring &sString );

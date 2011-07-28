@@ -71,21 +71,21 @@ RString RageDisplay::SetVideoMode( VideoModeParams p, bool &bNeedReloadTextures 
 	RString err;
 	vector<RString> vs;
 
-	if( err = this->TryVideoMode(p,bNeedReloadTextures) == "" )
+	if( (err = this->TryVideoMode(p,bNeedReloadTextures)) == "" )
 		return RString();
 	LOG->Trace( "TryVideoMode failed: %s", err.c_str() );
 	vs.push_back( err );
 
 	// fall back to settings that will most likely work
 	p.bpp = 16;
-	if( err = this->TryVideoMode(p,bNeedReloadTextures) == "" )
+	if( (err = this->TryVideoMode(p,bNeedReloadTextures)) == "" )
 		return RString();
 	vs.push_back( err );
 
 	// "Intel(R) 82810E Graphics Controller" won't accept a 16 bpp surface if 
 	// the desktop is 32 bpp, so try 32 bpp as well.
 	p.bpp = 32;
-	if( err = this->TryVideoMode(p,bNeedReloadTextures) == "" )
+	if( (err = this->TryVideoMode(p,bNeedReloadTextures)) == "" )
 		return RString();
 	vs.push_back( err );
 
@@ -101,7 +101,7 @@ RString RageDisplay::SetVideoMode( VideoModeParams p, bool &bNeedReloadTextures 
 	const DisplayResolution &d = *dr.begin();
 	p.width = d.iWidth;
 	p.height = d.iHeight;
-	if( err = this->TryVideoMode(p,bNeedReloadTextures) == "" )
+	if( (err = this->TryVideoMode(p,bNeedReloadTextures)) == "" )
 		return RString();
 	vs.push_back( err );
 

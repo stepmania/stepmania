@@ -95,14 +95,19 @@ void ScreenTestInput::Input( const InputEventPlus &input )
 	RString sMessage = input.DeviceI.ToString();
 	switch( input.type )
 	{
-	case IET_FIRST_PRESS:
-	case IET_RELEASE:
-		switch( input.type )
+		case IET_FIRST_PRESS:
+		case IET_RELEASE:
 		{
-		case IET_FIRST_PRESS:	sMessage += "Pressed";	break;
-		case IET_RELEASE:	sMessage += "Released";	break;
+			switch( input.type )
+			{
+				case IET_FIRST_PRESS:	sMessage += "Pressed";	break;
+				case IET_RELEASE:	sMessage += "Released";	break;
+				default: break;
+			}
+			MESSAGEMAN->Broadcast( sMessage );
+			break;
 		}
-		MESSAGEMAN->Broadcast( sMessage );
+		default: break;
 	}
 
 	Screen::Input( input );	// default handler
