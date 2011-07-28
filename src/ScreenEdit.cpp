@@ -1115,7 +1115,6 @@ void ScreenEdit::Update( float fDeltaTime )
 			fLastBeat = m_pSteps->m_Timing.GetBeatFromElapsedTime( fSeconds + 0.5f );
 		}
 
-		// This should be fine: it will convert to the same I believe. -Wolfman2000
 		float fStopAtSeconds = m_pSteps->m_Timing.GetElapsedTimeFromBeat( NoteRowToBeat(m_iStopPlayingAt) ) + 1;
 		if( GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fMusicSeconds > fStopAtSeconds )
 		{
