@@ -77,21 +77,20 @@ static void GetTimingTags( vector<RString> &lines, TimingData timing, bool bIsSo
 	w.Finish();
 	
 	w.Init( "STOPS" );
-	vector<TimingSegment *> &stops = timing.allTimingSegments[SEGMENT_STOP_DELAY];
+	vector<TimingSegment *> &stops = timing.allTimingSegments[SEGMENT_STOP];
 	for (i = 0; i < stops.size(); i++)
 	{
 		StopSegment *ss = static_cast<StopSegment *>(stops[i]);
-		if( !ss->GetDelay() )
-			w.Write( ss->GetRow(), ss->GetPause() );
+		w.Write( ss->GetRow(), ss->GetPause() );
 	}
 	w.Finish();
 	
 	w.Init( "DELAYS" );
-	for (i = 0; i < stops.size(); i++)
+	vector<TimingSegment *> &delays = timing.allTimingSegments[SEGMENT_DELAY];
+	for (i = 0; i < delays.size(); i++)
 	{
-		StopSegment *ss = static_cast<StopSegment *>(stops[i]);
-		if( ss->GetDelay() )
-			w.Write( ss->GetRow(), ss->GetPause() );
+		DelaySegment *ss = static_cast<DelaySegment *>(delays[i]);
+		w.Write( ss->GetRow(), ss->GetPause() );
 	}
 	w.Finish();
 	
@@ -183,9 +182,9 @@ static void WriteTimingTags( RageFile &f, const TimingData &timing, bool bIsSong
 	f.PutLine(ssprintf("#BPMS:%s;",
 			   join(",\r\n", timing.ToVectorString(SEGMENT_BPM)).c_str()));
 	f.PutLine(ssprintf("#STOPS:%s;",
-			   join(",\r\n", timing.ToVectorString(SEGMENT_STOP_DELAY, false)).c_str()));
+			   join(",\r\n", timing.ToVectorString(SEGMENT_STOP)).c_str()));
 	f.PutLine(ssprintf("#DELAYS:%s;",
-			   join(",\r\n", timing.ToVectorString(SEGMENT_STOP_DELAY, true)).c_str()));
+			   join(",\r\n", timing.ToVectorString(SEGMENT_DELAY)).c_str()));
 	f.PutLine(ssprintf("#WARPS:%s;",
 			   join(",\r\n", timing.ToVectorString(SEGMENT_WARP)).c_str()));
 	f.PutLine(ssprintf("#TIMESIGNATURES:%s;",

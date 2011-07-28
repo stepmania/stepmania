@@ -19,30 +19,30 @@ public:
 	void AddSegment(TimingSegmentType tst, TimingSegment * seg);
 	
 	int GetSegmentIndexAtRow(TimingSegmentType tst,
-							 int row, bool isDelay = false) const;
+							 int row) const;
 	
 	int GetSegmentIndexAtBeat(TimingSegmentType tst,
-							  float beat, bool isDelay = false) const
+							  float beat) const
 	{
-		return this->GetSegmentIndexAtRow(tst, BeatToNoteRow(beat), isDelay);
+		return this->GetSegmentIndexAtRow(tst, BeatToNoteRow(beat));
 	}
 	
 	float GetNextSegmentBeatAtRow(TimingSegmentType tst,
-								  int row, bool isDelay = false) const;
+								  int row) const;
 	
 	float GetNextSegmentBeatAtBeat(TimingSegmentType tst,
-								   float beat, bool isDelay = false) const
+								   float beat) const
 	{
-		return this->GetNextSegmentBeatAtRow(tst, BeatToNoteRow(beat), isDelay);
+		return this->GetNextSegmentBeatAtRow(tst, BeatToNoteRow(beat));
 	}
 	
 	float GetPreviousSegmentBeatAtRow(TimingSegmentType tst,
-									  int row, bool isDelay = false) const;
+									  int row) const;
 	
 	float GetPreviousSegmentBeatAtBeat(TimingSegmentType tst,
-									   float beat, bool isDelay = false) const
+									   float beat) const
 	{
-		return this->GetPreviousSegmentBeatAtRow(tst, BeatToNoteRow(beat), isDelay);
+		return this->GetPreviousSegmentBeatAtRow(tst, BeatToNoteRow(beat));
 	}
 	
 	bool empty() const;
@@ -103,20 +103,6 @@ public:
 	BPMSegment* GetBPMSegmentAtBeat( float fBeat ) { return GetBPMSegmentAtRow( (int)BeatToNoteRow(fBeat)); }
 	
 	/**
-	 * @brief Retrieve the Stop/Delay at the given row.
-	 * @param iNoteRow the row in question.
-	 * @param bDelayOut A flag to determine if we are getting a delay or not.
-	 * @return the time we stop at this row.
-	 */
-	float GetStopAtRow( int iNoteRow, bool bDelayOut ) const;
-	/**
-	 * @brief Retrieve the Stop/Delay at the given row.
-	 * @param fBeat the beat in question.
-	 * @param bDelayOut A flag to determine if we are getting a delay or not.
-	 * @return the time we stop at this beat.
-	 */
-	float GetStopAtBeat( float fBeat, bool bDelayOut ) const { return GetStopAtRow( BeatToNoteRow(fBeat), bDelayOut ); }
-	/**
 	 * @brief Retrieve the stop time at the given row.
 	 * @param iNoteRow the row in question.
 	 * @return the stop time.
@@ -128,6 +114,33 @@ public:
 	 * @return the stop time.
 	 */
 	float GetStopAtBeat( float fBeat ) const { return GetStopAtRow( BeatToNoteRow(fBeat) ); }
+	
+	/**
+	 * @brief Set the row to have the new stop time.
+	 * @param iNoteRow the row to have the new stop time.
+	 * @param fSeconds the new stop time.
+	 */
+	void SetStopAtRow( int iNoteRow, float fSeconds );
+	/**
+	 * @brief Set the beat to have the new stop time.
+	 * @param fBeat to have the new stop time.
+	 * @param fSeconds the new stop time.
+	 */
+	void SetStopAtBeat( float fBeat, float fSeconds ) { SetStopAtRow( BeatToNoteRow(fBeat), fSeconds); }
+	/**
+	 * @brief Retrieve the StopSegment at the specified row.
+	 * @param iNoteRow the row that has a StopSegment.
+	 * @return the StopSegment in question.
+	 */
+	StopSegment* GetStopSegmentAtRow( int iNoteRow );
+	/**
+	 * @brief Retrieve the StopSegment at the specified beat.
+	 * @param fBeat the beat that has a StopSegment.
+	 * @return the StopSegment in question.
+	 */
+	StopSegment* GetStopSegmentAtBeat( float fBeat ) { return GetStopSegmentAtRow( BeatToNoteRow(fBeat)); }
+	
+	
 	/**
 	 * @brief Retrieve the delay time at the given row.
 	 * @param iNoteRow the row in question.
@@ -140,21 +153,7 @@ public:
 	 * @return the delay time.
 	 */
 	float GetDelayAtBeat( float fBeat ) const { return GetDelayAtRow( BeatToNoteRow(fBeat) ); }
-	/**
-	 * @brief Set the row to have the new stop time.
-	 * @param iNoteRow the row to have the new stop time.
-	 * @param fSeconds the new stop time.
-	 */
-	void SetStopAtRow( int iNoteRow, float fSeconds ) { SetStopAtRow( iNoteRow, fSeconds, false ); }
-	/**
-	 * @brief Set the row to have the new pause time.
-	 *
-	 * This function was added specifically for sm-ssc.
-	 * @param iNoteRow the row to have the new pause time.
-	 * @param fSeconds the new pause time.
-	 * @param bDelay If true, this is a Delay Segment. Otherwise, it is a StopSegment.
-	 */
-	void SetStopAtRow( int iNoteRow, float fSeconds, bool bDelay );
+	
 	/**
 	 * @brief Set the row to have the new delay time.
 	 *
@@ -162,22 +161,7 @@ public:
 	 * @param iNoteRow the row to have the new delay time.
 	 * @param fSeconds the new delay time.
 	 */
-	void SetDelayAtRow( int iNoteRow, float fSeconds ) { SetStopAtRow( iNoteRow, fSeconds, true ); }
-	/**
-	 * @brief Set the beat to have the new stop time.
-	 * @param fBeat to have the new stop time.
-	 * @param fSeconds the new stop time.
-	 */
-	void SetStopAtBeat( float fBeat, float fSeconds ) { SetStopAtRow( BeatToNoteRow(fBeat), fSeconds, false ); }
-	/**
-	 * @brief Set the beat to have the new pause time.
-	 *
-	 * This function was added specifically for sm-ssc.
-	 * @param fBeat the beat to have the new pause time.
-	 * @param fSeconds the new pause time.
-	 * @param bDelay If true, this is a Delay Segment. Otherwise, it is a StopSegment.
-	 */
-	void SetStopAtBeat( float fBeat, float fSeconds, bool bDelay ) { SetStopAtRow( BeatToNoteRow(fBeat), fSeconds, bDelay ); }
+	void SetDelayAtRow( int iNoteRow, float fSeconds );
 	/**
 	 * @brief Set the beat to have the new delay time.
 	 *
@@ -185,45 +169,19 @@ public:
 	 * @param fBeat the beat to have the new delay time.
 	 * @param fSeconds the new delay time.
 	 */
-	void SetDelayAtBeat( float fBeat, float fSeconds ) { SetStopAtRow( BeatToNoteRow(fBeat), fSeconds, true ); }
-	/**
-	 * @brief Retrieve the StopSegment at the specified row.
-	 * @param iNoteRow the row that has a StopSegment.
-	 * @return the StopSegment in question.
-	 */
-	StopSegment* GetStopSegmentAtRow( int iNoteRow ) { return GetStopSegmentAtRow( iNoteRow, false ); }
-	/**
-	 * @brief Retrieve the StopSegment at the specified beat.
-	 * @param fBeat the beat that has a StopSegment.
-	 * @return the StopSegment in question.
-	 */
-	StopSegment* GetStopSegmentAtBeat( float fBeat ) { return GetStopSegmentAtRow( BeatToNoteRow(fBeat), false); }
-	/**
-	 * @brief Retrieve the StopSegment at the specified row.
-	 * @param iNoteRow the row that has a StopSegment.
-	 * @param bDelay If true, this is actually a DelaySegment.
-	 * @return the StopSegment in question.
-	 */
-	StopSegment* GetStopSegmentAtRow( int iNoteRow, bool bDelay );
-	/**
-	 * @brief Retrieve the StopSegment at the specified beat.
-	 * @param fBeat the beat that has a StopSegment.
-	 * @param bDelay If true, this is actually a DelaySegment.
-	 * @return the StopSegment in question.
-	 */
-	StopSegment* GetStopSegmentAtBeat( float fBeat, bool bDelay ) { return GetStopSegmentAtRow( BeatToNoteRow(fBeat), bDelay ); }
+	void SetDelayAtBeat( float fBeat, float fSeconds ) { SetDelayAtRow( BeatToNoteRow(fBeat), fSeconds); }
 	/**
 	 * @brief Retrieve the DelaySegment at the specified row.
 	 * @param iNoteRow the row that has a DelaySegment.
 	 * @return the DelaySegment in question.
 	 */
-	StopSegment* GetDelaySegmentAtRow( int iNoteRow ) { return GetStopSegmentAtRow( iNoteRow, true ); }
+	DelaySegment* GetDelaySegmentAtRow( int iNoteRow );
 	/**
 	 * @brief Retrieve the DelaySegment at the specified beat.
 	 * @param fBeat the beat that has a DelaySegment.
 	 * @return the DelaySegment in question.
 	 */
-	StopSegment* GetDelaySegmentAtBeat( float fBeat ) { return GetStopSegmentAtRow( BeatToNoteRow(fBeat), true); }
+	DelaySegment* GetDelaySegmentAtBeat( float fBeat ) { return GetDelaySegmentAtRow( BeatToNoteRow(fBeat)); }
 		
 	/**
 	 * @brief Retrieve the Time Signature's numerator at the given row.
@@ -830,7 +788,7 @@ public:
 	 */
 	float	m_fBeat0OffsetInSeconds;
 	
-	vector<RString> ToVectorString(TimingSegmentType tst, bool isDelay = false, int dec = 6) const;	
+	vector<RString> ToVectorString(TimingSegmentType tst, int dec = 6) const;	
 };
 
 #undef COMPARE
