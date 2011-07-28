@@ -939,7 +939,7 @@ void TimingData::GetBeatAndBPSFromElapsedTimeNoOffset( float fElapsedTime, float
 		}
 		if (itSS != segs[SEGMENT_STOP].end() &&
 			(*itSS)->GetRow() < iEventRow &&
-			iEventType != FOUND_DELAY ) // taking a gamble with this one.
+			iEventType != FOUND_DELAY )
 		{
 			iEventRow = (*itSS)->GetRow();
 			iEventType = FOUND_STOP;
