@@ -381,7 +381,8 @@ bool NotesWriterDWI::Write( RString sPath, const Song &out )
 		break;
 	}
 
-	const vector<TimingSegment *> &stops = out.m_SongTiming.allTimingSegments[SEGMENT_STOP_DELAY];
+	// TODO: Also check for delays, add them as stops minus one row?
+	const vector<TimingSegment *> &stops = out.m_SongTiming.allTimingSegments[SEGMENT_STOP];
 	if( !stops.empty() )
 	{
 		f.Write( "#FREEZE:" );

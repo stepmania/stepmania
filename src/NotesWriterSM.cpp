@@ -96,18 +96,20 @@ static void WriteGlobalTags( RageFile &f, Song &out )
 			int iRow = ws->GetRow();
 			float fBPS = 60 / out.m_SongTiming.GetBPMAtRow(iRow);
 			float fSkip = fBPS * ws->GetLength();
-			out.m_SongTiming.AddSegment(SEGMENT_STOP_DELAY,
-										new StopSegment(iRow, -fSkip, false) );
+			out.m_SongTiming.AddSegment(SEGMENT_STOP,
+										new StopSegment(iRow, -fSkip) );
 		}
 	}
 
+	// TODO: make Delays into Stops that start one row before.
+	
 	f.Write( "#STOPS:" );
-	vector<TimingSegment *> &stops = timing.allTimingSegments[SEGMENT_STOP_DELAY];
+	vector<TimingSegment *> &stops = timing.allTimingSegments[SEGMENT_STOP];
 	for( unsigned i=0; i<stops.size(); i++ )
 	{
 		const StopSegment *fs = static_cast<StopSegment *>(stops[i]);
 		float fBeat = fs->GetBeat();
-		if (fs->GetDelay()) fBeat--;
+		// if (fs->GetDelay()) fBeat--;
 		
 		f.PutLine( ssprintf( "%.3f=%.3f", fBeat, fs->GetPause() ) );
 		if( i != stops.size()-1 )

@@ -1364,20 +1364,13 @@ void TimingData::NoteRowToMeasureAndBeat( int iNoteRow, int &iMeasureIndexOut, i
 	return;
 }
 
-vector<RString> TimingData::ToVectorString(TimingSegmentType tst,
-										   bool isDelay, int dec) const
+vector<RString> TimingData::ToVectorString(TimingSegmentType tst, int dec) const
 {
 	const vector<TimingSegment *> segs = this->allTimingSegments[tst];
 	vector<RString> ret;
 	
 	for (unsigned i = 0; i < segs.size(); i++)
 	{
-		if (tst == SEGMENT_STOP_DELAY)
-		{
-			StopSegment *seg = static_cast<StopSegment *>(segs[i]);
-			if (seg->GetDelay() != isDelay)
-				continue;
-		}
 		ret.push_back(segs[i]->ToString(dec));
 	}
 	return ret;
@@ -1433,12 +1426,12 @@ public:
 	}
 	static int GetStops( T* p, lua_State *L )
 	{
-		LuaHelpers::CreateTableFromArray(p->ToVectorString(SEGMENT_STOP_DELAY, false), L);
+		LuaHelpers::CreateTableFromArray(p->ToVectorString(SEGMENT_STOP), L);
 		return 1;
 	}
 	static int GetDelays( T* p, lua_State *L )
 	{
-		LuaHelpers::CreateTableFromArray(p->ToVectorString(SEGMENT_STOP_DELAY, true), L);
+		LuaHelpers::CreateTableFromArray(p->ToVectorString(SEGMENT_DELAY), L);
 		return 1;
 	}
 	static int GetBPMs( T* p, lua_State *L )

@@ -830,7 +830,7 @@ public:
 	 */
 	float	m_fBeat0OffsetInSeconds;
 	
-	vector<RString> ToVectorString(TimingSegmentType tst, bool isDelay = false, int dec = 6) const;	
+	vector<RString> ToVectorString(TimingSegmentType tst, int dec = 6) const;	
 };
 
 #undef COMPARE

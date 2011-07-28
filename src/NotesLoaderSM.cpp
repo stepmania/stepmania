@@ -315,7 +315,7 @@ void SMLoader::ProcessStops( TimingData &out, const RString line, const int rows
 		}
 		else if( fFreezeSeconds > 0.0f )
 		{
-			out.AddSegment(SEGMENT_STOP_DELAY,
+			out.AddSegment(SEGMENT_STOP,
 						   new StopSegment(fFreezeBeat, fFreezeSeconds));
 		}
 		
@@ -353,14 +353,13 @@ void SMLoader::ProcessDelays( TimingData &out, const RString line, const int row
 		const float fFreezeBeat = RowToBeat( arrayDelayValues[0], rowsPerBeat );
 		const float fFreezeSeconds = StringToFloat( arrayDelayValues[1] );
 		
-		StopSegment * new_seg = new StopSegment(fFreezeBeat,
-												fFreezeSeconds,
-												true);
+		DelaySegment * new_seg = new DelaySegment(fFreezeBeat,
+												  fFreezeSeconds);
 		
 		// LOG->Trace( "Adding a delay segment: beat: %f, seconds = %f", new_seg.m_fStartBeat, new_seg.m_fStopSeconds );
 		
 		if(fFreezeSeconds > 0.0f)
-			out.AddSegment( SEGMENT_STOP_DELAY, new_seg );
+			out.AddSegment( SEGMENT_DELAY, new_seg );
 		else
 			LOG->UserLog(
 				     "Song file",
