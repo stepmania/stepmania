@@ -953,7 +953,7 @@ void NoteField::DrawPrimitives()
 			{
 				float fBeat = seg->GetBeat();
 				if( IS_ON_SCREEN(fBeat) )
-					DrawFreezeText( fBeat, seg->GetPause() );
+					DrawDelayText( fBeat, seg->GetPause() );
 			}
 		}
 		
