@@ -891,6 +891,7 @@ enum
 	FOUND_WARP_DESTINATION,
 	FOUND_BPM_CHANGE,
 	FOUND_STOP,
+	FOUND_DELAY,
 	FOUND_MARKER,
 	NOT_FOUND
 };
@@ -900,7 +901,8 @@ void TimingData::GetBeatAndBPSFromElapsedTimeNoOffset( float fElapsedTime, float
 	const vector<TimingSegment *> * segs = this->allTimingSegments;
 	vector<TimingSegment *>::const_iterator itBPMS = segs[SEGMENT_BPM].begin();
 	vector<TimingSegment *>::const_iterator itWS   = segs[SEGMENT_WARP].begin();
-	vector<TimingSegment *>::const_iterator itSS   = segs[SEGMENT_STOP_DELAY].begin();
+	vector<TimingSegment *>::const_iterator itSS   = segs[SEGMENT_STOP].begin();
+	vector<TimingSegment *>::const_iterator itDS   = segs[SEGMENT_DELAY].begin();
 	
 	bFreezeOut = false;
 	bDelayOut = false;
@@ -929,8 +931,15 @@ void TimingData::GetBeatAndBPSFromElapsedTimeNoOffset( float fElapsedTime, float
 			iEventRow = (*itBPMS)->GetRow();
 			iEventType = FOUND_BPM_CHANGE;
 		}
-		if (itSS != segs[SEGMENT_STOP_DELAY].end() &&
-			(*itSS)->GetRow() < iEventRow )
+		if (itDS != segs[SEGMENT_DELAY].end() &&
+			(*itDS)->GetRow() < iEventRow)
+		{
+			iEventRow = (*itDS)->GetRow();
+			iEventType = FOUND_DELAY;
+		}
+		if (itSS != segs[SEGMENT_STOP].end() &&
+			(*itSS)->GetRow() < iEventRow &&
+			iEventType != FOUND_DELAY ) // taking a gamble with this one.
 		{
 			iEventRow = (*itSS)->GetRow();
 			iEventType = FOUND_STOP;
@@ -954,23 +963,39 @@ void TimingData::GetBeatAndBPSFromElapsedTimeNoOffset( float fElapsedTime, float
 		fLastTime = fNextEventTime;
 		switch( iEventType )
 		{
-		case FOUND_WARP_DESTINATION:
-			bIsWarping = false;
-			break;
-		case FOUND_BPM_CHANGE:
-			fBPS = static_cast<BPMSegment *>(*itBPMS)->GetBPS();
-			itBPMS ++;
-			break;
-		case FOUND_STOP:
+			case FOUND_WARP_DESTINATION:
+				bIsWarping = false;
+				break;
+			case FOUND_BPM_CHANGE:
+				fBPS = static_cast<BPMSegment *>(*itBPMS)->GetBPS();
+				itBPMS ++;
+				break;
+			case FOUND_DELAY:
+			{
+				const DelaySegment *ss = static_cast<DelaySegment *>(*itDS);
+				fTimeToNextEvent = ss->GetPause();
+				fNextEventTime   = fLastTime + fTimeToNextEvent;
+				if ( fElapsedTime < fNextEventTime )
+				{
+					bFreezeOut = false;
+					bDelayOut  = true;
+					fBeatOut   = ss->GetBeat();
+					fBPSOut    = fBPS;
+					return;
+				}
+				fLastTime = fNextEventTime;
+				itDS ++;
+				break;
+			}
+			case FOUND_STOP:
 			{
 				const StopSegment *ss = static_cast<StopSegment *>(*itSS);
 				fTimeToNextEvent = ss->GetPause();
 				fNextEventTime   = fLastTime + fTimeToNextEvent;
-				const bool bIsDelay = ss->GetDelay();
 				if ( fElapsedTime < fNextEventTime )
 				{
-					bFreezeOut = !bIsDelay;
-					bDelayOut  = bIsDelay;
+					bFreezeOut = true;
+					bDelayOut  = false;
 					fBeatOut   = ss->GetBeat();
 					fBPSOut    = fBPS;
 					return;
@@ -979,7 +1004,7 @@ void TimingData::GetBeatAndBPSFromElapsedTimeNoOffset( float fElapsedTime, float
 				itSS ++;
 			}
 			break;
-		case FOUND_WARP:
+			case FOUND_WARP:
 			{
 				bIsWarping = true;
 				const WarpSegment *ws = static_cast<WarpSegment *>(*itWS);
@@ -1012,7 +1037,8 @@ float TimingData::GetElapsedTimeFromBeatNoOffset( float fBeat ) const
 	const vector<TimingSegment *> * segs = this->allTimingSegments;
 	vector<TimingSegment *>::const_iterator itBPMS = segs[SEGMENT_BPM].begin();
 	vector<TimingSegment *>::const_iterator itWS   = segs[SEGMENT_WARP].begin();
-	vector<TimingSegment *>::const_iterator itSS   = segs[SEGMENT_STOP_DELAY].begin();
+	vector<TimingSegment *>::const_iterator itSS   = segs[SEGMENT_STOP].begin();
+	vector<TimingSegment *>::const_iterator itDS   = segs[SEGMENT_DELAY].begin();
 	
 	int iLastRow = 0;
 	float fLastTime = -m_fBeat0OffsetInSeconds;
@@ -1036,20 +1062,18 @@ float TimingData::GetElapsedTimeFromBeatNoOffset( float fBeat ) const
 			iEventRow = (*itBPMS)->GetRow();
 			iEventType = FOUND_BPM_CHANGE;
 		}
-		if (itSS != segs[SEGMENT_STOP_DELAY].end() &&
-			static_cast<StopSegment *>(*itSS)->GetDelay() &&
-			(*itSS)->GetRow() < iEventRow ) // delays (come before marker)
+		if (itDS != segs[SEGMENT_DELAY].end() &&
+			(*itDS)->GetRow() < iEventRow ) // delays (come before marker)
 		{
-			iEventRow = (*itSS)->GetRow();
-			iEventType = FOUND_STOP;
+			iEventRow = (*itDS)->GetRow();
+			iEventType = FOUND_DELAY;
 		}
 		if( BeatToNoteRow(fBeat) < iEventRow )
 		{
 			iEventRow = BeatToNoteRow(fBeat);
 			iEventType = FOUND_MARKER;
 		}
-		if (itSS != segs[SEGMENT_STOP_DELAY].end() &&
-			!static_cast<StopSegment *>(*itSS)->GetDelay() &&
+		if (itSS != segs[SEGMENT_STOP].end() &&
 			(*itSS)->GetRow() < iEventRow ) // stops (come after marker)
 		{
 			iEventRow = (*itSS)->GetRow();
@@ -1078,6 +1102,12 @@ float TimingData::GetElapsedTimeFromBeatNoOffset( float fBeat ) const
 			fNextEventTime   = fLastTime + fTimeToNextEvent;
 			fLastTime = fNextEventTime;
 			itSS ++;
+			break;
+		case FOUND_DELAY:
+			fTimeToNextEvent = static_cast<DelaySegment *>(*itDS)->GetPause();
+			fNextEventTime   = fLastTime + fTimeToNextEvent;
+			fLastTime = fNextEventTime;
+			itDS ++;
 			break;
 		case FOUND_MARKER:
 			return fLastTime;	
