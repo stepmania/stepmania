@@ -4,7 +4,8 @@
 
 static const char *TimingSegmentTypeNames[] = {
 	"BPM",
-	"Stop/Delay", // TODO: separate when stops and delays are separate.
+	"Stop",
+	"Delay",
 	"Time Sig",
 	"Warp",
 	"Label",
@@ -332,24 +333,31 @@ void StopSegment::SetPause(const float i)
 	this->pauseSeconds = i;
 }
 
-bool StopSegment::GetDelay() const
-{
-	return this->isDelay;
-}
-
-void StopSegment::SetDelay(const bool i)
-{
-	this->isDelay = i;
-}
-
 bool StopSegment::operator<( const StopSegment &other ) const
 {
 	LTCOMPARE(GetRow());
-	if (this->GetDelay() && !other.GetDelay()) return true;
-	if (!this->GetDelay() && other.GetDelay()) return false;
 	LTCOMPARE(GetPause());
 	return false;
 }
+
+float DelaySegment::GetPause() const
+{
+	return this->pauseSeconds;
+}
+
+void DelaySegment::SetPause(const float i)
+{
+	this->pauseSeconds = i;
+}
+
+bool DelaySegment::operator<( const DelaySegment &other ) const
+{
+	LTCOMPARE(GetRow());
+	LTCOMPARE(GetPause());
+	return false;
+}
+
+#undef LTCOMPARE
 
 /**
  * @file

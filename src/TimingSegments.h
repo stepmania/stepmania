@@ -6,10 +6,8 @@
 enum TimingSegmentType
 {
 	SEGMENT_BPM,
-	SEGMENT_STOP_DELAY,
-	// uncomment the below two when stops and delays don't share one.
-	// SEGMENT_STOP,
-	// SEGMENT_DELAY,
+	SEGMENT_STOP,
+	SEGMENT_DELAY,
 	SEGMENT_TIME_SIG,
 	SEGMENT_WARP,
 	SEGMENT_LABEL,
@@ -81,7 +79,7 @@ struct TimingSegment
 	{
 		return TimingSegmentType_Invalid;
 	}
-	// TODO: Remove isDelay optional param and split Stops and Delays.
+	
 	virtual RString ToString(int dec) const
 	{
 		return FloatToString(this->GetBeat());
@@ -877,9 +875,7 @@ private:
 };
 
 /**
- * @brief Identifies when a song has a stop or a delay.
- *
- * It is hopeful that stops and delays can be made into their own segments at some point.
+ * @brief Identifies when a song has a stop, DDR/ITG style.
  */
 struct StopSegment : public TimingSegment
 {
@@ -889,35 +885,21 @@ struct StopSegment : public TimingSegment
 	 * It is best to override the values as soon as possible.
 	 */
 	StopSegment() : TimingSegment(-1),
-		pauseSeconds(-1.0f), isDelay(false) {}
+		pauseSeconds(-1.0f) {}
 	
 	StopSegment (const StopSegment &other):
 		TimingSegment(other.GetRow()),
-		pauseSeconds(other.GetPause()),
-		isDelay(other.GetDelay()) {}
+		pauseSeconds(other.GetPause())  {}
 	
 	/**
 	 * @brief Creates a Stop Segment with specified values.
-	 *
-	 * This will not create a dedicated delay segment.
-	 * Use the third constructor for making delays.
 	 * @param s the starting row / beat of this segment.
 	 * @param f the length of time to pause the note scrolling.
 	 */
 	template <typename StartType>
 	StopSegment( StartType s, float f ):
 		TimingSegment(max((StartType)0, s)),
-		pauseSeconds(f), isDelay(false) {}
-	/**
-	 * @brief Creates a Stop/Delay Segment with specified values.
-	 * @param s the starting row / beat of this segment.
-	 * @param f the length of time to pause the note scrolling.
-	 * @param d the flag that makes this Stop Segment a Delay Segment.
-	 */
-	template <typename StartType>
-	StopSegment( StartType s, float f, bool d ):
-		TimingSegment(max((StartType)0, s)),
-		pauseSeconds(f), isDelay(d) {}
+		pauseSeconds(f) {}
 
 	/**
 	 * @brief Get the pause length in this StopSegment.
@@ -929,16 +911,6 @@ struct StopSegment : public TimingSegment
 	 * @param i the pause length. */
 	void SetPause(const float i);
 	
-	/**
-	 * @brief Get the behavior in this StopSegment.
-	 * @return the behavior. */
-	bool GetDelay() const;
-	
-	/**
-	 * @brief Set the behavior in this StopSegment.
-	 * @param i the behavior. */
-	void SetDelay(const bool i);
-	
 	virtual RString ToString(int dec) const
 	{
 		const RString str = "%.0" + IntToString(dec)
@@ -948,30 +920,17 @@ struct StopSegment : public TimingSegment
 
 	/**
 	 * @brief Compares two StopSegments to see if one is less than the other.
-	 *
-	 * It should be observed that Delay Segments have to come before Stop Segments.
-	 * Otherwise, it will act like a Stop Segment with extra time from the Delay at
-	 * the same row.
 	 * @param other the other StopSegment to compare to.
 	 * @return the truth/falsehood of if the first is less than the second.
 	 */
 	bool operator<( const StopSegment &other ) const;
 	
-	TimingSegmentType GetType() const { return SEGMENT_STOP_DELAY; }
+	TimingSegmentType GetType() const { return SEGMENT_STOP; }
 private:
 	/**
 	 * @brief The amount of time to complete the pause at the given row.
 	 */
 	float pauseSeconds;
-	/**
-	 * @brief How does this StopSegment behave?
-	 *
-	 * If true, the Stop Segment is treated as a Delay Segment, similar to the Pump It Up series.
-	 * If false, this behaves similar to the DDR/ITG style games.
-	 *
-	 * TODO: Separate out DelaySegments in the future.
-	 */
-	bool isDelay;
 };
 
 /**
@@ -993,9 +952,6 @@ struct DelaySegment : public TimingSegment
 	
 	/**
 	 * @brief Creates a Delay Segment with specified values.
-	 *
-	 * This will not create a dedicated delay segment.
-	 * Use the third constructor for making delays.
 	 * @param s the starting row / beat of this segment.
 	 * @param f the length of time to pause the note scrolling.
 	 */
@@ -1030,7 +986,7 @@ struct DelaySegment : public TimingSegment
 	 */
 	bool operator<( const DelaySegment &other ) const;
 	
-	TimingSegmentType GetType() const { return SEGMENT_STOP_DELAY; }
+	TimingSegmentType GetType() const { return SEGMENT_DELAY; }
 private:
 	/**
 	 * @brief The amount of time to complete the pause at the given row.
