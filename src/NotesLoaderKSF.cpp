@@ -355,14 +355,14 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, Song &song, bool 
 				// DelayBeat
 				float fCurDelay = 60 / stepsTiming.GetBPMAtBeat(fCurBeat) * numTemp / iTickCount;
 				fCurDelay += stepsTiming.GetDelayAtRow(BeatToNoteRow(fCurBeat) );
-				stepsTiming.SetStopAtBeat( fCurBeat, fCurDelay, true );
+				stepsTiming.SetDelayAtBeat( fCurBeat, fCurDelay );
 			}
 			else if (BeginsWith(sRowString, "|D"))
 			{
 				// Delays
 				float fCurDelay = stepsTiming.GetStopAtRow(BeatToNoteRow(fCurBeat) );
 				fCurDelay += numTemp / 1000;
-				stepsTiming.SetStopAtBeat( fCurBeat, fCurDelay, true );
+				stepsTiming.SetDelayAtBeat( fCurBeat, fCurDelay );
 			}
 			else if (BeginsWith(sRowString, "|M") || BeginsWith(sRowString, "|C"))
 			{

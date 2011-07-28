@@ -2978,7 +2978,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	{
 		float fDelay = StringToFloat( ScreenTextEntry::s_sLastAnswer );
 		if( fDelay >= 0 )
-			GetAppropriateTiming().SetStopAtBeat( GetBeat(), fDelay, true );
+			GetAppropriateTiming().SetDelayAtBeat( GetBeat(), fDelay );
 		SetDirty( true );
 	}
 	else if( SM == SM_BackFromTimeSignatureChange && !ScreenTextEntry::s_bCancelledLast )
