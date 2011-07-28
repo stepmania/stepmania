@@ -1894,7 +1894,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 					fDelta *= 40;
 			}
 			unsigned i;
-			vector<TimingSegment *> &stops = GetAppropriateTiming().allTimingSegments[SEGMENT_STOP_DELAY];
+			vector<TimingSegment *> &stops = GetAppropriateTiming().allTimingSegments[SEGMENT_STOP];
 			for( i=0; i<stops.size(); i++ )
 			{
 				if( stops[i]->GetRow() == GetRow() )
@@ -1905,7 +1905,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			{
 				// create a new StopSegment
 				if( fDelta > 0 )
-					GetAppropriateTiming().AddSegment(SEGMENT_STOP_DELAY,
+					GetAppropriateTiming().AddSegment(SEGMENT_STOP,
 													  new StopSegment( GetRow(), fDelta) );
 			}
 			else	// StopSegment being modified is m_SongTiming.m_StopSegments[i]
@@ -4329,9 +4329,14 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 							cpy = new BPMSegment(*(static_cast<BPMSegment *>(org)));
 							break;
 						}
-						case SEGMENT_STOP_DELAY:
+						case SEGMENT_STOP:
 						{
 							cpy = new StopSegment(*(static_cast<StopSegment *>(org)));
+							break;
+						}
+						case SEGMENT_DELAY:
+						{
+							cpy = new DelaySegment(*(static_cast<DelaySegment *>(org)));
 							break;
 						}
 						case SEGMENT_TIME_SIG:

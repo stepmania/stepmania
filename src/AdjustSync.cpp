@@ -277,10 +277,17 @@ void AdjustSync::AutosyncTempo()
 		/* We assume that the stops were measured as a number of beats.
 		 * Therefore, if we change the bpms, we need to make a similar
 		 * change to the stops. */
-		vector<TimingSegment *> &stops = timing.allTimingSegments[SEGMENT_STOP_DELAY];
+		vector<TimingSegment *> &stops = timing.allTimingSegments[SEGMENT_STOP];
 		for (unsigned i = 0; i < stops.size(); i++)
 		{
 			StopSegment *s = static_cast<StopSegment *>(stops[i]);
+			s->SetPause(s->GetPause() * (1.0f - fSlope));
+		}
+		// Do the same for delays.
+		vector<TimingSegment *> &delays = timing.allTimingSegments[SEGMENT_DELAY];
+		for (unsigned i = 0; i < delays.size(); i++)
+		{
+			DelaySegment *s = static_cast<DelaySegment *>(delays[i]);
 			s->SetPause(s->GetPause() * (1.0f - fSlope));
 		}
 
@@ -377,8 +384,8 @@ void AdjustSync::GetSyncChangeTextSong( vector<RString> &vsAddTo )
 			}
 		}
 
-		vector<TimingSegment *> &stopTest = testing.allTimingSegments[SEGMENT_STOP_DELAY];
-		vector<TimingSegment *> &stopOrig = original.allTimingSegments[SEGMENT_STOP_DELAY];
+		vector<TimingSegment *> &stopTest = testing.allTimingSegments[SEGMENT_STOP];
+		vector<TimingSegment *> &stopOrig = original.allTimingSegments[SEGMENT_STOP];
 		for( unsigned i=0; i< stopTest.size(); i++ )
 		{
 			StopSegment *sT = static_cast<StopSegment *>(stopTest[i]);
@@ -399,6 +406,31 @@ void AdjustSync::GetSyncChangeTextSong( vector<RString> &vsAddTo )
 					i+1,
 					fOld, 
 					fNew ) );
+			}
+		}
+		
+		vector<TimingSegment *> &delyTest = testing.allTimingSegments[SEGMENT_DELAY];
+		vector<TimingSegment *> &delyOrig = original.allTimingSegments[SEGMENT_DELAY];
+		for( unsigned i=0; i< delyTest.size(); i++ )
+		{
+			DelaySegment *sT = static_cast<DelaySegment *>(delyTest[i]);
+			DelaySegment *sO = static_cast<DelaySegment *>(delyOrig[i]);
+			float fOld = Quantize( sO->GetPause(), 0.001f );
+			float fNew = Quantize( sT->GetPause(), 0.001f );
+			float fDelta = fNew - fOld;
+			
+			if( fabsf(fDelta) > 0.0001f )
+			{
+				if ( i >= 4 )
+				{
+					vsAddTo.push_back(ETC.GetValue());
+					break;
+				}
+				vsAddTo.push_back( ssprintf(
+											CHANGED_STOP.GetValue(),
+											i+1,
+											fOld, 
+											fNew ) );
 			}
 		}
 
