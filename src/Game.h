@@ -34,10 +34,7 @@ public:
 
 	/** @brief Do we count multiple notes in a row as separate notes, or as one note? */
 	bool			m_bCountNotesSeparately;
-	/** @brief Do we allow for hammer-ons and pull-offs?
-	 *
-	 * This is right now only useful for guitar type input. */
-	bool			m_bAllowHopos;
+
 	InputScheme		m_InputScheme;
 
 	struct PerButtonInfo

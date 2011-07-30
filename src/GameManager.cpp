@@ -502,7 +502,6 @@ static const Game g_Game_Dance =
 	"dance",					// m_szName
 	g_apGame_Dance_Styles,				// m_apStyles
 	false,						// m_bCountNotesSeparately
-	false,						// m_bAllowHopos
 	{						// m_InputScheme
 		"dance",				// m_szName
 		NUM_DANCE_BUTTONS,			// m_iButtonsPerController
@@ -873,7 +872,6 @@ static const Game g_Game_Pump =
 	"pump",						// m_szName
 	g_apGame_Pump_Styles,				// m_apStyles
 	false,						// m_bCountNotesSeparately
-	false,						// m_bAllowHopos
 	{						// m_InputScheme
 		"pump",					// m_szName
 		NUM_PUMP_BUTTONS,			// m_iButtonsPerController
@@ -1011,7 +1009,6 @@ static const Game g_Game_KB7 =
 	"kb7",						// m_szName
 	g_apGame_KB7_Styles,				// m_apStyles
 	true,						// m_bCountNotesSeparately
-	false,						// m_bAllowHopos
 	{						// m_InputScheme
 		"kb7",					// m_szName
 		NUM_KB7_BUTTONS,			// m_iButtonsPerController
@@ -1283,7 +1280,6 @@ static const Game g_Game_Ez2 =
 	"ez2",						// m_szName
 	g_apGame_Ez2_Styles,				// m_apStyles
 	true,						// m_bCountNotesSeparately
-	false,						// m_bAllowHopos
 	{						// m_InputScheme
 		"ez2",					// m_szName
 		NUM_EZ2_BUTTONS,			// m_iButtonsPerController
@@ -1416,7 +1412,6 @@ static const Game g_Game_Para =
 	"para",						// m_szName
 	g_apGame_Para_Styles,				// m_apStyles
 	false,						// m_bCountNotesSeparately
-	false,						// m_bAllowHopos
 	{						// m_InputScheme
 		"para",					// m_szName
 		NUM_PARA_BUTTONS,			// m_iButtonsPerController
@@ -1514,7 +1509,6 @@ static const Game g_Game_DS3DDX =
 	"ds3ddx",					// m_szName
 	g_apGame_DS3DDX_Styles,				// m_apStyles
 	false,						// m_bCountNotesSeparately
-	false,						// m_bAllowHopos
 	{						// m_InputScheme
 		"ds3ddx",				// m_szName
 		NUM_DS3DDX_BUTTONS,			// m_iButtonsPerController
@@ -1860,7 +1854,6 @@ static const Game g_Game_Beat =
 	"beat",						// m_szName
 	g_apGame_Beat_Styles,				// m_apStyles
 	true,						// m_bCountNotesSeparately
-	false,						// m_bAllowHopos
 	{						// m_InputScheme
 		"beat",					// m_szName
 		NUM_BEAT_BUTTONS,			// m_iButtonsPerController
@@ -2040,7 +2033,6 @@ static const Game g_Game_Maniax =
 	"maniax",					// m_szName
 	g_apGame_Maniax_Styles,				// m_apStyles
 	false,						// m_bCountNotesSeparately
-	false,						// m_bAllowHopos
 	{						// m_InputScheme
 		"maniax",				// m_szName
 		NUM_MANIAX_BUTTONS,			// m_iButtonsPerController
@@ -2510,7 +2502,6 @@ static const Game g_Game_Techno =
 	"techno",					// m_szName
 	g_apGame_Techno_Styles,				// m_apStyles
 	false,						// m_bCountNotesSeparately
-	false,						// m_bAllowHopos
 	{						// m_InputScheme
 		"techno",				// m_szName
 		NUM_TECHNO_BUTTONS,			// m_iButtonsPerController
@@ -2661,7 +2652,6 @@ static const Game g_Game_Popn =
 	"popn",						// m_szName
 	g_apGame_Popn_Styles,				// m_apStyles
 	true,						// m_bCountNotesSeparately
-	false,						// m_bAllowHopos
 	{						// m_InputScheme
 		"popn",					// m_szName
 		NUM_POPN_BUTTONS,			// m_iButtonsPerController
@@ -2767,7 +2757,6 @@ static const Game g_Game_Lights =
 	"lights",					// m_szName
 	g_apGame_Lights_Styles,				// m_apStyles
 	false,						// m_bCountNotesSeparately
-	false,						// m_bAllowHopos
 	{						// m_InputScheme
 		"lights",				// m_szName
 		NUM_LIGHTS_BUTTONS,			// m_iButtonsPerController
