@@ -8,6 +8,10 @@ ________________________________________________________________________________
 StepMania 5.0 Preview 3 | 20110???
 --------------------------------------------------------------------------------
 
+2011/07/30
+----------
+* [ProfileManager] Fix an issue when deleting recently created profiles. [AJ]
+
 2011/07/26
 ----------
 * [ScreenEdit] Add a semi working implementation of the often requested
