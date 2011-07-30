@@ -511,7 +511,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)</Command>
     <ClCompile Include="NotesLoaderDWI.cpp" />
     <ClCompile Include="NotesLoaderJson.cpp" />
     <ClCompile Include="NotesLoaderKSF.cpp" />
-    <ClCompile Include="NotesLoaderMidi.cpp" />
     <ClCompile Include="NotesLoaderPMS.cpp" />
     <ClCompile Include="NotesLoaderSM.cpp" />
     <ClCompile Include="NotesLoaderSMA.cpp" />
@@ -1832,7 +1831,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)</Command>
     <ClInclude Include="NotesLoaderDWI.h" />
     <ClInclude Include="NotesLoaderJson.h" />
     <ClInclude Include="NotesLoaderKSF.h" />
-    <ClInclude Include="NotesLoaderMidi.h" />
     <ClInclude Include="NotesLoaderPMS.h" />
     <ClInclude Include="NotesLoaderSM.h" />
     <ClInclude Include="NotesLoaderSMA.h" />

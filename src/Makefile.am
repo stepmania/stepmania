@@ -158,8 +158,7 @@ ModsGroup.cpp ModsGroup.h \
 NoteData.cpp NoteData.h NoteDataUtil.cpp NoteDataUtil.h NoteDataWithScoring.cpp NoteDataWithScoring.h \
 NoteTypes.cpp NoteTypes.h NotesLoader.cpp NotesLoader.h \
 NotesLoaderBMS.cpp NotesLoaderBMS.h NotesLoaderDWI.cpp NotesLoaderDWI.h \
-NotesLoaderJson.cpp NotesLoaderJson.h \
-NotesLoaderKSF.cpp NotesLoaderKSF.h NotesLoaderMidi.cpp NotesLoaderMidi.h \
+NotesLoaderJson.cpp NotesLoaderJson.h NotesLoaderKSF.cpp NotesLoaderKSF.h \
 NotesLoaderPMS.cpp NotesLoaderPMS.h NotesLoaderSM.cpp NotesLoaderSM.h \
 NotesLoaderSSC.cpp NotesLoaderSSC.h NotesLoaderSMA.cpp NotesLoaderSMA.h \
 NotesWriterDWI.cpp NotesWriterDWI.h \

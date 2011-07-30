@@ -985,12 +985,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="NotesLoaderKSF.h">
 			</File>
 			<File
-				RelativePath="NotesLoaderMidi.cpp">
-			</File>
-			<File
-				RelativePath="NotesLoaderMidi.h">
-			</File>
-			<File
 				RelativePath="NotesLoaderPMS.cpp">
 			</File>
 			<File

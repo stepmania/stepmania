@@ -164,7 +164,6 @@
 		3659B56F0F902143002B6B68 /* CommandLineActions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3659B56D0F902143002B6B68 /* CommandLineActions.cpp */; };
 		3659B5700F902143002B6B68 /* CommandLineActions.h in Headers */ = {isa = PBXBuildFile; fileRef = 3659B56E0F902143002B6B68 /* CommandLineActions.h */; };
 		367D575B0EDE56F200B46814 /* ScreenHighScores.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 367D57590EDE56F200B46814 /* ScreenHighScores.cpp */; };
-		3688B8530BD42DAA004186AD /* NotesLoaderMidi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3688B8510BD42DAA004186AD /* NotesLoaderMidi.cpp */; };
 		36C6888311297FFE00453295 /* RageFileDriverReadAhead.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 36C6887F11297FFE00453295 /* RageFileDriverReadAhead.cpp */; };
 		36C6888411297FFE00453295 /* RageFileDriverReadAhead.h in Headers */ = {isa = PBXBuildFile; fileRef = 36C6888011297FFE00453295 /* RageFileDriverReadAhead.h */; };
 		36C6888511297FFE00453295 /* RageFileManager_ReadAhead.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 36C6888111297FFE00453295 /* RageFileManager_ReadAhead.cpp */; };
@@ -211,8 +210,6 @@
 		AA1893630BD777C500AEC0BF /* ScreenProfileSave.h in Headers */ = {isa = PBXBuildFile; fileRef = AA18935F0BD777C400AEC0BF /* ScreenProfileSave.h */; };
 		AA1893640BD777C500AEC0BF /* ScreenProfileLoad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA18935C0BD777C400AEC0BF /* ScreenProfileLoad.cpp */; };
 		AA1893660BD777C500AEC0BF /* ScreenProfileSave.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA18935E0BD777C400AEC0BF /* ScreenProfileSave.cpp */; };
-		AA18937D0BD77ECE00AEC0BF /* NotesLoaderMidi.h in Headers */ = {isa = PBXBuildFile; fileRef = 3688B8520BD42DAA004186AD /* NotesLoaderMidi.h */; };
-		AA18937E0BD77ECF00AEC0BF /* NotesLoaderMidi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3688B8510BD42DAA004186AD /* NotesLoaderMidi.cpp */; };
 		AA1B083C0762532800835464 /* Command.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA1B08370762532800835464 /* Command.cpp */; };
 		AA1B083E0762532800835464 /* GameCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA1B08390762532800835464 /* GameCommand.cpp */; };
 		AA1B08400762532800835464 /* Preference.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA1B083B0762532800835464 /* Preference.cpp */; };
@@ -1991,8 +1988,6 @@
 		3659B56E0F902143002B6B68 /* CommandLineActions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommandLineActions.h; sourceTree = "<group>"; };
 		367D57590EDE56F200B46814 /* ScreenHighScores.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ScreenHighScores.cpp; path = ../src/ScreenHighScores.cpp; sourceTree = SOURCE_ROOT; };
 		367D575A0EDE56F200B46814 /* ScreenHighScores.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ScreenHighScores.h; path = ../src/ScreenHighScores.h; sourceTree = SOURCE_ROOT; };
-		3688B8510BD42DAA004186AD /* NotesLoaderMidi.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = NotesLoaderMidi.cpp; path = ../src/NotesLoaderMidi.cpp; sourceTree = "<group>"; };
-		3688B8520BD42DAA004186AD /* NotesLoaderMidi.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = NotesLoaderMidi.h; path = ../src/NotesLoaderMidi.h; sourceTree = "<group>"; };
 		36C6887F11297FFE00453295 /* RageFileDriverReadAhead.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RageFileDriverReadAhead.cpp; path = ../src/RageFileDriverReadAhead.cpp; sourceTree = SOURCE_ROOT; };
 		36C6888011297FFE00453295 /* RageFileDriverReadAhead.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RageFileDriverReadAhead.h; path = ../src/RageFileDriverReadAhead.h; sourceTree = SOURCE_ROOT; };
 		36C6888111297FFE00453295 /* RageFileManager_ReadAhead.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RageFileManager_ReadAhead.cpp; path = ../src/RageFileManager_ReadAhead.cpp; sourceTree = SOURCE_ROOT; };
@@ -3387,8 +3382,6 @@
 				2B9C2E8A137A138B004C92F3 /* NotesLoaderJson.h */,
 				AA6EFDF304770C79005F316C /* NotesLoaderKSF.cpp */,
 				AA6EFDF404770C79005F316C /* NotesLoaderKSF.h */,
-				3688B8510BD42DAA004186AD /* NotesLoaderMidi.cpp */,
-				3688B8520BD42DAA004186AD /* NotesLoaderMidi.h */,
 				EE2153A710A75BEE0074B01B /* NotesLoaderPMS.cpp */,
 				EE2153A810A75BEE0074B01B /* NotesLoaderPMS.h */,
 				AA6EFDF504770C79005F316C /* NotesLoaderSM.cpp */,
@@ -5647,7 +5640,6 @@
 				AA2CA8A00BB745BD002441E9 /* ScreenContinue.h in Headers */,
 				AA1893610BD777C500AEC0BF /* ScreenProfileLoad.h in Headers */,
 				AA1893630BD777C500AEC0BF /* ScreenProfileSave.h in Headers */,
-				AA18937D0BD77ECE00AEC0BF /* NotesLoaderMidi.h in Headers */,
 				AA3396B90BDE195E00E1475F /* RageSoundReader_Merge.h in Headers */,
 				AA339A7E0BF0FA6400E1475F /* LoadingWindow_Null.h in Headers */,
 				AAB3B7DF0C6C582E001BF487 /* ScreenSelectProfile.h in Headers */,
@@ -6614,7 +6606,6 @@
 				AA05A0B20BA2EFF3006F8139 /* OptionsList.cpp in Sources */,
 				AA2C9CA30BAD6F55002441E9 /* CodeSet.cpp in Sources */,
 				AA2CA8A10BB745BD002441E9 /* ScreenContinue.cpp in Sources */,
-				3688B8530BD42DAA004186AD /* NotesLoaderMidi.cpp in Sources */,
 				AA1893640BD777C500AEC0BF /* ScreenProfileLoad.cpp in Sources */,
 				AA1893660BD777C500AEC0BF /* ScreenProfileSave.cpp in Sources */,
 				AA3396BA0BDE195E00E1475F /* RageSoundReader_Merge.cpp in Sources */,
@@ -7017,7 +7008,6 @@
 				AA2CA89F0BB745BD002441E9 /* ScreenContinue.cpp in Sources */,
 				AA1893600BD777C500AEC0BF /* ScreenProfileLoad.cpp in Sources */,
 				AA1893620BD777C500AEC0BF /* ScreenProfileSave.cpp in Sources */,
-				AA18937E0BD77ECF00AEC0BF /* NotesLoaderMidi.cpp in Sources */,
 				AA3396B80BDE195E00E1475F /* RageSoundReader_Merge.cpp in Sources */,
 				AAB3B7DE0C6C582E001BF487 /* ScreenSelectProfile.cpp in Sources */,
 				AAB3BB5B0C718F2D001BF487 /* RageUtil_CachedObject.cpp in Sources */,

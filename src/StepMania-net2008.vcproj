@@ -1624,14 +1624,6 @@
 					>
 				</File>
 				<File
-					RelativePath="NotesLoaderMidi.cpp"
-					>
-				</File>
-				<File
-					RelativePath="NotesLoaderMidi.h"
-					>
-				</File>
-				<File
 					RelativePath="NotesLoaderPMS.cpp"
 					>
 				</File>
