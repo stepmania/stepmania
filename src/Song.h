@@ -42,7 +42,7 @@ enum BackgroundLayer
 /** @brief A custom foreach loop for the different background layers. */
 #define FOREACH_BackgroundLayer( bl ) FOREACH_ENUM( BackgroundLayer, bl )
 
-/** @brief The different instrument tracks for band type games. */
+/** @brief Different instrument tracks for band type games. */
 enum InstrumentTrack
 {
 	InstrumentTrack_Guitar,

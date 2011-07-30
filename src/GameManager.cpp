@@ -2801,7 +2801,6 @@ static const Game *g_Games[] =
 	&g_Game_Maniax,
 	&g_Game_Techno,
 	&g_Game_Popn,
-	//&g_Game_Guitar,	// nope, still broken. -aj
 	&g_Game_Lights,
 };
 

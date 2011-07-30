@@ -103,7 +103,6 @@ enum StepsType
 	StepsType_techno_double8,
 	StepsType_popn_five,
 	StepsType_popn_nine,
-	StepsType_guitar_five,
 	StepsType_lights_cabinet,
 	NUM_StepsType,		// leave this at the end
 	StepsType_Invalid,
