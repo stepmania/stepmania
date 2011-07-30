@@ -81,8 +81,8 @@ static void InitCharAliases()
 
 #define INTERNAL 0xE000
 
-	// todo: convert this into a vector? that way we can dynamically add
-	// to the list easier. -aj(?)
+	// todo: convert this into a vector?
+	// that way we can dynamically add to the list easier. -aj
 	// Hiragana:
 	struct alias {
 		const char *str;
