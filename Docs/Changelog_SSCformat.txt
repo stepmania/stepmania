@@ -9,9 +9,6 @@ change to JSON, but it is unsure if this will be done.
 Implement .ssc at your own risk.
 ________________________________________________________________________________
 
-[v0.78] - Wolfman2000
-* Remove the #INSTRUMENTTRACK tag.
-
 [v0.77] - Wolfman2000
 * Add the cache tag #STEPFILENAME to gain access to the proper #NOTES when
   required.

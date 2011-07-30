@@ -41,7 +41,7 @@
  * @brief The internal version of the cache for StepMania.
  *
  * Increment this value to invalidate the current cache. */
-const int FILE_CACHE_VERSION = 199;
+const int FILE_CACHE_VERSION = 198;
 
 /** @brief How long does a song sample last by default? */
 const float DEFAULT_MUSIC_SAMPLE_LENGTH = 12.f;
@@ -49,6 +49,14 @@ const float DEFAULT_MUSIC_SAMPLE_LENGTH = 12.f;
 static Preference<float>	g_fLongVerSongSeconds( "LongVerSongSeconds", 60*2.5f );
 static Preference<float>	g_fMarathonVerSongSeconds( "MarathonVerSongSeconds", 60*5.f );
 static Preference<bool>		g_BackUpAllSongSaves( "BackUpAllSongSaves", false );
+
+static const char *InstrumentTrackNames[] = {
+	"Guitar",
+	"Rhythm",
+	"Bass",
+};
+XToString( InstrumentTrack );
+StringToX( InstrumentTrack );
 
 Song::Song()
 {
@@ -446,6 +454,9 @@ void Song::TidyUpData( bool fromCache, bool duringCache )
 	ASSERT_M( m_sSongDir.Left(3) != "../", m_sSongDir ); // meaningless
 	FixupPath( m_sSongDir, "" );
 	FixupPath( m_sMusicFile, m_sSongDir );
+	FOREACH_ENUM( InstrumentTrack, i )
+		if( !m_sInstrumentTrackFile[i].empty() )
+			FixupPath( m_sInstrumentTrackFile[i], m_sSongDir );
 	FixupPath( m_sBannerFile, m_sSongDir );
 	//FixupPath( m_sJacketFile, m_sSongDir );
 	//FixupPath( m_sDiscFile, m_sSongDir );
@@ -1193,6 +1204,10 @@ bool Song::HasBanner() const
 {
 	return m_sBannerFile != "" && IsAFile(GetBannerPath());
 }
+bool Song::HasInstrumentTrack( InstrumentTrack it ) const
+{
+	return m_sInstrumentTrackFile[it] != "" && IsAFile(GetInstrumentTrackPath(it));
+}
 bool Song::HasLyrics() const
 {
 	return m_sLyricsFile != "" && IsAFile(GetLyricsPath());
@@ -1260,6 +1275,21 @@ vector<RString> Song::GetFGChanges1ToVectorString() const
 	return this->GetChangesToVectorString(this->GetForegroundChanges());
 }
 
+vector<RString> Song::GetInstrumentTracksToVectorString() const
+{
+	vector<RString> ret;
+	FOREACH_ENUM(InstrumentTrack, it)
+	{
+		if (this->HasInstrumentTrack(it))
+		{
+			ret.push_back(InstrumentTrackToString(it)
+				      + "="
+				      + this->m_sInstrumentTrackFile[it]);
+		}
+	}
+	return ret;
+}
+
 RString GetSongAssetPath( RString sPath, const RString &sSongPath )
 {
 	if( sPath == "" )
@@ -1292,6 +1322,11 @@ RString GetSongAssetPath( RString sPath, const RString &sSongPath )
 RString Song::GetMusicPath() const
 {
 	return GetSongAssetPath( m_sMusicFile, m_sSongDir );
+}
+
+RString Song::GetInstrumentTrackPath( InstrumentTrack it ) const
+{
+	return GetSongAssetPath( m_sInstrumentTrackFile[it], m_sSongDir );
 }
 
 RString Song::GetBannerPath() const

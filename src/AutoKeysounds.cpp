@@ -132,6 +132,15 @@ void AutoKeysounds::LoadTracks( const Song *pSong, RageSoundReader *&pShared, Ra
 	if( !sMusicPath.empty() )
 		vsMusicFile.push_back( sMusicPath );
 
+	FOREACH_ENUM( InstrumentTrack, it )
+	{
+		if( it == InstrumentTrack_Guitar )
+			continue;
+		if( pSong->HasInstrumentTrack(it) )
+			vsMusicFile.push_back( pSong->GetInstrumentTrackPath(it) );
+	}
+
+
 	vector<RageSoundReader *> vpSounds;
 	FOREACH( RString, vsMusicFile, s )
 	{
@@ -163,6 +172,17 @@ void AutoKeysounds::LoadTracks( const Song *pSong, RageSoundReader *&pShared, Ra
 		pSongReader = new RageSoundReader_Extend( pSongReader );
 		pSongReader = new RageSoundReader_ThreadedBuffer( pSongReader );
 		pShared = pSongReader;
+	}
+
+
+	if( pSong->HasInstrumentTrack(InstrumentTrack_Guitar) )
+	{
+		RString sError;
+		RageSoundReader *pGuitarTrackReader = RageSoundReader_FileReader::OpenFile( pSong->GetInstrumentTrackPath(InstrumentTrack_Guitar), sError );
+		// Load the buffering filter before the effects filters, so effects aren't delayed.
+		pGuitarTrackReader = new RageSoundReader_Extend( pGuitarTrackReader );
+		pGuitarTrackReader = new RageSoundReader_ThreadedBuffer( pGuitarTrackReader );
+		pPlayer1 = pGuitarTrackReader;	
 	}
 
 	return;
