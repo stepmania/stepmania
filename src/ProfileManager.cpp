@@ -486,6 +486,9 @@ bool ProfileManager::DeleteLocalProfile( RString sProfileID )
 	ASSERT( pProfile );
 	RString sProfileDir = LocalProfileIDToDir( sProfileID );
 
+	// flush directory cache in an attempt to get this working
+	FILEMAN->FlushDirCache( sProfileDir );
+
 	FOREACH( DirAndProfile, g_vLocalProfile, i )
 	{
 		if( i->sDir == sProfileDir )
@@ -504,6 +507,7 @@ bool ProfileManager::DeleteLocalProfile( RString sProfileID )
 			}
 			else
 			{
+				LOG->Warn( ssprintf("[ProfileManager::DeleteLocalProfile] DeleteRecursive(%s) failed",sProfileID.c_str()) );
 				return false;
 			}
 		}

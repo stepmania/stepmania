@@ -299,7 +299,6 @@ void ScreenOptionsManageProfiles::HandleScreenMessage( const ScreenMessage SM )
 				{
 					RString sTitle = pProfile->m_sDisplayName;
 					RString sMessage = ssprintf( CONFIRM_DELETE_PROFILE.GetValue(), sTitle.c_str() );
-					LOG->Trace("[ScreenOptionsManageProfiles] ProfileAction_Delete");
 					ScreenPrompt::Prompt( SM_BackFromDeleteConfirm, sMessage, PROMPT_YES_NO );
 				}
 				break;
