@@ -179,23 +179,6 @@ void SMLoader::ProcessAttacks( AttackArray &attacks, MsdFile::value_t params )
 	}
 }
 
-void SMLoader::ProcessInstrumentTracks( Song &out, const RString &sParam )
-{
-	vector<RString> vs1;
-	split( sParam, ",", vs1 );
-	FOREACH_CONST( RString, vs1, s )
-	{
-		vector<RString> vs2;
-		split( *s, "=", vs2 );
-		if( vs2.size() >= 2 )
-		{
-			InstrumentTrack it = StringToInstrumentTrack( vs2[0] );
-			if( it != InstrumentTrack_Invalid )
-				out.m_sInstrumentTrackFile[it] = vs2[1];
-		}
-	}
-}
-
 bool SMLoader::ProcessBPMs( TimingData &out, const RString line, const int rowsPerBeat )
 {
 	vector<RString> arrayBPMChangeExpressions;
@@ -782,12 +765,6 @@ bool SMLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCache
 		else if( sValueName=="TICKCOUNTS" )
 		{
 			ProcessTickcounts(out.m_SongTiming, sParams[1]);
-		}
-		
-		
-		else if( sValueName=="INSTRUMENTTRACK" )
-		{
-			ProcessInstrumentTracks( out, sParams[1] );
 		}
 
 		else if( sValueName=="MUSICLENGTH" )

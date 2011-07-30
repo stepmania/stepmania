@@ -20,7 +20,7 @@ void FixupPath( RString &path, const RString &sSongPath );
 RString GetSongAssetPath( RString sPath, const RString &sSongPath );
 
 /** @brief The version of the .ssc file format. */
-const static float STEPFILE_VERSION_NUMBER = 0.77f;
+const static float STEPFILE_VERSION_NUMBER = 0.78f;
 
 /** @brief How many edits for this song can each profile have? */
 const int MAX_EDITS_PER_SONG_PER_PROFILE = 15;
@@ -41,18 +41,6 @@ enum BackgroundLayer
 
 /** @brief A custom foreach loop for the different background layers. */
 #define FOREACH_BackgroundLayer( bl ) FOREACH_ENUM( BackgroundLayer, bl )
-
-/** @brief The different instrument tracks for band type games. */
-enum InstrumentTrack
-{
-	InstrumentTrack_Guitar,
-	InstrumentTrack_Rhythm,
-	InstrumentTrack_Bass,
-	NUM_InstrumentTrack,
-	InstrumentTrack_Invalid
-};
-const RString& InstrumentTrackToString( InstrumentTrack it );
-InstrumentTrack StringToInstrumentTrack( const RString& s );
 
 /** @brief The collection of lyrics for the Song. */
 struct LyricSegment
@@ -225,7 +213,6 @@ public:
 	RString m_sOrigin; // song origin (for .ssc format)
 
 	RString	m_sMusicFile;
-	RString	m_sInstrumentTrackFile[NUM_InstrumentTrack];
 
 	/** @brief The length of the music file. */
 	float	m_fMusicLengthSeconds;
@@ -248,7 +235,6 @@ public:
 	vector<RString>	m_sAttackString;
 
 	RString GetMusicPath() const;
-	RString GetInstrumentTrackPath( InstrumentTrack it ) const;
 	RString GetBannerPath() const;
 	//RString GetJacketPath() const;
 	//RString GetCDImagePath() const;
@@ -261,7 +247,6 @@ public:
 	bool m_bHasMusic, m_bHasBanner, m_bHasBackground;
 
 	bool HasMusic() const;
-	bool HasInstrumentTrack( InstrumentTrack it ) const;
 	/**
 	 * @brief Does this song have a banner?
 	 * @return true if it does, false otherwise. */
@@ -330,8 +315,6 @@ public:
 	vector<RString> GetBGChanges1ToVectorString() const;
 	vector<RString> GetBGChanges2ToVectorString() const;
 	vector<RString> GetFGChanges1ToVectorString() const;
-	
-	vector<RString> GetInstrumentTracksToVectorString() const;
 	
 	/**
 	 * @brief The list of LyricSegments.

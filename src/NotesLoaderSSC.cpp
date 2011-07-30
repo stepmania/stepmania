@@ -341,11 +341,6 @@ bool SSCLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 					out.m_sMusicFile = sParams[1];
 				}
 
-				else if( sValueName=="INSTRUMENTTRACK" )
-				{
-					SMLoader::ProcessInstrumentTracks( out, sParams[1] );
-				}
-
 				else if( sValueName=="MUSICLENGTH" )
 				{
 					if( !bFromCache )
