@@ -87,8 +87,6 @@ static const StepsTypeInfo g_StepsTypeInfos[] = {
 	// pop'n music
 	{ "pnm-five",		5,	true,	StepsTypeCategory_Single },	// called "pnm" for backward compat
 	{ "pnm-nine",		9,	true,	StepsTypeCategory_Single },	// called "pnm" for backward compat
-	// guitar hero
-	{ "guitar-five",	5,	true,	StepsTypeCategory_Single },	// 5 frets, no wail
 	// cabinet lights and other fine StepsTypes that don't exist lol
 	{ "lights-cabinet",	NUM_CabinetLight,	false,	StepsTypeCategory_Single }, // XXX disable lights autogen for now
 };
