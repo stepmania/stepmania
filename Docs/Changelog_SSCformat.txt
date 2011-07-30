@@ -7,7 +7,7 @@ Notice: .ssc is not a finalized format at the moment. There are plans for a
 change to JSON, but it is unsure if this will be done.
 
 Implement .ssc at your own risk.
-________________________________________________________________________________
+_______________________________________________________________________________
 
 [v0.77] - Wolfman2000
 * Add the cache tag #STEPFILENAME to gain access to the proper #NOTES when

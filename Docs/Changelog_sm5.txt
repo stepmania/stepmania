@@ -11,7 +11,8 @@ StepMania 5.0 Preview 3 | 20110???
 2011/07/30
 ----------
 * [ProfileManager] Fix an issue when deleting recently created profiles. [AJ]
-* Remove the guitar game. Keeping #INSTRUMENTTRACK for now. [Wolfman2000]
+* Start removing anything related to Guitar mode. This was rushed in, and it
+  is not worth us keeping at this time. [Wolfman2000]
 
 2011/07/26
 ----------
