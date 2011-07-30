@@ -482,7 +482,6 @@ bool ProfileManager::RenameLocalProfile( RString sProfileID, RString sNewName )
 
 bool ProfileManager::DeleteLocalProfile( RString sProfileID )
 {
-	LOG->Trace( ssprintf("[ProfileManager::DeleteLocalProfile] delete %s",sProfileID.c_str()) );
 	Profile *pProfile = ProfileManager::GetLocalProfile( sProfileID );
 	ASSERT( pProfile );
 	RString sProfileDir = LocalProfileIDToDir( sProfileID );
@@ -508,7 +507,7 @@ bool ProfileManager::DeleteLocalProfile( RString sProfileID )
 			}
 			else
 			{
-				LOG->Trace( ssprintf("[ProfileManager::DeleteLocalProfile] DeleteRecursive(%s) failed",sProfileID.c_str()) );
+				LOG->Warn( ssprintf("[ProfileManager::DeleteLocalProfile] DeleteRecursive(%s) failed",sProfileID.c_str()) );
 				return false;
 			}
 		}
