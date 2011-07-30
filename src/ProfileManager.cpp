@@ -507,7 +507,8 @@ bool ProfileManager::DeleteLocalProfile( RString sProfileID )
 			}
 			else
 			{
-				LOG->Warn( ssprintf("[ProfileManager::DeleteLocalProfile] DeleteRecursive(%s) failed",sProfileID.c_str()) );
+				LOG->Warn("[ProfileManager::DeleteLocalProfile] DeleteRecursive(%s) failed",
+						  sProfileID.c_str() );
 				return false;
 			}
 		}
