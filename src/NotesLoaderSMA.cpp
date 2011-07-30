@@ -463,7 +463,6 @@ bool SMALoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 				     sValueName.c_str() );
 	}
 	TidyUpData(out, false);
-	out.TidyUpData(false, true);
 	return true;
 }
 
