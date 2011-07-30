@@ -92,7 +92,7 @@ INT_PTR CALLBACK LoadingWindow_Win32::DlgProc( HWND hWnd, UINT msg, WPARAM wPara
 		self=(LoadingWindow_Win32 *)GetWindowLong(hWnd,DWL_USER);
 	}
 
-#if(WINVER >= 0x0601)
+#ifdef PROGRESS_IN_TASKBUTTON
 	if (self && msg == self->taskbarCreatedEvent && !self->pTaskbarList) {
 		HRESULT hr = CoCreateInstance(CLSID_TaskbarList, NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&self->pTaskbarList));
 		if (SUCCEEDED(hr)) {
@@ -142,7 +142,7 @@ INT_PTR CALLBACK LoadingWindow_Win32::DlgProc( HWND hWnd, UINT msg, WPARAM wPara
 
 	case WM_DESTROY:
 
-#if(WINVER >= 0x0601)
+#ifdef PROGRESS_IN_TASKBUTTON
 		if (self->pTaskbarList) {
 			self->pTaskbarList->Release();
 			self->pTaskbarList = NULL;
@@ -205,7 +205,7 @@ LoadingWindow_Win32::LoadingWindow_Win32()
 	cceData.dwICC=ICC_PROGRESS_CLASS;
 	InitCommonControlsEx(&cceData);
 
-#if(WINVER >= 0x0601)
+#ifdef PROGRESS_IN_TASKBUTTON
 	pTaskbarList=NULL;
 
 	taskbarCreatedEvent=RegisterWindowMessage("TaskbarButtonCreated");
@@ -281,11 +281,13 @@ void LoadingWindow_Win32::SetProgress(const int progress)
 	m_progress=progress;
 	HWND hwndItem = ::GetDlgItem( hwnd, IDC_PROGRESS );
 	::SendMessage(hwndItem,PBM_SETPOS,progress,0);
-#if(WINVER >= 0x0601)
+
+#ifdef PROGRESS_IN_TASKBUTTON
 	if(pTaskbarList) {
 		pTaskbarList->SetProgressValue(hwnd, m_progress, m_totalWork);
 	}
 #endif
+
 }
 
 void LoadingWindow_Win32::SetTotalWork(const int totalWork)
@@ -293,11 +295,13 @@ void LoadingWindow_Win32::SetTotalWork(const int totalWork)
 	m_totalWork=totalWork;
 	HWND hwndItem = ::GetDlgItem( hwnd, IDC_PROGRESS );
 	SendMessage(hwndItem,PBM_SETRANGE32,0,totalWork);
-#if(WINVER >= 0x0601)
+
+#ifdef PROGRESS_IN_TASKBUTTON
 	if(pTaskbarList) {
 		pTaskbarList->SetProgressValue(hwnd, m_progress, m_totalWork);
 	}
 #endif
+
 }
 
 void LoadingWindow_Win32::SetIndeterminate(bool indeterminate) {
@@ -306,7 +310,8 @@ void LoadingWindow_Win32::SetIndeterminate(bool indeterminate) {
 	HWND hwndItem = ::GetDlgItem( hwnd, IDC_PROGRESS );
 
 	if(indeterminate) {
-#if(WINVER >= 0x0601)
+
+#ifdef PROGRESS_IN_TASKBUTTON
 		if(pTaskbarList) {
 			pTaskbarList->SetProgressState(hwnd, TBPF_INDETERMINATE);
 		}
@@ -316,7 +321,7 @@ void LoadingWindow_Win32::SetIndeterminate(bool indeterminate) {
 	} else {
 		SendMessage(hwndItem,PBM_SETMARQUEE,0,0);
 		SetWindowLong(hwndItem,GWL_STYLE, (~PBS_MARQUEE) & GetWindowLong(hwndItem,GWL_STYLE));
-#if(WINVER >= 0x0601)
+#ifdef PROGRESS_IN_TASKBUTTON
 		if(pTaskbarList) {
 			pTaskbarList->SetProgressState(hwnd, TBPF_NORMAL);
 		}

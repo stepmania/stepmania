@@ -10,6 +10,10 @@
 #include "archutils/Win32/AppInstance.h"
 
 #if(WINVER >= 0x0601)
+#define PROGRESS_IN_TASKBUTTON
+#endif
+
+#ifdef PROGRESS_IN_TASKBUTTON
 #include "Shobjidl.h"
 #endif
 
@@ -35,7 +39,7 @@ private:
 	DWORD pumpThreadId;
 	HANDLE guiReadyEvent;
 
-#if(WINVER >= 0x0601)
+#ifdef PROGRESS_IN_TASKBUTTON
 	UINT taskbarCreatedEvent;
 	ITaskbarList3 *pTaskbarList;
 #endif
