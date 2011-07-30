@@ -171,6 +171,7 @@ my @files = (
 	"NoteSkins/pump/cmd-routine-p2",
 	"NoteSkins/pump/complex",
 	"NoteSkins/pump/default",
+	"NoteSkins/pump/delta",
 	"NoteSkins/pump/delta-note",
 	"NoteSkins/pump/frame5p",
 	"NoteSkins/pump/newextra",
