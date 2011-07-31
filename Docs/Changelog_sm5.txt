@@ -8,6 +8,11 @@ ________________________________________________________________________________
 StepMania 5.0 Preview 3 | 20110???
 --------------------------------------------------------------------------------
 
+2011/07/31
+----------
+* [ScreenGameplay, LyricDisplay] Stop lyrics from animating on failure.
+  Fixes issue 298. [AJ]
+
 2011/07/30
 ----------
 * [ProfileManager] Fix an issue when deleting recently created profiles. [AJ]

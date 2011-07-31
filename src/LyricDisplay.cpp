@@ -31,10 +31,18 @@ void LyricDisplay::Init()
 	m_iCurLyricNumber = 0;
 
 	m_fLastSecond = -500;
+	m_bStopped = false;
+}
+
+void LyricDisplay::Stop() {
+	m_bStopped = true;
 }
 
 void LyricDisplay::Update( float fDeltaTime )
 {
+	if( m_bStopped )
+		return;
+
 	ActorFrame::Update( fDeltaTime );
 
 	if( GAMESTATE->m_pCurSong == NULL )
