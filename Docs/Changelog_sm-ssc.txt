@@ -1171,7 +1171,7 @@ sm-ssc v1.0 Public Beta 2 | 20100331
 20100309
 --------
 * [ScreenSelectMaster] Add GetSelectionIndex(pn) Lua binding. (You'll have to
-  call this one using GAMESTATE:GetTopScreen():GetSelectionIndex(PLAYER_1) or
+  call this one using SCREENMAN:GetTopScreen():GetSelectionIndex(PLAYER_1) or
   something like that.)
 
 20100308
@@ -1245,7 +1245,6 @@ helper functions available to you in scripts via the fallback theme, either. :)
 20100223
 --------
 * [Player] CheckpointsFlashOnHold metric added. Fixes issue 16.
-
 
 20100222
 --------
