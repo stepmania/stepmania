@@ -12,7 +12,7 @@ return Def.ActorFrame {
 		LoseFocusCommand=cmd(stoptweening;cropright,0;linear,0.05;cropright,1;);
 	};
 	LoadFont("Common Normal") .. {
-		Text=gc:GetText();
+		Text=THEME:GetString("ScreenTitleMenu",gc:GetText());
 --[[ 		EnabledCommand=function(self)
 			if string.find( THEME:GetMetric( Var "LoadingScreen", "DisabledChoices") , gc:GetText() ) ~= nil then
 				self:diffuse(Color("Red"));
