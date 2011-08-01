@@ -345,11 +345,15 @@ static RString GetSSCNoteData( const Song &song, const Steps &in, bool bSavingCa
 	lines.push_back( ssprintf( "#RADARVALUES:%s;", join(",",asRadarValues).c_str() ) );
 
 	lines.push_back( ssprintf( "#CREDIT:%s;", SmEscape(in.GetCredit()).c_str() ) );
-	lines.push_back( ssprintf( "#OFFSET:%.6f;", in.m_Timing.m_fBeat0OffsetInSeconds ) );
 	
-	GetTimingTags( lines, in.m_Timing );
-	
-	lines.push_back( ssprintf("#ATTACKS:%s;", in.GetAttackString().c_str()));
+	// XXX: Is there a better way to write this?
+	if (const_cast<TimingData &>(song.m_SongTiming) != in.m_Timing)
+	{
+		lines.push_back( ssprintf( "#OFFSET:%.6f;", in.m_Timing.m_fBeat0OffsetInSeconds ) );
+		GetTimingTags( lines, in.m_Timing );
+	}
+	if (song.GetAttackString() != in.GetAttackString())
+		lines.push_back( ssprintf("#ATTACKS:%s;", in.GetAttackString().c_str()));
 	
 	switch( in.GetDisplayBPM() )
 	{

@@ -676,7 +676,8 @@ bool SSCLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 				{
 					ProcessLabels(stepsTiming, sParams[1]);
 				}
-				
+				/* If this is called, the chart does not use the same attacks
+				 * as the Song's timing. No other changes are required. */
 				else if( sValueName=="ATTACKS" )
 				{
 					ProcessAttackString(pNewNotes->m_sAttackString, sParams);
