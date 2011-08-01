@@ -8,7 +8,7 @@
 struct lua_State;
 
 /** @brief Compare a TimingData segment's properties with one another. */
-#define COMPARE(x) if(x!=other.x) return false;
+#define COMPARE(x) if(this->x!=other.x) return false;
 
 /**
  * @brief Holds data for translating beats<->seconds.
@@ -743,15 +743,82 @@ public:
 	 */
 	bool operator==( const TimingData &other )
 	{
-		for (int i = 0; i < NUM_TimingSegmentType; i++)
+		unsigned i;
+		
+#define COMPARE_SEGMENT(kind, tst, i) \
+if (static_cast<kind *>(this->allTimingSegments[tst][i]) != \
+	static_cast<kind *>(other.allTimingSegments[tst][i])) \
+return false
+		
+		COMPARE(allTimingSegments[SEGMENT_BPM].size());
+		for (i = 0; i < allTimingSegments[SEGMENT_BPM].size(); i++)
 		{
-			COMPARE(allTimingSegments[i].size());
-			for (unsigned j=0; j < allTimingSegments[i].size(); j++)
-			{
-				COMPARE(allTimingSegments[i][j]);
-			}
+			COMPARE_SEGMENT(BPMSegment, SEGMENT_BPM, i);
 		}
+		
+		COMPARE(allTimingSegments[SEGMENT_STOP].size());
+		for (i = 0; i < allTimingSegments[SEGMENT_STOP].size(); i++)
+		{
+			COMPARE_SEGMENT(StopSegment, SEGMENT_STOP, i);
+		}
+		
+		COMPARE(allTimingSegments[SEGMENT_DELAY].size());
+		for (i = 0; i < allTimingSegments[SEGMENT_DELAY].size(); i++)
+		{
+			COMPARE_SEGMENT(DelaySegment, SEGMENT_DELAY, i);
+		}
+		
+		COMPARE(allTimingSegments[SEGMENT_WARP].size());
+		for (i = 0; i < allTimingSegments[SEGMENT_WARP].size(); i++)
+		{
+			COMPARE_SEGMENT(WarpSegment, SEGMENT_WARP, i);
+		}
+		
+		COMPARE(allTimingSegments[SEGMENT_TIME_SIG].size());
+		for (i = 0; i < allTimingSegments[SEGMENT_TIME_SIG].size(); i++)
+		{
+			COMPARE_SEGMENT(TimeSignatureSegment, SEGMENT_TIME_SIG, i);
+		}
+		
+		COMPARE(allTimingSegments[SEGMENT_TICKCOUNT].size());
+		for (i = 0; i < allTimingSegments[SEGMENT_TICKCOUNT].size(); i++)
+		{
+			COMPARE_SEGMENT(TickcountSegment, SEGMENT_TICKCOUNT, i);
+		}
+		
+		COMPARE(allTimingSegments[SEGMENT_COMBO].size());
+		for (i = 0; i < allTimingSegments[SEGMENT_COMBO].size(); i++)
+		{
+			COMPARE_SEGMENT(ComboSegment, SEGMENT_COMBO, i);
+		}
+		
+		COMPARE(allTimingSegments[SEGMENT_SPEED].size());
+		for (i = 0; i < allTimingSegments[SEGMENT_SPEED].size(); i++)
+		{
+			COMPARE_SEGMENT(SpeedSegment, SEGMENT_SPEED, i);
+		}
+		
+		COMPARE(allTimingSegments[SEGMENT_SCROLL].size());
+		for (i = 0; i < allTimingSegments[SEGMENT_SCROLL].size(); i++)
+		{
+			COMPARE_SEGMENT(ScrollSegment, SEGMENT_SCROLL, i);
+		}
+		
+		COMPARE(allTimingSegments[SEGMENT_LABEL].size());
+		for (i = 0; i < allTimingSegments[SEGMENT_LABEL].size(); i++)
+		{
+			COMPARE_SEGMENT(LabelSegment, SEGMENT_LABEL, i);
+		}
+		
+		COMPARE(allTimingSegments[SEGMENT_FAKE].size());
+		for (i = 0; i < allTimingSegments[SEGMENT_FAKE].size(); i++)
+		{
+			COMPARE_SEGMENT(FakeSegment, SEGMENT_FAKE, i);
+		}
+		
 		COMPARE( m_fBeat0OffsetInSeconds );
+
+#undef COMPARE_SEGMENT
 		return true;
 	}
 	/**
@@ -760,7 +827,7 @@ public:
 	 * @return the inequality or lack thereof of the two TimingData.
 	 */
 	bool operator!=( const TimingData &other ) { return !operator==(other); }
-
+	
 	void ScaleRegion( float fScale = 1, int iStartRow = 0, int iEndRow = MAX_NOTE_ROW, bool bAdjustBPM = false );
 	void InsertRows( int iStartRow, int iRowsToAdd );
 	void DeleteRows( int iStartRow, int iRowsToDelete );
