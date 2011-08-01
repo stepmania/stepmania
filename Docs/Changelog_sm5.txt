@@ -8,6 +8,10 @@ ________________________________________________________________________________
 StepMania 5.0 Preview 3 | 20110???
 --------------------------------------------------------------------------------
 
+2011/08/01
+----------
+* [MusicWheel, RoomWheel] Moved the "- EMPTY -" string to the languages file. [AJ]
+
 2011/07/31
 ----------
 * [ScreenGameplay, LyricDisplay] Stop lyrics from animating on failure.

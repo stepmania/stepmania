@@ -21,6 +21,7 @@
 #include "PlayerState.h"
 #include "CommonMetrics.h"
 #include "MessageManager.h"
+#include "LocalizedString.h"
 
 static Preference<bool> g_bMoveRandomToEnd( "MoveRandomToEnd", false );
 static Preference<bool> g_bPrecacheAllSorts( "PreCacheAllWheelSorts", false);
@@ -33,6 +34,8 @@ static RString SECTION_COLORS_NAME( size_t i )	{ return ssprintf("SectionColor%d
 static RString CHOICE_NAME( RString s )		{ return ssprintf("Choice%s",s.c_str()); }
 static RString CUSTOM_WHEEL_ITEM_NAME( RString s )		{ return ssprintf("CustomWheelItem%s",s.c_str()); }
 static RString CUSTOM_WHEEL_ITEM_COLOR( RString s )		{ return ssprintf("%sColor",s.c_str()); }
+
+static LocalizedString EMPTY_STRING	( "MusicWheel", "Empty" );
 
 AutoScreenMessage( SM_SongChanged ); // TODO: Replace this with a Message and MESSAGEMAN
 AutoScreenMessage( SM_SortOrderChanging );
@@ -1039,7 +1042,7 @@ void MusicWheel::FilterWheelItemDatas(vector<MusicWheelItemData *> &aUnFilteredD
 
 	// If we've filtered all items, insert a dummy.
 	if( aFilteredData.empty() )
-		aFilteredData.push_back( new MusicWheelItemData(TYPE_SECTION, NULL, "- EMPTY -", NULL, RageColor(1,0,0,1), 0) );
+		aFilteredData.push_back( new MusicWheelItemData(TYPE_SECTION, NULL, EMPTY_STRING, NULL, RageColor(1,0,0,1), 0) );
 }
 
 void MusicWheel::UpdateSwitch()
