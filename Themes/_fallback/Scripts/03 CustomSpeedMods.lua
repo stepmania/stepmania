@@ -212,10 +212,11 @@ local function GetSpeedMods()
 
 	local playerMods = {}
 	for pn in ivalues(GAMESTATE:GetHumanPlayers()) do
-		-- file loading logic per player;
-		-- only bother if it's not the machine profile though.
-		if PROFILEMAN:IsPersistentProfile(pn) or
-			MEMCARDMAN:GetCardState(pn) == 'MemoryCardState_ready' then
+		-- file loading logic per player.
+		if PROFILEMAN:IsPersistentProfile(pn) then
+			playerMods[#playerMods+1] = ParseSpeedModFile(profileDirs[pn]..baseFilename)
+		-- we need to make sure the memory card is ready if we're gonna grab from it.
+		elseif MEMCARDMAN:GetCardState(pn) == 'MemoryCardState_ready' then
 			playerMods[#playerMods+1] = ParseSpeedModFile(profileDirs[pn]..baseFilename)
 		end
 	end

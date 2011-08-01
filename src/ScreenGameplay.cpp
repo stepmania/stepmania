@@ -1713,7 +1713,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 			{
 				m_pSoundMusic->StopPlaying();
 				SCREENMAN->PostMessageToTopScreen( SM_NotesEnded, 0 );
-				// todo: stop lyrics (m_LyricDisplay) from animating -aj
+				m_LyricDisplay.Stop();
 			}
 
 			// Update living players' alive time

@@ -13,10 +13,14 @@ public:
 	// Call when song changes:
 	void Init();
 
+	// Call on song failed:
+	void Stop();
+
 private:
 	BitmapText m_textLyrics[2];
 	unsigned m_iCurLyricNumber;
 	float m_fLastSecond;
+	bool m_bStopped;
 };
 
 #endif

@@ -1,4 +1,4 @@
-sm-ssc Beginner's Guide
+StepMania 5 Beginner's Guide
 Written and edited by the spinal shark collective
 --------------------------------------------------------------------------------
 Table of Contents
@@ -14,15 +14,15 @@ Table of Contents
   2.3.1 Installing Song Files
   2.3.2 Installing Noteskins/New Gametypes
   2.3.3 Installing Themes
-3.      sm-ssc
+3.      StepMania 5
 ================================================================================
 Chapter 1: Introduction
 ================================================================================
-Welcome to the sm-ssc Beginner's Guide. This guide is primarily meant for people
-who do not have any previous experience with StepMania, but also includes
-information on how sm-ssc differs from StepMania. If you already know what
-StepMania is, and the basics of adding things to an install, you can skip ahead
-to Chapter 3: sm-ssc. Otherwise, read on.
+Welcome to the StepMania 5 Beginner's Guide. This guide is primarily meant for
+people who do not have any previous experience with StepMania, but also includes
+information on how SM5 differs from previous StepMania versions. If you already
+know what StepMania is, and the basics of adding things to an install, you can
+skip ahead to Chapter 3: StepMania 5. Otherwise, read on.
 
 ================================================================================
 Chapter 2: StepMania
@@ -372,8 +372,9 @@ When in doubt, read any documentation that comes with the theme for proper
 installation instructions.
 
 ================================================================================
-Chapter 3: sm-ssc
+Chapter 3: StepMania 5
 ================================================================================
-sm-ssc is a fork of the current StepMania codebase. It is focused on adding
-features for theming, but also tries to make the process of dealing with
-StepMania a little easier.
+The modern StepMania 5 originally began life as sm-ssc, a fork of StepMania 4
+alpha 5 (later renamed to StepMania 5 after the reboot of SM4). sm-ssc was a fork
+focused on adding features for theming, but also tried to make the process of
+dealing with StepMania a little easier.
