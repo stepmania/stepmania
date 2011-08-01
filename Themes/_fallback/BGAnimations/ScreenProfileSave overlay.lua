@@ -5,8 +5,7 @@ local x = Def.ActorFrame{
 		OffCommand=cmd();
 	};
 	LoadFont("Common Normal")..{
-		Text="Saving Profiles...";
---~ 		Text=ScreenString("Loading Profiles...");
+		Text=ScreenString("Saving Profiles");
 		InitCommand=cmd(Center;diffuse,color("1,1,1,1");shadowlength,1);
 		OffCommand=cmd(linear,0.15;diffusealpha,0);
 	};
