@@ -46,13 +46,11 @@ if not PREFSMAN:GetPreference("EventMode") then
 				
 				if tRemap[Stage] == PREFSMAN:GetPreference("SongsPerPlay") then
 					Stage = 'Stage_Final';
--- 					s = 7;
 				else
 					Stage = Stage;
 					s = s;
 				end;
-				self:settext( StageToLocalizedString(Stage) .. " Stage" );
--- 				self:settext( StageToLocalizedString(Stage) .. " Stage" );
+				self:settext( string.format( THEME:GetString("ScreenWithMenuElements","StageCounter"), StageToLocalizedString(Stage) ) );
 				self:diffuse( (Stage == 'Stage_Final') and StageToColor('Stage_Final') or StageToColor(s) );
 				self:diffusebottomedge( (Stage == 'Stage_Final') and ColorMidTone(StageToColor('Stage_Final')) or ColorMidTone(StageToColor(s)) );
 				self:strokecolor( (Stage == 'Stage_Final') and ColorDarkTone(StageToColor('Stage_Final')) or ColorDarkTone(StageToColor(s)) );
