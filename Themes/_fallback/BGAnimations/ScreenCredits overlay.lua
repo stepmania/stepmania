@@ -77,6 +77,7 @@ local shoutout = {
 	"Ciera Boyd", -- you bet your ass I'm putting my girlfriend in the credits
 	--Image(), -- we should have some logos probably to look super pro
 	"#KBO",
+	"Celestia Radio", -- LOVE AND TOLERANCE
 	"You showed us... your ultimate dance",
 	-- "Can't stop crying... buckets of tears!"
 }
