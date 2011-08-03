@@ -630,51 +630,61 @@ bool SSCLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 				else if( sValueName=="STOPS" )
 				{
 					SMLoader::ProcessStops(stepsTiming, sParams[1]);
+					bHasOwnTiming = true;
 				}
 				
 				else if( sValueName=="DELAYS" )
 				{
 					SMLoader::ProcessDelays(stepsTiming, sParams[1]);
+					bHasOwnTiming = true;
 				}
 				
 				else if( sValueName=="TIMESIGNATURES" )
 				{
 					SMLoader::ProcessTimeSignatures(stepsTiming, sParams[1]);
+					bHasOwnTiming = true;
 				}
 				
 				else if( sValueName=="TICKCOUNTS" )
 				{
 					SMLoader::ProcessTickcounts(stepsTiming, sParams[1]);
+					bHasOwnTiming = true;
 				}
 				
 				else if( sValueName=="COMBOS" )
 				{
 					ProcessCombos(stepsTiming, sParams[1]);
+					bHasOwnTiming = true;
 				}
 				
 				else if( sValueName=="WARPS" )
 				{
 					ProcessWarps(stepsTiming, sParams[1], out.m_fVersion);
+					bHasOwnTiming = true;
 				}
 				
 				else if( sValueName=="SPEEDS" )
 				{
 					ProcessSpeeds( stepsTiming, sParams[1] );
+					bHasOwnTiming = true;
 				}
 				
 				else if( sValueName=="SCROLLS" )
 				{
 					ProcessScrolls( stepsTiming, sParams[1] );
+					bHasOwnTiming = true;
 				}
 				
 				else if( sValueName=="FAKES" )
 				{
 					ProcessFakes( stepsTiming, sParams[1] );
+					bHasOwnTiming = true;
 				}
 				
 				else if( sValueName=="LABELS" )
 				{
 					ProcessLabels(stepsTiming, sParams[1]);
+					bHasOwnTiming = true;
 				}
 				/* If this is called, the chart does not use the same attacks
 				 * as the Song's timing. No other changes are required. */
@@ -687,6 +697,7 @@ bool SSCLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 				else if( sValueName=="OFFSET" )
 				{
 					stepsTiming.m_fBeat0OffsetInSeconds = StringToFloat( sParams[1] );
+					bHasOwnTiming = true;
 				}
 				
 				else if( sValueName=="DISPLAYBPM" )

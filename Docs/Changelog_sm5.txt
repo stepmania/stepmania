@@ -8,6 +8,12 @@ ________________________________________________________________________________
 StepMania 5.0 Preview 3 | 20110???
 --------------------------------------------------------------------------------
 
+2011/08/02
+----------
+* [NotesSSC] Only write timing/attack tags for the step if there is a
+  difference from the song. For timing tags, at this time it means that if even
+  one tag is different, all tags are written. [Wolfman2000]
+
 2011/08/01
 ----------
 * [MusicWheel, RoomWheel] Moved the "- EMPTY -" string to the languages file. [AJ]

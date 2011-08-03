@@ -738,6 +738,9 @@ public:
 	bool HasScrollChanges() const;
 	/**
 	 * @brief Compare two sets of timing data to see if they are equal.
+	 *
+	 * TODO: Make doubly sure that we're using the operator== on the proper segments,
+	 * not the generic TimingSegment.
 	 * @param other the other TimingData.
 	 * @return the equality or lack thereof of the two TimingData.
 	 */
@@ -745,80 +748,132 @@ public:
 	{
 		unsigned i;
 		
-#define COMPARE_SEGMENT(kind, tst, i) \
-if (static_cast<kind *>(this->allTimingSegments[tst][i]) != \
-	static_cast<kind *>(other.allTimingSegments[tst][i])) \
-return false
-		
 		COMPARE(allTimingSegments[SEGMENT_BPM].size());
 		for (i = 0; i < allTimingSegments[SEGMENT_BPM].size(); i++)
 		{
-			COMPARE_SEGMENT(BPMSegment, SEGMENT_BPM, i);
+			BPMSegment * segT =
+				static_cast<BPMSegment *>(this->allTimingSegments[SEGMENT_BPM][i]);
+			BPMSegment * segO =
+				static_cast<BPMSegment *>(other.allTimingSegments[SEGMENT_BPM][i]);
+			if (segT->GetRow() != segO->GetRow()) return false;
+			if (segT->GetBPS() != segO->GetBPS()) return false;
 		}
 		
 		COMPARE(allTimingSegments[SEGMENT_STOP].size());
 		for (i = 0; i < allTimingSegments[SEGMENT_STOP].size(); i++)
 		{
-			COMPARE_SEGMENT(StopSegment, SEGMENT_STOP, i);
+			StopSegment * segT =
+				static_cast<StopSegment *>(this->allTimingSegments[SEGMENT_STOP][i]);
+			StopSegment * segO =
+				static_cast<StopSegment *>(other.allTimingSegments[SEGMENT_STOP][i]);
+			if (segT->GetRow() != segO->GetRow()) return false;
+			if (segT->GetPause() != segO->GetPause()) return false;
 		}
 		
 		COMPARE(allTimingSegments[SEGMENT_DELAY].size());
 		for (i = 0; i < allTimingSegments[SEGMENT_DELAY].size(); i++)
 		{
-			COMPARE_SEGMENT(DelaySegment, SEGMENT_DELAY, i);
+			DelaySegment * segT =
+				static_cast<DelaySegment *>(this->allTimingSegments[SEGMENT_DELAY][i]);
+			DelaySegment * segO =
+				static_cast<DelaySegment *>(other.allTimingSegments[SEGMENT_DELAY][i]);
+			if (segT->GetRow() != segO->GetRow()) return false;
+			if (segT->GetPause() != segO->GetPause()) return false;
 		}
 		
 		COMPARE(allTimingSegments[SEGMENT_WARP].size());
 		for (i = 0; i < allTimingSegments[SEGMENT_WARP].size(); i++)
 		{
-			COMPARE_SEGMENT(WarpSegment, SEGMENT_WARP, i);
+			WarpSegment * segT =
+				static_cast<WarpSegment *>(this->allTimingSegments[SEGMENT_WARP][i]);
+			WarpSegment * segO =
+				static_cast<WarpSegment *>(other.allTimingSegments[SEGMENT_WARP][i]);
+			if (segT->GetRow() != segO->GetRow()) return false;
+			if (segT->GetLength() != segO->GetLength()) return false;
 		}
 		
 		COMPARE(allTimingSegments[SEGMENT_TIME_SIG].size());
 		for (i = 0; i < allTimingSegments[SEGMENT_TIME_SIG].size(); i++)
 		{
-			COMPARE_SEGMENT(TimeSignatureSegment, SEGMENT_TIME_SIG, i);
+			TimeSignatureSegment * segT =
+				static_cast<TimeSignatureSegment *>(this->allTimingSegments[SEGMENT_TIME_SIG][i]);
+			TimeSignatureSegment * segO =
+				static_cast<TimeSignatureSegment *>(other.allTimingSegments[SEGMENT_TIME_SIG][i]);
+			if (segT->GetRow() != segO->GetRow()) return false;
+			if (segT->GetNum() != segO->GetNum()) return false;
+			if (segT->GetDen() != segO->GetDen()) return false;
 		}
 		
 		COMPARE(allTimingSegments[SEGMENT_TICKCOUNT].size());
 		for (i = 0; i < allTimingSegments[SEGMENT_TICKCOUNT].size(); i++)
 		{
-			COMPARE_SEGMENT(TickcountSegment, SEGMENT_TICKCOUNT, i);
+			TickcountSegment * segT =
+				static_cast<TickcountSegment *>(this->allTimingSegments[SEGMENT_TICKCOUNT][i]);
+			TickcountSegment * segO =
+				static_cast<TickcountSegment *>(other.allTimingSegments[SEGMENT_TICKCOUNT][i]);
+			if (segT->GetRow() != segO->GetRow()) return false;
+			if (segT->GetTicks() != segO->GetTicks()) return false;
 		}
 		
 		COMPARE(allTimingSegments[SEGMENT_COMBO].size());
 		for (i = 0; i < allTimingSegments[SEGMENT_COMBO].size(); i++)
 		{
-			COMPARE_SEGMENT(ComboSegment, SEGMENT_COMBO, i);
+			ComboSegment * segT =
+				static_cast<ComboSegment *>(this->allTimingSegments[SEGMENT_COMBO][i]);
+			ComboSegment * segO =
+				static_cast<ComboSegment *>(other.allTimingSegments[SEGMENT_COMBO][i]);
+			if (segT->GetRow() != segO->GetRow()) return false;
+			if (segT->GetCombo() != segO->GetCombo()) return false;
+			if (segT->GetMissCombo() != segO->GetMissCombo()) return false;
 		}
 		
 		COMPARE(allTimingSegments[SEGMENT_SPEED].size());
 		for (i = 0; i < allTimingSegments[SEGMENT_SPEED].size(); i++)
 		{
-			COMPARE_SEGMENT(SpeedSegment, SEGMENT_SPEED, i);
+			SpeedSegment * segT =
+				static_cast<SpeedSegment *>(this->allTimingSegments[SEGMENT_SPEED][i]);
+			SpeedSegment * segO =
+				static_cast<SpeedSegment *>(other.allTimingSegments[SEGMENT_SPEED][i]);
+			if (segT->GetRow() != segO->GetRow()) return false;
+			if (segT->GetRatio() != segO->GetRatio()) return false;
+			if (segT->GetLength() != segO->GetLength()) return false;
+			if (segT->GetUnit() != segO->GetUnit()) return false;
 		}
 		
 		COMPARE(allTimingSegments[SEGMENT_SCROLL].size());
 		for (i = 0; i < allTimingSegments[SEGMENT_SCROLL].size(); i++)
 		{
-			COMPARE_SEGMENT(ScrollSegment, SEGMENT_SCROLL, i);
+			ScrollSegment * segT =
+				static_cast<ScrollSegment *>(this->allTimingSegments[SEGMENT_SCROLL][i]);
+			ScrollSegment * segO =
+				static_cast<ScrollSegment *>(other.allTimingSegments[SEGMENT_SCROLL][i]);
+			if (segT->GetRow() != segO->GetRow()) return false;
+			if (segT->GetRatio() != segO->GetRatio()) return false;
 		}
 		
 		COMPARE(allTimingSegments[SEGMENT_LABEL].size());
 		for (i = 0; i < allTimingSegments[SEGMENT_LABEL].size(); i++)
 		{
-			COMPARE_SEGMENT(LabelSegment, SEGMENT_LABEL, i);
+			LabelSegment * segT =
+				static_cast<LabelSegment *>(this->allTimingSegments[SEGMENT_LABEL][i]);
+			LabelSegment * segO =
+				static_cast<LabelSegment *>(other.allTimingSegments[SEGMENT_LABEL][i]);
+			if (segT->GetRow() != segO->GetRow()) return false;
+			if (segT->GetLabel() != segO->GetLabel()) return false;
 		}
 		
 		COMPARE(allTimingSegments[SEGMENT_FAKE].size());
 		for (i = 0; i < allTimingSegments[SEGMENT_FAKE].size(); i++)
 		{
-			COMPARE_SEGMENT(FakeSegment, SEGMENT_FAKE, i);
+			FakeSegment * segT =
+				static_cast<FakeSegment *>(this->allTimingSegments[SEGMENT_FAKE][i]);
+			FakeSegment * segO =
+				static_cast<FakeSegment *>(other.allTimingSegments[SEGMENT_FAKE][i]);
+			if (segT->GetRow() != segO->GetRow()) return false;
+			if (segT->GetLength() != segO->GetLength()) return false;
 		}
 		
 		COMPARE( m_fBeat0OffsetInSeconds );
-
-#undef COMPARE_SEGMENT
 		return true;
 	}
 	/**
