@@ -12,7 +12,7 @@ t[#t+1] = LoadActor("Mine_Fill")..{
 
 
 t[#t+1] = LoadActor("Mine_Border")..{
-	InitCommand=cmd(spin;effectmagnitude,0,0,24);
+	InitCommand=cmd(spin;effectmagnitude,0,0,36);
 }
 
 t[#t+1] = LoadActor("Mine_Overlay");
@@ -20,7 +20,7 @@ t[#t+1] = LoadActor("Mine_Overlay");
 
 
 t[#t+1] = LoadActor("Mine_Light")..{
-	InitCommand=cmd(blend,Blend.Add;diffuseshift;effectcolor1,color("#FFFFFF77");effectcolor2,color("#FFFFFF00");effectclock,"bgm";zoom,1.15;effectperiod,2);
+	InitCommand=cmd(blend,Blend.Add;diffuseshift;effectcolor1,color("#FFFFFF55");effectcolor2,color("#FFFFFF00");effectclock,"bgm";zoom,1.15;effectperiod,2);
 }
 
 return t
