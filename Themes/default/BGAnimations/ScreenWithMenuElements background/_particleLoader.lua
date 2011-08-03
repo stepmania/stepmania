@@ -1,5 +1,5 @@
 local Params = { 
-	NumParticles = 80,
+	NumParticles = 30,
 	VelocityXMin = 100,
 	VelocityXMax = 400,
 	VelocityYMin = 0,
