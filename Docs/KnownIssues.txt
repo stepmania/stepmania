@@ -6,3 +6,7 @@ The following is a list of known issues with StepMania 5.
 * The scoring system needs to be made global for the game instead
   of tying it to the theme. Right now, this is causing a number
   of themes to have no score display during gameplay.
+* The C and V keys in the editor (related to attacks) still has
+  work to go. Crashes should hopefully be minimal if not otherwise
+  nonexistant.
+* Attacks involving noteskins do not work.
