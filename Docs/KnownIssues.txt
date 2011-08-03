@@ -10,3 +10,4 @@ The following is a list of known issues with StepMania 5.
   work to go. Crashes should hopefully be minimal if not otherwise
   nonexistant.
 * Attacks involving noteskins do not work.
+* Routine mode (dance or pump) isn't perfect yet.
