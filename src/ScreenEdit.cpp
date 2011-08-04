@@ -4992,7 +4992,6 @@ void ScreenEdit::ClearUndo()
 }
 
 static LocalizedString CREATES_MORE_THAN_NOTES	( "ScreenEdit", "This change creates more than %d notes in a measure." );
-static LocalizedString MORE_THAN_NOTES		( "ScreenEdit", "More than %d notes per measure is not allowed.  This change has been reverted." );
 static LocalizedString CREATES_NOTES_PAST_END	( "ScreenEdit", "This change creates notes past the end of the music and is not allowed." );
 static LocalizedString CHANGE_REVERTED		( "ScreenEdit", "The change has been reverted." );
 void ScreenEdit::CheckNumberOfNotesAndUndo()
@@ -5008,14 +5007,6 @@ void ScreenEdit::CheckNumberOfNotesAndUndo()
 		int iNumNotesThisMeasure = 0;
 		FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( m_NoteDataEdit, r, row, row+rowsPerMeasure )
 			iNumNotesThisMeasure += m_NoteDataEdit.GetNumTapNonEmptyTracks( r );
-		if( iNumNotesThisMeasure > MAX_NOTES_PER_MEASURE )
-		{
-			Undo();
-			m_bHasUndo = false;
-			RString sError = ssprintf( CREATES_MORE_THAN_NOTES.GetValue() + "\n\n" + MORE_THAN_NOTES.GetValue(), MAX_NOTES_PER_MEASURE, MAX_NOTES_PER_MEASURE );
-			ScreenPrompt::Prompt( SM_None, sError );
-			return;
-		}
 	}
 
 	if( GAMESTATE->m_pCurSteps[0]->IsAnEdit() )

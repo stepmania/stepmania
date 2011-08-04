@@ -257,13 +257,6 @@ const int MAX_NOTE_TRACKS = 16;
  * Is this a recommended course of action? -Wolfman2000 */
 const int ROWS_PER_BEAT	= 48;
 
-/**
- * @brief Enforce a maximum number of notes per measure in the step editor.
- *
- * TODO: See if there is a way to de-hard-code this number.
- */
-const int MAX_NOTES_PER_MEASURE = 50;
-
 /** @brief The max number of rows allowed for a Steps pattern. */
 const int MAX_NOTE_ROW = (1<<30);
 
