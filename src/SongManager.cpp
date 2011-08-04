@@ -1,7 +1,6 @@
 #include "global.h"
 #include "SongManager.h"
 #include "arch/LoadingWindow/LoadingWindow.h"
-#include "arch/ArchHooks/ArchHooks.h"
 #include "AnnouncerManager.h"
 #include "BackgroundUtil.h"
 #include "BannerCache.h"
@@ -254,7 +253,6 @@ void SongManager::LoadStepManiaSongDir( RString sDir )
 	songCount = 0;
 	FOREACH_CONST( RString, arrayGroupDirs, s )	// foreach dir in /Songs/
 	{
-		if(HOOKS->UserQuit()) break;
 		RString sGroupDirName = *s;
 		SanityCheckGroupDir(sDir+sGroupDirName);
 
@@ -292,7 +290,6 @@ void SongManager::LoadStepManiaSongDir( RString sDir )
 
 		for( unsigned j=0; j< arraySongDirs.size(); ++j )	// for each song dir
 		{
-			if(HOOKS->UserQuit()) break;
 			RString sSongDirName = arraySongDirs[j];
 
 			// this is a song directory. Load a new song.
@@ -772,7 +769,6 @@ void SongManager::InitCoursesFromDisk()
 	vector<RString> vsCourseGroupNames;
 	FOREACH_CONST( RString, vsCourseDirs, sDir )
 	{
-		if(HOOKS->UserQuit()) break;
 		// Find all group directories in Courses dir
 		GetDirListing( *sDir + "*", vsCourseGroupNames, true, true );
 		StripCvsAndSvn( vsCourseGroupNames );
@@ -785,7 +781,6 @@ void SongManager::InitCoursesFromDisk()
 
 	FOREACH_CONST( RString, vsCourseGroupNames, sCourseGroup )	// for each dir in /Courses/
 	{
-		if(HOOKS->UserQuit()) break;
 		// Find all CRS files in this group directory
 		vector<RString> vsCoursePaths;
 		GetDirListing( *sCourseGroup + "/*.crs", vsCoursePaths, false, true );
@@ -824,7 +819,6 @@ void SongManager::InitAutogenCourses()
 	Course* pCourse;
 	for( unsigned g=0; g<saGroupNames.size(); g++ )	// foreach Group
 	{
-		if(HOOKS->UserQuit()) break;
 		RString sGroupName = saGroupNames[g];
 
 		// Generate random courses from each group.
@@ -863,7 +857,6 @@ void SongManager::InitAutogenCourses()
 		vector<Song *> aSongs;
 		unsigned i = 0;
 		do {
-			if(HOOKS->UserQuit()) break;
 			RString sArtist = i >= apSongs.size()? RString(""): apSongs[i]->GetDisplayArtist();
 			RString sTranslitArtist = i >= apSongs.size()? RString(""): apSongs[i]->GetTranslitArtist();
 			if( i < apSongs.size() && !sCurArtist.CompareNoCase(sArtist) )
