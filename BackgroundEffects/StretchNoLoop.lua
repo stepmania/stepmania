@@ -1,8 +1,7 @@
--- A stretched file that does not loop back.
-local cColor1 = color(Var "Color1");
+local Color = color(Var "Color1");
 local t = Def.ActorFrame {
 	LoadActor(Var "File1") .. {
-		OnCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y;scaletoclipped,SCREEN_WIDTH,SCREEN_HEIGHT;diffuse,cColor1;loop,false);
+		OnCommand=cmd(scale_or_crop_background;diffuse,Color;loop,false;effectclock,"music");
 		GainFocusCommand=cmd(play);
 		LoseFocusCommand=cmd(pause);
 	};
