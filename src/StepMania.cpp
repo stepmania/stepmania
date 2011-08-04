@@ -17,7 +17,6 @@
 #include "arch/ArchHooks/ArchHooks.h"
 #include "arch/LoadingWindow/LoadingWindow.h"
 #include "arch/Dialog/Dialog.h"
-#include "arch/LuaDriver/LuaDriver.h"
 #include <ctime>
 
 #include "ProductInfo.h"
@@ -876,7 +875,7 @@ static void MountTreeOfZips( const RString &dir )
 			FILEMAN->Mount( "zip", zips[i], "/" );
 		}
 
-		GetDirListing( path + "/*", dirs, true, true ); */
+		GetDirListing( path + "/*", dirs, true, true );
 	}
 }
 
@@ -1080,7 +1079,6 @@ int main(int argc, char* argv[])
 	// depends on SONGINDEX:
 	SONGMAN		= new SongManager;
 	SONGMAN->InitAll();	// this takes a long time
-	earlyBail
 	CRYPTMAN	= new CryptManager;		// need to do this before ProfileMan
 	if( PREFSMAN->m_bSignProfileData )
 		CRYPTMAN->GenerateGlobalKeys();
@@ -1096,7 +1094,6 @@ int main(int argc, char* argv[])
 	STATSMAN	= new StatsManager;
 
 	// Initialize which courses are ranking courses here.
-	pLoadingWindow->SetText(UPDATE_COURSE_RANKS);
 	SONGMAN->UpdateRankingCourses();
 
 	SAFE_DELETE( pLoadingWindow );	// destroy this before init'ing Display
