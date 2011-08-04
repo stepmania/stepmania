@@ -17,6 +17,7 @@
 #include "arch/ArchHooks/ArchHooks.h"
 #include "arch/LoadingWindow/LoadingWindow.h"
 #include "arch/Dialog/Dialog.h"
+#include "arch/LuaDriver/LuaDriver.h"
 #include <ctime>
 
 #include "ProductInfo.h"
@@ -875,7 +876,7 @@ static void MountTreeOfZips( const RString &dir )
 			FILEMAN->Mount( "zip", zips[i], "/" );
 		}
 
-		GetDirListing( path + "/*", dirs, true, true );
+		GetDirListing( path + "/*", dirs, true, true ); */
 	}
 }
 
@@ -933,19 +934,6 @@ static void ApplyLogPreferences()
 }
 
 static LocalizedString COULDNT_OPEN_LOADING_WINDOW( "LoadingWindow", "Couldn't open any loading windows." );
-static LocalizedString STARTING_SOUND ( "LoadingWindow", "Starting sound subsystem...");
-static LocalizedString INIT_BOOKKEEPER ( "LoadingWindow", "Initializing bookkeeper...");
-static LocalizedString START_LIGHTS ( "LoadingWindow", "Starting lights subsystem...");
-static LocalizedString LOAD_GAMETYPE ( "LoadingWindow", "Loading game type...");
-static LocalizedString BUILD_SONG_CACHE_INDEX ( "LoadingWindow", "Building song cache index...");
-static LocalizedString LOAD_BANNER_CACHE ( "LoadingWindow", "Loading banner cache...");
-static LocalizedString INIT_MEMCARD ( "LoadingWindow", "Initializing memory card system...");
-static LocalizedString INIT_CHARS ( "LoadingWindow", "Initializing character system...");
-static LocalizedString INIT_PROFILES ( "LoadingWindow", "Initializing profile system...");
-static LocalizedString UPDATE_POPULAR ( "LoadingWindow", "Updating popular song list...");
-static LocalizedString UPDATE_COURSE_RANKS ( "LoadingWindow", "Updating course rankings...");
-static LocalizedString INIT_STATICS ( "LoadingWindow", "Initializing statics manager...");
-static LocalizedString INIT_MESSAGE ( "LoadingWindow", "Initializing message system...");
 
 int main(int argc, char* argv[])
 {
@@ -1073,33 +1061,21 @@ int main(int argc, char* argv[])
 	if( PREFSMAN->m_iSoundWriteAhead )
 		LOG->Info( "Sound writeahead has been overridden to %i", PREFSMAN->m_iSoundWriteAhead.Get() );
 
-	pLoadingWindow->SetText(STARTING_SOUND);
 	SOUNDMAN	= new RageSoundManager;
 	SOUNDMAN->Init();
 	SOUNDMAN->SetMixVolume();
 	SOUND		= new GameSoundManager;
-	pLoadingWindow->SetText(INIT_BOOKKEEPER);
 	BOOKKEEPER	= new Bookkeeper;
-	pLoadingWindow->SetText(START_LIGHTS);
 	LIGHTSMAN	= new LightsManager;
 	INPUTFILTER	= new InputFilter;
 	INPUTMAPPER	= new InputMapper;
 
-	pLoadingWindow->SetText(LOAD_GAMETYPE);
 	StepMania::ChangeCurrentGame( GAMESTATE->GetCurrentGame() );
 
 	INPUTQUEUE	= new InputQueue;
-	pLoadingWindow->SetText(BUILD_SONG_CACHE_INDEX);
 	SONGINDEX	= new SongCacheIndex;
-	pLoadingWindow->SetText(LOAD_BANNER_CACHE);
 	BANNERCACHE	= new BannerCache;
 	//BACKGROUNDCACHE	= new BackgroundCache;
-
-#define earlyBail if( ArchHooks::UserQuit() ) { \
-		ShutdownGame(); \
-		SAFE_DELETE( pLoadingWindow ); \
-		return 0; \
-	} \
 
 	// depends on SONGINDEX:
 	SONGMAN		= new SongManager;
@@ -1108,41 +1084,30 @@ int main(int argc, char* argv[])
 	CRYPTMAN	= new CryptManager;		// need to do this before ProfileMan
 	if( PREFSMAN->m_bSignProfileData )
 		CRYPTMAN->GenerateGlobalKeys();
-	earlyBail
-	pLoadingWindow->SetText(INIT_MEMCARD);
 	MEMCARDMAN	= new MemoryCardManager;
-	earlyBail
-	pLoadingWindow->SetText(INIT_CHARS);
-	earlyBail
 	CHARMAN		= new CharacterManager;
-	pLoadingWindow->SetText(INIT_PROFILES);
-	earlyBail
 	PROFILEMAN	= new ProfileManager;
 	PROFILEMAN->Init();				// must load after SONGMAN
-	earlyBail
 	UNLOCKMAN	= new UnlockManager;
-	pLoadingWindow->SetText(UPDATE_POPULAR);
-	earlyBail
 	SONGMAN->UpdatePopular();
 	SONGMAN->UpdatePreferredSort();
-	earlyBail
-
-	NSMAN 		= new NetworkSyncManager( pLoadingWindow ); 
-	pLoadingWindow->SetText(INIT_MESSAGE);
+	NSMAN 		= new NetworkSyncManager( pLoadingWindow );
 	MESSAGEMAN	= new MessageManager;
-	pLoadingWindow->SetText(INIT_STATICS);
 	STATSMAN	= new StatsManager;
-	earlyBail
 
 	// Initialize which courses are ranking courses here.
 	pLoadingWindow->SetText(UPDATE_COURSE_RANKS);
 	SONGMAN->UpdateRankingCourses();
-	earlyBail
 
-	// destroy this before init'ing Display, for now
-	// we will lose the rights to be focused, but that's not too important
-	// when we are going fullscreen
-	SAFE_DELETE( pLoadingWindow );
+	SAFE_DELETE( pLoadingWindow );	// destroy this before init'ing Display
+
+	/* If the user has tried to quit during the loading, do it before creating
+	 * the main window. This prevents going to full screen just to quit. */
+	if( ArchHooks::UserQuit() )
+	{
+		ShutdownGame();
+		return 0;
+	}
 
 	StartDisplay();
 
