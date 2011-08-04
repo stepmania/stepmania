@@ -75,7 +75,15 @@ void SMLoader::LoadFromTokens(
 
 	//	LOG->Trace( "Steps::LoadFromTokens()" );
 
-	// insert stepstype hacks from GameManager.cpp here? -aj
+	// backwards compatibility hacks:
+	// HACK: We eliminated "ez2-single-hard", but we should still handle it.
+	if( sStepsType == "ez2-single-hard" )
+		sStepsType = "ez2-single";
+
+	// HACK: "para-single" used to be called just "para"
+	if( sStepsType == "para" )
+		sStepsType = "para-single";
+
 	out.m_StepsType = GAMEMAN->StringToStepsType( sStepsType );
 	out.SetDescription( sDescription );
 	out.SetCredit( sDescription ); // this is often used for both.

@@ -3023,17 +3023,6 @@ StepsType GameManager::StringToStepsType( RString sStepsType )
 {
 	sStepsType.MakeLower();
 
-	// TODO: Format specific hacks should be moved into the file loader for that format.
-	// If i'm assuming this correctly, these two only apply to .sm files: -aj
-
-	// HACK: We eliminated "ez2-single-hard", but we should still handle it.
-	if( sStepsType == "ez2-single-hard" )
-		sStepsType = "ez2-single";
-
-	// HACK: "para-single" used to be called just "para"
-	if( sStepsType == "para" )
-		sStepsType = "para-single";
-
 	for( int i=0; i<NUM_StepsType; i++ )
 		if( g_StepsTypeInfos[i].szName == sStepsType )
 			return StepsType(i);
