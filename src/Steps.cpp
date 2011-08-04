@@ -32,6 +32,18 @@
 
 #include <algorithm>
 
+/* register DisplayBPM with StringConversion */
+#include "EnumHelper.h"
+
+static const char *DisplayBPMNames[] =
+{
+	"Actual",
+	"Specified",
+	"Random",
+};
+
+XToString( DisplayBPM );
+
 Steps::Steps(): m_StepsType(StepsType_Invalid), 
 	parent(NULL), m_pNoteData(new NoteData), m_bNoteDataIsFilled(false), 
 	m_sNoteDataCompressed(""), m_sFilename(""), m_bSavedToDisk(false), 
