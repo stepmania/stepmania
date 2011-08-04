@@ -164,6 +164,8 @@ GameState::GameState() :
 
 	m_bDopefish = false;
 
+	sExpandedSectionName = "";
+
 	// Don't reset yet; let the first screen do it, so we can use PREFSMAN and THEME.
 	//Reset();
 
@@ -347,6 +349,8 @@ void GameState::Reset()
 
 	m_bBackedOutOfFinalStage = false;
 	m_bEarnedExtraStage = false;
+	sExpandedSectionName = "";
+
 	ApplyCmdline();
 }
 

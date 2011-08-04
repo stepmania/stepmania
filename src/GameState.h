@@ -74,7 +74,7 @@ public:
 	void Update( float fDelta );
 
 	// Main state info
-	
+
 	/**
 	 * @brief State what the current game is.
 	 *
@@ -143,22 +143,22 @@ public:
 	PlayerNumber GetFirstDisabledPlayer() const;
 	bool IsCpuPlayer( PlayerNumber pn ) const;
 	bool AnyPlayersAreCpu() const;
-	
+
 	/**
 	 * @brief Retrieve the present master player number.
 	 * @return The master player number. */
 	PlayerNumber GetMasterPlayerNumber() const;
-	
+
 	/**
 	 * @brief Set the master player number.
 	 * @param p the master player number. */
 	void SetMasterPlayerNumber(const PlayerNumber p);
-	
+
 	/**
 	 * @brief Retrieve the present timing data being processed.
 	 * @return the timing data pointer. */
 	TimingData * GetProcessedTimingData() const;
-	
+
 	/**
 	 * @brief Set the timing data to be used with processing.
 	 * @param t the timing data. */
@@ -200,6 +200,8 @@ public:
 	 * This resets whenever a player joins or continues. */
 	int				m_iPlayerStageTokens[NUM_PLAYERS];
 
+	RString sExpandedSectionName;
+
 	static int GetNumStagesMultiplierForSong( const Song* pSong );
 	static int GetNumStagesForSongAndStyleType( const Song* pSong, StyleType st );
 	int GetNumStagesForCurrentSongAndStepsOrCourse() const;
@@ -236,7 +238,7 @@ public:
 	Course*		m_pPreferredCourse;
 	BroadcastOnChangePtr1D<Trail,NUM_PLAYERS>	m_pCurTrail;
 
-	bool        m_bBackedOutOfFinalStage;
+	bool		m_bBackedOutOfFinalStage;
 
 	// Music statistics:
 	SongPosition m_Position;
@@ -256,9 +258,9 @@ public:
 	bool OneIsHot() const;
 
 	// Haste
-	float			m_fHasteRate; // [-1,+1]; 0 = normal speed
-	float			m_fLastHasteUpdateMusicSeconds;
-	float			m_fAccumulatedHasteSeconds;
+	float	m_fHasteRate; // [-1,+1]; 0 = normal speed
+	float	m_fLastHasteUpdateMusicSeconds;
+	float	m_fAccumulatedHasteSeconds;
 
 	// Random Attacks & Attack Mines
 	vector<RString>		m_RandomAttacks;

@@ -1327,6 +1327,7 @@ void MusicWheel::SetOpenSection( RString group )
 {
 	//LOG->Trace( "SetOpenSection %s", group.c_str() );
 	m_sExpandedSectionName = group;
+	GAMESTATE->sExpandedSectionName = group;
 
 	// wheel positions = num song groups
 	if ( REMIND_WHEEL_POSITIONS && HIDE_INACTIVE_SECTIONS )
