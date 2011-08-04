@@ -64,7 +64,7 @@ else
 				local Offset = THEME:GetMetric(Var "LoadingScreen","StageDisplayNumberOffset");
 				local Stage = GAMESTATE:GetCurrentStageIndex();
 				local RealStage = Stage + Offset;
-				self:settextf( "Stage %03i", RealStage);
+				self:settextf( THEME:GetString("ScreenWithMenuElements","EventStageCounter"), RealStage );
 				self:diffuse( StageToColor('Stage_1st') );
 				self:diffusebottomedge( ColorMidTone(StageToColor('Stage_1st')) );
 				self:strokecolor( Color.Alpha( ColorDarkTone(StageToColor('Stage_1st')), 0.75) );
