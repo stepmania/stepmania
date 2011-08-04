@@ -110,7 +110,6 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 				out.m_iCustomMeter[cd] = max( StringToInt(sParams[2]), 0 );
 			}
 		}
-		// todo: add COMBO and COMBOMODE from DWI CRS files? -aj
 
 		else if( sValueName.EqualsNoCase("MODS") )
 		{
