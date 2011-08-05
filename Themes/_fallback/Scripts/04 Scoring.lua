@@ -200,19 +200,20 @@ r['DDR SuperNOVA 2'] = function(params, pss)
 	};
 	setmetatable(multLookup, ZeroIfNotFound);
 	local radarValues = GetDirectRadar(params.Player);
-	local totalItems = GetTotalItems(radarValues);
+	local totalItems = GetTotalItems(radarValues) - radarValues:GetValue('RadarCategory_Lifts');
 
 	-- handle holds
 	local maxAdd = 0;
 	if params.HoldNoteScore == 'HoldNoteScore_Held' then
 		maxAdd = 10;
-	elseif params.HoldNoteScore == 'HoldNoteScore_LetGo' then
-		maxAdd = 0;
 	else
-		maxAdd = multLookup[params.TapNoteScore];
-		if params.TapNoteScore == 'TapNoteScore_W2' or 'TapNoteScore_W3' then
-			-- [ja] 超最終手段
-			pss:SetCurMaxScore( pss:GetCurMaxScore() + 1000000 );
+		if params.HoldNoteScore == 'HoldNoteScore_LetGo' then
+			maxAdd = 0;
+		else
+			maxAdd = multLookup[params.TapNoteScore];
+			if params.TapNoteScore == 'TapNoteScore_W2' or 'TapNoteScore_W3' then
+				-- [ja] 超最終手段
+				pss:SetCurMaxScore( pss:GetCurMaxScore() + 1000000 );
 		end;
 	end;
 	pss:SetCurMaxScore(pss:GetCurMaxScore() + maxAdd);
