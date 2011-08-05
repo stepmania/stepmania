@@ -8,6 +8,10 @@ ________________________________________________________________________________
 StepMania 5.0 Preview 3 | 20110???
 --------------------------------------------------------------------------------
 
+2011/08/05
+----------
+* [NoteField] Added AreaHighlightColor metric. [AJ]
+
 2011/08/04
 ----------
 * [NoteTypes, ScreenEdit] Removed artificial MAX_NOTES_PER_MEASURE limit. [AJ]

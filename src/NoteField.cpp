@@ -428,7 +428,7 @@ void NoteField::DrawMarkerBar( int iBeat )
 	m_rectMarkerBar.Draw();
 }
 
-// todo: make colors in this section metricable -aj
+static ThemeMetric<RageColor> AREA_HIGHLIGHT_COLOR("NoteField", "AreaHighlightColor");
 void NoteField::DrawAreaHighlight( int iStartBeat, int iEndBeat )
 {
 	float fStartBeat = NoteRowToBeat( iStartBeat );
@@ -443,7 +443,7 @@ void NoteField::DrawAreaHighlight( int iStartBeat, int iEndBeat )
 	ASSERT( fYEndPos < +5000 );
 
 	m_rectAreaHighlight.StretchTo( RectF(-GetWidth()/2, fYStartPos, GetWidth()/2, fYEndPos) );
-	m_rectAreaHighlight.SetDiffuse( RageColor(1,0,0,0.3f) );
+	m_rectAreaHighlight.SetDiffuse( AREA_HIGHLIGHT_COLOR );
 	m_rectAreaHighlight.Draw();
 }
 
