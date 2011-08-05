@@ -255,6 +255,10 @@ Lights = arch/Lights/LightsDriver.cpp arch/Lights/LightsDriver.h \
 		arch/Lights/LightsDriver_Export.cpp arch/Lights/LightsDriver_Export.h \
 		arch/Lights/LightsDriver_SystemMessage.cpp arch/Lights/LightsDriver_SystemMessage.h
 
+LuaDriver = arch/LuaDriver/LuaDriver.cpp arch/LuaDriver/LuaDriver.h \
+	arch/LuaDriver/LuaDriver_InputModule.cpp arch/LuaDriver/LuaDriver_InputModule.h \
+	arch/LuaDriver/LuaDriver_LightsModule.cpp arch/LuaDriver/LuaDriver_LightsModule.h
+
 MemoryCard = arch/MemoryCard/MemoryCardDriver.cpp arch/MemoryCard/MemoryCardDriver.h arch/MemoryCard/MemoryCardDriver_Null.h
 LowLevelWindow = arch/LowLevelWindow/LowLevelWindow.cpp arch/LowLevelWindow/LowLevelWindow.h
 
@@ -310,8 +314,8 @@ InputHandler +=	arch/InputHandler/InputHandler_Linux_Event.cpp arch/InputHandler
 endif
 
 Arch = $(LoadingWindow) $(Sound) $(ArchHooks) $(InputHandler) $(MovieTexture) \
-	   $(Lights) $(MemoryCard) $(LowLevelWindow) $(ArchUtils) $(Dialog) $(Threads) \
-	   arch/arch_default.h arch/RageDriver.cpp arch/RageDriver.h
+	$(Lights) $(LuaDriver) $(MemoryCard) $(LowLevelWindow) $(ArchUtils) $(Dialog) $(Threads) \
+	arch/arch_default.h arch/RageDriver.cpp arch/RageDriver.h
 
 RageSoundFileReaders = RageSoundReader_WAV.cpp RageSoundReader_WAV.h 
 

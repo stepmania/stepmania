@@ -3,6 +3,7 @@
 #include "RageLog.h"
 #include "Foreach.h"
 #include "arch/arch_default.h"
+#include "arch/LuaDriver/LuaDriver.h"
 
 DriverList LightsDriver::m_pDriverList;
 
@@ -28,6 +29,9 @@ void LightsDriver::Create( const RString &sDrivers, vector<LightsDriver *> &Add 
 		LOG->Info( "Lights driver: %s", Driver->c_str() );
 		Add.push_back( pDriver );
 	}
+
+	// Add any additional Lua modules
+	LuaDriver::AddLightsModules( sDrivers, Add );
 }
 
 /*

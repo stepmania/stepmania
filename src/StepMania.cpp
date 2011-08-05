@@ -17,6 +17,7 @@
 #include "arch/ArchHooks/ArchHooks.h"
 #include "arch/LoadingWindow/LoadingWindow.h"
 #include "arch/Dialog/Dialog.h"
+#include "arch/LuaDriver/LuaDriver.h"
 #include <ctime>
 
 #include "ProductInfo.h"
@@ -875,7 +876,7 @@ static void MountTreeOfZips( const RString &dir )
 			FILEMAN->Mount( "zip", zips[i], "/" );
 		}
 
-		GetDirListing( path + "/*", dirs, true, true );
+		GetDirListing( path + "/*", dirs, true, true ); /* */
 	}
 }
 
@@ -1059,6 +1060,20 @@ int main(int argc, char* argv[])
 
 	if( PREFSMAN->m_iSoundWriteAhead )
 		LOG->Info( "Sound writeahead has been overridden to %i", PREFSMAN->m_iSoundWriteAhead.Get() );
+
+	/* Load all Lua drivers from Data/Modules. This needs to be done before
+	 * LightsManager or InputHandler are initialized, so their constructors
+	 * can load the resulting modules.
+	 * XXX: this seems like a weird place. Is there a better one? */
+
+	{
+		vector<RString> modules;
+		GetDirListing( "Data/Modules/*.lua", modules, false, true );
+
+		for( unsigned i = 0; i < modules.size(); ++i )
+			LuaDriver::Load( modules[i] );
+	}
+
 
 	SOUNDMAN	= new RageSoundManager;
 	SOUNDMAN->Init();

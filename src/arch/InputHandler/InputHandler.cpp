@@ -166,16 +166,18 @@ RString InputHandler::GetLocalizedInputString( const DeviceInput &di )
 
 DriverList InputHandler::m_pDriverList;
 
+#include "arch/LuaDriver/LuaDriver.h"
+
 static LocalizedString INPUT_HANDLERS_EMPTY( "Arch", "Input Handlers cannot be empty." );
 void InputHandler::Create( const RString &drivers_, vector<InputHandler *> &Add )
 {
 	const RString drivers = drivers_.empty()? RString(DEFAULT_INPUT_DRIVER_LIST):drivers_;
 	vector<RString> DriversToTry;
 	split( drivers, ",", DriversToTry, true );
-	
+
 	if( DriversToTry.empty() )
 		RageException::Throw( "%s", INPUT_HANDLERS_EMPTY.GetValue().c_str() );
-	
+
 	FOREACH_CONST( RString, DriversToTry, s )
 	{
 		RageDriver *pDriver = InputHandler::m_pDriverList.Create( *s );
@@ -192,6 +194,9 @@ void InputHandler::Create( const RString &drivers_, vector<InputHandler *> &Add 
 
 	// Always add
 	Add.push_back( new InputHandler_MonkeyKeyboard );
+
+	// Add any additional Lua modules
+	LuaDriver::AddInputModules( drivers, Add );
 }
 
 
