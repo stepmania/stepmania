@@ -318,6 +318,7 @@ Section "Main Section" SecMain
 	RMDir /r "$INSTDIR\NoteSkins\pump\cmd-routine-p2"
 	RMDir /r "$INSTDIR\NoteSkins\pump\complex"
 	RMDir /r "$INSTDIR\NoteSkins\pump\default"
+	RMDir /r "$INSTDIR\NoteSkins\pump\delta"
 	RMDir /r "$INSTDIR\NoteSkins\pump\delta-note"
 	RMDir /r "$INSTDIR\NoteSkins\pump\frame5p"
 	RMDir /r "$INSTDIR\NoteSkins\pump\newextra"
