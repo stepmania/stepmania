@@ -214,7 +214,8 @@ r['DDR SuperNOVA 2'] = function(params, pss)
 			if params.TapNoteScore == 'TapNoteScore_W2' or 'TapNoteScore_W3' then
 				-- [ja] 超最終手段
 				pss:SetCurMaxScore( pss:GetCurMaxScore() + 1000000 );
-		end;
+			end;
+		end
 	end;
 	pss:SetCurMaxScore(pss:GetCurMaxScore() + maxAdd);
 
