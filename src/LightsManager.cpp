@@ -33,6 +33,7 @@ static const char *CabinetLightNames[] = {
 };
 XToString( CabinetLight );
 StringToX( CabinetLight );
+LuaXType( CabinetLight );
 
 static const char *LightsModeNames[] = {
 	"Attract",
@@ -123,7 +124,7 @@ LightsManager::~LightsManager()
 // XXX: Allow themer to change these. (rewritten; who wrote original? -aj)
 static const float g_fLightEffectRiseSeconds = 0.075f;
 static const float g_fLightEffectFalloffSeconds = 0.35f;
-static const float g_fCoinPulseTime = 0.100f; 
+static const float g_fCoinPulseTime = 0.100f;
 void LightsManager::BlinkActorLight( CabinetLight cl )
 {
 	m_fSecsLeftInActorLightBlink[cl] = g_fLightEffectRiseSeconds;
