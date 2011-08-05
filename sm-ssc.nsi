@@ -321,6 +321,7 @@ Section "Main Section" SecMain
 	RMDir /r "$INSTDIR\NoteSkins\pump\delta-note"
 	RMDir /r "$INSTDIR\NoteSkins\pump\frame5p"
 	RMDir /r "$INSTDIR\NoteSkins\pump\newextra"
+	RMDir /r "$INSTDIR\NoteSkins\pump\pad"
 	RMDir /r "$INSTDIR\NoteSkins\pump\rhythm"
 	RMDir /r "$INSTDIR\NoteSkins\pump\simple"
 	; kb7
