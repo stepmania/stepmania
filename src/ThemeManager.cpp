@@ -8,7 +8,6 @@
 #include "RageTimer.h"
 #include "FontCharAliases.h"
 #include "arch/ArchHooks/ArchHooks.h"
-#include "arch/LoadingWindow/LoadingWindow.h"
 #include "arch/Dialog/Dialog.h"
 #include "RageFile.h"
 #if !defined(SMPACKAGE)
@@ -397,8 +396,6 @@ void ThemeManager::SwitchThemeAndLanguage( const RString &sThemeName_, const RSt
 	bool bNothingChanging = sThemeName == m_sCurThemeName && sLanguage == m_sCurLanguage && m_bPseudoLocalize == bPseudoLocalize;
 	if( bNothingChanging && !bForceThemeReload )
 		return;
-
-	if(pLoadingWindow) pLoadingWindow->SetText("Loading theme & language...");
 
 	m_bPseudoLocalize = bPseudoLocalize;
 

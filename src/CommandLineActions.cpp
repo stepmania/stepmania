@@ -108,7 +108,7 @@ static void Version()
 	#endif // WIN32
 }
 
-void CommandLineActions::Handle()
+void CommandLineActions::Handle(LoadingWindow* pLW)
 {
 	CommandLineArgs args;
 	for(int i=0; i<g_argc; ++i)
