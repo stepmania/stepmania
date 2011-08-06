@@ -363,6 +363,17 @@ bool LuaDriver::LoadFromTable( Lua *L, LuaReference *pTable )
 	return this->LoadDerivedFromTable( L, pTable );
 }
 
+#if 0	// not done yet
+namespace
+{
+	/* Takes the tables at the top of the stack and merges their keys.
+	 * In the event that the second table contains keys matching the
+	 * first table, throw an error */
+	void MergeTables( Lua *L )
+	{
+	}
+#endif
+
 /*
  * (c) 2011 Mark Cannon
  * All rights reserved.

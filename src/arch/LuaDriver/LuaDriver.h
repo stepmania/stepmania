@@ -28,7 +28,6 @@ typedef map<RString,LuaDriver*> LuaDriverMap;
 class LuaDriver
 {
 public:
-	/* Registers an API
 	/* Loads an input or lights driver from the given script and, if
 	 * successful, places it in the map of available module drivers. */
 	static bool Load( const RString &sScript );

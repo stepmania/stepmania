@@ -35,7 +35,7 @@ public:
 	virtual int GetRevisionMinor() const { return 0; }
 
 	virtual int GetError() const { return 0; }
-	virtual const char* GetErrorStr( int err ) const { return NULL; }
+	virtual const char* GetErrorStr( int err = GetError() ) const { return NULL; }
 
 	void PushSelf( lua_State *L );
 };
