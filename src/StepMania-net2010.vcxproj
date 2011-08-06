@@ -640,7 +640,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)</Command>
     <ClCompile Include="GraphDisplay.cpp" />
     <ClCompile Include="GrooveRadar.cpp" />
     <ClCompile Include="HelpDisplay.cpp" />
-    <ClCompile Include="InGameLoadingWindow.cpp" />
     <ClCompile Include="MemoryCardDisplay.cpp" />
     <ClCompile Include="MenuTimer.cpp" />
     <ClCompile Include="ModIcon.cpp" />
@@ -1687,7 +1686,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)</Command>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="InGameLoadingWindow.h" />
     <ClInclude Include="Screen.h" />
     <ClInclude Include="ScreenAttract.h" />
     <ClInclude Include="ScreenBookkeeping.h" />
