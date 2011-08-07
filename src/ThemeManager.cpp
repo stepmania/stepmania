@@ -1156,7 +1156,7 @@ RString ThemeManager::GetString( const RString &sMetricsGroup, const RString &sV
 {
 	RString sValueName = sValueName_;
 
-	// TODO: Are there escape rules for this?
+	// TODO: Handle escaping = with \=
 	DEBUG_ASSERT( sValueName.find('=') == sValueName.npos );
 
 	// TODO: Move this escaping into IniFile?
