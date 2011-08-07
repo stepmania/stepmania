@@ -248,6 +248,8 @@ void NoteDisplay::Load( int iColNum, const PlayerState* pPlayerState, float fYRe
 
 	const RString &sButton = GAMESTATE->GetCurrentStyle()->ColToButtonName( iColNum );
 
+	LuaThreadVariable var( "Player", LuaReference::Create(m_pPlayerState->m_PlayerNumber) );
+
 	cache->Load( sButton );
 
 	// "normal" note types
