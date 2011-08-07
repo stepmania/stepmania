@@ -15,6 +15,7 @@ StepMania 5.0 Preview 3 | 20110???
 * [TimingData] Add HasDelays() Lua binding; HasStops() now only checks stops. [AJ]
 * [GameState, SongUtil] Fix Issue 263 by not charging 2x stages for doubles when
   not using joint premium. [AJ]
+* [BeginnerHelper] Made BeginnerHelper run the OnCommand. [AJ]
 
 2011/08/06
 ----------
