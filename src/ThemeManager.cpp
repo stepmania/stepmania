@@ -381,7 +381,6 @@ void ThemeManager::SwitchThemeAndLanguage( const RString &sThemeName_, const RSt
 	// other purposes (e.g. PARASTAR).
 	if( !IsThemeSelectable(sThemeName) )
 		sThemeName = PREFSMAN->m_sDefaultTheme;
-		//sThemeName = SpecialFiles::BASE_THEME_NAME;
 #endif
 
 	ASSERT( IsThemeSelectable(sThemeName) );
