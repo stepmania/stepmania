@@ -498,7 +498,7 @@ void Steps::SetMeter( int meter )
 
 bool Steps::HasSignificantTimingChanges() const
 {
-	if( m_Timing.HasStops() )
+	if( m_Timing.HasStops() || m_Timing.HasDelays() )
 		return true;
 	
 	/* TODO: Deal with DisplayBPM here...if possible?
