@@ -16,6 +16,7 @@ StepMania 5.0 Preview 3 | 20110???
 * [GameState, SongUtil] Fix Issue 263 by not charging 2x stages for doubles when
   not using joint premium. [AJ]
 * [BeginnerHelper] Made BeginnerHelper run the OnCommand. [AJ]
+* [GameState] add GetExpandedSectionName() Lua binding. [AJ]
 
 2011/08/06
 ----------

@@ -2423,6 +2423,7 @@ public:
 			p->m_pCurCharacters[Enum::Check<PlayerNumber>(L, 1)] = c;
 		return 0;
 	}
+	static int GetExpandedSectionName( T* p, lua_State *L )				{ lua_pushstring(L, p->sExpandedSectionName); return 1; }
 	static int Dopefish( T* p, lua_State *L )
 	{
 		lua_pushboolean(L, p->m_bDopefish);
@@ -2526,6 +2527,7 @@ public:
 		ADD_METHOD( GetCurMusicSeconds );
 		ADD_METHOD( GetCharacter );
 		ADD_METHOD( SetCharacter );
+		ADD_METHOD( GetExpandedSectionName );
 		ADD_METHOD( Dopefish );
 	}
 };
