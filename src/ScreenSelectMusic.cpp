@@ -71,6 +71,7 @@ void ScreenSelectMusic::Init()
 		GAMESTATE->SetMasterPlayerNumber(PLAYER_1);
 	}
 
+	IDLE_COMMENT_SECONDS.Load( m_sName, "IdleCommentSeconds" );
 	SAMPLE_MUSIC_DELAY_INIT.Load( m_sName, "SampleMusicDelayInit" );
 	SAMPLE_MUSIC_DELAY.Load( m_sName, "SampleMusicDelay" );
 	SAMPLE_MUSIC_LOOPS.Load( m_sName, "SampleMusicLoops" );
@@ -226,6 +227,7 @@ void ScreenSelectMusic::Init()
 void ScreenSelectMusic::BeginScreen()
 {
 	g_ScreenStartedLoadingAt.Touch();
+	m_timerIdleComment.GetDeltaTime();
 
 	if( CommonMetrics::AUTO_SET_STYLE )
 	{
@@ -376,6 +378,15 @@ void ScreenSelectMusic::CheckBackgroundRequests( bool bForce )
 
 void ScreenSelectMusic::Update( float fDeltaTime )
 {
+	if( !IsTransitioning() )
+	{
+		if( IDLE_COMMENT_SECONDS > 0  &&  m_timerIdleComment.PeekDeltaTime() >= IDLE_COMMENT_SECONDS )
+		{
+			SOUND->PlayOnceFromAnnouncer( m_sName+" IdleComment" );
+			m_timerIdleComment.GetDeltaTime();
+		}
+	}
+
 	ScreenWithMenuElements::Update( fDeltaTime );
 
 	CheckBackgroundRequests( false );
@@ -383,6 +394,9 @@ void ScreenSelectMusic::Update( float fDeltaTime )
 void ScreenSelectMusic::Input( const InputEventPlus &input )
 {
 //	LOG->Trace( "ScreenSelectMusic::Input()" );
+
+	// reset announcer timer
+	m_timerIdleComment.GetDeltaTime();
 
 	// debugging?
 	// I just like being able to see untransliterated titles occasionally.
