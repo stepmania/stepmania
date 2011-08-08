@@ -55,6 +55,10 @@ local contrib = {
 	"waiei", -- custom scoring fixes + Hybrid scoring
 }
 
+local translations = {
+	"John Reactor (Polish)",
+}
+
 local thanks = {
 	"A Pseudonymous Coder", -- support
 	"Bill Shillito (DM Ashura)", -- Music (not yet though)
@@ -69,6 +73,7 @@ local thanks = {
 	"Renard",
 	"Ryan McKanna (Plaguefox)",
 }
+
 
 local shoutout = {
 	"The Lua team", -- lua project lead or some shit. super nerdy but oh hell.
@@ -94,6 +99,7 @@ local sections = {
 	{ "sm-ssc Team", sm_ssc },
 	{ "StepMania Team", stepmania },
 	{ "Other Contributors", contrib },
+  { "Translations", translations },
 	{ "Special Thanks", thanks },
 	{ "Shoutouts", shoutout },
 	{ "Copyright", copyright },
