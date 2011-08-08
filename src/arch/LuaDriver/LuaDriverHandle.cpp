@@ -30,11 +30,32 @@ void LuaDriverHandle::PushAPIHandle( Lua *L, const RString &sName )
 	}
 
 	const MakeHandleFn &pfn = it->second;
+
+	/* allocates a new handle; call Destroy() from Lua to deallocate */
 	LuaDriverHandle *pHandle = pfn();
 	pHandle->PushSelf( L );
 }
 
 #include "LuaBinding.h"
+
+/* For the sake of brevity, we're stealing "LuaDriver" for API utils */
+namespace
+{
+	int CreateAPIHandle( lua_State *L )
+	{
+		LuaDriverHandle::PushAPIHandle( L, SArg(1) );
+		return 1;
+	}
+
+	const luaL_Reg LuaDriverTable[] =
+	{
+		LIST_METHOD( CreateAPIHandle ),
+		{ NULL, NULL }
+	};
+};
+
+LUA_REGISTER_NAMESPACE( LuaDriver );
+
 
 class LunaLuaDriverHandle : public Luna<LuaDriverHandle>
 {
