@@ -3,6 +3,9 @@
 #include "RageThreads.h"
 #include "LuaDriver_LightsModule.h"
 
+#include "InputMapper.h" // for FOREACHGameButtonInScheme, GetInputScheme
+#include "GameInput.h"
+
 /*
  * LuaDriver_LightsModule functions
  */
@@ -129,6 +132,27 @@ void LuaDriver_LightsModule::PushLightsState( Lua *L, const LightsState *ls )
 	{
 		Enum::Push( L, cl );
 		lua_pushboolean( L, ls->m_bCabinetLights[cl] );
+		lua_rawset( L, -3 );
+	}
+
+	if( INPUTMAPPER == NULL )
+		return;
+
+	const InputScheme *pScheme = INPUTMAPPER->GetInputScheme();
+
+	FOREACH_ENUM( GameController, gc )
+	{
+		Enum::Push( L, gc );
+		lua_newtable( L );
+
+		FOREACH_GameButtonInScheme( pScheme, gb )
+		{
+			Enum::Push( L, gb );
+			lua_pushboolean( L, ls->m_bGameButtonLights[gc][gb] );
+			lua_rawset( L, -3 );
+		}
+
+		/* push this subtable into the main table */
 		lua_rawset( L, -3 );
 	}
 

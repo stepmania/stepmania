@@ -14,6 +14,45 @@ XToString( GameController );
 StringToX( GameController );
 LuaXType( GameController );
 
+/* TODO: extend game-specific names into Lua space */
+static const char *GameButtonNames[] = {
+	"MenuLeft",
+	"MenuRight",
+	"MenuUp",
+	"MenuDown",
+	"Start",
+	"Select",
+	"Back",
+	"Coin",
+	"Operator",
+	"EffectUp",
+	"EffectDown",
+	"Custom01",
+	"Custom02",
+	"Custom03",
+	"Custom04",
+	"Custom05",
+	"Custom06",
+	"Custom07",
+	"Custom08",
+	"Custom09",
+	"Custom10",
+	"Custom11",
+	"Custom12",
+	"Custom13",
+	"Custom14",
+	"Custom15",
+	"Custom16",
+	"Custom17",
+	"Custom18",
+	"Custom19",
+
+};
+
+// game-agnostic overloads of the functions below
+XToString( GameButton );
+StringToX( GameButton );
+LuaXType( GameButton );
 
 RString GameButtonToString( const InputScheme* pInputs, GameButton i )
 {
@@ -42,7 +81,7 @@ RString GameInput::ToString( const InputScheme* pInputs ) const
 }
 
 bool GameInput::FromString( const InputScheme* pInputs, const RString &s )
-{ 
+{
 	char szController[32] = "";
 	char szButton[32] = "";
 
@@ -57,10 +96,12 @@ bool GameInput::FromString( const InputScheme* pInputs, const RString &s )
 	return true;
 };
 
+
+
 /*
  * (c) 2001-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
