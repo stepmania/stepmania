@@ -8,7 +8,6 @@
 #include "RageTimer.h"
 #include "FontCharAliases.h"
 #include "arch/ArchHooks/ArchHooks.h"
-#include "arch/LoadingWindow/LoadingWindow.h"
 #include "arch/Dialog/Dialog.h"
 #include "RageFile.h"
 #if !defined(SMPACKAGE)
@@ -382,7 +381,6 @@ void ThemeManager::SwitchThemeAndLanguage( const RString &sThemeName_, const RSt
 	// other purposes (e.g. PARASTAR).
 	if( !IsThemeSelectable(sThemeName) )
 		sThemeName = PREFSMAN->m_sDefaultTheme;
-		//sThemeName = SpecialFiles::BASE_THEME_NAME;
 #endif
 
 	ASSERT( IsThemeSelectable(sThemeName) );
@@ -397,8 +395,6 @@ void ThemeManager::SwitchThemeAndLanguage( const RString &sThemeName_, const RSt
 	bool bNothingChanging = sThemeName == m_sCurThemeName && sLanguage == m_sCurLanguage && m_bPseudoLocalize == bPseudoLocalize;
 	if( bNothingChanging && !bForceThemeReload )
 		return;
-
-	if(pLoadingWindow) pLoadingWindow->SetText("Loading theme & language...");
 
 	m_bPseudoLocalize = bPseudoLocalize;
 
@@ -1160,7 +1156,7 @@ RString ThemeManager::GetString( const RString &sMetricsGroup, const RString &sV
 {
 	RString sValueName = sValueName_;
 
-	// TODO: Are there escape rules for this?
+	// TODO: Handle escaping = with \=
 	DEBUG_ASSERT( sValueName.find('=') == sValueName.npos );
 
 	// TODO: Move this escaping into IniFile?

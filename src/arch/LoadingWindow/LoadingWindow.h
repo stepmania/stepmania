@@ -24,8 +24,6 @@ protected:
 	bool m_indeterminate;
 };
 
-extern LoadingWindow *pLoadingWindow;
-
 #endif
 
 /**

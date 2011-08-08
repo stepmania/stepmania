@@ -1620,9 +1620,6 @@
     <ClCompile Include="SongPosition.cpp">
       <Filter>Data Structures</Filter>
     </ClCompile>
-    <ClCompile Include="InGameLoadingWindow.cpp">
-      <Filter>Actors used in Menus</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Screen.h">
@@ -3010,9 +3007,6 @@
     </ClInclude>
     <ClInclude Include="SongPosition.h">
       <Filter>Data Structures</Filter>
-    </ClInclude>
-    <ClInclude Include="InGameLoadingWindow.h">
-      <Filter>Actors used in Menus</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

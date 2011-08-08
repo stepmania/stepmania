@@ -56,8 +56,6 @@ LoadingWindow *LoadingWindow::Create()
 	return ret;
 }
 
-LoadingWindow *pLoadingWindow;
-
 /*
  * (c) 2002-2005 Glenn Maynard
  * All rights reserved.

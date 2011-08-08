@@ -4,6 +4,7 @@
 #include "GameConstantsAndTypes.h"
 #include "RageLog.h"
 #include "GameManager.h"
+#include "SongManager.h"
 #include "RageFile.h"
 #include "SongUtil.h"
 #include "StepsUtil.h"
@@ -1072,7 +1073,8 @@ void BMSLoader::GetApplicableFiles( const RString &sPath, vector<RString> &out )
 
 bool BMSLoader::LoadNoteDataFromSimfile( const RString & cachePath, Steps & out )
 {
-	Song dummy;
+	Song *pSong = SONGMAN->GetSongFromSteps( &out );
+	Song &song = *pSong;
 	// TODO: Simplify this copy/paste from LoadFromDir.
 	
 	vector<NameToData_t> BMSData;
@@ -1082,7 +1084,7 @@ bool BMSLoader::LoadNoteDataFromSimfile( const RString & cachePath, Steps & out 
 	RString commonSubstring;
 	GetCommonTagFromMapList( BMSData, "#title", commonSubstring );
 	
-	Steps *copy = dummy.CreateSteps();
+	Steps *copy = song.CreateSteps();
 	
 	copy->SetDifficulty( Difficulty_Medium );
 	RString sTag;
@@ -1115,7 +1117,7 @@ bool BMSLoader::LoadNoteDataFromSimfile( const RString & cachePath, Steps & out 
 		if (GetTagFromMap(BMSData[0], "#title#", localTag))
 			SearchForDifficulty(localTag, copy);
 	}
-	ReadGlobalTags( BMSData[0], dummy );
+	ReadGlobalTags( BMSData[0], song );
 	if( commonSubstring.size() > 2 && commonSubstring[commonSubstring.size() - 2] == ' ' )
 	{
 		switch( commonSubstring[commonSubstring.size() - 1] )
@@ -1129,9 +1131,12 @@ bool BMSLoader::LoadNoteDataFromSimfile( const RString & cachePath, Steps & out 
 		}
 	}
 	map<RString, int> mapFilenameToKeysoundIndex;
-
 	
-	const bool ok = LoadFromBMSFile( cachePath, BMSData[0], *copy, dummy, mapFilenameToKeysoundIndex );
+	for (unsigned i = 0; i < pSong->m_vsKeysoundFile.size(); i ++) {
+		mapFilenameToKeysoundIndex[pSong->m_vsKeysoundFile[i]] = i;
+	}
+
+	const bool ok = LoadFromBMSFile( cachePath, BMSData[0], *copy, song, mapFilenameToKeysoundIndex );
 	if( ok )
 	{
 		out.SetNoteData(copy->GetNoteData());

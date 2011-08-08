@@ -1367,12 +1367,14 @@ bool TimingData::HasBpmChanges() const
 	return this->allTimingSegments[SEGMENT_BPM].size()>1;
 }
 
-// TODO: Think about splitting this up into HasStops and HasDelays.
 bool TimingData::HasStops() const
 {
-	return
-		this->allTimingSegments[SEGMENT_STOP].size()>0 || 
-		this->allTimingSegments[SEGMENT_DELAY].size()>0;
+	return this->allTimingSegments[SEGMENT_STOP].size()>0;
+}
+
+bool TimingData::HasDelays() const
+{
+	return this->allTimingSegments[SEGMENT_DELAY].size()>0;
 }
 
 bool TimingData::HasWarps() const
@@ -1454,6 +1456,7 @@ class LunaTimingData: public Luna<TimingData>
 {
 public:
 	static int HasStops( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasStops()); return 1; }
+	static int HasDelays( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasDelays()); return 1; }
 	static int HasBPMChanges( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasBpmChanges()); return 1; }
 	static int HasWarps( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasWarps()); return 1; }
 	static int HasFakes( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasFakes()); return 1; }
@@ -1548,6 +1551,7 @@ public:
 	LunaTimingData()
 	{
 		ADD_METHOD( HasStops );
+		ADD_METHOD( HasDelays );
 		ADD_METHOD( HasBPMChanges );
 		ADD_METHOD( HasWarps );
 		ADD_METHOD( HasFakes );

@@ -1515,7 +1515,7 @@ bool Song::IsEditAlreadyLoaded( Steps* pSteps ) const
 
 bool Song::HasSignificantBpmChangesOrStops() const
 {
-	if( m_SongTiming.HasStops() )
+	if( m_SongTiming.HasStops() || m_SongTiming.HasDelays() )
 		return true;
 
 	// Don't consider BPM changes that only are only for maintaining sync as 

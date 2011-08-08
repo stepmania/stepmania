@@ -167,7 +167,7 @@ bool BeginnerHelper::Init( int iDancePadType )
 		m_pDancer[pl]->PlayAnimation( "rest" );
 		m_pDancer[pl]->SetX( HELPER_X+PLAYER_X(pl) );
 		m_pDancer[pl]->SetY( HELPER_Y+10 );
-		ActorUtil::LoadAllCommands( m_pDancer[pl], "BeginnerHelper" );
+		ActorUtil::LoadAllCommandsAndOnCommand( m_pDancer[pl], "BeginnerHelper" );
 		// many of the models floating around have the vertex order flipped, so force this.
 		m_pDancer[pl]->SetCullMode( CULL_NONE );
 	}

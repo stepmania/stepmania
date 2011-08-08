@@ -88,11 +88,10 @@ SongManager::~SongManager()
 	FreeSongs();
 }
 
-void SongManager::InitAll()
+void SongManager::InitAll( LoadingWindow *ld )
 {
-	InitSongsFromDisk();
-
-	InitCoursesFromDisk();
+	InitSongsFromDisk( ld );
+	InitCoursesFromDisk( ld );
 	InitAutogenCourses();
 	InitRandomAttacks();
 }
@@ -100,7 +99,8 @@ void SongManager::InitAll()
 static LocalizedString RELOADING ( "SongManager", "Reloading..." );
 static LocalizedString UNLOADING_SONGS ( "SongManager", "Unloading songs..." );
 static LocalizedString UNLOADING_COURSES ( "SongManager", "Unloading courses..." );
-void SongManager::Reload( bool bAllowFastLoad )
+
+void SongManager::Reload( bool bAllowFastLoad, LoadingWindow *ld )
 {
 	FILEMAN->FlushDirCache( SpecialFiles::SONGS_DIR );
 	FILEMAN->FlushDirCache( ADDITIONAL_SONGS_DIR );
@@ -108,26 +108,27 @@ void SongManager::Reload( bool bAllowFastLoad )
 	FILEMAN->FlushDirCache( ADDITIONAL_COURSES_DIR );
 	FILEMAN->FlushDirCache( EDIT_SUBDIR );
 
-	if( pLoadingWindow )
-		pLoadingWindow->SetText( RELOADING );
+	if( ld )
+		ld->SetText( RELOADING );
 
-	// save scores before unloading songs, of the scores will be lost
+	// save scores before unloading songs, or the scores will be lost
 	PROFILEMAN->SaveMachineProfile();
 
-	if( pLoadingWindow )
-		pLoadingWindow->SetText( UNLOADING_COURSES );
+	if( ld )
+		ld->SetText( UNLOADING_COURSES );
 
 	FreeCourses();
 
-	if( pLoadingWindow )
-		pLoadingWindow->SetText( UNLOADING_SONGS );
+	if( ld )
+		ld->SetText( UNLOADING_SONGS );
+
 	FreeSongs();
 
 	const bool OldVal = PREFSMAN->m_bFastLoad;
 	if( !bAllowFastLoad )
 		PREFSMAN->m_bFastLoad.Set( false );
 
-	InitAll();
+	InitAll( ld );
 
 	// reload scores and unlocks afterward
 	PROFILEMAN->LoadMachineProfile();
@@ -139,14 +140,14 @@ void SongManager::Reload( bool bAllowFastLoad )
 	UpdatePreferredSort();
 }
 
-void SongManager::InitSongsFromDisk()
+void SongManager::InitSongsFromDisk( LoadingWindow *ld )
 {
 	RageTimer tm;
-	LoadStepManiaSongDir( SpecialFiles::SONGS_DIR);
+	LoadStepManiaSongDir( SpecialFiles::SONGS_DIR, ld );
 
 	const bool bOldVal = PREFSMAN->m_bFastLoad;
 	PREFSMAN->m_bFastLoad.Set( PREFSMAN->m_bFastLoadAdditionalSongs );
-	LoadStepManiaSongDir( ADDITIONAL_SONGS_DIR );
+	LoadStepManiaSongDir( ADDITIONAL_SONGS_DIR, ld );
 	PREFSMAN->m_bFastLoad.Set( bOldVal );
 
 	LOG->Trace( "Found %d songs in %f seconds.", (int)m_pSongs.size(), tm.GetDeltaTime() );
@@ -233,7 +234,7 @@ void SongManager::AddGroup( RString sDir, RString sGroupDirName )
 }
 
 static LocalizedString LOADING_SONGS ( "SongManager", "Loading songs..." );
-void SongManager::LoadStepManiaSongDir( RString sDir )
+void SongManager::LoadStepManiaSongDir( RString sDir, LoadingWindow *ld )
 {
 	// Make sure sDir has a trailing slash.
 	if( sDir.Right(1) != "/" )
@@ -270,9 +271,9 @@ void SongManager::LoadStepManiaSongDir( RString sDir )
 
 	if( songCount==0 ) return;
 	
-	if( pLoadingWindow ) {
-		pLoadingWindow->SetIndeterminate( false );
-		pLoadingWindow->SetTotalWork( songCount );
+	if( ld ) {
+		ld->SetIndeterminate( false );
+		ld->SetTotalWork( songCount );
 	}
 	
 	groupIndex = 0;
@@ -293,10 +294,10 @@ void SongManager::LoadStepManiaSongDir( RString sDir )
 			RString sSongDirName = arraySongDirs[j];
 
 			// this is a song directory. Load a new song.
-			if( pLoadingWindow )
+			if( ld )
 			{
-				pLoadingWindow->SetProgress(songIndex);
-				pLoadingWindow->SetText( LOADING_SONGS.GetValue()+ssprintf("\n%s\n%s",
+				ld->SetProgress(songIndex);
+				ld->SetText( LOADING_SONGS.GetValue()+ssprintf("\n%s\n%s",
 									  Basename(sGroupDirName).c_str(),
 									  Basename(sSongDirName).c_str()));
 			}
@@ -329,8 +330,8 @@ void SongManager::LoadStepManiaSongDir( RString sDir )
 		LoadGroupSymLinks(sDir, sGroupDirName);
 	}
 
-	if( pLoadingWindow ) {
-		pLoadingWindow->SetIndeterminate( true );
+	if( ld ) {
+		ld->SetIndeterminate( true );
 	}
 
 	LoadEnabledSongsFromPref();
@@ -758,7 +759,7 @@ RString SongManager::ShortenGroupName( RString sLongGroupName )
 }
 
 static LocalizedString LOADING_COURSES ( "SongManager", "Loading courses..." );
-void SongManager::InitCoursesFromDisk()
+void SongManager::InitCoursesFromDisk( LoadingWindow *ld )
 {
 	LOG->Trace( "Loading courses." );
 
@@ -788,9 +789,9 @@ void SongManager::InitCoursesFromDisk()
 
 		FOREACH_CONST( RString, vsCoursePaths, sCoursePath )
 		{
-			if( pLoadingWindow )
+			if( ld )
 			{
-				pLoadingWindow->SetText( LOADING_COURSES.GetValue()+ssprintf("\n%s\n%s",
+				ld->SetText( LOADING_COURSES.GetValue()+ssprintf("\n%s\n%s",
 					Basename(*sCourseGroup).c_str(),
 					Basename(*sCoursePath).c_str()));
 			}

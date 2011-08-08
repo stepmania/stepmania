@@ -903,7 +903,7 @@ static void WriteLogHeader()
 	struct tm now;
 	localtime_r( &cur_time, &now );
 
-	LOG->Info( "Log starting %.4d-%.2d-%.2d %.2d:%.2d:%.2d", 
+	LOG->Info( "Log starting %.4d-%.2d-%.2d %.2d:%.2d:%.2d",
 		1900+now.tm_year, now.tm_mon+1, now.tm_mday, now.tm_hour, now.tm_min, now.tm_sec );
 	LOG->Trace( " " );
 
@@ -1016,7 +1016,7 @@ int main(int argc, char* argv[])
 	GAMESTATE	= new GameState;
 
 	// This requires PREFSMAN, for PREFSMAN->m_bShowLoadingWindow.
-	pLoadingWindow = LoadingWindow::Create();
+	LoadingWindow *pLoadingWindow = LoadingWindow::Create();
 	if(pLoadingWindow == NULL)
 		RageException::Throw("%s", COULDNT_OPEN_LOADING_WINDOW.GetValue().c_str());
 
@@ -1042,7 +1042,7 @@ int main(int argc, char* argv[])
 	// Switch to the last used game type, and set up the theme and announcer.
 	SwitchToLastPlayedGame();
 
-	CommandLineActions::Handle();
+	CommandLineActions::Handle(pLoadingWindow);
 
 	if( GetCommandlineArgument("dopefish") )
 		GAMESTATE->m_bDopefish = true;
@@ -1093,7 +1093,7 @@ int main(int argc, char* argv[])
 
 	// depends on SONGINDEX:
 	SONGMAN		= new SongManager;
-	SONGMAN->InitAll();	// this takes a long time
+	SONGMAN->InitAll( pLoadingWindow );	// this takes a long time
 	CRYPTMAN	= new CryptManager;		// need to do this before ProfileMan
 	if( PREFSMAN->m_bSignProfileData )
 		CRYPTMAN->GenerateGlobalKeys();
@@ -1111,10 +1111,10 @@ int main(int argc, char* argv[])
 	// Initialize which courses are ranking courses here.
 	SONGMAN->UpdateRankingCourses();
 
-	SAFE_DELETE( pLoadingWindow );	// destroy this before init'ing Display
+	SAFE_DELETE( pLoadingWindow ); // destroy this before init'ing Display
 
 	/* If the user has tried to quit during the loading, do it before creating
-	 * the main window. This prevents going to full screen just to quit. */
+	* the main window. This prevents going to full screen just to quit. */
 	if( ArchHooks::UserQuit() )
 	{
 		ShutdownGame();

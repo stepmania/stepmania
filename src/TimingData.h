@@ -714,11 +714,14 @@ public:
 	bool HasBpmChanges() const;
 	/**
 	 * @brief View the TimingData to see if there is at least one stop at any point.
-	 *
-	 * For the purposes of this function, Stops and Delays are considered the same.
 	 * @return true if there is at least one stop, false otherwise.
 	 */
 	bool HasStops() const;
+	/**
+	 * @brief View the TimingData to see if there is at least one delay at any point.
+	 * @return true if there is at least one delay, false otherwise.
+	 */
+	bool HasDelays() const;
 	/**
 	 * @brief View the TimingData to see if there is at least one warp at any point.
 	 * @return true if there is at least one warp, false otherwise.

@@ -6,8 +6,38 @@
 #include "RageLog.h"
 #include "ThemeManager.h"
 #include "ScreenDimensions.h"
+
 #include "arch/LoadingWindow/LoadingWindow.h"
-#include "InGameLoadingWindow.h"
+
+static const int DrawFrameRate = 20;
+class ScreenReloadSongsLoadingWindow: public LoadingWindow
+{
+	RageTimer m_LastDraw;
+	BitmapText &m_BitmapText;
+
+public:
+	ScreenReloadSongsLoadingWindow( BitmapText &bt ):
+		m_BitmapText(bt)
+	{
+	}
+
+	void SetText( RString str )
+	{
+		m_BitmapText.SetText( str );
+		Paint();
+	}
+
+	void Paint()
+	{
+		/* We load songs much faster than we draw frames. Cap the draw rate,
+		 * so we don't slow down the reload. */
+		if( m_LastDraw.PeekDeltaTime() < 1.0f/DrawFrameRate )
+			return;
+		m_LastDraw.GetDeltaTime();
+
+		SCREENMAN->Draw();
+	}
+};
 
 /* This could be cleaned up: show progress, for example.  Let's not use
  * this for the initial load, since we don't want to start up the display
@@ -21,30 +51,35 @@ void ScreenReloadSongs::Init()
 {
 	Screen::Init();
 
-	loadWin=new InGameLoadingWindow( );
+	m_iUpdates = 0;
 
-	AddChild( loadWin );
+	m_Loading.SetName( "LoadingText" );
+	m_Loading.LoadFromFont( THEME->GetPathF(m_sName, "LoadingText") );
+	m_Loading.SetXY( SCREEN_CENTER_X, SCREEN_CENTER_Y );
+	this->AddChild( &m_Loading );
 
-	loadWin->SetXY( SCREEN_CENTER_X, SCREEN_CENTER_Y );
-	
-	pLoadingWindow=loadWin;
-
-	m_loadingThread.SetName("Song reload work thread");
-	m_loadingThread.Create(loadingThreadProc,this);
-}
+	m_pLoadingWindow = new ScreenReloadSongsLoadingWindow( m_Loading );
+ }
 
 ScreenReloadSongs::~ScreenReloadSongs()
 {
-	m_loadingThread.Wait();
-	RemoveChild(loadWin);
-	delete loadWin;
+	delete m_pLoadingWindow;
 }
 
-int ScreenReloadSongs::loadingThreadProc(void *thisAsVoidPtr)
+void ScreenReloadSongs::Update( float fDeltaTime )
 {
-	SONGMAN->Reload( false );
+	Screen::Update( fDeltaTime );
+
+	/* Start the reload on the second update. On the first (0), SCREENMAN->Draw won't draw. */
+	++m_iUpdates;
+	if( m_iUpdates != 2 )
+		return;
+
+	ASSERT( !IsFirstUpdate() );
+
+	SONGMAN->Reload( false, m_pLoadingWindow );
+
 	SCREENMAN->PostMessageToTopScreen( SM_GoToNextScreen, 0 );
-	return 0;
 }
 
 /*
