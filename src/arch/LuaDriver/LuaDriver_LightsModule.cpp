@@ -12,7 +12,7 @@ LuaDriver_LightsModule::LuaDriver_LightsModule( const RString &sName ) :
 {
 	// woop woop
 	m_pEvent = NULL;
-	m_bThreaded = true;
+	m_bThreaded = false;
 	ZERO( m_LightsState );
 }
 

@@ -4,17 +4,21 @@
 #ifndef LUA_DRIVER_HANDLE_H
 #define LUA_DRIVER_HANDLE_H
 
+#include "RageUtil_AutoPtr.h"	// for HiddenPtr
+
 struct lua_State;
+class LuaClass;
 
 /* Registers a LuaDriverHandle with the core class. */
-#include "RageUtil.h"	// for CreateClass
 
-#define REGISTER_LUA_DRIVER_HANDLE( API, fn ) \
+#define REGISTER_LUA_DRIVER_HANDLE( API ) \
+	LuaDriverHandle *Create##API() { return new LuaDriverHandle_##API; } \
 	struct Register##API { \
-		Register##API() { LuaDriverHandle::RegisterAPI( #API, CreateClass<LuaDriverHandle_##API, LuaDriverHandle>() ); } \
+		Register##API() { LuaDriverHandle::RegisterAPI( #API, &Create##API); } \
 	}; \
 	static Register##API register##API;
 
+class LuaDriverHandle;
 typedef LuaDriverHandle* (*MakeHandleFn)();
 
 class LuaDriverHandle
@@ -35,9 +39,11 @@ public:
 	virtual int GetRevisionMinor() const { return 0; }
 
 	virtual int GetError() const { return 0; }
-	virtual const char* GetErrorStr( int err = GetError() ) const { return NULL; }
+	virtual const char* GetErrorStr( int err ) const { return NULL; }
 
+	/* Lua bindings */
 	void PushSelf( lua_State *L );
+	HiddenPtr<LuaClass> m_pLuaInstance;
 };
 
 #endif // LUA_DRIVER_HANDLE_H

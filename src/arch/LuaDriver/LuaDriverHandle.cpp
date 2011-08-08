@@ -1,8 +1,11 @@
 #include "global.h"
+#include "RageUtil.h"
 #include "LuaManager.h"
 #include "LuaDriverHandle.h"
 
-map<RString,MakeHandleFn> g_pMapRegistrees = NULL;
+#include <map>
+
+map<RString,MakeHandleFn> *g_pMapRegistrees = NULL;
 
 void LuaDriverHandle::RegisterAPI( const RString &sName, MakeHandleFn pfn )
 {
@@ -31,7 +34,9 @@ void LuaDriverHandle::PushAPIHandle( Lua *L, const RString &sName )
 	pHandle->PushSelf( L );
 }
 
-LunaLuaDriverHandle : public Luna<LuaDriverHandle>
+#include "LuaBinding.h"
+
+class LunaLuaDriverHandle : public Luna<LuaDriverHandle>
 {
 public:
 	static int Destroy( T* p, lua_State *L )
