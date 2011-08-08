@@ -1,12 +1,12 @@
--- used for LightsStateToString
-local lights =
+-- used for LightsStateToHex
+local lightsToHex =
 {
-	"CabinetLight_MarqueeUpLeft",
-	"CabinetLight_MarqueeUpRight",
-	"CabinetLight_MarqueeLrLeft",
-	"CabinetLight_MarqueeLrRight",
-	"CabinetLight_BassLeft",
-	"CabinetLight_BassRight",
+	CabinetLight_MarqueeUpLeft	= 0x100000,
+	CabinetLight_MarqueeUpRight	= 0x010000,
+	CabinetLight_MarqueeLrLeft	= 0x001000,
+	CabinetLight_MarqueeLrRight	= 0x000100,
+	CabinetLight_BassLeft		= 0x000010,
+	CabinetLight_BassRight		= 0x000001
 }
 
 return
@@ -24,30 +24,27 @@ return
 		Trace( "LightsModule_Print: exiting now" )
 	end,
 
+	Iter = 0,
+
 	Update = function(self, ls)
 		self.Iter = self.Iter + 1
-		local str = self:LightsStateToString(ls)
-		if str then
-			Trace( ("%s (%d iterations)"):format(str, self.Iter) )
+		local hex = self:LightsStateToHex(ls)
+		if hex then
+			Trace( ("%06x (%d iterations)"):format(hex, self.Iter) )
 			self.Iter = 0
 		end
 	end,
 
+	LastOutput = 0,
 
-	LastOutput = "000000",
+	LightsStateToHex = function( self, ls )
+		local ret = 0
 
-	Iter = 0,
-
-	LightsStateToString = function( self, ls )
-		local ret = ""
-
-		-- build a string of 1s/0s describing the lights
-		for i = 1, #lights do
-			ret = ret .. ( ls[lights[i]] and "1" or "0" )
---			if ls[lights[i]] then ret = ret .. "1" else ret = ret .. "0" end
+		for light, hex in pairs(lightsToHex) do
+			if ls[light] then ret = bit.bor(ret, hex) end
 		end
 
-		-- don't output redundant text
+		-- don't output redundant data
 		if ret == LastOutput then return end
 
 		LastOutput = ret

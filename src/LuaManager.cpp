@@ -253,6 +253,7 @@ LuaManager::LuaManager()
 	lua_pushcfunction( L, luaopen_string ); lua_call( L, 0, 0 );
 	lua_pushcfunction( L, luaopen_table ); lua_call( L, 0, 0 );
 	lua_pushcfunction( L, luaopen_debug ); lua_call( L, 0, 0 );
+	lua_pushcfunction( L, luaopen_bit ); lua_call( L, 0, 0 );
 	lua_pushcfunction( L, luaopen_package ); lua_call( L, 0, 0 ); // this one seems safe -shake
 	// these two can be dangerous. don't use them
 	// (unless you know what you are doing). -aj

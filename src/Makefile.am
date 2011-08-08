@@ -387,7 +387,7 @@ SongPosition.cpp SongPosition.h
 PCRE = ../extern/pcre/get.c ../extern/pcre/internal.h ../extern/pcre/maketables.c ../extern/pcre/pcre.c ../extern/pcre/pcre.h ../extern/pcre/study.c
 EXTRA_DIST += ../extern/pcre/chartables.c
 
-Lua = ../extern/lua-5.1/src/lapi.c ../extern/lua-5.1/src/lauxlib.c ../extern/lua-5.1/src/lbaselib.c ../extern/lua-5.1/src/lcode.c ../extern/lua-5.1/src/ldblib.c \
+Lua = ../extern/lua-5.1/src/bit.c ../extern/lua-5.1/src/lapi.c ../extern/lua-5.1/src/lauxlib.c ../extern/lua-5.1/src/lbaselib.c ../extern/lua-5.1/src/lcode.c ../extern/lua-5.1/src/ldblib.c \
 ../extern/lua-5.1/src/ldebug.c ../extern/lua-5.1/src/ldo.c ../extern/lua-5.1/src/ldump.c ../extern/lua-5.1/src/lfunc.c ../extern/lua-5.1/src/lgc.c ../extern/lua-5.1/src/linit.c \
 ../extern/lua-5.1/src/liolib.c ../extern/lua-5.1/src/llex.c ../extern/lua-5.1/src/lmathlib.c ../extern/lua-5.1/src/lmem.c ../extern/lua-5.1/src/loadlib.c \
 ../extern/lua-5.1/src/lobject.c ../extern/lua-5.1/src/lopcodes.c ../extern/lua-5.1/src/loslib.c ../extern/lua-5.1/src/lparser.c ../extern/lua-5.1/src/lstate.c \
