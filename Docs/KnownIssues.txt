@@ -9,5 +9,6 @@ The following is a list of known issues with StepMania 5.
 * The C and V keys in the editor (related to attacks) still has
   work to go. Crashes should hopefully be minimal if not otherwise
   nonexistant.
-* Attacks involving noteskins do not work.
+* Attacks involving noteskins do not work. They may never work
+  again unless some internal coding issues are figured out.
 * Routine mode (dance or pump) isn't perfect yet.
