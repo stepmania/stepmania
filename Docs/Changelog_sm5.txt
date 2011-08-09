@@ -13,6 +13,12 @@ StepMania 5.0 Preview 3 | 20110???
 * [LifeMeterBattery] Added LostLife param to LifeChanged message. [AJ]
 * [LifeMeterBattery] Converted LifeMeterBattery lives to an AutoActor. [AJ]
 * [TimingData] Add HasDelays() Lua binding; HasStops() now only checks stops. [AJ]
+* [GameState, SongUtil] Fix Issue 263 by not charging 2x stages for doubles when
+  not using joint premium. [AJ]
+* [BeginnerHelper] Made BeginnerHelper run the OnCommand. [AJ]
+* [GameState] add GetExpandedSectionName() Lua binding. [AJ]
+* [ScreenSelectMusic] Added IdleCommentSeconds metric and
+  "ScreenSelectMusic IdleComment" announcer sound. [AJ]
 
 2011/08/06
 ----------

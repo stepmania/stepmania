@@ -630,27 +630,6 @@ int GameState::GetNumStagesMultiplierForSong( const Song* pSong )
 	return iNumStages;
 }
 
-int GameState::GetNumStagesForSongAndStyleType( const Song* pSong, StyleType st )
-{
-	int iNumStages = GetNumStagesMultiplierForSong( pSong );
-
-	// One player, two-sides styles cost extra
-	switch( st )
-	{
-	DEFAULT_FAIL( st );
-	case StyleType_OnePlayerTwoSides:
-		if( g_Premium == Premium_Off )
-			iNumStages *= 2;
-		break;
-	case StyleType_TwoPlayersTwoSides:
-	case StyleType_OnePlayerOneSide:
-	case StyleType_TwoPlayersSharedSides:
-		break;
-	}
-
-	return iNumStages;
-}
-
 int GameState::GetNumStagesForCurrentSongAndStepsOrCourse() const
 {
 	int iNumStagesOfThisSong = 1;
@@ -688,7 +667,7 @@ int GameState::GetNumStagesForCurrentSongAndStepsOrCourse() const
 		if( IsAnExtraStage() )
 			iNumStagesOfThisSong = 1;
 		else
-			iNumStagesOfThisSong = GameState::GetNumStagesForSongAndStyleType( m_pCurSong, pStyle->m_StyleType );
+			iNumStagesOfThisSong = GameState::GetNumStagesMultiplierForSong( m_pCurSong );
 	}
 	else if( m_pCurCourse )
 		iNumStagesOfThisSong = PREFSMAN->m_iSongsPerPlay;
@@ -2444,6 +2423,7 @@ public:
 			p->m_pCurCharacters[Enum::Check<PlayerNumber>(L, 1)] = c;
 		return 0;
 	}
+	static int GetExpandedSectionName( T* p, lua_State *L )				{ lua_pushstring(L, p->sExpandedSectionName); return 1; }
 	static int Dopefish( T* p, lua_State *L )
 	{
 		lua_pushboolean(L, p->m_bDopefish);
@@ -2547,6 +2527,7 @@ public:
 		ADD_METHOD( GetCurMusicSeconds );
 		ADD_METHOD( GetCharacter );
 		ADD_METHOD( SetCharacter );
+		ADD_METHOD( GetExpandedSectionName );
 		ADD_METHOD( Dopefish );
 	}
 };
