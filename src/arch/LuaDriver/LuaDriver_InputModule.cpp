@@ -102,11 +102,95 @@ void LuaDriver_InputModule::ButtonPressed( DeviceButton db, float level )
 {
 	DeviceInput di( m_InputDevice, db, level );
 
-	/* If we're threaded, update the timstamp */
+	/* If we're threaded, update the timestamp */
 	if( !m_bThreaded )
 		di.ts.Touch();
 
 	InputHandler::ButtonPressed( di );
+}
+
+/* XXX: for PushLightsState */
+#include "LuaDriver_LightsModule.h"
+#include "arch/Lights/LightsDriver_Export.h"
+
+/* manually defined C functions that are pushed to the driver table */
+static int GetLightsState( lua_State *L )
+{
+	const LightsState ls = LightsDriver_Export::GetState();
+	LuaDriver_LightsModule::PushLightsState( L, &ls );
+
+	return 1;
+}
+
+static int ButtonPressed( lua_State *L )
+{
+	/* TODO: warning messages */
+	if( !lua_istable(L, 1) )
+		return 0;
+
+	int self = 1; /* driver table's position in the stack */
+
+	/* get the arguments */
+	DeviceButton db = Enum::Check<DeviceButton>( L, 2 );
+	float level = FArg(3);
+
+	LuaDriver_InputModule *p = NULL;
+
+	/* get the userdata from the driver's metatable */
+	{
+		lua_getmetatable( L, self );
+		int metatable = lua_gettop( L );
+
+		lua_pushstring( L, "__userdata" );
+		lua_rawget( L, metatable );
+
+		void *pDriver = lua_touserdata( L, lua_gettop(L) );
+		lua_pop( L, 2 ); // pop the metatable and pointer
+
+		p = static_cast<LuaDriver_InputModule*>( pDriver );
+	}
+
+	p->ButtonPressed( db, level );
+
+	return 0;
+}
+
+bool LuaDriver_InputModule::LoadDerivedFromTable( Lua *L, LuaReference *pTable )
+{
+	/* XXX: we need the driver to be represented as a table, but we also
+	 * need the pointer for the individual driver so we can properly call
+	 * back into ButtonPressed. Hide it in the metatable for now. */
+	pTable->PushSelf( L );
+	int table = lua_gettop( L );
+
+	lua_newtable( L );
+	int metatable = lua_gettop( L );
+
+	lua_pushstring( L, "__metatable" );
+	lua_pushstring( L, "(hidden)" );
+	lua_rawset( L, metatable );
+
+	lua_pushstring( L, "__userdata" );
+	lua_pushlightuserdata( L, this );
+	lua_rawset( L, metatable );
+
+	/* assign the metatable and pop it */
+	lua_setmetatable( L, table );
+
+	/* Now, push our C closures into the table */
+	lua_pushstring( L, "ButtonPressed" );
+	lua_pushcfunction( L, ::ButtonPressed );
+	lua_rawset( L, table );
+
+	lua_pushstring( L, "GetLightsState" );
+	lua_pushcfunction( L, GetLightsState );
+	lua_rawset( L, table );
+
+	/* pop the driver table */
+	lua_pop( L, 1 );
+	ASSERT( lua_gettop(L) == 0 );
+
+	return true;
 }
 
 /*

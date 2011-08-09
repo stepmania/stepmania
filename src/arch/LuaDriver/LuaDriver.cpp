@@ -204,7 +204,7 @@ bool LuaDriver::Load( const RString &sPath )
 LuaDriver::LuaDriver( const RString &sName ) : m_sName(sName)
 {
 	m_bRunning = false;
-	m_bThreaded = true; // always thread unless explicitly disabled
+	m_bThreaded = false;
 
 	m_pThread = NULL;
 	m_pDriver = m_pInit = m_pExit = m_pUpdate = NULL;
@@ -362,17 +362,6 @@ bool LuaDriver::LoadFromTable( Lua *L, LuaReference *pTable )
 	/* base functions are loaded - now load more specific driver data */
 	return this->LoadDerivedFromTable( L, pTable );
 }
-
-#if 0	// not done yet
-namespace
-{
-	/* Takes the tables at the top of the stack and merges their keys.
-	 * In the event that the second table contains keys matching the
-	 * first table, throw an error */
-	void MergeTables( Lua *L )
-	{
-	}
-#endif
 
 /*
  * (c) 2011 Mark Cannon

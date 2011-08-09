@@ -191,6 +191,9 @@ DeviceButton StringToDeviceButton( const RString& s )
 	return DeviceButton_Invalid;
 }
 
+/* XToString and StringToX are already declared above */
+LuaXType( DeviceButton );
+
 static const char *InputDeviceNames[] = {
 	"Key",
 	"Joy1",

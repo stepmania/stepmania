@@ -21,7 +21,8 @@ public:
 	void ButtonPressed( DeviceButton db, float level );
 
 protected:
-	virtual bool LoadDerivedFromTable( Lua *L, LuaReference *pTable ) { return true; }
+	virtual bool LoadDerivedFromTable( Lua *L, LuaReference *pTable );
+
 	void ModuleThread();
 
 	InputDevice m_InputDevice;

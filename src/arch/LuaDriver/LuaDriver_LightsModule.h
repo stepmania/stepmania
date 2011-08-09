@@ -8,7 +8,10 @@ class RageEvent;
 
 class LuaDriver_LightsModule : public LuaDriver, public LightsDriver
 {
-public: 
+public:
+	/* Pushes a table representing the given LightsState. */
+	static void PushLightsState( Lua *L, const LightsState *ls );
+
 	LuaDriver_LightsModule( const RString &sName );
 	virtual ~LuaDriver_LightsModule();
 
@@ -31,9 +34,6 @@ protected:
 	void ModuleThread();
 
 	virtual bool LoadDerivedFromTable( Lua *L, LuaReference *pTable ) { return true; }
-
-	/* Pushes a table representing the given LightsState. */
-	static void PushLightsState( Lua *L, const LightsState *ls );
 
 	/* LightsDrivers currently receive LightsState through Set(), so
 	 * for threads, we use a RageEvent to signal threaded updates. */
