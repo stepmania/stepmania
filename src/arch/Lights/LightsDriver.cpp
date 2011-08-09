@@ -1,5 +1,6 @@
 #include "global.h"
 #include "LightsDriver.h"
+#include "LightsDriver_Export.h"
 #include "RageLog.h"
 #include "Foreach.h"
 #include "arch/arch_default.h"
@@ -13,7 +14,7 @@ void LightsDriver::Create( const RString &sDrivers, vector<LightsDriver *> &Add 
 
 	vector<RString> asDriversToTry;
 	split( sDrivers, ",", asDriversToTry, true );
-	
+
 	FOREACH_CONST( RString, asDriversToTry, Driver )
 	{
 		RageDriver *pRet = m_pDriverList.Create( *Driver );
@@ -29,6 +30,9 @@ void LightsDriver::Create( const RString &sDrivers, vector<LightsDriver *> &Add 
 		LOG->Info( "Lights driver: %s", Driver->c_str() );
 		Add.push_back( pDriver );
 	}
+
+	// always add Export
+	Add.push_back( new LightsDriver_Export );
 
 	// Add any additional Lua modules
 	LuaDriver::AddLightsModules( sDrivers, Add );
