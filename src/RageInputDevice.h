@@ -293,6 +293,7 @@ enum DeviceButton
 	MOUSE_LEFT = 700,
 	MOUSE_RIGHT,
 	MOUSE_MIDDLE,
+	// todo: button4/5
 	// axis
 	MOUSE_X_LEFT, MOUSE_X_RIGHT,
 	MOUSE_Y_UP, MOUSE_Y_DOWN,
