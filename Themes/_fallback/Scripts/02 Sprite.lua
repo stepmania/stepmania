@@ -31,7 +31,7 @@ function Sprite:LoadFromCurrentSongBackground()
 	local song = GAMESTATE:GetCurrentSong();
 	if not song then
 		local trail = GAMESTATE:GetCurrentTrail(GAMESTATE:GetMasterPlayerNumber());
-		local e = trail:GetEntries()
+		local e = trail:GetTrailEntries()
 		if #e > 0 then
 			song = e[1]:GetSong();
 		end
