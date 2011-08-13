@@ -51,6 +51,9 @@ function InitUserPrefs()
 	if GetUserPrefB("UserPrefComboUnderField") == nil then
 		SetUserPref("UserPrefComboUnderField", true);
 	end;
+	if GetUserPrefB("UserPrefFancyUIBG") == nil then
+		SetUserPref("UserPrefFancyUIBG", true);
+	end;
 --[[ 	if GetUserPref("ProTimingP1") == nil then
 		SetUserPref("ProTimingP1", false);
 	end;
@@ -476,4 +479,42 @@ function UserPrefComboUnderField()
 	setmetatable( t, t );
 	return t;
 end
+
+function UserPrefFancyUIBG()
+	local t = {
+		Name = "UserPrefFancyUIBG";
+		LayoutType = "ShowAllInRow";
+		SelectType = "SelectOne";
+		OneChoiceForAllPlayers = true;
+		ExportOnChange = false;
+		Choices = {
+			THEME:GetString('OptionNames','On'),
+			THEME:GetString('OptionNames','Off')
+		};
+		LoadSelections = function(self, list, pn)
+			if ReadPrefFromFile("UserPrefFancyUIBG") ~= nil then
+				if GetUserPrefB("UserPrefFancyUIBG") then
+					list[1] = true;
+				else
+					list[2] = true;
+				end;
+			else
+				WritePrefToFile("UserPrefFancyUIBG",true);
+				list[1] = true;
+			end;
+		end;
+		SaveSelections = function(self, list, pn)
+			local val;
+			if list[1] then val = true;
+			else val = false;
+			end;
+			WritePrefToFile("UserPrefFancyUIBG",val);
+			MESSAGEMAN:Broadcast("PreferenceSet", { Message == "Set Preference" } );
+			THEME:ReloadMetrics();
+		end;
+	};
+	setmetatable( t, t );
+	return t;
+end
+
 --[[ end option rows ]]
