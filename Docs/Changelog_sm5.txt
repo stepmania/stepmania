@@ -11,6 +11,7 @@ StepMania 5.0 Preview 3 | 201108??
 2011/08/13
 ----------
 * [Theme-side] Added Fancy UI Background preference to Theme Options. [AJ]
+* [LowLevelWindow_X11] Don't force the window into the upper left corner. [ZipFile]
 
 2011/08/07
 ----------
