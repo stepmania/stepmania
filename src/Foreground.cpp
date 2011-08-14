@@ -33,16 +33,27 @@ void Foreground::LoadFromSong( const Song *pSong )
 	FOREACH_CONST( BackgroundChange, pSong->GetForegroundChanges(), bgc )
 	{
 		const BackgroundChange &change = *bgc;
-		RString sBGName = change.m_def.m_sFile1;
+		RString sBGName = change.m_def.m_sFile1,
+			sLuaFile = pSong->GetSongDir() + sBGName + "/default.lua";
 
 		LoadedBGA bga;
-		bga.m_bga = ActorUtil::MakeActor( pSong->GetSongDir() + sBGName, this );
+		if ( DoesFileExist( sLuaFile ) )
+		{
+			bga.m_bga = ActorUtil::MakeActor( sLuaFile, this );
+		}
+		else
+		{
+			bga.m_bga = ActorUtil::MakeActor( pSong->GetSongDir() + sBGName, this );
+		}
+		bga.m_bga->SetName( sBGName );
 		bga.m_bga->PlayCommand( "Init" );
 		bga.m_fStartBeat = change.m_fStartBeat;
 		bga.m_bFinished = false;
 
 		const float fStartSecond = pSong->m_SongTiming.GetElapsedTimeFromBeat( bga.m_fStartBeat );
+		bga.m_bga->PlayCommand( "On" );
 		const float fStopSecond = fStartSecond + bga.m_bga->GetTweenTimeLeft();
+		bga.m_bga->StopTweening();
 		bga.m_fStopBeat = pSong->m_SongTiming.GetBeatFromElapsedTime( fStopSecond );
 
 		bga.m_bga->SetVisible( false );
