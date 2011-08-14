@@ -8,6 +8,12 @@ ________________________________________________________________________________
 StepMania 5.0 Preview 3 | 2011081?
 --------------------------------------------------------------------------------
 
+2011/08/14
+----------
+* [Foreground] Restore Foreground Changes for use in gameplay. Note that it
+  is recommended to use lua for #FGCHANGES from now on: not all XML changes
+  will work. [Patrick]
+
 2011/08/13
 ----------
 * [Theme-side] Added Fancy UI Background preference to Theme Options. [AJ]
