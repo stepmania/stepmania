@@ -129,6 +129,13 @@ struct TapNote
 	// also used for hold_head only:
 	int		iDuration;
 	HoldNoteResult	HoldResult;
+	
+	/**
+	 * @brief The pre-applied mods that players must deal with when hitting the arrow.
+	 *
+	 * This takes place regardless of the Type.
+	 * If this is empty, there are no obstacles. */
+	RString obstacles;
 
 	// XML
 	XNode* CreateNode() const;
@@ -137,7 +144,7 @@ struct TapNote
 	TapNote(): type(empty), subType(SubType_Invalid), source(original),
 		result(), pn(PLAYER_INVALID), bHopoPossible(false), 
 		sAttackModifiers(""), fAttackDurationSeconds(0), 
-		iKeysoundIndex(-1), iDuration(0), HoldResult() {}
+		iKeysoundIndex(-1), iDuration(0), HoldResult(), obstacles("") {}
 	void Init()
 	{
 		type = empty;
@@ -155,12 +162,14 @@ struct TapNote
 		Source source_, 
 		RString sAttackModifiers_,
 		float fAttackDurationSeconds_,
-		int iKeysoundIndex_ ):
+		int iKeysoundIndex_,
+		RString obstacles_ = ""):
 		type(type_), subType(subType_), source(source_), result(),
 		pn(PLAYER_INVALID), bHopoPossible(false),
 		sAttackModifiers(sAttackModifiers_),
 		fAttackDurationSeconds(fAttackDurationSeconds_),
-		iKeysoundIndex(iKeysoundIndex_), iDuration(0), HoldResult()
+		iKeysoundIndex(iKeysoundIndex_), iDuration(0), HoldResult(),
+		obstacles(obstacles_)
 	{
 		if (type_ > TapNote::fake )
 		{
