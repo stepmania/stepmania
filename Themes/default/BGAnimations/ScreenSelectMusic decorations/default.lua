@@ -119,6 +119,7 @@ t[#t+1] = StandardDecorationFromFileOptional("DifficultyList","DifficultyList");
 t[#t+1] = StandardDecorationFromFileOptional("CourseContentsList","CourseContentsList");
 t[#t+1] = StandardDecorationFromFileOptional("BPMDisplay","BPMDisplay");
 t[#t+1] = StandardDecorationFromFileOptional("BPMLabel","BPMLabel");
+t[#t+1] = StandardDecorationFromFileOptional("SegmentDisplay","SegmentDisplay");
 --[[ t[#t+1] = StandardDecorationFromFileOptional("NegativeDisplay","NegativeDisplay") .. {
 }; --]]
 
