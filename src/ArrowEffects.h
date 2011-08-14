@@ -36,15 +36,20 @@ public:
 	/**
 	 * @brief Retrieve the actual display position.
 	 *
-	 * In this case, reverse and post-reverse-effects are factored in (fYOffset -> YPos). 
+	 * In this case, reverse and post-reverse-effects are factored in (fYOffset -> YPos).
+	 * @param tn the TapNote that may have an obstacle added to it.
 	 * @param pPlayerState the Player's state in question, including mods.
 	 * @param iCol the specific arrow column.
 	 * @param fYOffset the original display position.
 	 * @param fYReverseOffsetPixels the amount offset due to reverse.
 	 * @param WithReverse a flag to see if the Reverse mod is on.
 	 * @return the actual display position. */
-	static float GetYPos(	const PlayerState* pPlayerState, int iCol, float fYOffset, float fYReverseOffsetPixels, bool WithReverse = true );
-
+	static float GetYPos( const TapNote &tn, const PlayerState* pPlayerState, int iCol, float fYOffset, float fYReverseOffsetPixels, bool WithReverse = true );
+	static float GetYPos( const PlayerState* pPlayerState, int iCol, float fYOffset, float fYReverseOffsetPixels, bool WithReverse = true )
+	{
+		return GetYPos(TAP_EMPTY, pPlayerState, iCol, fYOffset, fYReverseOffsetPixels, WithReverse);
+	}
+	
 	// Inverse of ArrowGetYPos (YPos -> fYOffset).
 	static float GetYOffsetFromYPos( const PlayerState* pPlayerState, int iCol, float YPos, float fYReverseOffsetPixels );
 
@@ -79,11 +84,11 @@ public:
 
 	// fAlpha is the transparency of the arrow.  It depends on fYPos and the 
 	// AppearanceType.
-	static float GetAlpha( const PlayerState* pPlayerState, int iCol, float fYPos, float fPercentFadeToFail, float fYReverseOffsetPixels, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar );
+	static float GetAlpha( const TapNote &tn, const PlayerState* pPlayerState, int iCol, float fYPos, float fPercentFadeToFail, float fYReverseOffsetPixels, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar );
 
 	// fAlpha is the transparency of the arrow.  It depends on fYPos and the 
 	// AppearanceType.
-	static float GetGlow( const PlayerState* pPlayerState, int iCol, float fYPos, float fPercentFadeToFail, float fYReverseOffsetPixels, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar );
+	static float GetGlow( const TapNote &tn, const PlayerState* pPlayerState, int iCol, float fYPos, float fPercentFadeToFail, float fYReverseOffsetPixels, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar );
 
 	/**
 	 * @brief Retrieve the current brightness.
