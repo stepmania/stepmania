@@ -274,33 +274,37 @@ float ArrowEffects::GetYOffset( const TapNote &tn, const PlayerState* pPlayerSta
 	//const float* fEffects = pPlayerState->m_PlayerOptions.GetCurrent().m_fEffects;
 
 	float fYAdjust = 0;	// fill this in depending on PlayerOptions
-
-	if( fAccels[PlayerOptions::ACCEL_BOOST] != 0 )
+	// fill this in depending on the mods to be checked.
+	float intensity = ModIntensity(fAccels[PlayerOptions::ACCEL_BOOST], tn, "Boost");
+	
+	if( intensity != 0 )
 	{
 		float fEffectHeight = GetNoteFieldHeight(pPlayerState);
 		float fNewYOffset = fYOffset * 1.5f / ((fYOffset+fEffectHeight/1.2f)/fEffectHeight); 
-		float fAccelYAdjust =	fAccels[PlayerOptions::ACCEL_BOOST] * (fNewYOffset - fYOffset);
+		float fAccelYAdjust =	intensity * (fNewYOffset - fYOffset);
 		// TRICKY: Clamp this value, or else BOOST+BOOMERANG will draw a ton of arrows on the screen.
 		CLAMP( fAccelYAdjust, BOOST_MOD_MIN_CLAMP, BOOST_MOD_MAX_CLAMP );
 		fYAdjust += fAccelYAdjust;
 	}
-	if( fAccels[PlayerOptions::ACCEL_BRAKE] != 0 )
+	intensity = ModIntensity(fAccels[PlayerOptions::ACCEL_BRAKE], tn, "Brake");
+	if( intensity != 0 )
 	{
 		float fEffectHeight = GetNoteFieldHeight(pPlayerState);
 		float fScale = SCALE( fYOffset, 0.f, fEffectHeight, 0, 1.f );
 		float fNewYOffset = fYOffset * fScale; 
-		float fBrakeYAdjust = fAccels[PlayerOptions::ACCEL_BRAKE] * (fNewYOffset - fYOffset);
+		float fBrakeYAdjust = intensity * (fNewYOffset - fYOffset);
 		// TRICKY: Clamp this value the same way as BOOST so that in BOOST+BRAKE, BRAKE doesn't overpower BOOST
 		CLAMP( fBrakeYAdjust, BRAKE_MOD_MIN_CLAMP, BRAKE_MOD_MAX_CLAMP );
 		fYAdjust += fBrakeYAdjust;
 	}
-	if( fAccels[PlayerOptions::ACCEL_WAVE] != 0 )
-		fYAdjust +=	fAccels[PlayerOptions::ACCEL_WAVE] * WAVE_MOD_MAGNITUDE *RageFastSin( fYOffset/WAVE_MOD_HEIGHT );
+	intensity = ModIntensity(fAccels[PlayerOptions::ACCEL_WAVE], tn, "Wave");
+	if( intensity )
+		fYAdjust +=	intensity * WAVE_MOD_MAGNITUDE *RageFastSin( fYOffset/WAVE_MOD_HEIGHT );
 
 	fYOffset += fYAdjust;
 
-	// Factor in boomerang
-	if( fAccels[PlayerOptions::ACCEL_BOOMERANG] != 0 )
+	// Factor in boomerang. Note that general mod intensity seems to have no effect.
+	if( ModIntensity(fAccels[PlayerOptions::ACCEL_BOOMERANG], tn, "Boomerang") != 0 )
 	{
 		float fPeakAtYOffset = SCREEN_HEIGHT * BOOMERANG_PEAK_PERCENTAGE;	// zero point of boomerang function
 		fPeakYOffsetOut = (-1*fPeakAtYOffset*fPeakAtYOffset/SCREEN_HEIGHT) + 1.5f*fPeakAtYOffset;
@@ -329,7 +333,8 @@ float ArrowEffects::GetYOffset( const TapNote &tn, const PlayerState* pPlayerSta
 						1.0f, pPlayerState->m_PlayerOptions.GetCurrent().m_fRandomSpeed + 1.0f );
 	}
 
-	if( fAccels[PlayerOptions::ACCEL_EXPAND] != 0 )
+	intensity = ModIntensity(fAccels[PlayerOptions::ACCEL_EXPAND], tn, "Expand");
+	if( intensity != 0 )
 	{
 		// TODO: Don't index by PlayerNumber.
 		PerPlayerData &data = g_EffectData[pPlayerState->m_PlayerNumber];
@@ -337,7 +342,7 @@ float ArrowEffects::GetYOffset( const TapNote &tn, const PlayerState* pPlayerSta
 		float fExpandMultiplier = SCALE( RageFastCos(data.m_fExpandSeconds*EXPAND_MULTIPLIER_FREQUENCY), 
 						EXPAND_MULTIPLIER_SCALE_FROM_LOW, EXPAND_MULTIPLIER_SCALE_FROM_HIGH,
 						EXPAND_MULTIPLIER_SCALE_TO_LOW, EXPAND_MULTIPLIER_SCALE_TO_HIGH );
-		fScrollSpeed *=	SCALE( fAccels[PlayerOptions::ACCEL_EXPAND], 
+		fScrollSpeed *=	SCALE( intensity, 
 				      EXPAND_SPEED_SCALE_FROM_LOW, EXPAND_SPEED_SCALE_FROM_HIGH,
 				      EXPAND_SPEED_SCALE_TO_LOW, fExpandMultiplier );
 	}
