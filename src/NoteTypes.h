@@ -196,6 +196,16 @@ struct TapNote
 		}
 		return join(",", allInOne);
 	}
+	
+	float ObstacleIntensity(RString ob) const
+	{
+		map<RString, float>::const_iterator it = obstacles.find(ob);
+		if (it != obstacles.end())
+		{
+			return it->second;
+		}
+		return 0;
+	}
 
 	/**
 	 * @brief Determine if the two TapNotes are equal to each other.
