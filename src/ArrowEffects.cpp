@@ -353,10 +353,11 @@ float ArrowEffects::GetYOffset( const TapNote &tn, const PlayerState* pPlayerSta
 	return fYOffset;
 }
 
-static void ArrowGetReverseShiftAndScale( const PlayerState* pPlayerState, int iCol, float fYReverseOffsetPixels, float &fShiftOut, float &fScaleOut )
+void ArrowEffects::ArrowGetReverseShiftAndScale( const TapNote &tn, const PlayerState* pPlayerState, int iCol, float fYReverseOffsetPixels, float &fShiftOut, float &fScaleOut )
 {
 	// XXX: Hack: we need to scale the reverse shift by the zoom.
-	float fMiniPercent = pPlayerState->m_PlayerOptions.GetCurrent().m_fEffects[PlayerOptions::EFFECT_MINI];
+	float fMiniPercent = ModIntensity(pPlayerState->m_PlayerOptions.GetCurrent().m_fEffects[PlayerOptions::EFFECT_MINI],
+									  tn, "Mini");
 	float fZoom = 1 - fMiniPercent*0.5f;
 
 	// don't divide by 0
@@ -365,7 +366,8 @@ static void ArrowGetReverseShiftAndScale( const PlayerState* pPlayerState, int i
 
 	float fPercentReverse = pPlayerState->m_PlayerOptions.GetCurrent().GetReversePercentForColumn(iCol);
 	fShiftOut = SCALE( fPercentReverse, 0.f, 1.f, -fYReverseOffsetPixels/fZoom/2, fYReverseOffsetPixels/fZoom/2 );
-	float fPercentCentered = pPlayerState->m_PlayerOptions.GetCurrent().m_fScrolls[PlayerOptions::SCROLL_CENTERED];
+	float fPercentCentered = ModIntensity(pPlayerState->m_PlayerOptions.GetCurrent().m_fScrolls[PlayerOptions::SCROLL_CENTERED],
+										  tn, "Centered");
 	fShiftOut = SCALE( fPercentCentered, 0.f, 1.f, fShiftOut, 0.0f );
 
 	fScaleOut = SCALE( fPercentReverse, 0.f, 1.f, 1.f, -1.f );
@@ -378,16 +380,16 @@ float ArrowEffects::GetYPos( const TapNote &tn, const PlayerState* pPlayerState,
 	if( WithReverse )
 	{
 		float fShift, fScale;
-		ArrowGetReverseShiftAndScale( pPlayerState, iCol, fYReverseOffsetPixels, fShift, fScale );
+		ArrowGetReverseShiftAndScale( tn, pPlayerState, iCol, fYReverseOffsetPixels, fShift, fScale );
 
 		f *= fScale;
 		f += fShift;
 	}
 
 	const float* fEffects = pPlayerState->m_PlayerOptions.GetCurrent().m_fEffects;
-
-	if( fEffects[PlayerOptions::EFFECT_TIPSY] != 0 )
-		f += fEffects[PlayerOptions::EFFECT_TIPSY] 
+	float intensity = ModIntensity(fEffects[PlayerOptions::EFFECT_TIPSY], tn, "Tipsy");
+	if( intensity != 0 )
+		f += intensity
 			* ( RageFastCos( RageTimer::GetTimeSinceStartFast()*TIPSY_TIMER_FREQUENCY 
 					+ iCol*TIPSY_COLUMN_FREQUENCY) * ARROW_SIZE*TIPSY_ARROW_MAGNITUDE );
 
@@ -398,18 +400,19 @@ float ArrowEffects::GetYPos( const TapNote &tn, const PlayerState* pPlayerState,
 	return QUANTIZE_ARROW_Y ? floor(f) : f;
 }
 
-float ArrowEffects::GetYOffsetFromYPos( const PlayerState* pPlayerState, int iCol, float YPos, float fYReverseOffsetPixels )
+float ArrowEffects::GetYOffsetFromYPos( const TapNote &tn, const PlayerState* pPlayerState, int iCol, float YPos, float fYReverseOffsetPixels )
 {
 	float f = YPos;
 
 	const float* fEffects = pPlayerState->m_PlayerOptions.GetCurrent().m_fEffects;
-	if( fEffects[PlayerOptions::EFFECT_TIPSY] != 0 )
-		f -= fEffects[PlayerOptions::EFFECT_TIPSY] 
+	float intensity = ModIntensity(fEffects[PlayerOptions::EFFECT_TIPSY], tn, "Tipsy");
+	if( intensity != 0 )
+		f -= intensity 
 			* ( RageFastCos( RageTimer::GetTimeSinceStartFast()*TIPSY_OFFSET_TIMER_FREQUENCY 
 					+ iCol*TIPSY_OFFSET_COLUMN_FREQUENCY) * ARROW_SIZE*TIPSY_OFFSET_ARROW_MAGNITUDE );
 
 	float fShift, fScale;
-	ArrowGetReverseShiftAndScale( pPlayerState, iCol, fYReverseOffsetPixels, fShift, fScale );
+	ArrowGetReverseShiftAndScale( tn, pPlayerState, iCol, fYReverseOffsetPixels, fShift, fScale );
 
 	f -= fShift;
 	if( fScale )
@@ -418,7 +421,7 @@ float ArrowEffects::GetYOffsetFromYPos( const PlayerState* pPlayerState, int iCo
 	return f;
 }
 
-float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float fYOffset ) 
+float ArrowEffects::GetXPos( const TapNote &tn, const PlayerState* pPlayerState, int iColNum, float fYOffset ) 
 {
 	float fPixelOffsetFromCenter = 0; // fill this in below
 
@@ -429,7 +432,9 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 	const Style::ColumnInfo* pCols = pStyle->m_ColumnInfo[pPlayerState->m_PlayerNumber];
 	PerPlayerData &data = g_EffectData[pPlayerState->m_PlayerNumber];
 
-	if( fEffects[PlayerOptions::EFFECT_TORNADO] != 0 )
+	// Reuse this for each mod we come across.
+	float intensity = ModIntensity(fEffects[PlayerOptions::EFFECT_TORNADO], tn, "Tornado");
+	if( intensity != 0 )
 	{
 		const float fRealPixelOffset = pCols[iColNum].fXOffset;
 		const float fPositionBetween = SCALE( fRealPixelOffset, data.m_fMinTornadoX[iColNum], data.m_fMaxTornadoX[iColNum], 
@@ -440,14 +445,17 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 		const float fAdjustedPixelOffset = SCALE( RageFastCos(fRads), TORNADO_OFFSET_SCALE_FROM_LOW, TORNADO_OFFSET_SCALE_FROM_HIGH, 
 							 data.m_fMinTornadoX[iColNum], data.m_fMaxTornadoX[iColNum] );
 
-		fPixelOffsetFromCenter += (fAdjustedPixelOffset - fRealPixelOffset) * fEffects[PlayerOptions::EFFECT_TORNADO];
+		fPixelOffsetFromCenter += (fAdjustedPixelOffset - fRealPixelOffset) * intensity;
 	}
 
-	if( fEffects[PlayerOptions::EFFECT_DRUNK] != 0 )
-		fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_DRUNK] * 
+	intensity = ModIntensity(fEffects[PlayerOptions::EFFECT_DRUNK], tn, "Drunk");
+	if( intensity != 0 )
+		fPixelOffsetFromCenter += intensity * 
 			( RageFastCos( RageTimer::GetTimeSinceStartFast() + iColNum*DRUNK_COLUMN_FREQUENCY
 				      + fYOffset*DRUNK_OFFSET_FREQUENCY/SCREEN_HEIGHT) * ARROW_SIZE*DRUNK_ARROW_MAGNITUDE );
-	if( fEffects[PlayerOptions::EFFECT_FLIP] != 0 )
+	
+	intensity = ModIntensity(fEffects[PlayerOptions::EFFECT_FLIP], tn, "Flip");
+	if( intensity != 0 )
 	{
 		const int iFirstCol = 0;
 		const int iLastCol = pStyle->m_iColsPerPlayer-1;
@@ -455,18 +463,21 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 		const float fOldPixelOffset = pCols[iColNum].fXOffset;
 		const float fNewPixelOffset = pCols[iNewCol].fXOffset;
 		const float fDistance = fNewPixelOffset - fOldPixelOffset;
-		fPixelOffsetFromCenter += fDistance * fEffects[PlayerOptions::EFFECT_FLIP];
+		fPixelOffsetFromCenter += fDistance * intensity;
 	}
-	if( fEffects[PlayerOptions::EFFECT_INVERT] != 0 )
-		fPixelOffsetFromCenter += data.m_fInvertDistance[iColNum] * fEffects[PlayerOptions::EFFECT_INVERT];
+	intensity = ModIntensity(fEffects[PlayerOptions::EFFECT_INVERT], tn, "Invert");
+	if( intensity != 0 )
+		fPixelOffsetFromCenter += data.m_fInvertDistance[iColNum] * intensity;
 
-	if( fEffects[PlayerOptions::EFFECT_BEAT] != 0 )
+	intensity = ModIntensity(fEffects[PlayerOptions::EFFECT_BEAT], tn, "Beat");
+	if(intensity != 0 )
 	{
 		const float fShift = data.m_fBeatFactor*RageFastSin( fYOffset / BEAT_OFFSET_HEIGHT + PI/BEAT_PI_HEIGHT );
-		fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_BEAT] * fShift;
+		fPixelOffsetFromCenter += intensity * fShift;
 	}
 
-	if( fEffects[PlayerOptions::EFFECT_XMODE] != 0 )
+	intensity = ModIntensity(fEffects[PlayerOptions::EFFECT_XMODE], tn, "XMode");
+	if( intensity != 0 )
 	{
 		// based off of code by v1toko for StepNXA, except it should work on
 		// any gametype now.
@@ -479,9 +490,9 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 					// it's unknown if this will work for routine.
 					const int iMiddleColumn = static_cast<int>(floor(pStyle->m_iColsPerPlayer/2.0f));
 					if( iColNum > iMiddleColumn-1 )
-						fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_XMODE]*-(fYOffset);
+						fPixelOffsetFromCenter += intensity * -(fYOffset);
 					else
-						fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_XMODE]*fYOffset;
+						fPixelOffsetFromCenter += intensity * fYOffset;
 				}
 				break;
 			case StyleType_OnePlayerOneSide:
@@ -489,9 +500,9 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 				{
 					// the code was the same for both of these cases in StepNXA.
 					if( pPlayerState->m_PlayerNumber == PLAYER_2 )
-						fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_XMODE]*-(fYOffset);
+						fPixelOffsetFromCenter += intensity * -(fYOffset);
 					else
-						fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_XMODE]*fYOffset;
+						fPixelOffsetFromCenter += intensity * fYOffset;
 				}
 				break;
 			DEFAULT_FAIL(pStyle->m_StyleType);
@@ -499,11 +510,11 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 	}
 
 	fPixelOffsetFromCenter += pCols[iColNum].fXOffset;
-
-	if( fEffects[PlayerOptions::EFFECT_TINY] != 0 )
+	intensity = ModIntensity(fEffects[PlayerOptions::EFFECT_TINY], tn, "Tiny");
+	if( intensity != 0 )
 	{
 		// Allow Tiny to pull tracks together, but not to push them apart.
-		float fTinyPercent = fEffects[PlayerOptions::EFFECT_TINY];
+		float fTinyPercent = intensity;
 		fTinyPercent = min( powf(TINY_PERCENT_BASE, fTinyPercent), (float)TINY_PERCENT_GATE );
 		fPixelOffsetFromCenter *= fTinyPercent;
 	}
@@ -511,41 +522,46 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 	return fPixelOffsetFromCenter;
 }
 
-float ArrowEffects::GetRotationX( const PlayerState *pPlayerState, float fYOffset )
+float ArrowEffects::GetRotationX( const TapNote &tn, const PlayerState *pPlayerState, float fYOffset )
 {
 	const float* fEffects = pPlayerState->m_PlayerOptions.GetCurrent().m_fEffects;
 	float fRotation = 0;
-	if( fEffects[PlayerOptions::EFFECT_ROLL] != 0 )
+	float intensity = ModIntensity(fEffects[PlayerOptions::EFFECT_ROLL], tn, "Roll");
+	if( intensity != 0 )
 	{
-		fRotation = fEffects[PlayerOptions::EFFECT_ROLL] * fYOffset/2;
+		fRotation = intensity * fYOffset/2;
 	}
 	return fRotation;
 }
 
-float ArrowEffects::GetRotationY( const PlayerState *pPlayerState, float fYOffset )
+float ArrowEffects::GetRotationY( const TapNote &tn, const PlayerState *pPlayerState, float fYOffset )
 {
 	const float* fEffects = pPlayerState->m_PlayerOptions.GetCurrent().m_fEffects;
 	float fRotation = 0;
-	if( fEffects[PlayerOptions::EFFECT_TWIRL] != 0 )
+	float intensity = ModIntensity(fEffects[PlayerOptions::EFFECT_TWIRL], tn, "Twirl");
+	if( intensity != 0 )
 	{
-		fRotation = fEffects[PlayerOptions::EFFECT_TWIRL] * fYOffset/2;
+		fRotation = intensity * fYOffset/2;
 	}
 	return fRotation;
 }
 
-float ArrowEffects::GetRotationZ( const PlayerState* pPlayerState, float fNoteBeat, bool bIsHoldHead ) 
+float ArrowEffects::GetRotationZ( const TapNote &tn, const PlayerState* pPlayerState, float fNoteBeat, bool bIsHoldHead ) 
 {
 	const float* fEffects = pPlayerState->m_PlayerOptions.GetCurrent().m_fEffects;
 	float fRotation = 0;
+	// TODO: Don't have confusion based on PlayerState. It's mainly for receptors.
 	if( fEffects[PlayerOptions::EFFECT_CONFUSION] != 0 )
+	{
 		fRotation += ReceptorGetRotationZ( pPlayerState );
-
+	}
 	// As usual, enable dizzy hold heads at your own risk. -Wolfman2000
-	if( fEffects[PlayerOptions::EFFECT_DIZZY] != 0 && ( DIZZY_HOLD_HEADS || !bIsHoldHead ) )
+	float intensity = ModIntensity(fEffects[PlayerOptions::EFFECT_DIZZY], tn, "Dizzy");
+	if( intensity != 0 && ( DIZZY_HOLD_HEADS || !bIsHoldHead ) )
 	{
 		const float fSongBeat = pPlayerState->m_Position.m_fSongBeatVisible;
 		float fDizzyRotation = fNoteBeat - fSongBeat;
-		fDizzyRotation *= fEffects[PlayerOptions::EFFECT_DIZZY];
+		fDizzyRotation *= intensity;
 		fDizzyRotation = fmodf( fDizzyRotation, 2*PI );
 		fDizzyRotation *= 180/PI;
 		fRotation += fDizzyRotation;

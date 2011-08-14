@@ -448,15 +448,15 @@ void NoteDisplay::DrawHoldPart( const TapNote& tn, vector<Sprite*> &vpSpr, int i
 			bLast = true;
 		}
 
-		const float fYOffset		= ArrowEffects::GetYOffsetFromYPos( m_pPlayerState, iCol, fY, m_fYReverseOffsetPixels );
+		const float fYOffset		= ArrowEffects::GetYOffsetFromYPos( tn, m_pPlayerState, iCol, fY, m_fYReverseOffsetPixels );
 		const float fZ			= ArrowEffects::GetZPos( m_pPlayerState, iCol, fYOffset );
 		const float fFrameWidthScale	= ArrowEffects::GetFrameWidthScale( m_pPlayerState, fYOffset, fOverlappedTime );
 		const float fScaledFrameWidth	= fFrameWidth * fFrameWidthScale;
 
-		float fX			= ArrowEffects::GetXPos( m_pPlayerState, iCol, fYOffset );
+		float fX			= ArrowEffects::GetXPos( tn, m_pPlayerState, iCol, fYOffset );
 
 		// XXX: Actor rotations use degrees, RageFastCos/Sin use radians. Convert here.
-		const float fRotationY		= ArrowEffects::GetRotationY( m_pPlayerState, fYOffset ) * PI/180;
+		const float fRotationY		= ArrowEffects::GetRotationY( tn, m_pPlayerState, fYOffset ) * PI/180;
 
 		// if we're rotating, we need to modify the X and Z coords for the outer edges.
 		const float fRotOffsetX		= (fScaledFrameWidth/2) * RageFastCos(fRotationY);
@@ -686,22 +686,22 @@ void NoteDisplay::DrawActor( const TapNote& tn, Actor* pActor, NotePart part, in
 	if( fYOffset < fDrawDistanceAfterTargetsPixels || fYOffset > fDrawDistanceBeforeTargetsPixels )
 		return;
 	const float fY		= ArrowEffects::GetYPos(tn, m_pPlayerState, iCol, fYOffset, fReverseOffsetPixels );
-	const float fX		= ArrowEffects::GetXPos(	m_pPlayerState, iCol, fYOffset );
+	const float fX		= ArrowEffects::GetXPos(tn, m_pPlayerState, iCol, fYOffset );
 	const float fZ		= ArrowEffects::GetZPos(	m_pPlayerState, iCol, fYOffset );
 	const float fAlpha	= ArrowEffects::GetAlpha(tn, m_pPlayerState, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
 	const float fGlow	= ArrowEffects::GetGlow(tn, m_pPlayerState, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
 	const RageColor diffuse	= RageColor(fColorScale,fColorScale,fColorScale,fAlpha);
 	const RageColor glow	= RageColor(1,1,1,fGlow);
 	float fRotationX	= 0, fRotationZ	= 0;
-	const float fRotationY = ArrowEffects::GetRotationY( m_pPlayerState, fYOffset );
+	const float fRotationY = ArrowEffects::GetRotationY( tn, m_pPlayerState, fYOffset );
 
 	bool bIsHoldHead = tn.type == tn.hold_head;
 	bool bIsHoldCap = bIsHoldHead || tn.type == tn.hold_tail;
 	
-	fRotationZ = ArrowEffects::GetRotationZ( m_pPlayerState, fBeat, bIsHoldHead );
+	fRotationZ = ArrowEffects::GetRotationZ( tn, m_pPlayerState, fBeat, bIsHoldHead );
 	if( !bIsHoldCap )
 	{
-		fRotationX = ArrowEffects::GetRotationX( m_pPlayerState, fYOffset );
+		fRotationX = ArrowEffects::GetRotationX( tn, m_pPlayerState, fYOffset );
 	}
 
 	if( tn.type != tn.hold_head )
@@ -713,7 +713,7 @@ void NoteDisplay::DrawActor( const TapNote& tn, Actor* pActor, NotePart part, in
 	pActor->SetXY( fX, fY );
 	pActor->SetZ( fZ );
 	pActor->SetZoom( ArrowEffects::GetZoom(m_pPlayerState) );
-	// [AJ] this two lines (and how they're handled) piss off many people:
+	// [AJ] these two lines (and how they're handled) piss off many people:
 	pActor->SetDiffuse( diffuse );
 	pActor->SetGlow( glow );
 
