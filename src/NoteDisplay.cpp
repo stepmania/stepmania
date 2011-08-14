@@ -390,7 +390,7 @@ void NoteDisplay::DrawHoldPart( const TapNote& tn, vector<Sprite*> &vpSpr, int i
 	Sprite *pSprite = vpSpr.front();
 	FOREACH( Sprite *, vpSpr, s )
 	{
-		(*s)->SetZoom( ArrowEffects::GetZoom(m_pPlayerState) );
+		(*s)->SetZoom( ArrowEffects::GetZoom(tn, m_pPlayerState) );
 		ASSERT( (*s)->GetUnzoomedWidth() == pSprite->GetUnzoomedWidth() );
 		ASSERT( (*s)->GetUnzoomedHeight() == pSprite->GetUnzoomedHeight() );
 	}
@@ -449,7 +449,7 @@ void NoteDisplay::DrawHoldPart( const TapNote& tn, vector<Sprite*> &vpSpr, int i
 		}
 
 		const float fYOffset		= ArrowEffects::GetYOffsetFromYPos( tn, m_pPlayerState, iCol, fY, m_fYReverseOffsetPixels );
-		const float fZ			= ArrowEffects::GetZPos( m_pPlayerState, iCol, fYOffset );
+		const float fZ			= ArrowEffects::GetZPos( tn, m_pPlayerState, iCol, fYOffset );
 		const float fFrameWidthScale	= ArrowEffects::GetFrameWidthScale( m_pPlayerState, fYOffset, fOverlappedTime );
 		const float fScaledFrameWidth	= fFrameWidth * fFrameWidthScale;
 
@@ -547,7 +547,7 @@ void NoteDisplay::DrawHoldBody( const TapNote& tn, int iCol, float fBeat, bool b
 	else
 		DISPLAY->SetTextureMode( TextureUnit_1, TextureMode_Modulate );
 
-	const bool bWavyPartsNeedZBuffer = ArrowEffects::NeedZBuffer( m_pPlayerState );
+	const bool bWavyPartsNeedZBuffer = ArrowEffects::NeedZBuffer( tn, m_pPlayerState );
 	DISPLAY->SetZTestMode( bWavyPartsNeedZBuffer?ZTEST_WRITE_ON_PASS:ZTEST_OFF );
 	DISPLAY->SetZWrite( bWavyPartsNeedZBuffer );
 
@@ -687,7 +687,7 @@ void NoteDisplay::DrawActor( const TapNote& tn, Actor* pActor, NotePart part, in
 		return;
 	const float fY		= ArrowEffects::GetYPos(tn, m_pPlayerState, iCol, fYOffset, fReverseOffsetPixels );
 	const float fX		= ArrowEffects::GetXPos(tn, m_pPlayerState, iCol, fYOffset );
-	const float fZ		= ArrowEffects::GetZPos(	m_pPlayerState, iCol, fYOffset );
+	const float fZ		= ArrowEffects::GetZPos(tn, m_pPlayerState, iCol, fYOffset );
 	const float fAlpha	= ArrowEffects::GetAlpha(tn, m_pPlayerState, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
 	const float fGlow	= ArrowEffects::GetGlow(tn, m_pPlayerState, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
 	const RageColor diffuse	= RageColor(fColorScale,fColorScale,fColorScale,fAlpha);
@@ -712,7 +712,7 @@ void NoteDisplay::DrawActor( const TapNote& tn, Actor* pActor, NotePart part, in
 	pActor->SetRotationZ( fRotationZ );
 	pActor->SetXY( fX, fY );
 	pActor->SetZ( fZ );
-	pActor->SetZoom( ArrowEffects::GetZoom(m_pPlayerState) );
+	pActor->SetZoom( ArrowEffects::GetZoom(tn, m_pPlayerState) );
 	// [AJ] these two lines (and how they're handled) piss off many people:
 	pActor->SetDiffuse( diffuse );
 	pActor->SetGlow( glow );

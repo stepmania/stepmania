@@ -60,8 +60,6 @@ static ThemeMetric<float>	TINY_PERCENT_BASE( "ArrowEffects", "TinyPercentBase" )
 static ThemeMetric<float>	TINY_PERCENT_GATE( "ArrowEffects", "TinyPercentGate" );
 static ThemeMetric<bool>	DIZZY_HOLD_HEADS( "ArrowEffects", "DizzyHoldHeads" );
 
-float ArrowGetPercentVisible( const PlayerState* pPlayerState, float fYPosWithoutReverse );
-
 static float GetNoteFieldHeight( const PlayerState* pPlayerState )
 {
 	return SCREEN_HEIGHT + fabsf(pPlayerState->m_PlayerOptions.GetCurrent().m_fPerspectiveTilt)*200;
@@ -588,20 +586,21 @@ float ArrowEffects::ReceptorGetRotationZ( const PlayerState* pPlayerState )
 #define CENTER_LINE_Y 160	// from fYOffset == 0
 #define FADE_DIST_Y 40
 
-static float GetCenterLine( const PlayerState* pPlayerState )
+float ArrowEffects::GetCenterLine( const TapNote &tn, const PlayerState* pPlayerState )
 {
 	/* Another mini hack: if EFFECT_MINI is on, then our center line is at
 	 * eg. 320, not 160. */
-	const float fMiniPercent = pPlayerState->m_PlayerOptions.GetCurrent().m_fEffects[PlayerOptions::EFFECT_MINI];
+	const float *fEffects = pPlayerState->m_PlayerOptions.GetCurrent().m_fEffects;
+	const float fMiniPercent = ModIntensity(fEffects[PlayerOptions::EFFECT_MINI], tn, "Mini");
 	const float fZoom = 1 - fMiniPercent*0.5f;
 	return CENTER_LINE_Y / fZoom;
 }
 
-static float GetHiddenSudden( const PlayerState* pPlayerState ) 
+float ArrowEffects::GetHiddenSudden( const TapNote &tn, const PlayerState* pPlayerState ) 
 {
 	const float* fAppearances = pPlayerState->m_PlayerOptions.GetCurrent().m_fAppearances;
-	return fAppearances[PlayerOptions::APPEARANCE_HIDDEN] *
-		fAppearances[PlayerOptions::APPEARANCE_SUDDEN];
+	return ModIntensity(fAppearances[PlayerOptions::APPEARANCE_HIDDEN], tn, "Hidden") *
+		ModIntensity(fAppearances[PlayerOptions::APPEARANCE_SUDDEN], tn, "Sudden");
 }
 
 //
@@ -616,38 +615,42 @@ static float GetHiddenSudden( const PlayerState* pPlayerState )
 //  ...invisible...
 //
 // TRICKY:  We fudge hidden and sudden to be farther apart if they're both on.
-static float GetHiddenEndLine( const PlayerState* pPlayerState )
+float ArrowEffects::GetHiddenEndLine( const TapNote &tn, const PlayerState* pPlayerState )
 {
-	return GetCenterLine( pPlayerState ) + 
-		FADE_DIST_Y * SCALE( GetHiddenSudden(pPlayerState), 0.f, 1.f, -1.0f, -1.25f ) + 
-		GetCenterLine( pPlayerState ) * pPlayerState->m_PlayerOptions.GetCurrent().m_fAppearances[PlayerOptions::APPEARANCE_HIDDEN_OFFSET];
+	const float* fAppearances = pPlayerState->m_PlayerOptions.GetCurrent().m_fAppearances;
+	return GetCenterLine( tn, pPlayerState ) + 
+		FADE_DIST_Y * SCALE( GetHiddenSudden(tn, pPlayerState), 0.f, 1.f, -1.0f, -1.25f ) + 
+		GetCenterLine( tn, pPlayerState ) * ModIntensity(fAppearances[PlayerOptions::APPEARANCE_HIDDEN_OFFSET], tn, "HiddenOffset");
 }
 
-static float GetHiddenStartLine( const PlayerState* pPlayerState )
+float ArrowEffects::GetHiddenStartLine( const TapNote &tn, const PlayerState* pPlayerState )
 {
-	return GetCenterLine( pPlayerState ) + 
-		FADE_DIST_Y * SCALE( GetHiddenSudden(pPlayerState), 0.f, 1.f, +0.0f, -0.25f ) + 
-		GetCenterLine( pPlayerState ) * pPlayerState->m_PlayerOptions.GetCurrent().m_fAppearances[PlayerOptions::APPEARANCE_HIDDEN_OFFSET];
+	const float* fAppearances = pPlayerState->m_PlayerOptions.GetCurrent().m_fAppearances;
+	return GetCenterLine( tn, pPlayerState ) + 
+		FADE_DIST_Y * SCALE( GetHiddenSudden(tn, pPlayerState), 0.f, 1.f, +0.0f, -0.25f ) + 
+		GetCenterLine( tn, pPlayerState ) * ModIntensity(fAppearances[PlayerOptions::APPEARANCE_HIDDEN_OFFSET], tn, "HiddenOffset");
 }
 
-static float GetSuddenEndLine( const PlayerState* pPlayerState )
+float ArrowEffects::GetSuddenEndLine( const TapNote &tn, const PlayerState* pPlayerState )
 {
-	return GetCenterLine( pPlayerState ) + 
-		FADE_DIST_Y * SCALE( GetHiddenSudden(pPlayerState), 0.f, 1.f, -0.0f, +0.25f ) + 
-		GetCenterLine( pPlayerState ) * pPlayerState->m_PlayerOptions.GetCurrent().m_fAppearances[PlayerOptions::APPEARANCE_SUDDEN_OFFSET];
+	const float* fAppearances = pPlayerState->m_PlayerOptions.GetCurrent().m_fAppearances;
+	return GetCenterLine( tn, pPlayerState ) + 
+		FADE_DIST_Y * SCALE( GetHiddenSudden(tn, pPlayerState), 0.f, 1.f, -0.0f, +0.25f ) + 
+		GetCenterLine( tn, pPlayerState ) * ModIntensity(fAppearances[PlayerOptions::APPEARANCE_SUDDEN_OFFSET], tn, "SuddenOffset");
 }
 
-static float GetSuddenStartLine( const PlayerState* pPlayerState )
+float ArrowEffects::GetSuddenStartLine( const TapNote &tn, const PlayerState* pPlayerState )
 {
-	return GetCenterLine( pPlayerState ) + 
-		FADE_DIST_Y * SCALE( GetHiddenSudden(pPlayerState), 0.f, 1.f, +1.0f, +1.25f ) + 
-		GetCenterLine( pPlayerState ) * pPlayerState->m_PlayerOptions.GetCurrent().m_fAppearances[PlayerOptions::APPEARANCE_SUDDEN_OFFSET];
+	const float* fAppearances = pPlayerState->m_PlayerOptions.GetCurrent().m_fAppearances;
+	return GetCenterLine( tn, pPlayerState ) + 
+		FADE_DIST_Y * SCALE( GetHiddenSudden(tn, pPlayerState), 0.f, 1.f, +1.0f, +1.25f ) + 
+		GetCenterLine( tn, pPlayerState ) * ModIntensity(fAppearances[PlayerOptions::APPEARANCE_SUDDEN_OFFSET], tn, "SuddenOffset");
 }
 
 // used by ArrowGetAlpha and ArrowGetGlow below
-float ArrowGetPercentVisible( const PlayerState* pPlayerState, float fYPosWithoutReverse )
+float ArrowEffects::ArrowGetPercentVisible( const TapNote &tn, const PlayerState* pPlayerState, float fYPosWithoutReverse )
 {
-	const float fDistFromCenterLine = fYPosWithoutReverse - GetCenterLine( pPlayerState );
+	const float fDistFromCenterLine = fYPosWithoutReverse - GetCenterLine( tn, pPlayerState );
 
 	if( fYPosWithoutReverse < 0 && HIDDEN_SUDDEN_PAST_RECEPTOR)	// past Gray Arrows
 		return 1;	// totally visible
@@ -655,33 +658,41 @@ float ArrowGetPercentVisible( const PlayerState* pPlayerState, float fYPosWithou
 	const float* fAppearances = pPlayerState->m_PlayerOptions.GetCurrent().m_fAppearances;
 
 	float fVisibleAdjust = 0;
+	float intensity = ModIntensity(fAppearances[PlayerOptions::APPEARANCE_HIDDEN], tn, "Hidden");
 
-	if( fAppearances[PlayerOptions::APPEARANCE_HIDDEN] != 0 )
+	if( intensity != 0 )
 	{
-		float fHiddenVisibleAdjust = SCALE( fYPosWithoutReverse, GetHiddenStartLine(pPlayerState), GetHiddenEndLine(pPlayerState), 0, -1 );
+		float fHiddenVisibleAdjust = SCALE( fYPosWithoutReverse, GetHiddenStartLine(tn, pPlayerState), GetHiddenEndLine(tn, pPlayerState), 0, -1 );
 		CLAMP( fHiddenVisibleAdjust, -1, 0 );
-		fVisibleAdjust += fAppearances[PlayerOptions::APPEARANCE_HIDDEN] * fHiddenVisibleAdjust;
+		fVisibleAdjust += intensity * fHiddenVisibleAdjust;
 	}
-	if( fAppearances[PlayerOptions::APPEARANCE_SUDDEN] != 0 )
+	
+	intensity = ModIntensity(fAppearances[PlayerOptions::APPEARANCE_SUDDEN], tn, "Sudden");
+	if( intensity != 0 )
 	{
-		float fSuddenVisibleAdjust = SCALE( fYPosWithoutReverse, GetSuddenStartLine(pPlayerState), GetSuddenEndLine(pPlayerState), -1, 0 );
+		float fSuddenVisibleAdjust = SCALE( fYPosWithoutReverse, GetSuddenStartLine(tn, pPlayerState), GetSuddenEndLine(tn, pPlayerState), -1, 0 );
 		CLAMP( fSuddenVisibleAdjust, -1, 0 );
-		fVisibleAdjust += fAppearances[PlayerOptions::APPEARANCE_SUDDEN] * fSuddenVisibleAdjust;
+		fVisibleAdjust += intensity * fSuddenVisibleAdjust;
 	}
 
-	if( fAppearances[PlayerOptions::APPEARANCE_STEALTH] != 0 )
-		fVisibleAdjust -= fAppearances[PlayerOptions::APPEARANCE_STEALTH];
-	if( fAppearances[PlayerOptions::APPEARANCE_BLINK] != 0 )
+	intensity = ModIntensity(fAppearances[PlayerOptions::APPEARANCE_STEALTH], tn, "Stealth");
+	if( intensity != 0 )
+		fVisibleAdjust -= intensity;
+	
+	// TODO: See if Blink can use intensity.
+	if( ModIntensity(fAppearances[PlayerOptions::APPEARANCE_BLINK], tn, "Blink") != 0 )
 	{
 		float f = RageFastSin(RageTimer::GetTimeSinceStartFast()*10);
 		f = Quantize( f, BLINK_MOD_FREQUENCY );
 		fVisibleAdjust += SCALE( f, 0, 1, -1, 0 );
 	}
-	if( fAppearances[PlayerOptions::APPEARANCE_RANDOMVANISH] != 0 )
+	
+	intensity = ModIntensity(fAppearances[PlayerOptions::APPEARANCE_RANDOMVANISH], tn, "RandomVanish");
+	if( intensity != 0 )
 	{
 		const float fRealFadeDist = 80;
 		fVisibleAdjust += SCALE( fabsf(fDistFromCenterLine), fRealFadeDist, 2*fRealFadeDist, -1, 0 )
-			* fAppearances[PlayerOptions::APPEARANCE_RANDOMVANISH];
+			* intensity;
 	}
 
 	return clamp( 1+fVisibleAdjust, 0, 1 );
@@ -692,7 +703,7 @@ float ArrowEffects::GetAlpha( const TapNote &tn, const PlayerState* pPlayerState
 	// Get the YPos without reverse (that is, factor in EFFECT_TIPSY).
 	float fYPosWithoutReverse = ArrowEffects::GetYPos( tn, pPlayerState, iCol, fYOffset, fYReverseOffsetPixels, false );
 
-	float fPercentVisible = ArrowGetPercentVisible( pPlayerState, fYPosWithoutReverse );
+	float fPercentVisible = ArrowGetPercentVisible( tn, pPlayerState, fYPosWithoutReverse );
 
 	if( fPercentFadeToFail != -1 )
 		fPercentVisible = 1 - fPercentFadeToFail;
@@ -714,7 +725,7 @@ float ArrowEffects::GetGlow( const TapNote &tn, const PlayerState* pPlayerState,
 	// Get the YPos without reverse (that is, factor in EFFECT_TIPSY).
 	float fYPosWithoutReverse = ArrowEffects::GetYPos( tn, pPlayerState, iCol, fYOffset, fYReverseOffsetPixels, false );
 
-	float fPercentVisible = ArrowGetPercentVisible( pPlayerState, fYPosWithoutReverse );
+	float fPercentVisible = ArrowGetPercentVisible( tn, pPlayerState, fYPosWithoutReverse );
 
 	if( fPercentFadeToFail != -1 )
 		fPercentVisible = 1 - fPercentFadeToFail;
@@ -737,30 +748,31 @@ float ArrowEffects::GetBrightness( const PlayerState* pPlayerState, float fNoteB
 }
 
 
-float ArrowEffects::GetZPos( const PlayerState* pPlayerState, int iCol, float fYOffset )
+float ArrowEffects::GetZPos( const TapNote &tn, const PlayerState* pPlayerState, int iCol, float fYOffset )
 {
 	float fZPos=0;
 	const float* fEffects = pPlayerState->m_PlayerOptions.GetCurrent().m_fEffects;
 
-	if( fEffects[PlayerOptions::EFFECT_BUMPY] != 0 )
-		fZPos += fEffects[PlayerOptions::EFFECT_BUMPY] * 40*RageFastSin( fYOffset/16.0f );
+	float intensity = ModIntensity(fEffects[PlayerOptions::EFFECT_BUMPY], tn, "Bumpy");
+	if( intensity != 0 )
+		fZPos += intensity * 40*RageFastSin( fYOffset/16.0f );
 
 	return fZPos;
 }
 
-bool ArrowEffects::NeedZBuffer( const PlayerState* pPlayerState )
+bool ArrowEffects::NeedZBuffer( const TapNote &tn, const PlayerState* pPlayerState )
 {
 	const float* fEffects = pPlayerState->m_PlayerOptions.GetCurrent().m_fEffects;
 	// We also need to use the Z buffer if twirl is in play, because of
 	// hold modulation. -vyhd (OpenITG r623)
-	if( fEffects[PlayerOptions::EFFECT_BUMPY] != 0 ||
-		fEffects[PlayerOptions::EFFECT_TWIRL] != 0 )
+	if( ModIntensity(fEffects[PlayerOptions::EFFECT_BUMPY], tn, "Bumpy") != 0 ||
+		ModIntensity(fEffects[PlayerOptions::EFFECT_TWIRL], tn, "Twirl") != 0 )
 		return true;
 
 	return false;
 }
 
-float ArrowEffects::GetZoom( const PlayerState* pPlayerState )
+float ArrowEffects::GetZoom( const TapNote &tn, const PlayerState* pPlayerState )
 {
 	float fZoom = 1.0f;
 	// FIXME: Move the zoom values into Style
@@ -768,7 +780,8 @@ float ArrowEffects::GetZoom( const PlayerState* pPlayerState )
 		(GAMESTATE->GetNumSidesJoined()==2 || GAMESTATE->AnyPlayersAreCpu()) )
 		fZoom *= 0.6f;
 
-	float fTinyPercent = pPlayerState->m_PlayerOptions.GetCurrent().m_fEffects[PlayerOptions::EFFECT_TINY];
+	const float* fEffects = pPlayerState->m_PlayerOptions.GetCurrent().m_fEffects;
+	float fTinyPercent = ModIntensity(fEffects[PlayerOptions::EFFECT_TINY], tn, "Tiny");
 	if( fTinyPercent != 0 )
 	{
 		fTinyPercent = powf( 0.5f, fTinyPercent );

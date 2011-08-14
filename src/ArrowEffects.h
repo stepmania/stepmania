@@ -8,6 +8,14 @@ class PlayerState;
 class ArrowEffects
 {
 	static float ModIntensity(float playerMod, const TapNote &tn, RString obstacle);
+	static float GetCenterLine( const TapNote &tn, const PlayerState* pPlayerState );
+	static float GetHiddenSudden( const TapNote &tn, const PlayerState* pPlayerState );
+	static float GetHiddenEndLine( const TapNote &tn, const PlayerState* pPlayerState );
+	static float GetHiddenStartLine( const TapNote &tn, const PlayerState* pPlayerState );
+	static float GetSuddenEndLine( const TapNote &tn, const PlayerState* pPlayerState );
+	static float GetSuddenStartLine( const TapNote &tn, const PlayerState* pPlayerState );
+	
+	static float ArrowGetPercentVisible( const TapNote &tn, const PlayerState* pPlayerState, float fYPosWithoutReverse );
 public:
 	static void Update();
 
@@ -79,14 +87,19 @@ public:
 	 * @brief Retrieve the Z position.
 	 *
 	 * This is normally 0. This is only visible with perspective modes.
+	 * @param tn the TapNote with a possibly different perspective.
 	 * @param pPlayerState the Player's state, including the mods.
 	 * @param iCol the specific arrow column.
 	 * @param fYPos the Y position of the arrow.
 	 * @return the Z position. */
-	static float GetZPos( const PlayerState* pPlayerState, int iCol, float fYPos );
+	static float GetZPos( const TapNote &tn, const PlayerState* pPlayerState, int iCol, float fYPos );
+	static float GetZPos( const PlayerState* pPlayerState, int iCol, float fYPos )
+	{
+		return GetZPos(TAP_EMPTY, pPlayerState, iCol, fYPos);
+	}
 
 	// Enable this if any ZPos effects are enabled.
-	static bool NeedZBuffer( const PlayerState* pPlayerState );
+	static bool NeedZBuffer( const TapNote &tn, const PlayerState* pPlayerState );
 
 	// fAlpha is the transparency of the arrow.  It depends on fYPos and the 
 	// AppearanceType.
@@ -106,7 +119,11 @@ public:
 	static float GetBrightness( const PlayerState* pPlayerState, float fNoteBeat );
 
 	// This is the zoom of the individual tracks, not of the whole Player.
-	static float GetZoom( const PlayerState* pPlayerState );
+	static float GetZoom( const TapNote &tn, const PlayerState* pPlayerState );
+	static float GetZoom( const PlayerState* pPlayerState )
+	{
+		return GetZoom(TAP_EMPTY, pPlayerState);
+	}
 
 	static float GetFrameWidthScale( const PlayerState* pPlayerState, float fYOffset, float fOverlappedTime );
 };
