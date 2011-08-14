@@ -225,7 +225,7 @@ static void LoadFromSMNoteDataStringWithPlayer( NoteData& out, const RString &sS
 					
 					char szModifiers[256] = "";
 					// not fatal if this fails due to malformed data
-					if( sscanf( p, "%255s>", szModifiers ) == 1 )
+					if( sscanf( p, "%255[^>]>", szModifiers ) == 1 )
 					{
 						vector<RString> fullObstacles;
 						RString readMods = szModifiers;
