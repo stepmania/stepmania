@@ -422,7 +422,10 @@ void NoteDataUtil::GetSMNoteDataString( const NoteData &in, RString &sRet )
 						sRet.append( ssprintf("{%s:%.2f}", tn.sAttackModifiers.c_str(),
 								      tn.fAttackDurationSeconds) );
 					}
-					// hey maybe if we have TapNote::item we can do things here.
+					if (tn.obstacles != "")
+					{
+						sRet.append( ssprintf("<%s>", tn.obstacles.c_str() ) );
+					}
 					if( tn.iKeysoundIndex >= 0 )
 						sRet.append( ssprintf("[%d]",tn.iKeysoundIndex) );
 				}
