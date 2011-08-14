@@ -1,7 +1,7 @@
 #ifndef ARROWEFFECTS_H
 #define ARROWEFFECTS_H
 
-#include "NoteTypes.h"
+#include "NoteTypes.h" // Required due to use of TAP_EMPTY constants.
 
 class PlayerState;
 /** @brief Functions that return properties of arrows based on Style and PlayerOptions. */
