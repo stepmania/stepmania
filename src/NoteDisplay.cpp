@@ -623,11 +623,11 @@ void NoteDisplay::DrawHold( const TapNote &tn, int iCol, int iRow, bool bIsBeing
 	if( tn.HoldResult.bActive  &&  tn.HoldResult.fLife > 0 )
 		;	// use the default values filled in above
 	else
-		fStartYOffset = ArrowEffects::GetYOffset( m_pPlayerState, iCol, fStartBeat, fThrowAway, bStartIsPastPeak );
+		fStartYOffset = ArrowEffects::GetYOffset( tn, m_pPlayerState, iCol, fStartBeat, fThrowAway, bStartIsPastPeak );
 	
 	float fEndPeakYOffset	= 0;
 	bool bEndIsPastPeak = false;
-	float fEndYOffset	= ArrowEffects::GetYOffset( m_pPlayerState, iCol, NoteRowToBeat(iEndRow), fEndPeakYOffset, bEndIsPastPeak );
+	float fEndYOffset	= ArrowEffects::GetYOffset( tn, m_pPlayerState, iCol, NoteRowToBeat(iEndRow), fEndPeakYOffset, bEndIsPastPeak );
 
 	// In boomerang, the arrows reverse direction at Y offset value fPeakAtYOffset.  
 	// If fPeakAtYOffset lies inside of the hold we're drawing, then the we 
@@ -806,7 +806,7 @@ void NoteDisplay::DrawTap(const TapNote& tn, int iCol, float fBeat,
 		pActor->HandleMessage( msg );
 	}
 
-	const float fYOffset = ArrowEffects::GetYOffset( m_pPlayerState, iCol, fBeat );
+	const float fYOffset = ArrowEffects::GetYOffset( tn, m_pPlayerState, iCol, fBeat );
 	// this is the line that forces the (1,1,1,x) part of the noteskin diffuse -aj
 	DrawActor( tn, pActor, part, iCol, fYOffset, fBeat, bIsAddition, fPercentFadeToFail, fReverseOffsetPixels, 1.0f, fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
 

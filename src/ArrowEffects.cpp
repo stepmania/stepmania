@@ -221,7 +221,7 @@ float ArrowEffects::ModIntensity(float playerMod, const TapNote &tn, RString obs
 
 /* For visibility testing: if bAbsolute is false, random modifiers must return
  * the minimum possible scroll speed. */
-float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float fNoteBeat, float &fPeakYOffsetOut, bool &bIsPastPeakOut, bool bAbsolute )
+float ArrowEffects::GetYOffset( const TapNote &tn, const PlayerState* pPlayerState, int iCol, float fNoteBeat, float &fPeakYOffsetOut, bool &bIsPastPeakOut, bool bAbsolute )
 {
 	// Default values that are returned if boomerang is off.
 	fPeakYOffsetOut = FLT_MAX;
