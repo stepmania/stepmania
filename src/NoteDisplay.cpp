@@ -378,7 +378,7 @@ struct StripBuffer
 	int Free() const { return size - Used(); }
 };
 
-void NoteDisplay::DrawHoldPart( vector<Sprite*> &vpSpr, int iCol, int fYStep, float fPercentFadeToFail, float fColorScale, bool bGlow,
+void NoteDisplay::DrawHoldPart( const TapNote& tn, vector<Sprite*> &vpSpr, int iCol, int fYStep, float fPercentFadeToFail, float fColorScale, bool bGlow,
 				float fDrawDistanceAfterTargetsPixels, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar,
 				float fOverlappedTime,
 				float fYTop, float fYBottom,
@@ -577,7 +577,7 @@ void NoteDisplay::DrawHoldBody( const TapNote& tn, int iCol, float fBeat, bool b
 
 	// Draw the top cap
 	DrawHoldPart(
-		vpSprTop,
+		tn, vpSprTop,
 		iCol, fYStep, fPercentFadeToFail, fColorScale, bGlow,
 		fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar,
 		tn.HoldResult.fOverlappedTime,
@@ -587,7 +587,7 @@ void NoteDisplay::DrawHoldBody( const TapNote& tn, int iCol, float fBeat, bool b
 
 	// Draw the body
 	DrawHoldPart(
-		vpSprBody,
+		tn, vpSprBody,
 		iCol, fYStep, fPercentFadeToFail, fColorScale, bGlow,
 		fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar,
 		tn.HoldResult.fOverlappedTime,
@@ -597,7 +597,7 @@ void NoteDisplay::DrawHoldBody( const TapNote& tn, int iCol, float fBeat, bool b
 
 	// Draw the bottom cap
 	DrawHoldPart(
-		vpSprBottom,
+		tn, vpSprBottom,
 		iCol, fYStep, fPercentFadeToFail, fColorScale, bGlow,
 		fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar,
 		tn.HoldResult.fOverlappedTime,
