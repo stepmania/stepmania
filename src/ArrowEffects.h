@@ -1,10 +1,13 @@
 #ifndef ARROWEFFECTS_H
 #define ARROWEFFECTS_H
 
+#include "NoteTypes.h"
+
 class PlayerState;
 /** @brief Functions that return properties of arrows based on Style and PlayerOptions. */
 class ArrowEffects
 {
+	static float ModIntensity(float playerMod, const TapNote &tn, RString obstacle);
 public:
 	static void Update();
 

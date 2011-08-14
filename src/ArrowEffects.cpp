@@ -213,6 +213,12 @@ void ArrowEffects::Update()
 	}
 }
 
+float ArrowEffects::ModIntensity(float playerMod, const TapNote &tn, RString obstacle)
+{
+	if (playerMod != 0) return playerMod; // player option values always trump the notes.
+	return tn.ObstacleIntensity(obstacle);
+}
+
 /* For visibility testing: if bAbsolute is false, random modifiers must return
  * the minimum possible scroll speed. */
 float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float fNoteBeat, float &fPeakYOffsetOut, bool &bIsPastPeakOut, bool bAbsolute )
