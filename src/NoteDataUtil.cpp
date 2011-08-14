@@ -227,7 +227,24 @@ static void LoadFromSMNoteDataStringWithPlayer( NoteData& out, const RString &sS
 					// not fatal if this fails due to malformed data
 					if( sscanf( p, "%255s>", szModifiers ) == 1 )
 					{
-						tn.obstacles = szModifiers;
+						vector<RString> fullObstacles;
+						RString readMods = szModifiers;
+						split(readMods, ",", fullObstacles);
+						
+						FOREACH(RString, fullObstacles, r)
+						{
+							Trim(*r);
+							vector<RString> sizeCheck;
+							split(*r, " ", sizeCheck);
+							RString intensity = "100%";
+							if (sizeCheck.size() == 2)
+							{
+								intensity = sizeCheck[0];
+							}
+							Trim(intensity, "%");
+							tn.obstacles.insert(pair<RString, float>(sizeCheck.back(),
+																	 StringToFloat(intensity) / 100.f));
+						}
 					}
 
 					// skip past the '>'
@@ -422,9 +439,9 @@ void NoteDataUtil::GetSMNoteDataString( const NoteData &in, RString &sRet )
 						sRet.append( ssprintf("{%s:%.2f}", tn.sAttackModifiers.c_str(),
 								      tn.fAttackDurationSeconds) );
 					}
-					if (tn.obstacles != "")
+					if (!tn.obstacles.empty())
 					{
-						sRet.append( ssprintf("<%s>", tn.obstacles.c_str() ) );
+						sRet.append( ssprintf("<%s>", tn.ObstaclesToString().c_str() ) );
 					}
 					if( tn.iKeysoundIndex >= 0 )
 						sRet.append( ssprintf("[%d]",tn.iKeysoundIndex) );

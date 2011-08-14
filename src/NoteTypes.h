@@ -5,6 +5,7 @@
 
 #include "GameConstantsAndTypes.h"
 #include "PlayerNumber.h"
+#include "Foreach.h"
 #include "RageLog.h"
 
 class XNode;
@@ -135,7 +136,7 @@ struct TapNote
 	 *
 	 * This takes place regardless of the Type.
 	 * If this is empty, there are no obstacles. */
-	RString obstacles;
+	map<RString, float> obstacles;
 
 	// XML
 	XNode* CreateNode() const;
@@ -144,7 +145,7 @@ struct TapNote
 	TapNote(): type(empty), subType(SubType_Invalid), source(original),
 		result(), pn(PLAYER_INVALID), bHopoPossible(false), 
 		sAttackModifiers(""), fAttackDurationSeconds(0), 
-		iKeysoundIndex(-1), iDuration(0), HoldResult(), obstacles("") {}
+		iKeysoundIndex(-1), iDuration(0), HoldResult(), obstacles() {}
 	void Init()
 	{
 		type = empty;
@@ -162,20 +163,38 @@ struct TapNote
 		Source source_, 
 		RString sAttackModifiers_,
 		float fAttackDurationSeconds_,
-		int iKeysoundIndex_,
-		RString obstacles_ = ""):
+		int iKeysoundIndex_):
 		type(type_), subType(subType_), source(source_), result(),
 		pn(PLAYER_INVALID), bHopoPossible(false),
 		sAttackModifiers(sAttackModifiers_),
 		fAttackDurationSeconds(fAttackDurationSeconds_),
 		iKeysoundIndex(iKeysoundIndex_), iDuration(0), HoldResult(),
-		obstacles(obstacles_)
+		obstacles()
 	{
 		if (type_ > TapNote::fake )
 		{
 			LOG->Trace("Invalid tap note type %d (most likely) due to random vanish issues. Assume it doesn't need judging.", (int)type_ );
 			type = TapNote::empty;
 		}
+	}
+	
+	RString ObstaclesToString() const
+	{
+		vector<RString> allInOne;
+		FOREACHM_CONST(RString, float, obstacles, ob)
+		{
+			if (ob->second == 1)
+			{
+				allInOne.push_back(ob->first);
+			}
+			else
+			{
+				allInOne.push_back(ssprintf("%f%% %s",
+											ob->second * 100,
+											ob->first.c_str()));
+			}
+		}
+		return join(",", allInOne);
 	}
 
 	/**
