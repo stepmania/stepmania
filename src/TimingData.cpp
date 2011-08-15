@@ -892,6 +892,7 @@ enum
 	FOUND_BPM_CHANGE,
 	FOUND_STOP,
 	FOUND_DELAY,
+	FOUND_STOP_DELAY, // we have these two on the same row.
 	FOUND_MARKER,
 	NOT_FOUND
 };
@@ -940,8 +941,9 @@ void TimingData::GetBeatAndBPSFromElapsedTimeNoOffset( float fElapsedTime, float
 		if (itSS != segs[SEGMENT_STOP].end() &&
 			(*itSS)->GetRow() < iEventRow ) // && iEventType != FOUND_DELAY )
 		{
+			int tmpRow = iEventRow;
 			iEventRow = (*itSS)->GetRow();
-			iEventType = FOUND_STOP;
+			iEventType = (tmpRow == iEventRow) ? FOUND_STOP_DELAY : FOUND_STOP;
 		}
 		if (itWS != segs[SEGMENT_WARP].end() &&
 			(*itWS)->GetRow() < iEventRow )
@@ -1001,8 +1003,36 @@ void TimingData::GetBeatAndBPSFromElapsedTimeNoOffset( float fElapsedTime, float
 				}
 				fLastTime = fNextEventTime;
 				itSS ++;
+				break;
 			}
-			break;
+			case FOUND_STOP_DELAY:
+			{
+				const DelaySegment *ds = static_cast<DelaySegment *>(*itDS);
+				const StopSegment *ss = static_cast<StopSegment *>(*itSS);
+				fNextEventTime = fLastTime + ds->GetPause();
+				if ( fElapsedTime < fNextEventTime )
+				{
+					bFreezeOut = false;
+					bDelayOut  = true;
+					fBeatOut   = ds->GetBeat();
+					fBPSOut    = fBPS;
+					return;
+				}
+				itDS++;
+				
+				fNextEventTime += ss->GetPause();
+				if ( fElapsedTime < fNextEventTime )
+				{
+					bFreezeOut = true;
+					bDelayOut  = false;
+					fBeatOut   = ss->GetBeat();
+					fBPSOut    = fBPS;
+					return;
+				}
+				fLastTime = fNextEventTime;
+				itSS++;
+				break;
+			}
 			case FOUND_WARP:
 			{
 				bIsWarping = true;
