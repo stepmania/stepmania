@@ -972,6 +972,7 @@ void TimingData::GetBeatAndBPSFromElapsedTimeNoOffset( float fElapsedTime, float
 				itBPMS ++;
 				break;
 			case FOUND_DELAY:
+			case FOUND_STOP_DELAY:
 			{
 				const DelaySegment *ss = static_cast<DelaySegment *>(*itDS);
 				fTimeToNextEvent = ss->GetPause();
@@ -986,7 +987,8 @@ void TimingData::GetBeatAndBPSFromElapsedTimeNoOffset( float fElapsedTime, float
 				}
 				fLastTime = fNextEventTime;
 				itDS ++;
-				break;
+				if (iEventType == FOUND_DELAY)
+					break;
 			}
 			case FOUND_STOP:
 			{
@@ -1003,34 +1005,6 @@ void TimingData::GetBeatAndBPSFromElapsedTimeNoOffset( float fElapsedTime, float
 				}
 				fLastTime = fNextEventTime;
 				itSS ++;
-				break;
-			}
-			case FOUND_STOP_DELAY:
-			{
-				const DelaySegment *ds = static_cast<DelaySegment *>(*itDS);
-				const StopSegment *ss = static_cast<StopSegment *>(*itSS);
-				fNextEventTime = fLastTime + ds->GetPause();
-				if ( fElapsedTime < fNextEventTime )
-				{
-					bFreezeOut = false;
-					bDelayOut  = true;
-					fBeatOut   = ds->GetBeat();
-					fBPSOut    = fBPS;
-					return;
-				}
-				itDS++;
-				
-				fNextEventTime += ss->GetPause();
-				if ( fElapsedTime < fNextEventTime )
-				{
-					bFreezeOut = true;
-					bDelayOut  = false;
-					fBeatOut   = ss->GetBeat();
-					fBPSOut    = fBPS;
-					return;
-				}
-				fLastTime = fNextEventTime;
-				itSS++;
 				break;
 			}
 			case FOUND_WARP:
