@@ -12,7 +12,7 @@ StepMania 5.0 Preview 3 | 2011081?
 ----------
 * [Foreground] Restore Foreground Changes for use in gameplay. Note that it
   is recommended to use lua for #FGCHANGES from now on: not all XML changes
-  will work. [Patrick]
+  will work. [infamouspat]
 
 2011/08/13
 ----------
