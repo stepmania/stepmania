@@ -11,12 +11,6 @@ void SongPosition::UpdateSongPosition( float fPositionSeconds, const TimingData 
 	else
 		m_LastBeatUpdate.Touch();
 
-	// xxx testing: only do this on monotune survivor
-	/*
-	if( m_pCurSong && m_pCurSong->GetDisplayFullTitle() == "monotune survivor" )
-		LOG->Trace( ssprintf("[GameState::UpdateSongPosition] cur BPS = %f, fPositionSeconds = %f",m_fCurBPS,fPositionSeconds) );
-	*/
-
 	timing.GetBeatAndBPSFromElapsedTime( fPositionSeconds, m_fSongBeat, m_fCurBPS, m_bFreeze, m_bDelay, m_iWarpBeginRow, m_fWarpDestination );
 	
 	// "Crash reason : -243478.890625 -48695.773438"
