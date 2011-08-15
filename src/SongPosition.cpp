@@ -21,25 +21,6 @@ void SongPosition::UpdateSongPosition( float fPositionSeconds, const TimingData 
 	m_fLightSongBeat = timing.GetBeatFromElapsedTime( fPositionSeconds + g_fLightsAheadSeconds );
 
 	m_fSongBeatNoOffset = timing.GetBeatFromElapsedTimeNoOffset( fPositionSeconds );
-
-	/*
-	// xxx testing: only do this on monotune survivor
-	if( m_pCurSong && m_pCurSong->GetDisplayFullTitle() == "monotune survivor" )
-	{
-		// and only do it in the known negative bpm region. HACKITY HACK
-		if(m_fSongBeat >= 445.490f && m_fSongBeat <= 453.72f)
-		{
-			LOG->Trace( ssprintf("fPositionSeconds = %f",fPositionSeconds) );
-			LOG->Trace( ssprintf("Song beat: %f (%f seconds), BPS = %f (%f BPM)",m_fSongBeat,m_fMusicSecondsVisible,m_fCurBPS,m_fCurBPS*60.0f) );
-			//LOG->Trace( ssprintf("Music seconds visible %f = fPositionSeconds %f - g_fVisualDelaySeconds %f", m_fMusicSecondsVisible,fPositionSeconds,g_fVisualDelaySeconds.Get()) );
-		}
-		else if(m_fSongBeat == 445.500f)
-		{
-			LOG->Trace( ssprintf("[beat 445.500] fPositionSeconds = %f",fPositionSeconds) );
-			LOG->Trace( ssprintf("Song beat: %f (%f seconds), BPS = %f (%f BPM)",m_fSongBeat,m_fMusicSecondsVisible,m_fCurBPS,m_fCurBPS*60.0f) );
-		}
-	}
-	*/
 	
 	m_fMusicSecondsVisible = fPositionSeconds - g_fVisualDelaySeconds.Get();
 	float fThrowAway, fThrowAway2;
