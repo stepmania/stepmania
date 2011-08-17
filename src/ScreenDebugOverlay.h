@@ -15,7 +15,7 @@ class ScreenDebugOverlay : public Screen
 public:
 	virtual ~ScreenDebugOverlay();
 	virtual void Init();
-	
+
 	bool OverlayInput( const InputEventPlus &input );
 
 	void Update( float fDeltaTime );
