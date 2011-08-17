@@ -2248,7 +2248,7 @@ LuaFunction( Uppercase, MakeUpper( SArg(1) ) )
 LuaFunction( mbstrlen, (int)RStringToWstring(SArg(1)).length() )
 LuaFunction( URLEncode, URLEncode( SArg(1) ) );
 //LuaFunction( IsHexVal, IsHexVal( SArg(1) ) );
-LuaFunction( UndocumentedFeature, sm_crash(SArg(1)) );
+//LuaFunction( UndocumentedFeature, sm_crash(SArg(1)) );
 
 /*
  * Copyright (c) 2001-2005 Chris Danford, Glenn Maynard
