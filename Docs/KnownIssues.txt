@@ -12,3 +12,5 @@ The following is a list of known issues with StepMania 5.
 * Attacks involving noteskins do not work. They may never work
   again unless some internal coding issues are figured out.
 * Routine mode (dance or pump) isn't perfect yet.
+** In particular, routine mode and practice steps may crash.
+* If two players play Oni mode, having one player fail causes a crash.
