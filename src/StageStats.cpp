@@ -189,9 +189,8 @@ void StageStats::FinalizeScores( bool bSummary )
 
 	// generate a HighScore for each player
 
-	// whether or not to save scores when the stage was failed
-	// depends on if this is a course or not ... it's handled
-	// below in the switch
+	// whether or not to save scores when the stage was failed depends on if this
+	// is a course or not... it's handled below in the switch.
 	FOREACH_HumanPlayer( p )
 	{
 		RString sPlayerGuid = PROFILEMAN->IsPersistentProfile(p) ? PROFILEMAN->GetProfile(p)->m_sGuid : RString("");
