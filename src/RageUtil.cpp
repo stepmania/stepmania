@@ -2247,8 +2247,10 @@ static RString MakeUpper( RString s ) { s.MakeUpper(); return s; }
 LuaFunction( Uppercase, MakeUpper( SArg(1) ) )
 LuaFunction( mbstrlen, (int)RStringToWstring(SArg(1)).length() )
 LuaFunction( URLEncode, URLEncode( SArg(1) ) );
+LuaFunction( PrettyPercent, PrettyPercent( FArg(1), FArg(2) ) );
 //LuaFunction( IsHexVal, IsHexVal( SArg(1) ) );
-//LuaFunction( UndocumentedFeature, sm_crash(SArg(1)) );
+static bool UndocumentedFeature( RString s ){ sm_crash(s); return true; }
+LuaFunction( UndocumentedFeature, UndocumentedFeature(SArg(1)) );
 
 /*
  * Copyright (c) 2001-2005 Chris Danford, Glenn Maynard

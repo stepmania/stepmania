@@ -8,6 +8,10 @@ ________________________________________________________________________________
 StepMania 5.0 Preview 3 | 2011081?
 --------------------------------------------------------------------------------
 
+2011/08/16
+----------
+* Added PrettyPercent(numerator,denominator) Lua binding. [AJ]
+
 2011/08/14
 ----------
 * [Foreground] Restore Foreground Changes for use in gameplay. Note that it
