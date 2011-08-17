@@ -156,7 +156,7 @@ InputHandler_X11::~InputHandler_X11()
 	XWindowAttributes winAttrib;
 
 	XGetWindowAttributes( Dpy, Win, &winAttrib );
-	XSelectInput( Dpy, Win, winAttrib.your_event_mask & ~(KeyPressMask|KeyReleaseMask|ButtonPressMask|ButtonReleaseMask) );
+	XSelectInput( Dpy, Win, winAttrib.your_event_mask & ~(KeyPressMask|KeyReleaseMask|ButtonPressMask|ButtonReleaseMask|PointerMotionMask) );
 }
 
 void InputHandler_X11::Update()
