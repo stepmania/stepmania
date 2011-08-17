@@ -140,9 +140,13 @@ InputHandler_X11::InputHandler_X11()
 	XWindowAttributes winAttrib;
 
 	XGetWindowAttributes( Dpy, Win, &winAttrib );
-	// todo: add PointerMotionMask, ButtonMotionMask, Button(1-5)MotionMask,
+	// todo: add ButtonMotionMask, Button(1-5)MotionMask,
 	// (EnterWindowMask/LeaveWindowMask?) -aj
-	XSelectInput( Dpy, Win, winAttrib.your_event_mask | KeyPressMask | KeyReleaseMask | ButtonPressMask | ButtonReleaseMask );
+	XSelectInput( Dpy, Win,
+		winAttrib.your_event_mask | KeyPressMask | KeyReleaseMask
+		| ButtonPressMask | ButtonReleaseMask
+		| PointerMotionMask
+	);
 }
 
 InputHandler_X11::~InputHandler_X11()
