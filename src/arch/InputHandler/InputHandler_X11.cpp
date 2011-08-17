@@ -126,7 +126,7 @@ static DeviceButton XSymToDeviceButton( int key )
 	case XK_Pointer_Button1: return MOUSE_LEFT;
 	case XK_Pointer_Button2: return MOUSE_MIDDLE;
 	case XK_Pointer_Button3: return MOUSE_RIGHT;
-	case XK_Pointer_Button4: return MOUSE_MOUSE_WHEELUP;
+	case XK_Pointer_Button4: return MOUSE_WHEELUP;
 	case XK_Pointer_Button5: return MOUSE_WHEELDOWN;
 	}
 
