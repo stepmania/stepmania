@@ -1259,7 +1259,7 @@ public:
 	static int GetPathS( T* p, lua_State *L )			{ lua_pushstring(L, p->GetPathS(SArg(1),SArg(2)) ); return 1; }
 	static int GetPathO( T* p, lua_State *L )			{ lua_pushstring(L, p->GetPathO(SArg(1),SArg(2)) ); return 1; }
 	
-	static int RunLuaScripts( T* p, lua_State *L )			{ p->RunLuaScripts(SArg(1); return 1; }
+	static int RunLuaScripts( T* p, lua_State *L )			{ p->RunLuaScripts(SArg(1)); return 1; }
 
 	static int GetSelectableThemeNames( T* p, lua_State *L )
 	{
