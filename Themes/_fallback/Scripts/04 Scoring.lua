@@ -129,7 +129,7 @@ r['DDR Extreme'] = function(params, pss)
 end;
 
 -----------------------------------------------------------
---HYBRID Scoring
+--HYBRID Scoring, contributed by @waiei
 -----------------------------------------------------------
 r['HYBRID'] = function(params, pss)
 	local multLookup =
@@ -141,7 +141,7 @@ r['HYBRID'] = function(params, pss)
 	setmetatable(multLookup, ZeroIfNotFound);
 	local radarValues = GetDirectRadar(params.Player);
 	local totalItems = GetTotalItems(radarValues);
-	-- 1+2+3+...+totalItems の値
+	-- 1+2+3+...+totalItems value/の値
 	local sTotal = (totalItems+1)*totalItems/2;
 	-- [en] Score for one song
 	-- [ja] 1つあたりのスコア
@@ -231,8 +231,7 @@ r['DDR SuperNOVA 2'] = function(params, pss)
 	pss:SetScore( math.floor(10000*vScore/totalItems) * 10 - (vSub*10) );
 end;
 -----------------------------------------------------------
---Radar Master (doesn't work in sm-ssc 1.2.1, disabled)
---todo: get this working with StepMania 5
+--Radar Master (disabled; todo: get this working with StepMania 5)
 -----------------------------------------------------------
 r['[SSC] Radar Master'] = function(params, pss)
 	local masterTable = {
@@ -282,15 +281,16 @@ r['MIGS'] = function(params,pss)
 	pss:SetScore(clamp(curScore,0,math.huge));
 end;
 
+-------------------------------------------------------------------------------
 -- Formulas end here.
 Scoring = {};
-setmetatable(Scoring, { 
-	__metatable = { "Letting you change the metatable sort of defeats the purpose." };
+setmetatable(Scoring, {
+	__metatable = { "Letting you change the metatable sort of defeats the purpose." },
 	__index = function(tbl, key)
 			for v in ivalues(DisabledScoringModes) do
-				if key == v then return r['DDR Extreme']; end;
-			end;
-			return r[key];
-		end;
+				if key == v then return r['DDR Extreme'] end
+			end
+			return r[key]
+		end,
 	}
 );
