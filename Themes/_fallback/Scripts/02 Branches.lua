@@ -18,7 +18,7 @@ end
 
 function SelectMusicOrCourse()
 	if IsNetSMOnline() then
-		return "ScreenNetSelectMusic";
+		return "ScreenNetSelectMusic"
 	elseif GAMESTATE:IsCourseMode() then
 		return "ScreenSelectCourse"
 	else
@@ -28,7 +28,7 @@ end
 
 -- functions used for Routine mode
 function IsRoutine()
-	return GAMESTATE:GetCurrentStyle() and GAMESTATE:GetCurrentStyle():GetStyleType() == "StyleType_TwoPlayersSharedSides";
+	return GAMESTATE:GetCurrentStyle() and GAMESTATE:GetCurrentStyle():GetStyleType() == "StyleType_TwoPlayersSharedSides"
 end
 
 Branch = {
@@ -63,20 +63,20 @@ Branch = {
 		-- a possibility someone will use their existing StepMania simfile
 		-- collection with sm-ssc via AdditionalFolders/AdditionalSongFolders.
 		if SONGMAN:GetNumSongs() == 0 and SONGMAN:GetNumAdditionalSongs() == 0 then
-			return "ScreenHowToInstallSongs";
-		end;
+			return "ScreenHowToInstallSongs"
+		end
 		if PROFILEMAN:GetNumLocalProfiles() >= 2 then
-			return "ScreenSelectProfile";
+			return "ScreenSelectProfile"
 		else
-			return "ScreenProfileLoad";
+			return "ScreenProfileLoad"
 		end
 	end,
 	OptionsEdit = function()
 		-- Similar to above, don't let anyone in here with 0 songs.
 		if SONGMAN:GetNumSongs() == 0 and SONGMAN:GetNumAdditionalSongs() == 0 then
-			return "ScreenHowToInstallSongs";
-		end;
-		return "ScreenOptionsEdit";
+			return "ScreenHowToInstallSongs"
+		end
+		return "ScreenOptionsEdit"
 	end,
 	AfterProfileLoad = function()
 		return Branch.AfterSelectProfile()
@@ -147,17 +147,17 @@ Branch = {
 		local pm = GAMESTATE:GetPlayMode()
 		local restricted = { "PlayMode_Oni", "PlayMode_Rave",
 			--"PlayMode_Battle" -- ??
-		};
+		}
 		local optionsScreen = "ScreenPlayerOptions"
 		for i=1,#restricted do
 			if restricted[i] == pm then
 				optionsScreen = "ScreenPlayerOptionsRestricted"
-			end;
+			end
 		end
 		if SCREENMAN:GetTopScreen():GetGoToOptions() then
-			return optionsScreen;
+			return optionsScreen
 		else
-			return "ScreenStageInformation";
+			return "ScreenStageInformation"
 		end
 	end,
 	SongOptions = function()

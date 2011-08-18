@@ -14,29 +14,22 @@ function AreStageSongModsForced()
 end
 
 function SetFail()
-	local sFail = "";
+	local sFail = ""
 	
 	if GetGamePref("DefaultFail") then
-		sFail = string.format("Fail%s", GetGamePref("DefaultFail"));
+		sFail = string.format("Fail%s", GetGamePref("DefaultFail"))
 	else
-		sFail = "FailOff";
+		sFail = "FailOff"
 	end
 
-	sFail = tostring(sFail);
--- 	SCREENMAN:SystemMessage( 'NEW FAIL IS: ' .. tostring(sFail) );
+	sFail = tostring(sFail)
 	
 	for pn in ivalues(GAMESTATE:GetHumanPlayers()) do
--- 		GAMESTATE:ApplyGameCommand( "stagemod,FailImmediateContinue", pn );
--- 		GAMESTATE:GetPlayerState(pn):SetPlayerOptions( "ModsLevel_Song", 'mod,FailImmediateContinue' );
-		MESSAGEMAN:Broadcast( "PlayerOptionsChanged", {PlayerNumber = pn} );
+		MESSAGEMAN:Broadcast( "PlayerOptionsChanged", {PlayerNumber = pn} )
 	end
 	
--- 	GAMESTATE:SetSongOptions( "ModsLevel_Preferred", 'mod,FailImmediateContinue'  );
--- 	GAMESTATE:SetSongOptions( "ModsLevel_Stage", 'mod,FailImmediateContinue' );
--- 	GAMESTATE:SetSongOptions( "ModsLevel_Song",'mod,FailImmediateContinue'  );
-	GAMESTATE:ApplyGameCommand( "mod," .. sFail);
--- 	GAMESTATE:ApplyGameCommand( "stagemod,FailImmediateContinue");
-	MESSAGEMAN:Broadcast( "SongOptionsChanged" );
+	GAMESTATE:ApplyGameCommand( "mod," .. sFail)
+	MESSAGEMAN:Broadcast( "SongOptionsChanged" )
 end
 
 function ScreenSelectMusic:setupmusicstagemods()
@@ -44,9 +37,9 @@ function ScreenSelectMusic:setupmusicstagemods()
 	local pm = GAMESTATE:GetPlayMode()
 	
 	if pm == "PlayMode_Battle" or pm == "PlayMode_Rave" then
-		local so = GAMESTATE:GetDefaultSongOptions();
-		GAMESTATE:SetSongOptions( "ModsLevel_Stage", so );
-		MESSAGEMAN:Broadcast( "SongOptionsChanged" );
+		local so = GAMESTATE:GetDefaultSongOptions()
+		GAMESTATE:SetSongOptions( "ModsLevel_Stage", so )
+		MESSAGEMAN:Broadcast( "SongOptionsChanged" )
 	elseif GAMESTATE:IsAnExtraStage() then		
 		if GAMESTATE:GetPreferredSongGroup() == "---Group All---" then
 			local song = GAMESTATE:GetCurrentSong()
@@ -58,11 +51,11 @@ function ScreenSelectMusic:setupmusicstagemods()
 		local song, steps = SONGMAN:GetExtraStageInfo( bExtra2, style )
 		local po, so
 		if bExtra2 then
-			po = THEME:GetMetric("SongManager","OMESPlayerModifiers");
-			so = THEME:GetMetric("SongManager","OMESStageModifiers");
+			po = THEME:GetMetric("SongManager","OMESPlayerModifiers")
+			so = THEME:GetMetric("SongManager","OMESStageModifiers")
 		else
-			po = THEME:GetMetric("SongManager","ExtraStagePlayerModifiers");
-			so = THEME:GetMetric("SongManager","ExtraStageStageModifiers");
+			po = THEME:GetMetric("SongManager","ExtraStagePlayerModifiers")
+			so = THEME:GetMetric("SongManager","ExtraStageStageModifiers")
 		end
 		
 		local difficulty = steps:GetDifficulty()

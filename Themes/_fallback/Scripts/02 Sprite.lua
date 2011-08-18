@@ -28,18 +28,18 @@ function LoadSongBackground()
 end
 
 function Sprite:LoadFromCurrentSongBackground()
-	local song = GAMESTATE:GetCurrentSong();
+	local song = GAMESTATE:GetCurrentSong()
 	if not song then
-		local trail = GAMESTATE:GetCurrentTrail(GAMESTATE:GetMasterPlayerNumber());
+		local trail = GAMESTATE:GetCurrentTrail(GAMESTATE:GetMasterPlayerNumber())
 		local e = trail:GetTrailEntries()
 		if #e > 0 then
-			song = e[1]:GetSong();
+			song = e[1]:GetSong()
 		end
 	end
 
 	if not song then return end
 
-	self:LoadFromSongBackground(song);
+	self:LoadFromSongBackground(song)
 end
 
 function Sprite:position( f )

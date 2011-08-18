@@ -25,9 +25,8 @@ Color = {
     Saturation(hInput)
     Alpha(hInput)
     HSV(iHue,fSaturation,fValue or any other overload) --]]
-	Alpha = function(cColor,fAlpha)
-		local c = cColor;
-		return { c[1],c[2],c[3],fAlpha };
+	Alpha = function(c, fAlpha)
+		return { c[1],c[2],c[3], fAlpha }
 	end
 }
 
@@ -38,8 +37,8 @@ setmetatable(Color, { __call = function(self, c) return self[c] end })
 
 GameColor = {
 	PlayerColors = {
-		PLAYER_1	= color("#ef403d"),
-		PLAYER_2	= color("#0089cf"),
+		PLAYER_1 = color("#ef403d"),
+		PLAYER_2 = color("#0089cf"),
 	},
 	Difficulty = {
 		--[[ These are for 'Custom' Difficulty Ranks. It can be very  useful
@@ -91,11 +90,12 @@ GameColor = {
 		JudgmentLine_Miss	= color("#ff3c3c"),
 		JudgmentLine_MaxCombo	= color("#ffc600")
 	},
-};
-GameColor.Difficulty["Crazy"] = GameColor.Difficulty["Hard"];
-GameColor.Difficulty["Freestyle"] = GameColor.Difficulty["Easy"];
-GameColor.Difficulty["Nightmare"] = GameColor.Difficulty["Challenge"];
-GameColor.Difficulty["HalfDouble"] = GameColor.Difficulty["Medium"];
+}
+
+GameColor.Difficulty["Crazy"] = GameColor.Difficulty["Hard"]
+GameColor.Difficulty["Freestyle"] = GameColor.Difficulty["Easy"]
+GameColor.Difficulty["Nightmare"] = GameColor.Difficulty["Challenge"]
+GameColor.Difficulty["HalfDouble"] = GameColor.Difficulty["Medium"]
 
 --[[ Fallbacks ]]
 function BoostColor( cColor, fBoost )
