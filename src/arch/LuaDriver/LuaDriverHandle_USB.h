@@ -5,6 +5,7 @@
 #define LUA_DRIVER_HANDLE_USB_H
 
 #include "LuaDriverHandle.h"
+#include <set>
 
 /* a bunch of forward declarations for our linking pleasure */
 struct libusb_context;
@@ -33,12 +34,16 @@ public:
 
 	void PushSelf( lua_State *L );
 protected:
+	/* interfaces that had a detached kernel driver */
+	set<uint8_t> m_DetachedInterfaces;
+
 	/* the last error that was encountered */
 	int m_iError;
 
 	libusb_context *m_pContext;
 	libusb_device_handle *m_pHandle;
 
+	/* allow Lua access to protected functions */
 	friend class LunaLuaDriverHandle_USB;
 
 	/* USB device handling functions - see libusb documentation at

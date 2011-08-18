@@ -2,6 +2,7 @@
 #include "RageLog.h"
 #include "LuaManager.h"
 #include "LuaDriverHandle_USB.h"
+#include "RageUtil.h"
 
 #include <libusb-1.0/libusb.h>
 
@@ -15,11 +16,12 @@ int LuaDriverHandle_USB::GetRevisionMinor() const { return USB_API_REVISION_MINO
 
 LuaDriverHandle_USB::LuaDriverHandle_USB()
 {
+	LOG->Trace( "LuaDriverHandle_USB::LuaDriverHandle_USB()" );
 	m_iError = libusb_init( &m_pContext );
 
 	if( m_iError != LIBUSB_SUCCESS )
 	{
-		LOG->Warn( "libusb_init error: %s\n", GetErrorStr(m_iError) );
+		LOG->Warn( "libusb_init error: %s", GetErrorStr(m_iError) );
 		return;
 	}
 
@@ -69,6 +71,20 @@ bool LuaDriverHandle_USB::SetConfiguration( int config )
 
 bool LuaDriverHandle_USB::ClaimInterface( int interface )
 {
+	/* transparently detach any kernel drivers in use */
+	if( libusb_kernel_driver_active(m_pHandle, interface) )
+	{
+		int ret = libusb_detach_kernel_driver(m_pHandle, interface);
+
+		if( ret != LIBUSB_SUCCESS )
+		{
+			LOG->Warn( "Failed to detach kernel driver on interface %d", interface );
+			return false;
+		}
+
+		m_DetachedInterfaces.insert( interface );
+	}
+
 	m_iError = libusb_claim_interface( m_pHandle, interface );
 	return m_iError == LIBUSB_SUCCESS;
 }
@@ -77,8 +93,24 @@ bool LuaDriverHandle_USB::ReleaseInterface( int interface )
 {
 	m_iError = libusb_release_interface( m_pHandle, interface );
 
+	/* if this had a kernel driver on it previously, reattach it */
+	if( m_iError == LIBUSB_SUCCESS )
+	{
+		set<uint8_t>::iterator it = m_DetachedInterfaces.find(interface);
+
+		/* not found, no need to re-attach */
+		if( it == m_DetachedInterfaces.end() )
+			return true;
+
+		m_DetachedInterfaces.erase( it );
+		int ret = libusb_attach_kernel_driver( m_pHandle, interface );
+
+		if( ret != LIBUSB_SUCCESS )
+			LOG->Warn( "libusb_attach_kernel_driver: %s", GetErrorStr(ret) );
+	}
+
 	/* treat an unclaimed interface as success */
-	return m_iError == LIBUSB_SUCCESS || m_iError == LIBUSB_ERROR_NOT_FOUND;
+	return m_iError == LIBUSB_SUCCESS;
 }
 
 /* USB I/O functions */
@@ -268,7 +300,8 @@ public:
 		uint16_t iVID = IArg(1);
 		uint16_t iPID = IArg(2);
 
-		return p->Open( iVID, iPID );
+		lua_pushboolean( L, p->Open(iVID, iPID) );
+		return 1;
 	}
 
 	static int GetDeviceDescriptor( T *p, lua_State *L )
@@ -317,6 +350,54 @@ public:
 	{
 		lua_pushboolean( L, p->ReleaseInterface(IArg(1)) );
 		return 1;
+	}
+
+	static int InterruptTransfer( T *p, lua_State *L )
+	{
+		uint8_t endpoint = IArg(1);
+
+		size_t datalen;
+		uint8_t *data;
+
+		/* If we're getting data from the device, allocate a buffer
+		 * to store the incoming data, so we can pass it to Lua. */
+		bool bUsingBuffer = (endpoint & LIBUSB_ENDPOINT_IN);
+
+		if( bUsingBuffer )
+		{
+			// TODO: get endpoint descriptor, set to wMaxPacketSize
+			datalen = 8;
+			data = new uint8_t[datalen];
+		}
+		else
+		{
+			// get the size (and actual data) from Lua
+			size_t datalen = 0;
+			data = (uint8_t*)lua_tolstring(L, 2, &datalen );
+		}
+
+		unsigned timeout = IArg(3);
+		int transferred = 0;
+
+		LUA->YieldLua();
+		p->InterruptTransfer( endpoint, data, datalen, &transferred, timeout );
+		LUA->UnyieldLua();
+
+		/* push the amount of data transferred, and the data we got
+		 * if applicable */
+		lua_pushnumber( L, transferred );
+
+		if( bUsingBuffer )
+		{
+			lua_pushlstring( L, (const char*)data, datalen );
+			delete[] data;
+		}
+		else
+		{
+			lua_pushnil( L );
+		}
+
+		return 2;
 	}
 
 	/* phew... */
@@ -387,6 +468,7 @@ public:
 		ADD_METHOD( ClaimInterface );
 		ADD_METHOD( ReleaseInterface );
 		ADD_METHOD( ControlTransfer );
+		ADD_METHOD( InterruptTransfer );
 	}
 };
 
