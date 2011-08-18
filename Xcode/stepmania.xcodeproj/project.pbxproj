@@ -8021,7 +8021,7 @@
 					AppKit,
 				);
 				PREBINDING = NO;
-				PRODUCT_NAME = zlib;
+				PRODUCT_NAME = "zlib-sm5";
 			};
 			name = Native;
 		};
@@ -8043,7 +8043,7 @@
 					AppKit,
 				);
 				PREBINDING = NO;
-				PRODUCT_NAME = zlib;
+				PRODUCT_NAME = "zlib-sm5";
 			};
 			name = PerformanceDebug;
 		};
@@ -8065,7 +8065,7 @@
 					AppKit,
 				);
 				PREBINDING = NO;
-				PRODUCT_NAME = zlib;
+				PRODUCT_NAME = "zlib-sm5";
 			};
 			name = Universal;
 		};
