@@ -14,3 +14,5 @@ The following is a list of known issues with StepMania 5.
 * Routine mode (dance or pump) isn't perfect yet.
 ** In particular, routine mode and practice steps may crash.
 * If two players play Oni mode, having one player fail causes a crash.
+* The attempted new unlock code written a Preview or two ago
+  does not seem to work at this time. Assistance may be needed here.
