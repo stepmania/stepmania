@@ -2,10 +2,19 @@
 #include "RageUtil.h"
 #include "LuaManager.h"
 #include "LuaDriverHandle.h"
+#include "LuaDriverHandle_USB.h"
 
 #include <map>
 
 map<RString,MakeHandleFn> *g_pMapRegistrees = NULL;
+
+LuaDriverHandle::LuaDriverHandle()
+{
+}
+
+LuaDriverHandle::~LuaDriverHandle()
+{
+}
 
 void LuaDriverHandle::RegisterAPI( const RString &sName, MakeHandleFn pfn )
 {
@@ -33,6 +42,7 @@ void LuaDriverHandle::PushAPIHandle( Lua *L, const RString &sName )
 
 	/* allocates a new handle; call Destroy() from Lua to deallocate */
 	LuaDriverHandle *pHandle = pfn();
+//	LuaDriverHandle_USB *pHandle2 = dynamic_cast<LuaDriverHandle_USB*>( pHandle );
 	pHandle->PushSelf( L );
 }
 
@@ -85,16 +95,35 @@ public:
 		return 2;
 	}
 
+	static int GetError( T* p, lua_State *L )
+	{
+		lua_pushnumber( L, p->GetError() );
+		return 1;
+	}
+
+	static int GetErrorStr( T* p, lua_State *L )
+	{
+		int error = p->GetError();
+
+		if( lua_isnumber(L, 1) )
+			error = lua_tointeger( L, 1 );
+
+		lua_pushstring( L, p->GetErrorStr(error) );
+		return 1;
+	}
+
 	LunaLuaDriverHandle()
 	{
 		ADD_METHOD( Destroy );
 		ADD_METHOD( IsOpen );
 		ADD_METHOD( Close );
 		ADD_METHOD( GetRevision );
+		ADD_METHOD( GetError );
+		ADD_METHOD( GetErrorStr );
 	}
 };
 
-LUA_REGISTER_INSTANCED_BASE_CLASS( LuaDriverHandle );
+LUA_REGISTER_CLASS( LuaDriverHandle );
 
 /*
  * (c) 2011 Mark Cannon

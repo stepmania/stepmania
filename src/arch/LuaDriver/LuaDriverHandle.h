@@ -4,10 +4,7 @@
 #ifndef LUA_DRIVER_HANDLE_H
 #define LUA_DRIVER_HANDLE_H
 
-#include "RageUtil_AutoPtr.h"	// for HiddenPtr
-
 struct lua_State;
-class LuaClass;
 
 /* Registers a LuaDriverHandle with the core class. */
 
@@ -27,10 +24,10 @@ public:
 	static void RegisterAPI( const RString &sName, MakeHandleFn fn );
 	static void PushAPIHandle( lua_State *L, const RString &sName );
 
-	LuaDriverHandle() { }
-	virtual ~LuaDriverHandle() { }
+	LuaDriverHandle();
+	virtual ~LuaDriverHandle();
 
-	/* can't implement Open() abstractly; the call differs between APIs */
+	/* can't implement Open() abstractly; arguments differ between APIs */
 	virtual void Close() { }
 
 	virtual bool IsOpen() const { return false; }
@@ -42,8 +39,7 @@ public:
 	virtual const char* GetErrorStr( int err ) const { return NULL; }
 
 	/* Lua bindings */
-	void PushSelf( lua_State *L );
-	HiddenPtr<LuaClass> m_pLuaInstance;
+	virtual void PushSelf( lua_State *L );
 };
 
 #endif // LUA_DRIVER_HANDLE_H

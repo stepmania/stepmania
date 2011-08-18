@@ -82,7 +82,7 @@ static void AddModules( LuaDriverMap &mModules, const RString &sDrivers, vector<
 			continue;
 		}
 
-		LOG->Info( "Lua module: %s\n", s->c_str() );
+		LOG->Info( "Lua module: %s", s->c_str() );
 
 		AddTo.push_back( pHandler );
 	}
