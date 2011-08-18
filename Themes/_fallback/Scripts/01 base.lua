@@ -5,7 +5,15 @@ function loadfile(file)
 		return nil, ("what " .. file)
 	end
 
-	local chunk, err = load(data, "@" .. file)
+	local chunk, err = load(
+		function()
+			local ret = data
+			data = nil
+			return ret
+		end,
+		"@" .. file
+	);
+
 	if not chunk then return nil, err end
 
 	-- Set the environment, like loadfile does.
