@@ -18,14 +18,26 @@
 LuaDriverMap LuaDriver::s_mpInputModules;
 LuaDriverMap LuaDriver::s_mpLightsModules;
 
+enum DriverType {
+	DriverType_Input,
+	DriverType_Lights,
+	NUM_DriverType,
+	DriverType_Invalid
+};
+
 /* These map a ModuleType string to a DriverType */
-const char* LuaDriver::DriverTypeNames[NUM_DriverType] = { "Input", "Lights", NULL };
+const char* DriverTypeNames[NUM_DriverType] =
+{
+	"InputModule",
+	"LightsModule"
+};
 
 /* Inserts drivers from mModules into AddTo if their names are in sDrivers. */
 template<class Driver, class Handler>
 static void AddModules( LuaDriverMap &mModules, const RString &sDrivers, vector<Handler*> &AddTo )
 {
 	LOG->Trace( "LuaDriver::AddModules( %s )", sDrivers.c_str() );
+
 	if( sDrivers.empty() )
 		return; // nothing to do
 
@@ -93,6 +105,50 @@ bool LuaDriver::Load( const RString &sPath )
 {
 	RString sScript, sError;
 
+	/* Determine the name and the module type from the file name.
+	 * This allows us to enforce standard (descriptive) file names
+	 * with the format of DriverType_Name.lua. */
+
+	DriverType driverType = DriverType_Invalid;
+	RString sName, sType;
+
+	{
+		RString sFilename = GetFileNameWithoutExtension( sPath );
+		size_t pos = sFilename.find_first_of( '_' );
+
+		if( pos != string::npos )
+		{
+			sType = sFilename.substr( 0, pos );
+			sName = sFilename.substr( pos+1 );
+		}
+
+		if( sName.empty() || sType.empty() || pos == string::npos )
+		{
+			LOG->Warn( "Invalid filename \"%s\"", sFilename.c_str() );
+			return false;
+		}
+	}
+
+
+	FOREACH_ENUM( DriverType, type )
+	{
+		const char* name = DriverTypeNames[type];
+
+		if( sType.CompareNoCase(name) == 0 )
+		{
+			driverType = type;
+			break;
+		}
+	}
+
+	if( driverType == DriverType_Invalid )
+	{
+		LOG->Warn( "LuaDriver: invalid DriverType \"%s\"", sType.c_str() );
+		return false;
+	}
+
+	/* Attempt to retrieve the script and run it on the stack. */
+
 	if( !GetFileContents(sPath, sScript) )
 		return false;
 
@@ -100,60 +156,16 @@ bool LuaDriver::Load( const RString &sPath )
 
 	if( !LuaHelpers::RunScript(L, sScript, "@" + sPath, sError, 0, 1) )
 	{
-		lua_pop( L, 1 );	// pop the nil return value
-		ASSERT( lua_gettop(L) == 0 );
+		lua_pop( L, 1 );	// pop the return value
 		LUA->Release( L );
 
 		LOG->Warn( "LuaDriver: error compiling module \"%s\": %s", sPath.c_str(), sError.c_str() );
 		return false;
 	}
 
+	/* Set our reference from the return value of the script */
 	LuaReference *pTable = new LuaReference;
 	pTable->SetFromStack( L );
-	pTable->PushSelf( L );
-
-	/* get the driver's name */
-	lua_pushstring( L, "Name" );
-	lua_gettable( L, -2 );
-	const char *sName = lua_tostring(L, -1);
-	lua_pop( L, 1 );
-
-	if( sName == NULL )
-	{
-		LOG->Warn( ssprintf("%s needs a Name!", sPath.c_str()) );
-		lua_pop( L, 1 );
-		return false;
-	}
-
-	/* get the driver type from the ModuleType field */
-	lua_pushstring( L, "ModuleType" );
-	lua_gettable( L, -2 );
-
-	DriverType driverType = DriverType_Invalid;
-
-	if( lua_type(L, -1) == LUA_TSTRING )
-	{
-		const char *type = lua_tostring( L, -1 );
-
-		for( unsigned i = 0; DriverTypeNames[i] != NULL; ++i )
-		{
-			if( strcmp(type, DriverTypeNames[i]) == 0 )
-			{
-				driverType = DriverType(i);
-				break;
-			}
-		}
-
-		if( driverType == DriverType_Invalid )
-			FAIL_M( ssprintf("\"%s\": Invalid ModuleType \"%s\"", sPath.c_str(), type) );
-	}
-	else
-	{
-		FAIL_M( "ModuleType must be a string" );
-	}
-
-	lua_pop( L, 2 ); // pop the result and table
-
 	ASSERT( lua_gettop(L) == 0 );
 
 	LuaDriver *pDriver = NULL;
@@ -173,6 +185,7 @@ bool LuaDriver::Load( const RString &sPath )
 
 	/* Load internal data; the driver claims the pTable ref here. */
 	bool bLoaded = pDriver->LoadFromTable( L, pTable );
+	pTable = NULL;
 	LUA->Release( L );
 
 	if( bLoaded )

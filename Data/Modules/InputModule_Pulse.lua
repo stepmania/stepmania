@@ -1,8 +1,5 @@
 return
 {
-	Name = "Pulse",
-	ModuleType = "Input",
-
 	NumUpdates = 0,
 
 	-- once the update number reaches this count,

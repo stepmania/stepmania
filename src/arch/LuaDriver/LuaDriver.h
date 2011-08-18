@@ -36,15 +36,6 @@ public:
 	static void AddInputModules( const RString &sDrivers, vector<InputHandler*> &AddTo );
 	static void AddLightsModules( const RString &sDrivers, vector<LightsDriver*> &AddTo );
 
-	enum DriverType {
-		DriverType_Input,
-		DriverType_Lights,
-		DriverType_Invalid,
-		NUM_DriverType,
-	};
-
-	static const char* DriverTypeNames[NUM_DriverType];
-
 protected:
 	static LuaDriverMap s_mpInputModules, s_mpLightsModules;
 

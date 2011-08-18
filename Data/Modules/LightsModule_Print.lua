@@ -52,9 +52,7 @@ end
 
 return
 {
-	Name = "Print",
 	Desc = "Prints lights data to standard output",
-	ModuleType = "Lights",
 
 	Init = function(self)
 		Trace( "LightsModule_Print ("..tostring(self)..") initting now" )
