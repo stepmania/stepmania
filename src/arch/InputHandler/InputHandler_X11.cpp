@@ -121,6 +121,13 @@ static DeviceButton XSymToDeviceButton( int key )
 	case XK_Super_L:	return KEY_LSUPER;
 	case XK_Super_R:	return KEY_RSUPER;
 	case XK_Menu:		return KEY_MENU;
+
+	// mouse
+	case XK_Pointer_Button1: return MOUSE_LEFT;
+	case XK_Pointer_Button2: return MOUSE_MIDDLE;
+	case XK_Pointer_Button3: return MOUSE_RIGHT;
+	case XK_Pointer_Button4: return MOUSE_WHEELUP;
+	case XK_Pointer_Button5: return MOUSE_WHEELDOWN;
 	}
 
 	return DeviceButton_Invalid;
@@ -133,7 +140,13 @@ InputHandler_X11::InputHandler_X11()
 	XWindowAttributes winAttrib;
 
 	XGetWindowAttributes( Dpy, Win, &winAttrib );
-	XSelectInput( Dpy, Win, winAttrib.your_event_mask | KeyPressMask | KeyReleaseMask );
+	// todo: add ButtonMotionMask, Button(1-5)MotionMask,
+	// (EnterWindowMask/LeaveWindowMask?) -aj
+	XSelectInput( Dpy, Win,
+		winAttrib.your_event_mask | KeyPressMask | KeyReleaseMask
+		| ButtonPressMask | ButtonReleaseMask
+		| PointerMotionMask
+	);
 }
 
 InputHandler_X11::~InputHandler_X11()
@@ -143,7 +156,7 @@ InputHandler_X11::~InputHandler_X11()
 	XWindowAttributes winAttrib;
 
 	XGetWindowAttributes( Dpy, Win, &winAttrib );
-	XSelectInput( Dpy, Win, winAttrib.your_event_mask & ~(KeyPressMask|KeyReleaseMask) );
+	XSelectInput( Dpy, Win, winAttrib.your_event_mask & ~(KeyPressMask|KeyReleaseMask|ButtonPressMask|ButtonReleaseMask|PointerMotionMask) );
 }
 
 void InputHandler_X11::Update()
@@ -158,12 +171,23 @@ void InputHandler_X11::Update()
 	DeviceButton lastDB = DeviceButton_Invalid;
 	lastEvent.type = 0;
 
-	while( XCheckWindowEvent(Dpy, Win, KeyPressMask | KeyReleaseMask, &event) )
+	// todo: add other masks? (like the ones for drag'n drop) -aj
+	while( XCheckWindowEvent(Dpy, Win,
+			KeyPressMask | KeyReleaseMask
+			| ButtonPressMask | ButtonReleaseMask | PointerMotionMask,
+			&event) )
 	{
-		const bool bPress = event.type == KeyPress;
+		const bool bKeyPress = event.type == KeyPress;
+		//const bool bMousePress = event.type == ButtonPress;
+
+		if( event.type == MotionNotify )
+		{
+			INPUTFILTER->UpdateCursorLocation(event.xbutton.x,event.xbutton.y);
+		}
+
 		if( lastEvent.type != 0 )
 		{
-			if( bPress && event.xkey.time == lastEvent.xkey.time &&
+			if( bKeyPress && event.xkey.time == lastEvent.xkey.time &&
 			    event.xkey.keycode == lastEvent.xkey.keycode )
 			{
 				// This is a repeat event so ignore it.
@@ -174,18 +198,28 @@ void InputHandler_X11::Update()
 			ButtonPressed( DeviceInput(DEVICE_KEYBOARD, lastDB, 0) );
 			lastEvent.type = 0;
 		}
+
 		// Why only the zero index?
 		lastDB = XSymToDeviceButton( XLookupKeysym(&event.xkey, 0) );
 		if( lastDB == DeviceButton_Invalid )
 			continue;
-		if( bPress )
+
+		if( bKeyPress )
 			ButtonPressed( DeviceInput(DEVICE_KEYBOARD, lastDB, 1) );
+		/*
+		else if( bMousePress )
+			
+		*/
 		else
 			lastEvent = event;
 	}
+
 	// Handle any last releases.
 	if( lastEvent.type != 0 )
+	{
 		ButtonPressed( DeviceInput(DEVICE_KEYBOARD, lastDB, 0) );
+	}
+
 	InputHandler::UpdateTimer();
 }
 
@@ -193,7 +227,10 @@ void InputHandler_X11::Update()
 void InputHandler_X11::GetDevicesAndDescriptions( vector<InputDeviceInfo>& vDevicesOut )
 {
 	if( Dpy && Win )
+	{
 		vDevicesOut.push_back( InputDeviceInfo(DEVICE_KEYBOARD,"Keyboard") );
+		//vDevicesOut.push_back( InputDeviceInfo(DEVICE_MOUSE,"Mouse") );
+	}
 }
 
 /*

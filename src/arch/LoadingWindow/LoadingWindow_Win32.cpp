@@ -16,7 +16,6 @@
 #include "ProductInfo.h"
 #include "LocalizedString.h"
 
-
 #include "RageSurfaceUtils_Zoom.h"
 static HBITMAP g_hBitmap = NULL;
 
