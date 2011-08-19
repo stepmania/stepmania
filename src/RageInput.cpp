@@ -66,7 +66,7 @@ void RageInput::LoadDrivers()
 
 	// If no input devices are loaded, the user won't be able to input anything.
 	if( apDevices.size() == 0 )
-		LOG->Warn( NO_INPUT_DEVICES_LOADED );
+		LOG->Warn( NO_INPUT_DEVICES_LOADED.GetValue() );
 }
 
 void RageInput::Update()
