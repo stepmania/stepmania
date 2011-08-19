@@ -103,7 +103,7 @@ void LuaDriver_InputModule::ButtonPressed( DeviceButton db, float level )
 	DeviceInput di( m_InputDevice, db, level );
 
 	/* If we're threaded, update the timestamp */
-	if( !m_bThreaded )
+	if( m_bThreaded )
 		di.ts.Touch();
 
 	InputHandler::ButtonPressed( di );

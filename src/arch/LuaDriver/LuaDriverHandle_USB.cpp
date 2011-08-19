@@ -413,7 +413,7 @@ public:
 
 		/* If we're getting data from the device, allocate a buffer
 		 * to store the incoming data, so we can pass it to Lua. */
-		bool bUsingBuffer = bmReqType & LIBUSB_ENDPOINT_OUT;
+		bool bUsingBuffer = (bmReqType & LIBUSB_ENDPOINT_IN);
 
 		if( bUsingBuffer )
 		{
