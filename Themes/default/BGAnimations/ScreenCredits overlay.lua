@@ -55,6 +55,10 @@ local contrib = {
 	"waiei", -- custom scoring fixes + Hybrid scoring
 }
 
+local translators = {
+	"John Reactor (Polish)",
+	}
+
 local thanks = {
 	"A Pseudonymous Coder", -- support
 	"Bill Shillito (DM Ashura)", -- Music (not yet though)
@@ -94,10 +98,13 @@ local sections = {
 	{ "sm-ssc Team", sm_ssc },
 	{ "StepMania Team", stepmania },
 	{ "Other Contributors", contrib },
+  { "Translators", translators },
 	{ "Special Thanks", thanks },
 	{ "Shoutouts", shoutout },
 	{ "Copyright", copyright },
 }
+
+
 
 -- To add people or sections modify the above.
 
