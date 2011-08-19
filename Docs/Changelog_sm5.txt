@@ -13,6 +13,8 @@ StepMania 5.0 Preview 3 | 2011081?
 * [RageInput] Added "No input devices were loaded." string to languages. [AJ]
 * [RageInputDevice] Added localized names for InputDeviceState. [AJ]
 * [Course] Add IsPlayableIn(StepsType) and IsRanking() Lua bindings. [AJ]
+* [Trail] Added GetTotalMeter(), GetLengthSeconds(), IsSecret()
+  and ContainsSong(song) Lua bindings. [AJ]
 
 2011/08/16
 ----------
