@@ -13,6 +13,8 @@ StepMania 5.0 Preview 3 | 2011081?
 * [Steps] Add PredictMeter() and GetDisplayBPMType() Lua bindings. [AJ]
 * [Song] Add ShowInDemonstrationAndRanking() Lua binding. [AJ]
 * Turn off Autogen by default. [shakesoda]
+* Disable automatic aspect ratio guessing, default to 854x480
+  (16:9 because most newer displays are wide). [shakesoda]
 
 2011/08/18
 ----------
