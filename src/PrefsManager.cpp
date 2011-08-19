@@ -146,7 +146,7 @@ bool g_bAutoRestart = false;
 void ValidateDisplayAspectRatio( float &val )
 {
 	if( val < 0 )
-		val = 4/3.f;
+		val = 16/9.f;
 }
 
 void ValidateSongsPerPlay( int &val )
@@ -162,9 +162,9 @@ PrefsManager::PrefsManager() :
 	m_sDefaultModifiers	( "DefaultModifiers",		"" ), 
 
 	m_bWindowed		( "Windowed",			true ),
-	m_iDisplayWidth		( "DisplayWidth",		640 ),
+	m_iDisplayWidth		( "DisplayWidth",		854 ),
 	m_iDisplayHeight	( "DisplayHeight",		480 ),
-	m_fDisplayAspectRatio	( "DisplayAspectRatio",		4/3.f, ValidateDisplayAspectRatio ),
+	m_fDisplayAspectRatio	( "DisplayAspectRatio",		16/9.f, ValidateDisplayAspectRatio ),
 	m_iDisplayColorDepth	( "DisplayColorDepth",		16 ),
 	m_iTextureColorDepth	( "TextureColorDepth",		16 ),
 	m_iMovieColorDepth	( "MovieColorDepth",		16 ),

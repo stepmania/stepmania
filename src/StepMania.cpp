@@ -87,19 +87,21 @@ void StepMania::GetPreferredVideoModeParams( VideoModeParams &paramsOut )
 	 * When windowed (no monitor stretching), we will tweak the width so that
 	 * we get square pixels.
 	 * -Chris */
+/*
+	// TODO: This is broken. Needs fix. -Colby
 	int iWidth = PREFSMAN->m_iDisplayWidth;
 	if( PREFSMAN->m_bWindowed )
 	{
-		//float fRatio = PREFSMAN->m_iDisplayWidth / PREFSMAN->m_iDisplayHeight;
-		//iWidth = PREFSMAN->m_iDisplayHeight * fRatio;
+//		float fRatio = PREFSMAN->m_iDisplayHeight ;
+//		iWidth = PREFSMAN->m_iDisplayHeight * fRatio;
 		iWidth = static_cast<int>(ceilf(PREFSMAN->m_iDisplayHeight * PREFSMAN->m_fDisplayAspectRatio));
 	}
-
+*/
 	// todo: allow for PRODUCT_ID + "-" + CommonMetrics::WINDOW_TITLE as
 	// a theme option (Midi requested it, AJ had the idea for making it optional)
 	paramsOut = VideoModeParams(
 		PREFSMAN->m_bWindowed,
-		iWidth,
+		PREFSMAN->m_iDisplayWidth,
 		PREFSMAN->m_iDisplayHeight,
 		PREFSMAN->m_iDisplayColorDepth,
 		PREFSMAN->m_iRefreshRate,
