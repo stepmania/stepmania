@@ -8,6 +8,11 @@ ________________________________________________________________________________
 StepMania 5.0 Preview 3 | 2011081?
 --------------------------------------------------------------------------------
 
+2011/08/18
+----------
+* [RageInput] Added "No input devices were loaded." string to languages. [AJ]
+* [RageInputDevice] Added localized names for InputDeviceState. [AJ]
+
 2011/08/16
 ----------
 * Added PrettyPercent(numerator,denominator) Lua binding. [AJ]
