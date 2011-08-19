@@ -15,6 +15,7 @@ StepMania 5.0 Preview 3 | 2011081?
 * Turn off Autogen by default. [shakesoda]
 * Disable automatic aspect ratio guessing, default to 854x480
   (16:9 because most newer displays are wide). [shakesoda]
+* Turn on FastLoad and FastLoadAdditionalSongs by default. [shakesoda]
 
 2011/08/18
 ----------
