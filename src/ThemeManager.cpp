@@ -1289,6 +1289,7 @@ public:
 		ADD_METHOD( GetPathB );
 		ADD_METHOD( GetPathS );
 		ADD_METHOD( GetPathO );
+		ADD_METHOD( RunLuaScripts );
 		ADD_METHOD( GetSelectableThemeNames );
 		ADD_METHOD( GetNumSelectableThemes );
 		ADD_METHOD( GetCurrentThemeDirectory );

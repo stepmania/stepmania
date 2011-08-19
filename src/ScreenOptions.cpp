@@ -1326,6 +1326,9 @@ public:
 			lua_pushnil( L );
 		return 1;
 	}
+	
+	//FSX's WIP code, don't touch
+	//static int SetOptio
 
 	LunaScreenOptions()
 	{

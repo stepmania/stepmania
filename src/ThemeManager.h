@@ -98,7 +98,7 @@ public:
 
 	static RString GetBlankGraphicPath();
 
-	//needs to be public for the binding to work
+	//needs to be public for its binding to work
 	void RunLuaScripts( const RString &sMask );
 	
 	// For self-registering metrics
