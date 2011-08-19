@@ -98,7 +98,7 @@ local sections = {
 	{ "sm-ssc Team", sm_ssc },
 	{ "StepMania Team", stepmania },
 	{ "Other Contributors", contrib },
-  { "Translators", translators },
+	{ "Translators", translators },
 	{ "Special Thanks", thanks },
 	{ "Shoutouts", shoutout },
 	{ "Copyright", copyright },
