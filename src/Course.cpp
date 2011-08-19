@@ -86,8 +86,6 @@ int CourseEntry::GetNumModChanges() const
 }
 
 
-
-
 Course::Course(): m_bIsAutogen(false), m_sPath(""), m_sMainTitle(""),
 	m_sMainTitleTranslit(""), m_sSubTitle(""), m_sSubTitleTranslit(""),
 	m_sScripter(""), m_sDescription(""), m_sBannerPath(""), m_sBackgroundPath(""),
@@ -1059,8 +1057,7 @@ public:
 
 LUA_REGISTER_CLASS( CourseEntry )
 
-// Not done with lua yet: still another class.
-
+// Now for the Course bindings:
 /** @brief Allow Lua to have access to the Course. */ 
 class LunaCourse: public Luna<Course>
 {
@@ -1109,11 +1106,18 @@ public:
 	}
 	DEFINE_METHOD( IsEndless,		IsEndless() )
 	DEFINE_METHOD( IsNonstop,		IsNonstop() )
-	DEFINE_METHOD( IsOni,		IsOni() )
-	DEFINE_METHOD( GetGoalSeconds,		m_fGoalSeconds )
+	DEFINE_METHOD( IsOni,			IsOni() )
+	DEFINE_METHOD( GetGoalSeconds,	m_fGoalSeconds )
 	static int HasBanner( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasBanner() ); return 1; }
-	static int HasBackground( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasBackground() ); return 1; }
+	static int HasBackground( T* p, lua_State *L )	{ lua_pushboolean(L, p->HasBackground() ); return 1; }
 	DEFINE_METHOD( IsAnEdit,		IsAnEdit() )
+	static int IsPlayableIn( T* p, lua_State *L )
+	{
+		StepsType st = Enum::Check<StepsType>(L, 1);
+		lua_pushboolean(L, p->IsPlayableIn( st ) );
+		return 1;
+	}
+	DEFINE_METHOD( IsRanking, IsRanking() )
 
 	LunaCourse()
 	{
@@ -1142,6 +1146,8 @@ public:
 		ADD_METHOD( HasBanner );
 		ADD_METHOD( HasBackground );
 		ADD_METHOD( IsAnEdit );
+		ADD_METHOD( IsPlayableIn );
+		ADD_METHOD( IsRanking );
 	}
 };
 
