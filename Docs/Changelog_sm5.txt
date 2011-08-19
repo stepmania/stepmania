@@ -8,6 +8,10 @@ ________________________________________________________________________________
 StepMania 5.0 Preview 3 | 2011081?
 --------------------------------------------------------------------------------
 
+2011/08/19
+----------
+* [Steps] Add PredictMeter() and GetDisplayBPMType() Lua bindings. [AJ]
+
 2011/08/18
 ----------
 * [RageInput] Added "No input devices were loaded." string to languages. [AJ]
