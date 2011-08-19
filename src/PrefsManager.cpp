@@ -183,8 +183,8 @@ PrefsManager::PrefsManager() :
 	m_bDelayedModelDelete	( "DelayedModelDelete",		false ),
 	m_BannerCache		( "BannerCache",		BNCACHE_LOW_RES_PRELOAD ),
 	//m_BackgroundCache		( "BackgroundCache",		BGCACHE_LOW_RES_PRELOAD ),
-	m_bFastLoad		( "FastLoad",			false ),
-	m_bFastLoadAdditionalSongs      ( "FastLoadAdditionalSongs",    false ),
+	m_bFastLoad		( "FastLoad",			true ),
+	m_bFastLoadAdditionalSongs      ( "FastLoadAdditionalSongs",    true ),
 
 	m_bOnlyDedicatedMenuButtons	( "OnlyDedicatedMenuButtons",	false ),
 	m_bMenuTimer		( "MenuTimer",			false ),
