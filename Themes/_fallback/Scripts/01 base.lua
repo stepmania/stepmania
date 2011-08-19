@@ -30,7 +30,7 @@ function dofile(file)
 	if not chunk then
 		error(err, 2)
 	end
-	return chunk
+        return chunk()
 end
 
 -- Like ipairs(), but returns only values.
