@@ -10,7 +10,7 @@ StepMania 5.0 Preview 3 | 20110820
 
 2011/08/20
 ----------
-* [CustomSpeedMods] Updated to v2.2; implements a m-Mod fix. [hanubeki]
+* [PlayerOptions] Add GetMMod() Lua binding. [AJ]
 
 2011/08/19
 ----------

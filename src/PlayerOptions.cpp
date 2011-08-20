@@ -913,6 +913,7 @@ public:
 			lua_pushnil(L);
 		return 1;
 	}
+	static int GetMMod( T *p, lua_State *L ) { lua_pushnumber(L, p->m_fMaxScrollBPM); return 1; }
 
 	// Accel
 	DEFINE_METHOD( GetBoost, m_fAccels[PlayerOptions::ACCEL_BOOST] )
@@ -1042,6 +1043,7 @@ public:
 		ADD_METHOD( GetNoAttacks );
 		ADD_METHOD( GetCMod );
 		ADD_METHOD( GetXMod );
+		ADD_METHOD( GetMMod );
 
 		// Accel
 		ADD_METHOD( GetBoost );
