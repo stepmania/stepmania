@@ -49,6 +49,7 @@ const char *CodeNames[] = {
 	"PrevGroup",
 	"SaveScreenshot1",
 	"SaveScreenshot2",
+	"CancelAllPlayerOptions",
 	"BackInEventMode",
 	"CloseCurrentFolder",
 };
