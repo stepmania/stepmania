@@ -40,12 +40,14 @@ local function PercentScore( pn )
 				SongOrCourse = GAMESTATE:GetCurrentSong()
 				StepsOrTrail = GAMESTATE:GetCurrentSteps(pn)
 			end;
-			local st = StepsOrTrail:GetStepsType();
-			local diff = StepsOrTrail:GetDifficulty();
-			local courseType = GAMESTATE:IsCourseMode() and SongOrCourse:GetCourseType() or nil;
-			local cd = GetCustomDifficulty(st, diff, courseType);
-			self:diffuse(CustomDifficultyToColor(cd));
-			self:shadowcolor(CustomDifficultyToDarkColor(cd));
+			if SongOrCourse and StepsOrTrail then
+				local st = StepsOrTrail:GetStepsType();
+				local diff = StepsOrTrail:GetDifficulty();
+				local courseType = GAMESTATE:IsCourseMode() and SongOrCourse:GetCourseType() or nil;
+				local cd = GetCustomDifficulty(st, diff, courseType);
+				self:diffuse(CustomDifficultyToColor(cd));
+				self:shadowcolor(CustomDifficultyToDarkColor(cd));
+			end
 
 			local pss = STATSMAN:GetPlayedStageStats(1):GetPlayerStageStats(pn);
 			if pss then
