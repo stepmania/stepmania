@@ -35,7 +35,7 @@
  * </li></ul>
  */
 #ifndef PRODUCT_VER_BARE
-#define PRODUCT_VER_BARE v5.0 Preview 2
+#define PRODUCT_VER_BARE v5.0 Preview 3
 #endif
 
 /**
@@ -43,15 +43,15 @@
  *
  * This is used in crash reports and in the network code's version handling.
  */
-#define PRODUCT_ID_VER_BARE PRODUCT_ID_BARE PRODUCT_VER_BARE
+#define PRODUCT_ID_VER_BARE PRODUCT_FAMILY_BARE PRODUCT_VER_BARE
 
 // These cannot be #undef'd so make them unlikely to conflict with anything
 #define PRODUCT_STRINGIFY(x) #x
 #define PRODUCT_XSTRINGIFY(x) PRODUCT_STRINGIFY(x)
 
 #define PRODUCT_FAMILY		PRODUCT_XSTRINGIFY(PRODUCT_FAMILY_BARE)
-#define PRODUCT_ID		PRODUCT_XSTRINGIFY(PRODUCT_ID_BARE)
-#define PRODUCT_VER		PRODUCT_XSTRINGIFY(PRODUCT_VER_BARE)
+#define PRODUCT_ID			PRODUCT_XSTRINGIFY(PRODUCT_ID_BARE)
+#define PRODUCT_VER			PRODUCT_XSTRINGIFY(PRODUCT_VER_BARE)
 #define PRODUCT_ID_VER		PRODUCT_XSTRINGIFY(PRODUCT_ID_VER_BARE)
 
 #define VIDEO_TROUBLESHOOTING_URL "http://www.stepmania.com/stepmaniawiki.php?title=Video_Driver_Troubleshooting"
