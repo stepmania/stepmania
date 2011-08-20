@@ -276,3 +276,154 @@ end
 function ComboUnderField()
 	return GetUserPrefB("UserPrefComboUnderField")
 end
+
+local CodeDetectorCodes = {
+	-- steps
+	PrevSteps1 = {
+		default = "Up,Up",
+		dance = "Up,Up",
+		pump = "UpLeft",
+	},
+	PrevSteps2 = {
+		default = "MenuUp,MenuUp",
+		dance = "MenuUp,MenuUp",
+		pump = "",
+	},
+	NextSteps1 = {
+		default = "Down,Down",
+		dance = "Down,Down",
+		pump = "UpRight",
+	},
+	NextSteps2 = {
+		default = "MenuDown,MenuDown",
+		dance = "MenuDown,MenuDown",
+		pump = "",
+	},
+	-- group
+	NextGroup = {
+		default = "",
+		dance = "MenuUp,MenuRight,MenuRight",
+		pump = "",
+	},
+	PrevGroup = {
+		default = "",
+		dance = "MenuUp,MenuDown,MenuUp,MenuDown",
+		pump = "",
+	},
+	CloseCurrentFolder = {
+		default = "MenuUp-MenuDown",
+	},
+	-- sorts
+	NextSort1 = {
+		default = "@MenuLeft-@MenuRight-Start",
+		dance = "@MenuLeft-@MenuRight-Start",
+		pump = "@MenuLeft-@MenuRight-Start",
+	},
+	NextSort2 = {
+		default = "MenuLeft-MenuRight",
+		dance = "MenuLeft-MenuRight",
+		pump = "MenuLeft-MenuRight",
+	},
+	NextSort3 = {
+		default = "",
+		dance = "@Left-@Right-Start",
+		pump = "@DownLeft-@DownRight-Start",
+	},
+	NextSort4 = {
+		default = "",
+		dance = "Left-Right",
+		pump = "DownLeft-DownRight",
+	},
+	-- modemenu
+	ModeMenu1 = {
+		default = "Up,Down,Up,Down",
+	},
+	ModeMenu2 = {
+		default = "MenuUp,MenuDown,MenuUp,MenuDown",
+	},
+	-- Evaluation:
+	SaveScreenshot1 = {
+		default = "MenuLeft-MenuRight",
+	},
+	SaveScreenshot2 = {
+		default = "Select",
+	},
+	-- modifiers section
+	CancelAll = {
+		default = "Left,Right,Left,Right,Left,Right,Left,Right",
+	},
+	--- specific modifiers
+	Mirror = {
+		default = "Up,Left,Right,Left,Right",
+		pump = "DownRight,DownLeft,UpRight,UpLeft,DownRight,DownLeft,UpRight,UpLeft,Center",
+	},
+	Left = {
+		default = "Up,Down,Right,Left",
+	},
+	Right = {
+		default = "Up,Down,Left,Right",
+	},
+	Shuffle = {
+		default = "Down,Up,Down,Up",
+		pump = "UpLeft,UpRight,UpLeft,UpRight,DownLeft,DownRight,DownLeft,DownRight,Center", -- random
+	},
+	SuperShuffle = {
+		default = "Down,Up,Left,Right",
+		pump = "UpLeft,UpRight,DownLeft,DownRight,UpLeft,UpRight,DownLeft,DownRight,Center"
+	},
+	Reverse = {
+		default = "Down,Left,Right,Left,Right",
+		pump = "UpLeft,DownLeft,UpRight,DownRight,UpLeft,DownLeft,UpRight,DownRight,DownRight", -- drop
+	},
+	HoldNotes = {
+		default = "Right,Left,Down,Up",
+	},
+	Mines = {
+		default = "",
+	},
+	Dark = {
+		default = "",
+	},
+	Hidden = {
+		default = "",
+		pump = "UpLeft,UpRight,DownLeft,DownRight,Center", -- vanish
+	},
+	RandomVanish = {
+		default = "",
+	},
+	-- boost (accel), brake (decel), stealth (nonstep)
+	--- next/prev modifiers
+	NextTransform = {
+		default = "",
+	},
+	NextScrollSpeed = {
+		default = "Up,Left,Down,Left,Up",
+		pump = "UpLeft,UpRight,UpLeft,UpRight,Center",
+	},
+	PreviousScrollSpeed = {
+		default = "Down,Right,Up,Right,Down",
+		pump = "UpRight,UpLeft,UpRight,UpLeft,Center",
+	},
+	NextAccel = {
+		default = "Left,Right,Down,Up",
+	},
+	NextEffect = {
+		default = "Left,Down,Right",
+	},
+	NextAppearance = {
+		default = "Left,Up,Right",
+	},
+	NextTurn = {
+		default = "",
+	},
+	-- cancel all in player options
+	CancelAllPlayerOptions = {
+		default = "Left,Right,Left,Right,Left,Right",
+	},
+};
+
+function GetCodeForGame(codeName)
+	local gameName = GAMESTATE:GetCurrentGame():GetName()
+	local inputCode = CodeDetectorCodes[codeName]
+	return inputCode[gameName] or inputCode["default"]
+end
