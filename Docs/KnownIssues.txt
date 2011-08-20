@@ -18,3 +18,4 @@ The following is a list of known issues with StepMania 5.
   does not seem to work at this time. Assistance may be needed here.
 * Hold/Roll heads seem to be draw under preceding taps when they
   shouldn't be all the time.
+* C-Mods have not been fully tested with all of the new segments yet.
