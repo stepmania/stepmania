@@ -1199,7 +1199,6 @@ RString DerefRedir( const RString &_path )
 			return sPath;
 
 		RString sNewFileName;
-		// todo: figure out how to make this UTF-8 safe. -aj
 		GetFileContents( sPath, sNewFileName, true );
 
 		// Empty is invalid.
@@ -1239,6 +1238,7 @@ bool GetFileContents( const RString &sPath, RString &sOut, bool bOneLine )
 		return false;
 	}
 
+	// todo: figure out how to make this UTF-8 safe. -aj
 	RString sData;
 	int iGot;
 	if( bOneLine )
