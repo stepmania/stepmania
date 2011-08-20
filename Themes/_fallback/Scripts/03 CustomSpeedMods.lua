@@ -1,8 +1,11 @@
 --[[
-Custom Speed Mods v2.1 (for StepMania 5)
+Custom Speed Mods v2.2 (for StepMania 5)
 by AJ Kelly of KKI Labs ( http://kki.ajworld.net/ )
 
 changelog:
+
+v2.2 (StepMania 5 Preview 3)
+* m-Mod bugfix from hanubeki.
 
 v2.1 (StepMania 5 Preview 2)
 * Added support for m-Mods.
@@ -267,8 +270,18 @@ function SpeedMods()
 
 		LoadSelections = function(self, list, pn)
 			local pMods = GAMESTATE:GetPlayerState(pn):GetPlayerOptionsString("ModsLevel_Preferred")
+
+			local isMMod = string.match(join(',',pMods), "m%d+")
+			if isMMod then
+				local mIndex = table.find(self.Choices, isMMod)
+				if mIndex then
+					list[mIndex] = true
+					return
+				end
+			end
+
 			for i = 1,table.getn(self.Choices) do
-				if string.find(pMods, self.Choices[i]) then
+				if table.find(pMods, self.Choices[i]) then
 					list[i] = true
 					return
 				end
