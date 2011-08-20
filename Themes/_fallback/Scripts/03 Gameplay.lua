@@ -277,12 +277,20 @@ function ComboUnderField()
 	return GetUserPrefB("UserPrefComboUnderField")
 end
 
+function TwoPartSelection()
+	return GAMESTATE:GetCurrentGame():GetName() == "pump" and true or false
+end
+
+function TwoPartConfirmsOnly()
+	return GAMESTATE:GetCurrentGame():GetName() == "pump" and true or false
+end
+
 local CodeDetectorCodes = {
 	-- steps
 	PrevSteps1 = {
-		default = "Up,Up",
+		default = "",
 		dance = "Up,Up",
-		pump = "UpLeft",
+		pump = "+UpLeft",
 	},
 	PrevSteps2 = {
 		default = "MenuUp,MenuUp",
@@ -290,9 +298,9 @@ local CodeDetectorCodes = {
 		pump = "",
 	},
 	NextSteps1 = {
-		default = "Down,Down",
+		default = "",
 		dance = "Down,Down",
-		pump = "UpRight",
+		pump = "+UpRight",
 	},
 	NextSteps2 = {
 		default = "MenuDown,MenuDown",
@@ -336,7 +344,8 @@ local CodeDetectorCodes = {
 	},
 	-- modemenu
 	ModeMenu1 = {
-		default = "Up,Down,Up,Down",
+		default = "",
+		dance = "Up,Down,Up,Down",
 	},
 	ModeMenu2 = {
 		default = "MenuUp,MenuDown,MenuUp,MenuDown",
@@ -350,33 +359,41 @@ local CodeDetectorCodes = {
 	},
 	-- modifiers section
 	CancelAll = {
-		default = "Left,Right,Left,Right,Left,Right,Left,Right",
+		default = "",
+		dance = "Left,Right,Left,Right,Left,Right,Left,Right",
 	},
 	--- specific modifiers
 	Mirror = {
-		default = "Up,Left,Right,Left,Right",
+		default = "",
+		dance = "Up,Left,Right,Left,Right",
 		pump = "DownRight,DownLeft,UpRight,UpLeft,DownRight,DownLeft,UpRight,UpLeft,Center",
 	},
 	Left = {
-		default = "Up,Down,Right,Left",
+		default = "",
+		dance = "Up,Down,Right,Left",
 	},
 	Right = {
-		default = "Up,Down,Left,Right",
+		default = "",
+		dance = "Up,Down,Left,Right",
 	},
 	Shuffle = {
-		default = "Down,Up,Down,Up",
+		default = "",
+		dance = "Down,Up,Down,Up",
 		pump = "UpLeft,UpRight,UpLeft,UpRight,DownLeft,DownRight,DownLeft,DownRight,Center", -- random
 	},
 	SuperShuffle = {
-		default = "Down,Up,Left,Right",
+		default = "",
+		dance = "Down,Up,Left,Right",
 		pump = "UpLeft,UpRight,DownLeft,DownRight,UpLeft,UpRight,DownLeft,DownRight,Center"
 	},
 	Reverse = {
-		default = "Down,Left,Right,Left,Right",
+		default = "",
+		dance = "Down,Left,Right,Left,Right",
 		pump = "UpLeft,DownLeft,UpRight,DownRight,UpLeft,DownLeft,UpRight,DownRight,DownRight", -- drop
 	},
 	HoldNotes = {
-		default = "Right,Left,Down,Up",
+		default = "",
+		dance = "Right,Left,Down,Up",
 	},
 	Mines = {
 		default = "",
@@ -397,33 +414,39 @@ local CodeDetectorCodes = {
 		default = "",
 	},
 	NextScrollSpeed = {
-		default = "Up,Left,Down,Left,Up",
+		default = "",
+		dance = "Up,Left,Down,Left,Up",
 		pump = "UpLeft,UpRight,UpLeft,UpRight,Center",
 	},
 	PreviousScrollSpeed = {
-		default = "Down,Right,Up,Right,Down",
+		default = "",
+		dance = "Down,Right,Up,Right,Down",
 		pump = "UpRight,UpLeft,UpRight,UpLeft,Center",
 	},
 	NextAccel = {
-		default = "Left,Right,Down,Up",
+		default = "",
+		dance = "Left,Right,Down,Up",
 	},
 	NextEffect = {
-		default = "Left,Down,Right",
+		default = "",
+		dance = "Left,Down,Right",
 	},
 	NextAppearance = {
-		default = "Left,Up,Right",
+		default = "",
+		dance = "Left,Up,Right",
 	},
 	NextTurn = {
 		default = "",
 	},
 	-- cancel all in player options
 	CancelAllPlayerOptions = {
-		default = "Left,Right,Left,Right,Left,Right",
+		default = "",
+		dance = "Left,Right,Left,Right,Left,Right",
 	},
 };
 
 function GetCodeForGame(codeName)
-	local gameName = GAMESTATE:GetCurrentGame():GetName()
+	local gameName = string.lower(GAMESTATE:GetCurrentGame():GetName())
 	local inputCode = CodeDetectorCodes[codeName]
 	return inputCode[gameName] or inputCode["default"]
 end
