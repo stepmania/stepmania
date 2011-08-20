@@ -32,10 +32,12 @@ local function PercentScore( pn )
 		BeginCommand=cmd(playcommand,"Set");
 		SetCommand=function(self)
 			-- todo: color by difficulty
-			local StepsOrTrail;
+			local SongOrCourse, StepsOrTrail;
 			if GAMESTATE:IsCourseMode() then
+				SongOrCourse = GAMESTATE:GetCurrentCourse()
 				StepsOrTrail = GAMESTATE:GetCurrentTrail(pn)
 			else
+				SongOrCourse = GAMESTATE:GetCurrentSong()
 				StepsOrTrail = GAMESTATE:GetCurrentSteps(pn)
 			end;
 			local st = StepsOrTrail:GetStepsType();
