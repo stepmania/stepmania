@@ -11,6 +11,7 @@ StepMania 5.0 Preview 3 | 20110820
 2011/08/20
 ----------
 * [PlayerOptions] Add GetMMod() Lua binding. [AJ]
+* [Player] Make keysounds respect volume preference. Fixes issue 344. [AJ]
 
 2011/08/19
 ----------
