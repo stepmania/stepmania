@@ -56,6 +56,9 @@ StepMania 5.0 Preview 3 | 20110820
 * [GameState] add GetExpandedSectionName() Lua binding. [AJ]
 * [ScreenSelectMusic] Added IdleCommentSeconds metric and
   "ScreenSelectMusic IdleComment" announcer sound. [AJ]
+* [NotesLoaderBMS] "Send the actual song file to LoadFromBMSFile in
+  BMSLoader::LoadNoteDataFromSimfile instead of the dummy one...
+  This fixes the wrong sound issue [423]..." [theDtTvB]
 
 2011/08/06
 ----------
