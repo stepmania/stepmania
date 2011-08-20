@@ -688,7 +688,7 @@ try_element_again:
 
 	RString sNewClassName, sNewFile;
 	FileNameToMetricsGroupAndElement(sNewFileName, sNewClassName, sNewFile);
-	
+
 	/* Important: We need to do a full search.  For example, BG redirs in
 	 * the default theme point to "_shared background", and themes override
 	 * just "_shared background"; the redirs in the default theme should end
