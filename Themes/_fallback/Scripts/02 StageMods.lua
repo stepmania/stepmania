@@ -1,21 +1,18 @@
 function AreStagePlayerModsForced()
-	local bExtraStage = GAMESTATE:IsAnExtraStage()
-	local bOni = GAMESTATE:GetPlayMode() == "PlayMode_Oni"
-	return bExtraStage or bOni
+	return GAMESTATE:IsAnExtraStage() or (GAMESTATE:GetPlayMode() == "PlayMode_Oni")
 end
 
 function AreStageSongModsForced()
-	local bExtraStage = GAMESTATE:IsAnExtraStage()
 	local pm = GAMESTATE:GetPlayMode()
 	local bOni = pm == "PlayMode_Oni"
 	local bBattle = pm == "PlayMode_Battle"
 	local bRave = pm == "PlayMode_Rave"
-	return bExtraStage or bOni or bBattle or bRave
+	return GAMESTATE:IsAnExtraStage() or bOni or bBattle or bRave
 end
 
 function SetFail()
 	local sFail = ""
-	
+
 	if GetGamePref("DefaultFail") then
 		sFail = string.format("Fail%s", GetGamePref("DefaultFail"))
 	else
@@ -23,11 +20,11 @@ function SetFail()
 	end
 
 	sFail = tostring(sFail)
-	
+
 	for pn in ivalues(GAMESTATE:GetHumanPlayers()) do
 		MESSAGEMAN:Broadcast( "PlayerOptionsChanged", {PlayerNumber = pn} )
 	end
-	
+
 	GAMESTATE:ApplyGameCommand( "mod," .. sFail)
 	MESSAGEMAN:Broadcast( "SongOptionsChanged" )
 end
@@ -35,12 +32,12 @@ end
 function ScreenSelectMusic:setupmusicstagemods()
 	Trace( "setupmusicstagemods" )
 	local pm = GAMESTATE:GetPlayMode()
-	
+
 	if pm == "PlayMode_Battle" or pm == "PlayMode_Rave" then
 		local so = GAMESTATE:GetDefaultSongOptions()
 		GAMESTATE:SetSongOptions( "ModsLevel_Stage", so )
 		MESSAGEMAN:Broadcast( "SongOptionsChanged" )
-	elseif GAMESTATE:IsAnExtraStage() then		
+	elseif GAMESTATE:IsAnExtraStage() then
 		if GAMESTATE:GetPreferredSongGroup() == "---Group All---" then
 			local song = GAMESTATE:GetCurrentSong()
 			GAMESTATE:SetPreferredSongGroup( song:GetGroupName() )
@@ -57,7 +54,7 @@ function ScreenSelectMusic:setupmusicstagemods()
 			po = THEME:GetMetric("SongManager","ExtraStagePlayerModifiers")
 			so = THEME:GetMetric("SongManager","ExtraStageStageModifiers")
 		end
-		
+
 		local difficulty = steps:GetDifficulty()
 		local Reverse = PlayerNumber:Reverse()
 
@@ -96,7 +93,6 @@ function ScreenSelectMusic:setupcoursestagemods()
 	end
 end
 
--- 
 -- (c) 2006-2007 Steve Checkoway
 -- All rights reserved.
 -- 

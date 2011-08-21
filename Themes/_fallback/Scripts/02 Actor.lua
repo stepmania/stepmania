@@ -197,6 +197,24 @@ function Actor:bezier(...)
    self:tween(a[2], "TweenMode_Bezier", b)
 end	 
 
+-- formerly in 02 HelpDisplay.lua, although nothing uses it:
+function HelpDisplay:setfromsongorcourse()
+	local Artists = {}
+	local AltArtists = {}
+
+	local Song = GAMESTATE:GetCurrentSong()
+	local Trail = GAMESTATE:GetCurrentTrail( GAMESTATE:GetMasterPlayerNumber() )
+	if Song then
+		table.insert( Artists, Song:GetDisplayArtist() )
+		table.insert( AltArtists, Song:GetTranslitArtist() )
+	elseif Trail then
+		Artists, AltArtists = Trail:GetArtists()
+	end
+
+	self:settips( Artists, AltArtists )
+end
+
+
 -- (c) 2006 Glenn Maynard
 -- All rights reserved.
 --
@@ -219,4 +237,3 @@ end
 -- OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
 -- OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
 -- PERFORMANCE OF THIS SOFTWARE.
-

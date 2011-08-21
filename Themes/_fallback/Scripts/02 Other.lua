@@ -1,6 +1,7 @@
 local g_metrics_group = nil;
 local g_element = nil;
 
+-- legacy:
 SSC = (ProductID() == "sm-ssc");
 
 function LoadFallbackB()
@@ -93,7 +94,7 @@ end
 function GetCoursesToShowRanking()
 	local CoursesToShowRanking = PREFSMAN:GetPreference("CoursesToShowRanking")
 	if CoursesToShowRanking ~= "" then return CoursesToShowRanking end
-	return "Courses/Default/MostPlayed_01-04.crs,Courses/Default/MostPlayed_05-08.crs,Courses/Default/MostPlayed_09-12.crs"
+	return "Courses/Default/MostPlayed_01-04.crs,Courses/Default/ChallengingRandom5.crs,Courses/Default/Jupiter.crs"
 end
 
 -- Get a metric from the currently-loading screen.  This is only valid while loading
@@ -118,13 +119,13 @@ function TextBannerAfterSet(self,param)
 		Title:maxwidth(208)
 		Title:y(0)
 		Title:zoom(1)
-		
+
 		Subtitle:visible(false)
 	else
 		Title:zoom(1)
 		Title:y(-6)
 		Title:zoom(0.9)
-		
+
 		-- subtitle below title
 		Subtitle:visible(true)
 		Subtitle:zoom(0.6)
@@ -154,4 +155,3 @@ end
 -- OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
 -- OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
 -- PERFORMANCE OF THIS SOFTWARE.
-
