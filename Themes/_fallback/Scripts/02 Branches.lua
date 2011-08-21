@@ -185,6 +185,8 @@ Branch = {
 	AfterEvaluation = function()
 		if GAMESTATE:GetSmallestNumStagesLeftForAnyHumanPlayer() >= 1 then
 			return "ScreenProfileSave"
+		elseif STATSMAN:GetCurStageStats():AllFailed() then
+			return "ScreenProfileSaveSummary"
 		else
 			return "ScreenEvaluationSummary"
 		end

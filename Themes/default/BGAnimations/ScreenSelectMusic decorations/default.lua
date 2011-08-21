@@ -242,4 +242,14 @@ t[#t+1] = StandardDecorationFromFileOptional("SongOptions","SongOptionsText") ..
 	ShowEnteringOptionsCommand=THEME:GetMetric(Var "LoadingScreen","SongOptionsEnterCommand");
 	HidePressStartForOptionsCommand=THEME:GetMetric(Var "LoadingScreen","SongOptionsHideCommand");
 };
+-- Sounds
+t[#t+1] = Def.ActorFrame {
+	LoadActor(THEME:GetPathS("_switch","up")) .. {
+		SelectMenuOpenedMessageCommand=cmd(stop;play);
+	};
+	LoadActor(THEME:GetPathS("_switch","down")) .. {
+		SelectMenuClosedMessageCommand=cmd(stop;play);
+	};
+};
+
 return t
