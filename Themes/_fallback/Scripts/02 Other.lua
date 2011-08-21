@@ -2,7 +2,7 @@ local g_metrics_group = nil;
 local g_element = nil;
 
 -- legacy:
-SSC = (ProductID() == "sm-ssc");
+SSC = true;
 
 function LoadFallbackB()
 	-- Load the fallback BGA for the element that is currently being loaded.
