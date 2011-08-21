@@ -32,9 +32,7 @@ function IsRoutine()
 end
 
 Branch = {
-	Init = function()
-		return "ScreenInit"
-	end,
+	Init = function() return "ScreenInit" end,
 	AfterInit = function()
 		if GAMESTATE:GetCoinMode() == 'CoinMode_Home' then
 			return Branch.TitleMenu()
