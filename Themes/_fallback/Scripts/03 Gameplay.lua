@@ -62,8 +62,7 @@ function ScoreKeeperClass()
 		techno = "ScoreKeeperNormal",
 		ez2 = "ScoreKeeperNormal",
 		ds3ddx = "ScoreKeeperNormal",
-		maniax = "ScoreKeeperNormal",
-		guitar = "ScoreKeeperGuitar"
+		maniax = "ScoreKeeperNormal"
 	}
 	return ScoreKeepers[sGame]
 end
@@ -117,8 +116,7 @@ function HitCombo()
 		pump = 4,
 		beat = 2,
 		kb7 = 2,
-		para = 2,
-		guitar = 2
+		para = 2
 	}
 	return Combo[sGame]
 end
@@ -130,8 +128,7 @@ function MissCombo()
 		pump = 4,
 		beat = 0,
 		kb7 = 0,
-		para = 0,
-		guitar = 0
+		para = 0
 	}
 	return Combo[sGame]
 end
@@ -145,8 +142,7 @@ function FailCombo()
 		pump = 51, -- Pump Pro uses 30, real Pump uses 51
 		beat = -1,
 		kb7 = -1,
-		para = -1,
-		guitar = -1
+		para = -1
 	}
 	return Combo[sGame]
 end
@@ -158,8 +154,7 @@ function RoutineSkinP1()
 		pump = "cmd-routine-p1",
 		beat = "default",
 		kb7 = "default",
-		para = "default",
-		guitar = "default"
+		para = "default"
 	}
 	return Combo[sGame]
 end
@@ -171,8 +166,7 @@ function RoutineSkinP2()
 		pump = "cmd-routine-p2",
 		beat = "default",
 		kb7 = "retrobar",
-		para = "default",
-		guitar = "default"
+		para = "default"
 	}
 	return Combo[sGame]
 end
@@ -187,43 +181,23 @@ function HoldTiming()
 end
 
 function ShowHoldJudgments()
-	if GAMESTATE:GetCurrentGame():GetName() == "pump" then
-		return false
-	else
-		return true
-	end
+	return not GAMESTATE:GetCurrentGame():GetName() == "pump"
 end
 
 function HoldHeadStep()
-	if GAMESTATE:GetCurrentGame():GetName() == "pump" then
-		return false
-	else
-		return true
-	end
+	return not GAMESTATE:GetCurrentGame():GetName() == "pump"
 end
 
 function InitialHoldLife()
-	if GAMESTATE:GetCurrentGame():GetName() == "pump" then
-		return 0.05
-	else
-		return 1
-	end
+	return GAMESTATE:GetCurrentGame():GetName() == "pump" and 0.05 or 1
 end
 
 function MaxHoldLife()
-	if GAMESTATE:GetCurrentGame():GetName() == "pump" then
-		return 0.05
-	else
-		return 1
-	end
+	return GAMESTATE:GetCurrentGame():GetName() == "pump" and 0.05 or 1
 end
 
 function ImmediateHoldLetGo()
-	if GAMESTATE:GetCurrentGame():GetName() == "pump" then
-		return false
-	else
-		return true
-	end
+	return not GAMESTATE:GetCurrentGame():GetName() == "pump"
 end
 
 function RollBodyIncrementsCombo()
@@ -236,32 +210,18 @@ function RollBodyIncrementsCombo()
 end
 
 function CheckpointsTapsSeparateJudgment()
-	if GAMESTATE:GetCurrentGame():GetName() == "pump" then
-		return false
-	else
-		return true
-	end
+	return not GAMESTATE:GetCurrentGame():GetName() == "pump"
 end
 
 function ScoreMissedHoldsAndRolls()
-	if GAMESTATE:GetCurrentGame():GetName() == "pump" then
-		return false
-	else
-		return true
-	end
+	return not GAMESTATE:GetCurrentGame():GetName() == "pump"
 end
 
 local tNotePositions = {
 	-- StepMania 3.9/4.0
-	Normal = {
-		-144,
-		144,
-	},
+	Normal = { -144, 144, },
 	-- ITG
-	Lower = {
-		-125,
-		145,
-	}
+	Lower = { -125, 145, }
 }
 
 function GetTapPosition( sType )
@@ -278,11 +238,11 @@ function ComboUnderField()
 end
 
 function TwoPartSelection()
-	return GAMESTATE:GetCurrentGame():GetName() == "pump" and true or false
+	return GAMESTATE:GetCurrentGame():GetName() == "pump"
 end
 
 function TwoPartConfirmsOnly()
-	return GAMESTATE:GetCurrentGame():GetName() == "pump" and true or false
+	return GAMESTATE:GetCurrentGame():GetName() == "pump"
 end
 
 local CodeDetectorCodes = {
