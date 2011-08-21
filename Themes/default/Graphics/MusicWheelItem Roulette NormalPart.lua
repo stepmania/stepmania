@@ -3,6 +3,6 @@ return Def.ActorFrame {
 		InitCommand=cmd(glow,color('1,1,1,0.25'));
 	};
 	LoadActor(THEME:GetPathG("MusicWheelItem","Course NormalPart")) .. {
-		InitCommand=cmd(blend,Blend.Add;rainbow;diffusesalpha,0.325);
+		InitCommand=cmd(blend,Blend.Add;rainbow;diffusealpha,0.325);
 	};
 };
