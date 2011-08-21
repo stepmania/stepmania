@@ -81,12 +81,8 @@ Branch = {
 	end,
 	AfterSelectProfile = function()
 		if ( THEME:GetMetric("Common","AutoSetStyle") == true ) then
-			if IsNetConnected() then
-				-- use SelectStyle in online...
-				return "ScreenSelectStyle"
-			else
-				return "ScreenSelectPlayMode"
-			end
+			-- use SelectStyle in online...
+			return IsNetConnected() and "ScreenSelectStyle" or "ScreenSelectPlayMode"
 		else
 			return "ScreenSelectStyle"
 		end
@@ -105,11 +101,7 @@ Branch = {
 		return "ScreenSelectPlayMode"
 	end,
 	AfterSelectStyle = function()
-		if CHARMAN:GetAllCharacters() ~= nil then
-			return "ScreenSelectCharacter"
-		else
-			return "ScreenGameInformation"
-		end
+		return CHARMAN:GetAllCharacters() ~= nil and "ScreenSelectCharacter" or "ScreenGameInformation"
 	end,
 	AfterProfileSave = function()
 		-- Might be a little too broken? -- Midiman
@@ -166,10 +158,7 @@ Branch = {
 		end
 	end,
 	GameplayScreen = function()
-		if IsRoutine() then
-			return "ScreenGameplayShared"
-		end
-		return "ScreenGameplay"
+		return IsRoutine() and "ScreenGameplayShared" or "ScreenGameplay"
 	end,
 	AfterGameplay = function()
 		-- pick an evaluation screen based on settings.
