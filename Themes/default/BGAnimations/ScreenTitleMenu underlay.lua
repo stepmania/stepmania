@@ -8,7 +8,7 @@ t[#t+1] = StandardDecorationFromFileOptional("LifeDifficulty","LifeDifficulty");
 t[#t+1] = StandardDecorationFromFileOptional("TimingDifficulty","TimingDifficulty");
 t[#t+1] = StandardDecorationFromFileOptional("NetworkStatus","NetworkStatus");
 t[#t+1] = StandardDecorationFromFileOptional("SystemDirection","SystemDirection");
---
+
 t[#t+1] = StandardDecorationFromFileOptional("NumSongs","NumSongs") .. {
 	SetCommand=function(self)
 		local InstalledSongs, AdditionalSongs, InstalledCourses, AdditionalCourses, Groups, Unlocked = 0;
@@ -23,8 +23,8 @@ t[#t+1] = StandardDecorationFromFileOptional("NumSongs","NumSongs") .. {
 		else
 			return
 		end
-		
-		self:settextf("%i Songs (%i Groups), %i Courses", InstalledSongs, Groups, InstalledCourses);
+
+		self:settextf(THEME:GetString("ScreenTitleMenu","%i Songs (%i Groups), %i Courses"), InstalledSongs, Groups, InstalledCourses);
 -- 		self:settextf("%i (+%i) Songs (%i Groups), %i (+%i) Courses", InstalledSongs, AdditionalSongs, Groups, InstalledCourses, AdditionalCourses);
 	end;
 };

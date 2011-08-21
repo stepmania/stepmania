@@ -1,3 +1,3 @@
 return LoadFont("Common Normal") .. {
-	Text="NEW!";
+	Text=THEME:GetString("ScreenSelectMusic","NEW!");
 };

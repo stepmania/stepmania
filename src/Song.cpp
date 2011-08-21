@@ -41,7 +41,7 @@
  * @brief The internal version of the cache for StepMania.
  *
  * Increment this value to invalidate the current cache. */
-const int FILE_CACHE_VERSION = 201;
+const int FILE_CACHE_VERSION = 202;
 
 /** @brief How long does a song sample last by default? */
 const float DEFAULT_MUSIC_SAMPLE_LENGTH = 12.f;
@@ -1668,7 +1668,7 @@ public:
 		lua_pushboolean(L, p->IsTutorial());
 		return 1;
 	}
-	static int IsEnabled( T* p, lua_State *L )	
+	static int IsEnabled( T* p, lua_State *L )
 	{
 		lua_pushboolean(L, p->GetEnabled());
 		return 1;
@@ -1783,6 +1783,11 @@ public:
 		lua_pushboolean(L, p->NormallyDisplayed());
 		return 1;
 	}
+	static int ShowInDemonstrationAndRanking( T* p, lua_State *L )
+	{
+		lua_pushboolean(L, p->ShowInDemonstrationAndRanking());
+		return 1;
+	}
 	static int GetFirstSecond(T* p, lua_State *L)
 	{
 		lua_pushnumber(L, p->GetFirstSecond());
@@ -1891,6 +1896,7 @@ public:
 		ADD_METHOD( IsDisplayBpmSecret );
 		ADD_METHOD( IsDisplayBpmConstant );
 		ADD_METHOD( IsDisplayBpmRandom );
+		ADD_METHOD( ShowInDemonstrationAndRanking );
 	}   
 };
 

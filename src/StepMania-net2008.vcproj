@@ -294,7 +294,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386 &quot;$(intdir)\verstub.obj&quot;"
-				AdditionalDependencies="shell32.lib gdi32.lib user32.lib ole32.lib advapi32.lib Comctl32.lib ffmpeg/modern_working/lib/avcodec.lib ffmpeg/lib/avformat.lib ffmpeg/lib/avutil.lib ffmpeg/lib/swscale.lib"
+				AdditionalDependencies="shell32.lib gdi32.lib user32.lib ole32.lib advapi32.lib Comctl32.lib ffmpeg/modern_working/lib/avcodec.lib ffmpeg/modern_working/lib/avformat.lib ffmpeg/modern_working/lib/avutil.lib ffmpeg/modern_working/lib/swscale.lib"
 				OutputFile="../Program/StepMania-fastdebug.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"

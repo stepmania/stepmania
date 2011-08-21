@@ -4,9 +4,9 @@ function Serialize(t)
 	local queue = { }
 	local already_queued = { }
 
-	-- Convert a value to an identifier.  If we encounter a table that we've never seen before,
-	-- it's an anonymous table and we'll create a name for it; for example, in t = { [ {10} ] = 1 },
-	-- "{10}" has no name.
+	-- Convert a value to an identifier. If we encounter a table that we've
+	-- never seen before, it's an anonymous table and we'll create a name for it;
+	-- for example, in t = { [ {10} ] = 1 }, "{10}" has no name.
 	local next_id = 1
 	local function convert_to_identifier( v, name )
 		-- print("convert_to_identifier: " .. (name or "nil"))
@@ -24,7 +24,7 @@ function Serialize(t)
 				return already_queued[v]
 			end
 
-			-- Create the table.  If we have no name, give it one; be sure to make it local.
+			-- Create the table. If we have no name, give it one; be sure to make it local.
 			if not name then
 				name = "tab" .. next_id
 				next_id = next_id + 1

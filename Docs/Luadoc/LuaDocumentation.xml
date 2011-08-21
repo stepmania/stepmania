@@ -1582,6 +1582,9 @@
 	<Function name='GetCourseType' renamed='true' return='CourseType' arguments=''>
 		Returns the Course's <Link class='ENUM' function='CourseType' />. (Returns CourseType in sm-ssc; integer in SM4)
 	</Function>
+	<Function name='GetDescription' return='string' arguments=''>
+		Returns the description for this Course.
+	</Function>
 	<Function name='GetDisplayFullTitle' return='string' arguments=''>
 		Returns the full display title of the Course.
 	</Function>
@@ -1632,6 +1635,12 @@
 	</Function>
 	<Function name='IsOni' return='bool' arguments=''>
 		Returns <code>true</code> if the Course is Oni.
+	</Function>
+	<Function name='IsPlayableIn' return='bool' arguments='StepsType st'>
+		Returns <code>true</code> if the Course is playable in StepsType <code>st</code>.
+	</Function>
+	<Function name='IsRanking' return='bool' arguments=''>
+		Returns <code>true</code> if the Course is a ranking course.
 	</Function>
 </Class>
 <Class name='CourseContentsList'>
@@ -1784,7 +1793,7 @@
 	</Function>
 	<Function name='GetPlayerBalance' return='float' arguments='PlayerNumber pn'>
 		<!-- XXX: Presumably, 0 is all the way to the left, and 1 is all the way
-		          to the right. -->
+				  to the right. -->
 		Return the sound balance for <code>pn</code>.
 	</Function>
 	<Function name='PlayAnnouncer' return='void' arguments='string sPath'>
@@ -1891,6 +1900,9 @@
 	<Function name='GetEditSourceSteps' return='Steps' arguments=''>
 		Return the source <Link class='Steps' /> for the editor or <code>nil</code>
 		if it does not exist.
+	</Function>
+	<Function name='GetExpandedSectionName' return='String' arguments=''>
+		Returns the name of the currently expanded section.
 	</Function>
 	<Function name='GetGameSeed' return='int' arguments=''>
 		Return the random seed for the game.
@@ -3437,7 +3449,10 @@
 		Returns the length of the song in seconds.
 	</Function>
 	<Function name='NormallyDisplayed' return='bool' arguments=''>
-		Returns true if the song is normally displayed.
+		Returns <code>true</code> if the song is normally displayed.
+	</Function>
+	<Function name='ShowInDemonstrationAndRanking' return='bool' arguments=''>
+		Returns <code>true</code> if the song is shown in Demonstration and Ranking.
 	</Function>
 </Class>
 <Class name='SongManager'>
@@ -3713,6 +3728,12 @@
 	<Function name='GetDifficulty' return='Difficulty' arguments=''>
 		Returns the Steps difficulty.
 	</Function>
+	<Function name='GetDisplayBpms' return='{float}' arguments=''>
+		Returns a table with the minimum and maximum values from the DisplayBPM.
+	</Function>
+	<Function name='GetDisplayBPMType' return='DisplayBPM' arguments=''>
+		Returns the DisplayBPM type.
+	</Function>
 	<Function name='GetFilename' return='string' arguments=''>
 		Returns the Steps filename from the Cache.
 	</Function>
@@ -3725,9 +3746,9 @@
 	<Function name='HasAttacks' return='bool' arguments=''>
 		Returns <code>true</code> if the Steps has any attacks.
 	</Function>
-        <Function name='HasSignificantTimingChanges' return='bool' arguments=''>
-        	Returns <code>true</code> if the Steps pattern has significant timing changes.
-        </Function>
+	<Function name='HasSignificantTimingChanges' return='bool' arguments=''>
+		Returns <code>true</code> if the Steps pattern has significant timing changes.
+	</Function>
 	<Function name='GetRadarValues' return='RadarValues' arguments='PlayerNumber pn'>
 		Returns the complete list of RadarValues for player <code>pn</code>. Use <Link class='RadarValues' function='GetValue' /> to grab a specific value.
 	</Function>
@@ -3745,6 +3766,18 @@
 	</Function>
 	<Function name='IsAutogen' return='bool' arguments=''>
 		Returns <code>true</code> if the steps were automatically generated.
+	</Function>
+	<Function name='IsDisplayBpmConstant' return='' arguments=''>
+		Returns <code>true</code> if the DisplayBPM is constant.
+	</Function>
+	<Function name='IsDisplayBpmRandom' return='' arguments=''>
+		Returns <code>true</code> if the DisplayBPM is random.
+	</Function>
+	<Function name='IsDisplayBpmSecret' return='' arguments=''>
+		Returns <code>true</code> if the DisplayBPM is secret.
+	</Function>
+	<Function name='PredictMeter' return='float' arguments=''>
+		Returns the predicted meter for this Step.
 	</Function>
 	<Function name='UsesSplitTiming' return='bool'  arguments=''>
 		Returns <code>true</code> if the Steps use different <code>TimingData</code> from the Song.
@@ -3841,6 +3874,9 @@
 	<Function name='ReloadMetrics' return='void' arguments=''>
 		Reloads the current theme's metrics.
 	</Function>
+	<Function name='RunLuaScripts' return='void' arguments='string s'>
+		
+	</Function>
 </Class>
 <Class name='TimingData'>
 	<Function name='GetActualBPM' return='{float}' arguments=''>
@@ -3894,6 +3930,9 @@
 	<Function name='HasBPMChanges' return='bool' arguments=''>
 		Returns <code>true</code> if the TimingData contains BPM changes.
 	</Function>
+	<Function name='HasDelays' return='bool' arguments=''>
+		Returns <code>true</code> if the TimingData contains delays.
+	</Function>
 	<Function name='HasNegativeBPMs' return='bool' arguments=''>
 		Returns <code>true</code> if the TimingData contains any BPM changes with a negative BPM.
 	</Function>
@@ -3903,9 +3942,9 @@
 	<Function name='HasWarps' return='bool' arguments=''>
 		Returns <code>true</code> if the TimingData contains warps.
 	</Function>
-        <Function name='HasFakes' return='bool' arguments=''>
-               returns <code>true</code> if the TimingData contains fake segments.
-        </Function>
+	<Function name='HasFakes' return='bool' arguments=''>
+		returns <code>true</code> if the TimingData contains fake segments.
+	</Function>
 	<Function name='HasSpeedChanges' return='bool' arguments=''>
 		Returns <code>true</code> if the TimingData contains speed scrolling changes.
 	</Function>
@@ -3914,11 +3953,17 @@
 	</Function>
 </Class>
 <Class name='Trail'>
+	<Function name='ContainsSong' return='bool' arguments='Song s'>
+		Returns <code>true</code> if song <code>s</code> is in the Trail.
+	</Function>
 	<Function name='GetArtists' return='{string}' arguments=''>
 		Returns an array with all the artists in the Trail.
 	</Function>
 	<Function name='GetDifficulty' return='Difficulty' arguments=''>
 		Returns the Trail's difficulty.
+	</Function>
+	<Function name='GetLengthSeconds' return='float' arguments=''>
+		Returns the length of this Trail in seconds.
 	</Function>
 	<Function name='GetTrailEntries' return='{TrailEntry}' arguments=''>
 		Returns a table of TrailEntry items.
@@ -3932,8 +3977,14 @@
 	<Function name='GetStepsType' return='StepsType' arguments=''>
 		Returns the Trail's StepsType.
 	</Function>
+	<Function name='GetTotalMeter' return='int' arguments=''>
+		Returns the Trail's total meter
+	</Function>
 	<Function name='GetTrailEntry' return='TrailEntry' arguments='int iEntry'>
 		Returns the TrailEntry at index <code>iEntry</code>.
+	</Function>
+	<Function name='IsSecret' return='bool' arguments=''>
+		Returns <code>true</code> if any of the Trail entries are secret.
 	</Function>
 </Class>
 <Class name='TrailEntry'>

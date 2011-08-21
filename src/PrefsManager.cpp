@@ -146,7 +146,7 @@ bool g_bAutoRestart = false;
 void ValidateDisplayAspectRatio( float &val )
 {
 	if( val < 0 )
-		val = 4/3.f;
+		val = 16/9.f;
 }
 
 void ValidateSongsPerPlay( int &val )
@@ -162,9 +162,9 @@ PrefsManager::PrefsManager() :
 	m_sDefaultModifiers	( "DefaultModifiers",		"" ), 
 
 	m_bWindowed		( "Windowed",			true ),
-	m_iDisplayWidth		( "DisplayWidth",		640 ),
+	m_iDisplayWidth		( "DisplayWidth",		854 ),
 	m_iDisplayHeight	( "DisplayHeight",		480 ),
-	m_fDisplayAspectRatio	( "DisplayAspectRatio",		4/3.f, ValidateDisplayAspectRatio ),
+	m_fDisplayAspectRatio	( "DisplayAspectRatio",		16/9.f, ValidateDisplayAspectRatio ),
 	m_iDisplayColorDepth	( "DisplayColorDepth",		16 ),
 	m_iTextureColorDepth	( "TextureColorDepth",		16 ),
 	m_iMovieColorDepth	( "MovieColorDepth",		16 ),
@@ -183,8 +183,8 @@ PrefsManager::PrefsManager() :
 	m_bDelayedModelDelete	( "DelayedModelDelete",		false ),
 	m_BannerCache		( "BannerCache",		BNCACHE_LOW_RES_PRELOAD ),
 	//m_BackgroundCache		( "BackgroundCache",		BGCACHE_LOW_RES_PRELOAD ),
-	m_bFastLoad		( "FastLoad",			false ),
-	m_bFastLoadAdditionalSongs      ( "FastLoadAdditionalSongs",    false ),
+	m_bFastLoad		( "FastLoad",			true ),
+	m_bFastLoadAdditionalSongs      ( "FastLoadAdditionalSongs",    true ),
 
 	m_bOnlyDedicatedMenuButtons	( "OnlyDedicatedMenuButtons",	false ),
 	m_bMenuTimer		( "MenuTimer",			false ),
@@ -217,7 +217,7 @@ PrefsManager::PrefsManager() :
 	m_fMinPercentageForMachineSongHighScore		( "MinPercentageForMachineSongHighScore",	0.0001f ), // This is for home, who cares how bad you do?
 	m_fMinPercentageForMachineCourseHighScore	( "MinPercentageForMachineCourseHighScore",	0.0001f ),	// don't save course scores with 0 percentage
 	m_bDisqualification		( "Disqualification",			false ),
-	m_bAutogenSteps			( "AutogenSteps",			true ),
+	m_bAutogenSteps			( "AutogenSteps",			false ),
 	m_bAutogenGroupCourses		( "AutogenGroupCourses",		true ),
 	m_bOnlyPreferredDifficulties ( "OnlyPreferredDifficulties", false ),
 	m_bBreakComboToGetItem		( "BreakComboToGetItem",		false ),

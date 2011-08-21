@@ -623,81 +623,120 @@ bool SSCLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 				
 				else if( sValueName=="BPMS" )
 				{
-					if( SMLoader::ProcessBPMs(stepsTiming, sParams[1]) )
-						bHasOwnTiming = true;
+					if (out.m_fVersion >= VERSION_SPLIT_TIMING)
+					{
+						if( SMLoader::ProcessBPMs(stepsTiming, sParams[1]) )
+							bHasOwnTiming = true;
+					}
 				}
 				
 				else if( sValueName=="STOPS" )
 				{
-					SMLoader::ProcessStops(stepsTiming, sParams[1]);
-					bHasOwnTiming = true;
+					if (out.m_fVersion >= VERSION_SPLIT_TIMING)
+					{
+						SMLoader::ProcessStops(stepsTiming, sParams[1]);
+						bHasOwnTiming = true;
+					}
 				}
 				
 				else if( sValueName=="DELAYS" )
 				{
-					SMLoader::ProcessDelays(stepsTiming, sParams[1]);
-					bHasOwnTiming = true;
+					if (out.m_fVersion >= VERSION_SPLIT_TIMING)
+					{
+						SMLoader::ProcessDelays(stepsTiming, sParams[1]);
+						bHasOwnTiming = true;
+					}
 				}
 				
 				else if( sValueName=="TIMESIGNATURES" )
 				{
-					SMLoader::ProcessTimeSignatures(stepsTiming, sParams[1]);
-					bHasOwnTiming = true;
+					if (out.m_fVersion >= VERSION_SPLIT_TIMING)
+					{
+						SMLoader::ProcessTimeSignatures(stepsTiming, sParams[1]);
+						bHasOwnTiming = true;
+					}
 				}
 				
 				else if( sValueName=="TICKCOUNTS" )
 				{
-					SMLoader::ProcessTickcounts(stepsTiming, sParams[1]);
-					bHasOwnTiming = true;
+					if (out.m_fVersion >= VERSION_SPLIT_TIMING)
+					{
+						SMLoader::ProcessTickcounts(stepsTiming, sParams[1]);
+						bHasOwnTiming = true;
+					}
 				}
 				
 				else if( sValueName=="COMBOS" )
 				{
-					ProcessCombos(stepsTiming, sParams[1]);
-					bHasOwnTiming = true;
+					if (out.m_fVersion >= VERSION_SPLIT_TIMING)
+					{
+						ProcessCombos(stepsTiming, sParams[1]);
+						bHasOwnTiming = true;
+					}
 				}
 				
 				else if( sValueName=="WARPS" )
 				{
-					ProcessWarps(stepsTiming, sParams[1], out.m_fVersion);
-					bHasOwnTiming = true;
+					if (out.m_fVersion >= VERSION_SPLIT_TIMING)
+					{
+						ProcessWarps(stepsTiming, sParams[1], out.m_fVersion);
+						bHasOwnTiming = true;
+					}
 				}
 				
 				else if( sValueName=="SPEEDS" )
 				{
-					ProcessSpeeds( stepsTiming, sParams[1] );
-					bHasOwnTiming = true;
+					if (out.m_fVersion >= VERSION_SPLIT_TIMING)
+					{
+						ProcessSpeeds( stepsTiming, sParams[1] );
+						bHasOwnTiming = true;
+					}
 				}
 				
 				else if( sValueName=="SCROLLS" )
 				{
-					ProcessScrolls( stepsTiming, sParams[1] );
-					bHasOwnTiming = true;
+					if (out.m_fVersion >= VERSION_SPLIT_TIMING)
+					{
+						ProcessScrolls( stepsTiming, sParams[1] );
+						bHasOwnTiming = true;
+					}
 				}
 				
 				else if( sValueName=="FAKES" )
 				{
-					ProcessFakes( stepsTiming, sParams[1] );
-					bHasOwnTiming = true;
+					if (out.m_fVersion >= VERSION_SPLIT_TIMING)
+					{
+						ProcessFakes( stepsTiming, sParams[1] );
+						bHasOwnTiming = true;
+					}
 				}
 				
 				else if( sValueName=="LABELS" )
 				{
-					ProcessLabels(stepsTiming, sParams[1]);
-					bHasOwnTiming = true;
+					if (out.m_fVersion >= VERSION_SPLIT_TIMING)
+					{
+						ProcessLabels(stepsTiming, sParams[1]);
+						bHasOwnTiming = true;
+					}
 				}
 				/* If this is called, the chart does not use the same attacks
 				 * as the Song's timing. No other changes are required. */
 				else if( sValueName=="ATTACKS" )
 				{
-					ProcessAttackString(pNewNotes->m_sAttackString, sParams);
-					ProcessAttacks(pNewNotes->m_Attacks, sParams);
+					if (out.m_fVersion >= VERSION_SPLIT_TIMING)
+					{
+						ProcessAttackString(pNewNotes->m_sAttackString, sParams);
+						ProcessAttacks(pNewNotes->m_Attacks, sParams);
+					}
 				}
 				
 				else if( sValueName=="OFFSET" )
 				{
-					stepsTiming.m_fBeat0OffsetInSeconds = StringToFloat( sParams[1] );
-					bHasOwnTiming = true;
+					if (out.m_fVersion >= VERSION_SPLIT_TIMING)
+					{
+						stepsTiming.m_fBeat0OffsetInSeconds = StringToFloat( sParams[1] );
+						bHasOwnTiming = true;
+					}
 				}
 				
 				else if( sValueName=="DISPLAYBPM" )

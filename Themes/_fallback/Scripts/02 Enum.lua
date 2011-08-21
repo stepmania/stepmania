@@ -6,10 +6,9 @@ function Enum:Compare( e1, e2 )
 	assert( Value1, tostring(e1) .. " is not an enum of type " .. self:GetName() )
 	assert( Value2, tostring(e2) .. " is not an enum of type " .. self:GetName() )
 
-	-- Nil enums correspond to "invalid".  These compare greater
-	-- than any valid enum value, to line up with the equivalent
-	-- C++ code.
-	
+	-- Nil enums correspond to "invalid". These compare greater than any valid
+	-- enum value, to line up with the equivalent C++ code.
+
 	-- should this be changed to math.huge()? -shake
 	if not e1 then
 		Value1 = 99999999

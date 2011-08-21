@@ -688,7 +688,7 @@ try_element_again:
 
 	RString sNewClassName, sNewFile;
 	FileNameToMetricsGroupAndElement(sNewFileName, sNewClassName, sNewFile);
-	
+
 	/* Important: We need to do a full search.  For example, BG redirs in
 	 * the default theme point to "_shared background", and themes override
 	 * just "_shared background"; the redirs in the default theme should end
@@ -1258,6 +1258,8 @@ public:
 	static int GetPathB( T* p, lua_State *L )			{ lua_pushstring(L, p->GetPathB(SArg(1),SArg(2)) ); return 1; }
 	static int GetPathS( T* p, lua_State *L )			{ lua_pushstring(L, p->GetPathS(SArg(1),SArg(2)) ); return 1; }
 	static int GetPathO( T* p, lua_State *L )			{ lua_pushstring(L, p->GetPathO(SArg(1),SArg(2)) ); return 1; }
+	
+	static int RunLuaScripts( T* p, lua_State *L )			{ p->RunLuaScripts(SArg(1)); return 1; }
 
 	static int GetSelectableThemeNames( T* p, lua_State *L )
 	{
@@ -1287,6 +1289,7 @@ public:
 		ADD_METHOD( GetPathB );
 		ADD_METHOD( GetPathS );
 		ADD_METHOD( GetPathO );
+		ADD_METHOD( RunLuaScripts );
 		ADD_METHOD( GetSelectableThemeNames );
 		ADD_METHOD( GetNumSelectableThemes );
 		ADD_METHOD( GetCurrentThemeDirectory );

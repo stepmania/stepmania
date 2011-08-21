@@ -10,18 +10,17 @@ function FindValue(tab, value)
 end
 
 -- Return the index of a true value in list.
-function FindSelection( list )
+function FindSelection(list)
 	for index, on in list do
 		if on then
 			return index
 		end
 	end
-
 	return nil
 end
 
 -- Look up each value in a table, returning a table with the resulting strings.
-function TableStringLookup( t, group )
+function TableStringLookup(t, group)
 	local ret = { }
 	for key, val in t do
 		Trace(val)
@@ -30,23 +29,23 @@ function TableStringLookup( t, group )
 	return ret
 end
 
-function split( delimiter, text )
+function split(delimiter, text)
 	local list = {}
 	local pos = 1
 	while 1 do
-		local first,last = string.find( text, delimiter, pos )
+		local first,last = string.find(text, delimiter, pos)
 		if first then
-			table.insert( list, string.sub(text, pos, first-1) )
+			table.insert(list, string.sub(text, pos, first-1))
 			pos = last+1
 		else
-			table.insert( list, string.sub(text, pos) )
+			table.insert(list, string.sub(text, pos))
 			break
 		end
 	end
 	return list
 end
 
-function join( delimiter, list )
+function join(delimiter, list)
 	local ret = list[1]
 	for i = 2,table.getn(list) do
 		ret = ret .. delimiter .. list[i]
@@ -66,7 +65,7 @@ function wrap(val,n)
 	return ret
 end
 
-function fapproach( val, other_val, to_move )
+function fapproach(val, other_val, to_move)
 	if val == other_val then
 		return val -- already done!
 	end
@@ -83,26 +82,26 @@ function fapproach( val, other_val, to_move )
 	return val
 end
 
-function tableshuffle( t )
-	local ret = { }
+function tableshuffle(t)
+	local ret = {}
 	for i=1,table.getn(t) do
-		table.insert( ret, math.random(i), t[i] )
+		table.insert(ret, math.random(i), t[i])
 	end
 	return ret
 end
 table.shuffle = tableshuffle
 
-function tableslice( t, num )
-	local ret = { }
+function tableslice(t, num)
+	local ret = {}
 	for i=1,table.getn(t) do
-		table.insert( ret, i, t[i] )
+		table.insert(ret, i, t[i])
 	end
 	return ret
 end
 table.slice = tableslice
 
 -- add together the contents of a table
-function table.sum( t )
+function table.sum(t)
 	local sum = 0
 	for i=1,#t do
 		sum = sum + t[i]
@@ -111,12 +110,12 @@ function table.sum( t )
 end
 
 -- average of all table values
-function table.average( t )
-	return table.sum( t ) / #t
+function table.average(t)
+	return table.sum(t) / #t
 end
 
 -- furthest value from the average of a given table
-function table.deviation( t )
+function table.deviation(t)
 	local offset = math.abs(table.average(t))
 	for i=1,#t do
 		offset = math.max(math.abs(t[i]), offset)
@@ -124,25 +123,27 @@ function table.deviation( t )
 	return offset
 end
 -- See if this exists
-function table.search( t, sFind )
-	for i=1,#t do
-		if t[i] == sFind then
+function table.search(t, sFind)
+	for _, v in pairs(t) do
+		if v == sFind then
 			return true
 		end
 	end
+	return false
 end
 -- Retreive the entry that has this
-function table.find( t, sFind )
-	for i=1,#t do
-		if t[i] == sFind then
+function table.find(t, sFind)
+	for _, v in pairs(t) do
+		if v == sFind then
 			return i
 		end
 	end
+	return nil
 end
 
 function round(val, decimal)
-	if (decimal) then
-		return math.floor( (val * 10^decimal) + 0.5) / (10^decimal)
+	if decimal then
+		return math.floor((val * 10^decimal) + 0.5) / (10^decimal)
 	else
 		return math.floor(val+0.5)
 	end
@@ -172,15 +173,14 @@ function GetSongBackground()
 	return THEME:GetPathG("Common","fallback background")
 end
 
-function StepsOrTrailToCustomDifficulty( stepsOrTrail )
+function StepsOrTrailToCustomDifficulty(stepsOrTrail)
 	if lua.CheckType("Steps", stepsOrTrail) then
-		return StepsToCustomDifficulty( stepsOrTrail )
+		return StepsToCustomDifficulty(stepsOrTrail)
 	end
 	if lua.CheckType("Trail", stepsOrTrail) then
-		return TrailToCustomDifficulty( stepsOrTrail )
+		return TrailToCustomDifficulty(stepsOrTrail)
 	end
 end
-
 
 -- (c) 2005 Glenn Maynard, Chris Danford
 -- All rights reserved.

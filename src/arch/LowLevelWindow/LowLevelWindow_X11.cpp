@@ -210,9 +210,6 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 		// XXX: This doesn't handle if the config has changed since we queried it (see man Xrandr)
 		XRRSetScreenConfig( Dpy, g_pScreenConfig, RootWindow(Dpy, DefaultScreen(Dpy)), iSizeMatch, 1, CurrentTime );
 
-		// Move the window to the corner that the screen focuses in on.
-		XMoveWindow( Dpy, Win, 0, 0 );
-
 		XRaiseWindow( Dpy, Win );
 
 		// We want to prevent the WM from catching anything that comes from the keyboard.
@@ -269,7 +266,8 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 		XSendEvent(Dpy, DefaultRootWindow(Dpy), False, SubstructureNotifyMask, &xev);
 
 		// This one is needed for compiz, if the window reaches out of bounds of the screen it becames destroyed, only the window, the program is left running.
-		XMoveWindow( Dpy, Win, 0, 0 );
+		// Commented out per the patch at http://ssc.ajworld.net/sm-ssc/bugtracker/view.php?id=398
+		//XMoveWindow( Dpy, Win, 0, 0 );
 	}
 
 	// Resize the window.

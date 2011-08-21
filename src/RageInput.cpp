@@ -5,6 +5,7 @@
 #include "Foreach.h"
 #include "Preference.h"
 #include "LuaManager.h"
+#include "LocalizedString.h"
 
 RageInput* INPUTMAN = NULL; // globally accessable input device
 
@@ -48,6 +49,7 @@ RageInput::~RageInput()
 	LUA->UnsetGlobal( "INPUTMAN" );
 }
 
+static LocalizedString NO_INPUT_DEVICES_LOADED ( "RageInput", "No input devices were loaded." );
 void RageInput::LoadDrivers()
 {
 	for( unsigned i = 0; i < m_InputHandlers.size(); ++i )
@@ -64,7 +66,7 @@ void RageInput::LoadDrivers()
 
 	// If no input devices are loaded, the user won't be able to input anything.
 	if( apDevices.size() == 0 )
-		LOG->Warn( "No input devices were loaded." );
+		LOG->Warn( NO_INPUT_DEVICES_LOADED.GetValue() );
 }
 
 void RageInput::Update()

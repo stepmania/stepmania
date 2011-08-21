@@ -18,7 +18,7 @@ end
 
 function SelectMusicOrCourse()
 	if IsNetSMOnline() then
-		return "ScreenNetSelectMusic";
+		return "ScreenNetSelectMusic"
 	elseif GAMESTATE:IsCourseMode() then
 		return "ScreenSelectCourse"
 	else
@@ -28,13 +28,11 @@ end
 
 -- functions used for Routine mode
 function IsRoutine()
-	return GAMESTATE:GetCurrentStyle() and GAMESTATE:GetCurrentStyle():GetStyleType() == "StyleType_TwoPlayersSharedSides";
+	return GAMESTATE:GetCurrentStyle() and GAMESTATE:GetCurrentStyle():GetStyleType() == "StyleType_TwoPlayersSharedSides"
 end
 
 Branch = {
-	Init = function()
-		return "ScreenInit"
-	end,
+	Init = function() return "ScreenInit" end,
 	AfterInit = function()
 		if GAMESTATE:GetCoinMode() == 'CoinMode_Home' then
 			return Branch.TitleMenu()
@@ -63,32 +61,28 @@ Branch = {
 		-- a possibility someone will use their existing StepMania simfile
 		-- collection with sm-ssc via AdditionalFolders/AdditionalSongFolders.
 		if SONGMAN:GetNumSongs() == 0 and SONGMAN:GetNumAdditionalSongs() == 0 then
-			return "ScreenHowToInstallSongs";
-		end;
+			return "ScreenHowToInstallSongs"
+		end
 		if PROFILEMAN:GetNumLocalProfiles() >= 2 then
-			return "ScreenSelectProfile";
+			return "ScreenSelectProfile"
 		else
-			return "ScreenProfileLoad";
+			return "ScreenProfileLoad"
 		end
 	end,
 	OptionsEdit = function()
 		-- Similar to above, don't let anyone in here with 0 songs.
 		if SONGMAN:GetNumSongs() == 0 and SONGMAN:GetNumAdditionalSongs() == 0 then
-			return "ScreenHowToInstallSongs";
-		end;
-		return "ScreenOptionsEdit";
+			return "ScreenHowToInstallSongs"
+		end
+		return "ScreenOptionsEdit"
 	end,
 	AfterProfileLoad = function()
 		return Branch.AfterSelectProfile()
 	end,
 	AfterSelectProfile = function()
 		if ( THEME:GetMetric("Common","AutoSetStyle") == true ) then
-			if IsNetConnected() then
-				-- use SelectStyle in online...
-				return "ScreenSelectStyle"
-			else
-				return "ScreenSelectPlayMode"
-			end
+			-- use SelectStyle in online...
+			return IsNetConnected() and "ScreenSelectStyle" or "ScreenSelectPlayMode"
 		else
 			return "ScreenSelectStyle"
 		end
@@ -107,11 +101,7 @@ Branch = {
 		return "ScreenSelectPlayMode"
 	end,
 	AfterSelectStyle = function()
-		if CHARMAN:GetAllCharacters() ~= nil then
-			return "ScreenSelectCharacter"
-		else
-			return "ScreenGameInformation"
-		end
+		return CHARMAN:GetAllCharacters() ~= nil and "ScreenSelectCharacter" or "ScreenGameInformation"
 	end,
 	AfterProfileSave = function()
 		-- Might be a little too broken? -- Midiman
@@ -147,17 +137,17 @@ Branch = {
 		local pm = GAMESTATE:GetPlayMode()
 		local restricted = { "PlayMode_Oni", "PlayMode_Rave",
 			--"PlayMode_Battle" -- ??
-		};
+		}
 		local optionsScreen = "ScreenPlayerOptions"
 		for i=1,#restricted do
 			if restricted[i] == pm then
 				optionsScreen = "ScreenPlayerOptionsRestricted"
-			end;
+			end
 		end
 		if SCREENMAN:GetTopScreen():GetGoToOptions() then
-			return optionsScreen;
+			return optionsScreen
 		else
-			return "ScreenStageInformation";
+			return "ScreenStageInformation"
 		end
 	end,
 	SongOptions = function()
@@ -168,10 +158,7 @@ Branch = {
 		end
 	end,
 	GameplayScreen = function()
-		if IsRoutine() then
-			return "ScreenGameplayShared"
-		end
-		return "ScreenGameplay"
+		return IsRoutine() and "ScreenGameplayShared" or "ScreenGameplay"
 	end,
 	AfterGameplay = function()
 		-- pick an evaluation screen based on settings.
@@ -185,6 +172,8 @@ Branch = {
 	AfterEvaluation = function()
 		if GAMESTATE:GetSmallestNumStagesLeftForAnyHumanPlayer() >= 1 then
 			return "ScreenProfileSave"
+		elseif STATSMAN:GetCurStageStats():AllFailed() then
+			return "ScreenProfileSaveSummary"
 		else
 			return "ScreenEvaluationSummary"
 		end

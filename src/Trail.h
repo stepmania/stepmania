@@ -37,7 +37,6 @@ struct TrailEntry
 	AttackArray	Attacks;
 	/**
 	 * @brief Is this Song and its Step meant to be a secret?
-	 *
 	 * If so, it will show text such as "???" to indicate that it's a mystery. */
 	bool		bSecret;
 

@@ -12,7 +12,6 @@
 		<Function name='Center1Player'/>
 		<Function name='CheckpointsTapsSeparateJudgment'/>
 		<Function name='CloseConnection'/>
-		<Function name='Color'/>
 		<Function name='ColorDarkTone'/>
 		<Function name='ColorLightTone'/>
 		<Function name='ColorMidTone'/>
@@ -33,6 +32,7 @@
 		<Function name='DayOfMonth'/>
 		<Function name='DayOfYear'/>
 		<Function name='DeepCopy'/>
+		<Function name='EvalUsesCheckpointsWithJudgments'/>
 		<Function name='FailCombo'/>
 		<Function name='FindSelection'/>
 		<Function name='FindValue'/>
@@ -42,6 +42,7 @@
 		<Function name='GameCompatibleModes'/>
 		<Function name='GamePrefComboOnRolls'/>
 		<Function name='GamePrefDefaultFail'/>
+		<Function name='GetCodeForGame'/>
 		<Function name='GetCoursesToShowRanking'/>
 		<Function name='GetCustomDifficulty'/>
 		<Function name='GetDefaultOptionLines'/>
@@ -94,6 +95,7 @@
 		<Function name='IsNetSMOnline'/>
 		<Function name='IsRoutine'/>
 		<Function name='IsSMOnlineLoggedIn'/>
+		<Function name='IsUsingTwoScreens'/>
 		<Function name='IsUsingWideScreen'/>
 		<Function name='IsW1Allowed'/>
 		<Function name='JudgmentLineToColor'/>
@@ -126,6 +128,7 @@
 		<Function name='PlayerNumberToString'/>
 		<Function name='PlayerScoreColor'/>
 		<Function name='PositionPerPlayer'/>
+		<Function name='PrettyPercent'/>
 		<Function name='PrintTable'/>
 		<Function name='ProductID'/>
 		<Function name='ProductVersion'/>
@@ -159,6 +162,9 @@
 		<Function name='SetUserPref'/>
 		<Function name='ShowHoldJudgments'/>
 		<Function name='ShowStandardDecoration'/>
+		<Function name='SongMeterDisplayCommand'/>
+		<Function name='SongMeterDisplayX'/>
+		<Function name='SongMeterDisplayY'/>
 		<Function name='SortOrderToLocalizedString'/>
 		<Function name='SpeedMods'/>
 		<Function name='StageAwardToLocalizedString'/>
@@ -178,11 +184,15 @@
 		<Function name='ToEnumShortString'/>
 		<Function name='Trace'/>
 		<Function name='TrailToCustomDifficulty'/>
+		<Function name='TwoPartConfirmsOnly'/>
+		<Function name='TwoPartSelection'/>
 		<Function name='URLEncode'/>
+		<Function name='UndocumentedFeature'/>
 		<Function name='UnlockRewardTypeToLocalizedString'/>
 		<Function name='UserPrefAutoSetStyle'/>
 		<Function name='UserPrefComboOnRolls'/>
 		<Function name='UserPrefComboUnderField'/>
+		<Function name='UserPrefFancyUIBG'/>
 		<Function name='UserPrefFlashyCombo'/>
 		<Function name='UserPrefGameplayFooter'/>
 		<Function name='UserPrefGameplayShowScore'/>
@@ -579,8 +589,8 @@
 		<Class name='CharacterManager'>
 			<Function name='GetAllCharacters'/>
 			<Function name='GetCharacter'/>
-			<Function name='GetRandomCharacter'/>
 			<Function name='GetCharacterCount'/>
+			<Function name='GetRandomCharacter'/>
 		</Class>
 		<Class base='ActorFrame' name='ComboGraph'>
 			<Function name='Load'/>
@@ -598,6 +608,7 @@
 			<Function name='GetCourseEntries'/>
 			<Function name='GetCourseEntry'/>
 			<Function name='GetCourseType'/>
+			<Function name='GetDescription'/>
 			<Function name='GetDisplayFullTitle'/>
 			<Function name='GetEstimatedNumStages'/>
 			<Function name='GetGoalSeconds'/>
@@ -615,6 +626,8 @@
 			<Function name='IsEndless'/>
 			<Function name='IsNonstop'/>
 			<Function name='IsOni'/>
+			<Function name='IsPlayableIn'/>
+			<Function name='IsRanking'/>
 		</Class>
 		<Class base='ActorScroller' name='CourseContentsList'>
 			<Function name='SetFromGameState'/>
@@ -707,6 +720,7 @@
 			<Function name='GetEditLocalProfile'/>
 			<Function name='GetEditLocalProfileID'/>
 			<Function name='GetEditSourceSteps'/>
+			<Function name='GetExpandedSectionName'/>
 			<Function name='GetGameSeed'/>
 			<Function name='GetGameplayLeadIn'/>
 			<Function name='GetHardestStepsDifficulty'/>
@@ -931,6 +945,7 @@
 			<Function name='GetInvert'/>
 			<Function name='GetLeft'/>
 			<Function name='GetLittle'/>
+			<Function name='GetMMod'/>
 			<Function name='GetMines'/>
 			<Function name='GetMini'/>
 			<Function name='GetMirror'/>
@@ -1286,6 +1301,7 @@
 			<Function name='IsTutorial'/>
 			<Function name='MusicLengthSeconds'/>
 			<Function name='NormallyDisplayed'/>
+			<Function name='ShowInDemonstrationAndRanking'/>
 		</Class>
 		<Class name='SongManager'>
 			<Function name='FindCourse'/>
@@ -1386,6 +1402,8 @@
 			<Function name='GetChartStyle'/>
 			<Function name='GetDescription'/>
 			<Function name='GetDifficulty'/>
+			<Function name='GetDisplayBPMType'/>
+			<Function name='GetDisplayBpms'/>
 			<Function name='GetFilename'/>
 			<Function name='GetHash'/>
 			<Function name='GetMeter'/>
@@ -1397,6 +1415,10 @@
 			<Function name='IsAPlayerEdit'/>
 			<Function name='IsAnEdit'/>
 			<Function name='IsAutogen'/>
+			<Function name='IsDisplayBpmConstant'/>
+			<Function name='IsDisplayBpmRandom'/>
+			<Function name='IsDisplayBpmSecret'/>
+			<Function name='PredictMeter'/>
 			<Function name='UsesSplitTiming'/>
 		</Class>
 		<Class base='ActorFrame' name='StepsDisplay'>
@@ -1436,6 +1458,7 @@
 			<Function name='GetThemeAuthor'/>
 			<Function name='GetThemeDisplayName'/>
 			<Function name='ReloadMetrics'/>
+			<Function name='RunLuaScripts'/>
 		</Class>
 		<Class name='TimingData'>
 			<Function name='GetActualBPM'/>
@@ -1455,6 +1478,7 @@
 			<Function name='GetTimeSignatures'/>
 			<Function name='GetWarps'/>
 			<Function name='HasBPMChanges'/>
+			<Function name='HasDelays'/>
 			<Function name='HasFakes'/>
 			<Function name='HasNegativeBPMs'/>
 			<Function name='HasScrollChanges'/>
@@ -1463,13 +1487,17 @@
 			<Function name='HasWarps'/>
 		</Class>
 		<Class name='Trail'>
+			<Function name='ContainsSong'/>
 			<Function name='GetArtists'/>
 			<Function name='GetDifficulty'/>
+			<Function name='GetLengthSeconds'/>
 			<Function name='GetMeter'/>
 			<Function name='GetRadarValues'/>
 			<Function name='GetStepsType'/>
+			<Function name='GetTotalMeter'/>
 			<Function name='GetTrailEntries'/>
 			<Function name='GetTrailEntry'/>
+			<Function name='IsSecret'/>
 		</Class>
 		<Class name='TrailEntry'>
 			<Function name='GetNormalModifiers'/>
@@ -1485,6 +1513,7 @@
 			<Function name='GetRequirePassHardSteps'/>
 			<Function name='GetRequirement'/>
 			<Function name='GetSong'/>
+			<Function name='GetStepByStepsType'/>
 			<Function name='GetUnlockRewardType'/>
 			<Function name='IsLocked'/>
 			<Function name='code'/>
@@ -1635,6 +1664,11 @@
 			<EnumValue name='&apos;Difficulty_Hard&apos;' value='3'/>
 			<EnumValue name='&apos;Difficulty_Challenge&apos;' value='4'/>
 			<EnumValue name='&apos;Difficulty_Edit&apos;' value='5'/>
+		</Enum>
+		<Enum name='DisplayBPM'>
+			<EnumValue name='&apos;DisplayBPM_Actual&apos;' value='0'/>
+			<EnumValue name='&apos;DisplayBPM_Specified&apos;' value='1'/>
+			<EnumValue name='&apos;DisplayBPM_Random&apos;' value='2'/>
 		</Enum>
 		<Enum name='EarnedExtraStage'>
 			<EnumValue name='&apos;EarnedExtraStage_No&apos;' value='0'/>
@@ -2044,8 +2078,7 @@
 			<EnumValue name='&apos;StepsType_Techno_Double8&apos;' value='30'/>
 			<EnumValue name='&apos;StepsType_Pnm_Five&apos;' value='31'/>
 			<EnumValue name='&apos;StepsType_Pnm_Nine&apos;' value='32'/>
-			<EnumValue name='&apos;StepsType_Guitar_Five&apos;' value='33'/>
-			<EnumValue name='&apos;StepsType_Lights_Cabinet&apos;' value='34'/>
+			<EnumValue name='&apos;StepsType_Lights_Cabinet&apos;' value='33'/>
 		</Enum>
 		<Enum name='StyleType'>
 			<EnumValue name='&apos;StyleType_OnePlayerOneSide&apos;' value='0'/>
@@ -2137,6 +2170,6 @@
 		<Constant name='sGame' value='&apos;dance&apos;'/>
 		<Constant name='top' value='&apos;VertAlign_Top&apos;'/>
 	</Constants>
-	<Version>StepMania 5 v5.0 Preview 2</Version>
-	<Date>2011-07-04</Date>
+	<Version>StepMania v5.0 Preview 3</Version>
+	<Date>2011-08-20</Date>
 </Lua>

@@ -5,6 +5,9 @@
 #include "RageInputDevice.h"
 #include "RageUtil.h"
 #include "Foreach.h"
+#include "LocalizedString.h"
+
+//static LocalizedString D3D_NOT_INSTALLED ( "RageDisplay_D3D", "DirectX 8.1 or greater is not installed.  You can download it from:" );
 
 static const char *InputDeviceStateNames[] = {
 	"Connected",
@@ -13,6 +16,7 @@ static const char *InputDeviceStateNames[] = {
 	"NoInputHandler",
 };
 XToString( InputDeviceState );
+XToLocalizedString( InputDeviceState );
 
 static map<DeviceButton,RString> g_mapNamesToString;
 static map<RString,DeviceButton> g_mapStringToNames;
@@ -57,13 +61,11 @@ static void InitNames()
 	g_mapNamesToString[KEY_RALT] = "right alt";
 	g_mapNamesToString[KEY_LMETA] = "left meta";
 	g_mapNamesToString[KEY_RMETA] = "right meta";
-	// Note: The super key means different things depending on the platform.
-	// On Windows, it's known as the Windows key. In other operating systems,
-	// it is the Super key. -aj
+	// Note: On Windows, the Super key is the Windows key. -aj
 	g_mapNamesToString[KEY_LSUPER] = "left super";
 	g_mapNamesToString[KEY_RSUPER] = "right super";
 	g_mapNamesToString[KEY_MENU] = "menu";
-	
+
 	g_mapNamesToString[KEY_FN] = "function";
 
 	g_mapNamesToString[KEY_NUMLOCK] = "num lock";

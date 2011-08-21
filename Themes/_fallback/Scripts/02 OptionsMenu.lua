@@ -62,6 +62,7 @@ OptionRowTable =
 	end
 }
 
+-- ScreenJukeboxMenu RandomOptions item
 function OptionsRandomJukebox()	
 	local function AllChoices()
 		Trace('all choices')

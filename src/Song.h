@@ -81,7 +81,7 @@ public:
 	~Song();
 	void Reset();
 	void DetachSteps();
-	
+
 	/**
 	 * @brief Load a song from the chosen directory.
 	 *
@@ -96,17 +96,15 @@ public:
 	 * @param fromCache was this data loaded from the cache file?
 	 * @param duringCache was this data loaded during the cache process? */
 	void TidyUpData( bool fromCache = false, bool duringCache = false );
-	
+
 	/**
 	 * @brief Get the new radar values, and determine the last second at the same time.
-	 *
 	 * This is called by TidyUpData, after saving the Song.
 	 * @param fromCache was this data loaded from the cache file?
 	 * @param duringCache was this data loaded during the cache process? */
 	void ReCalculateRadarValuesAndLastSecond(bool fromCache = false, bool duringCache = false);
 	/**
 	 * @brief Translate any titles that aren't in english.
-	 *
 	 * This is called by TidyUpData. */
 	void TranslateTitles();
 
@@ -148,10 +146,9 @@ public:
 
 	/**
 	 * @brief Filename associated with this file.
-	 *
-	 * This will always have a .SSC extension. If we loaded a .SSC, 
-	 * this will point to it, but if we loaded any other type,
-	 * this will point to a generated .SSC filename. */
+	 * This will always have a .SSC extension. If we loaded a .SSC, this will
+	 * point to it, but if we loaded any other type, this will point to
+	 * a generated .SSC filename. */
 	RString m_sSongFileName;
 
 	/** @brief The group this Song is in. */
@@ -159,7 +156,6 @@ public:
 
 	/**
 	 * @brief the Profile this came from.
-	 *
 	 * This is ProfileSlot_Invalid if it wasn't loaded from a profile. */
 	ProfileSlot	m_LoadedFromProfile;
 	/** @brief Is the song file itself a symlink to another file? */
@@ -218,7 +214,6 @@ public:
 
 	/**
 	 * @brief The person who worked with the song file who should be credited.
-	 *
 	 * This is read and saved, but never actually used. */
 	RString	m_sCredit;
 
@@ -267,14 +262,14 @@ public:
 	 * @return true if it does, false otherwise. */
 	bool HasBanner() const;
 	/**
-	 * @brief Does this song have a background?
+	 * @brief Does this song have a background image?
 	 * @return true if it does, false otherwise. */
 	bool HasBackground() const;
 	//bool HasJacket() const;
 	//bool HasCDImage() const;
 	//bool HasDisc() const;
 	bool HasCDTitle() const;
-	bool HasMovieBackground() const;
+	//bool HasMovieBackground() const;
 	bool HasBGChanges() const;
 	bool HasLyrics() const;
 	bool HasAttacks() const;
@@ -283,14 +278,14 @@ public:
 
 	/** @brief The Song's TimingData. */
 	TimingData m_SongTiming;
-	
+
 	float GetFirstBeat() const;
 	float GetFirstSecond() const;
 	float GetLastBeat() const;
 	float GetLastSecond() const;
 	float GetSpecifiedLastBeat() const;
 	float GetSpecifiedLastSecond() const;
-	
+
 	void SetFirstSecond(const float f);
 	void SetLastSecond(const float f);
 	void SetSpecifiedLastSecond(const float f);
@@ -305,21 +300,17 @@ private:
 	float specifiedLastSecond;
 	/**
 	 * @brief The background changes (sorted by layer) that are for this Song.
-	 *
 	 * This uses an AutoPtr instead of a raw pointer so that the
 	 * auto gen'd copy constructor works correctly.
-	 *
 	 * This must be sorted before gameplay. */
 	AutoPtrCopyOnWrite<VBackgroundChange>	m_BackgroundChanges[NUM_BackgroundLayer];
 	/**
 	 * @brief The foreground changes that are for this Song.
-	 *
 	 * This uses an AutoPtr instead of a raw pointer so that the
 	 * auto gen'd copy constructor works correctly.
-	 *
 	 * This must be sorted before gameplay. */
 	AutoPtrCopyOnWrite<VBackgroundChange>	m_ForegroundChanges;
-	
+
 	vector<RString> GetChangesToVectorString(const vector<BackgroundChange> & changes) const;
 public:
 	const vector<BackgroundChange>	&GetBackgroundChanges( BackgroundLayer bl ) const;
@@ -330,12 +321,11 @@ public:
 	vector<RString> GetBGChanges1ToVectorString() const;
 	vector<RString> GetBGChanges2ToVectorString() const;
 	vector<RString> GetFGChanges1ToVectorString() const;
-	
+
 	vector<RString> GetInstrumentTracksToVectorString() const;
-	
+
 	/**
 	 * @brief The list of LyricSegments.
-	 *
 	 * This must be sorted before gameplay. */
 	vector<LyricSegment>			m_LyricSegments;
 
@@ -356,7 +346,7 @@ public:
 	void SetBPMAtBeat( float fBeat, float fBPM ) { m_Timing.SetBPMAtBeat( fBeat, fBPM ); }
 	BPMSegment& GetBPMSegmentAtBeat( float fBeat ) { return m_Timing.GetBPMSegmentAtBeat( fBeat ); }
 */
-	
+
 	Steps *CreateSteps();
 	void InitSteps(Steps *pSteps);
 
@@ -369,7 +359,7 @@ public:
 	{
 		return steps.m_Timing.GetBeatFromElapsedTime( fElapsedTime );
 	}
-	
+
 	float SongGetElapsedTimeFromBeat( float fBeat ) const
 	{
 		return m_SongTiming.GetElapsedTimeFromBeat( fBeat );
@@ -379,7 +369,7 @@ public:
 		return steps.m_Timing.GetElapsedTimeFromBeat( fBeat );
 	}
 	*/
-	
+
 	/* [splittiming]
 	float GetBeatFromElapsedTime( float fElapsedTime ) const 
 	{ 
@@ -387,7 +377,7 @@ public:
 	}
 	float GetElapsedTimeFromBeat( float fBeat ) const { return m_Timing.GetElapsedTimeFromBeat( fBeat ); }
 	*/
-	
+
 	bool HasSignificantBpmChangesOrStops() const;
 	float GetStepsSeconds() const;
 	bool IsLong() const;
@@ -406,7 +396,6 @@ public:
 	bool GetEnabled() const { return m_bEnabled; }
 	/**
 	 * @brief Determine if the song should be shown on the MusicWheel normally.
-	 *
 	 * Songs that are not displayed normally may still be available during
 	 * random selection, extra stages, or other special conditions.
 	 * @return true if displayed normally, false otherwise. */
@@ -415,7 +404,6 @@ public:
 
 	/**
 	 * @brief Add the chosen Steps to the Song.
-	 *
 	 * We are responsible for deleting the memory pointed to by pSteps!
 	 * @param pSteps the new steps. */
 	void AddSteps( Steps* pSteps );
@@ -429,9 +417,8 @@ public:
 
 	/**
 	 * @brief An array of keysound file names (e.g. "beep.wav").
-	 *
-	 * The index in this array corresponds to the index in TapNote.  If you 
-	 * change the index in here, you must change all NoteData too.
+	 * The index in this array corresponds to the index in TapNote.
+	 * If you  change the index in here, you must change all NoteData too.
 	 * Any note that doesn't have a value in the range of this array
 	 * means "this note doesn't have a keysound". */
 	vector<RString> m_vsKeysoundFile;
@@ -442,7 +429,7 @@ public:
 	{
 		return join(":", this->m_sAttackString);
 	}
-	
+
 	// Lua
 	void PushSelf( lua_State *L );
 

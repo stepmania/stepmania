@@ -1,46 +1,44 @@
 function Actor:LyricCommand(side)
-	self:settext( Var "LyricText" );
+	self:settext(Var "LyricText")
 
-	self:stoptweening();
-	self:shadowlengthx(0);
-	self:shadowlengthy(0);
-	self:strokecolor(Color("Outline"));
+	self:stoptweening()
+	self:shadowlengthx(0)
+	self:shadowlengthy(0)
+	self:strokecolor(Color("Outline"))
+	self:zoomx(clamp(SCREEN_WIDTH/(self:GetZoomedWidth()+1), 0, 1))
 
-	local Zoom = SCREEN_WIDTH/(self:GetZoomedWidth()+1);
-	if( Zoom > 1 ) then Zoom = 1 end
-	self:zoomx( Zoom );
-
-	local Color = Var "LyricColor";
+	local Color = Var "LyricColor"
 	local Factor = 1
 	if side == "Back" then
 		Factor = 0.5
 	elseif side == "Front" then
 		Factor = 0.9
 	end
-	self:diffuse( {
+	self:diffuse({
 		Color[1] * Factor,
 		Color[2] * Factor,
 		Color[3] * Factor,
-		Color[4] * Factor } )
+		Color[4] * Factor
+	})
 
 	if side == "Front" then
-		self:cropright(1);
+		self:cropright(1)
 	else
-		self:cropleft(0);
+		self:cropleft(0)
 	end
 
-	self:diffusealpha(0);
-	self:linear(0.2);
-	self:diffusealpha(0.75);
-	self:linear( Var "LyricDuration" * 0.75);
+	self:diffusealpha(0)
+	self:linear(0.2)
+	self:diffusealpha(0.75)
+	self:linear(Var "LyricDuration" * 0.75)
 	if side == "Front" then
-		self:cropright(0);
+		self:cropright(0)
 	else
-		self:cropleft(1);
+		self:cropleft(1)
 	end
-	self:sleep( Var "LyricDuration" * 0.25 );
-	self:linear(0.2);
-	self:diffusealpha(0);
+	self:sleep(Var "LyricDuration" * 0.25)
+	self:linear(0.2)
+	self:diffusealpha(0)
 end
 
 -- (c) 2006 Glenn Maynard
