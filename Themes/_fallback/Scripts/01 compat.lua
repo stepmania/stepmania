@@ -27,3 +27,17 @@ function GameState:GetSongBeatNoOffset() return self:GetSongPosition():GetSongBe
 function GameState:GetSongBPS() return self:GetSongPosition():GetCurBPS() end
 function GameState:GetSongDelay() return self:GetSongPosition():GetDelay() end
 function GameState:GetSongFreeze() return self:GetSongPosition():GetFreeze() end
+
+--[[ 3.9 Conditionals ]]
+Condition = {
+	Hour = function() return Hour() end,
+	IsDemonstration = function() return GAMESTATE:IsDemonstration() end,
+	CurSong = function(sSongName)
+		return GAMESTATE:GetCurrentSong():GetDisplayMainTitle() == sSongName
+	end,
+	DayOfMonth = function() return DayOfMonth() end,
+	MonthOfYear = function() return MonthOfYear() end,
+	UsingModifier = function(pnPlayer, sModifier)
+		return GAMESTATE:PlayerIsUsingModifier( pnPlayer, sModifier );
+	end,
+}

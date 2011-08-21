@@ -1,17 +1,15 @@
 -- ProductivityHelpers: A set of useful aliases for theming.
--- This is the sm-ssc version. You should not be using this in themes for
--- SM4 right now... We'll post an updated version soon.
 
 --[[ Globals ]]
 function IsArcade()
-	local sPayMode = GAMESTATE:GetCoinMode();
-	local bIsArcade = (sPayMode ~= 'CoinMode_Home');
+	local sCoinMode = GAMESTATE:GetCoinMode();
+	local bIsArcade = (sCoinMode ~= 'CoinMode_Home');
 	return bIsArcade;
 end
 
 function IsHome()
-	local sPayMode = GAMESTATE:GetCoinMode();
-	local bIsHome = (sPayMode == 'CoinMode_Home');
+	local sCoinMode = GAMESTATE:GetCoinMode();
+	local bIsHome = (sCoinMode == 'CoinMode_Home');
 	return bIsHome;
 end
 
@@ -24,49 +22,23 @@ function IsFreePlay()
 end
 
 function Center1Player()
-	if GAMESTATE:GetCurrentStyle():GetStyleType() == "StyleType_OnePlayerTwoSides" then
+	local styleType = GAMESTATE:GetCurrentStyle():GetStyleType()
+	-- always center in OnePlayerTwoSides.
+	if styleType == "StyleType_OnePlayerTwoSides" then
 		return true
+	-- only Center1P if Pref enabled and OnePlayerOneSide.
+	-- (implicitly excludes Rave, Battle, Versus, Routine)
 	elseif PREFSMAN:GetPreference("Center1Player") then
-		if GAMESTATE:GetCurrentStyle():GetStyleType() == "StyleType_OnePlayerOneSide" then
-			return true
-		else
-			return false
-		end
+		return styleType == "StyleType_OnePlayerOneSide"
 	else
 		return false
 	end
---[[ 	return PREFSMAN:GetPreference("Center1Player") and
-	THEME:GetMetric("ScreenGameplay","AllowCenter1Player") and 
-	not GAMESTATE:GetPlayMode("PlayMode_Battle") and 
-	not GAMESTATE:GetPlayMode("PlayMode_Rave") and 
-	GAMESTATE:GetCurrentStyle():GetStyleType() == "StyleType_OnePlayerOneSide"; --]]
 end
 
---[[ 3.9 Conditionals ]]
-Condition = {
-	Hour = function()
-		return Hour()
-	end,
-	IsDemonstration = function()
-		return GAMESTATE:IsDemonstration()
-	end,
-	CurSong = function(sSongName)
-		return GAMESTATE:GetCurrentSong():GetDisplayMainTitle() == sSongName
-	end,
-	DayOfMonth = function()
-		return DayOfMonth()
-	end,
-	MonthOfYear = function()
-		return MonthOfYear()
-	end,
-	UsingModifier = function(pnPlayer, sModifier)
-		return GAMESTATE:PlayerIsUsingModifier( pnPlayer, sModifier );
-	end,
-}
 --[[ 3.9 Functions ]]
 Game = {
 	GetStage = function()
-	
+		
 	end,
 }
 --[[ Aliases ]]
@@ -74,12 +46,32 @@ Game = {
 -- Blend Modes
 -- Aliases for blend modes.
 Blend = {
-	Normal   = 'BlendMode_Normal',
-	Add      = 'BlendMode_Add',
-	Modulate = 'BlendMode_Modulate',
-	Multiply = 'BlendMode_WeightedMultiply',
-	Invert   = 'BlendMode_InvertDest',
-	NoEffect = 'BlendMode_NoEffect',
+	Normal			= 'BlendMode_Normal',
+	Add				= 'BlendMode_Add',
+	Subtract		= 'BlendMode_Subtract',
+	Modulate		= 'BlendMode_Modulate',
+	CopySource		= 'BlendMode_CopySrc',
+	AlphaMask		= 'BlendMode_AlphaMask',
+	AlphaKnockout	= 'BlendMode_AlphaKnockout',
+	AlphaMultiply	= 'BlendMode_AlphaMultiply',
+	Multiply		= 'BlendMode_WeightedMultiply',
+	Invert			= 'BlendMode_InvertDest',
+	NoEffect		= 'BlendMode_NoEffect',
+}
+function StringToBlend(s) return Blend[s] or nil end
+
+-- EffectMode
+-- Aliases for EffectMode (aka shaders)
+EffectMode = {
+	Normal			= 'EffectMode_Normal',
+	Unpremultiply	= 'EffectMode_Unpremultiply',
+	ColorBurn		= 'EffectMode_ColorBurn',
+	ColorDodge		= 'EffectMode_ColorDodge',
+	VividLight		= 'EffectMode_VividLight',
+	HardMix			= 'EffectMode_HardMix',
+	Overlay			= 'EffectMode_Overlay',
+	Screen			= 'EffectMode_Screen',
+	YUYV422			= 'EffectMode_YUYV422',
 }
 
 -- Health Declarations
@@ -260,9 +252,7 @@ function tobool(v)
 	end
 end
 
-function pname(pn)
-	return ToEnumShortString(pn)
-end
+function pname(pn) return ToEnumShortString(pn) end
 
 function math.round(num, pre)
 	if pre and pre < 0 then pre = 0 end
