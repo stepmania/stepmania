@@ -35,7 +35,7 @@ function InitUserPrefs()
 --[[		{ "ProTimingP1",	false},
 		{ "ProTimingP2",	false},
 --]]
-	};		
+	};
 
 	local BPrefs = 
 	{
