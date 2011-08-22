@@ -61,8 +61,7 @@ bool X11Helper::MakeWindow( Window &win, int screenNum, int depth, Visual *visua
 	if( win == None )
 		return false;
 
-	/* Hide the mouse cursor. */
-	// todo: we only want to do this in certain situations (e.g. an arcade) -aj
+	// Hide the mouse cursor in certain situations.
     if( !PREFSMAN->m_bShowMouseCursor )
 	{
 		const char pBlank[] = { 0,0,0,0,0,0,0,0 };
