@@ -74,15 +74,16 @@ else
 		end
 	end
 
+	local playerOffset = 36 -- was 28
 	local displayTwoPlayers = Def.ActorFrame{
 		-- manual bpm displays
 		LoadFont("BPMDisplay", "bpm")..{
 			Name="DisplayP1";
-			InitCommand=cmd(x,-28;zoom,0.6;shadowlength,1);
+			InitCommand=cmd(x,-playerOffset;zoom,0.6;shadowlength,1);
 		};
 		LoadFont("BPMDisplay", "bpm")..{
 			Name="DisplayP2";
-			InitCommand=cmd(x,28;zoom,0.6;shadowlength,1);
+			InitCommand=cmd(x,playerOffset;zoom,0.6;shadowlength,1);
 		};
 	};
 
