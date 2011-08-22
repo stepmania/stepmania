@@ -66,7 +66,11 @@ Branch = {
 		if PROFILEMAN:GetNumLocalProfiles() >= 2 then
 			return "ScreenSelectProfile"
 		else
-			return "ScreenProfileLoad"
+			if THEME:GetMetric("Common","AutoSetStyle") == false then
+				return "ScreenSelectStyle"
+			else
+				return "ScreenProfileLoad"
+			end
 		end
 	end,
 	OptionsEdit = function()
@@ -76,18 +80,7 @@ Branch = {
 		end
 		return "ScreenOptionsEdit"
 	end,
-	AfterProfileLoad = function()
-		return Branch.AfterSelectProfile()
-	end,
-	AfterSelectProfile = function()
-		if ( THEME:GetMetric("Common","AutoSetStyle") == true ) then
-			-- use SelectStyle in online...
-			return IsNetConnected() and "ScreenSelectStyle" or "ScreenSelectPlayMode"
-		else
-			return "ScreenSelectStyle"
-		end
-	end,
-	AfterSelectPlayMode = function()
+	AfterSelectStyle = function()
 		if IsNetConnected() then
 			ReportStyle()
 			GAMESTATE:ApplyGameCommand("playmode,regular")
@@ -98,10 +91,20 @@ Branch = {
 		if IsNetConnected() then
 			return "ScreenNetRoom"
 		end
-		return "ScreenSelectPlayMode"
+		return "ScreenProfileLoad"
+
+		--return CHARMAN:GetAllCharacters() ~= nil and "ScreenSelectCharacter" or "ScreenGameInformation"
 	end,
-	AfterSelectStyle = function()
-		return CHARMAN:GetAllCharacters() ~= nil and "ScreenSelectCharacter" or "ScreenGameInformation"
+	AfterSelectProfile = function()
+		if ( THEME:GetMetric("Common","AutoSetStyle") == true ) then
+			-- use SelectStyle in online...
+			return IsNetConnected() and "ScreenSelectStyle" or "ScreenSelectPlayMode"
+		else
+			return "ScreenSelectStyle"
+		end
+	end,
+	AfterProfileLoad = function()
+		return "ScreenSelectPlayMode"
 	end,
 	AfterProfileSave = function()
 		-- Might be a little too broken? -- Midiman
