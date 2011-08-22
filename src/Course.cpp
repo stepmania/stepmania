@@ -884,7 +884,7 @@ RString Course::GetBackgroundPath() const
 		return m_sBackgroundPath;
 	// add "-bg" on the end to differentiate the background from the banner.
 	// This is based on traditional file naming found in most song files. -aj
-	return Dirname(m_sPath) + m_sBackgroundPath + RString("-bg");
+	return Dirname(m_sPath) + m_sBackgroundPath;
 }
 
 bool Course::HasBanner() const
