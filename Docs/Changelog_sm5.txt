@@ -13,7 +13,8 @@ StepMania 5.0 $next | 2011????
 * [NotesLoaderSSC] Fix loading pre-split timing files that had blank timing
   tags inside of them. Thanks to Vin.il for the catch. [Wolfman2000]
 * [Song] Added Jacket, CD image (a la early DDR), and Disc (PIU-style) support.
-  Added GetJacketPath(), GetCDImagePath(), GetDiscPath(),  [AJ]
+  Added GetJacketPath(), GetCDImagePath(), GetDiscPath(), HasJacket(), HasDisc(),
+  and HasCDImage() Lua bindings. [AJ]
 
 ================================================================================
 StepMania 5.0 Preview 3 | 20110820
