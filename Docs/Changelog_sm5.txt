@@ -8,6 +8,10 @@ ________________________________________________________________________________
 StepMania 5.0 $next | 2011????
 --------------------------------------------------------------------------------
 
+2011/08/22
+----------
+* [PrefsManager, X11Helper] Added ShowMouseCursor preference. [AJ]
+
 2011/08/21
 ----------
 * [NotesLoaderSSC] Fix loading pre-split timing files that had blank timing
