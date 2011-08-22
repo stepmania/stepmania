@@ -882,8 +882,6 @@ RString Course::GetBackgroundPath() const
 		return RString();
 	if( m_sBackgroundPath[0] == '/' )
 		return m_sBackgroundPath;
-	// add "-bg" on the end to differentiate the background from the banner.
-	// This is based on traditional file naming found in most song files. -aj
 	return Dirname(m_sPath) + m_sBackgroundPath;
 }
 
