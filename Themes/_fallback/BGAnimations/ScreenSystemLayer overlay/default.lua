@@ -2,7 +2,7 @@ local function CreditsText( pn )
 	local text = LoadFont(Var "LoadingScreen","credits") .. {
 		InitCommand=function(self)
 			self:name("Credits" .. PlayerNumberToString(pn))
--- 			ActorUtil.LoadAllCommandsAndSetXY(self,Var "LoadingScreen");
+			ActorUtil.LoadAllCommandsAndSetXY(self,Var "LoadingScreen");
 		end;
 		UpdateTextCommand=function(self)
 			local str = ScreenSystemLayerHelpers.GetCreditsMessage(pn);
@@ -21,7 +21,8 @@ local function CreditsText( pn )
 	};
 	return text;
 end;
-local function PlayerPane( PlayerNumber ) 
+
+--[[ local function PlayerPane( PlayerNumber ) 
 	local t = Def.ActorFrame {
 		InitCommand=function(self)
 			self:name("PlayerPane" .. PlayerNumberToString(PlayerNumber));
@@ -49,7 +50,7 @@ local function PlayerPane( PlayerNumber )
 		end;
 	};
 	return t
-end
+end --]]
 --
 local t = Def.ActorFrame {}
 
