@@ -5,6 +5,7 @@
 #include "RageFile.h"
 #include "Foreach.h"
 #include "LocalizedString.h"
+#include "LuaBinding.h"
 #include "LuaManager.h"
 #include <float.h>
 
@@ -89,6 +90,57 @@ int MersenneTwister::operator()()
 
 	return Temper( m_Values[m_iNext++] );
 }
+
+/* Extend MersenneTwister into Lua space. This is intended to replace
+ * math.randomseed and math.random, so we conform to their behavior. */
+
+namespace
+{
+	MersenneTwister g_LuaPRNG;
+
+	static int Seed( lua_State *L )
+	{
+		g_LuaPRNG.Reset( IArg(1) );
+		return 0;
+	}
+
+	static int Random( lua_State *L )
+	{
+		unsigned min = 0, max = 0;
+
+		/* [m..n] */
+		if( lua_isnumber(L, 2) )
+		{
+			min = IArg(1);
+			max = IArg(2);
+			lua_pushnumber( L, (g_LuaPRNG() % (max-min+1)) + min );
+		}
+		/* [1..m] */
+		else if( lua_isnumber(L, 1) )
+		{
+			max = IArg(1);
+			lua_pushnumber( L, (g_LuaPRNG() % max) + 1 );
+		}
+		else
+		/* [0..1) */
+		{
+			/* we get values in [0..(2^32-1)]; divide by 2^32. */
+			double rand = double(g_LuaPRNG()) / double(0x100000000f);
+			lua_pushnumber( L, rand );
+		}
+
+		return 1;
+	}
+
+	const luaL_Reg MersenneTwisterTable[] =
+	{
+		LIST_METHOD( Seed ),
+		LIST_METHOD( Random ),
+		{ NULL, NULL }
+	};
+}
+
+LUA_REGISTER_NAMESPACE( MersenneTwister );
 
 void fapproach( float& val, float other_val, float to_move )
 {
