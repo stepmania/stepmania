@@ -12,7 +12,7 @@ public:
 	RString Init();
 	~LoadingWindow_Gtk();
 	void SetText( RString str );
-	//void SetIcon( const RageSurface *pIcon );
+	void SetIcon( const RageSurface *pIcon );
 	void SetSplash( const RString str );
 	void SetProgress( const int progress );
 	void SetTotalWork( const int totalWork );
