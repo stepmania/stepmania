@@ -24,8 +24,8 @@ local tParticleInfo = {}
 for i=1,Params.NumParticles do
 	tParticleInfo[i] = {
 		X = math.random(Params.VelocityXMin, Params.VelocityXMax),
-		Y = math.random(Params.VelocityYMin, Params.VelocityYMax),
-		Z = math.random(Params.VelocityZMin, Params.VelocityZMax),
+		Y = Params.VelocityYMin ~= Params.VelocityYMax and math.random(Params.VelocityYMin, Params.VelocityYMax) or Params.VelocityYMin,
+		Z = Params.VelocityZMin ~= Params.VelocityZMax and math.random(Params.VelocityZMin, Params.VelocityZMax) or Params.VelocityZMin,
 		Zoom = math.random(Params.ZoomMin*1000,Params.ZoomMax*1000) / 1000,
 		BobZRate = math.random(Params.BobRateZMin*1000,Params.BobRateZMax*1000) / 1000,
 		Age = 0,

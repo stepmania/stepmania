@@ -13,11 +13,9 @@ t[#t+1] = Def.ActorFrame {
 			OnCommand=cmd(texcoordvelocity,0.125,0.5;diffuse,color("#ffd400");diffusealpha,0.045;bob;effectmagnitude,0,0,35;effectperiod,4);
 		};
 	};
-	--[[
 	LoadActor("_particleLoader") .. {
 		InitCommand=cmd(x,-SCREEN_CENTER_X;y,-SCREEN_CENTER_Y;hide_if,hideFancyElements;);
 	};
-	--]]
 --[[ 	LoadActor("_particles") .. {
 		InitCommand=cmd(x,-SCREEN_CENTER_X;y,-SCREEN_CENTER_Y);
 	}; --]]
