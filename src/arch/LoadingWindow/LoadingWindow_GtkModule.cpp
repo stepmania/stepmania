@@ -76,7 +76,7 @@ extern "C" void SetIcon( const RageSurface *pSrcImg )
 	GdkPixbuf *pIcon;
 	pIcon = gdk_pixbuf_new_from_data(pImg->pixels,
 			GDK_COLORSPACE_RGB, true,
-			32,
+			8,
 			pImg->w, pImg->h,
 			pImg->h * pImg->pitch, // ?
 			NULL, NULL);
