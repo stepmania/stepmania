@@ -11,6 +11,8 @@ StepMania 5.0 $next | 2011????
 2011/08/22
 ----------
 * [PrefsManager, X11Helper] Added ShowMouseCursor preference. [AJ]
+* [UnlockManager] Added GetStepOfAllTypes Lua binding. This gets the locked
+  Steps for all game types based on the difficulty specified. [Wolfman2000]
 
 2011/08/21
 ----------

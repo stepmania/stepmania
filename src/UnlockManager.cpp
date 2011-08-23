@@ -799,6 +799,27 @@ public:
 		if( pSong ) { pSong->PushSelf(L); return 1; }
 		return 0;
 	}
+	// Get all of the steps locked based on difficulty (similar to In The Groove 2).
+	static int GetStepOfAllTypes( T* p, lua_State *L )
+	{
+		Song *pSong = p->m_Song.ToSong();
+		if (pSong)
+		{
+			const vector<Steps*>& allSteps = pSong->GetAllSteps();
+			vector<Steps*> toRet;
+			FOREACH_CONST(Steps*, allSteps, step)
+			{
+				if ((*step)->GetDifficulty() == p->m_dc)
+				{
+					toRet.push_back(*step);
+				}
+			}
+			LuaHelpers::CreateTableFromArray<Steps*>( toRet, L );
+			return 1;
+		}
+		return 0;
+	}
+	
 	// TODO: Add a function to just get all steps.
 	static int GetStepByStepsType( T* p, lua_State *L )
 	{
@@ -866,6 +887,7 @@ public:
 		ADD_METHOD( GetRequirePassChallengeSteps );
 		ADD_METHOD( GetSong );
 		ADD_METHOD( GetCourse );
+		ADD_METHOD( GetStepOfAllTypes );
 		ADD_METHOD( GetStepByStepsType );
 		ADD_METHOD( song );
 		ADD_METHOD( steps );
