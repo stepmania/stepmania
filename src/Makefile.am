@@ -258,7 +258,8 @@ Lights = arch/Lights/LightsDriver.cpp arch/Lights/LightsDriver.h \
 LuaDriver = arch/LuaDriver/LuaDriver.cpp arch/LuaDriver/LuaDriver.h \
 	arch/LuaDriver/LuaDriverHandle.cpp arch/LuaDriver/LuaDriverHandle.h \
 	arch/LuaDriver/LuaDriver_InputModule.cpp arch/LuaDriver/LuaDriver_InputModule.h \
-	arch/LuaDriver/LuaDriver_LightsModule.cpp arch/LuaDriver/LuaDriver_LightsModule.h
+	arch/LuaDriver/LuaDriver_LightsModule.cpp arch/LuaDriver/LuaDriver_LightsModule.h \
+	arch/LuaDriver/LuaDriver_Peripheral.cpp arch/LuaDriver/LuaDriver_Peripheral.h
 
 #if HAVE_LIBUSB
 LIBS += -lusb-1.0
