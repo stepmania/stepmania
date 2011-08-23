@@ -868,6 +868,7 @@ public:
 	static int code( T* p, lua_State *L )	{ p->m_sEntryID = SArg(1); return 0; }
 	static int roulette( T* p, lua_State *L ) { p->m_bRoulette = true; return 0; }
 	static int requirepasshardsteps( T* p, lua_State *L ) { p->m_bRequirePassHardSteps = true; return 0; }
+	static int requirepasschallengesteps( T* p, lua_State *L ) { p->m_bRequirePassChallengeSteps = true; return 0; }
 	static int require( T* p, lua_State *L )
 	{
 		const UnlockRequirement ut = Enum::Check<UnlockRequirement>( L, 1 );
@@ -897,6 +898,7 @@ public:
 		ADD_METHOD( code );
 		ADD_METHOD( roulette );
 		ADD_METHOD( requirepasshardsteps );
+		ADD_METHOD( requirepasschallengesteps );
 		ADD_METHOD( require );
 	}
 };
