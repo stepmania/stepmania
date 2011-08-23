@@ -36,8 +36,8 @@ increment_version:
 		build=0; \
 	fi; \
 	echo "extern const unsigned long version_num = $$build;" > ver.cpp; \
-	echo "extern const char *const version_time = \"`date`\";" >> ver.cpp;
-	echo "extern const char *const version_date = \"`date`\";" >> ver.cpp;
+	echo "extern const char *const version_time = \"`date +"%H:%M:%S"`\";" >> ver.cpp;
+	echo "extern const char *const version_date = \"`date +"%Y/%m/%d"`\";" >> ver.cpp;
 
 ver.cpp:
 	$(MAKE) increment_version
