@@ -87,14 +87,14 @@ extern "C" void SetIcon( const RageSurface *pSrcImg )
 	gtk_window_set_icon( GTK_WINDOW(window), pIcon );
 	gtk_main_iteration_do(FALSE);
 }
-
+/*
 extern "C" void SetSplash( const char *s )
 {
 	splash = gtk_image_new_from_file(s);
 	gtk_widget_show(splash);
 	gtk_main_iteration_do(FALSE);
 }
-
+*/
 extern "C" void SetProgress( int progress, int totalWork )
 {
 	gdouble fraction = ( totalWork > 0 ? progress / (gdouble)totalWork : 0 );
