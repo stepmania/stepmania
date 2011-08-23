@@ -36,7 +36,7 @@ increment_version:
 		build=0; \
 	fi; \
 	echo "extern const unsigned long version_num = $$build;" > ver.cpp; \
-	echo "extern const char *const version_time = \"`date +"%H:%M:%S %Z (UTC%:z)"`\";" >> ver.cpp;
+	echo "extern const char *const version_time = \"`date +"%X %Z (UTC%:z)"`\";" >> ver.cpp;
 	echo "extern const char *const version_date = \"`date +"%Y%m%d"`\";" >> ver.cpp;
 
 ver.cpp:
