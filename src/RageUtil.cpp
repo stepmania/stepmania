@@ -106,7 +106,7 @@ namespace
 
 	static int Random( lua_State *L )
 	{
-		unsigned min = 0, max = 0;
+		int min = 0, max = 0;
 
 		/* [m..n] */
 		if( lua_isnumber(L, 2) )
