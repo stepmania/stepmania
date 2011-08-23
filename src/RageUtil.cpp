@@ -106,30 +106,42 @@ namespace
 
 	static int Random( lua_State *L )
 	{
-		int min = 0, max = 0;
+		switch( lua_gettop(L) )
+		{
+			/* [0..1) */
+			case 0:
+			{
+				/* we get values in [0..(2^32-1)]; divide by 2^32. */
+				/* XXX: get rid of long long to double conversion */
+				double r = double(g_LuaPRNG()) / double(0x100000000llu);
+				lua_pushnumber( L, r );
+				return 1;
+			}
 
-		/* [m..n] */
-		if( lua_isnumber(L, 2) )
-		{
-			min = IArg(1);
-			max = IArg(2);
-			lua_pushnumber( L, (g_LuaPRNG() % (max-min+1)) + min );
-		}
-		/* [1..m] */
-		else if( lua_isnumber(L, 1) )
-		{
-			max = IArg(1);
-			lua_pushnumber( L, (g_LuaPRNG() % max) + 1 );
-		}
-		else
-		/* [0..1) */
-		{
-			/* we get values in [0..(2^32-1)]; divide by 2^32. */
-			double rand = double(g_LuaPRNG()) / double(0x100000000llu);
-			lua_pushnumber( L, rand );
-		}
+			/* [1..u] */
+			case 1:
+			{
+				int upper = IArg(1);
+				luaL_argcheck( L, 1 <= upper, 1, "interval is empty" );
+				lua_pushnumber( L, g_LuaPRNG(upper) + 1 );
+				return 1;
+			}
+			/* [l..u] */
+			case 2:
+			{
+				int lower = IArg(1);
+				int upper = IArg(2);
+				luaL_argcheck( L, lower < upper, 2, "interval is empty" );
+				lua_pushnumber( L, (int(g_LuaPRNG()) % (upper-lower+1)) + lower );
+				return 1;
+			}
 
-		return 1;
+			/* wrong amount of arguments */
+			default:
+			{
+				return luaL_error( L, "wrong number of arguments" );
+			}
+		}
 	}
 
 	const luaL_Reg MersenneTwisterTable[] =
