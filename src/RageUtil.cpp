@@ -125,7 +125,7 @@ namespace
 		/* [0..1) */
 		{
 			/* we get values in [0..(2^32-1)]; divide by 2^32. */
-			double rand = double(g_LuaPRNG()) / double(0x100000000f);
+			double rand = double(g_LuaPRNG()) / double(0x100000000llu);
 			lua_pushnumber( L, rand );
 		}
 
