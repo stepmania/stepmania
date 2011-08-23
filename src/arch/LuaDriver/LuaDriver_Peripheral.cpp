@@ -102,7 +102,14 @@ void LuaDriver_Peripheral::HandleMessage( const Message &msg )
 
 	pFunc->PushSelf( L ); // function
 	m_pDriver->PushSelf( L ); // argument 1
-	msg.GetParamTable().PushSelf( L ); // argument 2
+
+	const LuaReference *params  = msg.GetParamTable();
+
+	// argument 2
+	if( params )
+		params->PushSelf( L );
+	else
+		lua_pushnil( L );
 
 	RString sError;
 	LuaHelpers::RunScriptOnStack(L, sError, 2, 0); // 2 args, 0 results
