@@ -98,6 +98,9 @@ namespace
 {
 	MersenneTwister g_LuaPRNG;
 
+	/* To map from [0..2^32-1] to [0..1), we divide by 2^32. */
+	const double DIVISOR = pow( double(2), double(32) );
+
 	static int Seed( lua_State *L )
 	{
 		g_LuaPRNG.Reset( IArg(1) );
@@ -111,9 +114,7 @@ namespace
 			/* [0..1) */
 			case 0:
 			{
-				/* we get values in [0..(2^32-1)]; divide by 2^32. */
-				/* XXX: get rid of long long to double conversion */
-				double r = double(g_LuaPRNG()) / double(0x100000000llu);
+				double r = double(g_LuaPRNG()) / DIVISOR;
 				lua_pushnumber( L, r );
 				return 1;
 			}
