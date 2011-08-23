@@ -69,6 +69,8 @@ Data/Static.ini
 PBProject/Hardware.plist
 Themes/pump
 Themes/optical-release
+Themes/moonlight
+Themes/ultralight
 src/version.bin
 src/verstub.cpp
 Songs/*
