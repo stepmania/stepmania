@@ -1053,17 +1053,9 @@ int main(int argc, char* argv[])
 
 	/* Load all Lua drivers from Data/Modules. This needs to be done before
 	 * LightsManager or InputHandler are initialized, so their constructors
-	 * can load the resulting modules.
-	 * XXX: this seems like a weird place. Is there a better one? */
+	 * can load the resulting modules. */
 
-	{
-		vector<RString> modules;
-		GetDirListing( "Data/Modules/*.lua", modules, false, true );
-
-		for( unsigned i = 0; i < modules.size(); ++i )
-			LuaDriver::Load( modules[i] );
-	}
-
+	LuaDriver::LoadModulesDir( SpecialFiles::LUADRIVER_MODULES_DIR );
 
 	SOUNDMAN	= new RageSoundManager;
 	SOUNDMAN->Init();
@@ -1097,6 +1089,8 @@ int main(int argc, char* argv[])
 	NSMAN 		= new NetworkSyncManager( pLoadingWindow );
 	MESSAGEMAN	= new MessageManager;
 	STATSMAN	= new StatsManager;
+
+	LuaDriver::LoadPeripherals();
 
 	// Initialize which courses are ranking courses here.
 	SONGMAN->UpdateRankingCourses();

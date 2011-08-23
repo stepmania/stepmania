@@ -15,6 +15,7 @@ class RageThread;
 class InputHandler;
 class LightsDriver;
 
+class LuaDriver_Peripheral;
 
 #include <map>
 
@@ -22,22 +23,43 @@ typedef void (*PushAPIHandleFn)(lua_State*);
 
 class LuaDriver;
 
-/* convenience typedef */
-typedef map<RString,LuaDriver*> LuaDriverMap;
+/* convenience typedef - maps a driver name to its path */
+typedef map<RString,RString> DriverPathMap;
 
+enum ModuleType
+{
+	ModuleType_Input,
+	ModuleType_Lights,
+	ModuleType_Peripheral,
+	NUM_ModuleType,
+	ModuleType_Invalid
+};
+
+/* XXX: we should probably separate the namespace and the base class. */
 class LuaDriver
 {
 public:
-	/* Loads an input or lights driver from the given script and, if
-	 * successful, places it in the map of available module drivers. */
-	static bool Load( const RString &sScript );
+	/* Loads modules from the given directory. Note that the modules
+	 * aren't instantiated here; we just get module names, filter
+	 * out the invalid ones, and save the file paths for later.
+ 	 * Drivers are instantiated in the following calls. */
+	static void LoadModulesDir( const RString &sDir );
 
-	/* Adds any handlers matching names in sDrivers to AddTo. */
+	/* Instantiate peripherals. Peripherals depend on MessageManager,
+	 * so this must be called after MESSAGEMAN is instantiated. */
+	static void LoadPeripherals();
+
+	/* Updates all peripherals owned by LuaDriver. */
+	static void Update( float fDeltaTime );
+
+	/* If any loaded drivers match names in sDrivers, instantiate the
+	 * corresponding handler, Init() it, and push it into AddTo. */
 	static void AddInputModules( const RString &sDrivers, vector<InputHandler*> &AddTo );
 	static void AddLightsModules( const RString &sDrivers, vector<LightsDriver*> &AddTo );
 
 protected:
-	static LuaDriverMap s_mpInputModules, s_mpLightsModules;
+	static DriverPathMap s_mModulePaths[NUM_ModuleType];
+	static vector<LuaDriver_Peripheral*> m_vpPeripherals;
 
 public:
 	LuaDriver( const RString &sName );
@@ -56,10 +78,10 @@ public:
 	virtual void ModuleExit( lua_State *L );
 	virtual void ModuleUpdate( lua_State *L );
 
-protected:
 	bool LoadFromTable( lua_State *L, LuaReference *pTable );
 	virtual bool LoadDerivedFromTable( lua_State *L, LuaReference *pTable ) { return true; }
 
+protected:
 	static int ModuleThread_Start( void *p ) { ((LuaDriver*)p)->ModuleThread(); return 0; }
 	virtual void ModuleThread() = 0;
 

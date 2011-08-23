@@ -1,47 +1,59 @@
 #include "global.h"
 #include "RageLog.h"
+
 #include "LuaManager.h"
 #include "LuaReference.h"
 #include "RageThreads.h"
 #include "RageUtil.h"
 #include "Foreach.h"
-#include "LuaDriver.h"
+#include "Preference.h"
 
+#include "LuaDriver.h"
 #include "LuaDriver_InputModule.h"
 #include "LuaDriver_LightsModule.h"
+#include "LuaDriver_Peripheral.h"
 
-/*
- * Static class functions
- */
+static Preference<RString> g_sPeripherals( "Peripherals", "" );
 
-/* Modules that have successfully loaded and are available to use */
-LuaDriverMap LuaDriver::s_mpInputModules;
-LuaDriverMap LuaDriver::s_mpLightsModules;
+DriverPathMap LuaDriver::s_mModulePaths[NUM_ModuleType];
+vector<LuaDriver_Peripheral*> LuaDriver::m_vpPeripherals;
 
-enum DriverType {
-	DriverType_Input,
-	DriverType_Lights,
-	NUM_DriverType,
-	DriverType_Invalid
-};
-
-/* These map a ModuleType string to a DriverType */
-const char* DriverTypeNames[NUM_DriverType] =
+static const char* ModuleTypeNames[NUM_ModuleType] =
 {
 	"InputModule",
-	"LightsModule"
+	"LightsModule",
+	"Peripheral"
 };
 
-/* Inserts drivers from mModules into AddTo if their names are in sDrivers. */
+const RString ModuleTypeToString( ModuleType type )
+{
+	return ModuleTypeNames[type];
+}
+
+ModuleType StringToModuleType( const RString &str )
+{
+	FOREACH_ENUM( ModuleType, type )
+		if(str.compare(ModuleTypeNames[type]) == 0)
+			return type;
+
+	return ModuleType_Invalid;
+}
+
+/*
+ * Global namespace functions
+ */
+
+/* If any names from sDrivers are found in mModules, instantiate the
+ * corresponding LuaDriver, cast it to Handler, and insert into AddTo. */
 template<class Driver, class Handler>
-static void AddModules( LuaDriverMap &mModules, const RString &sDrivers, vector<Handler*> &AddTo )
+static void AddModules( DriverPathMap &mModules, const RString &sDrivers, vector<Handler*> &AddTo )
 {
 	LOG->Trace( "LuaDriver::AddModules( %s )", sDrivers.c_str() );
 
 	if( sDrivers.empty() )
 		return; // nothing to do
 
-	/* Claim a Lua context for ModuleInit, if we get to it */
+	/* Claim a Lua context to use (later) for loading and ModuleInit. */
 	Lua *L = LUA->Get();
 	LUA->YieldLua();
 
@@ -51,40 +63,74 @@ static void AddModules( LuaDriverMap &mModules, const RString &sDrivers, vector<
 	FOREACH( RString, DriversToTry, s )
 	{
 		s->MakeLower();
-		LuaDriverMap::iterator it = mModules.find( *s );
+		DriverPathMap::iterator it = mModules.find( *s );
 
 		if( it == mModules.end() )
+			continue; // driver not found
+
+		const RString &sName = it->first;
+		const RString &sPath = it->second;
+
+		LOG->Trace( "Initializing module %s", sPath.c_str() );
+
+		RString sScript, sError;
+
+		if( !GetFileContents(sPath, sScript) )
 			continue;
 
-		LOG->Trace( "Found module \"%s\"", s->c_str() );
-
-		Driver *pDriver = dynamic_cast<Driver*>( it->second );
-		Handler *pHandler = dynamic_cast<Handler*>( pDriver );
-
-		if( pHandler == NULL )
-			FAIL_M( ssprintf("cast failed for \"%s\"", s->c_str()) );
-
+		// from here on, we start using our context; make sure to
+		// re-yield on any code path branching from here.
 		LUA->UnyieldLua();
-		bool bInitted = pDriver->ModuleInit( L );
-		LUA->YieldLua();
 
-		/* if init failed, this driver is useless; delete it */
-		if( !bInitted )
+		if( !LuaHelpers::RunScript(L, sScript, "@"+sPath, sError, 0, 1) )
 		{
-			LOG->Warn( "Module \"%s\" not usable", s->c_str() );
-			mModules.erase( it );
-
-			LUA->UnyieldLua();
-			pDriver->ModuleExit( L ); // it's okay if this fails
+			lua_pop( L, 1 ); // remove the return value
 			LUA->YieldLua();
 
-			delete pDriver;
+			LOG->Warn( "LuaDriver: error compiling module \"%s\": %s",
+				sPath.c_str(), sError.c_str() );
+
 			continue;
 		}
 
-		LOG->Info( "Lua module: %s", s->c_str() );
+		// Set a reference to the returned table
+		LuaReference *pTable = new LuaReference;
+		pTable->SetFromStack( L );
 
-		AddTo.push_back( pHandler );
+		ASSERT( lua_gettop(L) == 0 );
+		LuaDriver *pDriver = new Driver( sName );
+
+		// pass pTable to pDriver; it takes ownership of the pointer
+		if( !pDriver->LoadFromTable(L, pTable) )
+		{
+			delete pDriver; // deletes pTable for us
+			LUA->YieldLua();
+			continue;
+		}
+
+		/* our LuaDriver is now loaded; try to initialize it */
+		bool bInitted = pDriver->ModuleInit( L );
+
+		if( bInitted )
+		{
+			// dynamic_cast to the inherited handler type
+			Handler *pHandler = dynamic_cast<Handler*>( pDriver );
+			ASSERT_M( pHandler != NULL, "dynamic cast failed" );
+
+			LOG->Trace( "Lua module initialized: %s", sName.c_str() );
+			AddTo.push_back( pHandler );
+		}
+		else
+		{
+			LOG->Warn( "Module \"%s\" failed to initialize", sPath.c_str() );
+
+			// deinit and deallocate the driver
+			pDriver->ModuleExit( L );
+			delete pDriver;
+		}
+
+		// re-yield for the next iteration
+		LUA->YieldLua();
 	}
 
 	LUA->UnyieldLua();
@@ -93,121 +139,82 @@ static void AddModules( LuaDriverMap &mModules, const RString &sDrivers, vector<
 
 void LuaDriver::AddInputModules( const RString &sDrivers, vector<InputHandler*> &AddTo )
 {
-	AddModules<LuaDriver_InputModule>( s_mpInputModules, sDrivers, AddTo );
+	DriverPathMap &m = s_mModulePaths[ModuleType_Input];
+	AddModules<LuaDriver_InputModule>( m, sDrivers, AddTo );
 }
 
 void LuaDriver::AddLightsModules( const RString &sDrivers, vector<LightsDriver*> &AddTo )
 {
-	AddModules<LuaDriver_LightsModule>( s_mpLightsModules, sDrivers, AddTo );
+	DriverPathMap &m = s_mModulePaths[ModuleType_Input];
+	AddModules<LuaDriver_LightsModule>( m, sDrivers, AddTo );
 }
 
-bool LuaDriver::Load( const RString &sPath )
+void LuaDriver::LoadPeripherals()
 {
-	RString sScript, sError;
+/*
+	DriverPathMap &m = s_mModulePaths[ModuleType_Peripheral];
+	AddModules<LuaDriver_Peripheral>( m, g_sPeripherals, m_vpPeripherals );
+*/
+}
 
-	/* Determine the name and the module type from the file name.
-	 * This allows us to enforce standard (descriptive) file names
-	 * with the format of DriverType_Name.lua. */
-
-	DriverType driverType = DriverType_Invalid;
-	RString sName, sType;
-
-	{
-		RString sFilename = GetFileNameWithoutExtension( sPath );
-		size_t pos = sFilename.find_first_of( '_' );
-
-		if( pos != string::npos )
-		{
-			sType = sFilename.substr( 0, pos );
-			sName = sFilename.substr( pos+1 );
-		}
-
-		if( sName.empty() || sType.empty() || pos == string::npos )
-		{
-			LOG->Warn( "Invalid filename \"%s\"", sFilename.c_str() );
-			return false;
-		}
-	}
-
-
-	FOREACH_ENUM( DriverType, type )
-	{
-		const char* name = DriverTypeNames[type];
-
-		if( sType.CompareNoCase(name) == 0 )
-		{
-			driverType = type;
-			break;
-		}
-	}
-
-	if( driverType == DriverType_Invalid )
-	{
-		LOG->Warn( "LuaDriver: invalid DriverType \"%s\"", sType.c_str() );
-		return false;
-	}
-
-	/* Attempt to retrieve the script and run it on the stack. */
-
-	if( !GetFileContents(sPath, sScript) )
-		return false;
+void LuaDriver::Update( float fDeltaTime )
+{
+	if( m_vpPeripherals.empty() )
+		return;
 
 	Lua *L = LUA->Get();
 
-	if( !LuaHelpers::RunScript(L, sScript, "@" + sPath, sError, 0, 1) )
-	{
-		lua_pop( L, 1 );	// pop the return value
-		LUA->Release( L );
-
-		LOG->Warn( "LuaDriver: error compiling module \"%s\": %s", sPath.c_str(), sError.c_str() );
-		return false;
-	}
-
-	/* Set our reference from the return value of the script */
-	LuaReference *pTable = new LuaReference;
-	pTable->SetFromStack( L );
-	ASSERT( lua_gettop(L) == 0 );
-
-	LuaDriver *pDriver = NULL;
-
-	switch( driverType )
-	{
-	case DriverType_Input:
-		pDriver = new LuaDriver_InputModule( sName );
-		break;
-	case DriverType_Lights:
-		pDriver = new LuaDriver_LightsModule( sName );
-		break;
-	default:
-		ASSERT(0);
-		break;
-	}
-
-	/* Load internal data; the driver claims the pTable ref here. */
-	bool bLoaded = pDriver->LoadFromTable( L, pTable );
-	pTable = NULL;
+/*
+	for( unsigned i = 0; i < m_vpPeripherals.size(); ++i )
+		m_vpPeripherals[i]->ModuleUpdate( L, fDeltaTime );
+*/
 	LUA->Release( L );
+}
 
-	if( bLoaded )
+void LuaDriver::LoadModulesDir( const RString &sDir )
+{
+	vector<RString> vsModules;
+	GetDirListing( sDir + "/*.lua", vsModules, false, true ); /* nano! */
+
+	for( unsigned i = 0; i < vsModules.size(); ++i )
 	{
-		RString sName = pDriver->GetName();
+		const RString &sPath = vsModules[i];
+
+		RString sFilename = GetFileNameWithoutExtension( sPath );
+		RString sName, sType;
+
+		LOG->Trace( "Loading file \"%s\" -> %s", sPath.c_str(), sFilename.c_str() );
+
+		// split the file name into its ModuleType and name; the
+		// scope will de-allocate type and name when we're done
+		{
+			char type[16], name[21];
+			int num = sscanf( sFilename.c_str(), "%15[^_]_%20[^_]", type, name );
+
+			if( num != 2 )
+			{
+				LOG->Warn( "Invalid driver name \"%s\"", sName.c_str() );
+				continue;
+			}
+
+			sType.assign( type );
+			sName.assign( name );
+		}
+
+		ModuleType type = StringToModuleType( sType );
+
+		if( type == ModuleType_Invalid )
+		{
+			LOG->Warn( "Invalid ModuleType \"%s\"", sType.c_str() );
+			continue;
+		}
+
+		// must be lowercase to match case insensitively
 		sName.MakeLower();
 
-		switch( driverType )
-		{
-		case DriverType_Input:
-			s_mpInputModules[sName] = pDriver;
-			break;
-		case DriverType_Lights:
-			s_mpLightsModules[sName] = pDriver;
-			break;
-		default:
-			ASSERT(0);
-			break;
-		}
+		// add this module to its appropriate map
+		s_mModulePaths[type].insert( pair<RString,RString>(sName, sPath) );
 	}
-
-	return bLoaded;
 }
 
 /*
@@ -239,8 +246,6 @@ LuaDriver::~LuaDriver()
 		this->ModuleExit( L );
 		LUA->Release( L );
 
-		SAFE_DELETE( m_pThread );
-
 		LOG->Trace( "Module \"%s\" shut down.", m_sName.c_str() );
 	}
 
@@ -267,7 +272,7 @@ bool LuaDriver::ModuleInit( Lua *L )
 
 	if( !sError.empty() )
 	{
-		LOG->Warn( "LuaDriver %s: %s", m_sName.c_str(), sError.c_str() );
+		LOG->Warn( "[LuaDriver::ModuleInit] %s: %s", m_sName.c_str(), sError.c_str() );
 		return false;
 	}
 
@@ -400,3 +405,4 @@ bool LuaDriver::LoadFromTable( Lua *L, LuaReference *pTable )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+

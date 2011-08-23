@@ -18,7 +18,7 @@ const RString SpecialFiles::TYPE_TXT_FILE = "Data/Type.txt";
 const RString SpecialFiles::SONGS_DIR = "Songs/";
 const RString SpecialFiles::COURSES_DIR	= "Courses/";
 const RString SpecialFiles::NOTESKINS_DIR = "NoteSkins/";
-
+const RString SpecialFiles::LUADRIVER_MODULES_DIR = "Data/Modules/";
 
 /*
  * (c) 2003-2005 Chris Danford

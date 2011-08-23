@@ -21,6 +21,7 @@
 #include "NetworkSyncManager.h"
 #include "RageTimer.h"
 #include "RageInput.h"
+#include "arch/LuaDriver/LuaDriver.h"
 
 static RageTimer g_GameplayTimer;
 
@@ -170,7 +171,7 @@ void GameLoop::RunGameLoop()
 
 		if( g_fConstantUpdateDeltaSeconds > 0 )
 			fDeltaTime = g_fConstantUpdateDeltaSeconds;
-		
+
 		CheckGameLoopTimerSkips( fDeltaTime );
 
 		fDeltaTime *= g_fUpdateRate;
@@ -204,6 +205,7 @@ void GameLoop::RunGameLoop()
 		}
 
 		LIGHTSMAN->Update( fDeltaTime );
+		LuaDriver::Update( fDeltaTime );
 
 		// Render
 		SCREENMAN->Draw();
