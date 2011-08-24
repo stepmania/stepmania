@@ -37,7 +37,43 @@ LuaAPIHandle_USB::~LuaAPIHandle_USB()
 
 bool LuaAPIHandle_USB::Open( uint16_t iVendorID, uint16_t iProductID )
 {
-	m_pHandle = libusb_open_device_with_vid_pid( m_pContext, iVendorID, iProductID );
+	libusb_device **ppList = NULL;
+	ssize_t iNumDevices = libusb_get_device_list( m_pContext, &ppList );
+
+	if( iNumDevices < 0 )
+	{
+		m_iError = LIBUSB_ERROR_NO_MEM;
+		ASSERT( ppList == NULL );
+		return false;
+	}
+
+	// set this as our error message if no matches are found
+	m_iError = LIBUSB_ERROR_NO_DEVICE;
+
+	for( ssize_t i = 0; i < iNumDevices; ++i )
+	{
+		libusb_device *dev = ppList[i];
+		libusb_device_descriptor desc;
+
+		int ret = libusb_get_device_descriptor( dev, &desc );
+
+		if( ret != LIBUSB_SUCCESS )
+		{
+			LOG->Warn( "libusb_get_device_descriptor failed: %s", GetErrorStr(m_iError) );
+			continue;
+		}
+
+		// no match
+		if( desc.idVendor != iVendorID || desc.idProduct != iProductID )
+			continue;
+
+		m_iError = libusb_open( dev, &m_pHandle );
+
+		if( m_iError != LIBUSB_SUCCESS )
+			break;
+	}
+
+	libusb_free_device_list( ppList, int(true) );
 	return m_pHandle != NULL;
 }
 
