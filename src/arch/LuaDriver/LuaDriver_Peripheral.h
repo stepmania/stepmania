@@ -9,12 +9,15 @@ struct lua_State;
 class LuaDriver_Peripheral : public LuaDriver, MessageSubscriber
 {
 public:
+	LuaDriver_Peripheral( const RString &sName ) : LuaDriver(sName) { }
 	~LuaDriver_Peripheral();
 
 	void ModuleUpdate( lua_State *L, float fDeltaTime );
 	void HandleMessage( const Message &msg );
 
 protected:
+	// peripherals are not threaded (for now)
+	void ModuleThread() { }
 	bool LoadDerivedFromTable( lua_State *L, LuaReference *pTable );
 
 	map<RString,LuaReference*> m_mMessageFunctions;

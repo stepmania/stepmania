@@ -56,19 +56,19 @@ bool LuaDriver_Peripheral::LoadDerivedFromTable( lua_State *L, LuaReference *pTa
 			continue;
 		}
 
-		// subscribe to this message
-		this->SubscribeToMessage( sMessage );
-
 		// pop the function value into a new reference
 		LuaReference *pRef = new LuaReference;
 		pRef->SetFromStack( L );
 
 		// add it to the message functions map
 		m_mMessageFunctions.insert( pair<RString,LuaReference*>(sMessage, pRef) );
+
+		// subscribe to this message
+		this->SubscribeToMessage( sMessage );
 	}
 
-	lua_pop( L, 2 ); // pop last key and table
-	ASSERT( lua_gettop(L) == 0);
+	lua_pop( L, 1 ); // pop table
+	ASSERT_M( lua_gettop(L) == 0, ssprintf("stack top is %d, should be 0", lua_gettop(L)) );
 
 	return true;
 }

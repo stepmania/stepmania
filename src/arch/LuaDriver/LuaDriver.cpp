@@ -151,10 +151,8 @@ void LuaDriver::AddLightsModules( const RString &sDrivers, vector<LightsDriver*>
 
 void LuaDriver::LoadPeripherals()
 {
-/*
 	DriverPathMap &m = s_mModulePaths[ModuleType_Peripheral];
 	AddModules<LuaDriver_Peripheral>( m, g_sPeripherals, m_vpPeripherals );
-*/
 }
 
 void LuaDriver::Update( float fDeltaTime )
@@ -164,10 +162,9 @@ void LuaDriver::Update( float fDeltaTime )
 
 	Lua *L = LUA->Get();
 
-/*
 	for( unsigned i = 0; i < m_vpPeripherals.size(); ++i )
 		m_vpPeripherals[i]->ModuleUpdate( L, fDeltaTime );
-*/
+
 	LUA->Release( L );
 }
 

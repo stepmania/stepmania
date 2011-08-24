@@ -11,23 +11,22 @@ local CabinetLightToHex =
 
 local GameButtonToHex =
 {
-	-- Left, Right, Up, Down
 	dance =
 	{
-		GameButton_Custom01	= 0x1000,
-		GameButton_Custom02	= 0x0001,
-		GameButton_Custom03	= 0x0010,
-		GameButton_Custom04	= 0x0100,
+		DanceButton_Left	= 0x1000,
+		DanceButton_Right	= 0x0001,
+		DanceButton_Up		= 0x0010,
+		DanceButton_Down	= 0x0100,
 	},
 
 	-- UL, UR, Center, DL, DR
 	pump =
 	{
-		GameButton_Custom01	= 0x10000,
-		GameButton_Custom02	= 0x01000,
-		GameButton_Custom03	= 0x00100,
-		GameButton_Custom04	= 0x00010,
-		GameButton_Custom05	= 0x00001,
+		PumpButton_UpLeft	= 0x10000,
+		PumpButton_UpRight	= 0x01000,
+		PumpButton_Center	= 0x00100,
+		PumpButton_DownLeft	= 0x00010,
+		PumpButton_DownRight	= 0x00001,
 	},
 }
 
