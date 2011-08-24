@@ -81,6 +81,7 @@ ScreenMessage.cpp ScreenMessage.h ScreenMiniMenu.cpp ScreenMiniMenu.h \
 ScreenNameEntry.cpp ScreenNameEntry.h ScreenNameEntryTraditional.cpp ScreenNameEntryTraditional.h \
 ScreenOptions.cpp ScreenOptions.h \
 ScreenOptionsEditProfile.cpp ScreenOptionsEditProfile.h \
+ScreenOptionsExportPackage.cpp ScreenOptionsExportPackage.h \
 ScreenOptionsManageCourses.cpp ScreenOptionsManageCourses.h \
 ScreenOptionsManageEditSteps.cpp ScreenOptionsManageEditSteps.h \
 ScreenOptionsManageProfiles.cpp ScreenOptionsManageProfiles.h \
@@ -290,7 +291,7 @@ ArchUtils +=    archutils/Unix/AssertionHandler.cpp archutils/Unix/AssertionHand
 		archutils/Unix/LinuxThreadHelpers.cpp archutils/Unix/LinuxThreadHelpers.h \
 		archutils/Unix/RunningUnderValgrind.cpp archutils/Unix/RunningUnderValgrind.h \
 		archutils/Unix/EmergencyShutdown.cpp archutils/Unix/EmergencyShutdown.h \
-		archutils/Unix/StackCheck.cpp \
+		archutils/Unix/StackCheck.cpp archutils/Unix/SpecialDirs.cpp archutils/Unix/SpecialDirs.h \
 		archutils/Common/gcc_byte_swaps.h
 
 if USE_CRASH_HANDLER
