@@ -551,7 +551,7 @@ public:
 	static int AddChildFromPath( T* p, lua_State *L )
 	{
 		// this one is tricky, we need to get an Actor from Lua.
-		pActor = ActorUtil::MakeActor( SArg(1) );
+		Actor *pActor = ActorUtil::MakeActor( SArg(1) );
 		if ( pActor == NULL )
 		{
 			lua_pushboolean( L, 0 );
