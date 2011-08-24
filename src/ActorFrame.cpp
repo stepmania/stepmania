@@ -548,14 +548,20 @@ public:
 		return 0;
 	}
 
-	//TODO: fill out this stub
-	/*
-	static int AddChild( T* p, lua_State *L )
+	static int AddChildFromPath( T* p, lua_State *L )
 	{
 		// this one is tricky, we need to get an Actor from Lua.
-		return 0;
+		pActor = ActorUtil::MakeActor( SArg(1) );
+		if ( pActor == NULL )
+		{
+			lua_pushboolean( L, 0 );
+			return 1;
+		}
+		p->AddChild( pActor );
+		lua_pushboolean( L, 1 );
+		return 1;
 	}
-	*/
+
 	static int RemoveChild( T* p, lua_State *L )
 	{
 		Actor *pChild = p->GetChild( SArg(1) );
@@ -591,8 +597,7 @@ public:
 		ADD_METHOD( SetDiffuseLightColor );
 		ADD_METHOD( SetSpecularLightColor );
 		ADD_METHOD( SetLightDirection );
-		//AddChild is not yet implemented
-		//ADD_METHOD( AddChild );
+		ADD_METHOD( AddChildFromPath );
 		ADD_METHOD( RemoveChild );
 		ADD_METHOD( RemoveAllChildren );
 		
