@@ -1,22 +1,21 @@
 #include "global.h"
 #include "RageUtil.h"
 #include "LuaManager.h"
-#include "LuaDriverHandle.h"
-#include "LuaDriverHandle_USB.h"
+#include "LuaAPIHandle.h"
 
 #include <map>
 
 map<RString,MakeHandleFn> *g_pMapRegistrees = NULL;
 
-LuaDriverHandle::LuaDriverHandle()
+LuaAPIHandle::LuaAPIHandle()
 {
 }
 
-LuaDriverHandle::~LuaDriverHandle()
+LuaAPIHandle::~LuaAPIHandle()
 {
 }
 
-void LuaDriverHandle::RegisterAPI( const RString &sName, MakeHandleFn pfn )
+void LuaAPIHandle::RegisterAPI( const RString &sName, MakeHandleFn pfn )
 {
 	if( g_pMapRegistrees == NULL )
 		g_pMapRegistrees = new map<RString,MakeHandleFn>;
@@ -28,7 +27,7 @@ void LuaDriverHandle::RegisterAPI( const RString &sName, MakeHandleFn pfn )
 }
 
 /* Pushes a new handle of the given type, or nil if the type doesn't exist */
-void LuaDriverHandle::PushAPIHandle( Lua *L, const RString &sName )
+void LuaAPIHandle::PushAPIHandle( Lua *L, const RString &sName )
 {
 	map<RString,MakeHandleFn>::iterator it = g_pMapRegistrees->find( sName );
 
@@ -40,9 +39,8 @@ void LuaDriverHandle::PushAPIHandle( Lua *L, const RString &sName )
 
 	const MakeHandleFn &pfn = it->second;
 
-	/* allocates a new handle; call Destroy() from Lua to deallocate */
-	LuaDriverHandle *pHandle = pfn();
-//	LuaDriverHandle_USB *pHandle2 = dynamic_cast<LuaDriverHandle_USB*>( pHandle );
+	// allocates a new handle; call Destroy() from Lua to deallocate
+	LuaAPIHandle *pHandle = pfn();
 	pHandle->PushSelf( L );
 }
 
@@ -53,7 +51,7 @@ namespace
 {
 	int CreateAPIHandle( lua_State *L )
 	{
-		LuaDriverHandle::PushAPIHandle( L, SArg(1) );
+		LuaAPIHandle::PushAPIHandle( L, SArg(1) );
 		return 1;
 	}
 
@@ -67,7 +65,7 @@ namespace
 LUA_REGISTER_NAMESPACE( LuaDriver );
 
 
-class LunaLuaDriverHandle : public Luna<LuaDriverHandle>
+class LunaLuaAPIHandle : public Luna<LuaAPIHandle>
 {
 public:
 	static int Destroy( T* p, lua_State *L )
@@ -112,7 +110,7 @@ public:
 		return 1;
 	}
 
-	LunaLuaDriverHandle()
+	LunaLuaAPIHandle()
 	{
 		ADD_METHOD( Destroy );
 		ADD_METHOD( IsOpen );
@@ -123,7 +121,7 @@ public:
 	}
 };
 
-LUA_REGISTER_CLASS( LuaDriverHandle );
+LUA_REGISTER_CLASS( LuaAPIHandle );
 
 /*
  * (c) 2011 Mark Cannon

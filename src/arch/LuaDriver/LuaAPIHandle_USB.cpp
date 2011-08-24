@@ -1,22 +1,22 @@
 #include "global.h"
 #include "RageLog.h"
 #include "LuaManager.h"
-#include "LuaDriverHandle_USB.h"
+#include "LuaAPIHandle_USB.h"
 #include "RageUtil.h"
 
 #include <libusb-1.0/libusb.h>
 
-REGISTER_LUA_DRIVER_HANDLE( USB );
+REGISTER_LUA_API_HANDLE( USB );
 
 const unsigned USB_API_REVISION_MAJOR = 0;
 const unsigned USB_API_REVISION_MINOR = 1;
 
-int LuaDriverHandle_USB::GetRevisionMajor() const { return USB_API_REVISION_MAJOR; }
-int LuaDriverHandle_USB::GetRevisionMinor() const { return USB_API_REVISION_MINOR; }
+int LuaAPIHandle_USB::GetRevisionMajor() const { return USB_API_REVISION_MAJOR; }
+int LuaAPIHandle_USB::GetRevisionMinor() const { return USB_API_REVISION_MINOR; }
 
-LuaDriverHandle_USB::LuaDriverHandle_USB()
+LuaAPIHandle_USB::LuaAPIHandle_USB()
 {
-	LOG->Trace( "LuaDriverHandle_USB::LuaDriverHandle_USB()" );
+	LOG->Trace( "LuaAPIHandle_USB::LuaAPIHandle_USB()" );
 	m_iError = libusb_init( &m_pContext );
 
 	if( m_iError != LIBUSB_SUCCESS )
@@ -30,23 +30,23 @@ LuaDriverHandle_USB::LuaDriverHandle_USB()
 	m_pHandle = NULL;
 }
 
-LuaDriverHandle_USB::~LuaDriverHandle_USB()
+LuaAPIHandle_USB::~LuaAPIHandle_USB()
 {
 	libusb_exit( m_pContext );
 }
 
-bool LuaDriverHandle_USB::Open( uint16_t iVendorID, uint16_t iProductID )
+bool LuaAPIHandle_USB::Open( uint16_t iVendorID, uint16_t iProductID )
 {
 	m_pHandle = libusb_open_device_with_vid_pid( m_pContext, iVendorID, iProductID );
 	return m_pHandle != NULL;
 }
 
-bool LuaDriverHandle_USB::IsOpen() const
+bool LuaAPIHandle_USB::IsOpen() const
 {
 	return m_pHandle != NULL;
 }
 
-void LuaDriverHandle_USB::Close()
+void LuaAPIHandle_USB::Close()
 {
 	if( !m_pHandle )
 		return;
@@ -56,20 +56,20 @@ void LuaDriverHandle_USB::Close()
 }
 
 /* Enumeration/handling functions */
-int LuaDriverHandle_USB::GetConfiguration()
+int LuaAPIHandle_USB::GetConfiguration()
 {
 	int config;
 	m_iError = libusb_get_configuration( m_pHandle, &config );
 	return config;
 }
 
-bool LuaDriverHandle_USB::SetConfiguration( int config )
+bool LuaAPIHandle_USB::SetConfiguration( int config )
 {
 	m_iError = libusb_set_configuration( m_pHandle, config );
 	return m_iError == LIBUSB_SUCCESS;
 }
 
-bool LuaDriverHandle_USB::ClaimInterface( int interface )
+bool LuaAPIHandle_USB::ClaimInterface( int interface )
 {
 	/* transparently detach any kernel drivers in use */
 	if( libusb_kernel_driver_active(m_pHandle, interface) )
@@ -89,7 +89,7 @@ bool LuaDriverHandle_USB::ClaimInterface( int interface )
 	return m_iError == LIBUSB_SUCCESS;
 }
 
-bool LuaDriverHandle_USB::ReleaseInterface( int interface )
+bool LuaAPIHandle_USB::ReleaseInterface( int interface )
 {
 	m_iError = libusb_release_interface( m_pHandle, interface );
 
@@ -115,27 +115,27 @@ bool LuaDriverHandle_USB::ReleaseInterface( int interface )
 
 /* USB I/O functions */
 
-int LuaDriverHandle_USB::ControlTransfer( uint8_t bmReqType, uint8_t bRequest,
+int LuaAPIHandle_USB::ControlTransfer( uint8_t bmReqType, uint8_t bRequest,
 	uint16_t wValue, uint16_t wIndex, uint8_t *data, uint16_t wLength,
 	unsigned int timeout )
 {
 	return libusb_control_transfer( m_pHandle, bmReqType, bRequest, wValue, wIndex, data, wLength, timeout );
 }
 
-int LuaDriverHandle_USB::BulkTransfer( uint8_t endpoint, uint8_t *data,
+int LuaAPIHandle_USB::BulkTransfer( uint8_t endpoint, uint8_t *data,
 	uint32_t length, int* transferred, unsigned int timeout )
 {
 	return libusb_bulk_transfer( m_pHandle, endpoint, data, length, transferred, timeout );
 }
 
-int LuaDriverHandle_USB::InterruptTransfer( uint8_t endpoint, uint8_t *data,
+int LuaAPIHandle_USB::InterruptTransfer( uint8_t endpoint, uint8_t *data,
 	uint32_t length, int* transferred, unsigned int timeout )
 {
 	return libusb_interrupt_transfer( m_pHandle, endpoint, data, length, (int*)transferred, timeout );
 }
 
 /* Taken from http://libusb.sourceforge.net/api-1.0/group__misc.html */
-const char* LuaDriverHandle_USB::GetErrorStr( int error ) const
+const char* LuaAPIHandle_USB::GetErrorStr( int error ) const
 {
 	switch( error )
 	{
@@ -160,7 +160,7 @@ const char* LuaDriverHandle_USB::GetErrorStr( int error ) const
 #define SET_FIELD(name) \
 	{ lua_pushnumber(L, desc->name); lua_setfield(L, -2, #name); }
 
-void LuaDriverHandle_USB::PushDeviceDescriptor( lua_State *L,
+void LuaAPIHandle_USB::PushDeviceDescriptor( lua_State *L,
 	const libusb_device_descriptor *desc, bool bPushSubtables )
 {
 	lua_newtable( L );
@@ -206,7 +206,7 @@ void LuaDriverHandle_USB::PushDeviceDescriptor( lua_State *L,
 	lua_setfield( L, -2, "Configurations" );
 }
 
-void LuaDriverHandle_USB::PushConfigDescriptor( lua_State *L,
+void LuaAPIHandle_USB::PushConfigDescriptor( lua_State *L,
 	const libusb_config_descriptor *desc, bool bPushSubtables )
 {
 
@@ -245,7 +245,7 @@ void LuaDriverHandle_USB::PushConfigDescriptor( lua_State *L,
 	lua_setfield( L, -2, "Interfaces" );	/* assign sub-table */
 }
 
-void LuaDriverHandle_USB::PushInterfaceDescriptor( lua_State *L,
+void LuaAPIHandle_USB::PushInterfaceDescriptor( lua_State *L,
 	const libusb_interface_descriptor *desc, bool bPushSubtables )
 {
 	lua_newtable( L );
@@ -274,7 +274,7 @@ void LuaDriverHandle_USB::PushInterfaceDescriptor( lua_State *L,
 	lua_setfield( L, -2, "Endpoints" );
 }
 
-void LuaDriverHandle_USB::PushEndpointDescriptor( lua_State *L, const libusb_endpoint_descriptor *desc )
+void LuaAPIHandle_USB::PushEndpointDescriptor( lua_State *L, const libusb_endpoint_descriptor *desc )
 {
 	lua_newtable( L );
 	SET_FIELD( bDescriptorType );
@@ -292,7 +292,7 @@ void LuaDriverHandle_USB::PushEndpointDescriptor( lua_State *L, const libusb_end
 
 const unsigned CTL_TRANSFER_BUFFER_SIZE = 64;
 
-class LunaLuaDriverHandle_USB : public Luna<LuaDriverHandle_USB>
+class LunaLuaAPIHandle_USB : public Luna<LuaAPIHandle_USB>
 {
 public:
 	static int Open( T *p, lua_State *L )
@@ -458,7 +458,7 @@ public:
 		return 2;
 	}
 
-	LunaLuaDriverHandle_USB()
+	LunaLuaAPIHandle_USB()
 	{
 		/* IsOpen, Close, Revision, Destroy are in the base class */
 		ADD_METHOD( Open );
@@ -472,7 +472,7 @@ public:
 	}
 };
 
-LUA_REGISTER_DERIVED_CLASS( LuaDriverHandle_USB, LuaDriverHandle );
+LUA_REGISTER_DERIVED_CLASS( LuaAPIHandle_USB, LuaAPIHandle );
 
 /*
  * (c) 2011 Mark Cannon

@@ -1,10 +1,10 @@
-/* LuaDriverHandle_USB: a set of USB API functions extended into Lua space.
+/* LuaAPIHandle_USB: a set of USB API functions extended into Lua space.
  * The backing driver used for this is libusb-1.0 (http://www.libusb.org). */
 
-#ifndef LUA_DRIVER_HANDLE_USB_H
-#define LUA_DRIVER_HANDLE_USB_H
+#ifndef LUA_API_HANDLE_USB_H
+#define LUA_API_HANDLE_USB_H
 
-#include "LuaDriverHandle.h"
+#include "LuaAPIHandle.h"
 #include <set>
 
 /* a bunch of forward declarations for our linking pleasure */
@@ -15,11 +15,11 @@ struct libusb_config_descriptor;
 struct libusb_interface_descriptor;
 struct libusb_endpoint_descriptor;
 
-class LuaDriverHandle_USB : public LuaDriverHandle
+class LuaAPIHandle_USB : public LuaAPIHandle
 {
 public:
-	LuaDriverHandle_USB();
-	virtual ~LuaDriverHandle_USB();
+	LuaAPIHandle_USB();
+	virtual ~LuaAPIHandle_USB();
 
 	bool Open( uint16_t iVendorID, uint16_t iProductID );
 	bool IsOpen() const;
@@ -44,7 +44,7 @@ protected:
 	libusb_device_handle *m_pHandle;
 
 	/* allow Lua access to protected functions */
-	friend class LunaLuaDriverHandle_USB;
+	friend class LunaLuaAPIHandle_USB;
 
 	/* USB device handling functions - see libusb documentation at
 	 * http://libusb.sourceforge.net/api-1.0/group__dev.html */
@@ -91,7 +91,7 @@ protected:
 		const libusb_endpoint_descriptor *desc );
 };
 
-#endif // LUA_DRIVER_HANDLE_USB_H
+#endif // LUA_API_HANDLE_USB_H
 
 /*
  * (c) 2011 Mark Cannon

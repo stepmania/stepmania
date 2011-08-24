@@ -1,31 +1,31 @@
-/* LuaDriverHandle: an object representing the internal handles and methods
+/* LuaAPIHandle: an object representing the internal handles and methods
  * needed for a LuaDriver to interact with an I/O device. */
 
-#ifndef LUA_DRIVER_HANDLE_H
-#define LUA_DRIVER_HANDLE_H
+#ifndef LUA_API_HANDLE_H
+#define LUA_API_HANDLE_H
 
 struct lua_State;
 
-/* Registers a LuaDriverHandle with the core class. */
+/* Registers a LuaAPIHandle with the core class. */
 
-#define REGISTER_LUA_DRIVER_HANDLE( API ) \
-	LuaDriverHandle *Create##API() { return new LuaDriverHandle_##API; } \
+#define REGISTER_LUA_API_HANDLE( API ) \
+	LuaAPIHandle *Create##API() { return new LuaAPIHandle_##API; } \
 	struct Register##API { \
-		Register##API() { LuaDriverHandle::RegisterAPI( #API, &Create##API); } \
+		Register##API() { LuaAPIHandle::RegisterAPI( #API, &Create##API); } \
 	}; \
 	static Register##API register##API;
 
-class LuaDriverHandle;
-typedef LuaDriverHandle* (*MakeHandleFn)();
+class LuaAPIHandle;
+typedef LuaAPIHandle* (*MakeHandleFn)();
 
-class LuaDriverHandle
+class LuaAPIHandle
 {
 public:
 	static void RegisterAPI( const RString &sName, MakeHandleFn fn );
 	static void PushAPIHandle( lua_State *L, const RString &sName );
 
-	LuaDriverHandle();
-	virtual ~LuaDriverHandle();
+	LuaAPIHandle();
+	virtual ~LuaAPIHandle();
 
 	/* can't implement Open() abstractly; arguments differ between APIs */
 	virtual void Close() { }
@@ -42,7 +42,7 @@ public:
 	virtual void PushSelf( lua_State *L );
 };
 
-#endif // LUA_DRIVER_HANDLE_H
+#endif // LUA_API_HANDLE_H
 
 /*
  * (c) 2011 Mark Cannon
