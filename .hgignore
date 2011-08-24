@@ -68,6 +68,7 @@ Data/GamePrefs/*.cfg
 Data/Static.ini
 PBProject/Hardware.plist
 Themes/pump
+Themes/pump-*
 Themes/optical-release
 Themes/moonlight
 Themes/ultralight
