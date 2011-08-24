@@ -11,6 +11,8 @@
 #include "SpecialFiles.h"
 #include "ScreenPrompt.h"
 #include "SongManager.h"
+#include "RageFile.h"
+
 // there should probably be a better way to handle this: -aj
 #if defined(_WINDOWS)
 	#include "archutils/Win32/SpecialDirs.h"
@@ -193,17 +195,17 @@ static RString ReplaceInvalidFileNameChars( RString sOldFileName )
 
 static bool ExportPackage( RString sPackageName, RString sDirToExport, RString &sErrorOut )
 {
-	// Mount Desktop/ for each OS
+	// Mount Desktop/ for each OS.
 	RString sDesktopDir = SpecialDirs::GetDesktopDir();
-	LOG->Trace( "Desktop dir: %s", sDesktopDir.c_str() );
-	/*
+	RString fn = sDesktopDir+sPackageName;
 	RageFile f;
-	if( !f.Open(sDesktopDir+sPackageName, RageFile::WRITE) )
+	if( !f.Open(fn, RageFile::WRITE) )
 	{
 		sErrorOut = ssprintf( "Couldn't open %s for writing: %s", fn.c_str(), f.GetError().c_str() );
 		return false;
 	}
 
+	/*
 	RageFileObjZip zip( &f );
 	zip.Start();
 	zip.SetGlobalComment( sComment );
@@ -211,6 +213,7 @@ static bool ExportPackage( RString sPackageName, RString sDirToExport, RString &
 	vector<RString> vs;
 	GetDirListingRecursive( sDirToExport, "*", vs );
 	SMPackageUtil::StripIgnoredSmzipFiles( vs );
+	LOG->Trace("Adding files...");
 	FOREACH( RString, vs, s )
 	{
 		if( !zip.AddFile( *s ) )
@@ -220,6 +223,7 @@ static bool ExportPackage( RString sPackageName, RString sDirToExport, RString &
 		}
 	}
 
+	LOG->Trace("Writing zip...");
 	if( zip.Finish() == -1 )
 	{
 		sErrorOut = ssprintf( "Couldn't write to file %s", fn.c_str(), f.GetError().c_str() );
