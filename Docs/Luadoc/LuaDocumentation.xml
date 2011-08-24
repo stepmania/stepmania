@@ -4112,7 +4112,7 @@
 	<Function name='GetNumItems' return='int' arguments=''>
 		Returns the total number of items in the wheel.
 	</Function>
-	<Function name='GetWheelItem' return='WheelItemBaseData' arguments='int iIndex'>
+	<Function name='GetWheelItem' return='WheelItemBase' arguments='int iIndex'>
 		Returns the WheelItem at index <code>iIndex</code>.
 	</Function>
 	<Function name='IsLocked' return='bool' arguments=''>
