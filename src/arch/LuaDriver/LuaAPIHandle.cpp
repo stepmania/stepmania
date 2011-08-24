@@ -46,23 +46,22 @@ void LuaAPIHandle::PushAPIHandle( Lua *L, const RString &sName )
 
 #include "LuaBinding.h"
 
-/* For the sake of brevity, we're stealing "LuaDriver" for API utils */
 namespace
 {
-	int CreateAPIHandle( lua_State *L )
+	int Create( lua_State *L )
 	{
 		LuaAPIHandle::PushAPIHandle( L, SArg(1) );
 		return 1;
 	}
 
-	const luaL_Reg LuaDriverTable[] =
+	const luaL_Reg LuaAPIHandleTable[] =
 	{
-		LIST_METHOD( CreateAPIHandle ),
+		LIST_METHOD( Create ),
 		{ NULL, NULL }
 	};
 };
 
-LUA_REGISTER_NAMESPACE( LuaDriver );
+LUA_REGISTER_NAMESPACE( LuaAPIHandle );
 
 
 class LunaLuaAPIHandle : public Luna<LuaAPIHandle>
