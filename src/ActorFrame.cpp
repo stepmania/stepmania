@@ -548,14 +548,14 @@ public:
 		return 0;
 	}
 
-	// xxx: these might not be good ideas... -aj
+	//TODO: fill out this stub
 	/*
 	static int AddChild( T* p, lua_State *L )
 	{
 		// this one is tricky, we need to get an Actor from Lua.
 		return 0;
 	}
-
+	*/
 	static int RemoveChild( T* p, lua_State *L )
 	{
 		Actor *pChild = p->GetChild( SArg(1) );
@@ -566,7 +566,6 @@ public:
 		return 1;
 	}
 	static int RemoveAllChildren( T* p, lua_State *L )				{ p->RemoveAllChildren( ); return 0; }
-	*/
 
 	LunaActorFrame()
 	{
@@ -592,12 +591,11 @@ public:
 		ADD_METHOD( SetDiffuseLightColor );
 		ADD_METHOD( SetSpecularLightColor );
 		ADD_METHOD( SetLightDirection );
-		// not good ideas
-		/*
-		ADD_METHOD( AddChild );
+		//AddChild is not yet implemented
+		//ADD_METHOD( AddChild );
 		ADD_METHOD( RemoveChild );
 		ADD_METHOD( RemoveAllChildren );
-		*/
+		
 	}
 };
 
