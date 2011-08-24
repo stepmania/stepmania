@@ -234,19 +234,10 @@ LuaDriver::~LuaDriver()
 {
 	if( m_bRunning )
 	{
-		m_bRunning = false;
-
-		LOG->Trace( "Shutting down module \"%s\"...", m_sName.c_str()  );
-
-		/* if the thread is running, let it complete */
-		if( m_pThread && m_pThread->IsCreated() )
-			m_pThread->Wait();
-
 		Lua *L = LUA->Get();
 		this->ModuleExit( L );
 		LUA->Release( L );
-
-		LOG->Trace( "Module \"%s\" shut down.", m_sName.c_str() );
+		m_bRunning = false;
 	}
 
 	SAFE_DELETE( m_pThread );
