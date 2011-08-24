@@ -9,9 +9,16 @@
 #include "OptionRowHandler.h"
 #include "LocalizedString.h"
 #include "SpecialFiles.h"
-#include "SpecialFiles.h"
 #include "ScreenPrompt.h"
 #include "SongManager.h"
+// there should probably be a better way to handle this: -aj
+#if defined(_WINDOWS)
+	#include "archutils/Win32/SpecialDirs.h"
+#elif defined(MACOSX)
+	// XXX!
+#elif defined(UNIX)
+	#include "archutils/Unix/SpecialDirs.h"
+#endif
 
 // main page (type list)
 REGISTER_SCREEN_CLASS( ScreenOptionsExportPackage );
@@ -186,10 +193,11 @@ static RString ReplaceInvalidFileNameChars( RString sOldFileName )
 
 static bool ExportPackage( RString sPackageName, RString sDirToExport, RString &sErrorOut )
 {
-	/*
-	RageFile f;
+	//RageFile f;
 	// TODO: Mount Desktop/ for each OS
-	// SpecialDirs::GetDesktopDir() [windows only right now -aj]
+	RString sDesktopDir = SpecialDirs::GetDesktopDir();
+	LOG->Trace( "Desktop dir: %s", sDesktopDir.c_str() );
+	/*
 	if( !f.Open("Desktop/"+sPackageName, RageFile::WRITE) )
 	{
 		sErrorOut = ssprintf( "Couldn't open %s for writing: %s", fn.c_str(), f.GetError().c_str() );
