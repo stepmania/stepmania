@@ -7,7 +7,7 @@ return
 	Desc = "Logitech DualAction",
 
 	Init = function(self)
-		Handle = LuaDriver.CreateAPIHandle( "USB" )
+		Handle = LuaAPIHandle.Create( "USB" )
 		if not Handle then
 			return Warn( "Failed to create USB handle" )
 		end
