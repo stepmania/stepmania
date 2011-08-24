@@ -3,8 +3,12 @@
 #include "RageThreads.h"
 #include "LuaDriver_LightsModule.h"
 
+/* XXX: all this is needed for PushLightsState */
+#include "RageUtil.h"
 #include "InputMapper.h" // for FOREACHGameButtonInScheme, GetInputScheme
+#include "GameState.h" // for GetCurrentGame()
 #include "GameInput.h"
+#include "Game.h"
 
 /*
  * LuaDriver_LightsModule functions
@@ -139,15 +143,28 @@ void LuaDriver_LightsModule::PushLightsState( Lua *L, const LightsState *ls )
 		return;
 
 	const InputScheme *pScheme = INPUTMAPPER->GetInputScheme();
+	RString sGame = Capitalize(GAMESTATE->GetCurrentGame()->m_szName);
 
 	FOREACH_ENUM( GameController, gc )
 	{
 		Enum::Push( L, gc );
 		lua_newtable( L );
 
-		FOREACH_GameButtonInScheme( pScheme, gb )
+		// push game-agnostic buttons
+		for( GameButton gb = GameButton(0); gb < GAME_BUTTON_CUSTOM_01; enum_add(gb,+1) )
 		{
 			Enum::Push( L, gb );
+			lua_pushboolean( L, ls->m_bGameButtonLights[gc][gb] );
+			lua_rawset( L, -3 );
+		}
+
+		// push game-specific buttons
+		for( GameButton gb = GAME_BUTTON_CUSTOM_01; gb < pScheme->m_iButtonsPerController; enum_add(gb,1) )
+		{
+			// e.g. DanceButton_UpLeft
+			const RString sKey = sGame + "Button_" + GameButtonToString( pScheme, gb );
+
+			lua_pushstring( L, sKey );
 			lua_pushboolean( L, ls->m_bGameButtonLights[gc][gb] );
 			lua_rawset( L, -3 );
 		}
