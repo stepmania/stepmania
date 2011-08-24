@@ -15,7 +15,7 @@
 #if defined(_WINDOWS)
 	#include "archutils/Win32/SpecialDirs.h"
 #elif defined(MACOSX)
-	// XXX!
+	#include "archutils/Darwin/SpecialDirs.h"
 #elif defined(UNIX)
 	#include "archutils/Unix/SpecialDirs.h"
 #endif
@@ -193,12 +193,12 @@ static RString ReplaceInvalidFileNameChars( RString sOldFileName )
 
 static bool ExportPackage( RString sPackageName, RString sDirToExport, RString &sErrorOut )
 {
-	//RageFile f;
-	// TODO: Mount Desktop/ for each OS
+	// Mount Desktop/ for each OS
 	RString sDesktopDir = SpecialDirs::GetDesktopDir();
 	LOG->Trace( "Desktop dir: %s", sDesktopDir.c_str() );
 	/*
-	if( !f.Open("Desktop/"+sPackageName, RageFile::WRITE) )
+	RageFile f;
+	if( !f.Open(sDesktopDir+sPackageName, RageFile::WRITE) )
 	{
 		sErrorOut = ssprintf( "Couldn't open %s for writing: %s", fn.c_str(), f.GetError().c_str() );
 		return false;
