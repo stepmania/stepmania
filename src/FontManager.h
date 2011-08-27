@@ -16,13 +16,6 @@ public:
 	Font *CopyFont( Font *pFont );
 	void UnloadFont( Font *fp );
 	//void PruneFonts();
-
-	/* Warning: This reloads fonts completely, so all BitmapTexts need to be
-	 * reset, too.  If this isn't done, best case they end up with old font
-	 * metrics; worst case, they get left with stale pointers to RageTextures
-	 * that'll get freed eventually and crash.  This is only used for realtime
-	 * adjustment of fonts in ScreenTestFonts at the moment. */
-	void ReloadFonts();
 };
 
 extern FontManager*	FONT;	// global and accessable from anywhere in our program

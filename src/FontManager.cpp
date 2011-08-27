@@ -29,15 +29,6 @@ FontManager::~FontManager()
 	}
 }
 
-void FontManager::ReloadFonts()
-{
-	for(map<FontName, Font*>::iterator i = g_mapPathToFont.begin();
-		i != g_mapPathToFont.end(); ++i)
-	{
-		i->second->Reload();
-	}
-}
-
 Font* FontManager::LoadFont( const RString &sFontOrTextureFilePath, RString sChars )
 {
 	Font *pFont;
