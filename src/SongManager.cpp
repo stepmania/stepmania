@@ -1987,6 +1987,24 @@ public:
 		LuaHelpers::CreateTableFromArray<Course*>( v, L );
 		return 1;
 	}
+	static int SongToPreferredSortSectionName( T* p, lua_State *L )
+	{
+		const Song* pSong = Luna<Song>::check(L,1);
+		lua_pushstring(L, p->SongToPreferredSortSectionName(pSong));
+		return 1;
+	}
+	static int WasLoadedFromAdditionalSongs( T* p, lua_State *L )
+	{
+		const Song* pSong = Luna<Song>::check(L,1);
+		lua_pushboolean(L, p->WasLoadedFromAdditionalSongs(pSong));
+		return 1;
+	}
+	static int WasLoadedFromAdditionalCourses( T* p, lua_State *L )
+	{
+		const Course* pCourse = Luna<Course>::check(L,1);
+		lua_pushboolean(L, p->WasLoadedFromAdditionalCourses(pCourse));
+		return 1;
+	}
 
 	LunaSongManager()
 	{
@@ -2025,11 +2043,9 @@ public:
 		ADD_METHOD( DoesCourseGroupExist );
 		ADD_METHOD( GetPopularSongs );
 		ADD_METHOD( GetPopularCourses );
-		//ADD_METHOD( GetSongsOfCurrentGame );
-		//ADD_METHOD( GetAllSongsOfCurrentGame );
-		//ADD_METHOD( SongToPreferredSortSectionName );
-		//ADD_METHOD( WasLoadedFromAdditionalSongs );
-		//ADD_METHOD( WasLoadedFromAdditionalCourses );
+		ADD_METHOD( SongToPreferredSortSectionName );
+		ADD_METHOD( WasLoadedFromAdditionalSongs );
+		ADD_METHOD( WasLoadedFromAdditionalCourses );
 	}
 };
 

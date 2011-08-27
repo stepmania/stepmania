@@ -102,7 +102,7 @@ public:
 	 * a song is chosen.
 	 * @return all of the popular songs. */
 	const vector<Song*> &GetPopularSongs() const { return m_pPopularSongs; }
-	
+
 	/**
 	 * @brief Retrieve all of the songs in a group that have at least one
 	 * valid step for the current gametype.
@@ -114,7 +114,7 @@ public:
 	 * valid step for the current gametype.
 	 * @return the songs within the game that have at least one valid Step. */
 	const vector<Song *> &GetAllSongsOfCurrentGame() const;
-	
+
 	void GetPreferredSortSongs( vector<Song*> &AddTo ) const;
 	RString SongToPreferredSortSectionName( const Song *pSong ) const;
 	const vector<Course*> &GetPopularCourses( CourseType ct ) const { return m_pPopularCourses[ct]; }
