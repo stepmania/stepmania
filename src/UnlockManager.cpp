@@ -973,6 +973,8 @@ public:
 		ADD_METHOD( PreferUnlockEntryID );
 		ADD_METHOD( UnlockEntryID );
 		ADD_METHOD( UnlockEntryIndex );
+		//ADD_METHOD( UnlockSong );
+		//ADD_METHOD( GetUnlocksByType );
 	}
 };
 
