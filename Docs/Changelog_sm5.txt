@@ -10,6 +10,7 @@ StepMania 5.0 $next | 2011????
 
 2011/08/27
 ----------
+* Updated libjpeg to 8c.
 * [SongManager] Added GetCoursesInGroup(sCourseGroup,bIncludeAutogen),
   GetSongGroupBannerPath(songGroup), GetCourseGroupBannerPath(courseGroup),
   DoesSongGroupExist(songGroup), DoesCourseGroupExist(courseGroup) and
@@ -19,6 +20,9 @@ StepMania 5.0 $next | 2011????
 * [SongManager] Add SongToPreferredSortSectionName(song), WasLoadedFromAdditionalSongs(song),
   and WasLoadedFromAdditionalCourses(course) Lua bindings. [AJ]
 * [CryptManager] Add GenerateRandomUUID() Lua binding. [AJ]
+* [ThemeManager] Added DoesThemeExist(sTheme), IsThemeSelectable(sTheme),
+  DoesLanguageExist(sLang), GetCurThemeName(), HasMetric(sGroup,sValue), and
+  HasString(sGroup,sValue) Lua bindings. [AJ]
 
 2011/08/23
 ----------
