@@ -479,6 +479,13 @@ public:
 		lua_pushstring( L, sha1fout );
 		return 1;
 	}
+	static int GenerateRandomUUID( T* p, lua_State *L )
+	{
+		RString uuidOut;
+		uuidOut = p->GenerateRandomUUID();
+		lua_pushstring( L, uuidOut );
+		return 1;
+	}
 
 	LunaCryptManager()
 	{
@@ -486,6 +493,7 @@ public:
 		ADD_METHOD( MD5File );
 		ADD_METHOD( SHA1String );
 		ADD_METHOD( SHA1File );
+		ADD_METHOD( GenerateRandomUUID );
 	}
 };
 

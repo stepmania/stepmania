@@ -18,6 +18,7 @@ StepMania 5.0 $next | 2011????
   and GetPopularCourses(courseType) Lua bindings. [AJ]
 * [SongManager] Add SongToPreferredSortSectionName(song), WasLoadedFromAdditionalSongs(song),
   and WasLoadedFromAdditionalCourses(course) Lua bindings. [AJ]
+* [CryptManager] Add GenerateRandomUUID() Lua binding. [AJ]
 
 2011/08/23
 ----------
