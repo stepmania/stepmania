@@ -1676,6 +1676,9 @@
 	</Function>
 </Class>
 <Class name='CryptManager'>
+	<Function name='GenerateRandomUUID' return='string' arguments=''>
+		Generates a random UUID (version 4).
+	</Function>
 	<Function name='MD5File' return='string' arguments='string sPath'>
 		Returns the MD5 hash for the file at <code>sPath</code>.
 	</Function>
@@ -3456,6 +3459,12 @@
 	</Function>
 </Class>
 <Class name='SongManager'>
+	<Function name='DoesCourseGroupExist' return='bool' arguments='string sGroup'>
+		Returns <code>true</code> if the specified course group exists.
+	</Function>
+	<Function name='DoesSongGroupExist' return='bool' arguments='string sGroup'>
+		Returns <code>true</code> if the specified song group exists.
+	</Function>
 	<Function name='FindCourse' return='Course' arguments='string sCourse'>
 		Returns a Course if one matching <code>sCourse</code> is found.
 	</Function>
@@ -3471,8 +3480,14 @@
 	<Function name='GetCourseColor' return='color' arguments='Course c'>
 		Returns the course color of Course <code>c</code>.
 	</Function>
+	<Function name='GetCourseGroupBannerPath' return='string' arguments='string sGroup'>
+		Returns the path to the specified course group's banner.
+	</Function>
 	<Function name='GetCourseGroupNames' return='{string}' arguments=''>
 		Returns a table containing all of the course group names.
+	</Function>
+	<Function name='GetCoursesInGroup' return='{Course}' arguments='string sGroup'>
+		Returns a table with all of the courses in the specified group.
 	</Function>
 	<Function name='GetExtraStageInfo' return='various' arguments='bool bExtra2, Style s'>
 		Returns the extra stage info (Song, Steps) for the specified Style <code>s</code>. (If <code>bExtra2</code> is true, it will use the second Extra Stage data instead of the first. Again, Lua.xsd sucks)
@@ -3501,6 +3516,18 @@
 	<Function name='GetNumUnlockedSongs' return='int' arguments=''>
 		Returns the number of unlocked songs.
 	</Function>
+	<Function name='GetPopularCourses' return='{Course}' arguments='CourseType ct'>
+		Returns a table of popular courses for the specified CourseType.
+	</Function>
+	<Function name='GetPopularSongs' return='{Song}' arguments=''>
+		Returns a table of popular songs.
+	</Function>
+	<Function name='GetPreferredSortCourses' return='' arguments='CourseType ct, bool bIncludeAutogen'>
+		Returns a table of courses as they'd appear in preferred sort.
+	</Function>
+	<Function name='GetPreferredSortSongs' return='{Song}' arguments=''>
+		Returns a table of songs as they'd appear in preferred sort.
+	</Function>
 	<Function name='GetRandomCourse' return='Course' arguments=''>
 		Returns a random course.
 	</Function>
@@ -3513,10 +3540,12 @@
 	<Function name='GetSongFromSteps' return='Song' arguments='Steps st'>
 		Returns a Song given a set of Steps <code>st</code>.
 	</Function>
+	<Function name='GetSongGroupBannerPath' return='string' arguments='string sGroup'>
+		Returns the path to the specified song group's banner.
+	</Function>
 	<Function name='GetSongGroupColor' return='color' arguments='string sGroupName'>
 		Returns the song group color of <code>sGroupName</code>.
 	</Function>
-	<!-- sm-ssc additions: -->
 	<Function name='GetSongGroupNames' return='{string}' arguments=''>
 		Returns a table containing all of the song group names.
 	</Function>
@@ -3534,6 +3563,15 @@
 	</Function>
 	<Function name='SetPreferredSongs' return='void' arguments='string sListName'>
 		Loads preferred songs from <code>{theme}/Other/SongManager sListName.txt</code>.
+	</Function>
+	<Function name='SongToPreferredSortSectionName' return='string' arguments='Song s'>
+		Returns the preferred sort section name for the specified Song.
+	</Function>
+	<Function name='WasLoadedFromAdditionalCourses' return='bool' arguments='Course c'>
+		Returns <code>true</code> if the specified course was loaded from AdditionalCourses.
+	</Function>
+	<Function name='WasLoadedFromAdditionalSongs' return='bool' arguments='Song s'>
+		Returns <code>true</code> if the specified song was loaded from AdditionalSongs.
 	</Function>
 </Class>
 <Class name='SongPosition'>
@@ -3829,11 +3867,20 @@
 	</Function>
 </Class>
 <Class name='ThemeManager'>
+	<Function name='DoesLanguageExist' return='bool' arguments='string langName'>
+		Returns <code>true</code> if the specified language exists in the current theme.
+	</Function>
+	<Function name='DoesThemeExist' return='bool' arguments='string themeName'>
+		Returns <code>true</code> if the specified theme exists.
+	</Function>
 	<Function name='GetCurLanguage' return='string' arguments=''>
 		Returns the current language.
 	</Function>
 	<Function name='GetCurrentThemeDirectory' return='string' arguments=''>
 		Returns the theme's current directory.
+	</Function>
+	<Function name='GetCurThemeName' return='string' arguments=''>
+		Returns the name of the current theme.
 	</Function>
 	<Function name='GetMetric' return='string' arguments='string ClassName, string Element'>
 		Returns the value of <code>Element</code> in <code>Class</code> from metrics.ini.
@@ -3870,6 +3917,15 @@
 	</Function>
 	<Function name='GetThemeDisplayName' return='string' arguments=''>
 		Returns the display name of the current theme.
+	</Function>
+	<Function name='HasMetric' return='bool' arguments='string section, string value'>
+		Returns <code>true</code> if the theme has the specified metric.
+	</Function>
+	<Function name='HasString' return='bool' arguments='string section, string value'>
+		Returns <code>true</code> if the theme has the specified string. 
+	</Function>
+	<Function name='IsThemeSelectable' return='bool' arguments='string theme'>
+		Returns <code>true</code> if the specified theme is selectable.
 	</Function>
 	<Function name='ReloadMetrics' return='void' arguments=''>
 		Reloads the current theme's metrics.
