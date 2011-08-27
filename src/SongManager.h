@@ -81,7 +81,7 @@ public:
 	RageColor GetCourseGroupColor( const RString &sCourseGroupName ) const;
 	RageColor GetCourseColor( const Course* pCourse ) const;
 
-	void ResetGroupColors(); // sm-ssc add
+	void ResetGroupColors();
 
 	static RString ShortenGroupName( RString sLongGroupName );
 
@@ -108,12 +108,12 @@ public:
 	 * valid step for the current gametype.
 	 * @param sGroupName the name of the group.
 	 * @return the songs within the group that have at least one valid Step. */
-	const vector<Song *> & GetSongsOfCurrentGame( const RString &sGroupName ) const;
+	const vector<Song *> &GetSongsOfCurrentGame( const RString &sGroupName ) const;
 	/**
 	 * @brief Retrieve all of the songs in the game that have at least one
 	 * valid step for the current gametype.
 	 * @return the songs within the game that have at least one valid Step. */
-	const vector<Song *> & GetAllSongsOfCurrentGame() const;
+	const vector<Song *> &GetAllSongsOfCurrentGame() const;
 	
 	void GetPreferredSortSongs( vector<Song*> &AddTo ) const;
 	RString SongToPreferredSortSectionName( const Song *pSong ) const;

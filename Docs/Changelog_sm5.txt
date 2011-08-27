@@ -8,6 +8,13 @@ ________________________________________________________________________________
 StepMania 5.0 $next | 2011????
 --------------------------------------------------------------------------------
 
+2011/08/27
+----------
+* [SongManager] Added GetCoursesInGroup(sCourseGroup,bIncludeAutogen),
+  GetSongGroupBannerPath(songGroup), GetCourseGroupBannerPath(courseGroup),
+  DoesSongGroupExist(songGroup), DoesCourseGroupExist(courseGroup) and
+  GetPopularSongs() Lua bindings. [AJ]
+
 2011/08/23
 ----------
 * [Makefile.am] Fixed version date and time handling. [AJ]
