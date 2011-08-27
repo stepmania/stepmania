@@ -79,6 +79,10 @@ void ScreenOptionsExportPackage::ProcessMenuStart( const InputEventPlus &input )
 	}
 
 	ExportPackages::m_sPackageType = m_vsPackageTypes[iRow];
+
+	SCREENMAN->PlayStartSound();
+	this->BeginFadingOut();
+	// todo: find a way to make this next transition not be so bad.
 	SCREENMAN->SetNewScreen("ScreenOptionsExportPackageSubPage");
 }
 
@@ -105,6 +109,8 @@ void ScreenOptionsExportPackageSubPage::Init()
 
 void ScreenOptionsExportPackageSubPage::BeginScreen()
 {
+	ScreenWithMenuElements::BeginScreen();
+
 	// Check type and fill m_vsPossibleDirsToExport
 	const RString *s_packageType = &ExportPackages::m_sPackageType;
 	if( *s_packageType == "Themes" )
@@ -205,6 +211,7 @@ static bool ExportPackage( RString sPackageName, RString sDirToExport, RString &
 		return false;
 	}
 
+	// XXX: totally doesn't work. -aj
 	/*
 	RageFileObjZip zip( &f );
 	zip.Start();
@@ -279,7 +286,7 @@ void ScreenOptionsExportPackageSubPage::ExportOptions( int iRow, const vector<Pl
 }
 
 /*
- * (c) 2002-2004 Chris Danford
+ * (c) 2002-2011 Chris Danford, AJ Kelly
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
