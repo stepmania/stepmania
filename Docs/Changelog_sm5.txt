@@ -14,6 +14,8 @@ StepMania 5.0 $next | 2011????
   GetSongGroupBannerPath(songGroup), GetCourseGroupBannerPath(courseGroup),
   DoesSongGroupExist(songGroup), DoesCourseGroupExist(courseGroup) and
   GetPopularSongs() Lua bindings. [AJ]
+* [SongManager] Added GetPreferredSortSongs(), GetPreferredSortCourses(courseType,bIncludeAutogen),
+  and GetPopularCourses(courseType) Lua bindings. [AJ]
 
 2011/08/23
 ----------
