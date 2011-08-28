@@ -1,7 +1,10 @@
 #ifndef SPECIAL_DIRS_H
 #define SPECIAL_DIRS_H
 
-RString SpecialDirs::GetDesktopDir();
+namespace SpecialDirs
+{
+	RString GetDesktopDir();
+};
 
 #endif
 /*

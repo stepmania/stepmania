@@ -1,6 +1,9 @@
 #include "global.h"
 #include "SpecialDirs.h"
 #include "ProductInfo.h"
+#include <CoreServices/CoreServices.h>
+#include <IOKit/IOKitLib.h>
+#include "RageUtil.h"
 
 static void PathForFolderType( char dir[PATH_MAX], OSType folderType )
 {
@@ -18,6 +21,8 @@ RString SpecialDirs::GetDesktopDir()
 	PathForFolderType( dir, kDesktopFolderType );
 	return RString( ssprintf("%s/" PRODUCT_ID, dir) );
 }
+
+
 
 /*
  * (c) 2011 AJ Kelly
