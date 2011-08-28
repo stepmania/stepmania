@@ -311,9 +311,9 @@ end;
 --1bilDP scoring because I can.
 --------------------------------------------------------------
 r['1bilDP']= function(params,pss)
-  local score = math.floor((pss:GetActualDancePoints()/pss:GetPossibleDancePoints())*1000000000)
-  pss:SetScore(score)
-  pss:SetCurMaxScore(score)
+  local poss = pss:GetPossibleDancePoints()
+  pss:SetScore(math.floor((pss:GetActualDancePoints()/poss)*1000000000))
+  pss:SetCurMaxScore(math.floor((pss:GetCurrentPossibleDancePoints()/poss)*1000000000))
 end
 -------------------------------------------------------------------------------
 -- Formulas end here.
