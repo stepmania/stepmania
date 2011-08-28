@@ -318,4 +318,9 @@ end
 -------------------------------------------------------------------------------
 -- Formulas end here.
 for v in ivalues(DisabledScoringModes) do r[v] = nil end
-Scoring = r
+Scoring = {}
+setmetatable(Scoring, { __index = function(...) return function(params,pss)
+--put any code here that should run before every scoring function
+if not GAMESTATE:IsHumanPlayer(params.Player) and r[key] 
+then return r[key](...) end 
+end }
