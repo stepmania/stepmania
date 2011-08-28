@@ -318,4 +318,4 @@ end
 -------------------------------------------------------------------------------
 -- Formulas end here.
 for v in ivalues(DisabledScoringModes) do r[v] = nil end
-Scoring = {};
+Scoring = r
