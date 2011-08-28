@@ -304,20 +304,18 @@ r['MIGS'] = function(params,pss)
 	for k,v in pairs(tapScoreTable) do
 		curScore = curScore + ( pss:GetTapNoteScores(k) * v );
 	end;
-	curScore = curScore + ( pss:GetHoldNoteScores('HoldNoteScore_Held') * 6 );
-	pss:SetScore(clamp(curScore,0,math.huge));
+  curScore = math.max(0,curScore + ( pss:GetHoldNoteScores('HoldNoteScore_Held') * 6 ));
 end;
 
+--------------------------------------------------------------
+--1bilDP scoring because I can.
+--------------------------------------------------------------
+r['1bilDP']= function(params,pss)
+  local score = math.floor((pss:GetActualDancePoints()/pss:GetPossibleDancePoints())*1000000000)
+  pss:SetScore(score)
+  pss:SetCurMaxScore(score)
+end
 -------------------------------------------------------------------------------
 -- Formulas end here.
+for v in ivalues(DisabledScoringModes) do r[v] = nil end
 Scoring = {};
-setmetatable(Scoring, {
-	__metatable = { "Letting you change the metatable sort of defeats the purpose." },
-	__index = function(tbl, key)
-			for v in ivalues(DisabledScoringModes) do
-				if key == v then return r['DDR Extreme'] end
-			end
-			return r[key]
-		end,
-	}
-);
