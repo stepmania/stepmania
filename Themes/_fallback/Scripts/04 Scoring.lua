@@ -319,8 +319,13 @@ end
 -- Formulas end here.
 for v in ivalues(DisabledScoringModes) do r[v] = nil end
 Scoring = {}
-setmetatable(Scoring, { __index = function(...) return function(params,pss)
---put any code here that should run before every scoring function
-	if not GAMESTATE:IsHumanPlayer(params.Player) and type(r[key]) == "function" then 
-	return r[key](...) end
-end })
+setmetatable(Scoring, {
+	__metatable = { "Letting you change the metatable sort of defeats the purpose." },
+	__index = function(tbl, key)
+		for v in ivalues(DisabledScoringModes) do
+			if key == v then return r['DDR Extreme'] end
+		end
+		return r[key]
+	end,
+	}
+);
