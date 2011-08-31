@@ -1,7 +1,5 @@
-/*
- * LightsDriver_LinuxWeedTech: Control lights with WTDIO-M from Weeder Technologies
- *	http://www.weedtech.com
- */
+/* LightsDriver_LinuxWeedTech: Control lights with WTDIO-M from Weeder Technologies
+ *	http://www.weedtech.com / http://www.weedtech.com/wtdio-m.html */
 
 #ifndef LightsDriver_LinuxWeedTech_H
 #define LightsDriver_LinuxWeedTech_H
@@ -13,7 +11,7 @@ class LightsDriver_LinuxWeedTech : public LightsDriver
 public:
 	LightsDriver_LinuxWeedTech();
 	virtual ~LightsDriver_LinuxWeedTech();
-	
+
 	virtual void Set( const LightsState *ls );
 };
 
