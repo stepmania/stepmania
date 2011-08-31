@@ -1,7 +1,5 @@
-/*
- * LightsDriver_Win32Parallel - Control lights with Kit 74:
- *	http://www.google.com/search?hl=en&lr=&ie=UTF-8&oe=UTF-8&q=kit+74+relay
- */
+/* LightsDriver_Win32Parallel - Control lights with Kit 74:
+ *	http://www.google.com/search?hl=en&lr=&ie=UTF-8&oe=UTF-8&q=kit+74+relay */
 
 #ifndef LightsDriver_Win32Parallel_H
 #define LightsDriver_Win32Parallel_H
@@ -13,7 +11,7 @@ class LightsDriver_Win32Parallel : public LightsDriver
 public:
 	LightsDriver_Win32Parallel();
 	virtual ~LightsDriver_Win32Parallel();
-	
+
 	virtual void Set( const LightsState *ls );
 };
 
