@@ -272,7 +272,8 @@ RString GetInfoLog( GLhandleARB h )
 {
 	GLint iLength;
 	glGetObjectParameterivARB( h, GL_OBJECT_INFO_LOG_LENGTH_ARB, &iLength );
-	if (!iLength)
+
+	if( iLength <= 0 )
 		return RString();
 
 	GLcharARB *pInfoLog = new GLcharARB[iLength];
