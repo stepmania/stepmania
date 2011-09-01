@@ -144,8 +144,7 @@ InputHandler_X11::InputHandler_X11()
 	// (EnterWindowMask/LeaveWindowMask?) -aj
 	XSelectInput( Dpy, Win,
 		winAttrib.your_event_mask | KeyPressMask | KeyReleaseMask
-		| ButtonPressMask | ButtonReleaseMask
-		| PointerMotionMask
+		| ButtonPressMask | ButtonReleaseMask | PointerMotionMask
 	);
 }
 
@@ -156,7 +155,10 @@ InputHandler_X11::~InputHandler_X11()
 	XWindowAttributes winAttrib;
 
 	XGetWindowAttributes( Dpy, Win, &winAttrib );
-	XSelectInput( Dpy, Win, winAttrib.your_event_mask & ~(KeyPressMask|KeyReleaseMask|ButtonPressMask|ButtonReleaseMask|PointerMotionMask) );
+	XSelectInput( Dpy, Win,
+		winAttrib.your_event_mask &
+		~(KeyPressMask|KeyReleaseMask|ButtonPressMask|ButtonReleaseMask|PointerMotionMask)
+	);
 }
 
 void InputHandler_X11::Update()
@@ -178,7 +180,7 @@ void InputHandler_X11::Update()
 			&event) )
 	{
 		const bool bKeyPress = event.type == KeyPress;
-		//const bool bMousePress = event.type == ButtonPress;
+		const bool bMousePress = event.type == ButtonPress;
 
 		if( event.type == MotionNotify )
 		{
@@ -201,6 +203,7 @@ void InputHandler_X11::Update()
 
 		// Why only the zero index?
 		lastDB = XSymToDeviceButton( XLookupKeysym(&event.xkey, 0) );
+
 		if( lastDB == DeviceButton_Invalid )
 			continue;
 
@@ -208,7 +211,7 @@ void InputHandler_X11::Update()
 			ButtonPressed( DeviceInput(DEVICE_KEYBOARD, lastDB, 1) );
 		/*
 		else if( bMousePress )
-			
+			ButtonPressed( DeviceInput(DEVICE_MOUSE, lastDB, 1) );
 		*/
 		else
 			lastEvent = event;
@@ -217,7 +220,12 @@ void InputHandler_X11::Update()
 	// Handle any last releases.
 	if( lastEvent.type != 0 )
 	{
-		ButtonPressed( DeviceInput(DEVICE_KEYBOARD, lastDB, 0) );
+		if( lastEvent.type == (KeyPress|KeyRelease) )
+			ButtonPressed( DeviceInput(DEVICE_KEYBOARD, lastDB, 0) );
+		/*
+		if( lastEvent.type == (ButtonPress|ButtonRelease) )
+			ButtonPressed( DeviceInput(DEVICE_MOUSE, lastDB, 0) );
+		*/
 	}
 
 	InputHandler::UpdateTimer();
@@ -229,7 +237,7 @@ void InputHandler_X11::GetDevicesAndDescriptions( vector<InputDeviceInfo>& vDevi
 	if( Dpy && Win )
 	{
 		vDevicesOut.push_back( InputDeviceInfo(DEVICE_KEYBOARD,"Keyboard") );
-		//vDevicesOut.push_back( InputDeviceInfo(DEVICE_MOUSE,"Mouse") );
+		vDevicesOut.push_back( InputDeviceInfo(DEVICE_MOUSE,"Mouse") );
 	}
 }
 

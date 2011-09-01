@@ -192,7 +192,13 @@ end;
 t[#t+1] = StandardDecorationFromFileOptional("BPMDisplay","BPMDisplay");
 t[#t+1] = StandardDecorationFromFileOptional("StageDisplay","StageDisplay");
 t[#t+1] = StandardDecorationFromFileOptional("SongTitle","SongTitle");
-
+t[#t+1] = Def.ActorFrame {
+	InitCommand=cmd(x,SCREEN_RIGHT;y,SCREEN_BOTTOM;draworder,5);
+	LoadActor("_whatsup") .. {
+		InitCommand=cmd(horizalign,left;vertalign,top);
+		ToastyMessageCommand=cmd(smooth,3;x,-256;y,-200;sleep,2;smooth,3;x,256;y,200)
+	};
+};
 if( not GAMESTATE:IsCourseMode() ) then
 t[#t+1] = Def.Actor{
 	JudgmentMessageCommand = function(self, params)

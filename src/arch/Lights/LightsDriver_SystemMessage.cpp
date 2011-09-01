@@ -20,7 +20,7 @@ void LightsDriver_SystemMessage::Set( const LightsState *ls )
 		return;
 
 	RString s;
-	
+
 	s += LightsModeToString(LIGHTSMAN->GetLightsMode()) + "\n";
 
 	s += "Cabinet: ";

@@ -18,7 +18,6 @@ beat    | beatmania (5 and 7 keys)
 dance   | dance dance revolution (4 panels)
 ds3ddx  | ds3d DX
 ez2     | Ez2Dancer
-guitar  | guitar * (5 keys, so Guitar Hero for now)
 karaoke | karaoke (unimplemented)
 kb7     | keyboard 7 (<del>7</del> 6 keys now?)
 lights  | lights (unused)

@@ -1,24 +1,14 @@
-/* LightsDriver_LinuxWeedTech: Control lights with WTDIO-M from Weeder Technologies
- *	http://www.weedtech.com / http://www.weedtech.com/wtdio-m.html */
+#ifndef SPECIAL_DIRS_H
+#define SPECIAL_DIRS_H
 
-#ifndef LightsDriver_LinuxWeedTech_H
-#define LightsDriver_LinuxWeedTech_H
-
-#include "arch/Lights/LightsDriver.h"
-
-class LightsDriver_LinuxWeedTech : public LightsDriver
+namespace SpecialDirs
 {
-public:
-	LightsDriver_LinuxWeedTech();
-	virtual ~LightsDriver_LinuxWeedTech();
-
-	virtual void Set( const LightsState *ls );
+	RString GetDesktopDir();
 };
 
 #endif
-
 /*
- * (c) 2003-2004 Kevin Slaughter
+ * (c) 2011 AJ Kelly
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

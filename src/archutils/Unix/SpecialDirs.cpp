@@ -1,24 +1,19 @@
-/* LightsDriver_LinuxWeedTech: Control lights with WTDIO-M from Weeder Technologies
- *	http://www.weedtech.com / http://www.weedtech.com/wtdio-m.html */
+#include "global.h"
+#include "SpecialDirs.h"
 
-#ifndef LightsDriver_LinuxWeedTech_H
-#define LightsDriver_LinuxWeedTech_H
-
-#include "arch/Lights/LightsDriver.h"
-
-class LightsDriver_LinuxWeedTech : public LightsDriver
+RString SpecialDirs::GetDesktopDir()
 {
-public:
-	LightsDriver_LinuxWeedTech();
-	virtual ~LightsDriver_LinuxWeedTech();
-
-	virtual void Set( const LightsState *ls );
-};
-
-#endif
+	char *psPath = getenv("HOME");
+	if( psPath )
+	{
+		// XXX: should use PRODUCT_ID, probably
+		return RString(psPath) + "/Desktop/stepmania5/";
+	}
+	return "DICKS"; // not my suggestion -freem
+}
 
 /*
- * (c) 2003-2004 Kevin Slaughter
+ * (c) 2011 AJ Kelly
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

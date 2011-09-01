@@ -11,7 +11,7 @@
 
 REGISTER_SOUND_DRIVER_CLASS(LinuxWeedTech);
 
-// Begin serial driver //
+// Begin serial driver
 static int fd = -1;
 static LightsState CurLights;
 
@@ -45,7 +45,7 @@ static inline void SerialOpen()
 {
 	// Make sure we've not already opened the port
 	SerialClose();
-	
+
 	// Open a fresh instance..
 	fd = open( "/dev/ttyS0", O_WRONLY | O_NOCTTY | O_NDELAY );
 	if( fd < 0 )
@@ -58,16 +58,14 @@ static inline void SerialOpen()
 		tcgetattr( fd, &my_termios );
 		tcflush( fd, TCIFLUSH );
 		my_termios.c_cflag = B9600 | CS8 | CLOCAL | HUPCL;
-        	
+
 		cfsetospeed( &my_termios, B9600 );
 		tcsetattr( fd, TCSANOW, &my_termios );
 	}
 }
 // End serial driver //
 
-
-
-/* Module maps
+/* Module maps (Dance mode)
 	MODULE #A
 		Channel A:	Marquee (Up-Left)
 		Channel B:	Marquee (Up-Right)
@@ -101,7 +99,6 @@ static inline void SerialOpen()
 		Channel N:	<not used>
 */
 
-
 LightsDriver_LinuxWeedTech::LightsDriver_LinuxWeedTech()
 {
 	// Open port
@@ -131,7 +128,7 @@ void LightsDriver_LinuxWeedTech::Set( const LightsState *ls )
 	// Re-used var's
 	char str[6] = { 0x00, 0x00, 0x00, '1', 0x0d, 0x00 };
 	bool bOn = false;
-	
+
 	{
 		LightsMode lm = LIGHTSMAN->GetLightsMode();
 		if( lm == LIGHTSMODE_GAMEPLAY )
@@ -144,10 +141,10 @@ void LightsDriver_LinuxWeedTech::Set( const LightsState *ls )
 				bOn |= ls->m_bCabinetLights[cl];
 				CurLights.m_bCabinetLights[cl] = ls->m_bCabinetLights[cl];
 			}
-			
+
 			str[0]='A';
 			str[1]='W';
-			
+
 			if( bOn )
 			{
 				str[2]='C';
@@ -158,13 +155,13 @@ void LightsDriver_LinuxWeedTech::Set( const LightsState *ls )
 				str[2]='0';
 				str[3]='0';
 			}
-			
+
 			// Send command
 			puts( str );
 			SerialOut( str, 6 );
 			return;
 		}
-		
+
 		FOREACH_CabinetLight( cl )
 		{
 			// Only send the command if the light has changed states (on/off)
@@ -177,13 +174,12 @@ void LightsDriver_LinuxWeedTech::Set( const LightsState *ls )
 				else if(cl == LIGHT_MARQUEE_LR_RIGHT)	{str[0] = 'A'; str[2] = 'D';}
 				else if(cl == LIGHT_BASS_LEFT)		{str[0] = 'A'; str[2] = 'G';}
 				else if(cl == LIGHT_BASS_RIGHT)		{str[0] = 'A'; str[2] = 'H';}
-				
-				
+
 				if( bOn )
 					str[1]='L';
 				else
 					str[1]='H';
-				
+
 				if( str[0] != 0x00 )
 				{
 					SerialOut( str, 6 );
@@ -193,7 +189,7 @@ void LightsDriver_LinuxWeedTech::Set( const LightsState *ls )
 			}
 		}
 	}
-	
+
 	FOREACH_ENUM( GameController,  gc )
 	{
 		FOREACH_ENUM( GameButton,  gb )
@@ -204,23 +200,20 @@ void LightsDriver_LinuxWeedTech::Set( const LightsState *ls )
 				if(gc == GameController_1) {
 					if(gb == DANCE_BUTTON_LEFT)		{str[0] = 'A'; str[2] = 'I';}
 					if(gb == DANCE_BUTTON_RIGHT)		{str[0] = 'A'; str[2] = 'J';}
-					if(gb == DANCE_BUTTON_UP)		{str[0] = 'A'; str[2] = 'K';}
+					if(gb == DANCE_BUTTON_UP)			{str[0] = 'A'; str[2] = 'K';}
 					if(gb == DANCE_BUTTON_DOWN)		{str[0] = 'A'; str[2] = 'L';}
 					if(gb == GAME_BUTTON_START)		{str[0] = 'A'; str[2] = 'E';}
 				}
 				else if(gc == GameController_2) {
 					if(gb == DANCE_BUTTON_LEFT)		{str[0] = 'A'; str[2] = 'M';}
 					if(gb == DANCE_BUTTON_RIGHT)		{str[0] = 'A'; str[2] = 'N';}
-					if(gb == DANCE_BUTTON_UP)		{str[0] = 'B'; str[2] = 'A';}
+					if(gb == DANCE_BUTTON_UP)			{str[0] = 'B'; str[2] = 'A';}
 					if(gb == DANCE_BUTTON_DOWN)		{str[0] = 'B'; str[2] = 'B';}					
 					if(gb == GAME_BUTTON_START)		{str[0] = 'A'; str[2] = 'F';}
 				}
-				
-				if( bOn )
-					str[1]='L';
-				else
-					str[1]='H';
-				
+
+				str[1] = bOn ? 'L' : 'H';
+
 				if( str[0] != 0x00 )
 				{
 					//SerialOut(str, 6);
@@ -230,5 +223,29 @@ void LightsDriver_LinuxWeedTech::Set( const LightsState *ls )
 			}
 		}
 	}
-
 }
+
+/*
+ * (c) 2003-2004 Kevin Slaughter
+ * All rights reserved.
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, and/or sell copies of the Software, and to permit persons to
+ * whom the Software is furnished to do so, provided that the above
+ * copyright notice(s) and this permission notice appear in all copies of
+ * the Software and that both the above copyright notice(s) and this
+ * permission notice appear in supporting documentation.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF
+ * THIRD PARTY RIGHTS. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR HOLDERS
+ * INCLUDED IN THIS NOTICE BE LIABLE FOR ANY CLAIM, OR ANY SPECIAL INDIRECT
+ * OR CONSEQUENTIAL DAMAGES, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS
+ * OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+ * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+ * PERFORMANCE OF THIS SOFTWARE.
+ */

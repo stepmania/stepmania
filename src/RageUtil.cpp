@@ -5,6 +5,7 @@
 #include "RageFile.h"
 #include "Foreach.h"
 #include "LocalizedString.h"
+#include "LuaBinding.h"
 #include "LuaManager.h"
 #include <float.h>
 
@@ -89,6 +90,70 @@ int MersenneTwister::operator()()
 
 	return Temper( m_Values[m_iNext++] );
 }
+
+/* Extend MersenneTwister into Lua space. This is intended to replace
+ * math.randomseed and math.random, so we conform to their behavior. */
+
+namespace
+{
+	MersenneTwister g_LuaPRNG;
+
+	/* To map from [0..2^32-1] to [0..1), we divide by 2^32. */
+	const double DIVISOR = pow( double(2), double(32) );
+
+	static int Seed( lua_State *L )
+	{
+		g_LuaPRNG.Reset( IArg(1) );
+		return 0;
+	}
+
+	static int Random( lua_State *L )
+	{
+		switch( lua_gettop(L) )
+		{
+			/* [0..1) */
+			case 0:
+			{
+				double r = double(g_LuaPRNG()) / DIVISOR;
+				lua_pushnumber( L, r );
+				return 1;
+			}
+
+			/* [1..u] */
+			case 1:
+			{
+				int upper = IArg(1);
+				luaL_argcheck( L, 1 <= upper, 1, "interval is empty" );
+				lua_pushnumber( L, g_LuaPRNG(upper) + 1 );
+				return 1;
+			}
+			/* [l..u] */
+			case 2:
+			{
+				int lower = IArg(1);
+				int upper = IArg(2);
+				luaL_argcheck( L, lower < upper, 2, "interval is empty" );
+				lua_pushnumber( L, (int(g_LuaPRNG()) % (upper-lower+1)) + lower );
+				return 1;
+			}
+
+			/* wrong amount of arguments */
+			default:
+			{
+				return luaL_error( L, "wrong number of arguments" );
+			}
+		}
+	}
+
+	const luaL_Reg MersenneTwisterTable[] =
+	{
+		LIST_METHOD( Seed ),
+		LIST_METHOD( Random ),
+		{ NULL, NULL }
+	};
+}
+
+LUA_REGISTER_NAMESPACE( MersenneTwister );
 
 void fapproach( float& val, float other_val, float to_move )
 {

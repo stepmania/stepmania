@@ -5,13 +5,44 @@ from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
 ================================================================================
-StepMania 5.0 ????????? | 2011????
+StepMania 5.0 $next | 2011????
 --------------------------------------------------------------------------------
+
+2011/08/27
+----------
+* Updated libjpeg to 8c.
+* [SongManager] Added GetCoursesInGroup(sCourseGroup,bIncludeAutogen),
+  GetSongGroupBannerPath(songGroup), GetCourseGroupBannerPath(courseGroup),
+  DoesSongGroupExist(songGroup), DoesCourseGroupExist(courseGroup) and
+  GetPopularSongs() Lua bindings. [AJ]
+* [SongManager] Added GetPreferredSortSongs(), GetPreferredSortCourses(courseType,bIncludeAutogen),
+  and GetPopularCourses(courseType) Lua bindings. [AJ]
+* [SongManager] Add SongToPreferredSortSectionName(song), WasLoadedFromAdditionalSongs(song),
+  and WasLoadedFromAdditionalCourses(course) Lua bindings. [AJ]
+* [CryptManager] Add GenerateRandomUUID() Lua binding. [AJ]
+* [ThemeManager] Added DoesThemeExist(sTheme), IsThemeSelectable(sTheme),
+  DoesLanguageExist(sLang), GetCurThemeName(), HasMetric(sGroup,sValue), and
+  HasString(sGroup,sValue) Lua bindings. [AJ]
+
+2011/08/23
+----------
+* [Makefile.am] Fixed version date and time handling. [AJ]
+
+2011/08/22
+----------
+* [PrefsManager, X11Helper] Added ShowMouseCursor preference. [AJ]
+* [UnlockManager] Added GetStepOfAllTypes Lua binding. This gets the locked
+  Steps for all game types based on the difficulty specified. [Wolfman2000]
+* [UnlockManager] Added requirepasschallengesteps Lua binding. This is more
+  self-explanitory: pass challenge to be able to play edits. [Wolfman2000]
 
 2011/08/21
 ----------
 * [NotesLoaderSSC] Fix loading pre-split timing files that had blank timing
   tags inside of them. Thanks to Vin.il for the catch. [Wolfman2000]
+* [Song] Added Jacket, CD image (a la early DDR), and Disc (PIU-style) support.
+  Added GetJacketPath(), GetCDImagePath(), GetDiscPath(), HasJacket(), HasDisc(),
+  and HasCDImage() Lua bindings. [AJ]
 
 ================================================================================
 StepMania 5.0 Preview 3 | 20110820

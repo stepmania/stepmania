@@ -9,9 +9,18 @@
 #include "OptionRowHandler.h"
 #include "LocalizedString.h"
 #include "SpecialFiles.h"
-#include "SpecialFiles.h"
 #include "ScreenPrompt.h"
 #include "SongManager.h"
+#include "RageFile.h"
+
+// there should probably be a better way to handle this: -aj
+#if defined(_WINDOWS)
+	#include "archutils/Win32/SpecialDirs.h"
+#elif defined(MACOSX)
+	#include "archutils/Darwin/SpecialDirs.h"
+#elif defined(UNIX)
+	#include "archutils/Unix/SpecialDirs.h"
+#endif
 
 // main page (type list)
 REGISTER_SCREEN_CLASS( ScreenOptionsExportPackage );
@@ -70,6 +79,10 @@ void ScreenOptionsExportPackage::ProcessMenuStart( const InputEventPlus &input )
 	}
 
 	ExportPackages::m_sPackageType = m_vsPackageTypes[iRow];
+
+	SCREENMAN->PlayStartSound();
+	this->BeginFadingOut();
+	// todo: find a way to make this next transition not be so bad.
 	SCREENMAN->SetNewScreen("ScreenOptionsExportPackageSubPage");
 }
 
@@ -96,6 +109,8 @@ void ScreenOptionsExportPackageSubPage::Init()
 
 void ScreenOptionsExportPackageSubPage::BeginScreen()
 {
+	ScreenWithMenuElements::BeginScreen();
+
 	// Check type and fill m_vsPossibleDirsToExport
 	const RString *s_packageType = &ExportPackages::m_sPackageType;
 	if( *s_packageType == "Themes" )
@@ -186,16 +201,18 @@ static RString ReplaceInvalidFileNameChars( RString sOldFileName )
 
 static bool ExportPackage( RString sPackageName, RString sDirToExport, RString &sErrorOut )
 {
-	/*
+	// Mount Desktop/ for each OS.
+	RString sDesktopDir = SpecialDirs::GetDesktopDir();
+	RString fn = sDesktopDir+sPackageName;
 	RageFile f;
-	// TODO: Mount Desktop/ for each OS
-	// SpecialDirs::GetDesktopDir() [windows only right now -aj]
-	if( !f.Open("Desktop/"+sPackageName, RageFile::WRITE) )
+	if( !f.Open(fn, RageFile::WRITE) )
 	{
 		sErrorOut = ssprintf( "Couldn't open %s for writing: %s", fn.c_str(), f.GetError().c_str() );
 		return false;
 	}
 
+	// XXX: totally doesn't work. -aj
+	/*
 	RageFileObjZip zip( &f );
 	zip.Start();
 	zip.SetGlobalComment( sComment );
@@ -203,6 +220,7 @@ static bool ExportPackage( RString sPackageName, RString sDirToExport, RString &
 	vector<RString> vs;
 	GetDirListingRecursive( sDirToExport, "*", vs );
 	SMPackageUtil::StripIgnoredSmzipFiles( vs );
+	LOG->Trace("Adding files...");
 	FOREACH( RString, vs, s )
 	{
 		if( !zip.AddFile( *s ) )
@@ -212,6 +230,7 @@ static bool ExportPackage( RString sPackageName, RString sDirToExport, RString &
 		}
 	}
 
+	LOG->Trace("Writing zip...");
 	if( zip.Finish() == -1 )
 	{
 		sErrorOut = ssprintf( "Couldn't write to file %s", fn.c_str(), f.GetError().c_str() );
@@ -267,7 +286,7 @@ void ScreenOptionsExportPackageSubPage::ExportOptions( int iRow, const vector<Pl
 }
 
 /*
- * (c) 2002-2004 Chris Danford
+ * (c) 2002-2011 Chris Danford, AJ Kelly
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

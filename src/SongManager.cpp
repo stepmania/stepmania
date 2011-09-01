@@ -1863,6 +1863,23 @@ public:
 		LuaHelpers::CreateTableFromArray<Course*>( v, L );
 		return 1;
 	}
+
+	static int GetPreferredSortSongs( T* p, lua_State *L )
+	{
+		vector<Song*> v;
+		p->GetPreferredSortSongs(v);
+		LuaHelpers::CreateTableFromArray<Song*>( v, L );
+		return 1;
+	}
+	static int GetPreferredSortCourses( T* p, lua_State *L )
+	{
+		vector<Course*> v;
+		CourseType ct = Enum::Check<CourseType>(L,1);
+		p->GetPreferredSortCourses( ct, v, BArg(2) );
+		LuaHelpers::CreateTableFromArray<Course*>( v, L );
+		return 1;
+	}
+
 	static int FindSong( T* p, lua_State *L )		{ Song *pS = p->FindSong(SArg(1)); if(pS) pS->PushSelf(L); else lua_pushnil(L); return 1; }
 	static int FindCourse( T* p, lua_State *L )		{ Course *pC = p->FindCourse(SArg(1)); if(pC) pC->PushSelf(L); else lua_pushnil(L); return 1; }
 	static int GetRandomSong( T* p, lua_State *L )		{ Song *pS = p->GetRandomSong(); if(pS) pS->PushSelf(L); else lua_pushnil(L); return 1; }
@@ -1934,6 +1951,14 @@ public:
 		return 1;
 	}
 
+	static int GetCoursesInGroup( T* p, lua_State *L )
+	{
+		vector<Course*> v;
+		p->GetCoursesInGroup(v,SArg(1),BArg(2));
+		LuaHelpers::CreateTableFromArray<Course*>( v, L );
+		return 1;
+	}
+
 	DEFINE_METHOD( ShortenGroupName, ShortenGroupName( SArg(1) ) )
 
 	static int GetCourseGroupNames( T* p, lua_State *L )
@@ -1941,6 +1966,43 @@ public:
 		vector<RString> v;
 		p->GetCourseGroupNames( v );
 		LuaHelpers::CreateTableFromArray<RString>( v, L );
+		return 1;
+	}
+
+	DEFINE_METHOD( GetSongGroupBannerPath, GetSongGroupBannerPath(SArg(1)) );
+	DEFINE_METHOD( GetCourseGroupBannerPath, GetCourseGroupBannerPath(SArg(1)) );
+	DEFINE_METHOD( DoesSongGroupExist, DoesSongGroupExist(SArg(1)) );
+	DEFINE_METHOD( DoesCourseGroupExist, DoesCourseGroupExist(SArg(1)) );
+
+	static int GetPopularSongs( T* p, lua_State *L )
+	{
+		const vector<Song*> &v = p->GetPopularSongs();
+		LuaHelpers::CreateTableFromArray<Song*>( v, L );
+		return 1;
+	}
+	static int GetPopularCourses( T* p, lua_State *L )
+	{
+		CourseType ct = Enum::Check<CourseType>(L,1);
+		const vector<Course*> &v = p->GetPopularCourses(ct);
+		LuaHelpers::CreateTableFromArray<Course*>( v, L );
+		return 1;
+	}
+	static int SongToPreferredSortSectionName( T* p, lua_State *L )
+	{
+		const Song* pSong = Luna<Song>::check(L,1);
+		lua_pushstring(L, p->SongToPreferredSortSectionName(pSong));
+		return 1;
+	}
+	static int WasLoadedFromAdditionalSongs( T* p, lua_State *L )
+	{
+		const Song* pSong = Luna<Song>::check(L,1);
+		lua_pushboolean(L, p->WasLoadedFromAdditionalSongs(pSong));
+		return 1;
+	}
+	static int WasLoadedFromAdditionalCourses( T* p, lua_State *L )
+	{
+		const Course* pCourse = Luna<Course>::check(L,1);
+		lua_pushboolean(L, p->WasLoadedFromAdditionalCourses(pCourse));
 		return 1;
 	}
 
@@ -1969,9 +2031,21 @@ public:
 		ADD_METHOD( GetSongRank );
 		ADD_METHOD( GetSongGroupNames );
 		ADD_METHOD( GetSongsInGroup );
+		ADD_METHOD( GetCoursesInGroup );
 		ADD_METHOD( ShortenGroupName );
 		ADD_METHOD( SetPreferredSongs );
 		ADD_METHOD( SetPreferredCourses );
+		ADD_METHOD( GetPreferredSortSongs );
+		ADD_METHOD( GetPreferredSortCourses );
+		ADD_METHOD( GetSongGroupBannerPath );
+		ADD_METHOD( GetCourseGroupBannerPath );
+		ADD_METHOD( DoesSongGroupExist );
+		ADD_METHOD( DoesCourseGroupExist );
+		ADD_METHOD( GetPopularSongs );
+		ADD_METHOD( GetPopularCourses );
+		ADD_METHOD( SongToPreferredSortSectionName );
+		ADD_METHOD( WasLoadedFromAdditionalSongs );
+		ADD_METHOD( WasLoadedFromAdditionalCourses );
 	}
 };
 

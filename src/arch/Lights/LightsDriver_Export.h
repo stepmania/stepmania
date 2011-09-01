@@ -12,7 +12,7 @@ public:
 	LightsDriver_Export();
 	virtual void Set( const LightsState *ls );
 
-	/* Get the current lights state.  This can be called from a thread. */
+	// Get the current lights state. This can be called from a thread.
 	static LightsState GetState();
 
 private:

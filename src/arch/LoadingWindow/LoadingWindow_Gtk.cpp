@@ -11,6 +11,8 @@ static void *Handle = NULL;
 static INIT Module_Init;
 static SHUTDOWN Module_Shutdown;
 static SETTEXT Module_SetText;
+//static SETICON Module_SetIcon;
+static SETSPLASH Module_SetSplash;
 static SETPROGRESS Module_SetProgress;
 static SETINDETERMINATE Module_SetIndeterminate;
 
@@ -18,29 +20,48 @@ LoadingWindow_Gtk::LoadingWindow_Gtk()
 {
 }
 
+static RString ModuleError( const RString s )
+{
+	return ssprintf( "Couldn't load symbol Module_%s", s.c_str() );
+}
+
 RString LoadingWindow_Gtk::Init()
 {
 	ASSERT( Handle == NULL );
-	
+
 	Handle = dlopen( RageFileManagerUtil::sDirOfExecutable + "/" + "GtkModule.so", RTLD_NOW );
 	if( Handle == NULL )
 		return ssprintf( "dlopen(): %s", dlerror() );
 
 	Module_Init = (INIT) dlsym(Handle, "Init");
 	if( !Module_Init )
-		return "Couldn't load symbol Module_Init";
+		return ModuleError("Init");
+
 	Module_Shutdown = (SHUTDOWN) dlsym(Handle, "Shutdown");
 	if( !Module_Shutdown )
-		return "Couldn't load symbol Module_Shutdown";
+		return ModuleError("Shutdown");
+
 	Module_SetText = (SETTEXT) dlsym(Handle, "SetText");
 	if( !Module_SetText )
-		return "Couldn't load symbol Module_SetText";
+		return ModuleError("SetText");
+
+	/*
+	Module_SetIcon = (SETICON) dlsym(Handle, "SetIcon");
+	if( !Module_SetIcon )
+		return ModuleError("SetIcon");
+	*/
+
+	Module_SetSplash = (SETSPLASH) dlsym(Handle, "SetSplash");
+	if( !Module_SetSplash )
+		return ModuleError("SetSplash");
+
 	Module_SetProgress = (SETPROGRESS) dlsym(Handle, "SetProgress");
 	if( !Module_SetProgress )
-		return "Couldn't load symbol Module_SetProgress";
+		return ModuleError("SetProgress");
+
 	Module_SetIndeterminate = (SETINDETERMINATE) dlsym(Handle, "SetIndeterminate");
 	if( !Module_SetIndeterminate )
-		return "Couldn't load symbol Module_SetIndeterminate";
+		return ModuleError("SetIndeterminate");
 
 	const char *ret = Module_Init( &g_argc, &g_argv );
 	if( ret != NULL )
@@ -62,6 +83,16 @@ LoadingWindow_Gtk::~LoadingWindow_Gtk()
 void LoadingWindow_Gtk::SetText( RString s )
 {
 	Module_SetText( s );
+}
+
+void LoadingWindow_Gtk::SetIcon( const RageSurface *pIcon )
+{
+	//Module_SetIcon( pIcon );
+}
+
+void LoadingWindow_Gtk::SetSplash( const RString str )
+{
+	Module_SetSplash( str );
 }
 
 void LoadingWindow_Gtk::SetProgress( const int progress )

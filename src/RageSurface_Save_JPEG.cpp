@@ -12,7 +12,7 @@ namespace jpeg
 {
 	extern "C"
 	{
-#include <../extern/libjpeg/jpeglib.h>
+#include "jpeglib.h"
 	}
 }
 

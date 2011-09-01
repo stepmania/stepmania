@@ -13,6 +13,7 @@ typedef short int (WINAPI ISDRIVERINSTALLED)();
 ISDRIVERINSTALLED* IsDriverInstalled = NULL;
 
 const int LIGHTS_PER_PARALLEL_PORT = 8;
+// xxx: don't hardcode the port addresses. -aj
 const int MAX_PARALLEL_PORTS = 3;
 short LPT_ADDRESS[MAX_PARALLEL_PORTS] = 
 {
@@ -48,7 +49,7 @@ LightsDriver_Win32Parallel::LightsDriver_Win32Parallel()
 		MessageBox(NULL, "Could not LoadLibrary( parallel_lights_io.dll ).", "ERROR", MB_OK );
 		return;
 	}
-	
+
 	//Get the function pointers
 	PortOut = (PORTOUT*) GetProcAddress(hDLL, "PortOut");
 	IsDriverInstalled = (ISDRIVERINSTALLED*) GetProcAddress(hDLL, "IsDriverInstalled");
@@ -83,7 +84,7 @@ void LightsDriver_Win32Parallel::Set( const LightsState *ls )
 				data[lpt] &= ~mask;
 		}
 	}
-	
+
 	FOREACH_ENUM( GameController,  gc )
 	{
 		FOREACH_ENUM( GameButton,  gb )

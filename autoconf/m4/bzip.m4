@@ -16,7 +16,7 @@ AC_DEFUN([SM_BZIP],
 
         if test "$have_bzip" = "no"; then
                 echo "*** bzip is required to build StepMania; please make sure"
-                echo "*** that bzip is installed to continue the installation process."
+                echo "*** that libbz2 is installed to continue the installation process."
                 exit 0;
         fi
 

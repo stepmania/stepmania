@@ -1,6 +1,7 @@
 #include "global.h"
 #include "X11Helper.h"
 #include "RageLog.h"
+#include "PrefsManager.h" // XXX: only used for m_bShowMouseCursor -aj
 
 Display *X11Helper::Dpy = NULL;
 Window X11Helper::Win = None;
@@ -60,8 +61,8 @@ bool X11Helper::MakeWindow( Window &win, int screenNum, int depth, Visual *visua
 	if( win == None )
 		return false;
 
-	/* Hide the mouse cursor. */
-	// todo: we only want to do this in certain situations (e.g. an arcade) -aj
+	// Hide the mouse cursor in certain situations.
+    if( !PREFSMAN->m_bShowMouseCursor )
 	{
 		const char pBlank[] = { 0,0,0,0,0,0,0,0 };
 		Pixmap BlankBitmap = XCreateBitmapFromData( Dpy, win, pBlank, 8, 8 );

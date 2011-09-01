@@ -231,9 +231,9 @@ public:
 	float	m_fSpecifiedBPMMax;	// if a range, then Min != Max
 
 	RString m_sBannerFile;		// typically a 16:5 ratio graphic (e.g. 256x80)
-	//RString m_sJacketFile;	// typically square (e.g. 192x192, 256x256)
-	//RString m_sCDFile;		// square (e.g. 128x128 [DDR 1st-3rd])
-	//RString m_sDiscFile;		// rectangular (e.g. 256x192 [Pump], 200x150 [MGD3])
+	RString m_sJacketFile;	// typically square (e.g. 192x192, 256x256)
+	RString m_sCDFile;		// square (e.g. 128x128 [DDR 1st-3rd])
+	RString m_sDiscFile;		// rectangular (e.g. 256x192 [Pump], 200x150 [MGD3])
 	/** @brief The location of the lyrics file, if it exists. */
 	RString m_sLyricsFile;
 	RString m_sBackgroundFile;
@@ -245,9 +245,9 @@ public:
 	RString GetMusicPath() const;
 	RString GetInstrumentTrackPath( InstrumentTrack it ) const;
 	RString GetBannerPath() const;
-	//RString GetJacketPath() const;
-	//RString GetCDImagePath() const;
-	//RString GetDiscPath() const;
+	RString GetJacketPath() const;
+	RString GetCDImagePath() const;
+	RString GetDiscPath() const;
 	RString	GetLyricsPath() const;
 	RString GetBackgroundPath() const;
 	RString GetCDTitlePath() const;
@@ -265,9 +265,9 @@ public:
 	 * @brief Does this song have a background image?
 	 * @return true if it does, false otherwise. */
 	bool HasBackground() const;
-	//bool HasJacket() const;
-	//bool HasCDImage() const;
-	//bool HasDisc() const;
+	bool HasJacket() const;
+	bool HasCDImage() const;
+	bool HasDisc() const;
 	bool HasCDTitle() const;
 	//bool HasMovieBackground() const;
 	bool HasBGChanges() const;

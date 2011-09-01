@@ -1,7 +1,7 @@
 local function Beat(self)
 	-- too many locals
 	local this = self:GetChildren()
-	local player = GAMESTATE:GetMasterPlayerNumber()
+	local player = Var "Player" or GAMESTATE:GetMasterPlayerNumber()
 	local playerstate = GAMESTATE:GetPlayerState( player )
 	local songposition = playerstate:GetSongPosition() -- GAMESTATE:GetSongPosition()
 	

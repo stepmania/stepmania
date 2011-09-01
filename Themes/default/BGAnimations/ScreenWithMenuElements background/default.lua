@@ -1,5 +1,3 @@
-local hideFancyElements = (GetUserPrefB("UserPrefFancyUIBG") == false)
-
 local t = Def.ActorFrame {};
 
 t[#t+1] = Def.ActorFrame {

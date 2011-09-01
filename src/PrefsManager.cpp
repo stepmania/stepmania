@@ -174,6 +174,7 @@ PrefsManager::PrefsManager() :
 	m_bAllowMultitexture	( "AllowMultitexture",		true ),
 	m_bShowStats		( "ShowStats",			TRUE_IF_DEBUG),
 	m_bShowBanners		( "ShowBanners",		true ),
+	m_bShowMouseCursor	( "ShowMouseCursor",		true ),
 
 	m_bHiddenSongs		( "HiddenSongs",		false ),
 	m_bVsync		( "Vsync",			true ),

@@ -35,12 +35,11 @@ static ThemeMetric<float> FADE_FAIL_TIME( "NoteField", "FadeFailTime" );
 static RString RoutineNoteSkinName( size_t i ) { return ssprintf("RoutineNoteSkinP%i",int(i+1)); }
 static ThemeMetric1D<RString> ROUTINE_NOTESKIN( "NoteField", RoutineNoteSkinName, NUM_PLAYERS );
 
-
 inline const TimingData *GetRealTiming(const PlayerState *pPlayerState)
 {
 	if( GAMESTATE->m_pCurSteps[pPlayerState->m_PlayerNumber] != NULL )
 		return &GAMESTATE->m_pCurSteps[pPlayerState->m_PlayerNumber]->m_Timing;
-	return NULL;	
+	return NULL;
 }
 
 inline const TimingData *GetDisplayedTiming(const PlayerState *pPlayerState)
@@ -868,7 +867,7 @@ void NoteField::DrawPrimitives()
 		{
 			TimeSignatureSegment *ts = static_cast<TimeSignatureSegment *>(tSigs[i]);
 			int iSegmentEndRow = (i + 1 == tSigs.size()) ? iLastRowToDraw : tSigs[i+1]->GetRow();
-		
+
 			// beat bars every 16th note
 			int iDrawBeatBarsEveryRows = BeatToNoteRow( ((float)ts->GetDen()) / 4 ) / 4;
 
@@ -905,7 +904,7 @@ void NoteField::DrawPrimitives()
 		ASSERT(GAMESTATE->m_pCurSong);
 
 		const TimingData &timing = *pTiming;
-		
+
 		// Scroll text
 		if( GAMESTATE->m_bIsUsingStepTiming )
 		{
@@ -920,7 +919,7 @@ void NoteField::DrawPrimitives()
 				}
 			}
 		}
-		
+
 		// BPM text
 		for (i = 0; i < segs[SEGMENT_BPM].size(); i++)
 		{
@@ -944,7 +943,7 @@ void NoteField::DrawPrimitives()
 					DrawFreezeText( fBeat, seg->GetPause() );
 			}
 		}
-		
+
 		// Delay text
 		for (i = 0; i < segs[SEGMENT_DELAY].size(); i++)
 		{
@@ -956,7 +955,7 @@ void NoteField::DrawPrimitives()
 					DrawDelayText( fBeat, seg->GetPause() );
 			}
 		}
-		
+
 		// Warp text
 		for (i = 0; i < segs[SEGMENT_WARP].size(); i++)
 		{
@@ -968,8 +967,7 @@ void NoteField::DrawPrimitives()
 					DrawWarpText( fBeat, seg->GetLength() );
 			}
 		}
-		
-		
+
 		// Time Signature text
 		for (i = 0; i < segs[SEGMENT_TIME_SIG].size(); i++)
 		{
@@ -981,7 +979,7 @@ void NoteField::DrawPrimitives()
 					DrawTimeSignatureText( fBeat, seg->GetNum(), seg->GetDen() );
 			}
 		}
-		
+
 		if( GAMESTATE->m_bIsUsingStepTiming )
 		{
 			// Tickcount text
@@ -996,7 +994,7 @@ void NoteField::DrawPrimitives()
 				}
 			}
 		}
-		
+
 		if( GAMESTATE->m_bIsUsingStepTiming )
 		{
 			// Combo text
@@ -1011,7 +1009,7 @@ void NoteField::DrawPrimitives()
 				}
 			}
 		}
-		
+
 		// Label text
 		for (i = 0; i < segs[SEGMENT_LABEL].size(); i++)
 		{
@@ -1023,7 +1021,7 @@ void NoteField::DrawPrimitives()
 					DrawLabelText( fBeat, seg->GetLabel() );
 			}
 		}
-		
+
 		if( GAMESTATE->m_bIsUsingStepTiming )
 		{
 			// Speed text
@@ -1039,7 +1037,7 @@ void NoteField::DrawPrimitives()
 				}
 			}
 		}
-		
+
 		// Fake text
 		if( GAMESTATE->m_bIsUsingStepTiming )
 		{
@@ -1091,7 +1089,7 @@ void NoteField::DrawPrimitives()
 				}
 			}
 		}
-		
+
 		if( !GAMESTATE->m_bIsUsingStepTiming )
 		{
 			// BGChange text
@@ -1106,17 +1104,17 @@ void NoteField::DrawPrimitives()
 						vector<BackgroundChange>::iterator iter[NUM_BackgroundLayer];
 						FOREACH_BackgroundLayer( j )
 							iter[j] = GAMESTATE->m_pCurSong->GetBackgroundChanges(j).begin();
-		
+
 						while( 1 )
 						{
 							float fLowestBeat = FLT_MAX;
 							vector<BackgroundLayer> viLowestIndex;
-		
+
 							FOREACH_BackgroundLayer( j )
 							{
 								if( iter[j] == GAMESTATE->m_pCurSong->GetBackgroundChanges(j).end() )
 									continue;
-		
+
 								float fBeat = iter[j]->m_fStartBeat;
 								if( fBeat < fLowestBeat )
 								{
@@ -1183,7 +1181,6 @@ void NoteField::DrawPrimitives()
 			DrawMarkerBar( m_iEndMarker );
 		}
 	}
-
 
 	// Optimization is very important here because there are so many arrows to draw.
 	// Draw the arrows in order of column. This minimizes texture switches and

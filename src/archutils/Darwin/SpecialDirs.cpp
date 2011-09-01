@@ -1,24 +1,31 @@
-/* LightsDriver_LinuxWeedTech: Control lights with WTDIO-M from Weeder Technologies
- *	http://www.weedtech.com / http://www.weedtech.com/wtdio-m.html */
+#include "global.h"
+#include "SpecialDirs.h"
+#include "ProductInfo.h"
+#include <CoreServices/CoreServices.h>
+#include <IOKit/IOKitLib.h>
+#include "RageUtil.h"
 
-#ifndef LightsDriver_LinuxWeedTech_H
-#define LightsDriver_LinuxWeedTech_H
-
-#include "arch/Lights/LightsDriver.h"
-
-class LightsDriver_LinuxWeedTech : public LightsDriver
+static void PathForFolderType( char dir[PATH_MAX], OSType folderType )
 {
-public:
-	LightsDriver_LinuxWeedTech();
-	virtual ~LightsDriver_LinuxWeedTech();
+	FSRef fs;
 
-	virtual void Set( const LightsState *ls );
-};
+	if( FSFindFolder(kUserDomain, folderType, kDontCreateFolder, &fs) )
+		FAIL_M( ssprintf("FSFindFolder(%lu) failed.", folderType) );
+	if( FSRefMakePath(&fs, (UInt8 *)dir, PATH_MAX) )
+		FAIL_M( "FSRefMakePath() failed." );
+}
 
-#endif
+RString SpecialDirs::GetDesktopDir()
+{
+	char dir[PATH_MAX];
+	PathForFolderType( dir, kDesktopFolderType );
+	return RString( ssprintf("%s/" PRODUCT_ID, dir) );
+}
+
+
 
 /*
- * (c) 2003-2004 Kevin Slaughter
+ * (c) 2011 AJ Kelly
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

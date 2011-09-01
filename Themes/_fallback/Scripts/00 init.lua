@@ -12,6 +12,12 @@ Trace = lua.Trace
 Warn = lua.Warn
 print = Trace
 
+-- Use MersenneTwister in place of math.random and math.randomseed.
+if MersenneTwister then
+	math.random = MersenneTwister.Random
+	math.randomseed = MersenneTwister.Seed
+end
+
 PLAYER_1 = "PlayerNumber_P1"
 PLAYER_2 = "PlayerNumber_P2"
 NUM_PLAYERS = #PlayerNumber

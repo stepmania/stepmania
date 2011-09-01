@@ -177,6 +177,7 @@
 		<Function name='StepsOrTrailToColor'/>
 		<Function name='StepsOrTrailToCustomDifficulty'/>
 		<Function name='StepsToCustomDifficulty'/>
+		<Function name='StringToBlend'/>
 		<Function name='TableStringLookup'/>
 		<Function name='TapNoteScoreToLocalizedString'/>
 		<Function name='TextBannerAfterSet'/>
@@ -443,10 +444,13 @@
 			<Function name='zwrite'/>
 		</Class>
 		<Class base='Actor' name='ActorFrame'>
+			<Function name='AddChildFromPath'/>
 			<Function name='GetChild'/>
 			<Function name='GetChildren'/>
 			<Function name='GetDrawFunction'/>
 			<Function name='GetNumChildren'/>
+			<Function name='RemoveAllChildren'/>
+			<Function name='RemoveChild'/>
 			<Function name='RunCommandsOnChildren'/>
 			<Function name='SetAmbientLightColor'/>
 			<Function name='SetDiffuseLightColor'/>
@@ -643,6 +647,7 @@
 			<Function name='IsSecret'/>
 		</Class>
 		<Class name='CryptManager'>
+			<Function name='GenerateRandomUUID'/>
 			<Function name='MD5File'/>
 			<Function name='MD5String'/>
 			<Function name='SHA1File'/>
@@ -1084,7 +1089,7 @@
 			<Function name='GetTotalStepsWithTopGrade'/>
 			<Function name='GetTotalTapsAndHolds'/>
 			<Function name='GetTotalTrailsWithTopGrade'/>
-			<Function name='GetUserData'/>
+			<Function name='GetUserTable'/>
 			<Function name='GetWeightPounds'/>
 			<Function name='HasPassedAnyStepsInSong'/>
 			<Function name='IsCodeUnlocked'/>
@@ -1255,7 +1260,9 @@
 			<Function name='GetAllSteps'/>
 			<Function name='GetBackgroundPath'/>
 			<Function name='GetBannerPath'/>
+			<Function name='GetCDImagePath'/>
 			<Function name='GetCDTitlePath'/>
+			<Function name='GetDiscPath'/>
 			<Function name='GetDisplayArtist'/>
 			<Function name='GetDisplayBpms'/>
 			<Function name='GetDisplayFullTitle'/>
@@ -1265,6 +1272,7 @@
 			<Function name='GetFirstSecond'/>
 			<Function name='GetGenre'/>
 			<Function name='GetGroupName'/>
+			<Function name='GetJacketPath'/>
 			<Function name='GetLastBeat'/>
 			<Function name='GetLastSecond'/>
 			<Function name='GetLyricsPath'/>
@@ -1284,8 +1292,11 @@
 			<Function name='HasBGChanges'/>
 			<Function name='HasBackground'/>
 			<Function name='HasBanner'/>
+			<Function name='HasCDImage'/>
 			<Function name='HasCDTitle'/>
+			<Function name='HasDisc'/>
 			<Function name='HasEdits'/>
+			<Function name='HasJacket'/>
 			<Function name='HasLyrics'/>
 			<Function name='HasMusic'/>
 			<Function name='HasSignificantBPMChangesOrStops'/>
@@ -1304,12 +1315,16 @@
 			<Function name='ShowInDemonstrationAndRanking'/>
 		</Class>
 		<Class name='SongManager'>
+			<Function name='DoesCourseGroupExist'/>
+			<Function name='DoesSongGroupExist'/>
 			<Function name='FindCourse'/>
 			<Function name='FindSong'/>
 			<Function name='GetAllCourses'/>
 			<Function name='GetAllSongs'/>
 			<Function name='GetCourseColor'/>
+			<Function name='GetCourseGroupBannerPath'/>
 			<Function name='GetCourseGroupNames'/>
+			<Function name='GetCoursesInGroup'/>
 			<Function name='GetExtraStageInfo'/>
 			<Function name='GetNumAdditionalCourses'/>
 			<Function name='GetNumAdditionalSongs'/>
@@ -1319,10 +1334,15 @@
 			<Function name='GetNumSongGroups'/>
 			<Function name='GetNumSongs'/>
 			<Function name='GetNumUnlockedSongs'/>
+			<Function name='GetPopularCourses'/>
+			<Function name='GetPopularSongs'/>
+			<Function name='GetPreferredSortCourses'/>
+			<Function name='GetPreferredSortSongs'/>
 			<Function name='GetRandomCourse'/>
 			<Function name='GetRandomSong'/>
 			<Function name='GetSongColor'/>
 			<Function name='GetSongFromSteps'/>
+			<Function name='GetSongGroupBannerPath'/>
 			<Function name='GetSongGroupColor'/>
 			<Function name='GetSongGroupNames'/>
 			<Function name='GetSongRank'/>
@@ -1330,6 +1350,9 @@
 			<Function name='SetPreferredCourses'/>
 			<Function name='SetPreferredSongs'/>
 			<Function name='ShortenGroupName'/>
+			<Function name='SongToPreferredSortSectionName'/>
+			<Function name='WasLoadedFromAdditionalCourses'/>
+			<Function name='WasLoadedFromAdditionalSongs'/>
 		</Class>
 		<Class name='SongPosition'>
 			<Function name='GetCurBPS'/>
@@ -1443,7 +1466,10 @@
 			<Function name='SetFromString'/>
 		</Class>
 		<Class name='ThemeManager'>
+			<Function name='DoesLanguageExist'/>
+			<Function name='DoesThemeExist'/>
 			<Function name='GetCurLanguage'/>
+			<Function name='GetCurThemeName'/>
 			<Function name='GetCurrentThemeDirectory'/>
 			<Function name='GetMetric'/>
 			<Function name='GetNumSelectableThemes'/>
@@ -1457,6 +1483,9 @@
 			<Function name='GetString'/>
 			<Function name='GetThemeAuthor'/>
 			<Function name='GetThemeDisplayName'/>
+			<Function name='HasMetric'/>
+			<Function name='HasString'/>
+			<Function name='IsThemeSelectable'/>
 			<Function name='ReloadMetrics'/>
 			<Function name='RunLuaScripts'/>
 		</Class>
@@ -1514,12 +1543,14 @@
 			<Function name='GetRequirement'/>
 			<Function name='GetSong'/>
 			<Function name='GetStepByStepsType'/>
+			<Function name='GetStepOfAllTypes'/>
 			<Function name='GetUnlockRewardType'/>
 			<Function name='IsLocked'/>
 			<Function name='code'/>
 			<Function name='course'/>
 			<Function name='mod'/>
 			<Function name='require'/>
+			<Function name='requirepasschallengesteps'/>
 			<Function name='requirepasshardsteps'/>
 			<Function name='roulette'/>
 			<Function name='song'/>
@@ -1566,6 +1597,10 @@
 			<Function name='Compare'/>
 			<Function name='GetName'/>
 			<Function name='Reverse'/>
+		</Namespace>
+		<Namespace name='MersenneTwister'>
+			<Function name='Random'/>
+			<Function name='Seed'/>
 		</Namespace>
 		<Namespace name='RageFileUtil'>
 			<Function name='CreateRageFile'/>
@@ -1686,17 +1721,6 @@
 			<EnumValue name='&apos;EditState_Record&apos;' value='1'/>
 			<EnumValue name='&apos;EditState_RecordPaused&apos;' value='2'/>
 			<EnumValue name='&apos;EditState_Playing&apos;' value='3'/>
-		</Enum>
-		<Enum name='EffectMode'>
-			<EnumValue name='&apos;EffectMode_Normal&apos;' value='0'/>
-			<EnumValue name='&apos;EffectMode_Unpremultiply&apos;' value='1'/>
-			<EnumValue name='&apos;EffectMode_ColorBurn&apos;' value='2'/>
-			<EnumValue name='&apos;EffectMode_ColorDodge&apos;' value='3'/>
-			<EnumValue name='&apos;EffectMode_VividLight&apos;' value='4'/>
-			<EnumValue name='&apos;EffectMode_HardMix&apos;' value='5'/>
-			<EnumValue name='&apos;EffectMode_Overlay&apos;' value='6'/>
-			<EnumValue name='&apos;EffectMode_Screen&apos;' value='7'/>
-			<EnumValue name='&apos;EffectMode_YUYV422&apos;' value='8'/>
 		</Enum>
 		<Enum name='FileType'>
 			<EnumValue name='&apos;FileType_Bitmap&apos;' value='0'/>
@@ -2171,5 +2195,5 @@
 		<Constant name='top' value='&apos;VertAlign_Top&apos;'/>
 	</Constants>
 	<Version>StepMania v5.0 Preview 3</Version>
-	<Date>2011-08-20</Date>
+	<Date>2011-08-27</Date>
 </Lua>
