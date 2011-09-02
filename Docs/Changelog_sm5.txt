@@ -8,6 +8,11 @@ ________________________________________________________________________________
 StepMania 5.0 $next | 2011????
 --------------------------------------------------------------------------------
 
+2011/09/02
+----------
+* [MenuTimer] Added start(), disable() Lua bindings. Also renamed setseconds to
+  SetSeconds to match GetSeconds. [AJ]
+
 2011/08/27
 ----------
 * Updated libjpeg to 8c.
