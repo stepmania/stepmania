@@ -4,11 +4,10 @@ function InitGamePrefs()
 	{
 		{ "DefaultFail",	"Immediate" },
 	};
-	
+
 	local BPrefs =
 	{
 		{ "ComboOnRolls",	false },
-		
 	};
 
 	for idx,pref in ipairs(Prefs) do
@@ -39,13 +38,14 @@ function InitUserPrefs()
 
 	local BPrefs = 
 	{
+		{ "UserPrefAutoSetStyle",		false },
 		{ "UserPrefComboUnderField",	true },
-		{ "UserPrefAutoSetStyle",	false },
-		{ "UserPrefNotePosition",	true },
-		{ "UserPrefShowLotsaOptions",		true},
 		{ "UserPrefLongFail",			false},
+		{ "UserPrefNotePosition",		true },
 		{ "UserPrefProtimingP1",		false},
 		{ "UserPrefProtimingP2",		false},
+		{ "UserPrefShowLotsaOptions",	true},
+		{ "ComboOnRolls",	false},
 		{ "FlashyCombos",	false},
 		{ "GameplayFooter",	false},
 	};
