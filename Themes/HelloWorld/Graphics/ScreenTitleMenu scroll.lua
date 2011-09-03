@@ -27,8 +27,8 @@ local t = Def.ActorFrame{
 		DisabledCommand=cmd( diffuse,color("0.45,0,0,1") );
 		GainFocusCommand=cmd(stoptweening;accelerate,0.15;diffuse,color("#000000");strokecolor,color("0.85,0.9,1,0.75"););
 		LoseFocusCommand=cmd(stoptweening;accelerate,0.2;diffuse,color("#888888");strokecolor,color("0,0,0,0"););
-		OffFocusedCommand=cmd(sleep,1;decelerate,1;addx,-32;diffuse,color("#FF0000"););
-		OffUnfocusedCommand=cmd(sleep,0.2*gc:GetIndex();linear,0.5;addx,SCREEN_CENTER_X;);
+		OffFocusedCommand=cmd(sleep,0.45;decelerate,1;addx,-32;diffuse,color("#FF000000"););
+		OffUnfocusedCommand=cmd(sleep,0.125*gc:GetIndex();linear,0.5;addx,SCREEN_CENTER_X;);
 	};
 };
 

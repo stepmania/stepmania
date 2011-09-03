@@ -14,7 +14,7 @@ local t = Def.ActorFrame{
 	};
 
 	LoadActor( THEME:GetPathG("_section", "Guide") )..{
-		InitCommand=cmd(x,-250;y,-24;Real;halign,0);
+		InitCommand=cmd(x,-244;y,-23;Real;halign,0);
 		GainFocusCommand=cmd(decelerate,0.5;diffusealpha,0.9);
 		LoseFocusCommand=cmd(stoptweening;decelerate,0.5;diffusealpha,0.45);
 	};
