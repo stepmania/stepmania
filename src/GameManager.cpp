@@ -1589,7 +1589,7 @@ static const Style g_Style_Beat_Versus5 =
 	false,				// m_bUsedForEdit
 	true,				// m_bUsedForDemonstration
 	false,				// m_bUsedForHowToPlay
-	"versus",			// m_szName
+	"versus5",			// m_szName
 	StepsType_beat_versus5,	// m_StepsType
 	StyleType_TwoPlayersTwoSides,		// m_StyleType
 	6,				// m_iColsPerPlayer
@@ -1725,7 +1725,7 @@ static const Style g_Style_Beat_Versus7 =
 	true,				// m_bUsedForEdit
 	false,				// m_bUsedForDemonstration
 	false,				// m_bUsedForHowToPlay
-	"single7",			// m_szName
+	"versus7",			// m_szName
 	StepsType_beat_versus7,	// m_StepsType
 	StyleType_TwoPlayersTwoSides,		// m_StyleType
 	8,				// m_iColsPerPlayer

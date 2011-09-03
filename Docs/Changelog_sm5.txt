@@ -12,6 +12,7 @@ StepMania 5.0 $next | 2011????
 ----------
 * [MenuTimer] Added start(), disable() Lua bindings. Also renamed setseconds to
   SetSeconds to match GetSeconds. [AJ]
+* [GameManager] beat "versus" -> "versus5"; fix beat versus7 being "single7". [1a2a3a2a1a]
 
 2011/08/27
 ----------
