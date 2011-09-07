@@ -17,19 +17,17 @@
 void ThreadImpl_Pthreads::Halt( bool Kill )
 {
 	/* Linux:
-	 * Send a SIGSTOP to the thread.  If we send a SIGKILL, pthreads will
+	 * Send a SIGSTOP to the thread. If we send a SIGKILL, pthreads will
 	 * "helpfully" propagate it to the other threads, and we'll get killed, too.
-	 *
 	 * This isn't ideal, since it can cause the process to background as far as
 	 * the shell is concerned, so the shell prompt can display before the crash
-	 * handler actually displays a message.
-	 */
+	 * handler actually displays a message. */
 	SuspendThread( threadHandle );
 }
 
 void ThreadImpl_Pthreads::Resume()
 {
-	/* Linux: Send a SIGCONT to the thread. */
+	// Linux: Send a SIGCONT to the thread.
 	ResumeThread( threadHandle );
 }
 
@@ -65,12 +63,12 @@ static void *StartThread( void *pData )
 
 	pThis->threadHandle = GetCurrentThreadId();
 	*pThis->m_piThreadID = pThis->threadHandle;
-	
-	/* Tell MakeThread that we've set m_piThreadID, so it's safe to return. */
+
+	// Tell MakeThread that we've set m_piThreadID, so it's safe to return.
 	pThis->m_StartFinishedSem->Post();
 
 	int iRet = pThis->m_pFunc( pThis->m_pData );
-	
+
 	return new int(iRet);
 }
 
@@ -86,10 +84,10 @@ ThreadImpl *MakeThread( int (*pFunc)(void *pData), void *pData, uint64_t *piThre
 	int ret = pthread_create( &thread->thread, NULL, StartThread, thread );
 	ASSERT_M( ret == 0, ssprintf( "MakeThread: pthread_create: %s", strerror(errno)) );
 
-	/* Don't return until StartThread sets m_piThreadID. */
+	// Don't return until StartThread sets m_piThreadID.
 	thread->m_StartFinishedSem->Wait();
 	delete thread->m_StartFinishedSem;
-	
+
 	return thread;
 }
 
@@ -105,12 +103,11 @@ MutexImpl_Pthreads::~MutexImpl_Pthreads()
 	ASSERT_M( ret == 0, ssprintf("Error deleting mutex: %s", strerror(errno)) );
 }
 
-
 #if defined(HAVE_PTHREAD_MUTEX_TIMEDLOCK) || defined(HAVE_PTHREAD_COND_TIMEDWAIT)
 static bool UseTimedlock()
 {
 #if defined(LINUX)
-	/* Valgrind crashes and burns on pthread_mutex_timedlock. */
+	// Valgrind crashes and burns on pthread_mutex_timedlock.
 	if( RunningUnderValgrind() )
 		return false;
 #endif
@@ -124,12 +121,12 @@ bool MutexImpl_Pthreads::Lock()
 #if defined(HAVE_PTHREAD_MUTEX_TIMEDLOCK)
 	if( UseTimedlock() )
 	{
-		int len = 10; /* seconds */
+		int len = 10; // seconds
 		int tries = 2;
 
 		while( tries-- )
 		{
-			/* Wait for ten seconds.  If it takes longer than that, we're 
+			/* Wait for ten seconds. If it takes longer than that, we're 
 			 * probably deadlocked. */
 			timeval tv;
 			gettimeofday( &tv, NULL );
@@ -149,9 +146,9 @@ bool MutexImpl_Pthreads::Lock()
 				continue;
 
 			case ETIMEDOUT:
-				/* Timed out.  Probably deadlocked.  Try again one more time, with a smaller
-				 * timeout, just in case we're debugging and happened to stop while waiting
-				 * on the mutex. */
+				/* Timed out. Probably deadlocked. Try again one more time,
+				 * with a smaller timeout, just in case we're debugging
+				 * and happened to stop while waiting on the mutex. */
 				len = 1;
 				break;
 
@@ -205,8 +202,8 @@ MutexImpl *MakeMutex( RageMutex *pParent )
 	return new MutexImpl_Pthreads( pParent );
 }
 
-/* Check if condattr_setclock is supported, and supports the clock that RageTimer
- * selected. */
+/* Check if condattr_setclock is supported, and supports the clock that
+ * RageTimer selected. */
 #if defined(UNIX)
 #include <dlfcn.h>
 #include "arch/ArchHooks/ArchHooks_Unix.h"
@@ -247,7 +244,7 @@ namespace
 					break;
 			}
 
-			/* Make sure that we can set up the clock attribute. */
+			// Make sure that we can set up the clock attribute.
 			pthread_condattr_t condattr;
 			pthread_condattr_init( &condattr );
 
@@ -314,21 +311,21 @@ bool EventImpl_Pthreads::Wait( RageTimer *pTimeout )
 		return true;
 	}
 
-	/* If the clock is not CLOCK_MONOTONIC, or we can't change the wait clock (no
-	 * condattr_setclock), pthread_cond_timedwait has an inherent race condition:
-	 * the system clock may change before we call it. */
+	/* If the clock is not CLOCK_MONOTONIC, or we can't change the wait clock
+	 * (no condattr_setclock), pthread_cond_timedwait has an inherent race
+	 * condition: the system clock may change before we call it. */
 	timespec abstime;
 	if( g_CondattrSetclock != NULL || GetClock() == CLOCK_REALTIME )
 	{
-		/* If we support condattr_setclock, we'll set the condition to use the same
-		 * clock as RageTimer and can use it directly.  If the clock is CLOCK_REALTIME,
-		 * that's the default anyway. */
+		/* If we support condattr_setclock, we'll set the condition to use
+		 * the same clock as RageTimer and can use it directly. If the
+		 * clock is CLOCK_REALTIME, that's the default anyway. */
 		abstime.tv_sec = pTimeout->m_secs;
 		abstime.tv_nsec = pTimeout->m_us * 1000;
 	}
 	else
 	{
-		/* The RageTimer clock is different than the wait clock; convert it. */
+		// The RageTimer clock is different than the wait clock; convert it.
 		timeval tv;
 		gettimeofday( &tv, NULL );
 
@@ -427,7 +424,7 @@ bool SemaImpl_Pthreads::TryWait()
 	return true;
 }
 #else
-/* Use conditions, to work around OS X "forgetting" to implement semaphores. */
+// Use conditions, to work around OS X "forgetting" to implement semaphores.
 SemaImpl_Pthreads::SemaImpl_Pthreads( int iInitialValue )
 {
 	int ret = pthread_cond_init( &m_Cond, NULL );
@@ -480,9 +477,9 @@ bool SemaImpl_Pthreads::Wait()
 				break;
 
 			case ETIMEDOUT:
-				/* Timed out.  Probably deadlocked.  Try again one more time, with a smaller
-				 * timeout, just in case we're debugging and happened to stop while waiting
-				 * on the mutex. */
+				/* Timed out. Probably deadlocked. Try again one more time,
+				 * with a smaller timeout, just in case we're debugging and
+				 * happened to stop while waiting on the mutex. */
 				++ts.tv_sec;
 				tries--;
 				break;
@@ -525,7 +522,7 @@ bool SemaImpl_Pthreads::TryWait()
 		pthread_mutex_unlock( &m_Mutex);
 		return false;
 	}
-	
+
 	--m_iValue;
 	pthread_mutex_unlock( &m_Mutex);
 
