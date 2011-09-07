@@ -778,6 +778,7 @@ public:
 	static int position( T* p, lua_State *L )	{ p->SetPosition( FArg(1) ); return 0; }
 	static int playanimation( T* p, lua_State *L )	{ p->PlayAnimation(SArg(1),FArg(2)); return 0; }
 	static int SetDefaultAnimation( T* p, lua_State *L )	{ p->SetDefaultAnimation(SArg(1),FArg(2)); return 0; }
+	static int GetDefaultAnimation( T* p, lua_State *L )	{ lua_pushstring( L, p->GetDefaultAnimation() ); return 1; }
 	static int loop( T* p, lua_State *L )		{ p->SetLoop(BArg(1)); return 0; }
 	static int rate( T* p, lua_State *L )		{ p->SetRate(FArg(1)); return 0; }
 	static int GetNumStates( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetNumStates() ); return 1; }
@@ -788,11 +789,13 @@ public:
 		ADD_METHOD( position );
 		ADD_METHOD( playanimation );
 		ADD_METHOD( SetDefaultAnimation );
+		ADD_METHOD( GetDefaultAnimation );
 		ADD_METHOD( loop );
 		ADD_METHOD( rate );
 		// sm-ssc adds:
 		ADD_METHOD( GetNumStates );
 		//ADD_METHOD( CelShading );
+		// LoadMilkshapeAsciiBones?
 	}
 };
 
