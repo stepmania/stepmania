@@ -1,32 +1,23 @@
 // File for specifying Random Attacks, used by the Random Attacks mod and Attack Mines mod.
-// Only specify one modifier per attack.
 //
 // Sample lines:
-//
 // #ATTACK:drunk;
 // #ATTACK:30% tornado;
 // #ATTACK:-20% beat;
-//
 
-//
 // Speed Mods
-//
 #ATTACK:0.5x;
 #ATTACK:1x;
 #ATTACK:1.5x;
 #ATTACK:2x;
 
-//
 // Accel Mods
-//
 #ATTACK:boost;
 #ATTACK:brake;
 #ATTACK:wave;
 #ATTACK:expand;
 
-//
 // Effect Mods
-//
 #ATTACK:drunk;
 #ATTACK:dizzy;
 #ATTACK:confusion;
@@ -38,34 +29,24 @@
 #ATTACK:beat;
 #ATTACK:bumpy;
 
-//
 // Appearance Mods
-//
 #ATTACK:50% hidden;
 #ATTACK:50% sudden;
 #ATTACK:30% blink;
 
-//
 // Hide Mods
-//
 #ATTACK:dark;
 #ATTACK:blind;
 
-//
 // Transform Mods
-//
 #ATTACK:mines;
 
-//
 // Scroll
-//
 #ATTACK:30% reverse;
 #ATTACK:reverse;
 #ATTACK:centered;
 
-//
 // Perspective Mods
-//
 #ATTACK:hallway;
 #ATTACK:space;
 #ATTACK:incoming;
