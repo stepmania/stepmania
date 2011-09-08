@@ -9,6 +9,9 @@ change to JSON, but it is unsure if this will be done.
 Implement .ssc at your own risk.
 _______________________________________________________________________________
 
+[v0.79] - freem
+* Back to three significant decimal places.
+
 [v0.78] - Wolfman2000
 * Use the step timing/attack tags only when required. The presence of even
   ONE timing tag causes all to be used, so be careful with it.
