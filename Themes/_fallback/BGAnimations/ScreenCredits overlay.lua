@@ -38,21 +38,31 @@ local stepmania = {
 	-- and various other contributors
 }
 
+local oitg = {
+	"infamouspat",
+	"Mark Cannon (vyhd)",
+}
+
 local contrib = {
 	"Aldo Fregoso (Aldo_MX)", -- delays
 	"cerbo",
 	"cesarmades", -- pump/cmd* noteskins
 	"Chris Eldridge (kurisu)", -- dance-threepanel
-	"Christophe Goulet-LeBlanc (Kommisar)",
+	"Christophe Goulet-LeBlanc (Kommisar)", -- songs
 	"corec", -- various fixes
 	"galopin", -- piu PlayStation2 usb mat support
 	"gholms", -- automake 1.11 support
 	"juanelote", -- SongManager:GetSongGroupByIndex, JumpToNext/PrevGroup logic mods
 	"Kaox", -- pump/default noteskin
+	"Petriform", -- Music
 	"NitroX72", -- pump/frame noteskin
 	"sy567", -- beginner helper fix
 	"v1toko", -- x-mode from StepNXA
 	"waiei", -- custom scoring fixes + Hybrid scoring
+}
+
+local translators = {
+	"John Reactor (Polish)",
 }
 
 local thanks = {
@@ -60,12 +70,9 @@ local thanks = {
 	"Bill Shillito (DM Ashura)", -- Music (not yet though)
 	"cpubasic13", -- testing (a lot)
 	"Dreamwoods",
-	"Infamouspat", -- oitg bro
 	"Jason Bolt (LightningXCE)",
 	"Jousway", -- Noteskins
 	"Matt1360", -- Automake magic + oitg bro
-	"Mark Cannon (vyhd)",  -- oitg bro + twirl/roll
-	"Petriform", -- Music
 	"Renard",
 	"Ryan McKanna (Plaguefox)",
 }
@@ -92,6 +99,8 @@ local sections = {
 	{ "the spinal shark collective (project lead)", ssc },
 	{ "sm-ssc Team", sm_ssc },
 	{ "StepMania Team", stepmania },
+	{ "OpenITG Team", oitg },
+	{ "Translators", translators },
 	{ "Other Contributors", contrib },
 	{ "Special Thanks", thanks },
 	{ "Shoutouts", shoutout },
