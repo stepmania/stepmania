@@ -501,6 +501,21 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 		return; // ignore
 
 	// todo: Allow mousewheel to scroll MusicWheel -aj
+	/*
+	if( input.DeviceI.device == DEVICE_MOUSE )
+	{
+		if( input.DeviceI.button == MOUSE_WHEELUP )
+		{
+			MESSAGEMAN->Broadcast( "PreviousSong" );
+			m_MusicWheel.Move( -1 );
+		}
+		else if( input.DeviceI.button == MOUSE_WHEELDOWN )
+		{
+			MESSAGEMAN->Broadcast( "NextSong" );
+			m_MusicWheel.Move( +1 );
+		}
+	}
+	*/
 
 	if( USE_PLAYER_SELECT_MENU )
 	{
