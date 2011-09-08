@@ -2261,6 +2261,7 @@ public:
 	DEFINE_METHOD( IsExtraStage2,			IsExtraStage2() )
 	DEFINE_METHOD( GetCurrentStage,			GetCurrentStage() )
 	DEFINE_METHOD( HasEarnedExtraStage,		HasEarnedExtraStage() )
+	DEFINE_METHOD( GetEarnedExtraStage,		GetEarnedExtraStage() )
 	DEFINE_METHOD( GetEasiestStepsDifficulty,	GetEasiestStepsDifficulty() )
 	DEFINE_METHOD( GetHardestStepsDifficulty,	GetHardestStepsDifficulty() )
 	DEFINE_METHOD( IsEventMode,			IsEventMode() )
@@ -2476,6 +2477,7 @@ public:
 		ADD_METHOD( IsExtraStage2 );
 		ADD_METHOD( GetCurrentStage );
 		ADD_METHOD( HasEarnedExtraStage );
+		ADD_METHOD( GetEarnedExtraStage );
 		ADD_METHOD( GetEasiestStepsDifficulty );
 		ADD_METHOD( GetHardestStepsDifficulty );
 		ADD_METHOD( IsEventMode );
