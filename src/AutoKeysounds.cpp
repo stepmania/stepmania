@@ -19,7 +19,6 @@
 #include "AutoKeysounds.h"
 #include "GameState.h"
 #include "Song.h"
-#include "RageSoundReader.h"
 #include "RageSoundReader_Chain.h"
 #include "RageSoundReader_ChannelSplit.h"
 #include "RageSoundReader_Extend.h"
@@ -277,8 +276,6 @@ void AutoKeysounds::FinishLoading()
 		else
 		{
 			delete pChain;
-			RageSoundReader_Silence *pSilence = new RageSoundReader_Silence;
-			m_pSharedSound = pSilence;
 		}
 	}
 	ASSERT_M( m_pSharedSound, ssprintf("No keysounds were loaded for the song %s!", pSong->m_sMainTitle.c_str() ));
