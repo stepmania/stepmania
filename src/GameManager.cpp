@@ -1697,6 +1697,7 @@ static const Style g_Style_Beat_Single7 =
 			{ TRACK_7,	+BEAT_COL_SPACING*4.0f, NULL },
 		},
 		{	// PLAYER_2
+			{ TRACK_8,	+BEAT_COL_SPACING*4.0f, "scratch" },
 			{ TRACK_1,	-BEAT_COL_SPACING*3.5f, NULL },
 			{ TRACK_2,	-BEAT_COL_SPACING*2.5f, NULL },
 			{ TRACK_3,	-BEAT_COL_SPACING*1.5f, NULL },
@@ -1704,12 +1705,11 @@ static const Style g_Style_Beat_Single7 =
 			{ TRACK_5,	+BEAT_COL_SPACING*0.5f, NULL },
 			{ TRACK_6,	+BEAT_COL_SPACING*1.5f, NULL },
 			{ TRACK_7,	+BEAT_COL_SPACING*2.5f, NULL },
-			{ TRACK_8,	+BEAT_COL_SPACING*4.0f, "scratch" },
 		},
 	},
 	{	// m_iInputColumn[NUM_GameController][NUM_GameButton]
 		{ 1, 2, 3, 4, 5, 6, 7, 0, 0, Style::END_MAPPING },
-		{ 0, 1, 2, 3, 4, 5, 6, 7, 7, Style::END_MAPPING },
+		{ 1, 2, 3, 4, 5, 6, 7, 0, 0, Style::END_MAPPING },
 	},
 	{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
 		0,1,2,3,4,5,6,7
@@ -1741,6 +1741,7 @@ static const Style g_Style_Beat_Versus7 =
 			{ TRACK_7,	+BEAT_COL_SPACING*4.0f, NULL },
 		},
 		{	// PLAYER_2
+			{ TRACK_8,	+BEAT_COL_SPACING*4.0f, "scratch" },
 			{ TRACK_1,	-BEAT_COL_SPACING*3.5f, NULL },
 			{ TRACK_2,	-BEAT_COL_SPACING*2.5f, NULL },
 			{ TRACK_3,	-BEAT_COL_SPACING*1.5f, NULL },
@@ -1748,12 +1749,11 @@ static const Style g_Style_Beat_Versus7 =
 			{ TRACK_5,	+BEAT_COL_SPACING*0.5f, NULL },
 			{ TRACK_6,	+BEAT_COL_SPACING*1.5f, NULL },
 			{ TRACK_7,	+BEAT_COL_SPACING*2.5f, NULL },
-			{ TRACK_8,	+BEAT_COL_SPACING*4.0f, "scratch" },
 		},
 	},
 	{	// m_iInputColumn[NUM_GameController][NUM_GameButton]
 		{ 1, 2, 3, 4, 5, 6, 7, 0, 0, Style::END_MAPPING },
-		{ 0, 1, 2, 3, 4, 5, 6, 7, 7, Style::END_MAPPING },
+		{ 1, 2, 3, 4, 5, 6, 7, 0, 0, Style::END_MAPPING },
 	},
 	{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
 		0,1,2,3,4,5,6,7
