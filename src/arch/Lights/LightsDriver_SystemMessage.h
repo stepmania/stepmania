@@ -1,3 +1,4 @@
+/* LightsDriver_SystemMessage: Outputs light state as a system message. */
 #ifndef LightsDriver_SystemMessage_H
 #define LightsDriver_SystemMessage_H
 
@@ -8,7 +9,7 @@ class LightsDriver_SystemMessage : public LightsDriver
 public:
 	LightsDriver_SystemMessage();
 	virtual ~LightsDriver_SystemMessage();
-	
+
 	virtual void Set( const LightsState *ls );
 };
 

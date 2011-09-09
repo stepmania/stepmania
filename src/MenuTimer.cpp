@@ -198,19 +198,23 @@ void MenuTimer::SetText( float fSeconds )
 class LunaMenuTimer: public Luna<MenuTimer>
 {
 public:
-	static int setseconds( T* p, lua_State *L )	{ p->SetSeconds(FArg(1)); return 0; }
+	static int SetSeconds( T* p, lua_State *L )	{ p->SetSeconds(FArg(1)); return 0; }
 	static int GetSeconds( T* p, lua_State *L )	{ lua_pushnumber( L, p->GetSeconds() ); return 1; }
+	static int start( T* p, lua_State *L )		{ p->Start(); return 0; }
 	static int pause( T* p, lua_State *L )		{ p->Pause(); return 0; }
 	static int stop( T* p, lua_State *L )			{ p->Stop(); return 0; }
+	static int disable( T* p, lua_State *L )		{ p->Disable(); return 0; }
 	static int silent( T* p, lua_State *L )		{ p->EnableSilent(BArg(1)); return 0; }
 	static int stealth( T* p, lua_State *L )		{ p->EnableStealth(BArg(1)); return 0; }
 
 	LunaMenuTimer()
 	{
-		ADD_METHOD( setseconds );
+		ADD_METHOD( SetSeconds );
 		ADD_METHOD( GetSeconds );
+		ADD_METHOD( start );
 		ADD_METHOD( pause );
 		ADD_METHOD( stop );
+		ADD_METHOD( disable );
 		ADD_METHOD( silent );
 		ADD_METHOD( stealth );
 	}

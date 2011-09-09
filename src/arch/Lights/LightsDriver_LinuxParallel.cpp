@@ -1,9 +1,6 @@
-//
-//    LightsDriver_LinuxParallel - Parallel Port Based Lights Driver for Linux
-//
-//    This requires root permissions to work! (run as root or suid)
-//    This code was written using SystemMessage Driver as template.
-//
+/* LightsDriver_LinuxParallel - Parallel Port Based Lights Driver for Linux
+ * This requires root permissions to work! (run as root or suid)
+ * This code was written using SystemMessage Driver as template. */
 
 #include "global.h"
 #include <sys/io.h>
@@ -12,6 +9,7 @@
 #include "InputMapper.h"
 #include "Game.h"
 
+// xxx: don't hardcode the port address. -aj
 static const int PORT_ADDRESS = 0x378;
 static const bool SCREEN_DEBUG = false;
 
@@ -19,7 +17,7 @@ REGISTER_SOUND_DRIVER_CLASS(LinuxParallel);
 
 LightsDriver_LinuxParallel::LightsDriver_LinuxParallel()
 {
-	// Give port's permissions and reset all bits to zero
+	// Give ports permissions and reset all bits to zero
 	ioperm( PORT_ADDRESS, 1, 1 );
 	outb( 0, PORT_ADDRESS );
 }
@@ -36,7 +34,7 @@ void LightsDriver_LinuxParallel::Set( const LightsState *ls )
 	// Set LightState to port
 	RString s;
 
-	// Prepare Screen Output too for debugging
+	// Prepare screen output too for debugging
 	s += "LinuxParallel Lights Driver Debug\n";
 	s += "Lights Mode: " + LightsModeToString(LIGHTSMAN->GetLightsMode()) + "\n";
 
@@ -75,7 +73,6 @@ void LightsDriver_LinuxParallel::Set( const LightsState *ls )
 
 /*
  * (c) 2004 Hugo Hromic M. <hhromic@udec.cl>
- *
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

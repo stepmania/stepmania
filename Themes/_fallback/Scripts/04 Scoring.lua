@@ -131,7 +131,7 @@ end;
 -----------------------------------------------------------
 --HYBRID Scoring, contributed by @waiei
 -----------------------------------------------------------
-local hyb_Steps=0;
+local hyb_Steps={0,0};
 r['HYBRID'] = function(params, pss)
 	local multLookup =
 	{
@@ -151,17 +151,19 @@ r['HYBRID'] = function(params, pss)
 	-- [ja] 端数は最後の1ステップで加算するのでその値を取得
 	local sLast = 100000000-(sOne*sTotal);
 
+	local p = (params.Player == 'PlayerNumber_P1') and 1 or 2
+
+	-- [en] Initialize score if 0.
 	-- [ja] スコアが0の時に初期化
 	if pss:GetScore()==0 then
-		hyb_Steps=0;
+		hyb_Steps[p]=0;
 	end;
 
 	-- [ja] 現在のステップ数
-	hyb_Steps=hyb_Steps+1;
-	pss:SetCurMaxScore(pss:GetCurMaxScore()+1);
+	hyb_Steps[p]=hyb_Steps[p]+1;
 	-- [en] current score
 	-- [ja] 今回加算するスコア（W1の時）
-	local vScore = sOne*hyb_Steps;
+	local vScore = sOne*hyb_Steps[p];
 	pss:SetCurMaxScore(pss:GetCurMaxScore()+vScore);
 	-- [ja] 判定によって加算量を変更
 	if (params.HoldNoteScore == 'HoldNoteScore_Held') then
@@ -176,7 +178,7 @@ r['HYBRID'] = function(params, pss)
 	pss:SetScore(pss:GetScore()+vScore);
 
 	-- [ja] 最後の1ステップの場合、端数を加算する
-	if ((vScore > 0) and (hyb_Steps == totalItems)) then
+	if ((vScore > 0) and (hyb_Steps[p] == totalItems)) then
 		pss:SetScore(pss:GetScore()+sLast);
 	end;
 end;
@@ -184,6 +186,9 @@ end;
 -----------------------------------------------------------
 --DDR SuperNOVA(-esque) scoring
 -----------------------------------------------------------
+local sn2tmp_Sub={0,0};
+local sn2tmp_Score={0,0};
+local sn2tmp_Steps={0,0};
 r['DDR SuperNOVA'] = function(params, pss)
 	local multLookup =
 	{
@@ -193,13 +198,46 @@ r['DDR SuperNOVA'] = function(params, pss)
 	};
 	setmetatable(multLookup, ZeroIfNotFound);
 	local radarValues = GetDirectRadar(params.Player);
-	local totalItems = GetTotalItems(radarValues); 
-	local base = 10000000 / totalItems;
-	local hold = base * (params.HoldNoteScore == 'HoldNoteScore_Held' and 1 or 0);
-	local maxScore = (base * multLookup['TapNoteScore_W1']) + hold;
-	pss:SetCurMaxScore(pss:GetCurMaxScore() + math.round(maxScore));
-	local buildScore = (base * multLookup[params.TapNoteScore]) + hold;
-	pss:SetScore(pss:GetScore() + math.round(buildScore));
+	local totalItems = GetTotalItems(radarValues);
+
+	if totalItems < 0 then totalItems = 1; end
+	local p = (params.Player == 'PlayerNumber_P1') and 1 or 2
+
+	-- [en] Initialize score if 0.
+	-- [ja] スコアが0の時に初期化
+	if pss:GetScore()==0 then
+		sn2tmp_Sub[p]=0;
+		sn2tmp_Score[p]=0;
+		sn2tmp_Steps[p]=0;
+	end;
+
+	-- [ja] maxAdd は 加算する最高点を 10 とした時の値（つまり、10=100% / 5=50%）
+	local maxAdd = 0;
+
+	-- [ja] O.K.判定時は問答無用で満点
+	if params.HoldNoteScore == 'HoldNoteScore_Held' then
+		maxAdd = 10;
+	else
+		-- [ja] N.G.判定時は問答無用で0点
+		if params.HoldNoteScore == 'HoldNoteScore_LetGo' then
+			maxAdd = 0;
+		-- [ja] それ以外ということは、ロングノート以外の判定である
+		else
+			maxAdd = multLookup[params.TapNoteScore];
+			if (params.TapNoteScore == 'TapNoteScore_W2') or (params.TapNoteScore=='TapNoteScore_W3') then
+				-- [ja] W2とW3の数を記録
+				sn2tmp_Sub[p]=sn2tmp_Sub[p]+1;
+			end;
+		end
+	end
+	sn2tmp_Score[p]=sn2tmp_Score[p]+maxAdd;
+	-- [ja] 踏み踏みしたステップ数
+	sn2tmp_Steps[p]=sn2tmp_Steps[p]+1;
+	-- [ja] 現時点での、All W1判定の時のスコア
+	pss:SetCurMaxScore(math.floor(10000*sn2tmp_Steps[p]/totalItems) * 10);
+
+	-- [ja] 計算して代入
+	pss:SetScore((math.floor(10000*sn2tmp_Score[p]/totalItems) * 10) - (sn2tmp_Sub[p]*10) );
 end;
 -----------------------------------------------------------
 --DDR SuperNOVA 2(-esque) scoring
@@ -319,8 +357,13 @@ end
 -- Formulas end here.
 for v in ivalues(DisabledScoringModes) do r[v] = nil end
 Scoring = {}
-setmetatable(Scoring, { __index = function(...) return function(params,pss)
---put any code here that should run before every scoring function
-        if not GAMESTATE:IsHumanPlayer(params.Player) and type(r[key]) == "function" then 
-        return r[key](...) end 
-end }
+setmetatable(Scoring, {
+	__metatable = { "Letting you change the metatable sort of defeats the purpose." },
+	__index = function(tbl, key)
+		for v in ivalues(DisabledScoringModes) do
+			if key == v then return r['DDR Extreme'] end
+		end
+		return r[key]
+	end,
+	}
+);

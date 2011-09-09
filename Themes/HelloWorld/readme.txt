@@ -1,9 +1,8 @@
 Hello World
 and other sm-ssc theming examples
---------------------------------------
-A theme by various contributors.
---------------------------------------
-
+-------------------------------------------------------
+ A theme by various contributors. (see "Contributors")
+-------------------------------------------------------
 This theme and its accompanying documentation are licensed under
 the Creative Commons Attribution-Share Alike 3.0 license.
 
@@ -30,6 +29,7 @@ Table of Contents
    Managers    [r_man]
    Classes     [r_cls]
   Tutorials    [tutor]
+ Contributors [creds]
 [others tba]
 
 ================================================================================
@@ -47,3 +47,8 @@ sm-ssc theming.
 
 The Guide is a general run-through of how Themes are constructed (along with
 NoteSkins, Announcers, and Characters)
+================================================================================
+Contributors [creds]
+
+These are the people who have worked on Hello World:
+* AJ Kelly

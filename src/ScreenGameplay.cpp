@@ -2173,7 +2173,6 @@ void ScreenGameplay::Input( const InputEventPlus &input )
 {
 	//LOG->Trace( "ScreenGameplay::Input()" );
 
-	// codes motherfucker, do you speak it
 	Message msg("");
 	if( m_Codes.InputMessage(input, msg) )
 		this->HandleMessage( msg );
