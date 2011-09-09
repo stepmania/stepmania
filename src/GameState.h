@@ -310,6 +310,7 @@ public:
 	Character* m_pCurCharacters[NUM_PLAYERS];
 
 	bool HasEarnedExtraStage() const { return m_bEarnedExtraStage; }
+	EarnedExtraStage GetEarnedExtraStage() const { return CalculateEarnedExtraStage(); }
 
 	// Ranking Stuff
 	struct RankingFeat
@@ -390,7 +391,7 @@ private:
 	EarnedExtraStage	CalculateEarnedExtraStage() const;
 	int	m_iAwardedExtraStages[NUM_PLAYERS];
 	bool	m_bEarnedExtraStage;
-	
+
 	GameState(const GameState& rhs);
 	GameState& operator=(const GameState& rhs);
 

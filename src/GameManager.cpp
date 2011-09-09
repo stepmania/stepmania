@@ -2791,8 +2791,8 @@ static const Game g_Game_Lights =
 
 static const Game *g_Games[] = 
 {
-	&g_Game_Pump,
 	&g_Game_Dance,
+	&g_Game_Pump,
 	&g_Game_KB7,
 	&g_Game_Ez2,
 	&g_Game_Para,

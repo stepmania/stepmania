@@ -44,16 +44,16 @@ struct TimingTagWriter {
 
 	void Write( const int row, const char *value )
 	{
-		m_pvsLines->push_back( m_sNext + ssprintf( "%.6f=%s", NoteRowToBeat(row), value ) );
+		m_pvsLines->push_back( m_sNext + ssprintf( "%.3f=%s", NoteRowToBeat(row), value ) );
 		m_sNext = ",";
 	}
 
-	void Write( const int row, const float value )        { Write( row, ssprintf( "%.6f",  value ) ); }
+	void Write( const int row, const float value )        { Write( row, ssprintf( "%.3f",  value ) ); }
 	void Write( const int row, const int value )          { Write( row, ssprintf( "%d",    value ) ); }
 	void Write( const int row, const int a, const int b ) { Write( row, ssprintf( "%d=%d", a, b ) );  }
-	void Write( const int row, const float a, const float b ) { Write( row, ssprintf( "%.6f=%.6f", a, b) ); }
+	void Write( const int row, const float a, const float b ) { Write( row, ssprintf( "%.3f=%.3f", a, b) ); }
 	void Write( const int row, const float a, const float b, const unsigned short c )
-		{ Write( row, ssprintf( "%.6f=%.6f=%hd", a, b, c) ); }
+		{ Write( row, ssprintf( "%.3f=%.3f=%hd", a, b, c) ); }
 
 	void Init( const RString sTag ) { m_sNext = "#" + sTag + ":"; }
 	void Finish( ) { m_pvsLines->push_back( ( m_sNext != "," ? m_sNext : "" ) + ";" ); }
@@ -235,9 +235,9 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 			f.PutLine( "#INSTRUMENTTRACK:" + s + ";\n" );
 		}
 	}
-	f.PutLine( ssprintf( "#OFFSET:%.6f;", out.m_SongTiming.m_fBeat0OffsetInSeconds ) );
-	f.PutLine( ssprintf( "#SAMPLESTART:%.6f;", out.m_fMusicSampleStartSeconds ) );
-	f.PutLine( ssprintf( "#SAMPLELENGTH:%.6f;", out.m_fMusicSampleLengthSeconds ) );
+	f.PutLine( ssprintf( "#OFFSET:%.3f;", out.m_SongTiming.m_fBeat0OffsetInSeconds ) );
+	f.PutLine( ssprintf( "#SAMPLESTART:%.3f;", out.m_fMusicSampleStartSeconds ) );
+	f.PutLine( ssprintf( "#SAMPLELENGTH:%.3f;", out.m_fMusicSampleLengthSeconds ) );
 
 	f.Write( "#SELECTABLE:" );
 	switch(out.m_SelectionDisplay)
@@ -256,9 +256,9 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 		break;
 	case DISPLAY_BPM_SPECIFIED:
 		if( out.m_fSpecifiedBPMMin == out.m_fSpecifiedBPMMax )
-			f.PutLine( ssprintf( "#DISPLAYBPM:%.6f;", out.m_fSpecifiedBPMMin ) );
+			f.PutLine( ssprintf( "#DISPLAYBPM:%.3f;", out.m_fSpecifiedBPMMin ) );
 		else
-			f.PutLine( ssprintf( "#DISPLAYBPM:%.6f:%.6f;", out.m_fSpecifiedBPMMin, out.m_fSpecifiedBPMMax ) );
+			f.PutLine( ssprintf( "#DISPLAYBPM:%.3f:%.3f;", out.m_fSpecifiedBPMMin, out.m_fSpecifiedBPMMax ) );
 		break;
 	case DISPLAY_BPM_RANDOM:
 		f.PutLine( ssprintf( "#DISPLAYBPM:*;" ) );
@@ -268,7 +268,7 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 	WriteTimingTags( f, out.m_SongTiming, true );
 	
 	if( out.GetSpecifiedLastSecond() > 0 )
-		f.PutLine( ssprintf("#LASTSECONDHINT:%.6f;", out.GetSpecifiedLastSecond()) );
+		f.PutLine( ssprintf("#LASTSECONDHINT:%.3f;", out.GetSpecifiedLastSecond()) );
 	
 	FOREACH_BackgroundLayer( b )
 	{
@@ -349,7 +349,7 @@ static RString GetSSCNoteData( const Song &song, const Steps &in, bool bSavingCa
 	// XXX: Is there a better way to write this?
 	if (const_cast<TimingData &>(song.m_SongTiming) != in.m_Timing)
 	{
-		lines.push_back( ssprintf( "#OFFSET:%.6f;", in.m_Timing.m_fBeat0OffsetInSeconds ) );
+		lines.push_back( ssprintf( "#OFFSET:%.3f;", in.m_Timing.m_fBeat0OffsetInSeconds ) );
 		GetTimingTags( lines, in.m_Timing );
 	}
 	if (song.GetAttackString() != in.GetAttackString())
@@ -365,9 +365,9 @@ static RString GetSSCNoteData( const Song &song, const Steps &in, bool bSavingCa
 			float small = in.GetMinBPM();
 			float big = in.GetMaxBPM();
 			if (small == big)
-				lines.push_back( ssprintf( "#DISPLAYBPM:%.6f;", small ) );
+				lines.push_back( ssprintf( "#DISPLAYBPM:%.3f;", small ) );
 			else
-				lines.push_back( ssprintf( "#DISPLAYBPM:%.6f:%.6f;", small, big ) );
+				lines.push_back( ssprintf( "#DISPLAYBPM:%.3f:%.3f;", small, big ) );
 			break;
 		}
 		case DISPLAY_BPM_RANDOM:
@@ -414,12 +414,12 @@ bool NotesWriterSSC::Write( RString sPath, const Song &out, const vector<Steps*>
 	if( bSavingCache )
 	{
 		f.PutLine( ssprintf( "// cache tags:" ) );
-		f.PutLine( ssprintf( "#FIRSTSECOND:%.6f;", out.GetFirstSecond() ) );
-		f.PutLine( ssprintf( "#LASTSECOND:%.6f;", out.GetLastSecond() ) );
+		f.PutLine( ssprintf( "#FIRSTSECOND:%.3f;", out.GetFirstSecond() ) );
+		f.PutLine( ssprintf( "#LASTSECOND:%.3f;", out.GetLastSecond() ) );
 		f.PutLine( ssprintf( "#SONGFILENAME:%s;", out.m_sSongFileName.c_str() ) );
 		f.PutLine( ssprintf( "#HASMUSIC:%i;", out.m_bHasMusic ) );
 		f.PutLine( ssprintf( "#HASBANNER:%i;", out.m_bHasBanner ) );
-		f.PutLine( ssprintf( "#MUSICLENGTH:%.6f;", out.m_fMusicLengthSeconds ) );
+		f.PutLine( ssprintf( "#MUSICLENGTH:%.3f;", out.m_fMusicLengthSeconds ) );
 		f.PutLine( ssprintf( "// end cache tags" ) );
 	}
 

@@ -59,7 +59,6 @@ static Preference<bool> g_bHideIncompleteCourses( "HideIncompleteCourses", false
 RString SONG_GROUP_COLOR_NAME( size_t i )   { return ssprintf( "SongGroupColor%i", (int) i+1 ); }
 RString COURSE_GROUP_COLOR_NAME( size_t i ) { return ssprintf( "CourseGroupColor%i", (int) i+1 ); }
 
-
 SongManager::SongManager()
 {
 	// Register with Lua.
@@ -246,10 +245,10 @@ void SongManager::LoadStepManiaSongDir( RString sDir, LoadingWindow *ld )
 	SortRStringArray( arrayGroupDirs );
 	StripCvsAndSvn( arrayGroupDirs );
 	StripMacResourceForks( arrayGroupDirs );
-	
+
 	vector< vector<RString> > arrayGroupSongDirs;
 	int groupIndex, songCount, songIndex;
-	
+
 	groupIndex = 0;
 	songCount = 0;
 	FOREACH_CONST( RString, arrayGroupDirs, s )	// foreach dir in /Songs/
@@ -263,19 +262,19 @@ void SongManager::LoadStepManiaSongDir( RString sDir, LoadingWindow *ld )
 		StripCvsAndSvn( arraySongDirs );
 		StripMacResourceForks( arraySongDirs );
 		SortRStringArray( arraySongDirs );
-		
+
 		arrayGroupSongDirs.push_back(arraySongDirs);
 		songCount += arraySongDirs.size();
 
 	}
 
 	if( songCount==0 ) return;
-	
+
 	if( ld ) {
 		ld->SetIndeterminate( false );
 		ld->SetTotalWork( songCount );
 	}
-	
+
 	groupIndex = 0;
 	songIndex = 0;
 	FOREACH_CONST( RString, arrayGroupDirs, s )	// foreach dir in /Songs/
@@ -573,7 +572,7 @@ RageColor SongManager::GetCourseGroupColor( const RString &sCourseGroup ) const
 			return SONG_GROUP_COLOR.GetValue( iIndex%NUM_SONG_GROUP_COLORS );
 		iIndex++;
 	}
-	
+
 	ASSERT_M( 0, ssprintf("requested color for course group '%s' that doesn't exist",sCourseGroup.c_str()) );
 	return RageColor(1,1,1,1);
 }
@@ -584,7 +583,6 @@ RageColor SongManager::GetCourseColor( const Course* pCourse ) const
 	const UnlockEntry *pUE = UNLOCKMAN->FindCourse( pCourse );
 	if( pUE  &&  USE_UNLOCK_COLOR.GetValue() )
 		return UNLOCK_COLOR.GetValue();
-
 
 	if( USE_PREFERRED_SORT_COLOR )
 	{
@@ -627,7 +625,7 @@ void SongManager::ResetGroupColors()
 const vector<Song*> &SongManager::GetSongs( const RString &sGroupName ) const
 {
 	static const vector<Song*> vEmpty;
-	
+
 	if( sGroupName == GROUP_ALL )
 		return m_pSongs;
 	map<RString, SongPointerVector, Comp>::const_iterator iter = m_mapSongGroupIndex.find( sGroupName );
@@ -780,6 +778,7 @@ void SongManager::InitCoursesFromDisk( LoadingWindow *ld )
 	vsCourseGroupNames.push_back( SpecialFiles::COURSES_DIR );
 	SortRStringArray( vsCourseGroupNames );
 
+	int courseIndex = 0;
 	FOREACH_CONST( RString, vsCourseGroupNames, sCourseGroup )	// for each dir in /Courses/
 	{
 		// Find all CRS files in this group directory
@@ -787,10 +786,17 @@ void SongManager::InitCoursesFromDisk( LoadingWindow *ld )
 		GetDirListing( *sCourseGroup + "/*.crs", vsCoursePaths, false, true );
 		SortRStringArray( vsCoursePaths );
 
+		if( ld )
+		{
+			ld->SetIndeterminate( false );
+			ld->SetTotalWork( vsCoursePaths.size() );
+		}
+
 		FOREACH_CONST( RString, vsCoursePaths, sCoursePath )
 		{
 			if( ld )
 			{
+				ld->SetProgress(courseIndex);
 				ld->SetText( LOADING_COURSES.GetValue()+ssprintf("\n%s\n%s",
 					Basename(*sCourseGroup).c_str(),
 					Basename(*sCoursePath).c_str()));
@@ -806,7 +812,12 @@ void SongManager::InitCoursesFromDisk( LoadingWindow *ld )
 			}
 
 			m_pCourses.push_back( pCourse );
+			courseIndex++;
 		}
+	}
+
+	if( ld ) {
+		ld->SetIndeterminate( true );
 	}
 
 	RefreshCourseGroupInfo();
@@ -880,7 +891,7 @@ void SongManager::InitAutogenCourses()
 			}
 
 			aSongs.clear();
-			
+
 			if( i < apSongs.size() )
 			{
 				sCurArtist = sArtist;

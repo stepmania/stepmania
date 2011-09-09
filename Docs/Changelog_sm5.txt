@@ -8,6 +8,11 @@ ________________________________________________________________________________
 StepMania 5.0 $next | 2011????
 --------------------------------------------------------------------------------
 
+2011/09/07
+----------
+* [Model] Added GetDefaultAnimation() Lua binding. [AJ]
+* [GameState] Added GetEarnedExtraStage() Lua binding. [AJ]
+
 2011/09/02
 ----------
 * [MenuTimer] Added start(), disable() Lua bindings. Also renamed setseconds to
