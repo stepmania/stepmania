@@ -221,7 +221,8 @@ bool BMSChart::Load( const RString &chartPath )
 				if( channel == 2 )
 				{
 					// special channel: time signature
-					//this->measures[measure] = (BMSMeasure)(StringToFloat(data));
+					BMSMeasure m = { StringToFloat(data) };
+					this->measures[measure] = m;
 				}
 				else
 				{
