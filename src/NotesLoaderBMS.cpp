@@ -559,6 +559,11 @@ int BMSChartReader::GetKeysound( const BMSObject &obj )
 	}
 }
 
+struct BMSAutoKeysound {
+	int row;
+	int index;
+};
+
 bool BMSChartReader::ReadNoteData()
 {
 	if( out->m_StepsType == StepsType_Invalid )
@@ -715,6 +720,8 @@ bool BMSChartReader::ReadNoteData()
 			break;
 		}
 	}
+	
+	vector<BMSAutoKeysound> autos;
 
 	for( unsigned i = 0; i < in->objects.size(); i ++ )
 	{
@@ -798,17 +805,32 @@ bool BMSChartReader::ReadNoteData()
 		}
 		else if( channel == 1 || (11 <= channel && channel <= 19) || (21 <= channel && channel <= 29) ) // auto-keysound and other notes
 		{
+			BMSAutoKeysound ak = { row, GetKeysound(obj) };
+			autos.push_back( ak );
+		}
+	}
+	
+	int rowsToLook[3] = { 0, -1, 1 };
+	for( unsigned i = 0; i < autos.size(); i ++ )
+	{
+		BMSAutoKeysound &ak = autos[i];
+		bool found = false;
+		for( int j = 0; j < 3; j ++ )
+		{
+			int row = ak.row + rowsToLook[j];
 			for( int t = 0; t < tracks; t ++ )
 			{
-				if( nd.GetTapNote( t, row ) == TAP_EMPTY && holdStart[t] == -1 )
+				if( nd.GetTapNote( t, row ) == TAP_EMPTY && !nd.IsHoldNoteAtRow( t, row ) )
 				{
 					TapNote tn = TAP_ORIGINAL_TAP;
 					tn.type = TapNote::autoKeysound;
-					tn.iKeysoundIndex = GetKeysound(obj);
+					tn.iKeysoundIndex = ak.index;
 					nd.SetTapNote( t, row, tn );
+					found = true;
 					break;
 				}
 			}
+			if( found ) break;
 		}
 	}
 
