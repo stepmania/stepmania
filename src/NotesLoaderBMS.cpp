@@ -91,8 +91,8 @@ static void SearchForDifficulty( RString sTag, Steps *pOut )
 static void SlideDuplicateDifficulties( Song &p )
 {
 	/* BMS files have to guess the Difficulty from the meter; this is inaccurate,
-	* and often leads to duplicates. Slide duplicate difficulties upwards. We
-	* only do this with BMS files, since a very common bug was having *all*
+	* and often leads to duplicates. Slide duplicate difficulties upwards.
+	* We only do this with BMS files, since a very common bug was having *all*
 	* difficulties slid upwards due to (for example) having two beginner steps.
 	* We do a second pass in Song::TidyUpData to eliminate any remaining duplicates
 	* after this. */
@@ -125,12 +125,7 @@ void BMSLoader::GetApplicableFiles( const RString &sPath, vector<RString> &out )
 	GetDirListing( sPath + RString("*.bml"), out );
 }
 
-
-/*===========================================================================
- *===========================================================================
- *===========================================================================
- *===========================================================================
- */
+/*===========================================================================*/
 
 struct BMSObject
 {
@@ -151,15 +146,10 @@ struct BMSObject
 	}
 };
 
-
-
-
 struct BMSMeasure
 {
 	float size;
 };
-
-
 
 typedef map<RString, RString> BMSHeaders;
 typedef map<int, BMSMeasure> BMSMeasures;
@@ -179,7 +169,6 @@ public:
 	BMSMeasures measures;
 
 	void TidyUpData();
-
 };
 
 BMSChart::BMSChart()
@@ -196,7 +185,7 @@ bool BMSChart::GetHeader( const RString &header, RString &out )
 bool BMSChart::Load( const RString &chartPath )
 {
 	path = chartPath;
-	
+
 	RageFile file;
 	if( !file.Open(path) )
 	{
@@ -232,7 +221,7 @@ bool BMSChart::Load( const RString &chartPath )
 				if( channel == 2 )
 				{
 					// special channel: time signature
-					this->measures[measure] = (BMSMeasure){ StringToFloat(data) };
+					this->measures[measure] = (BMSMeasure)(StringToFloat(data));
 				}
 				else
 				{
@@ -277,9 +266,6 @@ void BMSChart::TidyUpData()
 	sort( objects.begin(), objects.end() );
 }
 
-
-
-
 class BMSSong {
 
 	map<RString, int> mapKeysoundToIndex;
@@ -289,7 +275,6 @@ public:
 	BMSSong( Song *song );
 	unsigned AllocateKeysound( RString filename, RString path );
 	Song *GetSong();
-
 };
 
 BMSSong::BMSSong( Song *song )
@@ -301,7 +286,6 @@ BMSSong::BMSSong( Song *song )
 	{
 		mapKeysoundToIndex[out->m_vsKeysoundFile[i]] = i;
 	}
-	
 }
 
 Song *BMSSong::GetSong()
@@ -317,7 +301,7 @@ unsigned BMSSong::AllocateKeysound( RString filename, RString path )
 	}
 
 	// try to normalize the filename first!
-	
+
 	// FIXME: garbled song names seem to crash the app.
 	// this might not be the best place to put this code.
 	if( !utf8_is_valid(filename) )
@@ -332,7 +316,7 @@ unsigned BMSSong::AllocateKeysound( RString filename, RString path )
 
 	if (dir.empty())
 		dir = Dirname(path);
-	
+
 	if( !IsAFile(dir + normalizedFilename) )
 	{
 		const char *exts[] = { "oga", "ogg", "wav", "mp3", NULL }; // XXX: stop duplicating these everywhere
@@ -346,14 +330,14 @@ unsigned BMSSong::AllocateKeysound( RString filename, RString path )
 			}
 		}
 	}
-	
+
 	if( !IsAFile(dir + normalizedFilename) )
 	{
 		mapKeysoundToIndex[filename] = -1;
 		LOG->UserLog( "Song file", dir, "references key \"%s\" that can't be found", normalizedFilename.c_str() );
 		return false;
 	}
-	
+
 	if( mapKeysoundToIndex.find( normalizedFilename ) != mapKeysoundToIndex.end() )
 	{
 		mapKeysoundToIndex[filename] = mapKeysoundToIndex[normalizedFilename];
@@ -365,23 +349,18 @@ unsigned BMSSong::AllocateKeysound( RString filename, RString path )
 	mapKeysoundToIndex[filename] = index;
 	mapKeysoundToIndex[normalizedFilename] = index;
 	return index;
-	
 }
 
-
 struct BMSChartInfo {
-
 	RString title;
 	RString artist;
 	RString genre;
 
 	RString backgroundFile;
 	RString musicFile;
-	
 };
 
 class BMSChartReader {
-
 	BMSChart *in;
 	Steps *out;
 	BMSSong *song;
@@ -486,7 +465,6 @@ void BMSChartReader::ReadHeaders()
 
 void BMSChartReader::CalculateStepsType()
 {
-
 	for( unsigned i = 0; i < in->objects.size(); i ++ )
 	{
 		BMSObject &obj = in->objects[i];
@@ -499,7 +477,6 @@ void BMSChartReader::CalculateStepsType()
 
 	nonEmptyTracksCount = nonEmptyTracks.size();
 	out->m_StepsType = DetermineStepsType();
-
 }
 
 enum BmsRawChannel
@@ -588,10 +565,10 @@ bool BMSChartReader::ReadNoteData()
 		LOG->UserLog( "Song file", in->path, "has an unknown steps type" );
 		return false;
 	}
-	
+
 	float currentBPM;
 	int tracks = GAMEMAN->GetStepsTypeInfo( out->m_StepsType ).iNumTracks;
-	
+
 	NoteData   nd;
 	TimingData td;
 
@@ -726,7 +703,7 @@ bool BMSChartReader::ReadNoteData()
 	float adjustedMeasureSize = 0.0f;
 	float measureAdjust = 1.0f;
 	int firstNoteMeasure = 0;
-	
+
 	for( unsigned i = 0; i < in->objects.size(); i ++ )
 	{
 		BMSObject &obj = in->objects[i];
@@ -737,7 +714,7 @@ bool BMSChartReader::ReadNoteData()
 			break;
 		}
 	}
-	
+
 	for( unsigned i = 0; i < in->objects.size(); i ++ )
 	{
 		BMSObject &obj = in->objects[i];
@@ -750,7 +727,7 @@ bool BMSChartReader::ReadNoteData()
 			if( it != in->measures.end() ) measureSize = it->second.size * 4.0f;
 			adjustedMeasureSize = measureSize;
 			if( trackMeasure < firstNoteMeasure ) adjustedMeasureSize = measureSize = 4.0f;
-			
+
 			// measure size adjustment
 			// XXX: need more testing / fine-tuning!
 			int sixteenths = lrintf(measureSize * 4.0f);
@@ -758,7 +735,6 @@ bool BMSChartReader::ReadNoteData()
 			measureAdjust = adjustedMeasureSize / measureSize;
 			td.SetBPMAtRow( BeatToNoteRow(measureStartBeat), measureAdjust * currentBPM );
 			// end measure size adjustment
-			
 		}
 
 		int row = BeatToNoteRow( measureStartBeat + adjustedMeasureSize * obj.position );
@@ -834,7 +810,7 @@ bool BMSChartReader::ReadNoteData()
 			}
 		}
 	}
-	
+
 	delete transform;
 	delete holdStart;
 
@@ -844,7 +820,6 @@ bool BMSChartReader::ReadNoteData()
 	out->TidyUpData();
 	out->SetSavedToDisk( true );	// we're loading from disk, so this is by definintion already saved
 
-
 	return true;
 }
 
@@ -852,8 +827,6 @@ Steps *BMSChartReader::GetSteps()
 {
 	return out;
 }
-
-
 
 struct BMSStepsInfo {
 	Steps *steps;
@@ -877,7 +850,6 @@ BMSSongLoader::BMSSongLoader( RString songDir, Song *outSong ): song(outSong), d
 
 bool BMSSongLoader::Load( RString fileName )
 {
-
 	// before doing anything else, load the chart first!
 	BMSChart chart;
 	if( !chart.Load( dir + fileName ) ) return false;
@@ -906,7 +878,6 @@ bool BMSSongLoader::Load( RString fileName )
 
 void BMSSongLoader::AddToSong()
 {
-
 	RString commonSubstring = "";
 
 	{
@@ -1044,11 +1015,7 @@ void BMSSongLoader::AddToSong()
 
 }
 
-/*===========================================================================
- *===========================================================================
- *===========================================================================
- *===========================================================================
- */
+/*===========================================================================*/
 
 bool BMSLoader::LoadNoteDataFromSimfile( const RString & cachePath, Steps & out )
 {
@@ -1068,7 +1035,6 @@ bool BMSLoader::LoadNoteDataFromSimfile( const RString & cachePath, Steps & out 
 
 bool BMSLoader::LoadFromDir( const RString &sDir, Song &out )
 {
-
 	LOG->Trace( "Song::LoadFromBMSDir(%s)", sDir.c_str() );
 
 	ASSERT( out.m_vsKeysoundFile.empty() );
@@ -1090,7 +1056,6 @@ bool BMSLoader::LoadFromDir( const RString &sDir, Song &out )
 	return true;
 
 }
-
 
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard
