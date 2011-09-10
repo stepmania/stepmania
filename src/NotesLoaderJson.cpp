@@ -41,8 +41,8 @@ static void Deserialize(TimingSegment &seg_, const Json::Value &root)
 
 static void Deserialize(TimingData &td, const Json::Value &root)
 {
-	JsonUtil::DeserializeVectorPointers( td.allTimingSegments[SEGMENT_BPM], Deserialize, root["BpmSegments"] );
-	JsonUtil::DeserializeVectorPointers( td.allTimingSegments[SEGMENT_STOP], Deserialize, root["StopSegments"] );
+	JsonUtil::DeserializeVectorPointers( td.m_avpTimingSegments[SEGMENT_BPM], Deserialize, root["BpmSegments"] );
+	JsonUtil::DeserializeVectorPointers( td.m_avpTimingSegments[SEGMENT_STOP], Deserialize, root["StopSegments"] );
 }
 
 static void Deserialize(LyricSegment &o, const Json::Value &root)

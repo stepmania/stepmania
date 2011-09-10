@@ -856,7 +856,7 @@ void NoteField::DrawPrimitives()
 	}
 
 	const TimingData *pTiming = GetDisplayedTiming(m_pPlayerState);
-	const vector<TimingSegment *> *segs = pTiming->allTimingSegments;
+	const vector<TimingSegment *> *segs = pTiming->m_avpTimingSegments;
 	unsigned i = 0;
 	// Draw beat bars
 	if( ( GAMESTATE->IsEditing() || SHOW_BEAT_BARS ) && pTiming != NULL )

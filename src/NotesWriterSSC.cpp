@@ -68,7 +68,7 @@ static void GetTimingTags( vector<RString> &lines, TimingData timing, bool bIsSo
 	unsigned i = 0;
 
 	w.Init( "BPMS" );
-	vector<TimingSegment *> &bpms = timing.allTimingSegments[SEGMENT_BPM];
+	vector<TimingSegment *> &bpms = timing.m_avpTimingSegments[SEGMENT_BPM];
 	for (; i < bpms.size(); i++)
 	{
 		BPMSegment *bs = static_cast<BPMSegment *>(bpms[i]);
@@ -77,7 +77,7 @@ static void GetTimingTags( vector<RString> &lines, TimingData timing, bool bIsSo
 	w.Finish();
 	
 	w.Init( "STOPS" );
-	vector<TimingSegment *> &stops = timing.allTimingSegments[SEGMENT_STOP];
+	vector<TimingSegment *> &stops = timing.m_avpTimingSegments[SEGMENT_STOP];
 	for (i = 0; i < stops.size(); i++)
 	{
 		StopSegment *ss = static_cast<StopSegment *>(stops[i]);
@@ -86,7 +86,7 @@ static void GetTimingTags( vector<RString> &lines, TimingData timing, bool bIsSo
 	w.Finish();
 	
 	w.Init( "DELAYS" );
-	vector<TimingSegment *> &delays = timing.allTimingSegments[SEGMENT_DELAY];
+	vector<TimingSegment *> &delays = timing.m_avpTimingSegments[SEGMENT_DELAY];
 	for (i = 0; i < delays.size(); i++)
 	{
 		DelaySegment *ss = static_cast<DelaySegment *>(delays[i]);
@@ -95,7 +95,7 @@ static void GetTimingTags( vector<RString> &lines, TimingData timing, bool bIsSo
 	w.Finish();
 	
 	w.Init( "WARPS" );
-	vector<TimingSegment *> &warps = timing.allTimingSegments[SEGMENT_WARP];
+	vector<TimingSegment *> &warps = timing.m_avpTimingSegments[SEGMENT_WARP];
 	for (i = 0; i < warps.size(); i++)
 	{
 		WarpSegment *ws = static_cast<WarpSegment *>(warps[i]);
@@ -103,7 +103,7 @@ static void GetTimingTags( vector<RString> &lines, TimingData timing, bool bIsSo
 	}
 	w.Finish();
 	
-	vector<TimingSegment *> &tSigs = timing.allTimingSegments[SEGMENT_TIME_SIG];
+	vector<TimingSegment *> &tSigs = timing.m_avpTimingSegments[SEGMENT_TIME_SIG];
 	ASSERT( !tSigs.empty() );
 	w.Init( "TIMESIGNATURES" );
 	for (i = 0; i < tSigs.size(); i++)
@@ -113,7 +113,7 @@ static void GetTimingTags( vector<RString> &lines, TimingData timing, bool bIsSo
 	}
 	w.Finish();
 
-	vector<TimingSegment *> &ticks = timing.allTimingSegments[SEGMENT_TICKCOUNT];
+	vector<TimingSegment *> &ticks = timing.m_avpTimingSegments[SEGMENT_TICKCOUNT];
 	ASSERT( !ticks.empty() );
 	w.Init( "TICKCOUNTS" );
 	for (i = 0; i < ticks.size(); i++)
@@ -123,7 +123,7 @@ static void GetTimingTags( vector<RString> &lines, TimingData timing, bool bIsSo
 	}
 	w.Finish();
 	
-	vector<TimingSegment *> &combos = timing.allTimingSegments[SEGMENT_COMBO];
+	vector<TimingSegment *> &combos = timing.m_avpTimingSegments[SEGMENT_COMBO];
 	ASSERT( !combos.empty() );
 	w.Init( "COMBOS" );
 	for (i = 0; i < combos.size(); i++)
@@ -137,7 +137,7 @@ static void GetTimingTags( vector<RString> &lines, TimingData timing, bool bIsSo
 	w.Finish();
 	
 	// Song Timing should only have the initial value.
-	vector<TimingSegment *> &speeds = timing.allTimingSegments[SEGMENT_SPEED];
+	vector<TimingSegment *> &speeds = timing.m_avpTimingSegments[SEGMENT_SPEED];
 	w.Init( "SPEEDS" );
 	for (i = 0; i < speeds.size(); i++)
 	{
@@ -147,7 +147,7 @@ static void GetTimingTags( vector<RString> &lines, TimingData timing, bool bIsSo
 	w.Finish();
 	
 	w.Init( "SCROLLS" );
-	vector<TimingSegment *> &scrolls = timing.allTimingSegments[SEGMENT_SCROLL];
+	vector<TimingSegment *> &scrolls = timing.m_avpTimingSegments[SEGMENT_SCROLL];
 	for (i = 0; i < scrolls.size(); i++)
 	{
 		ScrollSegment *ss = static_cast<ScrollSegment *>(scrolls[i]);
@@ -157,7 +157,7 @@ static void GetTimingTags( vector<RString> &lines, TimingData timing, bool bIsSo
 	
 	if( !bIsSong )
 	{	
-		vector<TimingSegment *> &fakes = timing.allTimingSegments[SEGMENT_FAKE];
+		vector<TimingSegment *> &fakes = timing.m_avpTimingSegments[SEGMENT_FAKE];
 		w.Init( "FAKES" );
 		for (i = 0; i < fakes.size(); i++)
 		{
@@ -168,7 +168,7 @@ static void GetTimingTags( vector<RString> &lines, TimingData timing, bool bIsSo
 	}
 	
 	w.Init( "LABELS" );
-	vector<TimingSegment *> &labels = timing.allTimingSegments[SEGMENT_LABEL];
+	vector<TimingSegment *> &labels = timing.m_avpTimingSegments[SEGMENT_LABEL];
 	for (i = 0; i < labels.size(); i++)
 	{
 		LabelSegment *ls = static_cast<LabelSegment *>(labels[i]);

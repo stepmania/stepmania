@@ -267,7 +267,7 @@ void AdjustSync::AutosyncTempo()
 		GAMESTATE->m_pCurSong->m_SongTiming.m_fBeat0OffsetInSeconds += fIntercept;
 		const float fScaleBPM = 1.0f/(1.0f - fSlope);
 		TimingData &timing = GAMESTATE->m_pCurSong->m_SongTiming;
-		vector<TimingSegment *> &bpms = timing.allTimingSegments[SEGMENT_BPM];
+		vector<TimingSegment *> &bpms = timing.m_avpTimingSegments[SEGMENT_BPM];
 		for (unsigned i = 0; i < bpms.size(); i++)
 		{
 			BPMSegment *b = static_cast<BPMSegment *>(bpms[i]);
@@ -277,14 +277,14 @@ void AdjustSync::AutosyncTempo()
 		/* We assume that the stops were measured as a number of beats.
 		 * Therefore, if we change the bpms, we need to make a similar
 		 * change to the stops. */
-		vector<TimingSegment *> &stops = timing.allTimingSegments[SEGMENT_STOP];
+		vector<TimingSegment *> &stops = timing.m_avpTimingSegments[SEGMENT_STOP];
 		for (unsigned i = 0; i < stops.size(); i++)
 		{
 			StopSegment *s = static_cast<StopSegment *>(stops[i]);
 			s->SetPause(s->GetPause() * (1.0f - fSlope));
 		}
 		// Do the same for delays.
-		vector<TimingSegment *> &delays = timing.allTimingSegments[SEGMENT_DELAY];
+		vector<TimingSegment *> &delays = timing.m_avpTimingSegments[SEGMENT_DELAY];
 		for (unsigned i = 0; i < delays.size(); i++)
 		{
 			DelaySegment *s = static_cast<DelaySegment *>(delays[i]);
@@ -359,8 +359,8 @@ void AdjustSync::GetSyncChangeTextSong( vector<RString> &vsAddTo )
 			}
 		}
 
-		vector<TimingSegment *> &bpmTest = testing.allTimingSegments[SEGMENT_BPM];
-		vector<TimingSegment *> &bpmOrig = original.allTimingSegments[SEGMENT_BPM];
+		vector<TimingSegment *> &bpmTest = testing.m_avpTimingSegments[SEGMENT_BPM];
+		vector<TimingSegment *> &bpmOrig = original.m_avpTimingSegments[SEGMENT_BPM];
 		for( unsigned i=0; i< bpmTest.size(); i++ )
 		{
 			BPMSegment *bT = static_cast<BPMSegment *>(bpmTest[i]);
@@ -384,8 +384,8 @@ void AdjustSync::GetSyncChangeTextSong( vector<RString> &vsAddTo )
 			}
 		}
 
-		vector<TimingSegment *> &stopTest = testing.allTimingSegments[SEGMENT_STOP];
-		vector<TimingSegment *> &stopOrig = original.allTimingSegments[SEGMENT_STOP];
+		vector<TimingSegment *> &stopTest = testing.m_avpTimingSegments[SEGMENT_STOP];
+		vector<TimingSegment *> &stopOrig = original.m_avpTimingSegments[SEGMENT_STOP];
 		for( unsigned i=0; i< stopTest.size(); i++ )
 		{
 			StopSegment *sT = static_cast<StopSegment *>(stopTest[i]);
@@ -409,8 +409,8 @@ void AdjustSync::GetSyncChangeTextSong( vector<RString> &vsAddTo )
 			}
 		}
 		
-		vector<TimingSegment *> &delyTest = testing.allTimingSegments[SEGMENT_DELAY];
-		vector<TimingSegment *> &delyOrig = original.allTimingSegments[SEGMENT_DELAY];
+		vector<TimingSegment *> &delyTest = testing.m_avpTimingSegments[SEGMENT_DELAY];
+		vector<TimingSegment *> &delyOrig = original.m_avpTimingSegments[SEGMENT_DELAY];
 		for( unsigned i=0; i< delyTest.size(); i++ )
 		{
 			DelaySegment *sT = static_cast<DelaySegment *>(delyTest[i]);

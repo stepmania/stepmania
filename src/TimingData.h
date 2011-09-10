@@ -17,43 +17,33 @@ class TimingData
 {
 public:
 	void AddSegment(TimingSegmentType tst, TimingSegment * seg);
-	
-	int GetSegmentIndexAtRow(TimingSegmentType tst,
-							 int row) const;
-	
-	int GetSegmentIndexAtBeat(TimingSegmentType tst,
-							  float beat) const
+
+	unsigned GetSegmentIndexAtRow(TimingSegmentType tst, int row) const;
+	unsigned GetSegmentIndexAtBeat(TimingSegmentType tst, float beat) const
 	{
-		return this->GetSegmentIndexAtRow(tst, BeatToNoteRow(beat));
+		return GetSegmentIndexAtRow( tst, BeatToNoteRow(beat) );
 	}
-	
-	float GetNextSegmentBeatAtRow(TimingSegmentType tst,
-								  int row) const;
-	
-	float GetNextSegmentBeatAtBeat(TimingSegmentType tst,
-								   float beat) const
+
+	float GetNextSegmentBeatAtRow(TimingSegmentType tst, int row) const;
+	float GetNextSegmentBeatAtBeat(TimingSegmentType tst, float beat) const
 	{
-		return this->GetNextSegmentBeatAtRow(tst, BeatToNoteRow(beat));
+		return GetNextSegmentBeatAtRow( tst, BeatToNoteRow(beat) );
 	}
-	
-	float GetPreviousSegmentBeatAtRow(TimingSegmentType tst,
-									  int row) const;
-	
-	float GetPreviousSegmentBeatAtBeat(TimingSegmentType tst,
-									   float beat) const
+
+	float GetPreviousSegmentBeatAtRow(TimingSegmentType tst, int row) const;
+	float GetPreviousSegmentBeatAtBeat(TimingSegmentType tst, float beat) const
 	{
-		return this->GetPreviousSegmentBeatAtRow(tst, BeatToNoteRow(beat));
+		return GetPreviousSegmentBeatAtRow( tst, BeatToNoteRow(beat) );
 	}
-	
+
 	bool empty() const;
-	
+
 	/**
 	 * @brief Sets up initial timing data with a defined offset.
 	 * @param fOffset the offset from the 0th beat. */
 	TimingData(float fOffset = 0);
-	
 	~TimingData();
-	
+
 	TimingData CopyRange(int startRow, int endRow) const;
 	/**
 	 * @brief Gets the actual BPM of the song,
@@ -89,19 +79,54 @@ public:
 	 * @param fBPM the BPM.
 	 */
 	void SetBPMAtBeat( float fBeat, float fBPM ) { SetBPMAtRow( BeatToNoteRow(fBeat), fBPM ); }
+
 	/**
-	 * @brief Retrieve the BPMSegment at the specified row.
-	 * @param iNoteRow the row that has a BPMSegment.
-	 * @return the BPMSegment in question.
+	 * @brief Retrieve the TimingSegment at the specified row.
+	 * @param iNoteRow the row that has a TimingSegment.
+	 * @param tst the TimingSegmentType requested.
+	 * @return the segment in question.
 	 */
-	BPMSegment* GetBPMSegmentAtRow( int iNoteRow );
+	TimingSegment* GetSegmentAtRow( int iNoteRow, TimingSegmentType tst );
 	/**
-	 * @brief Retrieve the BPMSegment at the specified beat.
-	 * @param fBeat the beat that has a BPMSegment.
-	 * @return the BPMSegment in question.
+	 * @brief Retrieve the TimingSegment at the given beat.
+	 * @param fBeat the beat that has a TimingSegment.
+	 * @param tst the TimingSegmentType requested.
+	 * @return the segment in question.
 	 */
-	BPMSegment* GetBPMSegmentAtBeat( float fBeat ) { return GetBPMSegmentAtRow( (int)BeatToNoteRow(fBeat)); }
-	
+	TimingSegment* GetSegmentAtBeat( float fBeat, TimingSegmentType tst )
+	{
+		return GetSegmentAtRow( BeatToNoteRow(fBeat), tst );
+	}
+
+	/* XXX: convenience shortcuts. We should get rid of these later. */
+	#define GetSegmentWithName(Seg, SegType) \
+		Seg* Get##Seg##AtRow( int iNoteRow ) \
+		{ \
+			TimingSegment *t = GetSegmentAtRow( iNoteRow, SegType ); \
+			return static_cast<Seg*>( t ); \
+		} \
+		Seg* Get##Seg##AtBeat( float fBeat ) \
+		{ \
+			TimingSegment *t = GetSegmentAtBeat( fBeat, SegType ); \
+			return static_cast<Seg*>( t ); \
+		}
+
+	// (TimeSignature,TIME_SIG) -> (TimeSignatureSegment,SEGMENT_TIME_SIG)
+	#define GetSegment(Seg, SegType ) \
+		GetSegmentWithName( Seg##Segment, SEGMENT_##SegType )
+
+	GetSegment( BPM, BPM );
+	GetSegment( Stop, STOP );
+	GetSegment( Delay, DELAY );
+	GetSegment( Warp, WARP );
+	GetSegment( Label, LABEL );
+	GetSegment( Tickcount, TICKCOUNT );
+	GetSegment( Combo, COMBO );
+	GetSegment( Speed, SPEED );
+	GetSegment( Scroll, SCROLL );
+	GetSegment( Fake, FAKE );
+	GetSegment( TimeSignature, TIME_SIG );
+
 	/**
 	 * @brief Retrieve the stop time at the given row.
 	 * @param iNoteRow the row in question.
@@ -114,7 +139,7 @@ public:
 	 * @return the stop time.
 	 */
 	float GetStopAtBeat( float fBeat ) const { return GetStopAtRow( BeatToNoteRow(fBeat) ); }
-	
+
 	/**
 	 * @brief Set the row to have the new stop time.
 	 * @param iNoteRow the row to have the new stop time.
@@ -127,20 +152,7 @@ public:
 	 * @param fSeconds the new stop time.
 	 */
 	void SetStopAtBeat( float fBeat, float fSeconds ) { SetStopAtRow( BeatToNoteRow(fBeat), fSeconds); }
-	/**
-	 * @brief Retrieve the StopSegment at the specified row.
-	 * @param iNoteRow the row that has a StopSegment.
-	 * @return the StopSegment in question.
-	 */
-	StopSegment* GetStopSegmentAtRow( int iNoteRow );
-	/**
-	 * @brief Retrieve the StopSegment at the specified beat.
-	 * @param fBeat the beat that has a StopSegment.
-	 * @return the StopSegment in question.
-	 */
-	StopSegment* GetStopSegmentAtBeat( float fBeat ) { return GetStopSegmentAtRow( BeatToNoteRow(fBeat)); }
-	
-	
+
 	/**
 	 * @brief Retrieve the delay time at the given row.
 	 * @param iNoteRow the row in question.
@@ -153,7 +165,7 @@ public:
 	 * @return the delay time.
 	 */
 	float GetDelayAtBeat( float fBeat ) const { return GetDelayAtRow( BeatToNoteRow(fBeat) ); }
-	
+
 	/**
 	 * @brief Set the row to have the new delay time.
 	 *
@@ -170,19 +182,7 @@ public:
 	 * @param fSeconds the new delay time.
 	 */
 	void SetDelayAtBeat( float fBeat, float fSeconds ) { SetDelayAtRow( BeatToNoteRow(fBeat), fSeconds); }
-	/**
-	 * @brief Retrieve the DelaySegment at the specified row.
-	 * @param iNoteRow the row that has a DelaySegment.
-	 * @return the DelaySegment in question.
-	 */
-	DelaySegment* GetDelaySegmentAtRow( int iNoteRow );
-	/**
-	 * @brief Retrieve the DelaySegment at the specified beat.
-	 * @param fBeat the beat that has a DelaySegment.
-	 * @return the DelaySegment in question.
-	 */
-	DelaySegment* GetDelaySegmentAtBeat( float fBeat ) { return GetDelaySegmentAtRow( BeatToNoteRow(fBeat)); }
-		
+
 	/**
 	 * @brief Retrieve the Time Signature's numerator at the given row.
 	 * @param iNoteRow the row in question.
@@ -245,19 +245,7 @@ public:
 	 * @param iDenominator the denominator.
 	 */
 	void SetTimeSignatureDenominatorAtBeat( float fBeat, int iDenominator ) { SetTimeSignatureDenominatorAtRow( BeatToNoteRow(fBeat), iDenominator); }
-	/**
-	 * @brief Retrieve the TimeSignatureSegment at the specified row.
-	 * @param iNoteRow the row that has a TimeSignatureSegment.
-	 * @return the TimeSignatureSegment in question.
-	 */
-	TimeSignatureSegment* GetTimeSignatureSegmentAtRow( int iNoteRow );
-	/**
-	 * @brief Retrieve the TimeSignatureSegment at the specified beat.
-	 * @param fBeat the beat that has a TimeSignatureSegment.
-	 * @return the TimeSignatureSegment in question.
-	 */
-	TimeSignatureSegment* GetTimeSignatureSegmentAtBeat( float fBeat ) { return GetTimeSignatureSegmentAtRow( BeatToNoteRow(fBeat) ); }
-	
+
 	/**
 	 * @brief Determine the beat to warp to.
 	 * @param iRow The row you start on.
@@ -282,18 +270,7 @@ public:
 	 * @param fNew The destination beat.
 	 */
 	void SetWarpAtBeat( float fBeat, float fNew ) { SetWarpAtRow( BeatToNoteRow( fBeat ), fNew ); }
-	/**
-	 * @brief Retrieve the WarpSegment at the specified row.
-	 * @param iRow the row to focus on.
-	 * @return the WarpSegment in question.
-	 */
-	WarpSegment* GetWarpSegmentAtRow( int iRow );
-	/**
-	 * @brief Retrieve the WarpSegment at the specified beat.
-	 * @param fBeat the beat to focus on.
-	 * @return the WarpSegment in question.
-	 */
-	WarpSegment* GetWarpSegmentAtBeat( float fBeat ) { return GetWarpSegmentAtRow( BeatToNoteRow( fBeat ) ); }
+
 	/**
 	 * @brief Checks if the row is inside a warp.
 	 * @param iRow the row to focus on.
@@ -331,19 +308,7 @@ public:
 	 * @param iTicks the tickcount.
 	 */
 	void SetTickcountAtBeat( float fBeat, int iTicks ) { SetTickcountAtRow( BeatToNoteRow( fBeat ), iTicks ); }
-	/**
-	 * @brief Retrieve the TickcountSegment at the specified row.
-	 * @param iNoteRow the row that has a TickcountSegment.
-	 * @return the TickcountSegment in question.
-	 */
-	TickcountSegment* GetTickcountSegmentAtRow( int iNoteRow );
-	/**
-	 * @brief Retrieve the TickcountSegment at the specified beat.
-	 * @param fBeat the beat that has a TickcountSegment.
-	 * @return the TickcountSegment in question.
-	 */
-	TickcountSegment* GetTickcountSegmentAtBeat( float fBeat ) { return GetTickcountSegmentAtRow( BeatToNoteRow(fBeat) ); }
-	
+
 	/**
 	 * @brief Retrieve the Combo at the given row.
 	 * @param iNoteRow the row in question.
@@ -418,19 +383,7 @@ public:
 	 * @param iCombo the Miss Combo.
 	 */
 	void SetMissComboAtBeat( float fBeat, int iCombo ) { SetMissComboAtRow( BeatToNoteRow( fBeat ), iCombo ); }
-	/**
-	 * @brief Retrieve the ComboSegment at the specified row.
-	 * @param iNoteRow the row that has a ComboSegment.
-	 * @return the ComboSegment in question.
-	 */
-	ComboSegment* GetComboSegmentAtRow( int iNoteRow );
-	/**
-	 * @brief Retrieve the ComboSegment at the specified beat.
-	 * @param fBeat the beat that has a ComboSegment.
-	 * @return the ComboSegment in question.
-	 */
-	ComboSegment* GetComboSegmentAtBeat( float fBeat ) { return GetComboSegmentAtRow( BeatToNoteRow(fBeat) ); }
-	
+
 	/**
 	 * @brief Retrieve the Label at the given row.
 	 * @param iNoteRow the row in question.
@@ -455,25 +408,12 @@ public:
 	 * @param sLabel the Label.
 	 */
 	void SetLabelAtBeat( float fBeat, const RString sLabel ) { SetLabelAtRow( BeatToNoteRow( fBeat ), sLabel ); }
-	/**
-	 * @brief Retrieve the LabelSegment at the specified row.
-	 * @param iNoteRow the row that has a LabelSegment.
-	 * @return the LabelSegment in question.
-	 */
-	LabelSegment* GetLabelSegmentAtRow( int iNoteRow );
-	/**
-	 * @brief Retrieve the LabelSegment at the specified beat.
-	 * @param fBeat the beat that has a LabelSegment.
-	 * @return the LabelSegment in question.
-	 */
-	LabelSegment* GetLabelSegmentAtBeat( float fBeat ) { return GetLabelSegmentAtRow( BeatToNoteRow(fBeat) ); }
-	
+
 	/**
 	 * @brief Determine if the requisite label already exists.
 	 * @param sLabel the label to check.
 	 * @return true if it exists, false otherwise. */
 	bool DoesLabelExist( RString sLabel ) const;
-	
 	/**
 	 * @brief Retrieve the Speed's percent at the given row.
 	 * @param iNoteRow the row in question.
@@ -562,21 +502,9 @@ public:
 	 * @param usMode the mode.
 	 */
 	void SetSpeedModeAtBeat( float fBeat, unsigned short usMode ) { SetSpeedModeAtRow( BeatToNoteRow(fBeat), usMode); }
-	/**
-	 * @brief Retrieve the SpeedSegment at the specified row.
-	 * @param iNoteRow the row that has a SpeedSegment.
-	 * @return the SpeedSegment in question.
-	 */
-	SpeedSegment* GetSpeedSegmentAtRow( int iNoteRow );
-	/**
-	 * @brief Retrieve the SpeedSegment at the specified beat.
-	 * @param fBeat the beat that has a SpeedSegment.
-	 * @return the SpeedSegment in question.
-	 */
-	SpeedSegment* GetSpeedSegmentAtBeat( float fBeat ) { return GetSpeedSegmentAtRow( BeatToNoteRow(fBeat) ); }
-	
+
 	float GetDisplayedSpeedPercent( float fBeat, float fMusicSeconds ) const;
-	
+
 	/**
 	 * @brief Retrieve the scrolling factor at the given row.
 	 * @param iNoteRow the row in question.
@@ -602,20 +530,7 @@ public:
 	 * @param fPercent the scrolling factor.
 	 */
 	void SetScrollAtBeat( float fBeat, float fPercent ) { SetScrollAtRow( BeatToNoteRow(fBeat), fPercent ); }
-	
-	/**
-	 * @brief Retrieve the ScrollSegment at the specified row.
-	 * @param iNoteRow the row that has a ScrollSegment.
-	 * @return the ScrollSegment in question.
-	 */
-	ScrollSegment* GetScrollSegmentAtRow( int iNoteRow );
-	/**
-	 * @brief Retrieve the ScrollSegment at the specified beat.
-	 * @param fBeat the beat that has a ScrollSegment.
-	 * @return the ScrollSegment in question.
-	 */
-	ScrollSegment* GetScrollSegmentAtBeat( float fBeat ) { return GetScrollSegmentAtRow( BeatToNoteRow(fBeat) ); }
-	
+
 	/**
 	 * @brief Determine when the fakes end.
 	 * @param iRow The row you start on.
@@ -640,18 +555,7 @@ public:
 	 * @param fNew The destination beat.
 	 */
 	void SetFakeAtBeat( float fBeat, float fNew ) { SetFakeAtRow( BeatToNoteRow( fBeat ), fNew ); }
-	/**
-	 * @brief Retrieve the FakeSegment at the specified row.
-	 * @param iRow the row to focus on.
-	 * @return the FakeSegment in question.
-	 */
-	FakeSegment* GetFakeSegmentAtRow( int iRow );
-	/**
-	 * @brief Retrieve the FakeSegment at the specified beat.
-	 * @param fBeat the beat to focus on.
-	 * @return the FakeSegment in question.
-	 */
-	FakeSegment* GetFakeSegmentAtBeat( float fBeat ) { return GetFakeSegmentAtRow( BeatToNoteRow( fBeat ) ); }
+
 	/**
 	 * @brief Checks if the row is inside a fake.
 	 * @param iRow the row to focus on.
@@ -741,151 +645,35 @@ public:
 	bool HasScrollChanges() const;
 	/**
 	 * @brief Compare two sets of timing data to see if they are equal.
-	 *
-	 * TODO: Make doubly sure that we're using the operator== on the proper segments,
-	 * not the generic TimingSegment.
 	 * @param other the other TimingData.
 	 * @return the equality or lack thereof of the two TimingData.
 	 */
 	bool operator==( const TimingData &other )
 	{
-		unsigned i;
-		
-		COMPARE(allTimingSegments[SEGMENT_BPM].size());
-		for (i = 0; i < allTimingSegments[SEGMENT_BPM].size(); i++)
+		FOREACH_ENUM( TimingSegmentType, tst )
 		{
-			BPMSegment * segT =
-				static_cast<BPMSegment *>(this->allTimingSegments[SEGMENT_BPM][i]);
-			BPMSegment * segO =
-				static_cast<BPMSegment *>(other.allTimingSegments[SEGMENT_BPM][i]);
-			if (segT->GetRow() != segO->GetRow()) return false;
-			if (segT->GetBPS() != segO->GetBPS()) return false;
+			const vector<TimingSegment*> &us = m_avpTimingSegments[tst];
+			const vector<TimingSegment*> &them = other.m_avpTimingSegments[tst];
+
+			// optimization: check vector sizes before contents
+			if( us.size() != them.size() )
+				return false;
+
+			if( !std::equal(us.begin(), us.end(), them.begin()) )
+				return false;
 		}
-		
-		COMPARE(allTimingSegments[SEGMENT_STOP].size());
-		for (i = 0; i < allTimingSegments[SEGMENT_STOP].size(); i++)
-		{
-			StopSegment * segT =
-				static_cast<StopSegment *>(this->allTimingSegments[SEGMENT_STOP][i]);
-			StopSegment * segO =
-				static_cast<StopSegment *>(other.allTimingSegments[SEGMENT_STOP][i]);
-			if (segT->GetRow() != segO->GetRow()) return false;
-			if (segT->GetPause() != segO->GetPause()) return false;
-		}
-		
-		COMPARE(allTimingSegments[SEGMENT_DELAY].size());
-		for (i = 0; i < allTimingSegments[SEGMENT_DELAY].size(); i++)
-		{
-			DelaySegment * segT =
-				static_cast<DelaySegment *>(this->allTimingSegments[SEGMENT_DELAY][i]);
-			DelaySegment * segO =
-				static_cast<DelaySegment *>(other.allTimingSegments[SEGMENT_DELAY][i]);
-			if (segT->GetRow() != segO->GetRow()) return false;
-			if (segT->GetPause() != segO->GetPause()) return false;
-		}
-		
-		COMPARE(allTimingSegments[SEGMENT_WARP].size());
-		for (i = 0; i < allTimingSegments[SEGMENT_WARP].size(); i++)
-		{
-			WarpSegment * segT =
-				static_cast<WarpSegment *>(this->allTimingSegments[SEGMENT_WARP][i]);
-			WarpSegment * segO =
-				static_cast<WarpSegment *>(other.allTimingSegments[SEGMENT_WARP][i]);
-			if (segT->GetRow() != segO->GetRow()) return false;
-			if (segT->GetLength() != segO->GetLength()) return false;
-		}
-		
-		COMPARE(allTimingSegments[SEGMENT_TIME_SIG].size());
-		for (i = 0; i < allTimingSegments[SEGMENT_TIME_SIG].size(); i++)
-		{
-			TimeSignatureSegment * segT =
-				static_cast<TimeSignatureSegment *>(this->allTimingSegments[SEGMENT_TIME_SIG][i]);
-			TimeSignatureSegment * segO =
-				static_cast<TimeSignatureSegment *>(other.allTimingSegments[SEGMENT_TIME_SIG][i]);
-			if (segT->GetRow() != segO->GetRow()) return false;
-			if (segT->GetNum() != segO->GetNum()) return false;
-			if (segT->GetDen() != segO->GetDen()) return false;
-		}
-		
-		COMPARE(allTimingSegments[SEGMENT_TICKCOUNT].size());
-		for (i = 0; i < allTimingSegments[SEGMENT_TICKCOUNT].size(); i++)
-		{
-			TickcountSegment * segT =
-				static_cast<TickcountSegment *>(this->allTimingSegments[SEGMENT_TICKCOUNT][i]);
-			TickcountSegment * segO =
-				static_cast<TickcountSegment *>(other.allTimingSegments[SEGMENT_TICKCOUNT][i]);
-			if (segT->GetRow() != segO->GetRow()) return false;
-			if (segT->GetTicks() != segO->GetTicks()) return false;
-		}
-		
-		COMPARE(allTimingSegments[SEGMENT_COMBO].size());
-		for (i = 0; i < allTimingSegments[SEGMENT_COMBO].size(); i++)
-		{
-			ComboSegment * segT =
-				static_cast<ComboSegment *>(this->allTimingSegments[SEGMENT_COMBO][i]);
-			ComboSegment * segO =
-				static_cast<ComboSegment *>(other.allTimingSegments[SEGMENT_COMBO][i]);
-			if (segT->GetRow() != segO->GetRow()) return false;
-			if (segT->GetCombo() != segO->GetCombo()) return false;
-			if (segT->GetMissCombo() != segO->GetMissCombo()) return false;
-		}
-		
-		COMPARE(allTimingSegments[SEGMENT_SPEED].size());
-		for (i = 0; i < allTimingSegments[SEGMENT_SPEED].size(); i++)
-		{
-			SpeedSegment * segT =
-				static_cast<SpeedSegment *>(this->allTimingSegments[SEGMENT_SPEED][i]);
-			SpeedSegment * segO =
-				static_cast<SpeedSegment *>(other.allTimingSegments[SEGMENT_SPEED][i]);
-			if (segT->GetRow() != segO->GetRow()) return false;
-			if (segT->GetRatio() != segO->GetRatio()) return false;
-			if (segT->GetLength() != segO->GetLength()) return false;
-			if (segT->GetUnit() != segO->GetUnit()) return false;
-		}
-		
-		COMPARE(allTimingSegments[SEGMENT_SCROLL].size());
-		for (i = 0; i < allTimingSegments[SEGMENT_SCROLL].size(); i++)
-		{
-			ScrollSegment * segT =
-				static_cast<ScrollSegment *>(this->allTimingSegments[SEGMENT_SCROLL][i]);
-			ScrollSegment * segO =
-				static_cast<ScrollSegment *>(other.allTimingSegments[SEGMENT_SCROLL][i]);
-			if (segT->GetRow() != segO->GetRow()) return false;
-			if (segT->GetRatio() != segO->GetRatio()) return false;
-		}
-		
-		COMPARE(allTimingSegments[SEGMENT_LABEL].size());
-		for (i = 0; i < allTimingSegments[SEGMENT_LABEL].size(); i++)
-		{
-			LabelSegment * segT =
-				static_cast<LabelSegment *>(this->allTimingSegments[SEGMENT_LABEL][i]);
-			LabelSegment * segO =
-				static_cast<LabelSegment *>(other.allTimingSegments[SEGMENT_LABEL][i]);
-			if (segT->GetRow() != segO->GetRow()) return false;
-			if (segT->GetLabel() != segO->GetLabel()) return false;
-		}
-		
-		COMPARE(allTimingSegments[SEGMENT_FAKE].size());
-		for (i = 0; i < allTimingSegments[SEGMENT_FAKE].size(); i++)
-		{
-			FakeSegment * segT =
-				static_cast<FakeSegment *>(this->allTimingSegments[SEGMENT_FAKE][i]);
-			FakeSegment * segO =
-				static_cast<FakeSegment *>(other.allTimingSegments[SEGMENT_FAKE][i]);
-			if (segT->GetRow() != segO->GetRow()) return false;
-			if (segT->GetLength() != segO->GetLength()) return false;
-		}
-		
+
 		COMPARE( m_fBeat0OffsetInSeconds );
 		return true;
 	}
+
 	/**
 	 * @brief Compare two sets of timing data to see if they are not equal.
 	 * @param other the other TimingData.
 	 * @return the inequality or lack thereof of the two TimingData.
 	 */
 	bool operator!=( const TimingData &other ) { return !operator==(other); }
-	
+
 	void ScaleRegion( float fScale = 1, int iStartRow = 0, int iEndRow = MAX_NOTE_ROW, bool bAdjustBPM = false );
 	void InsertRows( int iStartRow, int iRowsToAdd );
 	void DeleteRows( int iStartRow, int iRowsToDelete );
@@ -903,17 +691,16 @@ public:
 	 * This is for informational purposes only.
 	 */
 	RString					m_sFile;
-	// All of the following vectors must be sorted before gameplay.
 
-	
-	vector<TimingSegment *> allTimingSegments[NUM_TimingSegmentType];
-	
+	// All of the following vectors must be sorted before gameplay.
+	vector<TimingSegment *> m_avpTimingSegments[NUM_TimingSegmentType];
+
 	/**
 	 * @brief The initial offset of a song.
 	 */
 	float	m_fBeat0OffsetInSeconds;
-	
-	vector<RString> ToVectorString(TimingSegmentType tst, int dec = 6) const;	
+
+	vector<RString> ToVectorString(TimingSegmentType tst, int dec = 6) const;
 };
 
 #undef COMPARE

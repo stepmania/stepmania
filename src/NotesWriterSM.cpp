@@ -75,7 +75,7 @@ static void WriteGlobalTags( RageFile &f, Song &out )
 
 
 	f.Write( "#BPMS:" );
-	vector<TimingSegment *> &bpms = timing.allTimingSegments[SEGMENT_BPM];
+	vector<TimingSegment *> &bpms = timing.m_avpTimingSegments[SEGMENT_BPM];
 	for( unsigned i=0; i<bpms.size(); i++ )
 	{
 		const BPMSegment *bs = static_cast<BPMSegment *>(bpms[i]);
@@ -86,7 +86,7 @@ static void WriteGlobalTags( RageFile &f, Song &out )
 	}
 	f.PutLine( ";" );
 	
-	vector<TimingSegment *> &warps = timing.allTimingSegments[SEGMENT_WARP];
+	vector<TimingSegment *> &warps = timing.m_avpTimingSegments[SEGMENT_WARP];
 	unsigned wSize = warps.size();
 	if( wSize > 0 )
 	{
@@ -102,8 +102,8 @@ static void WriteGlobalTags( RageFile &f, Song &out )
 	}
 
 	// TODO: make Delays into Stops that start one row before.
-	vector<TimingSegment *> &stops = timing.allTimingSegments[SEGMENT_STOP];
-	vector<TimingSegment *> &delays = timing.allTimingSegments[SEGMENT_DELAY];
+	vector<TimingSegment *> &stops = timing.m_avpTimingSegments[SEGMENT_STOP];
+	vector<TimingSegment *> &delays = timing.m_avpTimingSegments[SEGMENT_DELAY];
 	
 	map<float, float> allPauses;
 	for( unsigned i=0; i<stops.size(); i++ )

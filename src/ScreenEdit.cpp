@@ -1893,7 +1893,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 					fDelta *= 40;
 			}
 			unsigned i;
-			vector<TimingSegment *> &stops = GetAppropriateTiming().allTimingSegments[SEGMENT_STOP];
+			vector<TimingSegment *> &stops = GetAppropriateTiming().m_avpTimingSegments[SEGMENT_STOP];
 			for( i=0; i<stops.size(); i++ )
 			{
 				if( stops[i]->GetRow() == GetRow() )
@@ -4315,10 +4315,10 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 			{
 				/* TODO: Maybe wipe out the already there timing data first?
 				 * We need to identify the max row within the timing data first. */
-				for (unsigned i = 0; i < this->clipboardTiming.allTimingSegments[tst].size(); i++)
+				for (unsigned i = 0; i < this->clipboardTiming.m_avpTimingSegments[tst].size(); i++)
 				{
 					// TODO: This REALLY needs improving.
-					TimingSegment * org = this->clipboardTiming.allTimingSegments[tst][i];
+					TimingSegment * org = this->clipboardTiming.m_avpTimingSegments[tst][i];
 					TimingSegment * cpy;
 					
 					switch (tst)
@@ -4665,7 +4665,7 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 		break;
 	case time_signature:
 	{
-		TimeSignatureSegment * ts = GetAppropriateTiming().GetTimeSignatureSegmentAtBeat( GetBeat() );
+		const TimeSignatureSegment *ts = GetAppropriateTiming().GetTimeSignatureSegmentAtBeat( GetBeat() );
 		ScreenTextEntry::TextEntry(
 			SM_BackFromTimeSignatureChange,
 			ENTER_TIME_SIGNATURE_VALUE,
@@ -4684,7 +4684,7 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 		break;
 	case combo:
 	{
-		ComboSegment *cs = GetAppropriateTiming().GetComboSegmentAtBeat(GetBeat());
+		const ComboSegment *cs = GetAppropriateTiming().GetComboSegmentAtBeat(GetBeat());
 		ScreenTextEntry::TextEntry(SM_BackFromComboChange,
 								   ENTER_COMBO_VALUE,
 								   ssprintf( "%d/%d",
@@ -4998,8 +4998,8 @@ void ScreenEdit::CheckNumberOfNotesAndUndo()
 {
 	if( EDIT_MODE.GetValue() != EditMode_Home )
 		return;
-	
-	TimeSignatureSegment * curTime = GAMESTATE->m_pCurSong->m_SongTiming.GetTimeSignatureSegmentAtBeat( GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat );
+
+	const TimeSignatureSegment * curTime = GAMESTATE->m_pCurSong->m_SongTiming.GetTimeSignatureSegmentAtBeat( GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat );
 	int rowsPerMeasure = curTime->GetDen() * curTime->GetNum();
 
 	for( int row=0; row<=m_NoteDataEdit.GetLastRow(); row+=rowsPerMeasure )
