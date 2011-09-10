@@ -57,7 +57,7 @@ return Def.ActorFrame {
 
 	-- Creative Commons logo, using a local file in the same directory:
 	LoadActor( "creativecommons" )..{
-		InitCommand=cmd(x,SCREEN_LEFT+64;y,SCREEN_BOTTOM-48;Real);
+		InitCommand=cmd(x,SCREEN_LEFT+64;y,SCREEN_BOTTOM-43;Real);
 		OnCommand=cmd(addy,32;cropbottom,1;fadebottom,1;decelerate,0.8;cropbottom,0;fadebottom,0;addy,-32);
 	};
 	-- Making a cheap reflection effect for the sake of showing off the fov and
