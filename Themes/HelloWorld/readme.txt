@@ -14,6 +14,7 @@ Table of Contents
  Introduction [intro]
  Chapter List [chapt]
   Guide       [guide]
+   Beginning   [g_beg]
    Metrics     [g_met]
    Fonts       [g_fon]
    Graphics    [g_gfx]
@@ -21,6 +22,7 @@ Table of Contents
    Sounds      [g_sfx]
    Scripts     [g_scr]
    Other       [g_oth]
+   Debug Menu  [g_deb]
    NoteSkins   [g_not]
    Announcers  [g_ann]
    Characters  [g_cha]
@@ -50,6 +52,36 @@ NoteSkins, Announcers, and Characters)
 ================================================================================
 Guide [guide]
 This section covers the basics of theming for StepMania.
+
+--------------------------------------------------------------------------------
+Beginning [g_beg]
+
+So you've decided to make a theme for StepMania 5.
+This section will tell you how to get started.
+
+The most important rule: NEVER COPY THE DEFAULT THEME'S FOLDER.
+This will only hurt you in the end, as the default theme is updated a lot, and
+any changes made in it WON'T carry over to your theme.
+
+The recommended way is to make a blank folder and use the fallback system,
+falling back on _fallback. If you are making an edit of the default theme,
+then you can set the fallback value to default. This will be explained more
+in the Metrics section.
+
+So hopefully by now you've decided to start from a blank folder.
+
+Make two blank text files: metrics.ini and ThemeInfo.ini.
+Then make these folders:
+BGAnimations/, Fonts/, Graphics/, Languages/, Other/, Scripts/, Sounds/
+
+# ThemeInfo.ini
+The ThemeInfo.ini file from the default theme looks like this:
+[ThemeInfo]
+DisplayName=Default
+Author=Midiman
+
+It should be straightforward enough to follow and edit.
+Once you've done this, you can move on to the next section.
 
 --------------------------------------------------------------------------------
 Metrics and Languages [g_met]
@@ -90,6 +122,26 @@ additional bindings added during sm-ssc (carried over to SM5).
 Other [g_oth]
 
 Ever wonder what all those files in the Other folder are for?
+
+--------------------------------------------------------------------------------
+Debug Menu and Shortcuts [g_deb]
+
+The debug menu will be your best friend when theming.
+
+Access the debug menu by holding F3. There are three sections of the menu
+available: Main (F5), Theme (F6), and Profiles (F7).
+
+There are other shortcuts that will be helpful for theming:
+Tab - speeds up animations.
+`/~ - slows down animations.
+Tab + `/~ - freezes animations.
+F2 - Reloads theme and textures.
+Shift + F2 - Reloads metrics only.
+Ctrl + F2 - Reloads scripts only.
+Ctrl + Shift + F2 - Reloads the overlay screens.
+F1 - Insert Coin
+Print Screen - Take a JPEG screenshot.
+Shift + Print Screen - Take a PNG screenshot.
 
 --------------------------------------------------------------------------------
 NoteSkins [g_not]
