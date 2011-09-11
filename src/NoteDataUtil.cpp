@@ -26,8 +26,7 @@ NoteType NoteDataUtil::GetSmallestNoteTypeForMeasure( const NoteData &nd, int iM
 NoteType NoteDataUtil::GetSmallestNoteTypeInRange( const NoteData &n, int iStartIndex, int iEndIndex )
 {
 	// probe to find the smallest note type
-	NoteType nt;
-	for( nt=(NoteType)0; nt<NUM_NoteType; nt=NoteType(nt+1) )		// for each NoteType, largest to largest
+	FOREACH_ENUM(NoteType, nt)
 	{
 		float fBeatSpacing = NoteTypeToBeat( nt );
 		int iRowSpacing = lrintf( fBeatSpacing * ROWS_PER_BEAT );
@@ -49,13 +48,9 @@ NoteType NoteDataUtil::GetSmallestNoteTypeInRange( const NoteData &n, int iStart
 		if( bFoundSmallerNote )
 			continue;	// searching the next NoteType
 		else
-			break;	// stop searching. We found the smallest NoteType
+			return nt;	// stop searching. We found the smallest NoteType
 	}
-
-	if( nt == NUM_NoteType )	// we didn't find one
-		return NoteType_Invalid;	// well-formed notes created in the editor should never get here
-	else
-		return nt;
+	return NoteType_Invalid;	// well-formed notes created in the editor should never get here
 }
 
 static void LoadFromSMNoteDataStringWithPlayer( NoteData& out, const RString &sSMNoteData, int start,
