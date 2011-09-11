@@ -275,7 +275,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 			new_entry.stepsCriteria.m_difficulty = OldStyleStringToDifficulty( sParams[2] );
       //most CRS files use old-style difficulties, but Difficulty enum values can be used in SM5. Test for those too.
       if( new_entry.stepsCriteria.m_difficulty == Difficulty_Invalid )
-        new_entry.stepsCriteria.m_difficulty = StringToDifficulty( sParamsp2] );
+        new_entry.stepsCriteria.m_difficulty = StringToDifficulty( sParams[2] );
 			if( new_entry.stepsCriteria.m_difficulty == Difficulty_Invalid )
 			{
 				int retval = sscanf( sParams[2], "%d..%d", &new_entry.stepsCriteria.m_iLowMeter, &new_entry.stepsCriteria.m_iHighMeter );

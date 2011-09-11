@@ -22,6 +22,8 @@ const RString& DifficultyToString( Difficulty dc );
 Difficulty StringToDifficulty( const RString& sDC );
 LuaDeclareType( Difficulty );
 
+Difficulty OldStyleStringToDifficulty( const RString& sDC ); // compatibility
+
 typedef Difficulty CourseDifficulty;
 const int NUM_CourseDifficulty = NUM_Difficulty;
 /** @brief Loop through the shown course difficulties. */
