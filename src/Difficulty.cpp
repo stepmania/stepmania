@@ -35,7 +35,7 @@ const RString &CourseDifficultyToLocalizedString( CourseDifficulty x )
 	return g_CourseDifficultyName[x]->GetValue();
 }
 
-Difficulty StringToDifficulty( const RString& sDC )
+Difficulty OldStyleStringToDifficulty( const RString& sDC )
 {
 	RString s2 = sDC;
 	s2.MakeLower();
