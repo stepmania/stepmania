@@ -126,7 +126,7 @@ void Banner::LoadFromSongGroup( RString sSongGroup )
 {
 	RString sGroupBannerPath = SONGMAN->GetSongGroupBannerPath( sSongGroup );
 	if( sGroupBannerPath != "" )			Load( sGroupBannerPath );
-	else						LoadFallback();
+	else						LoadGroupFallback();
 	m_bScrolling = false;
 }
 
@@ -189,6 +189,11 @@ void Banner::LoadFallback()
 void Banner::LoadFallbackBG()
 {
 	Load( THEME->GetPathG("Common","fallback background") );
+}
+
+void Banner::LoadGroupFallback()
+{
+	Load( THEME->GetPathG("Banner","group fallback") );
 }
 
 void Banner::LoadCourseFallback()

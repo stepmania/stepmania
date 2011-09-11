@@ -12,6 +12,7 @@ StepMania 5.0 $next | 2011????
 ----------
 * [ScreenEvaluation] Added "evaluation full combo W1" and
   "evaluation full combo W2" announcer cues. [AJ]
+* [Banner] Added "Banner group fallback" graphic. [AJ]
 
 2011/09/09
 ----------
