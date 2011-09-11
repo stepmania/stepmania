@@ -950,7 +950,7 @@ float NoteDataUtil::GetChaosRadarValue( const NoteData &in, float fSongSeconds )
 {
 	if( !fSongSeconds )
 		return 0.0f;
-	// count number of triplets or 16ths
+	// count number of notes smaller than 8ths
 	int iNumChaosNotes = 0;
 
 	FOREACH_NONEMPTY_ROW_ALL_TRACKS( in, r )
