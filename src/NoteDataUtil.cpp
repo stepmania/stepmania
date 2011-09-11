@@ -886,7 +886,7 @@ void NoteDataUtil::CalculateRadarValues( const NoteData &in, float fSongSeconds,
 		case RadarCategory_Rolls:			out[rc] = (float) in.GetNumRolls();			break;
 		case RadarCategory_Lifts:			out[rc] = (float) in.GetNumLifts();			break;
 		case RadarCategory_Fakes:			out[rc] = (float) in.GetNumFakes();			break;
-		default:	ASSERT(0);
+		default:	FAIL_M("Non-existant radar category attempted to be set!");
 		}
 	}
 }
