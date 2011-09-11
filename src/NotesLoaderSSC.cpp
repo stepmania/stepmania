@@ -37,10 +37,10 @@ void SSCLoader::ProcessWarps( TimingData &out, const RString sParam, const float
 		// Early versions were absolute in beats. They should be relative.
 		if( ( fVersion < VERSION_SPLIT_TIMING && fNewBeat > fBeat ) )
 		{
-			out.AddSegment( SEGMENT_WARP, new WarpSegment(fBeat, fNewBeat - fBeat) );
+			out.AddSegment( SEGMENT_WARP, new WarpSegment(BeatToNoteRow(fBeat), fNewBeat - fBeat) );
 		}
 		else if( fNewBeat > 0 )
-			out.AddSegment( SEGMENT_WARP, new WarpSegment(fBeat, fNewBeat) );
+			out.AddSegment( SEGMENT_WARP, new WarpSegment(BeatToNoteRow(fBeat), fNewBeat) );
 		else
 		{
 			LOG->UserLog("Song file",
@@ -73,7 +73,7 @@ void SSCLoader::ProcessLabels( TimingData &out, const RString sParam )
 		RString sLabel = arrayLabelValues[1];
 		TrimRight(sLabel);
 		if( fBeat >= 0.0f )
-			out.AddSegment( SEGMENT_LABEL, new LabelSegment(fBeat, sLabel) );
+			out.AddSegment( SEGMENT_LABEL, new LabelSegment(BeatToNoteRow(fBeat), sLabel) );
 		else 
 		{
 			LOG->UserLog("Song file",
@@ -106,7 +106,7 @@ void SSCLoader::ProcessCombos( TimingData &out, const RString line, const int ro
 		const float fComboBeat = StringToFloat( arrayComboValues[0] );
 		const int iCombos = StringToInt( arrayComboValues[1] );
 		const int iMisses = (size == 2 ? iCombos : StringToInt(arrayComboValues[2]));
-		out.AddSegment( SEGMENT_COMBO, new ComboSegment( fComboBeat, iCombos, iMisses ) );
+		out.AddSegment( SEGMENT_COMBO, new ComboSegment( BeatToNoteRow(fComboBeat), iCombos, iMisses ) );
 	}
 }
 
@@ -131,7 +131,7 @@ void SSCLoader::ProcessScrolls( TimingData &out, const RString sParam )
 		
 		const float fBeat = StringToFloat( vs2[0] );
 		
-		ScrollSegment * seg = new ScrollSegment(fBeat, StringToFloat( vs2[1] ) );
+		ScrollSegment * seg = new ScrollSegment(BeatToNoteRow(fBeat), StringToFloat( vs2[1] ) );
 		
 		if( fBeat < 0 )
 		{

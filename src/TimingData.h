@@ -10,6 +10,36 @@ struct lua_State;
 /** @brief Compare a TimingData segment's properties with one another. */
 #define COMPARE(x) if(this->x!=other.x) return false;
 
+
+/* convenience functions to handle static casting */
+template<class T> T* ToDerived( TimingSegment *t, TimingSegmentType tst )
+{
+	ASSERT( t->GetType() == tst ); // type checking
+	return static_cast<T*>( t );
+}
+
+#define TimingSegmentToXWithName(Seg, SegName, SegType) \
+	inline Seg* To##SegName( TimingSegment *t ) { return ToDerived<Seg>(t, SegType); }
+
+#define TimingSegmentToX(Seg, SegType) \
+	TimingSegmentToXWithName(Seg##Segment, Seg, SEGMENT_##SegType)
+
+/* ToBPM(TimingSegment*), ToTimeSignature(TimingSegment*), etc. */
+TimingSegmentToX( BPM, BPM );
+TimingSegmentToX( Stop, STOP );
+TimingSegmentToX( Delay, DELAY );
+TimingSegmentToX( TimeSignature, TIME_SIG );
+TimingSegmentToX( Warp, WARP );
+TimingSegmentToX( Label, LABEL );
+TimingSegmentToX( Tickcount, TICKCOUNT );
+TimingSegmentToX( Combo, COMBO );
+TimingSegmentToX( Speed, SPEED );
+TimingSegmentToX( Scroll, SCROLL );
+TimingSegmentToX( Fake, FAKE );
+
+#undef TimingSegmentToXWithName
+#undef TimingSegmentToX
+
 /**
  * @brief Holds data for translating beats<->seconds.
  */
@@ -87,6 +117,7 @@ public:
 	 * @return the segment in question.
 	 */
 	TimingSegment* GetSegmentAtRow( int iNoteRow, TimingSegmentType tst );
+
 	/**
 	 * @brief Retrieve the TimingSegment at the given beat.
 	 * @param fBeat the beat that has a TimingSegment.
@@ -98,34 +129,45 @@ public:
 		return GetSegmentAtRow( BeatToNoteRow(fBeat), tst );
 	}
 
+	void SetTimingSegmentAtRow( TimingSegment *seg, int iNoteRow );
+
+
 	/* XXX: convenience shortcuts. We should get rid of these later. */
-	#define GetSegmentWithName(Seg, SegType) \
+	#define GetAndSetSegmentWithName(Seg, SegName, SegType) \
 		Seg* Get##Seg##AtRow( int iNoteRow ) \
 		{ \
 			TimingSegment *t = GetSegmentAtRow( iNoteRow, SegType ); \
-			return static_cast<Seg*>( t ); \
+			return To##SegName( t ); \
 		} \
 		Seg* Get##Seg##AtBeat( float fBeat ) \
 		{ \
 			TimingSegment *t = GetSegmentAtBeat( fBeat, SegType ); \
-			return static_cast<Seg*>( t ); \
+			return To##SegName( t ); \
+		} \
+		void Set##SegName##AtRow( Seg &seg, int iNoteRow ) \
+		{ \
+			SetTimingSegmentAtRow( &seg, iNoteRow ); \
 		}
 
 	// (TimeSignature,TIME_SIG) -> (TimeSignatureSegment,SEGMENT_TIME_SIG)
-	#define GetSegment(Seg, SegType ) \
-		GetSegmentWithName( Seg##Segment, SEGMENT_##SegType )
+	#define GetAndSetSegment(Seg, SegType ) \
+		GetAndSetSegmentWithName( Seg##Segment, Seg, SEGMENT_##SegType )
 
-	GetSegment( BPM, BPM );
-	GetSegment( Stop, STOP );
-	GetSegment( Delay, DELAY );
-	GetSegment( Warp, WARP );
-	GetSegment( Label, LABEL );
-	GetSegment( Tickcount, TICKCOUNT );
-	GetSegment( Combo, COMBO );
-	GetSegment( Speed, SPEED );
-	GetSegment( Scroll, SCROLL );
-	GetSegment( Fake, FAKE );
-	GetSegment( TimeSignature, TIME_SIG );
+	GetAndSetSegment( BPM, BPM );
+	GetAndSetSegment( Stop, STOP );
+	GetAndSetSegment( Delay, DELAY );
+	GetAndSetSegment( Warp, WARP );
+	GetAndSetSegment( Label, LABEL );
+	GetAndSetSegment( Tickcount, TICKCOUNT );
+	GetAndSetSegment( Combo, COMBO );
+	GetAndSetSegment( Speed, SPEED );
+	GetAndSetSegment( Scroll, SCROLL );
+	GetAndSetSegment( Fake, FAKE );
+	GetAndSetSegment( TimeSignature, TIME_SIG );
+
+	#undef GetAndSetSegmentWithName
+	#undef GetAndSetSegment
+
 
 	/**
 	 * @brief Retrieve the stop time at the given row.
@@ -443,13 +485,13 @@ public:
 	 * @param iNoteRow the row in question.
 	 * @return the mode.
 	 */
-	unsigned short GetSpeedModeAtRow( int iNoteRow );
+	SpeedSegment::BaseUnit GetSpeedModeAtRow( int iNoteRow );
  	/**
 	 * @brief Retrieve the Speed's mode at the given beat.
 	 * @param fBeat the beat in question.
 	 * @return the mode.
 	 */
-	unsigned short GetSpeedModeAtBeat( float fBeat ) { return GetSpeedModeAtRow( BeatToNoteRow(fBeat) ); }
+	SpeedSegment::BaseUnit GetSpeedModeAtBeat( float fBeat ) { return GetSpeedModeAtRow( BeatToNoteRow(fBeat) ); }
 	/**
 	 * @brief Set the row to have the new Speed.
 	 * @param iNoteRow the row to have the new Speed.
@@ -457,7 +499,7 @@ public:
 	 * @param fWait the wait.
 	 * @param usMode the mode.
 	 */
-	void SetSpeedAtRow( int iNoteRow, float fPercent, float fWait, unsigned short usMode );
+	void SetSpeedAtRow( int iNoteRow, float fPercent, float fWait, SpeedSegment::BaseUnit unit );
 	/**
 	 * @brief Set the beat to have the new Speed.
 	 * @param fBeat the beat to have the new Speed.
@@ -465,7 +507,7 @@ public:
 	 * @param fWait the wait.
 	 * @param usMode the mode.
 	 */
-	void SetSpeedAtBeat( float fBeat, float fPercent, float fWait, unsigned short usMode ) { SetSpeedAtRow( BeatToNoteRow(fBeat), fPercent, fWait, usMode ); }
+	void SetSpeedAtBeat( float fBeat, float fPercent, float fWait, SpeedSegment::BaseUnit unit ) { SetSpeedAtRow( BeatToNoteRow(fBeat), fPercent, fWait, unit ); }
 	/**
 	 * @brief Set the row to have the new Speed percent.
 	 * @param iNoteRow the row to have the new Speed percent.
@@ -495,13 +537,13 @@ public:
 	 * @param iNoteRow the row to have the new Speed mode.
 	 * @param usMode the mode.
 	 */
-	void SetSpeedModeAtRow( int iNoteRow, unsigned short usMode );
+	void SetSpeedModeAtRow( int iNoteRow, SpeedSegment::BaseUnit unit );
 	/**
 	 * @brief Set the beat to have the new Speed mode.
 	 * @param fBeat the beat to have the new Speed mode.
 	 * @param usMode the mode.
 	 */
-	void SetSpeedModeAtBeat( float fBeat, unsigned short usMode ) { SetSpeedModeAtRow( BeatToNoteRow(fBeat), usMode); }
+	void SetSpeedModeAtBeat( float fBeat, SpeedSegment::BaseUnit unit ) { SetSpeedModeAtRow( BeatToNoteRow(fBeat), unit); }
 
 	float GetDisplayedSpeedPercent( float fBeat, float fMusicSeconds ) const;
 

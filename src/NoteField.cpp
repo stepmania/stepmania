@@ -618,7 +618,7 @@ void NoteField::DrawLabelText( const float fBeat, RString sLabel )
 	m_textMeasureNumber.Draw();
 }
 
-void NoteField::DrawSpeedText( const float fBeat, float fPercent, float fWait, unsigned short usMode )
+void NoteField::DrawSpeedText( const float fBeat, float fPercent, float fWait, int iMode )
 {
 	const float fYOffset	= ArrowEffects::GetYOffset( m_pPlayerState, 0, fBeat );
  	const float fYPos	= ArrowEffects::GetYPos(    m_pPlayerState, 0, fYOffset, m_fYReverseOffsetPixels );
@@ -630,7 +630,7 @@ void NoteField::DrawSpeedText( const float fBeat, float fPercent, float fWait, u
 	m_textMeasureNumber.SetHorizAlign( SPEED_IS_LEFT_SIDE ? align_right : align_left );
 	m_textMeasureNumber.SetDiffuse( SPEED_COLOR );
 	m_textMeasureNumber.SetGlow( RageColor(1,1,1,RageFastCos(RageTimer::GetTimeSinceStartFast()*2)/2+0.5f) );
-	m_textMeasureNumber.SetText( ssprintf("%.3f\n%s\n%.3f", fPercent, (usMode == 1 ? "S" : "B"), fWait) );
+	m_textMeasureNumber.SetText( ssprintf("%.3f\n%s\n%.3f", fPercent, (iMode == 1 ? "S" : "B"), fWait) );
 	m_textMeasureNumber.SetXY( (SPEED_IS_LEFT_SIDE ? -xBase - xOffset : xBase + xOffset), fYPos );
 	m_textMeasureNumber.Draw();
 }
@@ -1033,7 +1033,7 @@ void NoteField::DrawPrimitives()
 					float fBeat = seg->GetBeat();
 					if( IS_ON_SCREEN(fBeat) )
 						DrawSpeedText(fBeat, seg->GetRatio(), 
-							      seg->GetLength(), seg->GetUnit() );
+							      seg->GetDelay(), seg->GetUnit() );
 				}
 			}
 		}

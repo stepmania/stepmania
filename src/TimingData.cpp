@@ -7,7 +7,6 @@
 #include "Foreach.h"
 #include <float.h>
 
-
 TimingData::TimingData(float fOffset) : m_fBeat0OffsetInSeconds(fOffset)
 {
 }
@@ -46,57 +45,57 @@ TimingData TimingData::CopyRange(int startRow, int endRow) const
 				{
 					case SEGMENT_BPM:
 					{
-						cpy = new BPMSegment(*(static_cast<BPMSegment *>(org)));
+						cpy = new BPMSegment(*(ToBPM(org)));
 						break;
 					}
 					case SEGMENT_STOP:
 					{
-						cpy = new StopSegment(*(static_cast<StopSegment *>(org)));
+						cpy = new StopSegment(*(ToStop(org)));
 						break;
 					}
 					case SEGMENT_DELAY:
 					{
-						cpy = new DelaySegment(*(static_cast<DelaySegment *>(org)));
+						cpy = new DelaySegment(*(ToDelay(org)));
 						break;
 					}
 					case SEGMENT_TIME_SIG:
 					{
-						cpy = new TimeSignatureSegment(*(static_cast<TimeSignatureSegment *>(org)));
+						cpy = new TimeSignatureSegment(*(ToTimeSignature(org)));
 						break;
 					}
 					case SEGMENT_WARP:
 					{
-						cpy = new WarpSegment(*(static_cast<WarpSegment *>(org)));
+						cpy = new WarpSegment(*(ToWarp(org)));
 						break;
 					}
 					case SEGMENT_LABEL:
 					{
-						cpy = new LabelSegment(*(static_cast<LabelSegment *>(org)));
+						cpy = new LabelSegment(*(ToLabel(org)));
 						break;
 					}
 					case SEGMENT_TICKCOUNT:
 					{
-						cpy = new TickcountSegment(*(static_cast<TickcountSegment *>(org)));
+						cpy = new TickcountSegment(*(ToTickcount(org)));
 						break;
 					}
 					case SEGMENT_COMBO:
 					{
-						cpy = new ComboSegment(*(static_cast<ComboSegment *>(org)));
+						cpy = new ComboSegment(*(ToCombo(org)));
 						break;
 					}
 					case SEGMENT_SPEED:
 					{
-						cpy = new SpeedSegment(*(static_cast<SpeedSegment *>(org)));
+						cpy = new SpeedSegment(*(ToSpeed(org)));
 						break;
 					}
 					case SEGMENT_SCROLL:
 					{
-						cpy = new ScrollSegment(*(static_cast<ScrollSegment *>(org)));
+						cpy = new ScrollSegment(*(ToScroll(org)));
 						break;
 					}
 					case SEGMENT_FAKE:
 					{
-						cpy = new FakeSegment(*(static_cast<FakeSegment *>(org)));
+						cpy = new FakeSegment(*(ToFake(org)));
 						break;
 					}
 					default: FAIL_M(ssprintf("An unknown timing segment type %d can't be copied over!", tst));
@@ -119,7 +118,7 @@ void TimingData::GetActualBPM( float &fMinBPMOut, float &fMaxBPMOut, float highe
 	const vector<TimingSegment *> &bpms = m_avpTimingSegments[SEGMENT_BPM];
 	for (unsigned i = 0; i < bpms.size(); i++)
 	{
-		BPMSegment *seg = static_cast<BPMSegment *>(bpms[i]);
+		BPMSegment *seg = ToBPM( bpms[i] );
 		const float fBPM = seg->GetBPM();
 		fMaxBPMOut = clamp(max( fBPM, fMaxBPMOut ), 0, highest);
 		fMinBPMOut = min( fBPM, fMinBPMOut );
@@ -199,16 +198,16 @@ void TimingData::SetBPMAtRow( int iNoteRow, float fBPM )
 		// There is no BPMSegment at the specified beat.  If the BPM being set differs
 		// from the last BPMSegment's BPM, create a new BPMSegment.
 		if (i == 0 ||
-			fabsf(static_cast<BPMSegment *>(bpms[i-1])->GetBPM() - fBPM) > 1e-5f )
+			fabsf( ToBPM(bpms[i-1])->GetBPM() - fBPM) > 1e-5f )
 			AddSegment( SEGMENT_BPM, new BPMSegment(iNoteRow, fBPM) );
 	}
 	else	// BPMSegment being modified is m_BPMSegments[i]
 	{
 		if (i > 0 &&
-			fabsf(static_cast<BPMSegment *>(bpms[i-1])->GetBPM() - fBPM) < 1e-5f )
+			fabsf(ToBPM(bpms[i-1])->GetBPM() - fBPM) < 1e-5f )
 			bpms.erase( bpms.begin()+i, bpms.begin()+i+1 );
 		else
-			static_cast<BPMSegment *>(bpms[i])->SetBPM(fBPM);
+			ToBPM(bpms[i])->SetBPM(fBPM);
 	}
 }
 
@@ -230,7 +229,7 @@ void TimingData::SetStopAtRow( int iRow, float fSeconds )
 	}
 	else	// StopSegment being modified is m_StopSegments[i]
 	{
-		StopSegment *ss = static_cast<StopSegment *>(stops[i]);
+		StopSegment *ss = ToStop(stops[i]);
 		if( fSeconds > 0 )
 		{
 			ss->SetPause(fSeconds);
@@ -258,7 +257,7 @@ void TimingData::SetDelayAtRow( int iRow, float fSeconds )
 	}
 	else	// DelaySegment being modified is present one
 	{
-		DelaySegment *ss = static_cast<DelaySegment *>(stops[i]);
+		DelaySegment *ss = ToDelay(stops[i]);
 		if( fSeconds > 0 )
 		{
 			ss->SetPause(fSeconds);
@@ -282,20 +281,20 @@ void TimingData::SetTimeSignatureAtRow( int iRow, int iNumerator, int iDenominat
 	{
 		// No specific segment here: place one if it differs.
 		if (i == 0 || 
-		   (static_cast<TimeSignatureSegment *>(tSigs[i-1])->GetNum() != iNumerator ||
-			static_cast<TimeSignatureSegment *>(tSigs[i-1])->GetDen() != iDenominator ) )
+		   (ToTimeSignature(tSigs[i-1])->GetNum() != iNumerator ||
+			ToTimeSignature(tSigs[i-1])->GetDen() != iDenominator ) )
 			AddSegment( SEGMENT_TIME_SIG, new TimeSignatureSegment(iRow, iNumerator, iDenominator) );
 	}
 	else	// TimeSignatureSegment being modified is m_vTimeSignatureSegments[i]
 	{
 		if (i > 0 &&
-			static_cast<TimeSignatureSegment *>(tSigs[i-1])->GetNum() == iNumerator &&
-			static_cast<TimeSignatureSegment *>(tSigs[i-1])->GetDen() == iDenominator )
+			ToTimeSignature(tSigs[i-1])->GetNum() == iNumerator &&
+			ToTimeSignature(tSigs[i-1])->GetDen() == iDenominator )
 			tSigs.erase( tSigs.begin()+i, tSigs.begin()+i+1 );
 		else
 		{
-			static_cast<TimeSignatureSegment *>(tSigs[i])->SetNum(iNumerator);
-			static_cast<TimeSignatureSegment *>(tSigs[i])->SetDen(iDenominator);
+			ToTimeSignature(tSigs[i])->SetNum(iNumerator);
+			ToTimeSignature(tSigs[i])->SetDen(iDenominator);
 		}
 	}
 }
@@ -331,7 +330,7 @@ void TimingData::SetWarpAtRow( int iRow, float fNew )
 	{
 		if( valid )
 		{
-			static_cast<WarpSegment *>(warps[i])->SetLength(fNew);
+			ToWarp(warps[i])->SetLength(fNew);
 		}
 		else
 			warps.erase( warps.begin()+i, warps.begin()+i+1 );
@@ -351,16 +350,16 @@ void TimingData::SetTickcountAtRow( int iRow, int iTicks )
 	{
 		// No TickcountSegment here. Make a new segment if required.
 		if (i == 0 ||
-			static_cast<TickcountSegment *>(ticks[i-1])->GetTicks() != iTicks )
+			ToTickcount(ticks[i-1])->GetTicks() != iTicks )
 			AddSegment( SEGMENT_TICKCOUNT, new TickcountSegment(iRow, iTicks ) );
 	}
 	else	// TickcountSegment being modified is m_TickcountSegments[i]
 	{
 		if (i > 0 &&
-			static_cast<TickcountSegment *>(ticks[i-1])->GetTicks() == iTicks )
+			ToTickcount(ticks[i-1])->GetTicks() == iTicks )
 			ticks.erase( ticks.begin()+i, ticks.begin()+i+1 );
 		else
-			static_cast<TickcountSegment *>(ticks[i])->SetTicks(iTicks);
+			ToTickcount(ticks[i])->SetTicks(iTicks);
 	}
 }
 
@@ -375,20 +374,20 @@ void TimingData::SetComboAtRow( int iRow, int iCombo, int iMiss )
 	if( i == combos.size() || combos[i]->GetRow() != iRow )
 	{
 		if (i == 0 ||
-			static_cast<ComboSegment *>(combos[i-1])->GetCombo() != iCombo ||
-			static_cast<ComboSegment *>(combos[i-1])->GetMissCombo() != iMiss)
+			ToCombo(combos[i-1])->GetCombo() != iCombo ||
+			ToCombo(combos[i-1])->GetMissCombo() != iMiss)
 			AddSegment( SEGMENT_COMBO, new ComboSegment(iRow, iCombo, iMiss ) );
 	}
 	else
 	{
 		if (i > 0 &&
-			static_cast<ComboSegment *>(combos[i-1])->GetCombo() == iCombo &&
-			static_cast<ComboSegment *>(combos[i-1])->GetMissCombo() == iMiss)
+			ToCombo(combos[i-1])->GetCombo() == iCombo &&
+			ToCombo(combos[i-1])->GetMissCombo() == iMiss)
 			combos.erase( combos.begin()+i, combos.begin()+i+1 );
 		else
 		{
-			static_cast<ComboSegment *>(combos[i])->SetCombo(iCombo);
-			static_cast<ComboSegment *>(combos[i])->SetMissCombo(iMiss);
+			ToCombo(combos[i])->SetCombo(iCombo);
+			ToCombo(combos[i])->SetMissCombo(iMiss);
 		}
 	}
 }
@@ -418,21 +417,21 @@ void TimingData::SetLabelAtRow( int iRow, const RString sLabel )
 	if( i == labels.size() || labels[i]->GetRow() != iRow )
 	{
 		if (i == 0 ||
-			static_cast<LabelSegment *>(labels[i-1])->GetLabel() != sLabel )
+			ToLabel(labels[i-1])->GetLabel() != sLabel )
 			AddSegment( SEGMENT_LABEL, new LabelSegment(iRow, sLabel ) );
 	}
 	else
 	{
 		if (i > 0 &&
-			( static_cast<LabelSegment *>(labels[i-1])->GetLabel() == sLabel ||
+			( ToLabel(labels[i-1])->GetLabel() == sLabel ||
 			 sLabel == "" ) )
 			labels.erase( labels.begin()+i, labels.begin()+i+1 );
 		else
-			static_cast<LabelSegment *>(labels[i])->SetLabel(sLabel);
+			ToLabel(labels[i])->SetLabel(sLabel);
 	}
 }
 
-void TimingData::SetSpeedAtRow( int iRow, float fPercent, float fWait, unsigned short usMode )
+void TimingData::SetSpeedAtRow( int iRow, float fPercent, float fWait, SpeedSegment::BaseUnit unit )
 {
 	unsigned i;
 	vector<TimingSegment *> &speeds = m_avpTimingSegments[SEGMENT_SPEED];
@@ -441,25 +440,25 @@ void TimingData::SetSpeedAtRow( int iRow, float fPercent, float fWait, unsigned 
 		if( speeds[i]->GetRow() >= iRow)
 			break;
 	}
-	
+
 	if ( i == speeds.size() || speeds[i]->GetRow() != iRow )
 	{
 		// the core mod itself matters the most for comparisons.
 		if (i == 0 ||
-			static_cast<SpeedSegment *>(speeds[i-1])->GetRatio() != fPercent )
-			AddSegment( SEGMENT_SPEED, new SpeedSegment(iRow, fPercent, fWait, usMode) );
+			ToSpeed(speeds[i-1])->GetRatio() != fPercent )
+			AddSegment( SEGMENT_SPEED, new SpeedSegment(iRow, fPercent, fWait, unit) );
 	}
 	else
 	{
 		// The others aren't compared: only the mod itself matters.
 		if (i > 0 &&
-			static_cast<SpeedSegment *>(speeds[i-1])->GetRatio() == fPercent )
+			ToSpeed(speeds[i-1])->GetRatio() == fPercent )
 			speeds.erase( speeds.begin()+i, speeds.begin()+i+1 );
 		else
 		{
-			static_cast<SpeedSegment *>(speeds[i])->SetRatio(fPercent);
-			static_cast<SpeedSegment *>(speeds[i])->SetLength(fWait);
-			static_cast<SpeedSegment *>(speeds[i])->SetUnit(usMode);
+			ToSpeed(speeds[i])->SetRatio(fPercent);
+			ToSpeed(speeds[i])->SetDelay(fWait);
+			ToSpeed(speeds[i])->SetUnit(unit);
 		}
 	}
 }
@@ -478,18 +477,18 @@ void TimingData::SetScrollAtRow( int iRow, float fPercent )
 	{
 		// the core mod itself matters the most for comparisons.
 		if (i == 0 ||
-			static_cast<ScrollSegment *>(scrolls[i-1])->GetRatio() != fPercent )
+			ToScroll(scrolls[i-1])->GetRatio() != fPercent )
 			AddSegment( SEGMENT_SCROLL, new ScrollSegment(iRow, fPercent) );
 	}
 	else
 	{
 		// The others aren't compared: only the mod itself matters.
 		if (i > 0 &&
-			static_cast<ScrollSegment *>(scrolls[i-1])->GetRatio() == fPercent )
+			ToScroll(scrolls[i-1])->GetRatio() == fPercent )
 			scrolls.erase( scrolls.begin()+i, scrolls.begin()+i+1 );
 		else
 		{
-			static_cast<ScrollSegment *>(scrolls[i])->SetRatio(fPercent);
+			ToScroll(scrolls[i])->SetRatio(fPercent);
 		}
 	}
 }
@@ -513,7 +512,7 @@ void TimingData::SetFakeAtRow( int iRow, float fNew )
 	{
 		if( valid )
 		{
-			static_cast<FakeSegment *>(fakes[i])->SetLength(fNew);
+			ToFake(fakes[i])->SetLength(fNew);
 		}
 		else
 			fakes.erase( fakes.begin()+i, fakes.begin()+i+1 );
@@ -524,7 +523,7 @@ void TimingData::SetSpeedPercentAtRow( int iRow, float fPercent )
 {
 	SetSpeedAtRow( iRow, 
 		      fPercent, 
-		      GetSpeedSegmentAtRow( iRow )->GetLength(),
+		      GetSpeedSegmentAtRow( iRow )->GetDelay(),
 		      GetSpeedSegmentAtRow( iRow )->GetUnit());
 }
 
@@ -536,12 +535,12 @@ void TimingData::SetSpeedWaitAtRow( int iRow, float fWait )
 		      GetSpeedSegmentAtRow( iRow )->GetUnit());
 }
 
-void TimingData::SetSpeedModeAtRow( int iRow, unsigned short usMode )
+void TimingData::SetSpeedModeAtRow( int iRow, SpeedSegment::BaseUnit unit )
 {
 	SetSpeedAtRow( iRow, 
 		      GetSpeedSegmentAtRow( iRow )->GetRatio(),
-		      GetSpeedSegmentAtRow( iRow )->GetLength(),
-		      usMode );
+		      GetSpeedSegmentAtRow( iRow )->GetDelay(),
+		      unit );
 }
 
 float TimingData::GetStopAtRow( int iRow ) const
@@ -549,7 +548,7 @@ float TimingData::GetStopAtRow( int iRow ) const
 	const vector<TimingSegment *> &stops = m_avpTimingSegments[SEGMENT_STOP];
 	for( unsigned i=0; i<stops.size(); i++ )
 	{
-		const StopSegment *s = static_cast<StopSegment *>(stops[i]);
+		const StopSegment *s = ToStop(stops[i]);
 		if( s->GetRow() == iRow )
 		{
 			return s->GetPause();
@@ -564,7 +563,7 @@ float TimingData::GetDelayAtRow( int iRow ) const
 	const vector<TimingSegment *> &stops = m_avpTimingSegments[SEGMENT_DELAY];
 	for( unsigned i=0; i<stops.size(); i++ )
 	{
-		const DelaySegment *s = static_cast<DelaySegment *>(stops[i]);
+		const DelaySegment *s = ToDelay(stops[i]);
 		if( s->GetRow() == iRow )
 		{
 			return s->GetPause();
@@ -577,21 +576,21 @@ int TimingData::GetComboAtRow( int iNoteRow ) const
 {
 	const vector<TimingSegment *> &c = m_avpTimingSegments[SEGMENT_COMBO];
 	const int index = GetSegmentIndexAtRow(SEGMENT_COMBO, iNoteRow);
-	return static_cast<ComboSegment *>(c[index])->GetCombo();
+	return ToCombo(c[index])->GetCombo();
 }
 
 int TimingData::GetMissComboAtRow(int iNoteRow) const
 {
 	const vector<TimingSegment *> &c = m_avpTimingSegments[SEGMENT_COMBO];
 	const int index = GetSegmentIndexAtRow(SEGMENT_COMBO, iNoteRow);
-	return static_cast<ComboSegment *>(c[index])->GetMissCombo();
+	return ToCombo(c[index])->GetMissCombo();
 }
 
 RString TimingData::GetLabelAtRow( int iRow ) const
 {
 	const vector<TimingSegment *> &l = m_avpTimingSegments[SEGMENT_LABEL];
 	const int index = GetSegmentIndexAtRow(SEGMENT_LABEL, iRow);
-	return static_cast<LabelSegment *>(l[index])->GetLabel();
+	return ToLabel(l[index])->GetLabel();
 }
 
 float TimingData::GetWarpAtRow( int iWarpRow ) const
@@ -601,7 +600,7 @@ float TimingData::GetWarpAtRow( int iWarpRow ) const
 	{
 		if( warps[i]->GetRow() == iWarpRow )
 		{
-			return static_cast<WarpSegment *>(warps[i])->GetLength();
+			return ToWarp(warps[i])->GetLength();
 		}
 	}
 	return 0;
@@ -614,10 +613,10 @@ float TimingData::GetSpeedPercentAtRow( int iRow )
 
 float TimingData::GetSpeedWaitAtRow( int iRow )
 {
-	return GetSpeedSegmentAtRow( iRow )->GetLength();
+	return GetSpeedSegmentAtRow( iRow )->GetDelay();
 }
 
-unsigned short TimingData::GetSpeedModeAtRow( int iRow )
+SpeedSegment::BaseUnit TimingData::GetSpeedModeAtRow( int iRow )
 {
 	return GetSpeedSegmentAtRow( iRow )->GetUnit();
 }
@@ -634,7 +633,7 @@ float TimingData::GetFakeAtRow( int iFakeRow ) const
 	{
 		if( fakes[i]->GetRow() == iFakeRow )
 		{
-			return static_cast<FakeSegment *>(fakes[i])->GetLength();
+			return ToFake(fakes[i])->GetLength();
 		}
 	}
 	return 0;
@@ -647,7 +646,7 @@ void TimingData::MultiplyBPMInBeatRange( int iStartIndex, int iEndIndex, float f
 	vector<TimingSegment *> &bpms = m_avpTimingSegments[SEGMENT_BPM];
 	for( unsigned i=0; i<bpms.size(); i++ )
 	{
-		BPMSegment *bs = static_cast<BPMSegment *>(bpms[i]);
+		BPMSegment *bs = ToBPM(bpms[i]);
 		const int iStartIndexThisSegment = bs->GetRow();
 		const bool bIsLastBPMSegment = i == bpms.size()-1;
 		const int iStartIndexNextSegment = bIsLastBPMSegment ? INT_MAX : bpms[i+1]->GetRow();
@@ -690,7 +689,7 @@ float TimingData::GetBPMAtRow( int iNoteRow ) const
 	for( i=0; i<bpms.size()-1; i++ )
 		if( bpms[i+1]->GetRow() > iNoteRow )
 			break;
-	return static_cast<BPMSegment *>(bpms[i])->GetBPM();
+	return ToBPM(bpms[i])->GetBPM();
 }
 
 bool TimingData::IsWarpAtRow( int iNoteRow ) const
@@ -700,7 +699,7 @@ bool TimingData::IsWarpAtRow( int iNoteRow ) const
 		return false;
 
 	int i = GetSegmentIndexAtRow( SEGMENT_WARP, iNoteRow );
-	const WarpSegment *s = static_cast<WarpSegment *>(warps[i]);
+	const WarpSegment *s = ToWarp(warps[i]);
 	float beatRow = NoteRowToBeat(iNoteRow);
 	if( s->GetBeat() <= beatRow && beatRow < (s->GetBeat() + s->GetLength() ) )
 	{
@@ -725,7 +724,7 @@ bool TimingData::IsFakeAtRow( int iNoteRow ) const
 		return false;
 
 	int i = GetSegmentIndexAtRow( SEGMENT_FAKE, iNoteRow );
-	const FakeSegment *s = static_cast<FakeSegment *>(fakes[i]);
+	const FakeSegment *s = ToFake(fakes[i]);
 	float beatRow = NoteRowToBeat(iNoteRow);
 	if( s->GetBeat() <= beatRow && beatRow < ( s->GetBeat() + s->GetLength() ) )
 	{
@@ -774,7 +773,7 @@ int TimingData::GetTickcountAtRow( int iRow ) const
 {
 	const vector<TimingSegment *> &ticks = m_avpTimingSegments[SEGMENT_TICKCOUNT];
 	const int index = GetSegmentIndexAtRow( SEGMENT_TICKCOUNT, iRow );
-	return static_cast<TickcountSegment *>(ticks[index])->GetTicks();
+	return ToTickcount(ticks[index])->GetTicks();
 }
 
 bool TimingData::DoesLabelExist( RString sLabel ) const
@@ -782,7 +781,7 @@ bool TimingData::DoesLabelExist( RString sLabel ) const
 	const vector<TimingSegment *> &labels = m_avpTimingSegments[SEGMENT_LABEL];
 	for (unsigned i = 0; i < labels.size(); i++)
 	{
-		if (static_cast<LabelSegment *>(labels[i])->GetLabel() == sLabel)
+		if (ToLabel(labels[i])->GetLabel() == sLabel)
 			return true;
 	}
 	return false;
@@ -878,13 +877,13 @@ void TimingData::GetBeatAndBPSFromElapsedTimeNoOffset( float fElapsedTime, float
 				bIsWarping = false;
 				break;
 			case FOUND_BPM_CHANGE:
-				fBPS = static_cast<BPMSegment *>(*itBPMS)->GetBPS();
+				fBPS = ToBPM(*itBPMS)->GetBPS();
 				itBPMS ++;
 				break;
 			case FOUND_DELAY:
 			case FOUND_STOP_DELAY:
 			{
-				const DelaySegment *ss = static_cast<DelaySegment *>(*itDS);
+				const DelaySegment *ss = ToDelay(*itDS);
 				fTimeToNextEvent = ss->GetPause();
 				fNextEventTime   = fLastTime + fTimeToNextEvent;
 				if ( fElapsedTime < fNextEventTime )
@@ -902,7 +901,7 @@ void TimingData::GetBeatAndBPSFromElapsedTimeNoOffset( float fElapsedTime, float
 			}
 			case FOUND_STOP:
 			{
-				const StopSegment *ss = static_cast<StopSegment *>(*itSS);
+				const StopSegment *ss = ToStop(*itSS);
 				fTimeToNextEvent = ss->GetPause();
 				fNextEventTime   = fLastTime + fTimeToNextEvent;
 				if ( fElapsedTime < fNextEventTime )
@@ -920,7 +919,7 @@ void TimingData::GetBeatAndBPSFromElapsedTimeNoOffset( float fElapsedTime, float
 			case FOUND_WARP:
 			{
 				bIsWarping = true;
-				const WarpSegment *ws = static_cast<WarpSegment *>(*itWS);
+				const WarpSegment *ws = ToWarp(*itWS);
 				float fWarpSum = ws->GetLength() + ws->GetBeat();
 				if( fWarpSum > fWarpDestination )
 				{
@@ -1007,17 +1006,17 @@ float TimingData::GetElapsedTimeFromBeatNoOffset( float fBeat ) const
 			bIsWarping = false;
 			break;
 		case FOUND_BPM_CHANGE:
-			fBPS = static_cast<BPMSegment *>(*itBPMS)->GetBPS();
+			fBPS = ToBPM(*itBPMS)->GetBPS();
 			itBPMS ++;
 			break;
 		case FOUND_STOP:
-			fTimeToNextEvent = static_cast<StopSegment *>(*itSS)->GetPause();
+			fTimeToNextEvent = ToStop(*itSS)->GetPause();
 			fNextEventTime   = fLastTime + fTimeToNextEvent;
 			fLastTime = fNextEventTime;
 			itSS ++;
 			break;
 		case FOUND_DELAY:
-			fTimeToNextEvent = static_cast<DelaySegment *>(*itDS)->GetPause();
+			fTimeToNextEvent = ToDelay(*itDS)->GetPause();
 			fNextEventTime   = fLastTime + fTimeToNextEvent;
 			fLastTime = fNextEventTime;
 			itDS ++;
@@ -1027,7 +1026,7 @@ float TimingData::GetElapsedTimeFromBeatNoOffset( float fBeat ) const
 		case FOUND_WARP:
 			{
 				bIsWarping = true;
-				WarpSegment *ws = static_cast<WarpSegment *>(*itWS);
+				WarpSegment *ws = ToWarp(*itWS);
 				float fWarpSum = ws->GetLength() + ws->GetBeat();
 				if( fWarpSum > fWarpDestination )
 				{
@@ -1053,9 +1052,9 @@ float TimingData::GetDisplayedBeat( float fBeat ) const
 	{
 		if( scrolls[i+1]->GetBeat() > fBeat )
 			break;
-		fOutBeat += (scrolls[i+1]->GetBeat() - scrolls[i]->GetBeat()) * static_cast<ScrollSegment *>(scrolls[i])->GetRatio();
+		fOutBeat += (scrolls[i+1]->GetBeat() - scrolls[i]->GetBeat()) * ToScroll(scrolls[i])->GetRatio();
 	}
-	fOutBeat += (fBeat - scrolls[i]->GetBeat()) * static_cast<ScrollSegment *>(scrolls[i])->GetRatio();
+	fOutBeat += (fBeat - scrolls[i]->GetBeat()) * ToScroll(scrolls[i])->GetRatio();
 	return fOutBeat;
 }
 
@@ -1086,7 +1085,7 @@ void TimingData::ScaleRegion( float fScale, int iStartIndex, int iEndIndex, bool
 		// adjust BPM changes "between" iStartIndex and iNewEndIndex
 		for ( unsigned i = 0; i < bpms.size(); i++ )
 		{
-			BPMSegment *bpm = static_cast<BPMSegment *>(bpms[i]);
+			BPMSegment *bpm = ToBPM(bpms[i]);
 			const int iSegStart = bpm->GetRow();
 			if( iSegStart <= iStartIndex )
 				continue;
@@ -1175,7 +1174,7 @@ float TimingData::GetDisplayedSpeedPercent( float fSongBeat, float fMusicSeconds
 
 	const int index = GetSegmentIndexAtBeat( SEGMENT_SPEED, fSongBeat );
 	
-	const SpeedSegment *seg = static_cast<SpeedSegment *>(speeds[index]);
+	const SpeedSegment *seg = ToSpeed(speeds[index]);
 	float fStartBeat = seg->GetBeat();
 	float fStartTime = GetElapsedTimeFromBeat( fStartBeat ) - GetDelayAtBeat( fStartBeat );
 	float fEndTime;
@@ -1183,25 +1182,25 @@ float TimingData::GetDisplayedSpeedPercent( float fSongBeat, float fMusicSeconds
 	
 	if( seg->GetUnit() == 1 ) // seconds
 	{
-		fEndTime = fStartTime + seg->GetLength();
+		fEndTime = fStartTime + seg->GetDelay();
 	}
 	else
 	{
-		fEndTime = GetElapsedTimeFromBeat( fStartBeat + seg->GetLength() ) 
-		- GetDelayAtBeat( fStartBeat + seg->GetLength() );
+		fEndTime = GetElapsedTimeFromBeat( fStartBeat + seg->GetDelay() ) 
+		- GetDelayAtBeat( fStartBeat + seg->GetDelay() );
 	}
 	
-	SpeedSegment *first = static_cast<SpeedSegment *>(speeds[0]);
+	SpeedSegment *first = ToSpeed(speeds[0]);
 	
-	if( ( index == 0 && first->GetLength() > 0.0 ) && fCurTime < fStartTime )
+	if( ( index == 0 && first->GetDelay() > 0.0 ) && fCurTime < fStartTime )
 	{
 		return 1.0f;
 	}
-	else if( fEndTime >= fCurTime && ( index > 0 || first->GetLength() > 0.0 ) )
+	else if( fEndTime >= fCurTime && ( index > 0 || first->GetDelay() > 0.0 ) )
 	{
 		const float fPriorSpeed = (index == 0 ?
 								   1 :
-								   static_cast<SpeedSegment *>(speeds[index - 1])->GetRatio() );
+								   ToSpeed(speeds[index - 1])->GetRatio() );
 		float fTimeUsed = fCurTime - fStartTime;
 		float fDuration = fEndTime - fStartTime;
 		float fRatioUsed = fDuration == 0.0 ? 1 : fTimeUsed / fDuration;
@@ -1304,14 +1303,14 @@ bool TimingData::HasSpeedChanges() const
 {
 	const vector<TimingSegment *> &speeds = m_avpTimingSegments[SEGMENT_SPEED];
 	return (speeds.size()>1 || 
-			static_cast<SpeedSegment *>(speeds[0])->GetRatio() != 1);
+			ToSpeed(speeds[0])->GetRatio() != 1);
 }
 
 bool TimingData::HasScrollChanges() const
 {
 	const vector<TimingSegment *> &scrolls = m_avpTimingSegments[SEGMENT_SCROLL];
 	return (scrolls.size()>1 || 
-			static_cast<ScrollSegment *>(scrolls[0])->GetRatio() != 1);
+			ToScroll(scrolls[0])->GetRatio() != 1);
 }
 
 void TimingData::NoteRowToMeasureAndBeat( int iNoteRow, int &iMeasureIndexOut, int &iBeatIndexOut, int &iRowsRemainder ) const
@@ -1320,7 +1319,7 @@ void TimingData::NoteRowToMeasureAndBeat( int iNoteRow, int &iMeasureIndexOut, i
 	const vector<TimingSegment *> &tSigs = m_avpTimingSegments[SEGMENT_TIME_SIG];
 	for (unsigned i = 0; i < tSigs.size(); i++)
 	{
-		TimeSignatureSegment *curSig = static_cast<TimeSignatureSegment *>(tSigs[i]);
+		TimeSignatureSegment *curSig = ToTimeSignature(tSigs[i]);
 		int iSegmentEndRow = (i + 1 == tSigs.size()) ? INT_MAX : curSig->GetRow();
 	
 		int iRowsPerMeasureThisSegment = curSig->GetNoteRowsPerMeasure();
@@ -1426,7 +1425,7 @@ public:
 		vector<TimingSegment *> &bpms = p->m_avpTimingSegments[SEGMENT_BPM];
 		for (unsigned i = 0; i < bpms.size(); i++)
 		{
-			BPMSegment *seg = static_cast<BPMSegment *>(bpms[i]);
+			BPMSegment *seg = ToBPM(bpms[i]);
 			const float fBPM = seg->GetBPM();
 			vBPMs.push_back( fBPM );
 		}

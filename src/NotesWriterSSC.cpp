@@ -142,7 +142,7 @@ static void GetTimingTags( vector<RString> &lines, TimingData timing, bool bIsSo
 	for (i = 0; i < speeds.size(); i++)
 	{
 		SpeedSegment *ss = static_cast<SpeedSegment *>(speeds[i]);
-		w.Write( ss->GetRow(), ss->GetRatio(), ss->GetLength(), ss->GetUnit() );
+		w.Write( ss->GetRow(), ss->GetRatio(), ss->GetDelay(), ss->GetUnit() );
 	}
 	w.Finish();
 	

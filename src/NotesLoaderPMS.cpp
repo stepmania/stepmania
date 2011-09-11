@@ -695,7 +695,7 @@ static void ReadGlobalTags( const RString &sPath, const NameToData_t &mapNameToD
 
 						if( fBPM > 0.0f )
 						{
-							BPMSegment * newSeg = new BPMSegment( fBeat, fBPM );
+							BPMSegment * newSeg = new BPMSegment( BeatToNoteRow(fBeat), fBPM );
 							out.m_SongTiming.AddSegment( SEGMENT_BPM, newSeg );
 							LOG->Trace( "Inserting new BPM change at beat %f, BPM %f", fBeat, newSeg->GetBPM() );
 						}
@@ -722,7 +722,7 @@ static void ReadGlobalTags( const RString &sPath, const NameToData_t &mapNameToD
 						float fBeats = StringToFloat( sBeats ) / 48.0f;
 						float fFreezeSecs = fBeats / fBPS;
 
-						StopSegment * newSeg = new StopSegment( fBeat, fFreezeSecs );
+						StopSegment * newSeg = new StopSegment( BeatToNoteRow(fBeat), fFreezeSecs );
 						out.m_SongTiming.AddSegment( SEGMENT_STOP, newSeg );
 						LOG->Trace( "Inserting new Freeze at beat %f, secs %f", fBeat, newSeg->GetPause() );
 					}

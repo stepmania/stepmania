@@ -3046,23 +3046,20 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	{
 		if( ScreenTextEntry::s_sLastAnswer.substr(0, 1) == "b" || ScreenTextEntry::s_sLastAnswer.substr(0, 1) == "B" )
 		{
-			GetAppropriateTiming().SetSpeedModeAtBeat( GetBeat(), 0 );
+			GetAppropriateTiming().SetSpeedModeAtBeat( GetBeat(), SpeedSegment::UNIT_BEATS );
 		}
 		else if( ScreenTextEntry::s_sLastAnswer.substr(0, 1) == "s" || ScreenTextEntry::s_sLastAnswer.substr(0, 1) == "S" )
 		{
-			GetAppropriateTiming().SetSpeedModeAtBeat( GetBeat(), 1 );
+			GetAppropriateTiming().SetSpeedModeAtBeat( GetBeat(), SpeedSegment::UNIT_SECONDS );
 		}
 		else
 		{
 			int tmp = StringToInt(ScreenTextEntry::s_sLastAnswer );
-			if( tmp == 0 )
-			{
-				GetAppropriateTiming().SetSpeedModeAtBeat( GetBeat(), 0 );
-			}
-			else
-			{
-				GetAppropriateTiming().SetSpeedModeAtBeat( GetBeat(), 1 );
-			}
+
+			SpeedSegment::BaseUnit unit = (tmp == 0 ) ?
+			  SpeedSegment::UNIT_BEATS : SpeedSegment::UNIT_SECONDS;
+
+			GetAppropriateTiming().SetSpeedModeAtBeat( GetBeat(), unit );
 		}
 		SetDirty( true );
 	}
@@ -4729,7 +4726,7 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 		ScreenTextEntry::TextEntry(
 		   SM_BackFromSpeedWaitChange,
 		   ENTER_SPEED_WAIT_VALUE,
-		   ssprintf( "%.6f", GetAppropriateTiming().GetSpeedSegmentAtBeat( GetBeat() )->GetLength() ),
+		   ssprintf( "%.6f", GetAppropriateTiming().GetSpeedSegmentAtBeat( GetBeat() )->GetDelay() ),
 		   10
 		   );
 		break;
