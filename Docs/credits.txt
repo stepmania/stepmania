@@ -4,7 +4,8 @@ sm-ssc credits (in no particular order)
 * If you have any corrections to this list, let us know (via forums or IRC).
 
 ==the spinal shark collective==
-AJ Kelly (freem)
+AJ Kelly as freem
+ * Project Coordinator/Leader
  * Main programming
  * UserPreferences and some other Lua scripts
  * Some small theme edits here and there
@@ -111,6 +112,10 @@ NitroX72
 Tatsh
  * A patch to fix building with system ffmpeg
  (http://ssc.ajworld.net/sm-ssc/bugtracker/view.php?id=218)
+
+A.C(waiei)
+ * Hybrid scoring mode
+ * Various patches/fixes/bug reporting
 
 ==the beta testers==
 [SSC Beta Testing Team]

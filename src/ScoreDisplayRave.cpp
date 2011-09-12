@@ -35,14 +35,12 @@ void ScoreDisplayRave::Init( const PlayerState* pPlayerState, const PlayerStageS
 	for( int i=0; i<NUM_ATTACK_LEVELS; i++ )
 	{
 		m_sprMeter[i].SetName( ssprintf("MeterP%d",pn+1) );
-		LOAD_ALL_COMMANDS( m_sprMeter[i] );
-		ON_COMMAND( m_sprMeter[i] );
+		LOAD_ALL_COMMANDS_AND_SET_XY( m_sprMeter[i] );
 		this->AddChild( &m_sprMeter[i] );
 	}
 
 	m_textLevel.SetName( ssprintf("LevelP%d",pn+1) );
-	LOAD_ALL_COMMANDS( m_textLevel );
-	ON_COMMAND( m_textLevel );
+	LOAD_ALL_COMMANDS_AND_SET_XY( m_textLevel );
 	this->AddChild( &m_textLevel );
 
 	m_sprFrameOverlay.Load( THEME->GetPathG("ScoreDisplayRave",ssprintf("frame overlay p%d",pn+1)) );

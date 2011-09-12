@@ -8,7 +8,37 @@
 struct lua_State;
 
 /** @brief Compare a TimingData segment's properties with one another. */
-#define COMPARE(x) if(x!=other.x) return false;
+#define COMPARE(x) if(this->x!=other.x) return false;
+
+
+/* convenience functions to handle static casting */
+template<class T> T* ToDerived( TimingSegment *t, TimingSegmentType tst )
+{
+	ASSERT( t->GetType() == tst ); // type checking
+	return static_cast<T*>( t );
+}
+
+#define TimingSegmentToXWithName(Seg, SegName, SegType) \
+	inline Seg* To##SegName( TimingSegment *t ) { return ToDerived<Seg>(t, SegType); }
+
+#define TimingSegmentToX(Seg, SegType) \
+	TimingSegmentToXWithName(Seg##Segment, Seg, SEGMENT_##SegType)
+
+/* ToBPM(TimingSegment*), ToTimeSignature(TimingSegment*), etc. */
+TimingSegmentToX( BPM, BPM );
+TimingSegmentToX( Stop, STOP );
+TimingSegmentToX( Delay, DELAY );
+TimingSegmentToX( TimeSignature, TIME_SIG );
+TimingSegmentToX( Warp, WARP );
+TimingSegmentToX( Label, LABEL );
+TimingSegmentToX( Tickcount, TICKCOUNT );
+TimingSegmentToX( Combo, COMBO );
+TimingSegmentToX( Speed, SPEED );
+TimingSegmentToX( Scroll, SCROLL );
+TimingSegmentToX( Fake, FAKE );
+
+#undef TimingSegmentToXWithName
+#undef TimingSegmentToX
 
 /**
  * @brief Holds data for translating beats<->seconds.
@@ -17,40 +47,34 @@ class TimingData
 {
 public:
 	void AddSegment(TimingSegmentType tst, TimingSegment * seg);
-	
-	int GetSegmentIndexAtRow(TimingSegmentType tst,
-							 int row, bool isDelay = false) const;
-	
-	int GetSegmentIndexAtBeat(TimingSegmentType tst,
-							  float beat, bool isDelay = false) const
+
+	unsigned GetSegmentIndexAtRow(TimingSegmentType tst, int row) const;
+	unsigned GetSegmentIndexAtBeat(TimingSegmentType tst, float beat) const
 	{
-		return this->GetSegmentIndexAtRow(tst, BeatToNoteRow(beat), isDelay);
+		return GetSegmentIndexAtRow( tst, BeatToNoteRow(beat) );
 	}
-	
-	float GetNextSegmentBeatAtRow(TimingSegmentType tst,
-								  int row, bool isDelay = false) const;
-	
-	float GetNextSegmentBeatAtBeat(TimingSegmentType tst,
-								   float beat, bool isDelay = false) const
+
+	float GetNextSegmentBeatAtRow(TimingSegmentType tst, int row) const;
+	float GetNextSegmentBeatAtBeat(TimingSegmentType tst, float beat) const
 	{
-		return this->GetNextSegmentBeatAtRow(tst, BeatToNoteRow(beat), isDelay);
+		return GetNextSegmentBeatAtRow( tst, BeatToNoteRow(beat) );
 	}
-	
-	float GetPreviousSegmentBeatAtRow(TimingSegmentType tst,
-									  int row, bool isDelay = false) const;
-	
-	float GetPreviousSegmentBeatAtBeat(TimingSegmentType tst,
-									   float beat, bool isDelay = false) const
+
+	float GetPreviousSegmentBeatAtRow(TimingSegmentType tst, int row) const;
+	float GetPreviousSegmentBeatAtBeat(TimingSegmentType tst, float beat) const
 	{
-		return this->GetPreviousSegmentBeatAtRow(tst, BeatToNoteRow(beat), isDelay);
+		return GetPreviousSegmentBeatAtRow( tst, BeatToNoteRow(beat) );
 	}
-	
+
+	bool empty() const;
+
 	/**
 	 * @brief Sets up initial timing data with a defined offset.
 	 * @param fOffset the offset from the 0th beat. */
 	TimingData(float fOffset = 0);
-	
 	~TimingData();
+
+	TimingData CopyRange(int startRow, int endRow) const;
 	/**
 	 * @brief Gets the actual BPM of the song,
 	 * while respecting a limit.
@@ -85,33 +109,66 @@ public:
 	 * @param fBPM the BPM.
 	 */
 	void SetBPMAtBeat( float fBeat, float fBPM ) { SetBPMAtRow( BeatToNoteRow(fBeat), fBPM ); }
+
 	/**
-	 * @brief Retrieve the BPMSegment at the specified row.
-	 * @param iNoteRow the row that has a BPMSegment.
-	 * @return the BPMSegment in question.
+	 * @brief Retrieve the TimingSegment at the specified row.
+	 * @param iNoteRow the row that has a TimingSegment.
+	 * @param tst the TimingSegmentType requested.
+	 * @return the segment in question.
 	 */
-	BPMSegment* GetBPMSegmentAtRow( int iNoteRow );
+	TimingSegment* GetSegmentAtRow( int iNoteRow, TimingSegmentType tst );
+
 	/**
-	 * @brief Retrieve the BPMSegment at the specified beat.
-	 * @param fBeat the beat that has a BPMSegment.
-	 * @return the BPMSegment in question.
+	 * @brief Retrieve the TimingSegment at the given beat.
+	 * @param fBeat the beat that has a TimingSegment.
+	 * @param tst the TimingSegmentType requested.
+	 * @return the segment in question.
 	 */
-	BPMSegment* GetBPMSegmentAtBeat( float fBeat ) { return GetBPMSegmentAtRow( (int)BeatToNoteRow(fBeat)); }
-	
-	/**
-	 * @brief Retrieve the Stop/Delay at the given row.
-	 * @param iNoteRow the row in question.
-	 * @param bDelayOut A flag to determine if we are getting a delay or not.
-	 * @return the time we stop at this row.
-	 */
-	float GetStopAtRow( int iNoteRow, bool bDelayOut ) const;
-	/**
-	 * @brief Retrieve the Stop/Delay at the given row.
-	 * @param fBeat the beat in question.
-	 * @param bDelayOut A flag to determine if we are getting a delay or not.
-	 * @return the time we stop at this beat.
-	 */
-	float GetStopAtBeat( float fBeat, bool bDelayOut ) const { return GetStopAtRow( BeatToNoteRow(fBeat), bDelayOut ); }
+	TimingSegment* GetSegmentAtBeat( float fBeat, TimingSegmentType tst )
+	{
+		return GetSegmentAtRow( BeatToNoteRow(fBeat), tst );
+	}
+
+	void SetTimingSegmentAtRow( TimingSegment *seg, int iNoteRow );
+
+
+	/* XXX: convenience shortcuts. We should get rid of these later. */
+	#define GetAndSetSegmentWithName(Seg, SegName, SegType) \
+		Seg* Get##Seg##AtRow( int iNoteRow ) \
+		{ \
+			TimingSegment *t = GetSegmentAtRow( iNoteRow, SegType ); \
+			return To##SegName( t ); \
+		} \
+		Seg* Get##Seg##AtBeat( float fBeat ) \
+		{ \
+			TimingSegment *t = GetSegmentAtBeat( fBeat, SegType ); \
+			return To##SegName( t ); \
+		} \
+		void Set##SegName##AtRow( Seg &seg, int iNoteRow ) \
+		{ \
+			SetTimingSegmentAtRow( &seg, iNoteRow ); \
+		}
+
+	// (TimeSignature,TIME_SIG) -> (TimeSignatureSegment,SEGMENT_TIME_SIG)
+	#define GetAndSetSegment(Seg, SegType ) \
+		GetAndSetSegmentWithName( Seg##Segment, Seg, SEGMENT_##SegType )
+
+	GetAndSetSegment( BPM, BPM );
+	GetAndSetSegment( Stop, STOP );
+	GetAndSetSegment( Delay, DELAY );
+	GetAndSetSegment( Warp, WARP );
+	GetAndSetSegment( Label, LABEL );
+	GetAndSetSegment( Tickcount, TICKCOUNT );
+	GetAndSetSegment( Combo, COMBO );
+	GetAndSetSegment( Speed, SPEED );
+	GetAndSetSegment( Scroll, SCROLL );
+	GetAndSetSegment( Fake, FAKE );
+	GetAndSetSegment( TimeSignature, TIME_SIG );
+
+	#undef GetAndSetSegmentWithName
+	#undef GetAndSetSegment
+
+
 	/**
 	 * @brief Retrieve the stop time at the given row.
 	 * @param iNoteRow the row in question.
@@ -124,6 +181,20 @@ public:
 	 * @return the stop time.
 	 */
 	float GetStopAtBeat( float fBeat ) const { return GetStopAtRow( BeatToNoteRow(fBeat) ); }
+
+	/**
+	 * @brief Set the row to have the new stop time.
+	 * @param iNoteRow the row to have the new stop time.
+	 * @param fSeconds the new stop time.
+	 */
+	void SetStopAtRow( int iNoteRow, float fSeconds );
+	/**
+	 * @brief Set the beat to have the new stop time.
+	 * @param fBeat to have the new stop time.
+	 * @param fSeconds the new stop time.
+	 */
+	void SetStopAtBeat( float fBeat, float fSeconds ) { SetStopAtRow( BeatToNoteRow(fBeat), fSeconds); }
+
 	/**
 	 * @brief Retrieve the delay time at the given row.
 	 * @param iNoteRow the row in question.
@@ -136,21 +207,7 @@ public:
 	 * @return the delay time.
 	 */
 	float GetDelayAtBeat( float fBeat ) const { return GetDelayAtRow( BeatToNoteRow(fBeat) ); }
-	/**
-	 * @brief Set the row to have the new stop time.
-	 * @param iNoteRow the row to have the new stop time.
-	 * @param fSeconds the new stop time.
-	 */
-	void SetStopAtRow( int iNoteRow, float fSeconds ) { SetStopAtRow( iNoteRow, fSeconds, false ); }
-	/**
-	 * @brief Set the row to have the new pause time.
-	 *
-	 * This function was added specifically for sm-ssc.
-	 * @param iNoteRow the row to have the new pause time.
-	 * @param fSeconds the new pause time.
-	 * @param bDelay If true, this is a Delay Segment. Otherwise, it is a StopSegment.
-	 */
-	void SetStopAtRow( int iNoteRow, float fSeconds, bool bDelay );
+
 	/**
 	 * @brief Set the row to have the new delay time.
 	 *
@@ -158,22 +215,7 @@ public:
 	 * @param iNoteRow the row to have the new delay time.
 	 * @param fSeconds the new delay time.
 	 */
-	void SetDelayAtRow( int iNoteRow, float fSeconds ) { SetStopAtRow( iNoteRow, fSeconds, true ); }
-	/**
-	 * @brief Set the beat to have the new stop time.
-	 * @param fBeat to have the new stop time.
-	 * @param fSeconds the new stop time.
-	 */
-	void SetStopAtBeat( float fBeat, float fSeconds ) { SetStopAtRow( BeatToNoteRow(fBeat), fSeconds, false ); }
-	/**
-	 * @brief Set the beat to have the new pause time.
-	 *
-	 * This function was added specifically for sm-ssc.
-	 * @param fBeat the beat to have the new pause time.
-	 * @param fSeconds the new pause time.
-	 * @param bDelay If true, this is a Delay Segment. Otherwise, it is a StopSegment.
-	 */
-	void SetStopAtBeat( float fBeat, float fSeconds, bool bDelay ) { SetStopAtRow( BeatToNoteRow(fBeat), fSeconds, bDelay ); }
+	void SetDelayAtRow( int iNoteRow, float fSeconds );
 	/**
 	 * @brief Set the beat to have the new delay time.
 	 *
@@ -181,46 +223,8 @@ public:
 	 * @param fBeat the beat to have the new delay time.
 	 * @param fSeconds the new delay time.
 	 */
-	void SetDelayAtBeat( float fBeat, float fSeconds ) { SetStopAtRow( BeatToNoteRow(fBeat), fSeconds, true ); }
-	/**
-	 * @brief Retrieve the StopSegment at the specified row.
-	 * @param iNoteRow the row that has a StopSegment.
-	 * @return the StopSegment in question.
-	 */
-	StopSegment* GetStopSegmentAtRow( int iNoteRow ) { return GetStopSegmentAtRow( iNoteRow, false ); }
-	/**
-	 * @brief Retrieve the StopSegment at the specified beat.
-	 * @param fBeat the beat that has a StopSegment.
-	 * @return the StopSegment in question.
-	 */
-	StopSegment* GetStopSegmentAtBeat( float fBeat ) { return GetStopSegmentAtRow( BeatToNoteRow(fBeat), false); }
-	/**
-	 * @brief Retrieve the StopSegment at the specified row.
-	 * @param iNoteRow the row that has a StopSegment.
-	 * @param bDelay If true, this is actually a DelaySegment.
-	 * @return the StopSegment in question.
-	 */
-	StopSegment* GetStopSegmentAtRow( int iNoteRow, bool bDelay );
-	/**
-	 * @brief Retrieve the StopSegment at the specified beat.
-	 * @param fBeat the beat that has a StopSegment.
-	 * @param bDelay If true, this is actually a DelaySegment.
-	 * @return the StopSegment in question.
-	 */
-	StopSegment* GetStopSegmentAtBeat( float fBeat, bool bDelay ) { return GetStopSegmentAtRow( BeatToNoteRow(fBeat), bDelay ); }
-	/**
-	 * @brief Retrieve the DelaySegment at the specified row.
-	 * @param iNoteRow the row that has a DelaySegment.
-	 * @return the DelaySegment in question.
-	 */
-	StopSegment* GetDelaySegmentAtRow( int iNoteRow ) { return GetStopSegmentAtRow( iNoteRow, true ); }
-	/**
-	 * @brief Retrieve the DelaySegment at the specified beat.
-	 * @param fBeat the beat that has a DelaySegment.
-	 * @return the DelaySegment in question.
-	 */
-	StopSegment* GetDelaySegmentAtBeat( float fBeat ) { return GetStopSegmentAtRow( BeatToNoteRow(fBeat), true); }
-		
+	void SetDelayAtBeat( float fBeat, float fSeconds ) { SetDelayAtRow( BeatToNoteRow(fBeat), fSeconds); }
+
 	/**
 	 * @brief Retrieve the Time Signature's numerator at the given row.
 	 * @param iNoteRow the row in question.
@@ -283,19 +287,7 @@ public:
 	 * @param iDenominator the denominator.
 	 */
 	void SetTimeSignatureDenominatorAtBeat( float fBeat, int iDenominator ) { SetTimeSignatureDenominatorAtRow( BeatToNoteRow(fBeat), iDenominator); }
-	/**
-	 * @brief Retrieve the TimeSignatureSegment at the specified row.
-	 * @param iNoteRow the row that has a TimeSignatureSegment.
-	 * @return the TimeSignatureSegment in question.
-	 */
-	TimeSignatureSegment* GetTimeSignatureSegmentAtRow( int iNoteRow );
-	/**
-	 * @brief Retrieve the TimeSignatureSegment at the specified beat.
-	 * @param fBeat the beat that has a TimeSignatureSegment.
-	 * @return the TimeSignatureSegment in question.
-	 */
-	TimeSignatureSegment* GetTimeSignatureSegmentAtBeat( float fBeat ) { return GetTimeSignatureSegmentAtRow( BeatToNoteRow(fBeat) ); }
-	
+
 	/**
 	 * @brief Determine the beat to warp to.
 	 * @param iRow The row you start on.
@@ -320,18 +312,7 @@ public:
 	 * @param fNew The destination beat.
 	 */
 	void SetWarpAtBeat( float fBeat, float fNew ) { SetWarpAtRow( BeatToNoteRow( fBeat ), fNew ); }
-	/**
-	 * @brief Retrieve the WarpSegment at the specified row.
-	 * @param iRow the row to focus on.
-	 * @return the WarpSegment in question.
-	 */
-	WarpSegment* GetWarpSegmentAtRow( int iRow );
-	/**
-	 * @brief Retrieve the WarpSegment at the specified beat.
-	 * @param fBeat the beat to focus on.
-	 * @return the WarpSegment in question.
-	 */
-	WarpSegment* GetWarpSegmentAtBeat( float fBeat ) { return GetWarpSegmentAtRow( BeatToNoteRow( fBeat ) ); }
+
 	/**
 	 * @brief Checks if the row is inside a warp.
 	 * @param iRow the row to focus on.
@@ -369,19 +350,7 @@ public:
 	 * @param iTicks the tickcount.
 	 */
 	void SetTickcountAtBeat( float fBeat, int iTicks ) { SetTickcountAtRow( BeatToNoteRow( fBeat ), iTicks ); }
-	/**
-	 * @brief Retrieve the TickcountSegment at the specified row.
-	 * @param iNoteRow the row that has a TickcountSegment.
-	 * @return the TickcountSegment in question.
-	 */
-	TickcountSegment* GetTickcountSegmentAtRow( int iNoteRow );
-	/**
-	 * @brief Retrieve the TickcountSegment at the specified beat.
-	 * @param fBeat the beat that has a TickcountSegment.
-	 * @return the TickcountSegment in question.
-	 */
-	TickcountSegment* GetTickcountSegmentAtBeat( float fBeat ) { return GetTickcountSegmentAtRow( BeatToNoteRow(fBeat) ); }
-	
+
 	/**
 	 * @brief Retrieve the Combo at the given row.
 	 * @param iNoteRow the row in question.
@@ -456,19 +425,7 @@ public:
 	 * @param iCombo the Miss Combo.
 	 */
 	void SetMissComboAtBeat( float fBeat, int iCombo ) { SetMissComboAtRow( BeatToNoteRow( fBeat ), iCombo ); }
-	/**
-	 * @brief Retrieve the ComboSegment at the specified row.
-	 * @param iNoteRow the row that has a ComboSegment.
-	 * @return the ComboSegment in question.
-	 */
-	ComboSegment* GetComboSegmentAtRow( int iNoteRow );
-	/**
-	 * @brief Retrieve the ComboSegment at the specified beat.
-	 * @param fBeat the beat that has a ComboSegment.
-	 * @return the ComboSegment in question.
-	 */
-	ComboSegment* GetComboSegmentAtBeat( float fBeat ) { return GetComboSegmentAtRow( BeatToNoteRow(fBeat) ); }
-	
+
 	/**
 	 * @brief Retrieve the Label at the given row.
 	 * @param iNoteRow the row in question.
@@ -493,25 +450,12 @@ public:
 	 * @param sLabel the Label.
 	 */
 	void SetLabelAtBeat( float fBeat, const RString sLabel ) { SetLabelAtRow( BeatToNoteRow( fBeat ), sLabel ); }
-	/**
-	 * @brief Retrieve the LabelSegment at the specified row.
-	 * @param iNoteRow the row that has a LabelSegment.
-	 * @return the LabelSegment in question.
-	 */
-	LabelSegment* GetLabelSegmentAtRow( int iNoteRow );
-	/**
-	 * @brief Retrieve the LabelSegment at the specified beat.
-	 * @param fBeat the beat that has a LabelSegment.
-	 * @return the LabelSegment in question.
-	 */
-	LabelSegment* GetLabelSegmentAtBeat( float fBeat ) { return GetLabelSegmentAtRow( BeatToNoteRow(fBeat) ); }
-	
+
 	/**
 	 * @brief Determine if the requisite label already exists.
 	 * @param sLabel the label to check.
 	 * @return true if it exists, false otherwise. */
 	bool DoesLabelExist( RString sLabel ) const;
-	
 	/**
 	 * @brief Retrieve the Speed's percent at the given row.
 	 * @param iNoteRow the row in question.
@@ -541,13 +485,13 @@ public:
 	 * @param iNoteRow the row in question.
 	 * @return the mode.
 	 */
-	unsigned short GetSpeedModeAtRow( int iNoteRow );
+	SpeedSegment::BaseUnit GetSpeedModeAtRow( int iNoteRow );
  	/**
 	 * @brief Retrieve the Speed's mode at the given beat.
 	 * @param fBeat the beat in question.
 	 * @return the mode.
 	 */
-	unsigned short GetSpeedModeAtBeat( float fBeat ) { return GetSpeedModeAtRow( BeatToNoteRow(fBeat) ); }
+	SpeedSegment::BaseUnit GetSpeedModeAtBeat( float fBeat ) { return GetSpeedModeAtRow( BeatToNoteRow(fBeat) ); }
 	/**
 	 * @brief Set the row to have the new Speed.
 	 * @param iNoteRow the row to have the new Speed.
@@ -555,7 +499,7 @@ public:
 	 * @param fWait the wait.
 	 * @param usMode the mode.
 	 */
-	void SetSpeedAtRow( int iNoteRow, float fPercent, float fWait, unsigned short usMode );
+	void SetSpeedAtRow( int iNoteRow, float fPercent, float fWait, SpeedSegment::BaseUnit unit );
 	/**
 	 * @brief Set the beat to have the new Speed.
 	 * @param fBeat the beat to have the new Speed.
@@ -563,7 +507,7 @@ public:
 	 * @param fWait the wait.
 	 * @param usMode the mode.
 	 */
-	void SetSpeedAtBeat( float fBeat, float fPercent, float fWait, unsigned short usMode ) { SetSpeedAtRow( BeatToNoteRow(fBeat), fPercent, fWait, usMode ); }
+	void SetSpeedAtBeat( float fBeat, float fPercent, float fWait, SpeedSegment::BaseUnit unit ) { SetSpeedAtRow( BeatToNoteRow(fBeat), fPercent, fWait, unit ); }
 	/**
 	 * @brief Set the row to have the new Speed percent.
 	 * @param iNoteRow the row to have the new Speed percent.
@@ -593,28 +537,16 @@ public:
 	 * @param iNoteRow the row to have the new Speed mode.
 	 * @param usMode the mode.
 	 */
-	void SetSpeedModeAtRow( int iNoteRow, unsigned short usMode );
+	void SetSpeedModeAtRow( int iNoteRow, SpeedSegment::BaseUnit unit );
 	/**
 	 * @brief Set the beat to have the new Speed mode.
 	 * @param fBeat the beat to have the new Speed mode.
 	 * @param usMode the mode.
 	 */
-	void SetSpeedModeAtBeat( float fBeat, unsigned short usMode ) { SetSpeedModeAtRow( BeatToNoteRow(fBeat), usMode); }
-	/**
-	 * @brief Retrieve the SpeedSegment at the specified row.
-	 * @param iNoteRow the row that has a SpeedSegment.
-	 * @return the SpeedSegment in question.
-	 */
-	SpeedSegment* GetSpeedSegmentAtRow( int iNoteRow );
-	/**
-	 * @brief Retrieve the SpeedSegment at the specified beat.
-	 * @param fBeat the beat that has a SpeedSegment.
-	 * @return the SpeedSegment in question.
-	 */
-	SpeedSegment* GetSpeedSegmentAtBeat( float fBeat ) { return GetSpeedSegmentAtRow( BeatToNoteRow(fBeat) ); }
-	
+	void SetSpeedModeAtBeat( float fBeat, SpeedSegment::BaseUnit unit ) { SetSpeedModeAtRow( BeatToNoteRow(fBeat), unit); }
+
 	float GetDisplayedSpeedPercent( float fBeat, float fMusicSeconds ) const;
-	
+
 	/**
 	 * @brief Retrieve the scrolling factor at the given row.
 	 * @param iNoteRow the row in question.
@@ -640,20 +572,7 @@ public:
 	 * @param fPercent the scrolling factor.
 	 */
 	void SetScrollAtBeat( float fBeat, float fPercent ) { SetScrollAtRow( BeatToNoteRow(fBeat), fPercent ); }
-	
-	/**
-	 * @brief Retrieve the ScrollSegment at the specified row.
-	 * @param iNoteRow the row that has a ScrollSegment.
-	 * @return the ScrollSegment in question.
-	 */
-	ScrollSegment* GetScrollSegmentAtRow( int iNoteRow );
-	/**
-	 * @brief Retrieve the ScrollSegment at the specified beat.
-	 * @param fBeat the beat that has a ScrollSegment.
-	 * @return the ScrollSegment in question.
-	 */
-	ScrollSegment* GetScrollSegmentAtBeat( float fBeat ) { return GetScrollSegmentAtRow( BeatToNoteRow(fBeat) ); }
-	
+
 	/**
 	 * @brief Determine when the fakes end.
 	 * @param iRow The row you start on.
@@ -678,18 +597,7 @@ public:
 	 * @param fNew The destination beat.
 	 */
 	void SetFakeAtBeat( float fBeat, float fNew ) { SetFakeAtRow( BeatToNoteRow( fBeat ), fNew ); }
-	/**
-	 * @brief Retrieve the FakeSegment at the specified row.
-	 * @param iRow the row to focus on.
-	 * @return the FakeSegment in question.
-	 */
-	FakeSegment* GetFakeSegmentAtRow( int iRow );
-	/**
-	 * @brief Retrieve the FakeSegment at the specified beat.
-	 * @param fBeat the beat to focus on.
-	 * @return the FakeSegment in question.
-	 */
-	FakeSegment* GetFakeSegmentAtBeat( float fBeat ) { return GetFakeSegmentAtRow( BeatToNoteRow( fBeat ) ); }
+
 	/**
 	 * @brief Checks if the row is inside a fake.
 	 * @param iRow the row to focus on.
@@ -752,11 +660,14 @@ public:
 	bool HasBpmChanges() const;
 	/**
 	 * @brief View the TimingData to see if there is at least one stop at any point.
-	 *
-	 * For the purposes of this function, Stops and Delays are considered the same.
 	 * @return true if there is at least one stop, false otherwise.
 	 */
 	bool HasStops() const;
+	/**
+	 * @brief View the TimingData to see if there is at least one delay at any point.
+	 * @return true if there is at least one delay, false otherwise.
+	 */
+	bool HasDelays() const;
 	/**
 	 * @brief View the TimingData to see if there is at least one warp at any point.
 	 * @return true if there is at least one warp, false otherwise.
@@ -781,17 +692,23 @@ public:
 	 */
 	bool operator==( const TimingData &other )
 	{
-		for (int i = 0; i < NUM_TimingSegmentType; i++)
+		FOREACH_ENUM( TimingSegmentType, tst )
 		{
-			COMPARE(allTimingSegments[i].size());
-			for (unsigned j=0; j < allTimingSegments[i].size(); j++)
-			{
-				COMPARE(allTimingSegments[i][j]);
-			}
+			const vector<TimingSegment*> &us = m_avpTimingSegments[tst];
+			const vector<TimingSegment*> &them = other.m_avpTimingSegments[tst];
+
+			// optimization: check vector sizes before contents
+			if( us.size() != them.size() )
+				return false;
+
+			if( !std::equal(us.begin(), us.end(), them.begin()) )
+				return false;
 		}
+
 		COMPARE( m_fBeat0OffsetInSeconds );
 		return true;
 	}
+
 	/**
 	 * @brief Compare two sets of timing data to see if they are not equal.
 	 * @param other the other TimingData.
@@ -816,17 +733,16 @@ public:
 	 * This is for informational purposes only.
 	 */
 	RString					m_sFile;
-	// All of the following vectors must be sorted before gameplay.
 
-	
-	vector<TimingSegment *> allTimingSegments[NUM_TimingSegmentType];
-	
+	// All of the following vectors must be sorted before gameplay.
+	vector<TimingSegment *> m_avpTimingSegments[NUM_TimingSegmentType];
+
 	/**
 	 * @brief The initial offset of a song.
 	 */
 	float	m_fBeat0OffsetInSeconds;
-	
-	vector<RString> ToVectorString(TimingSegmentType tst, bool isDelay = false, int dec = 6) const;	
+
+	vector<RString> ToVectorString(TimingSegmentType tst, int dec = 6) const;
 };
 
 #undef COMPARE

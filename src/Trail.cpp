@@ -42,7 +42,7 @@ bool TrailEntry::ContainsTransformOrTurn() const
 	return false;
 }
 
-// lua start
+// TrailEntry lua start
 #include "LuaBinding.h"
 
 /** @brief Allow Lua to have access to the TrailEntry. */ 
@@ -78,8 +78,7 @@ public:
 };
 
 LUA_REGISTER_CLASS( TrailEntry )
-// lua end
-
+// TrailEntry lua end
 
 void Trail::SetRadarValues( const RadarValues &rv )
 {
@@ -233,6 +232,7 @@ class LunaTrail: public Luna<Trail>
 public:
 	static int GetDifficulty( T* p, lua_State *L )		{ LuaHelpers::Push(L, p->m_CourseDifficulty ); return 1; }
 	static int GetMeter( T* p, lua_State *L )		{ LuaHelpers::Push(L, p->GetMeter() ); return 1; }
+	static int GetTotalMeter( T* p, lua_State *L )		{ LuaHelpers::Push(L, p->GetTotalMeter() ); return 1; }
 	static int GetStepsType( T* p, lua_State *L )	{ LuaHelpers::Push(L, p->m_StepsType ); return 1; }
 	static int GetRadarValues( T* p, lua_State *L )
 	{
@@ -280,16 +280,28 @@ public:
 		LuaHelpers::CreateTableFromArray<TrailEntry*>( v, L );
 		return 1;
 	}
+	DEFINE_METHOD( GetLengthSeconds, GetLengthSeconds() )
+	DEFINE_METHOD( IsSecret, IsSecret() )
+	static int ContainsSong( T* p, lua_State *L )
+	{
+		const Song *pS = Luna<Song>::check(L,1);
+		lua_pushboolean(L, p->ContainsSong(pS));
+		return 1;
+	}
 
 	LunaTrail()
 	{
 		ADD_METHOD( GetDifficulty );
 		ADD_METHOD( GetMeter );
+		ADD_METHOD( GetTotalMeter );
 		ADD_METHOD( GetStepsType );
 		ADD_METHOD( GetRadarValues );
 		ADD_METHOD( GetArtists );
 		ADD_METHOD( GetTrailEntry );
 		ADD_METHOD( GetTrailEntries );
+		ADD_METHOD( GetLengthSeconds );
+		ADD_METHOD( IsSecret );
+		ADD_METHOD( ContainsSong );
 	}
 };
 

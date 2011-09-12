@@ -157,6 +157,7 @@ my @files = (
 	"NoteSkins/dance/Delta",
 	## midi series
 	"NoteSkins/dance/midi-note",
+	"NoteSkins/dance/midi-note-3d",
 	"NoteSkins/dance/midi-solo",
 	"NoteSkins/dance/midi-vivid",
 	"NoteSkins/dance/midi-routine-p1",
@@ -171,6 +172,10 @@ my @files = (
 	"NoteSkins/pump/cmd-routine-p2",
 	"NoteSkins/pump/complex",
 	"NoteSkins/pump/default",
+	"NoteSkins/pump/delta",
+	"NoteSkins/pump/delta-note",
+	"NoteSkins/pump/delta-routine-p1",
+	"NoteSkins/pump/delta-routine-p2",
 	"NoteSkins/pump/frame5p",
 	"NoteSkins/pump/newextra",
 	"NoteSkins/pump/pad",

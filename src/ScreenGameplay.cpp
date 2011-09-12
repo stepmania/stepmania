@@ -1713,7 +1713,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 			{
 				m_pSoundMusic->StopPlaying();
 				SCREENMAN->PostMessageToTopScreen( SM_NotesEnded, 0 );
-				// todo: stop lyrics (m_LyricDisplay) from animating -aj
+				m_LyricDisplay.Stop();
 			}
 
 			// Update living players' alive time
@@ -2173,7 +2173,6 @@ void ScreenGameplay::Input( const InputEventPlus &input )
 {
 	//LOG->Trace( "ScreenGameplay::Input()" );
 
-	// codes motherfucker, do you speak it
 	Message msg("");
 	if( m_Codes.InputMessage(input, msg) )
 		this->HandleMessage( msg );

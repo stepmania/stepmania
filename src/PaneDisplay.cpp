@@ -124,9 +124,9 @@ void PaneDisplay::SetContent( PaneCategory c )
 	const Profile *pProfile = PROFILEMAN->IsPersistentProfile(m_PlayerNumber) ? PROFILEMAN->GetProfile(m_PlayerNumber) : NULL;
 	bool bIsPlayerEdit = pSteps && pSteps->IsAPlayerEdit();
 
-	// Note: in SM3.9, all values would get set to a "?" if the current
-	// selection (pSong/pCourse, in this case) is invalid. In sm-ssc, we use
-	// the falback values (everything is blank).
+	// Note: In SM3.9, all values would get set to a "?" if the current
+	// selection (pSong/pCourse, in this case) is invalid.
+	// We use fallback values (everything is blank).
 	// TODO: add a theme option to use a similar behavior. -aj
 
 	if(GAMESTATE->IsCourseMode() && !pTrail)

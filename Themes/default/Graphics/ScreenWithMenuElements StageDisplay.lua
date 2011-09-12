@@ -46,13 +46,11 @@ if not PREFSMAN:GetPreference("EventMode") then
 				
 				if tRemap[Stage] == PREFSMAN:GetPreference("SongsPerPlay") then
 					Stage = 'Stage_Final';
--- 					s = 7;
 				else
 					Stage = Stage;
 					s = s;
 				end;
-				self:settext( StageToLocalizedString(Stage) .. " Stage" );
--- 				self:settext( StageToLocalizedString(Stage) .. " Stage" );
+				self:settext( string.format( THEME:GetString("ScreenWithMenuElements","StageCounter"), StageToLocalizedString(Stage) ) );
 				self:diffuse( (Stage == 'Stage_Final') and StageToColor('Stage_Final') or StageToColor(s) );
 				self:diffusebottomedge( (Stage == 'Stage_Final') and ColorMidTone(StageToColor('Stage_Final')) or ColorMidTone(StageToColor(s)) );
 				self:strokecolor( (Stage == 'Stage_Final') and ColorDarkTone(StageToColor('Stage_Final')) or ColorDarkTone(StageToColor(s)) );
@@ -66,7 +64,7 @@ else
 				local Offset = THEME:GetMetric(Var "LoadingScreen","StageDisplayNumberOffset");
 				local Stage = GAMESTATE:GetCurrentStageIndex();
 				local RealStage = Stage + Offset;
-				self:settextf( "Stage %03i", RealStage);
+				self:settextf( THEME:GetString("ScreenWithMenuElements","EventStageCounter"), RealStage );
 				self:diffuse( StageToColor('Stage_1st') );
 				self:diffusebottomedge( ColorMidTone(StageToColor('Stage_1st')) );
 				self:strokecolor( Color.Alpha( ColorDarkTone(StageToColor('Stage_1st')), 0.75) );

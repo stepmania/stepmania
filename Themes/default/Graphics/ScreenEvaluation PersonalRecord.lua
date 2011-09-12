@@ -5,7 +5,10 @@ local record = stats:GetPersonalHighScoreIndex()
 local hasPersonalRecord = record ~= -1
 
 return LoadFont("Common normal")..{
-	Text=string.format("Personal Record #%i!", record+1);
 	InitCommand=cmd(zoom,0.55;shadowlength,1;NoStroke;glowshift;effectcolor1,color("1,1,1,0");effectcolor2,color("1,1,1,0.25"));
-	BeginCommand=cmd(visible,hasPersonalRecord;);
+	BeginCommand=function(self)
+		self:visible(hasPersonalRecord);
+		local text = string.format(THEME:GetString("ScreenEvaluation", "PersonalRecord"), record+1)
+		self:settext(text)
+	end
 };

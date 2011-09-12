@@ -17,7 +17,7 @@ static void HandleBunki( TimingData &timing, const float fEarlyBPM,
 	const float beat = (fPos + fGap) * BeatsPerSecond;
 	LOG->Trace( "BPM %f, BPS %f, BPMPos %f, beat %f",
 		   fEarlyBPM, BeatsPerSecond, fPos, beat );
-	timing.AddSegment( SEGMENT_BPM, new BPMSegment(beat, fCurBPM) );
+	timing.AddSegment( SEGMENT_BPM, new BPMSegment(BeatToNoteRow(beat), fCurBPM) );
 }
 
 static bool LoadFromKSFFile( const RString &sPath, Steps &out, Song &song, bool bKIUCompliant )
@@ -355,14 +355,14 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, Song &song, bool 
 				// DelayBeat
 				float fCurDelay = 60 / stepsTiming.GetBPMAtBeat(fCurBeat) * numTemp / iTickCount;
 				fCurDelay += stepsTiming.GetDelayAtRow(BeatToNoteRow(fCurBeat) );
-				stepsTiming.SetStopAtBeat( fCurBeat, fCurDelay, true );
+				stepsTiming.SetDelayAtBeat( fCurBeat, fCurDelay );
 			}
 			else if (BeginsWith(sRowString, "|D"))
 			{
 				// Delays
 				float fCurDelay = stepsTiming.GetStopAtRow(BeatToNoteRow(fCurBeat) );
 				fCurDelay += numTemp / 1000;
-				stepsTiming.SetStopAtBeat( fCurBeat, fCurDelay, true );
+				stepsTiming.SetDelayAtBeat( fCurBeat, fCurDelay );
 			}
 			else if (BeginsWith(sRowString, "|M") || BeginsWith(sRowString, "|C"))
 			{
@@ -776,8 +776,6 @@ bool KSFLoader::LoadFromDir( const RString &sDir, Song &out )
 		pNewNotes->SetFilename(dir + arrayKSFFileNames[i]);
 		out.AddSteps( pNewNotes );
 	}
-	out.TidyUpData(false, true);
-
 	return true;
 }
 

@@ -75,7 +75,7 @@ public:
 	bool		HasMetric( const RString &sMetricsGroup, const RString &sValueName );
 	void		PushMetric( Lua *L, const RString &sMetricsGroup, const RString &sValueName );
 	RString		GetMetric( const RString &sMetricsGroup, const RString &sValueName );
-	int		GetMetricI( const RString &sMetricsGroup, const RString &sValueName );
+	int			GetMetricI( const RString &sMetricsGroup, const RString &sValueName );
 	float		GetMetricF( const RString &sMetricsGroup, const RString &sValueName );
 	bool		GetMetricB( const RString &sMetricsGroup, const RString &sValueName );
 	RageColor	GetMetricC( const RString &sMetricsGroup, const RString &sValueName );
@@ -98,6 +98,9 @@ public:
 
 	static RString GetBlankGraphicPath();
 
+	//needs to be public for its binding to work
+	void RunLuaScripts( const RString &sMask );
+
 	// For self-registering metrics
 	static void Subscribe( IThemeMetric *p );
 	static void Unsubscribe( IThemeMetric *p );
@@ -106,7 +109,6 @@ public:
 	void PushSelf( lua_State *L );
 
 protected:
-	void RunLuaScripts( const RString &sMask );
 	void LoadThemeMetrics( const RString &sThemeName, const RString &sLanguage_ );
 	RString GetMetricRaw( const IniFile &ini, const RString &sMetricsGroup, const RString &sValueName );
 	bool GetMetricRawRecursive( const IniFile &ini, const RString &sMetricsGroup, const RString &sValueName, RString &sRet );

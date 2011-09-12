@@ -14,7 +14,7 @@ public:
 
 	LightsDriver() {};
 	virtual ~LightsDriver() {};
-	
+
 	virtual void Set( const LightsState *ls ) = 0;
 };
 

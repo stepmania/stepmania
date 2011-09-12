@@ -48,9 +48,12 @@ for idx,diff in pairs(Difficulty) do
 				local steps = song:GetOneSteps( st, diff );
 				if steps then
 					meter = steps:GetMeter();
+					append = ""
 					--
 					if diff == 'Difficulty_Edit' then
-					meter = GetEdits( song, st ) .. ' Edit';
+						meter = GetEdits( song, st );
+						append = ( GetEdits( song, st ) > 1 ) and "Edits" or "Edit"
+						meter = meter .. " " .. append
 					end
 				end
 			end

@@ -15,3 +15,6 @@ http://x-raise.cjb.net/bpm.html
 
 marfitude [GPL license]
 http://www.erestar.net/games/marfitude/
+
+Kick it Up [unknown license]
+http://club.paran.com/club/home.do?clubid=prg-bbsView.do?menuno=7209-clubno=291-bbs_no=0L6DV

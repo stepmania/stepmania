@@ -1,0 +1,380 @@
+StepMania 5 Beginner's Guide
+Written and edited by the spinal shark collective
+--------------------------------------------------------------------------------
+Table of Contents
+1       Introduction
+2       StepMania
+ 2.1.   Terms and Concepts
+  2.1.1 Notable StepMania Versions
+  2.1.2 StepMania Components
+ 2.2    StepMania Configuration
+  2.2.1 Frequently Asked Questions that can be
+        Solved by Changing the Configuration
+ 2.3.   Installing Content
+  2.3.1 Installing Song Files
+  2.3.2 Installing Noteskins/New Gametypes
+  2.3.3 Installing Themes
+3.      StepMania 5
+================================================================================
+Chapter 1: Introduction
+================================================================================
+Welcome to the StepMania 5 Beginner's Guide. This guide is primarily meant for
+people who do not have any previous experience with StepMania, but also includes
+information on how SM5 differs from previous StepMania versions. If you already
+know what StepMania is, and the basics of adding things to an install, you can
+skip ahead to Chapter 3: StepMania 5. Otherwise, read on.
+
+================================================================================
+Chapter 2: StepMania
+================================================================================
+StepMania is an open-source rhythm game/engine, used by many projects, both
+commercial and free. It is the software from which sm-ssc is derived, and as
+a result, must be learned before using sm-ssc if you're not already familiar
+with how it works.
+
+Some of the things an average sm-ssc user is expected to know includes the
+meanings/"proper names" of certain things, as well as how to install content
+and configure the program to suit your playing style.
+
+--------------------------------------------------------------------------------
+2.1: Terms and Concepts
+--------------------------------------------------------------------------------
+Like many other video games, StepMania has a rich lexicon of words which may
+confuse others. The most important of the terms has to do with versions of
+StepMania, as backwards compatibility is pretty much nonexistent between major
+versions.
+
+--------------------------------------------------------------------------------
+2.1.1: Notable StepMania Versions
+--------------------------------------------------------------------------------
+Knowing the versions of StepMania is helpful, as it will help you deduce what
+you can and can not install. (Most songs are version-agnostic, though the
+background animations may not be. Themes, Noteskins, etc. are tied to
+specific versions.)
+
+* StepMania 3.9
+StepMania 3.9 is currently considered the stable version of StepMania. It dates
+back to 2005, and is the version for which the bulk of content is produced.
+
+* StepMania 3.9 Plus/StepMania 3.9 Plus Redux
+3.9 Plus/Redux is a fork of StepMania 3.9 that adds features from
+later StepMania versions (such as rolls), as well as new features.
+
+* StepMania 3.95/StepMania Online
+Generally, when people talk about this version, they refer to a CVS build of
+StepMania from around June-August 2006. It was not an officially supported
+build of StepMania.
+
+* OpenITG
+OpenITG is a fork of the StepMania CVS code from around the time In The Groove 2
+was released. OpenITG's goal is to produce a replacement executable for ITG2
+machines with enhanced features, though it can also be used at home as well.
+
+* StepMania 4.0 CVS
+This term is used to describe versions of StepMania 4 that appeared after "3.95"
+up until January 2008, when the last build that could be categorized as "CVS"
+was released.
+
+* StepMania 4.0 SVN/alpha
+The current development version of StepMania. This is the version that sm-ssc
+is forked off of. If you wish to port something to sm-ssc, it had better work
+for this version first, unless you like working hard to port the theme past
+various generations and default theme assumptions.
+
+--------------------------------------------------------------------------------
+2.1.2: StepMania Components
+--------------------------------------------------------------------------------
+Despite the title, this is a bit more broader-reaching, as it covers terms that
+you may see in StepMania communities and online.
+--------------------------------------------------------------------------------
+* Courses
+  Courses exist in many different forms, but in general, they take you through
+  multiple songs without a break in-between. There are multiple types of courses:
+
+ * Nonstop Courses
+   Nonstop courses use the regular lifebar and typically have 4 songs per
+   course, though this isn't always the case. It is the easiest of the
+   course modes.
+
+ * Oni/Challenge Courses
+   The Oni/challenge courses are quite difficult, usually giving you 4 lives
+   over multiple songs. If you get less than a Great, you lose a life. Once
+   you lose all your lives, the game is over.
+
+ * Survival Courses
+   Survival courses go by time. Each step judgment is worth something on the
+   timer, with most of the values being negative by default. If you run out of
+   time before you complete the course, the game is over.
+
+ * Endless Courses
+   Endless courses are like the name suggests. They don't end until you fail or
+   decide to quit. Like Nonstop courses, they have a normal lifebar as well.
+--------------------------------------------------------------------------------
+* Event Mode
+  Typically used during events, this disables the concept of stages and lets you
+  play songs until you decide to stop. It is quite useful in Home Mode, and this
+  guide recommends you enable it.
+
+* Gametypes
+  Gametypes are the different game modes StepMania can play. They generally
+  change things like number of default receptors, number of judgments, and more.
+  Gametypes are directly related to noteskins and unrelated to the different
+  play modes (Normal, Nonstop, Challenge, and so on).
+  Examples of gametypes include "dance", "pump", "beat", "techno", and so on.
+
+* NoteSkins
+  NoteSkins are the appearance of the notes. Most noteskins are bound to certain
+  gametypes, though some noteskins are easily adapted for other gametypes.
+
+* Pack/packs
+  A pack is a group of songs for StepMania. The term originated from the
+  community of StepMania keyboard creators, and can be seen prominently in
+  certain release names, such as Community Keyboard Mega Pack (CKMP).
+  When used as a single word question, e.g. "packs?", it is a request for what
+  packs you have installed.
+
+* Songs
+  StepMania songs contain a few files, but mainly the steps (.sm, .dwi, .ksf,
+  .bms, among many other formats) and song file itself (.mp3, .ogg, .wav). In
+  order to get the most out of StepMania, you'll need to know all about songs
+  and how to install them.
+
+* Themes
+  Themes are skins for StepMania. They change the look and feel, and in post-3.9
+  versions, can also change elements of gameplay (scoring, grading) as well.
+
+--------------------------------------------------------------------------------
+2.2: StepMania Configuration
+or "How to use the Options Menu"
+--------------------------------------------------------------------------------
+Learning how to properly configure StepMania can save you headaches.
+
+Most themes will have the Options menu in plain sight on the Title Menu.
+From there, it depends on which version of StepMania you have, as the options
+menus were re-shuffled around for the StepMania 4 alphas.
+
+The typical StepMania 3.9 Options Menu:
+* Appearance Options
+* Background Options
+* Bookkeeping
+* Center Image
+* Coin Options
+* Config Key/Joy Mappings
+* Input Options
+* Gameplay Options
+* Graphic Options
+* Machine Options
+* Sound Options
+* Profile Options
+* Other Options
+* Reload Songs/Courses
+* Test Input
+
+The StepMania 4.0 alpha 4 Options Menu:
+* Config Key/Joy Mappings
+* Test Input
+* Appearance Options
+* Graphics/Sound Options
+* Advanced Options
+* Network Options
+* Profiles
+* Reload Songs/Courses
+
+sm-ssc changes this up again, making the "Options" item on the Title Menu go
+to System Direction (mostly-used options), leaving the normal options menu to
+the Scroll Lock key. Blame Midiman. :)
+--------------------------------------------------------------------------------
+2.2.1: Frequently Asked Questions that can be Solved by Changing the Configuration
+--------------------------------------------------------------------------------
+With that in mind, it's time to answer some questions using this knowledge.
+
+Q: How do I disable the menu timer?
+A: Where you go depends on the version of StepMania you use.
+
+[3.9] Machine Options
+[4.0 alphas] Advanced Options
+It will be the first option on each.
+
+Q: How do I play forever, without game overs?
+A: Turn on Event Mode. Where you go depends on the version of StepMania you use.
+
+[3.9] Coin Options
+[4.0 alphas] Advanced Options, a bit down the page.
+
+Q: What the heck is this thing that says "Toasty" and how do I get rid of it?
+A: It's a reference to Mortal Kombat 2, where Dan Forden would pop out from
+the side of the screen randomly after an uppercut.
+In order to get a Toasty in StepMania, one must get a 250 combo without any
+Greats. The number 250 is a reference to how many VS games of MK2 you had to
+play before you could play Pong.
+
+As for turning it off, turn Easter Eggs off.
+It appears in different locations between StepMania versions:
+[3.9] Gameplay Options
+[4.0 alphas] Advanced Options, a bit down the page.
+
+--------------------------------------------------------------------------------
+2.3: Installing Content
+--------------------------------------------------------------------------------
+This is the most important section you will read, as all the time that you spend
+not playing with StepMania will be adding/removing things to it. Well, not
+completely, as you have other things to do.
+
+Before we touch on the specifics, there are a few skills you should learn.
+
+* Mac Users of StepMania 4.0
+Most of the game content is packaged in a file called StepMania.smzip. This has
+the pros of not cluttering things up, but the con is that people don't know
+where to put things.
+
+Wherever you have StepMania installed, make the following folders:
+ * Songs
+ * Themes
+ * Noteskins
+  (and the various gametype folders, which are optional. You need at least one
+  non-lights gametype in order to play.)
+  * Noteskins/dance
+  * Noteskins/pump
+  * Noteskins/para
+  * Noteskins/techno
+  * Noteskins/beat
+  * Noteskins/popn
+  * Noteskins/ez2
+ * Announcers
+   (but at this point, no SM4 announcers have been released)
+ * Packages
+   (optional, but recommended)
+
+and then you can follow the rest of this guide.
+
+* Not on Windows and want to deal with .smzip files?
+There are multiple ways to deal this.
+ 1) Put the SMZip file in the Packages folder.
+ 2) Rename the file to have an extension of .zip and extract in the root
+    StepMania folder.
+ 3) Pass the smzip's filename to StepMania on the command line/terminal.
+    Dragging and dropping the .smzip may or may not work; we have not tested it.
+    Also, this may or may not exist in your version of StepMania.
+
+--------------------------------------------------------------------------------
+2.3.1: Installing Song Files
+--------------------------------------------------------------------------------
+Song files are distributed in many ways. The concept of packs was explained
+above, in which multiple songs are included in one archive.
+
+For .smzip files, the section "Not on Windows and want to deal with .smzip
+files?" details all possible ways of installing .smzip files, but the most
+common ways are as follows:
+
+1) For operating systems with a filetype handler (Windows), you can double
+   click on the .smzip file and the StepMania tools will handle it.
+2) Putting the .smzip file in the Packages folder, where it will be automatically
+   read by StepMania.
+
+If it's not a .smzip file, you'll have to do some detective work.
+Open up the song archive and see how the files are laid out.
+
+The easiest single song installs will have a folder structure similar to this:
+Group Name\
+ Song Name\
+  song file.sm
+  song file.ogg/mp3
+  song file-bg.png
+  song file-bn.png
+
+With a setup like this, you can just extract it to the Songs folder with
+directory structure intact.
+
+Sometimes, simfile authors don't package their file with a group name,
+leaving you with a file structure like this:
+Song Name\
+ song file.sm
+ song file.ogg/mp3
+ song file-bg.png
+ song file-bn.png
+
+You will need to extract this into a song group folder that exists already.
+
+An uncommon setup will only include the song files, without any folders at all.
+These need to be put into the {Group Name}\{Song Name}\ folder in order to work.
+
+For packs, you follow the same logic. If there are multiple song folders, but no
+group folder, you will have to make a group folder. (Flightmix 4 is an example
+of a pack that exhibits this behavior.)
+
+Overall, the setup should look something like this:
+
+StepMania\
+ Songs\
+  Song Group 1\
+  Song Group 2\
+  Song Group 3\
+  Song Group 4\
+   Example Song\
+    Example Song.sm
+    Example Song.mp3/ogg
+    Example Song-bn.png
+    Example Song-bg.png
+
+--------------------------------------------------------------------------------
+2.3.2: Installing Noteskins/New Gametypes
+--------------------------------------------------------------------------------
+NoteSkins change the appearance of the arrows. They are also linked with getting
+other gametypes supported in StepMania.
+
+The noteskin installation process looks something like this:
+StepMania\
+ NoteSkins\
+  (gametype)\
+   (noteskin for gametype)\
+   default\
+  (gametype2)\
+   default\
+
+"gametype"/"gametype2" etc. can be any one of the following:
+dance (typically 4 panels)
+pump (typically 5 panels)
+para (5 receptors)
+techno (4, 5, and 8 panel modes)
+beat (5 and 7 key modes with a turntable on each)
+popn (5 and 9 line modes)
+kb7 (6 or 7 keys depending on when you try to use it)
+
+--------------------------------------------------------------------------------
+2.3.3: Installing Themes
+--------------------------------------------------------------------------------
+Depending on if the theme is packaged in a SMZip or not, you have a few options.
+
+If it is in a .smzip, you can put it in the Packages directory:
+StepMania/
+ Packages/
+  MyTheme.smzip
+and StepMania will automatically read it.
+On Windows, you can double click on the .smzip file to install it in your user
+packages directory. THIS IS NOT RECOMMENDED BECAUSE IT CAUSES CONFUSION.
+
+Since .smzip files are really .zip files, you could also extract them in the
+StepMania root folder.
+
+If the themer has not packaged the theme in a .smzip, then you have to look
+inside the archive to see how the directory layout looks.
+1) Themes folder
+   If it has a themes folder when you open it up, extract in the StepMania root
+   folder, like you would a .smzip file.
+2) Theme name as a folder
+   This one will have to be extracted in the Themes directory. You will get a
+   new folder with the files.
+3) A bunch of folders + metrics.ini
+   The themer was lazy; you're going to have to make a folder in the Themes
+   directory and extract the theme in there.
+
+When in doubt, read any documentation that comes with the theme for proper
+installation instructions.
+
+================================================================================
+Chapter 3: StepMania 5
+================================================================================
+The modern StepMania 5 originally began life as sm-ssc, a fork of StepMania 4
+alpha 5 (later renamed to StepMania 5 after the reboot of SM4). sm-ssc was a fork
+focused on adding features for theming, but also tried to make the process of
+dealing with StepMania a little easier.

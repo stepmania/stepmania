@@ -20,14 +20,18 @@ ret.Redir = function(sButton, sElement)
 	if sElement == "Hold Head Active" or
 	   sElement == "Roll Head Active"
 	then
-		sElement = "Tap Note";
+		sElement = 
+			(GAMESTATE:GetCurrentStyle():GetStyleType() == "StyleType_TwoPlayersSharedSides")
+			and "Tap Note" or "Hold Head Active";
 	end
 	
 	-- Test
 	if sElement == "Hold Head Inactive" or
 	   sElement == "Roll Head Inactive"
 	then
-		sElement = "Tap Note";
+		sElement =
+			(GAMESTATE:GetCurrentStyle():GetStyleType() == "StyleType_TwoPlayersSharedSides")
+			and "Tap Note" or "Hold Head Inactive";
 	end
 	
 	if sElement == "Tap Fake"

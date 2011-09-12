@@ -10,6 +10,7 @@ namespace
 {
 
 //ThemeMetric<TapNoteScoreJudgeType> LAST_OR_MINIMUM_TNS	("Gameplay","LastOrMinimumTapNoteScore");
+	static ThemeMetric<TapNoteScore> MIN_SCORE_TO_MAINTAIN_COMBO( "Gameplay", "MinScoreToMaintainCombo" );
 
 int GetNumTapNotesWithScore( const NoteData &in, TapNoteScore tns, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW )
 { 
@@ -135,7 +136,7 @@ int GetSuccessfulLifts( const NoteData &in, TapNoteScore tns, int iStartIndex = 
 	NoteData::all_tracks_const_iterator iter = in.GetTapNoteRangeAllTracks( iStartIndex, iEndIndex );
 	for( ; !iter.IsAtEnd(); ++iter )
 	{
-		if( iter->type == TapNote::lift && iter->result.tns == tns )
+		if( iter->type == TapNote::lift && iter->result.tns >= tns )
 			++iNumSuccessfulLiftNotes;
 	}
 	return iNumSuccessfulLiftNotes;
@@ -348,7 +349,7 @@ void NoteDataWithScoring::GetActualRadarValues( const NoteData &in, const Player
 		case RadarCategory_Mines:		out[rc] = (float) GetSuccessfulMines( in );						break;
 		case RadarCategory_Hands:		out[rc] = (float) GetSuccessfulHands( in );						break;
 		case RadarCategory_Rolls:		out[rc] = (float) GetNumHoldNotesWithScore( in, TapNote::hold_head_roll, HNS_Held );	break;
-		case RadarCategory_Lifts:		out[rc] = (float) GetSuccessfulLifts( in, TNS_W4 );					break;
+		case RadarCategory_Lifts:		out[rc] = (float) GetSuccessfulLifts( in, MIN_SCORE_TO_MAINTAIN_COMBO );					break;
 		case RadarCategory_Fakes:		out[rc] = (float) in.GetNumFakes();							break;
 		//case RadarCategory_Minefields:	out[rc] = (float) GetNumMinefieldsWithScore( in, TapNote::hold_head_mine, HNS_Held );	break;
 		DEFAULT_FAIL( rc );

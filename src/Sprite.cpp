@@ -360,8 +360,8 @@ void Sprite::UpdateAnimationState()
  * also don't loop when the effect timer loops.
  *
  * (I'd like to handle sprite and movie animation as consistently as possible;
- * the above is just documentation of current practice.) */
-// todo: source above comment, see if "current" practice is just that. -aj
+ * the above is just documentation of current practice.) -glenn */
+// todo: see if "current" practice is just that. -aj
 void Sprite::Update( float fDelta )
 {
 	Actor::Update( fDelta ); // do tweening

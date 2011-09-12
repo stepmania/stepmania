@@ -354,7 +354,7 @@ bool NotesWriterDWI::Write( RString sPath, const Song &out )
 	f.PutLine( ssprintf("#TITLE:%s;", DwiEscape(out.GetTranslitFullTitle()).c_str()) );
 	f.PutLine( ssprintf("#ARTIST:%s;", DwiEscape(out.GetTranslitArtist()).c_str()) );
 	
-	const vector<TimingSegment *> &bpms = out.m_SongTiming.allTimingSegments[SEGMENT_BPM];
+	const vector<TimingSegment *> &bpms = out.m_SongTiming.m_avpTimingSegments[SEGMENT_BPM];
 	
 	ASSERT_M(bpms[0]->GetRow() == 0,
 			 ssprintf("The first BPM Segment must be defined at row 0, not %d!", bpms[0]->GetRow()) );
@@ -381,7 +381,8 @@ bool NotesWriterDWI::Write( RString sPath, const Song &out )
 		break;
 	}
 
-	const vector<TimingSegment *> &stops = out.m_SongTiming.allTimingSegments[SEGMENT_STOP_DELAY];
+	// TODO: Also check for delays, add them as stops minus one row?
+	const vector<TimingSegment *> &stops = out.m_SongTiming.m_avpTimingSegments[SEGMENT_STOP];
 	if( !stops.empty() )
 	{
 		f.Write( "#FREEZE:" );

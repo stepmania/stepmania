@@ -1,17 +1,21 @@
 #include "global.h"
 #include "LoadingWindow_GtkModule.h"
+#include "RageUtil.h"
+#include "RageSurface.h"
+#include "RageSurfaceUtils.h"
+#include "RageSurface_Load.h"
 
 #include <gtk/gtk.h>
 
 static GtkWidget *label;
 static GtkWidget *window;
+static GtkWidget *splash;
 static GtkWidget *progressBar;
 
 extern "C" const char *Init( int *argc, char ***argv )
 {
 	const gchar *splash_image_path = "Data/splash.png";
 	GtkWidget *vbox;
-	GtkWidget *loadimage;
 
 	gtk_disable_setlocale();
 	if( !gtk_init_check(argc,argv) )
@@ -19,15 +23,21 @@ extern "C" const char *Init( int *argc, char ***argv )
 
 	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_position( GTK_WINDOW(window), GTK_WIN_POS_CENTER );
+	gtk_window_set_default_size( GTK_WINDOW(window), 512,96 );
+	//gtk_window_set_icon( GTK_WINDOW(window), );
 	gtk_widget_realize(window);
-	loadimage = gtk_image_new_from_file(splash_image_path);
+
+	splash = gtk_image_new_from_file(splash_image_path);
+
 	label = gtk_label_new(NULL);
 	gtk_label_set_justify(GTK_LABEL(label),GTK_JUSTIFY_CENTER);
+
 	progressBar = gtk_progress_bar_new();
 	gtk_progress_bar_set_fraction( GTK_PROGRESS_BAR(progressBar), 0.0 );
+
 	vbox = gtk_vbox_new(FALSE,5);
 	gtk_container_add(GTK_CONTAINER(window),vbox);
-	gtk_box_pack_start(GTK_BOX(vbox),loadimage,FALSE,FALSE,0);
+	gtk_box_pack_start(GTK_BOX(vbox),splash,FALSE,FALSE,0);
 	gtk_box_pack_end(GTK_BOX(vbox),progressBar,TRUE,TRUE,0);
 	gtk_box_pack_end(GTK_BOX(vbox),label,TRUE,TRUE,0);
 
@@ -48,6 +58,40 @@ extern "C" void SetText( const char *s )
 {
 	gtk_label_set_text(GTK_LABEL(label), s);
 	gtk_widget_show(label);
+	gtk_main_iteration_do(FALSE);
+}
+/*
+extern "C" void SetIcon( const RageSurface *pSrcImg )
+{
+	RageSurface *pImg;
+	{
+		pImg = CreateSurface( pSrcImg->w, pSrcImg->h, 32,
+			0x00FF0000,
+			0x0000FF00,
+			0x000000FF,
+			0xFF000000 );
+		RageSurfaceUtils::Blit( pSrcImg, pImg );
+	}
+
+	GdkPixbuf *pIcon;
+	pIcon = gdk_pixbuf_new_from_data(pImg->pixels,
+			GDK_COLORSPACE_RGB, true,
+			8,
+			pImg->w, pImg->h,
+			pImg->h * pImg->pitch, // ?
+			NULL, NULL);
+
+	delete pImg;
+	pImg = NULL;
+
+	gtk_window_set_icon( GTK_WINDOW(window), pIcon );
+	gtk_main_iteration_do(FALSE);
+}
+*/
+extern "C" void SetSplash( const char *s )
+{
+	splash = gtk_image_new_from_file(s);
+	gtk_widget_show(splash);
 	gtk_main_iteration_do(FALSE);
 }
 

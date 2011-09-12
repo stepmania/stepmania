@@ -41,7 +41,7 @@
  * @brief The internal version of the cache for StepMania.
  *
  * Increment this value to invalidate the current cache. */
-const int FILE_CACHE_VERSION = 196;
+const int FILE_CACHE_VERSION = 203;
 
 /** @brief How long does a song sample last by default? */
 const float DEFAULT_MUSIC_SAMPLE_LENGTH = 12.f;
@@ -458,8 +458,9 @@ void Song::TidyUpData( bool fromCache, bool duringCache )
 		if( !m_sInstrumentTrackFile[i].empty() )
 			FixupPath( m_sInstrumentTrackFile[i], m_sSongDir );
 	FixupPath( m_sBannerFile, m_sSongDir );
-	//FixupPath( m_sJacketFile, m_sSongDir );
-	//FixupPath( m_sDiscFile, m_sSongDir );
+	FixupPath( m_sJacketFile, m_sSongDir );
+	FixupPath( m_sCDFile, m_sSongDir );
+	FixupPath( m_sDiscFile, m_sSongDir );
 	FixupPath( m_sLyricsFile, m_sSongDir );
 	FixupPath( m_sBackgroundFile, m_sSongDir );
 	FixupPath( m_sCDTitleFile, m_sSongDir );
@@ -618,7 +619,6 @@ void Song::TidyUpData( bool fromCache, bool duringCache )
 			m_sBackgroundFile = arrayPossibleBGs[0];
 	}
 
-	/*
 	if( !HasJacket() )
 	{
 		// find an image with "jacket" or "albumart" in the filename.
@@ -629,26 +629,26 @@ void Song::TidyUpData( bool fromCache, bool duringCache )
 		if( !arrayPossibleJackets.empty() )
 			m_sJacketFile = arrayPossibleJackets[0];
 	}
-	*/
 
-	/*
 	if( !HasCDImage() )
 	{
 		// CD image, a la ddr 1st-3rd (not to be confused with CDTitles)
-		// find an image with "cd" at the end of the filename.
+		// find an image with "-cd" at the end of the filename.
 		vector<RString> arrayPossibleCDImages;
-		GetImageDirListing( m_sSongDir + "* CD", arrayPossibleCDImages );
+		GetImageDirListing( m_sSongDir + "*-cd", arrayPossibleCDImages );
 		if( !arrayPossibleCDImages.empty() )
 			m_sCDFile = arrayPossibleCDImages[0];
 	}
-	*/
 
-	/*
 	if( !HasDisc() )
 	{
 		// a rectangular graphic, not to be confused with CDImage above.
+		vector<RString> arrayPossibleDiscImages;
+		GetImageDirListing( m_sSongDir + "* Disc", arrayPossibleDiscImages );
+		GetImageDirListing( m_sSongDir + "* Title", arrayPossibleDiscImages );
+		if( !arrayPossibleDiscImages.empty() )
+			m_sDiscFile = arrayPossibleDiscImages[0];
 	}
-	*/
 
 	if( !HasCDTitle() )
 	{
@@ -695,7 +695,14 @@ void Song::TidyUpData( bool fromCache, bool duringCache )
 		if( HasCDTitle()  &&  m_sCDTitleFile.EqualsNoCase(arrayImages[i]) )
 			continue;	// skip
 
-		// todo: add checks for Jacket, Disc, and CDImage -aj
+		if( HasJacket()  &&  m_sJacketFile.EqualsNoCase(arrayImages[i]) )
+			continue;	// skip
+
+		if( HasDisc()  &&  m_sDiscFile.EqualsNoCase(arrayImages[i]) )
+			continue;	// skip
+
+		if( HasCDImage()  &&  m_sCDFile.EqualsNoCase(arrayImages[i]) )
+			continue;	// skip
 
 		RString sPath = m_sSongDir + arrayImages[i];
 
@@ -753,7 +760,27 @@ void Song::TidyUpData( bool fromCache, bool duringCache )
 			continue;
 		}
 
-		// todo: add checks for Jacket, Disc, and CDImage -aj
+		// Jacket files typically have the same width and height.
+		if( !HasJacket() && width == height )
+		{
+			m_sJacketFile = arrayImages[i];
+			continue;
+		}
+
+		// Disc images are typically rectangular; make sure we have a banner already.
+		if( !HasDisc() && (width > height) && HasBanner() )
+		{
+			if( arrayImages[i] != m_sBannerFile )
+				m_sDiscFile = arrayImages[i];
+			continue;
+		}
+
+		// CD images are the same as Jackets, typically the same width and height
+		if( !HasCDImage() && width == height )
+		{
+			m_sCDFile = arrayImages[i];
+			continue;
+		}
 	}
 
 	// These will be written to cache, for Song::LoadFromSongDir to use later.
@@ -1230,7 +1257,18 @@ bool Song::HasBGChanges() const
 	return false;
 }
 bool Song::HasAttacks() const		{return !m_Attacks.empty(); }
-// todo: add checks for Jacket, Disc, and CDImage -aj
+bool Song::HasJacket() const
+{
+	return m_sJacketFile != ""	&& IsAFile(GetJacketPath());
+}
+bool Song::HasDisc() const
+{
+	return m_sDiscFile != ""	&& IsAFile(GetDiscPath());
+}
+bool Song::HasCDImage() const
+{
+	return m_sCDFile != ""	&& IsAFile(GetCDImagePath());
+}
 
 const vector<BackgroundChange> &Song::GetBackgroundChanges( BackgroundLayer bl ) const
 {
@@ -1349,7 +1387,20 @@ RString Song::GetBackgroundPath() const
 	return GetSongAssetPath( m_sBackgroundFile, m_sSongDir );
 }
 
-// todo: add checks for Jacket, Disc, and CDImage -aj
+RString Song::GetJacketPath() const
+{
+	return GetSongAssetPath( m_sJacketFile, m_sSongDir );
+}
+
+RString Song::GetDiscPath() const
+{
+	return GetSongAssetPath( m_sDiscFile, m_sSongDir );
+}
+
+RString Song::GetCDImagePath() const
+{
+	return GetSongAssetPath( m_sCDFile, m_sSongDir );
+}
 
 RString Song::GetDisplayMainTitle() const
 {
@@ -1515,7 +1566,7 @@ bool Song::IsEditAlreadyLoaded( Steps* pSteps ) const
 
 bool Song::HasSignificantBpmChangesOrStops() const
 {
-	if( m_SongTiming.HasStops() )
+	if( m_SongTiming.HasStops() || m_SongTiming.HasDelays() )
 		return true;
 
 	// Don't consider BPM changes that only are only for maintaining sync as 
@@ -1640,6 +1691,33 @@ public:
 			lua_pushnil(L);
 		return 1; 
 	}
+	static int GetJacketPath( T* p, lua_State *L )
+	{
+		RString s = p->GetJacketPath();
+		if( !s.empty() ) 
+			lua_pushstring(L, s);
+		else
+			lua_pushnil(L);
+		return 1; 
+	}
+	static int GetCDImagePath( T* p, lua_State *L )
+	{
+		RString s = p->GetCDImagePath();
+		if( !s.empty() ) 
+			lua_pushstring(L, s);
+		else
+			lua_pushnil(L);
+		return 1; 
+	}
+	static int GetDiscPath( T* p, lua_State *L )
+	{
+		RString s = p->GetDiscPath();
+		if( !s.empty() ) 
+			lua_pushstring(L, s);
+		else
+			lua_pushnil(L);
+		return 1; 
+	}
 	static int GetCDTitlePath( T* p, lua_State *L )
 	{ 
 		RString s = p->GetCDTitlePath();
@@ -1668,7 +1746,7 @@ public:
 		lua_pushboolean(L, p->IsTutorial());
 		return 1;
 	}
-	static int IsEnabled( T* p, lua_State *L )	
+	static int IsEnabled( T* p, lua_State *L )
 	{
 		lua_pushboolean(L, p->GetEnabled());
 		return 1;
@@ -1719,42 +1797,17 @@ public:
 			lua_pushnil(L);
 		return 1;
 	}
-	static int GetTimingData( T* p, lua_State *L )
-	{
-		p->m_SongTiming.PushSelf(L);
-		return 1;
-	}
+	static int GetTimingData( T* p, lua_State *L ) { p->m_SongTiming.PushSelf(L); return 1; }
 	// has functions
-	static int HasMusic( T* p, lua_State *L )
-	{
-		lua_pushboolean(L, p->HasMusic());
-		return 1;
-	}
-	static int HasBanner( T* p, lua_State *L )
-	{
-		lua_pushboolean(L, p->HasBanner());
-		return 1;
-	}
-	static int HasBackground( T* p, lua_State *L )
-	{
-		lua_pushboolean(L, p->HasBackground());
-		return 1;
-	}
-	static int HasCDTitle( T* p, lua_State *L )
-	{
-		lua_pushboolean(L, p->HasCDTitle());
-		return 1;
-	}
-	static int HasBGChanges( T* p, lua_State *L )
-	{
-		lua_pushboolean(L, p->HasBGChanges());
-		return 1;
-	}
-	static int HasLyrics( T* p, lua_State *L )
-	{
-		lua_pushboolean(L, p->HasLyrics());
-		return 1;
-	}
+	static int HasMusic( T* p, lua_State *L )			{ lua_pushboolean(L, p->HasMusic()); return 1; }
+	static int HasBanner( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasBanner()); return 1; }
+	static int HasBackground( T* p, lua_State *L )	{ lua_pushboolean(L, p->HasBackground()); return 1; }
+	static int HasJacket( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasJacket()); return 1; }
+	static int HasDisc( T* p, lua_State *L )			{ lua_pushboolean(L, p->HasDisc()); return 1; }
+	static int HasCDImage( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasCDImage()); return 1; }
+	static int HasCDTitle( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasCDTitle()); return 1; }
+	static int HasBGChanges( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasBGChanges()); return 1; }
+	static int HasLyrics( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasLyrics()); return 1; }
 	// functions that AJ loves
 	static int HasSignificantBPMChangesOrStops( T* p, lua_State *L )
 	{
@@ -1781,6 +1834,11 @@ public:
 	static int NormallyDisplayed( T* p, lua_State *L )
 	{
 		lua_pushboolean(L, p->NormallyDisplayed());
+		return 1;
+	}
+	static int ShowInDemonstrationAndRanking( T* p, lua_State *L )
+	{
+		lua_pushboolean(L, p->ShowInDemonstrationAndRanking());
 		return 1;
 	}
 	static int GetFirstSecond(T* p, lua_State *L)
@@ -1858,6 +1916,9 @@ public:
 		ADD_METHOD( GetMusicPath );
 		ADD_METHOD( GetBannerPath );
 		ADD_METHOD( GetBackgroundPath );
+		ADD_METHOD( GetJacketPath );
+		ADD_METHOD( GetCDImagePath );
+		ADD_METHOD( GetDiscPath );
 		ADD_METHOD( GetCDTitlePath );
 		ADD_METHOD( GetLyricsPath );
 		ADD_METHOD( GetSongFilePath );
@@ -1874,6 +1935,9 @@ public:
 		ADD_METHOD( HasMusic );
 		ADD_METHOD( HasBanner );
 		ADD_METHOD( HasBackground );
+		ADD_METHOD( HasJacket );
+		ADD_METHOD( HasCDImage );
+		ADD_METHOD( HasDisc );
 		ADD_METHOD( HasCDTitle );
 		ADD_METHOD( HasBGChanges );
 		ADD_METHOD( HasLyrics );
@@ -1891,6 +1955,7 @@ public:
 		ADD_METHOD( IsDisplayBpmSecret );
 		ADD_METHOD( IsDisplayBpmConstant );
 		ADD_METHOD( IsDisplayBpmRandom );
+		ADD_METHOD( ShowInDemonstrationAndRanking );
 	}   
 };
 

@@ -540,6 +540,8 @@ static MenuDef g_AlterMenu(
 	      EditMode_Practice, true, true, 0, NULL ),
    MenuRowDef(ScreenEdit::copy,				"Copy",					true, 
 	      EditMode_Practice, true, true, 0, NULL ),
+   MenuRowDef(ScreenEdit::copy_partial_timing,	"Copy Partial Timing",	true, 
+		  EditMode_Practice, true, true, 0, NULL ),					   
    MenuRowDef(ScreenEdit::clear,			"Clear area",				true, 
 	      EditMode_Practice, true, true, 0, NULL ),
    MenuRowDef(ScreenEdit::quantize,			"Quantize",				true, 
@@ -586,7 +588,8 @@ static MenuDef g_AreaMenu(
 	"ScreenMiniMenuAreaMenu",
 	MenuRowDef( ScreenEdit::paste_at_current_beat,	"Paste at current beat",		true, EditMode_Practice, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::paste_at_begin_marker,	"Paste at begin marker",		true, EditMode_Practice, true, true, 0, NULL ),
-	MenuRowDef( ScreenEdit::insert_and_shift,	"Insert beat and shift down",		true, EditMode_Practice, true, true, 0, NULL ),
+    MenuRowDef( ScreenEdit::paste_partial_timing_at_beat,	"Paste Partial Timing at current beat",		true, EditMode_Practice, true, true, 0, NULL ),
+    MenuRowDef( ScreenEdit::insert_and_shift,	"Insert beat and shift down",		true, EditMode_Practice, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::delete_and_shift,	"Delete beat and shift up",		true, EditMode_Practice, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::shift_pauses_forward,	"Shift all timing changes down",	true, EditMode_Full, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::shift_pauses_backward,	"Shift all timing changes up",		true, EditMode_Full, true, true, 0, NULL ),
@@ -668,8 +671,8 @@ static MenuDef g_TimingDataInformation(
         MenuRowDef( ScreenEdit::speed_mode,			"Edit speed (mode)",		true, EditMode_Full, true, true, 0, "Beats", "Seconds" ),
         MenuRowDef( ScreenEdit::scroll,			"Edit scrolling factor",		true, EditMode_Full, true, true, 0, NULL ),
         MenuRowDef( ScreenEdit::fake,				"Edit fake",			true, EditMode_Full, true, true, 0, NULL ),
-        MenuRowDef( ScreenEdit::copy_timing,		"Copy timing data",			true, EditMode_Full, true, true, 0, NULL ),
-        MenuRowDef( ScreenEdit::paste_timing,		"Paste timing data",			true, EditMode_Full, true, true, 0, NULL ),
+        MenuRowDef( ScreenEdit::copy_full_timing,		"Copy timing data",			true, EditMode_Full, true, true, 0, NULL ),
+        MenuRowDef( ScreenEdit::paste_full_timing,		"Paste timing data",			true, EditMode_Full, true, true, 0, NULL ),
         MenuRowDef( ScreenEdit::erase_step_timing,		"Erase step timing",		true, EditMode_Full, true, true, 0, NULL )
 );
 
@@ -908,7 +911,7 @@ void ScreenEdit::Init()
 
 	m_Clipboard.SetNumTracks( m_NoteDataEdit.GetNumTracks() );
 	
-	clipboardTiming = GAMESTATE->m_pCurSong->m_SongTiming; // always have a backup.
+	clipboardFullTiming = GAMESTATE->m_pCurSong->m_SongTiming; // always have a backup.
 
 	m_bHasUndo = false;
 	m_Undo.SetNumTracks( m_NoteDataEdit.GetNumTracks() );
@@ -1112,7 +1115,6 @@ void ScreenEdit::Update( float fDeltaTime )
 			fLastBeat = m_pSteps->m_Timing.GetBeatFromElapsedTime( fSeconds + 0.5f );
 		}
 
-		// This should be fine: it will convert to the same I believe. -Wolfman2000
 		float fStopAtSeconds = m_pSteps->m_Timing.GetElapsedTimeFromBeat( NoteRowToBeat(m_iStopPlayingAt) ) + 1;
 		if( GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fMusicSeconds > fStopAtSeconds )
 		{
@@ -1740,6 +1742,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			// update enabled/disabled in g_AreaMenu
 			g_AreaMenu.rows[paste_at_current_beat].bEnabled = !m_Clipboard.IsEmpty();
 			g_AreaMenu.rows[paste_at_begin_marker].bEnabled = !m_Clipboard.IsEmpty() != 0 && m_NoteFieldEdit.m_iBeginMarker!=-1;
+			g_AreaMenu.rows[paste_partial_timing_at_beat].bEnabled = !this->clipboardTiming.empty();
 			g_AreaMenu.rows[undo].bEnabled = m_bHasUndo;
 			EditMiniMenu( &g_AreaMenu, SM_BackFromAreaMenu );
 		}
@@ -1890,7 +1893,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 					fDelta *= 40;
 			}
 			unsigned i;
-			vector<TimingSegment *> &stops = GetAppropriateTiming().allTimingSegments[SEGMENT_STOP_DELAY];
+			vector<TimingSegment *> &stops = GetAppropriateTiming().m_avpTimingSegments[SEGMENT_STOP];
 			for( i=0; i<stops.size(); i++ )
 			{
 				if( stops[i]->GetRow() == GetRow() )
@@ -1901,7 +1904,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			{
 				// create a new StopSegment
 				if( fDelta > 0 )
-					GetAppropriateTiming().AddSegment(SEGMENT_STOP_DELAY,
+					GetAppropriateTiming().AddSegment(SEGMENT_STOP,
 													  new StopSegment( GetRow(), fDelta) );
 			}
 			else	// StopSegment being modified is m_SongTiming.m_StopSegments[i]
@@ -2700,7 +2703,7 @@ void ScreenEdit::TransitionEditState( EditState em )
 		
 		if (!GAMESTATE->m_bIsUsingStepTiming)
 		{
-			backupStepTiming = GetAppropriateTiming();
+			backupStepTiming = GAMESTATE->m_pCurSteps[PLAYER_1]->m_Timing;
 			GAMESTATE->m_pCurSteps[PLAYER_1]->m_Timing = GAMESTATE->m_pCurSong->m_SongTiming;
 		}
 
@@ -2924,7 +2927,9 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if( SM == SM_BackFromAreaMenu )
 	{
-		HandleAreaMenuChoice( (AreaMenuChoice)ScreenMiniMenu::s_iLastRowCode, ScreenMiniMenu::s_viLastAnswers );
+		AreaMenuChoice amc = static_cast<AreaMenuChoice>(ScreenMiniMenu::s_iLastRowCode);
+		const vector<int> &answers = ScreenMiniMenu::s_viLastAnswers;
+		HandleAreaMenuChoice( amc, answers );
 	}
 	else if( SM == SM_BackFromAlterMenu )
 	{
@@ -2972,7 +2977,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	{
 		float fDelay = StringToFloat( ScreenTextEntry::s_sLastAnswer );
 		if( fDelay >= 0 )
-			GetAppropriateTiming().SetStopAtBeat( GetBeat(), fDelay, true );
+			GetAppropriateTiming().SetDelayAtBeat( GetBeat(), fDelay );
 		SetDirty( true );
 	}
 	else if( SM == SM_BackFromTimeSignatureChange && !ScreenTextEntry::s_bCancelledLast )
@@ -3041,23 +3046,20 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	{
 		if( ScreenTextEntry::s_sLastAnswer.substr(0, 1) == "b" || ScreenTextEntry::s_sLastAnswer.substr(0, 1) == "B" )
 		{
-			GetAppropriateTiming().SetSpeedModeAtBeat( GetBeat(), 0 );
+			GetAppropriateTiming().SetSpeedModeAtBeat( GetBeat(), SpeedSegment::UNIT_BEATS );
 		}
 		else if( ScreenTextEntry::s_sLastAnswer.substr(0, 1) == "s" || ScreenTextEntry::s_sLastAnswer.substr(0, 1) == "S" )
 		{
-			GetAppropriateTiming().SetSpeedModeAtBeat( GetBeat(), 1 );
+			GetAppropriateTiming().SetSpeedModeAtBeat( GetBeat(), SpeedSegment::UNIT_SECONDS );
 		}
 		else
 		{
 			int tmp = StringToInt(ScreenTextEntry::s_sLastAnswer );
-			if( tmp == 0 )
-			{
-				GetAppropriateTiming().SetSpeedModeAtBeat( GetBeat(), 0 );
-			}
-			else
-			{
-				GetAppropriateTiming().SetSpeedModeAtBeat( GetBeat(), 1 );
-			}
+
+			SpeedSegment::BaseUnit unit = (tmp == 0 ) ?
+			  SpeedSegment::UNIT_BEATS : SpeedSegment::UNIT_SECONDS;
+
+			GetAppropriateTiming().SetSpeedModeAtBeat( GetBeat(), unit );
 		}
 		SetDirty( true );
 	}
@@ -3888,6 +3890,9 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 
 void ScreenEdit::HandleAlterMenuChoice(AlterMenuChoice c, const vector<int> &iAnswers, bool bAllowUndo)
 {
+	ASSERT_M(m_NoteFieldEdit.m_iBeginMarker!=-1 && m_NoteFieldEdit.m_iEndMarker!=-1,
+			 "You can only alter a selection of notes with a selection to begin with!");
+	
 	bool bSaveUndo = true;
 	switch (c)
 	{
@@ -3924,14 +3929,19 @@ void ScreenEdit::HandleAlterMenuChoice(AlterMenuChoice c, const vector<int> &iAn
 			break;
 		case copy:
 		{
-			ASSERT( m_NoteFieldEdit.m_iBeginMarker!=-1 && m_NoteFieldEdit.m_iEndMarker!=-1 );
+			
 			m_Clipboard.ClearAll();
 			m_Clipboard.CopyRange( m_NoteDataEdit, m_NoteFieldEdit.m_iBeginMarker, m_NoteFieldEdit.m_iEndMarker );
 		}
 			break;
+		case copy_partial_timing:
+		{
+			this->clipboardTiming = GetAppropriateTiming().CopyRange(m_NoteFieldEdit.m_iBeginMarker,
+																	 m_NoteFieldEdit.m_iEndMarker);
+			break;
+		}
 		case clear:
 		{
-			ASSERT( m_NoteFieldEdit.m_iBeginMarker!=-1 && m_NoteFieldEdit.m_iEndMarker!=-1 );
 			m_NoteDataEdit.ClearRange( m_NoteFieldEdit.m_iBeginMarker, m_NoteFieldEdit.m_iEndMarker );
 		}
 			break;
@@ -4068,20 +4078,17 @@ void ScreenEdit::HandleAlterMenuChoice(AlterMenuChoice c, const vector<int> &iAn
 		}
 			
 		case play:
-			ASSERT( m_NoteFieldEdit.m_iBeginMarker!=-1 && m_NoteFieldEdit.m_iEndMarker!=-1 );
 			m_iStartPlayingAt = m_NoteFieldEdit.m_iBeginMarker;
 			m_iStopPlayingAt = m_NoteFieldEdit.m_iEndMarker;
 			TransitionEditState( STATE_PLAYING );
 			break;
 		case record:
-			ASSERT( m_NoteFieldEdit.m_iBeginMarker!=-1 && m_NoteFieldEdit.m_iEndMarker!=-1 );
 			m_iStartPlayingAt = m_NoteFieldEdit.m_iBeginMarker;
 			m_iStopPlayingAt = m_NoteFieldEdit.m_iEndMarker;
 			TransitionEditState( STATE_RECORDING );
 			break;
 		case preview_designation:
 		{
-			ASSERT( m_NoteFieldEdit.m_iBeginMarker!=-1 && m_NoteFieldEdit.m_iEndMarker!=-1 );
 			float fMarkerStart = GetAppropriateTiming().GetElapsedTimeFromBeat( NoteRowToBeat(m_NoteFieldEdit.m_iBeginMarker) );
 			float fMarkerEnd = GetAppropriateTiming().GetElapsedTimeFromBeat( NoteRowToBeat(m_NoteFieldEdit.m_iEndMarker) );
 			GAMESTATE->m_pCurSong->m_fMusicSampleStartSeconds = fMarkerStart;
@@ -4090,7 +4097,6 @@ void ScreenEdit::HandleAlterMenuChoice(AlterMenuChoice c, const vector<int> &iAn
 		}
 		case convert_to_pause:
 		{
-			ASSERT_M( m_NoteFieldEdit.m_iBeginMarker!=-1 && m_NoteFieldEdit.m_iEndMarker!=-1, "Attempted to convert beats outside the notefield to pauses!" );
 			float fMarkerStart = GetAppropriateTiming().GetElapsedTimeFromBeat( NoteRowToBeat(m_NoteFieldEdit.m_iBeginMarker) );
 			float fMarkerEnd = GetAppropriateTiming().GetElapsedTimeFromBeat( NoteRowToBeat(m_NoteFieldEdit.m_iEndMarker) );
 			
@@ -4113,7 +4119,6 @@ void ScreenEdit::HandleAlterMenuChoice(AlterMenuChoice c, const vector<int> &iAn
 		}
 		case convert_to_delay:
 		{
-			ASSERT_M( m_NoteFieldEdit.m_iBeginMarker!=-1 && m_NoteFieldEdit.m_iEndMarker!=-1, "Attempted to convert beats outside the notefield to pauses!" );
 			float fMarkerStart = GetAppropriateTiming().GetElapsedTimeFromBeat( NoteRowToBeat(m_NoteFieldEdit.m_iBeginMarker) );
 			float fMarkerEnd = GetAppropriateTiming().GetElapsedTimeFromBeat( NoteRowToBeat(m_NoteFieldEdit.m_iEndMarker) );
 			
@@ -4218,6 +4223,7 @@ void ScreenEdit::HandleAlterMenuChoice(AlterMenuChoice c, const vector<int> &iAn
 						TapNote nTap = tn;
 						nTap.pn = nPN;
 						StepsType curType = GAMESTATE->m_pCurSteps[PLAYER_1]->m_StepsType;
+						// TODO: Find a better way to do this.
 						if (curType == StepsType_dance_routine)
 						{
 							nTrack = tracks - t - 1;
@@ -4299,6 +4305,86 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 				m_NoteDataEdit.CopyRange( m_Clipboard, 0, iRowsToCopy, iDestFirstRow );
 			}
 			break;
+		case paste_partial_timing_at_beat:
+		{
+			int firstRow = BeatToNoteRow(GetAppropriatePosition().m_fSongBeat);
+			FOREACH_ENUM(TimingSegmentType, tst)
+			{
+				/* TODO: Maybe wipe out the already there timing data first?
+				 * We need to identify the max row within the timing data first. */
+				for (unsigned i = 0; i < this->clipboardTiming.m_avpTimingSegments[tst].size(); i++)
+				{
+					// TODO: This REALLY needs improving.
+					TimingSegment * org = this->clipboardTiming.m_avpTimingSegments[tst][i];
+					TimingSegment * cpy;
+					
+					switch (tst)
+					{
+						case SEGMENT_BPM:
+						{
+							cpy = new BPMSegment(*(static_cast<BPMSegment *>(org)));
+							break;
+						}
+						case SEGMENT_STOP:
+						{
+							cpy = new StopSegment(*(static_cast<StopSegment *>(org)));
+							break;
+						}
+						case SEGMENT_DELAY:
+						{
+							cpy = new DelaySegment(*(static_cast<DelaySegment *>(org)));
+							break;
+						}
+						case SEGMENT_TIME_SIG:
+						{
+							cpy = new TimeSignatureSegment(*(static_cast<TimeSignatureSegment *>(org)));
+							break;
+						}
+						case SEGMENT_WARP:
+						{
+							cpy = new WarpSegment(*(static_cast<WarpSegment *>(org)));
+							break;
+						}
+						case SEGMENT_LABEL:
+						{
+							cpy = new LabelSegment(*(static_cast<LabelSegment *>(org)));
+							break;
+						}
+						case SEGMENT_TICKCOUNT:
+						{
+							cpy = new TickcountSegment(*(static_cast<TickcountSegment *>(org)));
+							break;
+						}
+						case SEGMENT_COMBO:
+						{
+							cpy = new ComboSegment(*(static_cast<ComboSegment *>(org)));
+							break;
+						}
+						case SEGMENT_SPEED:
+						{
+							cpy = new SpeedSegment(*(static_cast<SpeedSegment *>(org)));
+							break;
+						}
+						case SEGMENT_SCROLL:
+						{
+							cpy = new ScrollSegment(*(static_cast<ScrollSegment *>(org)));
+							break;
+						}
+						case SEGMENT_FAKE:
+						{
+							cpy = new FakeSegment(*(static_cast<FakeSegment *>(org)));
+							break;
+						}
+						default: FAIL_M(ssprintf("An unknown timing segment type %d can't be copied over!", tst));
+					}
+					int oldRow = cpy->GetRow();
+					int newRow = oldRow + firstRow;
+					cpy->SetRow(newRow);
+					GetAppropriateTiming().AddSegment(tst, cpy);
+				}
+			}
+			break;
+		}
 		case insert_and_shift:
 			NoteDataUtil::InsertRows( m_NoteDataEdit, BeatToNoteRow( GetBeat() ), BeatToNoteRow(1) );
 			break;
@@ -4576,7 +4662,7 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 		break;
 	case time_signature:
 	{
-		TimeSignatureSegment * ts = GetAppropriateTiming().GetTimeSignatureSegmentAtBeat( GetBeat() );
+		const TimeSignatureSegment *ts = GetAppropriateTiming().GetTimeSignatureSegmentAtBeat( GetBeat() );
 		ScreenTextEntry::TextEntry(
 			SM_BackFromTimeSignatureChange,
 			ENTER_TIME_SIGNATURE_VALUE,
@@ -4595,7 +4681,7 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 		break;
 	case combo:
 	{
-		ComboSegment *cs = GetAppropriateTiming().GetComboSegmentAtBeat(GetBeat());
+		const ComboSegment *cs = GetAppropriateTiming().GetComboSegmentAtBeat(GetBeat());
 		ScreenTextEntry::TextEntry(SM_BackFromComboChange,
 								   ENTER_COMBO_VALUE,
 								   ssprintf( "%d/%d",
@@ -4640,7 +4726,7 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 		ScreenTextEntry::TextEntry(
 		   SM_BackFromSpeedWaitChange,
 		   ENTER_SPEED_WAIT_VALUE,
-		   ssprintf( "%.6f", GetAppropriateTiming().GetSpeedSegmentAtBeat( GetBeat() )->GetLength() ),
+		   ssprintf( "%.6f", GetAppropriateTiming().GetSpeedSegmentAtBeat( GetBeat() )->GetDelay() ),
 		   10
 		   );
 		break;
@@ -4665,20 +4751,20 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 			);
 			break;
 		}
-	case copy_timing:
+	case copy_full_timing:
 	{
-		clipboardTiming = GetAppropriateTiming();
+		clipboardFullTiming = GetAppropriateTiming();
 		break;
 	}
-	case paste_timing:
+	case paste_full_timing:
 	{
 		if (GAMESTATE->m_bIsUsingStepTiming)
 		{
-			GAMESTATE->m_pCurSteps[PLAYER_1]->m_Timing = clipboardTiming;
+			GAMESTATE->m_pCurSteps[PLAYER_1]->m_Timing = clipboardFullTiming;
 		}
 		else
 		{
-			GAMESTATE->m_pCurSong->m_SongTiming = clipboardTiming;
+			GAMESTATE->m_pCurSong->m_SongTiming = clipboardFullTiming;
 		}
 		SetDirty(true);
 		break;
@@ -4903,15 +4989,14 @@ void ScreenEdit::ClearUndo()
 }
 
 static LocalizedString CREATES_MORE_THAN_NOTES	( "ScreenEdit", "This change creates more than %d notes in a measure." );
-static LocalizedString MORE_THAN_NOTES		( "ScreenEdit", "More than %d notes per measure is not allowed.  This change has been reverted." );
 static LocalizedString CREATES_NOTES_PAST_END	( "ScreenEdit", "This change creates notes past the end of the music and is not allowed." );
 static LocalizedString CHANGE_REVERTED		( "ScreenEdit", "The change has been reverted." );
 void ScreenEdit::CheckNumberOfNotesAndUndo()
 {
 	if( EDIT_MODE.GetValue() != EditMode_Home )
 		return;
-	
-	TimeSignatureSegment * curTime = GAMESTATE->m_pCurSong->m_SongTiming.GetTimeSignatureSegmentAtBeat( GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat );
+
+	const TimeSignatureSegment * curTime = GAMESTATE->m_pCurSong->m_SongTiming.GetTimeSignatureSegmentAtBeat( GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat );
 	int rowsPerMeasure = curTime->GetDen() * curTime->GetNum();
 
 	for( int row=0; row<=m_NoteDataEdit.GetLastRow(); row+=rowsPerMeasure )
@@ -4919,14 +5004,6 @@ void ScreenEdit::CheckNumberOfNotesAndUndo()
 		int iNumNotesThisMeasure = 0;
 		FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( m_NoteDataEdit, r, row, row+rowsPerMeasure )
 			iNumNotesThisMeasure += m_NoteDataEdit.GetNumTapNonEmptyTracks( r );
-		if( iNumNotesThisMeasure > MAX_NOTES_PER_MEASURE )
-		{
-			Undo();
-			m_bHasUndo = false;
-			RString sError = ssprintf( CREATES_MORE_THAN_NOTES.GetValue() + "\n\n" + MORE_THAN_NOTES.GetValue(), MAX_NOTES_PER_MEASURE, MAX_NOTES_PER_MEASURE );
-			ScreenPrompt::Prompt( SM_None, sError );
-			return;
-		}
 	}
 
 	if( GAMESTATE->m_pCurSteps[0]->IsAnEdit() )

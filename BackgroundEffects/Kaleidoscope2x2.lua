@@ -1,7 +1,7 @@
--- 4 repeats of the same file in a kaleidoscope fashion.
-local cColor1 = color(Var "Color1");
+local Color1 = color(Var "Color1");
+
 local a = LoadActor(Var "File1") .. {
-	OnCommand=cmd(scaletoclipped,SCREEN_WIDTH,SCREEN_HEIGHT;diffuse,cColor1;zoomx,self:GetZoomX()*-1;zoomy,self:GetZoomY()*-1);
+	OnCommand=cmd(cropto,SCREEN_WIDTH/2,SCREEN_HEIGHT/2;diffuse,Color1;zoomx,self:GetZoomX()*-1;zoomy,self:GetZoomY()*-1;effectclock,"music");
 	GainFocusCommand=cmd(play);
 	LoseFocusCommand=cmd(pause);
 };

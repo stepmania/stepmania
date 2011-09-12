@@ -25,9 +25,8 @@ Color = {
     Saturation(hInput)
     Alpha(hInput)
     HSV(iHue,fSaturation,fValue or any other overload) --]]
-	Alpha = function(cColor,fAlpha)
-		local c = cColor;
-		return { c[1],c[2],c[3],fAlpha };
+	Alpha = function(c, fAlpha)
+		return { c[1],c[2],c[3], fAlpha }
 	end
 }
 
@@ -38,8 +37,8 @@ setmetatable(Color, { __call = function(self, c) return self[c] end })
 
 GameColor = {
 	PlayerColors = {
-		PLAYER_1	= color("#ef403d"),
-		PLAYER_2	= color("#0089cf"),
+		PLAYER_1 = color("#ef403d"),
+		PLAYER_2 = color("#0089cf"),
 	},
 	Difficulty = {
 		--[[ These are for 'Custom' Difficulty Ranks. It can be very  useful
@@ -91,11 +90,12 @@ GameColor = {
 		JudgmentLine_Miss	= color("#ff3c3c"),
 		JudgmentLine_MaxCombo	= color("#ffc600")
 	},
-};
-GameColor.Difficulty["Crazy"] = GameColor.Difficulty["Hard"];
-GameColor.Difficulty["Freestyle"] = GameColor.Difficulty["Easy"];
-GameColor.Difficulty["Nightmare"] = GameColor.Difficulty["Challenge"];
-GameColor.Difficulty["HalfDouble"] = GameColor.Difficulty["Medium"];
+}
+
+GameColor.Difficulty["Crazy"] = GameColor.Difficulty["Hard"]
+GameColor.Difficulty["Freestyle"] = GameColor.Difficulty["Easy"]
+GameColor.Difficulty["Nightmare"] = GameColor.Difficulty["Challenge"]
+GameColor.Difficulty["HalfDouble"] = GameColor.Difficulty["Medium"]
 
 --[[ Fallbacks ]]
 function BoostColor( cColor, fBoost )
@@ -116,21 +116,13 @@ function ColorDarkTone(c)
 end
 
 function PlayerColor( pn )
-	if pn == PLAYER_1 then
-		return color("#ef403d") -- pink-red
-	end
-	if pn == PLAYER_2 then
-		return color("#0089cf") -- sea-blue
-	end
+	if pn == PLAYER_1 then return color("#ef403d") end -- pink-red
+	if pn == PLAYER_2 then return color("#0089cf") end -- sea-blue
 	return color("1,1,1,1")
 end
 function PlayerScoreColor( pn )
-	if pn == PLAYER_1 then
-		return color("#ef403d") -- pink-red
-	end
-	if pn == PLAYER_2 then
-		return color("#0089cf") -- sea-blue
-	end
+	if pn == PLAYER_1 then return color("#ef403d") end -- pink-red
+	if pn == PLAYER_2 then return color("#0089cf") end -- sea-blue
 	return color("1,1,1,1")
 end
 
@@ -153,11 +145,7 @@ function StepsOrTrailToColor(StepsOrTrail)
 end
 
 function StageToColor( stage )
-	local c = GameColor.Stage[stage]
-	if c then
-		return c
-	end
-	return color("#000000")
+	return GameColor.Stage[stage] or color("#000000")
 end
 
 function StageToStrokeColor( stage )
@@ -166,11 +154,7 @@ function StageToStrokeColor( stage )
 end
 
 function JudgmentLineToColor( i )
-	local c = GameColor.Judgment[i]
-	if c then
-		return c
-	end
-	return color("#000000")
+	return GameColor.Judgment[i] or color("#000000")
 end
 
 function JudgmentLineToStrokeColor( i )

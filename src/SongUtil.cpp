@@ -972,10 +972,9 @@ void SongUtil::GetPlayableStepsTypes( const Song *pSong, set<StepsType> &vOut )
 		int iNumPlayers = GAMESTATE->GetNumPlayersEnabled();
 		iNumPlayers = max( iNumPlayers, 1 );
 
-		const Style *pStyle = GAMEMAN->GetFirstCompatibleStyle( GAMESTATE->m_pCurGame, iNumPlayers, *st );
 		bool bEnoughStages = GAMESTATE->IsAnExtraStage() || 
 			GAMESTATE->GetSmallestNumStagesLeftForAnyHumanPlayer() >= 
-			GAMESTATE->GetNumStagesForSongAndStyleType(pSong, pStyle->m_StyleType);
+			GAMESTATE->GetNumStagesMultiplierForSong(pSong);
 
 		if( bShowThisStepsType && bEnoughStages )
 			vOut.insert( *st );

@@ -1,0 +1,2 @@
+base color: border darkest
+fill: border darkest 40% op

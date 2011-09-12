@@ -32,6 +32,18 @@
 
 #include <algorithm>
 
+/* register DisplayBPM with StringConversion */
+#include "EnumHelper.h"
+
+static const char *DisplayBPMNames[] =
+{
+	"Actual",
+	"Specified",
+	"Random",
+};
+XToString( DisplayBPM );
+LuaXType( DisplayBPM );
+
 Steps::Steps(): m_StepsType(StepsType_Invalid), 
 	parent(NULL), m_pNoteData(new NoteData), m_bNoteDataIsFilled(false), 
 	m_sNoteDataCompressed(""), m_sFilename(""), m_bSavedToDisk(false), 
@@ -486,7 +498,7 @@ void Steps::SetMeter( int meter )
 
 bool Steps::HasSignificantTimingChanges() const
 {
-	if( m_Timing.HasStops() )
+	if( m_Timing.HasStops() || m_Timing.HasDelays() )
 		return true;
 	
 	/* TODO: Deal with DisplayBPM here...if possible?
@@ -536,14 +548,11 @@ public:
 		lua_pushboolean(L, p->HasSignificantTimingChanges()); 
 		return 1; 
 	}
-	
 	static int HasAttacks( T* p, lua_State *L )
 	{ 
 		lua_pushboolean(L, p->HasAttacks()); 
 		return 1; 
 	}
-	
-	
 	static int GetRadarValues( T* p, lua_State *L )
 	{
 		PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);
@@ -551,16 +560,14 @@ public:
 		rv.PushSelf(L);
 		return 1;
 	}
-
 	static int GetTimingData( T* p, lua_State *L )
 	{
 		p->m_Timing.PushSelf(L);
 		return 1;
 	}
-
 	static int GetHash( T* p, lua_State *L ) { lua_pushnumber( L, p->GetHash() ); return 1; }
-
 	// untested
+	/*
 	static int GetSMNoteData( T* p, lua_State *L )
 	{
 		RString out;
@@ -568,13 +575,12 @@ public:
 		lua_pushstring( L, out );
 		return 1;
 	}
-	
+	*/
 	static int GetChartName(T *p, lua_State *L)
 	{
 		lua_pushstring(L, p->GetChartName());
 		return 1;
 	}
-	
 	static int GetDisplayBpms( T* p, lua_State *L )
 	{
 		DisplayBpms temp;
@@ -606,6 +612,12 @@ public:
 		lua_pushboolean( L, p->GetDisplayBPM() == DISPLAY_BPM_RANDOM );
 		return 1;
 	}
+	DEFINE_METHOD( PredictMeter, PredictMeter() )
+	static int GetDisplayBPMType( T* p, lua_State *L )
+	{
+		LuaHelpers::Push( L, p->GetDisplayBPM() );
+		return 1;
+	}
 
 	LunaSteps()
 	{
@@ -631,6 +643,8 @@ public:
 		ADD_METHOD( IsDisplayBpmSecret );
 		ADD_METHOD( IsDisplayBpmConstant );
 		ADD_METHOD( IsDisplayBpmRandom );
+		ADD_METHOD( PredictMeter );
+		ADD_METHOD( GetDisplayBPMType );
 	}
 };
 

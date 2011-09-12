@@ -54,14 +54,6 @@
 	; I think it may need actual admin privs for writing to the registry... -aj
 	;RequestExecutionLevel user
 
-	;GetVersion::WindowsServicePackMajor
-	;Pop $R0
-	;${If} $R0 >= 6
-	;	vista & 7
-	;${Else}
-	;	xp and below
-	;${EndIf}
-
 	InstallDir "$PROGRAMFILES\${PRODUCT_ID}"
 	InstallDirRegKey HKEY_LOCAL_MACHINE "SOFTWARE\${PRODUCT_ID}" ""
 
@@ -96,9 +88,6 @@
 !endif
 
 	!insertmacro MUI_PAGE_WELCOME
-
-	; include various Windows-only notices
-	!insertmacro MUI_PAGE_LICENSE ".\Docs\WindowsNotes.txt"
 
 	;!insertmacro MUI_PAGE_COMPONENTS
 	!insertmacro MUI_PAGE_DIRECTORY
@@ -318,8 +307,13 @@ Section "Main Section" SecMain
 	RMDir /r "$INSTDIR\NoteSkins\pump\cmd-routine-p2"
 	RMDir /r "$INSTDIR\NoteSkins\pump\complex"
 	RMDir /r "$INSTDIR\NoteSkins\pump\default"
+	RMDir /r "$INSTDIR\NoteSkins\pump\delta"
+	RMDir /r "$INSTDIR\NoteSkins\pump\delta-note"
+	RMDir /r "$INSTDIR\NoteSkins\pump\delta-routine-p1"
+	RMDir /r "$INSTDIR\NoteSkins\pump\delta-routine-p2"
 	RMDir /r "$INSTDIR\NoteSkins\pump\frame5p"
 	RMDir /r "$INSTDIR\NoteSkins\pump\newextra"
+	RMDir /r "$INSTDIR\NoteSkins\pump\pad"
 	RMDir /r "$INSTDIR\NoteSkins\pump\rhythm"
 	RMDir /r "$INSTDIR\NoteSkins\pump\simple"
 	; kb7
@@ -364,6 +358,10 @@ Section "Main Section" SecMain
 	File /r /x CVS /x .svn "NoteSkins\pump\cmd-routine-p2"
 	File /r /x CVS /x .svn "NoteSkins\pump\complex"
 	File /r /x CVS /x .svn "NoteSkins\pump\default"
+	File /r /x CVS /x .svn "NoteSkins\pump\delta"
+	File /r /x CVS /x .svn "NoteSkins\pump\delta-note"
+	File /r /x CVS /x .svn "NoteSkins\pump\delta-routine-p1"
+	File /r /x CVS /x .svn "NoteSkins\pump\delta-routine-p2"
 	File /r /x CVS /x .svn "NoteSkins\pump\frame5p"
 	File /r /x CVS /x .svn "NoteSkins\pump\newextra"
 	File /r /x CVS /x .svn "NoteSkins\pump\rhythm"
@@ -672,6 +670,12 @@ FunctionEnd
 
 Function .onInit
 
+	nsisos::osversion
+	${If} $R0 >= 6
+		;vista & win7
+		StrCpy $INSTDIR "%HOMEPATH%\${PRODUCT_ID}"
+	${EndIf}
+
 	; Force show language selection for debugging
 	;!define MUI_LANGDLL_ALWAYSSHOW
 	!insertmacro MUI_LANGDLL_DISPLAY
@@ -767,6 +771,10 @@ Section "Uninstall"
 	RMDir /r "$INSTDIR\NoteSkins\pump\cmd-routine-p2"
 	RMDir /r "$INSTDIR\NoteSkins\pump\complex"
 	RMDir /r "$INSTDIR\NoteSkins\pump\default"
+	RMDir /r "$INSTDIR\NoteSkins\pump\delta"
+	RMDir /r "$INSTDIR\NoteSkins\pump\delta-note"
+	RMDir /r "$INSTDIR\NoteSkins\pump\delta-routine-p1"
+	RMDir /r "$INSTDIR\NoteSkins\pump\delta-routine-p2"
 	RMDir /r "$INSTDIR\NoteSkins\pump\frame5p"
 	RMDir /r "$INSTDIR\NoteSkins\pump\newextra"
 	RMDir /r "$INSTDIR\NoteSkins\pump\rhythm"

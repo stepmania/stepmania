@@ -21,13 +21,13 @@ end;
 local function CreatePaneDisplayItem( _pnPlayer, _sLabel, _rcRadarCategory )
 	return Def.ActorFrame {
 		LoadFont("Common Normal") .. {
-			Text=_sLabel;
+			Text=string.upper( THEME:GetString("PaneDisplay",_sLabel) );
 			InitCommand=cmd(horizalign,left);
 			OnCommand=cmd(zoom,0.5;diffuse,color("0.9,0.9,0.9");shadowlength,1);
 		};
 		LoadFont("Common Normal") .. {
 			Text="000";
-			InitCommand=cmd(x,32+8+4;horizalign,left);
+			InitCommand=cmd(x,32+8+8;horizalign,left);
 			OnCommand=cmd(zoom,0.5;shadowlength,1);
 			CurrentSongChangedMessageCommand=cmd(playcommand,"Set");
 			CurrentStepsP1ChangedMessageCommand=cmd(playcommand,"Set");
@@ -107,29 +107,29 @@ end;
 --[[ Numbers ]]
 t[#t+1] = Def.ActorFrame {
 	-- Left 
-	CreatePaneDisplayItem( iPN, "TAPS", 'RadarCategory_TapsAndHolds' ) .. {
+	CreatePaneDisplayItem( iPN, "Taps", 'RadarCategory_TapsAndHolds' ) .. {
 		InitCommand=cmd(x,-128+16+8;y,-14);
 	};
-	CreatePaneDisplayItem( iPN, "JUMPS", 'RadarCategory_Jumps' ) .. {
+	CreatePaneDisplayItem( iPN, "Jumps", 'RadarCategory_Jumps' ) .. {
 		InitCommand=cmd(x,-128+16+8;y,-14+16);
 	};
-	CreatePaneDisplayItem( iPN, "HOLDS", 'RadarCategory_Holds' ) .. {
+	CreatePaneDisplayItem( iPN, "Holds", 'RadarCategory_Holds' ) .. {
 		InitCommand=cmd(x,-128+16+8;y,-14+16*2);
 	};
-	CreatePaneDisplayItem( iPN, "MINES", 'RadarCategory_Mines' ) .. {
+	CreatePaneDisplayItem( iPN, "Mines", 'RadarCategory_Mines' ) .. {
 		InitCommand=cmd(x,-128+16+8;y,-14+16*3);
 	};
 	-- Center
-	CreatePaneDisplayItem( iPN, "HANDS", 'RadarCategory_Hands' ) .. {
+	CreatePaneDisplayItem( iPN, "Hands", 'RadarCategory_Hands' ) .. {
 		InitCommand=cmd(x,-128+16+8+74;y,-14);
 	};
-	CreatePaneDisplayItem( iPN, "ROLLS", 'RadarCategory_Rolls' ) .. {
+	CreatePaneDisplayItem( iPN, "Rolls", 'RadarCategory_Rolls' ) .. {
 		InitCommand=cmd(x,-128+16+8+74;y,-14+16);
 	};
-	CreatePaneDisplayItem( iPN, "LIFTS", 'RadarCategory_Lifts' ) .. {
+	CreatePaneDisplayItem( iPN, "Lifts", 'RadarCategory_Lifts' ) .. {
 		InitCommand=cmd(x,-128+16+8+74;y,-14+16*2);
 	};
-	CreatePaneDisplayItem( iPN, "FAKES", 'RadarCategory_Fakes' ) .. {
+	CreatePaneDisplayItem( iPN, "Fakes", 'RadarCategory_Fakes' ) .. {
 		InitCommand=cmd(x,-128+16+8+74;y,-14+16*3);
 	};
 	-- Right

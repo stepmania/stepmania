@@ -16,11 +16,10 @@ struct lua_State;
 class Style;
 class Game;
 
-const int MAX_EDIT_COURSE_TITLE_LENGTH = 12;
+const int MAX_EDIT_COURSE_TITLE_LENGTH = 16;
 
 inline PlayMode CourseTypeToPlayMode( CourseType ct ) { return (PlayMode)(PLAY_MODE_NONSTOP+ct); }
 inline CourseType PlayModeToCourseType( PlayMode pm ) { return (CourseType)(pm-PLAY_MODE_NONSTOP); }
-
 
 enum SongSort
 {
@@ -162,6 +161,7 @@ public:
 	RString	m_sMainTitle, m_sMainTitleTranslit;
 	RString	m_sSubTitle, m_sSubTitleTranslit;
 	RString m_sScripter;
+	RString m_sDescription;
 
 	RString	m_sBannerPath;
 	RString	m_sBackgroundPath;
@@ -190,7 +190,7 @@ public:
 	{
 		Trail trail;
 		bool null;
-		
+
 		CacheData(): trail(), null(false) {}
 	};
 	typedef map<CacheEntry, CacheData> TrailCache_t;

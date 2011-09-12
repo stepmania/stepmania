@@ -44,8 +44,6 @@ private:
 	int			m_iLivesLeft;			// dead when 0
 	int			m_iTrailingLivesLeft;	// lags m_iLivesLeft
 
-	float		m_fBatteryBlinkTime;	// if > 0 battery is blinking
-
 	ThemeMetric<float> BATTERY_BLINK_TIME;
 	ThemeMetric<TapNoteScore>	MIN_SCORE_TO_KEEP_LIFE;
 	ThemeMetric<int>	DANGER_THRESHOLD;
@@ -56,7 +54,7 @@ private:
 	ThemeMetric<RString> LIVES_FORMAT;
 
 	AutoActor	m_sprFrame;
-	Sprite		m_sprBattery;
+	AutoActor	m_sprBattery;
 	BitmapText	m_textNumLives;
 
 	PercentageDisplay	m_Percent;

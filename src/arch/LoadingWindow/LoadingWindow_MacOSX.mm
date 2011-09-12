@@ -62,9 +62,9 @@
 	
 	windowRect = NSMakeRect( 0, 0, size.width, size.height + height + progressHeight);
 	m_Window = [[NSWindow alloc] initWithContentRect:windowRect
-					       styleMask:NSTitledWindowMask
-						 backing:NSBackingStoreBuffered
-						   defer:YES];
+							styleMask:NSTitledWindowMask
+							backing:NSBackingStoreBuffered
+							defer:YES];
 	
 	NSView *view = [m_Window contentView];
 	

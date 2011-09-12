@@ -1,29 +1,29 @@
 -- Convenience aliases:
-left = "HorizAlign_Left";
-center = "HorizAlign_Center";
-right = "HorizAlign_Right";
-top = "VertAlign_Top";
-middle = "VertAlign_Middle";
-bottom = "VertAlign_Bottom";
+left = "HorizAlign_Left"
+center = "HorizAlign_Center"
+right = "HorizAlign_Right"
+top = "VertAlign_Top"
+middle = "VertAlign_Middle"
+bottom = "VertAlign_Bottom"
 
 function Actor:ease(t, fEase)
 	-- Optimizations:
 	-- fEase = -100 is equivalent to TweenType_Accelerate.
 	if fEase == -100 then
-		self:accelerate(t);
-		return;
+		self:accelerate(t)
+		return
 	end
 
 	-- fEase = 0 is equivalent to TweenType_Linear.
 	if fEase == 0 then
-		self:linear(t);
-		return;
+		self:linear(t)
+		return
 	end
 
 	-- fEase = +100 is equivalent to TweenType_Decelerate.
 	if fEase == 100 then
-		self:decelerate(t);
-		return;
+		self:decelerate(t)
+		return
 	end
 
 	self:tween( t, "TweenType_Bezier",
@@ -33,7 +33,7 @@ function Actor:ease(t, fEase)
 			scale(fEase, -100, 100, 1/3, 3/3),
 			1
 		}
-	);
+	)
 end
 -- Notes On Beziers --
 -- They can be 1D ( Quadratic ) or 2D ( Bezier )
@@ -51,7 +51,7 @@ local BounceBeginBezier =
 	1, 1
 }
 function Actor:bouncebegin(t)
-	self:tween( t, "TweenType_Bezier", BounceBeginBezier );
+	self:tween( t, "TweenType_Bezier", BounceBeginBezier )
 end
 
 local BounceEndBezier =
@@ -62,7 +62,7 @@ local BounceEndBezier =
 	1, 1
 }
 function Actor:bounceend(t)
-	self:tween( t, "TweenType_Bezier", BounceEndBezier );
+	self:tween( t, "TweenType_Bezier", BounceEndBezier )
 end
 
 local SmoothBezier =
@@ -70,7 +70,7 @@ local SmoothBezier =
 	0, 0, 1, 1
 }
 function Actor:smooth(t)
-	self:tween( t, "TweenType_Bezier", SmoothBezier );
+	self:tween( t, "TweenType_Bezier", SmoothBezier )
 end
 -- SSC Additions
 local DropBezier =
@@ -81,7 +81,7 @@ local DropBezier =
 	1	,	1,
 }
 function Actor:drop(t)
-	self:tween( t, "TweenType_Bezier", DropBezier );
+	self:tween( t, "TweenType_Bezier", DropBezier )
 end
 
 -- compound tweens "combine multiple interpolators to allow generating more
@@ -133,9 +133,9 @@ function Actor:player(p)
 end
 
 function ActorFrame:propagatecommand(...)
-	self:propagate(1);
-	self:playcommand(...);
-	self:propagate(0);
+	self:propagate(1)
+	self:playcommand(...)
+	self:propagate(0)
 end
 
 -- Shortcut for alignment.
@@ -143,12 +143,12 @@ end
 --   cmd(align,0.0,0.0)  -- align top-left
 --   cmd(align,0.5,0.0)  -- align top-center
 function Actor:align(h, v)
-	self:halign( h );
-	self:valign( v );
+	self:halign( h )
+	self:valign( v )
 end
 
 function Actor:FullScreen()
-	self:stretchto( 0,0,SCREEN_WIDTH,SCREEN_HEIGHT );
+	self:stretchto( 0,0,SCREEN_WIDTH,SCREEN_HEIGHT )
 end
 
 --[[ Typical background sizes:
@@ -166,10 +166,10 @@ function Actor:scale_or_crop_background()
 
 	if graphicAspect == displayAspect then
 		-- bga matches the current aspect, we can stretch it.
-		self:stretchto( 0,0,SCREEN_WIDTH,SCREEN_HEIGHT );
+		self:stretchto( 0,0,SCREEN_WIDTH,SCREEN_HEIGHT )
 	else
 		-- temp
-		self:scaletocover( 0,0,SCREEN_WIDTH,SCREEN_HEIGHT );
+		self:scaletocover( 0,0,SCREEN_WIDTH,SCREEN_HEIGHT )
 		--[[
 		-- bga doesn't match the aspect.
 		if displayAspect > graphicAspect then
@@ -197,6 +197,24 @@ function Actor:bezier(...)
    self:tween(a[2], "TweenMode_Bezier", b)
 end	 
 
+-- formerly in 02 HelpDisplay.lua, although nothing uses it:
+function HelpDisplay:setfromsongorcourse()
+	local Artists = {}
+	local AltArtists = {}
+
+	local Song = GAMESTATE:GetCurrentSong()
+	local Trail = GAMESTATE:GetCurrentTrail( GAMESTATE:GetMasterPlayerNumber() )
+	if Song then
+		table.insert( Artists, Song:GetDisplayArtist() )
+		table.insert( AltArtists, Song:GetTranslitArtist() )
+	elseif Trail then
+		Artists, AltArtists = Trail:GetArtists()
+	end
+
+	self:settips( Artists, AltArtists )
+end
+
+
 -- (c) 2006 Glenn Maynard
 -- All rights reserved.
 --
@@ -219,4 +237,3 @@ end
 -- OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
 -- OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
 -- PERFORMANCE OF THIS SOFTWARE.
-

@@ -9,52 +9,17 @@ function Actor:hidden(bHide)
 	self:visible(not bHide)
 end
 
--- for when horizalign and vertalign get killed by glenn:
---[[
-function Actor:horizalign(v)
-	local values = {
-		left = 0,
-		center = 0.5,
-		right = 1
-	}
-	self:halign(values[v])
-end
-
-function Actor:vertalign(v)
-	local values = {
-		top = 0,
-		middle = 0.5,
-		bottom = 1
-	}
-	self:valign(values[v])
-end
---]]
-
 --[[ ActorScroller: all of these got renamed, so alias the lowercase ones if
 things are going to look for them. ]]
-function ActorScroller:getsecondtodestination()
-	self:GetSecondsToDestination()
-end
+ActorScroller.getsecondtodestination = ActorScroller.GetSecondsToDestination
+ActorScroller.setsecondsperitem = ActorScroller.SetSecondsPerItem
+ActorScroller.setnumsubdivisions = ActorScroller.SetNumSubdivisions
+ActorScroller.scrollthroughallitems = ActorScroller.ScrollThroughAllItems
+ActorScroller.scrollwithpadding = ActorScroller.ScrollWithPadding
+ActorScroller.setfastcatchup = ActorScroller.SetFastCatchup
 
-function ActorScroller:setsecondsperitem(secs)
-	self:SetSecondsPerItem(secs)
-end
-
-function ActorScroller:setnumsubdivisions(subs)
-	self:SetNumSubdivisions(subs)
-end
-
-function ActorScroller:scrollthroughallitems()
-	self:ScrollThroughAllItems()
-end
-
-function ActorScroller:scrollwithpadding(fPadStart,fPadEnd)
-	self:ScrollWithPadding(fPadStart,fPadEnd)
-end
-
-function ActorScroller:setfastcatchup(bFastCatchup)
-	self:SetFastCatchup(bFastCatchup)
-end
+--[[ MenuTimer: just some case changes. ]]
+MenuTimer.setseconds = MenuTimer.SetSeconds
 
 --[[ GameState ]]
 --Aliases for old GAMESTATE timing functions.
@@ -65,3 +30,17 @@ function GameState:GetSongBeatNoOffset() return self:GetSongPosition():GetSongBe
 function GameState:GetSongBPS() return self:GetSongPosition():GetCurBPS() end
 function GameState:GetSongDelay() return self:GetSongPosition():GetDelay() end
 function GameState:GetSongFreeze() return self:GetSongPosition():GetFreeze() end
+
+--[[ 3.9 Conditionals ]]
+Condition = {
+	Hour = function() return Hour() end,
+	IsDemonstration = function() return GAMESTATE:IsDemonstration() end,
+	CurSong = function(sSongName)
+		return GAMESTATE:GetCurrentSong():GetDisplayMainTitle() == sSongName
+	end,
+	DayOfMonth = function() return DayOfMonth() end,
+	MonthOfYear = function() return MonthOfYear() end,
+	UsingModifier = function(pnPlayer, sModifier)
+		return GAMESTATE:PlayerIsUsingModifier( pnPlayer, sModifier );
+	end,
+}

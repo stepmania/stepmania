@@ -151,7 +151,7 @@ void Profile::InitGeneralData()
 	ZERO( m_iNumStagesPassedByPlayMode );
 	ZERO( m_iNumStagesPassedByGrade );
 
-	m_UserData.Unset();
+	m_UserTable.Unset();
 }
 
 void Profile::InitSongScores()
@@ -1160,16 +1160,16 @@ XNode* Profile::SaveGeneralDataCreateNode() const
 		}
 	}
 
-	// Load Lua UserData from profile
-	if( !IsMachine() && m_UserData.IsSet() )
+	// Load Lua UserTable from profile
+	if( !IsMachine() && m_UserTable.IsSet() )
 	{
 		Lua *L = LUA->Get();
-		m_UserData.PushSelf( L );
+		m_UserTable.PushSelf( L );
 		XNode* pUserTable = XmlFileUtil::XNodeFromTable( L );
 		LUA->Release( L );
 
 		// XXX: XNodeFromTable returns a root node with the name "Layer".
-		pUserTable->m_sName = "UserData";
+		pUserTable->m_sName = "UserTable";
 		pGeneralDataNode->AppendChild( pUserTable );
 	}
 
@@ -1348,17 +1348,17 @@ void Profile::LoadGeneralDataFromNode( const XNode* pNode )
 	// Build the custom data table from the existing XNode.
 	if( !IsMachine() )
 	{
-		const XNode *pUserData = pNode->GetChild( "UserData" );
+		const XNode *pUserTable = pNode->GetChild( "UserTable" );
 
 		Lua *L = LUA->Get();
 
 		// If we have custom data, load it. Otherwise, make a blank table.
-		if( pUserData )
-			LuaHelpers::CreateTableFromXNode( L, pUserData );
+		if( pUserTable )
+			LuaHelpers::CreateTableFromXNode( L, pUserTable );
 		else
 			lua_newtable( L );
 
-		m_UserData.SetFromStack( L );
+		m_UserTable.SetFromStack( L );
 		LUA->Release( L );
 	}
 
@@ -2034,7 +2034,7 @@ public:
 	static int GetTotalMines( T* p, lua_State *L )		{ lua_pushnumber(L, p->m_iTotalMines ); return 1; }
 	static int GetTotalHands( T* p, lua_State *L )		{ lua_pushnumber(L, p->m_iTotalHands ); return 1; }
 	static int GetTotalLifts( T* p, lua_State *L )		{ lua_pushnumber(L, p->m_iTotalLifts ); return 1; }
-	static int GetUserData( T* p, lua_State *L )		{ p->m_UserData.PushSelf(L); return 1; }
+	static int GetUserTable( T* p, lua_State *L )		{ p->m_UserTable.PushSelf(L); return 1; }
 
 	LunaProfile()
 	{
@@ -2081,7 +2081,7 @@ public:
 		ADD_METHOD( GetTotalMines );
 		ADD_METHOD( GetTotalHands );
 		ADD_METHOD( GetTotalLifts );
-		ADD_METHOD( GetUserData );
+		ADD_METHOD( GetUserTable );
 	}
 };
 

@@ -270,9 +270,7 @@ void ArchHooks::MountInitialFilesystems( const RString &sDirOfExecutable )
 	FILEMAN->Mount( "dir", "/proc", "/proc" );
 #endif
 	
-	/*
-	 * Next: path to write general mutable user data.
-	 *
+	/* Next: path to write general mutable user data.
 	 * Lowercase the PRODUCT_ID; dotfiles and directories are almost always lowercase.
 	 */
 	const char *szHome = getenv( "HOME" );
@@ -294,7 +292,7 @@ void ArchHooks::MountInitialFilesystems( const RString &sDirOfExecutable )
 		Root = RageFileManagerUtil::sInitialWorkingDirectory;
 	else
 		RageException::Throw( "%s", COULDNT_FIND_SONGS.GetValue().c_str() );
-			
+
 	FILEMAN->Mount( "dir", Root, "/" );
 }
 

@@ -86,11 +86,9 @@ int CourseEntry::GetNumModChanges() const
 }
 
 
-
-
 Course::Course(): m_bIsAutogen(false), m_sPath(""), m_sMainTitle(""),
 	m_sMainTitleTranslit(""), m_sSubTitle(""), m_sSubTitleTranslit(""),
-	m_sScripter(""), m_sBannerPath(""), m_sBackgroundPath(""),
+	m_sScripter(""), m_sDescription(""), m_sBannerPath(""), m_sBackgroundPath(""),
 	m_sCDTitlePath(""), m_sGroupName(""), m_bRepeat(false), m_fGoalSeconds(0), 
 	m_bShuffle(false), m_iLives(-1), m_bSortByMeter(false),
 	m_bIncomplete(false), m_vEntries(), m_SortOrder_TotalDifficulty(0),
@@ -176,6 +174,7 @@ void Course::Init()
 	m_sSubTitle = "";
 	m_sSubTitleTranslit = "";
 	m_sScripter = "";
+	m_sDescription = "";
 
 	m_sBannerPath = "";
 	m_sBackgroundPath = "";
@@ -883,9 +882,7 @@ RString Course::GetBackgroundPath() const
 		return RString();
 	if( m_sBackgroundPath[0] == '/' )
 		return m_sBackgroundPath;
-	// add "-bg" on the end to differentiate the background from the banner.
-	// This is based on traditional file naming found in most song files. -aj
-	return Dirname(m_sPath) + m_sBackgroundPath + RString("-bg");
+	return Dirname(m_sPath) + m_sBackgroundPath;
 }
 
 bool Course::HasBanner() const
@@ -1058,8 +1055,7 @@ public:
 
 LUA_REGISTER_CLASS( CourseEntry )
 
-// Not done with lua yet: still another class.
-
+// Now for the Course bindings:
 /** @brief Allow Lua to have access to the Course. */ 
 class LunaCourse: public Luna<Course>
 {
@@ -1095,6 +1091,7 @@ public:
 	static int IsAutogen( T* p, lua_State *L )		{ lua_pushboolean(L, p->m_bIsAutogen ); return 1; }
 	static int GetEstimatedNumStages( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetEstimatedNumStages() ); return 1; }
 	static int GetScripter( T* p, lua_State *L )		{ lua_pushstring(L, p->m_sScripter ); return 1; }
+	static int GetDescription( T* p, lua_State *L )		{ lua_pushstring(L, p->m_sDescription ); return 1; }
 	static int GetTotalSeconds( T* p, lua_State *L )
 	{
 		StepsType st = Enum::Check<StepsType>(L, 1);
@@ -1107,11 +1104,18 @@ public:
 	}
 	DEFINE_METHOD( IsEndless,		IsEndless() )
 	DEFINE_METHOD( IsNonstop,		IsNonstop() )
-	DEFINE_METHOD( IsOni,		IsOni() )
-	DEFINE_METHOD( GetGoalSeconds,		m_fGoalSeconds )
+	DEFINE_METHOD( IsOni,			IsOni() )
+	DEFINE_METHOD( GetGoalSeconds,	m_fGoalSeconds )
 	static int HasBanner( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasBanner() ); return 1; }
-	static int HasBackground( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasBackground() ); return 1; }
+	static int HasBackground( T* p, lua_State *L )	{ lua_pushboolean(L, p->HasBackground() ); return 1; }
 	DEFINE_METHOD( IsAnEdit,		IsAnEdit() )
+	static int IsPlayableIn( T* p, lua_State *L )
+	{
+		StepsType st = Enum::Check<StepsType>(L, 1);
+		lua_pushboolean(L, p->IsPlayableIn( st ) );
+		return 1;
+	}
+	DEFINE_METHOD( IsRanking, IsRanking() )
 
 	LunaCourse()
 	{
@@ -1131,6 +1135,7 @@ public:
 		ADD_METHOD( IsAutogen );
 		ADD_METHOD( GetEstimatedNumStages );
 		ADD_METHOD( GetScripter ); 
+		ADD_METHOD( GetDescription ); 
 		ADD_METHOD( GetTotalSeconds );
 		ADD_METHOD( IsEndless );
 		ADD_METHOD( IsNonstop );
@@ -1139,6 +1144,8 @@ public:
 		ADD_METHOD( HasBanner );
 		ADD_METHOD( HasBackground );
 		ADD_METHOD( IsAnEdit );
+		ADD_METHOD( IsPlayableIn );
+		ADD_METHOD( IsRanking );
 	}
 };
 

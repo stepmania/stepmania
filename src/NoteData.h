@@ -99,28 +99,28 @@ private:
 	bool IsPlayer1(const int track, const TapNote &tn) const;
 	
 	/**
-	 * @brief Determine if the note in questino should be counted as a tap.
+	 * @brief Determine if the note in question should be counted as a tap.
 	 * @param tn the note in question.
 	 * @param row the row it lives in.
 	 * @return true if it's a tap, false otherwise. */
 	bool IsTap(const TapNote &tn, const int row) const;
 	
 	/**
-	 * @brief Determine if the note in questino should be counted as a mine.
+	 * @brief Determine if the note in question should be counted as a mine.
 	 * @param tn the note in question.
 	 * @param row the row it lives in.
 	 * @return true if it's a mine, false otherwise. */
 	bool IsMine(const TapNote &tn, const int row) const;
 	
 	/**
-	 * @brief Determine if the note in questino should be counted as a lift.
+	 * @brief Determine if the note in question should be counted as a lift.
 	 * @param tn the note in question.
 	 * @param row the row it lives in.
 	 * @return true if it's a lift, false otherwise. */
 	bool IsLift(const TapNote &tn, const int row) const;
 	
 	/**
-	 * @brief Determine if the note in questino should be counted as a fake.
+	 * @brief Determine if the note in question should be counted as a fake.
 	 * @param tn the note in question.
 	 * @param row the row it lives in.
 	 * @return true if it's a fake, false otherwise. */

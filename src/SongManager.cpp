@@ -1,7 +1,6 @@
 #include "global.h"
 #include "SongManager.h"
 #include "arch/LoadingWindow/LoadingWindow.h"
-#include "arch/ArchHooks/ArchHooks.h"
 #include "AnnouncerManager.h"
 #include "BackgroundUtil.h"
 #include "BannerCache.h"
@@ -60,7 +59,6 @@ static Preference<bool> g_bHideIncompleteCourses( "HideIncompleteCourses", false
 RString SONG_GROUP_COLOR_NAME( size_t i )   { return ssprintf( "SongGroupColor%i", (int) i+1 ); }
 RString COURSE_GROUP_COLOR_NAME( size_t i ) { return ssprintf( "CourseGroupColor%i", (int) i+1 ); }
 
-
 SongManager::SongManager()
 {
 	// Register with Lua.
@@ -89,11 +87,10 @@ SongManager::~SongManager()
 	FreeSongs();
 }
 
-void SongManager::InitAll()
+void SongManager::InitAll( LoadingWindow *ld )
 {
-	InitSongsFromDisk();
-
-	InitCoursesFromDisk();
+	InitSongsFromDisk( ld );
+	InitCoursesFromDisk( ld );
 	InitAutogenCourses();
 	InitRandomAttacks();
 }
@@ -101,7 +98,8 @@ void SongManager::InitAll()
 static LocalizedString RELOADING ( "SongManager", "Reloading..." );
 static LocalizedString UNLOADING_SONGS ( "SongManager", "Unloading songs..." );
 static LocalizedString UNLOADING_COURSES ( "SongManager", "Unloading courses..." );
-void SongManager::Reload( bool bAllowFastLoad )
+
+void SongManager::Reload( bool bAllowFastLoad, LoadingWindow *ld )
 {
 	FILEMAN->FlushDirCache( SpecialFiles::SONGS_DIR );
 	FILEMAN->FlushDirCache( ADDITIONAL_SONGS_DIR );
@@ -109,26 +107,27 @@ void SongManager::Reload( bool bAllowFastLoad )
 	FILEMAN->FlushDirCache( ADDITIONAL_COURSES_DIR );
 	FILEMAN->FlushDirCache( EDIT_SUBDIR );
 
-	if( pLoadingWindow )
-		pLoadingWindow->SetText( RELOADING );
+	if( ld )
+		ld->SetText( RELOADING );
 
-	// save scores before unloading songs, of the scores will be lost
+	// save scores before unloading songs, or the scores will be lost
 	PROFILEMAN->SaveMachineProfile();
 
-	if( pLoadingWindow )
-		pLoadingWindow->SetText( UNLOADING_COURSES );
+	if( ld )
+		ld->SetText( UNLOADING_COURSES );
 
 	FreeCourses();
 
-	if( pLoadingWindow )
-		pLoadingWindow->SetText( UNLOADING_SONGS );
+	if( ld )
+		ld->SetText( UNLOADING_SONGS );
+
 	FreeSongs();
 
 	const bool OldVal = PREFSMAN->m_bFastLoad;
 	if( !bAllowFastLoad )
 		PREFSMAN->m_bFastLoad.Set( false );
 
-	InitAll();
+	InitAll( ld );
 
 	// reload scores and unlocks afterward
 	PROFILEMAN->LoadMachineProfile();
@@ -140,14 +139,14 @@ void SongManager::Reload( bool bAllowFastLoad )
 	UpdatePreferredSort();
 }
 
-void SongManager::InitSongsFromDisk()
+void SongManager::InitSongsFromDisk( LoadingWindow *ld )
 {
 	RageTimer tm;
-	LoadStepManiaSongDir( SpecialFiles::SONGS_DIR);
+	LoadStepManiaSongDir( SpecialFiles::SONGS_DIR, ld );
 
 	const bool bOldVal = PREFSMAN->m_bFastLoad;
 	PREFSMAN->m_bFastLoad.Set( PREFSMAN->m_bFastLoadAdditionalSongs );
-	LoadStepManiaSongDir( ADDITIONAL_SONGS_DIR );
+	LoadStepManiaSongDir( ADDITIONAL_SONGS_DIR, ld );
 	PREFSMAN->m_bFastLoad.Set( bOldVal );
 
 	LOG->Trace( "Found %d songs in %f seconds.", (int)m_pSongs.size(), tm.GetDeltaTime() );
@@ -234,7 +233,7 @@ void SongManager::AddGroup( RString sDir, RString sGroupDirName )
 }
 
 static LocalizedString LOADING_SONGS ( "SongManager", "Loading songs..." );
-void SongManager::LoadStepManiaSongDir( RString sDir )
+void SongManager::LoadStepManiaSongDir( RString sDir, LoadingWindow *ld )
 {
 	// Make sure sDir has a trailing slash.
 	if( sDir.Right(1) != "/" )
@@ -246,15 +245,14 @@ void SongManager::LoadStepManiaSongDir( RString sDir )
 	SortRStringArray( arrayGroupDirs );
 	StripCvsAndSvn( arrayGroupDirs );
 	StripMacResourceForks( arrayGroupDirs );
-	
+
 	vector< vector<RString> > arrayGroupSongDirs;
 	int groupIndex, songCount, songIndex;
-	
+
 	groupIndex = 0;
 	songCount = 0;
 	FOREACH_CONST( RString, arrayGroupDirs, s )	// foreach dir in /Songs/
 	{
-		if(HOOKS->UserQuit()) break;
 		RString sGroupDirName = *s;
 		SanityCheckGroupDir(sDir+sGroupDirName);
 
@@ -264,19 +262,19 @@ void SongManager::LoadStepManiaSongDir( RString sDir )
 		StripCvsAndSvn( arraySongDirs );
 		StripMacResourceForks( arraySongDirs );
 		SortRStringArray( arraySongDirs );
-		
+
 		arrayGroupSongDirs.push_back(arraySongDirs);
 		songCount += arraySongDirs.size();
 
 	}
 
 	if( songCount==0 ) return;
-	
-	if( pLoadingWindow ) {
-		pLoadingWindow->SetIndeterminate( false );
-		pLoadingWindow->SetTotalWork( songCount );
+
+	if( ld ) {
+		ld->SetIndeterminate( false );
+		ld->SetTotalWork( songCount );
 	}
-	
+
 	groupIndex = 0;
 	songIndex = 0;
 	FOREACH_CONST( RString, arrayGroupDirs, s )	// foreach dir in /Songs/
@@ -292,14 +290,13 @@ void SongManager::LoadStepManiaSongDir( RString sDir )
 
 		for( unsigned j=0; j< arraySongDirs.size(); ++j )	// for each song dir
 		{
-			if(HOOKS->UserQuit()) break;
 			RString sSongDirName = arraySongDirs[j];
 
 			// this is a song directory. Load a new song.
-			if( pLoadingWindow )
+			if( ld )
 			{
-				pLoadingWindow->SetProgress(songIndex);
-				pLoadingWindow->SetText( LOADING_SONGS.GetValue()+ssprintf("\n%s\n%s",
+				ld->SetProgress(songIndex);
+				ld->SetText( LOADING_SONGS.GetValue()+ssprintf("\n%s\n%s",
 									  Basename(sGroupDirName).c_str(),
 									  Basename(sSongDirName).c_str()));
 			}
@@ -332,8 +329,8 @@ void SongManager::LoadStepManiaSongDir( RString sDir )
 		LoadGroupSymLinks(sDir, sGroupDirName);
 	}
 
-	if( pLoadingWindow ) {
-		pLoadingWindow->SetIndeterminate( true );
+	if( ld ) {
+		ld->SetIndeterminate( true );
 	}
 
 	LoadEnabledSongsFromPref();
@@ -575,7 +572,7 @@ RageColor SongManager::GetCourseGroupColor( const RString &sCourseGroup ) const
 			return SONG_GROUP_COLOR.GetValue( iIndex%NUM_SONG_GROUP_COLORS );
 		iIndex++;
 	}
-	
+
 	ASSERT_M( 0, ssprintf("requested color for course group '%s' that doesn't exist",sCourseGroup.c_str()) );
 	return RageColor(1,1,1,1);
 }
@@ -586,7 +583,6 @@ RageColor SongManager::GetCourseColor( const Course* pCourse ) const
 	const UnlockEntry *pUE = UNLOCKMAN->FindCourse( pCourse );
 	if( pUE  &&  USE_UNLOCK_COLOR.GetValue() )
 		return UNLOCK_COLOR.GetValue();
-
 
 	if( USE_PREFERRED_SORT_COLOR )
 	{
@@ -629,7 +625,7 @@ void SongManager::ResetGroupColors()
 const vector<Song*> &SongManager::GetSongs( const RString &sGroupName ) const
 {
 	static const vector<Song*> vEmpty;
-	
+
 	if( sGroupName == GROUP_ALL )
 		return m_pSongs;
 	map<RString, SongPointerVector, Comp>::const_iterator iter = m_mapSongGroupIndex.find( sGroupName );
@@ -761,7 +757,7 @@ RString SongManager::ShortenGroupName( RString sLongGroupName )
 }
 
 static LocalizedString LOADING_COURSES ( "SongManager", "Loading courses..." );
-void SongManager::InitCoursesFromDisk()
+void SongManager::InitCoursesFromDisk( LoadingWindow *ld )
 {
 	LOG->Trace( "Loading courses." );
 
@@ -772,7 +768,6 @@ void SongManager::InitCoursesFromDisk()
 	vector<RString> vsCourseGroupNames;
 	FOREACH_CONST( RString, vsCourseDirs, sDir )
 	{
-		if(HOOKS->UserQuit()) break;
 		// Find all group directories in Courses dir
 		GetDirListing( *sDir + "*", vsCourseGroupNames, true, true );
 		StripCvsAndSvn( vsCourseGroupNames );
@@ -783,19 +778,26 @@ void SongManager::InitCoursesFromDisk()
 	vsCourseGroupNames.push_back( SpecialFiles::COURSES_DIR );
 	SortRStringArray( vsCourseGroupNames );
 
+	int courseIndex = 0;
 	FOREACH_CONST( RString, vsCourseGroupNames, sCourseGroup )	// for each dir in /Courses/
 	{
-		if(HOOKS->UserQuit()) break;
 		// Find all CRS files in this group directory
 		vector<RString> vsCoursePaths;
 		GetDirListing( *sCourseGroup + "/*.crs", vsCoursePaths, false, true );
 		SortRStringArray( vsCoursePaths );
 
+		if( ld )
+		{
+			ld->SetIndeterminate( false );
+			ld->SetTotalWork( vsCoursePaths.size() );
+		}
+
 		FOREACH_CONST( RString, vsCoursePaths, sCoursePath )
 		{
-			if( pLoadingWindow )
+			if( ld )
 			{
-				pLoadingWindow->SetText( LOADING_COURSES.GetValue()+ssprintf("\n%s\n%s",
+				ld->SetProgress(courseIndex);
+				ld->SetText( LOADING_COURSES.GetValue()+ssprintf("\n%s\n%s",
 					Basename(*sCourseGroup).c_str(),
 					Basename(*sCoursePath).c_str()));
 			}
@@ -810,7 +812,12 @@ void SongManager::InitCoursesFromDisk()
 			}
 
 			m_pCourses.push_back( pCourse );
+			courseIndex++;
 		}
+	}
+
+	if( ld ) {
+		ld->SetIndeterminate( true );
 	}
 
 	RefreshCourseGroupInfo();
@@ -824,7 +831,6 @@ void SongManager::InitAutogenCourses()
 	Course* pCourse;
 	for( unsigned g=0; g<saGroupNames.size(); g++ )	// foreach Group
 	{
-		if(HOOKS->UserQuit()) break;
 		RString sGroupName = saGroupNames[g];
 
 		// Generate random courses from each group.
@@ -863,7 +869,6 @@ void SongManager::InitAutogenCourses()
 		vector<Song *> aSongs;
 		unsigned i = 0;
 		do {
-			if(HOOKS->UserQuit()) break;
 			RString sArtist = i >= apSongs.size()? RString(""): apSongs[i]->GetDisplayArtist();
 			RString sTranslitArtist = i >= apSongs.size()? RString(""): apSongs[i]->GetTranslitArtist();
 			if( i < apSongs.size() && !sCurArtist.CompareNoCase(sArtist) )
@@ -886,7 +891,7 @@ void SongManager::InitAutogenCourses()
 			}
 
 			aSongs.clear();
-			
+
 			if( i < apSongs.size() )
 			{
 				sCurArtist = sArtist;
@@ -1869,6 +1874,23 @@ public:
 		LuaHelpers::CreateTableFromArray<Course*>( v, L );
 		return 1;
 	}
+
+	static int GetPreferredSortSongs( T* p, lua_State *L )
+	{
+		vector<Song*> v;
+		p->GetPreferredSortSongs(v);
+		LuaHelpers::CreateTableFromArray<Song*>( v, L );
+		return 1;
+	}
+	static int GetPreferredSortCourses( T* p, lua_State *L )
+	{
+		vector<Course*> v;
+		CourseType ct = Enum::Check<CourseType>(L,1);
+		p->GetPreferredSortCourses( ct, v, BArg(2) );
+		LuaHelpers::CreateTableFromArray<Course*>( v, L );
+		return 1;
+	}
+
 	static int FindSong( T* p, lua_State *L )		{ Song *pS = p->FindSong(SArg(1)); if(pS) pS->PushSelf(L); else lua_pushnil(L); return 1; }
 	static int FindCourse( T* p, lua_State *L )		{ Course *pC = p->FindCourse(SArg(1)); if(pC) pC->PushSelf(L); else lua_pushnil(L); return 1; }
 	static int GetRandomSong( T* p, lua_State *L )		{ Song *pS = p->GetRandomSong(); if(pS) pS->PushSelf(L); else lua_pushnil(L); return 1; }
@@ -1940,6 +1962,14 @@ public:
 		return 1;
 	}
 
+	static int GetCoursesInGroup( T* p, lua_State *L )
+	{
+		vector<Course*> v;
+		p->GetCoursesInGroup(v,SArg(1),BArg(2));
+		LuaHelpers::CreateTableFromArray<Course*>( v, L );
+		return 1;
+	}
+
 	DEFINE_METHOD( ShortenGroupName, ShortenGroupName( SArg(1) ) )
 
 	static int GetCourseGroupNames( T* p, lua_State *L )
@@ -1947,6 +1977,43 @@ public:
 		vector<RString> v;
 		p->GetCourseGroupNames( v );
 		LuaHelpers::CreateTableFromArray<RString>( v, L );
+		return 1;
+	}
+
+	DEFINE_METHOD( GetSongGroupBannerPath, GetSongGroupBannerPath(SArg(1)) );
+	DEFINE_METHOD( GetCourseGroupBannerPath, GetCourseGroupBannerPath(SArg(1)) );
+	DEFINE_METHOD( DoesSongGroupExist, DoesSongGroupExist(SArg(1)) );
+	DEFINE_METHOD( DoesCourseGroupExist, DoesCourseGroupExist(SArg(1)) );
+
+	static int GetPopularSongs( T* p, lua_State *L )
+	{
+		const vector<Song*> &v = p->GetPopularSongs();
+		LuaHelpers::CreateTableFromArray<Song*>( v, L );
+		return 1;
+	}
+	static int GetPopularCourses( T* p, lua_State *L )
+	{
+		CourseType ct = Enum::Check<CourseType>(L,1);
+		const vector<Course*> &v = p->GetPopularCourses(ct);
+		LuaHelpers::CreateTableFromArray<Course*>( v, L );
+		return 1;
+	}
+	static int SongToPreferredSortSectionName( T* p, lua_State *L )
+	{
+		const Song* pSong = Luna<Song>::check(L,1);
+		lua_pushstring(L, p->SongToPreferredSortSectionName(pSong));
+		return 1;
+	}
+	static int WasLoadedFromAdditionalSongs( T* p, lua_State *L )
+	{
+		const Song* pSong = Luna<Song>::check(L,1);
+		lua_pushboolean(L, p->WasLoadedFromAdditionalSongs(pSong));
+		return 1;
+	}
+	static int WasLoadedFromAdditionalCourses( T* p, lua_State *L )
+	{
+		const Course* pCourse = Luna<Course>::check(L,1);
+		lua_pushboolean(L, p->WasLoadedFromAdditionalCourses(pCourse));
 		return 1;
 	}
 
@@ -1975,9 +2042,21 @@ public:
 		ADD_METHOD( GetSongRank );
 		ADD_METHOD( GetSongGroupNames );
 		ADD_METHOD( GetSongsInGroup );
+		ADD_METHOD( GetCoursesInGroup );
 		ADD_METHOD( ShortenGroupName );
 		ADD_METHOD( SetPreferredSongs );
 		ADD_METHOD( SetPreferredCourses );
+		ADD_METHOD( GetPreferredSortSongs );
+		ADD_METHOD( GetPreferredSortCourses );
+		ADD_METHOD( GetSongGroupBannerPath );
+		ADD_METHOD( GetCourseGroupBannerPath );
+		ADD_METHOD( DoesSongGroupExist );
+		ADD_METHOD( DoesCourseGroupExist );
+		ADD_METHOD( GetPopularSongs );
+		ADD_METHOD( GetPopularCourses );
+		ADD_METHOD( SongToPreferredSortSectionName );
+		ADD_METHOD( WasLoadedFromAdditionalSongs );
+		ADD_METHOD( WasLoadedFromAdditionalCourses );
 	}
 };
 

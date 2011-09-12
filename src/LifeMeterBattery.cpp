@@ -9,11 +9,8 @@
 
 LifeMeterBattery::LifeMeterBattery()
 {
-
 	m_iLivesLeft = GAMESTATE->m_SongOptions.GetStage().m_iBatteryLives;
 	m_iTrailingLivesLeft = m_iLivesLeft;
-
-	m_fBatteryBlinkTime = 0;
 
 	m_soundGainLife.Load( THEME->GetPathS("LifeMeterBattery","gain") );
 	m_soundLoseLife.Load( THEME->GetPathS("LifeMeterBattery","lose"),true );
@@ -34,22 +31,19 @@ void LifeMeterBattery::Load( const PlayerState *pPlayerState, PlayerStageStats *
 	LET_GO_SUBTRACT_LIVES.Load(sType, "LetGoSubtractLives");
 
 	LIVES_FORMAT.Load(sType, "NumLivesFormat");
-	BATTERY_BLINK_TIME.Load(sType, "BatteryBlinkTime"); // 1.2f by default
 
 	bool bPlayerEnabled = GAMESTATE->IsPlayerEnabled( pPlayerState );
+	LuaThreadVariable var( "Player", LuaReference::Create(m_pPlayerState->m_PlayerNumber) );
 
 	m_sprFrame.Load( THEME->GetPathG(sType,"frame") );
 	this->AddChild( m_sprFrame );
 
-	m_sprBattery.Load( THEME->GetPathG(sType,"lives 1x4") );
-	m_sprBattery.SetName( ssprintf("BatteryP%i",int(pn+1)) );
-	// required because it's a sprite. todo: allow for AutoActoring but detect
-	// Sprites for old behavior. -aj
-	m_sprBattery.StopAnimating();
+	m_sprBattery.Load( THEME->GetPathG(sType,"lives") );
+	m_sprBattery->SetName( ssprintf("BatteryP%i",int(pn+1)) );
 	if( bPlayerEnabled )
 	{
 		ActorUtil::LoadAllCommandsAndSetXY( m_sprBattery, sType );
-		this->AddChild( &m_sprBattery );
+		this->AddChild( m_sprBattery );
 	}
 
 	m_textNumLives.LoadFromFont( THEME->GetPathF(sType, "lives") );
@@ -120,7 +114,6 @@ void LifeMeterBattery::SubtractLives( int iLives )
 	m_textNumLives.PlayCommand("LoseLife");
 
 	Refresh();
-	m_fBatteryBlinkTime = BATTERY_BLINK_TIME;
 }
 
 void LifeMeterBattery::AddLives( int iLives )
@@ -134,7 +127,6 @@ void LifeMeterBattery::AddLives( int iLives )
 	m_textNumLives.PlayCommand("GainLife");
 
 	Refresh();
-	m_fBatteryBlinkTime = 0;
 }
 
 void LifeMeterBattery::ChangeLives(int iLifeDiff)
@@ -150,19 +142,27 @@ void LifeMeterBattery::ChangeLife( TapNoteScore score )
 	if( m_iLivesLeft == 0 )
 		return;
 
+	bool bSubtract = false;
 	// this probably doesn't handle hold checkpoints. -aj
 	if( score == TNS_HitMine && MINES_SUBTRACT_LIVES > 0 )
+	{
 		SubtractLives(MINES_SUBTRACT_LIVES);
+		bSubtract = true;
+	}
 	else
 	{
 		if( score < MIN_SCORE_TO_KEEP_LIFE && score > TNS_CheckpointMiss && SUBTRACT_LIVES > 0 )
+		{
 			SubtractLives(SUBTRACT_LIVES);
+			bSubtract = true;
+		}
 	}
 
 	Message msg( "LifeChanged" );
 	msg.SetParam( "Player", m_pPlayerState->m_PlayerNumber );
 	msg.SetParam( "LifeMeter", LuaReference::CreateFromPush(*this) );
 	msg.SetParam( "LivesLeft", GetLivesLeft() );
+	msg.SetParam( "LostLife", bSubtract );
 	MESSAGEMAN->Broadcast( msg );
 }
 
@@ -171,15 +171,20 @@ void LifeMeterBattery::ChangeLife( HoldNoteScore score, TapNoteScore tscore )
 	if( m_iLivesLeft == 0 )
 		return;
 
+	bool bSubtract = false;
 	if( score == HNS_Held && HELD_ADD_LIVES > 0 )
 		AddLives(HELD_ADD_LIVES);
 	if( score == HNS_LetGo && LET_GO_SUBTRACT_LIVES > 0 )
+	{
 		SubtractLives(LET_GO_SUBTRACT_LIVES);
+		bSubtract = true;
+	}
 
 	Message msg( "LifeChanged" );
 	msg.SetParam( "Player", m_pPlayerState->m_PlayerNumber );
 	msg.SetParam( "LifeMeter", LuaReference::CreateFromPush(*this) );
 	msg.SetParam( "LivesLeft", GetLivesLeft() );
+	msg.SetParam( "LostLife", bSubtract );
 	MESSAGEMAN->Broadcast( msg );
 }
 
@@ -223,41 +228,13 @@ int LifeMeterBattery::GetRemainingLives() const
 }
 void LifeMeterBattery::Refresh()
 {
-	// todo: make this restraint metricable + handle non-sprites -aj
-	if( m_iLivesLeft <= 4 )
-	{
-		m_textNumLives.SetText( "" );
-		m_sprBattery.SetState( max(m_iLivesLeft-1,0) );
-	}
-	else
-	{
-		//m_textNumLives.SetText( ssprintf("x%d", m_iLivesLeft-1) );
-		m_textNumLives.SetText( ssprintf(LIVES_FORMAT.GetValue(), m_iLivesLeft-1) );
-		m_sprBattery.SetState( 3 );
-	}
+	m_textNumLives.SetText( ssprintf(LIVES_FORMAT.GetValue(), m_iLivesLeft-1) );
+	//update m_sprBattery
 }
 
 void LifeMeterBattery::Update( float fDeltaTime )
 {
 	LifeMeter::Update( fDeltaTime );
-
-	if( m_fBatteryBlinkTime > 0 )
-	{
-		m_fBatteryBlinkTime -= fDeltaTime;
-		int iFrame1 = m_iLivesLeft-1;
-		int iFrame2 = m_iTrailingLivesLeft-1;
-
-		int iFrameNo = (int(m_fBatteryBlinkTime*15)%2) ? iFrame1 : iFrame2;
-		CLAMP( iFrameNo, 0, 3 );
-		m_sprBattery.SetState( iFrameNo );
-	}
-	else
-	{
-		m_fBatteryBlinkTime = 0;
-		int iFrameNo = m_iLivesLeft-1;
-		CLAMP( iFrameNo, 0, 3 );
-		m_sprBattery.SetState( iFrameNo );
-	}
 }
 
 // lua start

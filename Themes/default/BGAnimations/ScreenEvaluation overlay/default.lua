@@ -38,7 +38,7 @@ local function CreateStats( pnPlayer )
 			InitCommand=cmd(zoom,0.875;diffuse,PlayerColor( pnPlayer ));
 		};
 		aLabel .. { Text="ITG DP:"; InitCommand=cmd(x,-64) };
-		aText .. { Text=string.format("%04i",tValues["ITG"]); InitCommand=cmd(x,-8;y,5;vertalign,bottom;zoom,0.675); };
+		aText .. { Text=string.format("%04i",tValues["ITG"]); InitCommand=cmd(x,-8;y,5;vertalign,bottom;zoom,0.6); };
 		aText .. { Text="/"; InitCommand=cmd(x,28;y,5;vertalign,bottom;zoom,0.5;diffusealpha,0.5); };
 		aText .. { Text=string.format("%04i",tValues["ITG_MAX"]); InitCommand=cmd(x,32;y,5;vertalign,bottom;zoom,0.5); };
 	};
@@ -48,7 +48,7 @@ local function CreateStats( pnPlayer )
 			InitCommand=cmd(zoom,0.875;diffuse,PlayerColor( pnPlayer ));
 		};
 		aLabel .. { Text="MIGS DP:"; InitCommand=cmd(x,-64) };
-		aText .. { Text=string.format("%04i",tValues["MIGS"]); InitCommand=cmd(x,-8;y,5;vertalign,bottom;zoom,0.675); };
+		aText .. { Text=string.format("%04i",tValues["MIGS"]); InitCommand=cmd(x,-8;y,5;vertalign,bottom;zoom,0.6); };
 		aText .. { Text="/"; InitCommand=cmd(x,28;y,5;vertalign,bottom;zoom,0.5;diffusealpha,0.5); };
 		aText .. { Text=string.format("%04i",tValues["MIGS_MAX"]); InitCommand=cmd(x,32;y,5;vertalign,bottom;zoom,0.5); };
 	};

@@ -67,6 +67,8 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 			out.m_sMainTitleTranslit = sParams[1];
 		else if( sValueName.EqualsNoCase("SCRIPTER") )
 			out.m_sScripter = sParams[1];
+		else if( sValueName.EqualsNoCase("DESCRIPTION") )
+			out.m_sDescription = sParams[1];
 		else if( sValueName.EqualsNoCase("REPEAT") )
 		{
 			RString str = sParams[1];
@@ -108,7 +110,6 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 				out.m_iCustomMeter[cd] = max( StringToInt(sParams[2]), 0 );
 			}
 		}
-		// todo: add COMBO and COMBOMODE from DWI CRS files? -aj
 
 		else if( sValueName.EqualsNoCase("MODS") )
 		{
@@ -271,7 +272,10 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 				}
 			}
 
-			new_entry.stepsCriteria.m_difficulty = StringToDifficulty( sParams[2] );
+			new_entry.stepsCriteria.m_difficulty = OldStyleStringToDifficulty( sParams[2] );
+      //most CRS files use old-style difficulties, but Difficulty enum values can be used in SM5. Test for those too.
+      if( new_entry.stepsCriteria.m_difficulty == Difficulty_Invalid )
+        new_entry.stepsCriteria.m_difficulty = StringToDifficulty( sParams[2] );
 			if( new_entry.stepsCriteria.m_difficulty == Difficulty_Invalid )
 			{
 				int retval = sscanf( sParams[2], "%d..%d", &new_entry.stepsCriteria.m_iLowMeter, &new_entry.stepsCriteria.m_iHighMeter );

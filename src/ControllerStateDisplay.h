@@ -20,6 +20,41 @@ enum ControllerStateButton
 	NUM_ControllerStateButton
 };
 
+/*
+enum ControllerDanceButton
+{
+	ControllerDanceButton_Up,
+	ControllerDanceButton_Down,
+	ControllerDanceButton_Left,
+	ControllerDanceButton_Right,
+	ControllerPumpButton_UpLeft,
+	ControllerPumpButton_UpRight,
+	NUM_ControllerDanceButton
+};
+
+enum ControllerPumpButton
+{
+	ControllerPumpButton_UpLeft,
+	ControllerPumpButton_UpRight,
+	ControllerPumpButton_Center,
+	ControllerPumpButton_DownLeft,
+	ControllerPumpButton_DownRight,
+	NUM_ControllerPumpButton
+};
+
+enum ControllerKB7Button
+{
+	ControllerKB7Button_Key1,
+	ControllerKB7Button_Key2,
+	ControllerKB7Button_Key3,
+	ControllerKB7Button_Key4,
+	ControllerKB7Button_Key5,
+	ControllerKB7Button_Key6,
+	ControllerKB7Button_Key7,
+	NUM_ControllerKB7Button
+};
+*/
+
 
 class ControllerStateDisplay : public ActorFrame
 {

@@ -4,9 +4,6 @@ sm-ssc is copyright © AJ Kelly, Midiman, shakesoda (referred to as
 "the spinal shark collective" hereafter), and other contributors.
 All rights reserved.
 
-"sm-ssc" is defined as the changes made to StepMania that do not make their
-way back into the main StepMania repository for various reasons.
-
 Permission is hereby granted, free of charge, to any person obtaining a
 copy of this software and associated documentation files (the
 "Software"), to deal in the Software without restriction, including
@@ -151,20 +148,3 @@ POSSIBILITY OF SUCH DAMAGE.
 The MAD library (included with most Windows binary distributions), and
 interface code in RageSoundReader_MP3, is under the GPL, available in
 Copying.MAD.  Support for this library can be disabled at compile-time.
-
-******************************************************************************
-
-NotesLoaderMidi contains code from STK under the following license:
-
-Copyright 2003 Gary P. Scavone
-
-LEGAL AND ETHICAL:
-
-This software was designed and created to be made publicly available for 
-free, primarily for academic purposes, so if you use it, pass it on with 
-this documentation, and for free.
-
-On April 19 2007, StepMania was granted an MIT license by Gary Scavone
-for any STK code on the condition that all of the the STK
-credits/disclaimers/copyrights from the README are retained in the
-source code and in the project documentation.

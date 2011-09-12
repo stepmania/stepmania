@@ -69,6 +69,9 @@ protected:
 	vector<Trail*>		m_vpTrails;
 	int					m_iSelection[NUM_PLAYERS];
 
+	RageTimer		m_timerIdleComment;
+	ThemeMetric<float> IDLE_COMMENT_SECONDS;
+
 	ThemeMetric<float>		SAMPLE_MUSIC_DELAY_INIT;
 	ThemeMetric<float>		SAMPLE_MUSIC_DELAY;
 	ThemeMetric<bool>		SAMPLE_MUSIC_LOOPS;

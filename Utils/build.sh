@@ -16,7 +16,7 @@ message () {
 		echo -n "$msg..."
 	fi
 	if [ $notify -gt 0 ]; then
-		notify-send "sm-ssc build script" "$msg..."
+		notify-send "StepMania build script" "$msg..."
 	fi
 }
 
@@ -27,7 +27,7 @@ success () {
 		echo okay.
 	fi
 	if [ $notify -gt 0 ]; then
-		notify-send "sm-ssc build script" "$msg...okay."
+		notify-send "StepMania build script" "$msg...okay."
 	fi
 }
 
@@ -43,7 +43,7 @@ failure () {
 		echo failed$error
 	fi
 	if [ $notify -gt 0 ]; then
-		notify-send "sm-ssc build script failed" "$msg...failed$error"
+		notify-send "StepMania build script failed" "$msg...failed$error"
 	fi;
 	echo "Consider passing --verbose to $0. Pass --help for details."
 	exit 1
@@ -81,7 +81,7 @@ usage () {
 version () {
 	echo 'build.sh (StepMania) 2.62'
 	echo 'Copyright (C) 2006-2009 Steve Checkoway'
-	echo 'StepMania is Copyright (C) 2001-2009 Chris Danford et al.'
+	echo 'StepMania is Copyright (C) 2001-2011 Chris Danford et al.'
 	echo 'sm-ssc is Copyright (C) 2009-2011 the spinal shark collective'
 	exit 0
 }
@@ -196,6 +196,7 @@ if [ -n "$s_stepmania" ]; then exit 0; fi
 if [ ! -f stepmania -o ! -f GtkModule.so ]; then
 	message 'Copying StepMania binaries'
 	call cp _build/src/stepmania .
+	# todo: check for existence of GtkModule.so -freem
 	#_build/src/GtkModule.so . # we tend to not have this file!
 fi
 

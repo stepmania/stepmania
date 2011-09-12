@@ -39,7 +39,7 @@ void SMALoader::ProcessMultipliers( TimingData &out, const int iRowsPerBeat, con
 							 iCombos : 
 							 StringToInt(arrayMultiplierValues[2]));
 		out.AddSegment(SEGMENT_COMBO,
-					   new ComboSegment( fComboBeat, iCombos, iMisses ));
+					   new ComboSegment( BeatToNoteRow(fComboBeat), iCombos, iMisses ));
 	}
 }
 
@@ -52,7 +52,7 @@ void SMALoader::ProcessBeatsPerMeasure( TimingData &out, const RString sParam )
 	{
 		vector<RString> vs2;
 		split( *s1, "=", vs2 );
-		
+
 		if( vs2.size() < 2 )
 		{
 			LOG->UserLog("Song file",
@@ -61,13 +61,13 @@ void SMALoader::ProcessBeatsPerMeasure( TimingData &out, const RString sParam )
 				     static_cast<int>(vs2.size()) );
 			continue;
 		}
-		
 		const float fBeat = StringToFloat( vs2[0] );
-		
-		TimeSignatureSegment * seg = new TimeSignatureSegment(fBeat,
-															  StringToInt(vs2[1]),
-															  4 );
-		
+
+		TimeSignatureSegment * seg = new TimeSignatureSegment(
+			BeatToNoteRow(fBeat),
+			  StringToInt(vs2[1]),
+			  4 );
+
 		if( fBeat < 0 )
 		{
 			LOG->UserLog("Song file",
@@ -122,14 +122,14 @@ void SMALoader::ProcessSpeeds( TimingData &out, const RString line, const int ro
 		RString backup = vs2[2];
 		Trim(vs2[2], "s");
 		Trim(vs2[2], "S");
+
 		
-		unsigned short tmp = ((backup != vs2[2]) ? 1 : 0);
-		
-		SpeedSegment * seg = new SpeedSegment(fBeat,
-											  StringToFloat( vs2[1] ),
-											  StringToFloat(vs2[2]),
-											  tmp);
-		
+		SpeedSegment::BaseUnit unit = ((backup != vs2[2]) ?
+			SpeedSegment::UNIT_SECONDS : SpeedSegment::UNIT_BEATS);
+
+		SpeedSegment * seg = new SpeedSegment( BeatToNoteRow(fBeat),
+			StringToFloat( vs2[1] ), StringToFloat(vs2[2]), unit);
+
 		if( fBeat < 0 )
 		{
 			LOG->UserLog("Song file",
@@ -139,12 +139,12 @@ void SMALoader::ProcessSpeeds( TimingData &out, const RString line, const int ro
 			continue;
 		}
 		
-		if( seg->GetLength() < 0 )
+		if( seg->GetDelay() < 0 )
 		{
 			LOG->UserLog("Song file",
 				     this->GetSongTitle(),
 				     "has an speed change with beat %f, length %f.",
-				     fBeat, seg->GetLength() );
+				     fBeat, seg->GetDelay() );
 			continue;
 		}
 		
@@ -463,7 +463,6 @@ bool SMALoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 				     sValueName.c_str() );
 	}
 	TidyUpData(out, false);
-	out.TidyUpData(false, true);
 	return true;
 }
 

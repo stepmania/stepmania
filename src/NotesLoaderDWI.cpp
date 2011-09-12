@@ -651,7 +651,7 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, set<RString> &Bla
 				int iFreezeRow = BeatToNoteRow( StringToFloat(arrayFreezeValues[0]) / 4.0f );
 				float fFreezeSeconds = StringToFloat( arrayFreezeValues[1] ) / 1000.0f;
 				
-				out.m_SongTiming.AddSegment( SEGMENT_STOP_DELAY, new StopSegment(iFreezeRow, fFreezeSeconds) );
+				out.m_SongTiming.AddSegment( SEGMENT_STOP, new StopSegment(iFreezeRow, fFreezeSeconds) );
 //				LOG->Trace( "Adding a freeze segment: beat: %f, seconds = %f", fFreezeBeat, fFreezeSeconds );
 			}
 		}

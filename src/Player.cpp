@@ -621,8 +621,6 @@ void Player::Load()
 	NoteDataUtil::TransformNoteData( m_NoteData, m_pPlayerState->m_PlayerOptions.GetStage(), GAMESTATE->GetCurrentStyle()->m_StepsType );
 
 	const Song* pSong = GAMESTATE->m_pCurSong;
-	if( GAMESTATE->m_pCurGame->m_bAllowHopos )
-		NoteDataUtil::SetHopoPossibleFlags( pSong, m_NoteData );
 
 	m_Timing = &GAMESTATE->m_pCurSteps[pn]->m_Timing;
 
@@ -1404,8 +1402,8 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 		// Possibly fixed.
 		if( tn.iKeysoundIndex >= 0 && tn.iKeysoundIndex < (int) m_vKeysounds.size() )
 		{
-			float factor = (tn.subType == TapNote::hold_head_roll ? 2 : 10.0f - 8.5f);
-			factor *= fLifeFraction;
+			float factor = (tn.subType == TapNote::hold_head_roll ? 2.0 * fLifeFraction : 10.0f * fLifeFraction - 8.5f);
+			// todo: Make sure the player's volume settings are respected. -aj
 			m_vKeysounds[tn.iKeysoundIndex].SetProperty ("Volume", max(0.0f, min(1.0f, factor)));
 		}
 	}
@@ -1942,7 +1940,9 @@ void Player::PlayKeysound( const TapNote &tn, TapNoteScore score )
 			}
 		}
 		m_vKeysounds[tn.iKeysoundIndex].Play();
-		m_vKeysounds[tn.iKeysoundIndex].SetProperty ("Volume", 1);
+		Preference<float> *pVolume = Preference<float>::GetPreferenceByName("SoundVolume");
+		float fVol = pVolume->Get();
+		m_vKeysounds[tn.iKeysoundIndex].SetProperty ("Volume", fVol);
 	}
 }
 

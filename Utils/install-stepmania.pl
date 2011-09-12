@@ -19,7 +19,7 @@ sub ReadCommand
 		for(my $i = 0; $i < length($line); ++$i)
 		{
 			my $ch = substr($line,$i,1);
-			# Check for quotes.  Any quote causes the parameter to
+			# Check for quotes. Any quote causes the parameter to
 			# be created; eg:
 			# Foo       ""          bar
 			# is "Foo", "", "bar".
@@ -53,18 +53,15 @@ sub ReadCommand
 				{
 					++$cur;
 				}
-				
 				next;
 			}
-			
 			$ret[$cur] .= $ch;
 		}
-		
 
 		return @ret;
 	}
 	print "guh\n";
-	
+
 	return 0;
 }
 
@@ -82,19 +79,18 @@ sub CreateDirectories
 	}
 }
 
-
 if ($#ARGV == -1)
 {
-	print "Install where?  (eg. /usr/games/sm-ssc)\n";
+	print "Install where?  (eg. /usr/games/stepmania5)\n";
 	exit 1;
 }
 
 my $instdir = $ARGV[0];
 print "Installing to $instdir\n";
 
-# Normally, this script is run after building, which means we probably have a Makefile
-# available.  Look for it, and pull out vpath, if any, to see where the real source
-# directory is.
+# Normally, this script is run after building, which means we probably
+# have a Makefile available. Look for it, and pull out vpath, if any,
+# to see where the real source directory is.
 
 my $bin_path;
 
@@ -120,20 +116,18 @@ print "Binary path: $bin_path\n";
 
 open(F, "sm-ssc.nsi") || die "Couldn't open sm-ssc.nsi: $!";
 
-
 # Search for the default installation section.
 my $FoundSection = 0;
 while(!eof(F))
 {
 	my @line=ReadCommand();
 	$#line == -1 && next;
-	
+
 	if( $#line >= 1 && $line[0] eq "Section" && $line[1] eq "" )
 	{
 		$FoundSection = 1;
 		last;
 	}
-
 }
 
 $FoundSection || die "sm-ssc.nsi parse error";
@@ -175,7 +169,6 @@ while(!eof(F))
 #		{
 #			mkdir($line[1]) || die "mkdir($line[1]): $!";
 #		}
-#
 #		next;
 #	}
 
@@ -184,7 +177,7 @@ while(!eof(F))
 		$OutPath = $line[1];
 		next;
 	}
-	
+
 	if ( $line[0] eq "File" )
 	{
 		my $pos = 1;
@@ -195,13 +188,13 @@ while(!eof(F))
 			$recurse = 1;
 		}
 		my $fn = $line[$pos];
-			
+
 		# Ignore Windows binaries.
 		if ( $fn =~ /.*dll/i || $fn =~ /.*exe/i || $fn =~ /.*vdi/i )
 		{
 			next;
 		}
-		
+
 		# Only create directories if we're actually installing something to them.
 		CreateDirectories( $OutPath );
 
@@ -227,7 +220,7 @@ while(!eof(F))
 			$recurse = 1;
 		}
 		my $dir = $line[$pos];
-			
+
 		my $args="-f";
 		if( $recurse )
 		{
@@ -238,20 +231,16 @@ while(!eof(F))
 		{
 			system("rm $args \"$dir\"");
 		}
-
 		next;
 	}
-	
 }
 
 $FoundSection || print "warning: SectionEnd not found\n";
 
 close F;
 
-system("cp -vp \"" . $bin_path . "sm-ssc\" \"$instdir\"");
+system("cp -vp \"" . $bin_path . "stepmania5\" \"$instdir\"");
 if( -e $bin_path . "GtkModule.so" )
 {
 	system("cp -vp \"" . $bin_path . "GtkModule.so\" \"$instdir\"");
 }
-
-

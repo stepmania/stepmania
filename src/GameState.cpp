@@ -164,6 +164,8 @@ GameState::GameState() :
 
 	m_bDopefish = false;
 
+	sExpandedSectionName = "";
+
 	// Don't reset yet; let the first screen do it, so we can use PREFSMAN and THEME.
 	//Reset();
 
@@ -347,6 +349,8 @@ void GameState::Reset()
 
 	m_bBackedOutOfFinalStage = false;
 	m_bEarnedExtraStage = false;
+	sExpandedSectionName = "";
+
 	ApplyCmdline();
 }
 
@@ -626,27 +630,6 @@ int GameState::GetNumStagesMultiplierForSong( const Song* pSong )
 	return iNumStages;
 }
 
-int GameState::GetNumStagesForSongAndStyleType( const Song* pSong, StyleType st )
-{
-	int iNumStages = GetNumStagesMultiplierForSong( pSong );
-
-	// One player, two-sides styles cost extra
-	switch( st )
-	{
-	DEFAULT_FAIL( st );
-	case StyleType_OnePlayerTwoSides:
-		if( g_Premium == Premium_Off )
-			iNumStages *= 2;
-		break;
-	case StyleType_TwoPlayersTwoSides:
-	case StyleType_OnePlayerOneSide:
-	case StyleType_TwoPlayersSharedSides:
-		break;
-	}
-
-	return iNumStages;
-}
-
 int GameState::GetNumStagesForCurrentSongAndStepsOrCourse() const
 {
 	int iNumStagesOfThisSong = 1;
@@ -684,7 +667,7 @@ int GameState::GetNumStagesForCurrentSongAndStepsOrCourse() const
 		if( IsAnExtraStage() )
 			iNumStagesOfThisSong = 1;
 		else
-			iNumStagesOfThisSong = GameState::GetNumStagesForSongAndStyleType( m_pCurSong, pStyle->m_StyleType );
+			iNumStagesOfThisSong = GameState::GetNumStagesMultiplierForSong( m_pCurSong );
 	}
 	else if( m_pCurCourse )
 		iNumStagesOfThisSong = PREFSMAN->m_iSongsPerPlay;
@@ -2278,6 +2261,7 @@ public:
 	DEFINE_METHOD( IsExtraStage2,			IsExtraStage2() )
 	DEFINE_METHOD( GetCurrentStage,			GetCurrentStage() )
 	DEFINE_METHOD( HasEarnedExtraStage,		HasEarnedExtraStage() )
+	DEFINE_METHOD( GetEarnedExtraStage,		GetEarnedExtraStage() )
 	DEFINE_METHOD( GetEasiestStepsDifficulty,	GetEasiestStepsDifficulty() )
 	DEFINE_METHOD( GetHardestStepsDifficulty,	GetHardestStepsDifficulty() )
 	DEFINE_METHOD( IsEventMode,			IsEventMode() )
@@ -2440,6 +2424,7 @@ public:
 			p->m_pCurCharacters[Enum::Check<PlayerNumber>(L, 1)] = c;
 		return 0;
 	}
+	static int GetExpandedSectionName( T* p, lua_State *L )				{ lua_pushstring(L, p->sExpandedSectionName); return 1; }
 	static int Dopefish( T* p, lua_State *L )
 	{
 		lua_pushboolean(L, p->m_bDopefish);
@@ -2492,6 +2477,7 @@ public:
 		ADD_METHOD( IsExtraStage2 );
 		ADD_METHOD( GetCurrentStage );
 		ADD_METHOD( HasEarnedExtraStage );
+		ADD_METHOD( GetEarnedExtraStage );
 		ADD_METHOD( GetEasiestStepsDifficulty );
 		ADD_METHOD( GetHardestStepsDifficulty );
 		ADD_METHOD( IsEventMode );
@@ -2543,6 +2529,7 @@ public:
 		ADD_METHOD( GetCurMusicSeconds );
 		ADD_METHOD( GetCharacter );
 		ADD_METHOD( SetCharacter );
+		ADD_METHOD( GetExpandedSectionName );
 		ADD_METHOD( Dopefish );
 	}
 };

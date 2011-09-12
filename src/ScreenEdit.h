@@ -277,10 +277,10 @@ protected:
 	TimingData		backupStepTiming;
 	
 	/**
-	 * @brief Have a backup of the TimingData of the player's choice.
-	 *
-	 * This will be used for copying and pasting as required. */
-	TimingData		clipboardTiming;
+	 * @brief Allow for copying and pasting a song's (or steps's) full Timing Data. */
+	TimingData		clipboardFullTiming;
+	
+	TimingData clipboardTiming;
 	
 	/** @brief The current TapNote that would be inserted. */
 	TapNote			m_selectedTap;
@@ -399,6 +399,7 @@ public:
 	{
 		cut, /**< Cut the notes. */
 		copy, /**< Copy the notes. */
+		copy_partial_timing, /**< Copy selected timing data. */
 		clear, /**< Erase the notes, without putting them in the clipboard. */
 		quantize, /**< Sync the notes to an exact level. */
 		turn, /**< Rotate the notes. */
@@ -422,17 +423,18 @@ public:
 	
 	enum AreaMenuChoice
 	{
-		paste_at_current_beat,
-		paste_at_begin_marker,
+		paste_at_current_beat, /**< Paste note data starting at the current beat. */
+		paste_at_begin_marker, /**< Paste note data starting at the first market. */
+		paste_partial_timing_at_beat, /**< Paste TimingData starting at the current beat. */
 		insert_and_shift,
 		delete_and_shift,
-		shift_pauses_forward,
-		shift_pauses_backward,
+		shift_pauses_forward, /**< Shift all timing changes forward one beat. */
+		shift_pauses_backward, /**< Shift all timing changes backward one beat. */
 		convert_pause_to_beat,
 		convert_delay_to_beat,
 		last_second_at_beat,
 		undo,
-		clear_clipboard,
+		clear_clipboard, /**< Clear the clipboards. */
 		NUM_AREA_MENU_CHOICES
 	};
 	void HandleAlterMenuChoice(AlterMenuChoice c,
@@ -579,8 +581,8 @@ public:
 		speed_mode,
 		scroll,
 		fake,
-		copy_timing,
-		paste_timing,
+		copy_full_timing,
+		paste_full_timing,
 		erase_step_timing,
 		NUM_TIMING_DATA_INFORMATION_CHOICES
 	};

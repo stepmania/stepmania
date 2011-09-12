@@ -87,8 +87,6 @@ static const StepsTypeInfo g_StepsTypeInfos[] = {
 	// pop'n music
 	{ "pnm-five",		5,	true,	StepsTypeCategory_Single },	// called "pnm" for backward compat
 	{ "pnm-nine",		9,	true,	StepsTypeCategory_Single },	// called "pnm" for backward compat
-	// guitar hero
-	{ "guitar-five",	5,	true,	StepsTypeCategory_Single },	// 5 frets, no wail
 	// cabinet lights and other fine StepsTypes that don't exist lol
 	{ "lights-cabinet",	NUM_CabinetLight,	false,	StepsTypeCategory_Single }, // XXX disable lights autogen for now
 };
@@ -504,7 +502,6 @@ static const Game g_Game_Dance =
 	"dance",					// m_szName
 	g_apGame_Dance_Styles,				// m_apStyles
 	false,						// m_bCountNotesSeparately
-	false,						// m_bAllowHopos
 	{						// m_InputScheme
 		"dance",				// m_szName
 		NUM_DANCE_BUTTONS,			// m_iButtonsPerController
@@ -875,7 +872,6 @@ static const Game g_Game_Pump =
 	"pump",						// m_szName
 	g_apGame_Pump_Styles,				// m_apStyles
 	false,						// m_bCountNotesSeparately
-	false,						// m_bAllowHopos
 	{						// m_InputScheme
 		"pump",					// m_szName
 		NUM_PUMP_BUTTONS,			// m_iButtonsPerController
@@ -1013,7 +1009,6 @@ static const Game g_Game_KB7 =
 	"kb7",						// m_szName
 	g_apGame_KB7_Styles,				// m_apStyles
 	true,						// m_bCountNotesSeparately
-	false,						// m_bAllowHopos
 	{						// m_InputScheme
 		"kb7",					// m_szName
 		NUM_KB7_BUTTONS,			// m_iButtonsPerController
@@ -1285,7 +1280,6 @@ static const Game g_Game_Ez2 =
 	"ez2",						// m_szName
 	g_apGame_Ez2_Styles,				// m_apStyles
 	true,						// m_bCountNotesSeparately
-	false,						// m_bAllowHopos
 	{						// m_InputScheme
 		"ez2",					// m_szName
 		NUM_EZ2_BUTTONS,			// m_iButtonsPerController
@@ -1418,7 +1412,6 @@ static const Game g_Game_Para =
 	"para",						// m_szName
 	g_apGame_Para_Styles,				// m_apStyles
 	false,						// m_bCountNotesSeparately
-	false,						// m_bAllowHopos
 	{						// m_InputScheme
 		"para",					// m_szName
 		NUM_PARA_BUTTONS,			// m_iButtonsPerController
@@ -1516,7 +1509,6 @@ static const Game g_Game_DS3DDX =
 	"ds3ddx",					// m_szName
 	g_apGame_DS3DDX_Styles,				// m_apStyles
 	false,						// m_bCountNotesSeparately
-	false,						// m_bAllowHopos
 	{						// m_InputScheme
 		"ds3ddx",				// m_szName
 		NUM_DS3DDX_BUTTONS,			// m_iButtonsPerController
@@ -1597,7 +1589,7 @@ static const Style g_Style_Beat_Versus5 =
 	false,				// m_bUsedForEdit
 	true,				// m_bUsedForDemonstration
 	false,				// m_bUsedForHowToPlay
-	"versus",			// m_szName
+	"versus5",			// m_szName
 	StepsType_beat_versus5,	// m_StepsType
 	StyleType_TwoPlayersTwoSides,		// m_StyleType
 	6,				// m_iColsPerPlayer
@@ -1705,6 +1697,7 @@ static const Style g_Style_Beat_Single7 =
 			{ TRACK_7,	+BEAT_COL_SPACING*4.0f, NULL },
 		},
 		{	// PLAYER_2
+			{ TRACK_8,	+BEAT_COL_SPACING*4.0f, "scratch" },
 			{ TRACK_1,	-BEAT_COL_SPACING*3.5f, NULL },
 			{ TRACK_2,	-BEAT_COL_SPACING*2.5f, NULL },
 			{ TRACK_3,	-BEAT_COL_SPACING*1.5f, NULL },
@@ -1712,12 +1705,11 @@ static const Style g_Style_Beat_Single7 =
 			{ TRACK_5,	+BEAT_COL_SPACING*0.5f, NULL },
 			{ TRACK_6,	+BEAT_COL_SPACING*1.5f, NULL },
 			{ TRACK_7,	+BEAT_COL_SPACING*2.5f, NULL },
-			{ TRACK_8,	+BEAT_COL_SPACING*4.0f, "scratch" },
 		},
 	},
 	{	// m_iInputColumn[NUM_GameController][NUM_GameButton]
 		{ 1, 2, 3, 4, 5, 6, 7, 0, 0, Style::END_MAPPING },
-		{ 0, 1, 2, 3, 4, 5, 6, 7, 7, Style::END_MAPPING },
+		{ 1, 2, 3, 4, 5, 6, 7, 0, 0, Style::END_MAPPING },
 	},
 	{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
 		0,1,2,3,4,5,6,7
@@ -1733,7 +1725,7 @@ static const Style g_Style_Beat_Versus7 =
 	true,				// m_bUsedForEdit
 	false,				// m_bUsedForDemonstration
 	false,				// m_bUsedForHowToPlay
-	"single7",			// m_szName
+	"versus7",			// m_szName
 	StepsType_beat_versus7,	// m_StepsType
 	StyleType_TwoPlayersTwoSides,		// m_StyleType
 	8,				// m_iColsPerPlayer
@@ -1749,6 +1741,7 @@ static const Style g_Style_Beat_Versus7 =
 			{ TRACK_7,	+BEAT_COL_SPACING*4.0f, NULL },
 		},
 		{	// PLAYER_2
+			{ TRACK_8,	+BEAT_COL_SPACING*4.0f, "scratch" },
 			{ TRACK_1,	-BEAT_COL_SPACING*3.5f, NULL },
 			{ TRACK_2,	-BEAT_COL_SPACING*2.5f, NULL },
 			{ TRACK_3,	-BEAT_COL_SPACING*1.5f, NULL },
@@ -1756,12 +1749,11 @@ static const Style g_Style_Beat_Versus7 =
 			{ TRACK_5,	+BEAT_COL_SPACING*0.5f, NULL },
 			{ TRACK_6,	+BEAT_COL_SPACING*1.5f, NULL },
 			{ TRACK_7,	+BEAT_COL_SPACING*2.5f, NULL },
-			{ TRACK_8,	+BEAT_COL_SPACING*4.0f, "scratch" },
 		},
 	},
 	{	// m_iInputColumn[NUM_GameController][NUM_GameButton]
 		{ 1, 2, 3, 4, 5, 6, 7, 0, 0, Style::END_MAPPING },
-		{ 0, 1, 2, 3, 4, 5, 6, 7, 7, Style::END_MAPPING },
+		{ 1, 2, 3, 4, 5, 6, 7, 0, 0, Style::END_MAPPING },
 	},
 	{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
 		0,1,2,3,4,5,6,7
@@ -1862,7 +1854,6 @@ static const Game g_Game_Beat =
 	"beat",						// m_szName
 	g_apGame_Beat_Styles,				// m_apStyles
 	true,						// m_bCountNotesSeparately
-	false,						// m_bAllowHopos
 	{						// m_InputScheme
 		"beat",					// m_szName
 		NUM_BEAT_BUTTONS,			// m_iButtonsPerController
@@ -2042,7 +2033,6 @@ static const Game g_Game_Maniax =
 	"maniax",					// m_szName
 	g_apGame_Maniax_Styles,				// m_apStyles
 	false,						// m_bCountNotesSeparately
-	false,						// m_bAllowHopos
 	{						// m_InputScheme
 		"maniax",				// m_szName
 		NUM_MANIAX_BUTTONS,			// m_iButtonsPerController
@@ -2161,24 +2151,24 @@ static const Style g_Style_Techno_Single8 =
 	8,				// m_iColsPerPlayer
 	{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
 		{	// PLAYER_1
-			{ TRACK_1,	-TECHNO_COL_SPACING*2.5f, NULL },
-			{ TRACK_2,	-TECHNO_COL_SPACING*1.5f, NULL },
-			{ TRACK_3,	-TECHNO_COL_SPACING*0.5f, NULL },
-			{ TRACK_4,	+TECHNO_COL_SPACING*0.5f, NULL },
-			{ TRACK_5,	+TECHNO_COL_SPACING*1.5f, NULL },
-			{ TRACK_6,	+TECHNO_COL_SPACING*2.5f, NULL },
-			{ TRACK_7,	+TECHNO_COL_SPACING*3.5f, NULL },
-			{ TRACK_8,	+TECHNO_COL_SPACING*4.5f, NULL },
+			{ TRACK_1,	-TECHNO_COL_SPACING*3.5f, NULL },
+			{ TRACK_2,	-TECHNO_COL_SPACING*2.5f, NULL },
+			{ TRACK_3,	-TECHNO_COL_SPACING*1.5f, NULL },
+			{ TRACK_4,	-TECHNO_COL_SPACING*0.5f, NULL },
+			{ TRACK_5,	+TECHNO_COL_SPACING*0.5f, NULL },
+			{ TRACK_6,	+TECHNO_COL_SPACING*1.5f, NULL },
+			{ TRACK_7,	+TECHNO_COL_SPACING*2.5f, NULL },
+			{ TRACK_8,	+TECHNO_COL_SPACING*3.5f, NULL },
 		},
 		{	// PLAYER_2
-			{ TRACK_1,	-TECHNO_COL_SPACING*4.5f, NULL },
-			{ TRACK_2,	-TECHNO_COL_SPACING*3.5f, NULL },
-			{ TRACK_3,	-TECHNO_COL_SPACING*2.5f, NULL },
-			{ TRACK_4,	-TECHNO_COL_SPACING*1.5f, NULL },
-			{ TRACK_5,	-TECHNO_COL_SPACING*0.5f, NULL },
-			{ TRACK_6,	+TECHNO_COL_SPACING*0.5f, NULL },
-			{ TRACK_7,	+TECHNO_COL_SPACING*1.5f, NULL },
-			{ TRACK_8,	+TECHNO_COL_SPACING*2.5f, NULL },
+			{ TRACK_1,	-TECHNO_COL_SPACING*3.5f, NULL },
+			{ TRACK_2,	-TECHNO_COL_SPACING*2.5f, NULL },
+			{ TRACK_3,	-TECHNO_COL_SPACING*1.5f, NULL },
+			{ TRACK_4,	-TECHNO_COL_SPACING*0.5f, NULL },
+			{ TRACK_5,	+TECHNO_COL_SPACING*0.5f, NULL },
+			{ TRACK_6,	+TECHNO_COL_SPACING*1.5f, NULL },
+			{ TRACK_7,	+TECHNO_COL_SPACING*2.5f, NULL },
+			{ TRACK_8,	+TECHNO_COL_SPACING*3.5f, NULL },
 		},
 	},
 	{	// m_iInputColumn[NUM_GameController][NUM_GameButton]
@@ -2512,7 +2502,6 @@ static const Game g_Game_Techno =
 	"techno",					// m_szName
 	g_apGame_Techno_Styles,				// m_apStyles
 	false,						// m_bCountNotesSeparately
-	false,						// m_bAllowHopos
 	{						// m_InputScheme
 		"techno",				// m_szName
 		NUM_TECHNO_BUTTONS,			// m_iButtonsPerController
@@ -2663,7 +2652,6 @@ static const Game g_Game_Popn =
 	"popn",						// m_szName
 	g_apGame_Popn_Styles,				// m_apStyles
 	true,						// m_bCountNotesSeparately
-	false,						// m_bAllowHopos
 	{						// m_InputScheme
 		"popn",					// m_szName
 		NUM_POPN_BUTTONS,			// m_iButtonsPerController
@@ -2696,113 +2684,6 @@ static const Game g_Game_Popn =
 	TNS_W3,		// m_mapW3To
 	TNS_W3,		// m_mapW4To
 	TNS_Miss,	// m_mapW5To
-};
-
-/** Guitar5 ******************************************************************/
-//ThemeMetric<int>	GUITAR5_COL_SPACING	("ColumnSpacing","Guitar5");
-static const int GUITAR5_COL_SPACING = 48;
-
-static const Style g_Style_Guitar_Five =
-{	// STYLE_GUITAR_FIVE
-	true,				// m_bUsedForGameplay
-	true,				// m_bUsedForEdit
-	true,				// m_bUsedForDemonstration
-	true,				// m_bUsedForHowToPlay
-	"guitar-five",				// m_szName
-	StepsType_guitar_five,		// m_StepsType
-	StyleType_OnePlayerOneSide,		// m_StyleType
-	5,					// m_iColsPerPlayer
-	{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
-		{	// PLAYER_1
-			{ TRACK_1,	-GUITAR5_COL_SPACING*2.0f, NULL },
-			{ TRACK_2,	-GUITAR5_COL_SPACING*1.0f, NULL },
-			{ TRACK_3,	+GUITAR5_COL_SPACING*0.0f, NULL },
-			{ TRACK_4,	+GUITAR5_COL_SPACING*1.0f, NULL },
-			{ TRACK_5,	+GUITAR5_COL_SPACING*2.0f, NULL },
-		},
-		{	// PLAYER_2
-			{ TRACK_1,	-GUITAR5_COL_SPACING*2.0f, NULL },
-			{ TRACK_2,	-GUITAR5_COL_SPACING*1.0f, NULL },
-			{ TRACK_3,	+GUITAR5_COL_SPACING*0.0f, NULL },
-			{ TRACK_4,	+GUITAR5_COL_SPACING*1.0f, NULL },
-			{ TRACK_5,	+GUITAR5_COL_SPACING*2.0f, NULL },
-		},
-	},
-	{	// m_iInputColumn[NUM_GameController][NUM_GameButton]
-		{ 0, 1, 2, 3, 4, Style::END_MAPPING },
-		{ 0, 1, 2, 3, 4, Style::END_MAPPING },
-	},
-	{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
-		0,1,2,3,4
-	},
-	false, // m_bNeedsZoomOutWith2Players
-	false, // m_bCanUseBeginnerHelper
-	false, // m_bLockDifficulties
-};
-
-static const Style *g_apGame_Guitar_Styles[] =
-{
-	&g_Style_Guitar_Five,
-	NULL
-};
-
-// auto keymappings
-static const AutoMappings g_AutoKeyMappings_Guitar = AutoMappings (
-	"",
-	"",
-	"",
-// p1
-	AutoMappingEntry( 0, KEY_Cz,		GUITAR_BUTTON_FRET1,	 false ),
-	AutoMappingEntry( 0, KEY_Cx,		GUITAR_BUTTON_FRET2,	 false ),
-	AutoMappingEntry( 0, KEY_Cc,		GUITAR_BUTTON_FRET3,	 false ),
-	AutoMappingEntry( 0, KEY_Cv,		GUITAR_BUTTON_FRET4,	 false ),
-	AutoMappingEntry( 0, KEY_Cb,		GUITAR_BUTTON_FRET5,	 false ),
-	AutoMappingEntry( 0, KEY_UP,		GUITAR_BUTTON_STRUM_UP,	 false ),
-	AutoMappingEntry( 0, KEY_DOWN,		GUITAR_BUTTON_STRUM_DOWN,false ),
-// p2
-	AutoMappingEntry( 0, KEY_Cy,		GUITAR_BUTTON_FRET1,	 true ),
-	AutoMappingEntry( 0, KEY_Cu,		GUITAR_BUTTON_FRET2,	 true ),
-	AutoMappingEntry( 0, KEY_Ci,		GUITAR_BUTTON_FRET3,	 true ),
-	AutoMappingEntry( 0, KEY_Co,		GUITAR_BUTTON_FRET4,	 true ),
-	AutoMappingEntry( 0, KEY_Cp,		GUITAR_BUTTON_FRET5,	 true ),
-	AutoMappingEntry( 0, KEY_KP_C8,		GUITAR_BUTTON_STRUM_UP,	 true ),
-	AutoMappingEntry( 0, KEY_KP_C5,		GUITAR_BUTTON_STRUM_DOWN,true )
-);
-
-static const Game g_Game_Guitar = 
-{
-	"guitar",						// m_szName
-	g_apGame_Guitar_Styles,				// m_apStyles
-	false,						// m_bCountNotesSeparately (false stops crashes and failing)
-	true,						// m_bAllowHopos
-	{						// m_InputScheme
-		"guitar",					// m_szName
-		NUM_GUITAR_BUTTONS,			// m_iButtonsPerController
-		{	// m_szButtonNames
-			{ "Fret1",		GAME_BUTTON_START },
-			{ "Fret2",		GAME_BUTTON_BACK },
-			{ "Fret3",		GameButton_Invalid },
-			{ "Fret4",		GameButton_Invalid },
-			{ "Fret5",		GameButton_Invalid },
-			{ "StrumUp",		GAME_BUTTON_UP },
-			{ "StrumDown",		GAME_BUTTON_DOWN },
-		},
-		&g_AutoKeyMappings_Guitar
-	},
-	{
-		{ GameButtonType_Fret }, // Green
-		{ GameButtonType_Fret }, // Red
-		{ GameButtonType_Fret }, // Yellow
-		{ GameButtonType_Fret }, // Blue
-		{ GameButtonType_Fret }, // Orange
-		{ GameButtonType_Strum },
-		{ GameButtonType_Strum },
-	},
-	TNS_W1,		// m_mapW1To
-	TNS_W2,		// m_mapW2To
-	TNS_W3,		// m_mapW3To
-	TNS_W4,		// m_mapW4To
-	TNS_W5,		// m_mapW5To
 };
 
 /** Lights *******************************************************************/
@@ -2876,7 +2757,6 @@ static const Game g_Game_Lights =
 	"lights",					// m_szName
 	g_apGame_Lights_Styles,				// m_apStyles
 	false,						// m_bCountNotesSeparately
-	false,						// m_bAllowHopos
 	{						// m_InputScheme
 		"lights",				// m_szName
 		NUM_LIGHTS_BUTTONS,			// m_iButtonsPerController
@@ -2921,7 +2801,6 @@ static const Game *g_Games[] =
 	&g_Game_Maniax,
 	&g_Game_Techno,
 	&g_Game_Popn,
-	//&g_Game_Guitar,	// nope, still broken. -aj
 	&g_Game_Lights,
 };
 
@@ -3143,17 +3022,6 @@ const StepsTypeInfo &GameManager::GetStepsTypeInfo( StepsType st )
 StepsType GameManager::StringToStepsType( RString sStepsType )
 {
 	sStepsType.MakeLower();
-
-	// TODO: Format specific hacks should be moved into the file loader for that format.
-	// If i'm assuming this correctly, these two only apply to .sm files: -aj
-
-	// HACK: We eliminated "ez2-single-hard", but we should still handle it.
-	if( sStepsType == "ez2-single-hard" )
-		sStepsType = "ez2-single";
-
-	// HACK: "para-single" used to be called just "para"
-	if( sStepsType == "para" )
-		sStepsType = "para-single";
 
 	for( int i=0; i<NUM_StepsType; i++ )
 		if( g_StepsTypeInfos[i].szName == sStepsType )

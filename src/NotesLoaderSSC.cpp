@@ -37,10 +37,10 @@ void SSCLoader::ProcessWarps( TimingData &out, const RString sParam, const float
 		// Early versions were absolute in beats. They should be relative.
 		if( ( fVersion < VERSION_SPLIT_TIMING && fNewBeat > fBeat ) )
 		{
-			out.AddSegment( SEGMENT_WARP, new WarpSegment(fBeat, fNewBeat - fBeat) );
+			out.AddSegment( SEGMENT_WARP, new WarpSegment(BeatToNoteRow(fBeat), fNewBeat - fBeat) );
 		}
 		else if( fNewBeat > 0 )
-			out.AddSegment( SEGMENT_WARP, new WarpSegment(fBeat, fNewBeat) );
+			out.AddSegment( SEGMENT_WARP, new WarpSegment(BeatToNoteRow(fBeat), fNewBeat) );
 		else
 		{
 			LOG->UserLog("Song file",
@@ -73,7 +73,7 @@ void SSCLoader::ProcessLabels( TimingData &out, const RString sParam )
 		RString sLabel = arrayLabelValues[1];
 		TrimRight(sLabel);
 		if( fBeat >= 0.0f )
-			out.AddSegment( SEGMENT_LABEL, new LabelSegment(fBeat, sLabel) );
+			out.AddSegment( SEGMENT_LABEL, new LabelSegment(BeatToNoteRow(fBeat), sLabel) );
 		else 
 		{
 			LOG->UserLog("Song file",
@@ -106,7 +106,7 @@ void SSCLoader::ProcessCombos( TimingData &out, const RString line, const int ro
 		const float fComboBeat = StringToFloat( arrayComboValues[0] );
 		const int iCombos = StringToInt( arrayComboValues[1] );
 		const int iMisses = (size == 2 ? iCombos : StringToInt(arrayComboValues[2]));
-		out.AddSegment( SEGMENT_COMBO, new ComboSegment( fComboBeat, iCombos, iMisses ) );
+		out.AddSegment( SEGMENT_COMBO, new ComboSegment( BeatToNoteRow(fComboBeat), iCombos, iMisses ) );
 	}
 }
 
@@ -131,7 +131,7 @@ void SSCLoader::ProcessScrolls( TimingData &out, const RString sParam )
 		
 		const float fBeat = StringToFloat( vs2[0] );
 		
-		ScrollSegment * seg = new ScrollSegment(fBeat, StringToFloat( vs2[1] ) );
+		ScrollSegment * seg = new ScrollSegment(BeatToNoteRow(fBeat), StringToFloat( vs2[1] ) );
 		
 		if( fBeat < 0 )
 		{
@@ -623,69 +623,120 @@ bool SSCLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 				
 				else if( sValueName=="BPMS" )
 				{
-					if( SMLoader::ProcessBPMs(stepsTiming, sParams[1]) )
-						bHasOwnTiming = true;
+					if (out.m_fVersion >= VERSION_SPLIT_TIMING)
+					{
+						if( SMLoader::ProcessBPMs(stepsTiming, sParams[1]) )
+							bHasOwnTiming = true;
+					}
 				}
 				
 				else if( sValueName=="STOPS" )
 				{
-					SMLoader::ProcessStops(stepsTiming, sParams[1]);
+					if (out.m_fVersion >= VERSION_SPLIT_TIMING)
+					{
+						SMLoader::ProcessStops(stepsTiming, sParams[1]);
+						bHasOwnTiming = true;
+					}
 				}
 				
 				else if( sValueName=="DELAYS" )
 				{
-					SMLoader::ProcessDelays(stepsTiming, sParams[1]);
+					if (out.m_fVersion >= VERSION_SPLIT_TIMING)
+					{
+						SMLoader::ProcessDelays(stepsTiming, sParams[1]);
+						bHasOwnTiming = true;
+					}
 				}
 				
 				else if( sValueName=="TIMESIGNATURES" )
 				{
-					SMLoader::ProcessTimeSignatures(stepsTiming, sParams[1]);
+					if (out.m_fVersion >= VERSION_SPLIT_TIMING)
+					{
+						SMLoader::ProcessTimeSignatures(stepsTiming, sParams[1]);
+						bHasOwnTiming = true;
+					}
 				}
 				
 				else if( sValueName=="TICKCOUNTS" )
 				{
-					SMLoader::ProcessTickcounts(stepsTiming, sParams[1]);
+					if (out.m_fVersion >= VERSION_SPLIT_TIMING)
+					{
+						SMLoader::ProcessTickcounts(stepsTiming, sParams[1]);
+						bHasOwnTiming = true;
+					}
 				}
 				
 				else if( sValueName=="COMBOS" )
 				{
-					ProcessCombos(stepsTiming, sParams[1]);
+					if (out.m_fVersion >= VERSION_SPLIT_TIMING)
+					{
+						ProcessCombos(stepsTiming, sParams[1]);
+						bHasOwnTiming = true;
+					}
 				}
 				
 				else if( sValueName=="WARPS" )
 				{
-					ProcessWarps(stepsTiming, sParams[1], out.m_fVersion);
+					if (out.m_fVersion >= VERSION_SPLIT_TIMING)
+					{
+						ProcessWarps(stepsTiming, sParams[1], out.m_fVersion);
+						bHasOwnTiming = true;
+					}
 				}
 				
 				else if( sValueName=="SPEEDS" )
 				{
-					ProcessSpeeds( stepsTiming, sParams[1] );
+					if (out.m_fVersion >= VERSION_SPLIT_TIMING)
+					{
+						ProcessSpeeds( stepsTiming, sParams[1] );
+						bHasOwnTiming = true;
+					}
 				}
 				
 				else if( sValueName=="SCROLLS" )
 				{
-					ProcessScrolls( stepsTiming, sParams[1] );
+					if (out.m_fVersion >= VERSION_SPLIT_TIMING)
+					{
+						ProcessScrolls( stepsTiming, sParams[1] );
+						bHasOwnTiming = true;
+					}
 				}
 				
 				else if( sValueName=="FAKES" )
 				{
-					ProcessFakes( stepsTiming, sParams[1] );
+					if (out.m_fVersion >= VERSION_SPLIT_TIMING)
+					{
+						ProcessFakes( stepsTiming, sParams[1] );
+						bHasOwnTiming = true;
+					}
 				}
 				
 				else if( sValueName=="LABELS" )
 				{
-					ProcessLabels(stepsTiming, sParams[1]);
+					if (out.m_fVersion >= VERSION_SPLIT_TIMING)
+					{
+						ProcessLabels(stepsTiming, sParams[1]);
+						bHasOwnTiming = true;
+					}
 				}
-				
+				/* If this is called, the chart does not use the same attacks
+				 * as the Song's timing. No other changes are required. */
 				else if( sValueName=="ATTACKS" )
 				{
-					ProcessAttackString(pNewNotes->m_sAttackString, sParams);
-					ProcessAttacks(pNewNotes->m_Attacks, sParams);
+					if (out.m_fVersion >= VERSION_SPLIT_TIMING)
+					{
+						ProcessAttackString(pNewNotes->m_sAttackString, sParams);
+						ProcessAttacks(pNewNotes->m_Attacks, sParams);
+					}
 				}
 				
 				else if( sValueName=="OFFSET" )
 				{
-					stepsTiming.m_fBeat0OffsetInSeconds = StringToFloat( sParams[1] );
+					if (out.m_fVersion >= VERSION_SPLIT_TIMING)
+					{
+						stepsTiming.m_fBeat0OffsetInSeconds = StringToFloat( sParams[1] );
+						bHasOwnTiming = true;
+					}
 				}
 				
 				else if( sValueName=="DISPLAYBPM" )

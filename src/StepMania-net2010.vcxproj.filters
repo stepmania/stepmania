@@ -534,9 +534,6 @@
     <ClCompile Include="NotesLoaderKSF.cpp">
       <Filter>Data Structures\NotesLoader</Filter>
     </ClCompile>
-    <ClCompile Include="NotesLoaderMidi.cpp">
-      <Filter>Data Structures\NotesLoader</Filter>
-    </ClCompile>
     <ClCompile Include="NotesLoaderPMS.cpp">
       <Filter>Data Structures\NotesLoader</Filter>
     </ClCompile>
@@ -601,9 +598,6 @@
       <Filter>Data Structures\NotesWriter</Filter>
     </ClCompile>
     <ClCompile Include="ScoreKeeper.cpp">
-      <Filter>Data Structures\ScoreKeeper</Filter>
-    </ClCompile>
-    <ClCompile Include="ScoreKeeperGuitar.cpp">
       <Filter>Data Structures\ScoreKeeper</Filter>
     </ClCompile>
     <ClCompile Include="ScoreKeeperNormal.cpp">
@@ -1626,9 +1620,6 @@
     <ClCompile Include="SongPosition.cpp">
       <Filter>Data Structures</Filter>
     </ClCompile>
-    <ClCompile Include="InGameLoadingWindow.cpp">
-      <Filter>Actors used in Menus</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Screen.h">
@@ -2057,9 +2048,6 @@
     <ClInclude Include="NotesLoaderKSF.h">
       <Filter>Data Structures\NotesLoader</Filter>
     </ClInclude>
-    <ClInclude Include="NotesLoaderMidi.h">
-      <Filter>Data Structures\NotesLoader</Filter>
-    </ClInclude>
     <ClInclude Include="NotesLoaderPMS.h">
       <Filter>Data Structures\NotesLoader</Filter>
     </ClInclude>
@@ -2124,9 +2112,6 @@
       <Filter>Data Structures\NotesWriter</Filter>
     </ClInclude>
     <ClInclude Include="ScoreKeeper.h">
-      <Filter>Data Structures\ScoreKeeper</Filter>
-    </ClInclude>
-    <ClInclude Include="ScoreKeeperGuitar.h">
       <Filter>Data Structures\ScoreKeeper</Filter>
     </ClInclude>
     <ClInclude Include="ScoreKeeperNormal.h">
@@ -3022,9 +3007,6 @@
     </ClInclude>
     <ClInclude Include="SongPosition.h">
       <Filter>Data Structures</Filter>
-    </ClInclude>
-    <ClInclude Include="InGameLoadingWindow.h">
-      <Filter>Actors used in Menus</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -799,6 +799,45 @@ public:
 		if( pSong ) { pSong->PushSelf(L); return 1; }
 		return 0;
 	}
+	// Get all of the steps locked based on difficulty (similar to In The Groove 2).
+	static int GetStepOfAllTypes( T* p, lua_State *L )
+	{
+		Song *pSong = p->m_Song.ToSong();
+		if (pSong)
+		{
+			const vector<Steps*>& allSteps = pSong->GetAllSteps();
+			vector<Steps*> toRet;
+			FOREACH_CONST(Steps*, allSteps, step)
+			{
+				if ((*step)->GetDifficulty() == p->m_dc)
+				{
+					toRet.push_back(*step);
+				}
+			}
+			LuaHelpers::CreateTableFromArray<Steps*>( toRet, L );
+			return 1;
+		}
+		return 0;
+	}
+	
+	// TODO: Add a function to just get all steps.
+	static int GetStepByStepsType( T* p, lua_State *L )
+	{
+		Song *pSong = p->m_Song.ToSong();
+		if (pSong)
+		{
+			const vector<Steps*>& allStepsType = pSong->GetStepsByStepsType(p->m_StepsType);
+			FOREACH_CONST(Steps*, allStepsType, step)
+			{
+				if ((*step)->GetDifficulty() == p->m_dc)
+				{
+					(*step)->PushSelf(L); return 1;
+				}
+			}
+		}
+		return 0;
+	}
+	
 	static int GetCourse( T* p, lua_State *L )
 	{
 		Course *pCourse = p->m_Course.ToCourse();
@@ -829,6 +868,7 @@ public:
 	static int code( T* p, lua_State *L )	{ p->m_sEntryID = SArg(1); return 0; }
 	static int roulette( T* p, lua_State *L ) { p->m_bRoulette = true; return 0; }
 	static int requirepasshardsteps( T* p, lua_State *L ) { p->m_bRequirePassHardSteps = true; return 0; }
+	static int requirepasschallengesteps( T* p, lua_State *L ) { p->m_bRequirePassChallengeSteps = true; return 0; }
 	static int require( T* p, lua_State *L )
 	{
 		const UnlockRequirement ut = Enum::Check<UnlockRequirement>( L, 1 );
@@ -848,6 +888,8 @@ public:
 		ADD_METHOD( GetRequirePassChallengeSteps );
 		ADD_METHOD( GetSong );
 		ADD_METHOD( GetCourse );
+		ADD_METHOD( GetStepOfAllTypes );
+		ADD_METHOD( GetStepByStepsType );
 		ADD_METHOD( song );
 		ADD_METHOD( steps );
 		ADD_METHOD( steps_type );
@@ -856,6 +898,7 @@ public:
 		ADD_METHOD( code );
 		ADD_METHOD( roulette );
 		ADD_METHOD( requirepasshardsteps );
+		ADD_METHOD( requirepasschallengesteps );
 		ADD_METHOD( require );
 	}
 };
@@ -930,6 +973,8 @@ public:
 		ADD_METHOD( PreferUnlockEntryID );
 		ADD_METHOD( UnlockEntryID );
 		ADD_METHOD( UnlockEntryIndex );
+		//ADD_METHOD( UnlockSong );
+		//ADD_METHOD( GetUnlocksByType );
 	}
 };
 

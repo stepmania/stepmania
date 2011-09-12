@@ -22,11 +22,15 @@ local t = Def.ActorFrame {};
 t[#t+1] = Def.Quad {
 	InitCommand=cmd(Center;zoomto,SCREEN_WIDTH,SCREEN_HEIGHT;diffuse,Color("Black"));
 };
-t[#t+1] = Def.Sprite {
-	InitCommand=cmd(Center);
-	BeginCommand=cmd(LoadFromCurrentSongBackground);
-	OnCommand=cmd(diffusealpha,0;scaletoclipped,SCREEN_WIDTH,SCREEN_HEIGHT;sleep,0.5;linear,0.50;diffusealpha,1;sleep,3);
-};
+if GAMESTATE:IsCourseMode() then
+	t[#t+1] = LoadActor("CourseDisplay");
+else
+	t[#t+1] = Def.Sprite {
+		InitCommand=cmd(Center);
+		BeginCommand=cmd(LoadFromCurrentSongBackground);
+		OnCommand=cmd(diffusealpha,0;scaletoclipped,SCREEN_WIDTH,SCREEN_HEIGHT;sleep,0.5;linear,0.50;diffusealpha,1;sleep,3);
+	};
+end
 
 t[#t+1] = Def.ActorFrame {
 	InitCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y);

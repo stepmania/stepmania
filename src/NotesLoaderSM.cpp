@@ -75,7 +75,15 @@ void SMLoader::LoadFromTokens(
 
 	//	LOG->Trace( "Steps::LoadFromTokens()" );
 
-	// insert stepstype hacks from GameManager.cpp here? -aj
+	// backwards compatibility hacks:
+	// HACK: We eliminated "ez2-single-hard", but we should still handle it.
+	if( sStepsType == "ez2-single-hard" )
+		sStepsType = "ez2-single";
+
+	// HACK: "para-single" used to be called just "para"
+	if( sStepsType == "para" )
+		sStepsType = "para-single";
+
 	out.m_StepsType = GAMEMAN->StringToStepsType( sStepsType );
 	out.SetDescription( sDescription );
 	out.SetCredit( sDescription ); // this is often used for both.
@@ -237,7 +245,7 @@ bool SMLoader::ProcessBPMs( TimingData &out, const RString line, const int rowsP
 			{
 				float endBeat = fBeat + (fNewBPM / -negBPM) * (fBeat - negBeat);
 				out.AddSegment(SEGMENT_WARP,
-							   new WarpSegment(negBeat, endBeat - negBeat));
+							   new WarpSegment(BeatToNoteRow(negBeat), endBeat - negBeat));
 				
 				negBeat = -1;
 				negBPM = 1;
@@ -253,12 +261,12 @@ bool SMLoader::ProcessBPMs( TimingData &out, const RString line, const int rowsP
 				if( highspeedBeat > 0 )
 				{
 					out.AddSegment(SEGMENT_WARP,
-								   new WarpSegment(highspeedBeat, fBeat - highspeedBeat) );
+								   new WarpSegment(BeatToNoteRow(highspeedBeat), fBeat - highspeedBeat) );
 					highspeedBeat = -1;
 				}
 				{
 					out.AddSegment(SEGMENT_BPM,
-								   new BPMSegment(fBeat, fNewBPM));
+								   new BPMSegment(BeatToNoteRow(fBeat), fNewBPM));
 				}
 			}
 		}
@@ -302,7 +310,7 @@ void SMLoader::ProcessStops( TimingData &out, const RString line, const int rows
 			if( negBeat + fSkipBeats > fFreezeBeat )
 				fSkipBeats = fFreezeBeat - negBeat;
 			
-			out.AddSegment(SEGMENT_WARP, new WarpSegment(negBeat, fSkipBeats));
+			out.AddSegment(SEGMENT_WARP, new WarpSegment(BeatToNoteRow(negBeat), fSkipBeats));
 			
 			negBeat = -1;
 			negPause = 0;
@@ -315,8 +323,8 @@ void SMLoader::ProcessStops( TimingData &out, const RString line, const int rows
 		}
 		else if( fFreezeSeconds > 0.0f )
 		{
-			out.AddSegment(SEGMENT_STOP_DELAY,
-						   new StopSegment(fFreezeBeat, fFreezeSeconds));
+			out.AddSegment(SEGMENT_STOP,
+						   new StopSegment(BeatToNoteRow(fFreezeBeat), fFreezeSeconds));
 		}
 		
 	}
@@ -328,7 +336,7 @@ void SMLoader::ProcessStops( TimingData &out, const RString line, const int rows
 		float fSecondsPerBeat = 60 / oldBPM->GetBPM();
 		float fSkipBeats = negPause / fSecondsPerBeat;
 		
-		out.AddSegment(SEGMENT_WARP, new WarpSegment(negBeat, fSkipBeats));
+		out.AddSegment(SEGMENT_WARP, new WarpSegment(BeatToNoteRow(negBeat), fSkipBeats));
 	}
 }
 
@@ -353,14 +361,13 @@ void SMLoader::ProcessDelays( TimingData &out, const RString line, const int row
 		const float fFreezeBeat = RowToBeat( arrayDelayValues[0], rowsPerBeat );
 		const float fFreezeSeconds = StringToFloat( arrayDelayValues[1] );
 		
-		StopSegment * new_seg = new StopSegment(fFreezeBeat,
-												fFreezeSeconds,
-												true);
+		DelaySegment * new_seg = new DelaySegment(BeatToNoteRow(fFreezeBeat),
+												  fFreezeSeconds);
 		
 		// LOG->Trace( "Adding a delay segment: beat: %f, seconds = %f", new_seg.m_fStartBeat, new_seg.m_fStopSeconds );
 		
 		if(fFreezeSeconds > 0.0f)
-			out.AddSegment( SEGMENT_STOP_DELAY, new_seg );
+			out.AddSegment( SEGMENT_DELAY, new_seg );
 		else
 			LOG->UserLog(
 				     "Song file",
@@ -374,28 +381,28 @@ void SMLoader::ProcessTimeSignatures( TimingData &out, const RString line, const
 {
 	vector<RString> vs1;
 	split( line, ",", vs1 );
-	
+
 	FOREACH_CONST( RString, vs1, s1 )
 	{
 		vector<RString> vs2;
 		split( *s1, "=", vs2 );
-		
+
 		if( vs2.size() < 3 )
 		{
 			LOG->UserLog("Song file",
-				     this->GetSongTitle(),
-				     "has an invalid time signature change with %i values.",
-				     static_cast<int>(vs2.size()) );
+				GetSongTitle(),
+				"has an invalid time signature change with %i values.",
+				static_cast<int>(vs2.size()) );
 			continue;
 		}
-		
+
 		const float fBeat = RowToBeat( vs2[0], rowsPerBeat );
-		
+
 		TimeSignatureSegment * seg =
-			new TimeSignatureSegment(fBeat,
+			new TimeSignatureSegment( BeatToNoteRow(fBeat),
 									 StringToInt( vs2[1] ),
 									 StringToInt( vs2[2] ));
-		
+
 		if( fBeat < 0 )
 		{
 			LOG->UserLog("Song file",
@@ -449,7 +456,7 @@ void SMLoader::ProcessTickcounts( TimingData &out, const RString line, const int
 		int iTicks = clamp(atoi( arrayTickcountValues[1] ), 0, ROWS_PER_BEAT);
 		
 		out.AddSegment( SEGMENT_TICKCOUNT,
-					   new TickcountSegment(fTickcountBeat, iTicks) );
+					   new TickcountSegment(BeatToNoteRow(fTickcountBeat), iTicks) );
 	}
 }
 
@@ -484,11 +491,17 @@ void SMLoader::ProcessSpeeds( TimingData &out, const RString line, const int row
 		
 		const float fBeat = RowToBeat( vs2[0], rowsPerBeat );
 		
-		SpeedSegment * seg = new SpeedSegment(fBeat,
-											  StringToFloat( vs2[1] ),
-											  StringToFloat( vs2[2] ));
-		seg->SetUnit(StringToInt(vs2[3]));
-		
+		SpeedSegment * seg = new SpeedSegment( BeatToNoteRow(fBeat),
+			StringToFloat( vs2[1] ),
+			StringToFloat( vs2[2] ));
+
+		// XXX: ugly...
+		int iUnit = StringToInt(vs2[3]);
+		SpeedSegment::BaseUnit unit = (iUnit == 0) ?
+			SpeedSegment::UNIT_BEATS : SpeedSegment::UNIT_SECONDS;
+
+		seg->SetUnit( unit );
+
 		if( fBeat < 0 )
 		{
 			LOG->UserLog("Song file",
@@ -498,12 +511,12 @@ void SMLoader::ProcessSpeeds( TimingData &out, const RString line, const int row
 			continue;
 		}
 		
-		if( seg->GetLength() < 0 )
+		if( seg->GetDelay() < 0 )
 		{
 			LOG->UserLog("Song file",
 				     this->GetSongTitle(),
 				     "has an speed change with beat %f, length %f.",
-				     fBeat, seg->GetLength() );
+				     fBeat, seg->GetDelay() );
 			continue;
 		}
 		
@@ -533,7 +546,7 @@ void SMLoader::ProcessFakes( TimingData &out, const RString line, const int rows
 		const float fNewBeat = StringToFloat( arrayFakeValues[1] );
 		
 		if(fNewBeat > 0)
-			out.AddSegment( SEGMENT_FAKE, new FakeSegment(fBeat, fNewBeat) );
+			out.AddSegment( SEGMENT_FAKE, new FakeSegment(BeatToNoteRow(fBeat), fNewBeat) );
 		else
 		{
 			LOG->UserLog("Song file",
@@ -920,7 +933,7 @@ bool SMLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCache
 	}
 	
 	// Ensure all warps from negative time changes are in order.
-	vector<TimingSegment *> &warps = out.m_SongTiming.allTimingSegments[SEGMENT_WARP];
+	vector<TimingSegment *> &warps = out.m_SongTiming.m_avpTimingSegments[SEGMENT_WARP];
 	sort(warps.begin(), warps.end());
 	TidyUpData( out, bFromCache );
 	return true;

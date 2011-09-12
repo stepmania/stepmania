@@ -5,6 +5,7 @@
 #include "RageFile.h"
 #include "Foreach.h"
 #include "LocalizedString.h"
+#include "LuaBinding.h"
 #include "LuaManager.h"
 #include <float.h>
 
@@ -90,6 +91,70 @@ int MersenneTwister::operator()()
 	return Temper( m_Values[m_iNext++] );
 }
 
+/* Extend MersenneTwister into Lua space. This is intended to replace
+ * math.randomseed and math.random, so we conform to their behavior. */
+
+namespace
+{
+	MersenneTwister g_LuaPRNG;
+
+	/* To map from [0..2^32-1] to [0..1), we divide by 2^32. */
+	const double DIVISOR = pow( double(2), double(32) );
+
+	static int Seed( lua_State *L )
+	{
+		g_LuaPRNG.Reset( IArg(1) );
+		return 0;
+	}
+
+	static int Random( lua_State *L )
+	{
+		switch( lua_gettop(L) )
+		{
+			/* [0..1) */
+			case 0:
+			{
+				double r = double(g_LuaPRNG()) / DIVISOR;
+				lua_pushnumber( L, r );
+				return 1;
+			}
+
+			/* [1..u] */
+			case 1:
+			{
+				int upper = IArg(1);
+				luaL_argcheck( L, 1 <= upper, 1, "interval is empty" );
+				lua_pushnumber( L, g_LuaPRNG(upper) + 1 );
+				return 1;
+			}
+			/* [l..u] */
+			case 2:
+			{
+				int lower = IArg(1);
+				int upper = IArg(2);
+				luaL_argcheck( L, lower < upper, 2, "interval is empty" );
+				lua_pushnumber( L, (int(g_LuaPRNG()) % (upper-lower+1)) + lower );
+				return 1;
+			}
+
+			/* wrong amount of arguments */
+			default:
+			{
+				return luaL_error( L, "wrong number of arguments" );
+			}
+		}
+	}
+
+	const luaL_Reg MersenneTwisterTable[] =
+	{
+		LIST_METHOD( Seed ),
+		LIST_METHOD( Random ),
+		{ NULL, NULL }
+	};
+}
+
+LUA_REGISTER_NAMESPACE( MersenneTwister );
+
 void fapproach( float& val, float other_val, float to_move )
 {
 	ASSERT_M( to_move >= 0, ssprintf("to_move: %f < 0", to_move) );
@@ -166,21 +231,21 @@ RString BinaryToHex( const RString &sString )
 
 bool HexToBinary( const RString &s, unsigned char *stringOut )
 {
-       if( !IsHexVal(s) )
-               return false;
+	if( !IsHexVal(s) )
+		return false;
 
-       for( int i=0; true; i++ )
-       {
-               if( (int)s.size() <= i*2 )
-                       break;
-               RString sByte = s.substr( i*2, 2 );
+	for( int i=0; true; i++ )
+	{
+		if( (int)s.size() <= i*2 )
+			break;
+		RString sByte = s.substr( i*2, 2 );
 
-               uint8_t val = 0;
-               if( sscanf( sByte, "%hhx", &val ) != 1 )
-                       return false;
-               stringOut[i] = val;
-       }
-       return true;
+		uint8_t val = 0;
+		if( sscanf( sByte, "%hhx", &val ) != 1 )
+			return false;
+		stringOut[i] = val;
+	}
+	return true;
 }
 
 bool HexToBinary( const RString &s, RString &sOut )
@@ -311,7 +376,6 @@ struct tm GetLocalTime()
 	return tm;
 }
 
-
 RString ssprintf( const char *fmt, ...)
 {
 	va_list	va;
@@ -331,7 +395,7 @@ RString vssprintf( const char *szFormat, va_list argList )
 	int iUsed = 0;
 	int iTry = 0;
 
-	do	
+	do
 	{
 		// Grow more than linearly (e.g. 512, 1536, 3072, etc)
 		iChars += iTry * FMT_BLOCK_SIZE;
@@ -393,8 +457,8 @@ RString vssprintf( const char *szFormat, va_list argList )
 	return sStr;
 }
 
-/* Windows uses %I64i to format a 64-bit int, instead of %lli.  Convert "a b %lli %-3llu c d"
- * to "a b %I64 %-3I64u c d".  This assumes a well-formed format string; invalid format strings
+/* Windows uses %I64i to format a 64-bit int, instead of %lli. Convert "a b %lli %-3llu c d"
+ * to "a b %I64 %-3I64u c d". This assumes a well-formed format string; invalid format strings
  * should not crash, but the results are undefined. */
 #if defined(WIN32)
 RString ConvertI64FormatString( const RString &sStr )
@@ -681,7 +745,6 @@ RString DwiEscape( const char *cUnescaped, int len )
 	return answer;
 }
 
-
 template <class S>
 static int DelimitorLength( const S &Delimitor )
 {
@@ -731,7 +794,6 @@ void do_split( const S &Source, const C Delimitor, vector<S> &AddIt, const bool 
 	} while ( startpos <= Source.size() );
 }
 
-
 void split( const RString &sSource, const RString &sDelimitor, vector<RString> &asAddIt, const bool bIgnoreEmpty )
 {
 	if( sDelimitor.size() == 1 )
@@ -760,14 +822,14 @@ while( 1 )
 	str[start] = 'Q';
 }
 
- */
+*/
 
 template <class S>
 void do_split( const S &Source, const S &Delimitor, int &begin, int &size, int len, const bool bIgnoreEmpty )
 {
 	if( size != -1 )
 	{
-		/* Start points to the beginning of the last delimiter.  Move it up. */
+		// Start points to the beginning of the last delimiter. Move it up.
 		begin += size+Delimitor.size();
 		begin = min( begin, len );
 	}
@@ -776,14 +838,14 @@ void do_split( const S &Source, const S &Delimitor, int &begin, int &size, int l
 
 	if( bIgnoreEmpty )
 	{
-		/* Skip delims. */
+		// Skip delims.
 		while( begin + Delimitor.size() < Source.size() &&
 			!Source.compare( begin, Delimitor.size(), Delimitor ) )
 			++begin;
 	}
 
-	/* Where's the string function to find within a substring?  C++ strings apparently
-	 * are missing that ... */
+	/* Where's the string function to find within a substring?
+	 * C++ strings apparently are missing that ... */
 	size_t pos;
 	if( Delimitor.size() == 1 )
 		pos = Source.find( Delimitor[0], begin );
@@ -797,7 +859,6 @@ void do_split( const S &Source, const S &Delimitor, int &begin, int &size, int l
 void split( const RString &Source, const RString &Delimitor, int &begin, int &size, int len, const bool bIgnoreEmpty )
 {
 	do_split( Source, Delimitor, begin, size, len, bIgnoreEmpty );
-
 }
 
 void split( const wstring &Source, const wstring &Delimitor, int &begin, int &size, int len, const bool bIgnoreEmpty )
@@ -814,8 +875,6 @@ void split( const wstring &Source, const wstring &Delimitor, int &begin, int &si
 {
 	do_split( Source, Delimitor, begin, size, Source.size(), bIgnoreEmpty );
 }
-
-
 
 /*
  * foo\fum\          -> "foo\fum\", "", ""
@@ -852,7 +911,6 @@ void splitpath( const RString &sPath, RString &sDir, RString &sFilename, RString
 		sFilename = sBase;
 	}
 }
-
 
 /* "foo.bar", "baz" -> "foo.baz"
  * "foo", "baz" -> "foo.baz"
@@ -902,12 +960,10 @@ void MakeValidFilename( RString &sName )
 			continue;
 		}
 
-		/*
-		 * We could replace with closest matches in ASCII: convert the character to UTF-8
-		 * NFD (decomposed) (maybe NFKD?), and see if the first character is ASCII.
-		 *
-		 * This is useless for non-Western languages, since we'll replace the whole filename.
-		 */
+		/* We could replace with closest matches in ASCII: convert the character
+		 * to UTF-8 NFD (decomposed) (maybe NFKD?), and see if the first
+		 * character is ASCII. This is useless for non-Western languages,
+		 * since we'll replace the whole filename. */
 		wsName[i] = '_';
 	}
 
@@ -929,13 +985,11 @@ void GetCommandLineArguments( int &argc, char **&argv )
 	argv = g_argv;
 }
 
-/*
- * Search for the commandline argument given; eg. "test" searches for the
+/* Search for the commandline argument given; eg. "test" searches for the
  * option "--test".  All commandline arguments are getopt_long style: --foo;
  * short arguments (-x) are not supported.  (These are not intended for
  * common, general use, so having short options isn't currently needed.)
- * If argument is non-NULL, accept an argument.
- */
+ * If argument is non-NULL, accept an argument. */
 bool GetCommandlineArgument( const RString &option, RString *argument, int iIndex )
 {
 	const RString optstr = "--" + option;
@@ -947,9 +1001,9 @@ bool GetCommandlineArgument( const RString &option, RString *argument, int iInde
 		const size_t i = CurArgument.find( "=" );
 		RString CurOption = CurArgument.substr(0,i);
 		if( CurOption.CompareNoCase(optstr) )
-			continue; /* no match */
+			continue; // no match
 
-		/* Found it. */
+		// Found it.
 		if( iIndex )
 		{
 			--iIndex;
@@ -1015,13 +1069,12 @@ void CRC32( unsigned int &iCRC, const void *pVoidBuffer, size_t iSize )
 	iCRC ^= 0xFFFFFFFF;
 }
 
-unsigned int GetHashForString ( const RString &s )
+unsigned int GetHashForString( const RString &s )
 {
 	unsigned crc = 0;
 	CRC32( crc, s.data(), s.size() );
 	return crc;
 }
-
 
 /* Return true if "dir" is empty or does not exist. */
 bool DirectoryIsEmpty( const RString &sDir )
@@ -1131,7 +1184,7 @@ void TrimRight( RString &sStr, const char *s )
 	while( n > 0 && strchr(s, sStr[n-1]) )
 		n--;
 
-	/* Delete from n to the end.  If n == sStr.size(), nothing is deleted;
+	/* Delete from n to the end. If n == sStr.size(), nothing is deleted;
 	 * if n == 0, the whole string is erased. */
 	sStr.erase( sStr.begin()+n, sStr.end() );
 }
@@ -1200,7 +1253,7 @@ void StripMacResourceForks( vector<RString> &vs )
 	RemoveIf( vs, MacResourceFork );
 }
 
-/* path is a .redir pathname.  Read it and return the real one. */
+// path is a .redir pathname. Read it and return the real one.
 RString DerefRedir( const RString &_path )
 {
 	RString sPath = _path;
@@ -1213,7 +1266,7 @@ RString DerefRedir( const RString &_path )
 		RString sNewFileName;
 		GetFileContents( sPath, sNewFileName, true );
 
-		/* Empty is invalid. */
+		// Empty is invalid.
 		if( sNewFileName == "" )
 			return RString();
 
@@ -1239,7 +1292,7 @@ RString DerefRedir( const RString &_path )
 
 bool GetFileContents( const RString &sPath, RString &sOut, bool bOneLine )
 {
-	/* Don't warn if the file doesn't exist, but do warn if it exists and fails to open. */
+	// Don't warn if the file doesn't exist, but do warn if it exists and fails to open.
 	if( !IsAFile(sPath) )
 		return false;
 
@@ -1250,6 +1303,7 @@ bool GetFileContents( const RString &sPath, RString &sOut, bool bOneLine )
 		return false;
 	}
 
+	// todo: figure out how to make this UTF-8 safe. -aj
 	RString sData;
 	int iGot;
 	if( bOneLine )
@@ -1395,9 +1449,6 @@ bool Regex::Replace( const RString &sReplacement, const RString &sSubject, RStri
 	return true;
 }
 
-
-
-
 /* Given a UTF-8 byte, return the length of the codepoint (if a start code)
  * or 0 if it's a continuation byte. */
 int utf8_get_char_len( char p )
@@ -1417,15 +1468,15 @@ static inline bool is_utf8_continuation_byte( char c )
 	return (c & 0xC0) == 0x80;
 }
 
-/* Decode one codepoint at start; advance start and place the result in ch.  If
- * the encoded string is invalid, false is returned. */
+/* Decode one codepoint at start; advance start and place the result in ch.
+ * If the encoded string is invalid, false is returned. */
 bool utf8_to_wchar_ec( const RString &s, unsigned &start, wchar_t &ch )
 {
 	if( start >= s.size() )
 		return false;
 
 	if( is_utf8_continuation_byte( s[start] ) || /* misplaced continuation byte */
-	    (s[start] & 0xFE) == 0xFE ) /* 0xFE, 0xFF */
+		(s[start] & 0xFE) == 0xFE ) /* 0xFE, 0xFF */
 	{
 		start += 1;
 		return false;
@@ -1441,7 +1492,7 @@ bool utf8_to_wchar_ec( const RString &s, unsigned &start, wchar_t &ch )
 	{
 		if( start+i >= s.size() )
 		{
-			/* We expected a continuation byte, but didn't get one.  Return error, and point
+			/* We expected a continuation byte, but didn't get one. Return error, and point
 			 * start at the unexpected byte; it's probably a new sequence. */
 			start += i;
 			return false;
@@ -1450,7 +1501,7 @@ bool utf8_to_wchar_ec( const RString &s, unsigned &start, wchar_t &ch )
 		char byte = s[start+i];
 		if( !is_utf8_continuation_byte(byte) )
 		{
-			/* We expected a continuation byte, but didn't get one.  Return error, and point
+			/* We expected a continuation byte, but didn't get one. Return error, and point
 			 * start at the unexpected byte; it's probably a new sequence. */
 			start += i;
 			return false;
@@ -1490,7 +1541,7 @@ bool utf8_to_wchar( const char *s, size_t iLength, unsigned &start, wchar_t &ch 
 
 	if( start+len > iLength )
 	{
-		/* We don't have room for enough continuation bytes.  Return error. */
+		// We don't have room for enough continuation bytes. Return error.
 		start += len;
 		ch = L'?';
 		return false;
@@ -1540,7 +1591,7 @@ bool utf8_to_wchar( const char *s, size_t iLength, unsigned &start, wchar_t &ch 
 }
 
 
-/* UTF-8 encode ch and append to out. */
+// UTF-8 encode ch and append to out.
 void wchar_to_utf8( wchar_t ch, RString &out )
 {
 	if( ch < 0x80 ) { out.append( 1, (char) ch ); return; }
@@ -1565,7 +1616,6 @@ void wchar_to_utf8( wchar_t ch, RString &out )
 	}
 }
 
-
 wchar_t utf8_get_char( const RString &s )
 {
 	unsigned start = 0;
@@ -1575,9 +1625,7 @@ wchar_t utf8_get_char( const RString &s )
 	return ret;
 }
 
-
-
-/* Replace invalid sequences in s. */
+// Replace invalid sequences in s.
 void utf8_sanitize( RString &s )
 {
 	RString ret;
@@ -1592,7 +1640,6 @@ void utf8_sanitize( RString &s )
 
 	s = ret;
 }
-
 
 bool utf8_is_valid( const RString &s )
 {
@@ -1615,11 +1662,12 @@ void utf8_remove_bom( RString &sLine )
 
 static int UnicodeDoUpper( char *p, size_t iLen, const unsigned char pMapping[256] )
 {
+	// Note: this has problems with certain accented characters. -aj
 	wchar_t wc = L'\0';
 	unsigned iStart = 0;
 	if( !utf8_to_wchar(p, iLen, iStart, wc) )
 		return 1;
-	
+
 	wchar_t iUpper = wc;
 	if( wc < 256 )
 		iUpper = pMapping[wc];
@@ -1636,8 +1684,8 @@ static int UnicodeDoUpper( char *p, size_t iLen, const unsigned char pMapping[25
 	return iStart;
 }
 
-/* Fast in-place MakeUpper and MakeLower.  This only replaces characters with characters of the same UTF-8
- * length, so we never have to move the whole string.  This is optimized for strings that have no
+/* Fast in-place MakeUpper and MakeLower. This only replaces characters with characters of the same UTF-8
+ * length, so we never have to move the whole string. This is optimized for strings that have no
  * non-ASCII characters. */
 void MakeUpper( char *p, size_t iLen )
 {
@@ -1645,7 +1693,7 @@ void MakeUpper( char *p, size_t iLen )
 	char *pEnd = p + iLen;
 	while( p < pEnd )
 	{
-		/* Fast path: */
+		// Fast path:
 		if( likely( !(*p & 0x80) ) )
 		{
 			if( unlikely(*p >= 'a' && *p <= 'z') )
@@ -1665,7 +1713,7 @@ void MakeLower( char *p, size_t iLen )
 	char *pEnd = p + iLen;
 	while( p < pEnd )
 	{
-		/* Fast path: */
+		// Fast path:
 		if( likely( !(*p & 0x80) ) )
 		{
 			if( unlikely(*p >= 'A' && *p <= 'Z') )
@@ -1749,7 +1797,7 @@ wstring RStringToWstring( const RString &s )
 		char c = s[start];
 		if( !(c&0x80) )
 		{
-			/* ASCII fast path */
+			// ASCII fast path
 			ret += c;
 			++start;
 			continue;
@@ -1774,7 +1822,6 @@ RString WStringToRString( const wstring &sStr )
 	return sRet;
 }
 
-
 RString WcharToUTF8( wchar_t c )
 {
 	RString ret;
@@ -1782,7 +1829,7 @@ RString WcharToUTF8( wchar_t c )
 	return ret;
 }
 
-/* &a; -> a */
+// &a; -> a
 void ReplaceEntityText( RString &sText, const map<RString,RString> &m )
 {
 	RString sRet;
@@ -1793,7 +1840,7 @@ void ReplaceEntityText( RString &sText, const map<RString,RString> &m )
 		size_t iStart = sText.find( '&', iOffset );
 		if( iStart == sText.npos )
 		{
-			/* Optimization: if we didn't replace anything at all, do nothing. */
+			// Optimization: if we didn't replace anything at all, do nothing.
 			if( iOffset == 0 )
 				return;
 
@@ -1810,8 +1857,7 @@ void ReplaceEntityText( RString &sText, const map<RString,RString> &m )
 		size_t iEnd = sText.find_first_of( "&;", iStart+1 );
 		if( iEnd == sText.npos || sText[iEnd] == '&' )
 		{
-			/* & with no matching ;, or two & in a row.  Append the & and
-			 * continue. */
+			// & with no matching ;, or two & in a row. Append the & and continue.
 			sRet.append( sText, iStart, 1 );
 			++iOffset;
 			continue;
@@ -1836,7 +1882,7 @@ void ReplaceEntityText( RString &sText, const map<RString,RString> &m )
 	sText = sRet;
 }
 
-/* abcd -> &a; &b; &c; &d; */
+// abcd -> &a; &b; &c; &d;
 void ReplaceEntityText( RString &sText, const map<char,RString> &m )
 {
 	RString sFind;
@@ -1852,7 +1898,7 @@ void ReplaceEntityText( RString &sText, const map<char,RString> &m )
 		size_t iStart = sText.find_first_of( sFind, iOffset );
 		if( iStart == sText.npos )
 		{
-			/* Optimization: if we didn't replace anything at all, do nothing. */
+			// Optimization: if we didn't replace anything at all, do nothing.
 			if( iOffset == 0 )
 				return;
 
@@ -1880,13 +1926,13 @@ void ReplaceEntityText( RString &sText, const map<char,RString> &m )
 	sText = sRet;
 }
 
-/* Replace &#nnnn; (decimal) and &xnnnn; (hex) with corresponding UTF-8 characters. */
+// Replace &#nnnn; (decimal) and &xnnnn; (hex) with corresponding UTF-8 characters.
 void Replace_Unicode_Markers( RString &sText )
 {
 	unsigned iStart = 0;
 	while( iStart < sText.size() )
 	{
-		/* Look for &#digits; */
+		// Look for &#digits;
 		bool bHex = false;
 		size_t iPos = sText.find( "&#", iStart );
 		if( iPos == sText.npos )
@@ -1902,19 +1948,19 @@ void Replace_Unicode_Markers( RString &sText )
 		unsigned p = iPos;
 		p += 2;
 
-		/* Found &# or &x.  Is it followed by digits and a semicolon? */
+		// Found &# or &x. Is it followed by digits and a semicolon?
 		if( p >= sText.size() )
 			continue;
 
 		int iNumDigits = 0;
 		while( p < sText.size() && bHex? isxdigit(sText[p]):isdigit(sText[p]) )
 		{
-		   p++;
-		   iNumDigits++;
+			p++;
+			iNumDigits++;
 		}
 
 		if( !iNumDigits )
-			continue; /* must have at least one digit */
+			continue; // must have at least one digit
 		if( p >= sText.size() || sText[p] != ';' )
 			continue;
 		p++;
@@ -1931,7 +1977,7 @@ void Replace_Unicode_Markers( RString &sText )
 	}
 }
 
-/* Form a string to identify a wchar_t with ASCII. */
+// Form a string to identify a wchar_t with ASCII.
 RString WcharDisplayText( wchar_t c )
 {
 	RString sChr;
@@ -1960,8 +2006,7 @@ RString Basename( const RString &sDir )
 	return sDir.substr( iStart, iEnd-iStart+1 );
 }
 
-/*
- * Return all but the last named component of dir:
+/* Return all but the last named component of dir:
  *
  * a/b/c -> a/b/
  * a/b/c/ -> a/b/
@@ -1971,16 +2016,16 @@ RString Basename( const RString &sDir )
  */
 RString Dirname( const RString &dir )
 {
-	/* Special case: "/" -> "/". */
+	// Special case: "/" -> "/".
 	if( dir.size() == 1 && dir[0] == '/' )
 		return "/";
 
 	int pos = dir.size()-1;
-	/* Skip trailing slashes. */
+	// Skip trailing slashes.
 	while( pos >= 0 && dir[pos] == '/' )
 		--pos;
 
-	/* Skip the last component. */
+	// Skip the last component.
 	while( pos >= 0 && dir[pos] != '/' )
 		--pos;
 
@@ -2050,8 +2095,7 @@ void FixSlashesInPlace( RString &sPath )
 			sPath[i] = '/';
 }
 
-/*
- * Keep trailing slashes, since that can be used to illustrate that a path always
+/* Keep trailing slashes, since that can be used to illustrate that a path always
  * represents a directory.
  *
  * foo/bar -> foo/bar
@@ -2075,7 +2119,7 @@ void CollapsePath( RString &sPath, bool bRemoveLeadingDot )
 	size_t iNext;
 	for( ; iPos < sPath.size(); iPos = iNext )
 	{
-		/* Find the next slash. */
+		// Find the next slash.
 		iNext = sPath.find( '/', iPos );
 		if( iNext == RString::npos )
 			iNext = sPath.size();
@@ -2089,32 +2133,32 @@ void CollapsePath( RString &sPath, bool bRemoveLeadingDot )
 				continue;
 		}
 
-		/* If this is a dot, skip it. */
+		// If this is a dot, skip it.
 		if( iNext - iPos == 2 && sPath[iPos] == '.' && sPath[iPos+1] == '/' )
 		{
 			if( bRemoveLeadingDot || !sOut.empty() )
 				continue;
 		}
 
-		/* If this is two dots, */
+		// If this is two dots,
 		if( iNext - iPos == 3 && sPath[iPos] == '.' && sPath[iPos+1] == '.' && sPath[iPos+2] == '/' )
 		{
-			/* If this is the first path element (nothing to delete), or all we have is a slash,
-			 * leave it. */
+			/* If this is the first path element (nothing to delete),
+			 * or all we have is a slash, leave it. */
 			if( sOut.empty() || (sOut.size() == 1 && sOut[0] == '/') )
 			{
 				sOut.append( sPath, iPos, iNext-iPos );
 				continue;
 			}
 
-			/* Search backwards for the previous path element. */
+			// Search backwards for the previous path element.
 			size_t iPrev = sOut.rfind( '/', sOut.size()-2 );
 			if( iPrev == RString::npos )
 				iPrev = 0;
 			else
 				++iPrev;
-			
-			/* If the previous element is also .., leave it. */
+
+			// If the previous element is also .., leave it.
 			bool bLastIsTwoDots = (sOut.size() - iPrev == 3 && sOut[iPrev] == '.' && sOut[iPrev+1] == '.' );
 			if( bLastIsTwoDots )
 			{
@@ -2268,7 +2312,10 @@ static RString MakeUpper( RString s ) { s.MakeUpper(); return s; }
 LuaFunction( Uppercase, MakeUpper( SArg(1) ) )
 LuaFunction( mbstrlen, (int)RStringToWstring(SArg(1)).length() )
 LuaFunction( URLEncode, URLEncode( SArg(1) ) );
+LuaFunction( PrettyPercent, PrettyPercent( FArg(1), FArg(2) ) );
 //LuaFunction( IsHexVal, IsHexVal( SArg(1) ) );
+static bool UndocumentedFeature( RString s ){ sm_crash(s); return true; }
+LuaFunction( UndocumentedFeature, UndocumentedFeature(SArg(1)) );
 
 /*
  * Copyright (c) 2001-2005 Chris Danford, Glenn Maynard

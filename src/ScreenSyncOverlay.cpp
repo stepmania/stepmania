@@ -225,8 +225,17 @@ bool ScreenSyncOverlay::OverlayInput( const InputEventPlus &input )
 			}
 			if( GAMESTATE->m_pCurSong != NULL )
 			{
-				BPMSegment * seg = GAMESTATE->m_pCurSong->m_SongTiming.GetBPMSegmentAtBeat( GAMESTATE->m_Position.m_fSongBeat );
+				TimingData &sTiming = GAMESTATE->m_pCurSong->m_SongTiming;
+				BPMSegment * seg = sTiming.GetBPMSegmentAtBeat( GAMESTATE->m_Position.m_fSongBeat );
 				seg->SetBPS( seg->GetBPS() + fDelta );
+				const vector<Steps *>& vpSteps = GAMESTATE->m_pCurSong->GetAllSteps();
+				FOREACH( Steps*, const_cast<vector<Steps *>&>(vpSteps), s )
+				{
+					TimingData &pTiming = (*s)->m_Timing;
+					float second = sTiming.GetElapsedTimeFromBeat(GAMESTATE->m_Position.m_fSongBeat);
+					seg = pTiming.GetBPMSegmentAtBeat(pTiming.GetBeatFromElapsedTime(second));
+					seg->SetBPS( seg->GetBPS() + fDelta );
+				}
 			}
 		}
 		break;

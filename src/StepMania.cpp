@@ -80,20 +80,10 @@ static Preference<bool> g_bAllowMultipleInstances( "AllowMultipleInstances", fal
 
 void StepMania::GetPreferredVideoModeParams( VideoModeParams &paramsOut )
 {
-	/* We can't rely on there being full-screen video modes that give us square
-	 * pixels at non-4:3 aspects.  The lowest non-4:3 resolution my new laptop
-	 * with Radeon supports is 1280x720. In most cases, we'll using a 4:3
-	 * resolution when full-screen let the monitor stretch to the correct aspect.
-	 * When windowed (no monitor stretching), we will tweak the width so that
-	 * we get square pixels.
-	 * -Chris */
-	int iWidth = PREFSMAN->m_iDisplayWidth;
-	if( PREFSMAN->m_bWindowed )
-	{
-		//float fRatio = PREFSMAN->m_iDisplayWidth / PREFSMAN->m_iDisplayHeight;
-		//iWidth = PREFSMAN->m_iDisplayHeight * fRatio;
-		iWidth = static_cast<int>(ceilf(PREFSMAN->m_iDisplayHeight * PREFSMAN->m_fDisplayAspectRatio));
-	}
+	// unsure if this is still going to cause first run issues. -aj
+	float fAspectRatio = PREFSMAN->m_fDisplayAspectRatio;
+	int iHeight = PREFSMAN->m_iDisplayHeight;
+	int iWidth = ceilf(iHeight * fAspectRatio);
 
 	// todo: allow for PRODUCT_ID + "-" + CommonMetrics::WINDOW_TITLE as
 	// a theme option (Midi requested it, AJ had the idea for making it optional)
@@ -902,7 +892,7 @@ static void WriteLogHeader()
 	struct tm now;
 	localtime_r( &cur_time, &now );
 
-	LOG->Info( "Log starting %.4d-%.2d-%.2d %.2d:%.2d:%.2d", 
+	LOG->Info( "Log starting %.4d-%.2d-%.2d %.2d:%.2d:%.2d",
 		1900+now.tm_year, now.tm_mon+1, now.tm_mday, now.tm_hour, now.tm_min, now.tm_sec );
 	LOG->Trace( " " );
 
@@ -933,19 +923,6 @@ static void ApplyLogPreferences()
 }
 
 static LocalizedString COULDNT_OPEN_LOADING_WINDOW( "LoadingWindow", "Couldn't open any loading windows." );
-static LocalizedString STARTING_SOUND ( "LoadingWindow", "Starting sound subsystem...");
-static LocalizedString INIT_BOOKKEEPER ( "LoadingWindow", "Initializing bookkeeper...");
-static LocalizedString START_LIGHTS ( "LoadingWindow", "Starting lights subsystem...");
-static LocalizedString LOAD_GAMETYPE ( "LoadingWindow", "Loading game type...");
-static LocalizedString BUILD_SONG_CACHE_INDEX ( "LoadingWindow", "Building song cache index...");
-static LocalizedString LOAD_BANNER_CACHE ( "LoadingWindow", "Loading banner cache...");
-static LocalizedString INIT_MEMCARD ( "LoadingWindow", "Initializing memory card system...");
-static LocalizedString INIT_CHARS ( "LoadingWindow", "Initializing character system...");
-static LocalizedString INIT_PROFILES ( "LoadingWindow", "Initializing profile system...");
-static LocalizedString UPDATE_POPULAR ( "LoadingWindow", "Updating popular song list...");
-static LocalizedString UPDATE_COURSE_RANKS ( "LoadingWindow", "Updating course rankings...");
-static LocalizedString INIT_STATICS ( "LoadingWindow", "Initializing statics manager...");
-static LocalizedString INIT_MESSAGE ( "LoadingWindow", "Initializing message system...");
 
 int main(int argc, char* argv[])
 {
@@ -1028,7 +1005,7 @@ int main(int argc, char* argv[])
 	GAMESTATE	= new GameState;
 
 	// This requires PREFSMAN, for PREFSMAN->m_bShowLoadingWindow.
-	pLoadingWindow = LoadingWindow::Create();
+	LoadingWindow *pLoadingWindow = LoadingWindow::Create();
 	if(pLoadingWindow == NULL)
 		RageException::Throw("%s", COULDNT_OPEN_LOADING_WINDOW.GetValue().c_str());
 
@@ -1054,7 +1031,7 @@ int main(int argc, char* argv[])
 	// Switch to the last used game type, and set up the theme and announcer.
 	SwitchToLastPlayedGame();
 
-	CommandLineActions::Handle();
+	CommandLineActions::Handle(pLoadingWindow);
 
 	if( GetCommandlineArgument("dopefish") )
 		GAMESTATE->m_bDopefish = true;
@@ -1073,76 +1050,51 @@ int main(int argc, char* argv[])
 	if( PREFSMAN->m_iSoundWriteAhead )
 		LOG->Info( "Sound writeahead has been overridden to %i", PREFSMAN->m_iSoundWriteAhead.Get() );
 
-	pLoadingWindow->SetText(STARTING_SOUND);
 	SOUNDMAN	= new RageSoundManager;
 	SOUNDMAN->Init();
 	SOUNDMAN->SetMixVolume();
 	SOUND		= new GameSoundManager;
-	pLoadingWindow->SetText(INIT_BOOKKEEPER);
 	BOOKKEEPER	= new Bookkeeper;
-	pLoadingWindow->SetText(START_LIGHTS);
 	LIGHTSMAN	= new LightsManager;
 	INPUTFILTER	= new InputFilter;
 	INPUTMAPPER	= new InputMapper;
 
-	pLoadingWindow->SetText(LOAD_GAMETYPE);
 	StepMania::ChangeCurrentGame( GAMESTATE->GetCurrentGame() );
 
 	INPUTQUEUE	= new InputQueue;
-	pLoadingWindow->SetText(BUILD_SONG_CACHE_INDEX);
 	SONGINDEX	= new SongCacheIndex;
-	pLoadingWindow->SetText(LOAD_BANNER_CACHE);
 	BANNERCACHE	= new BannerCache;
 	//BACKGROUNDCACHE	= new BackgroundCache;
 
-#define earlyBail if( ArchHooks::UserQuit() ) { \
-		ShutdownGame(); \
-		SAFE_DELETE( pLoadingWindow ); \
-		return 0; \
-	} \
-
 	// depends on SONGINDEX:
 	SONGMAN		= new SongManager;
-	SONGMAN->InitAll();	// this takes a long time
-	earlyBail
+	SONGMAN->InitAll( pLoadingWindow );	// this takes a long time
 	CRYPTMAN	= new CryptManager;		// need to do this before ProfileMan
 	if( PREFSMAN->m_bSignProfileData )
 		CRYPTMAN->GenerateGlobalKeys();
-	earlyBail
-	pLoadingWindow->SetText(INIT_MEMCARD);
 	MEMCARDMAN	= new MemoryCardManager;
-	earlyBail
-	pLoadingWindow->SetText(INIT_CHARS);
-	earlyBail
 	CHARMAN		= new CharacterManager;
-	pLoadingWindow->SetText(INIT_PROFILES);
-	earlyBail
 	PROFILEMAN	= new ProfileManager;
 	PROFILEMAN->Init();				// must load after SONGMAN
-	earlyBail
 	UNLOCKMAN	= new UnlockManager;
-	pLoadingWindow->SetText(UPDATE_POPULAR);
-	earlyBail
 	SONGMAN->UpdatePopular();
 	SONGMAN->UpdatePreferredSort();
-	earlyBail
-
-	NSMAN 		= new NetworkSyncManager( pLoadingWindow ); 
-	pLoadingWindow->SetText(INIT_MESSAGE);
+	NSMAN 		= new NetworkSyncManager( pLoadingWindow );
 	MESSAGEMAN	= new MessageManager;
-	pLoadingWindow->SetText(INIT_STATICS);
 	STATSMAN	= new StatsManager;
-	earlyBail
 
 	// Initialize which courses are ranking courses here.
-	pLoadingWindow->SetText(UPDATE_COURSE_RANKS);
 	SONGMAN->UpdateRankingCourses();
-	earlyBail
 
-	// destroy this before init'ing Display, for now
-	// we will lose the rights to be focused, but that's not too important
-	// when we are going fullscreen
-	SAFE_DELETE( pLoadingWindow );
+	SAFE_DELETE( pLoadingWindow ); // destroy this before init'ing Display
+
+	/* If the user has tried to quit during the loading, do it before creating
+	* the main window. This prevents going to full screen just to quit. */
+	if( ArchHooks::UserQuit() )
+	{
+		ShutdownGame();
+		return 0;
+	}
 
 	StartDisplay();
 

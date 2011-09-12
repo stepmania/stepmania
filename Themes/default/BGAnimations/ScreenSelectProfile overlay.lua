@@ -17,8 +17,7 @@ function GetLocalProfiles()
 				BeginCommand=function(self)
 					local numSongsPlayed = profile:GetNumTotalSongsPlayed();
 					local s = numSongsPlayed == 1 and "Song" or "Songs";
-					-- todo: localize
-					self:settext( numSongsPlayed.." "..s.." Played" );
+					self:settext( string.format(THEME:GetString("ScreenSelectProfile","%d "..s.." Played"),numSongsPlayed) );
 				end;
 			};
 		};
@@ -57,7 +56,7 @@ function LoadPlayerStuff(Player)
 			OnCommand=cmd(diffuse,Color('Orange');diffusealpha,0.5);
 		}; --]]
 		LoadFont("Common Normal") .. {
-			Text="Press &START; to join.";
+			Text=THEME:GetString("ScreenSelectProfile","PressStart");
 			InitCommand=cmd(shadowlength,1);
 			OnCommand=cmd(diffuseshift;effectcolor1,Color('White');effectcolor2,color("0.5,0.5,0.5"));
 		};

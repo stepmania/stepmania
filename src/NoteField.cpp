@@ -35,12 +35,11 @@ static ThemeMetric<float> FADE_FAIL_TIME( "NoteField", "FadeFailTime" );
 static RString RoutineNoteSkinName( size_t i ) { return ssprintf("RoutineNoteSkinP%i",int(i+1)); }
 static ThemeMetric1D<RString> ROUTINE_NOTESKIN( "NoteField", RoutineNoteSkinName, NUM_PLAYERS );
 
-
 inline const TimingData *GetRealTiming(const PlayerState *pPlayerState)
 {
 	if( GAMESTATE->m_pCurSteps[pPlayerState->m_PlayerNumber] != NULL )
 		return &GAMESTATE->m_pCurSteps[pPlayerState->m_PlayerNumber]->m_Timing;
-	return NULL;	
+	return NULL;
 }
 
 inline const TimingData *GetDisplayedTiming(const PlayerState *pPlayerState)
@@ -428,7 +427,7 @@ void NoteField::DrawMarkerBar( int iBeat )
 	m_rectMarkerBar.Draw();
 }
 
-// todo: make colors in this section metricable -aj
+static ThemeMetric<RageColor> AREA_HIGHLIGHT_COLOR("NoteField", "AreaHighlightColor");
 void NoteField::DrawAreaHighlight( int iStartBeat, int iEndBeat )
 {
 	float fStartBeat = NoteRowToBeat( iStartBeat );
@@ -443,7 +442,7 @@ void NoteField::DrawAreaHighlight( int iStartBeat, int iEndBeat )
 	ASSERT( fYEndPos < +5000 );
 
 	m_rectAreaHighlight.StretchTo( RectF(-GetWidth()/2, fYStartPos, GetWidth()/2, fYEndPos) );
-	m_rectAreaHighlight.SetDiffuse( RageColor(1,0,0,0.3f) );
+	m_rectAreaHighlight.SetDiffuse( AREA_HIGHLIGHT_COLOR );
 	m_rectAreaHighlight.Draw();
 }
 
@@ -500,27 +499,35 @@ void NoteField::DrawBPMText( const float fBeat, const float fBPM )
 	m_textMeasureNumber.Draw();
 }
 
-void NoteField::DrawFreezeText( const float fBeat, const float fSecs, const float bDelay )
+void NoteField::DrawFreezeText( const float fBeat, const float fSecs )
 {
 	const float fYOffset	= ArrowEffects::GetYOffset( m_pPlayerState, 0, fBeat );
  	const float fYPos	= ArrowEffects::GetYPos(    m_pPlayerState, 0, fYOffset, m_fYReverseOffsetPixels );
 	const float fZoom	= ArrowEffects::GetZoom(    m_pPlayerState );
 	const float xBase	= GetWidth()/2.f;
-	const float xOffset	= (bDelay ? DELAY_OFFSETX : STOP_OFFSETX) * fZoom;
+	const float xOffset	= STOP_OFFSETX * fZoom;
 
 	m_textMeasureNumber.SetZoom( fZoom );
-	if(bDelay)
-	{
-		m_textMeasureNumber.SetHorizAlign( DELAY_IS_LEFT_SIDE ? align_right : align_left );
-		m_textMeasureNumber.SetDiffuse( DELAY_COLOR );
-		m_textMeasureNumber.SetXY( (DELAY_IS_LEFT_SIDE ? -xBase - xOffset : xBase + xOffset), fYPos );
-	}
-	else
-	{
-		m_textMeasureNumber.SetHorizAlign( STOP_IS_LEFT_SIDE ? align_right : align_left );
-		m_textMeasureNumber.SetDiffuse( STOP_COLOR );
-		m_textMeasureNumber.SetXY( (STOP_IS_LEFT_SIDE ? -xBase - xOffset : xBase + xOffset), fYPos );
-	}
+	m_textMeasureNumber.SetHorizAlign( STOP_IS_LEFT_SIDE ? align_right : align_left );
+	m_textMeasureNumber.SetDiffuse( STOP_COLOR );
+	m_textMeasureNumber.SetXY( (STOP_IS_LEFT_SIDE ? -xBase - xOffset : xBase + xOffset), fYPos );
+	m_textMeasureNumber.SetGlow( RageColor(1,1,1,RageFastCos(RageTimer::GetTimeSinceStartFast()*2)/2+0.5f) );
+	m_textMeasureNumber.SetText( ssprintf("%.3f", fSecs) );
+	m_textMeasureNumber.Draw();
+}
+
+void NoteField::DrawDelayText( const float fBeat, const float fSecs )
+{
+	const float fYOffset	= ArrowEffects::GetYOffset( m_pPlayerState, 0, fBeat );
+ 	const float fYPos	= ArrowEffects::GetYPos(    m_pPlayerState, 0, fYOffset, m_fYReverseOffsetPixels );
+	const float fZoom	= ArrowEffects::GetZoom(    m_pPlayerState );
+	const float xBase	= GetWidth()/2.f;
+	const float xOffset	= DELAY_OFFSETX * fZoom;
+	
+	m_textMeasureNumber.SetZoom( fZoom );
+	m_textMeasureNumber.SetHorizAlign( DELAY_IS_LEFT_SIDE ? align_right : align_left );
+	m_textMeasureNumber.SetDiffuse( DELAY_COLOR );
+	m_textMeasureNumber.SetXY( (DELAY_IS_LEFT_SIDE ? -xBase - xOffset : xBase + xOffset), fYPos );
 	m_textMeasureNumber.SetGlow( RageColor(1,1,1,RageFastCos(RageTimer::GetTimeSinceStartFast()*2)/2+0.5f) );
 	m_textMeasureNumber.SetText( ssprintf("%.3f", fSecs) );
 	m_textMeasureNumber.Draw();
@@ -611,7 +618,7 @@ void NoteField::DrawLabelText( const float fBeat, RString sLabel )
 	m_textMeasureNumber.Draw();
 }
 
-void NoteField::DrawSpeedText( const float fBeat, float fPercent, float fWait, unsigned short usMode )
+void NoteField::DrawSpeedText( const float fBeat, float fPercent, float fWait, int iMode )
 {
 	const float fYOffset	= ArrowEffects::GetYOffset( m_pPlayerState, 0, fBeat );
  	const float fYPos	= ArrowEffects::GetYPos(    m_pPlayerState, 0, fYOffset, m_fYReverseOffsetPixels );
@@ -623,7 +630,7 @@ void NoteField::DrawSpeedText( const float fBeat, float fPercent, float fWait, u
 	m_textMeasureNumber.SetHorizAlign( SPEED_IS_LEFT_SIDE ? align_right : align_left );
 	m_textMeasureNumber.SetDiffuse( SPEED_COLOR );
 	m_textMeasureNumber.SetGlow( RageColor(1,1,1,RageFastCos(RageTimer::GetTimeSinceStartFast()*2)/2+0.5f) );
-	m_textMeasureNumber.SetText( ssprintf("%.3f\n%s\n%.3f", fPercent, (usMode == 1 ? "S" : "B"), fWait) );
+	m_textMeasureNumber.SetText( ssprintf("%.3f\n%s\n%.3f", fPercent, (iMode == 1 ? "S" : "B"), fWait) );
 	m_textMeasureNumber.SetXY( (SPEED_IS_LEFT_SIDE ? -xBase - xOffset : xBase + xOffset), fYPos );
 	m_textMeasureNumber.Draw();
 }
@@ -849,7 +856,7 @@ void NoteField::DrawPrimitives()
 	}
 
 	const TimingData *pTiming = GetDisplayedTiming(m_pPlayerState);
-	const vector<TimingSegment *> *segs = pTiming->allTimingSegments;
+	const vector<TimingSegment *> *segs = pTiming->m_avpTimingSegments;
 	unsigned i = 0;
 	// Draw beat bars
 	if( ( GAMESTATE->IsEditing() || SHOW_BEAT_BARS ) && pTiming != NULL )
@@ -860,7 +867,7 @@ void NoteField::DrawPrimitives()
 		{
 			TimeSignatureSegment *ts = static_cast<TimeSignatureSegment *>(tSigs[i]);
 			int iSegmentEndRow = (i + 1 == tSigs.size()) ? iLastRowToDraw : tSigs[i+1]->GetRow();
-		
+
 			// beat bars every 16th note
 			int iDrawBeatBarsEveryRows = BeatToNoteRow( ((float)ts->GetDen()) / 4 ) / 4;
 
@@ -897,7 +904,7 @@ void NoteField::DrawPrimitives()
 		ASSERT(GAMESTATE->m_pCurSong);
 
 		const TimingData &timing = *pTiming;
-		
+
 		// Scroll text
 		if( GAMESTATE->m_bIsUsingStepTiming )
 		{
@@ -912,7 +919,7 @@ void NoteField::DrawPrimitives()
 				}
 			}
 		}
-		
+
 		// BPM text
 		for (i = 0; i < segs[SEGMENT_BPM].size(); i++)
 		{
@@ -926,17 +933,29 @@ void NoteField::DrawPrimitives()
 		}
 
 		// Freeze text
-		for (i = 0; i < segs[SEGMENT_STOP_DELAY].size(); i++)
+		for (i = 0; i < segs[SEGMENT_STOP].size(); i++)
 		{
-			StopSegment *seg = static_cast<StopSegment *>(segs[SEGMENT_STOP_DELAY][i]);
+			StopSegment *seg = static_cast<StopSegment *>(segs[SEGMENT_STOP][i]);
 			if( seg->GetRow() >= iFirstRowToDraw && seg->GetRow() <= iLastRowToDraw )
 			{
 				float fBeat = seg->GetBeat();
 				if( IS_ON_SCREEN(fBeat) )
-					DrawFreezeText( fBeat, seg->GetPause(), seg->GetDelay() );
+					DrawFreezeText( fBeat, seg->GetPause() );
 			}
 		}
-		
+
+		// Delay text
+		for (i = 0; i < segs[SEGMENT_DELAY].size(); i++)
+		{
+			DelaySegment *seg = static_cast<DelaySegment *>(segs[SEGMENT_DELAY][i]);
+			if( seg->GetRow() >= iFirstRowToDraw && seg->GetRow() <= iLastRowToDraw )
+			{
+				float fBeat = seg->GetBeat();
+				if( IS_ON_SCREEN(fBeat) )
+					DrawDelayText( fBeat, seg->GetPause() );
+			}
+		}
+
 		// Warp text
 		for (i = 0; i < segs[SEGMENT_WARP].size(); i++)
 		{
@@ -948,8 +967,7 @@ void NoteField::DrawPrimitives()
 					DrawWarpText( fBeat, seg->GetLength() );
 			}
 		}
-		
-		
+
 		// Time Signature text
 		for (i = 0; i < segs[SEGMENT_TIME_SIG].size(); i++)
 		{
@@ -961,7 +979,7 @@ void NoteField::DrawPrimitives()
 					DrawTimeSignatureText( fBeat, seg->GetNum(), seg->GetDen() );
 			}
 		}
-		
+
 		if( GAMESTATE->m_bIsUsingStepTiming )
 		{
 			// Tickcount text
@@ -976,7 +994,7 @@ void NoteField::DrawPrimitives()
 				}
 			}
 		}
-		
+
 		if( GAMESTATE->m_bIsUsingStepTiming )
 		{
 			// Combo text
@@ -991,7 +1009,7 @@ void NoteField::DrawPrimitives()
 				}
 			}
 		}
-		
+
 		// Label text
 		for (i = 0; i < segs[SEGMENT_LABEL].size(); i++)
 		{
@@ -1003,7 +1021,7 @@ void NoteField::DrawPrimitives()
 					DrawLabelText( fBeat, seg->GetLabel() );
 			}
 		}
-		
+
 		if( GAMESTATE->m_bIsUsingStepTiming )
 		{
 			// Speed text
@@ -1015,11 +1033,11 @@ void NoteField::DrawPrimitives()
 					float fBeat = seg->GetBeat();
 					if( IS_ON_SCREEN(fBeat) )
 						DrawSpeedText(fBeat, seg->GetRatio(), 
-							      seg->GetLength(), seg->GetUnit() );
+							      seg->GetDelay(), seg->GetUnit() );
 				}
 			}
 		}
-		
+
 		// Fake text
 		if( GAMESTATE->m_bIsUsingStepTiming )
 		{
@@ -1071,7 +1089,7 @@ void NoteField::DrawPrimitives()
 				}
 			}
 		}
-		
+
 		if( !GAMESTATE->m_bIsUsingStepTiming )
 		{
 			// BGChange text
@@ -1086,17 +1104,17 @@ void NoteField::DrawPrimitives()
 						vector<BackgroundChange>::iterator iter[NUM_BackgroundLayer];
 						FOREACH_BackgroundLayer( j )
 							iter[j] = GAMESTATE->m_pCurSong->GetBackgroundChanges(j).begin();
-		
+
 						while( 1 )
 						{
 							float fLowestBeat = FLT_MAX;
 							vector<BackgroundLayer> viLowestIndex;
-		
+
 							FOREACH_BackgroundLayer( j )
 							{
 								if( iter[j] == GAMESTATE->m_pCurSong->GetBackgroundChanges(j).end() )
 									continue;
-		
+
 								float fBeat = iter[j]->m_fStartBeat;
 								if( fBeat < fLowestBeat )
 								{
@@ -1163,7 +1181,6 @@ void NoteField::DrawPrimitives()
 			DrawMarkerBar( m_iEndMarker );
 		}
 	}
-
 
 	// Optimization is very important here because there are so many arrows to draw.
 	// Draw the arrows in order of column. This minimizes texture switches and

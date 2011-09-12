@@ -1326,6 +1326,20 @@ public:
 			lua_pushnil( L );
 		return 1;
 	}
+	
+	/*FSX's WIP code, touch if it's wrong (which it probably is)
+	static int SetOptionRowFromName( T* p, lua_State *L ) 
+	{
+		FOREACH_PlayerNumber( pn )
+		{
+			for( unsigned i=0; i<m_pRows.size(); i++ )
+			{
+				if( m_pRows[i]->GetRowTitle() == SArg(1) && m_pRows[i]->GetRowDef().IsEnabledForPlayer(p) )
+					p->MoveRowAbsolute(pn,i)
+			}
+		}
+	}
+	*/
 
 	LunaScreenOptions()
 	{

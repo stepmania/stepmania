@@ -57,8 +57,7 @@ private:
 	RageSound m_soundChangeOpt;
 	RageSound m_soundChangeSel;
 
-	// todo: do these theme-side instead. -aj
-	BPMDisplay m_BPMDisplay;
+	// todo: do this theme-side instead. -aj
 	ModIconRow m_ModIconRow[NUM_PLAYERS];
 
 	Song * m_cSong;

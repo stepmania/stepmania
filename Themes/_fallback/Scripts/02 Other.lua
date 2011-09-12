@@ -1,44 +1,45 @@
 local g_metrics_group = nil;
 local g_element = nil;
 
-SSC = (ProductID() == "sm-ssc");
+-- legacy:
+SSC = true;
 
 function LoadFallbackB()
 	-- Load the fallback BGA for the element that is currently being loaded.
 	-- The fallback metrics group and element name will come either from LuaThreadVars
 	-- (loading from C++) or from the Lua globals above (loading from Lua).
 
-	--Warn( "g_element " .. (g_element or "") );
-	--Warn( "MatchingElement " .. (Var 'MatchingElement' or "") );
-	--Warn( "g_metrics_group " .. (g_metrics_group or "") );
-	--Warn( "MatchingMetricsGroup " .. (Var 'MatchingMetricsGroup' or "") );
+	--Warn( "g_element " .. (g_element or "") )
+	--Warn( "MatchingElement " .. (Var 'MatchingElement' or "") )
+	--Warn( "g_metrics_group " .. (g_metrics_group or "") )
+	--Warn( "MatchingMetricsGroup " .. (Var 'MatchingMetricsGroup' or "") )
 
-	local metrics_group = g_metrics_group or Var 'MatchingMetricsGroup';
-	local element = g_element or Var 'MatchingElement';
-	local fallback = THEME:GetMetric(metrics_group,'Fallback');
+	local metrics_group = g_metrics_group or Var 'MatchingMetricsGroup'
+	local element = g_element or Var 'MatchingElement'
+	local fallback = THEME:GetMetric(metrics_group,'Fallback')
 
-	local old_metrics_group = g_metrics_group;
-	local old_element = g_element;
+	local old_metrics_group = g_metrics_group
+	local old_element = g_element
 
-	local path;
-	path, g_metrics_group, g_element = THEME:GetPathInfoB(fallback,element);
-	--Trace('path ' .. path );
-	local t = LoadActor( path );
+	local path
+	path, g_metrics_group, g_element = THEME:GetPathInfoB(fallback,element)
+	--Trace('path ' .. path )
+	local t = LoadActor( path )
 
-	g_metrics_group = old_metrics_group;
-	g_element = old_element;
+	g_metrics_group = old_metrics_group
+	g_element = old_element
 
-	return t;
+	return t
 end
 
 function FormatNumSongsPlayed( num )
-	local s = num..' song';
+	local s = num..' song'
 	if s == 1 then 
-		s = s .. ' ';
+		s = s .. ' '
 	else 
-		s = s .. 's';
+		s = s .. 's'
 	end
-	return s..' played';
+	return s..' played'
 end
 
 function JudgmentTransformCommand( self, params )
@@ -87,13 +88,13 @@ function GetEditModeSubScreens()
 		"ScreenMiniMenuInsertTapAttack," ..
 		"ScreenMiniMenuInsertCourseAttack," ..
 		"ScreenMiniMenuCourseDisplay," ..
-		"ScreenEditOptions";
+		"ScreenEditOptions"
 end
 
 function GetCoursesToShowRanking()
 	local CoursesToShowRanking = PREFSMAN:GetPreference("CoursesToShowRanking")
 	if CoursesToShowRanking ~= "" then return CoursesToShowRanking end
-	return "Courses/Default/MostPlayed_01-04.crs,Courses/Default/MostPlayed_05-08.crs,Courses/Default/MostPlayed_09-12.crs"
+	return "Courses/Default/MostPlayed_01-04.crs,Courses/Default/ChallengingRandom5.crs,Courses/Default/Jupiter.crs"
 end
 
 -- Get a metric from the currently-loading screen.  This is only valid while loading
@@ -105,24 +106,30 @@ end
 ScreenMetric = Screen.Metric
 
 Screen.String = function ( sName )
-	local sClass = Var "LoadingScreen";
+	local sClass = Var "LoadingScreen"
 	return THEME:GetString( sClass, sName )
 end
 ScreenString = Screen.String
 
 function TextBannerAfterSet(self,param) 
-	local Title=self:GetChild("Title"); 
-	local Subtitle=self:GetChild("Subtitle"); 
-	--local Artist=self:GetChild("Artist"); 
+	local Title=self:GetChild("Title") 
+	local Subtitle=self:GetChild("Subtitle") 
+
 	if Subtitle:GetText() == "" then 
-		(cmd(maxwidth,208;y,0;zoom,1.0;))(Title);
-		(cmd(visible,false))(Subtitle);
-		--(cmd(zoom,0.66;maxwidth,300;y,7))(Artist);
+		Title:maxwidth(208)
+		Title:y(0)
+		Title:zoom(1)
+
+		Subtitle:visible(false)
 	else
-		-- subtitle below
-		(cmd(zoom,1;y,-6;zoom,0.9;))(Title);
-		(cmd(visible,true;zoom,0.6;y,7))(Subtitle); 
-		--(cmd(zoom,0.66;maxwidth,300;y,9))(Artist); 
+		Title:zoom(1)
+		Title:y(-6)
+		Title:zoom(0.9)
+
+		-- subtitle below title
+		Subtitle:visible(true)
+		Subtitle:zoom(0.6)
+		Subtitle:y(7)
 	end
 end
 
@@ -148,4 +155,3 @@ end
 -- OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
 -- OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
 -- PERFORMANCE OF THIS SOFTWARE.
-

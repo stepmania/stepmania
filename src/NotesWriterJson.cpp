@@ -24,8 +24,8 @@ static void Serialize(const TimingSegment &seg, Json::Value &root)
 
 static void Serialize(const TimingData &td, Json::Value &root)
 {
-	JsonUtil::SerializeVectorPointers( td.allTimingSegments[SEGMENT_BPM], Serialize, root["BpmSegments"] );
-	JsonUtil::SerializeVectorPointers( td.allTimingSegments[SEGMENT_STOP_DELAY], Serialize, root["StopSegments"] );
+	JsonUtil::SerializeVectorPointers( td.m_avpTimingSegments[SEGMENT_BPM], Serialize, root["BpmSegments"] );
+	JsonUtil::SerializeVectorPointers( td.m_avpTimingSegments[SEGMENT_STOP], Serialize, root["StopSegments"] );
 }
 
 static void Serialize(const LyricSegment &o, Json::Value &root)

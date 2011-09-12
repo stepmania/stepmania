@@ -18,7 +18,7 @@ void NotesLoaderJson::GetApplicableFiles( const RString &sPath, vector<RString> 
 static void Deserialize(TimingSegment &seg_, const Json::Value &root)
 {
 	TimingSegment *seg = &seg_;
-	
+
 	float fBeat = root["Beat"].asDouble();
 	seg->SetBeat(fBeat);
 	switch (seg->GetType())
@@ -29,7 +29,7 @@ static void Deserialize(TimingSegment &seg_, const Json::Value &root)
 			static_cast<BPMSegment *>(seg)->SetBPM(fBPM);
 			break;
 		}
-		case SEGMENT_STOP_DELAY:
+		case SEGMENT_STOP:
 		{
 			float fStop = root["Seconds"].asDouble();
 			static_cast<StopSegment *>(seg)->SetPause(fStop);
@@ -41,8 +41,8 @@ static void Deserialize(TimingSegment &seg_, const Json::Value &root)
 
 static void Deserialize(TimingData &td, const Json::Value &root)
 {
-	JsonUtil::DeserializeVectorPointers( td.allTimingSegments[SEGMENT_BPM], Deserialize, root["BpmSegments"] );
-	JsonUtil::DeserializeVectorPointers( td.allTimingSegments[SEGMENT_STOP_DELAY], Deserialize, root["StopSegments"] );
+	JsonUtil::DeserializeVectorPointers( td.m_avpTimingSegments[SEGMENT_BPM], Deserialize, root["BpmSegments"] );
+	JsonUtil::DeserializeVectorPointers( td.m_avpTimingSegments[SEGMENT_STOP], Deserialize, root["StopSegments"] );
 }
 
 static void Deserialize(LyricSegment &o, const Json::Value &root)
@@ -203,7 +203,6 @@ static void Deserialize( Song &out, const Json::Value &root )
 		FOREACH( Steps*, vpSteps, iter )
 			out.AddSteps( *iter );
 	}
-
 }
 
 bool NotesLoaderJson::LoadFromJsonFile( const RString &sPath, Song &out )

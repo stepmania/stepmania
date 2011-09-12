@@ -5,8 +5,173 @@ from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
 ================================================================================
-StepMania 5.0 ????????? | 20110???
+StepMania 5.0 $next | 2011????
 --------------------------------------------------------------------------------
+
+2011/09/11
+----------
+* [ScreenEvaluation] Added "evaluation full combo W1" and
+  "evaluation full combo W2" announcer cues. [AJ]
+* [Banner] Added "Banner group fallback" graphic. [AJ]
+
+2011/09/09
+----------
+* [NotesLoaderBMS] Rewrite the BMS loader, should fix issues 430 and 500. [theDtTvB]
+
+2011/09/08
+----------
+* [GameManager] Fix shifting of 2P notes in beat mode. [1a2a3a2a1a]
+
+2011/09/07
+----------
+* [Model] Added GetDefaultAnimation() Lua binding. [AJ]
+* [GameState] Added GetEarnedExtraStage() Lua binding. [AJ]
+
+2011/09/02
+----------
+* [MenuTimer] Added start(), disable() Lua bindings. Also renamed setseconds to
+  SetSeconds to match GetSeconds. [AJ]
+* [GameManager] beat "versus" -> "versus5"; fix beat versus7 being "single7". [1a2a3a2a1a]
+
+2011/08/27
+----------
+* Updated libjpeg to 8c.
+* [SongManager] Added GetCoursesInGroup(sCourseGroup,bIncludeAutogen),
+  GetSongGroupBannerPath(songGroup), GetCourseGroupBannerPath(courseGroup),
+  DoesSongGroupExist(songGroup), DoesCourseGroupExist(courseGroup) and
+  GetPopularSongs() Lua bindings. [AJ]
+* [SongManager] Added GetPreferredSortSongs(), GetPreferredSortCourses(courseType,bIncludeAutogen),
+  and GetPopularCourses(courseType) Lua bindings. [AJ]
+* [SongManager] Add SongToPreferredSortSectionName(song), WasLoadedFromAdditionalSongs(song),
+  and WasLoadedFromAdditionalCourses(course) Lua bindings. [AJ]
+* [CryptManager] Add GenerateRandomUUID() Lua binding. [AJ]
+* [ThemeManager] Added DoesThemeExist(sTheme), IsThemeSelectable(sTheme),
+  DoesLanguageExist(sLang), GetCurThemeName(), HasMetric(sGroup,sValue), and
+  HasString(sGroup,sValue) Lua bindings. [AJ]
+
+2011/08/23
+----------
+* [Makefile.am] Fixed version date and time handling. [AJ]
+
+2011/08/22
+----------
+* [PrefsManager, X11Helper] Added ShowMouseCursor preference. [AJ]
+* [UnlockManager] Added GetStepOfAllTypes Lua binding. This gets the locked
+  Steps for all game types based on the difficulty specified. [Wolfman2000]
+* [UnlockManager] Added requirepasschallengesteps Lua binding. This is more
+  self-explanitory: pass challenge to be able to play edits. [Wolfman2000]
+
+2011/08/21
+----------
+* [NotesLoaderSSC] Fix loading pre-split timing files that had blank timing
+  tags inside of them. Thanks to Vin.il for the catch. [Wolfman2000]
+* [Song] Added Jacket, CD image (a la early DDR), and Disc (PIU-style) support.
+  Added GetJacketPath(), GetCDImagePath(), GetDiscPath(), HasJacket(), HasDisc(),
+  and HasCDImage() Lua bindings. [AJ]
+
+================================================================================
+StepMania 5.0 Preview 3 | 20110820
+--------------------------------------------------------------------------------
+
+2011/08/20
+----------
+* [PlayerOptions] Add GetMMod() Lua binding. [AJ]
+* [Player] Make keysounds respect volume preference. Fixes issue 344. [AJ]
+
+2011/08/19
+----------
+* [Steps] Add PredictMeter() and GetDisplayBPMType() Lua bindings. [AJ]
+* [Song] Add ShowInDemonstrationAndRanking() Lua binding. [AJ]
+* Turn off Autogen by default. [shakesoda]
+* Disable automatic aspect ratio guessing, default to 854x480
+  (16:9 because most newer displays are wide). [shakesoda]
+* Turn on FastLoad and FastLoadAdditionalSongs by default. [shakesoda]
+
+2011/08/18
+----------
+* [RageInput] Added "No input devices were loaded." string to languages. [AJ]
+* [RageInputDevice] Added localized names for InputDeviceState. [AJ]
+* [Course] Add IsPlayableIn(StepsType) and IsRanking() Lua bindings. [AJ]
+* [Trail] Added GetTotalMeter(), GetLengthSeconds(), IsSecret()
+  and ContainsSong(song) Lua bindings. [AJ]
+
+2011/08/16
+----------
+* Added PrettyPercent(numerator,denominator) Lua binding. [AJ]
+
+2011/08/14
+----------
+* [Foreground] Restore Foreground Changes for use in gameplay. Note that it
+  is recommended to use lua for #FGCHANGES from now on: not all XML changes
+  will work. [infamouspat]
+
+2011/08/13
+----------
+* [Theme-side] Added Fancy UI Background preference to Theme Options. [AJ]
+* [LowLevelWindow_X11] Don't force the window into the upper left corner. [ZipFile]
+
+2011/08/07
+----------
+* [LifeMeterBattery] Added LostLife param to LifeChanged message. [AJ]
+* [LifeMeterBattery] Converted LifeMeterBattery lives to an AutoActor. [AJ]
+* [TimingData] Add HasDelays() Lua binding; HasStops() now only checks stops. [AJ]
+* [GameState, SongUtil] Fix Issue 263 by not charging 2x stages for doubles when
+  not using joint premium. [AJ]
+* [BeginnerHelper] Made BeginnerHelper run the OnCommand. [AJ]
+* [GameState] add GetExpandedSectionName() Lua binding. [AJ]
+* [ScreenSelectMusic] Added IdleCommentSeconds metric and
+  "ScreenSelectMusic IdleComment" announcer sound. [AJ]
+* [NotesLoaderBMS] "Send the actual song file to LoadFromBMSFile in
+  BMSLoader::LoadNoteDataFromSimfile instead of the dummy one...
+  This fixes the wrong sound issue [423]..." [theDtTvB]
+
+2011/08/06
+----------
+* [NoteSkins/beat/default] Fix Issue 425. [AJ]
+* [ScoreDisplayRave] Allow (Meter/Level)(X/Y) metrics to work again. [AJ]
+
+2011/08/05
+----------
+* [NoteField] Added AreaHighlightColor metric. [AJ]
+
+2011/08/04
+----------
+* [NoteTypes, ScreenEdit] Removed artificial MAX_NOTES_PER_MEASURE limit. [AJ]
+
+2011/08/02
+----------
+* [NotesSSC] Only write timing/attack tags for the step if there is a
+  difference from the song. For timing tags, at this time it means that if even
+  one tag is different, all tags are written. [Wolfman2000]
+
+2011/08/01
+----------
+* [MusicWheel, RoomWheel] Moved the "- EMPTY -" string to the languages file. [AJ]
+
+2011/07/31
+----------
+* [ScreenGameplay, LyricDisplay] Stop lyrics from animating on failure.
+  Fixes issue 298. [AJ]
+
+2011/07/30
+----------
+* [ProfileManager] Fix an issue when deleting recently created profiles. [AJ]
+* Start removing anything related to Guitar mode. This was rushed in, and it
+  is not worth us keeping at this time. [Wolfman2000]
+
+2011/07/26
+----------
+* [ScreenEdit] Add a semi working implementation of the often requested
+  copy/paste selected timing data feature. This should make it easier for
+  some charters. [Wolfman2000]
+
+2011/07/21
+----------
+* [BeginnerHelper] Removed DancePadAngle metric in favor of DancePadOnCommand.
+  The same goes for PlayerAngle, dancer rotation is now handled in
+  PlayerP1/2OnCommand. [AJ]
+* [Course] Bumped up max edit course title length to 16 (still feels too short).
+  Also added #DESCRIPTION tag and Course:GetDescription() Lua binding. [AJ]
 
 2011/07/20
 ----------

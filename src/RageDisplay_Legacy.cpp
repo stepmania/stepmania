@@ -272,7 +272,8 @@ RString GetInfoLog( GLhandleARB h )
 {
 	GLint iLength;
 	glGetObjectParameterivARB( h, GL_OBJECT_INFO_LOG_LENGTH_ARB, &iLength );
-	if (!iLength)
+
+	if( iLength <= 0 )
 		return RString();
 
 	GLcharARB *pInfoLog = new GLcharARB[iLength];
@@ -285,6 +286,9 @@ RString GetInfoLog( GLhandleARB h )
 
 GLhandleARB CompileShader( GLenum ShaderType, RString sFile, vector<RString> asDefines )
 {
+	if (!glewIsSupported("GL_ARB_fragment_shader"))
+		return 0;
+	
 	RString sBuffer;
 	{
 		RageFile file;

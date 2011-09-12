@@ -88,7 +88,7 @@ public:
 		m_iTotalHands(0), m_iTotalLifts(0), m_bNewProfile(false),
 		m_UnlockedEntryIDs(), m_sLastPlayedMachineGuid(""),
 		m_LastPlayedDate(),m_iNumSongsPlayedByStyle(),
-		m_iNumTotalSongsPlayed(0), m_UserData(), m_SongHighScores(),
+		m_iNumTotalSongsPlayed(0), m_UserTable(), m_SongHighScores(),
 		m_CourseHighScores(), m_vScreenshots(),
 		m_mapDayToCaloriesBurned()
 	{
@@ -106,7 +106,7 @@ public:
 		
 		ZERO( m_iNumStagesPassedByPlayMode );
 		ZERO( m_iNumStagesPassedByGrade );
-		m_UserData.Unset();
+		m_UserTable.Unset();
 		
 		FOREACH_ENUM( StepsType,st )
 			FOREACH_ENUM( RankingCategory,rc )
@@ -207,7 +207,9 @@ public:
 	int m_iNumTotalSongsPlayed;
 	int m_iNumStagesPassedByPlayMode[NUM_PlayMode];
 	int m_iNumStagesPassedByGrade[NUM_Grade];
-	LuaReference m_UserData;
+
+	/* store arbitrary data for the theme within a profile */
+	LuaTable m_UserTable;
 
 	// Song high scores
 	struct HighScoresForASteps

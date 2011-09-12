@@ -8,7 +8,6 @@
 #include "RageTimer.h"
 #include "FontCharAliases.h"
 #include "arch/ArchHooks/ArchHooks.h"
-#include "arch/LoadingWindow/LoadingWindow.h"
 #include "arch/Dialog/Dialog.h"
 #include "RageFile.h"
 #if !defined(SMPACKAGE)
@@ -382,7 +381,6 @@ void ThemeManager::SwitchThemeAndLanguage( const RString &sThemeName_, const RSt
 	// other purposes (e.g. PARASTAR).
 	if( !IsThemeSelectable(sThemeName) )
 		sThemeName = PREFSMAN->m_sDefaultTheme;
-		//sThemeName = SpecialFiles::BASE_THEME_NAME;
 #endif
 
 	ASSERT( IsThemeSelectable(sThemeName) );
@@ -397,8 +395,6 @@ void ThemeManager::SwitchThemeAndLanguage( const RString &sThemeName_, const RSt
 	bool bNothingChanging = sThemeName == m_sCurThemeName && sLanguage == m_sCurLanguage && m_bPseudoLocalize == bPseudoLocalize;
 	if( bNothingChanging && !bForceThemeReload )
 		return;
-
-	if(pLoadingWindow) pLoadingWindow->SetText("Loading theme & language...");
 
 	m_bPseudoLocalize = bPseudoLocalize;
 
@@ -692,7 +688,7 @@ try_element_again:
 
 	RString sNewClassName, sNewFile;
 	FileNameToMetricsGroupAndElement(sNewFileName, sNewClassName, sNewFile);
-	
+
 	/* Important: We need to do a full search.  For example, BG redirs in
 	 * the default theme point to "_shared background", and themes override
 	 * just "_shared background"; the redirs in the default theme should end
@@ -1160,7 +1156,7 @@ RString ThemeManager::GetString( const RString &sMetricsGroup, const RString &sV
 {
 	RString sValueName = sValueName_;
 
-	// TODO: Are there escape rules for this?
+	// TODO: Handle escaping = with \=
 	DEBUG_ASSERT( sValueName.find('=') == sValueName.npos );
 
 	// TODO: Move this escaping into IniFile?
@@ -1246,8 +1242,10 @@ class LunaThemeManager: public Luna<ThemeManager>
 public:
 	static int ReloadMetrics( T* p, lua_State *L )		{ p->ReloadMetrics(); return 0; }
 
-	static int GetMetric( T* p, lua_State *L )			{ p->PushMetric( L, SArg(1),SArg(2) ); return 1; }
-	static int GetString( T* p, lua_State *L )			{ lua_pushstring(L, p->GetString(SArg(1),SArg(2)) ); return 1; }
+	static int HasMetric( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasMetric(SArg(1),SArg(2))); return 1; }
+	static int GetMetric( T* p, lua_State *L )		{ p->PushMetric( L, SArg(1),SArg(2) ); return 1; }
+	static int HasString( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasString(SArg(1),SArg(2))); return 1; }
+	static int GetString( T* p, lua_State *L )		{ lua_pushstring(L, p->GetString(SArg(1),SArg(2)) ); return 1; }
 	static int GetPathInfoB( T* p, lua_State *L )
 	{
 		ThemeManager::PathInfo pi;
@@ -1262,6 +1260,8 @@ public:
 	static int GetPathB( T* p, lua_State *L )			{ lua_pushstring(L, p->GetPathB(SArg(1),SArg(2)) ); return 1; }
 	static int GetPathS( T* p, lua_State *L )			{ lua_pushstring(L, p->GetPathS(SArg(1),SArg(2)) ); return 1; }
 	static int GetPathO( T* p, lua_State *L )			{ lua_pushstring(L, p->GetPathO(SArg(1),SArg(2)) ); return 1; }
+	
+	static int RunLuaScripts( T* p, lua_State *L )			{ p->RunLuaScripts(SArg(1)); return 1; }
 
 	static int GetSelectableThemeNames( T* p, lua_State *L )
 	{
@@ -1279,6 +1279,10 @@ public:
 	DEFINE_METHOD( GetCurLanguage, GetCurLanguage() );
 	static int GetThemeDisplayName( T* p, lua_State *L )			{  lua_pushstring(L, p->GetThemeDisplayName(p->GetCurThemeName())); return 1; }
 	static int GetThemeAuthor( T* p, lua_State *L )			{  lua_pushstring(L, p->GetThemeAuthor(p->GetCurThemeName())); return 1; }
+	DEFINE_METHOD( DoesThemeExist, DoesThemeExist(SArg(1)) );
+	DEFINE_METHOD( IsThemeSelectable, IsThemeSelectable(SArg(1)) );
+	DEFINE_METHOD( DoesLanguageExist, DoesLanguageExist(SArg(1)) );
+	DEFINE_METHOD( GetCurThemeName, GetCurThemeName() );
 
 	LunaThemeManager()
 	{
@@ -1291,12 +1295,19 @@ public:
 		ADD_METHOD( GetPathB );
 		ADD_METHOD( GetPathS );
 		ADD_METHOD( GetPathO );
+		ADD_METHOD( RunLuaScripts );
 		ADD_METHOD( GetSelectableThemeNames );
 		ADD_METHOD( GetNumSelectableThemes );
 		ADD_METHOD( GetCurrentThemeDirectory );
 		ADD_METHOD( GetCurLanguage );
 		ADD_METHOD( GetThemeDisplayName );
 		ADD_METHOD( GetThemeAuthor );
+		ADD_METHOD( DoesThemeExist );
+		ADD_METHOD( IsThemeSelectable );
+		ADD_METHOD( DoesLanguageExist );
+		ADD_METHOD( GetCurThemeName );
+		ADD_METHOD( HasMetric );
+		ADD_METHOD( HasString );
 	}
 };
 

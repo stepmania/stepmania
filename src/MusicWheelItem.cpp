@@ -222,13 +222,8 @@ void MusicWheelItem::LoadFromWheelItemData( const WheelItemBaseData *pData, int 
 	case TYPE_SECTION:
 		{
 			sDisplayName = SONGMAN->ShortenGroupName(pWID->m_sText);
-			RString sExpandedSectionName;
 
-			// TODO: Move the expanded section name into GameState?
-			ScreenSelectMusic *pScreen = dynamic_cast<ScreenSelectMusic*>(SCREENMAN->GetTopScreen() );
-			if( pScreen )
-				sExpandedSectionName = pScreen->GetMusicWheel()->GetExpandedSectionName();
-			if( sExpandedSectionName == pWID->m_sText )
+			if( GAMESTATE->sExpandedSectionName == pWID->m_sText )
 				type = MusicWheelItemType_SectionExpanded;
 			else
 				type = MusicWheelItemType_SectionCollapsed;

@@ -7,6 +7,9 @@
 #include "NetworkSyncManager.h"
 #include "ScreenManager.h"
 #include "ActorUtil.h"
+#include "LocalizedString.h"
+
+static LocalizedString EMPTY_STRING	( "RoomWheel", "Empty" );
 
 AutoScreenMessage( SM_BackFromRoomName );
 AutoScreenMessage( SM_RoomInfoRetract );
@@ -87,7 +90,7 @@ void RoomWheelItem::Load( RString sType )
 void RoomWheel::BuildWheelItemsData( vector<WheelItemBaseData*> &arrayWheelItemDatas )
 {
 	if( arrayWheelItemDatas.empty() )
-		arrayWheelItemDatas.push_back( new RoomWheelItemData(TYPE_GENERIC, "- EMPTY -", "", RageColor(1,0,0,1)) );
+		arrayWheelItemDatas.push_back( new RoomWheelItemData(TYPE_GENERIC, EMPTY_STRING, "", RageColor(1,0,0,1)) );
 }
 
 void RoomWheel::AddPermanentItem( RoomWheelItemData *itemdata  )

@@ -93,7 +93,7 @@ static void Version()
 {
 	#if defined(WIN32)
 		RString sProductID = ssprintf("%s", PRODUCT_ID_VER);
-		RString sVersion = "(sm-ssc was built without HAVE_VERSION_INFO)";
+		RString sVersion = "(StepMania was built without HAVE_VERSION_INFO)";
 		#if defined(HAVE_VERSION_INFO)
 			sVersion = ssprintf("build %lu\nCompile Date: %s @ %s", version_num, version_date, version_time);
 		#endif // HAVE_VERSION_INFO
@@ -108,7 +108,7 @@ static void Version()
 	#endif // WIN32
 }
 
-void CommandLineActions::Handle()
+void CommandLineActions::Handle(LoadingWindow* pLW)
 {
 	CommandLineArgs args;
 	for(int i=0; i<g_argc; ++i)
