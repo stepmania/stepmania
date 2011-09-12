@@ -50,7 +50,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".;&quot;..\extern\lua-5.1\src&quot;;ffmpeg\modern_working\include;BaseClasses;&quot;..\extern\jsoncpp\include&quot;;&quot;..\extern\glew-1.5.8\include&quot;;..\extern\pcre;&quot;..\extern\mad-0.15.1b&quot;;..\extern\libpng;..\extern\libjpeg;..\extern\zlib;..\extern\vorbis"
+				AdditionalIncludeDirectories=".;&quot;..\extern\lua-5.1\src&quot;;ffmpeg\modern_working\include;BaseClasses;..\extern\jsoncpp\include;&quot;..\extern\glew-1.5.8\include&quot;;..\extern\pcre;&quot;..\extern\mad-0.15.1b&quot;;..\extern\libpng\include;..\extern\libjpeg;..\extern\zlib;..\extern\vorbis"
 				PreprocessorDefinitions="WIN32,_DEBUG,_WINDOWS,WINDOWS,DEBUG,GLEW_STATIC"
 				ExceptionHandling="0"
 				BasicRuntimeChecks="3"
@@ -81,11 +81,11 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386 &quot;$(intdir)\verstub.obj&quot;"
-				AdditionalDependencies="shell32.lib gdi32.lib user32.lib ole32.lib advapi32.lib ffmpeg/modern_working/lib/avcodec.lib ffmpeg/modern_working/lib/avformat.lib ffmpeg/modern_working/lib/avutil.lib ffmpeg/modern_working/lib/swscale.lib ../extern/libpng/lib/libpng.lib ../extern/zlib/zdll.lib"
+				AdditionalDependencies="shell32.lib gdi32.lib user32.lib ole32.lib advapi32.lib Comctl32.lib ffmpeg/modern_working/lib/avcodec.lib ffmpeg/modern_working/lib/avformat.lib ffmpeg/modern_working/lib/avutil.lib ffmpeg/modern_working/lib/swscale.lib ../extern/libpng/lib/libpng.lib ../extern/zlib/zdll.lib"
 				OutputFile="../Program/StepMania-debug.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="ffmpeg\lib"
+				AdditionalLibraryDirectories="ffmpeg\lib;&quot;..\extern\mad-0.15.1b\msvc++\Release\&quot;;..\extern\libjpeg\;..\extern\libpng\lib"
 				GenerateManifest="true"
 				IgnoreDefaultLibraryNames="wininet.lib;msimg32.lib;libci.lib;msvcrt.lib"
 				GenerateDebugInformation="true"
@@ -158,7 +158,7 @@
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="2"
-				AdditionalIncludeDirectories=".;&quot;..\extern\lua-5.1\src&quot;;ffmpeg\modern_working\include;BaseClasses;&quot;..\extern\jsoncpp\include&quot;;&quot;..\extern\glew-1.5.8\include&quot;;..\extern\pcre;&quot;..\extern\mad-0.15.1b&quot;;..\extern\libpng;..\extern\libjpeg;..\extern\zlib;..\extern\vorbis"
+				AdditionalIncludeDirectories=".;&quot;..\extern\lua-5.1\src&quot;;ffmpeg\modern_working\include;BaseClasses;..\extern\jsoncpp\include;&quot;..\extern\glew-1.5.8\include&quot;;..\extern\pcre;&quot;..\extern\mad-0.15.1b&quot;;..\extern\libpng\include;..\extern\libjpeg;..\extern\zlib;..\extern\vorbis"
 				PreprocessorDefinitions="WIN32,NDEBUG,_WINDOWS,WINDOWS,RELEASE,GLEW_STATIC"
 				StringPooling="true"
 				MinimalRebuild="false"
@@ -192,11 +192,11 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386 &quot;$(intdir)\verstub.obj&quot;"
-				AdditionalDependencies="shell32.lib gdi32.lib user32.lib ole32.lib advapi32.lib ffmpeg/modern_working/lib/avcodec.lib ffmpeg/modern_working/lib/avformat.lib ffmpeg/modern_working/lib/avutil.lib ffmpeg/modern_working/lib/swscale.lib ../extern/libpng/lib/libpng.lib ../extern/zlib/zdll.lib"
+				AdditionalDependencies="shell32.lib gdi32.lib user32.lib ole32.lib advapi32.lib Comctl32.lib ffmpeg/modern_working/lib/avcodec.lib ffmpeg/modern_working/lib/avformat.lib ffmpeg/modern_working/lib/avutil.lib ffmpeg/modern_working/lib/swscale.lib ../extern/libpng/lib/libpng.lib ../extern/zlib/zdll.lib"
 				OutputFile="..\Program/StepMania.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="ffmpeg\lib"
+				AdditionalLibraryDirectories="ffmpeg\lib;&quot;..\extern\mad-0.15.1b\msvc++\Release\&quot;;..\extern\libjpeg\;..\extern\libpng\lib"
 				IgnoreDefaultLibraryNames="wininet.lib;msimg32.lib;libci.lib"
 				ProgramDatabaseFile="$(IntDir)/StepMania.pdb"
 				GenerateMapFile="true"
@@ -263,7 +263,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".;&quot;..\extern\lua-5.1\src&quot;;ffmpeg\modern_working\include;BaseClasses;&quot;..\extern\jsoncpp\include&quot;;&quot;..\extern\glew-1.5.8\include&quot;;..\extern\pcre;&quot;..\extern\mad-0.15.1b&quot;;..\extern\libpng;..\extern\libjpeg;..\extern\zlib;..\extern\vorbis"
+				AdditionalIncludeDirectories=".;&quot;..\extern\lua-5.1\src&quot;;ffmpeg\modern_working\include;BaseClasses;..\extern\jsoncpp\include;&quot;..\extern\glew-1.5.8\include&quot;;..\extern\pcre;&quot;..\extern\mad-0.15.1b&quot;;..\extern\libpng\include;..\extern\libjpeg;..\extern\zlib;..\extern\vorbis"
 				PreprocessorDefinitions="WIN32,_DEBUG,_WINDOWS,WINDOWS,DEBUG,GLEW_STATIC"
 				ExceptionHandling="0"
 				BasicRuntimeChecks="0"
@@ -294,11 +294,11 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386 &quot;$(intdir)\verstub.obj&quot;"
-				AdditionalDependencies="shell32.lib gdi32.lib user32.lib ole32.lib advapi32.lib ffmpeg/modern_working/lib/avcodec.lib ffmpeg/modern_working/lib/avformat.lib ffmpeg/modern_working/lib/avutil.lib ffmpeg/modern_working/lib/swscale.lib ../extern/libpng/lib/libpng.lib ../extern/zlib/zdll.lib"
+				AdditionalDependencies="shell32.lib gdi32.lib user32.lib ole32.lib advapi32.lib Comctl32.lib ffmpeg/modern_working/lib/avcodec.lib ffmpeg/modern_working/lib/avformat.lib ffmpeg/modern_working/lib/avutil.lib ffmpeg/modern_working/lib/swscale.lib ../extern/libpng/lib/libpng.lib ../extern/zlib/zdll.lib"
 				OutputFile="..\Program/StepMania-fastdebug.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="ffmpeg\lib"
+				AdditionalLibraryDirectories="ffmpeg\lib;&quot;..\extern\mad-0.15.1b\msvc++\Release\&quot;;..\extern\libjpeg\;..\extern\libpng\lib"
 				GenerateManifest="true"
 				IgnoreDefaultLibraryNames="wininet.lib;msimg32.lib;libci.lib;msvcrt.lib"
 				GenerateDebugInformation="true"
@@ -371,7 +371,7 @@
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
-				AdditionalIncludeDirectories=".;&quot;..\extern\lua-5.1\src&quot;;ffmpeg\modern_working\include;BaseClasses;..\extern\jsoncpp\include;&quot;..\extern\glew-1.5.8\include&quot;;..\extern\pcre;&quot;..\extern\mad-0.15.1b&quot;;..\extern\libpng;..\extern\libjpeg;..\extern\zlib;..\extern\vorbis"
+				AdditionalIncludeDirectories=".;&quot;..\extern\lua-5.1\src&quot;;ffmpeg\modern_working\include;BaseClasses;..\extern\jsoncpp\include;&quot;..\extern\glew-1.5.8\include&quot;;..\extern\pcre;&quot;..\extern\mad-0.15.1b&quot;;..\extern\libpng\include;..\extern\libjpeg;..\extern\zlib;..\extern\vorbis"
 				PreprocessorDefinitions="WIN32,NDEBUG,_WINDOWS,WINDOWS,RELEASE,GLEW_STATIC"
 				StringPooling="true"
 				MinimalRebuild="false"
@@ -406,11 +406,11 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386 &quot;$(intdir)\verstub.obj&quot;"
-				AdditionalDependencies="shell32.lib gdi32.lib user32.lib ole32.lib advapi32.lib ffmpeg/modern_working/lib/avcodec.lib ffmpeg/modern_working/lib/avformat.lib ffmpeg/modern_working/lib/avutil.lib ffmpeg/modern_working/lib/swscale.lib ../extern/libpng/lib/libpng.lib ../extern/zlib/zdll.lib"
+				AdditionalDependencies="shell32.lib gdi32.lib user32.lib ole32.lib advapi32.lib Comctl32.lib ffmpeg/modern_working/lib/avcodec.lib ffmpeg/modern_working/lib/avformat.lib ffmpeg/modern_working/lib/avutil.lib ffmpeg/modern_working/lib/swscale.lib ../extern/libpng/lib/libpng.lib ../extern/zlib/zdll.lib"
 				OutputFile="..\Program/StepMania-SSE2.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="ffmpeg\lib"
+				AdditionalLibraryDirectories="ffmpeg\lib;&quot;..\extern\mad-0.15.1b\msvc++\Release\&quot;;..\extern\libjpeg\;..\extern\libpng\lib"
 				IgnoreDefaultLibraryNames="wininet.lib;msimg32.lib;libci.lib"
 				ProgramDatabaseFile="$(IntDir)/StepMania-SSE2.pdb"
 				GenerateMapFile="true"
@@ -842,14 +842,6 @@
 			</File>
 			<File
 				RelativePath="ScreenSystemLayer.h"
-				>
-			</File>
-			<File
-				RelativePath="ScreenTestFonts.cpp"
-				>
-			</File>
-			<File
-				RelativePath="ScreenTestFonts.h"
 				>
 			</File>
 			<File
@@ -1445,6 +1437,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\SongPosition.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\SongPosition.h"
+				>
+			</File>
+			<File
 				RelativePath="SongUtil.cpp"
 				>
 			</File>
@@ -1514,6 +1514,14 @@
 			</File>
 			<File
 				RelativePath="TimingData.h"
+				>
+			</File>
+			<File
+				RelativePath=".\TimingSegments.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\TimingSegments.h"
 				>
 			</File>
 			<File
@@ -1589,14 +1597,6 @@
 				</File>
 				<File
 					RelativePath="NotesLoaderKSF.h"
-					>
-				</File>
-				<File
-					RelativePath="NotesLoaderMidi.cpp"
-					>
-				</File>
-				<File
-					RelativePath="NotesLoaderMidi.h"
 					>
 				</File>
 				<File
@@ -1797,14 +1797,6 @@
 				</File>
 				<File
 					RelativePath="ScoreKeeper.h"
-					>
-				</File>
-				<File
-					RelativePath="ScoreKeeperGuitar.cpp"
-					>
-				</File>
-				<File
-					RelativePath="ScoreKeeperGuitar.h"
 					>
 				</File>
 				<File
