@@ -158,7 +158,7 @@ struct WarpSegment : public TimingSegment
 	RString ToString( int dec ) const;
 private:
 	/** @brief The number of rows the WarpSegment will warp past. */
-	float m_iLengthRows;
+	int m_iLengthRows;
 };
 
 /**
