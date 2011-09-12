@@ -18,7 +18,7 @@ void NotesLoaderJson::GetApplicableFiles( const RString &sPath, vector<RString> 
 static void Deserialize(TimingSegment &seg_, const Json::Value &root)
 {
 	TimingSegment *seg = &seg_;
-	
+
 	float fBeat = root["Beat"].asDouble();
 	seg->SetBeat(fBeat);
 	switch (seg->GetType())
@@ -203,7 +203,6 @@ static void Deserialize( Song &out, const Json::Value &root )
 		FOREACH( Steps*, vpSteps, iter )
 			out.AddSteps( *iter );
 	}
-
 }
 
 bool NotesLoaderJson::LoadFromJsonFile( const RString &sPath, Song &out )
