@@ -980,33 +980,27 @@ void NoteField::DrawPrimitives()
 			}
 		}
 
-		if( GAMESTATE->m_bIsUsingStepTiming )
+		// Tickcount text
+		for (i = 0; i < segs[SEGMENT_TICKCOUNT].size(); i++)
 		{
-			// Tickcount text
-			for (i = 0; i < segs[SEGMENT_TICKCOUNT].size(); i++)
+			TickcountSegment *seg = static_cast<TickcountSegment *>(segs[SEGMENT_TICKCOUNT][i]);
+			if( seg->GetRow() >= iFirstRowToDraw && seg->GetRow() <= iLastRowToDraw )
 			{
-				TickcountSegment *seg = static_cast<TickcountSegment *>(segs[SEGMENT_TICKCOUNT][i]);
-				if( seg->GetRow() >= iFirstRowToDraw && seg->GetRow() <= iLastRowToDraw )
-				{
-					float fBeat = seg->GetBeat();
-					if( IS_ON_SCREEN(fBeat) )
-						DrawTickcountText( fBeat, seg->GetTicks() );
-				}
+				float fBeat = seg->GetBeat();
+				if( IS_ON_SCREEN(fBeat) )
+					DrawTickcountText( fBeat, seg->GetTicks() );
 			}
 		}
-
-		if( GAMESTATE->m_bIsUsingStepTiming )
+		
+		// Combo text
+		for (i = 0; i < segs[SEGMENT_COMBO].size(); i++)
 		{
-			// Combo text
-			for (i = 0; i < segs[SEGMENT_COMBO].size(); i++)
+			ComboSegment *seg = static_cast<ComboSegment *>(segs[SEGMENT_COMBO][i]);
+			if( seg->GetRow() >= iFirstRowToDraw && seg->GetRow() <= iLastRowToDraw )
 			{
-				ComboSegment *seg = static_cast<ComboSegment *>(segs[SEGMENT_COMBO][i]);
-				if( seg->GetRow() >= iFirstRowToDraw && seg->GetRow() <= iLastRowToDraw )
-				{
-					float fBeat = seg->GetBeat();
-					if( IS_ON_SCREEN(fBeat) )
-						DrawComboText( fBeat, seg->GetCombo(), seg->GetMissCombo() );
-				}
+				float fBeat = seg->GetBeat();
+				if( IS_ON_SCREEN(fBeat) )
+					DrawComboText( fBeat, seg->GetCombo(), seg->GetMissCombo() );
 			}
 		}
 
@@ -1022,34 +1016,28 @@ void NoteField::DrawPrimitives()
 			}
 		}
 
-		if( GAMESTATE->m_bIsUsingStepTiming )
+		// Speed text
+		for (i = 0; i < segs[SEGMENT_SPEED].size(); i++)
 		{
-			// Speed text
-			for (i = 0; i < segs[SEGMENT_SPEED].size(); i++)
+			SpeedSegment *seg = static_cast<SpeedSegment *>(segs[SEGMENT_SPEED][i]);
+			if( seg->GetRow() >= iFirstRowToDraw && seg->GetRow() <= iLastRowToDraw )
 			{
-				SpeedSegment *seg = static_cast<SpeedSegment *>(segs[SEGMENT_SPEED][i]);
-				if( seg->GetRow() >= iFirstRowToDraw && seg->GetRow() <= iLastRowToDraw )
-				{
-					float fBeat = seg->GetBeat();
-					if( IS_ON_SCREEN(fBeat) )
-						DrawSpeedText(fBeat, seg->GetRatio(), 
-							      seg->GetDelay(), seg->GetUnit() );
-				}
+				float fBeat = seg->GetBeat();
+				if( IS_ON_SCREEN(fBeat) )
+					DrawSpeedText(fBeat, seg->GetRatio(), 
+							  seg->GetDelay(), seg->GetUnit() );
 			}
 		}
-
+		
 		// Fake text
-		if( GAMESTATE->m_bIsUsingStepTiming )
+		for (i = 0; i < segs[SEGMENT_FAKE].size(); i++)
 		{
-			for (i = 0; i < segs[SEGMENT_FAKE].size(); i++)
+			FakeSegment *seg = static_cast<FakeSegment *>(segs[SEGMENT_FAKE][i]);
+			if( seg->GetRow() >= iFirstRowToDraw && seg->GetRow() <= iLastRowToDraw )
 			{
-				FakeSegment *seg = static_cast<FakeSegment *>(segs[SEGMENT_FAKE][i]);
-				if( seg->GetRow() >= iFirstRowToDraw && seg->GetRow() <= iLastRowToDraw )
-				{
-					float fBeat = seg->GetBeat();
-					if( IS_ON_SCREEN(fBeat) )
-						DrawFakeText( fBeat, seg->GetLength() );
-				}
+				float fBeat = seg->GetBeat();
+				if( IS_ON_SCREEN(fBeat) )
+					DrawFakeText( fBeat, seg->GetLength() );
 			}
 		}
 
