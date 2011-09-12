@@ -37,6 +37,10 @@ function InitUserPrefs()
 			SetUserPref(k, v)
 		end
 	end
+
+	-- screen filter
+	setenv("ScreenFilterP1",0)
+	setenv("ScreenFilterP2",0)
 end
 
 function GetProTiming(pn)
