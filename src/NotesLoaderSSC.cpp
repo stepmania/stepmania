@@ -487,6 +487,18 @@ bool SSCLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 				{
 					ProcessCombos( out.m_SongTiming, sParams[1] );
 				}
+				else if (sValueName=="SPEEDS")
+				{
+					ProcessSpeeds(out.m_SongTiming, sParams[1]);
+				}
+				else if (sValueName=="SCROLLS")
+				{
+					ProcessScrolls(out.m_SongTiming, sParams[1]);
+				}
+				else if (sValueName=="FAKES")
+				{
+					ProcessFakes(out.m_SongTiming, sParams[1]);
+				}
 
 				/* The following are cache tags. Never fill their values
 				 * directly: only from the cached version. */
