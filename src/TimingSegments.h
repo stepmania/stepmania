@@ -239,7 +239,7 @@ struct LabelSegment : public TimingSegment
 	TimingSegmentType GetType() const { return SEGMENT_LABEL; }
 
 	LabelSegment( int iStartRow = ROW_INVALID, const RString& sLabel = RString() ) :
-		TimingSegment(), m_sLabel(sLabel) { }
+		TimingSegment(iStartRow), m_sLabel(sLabel) { }
 
 	LabelSegment(const LabelSegment &other) :
 		TimingSegment( other.GetRow() ),
