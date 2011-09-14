@@ -3601,13 +3601,8 @@ void ScreenEdit::DisplayTimingMenu()
 	g_TimingDataInformation.rows[scroll].SetOneUnthemedChoice( ssprintf("%.6f", pTime.GetScrollAtBeat( fBeat ) ) );
 	g_TimingDataInformation.rows[fake].SetOneUnthemedChoice( ssprintf("%.6f", pTime.GetFakeAtBeat( fBeat ) ) );
 	
-	g_TimingDataInformation.rows[tickcount].bEnabled = GAMESTATE->m_bIsUsingStepTiming;
-	g_TimingDataInformation.rows[combo].bEnabled = GAMESTATE->m_bIsUsingStepTiming;
-	g_TimingDataInformation.rows[speed_percent].bEnabled = GAMESTATE->m_bIsUsingStepTiming;
-	g_TimingDataInformation.rows[speed_wait].bEnabled = GAMESTATE->m_bIsUsingStepTiming && bHasSpeedOnThisRow;
-	g_TimingDataInformation.rows[speed_mode].bEnabled = GAMESTATE->m_bIsUsingStepTiming && bHasSpeedOnThisRow;
-	g_TimingDataInformation.rows[fake].bEnabled = GAMESTATE->m_bIsUsingStepTiming;
-	g_TimingDataInformation.rows[scroll].bEnabled = GAMESTATE->m_bIsUsingStepTiming;
+	g_TimingDataInformation.rows[speed_wait].bEnabled = bHasSpeedOnThisRow;
+	g_TimingDataInformation.rows[speed_mode].bEnabled = bHasSpeedOnThisRow;
 		
 	EditMiniMenu( &g_TimingDataInformation, SM_BackFromTimingDataInformation );
 }

@@ -197,9 +197,8 @@ static void WriteTimingTags( RageFile &f, const TimingData &timing, bool bIsSong
 			   join(",\r\n", timing.ToVectorString(SEGMENT_SPEED)).c_str()));
 	f.PutLine(ssprintf("#SCROLLS:%s;",
 			   join(",\r\n", timing.ToVectorString(SEGMENT_SCROLL)).c_str()));
-	if (!bIsSong)
-		f.PutLine(ssprintf("#FAKES:%s;",
-				   join(",\r\n", timing.ToVectorString(SEGMENT_FAKE)).c_str()));
+	f.PutLine(ssprintf("#FAKES:%s;",
+			   join(",\r\n", timing.ToVectorString(SEGMENT_FAKE)).c_str()));
 	f.PutLine(ssprintf("#LABELS:%s;",
 			   join(",\r\n", timing.ToVectorString(SEGMENT_LABEL)).c_str()));
 

@@ -13,6 +13,8 @@
 #include "NoteTypes.h"
 #include "NotesLoader.h"
 
+// XXX: this is mostly a copy of NotesLoaderBMS and should be consolidated there. -aj
+
 typedef multimap<RString, RString> NameToData_t;
 typedef map<int, float> MeasureToTimeSig_t;
 

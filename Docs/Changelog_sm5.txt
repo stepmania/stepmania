@@ -8,6 +8,11 @@ ________________________________________________________________________________
 StepMania 5.0 $next | 2011????
 --------------------------------------------------------------------------------
 
+2011/09/12
+----------
+* [NotesLoaderSSC/WriterSSC] Allow all timing tags regardless of what timing
+  is used. [Wolfman2000]
+
 2011/09/11
 ----------
 * [ScreenEvaluation] Added "evaluation full combo W1" and
