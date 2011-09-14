@@ -222,8 +222,7 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 	bIsPastPeakOut = true;
 
 	float fYOffset = 0;
-	const SongPosition &position = GAMESTATE->m_bIsUsingStepTiming
-	? pPlayerState->m_Position : GAMESTATE->m_Position;
+	const SongPosition &position = pPlayerState->GetDisplayedPosition();
 	
 	float fSongBeat = position.m_fSongBeatVisible;
 	
