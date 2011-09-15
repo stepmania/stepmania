@@ -52,6 +52,25 @@ table {
 	border-spacing: 0;
 }
 /** end reset css *************************************************************/
+body{
+	line-height: normal;
+}
+
+ul {
+	list-style: disc;
+}
+
+h1{
+	font-size:2em;
+}
+
+h2{
+	font-size:1.5em;
+}
+
+h3{
+	font-size:1.25em;
+}
 
 a:hover{
 	color: #F80;
@@ -92,6 +111,13 @@ ol.tocList{
 }
 
 #logoDiv{
+	width:100%;
+	margin-left:auto;
+	margin-right:auto;
+	text-align:center;
+}
+
+#footer{
 	width:100%;
 	margin-left:auto;
 	margin-right:auto;
