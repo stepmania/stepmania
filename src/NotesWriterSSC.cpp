@@ -60,115 +60,115 @@ struct TimingTagWriter {
 
 };
 
-static void GetTimingTags( vector<RString> &lines, TimingData timing, bool bIsSong = false )
+static void GetTimingTags( vector<RString> &lines, const TimingData &timing, bool bIsSong = false )
 {
 	TimingTagWriter w ( &lines );
-	
-	timing.TidyUpData();
+
+	// timing.TidyUpData(); // UGLY: done via const_cast. do we really -need- this here?
 	unsigned i = 0;
 
 	w.Init( "BPMS" );
-	vector<TimingSegment *> &bpms = timing.m_avpTimingSegments[SEGMENT_BPM];
+	const vector<TimingSegment *> &bpms = timing.GetTimingSegments(SEGMENT_BPM);
 	for (; i < bpms.size(); i++)
 	{
-		BPMSegment *bs = static_cast<BPMSegment *>(bpms[i]);
+		const BPMSegment *bs = ToBPM( bpms[i] );
 		w.Write( bs->GetRow(), bs->GetBPM() );
 	}
 	w.Finish();
-	
+
 	w.Init( "STOPS" );
-	vector<TimingSegment *> &stops = timing.m_avpTimingSegments[SEGMENT_STOP];
+	const vector<TimingSegment *> &stops = timing.GetTimingSegments(SEGMENT_STOP);
 	for (i = 0; i < stops.size(); i++)
 	{
-		StopSegment *ss = static_cast<StopSegment *>(stops[i]);
+		const StopSegment *ss = ToStop( stops[i] );
 		w.Write( ss->GetRow(), ss->GetPause() );
 	}
 	w.Finish();
-	
+
 	w.Init( "DELAYS" );
-	vector<TimingSegment *> &delays = timing.m_avpTimingSegments[SEGMENT_DELAY];
+	const vector<TimingSegment *> &delays = timing.GetTimingSegments(SEGMENT_DELAY);
 	for (i = 0; i < delays.size(); i++)
 	{
-		DelaySegment *ss = static_cast<DelaySegment *>(delays[i]);
+		const DelaySegment *ss = ToDelay( delays[i] );
 		w.Write( ss->GetRow(), ss->GetPause() );
 	}
 	w.Finish();
-	
+
 	w.Init( "WARPS" );
-	vector<TimingSegment *> &warps = timing.m_avpTimingSegments[SEGMENT_WARP];
+	const vector<TimingSegment *> &warps = timing.GetTimingSegments(SEGMENT_WARP);
 	for (i = 0; i < warps.size(); i++)
 	{
-		WarpSegment *ws = static_cast<WarpSegment *>(warps[i]);
+		const WarpSegment *ws = ToWarp( warps[i] );
 		w.Write( ws->GetRow(), ws->GetLength() );
 	}
 	w.Finish();
-	
-	vector<TimingSegment *> &tSigs = timing.m_avpTimingSegments[SEGMENT_TIME_SIG];
+
+	const vector<TimingSegment *> &tSigs = timing.GetTimingSegments(SEGMENT_TIME_SIG);
 	ASSERT( !tSigs.empty() );
 	w.Init( "TIMESIGNATURES" );
 	for (i = 0; i < tSigs.size(); i++)
 	{
-		TimeSignatureSegment *ts = static_cast<TimeSignatureSegment *>(tSigs[i]);
+		const TimeSignatureSegment *ts = ToTimeSignature( tSigs[i] );
 		w.Write( ts->GetRow(), ts->GetNum(), ts->GetDen() );
 	}
 	w.Finish();
 
-	vector<TimingSegment *> &ticks = timing.m_avpTimingSegments[SEGMENT_TICKCOUNT];
+	const vector<TimingSegment *> &ticks = timing.GetTimingSegments(SEGMENT_TICKCOUNT);
 	ASSERT( !ticks.empty() );
 	w.Init( "TICKCOUNTS" );
 	for (i = 0; i < ticks.size(); i++)
 	{
-		TickcountSegment *ts = static_cast<TickcountSegment *>(ticks[i]);
+		const TickcountSegment *ts = ToTickcount( ticks[i] );
 		w.Write( ts->GetRow(), ts->GetTicks() );
 	}
 	w.Finish();
-	
-	vector<TimingSegment *> &combos = timing.m_avpTimingSegments[SEGMENT_COMBO];
+
+	const vector<TimingSegment *> &combos = timing.GetTimingSegments(SEGMENT_COMBO);
 	ASSERT( !combos.empty() );
 	w.Init( "COMBOS" );
 	for (i = 0; i < combos.size(); i++)
 	{
-		ComboSegment *cs = static_cast<ComboSegment *>(combos[i]);
+		const ComboSegment *cs = ToCombo( combos[i] );
 		if (cs->GetCombo() == cs->GetMissCombo())
 			w.Write( cs->GetRow(), cs->GetCombo() );
 		else
 			w.Write( cs->GetRow(), cs->GetCombo(), cs->GetMissCombo() );
 	}
 	w.Finish();
-	
+
 	// Song Timing should only have the initial value.
-	vector<TimingSegment *> &speeds = timing.m_avpTimingSegments[SEGMENT_SPEED];
+	const vector<TimingSegment *> &speeds = timing.GetTimingSegments(SEGMENT_SPEED);
 	w.Init( "SPEEDS" );
 	for (i = 0; i < speeds.size(); i++)
 	{
-		SpeedSegment *ss = static_cast<SpeedSegment *>(speeds[i]);
+		SpeedSegment *ss = ToSpeed( speeds[i] );
 		w.Write( ss->GetRow(), ss->GetRatio(), ss->GetDelay(), ss->GetUnit() );
 	}
 	w.Finish();
-	
+
 	w.Init( "SCROLLS" );
-	vector<TimingSegment *> &scrolls = timing.m_avpTimingSegments[SEGMENT_SCROLL];
+	const vector<TimingSegment *> &scrolls = timing.GetTimingSegments(SEGMENT_SCROLL);
 	for (i = 0; i < scrolls.size(); i++)
 	{
-		ScrollSegment *ss = static_cast<ScrollSegment *>(scrolls[i]);
+		ScrollSegment *ss = ToScroll( scrolls[i] );
 		w.Write( ss->GetRow(), ss->GetRatio() );
 	}
 	w.Finish();
-	
+
 	if( !bIsSong )
-	{	
-		vector<TimingSegment *> &fakes = timing.m_avpTimingSegments[SEGMENT_FAKE];
+	{
+		const vector<TimingSegment *> &fakes = timing.GetTimingSegments(SEGMENT_FAKE);
 		w.Init( "FAKES" );
 		for (i = 0; i < fakes.size(); i++)
 		{
-			FakeSegment *fs = static_cast<FakeSegment *>(fakes[i]);
+			FakeSegment *fs = ToFake( fakes[i] );
 			w.Write( fs->GetRow(), fs->GetLength() );
 		}
 		w.Finish();
 	}
-	
+
 	w.Init( "LABELS" );
-	vector<TimingSegment *> &labels = timing.m_avpTimingSegments[SEGMENT_LABEL];
+	const vector<TimingSegment *> &labels = timing.GetTimingSegments(SEGMENT_LABEL);
 	for (i = 0; i < labels.size(); i++)
 	{
 		LabelSegment *ls = static_cast<LabelSegment *>(labels[i]);
@@ -344,7 +344,7 @@ static RString GetSSCNoteData( const Song &song, const Steps &in, bool bSavingCa
 	lines.push_back( ssprintf( "#RADARVALUES:%s;", join(",",asRadarValues).c_str() ) );
 
 	lines.push_back( ssprintf( "#CREDIT:%s;", SmEscape(in.GetCredit()).c_str() ) );
-	
+
 	// XXX: Is there a better way to write this?
 	if (const_cast<TimingData &>(song.m_SongTiming) != in.m_Timing)
 	{
@@ -353,7 +353,7 @@ static RString GetSSCNoteData( const Song &song, const Steps &in, bool bSavingCa
 	}
 	if (song.GetAttackString() != in.GetAttackString())
 		lines.push_back( ssprintf("#ATTACKS:%s;", in.GetAttackString().c_str()));
-	
+
 	switch( in.GetDisplayBPM() )
 	{
 		case DISPLAY_BPM_ACTUAL:

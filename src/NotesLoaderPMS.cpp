@@ -592,7 +592,7 @@ static void ReadGlobalTags( const RString &sPath, const NameToData_t &mapNameToD
 
 		if( fBPM > 0.0f )
 		{
-			out.m_SongTiming.AddSegment( SEGMENT_BPM, new BPMSegment(0, fBPM) );
+			out.m_SongTiming.AddSegment( BPMSegment(0, fBPM) );
 			LOG->Trace( "Inserting new BPM change at beat %f, BPM %f", NoteRowToBeat(0), fBPM );
 		}
 		else
@@ -697,9 +697,8 @@ static void ReadGlobalTags( const RString &sPath, const NameToData_t &mapNameToD
 
 						if( fBPM > 0.0f )
 						{
-							BPMSegment * newSeg = new BPMSegment( BeatToNoteRow(fBeat), fBPM );
-							out.m_SongTiming.AddSegment( SEGMENT_BPM, newSeg );
-							LOG->Trace( "Inserting new BPM change at beat %f, BPM %f", fBeat, newSeg->GetBPM() );
+							out.m_SongTiming.AddSegment( BPMSegment(BeatToNoteRow(fBeat), fBPM) );
+							LOG->Trace( "Inserting new BPM change at beat %f, BPM %f", fBeat, fBPM );
 						}
 						else
 						{
@@ -724,9 +723,8 @@ static void ReadGlobalTags( const RString &sPath, const NameToData_t &mapNameToD
 						float fBeats = StringToFloat( sBeats ) / 48.0f;
 						float fFreezeSecs = fBeats / fBPS;
 
-						StopSegment * newSeg = new StopSegment( BeatToNoteRow(fBeat), fFreezeSecs );
-						out.m_SongTiming.AddSegment( SEGMENT_STOP, newSeg );
-						LOG->Trace( "Inserting new Freeze at beat %f, secs %f", fBeat, newSeg->GetPause() );
+						out.m_SongTiming.AddSegment( StopSegment(BeatToNoteRow(fBeat), fFreezeSecs) );
+						LOG->Trace( "Inserting new Freeze at beat %f, secs %f", fBeat, fFreezeSecs );
 					}
 					else
 					{
@@ -753,12 +751,9 @@ static void ReadGlobalTags( const RString &sPath, const NameToData_t &mapNameToD
 
 					if( fBPM > 0.0f )
 					{
-						BPMSegment * newSeg = new BPMSegment( iStepIndex, fBPM );
-						out.m_SongTiming.AddSegment( SEGMENT_BPM, newSeg );
+						out.m_SongTiming.AddSegment( BPMSegment(iStepIndex, fBPM) );
 						LOG->Trace("Inserting new BPM change at beat %f, BPM %f",
-								   newSeg->GetBeat(),
-								   newSeg->GetBPM() );
-				
+								   NoteRowToBeat(iStepIndex), fBPM );
 					}
 					else
 					{

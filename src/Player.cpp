@@ -752,24 +752,23 @@ void Player::SendComboMessages( int iOldCombo, int iOldMissCombo )
 }
 
 static void GenerateCacheDataStructure(PlayerState *pPlayerState, NoteData &notes) {
-	
+
 	pPlayerState->m_CacheDisplayedBeat.clear();
-	
-	const vector<TimingSegment *> *segs = pPlayerState->GetDisplayedTiming().m_avpTimingSegments;
-	
+
+	const vector<TimingSegment*> vScrolls = pPlayerState->GetDisplayedTiming().GetTimingSegments( SEGMENT_SCROLL );
+
 	float displayedBeat = 0.0f;
 	float lastRealBeat = 0.0f;
 	float lastRatio = 1.0f;
-	for ( unsigned i = 0; i < segs[SEGMENT_SCROLL].size(); i++ )
+	for ( unsigned i = 0; i < vScrolls.size(); i++ )
 	{
-		ScrollSegment *seg = static_cast<ScrollSegment *>(segs[SEGMENT_SCROLL][i]);
+		ScrollSegment *seg = ToScroll( vScrolls[i] );
 		displayedBeat += ( seg->GetBeat() - lastRealBeat ) * lastRatio;
 		lastRealBeat = seg->GetBeat();
 		lastRatio = seg->GetRatio();
 		CacheDisplayedBeat c = { seg->GetBeat(), displayedBeat, seg->GetRatio() };
 		pPlayerState->m_CacheDisplayedBeat.push_back( c );
 	}
-	
 }
 
 void Player::Update( float fDeltaTime )
