@@ -52,12 +52,21 @@ table {
 	border-spacing: 0;
 }
 /** end reset css *************************************************************/
+
 body{
 	line-height: normal;
+	margin-left:1em;
+	margin-right:1em;
 }
 
 ul {
 	list-style: disc;
+	margin-left:2em;
+}
+
+p{
+	margin-bottom:0.2em;
+	margin-top:0.2em;
 }
 
 h1{
