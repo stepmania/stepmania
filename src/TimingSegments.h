@@ -60,7 +60,7 @@ struct TimingSegment
 		m_iStartRow( other.GetRow() ) { }
 
 	// for our purposes, two floats within this level of error are equal
-	static const double EPSILON = 1e-4f;
+	static const double EPSILON;
 
 	virtual ~TimingSegment() { }
 
@@ -92,7 +92,6 @@ struct TimingSegment
 	// should only compare contents, and this compares position.
 	virtual bool operator==( const TimingSegment &other ) const
 	{
-		LOG->Trace( __PRETTY_FUNCTION__ );
 		return GetRow() == other.GetRow();
 	}
 
@@ -152,14 +151,12 @@ struct FakeSegment : public TimingSegment
 
 	bool operator==( const FakeSegment &other ) const
 	{
-		LOG->Trace( __PRETTY_FUNCTION__ );
 		COMPARE( m_iLengthRows );
 		return true;
 	}
 
 	bool operator==( const TimingSegment &other ) const
 	{
-		LOG->Trace( __PRETTY_FUNCTION__ );
 		if( GetType() != other.GetType() )
 			return false;
 
@@ -211,14 +208,12 @@ struct WarpSegment : public TimingSegment
 
 	bool operator==( const WarpSegment &other ) const
 	{
-		LOG->Trace( __PRETTY_FUNCTION__ );
 		COMPARE( m_iLengthRows );
 		return true;
 	}
 
 	bool operator==( const TimingSegment &other ) const
 	{
-		LOG->Trace( __PRETTY_FUNCTION__ );
 		if( GetType() != other.GetType() )
 			return false;
 
@@ -267,14 +262,12 @@ struct TickcountSegment : public TimingSegment
 
 	bool operator==( const TickcountSegment &other ) const
 	{
-		LOG->Trace( __PRETTY_FUNCTION__ );
 		COMPARE( m_iTicksPerBeat );
 		return true;
 	}
 
 	bool operator==( const TimingSegment &other ) const
 	{
-		LOG->Trace( __PRETTY_FUNCTION__ );
 		if( GetType() != other.GetType() )
 			return false;
 
@@ -320,7 +313,6 @@ struct ComboSegment : public TimingSegment
 
 	bool operator==( const ComboSegment &other ) const
 	{
-		LOG->Trace( __PRETTY_FUNCTION__ );
 		COMPARE( m_iCombo );
 		COMPARE( m_iMissCombo );
 		return true;
@@ -328,7 +320,6 @@ struct ComboSegment : public TimingSegment
 
 	bool operator==( const TimingSegment &other ) const
 	{
-		LOG->Trace( __PRETTY_FUNCTION__ );
 		if( GetType() != other.GetType() )
 			return false;
 
@@ -373,14 +364,12 @@ struct LabelSegment : public TimingSegment
 
 	bool operator==( const LabelSegment &other ) const
 	{
-		LOG->Trace( __PRETTY_FUNCTION__ );
 		COMPARE( m_sLabel );
 		return true;
 	}
 
 	bool operator==( const TimingSegment &other ) const
 	{
-		LOG->Trace( __PRETTY_FUNCTION__ );
 		if( GetType() != other.GetType() )
 			return false;
 
@@ -422,14 +411,12 @@ struct BPMSegment : public TimingSegment
 
 	bool operator==( const BPMSegment &other ) const
 	{
-		LOG->Trace( __PRETTY_FUNCTION__ );
 		COMPARE_FLOAT( m_fBPS );
 		return true;
 	}
 
 	bool operator==( const TimingSegment &other ) const
 	{
-		LOG->Trace( __PRETTY_FUNCTION__ );
 		if( GetType() != other.GetType() )
 			return false;
 
@@ -495,7 +482,6 @@ struct TimeSignatureSegment : public TimingSegment
 
 	bool operator==( const TimeSignatureSegment &other ) const
 	{
-		LOG->Trace( __PRETTY_FUNCTION__ );
 		COMPARE( m_iNumerator );
 		COMPARE( m_iDenominator );
 		return true;
@@ -503,7 +489,6 @@ struct TimeSignatureSegment : public TimingSegment
 
 	bool operator==( const TimingSegment &other ) const
 	{
-		LOG->Trace( __PRETTY_FUNCTION__ );
 		if( GetType() != other.GetType() )
 			return false;
 
@@ -563,7 +548,6 @@ struct SpeedSegment : public TimingSegment
 
 	bool operator==( const SpeedSegment &other ) const
 	{
-		LOG->Trace( __PRETTY_FUNCTION__ );
 		COMPARE_FLOAT( m_fRatio );
 		COMPARE_FLOAT( m_fDelay );
 		COMPARE( m_Unit );
@@ -572,7 +556,6 @@ struct SpeedSegment : public TimingSegment
 
 	bool operator==( const TimingSegment &other ) const
 	{
-		LOG->Trace( __PRETTY_FUNCTION__ );
 		if( GetType() != other.GetType() )
 			return false;
 
@@ -624,14 +607,12 @@ struct ScrollSegment : public TimingSegment
 
 	bool operator==( const ScrollSegment &other ) const
 	{
-		LOG->Trace( __PRETTY_FUNCTION__ );
 		COMPARE_FLOAT( m_fRatio );
 		return true;
 	}
 
 	bool operator==( const TimingSegment &other ) const
 	{
-		LOG->Trace( __PRETTY_FUNCTION__ );
 		if( GetType() != other.GetType() )
 			return false;
 
@@ -670,14 +651,12 @@ struct StopSegment : public TimingSegment
 
 	bool operator==( const StopSegment &other ) const
 	{
-		LOG->Trace( __PRETTY_FUNCTION__ );
 		COMPARE_FLOAT( m_fSeconds );
 		return true;
 	}
 
 	bool operator==( const TimingSegment &other ) const
 	{
-		LOG->Trace( __PRETTY_FUNCTION__ );
 		if( GetType() != other.GetType() )
 			return false;
 
@@ -715,14 +694,12 @@ struct DelaySegment : public TimingSegment
 
 	bool operator==( const DelaySegment &other ) const
 	{
-		LOG->Trace( __PRETTY_FUNCTION__ );
 		COMPARE_FLOAT( m_fSeconds );
 		return true;
 	}
 
 	bool operator==( const TimingSegment &other ) const
 	{
-		LOG->Trace( __PRETTY_FUNCTION__ );
 		if( GetType() != other.GetType() )
 			return false;
 
