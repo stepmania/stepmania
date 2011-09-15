@@ -44,7 +44,6 @@ LowLevelWindow_X11::LowLevelWindow_X11()
 	int iRevision = iXServerVersion / 1000;  iXServerVersion %= 1000;
 	int iPatch = iXServerVersion;
 
-
 	LOG->Info( "Display: %s (screen %i)", DisplayString(Dpy), iScreen );
 	LOG->Info( "X server vendor: %s [%i.%i.%i.%i]", XServerVendor( Dpy ), iMajor, iMinor, iRevision, iPatch );
 	LOG->Info( "Server GLX vendor: %s [%s]", glXQueryServerString( Dpy, iScreen, GLX_VENDOR ), glXQueryServerString( Dpy, iScreen, GLX_VERSION ) );
@@ -86,8 +85,8 @@ LowLevelWindow_X11::~LowLevelWindow_X11()
 void *LowLevelWindow_X11::GetProcAddress( RString s )
 {
 	// XXX: We should check whether glXGetProcAddress or
-	// glXGetProcAddressARB is available, and go by that, instead of
-	// assuming like this.
+	// glXGetProcAddressARB is available/not NULL, and go by that,
+	// instead of assuming like this.
 	return (void*) glXGetProcAddressARB( (const GLubyte*) s.c_str() );
 }
 
@@ -95,11 +94,9 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 {
 #if defined(UNIX)
 	/* nVidia cards:
-	 *
 	 * This only works the first time we set up a window; after that, the
 	 * drivers appear to cache the value, so you have to actually restart
-	 * the program to change it again.
-	 */
+	 * the program to change it again. */
 	static char buf[128];
 	strcpy( buf, "__GL_SYNC_TO_VBLANK=" );
 	strcat( buf, p.vsync?"1":"0" );
@@ -173,7 +170,6 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 				break;
 		}
 		XSelectInput( Dpy, Win, winAttrib.your_event_mask );
-
 	}
 	else
 	{
@@ -243,9 +239,11 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 		XSetWMNormalHints( Dpy, Win, &hints );
 	}
 
-	// Workaround for metacity and compiz, if the window have the same resolution or higher than the screen
-	// it gets automaximized even when the window is set to don't let do it.
-	// This happens changing from fullscreen to window mode and our screen resolution is bigger.
+	/* Workaround for metacity and compiz: if the window have the same
+	 * resolution or higher than the screen, it gets automaximized even
+	 * when the window is set to not let it happen. This happens when
+	 * changing from fullscreen to window mode and our screen resolution
+	 * is bigger. */
 	{
 		XEvent xev;
 		Atom wm_state = XInternAtom(Dpy, "_NET_WM_STATE", False);
@@ -392,8 +390,8 @@ RenderTarget_X11::~RenderTarget_X11()
 		glDeleteTextures( 1, reinterpret_cast<GLuint*>(&m_iTexHandle) );
 }
 
-/* Note that although the texture size may need to be a power of 2, the Pbuffer
- * does not. */
+/* Note that although the texture size may need to be a power of 2,
+ * the Pbuffer does not. */
 void RenderTarget_X11::Create( const RenderTargetParam &param, int &iTextureWidthOut, int &iTextureHeightOut )
 {
 	//ASSERT( param.iWidth == power_of_two(param.iWidth) && param.iHeight == power_of_two(param.iHeight) );
@@ -410,7 +408,7 @@ void RenderTarget_X11::Create( const RenderTargetParam &param, int &iTextureWidt
 		GLX_GREEN_SIZE, 8,
 		GLX_BLUE_SIZE, 8,
 		GLX_ALPHA_SIZE, param.bWithAlpha? 8:GLX_DONT_CARE,
-	
+
 		GLX_DOUBLEBUFFER, False,
 		GLX_DEPTH_SIZE, param.bWithDepthBuffer? 16:GLX_DONT_CARE,
 		None
@@ -515,9 +513,9 @@ RenderTarget *LowLevelWindow_X11::CreateRenderTarget()
 
 void LowLevelWindow_X11::BeginConcurrentRenderingMainThread()
 {
-	/* Move the main thread, which is going to be loading textures, etc. but
-	 * not rendering, to an undisplayed window.  This results in smoother
-	 * rendering. */
+	/* Move the main thread, which is going to be loading textures, etc.
+	 * but not rendering, to an undisplayed window. This results in
+	 * smoother rendering. */
 	bool b = glXMakeCurrent( Dpy, g_AltWindow, g_pContext );
 	ASSERT(b);
 }

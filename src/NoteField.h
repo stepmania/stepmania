@@ -65,7 +65,7 @@ protected:
 	void DrawTickcountText( const float fBeat, int iTicks );
 	void DrawComboText( const float fBeat, int iCombo, int iMiss );
 	void DrawLabelText( const float fBeat, RString sLabel );
-	void DrawSpeedText( const float fBeat, float fPercent, float fWait, unsigned short usMode );
+	void DrawSpeedText( const float fBeat, float fPercent, float fWait, int iMode );
 	void DrawScrollText( const float fBeat, float fPercent );
 	void DrawFakeText( const float fBeat, const float fNewBeat );
 	void DrawAttackText( const float fBeat, const Attack &attack );

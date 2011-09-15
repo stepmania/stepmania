@@ -12,6 +12,12 @@
 #include "SampleHistory.h"
 struct lua_State;
 
+struct CacheDisplayedBeat {
+	float beat;
+	float displayedBeat;
+	float velocity;
+};
+
 /** @brief The player's indivdual state. */
 class PlayerState
 {
@@ -41,6 +47,19 @@ public:
 
 	// Music statistics:
 	SongPosition m_Position;
+	
+	const SongPosition &GetDisplayedPosition() const;
+	const TimingData   &GetDisplayedTiming()   const;
+	
+	/**
+	 * @brief Holds a vector sorted by real beat, the beat that would be displayed
+	 *        in the NoteField (because they are affected by scroll segments), and
+	 *        also the velocity.
+	 *        This vector will be populated each frame by Player and will probably
+	 *        be used a lot in ArrowEffects. This is way better than iterating through
+	 *        all scroll segments per tap note per frame, which is very slow!
+	 */
+	vector<CacheDisplayedBeat> m_CacheDisplayedBeat;
 
 	/**
 	 * @brief Change the PlayerOptions to their default.

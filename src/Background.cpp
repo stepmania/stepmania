@@ -421,8 +421,8 @@ void BackgroundImpl::LoadFromRandom( float fFirstBeat, float fEndBeat, const Bac
 	const TimingData &timing = m_pSong->m_SongTiming;
 
 	// change BG every time signature change or 4 measures
-	const vector<TimingSegment *> &tSigs = timing.allTimingSegments[SEGMENT_TIME_SIG];
-	
+	const vector<TimingSegment *> &tSigs = timing.GetTimingSegments(SEGMENT_TIME_SIG);
+
 	for (unsigned i = 0; i < tSigs.size(); i++)
 	{
 		TimeSignatureSegment *ts = static_cast<TimeSignatureSegment *>(tSigs[i]);
@@ -448,7 +448,7 @@ void BackgroundImpl::LoadFromRandom( float fFirstBeat, float fEndBeat, const Bac
 	}
 
 	// change BG every BPM change that is at the beginning of a measure
-	const vector<TimingSegment *> &bpms = timing.allTimingSegments[SEGMENT_BPM];
+	const vector<TimingSegment *> &bpms = timing.GetTimingSegments(SEGMENT_BPM);
 	for( unsigned i=0; i<bpms.size(); i++ )
 	{
 		bool bAtBeginningOfMeasure = false;

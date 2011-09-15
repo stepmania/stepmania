@@ -38,24 +38,30 @@ local stepmania = {
 	-- and various other contributors
 }
 
+local oitg = {
+	"infamouspat",
+	"Mark Cannon (vyhd)",
+}
+
 local contrib = {
 	"Aldo Fregoso (Aldo_MX)", -- delays
 	"cerbo",
 	"cesarmades", -- pump/cmd* noteskins
 	"Chris Eldridge (kurisu)", -- dance-threepanel
-	"Christophe Goulet-LeBlanc (Kommisar)",
+	"Christophe Goulet-LeBlanc (Kommisar)", -- songs
 	"corec", -- various fixes
 	"galopin", -- piu PlayStation2 usb mat support
 	"gholms", -- automake 1.11 support
 	"juanelote", -- SongManager:GetSongGroupByIndex, JumpToNext/PrevGroup logic mods
 	"Kaox", -- pump/default noteskin
 	"NitroX72", -- pump/frame noteskin
+	"Petriform", -- Music
 	"sy567", -- beginner helper fix
 	"v1toko", -- x-mode from StepNXA
 	"waiei", -- custom scoring fixes + Hybrid scoring
 }
 
-local translations = {
+local translators = {
 	"John Reactor (Polish)",
 }
 
@@ -64,16 +70,12 @@ local thanks = {
 	"Bill Shillito (DM Ashura)", -- Music (not yet though)
 	"cpubasic13", -- testing (a lot)
 	"Dreamwoods",
-	"Infamouspat", -- oitg bro
 	"Jason Bolt (LightningXCE)",
 	"Jousway", -- Noteskins
 	"Matt1360", -- Automake magic + oitg bro
-	"Mark Cannon (vyhd)",  -- oitg bro + twirl/roll
-	"Petriform", -- Music
 	"Renard",
 	"Ryan McKanna (Plaguefox)",
 }
-
 
 local shoutout = {
 	"The Lua team", -- lua project lead or some shit. super nerdy but oh hell.
@@ -82,10 +84,10 @@ local shoutout = {
 	"NAKET Coder",
 	"Ciera Boyd", -- you bet your ass I'm putting my girlfriend in the credits
 	--Image(), -- we should have some logos probably to look super pro
-	-- "Can't stop crying... buckets of tears!"
 	"#KBO",
-	"AJ Kelly, without which this game would have never been.",
+	"Celestia Radio", -- LOVE AND TOLERANCE
 	"You showed us... your ultimate dance",
+	-- "Can't stop crying... buckets of tears!"
 }
 
 local copyright = {
@@ -98,8 +100,9 @@ local sections = {
 	{ "the spinal shark collective (project lead)", ssc },
 	{ "sm-ssc Team", sm_ssc },
 	{ "StepMania Team", stepmania },
+	{ "OpenITG Team", oitg },
+	{ "Translators", translators },
 	{ "Other Contributors", contrib },
-  { "Translations", translations },
 	{ "Special Thanks", thanks },
 	{ "Shoutouts", shoutout },
 	{ "Copyright", copyright },

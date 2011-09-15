@@ -751,6 +751,26 @@ void Player::SendComboMessages( int iOldCombo, int iOldMissCombo )
 	}
 }
 
+static void GenerateCacheDataStructure(PlayerState *pPlayerState, NoteData &notes) {
+
+	pPlayerState->m_CacheDisplayedBeat.clear();
+
+	const vector<TimingSegment*> vScrolls = pPlayerState->GetDisplayedTiming().GetTimingSegments( SEGMENT_SCROLL );
+
+	float displayedBeat = 0.0f;
+	float lastRealBeat = 0.0f;
+	float lastRatio = 1.0f;
+	for ( unsigned i = 0; i < vScrolls.size(); i++ )
+	{
+		ScrollSegment *seg = ToScroll( vScrolls[i] );
+		displayedBeat += ( seg->GetBeat() - lastRealBeat ) * lastRatio;
+		lastRealBeat = seg->GetBeat();
+		lastRatio = seg->GetRatio();
+		CacheDisplayedBeat c = { seg->GetBeat(), displayedBeat, seg->GetRatio() };
+		pPlayerState->m_CacheDisplayedBeat.push_back( c );
+	}
+}
+
 void Player::Update( float fDeltaTime )
 {
 	const RageTimer now;
@@ -879,6 +899,9 @@ void Player::Update( float fDeltaTime )
 	// during pause.
 	if( m_bPaused )
 		return;
+
+	// Generate some cache data structure.
+	GenerateCacheDataStructure(m_pPlayerState, m_NoteData);
 
 	// Check for a strum miss
 	if( m_pPlayerState->m_fLastStrumMusicSeconds != -1  &&

@@ -44,131 +44,131 @@ struct TimingTagWriter {
 
 	void Write( const int row, const char *value )
 	{
-		m_pvsLines->push_back( m_sNext + ssprintf( "%.6f=%s", NoteRowToBeat(row), value ) );
+		m_pvsLines->push_back( m_sNext + ssprintf( "%.3f=%s", NoteRowToBeat(row), value ) );
 		m_sNext = ",";
 	}
 
-	void Write( const int row, const float value )        { Write( row, ssprintf( "%.6f",  value ) ); }
+	void Write( const int row, const float value )        { Write( row, ssprintf( "%.3f",  value ) ); }
 	void Write( const int row, const int value )          { Write( row, ssprintf( "%d",    value ) ); }
 	void Write( const int row, const int a, const int b ) { Write( row, ssprintf( "%d=%d", a, b ) );  }
-	void Write( const int row, const float a, const float b ) { Write( row, ssprintf( "%.6f=%.6f", a, b) ); }
+	void Write( const int row, const float a, const float b ) { Write( row, ssprintf( "%.3f=%.3f", a, b) ); }
 	void Write( const int row, const float a, const float b, const unsigned short c )
-		{ Write( row, ssprintf( "%.6f=%.6f=%hd", a, b, c) ); }
+		{ Write( row, ssprintf( "%.3f=%.3f=%hd", a, b, c) ); }
 
 	void Init( const RString sTag ) { m_sNext = "#" + sTag + ":"; }
 	void Finish( ) { m_pvsLines->push_back( ( m_sNext != "," ? m_sNext : "" ) + ";" ); }
 
 };
 
-static void GetTimingTags( vector<RString> &lines, TimingData timing, bool bIsSong = false )
+static void GetTimingTags( vector<RString> &lines, const TimingData &timing, bool bIsSong = false )
 {
 	TimingTagWriter w ( &lines );
-	
-	timing.TidyUpData();
+
+	// timing.TidyUpData(); // UGLY: done via const_cast. do we really -need- this here?
 	unsigned i = 0;
 
 	w.Init( "BPMS" );
-	vector<TimingSegment *> &bpms = timing.allTimingSegments[SEGMENT_BPM];
+	const vector<TimingSegment *> &bpms = timing.GetTimingSegments(SEGMENT_BPM);
 	for (; i < bpms.size(); i++)
 	{
-		BPMSegment *bs = static_cast<BPMSegment *>(bpms[i]);
+		const BPMSegment *bs = ToBPM( bpms[i] );
 		w.Write( bs->GetRow(), bs->GetBPM() );
 	}
 	w.Finish();
-	
+
 	w.Init( "STOPS" );
-	vector<TimingSegment *> &stops = timing.allTimingSegments[SEGMENT_STOP];
+	const vector<TimingSegment *> &stops = timing.GetTimingSegments(SEGMENT_STOP);
 	for (i = 0; i < stops.size(); i++)
 	{
-		StopSegment *ss = static_cast<StopSegment *>(stops[i]);
+		const StopSegment *ss = ToStop( stops[i] );
 		w.Write( ss->GetRow(), ss->GetPause() );
 	}
 	w.Finish();
-	
+
 	w.Init( "DELAYS" );
-	vector<TimingSegment *> &delays = timing.allTimingSegments[SEGMENT_DELAY];
+	const vector<TimingSegment *> &delays = timing.GetTimingSegments(SEGMENT_DELAY);
 	for (i = 0; i < delays.size(); i++)
 	{
-		DelaySegment *ss = static_cast<DelaySegment *>(delays[i]);
+		const DelaySegment *ss = ToDelay( delays[i] );
 		w.Write( ss->GetRow(), ss->GetPause() );
 	}
 	w.Finish();
-	
+
 	w.Init( "WARPS" );
-	vector<TimingSegment *> &warps = timing.allTimingSegments[SEGMENT_WARP];
+	const vector<TimingSegment *> &warps = timing.GetTimingSegments(SEGMENT_WARP);
 	for (i = 0; i < warps.size(); i++)
 	{
-		WarpSegment *ws = static_cast<WarpSegment *>(warps[i]);
+		const WarpSegment *ws = ToWarp( warps[i] );
 		w.Write( ws->GetRow(), ws->GetLength() );
 	}
 	w.Finish();
-	
-	vector<TimingSegment *> &tSigs = timing.allTimingSegments[SEGMENT_TIME_SIG];
+
+	const vector<TimingSegment *> &tSigs = timing.GetTimingSegments(SEGMENT_TIME_SIG);
 	ASSERT( !tSigs.empty() );
 	w.Init( "TIMESIGNATURES" );
 	for (i = 0; i < tSigs.size(); i++)
 	{
-		TimeSignatureSegment *ts = static_cast<TimeSignatureSegment *>(tSigs[i]);
+		const TimeSignatureSegment *ts = ToTimeSignature( tSigs[i] );
 		w.Write( ts->GetRow(), ts->GetNum(), ts->GetDen() );
 	}
 	w.Finish();
 
-	vector<TimingSegment *> &ticks = timing.allTimingSegments[SEGMENT_TICKCOUNT];
+	const vector<TimingSegment *> &ticks = timing.GetTimingSegments(SEGMENT_TICKCOUNT);
 	ASSERT( !ticks.empty() );
 	w.Init( "TICKCOUNTS" );
 	for (i = 0; i < ticks.size(); i++)
 	{
-		TickcountSegment *ts = static_cast<TickcountSegment *>(ticks[i]);
+		const TickcountSegment *ts = ToTickcount( ticks[i] );
 		w.Write( ts->GetRow(), ts->GetTicks() );
 	}
 	w.Finish();
-	
-	vector<TimingSegment *> &combos = timing.allTimingSegments[SEGMENT_COMBO];
+
+	const vector<TimingSegment *> &combos = timing.GetTimingSegments(SEGMENT_COMBO);
 	ASSERT( !combos.empty() );
 	w.Init( "COMBOS" );
 	for (i = 0; i < combos.size(); i++)
 	{
-		ComboSegment *cs = static_cast<ComboSegment *>(combos[i]);
+		const ComboSegment *cs = ToCombo( combos[i] );
 		if (cs->GetCombo() == cs->GetMissCombo())
 			w.Write( cs->GetRow(), cs->GetCombo() );
 		else
 			w.Write( cs->GetRow(), cs->GetCombo(), cs->GetMissCombo() );
 	}
 	w.Finish();
-	
+
 	// Song Timing should only have the initial value.
-	vector<TimingSegment *> &speeds = timing.allTimingSegments[SEGMENT_SPEED];
+	const vector<TimingSegment *> &speeds = timing.GetTimingSegments(SEGMENT_SPEED);
 	w.Init( "SPEEDS" );
 	for (i = 0; i < speeds.size(); i++)
 	{
-		SpeedSegment *ss = static_cast<SpeedSegment *>(speeds[i]);
-		w.Write( ss->GetRow(), ss->GetRatio(), ss->GetLength(), ss->GetUnit() );
+		SpeedSegment *ss = ToSpeed( speeds[i] );
+		w.Write( ss->GetRow(), ss->GetRatio(), ss->GetDelay(), ss->GetUnit() );
 	}
 	w.Finish();
-	
+
 	w.Init( "SCROLLS" );
-	vector<TimingSegment *> &scrolls = timing.allTimingSegments[SEGMENT_SCROLL];
+	const vector<TimingSegment *> &scrolls = timing.GetTimingSegments(SEGMENT_SCROLL);
 	for (i = 0; i < scrolls.size(); i++)
 	{
-		ScrollSegment *ss = static_cast<ScrollSegment *>(scrolls[i]);
+		ScrollSegment *ss = ToScroll( scrolls[i] );
 		w.Write( ss->GetRow(), ss->GetRatio() );
 	}
 	w.Finish();
-	
+
 	if( !bIsSong )
-	{	
-		vector<TimingSegment *> &fakes = timing.allTimingSegments[SEGMENT_FAKE];
+	{
+		const vector<TimingSegment *> &fakes = timing.GetTimingSegments(SEGMENT_FAKE);
 		w.Init( "FAKES" );
 		for (i = 0; i < fakes.size(); i++)
 		{
-			FakeSegment *fs = static_cast<FakeSegment *>(fakes[i]);
+			FakeSegment *fs = ToFake( fakes[i] );
 			w.Write( fs->GetRow(), fs->GetLength() );
 		}
 		w.Finish();
 	}
-	
+
 	w.Init( "LABELS" );
-	vector<TimingSegment *> &labels = timing.allTimingSegments[SEGMENT_LABEL];
+	const vector<TimingSegment *> &labels = timing.GetTimingSegments(SEGMENT_LABEL);
 	for (i = 0; i < labels.size(); i++)
 	{
 		LabelSegment *ls = static_cast<LabelSegment *>(labels[i]);
@@ -197,9 +197,8 @@ static void WriteTimingTags( RageFile &f, const TimingData &timing, bool bIsSong
 			   join(",\r\n", timing.ToVectorString(SEGMENT_SPEED)).c_str()));
 	f.PutLine(ssprintf("#SCROLLS:%s;",
 			   join(",\r\n", timing.ToVectorString(SEGMENT_SCROLL)).c_str()));
-	if (!bIsSong)
-		f.PutLine(ssprintf("#FAKES:%s;",
-				   join(",\r\n", timing.ToVectorString(SEGMENT_FAKE)).c_str()));
+	f.PutLine(ssprintf("#FAKES:%s;",
+			   join(",\r\n", timing.ToVectorString(SEGMENT_FAKE)).c_str()));
 	f.PutLine(ssprintf("#LABELS:%s;",
 			   join(",\r\n", timing.ToVectorString(SEGMENT_LABEL)).c_str()));
 
@@ -235,9 +234,9 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 			f.PutLine( "#INSTRUMENTTRACK:" + s + ";\n" );
 		}
 	}
-	f.PutLine( ssprintf( "#OFFSET:%.6f;", out.m_SongTiming.m_fBeat0OffsetInSeconds ) );
-	f.PutLine( ssprintf( "#SAMPLESTART:%.6f;", out.m_fMusicSampleStartSeconds ) );
-	f.PutLine( ssprintf( "#SAMPLELENGTH:%.6f;", out.m_fMusicSampleLengthSeconds ) );
+	f.PutLine( ssprintf( "#OFFSET:%.3f;", out.m_SongTiming.m_fBeat0OffsetInSeconds ) );
+	f.PutLine( ssprintf( "#SAMPLESTART:%.3f;", out.m_fMusicSampleStartSeconds ) );
+	f.PutLine( ssprintf( "#SAMPLELENGTH:%.3f;", out.m_fMusicSampleLengthSeconds ) );
 
 	f.Write( "#SELECTABLE:" );
 	switch(out.m_SelectionDisplay)
@@ -256,9 +255,9 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 		break;
 	case DISPLAY_BPM_SPECIFIED:
 		if( out.m_fSpecifiedBPMMin == out.m_fSpecifiedBPMMax )
-			f.PutLine( ssprintf( "#DISPLAYBPM:%.6f;", out.m_fSpecifiedBPMMin ) );
+			f.PutLine( ssprintf( "#DISPLAYBPM:%.3f;", out.m_fSpecifiedBPMMin ) );
 		else
-			f.PutLine( ssprintf( "#DISPLAYBPM:%.6f:%.6f;", out.m_fSpecifiedBPMMin, out.m_fSpecifiedBPMMax ) );
+			f.PutLine( ssprintf( "#DISPLAYBPM:%.3f:%.3f;", out.m_fSpecifiedBPMMin, out.m_fSpecifiedBPMMax ) );
 		break;
 	case DISPLAY_BPM_RANDOM:
 		f.PutLine( ssprintf( "#DISPLAYBPM:*;" ) );
@@ -268,7 +267,7 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 	WriteTimingTags( f, out.m_SongTiming, true );
 	
 	if( out.GetSpecifiedLastSecond() > 0 )
-		f.PutLine( ssprintf("#LASTSECONDHINT:%.6f;", out.GetSpecifiedLastSecond()) );
+		f.PutLine( ssprintf("#LASTSECONDHINT:%.3f;", out.GetSpecifiedLastSecond()) );
 	
 	FOREACH_BackgroundLayer( b )
 	{
@@ -345,16 +344,16 @@ static RString GetSSCNoteData( const Song &song, const Steps &in, bool bSavingCa
 	lines.push_back( ssprintf( "#RADARVALUES:%s;", join(",",asRadarValues).c_str() ) );
 
 	lines.push_back( ssprintf( "#CREDIT:%s;", SmEscape(in.GetCredit()).c_str() ) );
-	
+
 	// XXX: Is there a better way to write this?
 	if (const_cast<TimingData &>(song.m_SongTiming) != in.m_Timing)
 	{
-		lines.push_back( ssprintf( "#OFFSET:%.6f;", in.m_Timing.m_fBeat0OffsetInSeconds ) );
+		lines.push_back( ssprintf( "#OFFSET:%.3f;", in.m_Timing.m_fBeat0OffsetInSeconds ) );
 		GetTimingTags( lines, in.m_Timing );
 	}
 	if (song.GetAttackString() != in.GetAttackString())
 		lines.push_back( ssprintf("#ATTACKS:%s;", in.GetAttackString().c_str()));
-	
+
 	switch( in.GetDisplayBPM() )
 	{
 		case DISPLAY_BPM_ACTUAL:
@@ -365,9 +364,9 @@ static RString GetSSCNoteData( const Song &song, const Steps &in, bool bSavingCa
 			float small = in.GetMinBPM();
 			float big = in.GetMaxBPM();
 			if (small == big)
-				lines.push_back( ssprintf( "#DISPLAYBPM:%.6f;", small ) );
+				lines.push_back( ssprintf( "#DISPLAYBPM:%.3f;", small ) );
 			else
-				lines.push_back( ssprintf( "#DISPLAYBPM:%.6f:%.6f;", small, big ) );
+				lines.push_back( ssprintf( "#DISPLAYBPM:%.3f:%.3f;", small, big ) );
 			break;
 		}
 		case DISPLAY_BPM_RANDOM:
@@ -414,12 +413,12 @@ bool NotesWriterSSC::Write( RString sPath, const Song &out, const vector<Steps*>
 	if( bSavingCache )
 	{
 		f.PutLine( ssprintf( "// cache tags:" ) );
-		f.PutLine( ssprintf( "#FIRSTSECOND:%.6f;", out.GetFirstSecond() ) );
-		f.PutLine( ssprintf( "#LASTSECOND:%.6f;", out.GetLastSecond() ) );
+		f.PutLine( ssprintf( "#FIRSTSECOND:%.3f;", out.GetFirstSecond() ) );
+		f.PutLine( ssprintf( "#LASTSECOND:%.3f;", out.GetLastSecond() ) );
 		f.PutLine( ssprintf( "#SONGFILENAME:%s;", out.m_sSongFileName.c_str() ) );
 		f.PutLine( ssprintf( "#HASMUSIC:%i;", out.m_bHasMusic ) );
 		f.PutLine( ssprintf( "#HASBANNER:%i;", out.m_bHasBanner ) );
-		f.PutLine( ssprintf( "#MUSICLENGTH:%.6f;", out.m_fMusicLengthSeconds ) );
+		f.PutLine( ssprintf( "#MUSICLENGTH:%.3f;", out.m_fMusicLengthSeconds ) );
 		f.PutLine( ssprintf( "// end cache tags" ) );
 	}
 

@@ -37,10 +37,10 @@ void SSCLoader::ProcessWarps( TimingData &out, const RString sParam, const float
 		// Early versions were absolute in beats. They should be relative.
 		if( ( fVersion < VERSION_SPLIT_TIMING && fNewBeat > fBeat ) )
 		{
-			out.AddSegment( SEGMENT_WARP, new WarpSegment(fBeat, fNewBeat - fBeat) );
+			out.AddSegment( WarpSegment(BeatToNoteRow(fBeat), fNewBeat - fBeat) );
 		}
 		else if( fNewBeat > 0 )
-			out.AddSegment( SEGMENT_WARP, new WarpSegment(fBeat, fNewBeat) );
+			out.AddSegment( WarpSegment(BeatToNoteRow(fBeat), fNewBeat) );
 		else
 		{
 			LOG->UserLog("Song file",
@@ -73,7 +73,7 @@ void SSCLoader::ProcessLabels( TimingData &out, const RString sParam )
 		RString sLabel = arrayLabelValues[1];
 		TrimRight(sLabel);
 		if( fBeat >= 0.0f )
-			out.AddSegment( SEGMENT_LABEL, new LabelSegment(fBeat, sLabel) );
+			out.AddSegment( LabelSegment(BeatToNoteRow(fBeat), sLabel) );
 		else 
 		{
 			LOG->UserLog("Song file",
@@ -106,7 +106,7 @@ void SSCLoader::ProcessCombos( TimingData &out, const RString line, const int ro
 		const float fComboBeat = StringToFloat( arrayComboValues[0] );
 		const int iCombos = StringToInt( arrayComboValues[1] );
 		const int iMisses = (size == 2 ? iCombos : StringToInt(arrayComboValues[2]));
-		out.AddSegment( SEGMENT_COMBO, new ComboSegment( fComboBeat, iCombos, iMisses ) );
+		out.AddSegment( ComboSegment( BeatToNoteRow(fComboBeat), iCombos, iMisses ) );
 	}
 }
 
@@ -128,11 +128,10 @@ void SSCLoader::ProcessScrolls( TimingData &out, const RString sParam )
 				     static_cast<int>(vs2.size()) );
 			continue;
 		}
-		
+
 		const float fBeat = StringToFloat( vs2[0] );
-		
-		ScrollSegment * seg = new ScrollSegment(fBeat, StringToFloat( vs2[1] ) );
-		
+		const float fRatio = StringToFloat( vs2[1] );
+
 		if( fBeat < 0 )
 		{
 			LOG->UserLog("Song file",
@@ -141,8 +140,8 @@ void SSCLoader::ProcessScrolls( TimingData &out, const RString sParam )
 				     fBeat );
 			continue;
 		}
-		
-		out.AddSegment( SEGMENT_SCROLL, seg );
+
+		out.AddSegment( ScrollSegment(BeatToNoteRow(fBeat), fRatio) );
 	}
 }
 
@@ -487,6 +486,18 @@ bool SSCLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 				{
 					ProcessCombos( out.m_SongTiming, sParams[1] );
 				}
+				else if (sValueName=="SPEEDS")
+				{
+					ProcessSpeeds(out.m_SongTiming, sParams[1]);
+				}
+				else if (sValueName=="SCROLLS")
+				{
+					ProcessScrolls(out.m_SongTiming, sParams[1]);
+				}
+				else if (sValueName=="FAKES")
+				{
+					ProcessFakes(out.m_SongTiming, sParams[1]);
+				}
 
 				/* The following are cache tags. Never fill their values
 				 * directly: only from the cached version. */
@@ -729,7 +740,7 @@ bool SSCLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 						ProcessAttacks(pNewNotes->m_Attacks, sParams);
 					}
 				}
-				
+
 				else if( sValueName=="OFFSET" )
 				{
 					if (out.m_fVersion >= VERSION_SPLIT_TIMING)
@@ -738,7 +749,7 @@ bool SSCLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 						bHasOwnTiming = true;
 					}
 				}
-				
+
 				else if( sValueName=="DISPLAYBPM" )
 				{
 					// #DISPLAYBPM:[xxx][xxx:xxx]|[*]; 

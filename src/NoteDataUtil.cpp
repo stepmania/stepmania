@@ -26,8 +26,7 @@ NoteType NoteDataUtil::GetSmallestNoteTypeForMeasure( const NoteData &nd, int iM
 NoteType NoteDataUtil::GetSmallestNoteTypeInRange( const NoteData &n, int iStartIndex, int iEndIndex )
 {
 	// probe to find the smallest note type
-	NoteType nt;
-	for( nt=(NoteType)0; nt<NUM_NoteType; nt=NoteType(nt+1) )		// for each NoteType, largest to largest
+	FOREACH_ENUM(NoteType, nt)
 	{
 		float fBeatSpacing = NoteTypeToBeat( nt );
 		int iRowSpacing = lrintf( fBeatSpacing * ROWS_PER_BEAT );
@@ -49,13 +48,9 @@ NoteType NoteDataUtil::GetSmallestNoteTypeInRange( const NoteData &n, int iStart
 		if( bFoundSmallerNote )
 			continue;	// searching the next NoteType
 		else
-			break;	// stop searching. We found the smallest NoteType
+			return nt;	// stop searching. We found the smallest NoteType
 	}
-
-	if( nt == NUM_NoteType )	// we didn't find one
-		return NoteType_Invalid;	// well-formed notes created in the editor should never get here
-	else
-		return nt;
+	return NoteType_Invalid;	// well-formed notes created in the editor should never get here
 }
 
 static void LoadFromSMNoteDataStringWithPlayer( NoteData& out, const RString &sSMNoteData, int start,
@@ -891,7 +886,7 @@ void NoteDataUtil::CalculateRadarValues( const NoteData &in, float fSongSeconds,
 		case RadarCategory_Rolls:			out[rc] = (float) in.GetNumRolls();			break;
 		case RadarCategory_Lifts:			out[rc] = (float) in.GetNumLifts();			break;
 		case RadarCategory_Fakes:			out[rc] = (float) in.GetNumFakes();			break;
-		default:	ASSERT(0);
+		default:	FAIL_M("Non-existant radar category attempted to be set!");
 		}
 	}
 }
@@ -955,7 +950,7 @@ float NoteDataUtil::GetChaosRadarValue( const NoteData &in, float fSongSeconds )
 {
 	if( !fSongSeconds )
 		return 0.0f;
-	// count number of triplets or 16ths
+	// count number of notes smaller than 8ths
 	int iNumChaosNotes = 0;
 
 	FOREACH_NONEMPTY_ROW_ALL_TRACKS( in, r )

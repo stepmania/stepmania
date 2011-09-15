@@ -8,6 +8,36 @@ ________________________________________________________________________________
 StepMania 5.0 $next | 2011????
 --------------------------------------------------------------------------------
 
+2011/09/12
+----------
+* [NotesLoaderSSC/WriterSSC] Allow all timing tags regardless of what timing
+  is used. [Wolfman2000]
+
+2011/09/11
+----------
+* [ScreenEvaluation] Added "evaluation full combo W1" and
+  "evaluation full combo W2" announcer cues. [AJ]
+* [Banner] Added "Banner group fallback" graphic. [AJ]
+
+2011/09/09
+----------
+* [NotesLoaderBMS] Rewrite the BMS loader, should fix issues 430 and 500. [theDtTvB]
+
+2011/09/08
+----------
+* [GameManager] Fix shifting of 2P notes in beat mode. [1a2a3a2a1a]
+
+2011/09/07
+----------
+* [Model] Added GetDefaultAnimation() Lua binding. [AJ]
+* [GameState] Added GetEarnedExtraStage() Lua binding. [AJ]
+
+2011/09/02
+----------
+* [MenuTimer] Added start(), disable() Lua bindings. Also renamed setseconds to
+  SetSeconds to match GetSeconds. [AJ]
+* [GameManager] beat "versus" -> "versus5"; fix beat versus7 being "single7". [1a2a3a2a1a]
+
 2011/08/27
 ----------
 * Updated libjpeg to 8c.

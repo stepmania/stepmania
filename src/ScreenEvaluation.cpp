@@ -608,9 +608,26 @@ void ScreenEvaluation::Init()
 
 	// init records area
 	bool bOneHasNewTopRecord = false;
+	bool bOneHasFullW1Combo = false;
+	bool bOneHasFullW2Combo = false;
+
 	FOREACH_PlayerNumber( p )
-		if( GAMESTATE->IsPlayerEnabled(p) && (m_pStageStats->m_player[p].m_iMachineHighScoreIndex == 0 || m_pStageStats->m_player[p].m_iPersonalHighScoreIndex == 0) )
-			bOneHasNewTopRecord = true;
+	{
+		if(GAMESTATE->IsPlayerEnabled(p))
+		{
+			if( (m_pStageStats->m_player[p].m_iMachineHighScoreIndex == 0 ||
+				 m_pStageStats->m_player[p].m_iPersonalHighScoreIndex == 0) )
+			{
+				bOneHasNewTopRecord = true;
+			}
+
+			if( m_pStageStats->m_player[p].FullComboOfScore(TNS_W2) )
+				bOneHasFullW2Combo = true;
+
+			if( m_pStageStats->m_player[p].FullComboOfScore(TNS_W1) )
+				bOneHasFullW1Combo = true;
+		}
+	}
 
 	Grade best_grade = Grade_NoData;
 	FOREACH_PlayerNumber( p )
@@ -620,9 +637,14 @@ void ScreenEvaluation::Init()
 	{
 		SOUND->PlayOnce( THEME->GetPathS(m_sName,"try " + EarnedExtraStageToString(m_pStageStats->m_EarnedExtraStage)) );
 	}
-	else if( bOneHasNewTopRecord  &&  ANNOUNCER->HasSoundsFor("evaluation new record") )
+	else if( bOneHasNewTopRecord && ANNOUNCER->HasSoundsFor("evaluation new record") )
 	{
 		SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation new record") );
+	}
+	else if( (bOneHasFullW1Combo || bOneHasFullW2Combo) )
+	{
+		RString sComboType = bOneHasFullW1Combo ? "W1" : "W2";
+		SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation full combo "+sComboType) );
 	}
 	else
 	{
@@ -637,10 +659,8 @@ void ScreenEvaluation::Init()
 			case PLAY_MODE_BATTLE:
 				{
 					bool bWon = GAMESTATE->GetStageResult(GAMESTATE->GetMasterPlayerNumber()) == RESULT_WIN;
-					if( bWon )
-						SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation win") );
-					else
-						SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation lose") );
+					RString sResult = bWon ? "win" : "lose";
+					SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation "+sResult) );
 				}
 				break;
 			default:

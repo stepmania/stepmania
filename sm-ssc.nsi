@@ -54,14 +54,6 @@
 	; I think it may need actual admin privs for writing to the registry... -aj
 	;RequestExecutionLevel user
 
-	;GetVersion::WindowsServicePackMajor
-	;Pop $R0
-	;${If} $R0 >= 6
-	;	vista & 7
-	;${Else}
-	;	xp and below
-	;${EndIf}
-
 	InstallDir "$PROGRAMFILES\${PRODUCT_ID}"
 	InstallDirRegKey HKEY_LOCAL_MACHINE "SOFTWARE\${PRODUCT_ID}" ""
 
@@ -96,9 +88,6 @@
 !endif
 
 	!insertmacro MUI_PAGE_WELCOME
-
-	; include various Windows-only notices
-	!insertmacro MUI_PAGE_LICENSE ".\Docs\WindowsNotes.txt"
 
 	;!insertmacro MUI_PAGE_COMPONENTS
 	!insertmacro MUI_PAGE_DIRECTORY
@@ -680,6 +669,12 @@ Function PreInstall
 FunctionEnd
 
 Function .onInit
+
+	nsisos::osversion
+	${If} $R0 >= 6
+		;vista & win7
+		StrCpy $INSTDIR "%HOMEPATH%\${PRODUCT_ID}"
+	${EndIf}
 
 	; Force show language selection for debugging
 	;!define MUI_LANGDLL_ALWAYSSHOW

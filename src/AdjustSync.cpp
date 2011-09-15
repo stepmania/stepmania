@@ -267,28 +267,29 @@ void AdjustSync::AutosyncTempo()
 		GAMESTATE->m_pCurSong->m_SongTiming.m_fBeat0OffsetInSeconds += fIntercept;
 		const float fScaleBPM = 1.0f/(1.0f - fSlope);
 		TimingData &timing = GAMESTATE->m_pCurSong->m_SongTiming;
-		vector<TimingSegment *> &bpms = timing.allTimingSegments[SEGMENT_BPM];
+
+		const vector<TimingSegment *> &bpms = timing.GetTimingSegments(SEGMENT_BPM);
 		for (unsigned i = 0; i < bpms.size(); i++)
 		{
-			BPMSegment *b = static_cast<BPMSegment *>(bpms[i]);
-			b->SetBPM(b->GetBPM() * fScaleBPM);
+			const BPMSegment *b = ToBPM( bpms[i] );
+			timing.AddSegment( BPMSegment(b->GetRow(), b->GetBPM() * fScaleBPM) );
 		}
 
 		/* We assume that the stops were measured as a number of beats.
 		 * Therefore, if we change the bpms, we need to make a similar
 		 * change to the stops. */
-		vector<TimingSegment *> &stops = timing.allTimingSegments[SEGMENT_STOP];
+		const vector<TimingSegment *> &stops = timing.GetTimingSegments(SEGMENT_STOP);
 		for (unsigned i = 0; i < stops.size(); i++)
 		{
-			StopSegment *s = static_cast<StopSegment *>(stops[i]);
-			s->SetPause(s->GetPause() * (1.0f - fSlope));
+			const StopSegment *s = ToStop( stops[i] );
+			timing.AddSegment( StopSegment(s->GetRow(), s->GetPause() * (1.0f - fSlope)) );
 		}
 		// Do the same for delays.
-		vector<TimingSegment *> &delays = timing.allTimingSegments[SEGMENT_DELAY];
+		const vector<TimingSegment *> &delays = timing.GetTimingSegments(SEGMENT_DELAY);
 		for (unsigned i = 0; i < delays.size(); i++)
 		{
-			DelaySegment *s = static_cast<DelaySegment *>(delays[i]);
-			s->SetPause(s->GetPause() * (1.0f - fSlope));
+			const DelaySegment *s = ToDelay( delays[i] );
+			timing.AddSegment( DelaySegment(s->GetRow(), s->GetPause() * (1.0f - fSlope)) );
 		}
 
 		SCREENMAN->SystemMessage( AUTOSYNC_CORRECTION_APPLIED.GetValue() );
@@ -336,12 +337,13 @@ void AdjustSync::GetSyncChangeTextGlobal( vector<RString> &vsAddTo )
 	}
 }
 
+// XXX: needs cleanup still -- vyhd
 void AdjustSync::GetSyncChangeTextSong( vector<RString> &vsAddTo )
 {
 	if( GAMESTATE->m_pCurSong.Get() )
 	{
 		unsigned int iOriginalSize = vsAddTo.size();
-		TimingData original = s_vpTimingDataOriginal[0];
+		TimingData &original = s_vpTimingDataOriginal[0];
 		TimingData &testing = GAMESTATE->m_pCurSong->m_SongTiming;
 
 		{
@@ -359,79 +361,74 @@ void AdjustSync::GetSyncChangeTextSong( vector<RString> &vsAddTo )
 			}
 		}
 
-		vector<TimingSegment *> &bpmTest = testing.allTimingSegments[SEGMENT_BPM];
-		vector<TimingSegment *> &bpmOrig = original.allTimingSegments[SEGMENT_BPM];
+		const vector<TimingSegment *> &bpmTest = testing.GetTimingSegments(SEGMENT_BPM);
+		const vector<TimingSegment *> &bpmOrig = original.GetTimingSegments(SEGMENT_BPM);
 		for( unsigned i=0; i< bpmTest.size(); i++ )
 		{
-			BPMSegment *bT = static_cast<BPMSegment *>(bpmTest[i]);
-			BPMSegment *bO = static_cast<BPMSegment *>(bpmOrig[i]);
-			float fOld = Quantize( bO->GetBPM(), 0.001f );
-			float fNew = Quantize( bT->GetBPM(), 0.001f );
-			float fDelta = fNew - fOld;
+			float fNew = Quantize( ToBPM(bpmTest[i])->GetBPM(), 0.001f );
+			float fOld = Quantize( ToBPM(bpmOrig[i])->GetBPM(), 0.001f );
 
-			if( fabsf(fDelta) > 0.0001f )
+			if( fabsf(fNew - fOld) < 1e-4 )
+				continue;
+
+			if ( i >= 4 )
 			{
-				if ( i >= 4 ) 
-				{
-					vsAddTo.push_back(ETC.GetValue());
-					break;
-				}
-				vsAddTo.push_back( ssprintf( 
-					TEMPO_SEGMENT_FROM.GetValue(),
-					FormatNumberAndSuffix(i+1).c_str(),
-					fOld, 
-					fNew ) );
+				vsAddTo.push_back(ETC.GetValue());
+				break;
 			}
+
+			RString s = ssprintf( TEMPO_SEGMENT_FROM.GetValue(),
+					FormatNumberAndSuffix(i+1).c_str(), fOld, fNew );
+
+			vsAddTo.push_back( s );
 		}
 
-		vector<TimingSegment *> &stopTest = testing.allTimingSegments[SEGMENT_STOP];
-		vector<TimingSegment *> &stopOrig = original.allTimingSegments[SEGMENT_STOP];
+		const vector<TimingSegment *> &stopTest = testing.GetTimingSegments(SEGMENT_STOP);
+		const vector<TimingSegment *> &stopOrig = original.GetTimingSegments(SEGMENT_STOP);
+
 		for( unsigned i=0; i< stopTest.size(); i++ )
 		{
-			StopSegment *sT = static_cast<StopSegment *>(stopTest[i]);
-			StopSegment *sO = static_cast<StopSegment *>(stopOrig[i]);
-			float fOld = Quantize( sO->GetPause(), 0.001f );
-			float fNew = Quantize( sT->GetPause(), 0.001f );
+			float fOld = Quantize( ToStop(stopOrig[i])->GetPause(), 0.001f );
+			float fNew = Quantize( ToStop(stopTest[i])->GetPause(), 0.001f );
 			float fDelta = fNew - fOld;
 
-			if( fabsf(fDelta) > 0.0001f )
+			if( fabsf(fDelta) < 1e-4 )
+				continue;
+
+			if ( i >= 4 )
 			{
-				if ( i >= 4 )
-				{
-					vsAddTo.push_back(ETC.GetValue());
-					break;
-				}
-				vsAddTo.push_back( ssprintf(
-					CHANGED_STOP.GetValue(),
-					i+1,
-					fOld, 
-					fNew ) );
+				vsAddTo.push_back(ETC.GetValue());
+				break;
 			}
+
+			RString s = ssprintf( CHANGED_STOP.GetValue(), i+1, fOld, fNew, fDelta );
+			vsAddTo.push_back( s );
 		}
-		
-		vector<TimingSegment *> &delyTest = testing.allTimingSegments[SEGMENT_DELAY];
-		vector<TimingSegment *> &delyOrig = original.allTimingSegments[SEGMENT_DELAY];
+
+		const vector<TimingSegment *> &delyTest = testing.GetTimingSegments(SEGMENT_DELAY);
+		const vector<TimingSegment *> &delyOrig = original.GetTimingSegments(SEGMENT_DELAY);
+
 		for( unsigned i=0; i< delyTest.size(); i++ )
 		{
-			DelaySegment *sT = static_cast<DelaySegment *>(delyTest[i]);
-			DelaySegment *sO = static_cast<DelaySegment *>(delyOrig[i]);
-			float fOld = Quantize( sO->GetPause(), 0.001f );
-			float fNew = Quantize( sT->GetPause(), 0.001f );
+			if( delyTest[i] == delyOrig[i] )
+				continue;
+
+			float fOld = Quantize( ToDelay(delyOrig[i])->GetPause(), 0.001f );
+			float fNew = Quantize( ToDelay(delyTest[i])->GetPause(), 0.001f );
 			float fDelta = fNew - fOld;
-			
-			if( fabsf(fDelta) > 0.0001f )
+
+			if( fabsf(fDelta) < 1e-4 )
+				continue;
+
+			if ( i >= 4 )
 			{
-				if ( i >= 4 )
-				{
-					vsAddTo.push_back(ETC.GetValue());
-					break;
-				}
-				vsAddTo.push_back( ssprintf(
-											CHANGED_STOP.GetValue(),
-											i+1,
-											fOld, 
-											fNew ) );
+				vsAddTo.push_back(ETC.GetValue());
+				break;
 			}
+
+			RString s = ssprintf( CHANGED_STOP.GetValue(),
+				i+1, fOld, fNew, fDelta );
+			vsAddTo.push_back( s );
 		}
 
 		if( vsAddTo.size() > iOriginalSize && s_fAverageError > 0.0f )

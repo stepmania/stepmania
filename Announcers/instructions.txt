@@ -1,7 +1,7 @@
 Place announcer folders in this directory.
 
 [Announcer format]
-sm-ssc's announcers look for certain names. These can either be a single sound,
+StepMania's announcers look for certain names. These can either be a single sound,
 or a folder containing many sounds (of which one is picked at random).
 
 [Announcer calls]

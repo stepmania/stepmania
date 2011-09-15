@@ -42,6 +42,7 @@ public:
 	void LoadFromSortOrder( SortOrder so );
 	void LoadFallback();
 	void LoadFallbackBG();
+	void LoadGroupFallback();
 	void LoadCourseFallback();
 	void LoadFallbackCharacterIcon();
 

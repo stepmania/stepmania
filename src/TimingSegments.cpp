@@ -19,45 +19,109 @@ XToString( TimingSegmentType );
 
 #define LTCOMPARE(x)      if(this->x < other.x) return true; if(this->x > other.x) return false;
 
-TimingSegment::~TimingSegment() {}
-
-void TimingSegment::SetRow(const int s)
-{
-	this->startingRow = s;
-}
-
-void TimingSegment::SetBeat(const float s)
-{
-	SetRow(BeatToNoteRow(s));
-}
-
-int TimingSegment::GetRow() const
-{
-	return this->startingRow;
-}
-
-float TimingSegment::GetBeat() const
-{
-	return NoteRowToBeat(GetRow());
-}
-
 void TimingSegment::Scale( int start, int length, int newLength )
 {
 	SetRow( ScalePosition( start, length, newLength, this->GetRow() ) );
 }
 
-
-/* ======================================================
-   Here comes the actual timing segments implementation!! */
-
-float FakeSegment::GetLength() const
+void TimingSegment::DebugPrint() const
 {
-	return this->lengthBeats;
+	LOG->Trace( "\tTimingSegment(%d [%f])", GetRow(), GetBeat() );
 }
 
-void FakeSegment::SetLength(const float b)
+void BPMSegment::DebugPrint() const
 {
-	this->lengthBeats = b;
+	LOG->Trace( "\t%s(%d [%f], %f)",
+		TimingSegmentTypeToString(GetType()).c_str(),
+		GetRow(), GetBeat(), GetBPM()
+	);
+}
+
+void StopSegment::DebugPrint() const
+{
+	LOG->Trace( "\t%s(%d [%f], %f)",
+		TimingSegmentTypeToString(GetType()).c_str(),
+		GetRow(), GetBeat(), GetPause()
+	);
+}
+
+void DelaySegment::DebugPrint() const
+{
+	LOG->Trace( "\t%s(%d [%f], %f)",
+		TimingSegmentTypeToString(GetType()).c_str(),
+		GetRow(), GetBeat(), GetPause()
+	);
+}
+
+void TimeSignatureSegment::DebugPrint() const
+{
+	LOG->Trace( "\t%s(%d [%f], %d/%d)",
+		TimingSegmentTypeToString(GetType()).c_str(),
+		GetRow(), GetBeat(), GetNum(), GetDen()
+	);
+}
+
+void WarpSegment::DebugPrint() const
+{
+	LOG->Trace( "\t%s(%d [%f], %d [%f])",
+		TimingSegmentTypeToString(GetType()).c_str(),
+		GetRow(), GetBeat(), GetLengthRows(), GetLengthBeats()
+	);
+}
+
+void LabelSegment::DebugPrint() const
+{
+	LOG->Trace( "\t%s(%d [%f], %s)",
+		TimingSegmentTypeToString(GetType()).c_str(),
+		GetRow(), GetBeat(), GetLabel().c_str()
+	);
+}
+
+void TickcountSegment::DebugPrint() const
+{
+	LOG->Trace( "\t%s(%d [%f], %d)",
+		TimingSegmentTypeToString(GetType()).c_str(),
+		GetRow(), GetBeat(), GetTicks()
+	);
+}
+
+void ComboSegment::DebugPrint() const
+{
+	LOG->Trace( "\t%s(%d [%f], %d, %d)",
+		TimingSegmentTypeToString(GetType()).c_str(),
+		GetRow(), GetBeat(), GetCombo(), GetMissCombo()
+	);
+}
+
+void SpeedSegment::DebugPrint() const
+{
+	LOG->Trace( "\t%s(%d [%f], %f, %f, %d)",
+		TimingSegmentTypeToString(GetType()).c_str(),
+		GetRow(), GetBeat(), GetRatio(), GetDelay(), GetUnit()
+	);
+}
+
+void ScrollSegment::DebugPrint() const
+{
+	LOG->Trace( "\t%s(%d [%f], %f)",
+		TimingSegmentTypeToString(GetType()).c_str(),
+		GetRow(), GetBeat(), GetRatio()
+	);
+}
+
+void FakeSegment::DebugPrint() const
+{
+	LOG->Trace( "\t%s(%d [%f], %d [%f])",
+		TimingSegmentTypeToString(GetType()).c_str(),
+		GetRow(), GetBeat(), GetLengthRows(), GetLengthBeats()
+	);
+}
+
+RString FakeSegment::ToString(int dec) const
+{
+	RString str = "%.0" + IntToString(dec)
+	+ "f=%.0" + IntToString(dec) + "f";
+	return ssprintf(str.c_str(), GetBeat(), GetLength());
 }
 
 void FakeSegment::Scale( int start, int length, int newLength )
@@ -70,24 +134,11 @@ void FakeSegment::Scale( int start, int length, int newLength )
 	TimingSegment::Scale( start, length, newLength );
 }
 
-bool FakeSegment::operator<( const FakeSegment &other ) const
-{ 
-	LTCOMPARE(GetRow());
-	LTCOMPARE(GetLength());
-	return false;
-}
-
-
-
-
-float WarpSegment::GetLength() const
+RString WarpSegment::ToString(int dec) const
 {
-	return this->lengthBeats;
-}
-
-void WarpSegment::SetLength(const float b)
-{
-	this->lengthBeats = b;
+	RString str = "%.0" + IntToString(dec)
+	+ "f=%.0" + IntToString(dec) + "f";
+	return ssprintf(str.c_str(), GetBeat(), GetLength());
 }
 
 void WarpSegment::Scale( int start, int length, int newLength )
@@ -101,180 +152,48 @@ void WarpSegment::Scale( int start, int length, int newLength )
 	TimingSegment::Scale( start, length, newLength );
 }
 
-bool WarpSegment::operator<( const WarpSegment &other ) const
+RString TickcountSegment::ToString(int dec) const
 {
-	LTCOMPARE(GetRow());
-	LTCOMPARE(GetLength());
-	return false;
+	const RString str = "%.0" + IntToString(dec) + "f=%i";
+	return ssprintf(str.c_str(), GetBeat(), GetTicks());
 }
-
-
-
-
-int TickcountSegment::GetTicks() const
+RString ComboSegment::ToString(int dec) const
 {
-	return this->ticks;
+	RString str = "%.0" + IntToString(dec) + "f=%i";
+	if (GetCombo() == GetMissCombo())
+	{
+		return ssprintf(str.c_str(), GetBeat(), GetCombo());
+	}
+	str += "=%i";
+	return ssprintf(str.c_str(), GetBeat(), GetCombo(), GetMissCombo());
 }
 
-void TickcountSegment::SetTicks(const int i)
+RString LabelSegment::ToString(int dec) const
 {
-	this->ticks = i;
+	const RString str = "%.0" + IntToString(dec) + "f=%s";
+	return ssprintf(str.c_str(), GetBeat(), GetLabel().c_str());
 }
 
-bool TickcountSegment::operator<( const TickcountSegment &other ) const
+RString BPMSegment::ToString(int dec) const
 {
-	LTCOMPARE(GetRow());
-	LTCOMPARE(GetTicks());
-	return false;
+	const RString str = "%.0" + IntToString(dec)
+	+ "f=%.0" + IntToString(dec) + "f";
+	return ssprintf(str.c_str(), GetBeat(), GetBPM());
 }
 
-
-
-
-int ComboSegment::GetCombo() const
+RString TimeSignatureSegment::ToString(int dec) const
 {
-	return this->combo;
+	const RString str = "%.0" + IntToString(dec) + "f=%i=%i";
+	return ssprintf(str.c_str(), GetBeat(), GetNum(), GetDen());
 }
 
-void ComboSegment::SetCombo(const int i)
+RString SpeedSegment::ToString(int dec) const
 {
-	this->combo = i;
-}
-
-int ComboSegment::GetMissCombo() const
-{
-	return this->missCombo;
-}
-
-void ComboSegment::SetMissCombo(const int i)
-{
-	this->missCombo = i;
-}
-
-bool ComboSegment::operator<( const ComboSegment &other ) const
-{
-	LTCOMPARE(GetRow());
-	LTCOMPARE(GetCombo());
-	LTCOMPARE(GetMissCombo());
-	return false;
-}
-
-
-
-
-RString LabelSegment::GetLabel() const
-{
-	return this->label;
-}
-
-void LabelSegment::SetLabel(const RString l)
-{
-	this->label = l;
-}
-
-bool LabelSegment::operator<( const LabelSegment &other ) const
-{ 
-	LTCOMPARE(GetRow());
-	LTCOMPARE(GetLabel());
-	return false;
-}
-
-
-
-float BPMSegment::GetBPM() const
-{
-	return this->bps * 60.0f;
-}
-
-void BPMSegment::SetBPM(const float bpm)
-{
-	this->bps = bpm / 60.0f;
-}
-
-float BPMSegment::GetBPS() const
-{
-	return this->bps;
-}
-
-void BPMSegment::SetBPS(const float newBPS)
-{
-	this->bps = newBPS;
-}
-
-bool BPMSegment::operator<( const BPMSegment &other ) const
-{ 
-	LTCOMPARE(GetRow());
-	LTCOMPARE(GetBPS());
-	return false;
-}
-
-int TimeSignatureSegment::GetNum() const
-{
-	return this->numerator;
-}
-
-void TimeSignatureSegment::SetNum(const int i)
-{
-	this->numerator = i;
-}
-
-int TimeSignatureSegment::GetDen() const
-{
-	return this->denominator;
-}
-
-void TimeSignatureSegment::SetDen(const int i)
-{
-	this->denominator = i;
-}
-
-int TimeSignatureSegment::GetNoteRowsPerMeasure() const
-{
-	return BeatToNoteRow(1) * 4 * numerator / denominator;
-}
-
-bool TimeSignatureSegment::operator<( const TimeSignatureSegment &other ) const
-{ 
-	LTCOMPARE(GetRow());
-	LTCOMPARE(GetNum());
-	LTCOMPARE(GetDen());
-	return false;
-}
-
-float SpeedSegment::GetRatio() const
-{
-	return this->ratio;
-}
-
-void SpeedSegment::SetRatio(const float i)
-{
-	this->ratio = i;
-}
-
-float SpeedSegment::GetLength() const
-{
-	return this->length;
-}
-
-void SpeedSegment::SetLength(const float i)
-{
-	this->length = i;
-}
-
-
-unsigned short SpeedSegment::GetUnit() const
-{
-	return this->unit;
-}
-
-void SpeedSegment::SetUnit(const unsigned short i)
-{
-	this->unit = i;
-}
-
-void SpeedSegment::SetUnit(const int i)
-{
-	this->unit = static_cast<unsigned short>(i);
+	const RString str = "%.0" + IntToString(dec)
+		+ "f=%.0" + IntToString(dec) + "f=%.0"
+		+ IntToString(dec) + "f=%u";
+	return ssprintf(str.c_str(), GetBeat(), GetRatio(),
+					GetDelay(), GetUnit());
 }
 
 void SpeedSegment::Scale( int start, int oldLength, int newLength )
@@ -283,7 +202,7 @@ void SpeedSegment::Scale( int start, int oldLength, int newLength )
 	{
 		// XXX: this function is duplicated, there should be a better way
 		float startBeat    = GetBeat();
-		float endBeat      = startBeat + GetLength();
+		float endBeat      = startBeat + GetDelay();
 		float newStartBeat = ScalePosition(NoteRowToBeat(start),
 						   NoteRowToBeat(oldLength),
 						   NoteRowToBeat(newLength),
@@ -292,76 +211,35 @@ void SpeedSegment::Scale( int start, int oldLength, int newLength )
 						   NoteRowToBeat(oldLength),
 						   NoteRowToBeat(newLength),
 						   endBeat);
-		SetLength( newEndBeat - newStartBeat );
+		SetDelay( newEndBeat - newStartBeat );
 	}
 	TimingSegment::Scale( start, oldLength, newLength );
 }
 
-bool SpeedSegment::operator<( const SpeedSegment &other ) const
+RString ScrollSegment::ToString(int dec) const
 {
-	LTCOMPARE(GetRow());
-	LTCOMPARE(GetRatio());
-	LTCOMPARE(GetLength());
-	LTCOMPARE(GetUnit());
-	return false;
+	const RString str = "%.0" + IntToString(dec)
+		+ "f=%.0" + IntToString(dec) + "f";
+	return ssprintf(str.c_str(), GetBeat(), GetRatio());
 }
 
-float ScrollSegment::GetRatio() const
+RString StopSegment::ToString(int dec) const
 {
-	return this->ratio;
+	const RString str = "%.0" + IntToString(dec)
+	+ "f=%.0" + IntToString(dec) + "f";
+	return ssprintf(str.c_str(), GetBeat(), GetPause());
 }
 
-void ScrollSegment::SetRatio(const float i)
+RString DelaySegment::ToString(int dec) const
 {
-	this->ratio = i;
+	const RString str = "%.0" + IntToString(dec)
+	+ "f=%.0" + IntToString(dec) + "f";
+	return ssprintf(str.c_str(), GetBeat(), GetPause());
 }
-
-bool ScrollSegment::operator<( const ScrollSegment &other ) const
-{
-	LTCOMPARE(GetRow());
-	LTCOMPARE(GetRatio());
-	return false;
-}
-
-float StopSegment::GetPause() const
-{
-	return this->pauseSeconds;
-}
-
-void StopSegment::SetPause(const float i)
-{
-	this->pauseSeconds = i;
-}
-
-bool StopSegment::operator<( const StopSegment &other ) const
-{
-	LTCOMPARE(GetRow());
-	LTCOMPARE(GetPause());
-	return false;
-}
-
-float DelaySegment::GetPause() const
-{
-	return this->pauseSeconds;
-}
-
-void DelaySegment::SetPause(const float i)
-{
-	this->pauseSeconds = i;
-}
-
-bool DelaySegment::operator<( const DelaySegment &other ) const
-{
-	LTCOMPARE(GetRow());
-	LTCOMPARE(GetPause());
-	return false;
-}
-
-#undef LTCOMPARE
 
 /**
  * @file
- * @author Jason Felds (c) 2011 
+ * @author Jason Felds (c) 2011
  * @section LICENSE
  * All rights reserved.
  * 

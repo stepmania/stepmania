@@ -1589,7 +1589,7 @@ static const Style g_Style_Beat_Versus5 =
 	false,				// m_bUsedForEdit
 	true,				// m_bUsedForDemonstration
 	false,				// m_bUsedForHowToPlay
-	"versus",			// m_szName
+	"versus5",			// m_szName
 	StepsType_beat_versus5,	// m_StepsType
 	StyleType_TwoPlayersTwoSides,		// m_StyleType
 	6,				// m_iColsPerPlayer
@@ -1697,6 +1697,7 @@ static const Style g_Style_Beat_Single7 =
 			{ TRACK_7,	+BEAT_COL_SPACING*4.0f, NULL },
 		},
 		{	// PLAYER_2
+			{ TRACK_8,	+BEAT_COL_SPACING*4.0f, "scratch" },
 			{ TRACK_1,	-BEAT_COL_SPACING*3.5f, NULL },
 			{ TRACK_2,	-BEAT_COL_SPACING*2.5f, NULL },
 			{ TRACK_3,	-BEAT_COL_SPACING*1.5f, NULL },
@@ -1704,12 +1705,11 @@ static const Style g_Style_Beat_Single7 =
 			{ TRACK_5,	+BEAT_COL_SPACING*0.5f, NULL },
 			{ TRACK_6,	+BEAT_COL_SPACING*1.5f, NULL },
 			{ TRACK_7,	+BEAT_COL_SPACING*2.5f, NULL },
-			{ TRACK_8,	+BEAT_COL_SPACING*4.0f, "scratch" },
 		},
 	},
 	{	// m_iInputColumn[NUM_GameController][NUM_GameButton]
 		{ 1, 2, 3, 4, 5, 6, 7, 0, 0, Style::END_MAPPING },
-		{ 0, 1, 2, 3, 4, 5, 6, 7, 7, Style::END_MAPPING },
+		{ 1, 2, 3, 4, 5, 6, 7, 0, 0, Style::END_MAPPING },
 	},
 	{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
 		0,1,2,3,4,5,6,7
@@ -1725,7 +1725,7 @@ static const Style g_Style_Beat_Versus7 =
 	true,				// m_bUsedForEdit
 	false,				// m_bUsedForDemonstration
 	false,				// m_bUsedForHowToPlay
-	"single7",			// m_szName
+	"versus7",			// m_szName
 	StepsType_beat_versus7,	// m_StepsType
 	StyleType_TwoPlayersTwoSides,		// m_StyleType
 	8,				// m_iColsPerPlayer
@@ -1741,6 +1741,7 @@ static const Style g_Style_Beat_Versus7 =
 			{ TRACK_7,	+BEAT_COL_SPACING*4.0f, NULL },
 		},
 		{	// PLAYER_2
+			{ TRACK_8,	+BEAT_COL_SPACING*4.0f, "scratch" },
 			{ TRACK_1,	-BEAT_COL_SPACING*3.5f, NULL },
 			{ TRACK_2,	-BEAT_COL_SPACING*2.5f, NULL },
 			{ TRACK_3,	-BEAT_COL_SPACING*1.5f, NULL },
@@ -1748,12 +1749,11 @@ static const Style g_Style_Beat_Versus7 =
 			{ TRACK_5,	+BEAT_COL_SPACING*0.5f, NULL },
 			{ TRACK_6,	+BEAT_COL_SPACING*1.5f, NULL },
 			{ TRACK_7,	+BEAT_COL_SPACING*2.5f, NULL },
-			{ TRACK_8,	+BEAT_COL_SPACING*4.0f, "scratch" },
 		},
 	},
 	{	// m_iInputColumn[NUM_GameController][NUM_GameButton]
 		{ 1, 2, 3, 4, 5, 6, 7, 0, 0, Style::END_MAPPING },
-		{ 0, 1, 2, 3, 4, 5, 6, 7, 7, Style::END_MAPPING },
+		{ 1, 2, 3, 4, 5, 6, 7, 0, 0, Style::END_MAPPING },
 	},
 	{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
 		0,1,2,3,4,5,6,7
@@ -2151,24 +2151,24 @@ static const Style g_Style_Techno_Single8 =
 	8,				// m_iColsPerPlayer
 	{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
 		{	// PLAYER_1
-			{ TRACK_1,	-TECHNO_COL_SPACING*2.5f, NULL },
-			{ TRACK_2,	-TECHNO_COL_SPACING*1.5f, NULL },
-			{ TRACK_3,	-TECHNO_COL_SPACING*0.5f, NULL },
-			{ TRACK_4,	+TECHNO_COL_SPACING*0.5f, NULL },
-			{ TRACK_5,	+TECHNO_COL_SPACING*1.5f, NULL },
-			{ TRACK_6,	+TECHNO_COL_SPACING*2.5f, NULL },
-			{ TRACK_7,	+TECHNO_COL_SPACING*3.5f, NULL },
-			{ TRACK_8,	+TECHNO_COL_SPACING*4.5f, NULL },
+			{ TRACK_1,	-TECHNO_COL_SPACING*3.5f, NULL },
+			{ TRACK_2,	-TECHNO_COL_SPACING*2.5f, NULL },
+			{ TRACK_3,	-TECHNO_COL_SPACING*1.5f, NULL },
+			{ TRACK_4,	-TECHNO_COL_SPACING*0.5f, NULL },
+			{ TRACK_5,	+TECHNO_COL_SPACING*0.5f, NULL },
+			{ TRACK_6,	+TECHNO_COL_SPACING*1.5f, NULL },
+			{ TRACK_7,	+TECHNO_COL_SPACING*2.5f, NULL },
+			{ TRACK_8,	+TECHNO_COL_SPACING*3.5f, NULL },
 		},
 		{	// PLAYER_2
-			{ TRACK_1,	-TECHNO_COL_SPACING*4.5f, NULL },
-			{ TRACK_2,	-TECHNO_COL_SPACING*3.5f, NULL },
-			{ TRACK_3,	-TECHNO_COL_SPACING*2.5f, NULL },
-			{ TRACK_4,	-TECHNO_COL_SPACING*1.5f, NULL },
-			{ TRACK_5,	-TECHNO_COL_SPACING*0.5f, NULL },
-			{ TRACK_6,	+TECHNO_COL_SPACING*0.5f, NULL },
-			{ TRACK_7,	+TECHNO_COL_SPACING*1.5f, NULL },
-			{ TRACK_8,	+TECHNO_COL_SPACING*2.5f, NULL },
+			{ TRACK_1,	-TECHNO_COL_SPACING*3.5f, NULL },
+			{ TRACK_2,	-TECHNO_COL_SPACING*2.5f, NULL },
+			{ TRACK_3,	-TECHNO_COL_SPACING*1.5f, NULL },
+			{ TRACK_4,	-TECHNO_COL_SPACING*0.5f, NULL },
+			{ TRACK_5,	+TECHNO_COL_SPACING*0.5f, NULL },
+			{ TRACK_6,	+TECHNO_COL_SPACING*1.5f, NULL },
+			{ TRACK_7,	+TECHNO_COL_SPACING*2.5f, NULL },
+			{ TRACK_8,	+TECHNO_COL_SPACING*3.5f, NULL },
 		},
 	},
 	{	// m_iInputColumn[NUM_GameController][NUM_GameButton]
@@ -2791,8 +2791,8 @@ static const Game g_Game_Lights =
 
 static const Game *g_Games[] = 
 {
-	&g_Game_Pump,
 	&g_Game_Dance,
+	&g_Game_Pump,
 	&g_Game_KB7,
 	&g_Game_Ez2,
 	&g_Game_Para,

@@ -53,6 +53,47 @@ table {
 }
 /** end reset css *************************************************************/
 
+body{
+	line-height: normal;
+	margin-left:1em;
+	margin-right:1em;
+}
+
+hr{
+	margin-top:0.5em;
+	margin-bottom:0.5em;
+}
+
+ul {
+	list-style: disc;
+	margin-left:2em;
+}
+
+p{
+	margin-bottom:0.2em;
+	margin-top:0.2em;
+}
+
+h1{
+	font-size:2em;
+}
+
+h2{
+	font-size:1.5em;
+}
+
+h3{
+	font-size:1.25em;
+}
+
+h4{
+	font-size:1.125em;
+}
+
+h5{
+	font-size:1.075em;
+}
+
 a:hover{
 	color: #F80;
 }
@@ -92,6 +133,13 @@ ol.tocList{
 }
 
 #logoDiv{
+	width:100%;
+	margin-left:auto;
+	margin-right:auto;
+	text-align:center;
+}
+
+#footer{
 	width:100%;
 	margin-left:auto;
 	margin-right:auto;

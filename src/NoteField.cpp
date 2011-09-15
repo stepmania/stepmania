@@ -35,32 +35,6 @@ static ThemeMetric<float> FADE_FAIL_TIME( "NoteField", "FadeFailTime" );
 static RString RoutineNoteSkinName( size_t i ) { return ssprintf("RoutineNoteSkinP%i",int(i+1)); }
 static ThemeMetric1D<RString> ROUTINE_NOTESKIN( "NoteField", RoutineNoteSkinName, NUM_PLAYERS );
 
-inline const TimingData *GetRealTiming(const PlayerState *pPlayerState)
-{
-	if( GAMESTATE->m_pCurSteps[pPlayerState->m_PlayerNumber] != NULL )
-		return &GAMESTATE->m_pCurSteps[pPlayerState->m_PlayerNumber]->m_Timing;
-	return NULL;
-}
-
-inline const TimingData *GetDisplayedTiming(const PlayerState *pPlayerState)
-{
-	if( !GAMESTATE->m_bIsUsingStepTiming )
-		return &GAMESTATE->m_pCurSong->m_SongTiming;
-	return GetRealTiming(pPlayerState);
-}
-
-inline const SongPosition *GetRealPosition(const PlayerState *pPlayerState)
-{
-	return &pPlayerState->m_Position;
-}
-
-inline const SongPosition *GetDisplayedPosition(const PlayerState *pPlayerState)
-{
-	if( !GAMESTATE->m_bIsUsingStepTiming )
-		return &GAMESTATE->m_Position;
-	return GetRealPosition(pPlayerState);
-}
-
 NoteField::NoteField()
 {
 	m_pNoteData = NULL;
@@ -269,7 +243,7 @@ void NoteField::Update( float fDeltaTime )
 	ActorFrame::Update( fDeltaTime );
 
 	// update m_fBoardOffsetPixels, m_fCurrentBeatLastUpdate, m_fYPosCurrentBeatLastUpdate
-	const float fCurrentBeat = GetDisplayedPosition(m_pPlayerState)->m_fSongBeat;
+	const float fCurrentBeat = m_pPlayerState->GetDisplayedPosition().m_fSongBeat;
 	bool bTweeningOn = m_sprBoard->GetCurrentDiffuseAlpha() >= 0.98  &&  m_sprBoard->GetCurrentDiffuseAlpha() < 1.00;	// HACK
 	if( !bTweeningOn  &&  m_fCurrentBeatLastUpdate != -1 )
 	{
@@ -618,7 +592,7 @@ void NoteField::DrawLabelText( const float fBeat, RString sLabel )
 	m_textMeasureNumber.Draw();
 }
 
-void NoteField::DrawSpeedText( const float fBeat, float fPercent, float fWait, unsigned short usMode )
+void NoteField::DrawSpeedText( const float fBeat, float fPercent, float fWait, int iMode )
 {
 	const float fYOffset	= ArrowEffects::GetYOffset( m_pPlayerState, 0, fBeat );
  	const float fYPos	= ArrowEffects::GetYPos(    m_pPlayerState, 0, fYOffset, m_fYReverseOffsetPixels );
@@ -630,7 +604,7 @@ void NoteField::DrawSpeedText( const float fBeat, float fPercent, float fWait, u
 	m_textMeasureNumber.SetHorizAlign( SPEED_IS_LEFT_SIDE ? align_right : align_left );
 	m_textMeasureNumber.SetDiffuse( SPEED_COLOR );
 	m_textMeasureNumber.SetGlow( RageColor(1,1,1,RageFastCos(RageTimer::GetTimeSinceStartFast()*2)/2+0.5f) );
-	m_textMeasureNumber.SetText( ssprintf("%.3f\n%s\n%.3f", fPercent, (usMode == 1 ? "S" : "B"), fWait) );
+	m_textMeasureNumber.SetText( ssprintf("%.3f\n%s\n%.3f", fPercent, (iMode == 1 ? "S" : "B"), fWait) );
 	m_textMeasureNumber.SetXY( (SPEED_IS_LEFT_SIDE ? -xBase - xOffset : xBase + xOffset), fYPos );
 	m_textMeasureNumber.Draw();
 }
@@ -703,7 +677,7 @@ void NoteField::DrawBGChangeText( const float fBeat, const RString sNewBGName )
 // change this probing to binary search
 float FindFirstDisplayedBeat( const PlayerState* pPlayerState, int iDrawDistanceAfterTargetsPixels )
 {
-	float fFirstBeatToDraw = GetDisplayedPosition(pPlayerState)->m_fSongBeat-4;	// Adjust to balance off performance and showing enough notes.
+	float fFirstBeatToDraw = pPlayerState->GetDisplayedPosition().m_fSongBeat-4;	// Adjust to balance off performance and showing enough notes.
 
 	/* In Boomerang, we'll usually have two sections of notes: before and after
 	 * the peak. We always start drawing before the peak, and end after it, or
@@ -715,7 +689,7 @@ float FindFirstDisplayedBeat( const PlayerState* pPlayerState, int iDrawDistance
 		bBoomerang = (fAccels[PlayerOptions::ACCEL_BOOMERANG] != 0);
 	}
 
-	while( fFirstBeatToDraw < GetDisplayedPosition(pPlayerState)->m_fSongBeat )
+	while( fFirstBeatToDraw < pPlayerState->GetDisplayedPosition().m_fSongBeat )
 	{
 		bool bIsPastPeakYOffset;
 		float fPeakYOffset;
@@ -737,8 +711,8 @@ float FindLastDisplayedBeat( const PlayerState* pPlayerState, int iDrawDistanceB
 	// Probe for last note to draw. Worst case is 0.25x + boost.
 	// Adjust search distance so that notes don't pop onto the screen.
 	float fSearchDistance = 10;
-	float fLastBeatToDraw = GetDisplayedPosition(pPlayerState)->m_fSongBeat+fSearchDistance;
-	float fSpeedMultiplier = GetDisplayedTiming(pPlayerState)->GetDisplayedSpeedPercent(GetDisplayedPosition(pPlayerState)->m_fSongBeatVisible, GetDisplayedPosition(pPlayerState)->m_fMusicSecondsVisible);
+	float fLastBeatToDraw = pPlayerState->GetDisplayedPosition().m_fSongBeat+fSearchDistance;
+	float fSpeedMultiplier = pPlayerState->GetDisplayedTiming().GetDisplayedSpeedPercent(pPlayerState->GetDisplayedPosition().m_fSongBeatVisible, pPlayerState->GetDisplayedPosition().m_fMusicSecondsVisible);
 
 	const int NUM_ITERATIONS = 20;
 
@@ -766,7 +740,7 @@ float FindLastDisplayedBeat( const PlayerState* pPlayerState, int iDrawDistanceB
 
 	if( fSpeedMultiplier < 0.75 )
 	{
-		fLastBeatToDraw = min(fLastBeatToDraw, GetDisplayedPosition(pPlayerState)->m_fSongBeat + 16);
+		fLastBeatToDraw = min(fLastBeatToDraw, pPlayerState->GetDisplayedPosition().m_fSongBeat + 16);
 	}
 
 	return fLastBeatToDraw;
@@ -774,15 +748,7 @@ float FindLastDisplayedBeat( const PlayerState* pPlayerState, int iDrawDistanceB
 
 inline float NoteRowToVisibleBeat( const PlayerState *pPlayerState, int iRow )
 {
-	/*
-	if( GAMESTATE->m_bIsUsingStepTiming )
-	{
-	*/
-		return NoteRowToBeat(iRow);
-	/*
-	}
-	return GetDisplayedTiming(pPlayerState)->GetBeatFromElapsedTime(GetRealTiming(pPlayerState)->GetElapsedTimeFromBeat(NoteRowToBeat(iRow)));
-	*/
+	return NoteRowToBeat(iRow);
 }
 
 bool NoteField::IsOnScreen( float fBeat, int iCol, int iDrawDistanceAfterTargetsPixels, int iDrawDistanceBeforeTargetsPixels ) const
@@ -855,17 +821,21 @@ void NoteField::DrawPrimitives()
 		cur->m_ReceptorArrowRow.Draw();
 	}
 
-	const TimingData *pTiming = GetDisplayedTiming(m_pPlayerState);
-	const vector<TimingSegment *> *segs = pTiming->allTimingSegments;
+	const TimingData *pTiming = &m_pPlayerState->GetDisplayedTiming();
+	const vector<TimingSegment*>* segs[NUM_TimingSegmentType];
+
+	FOREACH_TimingSegmentType( tst )
+		segs[tst] = &(pTiming->GetTimingSegments(tst));
+
 	unsigned i = 0;
 	// Draw beat bars
 	if( ( GAMESTATE->IsEditing() || SHOW_BEAT_BARS ) && pTiming != NULL )
 	{
-		const vector<TimingSegment *> &tSigs = segs[SEGMENT_TIME_SIG];
+		const vector<TimingSegment *> &tSigs = *segs[SEGMENT_TIME_SIG];
 		int iMeasureIndex = 0;
 		for (i = 0; i < tSigs.size(); i++)
 		{
-			TimeSignatureSegment *ts = static_cast<TimeSignatureSegment *>(tSigs[i]);
+			const TimeSignatureSegment *ts = ToTimeSignature(tSigs[i]);
 			int iSegmentEndRow = (i + 1 == tSigs.size()) ? iLastRowToDraw : tSigs[i+1]->GetRow();
 
 			// beat bars every 16th note
@@ -908,9 +878,9 @@ void NoteField::DrawPrimitives()
 		// Scroll text
 		if( GAMESTATE->m_bIsUsingStepTiming )
 		{
-			for (i = 0; i < segs[SEGMENT_SCROLL].size(); i++)
+			for (i = 0; i < segs[SEGMENT_SCROLL]->size(); i++)
 			{
-				ScrollSegment *seg = static_cast<ScrollSegment *>(segs[SEGMENT_SCROLL][i]);
+				ScrollSegment *seg = ToScroll( segs[SEGMENT_SCROLL]->at(i) );
 				if( seg->GetRow() >= iFirstRowToDraw && seg->GetRow() <= iLastRowToDraw )
 				{
 					float fBeat = seg->GetBeat();
@@ -921,9 +891,9 @@ void NoteField::DrawPrimitives()
 		}
 
 		// BPM text
-		for (i = 0; i < segs[SEGMENT_BPM].size(); i++)
+		for (i = 0; i < segs[SEGMENT_BPM]->size(); i++)
 		{
-			BPMSegment *seg = static_cast<BPMSegment *>(segs[SEGMENT_BPM][i]);
+			const BPMSegment *seg = ToBPM( segs[SEGMENT_BPM]->at(i) );
 			if( seg->GetRow() >= iFirstRowToDraw && seg->GetRow() <= iLastRowToDraw )
 			{
 				float fBeat = seg->GetBeat();
@@ -933,9 +903,9 @@ void NoteField::DrawPrimitives()
 		}
 
 		// Freeze text
-		for (i = 0; i < segs[SEGMENT_STOP].size(); i++)
+		for (i = 0; i < segs[SEGMENT_STOP]->size(); i++)
 		{
-			StopSegment *seg = static_cast<StopSegment *>(segs[SEGMENT_STOP][i]);
+			const StopSegment *seg = ToStop( segs[SEGMENT_STOP]->at(i) );
 			if( seg->GetRow() >= iFirstRowToDraw && seg->GetRow() <= iLastRowToDraw )
 			{
 				float fBeat = seg->GetBeat();
@@ -945,9 +915,9 @@ void NoteField::DrawPrimitives()
 		}
 
 		// Delay text
-		for (i = 0; i < segs[SEGMENT_DELAY].size(); i++)
+		for (i = 0; i < segs[SEGMENT_DELAY]->size(); i++)
 		{
-			DelaySegment *seg = static_cast<DelaySegment *>(segs[SEGMENT_DELAY][i]);
+			const DelaySegment *seg = ToDelay( segs[SEGMENT_DELAY]->at(i) );
 			if( seg->GetRow() >= iFirstRowToDraw && seg->GetRow() <= iLastRowToDraw )
 			{
 				float fBeat = seg->GetBeat();
@@ -957,9 +927,9 @@ void NoteField::DrawPrimitives()
 		}
 
 		// Warp text
-		for (i = 0; i < segs[SEGMENT_WARP].size(); i++)
+		for (i = 0; i < segs[SEGMENT_WARP]->size(); i++)
 		{
-			WarpSegment *seg = static_cast<WarpSegment *>(segs[SEGMENT_WARP][i]);
+			const WarpSegment *seg = ToWarp( segs[SEGMENT_WARP]->at(i) );
 			if( seg->GetRow() >= iFirstRowToDraw && seg->GetRow() <= iLastRowToDraw )
 			{
 				float fBeat = seg->GetBeat();
@@ -969,9 +939,9 @@ void NoteField::DrawPrimitives()
 		}
 
 		// Time Signature text
-		for (i = 0; i < segs[SEGMENT_TIME_SIG].size(); i++)
+		for (i = 0; i < segs[SEGMENT_TIME_SIG]->size(); i++)
 		{
-			TimeSignatureSegment *seg = static_cast<TimeSignatureSegment *>(segs[SEGMENT_TIME_SIG][i]);
+			const TimeSignatureSegment *seg = ToTimeSignature( segs[SEGMENT_TIME_SIG]->at(i) );
 			if( seg->GetRow() >= iFirstRowToDraw && seg->GetRow() <= iLastRowToDraw )
 			{
 				float fBeat = seg->GetBeat();
@@ -980,40 +950,34 @@ void NoteField::DrawPrimitives()
 			}
 		}
 
-		if( GAMESTATE->m_bIsUsingStepTiming )
+		// Tickcount text
+		for (i = 0; i < segs[SEGMENT_TICKCOUNT]->size(); i++)
 		{
-			// Tickcount text
-			for (i = 0; i < segs[SEGMENT_TICKCOUNT].size(); i++)
+			const TickcountSegment *seg = ToTickcount( segs[SEGMENT_TICKCOUNT]->at(i) );
+			if( seg->GetRow() >= iFirstRowToDraw && seg->GetRow() <= iLastRowToDraw )
 			{
-				TickcountSegment *seg = static_cast<TickcountSegment *>(segs[SEGMENT_TICKCOUNT][i]);
-				if( seg->GetRow() >= iFirstRowToDraw && seg->GetRow() <= iLastRowToDraw )
-				{
-					float fBeat = seg->GetBeat();
-					if( IS_ON_SCREEN(fBeat) )
-						DrawTickcountText( fBeat, seg->GetTicks() );
-				}
+				float fBeat = seg->GetBeat();
+				if( IS_ON_SCREEN(fBeat) )
+					DrawTickcountText( fBeat, seg->GetTicks() );
 			}
 		}
 
-		if( GAMESTATE->m_bIsUsingStepTiming )
+		// Combo text
+		for (i = 0; i < segs[SEGMENT_COMBO]->size(); i++)
 		{
-			// Combo text
-			for (i = 0; i < segs[SEGMENT_COMBO].size(); i++)
+			const ComboSegment *seg = ToCombo( segs[SEGMENT_COMBO]->at(i) );
+			if( seg->GetRow() >= iFirstRowToDraw && seg->GetRow() <= iLastRowToDraw )
 			{
-				ComboSegment *seg = static_cast<ComboSegment *>(segs[SEGMENT_COMBO][i]);
-				if( seg->GetRow() >= iFirstRowToDraw && seg->GetRow() <= iLastRowToDraw )
-				{
-					float fBeat = seg->GetBeat();
-					if( IS_ON_SCREEN(fBeat) )
-						DrawComboText( fBeat, seg->GetCombo(), seg->GetMissCombo() );
-				}
+				float fBeat = seg->GetBeat();
+				if( IS_ON_SCREEN(fBeat) )
+					DrawComboText( fBeat, seg->GetCombo(), seg->GetMissCombo() );
 			}
 		}
 
 		// Label text
-		for (i = 0; i < segs[SEGMENT_LABEL].size(); i++)
+		for (i = 0; i < segs[SEGMENT_LABEL]->size(); i++)
 		{
-			LabelSegment *seg = static_cast<LabelSegment *>(segs[SEGMENT_LABEL][i]);
+			const LabelSegment *seg = ToLabel( segs[SEGMENT_LABEL]->at(i) );
 			if( seg->GetRow() >= iFirstRowToDraw && seg->GetRow() <= iLastRowToDraw )
 			{
 				float fBeat = seg->GetBeat();
@@ -1022,34 +986,28 @@ void NoteField::DrawPrimitives()
 			}
 		}
 
-		if( GAMESTATE->m_bIsUsingStepTiming )
+		// Speed text
+		for (i = 0; i < segs[SEGMENT_SPEED]->size(); i++)
 		{
-			// Speed text
-			for (i = 0; i < segs[SEGMENT_SPEED].size(); i++)
+			const SpeedSegment *seg = ToSpeed( segs[SEGMENT_SPEED]->at(i) );
+			if( seg->GetRow() >= iFirstRowToDraw && seg->GetRow() <= iLastRowToDraw )
 			{
-				SpeedSegment *seg = static_cast<SpeedSegment *>(segs[SEGMENT_SPEED][i]);
-				if( seg->GetRow() >= iFirstRowToDraw && seg->GetRow() <= iLastRowToDraw )
-				{
-					float fBeat = seg->GetBeat();
-					if( IS_ON_SCREEN(fBeat) )
-						DrawSpeedText(fBeat, seg->GetRatio(), 
-							      seg->GetLength(), seg->GetUnit() );
-				}
+				float fBeat = seg->GetBeat();
+				if( IS_ON_SCREEN(fBeat) )
+					DrawSpeedText(fBeat, seg->GetRatio(), 
+							  seg->GetDelay(), seg->GetUnit() );
 			}
 		}
 
 		// Fake text
-		if( GAMESTATE->m_bIsUsingStepTiming )
+		for (i = 0; i < segs[SEGMENT_FAKE]->size(); i++)
 		{
-			for (i = 0; i < segs[SEGMENT_FAKE].size(); i++)
+			const FakeSegment *seg = ToFake( segs[SEGMENT_FAKE]->at(i) );
+			if( seg->GetRow() >= iFirstRowToDraw && seg->GetRow() <= iLastRowToDraw )
 			{
-				FakeSegment *seg = static_cast<FakeSegment *>(segs[SEGMENT_FAKE][i]);
-				if( seg->GetRow() >= iFirstRowToDraw && seg->GetRow() <= iLastRowToDraw )
-				{
-					float fBeat = seg->GetBeat();
-					if( IS_ON_SCREEN(fBeat) )
-						DrawFakeText( fBeat, seg->GetLength() );
-				}
+				float fBeat = seg->GetBeat();
+				if( IS_ON_SCREEN(fBeat) )
+					DrawFakeText( fBeat, seg->GetLength() );
 			}
 		}
 
@@ -1134,7 +1092,7 @@ void NoteField::DrawPrimitives()
 									ASSERT( iter[j] == GAMESTATE->m_pCurSong->GetBackgroundChanges(j).end() );
 								break;
 							}
-		
+	
 							if( IS_ON_SCREEN(fLowestBeat) )
 							{
 								vector<RString> vsBGChanges;
@@ -1254,7 +1212,7 @@ void NoteField::DrawPrimitives()
 				displayCols->display[c].DrawHold( tn, c, iStartRow, bIsHoldingNote, Result, bUseAdditionColoring, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail, 
 					m_fYReverseOffsetPixels, (float) iDrawDistanceAfterTargetsPixels, (float) iDrawDistanceBeforeTargetsPixels, iDrawDistanceBeforeTargetsPixels, FADE_BEFORE_TARGETS_PERCENT );
 
-				bool bNoteIsUpcoming = NoteRowToBeat(iStartRow) > GetDisplayedPosition(m_pPlayerState)->m_fSongBeat;
+				bool bNoteIsUpcoming = NoteRowToBeat(iStartRow) > m_pPlayerState->GetDisplayedPosition().m_fSongBeat;
 				bAnyUpcomingInThisCol |= bNoteIsUpcoming;
 			}
 		}
@@ -1297,7 +1255,7 @@ void NoteField::DrawPrimitives()
 				continue; // skip
 
 			ASSERT_M( NoteRowToBeat(q) > -2000, ssprintf("%i %i %i, %f %f", q, iLastRowToDraw, 
-						     iFirstRowToDraw, GetDisplayedPosition(m_pPlayerState)->m_fSongBeat, GetDisplayedPosition(m_pPlayerState)->m_fMusicSeconds) );
+						     iFirstRowToDraw, m_pPlayerState->GetDisplayedPosition().m_fSongBeat, m_pPlayerState->GetDisplayedPosition().m_fMusicSeconds) );
 
 			// See if there is a hold step that begins on this index.
 			// Only do this if the noteskin cares.
@@ -1346,7 +1304,7 @@ void NoteField::DrawPrimitives()
 					m_fYReverseOffsetPixels, iDrawDistanceAfterTargetsPixels, iDrawDistanceBeforeTargetsPixels, 
 					FADE_BEFORE_TARGETS_PERCENT );
 
-			bool bNoteIsUpcoming = NoteRowToBeat(q) > GetDisplayedPosition(m_pPlayerState)->m_fSongBeat;
+			bool bNoteIsUpcoming = NoteRowToBeat(q) > m_pPlayerState->GetDisplayedPosition().m_fSongBeat;
 			bAnyUpcomingInThisCol |= bNoteIsUpcoming;
 		}
 

@@ -75,18 +75,18 @@ static void WriteGlobalTags( RageFile &f, Song &out )
 
 
 	f.Write( "#BPMS:" );
-	vector<TimingSegment *> &bpms = timing.allTimingSegments[SEGMENT_BPM];
+	const vector<TimingSegment *> &bpms = timing.GetTimingSegments(SEGMENT_BPM);
 	for( unsigned i=0; i<bpms.size(); i++ )
 	{
-		const BPMSegment *bs = static_cast<BPMSegment *>(bpms[i]);
+		const BPMSegment *bs = ToBPM(bpms[i]);
 
 		f.PutLine( ssprintf( "%.3f=%.3f", bs->GetBeat(), bs->GetBPM() ) );
 		if( i != bpms.size()-1 )
 			f.Write( "," );
 	}
 	f.PutLine( ";" );
-	
-	vector<TimingSegment *> &warps = timing.allTimingSegments[SEGMENT_WARP];
+
+	const vector<TimingSegment *> &warps = timing.GetTimingSegments(SEGMENT_WARP);
 	unsigned wSize = warps.size();
 	if( wSize > 0 )
 	{
@@ -96,34 +96,33 @@ static void WriteGlobalTags( RageFile &f, Song &out )
 			int iRow = ws->GetRow();
 			float fBPS = 60 / out.m_SongTiming.GetBPMAtRow(iRow);
 			float fSkip = fBPS * ws->GetLength();
-			out.m_SongTiming.AddSegment(SEGMENT_STOP,
-										new StopSegment(iRow, -fSkip) );
+			out.m_SongTiming.AddSegment( StopSegment(iRow, -fSkip) );
 		}
 	}
 
 	// TODO: make Delays into Stops that start one row before.
-	vector<TimingSegment *> &stops = timing.allTimingSegments[SEGMENT_STOP];
-	vector<TimingSegment *> &delays = timing.allTimingSegments[SEGMENT_DELAY];
-	
+	const vector<TimingSegment *> &stops = timing.GetTimingSegments(SEGMENT_STOP);
+	const vector<TimingSegment *> &delays = timing.GetTimingSegments(SEGMENT_DELAY);
+
 	map<float, float> allPauses;
 	for( unsigned i=0; i<stops.size(); i++ )
 	{
-		const StopSegment *fs = static_cast<StopSegment *>(stops[i]);
-		allPauses.insert(pair<float, float>(fs->GetBeat(),
-											fs->GetPause()));
+		const StopSegment *fs = ToStop( stops[i] );
+
+		allPauses.insert(pair<float, float>(fs->GetBeat(), fs->GetPause()));
+
+		// erase stops with negative length
 		if( fs->GetPause() < 0 )
-		{
-			stops.erase(stops.begin()+i,stops.begin()+i+1 );
-			i--;
-		}
+			timing.AddSegment( StopSegment(fs->GetRow(), 0) );
 	}
 	// Delays can't be negative: thus, no effect.
-	FOREACH(TimingSegment *, delays, ss)
+	FOREACH_CONST(TimingSegment *, delays, ss)
 	{
-		allPauses.insert(pair<float, float>(NoteRowToBeat((*ss)->GetRow() - 1),
-											static_cast<DelaySegment *>(*ss)->GetPause()));
+		float fBeat = NoteRowToBeat( (*ss)->GetRow()-1 );
+		float fPause = ToDelay(*ss)->GetPause();
+		allPauses.insert( pair<float,float>(fBeat, fPause) );
 	}
-	
+
 	f.Write( "#STOPS:" );
 	vector<RString> stopLines;
 	FOREACHM(float, float, allPauses, ap)
@@ -133,7 +132,7 @@ static void WriteGlobalTags( RageFile &f, Song &out )
 	f.PutLine(join(",\n", stopLines));
 
 	f.PutLine( ";" );
-		
+
 	FOREACH_BackgroundLayer( b )
 	{
 		if( b==0 )

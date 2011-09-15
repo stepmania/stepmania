@@ -263,7 +263,7 @@ void AutoKeysounds::FinishLoading()
 		pChain->SetPreferredSampleRate( SOUNDMAN->GetDriverSampleRate() );
 		LoadAutoplaySoundsInto( pChain );
 
-		if( pChain->GetNumSounds() > 0 )
+		if( pChain->GetNumSounds() > 0 || !m_pSharedSound )
 		{
 			if( m_pSharedSound )
 			{
@@ -271,7 +271,7 @@ void AutoKeysounds::FinishLoading()
 				pChain->AddSound( iIndex, 0.0f, 0 );
 			}
 			pChain->Finish();
-			m_pSharedSound = pChain;
+			m_pSharedSound = new RageSoundReader_Extend(pChain);
 		}
 		else
 		{

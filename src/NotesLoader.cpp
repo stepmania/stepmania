@@ -54,9 +54,11 @@ bool NotesLoader::LoadFromDir( const RString &sPath, Song &out, set<RString> &Bl
 	BMSLoader::GetApplicableFiles( sPath, list );
 	if( !list.empty() )
 		return BMSLoader::LoadFromDir( sPath, out );
+	/*
 	PMSLoader::GetApplicableFiles( sPath, list );
 	if( !list.empty() )
 		return PMSLoader::LoadFromDir( sPath, out );
+	*/
 	KSFLoader::GetApplicableFiles( sPath, list );
 	if( !list.empty() )
 		return KSFLoader::LoadFromDir( sPath, out );

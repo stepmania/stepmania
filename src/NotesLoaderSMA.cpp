@@ -38,8 +38,7 @@ void SMALoader::ProcessMultipliers( TimingData &out, const int iRowsPerBeat, con
 		const int iMisses = (size == 2 || size == 4 ?
 							 iCombos : 
 							 StringToInt(arrayMultiplierValues[2]));
-		out.AddSegment(SEGMENT_COMBO,
-					   new ComboSegment( fComboBeat, iCombos, iMisses ));
+		out.AddSegment( ComboSegment(BeatToNoteRow(fComboBeat), iCombos, iMisses) );
 	}
 }
 
@@ -52,7 +51,7 @@ void SMALoader::ProcessBeatsPerMeasure( TimingData &out, const RString sParam )
 	{
 		vector<RString> vs2;
 		split( *s1, "=", vs2 );
-		
+
 		if( vs2.size() < 2 )
 		{
 			LOG->UserLog("Song file",
@@ -61,32 +60,27 @@ void SMALoader::ProcessBeatsPerMeasure( TimingData &out, const RString sParam )
 				     static_cast<int>(vs2.size()) );
 			continue;
 		}
-		
 		const float fBeat = StringToFloat( vs2[0] );
-		
-		TimeSignatureSegment * seg = new TimeSignatureSegment(fBeat,
-															  StringToInt(vs2[1]),
-															  4 );
-		
+		const int iNumerator = StringToInt( vs2[1] );
+
 		if( fBeat < 0 )
 		{
 			LOG->UserLog("Song file",
-				     this->GetSongTitle(), 
+				     this->GetSongTitle(),
 				     "has an invalid time signature change with beat %f.",
 				     fBeat );
 			continue;
 		}
-		
-		if( seg->GetNum() < 1 )
+		if( iNumerator < 1 )
 		{
 			LOG->UserLog("Song file",
 				     this->GetSongTitle(),
 				     "has an invalid time signature change with beat %f, iNumerator %i.",
-				     fBeat, seg->GetNum() );
+				     fBeat, iNumerator );
 			continue;
 		}
-		
-		out.AddSegment( SEGMENT_TIME_SIG, seg );
+
+		out.AddSegment( TimeSignatureSegment(BeatToNoteRow(fBeat), iNumerator) );
 	}
 }
 
@@ -116,20 +110,20 @@ void SMALoader::ProcessSpeeds( TimingData &out, const RString line, const int ro
 				     static_cast<int>(vs2.size()) );
 			continue;
 		}
-		
+
 		const float fBeat = RowToBeat( vs2[0], rowsPerBeat );
-		
+
 		RString backup = vs2[2];
 		Trim(vs2[2], "s");
 		Trim(vs2[2], "S");
-		
-		unsigned short tmp = ((backup != vs2[2]) ? 1 : 0);
-		
-		SpeedSegment * seg = new SpeedSegment(fBeat,
-											  StringToFloat( vs2[1] ),
-											  StringToFloat(vs2[2]),
-											  tmp);
-		
+
+		const float fRatio = StringToFloat( vs2[1] );
+		const float fDelay = StringToFloat( vs2[2] );
+
+		SpeedSegment::BaseUnit unit = ((backup != vs2[2]) ?
+			SpeedSegment::UNIT_SECONDS : SpeedSegment::UNIT_BEATS);
+
+
 		if( fBeat < 0 )
 		{
 			LOG->UserLog("Song file",
@@ -138,17 +132,17 @@ void SMALoader::ProcessSpeeds( TimingData &out, const RString line, const int ro
 				     fBeat );
 			continue;
 		}
-		
-		if( seg->GetLength() < 0 )
+
+		if( fDelay < 0 )
 		{
 			LOG->UserLog("Song file",
 				     this->GetSongTitle(),
 				     "has an speed change with beat %f, length %f.",
-				     fBeat, seg->GetLength() );
+				     fBeat, fDelay );
 			continue;
 		}
-		
-		out.AddSegment( SEGMENT_SPEED, seg );
+
+		out.AddSegment( SpeedSegment(BeatToNoteRow(fBeat), fRatio, fDelay, unit) );
 	}
 }
 
@@ -348,7 +342,7 @@ bool SMALoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 		{
 			vector<RString> aFGChangeExpressions;
 			split( sParams[1], ",", aFGChangeExpressions );
-			
+
 			for( unsigned b=0; b<aFGChangeExpressions.size(); b++ )
 			{
 				BackgroundChange change;
@@ -356,82 +350,82 @@ bool SMALoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 					out.AddForegroundChange( change );
 			}
 		}
-		
+
 		else if( sValueName=="OFFSET" )
 		{
-			TimingData &timing = (state == SMA_GETTING_STEP_INFO 
+			TimingData &timing = (state == SMA_GETTING_STEP_INFO
 					      ? pNewNotes->m_Timing : out.m_SongTiming);
 			timing.m_fBeat0OffsetInSeconds = StringToFloat( sParams[1] );
 		}
-		
+
 		else if( sValueName=="BPMS" )
 		{
-			TimingData &timing = (state == SMA_GETTING_STEP_INFO 
+			TimingData &timing = (state == SMA_GETTING_STEP_INFO
 					      ? pNewNotes->m_Timing : out.m_SongTiming);
 			ProcessBPMs( timing, sParams[1], iRowsPerBeat );
 		}
-		
+
 		else if( sValueName=="STOPS" || sValueName=="FREEZES" )
 		{
-			TimingData &timing = (state == SMA_GETTING_STEP_INFO 
+			TimingData &timing = (state == SMA_GETTING_STEP_INFO
 					      ? pNewNotes->m_Timing : out.m_SongTiming);
 			ProcessStops( timing, sParams[1], iRowsPerBeat );
 		}
-		
+
 		else if( sValueName=="DELAYS" )
 		{
-			TimingData &timing = (state == SMA_GETTING_STEP_INFO 
+			TimingData &timing = (state == SMA_GETTING_STEP_INFO
 					      ? pNewNotes->m_Timing : out.m_SongTiming);
 			ProcessDelays( timing, sParams[1], iRowsPerBeat );
 		}
-		
+
 		else if( sValueName=="TICKCOUNT" )
 		{
-			TimingData &timing = (state == SMA_GETTING_STEP_INFO 
+			TimingData &timing = (state == SMA_GETTING_STEP_INFO
 					      ? pNewNotes->m_Timing : out.m_SongTiming);
 			ProcessTickcounts( timing, sParams[1], iRowsPerBeat );
 		}
-		
+
 		else if( sValueName=="SPEED" )
 		{
-			TimingData &timing = (state == SMA_GETTING_STEP_INFO 
+			TimingData &timing = (state == SMA_GETTING_STEP_INFO
 					      ? pNewNotes->m_Timing : out.m_SongTiming);
 			RString tmp = sParams[1];
 			Trim( tmp );
 			ProcessSpeeds( timing, tmp, iRowsPerBeat );
 		}
-		
+
 		else if( sValueName=="MULTIPLIER" )
 		{
-			TimingData &timing = (state == SMA_GETTING_STEP_INFO 
+			TimingData &timing = (state == SMA_GETTING_STEP_INFO
 					      ? pNewNotes->m_Timing : out.m_SongTiming);
 			ProcessMultipliers( timing, iRowsPerBeat, sParams[1] );
 		}
-		
+
 		else if( sValueName=="FAKES" )
 		{
-			TimingData &timing = (state == SMA_GETTING_STEP_INFO 
+			TimingData &timing = (state == SMA_GETTING_STEP_INFO
 					      ? pNewNotes->m_Timing : out.m_SongTiming);
 			ProcessFakes( timing, sParams[1], iRowsPerBeat );
 		}
-		
+
 		else if( sValueName=="METERTYPE" )
 		{
 			; // We don't use this...yet.
 		}
-		
+
 		else if( sValueName=="KEYSOUNDS" )
 		{
 			split( sParams[1], ",", out.m_vsKeysoundFile );
 		}
-		
+
 		// Attacks loaded from file
 		else if( sValueName=="ATTACKS" )
 		{
 			ProcessAttackString(out.m_sAttackString, sParams);
 			ProcessAttacks(out.m_Attacks, sParams);
 		}
-		
+
 		else if( sValueName=="NOTES" || sValueName=="NOTES2" )
 		{
 			if( iNumParams < 7 )
@@ -442,7 +436,7 @@ bool SMALoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 					     iNumParams );
 				continue;
 			}
-			
+
 			LoadFromTokens( 
 					 sParams[1], 
 					 sParams[2], 

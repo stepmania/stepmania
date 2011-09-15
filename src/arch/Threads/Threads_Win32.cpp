@@ -219,9 +219,9 @@ bool MutexImpl_Win32::Lock()
 		if( SimpleWaitForSingleObject( mutex, len ) )
 			return true;
 
-		/* Timed out; probably deadlocked.  Try a couple more times, with a smaller
-		 * timeout, just in case we're debugging and happened to stop while waiting
-		 * on the mutex. */
+		/* Timed out; probably deadlocked. Try a couple more times, with
+		 * a smaller timeout, just in case we're debugging and happened
+		 * to stop while waiting on the mutex. */
 		len = 1000;
 	}
 
@@ -238,8 +238,8 @@ void MutexImpl_Win32::Unlock()
 {
 	const bool ret = !!ReleaseMutex( mutex );
 
-	/* We can't ASSERT here, since this is called from checkpoints, which is
-	 * called from ASSERT. */
+	/* We can't ASSERT here, since this is called from checkpoints,
+	 * which is called from ASSERT. */
 	if( !ret )
 		sm_crash( werr_ssprintf( GetLastError(), "ReleaseMutex failed" ) );
 }
@@ -278,10 +278,11 @@ EventImpl_Win32::~EventImpl_Win32()
 	CloseHandle( m_WaitersDone );
 }
 
-/* SignalObjectAndWait is atomic, which leads to more fair event handling.  However,
- * we don't guarantee or depend upon fair events, and SignalObjectAndWait is only
- * available in NT.  I also can't find a single function to signal an object like
- * SignalObjectAndWait, so we need to know if the object is a mutex or an event. */
+/* SignalObjectAndWait is atomic, which leads to more fair event handling.
+ * However, we don't guarantee or depend upon fair events, and
+ * SignalObjectAndWait is only available in NT. I also can't find a single
+ * function to signal an object like SignalObjectAndWait, so we need to
+ * know if the object is a mutex or an event. */
 static bool PortableSignalObjectAndWait( HANDLE hObjectToSignal, HANDLE hObjectToWaitOn, bool bFirstParamIsMutex, unsigned iMilliseconds = INFINITE )
 {
 	static bool bSignalObjectAndWaitUnavailable = false;
@@ -364,8 +365,9 @@ bool EventImpl_Win32::Wait( RageTimer *pTimeout )
 	EnterCriticalSection( &m_iNumWaitingLock );
 	if( !bSuccess )
 	{
-		/* Avoid a race condition: someone may have signalled the object between PortableSignalObjectAndWait
-		 * and EnterCriticalSection.  While we hold m_iNumWaitingLock, poll (with a zero timeout) the
+		/* Avoid a race condition: someone may have signalled the object
+		 * between PortableSignalObjectAndWait and EnterCriticalSection.
+		 * While we hold m_iNumWaitingLock, poll (with a zero timeout) the
 		 * object one last time. */
 		if( WaitForSingleObject( m_WakeupSema, 0 ) == WAIT_OBJECT_0 )
 			bSuccess = true;
@@ -374,8 +376,8 @@ bool EventImpl_Win32::Wait( RageTimer *pTimeout )
 	bool bLastWaiting = m_iNumWaiting == 0;
 	LeaveCriticalSection( &m_iNumWaitingLock );
 
-	/* If we're the last waiter to wake up, and we were actually woken by another
-	 * thread (not by timeout), wake up the signaller. */
+	/* If we're the last waiter to wake up, and we were actually woken by
+	 * another thread (not by timeout), wake up the signaller. */
 	if( bLastWaiting && bSuccess )
 		PortableSignalObjectAndWait( m_WaitersDone, m_pParent->mutex, false );
 	else
@@ -416,8 +418,8 @@ void EventImpl_Win32::Broadcast()
 
 	LeaveCriticalSection( &m_iNumWaitingLock );
 
-	/* The last waiter will touch m_WaitersDone, so we wait for all waiters to
-	 * wake up and start waiting for the mutex before returning. */
+	/* The last waiter will touch m_WaitersDone, so we wait for all waiters
+	 * to wake up and start waiting for the mutex before returning. */
 	WaitForSingleObject( m_WaitersDone, INFINITE );
 }
 
@@ -452,7 +454,7 @@ bool SemaImpl_Win32::Wait()
 
 	while( tries-- )
 	{
-		/* Wait for 15 seconds.  If it takes longer than that, we're 
+		/* Wait for 15 seconds. If it takes longer than that, we're 
 		 * probably deadlocked. */
 		if( SimpleWaitForSingleObject( sem, len ) )
 		{
@@ -460,9 +462,9 @@ bool SemaImpl_Win32::Wait()
 			return true;
 		}
 
-		/* Timed out; probably deadlocked.  Try again a few more times, with a smaller
-		 * timeout, just in case we're debugging and happened to stop while waiting
-		 * on the mutex. */
+		/* Timed out; probably deadlocked. Try again a few more times,
+		 * with a smaller timeout, just in case we're debugging and
+		 * happened to stop while waiting on the mutex. */
 		len = 1000;
 	}
 

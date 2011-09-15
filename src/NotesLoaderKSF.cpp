@@ -17,7 +17,7 @@ static void HandleBunki( TimingData &timing, const float fEarlyBPM,
 	const float beat = (fPos + fGap) * BeatsPerSecond;
 	LOG->Trace( "BPM %f, BPS %f, BPMPos %f, beat %f",
 		   fEarlyBPM, BeatsPerSecond, fPos, beat );
-	timing.AddSegment( SEGMENT_BPM, new BPMSegment(beat, fCurBPM) );
+	timing.AddSegment( BPMSegment(BeatToNoteRow(beat), fCurBPM) );
 }
 
 static bool LoadFromKSFFile( const RString &sPath, Steps &out, Song &song, bool bKIUCompliant )
@@ -59,7 +59,7 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, Song &song, bool 
 		else if( sValueName=="BPM" )
 		{
 			BPM1 = StringToFloat(sParams[1]);
-			stepsTiming.AddSegment( SEGMENT_BPM, new BPMSegment(0, BPM1) );
+			stepsTiming.AddSegment( BPMSegment(0, BPM1) );
 		}
 		else if( sValueName=="BPM2" )
 		{
@@ -136,7 +136,7 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, Song &song, bool 
 				LOG->UserLog( "Song file", sPath, "has an invalid tick count: %d.", iTickCount );
 				return false;
 			}
-			stepsTiming.AddSegment( SEGMENT_TICKCOUNT, new TickcountSegment(0, iTickCount));
+			stepsTiming.AddSegment( TickcountSegment(0, iTickCount));
 		}
 		
 		else if( sValueName=="DIFFICULTY" )
@@ -332,7 +332,7 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, Song &song, bool 
 			// be 0. if the tickcount is non a stepmania standard then it will be adapted, a scroll
 			// segment will then be added based on approximations. -DaisuMaster
 			// eh better do it considering the tickcount (high tickcounts)
-			
+
 			// I'm making some experiments, please spare me...
 			//continue;
 
@@ -367,7 +367,8 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, Song &song, bool 
 			else if (BeginsWith(sRowString, "|M") || BeginsWith(sRowString, "|C"))
 			{
 				// multipliers/combo
-				stepsTiming.SetHitComboAtBeat( fCurBeat, static_cast<int>(numTemp) );
+				ComboSegment seg( BeatToNoteRow(fCurBeat), int(numTemp) );
+				stepsTiming.AddSegment( seg );
 			}
 			else if (BeginsWith(sRowString, "|S"))
 			{
@@ -380,7 +381,8 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, Song &song, bool 
 			else if (BeginsWith(sRowString, "|X"))
 			{
 				// scroll segments
-				stepsTiming.SetScrollAtBeat( fCurBeat, numTemp );
+				ScrollSegment seg = ScrollSegment( BeatToNoteRow(fCurBeat), numTemp );
+				stepsTiming.AddSegment( seg );
 				//return true;
 			}
 
@@ -511,12 +513,12 @@ static void ProcessTickcounts( const RString & value, int & ticks, TimingData & 
 	 * and stops. It will be called again in LoadFromKSFFile for the
 	 * actual steps. */
 	ticks = StringToInt( value );
-	ticks = ticks > 0 ? ticks : 4;
-	// add a tickcount for those using the [Player]
-	// CheckpointsUseTimeSignatures metric. -aj
-	// It's not with timesigs now -DaisuMaster
-	TickcountSegment * tcs = new TickcountSegment(0, ticks > ROWS_PER_BEAT ? ROWS_PER_BEAT : ticks);
-	timing.AddSegment( SEGMENT_TICKCOUNT, tcs );
+	CLAMP( ticks, 0, ROWS_PER_BEAT );
+
+	if( ticks == 0 )
+		ticks = TickcountSegment::DEFAULT_TICK_COUNT;
+
+	timing.AddSegment( TickcountSegment(0, ticks) );
 }
 
 static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant )
@@ -557,7 +559,7 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 		else if( sValueName=="BPM" )
 		{
 			BPM1 = StringToFloat(sParams[1]);
-			out.m_SongTiming.AddSegment( SEGMENT_BPM, new BPMSegment(0, BPM1) );
+			out.m_SongTiming.AddSegment( BPMSegment(0, BPM1) );
 		}
 		else if( sValueName=="BPM2" )
 		{
@@ -584,7 +586,7 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 			SMGap1 = -StringToFloat( sParams[1] )/100;
 			out.m_SongTiming.m_fBeat0OffsetInSeconds = SMGap1;
 		}
-		// This is currently required for more accurate KIU BPM changes.  
+		// This is currently required for more accurate KIU BPM changes.
 		else if( sValueName=="STARTTIME2" )
 		{
 			bKIUCompliant = true;
