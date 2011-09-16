@@ -112,21 +112,30 @@ int TimingData::GetSegmentIndexAtRow(TimingSegmentType tst, int iRow ) const
 {
 	const vector<TimingSegment*> &vSegs = GetTimingSegments(tst);
 
-	int i = 0;
-
 	if( vSegs.empty() )
 		return INVALID_INDEX;
 
-	// seek to the last segment that goes into effect before iRow.
-	// UGLY: vSegs.size() is cast to an int because its normal return type
-	// is size_t, but when it equals zero, subtracting 1 wraps around.
-	for( ; i < int(vSegs.size()) - 1; ++i )
+	int min = 0, max = vSegs.size() - 1;
+	int l = min, r = max;
+	while( l <= r )
 	{
-		if( iRow < vSegs[i+1]->GetRow() )
-			break;
+		int m = ( l + r ) / 2;
+		if( ( m == min || vSegs[m]->GetRow() <= iRow ) && ( m == max || iRow < vSegs[m + 1]->GetRow() ) )
+		{
+			return m;
+		}
+		else if( vSegs[m]->GetRow() <= iRow )
+		{
+			l = m + 1;
+		}
+		else
+		{
+			r = m - 1;
+		}
 	}
+	
+	return INVALID_INDEX; // this should not be reached. :(
 
-	return i;
 }
 
 struct ts_less : binary_function <TimingSegment*, TimingSegment*, bool>
@@ -342,7 +351,7 @@ void TimingData::AddSegment( const TimingSegment *seg )
 				prev = vSegs[index - 1];
 
 			// if true, this is redundant segment change
-			if( (*prev) == (*seg) )
+			if( prev != cur && (*prev) == (*seg) )
 			{
 				EraseSegment( vSegs, index, cur );
 				return;
