@@ -297,8 +297,8 @@ void SongManager::LoadStepManiaSongDir( RString sDir, LoadingWindow *ld )
 			{
 				ld->SetProgress(songIndex);
 				ld->SetText( LOADING_SONGS.GetValue()+ssprintf("\n%s\n%s",
-									  Basename(sGroupDirName).c_str(),
-									  Basename(sSongDirName).c_str()));
+															   Basename(sGroupDirName).c_str(),
+															   Basename(sSongDirName).c_str()));
 			}
 			Song* pNewSong = new Song;
 			if( !pNewSong->LoadFromSongDir( sSongDirName ) )
