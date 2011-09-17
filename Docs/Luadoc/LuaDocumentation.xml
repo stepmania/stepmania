@@ -4163,6 +4163,10 @@
 	<Function name='UnlockEntryIndex' return='void' arguments='int iUnlockEntryID'>
 		Unlocks an entry by index.
 	</Function>
+	<Function name='IsSongLocked' return='int' arguments='Song pSong'>
+		Determines if a song is locked by any means. The number returned determines
+		how the song is locked.
+	</Function>
 </Class>
 <Class name='WheelBase'>
 	<Function name='GetCurrentIndex' return='int' arguments=''>

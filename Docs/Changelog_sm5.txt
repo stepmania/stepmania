@@ -11,6 +11,7 @@ StepMania 5.0 $next | 2011????
 2011/09/16
 ----------
 * [UnlockManager] Added GetNumLockedSongs() Lua binding. [Wolfman2000]
+* [UnlockManager] Added IsSongLocked() Lua binding. [Wolfman2000]
 
 2011/09/12
 ----------

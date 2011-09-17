@@ -1573,6 +1573,7 @@
 			<Function name='PreferUnlockEntryID'/>
 			<Function name='UnlockEntryID'/>
 			<Function name='UnlockEntryIndex'/>
+			<Function name='IsSongLocked'/>
 		</Class>
 		<Class base='ActorFrame' name='WheelBase'>
 			<Function name='GetCurrentIndex'/>
