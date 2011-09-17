@@ -1330,6 +1330,7 @@
 			<Function name='GetNumAdditionalSongs'/>
 			<Function name='GetNumCourseGroups'/>
 			<Function name='GetNumCourses'/>
+			<Function name='GetNumLockedSongs'/>
 			<Function name='GetNumSelectableAndUnlockedSongs'/>
 			<Function name='GetNumSongGroups'/>
 			<Function name='GetNumSongs'/>

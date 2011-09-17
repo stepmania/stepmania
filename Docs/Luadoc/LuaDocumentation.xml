@@ -3513,6 +3513,9 @@
 	<Function name='GetNumSongs' return='int' arguments=''>
 		Returns the number of songs.
 	</Function>
+	<Function name='GetNumLockedSongs' return='int' arguments=''>
+		Returns the number of locked songs, regardless of reason for locking.
+	</Function>
 	<Function name='GetNumUnlockedSongs' return='int' arguments=''>
 		Returns the number of unlocked songs.
 	</Function>
