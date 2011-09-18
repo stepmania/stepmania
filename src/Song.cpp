@@ -1761,6 +1761,16 @@ public:
 		lua_pushnumber(L, p->m_fMusicLengthSeconds);
 		return 1;
 	}
+	static int GetSampleStart( T* p, lua_State *L )
+	{
+		lua_pushnumber(L, p->m_fMusicSampleStartSeconds);
+		return 1;
+	}
+	static int GetSampleLength( T* p, lua_State *L )
+	{
+		lua_pushnumber(L, p->m_fMusicSampleLengthSeconds);
+		return 1;
+	}
 	static int IsLong( T* p, lua_State *L )	
 	{
 		lua_pushboolean(L, p->IsLong());
@@ -1926,6 +1936,8 @@ public:
 		ADD_METHOD( IsEnabled );
 		ADD_METHOD( GetGroupName );
 		ADD_METHOD( MusicLengthSeconds );
+		ADD_METHOD( GetSampleStart );
+		ADD_METHOD( GetSampleLength );
 		ADD_METHOD( IsLong );
 		ADD_METHOD( IsMarathon );
 		ADD_METHOD( HasStepsType );

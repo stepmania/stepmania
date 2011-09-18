@@ -3364,6 +3364,12 @@
 	<Function name='GetOrigin' return='string' arguments=''>
 		Gets the Song's origin.
 	</Function>
+	<Function name='GetSampleLength' return='float' arguments=''>
+		Gets the length of a song's sample time in seconds.
+	</Function>
+	<Function name='GetSampleStart' return='float' arguments=''>
+		Gets the starting position of a song sample in seconds.
+	</Function>
 	<Function name='GetSongDir' return='string' arguments=''>
 		Returns the song's directory.
 	</Function>

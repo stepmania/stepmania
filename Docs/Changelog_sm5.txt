@@ -8,6 +8,11 @@ ________________________________________________________________________________
 StepMania 5.0 $next | 2011????
 --------------------------------------------------------------------------------
 
+2011/09/18
+----------
+* [Song] Added GetSampleStart() and GetSampleLength()
+  Lua bindings. [Wolfman2000]
+
 2011/09/16
 ----------
 * [UnlockManager] Added GetNumLockedSongs() Lua binding. [Wolfman2000]
