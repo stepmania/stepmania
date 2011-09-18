@@ -65,16 +65,11 @@ public:
 	TimingData( float fOffset = 0 );
 	~TimingData();
 
-	TimingData( const TimingData& rhs ) : m_sFile(rhs.m_sFile),
-		m_fBeat0OffsetInSeconds(rhs.m_fBeat0OffsetInSeconds)
-	{
-		const vector<TimingSegment*>* avpSegs = rhs.m_avpTimingSegments;
+	void Copy( const TimingData &other );
+	void Clear();
 
-		// deep-copy the TimingSegment pointers
-		FOREACH_TimingSegmentType( tst )
-			for( unsigned i = 0; i < avpSegs[tst].size(); ++i )
-				m_avpTimingSegments[tst].push_back( avpSegs[tst][i]->Copy() );
-	}
+	TimingData( const TimingData &cpy ) { Copy(cpy); }
+	TimingData& operator=( const TimingData &cpy ) { Copy(cpy); return *this; }
 
 	int GetSegmentIndexAtRow(TimingSegmentType tst, int row) const;
 	int GetSegmentIndexAtBeat(TimingSegmentType tst, float beat) const

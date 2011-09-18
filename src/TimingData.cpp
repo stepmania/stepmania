@@ -11,20 +11,41 @@ TimingData::TimingData(float fOffset) : m_fBeat0OffsetInSeconds(fOffset)
 {
 }
 
-TimingData::~TimingData()
+void TimingData::Copy( const TimingData& cpy )
 {
-// This is causing weird crashes, probably due to someone hanging onto pointers
-// for too long. Commenting this out until we can track it down... -- vyhd
-#if 0
+	/* de-allocate any old pointers we had */
+	Clear();
+
+	m_fBeat0OffsetInSeconds = cpy.m_fBeat0OffsetInSeconds;
+	m_sFile = cpy.m_sFile;
+
+	FOREACH_TimingSegmentType( tst )
+	{
+		const vector<TimingSegment*> vpSegs = cpy.m_avpTimingSegments[tst];
+
+		for( unsigned i = 0; i < vpSegs.size(); ++i )
+			AddSegment( vpSegs[i] );
+	}
+}
+
+void TimingData::Clear()
+{
 	/* Delete all pointers owned by this TimingData. */
 	FOREACH_TimingSegmentType( tst )
 	{
 		vector<TimingSegment*> &vSegs = m_avpTimingSegments[tst];
 		for( unsigned i = 0; i < vSegs.size(); ++i )
-			delete vSegs[i];
+		{
+			LOG->Trace( "deleting %p", vSegs[i] );
+			SAFE_DELETE( vSegs[i] );		}
+
 		vSegs.clear();
 	}
-#endif
+}
+
+TimingData::~TimingData()
+{
+	Clear();
 }
 
 bool TimingData::empty() const
