@@ -1972,8 +1972,8 @@
 		Returns the current Premium.
 	</Function>
 	<Function name='GetSmallestNumStagesLeftForAnyHumanPlayer' return='int' arguments=''>
-		<!-- Returns the smallest number of stages left for any human player. -->
-		Kind of does what it says on the tin.
+		<!-- Kind of does what it says on the tin. -->
+		Returns the smallest number of stages left for any human player.
 	</Function>
 	<Function name='GetSongBeat' theme='_fallback' return='float' arguments=''>
 		[01 compat.lua] Returns the current beat of the song.
