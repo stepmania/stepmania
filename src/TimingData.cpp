@@ -21,7 +21,7 @@ void TimingData::Copy( const TimingData& cpy )
 
 	FOREACH_TimingSegmentType( tst )
 	{
-		const vector<TimingSegment*> vpSegs = cpy.m_avpTimingSegments[tst];
+		const vector<TimingSegment*> &vpSegs = cpy.m_avpTimingSegments[tst];
 
 		for( unsigned i = 0; i < vpSegs.size(); ++i )
 			AddSegment( vpSegs[i] );
