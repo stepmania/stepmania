@@ -8,6 +8,11 @@ ________________________________________________________________________________
 StepMania 5.0 $next | 2011????
 --------------------------------------------------------------------------------
 
+2011/09/22
+----------
+* [ScreenDebugOverlay] Replaced hardcoded toggle command with
+  ButtonTextToggledCommand metric. [AJ]
+
 2011/09/21
 ----------
 * [FadingBanner] Added LoadRandom(), LoadRoulette(), LoadFallback(),
