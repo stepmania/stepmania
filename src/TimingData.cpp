@@ -36,7 +36,7 @@ void TimingData::Clear()
 		vector<TimingSegment*> &vSegs = m_avpTimingSegments[tst];
 		for( unsigned i = 0; i < vSegs.size(); ++i )
 		{
-			LOG->Trace( "deleting %p", vSegs[i] );
+			//LOG->Trace( "deleting %p", vSegs[i] );
 			SAFE_DELETE( vSegs[i] );		}
 
 		vSegs.clear();
@@ -323,7 +323,7 @@ static void EraseSegment( vector<TimingSegment*> &vSegs, int index, TimingSegmen
 // so we must deep-copy it (with ::Copy) for new allocations.
 void TimingData::AddSegment( const TimingSegment *seg )
 {
-	LOG->Trace( "AddSegment( %s )", TimingSegmentTypeToString(seg->GetType()).c_str() );
+	//LOG->Trace( "AddSegment( %s )", TimingSegmentTypeToString(seg->GetType()).c_str() );
 	seg->DebugPrint();
 
 	TimingSegmentType tst = seg->GetType();

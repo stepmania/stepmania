@@ -115,6 +115,7 @@ protected:
 
 	ThemeMetric<bool>	SUMMARY;
 	ThemeMetric<RString> ROLLING_NUMBERS_CLASS;
+	ThemeMetric<RString> ROLLING_NUMBERS_MAX_COMBO_CLASS;
 	/** @brief Did a player save a screenshot of their score? */
 	bool			m_bSavedScreenshot[NUM_PLAYERS];
 };
