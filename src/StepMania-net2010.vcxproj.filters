@@ -1242,25 +1242,25 @@
     <ClCompile Include="RageUtil_WorkerThread.cpp">
       <Filter>Rage</Filter>
     </ClCompile>
-    <ClCompile Include="Actor.cpp">
+    <ClCompile Include="Actors\Actor.cpp">
       <Filter>Actors</Filter>
     </ClCompile>
-    <ClCompile Include="ActorFrame.cpp">
+    <ClCompile Include="Actors\ActorFrame.cpp">
       <Filter>Actors</Filter>
     </ClCompile>
-    <ClCompile Include="ActorFrameTexture.cpp">
+    <ClCompile Include="Actors\ActorFrameTexture.cpp">
       <Filter>Actors</Filter>
     </ClCompile>
-    <ClCompile Include="ActorMultiTexture.cpp">
+    <ClCompile Include="Actors\ActorMultiTexture.cpp">
       <Filter>Actors</Filter>
     </ClCompile>
-    <ClCompile Include="ActorProxy.cpp">
+    <ClCompile Include="Actors\ActorProxy.cpp">
       <Filter>Actors</Filter>
     </ClCompile>
-    <ClCompile Include="ActorScroller.cpp">
+    <ClCompile Include="Actors\ActorScroller.cpp">
       <Filter>Actors</Filter>
     </ClCompile>
-    <ClCompile Include="ActorSound.cpp">
+    <ClCompile Include="Actors\ActorSound.cpp">
       <Filter>Actors</Filter>
     </ClCompile>
     <ClCompile Include="ActorUtil.cpp">
@@ -2777,25 +2777,25 @@
     <ClInclude Include="RageUtil_WorkerThread.h">
       <Filter>Rage</Filter>
     </ClInclude>
-    <ClInclude Include="Actor.h">
+    <ClInclude Include="Actors\Actor.h">
       <Filter>Actors</Filter>
     </ClInclude>
-    <ClInclude Include="ActorFrame.h">
+    <ClInclude Include="Actors\ActorFrame.h">
       <Filter>Actors</Filter>
     </ClInclude>
-    <ClInclude Include="ActorFrameTexture.h">
+    <ClInclude Include="Actors\ActorFrameTexture.h">
       <Filter>Actors</Filter>
     </ClInclude>
-    <ClInclude Include="ActorMultiTexture.h">
+    <ClInclude Include="Actors\ActorMultiTexture.h">
       <Filter>Actors</Filter>
     </ClInclude>
-    <ClInclude Include="ActorProxy.h">
+    <ClInclude Include="Actors\ActorProxy.h">
       <Filter>Actors</Filter>
     </ClInclude>
-    <ClInclude Include="ActorScroller.h">
+    <ClInclude Include="Actors\ActorScroller.h">
       <Filter>Actors</Filter>
     </ClInclude>
-    <ClInclude Include="ActorSound.h">
+    <ClInclude Include="Actors\ActorSound.h">
       <Filter>Actors</Filter>
     </ClInclude>
     <ClInclude Include="ActorUtil.h">
