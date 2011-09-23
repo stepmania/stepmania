@@ -3821,59 +3821,59 @@
 			Name="Actors"
 			>
 			<File
-				RelativePath="Actor.cpp"
+				RelativePath="Actors\Actor.cpp"
 				>
 			</File>
 			<File
-				RelativePath="Actor.h"
+				RelativePath="Actors\Actor.h"
 				>
 			</File>
 			<File
-				RelativePath="ActorFrame.cpp"
+				RelativePath="Actors\ActorFrame.cpp"
 				>
 			</File>
 			<File
-				RelativePath="ActorFrame.h"
+				RelativePath="Actors\ActorFrame.h"
 				>
 			</File>
 			<File
-				RelativePath="ActorFrameTexture.cpp"
+				RelativePath="Actors\ActorFrameTexture.cpp"
 				>
 			</File>
 			<File
-				RelativePath="ActorFrameTexture.h"
+				RelativePath="Actors\ActorFrameTexture.h"
 				>
 			</File>
 			<File
-				RelativePath="ActorMultiTexture.cpp"
+				RelativePath="Actors\ActorMultiTexture.cpp"
 				>
 			</File>
 			<File
-				RelativePath="ActorMultiTexture.h"
+				RelativePath="Actors\ActorMultiTexture.h"
 				>
 			</File>
 			<File
-				RelativePath="ActorProxy.cpp"
+				RelativePath="Actors\ActorProxy.cpp"
 				>
 			</File>
 			<File
-				RelativePath="ActorProxy.h"
+				RelativePath="Actors\ActorProxy.h"
 				>
 			</File>
 			<File
-				RelativePath="ActorScroller.cpp"
+				RelativePath="Actors\ActorScroller.cpp"
 				>
 			</File>
 			<File
-				RelativePath="ActorScroller.h"
+				RelativePath="Actors\ActorScroller.h"
 				>
 			</File>
 			<File
-				RelativePath="ActorSound.cpp"
+				RelativePath="Actors\ActorSound.cpp"
 				>
 			</File>
 			<File
-				RelativePath="ActorSound.h"
+				RelativePath="Actors\ActorSound.h"
 				>
 			</File>
 			<File
