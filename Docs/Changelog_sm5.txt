@@ -12,6 +12,8 @@ StepMania 5.0 $next | 2011????
 ----------
 * [ScreenDebugOverlay] Replaced hardcoded toggle command with
   ButtonTextToggledCommand metric. [AJ]
+* [LoadingWindow_Win32] Make the StepMania window gain focus after the
+  loading window closes. Fixes issue 424. [AJ]
 
 2011/09/21
 ----------
