@@ -181,11 +181,13 @@ function HoldTiming()
 end
 
 function ShowHoldJudgments()
-	return not GAMESTATE:GetCurrentGame():GetName() == "pump"
+	local isPump = GAMESTATE:GetCurrentGame():GetName() == "pump"
+	return isPump and false or true
 end
 
 function HoldHeadStep()
-	return not GAMESTATE:GetCurrentGame():GetName() == "pump"
+	local isPump = GAMESTATE:GetCurrentGame():GetName() == "pump"
+	return isPump and false or true
 end
 
 function InitialHoldLife()
