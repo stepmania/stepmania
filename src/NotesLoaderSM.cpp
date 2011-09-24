@@ -88,7 +88,7 @@ void SMLoader::LoadFromTokens(
 	out.SetDescription( sDescription );
 	out.SetCredit( sDescription ); // this is often used for both.
 	out.SetChartName(sDescription); // yeah, one more for good measure.
-	out.SetDifficulty( StringToDifficulty(sDifficulty) );
+	out.SetDifficulty( OldStyleStringToDifficulty(sDifficulty) );
 
 	// Handle hacks that originated back when StepMania didn't have
 	// Difficulty_Challenge. (At least v1.64, possibly v3.0 final...)
@@ -669,7 +669,8 @@ bool SMLoader::LoadNoteDataFromSimfile( const RString &path, Steps &out )
 			
 			if(!(out.m_StepsType == GAMEMAN->StringToStepsType( stepsType ) &&
 			     out.GetDescription() == description &&
-			     out.GetDifficulty() == StringToDifficulty(difficulty)))
+			     (out.GetDifficulty() == StringToDifficulty(difficulty) ||
+				  out.GetDifficulty() == OldStyleStringToDifficulty(difficulty))))
 			{
 				continue;
 			}

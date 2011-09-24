@@ -11,6 +11,8 @@ StepMania 5.0 $next | 2011????
 2011/09/23
 ----------
 * [ScreenEvaluation] Added RollingNumbersMaxComboClass metric. [AJ]
+* [NotesLoaderSM] Fix loading .sm files with non standard difficulty names.
+  It should be Hard, not Heavy. [Wolfman2000]
 
 2011/09/22
 ----------
