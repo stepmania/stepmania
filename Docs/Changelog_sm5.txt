@@ -8,10 +8,34 @@ ________________________________________________________________________________
 StepMania 5.0 $next | 2011????
 --------------------------------------------------------------------------------
 
+2011/09/24
+----------
+* [ScreenEdit] Disable shifting timing changes down one beat if starting on
+  beat 0. Important information must stay on that beat. [Wolfman2000]
+* [ScreenEdit] Disable converting rows to a stop or beat starting on beat 0.
+  There should be no reason for this at this time. [Wolfman2000]
+
+2011/09/23
+----------
+* [ScreenEvaluation] Added RollingNumbersMaxComboClass metric. [AJ]
+* [NotesLoaderSM] Fix loading .sm files with non standard difficulty names.
+  It should be Hard, not Heavy. [Wolfman2000]
+
+2011/09/22
+----------
+* [ScreenDebugOverlay] Replaced hardcoded toggle command with
+  ButtonTextToggledCommand metric. [AJ]
+* [LoadingWindow_Win32] Make the StepMania window gain focus after the
+  loading window closes. Fixes issue 424. [AJ]
+
+2011/09/21
+----------
+* [FadingBanner] Added LoadRandom(), LoadRoulette(), LoadFallback(),
+  LoadCourseFallback(), and GetBanner(int) Lua bindings. [AJ]
+
 2011/09/18
 ----------
-* [Song] Added GetSampleStart() and GetSampleLength()
-  Lua bindings. [Wolfman2000]
+* [Song] Added GetSampleStart() and GetSampleLength() Lua bindings. [Wolfman2000]
 
 2011/09/16
 ----------

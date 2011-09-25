@@ -88,7 +88,7 @@ void SMLoader::LoadFromTokens(
 	out.SetDescription( sDescription );
 	out.SetCredit( sDescription ); // this is often used for both.
 	out.SetChartName(sDescription); // yeah, one more for good measure.
-	out.SetDifficulty( StringToDifficulty(sDifficulty) );
+	out.SetDifficulty( OldStyleStringToDifficulty(sDifficulty) );
 
 	// Handle hacks that originated back when StepMania didn't have
 	// Difficulty_Challenge. (At least v1.64, possibly v3.0 final...)
@@ -667,9 +667,23 @@ bool SMLoader::LoadNoteDataFromSimfile( const RString &path, Steps &out )
 				difficulty = "Challenge";
 			}
 			
+			/* Handle hacks that originated back when StepMania didn't have
+			 * Difficulty_Challenge. TODO: Remove the need for said hacks. */
+			if( difficulty.CompareNoCase("hard") == 0 )
+			{
+				/* HACK: Both SMANIAC and CHALLENGE used to be Difficulty_Hard.
+				 * They were differentiated via aspecial description.
+				 * Account for the rogue charts that do this. */
+				// HACK: SMANIAC used to be Difficulty_Hard with a special description.
+				if (description.CompareNoCase("smaniac") == 0 ||
+					description.CompareNoCase("challenge") == 0) 
+					difficulty = "Challenge";
+			}
+			
 			if(!(out.m_StepsType == GAMEMAN->StringToStepsType( stepsType ) &&
 			     out.GetDescription() == description &&
-			     out.GetDifficulty() == StringToDifficulty(difficulty)))
+			     (out.GetDifficulty() == StringToDifficulty(difficulty) ||
+				  out.GetDifficulty() == OldStyleStringToDifficulty(difficulty))))
 			{
 				continue;
 			}

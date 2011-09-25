@@ -41,7 +41,7 @@
  * @brief The internal version of the cache for StepMania.
  *
  * Increment this value to invalidate the current cache. */
-const int FILE_CACHE_VERSION = 205;
+const int FILE_CACHE_VERSION = 207;
 
 /** @brief How long does a song sample last by default? */
 const float DEFAULT_MUSIC_SAMPLE_LENGTH = 12.f;
@@ -920,12 +920,6 @@ void Song::Save()
 
 	ReCalculateRadarValuesAndLastSecond();
 	TranslateTitles();
-	
-	// TODO: Figure out a better way to save to Song's timing data.
-	if( m_vpSteps.size() == 1 )
-	{
-		m_SongTiming = m_vpSteps[0]->m_Timing;
-	}
 
 	// Save the new files. These calls make backups on their own.
 	if( !SaveToSSCFile(GetSongFilePath(), false) )

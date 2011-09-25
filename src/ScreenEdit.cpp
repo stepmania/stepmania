@@ -1739,7 +1739,8 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 		break;
 	case EDIT_BUTTON_OPEN_AREA_MENU:
 		{
-			// update enabled/disabled in g_AreaMenu
+			// TODO: Improve behavior if timing changes are shifted down on beat 0.
+			g_AreaMenu.rows[shift_pauses_forward].bEnabled = (GetBeat() != 0);
 			g_AreaMenu.rows[paste_at_current_beat].bEnabled = !m_Clipboard.IsEmpty();
 			g_AreaMenu.rows[paste_at_begin_marker].bEnabled = !m_Clipboard.IsEmpty() != 0 && m_NoteFieldEdit.m_iBeginMarker!=-1;
 			g_AreaMenu.rows[paste_partial_timing_at_beat].bEnabled = !this->clipboardTiming.empty();
@@ -1757,6 +1758,9 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			}
 			else 
 			{
+				// TODO: Improve interaction when field is 0.
+				g_AlterMenu.rows[convert_to_delay].bEnabled = (m_NoteFieldEdit.m_iBeginMarker > 0);
+				g_AlterMenu.rows[convert_to_pause].bEnabled = (m_NoteFieldEdit.m_iBeginMarker > 0);
 				bool isRoutine = (m_InputPlayerNumber != PLAYER_INVALID);
 				g_AlterMenu.rows[routine_invert_notes].bEnabled = isRoutine;
 				g_AlterMenu.rows[routine_mirror_1_to_2].bEnabled = isRoutine;

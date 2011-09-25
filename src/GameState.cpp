@@ -1459,6 +1459,12 @@ void GameState::RemoveAllActiveAttacks()	// called on end of song
 		m_pPlayerState[p]->RemoveActiveAttacks();
 }
 
+void GameState::AddStageToPlayer( PlayerNumber pn )
+{
+	// Add one stage more to player (bonus) -cerbo
+	++m_iPlayerStageTokens[pn];
+}
+
 template<class T>
 void setmin( T &a, const T &b )
 {
@@ -2430,6 +2436,7 @@ public:
 		lua_pushboolean(L, p->m_bDopefish);
 		return 1;
 	}
+	static int AddStageToPlayer( T* p, lua_State *L )				{ p->AddStageToPlayer(Enum::Check<PlayerNumber>(L, 1)); return 0; }
 
 	LunaGameState()
 	{
@@ -2531,6 +2538,7 @@ public:
 		ADD_METHOD( SetCharacter );
 		ADD_METHOD( GetExpandedSectionName );
 		ADD_METHOD( Dopefish );
+		ADD_METHOD( AddStageToPlayer );
 	}
 };
 
