@@ -299,6 +299,16 @@ public:
 	static int LoadRoulette( T* p, lua_State *L ) { p->LoadRoulette(); return 0; }
 	static int LoadCourseFallback( T* p, lua_State *L ) { p->LoadCourseFallback(); return 0; }
 	static int LoadFallback( T* p, lua_State *L ) { p->LoadFallback(); return 0; }
+	static int LoadFromSortOrder( T* p, lua_State *L )
+	{
+		if( lua_isnil(L,1) ) { p->LoadFromSortOrder( SortOrder_Invalid ); }
+		else
+		{
+			SortOrder so = Enum::Check<SortOrder>(L, 1);
+			p->LoadFromSortOrder( so );
+		}
+		return 0;
+	}
 	static int GetLatestIndex( T* p, lua_State *L ){ lua_pushnumber( L, p->GetLatestIndex() ); return 1; }
 
 	LunaFadingBanner()
@@ -314,7 +324,7 @@ public:
 		ADD_METHOD( LoadRoulette );
 		ADD_METHOD( LoadCourseFallback );
 		ADD_METHOD( LoadFallback );
-		//ADD_METHOD( LoadFromSortOrder );
+		ADD_METHOD( LoadFromSortOrder );
 		ADD_METHOD( GetLatestIndex );
 		//ADD_METHOD( GetBanner );
 	}

@@ -15,6 +15,7 @@ StepMania 5.0 $next | 2011????
 * [ScreenEdit] Disable converting rows to a stop or beat starting on beat 0.
   There should be no reason for this at this time. [Wolfman2000]
 * [MusicWheelItem] Add/reinstate MusicWheelItem Mode Normal/Color/OverPart. [AJ]
+* [FadingBanner] Added LoadFromSortOrder(SortOrder) Lua binding. [AJ]
 
 2011/09/23
 ----------
