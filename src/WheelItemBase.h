@@ -48,6 +48,13 @@ public:
 
 	RageColor m_colorLocked;
 
+	const RString GetText(){ return m_pData->m_sText; }
+	const RageColor GetColor(){ return m_pData->m_color; }
+	WheelItemDataType GetType(){ return m_pData->m_Type; }
+
+	// Lua
+	void PushSelf( lua_State *L );
+
 protected:
 	void SetGrayBar( Actor *pBar ) { m_pGrayBar = pBar; }
 

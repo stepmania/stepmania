@@ -8,6 +8,7 @@ WheelItemBaseData::WheelItemBaseData( WheelItemDataType type, RString sText, Rag
 	m_color = color;
 }
 
+// begin WheelItemBase
 WheelItemBase::WheelItemBase( const WheelItemBase &cpy ):
 	ActorFrame( cpy ),
 	m_pData( cpy.m_pData ),
@@ -62,7 +63,28 @@ void WheelItemBase::DrawPrimitives()
 	if( m_pGrayBar != NULL )
 		DrawGrayBar( *m_pGrayBar );
 }
-  
+
+// lua start
+#include "LuaBinding.h"
+
+/** @brief Allow Lua to have access to the WheelItemBase. */ 
+class LunaWheelItemBase: public Luna<WheelItemBase>
+{
+public:
+	DEFINE_METHOD( GetColor, GetColor() )
+	DEFINE_METHOD( GetText, GetText() )
+	//DEFINE_METHOD( GetType, GetType() )
+
+	LunaWheelItemBase()
+	{
+		ADD_METHOD( GetColor );
+		ADD_METHOD( GetText );
+		//ADD_METHOD( GetType );
+	}
+};
+LUA_REGISTER_DERIVED_CLASS( WheelItemBase, ActorFrame )
+// lua end
+
 /*
  * (c) 2001-2004 Chris Danford, Chris Gomez, Glenn Maynard, Josh Allen
  * All rights reserved.
