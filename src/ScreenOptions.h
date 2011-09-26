@@ -97,6 +97,7 @@ protected:
 	int GetCurrentRow( PlayerNumber pn = PLAYER_1 ) const { return m_iCurrentRow[pn]; }
 	bool AllAreOnLastRow() const;
 	OptionRow* GetRow( int iRow ) const { return m_pRows[iRow]; }
+        //void SetOptionRowFromName( const RString& nombre );
 
 protected:	// derived classes need access to these
 	enum Navigation { NAV_THREE_KEY, NAV_THREE_KEY_MENU, NAV_THREE_KEY_ALT, NAV_FIVE_KEY, NAV_TOGGLE_THREE_KEY, NAV_TOGGLE_FIVE_KEY };

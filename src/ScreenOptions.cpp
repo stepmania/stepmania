@@ -1347,6 +1347,7 @@ public:
 		ADD_METHOD( FocusedItemEndsScreen );
 		ADD_METHOD( GetCurrentRowIndex );
 		ADD_METHOD( GetOptionRow );
+                //ADD_METHOD( SetOptionRowFromName );
 	}
 };
 
