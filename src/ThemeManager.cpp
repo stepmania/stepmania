@@ -445,7 +445,7 @@ void ThemeManager::ClearSubscribers()
 	}
 }
 
-void ThemeManager::RunLuaScripts( const RString &sMask )
+void ThemeManager::RunLuaScripts( const RString &sMask, bool bUseThemeDir )
 {
 	/* Run all script files with the given mask in Lua for all themes.  Start
 	 * from the deepest fallback theme and work outwards. */
@@ -463,13 +463,13 @@ void ThemeManager::RunLuaScripts( const RString &sMask )
 		 * scripts call GetThemeName(), it'll return the theme the script is in. */
 
 		m_sCurThemeName = iter->sThemeName;
-		const RString &sThemeDir = GetThemeDirFromName( m_sCurThemeName );
+		const RString &sThemeDir = bUseThemeDir ? GetThemeDirFromName( m_sCurThemeName ) : "/";
 
 		vector<RString> asElementPaths;
 		// get files from directories
 		vector<RString> asElementChildPaths;
 		vector<RString> arrayScriptDirs;
-		GetDirListing( sThemeDir + "Scripts/*", arrayScriptDirs, true );
+		GetDirListing( sScriptDir + "Scripts/*", arrayScriptDirs, true );
 		SortRStringArray( arrayScriptDirs );
 		StripCvsAndSvn( arrayScriptDirs );
 		StripMacResourceForks( arrayScriptDirs );
@@ -477,7 +477,7 @@ void ThemeManager::RunLuaScripts( const RString &sMask )
 		{
 			// Find all Lua files in this directory, add them to asElementPaths
 			RString sScriptDirName = *s;
-			GetDirListing( sThemeDir + "Scripts/" + sScriptDirName + "/" + sMask, asElementChildPaths, false, true );
+			GetDirListing( sScriptDir + "Scripts/" + sScriptDirName + "/" + sMask, asElementChildPaths, false, true );
 			for( unsigned i = 0; i < asElementChildPaths.size(); ++i )
 			{
 				// push these Lua files into the main element paths
@@ -487,7 +487,7 @@ void ThemeManager::RunLuaScripts( const RString &sMask )
 		}
 
 		// get regular Lua files
-		GetDirListing( sThemeDir + "Scripts/" + sMask, asElementPaths, false, true );
+		GetDirListing( sScriptDir + "Scripts/" + sMask, asElementPaths, false, true );
 
 		// load Lua files
 		for( unsigned i = 0; i < asElementPaths.size(); ++i )
@@ -513,7 +513,10 @@ void ThemeManager::UpdateLuaGlobals()
 	// explicitly refresh cached metrics that we use.
 	ScreenDimensions::ReloadScreenDimensions();
 
+	// run global scripts
 	RunLuaScripts( "*.lua" );
+	// run theme scripts
+	RunLuaScripts( "*.lua", true );
 #endif
 }
 
