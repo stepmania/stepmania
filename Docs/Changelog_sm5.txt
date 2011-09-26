@@ -8,6 +8,10 @@ ________________________________________________________________________________
 StepMania 5.0 $next | 2011????
 --------------------------------------------------------------------------------
 
+2011/09/26
+----------
+* [Default theme] Added Song Timing Display user preference. [AJ]
+
 2011/09/25
 ----------
 * [WheelItemBase] Added GetColor and GetText Lua bindings. [AJ]

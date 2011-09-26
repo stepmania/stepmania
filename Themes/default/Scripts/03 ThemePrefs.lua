@@ -28,7 +28,8 @@ function InitUserPrefs()
 		UserPrefProtimingP2 = false,
 		FlashyCombos = false,
 		UserPrefComboUnderField = true,
-		UserPrefFancyUIBG = true
+		UserPrefFancyUIBG = true,
+		UserPrefTimingDisplay = true
 	}
 	for k, v in pairs(Prefs) do
 		-- kind of xxx
@@ -63,7 +64,7 @@ function OptionRowScreenFilter()
 		SelectType = "SelectOne",
 		OneChoiceForAllPlayers = false,
 		ExportOnChange = false,
-		Choices = { 'Off', '0.1', '0.2', '0.3', '0.4', '0.5', '0.6', '0.7', '0.8', '0.9', '1.0', },
+		Choices = { THEME:GetString('OptionNames','Off'), '0.1', '0.2', '0.3', '0.4', '0.5', '0.6', '0.7', '0.8', '0.9', '1.0', },
 		LoadSelections = function(self, list, pn)
 			local pName = ToEnumShortString(pn)
 			local filterValue = getenv("ScreenFilter"..pName)
@@ -101,7 +102,10 @@ function OptionRowProTiming()
 		SelectType = "SelectOne",
 		OneChoiceForAllPlayers = false,
 		ExportOnChange = false,
-		Choices = { 'Off','On' },
+		Choices = {
+			THEME:GetString('OptionNames','Off'),
+			THEME:GetString('OptionNames','On')
+		},
 		LoadSelections = function(self, list, pn)
 			if GetUserPrefB("UserPrefProtiming" .. ToEnumShortString(pn)) then
 				local bShow = GetUserPrefB("UserPrefProtiming" .. ToEnumShortString(pn))
@@ -130,7 +134,10 @@ function UserPrefGameplayShowScore()
 		SelectType = "SelectOne",
 		OneChoiceForAllPlayers = true,
 		ExportOnChange = false,
-		Choices = { 'Off','On' },
+		Choices = {
+			THEME:GetString('OptionNames','Off'),
+			THEME:GetString('OptionNames','On')
+		},
 		LoadSelections = function(self, list, pn)
 			if ReadPrefFromFile("UserPrefGameplayShowScore") ~= nil then
 				if GetUserPrefB("UserPrefGameplayShowScore") then
@@ -161,7 +168,10 @@ function UserPrefGameplayShowStepsDisplay()
 		SelectType = "SelectOne",
 		OneChoiceForAllPlayers = true,
 		ExportOnChange = false,
-		Choices = { 'Off','On' },
+		Choices = {
+			THEME:GetString('OptionNames','Off'),
+			THEME:GetString('OptionNames','On')
+		},
 		LoadSelections = function(self, list, pn)
 			if ReadPrefFromFile("UserPrefGameplayShowStepsDisplay") ~= nil then
 				if GetUserPrefB("UserPrefGameplayShowStepsDisplay") then
@@ -253,7 +263,10 @@ function UserPrefAutoSetStyle()
 		SelectType = "SelectOne",
 		OneChoiceForAllPlayers = true,
 		ExportOnChange = false,
-		Choices = { 'Off','On' },
+		Choices = {
+			THEME:GetString('OptionNames','Off'),
+			THEME:GetString('OptionNames','On')
+		},
 		LoadSelections = function(self, list, pn)
 			if ReadPrefFromFile("UserPrefAutoSetStyle") ~= nil then
 				if GetUserPrefB("UserPrefAutoSetStyle") then
@@ -346,7 +359,10 @@ function UserPrefComboOnRolls()
 		SelectType = "SelectOne",
 		OneChoiceForAllPlayers = true,
 		ExportOnChange = false,
-		Choices = { 'Off','On' },
+		Choices = {
+			THEME:GetString('OptionNames','Off'),
+			THEME:GetString('OptionNames','On')
+		},
 		LoadSelections = function(self, list, pn)
 			if ReadPrefFromFile("UserPrefComboOnRolls") ~= nil then
 				if GetUserPrefB("UserPrefComboOnRolls") then
@@ -377,7 +393,10 @@ function UserPrefFlashyCombo()
 		SelectType = "SelectOne",
 		OneChoiceForAllPlayers = true,
 		ExportOnChange = false,
-		Choices = { 'Off','On' },
+		Choices = {
+			THEME:GetString('OptionNames','Off'),
+			THEME:GetString('OptionNames','On')
+		},
 		LoadSelections = function(self, list, pn)
 			if ReadPrefFromFile("UserPrefFlashyCombo") ~= nil then
 				if GetUserPrefB("UserPrefFlashyCombo") then
@@ -408,7 +427,10 @@ function UserPrefComboUnderField()
 		SelectType = "SelectOne",
 		OneChoiceForAllPlayers = true,
 		ExportOnChange = false,
-		Choices = { 'Off','On' },
+		Choices = {
+			THEME:GetString('OptionNames','Off'),
+			THEME:GetString('OptionNames','On')
+		},
 		LoadSelections = function(self, list, pn)
 			if ReadPrefFromFile("UserPrefComboUnderField") ~= nil then
 				if GetUserPrefB("UserPrefComboUnderField") then
@@ -458,6 +480,40 @@ function UserPrefFancyUIBG()
 		SaveSelections = function(self, list, pn)
 			local val = list[1] and true or false
 			WritePrefToFile("UserPrefFancyUIBG", val)
+			MESSAGEMAN:Broadcast("PreferenceSet", { Message == "Set Preference" })
+			THEME:ReloadMetrics()
+		end
+	}
+	setmetatable(t, t)
+	return t
+end
+
+function UserPrefTimingDisplay()
+	local t = {
+		Name = "UserPrefTimingDisplay",
+		LayoutType = "ShowAllInRow",
+		SelectType = "SelectOne",
+		OneChoiceForAllPlayers = true,
+		ExportOnChange = false,
+		Choices = {
+			THEME:GetString('OptionNames','Off'),
+			THEME:GetString('OptionNames','On')
+		},
+		LoadSelections = function(self, list, pn)
+			if ReadPrefFromFile("UserPrefTimingDisplay") ~= nil then
+				if GetUserPrefB("UserPrefTimingDisplay") then
+					list[2] = true
+				else
+					list[1] = true
+				end
+			else
+				WritePrefToFile("UserPrefTimingDisplay", true)
+				list[2] = true
+			end
+		end,
+		SaveSelections = function(self, list, pn)
+			local val = list[2] and true or false
+			WritePrefToFile("UserPrefTimingDisplay", val)
 			MESSAGEMAN:Broadcast("PreferenceSet", { Message == "Set Preference" })
 			THEME:ReloadMetrics()
 		end

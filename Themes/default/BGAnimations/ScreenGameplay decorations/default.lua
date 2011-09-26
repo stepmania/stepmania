@@ -141,9 +141,10 @@ local function CreateSegments(Player)
 end
 local t = LoadFallbackB()
 t[#t+1] = StandardDecorationFromFileOptional("ScoreFrame","ScoreFrame");
+
 for pn in ivalues(PlayerNumber) do
- 	local MetricsName = "SongMeterDisplay" .. PlayerNumberToString(pn);
- 	t[#t+1] = Def.ActorFrame {
+	local MetricsName = "SongMeterDisplay" .. PlayerNumberToString(pn);
+	local songMeterDisplay = Def.ActorFrame{
 		InitCommand=function(self) 
 			self:player(pn); 
 			self:name(MetricsName); 
@@ -174,10 +175,11 @@ for pn in ivalues(PlayerNumber) do
 			};
 			Tip=LoadActor( THEME:GetPathG( 'SongMeterDisplay', 'tip ' .. PlayerNumberToString(pn) ) ) .. { InitCommand=cmd(visible,false); };
 		};
-		CreateSegments(pn) .. {
--- 			InitCommand=cmd(draworder,10);
-		};
 	};
+	if ReadPrefFromFile("UserPrefTimingDisplay") == true then
+		songMeterDisplay[#songMeterDisplay+1] = CreateSegments(pn);
+	end
+	t[#t+1] = songMeterDisplay
 end;
 for pn in ivalues(PlayerNumber) do
 	local MetricsName = "ToastyDisplay" .. PlayerNumberToString(pn);
