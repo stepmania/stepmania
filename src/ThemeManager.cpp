@@ -463,7 +463,7 @@ void ThemeManager::RunLuaScripts( const RString &sMask, bool bUseThemeDir )
 		 * scripts call GetThemeName(), it'll return the theme the script is in. */
 
 		m_sCurThemeName = iter->sThemeName;
-		const RString &sThemeDir = bUseThemeDir ? GetThemeDirFromName( m_sCurThemeName ) : "/";
+		const RString &sScriptDir = bUseThemeDir ? GetThemeDirFromName( m_sCurThemeName ) : "/";
 
 		vector<RString> asElementPaths;
 		// get files from directories
