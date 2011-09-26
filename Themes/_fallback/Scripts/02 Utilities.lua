@@ -182,6 +182,18 @@ function StepsOrTrailToCustomDifficulty(stepsOrTrail)
 	end
 end
 
+Date = {
+	Today = function()
+		return string.format("%i%02i%02i", Year(), (MonthOfYear()+1), DayOfMonth())
+	end
+}
+
+Time = {
+	Now = function()
+		return string.format( "%02i:%02i:%02i", Hour(), Minute(), Second() )
+	end
+}
+
 -- (c) 2005 Glenn Maynard, Chris Danford
 -- All rights reserved.
 -- 
