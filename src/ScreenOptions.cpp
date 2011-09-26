@@ -1309,7 +1309,7 @@ void ScreenOptions::MenuUpDown( const InputEventPlus &input, int iDir )
 }
 
 /*
-void ScreenOptions::SetOptionRowFromName( RString nombre )
+void ScreenOptions::SetOptionRowFromName( const RString& nombre )
 	{
 		FOREACH_PlayerNumber( pn )
 		{
