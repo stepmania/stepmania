@@ -55,21 +55,7 @@ function ScoreKeeperClass()
 	if GAMESTATE:GetPlayMode() == 'PlayMode_Rave' then return "ScoreKeeperRave" end
 	local styleType = GAMESTATE:GetCurrentStyle():GetStyleType()
 	if styleType == 'StyleType_TwoPlayersSharedSides' then return "ScoreKeeperShared" end
-
-	local sGame = GAMESTATE:GetCurrentGame():GetName()
-	local ScoreKeepers = {
-		-- xxx: allow for ScoreKeeperShared when needed
-		dance = "ScoreKeeperNormal",
-		pump = "ScoreKeeperNormal",
-		beat = "ScoreKeeperNormal",
-		kb7 = "ScoreKeeperNormal",
-		para = "ScoreKeeperNormal",
-		techno = "ScoreKeeperNormal",
-		ez2 = "ScoreKeeperNormal",
-		ds3ddx = "ScoreKeeperNormal",
-		maniax = "ScoreKeeperNormal"
-	}
-	return ScoreKeepers[sGame]
+	return "ScoreKeeperNormal"
 end
 
 -- ComboContinue:
