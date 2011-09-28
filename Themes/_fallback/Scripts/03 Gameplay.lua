@@ -51,7 +51,10 @@ end
 -- ScoreKeeperClass:
 -- [en] Determines the correct ScoreKeeper class to use.
 function ScoreKeeperClass()
-	sGame = GAMESTATE:GetCurrentGame():GetName()
+	-- rave scorekeeper
+	if GAMESTATE:GetPlayMode() == 'PlayMode_Rave' then return "ScoreKeeperRave" end
+
+	local sGame = GAMESTATE:GetCurrentGame():GetName()
 	local ScoreKeepers = {
 		-- xxx: allow for ScoreKeeperShared when needed
 		dance = "ScoreKeeperNormal",
