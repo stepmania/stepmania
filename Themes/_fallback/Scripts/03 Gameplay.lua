@@ -53,6 +53,8 @@ end
 function ScoreKeeperClass()
 	-- rave scorekeeper
 	if GAMESTATE:GetPlayMode() == 'PlayMode_Rave' then return "ScoreKeeperRave" end
+	local styleType = GAMESTATE:GetCurrentStyle():GetStyleType()
+	if styleType == 'StyleType_TwoPlayersSharedSides' then return "ScoreKeeperShared" end
 
 	local sGame = GAMESTATE:GetCurrentGame():GetName()
 	local ScoreKeepers = {
