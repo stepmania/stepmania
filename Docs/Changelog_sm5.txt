@@ -8,6 +8,10 @@ ________________________________________________________________________________
 StepMania 5.0 $next | 2011????
 --------------------------------------------------------------------------------
 
+2011/09/29
+----------
+* [Fallback theme] Fix ImmediateHoldLetGo function. [Wolfman2000]
+
 2011/09/26
 ----------
 * [Default theme] Added Song Timing Display user preference. [AJ]

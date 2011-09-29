@@ -190,7 +190,7 @@ function MaxHoldLife()
 end
 
 function ImmediateHoldLetGo()
-	return not GAMESTATE:GetCurrentGame():GetName() == "pump"
+	return not (GAMESTATE:GetCurrentGame():GetName() == "pump")
 end
 
 function RollBodyIncrementsCombo()
