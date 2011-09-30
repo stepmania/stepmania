@@ -94,6 +94,7 @@ Song* GameState::GetDefaultSong() const
 	return sid.ToSong();
 }
 
+static const ThemeMetric<bool> EDIT_ALLOWED_FOR_EXTRA ("GameState","EditAllowedForExtra");
 static const ThemeMetric<Difficulty> MIN_DIFFICULTY_FOR_EXTRA	("GameState","MinDifficultyForExtra");
 static const ThemeMetric<Grade> GRADE_TIER_FOR_EXTRA_1	("GameState","GradeTierForExtra1");
 static const ThemeMetric<bool> ALLOW_EXTRA_2		("GameState","AllowExtra2");
@@ -1297,7 +1298,8 @@ EarnedExtraStage GameState::CalculateEarnedExtraStage() const
 		switch( dc )
 		{
 		case Difficulty_Edit:
-			continue; // can't use edit steps
+			if( !EDIT_ALLOWED_FOR_EXTRA )
+				continue; // can't use edit steps
 			break;
 		default:
 			if( dc < MIN_DIFFICULTY_FOR_EXTRA )
