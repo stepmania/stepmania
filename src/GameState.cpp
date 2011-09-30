@@ -2433,12 +2433,13 @@ public:
 		return 0;
 	}
 	static int GetExpandedSectionName( T* p, lua_State *L )				{ lua_pushstring(L, p->sExpandedSectionName); return 1; }
+	static int AddStageToPlayer( T* p, lua_State *L )				{ p->AddStageToPlayer(Enum::Check<PlayerNumber>(L, 1)); return 0; }
+	static int CurrentOptionsDisqualifyPlayer( T* p, lua_State *L )	{ lua_pushboolean(L, p->CurrentOptionsDisqualifyPlayer(Enum::Check<PlayerNumber>(L, 1))); return 1; }
 	static int Dopefish( T* p, lua_State *L )
 	{
 		lua_pushboolean(L, p->m_bDopefish);
 		return 1;
 	}
-	static int AddStageToPlayer( T* p, lua_State *L )				{ p->AddStageToPlayer(Enum::Check<PlayerNumber>(L, 1)); return 0; }
 
 	LunaGameState()
 	{
@@ -2539,8 +2540,9 @@ public:
 		ADD_METHOD( GetCharacter );
 		ADD_METHOD( SetCharacter );
 		ADD_METHOD( GetExpandedSectionName );
-		ADD_METHOD( Dopefish );
 		ADD_METHOD( AddStageToPlayer );
+		ADD_METHOD( CurrentOptionsDisqualifyPlayer );
+		ADD_METHOD( Dopefish );
 	}
 };
 

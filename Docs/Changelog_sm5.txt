@@ -8,6 +8,10 @@ ________________________________________________________________________________
 StepMania 5.0 $next | 201110??
 --------------------------------------------------------------------------------
 
+2011/09/30
+----------
+* [GameState] Added CurrentOptionsDisqualifyPlayer(player) Lua binding. [AJ]
+
 2011/09/29
 ----------
 * [Fallback theme] Fix ImmediateHoldLetGo function. [Wolfman2000]
