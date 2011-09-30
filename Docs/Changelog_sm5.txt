@@ -11,6 +11,7 @@ StepMania 5.0 $next | 201110??
 2011/09/30
 ----------
 * [GameState] Added CurrentOptionsDisqualifyPlayer(player) Lua binding. [AJ]
+* [GameState] Added ApplyPreferredModifiers(player,string) Lua binding. [AJ]
 
 2011/09/29
 ----------
