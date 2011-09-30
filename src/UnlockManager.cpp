@@ -391,7 +391,7 @@ UnlockEntryStatus UnlockEntry::GetUnlockEntryStatus() const
 			);
 		FOREACH_CONST( Steps*, vp, s )
 			if( PROFILEMAN->GetMachineProfile()->HasPassedSteps(pSong, *s) )
-				return UnlockEntryStatus_RequirementsMet;
+				return UnlockEntryStatus_Unlocked;
 	}
 	
 	if (m_bRequirePassChallengeSteps && m_Song.IsValid())
@@ -405,7 +405,7 @@ UnlockEntryStatus UnlockEntry::GetUnlockEntryStatus() const
 		FOREACH_CONST(Steps*, vp, s)
 		{
 			if (PROFILEMAN->GetMachineProfile()->HasPassedSteps(pSong, *s))
-				return UnlockEntryStatus_RequirementsMet;
+				return UnlockEntryStatus_Unlocked;
 		}
 	}
 
