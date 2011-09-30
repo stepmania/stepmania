@@ -1542,7 +1542,10 @@ int Song::GetNumStepsLoadedFromProfile( ProfileSlot slot ) const
 
 bool Song::IsEditAlreadyLoaded( Steps* pSteps ) const
 {
-	ASSERT( pSteps->GetDifficulty() == Difficulty_Edit );
+	ASSERT_M( pSteps->GetDifficulty() == Difficulty_Edit,
+			 ssprintf("The %s chart for %s is no edit, thus it can't be checked for loading.",
+					  DifficultyToString(pSteps->GetDifficulty()).c_str(),
+					  this->m_sMainTitle.c_str()));
 
 	for( unsigned i=0; i<m_vpSteps.size(); i++ )
 	{
