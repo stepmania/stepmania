@@ -135,7 +135,7 @@ end
 function table.find(t, sFind)
 	for _, v in pairs(t) do
 		if v == sFind then
-			return i
+			return _
 		end
 	end
 	return nil
