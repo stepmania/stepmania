@@ -313,7 +313,9 @@ TimingSegment* GetSegmentAtRow( int iNoteRow, TimingSegmentType tst )
 static void EraseSegment( vector<TimingSegment*> &vSegs, int index, TimingSegment *cur )
 {
 	LOG->Trace( "EraseSegment(%d, %p)", index, cur );
+#ifdef DEBUG
 	cur->DebugPrint();
+#endif
 
 	vSegs.erase( vSegs.begin() + index );
 	SAFE_DELETE( cur );
@@ -324,7 +326,9 @@ static void EraseSegment( vector<TimingSegment*> &vSegs, int index, TimingSegmen
 void TimingData::AddSegment( const TimingSegment *seg )
 {
 	//LOG->Trace( "AddSegment( %s )", TimingSegmentTypeToString(seg->GetType()).c_str() );
+#ifdef DEBUG
 	seg->DebugPrint();
+#endif
 
 	TimingSegmentType tst = seg->GetType();
 	vector<TimingSegment*> &vSegs = m_avpTimingSegments[tst];
