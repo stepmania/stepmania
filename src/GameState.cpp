@@ -2308,6 +2308,11 @@ public:
 		lua_pushstring(L, so.GetString());
 		return 1;
 	}
+	static int ApplyStageModifiers( T* p, lua_State *L )
+	{
+		p->ApplyStageModifiers( Enum::Check<PlayerNumber>(L, 1), SArg(2) );
+		return 0;
+	}
 	static int ApplyPreferredModifiers( T* p, lua_State *L )
 	{
 		p->ApplyPreferredModifiers( Enum::Check<PlayerNumber>(L, 1), SArg(2) );
@@ -2516,6 +2521,7 @@ public:
 		ADD_METHOD( GetSongOptions );
 		ADD_METHOD( GetDefaultSongOptions );
 		ADD_METHOD( ApplyPreferredModifiers );
+		ADD_METHOD( ApplyStageModifiers );
 		ADD_METHOD( ClearStageModifiersIllegalForCourse );
 		ADD_METHOD( SetSongOptions );
 		ADD_METHOD( IsWinner );
