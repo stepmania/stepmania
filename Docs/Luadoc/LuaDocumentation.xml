@@ -3415,7 +3415,7 @@
 	<Function name='HasCDTitle' return='bool' arguments=''>
 		Returns <code>true</code> if the song has a CDTitle.
 	</Function>
-	<Function name='HasEdits' return='bool' arguments=''>
+	<Function name='HasEdits' return='bool' arguments='StepsType st'>
 		Returns <code>true</code> if the song has edits.
 	</Function>
 	<Function name='HasLyrics' return='bool' arguments=''>
