@@ -8,6 +8,11 @@ ________________________________________________________________________________
 StepMania 5.0 $next | 201110??
 --------------------------------------------------------------------------------
 
+2011/10/01
+----------
+* [ScreenHighScores] Disable forced screen transition behavior when
+  ManualScrolling=true. [AJ]
+
 2011/09/30
 ----------
 * [GameState] Added CurrentOptionsDisqualifyPlayer(player),
