@@ -1,7 +1,7 @@
 #ifndef GROOVE_RADAR_H
 #define GROOVE_RADAR_H
 
-#include "ActorFrame.h"
+#include "Actors\ActorFrame.h"
 #include "Sprite.h"
 #include "AutoActor.h"
 #include "PlayerNumber.h"

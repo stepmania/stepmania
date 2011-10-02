@@ -3,7 +3,7 @@
 #ifndef ModIconRow_H
 #define ModIconRow_H
 
-#include "ActorFrame.h"
+#include "Actors\ActorFrame.h"
 #include "ModIcon.h"
 #include "ThemeMetric.h"
 class PlayerOptions;

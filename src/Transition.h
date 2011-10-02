@@ -3,7 +3,7 @@
 #ifndef TRANSITION_H
 #define TRANSITION_H
 
-#include "ActorFrame.h"
+#include "Actors\ActorFrame.h"
 #include "AutoActor.h"
 #include "ScreenMessage.h"
 

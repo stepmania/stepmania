@@ -2,7 +2,7 @@
 #define OPTIONS_CURSOR_H
 
 #include "Sprite.h"
-#include "ActorFrame.h"
+#include "Actors\ActorFrame.h"
 #include "PlayerNumber.h"
 #include "AutoActor.h"
 /** @brief A cursor for ScreenOptions. */

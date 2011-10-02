@@ -8,7 +8,7 @@
 #include "InputMapper.h"
 #include "Game.h"
 #include "PrefsManager.h"
-#include "Actor.h"
+#include "Actors\Actor.h"
 #include "Preference.h"
 #include "Foreach.h"
 #include "GameManager.h"

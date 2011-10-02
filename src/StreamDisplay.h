@@ -2,7 +2,7 @@
 #ifndef StreamDisplay_H
 #define StreamDisplay_H
 
-#include "ActorFrame.h"
+#include "Actors\ActorFrame.h"
 #include "Sprite.h"
 #include "Quad.h"
 #include "LuaExpressionTransform.h"

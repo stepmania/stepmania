@@ -7,7 +7,7 @@
 #include "GameConstantsAndTypes.h"
 #include "ActorUtil.h"
 #include "Difficulty.h"
-#include "ActorFrame.h"
+#include "Actors\ActorFrame.h"
 #include "ThemeMetric.h"
 #include "Sprite.h"
 

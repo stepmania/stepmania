@@ -1,7 +1,7 @@
 #ifndef GRADE_DISPLAY_H
 #define GRADE_DISPLAY_H
 
-#include "ActorFrame.h"
+#include "Actors\ActorFrame.h"
 #include "Grade.h"
 #include "PlayerNumber.h"
 #include "AutoActor.h"

@@ -1,7 +1,7 @@
 #ifndef NOTE_SKIN_MANAGER_H
 #define NOTE_SKIN_MANAGER_H
 
-#include "Actor.h"
+#include "Actors\Actor.h"
 #include "RageTypes.h"
 #include "PlayerNumber.h"
 #include "IniFile.h"

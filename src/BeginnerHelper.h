@@ -1,7 +1,7 @@
 #ifndef BEGINNER_HELPER_H
 #define BEGINNER_HELPER_H
 
-#include "ActorFrame.h"
+#include "Actors\ActorFrame.h"
 #include "Character.h"
 #include "Sprite.h"
 #include "AutoActor.h"

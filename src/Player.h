@@ -1,7 +1,7 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
-#include "ActorFrame.h"
+#include "Actors\ActorFrame.h"
 #include "HoldJudgment.h"
 #include "NoteDataWithScoring.h"
 #include "RageSound.h"

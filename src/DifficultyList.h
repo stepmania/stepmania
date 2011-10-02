@@ -2,7 +2,7 @@
 #ifndef DIFFICULTY_LIST_H
 #define DIFFICULTY_LIST_H
 
-#include "ActorFrame.h"
+#include "Actors\ActorFrame.h"
 #include "PlayerNumber.h"
 #include "StepsDisplay.h"
 #include "ThemeMetric.h"

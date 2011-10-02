@@ -1,7 +1,7 @@
 #ifndef BITMAP_TEXT_H
 #define BITMAP_TEXT_H
 
-#include "Actor.h"
+#include "Actors\Actor.h"
 #include <map>
 
 class RageTexture;

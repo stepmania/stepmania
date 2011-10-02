@@ -1,7 +1,7 @@
 #ifndef ACTOR_SCROLLER_H
 #define ACTOR_SCROLLER_H
 
-#include "ActorScroller.h"
+#include "Actors\ActorScroller.h"
 #include "LuaReference.h"
 /** @brief ActorScroller that fills in its children on the fly. */
 class DynamicActorScroller: public ActorScroller

@@ -3,7 +3,7 @@
 #ifndef MODEL_H
 #define MODEL_H
 
-#include "Actor.h"
+#include "Actors\Actor.h"
 #include "RageTypes.h"
 #include "ModelTypes.h"
 #include <vector>

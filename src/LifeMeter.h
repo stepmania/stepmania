@@ -3,7 +3,7 @@
 
 #include "PlayerNumber.h"
 #include "GameConstantsAndTypes.h"
-#include "ActorFrame.h"
+#include "Actors\ActorFrame.h"
 #include "SongOptions.h"
 
 class PlayerState;

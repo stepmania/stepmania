@@ -3,7 +3,7 @@
 #ifndef MENU_TIMER_H
 #define MENU_TIMER_H
 
-#include "ActorFrame.h"
+#include "Actors\ActorFrame.h"
 #include "BitmapText.h"
 #include "RageSound.h"
 #include "ThemeMetric.h"

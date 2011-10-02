@@ -3,7 +3,7 @@
 #ifndef ControllerStateDisplay_H
 #define ControllerStateDisplay_H
 
-#include "ActorFrame.h"
+#include "Actors\ActorFrame.h"
 #include "ActorUtil.h"
 #include "PlayerNumber.h"
 #include "AutoActor.h"

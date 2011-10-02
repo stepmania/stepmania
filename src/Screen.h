@@ -1,7 +1,7 @@
 #ifndef SCREEN_H
 #define SCREEN_H
 
-#include "ActorFrame.h"
+#include "Actors\ActorFrame.h"
 #include "ScreenMessage.h"
 #include "InputFilter.h"
 #include "ThemeMetric.h"

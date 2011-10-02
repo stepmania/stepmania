@@ -1,7 +1,7 @@
 #ifndef AttackDisplay_H
 #define AttackDisplay_H
 
-#include "ActorFrame.h"
+#include "Actors\ActorFrame.h"
 #include "Sprite.h"
 #include "GameConstantsAndTypes.h"	// for TapNoteScore
 #include "RageTexturePreloader.h"
