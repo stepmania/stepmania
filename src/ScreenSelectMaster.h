@@ -5,7 +5,7 @@
 #include "RageSound.h"
 #include "RandomSample.h"
 #include "ActorUtil.h"
-#include "Actors\ActorScroller.h"
+#include "Actors/ActorScroller.h"
 
 enum MenuDir
 {

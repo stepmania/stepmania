@@ -1,7 +1,7 @@
 #ifndef Inventory_H
 #define Inventory_H
 
-#include "Actors\Actor.h"
+#include "Actors/Actor.h"
 #include "PlayerNumber.h"
 #include "RageSound.h"
 #include "ScreenMessage.h"

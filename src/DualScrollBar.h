@@ -1,7 +1,7 @@
 #ifndef DUAL_SCROLLBAR_H
 #define DUAL_SCROLLBAR_H
 
-#include "Actors\ActorFrame.h"
+#include "Actors/ActorFrame.h"
 #include "AutoActor.h"
 #include "PlayerNumber.h"
 /** @brief A scrollbar with two independent thumbs. */

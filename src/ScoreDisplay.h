@@ -2,7 +2,7 @@
 #define SCORE_DISPLAY_H
 
 #include "PlayerNumber.h"
-#include "Actors\ActorFrame.h"
+#include "Actors/ActorFrame.h"
 #include "GameConstantsAndTypes.h"
 
 class PlayerState;

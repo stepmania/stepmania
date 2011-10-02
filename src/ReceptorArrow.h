@@ -1,7 +1,7 @@
 #ifndef RECEPTOR_ARROW_H
 #define RECEPTOR_ARROW_H
 
-#include "Actors\ActorFrame.h"
+#include "Actors/ActorFrame.h"
 #include "AutoActor.h"
 #include "PlayerNumber.h"
 #include "GameConstantsAndTypes.h"

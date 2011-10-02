@@ -4,7 +4,7 @@
 #include "GameConstantsAndTypes.h"
 #include "PlayerNumber.h"
 #include "Sprite.h"
-#include "Actors\ActorFrame.h"
+#include "Actors/ActorFrame.h"
 /** @brief A graphic displaying the state of memory cards. */
 class MemoryCardDisplay : public ActorFrame
 {

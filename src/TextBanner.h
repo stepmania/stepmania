@@ -3,7 +3,7 @@
 #ifndef TEXTBANNER_H
 #define TEXTBANNER_H
 
-#include "Actors\ActorFrame.h"
+#include "Actors/ActorFrame.h"
 #include "BitmapText.h"
 class Song;
 

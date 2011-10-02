@@ -1,7 +1,7 @@
 #ifndef LYRIC_DISPLAY_H
 #define LYRIC_DISPLAY_H
 
-#include "Actors\ActorFrame.h"
+#include "Actors/ActorFrame.h"
 #include "BitmapText.h"
 /** @brief Displays lyrics along with the song on Gameplay. */
 class LyricDisplay: public ActorFrame

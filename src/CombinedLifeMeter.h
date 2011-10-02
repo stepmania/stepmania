@@ -3,7 +3,7 @@
 
 #include "PlayerNumber.h"
 #include "GameConstantsAndTypes.h"
-#include "Actors\ActorFrame.h"
+#include "Actors/ActorFrame.h"
 
 /** @brief Multiple Players sharing one LifeMeter. */
 class CombinedLifeMeter : public ActorFrame
