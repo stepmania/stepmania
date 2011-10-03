@@ -6,7 +6,7 @@
 #include "ThemeManager.h"
 #include "RageTimer.h"
 #include "ActorUtil.h"
-#include "Actors/Actor.h"
+#include "Actor.h"
 #include "GameSoundManager.h"
 #include "MenuTimer.h"
 #include "NetworkSyncManager.h"

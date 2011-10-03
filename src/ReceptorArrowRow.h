@@ -2,7 +2,7 @@
 #define RECEPTOR_ARROW_ROW_H
 
 #include "ReceptorArrow.h"
-#include "Actors/ActorFrame.h"
+#include "ActorFrame.h"
 #include "GameConstantsAndTypes.h"
 
 class PlayerState;

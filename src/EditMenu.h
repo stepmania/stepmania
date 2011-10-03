@@ -1,7 +1,7 @@
 #ifndef EDIT_MENU_H
 #define EDIT_MENU_H
 
-#include "Actors/ActorFrame.h"
+#include "ActorFrame.h"
 #include "FadingBanner.h"
 #include "TextBanner.h"
 #include "GameConstantsAndTypes.h"

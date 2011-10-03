@@ -1,7 +1,7 @@
 #ifndef DancingCharacters_H
 #define DancingCharacters_H
 
-#include "Actors/ActorFrame.h"
+#include "ActorFrame.h"
 #include "PlayerNumber.h"
 #include "ThemeManager.h"
 #include "RageTimer.h"

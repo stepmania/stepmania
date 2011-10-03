@@ -1,7 +1,7 @@
 #ifndef BACKGROUND_H
 #define BACKGROUND_H
 
-#include "Actors/ActorFrame.h"
+#include "ActorFrame.h"
 #include "Quad.h"
 #include "PlayerNumber.h"
 #include "BackgroundUtil.h"

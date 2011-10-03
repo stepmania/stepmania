@@ -1,7 +1,7 @@
 #ifndef ModIcon_H
 #define ModIcon_H
 
-#include "Actors/ActorFrame.h"
+#include "ActorFrame.h"
 #include "AutoActor.h"
 #include "BitmapText.h"
 #include "PlayerNumber.h"

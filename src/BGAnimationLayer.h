@@ -2,7 +2,7 @@
 #define BGANIMATIONLAYER_H
 
 #include "GameConstantsAndTypes.h"
-#include "Actors/ActorFrame.h"
+#include "ActorFrame.h"
 #include <map>
 
 class XNode;

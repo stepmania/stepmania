@@ -2,7 +2,7 @@
 #ifndef COMBO_GRAPH_H
 #define COMBO_GRAPH_H
 
-#include "Actors/ActorFrame.h"
+#include "ActorFrame.h"
 #include "PlayerNumber.h"
 #include "ThemeMetric.h"
 

@@ -1,6 +1,6 @@
 #include "global.h"
 #include "GameState.h"
-#include "Actors/Actor.h"
+#include "Actor.h"
 #include "AdjustSync.h"
 #include "AnnouncerManager.h"
 #include "Bookkeeper.h"

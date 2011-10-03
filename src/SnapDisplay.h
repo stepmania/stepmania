@@ -1,7 +1,7 @@
 #ifndef SNAPDISPLAY_H
 #define SNAPDISPLAY_H
 
-#include "Actors/ActorFrame.h"
+#include "ActorFrame.h"
 #include "NoteTypes.h"
 #include "Sprite.h"
 

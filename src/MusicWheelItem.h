@@ -1,7 +1,7 @@
 #ifndef MUSIC_WHEEL_ITEM_H
 #define MUSIC_WHEEL_ITEM_H
 
-#include "Actors/ActorFrame.h"
+#include "ActorFrame.h"
 #include "BitmapText.h"
 #include "WheelNotifyIcon.h"
 #include "TextBanner.h"

@@ -1,7 +1,7 @@
 #ifndef COURSE_CONTENTS_LIST_H
 #define COURSE_CONTENTS_LIST_H
 
-#include "Actors/ActorScroller.h"
+#include "ActorScroller.h"
 class CourseEntryDisplay;
 /** @brief Holds course name and banner. */
 class CourseContentsList : public ActorScroller

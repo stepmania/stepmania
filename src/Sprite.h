@@ -1,7 +1,7 @@
 #ifndef SPRITE_H
 #define SPRITE_H
 
-#include "Actors/Actor.h"
+#include "Actor.h"
 #include "RageTextureID.h"
 
 void TexCoordArrayFromRect( float fImageCoords[8], const RectF &rect );

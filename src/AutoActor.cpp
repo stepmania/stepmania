@@ -1,7 +1,7 @@
 #include "global.h"
 #include "AutoActor.h"
 #include "ThemeManager.h"
-#include "Actors/Actor.h"
+#include "Actor.h"
 #include "ActorUtil.h"
 
 void AutoActor::Unload()

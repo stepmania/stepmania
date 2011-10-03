@@ -1,7 +1,7 @@
 #ifndef PANE_DISPLAY_H
 #define PANE_DISPLAY_H
 
-#include "Actors/ActorFrame.h"
+#include "ActorFrame.h"
 #include "ActorUtil.h"
 #include "PlayerNumber.h"
 #include "BitmapText.h"

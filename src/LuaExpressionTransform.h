@@ -3,7 +3,7 @@
 #ifndef LuaExpressionTransform_H
 #define LuaExpressionTransform_H
 
-#include "Actors/Actor.h"
+#include "Actor.h"
 #include "LuaReference.h"
 #include <map>
 

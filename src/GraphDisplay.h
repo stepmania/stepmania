@@ -1,7 +1,7 @@
 #ifndef GRAPH_DISPLAY_H
 #define GRAPH_DISPLAY_H
 
-#include "Actors/ActorFrame.h"
+#include "ActorFrame.h"
 #include "AutoActor.h"
 
 class StageStats;

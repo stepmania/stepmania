@@ -1,7 +1,7 @@
 #ifndef HOLD_JUDGMENT_H
 #define HOLD_JUDGMENT_H
 
-#include "Actors/ActorFrame.h"
+#include "ActorFrame.h"
 #include "GameConstantsAndTypes.h"
 #include "PlayerNumber.h"
 #include "AutoActor.h"

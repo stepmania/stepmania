@@ -4,7 +4,7 @@
 #include "TimingData.h"
 #include "SongPosition.h"
 #include "Sprite.h"
-#include "Actors/ActorFrame.h"
+#include "ActorFrame.h"
 #include "BitmapText.h"
 #include "Quad.h"
 #include "NoteDisplay.h"

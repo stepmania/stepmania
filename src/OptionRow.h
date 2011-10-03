@@ -3,7 +3,7 @@
 #ifndef OptionRow_H
 #define OptionRow_H
 
-#include "Actors/ActorFrame.h"
+#include "ActorFrame.h"
 #include "BitmapText.h"
 #include "OptionsCursor.h"
 #include "ModIcon.h"

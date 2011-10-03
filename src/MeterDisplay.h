@@ -3,7 +3,7 @@
 #ifndef METER_DISPLAY_H
 #define METER_DISPLAY_H
 
-#include "Actors/ActorFrame.h"
+#include "ActorFrame.h"
 #include "AutoActor.h"
 
 

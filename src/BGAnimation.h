@@ -1,7 +1,7 @@
 #ifndef BGANIMATION_H
 #define BGANIMATION_H
 
-#include "Actors/ActorFrame.h"
+#include "ActorFrame.h"
 
 class XNode;
 

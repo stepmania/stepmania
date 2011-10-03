@@ -1,7 +1,7 @@
 #ifndef WHEEL_ITEM_BASE_H
 #define WHEEL_ITEM_BASE_H
 
-#include "Actors/ActorFrame.h"
+#include "ActorFrame.h"
 #include "BitmapText.h"
 #include "ThemeMetric.h"
 #include "GameConstantsAndTypes.h"

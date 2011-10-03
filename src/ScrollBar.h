@@ -3,7 +3,7 @@
 #ifndef SCROLL_BAR_H
 #define SCROLL_BAR_H
 
-#include "Actors/ActorFrame.h"
+#include "ActorFrame.h"
 #include "AutoActor.h"
 
 

@@ -4,7 +4,7 @@
 #define ROOM_INFO_DISPLAY_H
 
 #include "RoomWheel.h"
-#include "Actors/ActorFrame.h"
+#include "ActorFrame.h"
 
 class RoomInfoDisplay : public ActorFrame
 {
