@@ -454,12 +454,12 @@ RageUtil_AutoPtr.h \
 RageUtil_WorkerThread.cpp RageUtil_WorkerThread.h
 
 Actors = \
-Actors/Actor.cpp Actors/Actor.h Actors/ActorFrame.cpp Actors/ActorFrame.h \
-Actors/ActorFrameTexture.cpp Actors/ActorFrameTexture.h \
-Actors/ActorMultiTexture.cpp Actors/ActorMultiTexture.h \
-Actors/ActorProxy.cpp Actors/ActorProxy.h \
-Actors/ActorScroller.cpp Actors/ActorScroller.h ActorUtil.cpp ActorUtil.h \
-Actors/ActorSound.cpp Actors/ActorSound.h \
+Actor.cpp Actor.h ActorFrame.cpp ActorFrame.h \
+ActorFrameTexture.cpp ActorFrameTexture.h \
+ActorMultiTexture.cpp ActorMultiTexture.h \
+ActorProxy.cpp ActorProxy.h \
+ActorScroller.cpp ActorScroller.h ActorUtil.cpp ActorUtil.h \
+ActorSound.cpp ActorSound.h \
 AutoActor.cpp AutoActor.h \
 BitmapText.cpp BitmapText.h Model.cpp Model.h \
 DynamicActorScroller.cpp DynamicActorScroller.h \
