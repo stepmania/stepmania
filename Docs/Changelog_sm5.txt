@@ -8,6 +8,11 @@ ________________________________________________________________________________
 StepMania 5.0 Preview 4 | 2011100?
 --------------------------------------------------------------------------------
 
+2011/10/04
+----------
+* [NoteDataUtil] More accurate Left, Right, and Mirror mods for Pump gameplay.
+  Major thanks to Hudson Felker and Bill Shillito here. [Wolfman2000]
+
 2011/10/01
 ----------
 * [ScreenHighScores] Disable forced screen transition behavior when
