@@ -1429,7 +1429,7 @@ void ScreenGameplay::PlayTicks()
 }
 
 /* Play announcer "type" if it's been at least fSeconds since the last announcer. */
-void ScreenGameplay::PlayAnnouncer( RString type, float fSeconds )
+void ScreenGameplay::PlayAnnouncer( RString type, float fSeconds, float *fDeltaSeconds )
 {
 	if( GAMESTATE->m_fOpponentHealthPercent == 0 )
 		return; // Shut the announcer up
@@ -1445,9 +1445,9 @@ void ScreenGameplay::PlayAnnouncer( RString type, float fSeconds )
 	   GAMESTATE->m_Position.m_fSongBeat < GAMESTATE->m_pCurSong->GetFirstBeat())
 		return;
 
-	if( m_fTimeSinceLastDancingComment < fSeconds )
+	if( *fDeltaSeconds < fSeconds )
 		return;
-	m_fTimeSinceLastDancingComment = 0;
+	*fDeltaSeconds = 0;
 
 	SOUND->PlayOnceFromAnnouncer( type );
 }
