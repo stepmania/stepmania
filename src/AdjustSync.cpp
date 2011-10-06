@@ -59,7 +59,6 @@ void AdjustSync::ResetOriginalSyncData()
 
 	if( GAMESTATE->m_pCurSong )
 	{
-		
 		s_vpTimingDataOriginal.push_back(GAMESTATE->m_pCurSong->m_SongTiming);
 		const vector<Steps *>& vpSteps = GAMESTATE->m_pCurSong->GetAllSteps();
 		FOREACH( Steps*, const_cast<vector<Steps *>&>(vpSteps), s )
@@ -97,7 +96,7 @@ void AdjustSync::SaveSyncChanges()
 {
 	if( GAMESTATE->IsCourseMode() )
 		return;
-	
+
 	/* TODO: Save all of the timing data changes.
 	 * Luckily, only the song timing data needs comparing here. */
 	if( GAMESTATE->m_pCurSong && s_vpTimingDataOriginal[0] != GAMESTATE->m_pCurSong->m_SongTiming )
@@ -123,10 +122,10 @@ void AdjustSync::RevertSyncChanges()
 	if( GAMESTATE->IsCourseMode() )
 		return;
 	PREFSMAN->m_fGlobalOffsetSeconds.Set( s_fGlobalOffsetSecondsOriginal );
-	
+
 	// The first one is ALWAYS the song timing.
 	GAMESTATE->m_pCurSong->m_SongTiming = s_vpTimingDataOriginal[0];
-	
+
 	unsigned location = 1;
 	const vector<Steps *>& vpSteps = GAMESTATE->m_pCurSong->GetAllSteps();
 	FOREACH( Steps*, const_cast<vector<Steps *>&>(vpSteps), s )
@@ -134,7 +133,7 @@ void AdjustSync::RevertSyncChanges()
 		(*s)->m_Timing = s_vpTimingDataOriginal[location];
 		location++;
 	}
-	
+
 	ResetOriginalSyncData();
 	s_fStandardDeviation = 0.0f;
 	s_fAverageError = 0.0f;
@@ -169,7 +168,7 @@ void AdjustSync::HandleAutosync( float fNoteOffBySeconds, float fStepTime )
 
 		AutosyncOffset();
 		break;
- 	}
+	}
 	default:
 		ASSERT(0);
 	}
@@ -250,12 +249,11 @@ void AdjustSync::AutosyncTempo()
 
 	if( s_fAverageError < ERROR_TOO_HIGH )
 	{
-		// Here we filter out any steps that are too far off.
-		//
-		// If it turns out that we want to be even more selective, we can
-		// keep only a fraction of the data, such as the 80% with the lowest
-		// error.  However, throwing away the ones with high error should
-		// be enough in most cases.
+		/* Here we filter out any steps that are too far off.
+		 * If it turns out that we want to be even more selective, we can keep
+		 * only a fraction of the data, such as the 80% with the lowest error.
+		 * However, throwing away the ones with high error should be enough
+		 * in most cases. */
 		float fFilteredError = 0;
 		s_iStepsFiltered = s_vAutosyncTempoData.size();
 		FilterHighErrorPoints( s_vAutosyncTempoData, fSlope, fIntercept, ERROR_TOO_HIGH );
@@ -267,28 +265,29 @@ void AdjustSync::AutosyncTempo()
 		GAMESTATE->m_pCurSong->m_SongTiming.m_fBeat0OffsetInSeconds += fIntercept;
 		const float fScaleBPM = 1.0f/(1.0f - fSlope);
 		TimingData &timing = GAMESTATE->m_pCurSong->m_SongTiming;
-		vector<TimingSegment *> &bpms = timing.m_avpTimingSegments[SEGMENT_BPM];
+
+		const vector<TimingSegment *> &bpms = timing.GetTimingSegments(SEGMENT_BPM);
 		for (unsigned i = 0; i < bpms.size(); i++)
 		{
-			BPMSegment *b = static_cast<BPMSegment *>(bpms[i]);
-			b->SetBPM(b->GetBPM() * fScaleBPM);
+			const BPMSegment *b = ToBPM( bpms[i] );
+			timing.AddSegment( BPMSegment(b->GetRow(), b->GetBPM() * fScaleBPM) );
 		}
 
 		/* We assume that the stops were measured as a number of beats.
 		 * Therefore, if we change the bpms, we need to make a similar
 		 * change to the stops. */
-		vector<TimingSegment *> &stops = timing.m_avpTimingSegments[SEGMENT_STOP];
+		const vector<TimingSegment *> &stops = timing.GetTimingSegments(SEGMENT_STOP);
 		for (unsigned i = 0; i < stops.size(); i++)
 		{
-			StopSegment *s = static_cast<StopSegment *>(stops[i]);
-			s->SetPause(s->GetPause() * (1.0f - fSlope));
+			const StopSegment *s = ToStop( stops[i] );
+			timing.AddSegment( StopSegment(s->GetRow(), s->GetPause() * (1.0f - fSlope)) );
 		}
 		// Do the same for delays.
-		vector<TimingSegment *> &delays = timing.m_avpTimingSegments[SEGMENT_DELAY];
+		const vector<TimingSegment *> &delays = timing.GetTimingSegments(SEGMENT_DELAY);
 		for (unsigned i = 0; i < delays.size(); i++)
 		{
-			DelaySegment *s = static_cast<DelaySegment *>(delays[i]);
-			s->SetPause(s->GetPause() * (1.0f - fSlope));
+			const DelaySegment *s = ToDelay( delays[i] );
+			timing.AddSegment( DelaySegment(s->GetRow(), s->GetPause() * (1.0f - fSlope)) );
 		}
 
 		SCREENMAN->SystemMessage( AUTOSYNC_CORRECTION_APPLIED.GetValue() );
@@ -301,7 +300,6 @@ void AdjustSync::AutosyncTempo()
 
 	s_vAutosyncTempoData.clear();
 }
-
 
 static LocalizedString EARLIER			("AdjustSync","earlier");
 static LocalizedString LATER			("AdjustSync","later");
@@ -329,19 +327,19 @@ void AdjustSync::GetSyncChangeTextGlobal( vector<RString> &vsAddTo )
 		{
 			vsAddTo.push_back( ssprintf( 
 				GLOBAL_OFFSET_FROM.GetValue(),
-				fOld, 
-				fNew,
-				(fDelta > 0 ? EARLIER:LATER).GetValue().c_str() ) );
+				fOld, fNew,
+				(fDelta > 0 ? EARLIER:LATER).GetValue().c_str() ));
 		}
 	}
 }
 
+// XXX: needs cleanup still -- vyhd
 void AdjustSync::GetSyncChangeTextSong( vector<RString> &vsAddTo )
 {
 	if( GAMESTATE->m_pCurSong.Get() )
 	{
 		unsigned int iOriginalSize = vsAddTo.size();
-		TimingData original = s_vpTimingDataOriginal[0];
+		TimingData &original = s_vpTimingDataOriginal[0];
 		TimingData &testing = GAMESTATE->m_pCurSong->m_SongTiming;
 
 		{
@@ -359,79 +357,74 @@ void AdjustSync::GetSyncChangeTextSong( vector<RString> &vsAddTo )
 			}
 		}
 
-		vector<TimingSegment *> &bpmTest = testing.m_avpTimingSegments[SEGMENT_BPM];
-		vector<TimingSegment *> &bpmOrig = original.m_avpTimingSegments[SEGMENT_BPM];
+		const vector<TimingSegment *> &bpmTest = testing.GetTimingSegments(SEGMENT_BPM);
+		const vector<TimingSegment *> &bpmOrig = original.GetTimingSegments(SEGMENT_BPM);
 		for( unsigned i=0; i< bpmTest.size(); i++ )
 		{
-			BPMSegment *bT = static_cast<BPMSegment *>(bpmTest[i]);
-			BPMSegment *bO = static_cast<BPMSegment *>(bpmOrig[i]);
-			float fOld = Quantize( bO->GetBPM(), 0.001f );
-			float fNew = Quantize( bT->GetBPM(), 0.001f );
-			float fDelta = fNew - fOld;
+			float fNew = Quantize( ToBPM(bpmTest[i])->GetBPM(), 0.001f );
+			float fOld = Quantize( ToBPM(bpmOrig[i])->GetBPM(), 0.001f );
 
-			if( fabsf(fDelta) > 0.0001f )
+			if( fabsf(fNew - fOld) < 1e-4 )
+				continue;
+
+			if ( i >= 4 )
 			{
-				if ( i >= 4 ) 
-				{
-					vsAddTo.push_back(ETC.GetValue());
-					break;
-				}
-				vsAddTo.push_back( ssprintf( 
-					TEMPO_SEGMENT_FROM.GetValue(),
-					FormatNumberAndSuffix(i+1).c_str(),
-					fOld, 
-					fNew ) );
+				vsAddTo.push_back(ETC.GetValue());
+				break;
 			}
+
+			RString s = ssprintf( TEMPO_SEGMENT_FROM.GetValue(),
+					FormatNumberAndSuffix(i+1).c_str(), fOld, fNew );
+
+			vsAddTo.push_back( s );
 		}
 
-		vector<TimingSegment *> &stopTest = testing.m_avpTimingSegments[SEGMENT_STOP];
-		vector<TimingSegment *> &stopOrig = original.m_avpTimingSegments[SEGMENT_STOP];
+		const vector<TimingSegment *> &stopTest = testing.GetTimingSegments(SEGMENT_STOP);
+		const vector<TimingSegment *> &stopOrig = original.GetTimingSegments(SEGMENT_STOP);
+
 		for( unsigned i=0; i< stopTest.size(); i++ )
 		{
-			StopSegment *sT = static_cast<StopSegment *>(stopTest[i]);
-			StopSegment *sO = static_cast<StopSegment *>(stopOrig[i]);
-			float fOld = Quantize( sO->GetPause(), 0.001f );
-			float fNew = Quantize( sT->GetPause(), 0.001f );
+			float fOld = Quantize( ToStop(stopOrig[i])->GetPause(), 0.001f );
+			float fNew = Quantize( ToStop(stopTest[i])->GetPause(), 0.001f );
 			float fDelta = fNew - fOld;
 
-			if( fabsf(fDelta) > 0.0001f )
+			if( fabsf(fDelta) < 1e-4 )
+				continue;
+
+			if ( i >= 4 )
 			{
-				if ( i >= 4 )
-				{
-					vsAddTo.push_back(ETC.GetValue());
-					break;
-				}
-				vsAddTo.push_back( ssprintf(
-					CHANGED_STOP.GetValue(),
-					i+1,
-					fOld, 
-					fNew ) );
+				vsAddTo.push_back(ETC.GetValue());
+				break;
 			}
+
+			RString s = ssprintf( CHANGED_STOP.GetValue(), i+1, fOld, fNew, fDelta );
+			vsAddTo.push_back( s );
 		}
-		
-		vector<TimingSegment *> &delyTest = testing.m_avpTimingSegments[SEGMENT_DELAY];
-		vector<TimingSegment *> &delyOrig = original.m_avpTimingSegments[SEGMENT_DELAY];
+
+		const vector<TimingSegment *> &delyTest = testing.GetTimingSegments(SEGMENT_DELAY);
+		const vector<TimingSegment *> &delyOrig = original.GetTimingSegments(SEGMENT_DELAY);
+
 		for( unsigned i=0; i< delyTest.size(); i++ )
 		{
-			DelaySegment *sT = static_cast<DelaySegment *>(delyTest[i]);
-			DelaySegment *sO = static_cast<DelaySegment *>(delyOrig[i]);
-			float fOld = Quantize( sO->GetPause(), 0.001f );
-			float fNew = Quantize( sT->GetPause(), 0.001f );
+			if( delyTest[i] == delyOrig[i] )
+				continue;
+
+			float fOld = Quantize( ToDelay(delyOrig[i])->GetPause(), 0.001f );
+			float fNew = Quantize( ToDelay(delyTest[i])->GetPause(), 0.001f );
 			float fDelta = fNew - fOld;
-			
-			if( fabsf(fDelta) > 0.0001f )
+
+			if( fabsf(fDelta) < 1e-4 )
+				continue;
+
+			if ( i >= 4 )
 			{
-				if ( i >= 4 )
-				{
-					vsAddTo.push_back(ETC.GetValue());
-					break;
-				}
-				vsAddTo.push_back( ssprintf(
-											CHANGED_STOP.GetValue(),
-											i+1,
-											fOld, 
-											fNew ) );
+				vsAddTo.push_back(ETC.GetValue());
+				break;
 			}
+
+			RString s = ssprintf( CHANGED_STOP.GetValue(),
+				i+1, fOld, fNew, fDelta );
+			vsAddTo.push_back( s );
 		}
 
 		if( vsAddTo.size() > iOriginalSize && s_fAverageError > 0.0f )

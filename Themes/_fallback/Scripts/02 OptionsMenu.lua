@@ -72,7 +72,6 @@ function OptionsRandomJukebox()
 
 	local t = 
 	{
-		-- Name is used to retrieve the header and explanation text.
 		Name = "OptionsRandomJukebox",
 		LayoutType = "ShowAllInRow",
 		SelectType = "SelectOne",
@@ -118,4 +117,3 @@ end
 -- OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
 -- OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
 -- PERFORMANCE OF THIS SOFTWARE.
-

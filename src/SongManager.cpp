@@ -296,9 +296,12 @@ void SongManager::LoadStepManiaSongDir( RString sDir, LoadingWindow *ld )
 			if( ld )
 			{
 				ld->SetProgress(songIndex);
-				ld->SetText( LOADING_SONGS.GetValue()+ssprintf("\n%s\n%s",
-									  Basename(sGroupDirName).c_str(),
-									  Basename(sSongDirName).c_str()));
+				ld->SetText( LOADING_SONGS.GetValue() +
+					ssprintf("\n%s\n%s",
+						Basename(sGroupDirName).c_str(),
+						Basename(sSongDirName).c_str()
+					)
+				);
 			}
 			Song* pNewSong = new Song;
 			if( !pNewSong->LoadFromSongDir( sSongDirName ) )
@@ -681,6 +684,18 @@ void SongManager::GetPreferredSortCourses( CourseType ct, vector<Course*> &AddTo
 int SongManager::GetNumSongs() const
 {
 	return m_pSongs.size();
+}
+
+int SongManager::GetNumLockedSongs() const
+{
+	int iNum = 0;
+	FOREACH_CONST( Song*, m_pSongs, i )
+	{
+		// If locked for any reason, regardless of how it's locked.
+		if( UNLOCKMAN->SongIsLocked(*i) )
+			++iNum;
+	}
+	return iNum;
 }
 
 int SongManager::GetNumUnlockedSongs() const
@@ -1896,6 +1911,7 @@ public:
 	static int GetRandomSong( T* p, lua_State *L )		{ Song *pS = p->GetRandomSong(); if(pS) pS->PushSelf(L); else lua_pushnil(L); return 1; }
 	static int GetRandomCourse( T* p, lua_State *L )	{ Course *pC = p->GetRandomCourse(); if(pC) pC->PushSelf(L); else lua_pushnil(L); return 1; }
 	static int GetNumSongs( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetNumSongs() ); return 1; }
+	static int GetNumLockedSongs( T* p, lua_State *L ) { lua_pushnumber( L, p->GetNumLockedSongs() ); return 1; }
 	static int GetNumUnlockedSongs( T* p, lua_State *L )    { lua_pushnumber( L, p->GetNumUnlockedSongs() ); return 1; }
 	static int GetNumSelectableAndUnlockedSongs( T* p, lua_State *L )    { lua_pushnumber( L, p->GetNumSelectableAndUnlockedSongs() ); return 1; }
 	static int GetNumAdditionalSongs( T* p, lua_State *L )  { lua_pushnumber( L, p->GetNumAdditionalSongs() ); return 1; }
@@ -2027,6 +2043,7 @@ public:
 		ADD_METHOD( GetRandomCourse );
 		ADD_METHOD( GetCourseGroupNames );
 		ADD_METHOD( GetNumSongs );
+		ADD_METHOD( GetNumLockedSongs );
 		ADD_METHOD( GetNumUnlockedSongs );
 		ADD_METHOD( GetNumSelectableAndUnlockedSongs );
 		ADD_METHOD( GetNumAdditionalSongs );

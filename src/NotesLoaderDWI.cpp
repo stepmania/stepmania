@@ -585,24 +585,20 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, set<RString> &Bla
 		else if( sValueName.EqualsNoCase("BPM") )
 		{
 			const float fBPM = StringToFloat( sParams[1] );
-			
-			if( PREFSMAN->m_bQuirksMode )
+
+			if( unlikely(fBPM <= 0.0f && !PREFSMAN->m_bQuirksMode) )
 			{
-				out.m_SongTiming.AddSegment( SEGMENT_BPM, new BPMSegment(0, fBPM) );
+				LOG->UserLog("Song file", sPath, "has an invalid BPM change at beat %f, BPM %f.",
+					0.0f, fBPM );
 			}
-			else{
-				if( fBPM > 0.0f )
-					out.m_SongTiming.AddSegment( SEGMENT_BPM, new BPMSegment(0, fBPM) );
-				else
-					LOG->UserLog("Song file",
-								 sPath,
-								 "has an invalid BPM change at beat %f, BPM %f.",
-								 0.0f, fBPM );
+			else
+			{
+				out.m_SongTiming.AddSegment( BPMSegment(0, fBPM) );
 			}
 		}
 		else if( sValueName.EqualsNoCase("DISPLAYBPM") )
 		{
-			// #DISPLAYBPM:[xxx..xxx]|[xxx]|[*]; 
+			// #DISPLAYBPM:[xxx..xxx]|[xxx]|[*];
 		    int iMin, iMax;
 			/* We can't parse this as a float with sscanf, since '.' is a valid
 			 * character in a float.  (We could do it with a regex, but it's not
@@ -626,7 +622,7 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, set<RString> &Bla
 
 		else if( sValueName.EqualsNoCase("GAP") )
 			// the units of GAP is 1/1000 second
-			out.m_SongTiming.m_fBeat0OffsetInSeconds = -StringToInt( sParams[1] ) / 1000.0f;
+			out.m_SongTiming.m_fBeat0OffsetInSeconds = -StringToInt(sParams[1]) / 1000.0f;
 
 		else if( sValueName.EqualsNoCase("SAMPLESTART") )
 			out.m_fMusicSampleStartSeconds = ParseBrokenDWITimestamp(sParams[1], sParams[2], sParams[3]);
@@ -650,8 +646,8 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, set<RString> &Bla
 				}
 				int iFreezeRow = BeatToNoteRow( StringToFloat(arrayFreezeValues[0]) / 4.0f );
 				float fFreezeSeconds = StringToFloat( arrayFreezeValues[1] ) / 1000.0f;
-				
-				out.m_SongTiming.AddSegment( SEGMENT_STOP, new StopSegment(iFreezeRow, fFreezeSeconds) );
+
+				out.m_SongTiming.AddSegment( StopSegment(iFreezeRow, fFreezeSeconds) );
 //				LOG->Trace( "Adding a freeze segment: beat: %f, seconds = %f", fFreezeBeat, fFreezeSeconds );
 			}
 		}
@@ -670,19 +666,14 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, set<RString> &Bla
 					LOG->UserLog( "Song file", sPath, "has an invalid CHANGEBPM: '%s'.", arrayBPMChangeExpressions[b].c_str() );
 					continue;
 				}
-				
+
 				int iStartIndex = BeatToNoteRow( StringToFloat(arrayBPMChangeValues[0]) / 4.0f );
 				float fBPM = StringToFloat( arrayBPMChangeValues[1] );
 				if( fBPM > 0.0f )
-				{
-					BPMSegment * bs = new BPMSegment( iStartIndex, fBPM );
-					out.m_SongTiming.AddSegment( SEGMENT_BPM, bs );
-				}
+					out.m_SongTiming.AddSegment( BPMSegment(iStartIndex, fBPM) );
 				else
-				{
 					LOG->UserLog( "Song file", sPath, "has an invalid BPM change at beat %f, BPM %f.",
 						      NoteRowToBeat(iStartIndex), fBPM );
-				}
 			}
 		}
 

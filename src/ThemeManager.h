@@ -99,7 +99,7 @@ public:
 	static RString GetBlankGraphicPath();
 
 	//needs to be public for its binding to work
-	void RunLuaScripts( const RString &sMask );
+	void RunLuaScripts( const RString &sMask, bool bUseThemeDir = false );
 
 	// For self-registering metrics
 	static void Subscribe( IThemeMetric *p );

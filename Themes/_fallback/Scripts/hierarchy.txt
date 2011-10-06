@@ -1,15 +1,15 @@
-sm-ssc Scripts Directory: Introduction 
+StepMania 5 fallback Scripts Directory: Introduction 
 --------------------------------------------------------------------------------
-Hello, and welcome to the sm-ssc Scripts directory. You'll notice that our Lua
-scripts have numbers at the beginning of them. This is to control the order of
-execution.
+Hello, and welcome to the StepMania 5 fallback Scripts directory. You'll notice
+that our Lua scripts have numbers at the beginning of them. This is to control
+the order of execution.
 
-In sm-ssc, scripts in subdirectories of Scripts/ (e.g. Scripts/01/somescript.lua)
+In SM5, scripts in subdirectories of Scripts/ (e.g. Scripts/01/somescript.lua)
 are loaded before scripts in the root of Scripts/ (e.g. Scripts/01 base.lua).
-This is important to know when making a theme for sm-ssc. It's also important
-to know that StepMania 4 (as of alpha 5) will not read scripts in subdirectories.
+This is important to know when making a theme. It's also important to know that
+previous StepMania versions will not read scripts in subdirectories.
 
-In sm-ssc, there are five rings of script execution:
+There are five rings of script execution:
 
 00 - Initialization
 ________________________________________________________________________________
@@ -18,17 +18,8 @@ There are three base scripts. "01 base.lua" is taken from StepMania 4's default
 theme and sets up very important function overrides and the "Var" alias (for
 lua.GetThreadVariable). The other two base scripts are sm-ssc specific.
 
-"01 alias.lua" contains non-compatibility aliases. To quote the file itself:
-"This is mainly here for making commands case-insensitive without needing to
-clutter up the C++ code. It can also be used to add custom functions that
-wouldn't otherwise belong somewhere else."
-
-"01 compat.lua" sets up compatibility aliases for some commands. Some commands
-were deprecated in sm-ssc (e.g. hidden), while others were renamed. If a problem
-was solved differently in sm-ssc, the corresponding StepMania 4 functions should
-live in here, and not the C++ code. (The prime example of this being
-PlayerStageStats:IsFullComboW* from SM4, whereas we have
-PlayerStageStats:FullComboOfScore, with the tap note score being passed in.)
+"01 alias.lua" contains various aliases. It also contains the compatibility
+aliases that used to live in "01 compat.lua".
 ________________________________________________________________________________
 02 - Defaults
 The "02" scripts are pretty much the same scripts you'd find in StepMania 4's
@@ -43,50 +34,6 @@ CustomSpeedMods, UserPreferences2), while others are from other themes (HSV)
 or written for sm-ssc (DateTime, Gameplay).
 ________________________________________________________________________________
 04 - ?
-FileUtils and WidescreenHelpers are in the fifth ring. To be honest, I don't
-know why they were moved out here. -aj
-
-================================================================================
-previously:
-SMOKE WEED '98 Scripts Directory Organization,
-or "An applied case of application of prefixes to control order of execution".
-
-Based on the original document for NCRX by Synikal, updated for SW98 by various
-members of the NAKET Team.
--------------------------------------------------------------------------------
-The general idea is that the order of execution in some scripts does matter.
-We can use filenames in order to load certain files before others.
-
-It is important to note that you do not always need to follow this order,
-especially if certain scripts do not require any dependencies. Typically,
-most scripts do not require hierarchy setup, only certain situations
-require it.
-
-Here is how we see the general hierarchy at NAKET HQ:
-
-00 = Initialization. Things that get called at the beginning of a theme.
-This is good for things that are required by everything. It's considered bad
-form to execute your own code before init, but there are ways around it if you
-do need to go around it.
-
-Examples include 00 init.lua (SM4 default) and 00 themeInfo.lua (various themes).
-
-01 = Base. After the initialization, the base layer goes on top and adds more
-core functionality to StepMania themes.
-
-Examples include 01 base.lua (SM4 default) and various 01 files in sm-ssc's
-fallback theme. In sm-ssc, these are treated differently than in normal SM4;
-01 files are used for aliasing/compatibility commands, which are just as
-important as 01 base.lua.
-----
-From here on out, these aren't officially used by the normal StepMania
-developers; they were invented by other themers.
-
-02 = Extensions. Generally, these are third party extensions, such as the KKI
-Labs stuff or vyhd's Genre Generator.
-
-03 = Theme-specific. This layer came into existence with dubaiOne/moonlight.
-
-It should be noted that this is still talking about StepMania 4 alphas, as
-sm-ssc introduces loading Scripts/folderA, Scripts/folderB, etc. (just not
-Scripts/folderA/folderB/ although why would you need that?)
+FileUtils, Scoring, and WidescreenHelpers are in the fifth ring.
+To be honest, I don't know why FileUtils and WidescreenHelpers were moved out
+here. Scoring is just here because the initial implementation was flawed.

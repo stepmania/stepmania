@@ -135,7 +135,7 @@ end
 function table.find(t, sFind)
 	for _, v in pairs(t) do
 		if v == sFind then
-			return i
+			return _
 		end
 	end
 	return nil
@@ -181,6 +181,18 @@ function StepsOrTrailToCustomDifficulty(stepsOrTrail)
 		return TrailToCustomDifficulty(stepsOrTrail)
 	end
 end
+
+Date = {
+	Today = function()
+		return string.format("%i%02i%02i", Year(), (MonthOfYear()+1), DayOfMonth())
+	end
+}
+
+Time = {
+	Now = function()
+		return string.format( "%02i:%02i:%02i", Hour(), Minute(), Second() )
+	end
+}
 
 -- (c) 2005 Glenn Maynard, Chris Danford
 -- All rights reserved.

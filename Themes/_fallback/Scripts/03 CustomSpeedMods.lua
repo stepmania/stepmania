@@ -19,9 +19,10 @@ This rewrite comes with the following changes/features:
 * Data/SpeedMods.txt is the fallback.
   Previously, all speed mods were stored in {SM4 folder}/Data/SpeedMods.txt.
   For compatibility reasons, this file is still read by the script.
+  It should be noted that this file may be the cause of problems in modern
+  Windows versions (Vista, 7).
 
-This version of Custom Speed Mods will only run on sm-ssc for the time being,
-DO NOT use it in themes for StepMania 4 alpha versions.
+This version of Custom Speed Mods will only run on StepMania 5 (due to m-mods).
 --------------------------------------------------------------------------------
 v1.4
 * Try to auto-set the speed mod to 1.0 if:
@@ -113,16 +114,6 @@ local function MergeTables(parent,child)
 
 	local addMe = true
 	for iC=1,#child do
-		--[[
-		for iP=1,#parent do
-			if addMe then
-				-- check if that's the case.
-				-- why am I doing this anyways?
-				-- by the time these tables are passed in,
-				-- dupes should be gone.
-			end
-		end
-		]]
 		if addMe then
 			table.insert(parent,child[iC])
 		end
@@ -170,11 +161,9 @@ local function SpeedModSort(tab)
 		table.insert(typ,tonumber(val))
 	end
 
-	-- sort xMods
+	-- sort Mods
 	xMods = AnonSort(xMods)
-	-- sort cMods
 	cMods = AnonSort(cMods)
-	-- sort mMods
 	mMods = AnonSort(mMods)
 	local fin = {}
 	-- convert it back to a string since that's what it expects
@@ -196,7 +185,7 @@ local function GetSpeedMods()
 
 	local baseFilename = "SpeedMods.txt"
 	local profileDirs = {
-		Fallback = "Data/",
+		Fallback = "Data/", -- xxx: this seems to cause problems on windows vista/7
 		Machine = ProfileDir('ProfileSlot_Machine'),
 		PlayerNumber_P1 = ProfileDir('ProfileSlot_Player1'),
 		PlayerNumber_P2 = ProfileDir('ProfileSlot_Player2')
@@ -221,7 +210,6 @@ local function GetSpeedMods()
 		end
 	end
 
-	-- with all loaded... the merging BEGINS!!
 	finalMods = fallbackMods
 	-- mine for duplicates, first pass (fallback <-> machine)
 	machineMods = MarkDupes(machineMods,finalMods)
@@ -256,7 +244,6 @@ local function GetSpeedMods()
 end
 
 function SpeedMods()
-	-- here we see the option menu itself.
 	local t = {
 		Name = "Speed",
 		LayoutType = "ShowAllInRow",

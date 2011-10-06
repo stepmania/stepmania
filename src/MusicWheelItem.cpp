@@ -241,7 +241,11 @@ void MusicWheelItem::LoadFromWheelItemData( const WheelItemBaseData *pData, int 
 		break;
 	case TYPE_SORT:
 		sDisplayName = pWID->m_sLabel;
-		type = MusicWheelItemType_Sort;
+		// hack to get mode items working. -freem
+		if( pWID->m_pAction->m_pm != PlayMode_Invalid )
+			type = MusicWheelItemType_Mode;
+		else
+			type = MusicWheelItemType_Sort;
 		break;
 	case TYPE_ROULETTE:
 		sDisplayName = THEME->GetString("MusicWheel","Roulette");

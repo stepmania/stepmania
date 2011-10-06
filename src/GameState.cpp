@@ -94,6 +94,7 @@ Song* GameState::GetDefaultSong() const
 	return sid.ToSong();
 }
 
+static const ThemeMetric<bool> EDIT_ALLOWED_FOR_EXTRA ("GameState","EditAllowedForExtra");
 static const ThemeMetric<Difficulty> MIN_DIFFICULTY_FOR_EXTRA	("GameState","MinDifficultyForExtra");
 static const ThemeMetric<Grade> GRADE_TIER_FOR_EXTRA_1	("GameState","GradeTierForExtra1");
 static const ThemeMetric<bool> ALLOW_EXTRA_2		("GameState","AllowExtra2");
@@ -1297,7 +1298,8 @@ EarnedExtraStage GameState::CalculateEarnedExtraStage() const
 		switch( dc )
 		{
 		case Difficulty_Edit:
-			continue; // can't use edit steps
+			if( !EDIT_ALLOWED_FOR_EXTRA )
+				continue; // can't use edit steps
 			break;
 		default:
 			if( dc < MIN_DIFFICULTY_FOR_EXTRA )
@@ -1457,6 +1459,12 @@ void GameState::RemoveAllActiveAttacks()	// called on end of song
 {
 	FOREACH_PlayerNumber( p )
 		m_pPlayerState[p]->RemoveActiveAttacks();
+}
+
+void GameState::AddStageToPlayer( PlayerNumber pn )
+{
+	// Add one stage more to player (bonus) -cerbo
+	++m_iPlayerStageTokens[pn];
 }
 
 template<class T>
@@ -2300,6 +2308,16 @@ public:
 		lua_pushstring(L, so.GetString());
 		return 1;
 	}
+	static int ApplyStageModifiers( T* p, lua_State *L )
+	{
+		p->ApplyStageModifiers( Enum::Check<PlayerNumber>(L, 1), SArg(2) );
+		return 0;
+	}
+	static int ApplyPreferredModifiers( T* p, lua_State *L )
+	{
+		p->ApplyPreferredModifiers( Enum::Check<PlayerNumber>(L, 1), SArg(2) );
+		return 0;
+	}
 	static int ClearStageModifiersIllegalForCourse( T* p, lua_State *L )
 	{
 		p->ClearStageModifiersIllegalForCourse();
@@ -2425,6 +2443,8 @@ public:
 		return 0;
 	}
 	static int GetExpandedSectionName( T* p, lua_State *L )				{ lua_pushstring(L, p->sExpandedSectionName); return 1; }
+	static int AddStageToPlayer( T* p, lua_State *L )				{ p->AddStageToPlayer(Enum::Check<PlayerNumber>(L, 1)); return 0; }
+	static int CurrentOptionsDisqualifyPlayer( T* p, lua_State *L )	{ lua_pushboolean(L, p->CurrentOptionsDisqualifyPlayer(Enum::Check<PlayerNumber>(L, 1))); return 1; }
 	static int Dopefish( T* p, lua_State *L )
 	{
 		lua_pushboolean(L, p->m_bDopefish);
@@ -2500,6 +2520,8 @@ public:
 		ADD_METHOD( GetSongOptionsString );
 		ADD_METHOD( GetSongOptions );
 		ADD_METHOD( GetDefaultSongOptions );
+		ADD_METHOD( ApplyPreferredModifiers );
+		ADD_METHOD( ApplyStageModifiers );
 		ADD_METHOD( ClearStageModifiersIllegalForCourse );
 		ADD_METHOD( SetSongOptions );
 		ADD_METHOD( IsWinner );
@@ -2530,6 +2552,8 @@ public:
 		ADD_METHOD( GetCharacter );
 		ADD_METHOD( SetCharacter );
 		ADD_METHOD( GetExpandedSectionName );
+		ADD_METHOD( AddStageToPlayer );
+		ADD_METHOD( CurrentOptionsDisqualifyPlayer );
 		ADD_METHOD( Dopefish );
 	}
 };

@@ -1,11 +1,11 @@
 <html>
 <head>
-<title>sm-ssc Manual</title>
+<title>StepMania 5 Manual</title>
 <link rel="stylesheet" type="text/css" media="screen" href="./data/style.css" />
 </head>
 <body>
 <div id="logoDiv">
-	<h1><img src="./data/logo.png" alt="sm-ssc:"><br/>The Manual</h1>
+	<h1><img src="./data/logo.png" alt="StepMania 5:"><br/>The Manual</h1>
 </div>
 <hr/>
 <div id="tocDiv">
@@ -14,11 +14,29 @@
 		<li><a href="#intro">Introduction</a></li>
 	</ol>
 	<ol class="tocList">
-		<li><a href="#welcome">Welcome to sm-ssc</a></li>
+		<li><a href="#welcome">Welcome to StepMania 5</a></li>
 		<ol class="tocList">
 			<li><a href="#sysreqs">System Requirements</a></li>
 			<li><a href="#install">Installation</a></li>
-			<li><a href="#getstart">Getting Started</a></li>
+			<li>
+				<a href="#getstart">Getting Started</a>
+				<ol class="tocList">
+					<li><a href="#songinst">Song Installation</a></li>
+					<li><a href="#controls">Connecting Controllers and Defining Controls</a></li>
+					<li><a href="#config">Configuration</a></li>
+				</ol>
+			</li>
+			<li><a href="#songedit">Song Editor</a></li>
+			<li>
+				<a href="#content">Creating Content</a>
+				<ol class="tocList">
+					<li>Announcers</li>
+					<li>Courses</li>
+					<li>Noteskins</li>
+					<li>BGAnimations</li>
+					<li>Themes</li>
+				</ol>
+			</li>
 		</ol>
 	</ol>
 </div>
@@ -26,49 +44,84 @@
 <hr/>
 
 <h2><a name="intro">Introduction</a></h2>
-<p>This is the basic player manual. We should also link to the Beginner's Guide
-and Themer's Guide from here as well.</p>
+<p>Welcome to StepMania, a rhythm game simulator. If you're not familiar with the
+concept of rhythm games, it involves triggering inputs (e.g. buttons, foot panels)
+in time to the music. StepMania can be controlled with a keyboard or one of various
+specialized controllers.</p>
 
 <hr/>
 
-<h2><a name="welcome">Welcome to sm-ssc</a></h2>
+<h2><a name="welcome">Welcome to StepMania 5</a></h2>
 
-<h3><a name="sysreqs">System Requirements</a></h2>
-<p>sm-ssc can run on this bare minimum:</p>
+<h3><a name="sysreqs">System Requirements</a></h3>
+<p>StepMania 5 can run on this bare minimum:</p>
 <ul>
 	<li>Operating System(s):
 		<ul>
-			<li>Windows® (2000, XP, Vista, Windows 7)</li>
+			<li>Windows (2000, XP, Vista, Windows 7)</li>
 			<li>Mac OS X (10.?)</li>
 			<li>*NIX/POSIX-compliant OS (GNU/Linux, *BSD)</li>
-			<li>Microsoft® Xbox® (<em><small>The Xbox build currently does not function.</small></em>)</li>
 		</ul>
 	</li>
+	<li>256MB of RAM</li>
+	<li>Video Card</li>
+	<li>Audio Card</li>
 </ul>
 
 <p>However, we highly recommend at least these settings for decent performance:</p>
 
-<h3><a name="install">Installation</a></h2>
-<p>If you're reading this, you've likely already figured out how to install sm-ssc.
+<p>On Windows, DirectX 8.0 is required in order to install StepMania. If DirectX
+is not installed on your computer, the StepMania installer will abort the installation
+with a warning.</p>
+
+<h3><a name="install">Installation</a></h3>
+<p>If you're reading this, you may have already figured out how to install StepMania 5.
 Just in case you're reading this without having installed it yourself, however,
 here are the installation instructions for various operating systems.</p>
 
 <h4>Windows</h4>
-<p>The Windows version is available as an .exe installer and a .zip/GameData.smzip
-combination. The .exe installer is much easier to deal with, but in case it doesn't
-work out for you, we have provided a zip file for manual installation. The zip
-distribution can be converted into Portable mode by placing a blank Portable.ini
-inside of the sm-ssc directory.</p>
+<p>The Windows version is available as an .exe installer. You can convert the game
+to Portable mode by placing a blank Portable.ini inside of the StepMania install directory.</p>
 
 <h4>Mac OS X</h4>
-<p>The Mac version is distributed as a .dmg file; Mount it, make a sm-ssc folder
-in Applications/, then put sm-ssc in there, and make folders as needed. That
-probably isn't the best way to do it, but it is A way.</p>
+<p>The Mac version is distributed as a .dmg file; Mount it, make a StepMania folder
+in Applications/, then put StepMania 5 in there, and make folders as needed. That
+probably isn't the best way to do it, but it is <strong><em>A</em></strong> way.</p>
 
 <h4>Linux</h4>
 <p>Linux users are typically expected to build from source. See <a href="http://code.google.com/p/sm-ssc/wiki/Compiling">Compiling</a>
-on the sm-ssc wiki for more information.</p>
+on the StepMania wiki for more information.</p>
 <hr/>
-<div id="footer">sm-ssc is Copyright &copy; 2009-2010 <a href="http://ssc.ajworld.net/">the Spinal Shark Collective</a>.
+
+<h3><a name="getstart">Getting Started</a></h3>
+
+<h4><a name="songinst">Song Installation</a></h4>
+<p>StepMania requires a specific folder layout when installing songs:
+<code>Songs/[group folder]/[song folder]/</code></p>
+
+<p>Using one of the included songs as an example:</p>
+<pre>
+Songs/StepMania 5/Springtime/Kommisar - Springtime.mp3
+Songs/StepMania 5/Springtime/spring.png
+Songs/StepMania 5/Springtime/springbn.png
+Songs/StepMania 5/Springtime/Springtime.ssc
+</pre>
+<p>Each of these files serves as a part of the simfile. StepMania 5 supports
+various formats, including (but not limited to) <code>SSC</code>, <code>SM</code>,
+<code>DWI</code>, <code>KSF</code> and <code>BMS</code>. With the multi-file BMS
+and KSF formats, put all the files in the song's folder.</p>
+
+<h5>Handling Asset Searching</h5>
+<p>todo: explain how StepMania tries to find files if they aren't defined in the simfile.</p>
+
+<h4><a name="controls">Connecting Controllers and Defining Controls</a></h4>
+
+<h4><a name="config">Configuration</a></h4>
+<hr/>
+
+<h3><a name="songeditor">Song Editor</a></h3>
+
+<hr/>
+<div id="footer">StepMania is copyright &copy; 2001-2011 StepMania team.
 </body>
 </html>

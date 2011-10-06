@@ -594,7 +594,7 @@ void OptionRow::UpdateEnabledDisabled()
 	case LAYOUT_SHOW_ALL_IN_ROW:
 		for( unsigned j=0; j<m_textItems.size(); j++ )
 		{
-			if( m_textItems[j]->DestTweenState().diffuse[0] == color ) 	 
+			if( m_textItems[j]->DestTweenState().diffuse[0] == color ) 
 				continue;
 
 			m_textItems[j]->StopTweening();

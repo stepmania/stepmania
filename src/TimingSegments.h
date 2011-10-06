@@ -20,25 +20,47 @@ enum TimingSegmentType
 	TimingSegmentType_Invalid,
 };
 
+// XXX: dumb names
+enum SegmentEffectType
+{
+	SegmentEffectType_Row,		// takes effect on a single row
+	SegmentEffectType_Range,	// takes effect for a definite amount of rows
+	SegmentEffectType_Indefinite,	// takes effect until the next segment of its type
+	NUM_SegmentEffectType,
+	SegmentEffectType_Invalid,
+};
+
+#define FOREACH_TimingSegmentType(tst) FOREACH_ENUM(TimingSegmentType, tst)
+
 const RString& TimingSegmentTypeToString( TimingSegmentType tst );
 
 const int ROW_INVALID = -1;
 
+#define COMPARE(x) if( this->x!=other.x ) return false
+#define COMPARE_FLOAT(x) if( fabsf(this->x - other.x) > EPSILON ) return false
+
 /**
  * @brief The base timing segment for make glorious benefit wolfman
+ * XXX: this should be an abstract class.
  */
 struct TimingSegment
 {
-	virtual TimingSegmentType GetType() const
-	{
-		return TimingSegmentType_Invalid;
-	}
+	virtual TimingSegmentType GetType() const { return TimingSegmentType_Invalid; }
+	virtual SegmentEffectType GetEffectType() const { return SegmentEffectType_Invalid; }
+	virtual TimingSegment* Copy() const = 0;
 
+	virtual bool IsNotable() const = 0;
+	virtual void DebugPrint() const;
+
+	// don't allow base TimingSegments to be instantiated directly
 	TimingSegment( int iRow = ROW_INVALID ) : m_iStartRow(iRow) { }
 	TimingSegment( float fBeat ) : m_iStartRow(ToNoteRow(fBeat)) { }
 
 	TimingSegment(const TimingSegment &other) :
 		m_iStartRow( other.GetRow() ) { }
+
+	// for our purposes, two floats within this level of error are equal
+	static const double EPSILON;
 
 	virtual ~TimingSegment() { }
 
@@ -66,6 +88,8 @@ struct TimingSegment
 		return GetRow() < other.GetRow();
 	}
 
+	// overloads should not call this base version; derived classes
+	// should only compare contents, and this compares position.
 	virtual bool operator==( const TimingSegment &other ) const
 	{
 		return GetRow() == other.GetRow();
@@ -73,7 +97,7 @@ struct TimingSegment
 
 	virtual bool operator!=( const TimingSegment &other ) const
 	{
-		return !operator==(other);
+		return !this->operator==(other);
 	}
 
 private:
@@ -95,6 +119,12 @@ private:
 struct FakeSegment : public TimingSegment
 {
 	TimingSegmentType GetType() const { return SEGMENT_FAKE; }
+	SegmentEffectType GetEffectType() const { return SegmentEffectType_Range; }
+
+	TimingSegment* Copy() const { return new FakeSegment(*this); }
+
+	bool IsNotable() const { return m_iLengthRows > 0; }
+	void DebugPrint() const;
 
 	FakeSegment() : TimingSegment(), m_iLengthRows(-1) { }
 
@@ -118,6 +148,21 @@ struct FakeSegment : public TimingSegment
 	void Scale( int start, int length, int newLength );
 
 	RString ToString( int dec ) const;
+
+	bool operator==( const FakeSegment &other ) const
+	{
+		COMPARE( m_iLengthRows );
+		return true;
+	}
+
+	bool operator==( const TimingSegment &other ) const
+	{
+		if( GetType() != other.GetType() )
+			return false;
+
+		return operator==( static_cast<const FakeSegment&>(other) );
+	}
+
 private:
 	/** @brief The number of rows the FakeSegment is alive for. */
 	int m_iLengthRows;
@@ -133,6 +178,11 @@ private:
 struct WarpSegment : public TimingSegment
 {
 	TimingSegmentType GetType() const { return SEGMENT_WARP; }
+	SegmentEffectType GetEffectType() const { return SegmentEffectType_Range; }
+	TimingSegment* Copy() const { return new WarpSegment(*this); }
+
+	bool IsNotable() const { return m_iLengthRows > 0; }
+	void DebugPrint() const;
 
 	WarpSegment() : TimingSegment(), m_iLengthRows(0) { }
 
@@ -154,8 +204,22 @@ struct WarpSegment : public TimingSegment
 	void SetLength( float fBeats ) { m_iLengthRows = ToNoteRow(fBeats); }
 
 	void Scale( int start, int length, int newLength );
-
 	RString ToString( int dec ) const;
+
+	bool operator==( const WarpSegment &other ) const
+	{
+		COMPARE( m_iLengthRows );
+		return true;
+	}
+
+	bool operator==( const TimingSegment &other ) const
+	{
+		if( GetType() != other.GetType() )
+			return false;
+
+		return operator==( static_cast<const WarpSegment&>(other) );
+	}
+
 private:
 	/** @brief The number of rows the WarpSegment will warp past. */
 	int m_iLengthRows;
@@ -170,12 +234,19 @@ private:
  * represent how many ticks can be counted in one beat.
  */
 
-/** @brief The default amount of ticks per beat. */
-const unsigned DEFAULT_TICK_COUNT = 4;
 
 struct TickcountSegment : public TimingSegment
 {
+	/** @brief The default amount of ticks per beat. */
+	static const unsigned DEFAULT_TICK_COUNT = 4;
+
 	TimingSegmentType GetType() const { return SEGMENT_TICKCOUNT; }
+	SegmentEffectType GetEffectType() const { return SegmentEffectType_Indefinite; }
+
+	bool IsNotable() const { return true; } // indefinite segments are always true
+	void DebugPrint() const;
+
+	TimingSegment* Copy() const { return new TickcountSegment(*this); }
 
 	TickcountSegment( int iStartRow = ROW_INVALID, int iTicks = DEFAULT_TICK_COUNT ) :
 		TimingSegment(iStartRow), m_iTicksPerBeat(iTicks) { }
@@ -188,6 +259,20 @@ struct TickcountSegment : public TimingSegment
 	void SetTicks( int iTicks ) { m_iTicksPerBeat = iTicks; }
 
 	RString ToString( int dec ) const;
+
+	bool operator==( const TickcountSegment &other ) const
+	{
+		COMPARE( m_iTicksPerBeat );
+		return true;
+	}
+
+	bool operator==( const TimingSegment &other ) const
+	{
+		if( GetType() != other.GetType() )
+			return false;
+
+		return operator==( static_cast<const TickcountSegment&>(other) );
+	}
 private:
 	/** @brief The amount of hold checkpoints counted per beat */
 	int m_iTicksPerBeat;
@@ -202,6 +287,12 @@ private:
 struct ComboSegment : public TimingSegment
 {
 	TimingSegmentType GetType() const { return SEGMENT_COMBO; }
+	SegmentEffectType GetEffectType() const { return SegmentEffectType_Indefinite; }
+
+	bool IsNotable() const { return true; } // indefinite segments are always true
+	void DebugPrint() const;
+
+	TimingSegment* Copy() const { return new ComboSegment(*this); }
 
 	ComboSegment( int iStartRow = ROW_INVALID, int iCombo = 1, int iMissCombo = 1 ) :
 		TimingSegment(iStartRow), m_iCombo(iCombo),
@@ -219,6 +310,21 @@ struct ComboSegment : public TimingSegment
 	void SetMissCombo( int iCombo ) { m_iMissCombo = iCombo; }
 
 	RString ToString( int dec ) const;
+
+	bool operator==( const ComboSegment &other ) const
+	{
+		COMPARE( m_iCombo );
+		COMPARE( m_iMissCombo );
+		return true;
+	}
+
+	bool operator==( const TimingSegment &other ) const
+	{
+		if( GetType() != other.GetType() )
+			return false;
+
+		return operator==( static_cast<const ComboSegment&>(other) );
+	}
 private:
 	/** @brief The amount the combo increases at this point. */
 	int m_iCombo;
@@ -237,9 +343,15 @@ private:
 struct LabelSegment : public TimingSegment
 {
 	TimingSegmentType GetType() const { return SEGMENT_LABEL; }
+	SegmentEffectType GetEffectType() const { return SegmentEffectType_Indefinite; }
+
+	bool IsNotable() const { return true; } // indefinite segments are always true
+	void DebugPrint() const;
+
+	TimingSegment* Copy() const { return new LabelSegment(*this); }
 
 	LabelSegment( int iStartRow = ROW_INVALID, const RString& sLabel = RString() ) :
-		TimingSegment(), m_sLabel(sLabel) { }
+		TimingSegment(iStartRow), m_sLabel(sLabel) { }
 
 	LabelSegment(const LabelSegment &other) :
 		TimingSegment( other.GetRow() ),
@@ -249,6 +361,20 @@ struct LabelSegment : public TimingSegment
 	void SetLabel( const RString& sLabel ) { m_sLabel.assign(sLabel); }
 
 	RString ToString( int dec ) const;
+
+	bool operator==( const LabelSegment &other ) const
+	{
+		COMPARE( m_sLabel );
+		return true;
+	}
+
+	bool operator==( const TimingSegment &other ) const
+	{
+		if( GetType() != other.GetType() )
+			return false;
+
+		return operator==( static_cast<const LabelSegment&>(other) );
+	}
 private:
 	/** @brief The label/section name for this point. */
 	RString m_sLabel;
@@ -260,6 +386,12 @@ private:
 struct BPMSegment : public TimingSegment
 {
 	TimingSegmentType GetType() const { return SEGMENT_BPM; }
+	SegmentEffectType GetEffectType() const { return SegmentEffectType_Indefinite; }
+
+	bool IsNotable() const { return true; } // indefinite segments are always true
+	void DebugPrint() const;
+
+	TimingSegment* Copy() const { return new BPMSegment(*this); }
 
 	// note that this takes a BPM, not a BPS (compatibility)
 	BPMSegment( int iStartRow = ROW_INVALID, float fBPM = 0.0f ) :
@@ -276,6 +408,21 @@ struct BPMSegment : public TimingSegment
 	void SetBPM( float fBPM ) { m_fBPS = fBPM / 60.0f; }
 
 	RString ToString( int dec ) const;
+
+	bool operator==( const BPMSegment &other ) const
+	{
+		COMPARE_FLOAT( m_fBPS );
+		return true;
+	}
+
+	bool operator==( const TimingSegment &other ) const
+	{
+		if( GetType() != other.GetType() )
+			return false;
+
+		return operator==( static_cast<const BPMSegment&>(other) );
+	}
+
 private:
 	/** @brief The number of beats per second within this BPMSegment. */
 	float m_fBPS;
@@ -291,6 +438,12 @@ private:
 struct TimeSignatureSegment : public TimingSegment
 {
 	TimingSegmentType GetType() const { return SEGMENT_TIME_SIG; }
+	SegmentEffectType GetEffectType() const { return SegmentEffectType_Indefinite; }
+
+	bool IsNotable() const { return true; } // indefinite segments are always true
+	void DebugPrint() const;
+
+	TimingSegment* Copy() const { return new TimeSignatureSegment(*this); }
 
 	TimeSignatureSegment( int iStartRow = ROW_INVALID,
 	  int iNum = 4, int iDenom = 4 ) :
@@ -308,6 +461,8 @@ struct TimeSignatureSegment : public TimingSegment
 	int GetDen() const { return m_iDenominator; }
 	void SetDen( int den ) { m_iDenominator = den; }
 
+	void Set( int num, int den ) { m_iNumerator = num; m_iDenominator = den; }
+
 	RString ToString( int dec ) const;
 
 	/**
@@ -323,6 +478,21 @@ struct TimeSignatureSegment : public TimingSegment
 	int GetNoteRowsPerMeasure() const
 	{
 		return BeatToNoteRow(1) * 4 * m_iNumerator / m_iDenominator;
+	}
+
+	bool operator==( const TimeSignatureSegment &other ) const
+	{
+		COMPARE( m_iNumerator );
+		COMPARE( m_iDenominator );
+		return true;
+	}
+
+	bool operator==( const TimingSegment &other ) const
+	{
+		if( GetType() != other.GetType() )
+			return false;
+
+		return operator==( static_cast<const TimeSignatureSegment&>(other) );
 	}
 
 private:
@@ -342,6 +512,12 @@ private:
 struct SpeedSegment : public TimingSegment
 {
 	TimingSegmentType GetType() const { return SEGMENT_SPEED; }
+	SegmentEffectType GetEffectType() const { return SegmentEffectType_Indefinite; }
+
+	bool IsNotable() const { return true; } // indefinite segments are always true
+	void DebugPrint() const;
+
+	TimingSegment* Copy() const { return new SpeedSegment(*this); }
 
 	/** @brief The type of unit used for segment scaling. */
 	enum BaseUnit { UNIT_BEATS, UNIT_SECONDS };
@@ -369,6 +545,23 @@ struct SpeedSegment : public TimingSegment
 	void Scale( int start, int length, int newLength );
 
 	RString ToString( int dec ) const;
+
+	bool operator==( const SpeedSegment &other ) const
+	{
+		COMPARE_FLOAT( m_fRatio );
+		COMPARE_FLOAT( m_fDelay );
+		COMPARE( m_Unit );
+		return true;
+	}
+
+	bool operator==( const TimingSegment &other ) const
+	{
+		if( GetType() != other.GetType() )
+			return false;
+
+		return operator==( static_cast<const SpeedSegment&>(other) );
+	}
+
 private:
 	/** @brief The percentage by which the Player's BPM is multiplied. */
 	float m_fRatio;
@@ -393,6 +586,12 @@ private:
 struct ScrollSegment : public TimingSegment
 {
 	TimingSegmentType GetType() const { return SEGMENT_SCROLL; }
+	SegmentEffectType GetEffectType() const { return SegmentEffectType_Indefinite; }
+
+	bool IsNotable() const { return true; } // indefinite segments are always true
+	void DebugPrint() const;
+
+	TimingSegment* Copy() const { return new ScrollSegment(*this); }
 
 	ScrollSegment( int iStartRow = ROW_INVALID, float fRatio = 1.0f ) :
 		TimingSegment(iStartRow), m_fRatio(fRatio) { }
@@ -405,6 +604,21 @@ struct ScrollSegment : public TimingSegment
 	void SetRatio( float fRatio ) { m_fRatio = fRatio; }
 
 	RString ToString( int dec ) const;
+
+	bool operator==( const ScrollSegment &other ) const
+	{
+		COMPARE_FLOAT( m_fRatio );
+		return true;
+	}
+
+	bool operator==( const TimingSegment &other ) const
+	{
+		if( GetType() != other.GetType() )
+			return false;
+
+		return operator==( static_cast<const ScrollSegment&>(other) );
+	}
+
 private:
 	/** @brief The percentage by which the chart's scroll rate is multiplied. */
 	float m_fRatio;
@@ -416,6 +630,12 @@ private:
 struct StopSegment : public TimingSegment
 {
 	TimingSegmentType GetType() const { return SEGMENT_STOP; }
+	SegmentEffectType GetEffectType() const { return SegmentEffectType_Row; }
+
+	bool IsNotable() const { return m_fSeconds > 0; }
+	void DebugPrint() const;
+
+	TimingSegment* Copy() const { return new StopSegment(*this); }
 
 	StopSegment( int iStartRow = ROW_INVALID, float fSeconds = 0.0f ) :
 		TimingSegment(iStartRow), m_fSeconds(fSeconds) { }
@@ -428,6 +648,20 @@ struct StopSegment : public TimingSegment
 	void SetPause( float fSeconds ) { m_fSeconds = fSeconds; }
 
 	RString ToString( int dec ) const;
+
+	bool operator==( const StopSegment &other ) const
+	{
+		COMPARE_FLOAT( m_fSeconds );
+		return true;
+	}
+
+	bool operator==( const TimingSegment &other ) const
+	{
+		if( GetType() != other.GetType() )
+			return false;
+
+		return operator==( static_cast<const StopSegment&>(other) );
+	}
 private:
 	/** @brief The number of seconds to pause at the segment's row. */
 	float m_fSeconds;
@@ -439,8 +673,14 @@ private:
 struct DelaySegment : public TimingSegment
 {
 	TimingSegmentType GetType() const { return SEGMENT_DELAY; }
+	SegmentEffectType GetEffectType() const { return SegmentEffectType_Row; }
 
-	DelaySegment( int iStartRow, float fSeconds ) :
+	bool IsNotable() const { return m_fSeconds > 0; }
+	void DebugPrint() const;
+
+	TimingSegment* Copy() const { return new DelaySegment(*this); }
+
+	DelaySegment( int iStartRow = ROW_INVALID, float fSeconds = 0 ) :
 		TimingSegment(iStartRow), m_fSeconds(fSeconds) { }
 
 	DelaySegment( const DelaySegment &other ) :
@@ -451,11 +691,27 @@ struct DelaySegment : public TimingSegment
 	void SetPause( float fSeconds ) { m_fSeconds = fSeconds; }
 
 	RString ToString( int dec ) const;
+
+	bool operator==( const DelaySegment &other ) const
+	{
+		COMPARE_FLOAT( m_fSeconds );
+		return true;
+	}
+
+	bool operator==( const TimingSegment &other ) const
+	{
+		if( GetType() != other.GetType() )
+			return false;
+
+		return operator==( static_cast<const DelaySegment&>(other) );
+	}
 private:
 	/** @brief The number of seconds to pause at the segment's row. */
 	float m_fSeconds;
 };
 
+#undef COMPARE
+#undef COMPARE_FLOAT
 
 #endif
 

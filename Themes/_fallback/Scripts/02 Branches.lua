@@ -40,6 +40,10 @@ Branch = {
 			return "ScreenLogo"
 		end
 	end,
+	NoiseTrigger = function()
+		local hour = Hour()
+		return hour > 3 and hour < 6 and "ScreenNoise" or "ScreenInit"
+	end,
 	TitleMenu = function()
 		-- home mode is the most assumed use of sm-ssc.
 		if GAMESTATE:GetCoinMode() == "CoinMode_Home" then

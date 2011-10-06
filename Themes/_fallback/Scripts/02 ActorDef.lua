@@ -209,6 +209,8 @@ function ShowStandardDecoration( MetricsName )
 	return THEME:GetMetric(Var "LoadingScreen","Show"..MetricsName)
 end
 
+--blank actor because these come in handy from time to time
+NullActor = { Class="Actor", _Source="(null actor)" }
 
 -- (c) 2006 Glenn Maynard
 -- All rights reserved.

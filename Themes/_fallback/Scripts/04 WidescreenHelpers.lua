@@ -17,11 +17,8 @@ function IsUsingTwoScreens()
 	return GetScreenAspectRatio() == AspectRatios.EightThree
 end
 
--- take and use it as you like, I don't care -aj
--- (although I should mention this file was specific to moonlight and was pretty
--- bad before some editing. -aj)
-
--- this one is good though:
 function WideScale(AR4_3, AR16_9)
 	return scale( SCREEN_WIDTH, 640, 854, AR4_3, AR16_9 )
 end
+
+-- take and use it as you like, I don't care -aj

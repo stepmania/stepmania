@@ -15,7 +15,6 @@
 #include "LuaBinding.h"
 #include "InputEventPlus.h"
 
-
 /*
  * These navigation types are provided:
  *
@@ -1308,6 +1307,19 @@ void ScreenOptions::MenuUpDown( const InputEventPlus &input, int iDir )
 	}
 }
 
+/*
+void ScreenOptions::SetOptionRowFromName( const RString& nombre )
+	{
+		FOREACH_PlayerNumber( pn )
+		{
+			for( unsigned i=0; i<m_pRows.size(); i++ )
+			{
+				if( m_pRows[i]->GetRowTitle() == nombre) && m_pRows[i]->GetRowDef().IsEnabledForPlayer(p) )
+					MoveRowAbsolute(pn,i)
+			}
+		}
+	}
+*/
 // lua start
 #include "LuaBinding.h"
 
@@ -1326,20 +1338,7 @@ public:
 			lua_pushnil( L );
 		return 1;
 	}
-	
-	/*FSX's WIP code, touch if it's wrong (which it probably is)
-	static int SetOptionRowFromName( T* p, lua_State *L ) 
-	{
-		FOREACH_PlayerNumber( pn )
-		{
-			for( unsigned i=0; i<m_pRows.size(); i++ )
-			{
-				if( m_pRows[i]->GetRowTitle() == SArg(1) && m_pRows[i]->GetRowDef().IsEnabledForPlayer(p) )
-					p->MoveRowAbsolute(pn,i)
-			}
-		}
-	}
-	*/
+   //static int SetOptionRowFromName( T* p, lua_State *L ) { p->SetOptionRowFromName( SArg(1) ); return 0; }
 
 	LunaScreenOptions()
 	{
@@ -1347,6 +1346,7 @@ public:
 		ADD_METHOD( FocusedItemEndsScreen );
 		ADD_METHOD( GetCurrentRowIndex );
 		ADD_METHOD( GetOptionRow );
+        //ADD_METHOD( SetOptionRowFromName );
 	}
 };
 

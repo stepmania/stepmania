@@ -213,6 +213,31 @@ void ArrowEffects::Update()
 	}
 }
 
+static float GetDisplayedBeat( const PlayerState* pPlayerState, float beat )
+{
+	// do a binary search here
+	const vector<CacheDisplayedBeat> &data = pPlayerState->m_CacheDisplayedBeat;
+	int max = data.size() - 1;
+	int l = 0, r = max;
+	while( l <= r )
+	{
+		int m = ( l + r ) / 2;
+		if( ( m == 0 || data[m].beat <= beat ) && ( m == max || beat < data[m + 1].beat ) )
+		{
+			return data[m].displayedBeat + data[m].velocity * (beat - data[m].beat);
+		}
+		else if( data[m].beat <= beat )
+		{
+			l = m + 1;
+		}
+		else
+		{
+			r = m - 1;
+		}
+	}
+	return beat;
+}
+
 /* For visibility testing: if bAbsolute is false, random modifiers must return
  * the minimum possible scroll speed. */
 float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float fNoteBeat, float &fPeakYOffsetOut, bool &bIsPastPeakOut, bool bAbsolute )
@@ -222,8 +247,7 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 	bIsPastPeakOut = true;
 
 	float fYOffset = 0;
-	const SongPosition &position = GAMESTATE->m_bIsUsingStepTiming
-	? pPlayerState->m_Position : GAMESTATE->m_Position;
+	const SongPosition &position = pPlayerState->GetDisplayedPosition();
 	
 	float fSongBeat = position.m_fSongBeatVisible;
 	
@@ -236,7 +260,7 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 		float bShowEffects = !( GAMESTATE->m_bInStepEditor || !GAMESTATE->m_bIsUsingStepTiming );
 		float fBeatsUntilStep = fNoteBeat - fSongBeat;
 		if( bShowEffects )
-			fBeatsUntilStep = pCurSteps->m_Timing.GetDisplayedBeat(fNoteBeat) - pCurSteps->m_Timing.GetDisplayedBeat(fSongBeat);
+			fBeatsUntilStep = GetDisplayedBeat(pPlayerState, fNoteBeat) - GetDisplayedBeat(pPlayerState, fSongBeat);
 		float fYOffsetBeatSpacing = fBeatsUntilStep;
 		float fSpeedMultiplier = bShowEffects ? 
 			pCurSteps->m_Timing.GetDisplayedSpeedPercent(
