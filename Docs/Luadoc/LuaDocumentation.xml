@@ -1715,6 +1715,15 @@
 	<Function name='GetLatestIndex' return='int' arguments=''>
 		Returns the index of the last banner loaded.
 	</Function>
+	<Function name='LoadCourseFallback' return='void' arguments=''>
+		Loads the fallback course banner.
+	</Function>
+	<Function name='LoadFallback' return='void' arguments=''>
+		Loads the fallback banner.
+	</Function>
+	<Function name='LoadCardFromCharacter' return='void' arguments='Character pCharacter'>
+		Loads the card image from the specified Character.
+	</Function>
 	<Function name='LoadFromCourse' return='void' arguments='Course c'>
 		Loads a Banner from a specified Course.
 	</Function>
@@ -1723,6 +1732,24 @@
 	</Function>
 	<Function name='LoadFromSongGroup' return='void' arguments='string s'>
 		Loads a Banner from a specified Song Group.
+	</Function>
+	<Function name='LoadFromSortOrder' return='void' arguments='SortOrder so'>
+		Loads a Banner from a specified SortOrder.
+	</Function>
+	<Function name='LoadIconFromCharacter' return='void' arguments='Character pCharacter'>
+		Loads an icon from the specified Character.
+	</Function>
+	<Function name='LoadRandom' return='void' arguments=''>
+		Loads the Random banner.
+	</Function>
+	<Function name='LoadRoulette' return='void' arguments=''>
+		Loads the Roulette banner.
+	</Function>
+	<Function name='scaletoclipped' return='void' arguments='float fWidth, float fHeight'>
+		See <Link class='Sprite' function='scaletoclipped' />.
+	</Function>
+	<Function name='ScaleToClipped' return='void' arguments='float fWidth, float fHeight'>
+		See <Link class='Sprite' function='scaletoclipped' />.
 	</Function>
 </Class>
 <Class name='StepsDisplayList'>
@@ -1897,7 +1924,7 @@
 		Return a string representation of the default song options.
 	</Function>
 	<Function name='GetEarnedExtraStage' return='EarnedExtraStage' arguments=''>
-		Returns the <Link enum='EarnedExtraStage' /> value.
+		Returns the <Link class='ENUM' function='EarnedExtraStage' /> value.
 	</Function>
 	<Function name='GetEasiestStepsDifficulty' return='Difficulty' arguments=''>
 		Return the easiest <Link class='ENUM' function='Difficulty' /> of the
