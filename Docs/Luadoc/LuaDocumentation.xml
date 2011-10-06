@@ -63,13 +63,13 @@
 	<Function name='color' return='color' arguments='string color'>
 		Returns a color from a string. <code>color</code> can be in hex (<code>"#FFFFFFFF"</code>) or 0..1 values (<code>"1.0,1.0,1.0,1.0"</code>), in RGBA order.
 	</Function>
-	<Function name='ColorDarkTone' theme='_fallback' return='' arguments='color c'>
+	<Function name='ColorDarkTone' theme='_fallback' return='color' arguments='color c'>
 		[02 Colors.lua] Returns a darker tone of the color. (Specifically <code>c[1]/2, c[2]/2, c[3]/2, c[4]</code>)
 	</Function>
-	<Function name='ColorLightTone' theme='_fallback' return='' arguments='color c'>
+	<Function name='ColorLightTone' theme='_fallback' return='color' arguments='color c'>
 		[02 Colors.lua] Returns a lighter tone of the color. (Specifically <code>c[1]+(c[1]/2), c[2]+(c[2]/2), c[3]+(c[3]/2), c[4]</code>)
 	</Function>
-	<Function name='ColorMidTone' theme='_fallback' return='' arguments='color c'>
+	<Function name='ColorMidTone' theme='_fallback' return='color' arguments='color c'>
 		[02 Colors.lua] Returns a midtone of the color. (Specifically <code>c[1]/1.5, c[2]/1.5, c[3]/1.5, c[4]</code>)
 	</Function>
 	<Function name='ColorToHex' theme='_fallback' return='string' arguments='color c'>
@@ -183,7 +183,7 @@
 	<Function name='GetThemeAspectRatio' return='float' arguments=''>
 		Returns the theme's aspect ratio.
 	</Function>
-	<Function name='GetThemePref' theme='_fallback' return='' arguments=''>
+	<Function name='GetThemePref' theme='_fallback' return='various' arguments='string pref'>
 		[03 ThemePrefs.lua] (Alias for <Link class='ThemePrefs' function='Get' />.)
 	</Function>
 	<Function name='GetTimingDifficulty' return='int' arguments=''>
@@ -302,7 +302,7 @@
 	<Function name='MissCombo' theme='_fallback' return='int' arguments=''>
 		[03 Gameplay.lua] Returns the value to start showing the miss combo at.
 	</Function>
-	<Function name='module' return='' arguments='string name, ...'>
+	<Function name='module' return='void' arguments='string name, ...'>
 		Creates a module. See the Lua manual for more details.
 	</Function>
 	<Function name='MonthOfYear' return='int' arguments=''>
@@ -314,7 +314,7 @@
 	<Function name='MonthToString' return='string' arguments='Month m'>
 		Returns Month <code>m</code> as a string.
 	</Function>
-	<Function name='next' return='' arguments='table t, int index'>
+	<Function name='next' return='void' arguments='table t, int index'>
 		"Allows a program to traverse all fields of a table. Its first argument is a
 		table and its second argument is an index in this table.
 		<code>next</code> returns the next index of the table and its associated value."
@@ -323,7 +323,7 @@
 	<Function name='OptionRowProTiming' theme='default' return='LuaOptionRow' arguments=''>
 		[03 ThemePrefs.lua] Returns a Lua option row for ProTiming.
 	</Function>
-	<Function name='pairs' return='' arguments='table t'>
+	<Function name='pairs' return='function' arguments='table t'>
 		"Returns three values: the <Link class='GLOBAL' function='next' /> function, the table <code>t</code>, and <code>nil</code>,
 		so that the construction <code>for k,v in pairs(t) do body end</code>
 		will iterate over all key–value pairs of table <code>t</code>."
@@ -368,7 +368,7 @@
 	<Function name='ReportStyle' return='void' arguments=''>
 		Sends the current style to the server.
 	</Function>
-	<Function name='require' return='' arguments='string modname'>
+	<Function name='require' return='void' arguments='string modname'>
 		Loads the specified module. See the Lua manual for more information.
 	</Function>
 	<Function name='round' theme='_fallback' return='int' arguments='float val, int decimal'>
@@ -476,7 +476,7 @@
 	<Function name='type' return='string' arguments='various v'>
 		Returns the type of the object as a string. See the Lua manual for valid return values.
 	</Function>
-	<Function name='unpack' return='' arguments='table list, int i, int j'>
+	<Function name='unpack' return='various' arguments='table list, int i, int j'>
 		"Returns the elements from the given table.
 		This function is equivalent to <code>return list[i], list[i+1], ···, list[j]</code>"
 		(<code>i</code> and <code>j</code> are optional; "by default, i is 1 and j is the length of the list.")
@@ -508,7 +508,7 @@
 	<Function name='WriteFile' theme='_fallback' return='bool' arguments='string path, string buf'>
 		[04 FileUtils.lua] Writes <code>buf</code> to the file at <code>path</code>.
 	</Function>
-	<Function name='WriteGamePrefToFile' theme='_fallback' return='' arguments='string name'>
+	<Function name='WriteGamePrefToFile' theme='_fallback' return='bool' arguments='string name'>
 		[03 GamePreferences.lua]
 	</Function>
 	<Function name='WritePrefToFile' theme='_fallback' return='bool' arguments='string prefName, various value'>
@@ -3589,7 +3589,7 @@
 	<Function name='GetPopularSongs' return='{Song}' arguments=''>
 		Returns a table of popular songs.
 	</Function>
-	<Function name='GetPreferredSortCourses' return='' arguments='CourseType ct, bool bIncludeAutogen'>
+	<Function name='GetPreferredSortCourses' return='{Course}' arguments='CourseType ct, bool bIncludeAutogen'>
 		Returns a table of courses as they'd appear in preferred sort.
 	</Function>
 	<Function name='GetPreferredSortSongs' return='{Song}' arguments=''>
