@@ -119,6 +119,7 @@
 		<Function name='MultiPlayerToLocalizedString'/>
 		<Function name='MultiPlayerToString'/>
 		<Function name='OptionRowProTiming'/>
+		<Function name='OptionRowScreenFilter'/>
 		<Function name='OptionsRandomJukebox'/>
 		<Function name='OptionsRowTest'/>
 		<Function name='PeakComboAwardToLocalizedString'/>
@@ -202,6 +203,7 @@
 		<Function name='UserPrefNotePosition'/>
 		<Function name='UserPrefScoringMode'/>
 		<Function name='UserPrefShowLotsaOptions'/>
+		<Function name='UserPrefTimingDisplay'/>
 		<Function name='Var'/>
 		<Function name='VersionDate'/>
 		<Function name='VersionTime'/>
@@ -216,7 +218,6 @@
 		<Function name='clamp'/>
 		<Function name='collectgarbage'/>
 		<Function name='color'/>
-		<Function name='date'/>
 		<Function name='dofile'/>
 		<Function name='error'/>
 		<Function name='fapproach'/>
@@ -663,10 +664,15 @@
 		<Class base='ActorFrame' name='FadingBanner'>
 			<Function name='GetLatestIndex'/>
 			<Function name='LoadCardFromCharacter'/>
+			<Function name='LoadCourseFallback'/>
+			<Function name='LoadFallback'/>
 			<Function name='LoadFromCourse'/>
 			<Function name='LoadFromSong'/>
 			<Function name='LoadFromSongGroup'/>
+			<Function name='LoadFromSortOrder'/>
 			<Function name='LoadIconFromCharacter'/>
+			<Function name='LoadRandom'/>
+			<Function name='LoadRoulette'/>
 			<Function name='ScaleToClipped'/>
 			<Function name='scaletoclipped'/>
 		</Class>
@@ -698,9 +704,13 @@
 			<Function name='PlayOnce'/>
 		</Class>
 		<Class name='GameState'>
+			<Function name='AddStageToPlayer'/>
 			<Function name='AnyPlayerHasRankingFeats'/>
 			<Function name='ApplyGameCommand'/>
+			<Function name='ApplyPreferredModifiers'/>
+			<Function name='ApplyStageModifiers'/>
 			<Function name='ClearStageModifiersIllegalForCourse'/>
+			<Function name='CurrentOptionsDisqualifyPlayer'/>
 			<Function name='Dopefish'/>
 			<Function name='EnoughCreditsToJoin'/>
 			<Function name='Env'/>
@@ -720,6 +730,7 @@
 			<Function name='GetCurrentStyle'/>
 			<Function name='GetCurrentTrail'/>
 			<Function name='GetDefaultSongOptions'/>
+			<Function name='GetEarnedExtraStage'/>
 			<Function name='GetEasiestStepsDifficulty'/>
 			<Function name='GetEditCourseEntryIndex'/>
 			<Function name='GetEditLocalProfile'/>
@@ -855,9 +866,12 @@
 		</Class>
 		<Class base='ActorFrame' name='MenuTimer'>
 			<Function name='GetSeconds'/>
+			<Function name='SetSeconds'/>
+			<Function name='disable'/>
 			<Function name='pause'/>
 			<Function name='setseconds'/>
 			<Function name='silent'/>
+			<Function name='start'/>
 			<Function name='stealth'/>
 			<Function name='stop'/>
 		</Class>
@@ -871,6 +885,7 @@
 			<Function name='Load'/>
 		</Class>
 		<Class base='Actor' name='Model'>
+			<Function name='GetDefaultAnimation'/>
 			<Function name='GetNumStates'/>
 			<Function name='SetDefaultAnimation'/>
 			<Function name='loop'/>
@@ -1572,10 +1587,10 @@
 			<Function name='GetStepsUnlockedByEntryID'/>
 			<Function name='GetUnlockEntry'/>
 			<Function name='GetUnlockEntryIndexToCelebrate'/>
+			<Function name='IsSongLocked'/>
 			<Function name='PreferUnlockEntryID'/>
 			<Function name='UnlockEntryID'/>
 			<Function name='UnlockEntryIndex'/>
-			<Function name='IsSongLocked'/>
 		</Class>
 		<Class base='ActorFrame' name='WheelBase'>
 			<Function name='GetCurrentIndex'/>
@@ -1584,6 +1599,10 @@
 			<Function name='IsLocked'/>
 			<Function name='IsSettled'/>
 			<Function name='SetOpenSection'/>
+		</Class>
+		<Class base='ActorFrame' name='WheelItemBase'>
+			<Function name='GetColor'/>
+			<Function name='GetText'/>
 		</Class>
 		<Class base='ActorFrame' name='WorkoutGraph'>
 			<Function name='SetFromCurrentWorkout'/>
@@ -2177,16 +2196,16 @@
 		</Enum>
 	</Enums>
 	<Constants>
-		<Constant name='ASPECT_SCALE_FACTOR' value='640'/>
+		<Constant name='ASPECT_SCALE_FACTOR' value='854'/>
 		<Constant name='NUM_PLAYERS' value='2'/>
 		<Constant name='SCREEN_BOTTOM' value='480'/>
-		<Constant name='SCREEN_CENTER_X' value='320'/>
+		<Constant name='SCREEN_CENTER_X' value='427'/>
 		<Constant name='SCREEN_CENTER_Y' value='240'/>
 		<Constant name='SCREEN_HEIGHT' value='480'/>
 		<Constant name='SCREEN_LEFT' value='0'/>
-		<Constant name='SCREEN_RIGHT' value='640'/>
+		<Constant name='SCREEN_RIGHT' value='854'/>
 		<Constant name='SCREEN_TOP' value='0'/>
-		<Constant name='SCREEN_WIDTH' value='640'/>
+		<Constant name='SCREEN_WIDTH' value='854'/>
 		<Constant name='PLAYER_1' value='&apos;PlayerNumber_P1&apos;'/>
 		<Constant name='PLAYER_2' value='&apos;PlayerNumber_P2&apos;'/>
 		<Constant name='_VERSION' value='&apos;Lua 5.1&apos;'/>
@@ -2198,6 +2217,6 @@
 		<Constant name='sGame' value='&apos;dance&apos;'/>
 		<Constant name='top' value='&apos;VertAlign_Top&apos;'/>
 	</Constants>
-	<Version>StepMania v5.0 Preview 3</Version>
-	<Date>2011-08-27</Date>
+	<Version>StepMania v5.0 Preview 4</Version>
+	<Date>2011-10-06</Date>
 </Lua>
