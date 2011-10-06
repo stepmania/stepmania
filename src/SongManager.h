@@ -126,6 +126,7 @@ public:
 	 * @brief Retrieve the number of songs in the game.
 	 * @return the number of songs. */
 	int GetNumSongs() const;
+	int GetNumLockedSongs() const;
 	int GetNumUnlockedSongs() const;
 	int GetNumSelectableAndUnlockedSongs() const;
 	int GetNumAdditionalSongs() const;

@@ -271,7 +271,7 @@ void AutoKeysounds::FinishLoading()
 				pChain->AddSound( iIndex, 0.0f, 0 );
 			}
 			pChain->Finish();
-			m_pSharedSound = pChain;
+			m_pSharedSound = new RageSoundReader_Extend(pChain);
 		}
 		else
 		{

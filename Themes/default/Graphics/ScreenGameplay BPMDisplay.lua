@@ -11,7 +11,7 @@ local function UpdateSingleBPM(self)
 end
 
 local displaySingle = Def.ActorFrame{
-	-- manual bpm displays
+	-- manual bpm display
 	LoadFont("BPMDisplay", "bpm")..{
 		Name="BPMDisplay";
 		InitCommand=cmd(zoom,0.675;shadowlength,1);

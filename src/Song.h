@@ -20,7 +20,7 @@ void FixupPath( RString &path, const RString &sSongPath );
 RString GetSongAssetPath( RString sPath, const RString &sSongPath );
 
 /** @brief The version of the .ssc file format. */
-const static float STEPFILE_VERSION_NUMBER = 0.79f;
+const static float STEPFILE_VERSION_NUMBER = 0.80f;
 
 /** @brief How many edits for this song can each profile have? */
 const int MAX_EDITS_PER_SONG_PER_PROFILE = 15;
@@ -75,7 +75,7 @@ public:
 	{ 
 		SHOW_ALWAYS,	/**< always show on the wheel. */
 		SHOW_NEVER	/**< never show on the wheel (unless song hiding is turned off). */
-	} /** @brief When should this song be displayed in the music wheel? */ m_SelectionDisplay;
+	} m_SelectionDisplay;
 
 	Song();
 	~Song();

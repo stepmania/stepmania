@@ -15,13 +15,9 @@ void NotesLoaderJson::GetApplicableFiles( const RString &sPath, vector<RString> 
 	GetDirListing( sPath + RString("*.json"), out );
 }
 
-static void Deserialize(TimingSegment &seg_, const Json::Value &root)
+static void Deserialize( TimingSegment *seg, const Json::Value &root )
 {
-	TimingSegment *seg = &seg_;
-
-	float fBeat = root["Beat"].asDouble();
-	seg->SetBeat(fBeat);
-	switch (seg->GetType())
+	switch( seg->GetType() )
 	{
 		case SEGMENT_BPM:
 		{
@@ -39,10 +35,33 @@ static void Deserialize(TimingSegment &seg_, const Json::Value &root)
 	}
 }
 
+static void Deserialize(BPMSegment &seg, const Json::Value &root)
+{
+	Deserialize( static_cast<TimingSegment*>(&seg), root );
+}
+
+static void Deserialize(StopSegment &seg, const Json::Value &root)
+{
+	Deserialize( static_cast<TimingSegment*>(&seg), root );
+}
+
 static void Deserialize(TimingData &td, const Json::Value &root)
 {
-	JsonUtil::DeserializeVectorPointers( td.m_avpTimingSegments[SEGMENT_BPM], Deserialize, root["BpmSegments"] );
-	JsonUtil::DeserializeVectorPointers( td.m_avpTimingSegments[SEGMENT_STOP], Deserialize, root["StopSegments"] );
+	vector<BPMSegment*> vBPMs;
+	vector<StopSegment*> vStops;
+	JsonUtil::DeserializeVectorPointers( vBPMs, Deserialize, root["BpmSegments"] );
+	JsonUtil::DeserializeVectorPointers( vStops, Deserialize, root["StopSegments"] );
+
+	for( unsigned i = 0; i < vBPMs.size(); ++i )
+	{
+		td.AddSegment( *vBPMs[i] );
+		delete vBPMs[i];
+	}
+	for( unsigned i = 0; i < vStops.size(); ++i )
+	{
+		td.AddSegment( *vStops[i] );
+		delete vStops[i];
+	}
 }
 
 static void Deserialize(LyricSegment &o, const Json::Value &root)

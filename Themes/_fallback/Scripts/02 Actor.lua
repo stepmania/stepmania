@@ -214,6 +214,13 @@ function HelpDisplay:setfromsongorcourse()
 	self:settips( Artists, AltArtists )
 end
 
+-- Play the sound on the given player's side. Must set SupportPan = true
+-- on load.
+function ActorSound:playforplayer(pn)
+	local fBalance = SOUND:GetPlayerBalance(pn)
+	self:get():SetProperty("Pan", fBalance)
+	self:play()
+end
 
 -- (c) 2006 Glenn Maynard
 -- All rights reserved.

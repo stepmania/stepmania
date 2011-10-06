@@ -3,15 +3,9 @@
 #ifndef LOADING_WINDOW_WIN32_H
 #define LOADING_WINDOW_WIN32_H
 
-#include "global.h"
-
 #include "LoadingWindow.h"
 #include <windows.h>
 #include "archutils/Win32/AppInstance.h"
-
-#if(WINVER >= 0x0601)
-#include "Shobjidl.h"
-#endif
 
 class LoadingWindow_Win32: public LoadingWindow
 {
@@ -19,6 +13,7 @@ public:
 	LoadingWindow_Win32();
 	~LoadingWindow_Win32();
 
+	void Paint();
 	void SetText( RString sText );
 	void SetIcon( const RageSurface *pIcon );
 	void SetSplash( const RString sPath );
@@ -31,22 +26,8 @@ private:
 	HWND hwnd;
 	RString text[3];
 	HICON m_hIcon;
-	HANDLE pumpThread;
-	DWORD pumpThreadId;
-	HANDLE guiReadyEvent;
 
-/*
-#if WINVER >= 0x0601
-	UINT taskbarCreatedEvent;
-	ITaskbarList3 *pTaskbarList;
-#endif
-*/
-
-	volatile bool runMessageLoop;
-
-	static DWORD WINAPI MessagePump(LPVOID thisAsVoidPtr);
-
-	static INT_PTR CALLBACK DlgProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam );
+	static BOOL CALLBACK WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam );
 };
 #define USE_LOADING_WINDOW_WIN32
 

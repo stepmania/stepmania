@@ -51,20 +51,13 @@ end
 -- ScoreKeeperClass:
 -- [en] Determines the correct ScoreKeeper class to use.
 function ScoreKeeperClass()
-	sGame = GAMESTATE:GetCurrentGame():GetName()
-	local ScoreKeepers = {
-		-- xxx: allow for ScoreKeeperShared when needed
-		dance = "ScoreKeeperNormal",
-		pump = "ScoreKeeperNormal",
-		beat = "ScoreKeeperNormal",
-		kb7 = "ScoreKeeperNormal",
-		para = "ScoreKeeperNormal",
-		techno = "ScoreKeeperNormal",
-		ez2 = "ScoreKeeperNormal",
-		ds3ddx = "ScoreKeeperNormal",
-		maniax = "ScoreKeeperNormal"
-	}
-	return ScoreKeepers[sGame]
+	-- rave scorekeeper
+	if GAMESTATE:GetPlayMode() == 'PlayMode_Rave' then return "ScoreKeeperRave" end
+	if GAMESTATE:GetCurrentStyle() then
+		local styleType = GAMESTATE:GetCurrentStyle():GetStyleType()
+		if styleType == 'StyleType_TwoPlayersSharedSides' then return "ScoreKeeperShared" end
+	end
+	return "ScoreKeeperNormal"
 end
 
 -- ComboContinue:
@@ -181,11 +174,13 @@ function HoldTiming()
 end
 
 function ShowHoldJudgments()
-	return not GAMESTATE:GetCurrentGame():GetName() == "pump"
+	local isPump = GAMESTATE:GetCurrentGame():GetName() == "pump"
+	return isPump and false or true
 end
 
 function HoldHeadStep()
-	return not GAMESTATE:GetCurrentGame():GetName() == "pump"
+	local isPump = GAMESTATE:GetCurrentGame():GetName() == "pump"
+	return isPump and false or true
 end
 
 function InitialHoldLife()
@@ -197,7 +192,7 @@ function MaxHoldLife()
 end
 
 function ImmediateHoldLetGo()
-	return not GAMESTATE:GetCurrentGame():GetName() == "pump"
+	return not (GAMESTATE:GetCurrentGame():GetName() == "pump")
 end
 
 function RollBodyIncrementsCombo()

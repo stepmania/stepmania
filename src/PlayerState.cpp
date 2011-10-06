@@ -5,6 +5,7 @@
 #include "RageLog.h"
 #include "RadarValues.h"
 #include "Steps.h"
+#include "Song.h"
 
 PlayerState::PlayerState()
 {
@@ -188,6 +189,21 @@ int PlayerState::GetSumOfActiveAttackLevels() const
 
 	return iSum;
 }
+
+const SongPosition &PlayerState::GetDisplayedPosition() const
+{
+	if( GAMESTATE->m_bIsUsingStepTiming )
+		return m_Position;
+	return GAMESTATE->m_Position;
+}
+
+const TimingData &PlayerState::GetDisplayedTiming() const
+{
+	if( GAMESTATE->m_bIsUsingStepTiming && GAMESTATE->m_pCurSteps[m_PlayerNumber] != NULL )
+		return GAMESTATE->m_pCurSteps[m_PlayerNumber]->m_Timing;
+	return GAMESTATE->m_pCurSong->m_SongTiming;
+}
+
 
 // lua start
 #include "LuaBinding.h"

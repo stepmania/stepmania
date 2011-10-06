@@ -232,9 +232,9 @@ void ScreenHighScores::Init()
 			{
 			default:	ASSERT(0);
 			case HighScoresType_NonstopCourses:	ct = COURSE_TYPE_NONSTOP;	break;
-			case HighScoresType_OniCourses:	ct = COURSE_TYPE_ONI;		break;
+			case HighScoresType_OniCourses:		ct = COURSE_TYPE_ONI;		break;
 			case HighScoresType_SurvivalCourses:	ct = COURSE_TYPE_SURVIVAL;	break;
-			case HighScoresType_AllCourses:	ct = CourseType_Invalid;	break;
+			case HighScoresType_AllCourses:		ct = CourseType_Invalid;	break;
 			}
 
 			m_Scroller.LoadCourses( ct, MAX_ITEMS_TO_SHOW );
@@ -264,8 +264,11 @@ void ScreenHighScores::BeginScreen()
 	else
 		m_Scroller.ScrollThroughAllItems();
 
-	float fSecs = m_Scroller.GetSecondsForCompleteScrollThrough();
-	this->PostScreenMessage( SM_BeginFadingOut, fSecs );
+	if( !MANUAL_SCROLLING )
+	{
+		float fSecs = m_Scroller.GetSecondsForCompleteScrollThrough();
+		this->PostScreenMessage( SM_BeginFadingOut, fSecs );
+	}
 }
 
 void ScreenHighScores::Input( const InputEventPlus &input )
@@ -274,7 +277,7 @@ void ScreenHighScores::Input( const InputEventPlus &input )
 	if( IsTransitioning() )
 		return;
 
-	// If manually scrolling, then pass the input to Scree::Input so it will call Menu*
+	// If manually scrolling, pass the input to Screen::Input so it will call Menu*
 	if( (bool)MANUAL_SCROLLING )
 		Screen::Input( input );
 	else
