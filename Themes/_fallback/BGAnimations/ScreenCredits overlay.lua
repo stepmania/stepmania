@@ -44,21 +44,23 @@ local oitg = {
 }
 
 local contrib = {
-	"Aldo Fregoso (Aldo_MX)", -- delays
-	"cerbo",
+	"Aldo Fregoso (Aldo_MX)", -- delays and much more. StepMania AMX creator
+	"A.C/@waiei", -- custom scoring fixes + Hybrid scoring
+	"cerbo", -- lua bindings and other fun stuff
 	"cesarmades", -- pump/cmd* noteskins
-	"Chris Eldridge (kurisu)", -- dance-threepanel
+	"Chris Eldridge (kurisu)", -- dance-threepanel stepstype support
 	"Christophe Goulet-LeBlanc (Kommisar)", -- songs
 	"corec", -- various fixes
 	"galopin", -- piu PlayStation2 usb mat support
 	"gholms", -- automake 1.11 support
 	"juanelote", -- SongManager:GetSongGroupByIndex, JumpToNext/PrevGroup logic mods
 	"Kaox", -- pump/default noteskin
-	"Petriform", -- Music
 	"NitroX72", -- pump/frame noteskin
+	"Petriform", -- default theme music
+	"桜為小鳩/@sakuraponila", -- custom scoring fixes
+	"Samuel Kim (1a2a3a2a1a)", -- various beat mode fixes
 	"sy567", -- beginner helper fix
 	"v1toko", -- x-mode from StepNXA
-	"waiei", -- custom scoring fixes + Hybrid scoring
 }
 
 local translators = {
@@ -72,6 +74,7 @@ local thanks = {
 	"Dreamwoods",
 	"Jason Bolt (LightningXCE)",
 	"Jousway", -- Noteskins
+	"Luizsan", -- creator of Delta theme
 	"Matt1360", -- Automake magic + oitg bro
 	"Renard",
 	"Ryan McKanna (Plaguefox)",
@@ -80,13 +83,13 @@ local thanks = {
 local shoutout = {
 	"The Lua team", -- lua project lead or some shit. super nerdy but oh hell.
 	"Mojang AB", -- minecraft forever -freem
+	"Wolfire Games", -- piles of inspiration
 	"NAKET Coder",
 	"Ciera Boyd", -- you bet your ass I'm putting my girlfriend in the credits
 	--Image(), -- we should have some logos probably to look super pro
 	"#KBO",
 	"Celestia Radio", -- LOVE AND TOLERANCE
 	"You showed us... your ultimate dance",
-	-- "Can't stop crying... buckets of tears!"
 }
 
 local copyright = {
@@ -145,7 +148,6 @@ end
 creditScroller.BeginCommand=function(self)
 	SCREENMAN:GetTopScreen():PostScreenMessage( "SM_BeginFadingOut", (t.SecondsPerItem * (#t + item_padding_start) + 5) );
 end;
-
 
 return Def.ActorFrame{
 	creditScroller..{
