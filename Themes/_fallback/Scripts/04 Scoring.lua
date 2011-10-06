@@ -36,48 +36,25 @@ function GetDirectRadar(player)
 end;
 
 -----------------------------------------------------------
---DDR 1st Mix and 2nd Mix Scoring
+--Oldschool scoring, best described as a modified 4th mix scheme
+--with a little 1st mix influence
 -----------------------------------------------------------
-r['DDR 1stMIX'] = function(params, pss)
-	local dCombo = math.floor((pss:GetCurrentCombo()+1)/4);
-	local bScore = (dCombo^2+1) * 100;
-	local multLookup = 
-	{ 
-		['TapNoteScore_W1']=3,
-		['TapNoteScore_W2']=3,
-		['TapNoteScore_W3']=1
-	};
-	setmetatable(multLookup, ZeroIfNotFound);
-	--if score increases above the boundaries of a 32-bit signed
-	--(about 2.15 billion), it stops increasing. Conveniently,
-	--1st Mix clamped score as well.
-	local capScore = 999999999;
-	local bestScore = bScore * multLookup['TapNoteScore_W1'];
-	local localScore = bScore * multLookup[params.TapNoteScore];
-	pss:SetCurMaxScore(clamp(pss:GetCurMaxScore()+(bestScore),0,capScore));
-	pss:SetScore(clamp(pss:GetScore()+(localScore),0,capScore));
-end;
-
------------------------------------------------------------
---DDR 4th Mix/Extra Mix/Konamix/GB3/DDRPC Scoring
------------------------------------------------------------
-r['DDR 4thMIX'] = function(params, pss)
+r['Oldschool'] = function(params, pss)
+  local bestPoints = 999
 	local scoreLookupTable =
 	{ 
-		['TapNoteScore_W1']=777, 
-		['TapNoteScore_W2']=777, 
-		['TapNoteScore_W3']=555 
+		['TapNoteScore_W1']=999, 
+    ['TapNoteScore_W2']=IsW1Allowed() and 888 or 999, 
+		['TapNoteScore_W3']=777,
+    ['TapNoteScore_W4']=555,
+    ['TapNoteScore_W5']=111, 
 	};
 	setmetatable(scoreLookupTable, ZeroIfNotFound);
-	-- TODO: Modify this so that current max assumes full combo?
-	local comboBonusForThisStep = (pss:GetCurrentCombo()+1)*333;
-	local capScore = 999999999;
-	local bestPoints = scoreLookupTable['TapNoteScore_W1'];
-	local bestCombo = bestPoints and comboBonusForThisStep or 0;
-	pss:SetCurMaxScore(clamp(pss:GetCurMaxScore()+bestPoints+bestCombo,0,capScore));
-	local localPoints = scoreLookupTable[params.TapNoteScore];
-	local localCombo = localPoints and comboBonusForThisStep or 0;
-	pss:SetScore(clamp(pss:GetScore()+localPoints+localCombo,0,capScore));
+  local comboBonusForThisStep = (pss:GetCurrentCombo()*111)^1.1;
+	local capScore = 1000000000;
+  pss:SetCurMaxScore(capScore); --i don't really care about weird scoring modes -fsx
+  local pointsGot = comboBonusForThisStep + scoreLookupTable[params.TapNoteScore] + (params.HoldNoteScore == 'HoldNoteScore_Held' and 777 or 0);
+	pss:SetScore(clamp(pss:GetScore()+pointsGot,0,capScore));
 end;
 
 -----------------------------------------------------------
@@ -168,7 +145,7 @@ end;
 --HYBRID Scoring, contributed by @waiei
 -----------------------------------------------------------
 local hyb_Steps={0,0};
-r['HYBRID'] = function(params, pss)
+r['Hybrid'] = function(params, pss)
 	local multLookup =
 	{
 		['TapNoteScore_W1'] = 10,
@@ -386,7 +363,7 @@ end;
 --------------------------------------------------------------
 --1bilDP scoring because I can.
 --------------------------------------------------------------
-r['1bilDP']= function(params,pss)
+r['Billions DP']= function(params,pss)
   local poss = pss:GetPossibleDancePoints()
   pss:SetScore(math.floor((pss:GetActualDancePoints()/poss)*1000000000))
   pss:SetCurMaxScore(math.floor((pss:GetCurrentPossibleDancePoints()/poss)*1000000000))
