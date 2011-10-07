@@ -66,7 +66,6 @@ XToString( DetailLine );
 #define SHOW_SCORE_AREA				THEME->GetMetricB(m_sName,"ShowScoreArea")
 #define SHOW_TIME_AREA				THEME->GetMetricB(m_sName,"ShowTimeArea")
 #define SHOW_RECORDS_AREA			THEME->GetMetricB(m_sName,"ShowRecordsArea")
-#define MAX_COMBO_NUM_DIGITS		THEME->GetMetricI(m_sName,"MaxComboNumDigits")
 #define PLAYER_OPTIONS_HIDE_FAIL_TYPE	THEME->GetMetricB(m_sName,"PlayerOptionsHideFailType")
 #define PLAYER_OPTIONS_SEPARATOR	THEME->GetMetric (m_sName,"PlayerOptionsSeparator")
 #define CHECKPOINTS_WITH_JUDGMENTS	THEME->GetMetricB(m_sName,"CheckpointsWithJudgments")
@@ -460,6 +459,7 @@ void ScreenEvaluation::Init()
 
 	// init judgment area
 	ROLLING_NUMBERS_CLASS.Load( m_sName, "RollingNumbersClass" );
+	ROLLING_NUMBERS_MAX_COMBO_CLASS.Load( m_sName, "RollingNumbersMaxComboClass" );
 	FOREACH_ENUM( JudgmentLine, l )
 	{
 		if( l == JudgmentLine_W1  && !GAMESTATE->ShowW1() )
@@ -481,7 +481,10 @@ void ScreenEvaluation::Init()
 			{
 				m_textJudgmentLineNumber[l][p].LoadFromFont( THEME->GetPathF(m_sName, "JudgmentLineNumber") );
 				m_textJudgmentLineNumber[l][p].SetName( JudgmentLineToString(l)+ssprintf("NumberP%d",p+1) );
-				m_textJudgmentLineNumber[l][p].Load( ROLLING_NUMBERS_CLASS );
+				if( JudgmentLineToString(l) == "MaxCombo" )
+					m_textJudgmentLineNumber[l][p].Load( ROLLING_NUMBERS_MAX_COMBO_CLASS );
+				else
+					m_textJudgmentLineNumber[l][p].Load( ROLLING_NUMBERS_CLASS );
 				ActorUtil::LoadAllCommands( m_textJudgmentLineNumber[l][p], m_sName );
 				SET_XY( m_textJudgmentLineNumber[l][p] );
 				this->AddChild( &m_textJudgmentLineNumber[l][p] );

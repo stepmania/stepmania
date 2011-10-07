@@ -7,7 +7,6 @@
 struct RadarValues;
 class NoteData;
 class PlayerStageStats;
-class NoteData;
 struct TapNote;
 
 /** @brief NoteData with scores for each TapNote and HoldNote. */

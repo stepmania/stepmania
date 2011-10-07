@@ -165,7 +165,6 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 			// todo: make sure these aren't generating bogus entries due
 			// to a lack of songs. -aj
 			int iNumSongs = SONGMAN->GetNumSongs();
-			LOG->Trace("[CourseLoaderCRS] sParams[1] = %s",sParams[1].c_str());
 			// most played
 			if( sParams[1].Left(strlen("BEST")) == "BEST" )
 			{

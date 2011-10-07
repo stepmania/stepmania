@@ -41,7 +41,7 @@
  * @brief The internal version of the cache for StepMania.
  *
  * Increment this value to invalidate the current cache. */
-const int FILE_CACHE_VERSION = 205;
+const int FILE_CACHE_VERSION = 207;
 
 /** @brief How long does a song sample last by default? */
 const float DEFAULT_MUSIC_SAMPLE_LENGTH = 12.f;
@@ -613,8 +613,9 @@ void Song::TidyUpData( bool fromCache, bool duringCache )
 
 		// find an image with "bg" or "background" in the file name
 		vector<RString> arrayPossibleBGs;
-		GetImageDirListing( m_sSongDir + "*bg*", arrayPossibleBGs );
 		GetImageDirListing( m_sSongDir + "*background*", arrayPossibleBGs );
+		// don't match e.g. "subgroup", "hobgoblin", etc.
+		GetImageDirListing( m_sSongDir + "*bg", arrayPossibleBGs );
 		if( !arrayPossibleBGs.empty() )
 			m_sBackgroundFile = arrayPossibleBGs[0];
 	}
@@ -644,8 +645,8 @@ void Song::TidyUpData( bool fromCache, bool duringCache )
 	{
 		// a rectangular graphic, not to be confused with CDImage above.
 		vector<RString> arrayPossibleDiscImages;
-		GetImageDirListing( m_sSongDir + "* Disc", arrayPossibleDiscImages );
-		GetImageDirListing( m_sSongDir + "* Title", arrayPossibleDiscImages );
+		GetImageDirListing( m_sSongDir + "* disc", arrayPossibleDiscImages );
+		GetImageDirListing( m_sSongDir + "* title", arrayPossibleDiscImages );
 		if( !arrayPossibleDiscImages.empty() )
 			m_sDiscFile = arrayPossibleDiscImages[0];
 	}
@@ -920,12 +921,6 @@ void Song::Save()
 
 	ReCalculateRadarValuesAndLastSecond();
 	TranslateTitles();
-	
-	// TODO: Figure out a better way to save to Song's timing data.
-	if( m_vpSteps.size() == 1 )
-	{
-		m_SongTiming = m_vpSteps[0]->m_Timing;
-	}
 
 	// Save the new files. These calls make backups on their own.
 	if( !SaveToSSCFile(GetSongFilePath(), false) )
@@ -1548,7 +1543,10 @@ int Song::GetNumStepsLoadedFromProfile( ProfileSlot slot ) const
 
 bool Song::IsEditAlreadyLoaded( Steps* pSteps ) const
 {
-	ASSERT( pSteps->GetDifficulty() == Difficulty_Edit );
+	ASSERT_M( pSteps->GetDifficulty() == Difficulty_Edit,
+			 ssprintf("The %s chart for %s is no edit, thus it can't be checked for loading.",
+					  DifficultyToString(pSteps->GetDifficulty()).c_str(),
+					  this->m_sMainTitle.c_str()));
 
 	for( unsigned i=0; i<m_vpSteps.size(); i++ )
 	{
@@ -1761,6 +1759,16 @@ public:
 		lua_pushnumber(L, p->m_fMusicLengthSeconds);
 		return 1;
 	}
+	static int GetSampleStart( T* p, lua_State *L )
+	{
+		lua_pushnumber(L, p->m_fMusicSampleStartSeconds);
+		return 1;
+	}
+	static int GetSampleLength( T* p, lua_State *L )
+	{
+		lua_pushnumber(L, p->m_fMusicSampleLengthSeconds);
+		return 1;
+	}
 	static int IsLong( T* p, lua_State *L )	
 	{
 		lua_pushboolean(L, p->IsLong());
@@ -1926,6 +1934,8 @@ public:
 		ADD_METHOD( IsEnabled );
 		ADD_METHOD( GetGroupName );
 		ADD_METHOD( MusicLengthSeconds );
+		ADD_METHOD( GetSampleStart );
+		ADD_METHOD( GetSampleLength );
 		ADD_METHOD( IsLong );
 		ADD_METHOD( IsMarathon );
 		ADD_METHOD( HasStepsType );

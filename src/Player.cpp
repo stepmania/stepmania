@@ -583,6 +583,42 @@ static bool NeedsHoldJudging( const TapNote &tn )
 	}
 }
 
+static void GenerateCacheDataStructure(PlayerState *pPlayerState, const NoteData &notes) {
+
+	pPlayerState->m_CacheDisplayedBeat.clear();
+
+	const vector<TimingSegment*> vScrolls = pPlayerState->GetDisplayedTiming().GetTimingSegments( SEGMENT_SCROLL );
+
+	float displayedBeat = 0.0f;
+	float lastRealBeat = 0.0f;
+	float lastRatio = 1.0f;
+	for ( unsigned i = 0; i < vScrolls.size(); i++ )
+	{
+		ScrollSegment *seg = ToScroll( vScrolls[i] );
+		displayedBeat += ( seg->GetBeat() - lastRealBeat ) * lastRatio;
+		lastRealBeat = seg->GetBeat();
+		lastRatio = seg->GetRatio();
+		CacheDisplayedBeat c = { seg->GetBeat(), displayedBeat, seg->GetRatio() };
+		pPlayerState->m_CacheDisplayedBeat.push_back( c );
+	}
+	
+	pPlayerState->m_CacheNoteStat.clear();
+	
+	NoteData::all_tracks_const_iterator it = notes.GetTapNoteRangeAllTracks( 0, MAX_NOTE_ROW, true );
+	int count = 0, lastCount = 0;
+	for( ; !it.IsAtEnd(); ++it )
+	{
+		for( int t = 0; t < notes.GetNumTracks(); t++ )
+		{
+			if( notes.GetTapNote( t, it.Row() ) != TAP_EMPTY ) count ++;
+		}
+		CacheNoteStat c = { NoteRowToBeat(it.Row()), lastCount, count  };
+		lastCount = count;
+		pPlayerState->m_CacheNoteStat.push_back(c);
+	}
+
+}
+
 void Player::Load()
 {
 	m_bLoaded = true;
@@ -623,6 +659,9 @@ void Player::Load()
 	const Song* pSong = GAMESTATE->m_pCurSong;
 
 	m_Timing = &GAMESTATE->m_pCurSteps[pn]->m_Timing;
+
+	// Generate some cache data structure.
+	GenerateCacheDataStructure(m_pPlayerState, m_NoteData);
 
 	switch( GAMESTATE->m_PlayMode )
 	{
@@ -748,26 +787,6 @@ void Player::SendComboMessages( int iOldCombo, int iOldMissCombo )
 		if( m_pPlayerStageStats )
 			msg.SetParam( "PlayerStageStats", LuaReference::CreateFromPush(*m_pPlayerStageStats) );
 		MESSAGEMAN->Broadcast( msg );
-	}
-}
-
-static void GenerateCacheDataStructure(PlayerState *pPlayerState, NoteData &notes) {
-
-	pPlayerState->m_CacheDisplayedBeat.clear();
-
-	const vector<TimingSegment*> vScrolls = pPlayerState->GetDisplayedTiming().GetTimingSegments( SEGMENT_SCROLL );
-
-	float displayedBeat = 0.0f;
-	float lastRealBeat = 0.0f;
-	float lastRatio = 1.0f;
-	for ( unsigned i = 0; i < vScrolls.size(); i++ )
-	{
-		ScrollSegment *seg = ToScroll( vScrolls[i] );
-		displayedBeat += ( seg->GetBeat() - lastRealBeat ) * lastRatio;
-		lastRealBeat = seg->GetBeat();
-		lastRatio = seg->GetRatio();
-		CacheDisplayedBeat c = { seg->GetBeat(), displayedBeat, seg->GetRatio() };
-		pPlayerState->m_CacheDisplayedBeat.push_back( c );
 	}
 }
 
@@ -899,9 +918,6 @@ void Player::Update( float fDeltaTime )
 	// during pause.
 	if( m_bPaused )
 		return;
-
-	// Generate some cache data structure.
-	GenerateCacheDataStructure(m_pPlayerState, m_NoteData);
 
 	// Check for a strum miss
 	if( m_pPlayerState->m_fLastStrumMusicSeconds != -1  &&

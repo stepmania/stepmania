@@ -75,7 +75,7 @@ public:
 	{ 
 		SHOW_ALWAYS,	/**< always show on the wheel. */
 		SHOW_NEVER	/**< never show on the wheel (unless song hiding is turned off). */
-	} /** @brief When should this song be displayed in the music wheel? */ m_SelectionDisplay;
+	} m_SelectionDisplay;
 
 	Song();
 	~Song();

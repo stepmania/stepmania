@@ -19,9 +19,7 @@
 #include "RageSurfaceUtils_Zoom.h"
 static HBITMAP g_hBitmap = NULL;
 
-#pragma comment(linker,"\"/manifestdependency:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
-
-// Load a RageSurface into a GDI surface.
+/* Load a RageSurface into a GDI surface. */
 static HBITMAP LoadWin32Surface( RageSurface *&s )
 {
 	RageSurfaceUtils::ConvertSurface( s, s->w, s->h, 32, 0xFF000000, 0x00FF0000, 0x0000FF00, 0 );
@@ -35,14 +33,14 @@ static HBITMAP LoadWin32Surface( RageSurface *&s )
 	HDC BitmapDC = CreateCompatibleDC( hScreen );
 	SelectObject( BitmapDC, bitmap );
 
-	// This is silly, but simple. We only do this once, on a small image.
+	/* This is silly, but simple.  We only do this once, on a small image. */
 	for( int y = 0; y < s->h; ++y )
 	{
 		unsigned const char *line = ((unsigned char *) s->pixels) + (y * s->pitch);
 		for( int x = 0; x < s->w; ++x )
 		{
 			unsigned const char *data = line + (x*s->format->BytesPerPixel);
-
+			
 			SetPixelV( BitmapDC, x, y, RGB( data[3], data[2], data[1] ) );
 		}
 	}
@@ -62,7 +60,7 @@ static HBITMAP LoadWin32Surface( RString sFile, HWND hWnd )
 	if( pSurface == NULL )
 		return NULL;
 
-	/* Resize the splash image to fit the dialog. Stretch to fit horizontally,
+	/* Resize the splash image to fit the dialog.  Stretch to fit horizontally,
 	 * maintaining aspect ratio. */
 	{
 		RECT r;
@@ -80,43 +78,8 @@ static HBITMAP LoadWin32Surface( RString sFile, HWND hWnd )
 	return ret;
 }
 
-INT_PTR CALLBACK LoadingWindow_Win32::DlgProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
+BOOL CALLBACK LoadingWindow_Win32::WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
 {
-	LoadingWindow_Win32 *self;
-
-	if(msg==WM_INITDIALOG) {
-		self=(LoadingWindow_Win32 *)lParam;
-		SetWindowLong(hWnd,DWL_USER,(LONG)self);
-	} else {
-		self=(LoadingWindow_Win32 *)GetWindowLong(hWnd,DWL_USER);
-	}
-
-/*
-#if WINVER >= 0x0601
-	if (self && msg == self->taskbarCreatedEvent && !self->pTaskbarList) {
-		HRESULT hr = CoCreateInstance(CLSID_TaskbarList, NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&self->pTaskbarList));
-		if (SUCCEEDED(hr)) {
-			self->pTaskbarList->HrInit();
-			if (FAILED(hr))	{
-				self->pTaskbarList->Release();
-				self->pTaskbarList = NULL;
-			} else {
-
-
-				if(self->m_indeterminate) {
-					self->pTaskbarList->SetProgressState(hWnd, TBPF_INDETERMINATE);
-				} else {
-					self->pTaskbarList->SetProgressState(hWnd, TBPF_NORMAL);
-					self->pTaskbarList->SetProgressValue(hWnd, self->m_progress, self->m_totalWork);
-				}
-			}
-		}
-
-
-	}
-#endif
-*/
-
 	switch( msg )
 	{
 	case WM_INITDIALOG:
@@ -134,36 +97,11 @@ INT_PTR CALLBACK LoadingWindow_Win32::DlgProc( HWND hWnd, UINT msg, WPARAM wPara
 			(WPARAM) IMAGE_BITMAP, 
 			(LPARAM) (HANDLE) g_hBitmap );
 		SetWindowTextA( hWnd, PRODUCT_ID );
-
 		break;
-
-	case WM_CLOSE:
-		HOOKS->SetUserQuit();
-		return FALSE;
 
 	case WM_DESTROY:
-
-/*
-#if(WINVER >= 0x0601)
-		if (self->pTaskbarList) {
-			self->pTaskbarList->Release();
-			self->pTaskbarList = NULL;
-		}
-#endif
-*/
-
 		DeleteObject( g_hBitmap );
 		g_hBitmap = NULL;
-		self->runMessageLoop=false;
-		self->hwnd=NULL;
-		return TRUE;
-		break;
-
-	case WM_APP:
-		DestroyWindow(hWnd);
-		self->runMessageLoop=false;
-		ExitThread(0);
-		return TRUE;
 		break;
 	}
 
@@ -172,7 +110,7 @@ INT_PTR CALLBACK LoadingWindow_Win32::DlgProc( HWND hWnd, UINT msg, WPARAM wPara
 
 void LoadingWindow_Win32::SetIcon( const RageSurface *pIcon )
 {
-	if( g_hBitmap != NULL )
+	if( m_hIcon != NULL )
 		DestroyIcon( m_hIcon );
 
 	m_hIcon = IconFromSurface( pIcon );
@@ -201,64 +139,35 @@ void LoadingWindow_Win32::SetSplash( const RString sPath )
 }
 
 LoadingWindow_Win32::LoadingWindow_Win32()
-{	
-
-	INITCOMMONCONTROLSEX cceData;
-	cceData.dwSize=sizeof(INITCOMMONCONTROLSEX);
-	cceData.dwICC=ICC_PROGRESS_CLASS;
-	InitCommonControlsEx(&cceData);
-
-/*
-#if(WINVER >= 0x0601)
-	pTaskbarList=NULL;
-
-	taskbarCreatedEvent=RegisterWindowMessage("TaskbarButtonCreated");
-#endif
-*/
-
+{
 	m_hIcon = NULL;
-
-	runMessageLoop=true;
-
-	guiReadyEvent=CreateEvent(NULL,FALSE,FALSE,NULL);
-
-	pumpThread=CreateThread(NULL, NULL,	MessagePump, (void *)this, 0,	&pumpThreadId);
-
-	WaitForSingleObject(guiReadyEvent,INFINITE);
-
+	hwnd = CreateDialog( handle.Get(), MAKEINTRESOURCE(IDD_LOADING_DIALOG), NULL, WndProc );
 	for( unsigned i = 0; i < 3; ++i )
 		text[i] = "ABC"; /* always set on first call */
 	SetText( "" );
+	Paint();
 }
 
 LoadingWindow_Win32::~LoadingWindow_Win32()
 {
-	SendMessage(hwnd,WM_APP,0,0);
-	//SendMessage(hwnd,WM_NULL,0,0);
-	WaitForSingleObject(pumpThread,INFINITE);
-	if(guiReadyEvent) 
-		CloseHandle(guiReadyEvent);
+	if( hwnd )
+		DestroyWindow( hwnd );
 	if( m_hIcon != NULL )
 		DestroyIcon( m_hIcon );
 }
 
-DWORD WINAPI LoadingWindow_Win32::MessagePump(LPVOID thisAsVoidPtr)
+void LoadingWindow_Win32::Paint()
 {
-	LoadingWindow_Win32 *self=(LoadingWindow_Win32 *)thisAsVoidPtr;
+	SendMessage( hwnd, WM_PAINT, 0, 0 );
 
-	self->hwnd = CreateDialogParam( self->handle.Get(), MAKEINTRESOURCE(IDD_LOADING_DIALOG), NULL, DlgProc, (LPARAM)thisAsVoidPtr);
-
-	SetEvent(self->guiReadyEvent);
-
-	// Run the message loop in a separate thread to keep the gui responsive during the loading
+	/* Process all queued messages since the last paint.  This allows the window to
+	 * come back if it loses focus during load. */
 	MSG msg;
-	while(self->runMessageLoop && GetMessage(&msg, self->hwnd, 0, 0 ) )
+	while( PeekMessage( &msg, hwnd, 0, 0, PM_NOREMOVE ) )
 	{
-		if(IsDialogMessage(self->hwnd,&msg)) continue;
+		GetMessage(&msg, hwnd, 0, 0 );
 		DispatchMessage( &msg );
 	}
-
-	return msg.wParam;
 }
 
 void LoadingWindow_Win32::SetText( RString sText )
@@ -267,7 +176,7 @@ void LoadingWindow_Win32::SetText( RString sText )
 	split( sText, "\n", asMessageLines, false );
 	while( asMessageLines.size() < 3 )
 		asMessageLines.push_back( "" );
-	
+
 	const int msgid[] = { IDC_STATIC_MESSAGE1, IDC_STATIC_MESSAGE2, IDC_STATIC_MESSAGE3 };
 	for( unsigned i = 0; i < 3; ++i )
 	{
@@ -276,7 +185,6 @@ void LoadingWindow_Win32::SetText( RString sText )
 		text[i] = asMessageLines[i];
 
 		HWND hwndItem = ::GetDlgItem( hwnd, msgid[i] );
-		
 		::SetWindowText( hwndItem, ConvertUTF8ToACP(asMessageLines[i]).c_str() );
 	}
 }
@@ -286,13 +194,6 @@ void LoadingWindow_Win32::SetProgress(const int progress)
 	m_progress=progress;
 	HWND hwndItem = ::GetDlgItem( hwnd, IDC_PROGRESS );
 	::SendMessage(hwndItem,PBM_SETPOS,progress,0);
-/*
-#if(WINVER >= 0x0601)
-	if(pTaskbarList) {
-		pTaskbarList->SetProgressValue(hwnd, m_progress, m_totalWork);
-	}
-#endif
-*/
 }
 
 void LoadingWindow_Win32::SetTotalWork(const int totalWork)
@@ -300,42 +201,21 @@ void LoadingWindow_Win32::SetTotalWork(const int totalWork)
 	m_totalWork=totalWork;
 	HWND hwndItem = ::GetDlgItem( hwnd, IDC_PROGRESS );
 	SendMessage(hwndItem,PBM_SETRANGE32,0,totalWork);
-/*
-#if(WINVER >= 0x0601)
-	if(pTaskbarList) {
-		pTaskbarList->SetProgressValue(hwnd, m_progress, m_totalWork);
-	}
-#endif
-*/
 }
 
-void LoadingWindow_Win32::SetIndeterminate(bool indeterminate) {
+void LoadingWindow_Win32::SetIndeterminate(bool indeterminate)
+{
 	m_indeterminate=indeterminate;
 
 	HWND hwndItem = ::GetDlgItem( hwnd, IDC_PROGRESS );
 
 	if(indeterminate) {
-/*
-#if(WINVER >= 0x0601)
-		if(pTaskbarList) {
-			pTaskbarList->SetProgressState(hwnd, TBPF_INDETERMINATE);
-		}
-#endif
-*/
 		SetWindowLong(hwndItem,GWL_STYLE, PBS_MARQUEE | GetWindowLong(hwndItem,GWL_STYLE));
 		SendMessage(hwndItem,PBM_SETMARQUEE,1,0);
 	} else {
 		SendMessage(hwndItem,PBM_SETMARQUEE,0,0);
 		SetWindowLong(hwndItem,GWL_STYLE, (~PBS_MARQUEE) & GetWindowLong(hwndItem,GWL_STYLE));
-/*
-#if(WINVER >= 0x0601)
-		if(pTaskbarList) {
-			pTaskbarList->SetProgressState(hwnd, TBPF_NORMAL);
-		}
-#endif
-*/
 	}
-	
 }
 
 /*

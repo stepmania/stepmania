@@ -62,6 +62,7 @@ public:
 	bool HaveProfileToLoad();
 	bool HaveProfileToSave();
 	void SaveLocalData();
+	void AddStageToPlayer( PlayerNumber pn );
 	void LoadCurrentSettingsFromProfile( PlayerNumber pn );
 	/**
 	 * @brief Save the specified player's settings to his/her profile.

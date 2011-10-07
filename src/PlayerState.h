@@ -18,6 +18,12 @@ struct CacheDisplayedBeat {
 	float velocity;
 };
 
+struct CacheNoteStat {
+	float beat;
+	int notesLower;
+	int notesUpper;
+};
+
 /** @brief The player's indivdual state. */
 class PlayerState
 {
@@ -55,11 +61,16 @@ public:
 	 * @brief Holds a vector sorted by real beat, the beat that would be displayed
 	 *        in the NoteField (because they are affected by scroll segments), and
 	 *        also the velocity.
-	 *        This vector will be populated each frame by Player and will probably
-	 *        be used a lot in ArrowEffects. This is way better than iterating through
-	 *        all scroll segments per tap note per frame, which is very slow!
+	 *        This vector will be populated on Player::Load() be used a lot in
+	 *        ArrowEffects to determine the target beat in O(log N).
 	 */
 	vector<CacheDisplayedBeat> m_CacheDisplayedBeat;
+
+	/**
+	 * @brief Holds a vector sorted by beat, the cumulative number of notes from
+	 *        the start of the song. This will be used by [insert more description here]
+	 */
+	vector<CacheNoteStat> m_CacheNoteStat;
 
 	/**
 	 * @brief Change the PlayerOptions to their default.

@@ -59,7 +59,6 @@ void AdjustSync::ResetOriginalSyncData()
 
 	if( GAMESTATE->m_pCurSong )
 	{
-		
 		s_vpTimingDataOriginal.push_back(GAMESTATE->m_pCurSong->m_SongTiming);
 		const vector<Steps *>& vpSteps = GAMESTATE->m_pCurSong->GetAllSteps();
 		FOREACH( Steps*, const_cast<vector<Steps *>&>(vpSteps), s )
@@ -97,7 +96,7 @@ void AdjustSync::SaveSyncChanges()
 {
 	if( GAMESTATE->IsCourseMode() )
 		return;
-	
+
 	/* TODO: Save all of the timing data changes.
 	 * Luckily, only the song timing data needs comparing here. */
 	if( GAMESTATE->m_pCurSong && s_vpTimingDataOriginal[0] != GAMESTATE->m_pCurSong->m_SongTiming )
@@ -123,10 +122,10 @@ void AdjustSync::RevertSyncChanges()
 	if( GAMESTATE->IsCourseMode() )
 		return;
 	PREFSMAN->m_fGlobalOffsetSeconds.Set( s_fGlobalOffsetSecondsOriginal );
-	
+
 	// The first one is ALWAYS the song timing.
 	GAMESTATE->m_pCurSong->m_SongTiming = s_vpTimingDataOriginal[0];
-	
+
 	unsigned location = 1;
 	const vector<Steps *>& vpSteps = GAMESTATE->m_pCurSong->GetAllSteps();
 	FOREACH( Steps*, const_cast<vector<Steps *>&>(vpSteps), s )
@@ -134,7 +133,7 @@ void AdjustSync::RevertSyncChanges()
 		(*s)->m_Timing = s_vpTimingDataOriginal[location];
 		location++;
 	}
-	
+
 	ResetOriginalSyncData();
 	s_fStandardDeviation = 0.0f;
 	s_fAverageError = 0.0f;
@@ -169,7 +168,7 @@ void AdjustSync::HandleAutosync( float fNoteOffBySeconds, float fStepTime )
 
 		AutosyncOffset();
 		break;
- 	}
+	}
 	default:
 		ASSERT(0);
 	}
@@ -250,12 +249,11 @@ void AdjustSync::AutosyncTempo()
 
 	if( s_fAverageError < ERROR_TOO_HIGH )
 	{
-		// Here we filter out any steps that are too far off.
-		//
-		// If it turns out that we want to be even more selective, we can
-		// keep only a fraction of the data, such as the 80% with the lowest
-		// error.  However, throwing away the ones with high error should
-		// be enough in most cases.
+		/* Here we filter out any steps that are too far off.
+		 * If it turns out that we want to be even more selective, we can keep
+		 * only a fraction of the data, such as the 80% with the lowest error.
+		 * However, throwing away the ones with high error should be enough
+		 * in most cases. */
 		float fFilteredError = 0;
 		s_iStepsFiltered = s_vAutosyncTempoData.size();
 		FilterHighErrorPoints( s_vAutosyncTempoData, fSlope, fIntercept, ERROR_TOO_HIGH );
@@ -303,7 +301,6 @@ void AdjustSync::AutosyncTempo()
 	s_vAutosyncTempoData.clear();
 }
 
-
 static LocalizedString EARLIER			("AdjustSync","earlier");
 static LocalizedString LATER			("AdjustSync","later");
 static LocalizedString GLOBAL_OFFSET_FROM	( "AdjustSync", "Global Offset from %+.3f to %+.3f (notes %s)" );
@@ -330,9 +327,8 @@ void AdjustSync::GetSyncChangeTextGlobal( vector<RString> &vsAddTo )
 		{
 			vsAddTo.push_back( ssprintf( 
 				GLOBAL_OFFSET_FROM.GetValue(),
-				fOld, 
-				fNew,
-				(fDelta > 0 ? EARLIER:LATER).GetValue().c_str() ) );
+				fOld, fNew,
+				(fDelta > 0 ? EARLIER:LATER).GetValue().c_str() ));
 		}
 	}
 }

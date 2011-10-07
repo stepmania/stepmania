@@ -496,18 +496,10 @@ bool ScreenDebugOverlay::OverlayInput( const InputEventPlus &input )
 			// update text to show the effect of what changed above
 			UpdateText();
 
-			// blink the text to show what changed
+			// show what changed
 			BitmapText &bt = *m_vptextButton[i];
 			bt.FinishTweening();
-			// blink 5 times instead of 8
-			// TODO: make this all metrics instead -aj
-			for( i=0; i<5; i++ )
-			{
-				bt.SetGlow( RageColor(1,0,0,1) );
-				bt.Sleep(0.1f);
-				bt.SetGlow( RageColor(1,0,0,0) );
-				bt.Sleep(0.1f);
-			}
+			bt.PlayCommand("Toggled");
 
 			return true;
 		}

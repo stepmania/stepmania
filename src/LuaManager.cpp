@@ -222,7 +222,7 @@ static int LuaPanic( lua_State *L )
 	RString sErr;
 	LuaHelpers::Pop( L, sErr );
 
-	RageException::Throw( "%s", sErr.c_str() );
+	RageException::Throw( "[Lua panic] %s", sErr.c_str() );
 }
 
 // Actor registration

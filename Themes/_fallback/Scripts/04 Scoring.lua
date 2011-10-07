@@ -11,7 +11,14 @@ function GetTotalItems(radars)
 	local total = radars:GetValue('RadarCategory_TapsAndHolds')
 	total = total + radars:GetValue('RadarCategory_Holds') 
 	total = total + radars:GetValue('RadarCategory_Rolls')
-	total = total + radars:GetValue('RadarCategory_Lifts')
+	-- [ja] Liftを加えると一部二重加算になるため除外する。
+	-- total = total + radars:GetValue('RadarCategory_Lifts')
+
+	-- [en] prevent divide by 0
+	-- [ja] 0除算対策（しなくても動作するけど満点になっちゃうんで）
+	if total <= 0 then
+		total = 1
+	end;
 	return total
 end;
 
@@ -29,61 +36,44 @@ function GetDirectRadar(player)
 end;
 
 -----------------------------------------------------------
---DDR 1st Mix and 2nd Mix Scoring
+--Oldschool scoring, best described as a modified 4th mix scheme
+--with a little 1st mix influence
 -----------------------------------------------------------
-r['DDR 1stMIX'] = function(params, pss)
-	local dCombo = math.floor((pss:GetCurrentCombo()+1)/4);
-	local bScore = (dCombo^2+1) * 100;
-	local multLookup = 
-	{ 
-		['TapNoteScore_W1']=3,
-		['TapNoteScore_W2']=3,
-		['TapNoteScore_W3']=1
-	};
-	setmetatable(multLookup, ZeroIfNotFound);
-	--if score increases above the boundaries of a 32-bit signed
-	--(about 2.15 billion), it stops increasing. Conveniently,
-	--1st Mix clamped score as well.
-	local capScore = 999999999;
-	local bestScore = bScore * multLookup['TapNoteScore_W1'];
-	local localScore = bScore * multLookup[params.TapNoteScore];
-	pss:SetCurMaxScore(clamp(pss:GetCurMaxScore()+(bestScore),0,capScore));
-	pss:SetScore(clamp(pss:GetScore()+(localScore),0,capScore));
-	
-end;
------------------------------------------------------------
---DDR 4th Mix/Extra Mix/Konamix/GB3/DDRPC Scoring
------------------------------------------------------------
-r['DDR 4thMIX'] = function(params, pss)
+r['Oldschool'] = function(params, pss)
+  local bestPoints = 999
 	local scoreLookupTable =
 	{ 
-		['TapNoteScore_W1']=777, 
-		['TapNoteScore_W2']=777, 
-		['TapNoteScore_W3']=555 
+		['TapNoteScore_W1']=999, 
+    ['TapNoteScore_W2']=IsW1Allowed() and 888 or 999, 
+		['TapNoteScore_W3']=777,
+    ['TapNoteScore_W4']=555,
+    ['TapNoteScore_W5']=111, 
 	};
 	setmetatable(scoreLookupTable, ZeroIfNotFound);
-	-- TODO: Modify this so that current max assumes full combo?
-	local comboBonusForThisStep = (pss:GetCurrentCombo()+1)*333;
-	local capScore = 999999999;
-	local bestPoints = scoreLookupTable['TapNoteScore_W1'];
-	local bestCombo = bestPoints and comboBonusForThisStep or 0;
-	pss:SetCurMaxScore(clamp(pss:GetCurMaxScore()+bestPoints+bestCombo,0,capScore));
-	local localPoints = scoreLookupTable[params.TapNoteScore];
-	local localCombo = localPoints and comboBonusForThisStep or 0;
-	pss:SetScore(clamp(pss:GetScore()+localPoints+localCombo,0,capScore));
+  local comboBonusForThisStep = (pss:GetCurrentCombo()*111)^1.1;
+	local capScore = 1000000000;
+  pss:SetCurMaxScore(capScore); --i don't really care about weird scoring modes -fsx
+  local pointsGot = comboBonusForThisStep + scoreLookupTable[params.TapNoteScore] + (params.HoldNoteScore == 'HoldNoteScore_Held' and 777 or 0);
+	pss:SetScore(clamp(pss:GetScore()+pointsGot,0,capScore));
 end;
+
 -----------------------------------------------------------
---DDR MAX2/Extreme Scoring
+--DDR MAX2/Extreme(-esque) Scoring by @sakuraponila
 -----------------------------------------------------------
+local ext_Steps = {0,0};
 r['DDR Extreme'] = function(params, pss)
-	local judgmentBase = {
+	local multLookup =
+	{
 		['TapNoteScore_W1'] = 10,
 		['TapNoteScore_W2'] = 9,
 		['TapNoteScore_W3'] = 5
 	};
-	setmetatable(judgmentBase, ZeroIfNotFound);
+	setmetatable(multLookup, ZeroIfNotFound);
 	local steps = GAMESTATE:GetCurrentSteps(params.Player);
-	local radarValues = steps:GetRadarValues(params.Player);
+	local radarValues = GetDirectRadar(params.Player);
+	local totalItems = GetTotalItems(radarValues);
+	-- 1 + 2 + 3 + ... + totalItems value/の値
+	local sTotal = (totalItems + 1) * totalItems / 2;
 	local meter = steps:GetMeter();
 	if (steps:IsAnEdit()) then
 		meter = 5;
@@ -92,39 +82,62 @@ r['DDR Extreme'] = function(params, pss)
 	elseif (meter > 10) then
 		meter = 10;
 	end;
-	local baseScore = meter * 1000000;
+	-- [en] score for one step
+	-- [ja] 1ステップあたりのスコア
+	local baseScore = meter * 1000000
 	if (GAMESTATE:GetCurrentSong():IsMarathon()) then
 		baseScore = baseScore * 3;
 	elseif (GAMESTATE:GetCurrentSong():IsLong()) then
 		baseScore = baseScore * 2;
 	end;
-	local totalItems = GetTotalItems(radarValues);
-	local singleStep = (1 + totalItems) * totalItems / 2;
-	if (not Shared.CurrentStep) then
-		Shared.CurrentStep = {};
-		Shared.CurrentStep["P1"] = 0;
-		Shared.CurrentStep["P2"] = 0;
-	end;
-	local pn = PlayerNumberToString(params.Player);
-	Shared.CurrentStep[pn] = Shared.CurrentStep[pn] + 1;
-	local stepValue = math.floor(baseScore /singleStep);
-	local stepLast = stepValue * Shared.CurrentStep[pn];
-	pss:SetCurMaxScore(pss:GetCurMaxScore() + 
-		(stepLast * judgmentBase['TapNoteScore_W1']));
-	local judgeScore = 0;
-	if (params.HoldNoteScore == 'HoldNoteScore_Held') then
-		judgeScore = judgmentBase['TapNoteScore_W1'];
+	local sOne = math.floor(baseScore / sTotal);
+	-- [en] measures for 5 points of units
+	-- [ja] 5点単位のための処置
+	sOne = sOne - sOne % 5;
+	-- [en] because fractions are added by the last step, get value
+	-- [ja] 端数は最後の1ステップで加算するのでその値を取得
+	local sLast = baseScore - (sOne * sTotal);
+
+	local p;
+	if params.Player == 'PlayerNumber_P1' then
+		p = 1;
 	else
-		judgeScore = judgmentBase[params.TapNoteScore];
-		if (IsW1Allowed(params.TapNoteScore)) then
-			judgeScore = judgmentBase['TapNoteScore_W1'];
+		p = 2;
+	end;
+	-- [en] initialized when score is 0
+	-- [ja] スコアが0の時に初期化
+	if pss:GetScore() == 0 then
+		ext_Steps[p] = 0;
+	end;
+	-- [en] now step count
+	-- [ja] 現在のステップ数
+	ext_Steps[p] = ext_Steps[p] + 1;
+	-- [en] current score
+	-- [ja] 今回加算するスコア（W1の時）
+	local vScore = sOne * ext_Steps[p];
+	pss:SetCurMaxScore(pss:GetCurMaxScore() + vScore);
+	-- [ja] 判定によって加算量を変更
+	if (params.HoldNoteScore == 'HoldNoteScore_Held') then
+	-- [ja] O.K.判定時は問答無用で満点
+		vScore = vScore;
+	else
+		-- [ja] N.G.判定時は問答無用で0点
+		if (params.HoldNoteScore == 'HoldNoteScore_LetGo') then
+			vScore = 0;
+		-- [en] non-long note scoring
+		-- [ja] それ以外ということは、ロングノート以外の判定である
+		else
+			vScore = vScore * multLookup[params.TapNoteScore] / 10
 		end;
 	end;
-	local stepScore = judgeScore * stepLast;
-	pss:SetScore(pss:GetScore() + stepScore);
-	if (Shared.CurrentStep[pn] >= totalItems) then -- Just in case.
-		-- TODO: Implement the bonus for the last step?
-		Shared.CurrentStep[pn] = 0; -- Reset for the next song.
+	-- [en] measures for 5 points of units
+	-- [ja] ここでも5点単位のための処置
+	vScore = vScore - vScore % 5
+	pss:SetScore(pss:GetScore() + vScore);
+	-- if one of the last step, add the fractions
+	-- [ja] 最後の1ステップの場合、端数を加算する
+	if ((vScore > 0) and (ext_Steps[p] == totalItems)) then
+		pss:SetScore(pss:GetScore() + sLast);
 	end;
 end;
 
@@ -132,7 +145,7 @@ end;
 --HYBRID Scoring, contributed by @waiei
 -----------------------------------------------------------
 local hyb_Steps={0,0};
-r['HYBRID'] = function(params, pss)
+r['Hybrid'] = function(params, pss)
 	local multLookup =
 	{
 		['TapNoteScore_W1'] = 10,
@@ -141,8 +154,7 @@ r['HYBRID'] = function(params, pss)
 	};
 	setmetatable(multLookup, ZeroIfNotFound);
 	local radarValues = GetDirectRadar(params.Player);
-	-- [ja] GetTotalItems(radarValues) に Liftも含まれているので 引いておく
-	local totalItems = GetTotalItems(radarValues) - radarValues:GetValue('RadarCategory_Lifts');
+	local totalItems = GetTotalItems(radarValues);
 	-- 1+2+3+...+totalItems value/の値
 	local sTotal = (totalItems+1)*totalItems/2;
 	-- [en] Score for one song
@@ -151,9 +163,13 @@ r['HYBRID'] = function(params, pss)
 	-- [ja] 端数は最後の1ステップで加算するのでその値を取得
 	local sLast = 100000000-(sOne*sTotal);
 
-	local p = (params.Player == 'PlayerNumber_P1') and 1 or 2
+	local p;
+	if params.Player=='PlayerNumber_P1' then
+		p=1;
+	else
+		p=2;
+	end;
 
-	-- [en] Initialize score if 0.
 	-- [ja] スコアが0の時に初期化
 	if pss:GetScore()==0 then
 		hyb_Steps[p]=0;
@@ -184,26 +200,81 @@ r['HYBRID'] = function(params, pss)
 end;
 
 -----------------------------------------------------------
---DDR SuperNOVA(-esque) scoring
+--DDR SuperNOVA scoring (Use MARVELOUS) by @sakuraponila
+-----------------------------------------------------------
+local sntmp_Score = {0,0};
+local sntmp_Steps = {0,0};
+r['DDR SuperNOVA'] = function(params, pss)
+	local multLookup =
+	{
+		['TapNoteScore_W1'] = 3,
+		['TapNoteScore_W2'] = 2,
+		['TapNoteScore_W3'] = 1
+	};
+	setmetatable(multLookup, ZeroIfNotFound);
+	local radarValues = GetDirectRadar(params.Player);
+	local totalItems = GetTotalItems(radarValues)
+	local p;
+	if params.Player == 'PlayerNumber_P1' then
+		p = 1;
+	else
+		p = 2;
+	end;
+
+	-- initialized when score is 0
+	-- [ja] スコアが0の時に初期化
+	if pss:GetScore() == 0 then
+		sntmp_Score[p] = 0;
+		sntmp_Steps[p] = 0;
+	end;
+
+	-- [ja] 判定によって加算量を変更
+	local maxAdd = 0;
+	-- [ja] O.K.判定時は問答無用で満点
+	if params.HoldNoteScore == 'HoldNoteScore_Held' then
+		maxAdd = 3;
+	else
+		-- [ja] N.G.判定時は問答無用で0点
+		if params.HoldNoteScore == 'HoldNoteScore_LetGo' then
+			maxAdd = 0;
+		-- [ja] それ以外ということは、ロングノート以外の判定である
+		else
+			maxAdd = multLookup[params.TapNoteScore];
+		end
+	end;
+	sntmp_Score[p] = sntmp_Score[p] + maxAdd;
+	
+	-- [ja] 踏み踏みしたステップ数
+	sntmp_Steps[p] = sntmp_Steps[p] + 1;
+	-- [ja] 現時点での、All W1判定の時のスコア
+	pss:SetCurMaxScore(math.floor(10000000 * sntmp_Steps[p] / totalItems / 3));
+	-- [ja] 計算して代入
+	pss:SetScore(math.floor(10000000 * sntmp_Score[p] / totalItems / 3));
+end;
+
+-----------------------------------------------------------
+--DDR SuperNOVA 2 scoring by @waiei
 -----------------------------------------------------------
 local sn2tmp_Sub={0,0};
 local sn2tmp_Score={0,0};
 local sn2tmp_Steps={0,0};
-r['DDR SuperNOVA'] = function(params, pss)
+r['DDR SuperNOVA 2'] = function(params, pss)
 	local multLookup =
 	{
-		['TapNoteScore_W1'] = 1,
-		['TapNoteScore_W2'] = 1,
-		['TapNoteScore_W3'] = 0.5
+		['TapNoteScore_W1'] = 10,
+		['TapNoteScore_W2'] = 10,
+		['TapNoteScore_W3'] = 5
 	};
 	setmetatable(multLookup, ZeroIfNotFound);
 	local radarValues = GetDirectRadar(params.Player);
 	local totalItems = GetTotalItems(radarValues);
+	local p;
+	if params.Player=='PlayerNumber_P1' then
+		p=1;
+	else
+		p=2;
+	end;
 
-	if totalItems < 0 then totalItems = 1; end
-	local p = (params.Player == 'PlayerNumber_P1') and 1 or 2
-
-	-- [en] Initialize score if 0.
 	-- [ja] スコアが0の時に初期化
 	if pss:GetScore()==0 then
 		sn2tmp_Sub[p]=0;
@@ -213,7 +284,6 @@ r['DDR SuperNOVA'] = function(params, pss)
 
 	-- [ja] maxAdd は 加算する最高点を 10 とした時の値（つまり、10=100% / 5=50%）
 	local maxAdd = 0;
-
 	-- [ja] O.K.判定時は問答無用で満点
 	if params.HoldNoteScore == 'HoldNoteScore_Held' then
 		maxAdd = 10;
@@ -229,7 +299,7 @@ r['DDR SuperNOVA'] = function(params, pss)
 				sn2tmp_Sub[p]=sn2tmp_Sub[p]+1;
 			end;
 		end
-	end
+	end;
 	sn2tmp_Score[p]=sn2tmp_Score[p]+maxAdd;
 	-- [ja] 踏み踏みしたステップ数
 	sn2tmp_Steps[p]=sn2tmp_Steps[p]+1;
@@ -239,62 +309,7 @@ r['DDR SuperNOVA'] = function(params, pss)
 	-- [ja] 計算して代入
 	pss:SetScore((math.floor(10000*sn2tmp_Score[p]/totalItems) * 10) - (sn2tmp_Sub[p]*10) );
 end;
------------------------------------------------------------
---DDR SuperNOVA 2(-esque) scoring
------------------------------------------------------------
-local sn2tmp_Sub=0;
-local sn2tmp_Score=0;
-local sn2tmp_Steps=0;
-r['DDR SuperNOVA 2'] = function(params, pss)
-	local multLookup =
-	{
-		['TapNoteScore_W1'] = 10,
-		['TapNoteScore_W2'] = 10,
-		['TapNoteScore_W3'] = 5
-	};
-	setmetatable(multLookup, ZeroIfNotFound);
-	local radarValues = GetDirectRadar(params.Player);
-	-- [ja] GetTotalItems(radarValues) に Liftも含まれているので 引いておく
-	local totalItems = GetTotalItems(radarValues) - radarValues:GetValue('RadarCategory_Lifts');
-	-- [ja] 0除算対策（しなくても動作するけど満点になっちゃうんで）
-	if totalItems <= 0 then
-		totalItems=1
-	end;
 
-	-- [ja] スコアが0の時に初期化
-	if pss:GetScore() == 0 then
-		sn2tmp_Sub=0;
-		sn2tmp_Score=0;
-		sn2tmp_Steps=0;
-	end;
-
-	-- [ja] maxAdd は 加算する最高点を 10 とした時の値（つまり、10=100% / 5=50%）
-	local maxAdd = 0;
-	-- [ja] O.K.判定時は問答無用で満点
-	if params.HoldNoteScore == 'HoldNoteScore_Held' then
-		maxAdd = 10;
-	else
-		-- [ja] N.G.判定時は問答無用で0点
-		if params.HoldNoteScore == 'HoldNoteScore_LetGo' then
-			maxAdd = 0;
-		-- [ja] それ以外ということは、ロングノート以外の判定である
-		else
-			maxAdd = multLookup[params.TapNoteScore];
-			if (params.TapNoteScore == 'TapNoteScore_W2') or (params.TapNoteScore=='TapNoteScore_W3') then
-			-- [ja] W2とW3の数を記録
-				sn2tmp_Sub=sn2tmp_Sub+1;
-			end;
-		end
-	end;
-	sn2tmp_Score=sn2tmp_Score+maxAdd;
-	-- [ja] 踏み踏みしたステップ数
-	sn2tmp_Steps=sn2tmp_Steps+1;
-	-- [ja] 現時点での、All W1判定の時のスコア
-	pss:SetCurMaxScore(math.floor(10000*sn2tmp_Steps/totalItems) * 10);
-
-	-- [ja] 計算して代入
-	pss:SetScore((math.floor(10000*sn2tmp_Score/totalItems) * 10) - (sn2tmp_Sub*10) );
-end;
 -----------------------------------------------------------
 --Radar Master (disabled; todo: get this working with StepMania 5)
 -----------------------------------------------------------
@@ -343,12 +358,13 @@ r['MIGS'] = function(params,pss)
 		curScore = curScore + ( pss:GetTapNoteScores(k) * v );
 	end;
   curScore = math.max(0,curScore + ( pss:GetHoldNoteScores('HoldNoteScore_Held') * 6 ));
+  pss:SetScore(curScore);
 end;
 
 --------------------------------------------------------------
 --1bilDP scoring because I can.
 --------------------------------------------------------------
-r['1bilDP']= function(params,pss)
+r['Billions DP']= function(params,pss)
   local poss = pss:GetPossibleDancePoints()
   pss:SetScore(math.floor((pss:GetActualDancePoints()/poss)*1000000000))
   pss:SetCurMaxScore(math.floor((pss:GetCurrentPossibleDancePoints()/poss)*1000000000))
@@ -356,14 +372,34 @@ end
 -------------------------------------------------------------------------------
 -- Formulas end here.
 for v in ivalues(DisabledScoringModes) do r[v] = nil end
-Scoring = {}
-setmetatable(Scoring, {
-	__metatable = { "Letting you change the metatable sort of defeats the purpose." },
-	__index = function(tbl, key)
-		for v in ivalues(DisabledScoringModes) do
-			if key == v then return r['DDR Extreme'] end
-		end
-		return r[key]
-	end,
-	}
-);
+Scoring = r;
+
+function UserPrefScoringMode()
+  local baseChoices = {}
+  for k,v in pairs(Scoring) do table.insert(baseChoices,k) end
+  if next(baseChoices) == nil then UndocumentedFeature "No scoring modes available" end
+	local t = {
+		Name = "UserPrefScoringMode";
+		LayoutType = "ShowAllInRow";
+		SelectType = "SelectOne";
+		OneChoiceForAllPlayers = true;
+		ExportOnChange = false;
+		Choices = baseChoices;
+		LoadSelections = function(self, list, pn)
+			if ReadPrefFromFile("UserPrefScoringMode") ~= nil then
+				local theValue = ReadPrefFromFile("UserPrefScoringMode");
+				local success = false;				
+				for k,v in ipairs(baseChoices) do if v == theValue then list[k] = true success = true break end end;
+				if success == false then list[1] = true end;
+			else
+        WritePrefToFile("UserPrefScoringMode", baseChoices[1]);
+				list[1] = true;
+			end;
+		end;
+		SaveSelections = function(self, list, pn)
+			for k,v in ipairs(list) do if v then WritePrefToFile("UserPrefScoringMode", baseChoices[k]) break end end;
+		end;
+	};
+	setmetatable( t, t );
+	return t;
+end

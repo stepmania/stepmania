@@ -13,6 +13,7 @@
 #include "DisplayResolutions.h"
 #include "LocalizedString.h"
 
+#include <d3dx8core.h>
 #include <d3d8.h>
 #include <dxerr8.h>
 
@@ -21,7 +22,8 @@
 // Static libraries
 // load Windows D3D8 dynamically
 #if defined(_MSC_VER)
-	#pragma comment(lib, "d3d8.lib")
+	//#pragma comment(lib, "d3d8.lib")
+	#pragma comment(lib, "d3dx8.lib")
 	#pragma comment(lib, "DxErr8.lib")
 #endif
 
@@ -639,8 +641,8 @@ RageSurface* RageDisplay_D3D::CreateScreenshot()
 	
 	// Aldo_MX: D3DXLoadSurfaceFromSurface requires d3dx8core.h, I replaced it with CopyRects to
 	// remove this dependency so its possible to compile SM with any DirectX SDK up to Aug 2007
-	//D3DXLoadSurfaceFromSurface( pCopy, NULL, NULL, pSurface, NULL, NULL, D3DX_DEFAULT, 0 );
-	g_pd3dDevice->CopyRects( pSurface, NULL, 0, pCopy, NULL );
+	D3DXLoadSurfaceFromSurface( pCopy, NULL, NULL, pSurface, NULL, NULL, D3DX_DEFAULT, 0 );
+	//g_pd3dDevice->CopyRects( pSurface, NULL, 0, pCopy, NULL );
 
 	pSurface->Release();
 

@@ -5,8 +5,85 @@ from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
 ================================================================================
-StepMania 5.0 $next | 2011????
+StepMania 5.0 $next | 2011xxxx
 --------------------------------------------------------------------------------
+
+2011/10/06
+----------
+* Various scoring fixes sourced from http://www47.atwiki.jp/waiei/pages/21.html
+ [A.C/@waiei, 桜為小鳩/@sakuraponila]
+
+================================================================================
+StepMania 5.0 Preview 4 | 20111005
+--------------------------------------------------------------------------------
+
+2011/10/04
+----------
+* [NoteDataUtil] More accurate Left, Right, and Mirror mods for Pump gameplay.
+  Major thanks to Hudson Felker and Bill Shillito here. [Wolfman2000]
+
+2011/10/01
+----------
+* [ScreenHighScores] Disable forced screen transition behavior when
+  ManualScrolling=true. [AJ]
+
+2011/09/30
+----------
+* [GameState] Added CurrentOptionsDisqualifyPlayer(player),
+  ApplyPreferredModifiers(player,string) and ApplyStageModifiers(player,string)
+  Lua bindings. [AJ]
+
+2011/09/29
+----------
+* [Fallback theme] Fix ImmediateHoldLetGo function. [Wolfman2000]
+* [GameState] Add the EditAllowedForExtra metric. Use this if you want edit
+  steps to be allowed for accessing the extra stage. By default, this is
+  false. [Wolfman2000]
+
+2011/09/26
+----------
+* [Default theme] Added Song Timing Display user preference. [AJ]
+* [ThemeManager] Add global Scripts dir. [shakesoda]
+
+2011/09/25
+----------
+* [WheelItemBase] Added GetColor and GetText Lua bindings. [AJ]
+
+2011/09/24
+----------
+* [ScreenEdit] Disable shifting timing changes down one beat if starting on
+  beat 0. Important information must stay on that beat. [Wolfman2000]
+* [ScreenEdit] Disable converting rows to a stop or beat starting on beat 0.
+  There should be no reason for this at this time. [Wolfman2000]
+* [MusicWheelItem] Add/reinstate MusicWheelItem Mode Normal/Color/OverPart. [AJ]
+* [FadingBanner] Added LoadFromSortOrder(SortOrder) Lua binding. [AJ]
+
+2011/09/23
+----------
+* [ScreenEvaluation] Added RollingNumbersMaxComboClass metric. [AJ]
+* [NotesLoaderSM] Fix loading .sm files with non standard difficulty names.
+  It should be Hard, not Heavy. [Wolfman2000]
+
+2011/09/22
+----------
+* [ScreenDebugOverlay] Replaced hardcoded toggle command with
+  ButtonTextToggledCommand metric. [AJ]
+* [LoadingWindow_Win32] Make the StepMania window gain focus after the
+  loading window closes. Fixes issue 424. [AJ]
+
+2011/09/21
+----------
+* [FadingBanner] Added LoadRandom(), LoadRoulette(), LoadFallback(),
+  LoadCourseFallback(), and GetBanner(int) Lua bindings. [AJ]
+
+2011/09/18
+----------
+* [Song] Added GetSampleStart() and GetSampleLength() Lua bindings. [Wolfman2000]
+
+2011/09/16
+----------
+* [UnlockManager] Added GetNumLockedSongs() Lua binding. [Wolfman2000]
+* [UnlockManager] Added IsSongLocked() Lua binding. [Wolfman2000]
 
 2011/09/12
 ----------

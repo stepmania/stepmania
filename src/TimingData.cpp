@@ -11,20 +11,41 @@ TimingData::TimingData(float fOffset) : m_fBeat0OffsetInSeconds(fOffset)
 {
 }
 
-TimingData::~TimingData()
+void TimingData::Copy( const TimingData& cpy )
 {
-// This is causing weird crashes, probably due to someone hanging onto pointers
-// for too long. Commenting this out until we can track it down... -- vyhd
-#if 0
+	/* de-allocate any old pointers we had */
+	Clear();
+
+	m_fBeat0OffsetInSeconds = cpy.m_fBeat0OffsetInSeconds;
+	m_sFile = cpy.m_sFile;
+
+	FOREACH_TimingSegmentType( tst )
+	{
+		const vector<TimingSegment*> &vpSegs = cpy.m_avpTimingSegments[tst];
+
+		for( unsigned i = 0; i < vpSegs.size(); ++i )
+			AddSegment( vpSegs[i] );
+	}
+}
+
+void TimingData::Clear()
+{
 	/* Delete all pointers owned by this TimingData. */
 	FOREACH_TimingSegmentType( tst )
 	{
 		vector<TimingSegment*> &vSegs = m_avpTimingSegments[tst];
 		for( unsigned i = 0; i < vSegs.size(); ++i )
-			delete vSegs[i];
+		{
+			//LOG->Trace( "deleting %p", vSegs[i] );
+			SAFE_DELETE( vSegs[i] );		}
+
 		vSegs.clear();
 	}
-#endif
+}
+
+TimingData::~TimingData()
+{
+	Clear();
 }
 
 bool TimingData::empty() const
@@ -112,21 +133,30 @@ int TimingData::GetSegmentIndexAtRow(TimingSegmentType tst, int iRow ) const
 {
 	const vector<TimingSegment*> &vSegs = GetTimingSegments(tst);
 
-	int i = 0;
-
 	if( vSegs.empty() )
 		return INVALID_INDEX;
 
-	// seek to the last segment that goes into effect before iRow.
-	// UGLY: vSegs.size() is cast to an int because its normal return type
-	// is size_t, but when it equals zero, subtracting 1 wraps around.
-	for( ; i < int(vSegs.size()) - 1; ++i )
+	int min = 0, max = vSegs.size() - 1;
+	int l = min, r = max;
+	while( l <= r )
 	{
-		if( iRow < vSegs[i+1]->GetRow() )
-			break;
+		int m = ( l + r ) / 2;
+		if( ( m == min || vSegs[m]->GetRow() <= iRow ) && ( m == max || iRow < vSegs[m + 1]->GetRow() ) )
+		{
+			return m;
+		}
+		else if( vSegs[m]->GetRow() <= iRow )
+		{
+			l = m + 1;
+		}
+		else
+		{
+			r = m - 1;
+		}
 	}
+	
+	return INVALID_INDEX; // this should not be reached. :(
 
-	return i;
 }
 
 struct ts_less : binary_function <TimingSegment*, TimingSegment*, bool>
@@ -283,7 +313,9 @@ TimingSegment* GetSegmentAtRow( int iNoteRow, TimingSegmentType tst )
 static void EraseSegment( vector<TimingSegment*> &vSegs, int index, TimingSegment *cur )
 {
 	LOG->Trace( "EraseSegment(%d, %p)", index, cur );
+#ifdef DEBUG
 	cur->DebugPrint();
+#endif
 
 	vSegs.erase( vSegs.begin() + index );
 	SAFE_DELETE( cur );
@@ -294,7 +326,9 @@ static void EraseSegment( vector<TimingSegment*> &vSegs, int index, TimingSegmen
 void TimingData::AddSegment( const TimingSegment *seg )
 {
 	LOG->Trace( "AddSegment( %s )", TimingSegmentTypeToString(seg->GetType()).c_str() );
+#ifdef DEBUG
 	seg->DebugPrint();
+#endif
 
 	TimingSegmentType tst = seg->GetType();
 	vector<TimingSegment*> &vSegs = m_avpTimingSegments[tst];
@@ -344,7 +378,8 @@ void TimingData::AddSegment( const TimingSegment *seg )
 			// if true, this is redundant segment change
 			if( (*prev) == (*seg) )
 			{
-				EraseSegment( vSegs, index, cur );
+				if( prev != cur )
+					EraseSegment( vSegs, index, cur );
 				return;
 			}
 

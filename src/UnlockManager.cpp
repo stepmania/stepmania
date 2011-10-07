@@ -391,7 +391,7 @@ UnlockEntryStatus UnlockEntry::GetUnlockEntryStatus() const
 			);
 		FOREACH_CONST( Steps*, vp, s )
 			if( PROFILEMAN->GetMachineProfile()->HasPassedSteps(pSong, *s) )
-				return UnlockEntryStatus_RequirementsMet;
+				return UnlockEntryStatus_Unlocked;
 	}
 	
 	if (m_bRequirePassChallengeSteps && m_Song.IsValid())
@@ -405,7 +405,7 @@ UnlockEntryStatus UnlockEntry::GetUnlockEntryStatus() const
 		FOREACH_CONST(Steps*, vp, s)
 		{
 			if (PROFILEMAN->GetMachineProfile()->HasPassedSteps(pSong, *s))
-				return UnlockEntryStatus_RequirementsMet;
+				return UnlockEntryStatus_Unlocked;
 		}
 	}
 
@@ -956,6 +956,13 @@ public:
 		lua_pushnumber( L, fScores[Enum::Check<UnlockRequirement>(L, 2)] );
 		return 1;
 	}
+	
+	static int IsSongLocked( T* p, lua_State *L )
+	{
+		Song *pSong = Luna<Song>::check(L,1);
+		lua_pushnumber( L, UNLOCKMAN->SongIsLocked(pSong));
+		return 1;
+	}
 
 	LunaUnlockManager()
 	{
@@ -973,6 +980,7 @@ public:
 		ADD_METHOD( PreferUnlockEntryID );
 		ADD_METHOD( UnlockEntryID );
 		ADD_METHOD( UnlockEntryIndex );
+		ADD_METHOD( IsSongLocked );
 		//ADD_METHOD( UnlockSong );
 		//ADD_METHOD( GetUnlocksByType );
 	}

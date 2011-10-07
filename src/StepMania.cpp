@@ -81,10 +81,14 @@ static Preference<bool> g_bAllowMultipleInstances( "AllowMultipleInstances", fal
 
 void StepMania::GetPreferredVideoModeParams( VideoModeParams &paramsOut )
 {
-	// unsure if this is still going to cause first run issues. -aj
-	float fAspectRatio = PREFSMAN->m_fDisplayAspectRatio;
-	int iHeight = PREFSMAN->m_iDisplayHeight;
-	int iWidth = ceilf(iHeight * fAspectRatio);
+	// resolution handling code that probably needs fixing
+	int iWidth = PREFSMAN->m_iDisplayWidth;
+	if( PREFSMAN->m_bWindowed )
+	{
+		//float fRatio = PREFSMAN->m_iDisplayHeight;
+		//iWidth = PREFSMAN->m_iDisplayHeight * fRatio;
+		iWidth = static_cast<int>(ceilf(PREFSMAN->m_iDisplayHeight * PREFSMAN->m_fDisplayAspectRatio));
+	}
 
 	// todo: allow for PRODUCT_ID + "-" + CommonMetrics::WINDOW_TITLE as
 	// a theme option (Midi requested it, AJ had the idea for making it optional)

@@ -673,37 +673,80 @@ void NoteField::DrawBGChangeText( const float fBeat, const RString sNewBGName )
 	m_textMeasureNumber.Draw();
 }
 
-// CPU OPTIMIZATION OPPORTUNITY:
-// change this probing to binary search
+CacheNoteStat GetNumNotesFromBeginning( const PlayerState *pPlayerState, float beat )
+{
+	// XXX: I realized that I have copied and pasted my binary search code 3 times already.
+	//      how can we abstract this?
+	const vector<CacheNoteStat> &data = pPlayerState->m_CacheNoteStat;
+	int max = data.size() - 1;
+	int l = 0, r = max;
+	while( l <= r )
+	{
+		int m = ( l + r ) / 2;
+		if( ( m == 0 || data[m].beat <= beat ) && ( m == max || beat < data[m + 1].beat ) )
+		{
+			return data[m];
+		}
+		else if( data[m].beat <= beat )
+		{
+			l = m + 1;
+		}
+		else
+		{
+			r = m - 1;
+		}
+	}
+	CacheNoteStat dummy = { 0, 0, 0 };
+	return dummy;
+}
+
+int GetNumNotesRange( const PlayerState* pPlayerState, float fLow, float fHigh )
+{
+	CacheNoteStat low  = GetNumNotesFromBeginning( pPlayerState, fLow );
+	CacheNoteStat high = GetNumNotesFromBeginning( pPlayerState, fHigh );
+	return high.notesUpper - low.notesLower;
+}
+
 float FindFirstDisplayedBeat( const PlayerState* pPlayerState, int iDrawDistanceAfterTargetsPixels )
 {
-	float fFirstBeatToDraw = pPlayerState->GetDisplayedPosition().m_fSongBeat-4;	// Adjust to balance off performance and showing enough notes.
-
-	/* In Boomerang, we'll usually have two sections of notes: before and after
-	 * the peak. We always start drawing before the peak, and end after it, or
-	 * we may falsely detect the off-screen portion as the end (or beginning)
-	 * of the stream. */
-	bool bBoomerang;
+	
+	float fLow = 0, fHigh = pPlayerState->GetDisplayedPosition().m_fSongBeat;
+	
+	bool bHasCache = pPlayerState->m_CacheNoteStat.size() > 0;
+	
+	if( !bHasCache )
 	{
-		const float* fAccels = pPlayerState->m_PlayerOptions.GetCurrent().m_fAccels;
-		bBoomerang = (fAccels[PlayerOptions::ACCEL_BOOMERANG] != 0);
+		fLow = fHigh - 4.0f;
 	}
-
-	while( fFirstBeatToDraw < pPlayerState->GetDisplayedPosition().m_fSongBeat )
+	
+	const int NUM_ITERATIONS = 24;
+	const int MAX_NOTES_AFTER = 32;
+	
+	float fFirstBeatToDraw = fLow;
+	
+	for( int i = 0; i < NUM_ITERATIONS; i ++ )
 	{
+	
+		float fMid = (fLow + fHigh) / 2.0f;
+		
 		bool bIsPastPeakYOffset;
 		float fPeakYOffset;
-		float fYOffset = ArrowEffects::GetYOffset( pPlayerState, 0, fFirstBeatToDraw, fPeakYOffset, bIsPastPeakYOffset, true );
+		float fYOffset = ArrowEffects::GetYOffset( pPlayerState, 0, fMid, fPeakYOffset, bIsPastPeakYOffset, true );
 
-		if( bBoomerang && bIsPastPeakYOffset )
-			break; // stop probing
-		else if( fYOffset < iDrawDistanceAfterTargetsPixels ) // off screen
-			fFirstBeatToDraw += 0.1f; // move toward fSongBeat
-		else // on screen
-			break; // stop probing
+		if( fYOffset < iDrawDistanceAfterTargetsPixels || ( bHasCache && GetNumNotesRange( pPlayerState, fMid, pPlayerState->GetDisplayedPosition().m_fSongBeat ) > MAX_NOTES_AFTER ) ) // off screen / too many notes
+		{
+			fFirstBeatToDraw = fMid; // move towards fSongBeat
+			fLow = fMid;
+		}
+		else // on screen, move away!!
+		{
+			fHigh = fMid;
+		}
+		
 	}
-	fFirstBeatToDraw -= 0.1f; // rewind if we intentionally overshot
+
 	return fFirstBeatToDraw;
+
 }
 
 float FindLastDisplayedBeat( const PlayerState* pPlayerState, int iDrawDistanceBeforeTargetsPixels )
