@@ -44,16 +44,16 @@ r['Oldschool'] = function(params, pss)
 	local scoreLookupTable =
 	{ 
 		['TapNoteScore_W1']=999, 
-    ['TapNoteScore_W2']=IsW1Allowed() and 888 or 999, 
+		['TapNoteScore_W2']=IsW1Allowed('TapNoteScore_W2') and 888 or 999, 
 		['TapNoteScore_W3']=777,
-    ['TapNoteScore_W4']=555,
-    ['TapNoteScore_W5']=111, 
+		['TapNoteScore_W4']=555,
+		['TapNoteScore_W5']=111, 
 	};
 	setmetatable(scoreLookupTable, ZeroIfNotFound);
-  local comboBonusForThisStep = (pss:GetCurrentCombo()*111)^1.1;
+	local comboBonusForThisStep = (pss:GetCurrentCombo()*111)^1.1;
 	local capScore = 1000000000;
-  pss:SetCurMaxScore(capScore); --i don't really care about weird scoring modes -fsx
-  local pointsGot = comboBonusForThisStep + scoreLookupTable[params.TapNoteScore] + (params.HoldNoteScore == 'HoldNoteScore_Held' and 777 or 0);
+	pss:SetCurMaxScore(capScore); --i don't really care about weird scoring modes -fsx
+	local pointsGot = comboBonusForThisStep + scoreLookupTable[params.TapNoteScore] + (params.HoldNoteScore == 'HoldNoteScore_Held' and 777 or 0);
 	pss:SetScore(clamp(pss:GetScore()+pointsGot,0,capScore));
 end;
 
