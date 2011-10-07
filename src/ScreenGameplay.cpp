@@ -1429,7 +1429,7 @@ void ScreenGameplay::PlayTicks()
 }
 
 /* Play announcer "type" if it's been at least fSeconds since the last announcer. */
-void ScreenGameplay::PlayAnnouncer( RString type, float fSeconds, float *fDeltaSeconds )
+void ScreenGameplay::PlayAnnouncer( const RString &type, float fSeconds, float *fDeltaSeconds )
 {
 	if( GAMESTATE->m_fOpponentHealthPercent == 0 )
 		return; // Shut the announcer up
