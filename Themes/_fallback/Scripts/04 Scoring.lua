@@ -377,6 +377,7 @@ Scoring = r;
 function UserPrefScoringMode()
   local baseChoices = {}
   for k,v in pairs(Scoring) do table.insert(baseChoices,k) end
+  if next(baseChoices) == nil then UndocumentedFeature "No scoring modes available" end
 	local t = {
 		Name = "UserPrefScoringMode";
 		LayoutType = "ShowAllInRow";
@@ -391,7 +392,7 @@ function UserPrefScoringMode()
 				for k,v in ipairs(baseChoices) do if v == theValue then list[k] = true success = true break end end;
 				if success == false then list[1] = true end;
 			else
-				WritePrefToFile("UserPrefScoringMode", 'DDR Extreme');
+        WritePrefToFile("UserPrefScoringMode", baseChoices[1]);
 				list[1] = true;
 			end;
 		end;
