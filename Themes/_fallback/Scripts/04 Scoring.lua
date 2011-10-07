@@ -358,6 +358,7 @@ r['MIGS'] = function(params,pss)
 		curScore = curScore + ( pss:GetTapNoteScores(k) * v );
 	end;
   curScore = math.max(0,curScore + ( pss:GetHoldNoteScores('HoldNoteScore_Held') * 6 ));
+  pss:SetScore(curScore);
 end;
 
 --------------------------------------------------------------
