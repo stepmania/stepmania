@@ -373,3 +373,32 @@ end
 -- Formulas end here.
 for v in ivalues(DisabledScoringModes) do r[v] = nil end
 Scoring = r;
+
+function UserPrefScoringMode()
+  local baseChoices = {}
+  for k,v in pairs(Scoring) do table.insert(baseChoices,k) end
+	local t = {
+		Name = "UserPrefScoringMode";
+		LayoutType = "ShowAllInRow";
+		SelectType = "SelectOne";
+		OneChoiceForAllPlayers = true;
+		ExportOnChange = false;
+		Choices = baseChoices;
+		LoadSelections = function(self, list, pn)
+			if ReadPrefFromFile("UserPrefScoringMode") ~= nil then
+				local theValue = ReadPrefFromFile("UserPrefScoringMode");
+				local success = false;				
+				for k,v in ipairs(baseChoices) do if v == theValue then list[k] = true success = true break end end;
+				if success == false then list[1] = true end;
+			else
+				WritePrefToFile("UserPrefScoringMode", 'DDR Extreme');
+				list[1] = true;
+			end;
+		end;
+		SaveSelections = function(self, list, pn)
+			for k,v in ipairs(list) do if v then WritePrefToFile("UserPrefScoringMode", baseChoices[k]) break end end;
+		end;
+	};
+	setmetatable( t, t );
+	return t;
+end
