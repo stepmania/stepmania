@@ -11,6 +11,9 @@ StepMania 5.0 $next | 2011xxxx
 2011/10/08
 ----------
 * [GameSoundManager] Add the PlayMusicPart lua binding. [Wolfman2000]
+* [ScreenEdit] Add the FadeInPreview and FadeOutPreview metrics. This controls
+  how long the fade in and fade outs are for playing the preview music.
+  The default values are 0 and 1.5 respectively. [Wolfman2000]
 
 2011/10/07
 ----------

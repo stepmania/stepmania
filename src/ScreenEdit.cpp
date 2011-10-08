@@ -1004,6 +1004,9 @@ void ScreenEdit::PlayTicks()
 	m_GameplayAssist.PlayTicks( m_Player->GetNoteData(), m_Player->GetPlayerState() );
 }
 
+static ThemeMetric<float> FADE_IN_PREVIEW("ScreenEdit", "FadeInPreview");
+static ThemeMetric<float> FADE_OUT_PREVIEW("ScreenEdit", "FadeOutPreview");
+
 void ScreenEdit::PlayPreviewMusic()
 {
 	SOUND->StopMusic();
@@ -1013,8 +1016,8 @@ void ScreenEdit::PlayPreviewMusic()
 		false,
 		m_pSong->m_fMusicSampleStartSeconds,
 		m_pSong->m_fMusicSampleLengthSeconds,
-		0.0f,
-		1.5f );
+		FADE_IN_PREVIEW,
+		FADE_OUT_PREVIEW );
 }
 
 void ScreenEdit::MakeFilteredMenuDef( const MenuDef* pDef, MenuDef &menu )
