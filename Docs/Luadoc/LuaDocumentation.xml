@@ -3035,6 +3035,15 @@
 	<Function name='GetDisplayWidth' return='int' arguments=''>
 		Return the width of the display.
 	</Function>
+	<Function name='GetFPS' return='int' arguments=''>
+		Return the FPS.
+	</Function>
+	<Function name='GetVPF' return='int' arguments=''>
+		Return the VPF.
+	</Function>
+	<Function name='GetCumFPS' return='int' arguments=''>
+		Return the cumulative FPS.
+	</Function>
 </Class>
 <Class name='RageFile'>
 	<Description>

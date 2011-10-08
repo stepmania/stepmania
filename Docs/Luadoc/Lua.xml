@@ -1134,6 +1134,9 @@
 		<Class name='RageDisplay'>
 			<Function name='GetDisplayHeight'/>
 			<Function name='GetDisplayWidth'/>
+			<Function name='GetFPS'/>
+			<Function name='GetVPF'/>
+			<Function name='GetCumFPS'/>
 		</Class>
 		<Class name='RageFile'>
 			<Function name='AtEOF'/>
