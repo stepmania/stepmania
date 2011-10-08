@@ -8,6 +8,10 @@ ________________________________________________________________________________
 StepMania 5.0 $next | 2011xxxx
 --------------------------------------------------------------------------------
 
+2011/10/08
+----------
+* [GameSoundManager] Add the PlayMusicPart lua binding. [Wolfman2000]
+
 2011/10/07
 ----------
 * [RageDisplay] Add the GetFPS, GetVPF, and GetCumFPS bindings. [Wolfman2000]

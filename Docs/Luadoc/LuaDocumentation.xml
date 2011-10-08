@@ -1829,6 +1829,11 @@
 	<Function name='PlayAnnouncer' return='void' arguments='string sPath'>
 		Plays a sound from the current announcer.
 	</Function>
+	<Function name='PlayMusicPart' return='void' arguments='string musicPath, float musicStart, float musicLength, float fadeIn = 0, float fadeOut = 0'>
+		Play the sound at <code>musicPath</code> starting from <code>musicStart</code> for
+		<code>musicLength</code> seconds one time. Both <code>fadeIn</code> and
+		<code>fadeOut</code> can be customized as required.
+	</Function>
 	<Function name='PlayOnce' return='void' arguments='string sPath'>
 		Play the sound at <code>sPath</code> one time.
 	</Function>

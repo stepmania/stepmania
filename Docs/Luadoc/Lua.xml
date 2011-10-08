@@ -701,6 +701,7 @@
 			<Function name='DimMusic'/>
 			<Function name='GetPlayerBalance'/>
 			<Function name='PlayAnnouncer'/>
+			<Function name='PlayMusicPart'/>
 			<Function name='PlayOnce'/>
 		</Class>
 		<Class name='GameState'>
