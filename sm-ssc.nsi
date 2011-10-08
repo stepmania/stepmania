@@ -670,12 +670,6 @@ FunctionEnd
 
 Function .onInit
 
-	nsisos::osversion
-	${If} $R0 >= 6
-		;vista & win7
-		StrCpy $INSTDIR "%HOMEPATH%\${PRODUCT_ID}"
-	${EndIf}
-
 	; Force show language selection for debugging
 	;!define MUI_LANGDLL_ALWAYSSHOW
 	!insertmacro MUI_LANGDLL_DISPLAY
