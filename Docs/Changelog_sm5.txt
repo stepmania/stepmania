@@ -8,6 +8,11 @@ ________________________________________________________________________________
 StepMania 5.0 $next | 2011xxxx
 --------------------------------------------------------------------------------
 
+2011/10/09
+----------
+* [NotesLoaderBMS] Fix the bug where keysounds that points to nonexistant file
+  gets assigned a random one [theDtTvB]
+
 2011/10/08
 ----------
 * [GameSoundManager] Add the PlayMusicPart lua binding. [Wolfman2000]
