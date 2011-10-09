@@ -274,7 +274,7 @@ class BMSSong {
 
 public:
 	BMSSong( Song *song );
-	unsigned AllocateKeysound( RString filename, RString path );
+	int AllocateKeysound( RString filename, RString path );
 	Song *GetSong();
 };
 
@@ -294,7 +294,7 @@ Song *BMSSong::GetSong()
 	return out;
 }
 
-unsigned BMSSong::AllocateKeysound( RString filename, RString path )
+int BMSSong::AllocateKeysound( RString filename, RString path )
 {
 	if( mapKeysoundToIndex.find( filename ) != mapKeysoundToIndex.end() )
 	{
@@ -306,7 +306,7 @@ unsigned BMSSong::AllocateKeysound( RString filename, RString path )
 	// FIXME: garbled song names seem to crash the app.
 	// this might not be the best place to put this code.
 	if( !utf8_is_valid(filename) )
-		return false;
+		return -1;
 
 	/* Due to bugs in some programs, many BMS files have a "WAV" extension
 	 * on files in the BMS for files that actually have some other extension.
@@ -336,7 +336,7 @@ unsigned BMSSong::AllocateKeysound( RString filename, RString path )
 	{
 		mapKeysoundToIndex[filename] = -1;
 		LOG->UserLog( "Song file", dir, "references key \"%s\" that can't be found", normalizedFilename.c_str() );
-		return false;
+		return -1;
 	}
 
 	if( mapKeysoundToIndex.find( normalizedFilename ) != mapKeysoundToIndex.end() )
