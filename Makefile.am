@@ -13,6 +13,8 @@ if HAVE_GTK
 installFiles += src/GtkModule.so
 endif
 
+installData = $(srcdir)/Announcers $(srcdir)/BGAnimations $(srcdir)/Themes $(srcdir)/Characters $(srcdir)/Scripts $(srcdir)/Courses $(srcdir)/BackgroundEffects $(srcdir)/Data $(srcdir)/BackgroundTransitions $(srcdir)/Docs $(srcdir)/NoteSkins
+
 .PHONY: SMData
 SMData:
 	$(srcdir)/Utils/CreatePackage.pl $(srcdir) .
@@ -20,16 +22,18 @@ SMData:
 dist-hook: SMData
 	mkdir -p $(distdir)/Packages
 	cp GameData.smzip $(distdir)/Packages
-	mkdir -p $(distdir)/Docs
-	cp $(srcdir)/Docs/Licenses.txt $(distdir)/Docs
-	cp $(srcdir)/Utils/build.sh $(distdir)
+	cp -r $(srcdir)/Docs $(distdir)
+	cp -r -t "$(distdir)" $(installFiles)
 
-install-data-hook: $(top_srcdir)/Packages/GameData.smzip
-	mkdir -p "$(DESTDIR)$(bindir)/$(productID)/Packages"
-	$(INSTALL) $(installFiles) "$(DESTDIR)$(bindir)/$(productID)"
-	$(INSTALL_DATA) $(top_srcdir)/Packages/GameData.smzip "$(DESTDIR)$(bindir)/$(productID)/Packages"
+install-exec-hook:
+	mkdir -p "$(prefix)/$(productID)"
+	$(INSTALL) $(installFiles) "$(prefix)/$(productID)"
+
+install-data-local:
+	cp -r -t "$(prefix)/$(productID)" $(installData)
+	mkdir -p "$(prefix)/$(productID)/Songs"
 
 uninstall-hook:
-	rm -f "$(DESTDIR)$(bindir)/$(productID)/stepmania"
-	rm -f "$(DESTDIR)$(bindir)/$(productID)/GtkModule.so"
-	rm -f "$(DESTDIR)$(bindir)/$(productID)/Packages/GameData.smzip"
+	rm -f "$(prefix)/$(productID)/stepmania"
+	rm -f "$(prefix)/$(productID)/GtkModule.so"
+# todo: properly remove data
