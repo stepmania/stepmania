@@ -1841,7 +1841,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 				SWITCHED_TO.GetValue() + " %s %s '%s' (%d of %d)",
 				GAMEMAN->GetStepsTypeInfo( pSteps->m_StepsType ).szName,
 				DifficultyToString( pSteps->GetDifficulty() ).c_str(),
-				pSteps->GetDescription().c_str(),
+				pSteps->GetChartName().c_str(),
 				it - vSteps.begin() + 1,
 				int(vSteps.size()) );
 			SCREENMAN->SystemMessage( s );
