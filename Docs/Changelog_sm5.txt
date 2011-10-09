@@ -11,7 +11,9 @@ StepMania 5.0 $next | 2011xxxx
 2011/10/09
 ----------
 * [NotesLoaderBMS] Fix the bug where keysounds that points to nonexistant file
-  gets assigned a random one [theDtTvB]
+  gets assigned a random one. [theDtTvB]
+* [NotesLoaderBMS] Use BMSLoader to load PMS files. [theDtTvB]
+* [RageSoundReader_WAV] Fix ADPCM support. [theDtTvB]
 
 2011/10/08
 ----------
