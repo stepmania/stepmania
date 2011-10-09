@@ -141,7 +141,7 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, Song &song, bool 
 		
 		else if( sValueName=="DIFFICULTY" )
 		{
-			out.SetMeter( max(StringToInt(sParams[1]), 0) );
+			out.SetMeter( max(StringToInt(sParams[1]), 1) );
 		}
 		// new cases from Aldo_MX's fork:
 		else if( sValueName=="PLAYER" )

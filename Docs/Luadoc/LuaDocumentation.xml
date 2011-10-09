@@ -63,13 +63,13 @@
 	<Function name='color' return='color' arguments='string color'>
 		Returns a color from a string. <code>color</code> can be in hex (<code>"#FFFFFFFF"</code>) or 0..1 values (<code>"1.0,1.0,1.0,1.0"</code>), in RGBA order.
 	</Function>
-	<Function name='ColorDarkTone' theme='_fallback' return='' arguments='color c'>
+	<Function name='ColorDarkTone' theme='_fallback' return='color' arguments='color c'>
 		[02 Colors.lua] Returns a darker tone of the color. (Specifically <code>c[1]/2, c[2]/2, c[3]/2, c[4]</code>)
 	</Function>
-	<Function name='ColorLightTone' theme='_fallback' return='' arguments='color c'>
+	<Function name='ColorLightTone' theme='_fallback' return='color' arguments='color c'>
 		[02 Colors.lua] Returns a lighter tone of the color. (Specifically <code>c[1]+(c[1]/2), c[2]+(c[2]/2), c[3]+(c[3]/2), c[4]</code>)
 	</Function>
-	<Function name='ColorMidTone' theme='_fallback' return='' arguments='color c'>
+	<Function name='ColorMidTone' theme='_fallback' return='color' arguments='color c'>
 		[02 Colors.lua] Returns a midtone of the color. (Specifically <code>c[1]/1.5, c[2]/1.5, c[3]/1.5, c[4]</code>)
 	</Function>
 	<Function name='ColorToHex' theme='_fallback' return='string' arguments='color c'>
@@ -183,7 +183,7 @@
 	<Function name='GetThemeAspectRatio' return='float' arguments=''>
 		Returns the theme's aspect ratio.
 	</Function>
-	<Function name='GetThemePref' theme='_fallback' return='' arguments=''>
+	<Function name='GetThemePref' theme='_fallback' return='various' arguments='string pref'>
 		[03 ThemePrefs.lua] (Alias for <Link class='ThemePrefs' function='Get' />.)
 	</Function>
 	<Function name='GetTimingDifficulty' return='int' arguments=''>
@@ -302,7 +302,7 @@
 	<Function name='MissCombo' theme='_fallback' return='int' arguments=''>
 		[03 Gameplay.lua] Returns the value to start showing the miss combo at.
 	</Function>
-	<Function name='module' return='' arguments='string name, ...'>
+	<Function name='module' return='void' arguments='string name, ...'>
 		Creates a module. See the Lua manual for more details.
 	</Function>
 	<Function name='MonthOfYear' return='int' arguments=''>
@@ -314,7 +314,7 @@
 	<Function name='MonthToString' return='string' arguments='Month m'>
 		Returns Month <code>m</code> as a string.
 	</Function>
-	<Function name='next' return='' arguments='table t, int index'>
+	<Function name='next' return='void' arguments='table t, int index'>
 		"Allows a program to traverse all fields of a table. Its first argument is a
 		table and its second argument is an index in this table.
 		<code>next</code> returns the next index of the table and its associated value."
@@ -323,7 +323,7 @@
 	<Function name='OptionRowProTiming' theme='default' return='LuaOptionRow' arguments=''>
 		[03 ThemePrefs.lua] Returns a Lua option row for ProTiming.
 	</Function>
-	<Function name='pairs' return='' arguments='table t'>
+	<Function name='pairs' return='function' arguments='table t'>
 		"Returns three values: the <Link class='GLOBAL' function='next' /> function, the table <code>t</code>, and <code>nil</code>,
 		so that the construction <code>for k,v in pairs(t) do body end</code>
 		will iterate over all key–value pairs of table <code>t</code>."
@@ -368,7 +368,7 @@
 	<Function name='ReportStyle' return='void' arguments=''>
 		Sends the current style to the server.
 	</Function>
-	<Function name='require' return='' arguments='string modname'>
+	<Function name='require' return='void' arguments='string modname'>
 		Loads the specified module. See the Lua manual for more information.
 	</Function>
 	<Function name='round' theme='_fallback' return='int' arguments='float val, int decimal'>
@@ -476,7 +476,7 @@
 	<Function name='type' return='string' arguments='various v'>
 		Returns the type of the object as a string. See the Lua manual for valid return values.
 	</Function>
-	<Function name='unpack' return='' arguments='table list, int i, int j'>
+	<Function name='unpack' return='various' arguments='table list, int i, int j'>
 		"Returns the elements from the given table.
 		This function is equivalent to <code>return list[i], list[i+1], ···, list[j]</code>"
 		(<code>i</code> and <code>j</code> are optional; "by default, i is 1 and j is the length of the list.")
@@ -508,7 +508,7 @@
 	<Function name='WriteFile' theme='_fallback' return='bool' arguments='string path, string buf'>
 		[04 FileUtils.lua] Writes <code>buf</code> to the file at <code>path</code>.
 	</Function>
-	<Function name='WriteGamePrefToFile' theme='_fallback' return='' arguments='string name'>
+	<Function name='WriteGamePrefToFile' theme='_fallback' return='bool' arguments='string name'>
 		[03 GamePreferences.lua]
 	</Function>
 	<Function name='WritePrefToFile' theme='_fallback' return='bool' arguments='string prefName, various value'>
@@ -1580,7 +1580,7 @@
 		Gets the CourseEntry at <code>iIndex</code> from the Course.
 	</Function>
 	<Function name='GetCourseType' renamed='true' return='CourseType' arguments=''>
-		Returns the Course's <Link class='ENUM' function='CourseType' />. (Returns CourseType in sm-ssc; integer in SM4)
+		Returns the Course's <Link class='ENUM' function='CourseType' />. (Returns CourseType in SM5; integer in SM4)
 	</Function>
 	<Function name='GetDescription' return='string' arguments=''>
 		Returns the description for this Course.
@@ -1598,7 +1598,7 @@
 		Returns the Course's group name.
 	</Function>
 	<Function name='GetPlayMode' renamed='true' return='PlayMode' arguments=''>
-		Returns the Course's <Link class='ENUM' function='PlayMode' />. (Returns PlayMode in sm-ssc; integer in SM4)
+		Returns the Course's <Link class='ENUM' function='PlayMode' />. (Returns PlayMode in SM5; integer in SM4)
 	</Function>
 	<Function name='GetScripter' return='string' arguments=''>
 		Returns the name of the person who scripted the Course.
@@ -1715,6 +1715,15 @@
 	<Function name='GetLatestIndex' return='int' arguments=''>
 		Returns the index of the last banner loaded.
 	</Function>
+	<Function name='LoadCourseFallback' return='void' arguments=''>
+		Loads the fallback course banner.
+	</Function>
+	<Function name='LoadFallback' return='void' arguments=''>
+		Loads the fallback banner.
+	</Function>
+	<Function name='LoadCardFromCharacter' return='void' arguments='Character pCharacter'>
+		Loads the card image from the specified Character.
+	</Function>
 	<Function name='LoadFromCourse' return='void' arguments='Course c'>
 		Loads a Banner from a specified Course.
 	</Function>
@@ -1723,6 +1732,24 @@
 	</Function>
 	<Function name='LoadFromSongGroup' return='void' arguments='string s'>
 		Loads a Banner from a specified Song Group.
+	</Function>
+	<Function name='LoadFromSortOrder' return='void' arguments='SortOrder so'>
+		Loads a Banner from a specified SortOrder.
+	</Function>
+	<Function name='LoadIconFromCharacter' return='void' arguments='Character pCharacter'>
+		Loads an icon from the specified Character.
+	</Function>
+	<Function name='LoadRandom' return='void' arguments=''>
+		Loads the Random banner.
+	</Function>
+	<Function name='LoadRoulette' return='void' arguments=''>
+		Loads the Roulette banner.
+	</Function>
+	<Function name='scaletoclipped' return='void' arguments='float fWidth, float fHeight'>
+		See <Link class='Sprite' function='scaletoclipped' />.
+	</Function>
+	<Function name='ScaleToClipped' return='void' arguments='float fWidth, float fHeight'>
+		See <Link class='Sprite' function='scaletoclipped' />.
 	</Function>
 </Class>
 <Class name='StepsDisplayList'>
@@ -1802,11 +1829,25 @@
 	<Function name='PlayAnnouncer' return='void' arguments='string sPath'>
 		Plays a sound from the current announcer.
 	</Function>
+	<Function name='PlayMusicPart' return='void' arguments='string musicPath, float musicStart, float musicLength, float fadeIn = 0, float fadeOut = 0'>
+		Play the sound at <code>musicPath</code> starting from <code>musicStart</code> for
+		<code>musicLength</code> seconds one time. Both <code>fadeIn</code> and
+		<code>fadeOut</code> can be customized as required.
+	</Function>
 	<Function name='PlayOnce' return='void' arguments='string sPath'>
 		Play the sound at <code>sPath</code> one time.
 	</Function>
 </Class>
 <Class name='GameState'>
+	<Function name='AddStageToPlayer' return='void' arguments='PlayerNumber pn'>
+		Adds another stage to the specifed player.
+	</Function>
+	<Function name='ApplyPreferredModifiers' return='void' arguments='PlayerNumber pn, string mods'>
+		Applies the specified modifiers for the specified player's preferred modifier set.
+	</Function>
+	<Function name='ApplyStageModifiers' return='void' arguments='PlayerNumber pn, string mods'>
+		Applies the specified modifiers for the specified player for the current stage.
+	</Function>
 	<Function name='AnyPlayerHasRankingFeats' return='bool' arguments=''>
 		Returns <code>true</code> if any player has performed a feat worthy of ranking.
 	</Function>
@@ -1816,6 +1857,9 @@
 	</Function>
 	<Function name='ClearStageModifiersIllegalForCourse' return='void' arguments=''>
 		Removes any stage modifiers that are illegal for course play.
+	</Function>
+	<Function name='CurrentOptionsDisqualifyPlayer' return='bool' arguments='PlayerNumber pn'>
+		Returns <code>true</code> if <code>pn</code>'s options will disqualify them for ranking.
 	</Function>
 	<Function name='EnoughCreditsToJoin' return='bool' arguments=''>
 		Returns <code>true</code> if enough credits have been inserted to join.
@@ -1883,6 +1927,9 @@
 	</Function>
 	<Function name='GetDefaultSongOptions' return='string' arguments=''>
 		Return a string representation of the default song options.
+	</Function>
+	<Function name='GetEarnedExtraStage' return='EarnedExtraStage' arguments=''>
+		Returns the <Link class='ENUM' function='EarnedExtraStage' /> value.
 	</Function>
 	<Function name='GetEasiestStepsDifficulty' return='Difficulty' arguments=''>
 		Return the easiest <Link class='ENUM' function='Difficulty' /> of the
@@ -1976,22 +2023,22 @@
 		Returns the smallest number of stages left for any human player.
 	</Function>
 	<Function name='GetSongBeat' theme='_fallback' return='float' arguments=''>
-		[01 compat.lua] Returns the current beat of the song.
+		[01 alias.lua] Returns the current beat of the song.
 	</Function>
 	<Function name='GetSongBeatNoOffset' theme='_fallback' return='float' arguments=''>
-		[01 compat.lua] Returns the current beat of the song without an offset.
+		[01 alias.lua] Returns the current beat of the song without an offset.
 	</Function>
 	<Function name='GetSongBeatVisible' return='float' arguments=''>
 		Returns the current visible beat of the song.
 	</Function>
 	<Function name='GetSongBPS' theme='_fallback' return='float' arguments=''>
-		[01 compat.lua] Returns the song's current beats per second.
+		[01 alias.lua] Returns the song's current beats per second.
 	</Function>
 	<Function name='GetSongDelay' theme='_fallback' return='bool' arguments=''>
-		[01 compat.lua] Returns <code>true</code> if a delay is active in the song.
+		[01 alias.lua] Returns <code>true</code> if a delay is active in the song.
 	</Function>
 	<Function name='GetSongFreeze' theme='_fallback' return='bool' arguments=''>
-		[01 compat.lua] Returns <code>true</code> if the song is currently in a freeze.
+		[01 alias.lua] Returns <code>true</code> if the song is currently in a freeze.
 	</Function>
 	<Function name='GetSongOptions' return='string' arguments='ModsLevel ml'>
 		Returns the song options for the specified ModsLevel as a string.
@@ -2268,6 +2315,9 @@
 	</Function>
 </Class>
 <Class name='MenuTimer'>
+	<Function name='disable' return='void' arguments=''>
+		Stops the MenuTimer by setting it to 99.99 and pausing.
+	</Function>
 	<Function name='GetSeconds' return='float' arguments=''>
 		Returns the current MenuTimer's value.
 	</Function>
@@ -2275,10 +2325,16 @@
 		Pauses the MenuTimer, stopping it from counting down.
 	</Function>
 	<Function name='setseconds' return='void' arguments='float fSeconds'>
+		Compatibility alias for SetSeconds.
+	</Function>
+	<Function name='SetSeconds' return='void' arguments='float fSeconds'>
 		Sets the MenuTimer's value to <code>fSeconds</code>.
 	</Function>
 	<Function name='silent' return='void' arguments='bool bSilent'>
 		Sets the MenuTimer's silent setting to <code>bSilent</code>.
+	</Function>
+	<Function name='start' return='void' arguments=''>
+		Starts up the timer.
 	</Function>
 	<Function name='stealth' return='void' arguments='bool bStealth'>
 		Sets the MenuTimer's stealth setting to <code>bStealth</code>. If
@@ -2301,6 +2357,9 @@
 	</Function>
 </Class>
 <Class name='Model'>
+	<Function name='GetDefaultAnimation' return='string' arguments=''>
+		Returns the model's default animation.
+	</Function>
 	<Function name='loop' return='void' arguments='bool bLoop'>
 		Controls if the model should loop or not.
 	</Function>
@@ -2740,20 +2799,6 @@
 	<Function name='GetTapNoteScores' return='int' arguments='TapNoteScore tns'>
 		Returns the number of judgments for a specified TapNoteScore.
 	</Function>
-	<!-- removed:
-	<Function name='IsFullComboW1' renamed='true' return='bool' arguments=''>
-		[01 compat.lua] Returns <code>true</code> if the player got a full combo of all W1s.
-	</Function>
-	<Function name='IsFullComboW2' renamed='true' return='bool' arguments=''>
-		[01 compat.lua] Returns <code>true</code> if the player got a full combo of all W2s.
-	</Function>
-	<Function name='IsFullComboW3' renamed='true' return='bool' arguments=''>
-		[01 compat.lua] Returns <code>true</code> if the player got a full combo of all W3s.
-	</Function>
-	<Function name='IsFullComboW4' renamed='true' return='bool' arguments=''>
-		[01 compat.lua] Returns <code>true</code> if the player got a full combo of all W4s.
-	</Function>
-	-->
 	<Function name='MaxCombo' return='int' arguments=''>
 		Returns the max combo for this performance.
 	</Function>
@@ -2994,6 +3039,15 @@
 	</Function>
 	<Function name='GetDisplayWidth' return='int' arguments=''>
 		Return the width of the display.
+	</Function>
+	<Function name='GetFPS' return='int' arguments=''>
+		Return the FPS.
+	</Function>
+	<Function name='GetVPF' return='int' arguments=''>
+		Return the VPF.
+	</Function>
+	<Function name='GetCumFPS' return='int' arguments=''>
+		Return the cumulative FPS.
 	</Function>
 </Class>
 <Class name='RageFile'>
@@ -3316,8 +3370,14 @@
 	<Function name='GetBannerPath' return='string' arguments=''>
 		Returns the path to the song's banner.
 	</Function>
+	<Function name='GetCDImagePath' return='string' arguments=''>
+		Returns the path to the song's CD image.
+	</Function>
 	<Function name='GetCDTitlePath' return='string' arguments=''>
 		Gets the path to the CDTitle.
+	</Function>
+	<Function name='GetDiscPath' return='string' arguments=''>
+		Returns the path to the song's disc image (different from CD, think Pump).
 	</Function>
 	<Function name='GetDisplayArtist' return='string' arguments=''>
 		Returns the displayed artist of the song.
@@ -3345,6 +3405,9 @@
 	</Function>
 	<Function name='GetGroupName' return='string' arguments=''>
 		Returns the group name that the song is in.
+	</Function>
+	<Function name='GetJacketPath' return='string' arguments=''>
+		Returns the path to the song's jacket image.
 	</Function>
 	<Function name='GetLastBeat' return='float' arguments=''>
 		Returns the last beat of the song.
@@ -3412,11 +3475,20 @@
 	<Function name='HasBGChanges' return='bool' arguments=''>
 		Returns <code>true</code> if the song has BGChanges.
 	</Function>
+	<Function name='HasCDImage' return='bool' arguments=''>
+		Returns <code>true</code> if the song has a CD image.
+	</Function>
 	<Function name='HasCDTitle' return='bool' arguments=''>
 		Returns <code>true</code> if the song has a CDTitle.
 	</Function>
+	<Function name='HasDisc' return='bool' arguments=''>
+		Returns <code>true</code> if the song has a Disc graphic.
+	</Function>
 	<Function name='HasEdits' return='bool' arguments='StepsType st'>
 		Returns <code>true</code> if the song has edits.
+	</Function>
+	<Function name='HasCDJacket' return='bool' arguments=''>
+		Returns <code>true</code> if the song has a jacket graphic.
 	</Function>
 	<Function name='HasLyrics' return='bool' arguments=''>
 		Returns <code>true</code> if the song has lyrics.
@@ -3425,10 +3497,10 @@
 		Returns <code>true</code> if the song has music.
 	</Function>
 	<Function name='HasSignificantBPMChangesOrStops' return='bool' arguments=''>
-		Returns <code>true</code> if the song has significant elephants or bison.
+		Returns <code>true</code> if the song has significant BPM changes or stops.
 	</Function>
-	<Function name='HasStepsType' return='bool' arguments=''>
-		Returns <code>true</code> if the song has .
+	<Function name='HasStepsType' return='bool' arguments='StepsType st'>
+		Returns <code>true</code> if the song has the specified StepsType.
 	</Function>
 	<Function name='IsDisplayBpmConstant' return='bool' arguments=''>
 		Returns <code>true</code> if the song's DisplayBPM is constant.
@@ -3531,7 +3603,7 @@
 	<Function name='GetPopularSongs' return='{Song}' arguments=''>
 		Returns a table of popular songs.
 	</Function>
-	<Function name='GetPreferredSortCourses' return='' arguments='CourseType ct, bool bIncludeAutogen'>
+	<Function name='GetPreferredSortCourses' return='{Course}' arguments='CourseType ct, bool bIncludeAutogen'>
 		Returns a table of courses as they'd appear in preferred sort.
 	</Function>
 	<Function name='GetPreferredSortSongs' return='{Song}' arguments=''>
@@ -3814,13 +3886,13 @@
 	<Function name='IsAutogen' return='bool' arguments=''>
 		Returns <code>true</code> if the steps were automatically generated.
 	</Function>
-	<Function name='IsDisplayBpmConstant' return='' arguments=''>
+	<Function name='IsDisplayBpmConstant' return='bool' arguments=''>
 		Returns <code>true</code> if the DisplayBPM is constant.
 	</Function>
-	<Function name='IsDisplayBpmRandom' return='' arguments=''>
+	<Function name='IsDisplayBpmRandom' return='bool' arguments=''>
 		Returns <code>true</code> if the DisplayBPM is random.
 	</Function>
-	<Function name='IsDisplayBpmSecret' return='' arguments=''>
+	<Function name='IsDisplayBpmSecret' return='bool' arguments=''>
 		Returns <code>true</code> if the DisplayBPM is secret.
 	</Function>
 	<Function name='PredictMeter' return='float' arguments=''>
@@ -4195,6 +4267,14 @@
 	</Function>
 	<Function name='SetOpenSection' return='void' arguments='string sSection'>
 		Attempts to set the open section to <code>sSection</code>.
+	</Function>
+</Class>
+<Class name='WheelItemBase'>
+	<Function name='GetColor' return='color' arguments=''>
+		Returns the color of this wheel item.
+	</Function>
+	<Function name='GetText' return='string' arguments=''>
+		Returns the text of this wheel item.
 	</Function>
 </Class>
 <Class name='WorkoutGraph'>

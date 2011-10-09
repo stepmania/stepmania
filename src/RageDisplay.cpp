@@ -1012,11 +1012,32 @@ public:
 		LuaHelpers::Push( L, params.height );
 		return 1;
 	}
+	
+	static int GetFPS( T* p, lua_State *L )
+	{
+		lua_pushnumber(L, p->GetFPS());
+		return 1;
+	}
+	
+	static int GetVPF( T* p, lua_State *L )
+	{
+		lua_pushnumber(L, p->GetVPF());
+		return 1;
+	}
+	
+	static int GetCumFPS( T* p, lua_State *L )
+	{
+		lua_pushnumber(L, p->GetCumFPS());
+		return 1;
+	}
 
 	LunaRageDisplay() 
 	{
 		ADD_METHOD( GetDisplayWidth );
 		ADD_METHOD( GetDisplayHeight );
+		ADD_METHOD( GetFPS );
+		ADD_METHOD( GetVPF );
+		ADD_METHOD( GetCumFPS );
 	}
 };
 

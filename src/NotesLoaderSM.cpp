@@ -103,6 +103,12 @@ void SMLoader::LoadFromTokens(
 			out.SetDifficulty( Difficulty_Challenge );
 	}
 
+	if( sMeter.empty() )
+	{
+		// some simfiles (e.g. X-SPECIALs from Zenius-I-Vanisher) don't
+		// have a meter on certain steps. Make the meter 1 in these instances.
+		sMeter = "1";
+	}
 	out.SetMeter( StringToInt(sMeter) );
 
 	out.SetSMNoteData( sNoteData );

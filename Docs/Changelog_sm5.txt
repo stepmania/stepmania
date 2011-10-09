@@ -5,6 +5,26 @@ from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
 ================================================================================
+StepMania 5.0 $next | 2011xxxx
+--------------------------------------------------------------------------------
+
+2011/10/08
+----------
+* [GameSoundManager] Add the PlayMusicPart lua binding. [Wolfman2000]
+* [ScreenEdit] Add the FadeInPreview and FadeOutPreview metrics. This controls
+  how long the fade in and fade outs are for playing the preview music.
+  The default values are 0 and 1.5 respectively. [Wolfman2000]
+
+2011/10/07
+----------
+* [RageDisplay] Add the GetFPS, GetVPF, and GetCumFPS bindings. [Wolfman2000]
+
+2011/10/06
+----------
+* Various scoring fixes sourced from http://www47.atwiki.jp/waiei/pages/21.html
+ [A.C/@waiei, 桜為小鳩/@sakuraponila]
+
+================================================================================
 StepMania 5.0 Preview 4 | 20111005
 --------------------------------------------------------------------------------
 

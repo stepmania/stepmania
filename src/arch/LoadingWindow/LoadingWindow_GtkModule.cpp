@@ -22,7 +22,7 @@ extern "C" const char *Init( int *argc, char ***argv )
 		return "Couldn't initialize gtk (cannot open display)";
 
 	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-	gtk_window_set_position( GTK_WINDOW(window), GTK_WIN_POS_CENTER );
+	gtk_window_set_position( GTK_WINDOW(window), GTK_WIN_POS_CENTER_ALWAYS );
 	gtk_window_set_default_size( GTK_WINDOW(window), 512,96 );
 	//gtk_window_set_icon( GTK_WINDOW(window), );
 	gtk_widget_realize(window);

@@ -10,7 +10,7 @@ AJ Kelly as freem
  * UserPreferences and some other Lua scripts
  * Some small theme edits here and there
  * Noteskins (retro, retrobar*)
- * Windows project file maintainer
+ * Windows project file maintainer (mostly)
 
 Midiman
  * Did most of the work on _fallback and default themes
@@ -39,7 +39,7 @@ Daisuke Master
  * Taking advantage of sm-ssc's new features :)
 
 FSX
- * Various fixes. (see Changelog_sm-ssc.txt for more details)
+ * Various fixes. (see Changelogs for more details)
 
 Nicole Reid (okeeblow)
  * Tested building sm-ssc on FreeBSD, provided fixes.
@@ -59,6 +59,9 @@ StepMania Team
  * Keeping StepMania 5 alive with changes, and providing a nice codebase for
    us to work with.
 
+1a2a3a2a1a
+ * Various beat mode fixes
+
 Kaox
  * Pump/default noteskin
 
@@ -66,7 +69,7 @@ cesarmades
  * Pump/cmd-* noteskins
 
 David Santamar�a Rogado (howl)
- * Various patches (see Changelog_sm-ssc.txt for more details and links)
+ * Various patches (see Changelogs for more details and links)
 
 Kita K./D. Trucks
  * default theme music
@@ -113,9 +116,12 @@ Tatsh
  * A patch to fix building with system ffmpeg
  (http://ssc.ajworld.net/sm-ssc/bugtracker/view.php?id=218)
 
-A.C(waiei)
- * Hybrid scoring mode
+A.C (@waiei)
+ * Hybrid scoring mode + scoring fixes
  * Various patches/fixes/bug reporting
+
+桜為小鳩 (@sakuraponila)
+ * Scoring fixes
 
 ==the beta testers==
 [SSC Beta Testing Team]

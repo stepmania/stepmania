@@ -613,8 +613,9 @@ void Song::TidyUpData( bool fromCache, bool duringCache )
 
 		// find an image with "bg" or "background" in the file name
 		vector<RString> arrayPossibleBGs;
-		GetImageDirListing( m_sSongDir + "*bg*", arrayPossibleBGs );
 		GetImageDirListing( m_sSongDir + "*background*", arrayPossibleBGs );
+		// don't match e.g. "subgroup", "hobgoblin", etc.
+		GetImageDirListing( m_sSongDir + "*bg", arrayPossibleBGs );
 		if( !arrayPossibleBGs.empty() )
 			m_sBackgroundFile = arrayPossibleBGs[0];
 	}
@@ -644,8 +645,8 @@ void Song::TidyUpData( bool fromCache, bool duringCache )
 	{
 		// a rectangular graphic, not to be confused with CDImage above.
 		vector<RString> arrayPossibleDiscImages;
-		GetImageDirListing( m_sSongDir + "* Disc", arrayPossibleDiscImages );
-		GetImageDirListing( m_sSongDir + "* Title", arrayPossibleDiscImages );
+		GetImageDirListing( m_sSongDir + "* disc", arrayPossibleDiscImages );
+		GetImageDirListing( m_sSongDir + "* title", arrayPossibleDiscImages );
 		if( !arrayPossibleDiscImages.empty() )
 			m_sDiscFile = arrayPossibleDiscImages[0];
 	}

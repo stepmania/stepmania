@@ -729,8 +729,7 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 	}
 
 	// two part confirms only means we can actually change songs here,
-	// so we need some hackery. oops looks like this is never going into
-	// mainline sm4 then -aj
+	// so we need some hackery. -aj
 	if( TWO_PART_CONFIRMS_ONLY )
 	{
 		if( m_SelectionState == SelectionState_SelectingSteps )
@@ -1080,6 +1079,8 @@ void ScreenSelectMusic::HandleMessage( const Message &msg )
 		}
 		else
 		{
+			// todo: handle changing rave difficulty on join -aj
+
 			Steps* pSteps = m_vpSteps.empty()? NULL: m_vpSteps[m_iSelection[pn]];
 			GAMESTATE->m_pCurSteps[pn].Set( pSteps );
 		}
