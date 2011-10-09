@@ -21,7 +21,7 @@ SMData:
 
 dist-hook: SMData
 	mkdir -p $(distdir)/Packages
-	cp GameData.smzip $(distdir)/Packages
+	mv GameData.smzip $(distdir)/Packages
 	cp -r $(srcdir)/Docs $(distdir)
 	cp -r -t "$(distdir)" $(installFiles)
 
