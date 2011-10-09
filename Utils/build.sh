@@ -7,6 +7,7 @@ s_configure=
 s_stepmania=
 s_data=
 s_rebuild=
+s_ffmpeg=
 num_jobs=1
 
 
@@ -20,6 +21,7 @@ usage () {
 	echo '                              (do not copy binaries).'
 	echo '  -d,  --data                 generate GameData.smzip.'
 	echo '  -r,  --rebuild              rebuild StepMania (soft).'
+        echo '  -f,  --ffmpeg               build with ffmpeg 0.6.1.'
 	echo '  -j#, --jobs=#               pass -j# to make.'
 	echo '  -h,  --help                 print this help and exit.'
 	echo '  -v,  --verbose              increase verbosity (up to 2).'
@@ -33,8 +35,8 @@ if which notify-send  >/dev/null 2>&1; then
 fi
 
 if which getopt >/dev/null 2>&1; then
-	set -- `getopt	-l configure,stepmania,data,rebuild,help \
-			-l jobs::,verbose,version -- drcshj::v $*`
+	set -- `getopt	-l configure,stepmania,data,rebuild,ffmpeg,help \
+			-l jobs::,verbose,version -- drfcshj::v $*`
 fi
 
 while [ $# -gt 0 ]; do
@@ -45,6 +47,7 @@ while [ $# -gt 0 ]; do
 		-s|--stepmania)	s_stepmania=yes		;;
 		-d|--data)	s_data=yes		;;
 		-r|--rebuild)	s_rebuild=yes		;;
+		-f|--ffmpeg)	s_ffmpeg=yes		;;
 		-h|--help)	usage 0			;;
 		-j|--jobs)	num_jobs=$1; shift	;;
 		-v|--verbose)	verbose=$[verbose+1]	;;
@@ -128,11 +131,51 @@ if [ -n "$s_data" ]; then
 	exit 0
 fi
 
+if [ -n "$s_ffmpeg" ]; then
+	ffversion=0.6.1
+	ffmpeg=ffmpeg-$ffversion
+	if [ ! -d $ffmpeg ]; then
+		message 'Downloading ffmpeg'
+		if which bzip2 &>/dev/null; then
+			zipcommand=jxf
+			ffmarc=$ffmpeg.tar.bz2
+		elif which gzip &>/dev/null; then
+			zipcommand=zxf
+			ffmarc=$ffmpeg.tar.gz   
+        	else
+			failure 'Install either bzip2 or gzip.' 
+		fi
+		if which wget &>/dev/null; then
+			get=wget
+		elif which curl &>/dev/null; then
+			get='curl -O'
+		else
+			failure 'Install either curl or wget.'
+		fi
+		call $get "http://ffmpeg.org/releases/$ffmarc"
+		message 'Extracting ffmpeg'
+		call tar -$zipcommand $ffmarc
+		message 'Cleaning up temporary files'
+#		call rm $ffmarc
+	fi
+	args="--enable-static --enable-gpl --enable-version3 --enable-nonfree --enable-libx264 --enable-libfaac --enable-libmp3lame --enable-libtheora --enable-libvorbis --enable-libvpx --enable-libxvid --disable-debug --enable-memalign-hack --disable-network --enable-small --disable-encoders --disable-ffserver --extra-cflags=-Dattribute_deprecated="
+	cd $ffmpeg
+	message 'Configuring ffmpeg'
+	call ./configure --prefix="`pwd`/_inst" $args
+	message 'Building ffmpeg'
+	call make --jobs="$num_jobs" install-libs install-headers
+	cd ..
+fi
+
 if [ ! -f _build/src/config.h ] || [ -n "$s_rebuild" ]; then
 	message 'Configuring StepMania'
 	mkdir -p _build
 	cd _build
-	call ../configure "$@"
+	if [ -n "$s_ffmpeg" ]; then
+		call ../configure --with-ffmpeg=../$ffmpeg/_inst "$@"
+	else
+		call ../configure "$@"
+	fi
 	cd ..
 fi
 if [ -n "$s_configure" ]; then exit 0; fi
