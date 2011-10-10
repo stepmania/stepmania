@@ -111,7 +111,7 @@ call () {
 }
 
 version () {
-	echo 'build.sh (StepMania) 2.63'
+	echo 'build.sh (StepMania) 2.64'
 	echo 'Copyright (C) 2006-2009 Steve Checkoway'
 	echo 'StepMania is Copyright (C) 2001-2011 Chris Danford et al.'
 	echo 'sm-ssc is Copyright (C) 2009-2011 the spinal shark collective'
@@ -122,7 +122,7 @@ if [ -n "$s_data" ]; then
 	message 'Generating GameData.smzip'
 	if [ -f _build/Makefile ]; then
 		cd _build
-		call make dist-hook
+		call make SMData
 		mv ./GameData.smzip ../
 		cd ..
 	else
