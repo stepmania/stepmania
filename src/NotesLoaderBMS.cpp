@@ -743,6 +743,16 @@ bool BMSChartReader::ReadNoteData()
 			if( sixteenths > 1 ) adjustedMeasureSize = (float)sixteenths / 4.0f;
 			measureAdjust = adjustedMeasureSize / measureSize;
 			td.SetBPMAtRow( BeatToNoteRow(measureStartBeat), measureAdjust * currentBPM );
+			
+			{
+				int num = sixteenths;
+				int den = 16;
+				while (den > 4 && num % 2 == 0 && den % 2 == 0) {
+					num /= 2;
+					den /= 2;
+				}
+				td.SetTimeSignatureAtRow( BeatToNoteRow(measureStartBeat), num, den );
+			}
 			// end measure size adjustment
 		}
 
