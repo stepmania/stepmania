@@ -8,6 +8,10 @@ ________________________________________________________________________________
 StepMania 5.0 $next | 2011xxxx
 --------------------------------------------------------------------------------
 
+2011/10/10
+----------
+* [NotesLoaderBMS] Add the time signature segments. [theDtTvB]
+
 2011/10/09
 ----------
 * [NotesLoaderBMS] Fix the bug where keysounds that points to nonexistant file
