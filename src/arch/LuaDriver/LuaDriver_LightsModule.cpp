@@ -153,6 +153,12 @@ void LuaDriver_LightsModule::PushLightsState( Lua *L, const LightsState *ls )
 		// push game-agnostic buttons
 		for( GameButton gb = GameButton(0); gb < GAME_BUTTON_CUSTOM_01; enum_add(gb,+1) )
 		{
+			// don't push buttons that aren't on; we do this
+			// because Lua will transparently handle nil keys
+			// as though they were false.
+			if( !ls->m_bGameButtonLights[gc][gb] )
+				continue;
+
 			Enum::Push( L, gb );
 			lua_pushboolean( L, ls->m_bGameButtonLights[gc][gb] );
 			lua_rawset( L, -3 );
@@ -161,11 +167,24 @@ void LuaDriver_LightsModule::PushLightsState( Lua *L, const LightsState *ls )
 		// push game-specific buttons
 		for( GameButton gb = GAME_BUTTON_CUSTOM_01; gb < pScheme->m_iButtonsPerController; enum_add(gb,1) )
 		{
-			// e.g. DanceButton_UpLeft
-			const RString sKey = sGame + "Button_" + GameButtonToString( pScheme, gb );
+			// don't push buttons that aren't on; we do this
+			// because Lua will transparently handle nil keys
+			// as though they were false.
+			if( !ls->m_bGameButtonLights[gc][gb] )
+				continue;
 
-			lua_pushstring( L, sKey );
-			lua_pushboolean( L, ls->m_bGameButtonLights[gc][gb] );
+			// push game-agnostic key, e.g. GameButton_Custom01
+			Enum::Push( L, gb );
+			lua_pushboolean( L, true );
+			lua_rawset( L, -3 );
+
+			// push game-specific key, e.g. DanceButton_UpLeft
+			// XXX: is there a better way to do this?
+			const RString sGameKey = sGame + "Button_"
+				+ GameButtonToString( pScheme, gb );
+
+			lua_pushstring( L, sGameKey );
+			lua_pushboolean( L, true );
 			lua_rawset( L, -3 );
 		}
 
