@@ -8,6 +8,11 @@ ________________________________________________________________________________
 StepMania 5.0 $next | 2011xxxx
 --------------------------------------------------------------------------------
 
+2011/10/12
+----------
+* [Steps] Fix a bug where e.g. ".SM" ".DWI" ".Sm" ".sM" files
+  wouldn't properly load since the code was expecting lowercase. [AJ]
+
 2011/10/10
 ----------
 * [NotesLoaderBMS] Add the time signature segments. [theDtTvB]

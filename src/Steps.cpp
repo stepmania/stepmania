@@ -105,6 +105,8 @@ bool Steps::GetNoteDataFromSimfile()
 	// Replace the line below with the Steps' cache file.
 	RString stepFile = this->GetFilename();
 	RString extension = GetExtension(stepFile);
+	extension.MakeLower(); // must do this because the code is expecting lowercase
+
 	if (extension.empty() || extension == "ssc") // remember cache files.
 	{
 		SSCLoader loader;
