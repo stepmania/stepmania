@@ -346,7 +346,7 @@ void Steps::Decompress()
 		// We have NoteData on disk and not in memory. Load it.
 		if (!this->GetNoteDataFromSimfile())
 		{
-			LOG->Warn("Couldn't load \"%s\"", m_sFilename.c_str());
+			LOG->Warn("Couldn't load NoteData from \"%s\"", m_sFilename.c_str());
 			return;
 		}
 
