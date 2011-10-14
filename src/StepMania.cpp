@@ -1289,8 +1289,9 @@ bool HandleGlobalInputs( const InputEventPlus &input )
 	{
 		if( bIsShiftHeld && !bIsCtrlHeld )
 		{
-			// Shift+F2: refresh metrics and CodeDetector cache only
+			// Shift+F2: refresh metrics,noteskin cache and CodeDetector cache only
 			THEME->ReloadMetrics();
+			NOTESKIN->RefreshNoteSkinData( GAMESTATE->m_pCurGame );
 			CodeDetector::RefreshCacheItems();
 			SCREENMAN->SystemMessage( RELOADED_METRICS );
 		}
