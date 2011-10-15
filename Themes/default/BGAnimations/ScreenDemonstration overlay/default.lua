@@ -31,7 +31,10 @@ local t = Def.ActorFrame{
 			local song = GAMESTATE:GetCurrentSong();
 			local text = "";
 			if song then
-				text = song:GetDisplayArtist().." - "..song:GetDisplayFullTitle().."   [from "..song:GetGroupName().."]";
+				local artist = song:GetDisplayArtist()
+				local title = song:GetDisplayFullTitle()
+				local group = song:GetGroupName()
+				text = string.format(Screen.String("%s - %s   [from %s]"),artist,title,group)
 			end;
 			self:settext(text);
 		end;
