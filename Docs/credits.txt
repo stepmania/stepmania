@@ -120,6 +120,12 @@ A.C (@waiei)
  * Hybrid scoring mode + scoring fixes
  * Various patches/fixes/bug reporting
 
+John_Reactor
+ * Polish translation
+
+DHalens
+ * Spanish translation
+
 桜為小鳩 (@sakuraponila)
  * Scoring fixes
 
