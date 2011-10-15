@@ -19,8 +19,7 @@ end
 
 local MapNameToLetter = {};
 local MapLetterToName = {};
-local letter = LoadFont( "Common Normal" ) .. {
--- local letter = LoadFont( "_regra bold 30px" ) .. {
+local letter = LoadFont("Common Normal")..{
 	InitCommand=cmd(zoom,0.8;shadowlength,0);
 	PulseCommand = function(self)
 		self:finishtweening();
@@ -33,19 +32,14 @@ for l in ivalues(Letters) do
 	local Name = "letter " .. l;
 	MapNameToLetter[Name] = l;
 	MapLetterToName[l] = Name;
-	children[#children+1] = letter .. {
+	children[#children+1] = letter..{
 		Name = Name;
 		Text = l;
 	};
 	if l == "BACK" or l == "ENTER" then
-		children[#children].File = THEME:GetPathF("", "Common Normal");
--- 		children[#children].File = THEME:GetPathF("", "_venacti 26px normal");
+		children[#children].File = THEME:GetPathF("Common", "Normal");
 	end;
 end;
---[[ children[#children+1] = LoadActor( THEME:GetPathS(Var "LoadingScreen", "type key") ) .. { Name = "Type"; SupportPan = true; }
-children[#children+1] = LoadActor( THEME:GetPathS(Var "LoadingScreen", "back") ) .. { Name = "Back"; SupportPan = true; }
-children[#children+1] = LoadActor( THEME:GetPathS(Var "LoadingScreen", "enter") ) .. { Name = "Enter"; SupportPan = true; }
-children[#children+1] = LoadActor( THEME:GetPathS(Var "LoadingScreen", "move cursor") ) .. { Name = "Move"; SupportPan = true; } --]]
 children[#children+1] = LoadActor( THEME:GetPathS("Common", "value") ) .. { Name = "Type"; SupportPan = true; }
 children[#children+1] = LoadActor( THEME:GetPathS("Common", "cancel") ) .. { Name = "Back"; SupportPan = true; }
 children[#children+1] = LoadActor( THEME:GetPathS("Common", "start") ).. { Name = "Enter"; SupportPan = true; }
@@ -60,7 +54,7 @@ for pn in ivalues(PlayerNumber) do
 	children[#children+1] = LoadActor( THEME:GetPathG("_frame", "1D"),
 		{ 4/10, 2/10, 4/10 },
 		LoadActor(CursorFiles[pn])
-	) .. {
+	)..{
 		Name = CursorFiles[pn];
 		BeginCommand = cmd(visible,SCREENMAN:GetTopScreen():GetEnteringName(pn));
 		OnCommand = cmd(
@@ -77,10 +71,7 @@ for pn in ivalues(PlayerNumber) do
 			self:playcommand("TweenOff" );
 		end;
 		TweenOffCommand = function(self,param)
-			(cmd(
-				accelerate,0.25;
-				zoomx,0;
-			))(self);
+			(cmd(accelerate,0.25;zoomx,0;))(self);
 		end;
 	};
 end
@@ -116,8 +107,7 @@ return Def.ActorFrame {
 		local fY = 0;
 		local iRow = 1;
 		for l in ivalues(Letters) do
-			if l == "O" or l == "0" or l == "BACK"
-			then
+			if l == "O" or l == "0" or l == "BACK" then
 				fX = 0;
 				fY = fY + 30;
 				iRow = iRow + 1;
@@ -163,7 +153,7 @@ return Def.ActorFrame {
 
 		if param.Name == "Left" or param.Name == "Right" then
 			local iDir = param.Name == "Left" and -1 or 1;
-			
+
 			local idx = LetterIndexes[Selection[pn]];
 			idx = idx + iDir;
 			idx = math.mod(idx+#Letters-1, #Letters)+1;
@@ -248,8 +238,6 @@ return Def.ActorFrame {
 			PlayerX[pn] = Keys[key].Text:GetX();
 			PlayerY[pn] = Keys[key].Text:GetY();
 		end
-
-	--	SCREENMAN:GetTopScreen():EnterKey(PLAYER_2,"x");
 	end;
 	MenuTimerExpiredMessageCommand = function(self, param)
 		for pn in ivalues(PlayerNumber) do
@@ -261,7 +249,6 @@ return Def.ActorFrame {
 	OnCommand = function(self, param)
 		for key in ivalues(Letters) do
 			local fDist = distance( Keys[key].Text:GetX(), Keys[key].Text:GetY(), 0, 100 );
-			
 			local f = cmd(
 				diffusealpha,0;zoom,0;
 				sleep,0.25 + (fDist / 400);
@@ -274,7 +261,6 @@ return Def.ActorFrame {
 	OffCommand = function(self, param)
 		for key in ivalues(Letters) do
 			local fDist = distance( Keys[key].Text:GetX(), Keys[key].Text:GetY(), 0, 100 );
-			
 			local f = cmd(
 				sleep,0.0 + (fDist / 400);
 				decelerate,0.5;
