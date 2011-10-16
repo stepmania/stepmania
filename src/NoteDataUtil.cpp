@@ -1125,6 +1125,7 @@ void NoteDataUtil::RemoveAllButPlayer( NoteData &inout, PlayerNumber pn )
 	}
 }
 
+// TODO: Perform appropriate matrix calculations for everything instead.
 static void GetTrackMapping( StepsType st, NoteDataUtil::TrackMapping tt, int NumTracks, int *iTakeFromTrack )
 {
 	// Identity transform for cases not handled below.
