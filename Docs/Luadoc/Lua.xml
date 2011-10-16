@@ -939,6 +939,7 @@
 		<Class name='PlayerOptions'>
 			<Function name='GetAlternate'/>
 			<Function name='GetAttackMines'/>
+			<Function name='GetBackwards'/>
 			<Function name='GetBMRize'/>
 			<Function name='GetBeat'/>
 			<Function name='GetBig'/>
