@@ -1208,57 +1208,58 @@ static void GetTrackMapping( StepsType st, NoteDataUtil::TrackMapping tt, int Nu
 		}
 
 		break;
+	case NoteDataUtil::backwards:
+	{
+		// If a Pump game type, treat differently. Otherwise, send to mirror.
+		switch (st)
+		{
+			case StepsType_pump_single:
+			case StepsType_pump_couple:
+			{
+				iTakeFromTrack[0] = 3;
+				iTakeFromTrack[1] = 4;
+				iTakeFromTrack[2] = 2;
+				iTakeFromTrack[3] = 0;
+				iTakeFromTrack[4] = 1;
+				iTakeFromTrack[5] = 8;
+				iTakeFromTrack[6] = 9;
+				iTakeFromTrack[7] = 2;
+				iTakeFromTrack[8] = 5;
+				iTakeFromTrack[9] = 6;
+				break;
+			}
+			case StepsType_pump_double:
+			case StepsType_pump_routine:
+			{
+				iTakeFromTrack[0] = 8;
+				iTakeFromTrack[1] = 9;
+				iTakeFromTrack[2] = 7;
+				iTakeFromTrack[3] = 5;
+				iTakeFromTrack[4] = 6;
+				iTakeFromTrack[5] = 3;
+				iTakeFromTrack[6] = 4;
+				iTakeFromTrack[7] = 2;
+				iTakeFromTrack[8] = 0;
+				iTakeFromTrack[9] = 1;
+				break;
+			}
+			case StepsType_pump_halfdouble:
+			{
+				iTakeFromTrack[0] = 5;
+				iTakeFromTrack[1] = 3;
+				iTakeFromTrack[2] = 4;
+				iTakeFromTrack[3] = 1;
+				iTakeFromTrack[4] = 2;
+				iTakeFromTrack[5] = 0;
+				break;
+			}
+			default:;
+		}
+	}
 	case NoteDataUtil::mirror:
 		{
-			switch (st)
-			{
-				case StepsType_pump_single:
-				case StepsType_pump_couple:
-				{
-					iTakeFromTrack[0] = 3;
-					iTakeFromTrack[1] = 4;
-					iTakeFromTrack[2] = 2;
-					iTakeFromTrack[3] = 0;
-					iTakeFromTrack[4] = 1;
-					iTakeFromTrack[5] = 8;
-					iTakeFromTrack[6] = 9;
-					iTakeFromTrack[7] = 2;
-					iTakeFromTrack[8] = 5;
-					iTakeFromTrack[9] = 6;
-					break;
-				}
-				case StepsType_pump_double:
-				case StepsType_pump_routine:
-				{
-					iTakeFromTrack[0] = 8;
-					iTakeFromTrack[1] = 9;
-					iTakeFromTrack[2] = 7;
-					iTakeFromTrack[3] = 5;
-					iTakeFromTrack[4] = 6;
-					iTakeFromTrack[5] = 3;
-					iTakeFromTrack[6] = 4;
-					iTakeFromTrack[7] = 2;
-					iTakeFromTrack[8] = 0;
-					iTakeFromTrack[9] = 1;
-					break;
-				}
-				case StepsType_pump_halfdouble:
-				{
-					iTakeFromTrack[0] = 5;
-					iTakeFromTrack[1] = 3;
-					iTakeFromTrack[2] = 4;
-					iTakeFromTrack[3] = 1;
-					iTakeFromTrack[4] = 2;
-					iTakeFromTrack[5] = 0;
-					break;
-				}
-				default:
-				{
-					for( int t=0; t<NumTracks; t++ )
-						iTakeFromTrack[t] = NumTracks-t-1;
-					break;
-				}
-			}
+			for( int t=0; t<NumTracks; t++ )
+				iTakeFromTrack[t] = NumTracks-t-1;
 			break;
 		}
 	case NoteDataUtil::shuffle:
