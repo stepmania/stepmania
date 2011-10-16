@@ -109,6 +109,7 @@ public:
 	enum Turn {
 		TURN_NONE=0, /**< No turning of the arrows is performed. */
 		TURN_MIRROR, /**< The arrows are mirrored from their normal position. */
+		TURN_BACKWARDS, /**< The arrows are turned 180 degrees. This does NOT always equal mirror. */
 		TURN_LEFT, /**< The arrows are turned 90 degrees to the left. */
 		TURN_RIGHT, /**< The arrows are turned 90 degress to the right. */
 		TURN_SHUFFLE, /**< Some of the arrow columns are changed throughout the whole song. */

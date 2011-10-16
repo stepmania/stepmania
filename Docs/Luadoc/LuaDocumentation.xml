@@ -2485,6 +2485,9 @@
 	<Function name='GetAttackMines' return='bool' arguments=''>
 		
 	</Function>
+	<Function name='GetBackwards' return='bool' arguments=''>
+		Returns <code>true</code> if the backwards mod is applied, <code>false</code> otherwise.
+	</Function>
 	<Function name='GetBeat' return='float' arguments=''>
 		
 	</Function>

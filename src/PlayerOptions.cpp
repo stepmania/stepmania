@@ -195,6 +195,7 @@ void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
 	AddPart( AddTo, m_fRandomSpeed,	"RandomSpeed" );
 
 	if( m_bTurns[TURN_MIRROR] )		AddTo.push_back( "Mirror" );
+	if( m_bTurns[TURN_BACKWARDS] )		AddTo.push_back( "Backwards" );
 	if( m_bTurns[TURN_LEFT] )			AddTo.push_back( "Left" );
 	if( m_bTurns[TURN_RIGHT] )			AddTo.push_back( "Right" );
 	if( m_bTurns[TURN_SHUFFLE] )		AddTo.push_back( "Shuffle" );
@@ -389,6 +390,7 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 	else if( sBit == "randomvanish" )			SET_FLOAT( fAppearances[APPEARANCE_RANDOMVANISH] )
 	else if( sBit == "turn" && !on )			ZERO( m_bTurns ); /* "no turn" */
 	else if( sBit == "mirror" )				m_bTurns[TURN_MIRROR] = on;
+	else if( sBit == "backwards" )			m_bTurns[TURN_BACKWARDS] = on;
 	else if( sBit == "left" )				m_bTurns[TURN_LEFT] = on;
 	else if( sBit == "right" )				m_bTurns[TURN_RIGHT] = on;
 	else if( sBit == "shuffle" )				m_bTurns[TURN_SHUFFLE] = on;
@@ -963,6 +965,7 @@ public:
 
 	// Turns
 	DEFINE_METHOD( GetMirror, m_bTurns[PlayerOptions::TURN_MIRROR] )
+	DEFINE_METHOD( GetBackwards, m_bTurns[PlayerOptions::TURN_BACKWARDS] )
 	DEFINE_METHOD( GetLeft, m_bTurns[PlayerOptions::TURN_LEFT] )
 	DEFINE_METHOD( GetRight, m_bTurns[PlayerOptions::TURN_RIGHT] )
 	DEFINE_METHOD( GetShuffle, m_bTurns[PlayerOptions::TURN_SHUFFLE] )
@@ -1088,6 +1091,7 @@ public:
 
 		// Turns
 		ADD_METHOD( GetMirror );
+		ADD_METHOD( GetBackwards );
 		ADD_METHOD( GetLeft );
 		ADD_METHOD( GetRight );
 		ADD_METHOD( GetShuffle );
