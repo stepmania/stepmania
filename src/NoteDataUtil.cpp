@@ -1212,6 +1212,7 @@ static void GetTrackMapping( StepsType st, NoteDataUtil::TrackMapping tt, int Nu
 	case NoteDataUtil::backwards:
 	{
 		// If a Pump game type, treat differently. Otherwise, send to mirror.
+		bool needsBackwards = true;
 		switch (st)
 		{
 			case StepsType_pump_single:
@@ -1254,8 +1255,10 @@ static void GetTrackMapping( StepsType st, NoteDataUtil::TrackMapping tt, int Nu
 				iTakeFromTrack[5] = 0;
 				break;
 			}
-			default:;
+			default:
+				needsBackwards = false;
 		}
+		if (needsBackwards) break;
 	}
 	case NoteDataUtil::mirror:
 		{
