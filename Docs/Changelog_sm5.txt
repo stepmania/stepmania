@@ -8,6 +8,13 @@ ________________________________________________________________________________
 StepMania 5.0 $next | 2011xxxx
 --------------------------------------------------------------------------------
 
+2011/10/16
+----------
+* [NoteDataUtil] Add the Backwards mod for games where the intended
+  definition of Mirror is different. Regarding Pump gameplay, what was
+  called Mirror in Preview 4 is considered Backwards now, and the original
+  Mirror is back in its old position. [Wolfman2000]
+
 2011/10/12
 ----------
 * [Steps] Fix a bug where e.g. ".SM" ".DWI" ".Sm" ".sM" files
