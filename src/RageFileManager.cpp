@@ -248,6 +248,8 @@ static void ChangeToDirOfExecutable( const RString &argv0 )
 	 * written through RageFile.  See also RageFileManager::RageFileManager. */
 #if defined(_WINDOWS)
 	chdir( RageFileManagerUtil::sDirOfExecutable + "/.." );
+#elif defined(UNIX)
+	chdir( RageFileManagerUtil::sDirOfExecutable + "/" );
 #elif defined(MACOSX)
 	/* If the basename is not MacOS, then we've likely been launched via the command line
 	 * through a symlink. Assume this is the case and change to the dir of the symlink. */
