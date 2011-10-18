@@ -1079,14 +1079,18 @@ void NoteField::DrawPrimitives()
 			AttackArray &attacks = GAMESTATE->m_bIsUsingStepTiming ?
 				GAMESTATE->m_pCurSteps[PLAYER_1]->m_Attacks :
 				GAMESTATE->m_pCurSong->m_Attacks;
-			FOREACH_CONST(Attack, attacks, a)
+			// XXX: We're somehow getting here when attacks is null. Find the actual cause later.
+			if (&attacks)
 			{
-				float fBeat = timing.GetBeatFromElapsedTime(a->fStartSecond);
-				if (BeatToNoteRow(fBeat) >= iFirstRowToDraw &&
-				    BeatToNoteRow(fBeat) <= iLastRowToDraw &&
-				    IS_ON_SCREEN(fBeat))
+				FOREACH_CONST(Attack, attacks, a)
 				{
-					this->DrawAttackText(fBeat, *a);
+					float fBeat = timing.GetBeatFromElapsedTime(a->fStartSecond);
+					if (BeatToNoteRow(fBeat) >= iFirstRowToDraw &&
+						BeatToNoteRow(fBeat) <= iLastRowToDraw &&
+						IS_ON_SCREEN(fBeat))
+					{
+						this->DrawAttackText(fBeat, *a);
+					}
 				}
 			}
 		}

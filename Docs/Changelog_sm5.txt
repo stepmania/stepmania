@@ -8,6 +8,11 @@ ________________________________________________________________________________
 StepMania 5.0 $next | 2011xxxx
 --------------------------------------------------------------------------------
 
+2011/10/17
+----------
+* [ScreenEdit/NoteField] Fix an editor crash when you exit without saving
+  after creating new steps. [Wolfman2000]
+
 2011/10/16
 ----------
 * [NoteDataUtil] Add the Backwards mod for games where the intended
