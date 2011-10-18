@@ -1496,14 +1496,13 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			// Alt + number = input to right half
 			if( EditIsBeingPressed(EDIT_BUTTON_RIGHT_SIDE) )
 				ShiftToRightSide( iCol, m_NoteDataEdit.GetNumTracks() );
-
+			
+			if( iCol >= m_NoteDataEdit.GetNumTracks() )
+				break; // this button is not in the range of columns for this Style
 
 			const float fSongBeat = GetBeat();
 			const int iSongIndex = BeatToNoteRow( fSongBeat );
-
-			if( iCol >= m_NoteDataEdit.GetNumTracks() )	// this button is not in the range of columns for this Style
-				break;
-
+			
 			// check for to see if the user intended to remove a HoldNote
 			int iHeadRow;
 			if( m_NoteDataEdit.IsHoldNoteAtRow( iCol, iSongIndex, &iHeadRow ) )
