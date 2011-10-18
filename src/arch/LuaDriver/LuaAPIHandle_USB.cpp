@@ -388,6 +388,55 @@ public:
 		return 1;
 	}
 
+	static int BulkTransfer( T *p, lua_State *L )
+	{
+		uint8_t endpoint = IArg(1);
+
+		size_t datalen;
+		uint8_t *data;
+
+		/* If we're performing a transfer on an incoming endpoint
+		 * allocate a buffer for the incoming data. */
+		bool bUsingBuffer = (endpoint & LIBUSB_ENDPOINT_IN);
+
+		if( bUsingBuffer )
+		{
+			// TODO: get endpoint descriptor, set to wMaxPacketSize
+			datalen = 0x40;
+			data = new uint8_t[datalen];
+		}
+		else
+		{
+			// get the size (and actual data) from Lua
+			datalen = 0;
+			data = (uint8_t*)lua_tolstring(L, 2, &datalen );
+		}
+
+		unsigned timeout = IArg(3);
+
+		int transferred = 0;
+
+		LUA->YieldLua();
+		p->BulkTransfer( endpoint, data, datalen, &transferred, timeout );
+		LUA->UnyieldLua();
+
+		/* push the amount of data transferred, and the data we got
+		 * if applicable */
+		lua_pushnumber( L, transferred );
+
+		if( bUsingBuffer )
+		{
+			lua_pushlstring( L, (const char*)data, datalen );
+			delete[] data;
+		}
+		else
+		{
+			lua_pushnil( L );
+		}
+
+		return 2;
+	}
+
 	static int InterruptTransfer( T *p, lua_State *L )
 	{
 		uint8_t endpoint = IArg(1);
@@ -402,13 +451,13 @@ public:
 		if( bUsingBuffer )
 		{
 			// TODO: get endpoint descriptor, set to wMaxPacketSize
-			datalen = 8;
+			datalen = 0x08;
 			data = new uint8_t[datalen];
 		}
 		else
 		{
 			// get the size (and actual data) from Lua
-			size_t datalen = 0;
+			datalen = 0;
 			data = (uint8_t*)lua_tolstring(L, 2, &datalen );
 		}
 
