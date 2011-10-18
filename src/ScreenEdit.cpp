@@ -1899,9 +1899,9 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 				else
 					fDelta *= 40;
 			}
-			unsigned i;
 
 #if 0
+			unsigned i;
 			// is there a StopSegment on the current row?
 			const StopSegment *seg = GetAppropriateTiming().GetStopSegmentAtRow( GetRow() );
 
