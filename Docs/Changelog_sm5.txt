@@ -8,6 +8,12 @@ ________________________________________________________________________________
 StepMania 5.0 $next | 2011xxxx
 --------------------------------------------------------------------------------
 
+2011/10/18
+----------
+* [LightsManager] Use song beat for menu button lights, allow demonstration to
+  flash pad lights when BlinkGameplayButtonLightsOnNote is true, light custom
+  game buttons when pressed during attract mode, general optimizations. [vyhd]
+
 2011/10/17
 ----------
 * [ScreenEdit/NoteField] Fix an editor crash when you exit without saving

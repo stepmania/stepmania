@@ -202,150 +202,162 @@ void LightsManager::Update( float fDeltaTime )
 
 	switch( m_LightsMode )
 	{
-	case LIGHTSMODE_ATTRACT:
+		DEFAULT_FAIL( m_LightsMode );
+
+		case LIGHTSMODE_ATTRACT:
 		{
 			int iSec = (int)RageTimer::GetTimeSinceStartFast();
 			int iTopIndex = iSec % 4;
+
+			CabinetLight cl = CabinetLight_Invalid;
+
 			switch( iTopIndex )
 			{
-			case 0:	m_LightsState.m_bCabinetLights[LIGHT_MARQUEE_UP_LEFT]  = true;	break;
-			case 1:	m_LightsState.m_bCabinetLights[LIGHT_MARQUEE_LR_RIGHT] = true;	break;
-			case 2:	m_LightsState.m_bCabinetLights[LIGHT_MARQUEE_UP_RIGHT] = true;	break;
-			case 3:	m_LightsState.m_bCabinetLights[LIGHT_MARQUEE_LR_LEFT]  = true;	break;
-			default:	ASSERT(0);
+				DEFAULT_FAIL( iTopIndex );
+				case 0:	m_LightsState.m_bCabinetLights[LIGHT_MARQUEE_UP_LEFT]  = true;	break;
+				case 1:	m_LightsState.m_bCabinetLights[LIGHT_MARQUEE_LR_RIGHT] = true;	break;
+				case 2:	m_LightsState.m_bCabinetLights[LIGHT_MARQUEE_UP_RIGHT] = true;	break;
+				case 3:	m_LightsState.m_bCabinetLights[LIGHT_MARQUEE_LR_LEFT]  = true;	break;
 			}
 
-			bool bOn = (iSec%4)==0;
-			m_LightsState.m_bCabinetLights[LIGHT_BASS_LEFT]			= bOn;
-			m_LightsState.m_bCabinetLights[LIGHT_BASS_RIGHT]		= bOn;
-		}
-		break;
-	case LIGHTSMODE_MENU_START_ONLY:
-	case LIGHTSMODE_MENU_START_AND_DIRECTIONS:
-	case LIGHTSMODE_JOINING:
-		{
-			FOREACH_CabinetLight( cl )
-				m_LightsState.m_bCabinetLights[cl] = false;
+			if( iTopIndex == 0 )
+			{
+				m_LightsState.m_bCabinetLights[LIGHT_BASS_LEFT] = true;
+				m_LightsState.m_bCabinetLights[LIGHT_BASS_RIGHT] = true;
+			}
 
-			static float fLastBeat;
+			break;
+		}
+		case LIGHTSMODE_MENU_START_ONLY:
+		case LIGHTSMODE_MENU_START_AND_DIRECTIONS:
+		case LIGHTSMODE_JOINING:
+		{
 			static int iLight;
 
-			if( fracf(GAMESTATE->m_Position.m_fLightSongBeat) < fracf(fLastBeat) )
+			// if we've crossed a beat boundary, advance the light index
 			{
-				++iLight;
-				wrap( iLight, 4 );
-			}
-			fLastBeat = GAMESTATE->m_Position.m_fLightSongBeat;
-			switch( iLight )
-			{
-			case 0:	m_LightsState.m_bCabinetLights[LIGHT_MARQUEE_UP_LEFT]  = true;	break;
-			case 1:	m_LightsState.m_bCabinetLights[LIGHT_MARQUEE_LR_RIGHT] = true;	break;
-			case 2:	m_LightsState.m_bCabinetLights[LIGHT_MARQUEE_UP_RIGHT] = true;	break;
-			case 3:	m_LightsState.m_bCabinetLights[LIGHT_MARQUEE_LR_LEFT]  = true;	break;
-			default:	ASSERT(0);
+				static float fLastBeat;
+				float fLightSongBeat = GAMESTATE->m_Position.m_fLightSongBeat;
+
+				if( fracf(fLightSongBeat) < fracf(fLastBeat) )
+				{
+					++iLight;
+					wrap( iLight, 4 );
+				}
+
+				fLastBeat = fLightSongBeat;
 			}
 
-			// Light the menu buttons.
-			switch( m_LightsMode )
+			CabinetLight cl = CabinetLight_Invalid;
+
+			switch( iLight )
 			{
-			DEFAULT_FAIL(m_LightsMode);
-			case LIGHTSMODE_MENU_START_ONLY:
-			case LIGHTSMODE_MENU_START_AND_DIRECTIONS:
-				{
-					float fSec = RageTimer::GetTimeSinceStartFast();
-					float fFractionSec = fSec - truncf(fSec);
-					bool bOn = fFractionSec < 0.5f;
-					FOREACH_PlayerNumber( pn )
-					{
-						if( GAMESTATE->m_bSideIsJoined[pn] )
-						{
-							m_LightsState.m_bGameButtonLights[pn][GAME_BUTTON_START] = bOn;
-							switch( m_LightsMode )
-							{
-							DEFAULT_FAIL(m_LightsMode);
-							case LIGHTSMODE_MENU_START_ONLY:
-								break;
-							case LIGHTSMODE_MENU_START_AND_DIRECTIONS:
-								m_LightsState.m_bGameButtonLights[pn][GAME_BUTTON_MENULEFT] = bOn;
-								m_LightsState.m_bGameButtonLights[pn][GAME_BUTTON_MENURIGHT] = bOn;
-								break;
-							}
-						}
-					}
-				}
-				break;
-			case LIGHTSMODE_JOINING:
-				FOREACH_PlayerNumber( pn )
-				{
-					if( GAMESTATE->m_bSideIsJoined[pn] )
-						m_LightsState.m_bGameButtonLights[pn][GAME_BUTTON_START] = true;
-				}
-				break;
+				DEFAULT_FAIL( iLight );
+				case 0:	cl = LIGHT_MARQUEE_UP_LEFT;	break;
+				case 1:	cl = LIGHT_MARQUEE_LR_RIGHT;	break;
+				case 2:	cl = LIGHT_MARQUEE_UP_RIGHT;	break;
+				case 3:	cl = LIGHT_MARQUEE_LR_LEFT;	break;
 			}
+
+			m_LightsState.m_bCabinetLights[cl] = true;
+
+			break;
 		}
-		break;
-	case LIGHTSMODE_DEMONSTRATION:
-	case LIGHTSMODE_GAMEPLAY:
-		FOREACH_CabinetLight( cl )
-			m_LightsState.m_bCabinetLights[cl] = m_fSecsLeftInCabinetLightBlink[cl] > 0;
-		break;
-	case LIGHTSMODE_STAGE:
-	case LIGHTSMODE_ALL_CLEARED:
+
+		case LIGHTSMODE_DEMONSTRATION:
+		case LIGHTSMODE_GAMEPLAY:
+		{
+			FOREACH_CabinetLight( cl )
+				m_LightsState.m_bCabinetLights[cl] = m_fSecsLeftInCabinetLightBlink[cl] > 0;
+
+			break;
+		}
+
+		case LIGHTSMODE_STAGE:
+		case LIGHTSMODE_ALL_CLEARED:
 		{
 			FOREACH_CabinetLight( cl )
 				m_LightsState.m_bCabinetLights[cl] = true;
+
+			break;
 		}
-		break;
-	case LIGHTSMODE_TEST_AUTO_CYCLE:
+
+		case LIGHTSMODE_TEST_AUTO_CYCLE:
 		{
 			int iSec = GetTestAutoCycleCurrentIndex();
-			FOREACH_CabinetLight( cl )
-			{
-				bool bOn = (iSec%NUM_CabinetLight) == cl;
-				m_LightsState.m_bCabinetLights[cl] = bOn;
-			}
+
+			CabinetLight cl = CabinetLight(iSec % NUM_CabinetLight);
+			m_LightsState.m_bCabinetLights[cl] = true;
+
+			break;
 		}
-		break;
-	case LIGHTSMODE_TEST_MANUAL_CYCLE:
+
+		case LIGHTSMODE_TEST_MANUAL_CYCLE:
 		{
-			FOREACH_CabinetLight( cl )
-			{
-				bool bOn = cl == m_clTestManualCycleCurrent;
-				m_LightsState.m_bCabinetLights[cl] = bOn;
-			}
+			CabinetLight cl = m_clTestManualCycleCurrent;
+			m_LightsState.m_bCabinetLights[cl] = true;
+
+			break;
 		}
-		break;
-	default:
-		ASSERT(0);
 	}
 
 
 	// Update game controller lights
 	switch( m_LightsMode )
 	{
-	case LIGHTSMODE_ATTRACT:
-	case LIGHTSMODE_DEMONSTRATION:
-		break;
-	case LIGHTSMODE_ALL_CLEARED:
-	case LIGHTSMODE_STAGE:
-	case LIGHTSMODE_JOINING:
-		{
-			FOREACH_ENUM( GameController,  gc )
-			{
-				bool bOn = GAMESTATE->m_bSideIsJoined[gc];
+		DEFAULT_FAIL( m_LightsMode );
 
-				FOREACH_ENUM( GameButton,  gb )
-					m_LightsState.m_bGameButtonLights[gc][gb] = bOn;
-			}
-		}
-		break;
-	case LIGHTSMODE_MENU_START_ONLY:
-	case LIGHTSMODE_MENU_START_AND_DIRECTIONS:
-	case LIGHTSMODE_GAMEPLAY:
+		case LIGHTSMODE_ALL_CLEARED:
+		case LIGHTSMODE_STAGE:
+		case LIGHTSMODE_JOINING:
 		{
-			if( m_LightsMode == LIGHTSMODE_GAMEPLAY  &&  g_bBlinkGameplayButtonLightsOnNote )
+			FOREACH_ENUM( GameController, gc )
 			{
-				// Blink on notes.
+				if( GAMESTATE->m_bSideIsJoined[gc] )
+				{
+					FOREACH_ENUM( GameButton, gb )
+						m_LightsState.m_bGameButtonLights[gc][gb] = true;
+				}
+			}
+
+			break;
+		}
+
+		case LIGHTSMODE_MENU_START_ONLY:
+		case LIGHTSMODE_MENU_START_AND_DIRECTIONS:
+		{
+			float fLightSongBeat = GAMESTATE->m_Position.m_fLightSongBeat;
+
+			/* Blink menu lights on the first half of the beat */
+			if( fracf(fLightSongBeat) <= 0.5f )
+			{
+				FOREACH_PlayerNumber( pn )
+				{
+					if( !GAMESTATE->m_bSideIsJoined[pn] )
+						continue;
+
+					m_LightsState.m_bGameButtonLights[pn][GAME_BUTTON_START] = true;
+
+					if( m_LightsMode == LIGHTSMODE_MENU_START_AND_DIRECTIONS )
+					{
+						m_LightsState.m_bGameButtonLights[pn][GAME_BUTTON_MENULEFT] = true;
+						m_LightsState.m_bGameButtonLights[pn][GAME_BUTTON_MENURIGHT] = true;
+						break;
+					}
+				}
+			}
+
+			// fall through to blink on button presses
+		}
+
+		case LIGHTSMODE_DEMONSTRATION:
+		case LIGHTSMODE_GAMEPLAY:
+		{
+			bool bGameplay = (m_LightsMode == LIGHTSMODE_DEMONSTRATION) || (m_LightsMode == LIGHTSMODE_GAMEPLAY);
+
+			// Blink on notes during gameplay.
+			if( bGameplay && g_bBlinkGameplayButtonLightsOnNote )
+			{
 				FOREACH_ENUM( GameController,  gc )
 				{
 					FOREACH_ENUM( GameButton,  gb )
@@ -354,27 +366,31 @@ void LightsManager::Update( float fDeltaTime )
 					}
 				}
 			}
-			else
+
+			// fall through to blink on button presses
+		}
+
+		case LIGHTSMODE_ATTRACT:
+		{
+			// Blink on button presses.
+			FOREACH_ENUM( GameController,  gc )
 			{
-				// Blink on button presses.
-				FOREACH_ENUM( GameController,  gc )
+				FOREACH_GameButton_Custom( gb )
 				{
-					FOREACH_GameButton_Custom( gb )
-					{
-						bool bOn = INPUTMAPPER->IsBeingPressed( GameInput(gc,gb) );
-						m_LightsState.m_bGameButtonLights[gc][gb] = bOn;
-					}
+					bool bOn = INPUTMAPPER->IsBeingPressed( GameInput(gc,gb) );
+					m_LightsState.m_bGameButtonLights[gc][gb] = bOn;
 				}
 			}
+
+			break;
 		}
-		break;
-	case LIGHTSMODE_TEST_AUTO_CYCLE:
+
+		case LIGHTSMODE_TEST_AUTO_CYCLE:
 		{
 			int index = GetTestAutoCycleCurrentIndex();
 
 			vector<GameInput> vGI;
 			GetUsedGameInputs( vGI );
-
 			wrap( index, vGI.size() );
 
 			ZERO( m_LightsState.m_bGameButtonLights );
@@ -382,27 +398,29 @@ void LightsManager::Update( float fDeltaTime )
 			GameController gc = vGI[index].controller;
 			GameButton gb = vGI[index].button;
 			m_LightsState.m_bGameButtonLights[gc][gb] = true;
+
+			break;
 		}
-		break;
-	case LIGHTSMODE_TEST_MANUAL_CYCLE:
+
+		case LIGHTSMODE_TEST_MANUAL_CYCLE:
 		{
 			ZERO( m_LightsState.m_bGameButtonLights );
 
 			vector<GameInput> vGI;
 			GetUsedGameInputs( vGI );
+
 			if( m_iControllerTestManualCycleCurrent != -1 )
 			{
 				GameController gc = vGI[m_iControllerTestManualCycleCurrent].controller;
 				GameButton gb = vGI[m_iControllerTestManualCycleCurrent].button;
 				m_LightsState.m_bGameButtonLights[gc][gb] = true;
 			}
+
+			break;
 		}
-		break;
-	default:
-		ASSERT(0);
 	}
 
-	// If not joined, has enough credits, and not too late to join, then 
+	// If not joined, has enough credits, and not too late to join, then
 	// blink the menu buttons rapidly so they'll press Start
 	{
 		int iBeat = (int)(GAMESTATE->m_Position.m_fLightSongBeat*4);
