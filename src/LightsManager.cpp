@@ -342,7 +342,6 @@ void LightsManager::Update( float fDeltaTime )
 					{
 						m_LightsState.m_bGameButtonLights[pn][GAME_BUTTON_MENULEFT] = true;
 						m_LightsState.m_bGameButtonLights[pn][GAME_BUTTON_MENURIGHT] = true;
-						break;
 					}
 				}
 			}
