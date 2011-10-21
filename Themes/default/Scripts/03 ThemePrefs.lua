@@ -202,7 +202,10 @@ function UserPrefShowLotsaOptions()
 		SelectType = "SelectOne",
 		OneChoiceForAllPlayers = true,
 		ExportOnChange = false,
-		Choices = { 'Many','Few' },
+		Choices = {
+			THEME:GetString('OptionNames','Many'),
+			THEME:GetString('OptionNames','Few')
+		},
 		LoadSelections = function(self, list, pn)
 			if ReadPrefFromFile("UserPrefShowLotsaOptions") ~= nil then
 				if GetUserPrefB("UserPrefShowLotsaOptions") then
@@ -297,7 +300,10 @@ function UserPrefNotePosition()
 		SelectType = "SelectOne",
 		OneChoiceForAllPlayers = true,
 		ExportOnChange = false,
-		Choices = { 'Normal','Lower' },
+		Choices = {
+			THEME:GetString('OptionNames','Normal'),
+			THEME:GetString('OptionNames','Lower')
+		},
 		LoadSelections = function(self, list, pn)
 			if ReadPrefFromFile("UserPrefNotePosition") ~= nil then
 				if GetUserPrefB("UserPrefNotePosition") then
@@ -328,7 +334,10 @@ function UserPrefLongFail()
 		SelectType = "SelectOne",
 		OneChoiceForAllPlayers = true,
 		ExportOnChange = false,
-		Choices = { 'Short','Long' },
+		Choices = {
+			THEME:GetString('OptionNames','Short'),
+			THEME:GetString('OptionNames','Long')
+		},
 		LoadSelections = function(self, list, pn)
 			if ReadPrefFromFile("UserPrefLongFail") ~= nil then
 				if GetUserPrefB("UserPrefLongFail") then
