@@ -475,33 +475,33 @@ Section "Main Section" SecMain
 
 	; Create Start Menu icons
 	SetShellVarContext current  # 	'all' doesn't work on Win9x
-	CreateDirectory "$SMPROGRAMS\${PRODUCT_ID}\"
+	CreateDirectory '"$SMPROGRAMS\${PRODUCT_ID}\"'
 	; todo: make desktop shortcut an option
 	!ifdef MAKE_DESKTOP_SHORTCUT
 		CreateShortCut "$DESKTOP\$(TEXT_IO_RUN).lnk" "$INSTDIR\Program\StepMania-SSE2.exe"
 	!endif
 
-	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_RUN).lnk" "$INSTDIR\Program\StepMania-SSE2.exe"
-	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_RUN_WITHOUT_SSE2).lnk" "$INSTDIR\Program\StepMania.exe"
+	CreateShortCut '"$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_RUN).lnk"' "$INSTDIR\Program\StepMania-SSE2.exe"
+	CreateShortCut '"$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_RUN_WITHOUT_SSE2).lnk"' "$INSTDIR\Program\StepMania.exe"
 
 	!ifdef MAKE_OPEN_PROGRAM_FOLDER_SHORTCUT
-		CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_OPEN_PROGRAM_FOLDER).lnk" "$WINDIR\explorer.exe" "$INSTDIR\"
+		CreateShortCut '"$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_OPEN_PROGRAM_FOLDER).lnk"' "$WINDIR\explorer.exe" "$INSTDIR\"
 	!endif
 	!ifdef MAKE_OPEN_SETTINGS_FOLDER_SHORTCUT
-		CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_OPEN_SETTINGS_FOLDER).lnk" "$WINDIR\explorer.exe" "$APPDATA\${PRODUCT_ID}"
+		CreateShortCut '"$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_OPEN_SETTINGS_FOLDER).lnk"' "$WINDIR\explorer.exe" '"$APPDATA\${PRODUCT_ID}"'
 	!endif
 
-	;CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_VIEW_STATISTICS).lnk" "$INSTDIR\Program\tools.exe" "--machine-profile-stats"
-	;CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_TOOLS).lnk" "$INSTDIR\Program\tools.exe"
-	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_MANUAL).lnk" "$INSTDIR\Manual\index.html"
-	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_UNINSTALL).lnk" "$INSTDIR\uninstall.exe"
-	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_WEB_SITE).lnk" "${PRODUCT_URL}"
-	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_TEXTURE_FONT_GENERATOR).lnk" '"$INSTDIR\Program\Texture Font Generator.exe"'
+	;CreateShortCut '"$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_VIEW_STATISTICS).lnk"' "$INSTDIR\Program\tools.exe" "--machine-profile-stats"
+	;CreateShortCut '"$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_TOOLS).lnk"' "$INSTDIR\Program\tools.exe"
+	CreateShortCut '"$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_MANUAL).lnk"' "$INSTDIR\Manual\index.html"
+	CreateShortCut '"$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_UNINSTALL).lnk"' "$INSTDIR\uninstall.exe"
+	CreateShortCut '"$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_WEB_SITE).lnk"' "${PRODUCT_URL}"
+	CreateShortCut '"$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_TEXTURE_FONT_GENERATOR).lnk" '"$INSTDIR\Program\Texture Font Generator.exe"''
 	!ifdef MAKE_UPDATES_SHORTCUT
-		CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_CHECK_FOR_UPDATES).lnk" "${UPDATES_URL}"
+		CreateShortCut '"$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_CHECK_FOR_UPDATES).lnk"' "${UPDATES_URL}"
 	!endif
-	CreateShortCut "$INSTDIR\${PRODUCT_ID}.lnk" "$INSTDIR\Program\StepMania-SSE2.exe"
-	CreateShortCut "$INSTDIR\${PRODUCT_ID} (non-SSE2).lnk" "$INSTDIR\Program\StepMania.exe"
+	CreateShortCut '"$INSTDIR\${PRODUCT_ID}.lnk"' "$INSTDIR\Program\StepMania-SSE2.exe"
+	CreateShortCut '"$INSTDIR\${PRODUCT_ID} (non-SSE2).lnk"' "$INSTDIR\Program\StepMania.exe"
 !endif
 
 	IfErrors do_error do_no_error
@@ -865,31 +865,31 @@ Section "Uninstall"
 		Delete "$DESKTOP\$(TEXT_IO_RUN).lnk"
 	!endif
 
-	Delete "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_RUN).lnk"
-	Delete "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_RUN_WITHOUT_SSE2).lnk"
+	Delete '"$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_RUN).lnk"'
+	Delete '"$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_RUN_WITHOUT_SSE2).lnk"'
 
 	!ifdef MAKE_OPEN_PROGRAM_FOLDER_SHORTCUT
-		Delete "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_OPEN_PROGRAM_FOLDER).lnk"
+		Delete '"$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_OPEN_PROGRAM_FOLDER).lnk"'
 	!endif
 	!ifdef MAKE_OPEN_SETTINGS_FOLDER_SHORTCUT
-		Delete "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_OPEN_SETTINGS_FOLDER).lnk"
+		Delete '"$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_OPEN_SETTINGS_FOLDER).lnk"'
 	!endif
 
-	;Delete "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_VIEW_STATISTICS).lnk"
-	;Delete "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_TOOLS).lnk"
-	Delete "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_MANUAL).lnk"
-	Delete "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_UNINSTALL).lnk"
-	Delete "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_WEB_SITE).lnk"
-	Delete "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_TEXTURE_FONT_GENERATOR).lnk"
+	;Delete '"$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_VIEW_STATISTICS).lnk"
+	;Delete '"$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_TOOLS).lnk"'
+	Delete '"$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_MANUAL).lnk"'
+	Delete '"$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_UNINSTALL).lnk"'
+	Delete '"$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_WEB_SITE).lnk"'
+	Delete '"$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_TEXTURE_FONT_GENERATOR).lnk"'
 	!ifdef MAKE_UPDATES_SHORTCUT
-		Delete "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_CHECK_FOR_UPDATES).lnk"
+		Delete '"$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_CHECK_FOR_UPDATES).lnk"'
 	!endif
-	Delete "$INSTDIR\${PRODUCT_ID}.lnk"
-	Delete "$INSTDIR\${PRODUCT_ID} (non-SSE2).lnk"
+	Delete '"$INSTDIR\${PRODUCT_ID}.lnk"'
+	Delete '"$INSTDIR\${PRODUCT_ID} (non-SSE2).lnk"'
 
 	; I'm being paranoid here:
-	Delete "$SMPROGRAMS\${PRODUCT_ID}\*.*"
-	RMDir "$SMPROGRAMS\${PRODUCT_ID}"
+	Delete '"$SMPROGRAMS\${PRODUCT_ID}\*.*"'
+	RMDir '"$SMPROGRAMS\${PRODUCT_ID}"'
 
 	Delete "$INSTDIR\Uninstall.exe"
 
