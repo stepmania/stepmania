@@ -68,8 +68,6 @@ NoteSkinManager::~NoteSkinManager()
 
 void NoteSkinManager::RefreshNoteSkinData( const Game* pGame )
 {
-	if( m_pCurGame == pGame )
-		return;
 	m_pCurGame = pGame;
 
 	// clear path cache
