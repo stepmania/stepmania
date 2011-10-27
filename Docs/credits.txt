@@ -1,13 +1,17 @@
-sm-ssc credits (in no particular order)
----------------------------------------
-* "Programming" is used in regards to the sm-ssc project.
-* If you have any corrections to this list, let us know (via forums or IRC).
+StepMania 5 credits (in no particular order)
+--------------------------------------------
+If you have any corrections to this list, let us know (via forums or IRC).
+
+==StepMania Team==
+Chris Danford, Glenn Maynard, Steve Checkoway, et al
+ * Keeping StepMania 5 alive with changes, and providing a nice codebase for
+   us to work with.
 
 ==the spinal shark collective==
 AJ Kelly as freem
- * Project Coordinator/Leader
+ * (sm-ssc) Project Coordinator/Leader
  * Main programming
- * UserPreferences and some other Lua scripts
+ * Various Lua scripts
  * Some small theme edits here and there
  * Noteskins (retro, retrobar*)
  * Windows project file maintainer (mostly)
@@ -43,9 +47,10 @@ FSX
 
 Nicole Reid (okeeblow)
  * Tested building sm-ssc on FreeBSD, provided fixes.
+ (fixes that still need to get implemented)
 
 Thai Pangsakulyanont (theDtTvB)
- * Various changes to BMS support to make things work better.
+ * Changes to BMS loading/playback behavior to make things work better.
 
 Jason Felds (Wolfman2000)
  * [Player] PercentUntilColorCombo metric
@@ -53,11 +58,7 @@ Jason Felds (Wolfman2000)
  * Various fixes/changes. (see Changelogs for more details)
 
 ==other contributors==
-(in no particular order, aside from having SM team at the top)
-
-StepMania Team
- * Keeping StepMania 5 alive with changes, and providing a nice codebase for
-   us to work with.
+(in no particular order)
 
 1a2a3a2a1a
  * Various beat mode fixes
