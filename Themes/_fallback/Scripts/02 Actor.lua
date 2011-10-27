@@ -181,21 +181,176 @@ function Actor:scale_or_crop_background()
 	end
 end
 
+-- xy(actorX,actorY)
+-- Sets the x and y of an actor in one command.
+function Actor:xy(actorX,actorY)
+	self:x(actorX)
+	self:y(actorY)
+end
+
+function Actor:CenterX()
+	self:x(SCREEN_CENTER_X)
+end
+
+function Actor:CenterY()
+	self:y(SCREEN_CENTER_Y)
+end
+
 function Actor:Center()
-    self:x(SCREEN_CENTER_X)
-    self:y(SCREEN_CENTER_Y)
+	self:x(SCREEN_CENTER_X)
+	self:y(SCREEN_CENTER_Y)
 end
 
 function Actor:bezier(...)
-   local a = {...}
-   local b = {}
-   local c = 0
-   assert((a == 9 or a == 5), "bad number of arguments for Actor:bezier()")
-   for i=3,c do
-      b[#b+1] = a[i]
-   end
-   self:tween(a[2], "TweenMode_Bezier", b)
-end	 
+	local a = {...}
+	local b = {}
+	local c = 0
+	assert((a == 9 or a == 5), "bad number of arguments for Actor:bezier()")
+	for i=3,c do
+		b[#b+1] = a[i]
+	end
+	self:tween(a[2], "TweenMode_Bezier", b)
+end
+
+function Actor:Real()
+	-- scale back down to real pixels.
+	self:basezoom(GetReal())
+	-- don't make this ugly
+	self:SetTextureFiltering(false)
+end
+
+-- Scale things back up after they have already been scaled down.
+function Actor:RealInverse()
+	-- scale back up to theme resolution
+	self:basezoom(GetRealInverse())
+	self:SetTextureFiltering(true)
+end
+
+-- MaskSource([clearzbuffer])
+-- Sets an actor up as the source for a mask. Clears zBuffer by default.
+function Actor:MaskSource(noclear)
+	if noclear == true then
+		self:clearzbuffer(true)
+	end
+	self:zwrite(true)
+	self:blend('BlendMode_NoEffect')
+end
+
+-- MaskDest()
+-- Sets an actor up to be masked by anything with MaskSource().
+function Actor:MaskDest()
+	self:ztest(true)
+end
+
+-- Thump()
+-- A customized version of pulse that is more appealing for on-beat
+-- effects;
+function Actor:thump(fEffectPeriod)
+	self:pulse()
+	if fEffectPeriod ~= nil then
+		self:effecttiming(0,0,0.75*fEffectPeriod,0.25*fEffectPeriod)
+	else
+		self:effecttiming(0,0,0.75,0.25)
+	end
+	-- The default effectmagnitude will make this effect look very bad.
+	self:effectmagnitude(1,1.125,1)
+end
+
+-- Heartbeat()
+-- A customized version of pulse that is more appealing for on-beat
+-- effects;
+function Actor:heartbeat(fEffectPeriod)
+	self:pulse()
+	if fEffectPeriod ~= nil then
+		self:effecttiming(0,0.125*fEffectPeriod,0.125*fEffectPeriod,0.75*fEffectPeriod);
+	else
+		self:effecttiming(0,0.125,0.125,0.75);
+	end
+	self:effecmagnitude(1,1.125,1)
+end
+
+--[[ BitmapText commands ]]
+
+-- PixelFont()
+-- An alias that turns off texture filtering.
+-- Named because it works best with pixel fonts.
+function BitmapText:PixelFont()
+	self:SetTextureFiltering(false)
+end
+
+-- Stroke(color)
+-- Sets the text's stroke color.
+function BitmapText:Stroke(c)
+	self:strokecolor( c )
+end
+
+-- NoStroke()
+-- Removes any stroke.
+function BitmapText:NoStroke()
+	self:strokecolor( color("0,0,0,0") )
+end
+
+-- Set Text With Format (contributed by Daisuke Master)
+-- this function is my hero - shake
+function BitmapText:settextf(...)
+	self:settext(string.format(...))
+end
+
+-- DiffuseAndStroke(diffuse,stroke)
+-- Set diffuse and stroke at the same time.
+function BitmapText:DiffuseAndStroke(diffuseC,strokeC)
+	self:diffuse(diffuseC)
+	self:strokecolor(strokeC)
+end;
+--[[ end BitmapText commands ]]
+
+function Actor:LyricCommand(side)
+	self:settext( Var "LyricText" )
+	self:draworder(102)
+
+	self:stoptweening()
+	self:shadowlengthx(0)
+	self:shadowlengthy(5)
+	self:strokecolor(color("#000000"))
+
+	local Zoom = SCREEN_WIDTH / (self:GetZoomedWidth()+1)
+	if( Zoom > 1 ) then
+		Zoom = 1
+	end
+	self:zoomx( Zoom )
+
+	local lyricColor = Var "LyricColor"
+	local Factor = 1
+	if side == "Back" then
+		Factor = 0.5
+	elseif side == "Front" then
+		Factor = 0.9
+	end
+	self:diffuse( {
+		lyricColor[1] * Factor,
+		lyricColor[2] * Factor,
+		lyricColor[3] * Factor,
+		lyricColor[4] * Factor } )
+
+	if side == "Front" then
+		self:cropright(1)
+	else
+		self:cropleft(0)
+	end
+
+	self:diffusealpha(0)
+	self:linear(0.2)
+	self:diffusealpha(0.75)
+	self:linear( Var "LyricDuration" * 0.75)
+	if side == "Front" then
+		self:cropright(0)
+	else
+		self:cropleft(1)
+	end
+	self:sleep( Var "LyricDuration" * 0.25 )
+	self:linear(0.2)
+	self:diffusealpha(0)
+end
 
 -- formerly in 02 HelpDisplay.lua, although nothing uses it:
 function HelpDisplay:setfromsongorcourse()
@@ -222,7 +377,7 @@ function ActorSound:playforplayer(pn)
 	self:play()
 end
 
--- (c) 2006 Glenn Maynard
+-- (c) 2006-2011 Glenn Maynard, SSC
 -- All rights reserved.
 --
 -- Permission is hereby granted, free of charge, to any person obtaining a
