@@ -8,6 +8,10 @@ ________________________________________________________________________________
 StepMania 5.0 $next | 2011xxxx
 --------------------------------------------------------------------------------
 
+2011/10/27
+----------
+* [Default theme] Fixed the pref controlling timing segments on song meter. [FSX]
+
 2011/10/18
 ----------
 * [LightsManager] Use song beat for menu button lights, allow demonstration to
