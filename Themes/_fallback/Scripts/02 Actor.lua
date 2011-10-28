@@ -75,7 +75,7 @@ end
 -- SSC Additions
 local DropBezier =
 {
-	0		,	0,
+	0	,	0,
 	1/3	,	1,
 	2/3	,	0.5,
 	1	,	1,
