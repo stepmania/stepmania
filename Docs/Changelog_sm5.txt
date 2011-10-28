@@ -8,6 +8,11 @@ ________________________________________________________________________________
 StepMania 5.0 $next | 2011xxxx
 --------------------------------------------------------------------------------
 
+2011/10/28
+----------
+* [ScoreKeeperRave] Fix an issue where the super meter would not decrease back
+  to 1 after hitting the end of 3. (Fixes issue 314.) [AJ]
+
 2011/10/27
 ----------
 * [Default theme] Fixed the pref controlling timing segments on song meter. [FSX]
