@@ -336,7 +336,6 @@ r['[SSC] Radar Master'] = function(params, pss)
 	end;
 	pss:SetScore(finalScore);
 end;
-r['free[do]m'] = function(params,pss) return nil pss:SetScore(math.min(10,GAMESTATE:GetCurrentSteps(params.Player):GetMeter())*1000000) end
 ------------------------------------------------------------
 --Marvelous Incorporated Grading System (or MIGS for short)
 --basically like DP scoring with locked DP values

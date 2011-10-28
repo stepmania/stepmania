@@ -799,6 +799,7 @@ void TimingData::DeleteRows( int iStartRow, int iRowsToDelete )
 
 float TimingData::GetDisplayedSpeedPercent( float fSongBeat, float fMusicSeconds ) const
 {
+	LOG->Trace("[TimingData::GetDisplayedSpeedPercent] begin (beat %f seconds %f)",fSongBeat,fMusicSeconds);
 	/* HACK: Somehow we get called into this function when there is no
 	 * TimingData to work with. This seems to happen the most upon
 	 * leaving the editor. Still, cover our butts in case this instance
@@ -811,12 +812,19 @@ float TimingData::GetDisplayedSpeedPercent( float fSongBeat, float fMusicSeconds
 		return 1.0f;
 	}
 
+	LOG->Trace("Getting speed segments");
 	const vector<TimingSegment *> &speeds = GetTimingSegments(SEGMENT_SPEED);
+	LOG->Trace("Got speed segments");
 	if( speeds.size() == 0 )
+	{
+		LOG->Trace("No speed segments");
 		return 1.0f;
+	}
 
+	LOG->Trace("GetSegmentIndexAtBeat %f",fSongBeat);
 	const int index = GetSegmentIndexAtBeat( SEGMENT_SPEED, fSongBeat );
 
+	LOG->Trace("Making segment from speeds[%i]",index);
 	const SpeedSegment *seg = ToSpeed(speeds[index]);
 	float fStartBeat = seg->GetBeat();
 	float fStartTime = GetElapsedTimeFromBeat( fStartBeat ) - GetDelayAtBeat( fStartBeat );
