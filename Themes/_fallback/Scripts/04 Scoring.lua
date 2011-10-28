@@ -76,8 +76,8 @@ r['DDR Extreme'] = function(params, pss)
 	local sTotal = (totalItems + 1) * totalItems / 2;
 	local meter = steps:GetMeter();
 	if (steps:IsAnEdit()) then
-		meter = 5;
-    meter = math.min(10,meter)
+    meter = 5; end;
+    meter = math.min(10,meter);
 	-- [en] score for one step
 	-- [ja] 1ステップあたりのスコア
 	local baseScore = meter * 1000000
