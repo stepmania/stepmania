@@ -2121,6 +2121,9 @@
 	<Function name='Reset' return='void' arguments=''>
 		Resets the GameState.
 	</Function>
+	<Function name='ResetPlayerOptions' return='void' arguments='PlayerNumber pn'>
+		Resets the specific Player's mods to the default settings.
+	</Function>
 	<Function name='SaveLocalData' return='void' arguments=''>
 		Saves the bookkeeping and machine profile data.
 	</Function>

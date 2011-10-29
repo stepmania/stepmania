@@ -790,6 +790,7 @@
 			<Function name='PlayerIsUsingModifier'/>
 			<Function name='PlayersCanJoin'/>
 			<Function name='Reset'/>
+			<Function name='ResetPlayerOptions'/>
 			<Function name='SaveLocalData'/>
 			<Function name='SetCharacter'/>
 			<Function name='SetCurrentCourse'/>

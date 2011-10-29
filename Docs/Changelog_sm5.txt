@@ -8,6 +8,10 @@ ________________________________________________________________________________
 StepMania 5.0 $next | 2011xxxx
 --------------------------------------------------------------------------------
 
+2011/10/29
+----------
+* [GameState] Add the ResetPlayerOptions lua binding. [Wolfman2000]
+
 2011/10/28
 ----------
 * [ScoreKeeperRave] Fix an issue where the super meter would not decrease back
