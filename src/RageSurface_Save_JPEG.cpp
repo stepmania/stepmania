@@ -12,7 +12,11 @@ namespace jpeg
 {
 	extern "C"
 	{
+#if defined(MACOSX)
+#include <../extern/libjpeg/jpeglib.h>
+#else
 #include "jpeglib.h"
+#endif
 	}
 }
 
