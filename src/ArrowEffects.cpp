@@ -87,7 +87,7 @@ void ArrowEffects::Update()
 	static float fLastTime = 0;
 	float fTime = RageTimer::GetTimeSinceStartFast();
 	
-	FOREACH_PlayerNumber( pn )
+	FOREACH_EnabledPlayer( pn )
 	{
 		const Style::ColumnInfo* pCols = pStyle->m_ColumnInfo[pn];
 		const SongPosition &position = GAMESTATE->m_bIsUsingStepTiming
