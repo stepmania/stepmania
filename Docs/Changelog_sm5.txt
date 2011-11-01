@@ -8,6 +8,11 @@ ________________________________________________________________________________
 StepMania 5.0 $next | 2011xxxx
 --------------------------------------------------------------------------------
 
+2011/11/01
+----------
+* [ArrowEffects] Fix Expand, and possibly other mods, from breaking if
+  using a second player. [Wolfman2000]
+
 2011/10/29
 ----------
 * [GameState] Add the ResetPlayerOptions lua binding. [Wolfman2000]
