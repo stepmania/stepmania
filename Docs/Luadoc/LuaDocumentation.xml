@@ -1364,6 +1364,11 @@
 		Sets the announcer to <code>sNewAnnouncer</code>.
 	</Function>
 </Class>
+<Class name='ArchHooks'>
+	<Function name='AppHasFocus' return='bool' arguments=''>
+		Returns <code>true</code> if the application presently has focus.
+	</Function>
+</Class>
 <Class name='Banner'>
 	<Function name='GetScrolling' return='bool' arguments=''>
 		Returns <code>true</code> if the Banner is currently scrolling.

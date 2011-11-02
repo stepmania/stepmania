@@ -55,6 +55,19 @@ ArchHooks *ArchHooks::Create()
 	return new ARCH_HOOKS;
 }
 
+// lua start
+#include "LuaBinding.h"
+
+class LunaArchHooks: public Luna<ArchHooks>
+{
+public:
+	DEFINE_METHOD( AppHasFocus, AppHasFocus() );
+	
+	LunaArchHooks()
+	{
+		ADD_METHOD( AppHasFocus );
+	}
+};
 
 /*
  * (c) 2003-2004 Glenn Maynard, Chris Danford

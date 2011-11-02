@@ -535,6 +535,9 @@
 			<Function name='GetCurrentAnnouncer'/>
 			<Function name='SetCurrentAnnouncer'/>
 		</Class>
+		<Class name='ArchHooks'>
+			<Function name='AppHasFocus'/>
+		</Class>
 		<Class base='BitmapText' name='BPMDisplay'>
 			<Function name='GetText'/>
 			<Function name='SetFromCourse'/>
