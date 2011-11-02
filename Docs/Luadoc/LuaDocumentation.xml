@@ -1368,6 +1368,9 @@
 	<Function name='AppHasFocus' return='bool' arguments=''>
 		Returns <code>true</code> if the application presently has focus.
 	</Function>
+	<Function name='GetArchName' return='{string}' arguments=''>
+		Returns the name of the architecture in use.
+	</Function>
 </Class>
 <Class name='Banner'>
 	<Function name='GetScrolling' return='bool' arguments=''>

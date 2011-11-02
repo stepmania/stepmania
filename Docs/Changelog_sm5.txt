@@ -8,6 +8,12 @@ ________________________________________________________________________________
 StepMania 5.0 $next | 2011xxxx
 --------------------------------------------------------------------------------
 
+2011/11/02
+----------
+* [ArchHooks] Add the GetArchName lua binding. To the themers that use
+  GetOSName, that function may be deprecated in the future. For now,
+  both options exist. [vyhd, Wolfman2000]
+
 2011/11/01
 ----------
 * [ArrowEffects] Fix Expand, and possibly other mods, from breaking if

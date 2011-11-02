@@ -537,6 +537,7 @@
 		</Class>
 		<Class name='ArchHooks'>
 			<Function name='AppHasFocus'/>
+			<Function name='GetArchName'/>
 		</Class>
 		<Class base='BitmapText' name='BPMDisplay'>
 			<Function name='GetText'/>
