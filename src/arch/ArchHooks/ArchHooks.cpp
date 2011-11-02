@@ -13,16 +13,8 @@ ArchHooks *HOOKS = NULL;
 
 ArchHooks::ArchHooks(): m_bHasFocus(true), m_bFocusChanged(false)
 {
-	// Register with Lua.
-	{
-		Lua *L = LUA->Get();
-		lua_pushstring( L, "HOOKS" );
-		this->PushSelf( L );
-		lua_settable( L, LUA_GLOBALSINDEX );
-		LUA->Release( L );
-	}
+	
 }
-
 
 bool ArchHooks::GetAndClearToggleWindowed()
 {
@@ -71,6 +63,7 @@ ArchHooks *ArchHooks::Create()
 
 // lua start
 #include "LuaBinding.h"
+#include "LuaReference.h"
 
 class LunaArchHooks: public Luna<ArchHooks>
 {
@@ -84,8 +77,19 @@ public:
 		ADD_METHOD( GetArchName );
 	}
 };
+LUA_REGISTER_CLASS( ArchHooks );
 
-LUA_REGISTER_CLASS( ArchHooks )
+/* XXX: ArchHooks is instantiated before Lua, so we encounter a dependency problem when
+ * trying to register HOOKS. Work around it by registering HOOKS in a static function,
+ * which LuaManager will call when it is instantiated. */
+void LuaFunc_Register_Hooks( lua_State *L )
+{
+	lua_pushstring( L, "HOOKS" );
+	HOOKS->PushSelf( L );
+	lua_settable( L, LUA_GLOBALSINDEX );
+}
+
+REGISTER_WITH_LUA_FUNCTION( LuaFunc_Register_Hooks );
 
 /*
  * (c) 2003-2004 Glenn Maynard, Chris Danford

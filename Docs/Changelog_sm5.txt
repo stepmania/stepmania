@@ -12,7 +12,7 @@ StepMania 5.0 $next | 2011xxxx
 ----------
 * [ArrowEffects] Fix Expand, and possibly other mods, from breaking if
   using a second player. [Wolfman2000]
-* [ArchHooks] Add the AppHasFocus lua binding. [Wolfman2000]
+* [ArchHooks] Add the AppHasFocus lua binding. [vyhd, Wolfman2000]
 
 2011/10/29
 ----------

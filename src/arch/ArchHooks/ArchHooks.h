@@ -1,8 +1,7 @@
 #ifndef ARCH_HOOKS_H
 #define ARCH_HOOKS_H
 
-#include "LuaReference.h"
-
+struct lua_State;
 class ArchHooks
 {
 public:
