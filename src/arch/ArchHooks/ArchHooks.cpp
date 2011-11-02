@@ -1,5 +1,6 @@
 #include "global.h"
 #include "ArchHooks.h"
+#include "LuaReference.h"
 #include "RageLog.h"
 #include "RageThreads.h"
 #include "arch/arch_default.h"
@@ -9,6 +10,19 @@ bool ArchHooks::g_bToggleWindowed = false;
 // Keep from pulling RageThreads.h into ArchHooks.h
 static RageMutex g_Mutex( "ArchHooks" );
 ArchHooks *HOOKS = NULL;
+
+ArchHooks::ArchHooks(): m_bHasFocus(true), m_bFocusChanged(false)
+{
+	// Register with Lua.
+	{
+		Lua *L = LUA->Get();
+		lua_pushstring( L, "HOOKS" );
+		this->PushSelf( L );
+		lua_settable( L, LUA_GLOBALSINDEX );
+		LUA->Release( L );
+	}
+}
+
 
 bool ArchHooks::GetAndClearToggleWindowed()
 {
@@ -71,7 +85,7 @@ public:
 	}
 };
 
-LUA_REGISTER_CLASS( ArchHooks );
+LUA_REGISTER_CLASS( ArchHooks )
 
 /*
  * (c) 2003-2004 Glenn Maynard, Chris Danford

@@ -1,12 +1,13 @@
 #ifndef ARCH_HOOKS_H
 #define ARCH_HOOKS_H
 
+#include "LuaReference.h"
+
 class ArchHooks
 {
 public:
 	static ArchHooks *Create();
-
-	ArchHooks(): m_bHasFocus(true), m_bFocusChanged(false) { }
+	ArchHooks();
 	virtual ~ArchHooks() { }
 	virtual void Init() { }
 	/*
@@ -122,6 +123,9 @@ public:
 	virtual bool GoToURL( RString sUrl );
 
 	virtual float GetDisplayAspectRatio() = 0;
+	
+	// Lua
+	void PushSelf( lua_State *L );
 
 private:
 	/* This are helpers for GetMicrosecondsSinceStart on systems with a timer
