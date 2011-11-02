@@ -71,6 +71,8 @@ public:
 	}
 };
 
+LUA_REGISTER_CLASS( ArchHooks );
+
 /*
  * (c) 2003-2004 Glenn Maynard, Chris Danford
  * All rights reserved.
