@@ -7,6 +7,8 @@
 #include "Foreach.h"
 #include <float.h>
 
+TimingSegment* GetSegmentAtRow( int iNoteRow, TimingSegmentType tst );
+
 TimingData::TimingData(float fOffset) : m_fBeat0OffsetInSeconds(fOffset)
 {
 }
@@ -814,7 +816,9 @@ float TimingData::GetDisplayedSpeedPercent( float fSongBeat, float fMusicSeconds
 	const vector<TimingSegment *> &speeds = GetTimingSegments(SEGMENT_SPEED);
 	if( speeds.size() == 0 )
 	{
+#ifdef DEBUG
 		LOG->Trace("No speed segments");
+#endif
 		return 1.0f;
 	}
 
