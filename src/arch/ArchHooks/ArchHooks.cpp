@@ -62,10 +62,12 @@ class LunaArchHooks: public Luna<ArchHooks>
 {
 public:
 	DEFINE_METHOD( AppHasFocus, AppHasFocus() );
+	DEFINE_METHOD( GetArchName, GetArchName() );
 	
 	LunaArchHooks()
 	{
 		ADD_METHOD( AppHasFocus );
+		ADD_METHOD( GetArchName );
 	}
 };
 
