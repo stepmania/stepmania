@@ -94,7 +94,9 @@ end;
 
 --[[ helper functions ]]
 function tobool(v)
-	if type(v) == "string" then
+  if getmetatable(v) and (getmetatable(v))["__tobool"] and type((getmetatable(v))["__tobool"])=="function" then
+    return (getmetatable(v))["__tobool"](v)
+  elseif type(v) == "string" then
 		local cmp = string.lower(v)
 		if cmp == "true" or cmp == "t" then
 			return true
