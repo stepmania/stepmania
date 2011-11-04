@@ -143,7 +143,7 @@ void ScoreKeeperRave::AddSuperMeterDelta( float fUnscaledPercentChange )
 	{
 		LaunchAttack( oldAL );
 		if( newAL == NUM_ATTACK_LEVELS )	// hit upper bounds of meter
-			m_pPlayerState->m_fSuperMeter = 0.f;
+			m_pPlayerState->m_fSuperMeter -= 1.f;
 	}
 
 	// mercy: if losing remove attacks on life drain
