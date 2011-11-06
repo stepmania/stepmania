@@ -21,8 +21,8 @@ static const float g_fSuperMeterPercentChangeInit[] =
 	+0.02f, // SE_W3
 	+0.00f, // SE_W4
 	+0.00f, // SE_W5
-	+0.20f, // SE_Miss
-	+0.40f, // SE_HitMine
+	-0.20f, // SE_Miss
+	-0.40f, // SE_HitMine
 	-0.02f, // SE_CheckpointMiss
 	+0.04f, // SE_Held
 	-0.20f, // SE_LetGo
@@ -143,7 +143,7 @@ void ScoreKeeperRave::AddSuperMeterDelta( float fUnscaledPercentChange )
 	{
 		LaunchAttack( oldAL );
 		if( newAL == NUM_ATTACK_LEVELS )	// hit upper bounds of meter
-			m_pPlayerState->m_fSuperMeter = 0.f;
+			m_pPlayerState->m_fSuperMeter -= 1.f;
 	}
 
 	// mercy: if losing remove attacks on life drain
