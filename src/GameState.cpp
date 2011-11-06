@@ -2456,6 +2456,12 @@ public:
 		return 0;
 	}
 	
+	static int RefreshNoteSkinData( T* p, lua_State *L )
+	{
+		NOTESKIN->RefreshNoteSkinData(p->m_pCurGame);
+		return 0;
+	}
+	
 	static int Dopefish( T* p, lua_State *L )
 	{
 		lua_pushboolean(L, p->m_bDopefish);
@@ -2566,6 +2572,7 @@ public:
 		ADD_METHOD( AddStageToPlayer );
 		ADD_METHOD( CurrentOptionsDisqualifyPlayer );
 		ADD_METHOD( ResetPlayerOptions );
+		ADD_METHOD( RefreshNoteSkinData );
 		ADD_METHOD( Dopefish );
 	}
 };

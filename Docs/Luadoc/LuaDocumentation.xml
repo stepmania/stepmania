@@ -2126,6 +2126,9 @@
 	<Function name='PlayersCanJoin' return='bool' arguments=''>
 		Returns <code>true</code> if players can join the game.
 	</Function>
+	<Function name='RefreshNoteSkinData' return='void' arguments=''>
+		Refreshes the NoteSkin data for the current game.
+	</Function>
 	<Function name='Reset' return='void' arguments=''>
 		Resets the GameState.
 	</Function>

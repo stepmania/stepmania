@@ -793,6 +793,7 @@
 			<Function name='JoinPlayer'/>
 			<Function name='PlayerIsUsingModifier'/>
 			<Function name='PlayersCanJoin'/>
+			<Function name='RefreshNoteSkinData'/>
 			<Function name='Reset'/>
 			<Function name='ResetPlayerOptions'/>
 			<Function name='SaveLocalData'/>

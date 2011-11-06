@@ -8,6 +8,11 @@ ________________________________________________________________________________
 StepMania 5.0 $next | 2011xxxx
 --------------------------------------------------------------------------------
 
+2011/11/06
+----------
+* [GameState] Add the RefreshNoteSkinData lua binding. This will only
+  refresh the NS data for the present game, not all games. [Wolfman2000]
+
 2011/11/02
 ----------
 * [ArchHooks] Add the GetArchName lua binding. To the themers that use
