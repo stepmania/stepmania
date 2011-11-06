@@ -1044,12 +1044,13 @@ void ScreenSelectMusic::HandleMessage( const Message &msg )
 {
 	if( m_bRunning && msg == Message_PlayerJoined )
 	{
+		PlayerNumber master_pn = GAMESTATE->GetMasterPlayerNumber();
 		// The current steps may no longer be playable. If one player has double
 		// steps selected, they are no longer playable now that P2 has joined.
 
 		// TODO: Invalidate the CurSteps only if they are no longer playable.
 		// That way, after music change will clamp to the nearest in the StepsDisplayList.
-		GAMESTATE->m_pCurSteps[GAMESTATE->GetMasterPlayerNumber()].SetWithoutBroadcast( NULL );
+		GAMESTATE->m_pCurSteps[master_pn].SetWithoutBroadcast( NULL );
 		FOREACH_ENUM( PlayerNumber, p )
 			GAMESTATE->m_pCurSteps[p].SetWithoutBroadcast( NULL );
 
@@ -1079,9 +1080,12 @@ void ScreenSelectMusic::HandleMessage( const Message &msg )
 		}
 		else
 		{
-			// todo: handle changing rave difficulty on join -aj
-
 			Steps* pSteps = m_vpSteps.empty()? NULL: m_vpSteps[m_iSelection[pn]];
+
+			// handle changing rave difficulty on join
+			if(GAMESTATE->m_PlayMode == PLAY_MODE_RAVE)
+				pSteps = m_vpSteps[m_iSelection[master_pn]];
+
 			GAMESTATE->m_pCurSteps[pn].Set( pSteps );
 		}
 	}

@@ -12,6 +12,8 @@ StepMania 5.0 $next | 2011xxxx
 ----------
 * [GameState] Add the RefreshNoteSkinData lua binding. This will only
   refresh the NS data for the present game, not all games. [Wolfman2000]
+* [ScreenSelectMusic] Fixed Rave difficulties not being synced on late join.
+  Fixes issue 577. [AJ]
 
 2011/11/04
 * [ScoreKeeperRave] Revert fix from 2011/10/28. [AJ]
