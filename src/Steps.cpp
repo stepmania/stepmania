@@ -379,6 +379,12 @@ void Steps::Compress() const
 		m_sNoteDataCompressed = RString();
 		return;
 	}
+	
+	// Don't compress data in the editor: it's still in use.
+	if (GAMESTATE->m_bInStepEditor)
+	{
+		return;
+	}
 
 	if( !m_sFilename.empty() && m_LoadedFromProfile == ProfileSlot_Invalid )
 	{
