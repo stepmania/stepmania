@@ -48,7 +48,8 @@
 		[03 ProductivityHelpers.lua] Returns <code>true</code> if Center 1P is being used.
 	</Function>
 	<Function name='CheckpointsTapsSeparateJudgment' theme='_fallback' return='bool' arguments=''>
-		[03 Gameplay.lua]
+		[03 Gameplay.lua] Returns <code>true</code> if checkpoint judgments and tap judgments
+		are considered separate, or <code>false</code> otherwise.
 	</Function>
 	<Function name='clamp' return='float' arguments='float fValue, float fLow, float fHigh'>
 		CLAMP is an all-female Japanese mangaka group that formed in the mid 1980s.
