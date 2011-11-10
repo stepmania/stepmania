@@ -265,10 +265,10 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 	}
 
 	WriteTimingTags( f, out.m_SongTiming, true );
-	
+
 	if( out.GetSpecifiedLastSecond() > 0 )
 		f.PutLine( ssprintf("#LASTSECONDHINT:%.3f;", out.GetSpecifiedLastSecond()) );
-	
+
 	FOREACH_BackgroundLayer( b )
 	{
 		if( b==0 )
@@ -309,7 +309,20 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 	}
 	f.PutLine( ";" );
 
-	f.PutLine( ssprintf("#ATTACKS:%s;", out.GetAttackString().c_str()) );
+	// attacks section
+	//f.PutLine( ssprintf("#ATTACKS:%s;", out.GetAttackString().c_str()) );
+	f.PutLine( "#ATTACKS:" );
+	for(unsigned j = 0; j < out.m_Attacks.size(); j++)
+	{
+		const Attack &a = out.m_Attacks[j];
+		f.Write( ssprintf( "  TIME=%.2f:LEN=%.2f:MODS=%s",
+			a.fStartSecond, a.fSecsRemaining, a.sModifiers.c_str() ) );
+
+		if( j+1 < out.m_Attacks.size() )
+			f.Write( ":" );
+	}
+	f.Write( ";" );
+	f.PutLine("");
 }
 
 /**
