@@ -531,16 +531,16 @@ void SMLoader::ProcessFakes( TimingData &out, const RString line, const int rows
 		}
 
 		const float fBeat = RowToBeat( arrayFakeValues[0], rowsPerBeat );
-		const float fNewBeat = StringToFloat( arrayFakeValues[1] );
+		const float fSkippedBeats = StringToFloat( arrayFakeValues[1] );
 
-		if(fNewBeat > 0)
-			out.AddSegment( FakeSegment(BeatToNoteRow(fBeat), fNewBeat) );
+		if(fSkippedBeats > 0)
+			out.AddSegment( FakeSegment(BeatToNoteRow(fBeat), fSkippedBeats) );
 		else
 		{
 			LOG->UserLog("Song file",
 				     this->GetSongTitle(),
-				     "has an invalid Fake at beat %f, BPM %f.",
-				     fBeat, fNewBeat );
+				     "has an invalid Fake at beat %f, beats to skip %f.",
+				     fBeat, fSkippedBeats );
 		}
 	}
 }
