@@ -364,6 +364,8 @@ static RString GetSSCNoteData( const Song &song, const Steps &in, bool bSavingCa
 		lines.push_back( ssprintf( "#OFFSET:%.3f;", in.m_Timing.m_fBeat0OffsetInSeconds ) );
 		GetTimingTags( lines, in.m_Timing );
 	}
+
+	// todo: get this to output similar to course mods -aj
 	if (song.GetAttackString() != in.GetAttackString())
 		lines.push_back( ssprintf("#ATTACKS:%s;", in.GetAttackString().c_str()));
 
