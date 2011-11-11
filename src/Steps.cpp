@@ -130,13 +130,9 @@ bool Steps::GetNoteDataFromSimfile()
 	{
 		return KSFLoader::LoadNoteDataFromSimfile(stepFile, *this);
 	}
-	else if (extension == "bms" || extension == "bml" || extension == "bme")
+	else if (extension == "bms" || extension == "bml" || extension == "bme" || extension == "pms")
 	{
 		return BMSLoader::LoadNoteDataFromSimfile(stepFile, *this);
-	}
-	else if (extension == "pms")
-	{
-		return PMSLoader::LoadNoteDataFromSimfile(stepFile, *this);
 	}
 	return false;
 }

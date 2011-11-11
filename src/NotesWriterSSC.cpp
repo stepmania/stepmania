@@ -303,6 +303,12 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 	f.Write( "#KEYSOUNDS:" );
 	for( unsigned i=0; i<out.m_vsKeysoundFile.size(); i++ )
 	{
+		// some keysound files has the first sound that starts with #,
+		// which makes MsdFile fail parsing the whole declaration.
+		// in this case, add a backslash at the front
+		// (#KEYSOUNDS:\#bgm.wav,01.wav,02.wav,..) and handle that on load.
+		if( i == 0 && out.m_vsKeysoundFile[i].size() > 0 && out.m_vsKeysoundFile[i][0] == '#' )
+			f.Write("\\");
 		f.Write( out.m_vsKeysoundFile[i] );
 		if( i != out.m_vsKeysoundFile.size()-1 )
 			f.Write( "," );

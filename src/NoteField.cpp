@@ -673,7 +673,7 @@ void NoteField::DrawBGChangeText( const float fBeat, const RString sNewBGName )
 	m_textMeasureNumber.Draw();
 }
 
-CacheNoteStat GetNumNotesFromBeginning( const PlayerState *pPlayerState, float beat )
+static CacheNoteStat GetNumNotesFromBeginning( const PlayerState *pPlayerState, float beat )
 {
 	// XXX: I realized that I have copied and pasted my binary search code 3 times already.
 	//      how can we abstract this?
@@ -700,7 +700,7 @@ CacheNoteStat GetNumNotesFromBeginning( const PlayerState *pPlayerState, float b
 	return dummy;
 }
 
-int GetNumNotesRange( const PlayerState* pPlayerState, float fLow, float fHigh )
+static int GetNumNotesRange( const PlayerState* pPlayerState, float fLow, float fHigh )
 {
 	CacheNoteStat low  = GetNumNotesFromBeginning( pPlayerState, fLow );
 	CacheNoteStat high = GetNumNotesFromBeginning( pPlayerState, fHigh );
@@ -720,7 +720,7 @@ float FindFirstDisplayedBeat( const PlayerState* pPlayerState, int iDrawDistance
 	}
 	
 	const int NUM_ITERATIONS = 24;
-	const int MAX_NOTES_AFTER = 32;
+	const int MAX_NOTES_AFTER = 64;
 	
 	float fFirstBeatToDraw = fLow;
 	

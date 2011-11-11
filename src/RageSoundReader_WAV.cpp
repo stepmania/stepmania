@@ -250,6 +250,10 @@ public:
 		ASSERT_M( m_iBufferUsed == m_iBufferAvail, ssprintf("%i", m_iBufferUsed) );
 
 		m_iBufferUsed = m_iBufferAvail = 0;
+		m_sError = "";
+
+		if( m_File.Tell() >= m_WavData.m_iDataChunkSize+m_WavData.m_iDataChunkPos || m_File.AtEOF() )
+			return true; /* past the data chunk */
 
 		int8_t iPredictor[2];
 		int16_t iDelta[2], iSamp1[2], iSamp2[2];
@@ -264,9 +268,6 @@ public:
 
 		if( m_sError.size() != 0 )
 			return false;
-
-		if( m_File.Tell() >= m_WavData.m_iDataChunkSize+m_WavData.m_iDataChunkPos || m_File.AtEOF() )
-			return true; /* past the data chunk */
 
 		float *pBuffer = m_pBuffer;
 		int iCoef1[2], iCoef2[2];
@@ -410,7 +411,7 @@ public:
 
 		{
 			const int iByte = iBlock*m_WavData.m_iBlockAlign;
-			if( iByte > m_WavData.m_iDataChunkSize )
+			if( iByte >= m_WavData.m_iDataChunkSize )
 			{
 				/* Past EOF. */
 				SetEOF();
@@ -419,7 +420,6 @@ public:
 			m_File.Seek( iByte+m_WavData.m_iDataChunkPos );
 		}
 
-		m_sError = ""; // please forget my errors, let's read again
 		if( !DecodeADPCMBlock() )
 			return -1;
 
