@@ -82,9 +82,11 @@ void ScreenOptionsExportPackage::ProcessMenuStart( const InputEventPlus &input )
 
 	SCREENMAN->PlayStartSound();
 	this->BeginFadingOut();
-	// todo: find a way to make this next transition not be so bad.
+	// todo: find a way to make this transition not be instant.
 	SCREENMAN->SetNewScreen("ScreenOptionsExportPackageSubPage");
 }
+
+// todo: process menu back in SubGroup mode
 
 void ScreenOptionsExportPackage::ImportOptions( int iRow, const vector<PlayerNumber> &vpns )
 {
