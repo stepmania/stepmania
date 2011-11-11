@@ -1195,7 +1195,7 @@ void NoteField::DrawPrimitives()
 
 	const Style* pStyle = GAMESTATE->GetCurrentStyle();
 	ASSERT_M(m_pNoteData->GetNumTracks() == GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer, 
-		 ssprintf("NumTracks %d = ColsPerPlayer %d",m_pNoteData->GetNumTracks(), 
+		 ssprintf("NumTracks %d != ColsPerPlayer %d",m_pNoteData->GetNumTracks(), 
 			  GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer));
 
 	for( int j=0; j<m_pNoteData->GetNumTracks(); j++ )	// for each arrow column
