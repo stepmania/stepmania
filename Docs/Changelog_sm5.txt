@@ -8,6 +8,13 @@ ________________________________________________________________________________
 StepMania 5.0 $next | 2011xxxx
 --------------------------------------------------------------------------------
 
+2011/11/15
+----------
+* [LifeMeterBar] Added the ExtraStageFreshBar metric. Let the themer decide
+  if extra stages should have their own life bar behavior. Note that this
+  metric does NOT change the lifebar to the battery style. This metric starts
+  as true. [Wolfman2000]
+
 2011/11/14
 ----------
 * [Mac OS X] Restore JPEG functionality. [Wolfman2000]

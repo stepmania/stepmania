@@ -25,6 +25,7 @@ LifeMeterBar::LifeMeterBar()
 	HOT_VALUE.Load		("LifeMeterBar","HotValue");
 	LIFE_MULTIPLIER.Load	( "LifeMeterBar","LifeMultiplier");
 	MIN_STAY_ALIVE.Load	("LifeMeterBar","MinStayAlive");
+	EXTRA_STAGE_FRESH_BAR.Load ("LifeMeterBar","ExtraStageFreshBar");
 	m_fLifePercentChange.Load( "LifeMeterBar", LIFE_PERCENT_CHANGE_NAME, NUM_ScoreEvent );
 
 	m_pPlayerState = NULL;
@@ -306,7 +307,7 @@ void LifeMeterBar::UpdateNonstopLifebar()
 //	if (iCleared > iTotal) iCleared = iTotal; // clear/iTotal <= 1
 //	if (iTotal == 0) iTotal = 1;  // no division by 0
 
-	if( GAMESTATE->IsAnExtraStage() )
+	if( GAMESTATE->IsAnExtraStage() && EXTRA_STAGE_FRESH_BAR )
 	{
 		// extra stage is its own thing, should not be progressive
 		// and it should be as difficult as life 4

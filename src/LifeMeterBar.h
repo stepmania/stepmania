@@ -38,6 +38,7 @@ private:
 	ThemeMetric<float> INITIAL_VALUE;
 	ThemeMetric<float> HOT_VALUE;
 	ThemeMetric<float> LIFE_MULTIPLIER;
+	ThemeMetric<bool> EXTRA_STAGE_FRESH_BAR;
 	ThemeMetric<TapNoteScore>   MIN_STAY_ALIVE;
 
 	ThemeMetric1D<float> m_fLifePercentChange;
