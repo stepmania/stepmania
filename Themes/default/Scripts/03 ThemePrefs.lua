@@ -471,23 +471,23 @@ function UserPrefFancyUIBG()
 		OneChoiceForAllPlayers = true,
 		ExportOnChange = false,
 		Choices = {
-			THEME:GetString('OptionNames','On'),
-			THEME:GetString('OptionNames','Off')
+			THEME:GetString('OptionNames','Off'),
+			THEME:GetString('OptionNames','On')
 		},
 		LoadSelections = function(self, list, pn)
 			if ReadPrefFromFile("UserPrefFancyUIBG") ~= nil then
 				if GetUserPrefB("UserPrefFancyUIBG") then
-					list[1] = true
-				else
 					list[2] = true
+				else
+					list[1] = true
 				end
 			else
 				WritePrefToFile("UserPrefFancyUIBG", true)
-				list[1] = true
+				list[2] = true
 			end
 		end,
 		SaveSelections = function(self, list, pn)
-			local val = list[1] and true or false
+			local val = list[2] and true or false
 			WritePrefToFile("UserPrefFancyUIBG", val)
 			MESSAGEMAN:Broadcast("PreferenceSet", { Message == "Set Preference" })
 			THEME:ReloadMetrics()
