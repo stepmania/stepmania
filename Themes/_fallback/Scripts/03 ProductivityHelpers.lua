@@ -114,6 +114,12 @@ end
 
 function pname(pn) return ToEnumShortString(pn) end
 
+function ThemeManager:GetAbsolutePath(sPath)
+  sFinPath = "/Themes/"..self:GetCurThemeName().."/"..sPath
+  assert(RageFileManager.DoesFileExist(sFinPath), "the theme element "..sPath.." is missing")
+  return sFinPath
+end
+
 function math.round(num, pre)
 	if pre and pre < 0 then pre = 0 end
 	local mult = 10^(pre or 0) 
