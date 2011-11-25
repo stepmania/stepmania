@@ -10,7 +10,8 @@ StepMania 5.0 $next | 20111xxx
 
 2011/11/25
 ----------
-* [PlayerStageStats] Hitting a mine no longer gives you full combo. [AJ]
+* [PlayerStageStats] Hitting a mine no longer gives you full combo when
+  [Gameplay] MineHitIncrementsMissCombo=true. [AJ]
 
 2011/11/24
 ----------
