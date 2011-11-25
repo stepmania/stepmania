@@ -1,4 +1,4 @@
-HOW 2 UZE EZSOKETS BY FWEEM INC
+[How to Use EzSockets by freem]
 
 Hey there. ezsockets is the socket library used in StepMania. If you are going to
 develop any extended network functionality, it would be good to know about

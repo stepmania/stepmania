@@ -11,7 +11,7 @@ function Actor:SetSize(w,h)
 end
 
 -- shorthand! this is tedious to type and makes things ugly so let's make it shorter.
--- screen.w, screen.h, etc.
+-- _screen.w, _screen.h, etc.
 _screen = {
 	w  = SCREEN_WIDTH,
 	h  = SCREEN_HEIGHT,

@@ -549,7 +549,7 @@ static MenuDef g_AlterMenu(
 	      EditMode_Practice, true, true, 0, 
 	      "4th","8th","12th","16th","24th","32nd","48th","64th","192nd"),
    MenuRowDef(ScreenEdit::turn,				"Turn",					true, 
-	      EditMode_Practice, true, true, 0, "Left","Right","Mirror","Shuffle","SuperShuffle" ),
+	      EditMode_Practice, true, true, 0, "Left","Right","Mirror","Backwards","Shuffle","SuperShuffle" ),
    MenuRowDef(ScreenEdit::transform,			"Transform",				true, 
 	      EditMode_Practice, true, true, 0, "NoHolds","NoMines","Little","Wide",
 	      "Big","Quick","Skippy","Mines","Echo","Stomp","Planted","Floored",
@@ -1004,6 +1004,9 @@ void ScreenEdit::PlayTicks()
 	m_GameplayAssist.PlayTicks( m_Player->GetNoteData(), m_Player->GetPlayerState() );
 }
 
+static ThemeMetric<float> FADE_IN_PREVIEW("ScreenEdit", "FadeInPreview");
+static ThemeMetric<float> FADE_OUT_PREVIEW("ScreenEdit", "FadeOutPreview");
+
 void ScreenEdit::PlayPreviewMusic()
 {
 	SOUND->StopMusic();
@@ -1013,8 +1016,8 @@ void ScreenEdit::PlayPreviewMusic()
 		false,
 		m_pSong->m_fMusicSampleStartSeconds,
 		m_pSong->m_fMusicSampleLengthSeconds,
-		0.0f,
-		1.5f );
+		FADE_IN_PREVIEW,
+		FADE_OUT_PREVIEW );
 }
 
 void ScreenEdit::MakeFilteredMenuDef( const MenuDef* pDef, MenuDef &menu )
@@ -1493,14 +1496,13 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			// Alt + number = input to right half
 			if( EditIsBeingPressed(EDIT_BUTTON_RIGHT_SIDE) )
 				ShiftToRightSide( iCol, m_NoteDataEdit.GetNumTracks() );
-
+			
+			if( iCol >= m_NoteDataEdit.GetNumTracks() )
+				break; // this button is not in the range of columns for this Style
 
 			const float fSongBeat = GetBeat();
 			const int iSongIndex = BeatToNoteRow( fSongBeat );
-
-			if( iCol >= m_NoteDataEdit.GetNumTracks() )	// this button is not in the range of columns for this Style
-				break;
-
+			
 			// check for to see if the user intended to remove a HoldNote
 			int iHeadRow;
 			if( m_NoteDataEdit.IsHoldNoteAtRow( iCol, iSongIndex, &iHeadRow ) )
@@ -1838,7 +1840,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 				SWITCHED_TO.GetValue() + " %s %s '%s' (%d of %d)",
 				GAMEMAN->GetStepsTypeInfo( pSteps->m_StepsType ).szName,
 				DifficultyToString( pSteps->GetDifficulty() ).c_str(),
-				pSteps->GetDescription().c_str(),
+				pSteps->GetChartName().c_str(),
 				it - vSteps.begin() + 1,
 				int(vSteps.size()) );
 			SCREENMAN->SystemMessage( s );
@@ -1897,9 +1899,9 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 				else
 					fDelta *= 40;
 			}
-			unsigned i;
 
 #if 0
+			unsigned i;
 			// is there a StopSegment on the current row?
 			const StopSegment *seg = GetAppropriateTiming().GetStopSegmentAtRow( GetRow() );
 
@@ -3983,6 +3985,7 @@ void ScreenEdit::HandleAlterMenuChoice(AlterMenuChoice c, const vector<int> &iAn
 				case left:		NoteDataUtil::Turn( m_Clipboard, st, NoteDataUtil::left );		break;
 				case right:		NoteDataUtil::Turn( m_Clipboard, st, NoteDataUtil::right );		break;
 				case mirror:		NoteDataUtil::Turn( m_Clipboard, st, NoteDataUtil::mirror );		break;
+				case turn_backwards:		NoteDataUtil::Turn( m_Clipboard, st, NoteDataUtil::backwards );		break;
 				case shuffle:		NoteDataUtil::Turn( m_Clipboard, st, NoteDataUtil::shuffle );		break;
 				case super_shuffle:	NoteDataUtil::Turn( m_Clipboard, st, NoteDataUtil::super_shuffle );	break;
 			}

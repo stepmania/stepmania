@@ -252,6 +252,7 @@ void NoteDisplay::Load( int iColNum, const PlayerState* pPlayerState, float fYRe
 
 	// "normal" note types
 	m_TapNote.Load(		sButton, "Tap Note" );
+	//m_TapAdd.Load(		sButton, "Tap Addition" );
 	m_TapMine.Load(		sButton, "Tap Mine" );
 	m_TapLift.Load(		sButton, "Tap Lift" );
 	m_TapFake.Load(		sButton, "Tap Fake" );
@@ -744,7 +745,13 @@ void NoteDisplay::DrawTap(const TapNote& tn, int iCol, float fBeat,
 {
 	Actor* pActor = NULL;
 	NotePart part = NotePart_Tap;
-
+	/*
+	if( tn.source == TapNote::addition )
+	{
+		pActor = GetTapActor( m_TapAddition, NotePart_Addition, fBeat );
+		part = NotePart_Addition;
+	}
+	*/
 	if( tn.type == TapNote::lift )
 	{
 		pActor = GetTapActor( m_TapLift, NotePart_Lift, fBeat );

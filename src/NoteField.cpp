@@ -673,7 +673,7 @@ void NoteField::DrawBGChangeText( const float fBeat, const RString sNewBGName )
 	m_textMeasureNumber.Draw();
 }
 
-CacheNoteStat GetNumNotesFromBeginning( const PlayerState *pPlayerState, float beat )
+static CacheNoteStat GetNumNotesFromBeginning( const PlayerState *pPlayerState, float beat )
 {
 	// XXX: I realized that I have copied and pasted my binary search code 3 times already.
 	//      how can we abstract this?
@@ -700,7 +700,7 @@ CacheNoteStat GetNumNotesFromBeginning( const PlayerState *pPlayerState, float b
 	return dummy;
 }
 
-int GetNumNotesRange( const PlayerState* pPlayerState, float fLow, float fHigh )
+static int GetNumNotesRange( const PlayerState* pPlayerState, float fLow, float fHigh )
 {
 	CacheNoteStat low  = GetNumNotesFromBeginning( pPlayerState, fLow );
 	CacheNoteStat high = GetNumNotesFromBeginning( pPlayerState, fHigh );
@@ -720,7 +720,7 @@ float FindFirstDisplayedBeat( const PlayerState* pPlayerState, int iDrawDistance
 	}
 	
 	const int NUM_ITERATIONS = 24;
-	const int MAX_NOTES_AFTER = 32;
+	const int MAX_NOTES_AFTER = 64;
 	
 	float fFirstBeatToDraw = fLow;
 	
@@ -1079,14 +1079,18 @@ void NoteField::DrawPrimitives()
 			AttackArray &attacks = GAMESTATE->m_bIsUsingStepTiming ?
 				GAMESTATE->m_pCurSteps[PLAYER_1]->m_Attacks :
 				GAMESTATE->m_pCurSong->m_Attacks;
-			FOREACH_CONST(Attack, attacks, a)
+			// XXX: We're somehow getting here when attacks is null. Find the actual cause later.
+			if (&attacks)
 			{
-				float fBeat = timing.GetBeatFromElapsedTime(a->fStartSecond);
-				if (BeatToNoteRow(fBeat) >= iFirstRowToDraw &&
-				    BeatToNoteRow(fBeat) <= iLastRowToDraw &&
-				    IS_ON_SCREEN(fBeat))
+				FOREACH_CONST(Attack, attacks, a)
 				{
-					this->DrawAttackText(fBeat, *a);
+					float fBeat = timing.GetBeatFromElapsedTime(a->fStartSecond);
+					if (BeatToNoteRow(fBeat) >= iFirstRowToDraw &&
+						BeatToNoteRow(fBeat) <= iLastRowToDraw &&
+						IS_ON_SCREEN(fBeat))
+					{
+						this->DrawAttackText(fBeat, *a);
+					}
 				}
 			}
 		}
@@ -1191,7 +1195,7 @@ void NoteField::DrawPrimitives()
 
 	const Style* pStyle = GAMESTATE->GetCurrentStyle();
 	ASSERT_M(m_pNoteData->GetNumTracks() == GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer, 
-		 ssprintf("NumTracks %d = ColsPerPlayer %d",m_pNoteData->GetNumTracks(), 
+		 ssprintf("NumTracks %d != ColsPerPlayer %d",m_pNoteData->GetNumTracks(), 
 			  GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer));
 
 	for( int j=0; j<m_pNoteData->GetNumTracks(); j++ )	// for each arrow column

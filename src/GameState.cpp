@@ -261,7 +261,11 @@ void GameState::ResetPlayer( PlayerNumber pn )
 	m_pCurTrail[pn].Set( NULL );
 	m_pPlayerState[pn]->Reset();
 	PROFILEMAN->UnloadProfile( pn );
+	ResetPlayerOptions(pn);
+}
 
+void GameState::ResetPlayerOptions( PlayerNumber pn )
+{
 	PlayerOptions po;
 	GetDefaultPlayerOptions( po );
 	m_pPlayerState[pn]->m_PlayerOptions.Assign( ModsLevel_Preferred, po );
@@ -2445,6 +2449,19 @@ public:
 	static int GetExpandedSectionName( T* p, lua_State *L )				{ lua_pushstring(L, p->sExpandedSectionName); return 1; }
 	static int AddStageToPlayer( T* p, lua_State *L )				{ p->AddStageToPlayer(Enum::Check<PlayerNumber>(L, 1)); return 0; }
 	static int CurrentOptionsDisqualifyPlayer( T* p, lua_State *L )	{ lua_pushboolean(L, p->CurrentOptionsDisqualifyPlayer(Enum::Check<PlayerNumber>(L, 1))); return 1; }
+	
+	static int ResetPlayerOptions( T* p, lua_State *L )
+	{
+		p->ResetPlayerOptions(Enum::Check<PlayerNumber>(L, 1));
+		return 0;
+	}
+	
+	static int RefreshNoteSkinData( T* p, lua_State *L )
+	{
+		NOTESKIN->RefreshNoteSkinData(p->m_pCurGame);
+		return 0;
+	}
+	
 	static int Dopefish( T* p, lua_State *L )
 	{
 		lua_pushboolean(L, p->m_bDopefish);
@@ -2554,6 +2571,8 @@ public:
 		ADD_METHOD( GetExpandedSectionName );
 		ADD_METHOD( AddStageToPlayer );
 		ADD_METHOD( CurrentOptionsDisqualifyPlayer );
+		ADD_METHOD( ResetPlayerOptions );
+		ADD_METHOD( RefreshNoteSkinData );
 		ADD_METHOD( Dopefish );
 	}
 };

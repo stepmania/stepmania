@@ -72,6 +72,7 @@ Themes/pump-*
 Themes/optical-release
 Themes/moonlight
 Themes/ultralight
+Themes/test
 src/version.bin
 src/verstub.cpp
 Songs/*

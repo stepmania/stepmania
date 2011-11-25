@@ -265,10 +265,10 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 	}
 
 	WriteTimingTags( f, out.m_SongTiming, true );
-	
+
 	if( out.GetSpecifiedLastSecond() > 0 )
 		f.PutLine( ssprintf("#LASTSECONDHINT:%.3f;", out.GetSpecifiedLastSecond()) );
-	
+
 	FOREACH_BackgroundLayer( b )
 	{
 		if( b==0 )
@@ -303,13 +303,32 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 	f.Write( "#KEYSOUNDS:" );
 	for( unsigned i=0; i<out.m_vsKeysoundFile.size(); i++ )
 	{
+		// some keysound files has the first sound that starts with #,
+		// which makes MsdFile fail parsing the whole declaration.
+		// in this case, add a backslash at the front
+		// (#KEYSOUNDS:\#bgm.wav,01.wav,02.wav,..) and handle that on load.
+		if( i == 0 && out.m_vsKeysoundFile[i].size() > 0 && out.m_vsKeysoundFile[i][0] == '#' )
+			f.Write("\\");
 		f.Write( out.m_vsKeysoundFile[i] );
 		if( i != out.m_vsKeysoundFile.size()-1 )
 			f.Write( "," );
 	}
 	f.PutLine( ";" );
 
-	f.PutLine( ssprintf("#ATTACKS:%s;", out.GetAttackString().c_str()) );
+	// attacks section
+	//f.PutLine( ssprintf("#ATTACKS:%s;", out.GetAttackString().c_str()) );
+	f.PutLine( "#ATTACKS:" );
+	for(unsigned j = 0; j < out.m_Attacks.size(); j++)
+	{
+		const Attack &a = out.m_Attacks[j];
+		f.Write( ssprintf( "  TIME=%.2f:LEN=%.2f:MODS=%s",
+			a.fStartSecond, a.fSecsRemaining, a.sModifiers.c_str() ) );
+
+		if( j+1 < out.m_Attacks.size() )
+			f.Write( ":" );
+	}
+	f.Write( ";" );
+	f.PutLine("");
 }
 
 /**
@@ -351,6 +370,8 @@ static RString GetSSCNoteData( const Song &song, const Steps &in, bool bSavingCa
 		lines.push_back( ssprintf( "#OFFSET:%.3f;", in.m_Timing.m_fBeat0OffsetInSeconds ) );
 		GetTimingTags( lines, in.m_Timing );
 	}
+
+	// todo: get this to output similar to course mods -aj
 	if (song.GetAttackString() != in.GetAttackString())
 		lines.push_back( ssprintf("#ATTACKS:%s;", in.GetAttackString().c_str()));
 

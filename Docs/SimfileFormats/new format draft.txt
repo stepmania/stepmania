@@ -1,3 +1,5 @@
+//this is a less conservative early version of the ssc-msd format
+//it was never used.
 $INFORMATION:maintitle:subtitle:artist:genre:credit;
 $TRANSLITS:main:sub:artist;
 $GRAPHICS:banner:background:disc:cdtitle;

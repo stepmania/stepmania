@@ -48,7 +48,8 @@
 		[03 ProductivityHelpers.lua] Returns <code>true</code> if Center 1P is being used.
 	</Function>
 	<Function name='CheckpointsTapsSeparateJudgment' theme='_fallback' return='bool' arguments=''>
-		[03 Gameplay.lua]
+		[03 Gameplay.lua] Returns <code>true</code> if checkpoint judgments and tap judgments
+		are considered separate, or <code>false</code> otherwise.
 	</Function>
 	<Function name='clamp' return='float' arguments='float fValue, float fLow, float fHigh'>
 		CLAMP is an all-female Japanese mangaka group that formed in the mid 1980s.
@@ -1364,6 +1365,14 @@
 		Sets the announcer to <code>sNewAnnouncer</code>.
 	</Function>
 </Class>
+<Class name='ArchHooks'>
+	<Function name='AppHasFocus' return='bool' arguments=''>
+		Returns <code>true</code> if the application presently has focus.
+	</Function>
+	<Function name='GetArchName' return='{string}' arguments=''>
+		Returns the name of the architecture in use.
+	</Function>
+</Class>
 <Class name='Banner'>
 	<Function name='GetScrolling' return='bool' arguments=''>
 		Returns <code>true</code> if the Banner is currently scrolling.
@@ -1829,6 +1838,11 @@
 	<Function name='PlayAnnouncer' return='void' arguments='string sPath'>
 		Plays a sound from the current announcer.
 	</Function>
+	<Function name='PlayMusicPart' return='void' arguments='string musicPath, float musicStart, float musicLength, float fadeIn = 0, float fadeOut = 0'>
+		Play the sound at <code>musicPath</code> starting from <code>musicStart</code> for
+		<code>musicLength</code> seconds one time. Both <code>fadeIn</code> and
+		<code>fadeOut</code> can be customized as required.
+	</Function>
 	<Function name='PlayOnce' return='void' arguments='string sPath'>
 		Play the sound at <code>sPath</code> one time.
 	</Function>
@@ -2113,8 +2127,14 @@
 	<Function name='PlayersCanJoin' return='bool' arguments=''>
 		Returns <code>true</code> if players can join the game.
 	</Function>
+	<Function name='RefreshNoteSkinData' return='void' arguments=''>
+		Refreshes the NoteSkin data for the current game.
+	</Function>
 	<Function name='Reset' return='void' arguments=''>
 		Resets the GameState.
+	</Function>
+	<Function name='ResetPlayerOptions' return='void' arguments='PlayerNumber pn'>
+		Resets the specific Player's mods to the default settings.
 	</Function>
 	<Function name='SaveLocalData' return='void' arguments=''>
 		Saves the bookkeeping and machine profile data.
@@ -2479,6 +2499,9 @@
 	</Function>
 	<Function name='GetAttackMines' return='bool' arguments=''>
 		
+	</Function>
+	<Function name='GetBackwards' return='bool' arguments=''>
+		Returns <code>true</code> if the backwards mod is applied, <code>false</code> otherwise.
 	</Function>
 	<Function name='GetBeat' return='float' arguments=''>
 		
@@ -3034,6 +3057,15 @@
 	</Function>
 	<Function name='GetDisplayWidth' return='int' arguments=''>
 		Return the width of the display.
+	</Function>
+	<Function name='GetFPS' return='int' arguments=''>
+		Return the FPS.
+	</Function>
+	<Function name='GetVPF' return='int' arguments=''>
+		Return the VPF.
+	</Function>
+	<Function name='GetCumFPS' return='int' arguments=''>
+		Return the cumulative FPS.
 	</Function>
 </Class>
 <Class name='RageFile'>

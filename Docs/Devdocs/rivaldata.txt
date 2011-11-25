@@ -1,4 +1,4 @@
-okay what we should probabably do for rival data is fuck up stats somehow.
+Rival Data draft (old version)
 
 Here's what rival data should have, taken from Stats.xml
 

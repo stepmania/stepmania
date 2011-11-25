@@ -1,5 +1,6 @@
 #include "global.h"
 #include "ArchHooks.h"
+#include "LuaReference.h"
 #include "RageLog.h"
 #include "RageThreads.h"
 #include "arch/arch_default.h"
@@ -9,6 +10,11 @@ bool ArchHooks::g_bToggleWindowed = false;
 // Keep from pulling RageThreads.h into ArchHooks.h
 static RageMutex g_Mutex( "ArchHooks" );
 ArchHooks *HOOKS = NULL;
+
+ArchHooks::ArchHooks(): m_bHasFocus(true), m_bFocusChanged(false)
+{
+	
+}
 
 bool ArchHooks::GetAndClearToggleWindowed()
 {
@@ -55,6 +61,35 @@ ArchHooks *ArchHooks::Create()
 	return new ARCH_HOOKS;
 }
 
+// lua start
+#include "LuaBinding.h"
+#include "LuaReference.h"
+
+class LunaArchHooks: public Luna<ArchHooks>
+{
+public:
+	DEFINE_METHOD( AppHasFocus, AppHasFocus() );
+	DEFINE_METHOD( GetArchName, GetArchName() );
+	
+	LunaArchHooks()
+	{
+		ADD_METHOD( AppHasFocus );
+		ADD_METHOD( GetArchName );
+	}
+};
+LUA_REGISTER_CLASS( ArchHooks );
+
+/* XXX: ArchHooks is instantiated before Lua, so we encounter a dependency problem when
+ * trying to register HOOKS. Work around it by registering HOOKS in a static function,
+ * which LuaManager will call when it is instantiated. */
+void LuaFunc_Register_Hooks( lua_State *L )
+{
+	lua_pushstring( L, "HOOKS" );
+	HOOKS->PushSelf( L );
+	lua_settable( L, LUA_GLOBALSINDEX );
+}
+
+REGISTER_WITH_LUA_FUNCTION( LuaFunc_Register_Hooks );
 
 /*
  * (c) 2003-2004 Glenn Maynard, Chris Danford

@@ -206,7 +206,8 @@ protected:
 	void GetMusicEndTiming( float &fSecondsToStartFadingOutMusic, float &fSecondsToStartTransitioningOut );
 	void LoadLights();
 	void PauseGame( bool bPause, GameController gc = GameController_Invalid );
-	void PlayAnnouncer( RString type, float fSeconds );
+	void PlayAnnouncer( const RString &type, float fSeconds, float *fDeltaSeconds );
+	void PlayAnnouncer( const RString &type, float fSeconds ) { PlayAnnouncer(type, fSeconds, &m_fTimeSinceLastDancingComment); }
 	void UpdateLights();
 	void SendCrossedMessages();
 	void BeginBackingOutFromGameplay();

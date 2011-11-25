@@ -44,16 +44,16 @@ r['Oldschool'] = function(params, pss)
 	local scoreLookupTable =
 	{ 
 		['TapNoteScore_W1']=999, 
-    ['TapNoteScore_W2']=IsW1Allowed() and 888 or 999, 
+		['TapNoteScore_W2']=IsW1Allowed('TapNoteScore_W2') and 888 or 999, 
 		['TapNoteScore_W3']=777,
-    ['TapNoteScore_W4']=555,
-    ['TapNoteScore_W5']=111, 
+		['TapNoteScore_W4']=555,
+		['TapNoteScore_W5']=111, 
 	};
 	setmetatable(scoreLookupTable, ZeroIfNotFound);
-  local comboBonusForThisStep = (pss:GetCurrentCombo()*111)^1.1;
+	local comboBonusForThisStep = (pss:GetCurrentCombo()*111)^1.1;
 	local capScore = 1000000000;
-  pss:SetCurMaxScore(capScore); --i don't really care about weird scoring modes -fsx
-  local pointsGot = comboBonusForThisStep + scoreLookupTable[params.TapNoteScore] + (params.HoldNoteScore == 'HoldNoteScore_Held' and 777 or 0);
+	pss:SetCurMaxScore(capScore); --i don't really care about weird scoring modes -fsx
+	local pointsGot = comboBonusForThisStep + scoreLookupTable[params.TapNoteScore] + (params.HoldNoteScore == 'HoldNoteScore_Held' and 777 or 0);
 	pss:SetScore(clamp(pss:GetScore()+pointsGot,0,capScore));
 end;
 
@@ -76,12 +76,8 @@ r['DDR Extreme'] = function(params, pss)
 	local sTotal = (totalItems + 1) * totalItems / 2;
 	local meter = steps:GetMeter();
 	if (steps:IsAnEdit()) then
-		meter = 5;
-	elseif (meter < 1) then
-		meter = 1;
-	elseif (meter > 10) then
-		meter = 10;
-	end;
+    meter = 5; end;
+    meter = math.min(10,meter);
 	-- [en] score for one step
 	-- [ja] 1ステップあたりのスコア
 	local baseScore = meter * 1000000
@@ -358,6 +354,7 @@ r['MIGS'] = function(params,pss)
 		curScore = curScore + ( pss:GetTapNoteScores(k) * v );
 	end;
   curScore = math.max(0,curScore + ( pss:GetHoldNoteScores('HoldNoteScore_Held') * 6 ));
+  pss:SetScore(curScore);
 end;
 
 --------------------------------------------------------------
@@ -371,14 +368,34 @@ end
 -------------------------------------------------------------------------------
 -- Formulas end here.
 for v in ivalues(DisabledScoringModes) do r[v] = nil end
-Scoring = {}
-setmetatable(Scoring, {
-	__metatable = { "Letting you change the metatable sort of defeats the purpose." },
-	__index = function(tbl, key)
-		for v in ivalues(DisabledScoringModes) do
-			if key == v then return r['DDR Extreme'] end
-		end
-		return r[key]
-	end,
-	}
-);
+Scoring = r;
+
+function UserPrefScoringMode()
+  local baseChoices = {}
+  for k,v in pairs(Scoring) do table.insert(baseChoices,k) end
+  if next(baseChoices) == nil then UndocumentedFeature "No scoring modes available" end
+	local t = {
+		Name = "UserPrefScoringMode";
+		LayoutType = "ShowAllInRow";
+		SelectType = "SelectOne";
+		OneChoiceForAllPlayers = true;
+		ExportOnChange = false;
+		Choices = baseChoices;
+		LoadSelections = function(self, list, pn)
+			if ReadPrefFromFile("UserPrefScoringMode") ~= nil then
+				local theValue = ReadPrefFromFile("UserPrefScoringMode");
+				local success = false;				
+				for k,v in ipairs(baseChoices) do if v == theValue then list[k] = true success = true break end end;
+				if success == false then list[1] = true end;
+			else
+        WritePrefToFile("UserPrefScoringMode", baseChoices[1]);
+				list[1] = true;
+			end;
+		end;
+		SaveSelections = function(self, list, pn)
+			for k,v in ipairs(list) do if v then WritePrefToFile("UserPrefScoringMode", baseChoices[k]) break end end;
+		end;
+	};
+	setmetatable( t, t );
+	return t;
+end

@@ -182,6 +182,36 @@ function StepsOrTrailToCustomDifficulty(stepsOrTrail)
 	end
 end
 
+function IsArcade()
+	local sCoinMode = GAMESTATE:GetCoinMode();
+	local bIsArcade = (sCoinMode ~= 'CoinMode_Home');
+	return bIsArcade;
+end
+
+function IsHome()
+	local sCoinMode = GAMESTATE:GetCoinMode();
+	local bIsHome = (sCoinMode == 'CoinMode_Home');
+	return bIsHome;
+end
+
+function IsFreePlay()
+	return IsArcade() and (GAMESTATE:GetCoinMode() == 'CoinMode_Free') or false
+end
+
+function Center1Player()
+	local styleType = GAMESTATE:GetCurrentStyle():GetStyleType()
+	-- always center in OnePlayerTwoSides.
+	if styleType == "StyleType_OnePlayerTwoSides" then
+		return true
+	-- only Center1P if Pref enabled and OnePlayerOneSide.
+	-- (implicitly excludes Rave, Battle, Versus, Routine)
+	elseif PREFSMAN:GetPreference("Center1Player") then
+		return styleType == "StyleType_OnePlayerOneSide"
+	else
+		return false
+	end
+end
+
 Date = {
 	Today = function()
 		return string.format("%i%02i%02i", Year(), (MonthOfYear()+1), DayOfMonth())
@@ -194,7 +224,53 @@ Time = {
 	end
 }
 
--- (c) 2005 Glenn Maynard, Chris Danford
+-- file utilities
+File = {
+	Write = function(path,buf)
+		local f = RageFileUtil.CreateRageFile()
+		if f:Open(path, 2) then
+			f:Write( tostring(buf) )
+			f:destroy()
+			return true
+		else
+			Trace( "[FileUtils] Error writing to ".. path ..": ".. f:GetError() )
+			f:ClearError()
+			f:destroy()
+			return false
+		end
+	end,
+	Read = function(path)
+		local f = RageFileUtil.CreateRageFile()
+		local ret = ""
+		if f:Open(path, 1) then
+			ret = tostring( f:Read() )
+			f:destroy()
+			return ret
+		else
+			Trace( "[FileUtils] Error reading from ".. path ..": ".. f:GetError() )
+			f:ClearError()
+			f:destroy()
+			return nil
+		end
+	end
+}
+
+envTable = GAMESTATE:Env()
+
+-- setenv(name,value)
+-- Sets aside an entry for <name> and puts <value> into it.
+-- Use a table as <value> to store multiple values
+function setenv(name,value)
+	envTable[name] = value
+end
+
+-- getenv(name)
+-- This will return whatever value is at envTable[name].
+function getenv(name)
+	return envTable[name]
+end
+
+-- (c) 2005-2011 Glenn Maynard, Chris Danford, SSC
 -- All rights reserved.
 -- 
 -- Permission is hereby granted, free of charge, to any person obtaining a

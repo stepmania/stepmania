@@ -103,6 +103,12 @@ void SMLoader::LoadFromTokens(
 			out.SetDifficulty( Difficulty_Challenge );
 	}
 
+	if( sMeter.empty() )
+	{
+		// some simfiles (e.g. X-SPECIALs from Zenius-I-Vanisher) don't
+		// have a meter on certain steps. Make the meter 1 in these instances.
+		sMeter = "1";
+	}
 	out.SetMeter( StringToInt(sMeter) );
 
 	out.SetSMNoteData( sNoteData );
@@ -525,16 +531,16 @@ void SMLoader::ProcessFakes( TimingData &out, const RString line, const int rows
 		}
 
 		const float fBeat = RowToBeat( arrayFakeValues[0], rowsPerBeat );
-		const float fNewBeat = StringToFloat( arrayFakeValues[1] );
+		const float fSkippedBeats = StringToFloat( arrayFakeValues[1] );
 
-		if(fNewBeat > 0)
-			out.AddSegment( FakeSegment(BeatToNoteRow(fBeat), fNewBeat) );
+		if(fSkippedBeats > 0)
+			out.AddSegment( FakeSegment(BeatToNoteRow(fBeat), fSkippedBeats) );
 		else
 		{
 			LOG->UserLog("Song file",
 				     this->GetSongTitle(),
-				     "has an invalid Fake at beat %f, BPM %f.",
-				     fBeat, fNewBeat );
+				     "has an invalid Fake at beat %f, beats to skip %f.",
+				     fBeat, fSkippedBeats );
 		}
 	}
 }

@@ -1,35 +1,41 @@
-sm-ssc Code Style Guidelines
+sm-ssc/SM5 Code Style Guidelines
 --------------------------------------------------------------------------------
-AJ is biased, but prefers to edit text in SciTE and just uses Visual Studio when
-necessary. "It's really slow!"
-
-That being said, the sm-ssc code style guidelines are as follows:
+The sm-ssc/SM5 code style guidelines are as follows:
 
 1) Follow the current coding conventions set forth in the source code.
 This means use tabs. AJ prefers tabs have a width of 4. Visual Studio and web
-browsers assume tabs to be 8 by default. :/
-Use of the tab character means you can define however wide you want it to be.
+browsers assume tabs to be 8 by default.
+Use of the tab character means you can define however wide you want it to be
+within your editor's settings.
 
 Use of the space character is allowed for complex alignment. There are many
 examples of this in the code.
 
-If it can be done in one line, do so:
+If it can be done in one line (and it's in a header), do so:
 int xTwenty(int factor){ return factor*20; }
 
 Otherwise, follow what's in the code, namely...
 
 for single line ifs :
-if( somecrap )
+if( someCondition )
 	dosomethingelse();
 
+though lately, there has been a shift to
+if( someCondition )
+{
+	dosomethingelse();
+}
+for clarity and ease of expansion.
+
 for multi-lines:
-if( anothercrap )
+if( anotherCondition )
 {
 	omg();
 	lotsofstuff();
 }
 
-Naming conventions seem to be Hungarian (of Apps or System, I do not know).
+Variable naming conventions seem to be Hungarian, with m_ being used for
+class member variables.
 
 2) Remove any unnecessary whitespace. "Unnecessary" whitespace includes tabs
 at the end of } characters, tabs that lead nowhere, like this one:
@@ -38,20 +44,24 @@ and keep in mind that this can be done with spaces too:
     
 so watch yourself. Remove 'em all.
 
+With that in mind, it's best to use a space around () for clarity, as in the
+examples in #1 above.
+
 3) When making LOG->Trace()s in code, it's best to include the name of the Class
 and Function in [], like so:
 LOG->Info( "[NetworkSyncManager::Listen] Initializing socket..." );
-You may not always need to do this, but it helps for clarity and sanity.
+You may not always need to do this, but it's a good idea if you're logging a
+function with the same name in multiple classes.
 
-4) Comment style. (This is a preferred suggestion. You may choose to do whatever
+4) Comment style. (This is a preferred suggestion. You may use whatever style
 you like, but it is recommended to follow this style when submitting code for
 inclusion.)
 // is preferred for one-liners
 // and also blocks of text where the comment isn't too long.
-// sometimes you'll find // comments longer than this thrown in there by AJ
-/* instead of doing this.
- * when making a new line in a long form comment, start like this line.
- * and put the end where it fits. */
+
+/* when making a new line in a long form comment, it's preferred to start
+ * from the top line and also try to put the end mark as close to the end of
+ * the text as possible. */
 
 /*
  * doing this (first line blank) is discouraged, but is allowed in certain places.
@@ -60,7 +70,7 @@ inclusion.)
  * for consistency's sake.
  */
  
-/* use of long comments for one line is VERY discouraged */
+/* use of long comments for one line is discouraged (with exceptions) */
 // usually, it will will get cleaned up into this style, but there are exceptions:
 
 // exception #1: function arguments
@@ -71,7 +81,7 @@ void SomeFunction(size_t /*ACTUAL DATA TYPE*/)
 #define /* you must use long form in defines, */ \
  // otherwise it won't parse the newline correctly (this will cause an error) \
 
-// exception #3: .h files
+// (loose) exception #3: .h files
 /* ScreenTypicalExample - this always shows up like this. It usually is always one line, even when it extends past column 80. This is acceptible; Most people don't write novels here like I just did. */
 
 // on comment length:

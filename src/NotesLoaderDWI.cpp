@@ -426,10 +426,14 @@ static bool LoadFromDWITokens(
 
 	out.m_StepsType = GetTypeFromMode(sMode);
 
+	// if the meter is empty, force it to 1.
+	if( sNumFeet.empty() )
+		sNumFeet = "1";
+
 	out.SetMeter(StringToInt(sNumFeet));
 
 	out.SetDifficulty( DwiCompatibleStringToDifficulty(sDescription) );
-	
+
 	out.SetNoteData( ParseNoteData(sStepData1, sStepData2, out, sPath) );
 
 	out.TidyUpData();

@@ -7,6 +7,8 @@
 #include "Foreach.h"
 #include <float.h>
 
+TimingSegment* GetSegmentAtRow( int iNoteRow, TimingSegmentType tst );
+
 TimingData::TimingData(float fOffset) : m_fBeat0OffsetInSeconds(fOffset)
 {
 }
@@ -36,8 +38,11 @@ void TimingData::Clear()
 		vector<TimingSegment*> &vSegs = m_avpTimingSegments[tst];
 		for( unsigned i = 0; i < vSegs.size(); ++i )
 		{
-			//LOG->Trace( "deleting %p", vSegs[i] );
-			SAFE_DELETE( vSegs[i] );		}
+#if defined(DEBUG)
+			LOG->Trace( "TimingData::Clear(): deleting %p", vSegs[i] );
+#endif
+			SAFE_DELETE( vSegs[i] );
+		}
 
 		vSegs.clear();
 	}
@@ -312,8 +317,8 @@ TimingSegment* GetSegmentAtRow( int iNoteRow, TimingSegmentType tst )
 
 static void EraseSegment( vector<TimingSegment*> &vSegs, int index, TimingSegment *cur )
 {
-	LOG->Trace( "EraseSegment(%d, %p)", index, cur );
 #ifdef DEBUG
+	LOG->Trace( "EraseSegment(%d, %p)", index, cur );
 	cur->DebugPrint();
 #endif
 
@@ -325,8 +330,8 @@ static void EraseSegment( vector<TimingSegment*> &vSegs, int index, TimingSegmen
 // so we must deep-copy it (with ::Copy) for new allocations.
 void TimingData::AddSegment( const TimingSegment *seg )
 {
-	LOG->Trace( "AddSegment( %s )", TimingSegmentTypeToString(seg->GetType()).c_str() );
 #ifdef DEBUG
+	LOG->Trace( "AddSegment( %s )", TimingSegmentTypeToString(seg->GetType()).c_str() );
 	seg->DebugPrint();
 #endif
 
@@ -390,7 +395,9 @@ void TimingData::AddSegment( const TimingSegment *seg )
 	// the segment at or before this row is equal to the new one; ignore it
 	if( bOnSameRow && (*cur) == (*seg) )
 	{
+#if defined(DEBUG)
 		LOG->Trace( "equals previous segment, ignoring" );
+#endif
 		return;
 	}
 
@@ -808,7 +815,12 @@ float TimingData::GetDisplayedSpeedPercent( float fSongBeat, float fMusicSeconds
 
 	const vector<TimingSegment *> &speeds = GetTimingSegments(SEGMENT_SPEED);
 	if( speeds.size() == 0 )
+	{
+#ifdef DEBUG
+		LOG->Trace("No speed segments");
+#endif
 		return 1.0f;
+	}
 
 	const int index = GetSegmentIndexAtBeat( SEGMENT_SPEED, fSongBeat );
 

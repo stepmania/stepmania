@@ -5,8 +5,106 @@ from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
 ================================================================================
-StepMania 5.0 $next | 2011xxxx
+StepMania 5.0 $next | 20111xxx
 --------------------------------------------------------------------------------
+
+2011/11/24
+----------
+* [PlayerStageStats] Added GetFailed and GetNumControllerSteps Lua bindings. [AJ]
+
+2011/11/15
+----------
+* [LifeMeterBar] Added the ForceLifeDifficultyOnExtraStage metric and
+  the ExtraStageLifeDifficulty metric. Let the themer decide if extra stages 
+  should have their own life bar behavior. Note that this metric does NOT 
+  change the lifebar to the battery style. [Wolfman2000/FSX]
+
+2011/11/14
+----------
+* [Mac OS X] Restore JPEG functionality. [Wolfman2000]
+
+2011/11/06
+----------
+* [GameState] Add the RefreshNoteSkinData lua binding. This will only
+  refresh the NS data for the present game, not all games. [Wolfman2000]
+* [ScreenSelectMusic] Fixed Rave difficulties not being synced on late join.
+  Fixes issue 577. [AJ]
+* [GameplayAssist] Don't play sounds if the player is dead. Fixes issue 621. [AJ]
+
+2011/11/04
+* [ScoreKeeperRave] Revert fix from 2011/10/28. [AJ]
+* [ScoreKeeperRave] Fixed Miss and HitMine giving meter life.
+  (Fixes issue 622.) [AJ]
+
+2011/11/02
+----------
+* [ArchHooks] Add the GetArchName lua binding. To the themers that use
+  GetOSName, that function may be deprecated in the future. For now,
+  both options exist. [vyhd, Wolfman2000]
+
+2011/11/01
+----------
+* [ArrowEffects] Fix Expand, and possibly other mods, from breaking if
+  using a second player. [Wolfman2000]
+* [ArchHooks] Add the AppHasFocus lua binding. [vyhd, Wolfman2000]
+
+2011/10/29
+----------
+* [GameState] Add the ResetPlayerOptions lua binding. [Wolfman2000]
+
+2011/10/28
+----------
+* [ScoreKeeperRave] Fix an issue where the super meter would not decrease back
+  to 1 after hitting the end of 3. (Fixes issue 314.) [AJ]
+
+2011/10/27
+----------
+* [Default theme] Fixed the pref controlling timing segments on song meter. [FSX]
+
+2011/10/18
+----------
+* [LightsManager] Use song beat for menu button lights, allow demonstration to
+  flash pad lights when BlinkGameplayButtonLightsOnNote is true, light custom
+  game buttons when pressed during attract mode, general optimizations. [vyhd]
+
+2011/10/17
+----------
+* [ScreenEdit/NoteField] Fix an editor crash when you exit without saving
+  after creating new steps. [Wolfman2000]
+
+2011/10/16
+----------
+* [NoteDataUtil] Add the Backwards mod for games where the intended
+  definition of Mirror is different. Regarding Pump gameplay, what was
+  called Mirror in Preview 4 is considered Backwards now, and the original
+  Mirror is back in its old position. [Wolfman2000]
+
+2011/10/12
+----------
+* [Steps] Fix a bug where e.g. ".SM" ".DWI" ".Sm" ".sM" files
+  wouldn't properly load since the code was expecting lowercase. [AJ]
+
+2011/10/10
+----------
+* [NotesLoaderBMS] Add the time signature segments. [theDtTvB]
+
+2011/10/09
+----------
+* [NotesLoaderBMS] Fix the bug where keysounds that points to nonexistant file
+  gets assigned a random one. [theDtTvB]
+* [NotesLoaderBMS] Use BMSLoader to load PMS files. [theDtTvB]
+* [RageSoundReader_WAV] Fix ADPCM support. [theDtTvB]
+
+2011/10/08
+----------
+* [GameSoundManager] Add the PlayMusicPart lua binding. [Wolfman2000]
+* [ScreenEdit] Add the FadeInPreview and FadeOutPreview metrics. This controls
+  how long the fade in and fade outs are for playing the preview music.
+  The default values are 0 and 1.5 respectively. [Wolfman2000]
+
+2011/10/07
+----------
+* [RageDisplay] Add the GetFPS, GetVPF, and GetCumFPS bindings. [Wolfman2000]
 
 2011/10/06
 ----------

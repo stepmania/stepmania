@@ -23,6 +23,7 @@ const char *CodeNames[] = {
 	"ModeMenu1",
 	"ModeMenu2",
 	"Mirror",
+	"Backwards",
 	"Left",
 	"Right",
 	"Shuffle",
@@ -200,6 +201,7 @@ bool CodeDetector::DetectAndAdjustMusicOptions( GameController controller )
 			switch( code )
 			{
 			case CODE_MIRROR:			po.ToggleOneTurn( PlayerOptions::TURN_MIRROR );		break;
+			case CODE_BACKWARDS:		po.ToggleOneTurn( PlayerOptions::TURN_BACKWARDS );	break;
 			case CODE_LEFT:				po.ToggleOneTurn( PlayerOptions::TURN_LEFT );		break;
 			case CODE_RIGHT:			po.ToggleOneTurn( PlayerOptions::TURN_RIGHT );		break;
 			case CODE_SHUFFLE:			po.ToggleOneTurn( PlayerOptions::TURN_SHUFFLE );	break;

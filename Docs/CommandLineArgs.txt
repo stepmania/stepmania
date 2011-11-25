@@ -1,4 +1,4 @@
-sm-ssc Command Line Arguments
+StepMania 5 Command Line Arguments
 ================================================================================
 Pass all arguments with --. For example, version would be entered as --version.
 stepmania --version
@@ -9,9 +9,8 @@ stepmania moonlight.smzip
 [GameState]
 * player
 usage: --player=1
-Joins in the specified player. Can also pass --player=2 at the same time,
-if desired. However, sm-ssc does not support more than two players, so don't
-go past 2.
+Joins in the specified player. Can also pass --player=2 at the same time, if
+desired. However, SM5 does not support more than two players, so don't go past 2.
 
 * mode
 usage: --mode=
@@ -34,7 +33,7 @@ Exports strings for the installer.
 
 * ExportLuaInformation
 usage: --ExportLuaInformation
-Exports Lua.xml using the default theme (and anything it falls back on)
+Exports Lua.xml using the current theme (and anything it falls back on)
 for reference.
 
 * theme
