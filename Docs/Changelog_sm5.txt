@@ -5,8 +5,12 @@ from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
 ================================================================================
-StepMania 5.0 $next | 2011xxxx
+StepMania 5.0 $next | 20111xxx
 --------------------------------------------------------------------------------
+
+2011/11/24
+----------
+* [PlayerStageStats] Added GetFailed and GetNumControllerSteps Lua bindings. [AJ]
 
 2011/11/15
 ----------
