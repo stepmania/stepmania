@@ -529,7 +529,11 @@ bool PlayerStageStats::FullComboOfScore( TapNoteScore tnsAllGreaterOrEqual ) con
 		if( m_iTapNoteScores[i] > 0 )
 			return false;
 	}
-	
+
+	// hit any mines? It's not a full combo.
+	if( m_iTapNoteScores[TNS_HitMine] > 0 )
+		return false;
+
 	// If has at least one of the judgments equal to or above, then is a full combo.
 	for( int i=tnsAllGreaterOrEqual; i<NUM_TapNoteScore; i++ )
 	{

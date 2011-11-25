@@ -8,6 +8,10 @@ ________________________________________________________________________________
 StepMania 5.0 $next | 20111xxx
 --------------------------------------------------------------------------------
 
+2011/11/25
+----------
+* [PlayerStageStats] Hitting a mine no longer gives you full combo. [AJ]
+
 2011/11/24
 ----------
 * [PlayerStageStats] Added GetFailed and GetNumControllerSteps Lua bindings. [AJ]
