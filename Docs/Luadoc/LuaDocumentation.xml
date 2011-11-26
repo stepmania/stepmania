@@ -1156,6 +1156,8 @@
 	</Function>
 </Class>
 <Class name='ActorFrame'>
+	<Function name='AddChildFromPath' return='bool' arguments='string sPath'>
+	</Function>
 	<Function name='fov' return='void' arguments='float fFOV'>
 		Sets the field of view for the ActorFrame.
 	</Function>
@@ -1182,6 +1184,12 @@
 	</Function>
 	<Function name='propagatecommand' theme='_fallback' return='void' arguments='LuaReference cmd'>
 		[02 Actor.lua] Propagates a command to the ActorFrame's children.
+	</Function>
+	<Function name='RemoveAllChildren' return='void' arguments=''>
+		Removes all the children from the ActorFrame.
+	</Function>
+	<Function name='RemoveChild' return='void' arguments='string sChild'>
+		Removes the specified child from the ActorFrame.
 	</Function>
 	<Function name='RunCommandsOnChildren' return='void' arguments='LuaReference cmds'>
 		Runs the commands in <code>cmds</code> on the ActorFrame's children.
@@ -2760,6 +2768,9 @@
 	<Function name='GetCurrentScoreMultiplier' return='int' arguments=''>
 		Returns the player's current score multiplier.
 	</Function>
+	<Function name='GetFailed' return='bool' arguments=''>
+		Returns <code>true</code> if the player failed.
+	</Function>
 	<Function name='GetGrade' return='Grade' arguments=''>
 		Returns the player's grade.
 	</Function>
@@ -2777,6 +2788,9 @@
 	</Function>
 	<Function name='GetMachineHighScoreIndex' return='int' arguments=''>
 		Returns the machine high score index for this performance.
+	</Function>
+	<Function name='GetNumControllerSteps' return='int' arguments=''>
+		Returns the number of controller steps.
 	</Function>
 	<Function name='GetPeakComboAward' return='PeakComboAward' arguments=''>
 		Returns the peak combo award for this performance.
@@ -3971,6 +3985,9 @@
 	</Function>
 	<Function name='DoesThemeExist' return='bool' arguments='string themeName'>
 		Returns <code>true</code> if the specified theme exists.
+	</Function>
+	<Function name='GetAbsolutePath' theme='_fallback' return='string' arguments='string sPath'>
+		[03 ProductivityHelpers.lua] Returns the absolute path of a file in the theme.
 	</Function>
 	<Function name='GetCurLanguage' return='string' arguments=''>
 		Returns the current language.
