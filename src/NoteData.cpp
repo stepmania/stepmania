@@ -599,7 +599,7 @@ int NoteData::GetNumRowsWithSimultaneousTaps( int iMinTaps, int iStartIndex, int
 	int iNum = 0;
 	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( *this, r, iStartIndex, iEndIndex )
 	{
-		if (GAMESTATE->GetProcessedTimingData()->IsJudgableAtRow(r))
+		if (!GAMESTATE->GetProcessedTimingData()->IsJudgableAtRow(r))
 			continue;
 		int iNumNotesThisIndex = 0;
 		for( int t=0; t<GetNumTracks(); t++ )
