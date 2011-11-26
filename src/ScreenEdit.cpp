@@ -1900,30 +1900,23 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 					fDelta *= 40;
 			}
 
-#if 0
-			unsigned i;
 			// is there a StopSegment on the current row?
-			const StopSegment *seg = GetAppropriateTiming().GetStopSegmentAtRow( GetRow() );
-
-			// a stop already exists here; change its value by the delta
-			if( seg->GetRow() == GetRow() )
+			TimingData & timing = GetAppropriateTiming();
+			StopSegment *seg = timing.GetStopSegmentAtRow( GetRow() );
+			int i = timing.GetSegmentIndexAtRow(SEGMENT_STOP, GetRow());
+			if (i == -1 || seg->GetRow() != GetRow()) // invalid
 			{
-				float fSeconds = seg->GetPause() + fDelta;
-				GetAppropriateTiming().AddSegment
-			if( i == stops.size() )	// there is no StopSegment at the current beat
-			{
-				// create a new StopSegment
 				if( fDelta > 0 )
-					GetAppropriateTiming().AddSegment( StopSegment(GetRow(), fDelta) );
+					timing.AddSegment( StopSegment(GetRow(), fDelta) );
 			}
-			else	// StopSegment being modified is m_SongTiming.m_StopSegments[i]
+			else
 			{
-				StopSegment *s = static_cast<StopSegment *>(stops[i]);
-				s->SetPause(s->GetPause() + fDelta);
-				if( s->GetPause() <= 0 )
+				vector<TimingSegment *> &stops = timing.GetTimingSegments(SEGMENT_STOP);
+				seg->SetPause(seg->GetPause() + fDelta);
+				if( seg->GetPause() <= 0 )
 					stops.erase( stops.begin()+i, stops.begin()+i+1);
 			}
-#endif
+
 			(fDelta>0 ? m_soundValueIncrease : m_soundValueDecrease).Play();
 			SetDirty( true );
 		}

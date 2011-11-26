@@ -361,6 +361,10 @@ public:
 
 	const vector<TimingSegment*> &GetTimingSegments( TimingSegmentType tst ) const
 	{
+		return const_cast<TimingData *>(this)->GetTimingSegments(tst);
+	}
+	vector<TimingSegment *> &GetTimingSegments( TimingSegmentType tst )
+	{
 		return m_avpTimingSegments[tst];
 	}
 
