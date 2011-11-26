@@ -129,6 +129,14 @@
 		2B12F07414807FBE0002A3F6 /* avio.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B12F07014807FBE0002A3F6 /* avio.h */; };
 		2B12F07714807FE70002A3F6 /* swscale.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B12F07614807FE70002A3F6 /* swscale.h */; };
 		2B12F07814807FE70002A3F6 /* swscale.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B12F07614807FE70002A3F6 /* swscale.h */; };
+		2B12F080148081490002A3F6 /* libavcodec_link.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B12F07C148081490002A3F6 /* libavcodec_link.a */; };
+		2B12F081148081490002A3F6 /* libavformat_link.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B12F07D148081490002A3F6 /* libavformat_link.a */; };
+		2B12F082148081490002A3F6 /* libavutil_link.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B12F07E148081490002A3F6 /* libavutil_link.a */; };
+		2B12F083148081490002A3F6 /* libswscale_link.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B12F07F148081490002A3F6 /* libswscale_link.a */; };
+		2B12F084148081490002A3F6 /* libavcodec_link.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B12F07C148081490002A3F6 /* libavcodec_link.a */; };
+		2B12F0851480814A0002A3F6 /* libavformat_link.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B12F07D148081490002A3F6 /* libavformat_link.a */; };
+		2B12F0861480814A0002A3F6 /* libavutil_link.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B12F07E148081490002A3F6 /* libavutil_link.a */; };
+		2B12F0871480814A0002A3F6 /* libswscale_link.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B12F07F148081490002A3F6 /* libswscale_link.a */; };
 		2B17AB7713980FF6001AE57D /* png.c in Sources */ = {isa = PBXBuildFile; fileRef = 2BC6130D13773C8E00CC8BBD /* png.c */; };
 		2B17AB7813980FF6001AE57D /* png.h in Headers */ = {isa = PBXBuildFile; fileRef = 2BC6130E13773C8E00CC8BBD /* png.h */; };
 		2B17AB7913980FF6001AE57D /* pngconf.h in Headers */ = {isa = PBXBuildFile; fileRef = 2BC6130F13773C8E00CC8BBD /* pngconf.h */; };
@@ -1601,8 +1609,6 @@
 		AA91ACB10878BB2C00FB2F8F /* RageTexturePreloader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA91ACAF0878BB2C00FB2F8F /* RageTexturePreloader.cpp */; };
 		AA9A78AB06B5C72200B03E97 /* Game.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA9A78A906B5C72200B03E97 /* Game.cpp */; };
 		AA9EC2F2055F5126007E5098 /* RageTextureID.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA9EC2F0055F5126007E5098 /* RageTextureID.cpp */; };
-		AAA0704E0CE5082E005A3060 /* libffmpeg_link.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AAA0704D0CE5082D005A3060 /* libffmpeg_link.a */; };
-		AAA0704F0CE5082E005A3060 /* libffmpeg_link.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AAA0704D0CE5082D005A3060 /* libffmpeg_link.a */; };
 		AAA0713D0CE7B3BB005A3060 /* bit.c in Sources */ = {isa = PBXBuildFile; fileRef = AAA070B40CE7B3AD005A3060 /* bit.c */; };
 		AAA0713E0CE7B3BB005A3060 /* bit.h in Headers */ = {isa = PBXBuildFile; fileRef = AAA070B50CE7B3AD005A3060 /* bit.h */; };
 		AAA071490CE7B3BB005A3060 /* decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = AAA070C00CE7B3AD005A3060 /* decoder.c */; };
@@ -2010,6 +2016,10 @@
 		2B12F06F14807FBE0002A3F6 /* avformat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = avformat.h; path = ../extern/ffmpeg/libavformat/avformat.h; sourceTree = SOURCE_ROOT; };
 		2B12F07014807FBE0002A3F6 /* avio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = avio.h; path = ../extern/ffmpeg/libavformat/avio.h; sourceTree = SOURCE_ROOT; };
 		2B12F07614807FE70002A3F6 /* swscale.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = swscale.h; path = ../extern/ffmpeg/libswscale/swscale.h; sourceTree = SOURCE_ROOT; };
+		2B12F07C148081490002A3F6 /* libavcodec_link.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libavcodec_link.a; sourceTree = "<group>"; };
+		2B12F07D148081490002A3F6 /* libavformat_link.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libavformat_link.a; sourceTree = "<group>"; };
+		2B12F07E148081490002A3F6 /* libavutil_link.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libavutil_link.a; sourceTree = "<group>"; };
+		2B12F07F148081490002A3F6 /* libswscale_link.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libswscale_link.a; sourceTree = "<group>"; };
 		2B17AB7213980FDF001AE57D /* libpng-1.5.1-sm5.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libpng-1.5.1-sm5.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2B17ABC013981521001AE57D /* libglew-sm5.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libglew-sm5.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2B17ABE013981756001AE57D /* libpcre-sm5.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libpcre-sm5.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2985,7 +2995,6 @@
 		AA9D236C0561B6CE00FC7F14 /* CombinedLifeMeter.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = CombinedLifeMeter.h; path = ../src/CombinedLifeMeter.h; sourceTree = "<group>"; };
 		AA9EC2F0055F5126007E5098 /* RageTextureID.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = RageTextureID.cpp; path = ../src/RageTextureID.cpp; sourceTree = "<group>"; };
 		AA9EC2F1055F5126007E5098 /* RageTextureID.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = RageTextureID.h; path = ../src/RageTextureID.h; sourceTree = "<group>"; };
-		AAA0704D0CE5082D005A3060 /* libffmpeg_link.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libffmpeg_link.a; sourceTree = "<group>"; };
 		AAA070A90CE7B0DF005A3060 /* libmad-sm5.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libmad-sm5.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		AAA070B40CE7B3AD005A3060 /* bit.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bit.c; sourceTree = "<group>"; };
 		AAA070B50CE7B3AD005A3060 /* bit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bit.h; sourceTree = "<group>"; };
@@ -3339,12 +3348,15 @@
 				AA7C8D200B6748E400FD9940 /* libtomcrypt-sm5.a in Frameworks */,
 				AA7C8D1F0B6748E300FD9940 /* libtommath-sm5.a in Frameworks */,
 				AA059E2C0B8F0C67006F8139 /* libz_link.a in Frameworks */,
-				AAA0704E0CE5082E005A3060 /* libffmpeg_link.a in Frameworks */,
 				AAA071B40CE7C9C9005A3060 /* libmad-sm5.a in Frameworks */,
 				2B17AB9F13981271001AE57D /* libpng-1.5.1-sm5.a in Frameworks */,
 				2B17ABCF139815E0001AE57D /* libglew-sm5.a in Frameworks */,
 				2B17ABFC139817D5001AE57D /* libpcre-sm5.a in Frameworks */,
 				2BD91A7A1470DE4C008812C5 /* libjpeg.8.dylib in Frameworks */,
+				2B12F080148081490002A3F6 /* libavcodec_link.a in Frameworks */,
+				2B12F081148081490002A3F6 /* libavformat_link.a in Frameworks */,
+				2B12F082148081490002A3F6 /* libavutil_link.a in Frameworks */,
+				2B12F083148081490002A3F6 /* libswscale_link.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3369,8 +3381,11 @@
 				AA7C8D440B674F4F00FD9940 /* libtomcrypt-sm5.a in Frameworks */,
 				AA7C8D430B674F4E00FD9940 /* libtommath-sm5.a in Frameworks */,
 				AA059E2B0B8F0C67006F8139 /* libz_link.a in Frameworks */,
-				AAA0704F0CE5082E005A3060 /* libffmpeg_link.a in Frameworks */,
 				2B17ABFD139817D6001AE57D /* libpcre-sm5.a in Frameworks */,
+				2B12F084148081490002A3F6 /* libavcodec_link.a in Frameworks */,
+				2B12F0851480814A0002A3F6 /* libavformat_link.a in Frameworks */,
+				2B12F0861480814A0002A3F6 /* libavutil_link.a in Frameworks */,
+				2B12F0871480814A0002A3F6 /* libswscale_link.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3616,6 +3631,17 @@
 				2B12F07614807FE70002A3F6 /* swscale.h */,
 			);
 			name = libswscale;
+			sourceTree = "<group>";
+		};
+		2B12F07B148081490002A3F6 /* ffmpeg */ = {
+			isa = PBXGroup;
+			children = (
+				2B12F07C148081490002A3F6 /* libavcodec_link.a */,
+				2B12F07D148081490002A3F6 /* libavformat_link.a */,
+				2B12F07E148081490002A3F6 /* libavutil_link.a */,
+				2B12F07F148081490002A3F6 /* libswscale_link.a */,
+			);
+			path = ffmpeg;
 			sourceTree = "<group>";
 		};
 		2B766980132FF62B00586512 /* NoteParsing */ = {
@@ -5247,7 +5273,7 @@
 		AAA3741C09099ADA00141131 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
-				AAA0704D0CE5082D005A3060 /* libffmpeg_link.a */,
+				2B12F07B148081490002A3F6 /* ffmpeg */,
 				AA21E4750A9826CD00684CEA /* libogg_link.a */,
 				AA21E4770A9826CD00684CEA /* libtheora_link.a */,
 				AA21E4780A9826CD00684CEA /* libvorbis_link.a */,
@@ -8532,6 +8558,7 @@
 					"$(SRCROOT)/build/$(CONFIGURATION)",
 					"$(SRCROOT)/Libraries",
 					"\"$(SRCROOT)/../extern/mad-0.15.1b/msvc++/Release\"",
+					"\"$(SRCROOT)/Libraries/ffmpeg\"",
 				);
 				LIBRARY_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/build\"";
 				LINKER_DISPLAYS_MANGLED_NAMES = NO;
@@ -8544,6 +8571,7 @@
 				);
 				PRODUCT_NAME = StepMania;
 				SYMROOT = "$(SRCROOT)/..";
+				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/../extern/glew-1.5.8/include $(PROJECT_DIR)/../extern/jsoncpp/include $(PROJECT_DIR)/../extern/ffmpeg";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -8646,6 +8674,7 @@
 					"$(SRCROOT)/build/$(CONFIGURATION)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_1)",
 					"\"$(SRCROOT)/../extern/mad-0.15.1b/msvc++/Release\"",
+					"\"$(SRCROOT)/Libraries/ffmpeg\"",
 				);
 				LIBRARY_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/build\"";
 				OBJROOT = "$(SRCROOT)/build";
@@ -8695,6 +8724,7 @@
 					"$(SRCROOT)/build/$(CONFIGURATION)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_1)",
 					"\"$(SRCROOT)/../extern/mad-0.15.1b/msvc++/Release\"",
+					"\"$(SRCROOT)/Libraries/ffmpeg\"",
 				);
 				LIBRARY_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/build\"";
 				OBJROOT = "$(SRCROOT)/build";
@@ -8746,6 +8776,7 @@
 					"$(SRCROOT)/build/$(CONFIGURATION)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_1)",
 					"\"$(SRCROOT)/../extern/mad-0.15.1b/msvc++/Release\"",
+					"\"$(SRCROOT)/Libraries/ffmpeg\"",
 				);
 				LIBRARY_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/build\"";
 				OBJROOT = "$(SRCROOT)/build";
@@ -9243,6 +9274,7 @@
 					"$(SRCROOT)/build/$(CONFIGURATION)",
 					"$(SRCROOT)/Libraries",
 					"\"$(SRCROOT)/../extern/mad-0.15.1b/msvc++/Release\"",
+					"\"$(SRCROOT)/Libraries/ffmpeg\"",
 				);
 				LIBRARY_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/build\"";
 				LINKER_DISPLAYS_MANGLED_NAMES = NO;
@@ -9256,6 +9288,7 @@
 				PRODUCT_NAME = StepMania;
 				STRIP_INSTALLED_PRODUCT = NO;
 				SYMROOT = "$(SRCROOT)/..";
+				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/../extern/glew-1.5.8/include $(PROJECT_DIR)/../extern/jsoncpp/include $(PROJECT_DIR)/../extern/ffmpeg";
 				WRAPPER_EXTENSION = app;
 			};
 			name = PerformanceDebug;
@@ -9320,6 +9353,7 @@
 					"$(SRCROOT)/build/$(CONFIGURATION)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_1)",
 					"\"$(SRCROOT)/../extern/mad-0.15.1b/msvc++/Release\"",
+					"\"$(SRCROOT)/Libraries/ffmpeg\"",
 				);
 				LIBRARY_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/build\"";
 				OBJROOT = "$(SRCROOT)/build";
@@ -9490,6 +9524,7 @@
 					"$(SRCROOT)/build/$(CONFIGURATION)",
 					"$(SRCROOT)/Libraries",
 					"\"$(SRCROOT)/../extern/mad-0.15.1b/msvc++/Release\"",
+					"\"$(SRCROOT)/Libraries/ffmpeg\"",
 				);
 				LIBRARY_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/build\"";
 				LINKER_DISPLAYS_MANGLED_NAMES = NO;
@@ -9502,6 +9537,7 @@
 				);
 				PRODUCT_NAME = StepMania;
 				SYMROOT = "$(SRCROOT)/..";
+				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/../extern/glew-1.5.8/include $(PROJECT_DIR)/../extern/jsoncpp/include $(PROJECT_DIR)/../extern/ffmpeg";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Native;
@@ -9621,6 +9657,7 @@
 					"$(SRCROOT)/build/$(CONFIGURATION)",
 					"$(SRCROOT)/Libraries",
 					"\"$(SRCROOT)/../extern/mad-0.15.1b/msvc++/Release\"",
+					"\"$(SRCROOT)/Libraries/ffmpeg\"",
 				);
 				LIBRARY_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/build\"";
 				LINKER_DISPLAYS_MANGLED_NAMES = NO;
@@ -9633,6 +9670,7 @@
 				);
 				PRODUCT_NAME = StepMania;
 				SYMROOT = "$(SRCROOT)/..";
+				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/../extern/glew-1.5.8/include $(PROJECT_DIR)/../extern/jsoncpp/include $(PROJECT_DIR)/../extern/ffmpeg";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Universal;

@@ -12,10 +12,6 @@
 
 namespace avcodec
 {
-#if defined(MACOSX)
-	// old shit
-	#include <ffmpeg/avformat.h>
-#else
 	/* ...shit. this is gonna break building on Linux and Mac, isn't it?
 	 * (the way I have it set to include ffmpeg/crap/header.h instead of
 	 * crap/header.h like in the patch: http://pastie.org/701873 )
@@ -25,7 +21,6 @@ namespace avcodec
 		#include <libavformat/avformat.h>
 		#include <libswscale/swscale.h>
 	}
-#endif
 };
 
 int URLRageFile_open( avcodec::URLContext *h, const char *filename, int flags );
