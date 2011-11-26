@@ -95,8 +95,6 @@
 		<Function name='IsNetSMOnline'/>
 		<Function name='IsRoutine'/>
 		<Function name='IsSMOnlineLoggedIn'/>
-		<Function name='IsUsingTwoScreens'/>
-		<Function name='IsUsingWideScreen'/>
 		<Function name='IsW1Allowed'/>
 		<Function name='JudgmentLineToColor'/>
 		<Function name='JudgmentLineToLocalizedString'/>
@@ -945,8 +943,8 @@
 		<Class name='PlayerOptions'>
 			<Function name='GetAlternate'/>
 			<Function name='GetAttackMines'/>
-			<Function name='GetBackwards'/>
 			<Function name='GetBMRize'/>
+			<Function name='GetBackwards'/>
 			<Function name='GetBeat'/>
 			<Function name='GetBig'/>
 			<Function name='GetBlind'/>
@@ -1035,12 +1033,14 @@
 			<Function name='GetCurrentMissCombo'/>
 			<Function name='GetCurrentPossibleDancePoints'/>
 			<Function name='GetCurrentScoreMultiplier'/>
+			<Function name='GetFailed'/>
 			<Function name='GetGrade'/>
 			<Function name='GetHoldNoteScores'/>
 			<Function name='GetLessonScoreActual'/>
 			<Function name='GetLessonScoreNeeded'/>
 			<Function name='GetLifeRemainingSeconds'/>
 			<Function name='GetMachineHighScoreIndex'/>
+			<Function name='GetNumControllerSteps'/>
 			<Function name='GetPeakComboAward'/>
 			<Function name='GetPercentDancePoints'/>
 			<Function name='GetPercentageOfTaps'/>
@@ -1140,11 +1140,11 @@
 			<Function name='GetValue'/>
 		</Class>
 		<Class name='RageDisplay'>
+			<Function name='GetCumFPS'/>
 			<Function name='GetDisplayHeight'/>
 			<Function name='GetDisplayWidth'/>
 			<Function name='GetFPS'/>
 			<Function name='GetVPF'/>
-			<Function name='GetCumFPS'/>
 		</Class>
 		<Class name='RageFile'>
 			<Function name='AtEOF'/>
@@ -1497,7 +1497,7 @@
 		<Class name='ThemeManager'>
 			<Function name='DoesLanguageExist'/>
 			<Function name='DoesThemeExist'/>
-      <Function name='GetAbsolutePath' />
+			<Function name='GetAbsolutePath'/>
 			<Function name='GetCurLanguage'/>
 			<Function name='GetCurThemeName'/>
 			<Function name='GetCurrentThemeDirectory'/>
@@ -1667,6 +1667,7 @@
 		<Singleton class='RageFileManager' name='FILEMAN'/>
 		<Singleton class='GameManager' name='GAMEMAN'/>
 		<Singleton class='GameState' name='GAMESTATE'/>
+		<Singleton class='ArchHooks' name='HOOKS'/>
 		<Singleton class='NoteSkinManager' name='NOTESKIN'/>
 		<Singleton class='PrefsManager' name='PREFSMAN'/>
 		<Singleton class='ThemeManager' name='THEME'/>
@@ -2230,5 +2231,5 @@
 		<Constant name='top' value='&apos;VertAlign_Top&apos;'/>
 	</Constants>
 	<Version>StepMania v5.0 Preview 4</Version>
-	<Date>2011-10-06</Date>
+	<Date>2011-11-26</Date>
 </Lua>
