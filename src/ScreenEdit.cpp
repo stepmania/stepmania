@@ -226,10 +226,14 @@ void ScreenEdit::InitEditMappings()
 		m_EditMappingsDeviceInput.button[EDIT_BUTTON_BPM_UP][0] = DeviceInput(DEVICE_KEYBOARD, KEY_F8);
 		m_EditMappingsDeviceInput.button[EDIT_BUTTON_STOP_DOWN][0] = DeviceInput(DEVICE_KEYBOARD, KEY_F9);
 		m_EditMappingsDeviceInput.button[EDIT_BUTTON_STOP_UP][0]  = DeviceInput(DEVICE_KEYBOARD, KEY_F10);
-	/*
+	
 		m_EditMappingsDeviceInput.button[EDIT_BUTTON_DELAY_DOWN][0] = DeviceInput(DEVICE_KEYBOARD, KEY_F9);
+		m_EditMappingsDeviceInput.hold[EDIT_BUTTON_DELAY_DOWN][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT);
+		m_EditMappingsDeviceInput.hold[EDIT_BUTTON_DELAY_DOWN][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT);
 		m_EditMappingsDeviceInput.button[EDIT_BUTTON_DELAY_UP][0]  = DeviceInput(DEVICE_KEYBOARD, KEY_F10);
-	*/
+		m_EditMappingsDeviceInput.hold[EDIT_BUTTON_DELAY_UP][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT);
+		m_EditMappingsDeviceInput.hold[EDIT_BUTTON_DELAY_UP][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT);
+			
 		m_EditMappingsDeviceInput.button[EDIT_BUTTON_OFFSET_DOWN][0] = DeviceInput(DEVICE_KEYBOARD, KEY_F11);
 		m_EditMappingsDeviceInput.button[EDIT_BUTTON_OFFSET_UP][0]  = DeviceInput(DEVICE_KEYBOARD, KEY_F12);
 
@@ -1924,7 +1928,52 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			SetDirty( true );
 		}
 		break;
-
+	// TODO: Combine the stop and delay call somehow?
+	case EDIT_BUTTON_DELAY_UP:
+	case EDIT_BUTTON_DELAY_DOWN:
+		{
+			float fDelta;
+			switch( EditB )
+			{
+					DEFAULT_FAIL( EditB );
+				case EDIT_BUTTON_DELAY_UP:		fDelta = +0.020f;	break;
+				case EDIT_BUTTON_DELAY_DOWN:	fDelta = -0.020f;	break;
+			}
+			if( EditIsBeingPressed( EDIT_BUTTON_ADJUST_FINE ) )
+			{
+				fDelta /= 20; // 1ms
+			}
+			else if( input.type == IET_REPEAT )
+			{
+				if( INPUTFILTER->GetSecsHeld(input.DeviceI) < 1.0f )
+					fDelta *= 10;
+				else
+					fDelta *= 40;
+			}
+			
+			// is there a StopSegment on the current row?
+			TimingData & timing = GetAppropriateTiming();
+			DelaySegment *seg = timing.GetDelaySegmentAtRow( GetRow() );
+			int i = timing.GetSegmentIndexAtRow(SEGMENT_DELAY, GetRow());
+			if (i == -1 || seg->GetRow() != GetRow()) // invalid
+			{
+				if( fDelta > 0 )
+					timing.AddSegment( DelaySegment(GetRow(), fDelta) );
+				else
+					break;
+			}
+			else
+			{
+				vector<TimingSegment *> &stops = timing.GetTimingSegments(SEGMENT_DELAY);
+				seg->SetPause(seg->GetPause() + fDelta);
+				if( seg->GetPause() <= 0 )
+					stops.erase( stops.begin()+i, stops.begin()+i+1);
+			}
+			
+			(fDelta>0 ? m_soundValueIncrease : m_soundValueDecrease).Play();
+			SetDirty( true );
+		}
+			break;
 	case EDIT_BUTTON_OFFSET_UP:
 	case EDIT_BUTTON_OFFSET_DOWN:
 		{
@@ -5080,7 +5129,7 @@ static const EditHelpLine g_EditHelpLines[] =
 	EditHelpLine( "Next/prev steps of same StepsType",		EDIT_BUTTON_OPEN_NEXT_STEPS,		EDIT_BUTTON_OPEN_PREV_STEPS ),
 	EditHelpLine( "Decrease/increase BPM at cur beat",		EDIT_BUTTON_BPM_DOWN,			EDIT_BUTTON_BPM_UP ),
 	EditHelpLine( "Decrease/increase stop at cur beat",		EDIT_BUTTON_STOP_DOWN,			EDIT_BUTTON_STOP_UP ),
-	//EditHelpLine( "Decrease/increase delay at cur beat",		EDIT_BUTTON_DELAY_DOWN,			EDIT_BUTTON_DELAY_UP ),
+	EditHelpLine( "Decrease/increase delay at cur beat",		EDIT_BUTTON_DELAY_DOWN,			EDIT_BUTTON_DELAY_UP ),
 	EditHelpLine( "Decrease/increase music offset",			EDIT_BUTTON_OFFSET_DOWN,		EDIT_BUTTON_OFFSET_UP ),
 	EditHelpLine( "Decrease/increase sample music start",		EDIT_BUTTON_SAMPLE_START_DOWN,		EDIT_BUTTON_SAMPLE_START_UP ),
 	EditHelpLine( "Decrease/increase sample music length",		EDIT_BUTTON_SAMPLE_LENGTH_DOWN,		EDIT_BUTTON_SAMPLE_LENGTH_UP ),
