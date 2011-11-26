@@ -12,6 +12,9 @@ StepMania 5.0 $next | 20111xxx
 ----------
 * [ScreenEdit] Restore using F9 and F10 to adjust stops by a fixed amount.
   Sorry for the delay in this. [Wolfman2000]
+* [ScreenEdit] Minor convenience. If you attempt to create a negative stop
+  segment from scratch, it does not create, and you are not requested to
+  save on exit, for there is nothing to save. [Wolfman2000]
 
 2011/11/25
 ----------

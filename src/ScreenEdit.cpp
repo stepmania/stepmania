@@ -1908,6 +1908,8 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			{
 				if( fDelta > 0 )
 					timing.AddSegment( StopSegment(GetRow(), fDelta) );
+				else
+					break;
 			}
 			else
 			{
