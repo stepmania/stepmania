@@ -4397,13 +4397,13 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 			break;
 		}
 		case insert_and_shift:
-			NoteDataUtil::InsertRows( m_NoteDataEdit, BeatToNoteRow( GetBeat() ), BeatToNoteRow(1) );
+			NoteDataUtil::InsertRows( m_NoteDataEdit, GetRow() ), BeatToNoteRow(1) );
 			break;
 		case delete_and_shift:
-			NoteDataUtil::DeleteRows( m_NoteDataEdit, BeatToNoteRow( GetBeat() ), BeatToNoteRow(1) );
+			NoteDataUtil::DeleteRows( m_NoteDataEdit, GetRow() ), BeatToNoteRow(1) );
 			break;
 		case shift_pauses_forward:
-			GetAppropriateTiming().InsertRows( BeatToNoteRow( GetBeat() ), BeatToNoteRow(1) );
+			GetAppropriateTiming().InsertRows( GetRow() ), BeatToNoteRow(1) );
 			break;
 		case shift_pauses_backward:
 			GetAppropriateTiming().DeleteRows( GetRow() + 1, BeatToNoteRow(1) );
