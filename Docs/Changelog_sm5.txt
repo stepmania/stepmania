@@ -8,6 +8,13 @@ ________________________________________________________________________________
 StepMania 5.0 $next | 20111xxx
 --------------------------------------------------------------------------------
 
+2011/11/27
+----------
+* [PlayerOptions] Pretty large changes here, namely a bunch of new bindings.
+  Fixed the logic for GetReversePercentForColumn; It will now return nil for
+  invalid columns. Also fixed the logic for UsingReverse (now checks for 1.0f)
+  and SetPassmark (no longer allows values < 0.00f and > 1.0f). [AJ]
+
 2011/11/26
 ----------
 * [ScreenEdit] Restore using F9 and F10 to adjust stops by a fixed amount.
