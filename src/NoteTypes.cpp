@@ -72,7 +72,7 @@ int NoteTypeToRow( NoteType nt )
 		case NoteType_Invalid:
 			return 1;
 		default:
-			FAIL("Invalid note type found: cannot convert to row.");
+			FAIL_M("Invalid note type found: cannot convert to row.");
 	}
 }
 
