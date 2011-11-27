@@ -383,9 +383,14 @@ function UserPrefScoringMode()
 		Choices = baseChoices;
 		LoadSelections = function(self, list, pn)
 			if ReadPrefFromFile("UserPrefScoringMode") ~= nil then
+        --Load the saved scoring mode from UserPrefs.
 				local theValue = ReadPrefFromFile("UserPrefScoringMode");
-				local success = false;				
+				local success = false; 
+        --HACK: Preview 4 took out 1st and 4th scoring. Replace with a close equivalent.
+        if theValue == "DDR 1stMIX" or theValue == "DDR 4thMIX" then theValue = "Oldschool" end
+        --Search the list of scoring modes for the saved scoring mode.        
 				for k,v in ipairs(baseChoices) do if v == theValue then list[k] = true success = true break end end;
+        --We couldn't find it, pick the first available scoring mode as a sane default.
 				if success == false then list[1] = true end;
 			else
         WritePrefToFile("UserPrefScoringMode", baseChoices[1]);
