@@ -14,6 +14,11 @@ StepMania 5.0 $next | 20111xxx
   Fixed the logic for GetReversePercentForColumn; It will now return nil for
   invalid columns. Also fixed the logic for UsingReverse (now checks for 1.0f)
   and SetPassmark (no longer allows values < 0.00f and > 1.0f). [AJ]
+* [ScreenEdit] Allow inserting and removing beats and timing changes in
+  specific note increments instead of just quarter notes (a whole beat).
+  Those that prefer to keep using the shortcut keys will note that the
+  behavior has not changed for that: only by going into the Area menu can you
+  deal with more specific changes. [Wolfman2000]
 
 2011/11/26
 ----------

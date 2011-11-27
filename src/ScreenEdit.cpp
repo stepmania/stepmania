@@ -594,10 +594,10 @@ static MenuDef g_AreaMenu(
 	MenuRowDef( ScreenEdit::paste_at_current_beat,	"Paste at current beat",		true, EditMode_Practice, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::paste_at_begin_marker,	"Paste at begin marker",		true, EditMode_Practice, true, true, 0, NULL ),
     MenuRowDef( ScreenEdit::paste_partial_timing_at_beat,	"Paste Partial Timing at current beat",		true, EditMode_Practice, true, true, 0, NULL ),
-    MenuRowDef( ScreenEdit::insert_and_shift,	"Insert beat and shift down",		true, EditMode_Practice, true, true, 0, NULL ),
-	MenuRowDef( ScreenEdit::delete_and_shift,	"Delete beat and shift up",		true, EditMode_Practice, true, true, 0, NULL ),
-	MenuRowDef( ScreenEdit::shift_pauses_forward,	"Shift all timing changes down",	true, EditMode_Full, true, true, 0, NULL ),
-	MenuRowDef( ScreenEdit::shift_pauses_backward,	"Shift all timing changes up",		true, EditMode_Full, true, true, 0, NULL ),
+    MenuRowDef( ScreenEdit::insert_and_shift,	"Insert beat and shift down",		true, EditMode_Practice, true, true, 0, "4th","8th","12th","16th","24th","32nd","48th","64th","192nd" ),
+	MenuRowDef( ScreenEdit::delete_and_shift,	"Delete beat and shift up",		true, EditMode_Practice, true, true, 0, "4th","8th","12th","16th","24th","32nd","48th","64th","192nd" ),
+	MenuRowDef( ScreenEdit::shift_pauses_forward,	"Shift all timing changes down",	true, EditMode_Full, true, true, 0, "4th","8th","12th","16th","24th","32nd","48th","64th","192nd" ),
+	MenuRowDef( ScreenEdit::shift_pauses_backward,	"Shift all timing changes up",		true, EditMode_Full, true, true, 0, "4th","8th","12th","16th","24th","32nd","48th","64th","192nd" ),
 	MenuRowDef(ScreenEdit::convert_pause_to_beat,	"Convert pause to beats",		true, 
 	     EditMode_Full, true, true, 0, NULL ),
 	MenuRowDef(ScreenEdit::convert_delay_to_beat, "Convert delay to beats",		true,
@@ -4396,17 +4396,26 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 #endif
 			break;
 		}
+			
 		case insert_and_shift:
-			NoteDataUtil::InsertRows( m_NoteDataEdit, GetRow() ), BeatToNoteRow(1) );
+			NoteDataUtil::InsertRows( m_NoteDataEdit, GetRow(),
+				iAnswers.size() > 0 ? 
+				NoteTypeToRow((NoteType)iAnswers[c]) : 48);
 			break;
 		case delete_and_shift:
-			NoteDataUtil::DeleteRows( m_NoteDataEdit, GetRow() ), BeatToNoteRow(1) );
+			NoteDataUtil::DeleteRows( m_NoteDataEdit, GetRow(),
+				iAnswers.size() > 0 ? 
+				NoteTypeToRow((NoteType)iAnswers[c]) : 48);
 			break;
 		case shift_pauses_forward:
-			GetAppropriateTiming().InsertRows( GetRow() ), BeatToNoteRow(1) );
+			GetAppropriateTiming().InsertRows( GetRow(),
+				iAnswers.size() > 0 ? 
+				NoteTypeToRow((NoteType)iAnswers[c]) : 48);
 			break;
 		case shift_pauses_backward:
-			GetAppropriateTiming().DeleteRows( GetRow() + 1, BeatToNoteRow(1) );
+			GetAppropriateTiming().DeleteRows( GetRow() + 1,
+			  iAnswers.size() > 0 ? 
+			  NoteTypeToRow((NoteType)iAnswers[c]) : 48);
 			break;
 
 		case convert_pause_to_beat:
