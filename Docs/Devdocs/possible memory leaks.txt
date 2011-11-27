@@ -1,5 +1,5 @@
 as found by cppcheck against normal sm4svn source (as of 20090527), so
-line numbers will be different in sm-ssc for some of these.
+line numbers will be different in SM5 for some of these.
 ==================================================================================
 [.\ActorFrameTexture.h:38]: (all) Memory leak: ActorFrameTexture::m_pRenderTarget
 

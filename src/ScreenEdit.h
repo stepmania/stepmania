@@ -128,10 +128,10 @@ enum EditButton
 	EDIT_BUTTON_BPM_DOWN,
 	EDIT_BUTTON_STOP_UP,
 	EDIT_BUTTON_STOP_DOWN,
-	/*
+	
 	EDIT_BUTTON_DELAY_UP,
 	EDIT_BUTTON_DELAY_DOWN,
-	*/
+	
 	EDIT_BUTTON_OFFSET_UP,
 	EDIT_BUTTON_OFFSET_DOWN,
 	EDIT_BUTTON_SAMPLE_START_UP,
@@ -456,7 +456,8 @@ public:
 	{
 		left, /**< Turn the notes as if you were facing to the left. */
 		right, /**< Turn the notes as if you were facing to the right. */
-		mirror, /**< Turn the notes as if you were facing away from the machine. */
+		mirror, /**< Flip the notes vertically. */
+		turn_backwards, /**< Turn the notes as if you were facing away from the machine. */
 		shuffle, /**< Replace one column with another column. */
 		super_shuffle, /**< Replace each note individually. */
 		NUM_TURN_TYPES 

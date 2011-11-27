@@ -250,6 +250,10 @@ public:
 		ASSERT_M( m_iBufferUsed == m_iBufferAvail, ssprintf("%i", m_iBufferUsed) );
 
 		m_iBufferUsed = m_iBufferAvail = 0;
+		m_sError = "";
+
+		if( m_File.Tell() >= m_WavData.m_iDataChunkSize+m_WavData.m_iDataChunkPos || m_File.AtEOF() )
+			return true; /* past the data chunk */
 
 		int8_t iPredictor[2];
 		int16_t iDelta[2], iSamp1[2], iSamp2[2];
@@ -264,9 +268,6 @@ public:
 
 		if( m_sError.size() != 0 )
 			return false;
-
-		if( m_File.Tell() >= m_WavData.m_iDataChunkSize+m_WavData.m_iDataChunkPos || m_File.AtEOF() )
-			return true; /* past the data chunk */
 
 		float *pBuffer = m_pBuffer;
 		int iCoef1[2], iCoef2[2];
@@ -300,11 +301,12 @@ public:
 		}
 
 		for( int i = 0; i < m_WavData.m_iChannels; ++i )
-			pBuffer[m_iBufferAvail++] = iSamp2[i] / 32768.0f;
+			pBuffer[m_iBufferAvail++] = (int16_t)iSamp2[i] / 32768.0f;
 		for( int i = 0; i < m_WavData.m_iChannels; ++i )
-			pBuffer[m_iBufferAvail++] = iSamp1[i] / 32768.0f;
+			pBuffer[m_iBufferAvail++] = (int16_t)iSamp1[i] / 32768.0f;
 
-		int8_t iBuf = 0, iBufSize = 0;
+		int8_t iBufSize = 0;
+		uint8_t iBuf = 0;
 
 		bool bDone = false;
 		for( int i = 2; !bDone && i < m_iFramesPerBlock; ++i )
@@ -325,37 +327,39 @@ public:
 				}
 
 				/* Store the nibble in signed char, so we get an arithmetic shift. */
-				int iErrorDelta = iBuf >> 4;
+				int8_t iErrorDelta = (int8_t)(iBuf) >> 4;
+				uint8_t iErrorDeltaUnsigned = iBuf >> 4;
 				iBuf <<= 4;
 				--iBufSize;
 
 				int32_t iPredSample = (iSamp1[c] * iCoef1[c] + iSamp2[c] * iCoef2[c]) / (1<<8);
-				int32_t iNewSample = iPredSample + (iDelta[c] * iErrorDelta);
-				iNewSample = clamp( iNewSample, -32768, 32767 );
+				if( iPredSample < -32768 ) iPredSample = -32768;
+				if( iPredSample > 32767 )  iPredSample = 32767;
 				
+				int16_t iNewSample = (int16_t)iPredSample + (iDelta[c] * iErrorDelta);
 				pBuffer[m_iBufferAvail++] = iNewSample / 32768.0f;
 
 				static const int aAdaptionTable[] = {
-					768, 614, 512, 409, 307, 230, 230, 230,
-					230, 230, 230, 230, 307, 409, 512, 614
+					230, 230, 230, 230, 307, 409, 512, 614,
+					768, 614, 512, 409, 307, 230, 230, 230
 				};
-				iDelta[c] = int16_t( (iDelta[c] * aAdaptionTable[iErrorDelta+8]) / (1<<8) );
+				iDelta[c] = int16_t( (iDelta[c] * aAdaptionTable[iErrorDeltaUnsigned]) / (1<<8) );
 				iDelta[c] = max( (int16_t) 16, iDelta[c] );
 				
 				iSamp2[c] = iSamp1[c];
-				iSamp1[c] = (int16_t) iNewSample;
+				iSamp1[c] = iNewSample;
 			}
 		}
 		
-		m_iBufferAvail *= sizeof(int16_t);
 		return true;
 	}
 
 	int Read( float *buf, int iFrames )
 	{
-		int iSamplesPerFrame = m_WavData.m_iChannels;
-		int iBytesPerFrame = iSamplesPerFrame * sizeof(float);
 		int iGotFrames = 0;
+		
+		int iSample = 0;
+		
 		while( iGotFrames < (int) iFrames )
 		{
 			if( m_iBufferUsed == m_iBufferAvail )
@@ -370,17 +374,12 @@ public:
 				else
 					return iGotFrames;
 			}
-
-			int iFramesToCopy = (m_iBufferAvail-m_iBufferUsed) / iBytesPerFrame;
-			iFramesToCopy = min( iFramesToCopy, (int) (iFrames-iGotFrames) );
-			int iSamplesToCopy = iFramesToCopy * iSamplesPerFrame;
-			int iBytesToCopy = iSamplesToCopy * sizeof(float);
-			memcpy( buf, m_pBuffer+m_iBufferUsed, iBytesToCopy );
-			m_iBufferUsed += iBytesToCopy;
-			iGotFrames += iFramesToCopy;
-			buf += iSamplesToCopy;
+			for( int c = 0; c < m_WavData.m_iChannels; c ++ )
+			{
+				buf[iSample++] = m_pBuffer[m_iBufferUsed++];
+			}
+			iGotFrames++;
 		}
-		
 		return iGotFrames;
 	}
 
@@ -412,7 +411,7 @@ public:
 
 		{
 			const int iByte = iBlock*m_WavData.m_iBlockAlign;
-			if( iByte > m_WavData.m_iDataChunkSize )
+			if( iByte >= m_WavData.m_iDataChunkSize )
 			{
 				/* Past EOF. */
 				SetEOF();
@@ -425,7 +424,7 @@ public:
 			return -1;
 
 		const int iRemainingFrames = iFrame - iBlock*m_iFramesPerBlock;
-		m_iBufferUsed = iRemainingFrames * m_WavData.m_iChannels * sizeof(int16_t);
+		m_iBufferUsed = iRemainingFrames * m_WavData.m_iChannels;
 		if( m_iBufferUsed > m_iBufferAvail )
 		{
 			SetEOF();

@@ -432,7 +432,10 @@ bool SSCLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 
 				else if( sValueName=="KEYSOUNDS" )
 				{
-					split( sParams[1], ",", out.m_vsKeysoundFile );
+					RString keysounds = sParams[1];
+					if( keysounds.length() >= 2 && keysounds.substr(0, 2) == "\\#" )
+						keysounds = keysounds.substr(1);
+					split( keysounds, ",", out.m_vsKeysoundFile );
 				}
 
 				// Attacks loaded from file

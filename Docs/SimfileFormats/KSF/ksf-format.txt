@@ -57,8 +57,8 @@ in the format of:
 #TAGNAME:VALUE;
 
 The exception being the #STEPS tag, which has a newline between the ":"
-and the first line of steps, and ends in "2222222222222" on a line by
-itself instead of ";".
+and the first line of steps, and ends on a line containing at least one
+"2" among 13 characters.
 
 KSF files seem to use CRLF (Windows-style) line termination. The vast
 majority of KSF files are in CP942/KSC 5601 encoding, but some are
@@ -127,6 +127,21 @@ then 100 seconds into the song, from 180.2 to 195.
 
 BUNKIs can be a decimal value.
 
+STARTTIME
+---------
+
+STARTTIME tags control the offset of the chart. The chart will begin at
+the start of the music + the value of the STARTTIME (in centiseconds).
+
+STARTTIME2 and STARTTIME3 are the values that the offset is set to at
+the BUNKI and BUNKI2 points respectively. The chart position is moved
+as if the chart started at that offset.
+
+This allows for warps and other wonderful visual tricks like that, 
+but Direct Move and StepMania don't properly implement this feature. 
+Most KSFs don't use these tricks, thankfully, but you can find some 
+that do; famously three or so made by Turkeyslam a very long time ago.
+
 Syntax Exceptions
 -----------------
 Unlike DWI files, KSF files seem to have few exceptions or violations of
@@ -135,10 +150,11 @@ is so mind-numbingly stupid.
 
 Still Unknown
 -------------
-Some files contain a #STARTTIMEx (like #BPMx or #BUNKIx).
 
 KSF step lines are 13 digits wide; only 10 digits appear to specify steps,
-but the last 3 are not always 0. They probably represent something.
+but the last 3 are not always 0. They are probably light control 
+columns, but no dedicated KSF players support lights and SM won't load
+lights from these channels. There are no KSFs known to use them properly.
 
 Author
 ------
@@ -149,9 +165,12 @@ Changes
 -------
 2003.08.15
  - Initial check in / release.
+2011.10.31
+ - Describe STARTTIME, change various other info.
 
 Acknowledgements
 ----------------
 This document is based primarily off of extensive work done by Matt Reppert.
 The Stepmania KSF loader source code (src/NotesLoaderKSF.cpp) also proved
-useful in verifying some information.
+useful in verifying some information. The STARTTIME behavior was found in
+Kick it Up's source code in mid-2011.

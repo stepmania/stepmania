@@ -84,7 +84,10 @@ void ArrowEffects::Update()
 {
 	const Style* pStyle = GAMESTATE->GetCurrentStyle();
 
-	FOREACH_PlayerNumber( pn )
+	static float fLastTime = 0;
+	float fTime = RageTimer::GetTimeSinceStartFast();
+	
+	FOREACH_EnabledPlayer( pn )
 	{
 		const Style::ColumnInfo* pCols = pStyle->m_ColumnInfo[pn];
 		const SongPosition &position = GAMESTATE->m_bIsUsingStepTiming
@@ -92,15 +95,10 @@ void ArrowEffects::Update()
 
 		PerPlayerData &data = g_EffectData[pn];
 		
+		if( !position.m_bFreeze || !position.m_bDelay )
 		{
-			static float fLastTime = 0;
-			float fTime = RageTimer::GetTimeSinceStartFast();
-			if( !position.m_bFreeze || !position.m_bDelay )
-			{
-				data.m_fExpandSeconds += fTime - fLastTime;
-				data.m_fExpandSeconds = fmodf( data.m_fExpandSeconds, PI*2 );
-			}
-			fLastTime = fTime;
+			data.m_fExpandSeconds += fTime - fLastTime;
+			data.m_fExpandSeconds = fmodf( data.m_fExpandSeconds, PI*2 );
 		}
 		
 		// Update Tornado
@@ -211,6 +209,7 @@ void ArrowEffects::Update()
 			data.m_fBeatFactor *= 20.0f;
 		} while( false );
 	}
+	fLastTime = fTime;
 }
 
 static float GetDisplayedBeat( const PlayerState* pPlayerState, float beat )

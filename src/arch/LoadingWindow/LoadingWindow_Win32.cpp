@@ -194,6 +194,7 @@ void LoadingWindow_Win32::SetProgress(const int progress)
 	m_progress=progress;
 	HWND hwndItem = ::GetDlgItem( hwnd, IDC_PROGRESS );
 	::SendMessage(hwndItem,PBM_SETPOS,progress,0);
+	Paint();
 }
 
 void LoadingWindow_Win32::SetTotalWork(const int totalWork)

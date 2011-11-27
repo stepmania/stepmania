@@ -14,6 +14,7 @@ static GtkWidget *progressBar;
 
 extern "C" const char *Init( int *argc, char ***argv )
 {
+	// Need to use external library to load this image. Native loader seems broken :/
 	const gchar *splash_image_path = "Data/splash.png";
 	GtkWidget *vbox;
 
@@ -23,7 +24,10 @@ extern "C" const char *Init( int *argc, char ***argv )
 
 	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_position( GTK_WINDOW(window), GTK_WIN_POS_CENTER );
-	gtk_window_set_default_size( GTK_WINDOW(window), 512,96 );
+	gtk_widget_set_size_request(window,468,-1);
+	gtk_window_set_deletable( GTK_WINDOW(window), FALSE );
+	gtk_window_set_policy(GTK_WINDOW(window),FALSE,FALSE,TRUE);
+	gtk_window_set_role( GTK_WINDOW(window), "sm-startup" );
 	//gtk_window_set_icon( GTK_WINDOW(window), );
 	gtk_widget_realize(window);
 
@@ -31,14 +35,16 @@ extern "C" const char *Init( int *argc, char ***argv )
 
 	label = gtk_label_new(NULL);
 	gtk_label_set_justify(GTK_LABEL(label),GTK_JUSTIFY_CENTER);
+	gtk_label_set_ellipsize(GTK_LABEL(label),PANGO_ELLIPSIZE_END);
+	gtk_label_set_line_wrap(GTK_LABEL(label),FALSE);
 
 	progressBar = gtk_progress_bar_new();
 	gtk_progress_bar_set_fraction( GTK_PROGRESS_BAR(progressBar), 0.0 );
 
-	vbox = gtk_vbox_new(FALSE,5);
+	vbox = gtk_vbox_new(FALSE,0);
 	gtk_container_add(GTK_CONTAINER(window),vbox);
 	gtk_box_pack_start(GTK_BOX(vbox),splash,FALSE,FALSE,0);
-	gtk_box_pack_end(GTK_BOX(vbox),progressBar,TRUE,TRUE,0);
+	gtk_box_pack_end(GTK_BOX(vbox),progressBar,FALSE,FALSE,0);
 	gtk_box_pack_end(GTK_BOX(vbox),label,TRUE,TRUE,0);
 
 	gtk_widget_show_all(window);

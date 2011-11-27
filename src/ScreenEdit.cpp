@@ -226,10 +226,14 @@ void ScreenEdit::InitEditMappings()
 		m_EditMappingsDeviceInput.button[EDIT_BUTTON_BPM_UP][0] = DeviceInput(DEVICE_KEYBOARD, KEY_F8);
 		m_EditMappingsDeviceInput.button[EDIT_BUTTON_STOP_DOWN][0] = DeviceInput(DEVICE_KEYBOARD, KEY_F9);
 		m_EditMappingsDeviceInput.button[EDIT_BUTTON_STOP_UP][0]  = DeviceInput(DEVICE_KEYBOARD, KEY_F10);
-	/*
+	
 		m_EditMappingsDeviceInput.button[EDIT_BUTTON_DELAY_DOWN][0] = DeviceInput(DEVICE_KEYBOARD, KEY_F9);
+		m_EditMappingsDeviceInput.hold[EDIT_BUTTON_DELAY_DOWN][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT);
+		m_EditMappingsDeviceInput.hold[EDIT_BUTTON_DELAY_DOWN][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT);
 		m_EditMappingsDeviceInput.button[EDIT_BUTTON_DELAY_UP][0]  = DeviceInput(DEVICE_KEYBOARD, KEY_F10);
-	*/
+		m_EditMappingsDeviceInput.hold[EDIT_BUTTON_DELAY_UP][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT);
+		m_EditMappingsDeviceInput.hold[EDIT_BUTTON_DELAY_UP][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT);
+			
 		m_EditMappingsDeviceInput.button[EDIT_BUTTON_OFFSET_DOWN][0] = DeviceInput(DEVICE_KEYBOARD, KEY_F11);
 		m_EditMappingsDeviceInput.button[EDIT_BUTTON_OFFSET_UP][0]  = DeviceInput(DEVICE_KEYBOARD, KEY_F12);
 
@@ -549,7 +553,7 @@ static MenuDef g_AlterMenu(
 	      EditMode_Practice, true, true, 0, 
 	      "4th","8th","12th","16th","24th","32nd","48th","64th","192nd"),
    MenuRowDef(ScreenEdit::turn,				"Turn",					true, 
-	      EditMode_Practice, true, true, 0, "Left","Right","Mirror","Shuffle","SuperShuffle" ),
+	      EditMode_Practice, true, true, 0, "Left","Right","Mirror","Backwards","Shuffle","SuperShuffle" ),
    MenuRowDef(ScreenEdit::transform,			"Transform",				true, 
 	      EditMode_Practice, true, true, 0, "NoHolds","NoMines","Little","Wide",
 	      "Big","Quick","Skippy","Mines","Echo","Stomp","Planted","Floored",
@@ -1004,6 +1008,9 @@ void ScreenEdit::PlayTicks()
 	m_GameplayAssist.PlayTicks( m_Player->GetNoteData(), m_Player->GetPlayerState() );
 }
 
+static ThemeMetric<float> FADE_IN_PREVIEW("ScreenEdit", "FadeInPreview");
+static ThemeMetric<float> FADE_OUT_PREVIEW("ScreenEdit", "FadeOutPreview");
+
 void ScreenEdit::PlayPreviewMusic()
 {
 	SOUND->StopMusic();
@@ -1013,8 +1020,8 @@ void ScreenEdit::PlayPreviewMusic()
 		false,
 		m_pSong->m_fMusicSampleStartSeconds,
 		m_pSong->m_fMusicSampleLengthSeconds,
-		0.0f,
-		1.5f );
+		FADE_IN_PREVIEW,
+		FADE_OUT_PREVIEW );
 }
 
 void ScreenEdit::MakeFilteredMenuDef( const MenuDef* pDef, MenuDef &menu )
@@ -1493,14 +1500,13 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			// Alt + number = input to right half
 			if( EditIsBeingPressed(EDIT_BUTTON_RIGHT_SIDE) )
 				ShiftToRightSide( iCol, m_NoteDataEdit.GetNumTracks() );
-
+			
+			if( iCol >= m_NoteDataEdit.GetNumTracks() )
+				break; // this button is not in the range of columns for this Style
 
 			const float fSongBeat = GetBeat();
 			const int iSongIndex = BeatToNoteRow( fSongBeat );
-
-			if( iCol >= m_NoteDataEdit.GetNumTracks() )	// this button is not in the range of columns for this Style
-				break;
-
+			
 			// check for to see if the user intended to remove a HoldNote
 			int iHeadRow;
 			if( m_NoteDataEdit.IsHoldNoteAtRow( iCol, iSongIndex, &iHeadRow ) )
@@ -1571,7 +1577,8 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 	{
 		int tmp = enum_add2( this->currentCycleSegment, +1 );
 		wrap( *ConvertValue<int>(&tmp), NUM_TimingSegmentType );
-		break;	}
+		break;
+	}
 	case EDIT_BUTTON_SCROLL_SPEED_UP:
 	case EDIT_BUTTON_SCROLL_SPEED_DOWN:
 		{
@@ -1838,7 +1845,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 				SWITCHED_TO.GetValue() + " %s %s '%s' (%d of %d)",
 				GAMEMAN->GetStepsTypeInfo( pSteps->m_StepsType ).szName,
 				DifficultyToString( pSteps->GetDifficulty() ).c_str(),
-				pSteps->GetDescription().c_str(),
+				pSteps->GetChartName().c_str(),
 				it - vSteps.begin() + 1,
 				int(vSteps.size()) );
 			SCREENMAN->SystemMessage( s );
@@ -1897,36 +1904,76 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 				else
 					fDelta *= 40;
 			}
-			unsigned i;
 
-#if 0
 			// is there a StopSegment on the current row?
-			const StopSegment *seg = GetAppropriateTiming().GetStopSegmentAtRow( GetRow() );
-
-			// a stop already exists here; change its value by the delta
-			if( seg->GetRow() == GetRow() )
+			TimingData & timing = GetAppropriateTiming();
+			StopSegment *seg = timing.GetStopSegmentAtRow( GetRow() );
+			int i = timing.GetSegmentIndexAtRow(SEGMENT_STOP, GetRow());
+			if (i == -1 || seg->GetRow() != GetRow()) // invalid
 			{
-				float fSeconds = seg->GetPause() + fDelta;
-				GetAppropriateTiming().AddSegment
-			if( i == stops.size() )	// there is no StopSegment at the current beat
-			{
-				// create a new StopSegment
 				if( fDelta > 0 )
-					GetAppropriateTiming().AddSegment( StopSegment(GetRow(), fDelta) );
+					timing.AddSegment( StopSegment(GetRow(), fDelta) );
+				else
+					break;
 			}
-			else	// StopSegment being modified is m_SongTiming.m_StopSegments[i]
+			else
 			{
-				StopSegment *s = static_cast<StopSegment *>(stops[i]);
-				s->SetPause(s->GetPause() + fDelta);
-				if( s->GetPause() <= 0 )
+				vector<TimingSegment *> &stops = timing.GetTimingSegments(SEGMENT_STOP);
+				seg->SetPause(seg->GetPause() + fDelta);
+				if( seg->GetPause() <= 0 )
 					stops.erase( stops.begin()+i, stops.begin()+i+1);
 			}
-#endif
+
 			(fDelta>0 ? m_soundValueIncrease : m_soundValueDecrease).Play();
 			SetDirty( true );
 		}
 		break;
-
+	// TODO: Combine the stop and delay call somehow?
+	case EDIT_BUTTON_DELAY_UP:
+	case EDIT_BUTTON_DELAY_DOWN:
+		{
+			float fDelta;
+			switch( EditB )
+			{
+					DEFAULT_FAIL( EditB );
+				case EDIT_BUTTON_DELAY_UP:		fDelta = +0.020f;	break;
+				case EDIT_BUTTON_DELAY_DOWN:	fDelta = -0.020f;	break;
+			}
+			if( EditIsBeingPressed( EDIT_BUTTON_ADJUST_FINE ) )
+			{
+				fDelta /= 20; // 1ms
+			}
+			else if( input.type == IET_REPEAT )
+			{
+				if( INPUTFILTER->GetSecsHeld(input.DeviceI) < 1.0f )
+					fDelta *= 10;
+				else
+					fDelta *= 40;
+			}
+			
+			// is there a StopSegment on the current row?
+			TimingData & timing = GetAppropriateTiming();
+			DelaySegment *seg = timing.GetDelaySegmentAtRow( GetRow() );
+			int i = timing.GetSegmentIndexAtRow(SEGMENT_DELAY, GetRow());
+			if (i == -1 || seg->GetRow() != GetRow()) // invalid
+			{
+				if( fDelta > 0 )
+					timing.AddSegment( DelaySegment(GetRow(), fDelta) );
+				else
+					break;
+			}
+			else
+			{
+				vector<TimingSegment *> &stops = timing.GetTimingSegments(SEGMENT_DELAY);
+				seg->SetPause(seg->GetPause() + fDelta);
+				if( seg->GetPause() <= 0 )
+					stops.erase( stops.begin()+i, stops.begin()+i+1);
+			}
+			
+			(fDelta>0 ? m_soundValueIncrease : m_soundValueDecrease).Play();
+			SetDirty( true );
+		}
+			break;
 	case EDIT_BUTTON_OFFSET_UP:
 	case EDIT_BUTTON_OFFSET_DOWN:
 		{
@@ -3983,6 +4030,7 @@ void ScreenEdit::HandleAlterMenuChoice(AlterMenuChoice c, const vector<int> &iAn
 				case left:		NoteDataUtil::Turn( m_Clipboard, st, NoteDataUtil::left );		break;
 				case right:		NoteDataUtil::Turn( m_Clipboard, st, NoteDataUtil::right );		break;
 				case mirror:		NoteDataUtil::Turn( m_Clipboard, st, NoteDataUtil::mirror );		break;
+				case turn_backwards:		NoteDataUtil::Turn( m_Clipboard, st, NoteDataUtil::backwards );		break;
 				case shuffle:		NoteDataUtil::Turn( m_Clipboard, st, NoteDataUtil::shuffle );		break;
 				case super_shuffle:	NoteDataUtil::Turn( m_Clipboard, st, NoteDataUtil::super_shuffle );	break;
 			}
@@ -5081,7 +5129,7 @@ static const EditHelpLine g_EditHelpLines[] =
 	EditHelpLine( "Next/prev steps of same StepsType",		EDIT_BUTTON_OPEN_NEXT_STEPS,		EDIT_BUTTON_OPEN_PREV_STEPS ),
 	EditHelpLine( "Decrease/increase BPM at cur beat",		EDIT_BUTTON_BPM_DOWN,			EDIT_BUTTON_BPM_UP ),
 	EditHelpLine( "Decrease/increase stop at cur beat",		EDIT_BUTTON_STOP_DOWN,			EDIT_BUTTON_STOP_UP ),
-	//EditHelpLine( "Decrease/increase delay at cur beat",		EDIT_BUTTON_DELAY_DOWN,			EDIT_BUTTON_DELAY_UP ),
+	EditHelpLine( "Decrease/increase delay at cur beat",		EDIT_BUTTON_DELAY_DOWN,			EDIT_BUTTON_DELAY_UP ),
 	EditHelpLine( "Decrease/increase music offset",			EDIT_BUTTON_OFFSET_DOWN,		EDIT_BUTTON_OFFSET_UP ),
 	EditHelpLine( "Decrease/increase sample music start",		EDIT_BUTTON_SAMPLE_START_DOWN,		EDIT_BUTTON_SAMPLE_START_UP ),
 	EditHelpLine( "Decrease/increase sample music length",		EDIT_BUTTON_SAMPLE_LENGTH_DOWN,		EDIT_BUTTON_SAMPLE_LENGTH_UP ),

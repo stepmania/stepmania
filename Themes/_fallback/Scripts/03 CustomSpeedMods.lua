@@ -185,7 +185,7 @@ local function GetSpeedMods()
 
 	local baseFilename = "SpeedMods.txt"
 	local profileDirs = {
-		Fallback = "Data/", -- xxx: this seems to cause problems on windows vista/7
+		--Fallback = "Data/",
 		Machine = ProfileDir('ProfileSlot_Machine'),
 		PlayerNumber_P1 = ProfileDir('ProfileSlot_Player1'),
 		PlayerNumber_P2 = ProfileDir('ProfileSlot_Player2')
@@ -194,7 +194,7 @@ local function GetSpeedMods()
 	-- figure out how many players we have to deal with.
 	local numPlayers = GAMESTATE:GetNumPlayersEnabled()
 	-- load fallback
-	local fallbackMods = ParseSpeedModFile(profileDirs.Fallback..baseFilename)
+	--local fallbackMods = ParseSpeedModFile(profileDirs.Fallback..baseFilename)
 
 	-- load machine
 	local machineMods = ParseSpeedModFile(profileDirs.Machine..baseFilename)
@@ -210,7 +210,7 @@ local function GetSpeedMods()
 		end
 	end
 
-	finalMods = fallbackMods
+	--finalMods = fallbackMods
 	-- mine for duplicates, first pass (fallback <-> machine)
 	machineMods = MarkDupes(machineMods,finalMods)
 	for ply=1,#playerMods do

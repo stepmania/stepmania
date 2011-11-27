@@ -1,23 +1,17 @@
-The Golden Rules of sm-ssc Development
+The Golden Rules of StepMania 5 Development
 --------------------------------------------------------------------------------
-In addition to CodingStyle.txt, this is the doctrine for operation of sm-ssc.
+In addition to CodingStyle.txt, this is the doctrine for operation of SM5.
 
-1) Always remember that the original branch of StepMania exists, and that we need
-to give back to it in order for sm-ssc to survive.
-(Literal: Be sure to commit useful changes/fixes to the mainline StepMania branch
-every so often.)
-
-2) If you want something done, you should probably work on it yourself. However,
+1) If you want something done, you should probably work on it yourself. However,
 SSC members should be willing to help if their area of expertise and the problem
 domain overlap (life permitting).
 
-3) Always know your priorities. sm-ssc is important, but it's not life itself.
-Take breaks every once in a while. Work on other things. Don't get burned out
-from nonstop sm-ssc development.
+2) Always know your priorities. StepMania is not your life.
+Take breaks every once in a while. Work on other things.
+Don't get burned out from nonstop development.
 
-4) Patches should be checked for compatibility/compilability before being
+3) Patches should be checked for compatibility/compilability before being
 accepted and integrated. Common sense, but a golden rule nevertheless.
 
-5) Anyone who decides to theme for sm-ssc during development is willing to
-accept that occasionally, changes to the default and/or fallback theme will
-break things.
+4) Anyone who decides to theme during development is willing to accept that
+occasionally, changes to the default and/or fallback theme will break things.

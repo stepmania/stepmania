@@ -41,8 +41,6 @@ const RString RIVAL_SUBDIR         = "Rivals/";
 
 ThemeMetric<bool> SHOW_COIN_DATA( "Profile", "ShowCoinData" );
 static Preference<bool> g_bProfileDataCompress( "ProfileDataCompress", false );
-static Preference<bool> g_bCopyCatalogToProfiles( "CopyCatalogToProfiles", true );
-extern Preference<bool> g_bWriteCatalog;
 static ThemeMetric<RString> UNLOCK_AUTH_STRING( "Profile", "UnlockAuthString" );
 #define GUID_SIZE_BYTES 8
 
