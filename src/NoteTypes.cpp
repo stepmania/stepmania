@@ -30,7 +30,7 @@ static const char *NoteTypeNames[] = {
 	"192nd",
 };
 XToString( NoteType );
-LuaXType( NoteType )
+LuaXType( NoteType );
 XToLocalizedString( NoteType );
 
 /**
