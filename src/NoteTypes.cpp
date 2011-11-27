@@ -56,6 +56,26 @@ float NoteTypeToBeat( NoteType nt )
 	}
 }
 
+int NoteTypeToRow( NoteType nt )
+{
+	switch( nt )
+	{
+		case NOTE_TYPE_4TH: return 48;
+		case NOTE_TYPE_8TH: return 24;
+		case NOTE_TYPE_12TH: return 16;
+		case NOTE_TYPE_16TH: return 12;
+		case NOTE_TYPE_24TH: return 8;
+		case NOTE_TYPE_32ND: return 6;
+		case NOTE_TYPE_48TH: return 4;
+		case NOTE_TYPE_64TH: return 3;
+		case NOTE_TYPE_192ND:
+		case NoteType_Invalid:
+			return 1;
+		default:
+			FAIL("Invalid note type found: cannot convert to row.");
+	}
+}
+
 /**
  * @brief The number of beats per measure.
  *
