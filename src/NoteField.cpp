@@ -195,7 +195,7 @@ void NoteField::Load(
 	 * regardless of noteskin content. This may take a while to fix. */
 	NoteDisplayCols *badIdea = m_pCurDisplay;
 
-	if (sNoteSkinLower.empty())
+	if(sNoteSkinLower.empty())
 	{
 		sNoteSkinLower = m_pPlayerState->m_PlayerOptions.GetPreferred().m_sNoteSkin;
 
@@ -208,7 +208,7 @@ void NoteField::Load(
 
 	sNoteSkinLower.MakeLower();
 	map<RString, NoteDisplayCols *>::iterator it = m_NoteDisplays.find( sNoteSkinLower );
-	ASSERT_M( it != m_NoteDisplays.end(), sNoteSkinLower );
+	ASSERT_M( it != m_NoteDisplays.end(), ssprintf("iterator != m_NoteDisplays.end() [sNoteSkinLower = %s]",sNoteSkinLower.c_str()) );
 	memset( m_pDisplays, 0, sizeof(m_pDisplays) );
 	FOREACH_EnabledPlayer( pn )
 	{
