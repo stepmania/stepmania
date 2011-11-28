@@ -30,7 +30,7 @@ WheelItemBase::WheelItemBase(RString sType)
 
 void WheelItemBase::Load( RString sType )
 {
-	m_colorLocked = RageColor(0,0,0,0);
+	m_colorLocked = RageColor(0,0,0,0.25);
 }
 
 void WheelItemBase::LoadFromWheelItemData( const WheelItemBaseData* pWID, int iIndex, bool bHasFocus, int iDrawIndex )
