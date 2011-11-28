@@ -1,5 +1,5 @@
 local t = Def.ActorFrame{
-	LoadActor("danger");
+	--LoadActor("danger");
 	LoadActor("ScreenFilter");
 };
 
