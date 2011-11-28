@@ -2517,6 +2517,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			return;
 		}
 
+		// todo: add GameplayCleared, StartTransitioningCleared commands -aj
 		TweenOffScreen();
 
 		m_Out.StartTransitioning( SM_DoNextScreen );

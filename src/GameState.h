@@ -48,6 +48,7 @@ public:
 	/** @brief Reset the GameState back to initial values. */
 	void Reset();
 	void ResetPlayer( PlayerNumber pn );
+	void ResetPlayerOptions( PlayerNumber pn );
 	void ApplyCmdline(); // called by Reset
 	void ApplyGameCommand( const RString &sCommand, PlayerNumber pn=PLAYER_INVALID );
 	/** @brief Start the game when the first player joins in. */

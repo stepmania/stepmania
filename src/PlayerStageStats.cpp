@@ -19,6 +19,7 @@
 #define GRADE_TIER02_IS_FULL_COMBO THEME->GetMetricB("PlayerStageStats","GradeTier02IsFullCombo")
 
 static ThemeMetric<TapNoteScore> g_MinScoreToMaintainCombo( "Gameplay", "MinScoreToMaintainCombo" );
+static ThemeMetric<bool> g_MineHitIncrementsMissCombo( "Gameplay", "MineHitIncrementsMissCombo" );
 
 const float LESSON_PASS_THRESHOLD = 0.8f;
 
@@ -529,7 +530,11 @@ bool PlayerStageStats::FullComboOfScore( TapNoteScore tnsAllGreaterOrEqual ) con
 		if( m_iTapNoteScores[i] > 0 )
 			return false;
 	}
-	
+
+	// hit any mines when they increment the miss combo? It's not a full combo.
+	if( g_MineHitIncrementsMissCombo && m_iTapNoteScores[TNS_HitMine] > 0 )
+		return false;
+
 	// If has at least one of the judgments equal to or above, then is a full combo.
 	for( int i=tnsAllGreaterOrEqual; i<NUM_TapNoteScore; i++ )
 	{
@@ -678,13 +683,14 @@ class LunaPlayerStageStats: public Luna<PlayerStageStats>
 {
 public:
 	DEFINE_METHOD( GetCaloriesBurned,			m_fCaloriesBurned )
+	DEFINE_METHOD( GetNumControllerSteps,		m_iNumControllerSteps )
 	DEFINE_METHOD( GetLifeRemainingSeconds,		m_fLifeRemainingSeconds )
 	DEFINE_METHOD( GetSurvivalSeconds,			GetSurvivalSeconds() )
 	DEFINE_METHOD( GetCurrentCombo,				m_iCurCombo )
 	DEFINE_METHOD( GetCurrentMissCombo,			m_iCurMissCombo )
 	DEFINE_METHOD( GetCurrentScoreMultiplier,	m_iCurScoreMultiplier )
 	DEFINE_METHOD( GetScore,					m_iScore )
-	DEFINE_METHOD( GetCurMaxScore,			m_iCurMaxScore )
+	DEFINE_METHOD( GetCurMaxScore,				m_iCurMaxScore )
 	DEFINE_METHOD( GetTapNoteScores,			m_iTapNoteScores[Enum::Check<TapNoteScore>(L, 1)] )
 	DEFINE_METHOD( GetHoldNoteScores,			m_iHoldNoteScores[Enum::Check<HoldNoteScore>(L, 1)] )
 	DEFINE_METHOD( FullCombo,					FullCombo() )
@@ -706,6 +712,7 @@ public:
 	DEFINE_METHOD( GetAliveSeconds,				m_fAliveSeconds )
 	DEFINE_METHOD( GetPercentageOfTaps,			GetPercentageOfTaps( Enum::Check<TapNoteScore>(L, 1) ) )
 	DEFINE_METHOD( GetBestFullComboTapNoteScore, GetBestFullComboTapNoteScore() )
+	DEFINE_METHOD( GetFailed, 					m_bFailed )
 
 	static int GetPlayedSteps( T* p, lua_State *L )
 	{
@@ -752,6 +759,7 @@ public:
 	LunaPlayerStageStats()
 	{
 		ADD_METHOD( GetCaloriesBurned );
+		ADD_METHOD( GetNumControllerSteps );
 		ADD_METHOD( GetLifeRemainingSeconds );
 		ADD_METHOD( GetSurvivalSeconds );
 		ADD_METHOD( GetCurrentCombo );
@@ -784,7 +792,9 @@ public:
 		ADD_METHOD( GetRadarActual );
 		ADD_METHOD( GetRadarPossible );
 		ADD_METHOD( GetBestFullComboTapNoteScore );
+		ADD_METHOD( GetFailed );
 		ADD_METHOD( SetScore );
+		ADD_METHOD( GetCurMaxScore );
 		ADD_METHOD( SetCurMaxScore );
 	}
 };

@@ -615,8 +615,8 @@ libtomcrypt_a_CPPFLAGS = -I$(srcdir)/libtomcrypt/src/headers $(AM_CPPFLAGS)
 
 noinst_LIBRARIES += libtomcrypt.a
 
-main_CPPFLAGS = -I$(top_srcdir)/extern/jsoncpp/include \
--I$(top_srcdir)/extern/glew-1.5.8/include
+main_CPPFLAGS = -I$(top_srcdir)/extern/jsoncpp/include
+#-I$(top_srcdir)/extern/glew-1.5.8/include
 
 main_SOURCES = $(PNG) \
 		$(Screens) \

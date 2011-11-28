@@ -82,9 +82,11 @@ void ScreenOptionsExportPackage::ProcessMenuStart( const InputEventPlus &input )
 
 	SCREENMAN->PlayStartSound();
 	this->BeginFadingOut();
-	// todo: find a way to make this next transition not be so bad.
+	// todo: find a way to make this transition not be instant.
 	SCREENMAN->SetNewScreen("ScreenOptionsExportPackageSubPage");
 }
+
+// todo: process menu back in SubGroup mode
 
 void ScreenOptionsExportPackage::ImportOptions( int iRow, const vector<PlayerNumber> &vpns )
 {
@@ -153,15 +155,13 @@ void ScreenOptionsExportPackageSubPage::BeginScreen()
 	else if( *s_packageType == "SubGroup" )
 	{
 		//ExportPackages::m_sFolder
-		/*
 		vector<RString> vs;
-		GetDirListing( SpecialFiles::SONGS_DIR + "*", vs, true, true );
+		GetDirListing( SpecialFiles::SONGS_DIR + "/" + ExportPackages::m_sFolder + "/*", vs, true, true );
 		FOREACH_CONST( RString, vs, s )
 		{
 			m_vsPossibleDirsToExport.push_back( *s );
 			GetDirListing( *s + "/*", m_vsPossibleDirsToExport, true, true );
 		}
-		*/
 	}
 	StripCvsAndSvn( m_vsPossibleDirsToExport );
 	StripMacResourceForks( m_vsPossibleDirsToExport );

@@ -807,9 +807,43 @@ public:
 		p->DimMusic( fVolume, fDurationSeconds );
 		return 0;
 	}
-	static int PlayOnce( T* p, lua_State *L ) { RString sPath = SArg(1); p->PlayOnce( sPath ); return 0; }
-	static int PlayAnnouncer( T* p, lua_State *L ) { RString sPath = SArg(1); p->PlayOnceFromAnnouncer( sPath ); return 0; }
-	static int GetPlayerBalance( T* p, lua_State *L ) { PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1); lua_pushnumber( L, p->GetPlayerBalance(pn) ); return 1; }
+	static int PlayOnce( T* p, lua_State *L )
+	{
+		RString sPath = SArg(1);
+		p->PlayOnce( sPath );
+		return 0;
+	}
+	static int PlayAnnouncer( T* p, lua_State *L )
+	{
+		RString sPath = SArg(1);
+		p->PlayOnceFromAnnouncer( sPath );
+		return 0;
+	}
+	static int GetPlayerBalance( T* p, lua_State *L )
+	{
+		PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);
+		lua_pushnumber( L, p->GetPlayerBalance(pn) );
+		return 1;
+	}
+	static int PlayMusicPart( T* p, lua_State *L )
+	{
+		RString musicPath = SArg(1);
+		float musicStart = FArg(2);
+		float musicLength = FArg(3);
+		float fadeIn = 0;
+		float fadeOut = 0;
+		if (lua_gettop(L) >= 4 && !lua_isnil(L,4))
+		{
+			fadeIn = FArg(4);
+			if (lua_gettop(L) >= 5 && !lua_isnil(L,5))
+			{
+				fadeOut = FArg(5);
+			}
+		}
+		p->PlayMusic(musicPath, NULL, false, musicStart, musicLength,
+					 fadeIn, fadeOut);
+		return 0;
+	}
 
 	LunaGameSoundManager()
 	{
@@ -817,6 +851,7 @@ public:
 		ADD_METHOD( PlayOnce );
 		ADD_METHOD( PlayAnnouncer );
 		ADD_METHOD( GetPlayerBalance );
+		ADD_METHOD( PlayMusicPart );
 	}
 };
 

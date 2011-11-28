@@ -9,16 +9,6 @@ AspectRatios = {
 	EightThree  = 2.66666	-- 1280x480 (two monitors)
 }
 
-function IsUsingWideScreen()
-	return GetScreenAspectRatio() >= AspectRatios.SixteenTen
-end
-
-function IsUsingTwoScreens()
-	return GetScreenAspectRatio() == AspectRatios.EightThree
-end
-
 function WideScale(AR4_3, AR16_9)
 	return scale( SCREEN_WIDTH, 640, 854, AR4_3, AR16_9 )
 end
-
--- take and use it as you like, I don't care -aj

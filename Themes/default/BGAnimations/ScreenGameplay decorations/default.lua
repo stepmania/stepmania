@@ -176,7 +176,7 @@ for pn in ivalues(PlayerNumber) do
 			Tip=LoadActor( THEME:GetPathG( 'SongMeterDisplay', 'tip ' .. PlayerNumberToString(pn) ) ) .. { InitCommand=cmd(visible,false); };
 		};
 	};
-	if ReadPrefFromFile("UserPrefTimingDisplay") == true then
+  if GetUserPrefB("UserPrefTimingDisplay") == true then
 		songMeterDisplay[#songMeterDisplay+1] = CreateSegments(pn);
 	end
 	t[#t+1] = songMeterDisplay

@@ -95,8 +95,6 @@
 		<Function name='IsNetSMOnline'/>
 		<Function name='IsRoutine'/>
 		<Function name='IsSMOnlineLoggedIn'/>
-		<Function name='IsUsingTwoScreens'/>
-		<Function name='IsUsingWideScreen'/>
 		<Function name='IsW1Allowed'/>
 		<Function name='JudgmentLineToColor'/>
 		<Function name='JudgmentLineToLocalizedString'/>
@@ -535,6 +533,10 @@
 			<Function name='GetCurrentAnnouncer'/>
 			<Function name='SetCurrentAnnouncer'/>
 		</Class>
+		<Class name='ArchHooks'>
+			<Function name='AppHasFocus'/>
+			<Function name='GetArchName'/>
+		</Class>
 		<Class base='BitmapText' name='BPMDisplay'>
 			<Function name='GetText'/>
 			<Function name='SetFromCourse'/>
@@ -701,6 +703,7 @@
 			<Function name='DimMusic'/>
 			<Function name='GetPlayerBalance'/>
 			<Function name='PlayAnnouncer'/>
+			<Function name='PlayMusicPart'/>
 			<Function name='PlayOnce'/>
 		</Class>
 		<Class name='GameState'>
@@ -788,7 +791,9 @@
 			<Function name='JoinPlayer'/>
 			<Function name='PlayerIsUsingModifier'/>
 			<Function name='PlayersCanJoin'/>
+			<Function name='RefreshNoteSkinData'/>
 			<Function name='Reset'/>
+			<Function name='ResetPlayerOptions'/>
 			<Function name='SaveLocalData'/>
 			<Function name='SetCharacter'/>
 			<Function name='SetCurrentCourse'/>
@@ -939,6 +944,7 @@
 			<Function name='GetAlternate'/>
 			<Function name='GetAttackMines'/>
 			<Function name='GetBMRize'/>
+			<Function name='GetBackwards'/>
 			<Function name='GetBeat'/>
 			<Function name='GetBig'/>
 			<Function name='GetBlind'/>
@@ -969,6 +975,7 @@
 			<Function name='GetMines'/>
 			<Function name='GetMini'/>
 			<Function name='GetMirror'/>
+			<Function name='GetMuteOnError'/>
 			<Function name='GetNoAttacks'/>
 			<Function name='GetNoFakes'/>
 			<Function name='GetNoHands'/>
@@ -1011,7 +1018,79 @@
 			<Function name='GetWide'/>
 			<Function name='GetXMod'/>
 			<Function name='GetXMode'/>
+			<Function name='SetAlternate'/>
+			<Function name='SetAttackMines'/>
+			<Function name='SetBMRize'/>
+			<Function name='SetBackwards'/>
+			<Function name='SetBeat'/>
+			<Function name='SetBig'/>
+			<Function name='SetBlind'/>
+			<Function name='SetBlink'/>
+			<Function name='SetBoomerang'/>
+			<Function name='SetBoost'/>
+			<Function name='SetBrake'/>
+			<Function name='SetBumpy'/>
+			<Function name='SetCMod'/>
+			<Function name='SetCentered'/>
+			<Function name='SetConfusion'/>
+			<Function name='SetCover'/>
+			<Function name='SetCross'/>
+			<Function name='SetDark'/>
+			<Function name='SetDizzy'/>
+			<Function name='SetDrunk'/>
+			<Function name='SetEcho'/>
+			<Function name='SetExpand'/>
+			<Function name='SetFlip'/>
+			<Function name='SetFloored'/>
+			<Function name='SetHidden'/>
+			<Function name='SetHiddenOffset'/>
+			<Function name='SetHoldRolls'/>
+			<Function name='SetInvert'/>
+			<Function name='SetLeft'/>
+			<Function name='SetLittle'/>
+			<Function name='SetMMod'/>
+			<Function name='SetMines'/>
+			<Function name='SetMini'/>
+			<Function name='SetMirror'/>
+			<Function name='SetMuteOnError'/>
+			<Function name='SetNoFakes'/>
+			<Function name='SetNoHands'/>
+			<Function name='SetNoHolds'/>
+			<Function name='SetNoJumps'/>
+			<Function name='SetNoLifts'/>
+			<Function name='SetNoMines'/>
+			<Function name='SetNoQuads'/>
+			<Function name='SetNoRolls'/>
+			<Function name='SetNoStretch'/>
 			<Function name='SetNoteSkin'/>
+			<Function name='SetPassmark'/>
+			<Function name='SetPlanted'/>
+			<Function name='SetQuick'/>
+			<Function name='SetRandomAttacks'/>
+			<Function name='SetRandomSpeed'/>
+			<Function name='SetRandomVanish'/>
+			<Function name='SetReverse'/>
+			<Function name='SetRight'/>
+			<Function name='SetRoll'/>
+			<Function name='SetShuffle'/>
+			<Function name='SetSkew'/>
+			<Function name='SetSkippy'/>
+			<Function name='SetSoftShuffle'/>
+			<Function name='SetSplit'/>
+			<Function name='SetStealth'/>
+			<Function name='SetStomp'/>
+			<Function name='SetSudden'/>
+			<Function name='SetSuddenOffset'/>
+			<Function name='SetSuperShuffle'/>
+			<Function name='SetTiny'/>
+			<Function name='SetTipsy'/>
+			<Function name='SetTornado'/>
+			<Function name='SetTwirl'/>
+			<Function name='SetTwister'/>
+			<Function name='SetWave'/>
+			<Function name='SetWide'/>
+			<Function name='SetXMod'/>
+			<Function name='SetXMode'/>
 			<Function name='UsingReverse'/>
 		</Class>
 		<Class name='PlayerStageStats'>
@@ -1027,12 +1106,14 @@
 			<Function name='GetCurrentMissCombo'/>
 			<Function name='GetCurrentPossibleDancePoints'/>
 			<Function name='GetCurrentScoreMultiplier'/>
+			<Function name='GetFailed'/>
 			<Function name='GetGrade'/>
 			<Function name='GetHoldNoteScores'/>
 			<Function name='GetLessonScoreActual'/>
 			<Function name='GetLessonScoreNeeded'/>
 			<Function name='GetLifeRemainingSeconds'/>
 			<Function name='GetMachineHighScoreIndex'/>
+			<Function name='GetNumControllerSteps'/>
 			<Function name='GetPeakComboAward'/>
 			<Function name='GetPercentDancePoints'/>
 			<Function name='GetPercentageOfTaps'/>
@@ -1132,8 +1213,11 @@
 			<Function name='GetValue'/>
 		</Class>
 		<Class name='RageDisplay'>
+			<Function name='GetCumFPS'/>
 			<Function name='GetDisplayHeight'/>
 			<Function name='GetDisplayWidth'/>
+			<Function name='GetFPS'/>
+			<Function name='GetVPF'/>
 		</Class>
 		<Class name='RageFile'>
 			<Function name='AtEOF'/>
@@ -1486,6 +1570,7 @@
 		<Class name='ThemeManager'>
 			<Function name='DoesLanguageExist'/>
 			<Function name='DoesThemeExist'/>
+			<Function name='GetAbsolutePath'/>
 			<Function name='GetCurLanguage'/>
 			<Function name='GetCurThemeName'/>
 			<Function name='GetCurrentThemeDirectory'/>
@@ -1655,6 +1740,7 @@
 		<Singleton class='RageFileManager' name='FILEMAN'/>
 		<Singleton class='GameManager' name='GAMEMAN'/>
 		<Singleton class='GameState' name='GAMESTATE'/>
+		<Singleton class='ArchHooks' name='HOOKS'/>
 		<Singleton class='NoteSkinManager' name='NOTESKIN'/>
 		<Singleton class='PrefsManager' name='PREFSMAN'/>
 		<Singleton class='ThemeManager' name='THEME'/>
@@ -2218,5 +2304,5 @@
 		<Constant name='top' value='&apos;VertAlign_Top&apos;'/>
 	</Constants>
 	<Version>StepMania v5.0 Preview 4</Version>
-	<Date>2011-10-06</Date>
+	<Date>2011-11-27</Date>
 </Lua>

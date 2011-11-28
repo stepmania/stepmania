@@ -105,6 +105,8 @@ bool Steps::GetNoteDataFromSimfile()
 	// Replace the line below with the Steps' cache file.
 	RString stepFile = this->GetFilename();
 	RString extension = GetExtension(stepFile);
+	extension.MakeLower(); // must do this because the code is expecting lowercase
+
 	if (extension.empty() || extension == "ssc") // remember cache files.
 	{
 		SSCLoader loader;
@@ -128,13 +130,9 @@ bool Steps::GetNoteDataFromSimfile()
 	{
 		return KSFLoader::LoadNoteDataFromSimfile(stepFile, *this);
 	}
-	else if (extension == "bms" || extension == "bml" || extension == "bme")
+	else if (extension == "bms" || extension == "bml" || extension == "bme" || extension == "pms")
 	{
 		return BMSLoader::LoadNoteDataFromSimfile(stepFile, *this);
-	}
-	else if (extension == "pms")
-	{
-		return PMSLoader::LoadNoteDataFromSimfile(stepFile, *this);
 	}
 	return false;
 }
@@ -346,7 +344,8 @@ void Steps::Decompress()
 		// We have NoteData on disk and not in memory. Load it.
 		if (!this->GetNoteDataFromSimfile())
 		{
-			LOG->Warn("Couldn't load \"%s\"", m_sFilename.c_str());
+			LOG->Warn("Couldn't load the %s chart's NoteData from \"%s\"",
+					  DifficultyToString(m_Difficulty).c_str(), m_sFilename.c_str());
 			return;
 		}
 
@@ -374,6 +373,12 @@ void Steps::Compress() const
 	if( this->m_StepsType == StepsType_lights_cabinet && m_bNoteDataIsFilled )
 	{
 		m_sNoteDataCompressed = RString();
+		return;
+	}
+	
+	// Don't compress data in the editor: it's still in use.
+	if (GAMESTATE->m_bInStepEditor)
+	{
 		return;
 	}
 

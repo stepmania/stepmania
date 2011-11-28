@@ -21,14 +21,17 @@ void GameplayAssist::PlayTicks( const NoteData &nd, const PlayerState *ps )
 	if( !bClap  &&  !bMetronome )
 		return;
 
+	// don't play sounds for dead players
+	if( ps->m_HealthState == HealthState_Dead )
+		return;
+
 	/* Sound cards have a latency between when a sample is Play()ed and when the sound
 	 * will start coming out the speaker.  Compensate for this by boosting fPositionSeconds
 	 * ahead.  This is just to make sure that we request the sound early enough for it to
 	 * come out on time; the actual precise timing is handled by SetStartTime. */
-	
 	SongPosition &position = GAMESTATE->m_pPlayerState[ps->m_PlayerNumber]->m_Position;
 	float fPositionSeconds = position.m_fMusicSeconds;
-	
+
 	//float fPositionSeconds = GAMESTATE->m_Position.m_fMusicSeconds;
 	fPositionSeconds += SOUNDMAN->GetPlayLatency() + (float)CommonMetrics::TICK_EARLY_SECONDS + 0.250f;
 	const TimingData &timing = GAMESTATE->m_pCurSteps[ps->m_PlayerNumber]->m_Timing;

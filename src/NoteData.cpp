@@ -599,14 +599,15 @@ int NoteData::GetNumRowsWithSimultaneousTaps( int iMinTaps, int iStartIndex, int
 	int iNum = 0;
 	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( *this, r, iStartIndex, iEndIndex )
 	{
+		if (!GAMESTATE->GetProcessedTimingData()->IsJudgableAtRow(r))
+			continue;
 		int iNumNotesThisIndex = 0;
 		for( int t=0; t<GetNumTracks(); t++ )
 		{
 			const TapNote &tn = GetTapNote(t, r);
 			if( tn.type != TapNote::mine     // mines don't count.
 			   &&  tn.type != TapNote::empty  
-			   &&  tn.type != TapNote::fake
-			   && GAMESTATE->GetProcessedTimingData()->IsJudgableAtRow(r))
+			   &&  tn.type != TapNote::fake)
 				iNumNotesThisIndex++;
 		}
 		if( iNumNotesThisIndex >= iMinTaps )

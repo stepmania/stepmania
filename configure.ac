@@ -3,6 +3,7 @@ AC_INIT(StepMania 5, experimental, [http://ssc.ajworld.net/sm-ssc/], StepMania)
 AC_CONFIG_SRCDIR([src/StepMania.cpp])
 AC_CONFIG_AUX_DIR(autoconf)
 AC_CANONICAL_TARGET
+AC_PREFIX_DEFAULT(/opt)
 
 AM_INIT_AUTOMAKE([no-define])
 AC_CONFIG_HEADERS([src/config.h])

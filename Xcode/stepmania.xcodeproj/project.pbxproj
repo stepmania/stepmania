@@ -106,6 +106,7 @@
 		2BD6E15A13D78FAE008443DB /* uncompr.c in Sources */ = {isa = PBXBuildFile; fileRef = 2BD6E14013D78FAD008443DB /* uncompr.c */; };
 		2BD6E15B13D78FAE008443DB /* zutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 2BD6E14113D78FAD008443DB /* zutil.c */; };
 		2BD6E15C13D78FAE008443DB /* zutil.h in Headers */ = {isa = PBXBuildFile; fileRef = 2BD6E14213D78FAD008443DB /* zutil.h */; };
+		2BD91A7A1470DE4C008812C5 /* libjpeg.8.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BD91A791470DE4C008812C5 /* libjpeg.8.dylib */; };
 		2BDB88E9137201F700E6FD3A /* lapi.c in Sources */ = {isa = PBXBuildFile; fileRef = 2BDB88B2137201F700E6FD3A /* lapi.c */; };
 		2BDB88EA137201F700E6FD3A /* lapi.h in Headers */ = {isa = PBXBuildFile; fileRef = 2BDB88B3137201F700E6FD3A /* lapi.h */; };
 		2BDB88EB137201F700E6FD3A /* lauxlib.c in Sources */ = {isa = PBXBuildFile; fileRef = 2BDB88B4137201F700E6FD3A /* lauxlib.c */; };
@@ -220,11 +221,9 @@
 		AA1F9C4909AF1BF5002C15A8 /* PumpDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = AA1F9C4509AF1BF5002C15A8 /* PumpDevice.h */; };
 		AA1F9C4A09AF1BF5002C15A8 /* PumpDevice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA1F9C4609AF1BF5002C15A8 /* PumpDevice.cpp */; };
 		AA21D59D0712ADE4008B825F /* ScreenDimensions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA21D59C0712ADE4008B825F /* ScreenDimensions.cpp */; };
-		AA21E4790A9826CD00684CEA /* libjpeg_link.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AA21E4730A9826CD00684CEA /* libjpeg_link.a */; };
 		AA21E47B0A9826CD00684CEA /* libogg_link.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AA21E4750A9826CD00684CEA /* libogg_link.a */; };
 		AA21E47D0A9826CD00684CEA /* libtheora_link.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AA21E4770A9826CD00684CEA /* libtheora_link.a */; };
 		AA21E47E0A9826CD00684CEA /* libvorbis_link.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AA21E4780A9826CD00684CEA /* libvorbis_link.a */; };
-		AA21E47F0A9826CD00684CEA /* libjpeg_link.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AA21E4730A9826CD00684CEA /* libjpeg_link.a */; };
 		AA21E4810A9826CD00684CEA /* libogg_link.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AA21E4750A9826CD00684CEA /* libogg_link.a */; };
 		AA21E4830A9826CD00684CEA /* libtheora_link.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AA21E4770A9826CD00684CEA /* libtheora_link.a */; };
 		AA21E4840A9826CD00684CEA /* libvorbis_link.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AA21E4780A9826CD00684CEA /* libvorbis_link.a */; };
@@ -1929,6 +1928,7 @@
 		2BD6E14013D78FAD008443DB /* uncompr.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = uncompr.c; sourceTree = "<group>"; };
 		2BD6E14113D78FAD008443DB /* zutil.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = zutil.c; sourceTree = "<group>"; };
 		2BD6E14213D78FAD008443DB /* zutil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = zutil.h; sourceTree = "<group>"; };
+		2BD91A791470DE4C008812C5 /* libjpeg.8.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libjpeg.8.dylib; path = usr/local/lib/libjpeg.8.dylib; sourceTree = SDKROOT; };
 		2BDB88B2137201F700E6FD3A /* lapi.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = lapi.c; path = "../extern/lua-5.1/src/lapi.c"; sourceTree = SOURCE_ROOT; };
 		2BDB88B3137201F700E6FD3A /* lapi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = lapi.h; path = "../extern/lua-5.1/src/lapi.h"; sourceTree = SOURCE_ROOT; };
 		2BDB88B4137201F700E6FD3A /* lauxlib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = lauxlib.c; path = "../extern/lua-5.1/src/lauxlib.c"; sourceTree = SOURCE_ROOT; };
@@ -2060,7 +2060,6 @@
 		AA1F9C4609AF1BF5002C15A8 /* PumpDevice.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PumpDevice.cpp; sourceTree = "<group>"; };
 		AA21D59C0712ADE4008B825F /* ScreenDimensions.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScreenDimensions.cpp; path = ../src/ScreenDimensions.cpp; sourceTree = "<group>"; };
 		AA21D5A10712AE16008B825F /* ThemeMetric.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ThemeMetric.h; path = ../src/ThemeMetric.h; sourceTree = "<group>"; };
-		AA21E4730A9826CD00684CEA /* libjpeg_link.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libjpeg_link.a; sourceTree = "<group>"; };
 		AA21E4750A9826CD00684CEA /* libogg_link.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libogg_link.a; sourceTree = "<group>"; };
 		AA21E4770A9826CD00684CEA /* libtheora_link.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libtheora_link.a; sourceTree = "<group>"; };
 		AA21E4780A9826CD00684CEA /* libvorbis_link.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libvorbis_link.a; sourceTree = "<group>"; };
@@ -3174,7 +3173,6 @@
 				AA230EB106043704002672F3 /* AudioUnit.framework in Frameworks */,
 				AAA8E0030696984300FCE1F9 /* CoreAudio.framework in Frameworks */,
 				AA77E8B108B6ABD500FA24CA /* vecLib.framework in Frameworks */,
-				AA21E4790A9826CD00684CEA /* libjpeg_link.a in Frameworks */,
 				AA21E47B0A9826CD00684CEA /* libogg_link.a in Frameworks */,
 				AA21E47D0A9826CD00684CEA /* libtheora_link.a in Frameworks */,
 				AA21E47E0A9826CD00684CEA /* libvorbis_link.a in Frameworks */,
@@ -3187,6 +3185,7 @@
 				2B17AB9F13981271001AE57D /* libpng-1.5.1-sm5.a in Frameworks */,
 				2B17ABCF139815E0001AE57D /* libglew-sm5.a in Frameworks */,
 				2B17ABFC139817D5001AE57D /* libpcre-sm5.a in Frameworks */,
+				2BD91A7A1470DE4C008812C5 /* libjpeg.8.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3204,7 +3203,6 @@
 				AA40D51D09A08D650068C0D5 /* AudioUnit.framework in Frameworks */,
 				AA40D51E09A08D650068C0D5 /* CoreAudio.framework in Frameworks */,
 				AA40D51F09A08D650068C0D5 /* vecLib.framework in Frameworks */,
-				AA21E47F0A9826CD00684CEA /* libjpeg_link.a in Frameworks */,
 				AA21E4810A9826CD00684CEA /* libogg_link.a in Frameworks */,
 				AA21E4830A9826CD00684CEA /* libtheora_link.a in Frameworks */,
 				AA21E4840A9826CD00684CEA /* libvorbis_link.a in Frameworks */,
@@ -4998,11 +4996,11 @@
 			isa = PBXGroup;
 			children = (
 				AAA0704D0CE5082D005A3060 /* libffmpeg_link.a */,
-				AA21E4730A9826CD00684CEA /* libjpeg_link.a */,
 				AA21E4750A9826CD00684CEA /* libogg_link.a */,
 				AA21E4770A9826CD00684CEA /* libtheora_link.a */,
 				AA21E4780A9826CD00684CEA /* libvorbis_link.a */,
 				AA059E2A0B8F0C66006F8139 /* libz_link.a */,
+				2BD91A791470DE4C008812C5 /* libjpeg.8.dylib */,
 			);
 			path = Libraries;
 			sourceTree = "<group>";
