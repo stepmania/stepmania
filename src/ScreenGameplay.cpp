@@ -70,6 +70,7 @@
 static ThemeMetric<float> INITIAL_BACKGROUND_BRIGHTNESS	("ScreenGameplay","InitialBackgroundBrightness");
 static ThemeMetric<float> SECONDS_BETWEEN_COMMENTS	("ScreenGameplay","SecondsBetweenComments");
 static ThemeMetric<RString> SCORE_KEEPER_CLASS		("ScreenGameplay","ScoreKeeperClass");
+static ThemeMetric<bool> SURVIVAL_MOD_OVERRIDE ("ScreenGameplay","SurvivalModOverride");
 
 AutoScreenMessage( SM_PlayGo );
 
@@ -831,7 +832,7 @@ void ScreenGameplay::InitSongQueues()
 			}
 
 			// In a survival course, override stored mods
-			if( pCourse->GetCourseType() == COURSE_TYPE_SURVIVAL )
+			if( pCourse->GetCourseType() == COURSE_TYPE_SURVIVAL && SURVIVAL_MOD_OVERRIDE )
 			{
 				pi->GetPlayerState()->m_PlayerOptions.FromString( ModsLevel_Stage, 
 										 "clearall,"

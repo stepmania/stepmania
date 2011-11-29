@@ -8,6 +8,13 @@ ________________________________________________________________________________
 StepMania 5.0 $next | 20111xxx
 --------------------------------------------------------------------------------
 
+2011/11/28
+----------
+* [ScreenGameplay] Add the SurvivalModOverride metric. Let the themer decide
+  if mods should be overridden on survival or not. Funny enough, this used
+  to be true for the old Oni style mode, but...well, we'll cross that bridge
+  later. [Wolfman2000]
+
 2011/11/27
 ----------
 * [PlayerOptions] Pretty large changes here, namely a bunch of new bindings.

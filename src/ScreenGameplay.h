@@ -197,6 +197,7 @@ protected:
 	ThemeMetric<bool> ALLOW_CENTER_1_PLAYER;
 	ThemeMetric<bool> UNPAUSE_WITH_START;
 	ThemeMetric<RString> SONG_NUMBER_FORMAT;
+	ThemeMetric<bool> SURVIVAL_MOD_OVERRIDE;
 
 	bool IsLastSong();
 	void SetupSong( int iSongIndex );
