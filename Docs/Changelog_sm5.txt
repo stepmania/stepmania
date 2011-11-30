@@ -14,6 +14,8 @@ StepMania 5.0 $next | 20111xxx
   if mods should be overridden on survival or not. Funny enough, this used
   to be true for the old Oni style mode, but...well, we'll cross that bridge
   later. [Wolfman2000]
+* [LifeMeterBattery] Added MaxLives metric, which limits the maximum amount of
+  lives. Setting this to 0 will remove the limit. [AJ]
 
 2011/11/27
 ----------

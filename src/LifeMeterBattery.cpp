@@ -24,6 +24,7 @@ void LifeMeterBattery::Load( const PlayerState *pPlayerState, PlayerStageStats *
 	PlayerNumber pn = pPlayerState->m_PlayerNumber;
 
 	MIN_SCORE_TO_KEEP_LIFE.Load(sType, "MinScoreToKeepLife");
+	MAX_LIVES.Load(sType, "MaxLives");
 	DANGER_THRESHOLD.Load(sType, "DangerThreshold");
 	SUBTRACT_LIVES.Load(sType, "SubtractLives");
 	MINES_SUBTRACT_LIVES.Load(sType, "MinesSubtractLives");
@@ -119,6 +120,8 @@ void LifeMeterBattery::SubtractLives( int iLives )
 void LifeMeterBattery::AddLives( int iLives )
 {
 	if( iLives <= 0 )
+		return;
+	if( MAX_LIVES != 0 && m_iLivesLeft >= MAX_LIVES )
 		return;
 
 	m_iTrailingLivesLeft = m_iLivesLeft;
