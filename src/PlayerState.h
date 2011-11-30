@@ -53,10 +53,10 @@ public:
 
 	// Music statistics:
 	SongPosition m_Position;
-	
+
 	const SongPosition &GetDisplayedPosition() const;
 	const TimingData   &GetDisplayedTiming()   const;
-	
+
 	/**
 	 * @brief Holds a vector sorted by real beat, the beat that would be displayed
 	 *        in the NoteField (because they are affected by scroll segments), and

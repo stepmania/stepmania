@@ -12,6 +12,7 @@ StepMania 5.0 $next | 20111xxx
 ----------
 * [PlayerOptions] Added IsEasierForSongAndSteps(Song,Steps,PlayerNumber) and
   IsEasierForCourseAndTrail(Course, Trail) Lua bindings. [AJ]
+* [PlayerState] Added GetSuperMeterLevel() Lua binding. [AJ]
 
 2011/11/28
 ----------
