@@ -8,6 +8,11 @@ ________________________________________________________________________________
 StepMania 5.0 $next | 20111xxx
 --------------------------------------------------------------------------------
 
+2011/11/30
+----------
+* [PlayerOptions] Added IsEasierForSongAndSteps(Song,Steps,PlayerNumber) and
+  IsEasierForCourseAndTrail(Course, Trail) Lua bindings. [AJ]
+
 2011/11/28
 ----------
 * [ScreenGameplay] Add the SurvivalModOverride metric. Let the themer decide
