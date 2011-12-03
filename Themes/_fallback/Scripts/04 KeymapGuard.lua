@@ -1,7 +1,8 @@
 --People sometimes have problems where they rebind the enter key and thus cannot press start.
 --To work around this problem, this script deletes every key binding to Enter.
 
---load Keymaps.ini
+function ClearEnterMappedKeys()
+  --load Keymaps.ini
 local keymaps = IniFile.ReadFile("/Save/Keymaps.ini")
 
 --iterate through the games
@@ -17,3 +18,7 @@ end
 
 --write Keymaps.ini back out. yay.
 IniFile.WriteFile("/Save/Keymaps.ini",keymaps)
+end
+
+--actually run it.
+ClearEnterMappedKeys()
