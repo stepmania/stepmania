@@ -6,9 +6,9 @@ function ClearEnterMappedKeys()
 local keymaps = IniFile.ReadFile("/Save/Keymaps.ini")
 
 --iterate through the games
-for k,v in keymaps do
+for k,v in pairs(keymaps) do
 	--iterate through the potential key mappings
-	for l,w in v do
+ for l,w in pairs(v) do
 		--check for enter
 		w:gsub("Key_enter","")
 		--write back
