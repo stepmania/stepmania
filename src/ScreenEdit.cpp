@@ -1843,7 +1843,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 
 			RString s = ssprintf(
 				SWITCHED_TO.GetValue() + " %s %s '%s' (%d of %d)",
-				GAMEMAN->GetStepsTypeInfo( pSteps->m_StepsType ).szName,
+				GAMEMAN->GetStepsTypeInfo( st ).szName,
 				DifficultyToString( pSteps->GetDifficulty() ).c_str(),
 				pSteps->GetChartName().c_str(),
 				it - vSteps.begin() + 1,
