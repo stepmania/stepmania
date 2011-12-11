@@ -19,6 +19,24 @@ _screen = {
 	cy = SCREEN_CENTER_Y
 }
 
+-- Title & Action safe calculation, probably messy. Uses microsofts suggestion of 85% ( 7.5% per side )
+function GetTitleSafeH( fPerc )
+  return math.floor( SCREEN_RIGHT * fPerc );
+end
+
+function GetTitleSafeV( fPerc )
+  return math.floor( SCREEN_BOTTOM * fPerc );
+end
+
+SAFE_WIDTH = GetTitleSafeH(0.075);
+SAFE_HEIGHT = GetTitleSafeV(0.075);
+
+_safe = {
+  w = GetTitleSafeH(0.075);
+  h = GetTitleSafeV(0.075);
+}
+  
+
 --[[ compatibility aliases ]]
 
 --[[ Actor ]]
