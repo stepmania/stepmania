@@ -427,8 +427,8 @@ void ArchHooks::MountInitialFilesystems( const RString &sDirOfExecutable )
 	FILEMAN->Mount( "dir", ssprintf("%s/Logs/" PRODUCT_ID, dir), "/Logs" );
 
 	// /Desktop -> /Users/<user>/Desktop/PRODUCT_ID
-	PathForFolderType( dir, kDesktopFolderType );
-	FILEMAN->Mount( "dir", ssprintf("%s/" PRODUCT_ID, dir), "/Desktop" );
+	// PathForFolderType( dir, kDesktopFolderType );
+	// FILEMAN->Mount( "dir", ssprintf("%s/" PRODUCT_ID, dir), "/Desktop" );
 }
 
 void ArchHooks::MountUserFilesystems( const RString &sDirOfExecutable )
