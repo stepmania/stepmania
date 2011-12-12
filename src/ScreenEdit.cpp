@@ -1571,12 +1571,14 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 	{
 		int tmp = enum_add2( this->currentCycleSegment, -1 );
 		wrap( *ConvertValue<int>(&tmp), NUM_TimingSegmentType );
+		currentCycleSegment = (TimingSegmentType)tmp;
 		break;
-	}		
+	}
 	case EDIT_BUTTON_CYCLE_SEGMENT_RIGHT:
 	{
 		int tmp = enum_add2( this->currentCycleSegment, +1 );
 		wrap( *ConvertValue<int>(&tmp), NUM_TimingSegmentType );
+		currentCycleSegment = (TimingSegmentType)tmp;
 		break;
 	}
 	case EDIT_BUTTON_SCROLL_SPEED_UP:
