@@ -8,6 +8,10 @@ ________________________________________________________________________________
 StepMania 5.0 $next | 20111xxx
 --------------------------------------------------------------------------------
 
+2011/12/12
+----------
+* [ScreenEdit] Add the GAMESTATE:InStepEditor LUA binding. [Wolfman2000]
+
 2011/12/11
 ----------
 * [ScreenEdit] Restore cycling the timing segments for jumping between.

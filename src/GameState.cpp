@@ -2156,6 +2156,7 @@ public:
 		p->m_bMultiplayer = BArg(1);
 		return 0;
 	}
+	DEFINE_METHOD( InStepEditor,			m_bInStepEditor );
 	DEFINE_METHOD( GetNumMultiplayerNoteFields,	m_iNumMultiplayerNoteFields )
 	DEFINE_METHOD( ShowW1,				ShowW1() )
 
@@ -2476,6 +2477,7 @@ public:
 		ADD_METHOD( GetMasterPlayerNumber );
 		ADD_METHOD( GetMultiplayer );
 		ADD_METHOD( SetMultiplayer );
+		ADD_METHOD( InStepEditor );
 		ADD_METHOD( GetNumMultiplayerNoteFields );
 		ADD_METHOD( SetNumMultiplayerNoteFields );
 		ADD_METHOD( ShowW1 );
