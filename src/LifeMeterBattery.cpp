@@ -49,11 +49,6 @@ void LifeMeterBattery::Load( const PlayerState *pPlayerState, PlayerStageStats *
 
 	m_textNumLives.LoadFromFont( THEME->GetPathF(sType, "lives") );
 	m_textNumLives.SetName( ssprintf("NumLivesP%i",int(pn+1)) );
-	// old hardcoded commands:
-	/*
-	m_textNumLives.SetDiffuse( RageColor(1,1,1,1) );
-	m_textNumLives.SetShadowLength( 0 );
-	*/
 	if( bPlayerEnabled )
 	{
 		ActorUtil::LoadAllCommandsAndSetXY( m_textNumLives, sType );
@@ -232,6 +227,11 @@ int LifeMeterBattery::GetRemainingLives() const
 void LifeMeterBattery::Refresh()
 {
 	m_textNumLives.SetText( ssprintf(LIVES_FORMAT.GetValue(), m_iLivesLeft-1) );
+	if( m_iLivesLeft-1 < 0 )
+	{
+		// hide text to avoid showing -1
+		m_textNumLives.SetVisible(false);
+	}
 	//update m_sprBattery
 }
 

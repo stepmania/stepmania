@@ -13,6 +13,9 @@ StepMania 5.0 $next | 20111xxx
 * [ScreenEdit] Add the GAMESTATE:InStepEditor LUA binding. [Wolfman2000]
 * [Player, ScreenGameplay] Allow failing on Oni without crashing. This one
   took awhile. [Wolfman2000]
+* [LifeMeterBattery] Fixed various issues (lives not fully disappearing on fail,
+  P2 lose life animation having the wrong x zoom, hide the lives number if it
+  falls below 0). [AJ]
 
 2011/12/11
 ----------
