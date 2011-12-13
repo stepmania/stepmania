@@ -1682,7 +1682,9 @@ void ScreenGameplay::Update( float fDeltaTime )
 						// kill them!
 						SOUND->PlayOnceFromDir( THEME->GetPathS(m_sName,"oni die") );
 						pi->ShowOniGameOver();
+						int tracks = pi->m_NoteData.GetNumTracks();
 						pi->m_NoteData.Init();		// remove all notes and scoring
+						pi->m_NoteData.SetNumTracks(tracks); // reset the number of tracks.
 						pi->m_pPlayer->FadeToFail();	// tell the NoteField to fade to white
 					}
 				}
