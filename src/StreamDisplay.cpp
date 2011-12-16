@@ -29,6 +29,11 @@ void StreamDisplay::Load( const RString &_sMetricsGroup )
 	RString sMetricsGroup = "StreamDisplay";
 
 	m_transformPill.SetFromReference( THEME->GetMetricR(sMetricsGroup,"PillTransformFunction") );
+	VELOCITY_MULTIPLIER.Load(sMetricsGroup, "VelocityMultiplier");
+	VELOCITY_MIN.Load(sMetricsGroup, "VelocityMin");
+	VELOCITY_MAX.Load(sMetricsGroup, "VelocityMax");
+	SPRING_MULTIPLIER.Load(sMetricsGroup, "SpringMultiplier");
+	VISCOSITY_MULTIPLIER.Load(sMetricsGroup, "ViscosityMultiplier");
 
 	float fTextureCoordScaleX = THEME->GetMetricF(sMetricsGroup,"TextureCoordScaleX");
 	int iNumPills = static_cast<int>(THEME->GetMetricF(sMetricsGroup,"NumPills"));
@@ -71,19 +76,19 @@ void StreamDisplay::Update( float fDeltaSecs )
 			if( fabsf(fDelta) < 0.00001f )
 				m_fVelocity = 0; // prevent div/0
 			else
-				m_fVelocity = (fDelta / fabsf(fDelta)) * 4;
+				m_fVelocity = (fDelta / fabsf(fDelta)) * VELOCITY_MULTIPLIER;
 		}
 		else
 		{
-			const float fSpringForce = fDelta * 2.0f;
+			const float fSpringForce = fDelta * SPRING_MULTIPLIER;
 			m_fVelocity += fSpringForce * fDeltaSecs;
 
-			const float fViscousForce = -m_fVelocity * 0.2f;
+			const float fViscousForce = -m_fVelocity * VISCOSITY_MULTIPLIER;
 			if( !m_bAlwaysBounce )
 				m_fVelocity += fViscousForce * fDeltaSecs;
 		}
 
-		CLAMP( m_fVelocity, -.06f, +.02f );
+		CLAMP( m_fVelocity, VELOCITY_MIN, VELOCITY_MAX );
 
 		m_fTrailingPercent += m_fVelocity * fDeltaSecs;
 	}

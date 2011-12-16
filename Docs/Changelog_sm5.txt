@@ -8,9 +8,14 @@ ________________________________________________________________________________
 StepMania 5.0 $next | 20111xxx
 --------------------------------------------------------------------------------
 
+2011/12/16
+----------
+* [StreamDisplay] Added VelocityMultiplier, VelocityMin, VelocityMax,
+  SpringMultiplier and ViscosityMultiplier metrics. [AJ]
+
 2011/12/12
 ----------
-* [ScreenEdit] Add the GAMESTATE:InStepEditor LUA binding. [Wolfman2000]
+* [ScreenEdit] Add the GAMESTATE:InStepEditor Lua binding. [Wolfman2000]
 * [Player, ScreenGameplay] Allow failing on Oni without crashing. This one
   took awhile. [Wolfman2000]
 * [LifeMeterBattery] Fixed various issues (lives not fully disappearing on fail,
