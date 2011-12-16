@@ -79,3 +79,44 @@ Condition = {
 		return GAMESTATE:PlayerIsUsingModifier( pnPlayer, sModifier );
 	end,
 }
+
+--[[ Productivity Helpers ]]
+-- Blend Modes
+-- Aliases for blend modes.
+Blend = {
+	Normal			= 'BlendMode_Normal',
+	Add				= 'BlendMode_Add',
+	Subtract		= 'BlendMode_Subtract',
+	Modulate		= 'BlendMode_Modulate',
+	CopySource		= 'BlendMode_CopySrc',
+	AlphaMask		= 'BlendMode_AlphaMask',
+	AlphaKnockout	= 'BlendMode_AlphaKnockout',
+	AlphaMultiply	= 'BlendMode_AlphaMultiply',
+	Multiply		= 'BlendMode_WeightedMultiply',
+	Invert			= 'BlendMode_InvertDest',
+	NoEffect		= 'BlendMode_NoEffect',
+}
+function StringToBlend(s) return Blend[s] or nil end
+
+-- EffectMode
+-- Aliases for EffectMode (aka shaders)
+EffectMode = {
+	Normal			= 'EffectMode_Normal',
+	Unpremultiply	= 'EffectMode_Unpremultiply',
+	ColorBurn		= 'EffectMode_ColorBurn',
+	ColorDodge		= 'EffectMode_ColorDodge',
+	VividLight		= 'EffectMode_VividLight',
+	HardMix			= 'EffectMode_HardMix',
+	Overlay			= 'EffectMode_Overlay',
+	Screen			= 'EffectMode_Screen',
+	YUYV422			= 'EffectMode_YUYV422',
+}
+
+-- Health Declarations
+-- Used primarily for lifebars.
+Health = {
+	Max    = 'HealthState_Hot',
+	Alive  = 'HealthState_Alive',
+	Danger = 'HealthState_Danger',
+	Dead   = 'HealthState_Dead'
+}
