@@ -181,7 +181,7 @@ Branch = {
 			return "ScreenProfileSave"
 		else
 			local maxStages = PREFSMAN:GetPreference("SongsPerPlay")
-			local stagesLeft = GetSmallestNumStagesLeftForAnyHumanPlayer()
+			local stagesLeft = GAMESTATE:GetSmallestNumStagesLeftForAnyHumanPlayer()
 			local allFailed = STATSMAN:GetCurStageStats():AllFailed()
 			local song = GAMESTATE:GetCurrentSong()
 
