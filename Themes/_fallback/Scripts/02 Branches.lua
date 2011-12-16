@@ -177,12 +177,27 @@ Branch = {
 		end
 	end,
 	AfterEvaluation = function()
-		if GAMESTATE:GetSmallestNumStagesLeftForAnyHumanPlayer() >= 1 then
+		if GAMESTATE:IsCourseMode() then
 			return "ScreenProfileSave"
-		elseif STATSMAN:GetCurStageStats():AllFailed() then
-			return "ScreenProfileSaveSummary"
 		else
-			return "ScreenEvaluationSummary"
+			local maxStages = PREFSMAN:GetPreference("SongsPerPlay")
+			local stagesLeft = GetSmallestNumStagesLeftForAnyHumanPlayer()
+			local allFailed = STATSMAN:GetCurStageStats():AllFailed()
+			local song = GAMESTATE:GetCurrentSong()
+
+			if GAMESTATE:IsEventMode() or stagesLeft >= 1 then
+				return "ScreenProfileSave"
+			elseif allFailed then
+				return "ScreenProfileSaveSummary"
+			elseif song:IsLong() and maxStages <= 2 and stagesLeft < 1 and allFailed then
+				return "ScreenProfileSaveSummary"
+			elseif song:IsMarathon() and maxStages <= 3 and stagesLeft < 1 and allFailed then
+				return "ScreenProfileSaveSummary"
+			elseif maxStages >= 2 and stagesLeft < 1 and failed then
+				return "ScreenProfileSaveSummary"
+			else
+				return "ScreenProfileSave"
+			end
 		end
 	end,
 	AfterSummary = "ScreenProfileSaveSummary",
