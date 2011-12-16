@@ -187,13 +187,13 @@ Branch = {
 
 			if GAMESTATE:IsEventMode() or stagesLeft >= 1 then
 				return "ScreenProfileSave"
-			elseif allFailed then
-				return "ScreenProfileSaveSummary"
 			elseif song:IsLong() and maxStages <= 2 and stagesLeft < 1 and allFailed then
 				return "ScreenProfileSaveSummary"
 			elseif song:IsMarathon() and maxStages <= 3 and stagesLeft < 1 and allFailed then
 				return "ScreenProfileSaveSummary"
-			elseif maxStages >= 2 and stagesLeft < 1 and failed then
+			elseif maxStages >= 2 and stagesLeft < 1 and allFailed then
+				return "ScreenProfileSaveSummary"
+			elseif allFailed then
 				return "ScreenProfileSaveSummary"
 			else
 				return "ScreenProfileSave"
