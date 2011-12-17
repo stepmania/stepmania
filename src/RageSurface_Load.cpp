@@ -18,7 +18,7 @@ static RageSurface *TryOpenFile( RString sPath, bool bHeaderOnly, RString &error
 		result = RageSurface_Load_PNG( sPath, ret, bHeaderOnly, error );
 	else if( !format.CompareNoCase("gif") )
 		result = RageSurface_Load_GIF( sPath, ret, bHeaderOnly, error );
-	else if( !format.CompareNoCase("jpg") )
+	else if( !format.CompareNoCase("jpg") || !format.CompareNoCase("jpeg") )
 		result = RageSurface_Load_JPEG( sPath, ret, bHeaderOnly, error );
 	else if( !format.CompareNoCase("bmp") )
 		result = RageSurface_Load_BMP( sPath, ret, bHeaderOnly, error );
@@ -87,6 +87,7 @@ RageSurface *RageSurfaceUtils::LoadFile( const RString &sPath, RString &error, b
 	set<RString> FileTypes;
 	FileTypes.insert("png");
 	FileTypes.insert("jpg");
+	FileTypes.insert("jpeg");
 	FileTypes.insert("gif");
 	FileTypes.insert("bmp");
 

@@ -1683,8 +1683,6 @@
 		B75CE3B6137963350076A82D /* SongPosition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B75CE3B4137963350076A82D /* SongPosition.cpp */; };
 		B773AE6D140AAB1800C68DDD /* SpecialDirs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B773AE6B140AAB1800C68DDD /* SpecialDirs.cpp */; };
 		B773AE6E140AAB1800C68DDD /* SpecialDirs.h in Headers */ = {isa = PBXBuildFile; fileRef = B773AE6C140AAB1800C68DDD /* SpecialDirs.h */; };
-		EE2153A910A75BEE0074B01B /* NotesLoaderPMS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EE2153A710A75BEE0074B01B /* NotesLoaderPMS.cpp */; };
-		EE2153AA10A75BEE0074B01B /* NotesLoaderPMS.h in Headers */ = {isa = PBXBuildFile; fileRef = EE2153A810A75BEE0074B01B /* NotesLoaderPMS.h */; };
 		EE879B60132DEE720078FDDC /* RageDisplay_Legacy_Helpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EE879B5C132DEE720078FDDC /* RageDisplay_Legacy_Helpers.cpp */; };
 		EE879B61132DEE720078FDDC /* RageDisplay_Legacy_Helpers.h in Headers */ = {isa = PBXBuildFile; fileRef = EE879B5D132DEE720078FDDC /* RageDisplay_Legacy_Helpers.h */; };
 		EE879B62132DEE720078FDDC /* RageDisplay_Legacy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EE879B5E132DEE720078FDDC /* RageDisplay_Legacy.cpp */; };
@@ -3111,8 +3109,6 @@
 		B75CE3B4137963350076A82D /* SongPosition.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SongPosition.cpp; path = ../src/SongPosition.cpp; sourceTree = SOURCE_ROOT; };
 		B773AE6B140AAB1800C68DDD /* SpecialDirs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SpecialDirs.cpp; path = archutils/Darwin/SpecialDirs.cpp; sourceTree = "<group>"; };
 		B773AE6C140AAB1800C68DDD /* SpecialDirs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpecialDirs.h; path = archutils/Darwin/SpecialDirs.h; sourceTree = "<group>"; };
-		EE2153A710A75BEE0074B01B /* NotesLoaderPMS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NotesLoaderPMS.cpp; path = ../src/NotesLoaderPMS.cpp; sourceTree = SOURCE_ROOT; };
-		EE2153A810A75BEE0074B01B /* NotesLoaderPMS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NotesLoaderPMS.h; path = ../src/NotesLoaderPMS.h; sourceTree = SOURCE_ROOT; };
 		EE879B5C132DEE720078FDDC /* RageDisplay_Legacy_Helpers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RageDisplay_Legacy_Helpers.cpp; path = ../src/RageDisplay_Legacy_Helpers.cpp; sourceTree = SOURCE_ROOT; };
 		EE879B5D132DEE720078FDDC /* RageDisplay_Legacy_Helpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RageDisplay_Legacy_Helpers.h; path = ../src/RageDisplay_Legacy_Helpers.h; sourceTree = SOURCE_ROOT; };
 		EE879B5E132DEE720078FDDC /* RageDisplay_Legacy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RageDisplay_Legacy.cpp; path = ../src/RageDisplay_Legacy.cpp; sourceTree = SOURCE_ROOT; };
@@ -3380,8 +3376,6 @@
 				2B9C2E8A137A138B004C92F3 /* NotesLoaderJson.h */,
 				AA6EFDF304770C79005F316C /* NotesLoaderKSF.cpp */,
 				AA6EFDF404770C79005F316C /* NotesLoaderKSF.h */,
-				EE2153A710A75BEE0074B01B /* NotesLoaderPMS.cpp */,
-				EE2153A810A75BEE0074B01B /* NotesLoaderPMS.h */,
 				AA6EFDF504770C79005F316C /* NotesLoaderSM.cpp */,
 				AA6EFDF604770C79005F316C /* NotesLoaderSM.h */,
 				2B76698A132FF71500586512 /* NotesLoaderSMA.cpp */,
@@ -5242,7 +5236,6 @@
 				3659B5700F902143002B6B68 /* CommandLineActions.h in Headers */,
 				36CA531D0F91564A0063D59D /* ScreenOptionsCourseOverview.h in Headers */,
 				36CA53210F9156860063D59D /* ScreenOptionsEditCourse.h in Headers */,
-				EE2153AA10A75BEE0074B01B /* NotesLoaderPMS.h in Headers */,
 				EEA7C84410A805A300082E7B /* ScreenPackagesSSC.h in Headers */,
 				36C6888411297FFE00453295 /* RageFileDriverReadAhead.h in Headers */,
 				36C6888611297FFE00453295 /* RageFileManager_ReadAhead.h in Headers */,
@@ -6270,7 +6263,6 @@
 				AA29CD680558741A00961A51 /* NotesLoaderDWI.cpp in Sources */,
 				2B9C2E8D137A138B004C92F3 /* NotesLoaderJson.cpp in Sources */,
 				AA29CD690558741A00961A51 /* NotesLoaderKSF.cpp in Sources */,
-				EE2153A910A75BEE0074B01B /* NotesLoaderPMS.cpp in Sources */,
 				AA29CD6A0558741A00961A51 /* NotesLoaderSM.cpp in Sources */,
 				2B76698C132FF71500586512 /* NotesLoaderSMA.cpp in Sources */,
 				2BA7925E1304F20D002BD8E1 /* NotesLoaderSSC.cpp in Sources */,

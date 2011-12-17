@@ -390,6 +390,7 @@ FileType ActorUtil::GetFileType( const RString &sPath )
 	else if( 
 		sExt=="png" ||
 		sExt=="jpg" || 
+		sExt=="jpeg" || 
 		sExt=="gif" || 
 		sExt=="bmp" )		return FT_Bitmap;
 	else if( 

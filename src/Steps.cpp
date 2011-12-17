@@ -28,8 +28,6 @@
 #include "NotesLoaderDWI.h"
 #include "NotesLoaderKSF.h"
 #include "NotesLoaderBMS.h"
-#include "NotesLoaderPMS.h"
-
 #include <algorithm>
 
 /* register DisplayBPM with StringConversion */

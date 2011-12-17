@@ -774,6 +774,7 @@
 			<Function name='GetStageSeed'/>
 			<Function name='GetWorkoutGoalComplete'/>
 			<Function name='HasEarnedExtraStage'/>
+			<Function name='InStepEditor'/>
 			<Function name='IsAnExtraStage'/>
 			<Function name='IsAnyHumanPlayerUsingMemoryCard'/>
 			<Function name='IsBattleMode'/>

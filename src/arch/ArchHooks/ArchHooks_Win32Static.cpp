@@ -61,16 +61,23 @@ void ArchHooks::MountInitialFilesystems( const RString &sDirOfExecutable )
 
 void ArchHooks::MountUserFilesystems( const RString &sDirOfExecutable )
 {
-	RString sCommonAppDataDir = SpecialDirs::GetCommonAppDataDir() + PRODUCT_ID;
+	/*
+	 * Look, I know what you're thinking: "Hey, let's put all this stuff into
+	 * their respective 'proper' places on the filesystem!" Stop. Now.
+	 * This was done before and it was the most ungodly confusing thing to ever
+	 * happen. Just don't do it, seriously. Keep them in one place.
+	 * - Colby
+	 */
 	RString sAppDataDir = SpecialDirs::GetAppDataDir() + PRODUCT_ID;
-	RString sLocalAppDataDir = SpecialDirs::GetLocalAppDataDir() + PRODUCT_ID;
-	RString sPicturesDir = SpecialDirs::GetPicturesDir() + PRODUCT_ID;
+	//RString sCommonAppDataDir = SpecialDirs::GetCommonAppDataDir() + PRODUCT_ID;
+	//RString sLocalAppDataDir = SpecialDirs::GetLocalAppDataDir() + PRODUCT_ID;
+	//RString sPicturesDir = SpecialDirs::GetPicturesDir() + PRODUCT_ID;
 
 	FILEMAN->Mount( "dir", sAppDataDir + "/Logs", "/Logs" );
 	FILEMAN->Mount( "dir", sAppDataDir + "/Save", "/Save" );
-	FILEMAN->Mount( "dir", sPicturesDir + " /Screenshots", "/Screenshots" );
-	FILEMAN->Mount( "dir", sCommonAppDataDir, "/" );
-	FILEMAN->Mount( "dir", sCommonAppDataDir + "/Cache", "/Cache" );
+	FILEMAN->Mount( "dir", sAppDataDir + "/Screenshots", "/Screenshots" );
+	FILEMAN->Mount( "dir", sAppDataDir, "/" );
+	FILEMAN->Mount( "dir", sAppDataDir + "/Cache", "/Cache" );
 	FILEMAN->Mount( "dir", sAppDataDir + "/Packages", "/" + SpecialFiles::USER_PACKAGES_DIR );
 }
 

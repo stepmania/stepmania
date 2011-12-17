@@ -2084,6 +2084,11 @@
 	<Function name='HasEarnedExtraStage' return='bool' arguments=''>
 		Returns <code>true</code> if an extra stage was earned.
 	</Function>
+	<Function name='InStepEditor' return='bool' arguments=''>
+		Returns <code>true</code> if we are specifically in the Step Editor's
+		editing portion. If in recording or playing mode, this will return
+		<code>false</code>.
+	</Function>
 	<Function name='IsAnExtraStage' return='bool' arguments=''>
 		Returns <code>true</code> if this is an extra stage.
 	</Function>

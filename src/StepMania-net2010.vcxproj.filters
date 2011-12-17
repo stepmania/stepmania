@@ -534,9 +534,6 @@
     <ClCompile Include="NotesLoaderKSF.cpp">
       <Filter>Data Structures\NotesLoader</Filter>
     </ClCompile>
-    <ClCompile Include="NotesLoaderPMS.cpp">
-      <Filter>Data Structures\NotesLoader</Filter>
-    </ClCompile>
     <ClCompile Include="NotesLoaderSM.cpp">
       <Filter>Data Structures\NotesLoader</Filter>
     </ClCompile>
@@ -2046,9 +2043,6 @@
       <Filter>Data Structures\NotesLoader</Filter>
     </ClInclude>
     <ClInclude Include="NotesLoaderKSF.h">
-      <Filter>Data Structures\NotesLoader</Filter>
-    </ClInclude>
-    <ClInclude Include="NotesLoaderPMS.h">
       <Filter>Data Structures\NotesLoader</Filter>
     </ClInclude>
     <ClInclude Include="NotesLoaderSM.h">

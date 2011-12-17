@@ -29,6 +29,7 @@ bool Character::Load( RString sCharDir )
 		vector<RString> as;
 		GetDirListing( m_sCharDir+"card.png", as, false, true );
 		GetDirListing( m_sCharDir+"card.jpg", as, false, true );
+		GetDirListing( m_sCharDir+"card.jpeg", as, false, true );
 		GetDirListing( m_sCharDir+"card.gif", as, false, true );
 		GetDirListing( m_sCharDir+"card.bmp", as, false, true );
 		if( as.empty() )
@@ -41,6 +42,7 @@ bool Character::Load( RString sCharDir )
 		vector<RString> as;
 		GetDirListing( m_sCharDir+"icon.png", as, false, true );
 		GetDirListing( m_sCharDir+"icon.jpg", as, false, true );
+		GetDirListing( m_sCharDir+"icon.jpeg", as, false, true );
 		GetDirListing( m_sCharDir+"icon.gif", as, false, true );
 		GetDirListing( m_sCharDir+"icon.bmp", as, false, true );
 		if( as.empty() )
@@ -97,6 +99,7 @@ RString Character::GetTakingABreakPath() const
 	vector<RString> as;
 	GetDirListing( m_sCharDir+"break.png", as, false, true );
 	GetDirListing( m_sCharDir+"break.jpg", as, false, true );
+	GetDirListing( m_sCharDir+"break.jpeg", as, false, true );
 	GetDirListing( m_sCharDir+"break.gif", as, false, true );
 	GetDirListing( m_sCharDir+"break.bmp", as, false, true );
 	if( as.empty() )
@@ -112,6 +115,7 @@ RString Character::GetSongSelectIconPath() const
 	// so you can have different icons for music select / char select
 	GetDirListing( m_sCharDir+"selectmusicicon.png", as, false, true );
 	GetDirListing( m_sCharDir+"selectmusicicon.jpg", as, false, true );
+	GetDirListing( m_sCharDir+"selectmusicicon.jpeg", as, false, true );
 	GetDirListing( m_sCharDir+"selectmusicicon.gif", as, false, true );
 	GetDirListing( m_sCharDir+"selectmusicicon.bmp", as, false, true );
 
@@ -120,6 +124,7 @@ RString Character::GetSongSelectIconPath() const
 		// if that failed, try using the regular icon
 		GetDirListing( m_sCharDir+"icon.png", as, false, true );
 		GetDirListing( m_sCharDir+"icon.jpg", as, false, true );
+		GetDirListing( m_sCharDir+"icon.jpeg", as, false, true );
 		GetDirListing( m_sCharDir+"icon.gif", as, false, true );
 		GetDirListing( m_sCharDir+"icon.bmp", as, false, true );
 		if( as.empty() )
@@ -138,6 +143,7 @@ RString Character::GetStageIconPath() const
 	// so you can have different icons for music select / char select
 	GetDirListing( m_sCharDir+"stageicon.png", as, false, true );
 	GetDirListing( m_sCharDir+"stageicon.jpg", as, false, true );
+	GetDirListing( m_sCharDir+"stageicon.jpeg", as, false, true );
 	GetDirListing( m_sCharDir+"stageicon.gif", as, false, true );
 	GetDirListing( m_sCharDir+"stageicon.bmp", as, false, true );
 
@@ -146,6 +152,7 @@ RString Character::GetStageIconPath() const
 		// if that failed, try using the regular icon
 		GetDirListing( m_sCharDir+"card.png", as, false, true );
 		GetDirListing( m_sCharDir+"card.jpg", as, false, true );
+		GetDirListing( m_sCharDir+"card.jpeg", as, false, true );
 		GetDirListing( m_sCharDir+"card.gif", as, false, true );
 		GetDirListing( m_sCharDir+"card.bmp", as, false, true );
 		if( as.empty() )

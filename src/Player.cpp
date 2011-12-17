@@ -799,7 +799,7 @@ void Player::Update( float fDeltaTime )
 
 	//LOG->Trace( "Player::Update(%f)", fDeltaTime );
 
-	if( GAMESTATE->m_pCurSong==NULL )
+	if( GAMESTATE->m_pCurSong==NULL || IsOniDead() )
 		return;
 
 	ActorFrame::Update( fDeltaTime );
@@ -1520,7 +1520,7 @@ void Player::DrawPrimitives()
 
 	DISPLAY->LoadMenuPerspective( 45, SCREEN_WIDTH, SCREEN_HEIGHT, SCALE(fSkew,0.f,1.f,this->GetX(),SCREEN_CENTER_X), fCenterY );
 
-	if( m_pNoteField )
+	if( m_pNoteField && !IsOniDead() )
 	{
 		float fOriginalY = 	m_pNoteField->GetY();
 

@@ -604,10 +604,10 @@ try_element_again:
 		for( unsigned p = 0; p < asPaths.size(); ++p )
 		{
 			// BGAnimations, Fonts, Graphics, Sounds, Other
-			static const char *masks[NUM_ElementCategory][14] = {
-				{ "redir", "lua", "xml", "png", "jpg", "bmp", "gif", "ogv", "avi", "mpg", "mpeg", "txt", "", NULL},
+			static const char *masks[NUM_ElementCategory][15] = {
+				{ "redir", "lua", "xml", "png", "jpg", "jpeg", "bmp", "gif", "ogv", "avi", "mpg", "mpeg", "txt", "", NULL},
 				{ "redir", "ini", NULL },
-				{ "redir", "lua", "xml", "png", "jpg", "bmp", "gif", "ogv", "avi", "mpg", "mpeg", "txt", "", NULL},
+				{ "redir", "lua", "xml", "png", "jpg", "jpeg", "bmp", "gif", "ogv", "avi", "mpg", "mpeg", "txt", "", NULL},
 				{ "redir", "lua", "mp3", "oga", "ogg", "wav", NULL },
 				{ "*", NULL },
 			};

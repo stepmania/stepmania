@@ -882,6 +882,23 @@ void PlayerOptions::ResetPrefs( ResetPrefsType type )
 class LunaPlayerOptions: public Luna<PlayerOptions>
 {
 public:
+	static int IsEasierForSongAndSteps( T *p, lua_State *L )
+	{
+		Song* pSong = Luna<Song>::check(L,1);
+		Steps* pSteps = Luna<Steps>::check(L,2);
+		PlayerNumber pn = Enum::Check<PlayerNumber>(L, 3);
+		lua_pushboolean(L, p->IsEasierForSongAndSteps(pSong, pSteps, pn) );
+		return 1;
+	}
+	static int IsEasierForCourseAndTrail( T *p, lua_State *L )
+	{
+		// course, trail
+		Course* pCourse = Luna<Course>::check(L,1);
+		Trail* pTrail = Luna<Trail>::check(L,2);
+		lua_pushboolean(L, p->IsEasierForCourseAndTrail(pCourse, pTrail) );
+		return 1;
+	}
+
 	// NoteSkins
 	static int GetNoteSkin( T *p, lua_State *L )
 	{
@@ -1106,6 +1123,9 @@ public:
 
 	LunaPlayerOptions()
 	{
+		ADD_METHOD( IsEasierForSongAndSteps );
+		ADD_METHOD( IsEasierForCourseAndTrail );
+
 		ADD_METHOD( GetDark );
 		ADD_METHOD( SetDark );
 		ADD_METHOD( GetBlind );

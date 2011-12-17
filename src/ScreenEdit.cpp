@@ -1571,12 +1571,14 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 	{
 		int tmp = enum_add2( this->currentCycleSegment, -1 );
 		wrap( *ConvertValue<int>(&tmp), NUM_TimingSegmentType );
+		currentCycleSegment = (TimingSegmentType)tmp;
 		break;
-	}		
+	}
 	case EDIT_BUTTON_CYCLE_SEGMENT_RIGHT:
 	{
 		int tmp = enum_add2( this->currentCycleSegment, +1 );
 		wrap( *ConvertValue<int>(&tmp), NUM_TimingSegmentType );
+		currentCycleSegment = (TimingSegmentType)tmp;
 		break;
 	}
 	case EDIT_BUTTON_SCROLL_SPEED_UP:
@@ -1843,7 +1845,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 
 			RString s = ssprintf(
 				SWITCHED_TO.GetValue() + " %s %s '%s' (%d of %d)",
-				GAMEMAN->GetStepsTypeInfo( pSteps->m_StepsType ).szName,
+				GAMEMAN->GetStepsTypeInfo( st ).szName,
 				DifficultyToString( pSteps->GetDifficulty() ).c_str(),
 				pSteps->GetChartName().c_str(),
 				it - vSteps.begin() + 1,

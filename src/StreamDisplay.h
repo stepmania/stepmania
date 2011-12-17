@@ -6,6 +6,7 @@
 #include "Sprite.h"
 #include "Quad.h"
 #include "LuaExpressionTransform.h"
+#include "ThemeMetric.h"
 
 enum StreamType
 {
@@ -34,6 +35,11 @@ private:
 	vector<Sprite*>	m_vpSprPill[NUM_StreamType];
 
 	LuaExpressionTransform		m_transformPill;	// params: self,offsetFromCenter,itemIndex,numItems
+	ThemeMetric<float> VELOCITY_MULTIPLIER;
+	ThemeMetric<float> VELOCITY_MIN;
+	ThemeMetric<float> VELOCITY_MAX;
+	ThemeMetric<float> SPRING_MULTIPLIER;
+	ThemeMetric<float> VISCOSITY_MULTIPLIER;
 
 	float m_fPercent;	// percent filled
 	float m_fTrailingPercent;	// this approaches m_fPercent, use this value to draw

@@ -4,6 +4,14 @@
 
 -- shakesoda calls this pump.lua
 
+-- Check the active game mode against a string. Cut down typing this in metrics.
+function IsGame(str)
+	if GAMESTATE:GetCurrentGame():GetName() == str then
+		return true
+	end
+	return false
+end
+
 -- GetExtraColorThreshold()
 -- [en] returns the difficulty threshold in meter
 -- for songs that should be counted as boss songs.
@@ -166,50 +174,11 @@ end
 
 -- todo: use tables for some of these -aj
 function HoldTiming()
-	if GAMESTATE:GetCurrentGame():GetName() == "pump" then
-		return 0
-	else
-		return PREFSMAN:GetPreference("TimingWindowSecondsHold")
-	end
+	return IsGame("pump") and 0 or PREFSMAN:GetPreference("TimingWindowSecondsHold")
 end
 
 function ShowHoldJudgments()
-	local isPump = GAMESTATE:GetCurrentGame():GetName() == "pump"
-	return isPump and false or true
-end
-
-function HoldHeadStep()
-	local isPump = GAMESTATE:GetCurrentGame():GetName() == "pump"
-	return isPump and false or true
-end
-
-function InitialHoldLife()
-	return GAMESTATE:GetCurrentGame():GetName() == "pump" and 0.05 or 1
-end
-
-function MaxHoldLife()
-	return GAMESTATE:GetCurrentGame():GetName() == "pump" and 0.05 or 1
-end
-
-function ImmediateHoldLetGo()
-	return not (GAMESTATE:GetCurrentGame():GetName() == "pump")
-end
-
-function RollBodyIncrementsCombo()
-	return false
---[[ 	if GAMESTATE:GetCurrentGame():GetName() == "pump" then
-		return false
-	else
-		return true
-	end --]]
-end
-
-function CheckpointsTapsSeparateJudgment()
-	return not GAMESTATE:GetCurrentGame():GetName() == "pump"
-end
-
-function ScoreMissedHoldsAndRolls()
-	return not GAMESTATE:GetCurrentGame():GetName() == "pump"
+	return not IsGame("pump")
 end
 
 local tNotePositions = {
@@ -230,14 +199,6 @@ end
 
 function ComboUnderField()
 	return GetUserPrefB("UserPrefComboUnderField")
-end
-
-function TwoPartSelection()
-	return GAMESTATE:GetCurrentGame():GetName() == "pump"
-end
-
-function TwoPartConfirmsOnly()
-	return GAMESTATE:GetCurrentGame():GetName() == "pump"
 end
 
 local CodeDetectorCodes = {
