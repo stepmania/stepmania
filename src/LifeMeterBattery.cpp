@@ -24,6 +24,7 @@ void LifeMeterBattery::Load( const PlayerState *pPlayerState, PlayerStageStats *
 	PlayerNumber pn = pPlayerState->m_PlayerNumber;
 
 	MIN_SCORE_TO_KEEP_LIFE.Load(sType, "MinScoreToKeepLife");
+	MAX_LIVES.Load(sType, "MaxLives");
 	DANGER_THRESHOLD.Load(sType, "DangerThreshold");
 	SUBTRACT_LIVES.Load(sType, "SubtractLives");
 	MINES_SUBTRACT_LIVES.Load(sType, "MinesSubtractLives");
@@ -48,11 +49,6 @@ void LifeMeterBattery::Load( const PlayerState *pPlayerState, PlayerStageStats *
 
 	m_textNumLives.LoadFromFont( THEME->GetPathF(sType, "lives") );
 	m_textNumLives.SetName( ssprintf("NumLivesP%i",int(pn+1)) );
-	// old hardcoded commands:
-	/*
-	m_textNumLives.SetDiffuse( RageColor(1,1,1,1) );
-	m_textNumLives.SetShadowLength( 0 );
-	*/
 	if( bPlayerEnabled )
 	{
 		ActorUtil::LoadAllCommandsAndSetXY( m_textNumLives, sType );
@@ -119,6 +115,8 @@ void LifeMeterBattery::SubtractLives( int iLives )
 void LifeMeterBattery::AddLives( int iLives )
 {
 	if( iLives <= 0 )
+		return;
+	if( MAX_LIVES != 0 && m_iLivesLeft >= MAX_LIVES )
 		return;
 
 	m_iTrailingLivesLeft = m_iLivesLeft;
@@ -229,6 +227,11 @@ int LifeMeterBattery::GetRemainingLives() const
 void LifeMeterBattery::Refresh()
 {
 	m_textNumLives.SetText( ssprintf(LIVES_FORMAT.GetValue(), m_iLivesLeft-1) );
+	if( m_iLivesLeft-1 < 0 )
+	{
+		// hide text to avoid showing -1
+		m_textNumLives.SetVisible(false);
+	}
 	//update m_sprBattery
 }
 

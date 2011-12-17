@@ -1156,6 +1156,8 @@
 	</Function>
 </Class>
 <Class name='ActorFrame'>
+	<Function name='AddChildFromPath' return='bool' arguments='string sPath'>
+	</Function>
 	<Function name='fov' return='void' arguments='float fFOV'>
 		Sets the field of view for the ActorFrame.
 	</Function>
@@ -1182,6 +1184,12 @@
 	</Function>
 	<Function name='propagatecommand' theme='_fallback' return='void' arguments='LuaReference cmd'>
 		[02 Actor.lua] Propagates a command to the ActorFrame's children.
+	</Function>
+	<Function name='RemoveAllChildren' return='void' arguments=''>
+		Removes all the children from the ActorFrame.
+	</Function>
+	<Function name='RemoveChild' return='void' arguments='string sChild'>
+		Removes the specified child from the ActorFrame.
 	</Function>
 	<Function name='RunCommandsOnChildren' return='void' arguments='LuaReference cmds'>
 		Runs the commands in <code>cmds</code> on the ActorFrame's children.
@@ -1838,7 +1846,7 @@
 	<Function name='PlayAnnouncer' return='void' arguments='string sPath'>
 		Plays a sound from the current announcer.
 	</Function>
-	<Function name='PlayMusicPart' return='void' arguments='string musicPath, float musicStart, float musicLength, float fadeIn = 0, float fadeOut = 0'>
+	<Function name='PlayMusicPart' return='void' arguments='string musicPath, float musicStart, float musicLength, float fadeIn, float fadeOut'>
 		Play the sound at <code>musicPath</code> starting from <code>musicStart</code> for
 		<code>musicLength</code> seconds one time. Both <code>fadeIn</code> and
 		<code>fadeOut</code> can be customized as required.
@@ -2075,6 +2083,11 @@
 	</Function>
 	<Function name='HasEarnedExtraStage' return='bool' arguments=''>
 		Returns <code>true</code> if an extra stage was earned.
+	</Function>
+	<Function name='InStepEditor' return='bool' arguments=''>
+		Returns <code>true</code> if we are specifically in the Step Editor's
+		editing portion. If in recording or playing mode, this will return
+		<code>false</code>.
 	</Function>
 	<Function name='IsAnExtraStage' return='bool' arguments=''>
 		Returns <code>true</code> if this is an extra stage.
@@ -2495,175 +2508,359 @@
 </Class>
 <Class name='PlayerOptions'>
 	<Function name='GetAlternate' return='float' arguments=''>
-		
+		Returns the value of the Alternate modifier.
+	</Function>
+	<Function name='SetAlternate' return='void' arguments='float fAlternate'>
+		Sets the value of the Alternate modifier.
 	</Function>
 	<Function name='GetAttackMines' return='bool' arguments=''>
-		
+		Returns the status of the Attack Mines modifier.
+	</Function>
+	<Function name='SetAttackMines' return='void' arguments='bool bAttackMines'>
+		Sets the Attack Mines modifier.
 	</Function>
 	<Function name='GetBackwards' return='bool' arguments=''>
-		Returns <code>true</code> if the backwards mod is applied, <code>false</code> otherwise.
+		Returns <code>true</code> if the Backwards modifier is applied.
+	</Function>
+	<Function name='SetBackwards' return='void' arguments='bool bBackwards'>
+		Sets the Backwards modifier.
 	</Function>
 	<Function name='GetBeat' return='float' arguments=''>
-		
+		Returns the value of the Beat modifier.
+	</Function>
+	<Function name='SetBeat' return='void' arguments='float fBeat'>
+		Sets the value for the Beat modifier.
 	</Function>
 	<Function name='GetBig' return='bool' arguments=''>
-		
+		Returns the status of the Big modifier.
+	</Function>
+	<Function name='SetBig' return='void' arguments='bool bBig'>
+		Sets the Big modifier.
 	</Function>
 	<Function name='GetBlind' return='float' arguments=''>
-		
+		Returns the value of the Blind modifier.
+	</Function>
+	<Function name='SetBlind' return='void' arguments='float fBlind'>
+		Sets the value for the Blind modifier.
 	</Function>
 	<Function name='GetBlink' return='float' arguments=''>
-		
+		Returns the value of the Blink modifier.
+	</Function>
+	<Function name='SetBlink' return='void' arguments='float fBlink'>
+		Sets the value for the Blink modifier.
 	</Function>
 	<Function name='GetBMRize' return='bool' arguments=''>
-		
+		Returns the status of the BMRize modifier.
+	</Function>
+	<Function name='SetBMRize' return='void' arguments='bool bBMRize'>
+		Sets the BMRize modifier.
 	</Function>
 	<Function name='GetBoomerang' return='float' arguments=''>
-		
+		Returns the value of the Boomerang modifier.
+	</Function>
+	<Function name='SetBoomerang' return='void' arguments='float fBoomerang'>
+		Sets the value for the Boomerang modifier.
 	</Function>
 	<Function name='GetBoost' return='float' arguments=''>
-		
+		Returns the value of the Boost modifier.
+	</Function>
+	<Function name='SetBoost' return='void' arguments='float fBoost'>
+		Sets the value for the Boost modifier.
 	</Function>
 	<Function name='GetBrake' return='float' arguments=''>
-		
+		Returns the value of the Brake modifier.
+	</Function>
+	<Function name='SetBrake' return='void' arguments='float fBrake'>
+		Sets the value for the Brake modifier.
 	</Function>
 	<Function name='GetBumpy' return='float' arguments=''>
-		
+		Returns the value of the Bumpy modifier.
+	</Function>
+	<Function name='SetBumpy' return='void' arguments='float fBumpy'>
+		Sets the value for the Bumpy modifier.
 	</Function>
 	<Function name='GetCentered' return='float' arguments=''>
-		
+		Returns the value of the Centered modifier.
+	</Function>
+	<Function name='SetCentered' return='void' arguments='float fCentered'>
+		Sets the value for the Centered modifier.
 	</Function>
 	<Function name='GetCMod' return='float' arguments=''>
-		
+		Returns the player's C-mod.
+	</Function>
+	<Function name='SetCMod' return='void' arguments='float fCmod'>
+		Sets the player's C-mod to <code>fCmod</code>.
 	</Function>
 	<Function name='GetConfusion' return='float' arguments=''>
-		
+		Returns the value of the Confusion modifier.
+	</Function>
+	<Function name='SetConfusion' return='void' arguments='float fConfusion'>
+		Sets the value for the Confusion modifier.
 	</Function>
 	<Function name='GetCover' return='float' arguments=''>
-		
+		Returns the value of the Cover modifier.
+	</Function>
+	<Function name='SetCover' return='void' arguments='float fCover'>
+		Sets the value for the Cover modifier.
 	</Function>
 	<Function name='GetCross' return='float' arguments=''>
-		
+		Returns the value of the Cross modifier.
+	</Function>
+	<Function name='SetCross' return='void' arguments='float fCross'>
+		Sets the value for the Cross modifier.
 	</Function>
 	<Function name='GetDark' return='float' arguments=''>
-		
+		Returns the value of the Dark modifier.
+	</Function>
+	<Function name='SetDark' return='void' arguments='float fDark'>
+		Sets the value for the Dark modifier.
 	</Function>
 	<Function name='GetDizzy' return='float' arguments=''>
-		
+		Returns the value of the Dizzy modifier.
+	</Function>
+	<Function name='SetDizzy' return='void' arguments='float fDizzy'>
+		Sets the value for the Dizzy modifier.
 	</Function>
 	<Function name='GetDrunk' return='float' arguments=''>
-		
+		Returns the value of the Drunk modifier.
+	</Function>
+	<Function name='SetDrunk' return='void' arguments='float fDrunk'>
+		Sets the value for the Drunk modifier.
 	</Function>
 	<Function name='GetEcho' return='bool' arguments=''>
-		
+		Returns the status of the Echo modifier.
+	</Function>
+	<Function name='SetEcho' return='void' arguments='bool bEcho'>
+		Sets the Echo modifier.
 	</Function>
 	<Function name='GetExpand' return='float' arguments=''>
-		
+		Returns the value of the Expand modifier.
+	</Function>
+	<Function name='SetExpand' return='void' arguments='float fExpand'>
+		Sets the value for the Expand modifier.
 	</Function>
 	<Function name='GetFlip' return='float' arguments=''>
-		
+		Returns the value of the Flip modifier.
+	</Function>
+	<Function name='SetFlip' return='void' arguments='float fFlip'>
+		Sets the value for the Flip modifier.
 	</Function>
 	<Function name='GetFloored' return='bool' arguments=''>
-		
+		Returns the status of the Floored modifier.
+	</Function>
+	<Function name='SetFloored' return='void' arguments='bool bFloored'>
+		Sets the Floored modifier.
 	</Function>
 	<Function name='GetHidden' return='float' arguments=''>
-		
+		Returns the value of the Hidden modifier.
+	</Function>
+	<Function name='SetHidden' return='void' arguments='float fHidden'>
+		Sets the value for the Hidden modifier.
 	</Function>
 	<Function name='GetHiddenOffset' return='float' arguments=''>
-		
+		Returns the value of the Hidden Offset modifier.
+	</Function>
+	<Function name='SetHiddenOffset' return='void' arguments='float fHiddenOffset'>
+		Sets the value for the Hidden Offset modifier.
 	</Function>
 	<Function name='GetHoldRolls' return='bool' arguments=''>
-		
+		Returns <code>true</code> if Holds will be converted to Rolls.
+	</Function>
+	<Function name='SetHoldRolls' return='void' arguments='bool bHoldsRolls'>
+		If <code>true</code>, Holds will be converted to Rolls.
 	</Function>
 	<Function name='GetInvert' return='float' arguments=''>
-		
+		Returns the value of the Invert modifier.
+	</Function>
+	<Function name='SetInvert' return='void' arguments='float fInvert'>
+		Sets the value for the Invert modifier.
 	</Function>
 	<Function name='GetLeft' return='bool' arguments=''>
-		
+		Returns the status of the Left modifier.
+	</Function>
+	<Function name='SetLeft' return='void' arguments='bool bLeft'>
+		Sets the Left modifier.
 	</Function>
 	<Function name='GetLittle' return='bool' arguments=''>
-		
+		Returns the status of the Little modifier.
+	</Function>
+	<Function name='SetLittle' return='void' arguments='bool bLittle'>
+		Sets the Little modifier.
 	</Function>
 	<Function name='GetMines' return='bool' arguments=''>
-		
+		Returns the status of the Mines modifier.
+	</Function>
+	<Function name='SetMines' return='void' arguments='bool bMines'>
+		Sets the Mines modifier.
 	</Function>
 	<Function name='GetMini' return='float' arguments=''>
-		
+		Returns the value of the Mini modifier.
+	</Function>
+	<Function name='SetMini' return='void' arguments='float fMini'>
+		Sets the value for the Mini modifier.
 	</Function>
 	<Function name='GetMirror' return='bool' arguments=''>
-		
+		Returns <code>true</code> if the Mirror modifier is applied.
+	</Function>
+	<Function name='SetMirror' return='void' arguments='bool bMirror'>
+		Sets the Mirror modifier.
+	</Function>
+	<Function name='GetMMod' return='float' arguments=''>
+		Returns the player's M-mod.
+	</Function>
+	<Function name='SetMMod' return='void' arguments='float fMmod'>
+		Sets the player's M-mod to <code>fMmod</code>.
+	</Function>
+	<Function name='GetMuteOnError' return='bool' arguments=''>
+		Returns <code>true</code> if the game mutes an instrument track on errors.
+	</Function>
+	<Function name='SetMuteOnError' return='void' arguments='bool bMuteOnError'>
+		Sets the Mute on Error modifier.
+	</Function>
+	<Function name='GetNoAttacks' return='float' arguments=''>
+		Returns the value of the No Attacks modifier.
 	</Function>
 	<Function name='GetNoFakes' return='bool' arguments=''>
-		
+		Returns the status of the No Fakes modifier.
+	</Function>
+	<Function name='SetNoFakes' return='void' arguments='bool bNoFakes'>
+		Sets the No Fakes modifier, removing all Fakes.
 	</Function>
 	<Function name='GetNoHands' return='bool' arguments=''>
-		
+		Returns the status of the No Hands modifier.
+	</Function>
+	<Function name='SetNoHands' return='void' arguments='bool bNoHands'>
+		Sets the No Hands modifier, removing all Hands.
 	</Function>
 	<Function name='GetNoHolds' return='bool' arguments=''>
-		
+		Returns the status of the No Holds modifier.
+	</Function>
+	<Function name='SetNoHolds' return='void' arguments='bool bNoHolds'>
+		Sets the No Holds modifier, removing all Holds.
 	</Function>
 	<Function name='GetNoJumps' return='bool' arguments=''>
-		
+		Returns the status of the No Jumps modifier.
+	</Function>
+	<Function name='SetNoJumps' return='void' arguments='bool bNoJumps'>
+		Sets the No Jumps modifier, removing all Jumps.
 	</Function>
 	<Function name='GetNoLifts' return='bool' arguments=''>
-		
+		Returns the status of the No Lifts modifier.
+	</Function>
+	<Function name='SetNoLifts' return='void' arguments='bool bNoLifts'>
+		Sets the No Lifts modifier, removing all Lifts.
 	</Function>
 	<Function name='GetNoMines' return='bool' arguments=''>
-		
+		Returns the status of the No Mines modifier.
+	</Function>
+	<Function name='SetNoMines' return='void' arguments='bool bNoMines'>
+		Sets the No Mines modifier, removing all Mines.
 	</Function>
 	<Function name='GetNoQuads' return='bool' arguments=''>
-		
+		Returns the status of the No Quads modifier.
+	</Function>
+	<Function name='SetNoQuads' return='void' arguments='bool bNoQuads'>
+		Sets the No Quads modifier, removing all Quads.
 	</Function>
 	<Function name='GetNoRolls' return='bool' arguments=''>
-		
+		Returns the status of the No Rolls modifier.
+	</Function>
+	<Function name='SetNoRolls' return='void' arguments='bool bNoRolls'>
+		Sets the No Rolls modifier, removing all Rolls.
 	</Function>
 	<Function name='GetNoStretch' return='bool' arguments=''>
-		
+		Returns the status of the No Stretch modifier.
+	</Function>
+	<Function name='SetNoStretch' return='void' arguments='bool bNoStretch'>
+		Sets the No Stretch modifier, removing all step combinations that require a large stretch.
 	</Function>
 	<Function name='GetNoteSkin' return='string' arguments=''>
 		Returns the current NoteSkin set in the PlayerOptions.
 	</Function>
+	<Function name='SetNoteSkin' return='void' arguments='string noteskin'>
+		Changes the player's noteskin to <code>noteskin</code>.
+	</Function>
 	<Function name='GetPassmark' return='float' arguments=''>
-		
+		Returns the value of the Passmark.
+	</Function>
+	<Function name='SetPassmark' return='void' arguments='float fPassmark'>
+		Sets the value for the Passmark.
 	</Function>
 	<Function name='GetPlanted' return='bool' arguments=''>
-		
+		Returns the status of the Planted modifier.
+	</Function>
+	<Function name='SetPlanted' return='void' arguments='bool bPlanted'>
+		Sets the Planted modifier.
 	</Function>
 	<Function name='GetQuick' return='bool' arguments=''>
-		
+		Returns the status of the Quick modifier.
+	</Function>
+	<Function name='SetQuick' return='void' arguments='bool bQuick'>
+		Sets the Quick modifier.
 	</Function>
 	<Function name='GetRandomAttacks' return='float' arguments=''>
-		
+		Returns the value of the Random Attacks modifier.
+	</Function>
+	<Function name='SetRandomAttacks' return='void' arguments='float fRandomAttacks'>
+		Sets the value for the Random Attacks modifier.
 	</Function>
 	<Function name='GetRandomSpeed' return='float' arguments=''>
-		
+		Returns the value of the Random Speed modifier.
+	</Function>
+	<Function name='SetRandomSpeed' return='void' arguments='float fRandomSpeed'>
+		Sets the value for the Random Speed modifier.
 	</Function>
 	<Function name='GetRandomVanish' return='float' arguments=''>
-		
+		Returns the value of the Random Vanish modifier.
+	</Function>
+	<Function name='SetRandomVanish' return='void' arguments='float fRandomVanish'>
+		Sets the value for the Random Vanish modifier.
 	</Function>
 	<Function name='GetReverse' return='float' arguments=''>
-		
+		Returns the value of the Reverse modifier.
+	</Function>
+	<Function name='SetReverse' return='void' arguments='float fReverse'>
+		Sets the value for the Reverse modifier.
 	</Function>
 	<Function name='GetReversePercentForColumn' return='float' arguments='int col'>
-		
+		Returns the amount of reverse applied to the specified column.
 	</Function>
 	<Function name='GetRight' return='bool' arguments=''>
-		
+		Returns the status of the Right modifier.
+	</Function>
+	<Function name='SetRight' return='void' arguments='bool bRght'>
+		Sets the Right modifier.
 	</Function>
 	<Function name='GetRoll' return='float' arguments=''>
-		
+		Returns the value of the Roll modifier.
+	</Function>
+	<Function name='SetRoll' return='void' arguments='float fRoll'>
+		Sets the value for the Roll modifier.
 	</Function>
 	<Function name='GetShuffle' return='bool' arguments=''>
-		
+		Returns the status of the Shuffle modifier.
+	</Function>
+	<Function name='SetShuffle' return='void' arguments='bool bShuffle'>
+		Sets the Shuffle modifier.
 	</Function>
 	<Function name='GetSkew' return='float' arguments=''>
-		
+		Returns the value of the NoteField skew.
+	</Function>
+	<Function name='SetSkew' return='void' arguments='float fSkew'>
+		Sets the NoteField skew. This is used to replicate the various
+		views. (Distant, Hallway, etc.)
 	</Function>
 	<Function name='GetSkippy' return='bool' arguments=''>
-		
+		Returns the status of the Skippy modifier.
+	</Function>
+	<Function name='SetSkippy' return='void' arguments='bool bSkippy'>
+		Sets the Skippy modifier.
 	</Function>
 	<Function name='GetSoftShuffle' return='bool' arguments=''>
-		
+		Returns the status of the Soft Shuffle modifier.
+	</Function>
+	<Function name='SetSoftShuffle' return='void' arguments='bool bSoftShuffle'>
+		Sets the Soft Shuffle modifier.
 	</Function>
 	<Function name='GetSongAttacks' return='float' arguments=''>
 		This function is deprecated. Please use GetStepAttacks() instead.
@@ -2672,55 +2869,97 @@
 		
 	</Function>
 	<Function name='GetSplit' return='float' arguments=''>
-		
+		Returns the value of the Split modifier.
+	</Function>
+	<Function name='SetSplit' return='void' arguments='float fSplit'>
+		Sets the value for the Split modifier.
 	</Function>
 	<Function name='GetStealth' return='float' arguments=''>
-		
+		Returns the value of the Stealth modifier.
+	</Function>
+	<Function name='SetStealth' return='void' arguments='float fStealth'>
+		Sets the value for the Stealth modifier.
 	</Function>
 	<Function name='GetStomp' return='bool' arguments=''>
-		
+		Returns the status of the Stomp modifier.
+	</Function>
+	<Function name='SetStomp' return='void' arguments='bool bStomp'>
+		Sets the Stomp modifier.
 	</Function>
 	<Function name='GetSudden' return='float' arguments=''>
-		
+		Returns the value of the Sudden modifier.
+	</Function>
+	<Function name='SetSudden' return='void' arguments='float fSudden'>
+		Sets the value for the Sudden modifier.
 	</Function>
 	<Function name='GetSuddenOffset' return='float' arguments=''>
-		
+		Returns the value of the Sudden Offset modifier.
+	</Function>
+	<Function name='SetSuddenOffset' return='void' arguments='float fSuddenOffset'>
+		Sets the value for the Sudden Offset modifier.
 	</Function>
 	<Function name='GetSuperShuffle' return='bool' arguments=''>
-		
+		Returns the status of the Super Shuffle modifier.
+	</Function>
+	<Function name='SetSuperShuffle' return='void' arguments='bool bSuperShuffle'>
+		Sets the Super Shuffle modifier.
 	</Function>
 	<Function name='GetTiny' return='float' arguments=''>
-		
+		Returns the value of the Tiny modifier.
+	</Function>
+	<Function name='SetTiny' return='void' arguments='float fTiny'>
+		Sets the value for the Tiny modifier.
 	</Function>
 	<Function name='GetTipsy' return='float' arguments=''>
-		
+		Returns the value of the Tipsy modifier.
+	</Function>
+	<Function name='SetTipsy' return='void' arguments='float fTipsy'>
+		Sets the value for the Tipsy modifier.
 	</Function>
 	<Function name='GetTornado' return='float' arguments=''>
-		
+		Returns the value of the Tornado modifier.
+	</Function>
+	<Function name='SetTornado' return='void' arguments='float fTornado'>
+		Sets the value for the Tornado modifier.
 	</Function>
 	<Function name='GetTwirl' return='float' arguments=''>
-		
+		Returns the value of the Twirl modifier.
+	</Function>
+	<Function name='SetTwirl' return='void' arguments='float fTwirl'>
+		Sets the value for the Twirl modifier.
 	</Function>
 	<Function name='GetTwister' return='bool' arguments=''>
-		
+		Returns the status of the Twister modifier.
+	</Function>
+	<Function name='SetTwister' return='void' arguments='bool bTwister'>
+		Sets the Twister modifier.
 	</Function>
 	<Function name='GetWave' return='float' arguments=''>
-		
+		Returns the value of the Wave modifier.
+	</Function>
+	<Function name='SetWave' return='void' arguments='float fWave'>
+		Sets the value for the Wave modifier.
 	</Function>
 	<Function name='GetWide' return='bool' arguments=''>
-		
+		Returns the status of the Wide modifier.
+	</Function>
+	<Function name='SetWide' return='void' arguments='bool bWide'>
+		Sets the Wide modifier.
 	</Function>
 	<Function name='GetXMod' return='float' arguments=''>
-		
+		Returns the player's X-mod.
+	</Function>
+	<Function name='SetXMod' return='void' arguments='float fXmod'>
+		Sets the player's X-mod to <code>fXmod</code>.
 	</Function>
 	<Function name='GetXMode' return='float' arguments=''>
-		
+		Returns the value of X Mode.
 	</Function>
-	<Function name='SetNoteSkin' return='void' arguments='string noteskin'>
-		Changes the player's noteskin to <code>noteskin</code>.
+	<Function name='SetXMode' return='void' arguments='float fXModeVal'>
+		Sets the X Mode percentage to <code>fXModeVal</code>.
 	</Function>
 	<Function name='UsingReverse' return='bool' arguments=''>
-		Returns <code>true</code> if the player is using reverse. (equivalent to <code>GetReverse() == 1</code>)
+		Returns <code>true</code> if the player is using reverse. (equivalent to <code>GetReverse() == 1.0</code>)
 	</Function>
 </Class>
 <Class name='PlayerStageStats'>
@@ -2760,6 +2999,9 @@
 	<Function name='GetCurrentScoreMultiplier' return='int' arguments=''>
 		Returns the player's current score multiplier.
 	</Function>
+	<Function name='GetFailed' return='bool' arguments=''>
+		Returns <code>true</code> if the player failed.
+	</Function>
 	<Function name='GetGrade' return='Grade' arguments=''>
 		Returns the player's grade.
 	</Function>
@@ -2777,6 +3019,9 @@
 	</Function>
 	<Function name='GetMachineHighScoreIndex' return='int' arguments=''>
 		Returns the machine high score index for this performance.
+	</Function>
+	<Function name='GetNumControllerSteps' return='int' arguments=''>
+		Returns the number of controller steps.
 	</Function>
 	<Function name='GetPeakComboAward' return='PeakComboAward' arguments=''>
 		Returns the peak combo award for this performance.
@@ -3971,6 +4216,9 @@
 	</Function>
 	<Function name='DoesThemeExist' return='bool' arguments='string themeName'>
 		Returns <code>true</code> if the specified theme exists.
+	</Function>
+	<Function name='GetAbsolutePath' theme='_fallback' return='string' arguments='string sPath'>
+		[03 ProductivityHelpers.lua] Returns the absolute path of a file in the theme.
 	</Function>
 	<Function name='GetCurLanguage' return='string' arguments=''>
 		Returns the current language.

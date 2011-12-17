@@ -279,6 +279,7 @@ const RString& NoteTypeToString( NoteType nt );
 const RString& NoteTypeToLocalizedString( NoteType nt );
 LuaDeclareType( NoteType );
 float NoteTypeToBeat( NoteType nt );
+int NoteTypeToRow( NoteType nt );
 NoteType GetNoteType( int row );
 NoteType BeatToNoteType( float fBeat );
 bool IsNoteOfType( int row, NoteType t );

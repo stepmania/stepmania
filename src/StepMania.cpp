@@ -89,8 +89,6 @@ void StepMania::GetPreferredVideoModeParams( VideoModeParams &paramsOut )
 		iWidth = static_cast<int>(ceilf(PREFSMAN->m_iDisplayHeight * PREFSMAN->m_fDisplayAspectRatio));
 	}
 
-	// todo: allow for PRODUCT_ID + "-" + CommonMetrics::WINDOW_TITLE as
-	// a theme option (Midi requested it, AJ had the idea for making it optional)
 	paramsOut = VideoModeParams(
 		PREFSMAN->m_bWindowed,
 		iWidth,
@@ -1279,8 +1277,8 @@ bool HandleGlobalInputs( const InputEventPlus &input )
 	}
 
 	/* Re-added for StepMania 3.9 theming veterans, plus it's just faster than
-	 * the debug menu. However, in sm-ssc, the Shift button only reloads the
-	 * metrics, unlike in 3.9 (where it saved bookkeeping and machine profile). -aj */
+	 * the debug menu. The Shift button only reloads the metrics, unlike in 3.9
+	 * (where it saved bookkeeping and machine profile). -aj */
 	bool bIsShiftHeld = INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT), &input.InputList) ||
 		INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT), &input.InputList);
 	bool bIsCtrlHeld = INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL), &input.InputList) ||
@@ -1304,7 +1302,7 @@ bool HandleGlobalInputs( const InputEventPlus &input )
 		else if( bIsCtrlHeld && bIsShiftHeld )
 		{
 			// Shift+Ctrl+F2: reload overlay screens (and metrics, since themers
-			// are likely going to do this after changing metrics and be lazy.)
+			// are likely going to do this after changing metrics.)
 			THEME->ReloadMetrics();
 			SCREENMAN->ReloadOverlayScreens();
 			SCREENMAN->SystemMessage( RELOADED_OVERLAY_SCREENS );

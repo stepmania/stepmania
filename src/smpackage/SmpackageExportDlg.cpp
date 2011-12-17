@@ -189,6 +189,7 @@ static bool ExportPackage( const RString &sPackageName, const RString &sSourceIn
 			sExt.CompareNoCase("ogg")==0 ||
 			sExt.CompareNoCase("gif")==0 ||
 			sExt.CompareNoCase("jpg")==0 ||
+			sExt.CompareNoCase("jpeg")==0 ||
 			sExt.CompareNoCase("png")==0 )
 			bUseCompression = false;
 

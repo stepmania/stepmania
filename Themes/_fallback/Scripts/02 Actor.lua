@@ -377,6 +377,25 @@ function ActorSound:playforplayer(pn)
 	self:play()
 end
 
+function PositionPerPlayer(player, p1X, p2X)
+	return player == PLAYER_1 and p1X or p2X
+end
+
+-- Make graphics their true size at any resolution.
+--[[ Note: for screens taller than wide (i.e. phones, sideways displays),
+you'll need to get width rather than height (I just don't feel like
+uglyfying my code just to handle rare cases). -shake ]]
+function GetReal()
+	local theme = THEME:GetMetric("Common","ScreenHeight")
+	local res = PREFSMAN:GetPreference("DisplayHeight")
+	return theme/res
+end
+function GetRealInverse()
+	local theme = THEME:GetMetric("Common","ScreenHeight")
+	local res = PREFSMAN:GetPreference("DisplayHeight")
+	return res/theme
+end
+
 -- (c) 2006-2011 Glenn Maynard, SSC
 -- All rights reserved.
 --

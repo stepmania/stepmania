@@ -8,6 +8,71 @@ ________________________________________________________________________________
 StepMania 5.0 $next | 20111xxx
 --------------------------------------------------------------------------------
 
+2011/12/17
+----------
+* [Various] Allow loading of *.jpeg in addition to *.jpg. [AJ]
+
+2011/12/16
+----------
+* [StreamDisplay] Added VelocityMultiplier, VelocityMin, VelocityMax,
+  SpringMultiplier and ViscosityMultiplier metrics. [AJ]
+
+2011/12/12
+----------
+* [ScreenEdit] Add the GAMESTATE:InStepEditor Lua binding. [Wolfman2000]
+* [Player, ScreenGameplay] Allow failing on Oni without crashing. This one
+  took awhile. [Wolfman2000]
+* [LifeMeterBattery] Fixed various issues (lives not fully disappearing on fail,
+  P2 lose life animation having the wrong x zoom, hide the lives number if it
+  falls below 0). [AJ]
+
+2011/12/11
+----------
+* [ScreenEdit] Restore cycling the timing segments for jumping between.
+  The required line somehow never got replaced. [Wolfman2000]
+
+2011/11/30
+----------
+* [PlayerOptions] Added IsEasierForSongAndSteps(Song,Steps,PlayerNumber) and
+  IsEasierForCourseAndTrail(Course, Trail) Lua bindings. [AJ]
+* [PlayerState] Added GetSuperMeterLevel() Lua binding. [AJ]
+
+2011/11/28
+----------
+* [ScreenGameplay] Add the SurvivalModOverride metric. Let the themer decide
+  if mods should be overridden on survival or not. Funny enough, this used
+  to be true for the old Oni style mode, but...well, we'll cross that bridge
+  later. [Wolfman2000]
+* [LifeMeterBattery] Added MaxLives metric, which limits the maximum amount of
+  lives. Setting this to 0 will remove the limit. [AJ]
+
+2011/11/27
+----------
+* [PlayerOptions] Pretty large changes here, namely a bunch of new bindings.
+  Fixed the logic for GetReversePercentForColumn; It will now return nil for
+  invalid columns. Also fixed the logic for UsingReverse (now checks for 1.0f)
+  and SetPassmark (no longer allows values < 0.00f and > 1.0f). [AJ]
+* [ScreenEdit] Allow inserting and removing beats and timing changes in
+  specific note increments instead of just quarter notes (a whole beat).
+  Those that prefer to keep using the shortcut keys will note that the
+  behavior has not changed for that: only by going into the Area menu can you
+  deal with more specific changes. [Wolfman2000]
+
+2011/11/26
+----------
+* [ScreenEdit] Restore using F9 and F10 to adjust stops by a fixed amount.
+  Sorry for the delay in this. [Wolfman2000]
+* [ScreenEdit] Minor convenience. If you attempt to create a negative stop
+  segment from scratch, it does not create, and you are not requested to
+  save on exit, for there is nothing to save. [Wolfman2000]
+* [ScreenEdit] Allow Shift + F9/F10 for adjusting delays. This works the same
+  way as adjusting stops. [Wolfman2000]
+
+2011/11/25
+----------
+* [PlayerStageStats] Hitting a mine no longer gives you full combo when
+  [Gameplay] MineHitIncrementsMissCombo=true. [AJ]
+
 2011/11/24
 ----------
 * [PlayerStageStats] Added GetFailed and GetNumControllerSteps Lua bindings. [AJ]
@@ -32,6 +97,7 @@ StepMania 5.0 $next | 20111xxx
 * [GameplayAssist] Don't play sounds if the player is dead. Fixes issue 621. [AJ]
 
 2011/11/04
+----------
 * [ScoreKeeperRave] Revert fix from 2011/10/28. [AJ]
 * [ScoreKeeperRave] Fixed Miss and HitMine giving meter life.
   (Fixes issue 622.) [AJ]

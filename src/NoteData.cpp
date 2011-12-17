@@ -501,8 +501,13 @@ int NoteData::GetNumTapNotes( int iStartIndex, int iEndIndex ) const
 
 int NoteData::GetNumTapNotesInRow( int iRow ) const
 {
-	// Optimization opportunity: There's no need to instantiate row iterators if we're only checking one row.
-	return GetNumTapNotes( iRow, iRow+1 );
+	int iNumNotes = 0;
+	for( int t=0; t<GetNumTracks(); t++ )
+	{
+		if (this->IsTap(GetTapNote(t, iRow), iRow))
+			iNumNotes++;
+	}
+	return iNumNotes;
 }
 
 int NoteData::GetNumRowsWithTap( int iStartIndex, int iEndIndex ) const
@@ -599,7 +604,7 @@ int NoteData::GetNumRowsWithSimultaneousTaps( int iMinTaps, int iStartIndex, int
 	int iNum = 0;
 	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( *this, r, iStartIndex, iEndIndex )
 	{
-		if (GAMESTATE->GetProcessedTimingData()->IsJudgableAtRow(r))
+		if (!GAMESTATE->GetProcessedTimingData()->IsJudgableAtRow(r))
 			continue;
 		int iNumNotesThisIndex = 0;
 		for( int t=0; t<GetNumTracks(); t++ )

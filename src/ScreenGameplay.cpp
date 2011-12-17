@@ -70,6 +70,7 @@
 static ThemeMetric<float> INITIAL_BACKGROUND_BRIGHTNESS	("ScreenGameplay","InitialBackgroundBrightness");
 static ThemeMetric<float> SECONDS_BETWEEN_COMMENTS	("ScreenGameplay","SecondsBetweenComments");
 static ThemeMetric<RString> SCORE_KEEPER_CLASS		("ScreenGameplay","ScoreKeeperClass");
+static ThemeMetric<bool> SURVIVAL_MOD_OVERRIDE ("ScreenGameplay","SurvivalModOverride");
 
 AutoScreenMessage( SM_PlayGo );
 
@@ -831,7 +832,7 @@ void ScreenGameplay::InitSongQueues()
 			}
 
 			// In a survival course, override stored mods
-			if( pCourse->GetCourseType() == COURSE_TYPE_SURVIVAL )
+			if( pCourse->GetCourseType() == COURSE_TYPE_SURVIVAL && SURVIVAL_MOD_OVERRIDE )
 			{
 				pi->GetPlayerState()->m_PlayerOptions.FromString( ModsLevel_Stage, 
 										 "clearall,"
@@ -1681,7 +1682,9 @@ void ScreenGameplay::Update( float fDeltaTime )
 						// kill them!
 						SOUND->PlayOnceFromDir( THEME->GetPathS(m_sName,"oni die") );
 						pi->ShowOniGameOver();
+						int tracks = pi->m_NoteData.GetNumTracks();
 						pi->m_NoteData.Init();		// remove all notes and scoring
+						pi->m_NoteData.SetNumTracks(tracks); // reset the number of tracks.
 						pi->m_pPlayer->FadeToFail();	// tell the NoteField to fade to white
 					}
 				}
@@ -2517,6 +2520,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			return;
 		}
 
+		// todo: add GameplayCleared, StartTransitioningCleared commands -aj
 		TweenOffScreen();
 
 		m_Out.StartTransitioning( SM_DoNextScreen );

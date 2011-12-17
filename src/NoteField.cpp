@@ -195,11 +195,11 @@ void NoteField::Load(
 	 * regardless of noteskin content. This may take a while to fix. */
 	NoteDisplayCols *badIdea = m_pCurDisplay;
 
-	if (sNoteSkinLower.empty())
+	if(sNoteSkinLower.empty())
 	{
 		sNoteSkinLower = m_pPlayerState->m_PlayerOptions.GetPreferred().m_sNoteSkin;
 
-		if (sNoteSkinLower.empty())
+		if(sNoteSkinLower.empty())
 		{
 			sNoteSkinLower = "default";
 		}
@@ -208,24 +208,24 @@ void NoteField::Load(
 
 	sNoteSkinLower.MakeLower();
 	map<RString, NoteDisplayCols *>::iterator it = m_NoteDisplays.find( sNoteSkinLower );
-	ASSERT_M( it != m_NoteDisplays.end(), sNoteSkinLower );
+	ASSERT_M( it != m_NoteDisplays.end(), ssprintf("iterator != m_NoteDisplays.end() [sNoteSkinLower = %s]",sNoteSkinLower.c_str()) );
 	memset( m_pDisplays, 0, sizeof(m_pDisplays) );
 	FOREACH_EnabledPlayer( pn )
 	{
 		sNoteSkinLower = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.GetCurrent().m_sNoteSkin;
 
 		// XXX: Re-setup sNoteSkinLower. Unsure if inserting the skin again is needed.
-		if (sNoteSkinLower.empty())
+		if(sNoteSkinLower.empty())
 		{
 			sNoteSkinLower = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.GetPreferred().m_sNoteSkin;
-			
-			if (sNoteSkinLower.empty())
+
+			if(sNoteSkinLower.empty())
 			{
 				sNoteSkinLower = "default";
 			}
 			m_NoteDisplays.insert(pair<RString, NoteDisplayCols *> (sNoteSkinLower, badIdea));
 		}
-		
+
 		sNoteSkinLower.MakeLower();
 		it = m_NoteDisplays.find( sNoteSkinLower );
 		ASSERT_M( it != m_NoteDisplays.end(), sNoteSkinLower );

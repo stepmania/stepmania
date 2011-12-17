@@ -1307,14 +1307,6 @@
 				>
 			</File>
 			<File
-				RelativePath="NotesLoaderPMS.cpp"
-				>
-			</File>
-			<File
-				RelativePath="NotesLoaderPMS.h"
-				>
-			</File>
-			<File
 				RelativePath="NotesLoaderSM.cpp"
 				>
 			</File>

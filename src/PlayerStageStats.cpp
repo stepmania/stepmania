@@ -19,6 +19,7 @@
 #define GRADE_TIER02_IS_FULL_COMBO THEME->GetMetricB("PlayerStageStats","GradeTier02IsFullCombo")
 
 static ThemeMetric<TapNoteScore> g_MinScoreToMaintainCombo( "Gameplay", "MinScoreToMaintainCombo" );
+static ThemeMetric<bool> g_MineHitIncrementsMissCombo( "Gameplay", "MineHitIncrementsMissCombo" );
 
 const float LESSON_PASS_THRESHOLD = 0.8f;
 
@@ -529,7 +530,11 @@ bool PlayerStageStats::FullComboOfScore( TapNoteScore tnsAllGreaterOrEqual ) con
 		if( m_iTapNoteScores[i] > 0 )
 			return false;
 	}
-	
+
+	// hit any mines when they increment the miss combo? It's not a full combo.
+	if( g_MineHitIncrementsMissCombo && m_iTapNoteScores[TNS_HitMine] > 0 )
+		return false;
+
 	// If has at least one of the judgments equal to or above, then is a full combo.
 	for( int i=tnsAllGreaterOrEqual; i<NUM_TapNoteScore; i++ )
 	{

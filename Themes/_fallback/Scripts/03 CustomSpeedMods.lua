@@ -16,12 +16,6 @@ This rewrite comes with the following changes/features:
   Thanks to this, we can now support reading SpeedMods from a USB stick or
   other external storage. (I didn't test writing yet, but it should work.)
 
-* Data/SpeedMods.txt is the fallback.
-  Previously, all speed mods were stored in {SM4 folder}/Data/SpeedMods.txt.
-  For compatibility reasons, this file is still read by the script.
-  It should be noted that this file may be the cause of problems in modern
-  Windows versions (Vista, 7).
-
 This version of Custom Speed Mods will only run on StepMania 5 (due to m-mods).
 --------------------------------------------------------------------------------
 v1.4
@@ -185,7 +179,6 @@ local function GetSpeedMods()
 
 	local baseFilename = "SpeedMods.txt"
 	local profileDirs = {
-		--Fallback = "Data/",
 		Machine = ProfileDir('ProfileSlot_Machine'),
 		PlayerNumber_P1 = ProfileDir('ProfileSlot_Player1'),
 		PlayerNumber_P2 = ProfileDir('ProfileSlot_Player2')
@@ -193,8 +186,6 @@ local function GetSpeedMods()
 
 	-- figure out how many players we have to deal with.
 	local numPlayers = GAMESTATE:GetNumPlayersEnabled()
-	-- load fallback
-	--local fallbackMods = ParseSpeedModFile(profileDirs.Fallback..baseFilename)
 
 	-- load machine
 	local machineMods = ParseSpeedModFile(profileDirs.Machine..baseFilename)
@@ -210,8 +201,7 @@ local function GetSpeedMods()
 		end
 	end
 
-	--finalMods = fallbackMods
-	-- mine for duplicates, first pass (fallback <-> machine)
+	-- mine for duplicates, first pass
 	machineMods = MarkDupes(machineMods,finalMods)
 	for ply=1,#playerMods do
 		playerMods[ply] = MarkDupes(playerMods[ply],finalMods)

@@ -5,7 +5,6 @@
 #include "NotesLoaderSSC.h"
 #include "NotesLoaderDWI.h"
 #include "NotesLoaderBMS.h"
-#include "NotesLoaderPMS.h"
 #include "NotesLoaderKSF.h"
 #include "RageUtil.h"
 

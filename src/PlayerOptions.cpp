@@ -882,6 +882,23 @@ void PlayerOptions::ResetPrefs( ResetPrefsType type )
 class LunaPlayerOptions: public Luna<PlayerOptions>
 {
 public:
+	static int IsEasierForSongAndSteps( T *p, lua_State *L )
+	{
+		Song* pSong = Luna<Song>::check(L,1);
+		Steps* pSteps = Luna<Steps>::check(L,2);
+		PlayerNumber pn = Enum::Check<PlayerNumber>(L, 3);
+		lua_pushboolean(L, p->IsEasierForSongAndSteps(pSong, pSteps, pn) );
+		return 1;
+	}
+	static int IsEasierForCourseAndTrail( T *p, lua_State *L )
+	{
+		// course, trail
+		Course* pCourse = Luna<Course>::check(L,1);
+		Trail* pTrail = Luna<Trail>::check(L,2);
+		lua_pushboolean(L, p->IsEasierForCourseAndTrail(pCourse, pTrail) );
+		return 1;
+	}
+
 	// NoteSkins
 	static int GetNoteSkin( T *p, lua_State *L )
 	{
@@ -907,6 +924,8 @@ public:
 			lua_pushnil(L);
 		return 1;
 	}
+	static int SetCMod( T *p, lua_State *L ) { p->m_fTimeSpacing = FArg(1); return 0; }
+
 	static int GetXMod( T *p, lua_State *L )
 	{
 		if( !p->m_fTimeSpacing )
@@ -915,213 +934,364 @@ public:
 			lua_pushnil(L);
 		return 1;
 	}
+	static int SetXMod( T *p, lua_State *L ) { p->m_fScrollSpeed = FArg(1); return 0; }
+
 	static int GetMMod( T *p, lua_State *L ) { lua_pushnumber(L, p->m_fMaxScrollBPM); return 1; }
+	static int SetMMod( T *p, lua_State *L ) { p->m_fMaxScrollBPM = FArg(1); return 0; }
 
 	// Accel
 	DEFINE_METHOD( GetBoost, m_fAccels[PlayerOptions::ACCEL_BOOST] )
+	static int SetBoost( T *p, lua_State *L ){ p->m_fAccels[PlayerOptions::ACCEL_BOOST] = FArg(1); return 0; }
 	DEFINE_METHOD( GetBrake, m_fAccels[PlayerOptions::ACCEL_BRAKE] )
+	static int SetBrake( T *p, lua_State *L ){ p->m_fAccels[PlayerOptions::ACCEL_BRAKE] = FArg(1); return 0; }
 	DEFINE_METHOD( GetWave, m_fAccels[PlayerOptions::ACCEL_WAVE] )
+	static int SetWave( T *p, lua_State *L ){ p->m_fAccels[PlayerOptions::ACCEL_WAVE] = FArg(1); return 0; }
 	DEFINE_METHOD( GetExpand, m_fAccels[PlayerOptions::ACCEL_EXPAND] )
+	static int SetExpand( T *p, lua_State *L ){ p->m_fAccels[PlayerOptions::ACCEL_EXPAND] = FArg(1); return 0; }
 	DEFINE_METHOD( GetBoomerang, m_fAccels[PlayerOptions::ACCEL_BOOMERANG] )
+	static int SetBoomerang( T *p, lua_State *L ){ p->m_fAccels[PlayerOptions::ACCEL_BOOMERANG] = FArg(1); return 0; }
 
 	// Effect
 	DEFINE_METHOD( GetDrunk, m_fEffects[PlayerOptions::EFFECT_DRUNK] ) // MoonGyuHyuk
+	static int SetDrunk( T *p, lua_State *L ){ p->m_fEffects[PlayerOptions::EFFECT_DRUNK] = FArg(1); return 0; }
 	DEFINE_METHOD( GetDizzy, m_fEffects[PlayerOptions::EFFECT_DIZZY] )
+	static int SetDizzy( T *p, lua_State *L ){ p->m_fEffects[PlayerOptions::EFFECT_DIZZY] = FArg(1); return 0; }
 	DEFINE_METHOD( GetConfusion, m_fEffects[PlayerOptions::EFFECT_CONFUSION] )
+	static int SetConfusion( T *p, lua_State *L ){ p->m_fEffects[PlayerOptions::EFFECT_CONFUSION] = FArg(1); return 0; }
 	DEFINE_METHOD( GetMini, m_fEffects[PlayerOptions::EFFECT_MINI] )
+	static int SetMini( T *p, lua_State *L ){ p->m_fEffects[PlayerOptions::EFFECT_MINI] = FArg(1); return 0; }
 	DEFINE_METHOD( GetTiny, m_fEffects[PlayerOptions::EFFECT_TINY] )
+	static int SetTiny( T *p, lua_State *L ){ p->m_fEffects[PlayerOptions::EFFECT_TINY] = FArg(1); return 0; }
 	DEFINE_METHOD( GetFlip, m_fEffects[PlayerOptions::EFFECT_FLIP] )
+	static int SetFlip( T *p, lua_State *L ){ p->m_fEffects[PlayerOptions::EFFECT_DRUNK] = FArg(1); return 0; }
 	DEFINE_METHOD( GetInvert, m_fEffects[PlayerOptions::EFFECT_INVERT] )
+	static int SetInvert( T *p, lua_State *L ){ p->m_fEffects[PlayerOptions::EFFECT_DRUNK] = FArg(1); return 0; }
 	DEFINE_METHOD( GetTornado, m_fEffects[PlayerOptions::EFFECT_TORNADO] )
+	static int SetTornado( T *p, lua_State *L ){ p->m_fEffects[PlayerOptions::EFFECT_DRUNK] = FArg(1); return 0; }
 	DEFINE_METHOD( GetTipsy, m_fEffects[PlayerOptions::EFFECT_TIPSY] )
+	static int SetTipsy( T *p, lua_State *L ){ p->m_fEffects[PlayerOptions::EFFECT_DRUNK] = FArg(1); return 0; }
 	DEFINE_METHOD( GetBumpy, m_fEffects[PlayerOptions::EFFECT_BUMPY] )
+	static int SetBumpy( T *p, lua_State *L ){ p->m_fEffects[PlayerOptions::EFFECT_DRUNK] = FArg(1); return 0; }
 	DEFINE_METHOD( GetBeat, m_fEffects[PlayerOptions::EFFECT_BEAT] )
+	static int SetBeat( T *p, lua_State *L ){ p->m_fEffects[PlayerOptions::EFFECT_DRUNK] = FArg(1); return 0; }
 	DEFINE_METHOD( GetXMode, m_fEffects[PlayerOptions::EFFECT_XMODE] )
+	static int SetXMode( T *p, lua_State *L ){ p->m_fEffects[PlayerOptions::EFFECT_DRUNK] = FArg(1); return 0; }
 	DEFINE_METHOD( GetTwirl, m_fEffects[PlayerOptions::EFFECT_TWIRL] )
+	static int SetTwirl( T *p, lua_State *L ){ p->m_fEffects[PlayerOptions::EFFECT_DRUNK] = FArg(1); return 0; }
 	DEFINE_METHOD( GetRoll, m_fEffects[PlayerOptions::EFFECT_ROLL] )
+	static int SetRoll( T *p, lua_State *L ){ p->m_fEffects[PlayerOptions::EFFECT_DRUNK] = FArg(1); return 0; }
 
 	// Appearance
 	DEFINE_METHOD( GetHidden, m_fAppearances[PlayerOptions::APPEARANCE_HIDDEN] )
+	static int SetHidden( T *p, lua_State *L ){ p->m_fAppearances[PlayerOptions::APPEARANCE_HIDDEN] = FArg(1); return 0; }
 	DEFINE_METHOD( GetHiddenOffset, m_fAppearances[PlayerOptions::APPEARANCE_HIDDEN_OFFSET] )
+	static int SetHiddenOffset( T *p, lua_State *L ){ p->m_fAppearances[PlayerOptions::APPEARANCE_HIDDEN_OFFSET] = FArg(1); return 0; }
 	DEFINE_METHOD( GetSudden, m_fAppearances[PlayerOptions::APPEARANCE_SUDDEN] )
+	static int SetSudden( T *p, lua_State *L ){ p->m_fAppearances[PlayerOptions::APPEARANCE_SUDDEN] = FArg(1); return 0; }
 	DEFINE_METHOD( GetSuddenOffset, m_fAppearances[PlayerOptions::APPEARANCE_SUDDEN_OFFSET] )
+	static int SetSuddenOffset( T *p, lua_State *L ){ p->m_fAppearances[PlayerOptions::APPEARANCE_SUDDEN_OFFSET] = FArg(1); return 0; }
 	DEFINE_METHOD( GetStealth, m_fAppearances[PlayerOptions::APPEARANCE_STEALTH] )
+	static int SetStealth( T *p, lua_State *L ){ p->m_fAppearances[PlayerOptions::APPEARANCE_STEALTH] = FArg(1); return 0; }
 	DEFINE_METHOD( GetBlink, m_fAppearances[PlayerOptions::APPEARANCE_BLINK] )
+	static int SetBlink( T *p, lua_State *L ){ p->m_fAppearances[PlayerOptions::APPEARANCE_BLINK] = FArg(1); return 0; }
 	DEFINE_METHOD( GetRandomVanish, m_fAppearances[PlayerOptions::APPEARANCE_RANDOMVANISH] )
+	static int SetRandomVanish( T *p, lua_State *L ){ p->m_fAppearances[PlayerOptions::APPEARANCE_RANDOMVANISH] = FArg(1); return 0; }
 
 	// Scroll
 	DEFINE_METHOD( GetReverse, m_fScrolls[PlayerOptions::SCROLL_REVERSE] )
-	DEFINE_METHOD( UsingReverse, m_fScrolls[PlayerOptions::SCROLL_REVERSE] == 1 )
+	static int SetReverse( T *p, lua_State *L ){ p->m_fScrolls[PlayerOptions::SCROLL_REVERSE] = FArg(1); return 0; }
+	DEFINE_METHOD( UsingReverse, m_fScrolls[PlayerOptions::SCROLL_REVERSE] == 1.0f )
 	static int GetReversePercentForColumn( T *p, lua_State *L )
 	{
-		// todo: make sure IArg is within boundaries -aj
-		lua_pushnumber( L, p->GetReversePercentForColumn(IArg(1)) );
+		const int colNum = IArg(1);
+		const int numColumns = GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer;
+
+		// We don't want to go outside the bounds.
+		if(colNum < 0 || colNum > numColumns)
+			lua_pushnil(L);
+		else
+			lua_pushnumber( L, p->GetReversePercentForColumn(colNum) );
+
 		return 1;
 	}
 	DEFINE_METHOD( GetSplit, m_fScrolls[PlayerOptions::SCROLL_SPLIT] )
+	static int SetSplit( T *p, lua_State *L ){ p->m_fScrolls[PlayerOptions::SCROLL_SPLIT] = FArg(1); return 0; }
 	DEFINE_METHOD( GetAlternate, m_fScrolls[PlayerOptions::SCROLL_ALTERNATE] )
+	static int SetAlternate( T *p, lua_State *L ){ p->m_fScrolls[PlayerOptions::SCROLL_ALTERNATE] = FArg(1); return 0; }
 	DEFINE_METHOD( GetCross, m_fScrolls[PlayerOptions::SCROLL_CROSS] )
+	static int SetCross( T *p, lua_State *L ){ p->m_fScrolls[PlayerOptions::SCROLL_CROSS] = FArg(1); return 0; }
 	DEFINE_METHOD( GetCentered, m_fScrolls[PlayerOptions::SCROLL_CENTERED] )
+	static int SetCentered( T *p, lua_State *L ){ p->m_fScrolls[PlayerOptions::SCROLL_CENTERED] = FArg(1); return 0; }
 
 	// Turns
 	DEFINE_METHOD( GetMirror, m_bTurns[PlayerOptions::TURN_MIRROR] )
+	static int SetMirror( T *p, lua_State *L ){ p->m_bTurns[PlayerOptions::TURN_MIRROR] = BArg(1); return 0; }
 	DEFINE_METHOD( GetBackwards, m_bTurns[PlayerOptions::TURN_BACKWARDS] )
+	static int SetBackwards( T *p, lua_State *L ){ p->m_bTurns[PlayerOptions::TURN_BACKWARDS] = BArg(1); return 0; }
 	DEFINE_METHOD( GetLeft, m_bTurns[PlayerOptions::TURN_LEFT] )
+	static int SetLeft( T *p, lua_State *L ){ p->m_bTurns[PlayerOptions::TURN_LEFT] = BArg(1); return 0; }
 	DEFINE_METHOD( GetRight, m_bTurns[PlayerOptions::TURN_RIGHT] )
+	static int SetRight( T *p, lua_State *L ){ p->m_bTurns[PlayerOptions::TURN_RIGHT] = BArg(1); return 0; }
 	DEFINE_METHOD( GetShuffle, m_bTurns[PlayerOptions::TURN_SHUFFLE] )
+	static int SetShuffle( T *p, lua_State *L ){ p->m_bTurns[PlayerOptions::TURN_SHUFFLE] = BArg(1); return 0; }
 	DEFINE_METHOD( GetSoftShuffle, m_bTurns[PlayerOptions::TURN_SOFT_SHUFFLE] )
+	static int SetSoftShuffle( T *p, lua_State *L ){ p->m_bTurns[PlayerOptions::TURN_SOFT_SHUFFLE] = BArg(1); return 0; }
 	DEFINE_METHOD( GetSuperShuffle, m_bTurns[PlayerOptions::TURN_SUPER_SHUFFLE] )
+	static int SetSuperShuffle( T *p, lua_State *L ){ p->m_bTurns[PlayerOptions::TURN_SUPER_SHUFFLE] = BArg(1); return 0; }
 
 	// Transform
 	DEFINE_METHOD( GetNoHolds, m_bTransforms[PlayerOptions::TRANSFORM_NOHOLDS] )
+	static int SetNoHolds( T *p, lua_State *L ){ p->m_bTransforms[PlayerOptions::TRANSFORM_NOHOLDS] = BArg(1); return 0; }
 	DEFINE_METHOD( GetNoRolls, m_bTransforms[PlayerOptions::TRANSFORM_NOROLLS] )
+	static int SetNoRolls( T *p, lua_State *L ){ p->m_bTransforms[PlayerOptions::TRANSFORM_NOROLLS] = BArg(1); return 0; }
 	DEFINE_METHOD( GetNoMines, m_bTransforms[PlayerOptions::TRANSFORM_NOMINES] )
+	static int SetNoMines( T *p, lua_State *L ){ p->m_bTransforms[PlayerOptions::TRANSFORM_NOMINES] = BArg(1); return 0; }
 	DEFINE_METHOD( GetLittle, m_bTransforms[PlayerOptions::TRANSFORM_LITTLE] )
+	static int SetLittle( T *p, lua_State *L ){ p->m_bTransforms[PlayerOptions::TRANSFORM_LITTLE] = BArg(1); return 0; }
 	DEFINE_METHOD( GetWide, m_bTransforms[PlayerOptions::TRANSFORM_WIDE] )
+	static int SetWide( T *p, lua_State *L ){ p->m_bTransforms[PlayerOptions::TRANSFORM_WIDE] = BArg(1); return 0; }
 	DEFINE_METHOD( GetBig, m_bTransforms[PlayerOptions::TRANSFORM_BIG] )
+	static int SetBig( T *p, lua_State *L ){ p->m_bTransforms[PlayerOptions::TRANSFORM_BIG] = BArg(1); return 0; }
 	DEFINE_METHOD( GetQuick, m_bTransforms[PlayerOptions::TRANSFORM_QUICK] )
+	static int SetQuick( T *p, lua_State *L ){ p->m_bTransforms[PlayerOptions::TRANSFORM_QUICK] = BArg(1); return 0; }
 	DEFINE_METHOD( GetBMRize, m_bTransforms[PlayerOptions::TRANSFORM_BMRIZE] )
+	static int SetBMRize( T *p, lua_State *L ){ p->m_bTransforms[PlayerOptions::TRANSFORM_BMRIZE] = BArg(1); return 0; }
 	DEFINE_METHOD( GetSkippy, m_bTransforms[PlayerOptions::TRANSFORM_SKIPPY] )
+	static int SetSkippy( T *p, lua_State *L ){ p->m_bTransforms[PlayerOptions::TRANSFORM_SKIPPY] = BArg(1); return 0; }
 	DEFINE_METHOD( GetMines, m_bTransforms[PlayerOptions::TRANSFORM_MINES] )
+	static int SetMines( T *p, lua_State *L ){ p->m_bTransforms[PlayerOptions::TRANSFORM_MINES] = BArg(1); return 0; }
 	DEFINE_METHOD( GetAttackMines, m_bTransforms[PlayerOptions::TRANSFORM_ATTACKMINES] )
+	static int SetAttackMines( T *p, lua_State *L ){ p->m_bTransforms[PlayerOptions::TRANSFORM_ATTACKMINES] = BArg(1); return 0; }
 	DEFINE_METHOD( GetEcho, m_bTransforms[PlayerOptions::TRANSFORM_ECHO] )
+	static int SetEcho( T *p, lua_State *L ){ p->m_bTransforms[PlayerOptions::TRANSFORM_ECHO] = BArg(1); return 0; }
 	DEFINE_METHOD( GetStomp, m_bTransforms[PlayerOptions::TRANSFORM_STOMP] )
+	static int SetStomp( T *p, lua_State *L ){ p->m_bTransforms[PlayerOptions::TRANSFORM_STOMP] = BArg(1); return 0; }
 	DEFINE_METHOD( GetPlanted, m_bTransforms[PlayerOptions::TRANSFORM_PLANTED] )
+	static int SetPlanted( T *p, lua_State *L ){ p->m_bTransforms[PlayerOptions::TRANSFORM_PLANTED] = BArg(1); return 0; }
 	DEFINE_METHOD( GetFloored, m_bTransforms[PlayerOptions::TRANSFORM_FLOORED] )
+	static int SetFloored( T *p, lua_State *L ){ p->m_bTransforms[PlayerOptions::TRANSFORM_FLOORED] = BArg(1); return 0; }
 	DEFINE_METHOD( GetTwister, m_bTransforms[PlayerOptions::TRANSFORM_TWISTER] )
+	static int SetTwister( T *p, lua_State *L ){ p->m_bTransforms[PlayerOptions::TRANSFORM_TWISTER] = BArg(1); return 0; }
 	DEFINE_METHOD( GetHoldRolls, m_bTransforms[PlayerOptions::TRANSFORM_HOLDROLLS] )
+	static int SetHoldRolls( T *p, lua_State *L ){ p->m_bTransforms[PlayerOptions::TRANSFORM_HOLDROLLS] = BArg(1); return 0; }
 	DEFINE_METHOD( GetNoJumps, m_bTransforms[PlayerOptions::TRANSFORM_NOJUMPS] )
+	static int SetNoJumps( T *p, lua_State *L ){ p->m_bTransforms[PlayerOptions::TRANSFORM_NOJUMPS] = BArg(1); return 0; }
 	DEFINE_METHOD( GetNoHands, m_bTransforms[PlayerOptions::TRANSFORM_NOHANDS] )
+	static int SetNoHands( T *p, lua_State *L ){ p->m_bTransforms[PlayerOptions::TRANSFORM_NOHANDS] = BArg(1); return 0; }
 	DEFINE_METHOD( GetNoLifts, m_bTransforms[PlayerOptions::TRANSFORM_NOLIFTS] )
+	static int SetNoLifts( T *p, lua_State *L ){ p->m_bTransforms[PlayerOptions::TRANSFORM_NOLIFTS] = BArg(1); return 0; }
 	DEFINE_METHOD( GetNoFakes, m_bTransforms[PlayerOptions::TRANSFORM_NOFAKES] )
+	static int SetNoFakes( T *p, lua_State *L ){ p->m_bTransforms[PlayerOptions::TRANSFORM_NOFAKES] = BArg(1); return 0; }
 	DEFINE_METHOD( GetNoQuads, m_bTransforms[PlayerOptions::TRANSFORM_NOQUADS] )
+	static int SetNoQuads( T *p, lua_State *L ){ p->m_bTransforms[PlayerOptions::TRANSFORM_NOQUADS] = BArg(1); return 0; }
 	DEFINE_METHOD( GetNoStretch, m_bTransforms[PlayerOptions::TRANSFORM_NOSTRETCH] )
+	static int SetNoStretch( T *p, lua_State *L ){ p->m_bTransforms[PlayerOptions::TRANSFORM_NOSTRETCH] = BArg(1); return 0; }
 
 	// Others
 	DEFINE_METHOD( GetDark, m_fDark )
+	static int SetDark( T *p, lua_State *L ) { p->m_fDark = FArg(1); return 0; }
 	DEFINE_METHOD( GetBlind, m_fBlind )
+	static int SetBlind( T *p, lua_State *L ) { p->m_fBlind = FArg(1); return 0; }
 	DEFINE_METHOD( GetCover, m_fCover )
+	static int SetCover( T *p, lua_State *L ) { p->m_fCover = FArg(1); return 0; }
 	DEFINE_METHOD( GetRandomAttacks, m_fRandAttack )
-	
+	static int SetRandomAttacks( T *p, lua_State *L ) { p->m_fRandAttack = FArg(1); return 0; }
+	DEFINE_METHOD( GetMuteOnError, m_bMuteOnError)
+	static int SetMuteOnError( T *p, lua_State *L ) { p->m_bMuteOnError = BArg(1); return 0; }
+
 	static int GetStepAttacks( T *p, lua_State *L )
 	{
 		lua_pushnumber(L,
-			       (p->m_fNoAttack > 0 || p->m_fRandAttack > 0 ? 0 : 1 ));
+			(p->m_fNoAttack > 0 || p->m_fRandAttack > 0 ? 0 : 1 ));
 		return 1;
 	}
-	
 	// This one is deprecated.
-	static int GetSongAttacks( T *p, lua_State *L )
-	{
-		return GetStepAttacks(p, L);
-	}
+	static int GetSongAttacks( T *p, lua_State *L ) { return GetStepAttacks(p, L); }
+
 	DEFINE_METHOD( GetNoAttacks, m_fNoAttack )
 	DEFINE_METHOD( GetSkew, m_fSkew )
+	static int SetSkew( T *p, lua_State *L ) { p->m_fSkew = FArg(1); return 0; }
 	DEFINE_METHOD( GetPassmark, m_fPassmark )
+	static int SetPassmark( T *p, lua_State *L ) {
+		const float fPassmark = FArg(1);
+		if( !(fPassmark < 0.00f) && fPassmark <= 1.0f )
+			p->m_fPassmark = fPassmark;
+		return 0;
+	}
 	DEFINE_METHOD( GetRandomSpeed, m_fRandomSpeed )
+	static int SetRandomSpeed( T *p, lua_State *L ){ p->m_fRandomSpeed = FArg(1); return 0; }
 
 	LunaPlayerOptions()
 	{
+		ADD_METHOD( IsEasierForSongAndSteps );
+		ADD_METHOD( IsEasierForCourseAndTrail );
+
 		ADD_METHOD( GetDark );
-		// SetDark
+		ADD_METHOD( SetDark );
 		ADD_METHOD( GetBlind );
-		// SetBlind
+		ADD_METHOD( SetBlind );
 		ADD_METHOD( GetCover );
-		// SetCover
-		// GetMuteOnError, SetMuteOnError
+		ADD_METHOD( SetCover );
+		ADD_METHOD( GetMuteOnError );
+		ADD_METHOD( SetMuteOnError );
 		ADD_METHOD( GetNoteSkin );
 		ADD_METHOD( SetNoteSkin );
 		// GetPerspectiveTilt, SetPerspectiveTilt
 		ADD_METHOD( GetPassmark );
-		// SetPassmark
+		ADD_METHOD( SetPassmark );
 		ADD_METHOD( GetRandomAttacks );
-		// SetRandomAttacks
+		ADD_METHOD( SetRandomAttacks );
 		ADD_METHOD( GetRandomSpeed );
-		// SetRandomSpeed
+		ADD_METHOD( SetRandomSpeed );
 		ADD_METHOD( GetSkew );
-		// SetSkew
+		ADD_METHOD( SetSkew );
 		ADD_METHOD( GetSongAttacks );
-		// SetSongAttacks
 		ADD_METHOD( GetStepAttacks );
 		ADD_METHOD( GetNoAttacks );
+
+		// Speed
 		ADD_METHOD( GetCMod );
+		ADD_METHOD( SetCMod );
 		ADD_METHOD( GetXMod );
+		ADD_METHOD( SetXMod );
 		ADD_METHOD( GetMMod );
+		ADD_METHOD( SetMMod );
 
 		// Accel
 		ADD_METHOD( GetBoost );
+		ADD_METHOD( SetBoost );
 		ADD_METHOD( GetBrake );
+		ADD_METHOD( SetBrake );
 		ADD_METHOD( GetWave );
+		ADD_METHOD( SetWave );
 		ADD_METHOD( GetExpand );
+		ADD_METHOD( SetExpand );
 		ADD_METHOD( GetBoomerang );
+		ADD_METHOD( SetBoomerang );
 
 		// Effect
 		ADD_METHOD( GetDrunk );
+		ADD_METHOD( SetDrunk );
 		ADD_METHOD( GetDizzy );
+		ADD_METHOD( SetDizzy );
 		ADD_METHOD( GetConfusion );
+		ADD_METHOD( SetConfusion );
 		ADD_METHOD( GetMini );
+		ADD_METHOD( SetMini );
 		ADD_METHOD( GetTiny );
+		ADD_METHOD( SetTiny );
 		ADD_METHOD( GetFlip );
+		ADD_METHOD( SetFlip );
 		ADD_METHOD( GetInvert );
+		ADD_METHOD( SetInvert );
 		ADD_METHOD( GetTornado );
+		ADD_METHOD( SetTornado );
 		ADD_METHOD( GetTipsy );
+		ADD_METHOD( SetTipsy );
 		ADD_METHOD( GetBumpy );
+		ADD_METHOD( SetBumpy );
 		ADD_METHOD( GetBeat );
+		ADD_METHOD( SetBeat );
 		ADD_METHOD( GetXMode );
+		ADD_METHOD( SetXMode );
 		ADD_METHOD( GetTwirl );
+		ADD_METHOD( SetTwirl );
 		ADD_METHOD( GetRoll );
+		ADD_METHOD( SetRoll );
 
 		// Appearance
 		ADD_METHOD( GetHidden );
+		ADD_METHOD( SetHidden );
 		ADD_METHOD( GetHiddenOffset );
+		ADD_METHOD( SetHiddenOffset );
 		ADD_METHOD( GetSudden );
+		ADD_METHOD( SetSudden );
 		ADD_METHOD( GetSuddenOffset );
+		ADD_METHOD( SetSuddenOffset );
 		ADD_METHOD( GetStealth );
+		ADD_METHOD( SetStealth );
 		ADD_METHOD( GetBlink );
+		ADD_METHOD( SetBlink );
 		ADD_METHOD( GetRandomVanish );
+		ADD_METHOD( SetRandomVanish );
 
 		// Scroll
 		ADD_METHOD( GetReverse );
+		ADD_METHOD( SetReverse );
 		ADD_METHOD( UsingReverse );
 		ADD_METHOD( GetReversePercentForColumn );
 		ADD_METHOD( GetSplit );
+		ADD_METHOD( SetSplit );
 		ADD_METHOD( GetAlternate );
+		ADD_METHOD( SetAlternate );
 		ADD_METHOD( GetCross );
+		ADD_METHOD( SetCross );
 		ADD_METHOD( GetCentered );
+		ADD_METHOD( SetCentered );
 
 		// Turns
 		ADD_METHOD( GetMirror );
+		ADD_METHOD( SetMirror );
 		ADD_METHOD( GetBackwards );
+		ADD_METHOD( SetBackwards );
 		ADD_METHOD( GetLeft );
+		ADD_METHOD( SetLeft );
 		ADD_METHOD( GetRight );
+		ADD_METHOD( SetRight );
 		ADD_METHOD( GetShuffle );
+		ADD_METHOD( SetShuffle );
 		ADD_METHOD( GetSoftShuffle );
+		ADD_METHOD( SetSoftShuffle );
 		ADD_METHOD( GetSuperShuffle );
+		ADD_METHOD( SetSuperShuffle );
 
 		// Transform
 		ADD_METHOD( GetNoHolds );
+		ADD_METHOD( SetNoHolds );
 		ADD_METHOD( GetNoRolls );
+		ADD_METHOD( SetNoRolls );
 		ADD_METHOD( GetNoMines );
+		ADD_METHOD( SetNoMines );
 		ADD_METHOD( GetLittle );
+		ADD_METHOD( SetLittle );
 		ADD_METHOD( GetWide );
+		ADD_METHOD( SetWide );
 		ADD_METHOD( GetBig );
+		ADD_METHOD( SetBig );
 		ADD_METHOD( GetQuick );
+		ADD_METHOD( SetQuick );
 		ADD_METHOD( GetBMRize );
+		ADD_METHOD( SetBMRize );
 		ADD_METHOD( GetSkippy );
+		ADD_METHOD( SetSkippy );
 		ADD_METHOD( GetMines );
+		ADD_METHOD( SetMines );
 		ADD_METHOD( GetAttackMines );
+		ADD_METHOD( SetAttackMines );
 		ADD_METHOD( GetEcho );
+		ADD_METHOD( SetEcho );
 		ADD_METHOD( GetStomp );
+		ADD_METHOD( SetStomp );
 		ADD_METHOD( GetPlanted );
+		ADD_METHOD( SetPlanted );
 		ADD_METHOD( GetFloored );
+		ADD_METHOD( SetFloored );
 		ADD_METHOD( GetTwister );
+		ADD_METHOD( SetTwister );
 		ADD_METHOD( GetHoldRolls );
+		ADD_METHOD( SetHoldRolls );
 		ADD_METHOD( GetNoJumps );
+		ADD_METHOD( SetNoJumps );
 		ADD_METHOD( GetNoHands );
+		ADD_METHOD( SetNoHands );
 		ADD_METHOD( GetNoLifts );
+		ADD_METHOD( SetNoLifts );
 		ADD_METHOD( GetNoFakes );
+		ADD_METHOD( SetNoFakes );
 		ADD_METHOD( GetNoQuads );
+		ADD_METHOD( SetNoQuads );
 		ADD_METHOD( GetNoStretch );
+		ADD_METHOD( SetNoStretch );
 	}
 };
 

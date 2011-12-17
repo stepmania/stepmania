@@ -20,16 +20,25 @@ ret.Redir = function(sButton, sElement)
 	if sElement == "Hold Head Active" or
 	   sElement == "Roll Head Active"
 	then
-		sElement = "StreamHead Active";
+		sElement = 
+			(GAMESTATE:GetCurrentStyle():GetStyleType() == "StyleType_TwoPlayersSharedSides")
+			and "Tap Note" or "Hold Head Active";
 	end
 	
 	-- Test
 	if sElement == "Hold Head Inactive" or
-	   sElement == "Roll Head Inactive" or
+	   sElement == "Roll Head Inactive"
 	then
-		sElement = "StreamHead Inactive";
+		sElement =
+			(GAMESTATE:GetCurrentStyle():GetStyleType() == "StyleType_TwoPlayersSharedSides")
+			and "Tap Note" or "Hold Head Inactive";
 	end
-
+	
+	if sElement == "Tap Fake"
+	then
+		sElement = "Tap Note";
+	end
+	
 	sButton = ret.RedirTable[sButton];
 
 	return sButton, sElement;
@@ -85,6 +94,7 @@ ret.PartsToRotate =
 	["Tap Explosion Bright"] = true,
 	["Tap Explosion Dim"] = true,
 	["Tap Note"] = true,
+	["Tap Fake"] = true,
 	["Tap Lift"] = true,
 	["Hold Head Active"] = true,
 	["Hold Head Inactive"] = true,

@@ -94,12 +94,7 @@ r['DDR Extreme'] = function(params, pss)
 	-- [ja] 端数は最後の1ステップで加算するのでその値を取得
 	local sLast = baseScore - (sOne * sTotal);
 
-	local p;
-	if params.Player == 'PlayerNumber_P1' then
-		p = 1;
-	else
-		p = 2;
-	end;
+	local p = (params.Player == 'PlayerNumber_P1') and 1 or 2;
 	-- [en] initialized when score is 0
 	-- [ja] スコアが0の時に初期化
 	if pss:GetScore() == 0 then
@@ -159,12 +154,7 @@ r['Hybrid'] = function(params, pss)
 	-- [ja] 端数は最後の1ステップで加算するのでその値を取得
 	local sLast = 100000000-(sOne*sTotal);
 
-	local p;
-	if params.Player=='PlayerNumber_P1' then
-		p=1;
-	else
-		p=2;
-	end;
+	local p = (params.Player == 'PlayerNumber_P1') and 1 or 2;
 
 	-- [ja] スコアが0の時に初期化
 	if pss:GetScore()==0 then
@@ -210,12 +200,7 @@ r['DDR SuperNOVA'] = function(params, pss)
 	setmetatable(multLookup, ZeroIfNotFound);
 	local radarValues = GetDirectRadar(params.Player);
 	local totalItems = GetTotalItems(radarValues)
-	local p;
-	if params.Player == 'PlayerNumber_P1' then
-		p = 1;
-	else
-		p = 2;
-	end;
+	local p = (params.Player == 'PlayerNumber_P1') and 1 or 2;
 
 	-- initialized when score is 0
 	-- [ja] スコアが0の時に初期化
@@ -239,7 +224,7 @@ r['DDR SuperNOVA'] = function(params, pss)
 		end
 	end;
 	sntmp_Score[p] = sntmp_Score[p] + maxAdd;
-	
+
 	-- [ja] 踏み踏みしたステップ数
 	sntmp_Steps[p] = sntmp_Steps[p] + 1;
 	-- [ja] 現時点での、All W1判定の時のスコア
@@ -264,12 +249,7 @@ r['DDR SuperNOVA 2'] = function(params, pss)
 	setmetatable(multLookup, ZeroIfNotFound);
 	local radarValues = GetDirectRadar(params.Player);
 	local totalItems = GetTotalItems(radarValues);
-	local p;
-	if params.Player=='PlayerNumber_P1' then
-		p=1;
-	else
-		p=2;
-	end;
+	local p = (params.Player == 'PlayerNumber_P1') and 1 or 2;
 
 	-- [ja] スコアが0の時に初期化
 	if pss:GetScore()==0 then
@@ -383,9 +363,14 @@ function UserPrefScoringMode()
 		Choices = baseChoices;
 		LoadSelections = function(self, list, pn)
 			if ReadPrefFromFile("UserPrefScoringMode") ~= nil then
+        --Load the saved scoring mode from UserPrefs.
 				local theValue = ReadPrefFromFile("UserPrefScoringMode");
-				local success = false;				
+				local success = false; 
+        --HACK: Preview 4 took out 1st and 4th scoring. Replace with a close equivalent.
+        if theValue == "DDR 1stMIX" or theValue == "DDR 4thMIX" then theValue = "Oldschool" end
+        --Search the list of scoring modes for the saved scoring mode.        
 				for k,v in ipairs(baseChoices) do if v == theValue then list[k] = true success = true break end end;
+        --We couldn't find it, pick the first available scoring mode as a sane default.
 				if success == false then list[1] = true end;
 			else
         WritePrefToFile("UserPrefScoringMode", baseChoices[1]);

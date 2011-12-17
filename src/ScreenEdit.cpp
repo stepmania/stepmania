@@ -226,10 +226,14 @@ void ScreenEdit::InitEditMappings()
 		m_EditMappingsDeviceInput.button[EDIT_BUTTON_BPM_UP][0] = DeviceInput(DEVICE_KEYBOARD, KEY_F8);
 		m_EditMappingsDeviceInput.button[EDIT_BUTTON_STOP_DOWN][0] = DeviceInput(DEVICE_KEYBOARD, KEY_F9);
 		m_EditMappingsDeviceInput.button[EDIT_BUTTON_STOP_UP][0]  = DeviceInput(DEVICE_KEYBOARD, KEY_F10);
-	/*
+	
 		m_EditMappingsDeviceInput.button[EDIT_BUTTON_DELAY_DOWN][0] = DeviceInput(DEVICE_KEYBOARD, KEY_F9);
+		m_EditMappingsDeviceInput.hold[EDIT_BUTTON_DELAY_DOWN][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT);
+		m_EditMappingsDeviceInput.hold[EDIT_BUTTON_DELAY_DOWN][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT);
 		m_EditMappingsDeviceInput.button[EDIT_BUTTON_DELAY_UP][0]  = DeviceInput(DEVICE_KEYBOARD, KEY_F10);
-	*/
+		m_EditMappingsDeviceInput.hold[EDIT_BUTTON_DELAY_UP][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT);
+		m_EditMappingsDeviceInput.hold[EDIT_BUTTON_DELAY_UP][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT);
+			
 		m_EditMappingsDeviceInput.button[EDIT_BUTTON_OFFSET_DOWN][0] = DeviceInput(DEVICE_KEYBOARD, KEY_F11);
 		m_EditMappingsDeviceInput.button[EDIT_BUTTON_OFFSET_UP][0]  = DeviceInput(DEVICE_KEYBOARD, KEY_F12);
 
@@ -590,10 +594,10 @@ static MenuDef g_AreaMenu(
 	MenuRowDef( ScreenEdit::paste_at_current_beat,	"Paste at current beat",		true, EditMode_Practice, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::paste_at_begin_marker,	"Paste at begin marker",		true, EditMode_Practice, true, true, 0, NULL ),
     MenuRowDef( ScreenEdit::paste_partial_timing_at_beat,	"Paste Partial Timing at current beat",		true, EditMode_Practice, true, true, 0, NULL ),
-    MenuRowDef( ScreenEdit::insert_and_shift,	"Insert beat and shift down",		true, EditMode_Practice, true, true, 0, NULL ),
-	MenuRowDef( ScreenEdit::delete_and_shift,	"Delete beat and shift up",		true, EditMode_Practice, true, true, 0, NULL ),
-	MenuRowDef( ScreenEdit::shift_pauses_forward,	"Shift all timing changes down",	true, EditMode_Full, true, true, 0, NULL ),
-	MenuRowDef( ScreenEdit::shift_pauses_backward,	"Shift all timing changes up",		true, EditMode_Full, true, true, 0, NULL ),
+    MenuRowDef( ScreenEdit::insert_and_shift,	"Insert beat and shift down",		true, EditMode_Practice, true, true, 0, "4th","8th","12th","16th","24th","32nd","48th","64th","192nd" ),
+	MenuRowDef( ScreenEdit::delete_and_shift,	"Delete beat and shift up",		true, EditMode_Practice, true, true, 0, "4th","8th","12th","16th","24th","32nd","48th","64th","192nd" ),
+	MenuRowDef( ScreenEdit::shift_pauses_forward,	"Shift all timing changes down",	true, EditMode_Full, true, true, 0, "4th","8th","12th","16th","24th","32nd","48th","64th","192nd" ),
+	MenuRowDef( ScreenEdit::shift_pauses_backward,	"Shift all timing changes up",		true, EditMode_Full, true, true, 0, "4th","8th","12th","16th","24th","32nd","48th","64th","192nd" ),
 	MenuRowDef(ScreenEdit::convert_pause_to_beat,	"Convert pause to beats",		true, 
 	     EditMode_Full, true, true, 0, NULL ),
 	MenuRowDef(ScreenEdit::convert_delay_to_beat, "Convert delay to beats",		true,
@@ -1567,13 +1571,16 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 	{
 		int tmp = enum_add2( this->currentCycleSegment, -1 );
 		wrap( *ConvertValue<int>(&tmp), NUM_TimingSegmentType );
+		currentCycleSegment = (TimingSegmentType)tmp;
 		break;
-	}		
+	}
 	case EDIT_BUTTON_CYCLE_SEGMENT_RIGHT:
 	{
 		int tmp = enum_add2( this->currentCycleSegment, +1 );
 		wrap( *ConvertValue<int>(&tmp), NUM_TimingSegmentType );
-		break;	}
+		currentCycleSegment = (TimingSegmentType)tmp;
+		break;
+	}
 	case EDIT_BUTTON_SCROLL_SPEED_UP:
 	case EDIT_BUTTON_SCROLL_SPEED_DOWN:
 		{
@@ -1838,7 +1845,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 
 			RString s = ssprintf(
 				SWITCHED_TO.GetValue() + " %s %s '%s' (%d of %d)",
-				GAMEMAN->GetStepsTypeInfo( pSteps->m_StepsType ).szName,
+				GAMEMAN->GetStepsTypeInfo( st ).szName,
 				DifficultyToString( pSteps->GetDifficulty() ).c_str(),
 				pSteps->GetChartName().c_str(),
 				it - vSteps.begin() + 1,
@@ -1900,35 +1907,75 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 					fDelta *= 40;
 			}
 
-#if 0
-			unsigned i;
 			// is there a StopSegment on the current row?
-			const StopSegment *seg = GetAppropriateTiming().GetStopSegmentAtRow( GetRow() );
-
-			// a stop already exists here; change its value by the delta
-			if( seg->GetRow() == GetRow() )
+			TimingData & timing = GetAppropriateTiming();
+			StopSegment *seg = timing.GetStopSegmentAtRow( GetRow() );
+			int i = timing.GetSegmentIndexAtRow(SEGMENT_STOP, GetRow());
+			if (i == -1 || seg->GetRow() != GetRow()) // invalid
 			{
-				float fSeconds = seg->GetPause() + fDelta;
-				GetAppropriateTiming().AddSegment
-			if( i == stops.size() )	// there is no StopSegment at the current beat
-			{
-				// create a new StopSegment
 				if( fDelta > 0 )
-					GetAppropriateTiming().AddSegment( StopSegment(GetRow(), fDelta) );
+					timing.AddSegment( StopSegment(GetRow(), fDelta) );
+				else
+					break;
 			}
-			else	// StopSegment being modified is m_SongTiming.m_StopSegments[i]
+			else
 			{
-				StopSegment *s = static_cast<StopSegment *>(stops[i]);
-				s->SetPause(s->GetPause() + fDelta);
-				if( s->GetPause() <= 0 )
+				vector<TimingSegment *> &stops = timing.GetTimingSegments(SEGMENT_STOP);
+				seg->SetPause(seg->GetPause() + fDelta);
+				if( seg->GetPause() <= 0 )
 					stops.erase( stops.begin()+i, stops.begin()+i+1);
 			}
-#endif
+
 			(fDelta>0 ? m_soundValueIncrease : m_soundValueDecrease).Play();
 			SetDirty( true );
 		}
 		break;
-
+	// TODO: Combine the stop and delay call somehow?
+	case EDIT_BUTTON_DELAY_UP:
+	case EDIT_BUTTON_DELAY_DOWN:
+		{
+			float fDelta;
+			switch( EditB )
+			{
+					DEFAULT_FAIL( EditB );
+				case EDIT_BUTTON_DELAY_UP:		fDelta = +0.020f;	break;
+				case EDIT_BUTTON_DELAY_DOWN:	fDelta = -0.020f;	break;
+			}
+			if( EditIsBeingPressed( EDIT_BUTTON_ADJUST_FINE ) )
+			{
+				fDelta /= 20; // 1ms
+			}
+			else if( input.type == IET_REPEAT )
+			{
+				if( INPUTFILTER->GetSecsHeld(input.DeviceI) < 1.0f )
+					fDelta *= 10;
+				else
+					fDelta *= 40;
+			}
+			
+			// is there a StopSegment on the current row?
+			TimingData & timing = GetAppropriateTiming();
+			DelaySegment *seg = timing.GetDelaySegmentAtRow( GetRow() );
+			int i = timing.GetSegmentIndexAtRow(SEGMENT_DELAY, GetRow());
+			if (i == -1 || seg->GetRow() != GetRow()) // invalid
+			{
+				if( fDelta > 0 )
+					timing.AddSegment( DelaySegment(GetRow(), fDelta) );
+				else
+					break;
+			}
+			else
+			{
+				vector<TimingSegment *> &stops = timing.GetTimingSegments(SEGMENT_DELAY);
+				seg->SetPause(seg->GetPause() + fDelta);
+				if( seg->GetPause() <= 0 )
+					stops.erase( stops.begin()+i, stops.begin()+i+1);
+			}
+			
+			(fDelta>0 ? m_soundValueIncrease : m_soundValueDecrease).Play();
+			SetDirty( true );
+		}
+			break;
 	case EDIT_BUTTON_OFFSET_UP:
 	case EDIT_BUTTON_OFFSET_DOWN:
 		{
@@ -4351,17 +4398,26 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 #endif
 			break;
 		}
+			
 		case insert_and_shift:
-			NoteDataUtil::InsertRows( m_NoteDataEdit, BeatToNoteRow( GetBeat() ), BeatToNoteRow(1) );
+			NoteDataUtil::InsertRows( m_NoteDataEdit, GetRow(),
+				iAnswers.size() > 0 ? 
+				NoteTypeToRow((NoteType)iAnswers[c]) : 48);
 			break;
 		case delete_and_shift:
-			NoteDataUtil::DeleteRows( m_NoteDataEdit, BeatToNoteRow( GetBeat() ), BeatToNoteRow(1) );
+			NoteDataUtil::DeleteRows( m_NoteDataEdit, GetRow(),
+				iAnswers.size() > 0 ? 
+				NoteTypeToRow((NoteType)iAnswers[c]) : 48);
 			break;
 		case shift_pauses_forward:
-			GetAppropriateTiming().InsertRows( BeatToNoteRow( GetBeat() ), BeatToNoteRow(1) );
+			GetAppropriateTiming().InsertRows( GetRow(),
+				iAnswers.size() > 0 ? 
+				NoteTypeToRow((NoteType)iAnswers[c]) : 48);
 			break;
 		case shift_pauses_backward:
-			GetAppropriateTiming().DeleteRows( GetRow() + 1, BeatToNoteRow(1) );
+			GetAppropriateTiming().DeleteRows( GetRow() + 1,
+			  iAnswers.size() > 0 ? 
+			  NoteTypeToRow((NoteType)iAnswers[c]) : 48);
 			break;
 
 		case convert_pause_to_beat:
@@ -5084,7 +5140,7 @@ static const EditHelpLine g_EditHelpLines[] =
 	EditHelpLine( "Next/prev steps of same StepsType",		EDIT_BUTTON_OPEN_NEXT_STEPS,		EDIT_BUTTON_OPEN_PREV_STEPS ),
 	EditHelpLine( "Decrease/increase BPM at cur beat",		EDIT_BUTTON_BPM_DOWN,			EDIT_BUTTON_BPM_UP ),
 	EditHelpLine( "Decrease/increase stop at cur beat",		EDIT_BUTTON_STOP_DOWN,			EDIT_BUTTON_STOP_UP ),
-	//EditHelpLine( "Decrease/increase delay at cur beat",		EDIT_BUTTON_DELAY_DOWN,			EDIT_BUTTON_DELAY_UP ),
+	EditHelpLine( "Decrease/increase delay at cur beat",		EDIT_BUTTON_DELAY_DOWN,			EDIT_BUTTON_DELAY_UP ),
 	EditHelpLine( "Decrease/increase music offset",			EDIT_BUTTON_OFFSET_DOWN,		EDIT_BUTTON_OFFSET_UP ),
 	EditHelpLine( "Decrease/increase sample music start",		EDIT_BUTTON_SAMPLE_START_DOWN,		EDIT_BUTTON_SAMPLE_START_UP ),
 	EditHelpLine( "Decrease/increase sample music length",		EDIT_BUTTON_SAMPLE_LENGTH_DOWN,		EDIT_BUTTON_SAMPLE_LENGTH_UP ),
