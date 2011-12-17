@@ -359,6 +359,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 		vector<RString> arrayPossibleBanners;
 		GetDirListing( sFName + "*.png", arrayPossibleBanners, false, false );
 		GetDirListing( sFName + "*.jpg", arrayPossibleBanners, false, false );
+		GetDirListing( sFName + "*.jpeg", arrayPossibleBanners, false, false );
 		GetDirListing( sFName + "*.bmp", arrayPossibleBanners, false, false );
 		GetDirListing( sFName + "*.gif", arrayPossibleBanners, false, false );
 		if( !arrayPossibleBanners.empty() )

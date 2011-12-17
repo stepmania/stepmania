@@ -211,6 +211,7 @@ void BackgroundUtil::GetSongBitmaps( const Song *pSong, const RString &sMatch, v
 	{
 		GetDirListing( pSong->GetSongDir()+sMatch+"*.png",	vsPathsOut, false, true );
 		GetDirListing( pSong->GetSongDir()+sMatch+"*.jpg",	vsPathsOut, false, true );
+		GetDirListing( pSong->GetSongDir()+sMatch+"*.jpeg",	vsPathsOut, false, true );
 		GetDirListing( pSong->GetSongDir()+sMatch+"*.gif",	vsPathsOut, false, true );
 		GetDirListing( pSong->GetSongDir()+sMatch+"*.bmp",	vsPathsOut, false, true );
 	}

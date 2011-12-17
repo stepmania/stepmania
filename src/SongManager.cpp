@@ -179,6 +179,7 @@ void SongManager::AddGroup( RString sDir, RString sGroupDirName )
 	vector<RString> arrayGroupBanners;
 	GetDirListing( sDir+sGroupDirName+"/*.png", arrayGroupBanners );
 	GetDirListing( sDir+sGroupDirName+"/*.jpg", arrayGroupBanners );
+	GetDirListing( sDir+sGroupDirName+"/*.jpeg", arrayGroupBanners );
 	GetDirListing( sDir+sGroupDirName+"/*.gif", arrayGroupBanners );
 	GetDirListing( sDir+sGroupDirName+"/*.bmp", arrayGroupBanners );
 
@@ -190,6 +191,7 @@ void SongManager::AddGroup( RString sDir, RString sGroupDirName )
 		// Look for a group banner in the parent folder
 		GetDirListing( sDir+sGroupDirName+".png", arrayGroupBanners );
 		GetDirListing( sDir+sGroupDirName+".jpg", arrayGroupBanners );
+		GetDirListing( sDir+sGroupDirName+".jpeg", arrayGroupBanners );
 		GetDirListing( sDir+sGroupDirName+".gif", arrayGroupBanners );
 		GetDirListing( sDir+sGroupDirName+".bmp", arrayGroupBanners );
 		if( !arrayGroupBanners.empty() )
@@ -206,6 +208,7 @@ void SongManager::AddGroup( RString sDir, RString sGroupDirName )
 	//vector<RString> arrayGroupBackgrounds;
 	//GetDirListing( sDir+sGroupDirName+"/*-bg.png", arrayGroupBanners );
 	//GetDirListing( sDir+sGroupDirName+"/*-bg.jpg", arrayGroupBanners );
+	//GetDirListing( sDir+sGroupDirName+"/*-bg.jpeg", arrayGroupBanners );
 	//GetDirListing( sDir+sGroupDirName+"/*-bg.gif", arrayGroupBanners );
 	//GetDirListing( sDir+sGroupDirName+"/*-bg.bmp", arrayGroupBanners );
 /*
@@ -217,6 +220,7 @@ void SongManager::AddGroup( RString sDir, RString sGroupDirName )
 		// Look for a group background in the parent folder
 		GetDirListing( sDir+sGroupDirName+"-bg.png", arrayGroupBackgrounds );
 		GetDirListing( sDir+sGroupDirName+"-bg.jpg", arrayGroupBackgrounds );
+		GetDirListing( sDir+sGroupDirName+"-bg.jpeg", arrayGroupBackgrounds );
 		GetDirListing( sDir+sGroupDirName+"-bg.gif", arrayGroupBackgrounds );
 		GetDirListing( sDir+sGroupDirName+"-bg.bmp", arrayGroupBackgrounds );
 		if( !arrayGroupBackgrounds.empty() )

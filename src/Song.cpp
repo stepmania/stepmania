@@ -429,6 +429,7 @@ static void GetImageDirListing( RString sPath, vector<RString> &AddTo )
 {
 	GetDirListing( sPath + ".png", AddTo, false, false );
 	GetDirListing( sPath + ".jpg", AddTo, false, false );
+	GetDirListing( sPath + ".jpeg", AddTo, false, false );
 	GetDirListing( sPath + ".bmp", AddTo, false, false );
 	GetDirListing( sPath + ".gif", AddTo, false, false );
 }
