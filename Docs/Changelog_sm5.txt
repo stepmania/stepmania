@@ -97,6 +97,7 @@ StepMania 5.0 $next | 20111xxx
 * [GameplayAssist] Don't play sounds if the player is dead. Fixes issue 621. [AJ]
 
 2011/11/04
+----------
 * [ScoreKeeperRave] Revert fix from 2011/10/28. [AJ]
 * [ScoreKeeperRave] Fixed Miss and HitMine giving meter life.
   (Fixes issue 622.) [AJ]
