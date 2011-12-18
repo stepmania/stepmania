@@ -3232,6 +3232,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 			toEdit.Assign( ModsLevel_Preferred, po );
 			SCREENMAN->AddNewScreenToTop( "ScreenPlayerOptions", SM_BackFromInsertStepAttackPlayerOptions );
 		}
+		SetDirty(true);
 	}
 	else if( SM == SM_BackFromInsertCourseAttack )
 	{
