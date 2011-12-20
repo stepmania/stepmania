@@ -255,13 +255,13 @@ void ScreenNetRoom::UpdateRoomsList()
 		{
 			difference = abs( difference );
 			for( int x = 0; x < difference; ++x )
-				m_RoomWheel.AddItem( new RoomWheelItemData(TYPE_GENERIC, "", "", RageColor(1,1,1,1)) );
+				m_RoomWheel.AddItem( new RoomWheelItemData(WheelItemDataType_Generic, "", "", RageColor(1,1,1,1)) );
 		}
 	}
 	else
 	{
 		for ( unsigned int x = 0; x < m_Rooms.size(); ++x)
-				m_RoomWheel.AddItem( new RoomWheelItemData(TYPE_GENERIC, "", "", RageColor(1,1,1,1)) );
+				m_RoomWheel.AddItem( new RoomWheelItemData(WheelItemDataType_Generic, "", "", RageColor(1,1,1,1)) );
 	}
 
 	for( unsigned int i = 0; i < m_Rooms.size(); ++i )
