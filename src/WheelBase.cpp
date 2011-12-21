@@ -276,10 +276,10 @@ bool WheelBase::Select()	// return true if this selection can end the screen
 
 	switch( m_CurWheelItemData[m_iSelection]->m_Type )
 	{
-	case TYPE_GENERIC:
+	case WheelItemDataType_Generic:
 		m_LastSelection = m_CurWheelItemData[m_iSelection];
 		break;
-	case TYPE_SECTION:
+	case WheelItemDataType_Section:
 		{
 			RString sThisItemSectionName = m_CurWheelItemData[m_iSelection]->m_sText;
 			if( m_sExpandedSectionName == sThisItemSectionName ) // already expanded
@@ -468,7 +468,7 @@ void WheelBase::RebuildWheelItems( int iDist )
 		const WheelItemBaseData *pData = data[iIndex];
 		WheelItemBase *pDisplay = items[i];
 
-		pDisplay->SetExpanded( pData->m_Type == TYPE_SECTION && pData->m_sText == m_sExpandedSectionName );
+		pDisplay->SetExpanded( pData->m_Type == WheelItemDataType_Section && pData->m_sText == m_sExpandedSectionName );
 	}
 
 	for( int i=0; i<(int)items.size(); i++ )
@@ -530,6 +530,11 @@ public:
 	//static int Move( T* p, lua_State *L ){ p->Move( IArg(1) ); return 0; }
 	//static int ChangeMusic( T* p, lua_State *L ){ p->ChangeMusicUnlessLocked( IArg(1) ); return 0; }
 
+	static int GetSelectedType( T* p, lua_State *L ) {
+		lua_pushnumber( L, p->GetSelectedType() );
+		return 1;
+	}
+
 	LunaWheelBase()
 	{
 		ADD_METHOD( GetWheelItem );
@@ -538,6 +543,7 @@ public:
 		ADD_METHOD( SetOpenSection );
 		ADD_METHOD( GetCurrentIndex );
 		ADD_METHOD( GetNumItems );
+		ADD_METHOD( GetSelectedType );
 		// evil shit
 		//ADD_METHOD( Move );
 		//ADD_METHOD( ChangeMusic );

@@ -49,6 +49,8 @@ public:
 	RString GetExpandedSectionName() { return m_sExpandedSectionName; }
 	int GetCurrentIndex() { return m_iSelection; }
 
+	WheelItemDataType GetSelectedType() { return m_CurWheelItemData[m_iSelection]->m_Type; }
+
 	// Lua
 	void PushSelf( lua_State *L );
 

@@ -207,7 +207,7 @@ void MusicWheelItem::LoadFromWheelItemData( const WheelItemBaseData *pData, int 
 	switch( pWID->m_Type )
 	{
 	DEFAULT_FAIL( pWID->m_Type );
-	case TYPE_SONG:
+	case WheelItemDataType_Song:
 		type = MusicWheelItemType_Song;
 
 		m_TextBanner.SetFromSong( pWID->m_pSong );
@@ -219,7 +219,7 @@ void MusicWheelItem::LoadFromWheelItemData( const WheelItemBaseData *pData, int 
 		m_WheelNotifyIcon.SetVisible( true );
 		RefreshGrades();
 		break;
-	case TYPE_SECTION:
+	case WheelItemDataType_Section:
 		{
 			sDisplayName = SONGMAN->ShortenGroupName(pWID->m_sText);
 
@@ -232,14 +232,14 @@ void MusicWheelItem::LoadFromWheelItemData( const WheelItemBaseData *pData, int 
 			m_pTextSectionCount->SetVisible( true );
 		}
 		break;
-	case TYPE_COURSE:
+	case WheelItemDataType_Course:
 		sDisplayName = pWID->m_pCourse->GetDisplayFullTitle();
 		sTranslitName = pWID->m_pCourse->GetTranslitFullTitle();
 		type = MusicWheelItemType_Course;
 		m_WheelNotifyIcon.SetFlags( pWID->m_Flags );
 		m_WheelNotifyIcon.SetVisible( true );
 		break;
-	case TYPE_SORT:
+	case WheelItemDataType_Sort:
 		sDisplayName = pWID->m_sLabel;
 		// hack to get mode items working. -freem
 		if( pWID->m_pAction->m_pm != PlayMode_Invalid )
@@ -247,19 +247,19 @@ void MusicWheelItem::LoadFromWheelItemData( const WheelItemBaseData *pData, int 
 		else
 			type = MusicWheelItemType_Sort;
 		break;
-	case TYPE_ROULETTE:
+	case WheelItemDataType_Roulette:
 		sDisplayName = THEME->GetString("MusicWheel","Roulette");
 		type = MusicWheelItemType_Roulette;
 		break;
-	case TYPE_RANDOM:
+	case WheelItemDataType_Random:
 		sDisplayName = THEME->GetString("MusicWheel","Random");
 		type = MusicWheelItemType_Random;
 		break;
-	case TYPE_PORTAL:
+	case WheelItemDataType_Portal:
 		sDisplayName = THEME->GetString("MusicWheel","Portal");
 		type = MusicWheelItemType_Portal;
 		break;
-	case TYPE_CUSTOM:
+	case WheelItemDataType_Custom:
 		sDisplayName = pWID->m_sLabel;
 		type = MusicWheelItemType_Custom;
 		break;
