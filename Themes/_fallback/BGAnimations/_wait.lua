@@ -1,5 +1,3 @@
-local time = ...
-assert(time)
-return Def.ActorFrame{
-	Def.Actor{ OnCommand=cmd(sleep,time); };
-};
+local waitTime = ...
+assert(waitTime,"[_wait] requires a wait time")
+return Def.Actor{ OnCommand=cmd(sleep,waitTime); };
