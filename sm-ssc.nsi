@@ -295,8 +295,12 @@ Section "Main Section" SecMain
 	RMDir /r "$INSTDIR\NoteSkins\dance\midi-note-3d"
 	RMDir /r "$INSTDIR\NoteSkins\dance\midi-solo"
 	RMDir /r "$INSTDIR\NoteSkins\dance\midi-vivid"
+	; old names
 	RMDir /r "$INSTDIR\NoteSkins\dance\midi-rhythm-p1"
 	RMDir /r "$INSTDIR\NoteSkins\dance\midi-rhythm-p2"
+	; new names
+	RMDir /r "$INSTDIR\NoteSkins\dance\midi-routine-p1"
+	RMDir /r "$INSTDIR\NoteSkins\dance\midi-routine-p2"
 	; retro, retrobar.
 	RMDir /r "$INSTDIR\NoteSkins\dance\retro"
 	RMDir /r "$INSTDIR\NoteSkins\dance\retrobar"
