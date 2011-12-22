@@ -962,6 +962,7 @@ void LuaHelpers::PushValueFunc( lua_State *L, int iArgs )
 }
 
 #include "ProductInfo.h"
+LuaFunction( ProductFamily, (RString) PRODUCT_FAMILY );
 LuaFunction( ProductVersion, (RString) PRODUCT_VER );
 LuaFunction( ProductID, (RString) PRODUCT_ID );
 
