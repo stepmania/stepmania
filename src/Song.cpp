@@ -563,7 +563,7 @@ void Song::TidyUpData( bool fromCache, bool duringCache )
 	TranslateTitles();
 
 	if( m_fMusicSampleStartSeconds == -1 ||
-		m_fMusicSampleStartSeconds == 0 ||
+		m_fMusicSampleLengthSeconds == 0 ||
 		m_fMusicSampleStartSeconds+m_fMusicSampleLengthSeconds > this->m_fMusicLengthSeconds )
 	{
 		const TimingData &timing = this->m_SongTiming;
