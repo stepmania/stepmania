@@ -13,6 +13,8 @@ StepMania 5.0 $next | 20111xxx
 * [Song] Fixed a bug where a sample start of 0 wouldn't work. [AJ]
 * [Game] Added CountNotesSeparately and GetMapJudgmentTo(TapNoteScore)
   Lua bindings. [AJ]
+* [StepMania.cpp] Fix initial aspect ratio on first boot, hopefully.
+  (See issues 6 and 27) [AJ]
 
 2011/12/22
 ----------
