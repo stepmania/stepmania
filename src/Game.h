@@ -54,6 +54,7 @@ public:
 	TapNoteScore m_mapW3To;
 	TapNoteScore m_mapW4To;
 	TapNoteScore m_mapW5To;
+	TapNoteScore GetMapJudgmentTo( TapNoteScore tns ) const;
 
 	// Lua
 	void PushSelf( lua_State *L );
