@@ -343,7 +343,11 @@ RString ArchHooks::GetPreferredLanguage()
 	{
 		// MacRoman agrees with ASCII in the low-order 7 bits.
 		const char *str = CFStringGetCStringPtr( lang, kCFStringEncodingMacRoman );
-		ASSERT( str );
+		if( str )
+			ret = str;
+		else
+			LOG->Warn( "Unable to determine system language. Using English." );
+
 		ret = RString( str, 2 );
 	}
 
