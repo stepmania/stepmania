@@ -34,3 +34,7 @@ The following is a list of known issues with StepMania 5.
   works perfectly fine seemingly at random. Unsure for other platforms.
 * VBR MP3's don't seek correctly in the editor, which botches sync.
 * Strange TimingData-related crashes happen, particularly in ScreenHowToPlay.
+* There is no make install target for linux systems - this is important for
+  packaging purposes in particular (it would be great to release .debs!)
+* Portable.ini support is not implemented for Linux.
+* LuaDriver works well, but without threading it has latency issues.
