@@ -8,6 +8,11 @@ ________________________________________________________________________________
 StepMania 5.0 $next | 20111xxx
 --------------------------------------------------------------------------------
 
+2011/12/26
+----------
+* [ArchHooks_OSX] Worked around a crash when language detection goes wrong.
+  Note: a real fix should be looked into. [shakesoda]
+
 2011/12/23
 ----------
 * [Song] Fixed a bug where a sample start of 0 wouldn't work. [AJ]
