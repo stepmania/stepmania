@@ -971,22 +971,6 @@ extern const char *const version_time;
 LuaFunction( VersionDate, (RString) version_date );
 LuaFunction( VersionTime, (RString) version_time );
 
-static RString GetOSName()
-{
-	RString system;
-	#if defined(WIN32)
-		system = "Windows";
-	#elif defined(LINUX)
-		system = "Linux";
-	#elif defined(DARWIN)
-		system = "Mac";
-	#else
-		system = "Unknown";
-	#endif
-	return system;
-}
-LuaFunction( GetOSName, GetOSName() );
-
 static float scale( float x, float l1, float h1, float l2, float h2 )
 {
 	return SCALE( x, l1, h1, l2, h2 );
