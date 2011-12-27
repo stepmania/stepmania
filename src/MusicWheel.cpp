@@ -1602,6 +1602,20 @@ void MusicWheel::FinishChangingSorts()
 	m_fTimeLeftInState = 0;
 }
 
+// lua start
+#include "LuaBinding.h"
+
+class LunaMusicWheel: public Luna<MusicWheel>
+{
+public:
+	static int IsRouletting( T* p, lua_State *L ){ lua_pushboolean( L, p->IsRouletting() ); return 1; }
+
+	LunaMusicWheel()
+	{
+		ADD_METHOD( IsRouletting );
+	}
+};
+
 /*
  * (c) 2001-2004 Chris Danford, Chris Gomez, Glenn Maynard
  * All rights reserved.

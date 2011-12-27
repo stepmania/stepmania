@@ -8,6 +8,11 @@ ________________________________________________________________________________
 StepMania 5.0 $next | 20111xxx
 --------------------------------------------------------------------------------
 
+2011/12/27
+----------
+* [MusicWheel] Add
+* [WheelBase] Add GetNumWheelItems Lua binding. [AJ]
+
 2011/12/26
 ----------
 * [ArchHooks_OSX] Worked around a crash when language detection goes wrong.
