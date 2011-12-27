@@ -10,7 +10,7 @@ StepMania 5.0 $next | 20111xxx
 
 2011/12/27
 ----------
-* [MusicWheel] Add
+* [MusicWheel] Add IsRouletting Lua binding. [AJ]
 * [WheelBase] Add GetNumWheelItems Lua binding. [AJ]
 
 2011/12/26
