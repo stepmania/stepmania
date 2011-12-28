@@ -1,3 +1,7 @@
+local hideFancyElements = (ThemePrefs.Get("FancyUIBG") == false)
+local t = Def.ActorFrame{};
+if hideFancyElements then return t; end
+
 local Params = { 
 	NumParticles = 30,
 	VelocityXMin = 100,
@@ -14,10 +18,6 @@ local Params = {
 	BobZ = 52,
 	File = "_particle normal",
 };
-
-local hideFancyElements = (GetUserPrefB("UserPrefFancyUIBG") == false)
-local t = Def.ActorFrame{};
-if hideFancyElements then return t; end
 
 local tParticleInfo = {}
 

@@ -1,4 +1,4 @@
-local ShowFlashyCombo = GetUserPrefB("UserPrefFlashyCombo")
+local ShowFlashyCombo = ThemePrefs.Get("FlashyCombo")
 return Def.ActorFrame {
 	LoadActor("explosion") .. {
 		InitCommand=cmd(diffusealpha,0;blend,'BlendMode_Add';hide_if,not ShowFlashyCombo);

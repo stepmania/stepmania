@@ -1,5 +1,10 @@
 InitUserPrefs();
-local t = Def.ActorFrame {};
+
+local t = Def.ActorFrame {
+	BeginCommand=function(self)
+		ThemePrefs.Save()
+	end;
+};
 
 t[#t+1] = StandardDecorationFromFileOptional("Logo","Logo");
 t[#t+1] = StandardDecorationFromFileOptional("VersionInfo","VersionInfo");

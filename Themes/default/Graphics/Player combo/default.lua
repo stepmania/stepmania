@@ -12,7 +12,7 @@ local NumberMaxZoomAt = THEME:GetMetric("Combo", "NumberMaxZoomAt");
 local LabelMinZoom = THEME:GetMetric("Combo", "LabelMinZoom");
 local LabelMaxZoom = THEME:GetMetric("Combo", "LabelMaxZoom");
 
-local ShowFlashyCombo = GetUserPrefB("UserPrefFlashyCombo")
+local ShowFlashyCombo = ThemePrefs.Get("FlashyCombo")
 
 local t = Def.ActorFrame {
 	InitCommand=cmd(vertalign,bottom);
