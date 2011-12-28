@@ -1733,7 +1733,6 @@
 		EE4FD2E214A8F066002B5758 /* jmemmgr.c in Sources */ = {isa = PBXBuildFile; fileRef = EE4FD29A14A8F066002B5758 /* jmemmgr.c */; };
 		EE4FD2E314A8F066002B5758 /* jmemname.c in Sources */ = {isa = PBXBuildFile; fileRef = EE4FD29B14A8F066002B5758 /* jmemname.c */; };
 		EE4FD2E414A8F066002B5758 /* jmemnobs.c in Sources */ = {isa = PBXBuildFile; fileRef = EE4FD29C14A8F066002B5758 /* jmemnobs.c */; };
-		EE4FD2E514A8F066002B5758 /* jpegtran.c in Sources */ = {isa = PBXBuildFile; fileRef = EE4FD29D14A8F066002B5758 /* jpegtran.c */; };
 		EE4FD2E614A8F066002B5758 /* jquant1.c in Sources */ = {isa = PBXBuildFile; fileRef = EE4FD29E14A8F066002B5758 /* jquant1.c */; };
 		EE4FD2E714A8F066002B5758 /* jquant2.c in Sources */ = {isa = PBXBuildFile; fileRef = EE4FD29F14A8F066002B5758 /* jquant2.c */; };
 		EE4FD30814A8F281002B5758 /* libjpeg.a in Frameworks */ = {isa = PBXBuildFile; fileRef = EE4FD26014A8EFE1002B5758 /* libjpeg.a */; };
@@ -1878,7 +1877,7 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = EE4FD25F14A8EFE1002B5758 /* jpeg */;
+			remoteGlobalIDString = EE4FD25F14A8EFE1002B5758;
 			remoteInfo = jpeg;
 		};
 /* End PBXContainerItemProxy section */
@@ -3222,7 +3221,6 @@
 		EE4FD29A14A8F066002B5758 /* jmemmgr.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jmemmgr.c; path = ../extern/libjpeg/jmemmgr.c; sourceTree = SOURCE_ROOT; };
 		EE4FD29B14A8F066002B5758 /* jmemname.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jmemname.c; path = ../extern/libjpeg/jmemname.c; sourceTree = SOURCE_ROOT; };
 		EE4FD29C14A8F066002B5758 /* jmemnobs.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jmemnobs.c; path = ../extern/libjpeg/jmemnobs.c; sourceTree = SOURCE_ROOT; };
-		EE4FD29D14A8F066002B5758 /* jpegtran.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jpegtran.c; path = ../extern/libjpeg/jpegtran.c; sourceTree = SOURCE_ROOT; };
 		EE4FD29E14A8F066002B5758 /* jquant1.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jquant1.c; path = ../extern/libjpeg/jquant1.c; sourceTree = SOURCE_ROOT; };
 		EE4FD29F14A8F066002B5758 /* jquant2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jquant2.c; path = ../extern/libjpeg/jquant2.c; sourceTree = SOURCE_ROOT; };
 		EE879B5C132DEE720078FDDC /* RageDisplay_Legacy_Helpers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RageDisplay_Legacy_Helpers.cpp; path = ../src/RageDisplay_Legacy_Helpers.cpp; sourceTree = SOURCE_ROOT; };
@@ -5332,7 +5330,6 @@
 				EE4FD29A14A8F066002B5758 /* jmemmgr.c */,
 				EE4FD29B14A8F066002B5758 /* jmemname.c */,
 				EE4FD29C14A8F066002B5758 /* jmemnobs.c */,
-				EE4FD29D14A8F066002B5758 /* jpegtran.c */,
 				EE4FD29E14A8F066002B5758 /* jquant1.c */,
 				EE4FD29F14A8F066002B5758 /* jquant2.c */,
 			);
@@ -7643,7 +7640,6 @@
 				EE4FD2E214A8F066002B5758 /* jmemmgr.c in Sources */,
 				EE4FD2E314A8F066002B5758 /* jmemname.c in Sources */,
 				EE4FD2E414A8F066002B5758 /* jmemnobs.c in Sources */,
-				EE4FD2E514A8F066002B5758 /* jpegtran.c in Sources */,
 				EE4FD2E614A8F066002B5758 /* jquant1.c in Sources */,
 				EE4FD2E714A8F066002B5758 /* jquant2.c in Sources */,
 			);
