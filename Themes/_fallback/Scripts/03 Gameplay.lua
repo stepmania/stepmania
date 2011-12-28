@@ -3,10 +3,13 @@
 -- game mode.
 
 -- shakesoda calls this pump.lua
+local function CurGameName()
+	return GAMESTATE:GetCurrentGame():GetName()
+end
 
 -- Check the active game mode against a string. Cut down typing this in metrics.
 function IsGame(str)
-	if GAMESTATE:GetCurrentGame():GetName() == str then
+	if CurGameName() == str then
 		return true
 	end
 	return false
@@ -16,7 +19,6 @@ end
 -- [en] returns the difficulty threshold in meter
 -- for songs that should be counted as boss songs.
 function GetExtraColorThreshold()
-	sGame = GAMESTATE:GetCurrentGame():GetName()
 	local Modes = {
 		dance = 10,
 		pump = 21,
@@ -26,13 +28,12 @@ function GetExtraColorThreshold()
 		techno = 10,
 		lights = 10, -- lights shouldn't be playable
 	}
-	return Modes[sGame]
+	return Modes[CurGameName()]
 end
 
 -- GameCompatibleModes:
 -- [en] returns possible modes for ScreenSelectPlayMode
 function GameCompatibleModes()
-	sGame = GAMESTATE:GetCurrentGame():GetName()
 	local Modes = {
 		dance = "Single,Double,Solo,Versus,Couple",
 		pump = "Single,Double,HalfDouble,Versus,Couple,Routine",
@@ -42,11 +43,11 @@ function GameCompatibleModes()
 		techno = "Single4,Single5,Single8,Double4,Double8",
 		lights = "Single" -- lights shouldn't be playable
 	}
-	return Modes[sGame]
+	return Modes[CurGameName()]
 end
 
 function SelectProfileKeys()
-	local sGame = GAMESTATE:GetCurrentGame():GetName()	
+	local sGame = CurGameName()
 	if sGame == "pump" then
 		return "Up,Down,Start,Back,Center,DownLeft,DownRight"
 	elseif sGame == "dance" then
@@ -71,7 +72,6 @@ end
 -- ComboContinue:
 -- [en] 
 function ComboContinue()
-	sGame = GAMESTATE:GetCurrentGame():GetName()
 	local Continue = {
 		dance = GAMESTATE:GetPlayMode() == "PlayMode_Oni" and "TapNoteScore_W2" or "TapNoteScore_W3",
 		pump = "TapNoteScore_W3",
@@ -79,11 +79,10 @@ function ComboContinue()
 		kb7 = "TapNoteScore_W3",
 		para = "TapNoteScore_W4"
 	}
-	return Continue[sGame]
+	return Continue[CurGameName()]
 end
 
 function ComboMaintain()
-	sGame = GAMESTATE:GetCurrentGame():GetName()
 	local Maintain = {
 		dance = "TapNoteScore_W3",
 		pump = "TapNoteScore_W4",
@@ -91,11 +90,11 @@ function ComboMaintain()
 		kb7 = "TapNoteScore_W3",
 		para = "TapNoteScore_W4"
 	}
-	return Maintain[sGame]
+	return Maintain[CurGameName()]
 end
 
 function ComboPerRow()
-	sGame = GAMESTATE:GetCurrentGame():GetName()
+	sGame = CurGameName()
 	if sGame == "pump" then
 		return true
 	elseif GAMESTATE:GetPlayMode() == "PlayMode_Oni" then
@@ -106,12 +105,11 @@ function ComboPerRow()
 end
 
 function EvalUsesCheckpointsWithJudgments()
-	return (GAMESTATE:GetCurrentGame():GetName() == "pump") and true or false
+	return (CurGameName() == "pump") and true or false
 end
 
 -- these need cleanup really.
 function HitCombo()
-	sGame = GAMESTATE:GetCurrentGame():GetName()
 	local Combo = {
 		dance = 2,
 		pump = 4,
@@ -119,11 +117,10 @@ function HitCombo()
 		kb7 = 2,
 		para = 2
 	}
-	return Combo[sGame]
+	return Combo[CurGameName()]
 end
 
 function MissCombo()
-	sGame = GAMESTATE:GetCurrentGame():GetName()
 	local Combo = {
 		dance = 2,
 		pump = 4,
@@ -131,13 +128,12 @@ function MissCombo()
 		kb7 = 0,
 		para = 0
 	}
-	return Combo[sGame]
+	return Combo[CurGameName()]
 end
 
 -- FailCombo:
 -- [en] The combo that causes game failure.
 function FailCombo()
-	sGame = GAMESTATE:GetCurrentGame():GetName()
 	local Combo = {
 		dance = -1, -- ITG uses 30
 		pump = 51, -- Pump Pro uses 30, real Pump uses 51
@@ -145,11 +141,10 @@ function FailCombo()
 		kb7 = -1,
 		para = -1
 	}
-	return Combo[sGame]
+	return Combo[CurGameName()]
 end
 
 function RoutineSkinP1()
-	sGame = GAMESTATE:GetCurrentGame():GetName()
 	local Combo = {
 		dance = "midi-routine-p1",
 		pump = "cmd-routine-p1",
@@ -157,11 +152,10 @@ function RoutineSkinP1()
 		kb7 = "default",
 		para = "default"
 	}
-	return Combo[sGame]
+	return Combo[CurGameName()]
 end
 
 function RoutineSkinP2()
-	sGame = GAMESTATE:GetCurrentGame():GetName()
 	local Combo = {
 		dance = "midi-routine-p2",
 		pump = "cmd-routine-p2",
@@ -169,7 +163,7 @@ function RoutineSkinP2()
 		kb7 = "retrobar",
 		para = "default"
 	}
-	return Combo[sGame]
+	return Combo[CurGameName()]
 end
 
 -- todo: use tables for some of these -aj
@@ -198,7 +192,7 @@ function GetTapPosition( sType )
 end
 
 function ComboUnderField()
-	return GetUserPrefB("UserPrefComboUnderField")
+	return ThemePrefs.Get("ComboUnderField")
 end
 
 local CodeDetectorCodes = {
@@ -362,7 +356,7 @@ local CodeDetectorCodes = {
 };
 
 function GetCodeForGame(codeName)
-	local gameName = string.lower(GAMESTATE:GetCurrentGame():GetName())
+	local gameName = string.lower(CurGameName())
 	local inputCode = CodeDetectorCodes[codeName]
 	return inputCode[gameName] or inputCode["default"]
 end
