@@ -16,7 +16,6 @@ ThemePrefs.InitAll(Prefs)
 function InitUserPrefs()
 	local Prefs = {
 		UserPrefGameplayShowStepsDisplay = true,
-		UserPrefGameplayShowStepsDisplay = true,
 		UserPrefGameplayShowScore = false,
 		UserPrefScoringMode = 'DDR Extreme',
 		UserPrefShowLotsaOptions = true,
