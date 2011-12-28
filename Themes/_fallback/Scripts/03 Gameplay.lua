@@ -192,7 +192,8 @@ function GetTapPosition( sType )
 end
 
 function ComboUnderField()
-	return ThemePrefs.Get("ComboUnderField")
+	--return ThemePrefs.Get("ComboUnderField")
+	return false
 end
 
 local CodeDetectorCodes = {
