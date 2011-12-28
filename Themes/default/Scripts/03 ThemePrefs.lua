@@ -1,14 +1,79 @@
--- sm-ssc Default Theme Preferences Handler
+-- StepMania 5 Default Theme Preferences Handler
+local function OptionNameString(str)
+	return THEME:GetString('OptionNames',str)
+end
 
--- Example usage of new system (not really implemented yet)
+-- Example usage of new system (not fully implemented yet)
 local Prefs =
 {
 	AutoSetStyle =
 	{
 		Default = false,
-		Choices = { "ON", "OFF" },
+		Choices = { OptionNameString('Off'), OptionNameString('On') },
+		Values = { false, true }
+	},
+	GameplayShowStepsDisplay = 
+	{
+		Default = true,
+		Choices = { OptionNameString('Off'), OptionNameString('On') },
+		Values = { false, true }
+	},
+	GameplayShowScore =
+	{
+		Default = false,
+		Choices = { OptionNameString('Off'), OptionNameString('On') },
+		Values = { false, true }
+	},
+	ShowLotsaOptions =
+	{
+		Default = true,
+		Choices = { OptionNameString('Many'), OptionNameString('Few') },
 		Values = { true, false }
 	},
+	LongFail =
+	{
+		Default = false,
+		Choices = { OptionNameString('Short'), OptionNameString('Long') },
+		Values = { false, true }
+	},
+	NotePosition =
+	{
+		Default = true,
+		Choices = { OptionNameString('Normal'), OptionNameString('Lower') },
+		Values = { true, false }
+	},
+	ComboOnRolls =
+	{
+		Default = false,
+		Choices = { OptionNameString('Off'), OptionNameString('On') },
+		Values = { false, true }
+	},
+	FlashyCombos =
+	{
+		Default = false,
+		Choices = { OptionNameString('Off'), OptionNameString('On') },
+		Values = { false, true }
+	},
+	ComboUnderField =
+	{
+		Default = true,
+		Choices = { OptionNameString('Off'), OptionNameString('On') },
+		Values = { false, true }
+	},
+	FancyUIBG =
+	{
+		Default = true,
+		Choices = { OptionNameString('Off'), OptionNameString('On') },
+		Values = { false, true }
+	},
+	--[[
+	TimingDisplay,
+
+	ProtimingP1,
+	ProtimingP2,
+
+	UserPrefScoringMode = 'DDR Extreme'
+	--]]
 }
 
 ThemePrefs.InitAll(Prefs)
