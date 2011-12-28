@@ -311,6 +311,14 @@ function GetPlayerOrMachineProfile(pn)
 	end;
 end;
 
+function pname(pn) return ToEnumShortString(pn) end
+
+function ThemeManager:GetAbsolutePath(sPath)
+  sFinPath = "/Themes/"..self:GetCurThemeName().."/"..sPath
+  assert(RageFileManager.DoesFileExist(sFinPath), "the theme element "..sPath.." is missing")
+  return sFinPath
+end
+
 -- (c) 2005-2011 Glenn Maynard, Chris Danford, SSC
 -- All rights reserved.
 -- 
