@@ -11,7 +11,6 @@ StepMania 5.0 alpha 1 | 201112xx
 2011/12/27
 ----------
 * [MusicWheel] Add IsRouletting Lua binding. [AJ]
-* [WheelBase] Add GetNumWheelItems Lua binding. [AJ]
 * [LuaManager] Remove GetOSName Lua binding; use GetArchName instead. [AJ]
 
 2011/12/26
