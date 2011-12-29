@@ -1664,7 +1664,7 @@ void RageDisplay_Legacy::SetTextureFiltering( TextureUnit tu, bool b )
 
 void RageDisplay_Legacy::SetEffectMode( EffectMode effect )
 {
-	if (!GLEW_ARB_fragment_program && !GLEW_ARB_shading_language_100)
+	if (!GLEW_ARB_fragment_program || !GLEW_ARB_shading_language_100 || !GLEW_ARB_shader_objects)
 		return;
 
 	GLhandleARB hShader = 0;
