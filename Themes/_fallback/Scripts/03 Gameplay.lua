@@ -186,7 +186,7 @@ function GetTapPosition( sType )
 	bCategory = (sType == 'Standard') and 1 or 2
 	-- true: Normal
 	-- false: Lower
-	bPreference = GetUserPrefB("UserPrefNotePosition") and "Normal" or "Lower"
+	bPreference = ThemePrefs.Get("NotePosition") and "Normal" or "Lower"
 	tNotePos = tNotePositions[bPreference]
 	return tNotePos[bCategory]
 end
