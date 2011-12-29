@@ -1667,6 +1667,7 @@ void RageDisplay_Legacy::SetEffectMode( EffectMode effect )
 	if (!GLEW_ARB_fragment_program && !GLEW_ARB_shading_language_100)
 		return;
 
+
 	GLhandleARB hShader = 0;
 	switch (effect)
 	{
