@@ -1181,7 +1181,7 @@ save yourself some time, copy this for undocumented things:
 	<Function name='visible' return='void' arguments='bool b'>
 		Sets an Actor's visibility to b.
 	</Function>
-	<Function name='wag' return='void' arguments='wag'>
+	<Function name='wag' return='void' arguments=''>
 		Makes the Actor wag. Use <Link function='effectmagnitude' /> to define different wag behavior.
 	</Function>
 	<Function name='x' return='void' arguments='float xPos'>
