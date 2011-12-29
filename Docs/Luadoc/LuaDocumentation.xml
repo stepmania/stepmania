@@ -24,7 +24,7 @@
 <!-- Global functions -->
 <GlobalFunctions>
 	<Function name='Alpha' theme='_fallback' return='color' arguments='color c, float percent'>
-		[03 HSV.lua] Returns a <code>color</code> with the specified alpha.
+		[02 Colors.lua] Returns a <code>color</code> with the specified alpha.
 	</Function>
 	<Function name='AreStagePlayerModsForced' theme='_fallback' return='bool' arguments=''>
 		[02 StageMods.lua]
@@ -42,10 +42,10 @@
 		[02 Colors.lua] Boosts the specified color by multiplying its values by <code>fBoost</code>.
 	</Function>
 	<Function name='Brightness' theme='_fallback' return='color' arguments='color c, float percent'>
-		[03 HSV.lua] Modifies the brightness of the specified color.
+		[02 Colors.lua] Modifies the brightness of the specified color.
 	</Function>
 	<Function name='Center1Player' theme='_fallback' return='bool' arguments=''>
-		[03 ProductivityHelpers.lua] Returns <code>true</code> if Center 1P is being used.
+		[02 Utilities.lua] Returns <code>true</code> if Center 1P is being used.
 	</Function>
 	<Function name='CheckpointsTapsSeparateJudgment' theme='_fallback' return='bool' arguments=''>
 		[03 Gameplay.lua] Returns <code>true</code> if checkpoint judgments and tap judgments
@@ -74,10 +74,10 @@
 		[02 Colors.lua] Returns a midtone of the color. (Specifically <code>c[1]/1.5, c[2]/1.5, c[3]/1.5, c[4]</code>)
 	</Function>
 	<Function name='ColorToHex' theme='_fallback' return='string' arguments='color c'>
-		[03 HSV.lua] Returns a hex representation for the specified color.
+		[02 Colors.lua] Returns a hex representation for the specified color.
 	</Function>
 	<Function name='ColorToHSV' theme='_fallback' return='table' arguments='color c'>
-		[03 HSV.lua] Takes in a color and returns a table with the HSV values.
+		[02 Colors.lua] Takes in a color and returns a table with the HSV values.
 	</Function>
 	<Function name='ComboContinue' theme='_fallback' return='TapNoteScore' arguments=''>
 		[03 Gameplay.lua] Determines what TapNoteScore allows for continuing the combo.
@@ -155,7 +155,7 @@
 		Returns a string representing the name of the operating system being used. (e.g. "Windows", "Linux", "Mac, "Unknown")
 	</Function>
 	<Function name='GetPlayerOrMachineProfile' theme='_fallback' return='Profile' arguments='PlayerNumber pn'>
-		[03 ProductivityHelpers.lua] "This returns a profile, preferably a player one. If there isn't one, [it falls] back on the machine profile."
+		[02 Utilities.lua] "This returns a profile, preferably a player one. If there isn't one, [it falls] back on the machine profile."
 	</Function>
 	<Function name='GetProTiming' theme='default' return='bool' arguments='PlayerNumber pn'>
 		[03 ThemePrefs.lua] Returns <code>true</code> if player <code>pn</code> is using ProTiming.
@@ -164,10 +164,10 @@
 		[02 Utilities.lua] Returns a path to a random song background.
 	</Function>
 	<Function name='GetReal' theme="_fallback" return='float' arguments=''>
-		[03 ProductivityHelpers.lua]
+		[02 Actor.lua]
 	</Function>
 	<Function name='GetRealInverse' theme="_fallback" return='float' arguments=''>
-		[03 ProductivityHelpers.lua]
+		[02 Actor.lua]
 	</Function>
 	<Function name='GetScreenAspectRatio' return='float' arguments=''>
 		Returns the display aspect ratio.
@@ -206,7 +206,7 @@
 		[03 UserPreferences2.lua] Themer-facing function for getting a user preference as a number.
 	</Function>
 	<Function name='HasAlpha' theme='_fallback' return='float' arguments='color c'>
-		[03 HSV.lua] Returns the color's alpha if it has any, otherwise returns 1.
+		[02 Colors.lua] Returns the color's alpha if it has any, otherwise returns 1.
 	</Function>
 	<Function name='HitCombo' theme='_fallback' return='int' arguments=''>
 		[03 Gameplay.lua] Returns the value to start showing the combo at.
@@ -221,36 +221,36 @@
 		Returns the current hour.
 	</Function>
 	<Function name='HSV' theme='_fallback' return='color' arguments='float h, float s, float v'>
-		[03 HSV.lua] Converts a color from HSV values to something StepMania can understand.
+		[02 Colors.lua] Converts a color from HSV values to something StepMania can understand.
 		hue is from <code>0-360</code>, saturation and value are <code>0..1</code>
 	</Function>
 	<Function name='HSVA' theme='_fallback' return='color' arguments='float h, float s, float v, float a'>
-		[03 HSV.lua] Converts a color from HSV values with alpha to something StepMania can understand.
+		[02 Colors.lua] Converts a color from HSV values with alpha to something StepMania can understand.
 		hue is from <code>0-360</code>, saturation, value, and alpha are <code>0..1</code>
 	</Function>
 	<Function name='HSVToColor' theme='_fallback' return='color' arguments='table hsv'>
-		[03 HSV.lua] "Converts a set of HSV values to a color."
+		[02 Colors.lua] "Converts a set of HSV values to a color."
 	</Function>
 	<Function name='HSVToHex' theme='_fallback' return='string' arguments='table hsv'>
-		[03 HSV.lua] "Takes in a normal color and returns the hex representation. (Adapted from code in LuaBit)"
+		[02 Colors.lua] "Takes in a normal color and returns the hex representation. (Adapted from code in LuaBit)"
 	</Function>
 	<Function name='Hue' theme='_fallback' return='color' arguments='color c, int newHue'>
-		[03 HSV.lua] Changes the hue of the input color.
+		[02 Colors.lua] Changes the hue of the input color.
 	</Function>
 	<Function name='InitUserPrefs' theme='default' return='void' arguments=''>
 		[03 ThemePrefs.lua] Initializes various user preferences.
 	</Function>
 	<Function name='IsArcade' theme="_fallback" return='bool' arguments=''>
-		[03 ProductivityHelpers.lua] Returns <code>true</code> if the coin mode is not set to <Link class='ENUM' function='CoinMode'>CoinMode_Home</Link>.
+		[02 Utilities.lua] Returns <code>true</code> if the coin mode is not set to <Link class='ENUM' function='CoinMode'>CoinMode_Home</Link>.
 	</Function>
 	<Function name='IsEventMode' return='bool' arguments=''>
 		Returns <code>true</code> if Event Mode is turned on.
 	</Function>
 	<Function name='IsFreePlay' theme="_fallback" return='bool' arguments=''>
-		[03 ProductivityHelpers.lua] Returns <code>true</code> <Link function='IsArcade'>if Arcade</Link> and the coin mode is <Link class='ENUM' function='CoinMode'>CoinMode_Free</Link>.
+		[02 Utilities.lua] Returns <code>true</code> <Link function='IsArcade'>if Arcade</Link> and the coin mode is <Link class='ENUM' function='CoinMode'>CoinMode_Free</Link>.
 	</Function>
 	<Function name='IsHome' theme="_fallback" return='bool' arguments=''>
-		[03 ProductivityHelpers.lua] Returns <code>true</code> if the coin mode is set to <Link class='ENUM' function='CoinMode'>CoinMode_Home</Link>.
+		[02 Utilities.lua] Returns <code>true</code> if the coin mode is set to <Link class='ENUM' function='CoinMode'>CoinMode_Home</Link>.
 	</Function>
 	<Function name='IsNetConnected' return='bool' arguments=''>
 		Returns <code>true</code> if connected to the Internet.
@@ -330,10 +330,10 @@
 		will iterate over all key–value pairs of table <code>t</code>."
 	</Function>
 	<Function name='pname' theme='_fallback' return='string' arguments='PlayerNumber pn'>
-		[03 ProductivityHelpers.lua] Converts a PlayerNumber into a short string (e.g. "P1", "P2").
+		[02 Utilities.lua] Converts a PlayerNumber into a short string (e.g. "P1", "P2").
 	</Function>
 	<Function name='PositionPerPlayer' theme='_fallback' return='float' arguments='PlayerNumber pn, float p1val, float p2val'>
-		[03 ProductivityHelpers.lua] Returns either <code>p1val</code> or <code>p2val</code> depending on <code>pn</code>.
+		[02 Actor.lua] Returns either <code>p1val</code> or <code>p2val</code> depending on <code>pn</code>.
 	</Function>
 	<Function name='print' theme='_fallback' return='void' arguments='string s'>
 		[00 init.lua] 
@@ -376,7 +376,7 @@
 		[02 Utilities.lua] Round a number.
 	</Function>
 	<Function name='Saturation' theme='_fallback' return='color' arguments='color c, float percent'>
-		[03 HSV.lua] Modifies the saturation of the specified color
+		[02 Colors.lua] Modifies the saturation of the specified color
 	</Function>
 	<Function name='ScoreKeeperClass' theme='_fallback' return='string' arguments=''>
 		[03 Gameplay.lua] Returns the primary ScoreKeeper class to use.
@@ -459,7 +459,7 @@
 		[02 TextBanner.lua] This function defines how the TextBanner is laid out.
 	</Function>
 	<Function name='tobool' theme='_fallback' return='bool' arguments='various v'>
-		[03 ProductivityHelpers.lua] Converts a string or number to a bool.
+		[02 Utilities.lua] Converts a string or number to a bool.
 	</Function>
 	<Function name='tonumber' return='float' arguments='various e, int base'>
 		Tries to convert <code>e</code> to a number. Returns <code>nil</code> if
@@ -686,6 +686,9 @@
 	<Function name='accelerate' return='void' arguments='float fRate'>
 		Plays the commands that follow at an accelerated rate (<code>fRate</code> * <code>fRate</code>), where <code>fRate</code> is in seconds.
 	</Function>
+	<Function name='addcommand' return='void' arguments='string sName, ActorCommand cmd'>
+		Adds a command to the Actor.
+	</Function>
 	<Function name='addrotationx' return='void' arguments='float rot'>
 		Adds <code>rot</code> to the Actor's current x rotation.
 	</Function>
@@ -759,10 +762,10 @@
 		[02 Actor.lua] Centers an Actor on the screen. (equivalent to <code>x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y</code>)
 	</Function>
 	<Function name='CenterX' theme='_fallback' return='void' arguments=''>
-		[03 ProductivityHelpers.lua] Centers an Actor on the X axis. (equivalent to <code>x,SCREEN_CENTER_X</code>)
+		[02 Actor.lua] Centers an Actor on the X axis. (equivalent to <code>x,SCREEN_CENTER_X</code>)
 	</Function>
 	<Function name='CenterY' theme='_fallback' return='void' arguments=''>
-		[03 ProductivityHelpers.lua] Centers an Actor on the y axis. (equivalent to <code>y,SCREEN_CENTER_Y</code>)
+		[02 Actor.lua] Centers an Actor on the y axis. (equivalent to <code>y,SCREEN_CENTER_Y</code>)
 	</Function>
 	<Function name='clearzbuffer' return='void' arguments='bool bClear'>
 		Determines if the z-buffer should be cleared or not.
@@ -796,6 +799,9 @@
 	<Function name='diffusealpha' return='void' arguments='float fAlpha'>
 		Sets the Actor's alpha level to <code>fAlpha</code>, where <code>fAlpha</code> is in the range 0..1.
 	</Function>
+	<Function name='diffuseblink' return='void' arguments=''>
+		Makes the Actor switch between two colors immediately.
+	</Function>
 	<Function name='diffusebottomedge' return='void' arguments=''>
 		Sets the Actor's bottom edge color to <code>c</code>.
 	</Function>
@@ -811,8 +817,14 @@
 	<Function name='diffuselowerright' return='void' arguments='color c'>
 		Sets the Actor's lower right corner color to <code>c</code>.
 	</Function>
+	<Function name='diffuseramp' return='void' arguments=''>
+		Makes the Actor switch between two colors, jumping back to the first after reaching the second.
+	</Function>
 	<Function name='diffuserightedge' return='void' arguments='color c'>
 		Sets the Actor's right edge color to <code>c</code>.
+	</Function>
+	<Function name='diffuseshift' return='void' arguments=''>
+		Makes the Actor shift between two colors smoothly.
 	</Function>
 	<Function name='diffusetopedge' return='void' arguments='color c'>
 		Sets the Actor's top edge color to <code>c</code>.
@@ -822,6 +834,9 @@
 	</Function>
 	<Function name='diffuseupperright' return='void' arguments='color c'>
 		Sets the Actor's upper right corner color to <code>c</code>.
+	</Function>
+	<Function name='Draw' return='void' arguments=''>
+		Tells the Actor to draw itself.
 	</Function>
 	<Function name='draworder' return='void' arguments='int iOrder'>
 		Sets the Actor's draworder to <code>iOrder</code>, where larger values display first.
@@ -913,6 +928,7 @@
 	<Function name='GetHeight' return='float' arguments=''>
 		Returns the Actor's current height.
 	</Function>
+	<!-- todo: GetRotation() returns three numbers, the x, y, and z -->
 	<Function name='GetRotationX' return='float' arguments=''>
 		Returns the Actor's current X rotation.
 	</Function>
@@ -943,12 +959,19 @@
 	<Function name='glow' return='void' arguments='color c'>
 		Sets the Actor's glow color.
 	</Function>
+	<Function name='glowblink' return='void' arguments=''>
+		Makes the Actor glow between two colors immediately.
+	</Function>
 	<Function name='glowramp' return='void' arguments=''>
-		<!-- oh shit how do I document this -aj -->
+		Makes the Actor glow between two colors smoothly, jumping back to the first at the end.
+	</Function>
+	<Function name='glowshift' return='void' arguments=''>
+		Makes the Actor glow between two colors smoothly.
 	</Function>
 	<Function name='halign' return='void' arguments='float fAlign'>
 		Set the fractional horizontal alignment of the Actor according to <code>fAlign</code> which should be a float in the range 0..1. An alignment of 0 is left aligned while an alignment of 1 is right aligned. See <Link function='horizalign' /> for the common case.
 	</Function>
+	<!-- heading -->
 	<Function name='hibernate' return='void' arguments='float fTime'>
 		Hides the Actor for the specified amount of time.
 	</Function>
@@ -976,6 +999,7 @@
 	<Function name='pause' return='void' arguments=''>
 		Stops the Actor's movement. (Usually used for Sprites or Models.)
 	</Function>
+	<!-- pitch -->
 	<Function name='play' return='void' arguments=''>
 		Starts the Actor's movement. (Usually used for Sprites or Models.)
 	</Function>
@@ -997,6 +1021,7 @@
 	<Function name='rainbow' return='void' arguments=''>
 		Makes the Actor change colors continually using colors of the rainbow.
 	</Function>
+	<!-- roll -->
 	<Function name='rotationx' return='void' arguments='float fRotation'>
 		Set the Actor's rotation on the X axis to <code>fAlign</code>.
 	</Function>
@@ -1006,6 +1031,7 @@
 	<Function name='rotationz' return='void' arguments='float fRotation'>
 		Set the Actor's rotation on the Z axis to <code>fAlign</code>.
 	</Function>
+	<!-- RunCommandsRecursively -->
 	<Function name='scale_or_crop_alternative' theme="_fallback" return='void' arguments=''>
 		[02 Actor.lua] An alternative version of <Link function='scale_or_crop_background' />.
 	</Function>
@@ -1060,6 +1086,7 @@
 	<Function name='spin' return='void' arguments=''>
 		Tells the Actor to spin. Can use <Link function='effectmagnitude' /> to define different spinning behavior.
 	</Function>
+	<!-- spring -->
 	<Function name='stopeffect' return='void' arguments=''>
 		Stops any effect the Actor has.
 	</Function>
@@ -1069,6 +1096,10 @@
 	<Function name='stretchto' return='void' arguments='float x1, float y1, float x2, float y2'>
 		Stretches the Actor to a rectangle of a specific size.
 	</Function>
+	<Function name='texturewrapping' return='void' arguments='bool bWrap'>
+		Determines if the Actor should use texture wrapping or not.
+	</Function>
+	<!-- tween -->
 	<Function name='valign' return='void' arguments='float fAlign'>
 		Set the fractional vertical alignment of the Actor according to <code>fAlign</code> which should be a float in the range 0..1. An alignment of 0 is top aligned while an alignment of 1 is bottom aligned. See <Link function="vertalign" /> for the common case.
 	</Function>
@@ -1080,6 +1111,9 @@
 	</Function>
 	<Function name='visible' return='void' arguments='bool b'>
 		Sets an Actor's visibility to b.
+	</Function>
+	<Function name='wag' return='void' arguments='wag'>
+		Makes the Actor wag. Use <Link function='effectmagnitude' /> to define different wag behavior.
 	</Function>
 	<Function name='x' return='void' arguments='float xPos'>
 		Set the x position of the Actor to <code>xPos</code>.
@@ -1134,29 +1168,30 @@
 		[02 Actor.lua] Stretches an Actor to cover the screen. (equivalent to <code>stretchto,0,0,SCREEN_WIDTH,SCREEN_HEIGHT</code>)
 	</Function>
 	<Function name='heartbeat' theme='_fallback' return='void' arguments='float fEffectPeriod'>
-		[03 ProductivityHelpers.lua] A customized version of pulse that is more appealing for on-beat effects.
+		[02 Actor.lua] A customized version of pulse that is more appealing for on-beat effects.
 	</Function>
 	<Function name='MaskDest' theme='_fallback' return='void' arguments=''>
-		[03 ProductivityHelpers.lua] Sets and Actor as a mask destination.
+		[02 Actor.lua] Sets and Actor as a mask destination.
 	</Function>
 	<Function name='MaskSource' theme='_fallback' return='void' arguments=''>
-		[03 ProductivityHelpers.lua] Sets an Actor as a mask source. (Also clears zbuffer; other mask sources need to not clear the zbuffer)
+		[02 Actor.lua] Sets an Actor as a mask source. (Also clears zbuffer; other mask sources need to not clear the zbuffer)
 	</Function>
 	<Function name='Real' theme='_fallback' return='void' arguments='float f'>
-		[03 ProductivityHelpers.lua] Make graphics their true size at any resolution.
+		[02 Actor.lua] Make graphics their true size at any resolution.
 	</Function>
 	<Function name='RealInverse' theme='_fallback' return='void' arguments='float f'>
-		[03 ProductivityHelpers.lua] Scale things back up after they have already been scaled down.
+		[02 Actor.lua] Scale things back up after they have already been scaled down.
 	</Function>
 	<Function name='thump' theme='_fallback' return='void' arguments='float fEffectPeriod'>
-		[03 ProductivityHelpers.lua] A customized version of pulse that is more appealing for on-beat effects.
+		[02 Actor.lua] A customized version of pulse that is more appealing for on-beat effects.
 	</Function>
 	<Function name='xy' theme='_fallback' return='void' arguments='float actorX, float actorY'>
-		[03 ProductivityHelpers.lua] Sets the x and y location of the Actor in one command.
+		[02 Actor.lua] Sets the x and y location of the Actor in one command.
 	</Function>
 </Class>
 <Class name='ActorFrame'>
 	<Function name='AddChildFromPath' return='bool' arguments='string sPath'>
+		Adds a child to the ActorFrame from the specified path.
 	</Function>
 	<Function name='fov' return='void' arguments='float fFOV'>
 		Sets the field of view for the ActorFrame.
@@ -1231,12 +1266,44 @@
 		Sets the vanishing point for the ActorFrame.
 	</Function>
 </Class>
+<Class name='ActorFrameTexture'>
+	<Function name='Create' return='void' arguments=''>
+		Creates the ActorFrameTexture.
+	</Function>
+	<Function name='EnableAlphaBuffer' return='void' arguments='bool bEnable'>
+		Enables/disables the Alpha Buffer.
+	</Function>
+	<Function name='EnableDepthBuffer' return='void' arguments='bool bEnable'>
+		Enables/disables the Depth Buffer.
+	</Function>
+	<Function name='EnableFloat' return='void' arguments='bool bEnable'>
+		Enables/disables
+	</Function>
+	<Function name='EnablePreserveTexture' return='void' arguments='bool bEnable'>
+		Enables/disables the Preserve Texture option.
+	</Function>
+	<Function name='GetTexture' return='RageTexture' arguments=''>
+		Returns the texture.
+	</Function>
+	<Function name='SetTextureName' return='void' arguments='string sName'>
+		Sets the Texture's name to <code>sName</code>.
+	</Function>
+</Class>
 <Class name='ActorMultiTexture'>
+	<Function name='AddTexture' return='int' arguments='RageTexture tex'>
+		Adds a texture to the ActorMultiTexture. Returns the number of texture units.
+	</Function>
 	<Function name='ClearTextures' return='void' arguments=''>
-		Clears all the textures from the MultiTexture.
+		Clears all the textures from the ActorMultiTexture.
 	</Function>
 	<Function name='SetEffectMode' return='void' arguments='EffectMode em'>
-		Sets the EffectMode on the MultiTexture.
+		Sets the EffectMode on the ActorMultiTexture.
+	</Function>
+	<Function name='SetSizeFromTexture' return='void' arguments='RageTexture tex'>
+		Sets the size of the ActorMultiTexture from the specified texture.
+	</Function>
+	<Function name='SetTextureCoords' return='void' arguments='float x1, float y1, float x2, float y2'>
+		Sets the coordinates of the ActorMultiTexture.
 	</Function>
 	<Function name='SetTextureMode' return='void' arguments='int iIndex, TextureMode tm'>
 		Sets a TextureMode on the specified index.
@@ -1447,7 +1514,7 @@
 		Clear all attributes associated with the BitmapText.
 	</Function>
 	<Function name='DiffuseAndStroke' theme='_fallback' return='void' arguments='color diffuseColor, color strokeColor'>
-		[03 ProductivityHelpers.lua] Sets the diffuse and stroke color of text in one command.
+		[02 Actor.lua] Sets the diffuse and stroke color of text in one command.
 	</Function>
 	<Function name='GetText' return='string' arguments=''>
 		Returns the text that is currently set.
@@ -1462,10 +1529,10 @@
 		Set the maximum width of the unzoomed text to <code>fWidth</code>. If <code>fWidth</code> is <code>0</code>, then there is no maximum width.
 	</Function>
 	<Function name='NoStroke' theme='_fallback' return='void' arguments=''>
-		[03 ProductivityHelpers.lua] Remove any stroke color.
+		[02 Actor.lua] Remove any stroke color.
 	</Function>
 	<Function name='PixelFont' theme='_fallback' return='void' arguments=''>
-		[03 ProductivityHelpers.lua] Alias for setting <Link class='Actor' function='SetTextureFiltering' /> to <code>false</code>.
+		[02 Actor.lua] Alias for setting <Link class='Actor' function='SetTextureFiltering' /> to <code>false</code>.
 	</Function>
 	<Function name='rainbowscroll' return='void' arguments='bool bRainbowScroll'>
 		If <code>true</code>, set each character of the text in turn to the rainbow colors in the metrics <code>BitmapText::RainbowColor#</code>.
@@ -1474,10 +1541,10 @@
 		Set the text to <code>sText</code>. This clears all attributes.
 	</Function>
 	<Function name='settextf' theme='_fallback' return='void' arguments='string sFormat, ...'>
-		[03 ProductivityHelpers.lua] Sets text using <code>string.format(sFormat, ...)</code>.
+		[02 Actor.lua] Sets text using <code>string.format(sFormat, ...)</code>.
 	</Function>
 	<Function name='Stroke' theme='_fallback' return='void' arguments='color c'>
-		[03 ProductivityHelpers.lua] Alias for <Link function='strokecolor' />.
+		[02 Actor.lua] Alias for <Link function='strokecolor' />.
 	</Function>
 	<Function name='strokecolor' return='void' arguments='color c'>
 		Sets the stroke color to <code>c</code>.
@@ -1775,6 +1842,12 @@
 	</Function>
 </Class>
 <Class name='Game'>
+	<Function name='CountNotesSeparately' return='bool' arguments=''>
+		Returns <code>true</code> if notes are counted separately in this game.
+	</Function>
+	<Function name='GetMapJudgmentTo' return='TapNoteScore' arguments='TapNoteScore tns'>
+		Returns the mapped judgment for <code>tns</code>.
+	</Function>
 	<Function name='GetName' return='string' arguments=''>
 		Returns the name of the game such as &quot;dance&quot; or &quot;pump&quot;.
 	</Function>
@@ -2295,6 +2368,7 @@
 </Class>
 <Class name='InputFilter'>
 	<Function name='GetMouseWheel' return='float' arguments=''>
+		Returns the mouse wheel value.
 	</Function>
 	<Function name='GetMouseX' return='float' arguments=''>
 		Returns the X position of the mouse.
@@ -2495,6 +2569,17 @@
 <Class name='PercentageDisplay'>
 	<Function name='LoadFromStats' return='void' arguments='PlayerState pPlayerState, PlayerStageStats pPlayerStageStats'>
 		Sets the PercentageDisplay from the specified PlayerState and PlayerStageStats.
+	</Function>
+</Class>
+<Class name='Player'>
+	<Function name='GetPlayerTimingData' return='TimingData' arguments=''>
+		Returns the current TimingData for this player.
+	</Function>
+	<Function name='SetActorWithComboPosition' return='void' arguments='Actor a'>
+		Sets Actor with Combo position.
+	</Function>
+	<Function name='SetActorWithJudgmentPosition' return='void' arguments='Actor a'>
+		Sets Actor with Judgment position.
 	</Function>
 </Class>
 <Class name='PlayerInfo'>
@@ -2955,6 +3040,12 @@
 	<Function name='GetXMode' return='float' arguments=''>
 		Returns the value of X Mode.
 	</Function>
+	<Function name='IsEasierForCourseAndTrail' return='bool' arguments='Course c, Trail t'>
+		Returns <code>true</code> if the current PlayerOptions makes the current Course/Trail easier.
+	</Function>
+	<Function name='IsEasierForSongAndSteps' return='bool' arguments='Song so, Steps st'>
+		Returns <code>true</code> if the current PlayerOptions makes the current Song/Steps easier.
+	</Function>
 	<Function name='SetXMode' return='void' arguments='float fXModeVal'>
 		Sets the X Mode percentage to <code>fXModeVal</code>.
 	</Function>
@@ -3103,6 +3194,9 @@
 	<Function name='GetSongPosition' return='SongPosition' arguments=''>
 		Returns the SongPosition for this PlayerState.
 	</Function>
+	<Function name='GetSuperMeterLevel' return='float' arguments=''>
+		Returns the current Super Meter level for this PlayerState.
+	</Function>
 	<Function name='SetPlayerOptions' return='string' arguments='ModsLevel ml, string sPlayerOptions'>
 		Sets the player options to <code>sPlayerOptions</code> for the specified ModsLevel.
 	</Function>
@@ -3217,6 +3311,9 @@
 	</Function>
 	<Function name='GetTotalTrailsWithTopGrade' return='int' arguments='StepsType st, Difficulty d, Grade g'>
 		Returns the number of trails with the specified StepsType and Difficulty that you've scored a certain Grade <code>g</code> on.
+	</Function>
+	<Function name='GetUserTable' return='table' arguments=''>
+		Returns the user table for this Profile.
 	</Function>
 	<Function name='GetWeightPounds' return='int' arguments=''>
 		Returns how much the player weighs.
@@ -3750,7 +3847,7 @@
 	<Function name='HasEdits' return='bool' arguments='StepsType st'>
 		Returns <code>true</code> if the song has edits.
 	</Function>
-	<Function name='HasCDJacket' return='bool' arguments=''>
+	<Function name='HasJacket' return='bool' arguments=''>
 		Returns <code>true</code> if the song has a jacket graphic.
 	</Function>
 	<Function name='HasLyrics' return='bool' arguments=''>
@@ -3963,7 +4060,7 @@
 	<Function name='GetTexture' return='RageTexture' arguments=''>
 		Returns the Sprite's texture.
 	</Function>
-	<Function name='LinearFrames' theme='_fallback' return='{Frame}' arguments='int iNumFrames, float fSeconds'>
+	<Function name='LinearFrames' theme='_fallback' return='table' arguments='int iNumFrames, float fSeconds'>
 		[02 Sprite.lua] Returns a <code>Frames</code> table consisting of <code>iNumFrames</code> frames lasting for a total of <code>fSeconds</code> seconds. This function is not a member function and should be used as <code>Frames = Sprite.LinearFrames( 5, 2.6 )</code>.
 	</Function>
 	<Function name='Load' return='void' arguments='string sPath'>
@@ -4218,7 +4315,7 @@
 		Returns <code>true</code> if the specified theme exists.
 	</Function>
 	<Function name='GetAbsolutePath' theme='_fallback' return='string' arguments='string sPath'>
-		[03 ProductivityHelpers.lua] Returns the absolute path of a file in the theme.
+		[02 Utilities.lua] Returns the absolute path of a file in the theme.
 	</Function>
 	<Function name='GetCurLanguage' return='string' arguments=''>
 		Returns the current language.
@@ -4277,7 +4374,7 @@
 	<Function name='ReloadMetrics' return='void' arguments=''>
 		Reloads the current theme's metrics.
 	</Function>
-	<Function name='RunLuaScripts' return='void' arguments='string s'>
+	<Function name='RunLuaScripts' return='void' arguments='string sMask'>
 		
 	</Function>
 </Class>
@@ -4433,6 +4530,12 @@
 	<Function name='GetSong' return='Song' arguments=''>
 		Returns the Song related to the UnlockEntry.
 	</Function>
+	<Function name='GetStepByStepsType' return='Steps' arguments=''>
+		Get all of the steps locked based on StepsType.
+	</Function>
+	<Function name='GetStepOfAllTypes' return='{Steps}' arguments=''>
+		Get all of the steps locked based on difficulty.
+	</Function>
 	<Function name='GetUnlockRewardType' return='UnlockRewardType' arguments=''>
 		Returns the UnlockRewardType for this entry.
 	</Function>
@@ -4448,12 +4551,14 @@
 	<Function name='requirepasshardsteps' return='void' arguments=''>
 		Makes the UnlockEntry require passing Hard steps.
 	</Function>
+	<Function name='requirepasschallengesteps' return='void' arguments=''>
+		Makes the UnlockEntry require passing Challenge steps.
+	</Function>
 	<Function name='roulette' return='void' arguments=''>
 		Makes the UnlockEntry hide in Roulette.
 	</Function>
 	<Function name='song' return='void' arguments='string sSongName'>
-		Sets the UnlockEntry's song to <code>sSongName</code>.<br />
-		<code>sSongName</code> also requires the group.<br />
+		Sets the UnlockEntry's song to <code>sSongName</code>. <code>sSongName</code> also requires the group.<br />
 		Example: <code>song,"In The Groove/Pandemonium"</code>
 	</Function>
 	<Function name='steps' return='void' arguments='string sSong, string sSteps'>
@@ -4519,6 +4624,9 @@
 	<Function name='GetNumItems' return='int' arguments=''>
 		Returns the total number of items in the wheel.
 	</Function>
+	<Function name='GetSelectedType' return='int' arguments=''>
+		
+	</Function>
 	<Function name='GetWheelItem' return='WheelItemBase' arguments='int iIndex'>
 		Returns the WheelItem at index <code>iIndex</code>.
 	</Function>
@@ -4541,6 +4649,9 @@
 	</Function>
 	<Function name='GetText' return='string' arguments=''>
 		Returns the text of this wheel item.
+	</Function>
+	<Function name='GetType' return='WheelItemDataType' arguments=''>
+		Returns the type of this wheel item.
 	</Function>
 </Class>
 <Class name='WorkoutGraph'>
