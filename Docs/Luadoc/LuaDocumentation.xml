@@ -18,6 +18,11 @@
      <Link class='GLOBAL' function='Basename' /> -> Basename()
      To add a link to an Enum:
      <Link class='ENUM' function='CoinMode' /> -> CoinMode
+
+save yourself some time, copy this for undocumented things:
+<Function name='' return='' arguments=''>
+		
+	</Function>
   -->
 
 <Documentation xmlns='http://www.stepmania.com' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='http://www.stepmania.com Lua.xsd'>
@@ -54,6 +59,9 @@
 	<Function name='clamp' return='float' arguments='float fValue, float fLow, float fHigh'>
 		CLAMP is an all-female Japanese mangaka group that formed in the mid 1980s.
 		Erm, I mean... Clamps <code>fValue</code> between <code>fLow</code> and <code>fHigh</code>.
+	</Function>
+	<Function name='ClearEnterMappedKeys' theme='_fallback' return='void' arguments=''>
+		[04 KeymapGuard.lua]
 	</Function>
 	<Function name='CloseConnection' return='void' arguments=''>
 		Closes any connection to an online server.
@@ -97,6 +105,15 @@
 	<Function name='ConnectToServer' return='bool' arguments='string sAddress'>
 		Tries to connect to the server at <code>sAddress</code>.
 	</Function>
+	<Function name='CustomDifficultyToColor' theme='_fallback' return='color' arguments='string cd'>
+		[02 Colors.lua]
+	</Function>
+	<Function name='CustomDifficultyToDarkColor' theme='_fallback' return='color' arguments='string cd'>
+		[02 Colors.lua]
+	</Function>
+	<Function name='CustomDifficultyToLightColor' theme='_fallback' return='color' arguments='string cd'>
+		[02 Colors.lua]
+	</Function>
 	<Function name='DayOfMonth' return='int' arguments=''>
 		Returns the current day of the month.
 	</Function>
@@ -108,6 +125,12 @@
 	</Function>
 	<Function name='dofile' theme='_fallback' return='chunk' arguments='string sFilePath'>
 		[01 base.lua] "Override Lua's dofile to use our <Link function="loadfile">loadfile</Link>."
+	</Function>
+	<Function name='EvalUsesCheckpointsWithJudgments' theme='_fallback' return='bool' arguments=''>
+		[03 Gameplay.lua]
+	</Function>
+	<Function name='FailCombo' theme='_fallback' return='int' arguments=''>
+		[03 Gameplay.lua]
 	</Function>
 	<Function name='fapproach' theme='_fallback' return='float' arguments='float val, float other_val, float to_move'>
 		[02 Utilities.lua]
@@ -124,11 +147,15 @@
 	<Function name='FormatNumberAndSuffix' return='string' arguments='int num'>
 		Returns the number passed to the function followed by its suffix (&quot;th&quot;, &quot;nd&quot;, and so on).
 	</Function>
+	<!-- FormatNumSongsPlayed -->
 	<Function name='FormatPercentScore' return='string' arguments='float fPercentDancePoints'>
 		Returns <code>fPercentDancePoints</code> formatted as a percentage.
 	</Function>
 	<Function name='GameCompatibleModes' theme='_fallback' return='string' arguments=''>
 		[03 Gameplay.lua] Returns a list of valid styles for the current gametype.
+	</Function>
+	<Function name='GetCodeForGame' theme='_fallback' return='string' arguments=''>
+		[03 Gameplay.lua]
 	</Function>
 	<Function name='GetCustomDifficulty' return='string' arguments='StepsType st, Difficulty d, CourseType ct'>
 		Returns the corresponding CustomDifficulty string for a StepsType/Difficulty (/optional CourseType) combination.
@@ -190,6 +217,12 @@
 	<Function name='GetTimingDifficulty' return='int' arguments=''>
 		Returns the current Timing difficulty.
 	</Function>
+	<Function name='GetTitleSafeH' theme='_fallback' return='float' arguments='float fPercent'>
+		[01 alias.lua]
+	</Function>
+	<Function name='GetTitleSafeV' theme='_fallback' return='float' arguments='float fPercent'>
+		[01 alias.lua]
+	</Function>
 	<Function name='GetTotalItems' theme='_fallback' return='float' arguments='RadarValues radars'>
 		[04 Scoring.lua] "Retrieve the amount of taps/holds/rolls involved." Used in some scoring formulas.
 	</Function>
@@ -249,6 +282,9 @@
 	<Function name='IsFreePlay' theme="_fallback" return='bool' arguments=''>
 		[02 Utilities.lua] Returns <code>true</code> <Link function='IsArcade'>if Arcade</Link> and the coin mode is <Link class='ENUM' function='CoinMode'>CoinMode_Free</Link>.
 	</Function>
+	<Function name='IsGame' theme='_fallback' return='bool' arguments='string sGame'>
+		[03 Gameplay.lua] Returns <code>true</code> if the current game is <code>sGame</code>.
+	</Function>
 	<Function name='IsHome' theme="_fallback" return='bool' arguments=''>
 		[02 Utilities.lua] Returns <code>true</code> if the coin mode is set to <Link class='ENUM' function='CoinMode'>CoinMode_Home</Link>.
 	</Function>
@@ -261,6 +297,9 @@
 	<Function name='IsSMOnlineLoggedIn' return='bool' arguments='PlayerNumber pn'>
 		Returns <code>true</code> if Player <code>pn</code> is logged on to a SMOnline server.
 	</Function>
+	<Function name='IsW1Allowed' theme='_fallback' return='bool' arguments='TapNoteScore tns'>
+		[04 Scoring.lua] Returns <code>true</code> if W1 is allowed (and <code>tns == 'TapNoteScore_W2'</code>)
+	</Function>
 	<Function name='IsRoutine' theme='_fallback' return='bool' arguments=''>
 		[02 Branches.lua] Returns <code>true</code> if Routine mode is being played.
 	</Function>
@@ -272,6 +311,12 @@
 	</Function>
 	<Function name='join' theme='_fallback' return='string' arguments='string delimiter, table list'>
 		[02 Utilities.lua] Joins a table, splitting each item with <code>delimiter</code>, returning a string of the results.
+	</Function>
+	<Function name='JudgmentLineToColor' theme='_fallback' return='color' arguments='JudgmentLine jl'>
+		[02 Colors.lua]
+	</Function>
+	<Function name='JudgmentLineToStrokeColor' theme='_fallback' return='color' arguments='JudgmentLine jl'>
+		[02 Colors.lua]
 	</Function>
 	<Function name='LoadActor' return='ActorDef' arguments='string sPath, ...'>
 		Returns an Actor definition for the actor at <code>sPath</code>. If <code>sPath</code> points to a Lua file, any additional arguments will be passed to that script.
@@ -329,6 +374,12 @@
 		so that the construction <code>for k,v in pairs(t) do body end</code>
 		will iterate over all key–value pairs of table <code>t</code>."
 	</Function>
+	<Function name='PlayerColor' theme='_fallback' return='color' arguments='PlayerNumber pn'>
+		[02 Colors.lua]
+	</Function>
+	<Function name='PlayerScoreColor' theme='_fallback' return='color' arguments='PlayerNumber pn'>
+		[02 Colors.lua]
+	</Function>
 	<Function name='pname' theme='_fallback' return='string' arguments='PlayerNumber pn'>
 		[02 Utilities.lua] Converts a PlayerNumber into a short string (e.g. "P1", "P2").
 	</Function>
@@ -341,8 +392,11 @@
 	<Function name='PrintTable' theme='_fallback' return='void' arguments='table t'>
 		[03 ThemePrefs.lua] Prints a table's contents to the log.
 	</Function>
+	<Function name='ProductFamily' return='string' arguments=''>
+		Returns the product family. (e.g. "StepMania")
+	</Function>
 	<Function name='ProductID' return='string' arguments=''>
-		Returns the product ID.
+		Returns the product ID. (e.g. "StepMania 5")
 	</Function>
 	<Function name='ProductVersion' return='string' arguments=''>
 		Returns the product version.
@@ -374,6 +428,12 @@
 	</Function>
 	<Function name='round' theme='_fallback' return='int' arguments='float val, int decimal'>
 		[02 Utilities.lua] Round a number.
+	</Function>
+	<Function name='RoutineSkinP1' theme='_fallback' return='string' arguments=''>
+		[03 Gameplay.lua] Returns the routine noteskin for player .
+	</Function>
+	<Function name='RoutineSkinP2' theme='_fallback' return='string' arguments=''>
+		[03 Gameplay.lua] Returns the routine noteskin for player 2.
 	</Function>
 	<Function name='Saturation' theme='_fallback' return='color' arguments='color c, float percent'>
 		[02 Colors.lua] Modifies the saturation of the specified color
@@ -428,6 +488,9 @@
 	<Function name='SetUserPref' theme='_fallback' return='bool' arguments='string name, string value'>
 		[03 UserPreferences2.lua] Themer-facing function for setting a user preference.
 	</Function>
+	<Function name='ShowHoldJudgments' theme='_fallback' return='bool' arguments=''>
+		[03 Gameplay.lua] 
+	</Function>
 	<Function name='ShowStandardDecoration' theme='_fallback' return='bool' arguments='string sMetricsName'>
 		[02 ActorDef.lua] Returns <code>true</code> if a decoration should be shown on the current screen or not.
 	</Function>
@@ -436,6 +499,12 @@
 	</Function>
 	<Function name='split' theme='_fallback' return='table' arguments='string delimiter, string text'>
 		[02 Utilities.lua] Splits a string at every occurence of <code>delimiter</code>, returning a table of the results.
+	</Function>
+	<Function name='StageToColor' theme='_fallback' return='color' arguments='Stage s'>
+		[02 Colors.lua]
+	</Function>
+	<Function name='StageToStrokeColor' theme='_fallback' return='color' arguments='Stage s'>
+		[02 Colors.lua]
 	</Function>
 	<Function name='StandardDecorationFromTable' theme='_fallback' return='Actor' arguments='string sMetricsName, table t'>
 		[02 ActorDef.lua] 
