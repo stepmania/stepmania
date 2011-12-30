@@ -3645,7 +3645,7 @@ void ScreenEdit::DisplayTimingMenu()
 	float fBeat = GetBeat();
 	TimingData &pTime = GetAppropriateTiming();
 	bool bHasSpeedOnThisRow = pTime.GetSpeedSegmentAtBeat( fBeat )->GetBeat() == fBeat;
-	bool bIsSelecting = ( (m_NoteFieldEdit.m_iEndMarker != -1) && (m_NoteFieldEdit.m_iBeginMarker != -1) );
+	// bool bIsSelecting = ( (m_NoteFieldEdit.m_iEndMarker != -1) && (m_NoteFieldEdit.m_iBeginMarker != -1) );
 
 
 	g_TimingDataInformation.rows[beat_0_offset].SetOneUnthemedChoice( ssprintf("%.6f", pTime.m_fBeat0OffsetInSeconds) );
@@ -3675,7 +3675,7 @@ void ScreenEdit::DisplayTimingMenu()
 	g_TimingDataInformation.rows[scroll].SetOneUnthemedChoice( ssprintf("%.6f", pTime.GetScrollAtBeat( fBeat ) ) );
 	g_TimingDataInformation.rows[fake].SetOneUnthemedChoice( ssprintf("%.6f", pTime.GetFakeAtBeat( fBeat ) ) );
 
-	g_TimingDataInformation.rows[speed_percent].bEnabled = !bIsSelecting;
+	// g_TimingDataInformation.rows[speed_percent].bEnabled = !bIsSelecting;
 	g_TimingDataInformation.rows[speed_wait].bEnabled = bHasSpeedOnThisRow;
 	g_TimingDataInformation.rows[speed_mode].bEnabled = bHasSpeedOnThisRow;
 
