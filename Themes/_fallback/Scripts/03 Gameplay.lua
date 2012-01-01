@@ -108,62 +108,60 @@ function EvalUsesCheckpointsWithJudgments()
 	return (CurGameName() == "pump") and true or false
 end
 
--- these need cleanup really.
+local ComboThresholds = {
+	dance	= { Hit = 2, Miss = 2, Fail = -1 },
+	pump	= { Hit = 4, Miss = 4, Fail = 51 },
+	beat	= { Hit = 1, Miss = 0, Fail = -1 },
+	kb7		= { Hit = 1, Miss = 0, Fail = -1 },
+	para	= { Hit = 2, Miss = 0, Fail = -1 },
+	-------------------------------------------
+	default	= { Hit = 2, Miss = 2, Fail = -1 }
+}
+
 function HitCombo()
-	local Combo = {
-		dance = 2,
-		pump = 4,
-		beat = 2,
-		kb7 = 2,
-		para = 2
-	}
-	return Combo[CurGameName()]
+	if ComboThresholds[CurGameName()] then
+		return ComboThresholds[CurGameName()].Hit
+	end
+	return ComboThresholds["default"].Hit
 end
 
 function MissCombo()
-	local Combo = {
-		dance = 2,
-		pump = 4,
-		beat = 0,
-		kb7 = 0,
-		para = 0
-	}
-	return Combo[CurGameName()]
+	if ComboThresholds[CurGameName()] then
+		return ComboThresholds[CurGameName()].Miss
+	end
+	return ComboThresholds["default"].Miss
 end
 
 -- FailCombo:
 -- [en] The combo that causes game failure.
 function FailCombo()
-	local Combo = {
-		dance = -1, -- ITG uses 30
-		pump = 51, -- Pump Pro uses 30, real Pump uses 51
-		beat = -1,
-		kb7 = -1,
-		para = -1
-	}
-	return Combo[CurGameName()]
+	-- ITG (dance) uses 30. Pump Pro uses 30, real Pump uses 51
+	if ComboThresholds[CurGameName()] then
+		return ComboThresholds[CurGameName()].Fail
+	end
+	return ComboThresholds["default"].Fail
 end
 
+local RoutineSkins = {
+	dance	= { P1 = "midi-routine-p1", P2 = "midi-routine-p1" },
+	pump	= { P1 = "cmd-routine-p1", P2 = "cmd-routine-p2" },
+	kb7		= { P1 = "default", P2 = "retrobar" },
+	-------------------------------------------------------------
+	default	= { P1 = "default", P2 = "default" }
+}
+
 function RoutineSkinP1()
-	local Combo = {
-		dance = "midi-routine-p1",
-		pump = "cmd-routine-p1",
-		beat = "default",
-		kb7 = "default",
-		para = "default"
-	}
-	return Combo[CurGameName()]
+	if RoutineSkins[CurGameName()] then
+		return RoutineSkins[CurGameName()].P1
+	end
+	return RoutineSkins["Default"].P1
 end
 
 function RoutineSkinP2()
-	local Combo = {
-		dance = "midi-routine-p2",
-		pump = "cmd-routine-p2",
-		beat = "default",
-		kb7 = "retrobar",
-		para = "default"
-	}
-	return Combo[CurGameName()]
+	if RoutineSkins[CurGameName()] then
+		return RoutineSkins[CurGameName()].P2
+	end
+	return RoutineSkins["Default"].P2
 end
 
 -- todo: use tables for some of these -aj
@@ -173,27 +171,6 @@ end
 
 function ShowHoldJudgments()
 	return not IsGame("pump")
-end
-
-local tNotePositions = {
-	-- StepMania 3.9/4.0
-	Normal = { -144, 144, },
-	-- ITG
-	Lower = { -125, 145, }
-}
-
-function GetTapPosition( sType )
-	bCategory = (sType == 'Standard') and 1 or 2
-	-- true: Normal
-	-- false: Lower
-	bPreference = ThemePrefs.Get("NotePosition") and "Normal" or "Lower"
-	tNotePos = tNotePositions[bPreference]
-	return tNotePos[bCategory]
-end
-
-function ComboUnderField()
-	--return ThemePrefs.Get("ComboUnderField")
-	return false
 end
 
 local CodeDetectorCodes = {

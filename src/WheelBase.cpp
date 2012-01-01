@@ -521,7 +521,6 @@ public:
 
 		return 1;
 	}
-	static int GetNumWheelItems( T* p, lua_State *L ){ lua_pushnumber( L, p->GetNumItems() ); return 1; }
 	static int IsSettled( T* p, lua_State *L ){ lua_pushboolean( L, p->IsSettled() ); return 1; }
 	static int IsLocked( T* p, lua_State *L ){ lua_pushboolean( L, p->WheelIsLocked() ); return 1; }
 	static int SetOpenSection( T* p, lua_State *L ){ p->SetOpenSection( SArg(1) ); return 0; }
@@ -539,7 +538,6 @@ public:
 	LunaWheelBase()
 	{
 		ADD_METHOD( GetWheelItem );
-		ADD_METHOD( GetNumWheelItems );
 		ADD_METHOD( IsSettled );
 		ADD_METHOD( IsLocked );
 		ADD_METHOD( SetOpenSection );
