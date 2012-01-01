@@ -1986,7 +1986,6 @@
 		2BD6E14013D78FAD008443DB /* uncompr.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = uncompr.c; sourceTree = "<group>"; };
 		2BD6E14113D78FAD008443DB /* zutil.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = zutil.c; sourceTree = "<group>"; };
 		2BD6E14213D78FAD008443DB /* zutil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = zutil.h; sourceTree = "<group>"; };
-		2BD91A791470DE4C008812C5 /* libjpeg.8.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libjpeg.8.dylib; path = usr/local/lib/libjpeg.8.dylib; sourceTree = SDKROOT; };
 		2BDB88B2137201F700E6FD3A /* lapi.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = lapi.c; path = "../extern/lua-5.1/src/lapi.c"; sourceTree = SOURCE_ROOT; };
 		2BDB88B3137201F700E6FD3A /* lapi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = lapi.h; path = "../extern/lua-5.1/src/lapi.h"; sourceTree = SOURCE_ROOT; };
 		2BDB88B4137201F700E6FD3A /* lauxlib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = lauxlib.c; path = "../extern/lua-5.1/src/lauxlib.c"; sourceTree = SOURCE_ROOT; };
@@ -5117,7 +5116,6 @@
 				AA21E4770A9826CD00684CEA /* libtheora_link.a */,
 				AA21E4780A9826CD00684CEA /* libvorbis_link.a */,
 				AA059E2A0B8F0C66006F8139 /* libz_link.a */,
-				2BD91A791470DE4C008812C5 /* libjpeg.8.dylib */,
 			);
 			path = Libraries;
 			sourceTree = "<group>";
