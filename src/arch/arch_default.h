@@ -39,7 +39,7 @@
 #define DEFAULT_INPUT_DRIVER_LIST "X11"
 #endif
 #define DEFAULT_MOVIE_DRIVER_LIST "Theora,FFMpeg,Null"
-#define DEFAULT_SOUND_DRIVER_LIST "pulse,ALSA-sw,OSS,Null"
+#define DEFAULT_SOUND_DRIVER_LIST "ALSA-sw,pulse,OSS,Null"
 #else
 #error Which arch?
 #endif
