@@ -2401,6 +2401,14 @@ public:
 		LuaHelpers::CreateTableFromArray( vHP, L );
 		return 1;
 	}
+  static int GetEnabledPlayers(T* p, lua_State *L )
+  {
+    vector<PlayerNumber> vEP;
+    FOREACH_EnabledPlayer( pn )
+      vEP.push_back( pn );
+    LuaHelpers::CreateTableFromArray( vEP, L );
+    return 1;
+  }  
 	static int GetCurrentStyle( T* p, lua_State *L )
 	{
 		Style *pStyle = const_cast<Style *> (p->GetCurrentStyle());
@@ -2554,6 +2562,7 @@ public:
 		ADD_METHOD( SetPreferredSongGroup );
 		ADD_METHOD( GetPreferredSongGroup );
 		ADD_METHOD( GetHumanPlayers );
+    ADD_METHOD( GetEnabledPlayers );
 		ADD_METHOD( GetCurrentStyle );
 		ADD_METHOD( IsAnyHumanPlayerUsingMemoryCard );
 		ADD_METHOD( GetNumStagesForCurrentSongAndStepsOrCourse );
