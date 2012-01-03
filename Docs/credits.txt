@@ -130,6 +130,9 @@ DHalens
 桜為小鳩 (@sakuraponila)
  * Scoring fixes
 
+@Niler_jp
+ * Japanese translation
+
 ==the beta testers==
 [SSC Beta Testing Team]
 KeithD

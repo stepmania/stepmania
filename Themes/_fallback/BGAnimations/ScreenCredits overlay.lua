@@ -66,6 +66,7 @@ local contrib = {
 local translators = {
 	"John Reactor (Polish)",
 	"DHalens (Spanish)",
+	"@Niler_jp (Japanese)",
 }
 
 local thanks = {
