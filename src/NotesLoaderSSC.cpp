@@ -325,6 +325,21 @@ bool SSCLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 					out.m_sBackgroundFile = sParams[1];
 				}
 
+				else if( sValueName=="JACKET" )
+				{
+					out.m_sJacketFile = sParams[1];
+				}
+
+				else if( sValueName=="CDIMAGE" )
+				{
+					out.m_sCDFile = sParams[1];
+				}
+
+				else if( sValueName=="DISCIMAGE" )
+				{
+					out.m_sDiscFile = sParams[1];
+				}
+
 				else if( sValueName=="LYRICSPATH" )
 				{
 					out.m_sLyricsFile = sParams[1];
