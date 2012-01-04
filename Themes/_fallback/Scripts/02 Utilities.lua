@@ -353,14 +353,6 @@ local function round(num, idp)
 	return math.floor(num + 0.5);
 end
 
-DisplayType = {
-	'DisplayType_Normal',
-	'DisplayType_WideScreen_16_9',
-	'DisplayType_WideScreen_16_10',
-	'DisplayType_WideScreen_8_3',
-	'DisplayType_Invalid',
-};
-
 function IsUsingWideScreen()
 	local curAspect = round(GetScreenAspectRatio(),5);
 	for k,v in pairs(AspectRatios) do
