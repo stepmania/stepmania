@@ -127,7 +127,7 @@ John_Reactor
 DHalens
  * Spanish translation
 
-桜為小鳩 (@sakuraponila)
+桜為小鳩/Sakurana-Kobato (@sakuraponila)
  * Scoring fixes
 
 @Niler_jp
