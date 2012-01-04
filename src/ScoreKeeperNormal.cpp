@@ -686,12 +686,10 @@ int ScoreKeeperNormal::GetPossibleGradePoints( const RadarValues& radars )
 	 * W2 will be used instead. */
 
 	int NumTaps = int(radars[RadarCategory_TapsAndHolds]);
-	int NumLifts = int(radars[RadarCategory_Lifts]);
 	int NumHolds = int(radars[RadarCategory_Holds]);
 	int NumRolls = int(radars[RadarCategory_Rolls]);
 	return
 		NumTaps*TapNoteScoreToGradePoints(TNS_W1, false) +
-		NumLifts*TapNoteScoreToGradePoints(TNS_W1, false) +
 		NumHolds*HoldNoteScoreToGradePoints(HNS_Held, false) +
 		NumRolls*HoldNoteScoreToGradePoints(HNS_Held, false);
 }
