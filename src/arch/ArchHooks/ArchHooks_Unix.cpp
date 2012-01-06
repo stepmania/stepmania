@@ -269,18 +269,6 @@ void ArchHooks::MountInitialFilesystems( const RString &sDirOfExecutable )
 	 * (Deprecated; use rootfs.) */
 	FILEMAN->Mount( "dir", "/proc", "/proc" );
 #endif
-	
-	/* Next: path to write general mutable user data.
-	 * Lowercase the PRODUCT_ID; dotfiles and directories are almost always lowercase.
-	 */
-	const char *szHome = getenv( "HOME" );
-	RString sProductId = PRODUCT_ID;
-	sProductId.MakeLower();
-	RString sUserDataPath = ssprintf( "%s/.%s", szHome? szHome:".", "stepmania5" );
-	FILEMAN->Mount( "dir", sUserDataPath + "/Cache", "/Cache" );
-	FILEMAN->Mount( "dir", sUserDataPath + "/Logs", "/Logs" );
-	FILEMAN->Mount( "dir", sUserDataPath + "/Save", "/Save" );
-	FILEMAN->Mount( "dir", sUserDataPath + "/Screenshots", "/Screenshots" );
 
 	RString Root;
 	struct stat st;
@@ -298,7 +286,17 @@ void ArchHooks::MountInitialFilesystems( const RString &sDirOfExecutable )
 
 void ArchHooks::MountUserFilesystems( const RString &sDirOfExecutable )
 {
-	// XXX: Fix me.
+	/* Path to write general mutable user data when not Portable
+	 * Lowercase the PRODUCT_ID; dotfiles and directories are almost always lowercase.
+	 */
+	const char *szHome = getenv( "HOME" );
+	RString sProductId = PRODUCT_ID;
+	sProductId.MakeLower();
+	RString sUserDataPath = ssprintf( "%s/.%s", szHome? szHome:".", "stepmania5" );
+	FILEMAN->Mount( "dir", sUserDataPath + "/Cache", "/Cache" );
+	FILEMAN->Mount( "dir", sUserDataPath + "/Logs", "/Logs" );
+	FILEMAN->Mount( "dir", sUserDataPath + "/Save", "/Save" );
+	FILEMAN->Mount( "dir", sUserDataPath + "/Screenshots", "/Screenshots" );
 }
 
 /*
