@@ -168,16 +168,7 @@ function Actor:scale_or_crop_background()
 		-- bga matches the current aspect, we can stretch it.
 		self:stretchto( 0,0,SCREEN_WIDTH,SCREEN_HEIGHT )
 	else
-		-- temp
-		self:scaletocover( 0,0,SCREEN_WIDTH,SCREEN_HEIGHT )
-		--[[
-		-- bga doesn't match the aspect.
-		if displayAspect > graphicAspect then
-			-- the graphic is smaller than the display aspect ratio
-		else
-			-- the graphic is bigger than the display aspect ratio; crop me
-		end
-		--]]
+		self:scaletofit( SCREEN_CENTER_X-(gw/2),SCREEN_TOP,SCREEN_CENTER_X+(gw/2),SCREEN_HEIGHT)
 	end
 end
 
