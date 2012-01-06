@@ -168,7 +168,12 @@ function Actor:scale_or_crop_background()
 		-- bga matches the current aspect, we can stretch it.
 		self:stretchto( 0,0,SCREEN_WIDTH,SCREEN_HEIGHT )
 	else
-		self:scaletofit( SCREEN_CENTER_X-(gw/2),SCREEN_TOP,SCREEN_CENTER_X+(gw/2),SCREEN_HEIGHT)
+		if gh < DISPLAY:GetDisplayHeight() then
+			-- we have a bg smaller than the display height. we need to scale it up.
+			self:scaletofit( SCREEN_CENTER_X-((graphicAspect*SCREEN_HEIGHT)/2),SCREEN_TOP,SCREEN_CENTER_X+((graphicAspect*SCREEN_HEIGHT)/2),SCREEN_HEIGHT)
+		else
+			self:scaletofit( SCREEN_CENTER_X-(gw/2),SCREEN_TOP,SCREEN_CENTER_X+(gw/2),SCREEN_HEIGHT)
+		end
 	end
 end
 
