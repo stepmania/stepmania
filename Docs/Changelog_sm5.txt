@@ -5,8 +5,13 @@ from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
 ================================================================================
-StepMania 5.0 alpha 1 | 201112xx
+StepMania 5.0 alpha 1 | 201201xx
 --------------------------------------------------------------------------------
+
+2012/01/05
+----------
+* [PercentageDisplay] Remove unused ApplyScoreDisplayOptions metric;
+  added PercentFormat and RemainderFormat metrics. [AJ]
 
 2011/12/27
 ----------
