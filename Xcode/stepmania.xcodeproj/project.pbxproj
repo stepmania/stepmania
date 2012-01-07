@@ -1735,7 +1735,7 @@
 		EE4FD2E414A8F066002B5758 /* jmemnobs.c in Sources */ = {isa = PBXBuildFile; fileRef = EE4FD29C14A8F066002B5758 /* jmemnobs.c */; };
 		EE4FD2E614A8F066002B5758 /* jquant1.c in Sources */ = {isa = PBXBuildFile; fileRef = EE4FD29E14A8F066002B5758 /* jquant1.c */; };
 		EE4FD2E714A8F066002B5758 /* jquant2.c in Sources */ = {isa = PBXBuildFile; fileRef = EE4FD29F14A8F066002B5758 /* jquant2.c */; };
-		EE4FD30814A8F281002B5758 /* libjpeg.a in Frameworks */ = {isa = PBXBuildFile; fileRef = EE4FD26014A8EFE1002B5758 /* libjpeg.a */; };
+		EE4FD30814A8F281002B5758 /* libjpeg-sm5.a in Frameworks */ = {isa = PBXBuildFile; fileRef = EE4FD26014A8EFE1002B5758 /* libjpeg-sm5.a */; };
 		EE879B60132DEE720078FDDC /* RageDisplay_Legacy_Helpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EE879B5C132DEE720078FDDC /* RageDisplay_Legacy_Helpers.cpp */; };
 		EE879B61132DEE720078FDDC /* RageDisplay_Legacy_Helpers.h in Headers */ = {isa = PBXBuildFile; fileRef = EE879B5D132DEE720078FDDC /* RageDisplay_Legacy_Helpers.h */; };
 		EE879B62132DEE720078FDDC /* RageDisplay_Legacy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EE879B5E132DEE720078FDDC /* RageDisplay_Legacy.cpp */; };
@@ -1746,6 +1746,7 @@
 		EE906F8312BF3AF800146C96 /* JsonUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = EE906F8112BF3AF800146C96 /* JsonUtil.h */; };
 		EE906F8A12BF3C7C00146C96 /* FileDownload.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EE906F8812BF3C7C00146C96 /* FileDownload.cpp */; };
 		EE906F8B12BF3C7C00146C96 /* FileDownload.h in Headers */ = {isa = PBXBuildFile; fileRef = EE906F8912BF3C7C00146C96 /* FileDownload.h */; };
+		EE9D33F514B81BE80098EB9C /* jutils.c in Sources */ = {isa = PBXBuildFile; fileRef = EE9D33F414B81BE80098EB9C /* jutils.c */; };
 		EEA7C84310A805A300082E7B /* ScreenPackagesSSC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EEA7C84110A805A300082E7B /* ScreenPackagesSSC.cpp */; };
 		EEA7C84410A805A300082E7B /* ScreenPackagesSSC.h in Headers */ = {isa = PBXBuildFile; fileRef = EEA7C84210A805A300082E7B /* ScreenPackagesSSC.h */; };
 		EEC7863F0E58208B00F559BC /* StepsDisplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EEC7863D0E58208B00F559BC /* StepsDisplay.cpp */; };
@@ -3168,7 +3169,7 @@
 		B75CE3B4137963350076A82D /* SongPosition.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SongPosition.cpp; path = ../src/SongPosition.cpp; sourceTree = SOURCE_ROOT; };
 		B773AE6B140AAB1800C68DDD /* SpecialDirs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SpecialDirs.cpp; path = archutils/Darwin/SpecialDirs.cpp; sourceTree = "<group>"; };
 		B773AE6C140AAB1800C68DDD /* SpecialDirs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpecialDirs.h; path = archutils/Darwin/SpecialDirs.h; sourceTree = "<group>"; };
-		EE4FD26014A8EFE1002B5758 /* libjpeg.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libjpeg.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		EE4FD26014A8EFE1002B5758 /* libjpeg-sm5.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libjpeg-sm5.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE4FD26814A8F066002B5758 /* ansi2knr.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ansi2knr.c; path = ../extern/libjpeg/ansi2knr.c; sourceTree = SOURCE_ROOT; };
 		EE4FD26914A8F066002B5758 /* cdjpeg.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = cdjpeg.c; path = ../extern/libjpeg/cdjpeg.c; sourceTree = SOURCE_ROOT; };
 		EE4FD26A14A8F066002B5758 /* cjpeg.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = cjpeg.c; path = ../extern/libjpeg/cjpeg.c; sourceTree = SOURCE_ROOT; };
@@ -3233,6 +3234,7 @@
 		EE906F8112BF3AF800146C96 /* JsonUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JsonUtil.h; path = ../src/JsonUtil.h; sourceTree = SOURCE_ROOT; };
 		EE906F8812BF3C7C00146C96 /* FileDownload.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FileDownload.cpp; path = ../src/FileDownload.cpp; sourceTree = SOURCE_ROOT; };
 		EE906F8912BF3C7C00146C96 /* FileDownload.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileDownload.h; path = ../src/FileDownload.h; sourceTree = SOURCE_ROOT; };
+		EE9D33F414B81BE80098EB9C /* jutils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jutils.c; path = ../extern/libjpeg/jutils.c; sourceTree = SOURCE_ROOT; };
 		EEA7C84110A805A300082E7B /* ScreenPackagesSSC.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ScreenPackagesSSC.cpp; path = ../src/ScreenPackagesSSC.cpp; sourceTree = SOURCE_ROOT; };
 		EEA7C84210A805A300082E7B /* ScreenPackagesSSC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ScreenPackagesSSC.h; path = ../src/ScreenPackagesSSC.h; sourceTree = SOURCE_ROOT; };
 		EEC7863D0E58208B00F559BC /* StepsDisplay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StepsDisplay.cpp; path = ../src/StepsDisplay.cpp; sourceTree = "<group>"; };
@@ -3294,7 +3296,7 @@
 				2B17AB9F13981271001AE57D /* libpng-1.5.1-sm5.a in Frameworks */,
 				2B17ABCF139815E0001AE57D /* libglew-sm5.a in Frameworks */,
 				2B17ABFC139817D5001AE57D /* libpcre-sm5.a in Frameworks */,
-				EE4FD30814A8F281002B5758 /* libjpeg.a in Frameworks */,
+				EE4FD30814A8F281002B5758 /* libjpeg-sm5.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3420,7 +3422,7 @@
 				2B17ABE013981756001AE57D /* libpcre-sm5.a */,
 				2BD6E10C13D78B36008443DB /* libzlib-sm5.a */,
 				2B85696213DFAE2F005037D2 /* StepMania.app */,
-				EE4FD26014A8EFE1002B5758 /* libjpeg.a */,
+				EE4FD26014A8EFE1002B5758 /* libjpeg-sm5.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -5321,6 +5323,7 @@
 				EE4FD29114A8F066002B5758 /* jfdctflt.c */,
 				EE4FD29214A8F066002B5758 /* jfdctfst.c */,
 				EE4FD29314A8F066002B5758 /* jfdctint.c */,
+				EE9D33F414B81BE80098EB9C /* jutils.c */,
 				EE4FD29414A8F066002B5758 /* jidctflt.c */,
 				EE4FD29514A8F066002B5758 /* jidctfst.c */,
 				EE4FD29614A8F066002B5758 /* jidctint.c */,
@@ -6193,7 +6196,7 @@
 			);
 			name = jpeg;
 			productName = jpeg;
-			productReference = EE4FD26014A8EFE1002B5758 /* libjpeg.a */;
+			productReference = EE4FD26014A8EFE1002B5758 /* libjpeg-sm5.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
@@ -7640,6 +7643,7 @@
 				EE4FD2E414A8F066002B5758 /* jmemnobs.c in Sources */,
 				EE4FD2E614A8F066002B5758 /* jquant1.c in Sources */,
 				EE4FD2E714A8F066002B5758 /* jquant2.c in Sources */,
+				EE9D33F514B81BE80098EB9C /* jutils.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8488,6 +8492,7 @@
 				GCC_WARN_UNUSED_LABEL = YES;
 				GCC_WARN_UNUSED_VALUE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/Libraries";
 				LINKER_DISPLAYS_MANGLED_NAMES = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				MACOSX_DEPLOYMENT_TARGET_i386 = 10.5;
@@ -9069,6 +9074,7 @@
 				GCC_WARN_UNUSED_LABEL = YES;
 				GCC_WARN_UNUSED_VALUE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/Libraries";
 				LINKER_DISPLAYS_MANGLED_NAMES = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				MACOSX_DEPLOYMENT_TARGET_i386 = 10.5;
@@ -9417,6 +9423,7 @@
 				GCC_WARN_UNUSED_LABEL = YES;
 				GCC_WARN_UNUSED_VALUE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/Libraries";
 				LINKER_DISPLAYS_MANGLED_NAMES = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				MACOSX_DEPLOYMENT_TARGET_i386 = 10.5;
@@ -9548,6 +9555,7 @@
 				GCC_WARN_UNUSED_LABEL = YES;
 				GCC_WARN_UNUSED_VALUE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/Libraries";
 				LINKER_DISPLAYS_MANGLED_NAMES = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				MACOSX_DEPLOYMENT_TARGET_i386 = 10.5;
@@ -9675,7 +9683,7 @@
 				INSTALL_PATH = /usr/local/lib;
 				OTHER_LDFLAGS = "";
 				PREBINDING = NO;
-				PRODUCT_NAME = jpeg;
+				PRODUCT_NAME = "jpeg-sm5";
 			};
 			name = Native;
 		};
@@ -9714,7 +9722,7 @@
 				INSTALL_PATH = /usr/local/lib;
 				OTHER_LDFLAGS = "";
 				PREBINDING = NO;
-				PRODUCT_NAME = jpeg;
+				PRODUCT_NAME = "jpeg-sm5";
 			};
 			name = PerformanceDebug;
 		};
@@ -9752,7 +9760,7 @@
 				GCC_WARN_UNUSED_VARIABLE = NO;
 				INSTALL_PATH = /usr/local/lib;
 				OTHER_LDFLAGS = "";
-				PRODUCT_NAME = jpeg;
+				PRODUCT_NAME = "jpeg-sm5";
 			};
 			name = Universal;
 		};
@@ -9794,7 +9802,7 @@
 				INSTALL_PATH = /usr/local/lib;
 				OTHER_LDFLAGS = "";
 				PREBINDING = NO;
-				PRODUCT_NAME = jpeg;
+				PRODUCT_NAME = "jpeg-sm5";
 			};
 			name = Debug;
 		};
