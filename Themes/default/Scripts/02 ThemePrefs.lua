@@ -62,7 +62,7 @@ local Prefs =
 	},
 	FancyUIBG =
 	{
-		Default = true,
+		Default = false,
 		Choices = { OptionNameString('Off'), OptionNameString('On') },
 		Values = { false, true }
 	},
