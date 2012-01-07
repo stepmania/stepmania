@@ -191,34 +191,4 @@ function OptionRowProTiming()
 	return t
 end
 
-function GetDefaultOptionLines()
-	local LineSets = { -- none of these include characters yet.
-		"1,8,14,2,3A,3B,4,5,6,R,7,9,10,11,12,13,16,SF,17", -- All
-		"1,8,14,2,7,13,16,SF,17", -- DDR Essentials ( no turns, fx )
-	};
-	local function IsExtra()
-		if GAMESTATE:IsExtraStage() or GAMESTATE:IsExtraStage2() then
-			return true
-		else
-			return false
-		end
-	end
-
-	local function CheckCharacters(mods)
-		if CHARMAN:GetCharacterCount() > 0 then
-			return mods .. ",18" --TODO: Better line name.
-		end
-		return mods
-	end
-
-	modLines = LineSets[2]
-
-	if not IsExtra() then
-		modLines = GetUserPrefB("UserPrefShowLotsaOptions")
-			and LineSets[1] or LineSets[2]
-	end
-
-	return CheckCharacters(modLines)
-end
-
 --[[ end option rows ]]
