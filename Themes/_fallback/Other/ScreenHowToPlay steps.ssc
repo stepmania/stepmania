@@ -1,9 +1,7 @@
-// these steps are only used by the How To Play screen.
-// you can use any difficuly here, as long as there is
-// only one set of steps in the file. the steps start
-// as soon as the screen comes up. also, the music used
-// is Sounds/ScreenHowToPlay Music, so no need to specify
-// a song file here.
+// these steps are only used by the How To Play screen. you can use any
+// difficulty here, as long as there is only one set of steps (per stepstype?)
+// in the file. the steps start as soon as the screen comes up. the music used
+// is Sounds/ScreenHowToPlay Music, so no need to specify a song file here.
 #TITLE:ScreenHowToPlay steps;
 #ARTIST:foo;
 #BPMS:0.000=100.000;
