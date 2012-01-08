@@ -11,12 +11,19 @@ StepMania 5.0 alpha 1 | 20120108
 2012/01/08
 ----------
 * [ScreenManager] Made AddScreenToTop take a second (optional) parameter for
-  posting a ScreenMessage on screen pop.
+  posting a ScreenMessage on screen pop. [AJ]
+* Only read certain tags during first load; makes song loading faster. [theDtTvB]
+* Comment out the Desktop mount on OS X. [theDtTvB]
+  
+2012/01/07
+----------
+* Fix Portable.ini not working on Mac OS X. [shakesoda]
 
 2012/01/05
 ----------
 * [PercentageDisplay] Remove unused ApplyScoreDisplayOptions metric;
   added PercentFormat and RemainderFormat metrics. [AJ]
+* Fix Portable.ini not working in Linux. [FSX]
 
 2011/12/27
 ----------
