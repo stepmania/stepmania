@@ -1,6 +1,13 @@
 local c;
 local player = Var "Player";
-local bShowProtiming = GetUserPrefB("UserPrefProtiming" .. ToEnumShortString(player) );
+local function ShowProtiming()
+  if GAMESTATE:IsDemonstration() then
+    return false
+  else
+    return GetUserPrefB("UserPrefProtiming" .. ToEnumShortString(player));
+  end
+end;
+local bShowProtiming = ShowProtiming();
 
 local function MakeAverage( t )
 	local sum = 0;

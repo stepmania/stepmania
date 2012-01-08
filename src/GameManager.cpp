@@ -390,8 +390,8 @@ static const Style g_Style_Dance_ThreePanel =
 	},
 	{	// m_iInputColumn[NUM_GameController][NUM_GameButton]
 		// 4 3 5
-		{ Style::NO_MAPPING, Style::NO_MAPPING, Style::NO_MAPPING, 1, 0, 2, Style::END_MAPPING },
-		{ Style::NO_MAPPING, Style::NO_MAPPING, Style::NO_MAPPING, 1, 0, 2, Style::END_MAPPING }
+		{ 0, 2, Style::NO_MAPPING, 1, 0, 2, Style::END_MAPPING },
+		{ 0, 2, Style::NO_MAPPING, 1, 0, 2, Style::END_MAPPING }
 	},
 	{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
 		0,1,2

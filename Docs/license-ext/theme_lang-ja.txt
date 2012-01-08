@@ -1,0 +1,39 @@
+﻿Stepmania 5系本体用　日本語化セット2(2011/12/18)
+作者：ナイラー
+-----------
+Stepmania5系本体では従来の日本語テーマ、および日本語ランゲージファイルが使用できなくなっています。
+個人的に日本語が見えているほうが安心できるので、とりあえずファイルを製作してみました。
+-----------
+以下のファイルが同梱されています。
+・fallbackja.ini(_fallbackテーマ用日本語ランゲージファイル) Ver 1.04α
+・themeja.ini(デフォルトテーマ用日本語ランゲージファイル) Ver 1.02α
+-----------
+今回の更新点
+fallbackja.iniに対して
+・一部整形し忘れた文の整形。
+・エディット内での背景設定の部分の訳。
+-----------
+それぞれのファイルは、次の場所に配置してください。
+・fallbackja.iniは、「Theme」フォルダの「_fallback」フォルダ内の「Language」フォルダに、
+　「ja.ini」にリネームして配置。
+・themeja.iniは、「Theme」フォルダの「Default」フォルダ内の「Language」フォルダに
+　「ja.ini」にリネームして配置。
+　　☆(重要)デフォルトテーマ以外では日本語化しきれなくなる部分があります。
+　　　　　　そのことの報告は控えていただければ。
+これでオプションから日本語が設定できるようになります。
+操作の手順は、標準テーマなら
+「起動→Option→More Option→Appearance Options→Languageで日本語を選択」です。
+----------
+誤訳、および訳さないほうがいい部分もありますが、そこは勘弁してください。
+また、フォント画像が追加で必要になる箇所があるかもしれませんが、今回はそれも勘弁してください。
+
+----------
+このセットは自由に改変、再配布することができます。パッケージなどに同梱しても構いません。
+改変後のファイルの改変・再配布条件は自由に設定してかまいません。
+----------
+For foreign "rhythmers"
+This archive can be fixed and redistributed by you all.Including to Song Packages or Themes is
+also OK.
+Moreover,you can decide how these files are treated.
+----------
+何かありましたらTwitterの@Niler_jpまで。 

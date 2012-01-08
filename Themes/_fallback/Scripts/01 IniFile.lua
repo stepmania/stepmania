@@ -74,7 +74,7 @@ IniFile =
 				-- if this section doesn't exist, create it
 				tbl[sec] = tbl[sec] and tbl[sec] or { }
 				current = tbl[sec]
-				Warn( "Switching section to " .. sec )
+				--Warn( "Switching section to " .. sec )
 			else
 				local k, v = IniFile.StrToKeyVal( str )
 				if k and v then current[k] = v end
