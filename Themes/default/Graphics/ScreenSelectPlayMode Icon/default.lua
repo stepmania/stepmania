@@ -16,7 +16,7 @@ t[#t+1] = Def.ActorFrame {
 
 	-- todo: generate a better font for these.
 	LoadFont("_helveticaneuelt std extblk cn 42px")..{
-		InitCommand=cmd(y,-12;zoom,1.1;diffuse,color("#000000");uppercase,true;settext,gc:GetName(););
+		InitCommand=cmd(y,-12;zoom,1.1;diffuse,color("#000000");uppercase,true;settext,gc:GetText(););
 	};
 	LoadFont("_helveticaneuelt std extblk cn 42px")..{
 		InitCommand=cmd(y,27.5;zoom,0.45;maxwidth,320*1.6;uppercase,true;settext,THEME:GetString(Var "LoadingScreen", gc:GetName().."Explanation"));

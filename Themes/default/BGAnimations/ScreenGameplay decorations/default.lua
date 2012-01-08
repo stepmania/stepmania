@@ -84,7 +84,7 @@ local function CreateSegments(Player)
 					};
 				end;
 
-				for i=1,#bpms do
+				for i=2,#bpms do
 					local data = split("=",bpms[i]);
 					bpmFrame[#bpmFrame+1] = CreateLine(data[1], 0,
 						"#00808077", "#00808077", "#00808077", "#FF634777", "#FF000077");
@@ -198,10 +198,10 @@ t[#t+1] = StandardDecorationFromFileOptional("StageDisplay","StageDisplay");
 t[#t+1] = StandardDecorationFromFileOptional("SongTitle","SongTitle");
 t[#t+1] = Def.ActorFrame {
 	InitCommand=cmd(x,SCREEN_RIGHT;y,SCREEN_BOTTOM;draworder,5);
-	LoadActor("_whatsup") .. {
+--[[ 	LoadActor("_whatsup") .. {
 		InitCommand=cmd(horizalign,left;vertalign,top);
 		ToastyMessageCommand=cmd(smooth,3;x,-256;y,-200;sleep,2;smooth,3;x,256;y,200)
-	};
+	}; ]]
 };
 if( not GAMESTATE:IsCourseMode() ) then
 t[#t+1] = Def.Actor{
