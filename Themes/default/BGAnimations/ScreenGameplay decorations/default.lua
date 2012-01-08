@@ -1,3 +1,5 @@
+local maxSegments = 150
+
 local function CreateSegments(Player)
 	local t = Def.ActorFrame { };
 	local bars = Def.ActorFrame{ };
@@ -35,6 +37,12 @@ local function CreateSegments(Player)
 				local fakes = timingData:GetFakes();
 				local scrolls = timingData:GetScrolls();
 				local speeds = timingData:GetSpeeds();
+
+				-- we don't want too many segments to be shown.
+				local sumSegments = bpms + stops + delays + warps + fakes + scrolls + speeds
+				if sumSegments > maxSegments then
+					return Def.ActorFrame{}
+				end
 
 				local function CreateLine(beat, secs, firstShadow, firstDiffuse, secondShadow, firstEffect, secondEffect)
 					local beatTime = timingData:GetElapsedTimeFromBeat(beat);

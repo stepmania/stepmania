@@ -2205,6 +2205,7 @@ public:
 		PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);
 		if( lua_isnil(L,2) )	{ p->m_pCurSteps[pn].Set( NULL ); }
 		else					{ Steps *pS = Luna<Steps>::check(L,2); p->m_pCurSteps[pn].Set( pS ); }
+		GAMESTATE->SetCurrentStyle( GAMEMAN->GetFirstCompatibleStyle( GAMESTATE->m_pCurGame, GAMESTATE->GetNumSidesJoined(), p->m_pCurSteps[pn]->m_StepsType ));
 
 		// Why Broadcast again?  This is double-broadcasting. -Chris
 		MESSAGEMAN->Broadcast( (MessageID)(Message_CurrentStepsP1Changed+pn) );
