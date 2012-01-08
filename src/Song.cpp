@@ -826,7 +826,10 @@ void Song::TidyUpData( bool fromCache, bool duringCache )
 	/* Don't allow multiple Steps of the same StepsType and Difficulty (except
 	 * for edits). We should be able to use difficulty names as unique
 	 * identifiers for steps. */
-	SongUtil::AdjustDuplicateSteps( this );
+	if( !duringCache )
+    {
+        SongUtil::AdjustDuplicateSteps( this );
+    }
 }
 
 void Song::TranslateTitles()
