@@ -13,7 +13,6 @@ StepMania 5.0 alpha 1 | 20120108
 * [ScreenManager] Made AddScreenToTop take a second (optional) parameter for
   posting a ScreenMessage on screen pop. [AJ]
 * Only read certain tags during first load; makes song loading faster. [theDtTvB]
-* Comment out the Desktop mount on OS X. [theDtTvB]
   
 2012/01/07
 ----------
