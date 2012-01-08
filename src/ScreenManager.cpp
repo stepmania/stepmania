@@ -874,7 +874,18 @@ public:
 	static int SystemMessage( T* p, lua_State *L )		{ p->SystemMessage( SArg(1) ); return 0; }
 	static int ScreenIsPrepped( T* p, lua_State *L )	{ lua_pushboolean( L, ScreenManagerUtil::ScreenIsPrepped( SArg(1) ) ); return 1; }
 	static int ScreenClassExists( T* p, lua_State *L )	{ lua_pushboolean( L, g_pmapRegistrees->find( SArg(1) ) != g_pmapRegistrees->end() ); return 1; }
-	static int AddNewScreenToTop( T* p, lua_State *L )	{ p->AddNewScreenToTop( SArg(1) ); return 0; }
+	static int AddNewScreenToTop( T* p, lua_State *L )
+	{
+		ScreenMessage SM = SM_None;
+		if( lua_gettop(L) >= 2 && !lua_isnil(L,2) )
+		{
+			RString sMessage = SArg(2);
+			SM = ScreenMessageHelpers::ToScreenMessage( sMessage );
+		}
+
+		p->AddNewScreenToTop( SArg(1), SM );
+		return 0;
+	}
 	//static int GetScreenStackSize( T* p, lua_State *L )	{ lua_pushnumber( L, ScreenManagerUtil::g_ScreenStack.size() ); return 1; }
 	static int ReloadOverlayScreens( T* p, lua_State *L )	{ p->ReloadOverlayScreens(); return 0; }
 
