@@ -39,7 +39,7 @@ local function CreateSegments(Player)
 				local speeds = timingData:GetSpeeds();
 
 				-- we don't want too many segments to be shown.
-				local sumSegments = bpms + stops + delays + warps + fakes + scrolls + speeds
+				local sumSegments = #bpms + #stops + #delays + #warps + #fakes + #scrolls + #speeds
 				if sumSegments > maxSegments then
 					return Def.ActorFrame{}
 				end
