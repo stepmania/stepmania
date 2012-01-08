@@ -520,7 +520,7 @@ StepsType BMSChartReader::DetermineStepsType()
 				case 7:
 				case 8:		return StepsType_beat_single7;
 				case 9:		return StepsType_popn_nine;
-				default:	return StepsType_Invalid;
+				default:	return StepsType_beat_single7;
 			}
 		case 2:	// couple/battle
 			return StepsType_dance_couple;
@@ -532,7 +532,7 @@ StepsType BMSChartReader::DetermineStepsType()
 				case 16:	return StepsType_beat_double7;
 				case 5:		return StepsType_popn_five;
 				case 9:		return StepsType_popn_nine;
-				default:	return StepsType_Invalid;
+				default:	return StepsType_beat_double7;
 			}
 		default:
 			LOG->UserLog( "Song file", in->path, "has an invalid #PLAYER value %d.", player );
@@ -912,8 +912,13 @@ bool BMSSongLoader::Load( RString fileName )
 
 void BMSSongLoader::AddToSong()
 {
+    if( loadedSteps.size() == 0 )
+    {
+        return;
+    }
+    
 	RString commonSubstring = "";
-
+    
 	{
 		bool found = false;
 		for( unsigned i = 0; i < loadedSteps.size(); i ++ )
