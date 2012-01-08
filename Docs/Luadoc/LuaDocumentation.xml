@@ -3649,8 +3649,8 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 </Class>
 <Class name='ScreenManager'>
-	<Function name='AddNewScreenToTop' return='void' arguments='string sScreenName'>
-		Adds a screen at the top of the screen stack.
+	<Function name='AddNewScreenToTop' return='void' arguments='string sScreenName, string sMessage'>
+		Adds a screen at the top of the screen stack. (<code>sMessage</code> is an optional ScreenMessage posted once the new screen is finished.)
 	</Function>
 	<Function name='GetTopScreen' return='Screen' arguments=''>
 		Gets the screen at the top of the screen stack.
