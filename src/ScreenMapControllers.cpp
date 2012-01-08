@@ -230,6 +230,9 @@ static bool IsAxis( const DeviceInput& DeviceI )
 
 void ScreenMapControllers::Input( const InputEventPlus &input )
 {
+	if( m_fLockInputSecs > 0 )
+		return;
+	
 	if( input.type != IET_FIRST_PRESS && input.type != IET_REPEAT )
 		return;	// ignore
 	if( IsTransitioning() )
