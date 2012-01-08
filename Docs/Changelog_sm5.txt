@@ -25,6 +25,10 @@ StepMania 5.0 alpha 1 | 20120108
   added PercentFormat and RemainderFormat metrics. [AJ]
 * Fix Portable.ini not working in Linux. [FSX]
 
+2012/01/04
+----------
+* Fix a scoring/grading bug with Lifts. [FSX]
+
 2011/12/27
 ----------
 * [MusicWheel] Add IsRouletting Lua binding. [AJ]
