@@ -601,7 +601,7 @@ void Song::TidyUpData( bool fromCache, bool duringCache )
 		{
 			/* If a nonexistant banner file is specified, and we can't find a
 			 * replacement, don't wipe out the old value. */
-	//		m_sBannerFile = "";
+			//m_sBannerFile = "";
 
 			// find an image with "banner" in the file name
 			vector<RString> arrayPossibleBanners;
@@ -617,7 +617,7 @@ void Song::TidyUpData( bool fromCache, bool duringCache )
 
 		if( !HasBackground() )
 		{
-	//		m_sBackgroundFile = "";
+			//m_sBackgroundFile = "";
 
 			// find an image with "bg" or "background" in the file name
 			vector<RString> arrayPossibleBGs;
