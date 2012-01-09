@@ -589,7 +589,7 @@ void Song::TidyUpData( bool fromCache, bool duringCache )
 
 	CHECKPOINT_M( "Looking for images..." );
     
-    if( !duringCache )
+    if( !fromCache )
     {
 
         // First, check the file name for hints.
@@ -804,7 +804,7 @@ void Song::TidyUpData( bool fromCache, bool duringCache )
 
 	// If no BGChanges are specified and there are movies in the song directory, then assume
 	// they are DWI style where the movie begins at beat 0.
-	if( !HasBGChanges() && !duringCache )
+	if( !HasBGChanges() && !fromCache )
 	{
 		vector<RString> arrayPossibleMovies;
 		GetDirListing( m_sSongDir + RString("*.ogv"), arrayPossibleMovies );
@@ -826,7 +826,7 @@ void Song::TidyUpData( bool fromCache, bool duringCache )
 	/* Don't allow multiple Steps of the same StepsType and Difficulty (except
 	 * for edits). We should be able to use difficulty names as unique
 	 * identifiers for steps. */
-	if( !duringCache )
+	if( !fromCache )
     {
         SongUtil::AdjustDuplicateSteps( this );
     }
