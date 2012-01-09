@@ -80,6 +80,7 @@ local thanks = {
 	"Matt1360", -- Automake magic + oitg bro
 	"Renard",
 	"Ryan McKanna (Plaguefox)",
+  "Sta Kousin", --help with Japanese bug reports
 }
 
 local shoutout = {
