@@ -982,6 +982,13 @@ void MusicWheel::FilterWheelItemDatas(vector<MusicWheelItemData *> &aUnFilteredD
 				aiRemove[i] = true;
 				continue;
 			}
+			
+			// if AutoSetStyle, make sure the song is playable in the end.
+			if (CommonMetrics::AUTO_SET_STYLE && !SongUtil::IsSongPlayable(pSong))
+			{
+				aiRemove[i] = true;
+				continue;
+			}
 		}
 
 		if( WID.m_Type == WheelItemDataType_Course )
@@ -1506,7 +1513,7 @@ void MusicWheel::PlayerJoined()
 	{
 		if(m_WheelItemDatasStatus[GAMESTATE->m_SortOrder]!=INVALID)
 			m_WheelItemDatasStatus[GAMESTATE->m_SortOrder]=NEEDREFILTER;
-
+		
 		RebuildWheelItems();
 	}
 
