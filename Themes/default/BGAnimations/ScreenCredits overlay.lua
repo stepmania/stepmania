@@ -92,7 +92,7 @@ local shoutout = {
 	--Image(), -- we should have some logos probably to look super pro
 	"#KBO",
 	"Celestia Radio", -- LOVE AND TOLERANCE
-	"You showed us... your ultimate dance",
+	"You showed us... your ultimate dance!",
 }
 
 local copyright = {
