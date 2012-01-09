@@ -79,9 +79,8 @@ RString GetCustomDifficulty( StepsType st, Difficulty dc, CourseType ct )
 	/* XXX GAMEMAN->GetStepsTypeInfo( StepsType_Invalid ) will crash. I'm not
 	 * sure what the correct behavior in this case should be. Should we still
 	 * allow custom difficulties? Why do we not allow custom difficulties for
-	 * Couple, Routine, or Edit? - Steve */
-	// CustomDifficulty for Edit defeats the purpose of the edit's name.
-	// I don't know the other two. -aj
+	 * Edit? - Steve */
+	// CustomDifficulty for Edit defeats the purpose of the edit's name. -aj
 	if( st == StepsType_Invalid )
 	{
 		/* This is not totally necessary since DifficultyToString() will
