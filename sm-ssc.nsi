@@ -42,7 +42,7 @@
 
 	; don't forget to change this before releasing a new verson.
 	; wish this could be automated, but it requires "X.Y.Z.a" format. -aj
-	VIProductVersion "5.0.0.3"
+	VIProductVersion "5.0.0.5"
 	VIAddVersionKey "ProductName" "${PRODUCT_ID}"
 	VIAddVersionKey "FileVersion" "${PRODUCT_VER}"
 	VIAddVersionKey "FileDescription" "${PRODUCT_ID} Installer"
@@ -285,6 +285,7 @@ Section "Main Section" SecMain
 
 	; remove old noteskins
 	RMDir /r "$INSTDIR\NoteSkins\common\default"
+	RMDir /r "$INSTDIR\NoteSkins\common\_Editor"
 	; dance
 	RMDir /r "$INSTDIR\NoteSkins\dance\default"
 	RMDir /r "$INSTDIR\NoteSkins\dance\Delta"
@@ -337,6 +338,7 @@ Section "Main Section" SecMain
 	; common noteskin
 	SetOutPath "$INSTDIR\NoteSkins\common"
 	File /r /x CVS /x .svn "NoteSkins\common\common"
+	File /r /x CVS /x .svn "NoteSkins\common\_Editor"
 
 	; install dance noteskins
 	SetOutPath "$INSTDIR\NoteSkins\dance"
@@ -403,7 +405,8 @@ Section "Main Section" SecMain
 	SetOutPath "$INSTDIR\Themes"
 	;File "Themes\instructions.txt"
 	File /r /x CVS /x .svn "Themes\_fallback"
-	File /r /x CVS /x .svn "Themes\_portKit-sm4"
+	; no more portkit sm4
+	;File /r /x CVS /x .svn "Themes\_portKit-sm4"
 	File /r /x CVS /x .svn "Themes\default"
 
 	CreateDirectory "$INSTDIR\Data"
