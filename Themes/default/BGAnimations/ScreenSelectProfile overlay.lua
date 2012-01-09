@@ -99,7 +99,7 @@ function LoadPlayerStuff(Player)
 	table.insert( ret, t );
 
 	t = Def.ActorScroller{
-		Name = 'Scroller';
+		Name = 'ProfileScroller';
 		NumItemsToDraw=6;
 -- 		InitCommand=cmd(y,-230/2+20;);
 		OnCommand=cmd(y,1;SetFastCatchup,true;SetMask,200,58;SetSecondsPerItem,0.15);
@@ -146,7 +146,7 @@ end;
 function UpdateInternal3(self, Player)
 	local pn = (Player == PLAYER_1) and 1 or 2;
 	local frame = self:GetChild(string.format('P%uFrame', pn));
-	local scroller = frame:GetChild('Scroller');
+	local scroller = frame:GetChild('ProfileScroller');
 	local seltext = frame:GetChild('SelectedProfileText');
 	local joinframe = frame:GetChild('JoinFrame');
 	local smallframe = frame:GetChild('SmallFrame');
