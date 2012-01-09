@@ -28,6 +28,15 @@ namespace avcodec
 #endif
 };
 
+/* XXX: FF_B_TYPE was previously a numeric macro, but newer versions define
+ * it as as a member of the AVPictureType enum in avutil. Bring it under
+ * our 'avcodec' namespace explicitly. */
+
+#if FF_API_OLD_IMAGE_NAMES
+#undef FF_B_TYPE
+#define FF_B_TYPE avcodec::AV_PICTURE_TYPE_B
+#endif
+
 int URLRageFile_open( avcodec::URLContext *h, const char *filename, int flags );
 int URLRageFile_read( avcodec::URLContext *h, unsigned char *buf, int size );
 int URLRageFile_close( avcodec::URLContext *h );
@@ -675,7 +684,7 @@ int URLRageFile_read( avcodec::URLContext *h, unsigned char *buf, int size )
 #if defined(MACOSX) || defined(_MSC_VER) // still using older ffmpeg versions
 	int URLRageFile_write( avcodec::URLContext *h, unsigned char *buf, int size )
 #else // assume ffmpeg 0.6 on *nix
-	int URLRageFile_write( avcodec::URLContext *h, unsigned char *buf, int size )
+	int URLRageFile_write( avcodec::URLContext *h, const unsigned char *buf, int size )
 #endif
 {
 	RageFileBasic *f = (RageFileBasic *) h->priv_data;
@@ -706,24 +715,21 @@ int URLRageFile_close( avcodec::URLContext *h )
 	return 0;
 }
 
+/* TODO: URLProtocol is deprecated in newer releases. Either pick a
+ * version of ffmpeg to use statically, or migrate to AVIOContext. */
 static avcodec::URLProtocol RageProtocol =
 {
-	"rage",
-	URLRageFile_open,
-	URLRageFile_read,
-	URLRageFile_write,
-	URLRageFile_seek,
-	URLRageFile_close,
-	// why were these two nulls added? -aj
-	// I added them because the last api of ffmpeg spects them to be, you could
-	// avoid them and I think it could result in compiler warnings, but the
-	// correct code is theese NULLS to be there. - howl (quote from
-	// http://www.stepmania.com/forums/showpost.php?p=168832&postcount=37)
-#if !defined(MACOSX)
-	NULL,
-	NULL,
-#endif
-	NULL
+	 "rage",		/* name */
+	URLRageFile_open,	/* url_open() */
+	URLRageFile_read,	/* url_read() */
+	URLRageFile_write,	/* url_write() */
+	URLRageFile_seek,	/* url_seek() */
+	URLRageFile_close	/* url_close() */
+
+	/* Since we're a static struct, all other struct data is zeroed.
+	 * This is intentional: ffmpeg has several different URLProtocol
+	 * structs floating around, but we don't care about any members
+	 * except the above. Please ignore the compiler warning. -- vyhd */
 };
 
 void MovieTexture_FFMpeg::RegisterProtocols()
