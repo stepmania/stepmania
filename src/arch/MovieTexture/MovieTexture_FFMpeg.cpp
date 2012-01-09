@@ -681,14 +681,17 @@ int URLRageFile_read( avcodec::URLContext *h, unsigned char *buf, int size )
 	return f->Read( buf, size );
 }
 
-#if defined(MACOSX) || defined(_MSC_VER) // still using older ffmpeg versions
-	int URLRageFile_write( avcodec::URLContext *h, unsigned char *buf, int size )
-#else // assume ffmpeg 0.6 on *nix
-	int URLRageFile_write( avcodec::URLContext *h, const unsigned char *buf, int size )
-#endif
+int URLRageFile_write( avcodec::URLContext *h, const unsigned char *buf, int size )
 {
 	RageFileBasic *f = (RageFileBasic *) h->priv_data;
 	return f->Write( buf, size );
+}
+
+/* Some avcodecs want unsigned char, others want const. Make everyone happy
+ * by providing a const overload and letting the compiler figure it out. */
+int URLRageFile_write( avcodec::URLContext *h, unsigned char *buf, int size )
+{
+	return URLRageFile_write( h, (const unsigned char*)buf, size );
 }
 
 // sm4svn has it as:
