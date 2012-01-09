@@ -984,7 +984,7 @@ void MusicWheel::FilterWheelItemDatas(vector<MusicWheelItemData *> &aUnFilteredD
 			}
 			
 			// if AutoSetStyle, make sure the song is playable in the end.
-			if (CommonMetrics::AUTO_SET_STYLE && !SongUtil::IsSongPlayable(pSong))
+			if (!SongUtil::IsSongPlayable(pSong))
 			{
 				aiRemove[i] = true;
 				continue;
