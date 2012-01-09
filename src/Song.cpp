@@ -589,11 +589,7 @@ void Song::TidyUpData( bool fromCache, bool duringCache )
 
 	CHECKPOINT_M( "Looking for images..." );
 
-	// HACK: DWI/KSF files require searching the file system for this info.
-	RString extension = GetExtension(this->m_sSongFileName);
-	extension.MakeLower();
-
-	if( extension == "dwi" || extension == "ksf" || !fromCache )
+	if( !fromCache )
 	{
 
 		// First, check the file name for hints.
@@ -808,7 +804,7 @@ void Song::TidyUpData( bool fromCache, bool duringCache )
 
 	// If no BGChanges are specified and there are movies in the song directory, then assume
 	// they are DWI style where the movie begins at beat 0.
-	if( extension == "dwi" || extension == "ksf" || (!HasBGChanges() && !fromCache) )
+	if( (!HasBGChanges() && !fromCache) )
 	{
 		vector<RString> arrayPossibleMovies;
 		GetDirListing( m_sSongDir + RString("*.ogv"), arrayPossibleMovies );
