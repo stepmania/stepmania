@@ -23,7 +23,7 @@ public:
 	virtual void Load( RString sType );
 	void BeginScreen();
 
-	bool ChangeSort( SortOrder new_so );	// return true if change successful
+	bool ChangeSort( SortOrder new_so, bool allowSameSort = false );	// return true if change successful
 	bool NextSort();						// return true if change successful
 	void StartRoulette();
 	void StartRandom();
