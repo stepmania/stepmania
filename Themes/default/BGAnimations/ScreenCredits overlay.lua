@@ -80,6 +80,7 @@ local thanks = {
 	"Matt1360", -- Automake magic + oitg bro
 	"Renard",
 	"Ryan McKanna (Plaguefox)",
+  "Sta Kousin", --help with Japanese bug reports
 }
 
 local shoutout = {
@@ -91,7 +92,7 @@ local shoutout = {
 	--Image(), -- we should have some logos probably to look super pro
 	"#KBO",
 	"Celestia Radio", -- LOVE AND TOLERANCE
-	"You showed us... your ultimate dance",
+	"You showed us... your ultimate dance!",
 }
 
 local copyright = {

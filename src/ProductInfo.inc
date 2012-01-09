@@ -5,7 +5,7 @@
 
 ; see ProductInfo.h for use descriptions
 !define PRODUCT_ID "StepMania"
-!define PRODUCT_VER "v5.0 alpha 0"
+!define PRODUCT_VER "v5.0 alpha 1"
 !define PRODUCT_DISPLAY "${PRODUCT_ID} ${PRODUCT_VER}"
 !define PRODUCT_BITMAP "sm5"
 

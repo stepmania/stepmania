@@ -14,6 +14,7 @@ public:
 	virtual void MenuRight( const InputEventPlus &input );
 	virtual void MenuUp( const InputEventPlus &input );
 	virtual void MenuDown( const InputEventPlus &input );
+	virtual void HandleScreenMessage( const ScreenMessage SM );
 
 	GameButton m_TrackingRepeatingInput;
 

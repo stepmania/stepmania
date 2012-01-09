@@ -210,6 +210,20 @@ bool ScreenSelectProfile::Finish(){
 	return true;
 }
 
+void ScreenSelectProfile::HandleScreenMessage( const ScreenMessage SM )
+{
+	if( SM == SM_MenuTimer )
+	{
+		bool bFinished = Finish();
+		if( !bFinished )
+		{
+			// TODO: we need to decide how to handle unfinished business.
+		}
+	}
+
+	ScreenWithMenuElements::HandleScreenMessage( SM );
+}
+
 // lua start
 #include "LuaBinding.h"
 

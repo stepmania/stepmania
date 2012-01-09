@@ -982,6 +982,13 @@ void MusicWheel::FilterWheelItemDatas(vector<MusicWheelItemData *> &aUnFilteredD
 				aiRemove[i] = true;
 				continue;
 			}
+			
+			// if AutoSetStyle, make sure the song is playable in the end.
+			if (!SongUtil::IsSongPlayable(pSong))
+			{
+				aiRemove[i] = true;
+				continue;
+			}
 		}
 
 		if( WID.m_Type == WheelItemDataType_Course )
@@ -1163,10 +1170,10 @@ void MusicWheel::ChangeMusic( int iDist )
 }
 
 
-bool MusicWheel::ChangeSort( SortOrder new_so )	// return true if change successful
+bool MusicWheel::ChangeSort( SortOrder new_so, bool allowSameSort )	// return true if change successful
 {
 	ASSERT( new_so < NUM_SortOrder );
-	if( GAMESTATE->m_SortOrder == new_so )
+	if( GAMESTATE->m_SortOrder == new_so && !allowSameSort )
 		return false;
 
 	// Don't change to SORT_MODE_MENU if it doesn't have at least two choices.
@@ -1504,12 +1511,12 @@ void MusicWheel::PlayerJoined()
 	// We need to rebuild the wheel item data in this situation. -aj
 	if( !GAMESTATE->IsCourseMode() && !PREFSMAN->m_bAutogenSteps )
 	{
-		if(m_WheelItemDatasStatus[GAMESTATE->m_SortOrder]!=INVALID)
-			m_WheelItemDatasStatus[GAMESTATE->m_SortOrder]=NEEDREFILTER;
-
+		FOREACH_ENUM(SortOrder, so)
+		{
+			m_WheelItemDatasStatus[so] = INVALID;
+		}
 		RebuildWheelItems();
 	}
-
 	SetOpenSection( m_sExpandedSectionName );
 }
 

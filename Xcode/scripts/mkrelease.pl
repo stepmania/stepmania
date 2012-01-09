@@ -13,8 +13,40 @@ my @docs = (
 	"Changelog_sm-ssc.txt",
 	"Changelog_SSCformat.txt",
 	"CommandLineArgs.txt",
-	"credits.txt",
-	"Themerdocs/"
+	"credits.txt"
+);
+
+my @themerdocs = (
+	"actordef.txt",
+	"conditional_music.txt",
+	"fontini.txt",
+	"gamecommands.txt",
+	"included_scripts.txt",
+	"moremsg.txt",
+	"Noteskin elements Reference.txt",
+	"recommended_practices.txt",
+	"ScreenMessages.txt",
+	"ScreenTextEntry.txt",
+	"sm-ssc_themeguide.txt",
+	"ThemePrefs.txt",
+	"ThemePrefsRows.txt"
+);
+
+# XXX
+my @songs = ( "Instructions.txt" );
+my @song_mechatribe = (
+	"Mecha-Tribe Assault.ssc",
+	"Mecha-Tribe Assault.ogg",
+	"mechatribeassaultbg.png",
+	"mechatribeassaultbn.png",
+	"wyde cd-tital.png"
+);
+
+my @song_springtime = (
+	"Springtime.ssc",
+	"Kommisar - Springtime.mp3",
+	"spring.png",
+	"springbn.png"
 );
 
 # Passing a date for a CVS release gives StepMania-CVS-date.
@@ -57,6 +89,23 @@ system "$srcdir/Utils/CreatePackage.pl", $srcdir, "$tmp/Packages" and die "mksmd
 # Copy docs
 mkdir "$tmp/Docs";
 copy "$srcdir/Docs/$_", "$tmp/Docs/$_" for @docs;
+
+# Copy themer docs
+mkdir "$tmp/Docs/Themerdocs";
+copy "$srcdir/Docs/Themerdocs/$_", "$tmp/Docs/Themerdocs/$_" for @themerdocs;
+
+# Copy songs
+mkdir "$tmp/Songs";
+copy "$srcdir/Songs/$_", "$tmp/Songs/$_" for @songs;
+
+# oh man, is this ugly or what
+mkdir "$tmp/Songs/StepMania 5";
+
+mkdir "$tmp/Songs/StepMania 5/MechaTribe Assault";
+copy "$srcdir/Songs/StepMania 5/MechaTribe Assault/$_", "$tmp/Songs/StepMania 5/MechaTribe Assault/$_" for @song_mechatribe;
+
+mkdir "$tmp/Songs/StepMania 5/Springtime";
+copy "$srcdir/Songs/StepMania 5/Springtime/$_", "$tmp/Songs/StepMania 5/Springtime/$_" for @song_springtime;
 
 # Make a dmg
 system qw/hdiutil create -ov -format UDZO -imagekey zlib-level=9 -srcfolder/, $tmp, '-volname', $destname, "$root/$destname-mac.dmg";
