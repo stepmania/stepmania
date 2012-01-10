@@ -3,6 +3,7 @@ ThemePrefs: handles the underlying structure for ThemePrefs, so any themes
 built off of this can simply declare their prefs and default values, and
 access them through this system.
 
+v0.2.7: Jan. 10, 2012. Added ThemePrefs.ForceSave function [freem]
 v0.7.1: Dec. 28, 2010. Added language support.
 v0.7.0: Dec. 15, 2010. Initial version.
 
