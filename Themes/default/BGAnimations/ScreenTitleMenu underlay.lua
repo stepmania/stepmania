@@ -1,7 +1,15 @@
 InitUserPrefs();
 
 local t = Def.ActorFrame {
-	BeginCommand=function(self) ThemePrefs.ForceSave() end;
+	BeginCommand=function(self)
+		if not FILEMAN:DoesFileExist("Save/ThemePrefs.ini") then
+			ThemePrefs.ForceSave()
+		end
+
+		if ThemePrefs.NeedsSaved == true then
+			ThemePrefs.Save()
+		end
+	end;
 };
 
 t[#t+1] = StandardDecorationFromFileOptional("Logo","Logo");
