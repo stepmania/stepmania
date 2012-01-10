@@ -120,6 +120,13 @@ ThemePrefs =
 		IniFile.WriteFile( ThemePrefsPath, PrefsTable )
 	end,
 
+	-- for when you absolutely have to save, no matter what NeedsSaved says.
+	ForceSave = function()
+		if not IniFile then return false end
+		NeedsSaved = false
+		IniFile.WriteFile( ThemePrefsPath, PrefsTable )
+	end,
+
 	Get = function( name )
 		Trace( ("ThemePrefs.Get(%s)"):format(name) )
 		local tbl = ResolveTable(name)
