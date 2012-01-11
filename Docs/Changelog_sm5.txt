@@ -10,6 +10,10 @@ StepMania 5.0 alpha 1 | 20120108
 
 2012/01/08
 ----------
+* [Song] Add HasPreviewVid and GetPreviewVidPath lua binding [cerbo]
+
+2012/01/08
+----------
 * [ScreenManager] Made AddScreenToTop take a second (optional) parameter for
   posting a ScreenMessage on screen pop. [AJ]
 * Only read certain tags during first load; makes song loading faster. [theDtTvB]

@@ -222,7 +222,7 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 	f.PutLine( ssprintf( "#CREDIT:%s;", SmEscape(out.m_sCredit).c_str() ) );
 	f.PutLine( ssprintf( "#BANNER:%s;", SmEscape(out.m_sBannerFile).c_str() ) );
 	f.PutLine( ssprintf( "#BACKGROUND:%s;", SmEscape(out.m_sBackgroundFile).c_str() ) );
-	f.PutLine( ssprintf( "#PREVIEWBG:%s;", SmEscape(out.m_sPreviewBGFile).c_str() ) );
+	f.PutLine( ssprintf( "#PREVIEWVID:%s;", SmEscape(out.m_sPreviewVidFile).c_str() ) );
 	f.PutLine( ssprintf( "#JACKET:%s;", SmEscape(out.m_sJacketFile).c_str() ) );
 	f.PutLine( ssprintf( "#CDIMAGE:%s;", SmEscape(out.m_sCDFile).c_str() ) );
 	f.PutLine( ssprintf( "#DISCIMAGE:%s;", SmEscape(out.m_sDiscFile).c_str() ) );

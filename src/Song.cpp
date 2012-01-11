@@ -41,7 +41,7 @@
  * @brief The internal version of the cache for StepMania.
  *
  * Increment this value to invalidate the current cache. */
-const int FILE_CACHE_VERSION = 207;
+const int FILE_CACHE_VERSION = 208;
 
 /** @brief How long does a song sample last by default? */
 const float DEFAULT_MUSIC_SAMPLE_LENGTH = 12.f;
@@ -1273,9 +1273,9 @@ bool Song::HasCDImage() const
 {
 	return m_sCDFile != ""	&& IsAFile(GetCDImagePath());
 }
-bool Song::HasPreviewBG() const
+bool Song::HasPreviewVid() const
 {
-	return m_sPreviewBGFile != ""	&& IsAFile(GetPreviewBGPath());
+	return m_sPreviewVidFile != ""	&& IsAFile(GetPreviewVidPath());
 }
 
 const vector<BackgroundChange> &Song::GetBackgroundChanges( BackgroundLayer bl ) const
@@ -1410,9 +1410,9 @@ RString Song::GetCDImagePath() const
 	return GetSongAssetPath( m_sCDFile, m_sSongDir );
 }
 
-RString Song::GetPreviewBGPath() const
+RString Song::GetPreviewVidPath() const
 {
-	return GetSongAssetPath( m_sPreviewBGFile, m_sSongDir );
+	return GetSongAssetPath( m_sPreviewVidFile, m_sSongDir );
 }
 
 RString Song::GetDisplayMainTitle() const
@@ -1707,9 +1707,9 @@ public:
 			lua_pushnil(L);
 		return 1; 
 	}
-	static int GetPreviewBGPath( T* p, lua_State *L )
+	static int GetPreviewVidPath( T* p, lua_State *L )
 	{
-		RString s = p->GetPreviewBGPath();
+		RString s = p->GetPreviewVidPath();
 		if( !s.empty() ) 
 			lua_pushstring(L, s);
 		else
@@ -1837,7 +1837,7 @@ public:
 	static int HasMusic( T* p, lua_State *L )			{ lua_pushboolean(L, p->HasMusic()); return 1; }
 	static int HasBanner( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasBanner()); return 1; }
 	static int HasBackground( T* p, lua_State *L )	{ lua_pushboolean(L, p->HasBackground()); return 1; }
-	static int HasPreviewBG( T* p, lua_State *L )	{ lua_pushboolean(L, p->HasPreviewBG()); return 1; }
+	static int HasPreviewVid( T* p, lua_State *L )	{ lua_pushboolean(L, p->HasPreviewVid()); return 1; }
 	static int HasJacket( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasJacket()); return 1; }
 	static int HasDisc( T* p, lua_State *L )			{ lua_pushboolean(L, p->HasDisc()); return 1; }
 	static int HasCDImage( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasCDImage()); return 1; }
@@ -1994,8 +1994,8 @@ public:
 		ADD_METHOD( IsDisplayBpmConstant );
 		ADD_METHOD( IsDisplayBpmRandom );
 		ADD_METHOD( ShowInDemonstrationAndRanking );
-		ADD_METHOD( HasPreviewBG );
-		ADD_METHOD( GetPreviewBGPath );
+		ADD_METHOD( HasPreviewVid );
+		ADD_METHOD( GetPreviewVidPath );
 	}   
 };
 
