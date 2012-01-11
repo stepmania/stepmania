@@ -325,6 +325,11 @@ bool SSCLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 					out.m_sBackgroundFile = sParams[1];
 				}
 
+				else if( sValueName=="PREVIEWBG" )
+				{
+					out.m_sPreviewBGFile = sParams[1];
+				}
+
 				else if( sValueName=="JACKET" )
 				{
 					out.m_sJacketFile = sParams[1];

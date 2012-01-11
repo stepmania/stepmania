@@ -1273,6 +1273,10 @@ bool Song::HasCDImage() const
 {
 	return m_sCDFile != ""	&& IsAFile(GetCDImagePath());
 }
+bool Song::HasPreviewBG() const
+{
+	return m_sPreviewBGFile != ""	&& IsAFile(GetPreviewBGPath());
+}
 
 const vector<BackgroundChange> &Song::GetBackgroundChanges( BackgroundLayer bl ) const
 {
@@ -1404,6 +1408,11 @@ RString Song::GetDiscPath() const
 RString Song::GetCDImagePath() const
 {
 	return GetSongAssetPath( m_sCDFile, m_sSongDir );
+}
+
+RString Song::GetPreviewBGPath() const
+{
+	return GetSongAssetPath( m_sPreviewBGFile, m_sSongDir );
 }
 
 RString Song::GetDisplayMainTitle() const
@@ -1698,6 +1707,15 @@ public:
 			lua_pushnil(L);
 		return 1; 
 	}
+	static int GetPreviewBGPath( T* p, lua_State *L )
+	{
+		RString s = p->GetPreviewBGPath();
+		if( !s.empty() ) 
+			lua_pushstring(L, s);
+		else
+			lua_pushnil(L);
+		return 1; 
+	}
 	static int GetJacketPath( T* p, lua_State *L )
 	{
 		RString s = p->GetJacketPath();
@@ -1819,6 +1837,7 @@ public:
 	static int HasMusic( T* p, lua_State *L )			{ lua_pushboolean(L, p->HasMusic()); return 1; }
 	static int HasBanner( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasBanner()); return 1; }
 	static int HasBackground( T* p, lua_State *L )	{ lua_pushboolean(L, p->HasBackground()); return 1; }
+	static int HasPreviewBG( T* p, lua_State *L )	{ lua_pushboolean(L, p->HasPreviewBG()); return 1; }
 	static int HasJacket( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasJacket()); return 1; }
 	static int HasDisc( T* p, lua_State *L )			{ lua_pushboolean(L, p->HasDisc()); return 1; }
 	static int HasCDImage( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasCDImage()); return 1; }
@@ -1975,6 +1994,8 @@ public:
 		ADD_METHOD( IsDisplayBpmConstant );
 		ADD_METHOD( IsDisplayBpmRandom );
 		ADD_METHOD( ShowInDemonstrationAndRanking );
+		ADD_METHOD( HasPreviewBG );
+		ADD_METHOD( GetPreviewBGPath );
 	}   
 };
 
