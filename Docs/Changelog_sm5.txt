@@ -8,6 +8,11 @@ ________________________________________________________________________________
 StepMania 5.0 alpha 1 | 20120108
 --------------------------------------------------------------------------------
 
+2012/01/11
+----------
+* [ScreenEdit] Fix a floating point issue when dealing with speed segments.
+  [Wolfman2000]
+
 2012/01/08
 ----------
 * [Song] Add HasPreviewVid and GetPreviewVidPath lua binding [cerbo]
