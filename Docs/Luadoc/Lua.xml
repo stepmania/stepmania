@@ -94,6 +94,7 @@
 		<Function name='IsNetSMOnline'/>
 		<Function name='IsRoutine'/>
 		<Function name='IsSMOnlineLoggedIn'/>
+		<Function name='IsUsingWideScreen'/>
 		<Function name='IsW1Allowed'/>
 		<Function name='JudgmentLineToColor'/>
 		<Function name='JudgmentLineToLocalizedString'/>
@@ -736,6 +737,7 @@
 			<Function name='GetEditLocalProfile'/>
 			<Function name='GetEditLocalProfileID'/>
 			<Function name='GetEditSourceSteps'/>
+			<Function name='GetEnabledPlayers'/>
 			<Function name='GetExpandedSectionName'/>
 			<Function name='GetGameSeed'/>
 			<Function name='GetGameplayLeadIn'/>
@@ -2308,6 +2310,6 @@
 		<Constant name='right' value='&apos;HorizAlign_Right&apos;'/>
 		<Constant name='top' value='&apos;VertAlign_Top&apos;'/>
 	</Constants>
-	<Version>StepMania v5.0 alpha 0</Version>
-	<Date>2011-12-29</Date>
+	<Version>StepMania v5.0 alpha 1</Version>
+	<Date>2012-01-12</Date>
 </Lua>
