@@ -1,39 +1,49 @@
-ï»¿Stepmania 5ç³»æœ¬ä½“ç”¨ã€€æ—¥æœ¬èªžåŒ–ã‚»ãƒƒãƒˆ2(2011/12/18)
-ä½œè€…ï¼šãƒŠã‚¤ãƒ©ãƒ¼
+Stepmania 5Œn–{‘Ì—p@“ú–{Œê‰»ƒZƒbƒg5(2012/01/12)
+ìŽÒFƒiƒCƒ‰[
 -----------
-Stepmania5ç³»æœ¬ä½“ã§ã¯å¾“æ¥ã®æ—¥æœ¬èªžãƒ†ãƒ¼ãƒžã€ãŠã‚ˆã³æ—¥æœ¬èªžãƒ©ãƒ³ã‚²ãƒ¼ã‚¸ãƒ•ã‚¡ã‚¤ãƒ«ãŒä½¿ç”¨ã§ããªããªã£ã¦ã„ã¾ã™ã€‚
-å€‹äººçš„ã«æ—¥æœ¬èªžãŒè¦‹ãˆã¦ã„ã‚‹ã»ã†ãŒå®‰å¿ƒã§ãã‚‹ã®ã§ã€ã¨ã‚Šã‚ãˆãšãƒ•ã‚¡ã‚¤ãƒ«ã‚’è£½ä½œã—ã¦ã¿ã¾ã—ãŸã€‚
+Stepmania5Œn–{‘Ì‚Å‚Í]—ˆ‚Ì“ú–{Œêƒe[ƒ}A‚¨‚æ‚Ñ“ú–{Œêƒ‰ƒ“ƒQ[ƒWƒtƒ@ƒCƒ‹‚ªŽg—p‚Å‚«‚È‚­‚È‚Á‚Ä‚¢‚Ü‚·B
+ŒÂl“I‚É“ú–{Œê‚ªŒ©‚¦‚Ä‚¢‚é‚Ù‚¤‚ªˆÀS‚Å‚«‚é‚Ì‚ÅA‚Æ‚è‚ ‚¦‚¸ƒtƒ@ƒCƒ‹‚ð»ì‚µ‚Ä‚Ý‚Ü‚µ‚½B
 -----------
-ä»¥ä¸‹ã®ãƒ•ã‚¡ã‚¤ãƒ«ãŒåŒæ¢±ã•ã‚Œã¦ã„ã¾ã™ã€‚
-ãƒ»fallbackja.ini(_fallbackãƒ†ãƒ¼ãƒžç”¨æ—¥æœ¬èªžãƒ©ãƒ³ã‚²ãƒ¼ã‚¸ãƒ•ã‚¡ã‚¤ãƒ«) Ver 1.04Î±
-ãƒ»themeja.ini(ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆãƒ†ãƒ¼ãƒžç”¨æ—¥æœ¬èªžãƒ©ãƒ³ã‚²ãƒ¼ã‚¸ãƒ•ã‚¡ã‚¤ãƒ«) Ver 1.02Î±
+ˆÈ‰º‚Ìƒtƒ@ƒCƒ‹‚ª“¯«‚³‚ê‚Ä‚¢‚Ü‚·B
+Efallbackja.ini(_fallbackƒe[ƒ}—p“ú–{Œêƒ‰ƒ“ƒQ[ƒWƒtƒ@ƒCƒ‹) Ver 1.05ƒÀ
+Ethemeja.ini(ƒfƒtƒHƒ‹ƒgƒe[ƒ}—p“ú–{Œêƒ‰ƒ“ƒQ[ƒWƒtƒ@ƒCƒ‹) Ver 1.03ƒÀ
+(“YŽš‚ªƒ¿‚©‚çƒÀ‚É‚È‚Á‚½‚Ì‚É‹­‚¢ˆÓ–¡‚Í‚ ‚è‚Ü‚¹‚ñB”Ô†“®‚©‚µ‚½‚­‚È‚©‚Á‚½‚Ì‚Å)
 -----------
-ä»Šå›žã®æ›´æ–°ç‚¹
-fallbackja.iniã«å¯¾ã—ã¦
-ãƒ»ä¸€éƒ¨æ•´å½¢ã—å¿˜ã‚ŒãŸæ–‡ã®æ•´å½¢ã€‚
-ãƒ»ã‚¨ãƒ‡ã‚£ãƒƒãƒˆå†…ã§ã®èƒŒæ™¯è¨­å®šã®éƒ¨åˆ†ã®è¨³ã€‚
+¡‰ñ‚ÌXV“_
+‘O‰ñ‚Ìu×‚©‚¢’ù³v‚ÅŒ©—Ž‚Æ‚µ‚Ä‚½•”•ª‚ðC³‚µ‚Ü‚µ‚½B
+fallbackja.ini‚É‘Î‚µ‚Ä
+E‹N“®ƒEƒCƒ“ƒhƒE‚ÌƒeƒLƒXƒg‚Ì“ú–{Œê‰»B
+EƒGƒfƒBƒbƒg‚Ìƒwƒ‹ƒv‚Ì–ó‚Ì’E—Ž‚ðC³B
+™‚È‚¨AŠm”F‚µ‚Ä‚Í‚¢‚Ü‚¹‚ñ‚ª‹N“®ƒEƒCƒ“ƒhƒE‚É2ƒoƒCƒg•¶Žš‚ð’u‚­‚ÆƒoƒO‚é‚ÆŽv‚¢‚Ü‚·(„‘ª‚Å‚·‚ª)B
+‚à‚µƒoƒO‚ª‹N‚«‚½ê‡A[LoadingWindow]‚Ì€‚ð‚·‚×‚Ä‰pŒê‚ÌŒ¾Œêƒtƒ@ƒCƒ‹‚Ì‚à‚Ì‚É’u‚«Š·‚¦‚Ä‚­‚¾‚³‚¢B
+‹N‚«‚È‚¯‚ê‚Î‚¨Šy‚µ‚Ý‚­‚¾‚³‚¢B
+themeja.ini‚É‘Î‚µ‚Ä
+EƒI[ƒgƒvƒŒƒC‚Ìà–¾‚Ì’E—Ž‚ðC³B
+E•ˆ–Ê‚ªˆê‚Â‚à‚È‚¢Žž‚ÉƒQ[ƒ€ƒXƒ^[ƒg‚©ƒGƒfƒBƒbƒg‚ð‘I‚Ô‚Æo‚Ä‚­‚éƒXƒNƒŠ[ƒ“‚Ì•¶Í‚Ì®Œ`B
 -----------
-ãã‚Œãžã‚Œã®ãƒ•ã‚¡ã‚¤ãƒ«ã¯ã€æ¬¡ã®å ´æ‰€ã«é…ç½®ã—ã¦ãã ã•ã„ã€‚
-ãƒ»fallbackja.iniã¯ã€ã€ŒThemeã€ãƒ•ã‚©ãƒ«ãƒ€ã®ã€Œ_fallbackã€ãƒ•ã‚©ãƒ«ãƒ€å†…ã®ã€ŒLanguageã€ãƒ•ã‚©ãƒ«ãƒ€ã«ã€
-ã€€ã€Œja.iniã€ã«ãƒªãƒãƒ¼ãƒ ã—ã¦é…ç½®ã€‚
-ãƒ»themeja.iniã¯ã€ã€ŒThemeã€ãƒ•ã‚©ãƒ«ãƒ€ã®ã€ŒDefaultã€ãƒ•ã‚©ãƒ«ãƒ€å†…ã®ã€ŒLanguageã€ãƒ•ã‚©ãƒ«ãƒ€ã«
-ã€€ã€Œja.iniã€ã«ãƒªãƒãƒ¼ãƒ ã—ã¦é…ç½®ã€‚
-ã€€ã€€â˜†(é‡è¦)ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆãƒ†ãƒ¼ãƒžä»¥å¤–ã§ã¯æ—¥æœ¬èªžåŒ–ã—ãã‚Œãªããªã‚‹éƒ¨åˆ†ãŒã‚ã‚Šã¾ã™ã€‚
-ã€€ã€€ã€€ã€€ã€€ã€€ãã®ã“ã¨ã®å ±å‘Šã¯æŽ§ãˆã¦ã„ãŸã ã‘ã‚Œã°ã€‚
-ã“ã‚Œã§ã‚ªãƒ—ã‚·ãƒ§ãƒ³ã‹ã‚‰æ—¥æœ¬èªžãŒè¨­å®šã§ãã‚‹ã‚ˆã†ã«ãªã‚Šã¾ã™ã€‚
-æ“ä½œã®æ‰‹é †ã¯ã€æ¨™æº–ãƒ†ãƒ¼ãƒžãªã‚‰
-ã€Œèµ·å‹•â†’Optionâ†’More Optionâ†’Appearance Optionsâ†’Languageã§æ—¥æœ¬èªžã‚’é¸æŠžã€ã§ã™ã€‚
+‚»‚ê‚¼‚ê‚Ìƒtƒ@ƒCƒ‹‚ÍAŽŸ‚ÌêŠ‚É”z’u‚µ‚Ä‚­‚¾‚³‚¢B
+Efallbackja.ini‚ÍAuThemevƒtƒHƒ‹ƒ_‚Ìu_fallbackvƒtƒHƒ‹ƒ_“à‚ÌuLanguagevƒtƒHƒ‹ƒ_‚ÉA
+@uja.iniv‚ÉƒŠƒl[ƒ€‚µ‚Ä”z’uB
+Ethemeja.ini‚ÍAuThemevƒtƒHƒ‹ƒ_‚ÌuDefaultvƒtƒHƒ‹ƒ_“à‚ÌuLanguagevƒtƒHƒ‹ƒ_‚É
+@uja.iniv‚ÉƒŠƒl[ƒ€‚µ‚Ä”z’uB
+@@™(d—v)ƒfƒtƒHƒ‹ƒgƒe[ƒ}ˆÈŠO‚Å‚Í“ú–{Œê‰»‚µ‚«‚ê‚È‚­‚È‚é•”•ª‚ª‚ ‚è‚Ü‚·B
+@@@@@@‚»‚Ì‚±‚Æ‚Ì•ñ‚ÍT‚¦‚Ä‚¢‚½‚¾‚¯‚ê‚ÎB
+‚±‚ê‚ÅƒIƒvƒVƒ‡ƒ“‚©‚ç“ú–{Œê‚ªÝ’è‚Å‚«‚é‚æ‚¤‚É‚È‚è‚Ü‚·B
+‘€ì‚ÌŽè‡‚ÍA•W€ƒe[ƒ}‚È‚ç
+u‹N“®¨Option¨More Option¨Appearance Options¨Language‚Å“ú–{Œê‚ð‘I‘ðv‚Å‚·B
 ----------
-èª¤è¨³ã€ãŠã‚ˆã³è¨³ã•ãªã„ã»ã†ãŒã„ã„éƒ¨åˆ†ã‚‚ã‚ã‚Šã¾ã™ãŒã€ãã“ã¯å‹˜å¼ã—ã¦ãã ã•ã„ã€‚
-ã¾ãŸã€ãƒ•ã‚©ãƒ³ãƒˆç”»åƒãŒè¿½åŠ ã§å¿…è¦ã«ãªã‚‹ç®‡æ‰€ãŒã‚ã‚‹ã‹ã‚‚ã—ã‚Œã¾ã›ã‚“ãŒã€ä»Šå›žã¯ãã‚Œã‚‚å‹˜å¼ã—ã¦ãã ã•ã„ã€‚
-
+Œë–óA‚¨‚æ‚Ñ–ó‚³‚È‚¢‚Ù‚¤‚ª‚¢‚¢•”•ª‚à‚ ‚è‚Ü‚·‚ªA‚»‚±‚ÍŠ¨•Ù‚µ‚Ä‚­‚¾‚³‚¢B
+’Ç‰Á‚Å“ú–{ŒêƒtƒHƒ“ƒgƒtƒ@ƒCƒ‹‚ª•K—v‚Æ‚È‚éê‡A
+https://skydrive.live.com/embed?cid=EF81182F6B9C3571&resid=EF81182F6B9C3571%21140&authkey=AHPyLL7fuTngDMk
+‚©‚çuStepmania—p¬‰Äv‚ð“üŽè‚·‚é‚±‚Æ‚ª‚Å‚«‚Ü‚·B
+Stepmania—p¬‰Ä‚É‚Í”¼ŠpƒJƒi‚âƒfƒtƒHƒ‹ƒgƒtƒHƒ“ƒg‚ÉŽû˜^‚³‚ê‚Ä‚¢‚È‚¢Š¿Žš‚Ìˆê•”‚ªŽû˜^‚³‚ê‚Ä‚¢‚Ü‚·B
 ----------
-ã“ã®ã‚»ãƒƒãƒˆã¯è‡ªç”±ã«æ”¹å¤‰ã€å†é…å¸ƒã™ã‚‹ã“ã¨ãŒã§ãã¾ã™ã€‚ãƒ‘ãƒƒã‚±ãƒ¼ã‚¸ãªã©ã«åŒæ¢±ã—ã¦ã‚‚æ§‹ã„ã¾ã›ã‚“ã€‚
-æ”¹å¤‰å¾Œã®ãƒ•ã‚¡ã‚¤ãƒ«ã®æ”¹å¤‰ãƒ»å†é…å¸ƒæ¡ä»¶ã¯è‡ªç”±ã«è¨­å®šã—ã¦ã‹ã¾ã„ã¾ã›ã‚“ã€‚
+‚±‚ÌƒZƒbƒg‚ÍŽ©—R‚É‰ü•ÏAÄ”z•z‚·‚é‚±‚Æ‚ª‚Å‚«‚Ü‚·BƒpƒbƒP[ƒW‚È‚Ç‚É“¯«‚µ‚Ä‚à\‚¢‚Ü‚¹‚ñB
+‰ü•ÏŒã‚Ìƒtƒ@ƒCƒ‹‚Ì‰ü•ÏEÄ”z•zðŒ‚ÍŽ©—R‚ÉÝ’è‚µ‚Ä‚©‚Ü‚¢‚Ü‚¹‚ñB
 ----------
-For foreign "rhythmers"
 This archive can be fixed and redistributed by you all.Including to Song Packages or Themes is
 also OK.
 Moreover,you can decide how these files are treated.
+Sorry for my poor English :)
 ----------
-ä½•ã‹ã‚ã‚Šã¾ã—ãŸã‚‰Twitterã®@Niler_jpã¾ã§ã€‚ 
+‰½‚©‚ ‚è‚Ü‚µ‚½‚çTwitter‚Ì@Niler_jp‚Ü‚ÅB
