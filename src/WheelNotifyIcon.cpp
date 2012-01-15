@@ -14,6 +14,7 @@
 
 static ThemeMetric<bool>	SHOW_TRAINING	("WheelNotifyIcon","ShowTraining");
 static ThemeMetric<bool>	BLINK_BEST_ICON	("WheelNotifyIcon","BlinkPlayersBest");
+static ThemeMetric<int>		NUM_ICONS_TO_SHOW ("WheelNotifyIcon","NumIconsToShow");
 
 WheelNotifyIcon::WheelNotifyIcon()
 {
@@ -57,9 +58,7 @@ void WheelNotifyIcon::SetFlags( Flags flags )
 			m_vIconsToShow.push_back( empty );
 	}
 
-	// crop to most important 2
-	// todo: Let themer handle this? -aj
-	m_vIconsToShow.resize( min(m_vIconsToShow.size(),2u) );
+	m_vIconsToShow.resize( min(m_vIconsToShow.size(), static_cast<unsigned int>(NUM_ICONS_TO_SHOW)) );
 
 	// Broadcast Set message so items can react. (futures) -aj
 	//Message msg("Set");
