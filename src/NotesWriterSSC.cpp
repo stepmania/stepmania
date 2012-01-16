@@ -172,7 +172,8 @@ static void GetTimingTags( vector<RString> &lines, const TimingData &timing, boo
 	for (i = 0; i < labels.size(); i++)
 	{
 		LabelSegment *ls = static_cast<LabelSegment *>(labels[i]);
-		w.Write( ls->GetRow(), ls->GetLabel().c_str() );
+		if (!ls->GetLabel().empty())
+			w.Write( ls->GetRow(), ls->GetLabel().c_str() );
 	}
 	w.Finish();
 }
