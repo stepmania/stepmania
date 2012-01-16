@@ -20,9 +20,9 @@ SMData:
 	$(srcdir)/Utils/CreatePackage.pl $(srcdir) .
 
 dist-hook: SMData
-	mkdir -p $(distdir)/Packages
-	mv GameData.smzip $(distdir)/Packages
-	cp -r $(srcdir)/Docs $(distdir)
+	mkdir -p "$(distdir)/Packages"
+	mv GameData.smzip "$(distdir)/Packages"
+	cp -r "$(srcdir)/Docs" "$(distdir)"
 	cp -r -t "$(distdir)" $(installFiles)
 
 install-exec-hook:

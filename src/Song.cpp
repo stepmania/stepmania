@@ -41,7 +41,7 @@
  * @brief The internal version of the cache for StepMania.
  *
  * Increment this value to invalidate the current cache. */
-const int FILE_CACHE_VERSION = 207;
+const int FILE_CACHE_VERSION = 208;
 
 /** @brief How long does a song sample last by default? */
 const float DEFAULT_MUSIC_SAMPLE_LENGTH = 12.f;
@@ -588,211 +588,208 @@ void Song::TidyUpData( bool fromCache, bool duringCache )
 	// is the CDTitle.
 
 	CHECKPOINT_M( "Looking for images..." );
-	// HACK: DWI/KSF files require searching the file system for this info.
-    RString extension = GetExtension(this->m_sSongFileName);
-	extension.MakeLower();
-	
-    if( extension == "dwi" || extension == "ksf" || !duringCache )
-    {
 
-        // First, check the file name for hints.
-        if( !HasBanner() )
-        {
-            /* If a nonexistant banner file is specified, and we can't find a
-             * replacement, don't wipe out the old value. */
-    //		m_sBannerFile = "";
+	if( !fromCache )
+	{
 
-            // find an image with "banner" in the file name
-            vector<RString> arrayPossibleBanners;
-            GetImageDirListing( m_sSongDir + "*banner*", arrayPossibleBanners );
+		// First, check the file name for hints.
+		if( !HasBanner() )
+		{
+			/* If a nonexistant banner file is specified, and we can't find a
+			 * replacement, don't wipe out the old value. */
+			//m_sBannerFile = "";
 
-            /* Some people do things differently for the sake of being different.
-             * Don't match eg. abnormal, numbness. */
-            GetImageDirListing( m_sSongDir + "* BN", arrayPossibleBanners );
+			// find an image with "banner" in the file name
+			vector<RString> arrayPossibleBanners;
+			GetImageDirListing( m_sSongDir + "*banner*", arrayPossibleBanners );
 
-            if( !arrayPossibleBanners.empty() )
-                m_sBannerFile = arrayPossibleBanners[0];
-        }
+			/* Some people do things differently for the sake of being different.
+			 * Don't match eg. abnormal, numbness. */
+			GetImageDirListing( m_sSongDir + "* BN", arrayPossibleBanners );
 
-        if( !HasBackground() )
-        {
-    //		m_sBackgroundFile = "";
+			if( !arrayPossibleBanners.empty() )
+				m_sBannerFile = arrayPossibleBanners[0];
+		}
 
-            // find an image with "bg" or "background" in the file name
-            vector<RString> arrayPossibleBGs;
-            GetImageDirListing( m_sSongDir + "*background*", arrayPossibleBGs );
-            // don't match e.g. "subgroup", "hobgoblin", etc.
-            GetImageDirListing( m_sSongDir + "*bg", arrayPossibleBGs );
-            if( !arrayPossibleBGs.empty() )
-                m_sBackgroundFile = arrayPossibleBGs[0];
-        }
+		if( !HasBackground() )
+		{
+			//m_sBackgroundFile = "";
 
-        if( !HasJacket() )
-        {
-            // find an image with "jacket" or "albumart" in the filename.
-            vector<RString> arrayPossibleJackets;
-            GetImageDirListing( m_sSongDir + "jk_*", arrayPossibleJackets );
-            GetImageDirListing( m_sSongDir + "*jacket*", arrayPossibleJackets );
-            GetImageDirListing( m_sSongDir + "*albumart*", arrayPossibleJackets );
-            if( !arrayPossibleJackets.empty() )
-                m_sJacketFile = arrayPossibleJackets[0];
-        }
+			// find an image with "bg" or "background" in the file name
+			vector<RString> arrayPossibleBGs;
+			GetImageDirListing( m_sSongDir + "*background*", arrayPossibleBGs );
+			// don't match e.g. "subgroup", "hobgoblin", etc.
+			GetImageDirListing( m_sSongDir + "*bg", arrayPossibleBGs );
+			if( !arrayPossibleBGs.empty() )
+				m_sBackgroundFile = arrayPossibleBGs[0];
+		}
 
-        if( !HasCDImage() )
-        {
-            // CD image, a la ddr 1st-3rd (not to be confused with CDTitles)
-            // find an image with "-cd" at the end of the filename.
-            vector<RString> arrayPossibleCDImages;
-            GetImageDirListing( m_sSongDir + "*-cd", arrayPossibleCDImages );
-            if( !arrayPossibleCDImages.empty() )
-                m_sCDFile = arrayPossibleCDImages[0];
-        }
+		if( !HasJacket() )
+		{
+			// find an image with "jacket" or "albumart" in the filename.
+			vector<RString> arrayPossibleJackets;
+			GetImageDirListing( m_sSongDir + "jk_*", arrayPossibleJackets );
+			GetImageDirListing( m_sSongDir + "*jacket*", arrayPossibleJackets );
+			GetImageDirListing( m_sSongDir + "*albumart*", arrayPossibleJackets );
+			if( !arrayPossibleJackets.empty() )
+				m_sJacketFile = arrayPossibleJackets[0];
+		}
 
-        if( !HasDisc() )
-        {
-            // a rectangular graphic, not to be confused with CDImage above.
-            vector<RString> arrayPossibleDiscImages;
-            GetImageDirListing( m_sSongDir + "* disc", arrayPossibleDiscImages );
-            GetImageDirListing( m_sSongDir + "* title", arrayPossibleDiscImages );
-            if( !arrayPossibleDiscImages.empty() )
-                m_sDiscFile = arrayPossibleDiscImages[0];
-        }
+		if( !HasCDImage() )
+		{
+			// CD image, a la ddr 1st-3rd (not to be confused with CDTitles)
+			// find an image with "-cd" at the end of the filename.
+			vector<RString> arrayPossibleCDImages;
+			GetImageDirListing( m_sSongDir + "*-cd", arrayPossibleCDImages );
+			if( !arrayPossibleCDImages.empty() )
+				m_sCDFile = arrayPossibleCDImages[0];
+		}
 
-        if( !HasCDTitle() )
-        {
-            // find an image with "cdtitle" in the file name
-            vector<RString> arrayPossibleCDTitles;
-            GetImageDirListing( m_sSongDir + "*cdtitle*", arrayPossibleCDTitles );
-            if( !arrayPossibleCDTitles.empty() )
-                m_sCDTitleFile = arrayPossibleCDTitles[0];
-        }
+		if( !HasDisc() )
+		{
+			// a rectangular graphic, not to be confused with CDImage above.
+			vector<RString> arrayPossibleDiscImages;
+			GetImageDirListing( m_sSongDir + "* disc", arrayPossibleDiscImages );
+			GetImageDirListing( m_sSongDir + "* title", arrayPossibleDiscImages );
+			if( !arrayPossibleDiscImages.empty() )
+				m_sDiscFile = arrayPossibleDiscImages[0];
+		}
 
-        if( !HasLyrics() )
-        {
-            // Check if there is a lyric file in here
-            vector<RString> arrayLyricFiles;
-            GetDirListing(m_sSongDir + RString("*.lrc"), arrayLyricFiles );
-            if(	!arrayLyricFiles.empty() )
-                m_sLyricsFile = arrayLyricFiles[0];
-        }
+		if( !HasCDTitle() )
+		{
+			// find an image with "cdtitle" in the file name
+			vector<RString> arrayPossibleCDTitles;
+			GetImageDirListing( m_sSongDir + "*cdtitle*", arrayPossibleCDTitles );
+			if( !arrayPossibleCDTitles.empty() )
+				m_sCDTitleFile = arrayPossibleCDTitles[0];
+		}
 
-        /* Now, For the images we still haven't found,
-         * look at the image dimensions of the remaining unclassified images. */
-        vector<RString> arrayImages;
-        GetImageDirListing( m_sSongDir + "*", arrayImages );
+		if( !HasLyrics() )
+		{
+			// Check if there is a lyric file in here
+			vector<RString> arrayLyricFiles;
+			GetDirListing(m_sSongDir + RString("*.lrc"), arrayLyricFiles );
+			if(	!arrayLyricFiles.empty() )
+				m_sLyricsFile = arrayLyricFiles[0];
+		}
 
-        for( unsigned i=0; i<arrayImages.size(); i++ )	// foreach image
-        {
-            if( HasBanner() && HasCDTitle() && HasBackground() )
-                break; // done
+		/* Now, For the images we still haven't found,
+		 * look at the image dimensions of the remaining unclassified images. */
+		vector<RString> arrayImages;
+		GetImageDirListing( m_sSongDir + "*", arrayImages );
 
-            // ignore DWI "-char" graphics
-            RString sLower = arrayImages[i];
-            sLower.MakeLower();
-            if( BlacklistedImages.find(sLower) != BlacklistedImages.end() )
-                continue;	// skip
+		for( unsigned i=0; i<arrayImages.size(); i++ )	// foreach image
+		{
+			if( HasBanner() && HasCDTitle() && HasBackground() )
+				break; // done
 
-            // Skip any image that we've already classified
+			// ignore DWI "-char" graphics
+			RString sLower = arrayImages[i];
+			sLower.MakeLower();
+			if( BlacklistedImages.find(sLower) != BlacklistedImages.end() )
+				continue;	// skip
 
-            if( HasBanner()  &&  m_sBannerFile.EqualsNoCase(arrayImages[i]) )
-                continue;	// skip
+			// Skip any image that we've already classified
 
-            if( HasBackground()  &&  m_sBackgroundFile.EqualsNoCase(arrayImages[i]) )
-                continue;	// skip
+			if( HasBanner()  &&  m_sBannerFile.EqualsNoCase(arrayImages[i]) )
+				continue;	// skip
 
-            if( HasCDTitle()  &&  m_sCDTitleFile.EqualsNoCase(arrayImages[i]) )
-                continue;	// skip
+			if( HasBackground()  &&  m_sBackgroundFile.EqualsNoCase(arrayImages[i]) )
+				continue;	// skip
 
-            if( HasJacket()  &&  m_sJacketFile.EqualsNoCase(arrayImages[i]) )
-                continue;	// skip
+			if( HasCDTitle()  &&  m_sCDTitleFile.EqualsNoCase(arrayImages[i]) )
+				continue;	// skip
 
-            if( HasDisc()  &&  m_sDiscFile.EqualsNoCase(arrayImages[i]) )
-                continue;	// skip
+			if( HasJacket()  &&  m_sJacketFile.EqualsNoCase(arrayImages[i]) )
+				continue;	// skip
 
-            if( HasCDImage()  &&  m_sCDFile.EqualsNoCase(arrayImages[i]) )
-                continue;	// skip
+			if( HasDisc()  &&  m_sDiscFile.EqualsNoCase(arrayImages[i]) )
+				continue;	// skip
 
-            RString sPath = m_sSongDir + arrayImages[i];
+			if( HasCDImage()  &&  m_sCDFile.EqualsNoCase(arrayImages[i]) )
+				continue;	// skip
 
-            // We only care about the dimensions.
-            RString error;
-            RageSurface *img = RageSurfaceUtils::LoadFile( sPath, error, true );
-            if( !img )
-            {
-                LOG->UserLog( "Graphic file", sPath, "couldn't be loaded: %s", error.c_str() );
-                continue;
-            }
+			RString sPath = m_sSongDir + arrayImages[i];
 
-            const int width = img->w;
-            const int height = img->h;
-            delete img;
+			// We only care about the dimensions.
+			RString error;
+			RageSurface *img = RageSurfaceUtils::LoadFile( sPath, error, true );
+			if( !img )
+			{
+				LOG->UserLog( "Graphic file", sPath, "couldn't be loaded: %s", error.c_str() );
+				continue;
+			}
 
-            if( !HasBackground()  &&  width >= 320  &&  height >= 240 )
-            {
-                m_sBackgroundFile = arrayImages[i];
-                continue;
-            }
+			const int width = img->w;
+			const int height = img->h;
+			delete img;
 
-            if( !HasBanner()  &&  100<=width  &&  width<=320  &&  50<=height  &&  height<=240 )
-            {
-                m_sBannerFile = arrayImages[i];
-                continue;
-            }
+			if( !HasBackground()  &&  width >= 320  &&  height >= 240 )
+			{
+				m_sBackgroundFile = arrayImages[i];
+				continue;
+			}
 
-            /* Some songs have overlarge banners. Check if the ratio is reasonable
-             * (over 2:1; usually over 3:1), and large (not a cdtitle). */
-            if( !HasBanner() && width > 200 && float(width) / height > 2.0f )
-            {
-                m_sBannerFile = arrayImages[i];
-                continue;
-            }
+			if( !HasBanner()  &&  100<=width  &&  width<=320  &&  50<=height  &&  height<=240 )
+			{
+				m_sBannerFile = arrayImages[i];
+				continue;
+			}
 
-            /* Agh. DWI's inline title images are triggering this, resulting in
-             * kanji, etc., being used as a CDTitle for songs with none. Some
-             * sample data from random incarnations:
-             *   42x50 35x50 50x50 144x49
-             * It looks like ~50 height is what people use to align to DWI's font.
-             *
-             * My tallest CDTitle is 44. Let's cut off in the middle and hope for
-             * the best. -(who? -aj) */
-            /* The proper size of a CDTitle is 64x48 or sometihng. Simfile artists
-             * typically don't give a shit about this (see Cetaka's fucking banner
-             * -sized CDTitle). This is also subverted in certain designs (beta
-             * Mungyodance 3 simfiles, for instance, used the CDTitle to hold
-             * various information about the song in question). As it stands,
-             * I'm keeping this code until I figure out wtf to do -aj
-             */
-            if( !HasCDTitle()  &&  width<=100  &&  height<=48 )
-            {
-                m_sCDTitleFile = arrayImages[i];
-                continue;
-            }
+			/* Some songs have overlarge banners. Check if the ratio is reasonable
+			 * (over 2:1; usually over 3:1), and large (not a cdtitle). */
+			if( !HasBanner() && width > 200 && float(width) / height > 2.0f )
+			{
+				m_sBannerFile = arrayImages[i];
+				continue;
+			}
 
-            // Jacket files typically have the same width and height.
-            if( !HasJacket() && width == height )
-            {
-                m_sJacketFile = arrayImages[i];
-                continue;
-            }
+			/* Agh. DWI's inline title images are triggering this, resulting in
+			 * kanji, etc., being used as a CDTitle for songs with none. Some
+			 * sample data from random incarnations:
+			 *   42x50 35x50 50x50 144x49
+			 * It looks like ~50 height is what people use to align to DWI's font.
+			 *
+			 * My tallest CDTitle is 44. Let's cut off in the middle and hope for
+			 * the best. -(who? -aj) */
+			/* The proper size of a CDTitle is 64x48 or sometihng. Simfile artists
+			 * typically don't give a shit about this (see Cetaka's fucking banner
+			 * -sized CDTitle). This is also subverted in certain designs (beta
+			 * Mungyodance 3 simfiles, for instance, used the CDTitle to hold
+			 * various information about the song in question). As it stands,
+			 * I'm keeping this code until I figure out wtf to do -aj
+			 */
+			if( !HasCDTitle()  &&  width<=100  &&  height<=48 )
+			{
+				m_sCDTitleFile = arrayImages[i];
+				continue;
+			}
 
-            // Disc images are typically rectangular; make sure we have a banner already.
-            if( !HasDisc() && (width > height) && HasBanner() )
-            {
-                if( arrayImages[i] != m_sBannerFile )
-                    m_sDiscFile = arrayImages[i];
-                continue;
-            }
+			// Jacket files typically have the same width and height.
+			if( !HasJacket() && width == height )
+			{
+				m_sJacketFile = arrayImages[i];
+				continue;
+			}
 
-            // CD images are the same as Jackets, typically the same width and height
-            if( !HasCDImage() && width == height )
-            {
-                m_sCDFile = arrayImages[i];
-                continue;
-            }
-        }
+			// Disc images are typically rectangular; make sure we have a banner already.
+			if( !HasDisc() && (width > height) && HasBanner() )
+			{
+				if( arrayImages[i] != m_sBannerFile )
+					m_sDiscFile = arrayImages[i];
+				continue;
+			}
 
-    }
-        
+			// CD images are the same as Jackets, typically the same width and height
+			if( !HasCDImage() && width == height )
+			{
+				m_sCDFile = arrayImages[i];
+				continue;
+			}
+		}
+
+	}
+		
 	// These will be written to cache, for Song::LoadFromSongDir to use later.
 	m_bHasMusic = HasMusic();
 	m_bHasBanner = HasBanner();
@@ -807,7 +804,7 @@ void Song::TidyUpData( bool fromCache, bool duringCache )
 
 	// If no BGChanges are specified and there are movies in the song directory, then assume
 	// they are DWI style where the movie begins at beat 0.
-	if( extension == "dwi" || extension == "ksf" || (!HasBGChanges() && !duringCache) )
+	if( (!HasBGChanges() && !fromCache) )
 	{
 		vector<RString> arrayPossibleMovies;
 		GetDirListing( m_sSongDir + RString("*.ogv"), arrayPossibleMovies );
@@ -829,10 +826,10 @@ void Song::TidyUpData( bool fromCache, bool duringCache )
 	/* Don't allow multiple Steps of the same StepsType and Difficulty (except
 	 * for edits). We should be able to use difficulty names as unique
 	 * identifiers for steps. */
-	if( !duringCache )
-    {
-        SongUtil::AdjustDuplicateSteps( this );
-    }
+	if( !fromCache )
+	{
+		SongUtil::AdjustDuplicateSteps( this );
+	}
 }
 
 void Song::TranslateTitles()
@@ -1276,6 +1273,10 @@ bool Song::HasCDImage() const
 {
 	return m_sCDFile != ""	&& IsAFile(GetCDImagePath());
 }
+bool Song::HasPreviewVid() const
+{
+	return m_sPreviewVidFile != ""	&& IsAFile(GetPreviewVidPath());
+}
 
 const vector<BackgroundChange> &Song::GetBackgroundChanges( BackgroundLayer bl ) const
 {
@@ -1328,8 +1329,8 @@ vector<RString> Song::GetInstrumentTracksToVectorString() const
 		if (this->HasInstrumentTrack(it))
 		{
 			ret.push_back(InstrumentTrackToString(it)
-				      + "="
-				      + this->m_sInstrumentTrackFile[it]);
+					  + "="
+					  + this->m_sInstrumentTrackFile[it]);
 		}
 	}
 	return ret;
@@ -1407,6 +1408,11 @@ RString Song::GetDiscPath() const
 RString Song::GetCDImagePath() const
 {
 	return GetSongAssetPath( m_sCDFile, m_sSongDir );
+}
+
+RString Song::GetPreviewVidPath() const
+{
+	return GetSongAssetPath( m_sPreviewVidFile, m_sSongDir );
 }
 
 RString Song::GetDisplayMainTitle() const
@@ -1701,6 +1707,15 @@ public:
 			lua_pushnil(L);
 		return 1; 
 	}
+	static int GetPreviewVidPath( T* p, lua_State *L )
+	{
+		RString s = p->GetPreviewVidPath();
+		if( !s.empty() ) 
+			lua_pushstring(L, s);
+		else
+			lua_pushnil(L);
+		return 1; 
+	}
 	static int GetJacketPath( T* p, lua_State *L )
 	{
 		RString s = p->GetJacketPath();
@@ -1822,6 +1837,7 @@ public:
 	static int HasMusic( T* p, lua_State *L )			{ lua_pushboolean(L, p->HasMusic()); return 1; }
 	static int HasBanner( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasBanner()); return 1; }
 	static int HasBackground( T* p, lua_State *L )	{ lua_pushboolean(L, p->HasBackground()); return 1; }
+	static int HasPreviewVid( T* p, lua_State *L )	{ lua_pushboolean(L, p->HasPreviewVid()); return 1; }
 	static int HasJacket( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasJacket()); return 1; }
 	static int HasDisc( T* p, lua_State *L )			{ lua_pushboolean(L, p->HasDisc()); return 1; }
 	static int HasCDImage( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasCDImage()); return 1; }
@@ -1978,6 +1994,8 @@ public:
 		ADD_METHOD( IsDisplayBpmConstant );
 		ADD_METHOD( IsDisplayBpmRandom );
 		ADD_METHOD( ShowInDemonstrationAndRanking );
+		ADD_METHOD( HasPreviewVid );
+		ADD_METHOD( GetPreviewVidPath );
 	}   
 };
 

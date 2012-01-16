@@ -43,7 +43,9 @@ static LocalizedString THEME_		("ScreenTitleMenu","Theme");
 static LocalizedString ANNOUNCER_	("ScreenTitleMenu","Announcer");
 void ScreenTitleMenu::Input( const InputEventPlus &input )
 {
+#if defined(DEBUG)
 	LOG->Trace( "ScreenTitleMenu::Input( %d-%d )", input.DeviceI.device, input.DeviceI.button );	// debugging gameport joystick problem
+#endif
 
 	if( m_In.IsTransitioning() || m_Cancel.IsTransitioning() ) /* not m_Out */
 		return;

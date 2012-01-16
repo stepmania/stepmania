@@ -21,6 +21,7 @@ end
 PLAYER_1 = "PlayerNumber_P1"
 PLAYER_2 = "PlayerNumber_P2"
 NUM_PLAYERS = #PlayerNumber
+OtherPlayer = { [PLAYER_1] = PLAYER_2, [PLAYER_2] = PLAYER_1 }
 
 function string:find_last(text)
 	local LastPos = 0

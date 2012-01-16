@@ -238,6 +238,7 @@ public:
 	RString m_sLyricsFile;
 	RString m_sBackgroundFile;
 	RString m_sCDTitleFile;
+	RString m_sPreviewVidFile;
 
 	AttackArray m_Attacks;
 	vector<RString>	m_sAttackString;
@@ -251,6 +252,7 @@ public:
 	RString	GetLyricsPath() const;
 	RString GetBackgroundPath() const;
 	RString GetCDTitlePath() const;
+	RString GetPreviewVidPath() const;
 
 	// For loading only:
 	bool m_bHasMusic, m_bHasBanner, m_bHasBackground;
@@ -273,6 +275,7 @@ public:
 	bool HasBGChanges() const;
 	bool HasLyrics() const;
 	bool HasAttacks() const;
+	bool HasPreviewVid() const;
 
 	bool Matches(RString sGroup, RString sSong) const;
 

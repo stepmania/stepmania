@@ -273,6 +273,9 @@ save yourself some time, copy this for undocumented things:
 	<Function name='InitUserPrefs' theme='default' return='void' arguments=''>
 		[03 ThemePrefs.lua] Initializes various user preferences.
 	</Function>
+	<Function name='ipairs' theme='_fallback' return='function' arguments='table t'>
+		[01 base.lua] "Like ipairs(), but returns only values."
+	</Function>
 	<Function name='IsArcade' theme="_fallback" return='bool' arguments=''>
 		[02 Utilities.lua] Returns <code>true</code> if the coin mode is not set to <Link class='ENUM' function='CoinMode'>CoinMode_Home</Link>.
 	</Function>
@@ -352,7 +355,7 @@ save yourself some time, copy this for undocumented things:
 		Creates a module. See the Lua manual for more details.
 	</Function>
 	<Function name='MonthOfYear' return='int' arguments=''>
-		Returns the current month of the year.
+		Returns the current month of the year (<code>0</code>-<code>11</code>).
 	</Function>
 	<Function name='MonthToLocalizedString' return='string' arguments='Month m'>
 		Returns Month <code>m</code> as a localized string.
@@ -385,6 +388,9 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='PositionPerPlayer' theme='_fallback' return='float' arguments='PlayerNumber pn, float p1val, float p2val'>
 		[02 Actor.lua] Returns either <code>p1val</code> or <code>p2val</code> depending on <code>pn</code>.
+	</Function>
+	<Function name='PrettyPercent' return='string' arguments='float num, float den'>
+		Returns a formatted percent with the specified <code>num</code>erator and <code>den</code>ominator.
 	</Function>
 	<Function name='print' theme='_fallback' return='void' arguments='string s'>
 		[00 init.lua] 
@@ -437,6 +443,9 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='Saturation' theme='_fallback' return='color' arguments='color c, float percent'>
 		[02 Colors.lua] Modifies the saturation of the specified color
+	</Function>
+	<Function name='scale' return='float' arguments='float x, float low1, float high1, float low2, float high2'>
+		Scales <code>x</code>, originally within <code>low1</code> and <code>high1</code>, to fall between <code>low2</code> and <code>high2</code>.
 	</Function>
 	<Function name='ScoreKeeperClass' theme='_fallback' return='string' arguments=''>
 		[03 Gameplay.lua] Returns the primary ScoreKeeper class to use.
@@ -2110,7 +2119,10 @@ save yourself some time, copy this for undocumented things:
 		Return the source <Link class='Steps' /> for the editor or <code>nil</code>
 		if it does not exist.
 	</Function>
-	<Function name='GetExpandedSectionName' return='String' arguments=''>
+	<Function name='GetEnabledPlayers' return='{PlayerNumber}' arguments=''>
+		Returns a table of enabled players.
+	</Function>
+	<Function name='GetExpandedSectionName' return='string' arguments=''>
 		Returns the name of the currently expanded section.
 	</Function>
 	<Function name='GetGameSeed' return='int' arguments=''>

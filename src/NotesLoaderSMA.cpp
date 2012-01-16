@@ -207,6 +207,9 @@ bool SMALoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 		
 		else if( sValueName=="BACKGROUND" )
 			out.m_sBackgroundFile = sParams[1];
+
+		else if( sValueName=="PREVIEW" )
+			out.m_sPreviewVidFile = sParams[1];
 		
 		// Save "#LYRICS" for later, so we can add an internal lyrics tag.
 		else if( sValueName=="LYRICSPATH" )

@@ -41,7 +41,6 @@ static RageSurfaceUtils::OpenResult LoadBMP( RageFile &f, RageSurface *&img, RSt
 	uint32_t iDataOffset = read_u32_le( f, sError );
 	uint32_t iHeaderSize = read_u32_le( f, sError );
 
-
 	uint32_t iWidth, iHeight, iPlanes, iBPP, iCompression = COMP_BI_RGB, iColors = 0;
 	if( iHeaderSize == 12 )
 	{

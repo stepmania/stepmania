@@ -3,6 +3,7 @@ ThemePrefs: handles the underlying structure for ThemePrefs, so any themes
 built off of this can simply declare their prefs and default values, and
 access them through this system.
 
+v0.7.2: Jan. 10, 2012. Added ThemePrefs.ForceSave function [freem]
 v0.7.1: Dec. 28, 2010. Added language support.
 v0.7.0: Dec. 15, 2010. Initial version.
 
@@ -42,7 +43,7 @@ local function ResolveTable( pref )
 	local val = PrefsTable[name][pref]
 
 	if val ~= nil then
-		Trace( ("ResolveTable(%s): found in %s"):format(pref,name) )
+		--Trace( ("ResolveTable(%s): found in %s"):format(pref,name) )
 		return PrefsTable[name]
 	end
 
@@ -50,7 +51,7 @@ local function ResolveTable( pref )
 	if PrefsTable[FallbackTheme] then
 		val = PrefsTable[FallbackTheme][pref]
 		if val ~= nil then
-			Trace( ("ResolveTable(%s): found in fallback"):format(pref) )
+			--Trace( ("ResolveTable(%s): found in fallback"):format(pref) )
 			return PrefsTable[FallbackTheme]
 		end
 	end
@@ -60,7 +61,7 @@ local function ResolveTable( pref )
 	for section, _ in pairs(PrefsTable) do
 		val = PrefsTable[section][pref]
 		if val ~= nil then
-			Trace( ("ResolveTable(%s): found in section %s"):format(pref,section) )
+			--Trace( ("ResolveTable(%s): found in section %s"):format(pref,section) )
 			return PrefsTable[section] end
 	end
 
@@ -93,7 +94,7 @@ ThemePrefs =
 		local section = GetThemeName()
 		PrefsTable[section] = PrefsTable[section] and PrefsTable[section] or { }
 
-		Trace( "Using section " .. section )
+		--Trace( "Using section " .. section )
 
 		-- if the key doesn't exist, add it with our default value
 		for k, tbl in pairs(prefs) do
@@ -103,7 +104,7 @@ ThemePrefs =
 			end
 		end
 
-		PrintTable( PrefsTable[section] )
+		--PrintTable( PrefsTable[section] )
 	end,
 
 	Load = function()
@@ -120,8 +121,15 @@ ThemePrefs =
 		IniFile.WriteFile( ThemePrefsPath, PrefsTable )
 	end,
 
+	-- for when you absolutely have to save, no matter what NeedsSaved says.
+	ForceSave = function()
+		if not IniFile then return false end
+		NeedsSaved = false
+		IniFile.WriteFile( ThemePrefsPath, PrefsTable )
+	end,
+
 	Get = function( name )
-		Trace( ("ThemePrefs.Get(%s)"):format(name) )
+		--Trace( ("ThemePrefs.Get(%s)"):format(name) )
 		local tbl = ResolveTable(name)
 		if tbl then return tbl[name] end
 		Warn( "Get: "..GetString("UnknownPreference"):format(name) )
@@ -129,7 +137,7 @@ ThemePrefs =
 	end,
 
 	Set = function( name, value )
-		Trace( ("ThemePrefs.Set(%s, %s)"):format(name, tostring(value)) )
+		--Trace( ("ThemePrefs.Set(%s, %s)"):format(name, tostring(value)) )
 		local tbl = ResolveTable(name)
 		if tbl then tbl[name] = value; NeedsSaved = true; return end
 		Warn( "Set: "..GetString("UnknownPreference"):format(name) )
