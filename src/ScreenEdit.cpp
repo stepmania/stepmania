@@ -534,7 +534,7 @@ static MenuDef g_MainMenu(
 	MenuRowDef( ScreenEdit::edit_song_info,			"Edit song info",		true, EditMode_Full, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::edit_steps_information,		"Edit steps information",	true, EditMode_Practice, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::edit_timing_data,		"Edit Timing Data",		true, EditMode_Full, true, true, 0, NULL ),
-	MenuRowDef( ScreenEdit::view_steps_data,	"View steps data",	true,	EditMode_Practice, true, true, 0, NULL ),
+	MenuRowDef( ScreenEdit::view_steps_data,	"View steps data",	true,	EditMode_Full, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::play_preview_music,		"Play preview music",		true, EditMode_Full, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::exit,				"Exit Edit Mode",		true, EditMode_Practice, true, true, 0, NULL )
 );
