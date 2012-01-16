@@ -214,9 +214,9 @@ bool NetworkSyncManager::Connect( const RString& addy, unsigned short port )
 	LOG->Info( "Beginning to connect" );
 
 	NetPlayerClient->create(); // Initialize Socket
-  LOG->Info( "Calling EzSockets:connect()" );
+	LOG->Info( "Calling EzSockets:connect()" );
 	useSMserver = NetPlayerClient->connect( addy, port );
-  LOG->Info( "Back from ezsockets..." )  
+	LOG->Info( "Back from ezsockets..." );
 	return useSMserver;
 }
 
