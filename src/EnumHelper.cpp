@@ -70,7 +70,12 @@ const RString &EnumToString( int iVal, int iMax, const char **szNameArray, auto_
 	// Maybe we should assert on _Invalid?  It seems better to make 
 	// the caller check that they're supplying a valid enum value instead of 
 	// returning an inconspicuous garbage value (empty string). -Chris
-	ASSERT_M( iVal >= 0 && (iVal < iMax || iVal == iMax+1), ssprintf("%i, %i, (%s)", iVal, iMax, szNameArray[0])  );
+	if (iVal < 0)
+		FAIL_M(ssprintf("Value %i cannot be negative for enums! Enum hint: %s", iVal, szNameArray[0]));
+	if (iVal == iMax)
+		FAIL_M(ssprintf("Value %i cannot be a string with value %i! Enum hint: %s", iVal, iMax, szNameArray[0]));
+	if (iVal > iMax+1)
+		FAIL_M(ssprintf("Value %i is past the invalid value %i! Enum hint: %s", iVal, iMax, szNameArray[0]));
 	return *pNameCache[iVal];
 }
 
