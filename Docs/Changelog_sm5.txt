@@ -19,6 +19,11 @@ StepMania 5.0 alpha 1a | 201201??
 * [ScreenEdit] Fix a floating point issue when dealing with speed segments.
   [Wolfman2000]
 
+2012/01/09
+----------
+* [Song] Fix a bug introduced with "Only read certain tags during first load"
+  where song graphic files wouldn't load. [theDtTvB]
+
 ================================================================================
 StepMania 5.0 alpha 1 | 20120108
 --------------------------------------------------------------------------------
