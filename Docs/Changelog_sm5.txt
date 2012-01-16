@@ -5,12 +5,14 @@ from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
 ================================================================================
-StepMania 5.0 alpha ? | 20120???
+StepMania 5.0 alpha 1a | 201201??
 --------------------------------------------------------------------------------
 
 2012/01/15
 ----------
 * [WheelNotifyIcon] Add the NumIconsToShow metric. [Wolfman2000]
+* [PlayerOptions] Fix a problem with m-mods where you would get m200 as
+  the default speed modifier. [AJ]
 
 2012/01/11
 ----------

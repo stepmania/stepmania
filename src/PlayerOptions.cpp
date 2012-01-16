@@ -61,7 +61,7 @@ void PlayerOptions::Approach( const PlayerOptions& other, float fDeltaSeconds )
 
 	APPROACH( fTimeSpacing );
 	APPROACH( fScrollSpeed );
-	//APPROACH( fMaxScrollBPM );
+	APPROACH( fMaxScrollBPM );
 	fapproach( m_fScrollBPM, other.m_fScrollBPM, fDeltaSeconds * other.m_SpeedfScrollBPM*150 );
 	for( int i=0; i<NUM_ACCELS; i++ )
 		APPROACH( fAccels[i] );
@@ -355,8 +355,11 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 	// XXX: will not properly tween, I don't think.
 	else if( sscanf( sBit, "m%f", &level ) == 1 )
 	{
+		// OpenITG doesn't have this block:
+		/*
 		if( !isfinite(level) || level <= 0.0f )
 			level = 200.0f;
+		*/
 		SET_FLOAT( fMaxScrollBPM )
 		m_fTimeSpacing = 0;
 	}
