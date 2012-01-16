@@ -99,8 +99,6 @@ static RageSurfaceUtils::OpenResult LoadBMP( RageFile &f, RageSurface *&img, RSt
 		Gmask = Swap32LE( 0x0000FF00 );
 		Bmask = Swap32LE( 0x000000FF );
 		break;
-	default:
-		FAIL_M( ssprintf("%iBPP color depth not handled by BMP loader!", iBPP) );
 	}
 
 	if( iCompression == COMP_BI_BITFIELDS )
