@@ -193,7 +193,8 @@ my @files = (
 	# themes
 	"Themes/_fallback",
 	"Themes/_portKit-sm4",
-	"Themes/default"
+	"Themes/default",
+	"Scripts"
 );
 
 ZipFiles( ".", "GameData", \@files );
