@@ -1,8 +1,12 @@
 --[[
-Custom Speed Mods v2.1 (for StepMania 5)
+Custom Speed Mods v2.2 (for StepMania 5)
 by AJ Kelly of KKI Labs ( http://kki.ajworld.net/ )
 
 changelog:
+
+v2.2 (StepMania 5 alpha 2) [by FSX]
+* Rewrite table management code.
+* Add code to make sure that there are speed mods and that they are correct.
 
 v2.1 (StepMania 5 Preview 2)
 * Added support for m-Mods.
@@ -48,20 +52,7 @@ end
 -- Tries to parse the file at path. If successful, returns a table of mods.
 -- If it can't open the file, it will write a fallback set of mods.
 local function ParseSpeedModFile(path)
-	local file = RageFileUtil.CreateRageFile()
-	if file:Open(path, 1) then
-		-- success
-		local contents = file:Read()
-		mods = split(',',contents)
-
-		-- strip any whitespace
-		for i=1,#mods do
-			string.gsub(mods[i], "%s", "")
-		end
-
-		file:destroy()
-		return mods
-	else
+	local function Failure()
 		-- error; write a fallback mod file and return it
 		local fallbackString = "0.5x,1x,1.5x,2x,3x,4x,5x,6x,7x,8x,C250,C450,m550"
 		Trace("[CustomSpeedMods]: Could not read SpeedMods; writing fallback to "..path)
@@ -70,49 +61,46 @@ local function ParseSpeedModFile(path)
 		file:destroy()
 		return split(',',fallbackString)
 	end
-end
-
--- MarkDupes(src,parent)
--- Marks duplicates in src from any matches in parent.
--- the overall mods are usually used as the parent.
-local function MarkDupes(src,parent)
-	for iPar=1,#parent do
-		for iSrc=1,#src do
-			if parent[iPar] == src[iSrc] then
-				src[iSrc] = "XXX"
+	local file = RageFileUtil.CreateRageFile()
+	if file:Open(path, 1) then
+		-- success
+		local contents = file:Read()
+		mods = split(',',contents)
+		
+		-- strip any whitespace and check 
+		for i=1,#mods do
+			string.gsub(mods[i], "%s", "")
+			if not(mods[i]:find("%d+\.?%d*x") or mods[i]:find("[cmCM]%d+")) then
+				mods[i] = nil
 			end
 		end
+		
+		if #mods==0 then return Failure() end
+		
+		file:destroy()
+		return mods
+	else
+		return Failure()
 	end
-	return src
 end
 
--- RemoveMarked(src)
--- Removes any values marked for deletion.
-local function RemoveMarked(src)
-	for iSrc=1,#src do
-		if src[iSrc] == "XXX" then
-			table.remove(src,iSrc)
-		end
+-- InvertTable(tbl)
+-- Returns a table where a key-value pair is swapped.
+local function InvertTable(tbl)
+	local rTable = {}
+	for k,v in pairs(tbl) do
+		rTable[v] = k
 	end
-	return src
+	return rTable
 end
 
 -- MergeTables(parent,child)
--- Adds the child's contents to the parent.
--- the overall mods are usually used as the parent.
-local function MergeTables(parent,child)
-	child = RemoveMarked(child)
-	if #child == 0 then
-		return parent
+-- Puts two tables together, overwriting values
+-- with the same key.
+local function MergeTables(parent, child)
+	for k,v in pairs(parent) do
+		child[k] = v
 	end
-
-	local addMe = true
-	for iC=1,#child do
-		if addMe then
-			table.insert(parent,child[iC])
-		end
-	end
-	return parent
 end
 
 -- code in this function is based off of code in
@@ -187,8 +175,8 @@ local function GetSpeedMods()
 	-- figure out how many players we have to deal with.
 	local numPlayers = GAMESTATE:GetNumPlayersEnabled()
 
-	-- load machine
-	local machineMods = ParseSpeedModFile(profileDirs.Machine..baseFilename)
+	-- load machine to finalMods
+	finalMods = InvertTable(ParseSpeedModFile(profileDirs.Machine..baseFilename))
 
 	local playerMods = {}
 	for pn in ivalues(GAMESTATE:GetHumanPlayers()) do
@@ -200,35 +188,23 @@ local function GetSpeedMods()
 			playerMods[#playerMods+1] = ParseSpeedModFile(profileDirs[pn]..baseFilename)
 		end
 	end
-
-	-- mine for duplicates, first pass
-	machineMods = MarkDupes(machineMods,finalMods)
+	
+	-- join players, overwriting duplicates
 	for ply=1,#playerMods do
-		playerMods[ply] = MarkDupes(playerMods[ply],finalMods)
+		MergeTables(finalMods,InvertTable(playerMods[ply]))
 	end
-	-- remove XXX, first pass
-	machineMods = RemoveMarked(machineMods);
-	for ply=1,#playerMods do
-		playerMods[ply] = RemoveMarked(playerMods[ply])
+	
+	-- convert into an unsorted integer-indexed table
+	do
+		local curIndex = 1
+		local newFinalMods = {}
+		for k,v in pairs(finalMods) do
+			newFinalMods[curIndex] = k
+			curIndex = curIndex + 1
+		end
+		finalMods = newFinalMods
 	end
-	-- mine for duplicates, second pass (machine <-> player)
-	for ply=1,#playerMods do
-		playerMods[ply] = MarkDupes(playerMods[ply],machineMods)
-	end
-	-- remove XXX, second pass
-	machineMods = RemoveMarked(machineMods)
-	for ply=1,#playerMods do
-		playerMods[ply] = RemoveMarked(playerMods[ply])
-	end
-
-	-- merge zone
-	finalMods = MergeTables(finalMods,machineMods)
-	for ply=1,#playerMods do
-		finalMods = MergeTables(finalMods,playerMods[ply])
-	end
-
-	-- final removal of XXX before sorting
-	finalMods = RemoveMarked(finalMods)
+	
 	-- sort the mods before returning them
 	return SpeedModSort(finalMods)
 end
