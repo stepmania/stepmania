@@ -70,7 +70,7 @@ local function ParseSpeedModFile(path)
 		-- strip any whitespace and check 
 		for i=1,#mods do
 			string.gsub(mods[i], "%s", "")
-			if not(mods[i]:find("%d+\.?%d*x") or mods[i]:find("[cmCM]%d+")) then
+			if not(mods[i]:find("%d+.?%d*[xX]") or mods[i]:find("[cmCM]%d+")) then
 				mods[i] = nil
 			end
 		end
@@ -101,6 +101,7 @@ local function MergeTables(parent, child)
 	for k,v in pairs(parent) do
 		child[k] = v
 	end
+	return child
 end
 
 -- code in this function is based off of code in
@@ -191,7 +192,7 @@ local function GetSpeedMods()
 	
 	-- join players, overwriting duplicates
 	for ply=1,#playerMods do
-		MergeTables(finalMods,InvertTable(playerMods[ply]))
+		finalMods=MergeTables(finalMods,InvertTable(playerMods[ply]))
 	end
 	
 	-- convert into an unsorted integer-indexed table
