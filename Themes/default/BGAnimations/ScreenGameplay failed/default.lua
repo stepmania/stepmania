@@ -1,4 +1,4 @@
-local longFail = GetUserPrefB("UserPrefLongFail");
+local longFail = ThemePrefs.Get("LongFail");
 
 local t = Def.ActorFrame{};
 

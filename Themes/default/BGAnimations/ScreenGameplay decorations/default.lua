@@ -1,3 +1,5 @@
+local maxSegments = 150
+
 local function CreateSegments(Player)
 	local t = Def.ActorFrame { };
 	local bars = Def.ActorFrame{ };
@@ -35,6 +37,12 @@ local function CreateSegments(Player)
 				local fakes = timingData:GetFakes();
 				local scrolls = timingData:GetScrolls();
 				local speeds = timingData:GetSpeeds();
+
+				-- we don't want too many segments to be shown.
+				local sumSegments = #bpms + #stops + #delays + #warps + #fakes + #scrolls + #speeds
+				if sumSegments > maxSegments then
+					return Def.ActorFrame{}
+				end
 
 				local function CreateLine(beat, secs, firstShadow, firstDiffuse, secondShadow, firstEffect, secondEffect)
 					local beatTime = timingData:GetElapsedTimeFromBeat(beat);
@@ -84,7 +92,7 @@ local function CreateSegments(Player)
 					};
 				end;
 
-				for i=1,#bpms do
+				for i=2,#bpms do
 					local data = split("=",bpms[i]);
 					bpmFrame[#bpmFrame+1] = CreateLine(data[1], 0,
 						"#00808077", "#00808077", "#00808077", "#FF634777", "#FF000077");
@@ -176,7 +184,7 @@ for pn in ivalues(PlayerNumber) do
 			Tip=LoadActor( THEME:GetPathG( 'SongMeterDisplay', 'tip ' .. PlayerNumberToString(pn) ) ) .. { InitCommand=cmd(visible,false); };
 		};
 	};
-  if GetUserPrefB("UserPrefTimingDisplay") == true then
+  if ThemePrefs.Get("TimingDisplay") == true then
 		songMeterDisplay[#songMeterDisplay+1] = CreateSegments(pn);
 	end
 	t[#t+1] = songMeterDisplay
@@ -198,10 +206,10 @@ t[#t+1] = StandardDecorationFromFileOptional("StageDisplay","StageDisplay");
 t[#t+1] = StandardDecorationFromFileOptional("SongTitle","SongTitle");
 t[#t+1] = Def.ActorFrame {
 	InitCommand=cmd(x,SCREEN_RIGHT;y,SCREEN_BOTTOM;draworder,5);
-	LoadActor("_whatsup") .. {
+--[[ 	LoadActor("_whatsup") .. {
 		InitCommand=cmd(horizalign,left;vertalign,top);
 		ToastyMessageCommand=cmd(smooth,3;x,-256;y,-200;sleep,2;smooth,3;x,256;y,200)
-	};
+	}; ]]
 };
 if( not GAMESTATE:IsCourseMode() ) then
 t[#t+1] = Def.Actor{

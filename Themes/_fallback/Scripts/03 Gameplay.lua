@@ -3,10 +3,13 @@
 -- game mode.
 
 -- shakesoda calls this pump.lua
+local function CurGameName()
+	return GAMESTATE:GetCurrentGame():GetName()
+end
 
 -- Check the active game mode against a string. Cut down typing this in metrics.
 function IsGame(str)
-	if GAMESTATE:GetCurrentGame():GetName() == str then
+	if CurGameName() == str then
 		return true
 	end
 	return false
@@ -16,7 +19,6 @@ end
 -- [en] returns the difficulty threshold in meter
 -- for songs that should be counted as boss songs.
 function GetExtraColorThreshold()
-	sGame = GAMESTATE:GetCurrentGame():GetName()
 	local Modes = {
 		dance = 10,
 		pump = 21,
@@ -26,13 +28,12 @@ function GetExtraColorThreshold()
 		techno = 10,
 		lights = 10, -- lights shouldn't be playable
 	}
-	return Modes[sGame]
+	return Modes[CurGameName()]
 end
 
 -- GameCompatibleModes:
 -- [en] returns possible modes for ScreenSelectPlayMode
 function GameCompatibleModes()
-	sGame = GAMESTATE:GetCurrentGame():GetName()
 	local Modes = {
 		dance = "Single,Double,Solo,Versus,Couple",
 		pump = "Single,Double,HalfDouble,Versus,Couple,Routine",
@@ -42,11 +43,11 @@ function GameCompatibleModes()
 		techno = "Single4,Single5,Single8,Double4,Double8",
 		lights = "Single" -- lights shouldn't be playable
 	}
-	return Modes[sGame]
+	return Modes[CurGameName()]
 end
 
 function SelectProfileKeys()
-	local sGame = GAMESTATE:GetCurrentGame():GetName()	
+	local sGame = CurGameName()
 	if sGame == "pump" then
 		return "Up,Down,Start,Back,Center,DownLeft,DownRight"
 	elseif sGame == "dance" then
@@ -71,7 +72,6 @@ end
 -- ComboContinue:
 -- [en] 
 function ComboContinue()
-	sGame = GAMESTATE:GetCurrentGame():GetName()
 	local Continue = {
 		dance = GAMESTATE:GetPlayMode() == "PlayMode_Oni" and "TapNoteScore_W2" or "TapNoteScore_W3",
 		pump = "TapNoteScore_W3",
@@ -79,11 +79,10 @@ function ComboContinue()
 		kb7 = "TapNoteScore_W3",
 		para = "TapNoteScore_W4"
 	}
-	return Continue[sGame]
+	return Continue[CurGameName()]
 end
 
 function ComboMaintain()
-	sGame = GAMESTATE:GetCurrentGame():GetName()
 	local Maintain = {
 		dance = "TapNoteScore_W3",
 		pump = "TapNoteScore_W4",
@@ -91,11 +90,11 @@ function ComboMaintain()
 		kb7 = "TapNoteScore_W3",
 		para = "TapNoteScore_W4"
 	}
-	return Maintain[sGame]
+	return Maintain[CurGameName()]
 end
 
 function ComboPerRow()
-	sGame = GAMESTATE:GetCurrentGame():GetName()
+	sGame = CurGameName()
 	if sGame == "pump" then
 		return true
 	elseif GAMESTATE:GetPlayMode() == "PlayMode_Oni" then
@@ -106,70 +105,63 @@ function ComboPerRow()
 end
 
 function EvalUsesCheckpointsWithJudgments()
-	return (GAMESTATE:GetCurrentGame():GetName() == "pump") and true or false
+	return (CurGameName() == "pump") and true or false
 end
 
--- these need cleanup really.
+local ComboThresholds = {
+	dance	= { Hit = 2, Miss = 2, Fail = -1 },
+	pump	= { Hit = 4, Miss = 4, Fail = 51 },
+	beat	= { Hit = 1, Miss = 0, Fail = -1 },
+	kb7		= { Hit = 1, Miss = 0, Fail = -1 },
+	para	= { Hit = 2, Miss = 0, Fail = -1 },
+	-------------------------------------------
+	default	= { Hit = 2, Miss = 2, Fail = -1 }
+}
+
 function HitCombo()
-	sGame = GAMESTATE:GetCurrentGame():GetName()
-	local Combo = {
-		dance = 2,
-		pump = 4,
-		beat = 2,
-		kb7 = 2,
-		para = 2
-	}
-	return Combo[sGame]
+	if ComboThresholds[CurGameName()] then
+		return ComboThresholds[CurGameName()].Hit
+	end
+	return ComboThresholds["default"].Hit
 end
 
 function MissCombo()
-	sGame = GAMESTATE:GetCurrentGame():GetName()
-	local Combo = {
-		dance = 2,
-		pump = 4,
-		beat = 0,
-		kb7 = 0,
-		para = 0
-	}
-	return Combo[sGame]
+	if ComboThresholds[CurGameName()] then
+		return ComboThresholds[CurGameName()].Miss
+	end
+	return ComboThresholds["default"].Miss
 end
 
 -- FailCombo:
 -- [en] The combo that causes game failure.
 function FailCombo()
-	sGame = GAMESTATE:GetCurrentGame():GetName()
-	local Combo = {
-		dance = -1, -- ITG uses 30
-		pump = 51, -- Pump Pro uses 30, real Pump uses 51
-		beat = -1,
-		kb7 = -1,
-		para = -1
-	}
-	return Combo[sGame]
+	-- ITG (dance) uses 30. Pump Pro uses 30, real Pump uses 51
+	if ComboThresholds[CurGameName()] then
+		return ComboThresholds[CurGameName()].Fail
+	end
+	return ComboThresholds["default"].Fail
 end
 
+local RoutineSkins = {
+	dance	= { P1 = "midi-routine-p1", P2 = "midi-routine-p1" },
+	pump	= { P1 = "cmd-routine-p1", P2 = "cmd-routine-p2" },
+	kb7		= { P1 = "default", P2 = "retrobar" },
+	-------------------------------------------------------------
+	default	= { P1 = "default", P2 = "default" }
+}
+
 function RoutineSkinP1()
-	sGame = GAMESTATE:GetCurrentGame():GetName()
-	local Combo = {
-		dance = "midi-routine-p1",
-		pump = "cmd-routine-p1",
-		beat = "default",
-		kb7 = "default",
-		para = "default"
-	}
-	return Combo[sGame]
+	if RoutineSkins[CurGameName()] then
+		return RoutineSkins[CurGameName()].P1
+	end
+	return RoutineSkins["Default"].P1
 end
 
 function RoutineSkinP2()
-	sGame = GAMESTATE:GetCurrentGame():GetName()
-	local Combo = {
-		dance = "midi-routine-p2",
-		pump = "cmd-routine-p2",
-		beat = "default",
-		kb7 = "retrobar",
-		para = "default"
-	}
-	return Combo[sGame]
+	if RoutineSkins[CurGameName()] then
+		return RoutineSkins[CurGameName()].P2
+	end
+	return RoutineSkins["Default"].P2
 end
 
 -- todo: use tables for some of these -aj
@@ -179,26 +171,6 @@ end
 
 function ShowHoldJudgments()
 	return not IsGame("pump")
-end
-
-local tNotePositions = {
-	-- StepMania 3.9/4.0
-	Normal = { -144, 144, },
-	-- ITG
-	Lower = { -125, 145, }
-}
-
-function GetTapPosition( sType )
-	bCategory = (sType == 'Standard') and 1 or 2
-	-- true: Normal
-	-- false: Lower
-	bPreference = GetUserPrefB("UserPrefNotePosition") and "Normal" or "Lower"
-	tNotePos = tNotePositions[bPreference]
-	return tNotePos[bCategory]
-end
-
-function ComboUnderField()
-	return GetUserPrefB("UserPrefComboUnderField")
 end
 
 local CodeDetectorCodes = {
@@ -362,7 +334,7 @@ local CodeDetectorCodes = {
 };
 
 function GetCodeForGame(codeName)
-	local gameName = string.lower(GAMESTATE:GetCurrentGame():GetName())
+	local gameName = string.lower(CurGameName())
 	local inputCode = CodeDetectorCodes[codeName]
 	return inputCode[gameName] or inputCode["default"]
 end

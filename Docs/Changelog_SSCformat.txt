@@ -9,6 +9,12 @@ change to JSON, but it is unsure if this will be done.
 Implement .ssc at your own risk.
 _______________________________________________________________________________
 
+[v0.82] - cerbo
+* add #PREVIEWVID tag. (to load the preview video, like #PREVIEW tag in .sma)
+
+[v0.81] - freem
+* add #JACKET, #CDIMAGE, and #DISCIMAGE tags. (similar to #BANNER, etc.)
+
 [v0.80] - Wolfman2000
 * All timing tags are allowed regardless of timing.
 

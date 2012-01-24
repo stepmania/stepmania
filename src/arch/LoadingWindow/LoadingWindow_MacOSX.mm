@@ -24,9 +24,10 @@
 	NSSize size = [image size];
 	NSRect viewRect, windowRect;
 	float height = 0.0f;
+	float padding = 5.0f;
 	
 	NSRect progressIndicatorRect;
-	progressIndicatorRect = NSMakeRect(0, 0, size.width, 0);
+	progressIndicatorRect = NSMakeRect(padding, padding, size.width-padding*2.0f, 0);
 	m_ProgressIndicator = [[NSProgressIndicator alloc] initWithFrame:progressIndicatorRect];
 	[m_ProgressIndicator sizeToFit];
 	[m_ProgressIndicator setIndeterminate:YES];
@@ -39,28 +40,28 @@
 	NSFont *font = [NSFont systemFontOfSize:0.0f];
 	NSRect textRect;
 	// Just give it a size until it is created.
-	textRect = NSMakeRect( 0, progressHeight, size.width, size.height );
+	textRect = NSMakeRect( 0, progressHeight + padding, size.width, size.height );
 	m_Text = [[NSTextView alloc] initWithFrame:textRect];
 	[m_Text setFont:font];
 	height = [[m_Text layoutManager] defaultLineHeightForFont:font]*3 + 4;
-	textRect = NSMakeRect( 0, progressHeight, size.width, height );
+	textRect = NSMakeRect( 0, progressHeight + padding, size.width, height );
 	
 	[m_Text setFrame:textRect];
 	[m_Text setEditable:NO];
 	[m_Text setSelectable:NO];
-	[m_Text setDrawsBackground:YES];
+	[m_Text setDrawsBackground:NO];
 	[m_Text setBackgroundColor:[NSColor lightGrayColor]];
 	[m_Text setAlignment:NSCenterTextAlignment];
 	[m_Text setHorizontallyResizable:NO];
 	[m_Text setVerticallyResizable:NO];
 	[m_Text setString:@"Initializing Hardware..."];
 	
-	viewRect = NSMakeRect( 0, height + progressHeight, size.width, size.height );
+	viewRect = NSMakeRect( 0, height + progressHeight + padding, size.width, size.height );
 	NSImageView *iView = [[NSImageView alloc] initWithFrame:viewRect];
 	[iView setImage:image];
 	[iView setImageFrameStyle:NSImageFrameNone];
 	
-	windowRect = NSMakeRect( 0, 0, size.width, size.height + height + progressHeight);
+	windowRect = NSMakeRect( 0, 0, size.width, size.height + height + progressHeight + padding);
 	m_Window = [[NSWindow alloc] initWithContentRect:windowRect
 							styleMask:NSTitledWindowMask
 							backing:NSBackingStoreBuffered

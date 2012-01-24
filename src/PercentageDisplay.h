@@ -28,7 +28,6 @@ public:
 private:
 	int m_iDancePointsDigits;
 	bool m_bUseRemainder;
-	bool m_bApplyScoreDisplayOptions;
 
 	void Refresh();
 	const PlayerState *m_pPlayerState;
@@ -38,6 +37,8 @@ private:
 	int m_LastMax;
 	BitmapText	m_textPercent;
 	BitmapText	m_textPercentRemainder;
+	RString m_sPercentFormat;
+	RString m_sRemainderFormat;
 
 	LuaReference m_FormatPercentScore;
 };

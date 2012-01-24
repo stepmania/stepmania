@@ -5,8 +5,74 @@ from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
 ================================================================================
-StepMania 5.0 $next | 20111xxx
+StepMania 5.0 alpha 1a | 201201??
 --------------------------------------------------------------------------------
+
+2012/01/15
+----------
+* [WheelNotifyIcon] Add the NumIconsToShow metric. [Wolfman2000]
+* [PlayerOptions] Fix a problem with m-mods where you would get m200 as
+  the default speed modifier. [AJ]
+
+2012/01/11
+----------
+* [ScreenEdit] Fix a floating point issue when dealing with speed segments.
+  [Wolfman2000]
+
+2012/01/09
+----------
+* [Song] Fix a bug introduced with "Only read certain tags during first load"
+  where song graphic files wouldn't load. [theDtTvB]
+
+================================================================================
+StepMania 5.0 alpha 1 | 20120108
+--------------------------------------------------------------------------------
+
+2012/01/08
+----------
+* [Song] Add HasPreviewVid and GetPreviewVidPath lua binding [cerbo]
+
+2012/01/08
+----------
+* [ScreenManager] Made AddScreenToTop take a second (optional) parameter for
+  posting a ScreenMessage on screen pop. [AJ]
+* Only read certain tags during first load; makes song loading faster. [theDtTvB]
+  
+2012/01/07
+----------
+* Fix Portable.ini not working on Mac OS X. [shakesoda]
+
+2012/01/05
+----------
+* [PercentageDisplay] Remove unused ApplyScoreDisplayOptions metric;
+  added PercentFormat and RemainderFormat metrics. [AJ]
+* Fix Portable.ini not working in Linux. [FSX]
+
+2012/01/04
+----------
+* Fix a scoring/grading bug with Lifts. [FSX]
+
+2011/12/27
+----------
+* [MusicWheel] Add IsRouletting Lua binding. [AJ]
+* [LuaManager] Remove GetOSName Lua binding; use GetArchName instead. [AJ]
+
+2011/12/26
+----------
+* [ArchHooks_OSX] Worked around a crash when language detection goes wrong.
+  Note: a real fix should be looked into. [shakesoda]
+
+2011/12/23
+----------
+* [Song] Fixed a bug where a sample start of 0 wouldn't work. [AJ]
+* [Game] Added CountNotesSeparately and GetMapJudgmentTo(TapNoteScore)
+  Lua bindings. [AJ]
+* [StepMania.cpp] Fix initial aspect ratio on first boot, hopefully.
+  (See issues 6 and 27) [AJ]
+
+2011/12/22
+----------
+* [LuaManager] Added ProductFamily() Lua binding. [AJ]
 
 2011/12/17
 ----------

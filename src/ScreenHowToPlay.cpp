@@ -145,14 +145,16 @@ void ScreenHowToPlay::Init()
 
 		const Style* pStyle = GAMESTATE->GetCurrentStyle();
 
-		Steps *pSteps = SongUtil::GetStepsByDescription( &m_Song, pStyle->m_StepsType, "" );
+		Steps *pSteps = SongUtil::GetClosestNotes( &m_Song, pStyle->m_StepsType, Difficulty_Beginner );
 		ASSERT_M( pSteps != NULL, ssprintf("No playable steps of StepsType '%s' for ScreenHowToPlay", StringConversion::ToString(pStyle->m_StepsType).c_str()) );
 
+		pSteps->m_Timing.TidyUpData();
 		NoteData tempNoteData;
 		pSteps->GetNoteData( tempNoteData );
 		pStyle->GetTransformedNoteDataForStyle( PLAYER_1, tempNoteData, m_NoteData );
 
 		GAMESTATE->m_pCurSong.Set( &m_Song );
+		GAMESTATE->m_pCurSteps[PLAYER_1].Set(pSteps);
 		GAMESTATE->m_bGameplayLeadIn.Set( false );
 		GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerController = PC_AUTOPLAY;
 

@@ -12,7 +12,7 @@ local NumberMaxZoomAt = THEME:GetMetric("Combo", "NumberMaxZoomAt");
 local LabelMinZoom = THEME:GetMetric("Combo", "LabelMinZoom");
 local LabelMaxZoom = THEME:GetMetric("Combo", "LabelMaxZoom");
 
-local ShowFlashyCombo = GetUserPrefB("UserPrefFlashyCombo")
+local ShowFlashyCombo = ThemePrefs.Get("FlashyCombo")
 
 local t = Def.ActorFrame {
 	InitCommand=cmd(vertalign,bottom);
@@ -58,7 +58,7 @@ local t = Def.ActorFrame {
 		end; --]]
  	TwentyFiveMilestoneCommand=function(self,parent)
 		if ShowFlashyCombo then
-			(cmd(skewy,-0.125;decelerate,0.325;skewy,0))(self);
+			(cmd(finishtweening;addy,-4;bounceend,0.125;addy,4))(self);
 		end;
 	end;
 	--]]
@@ -101,21 +101,29 @@ local t = Def.ActorFrame {
 		cf.Number:visible(true);
 		cf.Label:visible(true);
 		cf.Number:settext( string.format("%i", iCombo) );
+        cf.Number:textglowmode("TextGlowMode_Stroke");
 		-- FullCombo Rewards
 		if param.FullComboW1 then
 			cf.Number:diffuse( GameColor.Judgment["JudgmentLine_W1"] );
+			cf.Number:strokecolor( GameColor.Judgment["JudgmentLine_W1"] );
+            cf.Number:textglowmode("TextGlowMode_Stroke");
 			cf.Number:glowshift();
 		elseif param.FullComboW2 then
 			cf.Number:diffuse( GameColor.Judgment["JudgmentLine_W2"] );
+			cf.Number:strokecolor( GameColor.Judgment["JudgmentLine_W2"] );
+            cf.Number:textglowmode("TextGlowMode_Stroke");
 			cf.Number:glowshift();
 		elseif param.FullComboW3 then
 			cf.Number:diffuse( GameColor.Judgment["JudgmentLine_W3"] );
-			cf.Number:stopeffect();
+			cf.Number:strokecolor( GameColor.Judgment["JudgmentLine_W3"] );
+            cf.Number:textglowmode("TextGlowMode_Stroke");
+			cf.Number:glowshift();
 		elseif param.Combo then
 			-- Player 1's color is Red, which conflicts with the miss combo.
 			-- instead, just diffuse to white for now. -aj
 			--c.Number:diffuse(PlayerColor(player));
 			cf.Number:diffuse(Color("White"));
+			cf.Number:strokecolor(Color("Stealth"));
 			cf.Number:stopeffect();
 			(cmd(diffuse,Color("White");diffusebottomedge,color("0.5,0.5,0.5,1")))(cf.Label);
 		else

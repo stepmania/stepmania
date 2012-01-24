@@ -70,7 +70,6 @@
 static ThemeMetric<float> INITIAL_BACKGROUND_BRIGHTNESS	("ScreenGameplay","InitialBackgroundBrightness");
 static ThemeMetric<float> SECONDS_BETWEEN_COMMENTS	("ScreenGameplay","SecondsBetweenComments");
 static ThemeMetric<RString> SCORE_KEEPER_CLASS		("ScreenGameplay","ScoreKeeperClass");
-static ThemeMetric<bool> SURVIVAL_MOD_OVERRIDE ("ScreenGameplay","SurvivalModOverride");
 
 AutoScreenMessage( SM_PlayGo );
 
@@ -348,6 +347,7 @@ void ScreenGameplay::Init()
 	ALLOW_CENTER_1_PLAYER.Load(		m_sName, "AllowCenter1Player" );
 	// configurable:
 	UNPAUSE_WITH_START.Load(		m_sName, "UnpauseWithStart");
+	SURVIVAL_MOD_OVERRIDE.Load(m_sName, "SurvivalModOverride");
 
 	if( UseSongBackgroundAndForeground() )
 	{

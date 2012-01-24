@@ -282,6 +282,9 @@ RString GetInfoLog( GLhandleARB h )
 
 GLhandleARB CompileShader( GLenum ShaderType, RString sFile, vector<RString> asDefines )
 {
+	if (!glewIsSupported("GL_ARB_fragment_shader"))
+		return 0;
+
 	RString sBuffer;
 	{
 		RageFile file;
@@ -1661,7 +1664,7 @@ void RageDisplay_Legacy::SetTextureFiltering( TextureUnit tu, bool b )
 
 void RageDisplay_Legacy::SetEffectMode( EffectMode effect )
 {
-	if (!GLEW_ARB_fragment_program && !GLEW_ARB_shading_language_100)
+	if (!GLEW_ARB_fragment_program || !GLEW_ARB_shading_language_100 || !GLEW_ARB_shader_objects)
 		return;
 
 	GLhandleARB hShader = 0;

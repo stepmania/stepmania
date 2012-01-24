@@ -42,7 +42,7 @@
 
 	; don't forget to change this before releasing a new verson.
 	; wish this could be automated, but it requires "X.Y.Z.a" format. -aj
-	VIProductVersion "5.0.0.3"
+	VIProductVersion "5.0.0.5"
 	VIAddVersionKey "ProductName" "${PRODUCT_ID}"
 	VIAddVersionKey "FileVersion" "${PRODUCT_VER}"
 	VIAddVersionKey "FileDescription" "${PRODUCT_ID} Installer"
@@ -210,7 +210,7 @@ Section "Main Section" SecMain
 	WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_ID}" "DisplayVersion" "$(PRODUCT_VER)"
 	WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_ID}" "Comments" "StepMania 5 is a rhythm game simulator."
 	WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_ID}" "Publisher" "StepMania Team"
-	WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_ID}" "URLInfoAbout" "http://code.google.com/p/sm-ssc/"
+	WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_ID}" "URLInfoAbout" "http://www.stepmania.com/"
 	WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_ID}" "URLUpdateInfo" "http://code.google.com/p/sm-ssc/"
 	WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_ID}" "UninstallString" '"$INSTDIR\uninstall.exe"'
 !endif
@@ -285,6 +285,7 @@ Section "Main Section" SecMain
 
 	; remove old noteskins
 	RMDir /r "$INSTDIR\NoteSkins\common\default"
+	RMDir /r "$INSTDIR\NoteSkins\common\_Editor"
 	; dance
 	RMDir /r "$INSTDIR\NoteSkins\dance\default"
 	RMDir /r "$INSTDIR\NoteSkins\dance\Delta"
@@ -295,8 +296,13 @@ Section "Main Section" SecMain
 	RMDir /r "$INSTDIR\NoteSkins\dance\midi-note-3d"
 	RMDir /r "$INSTDIR\NoteSkins\dance\midi-solo"
 	RMDir /r "$INSTDIR\NoteSkins\dance\midi-vivid"
+	RMDir /r "$INSTDIR\NoteSkins\dance\midi-vivid-3d"
+	; old names
 	RMDir /r "$INSTDIR\NoteSkins\dance\midi-rhythm-p1"
 	RMDir /r "$INSTDIR\NoteSkins\dance\midi-rhythm-p2"
+	; new names
+	RMDir /r "$INSTDIR\NoteSkins\dance\midi-routine-p1"
+	RMDir /r "$INSTDIR\NoteSkins\dance\midi-routine-p2"
 	; retro, retrobar.
 	RMDir /r "$INSTDIR\NoteSkins\dance\retro"
 	RMDir /r "$INSTDIR\NoteSkins\dance\retrobar"
@@ -333,6 +339,7 @@ Section "Main Section" SecMain
 	; common noteskin
 	SetOutPath "$INSTDIR\NoteSkins\common"
 	File /r /x CVS /x .svn "NoteSkins\common\common"
+	File /r /x CVS /x .svn "NoteSkins\common\_Editor"
 
 	; install dance noteskins
 	SetOutPath "$INSTDIR\NoteSkins\dance"
@@ -345,6 +352,7 @@ Section "Main Section" SecMain
 	File /r /x CVS /x .svn "NoteSkins\dance\midi-routine-p2"
 	File /r /x CVS /x .svn "NoteSkins\dance\midi-solo"
 	File /r /x CVS /x .svn "NoteSkins\dance\midi-vivid"
+	File /r /x CVS /x .svn "NoteSkins\dance\midi-vivid-3d"
 	; retro and retrobar
 	File /r /x CVS /x .svn "NoteSkins\dance\retro"
 	File /r /x CVS /x .svn "NoteSkins\dance\retrobar"
@@ -399,7 +407,8 @@ Section "Main Section" SecMain
 	SetOutPath "$INSTDIR\Themes"
 	;File "Themes\instructions.txt"
 	File /r /x CVS /x .svn "Themes\_fallback"
-	File /r /x CVS /x .svn "Themes\_portKit-sm4"
+	; no more portkit sm4
+	;File /r /x CVS /x .svn "Themes\_portKit-sm4"
 	File /r /x CVS /x .svn "Themes\default"
 
 	CreateDirectory "$INSTDIR\Data"
@@ -475,33 +484,33 @@ Section "Main Section" SecMain
 
 	; Create Start Menu icons
 	SetShellVarContext current  # 	'all' doesn't work on Win9x
-	CreateDirectory '"$SMPROGRAMS\${PRODUCT_ID}\"'
+	CreateDirectory "$SMPROGRAMS\${PRODUCT_ID}\"
 	; todo: make desktop shortcut an option
 	!ifdef MAKE_DESKTOP_SHORTCUT
 		CreateShortCut "$DESKTOP\$(TEXT_IO_RUN).lnk" "$INSTDIR\Program\StepMania-SSE2.exe"
 	!endif
 
-	CreateShortCut '"$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_RUN).lnk"' "$INSTDIR\Program\StepMania-SSE2.exe"
-	CreateShortCut '"$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_RUN_WITHOUT_SSE2).lnk"' "$INSTDIR\Program\StepMania.exe"
+	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_RUN).lnk" "$INSTDIR\Program\StepMania-SSE2.exe"
+	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_RUN_WITHOUT_SSE2).lnk" "$INSTDIR\Program\StepMania.exe"
 
 	!ifdef MAKE_OPEN_PROGRAM_FOLDER_SHORTCUT
-		CreateShortCut '"$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_OPEN_PROGRAM_FOLDER).lnk"' "$WINDIR\explorer.exe" "$INSTDIR\"
+		CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_OPEN_PROGRAM_FOLDER).lnk" "$WINDIR\explorer.exe" "$INSTDIR\"
 	!endif
 	!ifdef MAKE_OPEN_SETTINGS_FOLDER_SHORTCUT
-		CreateShortCut '"$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_OPEN_SETTINGS_FOLDER).lnk"' "$WINDIR\explorer.exe" '"$APPDATA\${PRODUCT_ID}"'
+		CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_OPEN_SETTINGS_FOLDER).lnk" "$WINDIR\explorer.exe" "$APPDATA\${PRODUCT_ID}"
 	!endif
 
-	;CreateShortCut '"$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_VIEW_STATISTICS).lnk"' "$INSTDIR\Program\tools.exe" "--machine-profile-stats"
-	;CreateShortCut '"$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_TOOLS).lnk"' "$INSTDIR\Program\tools.exe"
-	CreateShortCut '"$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_MANUAL).lnk"' "$INSTDIR\Manual\index.html"
-	CreateShortCut '"$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_UNINSTALL).lnk"' "$INSTDIR\uninstall.exe"
-	CreateShortCut '"$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_WEB_SITE).lnk"' "${PRODUCT_URL}"
-	CreateShortCut '"$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_TEXTURE_FONT_GENERATOR).lnk" '"$INSTDIR\Program\Texture Font Generator.exe"''
+	;CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_VIEW_STATISTICS).lnk" "$INSTDIR\Program\tools.exe" "--machine-profile-stats"
+	;CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_TOOLS).lnk" "$INSTDIR\Program\tools.exe"
+	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_MANUAL).lnk" "$INSTDIR\Manual\index.html"
+	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_UNINSTALL).lnk" "$INSTDIR\uninstall.exe"
+	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_WEB_SITE).lnk" "${PRODUCT_URL}"
+	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_TEXTURE_FONT_GENERATOR).lnk" "$INSTDIR\Program\Texture Font Generator.exe"
 	!ifdef MAKE_UPDATES_SHORTCUT
-		CreateShortCut '"$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_CHECK_FOR_UPDATES).lnk"' "${UPDATES_URL}"
+		CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_CHECK_FOR_UPDATES).lnk" "${UPDATES_URL}"
 	!endif
-	CreateShortCut '"$INSTDIR\${PRODUCT_ID}.lnk"' "$INSTDIR\Program\StepMania-SSE2.exe"
-	CreateShortCut '"$INSTDIR\${PRODUCT_ID} (non-SSE2).lnk"' "$INSTDIR\Program\StepMania.exe"
+	CreateShortCut "$INSTDIR\${PRODUCT_ID}.lnk" "$INSTDIR\Program\StepMania-SSE2.exe"
+	CreateShortCut "$INSTDIR\${PRODUCT_ID} (non-SSE2).lnk" "$INSTDIR\Program\StepMania.exe"
 !endif
 
 	IfErrors do_error do_no_error

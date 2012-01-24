@@ -152,6 +152,7 @@ my @files = (
 	"Data",
 	"NoteSkins/beat/default",
 	"NoteSkins/common/common",
+	"NoteSkins/common/_Editor",
 	# dance noteskins
 	"NoteSkins/dance/default",
 	"NoteSkins/dance/Delta",
@@ -192,7 +193,8 @@ my @files = (
 	# themes
 	"Themes/_fallback",
 	"Themes/_portKit-sm4",
-	"Themes/default"
+	"Themes/default",
+	"Scripts"
 );
 
 ZipFiles( ".", "GameData", \@files );

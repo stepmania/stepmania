@@ -16,10 +16,7 @@ function GetTotalItems(radars)
 
 	-- [en] prevent divide by 0
 	-- [ja] 0除算対策（しなくても動作するけど満点になっちゃうんで）
-	if total <= 0 then
-		total = 1
-	end;
-	return total
+	return math.max(1,total);
 end;
 
 -- Determine whether marvelous timing is to be considered.
@@ -76,8 +73,10 @@ r['DDR Extreme'] = function(params, pss)
 	local sTotal = (totalItems + 1) * totalItems / 2;
 	local meter = steps:GetMeter();
 	if (steps:IsAnEdit()) then
-    meter = 5; end;
-    meter = math.min(10,meter);
+		meter = 5;
+	else
+		meter = math.min(10,meter);
+	end;
 	-- [en] score for one step
 	-- [ja] 1ステップあたりのスコア
 	local baseScore = meter * 1000000

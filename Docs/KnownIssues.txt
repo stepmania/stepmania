@@ -23,3 +23,18 @@ The following is a list of known issues with StepMania 5.
 * C-Mods have not been fully tested with all of the new segments yet.
 * Split Timing needs adjustments with only one chart in place.
 ** Either that, or all tags must be allowable in song timing.
+* Language detection fails for Czech and possibly other things on OS X
+  (non-fatally, now)
+* Japanese font maps are too large and get resized on load to something
+  manageable. They should be cut into thirds vertically.
+** This makes debug builds in particular load very slowly, and reduces
+   quality.
+* The editor sometimes keeps playing music and won't scroll.
+* FFMPEG ruins our lives. I suspect init problems for Linux, since it
+  works perfectly fine seemingly at random. Unsure for other platforms.
+* VBR MP3's don't seek correctly in the editor, which botches sync.
+* Strange TimingData-related crashes happen, particularly in ScreenHowToPlay.
+* There is no make install target for linux systems - this is important for
+  packaging purposes in particular (it would be great to release .debs!)
+* Portable.ini support is not implemented for Linux.
+* LuaDriver works well, but without threading it has latency issues.
