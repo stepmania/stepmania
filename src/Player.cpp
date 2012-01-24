@@ -2236,7 +2236,6 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 				   m_Timing->IsJudgableAtRow)
 					score = TNS_HitMine;   
 				break;
-
 			case TapNote::attack:
 				if( !bRelease && fSecondsFromExact <= GetWindowSeconds(TW_Attack) && !pTN->result.bHidden )
 					score = TNS_W2; // sentinel
