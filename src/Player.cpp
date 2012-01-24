@@ -3348,6 +3348,10 @@ void Player::SetMineJudgment( TapNoteScore tns )
 		msg.SetParam( "Player", m_pPlayerState->m_PlayerNumber );
 		msg.SetParam( "TapNoteScore", tns );
 		MESSAGEMAN->Broadcast( msg );
+		if( m_pPlayerStageStats )
+		{
+			SetCombo( m_pPlayerStageStats->m_iCurCombo, m_pPlayerStageStats->m_iCurMissCombo );
+		}
 	}
 }
 
