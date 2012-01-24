@@ -2834,8 +2834,10 @@ void Player::UpdateJudgedRows()
 				bAllJudged = false;
 				continue;
 			case TNS_AvoidMine:
+				SetMineJudgment( tn.result.tns );
 				continue;
 			case TNS_HitMine:
+				SetMineJudgment( tn.result.tns );
 				break;
 			}
 			if( m_pNoteField )
@@ -3337,6 +3339,17 @@ void Player::CacheAllUsedNoteSkins()
 {
 	if( m_pNoteField )
 		m_pNoteField->CacheAllUsedNoteSkins();
+}
+
+void Player::SetMineJudgment( TapNoteScore tns )
+{
+	if( m_bSendJudgmentAndComboMessages )
+	{
+		Message msg("Judgment");
+		msg.SetParam( "Player", m_pPlayerState->m_PlayerNumber );
+		msg.SetParam( "TapNoteScore", tns );
+		MESSAGEMAN->Broadcast( msg );
+	}
 }
 
 void Player::SetJudgment( TapNoteScore tns, int iTrack, float fTapNoteOffset )

@@ -8,6 +8,11 @@ ________________________________________________________________________________
 StepMania 5.0 alpha 1a | 201201??
 --------------------------------------------------------------------------------
 
+2012/01/23
+----------
+* [Player] Tap Note Scores (tns) can now be "AvoidMine" or "HitMine" in
+JudgmentMessageCommand. [Saturn2888, shakesoda]
+
 2012/01/15
 ----------
 * [WheelNotifyIcon] Add the NumIconsToShow metric. [Wolfman2000]
