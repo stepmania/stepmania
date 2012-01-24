@@ -2233,15 +2233,8 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 				// Stepped too close to mine?
 				if( !bRelease && ( REQUIRE_STEP_ON_MINES == !bHeld ) && 
 				   fSecondsFromExact <= GetWindowSeconds(TW_Mine) &&
-				   m_Timing->IsJudgableAtRow(iSongRow))
-      {
-					score = TNS_HitMine;
-          if( m_pPlayerStageStats )
-	{
-		SetCombo( m_pPlayerStageStats->m_iCurCombo, m_pPlayerStageStats->m_iCurMissCombo );
-		m_pPlayerStageStats->UpdateComboList( STATSMAN->m_CurStageStats.m_fStepsSeconds, false );
-	}
-}   
+				   m_Timing->IsJudgableAtRow)
+					score = TNS_HitMine;   
 				break;
 
 			case TapNote::attack:
