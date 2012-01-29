@@ -87,6 +87,11 @@ Utils/temp*
 *.lnk
 BuildLog.htm
 *.pch
+Cache/
+Save/
+Logs/
+Screenshots/
+portable.ini
 
 .hgrc
 src/UpgradeLog*.XML
