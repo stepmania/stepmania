@@ -520,6 +520,10 @@ static MenuDef g_EditHelp(
 	// fill this in dynamically
 );
 
+static MenuDef g_KeysoundTrack(
+							   "ScreenMiniMenuKeysoundTrack"
+							   ); // fill this in dynamically
+
 static MenuDef g_MainMenu(
 	"ScreenMiniMenuMainMenu",
 	MenuRowDef( ScreenEdit::play_whole_song,		"Play whole song",		true, EditMode_Practice, true, true, 0, NULL ),
