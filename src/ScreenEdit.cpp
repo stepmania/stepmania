@@ -74,6 +74,7 @@ AutoScreenMessage( SM_BackFromInsertStepAttackPlayerOptions );
 AutoScreenMessage( SM_BackFromInsertCourseAttack );
 AutoScreenMessage( SM_BackFromInsertCourseAttackPlayerOptions );
 AutoScreenMessage( SM_BackFromCourseModeMenu );
+AutoScreenMessage( SM_BackFromKeysoundTrack );
 AutoScreenMessage( SM_DoRevertToLastSave );
 AutoScreenMessage( SM_DoRevertFromDisk );
 AutoScreenMessage( SM_BackFromTimingDataInformation );
@@ -3178,6 +3179,35 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 			ASSERT( GAMESTATE->m_pCurCourse );
 		}
 	}
+	else if (SM == SM_BackFromKeysoundTrack)
+	{
+		int track = ScreenMiniMenu::s_iLastRowCode;
+		unsigned int sound = ScreenMiniMenu::s_viLastAnswers[0];
+		
+		if (track < m_NoteDataEdit.GetNumTracks())
+		{
+			vector<RString> &kses = m_pSong->m_vsKeysoundFile;
+			if (sound < kses.size())
+			{
+				// set note at this row to use this keysound file.
+				// if it's empty, make it an auto keysound.
+			}
+			else if (sound == kses.size())
+			{
+				// create a new sound (filename), point it.
+				// if it's empty, make it an auto keysound.
+			}
+			else // sound > kses.size()
+			{
+				// remove the sound. if it's an auto keysound, make it empty.
+			}
+		}
+		else
+		{
+			// TODO: (Maybe) allow for an option to delete a keysound if beyond the tracks?
+		}
+		SetDirty(true);
+	}
 	else if( SM == SM_BackFromOptions )
 	{
 		// The options may have changed the note skin.
@@ -5256,7 +5286,7 @@ void ScreenEdit::DoKeyboardTrackMenu()
 												  true, EditMode_Full, false, false, keyIndex, choices));
 	}
 	
-	EditMiniMenu(&g_KeysoundTrack);
+	EditMiniMenu(&g_KeysoundTrack, SM_BackFromKeysoundTrack);
 }
 
 void ScreenEdit::DoHelp()
