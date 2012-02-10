@@ -8,6 +8,11 @@ ________________________________________________________________________________
 StepMania 5.0 alpha 1a | 201202??
 --------------------------------------------------------------------------------
 
+2012/02/10
+----------
+* [WheelBase, WheelItemBase] Turned WheelItemDataType into a Lua type,
+  made WheelBase:GetSelectedType() return the enum instead of a number. [AJ]
+
 2012/02/08
 ----------
 * [ScreenOptionsMaster] Added StepsRowLayoutType metric.

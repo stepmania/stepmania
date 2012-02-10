@@ -1,5 +1,21 @@
 #include "global.h"
 #include "WheelItemBase.h"
+#include "LuaManager.h"
+
+static const char *WheelItemDataTypeNames[] = {
+	"Generic",
+	"Section",
+	"Song",
+	"Roulette",
+	"Random",
+	"Portal",
+	"Course",
+	"Sort",
+	"Custom",
+};
+XToString( WheelItemDataType );
+StringToX( WheelItemDataType );
+LuaXType( WheelItemDataType );
 
 WheelItemBaseData::WheelItemBaseData( WheelItemDataType type, RString sText, RageColor color )
 {

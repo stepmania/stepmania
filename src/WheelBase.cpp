@@ -530,10 +530,7 @@ public:
 	//static int Move( T* p, lua_State *L ){ p->Move( IArg(1) ); return 0; }
 	//static int ChangeMusic( T* p, lua_State *L ){ p->ChangeMusicUnlessLocked( IArg(1) ); return 0; }
 
-	static int GetSelectedType( T* p, lua_State *L ) {
-		lua_pushnumber( L, p->GetSelectedType() );
-		return 1;
-	}
+	DEFINE_METHOD( GetSelectedType,		GetSelectedType() )
 
 	LunaWheelBase()
 	{
