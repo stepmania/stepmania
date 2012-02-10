@@ -4471,7 +4471,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 		}
 		case modify_keysounds_at_row:
 		{
-			// Nothing yet.
+			this->DoKeyboardTrackMenu();
 			break;
 		}
 	};
@@ -5227,16 +5227,33 @@ static RString GetDeviceButtonsLocalized( const vector<EditButton> &veb, const M
 }
 
 static LocalizedString TRACK_NUM("ScreenEdit", "Track %d");
+static LocalizedString NO_KEYSND("ScreenEdit", "None");
+static LocalizedString NEWKEYSND("ScreenEdit", "New Sound");
 
 void ScreenEdit::DoKeyboardTrackMenu()
 {
 	g_KeysoundTrack.rows.clear();
-	int numKeysounds = m_pSong->m_vsKeysoundFile.size();
+	vector<RString> &kses = m_pSong->m_vsKeysoundFile;
+	
+	vector<RString> choices;
+	FOREACH(RString, kses, ks)
+	{
+		choices.push_back(*ks);
+	}
+	choices.push_back(NEWKEYSND);
+	choices.push_back(NO_KEYSND);
+	int numKeysounds = kses.size();
 	for (int i = 0; i < m_NoteDataEdit.GetNumTracks(); ++i)
 	{
 		const TapNote &tn = m_NoteDataEdit.GetTapNote(i, this->GetRow());
+		int keyIndex = tn.iKeysoundIndex;
+		if (keyIndex == -1)
+		{
+			keyIndex = numKeysounds;
+		}
 		
-		//MenuRowDef(i, ssprintf(TRACK_NUM.c_str(), i + 1), true, EditMode_Full, false, false, 
+		g_KeysoundTrack.rows.push_back(MenuRowDef(i, ssprintf(TRACK_NUM.GetValue(), i + 1),
+												  true, EditMode_Full, false, false, keyIndex, choices));
 	}
 	
 	EditMiniMenu(&g_KeysoundTrack);
