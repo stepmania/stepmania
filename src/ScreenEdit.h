@@ -435,6 +435,7 @@ public:
 		last_second_at_beat,
 		undo,
 		clear_clipboard, /**< Clear the clipboards. */
+		modify_keysounds_at_row, /**< Modify the keysounds at this row. */
 		NUM_AREA_MENU_CHOICES
 	};
 	void HandleAlterMenuChoice(AlterMenuChoice c,

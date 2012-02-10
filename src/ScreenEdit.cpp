@@ -605,7 +605,9 @@ static MenuDef g_AreaMenu(
 	  MenuRowDef(ScreenEdit::last_second_at_beat,	"Designate last second at current beat", true, EditMode_Full, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::undo,			"Undo",					true, EditMode_Practice, true, true, 0, NULL ),
 	MenuRowDef(ScreenEdit::clear_clipboard,		"Clear clipboard",			true,
-	     EditMode_Practice, true, true, 0, NULL )
+	     EditMode_Practice, true, true, 0, NULL ),
+	MenuRowDef(ScreenEdit::modify_keysounds_at_row, "Modify Keysounds at current beat",
+			   true, EditMode_Full, true, true, 0, NULL)
 			  
 );
 
@@ -4461,6 +4463,11 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 		case clear_clipboard:
 		{
 			m_Clipboard.ClearAll();
+			break;
+		}
+		case modify_keysounds_at_row:
+		{
+			// Nothing yet.
 			break;
 		}
 	};
