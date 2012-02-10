@@ -3182,10 +3182,10 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	else if (SM == SM_BackFromKeysoundTrack)
 	{
 		int track = ScreenMiniMenu::s_iLastRowCode;
-		unsigned int sound = ScreenMiniMenu::s_viLastAnswers[0];
 		
 		if (track < m_NoteDataEdit.GetNumTracks())
 		{
+			unsigned int sound = ScreenMiniMenu::s_viLastAnswers[track];
 			vector<RString> &kses = m_pSong->m_vsKeysoundFile;
 			if (sound < kses.size())
 			{
