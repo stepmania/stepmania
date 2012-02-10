@@ -5226,6 +5226,22 @@ static RString GetDeviceButtonsLocalized( const vector<EditButton> &veb, const M
 	return s;
 }
 
+static LocalizedString TRACK_NUM("ScreenEdit", "Track %d");
+
+void ScreenEdit::DoKeyboardTrackMenu()
+{
+	g_KeysoundTrack.rows.clear();
+	int numKeysounds = m_pSong->m_vsKeysoundFile.size();
+	for (int i = 0; i < m_NoteDataEdit.GetNumTracks(); ++i)
+	{
+		const TapNote &tn = m_NoteDataEdit.GetTapNote(i, this->GetRow());
+		
+		//MenuRowDef(i, ssprintf(TRACK_NUM.c_str(), i + 1), true, EditMode_Full, false, false, 
+	}
+	
+	EditMiniMenu(&g_KeysoundTrack);
+}
+
 void ScreenEdit::DoHelp()
 {
 	g_EditHelp.rows.clear();

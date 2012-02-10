@@ -248,6 +248,9 @@ protected:
 	float GetMaximumBeatForNewNote() const;	// don't allow Down key to go past this beat.
 	float GetMaximumBeatForMoving() const;	// don't allow Down key to go past this beat.
 
+	/** @brief Display the keyboard track menu for the current row. */
+	void DoKeyboardTrackMenu();
+	
 	void DoHelp();
 	
 	/** @brief Display the TimingData menu for editing song and step timing. */
