@@ -2746,10 +2746,6 @@ void Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 			if( m_pSecondaryScoreKeeper )
 				m_pSecondaryScoreKeeper->HandleTapScore( tn );
 		}
-		else if (tn.type == TapNote::autoKeysound)
-		{
-			tn.result.tns = AllowW1() ? TNS_W1 : TNS_W2; // sentinel
-		}
 		else
 		{
 			tn.result.tns = TNS_Miss;
