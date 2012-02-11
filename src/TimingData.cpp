@@ -38,9 +38,6 @@ void TimingData::Clear()
 		vector<TimingSegment*> &vSegs = m_avpTimingSegments[tst];
 		for( unsigned i = 0; i < vSegs.size(); ++i )
 		{
-#if defined(DEBUG)
-			LOG->Trace( "TimingData::Clear(): deleting %p", vSegs[i] );
-#endif
 			SAFE_DELETE( vSegs[i] );
 		}
 
