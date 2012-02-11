@@ -3185,12 +3185,13 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	else if (SM == SM_BackFromKeysoundTrack)
 	{
 		const int track = ScreenMiniMenu::s_iLastRowCode;
+		const int tracks = m_NoteDataEdit.GetNumTracks();
 		const int row = this->GetRow();
+		unsigned int sound = ScreenMiniMenu::s_viLastAnswers[track];
+		vector<RString> &kses = m_pSong->m_vsKeysoundFile;
 		
-		if (track < m_NoteDataEdit.GetNumTracks())
+		if (track < tracks)
 		{
-			unsigned int sound = ScreenMiniMenu::s_viLastAnswers[track];
-			vector<RString> &kses = m_pSong->m_vsKeysoundFile;
 			if (sound == kses.size())
 			{
 				// create a new sound (filename), point it.
@@ -3221,9 +3222,28 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 			}
 			m_NoteDataEdit.SetTapNote(track, row, newNote);
 		}
-		else
+		else if (track == tracks)
 		{
-			// TODO: (Maybe) allow for an option to delete a keysound if beyond the tracks?
+			kses.erase(kses.begin() + sound);
+			// TODO: Make the following a part of NoteData?
+			for (int t = 0; t < tracks; ++t)
+			{
+				FOREACH_NONEMPTY_ROW_IN_TRACK(m_NoteDataEdit, t, r)
+				{
+					const TapNote &oldNote = m_NoteDataEdit.GetTapNote(t, r);
+					TapNote newNote = oldNote; // need to lose the const. not feeling like casting.
+					if (newNote.iKeysoundIndex == static_cast<int>(sound))
+					{
+						newNote.iKeysoundIndex = -1;
+						if (newNote.type == TapNote::autoKeysound)
+							newNote.type = TapNote::empty;
+					}
+					else if (newNote.iKeysoundIndex > static_cast<int>(sound))
+						newNote.iKeysoundIndex--;
+					
+					m_NoteDataEdit.SetTapNote(t, r, newNote);
+				}
+			}
 		}
 		SetDirty(true);
 	}
@@ -5327,8 +5347,8 @@ void ScreenEdit::DoKeyboardTrackMenu()
 		g_KeysoundTrack.rows.push_back(MenuRowDef(i, ssprintf(TRACK_NUM.GetValue(), i + 1),
 												  true, EditMode_Full, false, false, keyIndex, choices));
 	}
-	g_KeysoundTrack.rows.push_back(MenuRowDef(kses.size(), "Remove Keysound", true,
-											  EditMode_Full, false, false, 0, kses));
+	g_KeysoundTrack.rows.push_back(MenuRowDef(m_NoteDataEdit.GetNumTracks(), "Remove Keysound",
+											  true, EditMode_Full, false, false, 0, kses));
 	
 	EditMiniMenu(&g_KeysoundTrack, SM_BackFromKeysoundTrack);
 }
