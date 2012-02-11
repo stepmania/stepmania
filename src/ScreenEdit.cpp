@@ -5319,6 +5319,8 @@ void ScreenEdit::DoKeyboardTrackMenu()
 		g_KeysoundTrack.rows.push_back(MenuRowDef(i, ssprintf(TRACK_NUM.GetValue(), i + 1),
 												  true, EditMode_Full, false, false, keyIndex, choices));
 	}
+	g_KeysoundTrack.rows.push_back(MenuRowDef(kses.size(), "Remove Keysound", true,
+											  EditMode_Full, false, false, 0, kses));
 	
 	EditMiniMenu(&g_KeysoundTrack, SM_BackFromKeysoundTrack);
 }
