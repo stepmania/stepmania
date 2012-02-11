@@ -2240,9 +2240,6 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 				if( !bRelease && fSecondsFromExact <= GetWindowSeconds(TW_Attack) && !pTN->result.bHidden )
 					score = AllowW1() ? TNS_W1 : TNS_W2; // sentinel
 				break;
-			case TapNote::autoKeysound:
-					score = AllowW1() ? TNS_W1 : TNS_W2;
-				break;
 			case TapNote::hold_head:
 				// oh wow, this was causing the trigger before the hold heads
 				// bug. (It was fNoteOffset > 0.f before) -DaisuMaster
