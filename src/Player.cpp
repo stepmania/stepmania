@@ -2984,6 +2984,16 @@ void Player::CrossedRows( int iLastRowCrossed, const RageTimer &now )
 					}
 				}
 			}
+			
+			// handle autokeysounds here.
+			for (int t = 0; t < m_NoteData.GetNumTracks(); ++t)
+			{
+				const TapNote &tn = m_NoteData.GetTapNote(t, iRow);
+				if (tn.type == TapNote::autoKeysound)
+				{
+					PlayKeysound(tn, TNS_None);
+				}
+			}
 		}
 	}
 
