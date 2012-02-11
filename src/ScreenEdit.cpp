@@ -3181,7 +3181,8 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if (SM == SM_BackFromKeysoundTrack)
 	{
-		int track = ScreenMiniMenu::s_iLastRowCode;
+		const int track = ScreenMiniMenu::s_iLastRowCode;
+		const int row = this->GetRow();
 		
 		if (track < m_NoteDataEdit.GetNumTracks())
 		{
@@ -3200,6 +3201,14 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 			else // sound > kses.size()
 			{
 				// remove the sound. if it's an auto keysound, make it empty.
+				const TapNote &oldNote = m_NoteDataEdit.GetTapNote(track, row);
+				TapNote newNote = oldNote;
+				newNote.iKeysoundIndex = -1;
+				if (newNote.type == TapNote::autoKeysound)
+				{
+					newNote.type = TapNote::empty; // autoKeysound with no sound is pointless.
+				}
+				m_NoteDataEdit.SetTapNote(track, row, newNote);
 			}
 		}
 		else
