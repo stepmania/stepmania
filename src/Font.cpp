@@ -157,6 +157,11 @@ void FontPage::SetTextureCoords( const vector<int> &widths, int iAdvanceExtraPix
 
 void FontPage::SetExtraPixels( int iDrawExtraPixelsLeft, int iDrawExtraPixelsRight )
 {
+	// Most fonts don't take the stroke into account, so if it shows up, it'll
+	// be cut off. I now understand why this code was here before. -freem
+	iDrawExtraPixelsRight++;
+	iDrawExtraPixelsLeft++;
+
 	if( (iDrawExtraPixelsLeft % 2) == 1 )
 		++iDrawExtraPixelsLeft;
 
