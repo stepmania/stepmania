@@ -3235,8 +3235,16 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		const TapNote &oldNote = m_NoteDataEdit.GetTapNote(track, row);
 		TapNote newNote = oldNote; // need to lose the const. not feeling like casting.
 		vector<RString> &kses = m_pSong->m_vsKeysoundFile;
-		newNote.iKeysoundIndex = kses.size();
-		kses.push_back(answer);
+		unsigned pos = find(kses.begin(), kses.end(), answer) - kses.begin();
+		if (pos == kses.size())
+		{
+			newNote.iKeysoundIndex = kses.size();
+			kses.push_back(answer);
+		}
+		else
+		{
+			newNote.iKeysoundIndex = pos;
+		}
 		if (newNote.type == TapNote::empty)
 			newNote.type = TapNote::autoKeysound; // keysounds need something non empty.
 		m_NoteDataEdit.SetTapNote(track, row, newNote);
