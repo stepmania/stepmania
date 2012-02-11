@@ -3188,10 +3188,13 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		{
 			unsigned int sound = ScreenMiniMenu::s_viLastAnswers[track];
 			vector<RString> &kses = m_pSong->m_vsKeysoundFile;
+			const TapNote &oldNote = m_NoteDataEdit.GetTapNote(track, row);
+			TapNote newNote = oldNote;
 			if (sound < kses.size())
 			{
 				// set note at this row to use this keysound file.
 				// if it's empty, make it an auto keysound.
+				newNote.iKeysoundIndex = sound;
 			}
 			else if (sound == kses.size())
 			{
@@ -3201,15 +3204,17 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 			else // sound > kses.size()
 			{
 				// remove the sound. if it's an auto keysound, make it empty.
-				const TapNote &oldNote = m_NoteDataEdit.GetTapNote(track, row);
-				TapNote newNote = oldNote;
 				newNote.iKeysoundIndex = -1;
-				if (newNote.type == TapNote::autoKeysound)
-				{
-					newNote.type = TapNote::empty; // autoKeysound with no sound is pointless.
-				}
-				m_NoteDataEdit.SetTapNote(track, row, newNote);
 			}
+			if (newNote.type == TapNote::autoKeysound && newNote.iKeysoundIndex == -1)
+			{
+				newNote.type = TapNote::empty; // autoKeysound with no sound is pointless.
+			}
+			else if (newNote.type == TapNote::empty && newNote.iKeysoundIndex != -1)
+			{
+				newNote.type = TapNote::autoKeysound; // keysounds need something non empty.
+			}
+			m_NoteDataEdit.SetTapNote(track, row, newNote);
 		}
 		else
 		{
