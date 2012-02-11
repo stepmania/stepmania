@@ -462,7 +462,8 @@ int NoteData::GetLastRow() const
 bool NoteData::IsTap(const TapNote &tn, const int row) const
 {
 	return (tn.type != TapNote::empty && tn.type != TapNote::mine
-			&& tn.type != TapNote::lift && tn.type != TapNote::fake 
+			&& tn.type != TapNote::lift && tn.type != TapNote::fake
+			&& tn.type != TapNote::autoKeysound
 			&& GAMESTATE->GetProcessedTimingData()->IsJudgableAtRow(row));
 }
 
@@ -610,9 +611,10 @@ int NoteData::GetNumRowsWithSimultaneousTaps( int iMinTaps, int iStartIndex, int
 		for( int t=0; t<GetNumTracks(); t++ )
 		{
 			const TapNote &tn = GetTapNote(t, r);
-			if( tn.type != TapNote::mine     // mines don't count.
-			   &&  tn.type != TapNote::empty  
-			   &&  tn.type != TapNote::fake)
+			if (tn.type != TapNote::mine &&     // mines don't count.
+				tn.type != TapNote::empty &&
+				tn.type != TapNote::fake &&
+				tn.type != TapNote::autoKeysound)
 				iNumNotesThisIndex++;
 		}
 		if( iNumNotesThisIndex >= iMinTaps )
