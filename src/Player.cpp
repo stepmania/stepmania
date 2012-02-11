@@ -1653,6 +1653,7 @@ int Player::GetClosestNoteDirectional( int col, int iStartRow, int iEndRow, bool
 			const TapNote &tn = begin->second;
 			if (!m_Timing->IsJudgableAtRow( begin->first ))
 				break;
+			// unsure if autoKeysounds should be excluded. -Wolfman2000
 			if( tn.type == TapNote::empty || tn.type == TapNote::autoKeysound )
 				break;
 			if( !bAllowGraded && tn.result.tns != TNS_None )
