@@ -557,6 +557,7 @@ bool NoteData::RowNeedsAtLeastSimultaneousPresses( int iMinSimultaneousPresses, 
 			case TapNote::empty:
 			case TapNote::fake:
 			case TapNote::lift: // you don't "press" on a lift.
+			case TapNote::autoKeysound:
 				continue;	// skip these types - they don't count
 			default: break;
 		}
