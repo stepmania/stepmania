@@ -2990,13 +2990,16 @@ void Player::CrossedRows( int iLastRowCrossed, const RageTimer &now )
 				}
 			}
 			
-			// handle autokeysounds here.
-			for (int t = 0; t < m_NoteData.GetNumTracks(); ++t)
+			// handle autokeysounds here (if not in the editor).
+			if (!GAMESTATE->m_bInStepEditor)
 			{
-				const TapNote &tap = m_NoteData.GetTapNote(t, iRow);
-				if (tap.type == TapNote::autoKeysound)
+				for (int t = 0; t < m_NoteData.GetNumTracks(); ++t)
 				{
-					PlayKeysound(tap, TNS_None);
+					const TapNote &tap = m_NoteData.GetTapNote(t, iRow);
+					if (tap.type == TapNote::autoKeysound)
+					{
+						PlayKeysound(tap, TNS_None);
+					}
 				}
 			}
 		}
