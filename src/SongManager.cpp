@@ -258,6 +258,7 @@ void SongManager::LoadStepManiaSongDir( RString sDir, LoadingWindow *ld )
 	FOREACH_CONST( RString, arrayGroupDirs, s )	// foreach dir in /Songs/
 	{
 		RString sGroupDirName = *s;
+		// TODO: If this check fails, log a warning instead of crashing.
 		SanityCheckGroupDir(sDir+sGroupDirName);
 
 		// Find all Song folders in this group directory
