@@ -50,6 +50,19 @@ struct MenuRowDef
 		PUSH(c23);PUSH(c23);PUSH(c24);PUSH(c25);
 #undef PUSH
 	}
+	
+	MenuRowDef(int r, RString n, bool e, EditMode s,
+			   bool bTT, bool bTI, int d, vector<RString> options):
+			iRowCode(r), sName(n), bEnabled(e), pfnEnabled(NULL),
+			emShowIn(s), iDefaultChoice(d), choices(),
+			bThemeTitle(bTT), bThemeItems(bTI)
+	{
+		FOREACH(RString, options, str)
+		{
+			if (*str != "") choices.push_back(*str);
+		}
+	}
+	
 	MenuRowDef( int r, RString n, bool e, EditMode s, bool bTT, bool bTI, 
 		   int d, const char *c0=NULL, const char *c1=NULL, 
 		   const char *c2=NULL, const char *c3=NULL, 

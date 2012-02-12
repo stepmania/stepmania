@@ -153,7 +153,10 @@ int LastTapNoteScoreTrack( const NoteData &in, unsigned iRow, PlayerNumber pn )
 	{
 		/* Skip empty tracks and mines */
 		const TapNote &tn = in.GetTapNote( t, iRow );
-		if( tn.type == TapNote::empty || tn.type == TapNote::mine || tn.type == TapNote::fake ) 
+		if (tn.type == TapNote::empty ||
+			tn.type == TapNote::mine ||
+			tn.type == TapNote::fake ||
+			tn.type == TapNote::autoKeysound) 
 			continue;
 		if( tn.pn != PLAYER_INVALID && tn.pn != pn && pn != PLAYER_INVALID )
 			continue;
@@ -187,7 +190,10 @@ int MinTapNoteScoreTrack( const NoteData &in, unsigned iRow, PlayerNumber pn )
 	{
 		// Skip empty tracks and mines
 		const TapNote &tn = in.GetTapNote( t, iRow );
-		if( tn.type == TapNote::empty || tn.type == TapNote::mine || tn.type == TapNote::fake ) 
+		if (tn.type == TapNote::empty ||
+			tn.type == TapNote::mine ||
+			tn.type == TapNote::fake ||
+			tn.type == TapNote::autoKeysound) 
 			continue;
 		if( tn.pn != PLAYER_INVALID && tn.pn != pn && pn != PLAYER_INVALID )
 			continue;
@@ -250,7 +256,10 @@ TapNoteScore NoteDataWithScoring::MinTapNoteScore( const NoteData &in, unsigned 
 	{
 		// Ignore mines (and fake arrows), or the score will always be TNS_None.
 		const TapNote &tn = in.GetTapNote( t, row );
-		if( tn.type == TapNote::empty || tn.type == TapNote::mine || tn.type == TapNote::fake )
+		if (tn.type == TapNote::empty ||
+			tn.type == TapNote::mine ||
+			tn.type == TapNote::fake ||
+			tn.type == TapNote::autoKeysound)
 			continue;
 		score = min( score, tn.result.tns );
 	}

@@ -1653,7 +1653,8 @@ int Player::GetClosestNoteDirectional( int col, int iStartRow, int iEndRow, bool
 			const TapNote &tn = begin->second;
 			if (!m_Timing->IsJudgableAtRow( begin->first ))
 				break;
-			if( tn.type == TapNote::empty )
+			// unsure if autoKeysounds should be excluded. -Wolfman2000
+			if( tn.type == TapNote::empty || tn.type == TapNote::autoKeysound )
 				break;
 			if( !bAllowGraded && tn.result.tns != TNS_None )
 				break;
@@ -2238,9 +2239,8 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 				break;
 			case TapNote::attack:
 				if( !bRelease && fSecondsFromExact <= GetWindowSeconds(TW_Attack) && !pTN->result.bHidden )
-					score = TNS_W2; // sentinel
+					score = AllowW1() ? TNS_W1 : TNS_W2; // sentinel
 				break;
-
 			case TapNote::hold_head:
 				// oh wow, this was causing the trigger before the hold heads
 				// bug. (It was fNoteOffset > 0.f before) -DaisuMaster
@@ -2791,7 +2791,9 @@ void Player::UpdateJudgedRows()
 					for( int iTrack = 0; iTrack < m_NoteData.GetNumTracks(); ++iTrack )
 					{
 						const TapNote &tn = m_NoteData.GetTapNote( iTrack, iRow );
-						if( tn.type == TapNote::empty || tn.type == TapNote::mine ) continue;
+						if (tn.type == TapNote::empty ||
+							tn.type == TapNote::mine ||
+							tn.type == TapNote::autoKeysound) continue;
 						SetJudgment( tn.result.tns, iTrack, tn.result.fTapNoteOffset );
 					}
 				}
@@ -2973,14 +2975,30 @@ void Player::CrossedRows( int iLastRowCrossed, const RageTimer &now )
 			// check to see if there's a note at the crossed row
 			if( m_pPlayerState->m_PlayerController != PC_HUMAN )
 			{
-				if(tn.type != TapNote::empty && tn.type != TapNote::fake && tn.result.tns == TNS_None
-				   && this->m_Timing->IsJudgableAtRow(iRow) )
+				if (tn.type != TapNote::empty &&
+					tn.type != TapNote::fake &&
+					tn.type != TapNote::autoKeysound &&
+					tn.result.tns == TNS_None &&
+					this->m_Timing->IsJudgableAtRow(iRow) )
 				{
 					Step( iTrack, iRow, now, false, false );
 					if( m_pPlayerState->m_PlayerController == PC_AUTOPLAY )
 					{
 						if( m_pPlayerStageStats )
 							m_pPlayerStageStats->m_bDisqualified = true;
+					}
+				}
+			}
+			
+			// handle autokeysounds here (if not in the editor).
+			if (!GAMESTATE->m_bInStepEditor)
+			{
+				for (int t = 0; t < m_NoteData.GetNumTracks(); ++t)
+				{
+					const TapNote &tap = m_NoteData.GetTapNote(t, iRow);
+					if (tap.type == TapNote::autoKeysound)
+					{
+						PlayKeysound(tap, TNS_None);
 					}
 				}
 			}
@@ -3141,7 +3159,10 @@ void Player::HandleTapRowScore( unsigned row )
 	{
 		const TapNote &tn = m_NoteData.GetTapNote( track, row );
 		// Mines cannot be handled here.
-		if( tn.type == TapNote::empty || tn.type == TapNote::fake || tn.type == TapNote::mine )
+		if (tn.type == TapNote::empty ||
+			tn.type == TapNote::fake ||
+			tn.type == TapNote::mine ||
+			tn.type == TapNote::autoKeysound)
 			continue;
 		if( m_pPrimaryScoreKeeper )
 			m_pPrimaryScoreKeeper->HandleTapScore( tn );

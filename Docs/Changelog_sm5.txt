@@ -15,6 +15,14 @@ StepMania 5.0 alpha 1a | 2012021?
 
 2012/02/08
 ----------
+* [ScreenEdit] Added support for editing keysounds. Use the Area Menu (Enter)
+  to either modify what sounds play on that row, or even remove a sound from
+  the list. Any sounds assigned to empty notes will automatically become
+  an AutoKeysound, and any AutoKeysounds that have their sound removed will
+  become empty notes. [Wolfman2000]
+
+2012/02/08
+----------
 * [ScreenOptionsMaster] Added StepsRowLayoutType metric.
   (Valid values are "ShowAllInRow" or "ShowOneInRow".) [AJ]
 

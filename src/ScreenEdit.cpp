@@ -74,6 +74,8 @@ AutoScreenMessage( SM_BackFromInsertStepAttackPlayerOptions );
 AutoScreenMessage( SM_BackFromInsertCourseAttack );
 AutoScreenMessage( SM_BackFromInsertCourseAttackPlayerOptions );
 AutoScreenMessage( SM_BackFromCourseModeMenu );
+AutoScreenMessage( SM_BackFromKeysoundTrack );
+AutoScreenMessage( SM_BackFromNewKeysound );
 AutoScreenMessage( SM_DoRevertToLastSave );
 AutoScreenMessage( SM_DoRevertFromDisk );
 AutoScreenMessage( SM_BackFromTimingDataInformation );
@@ -520,6 +522,10 @@ static MenuDef g_EditHelp(
 	// fill this in dynamically
 );
 
+static MenuDef g_KeysoundTrack(
+							   "ScreenMiniMenuKeysoundTrack"
+							   ); // fill this in dynamically
+
 static MenuDef g_MainMenu(
 	"ScreenMiniMenuMainMenu",
 	MenuRowDef( ScreenEdit::play_whole_song,		"Play whole song",		true, EditMode_Practice, true, true, 0, NULL ),
@@ -605,7 +611,9 @@ static MenuDef g_AreaMenu(
 	  MenuRowDef(ScreenEdit::last_second_at_beat,	"Designate last second at current beat", true, EditMode_Full, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::undo,			"Undo",					true, EditMode_Practice, true, true, 0, NULL ),
 	MenuRowDef(ScreenEdit::clear_clipboard,		"Clear clipboard",			true,
-	     EditMode_Practice, true, true, 0, NULL )
+	     EditMode_Practice, true, true, 0, NULL ),
+	MenuRowDef(ScreenEdit::modify_keysounds_at_row, "Modify Keysounds at current beat",
+			   true, EditMode_Full, true, true, 0, NULL)
 			  
 );
 
@@ -2927,6 +2935,8 @@ void ScreenEdit::ScrollTo( float fDestinationBeat )
 	m_soundChangeLine.Play();
 }
 
+static LocalizedString NEW_KEYSOUND_FILE("ScreenEdit", "Enter New Keysound File");
+
 void ScreenEdit::HandleMessage( const Message &msg )
 {
 	if( msg == "Judgment" )
@@ -3171,6 +3181,94 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 			GAMESTATE->m_iEditCourseEntryIndex.Set( iCourseEntryIndex );
 			ASSERT( GAMESTATE->m_pCurCourse );
 		}
+	}
+	else if (SM == SM_BackFromKeysoundTrack)
+	{
+		const int track = ScreenMiniMenu::s_iLastRowCode;
+		const int tracks = m_NoteDataEdit.GetNumTracks();
+		const int row = this->GetRow();
+		unsigned int sound = ScreenMiniMenu::s_viLastAnswers[track];
+		vector<RString> &kses = m_pSong->m_vsKeysoundFile;
+		
+		if (track < tracks)
+		{
+			if (sound == kses.size())
+			{
+				// create a new sound (filename), point it.
+				// if it's empty, make it an auto keysound.
+				ScreenTextEntry::TextEntry(SM_BackFromNewKeysound, NEW_KEYSOUND_FILE, "", 64);
+				return;
+			}
+			const TapNote &oldNote = m_NoteDataEdit.GetTapNote(track, row);
+			TapNote newNote = oldNote; // need to lose the const. not feeling like casting.
+			if (sound < kses.size())
+			{
+				// set note at this row to use this keysound file.
+				// if it's empty, make it an auto keysound.
+				newNote.iKeysoundIndex = sound;
+				if (newNote.type == TapNote::empty)
+				{
+					newNote.type = TapNote::autoKeysound; // keysounds need something non empty.
+				}
+			}
+			else // sound > kses.size()
+			{
+				// remove the sound. if it's an auto keysound, make it empty.
+				newNote.iKeysoundIndex = -1;
+				if (newNote.type == TapNote::autoKeysound)
+				{
+					newNote.type = TapNote::empty; // autoKeysound with no sound is pointless.
+				}
+			}
+			m_NoteDataEdit.SetTapNote(track, row, newNote);
+		}
+		else if (track == tracks)
+		{
+			kses.erase(kses.begin() + sound);
+			// TODO: Make the following a part of NoteData?
+			for (int t = 0; t < tracks; ++t)
+			{
+				FOREACH_NONEMPTY_ROW_IN_TRACK(m_NoteDataEdit, t, r)
+				{
+					const TapNote &oldNote = m_NoteDataEdit.GetTapNote(t, r);
+					TapNote newNote = oldNote; // need to lose the const. not feeling like casting.
+					if (newNote.iKeysoundIndex == static_cast<int>(sound))
+					{
+						newNote.iKeysoundIndex = -1;
+						if (newNote.type == TapNote::autoKeysound)
+							newNote.type = TapNote::empty;
+					}
+					else if (newNote.iKeysoundIndex > static_cast<int>(sound))
+						newNote.iKeysoundIndex--;
+					
+					m_NoteDataEdit.SetTapNote(t, r, newNote);
+				}
+			}
+		}
+		SetDirty(true);
+	}
+	else if (SM == SM_BackFromNewKeysound && !ScreenTextEntry::s_bCancelledLast)
+	{
+		RString answer = ScreenTextEntry::s_sLastAnswer;
+		const int track = ScreenMiniMenu::s_iLastRowCode; // still keeps the same value.
+		const int row = this->GetRow();
+		const TapNote &oldNote = m_NoteDataEdit.GetTapNote(track, row);
+		TapNote newNote = oldNote; // need to lose the const. not feeling like casting.
+		vector<RString> &kses = m_pSong->m_vsKeysoundFile;
+		unsigned pos = find(kses.begin(), kses.end(), answer) - kses.begin();
+		if (pos == kses.size())
+		{
+			newNote.iKeysoundIndex = kses.size();
+			kses.push_back(answer);
+		}
+		else
+		{
+			newNote.iKeysoundIndex = pos;
+		}
+		if (newNote.type == TapNote::empty)
+			newNote.type = TapNote::autoKeysound; // keysounds need something non empty.
+		m_NoteDataEdit.SetTapNote(track, row, newNote);
+		SetDirty(true);
 	}
 	else if( SM == SM_BackFromOptions )
 	{
@@ -4463,6 +4561,11 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 			m_Clipboard.ClearAll();
 			break;
 		}
+		case modify_keysounds_at_row:
+		{
+			this->DoKeyboardTrackMenu();
+			break;
+		}
 	};
 
 	if( bSaveUndo )
@@ -5213,6 +5316,41 @@ static RString GetDeviceButtonsLocalized( const vector<EditButton> &veb, const M
 	if( !vsHold.empty() )
 		s = join("/",vsHold) + " + " + s;
 	return s;
+}
+
+static LocalizedString TRACK_NUM("ScreenEdit", "Track %d");
+static LocalizedString NO_KEYSND("ScreenEdit", "None");
+static LocalizedString NEWKEYSND("ScreenEdit", "New Sound");
+
+void ScreenEdit::DoKeyboardTrackMenu()
+{
+	g_KeysoundTrack.rows.clear();
+	vector<RString> &kses = m_pSong->m_vsKeysoundFile;
+	
+	vector<RString> choices;
+	FOREACH(RString, kses, ks)
+	{
+		choices.push_back(*ks);
+	}
+	choices.push_back(NEWKEYSND);
+	choices.push_back(NO_KEYSND);
+	int numKeysounds = kses.size();
+	for (int i = 0; i < m_NoteDataEdit.GetNumTracks(); ++i)
+	{
+		const TapNote &tn = m_NoteDataEdit.GetTapNote(i, this->GetRow());
+		int keyIndex = tn.iKeysoundIndex;
+		if (keyIndex == -1)
+		{
+			keyIndex = numKeysounds;
+		}
+		
+		g_KeysoundTrack.rows.push_back(MenuRowDef(i, ssprintf(TRACK_NUM.GetValue(), i + 1),
+												  true, EditMode_Full, false, false, keyIndex, choices));
+	}
+	g_KeysoundTrack.rows.push_back(MenuRowDef(m_NoteDataEdit.GetNumTracks(), "Remove Keysound",
+											  true, EditMode_Full, false, false, 0, kses));
+	
+	EditMiniMenu(&g_KeysoundTrack, SM_BackFromKeysoundTrack);
 }
 
 void ScreenEdit::DoHelp()
