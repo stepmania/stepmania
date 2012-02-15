@@ -135,6 +135,9 @@ static HighScore FillInHighScore( const PlayerStageStats &pss, const PlayerState
 	hs.SetScore( pss.m_iScore );
 	hs.SetPercentDP( pss.GetPercentDancePoints() );
 	hs.SetAliveSeconds( pss.m_fAliveSeconds );
+	hs.SetMaxCombo( pss.GetMaxCombo().m_cnt );
+	hs.SetStageAward( pss.m_StageAward );
+	hs.SetPeakComboAward( pss.m_PeakComboAward );
 
 	vector<RString> asModifiers;
 	{

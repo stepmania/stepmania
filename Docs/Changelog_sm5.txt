@@ -8,6 +8,12 @@ ________________________________________________________________________________
 StepMania 5.0 alpha 1a | 2012021?
 --------------------------------------------------------------------------------
 
+2012/02/15
+----------
+* [HighScore] Added Max Combo, Stage Award and Peak Award. New Lua bindings for
+  HighScore: GetMaxCombo(), GetStageAward(), GetPeakComboAward(). [AJ]
+  (the specifics of this are subject to change.)
+
 2012/02/10
 ----------
 * [WheelBase, WheelItemBase] Turned WheelItemDataType into a Lua type,

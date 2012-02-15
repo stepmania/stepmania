@@ -18,6 +18,9 @@ struct HighScoreImpl
 	int iScore;
 	float fPercentDP;
 	float fSurviveSeconds;
+	int iMaxCombo;			// maximum combo obtained [SM5 alpha 1a+]
+	StageAward stageAward;	// stage award [SM5 alpha 1a+]
+	PeakComboAward peakComboAward;	// peak combo award [SM5 alpha 1a+]
 	RString	sModifiers;
 	DateTime dateTime;		// return value of time() when screenshot was taken
 	RString sPlayerGuid;	// who made this high score
@@ -43,6 +46,9 @@ bool HighScoreImpl::operator==( const HighScoreImpl& other ) const
 	COMPARE( sName );
 	COMPARE( grade );
 	COMPARE( iScore );
+	COMPARE( iMaxCombo );
+	COMPARE( stageAward );
+	COMPARE( peakComboAward );
 	COMPARE( fPercentDP );
 	COMPARE( fSurviveSeconds );
 	COMPARE( sModifiers );
@@ -69,6 +75,9 @@ HighScoreImpl::HighScoreImpl()
 	iScore = 0;
 	fPercentDP = 0;
 	fSurviveSeconds = 0;
+	iMaxCombo = 0;
+	stageAward = StageAward_Invalid;
+	peakComboAward = PeakComboAward_Invalid;
 	sModifiers = "";
 	dateTime.Init();
 	sPlayerGuid = "";
@@ -92,6 +101,9 @@ XNode *HighScoreImpl::CreateNode() const
 	pNode->AppendChild( "Score",			iScore );
 	pNode->AppendChild( "PercentDP",		fPercentDP );
 	pNode->AppendChild( "SurviveSeconds",	fSurviveSeconds );
+	pNode->AppendChild( "MaxCombo",			iMaxCombo );
+	pNode->AppendChild( "StageAward",		StageAwardToString(stageAward) );
+	pNode->AppendChild( "PeakComboAward",	PeakComboAwardToString(peakComboAward) );
 	pNode->AppendChild( "Modifiers",		sModifiers );
 	pNode->AppendChild( "DateTime",			dateTime.GetString() );
 	pNode->AppendChild( "PlayerGuid",		sPlayerGuid );
@@ -124,6 +136,9 @@ void HighScoreImpl::LoadFromNode( const XNode *pNode )
 	pNode->GetChildValue( "Score",			iScore );
 	pNode->GetChildValue( "PercentDP",		fPercentDP );
 	pNode->GetChildValue( "SurviveSeconds",		fSurviveSeconds );
+	pNode->GetChildValue( "MaxCombo",		iMaxCombo );
+	pNode->GetChildValue( "StageAward",		s ); stageAward = StringToStageAward(s);
+	pNode->GetChildValue( "PeakComboAward",	s ); peakComboAward = StringToPeakComboAward(s);
 	pNode->GetChildValue( "Modifiers",		sModifiers );
 	pNode->GetChildValue( "DateTime",		s ); dateTime.FromString( s );
 	pNode->GetChildValue( "PlayerGuid",		sPlayerGuid );
@@ -175,6 +190,9 @@ bool HighScore::IsEmpty() const
 RString	HighScore::GetName() const { return m_Impl->sName; }
 Grade HighScore::GetGrade() const { return m_Impl->grade; }
 int HighScore::GetScore() const { return m_Impl->iScore; }
+int HighScore::GetMaxCombo() const { return m_Impl->iMaxCombo; }
+StageAward HighScore::GetStageAward() const { return m_Impl->stageAward; }
+PeakComboAward HighScore::GetPeakComboAward() const { return m_Impl->peakComboAward; }
 float HighScore::GetPercentDP() const { return m_Impl->fPercentDP; }
 float HighScore::GetSurviveSeconds() const { return m_Impl->fSurviveSeconds; }
 float HighScore::GetSurvivalSeconds() const { return GetSurviveSeconds() + GetLifeRemainingSeconds(); }
@@ -192,6 +210,9 @@ bool HighScore::GetDisqualified() const { return m_Impl->bDisqualified; }
 void HighScore::SetName( const RString &sName ) { m_Impl->sName = sName; }
 void HighScore::SetGrade( Grade g ) { m_Impl->grade = g; }
 void HighScore::SetScore( int iScore ) { m_Impl->iScore = iScore; }
+void HighScore::SetMaxCombo( int i ) { m_Impl->iMaxCombo = i; }
+void HighScore::SetStageAward( StageAward a ) { m_Impl->stageAward = a; }
+void HighScore::SetPeakComboAward( PeakComboAward a ) { m_Impl->peakComboAward = a; }
 void HighScore::SetPercentDP( float f ) { m_Impl->fPercentDP = f; }
 void HighScore::SetAliveSeconds( float f ) { m_Impl->fSurviveSeconds = f; }
 void HighScore::SetModifiers( RString s ) { m_Impl->sModifiers = s; }
@@ -251,7 +272,7 @@ RString HighScore::GetDisplayName() const
 		return GetName();
 }
 
-
+/* begin HighScoreList */
 void HighScoreList::Init()
 {
 	iNumTimesPlayed = 0;
@@ -428,6 +449,7 @@ public:
 		lua_pushboolean( L, bIsFillInMarker );
 		return 1;
 	}
+	static int GetMaxCombo( T* p, lua_State *L )			{ lua_pushnumber(L, p->GetMaxCombo() ); return 1; }
 	static int GetModifiers( T* p, lua_State *L )			{ lua_pushstring(L, p->GetModifiers() ); return 1; }
 	static int GetTapNoteScore( T* p, lua_State *L )			{ lua_pushnumber(L, p->GetTapNoteScore( Enum::Check<TapNoteScore>(L, 1) ) ); return 1; }
 	static int GetHoldNoteScore( T* p, lua_State *L )			{ lua_pushnumber(L, p->GetHoldNoteScore( Enum::Check<HoldNoteScore>(L, 1) ) ); return 1; }
@@ -438,6 +460,8 @@ public:
 		return 1;
 	}
 	DEFINE_METHOD( GetGrade, GetGrade() )
+	DEFINE_METHOD( GetStageAward, GetStageAward() )
+	DEFINE_METHOD( GetPeakComboAward, GetPeakComboAward() )
 
 	LunaHighScore()
 	{
@@ -447,12 +471,14 @@ public:
 		ADD_METHOD( GetDate );
 		ADD_METHOD( GetSurvivalSeconds );
 		ADD_METHOD( IsFillInMarker );
-		// sm-ssc additions:
 		ADD_METHOD( GetModifiers );
 		ADD_METHOD( GetTapNoteScore );
 		ADD_METHOD( GetHoldNoteScore );
 		ADD_METHOD( GetRadarValues );
 		ADD_METHOD( GetGrade );
+		ADD_METHOD( GetMaxCombo );
+		ADD_METHOD( GetStageAward );
+		ADD_METHOD( GetPeakComboAward );
 	}
 };
 
