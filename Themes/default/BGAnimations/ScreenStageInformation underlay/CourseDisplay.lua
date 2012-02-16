@@ -13,12 +13,12 @@ local t = Def.ActorFrame{
 				self:LoadFromCurrentSongBackground()
 			end
 		end;
-		OnCommand=cmd(diffusealpha,0;scaletoclipped,SCREEN_WIDTH,SCREEN_HEIGHT;sleep,0.5;linear,0.50;diffusealpha,1;sleep,3);
+		OnCommand=cmd(diffusealpha,0;scale_or_crop_background;sleep,0.5;linear,0.50;diffusealpha,1;sleep,3);
 	};
 	-- alternate background
 	Def.Sprite{
 		InitCommand=cmd(Center;);
-		BeginCommand=cmd(LoadFromCurrentSongBackground;scaletoclipped,SCREEN_WIDTH,SCREEN_HEIGHT;diffusealpha,0);
+		BeginCommand=cmd(LoadFromCurrentSongBackground;scale_or_crop_background;diffusealpha,0);
 		OnCommand=cmd(sleep,4;playcommand,"Show");
 		ShowCommand=function(self)
 			if course:HasBackground() then

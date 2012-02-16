@@ -151,34 +151,9 @@ function Actor:FullScreen()
 	self:stretchto( 0,0,SCREEN_WIDTH,SCREEN_HEIGHT )
 end
 
---[[ Typical background sizes:
-320x240 - [4:3]
-640x480 - [4:3] (most simfiles in distribution today use this res.)
-768x480 - [16:10]
-854x480 - [16:9]
-]]
 function Actor:scale_or_crop_background()
-	local gw = self:GetWidth()
-	local gh = self:GetHeight()
-
-	local graphicAspect = gw/gh
-	local displayAspect = DISPLAY:GetDisplayWidth()/DISPLAY:GetDisplayHeight()
-
-	if graphicAspect == displayAspect then
-		-- bga matches the current aspect, we can stretch it.
-		self:stretchto( 0,0,SCREEN_WIDTH,SCREEN_HEIGHT )
-	else
-		-- temp
-		self:scaletocover( 0,0,SCREEN_WIDTH,SCREEN_HEIGHT )
-		--[[
-		-- bga doesn't match the aspect.
-		if displayAspect > graphicAspect then
-			-- the graphic is smaller than the display aspect ratio
-		else
-			-- the graphic is bigger than the display aspect ratio; crop me
-		end
-		--]]
-	end
+	local graphicAspect = self:GetWidth()/self:GetHeight()
+	self:zoomto(SCREEN_HEIGHT*graphicAspect,SCREEN_HEIGHT)
 end
 
 -- xy(actorX,actorY)

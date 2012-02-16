@@ -9,7 +9,7 @@ t[#t+1] = Def.ActorFrame {
 				if song:HasBackground() then
 					self:LoadBackground(song:GetBackgroundPath());
 				end;
-				self:scaletoclipped( SCREEN_WIDTH+1,SCREEN_HEIGHT );
+				self:scale_or_crop_background()
 				(cmd(fadebottom,0.25;fadetop,0.25;croptop,48/480;cropbottom,48/480))(self);
 			else
 				self:visible(false);
