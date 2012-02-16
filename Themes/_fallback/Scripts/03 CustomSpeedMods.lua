@@ -52,7 +52,7 @@ end
 -- Tries to parse the file at path. If successful, returns a table of mods.
 -- If it can't open the file, it will write a fallback set of mods.
 local function ParseSpeedModFile(path)
-	local function Failure()
+	local function Failure(file)
 		-- error; write a fallback mod file and return it
 		local fallbackString = "0.5x,1x,1.5x,2x,3x,4x,5x,6x,7x,8x,C250,C450,m550"
 		Trace("[CustomSpeedMods]: Could not read SpeedMods; writing fallback to "..path)
@@ -61,6 +61,7 @@ local function ParseSpeedModFile(path)
 		file:destroy()
 		return split(',',fallbackString)
 	end
+
 	local file = RageFileUtil.CreateRageFile()
 	if file:Open(path, 1) then
 		-- success
@@ -80,7 +81,7 @@ local function ParseSpeedModFile(path)
 		file:destroy()
 		return mods
 	else
-		return Failure()
+		return Failure(file)
 	end
 end
 
