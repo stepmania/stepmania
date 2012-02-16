@@ -10,7 +10,10 @@ t[#t+1] = Def.ActorFrame {
 					self:LoadBackground(song:GetBackgroundPath());
 				end;
 				self:scale_or_crop_background()
-				(cmd(fadebottom,0.25;fadetop,0.25;croptop,48/480;cropbottom,48/480))(self);
+				self:fadebottom(0.25)
+				self:fadetop(0.25)
+				self:croptop(1/10)
+				self:cropbottom(1/10)
 			else
 				self:visible(false);
 			end
