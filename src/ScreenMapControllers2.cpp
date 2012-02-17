@@ -486,7 +486,7 @@ void ScreenMapControllers2::TweenOnScreen()
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to ScreenEdit. */ 
+/** @brief Allow Lua to have access to ScreenMapControllers2. */ 
 class LunaScreenMapControllers2: public Luna<ScreenMapControllers2>
 {
 public:
