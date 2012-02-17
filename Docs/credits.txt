@@ -132,6 +132,9 @@ DHalens
 
 @Niler_jp
  * Japanese translation
+ 
+Deamon007
+ * Dutch translation
 
 ==the beta testers==
 [SSC Beta Testing Team]

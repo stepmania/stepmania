@@ -67,6 +67,7 @@ local translators = {
 	"John Reactor (Polish)",
 	"DHalens (Spanish)",
 	"@Niler_jp (Japanese)",
+	"Deamon007 (Dutch)"
 }
 
 local thanks = {
@@ -80,6 +81,7 @@ local thanks = {
 	"Matt1360", -- Automake magic + oitg bro
 	"Renard",
 	"Ryan McKanna (Plaguefox)",
+	"Sta Kousin", --help with Japanese bug reports
 }
 
 local shoutout = {
