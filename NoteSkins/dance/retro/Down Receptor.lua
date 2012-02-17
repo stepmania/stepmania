@@ -8,7 +8,7 @@ local t = Def.ActorFrame{
 		NoneCommand=NOTESKIN:GetMetricA('ReceptorArrow', 'NoneCommand');
 		PressCommand=NOTESKIN:GetMetricA('ReceptorArrow', 'PressCommand');
 	};
-	-- flash part
+	-- flashpert
 	Def.Sprite {
 		Texture="_down receptor tap";
 		Frame0000=0;
