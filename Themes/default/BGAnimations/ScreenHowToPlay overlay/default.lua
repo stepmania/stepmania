@@ -46,29 +46,30 @@ return Def.ActorFrame {
 
 	-- messages
 	LoadFont("Common Normal") .. {
-		Text = "How To Play StepMania",
+		Text="How To Play StepMania",
 		InitCommand=cmd(zbuffer,1;z,20;x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y;shadowlength,1;strokecolor,Color("Outline"));
 		OnCommand=cmd(diffusealpha,0;zoom,4;sleep,0.0;linear,0.3;diffusealpha,1;zoom,1;sleep,1.8;linear,0.3;zoom,0.75;x,170;y,60);
 	};
 	LoadActor("feet") .. {
-		OnCommand=cmd(zbuffer,1;z,20;x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y;addx,-SCREEN_WIDTH;sleep,2.4;decelerate,0.3;addx,SCREEN_WIDTH;sleep,2;linear,0.3;zoomy,0);
+		OnCommand=cmd(z,20;x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y;addx,-SCREEN_WIDTH;sleep,2.4;decelerate,0.3;addx,SCREEN_WIDTH;sleep,2;linear,0.3;zoomy,0);
 	};
-	LoadActor("tapmessage") .. {
-		OnCommand=cmd(x,SCREEN_HEIGHT;y,280;diffusealpha,0;sleep,6;linear,0;diffusealpha,1;sleep,2;linear,0;diffusealpha,0);
+
+	LoadActor("_message tap")..{
+		OnCommand=cmd(sleep,6;queuecommand,"Show");
 	};
-	LoadActor("tapmessage") .. {
-		OnCommand=cmd(x,SCREEN_HEIGHT;y,280;diffusealpha,0;sleep,9.7;linear,0;diffusealpha,1;sleep,1.7;linear,0;diffusealpha,0);
+	LoadActor("_message tap")..{
+		OnCommand=cmd(sleep,9.7;queuecommand,"Show");
 	};
-	LoadActor("tapmessage") .. {
-		OnCommand=cmd(x,SCREEN_HEIGHT;y,280;diffusealpha,0;sleep,12.7;linear,0;diffusealpha,1;sleep,1.7;linear,0;diffusealpha,0);
+	LoadActor("_message tap")..{
+		OnCommand=cmd(sleep,12.7;queuecommand,"Show");
 	};
-	LoadActor("tapmessage") .. {
-		OnCommand=cmd(x,SCREEN_HEIGHT;y,280;diffusealpha,0;sleep,15.7;linear,0;diffusealpha,1;sleep,1.7;linear,0;diffusealpha,0);
+	LoadActor("_message tap")..{
+		OnCommand=cmd(sleep,15.7;queuecommand,"Show");
 	};
-	LoadActor("jumpmessage") .. {
-		OnCommand=cmd(x,SCREEN_HEIGHT;y,280;diffusealpha,0;sleep,18.7;linear,0;diffusealpha,1;sleep,1.7;linear,0;diffusealpha,0);
+	LoadActor("_message jump")..{
+		OnCommand=cmd(sleep,18.7;queuecommand,"Show");
 	};
-	LoadActor("missmessage") .. {
-		OnCommand=cmd(x,SCREEN_HEIGHT;y,280;diffusealpha,0;sleep,22.7;linear,0;diffusealpha,1;sleep,22.7;linear,0;diffusealpha,0);
+	LoadActor("_message miss")..{
+		OnCommand=cmd(sleep,22.7;queuecommand,"Show");
 	};
 };
