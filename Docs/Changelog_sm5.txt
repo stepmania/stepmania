@@ -10,7 +10,7 @@ StepMania 5.0 alpha 1a | 20120219
 
 2012/02/19
 ----------
-* [Style] Added LockedDifficulty() Lua binding.
+* [Style] Added LockedDifficulty() Lua binding. [AJ]
 
 2012/02/15
 ----------
