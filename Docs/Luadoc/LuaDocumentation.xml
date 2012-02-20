@@ -2409,11 +2409,17 @@ save yourself some time, copy this for undocumented things:
 	<Function name='GetHoldNoteScore' return='int' arguments='HoldNoteScore hns'>
 		Return the number of HoldNoteScores that match <code>hns</code>.
 	</Function>
+	<Function name='GetMaxCombo' return='int' arguments=''>
+		Returns the Max Combo of this high score.
+	</Function>
 	<Function name='GetModifiers' return='string' arguments=''>
 		Returns the modifiers used for this HighScore.
 	</Function>
 	<Function name='GetName' return='string' arguments=''>
 		Returns the name associated with the high score.
+	</Function>
+	<Function name='GetPeakComboAward' return='PeakComboAward' arguments=''>
+		Returns the Peak Combo Award for this high score.
 	</Function>
 	<Function name='GetPercentDP' return='float' arguments=''>
 		Returns the percentage of dance points associated with the high score.
@@ -2423,6 +2429,9 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='GetScore' return='int' arguments=''>
 		Returns the score associated with the high score.
+	</Function>
+	<Function name='GetStageAward' return='StageAward' arguments=''>
+		Retrns the Stage Award for this high score.
 	</Function>
 	<Function name='GetSurvivalSeconds' return='float' arguments=''>
 		Returns the number of seconds survived associated with the high score.
@@ -3561,8 +3570,11 @@ save yourself some time, copy this for undocumented things:
 	<Description>
 		See <Link class='ActorSound' /> for loading a sound.
 	</Description>
+	<Function name='SetParam' return='void' arguments='string sProperty, float fVal'>
+		Actually sets the value of <code>sProperty</code> to <code>fVal</code>. The supported properties depend on how the associated <Link class='ActorSound' /> was loaded.
+	</Function>
 	<Function name='SetProperty' return='void' arguments='string sProperty, float fVal'>
-		Sets the value of <code>sProperty</code> to <code>fVal</code>. The supported properties depend on how the associated <Link class='ActorSound' /> was loaded.
+		Attempts (and typically fails) to set the value of <code>sProperty</code> to <code>fVal</code>. The supported properties depend on how the associated <Link class='ActorSound' /> was loaded.
 	</Function>
 	<Function name='pitch' return='void' arguments='float fPitch'>
 		Sets the pitch to <code>fPitch</code>. The associated <Link class='ActorSound' /> have <code>SupportsRateChanging = true</code> on load.
@@ -3868,6 +3880,9 @@ save yourself some time, copy this for undocumented things:
 	<Function name='GetOrigin' return='string' arguments=''>
 		Gets the Song's origin.
 	</Function>
+	<Function name='GetPreviewVidPath' return='string' arguments=''>
+		Returns the path to the Song's preview video, if it exists. (Returns <code>nil</code> otherwise.)
+	</Function>
 	<Function name='GetSampleLength' return='float' arguments=''>
 		Gets the length of a song's sample time in seconds.
 	</Function>
@@ -3936,6 +3951,9 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='HasMusic' return='bool' arguments=''>
 		Returns <code>true</code> if the song has music.
+	</Function>
+	<Function name='HasPreviewVid' return='bool' arguments=''>
+		Returns <code>true</code> if the song has a preview video.
 	</Function>
 	<Function name='HasSignificantBPMChangesOrStops' return='bool' arguments=''>
 		Returns <code>true</code> if the song has significant BPM changes or stops.
@@ -4705,8 +4723,8 @@ save yourself some time, copy this for undocumented things:
 	<Function name='GetNumItems' return='int' arguments=''>
 		Returns the total number of items in the wheel.
 	</Function>
-	<Function name='GetSelectedType' return='int' arguments=''>
-		
+	<Function name='GetSelectedType' return='WheelItemDataType' arguments=''>
+		Returns the WheelItemDataType of the selected item.
 	</Function>
 	<Function name='GetWheelItem' return='WheelItemBase' arguments='int iIndex'>
 		Returns the WheelItem at index <code>iIndex</code>.

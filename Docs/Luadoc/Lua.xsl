@@ -233,7 +233,7 @@
 	<div>
 		<fieldset>
 		<legend>Function Colors</legend>
-		<div class="descriptionCell">Available in sm-ssc and StepMania 5</div>
+		<div class="descriptionCell">Available in StepMania 5</div>
 		<div class="renamed">Renamed or changed from StepMania 4 alphas</div>
 		<div class="fallbackTheme">Defined in the _fallback theme</div>
 		<div class="defaultTheme">Defined in the default theme</div>

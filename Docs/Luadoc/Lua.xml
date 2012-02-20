@@ -10,7 +10,6 @@
 		<Function name='BoostColor'/>
 		<Function name='Brightness'/>
 		<Function name='Center1Player'/>
-		<Function name='ClearEnterMappedKeys'/>
 		<Function name='CloseConnection'/>
 		<Function name='ColorDarkTone'/>
 		<Function name='ColorLightTone'/>
@@ -834,11 +833,14 @@
 			<Function name='GetDate'/>
 			<Function name='GetGrade'/>
 			<Function name='GetHoldNoteScore'/>
+			<Function name='GetMaxCombo'/>
 			<Function name='GetModifiers'/>
 			<Function name='GetName'/>
+			<Function name='GetPeakComboAward'/>
 			<Function name='GetPercentDP'/>
 			<Function name='GetRadarValues'/>
 			<Function name='GetScore'/>
+			<Function name='GetStageAward'/>
 			<Function name='GetSurvivalSeconds'/>
 			<Function name='GetTapNoteScore'/>
 			<Function name='IsFillInMarker'/>
@@ -1248,6 +1250,7 @@
 			<Function name='GetDescriptions'/>
 		</Class>
 		<Class name='RageSound'>
+			<Function name='SetParam'/>
 			<Function name='SetProperty'/>
 			<Function name='pitch'/>
 			<Function name='speed'/>
@@ -1382,6 +1385,7 @@
 			<Function name='GetMusicPath'/>
 			<Function name='GetOneSteps'/>
 			<Function name='GetOrigin'/>
+			<Function name='GetPreviewVidPath'/>
 			<Function name='GetSampleLength'/>
 			<Function name='GetSampleStart'/>
 			<Function name='GetSongDir'/>
@@ -1404,6 +1408,7 @@
 			<Function name='HasJacket'/>
 			<Function name='HasLyrics'/>
 			<Function name='HasMusic'/>
+			<Function name='HasPreviewVid'/>
 			<Function name='HasSignificantBPMChangesOrStops'/>
 			<Function name='HasStepsType'/>
 			<Function name='HasStepsTypeAndDifficulty'/>
@@ -2281,6 +2286,17 @@
 			<EnumValue name='&apos;VertAlign_Middle&apos;' value='1'/>
 			<EnumValue name='&apos;VertAlign_Bottom&apos;' value='2'/>
 		</Enum>
+		<Enum name='WheelItemDataType'>
+			<EnumValue name='&apos;WheelItemDataType_Generic&apos;' value='0'/>
+			<EnumValue name='&apos;WheelItemDataType_Section&apos;' value='1'/>
+			<EnumValue name='&apos;WheelItemDataType_Song&apos;' value='2'/>
+			<EnumValue name='&apos;WheelItemDataType_Roulette&apos;' value='3'/>
+			<EnumValue name='&apos;WheelItemDataType_Random&apos;' value='4'/>
+			<EnumValue name='&apos;WheelItemDataType_Portal&apos;' value='5'/>
+			<EnumValue name='&apos;WheelItemDataType_Course&apos;' value='6'/>
+			<EnumValue name='&apos;WheelItemDataType_Sort&apos;' value='7'/>
+			<EnumValue name='&apos;WheelItemDataType_Custom&apos;' value='8'/>
+		</Enum>
 		<Enum name='ZTestMode'>
 			<EnumValue name='&apos;ZTestMode_Off&apos;' value='0'/>
 			<EnumValue name='&apos;ZTestMode_WriteOnPass&apos;' value='1'/>
@@ -2310,6 +2326,6 @@
 		<Constant name='right' value='&apos;HorizAlign_Right&apos;'/>
 		<Constant name='top' value='&apos;VertAlign_Top&apos;'/>
 	</Constants>
-	<Version>StepMania v5.0 alpha 1</Version>
-	<Date>2012-01-12</Date>
+	<Version>StepMania v5.0 alpha 1a</Version>
+	<Date>2012-02-19</Date>
 </Lua>
