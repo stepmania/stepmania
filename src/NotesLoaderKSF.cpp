@@ -310,11 +310,14 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, Song &song, bool 
 			}
 			/* have this row be the last moment in the song, unless
 			 * a future step ends later. */
-			float curTime = stepsTiming.GetElapsedTimeFromBeat(fCurBeat);
-			if (curTime > song.GetSpecifiedLastSecond())
-			{
-				song.SetSpecifiedLastSecond(curTime);
-			}
+			//float curTime = stepsTiming.GetElapsedTimeFromBeat(fCurBeat);
+			//if (curTime > song.GetSpecifiedLastSecond())
+			//{
+			//	song.SetSpecifiedLastSecond(curTime);
+			//}
+
+			song.SetSpecifiedLastSecond( song.GetSpecifiedLastSecond() + 4 );
+
 			break;
 		}
 
