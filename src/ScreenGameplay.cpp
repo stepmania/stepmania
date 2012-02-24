@@ -968,7 +968,7 @@ void ScreenGameplay::SetupSong( int iSongIndex )
 			Attack a = pi->m_asModifiersQueue[iSongIndex][i];
 			if( a.fStartSecond != 0 )
 				continue;
-			a.fStartSecond = -1;	// now
+			a.fStartSecond = a.ATTACK_STARTS_NOW;	// now
 
 			PlayerOptions po;
 			po.FromString( a.sModifiers );
@@ -1018,7 +1018,7 @@ void ScreenGameplay::SetupSong( int iSongIndex )
 		{
 			Attack a = pi->m_asModifiersQueue[iSongIndex][i];
 			if( a.fStartSecond == 0 )
-				a.fStartSecond = -1;	// now
+				a.fStartSecond = a.ATTACK_STARTS_NOW;	// now
 			
 			pi->GetPlayerState()->LaunchAttack( a );
 			GAMESTATE->m_SongOptions.FromString( ModsLevel_Song, a.sModifiers );

@@ -2859,7 +2859,7 @@ void Player::UpdateJudgedRows()
 
 				Attack attMineAttack;
 				attMineAttack.sModifiers = ApplyRandomAttack();
-				attMineAttack.fStartSecond = -1.0f;
+				attMineAttack.fStartSecond = attMineAttack.ATTACK_STARTS_NOW;
 				attMineAttack.fSecsRemaining = fAttackRunTime;
 
 				m_pPlayerState->LaunchAttack( attMineAttack );
