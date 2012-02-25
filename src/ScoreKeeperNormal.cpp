@@ -304,67 +304,60 @@ void ScoreKeeperNormal::AddScoreInternal( TapNoteScore score )
 	int &iCurMaxScore = m_pPlayerStageStats->m_iCurMaxScore;
 
 	// See Aaron In Japan for more details about the scoring formulas.
-	if( GAMESTATE->IsCourseMode() )
+	// Note: this assumes no custom scoring systems are in use.
+	int p = 0;	// score multiplier
+
+	switch( score )
 	{
-		int p = 0;	// score multiplier
-
-		switch( score )
-		{
-		case TNS_W1:	p = 10;	break;
-		case TNS_W2:	p = GAMESTATE->ShowW1()? 9:10; break;
-		case TNS_W3:	p = 5;	break;
-		default:		p = 0;	break;
-		}
-
-		m_iTapNotesHit++;
-
-		const int N = m_iNumTapsAndHolds;
-		const int sum = (N * (N + 1)) / 2;
-		const int Z = m_iMaxPossiblePoints/10;
-
-		// Don't use a multiplier if the player has failed
-		if( m_pPlayerStageStats->m_bFailed )
-		{
-			iScore += p;
-			// make score evenly divisible by 5
-			// only update this on the next step, to make it less *obvious*
-			/* Round to the nearest 5, instead of always rounding down, so a base score
-			* of 9 will round to 10, not 5. */
-			if (p > 0)
-				iScore = ((iScore+2) / 5) * 5;
-		}
-		else
-		{
-			iScore += GetScore(p, Z, sum, m_iTapNotesHit);
-			const int &iCurrentCombo = m_pPlayerStageStats->m_iCurCombo;
-			iScore += m_ComboBonusFactor[score] * iCurrentCombo;
-		}
-
-		// Subtract the maximum this step could have been worth from the bonus.
-		m_iPointBonus -= GetScore(10, Z, sum, m_iTapNotesHit);
-		// And add the maximum this step could have been worth to the max score up to now.
-		iCurMaxScore += GetScore(10, Z, sum, m_iTapNotesHit);
-
-		if ( m_iTapNotesHit == m_iNumTapsAndHolds && score >= TNS_W2 )
-		{
-			if( !m_pPlayerStageStats->m_bFailed )
-				iScore += m_iPointBonus;
-			if ( m_bIsLastSongInCourse )
-			{
-				iScore += 100000000 - m_iMaxScoreSoFar;
-				iCurMaxScore += 100000000 - m_iMaxScoreSoFar;
-
-				/* If we're in Endless mode, we'll come around here again, so reset
-				* the bonus counter. */
-				m_iMaxScoreSoFar = 0;
-			}
-			iCurMaxScore += m_iPointBonus;
-		}
+	case TNS_W1:	p = 10;	break;
+	case TNS_W2:	p = GAMESTATE->ShowW1()? 9:10; break;
+	case TNS_W3:	p = 5;	break;
+	default:		p = 0;	break;
 	}
-	// Custom Scoring
+
+	m_iTapNotesHit++;
+
+	const int N = m_iNumTapsAndHolds;
+	const int sum = (N * (N + 1)) / 2;
+	const int Z = m_iMaxPossiblePoints/10;
+
+	// Don't use a multiplier if the player has failed
+	if( m_pPlayerStageStats->m_bFailed )
+	{
+		iScore += p;
+		// make score evenly divisible by 5
+		// only update this on the next step, to make it less *obvious*
+		/* Round to the nearest 5, instead of always rounding down, so a base score
+		* of 9 will round to 10, not 5. */
+		if (p > 0)
+			iScore = ((iScore+2) / 5) * 5;
+	}
 	else
 	{
-		
+		iScore += GetScore(p, Z, sum, m_iTapNotesHit);
+		const int &iCurrentCombo = m_pPlayerStageStats->m_iCurCombo;
+		iScore += m_ComboBonusFactor[score] * iCurrentCombo;
+	}
+
+	// Subtract the maximum this step could have been worth from the bonus.
+	m_iPointBonus -= GetScore(10, Z, sum, m_iTapNotesHit);
+	// And add the maximum this step could have been worth to the max score up to now.
+	iCurMaxScore += GetScore(10, Z, sum, m_iTapNotesHit);
+
+	if ( m_iTapNotesHit == m_iNumTapsAndHolds && score >= TNS_W2 )
+	{
+		if( !m_pPlayerStageStats->m_bFailed )
+			iScore += m_iPointBonus;
+		if ( m_bIsLastSongInCourse )
+		{
+			iScore += 100000000 - m_iMaxScoreSoFar;
+			iCurMaxScore += 100000000 - m_iMaxScoreSoFar;
+
+			/* If we're in Endless mode, we'll come around here again, so reset
+			* the bonus counter. */
+			m_iMaxScoreSoFar = 0;
+		}
+		iCurMaxScore += m_iPointBonus;
 	}
 
 	ASSERT_M( iScore >= 0, "iScore < 0 before re-rounding" );
