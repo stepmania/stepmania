@@ -91,17 +91,6 @@ private:
 	// Any blank space in the map is defined to be empty.
 	vector<TrackMap>	m_TapNotes;
 	
-	/**
-	 * @brief Determine whether this note is for Player 1 or Player 2.
-	 * @param track the track/column the note is in.
-	 * @param tn the note in question. Required for routine mode.
-	 * @return true if it's for player 1, false for player 2. */
-	bool IsPlayer1(const int track, const TapNote &tn) const;
-	
-	pair<int, int> GetNumRowsWithSimultaneousTapsTwoPlayer(int minTaps = 2,
-														   int startRow = 0,
-														   int endRow = MAX_NOTE_ROW) const;
-	
 public:
 	void Init();
 	
@@ -313,34 +302,6 @@ public:
 	// and the other notetypes
 	int GetNumLifts( int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW ) const;
 	int GetNumFakes( int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW ) const;
-
-	// the couple/routine style variants of the above.
-	pair<int, int> GetNumTapNotesTwoPlayer(int startRow = 0,
-										   int endRow = MAX_NOTE_ROW) const;
-	
-	pair<int, int> GetNumJumpsTwoPlayer(int startRow = 0,
-										int endRow = MAX_NOTE_ROW) const;
-	
-	pair<int, int> GetNumHandsTwoPlayer(int startRow = 0,
-										int endRow = MAX_NOTE_ROW) const;
-	
-	pair<int, int> GetNumQuadsTwoPlayer(int startRow = 0,
-										int endRow = MAX_NOTE_ROW) const;
-	
-	pair<int, int> GetNumHoldNotesTwoPlayer(int startRow = 0,
-											int endRow = MAX_NOTE_ROW) const;
-	
-	pair<int, int> GetNumMinesTwoPlayer(int startRow = 0,
-										int endRow = MAX_NOTE_ROW) const;
-	
-	pair<int, int> GetNumRollsTwoPlayer(int startRow = 0,
-										int endRow = MAX_NOTE_ROW) const;
-	
-	pair<int, int> GetNumLiftsTwoPlayer(int startRow = 0,
-										int endRow = MAX_NOTE_ROW) const;
-	
-	pair<int, int> GetNumFakesTwoPlayer(int startRow = 0,
-										int endRow = MAX_NOTE_ROW) const;
 	
 	// Transformations
 	void LoadTransformed(const NoteData& original,
