@@ -357,7 +357,7 @@ void Steps::Decompress()
 	else
 	{
 		// load from compressed
-		bool bComposite = GAMEMAN->GetStepsTypeInfo(m_StepsType).m_StepsTypeCategory == StepsTypeCategory_Routine;
+		bool bComposite = this->GetStepsTypeCategory() == StepsTypeCategory_Routine;
 		m_bNoteDataIsFilled = true;
 		m_pNoteData->SetNumTracks( GAMEMAN->GetStepsTypeInfo(m_StepsType).iNumTracks );
 
