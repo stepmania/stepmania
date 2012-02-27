@@ -2054,8 +2054,13 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 
 		}
 	case EDIT_BUTTON_OPEN_EDIT_MENU:
-		EditMiniMenu( &g_MainMenu, SM_BackFromMainMenu );
-		break;
+		{
+			EditMiniMenu( &g_MainMenu, SM_BackFromMainMenu );
+			// Do the steps in case View Steps Data is requested. 
+			Steps* pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
+			pSteps->SetNoteData(m_NoteDataEdit);
+			break;
+		}
 	case EDIT_BUTTON_OPEN_INPUT_HELP:
 		DoHelp();
 		break;
@@ -4149,40 +4154,17 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 		{
 			float fMusicSeconds = m_pSoundMusic->GetLengthSeconds();
 			Steps* pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
-			const StepsTypeCategory &cat = GAMEMAN->GetStepsTypeInfo(pSteps->m_StepsType).m_StepsTypeCategory;
-			if (cat == StepsTypeCategory_Couple || cat == StepsTypeCategory_Routine)
-			{
-				pair<int, int> tmp = m_NoteDataEdit.GetNumTapNotesTwoPlayer();
-				g_StepsData.rows[tap_notes].SetOneUnthemedChoice( ssprintf("%d / %d", tmp.first, tmp.second) );
-				tmp = m_NoteDataEdit.GetNumJumpsTwoPlayer();
-				g_StepsData.rows[jumps].SetOneUnthemedChoice( ssprintf("%d / %d", tmp.first, tmp.second) );
-				tmp = m_NoteDataEdit.GetNumHandsTwoPlayer();
-				g_StepsData.rows[hands].SetOneUnthemedChoice( ssprintf("%d / %d", tmp.first, tmp.second) );
-				tmp = m_NoteDataEdit.GetNumQuadsTwoPlayer();
-				g_StepsData.rows[quads].SetOneUnthemedChoice( ssprintf("%d / %d", tmp.first, tmp.second) );
-				tmp = m_NoteDataEdit.GetNumHoldNotesTwoPlayer();
-				g_StepsData.rows[holds].SetOneUnthemedChoice( ssprintf("%d / %d", tmp.first, tmp.second) );
-				tmp = m_NoteDataEdit.GetNumMinesTwoPlayer();
-				g_StepsData.rows[mines].SetOneUnthemedChoice( ssprintf("%d / %d", tmp.first, tmp.second) );
-				tmp = m_NoteDataEdit.GetNumRollsTwoPlayer();
-				g_StepsData.rows[rolls].SetOneUnthemedChoice( ssprintf("%d / %d", tmp.first, tmp.second) );
-				tmp = m_NoteDataEdit.GetNumLiftsTwoPlayer();
-				g_StepsData.rows[lifts].SetOneUnthemedChoice( ssprintf("%d / %d", tmp.first, tmp.second) );
-				tmp = m_NoteDataEdit.GetNumFakesTwoPlayer();
-				g_StepsData.rows[fakes].SetOneUnthemedChoice( ssprintf("%d / %d", tmp.first, tmp.second) );
-			}
-			else
-			{
-				g_StepsData.rows[tap_notes].SetOneUnthemedChoice( ssprintf("%d", m_NoteDataEdit.GetNumTapNotes()) );
-				g_StepsData.rows[jumps].SetOneUnthemedChoice( ssprintf("%d", m_NoteDataEdit.GetNumJumps()) );
-				g_StepsData.rows[hands].SetOneUnthemedChoice( ssprintf("%d", m_NoteDataEdit.GetNumHands()) );
-				g_StepsData.rows[quads].SetOneUnthemedChoice( ssprintf("%d", m_NoteDataEdit.GetNumQuads()) );
-				g_StepsData.rows[holds].SetOneUnthemedChoice( ssprintf("%d", m_NoteDataEdit.GetNumHoldNotes()) );
-				g_StepsData.rows[mines].SetOneUnthemedChoice( ssprintf("%d", m_NoteDataEdit.GetNumMines()) );
-				g_StepsData.rows[rolls].SetOneUnthemedChoice( ssprintf("%d", m_NoteDataEdit.GetNumRolls()) );
-				g_StepsData.rows[lifts].SetOneUnthemedChoice( ssprintf("%d", m_NoteDataEdit.GetNumLifts()) );
-				g_StepsData.rows[fakes].SetOneUnthemedChoice( ssprintf("%d", m_NoteDataEdit.GetNumFakes()) );
-			}
+			// always get the accurate step data with this menu.
+			g_StepsData.rows[tap_notes].SetOneUnthemedChoice(VectorIntToString(pSteps->GetNumTapNotes()).c_str());
+			g_StepsData.rows[jumps].SetOneUnthemedChoice(VectorIntToString(pSteps->GetNumJumps()).c_str());
+			g_StepsData.rows[hands].SetOneUnthemedChoice(VectorIntToString(pSteps->GetNumHands()).c_str());
+			g_StepsData.rows[quads].SetOneUnthemedChoice(VectorIntToString(pSteps->GetNumQuads()).c_str());
+			g_StepsData.rows[holds].SetOneUnthemedChoice(VectorIntToString(pSteps->GetNumHoldNotes()).c_str());
+			g_StepsData.rows[mines].SetOneUnthemedChoice(VectorIntToString(pSteps->GetNumMines()).c_str());
+			g_StepsData.rows[rolls].SetOneUnthemedChoice(VectorIntToString(pSteps->GetNumRolls()).c_str());
+			g_StepsData.rows[lifts].SetOneUnthemedChoice(VectorIntToString(pSteps->GetNumLifts()).c_str());
+			g_StepsData.rows[fakes].SetOneUnthemedChoice(VectorIntToString(pSteps->GetNumFakes()).c_str());
+			
 			g_StepsData.rows[stream].SetOneUnthemedChoice( ssprintf("%.2f", NoteDataUtil::GetStreamRadarValue(m_NoteDataEdit,fMusicSeconds)) );
 			g_StepsData.rows[voltage].SetOneUnthemedChoice( ssprintf("%.2f", NoteDataUtil::GetVoltageRadarValue(m_NoteDataEdit,fMusicSeconds)) );
 			g_StepsData.rows[air].SetOneUnthemedChoice( ssprintf("%.2f", NoteDataUtil::GetAirRadarValue(m_NoteDataEdit,fMusicSeconds)) );
