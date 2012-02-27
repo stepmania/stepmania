@@ -3412,7 +3412,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	else if ( SM == SM_BackFromFakeChange && !ScreenTextEntry::s_bCancelledLast )
 	{
 		float fFake = StringToFloat( ScreenTextEntry::s_sLastAnswer );
-		if( fFake >= 0 ) // allow 0 to kill a warp.
+		if( fFake >= 0 ) // allow 0 to kill a fake.
 		{
 			GetAppropriateTiming().AddSegment( FakeSegment(GetRow(), fFake) );
 			SetDirty( true );
