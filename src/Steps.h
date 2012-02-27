@@ -368,6 +368,16 @@ private:
 	 * @brief What is the maximum specified BPM?
 	 * If this is a range, then min should not be equal to max. */
 	float	specifiedBPMMax;
+
+	/**
+	* @brief Which PlayerNumber are we dealing with for the purposes of this Steps' TapNote?
+	* 
+	* Note: this function could possibly be abstracted if all of the cases
+	* can be separated between Couple and Routine.
+	* @param track the Track in question. Mainly if it's Couple.
+	* @param tn the TapNote to look at. Mainly if it's Routine.
+	* @return the PlayerNumber that uses this note. */
+	PlayerNumber GetEffectivePlayer(const int track, const TapNote &tn) const;
 };
 
 #endif

@@ -543,6 +543,20 @@ bool Steps::IsMultiPlayerStyle() const
 	return cat == StepsTypeCategory_Couple || cat == StepsTypeCategory_Routine;
 }
 
+PlayerNumber Steps::GetEffectivePlayer(const int track, const TapNote &tn) const
+{
+	if (!this->IsMultiPlayerStyle())
+	{
+		return PLAYER_1;
+	}
+	if (this->GetStepsTypeCategory() == StepsTypeCategory_Routine)
+	{
+		return tn.pn;
+	}
+	// at this point, we know it's couple.
+	return (track < (this->GetNoteData().GetNumTracks() / 2)) ? PLAYER_1 : PLAYER_2;
+}
+
 bool Steps::IsTap(const TapNote &tn, const int row) const
 {
 	if (this->m_Timing.IsJudgableAtRow(row))
@@ -569,6 +583,36 @@ bool Steps::IsFake(const TapNote &tn, const int row) const
 	if (this->m_Timing.IsJudgableAtRow(row))
 		return this->GetNoteData().IsFake(tn, row);
 	return true;
+}
+
+vector<int> Steps::GetNumFakes(int start, int end) const
+{
+	vector<int> num(1);
+	if (!this->IsMultiPlayerStyle() &&
+		!this->m_Timing.HasWarps() &&
+		!this->m_Timing.HasFakes())
+	{
+		num[0] = this->GetNoteData().GetNumFakes(start, end);
+		return num;
+	}
+	if (this->IsMultiPlayerStyle())
+	{
+		num.resize(NUM_PLAYERS);
+	}
+	const NoteData &nd = this->GetNoteData();
+	for (int t = 0; t < nd.GetNumTracks(); ++t)
+	{
+		FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE(nd, t, r, start, end)
+		{
+			const TapNote &tn = nd.GetTapNote(t, r);
+			if (nd.IsFake(tn, r) ||
+				!this->m_Timing.IsJudgableAtRow(r))
+			{
+				++num[this->GetEffectivePlayer(t, tn)];
+			}
+		}
+	}
+	return num;
 }
 
 
