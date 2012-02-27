@@ -526,6 +526,33 @@ bool Steps::UsesSplitTiming() const
 	Song *song = SONGMAN->GetSongFromSteps(const_cast<Steps *>(this));
 	return song->m_SongTiming != this->m_Timing;
 }
+bool Steps::IsTap(const TapNote &tn, const int row) const
+{
+	if (this->m_Timing.IsJudgableAtRow(row))
+		return this->GetNoteData().IsTap(tn, row);
+	return false;
+}
+
+bool Steps::IsMine(const TapNote &tn, const int row) const
+{
+	if (this->m_Timing.IsJudgableAtRow(row))
+		return this->GetNoteData().IsMine(tn, row);
+	return false;
+}
+
+bool Steps::IsLift(const TapNote &tn, const int row) const
+{
+	if (this->m_Timing.IsJudgableAtRow(row))
+		return this->GetNoteData().IsLift(tn, row);
+	return false;
+}
+
+bool Steps::IsFake(const TapNote &tn, const int row) const
+{
+	if (this->m_Timing.IsJudgableAtRow(row))
+		return this->GetNoteData().IsFake(tn, row);
+	return true;
+}
 
 
 // lua start

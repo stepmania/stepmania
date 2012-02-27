@@ -98,6 +98,13 @@ private:
 	 * @return true if it's for player 1, false for player 2. */
 	bool IsPlayer1(const int track, const TapNote &tn) const;
 	
+	pair<int, int> GetNumRowsWithSimultaneousTapsTwoPlayer(int minTaps = 2,
+														   int startRow = 0,
+														   int endRow = MAX_NOTE_ROW) const;
+	
+public:
+	void Init();
+	
 	/**
 	 * @brief Determine if the note in question should be counted as a tap.
 	 * @param tn the note in question.
@@ -125,14 +132,7 @@ private:
 	 * @param row the row it lives in.
 	 * @return true if it's a fake, false otherwise. */
 	bool IsFake(const TapNote &tn, const int row) const;
-
-	pair<int, int> GetNumRowsWithSimultaneousTapsTwoPlayer(int minTaps = 2,
-														   int startRow = 0,
-														   int endRow = MAX_NOTE_ROW) const;
 	
-public:
-	void Init();
-
 	int GetNumTracks() const { return m_TapNotes.size(); }
 	void SetNumTracks( int iNewNumTracks );
 	bool IsComposite() const;
