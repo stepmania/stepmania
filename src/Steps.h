@@ -191,6 +191,35 @@ public:
 	{
 		return join(":", this->m_sAttackString);
 	}
+	
+	/**
+	 * @brief Determine whether this note is to be a Tap
+	 * given the Steps' timing data.
+	 * @param tn the TapNote to check.
+	 * @param row the row to check.
+	 * @return true if this is to be a Tap, false otherwise. */
+	bool IsTap(const TapNote &tn, const int row) const;
+	/**
+	 * @brief Determine whether this note is to be a Mine
+	 * given the Steps' timing data.
+	 * @param tn the TapNote to check.
+	 * @param row the row to check.
+	 * @return true if this is to be a Mine, false otherwise. */
+	bool IsMine(const TapNote &tn, const int row) const;
+	/**
+	 * @brief Determine whether this note is to be a Lift
+	 * given the Steps' timing data.
+	 * @param tn the TapNote to check.
+	 * @param row the row to check.
+	 * @return true if this is to be a Lift, false otherwise. */
+	bool IsLift(const TapNote &tn, const int row) const;
+	/**
+	 * @brief Determine whether this note is to be a Fake
+	 * given the Steps' timing data.
+	 * @param tn the TapNote to check.
+	 * @param row the row to check.
+	 * @return true if this is to be a Fake, false otherwise. */
+	bool IsFake(const TapNote &tn, const int row) const;
 
 private:
 	inline const Steps *Real() const		{ return parent ? parent : this; }
