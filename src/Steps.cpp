@@ -526,6 +526,23 @@ bool Steps::UsesSplitTiming() const
 	Song *song = SONGMAN->GetSongFromSteps(const_cast<Steps *>(this));
 	return song->m_SongTiming != this->m_Timing;
 }
+
+StepsType Steps::GetStepsType() const
+{
+	return this->m_StepsType;
+}
+
+StepsTypeCategory Steps::GetStepsTypeCategory() const
+{
+	return GAMEMAN->GetStepsTypeInfo(this->GetStepsType()).m_StepsTypeCategory;
+}
+
+bool Steps::IsMultiPlayerStyle() const
+{
+	const StepsTypeCategory &cat = this->GetStepsTypeCategory();
+	return cat == StepsTypeCategory_Couple || cat == StepsTypeCategory_Routine;
+}
+
 bool Steps::IsTap(const TapNote &tn, const int row) const
 {
 	if (this->m_Timing.IsJudgableAtRow(row))

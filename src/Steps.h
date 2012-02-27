@@ -191,7 +191,22 @@ public:
 	{
 		return join(":", this->m_sAttackString);
 	}
-	
+
+	/**
+	 * @brief Quickly get the Steps' StepsType.
+	 * @return the StepsType. */
+	StepsType GetStepsType() const;
+
+	/**
+	 * @brief Quickly get the category for this Steps' style.
+	 * @return the appropriate StepsTypeCategory. */
+	StepsTypeCategory GetStepsTypeCategory() const;
+
+	/**
+	 * @brief Determine whether this Steps' style requires more than one player.
+	 * @return true if more than one player is needed for this style, false otherwise. */
+	bool IsMultiPlayerStyle() const;
+
 	/**
 	 * @brief Determine whether this note is to be a Tap
 	 * given the Steps' timing data.
