@@ -359,46 +359,53 @@ bool NoteData::IsHoldHeadOrBodyAtRow( int iTrack, int iRow, int *pHeadRow ) cons
 	return IsHoldNoteAtRow( iTrack, iRow, pHeadRow );
 }
 
+int NoteData::GetSoonestHoldHeadAtRow(int track, int row) const
+{
+	/* Starting at the row, search upwards. If we find a hold head, we're within a hold.
+	 * If we find just about anything else, we're not: at this point, only auto keysounds
+	 can exist within a hold note. */
+	FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE_REVERSE(*this, track, r, 0, row)
+	{
+		const TapNote &tn = GetTapNote(track, r);
+		switch (tn.type)
+		{
+			case TapNote::hold_head:
+			{
+				return (tn.iDuration + r < row) ? -1 : r;
+			}
+			case TapNote::tap:
+			case TapNote::mine:
+			case TapNote::attack: // TODO: Should this be left out?
+			case TapNote::lift:
+			case TapNote::fake:
+				return -1;
+			case TapNote::empty:
+			case TapNote::autoKeysound:
+				continue;
+			default:
+				FAIL_M("Unknown note type has been found!");
+		}
+	}
+	return -1;
+}
+
 /* Determine if a hold note lies on the given spot. Return true if so.  If
  * pHeadRow is non-NULL, return the row of the head. (Note that this returns
  * false if a hold head lies on iRow itself.) */
 /* XXX: rename this to IsHoldBodyAtRow */
 bool NoteData::IsHoldNoteAtRow( int iTrack, int iRow, int *pHeadRow ) const
 {
-	int iDummy;
+	int iDummy = -1;
 	if( pHeadRow == NULL )
 		pHeadRow = &iDummy;
 
-	/* Starting at iRow, search upwards. If we find a TapNote::hold_head, we're within
-	 * a hold. If we find a tap, mine or attack, we're not--those never lie
-	 * within hold notes. Ignore autoKeysound. */
-	FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE_REVERSE( *this, iTrack, r, 0, iRow )
+	int head = this->GetSoonestHoldHeadAtRow(iTrack, iRow);
+	if (head == -1)
 	{
-		const TapNote &tn = GetTapNote( iTrack, r );
-		switch( tn.type )
-		{
-		case TapNote::hold_head:
-			if( tn.iDuration + r < iRow )
-				return false;
-			*pHeadRow = r;
-			return true;
-
-		case TapNote::tap:
-		case TapNote::mine:
-		case TapNote::attack:
-		case TapNote::lift:
-		case TapNote::fake:
-			return false;
-
-		case TapNote::empty:
-		case TapNote::autoKeysound:
-			// ignore
-			continue;
-		DEFAULT_FAIL( tn.type );
-		}
+		return false;
 	}
-
-	return false;
+	*pHeadRow = head;
+	return true;
 }
 
 bool NoteData::IsEmpty() const

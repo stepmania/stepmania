@@ -258,6 +258,13 @@ public:
 	bool IsHoldNoteAtRow( int iTrack, int iRow, int *pHeadRow = NULL ) const;
 	bool IsHoldHeadOrBodyAtRow( int iTrack, int iRow, int *pHeadRow ) const;
 
+	/**
+	 * @brief Get the row that contains the soonest hold head based on the current location.
+	 * @param track the current track.
+	 * @param the current row.
+	 * @return the row that has the soonest hold head. */
+	int GetSoonestHoldHeadAtRow(int track, int row) const;
+
 	// statistics
 	bool IsEmpty() const;
 	bool IsTrackEmpty( int iTrack ) const { return m_TapNotes[iTrack].empty(); }

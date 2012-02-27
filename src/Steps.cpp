@@ -591,6 +591,155 @@ PlayerNumber Steps::GetEffectivePlayer(const int track, const TapNote &tn) const
 	return (track < (this->GetNoteData().GetNumTracks() / 2)) ? PLAYER_1 : PLAYER_2;
 }
 
+vector<bool> Steps::RowNeedsAtLeastSimultaneousPresses(int min, int row) const
+{
+	if (!this->IsMultiPlayerStyle())
+	{
+		vector<bool> result(1, this->GetNoteData().RowNeedsAtLeastSimultaneousPresses(min, row));
+		return result;
+	}
+	vector<bool> result(NUM_PLAYERS);
+	vector<int> found(NUM_PLAYERS);
+
+	const NoteData &nd = this->GetNoteData();
+	for (int t = 0; t < nd.GetNumTracks(); ++t)
+	{
+		const TapNote &tn = nd.GetTapNote(t, row);
+		switch (tn.type)
+		{
+		case TapNote::mine:
+		case TapNote::empty:
+		case TapNote::fake:
+		case TapNote::lift: // you don't "press" on a lift.
+		case TapNote::autoKeysound:
+			continue; // should attack type notes be included?
+		default:
+			++found[this->GetEffectivePlayer(t, tn)];
+		}
+	}
+	// if no taps are found for any players, abandon ship.
+	bool valid = false;
+	FOREACH(int, found, i)
+	{
+		if (*i > 0)
+		{
+			valid = true;
+			break;
+		}
+	}
+	if (!valid)
+	{
+		return result; // by default, bools in vectors should be set to false.
+	}
+
+	FOREACH(int, found, i)
+	{
+		if (*i < min)
+		{
+			valid = false;
+			break;
+		}
+	}
+	if (valid)
+	{
+		vector<bool> yes(result.size(), true);
+		return yes; // all players require the min number of taps.
+	}
+
+	/*
+	 * At this point, at least one player doesn't have to press the minimum number of taps.
+	 * Check the holds at this point. Specifically, check the adjacent ones. */
+	for (int t = 0; t < nd.GetNumTracks(); ++t)
+	{
+		int headRow = nd.GetSoonestHoldHeadAtRow(t, row);
+		if (headRow != -1)
+		{
+			++found[this->GetEffectivePlayer(t, nd.GetTapNote(t, headRow))];
+		}
+	}
+	for (unsigned i = 0; i < found.size(); ++i)
+	{
+		if (found[i] > min)
+		{
+			result[i] = true;
+		}
+	}
+	return result;
+}
+
+vector<int> Steps::GetNumRowsWithSimultaneousPresses(int min, int start, int end) const
+{
+	vector<int> num(1);
+	if (!this->IsMultiPlayerStyle() &&
+		!this->m_Timing.HasWarps() &&
+		!this->m_Timing.HasFakes())
+	{
+		num[0] = this->GetNoteData().GetNumRowsWithSimultaneousPresses(min, start, end);
+		return num;
+	}
+	if (this->IsMultiPlayerStyle())
+	{
+		num.resize(NUM_PLAYERS);
+	}
+	const NoteData &nd = this->GetNoteData();
+	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE(nd, r, start, end)
+	{
+		if (this->m_Timing.IsJudgableAtRow(r))
+		{
+			vector<bool> result = this->RowNeedsAtLeastSimultaneousPresses(min, r);
+			for (unsigned i = 0; i < num.size(); ++i)
+			{
+				if (result[i])
+				{
+					++num[i];
+				}
+			}
+		}
+	}
+	return num;
+}
+
+vector<int> Steps::GetNumRowsWithSimultaneousTaps(int min, int start, int end) const
+{
+	vector<int> num(1);
+	if (!this->IsMultiPlayerStyle() &&
+		!this->m_Timing.HasWarps() &&
+		!this->m_Timing.HasFakes())
+	{
+		num[0] = this->GetNoteData().GetNumRowsWithSimultaneousTaps(min, start, end);
+		return num;
+	}
+	if (this->IsMultiPlayerStyle())
+	{
+		num.resize(NUM_PLAYERS);
+	}
+	const NoteData &nd = this->GetNoteData();
+	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE(nd, r, start, end)
+	{
+		if (!this->m_Timing.IsJudgableAtRow(r))
+		{
+			continue;
+		}
+		vector<int> found(num.size());
+		for (int t = 0; t < nd.GetNumTracks(); ++t)
+		{
+			const TapNote &tn = nd.GetTapNote(t, r);
+			if (nd.IsTap(tn, r))
+			{
+				++found[this->GetEffectivePlayer(t, tn)];
+			}
+		}
+		for (unsigned i = 0; i < num.size(); ++i)
+		{
+			if (found[i] >= min)
+			{
+				++num[i];
+			}
+		}
+	}
+	return num;
+}
+
 bool Steps::IsTap(const TapNote &tn, const int row) const
 {
 	if (this->m_Timing.IsJudgableAtRow(row))
@@ -617,6 +766,21 @@ bool Steps::IsFake(const TapNote &tn, const int row) const
 	if (this->m_Timing.IsJudgableAtRow(row))
 		return this->GetNoteData().IsFake(tn, row);
 	return true;
+}
+
+vector<int> Steps::GetNumJumps(int start, int end) const
+{
+	return this->GetNumRowsWithSimultaneousTaps(2, start, end);
+}
+
+vector<int> Steps::GetNumHands(int start, int end) const
+{
+	return this->GetNumRowsWithSimultaneousPresses(3, start, end);
+}
+
+vector<int> Steps::GetNumQuads(int start, int end) const
+{
+	return this->GetNumRowsWithSimultaneousPresses(4, start, end);
 }
 
 vector<int> Steps::GetNumHoldNotes(int start, int end) const
