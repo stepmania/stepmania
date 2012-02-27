@@ -1082,6 +1082,23 @@ static ThemeMetric<RString> EDIT_MODIFIERS		("ScreenEdit","EditModifiers");
 
 static ThemeMetric<bool> LOOP_ON_CHART_END		("ScreenEdit","LoopOnChartEnd");
 
+/**
+ * @brief Should the right side display some step stats?
+ */
+static ThemeMetric<bool> DISPLAY_SIDE_STATS		("ScreenEdit","DisplaySideStats");
+
+/**
+ * @brief Should the NoteData stats be displayed, or the Steps stats?
+ *
+ * This metric is irrelevant if the Display Side Stats metric is set to false. */
+static ThemeMetric<bool> DISPLAY_NOTEDATA_STATS	("ScreenEdit","DisplayNotedataStats");
+
+/**
+ * @brief Should the Steps Stats be updated on every NoteData change?
+ *
+ * If true, this may slow down the editor speed. */
+static ThemeMetric<bool> UPDATE_STEPS_STATS_LIVE ("ScreenEdit","UpdateStepsStatsLive");
+
 REGISTER_SCREEN_CLASS( ScreenEdit );
 
 void ScreenEdit::Init()
@@ -1551,52 +1568,67 @@ void ScreenEdit::UpdateTextInfo()
 	}
 	
 	GAMESTATE->SetProcessedTimingData(&m_pSteps->m_Timing);
-	const StepsTypeCategory &cat = GAMEMAN->GetStepsTypeInfo(m_pSteps->m_StepsType).m_StepsTypeCategory;
-	if (cat == StepsTypeCategory_Couple || cat == StepsTypeCategory_Routine)
+	if (DISPLAY_SIDE_STATS)
 	{
-		pair<int, int> tmp = m_NoteDataEdit.GetNumTapNotesTwoPlayer();
-		sText += ssprintf(NUM_STEPS_FORMAT_TWO_PLAYER.GetValue(),
-						  TAP_STEPS.GetValue().c_str(),
-						  tmp.first, tmp.second);
-		tmp = m_NoteDataEdit.GetNumJumpsTwoPlayer();
-		sText += ssprintf(NUM_JUMPS_FORMAT_TWO_PLAYER.GetValue(),
-						  JUMPS.GetValue().c_str(),
-						  tmp.first, tmp.second);
-		tmp = m_NoteDataEdit.GetNumHandsTwoPlayer();
-		sText += ssprintf(NUM_HANDS_FORMAT_TWO_PLAYER.GetValue(),
-						  HANDS.GetValue().c_str(),
-						  tmp.first, tmp.second);
-		tmp = m_NoteDataEdit.GetNumHoldNotesTwoPlayer();
-		sText += ssprintf(NUM_HOLDS_FORMAT_TWO_PLAYER.GetValue(),
-						  HOLDS.GetValue().c_str(),
-						  tmp.first, tmp.second);
-		tmp = m_NoteDataEdit.GetNumMinesTwoPlayer();
-		sText += ssprintf(NUM_MINES_FORMAT_TWO_PLAYER.GetValue(),
-						  MINES.GetValue().c_str(),
-						  tmp.first, tmp.second);
-		tmp = m_NoteDataEdit.GetNumRollsTwoPlayer();
-		sText += ssprintf(NUM_ROLLS_FORMAT_TWO_PLAYER.GetValue(),
-						  ROLLS.GetValue().c_str(),
-						  tmp.first, tmp.second);
-		tmp = m_NoteDataEdit.GetNumLiftsTwoPlayer();
-		sText += ssprintf(NUM_LIFTS_FORMAT_TWO_PLAYER.GetValue(),
-						  LIFTS.GetValue().c_str(),
-						  tmp.first, tmp.second);
-		tmp = m_NoteDataEdit.GetNumFakesTwoPlayer();
-		sText += ssprintf(NUM_FAKES_FORMAT_TWO_PLAYER.GetValue(),
-						  FAKES.GetValue().c_str(),
-						  tmp.first, tmp.second);
-	}
-	else
-	{
-		sText += ssprintf( NUM_STEPS_FORMAT.GetValue(), TAP_STEPS.GetValue().c_str(), m_NoteDataEdit.GetNumTapNotes() );
-		sText += ssprintf( NUM_JUMPS_FORMAT.GetValue(), JUMPS.GetValue().c_str(), m_NoteDataEdit.GetNumJumps() );
-		sText += ssprintf( NUM_HANDS_FORMAT.GetValue(), HANDS.GetValue().c_str(), m_NoteDataEdit.GetNumHands() );
-		sText += ssprintf( NUM_HOLDS_FORMAT.GetValue(), HOLDS.GetValue().c_str(), m_NoteDataEdit.GetNumHoldNotes() );
-		sText += ssprintf( NUM_MINES_FORMAT.GetValue(), MINES.GetValue().c_str(), m_NoteDataEdit.GetNumMines() );
-		sText += ssprintf( NUM_ROLLS_FORMAT.GetValue(), ROLLS.GetValue().c_str(), m_NoteDataEdit.GetNumRolls() );
-		sText += ssprintf( NUM_LIFTS_FORMAT.GetValue(), LIFTS.GetValue().c_str(), m_NoteDataEdit.GetNumLifts() );
-		sText += ssprintf( NUM_FAKES_FORMAT.GetValue(), FAKES.GetValue().c_str(), m_NoteDataEdit.GetNumFakes() );
+		if (DISPLAY_NOTEDATA_STATS)
+		{
+			sText += ssprintf(NUM_STEPS_FORMAT.GetValue(),
+				TAP_STEPS.GetValue().c_str(),
+				StringConversion::ToString(m_NoteDataEdit.GetNumTapNotes()).c_str() );
+			sText += ssprintf(NUM_JUMPS_FORMAT.GetValue(),
+				JUMPS.GetValue().c_str(),
+				StringConversion::ToString(m_NoteDataEdit.GetNumJumps()).c_str() );
+			sText += ssprintf(NUM_HANDS_FORMAT.GetValue(), 
+				HANDS.GetValue().c_str(), 
+				StringConversion::ToString(m_NoteDataEdit.GetNumHands()).c_str() );
+			sText += ssprintf(NUM_HOLDS_FORMAT.GetValue(),
+				HOLDS.GetValue().c_str(),
+				StringConversion::ToString(m_NoteDataEdit.GetNumHoldNotes()).c_str() );
+			sText += ssprintf(NUM_MINES_FORMAT.GetValue(),
+				MINES.GetValue().c_str(),
+				StringConversion::ToString(m_NoteDataEdit.GetNumMines()).c_str() );
+			sText += ssprintf(NUM_ROLLS_FORMAT.GetValue(),
+				ROLLS.GetValue().c_str(),
+				StringConversion::ToString(m_NoteDataEdit.GetNumRolls()).c_str() );
+			sText += ssprintf(NUM_LIFTS_FORMAT.GetValue(),
+				LIFTS.GetValue().c_str(), 
+				StringConversion::ToString(m_NoteDataEdit.GetNumLifts()).c_str() );
+			sText += ssprintf(NUM_FAKES_FORMAT.GetValue(),
+				FAKES.GetValue().c_str(), 
+				StringConversion::ToString(m_NoteDataEdit.GetNumFakes()).c_str() );
+		}
+		else
+		{
+			Steps* pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
+			if (UPDATE_STEPS_STATS_LIVE)
+			{
+				pSteps->SetNoteData(this->m_NoteDataEdit);
+			}
+			sText += ssprintf(NUM_STEPS_FORMAT.GetValue(),
+				TAP_STEPS.GetValue().c_str(),
+				VectorIntToString(pSteps->GetNumTapNotes()).c_str());
+			sText += ssprintf(NUM_JUMPS_FORMAT.GetValue(),
+				JUMPS.GetValue().c_str(),
+				VectorIntToString(pSteps->GetNumJumps()).c_str());
+			sText += ssprintf(NUM_HANDS_FORMAT.GetValue(), 
+				HANDS.GetValue().c_str(), 
+				VectorIntToString(pSteps->GetNumHands()).c_str());
+			sText += ssprintf(NUM_HOLDS_FORMAT.GetValue(),
+				HOLDS.GetValue().c_str(),
+				VectorIntToString(pSteps->GetNumHoldNotes()).c_str());
+			sText += ssprintf(NUM_MINES_FORMAT.GetValue(),
+				MINES.GetValue().c_str(),
+				VectorIntToString(pSteps->GetNumMines()).c_str());
+			sText += ssprintf(NUM_ROLLS_FORMAT.GetValue(),
+				ROLLS.GetValue().c_str(),
+				VectorIntToString(pSteps->GetNumRolls()).c_str());
+			sText += ssprintf(NUM_LIFTS_FORMAT.GetValue(),
+				LIFTS.GetValue().c_str(), 
+				VectorIntToString(pSteps->GetNumLifts()).c_str());
+			sText += ssprintf(NUM_FAKES_FORMAT.GetValue(),
+				FAKES.GetValue().c_str(), 
+				VectorIntToString(pSteps->GetNumFakes()).c_str());
+		}
 	}
 	switch( EDIT_MODE.GetValue() )
 	{
