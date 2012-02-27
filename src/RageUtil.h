@@ -419,6 +419,13 @@ float StringToFloat( const RString &sString );
 RString FloatToString( const float &num );
 bool StringToFloat( const RString &sString, float &fOut );
 
+/**
+ * @brief Have a standard way of converting vectors of ints to strings.
+ * @param nums the integers to convert.
+ * @param delim the delimeter to use for separating the ints.
+ * @return the string we are after. */
+RString VectorIntToString(const vector<int> &nums, const RString delim = "/");
+
 RString WStringToRString( const wstring &sString );
 RString WcharToUTF8( wchar_t c );
 wstring RStringToWstring( const RString &sString );

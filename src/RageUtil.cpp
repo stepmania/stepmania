@@ -1786,6 +1786,21 @@ RString FloatToString( const float &num )
 	return ss.str();
 }
 
+RString VectorIntToString(const vector<int> &nums, const RString delim)
+{
+	if (nums.size() == 0)
+	{
+		return "";
+	}
+	stringstream ss;
+	ss << nums[0];
+	for (unsigned i = 1; i < nums.size(); ++i)
+	{
+		ss << delim << nums[i];
+	}
+	return ss.str();
+}
+
 const wchar_t INVALID_CHAR = 0xFFFD; /* U+FFFD REPLACEMENT CHARACTER */
 
 wstring RStringToWstring( const RString &s )
