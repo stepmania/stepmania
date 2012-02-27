@@ -281,7 +281,12 @@ public:
 		return GetNumRowsWithSimultaneousTaps( 2, iStartIndex, iEndIndex );
 	}
 	
-	
+	/** @brief Get the number of specific holds.
+	 * @param holdType the type of hold we are dealing with.
+	 * @param start the starting row.
+	 * @param end the ending row.
+	 * @return the number of specific holds. */
+	int GetNumHoldsOfType(const TapNote::SubType holdType, int start = 0, int end = MAX_NOTE_ROW) const;
 
 	// This row needs at least iMinSimultaneousPresses either tapped or held.
 	bool RowNeedsAtLeastSimultaneousPresses( int iMinSimultaneousPresses, int row ) const;

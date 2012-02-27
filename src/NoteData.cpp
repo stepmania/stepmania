@@ -625,17 +625,17 @@ int NoteData::GetNumRowsWithSimultaneousTaps( int iMinTaps, int iStartIndex, int
 	return iNum;
 }
 
-int NoteData::GetNumHoldNotes( int iStartIndex, int iEndIndex ) const
+int NoteData::GetNumHoldsOfType(const TapNote::SubType holdType, int start, int end ) const
 {
 	int iNumHolds = 0;
 	for( int t=0; t<GetNumTracks(); ++t )
 	{
 		NoteData::TrackMap::const_iterator lBegin, lEnd;
-		GetTapNoteRangeExclusive( t, iStartIndex, iEndIndex, lBegin, lEnd );
+		GetTapNoteRangeExclusive( t, start, end, lBegin, lEnd );
 		for( ; lBegin != lEnd; ++lBegin )
 		{
-			if( lBegin->second.type != TapNote::hold_head ||
-				lBegin->second.subType != TapNote::hold_head_hold )
+			if (lBegin->second.type != TapNote::hold_head ||
+				lBegin->second.subType != holdType )
 				continue;
 			if (!GAMESTATE->GetProcessedTimingData()->IsJudgableAtRow(lBegin->first))
 				continue;
@@ -645,24 +645,14 @@ int NoteData::GetNumHoldNotes( int iStartIndex, int iEndIndex ) const
 	return iNumHolds;
 }
 
-int NoteData::GetNumRolls( int iStartIndex, int iEndIndex ) const
+int NoteData::GetNumHoldNotes(int start, int end) const
 {
-	int iNumRolls = 0;
-	for( int t=0; t<GetNumTracks(); ++t )
-	{
-		NoteData::TrackMap::const_iterator lBegin, lEnd;
-		GetTapNoteRangeExclusive( t, iStartIndex, iEndIndex, lBegin, lEnd );
-		for( ; lBegin != lEnd; ++lBegin )
-		{
-			if( lBegin->second.type != TapNote::hold_head ||
-				lBegin->second.subType != TapNote::hold_head_roll )
-				continue;
-			if (!GAMESTATE->GetProcessedTimingData()->IsJudgableAtRow(lBegin->first))
-				continue;
-			iNumRolls++;
-		}
-	}
-	return iNumRolls;
+	return this->GetNumHoldsOfType(TapNote::hold_head_hold, start, end);
+}
+
+int NoteData::GetNumRolls( int start, int end ) const
+{
+	return this->GetNumHoldsOfType(TapNote::hold_head_roll, start, end);
 }
 
 int NoteData::GetNumLifts( int iStartIndex, int iEndIndex ) const
