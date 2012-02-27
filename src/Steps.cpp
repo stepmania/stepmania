@@ -768,6 +768,39 @@ bool Steps::IsFake(const TapNote &tn, const int row) const
 	return true;
 }
 
+vector<int> Steps::GetNumTapNotes(int start, int end) const
+{
+	vector<int> num(1);
+	if (!this->IsMultiPlayerStyle() &&
+		!this->m_Timing.HasWarps() &&
+		!this->m_Timing.HasFakes())
+	{
+		num[0] = this->GetNoteData().GetNumTapNotes(start, end);
+		return num;
+	}
+	if (this->IsMultiPlayerStyle())
+	{
+		num.resize(NUM_PLAYERS);
+	}
+	const NoteData &nd = this->GetNoteData();
+	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE(nd, r, start, end)
+	{
+		if (!this->m_Timing.IsJudgableAtRow(r))
+		{
+			continue;
+		}
+		for (int t = 0; t < nd.GetNumTracks(); ++t)
+		{
+			const TapNote &tn = nd.GetTapNote(t, r);
+			if (nd.IsTap(tn, r))
+			{
+				++num[this->GetEffectivePlayer(t, tn)];
+			}
+		}
+	}
+	return num;
+}
+
 vector<int> Steps::GetNumJumps(int start, int end) const
 {
 	return this->GetNumRowsWithSimultaneousTaps(2, start, end);
