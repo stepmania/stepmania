@@ -99,6 +99,8 @@ src/_UpgradeReport_Files
 src/*/sm-ssc.lib
 src/*/StepMania.lib
 src/libtom*/*/libtom*.lib
+src/sm5-net2010.sdf
+src/sm5-net2010.opensdf
 syntax: regexp
 .*\#.*\#$
 glob:Cache/Banners/AdditionalSongs_Airspace Preview_Derailed_Derailed bn.png
