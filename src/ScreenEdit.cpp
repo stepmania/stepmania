@@ -791,7 +791,7 @@ static MenuDef g_SongInformation(
 	MenuRowDef(ScreenEdit::min_bpm,
 		"Min BPM",
 		true, EditMode_Full, true, true, 0, NULL ),
-	MenuRowDef(screenEdit::max_bpm,
+	MenuRowDef(ScreenEdit::max_bpm,
 		"Max BPM",
 		true, EditMode_Full, true, true, 0, NULL )
 );
@@ -1534,14 +1534,8 @@ void ScreenEdit::UpdateTextInfo()
 			sText += SELECTION_BEAT_UNFINISHED_FORMAT;
 	}
 
-	switch( EDIT_MODE.GetValue() )
+	if (EDIT_MODE.GetValue() == EditMode_Full)
 	{
-	DEFAULT_FAIL( EDIT_MODE.GetValue() );
-	case EditMode_Practice:
-	case EditMode_CourseMods:
-	case EditMode_Home:
-		break;
-	case EditMode_Full:
 		sText += ssprintf( DIFFICULTY_FORMAT.GetValue(), DIFFICULTY.GetValue().c_str(), DifficultyToString( m_pSteps->GetDifficulty() ).c_str() );
 		if ( m_InputPlayerNumber != PLAYER_INVALID )
 			sText += ssprintf( ROUTINE_PLAYER_FORMAT.GetValue(), ROUTINE_PLAYER.GetValue().c_str(), m_InputPlayerNumber + 1 );
@@ -1554,7 +1548,6 @@ void ScreenEdit::UpdateTextInfo()
 			sText += ssprintf( SUBTITLE_FORMAT.GetValue(), SUBTITLE.GetValue().c_str(), m_pSong->m_sSubTitle.c_str() );
 		sText += ssprintf( SEGMENT_TYPE_FORMAT.GetValue(), SEGMENT_TYPE.GetValue().c_str(), TimingSegmentTypeToString(currentCycleSegment).c_str() );
 		sText += ssprintf( TAP_NOTE_TYPE_FORMAT.GetValue(), TAP_NOTE_TYPE.GetValue().c_str(), TapNoteTypeToString( m_selectedTap.type ).c_str() );
-			break;
 	}
 	
 	GAMESTATE->SetProcessedTimingData(&m_pSteps->m_Timing);
