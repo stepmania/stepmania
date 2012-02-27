@@ -2079,7 +2079,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			pSteps->SetNoteData( m_NoteDataEdit );
 
 			// Get all Steps of this StepsType
-			StepsType st = pSteps->m_StepsType;
+			const StepsType st = pSteps->m_StepsType;
 			vector<Steps*> vSteps;
 			SongUtil::GetSteps( GAMESTATE->m_pCurSong, vSteps, st );
 
