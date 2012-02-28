@@ -468,28 +468,25 @@ int NoteData::GetLastRow() const
 
 bool NoteData::IsTap(const TapNote &tn, const int row) const
 {
+	// TODO: Exclude attack notes?
 	return (tn.type != TapNote::empty && tn.type != TapNote::mine
 			&& tn.type != TapNote::lift && tn.type != TapNote::fake
-			&& tn.type != TapNote::autoKeysound
-			&& GAMESTATE->GetProcessedTimingData()->IsJudgableAtRow(row));
+			&& tn.type != TapNote::autoKeysound);
 }
 
 bool NoteData::IsMine(const TapNote &tn, const int row) const
 {
-	return (tn.type == TapNote::mine
-			&& GAMESTATE->GetProcessedTimingData()->IsJudgableAtRow(row));
+	return (tn.type == TapNote::mine);
 }
 
 bool NoteData::IsLift(const TapNote &tn, const int row) const
 {
-	return (tn.type == TapNote::lift
-			&& GAMESTATE->GetProcessedTimingData()->IsJudgableAtRow(row));
+	return (tn.type == TapNote::lift);
 }
 
 bool NoteData::IsFake(const TapNote &tn, const int row) const
 {
-	return (tn.type == TapNote::fake
-			|| !GAMESTATE->GetProcessedTimingData()->IsJudgableAtRow(row));
+	return (tn.type == TapNote::fake);
 }
 
 int NoteData::GetNumTapNotes( int iStartIndex, int iEndIndex ) const
