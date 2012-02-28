@@ -9,7 +9,6 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "XmlFile.h"
-#include "GameState.h" // blame radar calculations.
 #include "Foreach.h"
 #include "RageUtil_AutoPtr.h"
 
@@ -595,11 +594,8 @@ int NoteData::GetNumRowsWithSimultaneousPresses( int iMinSimultaneousPresses, in
 	int iNum = 0;
 	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( *this, r, iStartIndex, iEndIndex )
 	{
-		if( !RowNeedsAtLeastSimultaneousPresses(iMinSimultaneousPresses,r) )
-			continue;
-		if (!GAMESTATE->GetProcessedTimingData()->IsJudgableAtRow(r))
-			continue;
-		iNum++;
+		if( RowNeedsAtLeastSimultaneousPresses(iMinSimultaneousPresses,r) )
+			++iNum;
 	}
 
 	return iNum;
@@ -610,8 +606,6 @@ int NoteData::GetNumRowsWithSimultaneousTaps( int iMinTaps, int iStartIndex, int
 	int iNum = 0;
 	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( *this, r, iStartIndex, iEndIndex )
 	{
-		if (!GAMESTATE->GetProcessedTimingData()->IsJudgableAtRow(r))
-			continue;
 		int iNumNotesThisIndex = 0;
 		for( int t=0; t<GetNumTracks(); t++ )
 		{
@@ -638,12 +632,9 @@ int NoteData::GetNumHoldsOfType(const TapNote::SubType holdType, int start, int 
 		GetTapNoteRangeExclusive( t, start, end, lBegin, lEnd );
 		for( ; lBegin != lEnd; ++lBegin )
 		{
-			if (lBegin->second.type != TapNote::hold_head ||
-				lBegin->second.subType != holdType )
-				continue;
-			if (!GAMESTATE->GetProcessedTimingData()->IsJudgableAtRow(lBegin->first))
-				continue;
-			iNumHolds++;
+			if (lBegin->second.type == TapNote::hold_head &&
+				lBegin->second.subType == holdType )
+				++iNumHolds;
 		}
 	}
 	return iNumHolds;
