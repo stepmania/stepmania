@@ -244,7 +244,9 @@ public:
 	 * crazy timing data, we defer to the NoteData calls. They are generally faster. */
 
 	int GetNumRowsWithTap(int start = 0, int end = MAX_NOTE_ROW) const;
-	vector<int> GetNumRowsWithTapOrHoldHead(int start = 0, int end = MAX_NOTE_ROW) const; // may keep int
+	
+	int GetNumRowsWithTapOrHoldHead(int start = 0, int end = MAX_NOTE_ROW) const;
+	
 	/** @brief Determine if a Player's row needs a certain number of presses.
 	 * @param min the mininum number to watch for.
 	 * @param row the row to check for.

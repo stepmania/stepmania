@@ -812,12 +812,31 @@ int Steps::GetNumRowsWithTap( int start, int end ) const
 	const NoteData &nd = this->GetNoteData();
 	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE(nd, r, start, end)
 	{
-		if( nd.IsThereATapAtRow(r) && this->m_Timing.IsJudgableAtRow(r) )
+		if(nd.IsThereATapAtRow(r) && this->m_Timing.IsJudgableAtRow(r))
 		{
 			++num;
 		}
 	}
 
+	return num;
+}
+
+int Steps::GetNumRowsWithTapOrHoldHead(int start, int end) const
+{
+	if (!this->m_Timing.HasWarps() &&
+		!this->m_Timing.HasFakes())
+	{
+		return this->GetNoteData().GetNumRowsWithTapOrHoldHead(start, end);
+	}
+	int num = 0;
+	const NoteData &nd = this->GetNoteData();
+	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE(nd, r, start, end)
+	{
+		if (nd.IsThereATapOrHoldHeadAtRow(r) && this->m_Timing.IsJudgableAtRow(r))
+		{
+			++num;
+		}
+	}
 	return num;
 }
 

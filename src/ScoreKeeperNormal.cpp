@@ -221,6 +221,7 @@ void ScoreKeeperNormal::OnNextSong( int iSongInCourseIndex, const Steps* pSteps,
 
 	GAMESTATE->SetProcessedTimingData(const_cast<TimingData *>(&pSteps->m_Timing));
 	
+	// TODO: Handle multiple players properly. pSteps points to vector versions.
 	m_iNumTapsAndHolds = pNoteData->GetNumRowsWithTapOrHoldHead() + pNoteData->GetNumHoldNotes()
 		+ pNoteData->GetNumRolls();
 

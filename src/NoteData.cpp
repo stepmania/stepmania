@@ -543,7 +543,7 @@ int NoteData::GetNumRowsWithTapOrHoldHead( int iStartIndex, int iEndIndex ) cons
 {
 	int iNumNotes = 0;
 	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( *this, r, iStartIndex, iEndIndex )
-		if( IsThereATapOrHoldHeadAtRow(r) && GAMESTATE->GetProcessedTimingData()->IsJudgableAtRow(r) )
+		if( IsThereATapOrHoldHeadAtRow(r) )
 			iNumNotes++;
 
 	return iNumNotes;
