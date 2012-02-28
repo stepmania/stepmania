@@ -519,7 +519,7 @@ int NoteData::GetNumRowsWithTap( int iStartIndex, int iEndIndex ) const
 {
 	int iNumNotes = 0;
 	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( *this, r, iStartIndex, iEndIndex )
-		if( IsThereATapAtRow(r) && GAMESTATE->GetProcessedTimingData()->IsJudgableAtRow(r) )
+		if( IsThereATapAtRow(r) )
 			iNumNotes++;
 
 	return iNumNotes;

@@ -801,6 +801,26 @@ vector<int> Steps::GetNumTapNotes(int start, int end) const
 	return num;
 }
 
+int Steps::GetNumRowsWithTap( int start, int end ) const
+{
+	if (!this->m_Timing.HasWarps() &&
+		!this->m_Timing.HasFakes())
+	{
+		return this->GetNoteData().GetNumRowsWithTap(start, end);
+	}
+	int num = 0;
+	const NoteData &nd = this->GetNoteData();
+	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE(nd, r, start, end)
+	{
+		if( nd.IsThereATapAtRow(r) && this->m_Timing.IsJudgableAtRow(r) )
+		{
+			++num;
+		}
+	}
+
+	return num;
+}
+
 vector<int> Steps::GetNumJumps(int start, int end) const
 {
 	return this->GetNumRowsWithSimultaneousTaps(2, start, end);
