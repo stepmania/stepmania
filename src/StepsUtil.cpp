@@ -89,6 +89,19 @@ bool StepsUtil::HasMatching( const Song *pSong, const StepsCriteria &stc )
 	return false;
 }
 
+void CalculateTrueRadarValue(const Steps *in,
+	const float songLength,
+	RadarValues * all,
+	const RadarCategory rc,
+	vector<float> (*RadarCalc)(const Steps *, float)) // Not a member function, should be alright.
+{
+	vector<float> nums = (*RadarCalc)(in, songLength);
+	FOREACH_ENUM(PlayerNumber, pn)
+	{
+		all[pn][rc] = nums[pn];
+	}
+}
+
 void StepsUtil::CalculateRadarValues( Steps *in, float fSongSeconds )
 {	
 	bool isMulti = in->IsMultiPlayerStyle(); // needed for later
@@ -112,53 +125,46 @@ void StepsUtil::CalculateRadarValues( Steps *in, float fSongSeconds )
 	// The for loop and the assert are used to ensure that all fields of 
 	// RadarValue get set in here.
 	
+	/*
+	 * Possible optimization opportunity here:
+	 * The enums go in order from the "true" radar categories to the "stat"
+	 * radar categories. The true ones require information that is later
+	 * gotten from the stat categories. Perhaps instead of looping
+	 * through the enum, we should hardcode values so as to reduce
+	 * processing of the underlying notedata many times? --Wolfman2000
+	 */
 	FOREACH_ENUM( RadarCategory, rc )
 	{
 		switch( rc )
 		{
 			case RadarCategory_Stream:
 			{
-				vector<float> nums = GetStreamRadarValue(in, fSongSeconds);
-				FOREACH_ENUM(PlayerNumber, pn)
-				{
-					all[pn][rc] = nums[pn];
-				}
+				CalculateTrueRadarValue(in, fSongSeconds, all, rc,
+					&StepsUtil::GetStreamRadarValue);
 				break;	
 			}
 			case RadarCategory_Voltage:
 			{
-				vector<float> nums = GetVoltageRadarValue(in, fSongSeconds);
-				FOREACH_ENUM(PlayerNumber, pn)
-				{
-					all[pn][rc] = nums[pn];
-				}
+				CalculateTrueRadarValue(in, fSongSeconds, all, rc,
+					&StepsUtil::GetVoltageRadarValue);
 				break;	
 			}
 			case RadarCategory_Air:
 			{
-				vector<float> nums = GetAirRadarValue(in, fSongSeconds);
-				FOREACH_ENUM(PlayerNumber, pn)
-				{
-					all[pn][rc] = nums[pn];
-				}
+				CalculateTrueRadarValue(in, fSongSeconds, all, rc,
+					&StepsUtil::GetAirRadarValue);
 				break;
 			}
 			case RadarCategory_Freeze:
 			{
-				vector<float> nums = GetFreezeRadarValue(in, fSongSeconds);
-				FOREACH_ENUM(PlayerNumber, pn)
-				{
-					all[pn][rc] = nums[pn];
-				}
+				CalculateTrueRadarValue(in, fSongSeconds, all, rc,
+					&StepsUtil::GetFreezeRadarValue);
 				break;
 			}
 			case RadarCategory_Chaos:
 			{
-				vector<float> nums = GetChaosRadarValue(in, fSongSeconds);
-				FOREACH_ENUM(PlayerNumber, pn)
-				{
-					all[pn][rc] = nums[pn];
-				}
+				CalculateTrueRadarValue(in, fSongSeconds, all, rc,
+					&StepsUtil::GetChaosRadarValue);
 				break;
 			}
 			/*
