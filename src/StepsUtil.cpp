@@ -150,12 +150,16 @@ void StepsUtil::CalculateRadarValues( Steps *in, float fSongSeconds )
 				}
 				break;
 			}
-			/*
 			case RadarCategory_Chaos:
 			{
-				all[rc] = GetChaosRadarValue( in, fSongSeconds );
+				vector<float> nums = GetChaosRadarValue(in, fSongSeconds);
+				FOREACH_ENUM(PlayerNumber, pn)
+				{
+					all[pn][rc] = nums[pn];
+				}
 				break;
 			}
+			/*
 			case RadarCategory_TapsAndHolds:	
 			{
 				vector<int> nums = in->GetNumTapNotes();
@@ -256,6 +260,67 @@ vector<float> StepsUtil::GetFreezeRadarValue( const Steps *in, float fSongSecond
 		holds[i] = min(stats[i] / fSongSeconds, 1.0f);
 	}
 	return holds;
+}
+
+vector<float> StepsUtil::GetChaosRadarValue( const Steps *in, float fSongSeconds )
+{
+	vector<float> nums(NUM_PLAYERS, 0.0f);
+	if( !fSongSeconds )
+		return nums;
+	// count number of notes smaller than 8ths
+	
+	const NoteData &nd = in->GetNoteData();
+	int perPlayerTracks = nd.GetNumTracks() / 2; // mainly for couple.
+	FOREACH_NONEMPTY_ROW_ALL_TRACKS( nd, r )
+	{
+		if (!in->m_Timing.IsJudgableAtRow(r))
+		{
+			continue; // if players can't interact with the row, don't count it.
+		}
+
+		if( GetNoteType(r) >= NOTE_TYPE_12TH )
+		{
+			FOREACH_ENUM(PlayerNumber, pn)
+			{
+				if (!in->IsMultiPlayerStyle())
+				{
+					++nums[pn];
+				}
+				else if (in->GetStepsTypeCategory() == StepsTypeCategory_Couple)
+				{
+					// Remember: couple splits up the notes in the middle.
+					for (int t = static_cast<int>(pn) * perPlayerTracks;
+						t < (static_cast<int>(pn) + 1) * perPlayerTracks; ++t)
+					{
+						const TapNote &tn = nd.GetTapNote(t, r);
+						if (tn.type != TapNote::empty && tn.type != TapNote::fake)
+						{
+							++nums[pn];
+						}
+					}
+				}
+				else // routine
+				{
+					for (int t = 0; t < nd.GetNumTracks(); ++t)
+					{
+						const TapNote &tn = nd.GetTapNote(t, r);
+						if (tn.type != TapNote::empty &&
+							tn.type != TapNote::fake &&
+							tn.pn == pn)
+						{
+							++nums[pn];
+							break;
+						}
+					}
+				}
+			}
+		}
+	}
+	for (unsigned i = 0; i < nums.size(); ++i)
+	{
+		nums[i] = min(nums[i] / fSongSeconds * 0.5f, 1.0f);
+	}
+	return nums;
 }
 
 // Sorting stuff
