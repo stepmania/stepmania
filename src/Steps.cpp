@@ -722,7 +722,7 @@ vector<int> Steps::GetNumRowsWithSimultaneousTaps(int min, int start, int end) c
 		for (int t = 0; t < nd.GetNumTracks(); ++t)
 		{
 			const TapNote &tn = nd.GetTapNote(t, r);
-			if (nd.IsTap(tn, r))
+			if (nd.IsTap(tn))
 			{
 				++found[this->GetEffectivePlayer(t, tn)];
 			}
@@ -741,28 +741,28 @@ vector<int> Steps::GetNumRowsWithSimultaneousTaps(int min, int start, int end) c
 bool Steps::IsTap(const TapNote &tn, const int row) const
 {
 	if (this->m_Timing.IsJudgableAtRow(row))
-		return this->GetNoteData().IsTap(tn, row);
+		return this->GetNoteData().IsTap(tn);
 	return false;
 }
 
 bool Steps::IsMine(const TapNote &tn, const int row) const
 {
 	if (this->m_Timing.IsJudgableAtRow(row))
-		return this->GetNoteData().IsMine(tn, row);
+		return this->GetNoteData().IsMine(tn);
 	return false;
 }
 
 bool Steps::IsLift(const TapNote &tn, const int row) const
 {
 	if (this->m_Timing.IsJudgableAtRow(row))
-		return this->GetNoteData().IsLift(tn, row);
+		return this->GetNoteData().IsLift(tn);
 	return false;
 }
 
 bool Steps::IsFake(const TapNote &tn, const int row) const
 {
 	if (this->m_Timing.IsJudgableAtRow(row))
-		return this->GetNoteData().IsFake(tn, row);
+		return this->GetNoteData().IsFake(tn);
 	return true;
 }
 
@@ -790,7 +790,7 @@ vector<int> Steps::GetNumTapNotes(int start, int end) const
 		for (int t = 0; t < nd.GetNumTracks(); ++t)
 		{
 			const TapNote &tn = nd.GetTapNote(t, r);
-			if (nd.IsTap(tn, r))
+			if (nd.IsTap(tn))
 			{
 				++num[this->GetEffectivePlayer(t, tn)];
 			}
@@ -887,7 +887,7 @@ vector<int> Steps::GetNumMines(int start, int end) const
 		for (int t = 0; t < nd.GetNumTracks(); ++t)
 		{
 			const TapNote &tn = nd.GetTapNote(t, r);
-			if (nd.IsMine(tn, r))
+			if (nd.IsMine(tn))
 			{
 				++num[this->GetEffectivePlayer(t, tn)];
 			}
@@ -920,7 +920,7 @@ vector<int> Steps::GetNumLifts(int start, int end) const
 		for (int t = 0; t < nd.GetNumTracks(); ++t)
 		{
 			const TapNote &tn = nd.GetTapNote(t, r);
-			if (nd.IsLift(tn, r))
+			if (nd.IsLift(tn))
 			{
 				++num[this->GetEffectivePlayer(t, tn)];
 			}
@@ -949,7 +949,7 @@ vector<int> Steps::GetNumFakes(int start, int end) const
 		FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE(nd, t, r, start, end)
 		{
 			const TapNote &tn = nd.GetTapNote(t, r);
-			if (nd.IsFake(tn, r) ||
+			if (nd.IsFake(tn) ||
 				!this->m_Timing.IsJudgableAtRow(r))
 			{
 				++num[this->GetEffectivePlayer(t, tn)];

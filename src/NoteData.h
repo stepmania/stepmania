@@ -97,30 +97,26 @@ public:
 	/**
 	 * @brief Determine if the note in question should be counted as a tap.
 	 * @param tn the note in question.
-	 * @param row the row it lives in.
 	 * @return true if it's a tap, false otherwise. */
-	bool IsTap(const TapNote &tn, const int row) const;
+	bool IsTap(const TapNote &tn) const;
 	
 	/**
 	 * @brief Determine if the note in question should be counted as a mine.
 	 * @param tn the note in question.
-	 * @param row the row it lives in.
 	 * @return true if it's a mine, false otherwise. */
-	bool IsMine(const TapNote &tn, const int row) const;
+	bool IsMine(const TapNote &tn) const;
 	
 	/**
 	 * @brief Determine if the note in question should be counted as a lift.
 	 * @param tn the note in question.
-	 * @param row the row it lives in.
 	 * @return true if it's a lift, false otherwise. */
-	bool IsLift(const TapNote &tn, const int row) const;
+	bool IsLift(const TapNote &tn) const;
 	
 	/**
 	 * @brief Determine if the note in question should be counted as a fake.
 	 * @param tn the note in question.
-	 * @param row the row it lives in.
 	 * @return true if it's a fake, false otherwise. */
-	bool IsFake(const TapNote &tn, const int row) const;
+	bool IsFake(const TapNote &tn) const;
 	
 	int GetNumTracks() const { return m_TapNotes.size(); }
 	void SetNumTracks( int iNewNumTracks );
