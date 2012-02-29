@@ -264,13 +264,14 @@ void Steps::CalculateRadarValues( float fMusicLengthSeconds )
 	if( IsAnEdit() )
 		return;
 	*/
-
-	NoteData tempNoteData;
-	this->GetNoteData( tempNoteData );
-
 	FOREACH_PlayerNumber( pn )
 		m_CachedRadarValues[pn].Zero();
 
+	StepsUtil::CalculateRadarValues(this, fMusicLengthSeconds);
+	/*
+	NoteData tempNoteData;
+	this->GetNoteData( tempNoteData );
+	
 	if( tempNoteData.IsComposite() ) // TODO: Would it be better to just check the StepsTypeCategory?
 	{
 		vector<NoteData> vParts;
@@ -300,6 +301,7 @@ void Steps::CalculateRadarValues( float fMusicLengthSeconds )
 		NoteDataUtil::CalculateRadarValues( tempNoteData, fMusicLengthSeconds, m_CachedRadarValues[0] );
 		fill_n( m_CachedRadarValues + 1, NUM_PLAYERS-1, m_CachedRadarValues[0] );
 	}
+	*/
 }
 
 void Steps::Decompress() const
