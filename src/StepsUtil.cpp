@@ -167,43 +167,64 @@ void StepsUtil::CalculateRadarValues( Steps *in, float fSongSeconds )
 					&StepsUtil::GetChaosRadarValue);
 				break;
 			}
-			/*
+			
 			case RadarCategory_TapsAndHolds:	
 			{
 				vector<int> nums = in->GetNumTapNotes();
 				all[PLAYER_1][rc] = nums[0];
+				all[PLAYER_2][rc] = nums[(nums.size() < NUM_PLAYERS) ? 0 : 1];
 				break;
 			}
 			case RadarCategory_Jumps:
 			{
-				out[rc] = (float) stats.jumps;				break;
+				vector<int> nums = in->GetNumJumps();
+				all[PLAYER_1][rc] = nums[0];
+				all[PLAYER_2][rc] = nums[(nums.size() < NUM_PLAYERS) ? 0 : 1];
+				break;
 			}
 			case RadarCategory_Holds:
 			{
-				out[rc] = (float) in.GetNumHoldNotes();		break;
+				vector<int> nums = in->GetNumHoldNotes();
+				all[PLAYER_1][rc] = nums[0];
+				all[PLAYER_2][rc] = nums[(nums.size() < NUM_PLAYERS) ? 0 : 1];
+				break;
 			}
 			case RadarCategory_Mines:
 			{
-				out[rc] = (float) in.GetNumMines();			break;
+				vector<int> nums = in->GetNumMines();
+				all[PLAYER_1][rc] = nums[0];
+				all[PLAYER_2][rc] = nums[(nums.size() < NUM_PLAYERS) ? 0 : 1];
+				break;
 			}
 			case RadarCategory_Hands:
 			{
-				out[rc] = (float) in.GetNumHands();			break;
+				vector<int> nums = in->GetNumHands();
+				all[PLAYER_1][rc] = nums[0];
+				all[PLAYER_2][rc] = nums[(nums.size() < NUM_PLAYERS) ? 0 : 1];
+				break;
 			}
 			case RadarCategory_Rolls:
 			{
-				out[rc] = (float) in.GetNumRolls();			break;
+				vector<int> nums = in->GetNumRolls();
+				all[PLAYER_1][rc] = nums[0];
+				all[PLAYER_2][rc] = nums[(nums.size() < NUM_PLAYERS) ? 0 : 1];
+				break;
 			}
 			case RadarCategory_Lifts:
 			{
-				out[rc] = (float) in.GetNumLifts();			break;
+				vector<int> nums = in->GetNumLifts();
+				all[PLAYER_1][rc] = nums[0];
+				all[PLAYER_2][rc] = nums[(nums.size() < NUM_PLAYERS) ? 0 : 1];
+				break;
 			}
 			case RadarCategory_Fakes:
 			{
-				out[rc] = (float) in.GetNumFakes();			break;
+				vector<int> nums = in->GetNumFakes();
+				all[PLAYER_1][rc] = nums[0];
+				all[PLAYER_2][rc] = nums[(nums.size() < NUM_PLAYERS) ? 0 : 1];
+				break;
 			}
-		default:	FAIL_M("Non-existant radar category attempted to be set!");
-		*/
+			default:	FAIL_M("Non-existant radar category attempted to be set!");
 		}
 	}
 }
