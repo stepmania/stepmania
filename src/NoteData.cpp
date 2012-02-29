@@ -488,19 +488,25 @@ bool NoteData::IsFake(const TapNote &tn) const
 	return (tn.type == TapNote::fake);
 }
 
-int NoteData::GetNumTapNotes( int iStartIndex, int iEndIndex ) const
+int NoteData::GetNumTapsOfType(int start, int end, bool (NoteData::*TapType)(const TapNote &) const) const
 {
-	int iNumNotes = 0;
-	for( int t=0; t<GetNumTracks(); t++ )
+	int num = 0;
+	for (int t = 0; t < this->GetNumTracks(); ++t)
 	{
-		FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( *this, t, r, iStartIndex, iEndIndex )
+		FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE(*this, t, r, start, end)
 		{
-			if (this->IsTap(GetTapNote(t, r)))
-				iNumNotes++;
+			if ((*this.*TapType)(GetTapNote(t, r)))
+			{
+				++num;
+			}
 		}
 	}
+	return 0;
+}
 
-	return iNumNotes;
+int NoteData::GetNumTapNotes( int iStartIndex, int iEndIndex ) const
+{
+	return this->GetNumTapsOfType(iStartIndex, iEndIndex, &NoteData::IsTap);
 }
 
 int NoteData::GetNumTapNotesInRow( int iRow ) const
@@ -526,16 +532,7 @@ int NoteData::GetNumRowsWithTap( int iStartIndex, int iEndIndex ) const
 
 int NoteData::GetNumMines( int iStartIndex, int iEndIndex ) const
 {
-	int iNumMines = 0;
-
-	for( int t=0; t<GetNumTracks(); t++ )
-	{
-		FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( *this, t, r, iStartIndex, iEndIndex )
-			if (this->IsMine(GetTapNote(t, r)))
-				iNumMines++;
-	}
-
-	return iNumMines;
+	return this->GetNumTapsOfType(iStartIndex, iEndIndex, &NoteData::IsMine);
 }
 
 int NoteData::GetNumRowsWithTapOrHoldHead( int iStartIndex, int iEndIndex ) const
@@ -652,30 +649,12 @@ int NoteData::GetNumRolls( int start, int end ) const
 
 int NoteData::GetNumLifts( int iStartIndex, int iEndIndex ) const
 {
-	int iNumLifts = 0;
-
-	for( int t=0; t<GetNumTracks(); t++ )
-	{
-		FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( *this, t, r, iStartIndex, iEndIndex )
-			if( this->IsLift(GetTapNote(t, r)))
-				iNumLifts++;
-	}
-
-	return iNumLifts;
+	return this->GetNumTapsOfType(iStartIndex, iEndIndex, &NoteData::IsLift);
 }
 
 int NoteData::GetNumFakes( int iStartIndex, int iEndIndex ) const
 {
-	int iNumFakes = 0;
-	
-	for( int t=0; t<GetNumTracks(); t++ )
-	{
-		FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( *this, t, r, iStartIndex, iEndIndex )
-			if( this->IsFake(GetTapNote(t, r)))
-				iNumFakes++;
-	}
-	
-	return iNumFakes;
+	return this->GetNumTapsOfType(iStartIndex, iEndIndex, &NoteData::IsFake);
 }
 
 /*

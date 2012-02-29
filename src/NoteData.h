@@ -90,6 +90,8 @@ private:
 	// There's no point in inserting empty notes into the map.
 	// Any blank space in the map is defined to be empty.
 	vector<TrackMap>	m_TapNotes;
+
+	int GetNumTapsOfType(int start, int end, bool (NoteData::*TapType)(const TapNote &) const) const;
 	
 public:
 	void Init();
