@@ -271,7 +271,7 @@ void Steps::CalculateRadarValues( float fMusicLengthSeconds )
 	FOREACH_PlayerNumber( pn )
 		m_CachedRadarValues[pn].Zero();
 
-	if( tempNoteData.IsComposite() )
+	if( tempNoteData.IsComposite() ) // TODO: Would it be better to just check the StepsTypeCategory?
 	{
 		vector<NoteData> vParts;
 
@@ -279,7 +279,7 @@ void Steps::CalculateRadarValues( float fMusicLengthSeconds )
 		for( size_t pn = 0; pn < min(vParts.size(), size_t(NUM_PLAYERS)); ++pn )
 			NoteDataUtil::CalculateRadarValues( vParts[pn], fMusicLengthSeconds, m_CachedRadarValues[pn] );
 	}
-	else if (GAMEMAN->GetStepsTypeInfo(this->m_StepsType).m_StepsTypeCategory == StepsTypeCategory_Couple)
+	else if (this->GetStepsTypeCategory() == StepsTypeCategory_Couple)
 	{
 		NoteData p1 = tempNoteData;
 		// XXX: Assumption that couple will always have an even number of notes.
