@@ -131,11 +131,17 @@ void StepsUtil::CalculateRadarValues( Steps *in, float fSongSeconds )
 				all[rc] = GetVoltageRadarValue( in, fSongSeconds );
 				break;
 			}
+			*/
 			case RadarCategory_Air:
 			{
-				all[rc] = GetAirRadarValue( in, fSongSeconds );
+				vector<float> nums = GetAirRadarValue(in, fSongSeconds);
+				FOREACH_ENUM(PlayerNumber, pn)
+				{
+					all[pn][rc] = nums[pn];
+				}
 				break;
 			}
+			/*
 			case RadarCategory_Freeze:
 			{
 				all[rc] = GetFreezeRadarValue( in, fSongSeconds );
@@ -206,6 +212,26 @@ vector<float> StepsUtil::GetStreamRadarValue( const Steps *in, float fSongSecond
 		notes[i] = min((((taps[i] + holds[i]) / fSongSeconds) / 7), 1.0f);
 	}
 	return notes;
+}
+
+vector<float> StepsUtil::GetAirRadarValue( const Steps *in, float fSongSeconds )
+{
+	vector<float> nums(NUM_PLAYERS, 0.0f);
+	if( !fSongSeconds )
+		return nums;
+	// number of doubles
+	vector<float> jumps(NUM_PLAYERS);
+
+	vector<int> hops = in->GetNumJumps();
+	if (!in->IsMultiPlayerStyle())
+	{
+		hops.push_back(hops[0]);
+	}
+	for (unsigned i = 0; i < jumps.size(); ++i)
+	{
+		jumps[i] = min(hops[i] / fSongSeconds, 1.0f);
+	}
+	return jumps;
 }
 
 // Sorting stuff
