@@ -102,6 +102,16 @@ void CalculateTrueRadarValue(const Steps *in,
 	}
 }
 
+void CalculateStatRadarValue(const Steps *in,
+	RadarValues * all,
+	const RadarCategory rc,
+	vector<int> (Steps::*StatCalc)(int, int) const) // Need a member function here.
+{
+	vector<int> nums = (*in.*StatCalc)(0, MAX_NOTE_ROW); // Forced to specify these.
+	all[PLAYER_1][rc] = nums[0];
+	all[PLAYER_2][rc] = nums[(nums.size() < NUM_PLAYERS) ? 0 : 1];
+}
+
 void StepsUtil::CalculateRadarValues( Steps *in, float fSongSeconds )
 {	
 	bool isMulti = in->IsMultiPlayerStyle(); // needed for later
@@ -170,58 +180,50 @@ void StepsUtil::CalculateRadarValues( Steps *in, float fSongSeconds )
 			
 			case RadarCategory_TapsAndHolds:	
 			{
-				vector<int> nums = in->GetNumTapNotes();
-				all[PLAYER_1][rc] = nums[0];
-				all[PLAYER_2][rc] = nums[(nums.size() < NUM_PLAYERS) ? 0 : 1];
+				CalculateStatRadarValue(in, all, rc,
+					&Steps::GetNumTapNotes);
 				break;
 			}
 			case RadarCategory_Jumps:
 			{
-				vector<int> nums = in->GetNumJumps();
-				all[PLAYER_1][rc] = nums[0];
-				all[PLAYER_2][rc] = nums[(nums.size() < NUM_PLAYERS) ? 0 : 1];
+				CalculateStatRadarValue(in, all, rc,
+					&Steps::GetNumJumps);
 				break;
 			}
 			case RadarCategory_Holds:
 			{
-				vector<int> nums = in->GetNumHoldNotes();
-				all[PLAYER_1][rc] = nums[0];
-				all[PLAYER_2][rc] = nums[(nums.size() < NUM_PLAYERS) ? 0 : 1];
+				CalculateStatRadarValue(in, all, rc,
+					&Steps::GetNumHoldNotes);
 				break;
 			}
 			case RadarCategory_Mines:
 			{
-				vector<int> nums = in->GetNumMines();
-				all[PLAYER_1][rc] = nums[0];
-				all[PLAYER_2][rc] = nums[(nums.size() < NUM_PLAYERS) ? 0 : 1];
+				CalculateStatRadarValue(in, all, rc,
+					&Steps::GetNumMines);
 				break;
 			}
 			case RadarCategory_Hands:
 			{
-				vector<int> nums = in->GetNumHands();
-				all[PLAYER_1][rc] = nums[0];
-				all[PLAYER_2][rc] = nums[(nums.size() < NUM_PLAYERS) ? 0 : 1];
+				CalculateStatRadarValue(in, all, rc,
+					&Steps::GetNumHands);
 				break;
 			}
 			case RadarCategory_Rolls:
 			{
-				vector<int> nums = in->GetNumRolls();
-				all[PLAYER_1][rc] = nums[0];
-				all[PLAYER_2][rc] = nums[(nums.size() < NUM_PLAYERS) ? 0 : 1];
+				CalculateStatRadarValue(in, all, rc,
+					&Steps::GetNumRolls);
 				break;
 			}
 			case RadarCategory_Lifts:
 			{
-				vector<int> nums = in->GetNumLifts();
-				all[PLAYER_1][rc] = nums[0];
-				all[PLAYER_2][rc] = nums[(nums.size() < NUM_PLAYERS) ? 0 : 1];
+				CalculateStatRadarValue(in, all, rc,
+					&Steps::GetNumLifts);
 				break;
 			}
 			case RadarCategory_Fakes:
 			{
-				vector<int> nums = in->GetNumFakes();
-				all[PLAYER_1][rc] = nums[0];
-				all[PLAYER_2][rc] = nums[(nums.size() < NUM_PLAYERS) ? 0 : 1];
+				CalculateStatRadarValue(in, all, rc,
+					&Steps::GetNumFakes);
 				break;
 			}
 			default:	FAIL_M("Non-existant radar category attempted to be set!");
