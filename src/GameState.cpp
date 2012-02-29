@@ -107,7 +107,6 @@ static Preference<Premium> g_Premium( "Premium", Premium_Off );
 Preference<bool> GameState::m_bAutoJoin( "AutoJoin", false );
 
 GameState::GameState() :
-	processedTiming( NULL ),
 	m_pCurGame(				Message_CurrentGameChanged ),
 	m_pCurStyle(			Message_CurrentStyleChanged ),
 	m_PlayMode(				Message_PlayModeChanged ),
@@ -192,7 +191,6 @@ GameState::~GameState()
 
 	SAFE_DELETE( m_Environment );
 	SAFE_DELETE( g_pImpl );
-	SAFE_DELETE( processedTiming );
 }
 
 PlayerNumber GameState::GetMasterPlayerNumber() const
@@ -203,16 +201,6 @@ PlayerNumber GameState::GetMasterPlayerNumber() const
 void GameState::SetMasterPlayerNumber(const PlayerNumber p)
 {
 	this->masterPlayerNumber = p;
-}
-
-TimingData * GameState::GetProcessedTimingData() const
-{
-	return this->processedTiming;
-}
-
-void GameState::SetProcessedTimingData(TimingData * t)
-{
-	this->processedTiming = t;
 }
 
 void GameState::ApplyGameCommand( const RString &sCommand, PlayerNumber pn )

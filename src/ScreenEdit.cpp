@@ -1559,7 +1559,6 @@ void ScreenEdit::UpdateTextInfo()
 		sText += ssprintf( TAP_NOTE_TYPE_FORMAT.GetValue(), TAP_NOTE_TYPE.GetValue().c_str(), TapNoteTypeToString( m_selectedTap.type ).c_str() );
 	}
 	
-	GAMESTATE->SetProcessedTimingData(&m_pSteps->m_Timing);
 	if (DISPLAY_SIDE_STATS)
 	{
 		if (DISPLAY_NOTEDATA_STATS)
@@ -1644,8 +1643,6 @@ void ScreenEdit::UpdateTextInfo()
 	}
 
 	m_textInfo.SetText( sText );
-	
-	GAMESTATE->SetProcessedTimingData(NULL);
 }
 
 void ScreenEdit::DrawPrimitives()
@@ -4083,7 +4080,6 @@ static LocalizedString SAVE_CHANGES_BEFORE_EXITING	( "ScreenEdit", "Do you want 
 
 void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAnswers )
 {
-	GAMESTATE->SetProcessedTimingData(&m_pSteps->m_Timing);
 	switch( c )
 	{
 		DEFAULT_FAIL( c );
@@ -4324,7 +4320,6 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 			}
 			break;
 	};
-	GAMESTATE->SetProcessedTimingData(NULL);
 }
 
 void ScreenEdit::HandleAlterMenuChoice(AlterMenuChoice c, const vector<int> &iAnswers, bool bAllowUndo)
