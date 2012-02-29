@@ -125,13 +125,15 @@ void StepsUtil::CalculateRadarValues( Steps *in, float fSongSeconds )
 				}
 				break;	
 			}
-			/*
 			case RadarCategory_Voltage:
 			{
-				all[rc] = GetVoltageRadarValue( in, fSongSeconds );
-				break;
+				vector<float> nums = GetVoltageRadarValue(in, fSongSeconds);
+				FOREACH_ENUM(PlayerNumber, pn)
+				{
+					all[pn][rc] = nums[pn];
+				}
+				break;	
 			}
-			*/
 			case RadarCategory_Air:
 			{
 				vector<float> nums = GetAirRadarValue(in, fSongSeconds);
@@ -220,6 +222,47 @@ vector<float> StepsUtil::GetStreamRadarValue( const Steps *in, float fSongSecond
 		notes[i] = min((((taps[i] + holds[i]) / fSongSeconds) / 7), 1.0f);
 	}
 	return notes;
+}
+
+vector<float> StepsUtil::GetVoltageRadarValue( const Steps *in, float fSongSeconds )
+{
+	vector<float> nums(NUM_PLAYERS, 0.0f);
+	if( !fSongSeconds )
+		return nums;
+
+	const NoteData &nd = in->GetNoteData();
+	const float fLastBeat = nd.GetLastBeat();
+	const float fAvgBPS = fLastBeat / fSongSeconds;
+
+	// peak density of steps
+	vector<float> maxDensity(NUM_PLAYERS, 0.0f);
+
+	const float BEAT_WINDOW = 8;
+	const int BEAT_WINDOW_ROWS = BeatToNoteRow( BEAT_WINDOW );
+
+	// TODO: Find a way to work around warps and fakes better.
+	for( int i=0; i<=BeatToNoteRow(fLastBeat); i+=BEAT_WINDOW_ROWS )
+	{
+		vector<int> taps = in->GetNumTapNotes(i, i + BEAT_WINDOW_ROWS);
+		vector<int> holds = in->GetNumHoldNotes(i, i + BEAT_WINDOW_ROWS);
+
+		if (!in->IsMultiPlayerStyle())
+		{
+			taps.push_back(taps[0]);
+			holds.push_back(holds[0]);
+		}
+
+		for (unsigned pn = 0; pn < nums.size(); ++pn)
+		{
+			nums[pn] = max(nums[pn], (taps[pn] + holds[pn]) / BEAT_WINDOW);
+		}
+	}
+
+	for (unsigned pn = 0; pn < nums.size(); ++pn)
+	{
+		nums[pn] = min((nums[pn] * fAvgBPS/10), 1.0f);
+	}
+	return nums;
 }
 
 vector<float> StepsUtil::GetAirRadarValue( const Steps *in, float fSongSeconds )
