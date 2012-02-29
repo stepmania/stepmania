@@ -111,16 +111,21 @@ void StepsUtil::CalculateRadarValues( Steps *in, float fSongSeconds )
 
 	// The for loop and the assert are used to ensure that all fields of 
 	// RadarValue get set in here.
-	/*
+	
 	FOREACH_ENUM( RadarCategory, rc )
 	{
 		switch( rc )
 		{
 			case RadarCategory_Stream:
 			{
-				all[PLAYER_1][rc] = GetStreamRadarValue( in, fSongSeconds );
+				vector<float> nums = GetStreamRadarValue(in, fSongSeconds);
+				FOREACH_ENUM(PlayerNumber, pn)
+				{
+					all[pn][rc] = nums[pn];
+				}
 				break;	
 			}
+			/*
 			case RadarCategory_Voltage:
 			{
 				all[rc] = GetVoltageRadarValue( in, fSongSeconds );
@@ -176,9 +181,31 @@ void StepsUtil::CalculateRadarValues( Steps *in, float fSongSeconds )
 				out[rc] = (float) in.GetNumFakes();			break;
 			}
 		default:	FAIL_M("Non-existant radar category attempted to be set!");
+		*/
 		}
 	}
-	*/
+}
+
+vector<float> StepsUtil::GetStreamRadarValue( const Steps *in, float fSongSeconds )
+{
+	vector<float> nums(NUM_PLAYERS, 0.0f);
+	if( !fSongSeconds )
+		return nums;
+	// density of steps
+	vector<float> notes(NUM_PLAYERS);
+	vector<int> taps = in->GetNumTapNotes();
+	vector<int> holds = in->GetNumHoldNotes();
+
+	if (!in->IsMultiPlayerStyle())
+	{
+		taps.push_back(taps[0]);
+		holds.push_back(holds[0]);
+	}
+	for (unsigned i = 0; i < notes.size(); ++i)
+	{
+		notes[i] = min((((taps[i] + holds[i]) / fSongSeconds) / 7), 1.0f);
+	}
+	return notes;
 }
 
 // Sorting stuff
