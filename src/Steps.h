@@ -387,6 +387,13 @@ private:
 	 * @param end the ending row.
 	 * @return the number of specific holds for each player. */
 	vector<int> GetNumHoldsOfType(const TapNote::SubType holdType, int start = 0, int end = MAX_NOTE_ROW) const;
+
+
+	vector<int> GetNumTapsOfType(int start,
+		int end,
+		int (NoteData::*NumTapType)(int, int) const, // nd.GetNumWhatever
+		bool (NoteData::*TapType)(const TapNote &) const // nd.IsWhatever
+		) const;
 };
 
 #endif

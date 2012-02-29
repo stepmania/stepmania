@@ -766,14 +766,18 @@ bool Steps::IsFake(const TapNote &tn, const int row) const
 	return true;
 }
 
-vector<int> Steps::GetNumTapNotes(int start, int end) const
+vector<int> Steps::GetNumTapsOfType(int start,
+		int end,
+		int (NoteData::*NumTapType)(int, int) const,
+		bool (NoteData::*TapType)(const TapNote &) const
+		) const
 {
 	vector<int> num(1);
 	if (!this->IsMultiPlayerStyle() &&
 		!this->m_Timing.HasWarps() &&
 		!this->m_Timing.HasFakes())
 	{
-		num[0] = this->GetNoteData().GetNumTapNotes(start, end);
+		num[0] = (this->GetNoteData().*NumTapType)(start, end);
 		return num;
 	}
 	if (this->IsMultiPlayerStyle())
@@ -790,13 +794,18 @@ vector<int> Steps::GetNumTapNotes(int start, int end) const
 		for (int t = 0; t < nd.GetNumTracks(); ++t)
 		{
 			const TapNote &tn = nd.GetTapNote(t, r);
-			if (nd.IsTap(tn))
+			if ((nd.*TapType)(tn))
 			{
 				++num[this->GetEffectivePlayer(t, tn)];
 			}
 		}
 	}
 	return num;
+}
+
+vector<int> Steps::GetNumTapNotes(int start, int end) const
+{
+	return this->GetNumTapsOfType(start, end, &NoteData::GetNumTapNotes, &NoteData::IsTap);
 }
 
 int Steps::GetNumRowsWithTap( int start, int end ) const
@@ -865,98 +874,17 @@ vector<int> Steps::GetNumRolls(int start, int end) const
 
 vector<int> Steps::GetNumMines(int start, int end) const
 {
-	vector<int> num(1);
-	if (!this->IsMultiPlayerStyle() &&
-		!this->m_Timing.HasWarps() &&
-		!this->m_Timing.HasFakes())
-	{
-		num[0] = this->GetNoteData().GetNumMines(start, end);
-		return num;
-	}
-	if (this->IsMultiPlayerStyle())
-	{
-		num.resize(NUM_PLAYERS);
-	}
-	const NoteData &nd = this->GetNoteData();
-	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE(nd, r, start, end)
-	{
-		if (!this->m_Timing.IsJudgableAtRow(r))
-		{
-			continue;
-		}
-		for (int t = 0; t < nd.GetNumTracks(); ++t)
-		{
-			const TapNote &tn = nd.GetTapNote(t, r);
-			if (nd.IsMine(tn))
-			{
-				++num[this->GetEffectivePlayer(t, tn)];
-			}
-		}
-	}
-	return num;
+	return this->GetNumTapsOfType(start, end, &NoteData::GetNumMines, &NoteData::IsMine);
 }
 
 vector<int> Steps::GetNumLifts(int start, int end) const
 {
-	vector<int> num(1);
-	if (!this->IsMultiPlayerStyle() &&
-		!this->m_Timing.HasWarps() &&
-		!this->m_Timing.HasFakes())
-	{
-		num[0] = this->GetNoteData().GetNumLifts(start, end);
-		return num;
-	}
-	if (this->IsMultiPlayerStyle())
-	{
-		num.resize(NUM_PLAYERS);
-	}
-	const NoteData &nd = this->GetNoteData();
-	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE(nd, r, start, end)
-	{
-		if (!this->m_Timing.IsJudgableAtRow(r))
-		{
-			continue;
-		}
-		for (int t = 0; t < nd.GetNumTracks(); ++t)
-		{
-			const TapNote &tn = nd.GetTapNote(t, r);
-			if (nd.IsLift(tn))
-			{
-				++num[this->GetEffectivePlayer(t, tn)];
-			}
-		}
-	}
-	return num;
+	return this->GetNumTapsOfType(start, end, &NoteData::GetNumLifts, &NoteData::IsLift);
 }
 
 vector<int> Steps::GetNumFakes(int start, int end) const
 {
-	vector<int> num(1);
-	if (!this->IsMultiPlayerStyle() &&
-		!this->m_Timing.HasWarps() &&
-		!this->m_Timing.HasFakes())
-	{
-		num[0] = this->GetNoteData().GetNumFakes(start, end);
-		return num;
-	}
-	if (this->IsMultiPlayerStyle())
-	{
-		num.resize(NUM_PLAYERS);
-	}
-	const NoteData &nd = this->GetNoteData();
-	for (int t = 0; t < nd.GetNumTracks(); ++t)
-	{
-		FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE(nd, t, r, start, end)
-		{
-			const TapNote &tn = nd.GetTapNote(t, r);
-			if (nd.IsFake(tn) ||
-				!this->m_Timing.IsJudgableAtRow(r))
-			{
-				++num[this->GetEffectivePlayer(t, tn)];
-			}
-		}
-	}
-	return num;
+	return this->GetNumTapsOfType(start, end, &NoteData::GetNumFakes, &NoteData::IsFake);
 }
 
 
