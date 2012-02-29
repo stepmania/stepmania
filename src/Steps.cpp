@@ -787,16 +787,15 @@ vector<int> Steps::GetNumTapsOfType(int start,
 	const NoteData &nd = this->GetNoteData();
 	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE(nd, r, start, end)
 	{
-		if (!this->m_Timing.IsJudgableAtRow(r))
+		if (this->m_Timing.IsJudgableAtRow(r))
 		{
-			continue;
-		}
-		for (int t = 0; t < nd.GetNumTracks(); ++t)
-		{
-			const TapNote &tn = nd.GetTapNote(t, r);
-			if ((nd.*TapType)(tn))
+			for (int t = 0; t < nd.GetNumTracks(); ++t)
 			{
-				++num[this->GetEffectivePlayer(t, tn)];
+				const TapNote &tn = nd.GetTapNote(t, r);
+				if ((nd.*TapType)(tn))
+				{
+					++num[this->GetEffectivePlayer(t, tn)];
+				}
 			}
 		}
 	}
