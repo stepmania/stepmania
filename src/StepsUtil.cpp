@@ -5,6 +5,8 @@
 #include "Profile.h"
 #include "Song.h"
 #include "SongManager.h"
+#include "NoteData.h"
+#include "NoteDataUtil.h" // If we can skip the complicated radar stuff.
 #include "GameManager.h"
 #include "XmlFile.h"
 #include "UnlockManager.h"
@@ -85,6 +87,98 @@ bool StepsUtil::HasMatching( const Song *pSong, const StepsCriteria &stc )
 	  	        return true;
 	}
 	return false;
+}
+
+void StepsUtil::CalculateRadarValues( Steps *in, float fSongSeconds )
+{	
+	bool isMulti = in->IsMultiPlayerStyle(); // needed for later
+	if (!isMulti &&
+		!in->m_Timing.HasFakes() &&
+		!in->m_Timing.HasWarps())
+	{
+		RadarValues tmp;
+		NoteDataUtil::CalculateRadarValues(in->GetNoteData(), fSongSeconds, tmp);
+		RadarValues one[NUM_PLAYERS];
+		FOREACH_ENUM(PlayerNumber, pn)
+		{
+			one[pn] = tmp;
+		}
+		in->SetCachedRadarValues(one);
+		return;
+	}
+
+	RadarValues all[NUM_PLAYERS];
+
+	// The for loop and the assert are used to ensure that all fields of 
+	// RadarValue get set in here.
+	/*
+	FOREACH_ENUM( RadarCategory, rc )
+	{
+		switch( rc )
+		{
+			case RadarCategory_Stream:
+			{
+				all[PLAYER_1][rc] = GetStreamRadarValue( in, fSongSeconds );
+				break;	
+			}
+			case RadarCategory_Voltage:
+			{
+				all[rc] = GetVoltageRadarValue( in, fSongSeconds );
+				break;
+			}
+			case RadarCategory_Air:
+			{
+				all[rc] = GetAirRadarValue( in, fSongSeconds );
+				break;
+			}
+			case RadarCategory_Freeze:
+			{
+				all[rc] = GetFreezeRadarValue( in, fSongSeconds );
+				break;
+			}
+			case RadarCategory_Chaos:
+			{
+				all[rc] = GetChaosRadarValue( in, fSongSeconds );
+				break;
+			}
+			case RadarCategory_TapsAndHolds:	
+			{
+				vector<int> nums = in->GetNumTapNotes();
+				all[PLAYER_1][rc] = nums[0];
+				break;
+			}
+			case RadarCategory_Jumps:
+			{
+				out[rc] = (float) stats.jumps;				break;
+			}
+			case RadarCategory_Holds:
+			{
+				out[rc] = (float) in.GetNumHoldNotes();		break;
+			}
+			case RadarCategory_Mines:
+			{
+				out[rc] = (float) in.GetNumMines();			break;
+			}
+			case RadarCategory_Hands:
+			{
+				out[rc] = (float) in.GetNumHands();			break;
+			}
+			case RadarCategory_Rolls:
+			{
+				out[rc] = (float) in.GetNumRolls();			break;
+			}
+			case RadarCategory_Lifts:
+			{
+				out[rc] = (float) in.GetNumLifts();			break;
+			}
+			case RadarCategory_Fakes:
+			{
+				out[rc] = (float) in.GetNumFakes();			break;
+			}
+		default:	FAIL_M("Non-existant radar category attempted to be set!");
+		}
+	}
+	*/
 }
 
 // Sorting stuff

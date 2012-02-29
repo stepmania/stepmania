@@ -146,7 +146,7 @@ namespace StepsUtil
 	 * @param in the Steps we're analyzing.
 	 * @param songLength the calculated length of the song. Unsure if this is needed.
 	 * @param out the RadarValues we want. */
-	void CalculateRadarValues( const Steps *in, float songLength, RadarValues& out );
+	void CalculateRadarValues( Steps *in, float songLength );
 
 	bool CompareNotesPointersByRadarValues(const Steps* pSteps1, const Steps* pSteps2);
 	bool CompareNotesPointersByMeter(const Steps *pSteps1, const Steps* pSteps2);
