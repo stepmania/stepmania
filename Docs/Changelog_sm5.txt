@@ -13,6 +13,7 @@ StepMania 5.0 alpha 2 | 20120???
 ----------
 * [MemoryCardManager] Disable Memory Cards by default. If you want to use them,
 set MemoryCards=1 in Save/Preferences.ini (or Save/Static.ini). [AJ]
+* [GameState] Set Premium to Premium_DoubleFor1Credit by default. [AJ]
 
 StepMania 5.0 alpha 1a | 20120219
 --------------------------------------------------------------------------------
