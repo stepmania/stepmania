@@ -5,6 +5,15 @@ from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
 ================================================================================
+
+StepMania 5.0 alpha 2 | 20120???
+--------------------------------------------------------------------------------
+
+2012/03/01
+----------
+* [MemoryCardManager] Disable Memory Cards by default. If you want to use them,
+set MemoryCards=1 in Save/Preferences.ini (or Save/Static.ini). [AJ]
+
 StepMania 5.0 alpha 1a | 20120219
 --------------------------------------------------------------------------------
 
