@@ -7,7 +7,7 @@ local t = Def.ActorFrame {
 	};
 
 	LoadActor(Var "File1") .. {
-		OnCommand=cmd(blend,"BlendMode_Add";x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y;scaletoclipped,SCREEN_WIDTH,SCREEN_HEIGHT;diffuse,Color2;effectclock,"music");
+		OnCommand=cmd(blend,"BlendMode_Add";x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y;scale_or_crop_background;diffuse,Color2;effectclock,"music");
 		GainFocusCommand=cmd(play);
 		LoseFocusCommand=cmd(pause);
 	};
