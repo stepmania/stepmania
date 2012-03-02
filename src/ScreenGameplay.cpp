@@ -2361,6 +2361,7 @@ void ScreenGameplay::SaveStats()
 		//NoteDataUtil::CalculateRadarValues( nd, fMusicLen, rv );
 		pss.m_radarPossible += rv;
 
+		// TODO: Make this Steps with scoring, rely on pss and pn.
 		NoteDataWithScoring::GetActualRadarValues( nd, pss, fMusicLen, rv );
 		pss.m_radarActual += rv;
 	}
