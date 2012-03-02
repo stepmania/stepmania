@@ -268,40 +268,6 @@ void Steps::CalculateRadarValues( float fMusicLengthSeconds )
 		m_CachedRadarValues[pn].Zero();
 
 	StepsUtil::CalculateRadarValues(this, fMusicLengthSeconds);
-	/*
-	NoteData tempNoteData;
-	this->GetNoteData( tempNoteData );
-	
-	if( tempNoteData.IsComposite() ) // TODO: Would it be better to just check the StepsTypeCategory?
-	{
-		vector<NoteData> vParts;
-
-		NoteDataUtil::SplitCompositeNoteData( tempNoteData, vParts );
-		for( size_t pn = 0; pn < min(vParts.size(), size_t(NUM_PLAYERS)); ++pn )
-			NoteDataUtil::CalculateRadarValues( vParts[pn], fMusicLengthSeconds, m_CachedRadarValues[pn] );
-	}
-	else if (this->GetStepsTypeCategory() == StepsTypeCategory_Couple)
-	{
-		NoteData p1 = tempNoteData;
-		// XXX: Assumption that couple will always have an even number of notes.
-		const int tracks = tempNoteData.GetNumTracks() / 2;
-		p1.SetNumTracks(tracks);
-		NoteDataUtil::CalculateRadarValues(p1,
-										   fMusicLengthSeconds,
-										   m_CachedRadarValues[PLAYER_1]);
-		// at this point, p2 is tempNoteData.
-		NoteDataUtil::ShiftTracks(tempNoteData, tracks);
-		tempNoteData.SetNumTracks(tracks);
-		NoteDataUtil::CalculateRadarValues(tempNoteData,
-										   fMusicLengthSeconds,
-										   m_CachedRadarValues[PLAYER_2]);
-	}
-	else
-	{
-		NoteDataUtil::CalculateRadarValues( tempNoteData, fMusicLengthSeconds, m_CachedRadarValues[0] );
-		fill_n( m_CachedRadarValues + 1, NUM_PLAYERS-1, m_CachedRadarValues[0] );
-	}
-	*/
 }
 
 void Steps::Decompress() const

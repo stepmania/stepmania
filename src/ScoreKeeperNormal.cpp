@@ -127,8 +127,6 @@ void ScoreKeeperNormal::Load(
 		StepsUtil::CalculateRadarValues(&radarSteps, pSong->m_fMusicLengthSeconds);
 		RadarValues rvPre = radarSteps.GetRadarValues(pn);
 
-		// NoteDataUtil::CalculateRadarValues( nd, pSong->m_fMusicLengthSeconds, rvPre );
-
 		/* Apply user transforms to find out how the notes will really look.
 		 *
 		 * XXX: This is brittle: if we end up combining mods for a song differently
@@ -141,7 +139,6 @@ void ScoreKeeperNormal::Load(
 		radarSteps.SetNoteData(nd);
 		StepsUtil::CalculateRadarValues(&radarSteps, pSong->m_fMusicLengthSeconds);
 		RadarValues rvPost = radarSteps.GetRadarValues(pn);
-		//NoteDataUtil::CalculateRadarValues( nd, pSong->m_fMusicLengthSeconds, rvPost );
 		
 		iTotalPossibleDancePoints += this->GetPossibleDancePoints( rvPre, rvPost );
 		iTotalPossibleGradePoints += this->GetPossibleGradePoints( rvPre, rvPost );
