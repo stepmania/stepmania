@@ -2466,7 +2466,8 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 
 					int iRowsAgoLastNote = 100000;	// TODO: find more reasonable value based on HOPO_CHAIN_SECONDS?
 					NoteData::all_tracks_reverse_iterator iter = m_NoteData.GetTapNoteRangeAllTracksReverse( iRowsAgoLastNote-iRowsAgoLastNote, iRowOfOverlappingNoteOrRow-1 );
-					ASSERT( !iter.IsAtEnd() );	// there must have been a note that started the hopo
+					ASSERT_M( !iter.IsAtEnd(), ssprintf("Row %d, Track %d: was there no note that started the hopo?",
+						row, col + 1));
 					if( !NoteDataWithScoring::IsRowCompletelyJudged(m_NoteData, iter.Row()) )
 					{
 						bDidHopo = false;
