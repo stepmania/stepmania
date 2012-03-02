@@ -664,6 +664,7 @@ void Player::Load()
 	const Song* pSong = GAMESTATE->m_pCurSong;
 
 	m_Timing = &GAMESTATE->m_pCurSteps[pn]->m_Timing;
+	currentStep->m_Timing = *this->m_Timing;
 
 	// Generate some cache data structure.
 	GenerateCacheDataStructure(m_pPlayerState, m_NoteData);
