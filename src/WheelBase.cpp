@@ -283,11 +283,15 @@ bool WheelBase::Select()	// return true if this selection can end the screen
 		{
 			RString sThisItemSectionName = m_CurWheelItemData[m_iSelection]->m_sText;
 			if( m_sExpandedSectionName == sThisItemSectionName ) // already expanded
+			{
 				SetOpenSection( "" ); // collapse it
+				m_soundCollapse.Play();
+			}
 			else // already collapsed
+			{
 				SetOpenSection( sThisItemSectionName ); // expand it
-
-			m_soundExpand.Play();
+				m_soundExpand.Play();
+			}
 		}
 		break;
 	default:

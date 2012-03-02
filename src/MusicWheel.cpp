@@ -109,6 +109,7 @@ void MusicWheel::Load( RString sType )
 
 	m_soundChangeSort.Load(	THEME->GetPathS(sType,"sort") );
 	m_soundExpand.Load(	THEME->GetPathS(sType,"expand"), true );
+	m_soundCollapse.Load(	THEME->GetPathS(sType,"collapse"), true );
 
 	// Update for SORT_MOST_PLAYED.
 	SONGMAN->UpdatePopular();
