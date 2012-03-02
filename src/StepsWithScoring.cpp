@@ -7,43 +7,6 @@
 #include "ThemeMetric.h"
 #include "RageLog.h"
 
-// TODO: Combine this function and NoteDataWithScoring's MinTapNoteScore. The code is errily similar.
-TapNoteScore StepsWithScoring::MinTapNoteScoreCouple( const NoteData &in, unsigned row, PlayerNumber pn )
-{
-	TapNoteScore score = TNS_W1;
-	const int tracks = in.GetNumTracks();
-	for( int t = pn * (tracks / 2); t < (pn + 1) * (tracks / 2); ++t )
-	{
-		// Ignore mines (and fake arrows), or the score will always be TNS_None.
-		const TapNote &tn = in.GetTapNote( t, row );
-		if (tn.type == TapNote::empty ||
-			tn.type == TapNote::mine ||
-			tn.type == TapNote::fake ||
-			tn.type == TapNote::autoKeysound)
-			continue;
-		score = min( score, tn.result.tns );
-	}
-
-	return score;
-}
-
-TapNoteScore StepsWithScoring::MinTapNoteScoreRoutine( const NoteData &in, unsigned row, PlayerNumber pn )
-{
-	TapNoteScore score = TNS_W1;
-	for (int t = 0; t < in.GetNumTracks(); ++t)
-	{
-		const TapNote &tn = in.GetTapNote(t, row);
-		if (tn.pn != pn || 
-			tn.type == TapNote::empty ||
-			tn.type == TapNote::mine ||
-			tn.type == TapNote::fake ||
-			tn.type == TapNote::autoKeysound)
-			continue;
-		score = min(score, tn.result.tns);
-	}
-	return score;
-}
-
 bool StepsWithScoring::IsRowCompletelyJudged( const NoteData &in, unsigned row, StepsTypeCategory stc, PlayerNumber pn )
 {
 	TapNoteScore tns;
@@ -51,12 +14,14 @@ bool StepsWithScoring::IsRowCompletelyJudged( const NoteData &in, unsigned row, 
 	{
 		case StepsTypeCategory_Couple:
 		{
-			tns = StepsWithScoring::MinTapNoteScoreCouple(in, row, pn);
+			const int tracksPerPlayer = in.GetNumTracks() / 2;
+			int start = pn * tracksPerPlayer;
+			tns = NoteDataWithScoring::MinTapNoteScore(in, row, start, start + tracksPerPlayer, PLAYER_INVALID);
 			break;
 		}
 		case StepsTypeCategory_Routine:
 		{
-			tns = StepsWithScoring::MinTapNoteScoreRoutine(in, row, pn);
+			tns = NoteDataWithScoring::MinTapNoteScore(in, row, 0, in.GetNumTracks(), pn);
 			break;
 		}
 		default:

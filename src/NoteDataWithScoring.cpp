@@ -246,16 +246,20 @@ const TapNote &NoteDataWithScoring::LastTapNoteWithResult( const NoteData &in, u
 	return in.GetTapNote( iTrack, iRow );
 }
 
-/* Return the minimum tap score of a row.  If the row isn't complete (not all
+/* Return the minimum tap score of a row. If the row isn't complete (not all
  * taps have been hit), return TNS_None or TNS_Miss. */
-TapNoteScore NoteDataWithScoring::MinTapNoteScore( const NoteData &in, unsigned row )
+TapNoteScore NoteDataWithScoring::MinTapNoteScore(const NoteData &in, unsigned row, int start, int end, PlayerNumber pn)
 {
 	//LOG->Trace("Hey I'm NoteDataWithScoring::MinTapNoteScore");
 	TapNoteScore score = TNS_W1;
-	for( int t=0; t<in.GetNumTracks(); t++ )
+	for (int t = start; t < end; ++t)
 	{
-		// Ignore mines (and fake arrows), or the score will always be TNS_None.
-		const TapNote &tn = in.GetTapNote( t, row );
+		const TapNote &tn = in.GetTapNote(t, row);
+		// If pn isn't invalid, it's a routine chart. Check the PlayerNumber of the TapNote.
+		if (pn != PLAYER_INVALID && tn.pn != pn)
+			continue;
+		/* Empty notes, mines, fakes, and auto Keysounds aren't used for scoring.
+		 * If not ignored, the score is always TNS_None, and that's bad. */
 		if (tn.type == TapNote::empty ||
 			tn.type == TapNote::mine ||
 			tn.type == TapNote::fake ||
@@ -263,9 +267,13 @@ TapNoteScore NoteDataWithScoring::MinTapNoteScore( const NoteData &in, unsigned 
 			continue;
 		score = min( score, tn.result.tns );
 	}
-
 	//LOG->Trace( ssprintf("OMG score is?? %s",TapNoteScoreToString(score).c_str()) );
 	return score;
+}
+
+TapNoteScore NoteDataWithScoring::MinTapNoteScore( const NoteData &in, unsigned row )
+{
+	return NoteDataWithScoring::MinTapNoteScore(in, row, 0, in.GetNumTracks(), PLAYER_INVALID);
 }
 
 bool NoteDataWithScoring::IsRowCompletelyJudged( const NoteData &in, unsigned row )
