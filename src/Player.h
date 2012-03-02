@@ -68,6 +68,9 @@ public:
 		ScoreKeeper* pSecondaryScoreKeeper );
 	void Load();
 	void CrossedRows( int iLastRowCrossed, const RageTimer &now );
+	/**
+	 * @brief Has this Player died in the Oni style gameplay?
+	 * @return true if the player is dead based on Oni rules, false otherwise. */
 	bool IsOniDead() const;
 	
 	/**
@@ -107,6 +110,10 @@ public:
 
 	static float GetMaxStepDistanceSeconds();
 	static float GetWindowSeconds( TimingWindow tw );
+
+	/**
+	 * @brief Retrieve the latest reference to the Player's NoteData.
+	 * @return the NoteData reference in question. */
 	const NoteData &GetNoteData() const { return m_NoteData; }
 	bool HasVisibleParts() const { return m_pNoteField != NULL; }
 
@@ -118,6 +125,9 @@ public:
 	// Lua
 	virtual void PushSelf( lua_State *L );
 	
+	/**
+	 * @brief Have quick access to the Player's state.
+	 * @return the Player's state. */
 	PlayerState * GetPlayerState() { return this->m_pPlayerState; }
 
 protected:
@@ -130,6 +140,11 @@ protected:
 	void DrawTapJudgments();
 	void DrawHoldJudgments();
 	void SendComboMessages( int iOldCombo, int iOldMissCombo );
+
+	/**
+	 * @brief Play the appropriate keysound.
+	 * @param tn the TapNote that has an indexed keysound.
+	 * @param score the score of the note. */
 	void PlayKeysound( const TapNote &tn, TapNoteScore score );
 
 	void SetMineJudgment( TapNoteScore tns );
