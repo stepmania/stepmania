@@ -7,6 +7,7 @@
 #include "RageSound.h"
 #include "AttackDisplay.h"
 #include "NoteData.h"
+#include "Steps.h"
 #include "ScreenMessage.h"
 #include "ThemeMetric.h"
 #include "InputEventPlus.h"
@@ -41,7 +42,7 @@ class Player: public ActorFrame
 {
 public:
 	// The passed in NoteData isn't touched until Load() is called.
-	Player( NoteData &nd, bool bVisibleParts = true );
+	Player( NoteData &nd, StepsType st, bool bVisibleParts = true );
 	~Player();
 
 	virtual void Update( float fDeltaTime );
@@ -122,6 +123,8 @@ public:
 
 	void SetSendJudgmentAndComboMessages( bool b ) { m_bSendJudgmentAndComboMessages = b; }
 
+	Steps * GetStep() { return this->currentStep; }
+
 	// Lua
 	virtual void PushSelf( lua_State *L );
 	
@@ -184,6 +187,7 @@ protected:
 
 	NoteData		&m_NoteData;
 	NoteField		*m_pNoteField;
+	Steps			*currentStep;
 
 	vector<HoldJudgment*>	m_vpHoldJudgment;
 
@@ -249,7 +253,7 @@ class PlayerPlus
 	Player *m_pPlayer;
 	NoteData m_NoteData;
 public:
-	PlayerPlus() { m_pPlayer = new Player(m_NoteData); }
+	PlayerPlus() { m_pPlayer = new Player(m_NoteData, StepsType_Invalid); }
 	~PlayerPlus() { delete m_pPlayer; }
 	void Load( const NoteData &nd ) { m_NoteData = nd; m_pPlayer->Load(); }
 	Player *operator->() { return m_pPlayer; }

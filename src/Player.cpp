@@ -218,9 +218,13 @@ float Player::GetWindowSeconds( TimingWindow tw )
 	return fSecs;
 }
 
-Player::Player( NoteData &nd, bool bVisibleParts ) : m_NoteData(nd)
+Player::Player( NoteData &nd, StepsType st, bool bVisibleParts ) : m_NoteData(nd)
 {
 	m_bLoaded = false;
+
+	currentStep = new Steps;
+	currentStep->m_StepsType = st;
+	currentStep->SetNoteData(nd); // will set this as needed later.
 
 	m_pPlayerState = NULL;
 	m_pPlayerStageStats = NULL;
@@ -266,6 +270,7 @@ Player::~Player()
 {
 	SAFE_DELETE( m_pAttackDisplay );
 	SAFE_DELETE( m_pNoteField );
+	SAFE_DELETE( currentStep );
 	for( unsigned i = 0; i < m_vpHoldJudgment.size(); ++i )
 		SAFE_DELETE( m_vpHoldJudgment[i] );
 	SAFE_DELETE( m_pJudgedRows );

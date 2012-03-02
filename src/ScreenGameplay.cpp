@@ -173,7 +173,8 @@ void PlayerInfo::Load( PlayerNumber pn, MultiPlayer mp, bool bShowNoteField, int
 
 	m_ptextPlayerOptions = NULL;
 	m_pActiveAttackList = NULL;
-	m_pPlayer = new Player( m_NoteData, bShowNoteField );
+	StepsType st = GAMESTATE->m_pCurSteps[pn]->m_StepsType;
+	m_pPlayer = new Player( m_NoteData, st, bShowNoteField );
 	m_pInventory = NULL;
 	m_pStepsDisplay = NULL;
 
@@ -191,8 +192,11 @@ void PlayerInfo::LoadDummyP1( int iDummyIndex, int iAddToDifficulty )
 	m_iDummyIndex = iDummyIndex;
 	m_iAddToDifficulty = iAddToDifficulty;
 
+	// as this is a dummy, the steps type isn't really relevant.
+	StepsType st = StepsType_Invalid;
+
 	// don't init any of the scoring objects
-	m_pPlayer = new Player( m_NoteData, true );
+	m_pPlayer = new Player( m_NoteData, st, true );
 
 	// PlayerOptions needs to be set now so that we load the correct NoteSkin.
 	m_PlayerStateDummy = *GAMESTATE->m_pPlayerState[PLAYER_1];
@@ -2346,13 +2350,17 @@ void ScreenGameplay::SaveStats()
 	{
 		/* Note that adding stats is only meaningful for the counters (eg. RadarCategory_Jumps),
 		 * not for the percentages (RadarCategory_Air). */
-		RadarValues rv;
 		PlayerStageStats &pss = *pi->GetPlayerStageStats();
 		const NoteData &nd = pi->m_pPlayer->GetNoteData();
 		PlayerNumber pn = pi->m_pn;
+		Steps *playerSteps = pi->m_pPlayer->GetStep();
+		playerSteps->SetNoteData(nd);
+		StepsUtil::CalculateRadarValues(playerSteps, fMusicLen);
+		RadarValues rv = playerSteps->GetRadarValues(pn);
 
-		NoteDataUtil::CalculateRadarValues( nd, fMusicLen, rv );
+		//NoteDataUtil::CalculateRadarValues( nd, fMusicLen, rv );
 		pss.m_radarPossible += rv;
+
 		NoteDataWithScoring::GetActualRadarValues( nd, pss, fMusicLen, rv );
 		pss.m_radarActual += rv;
 	}
