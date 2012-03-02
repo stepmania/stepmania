@@ -1,0 +1,7 @@
+#include "global.h"
+#include "StepsWithScoring.h"
+#include "NoteData.h"
+#include "PlayerStageStats.h"
+#include "GameConstantsAndTypes.h"
+#include "ThemeMetric.h"
+#include "RageLog.h"

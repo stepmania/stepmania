@@ -498,6 +498,7 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)</Command>
     <ClCompile Include="StageStats.cpp" />
     <ClCompile Include="Steps.cpp" />
     <ClCompile Include="StepsUtil.cpp" />
+    <ClCompile Include="StepsWithScoring.cpp" />
     <ClCompile Include="Style.cpp" />
     <ClCompile Include="StyleUtil.cpp" />
     <ClCompile Include="TimingData.cpp" />
@@ -1813,6 +1814,7 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)</Command>
     <ClInclude Include="StageStats.h" />
     <ClInclude Include="Steps.h" />
     <ClInclude Include="StepsUtil.h" />
+    <ClInclude Include="StepsWithScoring.h" />
     <ClInclude Include="Style.h" />
     <ClInclude Include="StyleUtil.h" />
     <ClInclude Include="SubscriptionManager.h" />

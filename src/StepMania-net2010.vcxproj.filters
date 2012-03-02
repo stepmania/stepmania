@@ -1617,6 +1617,9 @@
     <ClCompile Include="SongPosition.cpp">
       <Filter>Data Structures</Filter>
     </ClCompile>
+    <ClCompile Include="StepsWithScoring.cpp">
+      <Filter>Data Structures</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Screen.h">
@@ -3000,6 +3003,9 @@
       <Filter>Helpers\Lua</Filter>
     </ClInclude>
     <ClInclude Include="SongPosition.h">
+      <Filter>Data Structures</Filter>
+    </ClInclude>
+    <ClInclude Include="StepsWithScoring.h">
       <Filter>Data Structures</Filter>
     </ClInclude>
   </ItemGroup>
