@@ -59,7 +59,7 @@ local contrib = {
 	"Petriform", -- default theme music
 	"桜為小鳩/Sakurana-Kobato (@sakuraponila)", -- custom scoring fixes
 	"Samuel Kim (1a2a3a2a1a)", -- various beat mode fixes
-	"sy567", -- beginner helper fix
+	"hanubeki (@803832)", -- beginner helper fix, among various other things
 	"v1toko", -- x-mode from StepNXA
 }
 

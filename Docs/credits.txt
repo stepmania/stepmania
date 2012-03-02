@@ -84,7 +84,7 @@ v1toko
 Macgravel
  * Orbular noteskin (the default kb7 noteskin)
 
-sy567
+hanubeki (@803832, formerly sy567)
  * Small beginner helper fix
  (http://www.stepmania.com/forums/showpost.php?p=158721&postcount=12)
 

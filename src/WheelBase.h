@@ -99,6 +99,7 @@ protected:
 
 	RageSound m_soundChangeMusic;
 	RageSound m_soundExpand;
+	RageSound m_soundCollapse;
 	RageSound m_soundLocked;
 
 //	bool WheelItemIsVisible(int n);

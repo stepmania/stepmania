@@ -5,6 +5,18 @@ from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
 ================================================================================
+
+StepMania 5.0 alpha 2 | 20120???
+--------------------------------------------------------------------------------
+
+2012/03/01
+----------
+* [MemoryCardManager] Disable Memory Cards by default. If you want to use them,
+set MemoryCards=1 in Save/Preferences.ini (or Save/Static.ini). [AJ]
+* [GameState] Set Premium to Premium_DoubleFor1Credit by default. [AJ]
+* [ScreenSelectMusic] Added PlaySoundOnEnteringOptionsMenu metric. [AJ]
+* [MusicWheel, WheelBase] Added collapse sound. [AJ]
+
 StepMania 5.0 alpha 1a | 20120219
 --------------------------------------------------------------------------------
 
