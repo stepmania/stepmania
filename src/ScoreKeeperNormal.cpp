@@ -98,6 +98,7 @@ void ScoreKeeperNormal::Load(
 	// Fill in STATSMAN->m_CurStageStats, calculate multiplier
 	int iTotalPossibleDancePoints = 0;
 	int iTotalPossibleGradePoints = 0;
+	const PlayerNumber pn = this->m_pPlayerState->m_PlayerNumber;
 	for( unsigned i=0; i<apSteps.size(); i++ )
 	{
 		Song* pSong = apSongs[i];
@@ -113,14 +114,20 @@ void ScoreKeeperNormal::Load(
 
 		const Style* pStyle = GAMESTATE->GetCurrentStyle();
 		NoteData nd;
-		pStyle->GetTransformedNoteDataForStyle( m_pPlayerState->m_PlayerNumber, ndTemp, nd );
+		pStyle->GetTransformedNoteDataForStyle( pn, ndTemp, nd );
 
 		/* Compute RadarValues before applying any user-selected mods. Apply
 		 * Course mods and count them in the "pre" RadarValues because they're
 		 * forced and not chosen by the user. */
 		NoteDataUtil::TransformNoteData( nd, aa, pSteps->m_StepsType, pSong );
-		RadarValues rvPre;
-		NoteDataUtil::CalculateRadarValues( nd, pSong->m_fMusicLengthSeconds, rvPre );
+		
+		Steps radarSteps;
+		radarSteps.m_StepsType = pSteps->m_StepsType;
+		radarSteps.SetNoteData(nd);
+		StepsUtil::CalculateRadarValues(&radarSteps, pSong->m_fMusicLengthSeconds);
+		RadarValues rvPre = radarSteps.GetRadarValues(pn);
+
+		// NoteDataUtil::CalculateRadarValues( nd, pSong->m_fMusicLengthSeconds, rvPre );
 
 		/* Apply user transforms to find out how the notes will really look.
 		 *
@@ -130,8 +137,11 @@ void ScoreKeeperNormal::Load(
 		 * the last call to StoreSelectedOptions and the modifiers list, but that'd
 		 * mean moving the queues in ScreenGameplay to GameState ... */
 		NoteDataUtil::TransformNoteData( nd, m_pPlayerState->m_PlayerOptions.GetStage(), pSteps->m_StepsType );
-		RadarValues rvPost;
-		NoteDataUtil::CalculateRadarValues( nd, pSong->m_fMusicLengthSeconds, rvPost );
+
+		radarSteps.SetNoteData(nd);
+		StepsUtil::CalculateRadarValues(&radarSteps, pSong->m_fMusicLengthSeconds);
+		RadarValues rvPost = radarSteps.GetRadarValues(pn);
+		//NoteDataUtil::CalculateRadarValues( nd, pSong->m_fMusicLengthSeconds, rvPost );
 		
 		iTotalPossibleDancePoints += this->GetPossibleDancePoints( rvPre, rvPost );
 		iTotalPossibleGradePoints += this->GetPossibleGradePoints( rvPre, rvPost );
