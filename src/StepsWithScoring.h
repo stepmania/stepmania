@@ -15,11 +15,29 @@ namespace StepsWithScoring
 {
 	/**
 	 * @brief Has the current row of NoteData been judged completely?
-	 * @param in the entire Notedata.
+	 * @param in the NoteData in question.
 	 * @param iRow the row to check.
+	 * @param stepsType the stepsType of this NoteData/Steps.
+	 * @param pn the PlayerNumber (should it be relevant).
 	 * @return true if it has been completley judged, or false otherwise. */
-	bool IsRowCompletelyJudged( const NoteData &in, unsigned iRow );
-	TapNoteScore MinTapNoteScore( const NoteData &in, unsigned iRow );
+	bool IsRowCompletelyJudged( const NoteData &in, unsigned iRow, StepsTypeCategory stc, PlayerNumber pn = PLAYER_INVALID );
+
+	/**
+	 * @brief What is the worst TapNoteScore for the row in Couple Mode?
+	 * @param in the NoteData in question.
+	 * @param iRow the row to check.
+	 * @param pn the PlayerNumber to look at.
+	 * @return the minimum TapNoteScore for that row. */
+	TapNoteScore MinTapNoteScoreCouple( const NoteData &in, unsigned iRow, PlayerNumber pn );
+
+	/**
+	 * @brief What is the worst TapNoteScore for the row in Routine Mode?
+	 * @param in the NoteData in question.
+	 * @param iRow the row to check.
+	 * @param pn the PlayerNumber to look at.
+	 * @return the minimum TapNoteScore for that row. */
+	TapNoteScore MinTapNoteScoreRoutine( const NoteData &in, unsigned iRow, PlayerNumber pn );
+
 	const TapNote &LastTapNoteWithResult( const NoteData &in, unsigned iRow );
 
 	void GetActualRadarValues( const NoteData &in, const PlayerStageStats &pss, 
