@@ -94,6 +94,7 @@ void ScreenSelectMusic::Init()
 	TWO_PART_TIMER_SECONDS.Load( m_sName, "TwoPartTimerSeconds" );
 	WRAP_CHANGE_STEPS.Load( m_sName, "WrapChangeSteps" );
 	NULL_SCORE_STRING.Load( m_sName, "NullScoreString" );
+	PLAY_SOUND_ON_ENTERING_OPTIONS_MENU.Load( m_sName, "PlaySoundOnEnteringOptionsMenu" );
 	// To allow changing steps with gamebuttons -DaisuMaster
 	CHANGE_STEPS_WITH_GAME_BUTTONS.Load( m_sName, "ChangeStepsWithGameButtons" );
 	CHANGE_GROUPS_WITH_GAME_BUTTONS.Load( m_sName, "ChangeGroupsWithGameButtons" );
@@ -437,7 +438,8 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 		}
 
 		m_bGoToOptions = true;
-		m_soundStart.Play();
+		if( PLAY_SOUND_ON_ENTERING_OPTIONS_MENU )
+			m_soundStart.Play();
 		this->PlayCommand( "ShowEnteringOptions" );
 
 		// Re-queue SM_BeginFadingOut, since ShowEnteringOptions may have
