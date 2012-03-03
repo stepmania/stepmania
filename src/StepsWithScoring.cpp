@@ -8,6 +8,8 @@
 #include "Steps.h"
 #include "RageLog.h"
 
+static ThemeMetric<TapNoteScore> MIN_SCORE_TO_MAINTAIN_COMBO( "Gameplay", "MinScoreToMaintainCombo" );
+
 const TapNote &StepsWithScoring::LastTapNoteWithResult( const NoteData &in, unsigned row, StepsTypeCategory stc, PlayerNumber pn )
 {
 	int track;
@@ -61,6 +63,8 @@ bool StepsWithScoring::IsRowCompletelyJudged( const NoteData &in, unsigned row, 
 	}
 	return tns >= TNS_Miss;
 }
+
+
 
 RadarValues StepsWithScoring::GetActualRadarValues(const Steps *in,
 	const PlayerStageStats &pss,
