@@ -5,6 +5,7 @@
 #include "PlayerStageStats.h"
 #include "GameConstantsAndTypes.h"
 #include "ThemeMetric.h"
+#include "Steps.h"
 #include "RageLog.h"
 
 const TapNote &StepsWithScoring::LastTapNoteWithResult( const NoteData &in, unsigned row, StepsTypeCategory stc, PlayerNumber pn )
@@ -87,7 +88,16 @@ RadarValues StepsWithScoring::GetActualRadarValues(const Steps *in,
 		case RadarCategory_Hands:		rv[rc] = (float) GetSuccessfulHands( in );						break;
 		case RadarCategory_Rolls:		rv[rc] = (float) GetNumHoldNotesWithScore( in, TapNote::hold_head_roll, HNS_Held );	break;
 		case RadarCategory_Lifts:		rv[rc] = (float) GetSuccessfulLifts( in, MIN_SCORE_TO_MAINTAIN_COMBO );					break;
-		case RadarCategory_Fakes:		rv[rc] = (float) in.GetNumFakes();							break;
+			case RadarCategory_Fakes:
+			{
+				statResults = in->GetNumFakes();
+				if (statResults.size() == 1)
+				{
+					statResults.push_back(statResults[0]);
+				}
+				rv[rc] = statResults[pn];
+				break;
+			}
 		DEFAULT_FAIL( rc );
 		}
 	}
