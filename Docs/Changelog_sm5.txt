@@ -9,6 +9,13 @@ ________________________________________________________________________________
 StepMania 5.0 alpha 2 | 20120???
 --------------------------------------------------------------------------------
 
+2012/03/02
+----------
+* [NotesLoaderBMS] Fix calculating stops, Support for #LNOBJ, Don't use #BACKBMP
+  as song background if main StepsType is beat-*. [hanubeki]
+  These changes constitute revisions f26caccf103e, 2d114b38c6c9, and b60f021d2b67
+  of hanubeki-modified-sm-ssc. (http://code.google.com/r/hanubeki-modified-sm-ssc/)
+
 2012/03/01
 ----------
 * [MemoryCardManager] Disable Memory Cards by default. If you want to use them,

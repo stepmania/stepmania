@@ -359,6 +359,7 @@ struct BMSChartInfo {
 	RString genre;
 
 	RString backgroundFile;
+	RString stageFile;
 	RString musicFile;
 };
 
@@ -434,7 +435,14 @@ void BMSChartReader::ReadHeaders()
 		}
 		else if( it->first == "#backbmp" )
 		{
+			/* XXX: don't use #backbmp if StepsType is beat-*.
+			 * incorrectly used in other simulators; see
+			 * http://www.geocities.jp/red_without_right_stick/backbmp/ */
 			info.backgroundFile = it->second;
+		}
+		else if( it->first == "#stagefile" )
+		{
+			info.stageFile = it->second;
 		}
 		else if( it->first == "#wav" )
 		{
@@ -456,7 +464,7 @@ void BMSChartReader::ReadHeaders()
 		else if( it->first == "#lnobj" )
 		{
 			lnobj = it->second;
-			// TODO: support lnobj
+			lnobj.MakeLower();
 		}
 		else if( it->first == "#playlevel" )
 		{
@@ -513,26 +521,33 @@ StepsType BMSChartReader::DetermineStepsType()
 					if( nonEmptyTracks.find(BMS_RAW_P2_KEY2) != nonEmptyTracks.end() ) return StepsType_popn_five;
 				case 6:
 					// FIXME: There's no way to distinguish between these types.
-					// They use the same tracks.  Assume it's a Beat type since they
-					// are more common.
+					// They use the same number of tracks. Assume it's a Beat
+					// type, since they are more common.
 					//return StepsType_dance_solo;
 					return StepsType_beat_single5;
 				case 7:
 				case 8:		return StepsType_beat_single7;
 				case 9:		return StepsType_popn_nine;
-				default:	return StepsType_beat_single7;
+				// XXX: Some double files doesn't have #player.
+				case 12:	return StepsType_beat_double5;
+				case 16:	return StepsType_beat_double7;
+				default:
+					if( nonEmptyTracksCount > 8 )
+						return StepsType_beat_double7;
+					else
+						return StepsType_beat_single7;
 			}
 		case 2:	// couple/battle
 			return StepsType_dance_couple;
 		case 3:	// double
 			switch( nonEmptyTracksCount ) 
 			{
-				case 8:		return StepsType_beat_single7;
-				case 12:	return StepsType_beat_double5;
-				case 16:	return StepsType_beat_double7;
+				case 8:		return StepsType_dance_double;
+				case 12:		return StepsType_beat_double5;
+				case 16:		return StepsType_beat_double7;
 				case 5:		return StepsType_popn_five;
 				case 9:		return StepsType_popn_nine;
-				default:	return StepsType_beat_double7;
+				default:		return StepsType_beat_double7;
 			}
 		default:
 			LOG->UserLog( "Song file", in->path, "has an invalid #PLAYER value %d.", player );
@@ -585,8 +600,10 @@ bool BMSChartReader::ReadNoteData()
 	// set up note transformation vector.
 	int *transform = new int[tracks];
 	int *holdStart = new int[tracks];
+	int *lastNote = new int[tracks];
 
 	for( int i = 0; i < tracks; i ++ ) holdStart[i] = -1;
+	for( int i = 0; i < tracks; i ++ ) lastNote[i] = -1;
 
 	switch( out->m_StepsType )
 	{
@@ -787,7 +804,7 @@ bool BMSChartReader::ReadNoteData()
 			BMSHeaders::iterator it = in->headers.find( search );
 			if( it != in->headers.end() )
 			{
-				td.SetStopAtRow( row, (StringToFloat(it->second) / 48.0f) * (currentBPM / 60.0f) );
+				td.SetStopAtRow( row, (StringToFloat(it->second) / 48.0f) * (60.0f / currentBPM) );
 			}
 			else
 			{
@@ -805,6 +822,18 @@ bool BMSChartReader::ReadNoteData()
 				tn.subType = TapNote::hold_head_hold;
 				nd.AddHoldNote( track, holdStart[track], row, tn );
 				holdStart[track] = -1;
+				lastNote[track] = -1;
+			}
+			else if( obj.value == lnobj && lastNote[track] != -1 )
+			{
+				// this object is the end of the hold note.
+				// lnobj: set last note to hold head.
+				TapNote tn = nd.GetTapNote(track, lastNote[track]);
+				tn.type = TapNote::hold_head;
+				tn.subType = TapNote::hold_head_hold;
+				nd.AddHoldNote( track, lastNote[track], row, tn );
+				holdStart[track] = -1;
+				lastNote[track] = -1;
 			}
 			else
 			{
@@ -812,6 +841,7 @@ bool BMSChartReader::ReadNoteData()
 				tn.iKeysoundIndex = GetKeysound(obj);
 				nd.SetTapNote( track, row, tn );
 				if( hold ) holdStart[track] = row;
+				lastNote[track] = row;
 			}
 		}
 		else if( channel == 1 || (11 <= channel && channel <= 19) || (21 <= channel && channel <= 29) ) // auto-keysound and other notes
@@ -847,6 +877,7 @@ bool BMSChartReader::ReadNoteData()
 
 	delete transform;
 	delete holdStart;
+	delete lastNote;
 
 	td.TidyUpData();
 	out->SetNoteData(nd);
@@ -1023,7 +1054,25 @@ void BMSSongLoader::AddToSong()
 			NotesLoader::GetMainAndSubTitlesFromFullTitle( main.info.title, out->m_sMainTitle, out->m_sSubTitle );
 		out->m_sArtist = main.info.artist;
 		out->m_sGenre = main.info.genre;
-		out->m_sBackgroundFile = main.info.backgroundFile;
+
+		switch( main.steps->m_StepsType )
+		{
+			case StepsType_beat_single5:
+			case StepsType_beat_single7:
+			case StepsType_beat_double5:
+			case StepsType_beat_double7:
+			case StepsType_beat_versus5:
+			case StepsType_beat_versus7:
+				out->m_sBackgroundFile = main.info.stageFile;
+				break;
+			default:
+				if ( main.info.backgroundFile != "" )
+ 					out->m_sBackgroundFile = main.info.backgroundFile;
+ 				else
+ 					out->m_sBackgroundFile = main.info.stageFile;
+				break;
+		}
+
 		out->m_sMusicFile = main.info.musicFile;
 		out->m_SongTiming = main.steps->m_Timing;
 	}
