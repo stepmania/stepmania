@@ -31,8 +31,10 @@ namespace StepsWithScoring
 	 * @return the TapNote last judged. */
 	const TapNote &LastTapNoteWithResult( const NoteData &in, unsigned iRow, StepsTypeCategory stc, PlayerNumber pn = PLAYER_INVALID );
 
-	void GetActualRadarValues( const NoteData &in, const PlayerStageStats &pss, 
-				  float fSongSeconds, RadarValues& out );
+	RadarValues GetActualRadarValues(const Steps *in,
+		const PlayerStageStats &pss,
+		float songLength,
+		PlayerNumber pn);
 };
 
 #endif
