@@ -80,6 +80,17 @@ float GetActualVoltageRadarValue(const PlayerStageStats &pss)
 	return clamp( fComboPercent, 0.0f, 1.0f );
 }
 
+// Return the ratio of actual to possible dance points.
+float GetActualChaosRadarValue( const PlayerStageStats &pss )
+{
+	const int iPossibleDP = pss.m_iPossibleDancePoints;
+	if ( iPossibleDP == 0 )
+		return 1;
+
+	const int ActualDP = pss.m_iActualDancePoints;
+	return clamp( float(ActualDP)/iPossibleDP, 0.0f, 1.0f );
+}
+
 }
 
 RadarValues StepsWithScoring::GetActualRadarValues(const Steps *in,
@@ -104,7 +115,11 @@ RadarValues StepsWithScoring::GetActualRadarValues(const Steps *in,
 			}
 		case RadarCategory_Air:			rv[rc] = GetActualAirRadarValue( in, fSongSeconds );					break;
 		case RadarCategory_Freeze:		rv[rc] = GetActualFreezeRadarValue( in, fSongSeconds );				break;
-		case RadarCategory_Chaos:		rv[rc] = GetActualChaosRadarValue( in, fSongSeconds, pss );				break;
+			case RadarCategory_Chaos:
+			{
+				rv[rc] = GetActualChaosRadarValue(pss);
+				break;
+			}
 		case RadarCategory_TapsAndHolds:	rv[rc] = (float) GetNumNWithScore( in, TNS_W4, 1 );					break;
 		case RadarCategory_Jumps:		rv[rc] = (float) GetNumNWithScore( in, TNS_W4, 2 );					break;
 		case RadarCategory_Holds:		rv[rc] = (float) GetNumHoldNotesWithScore( in, TapNote::hold_head_hold, HNS_Held );	break;
