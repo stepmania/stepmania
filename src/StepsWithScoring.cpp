@@ -64,6 +64,38 @@ bool StepsWithScoring::IsRowCompletelyJudged( const NoteData &in, unsigned row, 
 	return tns >= TNS_Miss;
 }
 
+int GetNumHoldNotesWithScore(const NoteData &in,
+	TapNote::SubType subType,
+	HoldNoteScore hns,
+	int start,
+	int last,
+	PlayerNumber pn = PLAYER_INVALID)
+{
+	ASSERT( subType != TapNote::SubType_Invalid );
+
+	int iNumSuccessfulHolds = 0;
+	for (int t = start; t < last; ++t )
+	{
+		NoteData::TrackMap::const_iterator begin, end;
+		in.GetTapNoteRange( t, 0, MAX_NOTE_ROW, begin, end );
+
+		for( ; begin != end; ++begin )
+		{
+			const TapNote &tn = begin->second;
+			if( tn.type != TapNote::hold_head )
+				continue;
+			if( tn.subType != subType )
+				continue;
+			// Routine player mode check.
+			if( tn.pn != PLAYER_INVALID && tn.pn != pn && pn != PLAYER_INVALID )
+				continue;
+			if( tn.HoldResult.hns == hns )
+				++iNumSuccessfulHolds;
+		}
+	}
+	return iNumSuccessfulHolds;
+}
+
 namespace // radar calculation namespace
 {
 
@@ -78,6 +110,44 @@ float GetActualVoltageRadarValue(const PlayerStageStats &pss)
 	const PlayerStageStats::Combo_t MaxCombo = pss.GetMaxCombo();
 	float fComboPercent = SCALE( MaxCombo.m_fSizeSeconds, 0, pss.m_fLastSecond-pss.m_fFirstSecond, 0.0f, 1.0f );
 	return clamp( fComboPercent, 0.0f, 1.0f );
+}
+
+// Return the ratio of actual to possible successful holds.
+float GetActualFreezeRadarValue( const Steps *in, PlayerNumber pn )
+{
+	// number of hold steps
+	vector<int> totalHolds = in->GetNumHoldNotes();
+	if (totalHolds.size() == 1)
+	{
+		totalHolds.push_back(totalHolds[0]);
+	}
+	int possibleHolds = totalHolds[pn];
+	if (possibleHolds == 0)
+	{
+		return 1.0f;
+	}
+
+	/*
+	 * XXX: The Freeze value requires getting the total number of holds, but added
+	 * the results of rolls, which are not a part of this. This made no sense.
+	 */
+	const NoteData &nd = in->GetNoteData();
+	int start = 0;
+	int end = nd.GetNumTracks();
+	if (in->GetStepsTypeCategory() == StepsTypeCategory_Couple)
+	{
+		int perPlayer = end / 2;
+		start = pn * perPlayer;
+		end = (pn + 1) * perPlayer;
+		pn = PLAYER_INVALID;
+	}
+	else if (in->GetStepsTypeCategory() != StepsTypeCategory_Routine)
+	{
+		pn = PLAYER_INVALID;
+	}
+
+	int actualHolds = GetNumHoldNotesWithScore(nd, TapNote::hold_head_hold, HNS_Held, start, end, pn);
+	return clamp( float(actualHolds) / possibleHolds, 0.0f, 1.0f );
 }
 
 // Return the ratio of actual to possible dance points.
@@ -103,6 +173,12 @@ RadarValues StepsWithScoring::GetActualRadarValues(const Steps *in,
 	// RadarValue get set in here.
 	vector<int> statResults;
 	vector<float> radarResults;
+	const StepsTypeCategory stc = in->GetStepsTypeCategory();
+	const NoteData &nd = in->GetNoteData();
+
+	/*
+	 * TODO: Optimization opportunity. Some of these calls are repeated in
+	 * both stat and radar based categories. For loops may not be needed. */
 	FOREACH_ENUM( RadarCategory, rc )
 	{
 		switch( rc )
@@ -114,7 +190,11 @@ RadarValues StepsWithScoring::GetActualRadarValues(const Steps *in,
 				break;
 			}
 		case RadarCategory_Air:			rv[rc] = GetActualAirRadarValue( in, fSongSeconds );					break;
-		case RadarCategory_Freeze:		rv[rc] = GetActualFreezeRadarValue( in, fSongSeconds );				break;
+			case RadarCategory_Freeze:
+			{
+				rv[rc] = GetActualFreezeRadarValue( in, pn );
+				break;
+			}
 			case RadarCategory_Chaos:
 			{
 				rv[rc] = GetActualChaosRadarValue(pss);
@@ -122,10 +202,34 @@ RadarValues StepsWithScoring::GetActualRadarValues(const Steps *in,
 			}
 		case RadarCategory_TapsAndHolds:	rv[rc] = (float) GetNumNWithScore( in, TNS_W4, 1 );					break;
 		case RadarCategory_Jumps:		rv[rc] = (float) GetNumNWithScore( in, TNS_W4, 2 );					break;
-		case RadarCategory_Holds:		rv[rc] = (float) GetNumHoldNotesWithScore( in, TapNote::hold_head_hold, HNS_Held );	break;
+			case RadarCategory_Holds:
+			case RadarCategory_Rolls:
+			{
+				TapNote::SubType sub = (rc == RadarCategory_Holds) ? TapNote::hold_head_hold : TapNote::hold_head_roll;
+				switch (stc)
+				{
+					case StepsTypeCategory_Couple:
+					{
+						int perPlayer = nd.GetNumTracks() / 2;
+						int start = pn * perPlayer;
+						int end = (pn + 1) * perPlayer;
+						rv[rc] = GetNumHoldNotesWithScore(nd, sub, HNS_Held, start, end);
+						break;
+					}
+					case StepsTypeCategory_Routine:
+					{
+						rv[rc] = GetNumHoldNotesWithScore(nd, sub, HNS_Held, 0, nd.GetNumTracks(), pn);
+						break;
+					}
+					default:
+					{
+						rv[rc] = GetNumHoldNotesWithScore(nd, sub, HNS_Held, 0, nd.GetNumTracks());
+					}
+				}
+				break;
+			}
 		case RadarCategory_Mines:		rv[rc] = (float) GetSuccessfulMines( in );						break;
 		case RadarCategory_Hands:		rv[rc] = (float) GetSuccessfulHands( in );						break;
-		case RadarCategory_Rolls:		rv[rc] = (float) GetNumHoldNotesWithScore( in, TapNote::hold_head_roll, HNS_Held );	break;
 		case RadarCategory_Lifts:		rv[rc] = (float) GetSuccessfulLifts( in, MIN_SCORE_TO_MAINTAIN_COMBO );					break;
 			case RadarCategory_Fakes:
 			{
