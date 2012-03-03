@@ -64,7 +64,23 @@ bool StepsWithScoring::IsRowCompletelyJudged( const NoteData &in, unsigned row, 
 	return tns >= TNS_Miss;
 }
 
+namespace // radar calculation namespace
+{
 
+// Return the ratio of actual combo to max combo.
+float GetActualVoltageRadarValue(const PlayerStageStats &pss)
+{
+	/* STATSMAN->m_CurStageStats.iMaxCombo is unrelated to GetNumTapNotes:
+	 * m_bComboContinuesBetweenSongs might be on, and the way combo is counted
+	 * varies depending on the mode and score keeper. Instead, let's use the
+	 * length of the longest recorded combo. This is only subtly different:
+	 * it's the percent of the song the longest combo took to get. */
+	const PlayerStageStats::Combo_t MaxCombo = pss.GetMaxCombo();
+	float fComboPercent = SCALE( MaxCombo.m_fSizeSeconds, 0, pss.m_fLastSecond-pss.m_fFirstSecond, 0.0f, 1.0f );
+	return clamp( fComboPercent, 0.0f, 1.0f );
+}
+
+}
 
 RadarValues StepsWithScoring::GetActualRadarValues(const Steps *in,
 	const PlayerStageStats &pss,
@@ -81,7 +97,11 @@ RadarValues StepsWithScoring::GetActualRadarValues(const Steps *in,
 		switch( rc )
 		{
 		case RadarCategory_Stream:		rv[rc] = GetActualStreamRadarValue( in, fSongSeconds );				break;
-		case RadarCategory_Voltage:		rv[rc] = GetActualVoltageRadarValue( in, fSongSeconds, pss );				break;
+			case RadarCategory_Voltage:
+			{
+				rv[rc] = GetActualVoltageRadarValue(pss);
+				break;
+			}
 		case RadarCategory_Air:			rv[rc] = GetActualAirRadarValue( in, fSongSeconds );					break;
 		case RadarCategory_Freeze:		rv[rc] = GetActualFreezeRadarValue( in, fSongSeconds );				break;
 		case RadarCategory_Chaos:		rv[rc] = GetActualChaosRadarValue( in, fSongSeconds, pss );				break;
