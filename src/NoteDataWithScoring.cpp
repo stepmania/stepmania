@@ -147,33 +147,7 @@ int GetSuccessfulLifts( const NoteData &in, TapNoteScore tns, int iStartIndex = 
  * graded (any tap is TNS_None) or are missed (TNS_Miss), return it. */
 int LastTapNoteScoreTrack( const NoteData &in, unsigned iRow, PlayerNumber pn )
 {
-	float scoretime = -9999;
-	int best_track = -1;
-	for( int t=0; t<in.GetNumTracks(); t++ )
-	{
-		/* Skip empty tracks and mines */
-		const TapNote &tn = in.GetTapNote( t, iRow );
-		if (tn.type == TapNote::empty ||
-			tn.type == TapNote::mine ||
-			tn.type == TapNote::fake ||
-			tn.type == TapNote::autoKeysound) 
-			continue;
-		if( tn.pn != PLAYER_INVALID && tn.pn != pn && pn != PLAYER_INVALID )
-			continue;
-
-		TapNoteScore tns = tn.result.tns;
-		
-		if( tns == TNS_Miss || tns == TNS_None )
-			return t;
-
-		float tm = tn.result.fTapNoteOffset;
-		if(tm < scoretime) continue;
-
-		scoretime = tm;
-		best_track = t;
-	}
-
-	return best_track;
+	return NoteDataWithScoring::LastTapNoteScoreTrack(in, iRow, 0, in.GetNumTracks(), pn);
 }
 
 /* Return the minimum tap score of a row: the lowest grade of the tap in the row.
@@ -219,30 +193,43 @@ int MinTapNoteScoreTrack( const NoteData &in, unsigned iRow, PlayerNumber pn )
 
 }
 
+int NoteDataWithScoring::LastTapNoteScoreTrack(const NoteData &in, unsigned row, int start, int end, PlayerNumber pn)
+{
+	float scoretime = -9999;
+	int best_track = -1;
+	for( int t = start; t < end; t++ )
+	{
+		/* Skip empty tracks and mines */
+		const TapNote &tn = in.GetTapNote(t, row);
+		if (tn.type == TapNote::empty ||
+			tn.type == TapNote::mine ||
+			tn.type == TapNote::fake ||
+			tn.type == TapNote::autoKeysound) 
+			continue;
+		if( tn.pn != PLAYER_INVALID && tn.pn != pn && pn != PLAYER_INVALID )
+			continue;
+
+		TapNoteScore tns = tn.result.tns;
+		
+		if( tns == TNS_Miss || tns == TNS_None )
+			return t;
+
+		float tm = tn.result.fTapNoteOffset;
+		if(tm < scoretime) continue;
+
+		scoretime = tm;
+		best_track = t;
+	}
+
+	return best_track;
+}
+
 const TapNote &NoteDataWithScoring::LastTapNoteWithResult( const NoteData &in, unsigned iRow )
 {
-	// Allow this to be configurable between LastTapNoteScoreTrack and
-	// MinTapNoteScore; this change inspired by PumpMania (Zmey, et al) -aj
-	/*
-	LOG->Trace( ssprintf("hi i'm NoteDataWithScoring::LastTapNoteWithResult(NoteData in, iRow=%i, PlayerNumber pn)", iRow) );
-	int iTrack = 0;
-	switch(LAST_OR_MINIMUM_TNS)
-	{
-		case TapNoteScoreJudgeType_MinimumScore:
-			iTrack = MinTapNoteScoreTrack( in, iRow, pn );
-			LOG->Trace( ssprintf("TapNoteScoreJudgeType_MinimumScore omg iTrack is %i and iRow is %i",iTrack,iRow) );
-			break;
-		case TapNoteScoreJudgeType_LastScore:
-		default:
-			iTrack = LastTapNoteScoreTrack( in, iRow, pn );
-			break;
-	}
-	*/
-	int iTrack = LastTapNoteScoreTrack( in, iRow, PLAYER_INVALID );
+	int iTrack = LastTapNoteScoreTrack( in, iRow, 0, in.GetNumTracks(), PLAYER_INVALID );
 	if( iTrack == -1 )
 		return TAP_EMPTY;
 
-	//LOG->Trace( ssprintf("returning in.GetTapNote(iTrack=%i, iRow=%i)", iTrack, iRow) );
 	return in.GetTapNote( iTrack, iRow );
 }
 

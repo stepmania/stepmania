@@ -30,9 +30,21 @@ namespace NoteDataWithScoring
 	 */
 	TapNoteScore MinTapNoteScore(const NoteData &in, unsigned row, int start, int end, PlayerNumber pn);
 
+	/**
+	 * @brief Retrieve the last scored track based on the criteria below.
+	 * @param in the entire NoteData.
+	 * @param row the row to check.
+	 * @param start the first track to check, inclusive.
+	 * @param end the last row to check, exclusive.
+	 * @param pn the PlayerNumber to compare for (assuming it's not invalid).
+	 * @return the track that was scored last.
+	 */
+	int LastTapNoteScoreTrack(const NoteData &in, unsigned row, int start, int end, PlayerNumber pn);
+
 	TapNoteScore MinTapNoteScore( const NoteData &in, unsigned iRow );
 	const TapNote &LastTapNoteWithResult( const NoteData &in, unsigned iRow );
 
+	
 	void GetActualRadarValues( const NoteData &in, const PlayerStageStats &pss, 
 				  float fSongSeconds, RadarValues& out );
 };

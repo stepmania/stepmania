@@ -17,12 +17,19 @@ namespace StepsWithScoring
 	 * @brief Has the current row of NoteData been judged completely?
 	 * @param in the NoteData in question.
 	 * @param iRow the row to check.
-	 * @param stepsType the stepsType of this NoteData/Steps.
+	 * @param stc the StepsTypeCategory of this NoteData/Steps.
 	 * @param pn the PlayerNumber (should it be relevant).
 	 * @return true if it has been completley judged, or false otherwise. */
 	bool IsRowCompletelyJudged( const NoteData &in, unsigned iRow, StepsTypeCategory stc, PlayerNumber pn = PLAYER_INVALID );
 
-	const TapNote &LastTapNoteWithResult( const NoteData &in, unsigned iRow );
+	/**
+	 * @brief Retrieve the last tap note that had a result associated with it.
+	 * @param in the NoteData in question.
+	 * @param iRow the row to check.
+	 * @param stc the StepsTypeCategory of this NoteData/Steps.
+	 * @param pn the PlayerNumber (should it be relevant).
+	 * @return the TapNote last judged. */
+	const TapNote &LastTapNoteWithResult( const NoteData &in, unsigned iRow, StepsTypeCategory stc, PlayerNumber pn = PLAYER_INVALID );
 
 	void GetActualRadarValues( const NoteData &in, const PlayerStageStats &pss, 
 				  float fSongSeconds, RadarValues& out );
