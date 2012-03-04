@@ -316,6 +316,77 @@ int GetSuccessfulMines(const NoteData &in,
 	return successes;
 }
 
+int GetSuccessfulHands(const Steps *in,
+	int firstTrack,
+	int lastTrack,
+	PlayerNumber pn = PLAYER_INVALID,
+	int firstRow = 0,
+	int lastRow = MAX_NOTE_ROW)
+{
+	int iNum = 0;
+	const NoteData &nd = in->GetNoteData();
+	// TODO: Better way of handling routine check within this function.
+	PlayerNumber routinePN = (in->GetStepsTypeCategory() == StepsTypeCategory_Routine) ? pn : PLAYER_INVALID;
+	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE(nd, r, firstRow, lastRow)
+	{
+		vector<bool> needsHands = in->RowNeedsAtLeastSimultaneousPresses(3, r);
+		bool doesPlayerNeedHand = needsHands[0];
+		// TODO: Better way of phrasing this.
+		if (needsHands.size() == NUM_PLAYERS && pn == PLAYER_2)
+		{
+			doesPlayerNeedHand = needsHands[1];
+		}
+
+		if(!doesPlayerNeedHand)
+			continue;
+
+		bool Missed = false;
+		for (int t = firstTrack; t < lastTrack; ++t)
+		{
+			const TapNote &tn = nd.GetTapNote(t, r);
+			if( tn.type == TapNote::empty )
+				continue;
+			if( tn.type == TapNote::mine ) // mines don't count
+				continue;
+			if (tn.type == TapNote::fake ) // fake arrows don't count
+				continue;
+			// routine mode check.
+			if (tn.pn != PLAYER_INVALID && tn.pn != routinePN && routinePN != PLAYER_INVALID)
+				continue;
+			if( tn.result.tns <= TNS_W5 )
+				Missed = true;
+		}
+
+		if( Missed )
+			continue;
+
+		// Check hold scores.
+		for (int t = firstTrack; t < lastTrack; ++t)
+		{
+			int iHeadRow;
+			if( !nd.IsHoldNoteAtRow( t, r, &iHeadRow ) )
+				continue;
+			const TapNote &tn = nd.GetTapNote( t, iHeadRow );
+			// routine mode check.
+			if (tn.pn != PLAYER_INVALID && tn.pn != routinePN && routinePN != PLAYER_INVALID)
+				continue;
+
+			/* If a hold is released *after* a hand containing it, the hand is
+			 * still good. Ignore the judgement and only examine iLastHeldRow
+			 * to be sure that the hold was still held at the point of this row.
+			 * (Note that if the hold head tap was missed, then iLastHeldRow == i
+			 * and this won't fail--but the tap check above will have already failed.) */
+			if( tn.HoldResult.iLastHeldRow < r )
+				Missed = true;
+		}
+
+		if( !Missed )
+			iNum++;
+	}
+
+	return iNum;
+}
+
 RadarValues StepsWithScoring::GetActualRadarValues(const Steps *in,
 	const PlayerStageStats &pss,
 	float fSongSeconds,
@@ -418,7 +489,30 @@ RadarValues StepsWithScoring::GetActualRadarValues(const Steps *in,
 				}
 				break;
 			}
-		case RadarCategory_Hands:		rv[rc] = (float) GetSuccessfulHands( in );						break;
+			case RadarCategory_Hands:
+				{
+					switch (stc)
+					{
+						case StepsTypeCategory_Couple:
+						{
+							int perPlayer = nd.GetNumTracks() / 2;
+							int start = pn * perPlayer;
+							int end = (pn + 1) * perPlayer;
+							rv[rc] = GetSuccessfulHands(in, start, end, pn); // we need the PN this time.
+							break;
+						}
+						case StepsTypeCategory_Routine:
+						{
+							rv[rc] = GetSuccessfulHands(in, 0, nd.GetNumTracks(), pn);
+							break;
+						}
+						default:
+						{
+							rv[rc] = GetSuccessfulHands(in, 0, nd.GetNumTracks());
+						}
+					}
+					break;
+				}
 			case RadarCategory_Lifts:
 			{
 				switch (stc)
@@ -456,4 +550,5 @@ RadarValues StepsWithScoring::GetActualRadarValues(const Steps *in,
 		DEFAULT_FAIL( rc );
 		}
 	}
+	return rv;
 }
