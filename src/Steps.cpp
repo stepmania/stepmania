@@ -814,6 +814,34 @@ int Steps::GetNumRowsWithTapOrHoldHead(int start, int end) const
 	return num;
 }
 
+vector<int> Steps::GetNumTracksWithTapOrHoldHead(int row) const
+{
+	vector<int> num(1);
+	if (!this->IsMultiPlayerStyle() &&
+		!this->m_Timing.HasWarps() &&
+		!this->m_Timing.HasFakes())
+	{
+		num[0] = this->GetNoteData().GetNumTracksWithTapOrHoldHead(row);
+		return num;
+	}
+	if (this->IsMultiPlayerStyle())
+	{
+		num.resize(NUM_PLAYERS);
+	}
+	const NoteData &nd = this->GetNoteData();
+	for (int t = 0; t < nd.GetNumTracks(); ++t)
+	{
+		const TapNote &tn = nd.GetTapNote(t, row);
+		if (tn.type == TapNote::tap ||
+			tn.type == TapNote::lift || // unsure of this one.
+			tn.type == TapNote::hold_head)
+		{
+			++num[this->GetEffectivePlayer(t, tn)];
+		}
+	}
+	return num;
+}
+
 vector<int> Steps::GetNumJumps(int start, int end) const
 {
 	return this->GetNumRowsWithSimultaneousTaps(2, start, end);

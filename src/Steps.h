@@ -246,6 +246,14 @@ public:
 	int GetNumRowsWithTap(int start = 0, int end = MAX_NOTE_ROW) const;
 	
 	int GetNumRowsWithTapOrHoldHead(int start = 0, int end = MAX_NOTE_ROW) const;
+
+	/**
+	 * @brief Determine how many tracks for each player have a tap or hold head.
+	 *
+	 * NOTE: Right now lifts are counted with this. Should this be modified?
+	 * @param row the row to check.
+	 * @return the number of tracks per player with the requisite note. */
+	vector<int> GetNumTracksWithTapOrHoldHead(int row) const;
 	
 	/** @brief Determine if a Player's row needs a certain number of presses.
 	 * @param min the mininum number to watch for.
