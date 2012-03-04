@@ -276,17 +276,18 @@ int GetSuccessfulLifts(const NoteData &in,
 	int lastRow = MAX_NOTE_ROW)
 {
 	int successfulLifts = 0;
-	NoteData::all_tracks_const_iterator iter = in.GetTapNoteRangeAllTracks(firstRow, lastRow);
-	for (; !iter.IsAtEnd(); ++iter)
+	for (int t = firstTrack; t < lastTrack; ++t)
 	{
-		// it must be a lift.
-		if (iter->type != TapNote::lift)
-			continue;
-		// if using player numbers, it must match the right player.
-		if (iter->pn != PLAYER_INVALID && iter->pn != pn && pn != PLAYER_INVALID)
-			continue;
-		if (iter->result.tns >= tns)
-			++successfulLifts;
+		FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE(in, t, r, firstRow, lastRow)
+		{
+			const TapNote &tn = in.GetTapNote(t, r);
+			if (tn.type != TapNote::lift)
+				continue;
+			if (tn.pn != PLAYER_INVALID && tn.pn != pn && pn != PLAYER_INVALID)
+				continue;
+			if (tn.result.tns >= tns)
+				++successfulLifts;
+		}
 	}
 	return successfulLifts;
 }
