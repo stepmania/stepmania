@@ -163,6 +163,30 @@ float GetActualChaosRadarValue( const PlayerStageStats &pss )
 
 }
 
+int GetSuccessfulLifts(const NoteData &in,
+	TapNoteScore tns,
+	int firstTrack,
+	int lastTrack,
+	PlayerNumber pn = PLAYER_INVALID,
+	int firstRow = 0,
+	int lastRow = MAX_NOTE_ROW)
+{
+	int successfulLifts = 0;
+	NoteData::all_tracks_const_iterator iter = in.GetTapNoteRangeAllTracks(firstRow, lastRow);
+	for (; !iter.IsAtEnd(); ++iter)
+	{
+		// it must be a lift.
+		if (iter->type != TapNote::lift)
+			continue;
+		// if using player numbers, it must match the right player.
+		if (iter->pn != PLAYER_INVALID && iter->pn != pn && pn != PLAYER_INVALID)
+			continue;
+		if (iter->result.tns >= tns)
+			++successfulLifts;
+	}
+	return successfulLifts;
+}
+
 RadarValues StepsWithScoring::GetActualRadarValues(const Steps *in,
 	const PlayerStageStats &pss,
 	float fSongSeconds,
@@ -230,7 +254,30 @@ RadarValues StepsWithScoring::GetActualRadarValues(const Steps *in,
 			}
 		case RadarCategory_Mines:		rv[rc] = (float) GetSuccessfulMines( in );						break;
 		case RadarCategory_Hands:		rv[rc] = (float) GetSuccessfulHands( in );						break;
-		case RadarCategory_Lifts:		rv[rc] = (float) GetSuccessfulLifts( in, MIN_SCORE_TO_MAINTAIN_COMBO );					break;
+			case RadarCategory_Lifts:
+			{
+				switch (stc)
+				{
+					case StepsTypeCategory_Couple:
+					{
+						int perPlayer = nd.GetNumTracks() / 2;
+						int start = pn * perPlayer;
+						int end = (pn + 1) * perPlayer;
+						rv[rc] = GetSuccessfulLifts(nd, MIN_SCORE_TO_MAINTAIN_COMBO, start, end);
+						break;
+					}
+					case StepsTypeCategory_Routine:
+					{
+						rv[rc] = GetSuccessfulLifts(nd, MIN_SCORE_TO_MAINTAIN_COMBO, 0, nd.GetNumTracks(), pn);
+						break;
+					}
+					default:
+					{
+						rv[rc] = GetSuccessfulLifts(nd, MIN_SCORE_TO_MAINTAIN_COMBO, 0, nd.GetNumTracks());
+					}
+				}
+				break;
+			}
 			case RadarCategory_Fakes:
 			{
 				statResults = in->GetNumFakes();
