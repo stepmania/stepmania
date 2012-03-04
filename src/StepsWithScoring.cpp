@@ -118,6 +118,30 @@ int GetNumTapNotesWithScore(const NoteData &in,
 	return iNumSuccessfulTapNotes;
 }
 
+int GetNumNWithScore(const Steps *in,
+	TapNoteScore tns,
+	int MinTaps,
+	PlayerNumber pn = PLAYER_INVALID)
+{
+	int iNumSuccessfulDoubles = 0;
+	const NoteData &nd = in->GetNoteData();
+	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( nd, r, 0, MAX_NOTE_ROW )
+	{
+		vector<int> notesInRow = in->GetNumTracksWithTapOrHoldHead(r);
+		int playerNotes = notesInRow[0];
+		if (pn != PLAYER_INVALID && in->IsMultiPlayerStyle())
+		{
+			playerNotes = notesInRow[1];
+		}
+		TapNoteScore tnsRow = StepsWithScoring::LastTapNoteWithResult(nd, r, in->GetStepsTypeCategory(), pn).result.tns;
+
+		if( playerNotes >= MinTaps && tnsRow >= tns )
+			iNumSuccessfulDoubles++;
+	}
+
+	return iNumSuccessfulDoubles;
+}
+
 namespace // radar calculation namespace
 {
 
@@ -157,7 +181,7 @@ float GetActualStreamRadarValue( const Steps *in, PlayerNumber pn )
 			w2s = GetNumTapNotesWithScore(nd, TNS_W2, 0, nd.GetNumTracks());
 		}
 	}
-	return clamp( float(w2s)/possibleSteps, 0.0f, 1.0f );
+	return clamp( static_cast<float>(w2s)/possibleSteps, 0.0f, 1.0f );
 }
 
 // Return the ratio of actual combo to max combo.
@@ -171,6 +195,25 @@ float GetActualVoltageRadarValue(const PlayerStageStats &pss)
 	const PlayerStageStats::Combo_t MaxCombo = pss.GetMaxCombo();
 	float fComboPercent = SCALE( MaxCombo.m_fSizeSeconds, 0, pss.m_fLastSecond-pss.m_fFirstSecond, 0.0f, 1.0f );
 	return clamp( fComboPercent, 0.0f, 1.0f );
+}
+
+// Return the ratio of actual to possible W2s on jumps.
+float GetActualAirRadarValue( const Steps *in, PlayerNumber pn )
+{
+	vector<int> allJumps = in->GetNumJumps();
+	if (allJumps.size() == 1)
+	{
+		allJumps.push_back(allJumps[0]);
+	}
+	const int possibleJumps = allJumps[pn];
+	if (possibleJumps == 0)
+	{
+		return 1.0f; // no jumps for the player.
+	}
+
+	// number of doubles
+	int w2s = GetNumNWithScore(in, TNS_W2, 2, pn);
+	return clamp( static_cast<float>(w2s) / possibleJumps, 0.0f, 1.0f );
 }
 
 // Return the ratio of actual to possible successful holds.
@@ -278,7 +321,11 @@ RadarValues StepsWithScoring::GetActualRadarValues(const Steps *in,
 				rv[rc] = GetActualVoltageRadarValue(pss);
 				break;
 			}
-		case RadarCategory_Air:			rv[rc] = GetActualAirRadarValue( in, fSongSeconds );					break;
+			case RadarCategory_Air:
+			{
+				rv[rc] = GetActualAirRadarValue( in, pn );
+				break;
+			}
 			case RadarCategory_Freeze:
 			{
 				rv[rc] = GetActualFreezeRadarValue( in, pn );
@@ -289,8 +336,13 @@ RadarValues StepsWithScoring::GetActualRadarValues(const Steps *in,
 				rv[rc] = GetActualChaosRadarValue(pss);
 				break;
 			}
-		case RadarCategory_TapsAndHolds:	rv[rc] = (float) GetNumNWithScore( in, TNS_W4, 1 );					break;
-		case RadarCategory_Jumps:		rv[rc] = (float) GetNumNWithScore( in, TNS_W4, 2 );					break;
+			case RadarCategory_TapsAndHolds:	rv[rc] = (float) GetNumNWithScore( in, TNS_W4, 1 );					break;
+			case RadarCategory_Jumps:
+			{
+				int num = (rc == RadarCategory_TapsAndHolds) ? 1 : 2;
+				rv[rc] = GetNumNWithScore(in, TNS_W4, num, pn);
+				break;
+			}
 			case RadarCategory_Holds:
 			case RadarCategory_Rolls:
 			{
