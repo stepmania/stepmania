@@ -43,10 +43,6 @@ namespace NoteDataWithScoring
 
 	TapNoteScore MinTapNoteScore( const NoteData &in, unsigned iRow );
 	const TapNote &LastTapNoteWithResult( const NoteData &in, unsigned iRow );
-
-	
-	void GetActualRadarValues( const NoteData &in, const PlayerStageStats &pss, 
-				  float fSongSeconds, RadarValues& out );
 };
 
 #endif

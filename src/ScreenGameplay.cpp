@@ -8,6 +8,7 @@
 #include "GameManager.h"
 #include "RageFileManager.h"
 #include "Steps.h"
+#include "StepsWithScoring.h"
 #include "RageLog.h"
 #include "LifeMeter.h"
 #include "GameState.h"
@@ -2356,14 +2357,10 @@ void ScreenGameplay::SaveStats()
 		Steps *playerSteps = pi->m_pPlayer->GetStep();
 		playerSteps->SetNoteData(nd);
 		StepsUtil::CalculateRadarValues(playerSteps, fMusicLen);
-		RadarValues rv = playerSteps->GetRadarValues(pn);
 
-		//NoteDataUtil::CalculateRadarValues( nd, fMusicLen, rv );
-		pss.m_radarPossible += rv;
+		pss.m_radarPossible += playerSteps->GetRadarValues(pn);
+		pss.m_radarActual += StepsWithScoring::GetActualRadarValues(playerSteps, pss, fMusicLen, pn);
 
-		// TODO: Make this Steps with scoring, rely on pss and pn.
-		NoteDataWithScoring::GetActualRadarValues( nd, pss, fMusicLen, rv );
-		pss.m_radarActual += rv;
 	}
 }
 
