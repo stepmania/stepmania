@@ -432,7 +432,7 @@ RadarValues StepsWithScoring::GetActualRadarValues(const Steps *in,
 				rv[rc] = GetActualChaosRadarValue(pss);
 				break;
 			}
-			case RadarCategory_TapsAndHolds:	rv[rc] = (float) GetNumNWithScore( in, TNS_W4, 1 );					break;
+			case RadarCategory_TapsAndHolds:
 			case RadarCategory_Jumps:
 			{
 				int num = (rc == RadarCategory_TapsAndHolds) ? 1 : 2;
