@@ -99,6 +99,24 @@ int GetNumHoldNotesWithScore(const NoteData &in,
 namespace // radar calculation namespace
 {
 
+// Return the ratio of actual to possible Bs.
+float GetActualStreamRadarValue( const Steps *in, PlayerNumber pn )
+{
+	vector<int> allSteps = in->GetNumTapNotes();
+	if (allSteps.size() == 1)
+	{
+		allSteps.push_back(allSteps[0]);
+	}
+	int possibleSteps = allSteps[pn];
+	if (possibleSteps == 0)
+	{
+		return 1.0f;
+	}
+
+	const int iW2s = GetNumTapNotesWithScore( in, TNS_W2 );
+	return clamp( float(iW2s)/possibleSteps, 0.0f, 1.0f );
+}
+
 // Return the ratio of actual combo to max combo.
 float GetActualVoltageRadarValue(const PlayerStageStats &pss)
 {
@@ -207,7 +225,11 @@ RadarValues StepsWithScoring::GetActualRadarValues(const Steps *in,
 	{
 		switch( rc )
 		{
-		case RadarCategory_Stream:		rv[rc] = GetActualStreamRadarValue( in, fSongSeconds );				break;
+			case RadarCategory_Stream:
+			{
+				rv[rc] = GetActualStreamRadarValue( in, pn );
+				break;
+			}
 			case RadarCategory_Voltage:
 			{
 				rv[rc] = GetActualVoltageRadarValue(pss);
