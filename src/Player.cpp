@@ -38,6 +38,7 @@
 #include "StatsManager.h"
 #include "Song.h"
 #include "Steps.h"
+#include "StepsWithScoring.h"
 #include "GameCommand.h"
 #include "LocalizedString.h"
 #include "AdjustSync.h"
@@ -2475,7 +2476,11 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 						goto done_checking_hopo;
 					}
 
-					const TapNoteResult &lastTNR = NoteDataWithScoring::LastTapNoteWithResult( m_NoteData, iter.Row() ).result;
+					const TapNoteResult &lastTNR = StepsWithScoring::LastTapNoteWithResult(m_NoteData,
+						iter.Row(),
+						this->currentStep->GetStepsTypeCategory(),
+						this->GetPlayerState()->m_PlayerNumber).result;
+
 					if( lastTNR.tns <= TNS_Miss )
 					{
 						bDidHopo = false;
@@ -2789,7 +2794,11 @@ void Player::UpdateJudgedRows()
 					*m_pIterUnjudgedRows = iter;
 				if( m_pJudgedRows->JudgeRow(iRow) )
 					continue;
-				const TapNoteResult &lastTNR = NoteDataWithScoring::LastTapNoteWithResult( m_NoteData, iRow ).result;
+
+				const TapNoteResult &lastTNR = StepsWithScoring::LastTapNoteWithResult(m_NoteData,
+						iRow,
+						this->currentStep->GetStepsTypeCategory(),
+						this->GetPlayerState()->m_PlayerNumber).result;
 
 				if( lastTNR.tns < TNS_Miss )
 					continue;
@@ -2898,7 +2907,10 @@ void Player::UpdateJudgedRows()
 
 void Player::FlashGhostRow( int iRow )
 {
-	TapNoteScore lastTNS = NoteDataWithScoring::LastTapNoteWithResult( m_NoteData, iRow ).result.tns;
+	const TapNoteScore lastTNS = StepsWithScoring::LastTapNoteWithResult(m_NoteData,
+		iRow,
+		this->currentStep->GetStepsTypeCategory(),
+		this->GetPlayerState()->m_PlayerNumber).result.tns;
 	const bool bBlind = (m_pPlayerState->m_PlayerOptions.GetCurrent().m_fBlind != 0);
 	const bool bBright = ( m_pPlayerStageStats && m_pPlayerStageStats->m_iCurCombo > int(BRIGHT_GHOST_COMBO_THRESHOLD) ) || bBlind;
 
@@ -3154,7 +3166,10 @@ void Player::HandleTapRowScore( unsigned row )
 	if( bNoCheating && m_pPlayerState->m_PlayerController == PC_AUTOPLAY )
 		return;
 
-	TapNoteScore scoreOfLastTap = NoteDataWithScoring::LastTapNoteWithResult(m_NoteData, row).result.tns;
+	TapNoteScore scoreOfLastTap = StepsWithScoring::LastTapNoteWithResult(m_NoteData,
+		row,
+		this->currentStep->GetStepsTypeCategory(),
+		this->GetPlayerState()->m_PlayerNumber).result.tns;
 	const int iOldCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurCombo : 0;
 	const int iOldMissCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurMissCombo : 0;
 
