@@ -96,6 +96,28 @@ int GetNumHoldNotesWithScore(const NoteData &in,
 	return iNumSuccessfulHolds;
 }
 
+int GetNumTapNotesWithScore(const NoteData &in,
+	TapNoteScore tns,
+	int first,
+	int last,
+	PlayerNumber pn = PLAYER_INVALID)
+{ 
+	int iNumSuccessfulTapNotes = 0;
+	for (int t = first; t < last; ++t )
+	{
+		FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( in, t, r, 0, MAX_NOTE_ROW )
+		{
+			const TapNote &tn = in.GetTapNote(t, r);
+			// Routine player mode check.
+			if( tn.pn != PLAYER_INVALID && tn.pn != pn && pn != PLAYER_INVALID )
+				continue;
+			if( tn.result.tns >= tns )
+				iNumSuccessfulTapNotes++;
+		}
+	}
+	return iNumSuccessfulTapNotes;
+}
+
 namespace // radar calculation namespace
 {
 
@@ -113,8 +135,29 @@ float GetActualStreamRadarValue( const Steps *in, PlayerNumber pn )
 		return 1.0f;
 	}
 
-	const int iW2s = GetNumTapNotesWithScore( in, TNS_W2 );
-	return clamp( float(iW2s)/possibleSteps, 0.0f, 1.0f );
+	int w2s = 0;
+	const NoteData &nd = in->GetNoteData();
+	switch (in->GetStepsTypeCategory())
+	{
+		case StepsTypeCategory_Couple:
+		{
+			int perPlayer = nd.GetNumTracks() / 2;
+			int start = pn * perPlayer;
+			int end = (pn + 1) * perPlayer;
+			w2s = GetNumTapNotesWithScore(nd, TNS_W2, start, end);
+			break;
+		}
+		case StepsTypeCategory_Routine:
+		{
+			w2s = GetNumTapNotesWithScore(nd, TNS_W2, 0, nd.GetNumTracks(), pn);
+			break;
+		}
+		default:
+		{
+			w2s = GetNumTapNotesWithScore(nd, TNS_W2, 0, nd.GetNumTracks());
+		}
+	}
+	return clamp( float(w2s)/possibleSteps, 0.0f, 1.0f );
 }
 
 // Return the ratio of actual combo to max combo.
