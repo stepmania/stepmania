@@ -292,6 +292,30 @@ int GetSuccessfulLifts(const NoteData &in,
 	return successfulLifts;
 }
 
+int GetSuccessfulMines(const NoteData &in,
+	int firstTrack,
+	int lastTrack,
+	PlayerNumber pn = PLAYER_INVALID,
+	int firstRow = 0,
+	int lastRow = MAX_NOTE_ROW)
+{
+	int successes = 0;
+	for (int t = firstTrack; t < lastTrack; ++t)
+	{
+		FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE(in, t, r, firstRow, lastRow)
+		{
+			const TapNote &tn = in.GetTapNote(t, r);
+			if (tn.type != TapNote::mine)
+				continue;
+			if (tn.pn != PLAYER_INVALID && tn.pn != pn && pn != PLAYER_INVALID)
+				continue;
+			if (tn.result.tns == TNS_AvoidMine)
+				++successes;
+		}
+	}
+	return successes;
+}
+
 RadarValues StepsWithScoring::GetActualRadarValues(const Steps *in,
 	const PlayerStageStats &pss,
 	float fSongSeconds,
@@ -370,7 +394,30 @@ RadarValues StepsWithScoring::GetActualRadarValues(const Steps *in,
 				}
 				break;
 			}
-		case RadarCategory_Mines:		rv[rc] = (float) GetSuccessfulMines( in );						break;
+			case RadarCategory_Mines:
+			{
+				switch (stc)
+				{
+					case StepsTypeCategory_Couple:
+					{
+						int perPlayer = nd.GetNumTracks() / 2;
+						int start = pn * perPlayer;
+						int end = (pn + 1) * perPlayer;
+						rv[rc] = GetSuccessfulMines(nd, start, end);
+						break;
+					}
+					case StepsTypeCategory_Routine:
+					{
+						rv[rc] = GetSuccessfulMines(nd, 0, nd.GetNumTracks(), pn);
+						break;
+					}
+					default:
+					{
+						rv[rc] = GetSuccessfulMines(nd, 0, nd.GetNumTracks());
+					}
+				}
+				break;
+			}
 		case RadarCategory_Hands:		rv[rc] = (float) GetSuccessfulHands( in );						break;
 			case RadarCategory_Lifts:
 			{
