@@ -1710,7 +1710,8 @@ int Player::GetClosestNonEmptyRowDirectional( int iStartRow, int iEndRow, bool b
 
 		while( !iter.IsAtEnd() )
 		{
-			if( NoteDataWithScoring::IsRowCompletelyJudged(m_NoteData, iter.Row()) )
+			if (StepsWithScoring::IsRowCompletelyJudged(m_NoteData, iter.Row(),
+				this->currentStep->GetStepsTypeCategory(), this->m_pPlayerState->m_PlayerNumber))
 			{
 				++iter;
 				continue;
@@ -1729,7 +1730,8 @@ int Player::GetClosestNonEmptyRowDirectional( int iStartRow, int iEndRow, bool b
 
 		while( !iter.IsAtEnd() )
 		{
-			if( NoteDataWithScoring::IsRowCompletelyJudged(m_NoteData, iter.Row()) )
+			if (StepsWithScoring::IsRowCompletelyJudged(m_NoteData, iter.Row(),
+				this->currentStep->GetStepsTypeCategory(), this->m_pPlayerState->m_PlayerNumber))
 			{
 				++iter;
 				continue;
@@ -2470,16 +2472,17 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 					NoteData::all_tracks_reverse_iterator iter = m_NoteData.GetTapNoteRangeAllTracksReverse( iRowsAgoLastNote-iRowsAgoLastNote, iRowOfOverlappingNoteOrRow-1 );
 					ASSERT_M( !iter.IsAtEnd(), ssprintf("Row %d, Track %d: was there no note that started the hopo?",
 						row, col + 1));
-					if( !NoteDataWithScoring::IsRowCompletelyJudged(m_NoteData, iter.Row()) )
+					PlayerNumber pn = this->GetPlayerState()->m_PlayerNumber;
+					StepsTypeCategory stc = this->currentStep->GetStepsTypeCategory();
+					if (!StepsWithScoring::IsRowCompletelyJudged(m_NoteData, iter.Row(),
+						stc, pn))
 					{
 						bDidHopo = false;
 						goto done_checking_hopo;
 					}
 
 					const TapNoteResult &lastTNR = StepsWithScoring::LastTapNoteWithResult(m_NoteData,
-						iter.Row(),
-						this->currentStep->GetStepsTypeCategory(),
-						this->GetPlayerState()->m_PlayerNumber).result;
+						iter.Row(), stc, pn).result;
 
 					if( lastTNR.tns <= TNS_Miss )
 					{
@@ -2583,7 +2586,8 @@ done_checking_hopo:
 					HideNote( col, iRowOfOverlappingNoteOrRow );
 			}
 		}
-		else if( NoteDataWithScoring::IsRowCompletelyJudged(m_NoteData, iRowOfOverlappingNoteOrRow) )
+		else if (StepsWithScoring::IsRowCompletelyJudged(m_NoteData, iRowOfOverlappingNoteOrRow,
+			this->currentStep->GetStepsTypeCategory(), this->m_pPlayerState->m_PlayerNumber))
 		{
 			FlashGhostRow( iRowOfOverlappingNoteOrRow );
 		}
@@ -2767,6 +2771,8 @@ void Player::UpdateJudgedRows()
 {
 	const int iEndRow = BeatToNoteRow( m_pPlayerState->m_Position.m_fSongBeat );
 	bool bAllJudged = true;
+	StepsTypeCategory stc = this->currentStep->GetStepsTypeCategory();
+	PlayerNumber pn = this->m_pPlayerState->m_PlayerNumber;
 	const bool bSeparately = GAMESTATE->GetCurrentGame()->m_bCountNotesSeparately;
 
 	{
@@ -2785,7 +2791,8 @@ void Player::UpdateJudgedRows()
 				iLastSeenRow = iRow;
 
 				// crossed a nonempty row
-				if( !NoteDataWithScoring::IsRowCompletelyJudged(m_NoteData, iRow) )
+				if (!StepsWithScoring::IsRowCompletelyJudged(m_NoteData, iRow,
+					stc, pn))
 				{
 					bAllJudged = false;
 					continue;
@@ -2796,9 +2803,7 @@ void Player::UpdateJudgedRows()
 					continue;
 
 				const TapNoteResult &lastTNR = StepsWithScoring::LastTapNoteWithResult(m_NoteData,
-						iRow,
-						this->currentStep->GetStepsTypeCategory(),
-						this->GetPlayerState()->m_PlayerNumber).result;
+						iRow, stc, pn).result;
 
 				if( lastTNR.tns < TNS_Miss )
 					continue;
