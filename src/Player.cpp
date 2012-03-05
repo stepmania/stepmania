@@ -114,7 +114,7 @@ void TimingWindowSecondsInit( size_t /*TimingWindow*/ i, RString &sNameOut, floa
 	case TW_W4:	defaultValueOut = 0.135f;	break;
 	case TW_W5:	defaultValueOut = 0.180f;	break;
 	case TW_Mine:	defaultValueOut = 0.090f;	break;	// same as great
-	case TW_Hold:	defaultValueOut = 0.500f;	break;	// allow enough time to take foot off and put back on
+	case TW_Hold:	defaultValueOut = 0.250f;	break;	// allow enough time to take foot off and put back on
 	case TW_Roll:	defaultValueOut = 0.500f;	break;
 	case TW_Attack:	defaultValueOut = 0.135f;	break;
 	}

@@ -9,6 +9,10 @@ ________________________________________________________________________________
 StepMania 5.0 alpha 2 | 20120???
 --------------------------------------------------------------------------------
 
+2012/03/04
+----------
+* [Player] Changed default Hold window to 0.250f, like it was in 3.9. [AJ]
+
 2012/03/02
 ----------
 * [NotesLoaderBMS] Fix calculating stops, Support for #LNOBJ, Don't use #BACKBMP
