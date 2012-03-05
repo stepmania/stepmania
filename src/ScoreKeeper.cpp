@@ -27,6 +27,7 @@ void ScoreKeeper::GetScoreOfLastTapInRow( const NoteData &nd, int iRow,
 	/*
 	 * TODO: Need a way to add StepsTypeCategory in here.
 	 * How can this be done without causing [much] trouble here?
+	 * Strange, though...this is only called via Rave?
 	 * tnsOut = StepsWithScoring::LastTapNoteWithResult(nd, iRow, this->m_pPlayerState->m_PlayerNumber).result.tns;
 	 */
 	tnsOut = NoteDataWithScoring::LastTapNoteWithResult( nd, iRow ).result.tns;
