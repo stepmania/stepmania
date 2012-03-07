@@ -204,7 +204,9 @@ Branch = {
 			end
 		end
 	end,
-	AfterSummary = "ScreenProfileSaveSummary",
+	AfterSummary = function()
+		return "ScreenProfileSaveSummary"
+	end,
 	Network = function()
 		return IsNetConnected() and "ScreenTitleMenu" or "ScreenTitleMenu"
 	end,
