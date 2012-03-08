@@ -39,6 +39,7 @@ public:
 	virtual void TweenOffScreen();
 
 	virtual void HandleScreenMessage( const ScreenMessage SM );
+	virtual void HandleMessage( const Message &msg );
 	virtual bool AllowLateJoin() const { return true; }
 
 	// sm-ssc additions:

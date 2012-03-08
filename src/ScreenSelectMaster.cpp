@@ -334,6 +334,16 @@ void ScreenSelectMaster::HandleScreenMessage( const ScreenMessage SM )
 	}
 }
 
+void ScreenSelectMaster::HandleMessage( const Message &msg )
+{
+	if ( msg == Message_PlayerJoined )
+	{
+		UpdateSelectableChoices();
+	}
+
+	ScreenSelect::HandleMessage( msg );
+}
+
 int ScreenSelectMaster::GetSelectionIndex( PlayerNumber pn )
 {
 	return m_iChoice[pn];

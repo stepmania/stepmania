@@ -6,8 +6,14 @@ ________________________________________________________________________________
 
 ================================================================================
 
-StepMania 5.0 alpha 2 | 20120???
+StepMania 5.0 alpha 2 | 201203??
 --------------------------------------------------------------------------------
+
+2012/03/07
+----------
+* [ScreenSelectMaster] Now updates choices on player join; it will move the
+  scroller to the correct location, but the GainFocus/LoseFocus commands don't
+  seem to work. [AJ]
 
 2012/03/05
 ----------
