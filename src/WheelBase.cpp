@@ -539,7 +539,6 @@ public:
 		return 1;
 	}
 	static int IsSettled( T* p, lua_State *L ){ lua_pushboolean( L, p->IsSettled() ); return 1; }
-	static int IsLocked( T* p, lua_State *L ){ lua_pushboolean( L, p->WheelIsLocked() ); return 1; }
 	static int SetOpenSection( T* p, lua_State *L ){ p->SetOpenSection( SArg(1) ); return 0; }
 	static int GetCurrentIndex( T* p, lua_State *L ){ lua_pushnumber( L, p->GetCurrentIndex() ); return 1; }
 	static int GetNumItems( T* p, lua_State *L ){ lua_pushnumber( L, p->GetNumItems() ); return 1; }
@@ -549,6 +548,9 @@ public:
 
 	DEFINE_METHOD( GetSelectedType,		GetSelectedType() )
 	DEFINE_METHOD( GetWheelState,		GetWheelState() )
+
+	// deprecated; use GetWheelState instead:
+	static int IsLocked( T* p, lua_State *L ){ lua_pushboolean( L, p->WheelIsLocked() ); return 1; }
 
 	LunaWheelBase()
 	{

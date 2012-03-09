@@ -14,7 +14,7 @@ StepMania 5.0 alpha 2 | 201203??
 * [MusicWheel] Added RouletteStopped message, which is broadcast when Roulette
   is finished and the wheel is locked. [AJ]
 * [WheelBase] Made WheelState a Lua-enabled enum and added
-  GetWheelState() Lua binding. [AJ]
+  GetWheelState() Lua binding. Deprecated IsLocked() Lua binding. [AJ]
 
 2012/03/07
 ----------
