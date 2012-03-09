@@ -19,6 +19,19 @@
 const int MAX_WHEEL_SOUND_SPEED = 15;
 AutoScreenMessage( SM_SongChanged ); // TODO: Replace this with a Message and MESSAGEMAN
 
+static const char *WheelStateNames[] = {
+	"Selecting",
+	"FlyingOffBeforeNextSort",
+	"FlyingOnAfterNextSort",
+	"RouletteSpinning",
+	"RouletteSlowingDown",
+	"RandomSpinning",
+	"Locked",
+};
+XToString( WheelState );
+StringToX( WheelState );
+LuaXType( WheelState );
+
 WheelBase::~WheelBase()
 {
 	FOREACH( WheelItemBase*, m_WheelBaseItems, i )
@@ -535,6 +548,7 @@ public:
 	//static int ChangeMusic( T* p, lua_State *L ){ p->ChangeMusicUnlessLocked( IArg(1) ); return 0; }
 
 	DEFINE_METHOD( GetSelectedType,		GetSelectedType() )
+	DEFINE_METHOD( GetWheelState,		GetWheelState() )
 
 	LunaWheelBase()
 	{
