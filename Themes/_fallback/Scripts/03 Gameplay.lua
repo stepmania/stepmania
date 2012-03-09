@@ -154,14 +154,14 @@ function RoutineSkinP1()
 	if RoutineSkins[CurGameName()] then
 		return RoutineSkins[CurGameName()].P1
 	end
-	return RoutineSkins["Default"].P1
+	return RoutineSkins["default"].P1
 end
 
 function RoutineSkinP2()
 	if RoutineSkins[CurGameName()] then
 		return RoutineSkins[CurGameName()].P2
 	end
-	return RoutineSkins["Default"].P2
+	return RoutineSkins["default"].P2
 end
 
 -- todo: use tables for some of these -aj
