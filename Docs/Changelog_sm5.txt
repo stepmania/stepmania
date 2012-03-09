@@ -9,6 +9,11 @@ ________________________________________________________________________________
 StepMania 5.0 alpha 2 | 201203??
 --------------------------------------------------------------------------------
 
+2012/03/08
+----------
+* [MusicWheel] Added RouletteStopped message, which is broadcast when Roulette
+  is finished and the wheel is locked. [AJ]
+
 2012/03/07
 ----------
 * [ScreenSelectMaster] Now updates choices on player join; it will move the

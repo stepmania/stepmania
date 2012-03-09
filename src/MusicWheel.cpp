@@ -1119,6 +1119,7 @@ void MusicWheel::UpdateSwitch()
 
 			// Send this again so the screen starts sample music.
 			SCREENMAN->PostMessageToTopScreen( SM_SongChanged, 0 );
+			MESSAGEMAN->Broadcast("RouletteStopped");
 		}
 		else
 		{
