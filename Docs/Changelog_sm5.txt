@@ -9,6 +9,11 @@ ________________________________________________________________________________
 StepMania 5.0 alpha 2 | 201203??
 --------------------------------------------------------------------------------
 
+2012/03/09
+----------
+* [PlayerOptions] Don't display x-mods when using m-mods.
+  Sourced from hanubeki-modified-sm-ssc rev. bd08a58dd7cf and OpenITG.
+
 2012/03/08
 ----------
 * [MusicWheel] Added RouletteStopped message, which is broadcast when Roulette

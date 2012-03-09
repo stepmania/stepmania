@@ -123,7 +123,7 @@ void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
 			RString s = ssprintf( "m%.0f", m_fMaxScrollBPM );
 			AddTo.push_back( s );
 		}
-		if( m_bSetScrollSpeed || m_fScrollSpeed != 1 )
+		else if( m_bSetScrollSpeed || m_fScrollSpeed != 1 )
 		{
 			/* -> 1.00 */
 			RString s = ssprintf( "%2.2f", m_fScrollSpeed );
