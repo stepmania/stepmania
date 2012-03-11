@@ -1,0 +1,309 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html401/loose.dtd">
+<html>
+<!-- Created on January 27, 2012 by texi2html 1.82 -->
+<!--
+texi2html was written by: 
+            Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Many creative people.
+Send bugs and suggestions to <texi2html-bug@nongnu.org>
+
+-->
+<head>
+<title>FFmpeg documentation : : </title>
+
+<meta name="description" content=": ">
+<meta name="keywords" content="FFmpeg documentation : : ">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2html 1.82">
+
+<style type="text/css">
+<!--
+a.summary-letter { text-decoration: none }
+a { color: #2D6198; }
+a:visited { color: #884488; }
+h1 a, h2 a, h3 a { text-decoration: inherit; color: inherit; }
+p { margin-left: 1em; margin-right: 1em; }
+table { margin-left: 2em; }
+pre { margin-left: 2em; }
+#footer { text-align: center; }
+#body { margin-left: 1em; margin-right: 1em; }
+body { background-color: #313131; margin: 0; }
+
+#container {
+    background-color: white;
+    color: #202020;
+    margin-left: 1em;
+    margin-right: 1em;
+}
+
+h1 {
+    background-color: #7BB37B;
+    border: 1px solid #6A996A;
+    color: #151515;
+    font-size: 1.2em;
+    padding-bottom: 0.2em;
+    padding-left: 0.4em;
+    padding-top: 0.2em;
+}
+
+h2 {
+    color: #313131;
+    font-size: 1.2em;
+}
+
+h3 {
+    color: #313131;
+    font-size: 0.8em;
+    margin-bottom: -8px;
+}
+
+.note {
+    margin: 1em;
+    border: 1px solid #bbc9d8;
+    background-color: #dde1e1;
+}
+
+.important {
+    margin: 1em;
+    border: 1px solid #d26767;
+    background-color: #f8e1e1;
+}
+
+-->
+</style>
+
+<link rel="icon" href="favicon.png" type="image/png" />
+<link rel="stylesheet" type="text/css" href="default.css" />
+
+</head>
+
+<body >
+<div id="container">
+
+<div id="body">
+<a name="Top"></a>
+<a name="SEC_Top"></a>
+<h1 class="settitle">FATE Automated Testing Environment</h1>
+
+<a name="SEC_Contents"></a>
+<h1>Table of Contents</h1>
+<div class="contents">
+
+<ul class="toc">
+  <li><a name="toc-Introduction" href="#Introduction">1. Introduction</a></li>
+  <li><a name="toc-Using-FATE-from-your-FFmpeg-source-directory" href="#Using-FATE-from-your-FFmpeg-source-directory">2. Using FATE from your FFmpeg source directory</a></li>
+  <li><a name="toc-Submitting-the-results-to-the-FFmpeg-result-aggregation-server" href="#Submitting-the-results-to-the-FFmpeg-result-aggregation-server">3. Submitting the results to the FFmpeg result aggregation server</a></li>
+  <li><a name="toc-FATE-makefile-targets-and-variables" href="#FATE-makefile-targets-and-variables">4. FATE makefile targets and variables</a>
+  <ul class="toc">
+    <li><a name="toc-Makefile-targets" href="#Makefile-targets">4.1 Makefile targets</a></li>
+    <li><a name="toc-Makefile-variables" href="#Makefile-variables">4.2 Makefile variables</a></li>
+  </ul>
+</li>
+</ul>
+</div>
+
+<a name="Introduction"></a>
+<h1 class="chapter"><a href="fate.html#toc-Introduction">1. Introduction</a></h1>
+
+<p>  FATE is an extended regression suite on the client-side and a means
+for results aggregation and presentation on the server-side.
+</p>
+<p>  The first part of this document explains how you can use FATE from
+your FFmpeg source directory to test your ffmpeg binary. The second
+part describes how you can run FATE to submit the results to FFmpeg&rsquo;s
+FATE server.
+</p>
+<p>  In any way you can have a look at the publicly viewable FATE results
+by visiting this website:
+</p>
+<p>  <a href="http://fate.ffmpeg.org/">http://fate.ffmpeg.org/</a>
+</p>
+<p>  This is especially recommended for all people contributing source
+code to FFmpeg, as it can be seen if some test on some platform broke
+with there recent contribution. This usually happens on the platforms
+the developers could not test on.
+</p>
+<p>  The second part of this document describes how you can run FATE to
+submit your results to FFmpeg&rsquo;s FATE server. If you want to submit your
+results be sure to check that your combination of CPU, OS and compiler
+is not already listed on the above mentioned website.
+</p>
+<p>  In the third part you can find a comprehensive listing of FATE makefile
+targets and variables.
+</p>
+
+<a name="Using-FATE-from-your-FFmpeg-source-directory"></a>
+<h1 class="chapter"><a href="fate.html#toc-Using-FATE-from-your-FFmpeg-source-directory">2. Using FATE from your FFmpeg source directory</a></h1>
+
+<p>  If you want to run FATE on your machine you need to have the samples
+in place. You can get the samples via the build target fate-rsync.
+Use this command from the top-level source directory:
+</p>
+<table><tr><td>&nbsp;</td><td><pre class="example">make fate-rsync SAMPLES=fate-suite/
+make fate       SAMPLES=fate-suite/
+</pre></td></tr></table>
+
+<p>  The above commands set the samples location by passing a makefile
+variable via command line. It is also possible to set the samples
+location at source configuration time by invoking configure with
+&lsquo;&ndash;samples=&lt;path to the samples directory&gt;&rsquo;. Afterwards you can
+invoke the makefile targets without setting the SAMPLES makefile
+variable. This is illustrated by the following commands:
+</p>
+<table><tr><td>&nbsp;</td><td><pre class="example">./configure --samples=fate-suite/
+make fate-rsync
+make fate
+</pre></td></tr></table>
+
+<p>  Yet another way to tell FATE about the location of the sample
+directory is by making sure the environment variable FATE_SAMPLES
+contains the path to your samples directory. This can be achieved
+by e.g. putting that variable in your shell profile or by setting
+it in your interactive session.
+</p>
+<table><tr><td>&nbsp;</td><td><pre class="example">FATE_SAMPLES=fate-suite/ make fate
+</pre></td></tr></table>
+
+<div class="float note">
+<p>Do not put a &rsquo;~&rsquo; character in the samples path to indicate a home
+directory. Because of shell nuances, this will cause FATE to fail.
+</p></div>
+
+<a name="Submitting-the-results-to-the-FFmpeg-result-aggregation-server"></a>
+<h1 class="chapter"><a href="fate.html#toc-Submitting-the-results-to-the-FFmpeg-result-aggregation-server">3. Submitting the results to the FFmpeg result aggregation server</a></h1>
+
+<p>  To submit your results to the server you should run fate through the
+shell script tests/fate.sh from the FFmpeg sources. This script needs
+to be invoked with a configuration file as its first argument.
+</p>
+<table><tr><td>&nbsp;</td><td><pre class="example">tests/fate.sh /path/to/fate_config
+</pre></td></tr></table>
+
+<p>  A configuration file template with comments describing the individual
+configuration variables can be found at &lsquo;<tt>tests/fate_config.sh.template</tt>&rsquo;.
+</p>
+<p>  The mentioned configuration template is also available here:
+<pre class="verbatim">slot=                                    # some unique identifier
+repo=git://source.ffmpeg.org/ffmpeg.git  # the source repository
+samples=                                 # path to samples directory
+workdir=                                 # directory in which to do all the work
+#fate_recv=&quot;ssh -T fate@fate.ffmpeg.org&quot; # command to submit report
+comment=                                 # optional description
+
+# the following are optional and map to configure options
+arch=
+cpu=
+cross_prefix=
+cc=
+target_os=
+sysroot=
+target_exec=
+target_path=
+extra_cflags=
+extra_ldflags=
+extra_libs=
+extra_conf=     # extra configure options not covered above
+
+#make=          # name of GNU make if not 'make'
+makeopts=       # extra options passed to 'make'
+#tar=           # command to create a tar archive from its arguments on stdout,
+                # defaults to 'tar c'
+</pre></p>
+<p>  Create a configuration that suits your needs, based on the configuration
+template. The &lsquo;slot&rsquo; configuration variable can be any string that is not
+yet used, but it is suggested that you name it adhering to the following
+pattern &lt;arch&gt;-&lt;os&gt;-&lt;compiler&gt;-&lt;compiler version&gt;. The configuration file
+itself will be sourced in a shell script, therefore all shell features may
+be used. This enables you to setup the environment as you need it for your
+build.
+</p>
+<p>  For your first test runs the &lsquo;fate_recv&rsquo; variable should be empty or
+commented out. This will run everything as normal except that it will omit
+the submission of the results to the server. The following files should be
+present in $workdir as specified in the configuration file:
+</p>
+<ul>
+<li> configure.log
+    </li><li> compile.log
+    </li><li> test.log
+    </li><li> report
+    </li><li> version
+</li></ul>
+
+<p>  When you have everything working properly you can create an SSH key and
+send its public part to the FATE server administrator.
+</p>
+<p>  Configure your SSH client to use public key authentication with that key
+when connecting to the FATE server. Also do not forget to check the identity
+of the server and to accept its host key. This can usually be achieved by
+running your SSH client manually and killing it after you accepted the key.
+The FATE server&rsquo;s fingerprint is:
+</p>
+<p>  b1:31:c8:79:3f:04:1d:f8:f2:23:26:5a:fd:55:fa:92
+</p>
+<p>  The only thing left is to automate the execution of the fate.sh script and
+the synchronisation of the samples directory.
+</p>
+
+<a name="FATE-makefile-targets-and-variables"></a>
+<h1 class="chapter"><a href="fate.html#toc-FATE-makefile-targets-and-variables">4. FATE makefile targets and variables</a></h1>
+
+<a name="Makefile-targets"></a>
+<h2 class="section"><a href="fate.html#toc-Makefile-targets">4.1 Makefile targets</a></h2>
+
+<dl compact="compact">
+<dt> &lsquo;<samp>fate-rsync</samp>&rsquo;</dt>
+<dd><p>    Download/synchronize sample files to the configured samples directory.
+</p>
+</dd>
+<dt> &lsquo;<samp>fate-list</samp>&rsquo;</dt>
+<dd><p>    Will list all fate/regression test targets.
+</p>
+</dd>
+<dt> &lsquo;<samp>fate</samp>&rsquo;</dt>
+<dd><p>    Run the FATE test suite (requires the fate-suite dataset).
+</p></dd>
+</dl>
+
+<a name="Makefile-variables"></a>
+<h2 class="section"><a href="fate.html#toc-Makefile-variables">4.2 Makefile variables</a></h2>
+
+<dl compact="compact">
+<dt> &lsquo;<samp>V</samp>&rsquo;</dt>
+<dd><p>    Verbosity level, can be set to 0, 1 or 2.
+    </p><ul>
+<li> 0: show just the test arguments
+        </li><li> 1: show just the command used in the test
+        </li><li> 2: show everything
+    </li></ul>
+
+</dd>
+<dt> &lsquo;<samp>SAMPLES</samp>&rsquo;</dt>
+<dd><p>    Specify or override the path to the FATE samples at make time, it has a
+    meaning only while running the regression tests.
+</p>
+</dd>
+<dt> &lsquo;<samp>THREADS</samp>&rsquo;</dt>
+<dd><p>    Specify how many threads to use while running regression tests, it is
+    quite useful to detect thread-related regressions.
+</p></dd>
+</dl>
+
+<p>Example:
+</p><table><tr><td>&nbsp;</td><td><pre class="example">make V=1 SAMPLES=/var/fate/samples THREADS=2 fate
+</pre></td></tr></table>
+<div id="footer">
+<p>
+ <font size="-1">
+  This document was generated by <em>Kyle</em> on <em>January 27, 2012</em> using <a href="http://www.nongnu.org/texi2html/"><em>texi2html 1.82</em></a>.
+ </font>
+ <br>
+</div></div>
+</p>
+</body>
+</html>
+</div>
