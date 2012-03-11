@@ -136,6 +136,9 @@ DHalens
 Deamon007
  * Dutch translation
 
+cvpcs
+ * Updated ffmpeg support to v0.10
+
 ==the beta testers==
 [SSC Beta Testing Team]
 KeithD

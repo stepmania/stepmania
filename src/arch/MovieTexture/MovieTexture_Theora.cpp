@@ -9,15 +9,11 @@
 
 namespace avcodec
 {
-#if defined(MACOSX)
-	#include <ffmpeg/avcodec.h>
-#else
 	extern "C"
 	{
 		#include <libavcodec/avcodec.h> // for avcodec::img_convert
 		#include <libswscale/swscale.h>
 	}
-#endif
 };
 
 // #define HAVE_THEORAEXP
