@@ -81,6 +81,7 @@ ScreenMessage.cpp ScreenMessage.h ScreenMiniMenu.cpp ScreenMiniMenu.h \
 ScreenNameEntry.cpp ScreenNameEntry.h ScreenNameEntryTraditional.cpp ScreenNameEntryTraditional.h \
 ScreenOptions.cpp ScreenOptions.h \
 ScreenOptionsCourseOverview.cpp ScreenOptionsCourseOverview.h \
+ScreenOptionsEditCourse.cpp ScreenOptionsEditCourse.h \
 ScreenOptionsEditProfile.cpp ScreenOptionsEditProfile.h \
 ScreenOptionsExportPackage.cpp ScreenOptionsExportPackage.h \
 ScreenOptionsManageCourses.cpp ScreenOptionsManageCourses.h \
