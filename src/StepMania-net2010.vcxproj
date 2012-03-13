@@ -585,7 +585,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)</Command>
     <ClCompile Include="arch\MovieTexture\MovieTexture_FFMpeg.cpp" />
     <ClCompile Include="arch\MovieTexture\MovieTexture_Generic.cpp" />
     <ClCompile Include="arch\MovieTexture\MovieTexture_Null.cpp" />
-    <ClCompile Include="arch\MovieTexture\MovieTexture_Theora.cpp" />
     <ClCompile Include="arch\LowLevelWindow\LowLevelWindow.cpp" />
     <ClCompile Include="arch\LowLevelWindow\LowLevelWindow_Win32.cpp" />
     <ClCompile Include="arch\MemoryCard\MemoryCardDriver.cpp" />
@@ -1899,7 +1898,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)</Command>
     <ClInclude Include="arch\MovieTexture\MovieTexture_FFMpeg.h" />
     <ClInclude Include="arch\MovieTexture\MovieTexture_Generic.h" />
     <ClInclude Include="arch\MovieTexture\MovieTexture_Null.h" />
-    <ClInclude Include="arch\MovieTexture\MovieTexture_Theora.h" />
     <ClInclude Include="arch\LowLevelWindow\LowLevelWindow.h" />
     <ClInclude Include="arch\LowLevelWindow\LowLevelWindow_Win32.h" />
     <ClInclude Include="arch\MemoryCard\MemoryCardDriver.h" />

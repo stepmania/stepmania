@@ -8,7 +8,7 @@
 #include "LowLevelWindow/LowLevelWindow_Win32.h"
 #include "MemoryCard/MemoryCardDriverThreaded_Windows.h"
 #define DEFAULT_INPUT_DRIVER_LIST "DirectInput,Pump,Para"
-#define DEFAULT_MOVIE_DRIVER_LIST "Theora,FFMpeg,DShow,Null"
+#define DEFAULT_MOVIE_DRIVER_LIST "FFMpeg,DShow,Null"
 #define DEFAULT_SOUND_DRIVER_LIST "DirectSound-sw,WDMKS,WaveOut,Null"
 
 
@@ -18,7 +18,7 @@
 #include "LowLevelWindow/LowLevelWindow_MacOSX.h"
 #include "MemoryCard/MemoryCardDriverThreaded_MacOSX.h"
 #define DEFAULT_INPUT_DRIVER_LIST "HID"
-#define DEFAULT_MOVIE_DRIVER_LIST "Theora,FFMpeg,Null"
+#define DEFAULT_MOVIE_DRIVER_LIST "FFMpeg,Null"
 #define DEFAULT_SOUND_DRIVER_LIST "AudioUnit,Null"
 
 
@@ -38,7 +38,7 @@
 #else
 #define DEFAULT_INPUT_DRIVER_LIST "X11"
 #endif
-#define DEFAULT_MOVIE_DRIVER_LIST "Theora,FFMpeg,Null"
+#define DEFAULT_MOVIE_DRIVER_LIST "FFMpeg,Null"
 #define DEFAULT_SOUND_DRIVER_LIST "ALSA-sw,pulse,OSS,Null"
 #else
 #error Which arch?

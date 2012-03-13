@@ -9,6 +9,10 @@ ________________________________________________________________________________
 StepMania 5.0 alpha 2 | 201203??
 --------------------------------------------------------------------------------
 
+2012/03/12
+----------
+* Remove libtheora support since ffmpeg already supports theora videos. [cvpcs]
+
 2012/03/10
 ----------
 * Update ffmpeg support to v0.10. [cvpcs]
