@@ -63,9 +63,9 @@ return Def.ActorFrame {
 	-- Making a cheap reflection effect for the sake of showing off the fov and
 	-- vanishpoint commands on ActorFrames.
 	Def.ActorFrame{
-		InitCommand=cmd(fov,45;vanishpoint,SCREEN_LEFT+64,SCREEN_BOTTOM-24;);
+		InitCommand=cmd(fov,45;vanishpoint,SCREEN_LEFT+64,SCREEN_BOTTOM-20;);
 		LoadActor( "creativecommons" )..{
-			InitCommand=cmd(x,SCREEN_LEFT+64;y,SCREEN_BOTTOM-24;valign,0;zoomy,-0.6;rotationx,-60;diffusealpha,0.6;Real;);
+			InitCommand=cmd(x,SCREEN_LEFT+64;y,SCREEN_BOTTOM-20;valign,0;zoomy,-0.6;rotationx,-60;diffusealpha,0.6;Real;);
 			OnCommand=cmd(croptop,1;fadetop,0;decelerate,0.8;croptop,0;fadetop,1;);
 		};
 	};
