@@ -123,6 +123,7 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 	case TNS_CheckpointMiss:fDeltaLife = m_fLifePercentChange.GetValue(SE_CheckpointMiss);	break;
 	}
 
+	// this was previously if( IsHot()  &&  score < TNS_GOOD ) in 3.9... -freem
 	if( IsHot()  &&  fDeltaLife < 0 )
 		fDeltaLife = min( fDeltaLife, -0.10f );		// make it take a while to get back to "hot"
 
