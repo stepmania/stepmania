@@ -33,6 +33,387 @@ function GetDirectRadar(player)
 end;
 
 -----------------------------------------------------------
+--StepMania 3.9 (Plus) Scorings by @803832
+--3.9 MAX2
+--3.9 5TH
+--3.9Plus HYBRID
+--3.9Plus SN
+--3.9Plus SN2
+-- note: 3.9Plus PIU Scoring cannot be implemented due to no NumTapsInRow
+-- in JudgmentMessage. This is fixed in hanubeki-modified-sm-ssc revision 6c7184e7df9a:
+-- http://code.google.com/r/hanubeki-modified-sm-ssc/source/detail?r=6c7184e7df9a3694649f965c2976859bb9e45963 
+-----------------------------------------------------------
+local function isW2OrAbove(tns)
+	if tns == 'TapNoteScore_W1' or tns == 'TapNoteScore_W2' then
+		return true;
+	end;
+	return false;
+end
+local sm3_Steps = {0,0};
+local sm3_Score = {0,0};
+local sm3_CurMaxScore = {0,0};
+local sm3_Bonus = {0,0};
+
+r["3.9 MAX2"] = function(params, pss)
+	local multLookup =
+	{
+		['TapNoteScore_W1'] = 10,
+		['TapNoteScore_W2'] = GAMESTATE:ShowW1() and 9 or 10,
+		['TapNoteScore_W3'] = 5
+	};
+	setmetatable(multLookup, ZeroIfNotFound);
+	local radarValues = GetDirectRadar(params.Player);
+	local totalItems = GetTotalItems(radarValues);
+	-- 1+2+3+...+totalItems value/の値
+	local sTotal = (totalItems+1)*totalItems/2;
+	local steps = GAMESTATE:GetCurrentSteps(params.Player);
+	local meter = steps:GetMeter();
+	meter = clamp(meter,1,10);
+
+	-- [en] check song length and multiply accordingly.
+	-- [ja] 満点を求める
+	local length = 1;
+	if (GAMESTATE:GetCurrentSong():IsMarathon()) then
+		length = 2;
+	elseif (GAMESTATE:GetCurrentSong():IsLong()) then
+		length = 3;
+	end;
+	local baseScore = meter * 10000000 * length;
+
+	local sOne = baseScore/sTotal;
+
+	local p = (params.Player == 'PlayerNumber_P1') and 1 or 2;
+
+	-- [ja] スコアが0の時に初期化
+	if pss:GetScore()==0 then
+		sm3_Steps[p] = 0;
+	end;
+
+	-- [en] current number of steps
+	-- [ja] 現在のステップ数
+	sm3_Steps[p]=sm3_Steps[p]+1;
+	-- [en] current score
+	-- [ja] 今回加算するスコア（W1の時）
+	local vScore = sOne*sm3_Steps[p];
+	pss:SetCurMaxScore(pss:GetCurMaxScore()+math.floor(vScore));
+	-- [ja] 判定によって加算量を変更
+	if (params.HoldNoteScore == 'HoldNoteScore_Held') then
+		vScore = vScore;
+	else
+		if (params.HoldNoteScore == 'HoldNoteScore_LetGo') then
+			vScore = 0;
+		else
+			vScore = vScore*multLookup[params.TapNoteScore]/10;
+		end;
+	end;
+
+	-- [ja] 落ちていた場合は入るスコアが減る
+	if (pss:GetFailed()) then
+		if (params.HoldNoteScore == 'HoldNoteScore_Held') then
+			-- [ja] O.K.判定時は10点
+			pss:SetScore(pss:GetScore()+10);
+		elseif (params.HoldNoteScore ~= 'HoldNoteScore_LetGo') then
+			-- [ja] O.K.でもN.G.でもない場合のスコア：
+			-- W1 (Marvelous): 10
+			-- W2 (Perfect):    9
+			-- W3 (Great):      5
+			pss:SetScore(pss:GetScore()+multLookup[params.TapNoteScore]);
+			-- [ja] 5点単位の処理がなぜかここでされる
+			if multLookup[params.TapNoteScore] > 0 then
+				pss:SetScore(math.floor((pss:GetScore() + 2) / 5) * 5);
+			end;
+		end;
+	else
+		pss:SetScore(pss:GetScore()+math.floor(vScore));
+	end;
+
+	if (sm3_Steps[p] == totalItems and not pss:GetFailed()) then
+		-- [ja] 最後の1ステップがW2以上の場合、端数を加算する
+		-- [ja] 端数は設定上の満点と最終ステップ時点での満点の差から求める
+		if (isW2OrAbove(params.TapNoteScore) or params.HoldNoteScore == 'HoldNoteScore_Held') then
+			pss:SetScore(pss:GetScore()+(baseScore-pss:GetCurMaxScore()));
+			pss:SetCurMaxScore(pss:GetCurMaxScore()+(baseScore-pss:GetCurMaxScore()));
+		end;
+	end;
+end;
+
+r["3.9 5TH"] = function(params, pss)
+	local multLookup =
+	{
+		['TapNoteScore_W1'] = 10,
+		['TapNoteScore_W2'] = GAMESTATE:ShowW1() and 9 or 10,
+		['TapNoteScore_W3'] = 5
+	};
+	setmetatable(multLookup, ZeroIfNotFound);
+	local radarValues = GetDirectRadar(params.Player);
+	local totalItems = GetTotalItems(radarValues);
+	-- 1+2+3+...+totalItems value/の値
+	local sTotal = (totalItems+1)*totalItems/2;
+	local steps = GAMESTATE:GetCurrentSteps(params.Player);
+	local meter = steps:GetMeter();
+	meter = clamp(meter,1,10);
+
+	-- [ja] 満点を求める
+	local length = 1;
+	if (GAMESTATE:GetCurrentSong():IsMarathon()) then
+		length = 2;
+	elseif (GAMESTATE:GetCurrentSong():IsLong()) then
+		length = 3;
+	end;
+	local baseScore = (meter * length + 1) * 5000000;
+
+	local sOne = baseScore/sTotal;
+
+	local p = (params.Player == 'PlayerNumber_P1') and 1 or 2;
+
+	-- [ja] スコアが0の時に初期化
+	if pss:GetScore()==0 then
+		sm3_Steps[p] = 0;
+		sm3_Bonus[p] = 0;
+		sm3_Score[p] = 0;
+		sm3_CurMaxScore[p] = 0;
+	end;
+
+	-- [ja] 現在のステップ数
+	sm3_Steps[p]=sm3_Steps[p]+1;
+	-- [en] current score
+	-- [ja] 今回加算するスコア（W1の時）
+	local vScore = sOne*sm3_Steps[p];
+	sm3_CurMaxScore[p] = sm3_CurMaxScore[p]+math.floor(vScore);
+	-- [ja] 判定によって加算量を変更
+	if (params.HoldNoteScore == 'HoldNoteScore_Held') then
+		vScore = vScore;
+	else
+		if (params.HoldNoteScore == 'HoldNoteScore_LetGo') then
+			vScore = 0;
+		else
+			vScore = vScore*multLookup[params.TapNoteScore]/10;
+		end;
+	end;
+
+	local bonusTable =
+	{
+		['TapNoteScore_W1'] = 55,
+		['TapNoteScore_W2'] = 55,
+		['TapNoteScore_W3'] = 33
+	};
+	setmetatable(bonusTable, ZeroIfNotFound);
+
+	-- [ja] 落ちていた場合は入るスコアが減る
+	if (pss:GetFailed()) then
+		if (params.HoldNoteScore == 'HoldNoteScore_Held') then
+			-- [ja] O.K.判定時は10点
+			sm3_Score[p] = sm3_Score[p]+10;
+		elseif (params.HoldNoteScore ~= 'HoldNoteScore_LetGo') then
+			-- [ja] O.K.でもN.G.でもない場合のスコア：
+			-- W1 (Marvelous): 10
+			-- W2 (Perfect):    9
+			-- W3 (Great):      5
+			sm3_Score[p] = sm3_Score[p]+multLookup[params.TapNoteScore];
+			-- [ja] 5点単位の処理がなぜかここでされる
+			if multLookup[params.TapNoteScore] > 0 then
+				sm3_Score[p] = math.floor((sm3_Score[p] + 2) / 5) * 5;
+			end;
+		end;
+	else
+		sm3_Score[p] = sm3_Score[p]+math.floor(vScore);
+		sm3_Bonus[p] = sm3_Bonus[p]+multLookup[params.TapNoteScore]*pss:GetCurrentCombo();
+	end;
+
+	if (sm3_Steps[p] == totalItems and not pss:GetFailed()) then
+		-- [ja] 最後の1ステップがW2以上の場合、端数を加算する
+		-- [ja] 端数は設定上の満点と最終ステップ時点での満点の差から求める
+		if (isW2OrAbove(params.TapNoteScore) or params.HoldNoteScore == 'HoldNoteScore_Held') then
+			sm3_Score[p] = sm3_Score[p]+(baseScore-sm3_CurMaxScore[p]);
+			sm3_CurMaxScore[p] = sm3_CurMaxScore[p]+(baseScore-sm3_CurMaxScore[p]);
+		end;
+
+		-- [ja] コンボボーナスとグレードボーナスを加算
+		sm3_Score[p] = sm3_Score[p]+sm3_Bonus[p];
+		sm3_CurMaxScore[p] = sm3_CurMaxScore[p]+totalItems*sTotal;
+
+		local gradeBonusTable = {
+			['Grade_Tier01'] = 10000000,
+			['Grade_Tier02'] = 10000000,
+			['Grade_Tier03'] = 1000000,
+			['Grade_Tier04'] = 100000,
+			['Grade_Tier05'] = 10000,
+			['Grade_Tier06'] = 1000,
+			['Grade_Tier07'] = 100,
+		};
+		setmetatable(gradeBonusTable, ZeroIfNotFound);
+
+		sm3_Score[p] = sm3_Score[p]+gradeBonusTable[pss:GetGrade()];
+		sm3_CurMaxScore[p] = sm3_CurMaxScore[p]+10000000;
+	end;
+
+	-- [ja] 5点単位の処理は5TH方式のみでされる
+	pss:SetScore(sm3_Score[p] - sm3_Score[p] % 5);
+	pss:SetCurMaxScore(sm3_CurMaxScore[p] - sm3_CurMaxScore[p] % 5);
+end;
+
+r["3.9Plus HYBRID"] = function(params, pss)
+	local multLookup =
+	{
+		['TapNoteScore_W1'] = 10,
+		['TapNoteScore_W2'] = GAMESTATE:ShowW1() and 9 or 10,
+		['TapNoteScore_W3'] = 5
+	};
+	setmetatable(multLookup, ZeroIfNotFound);
+	local radarValues = GetDirectRadar(params.Player);
+	local totalItems = GetTotalItems(radarValues);
+	-- 1+2+3+...+totalItems value/の値
+	local sTotal = (totalItems+1)*totalItems/2;
+	local steps = GAMESTATE:GetCurrentSteps(params.Player);
+	local meter = steps:GetMeter();
+	meter = clamp(meter,1,10);
+
+	-- [ja] 満点を求める
+	local length = 1;
+	if (GAMESTATE:GetCurrentSong():IsMarathon()) then
+		length = 2;
+	elseif (GAMESTATE:GetCurrentSong():IsLong()) then
+		length = 3;
+	end;
+	local baseScore = 100000000 * length;
+
+	local sOne = baseScore/sTotal;
+
+	local p = (params.Player == 'PlayerNumber_P1') and 1 or 2;
+
+	-- [ja] スコアが0の時に初期化
+	if pss:GetScore()==0 then
+		sm3_Steps[p] = 0;
+	end;
+
+	-- [ja] 現在のステップ数
+	sm3_Steps[p]=sm3_Steps[p]+1;
+	-- [en] current score
+	-- [ja] 今回加算するスコア（W1の時）
+	local vScore = sOne*sm3_Steps[p];
+	pss:SetCurMaxScore(pss:GetCurMaxScore()+math.floor(vScore));
+	-- [ja] 判定によって加算量を変更
+	if (params.HoldNoteScore == 'HoldNoteScore_Held') then
+		vScore = vScore;
+	else
+		if (params.HoldNoteScore == 'HoldNoteScore_LetGo') then
+			vScore = 0;
+		else
+			vScore = vScore*multLookup[params.TapNoteScore]/10;
+		end;
+	end;
+
+	-- [ja] 落ちていた場合は入るスコアが減る
+	if (pss:GetFailed()) then
+		if (params.HoldNoteScore == 'HoldNoteScore_Held') then
+			-- [ja] O.K.判定時は10点
+			pss:SetScore(pss:GetScore()+10);
+		elseif (params.HoldNoteScore ~= 'HoldNoteScore_LetGo') then
+			-- [ja] O.K.でもN.G.でもない場合のスコア：
+			-- W1 (Marvelous): 10
+			-- W2 (Perfect):    9
+			-- W3 (Great):      5
+			pss:SetScore(pss:GetScore()+multLookup[params.TapNoteScore]);
+			-- [ja] 5点単位の処理がなぜかここでされる
+			if multLookup[params.TapNoteScore] > 0 then
+				pss:SetScore(math.floor((pss:GetScore() + 2) / 5) * 5);
+			end;
+		end;
+	else
+		pss:SetScore(pss:GetScore()+math.floor(vScore));
+	end;
+
+	if (sm3_Steps[p] == totalItems and not pss:GetFailed()) then
+		-- [ja] 最後の1ステップがW2以上の場合、端数を加算する
+		-- [ja] 端数は設定上の満点と最終ステップ時点での満点の差から求める
+		if (isW2OrAbove(params.TapNoteScore) or params.HoldNoteScore == 'HoldNoteScore_Held') then
+			pss:SetScore(pss:GetScore()+(baseScore-pss:GetCurMaxScore()));
+			pss:SetCurMaxScore(pss:GetCurMaxScore()+(baseScore-pss:GetCurMaxScore()));
+		end;
+	end;
+end;
+
+r["3.9Plus SN"] = function(params, pss)
+	local radarValues = GetDirectRadar(params.Player);
+	local totalItems = GetTotalItems(radarValues);
+
+	-- [ja] 満点を求める
+	local length = 1;
+	if (GAMESTATE:GetCurrentSong():IsMarathon()) then
+		length = 2;
+	elseif (GAMESTATE:GetCurrentSong():IsLong()) then
+		length = 3;
+	end;
+	local baseScore = 10000000 * length;
+
+	-- [en] current score
+	-- [ja] 今回加算するスコア
+	local multLookup =
+	{
+		['TapNoteScore_W1'] = math.floor(baseScore / totalItems),
+		['TapNoteScore_W2'] = math.floor(baseScore / totalItems),
+		['TapNoteScore_W3'] = math.floor(math.floor(baseScore / 2) / totalItems)
+	};
+	setmetatable(multLookup, ZeroIfNotFound);
+	local vScore = multLookup[params.TapNoteScore];
+	pss:SetCurMaxScore(pss:GetCurMaxScore()+multLookup['TapNoteScore_W1']);
+
+	-- [ja] 判定によって加算量を変更
+	if (params.HoldNoteScore == 'HoldNoteScore_Held') then
+		vScore = multLookup['TapNoteScore_W1'];
+	elseif (params.HoldNoteScore == 'HoldNoteScore_LetGo') then
+		vScore = 0;
+	end;
+
+	-- [ja] 落ちていた場合は入るスコアが減る
+	if (not pss:GetFailed()) then
+		pss:SetScore(pss:GetScore()+math.floor(vScore));
+	end;
+
+	-- [ja] 端数の処理はされていないようだ
+end;
+
+r["3.9Plus SN2"] = function(params, pss)
+	local radarValues = GetDirectRadar(params.Player);
+	local totalItems = GetTotalItems(radarValues);
+
+	-- [ja] 満点を求める
+	local length = 1;
+	if (GAMESTATE:GetCurrentSong():IsMarathon()) then
+		length = 2;
+	elseif (GAMESTATE:GetCurrentSong():IsLong()) then
+		length = 3;
+	end;
+	local baseScore = 1000000 * length;
+
+	-- [en] current score
+	-- [ja] 今回加算するスコア
+	local multLookup =
+	{
+		['TapNoteScore_W1'] = math.floor(baseScore / totalItems),
+		['TapNoteScore_W2'] = math.floor(baseScore / totalItems) - 10,
+		['TapNoteScore_W3'] = math.floor(math.floor(baseScore / 2) / totalItems) - 10
+	};
+	setmetatable(multLookup, ZeroIfNotFound);
+	local vScore = multLookup[params.TapNoteScore];
+	pss:SetCurMaxScore(pss:GetCurMaxScore()+multLookup['TapNoteScore_W1']);
+
+	-- [ja] 判定によって加算量を変更
+	if (params.HoldNoteScore == 'HoldNoteScore_Held') then
+		vScore = multLookup['TapNoteScore_W1'];
+	elseif (params.HoldNoteScore == 'HoldNoteScore_LetGo') then
+		vScore = 0;
+	end;
+
+	-- [ja] 落ちていた場合は入るスコアが減る
+	if (not pss:GetFailed()) then
+		pss:SetScore(pss:GetScore()+math.floor(vScore));
+	end;
+
+	-- [ja] 端数の処理はされていないようだ
+end;
+
+-----------------------------------------------------------
 --Oldschool scoring, best described as a modified 4th mix scheme
 --with a little 1st mix influence
 -----------------------------------------------------------

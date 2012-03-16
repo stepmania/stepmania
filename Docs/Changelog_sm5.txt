@@ -9,6 +9,10 @@ ________________________________________________________________________________
 StepMania 5.0 alpha 2 | 201203??
 --------------------------------------------------------------------------------
 
+2012/03/15
+----------
+* [04 Scoring.lua] Added various 3.9 and 3.9+ scoring methods. [hanubeki]
+
 2012/03/12
 ----------
 * Remove libtheora support since ffmpeg already supports theora videos. [cvpcs]
