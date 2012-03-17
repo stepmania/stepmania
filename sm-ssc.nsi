@@ -452,11 +452,11 @@ Section "Main Section" SecMain
 	File "Program\msvcp80.dll"
 	File "Program\msvcp90.dll"
 	; FFmpeg and related
-	File "Program\avcodec-52.dll"
-	File "Program\avdevice-52.dll"
-	File "Program\avformat-52.dll"
-	File "Program\avutil-50.dll"
-	File "Program\swscale-0.dll"
+	File "Program\avcodec-53.dll"
+	;File "Program\avdevice-52.dll"
+	File "Program\avformat-53.dll"
+	File "Program\avutil-51.dll"
+	File "Program\swscale-2.dll"
 	; parallel lights
 	File "Program\parallel_lights_io.dll"
 	; others
@@ -841,10 +841,14 @@ Section "Uninstall"
 	Delete "$INSTDIR\Program\msvcr90.dll"
 	Delete "$INSTDIR\Program\msvcp90.dll"
 	; FFmpeg and related
+	Delete "$INSTDIR\Program\avcodec-53.dll"
 	Delete "$INSTDIR\Program\avcodec-52.dll"
 	Delete "$INSTDIR\Program\avdevice-52.dll"
+	Delete "$INSTDIR\Program\avformat-53.dll"
 	Delete "$INSTDIR\Program\avformat-52.dll"
+	Delete "$INSTDIR\Program\avutil-51.dll"
 	Delete "$INSTDIR\Program\avutil-50.dll"
+	Delete "$INSTDIR\Program\swscale-2.dll"
 	Delete "$INSTDIR\Program\swscale-0.dll"
 	; others
 	Delete "$INSTDIR\Program\dbghelp.dll"
