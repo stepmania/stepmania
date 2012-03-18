@@ -554,6 +554,7 @@ public:
 		ADD_METHOD( ReleaseInterface );
 		ADD_METHOD( ControlTransfer );
 		ADD_METHOD( InterruptTransfer );
+		ADD_METHOD( BulkTransfer );
 	}
 };
 
