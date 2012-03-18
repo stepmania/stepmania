@@ -145,7 +145,7 @@ void LuaDriver::AddInputModules( const RString &sDrivers, vector<InputHandler*> 
 
 void LuaDriver::AddLightsModules( const RString &sDrivers, vector<LightsDriver*> &AddTo )
 {
-	DriverPathMap &m = s_mModulePaths[ModuleType_Input];
+	DriverPathMap &m = s_mModulePaths[ModuleType_Lights];
 	AddModules<LuaDriver_LightsModule>( m, sDrivers, AddTo );
 }
 
