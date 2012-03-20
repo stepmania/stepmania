@@ -4,6 +4,7 @@
 #include "GameConstantsAndTypes.h"
 #include "RageTimer.h"
 #include "RageLog.h"
+#include "RageDisplay.h"
 #include "RageTextureManager.h"
 #include "GameState.h"
 #include "PrefsManager.h"
@@ -839,7 +840,10 @@ void BackgroundImpl::DrawPrimitives()
 	}
 
 	if( m_pDancingCharacters )
+	{
 		m_pDancingCharacters->Draw();
+		DISPLAY->ClearZBuffer();
+	}
 
 	ActorFrame::DrawPrimitives();
 }
