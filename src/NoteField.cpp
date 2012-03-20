@@ -19,6 +19,7 @@
 #include "BackgroundUtil.h"
 #include "Course.h"
 #include "NoteData.h"
+#include "RageDisplay.h"
 
 float FindFirstDisplayedBeat( const PlayerState* pPlayerState, int iDrawDistanceAfterTargetsPixels );
 float FindLastDisplayedBeat( const PlayerState* pPlayerState, int iDrawDistanceBeforeTargetsPixels );
@@ -1294,7 +1295,6 @@ void NoteField::DrawPrimitives()
 			if( tn.result.bHidden )
 				continue;
 
-
 			// TRICKY: If boomerang is on, then all notes in the range 
 			// [iFirstRowToDraw,iLastRowToDraw] aren't necessarily visible.
 			// Test every note to make sure it's on screen before drawing.
@@ -1302,7 +1302,7 @@ void NoteField::DrawPrimitives()
 				continue; // skip
 
 			ASSERT_M( NoteRowToBeat(q) > -2000, ssprintf("%i %i %i, %f %f", q, iLastRowToDraw, 
-						     iFirstRowToDraw, m_pPlayerState->GetDisplayedPosition().m_fSongBeat, m_pPlayerState->GetDisplayedPosition().m_fMusicSeconds) );
+							iFirstRowToDraw, m_pPlayerState->GetDisplayedPosition().m_fSongBeat, m_pPlayerState->GetDisplayedPosition().m_fMusicSeconds) );
 
 			// See if there is a hold step that begins on this index.
 			// Only do this if the noteskin cares.
@@ -1320,7 +1320,7 @@ void NoteField::DrawPrimitives()
 					}
 				}
 			}
-			
+
 			// do the same for a roll.
 			bool bRollNoteBeginsOnThisBeat = false;
 			if (m_pCurDisplay->display[c].DrawRollHeadForTapsOnSameRow() )
@@ -1353,6 +1353,8 @@ void NoteField::DrawPrimitives()
 
 			bool bNoteIsUpcoming = NoteRowToBeat(q) > m_pPlayerState->GetDisplayedPosition().m_fSongBeat;
 			bAnyUpcomingInThisCol |= bNoteIsUpcoming;
+
+			DISPLAY->ClearZBuffer();
 		}
 
 		cur->m_ReceptorArrowRow.SetNoteUpcoming( c, bAnyUpcomingInThisCol );
