@@ -84,7 +84,7 @@ extern "C" void SetIcon( const RageSurface *pSrcImg )
 			GDK_COLORSPACE_RGB, true,
 			8,
 			pImg->w, pImg->h,
-			pImg->h * pImg->pitch, // ?
+			pImg->h * pImg->pitch, // not sure how to handle rowstride
 			NULL, NULL);
 
 	delete pImg;
