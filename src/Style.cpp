@@ -124,6 +124,7 @@ public:
 	DEFINE_METHOD( GetStepsType,		m_StepsType )
 	DEFINE_METHOD( ColumnsPerPlayer,	m_iColsPerPlayer )
 	DEFINE_METHOD( NeedsZoomOutWith2Players,	m_bNeedsZoomOutWith2Players )
+	DEFINE_METHOD( LockedDifficulty,	m_bLockDifficulties )
 
 	LunaStyle()
 	{
@@ -132,6 +133,7 @@ public:
 		ADD_METHOD( GetStepsType );
 		ADD_METHOD( ColumnsPerPlayer );
 		ADD_METHOD( NeedsZoomOutWith2Players );
+		ADD_METHOD( LockedDifficulty );
 	}
 };
 

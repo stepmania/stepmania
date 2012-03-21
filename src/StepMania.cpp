@@ -661,7 +661,10 @@ found_defaults:
 		PREFSMAN->m_iMovieColorDepth.Set( defaults.iMovieColor );
 		PREFSMAN->m_iMaxTextureResolution.Set( defaults.iTextureSize );
 		PREFSMAN->m_bSmoothLines.Set( defaults.bSmoothLines );
-		PREFSMAN->m_fDisplayAspectRatio.Set( HOOKS->GetDisplayAspectRatio() );
+		// this only worked when we started in fullscreen by default. -aj
+		//PREFSMAN->m_fDisplayAspectRatio.Set( HOOKS->GetDisplayAspectRatio() );
+		// now that we start in windowed mode, use the new default aspect ratio.
+		PREFSMAN->m_fDisplayAspectRatio.Set( PREFSMAN->m_fDisplayAspectRatio );
 
 		// Update last seen video card
 		PREFSMAN->m_sLastSeenVideoDriver.Set( GetVideoDriverName() );
@@ -942,10 +945,11 @@ int main(int argc, char* argv[])
 	// Almost everything uses this to read and write files.  Load this early.
 	FILEMAN = new RageFileManager( argv[0] );
 	FILEMAN->MountInitialFilesystems();
+	
 	bool bPortable = DoesFileExist("Portable.ini");
 	if( !bPortable )
 		FILEMAN->MountUserFilesystems();
-
+	
 	// Set this up next. Do this early, since it's needed for RageException::Throw.
 	LOG		= new RageLog;
 

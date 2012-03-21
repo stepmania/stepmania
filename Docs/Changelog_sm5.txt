@@ -5,8 +5,173 @@ from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
 ================================================================================
-StepMania 5.0 $next | 20111xxx
+
+StepMania 5.0 alpha 2 | 201203??
 --------------------------------------------------------------------------------
+
+2012/03/20
+----------
+* [Background] Fix 3D noteskins and dancing characters from clashing with each other. [shakesoda, AJ]
+* [NoteField] Fix 3D noteskins overlapping. [shakesoda, AJ]
+* [ScreenEdit] Don't use Step timing by default. [Midiman]
+* [ScreenEdit] Allow playback of course modifiers in Course Edit mode [Midiman]
+
+2012/03/15
+----------
+* [04 Scoring.lua] Added various 3.9 and 3.9+ scoring methods. [hanubeki]
+
+2012/03/12
+----------
+* Remove libtheora support since ffmpeg already supports theora videos. [cvpcs]
+
+2012/03/10
+----------
+* Update ffmpeg support to v0.10. [cvpcs]
+
+2012/03/09
+----------
+* [PlayerOptions] Don't display x-mods when using m-mods.
+  Sourced from hanubeki-modified-sm-ssc rev. bd08a58dd7cf and OpenITG.
+
+2012/03/08
+----------
+* [MusicWheel] Added RouletteStopped message, which is broadcast when Roulette
+  is finished and the wheel is locked. [AJ]
+* [WheelBase] Made WheelState a Lua-enabled enum and added
+  GetWheelState() Lua binding. Deprecated IsLocked() Lua binding. [AJ]
+
+2012/03/07
+----------
+* [ScreenSelectMaster] Now updates choices on player join; it will move the
+  scroller to the correct location, but the GainFocus/LoseFocus commands don't
+  seem to work. [AJ]
+
+2012/03/05
+----------
+* [GameCommand] Added GetDifficulty(), GetCourseDifficulty(), GetPlayMode(),
+  GetSortOrder(), GetAnnouncer(), GetPreferredModifiers(), and
+  GetStageModifiers() Lua bindings. [AJ]
+
+2012/03/04
+----------
+* [Player] Changed default Hold window to 0.250f, like it was in 3.9. [AJ]
+
+2012/03/02
+----------
+* [NotesLoaderBMS] Fix calculating stops, Support for #LNOBJ, Don't use #BACKBMP
+  as song background if main StepsType is beat-*. [hanubeki]
+  These changes constitute revisions f26caccf103e, 2d114b38c6c9, and b60f021d2b67
+  of hanubeki-modified-sm-ssc. (http://code.google.com/r/hanubeki-modified-sm-ssc/)
+
+2012/03/01
+----------
+* [MemoryCardManager] Disable Memory Cards by default. If you want to use them,
+set MemoryCards=1 in Save/Preferences.ini (or Save/Static.ini). [AJ]
+* [GameState] Set Premium to Premium_DoubleFor1Credit by default. [AJ]
+* [ScreenSelectMusic] Added PlaySoundOnEnteringOptionsMenu metric. [AJ]
+* [MusicWheel, WheelBase] Added collapse sound. [AJ]
+
+StepMania 5.0 alpha 1a | 20120219
+--------------------------------------------------------------------------------
+
+2012/02/19
+----------
+* [Style] Added LockedDifficulty() Lua binding. [AJ]
+
+2012/02/15
+----------
+* [HighScore] Added Max Combo, Stage Award and Peak Award. New Lua bindings for
+  HighScore: GetMaxCombo(), GetStageAward(), GetPeakComboAward(). [AJ]
+  (the specifics of this are subject to change.)
+
+2012/02/10
+----------
+* [WheelBase, WheelItemBase] Turned WheelItemDataType into a Lua type,
+  made WheelBase:GetSelectedType() return the enum instead of a number. [AJ]
+
+2012/02/08
+----------
+* [ScreenEdit] Added support for editing keysounds. Use the Area Menu (Enter)
+  to either modify what sounds play on that row, or even remove a sound from
+  the list. Any sounds assigned to empty notes will automatically become
+  an AutoKeysound, and any AutoKeysounds that have their sound removed will
+  become empty notes. [Wolfman2000]
+
+2012/02/08
+----------
+* [ScreenOptionsMaster] Added StepsRowLayoutType metric.
+  (Valid values are "ShowAllInRow" or "ShowOneInRow".) [AJ]
+
+2012/01/23
+----------
+* [Player] Tap Note Scores (tns) can now be "AvoidMine" or "HitMine" in
+JudgmentMessageCommand. [Saturn2888, shakesoda]
+
+2012/01/15
+----------
+* [WheelNotifyIcon] Add the NumIconsToShow metric. [Wolfman2000]
+* [PlayerOptions] Fix a problem with m-mods where you would get m200 as
+  the default speed modifier. [AJ]
+
+2012/01/11
+----------
+* [ScreenEdit] Fix a floating point issue when dealing with speed segments.
+  [Wolfman2000]
+
+2012/01/09
+----------
+* [Song] Fix a bug introduced with "Only read certain tags during first load"
+  where song graphic files wouldn't load. [theDtTvB]
+
+================================================================================
+StepMania 5.0 alpha 1 | 20120108
+--------------------------------------------------------------------------------
+
+2012/01/08
+----------
+* [Song] Add HasPreviewVid and GetPreviewVidPath lua binding [cerbo]
+
+2012/01/08
+----------
+* [ScreenManager] Made AddScreenToTop take a second (optional) parameter for
+  posting a ScreenMessage on screen pop. [AJ]
+* Only read certain tags during first load; makes song loading faster. [theDtTvB]
+  
+2012/01/07
+----------
+* Fix Portable.ini not working on Mac OS X. [shakesoda]
+
+2012/01/05
+----------
+* [PercentageDisplay] Remove unused ApplyScoreDisplayOptions metric;
+  added PercentFormat and RemainderFormat metrics. [AJ]
+* Fix Portable.ini not working in Linux. [FSX]
+
+2012/01/04
+----------
+* Fix a scoring/grading bug with Lifts. [FSX]
+
+2011/12/27
+----------
+* [MusicWheel] Add IsRouletting Lua binding. [AJ]
+* [LuaManager] Remove GetOSName Lua binding; use GetArchName instead. [AJ]
+
+2011/12/26
+----------
+* [ArchHooks_OSX] Worked around a crash when language detection goes wrong.
+  Note: a real fix should be looked into. [shakesoda]
+
+2011/12/23
+----------
+* [Song] Fixed a bug where a sample start of 0 wouldn't work. [AJ]
+* [Game] Added CountNotesSeparately and GetMapJudgmentTo(TapNoteScore)
+  Lua bindings. [AJ]
+* [StepMania.cpp] Fix initial aspect ratio on first boot, hopefully.
+  (See issues 6 and 27) [AJ]
+
+2011/12/22
+----------
+* [LuaManager] Added ProductFamily() Lua binding. [AJ]
 
 2011/12/17
 ----------

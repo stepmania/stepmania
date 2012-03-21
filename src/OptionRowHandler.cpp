@@ -28,7 +28,8 @@
 #define ENTRY_MODE(s,i)		THEME->GetMetric ("ScreenOptionsMaster",ssprintf("%s,%i",(s).c_str(),(i+1)))
 #define ENTRY_DEFAULT(s)	THEME->GetMetric ("ScreenOptionsMaster",(s) + "Default")
 #define NOTE_SKIN_SORT_ORDER	THEME->GetMetric ("ScreenOptionsMaster","NoteSkinSortOrder")
-#define STEPS_USE_CHART_NAME THEME->GetMetricB("ScreenOptionsMaster","StepsUseChartName")
+#define STEPS_ROW_LAYOUT_TYPE	THEME->GetMetric("ScreenOptionsMaster","StepsRowLayoutType")
+#define STEPS_USE_CHART_NAME	THEME->GetMetricB("ScreenOptionsMaster","StepsUseChartName")
 
 static const char *SelectTypeNames[] = {
 	"SelectOne",
@@ -423,6 +424,7 @@ class OptionRowHandlerListSteps : public OptionRowHandlerList
 		else if( GAMESTATE->IsCourseMode() && GAMESTATE->m_pCurCourse )   // playing a course
 		{
 			m_Def.m_bOneChoiceForAllPlayers = (bool)PREFSMAN->m_bLockCourseDifficulties;
+			m_Def.m_layoutType = StringToLayoutType( STEPS_ROW_LAYOUT_TYPE );
 
 			vector<Trail*> vTrails;
 			GAMESTATE->m_pCurCourse->GetTrails( vTrails, GAMESTATE->GetCurrentStyle()->m_StepsType );
@@ -440,6 +442,8 @@ class OptionRowHandlerListSteps : public OptionRowHandlerList
 		}
 		else if( GAMESTATE->m_pCurSong ) // playing a song
 		{
+			m_Def.m_layoutType = StringToLayoutType( STEPS_ROW_LAYOUT_TYPE );
+
 			vector<Steps*> vpSteps;
 			Song *pSong = GAMESTATE->m_pCurSong;
 			SongUtil::GetSteps( pSong, vpSteps, GAMESTATE->GetCurrentStyle()->m_StepsType );

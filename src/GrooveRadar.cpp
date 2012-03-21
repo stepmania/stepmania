@@ -15,8 +15,8 @@
 
 REGISTER_ACTOR_CLASS(GrooveRadar);
 
-static const ThemeMetric<float>			RADAR_EDGE_WIDTH			("GrooveRadar","EdgeWidth");
-static const ThemeMetric<float>			RADAR_CENTER_ALPHA			("GrooveRadar","CenterAlpha");
+static const ThemeMetric<float>	RADAR_EDGE_WIDTH	("GrooveRadar","EdgeWidth");
+static const ThemeMetric<float>	RADAR_CENTER_ALPHA	("GrooveRadar","CenterAlpha");
 
 static float RADAR_VALUE_ROTATION( int iValueIndex ) {	return PI/2 + PI*2 / 5.0f * iValueIndex; }
 
@@ -31,6 +31,7 @@ GrooveRadar::GrooveRadar()
 
 	FOREACH_PlayerNumber( p )
 	{
+		// todo: remove dependency on radar base being a sprite. -aj
 		m_GrooveRadarValueMap[p].SetRadius( m_sprRadarBase->GetZoomedWidth() );
 		m_Frame.AddChild( &m_GrooveRadarValueMap[p] );
 		m_GrooveRadarValueMap[p].SetName( ssprintf("RadarValueMapP%d",p+1) );

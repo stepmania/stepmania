@@ -2,24 +2,61 @@ The following is a list of known issues with StepMania 5.
 
 * Hidden, Sudden, Stealth, and RandomVanish do not work with layered
   note skins. Random Vanish, in particular, has caused crashes.
-** In a more technical and general sense, diffuse commands do not
+ * In a more technical and general sense, diffuse commands do not
    work properly with ActorFrames.
-* The course editor is not working completely.
+
+* The course editor is not working. (It could stand to be rewritten.)
+
 * The scoring system needs to be made global for the game instead
-  of tying it to the theme. Right now, this is causing a number
-  of themes to have no score display during gameplay.
+  of tying it to the theme. The current arrangement causes multiple problems
+  (themes not supporting scoring unless they explicitly add it to gameplay
+  decorations, the last note not being scored, and so on).
+
 * The C and V keys in the editor (related to attacks) still has
   work to go. Crashes should hopefully be minimal if not otherwise
   nonexistant.
-* Attacks involving noteskins do not work. They may never work
-  again unless some internal coding issues are figured out.
+
+* Attacks involving noteskins do not work. They may never work again unless
+  some internal coding issues are figured out.
+
 * Routine mode (dance or pump) isn't perfect yet.
-** In particular, routine mode and practice steps may crash.
-* If two players play Oni mode, having one player fail causes a crash.
-* The attempted new unlock code written a Preview or two ago
-  does not seem to work at this time. Assistance may be needed here.
+ * Attempting to use the Jukebox to show Routine steps will lead to an infinite
+   loop that is not escapable short of killing the program.
+ * Practice mode and routine steps may cause a crash. (?)
+
+* The attempted unlock code written around Previews 2-4 (?) does not seem to
+  work at this time. Assistance may be needed here.
+
 * Hold/Roll heads seem to be draw under preceding taps when they
   shouldn't be all the time.
+
 * C-Mods have not been fully tested with all of the new segments yet.
+
 * Split Timing needs adjustments with only one chart in place.
-** Either that, or all tags must be allowable in song timing.
+ * Either that, or all tags must be allowable in song timing.
+
+* Language detection fails for Czech and possibly other things on OS X
+  (non-fatally, now)
+
+* Japanese font maps are too large and get resized on load to something
+  manageable. They should be cut into thirds vertically.
+ * This makes debug builds in particular load very slowly, and reduces quality.
+ 
+* The editor sometimes keeps playing music and won't scroll.
+
+* FFMPEG ruins our lives. I suspect init problems for Linux, since it
+  works perfectly fine seemingly at random. Unsure for other platforms.
+
+* VBR MP3's don't seek correctly in the editor, which botches sync.
+
+* While ScreenHowToPlay no longer crashes (?), the steps do not show up.
+  The steps themselves are being read, as the character will react to where
+  the arrows would be.
+
+* There is no make install target for linux systems - this is important for
+  packaging purposes in particular (it would be great to release .debs!)
+
+* LuaDriver works well, but without threading it has latency issues.
+
+* Survival courses crash if you set a noteskin in the player options
+  just before starting the course.

@@ -70,10 +70,14 @@ Branch = {
 		if PROFILEMAN:GetNumLocalProfiles() >= 2 then
 			return "ScreenSelectProfile"
 		else
-			if THEME:GetMetric("Common","AutoSetStyle") == false then
+			if IsNetConnected() then
 				return "ScreenSelectStyle"
 			else
-				return "ScreenProfileLoad"
+				if THEME:GetMetric("Common","AutoSetStyle") == false then
+					return "ScreenSelectStyle"
+				else
+					return "ScreenProfileLoad"
+				end
 			end
 		end
 	end,
@@ -200,7 +204,9 @@ Branch = {
 			end
 		end
 	end,
-	AfterSummary = "ScreenProfileSaveSummary",
+	AfterSummary = function()
+		return "ScreenProfileSaveSummary"
+	end,
 	Network = function()
 		return IsNetConnected() and "ScreenTitleMenu" or "ScreenTitleMenu"
 	end,

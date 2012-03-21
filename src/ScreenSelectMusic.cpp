@@ -94,6 +94,7 @@ void ScreenSelectMusic::Init()
 	TWO_PART_TIMER_SECONDS.Load( m_sName, "TwoPartTimerSeconds" );
 	WRAP_CHANGE_STEPS.Load( m_sName, "WrapChangeSteps" );
 	NULL_SCORE_STRING.Load( m_sName, "NullScoreString" );
+	PLAY_SOUND_ON_ENTERING_OPTIONS_MENU.Load( m_sName, "PlaySoundOnEnteringOptionsMenu" );
 	// To allow changing steps with gamebuttons -DaisuMaster
 	CHANGE_STEPS_WITH_GAME_BUTTONS.Load( m_sName, "ChangeStepsWithGameButtons" );
 	CHANGE_GROUPS_WITH_GAME_BUTTONS.Load( m_sName, "ChangeGroupsWithGameButtons" );
@@ -437,7 +438,8 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 		}
 
 		m_bGoToOptions = true;
-		m_soundStart.Play();
+		if( PLAY_SOUND_ON_ENTERING_OPTIONS_MENU )
+			m_soundStart.Play();
 		this->PlayCommand( "ShowEnteringOptions" );
 
 		// Re-queue SM_BeginFadingOut, since ShowEnteringOptions may have
@@ -1695,11 +1697,11 @@ void ScreenSelectMusic::AfterMusicChange()
 
 	switch( m_MusicWheel.GetSelectedType() )
 	{
-	case TYPE_SECTION:
-	case TYPE_SORT:
-	case TYPE_ROULETTE:
-	case TYPE_RANDOM:
-	case TYPE_CUSTOM:
+	case WheelItemDataType_Section:
+	case WheelItemDataType_Sort:
+	case WheelItemDataType_Roulette:
+	case WheelItemDataType_Random:
+	case WheelItemDataType_Custom:
 		FOREACH_PlayerNumber( p )
 			m_iSelection[p] = -1;
 
@@ -1722,7 +1724,7 @@ void ScreenSelectMusic::AfterMusicChange()
 
 		switch( m_MusicWheel.GetSelectedType() )
 		{
-			case TYPE_SECTION:
+			case WheelItemDataType_Section:
 				// reduce scope
 				{
 					SortOrder curSort = GAMESTATE->m_SortOrder;
@@ -1740,25 +1742,25 @@ void ScreenSelectMusic::AfterMusicChange()
 						m_sSampleMusicToPlay = m_sSectionMusicPath;
 				}
 				break;
-			case TYPE_SORT:
+			case WheelItemDataType_Sort:
 				bWantBanner = false; // we load it ourself
 				m_Banner.LoadMode();
 				if( SAMPLE_MUSIC_PREVIEW_MODE != SampleMusicPreviewMode_LastSong )
 					m_sSampleMusicToPlay = m_sSortMusicPath;
 				break;
-			case TYPE_ROULETTE:
+			case WheelItemDataType_Roulette:
 				bWantBanner = false; // we load it ourself
 				m_Banner.LoadRoulette();
 				if( SAMPLE_MUSIC_PREVIEW_MODE != SampleMusicPreviewMode_LastSong )
 					m_sSampleMusicToPlay = m_sRouletteMusicPath;
 				break;
-			case TYPE_RANDOM:
+			case WheelItemDataType_Random:
 				bWantBanner = false; // we load it ourself
 				m_Banner.LoadRandom();
 				//if( SAMPLE_MUSIC_PREVIEW_MODE != SampleMusicPreviewMode_LastSong )
 				m_sSampleMusicToPlay = m_sRandomMusicPath;
 				break;
-			case TYPE_CUSTOM:
+			case WheelItemDataType_Custom:
 				{
 					bWantBanner = false; // we load it ourself
 					RString sBannerName = GetMusicWheel()->GetCurWheelItemData( GetMusicWheel()->GetCurrentIndex() )->m_pAction->m_sName.c_str();
@@ -1781,8 +1783,8 @@ void ScreenSelectMusic::AfterMusicChange()
 		}
 		*/
 		break;
-	case TYPE_SONG:
-	case TYPE_PORTAL:
+	case WheelItemDataType_Song:
+	case WheelItemDataType_Portal:
 		// check SampleMusicPreviewMode here.
 		switch( SAMPLE_MUSIC_PREVIEW_MODE )
 		{
@@ -1818,7 +1820,7 @@ void ScreenSelectMusic::AfterMusicChange()
 		SwitchToPreferredDifficulty();
 		break;
 
-	case TYPE_COURSE:
+	case WheelItemDataType_Course:
 	{
 		const Course *lCourse = m_MusicWheel.GetSelectedCourse();
 		const Style *pStyle = NULL;

@@ -2,7 +2,6 @@
 #define ARCH_SETUP_WINDOWS_H
 
 #define HAVE_FFMPEG
-#define HAVE_THEORA
 
 #define SUPPORT_OPENGL
 #define SUPPORT_D3D

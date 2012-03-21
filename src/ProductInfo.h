@@ -23,19 +23,14 @@
  *
  * These are the 'official' version designations:
  * <ul>
- * <li>"experimental: pre-release versions.</li>
- * 
- * <li>"private beta v0.0": hmm, think about it for a second there.</li>
- * 
- * <li>==Public versions==
- *   - "v0.0 alpha #": Alpha versions (bug squashing, polishing until we reach beta)
- *   - "v0.0 beta #": Beta versions (bug squashing, _focus_ is on high priority bugs)
- *   - "v0.0 rc#": Release Candidates (if there are no problems, move on to final)
- *   - "v0.0": Final Releases
+ * <li>"v5.0 alpha #": Alpha versions (bug squashing, polishing until we reach beta)</li>
+ * <li>"v5.0 beta #": Beta versions (bug squashing, _focus_ is on high priority bugs)</li>
+ * <li>"v5.0 rc#": Release Candidates (if there are no problems, move on to final)</li>
+ * <li>"v5.0.0": Final Releases</li>
  * </li></ul>
  */
 #ifndef PRODUCT_VER_BARE
-#define PRODUCT_VER_BARE v5.0 Preview 4
+#define PRODUCT_VER_BARE v5.0 alpha 1a
 #endif
 
 /**

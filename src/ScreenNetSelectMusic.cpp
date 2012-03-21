@@ -392,7 +392,7 @@ void ScreenNetSelectMusic::MenuStart( const InputEventPlus &input )
 	if( !bResult )
 		return;
 
-	if( m_MusicWheel.GetSelectedType() != TYPE_SONG )
+	if( m_MusicWheel.GetSelectedType() != WheelItemDataType_Song )
 		return;
 
 	Song * pSong = m_MusicWheel.GetSelectedSong();

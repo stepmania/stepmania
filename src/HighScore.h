@@ -41,6 +41,9 @@ struct HighScore
 	 * @return the number of seconds left. */
 	float GetSurviveSeconds() const;
 	float GetSurvivalSeconds() const;
+	int   GetMaxCombo() const;
+	StageAward GetStageAward() const;
+	PeakComboAward GetPeakComboAward() const;
 	/**
 	 * @brief Get the modifiers used for this run.
 	 * @return the modifiers. */
@@ -66,6 +69,9 @@ struct HighScore
 	void SetScore( int iScore );
 	void SetPercentDP( float f );
 	void SetAliveSeconds( float f );
+	void SetMaxCombo( int i );
+	void SetStageAward( StageAward a );
+	void SetPeakComboAward( PeakComboAward a );
 	void SetModifiers( RString s );
 	void SetDateTime( DateTime d );
 	void SetPlayerGuid( RString s );

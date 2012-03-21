@@ -114,7 +114,7 @@ void TimingWindowSecondsInit( size_t /*TimingWindow*/ i, RString &sNameOut, floa
 	case TW_W4:	defaultValueOut = 0.135f;	break;
 	case TW_W5:	defaultValueOut = 0.180f;	break;
 	case TW_Mine:	defaultValueOut = 0.090f;	break;	// same as great
-	case TW_Hold:	defaultValueOut = 0.500f;	break;	// allow enough time to take foot off and put back on
+	case TW_Hold:	defaultValueOut = 0.250f;	break;	// allow enough time to take foot off and put back on
 	case TW_Roll:	defaultValueOut = 0.500f;	break;
 	case TW_Attack:	defaultValueOut = 0.135f;	break;
 	}
@@ -1653,7 +1653,8 @@ int Player::GetClosestNoteDirectional( int col, int iStartRow, int iEndRow, bool
 			const TapNote &tn = begin->second;
 			if (!m_Timing->IsJudgableAtRow( begin->first ))
 				break;
-			if( tn.type == TapNote::empty )
+			// unsure if autoKeysounds should be excluded. -Wolfman2000
+			if( tn.type == TapNote::empty || tn.type == TapNote::autoKeysound )
 				break;
 			if( !bAllowGraded && tn.result.tns != TNS_None )
 				break;
@@ -2234,14 +2235,12 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 				if( !bRelease && ( REQUIRE_STEP_ON_MINES == !bHeld ) && 
 				   fSecondsFromExact <= GetWindowSeconds(TW_Mine) &&
 				   m_Timing->IsJudgableAtRow(iSongRow))
-					score = TNS_HitMine;
+					score = TNS_HitMine;   
 				break;
-
 			case TapNote::attack:
 				if( !bRelease && fSecondsFromExact <= GetWindowSeconds(TW_Attack) && !pTN->result.bHidden )
-					score = TNS_W2; // sentinel
+					score = AllowW1() ? TNS_W1 : TNS_W2; // sentinel
 				break;
-
 			case TapNote::hold_head:
 				// oh wow, this was causing the trigger before the hold heads
 				// bug. (It was fNoteOffset > 0.f before) -DaisuMaster
@@ -2792,7 +2791,9 @@ void Player::UpdateJudgedRows()
 					for( int iTrack = 0; iTrack < m_NoteData.GetNumTracks(); ++iTrack )
 					{
 						const TapNote &tn = m_NoteData.GetTapNote( iTrack, iRow );
-						if( tn.type == TapNote::empty || tn.type == TapNote::mine ) continue;
+						if (tn.type == TapNote::empty ||
+							tn.type == TapNote::mine ||
+							tn.type == TapNote::autoKeysound) continue;
 						SetJudgment( tn.result.tns, iTrack, tn.result.fTapNoteOffset );
 					}
 				}
@@ -2834,8 +2835,10 @@ void Player::UpdateJudgedRows()
 				bAllJudged = false;
 				continue;
 			case TNS_AvoidMine:
+				SetMineJudgment( tn.result.tns );
 				continue;
 			case TNS_HitMine:
+				SetMineJudgment( tn.result.tns );
 				break;
 			}
 			if( m_pNoteField )
@@ -2856,7 +2859,7 @@ void Player::UpdateJudgedRows()
 
 				Attack attMineAttack;
 				attMineAttack.sModifiers = ApplyRandomAttack();
-				attMineAttack.fStartSecond = -1.0f;
+				attMineAttack.fStartSecond = attMineAttack.ATTACK_STARTS_NOW;
 				attMineAttack.fSecsRemaining = fAttackRunTime;
 
 				m_pPlayerState->LaunchAttack( attMineAttack );
@@ -2972,14 +2975,30 @@ void Player::CrossedRows( int iLastRowCrossed, const RageTimer &now )
 			// check to see if there's a note at the crossed row
 			if( m_pPlayerState->m_PlayerController != PC_HUMAN )
 			{
-				if(tn.type != TapNote::empty && tn.type != TapNote::fake && tn.result.tns == TNS_None
-				   && this->m_Timing->IsJudgableAtRow(iRow) )
+				if (tn.type != TapNote::empty &&
+					tn.type != TapNote::fake &&
+					tn.type != TapNote::autoKeysound &&
+					tn.result.tns == TNS_None &&
+					this->m_Timing->IsJudgableAtRow(iRow) )
 				{
 					Step( iTrack, iRow, now, false, false );
 					if( m_pPlayerState->m_PlayerController == PC_AUTOPLAY )
 					{
 						if( m_pPlayerStageStats )
 							m_pPlayerStageStats->m_bDisqualified = true;
+					}
+				}
+			}
+			
+			// handle autokeysounds here (if not in the editor).
+			if (!GAMESTATE->m_bInStepEditor)
+			{
+				for (int t = 0; t < m_NoteData.GetNumTracks(); ++t)
+				{
+					const TapNote &tap = m_NoteData.GetTapNote(t, iRow);
+					if (tap.type == TapNote::autoKeysound)
+					{
+						PlayKeysound(tap, TNS_None);
 					}
 				}
 			}
@@ -3140,7 +3159,10 @@ void Player::HandleTapRowScore( unsigned row )
 	{
 		const TapNote &tn = m_NoteData.GetTapNote( track, row );
 		// Mines cannot be handled here.
-		if( tn.type == TapNote::empty || tn.type == TapNote::fake || tn.type == TapNote::mine )
+		if (tn.type == TapNote::empty ||
+			tn.type == TapNote::fake ||
+			tn.type == TapNote::mine ||
+			tn.type == TapNote::autoKeysound)
 			continue;
 		if( m_pPrimaryScoreKeeper )
 			m_pPrimaryScoreKeeper->HandleTapScore( tn );
@@ -3337,6 +3359,21 @@ void Player::CacheAllUsedNoteSkins()
 {
 	if( m_pNoteField )
 		m_pNoteField->CacheAllUsedNoteSkins();
+}
+
+void Player::SetMineJudgment( TapNoteScore tns )
+{
+	if( m_bSendJudgmentAndComboMessages )
+	{
+		Message msg("Judgment");
+		msg.SetParam( "Player", m_pPlayerState->m_PlayerNumber );
+		msg.SetParam( "TapNoteScore", tns );
+		MESSAGEMAN->Broadcast( msg );
+		if( m_pPlayerStageStats )
+		{
+			SetCombo( m_pPlayerStageStats->m_iCurCombo, m_pPlayerStageStats->m_iCurMissCombo );
+		}
+	}
 }
 
 void Player::SetJudgment( TapNoteScore tns, int iTrack, float fTapNoteOffset )

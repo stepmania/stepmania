@@ -17,10 +17,9 @@ bool MouseDevice::AddLogicalDevice( int usagePage, int usage )
 
 	switch( usage )
 	{
-		// Mice can either be kHIDUsage_GD_Mouse or kHIDUsage_GD_Pointer...
-		// Let's just go with kHIDUsage_GD_Mouse for now. -aj
+		// Mice can either be kHIDUsage_GD_Mouse or kHIDUsage_GD_Pointer.
 		case kHIDUsage_GD_Mouse:
-		//case kHIDUsage_GD_Pointer:
+		case kHIDUsage_GD_Pointer:
 			break;
 		default:
 			return false;

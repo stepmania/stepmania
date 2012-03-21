@@ -11,16 +11,19 @@ struct WheelItemBaseData;
 /** @brief The different types of Wheel Items. */
 enum WheelItemDataType 
 {
-	TYPE_GENERIC,	/**< A generic item on the Wheel. */
-	TYPE_SECTION,	/**< A general section on the Wheel. */
-	TYPE_SONG,	/**< A Song on the Wheel. */
-	TYPE_ROULETTE,	/**< The roulette section on the Wheel. */
-	TYPE_RANDOM,	/**< The random section on the Wheel. */
-	TYPE_PORTAL,	/**< The portal section on the Wheel. */
-	TYPE_COURSE,	/**< A Course on the Wheel. */
-	TYPE_SORT,	/**< A generic sorting item on the Wheel. */
-	TYPE_CUSTOM	/**< A custom item on the Wheel. */
+	WheelItemDataType_Generic,	/**< A generic item on the Wheel. */
+	WheelItemDataType_Section,	/**< A general section on the Wheel. */
+	WheelItemDataType_Song,		/**< A Song on the Wheel. */
+	WheelItemDataType_Roulette,	/**< The roulette section on the Wheel. */
+	WheelItemDataType_Random,	/**< The random section on the Wheel. */
+	WheelItemDataType_Portal,	/**< The portal section on the Wheel. */
+	WheelItemDataType_Course,	/**< A Course on the Wheel. */
+	WheelItemDataType_Sort,		/**< A generic sorting item on the Wheel. */
+	WheelItemDataType_Custom,	/**< A custom item on the Wheel. */
+	NUM_WheelItemDataType,
+	WheelItemDataType_Invalid
 };
+LuaDeclareType( WheelItemDataType );
 
 struct WheelItemBaseData
 {

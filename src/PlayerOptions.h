@@ -21,6 +21,7 @@ public:
 	 * This code was taken from Init() to use proper initialization. */
 	PlayerOptions(): m_bSetScrollSpeed(false),
 		m_fTimeSpacing(0), m_SpeedfTimeSpacing(1.0f),
+		m_fMaxScrollBPM(0), m_SpeedfMaxScrollBPM(1.0f),
 		m_fScrollSpeed(1.0f), m_SpeedfScrollSpeed(1.0f),
 		m_fScrollBPM(200), m_SpeedfScrollBPM(1.0f),
 		m_fDark(0), m_SpeedfDark(1.0f),

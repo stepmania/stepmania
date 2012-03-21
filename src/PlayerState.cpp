@@ -63,10 +63,10 @@ void PlayerState::Update( float fDelta )
 	{
 		Attack &attack = m_ActiveAttacks[s];
 
-		// -1 is the "starts now" sentinel value. You must add the attack
-		// by calling GameState::LaunchAttack, or else the -1 won't be 
+		// You must add sattack by calling GameState::LaunchAttack,
+		// or else the sentinel value won't be 
 		// converted into the current music time.  
-		ASSERT( attack.fStartSecond != -1 );
+		ASSERT( attack.fStartSecond != attack.ATTACK_STARTS_NOW );
 
 		bool bCurrentlyEnabled =
 			attack.bGlobal ||
@@ -111,12 +111,12 @@ void PlayerState::LaunchAttack( const Attack& a )
 
 	Attack attack = a;
 
-	/* If fStartSecond is -1, it means "launch as soon as possible". For m_ActiveAttacks,
+	/* If fStartSecond is the sentinel, it means "launch as soon as possible". For m_ActiveAttacks,
 	 * mark the real time it's starting (now), so Update() can know when the attack
-	 * started so it can be removed later.  For m_ModsToApply, leave the -1 in,
+	 * started so it can be removed later.  For m_ModsToApply, leave the sentinel in,
 	 * so Player::Update knows to apply attack transforms correctly. (yuck) */
 	m_ModsToApply.push_back( attack );
-	if( attack.fStartSecond == -1 )
+	if( attack.fStartSecond == attack.ATTACK_STARTS_NOW )
 		attack.fStartSecond = m_Position.m_fMusicSeconds;
 	m_ActiveAttacks.push_back( attack );
 

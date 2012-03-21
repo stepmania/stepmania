@@ -39,6 +39,19 @@ const Game::PerButtonInfo *Game::GetPerButtonInfo( GameButton gb ) const
 		return &m_PerButtonInfo[gb-GAME_BUTTON_NEXT];
 }
 
+TapNoteScore Game::GetMapJudgmentTo( TapNoteScore tns ) const
+{
+	switch(tns)
+	{
+		case TNS_W1: return m_mapW1To;
+		case TNS_W2: return m_mapW2To; 
+		case TNS_W3: return m_mapW3To;
+		case TNS_W4: return m_mapW4To;
+		case TNS_W5: return m_mapW5To;
+		default: return TapNoteScore_Invalid;
+	}
+}
+
 // lua start
 #include "LuaBinding.h"
 
@@ -47,10 +60,14 @@ class LunaGame: public Luna<Game>
 {
 public:
 	static int GetName( T* p, lua_State *L )			{ lua_pushstring( L, p->m_szName ); return 1; }
+	static int CountNotesSeparately( T* p, lua_State *L )	{ lua_pushboolean( L, p->m_bCountNotesSeparately ); return 1; }
+	DEFINE_METHOD( GetMapJudgmentTo, GetMapJudgmentTo(Enum::Check<TapNoteScore>(L, 1)) )
 
 	LunaGame()
 	{
 		ADD_METHOD( GetName );
+		ADD_METHOD( CountNotesSeparately );
+		ADD_METHOD( GetMapJudgmentTo );
 	}
 };
 

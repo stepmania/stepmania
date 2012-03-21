@@ -194,7 +194,7 @@ PrefsManager::PrefsManager() :
 
 
 	m_iRegenComboAfterMiss		( "RegenComboAfterMiss",	5 ),
-	m_bMercifulDrain		( "MercifulDrain",		true ),	// negative life deltas are scaled by the players life percentage
+	m_bMercifulDrain		( "MercifulDrain",		false ),	// negative life deltas are scaled by the players life percentage
 	m_bMinimum1FullSongInCourses	( "Minimum1FullSongInCourses",	false ),	// FEoS for 1st song, FailImmediate thereafter
 	m_bFailOffInBeginner		( "FailOffInBeginner",		false ),
 	m_bFailOffForFirstStageEasy	( "FailOffForFirstStageEasy",	false ),
@@ -213,7 +213,7 @@ PrefsManager::PrefsManager() :
 	m_iSongsPerPlay			( "SongsPerPlay",		3, ValidateSongsPerPlay ),
 	m_bDelayedCreditsReconcile	( "DelayedCreditsReconcile",	false ),
 	m_ShowSongOptions		( "ShowSongOptions",		Maybe_YES ),
-	m_bDancePointsForOni		( "DancePointsForOni",		false ),
+	m_bDancePointsForOni		( "DancePointsForOni",		true ),
 	m_bPercentageScoring		( "PercentageScoring",		false ),
 	m_fMinPercentageForMachineSongHighScore		( "MinPercentageForMachineSongHighScore",	0.0001f ), // This is for home, who cares how bad you do?
 	m_fMinPercentageForMachineCourseHighScore	( "MinPercentageForMachineCourseHighScore",	0.0001f ),	// don't save course scores with 0 percentage

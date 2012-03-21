@@ -84,7 +84,7 @@ v1toko
 Macgravel
  * Orbular noteskin (the default kb7 noteskin)
 
-sy567
+hanubeki (@803832, formerly sy567)
  * Small beginner helper fix
  (http://www.stepmania.com/forums/showpost.php?p=158721&postcount=12)
 
@@ -127,8 +127,17 @@ John_Reactor
 DHalens
  * Spanish translation
 
-桜為小鳩 (@sakuraponila)
+桜為小鳩/Sakurana-Kobato (@sakuraponila)
  * Scoring fixes
+
+@Niler_jp
+ * Japanese translation
+ 
+Deamon007
+ * Dutch translation
+
+cvpcs
+ * Updated ffmpeg support to v0.10
 
 ==the beta testers==
 [SSC Beta Testing Team]

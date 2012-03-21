@@ -8,6 +8,8 @@ class PlayerState;
 /** @brief An action made against a Player to make things more difficult. */
 struct Attack
 {
+	static const int ATTACK_STARTS_NOW = -10000;
+
 	AttackLevel	level;
 	/**
 	 * @brief the starting point of this attack.
@@ -25,14 +27,14 @@ struct Attack
 	void MakeBlank()
 	{
 		level = ATTACK_LEVEL_1;
-		fStartSecond = -1;
+		fStartSecond = ATTACK_STARTS_NOW;
 		fSecsRemaining = 0;
 		sModifiers = RString();
 		bOn = false;
 		bGlobal = false;
 		bShowInAttackList = true;
 	}
-	Attack(): level(ATTACK_LEVEL_1), fStartSecond(-1),
+	Attack(): level(ATTACK_LEVEL_1), fStartSecond(ATTACK_STARTS_NOW),
 		fSecsRemaining(0), sModifiers(RString()),
 		bOn(false), bGlobal(false), bShowInAttackList(true)
 		{} // MakeBlank() is effectively called here.

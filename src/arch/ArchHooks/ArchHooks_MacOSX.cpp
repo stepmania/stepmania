@@ -343,7 +343,11 @@ RString ArchHooks::GetPreferredLanguage()
 	{
 		// MacRoman agrees with ASCII in the low-order 7 bits.
 		const char *str = CFStringGetCStringPtr( lang, kCFStringEncodingMacRoman );
-		ASSERT( str );
+		if( str )
+			ret = str;
+		else
+			LOG->Warn( "Unable to determine system language. Using English." );
+
 		ret = RString( str, 2 );
 	}
 
@@ -405,6 +409,11 @@ void ArchHooks::MountInitialFilesystems( const RString &sDirOfExecutable )
 		CFRelease( dataPath );
 		CFRelease( dataUrl );
 	}
+}
+
+void ArchHooks::MountUserFilesystems( const RString &sDirOfExecutable )
+{
+	char dir[PATH_MAX];
 
 	// /Save -> ~/Library/Preferences/PRODUCT_ID
 	PathForFolderType( dir, kPreferencesFolderType );
@@ -429,11 +438,6 @@ void ArchHooks::MountInitialFilesystems( const RString &sDirOfExecutable )
 	// /Desktop -> /Users/<user>/Desktop/PRODUCT_ID
 	PathForFolderType( dir, kDesktopFolderType );
 	FILEMAN->Mount( "dir", ssprintf("%s/" PRODUCT_ID, dir), "/Desktop" );
-}
-
-void ArchHooks::MountUserFilesystems( const RString &sDirOfExecutable )
-{
-	// XXX: Fix me.
 }
 
 static inline int GetIntValue( CFTypeRef r )

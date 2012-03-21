@@ -1,0 +1,3 @@
+No graphics here.
+Hey. It`s only black bacground and some text. What you`ve expeced.
+All text should be dynamic, and translatable, remeber? 

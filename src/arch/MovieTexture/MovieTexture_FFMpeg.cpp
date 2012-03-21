@@ -6,31 +6,17 @@
 #include "RageUtil.h"
 #include "RageFile.h"
 #include "RageSurface.h"
-#include "RageFileDriverReadAhead.h"
 
 #include <cerrno>
 
 namespace avcodec
 {
-#if defined(MACOSX)
-	// old shit
-	#include <ffmpeg/avformat.h>
-#else
-	/* ...shit. this is gonna break building on Linux and Mac, isn't it?
-	 * (the way I have it set to include ffmpeg/crap/header.h instead of
-	 * crap/header.h like in the patch: http://pastie.org/701873 )
-	 */
 	extern "C"
 	{
 		#include <libavformat/avformat.h>
 		#include <libswscale/swscale.h>
 	}
-#endif
 };
-
-int URLRageFile_open( avcodec::URLContext *h, const char *filename, int flags );
-int URLRageFile_read( avcodec::URLContext *h, unsigned char *buf, int size );
-int URLRageFile_close( avcodec::URLContext *h );
 
 /*
 #if defined(_MSC_VER)
@@ -42,9 +28,7 @@ int URLRageFile_close( avcodec::URLContext *h );
 #endif // _MSC_VER
 */
 
-#if !defined(MACOSX)
-	static const int sws_flags = SWS_BICUBIC; // XXX: Reasonable default?
-#endif
+static const int sws_flags = SWS_BICUBIC; // XXX: Reasonable default?
 
 static struct AVPixelFormat_t
 {
@@ -281,9 +265,7 @@ private:
 	avcodec::AVStream *m_pStream;
 	avcodec::AVFrame m_Frame;
 	avcodec::PixelFormat m_AVTexfmt; /* PixelFormat of output surface */
-#if !defined(MACOSX)
 	avcodec::SwsContext *m_swsctx;
-#endif
 
 	float m_fPTS;
 	avcodec::AVFormatContext *m_fctx;
@@ -292,7 +274,6 @@ private:
 	float m_fTimestampOffset;
 	float m_fLastFrameDelay;
 	int m_iFrameNumber;
-	bool m_bHadBframes;
 
 	avcodec::AVPacket m_Packet;
 	int m_iCurrentPacketOffset;
@@ -312,10 +293,6 @@ MovieDecoder_FFMpeg::MovieDecoder_FFMpeg()
 	m_pStream = NULL;
 	m_iCurrentPacketOffset = -1;
 
-	/* Until we play the whole movie once without hitting a B-frame, assume
-	 * they exist. */
-	m_bHadBframes = true;
-
 	m_fLastFrame = 0;
 
 	Init();
@@ -328,14 +305,11 @@ MovieDecoder_FFMpeg::~MovieDecoder_FFMpeg()
 		avcodec::av_free_packet( &m_Packet );
 		m_iCurrentPacketOffset = -1;
 	}
-#if !defined(MACOSX)
 	if (m_swsctx)
 	{
 		avcodec::sws_freeContext(m_swsctx);
 		m_swsctx = NULL;
 	}
-#endif
-
 }
 
 void MovieDecoder_FFMpeg::Init()
@@ -347,9 +321,7 @@ void MovieDecoder_FFMpeg::Init()
 	m_fPTS = -1;
 	m_iFrameNumber = -1; /* decode one frame and you're on the 0th */
 	m_fTimestampOffset = 0;
-#if !defined(MACOSX)
 	m_swsctx = NULL;
-#endif
 
 	if( m_iCurrentPacketOffset != -1 )
 	{
@@ -478,16 +450,16 @@ int MovieDecoder_FFMpeg::DecodePacket( float fTargetTime )
 		CHECKPOINT;
 		/* Hack: we need to send size = 0 to flush frames at the end, but we have
 		 * to give it a buffer to read from since it tries to read anyway. */
-		static uint8_t dummy[FF_INPUT_BUFFER_PADDING_SIZE] = { 0 };
-		int len = avcodec::avcodec_decode_video(
+		m_Packet.data = m_Packet.size ? m_Packet.data : NULL;
+		int len = avcodec::avcodec_decode_video2(
 				m_pStream->codec, 
 				&m_Frame, &iGotFrame,
-				m_Packet.size? m_Packet.data:dummy, m_Packet.size );
+				&m_Packet );
 		CHECKPOINT;
 
 		if( len < 0 )
 		{
-			LOG->Warn("avcodec_decode_video: %i", len);
+			LOG->Warn("avcodec_decode_video2: %i", len);
 			return -1; // XXX
 		}
 
@@ -519,9 +491,6 @@ int MovieDecoder_FFMpeg::DecodePacket( float fTargetTime )
 
 		++m_iFrameNumber;
 
-		if( m_Frame.pict_type == FF_B_TYPE )
-			m_bHadBframes = true;
-
 		if( m_iFrameNumber == 0 )
 		{
 			/* Some videos start with a timestamp other than 0.  I think this is used
@@ -551,19 +520,6 @@ void MovieDecoder_FFMpeg::GetFrame( RageSurface *pSurface )
 	pict.data[0] = (unsigned char *) pSurface->pixels;
 	pict.linesize[0] = pSurface->pitch;
 
-	/* Greetings. The code that's commented out below is what is found in the
-	 * current StepMania 4 ("vanilla") codebase, since they use ffmpeg r8448
-	 * with a patch. When looking at ffmpeg's code recently to see if they've
-	 * accepted the patch, they did, and since various people have decided to
-	 * make StepMania support modern versions of ffmpeg, we are doing so as
-	 * well. This is part of that whole "futures-oriented" thing we have going
-	 * on with sm-ssc. Just thought you'd like to know. :) -aj
-	 */
-#if defined(MACOSX)
-	avcodec::img_convert( &pict, m_AVTexfmt,
-			(avcodec::AVPicture *) &m_Frame, m_pStream->codec->pix_fmt, 
-			m_pStream->codec->width, m_pStream->codec->height );
-#else
 	/* XXX 1: Do this in one of the Open() methods instead?
 	 * XXX 2: The problem of doing this in Open() is that m_AVTexfmt is not
 	 * already initialized with its correct value.
@@ -584,21 +540,7 @@ void MovieDecoder_FFMpeg::GetFrame( RageSurface *pSurface )
 	avcodec::sws_scale( m_swsctx,
 			m_Frame.data, m_Frame.linesize, 0, GetHeight(),
 			pict.data, pict.linesize );
-#endif
 }
-
-static avcodec::AVStream *FindVideoStream( avcodec::AVFormatContext *m_fctx )
-{
-	ASSERT_M( m_fctx->nb_streams <= MAX_STREAMS, ssprintf( "m_fctx->nb_streams = %d", m_fctx->nb_streams) );
-	for( unsigned stream = 0; stream < m_fctx->nb_streams; ++stream )
-	{
-		avcodec::AVStream *enc = m_fctx->streams[stream];
-		if( enc->codec->codec_type == avcodec::CODEC_TYPE_VIDEO )
-			return enc;
-	}
-	return NULL;
-}
-
 
 static RString averr_ssprintf( int err, const char *fmt, ... )
 {
@@ -609,16 +551,11 @@ static RString averr_ssprintf( int err, const char *fmt, ... )
 	RString s = vssprintf( fmt, va );
 	va_end(va); 
 
-	RString Error;
-	switch( err )
-	{
-	case AVERROR_IO:		Error = "I/O error"; break;
-	case AVERROR_NUMEXPECTED:	Error = "number syntax expected in filename"; break;
-	case AVERROR_INVALIDDATA:	Error = "invalid data found"; break;
-	case AVERROR_NOMEM:		Error = "not enough memory"; break;
-	case AVERROR_NOFMT:		Error = "unknown format"; break;
-	default: Error = ssprintf( "unknown error %i", err ); break;
-	}
+	size_t errbuf_size = 512;
+	char* errbuf = new char[errbuf_size];
+	avcodec::av_strerror(err, errbuf, errbuf_size);
+	RString Error = ssprintf("%i: %s", err, errbuf);
+	delete errbuf;
 
 	return s + " (" + Error + ")";
 }
@@ -628,17 +565,17 @@ int URLRageFile_open( avcodec::URLContext *h, const char *filename, int flags )
 	if( strncmp( filename, "rage://", 7 ) )
 	{
 		LOG->Warn("URLRageFile_open: Unexpected path \"%s\"", filename );
-	    return -EIO;
+		return -EIO;
 	}
 	filename += 7;
 
 	int mode = 0;
-	switch( flags )
-	{
-	case URL_RDONLY: mode = RageFile::READ; break;
-	case URL_WRONLY: mode = RageFile::WRITE | RageFile::STREAMED; break;
-	case URL_RDWR: FAIL_M( "O_RDWR unsupported" );
-	}
+	if ( flags & URL_RDONLY )
+		mode = RageFile::READ;
+	else if ( flags & URL_WRONLY )
+		mode = RageFile::WRITE | RageFile::STREAMED;
+	else
+		FAIL_M( "O_RDWR unsupported" );
 
 	RageFileBasic *pFile = new RageFile;
 
@@ -653,14 +590,6 @@ int URLRageFile_open( avcodec::URLContext *h, const char *filename, int flags )
 		pFile = f;
 	}
 
-	// If possible, wrap this file in the read-ahead filter to avoid skips when we rewind.
-	if( RageFileDriverReadAhead::FileSupported(pFile) )
-	{
-		RageFileDriverReadAhead *pBufferedFile = new RageFileDriverReadAhead( pFile, 1024*128 );
-		pBufferedFile->DeleteFileWhenFinished();
-		pFile = pBufferedFile;
-	}
-
 	h->is_streamed = false;
 	h->priv_data = pFile;
 	return 0;
@@ -672,29 +601,23 @@ int URLRageFile_read( avcodec::URLContext *h, unsigned char *buf, int size )
 	return f->Read( buf, size );
 }
 
-#if defined(MACOSX) || defined(_MSC_VER) // still using older ffmpeg versions
-	int URLRageFile_write( avcodec::URLContext *h, unsigned char *buf, int size )
-#else // assume ffmpeg 0.6 on *nix
-	int URLRageFile_write( avcodec::URLContext *h, unsigned char *buf, int size )
-#endif
+int URLRageFile_write( avcodec::URLContext *h, const unsigned char *buf, int size )
 {
 	RageFileBasic *f = (RageFileBasic *) h->priv_data;
 	return f->Write( buf, size );
 }
 
-// sm4svn has it as:
-#if defined(MACOSX)
-	avcodec::offset_t URLRageFile_seek( avcodec::URLContext *h, avcodec::offset_t pos, int whence )
-#else
-	int64_t URLRageFile_seek( avcodec::URLContext *h, int64_t pos, int whence )
-#endif
+int64_t URLRageFile_seek( avcodec::URLContext *h, int64_t pos, int whence )
 {
 	RageFileBasic *f = (RageFileBasic *) h->priv_data;
 	if( whence == AVSEEK_SIZE )
 		return f->GetFileSize();
 
 	if( whence != SEEK_SET && whence != SEEK_CUR && whence != SEEK_END )
+	{
+		LOG->Trace("Error: unsupported seek whence: %d", whence);
 		return -1;
+	}
 
 	return f->Seek( (int) pos, whence );
 }
@@ -713,17 +636,7 @@ static avcodec::URLProtocol RageProtocol =
 	URLRageFile_read,
 	URLRageFile_write,
 	URLRageFile_seek,
-	URLRageFile_close,
-	// why were these two nulls added? -aj
-	// I added them because the last api of ffmpeg spects them to be, you could
-	// avoid them and I think it could result in compiler warnings, but the
-	// correct code is theese NULLS to be there. - howl (quote from
-	// http://www.stepmania.com/forums/showpost.php?p=168832&postcount=37)
-#if !defined(MACOSX)
-	NULL,
-	NULL,
-#endif
-	NULL
+	URLRageFile_close
 };
 
 void MovieTexture_FFMpeg::RegisterProtocols()
@@ -733,26 +646,28 @@ void MovieTexture_FFMpeg::RegisterProtocols()
 		return;
 	Done = true;
 
+	avcodec::avcodec_register_all();
 	avcodec::av_register_all();
-	avcodec::register_protocol( &RageProtocol );
+	avcodec::av_register_protocol2( &RageProtocol, sizeof(RageProtocol) );
 }
 
 RString MovieDecoder_FFMpeg::Open( RString sFile )
 {
 	MovieTexture_FFMpeg::RegisterProtocols();
 
-	int ret = avcodec::av_open_input_file( &m_fctx, "rage://" + sFile, NULL, 0, NULL );
+	m_fctx = avcodec::avformat_alloc_context();
+	int ret = avcodec::avformat_open_input( &m_fctx, "rage://" + sFile, NULL, NULL );
 	if( ret < 0 )
 		return RString( averr_ssprintf(ret, "AVCodec: Couldn't open \"%s\"", sFile.c_str()) );
 
-	ret = avcodec::av_find_stream_info( m_fctx );
+	ret = avcodec::avformat_find_stream_info( m_fctx, NULL );
 	if( ret < 0 )
 		return RString( averr_ssprintf(ret, "AVCodec (%s): Couldn't find codec parameters", sFile.c_str()) );
 
-	avcodec::AVStream *pStream = FindVideoStream( m_fctx );
-	if( pStream == NULL )
+	int stream_idx = avcodec::av_find_best_stream( m_fctx, avcodec::AVMEDIA_TYPE_VIDEO, -1, -1, NULL, 0 );
+	if ( stream_idx < 0 || stream_idx >= m_fctx->nb_streams || m_fctx->streams[stream_idx] == NULL )
 		return "Couldn't find any video streams";
-	m_pStream = pStream;
+	m_pStream = m_fctx->streams[stream_idx];
 
 	if( m_pStream->codec->codec_id == avcodec::CODEC_ID_NONE )
 		return ssprintf( "Unsupported codec %08x", m_pStream->codec->codec_tag );
@@ -779,21 +694,19 @@ RString MovieDecoder_FFMpeg::OpenCodec()
 	if( pCodec == NULL )
 		return ssprintf( "Couldn't find decoder %i", m_pStream->codec->codec_id );
 
+	m_pStream->codec->workaround_bugs   = 1;
+	m_pStream->codec->idct_algo         = FF_IDCT_AUTO;
+	m_pStream->codec->error_concealment = 3;
+
+	if( pCodec->capabilities & CODEC_CAP_DR1 )
+		m_pStream->codec->flags |= CODEC_FLAG_EMU_EDGE;
+
 	LOG->Trace("Opening codec %s", pCodec->name );
 
-	if( !m_bHadBframes )
-	{
-		LOG->Trace("Setting CODEC_FLAG_LOW_DELAY" );
-		m_pStream->codec->flags |= CODEC_FLAG_LOW_DELAY;
-	}
-
-	int ret = avcodec::avcodec_open( m_pStream->codec, pCodec );
+	int ret = avcodec::avcodec_open2( m_pStream->codec, pCodec, NULL );
 	if( ret < 0 )
 		return RString( averr_ssprintf(ret, "Couldn't open codec \"%s\"", pCodec->name) );
 	ASSERT( m_pStream->codec->codec );
-
-	/* This is set to true when we find a B-frame, to use on the next loop. */
-	m_bHadBframes = false;
 
 	return RString();
 }

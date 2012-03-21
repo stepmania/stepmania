@@ -872,6 +872,14 @@ public:
 	static int GetCharacter( T* p, lua_State *L )	{ if(p->m_pCharacter==NULL) lua_pushnil(L); else p->m_pCharacter->PushSelf(L); return 1; }
 	static int GetSongGroup( T* p, lua_State *L )	{ lua_pushstring(L, p->m_sSongGroup ); return 1; }
 	static int GetUrl( T* p, lua_State *L )	{ lua_pushstring(L, p->m_sUrl ); return 1; }
+	static int GetAnnouncer( T* p, lua_State *L )	{ lua_pushstring(L, p->m_sAnnouncer ); return 1; }
+	static int GetPreferredModifiers( T* p, lua_State *L )	{ lua_pushstring(L, p->m_sPreferredModifiers ); return 1; }
+	static int GetStageModifiers( T* p, lua_State *L )	{ lua_pushstring(L, p->m_sStageModifiers ); return 1; }
+
+	DEFINE_METHOD( GetCourseDifficulty,	m_CourseDifficulty )
+	DEFINE_METHOD( GetDifficulty,	m_dc )
+	DEFINE_METHOD( GetPlayMode,		m_pm )
+	DEFINE_METHOD( GetSortOrder,	m_SortOrder )
 
 	LunaGameCommand()
 	{
@@ -880,10 +888,10 @@ public:
 		ADD_METHOD( GetIndex );
 		ADD_METHOD( GetMultiPlayer );
 		ADD_METHOD( GetStyle );
-		//ADD_METHOD( GetDifficulty );
-		//ADD_METHOD( GetCourseDifficulty );
+		ADD_METHOD( GetDifficulty );
+		ADD_METHOD( GetCourseDifficulty );
 		ADD_METHOD( GetScreen );
-		//ADD_METHOD( GetPlayMode );
+		ADD_METHOD( GetPlayMode );
 		ADD_METHOD( GetProfileID );
 		ADD_METHOD( GetSong );
 		ADD_METHOD( GetSteps );
@@ -891,8 +899,11 @@ public:
 		ADD_METHOD( GetTrail );
 		ADD_METHOD( GetCharacter );
 		ADD_METHOD( GetSongGroup );
-		//ADD_METHOD( GetSortOrder );
+		ADD_METHOD( GetSortOrder );
 		ADD_METHOD( GetUrl );
+		ADD_METHOD( GetAnnouncer );
+		ADD_METHOD( GetPreferredModifiers );
+		ADD_METHOD( GetStageModifiers );
 	}
 };
 

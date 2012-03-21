@@ -1,5 +1,21 @@
 #include "global.h"
 #include "WheelItemBase.h"
+#include "LuaManager.h"
+
+static const char *WheelItemDataTypeNames[] = {
+	"Generic",
+	"Section",
+	"Song",
+	"Roulette",
+	"Random",
+	"Portal",
+	"Course",
+	"Sort",
+	"Custom",
+};
+XToString( WheelItemDataType );
+StringToX( WheelItemDataType );
+LuaXType( WheelItemDataType );
 
 WheelItemBaseData::WheelItemBaseData( WheelItemDataType type, RString sText, RageColor color )
 {
@@ -30,7 +46,7 @@ WheelItemBase::WheelItemBase(RString sType)
 
 void WheelItemBase::Load( RString sType )
 {
-	m_colorLocked = RageColor(0,0,0,0.25);
+	m_colorLocked = RageColor(0,0,0,0.25f);
 }
 
 void WheelItemBase::LoadFromWheelItemData( const WheelItemBaseData* pWID, int iIndex, bool bHasFocus, int iDrawIndex )
@@ -73,13 +89,17 @@ class LunaWheelItemBase: public Luna<WheelItemBase>
 public:
 	DEFINE_METHOD( GetColor, GetColor() )
 	DEFINE_METHOD( GetText, GetText() )
-	//DEFINE_METHOD( GetType, GetType() )
+	
+	static int GetType( T* p, lua_State *L ) {
+		lua_pushnumber( L, p->GetType() );
+		return 1;
+	}
 
 	LunaWheelItemBase()
 	{
 		ADD_METHOD( GetColor );
 		ADD_METHOD( GetText );
-		//ADD_METHOD( GetType );
+		ADD_METHOD( GetType );
 	}
 };
 LUA_REGISTER_DERIVED_CLASS( WheelItemBase, ActorFrame )

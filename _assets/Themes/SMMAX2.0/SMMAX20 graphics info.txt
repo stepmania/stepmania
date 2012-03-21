@@ -1,0 +1,17 @@
+This folder contains all graphics and fonts used in SMMAX2.0 theme project.
+Project is aimed to cration of new version of very popular SM3.9`s SMMAX theme for use in SM5.0. 
+It`s not intended to be a port! Project was desingned to be new from scratch.
+I was planning to do all work myself but I hit the wall of my poor coding skills. 
+So, after couple months lack of progress I`ve made a decision to share the project with community.
+Main project file is "SMMAX20 screens project ver1_1.cdr". To open it you need Corel Draw X5 or later.
+From corel you can export every tiny element to PNG or PSD whith transperacy. 
+It`s just a matter of proper selection. 
+Keep in mind that project graphisc was designed in 1920x1200 resolution. 
+It is native resolution of my monitor. So now you must bear with me, 
+because it`s lots of work to change it back to 1080p
+Project use 2 fonts and you can find`em (or info about how to obtain it) in fonts folder.
+Project is released under MIT License. Same as whole stepmania.
+Thankyou for your attention, intrest, future contribution,
+and please, really please, (I`m beging now) do not convert my work to something ugly. ^__^; 
+
+~ John Reactor.    

@@ -14,14 +14,7 @@ void ActorSound::Load( const RString &sPath )
 
 void ActorSound::Play()
 {
-	// This fix makes it possible to stop and pause ActorSounds. (Also,
-	// sometimes stacking sounds is annoying.) -DaisuMaster
-	if( m_Sound.IsPlaying() )
-	{
-		m_Sound.PlayCopy();
-		return;
-	}
-	m_Sound.StartPlaying();
+	m_Sound.Play();
 }
 
 void ActorSound::Pause( bool bPause )

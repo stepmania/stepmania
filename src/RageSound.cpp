@@ -667,6 +667,24 @@ public:
 		return 1;
 	}
 
+	// Rename me and deprecate the above one? -DaisuMaster
+	static int SetParam( T* p, lua_State *L )
+	{
+		RageSoundParams params( p->GetParams() );
+
+		RString val = SArg(1);
+		if( val == "StartSecond" ) params.m_StartSecond = FArg(2);
+		else if( val == "LengthSeconds" ) params.m_LengthSeconds = FArg(2);
+		else if( val == "FadeInSeconds" ) params.m_fFadeInSeconds = FArg(2);
+		else if( val == "FadeSeconds" ) params.m_fFadeOutSeconds = FArg(2);
+		else if( val == "Pitch" ) params.m_fPitch = FArg(2);
+		else if( val == "Speed" ) params.m_fSpeed = FArg(2);
+		else if( val == "Volume" ) params.m_Volume = FArg(2);
+
+		p->SetParams( params );
+		return 0;
+	}
+
 	/*
 	static int SetStopMode( T* p, lua_State *L )
 	{
@@ -681,6 +699,7 @@ public:
 		ADD_METHOD( speed );
 		ADD_METHOD( volume );
 		ADD_METHOD( SetProperty );
+		ADD_METHOD( SetParam );
 		//ADD_METHOD( SetStopMode );
 	}
 };

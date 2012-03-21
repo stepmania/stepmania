@@ -23,7 +23,6 @@ PercentageDisplay::PercentageDisplay()
 	m_LastMax = -1;
 	m_iDancePointsDigits = 0;
 	m_bUseRemainder = false;
-	m_bApplyScoreDisplayOptions = false;
 	m_bAutoRefresh = false;
 	m_FormatPercentScore.SetFromExpression( "FormatPercentScore" );
 }
@@ -31,7 +30,6 @@ PercentageDisplay::PercentageDisplay()
 void PercentageDisplay::LoadFromNode( const XNode* pNode )
 {
 	pNode->GetAttrValue( "DancePointsDigits", m_iDancePointsDigits );
-	pNode->GetAttrValue( "ApplyScoreDisplayOptions", m_bApplyScoreDisplayOptions );
 	pNode->GetAttrValue( "AutoRefresh", m_bAutoRefresh );
 	{
 		Lua *L = LUA->Get();
@@ -76,9 +74,11 @@ void PercentageDisplay::Load( const PlayerState *pPlayerState, const PlayerStage
 
 	m_iDancePointsDigits = THEME->GetMetricI( sMetricsGroup, "DancePointsDigits" );
 	m_bUseRemainder = THEME->GetMetricB( sMetricsGroup, "PercentUseRemainder" );
-	m_bApplyScoreDisplayOptions = THEME->GetMetricB( sMetricsGroup, "ApplyScoreDisplayOptions" );
 	m_FormatPercentScore = THEME->GetMetricR( sMetricsGroup, "Format" );
-	
+
+	m_sPercentFormat = THEME->GetMetric( sMetricsGroup, "PercentFormat" );
+	m_sRemainderFormat = THEME->GetMetric( sMetricsGroup, "RemainderFormat" );
+
 	if( m_FormatPercentScore.IsNil() )
 	{
 		LOG->Trace( "Format is nil in [%s]. Defaulting to 'FormatPercentScore'.", sMetricsGroup.c_str() );
@@ -145,8 +145,8 @@ void PercentageDisplay::Refresh()
 		{
 			int iPercentWhole = int(fPercentDancePoints*100);
 			int iPercentRemainder = int( (fPercentDancePoints*100 - int(fPercentDancePoints*100)) * 10 );
-			sNumToDisplay = ssprintf( "%2d", iPercentWhole );
-			m_textPercentRemainder.SetText( ssprintf(".%01d%%", iPercentRemainder) );
+			sNumToDisplay = ssprintf( m_sPercentFormat, iPercentWhole );
+			m_textPercentRemainder.SetText( ssprintf(m_sRemainderFormat, iPercentRemainder) );
 		}
 		else
 		{
@@ -159,7 +159,7 @@ void PercentageDisplay::Refresh()
 				LOG->Warn( "Error running FormatPercentScore: %s", sError.c_str() );
 			LuaHelpers::Pop( L, sNumToDisplay );
 			LUA->Release(L);
-			
+
 			// HACK: Use the last frame in the numbers texture as '-'
 			sNumToDisplay.Replace('-','x');
 		}

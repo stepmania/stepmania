@@ -1,0 +1,6 @@
+Second font used in project is frutiger. Unforutnatly it`s commersial, and cant be distributed.
+But no worries. Firstly: This font is used only in "system layer" graphics, and isnt essential for design as charlie brown m54.
+Secondly: This font has many free replacements. Just search the web for something simillar. Heres link to the original:
+http://www.fonts.com/findfonts/detail.htm?productid=191443 for reference.
+ 
+   

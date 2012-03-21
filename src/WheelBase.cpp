@@ -19,6 +19,19 @@
 const int MAX_WHEEL_SOUND_SPEED = 15;
 AutoScreenMessage( SM_SongChanged ); // TODO: Replace this with a Message and MESSAGEMAN
 
+static const char *WheelStateNames[] = {
+	"Selecting",
+	"FlyingOffBeforeNextSort",
+	"FlyingOnAfterNextSort",
+	"RouletteSpinning",
+	"RouletteSlowingDown",
+	"RandomSpinning",
+	"Locked",
+};
+XToString( WheelState );
+StringToX( WheelState );
+LuaXType( WheelState );
+
 WheelBase::~WheelBase()
 {
 	FOREACH( WheelItemBase*, m_WheelBaseItems, i )
@@ -276,18 +289,22 @@ bool WheelBase::Select()	// return true if this selection can end the screen
 
 	switch( m_CurWheelItemData[m_iSelection]->m_Type )
 	{
-	case TYPE_GENERIC:
+	case WheelItemDataType_Generic:
 		m_LastSelection = m_CurWheelItemData[m_iSelection];
 		break;
-	case TYPE_SECTION:
+	case WheelItemDataType_Section:
 		{
 			RString sThisItemSectionName = m_CurWheelItemData[m_iSelection]->m_sText;
 			if( m_sExpandedSectionName == sThisItemSectionName ) // already expanded
+			{
 				SetOpenSection( "" ); // collapse it
+				m_soundCollapse.Play();
+			}
 			else // already collapsed
+			{
 				SetOpenSection( sThisItemSectionName ); // expand it
-
-			m_soundExpand.Play();
+				m_soundExpand.Play();
+			}
 		}
 		break;
 	default:
@@ -468,7 +485,7 @@ void WheelBase::RebuildWheelItems( int iDist )
 		const WheelItemBaseData *pData = data[iIndex];
 		WheelItemBase *pDisplay = items[i];
 
-		pDisplay->SetExpanded( pData->m_Type == TYPE_SECTION && pData->m_sText == m_sExpandedSectionName );
+		pDisplay->SetExpanded( pData->m_Type == WheelItemDataType_Section && pData->m_sText == m_sExpandedSectionName );
 	}
 
 	for( int i=0; i<(int)items.size(); i++ )
@@ -522,13 +539,18 @@ public:
 		return 1;
 	}
 	static int IsSettled( T* p, lua_State *L ){ lua_pushboolean( L, p->IsSettled() ); return 1; }
-	static int IsLocked( T* p, lua_State *L ){ lua_pushboolean( L, p->WheelIsLocked() ); return 1; }
 	static int SetOpenSection( T* p, lua_State *L ){ p->SetOpenSection( SArg(1) ); return 0; }
 	static int GetCurrentIndex( T* p, lua_State *L ){ lua_pushnumber( L, p->GetCurrentIndex() ); return 1; }
 	static int GetNumItems( T* p, lua_State *L ){ lua_pushnumber( L, p->GetNumItems() ); return 1; }
 	// evil shit
 	//static int Move( T* p, lua_State *L ){ p->Move( IArg(1) ); return 0; }
 	//static int ChangeMusic( T* p, lua_State *L ){ p->ChangeMusicUnlessLocked( IArg(1) ); return 0; }
+
+	DEFINE_METHOD( GetSelectedType,		GetSelectedType() )
+	DEFINE_METHOD( GetWheelState,		GetWheelState() )
+
+	// deprecated; use GetWheelState instead:
+	static int IsLocked( T* p, lua_State *L ){ lua_pushboolean( L, p->WheelIsLocked() ); return 1; }
 
 	LunaWheelBase()
 	{
@@ -538,6 +560,7 @@ public:
 		ADD_METHOD( SetOpenSection );
 		ADD_METHOD( GetCurrentIndex );
 		ADD_METHOD( GetNumItems );
+		ADD_METHOD( GetSelectedType );
 		// evil shit
 		//ADD_METHOD( Move );
 		//ADD_METHOD( ChangeMusic );

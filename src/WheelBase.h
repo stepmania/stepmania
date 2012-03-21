@@ -14,6 +14,21 @@
 
 #define NUM_WHEEL_ITEMS		((int)ceil(NUM_WHEEL_ITEMS_TO_DRAW+2))
 
+enum WheelState {
+	STATE_SELECTING,
+	STATE_FLYING_OFF_BEFORE_NEXT_SORT, 
+	STATE_FLYING_ON_AFTER_NEXT_SORT, 
+	STATE_ROULETTE_SPINNING,
+	STATE_ROULETTE_SLOWING_DOWN,
+	STATE_RANDOM_SPINNING,
+	STATE_LOCKED,
+	NUM_WheelState,
+	WheelState_Invalid,
+};
+const RString& WheelStateToString( WheelState ws );
+WheelState StringToWheelState( const RString& sDC );
+LuaDeclareType( WheelState );
+
 /** @brief A wheel with data elements. */
 class WheelBase : public ActorFrame
 {
@@ -38,6 +53,7 @@ public:
 
 	virtual bool Select();	// return true if this selection can end the screen
 
+	WheelState GetWheelState() { return m_WheelState; }
 	bool WheelIsLocked() { return (m_WheelState == STATE_LOCKED ? true : false); }
 	void RebuildWheelItems( int dist = INT_MAX );	// INT_MAX = refresh all
 
@@ -48,6 +64,8 @@ public:
 	WheelItemBase *GetWheelItem( int i ) { if( i < 0 || i >= (int) m_WheelBaseItems.size() ) return NULL; return m_WheelBaseItems[i]; }
 	RString GetExpandedSectionName() { return m_sExpandedSectionName; }
 	int GetCurrentIndex() { return m_iSelection; }
+
+	WheelItemDataType GetSelectedType() { return m_CurWheelItemData[m_iSelection]->m_Type; }
 
 	// Lua
 	void PushSelf( lua_State *L );
@@ -81,15 +99,6 @@ protected:
 	RageTimer	m_MovingSoundTimer;
 	float		m_TimeBeforeMovingBegins;
 	float		m_SpinSpeed;
-	enum WheelState { 
-		STATE_SELECTING,
-		STATE_FLYING_OFF_BEFORE_NEXT_SORT, 
-		STATE_FLYING_ON_AFTER_NEXT_SORT, 
-		STATE_ROULETTE_SPINNING,
-		STATE_ROULETTE_SLOWING_DOWN,
-		STATE_RANDOM_SPINNING,
-		STATE_LOCKED,
-	};
 
 	WheelState	m_WheelState;
 	float		m_fTimeLeftInState;
@@ -97,6 +106,7 @@ protected:
 
 	RageSound m_soundChangeMusic;
 	RageSound m_soundExpand;
+	RageSound m_soundCollapse;
 	RageSound m_soundLocked;
 
 //	bool WheelItemIsVisible(int n);

@@ -262,13 +262,10 @@ void ScreenDebugOverlay::Init()
 		BitmapText *p = new BitmapText;
 		p->SetName( "PageText" );
 		p->LoadFromFont( THEME->GetPathF("ScreenDebugOverlay", "page") );
-		LOAD_ALL_COMMANDS( p );
-		// xxx: I shouldn't have to do this:
-		ON_COMMAND( p );
+		LOAD_ALL_COMMANDS_AND_ON_COMMAND( p );
 		// todo: Y value is still hardcoded. -aj
 		p->SetXY( PAGE_START_X+iPage*PAGE_SPACING_X, SCREEN_TOP+20 );
 		p->SetText( *s + " (" + sButton + ")" );
-		//p->SetShadowLength( 1 );
 		m_vptextPages.push_back( p );
 		this->AddChild( p );
 	}
@@ -281,10 +278,7 @@ void ScreenDebugOverlay::Init()
 			bt->LoadFromFont( THEME->GetPathF("ScreenDebugOverlay", "line") );
 			bt->SetHorizAlign( align_right );
 			bt->SetText( "blah" );
-			//p->SetShadowLength( 2 );
-			LOAD_ALL_COMMANDS( *bt );
-			// xxx: I shouldn't have to do this:
-			ON_COMMAND( bt );
+			LOAD_ALL_COMMANDS_AND_ON_COMMAND( *bt );
 			m_vptextButton.push_back( bt );
 			this->AddChild( bt );
 		}
@@ -294,10 +288,7 @@ void ScreenDebugOverlay::Init()
 			bt->LoadFromFont( THEME->GetPathF("ScreenDebugOverlay", "line") );
 			bt->SetHorizAlign( align_left );
 			bt->SetText( "blah" );
-			//p->SetShadowLength( 2 );
-			LOAD_ALL_COMMANDS( *bt );
-			// xxx: I shouldn't have to do this:
-			ON_COMMAND( bt );
+			LOAD_ALL_COMMANDS_AND_ON_COMMAND( *bt );
 			m_vptextFunction.push_back( bt );
 			this->AddChild( bt );
 		}
@@ -366,7 +357,6 @@ void ScreenDebugOverlay::UpdateText()
 
 		int i = p-g_pvpSubscribers->begin();
 
-		//float fY = SCREEN_TOP+50 + iOffset * 16;
 		float fY = LINE_START_Y + iOffset * LINE_SPACING;
 
 		BitmapText &txt1 = *m_vptextButton[i];

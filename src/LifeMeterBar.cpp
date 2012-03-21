@@ -123,6 +123,7 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 	case TNS_CheckpointMiss:fDeltaLife = m_fLifePercentChange.GetValue(SE_CheckpointMiss);	break;
 	}
 
+	// this was previously if( IsHot()  &&  score < TNS_GOOD ) in 3.9... -freem
 	if( IsHot()  &&  fDeltaLife < 0 )
 		fDeltaLife = min( fDeltaLife, -0.10f );		// make it take a while to get back to "hot"
 
@@ -220,6 +221,14 @@ void LifeMeterBar::ChangeLife( float fDeltaLife )
 				fDeltaLife *= m_fLifeDifficulty;
 			else
 				fDeltaLife /= m_fLifeDifficulty;
+			break;
+		case SongOptions::DRAIN_SUDDEN_DEATH:
+			// This should always -1.0f;
+			if( fDeltaLife < 0 )
+				fDeltaLife = -1.0f;
+			else
+				fDeltaLife = 0;
+			break;
 		default:
 		break;
 	}

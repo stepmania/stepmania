@@ -57,15 +57,17 @@ local contrib = {
 	"Kaox", -- pump/default noteskin
 	"NitroX72", -- pump/frame noteskin
 	"Petriform", -- default theme music
-	"桜為小鳩/@sakuraponila", -- custom scoring fixes
+	"桜為小鳩/Sakurana-Kobato (@sakuraponila)", -- custom scoring fixes
 	"Samuel Kim (1a2a3a2a1a)", -- various beat mode fixes
-	"sy567", -- beginner helper fix
+	"hanubeki (@803832)", -- beginner helper fix, among various other things
 	"v1toko", -- x-mode from StepNXA
 }
 
 local translators = {
 	"John Reactor (Polish)",
 	"DHalens (Spanish)",
+	"@Niler_jp (Japanese)",
+	"Deamon007 (Dutch)"
 }
 
 local thanks = {
@@ -79,6 +81,7 @@ local thanks = {
 	"Matt1360", -- Automake magic + oitg bro
 	"Renard",
 	"Ryan McKanna (Plaguefox)",
+	"Sta Kousin", --help with Japanese bug reports
 }
 
 local shoutout = {

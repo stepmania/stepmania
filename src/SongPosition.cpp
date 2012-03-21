@@ -14,6 +14,7 @@ void SongPosition::UpdateSongPosition( float fPositionSeconds, const TimingData 
 	timing.GetBeatAndBPSFromElapsedTime( fPositionSeconds, m_fSongBeat, m_fCurBPS, m_bFreeze, m_bDelay, m_iWarpBeginRow, m_fWarpDestination );
 	
 	// "Crash reason : -243478.890625 -48695.773438"
+	// The question is why is -2000 used as the limit? -aj
 	ASSERT_M( m_fSongBeat > -2000, ssprintf("Song beat %f at %f seconds is less than -2000!", m_fSongBeat, fPositionSeconds) );
 
 	m_fMusicSeconds = fPositionSeconds;

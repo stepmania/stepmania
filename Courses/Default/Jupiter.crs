@@ -1,8 +1,9 @@
 #COURSE:Jupiter;
 #SCRIPTER:Midiman;
+#METER:Medium:5;
 
 #GAINSECONDS:120;
-#SONG:*:Hard;
+#SONG:StepMania 5\Springtime:Medium;nodifficult;
 
 #GAINSECONDS:25;
-#SONG:*:Hard;
+#SONG:StepMania 5\MechaTribe Assault:Easy;nodifficult;

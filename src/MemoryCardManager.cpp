@@ -39,7 +39,7 @@ static void MemoryCardUsbLevelInit( size_t /*PlayerNumber*/ i, RString &sNameOut
 	defaultValueOut = -1;
 }
 
-static Preference<bool>	g_bMemoryCards( "MemoryCards", true );
+static Preference<bool>	g_bMemoryCards( "MemoryCards", false );
 static Preference<bool>	g_bMemoryCardProfiles( "MemoryCardProfiles", true );
 
 // if set, always use the device that mounts to this point

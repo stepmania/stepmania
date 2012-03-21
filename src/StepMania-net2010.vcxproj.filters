@@ -711,9 +711,6 @@
     <ClCompile Include="arch\MovieTexture\MovieTexture_Null.cpp">
       <Filter>StepMania\arch\MovieTexture</Filter>
     </ClCompile>
-    <ClCompile Include="arch\MovieTexture\MovieTexture_Theora.cpp">
-      <Filter>StepMania\arch\MovieTexture</Filter>
-    </ClCompile>
     <ClCompile Include="arch\LowLevelWindow\LowLevelWindow.cpp">
       <Filter>StepMania\arch\LowLevelWindow</Filter>
     </ClCompile>
@@ -2220,9 +2217,6 @@
       <Filter>StepMania\arch\MovieTexture</Filter>
     </ClInclude>
     <ClInclude Include="arch\MovieTexture\MovieTexture_Null.h">
-      <Filter>StepMania\arch\MovieTexture</Filter>
-    </ClInclude>
-    <ClInclude Include="arch\MovieTexture\MovieTexture_Theora.h">
       <Filter>StepMania\arch\MovieTexture</Filter>
     </ClInclude>
     <ClInclude Include="arch\LowLevelWindow\LowLevelWindow.h">

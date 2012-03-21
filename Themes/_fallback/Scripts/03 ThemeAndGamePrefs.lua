@@ -23,14 +23,14 @@ function InitGamePrefs()
 	end;
 end
 function InitUserPrefs()
-	if GetUserPrefB("UserPrefShowLotsaOptions") == nil then
-		SetUserPref("UserPrefShowLotsaOptions", true);
+	if GetUserPrefB("ShowLotsaOptions") == nil then
+		SetUserPref("ShowLotsaOptions", true);
 	end;
 
 	local Prefs =
 	{
-		{ "UserPrefGameplayShowStepsDisplay",	true },
-		{ "UserPrefGameplayShowScore",		false},
+		{ "GameplayShowStepsDisplay",	true },
+		{ "GameplayShowScore",		false},
 --[[		{ "ProTimingP1",	false},
 		{ "ProTimingP2",	false},
 --]]
@@ -38,13 +38,13 @@ function InitUserPrefs()
 
 	local BPrefs = 
 	{
-		{ "UserPrefAutoSetStyle",		false },
-		{ "UserPrefComboUnderField",	true },
-		{ "UserPrefLongFail",			false},
-		{ "UserPrefNotePosition",		true },
+		{ "AutoSetStyle",		false },
+		{ "ComboUnderField",	true },
+		{ "LongFail",			false},
+		{ "NotePosition",		true },
 		{ "UserPrefProtimingP1",		false},
 		{ "UserPrefProtimingP2",		false},
-		{ "UserPrefShowLotsaOptions",	true},
+		{ "ShowLotsaOptions",	true},
 		{ "ComboOnRolls",	false},
 		{ "FlashyCombos",	false},
 		{ "GameplayFooter",	false},

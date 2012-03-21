@@ -28,7 +28,7 @@ else
 	t[#t+1] = Def.Sprite {
 		InitCommand=cmd(Center);
 		BeginCommand=cmd(LoadFromCurrentSongBackground);
-		OnCommand=cmd(diffusealpha,0;scaletoclipped,SCREEN_WIDTH,SCREEN_HEIGHT;sleep,0.5;linear,0.50;diffusealpha,1;sleep,3);
+		OnCommand=cmd(diffusealpha,0;scale_or_crop_background;sleep,0.5;linear,0.50;diffusealpha,1;sleep,3);
 	};
 end
 

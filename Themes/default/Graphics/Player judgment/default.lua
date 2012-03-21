@@ -1,6 +1,13 @@
 local c;
 local player = Var "Player";
-local bShowProtiming = GetUserPrefB("UserPrefProtiming" .. ToEnumShortString(player) );
+local function ShowProtiming()
+  if GAMESTATE:IsDemonstration() then
+    return false
+  else
+    return GetUserPrefB("UserPrefProtiming" .. ToEnumShortString(player));
+  end
+end;
+local bShowProtiming = ShowProtiming();
 
 local function MakeAverage( t )
 	local sum = 0;
@@ -127,6 +134,10 @@ t[#t+1] = Def.ActorFrame {
 	end;
 
 	JudgmentMessageCommand=function(self, param)
+        -- Fix Player Combo animating when player successfully avoids a mine.
+        local msgParam = param;
+        MESSAGEMAN:Broadcast("TestJudgment",msgParam);
+        --
 		if param.Player ~= player then return end;
 		if param.HoldNoteScore then return end;
 		
@@ -159,7 +170,8 @@ t[#t+1] = Def.ActorFrame {
 		
 		if fTapNoteOffset ~= 1 then
 			-- we're safe, you can push the values
-			tTotalJudgments[#tTotalJudgments+1] = bUseNegative and fTapNoteOffset or math.abs( fTapNoteOffset );
+			tTotalJudgments[#tTotalJudgments+1] = fTapNoteOffset;
+--~ 			tTotalJudgments[#tTotalJudgments+1] = bUseNegative and fTapNoteOffset or math.abs( fTapNoteOffset );
 		end
 		
 		self:playcommand("Reset");
@@ -169,7 +181,7 @@ t[#t+1] = Def.ActorFrame {
 		JudgeCmds[param.TapNoteScore](c.Judgment);
 		
 		c.ProtimingDisplay:visible( bShowProtiming );
-		c.ProtimingDisplay:settextf("%i",math.abs(fTapNoteOffset * 1000));
+		c.ProtimingDisplay:settextf("%i",fTapNoteOffset * 1000);
 		ProtimingCmds[param.TapNoteScore](c.ProtimingDisplay);
 		
 		c.ProtimingAverage:visible( bShowProtiming );

@@ -40,7 +40,9 @@ for( map<keyType, valType>::const_iterator var = (vect).begin(); var != (vect).e
 #define FOREACHMM( keyType, valType, vect, var ) 			\
 for( multimap<keyType, valType>::iterator var = (vect).begin(); var != (vect).end(); ++var )
 
-/* Hmm...any reason why there is no FOREACHMM_CONST? */
+/** @brief General foreach loop iterating over a multimap, using a constant iterator. */
+#define FOREACHMM_CONST( keyType, valType, vect, var ) \
+for( multimap<keyType, valType>::const_iterator var = (vect).begin(); var != (vect).end(); ++var )
 
 #endif
 

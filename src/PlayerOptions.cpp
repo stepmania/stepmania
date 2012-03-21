@@ -61,7 +61,7 @@ void PlayerOptions::Approach( const PlayerOptions& other, float fDeltaSeconds )
 
 	APPROACH( fTimeSpacing );
 	APPROACH( fScrollSpeed );
-	//APPROACH( fMaxScrollBPM );
+	//APPROACH( fMaxScrollBPM ); // if uncommented, causes crashes. -aj
 	fapproach( m_fScrollBPM, other.m_fScrollBPM, fDeltaSeconds * other.m_SpeedfScrollBPM*150 );
 	for( int i=0; i<NUM_ACCELS; i++ )
 		APPROACH( fAccels[i] );
@@ -123,7 +123,7 @@ void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
 			RString s = ssprintf( "m%.0f", m_fMaxScrollBPM );
 			AddTo.push_back( s );
 		}
-		if( m_bSetScrollSpeed || m_fScrollSpeed != 1 )
+		else if( m_bSetScrollSpeed || m_fScrollSpeed != 1 )
 		{
 			/* -> 1.00 */
 			RString s = ssprintf( "%2.2f", m_fScrollSpeed );
@@ -355,8 +355,11 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 	// XXX: will not properly tween, I don't think.
 	else if( sscanf( sBit, "m%f", &level ) == 1 )
 	{
+		// OpenITG doesn't have this block:
+		/*
 		if( !isfinite(level) || level <= 0.0f )
 			level = 200.0f;
+		*/
 		SET_FLOAT( fMaxScrollBPM )
 		m_fTimeSpacing = 0;
 	}

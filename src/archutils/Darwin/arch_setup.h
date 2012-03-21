@@ -7,7 +7,6 @@ extern "C" int SM_main( int argc, char *argv[] );
 
 #define HAVE_VERSION_INFO
 #define HAVE_CXA_DEMANGLE
-#define HAVE_THEORA
 #define HAVE_FFMPEG
 #define HAVE_PTHREAD_COND_TIMEDWAIT
 /* This must be defined to 1 because autoconf's AC_CHECK_DECLS macro decides to define
