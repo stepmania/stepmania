@@ -1931,11 +1931,20 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 </Class>
 <Class name='GameCommand'>
+	<Function name='GetAnnouncer' return='string' arguments=''>
+		Returns any announcer that may have been set.
+	</Function>
 	<Function name='GetCharacter' return='Character' arguments=''>
 		Returns any Character associated with this item (or <code>nil</code> if there isn't one).
 	</Function>
 	<Function name='GetCourse' return='Course' arguments=''>
 		Returns any Course that may have been set.
+	</Function>
+	<Function name='GetCourseDifficulty' return='Difficulty' arguments=''>
+		Returns a course difficulty, if one is set in the GameCommand.
+	</Function>
+	<Function name='GetDifficulty' return='Difficulty' arguments=''>
+		Returns a difficulty, if one is set in the GameCommand.
 	</Function>
 	<Function name='GetIndex' return='int' arguments=''>
 		Returns the index of this item.
@@ -1945,6 +1954,12 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='GetName' return='string' arguments=''>
 		Returns the choice name.
+	</Function>
+	<Function name='GetPlayMode' return='PlayMode' arguments=''>
+		Returns the PlayMode associated with this GameCommand.
+	</Function>
+	<Function name='GetPreferredModifiers' return='string' arguments=''>
+		Returns any preferred modifiers that may have been set.
 	</Function>
 	<Function name='GetProfileID' return='string' arguments=''>
 		Returns any Profile ID that may have been set.
@@ -1957,6 +1972,12 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='GetSongGroup' return='string' arguments=''>
 		Returns the name of any song group that may have been set.
+	</Function>
+	<Function name='GetSortOrder' return='SortOder' arguments=''>
+		Returns the sort order, if the GameCommand has set one.
+	</Function>
+	<Function name='GetStageModifiers' return='string' arguments=''>
+		Returns any stage modifiers that may have been set.
 	</Function>
 	<Function name='GetSteps' return='Steps' arguments=''>
 		Returns any Steps that may have been set.
@@ -4380,7 +4401,7 @@ save yourself some time, copy this for undocumented things:
 </Class>
 <Class name='Style'>
 	<Function name='ColumnsPerPlayer' return='int' arguments=''>
-		Returns the number of total tracks this Style contains (e.g. 4 for dance-versus, but 8 for dance-double).
+		Returns the number of total tracks per player this Style contains (e.g. 4 for dance-versus, but 8 for dance-double).
 	</Function>
 	<Function name='GetName' return='string' arguments=''>
 		Returns the name of the Style.
@@ -4390,6 +4411,9 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='GetStyleType' return='StyleType' arguments=''>
 		Returns the StyleType for this Style.
+	</Function>
+	<Function name='LockedDifficulty' return='bool' arguments=''>
+		Returns <code>true</code> if this style locks the difficulty for both players.
 	</Function>
 	<Function name='NeedsZoomOutWith2Players' return='bool' arguments=''>
 		Returns <code>true</code> if the Style needs to be zoomed out with two players.

@@ -676,15 +676,22 @@
 			<Function name='GetName'/>
 		</Class>
 		<Class name='GameCommand'>
+			<Function name='GetAnnouncer'/>
 			<Function name='GetCharacter'/>
 			<Function name='GetCourse'/>
+			<Function name='GetCourseDifficulty'/>
+			<Function name='GetDifficulty'/>
 			<Function name='GetIndex'/>
 			<Function name='GetMultiPlayer'/>
 			<Function name='GetName'/>
+			<Function name='GetPlayMode'/>
+			<Function name='GetPreferredModifiers'/>
 			<Function name='GetProfileID'/>
 			<Function name='GetScreen'/>
 			<Function name='GetSong'/>
 			<Function name='GetSongGroup'/>
+			<Function name='GetSortOrder'/>
+			<Function name='GetStageModifiers'/>
 			<Function name='GetSteps'/>
 			<Function name='GetStyle'/>
 			<Function name='GetText'/>
@@ -1569,6 +1576,7 @@
 			<Function name='GetName'/>
 			<Function name='GetStepsType'/>
 			<Function name='GetStyleType'/>
+			<Function name='LockedDifficulty'/>
 			<Function name='NeedsZoomOutWith2Players'/>
 		</Class>
 		<Class base='ActorFrame' name='TextBanner'>
@@ -2297,6 +2305,15 @@
 			<EnumValue name='&apos;WheelItemDataType_Sort&apos;' value='7'/>
 			<EnumValue name='&apos;WheelItemDataType_Custom&apos;' value='8'/>
 		</Enum>
+		<Enum name='WheelState'>
+			<EnumValue name='&apos;WheelState_Selecting&apos;' value='0'/>
+			<EnumValue name='&apos;WheelState_FlyingOffBeforeNextSort&apos;' value='1'/>
+			<EnumValue name='&apos;WheelState_FlyingOnAfterNextSort&apos;' value='2'/>
+			<EnumValue name='&apos;WheelState_RouletteSpinning&apos;' value='3'/>
+			<EnumValue name='&apos;WheelState_RouletteSlowingDown&apos;' value='4'/>
+			<EnumValue name='&apos;WheelState_RandomSpinning&apos;' value='5'/>
+			<EnumValue name='&apos;WheelState_Locked&apos;' value='6'/>
+		</Enum>
 		<Enum name='ZTestMode'>
 			<EnumValue name='&apos;ZTestMode_Off&apos;' value='0'/>
 			<EnumValue name='&apos;ZTestMode_WriteOnPass&apos;' value='1'/>
@@ -2327,5 +2344,5 @@
 		<Constant name='top' value='&apos;VertAlign_Top&apos;'/>
 	</Constants>
 	<Version>StepMania v5.0 alpha 1a</Version>
-	<Date>2012-02-19</Date>
+	<Date>2012-03-20</Date>
 </Lua>
