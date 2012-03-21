@@ -134,6 +134,10 @@ t[#t+1] = Def.ActorFrame {
 	end;
 
 	JudgmentMessageCommand=function(self, param)
+        -- Fix Player Combo animating when player successfully avoids a mine.
+        local msgParam = param;
+        MESSAGEMAN:Broadcast("TestJudgment",msgParam);
+        --
 		if param.Player ~= player then return end;
 		if param.HoldNoteScore then return end;
 		

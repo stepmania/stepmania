@@ -221,6 +221,14 @@ void LifeMeterBar::ChangeLife( float fDeltaLife )
 				fDeltaLife *= m_fLifeDifficulty;
 			else
 				fDeltaLife /= m_fLifeDifficulty;
+			break;
+		case SongOptions::DRAIN_SUDDEN_DEATH:
+			// This should always -1.0f;
+			if( fDeltaLife < 0 )
+				fDeltaLife = -1.0f;
+			else
+				fDeltaLife = 0;
+			break;
 		default:
 		break;
 	}

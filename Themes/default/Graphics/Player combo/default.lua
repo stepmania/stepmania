@@ -1,5 +1,6 @@
 local c;
 local cf;
+local canAnimate = false;
 local player = Var "Player";
 local ShowComboAt = THEME:GetMetric("Combo", "ShowComboAt");
 local Pulse = THEME:GetMetric("Combo", "PulseCommand");
