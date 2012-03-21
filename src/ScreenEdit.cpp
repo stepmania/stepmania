@@ -1119,8 +1119,13 @@ void ScreenEdit::Init()
 	m_pSong = GAMESTATE->m_pCurSong;
 	m_pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
 	
+	/*	The user will most likely switch into Step Timing after laying down 
+		some initial notes. It also throws off many people at first glance.
+	
 	if( m_pSteps->UsesSplitTiming() )
 		GAMESTATE->m_bIsUsingStepTiming = true;
+	*/
+
 	
 	m_bReturnToRecordMenuAfterPlay = false;
 	m_fBeatToReturnTo = 0;
