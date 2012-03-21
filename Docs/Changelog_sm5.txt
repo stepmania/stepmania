@@ -13,6 +13,7 @@ StepMania 5.0 alpha 2 | 201203??
 ----------
 * [Background] Fix 3D noteskins and dancing characters from clashing with each other. [shakesoda, AJ]
 * [NoteField] Fix 3D noteskins overlapping. [shakesoda, AJ]
+* [ScreenEdit] Don't use Step timing by default. [Midiman]
 
 2012/03/15
 ----------
