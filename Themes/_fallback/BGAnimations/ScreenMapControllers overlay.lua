@@ -9,13 +9,13 @@ t[#t+1] = Def.Quad {
 };
 t[#t+1] = Def.ActorFrame {
   LoadFont("Common Normal") .. {
-    Text="WARNING!";
+    Text=ScreenString("WarningHeader");
     InitCommand=cmd(y,-70;diffuse,Color.Red);
     TweenOnCommand=cmd(diffusealpha,0;zoomx,2;zoomy,0;sleep,0.5;smooth,0.25;zoom,1;diffusealpha,1);
     TweenOffCommand=cmd(linear,0.5;diffusealpha,0);
   };
   LoadFont("Common Normal") .. {
-    Text="Please ensure that you do not overwrite any important keymappings, such as:\n&MENULEFT; LEFT &MENURIGHT; RIGHT &MENUUP; UP &MENUDOWN; DOWN &START; START &BACK; BACK or &SELECT; SELECT. Do not apply keymappings that you do not know the function of or unmap important keys!";
+    Text=ScreenString("WarningText");
     InitCommand=cmd(y,10;wrapwidthpixels,SCREEN_WIDTH-48);
     TweenOnCommand=cmd(diffusealpha,0;sleep,0.5125;linear,0.125;diffusealpha,1);
     TweenOffCommand=cmd(linear,0.5;diffusealpha,0);
