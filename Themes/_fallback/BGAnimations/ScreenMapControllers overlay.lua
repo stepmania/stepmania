@@ -1,6 +1,6 @@
 local t = Def.ActorFrame {
   InitCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y);
-  OnCommand=cmd(queuecommand,"TweenOn";sleep,5;queuecommand,"TweenOff");
+  OnCommand=cmd(queuecommand,"TweenOn";sleep,10;queuecommand,"TweenOff");
 }
 t[#t+1] = Def.Quad {
   InitCommand=cmd(zoomto,SCREEN_WIDTH,SCREEN_HEIGHT;diffuse,Color.Black);
