@@ -76,7 +76,7 @@ t[#t+1] = Def.ActorFrame {
 	};
 	LoadFont("Common Normal") .. {
 		Name="TextDisplay";
-		Text="MS";
+		Text=THEME:GetString("Protiming","MS");
 		InitCommand=cmd(visible,false);
 		OnCommand=THEME:GetMetric("Protiming","TextOnCommand");
 		ResetCommand=cmd(finishtweening;stopeffect;visible,false);
