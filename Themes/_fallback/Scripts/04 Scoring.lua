@@ -33,12 +33,12 @@ function GetDirectRadar(player)
 end;
 
 -----------------------------------------------------------
---StepMania 3.9 (Plus) Scorings by @803832
---3.9 MAX2
---3.9 5TH
---3.9Plus HYBRID
---3.9Plus SN
---3.9Plus SN2
+-- StepMania 3.9 (Plus) Scorings by @803832
+-- 3.9 MAX2
+-- 3.9 5TH
+-- 3.9Plus HYBRID
+-- 3.9Plus SN
+-- 3.9Plus SN2
 -- note: 3.9Plus PIU Scoring cannot be implemented due to no NumTapsInRow
 -- in JudgmentMessage. This is fixed in hanubeki-modified-sm-ssc revision 6c7184e7df9a:
 -- http://code.google.com/r/hanubeki-modified-sm-ssc/source/detail?r=6c7184e7df9a3694649f965c2976859bb9e45963 
@@ -502,8 +502,8 @@ r["3.9Plus SN2"] = function(params, pss)
 end;
 
 -----------------------------------------------------------
---Oldschool scoring, best described as a modified 4th mix scheme
---with a little 1st mix influence
+-- Oldschool scoring, best described as a modified 4th mix
+-- scheme with a little 1st mix influence
 -----------------------------------------------------------
 r['Oldschool'] = function(params, pss)
   local bestPoints = 999
@@ -524,7 +524,7 @@ r['Oldschool'] = function(params, pss)
 end;
 
 -----------------------------------------------------------
---DDR MAX2/Extreme(-esque) Scoring by @sakuraponila
+-- DDR MAX2/Extreme(-esque) Scoring by @sakuraponila
 -----------------------------------------------------------
 local ext_Steps = {0,0};
 r['DDR Extreme'] = function(params, pss)
@@ -601,7 +601,7 @@ r['DDR Extreme'] = function(params, pss)
 end;
 
 -----------------------------------------------------------
---HYBRID Scoring, contributed by @waiei
+-- HYBRID Scoring, contributed by @waiei
 -----------------------------------------------------------
 local hyb_Steps={0,0};
 r['Hybrid'] = function(params, pss)
@@ -654,7 +654,7 @@ r['Hybrid'] = function(params, pss)
 end;
 
 -----------------------------------------------------------
---DDR SuperNOVA scoring (Use MARVELOUS) by @sakuraponila
+-- DDR SuperNOVA scoring (Use MARVELOUS) by @sakuraponila
 -----------------------------------------------------------
 local sntmp_Score = {0,0};
 local sntmp_Steps = {0,0};
@@ -702,7 +702,7 @@ r['DDR SuperNOVA'] = function(params, pss)
 end;
 
 -----------------------------------------------------------
---DDR SuperNOVA 2 scoring by @waiei
+-- DDR SuperNOVA 2 scoring by @waiei
 -----------------------------------------------------------
 local sn2tmp_Sub={0,0};
 local sn2tmp_Score={0,0};
@@ -755,7 +755,8 @@ r['DDR SuperNOVA 2'] = function(params, pss)
 end;
 
 -----------------------------------------------------------
---Radar Master (disabled; todo: get this working with StepMania 5)
+-- Radar Master (disabled)
+-- (todo: get this working with StepMania 5)
 -----------------------------------------------------------
 r['[SSC] Radar Master'] = function(params, pss)
 	local masterTable = {
@@ -776,17 +777,18 @@ r['[SSC] Radar Master'] = function(params, pss)
 			totalRadar = totalRadar + firstRadar;
 		end;
 	end;
-	--two loops are needed because we need to calculate totalRadar
-	--to actually calculate any part of the score
+	-- two loops are needed, because we need to calculate totalRadar
+	-- to actually calculate any part of the score
 	for k,v in pairs(masterTable) do
 		local curPortion = pss:GetRadarActual():GetValue(k) / v;
 		finalScore = finalScore + curPortion*(500000000*(v/totalRadar));
 	end;
 	pss:SetScore(finalScore);
 end;
+
 ------------------------------------------------------------
---Marvelous Incorporated Grading System (or MIGS for short)
---basically like DP scoring with locked DP values
+-- Marvelous Incorporated Grading System (or MIGS for short)
+-- basically like DP scoring with locked DP values
 ------------------------------------------------------------
 r['MIGS'] = function(params,pss)
 	local curScore = 0;
@@ -806,15 +808,17 @@ r['MIGS'] = function(params,pss)
 end;
 
 --------------------------------------------------------------
---1bilDP scoring because I can.
+-- 1bilDP scoring because I can.
 --------------------------------------------------------------
 r['Billions DP']= function(params,pss)
   local poss = pss:GetPossibleDancePoints()
   pss:SetScore(math.floor((pss:GetActualDancePoints()/poss)*1000000000))
   pss:SetCurMaxScore(math.floor((pss:GetCurrentPossibleDancePoints()/poss)*1000000000))
 end
+
 -------------------------------------------------------------------------------
 -- Formulas end here.
+
 for v in ivalues(DisabledScoringModes) do r[v] = nil end
 Scoring = r;
 
@@ -831,22 +835,29 @@ function UserPrefScoringMode()
 		Choices = baseChoices;
 		LoadSelections = function(self, list, pn)
 			if ReadPrefFromFile("UserPrefScoringMode") ~= nil then
-        --Load the saved scoring mode from UserPrefs.
+			--Load the saved scoring mode from UserPrefs.
 				local theValue = ReadPrefFromFile("UserPrefScoringMode");
 				local success = false; 
-        --HACK: Preview 4 took out 1st and 4th scoring. Replace with a close equivalent.
-        if theValue == "DDR 1stMIX" or theValue == "DDR 4thMIX" then theValue = "Oldschool" end
-        --Search the list of scoring modes for the saved scoring mode.        
-				for k,v in ipairs(baseChoices) do if v == theValue then list[k] = true success = true break end end;
-        --We couldn't find it, pick the first available scoring mode as a sane default.
+
+				--HACK: Preview 4 took out 1st and 4th scoring. Replace with a close equivalent.
+				if theValue == "DDR 1stMIX" or theValue == "DDR 4thMIX" then theValue = "Oldschool" end
+
+				--Search the list of scoring modes for the saved scoring mode.        
+				for k,v in ipairs(baseChoices) do
+					if v == theValue then list[k] = true success = true break end
+				end;
+
+				--We couldn't find it, pick the first available scoring mode as a sane default.
 				if success == false then list[1] = true end;
 			else
-        WritePrefToFile("UserPrefScoringMode", baseChoices[1]);
+				WritePrefToFile("UserPrefScoringMode", baseChoices[1]);
 				list[1] = true;
 			end;
 		end;
 		SaveSelections = function(self, list, pn)
-			for k,v in ipairs(list) do if v then WritePrefToFile("UserPrefScoringMode", baseChoices[k]) break end end;
+			for k,v in ipairs(list) do
+				if v then WritePrefToFile("UserPrefScoringMode", baseChoices[k]) break end
+			end;
 		end;
 	};
 	setmetatable( t, t );
