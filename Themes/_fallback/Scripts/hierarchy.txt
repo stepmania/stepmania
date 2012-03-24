@@ -1,8 +1,8 @@
 StepMania 5 fallback Scripts Directory: Introduction 
 --------------------------------------------------------------------------------
 Hello, and welcome to the StepMania 5 fallback Scripts directory. You'll notice
-that our Lua scripts have numbers at the beginning of them. This is to control
-the order of execution.
+that all of our Lua scripts have numbers at the beginning of them. This is to
+control the order of execution.
 
 In SM5, scripts in subdirectories of Scripts/ (e.g. Scripts/01/somescript.lua)
 are loaded before scripts in the root of Scripts/ (e.g. Scripts/01 base.lua).
@@ -12,20 +12,22 @@ previous StepMania versions will not read scripts in subdirectories.
 There are five rings of script execution:
 
 00 - Initialization
+The only file in this ring is "00 init.lua", which sets up various aliases and
+functions, including StepMania's uppercase/lowercase functions.
 ________________________________________________________________________________
 01 - Base
-There are three base scripts. "01 base.lua" is taken from StepMania 4's default
-theme and sets up very important function overrides and the "Var" alias (for
-lua.GetThreadVariable). The other two base scripts are sm-ssc specific.
+There are three base scripts:
 
-"01 alias.lua" contains various aliases. It also contains the compatibility
-aliases that used to live in "01 compat.lua".
+"01 base.lua" is taken from StepMania 4's default theme and sets up very
+important function overrides and the "Var" alias (for lua.GetThreadVariable).
+
+"01 alias.lua" contains various aliases for commands.
+
+"01 IniFile.lua" is an .ini file parser, which is used in vyhd's ThemePrefs.
 ________________________________________________________________________________
 02 - Defaults
 The "02" scripts are pretty much the same scripts you'd find in StepMania 4's
-default theme. Some scripts do exhibit differences, however. The most notable
-of these changes is to "02 Color.lua", which adds a color library to the old
-StepMania 4 Colors script.
+default theme, with some additions.
 ________________________________________________________________________________
 03 - Extensions
 Scripts that extend normal (StepMania 4 default theme) functionality belong
@@ -34,6 +36,4 @@ CustomSpeedMods, UserPreferences2), while others are from other themes (HSV)
 or written for sm-ssc (DateTime, Gameplay).
 ________________________________________________________________________________
 04 - ?
-FileUtils, Scoring, and WidescreenHelpers are in the fifth ring.
-To be honest, I don't know why FileUtils and WidescreenHelpers were moved out
-here. Scoring is just here because the initial implementation was flawed.
+Scoring is the only file in the fifth ring.
