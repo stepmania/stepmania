@@ -1,15 +1,5 @@
 --[[ command aliases ]]
 
--- (this probably belongs in Sprite.lua)
-function Sprite:cropto(w,h)
-	self:CropTo(w,h)
-end
-
--- (this probably belongs in Actor.lua)
-function Actor:SetSize(w,h)
-	self:setsize(w,h)
-end
-
 -- shorthand! this is tedious to type and makes things ugly so let's make it shorter.
 -- _screen.w, _screen.h, etc.
 _screen = {
@@ -19,31 +9,20 @@ _screen = {
 	cy = SCREEN_CENTER_Y
 }
 
--- Title & Action safe calculation, probably messy. Uses microsofts suggestion of 85% ( 7.5% per side )
-function GetTitleSafeH( fPerc )
-  return math.floor( SCREEN_RIGHT * fPerc );
-end
-
-function GetTitleSafeV( fPerc )
-  return math.floor( SCREEN_BOTTOM * fPerc );
-end
+-- Title & Action area safe calculation, probably messy.
+-- Uses Microsoft's suggestion of 85% of the screen (7.5% per side).
+function GetTitleSafeH( fPerc ) return math.floor( SCREEN_RIGHT * fPerc ); end
+function GetTitleSafeV( fPerc ) return math.floor( SCREEN_BOTTOM * fPerc ); end
 
 SAFE_WIDTH = GetTitleSafeH(0.075);
 SAFE_HEIGHT = GetTitleSafeV(0.075);
 
 _safe = {
-  w = GetTitleSafeH(0.075);
-  h = GetTitleSafeV(0.075);
+	w = GetTitleSafeH(0.075);
+	h = GetTitleSafeV(0.075);
 }
   
-
 --[[ compatibility aliases ]]
-
---[[ Actor ]]
-function Actor:hidden(bHide)
-	Warn("hidden is deprecated, use visible instead. (used on ".. self:GetName() ..")")
-	self:visible(not bHide)
-end
 
 --[[ ActorScroller: all of these got renamed, so alias the lowercase ones if
 themes are going to look for them. ]]

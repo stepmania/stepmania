@@ -334,16 +334,6 @@ function WideScale(AR4_3, AR16_9)
 	return scale( SCREEN_WIDTH, 640, 854, AR4_3, AR16_9 )
 end
 
--- it turns out some people actually used this (mostly) worthless code:
-AspectRatios = {
-	ThreeFour   = 0.75,		-- (576x760 at 1024x768)
-	OneOne      = 1.0,		-- 480x480  (uses Y)
-	FiveFour    = 1.25,		-- 600x480 (1280x1024 is a real use)
-	FourThree   = 1.33333,	--* 640x480
-	SixteenTen  = 1.6,		--* 720x480
-	SixteenNine = 1.77778,	--* 853x480
-	EightThree  = 2.66666,	-- 1280x480
-};
 
 local function round(num, idp)
 	if idp and idp > 0 then

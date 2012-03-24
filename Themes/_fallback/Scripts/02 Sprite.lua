@@ -65,6 +65,9 @@ function Sprite.LinearFrames(NumFrames, Seconds)
 	return Frames
 end
 
+-- command aliases:
+function Sprite:cropto(w,h) self:CropTo(w,h) end
+
 -- (c) 2005 Glenn Maynard
 -- All rights reserved.
 -- 

@@ -371,6 +371,15 @@ function GetRealInverse()
 	return res/theme
 end
 
+-- command aliases:
+function Actor:SetSize(w,h) self:setsize(w,h) end
+
+-- deprecated aliases:
+function Actor:hidden(bHide)
+	Warn("hidden is deprecated, use visible instead. (used on ".. self:GetName() ..")")
+	self:visible(not bHide)
+end
+
 -- (c) 2006-2011 Glenn Maynard, SSC
 -- All rights reserved.
 --
