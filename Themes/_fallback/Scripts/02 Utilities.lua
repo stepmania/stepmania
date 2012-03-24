@@ -334,7 +334,6 @@ function WideScale(AR4_3, AR16_9)
 	return scale( SCREEN_WIDTH, 640, 854, AR4_3, AR16_9 )
 end
 
-
 local function round(num, idp)
 	if idp and idp > 0 then
 		local mult = 10 ^ idp;
