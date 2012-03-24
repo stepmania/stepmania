@@ -190,15 +190,11 @@ function StepsOrTrailToCustomDifficulty(stepsOrTrail)
 end
 
 function IsArcade()
-	local sCoinMode = GAMESTATE:GetCoinMode();
-	local bIsArcade = (sCoinMode ~= 'CoinMode_Home');
-	return bIsArcade;
+	return GAMESTATE:GetCoinMode() ~= 'CoinMode_Home'
 end
 
 function IsHome()
-	local sCoinMode = GAMESTATE:GetCoinMode();
-	local bIsHome = (sCoinMode == 'CoinMode_Home');
-	return bIsHome;
+	return GAMESTATE:GetCoinMode() == 'CoinMode_Home'
 end
 
 function IsFreePlay()
@@ -267,22 +263,18 @@ envTable = GAMESTATE:Env()
 -- setenv(name,value)
 -- Sets aside an entry for <name> and puts <value> into it.
 -- Use a table as <value> to store multiple values
-function setenv(name,value)
-	envTable[name] = value
-end
+function setenv(name,value) envTable[name] = value end
 
 -- getenv(name)
 -- This will return whatever value is at envTable[name].
-function getenv(name)
-	return envTable[name]
-end
+function getenv(name) return envTable[name] end
 
 -- tobool(v)
 -- Converts v to a boolean.
 function tobool(v)
-  if getmetatable(v) and (getmetatable(v))["__tobool"] and type((getmetatable(v))["__tobool"])=="function" then
-    return (getmetatable(v))["__tobool"](v)
-  elseif type(v) == "string" then
+	if getmetatable(v) and (getmetatable(v))["__tobool"] and type((getmetatable(v))["__tobool"])=="function" then
+		return (getmetatable(v))["__tobool"](v)
+	elseif type(v) == "string" then
 		local cmp = string.lower(v)
 		if cmp == "true" or cmp == "t" then
 			return true
@@ -314,9 +306,9 @@ end;
 function pname(pn) return ToEnumShortString(pn) end
 
 function ThemeManager:GetAbsolutePath(sPath)
-  sFinPath = "/Themes/"..self:GetCurThemeName().."/"..sPath
-  assert(RageFileManager.DoesFileExist(sFinPath), "the theme element "..sPath.." is missing")
-  return sFinPath
+	sFinPath = "/Themes/"..self:GetCurThemeName().."/"..sPath
+	assert(RageFileManager.DoesFileExist(sFinPath), "the theme element "..sPath.." is missing")
+	return sFinPath
 end
 
 -- supported aspect ratios
