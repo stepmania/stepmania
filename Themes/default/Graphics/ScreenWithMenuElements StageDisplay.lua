@@ -1,7 +1,6 @@
 local curScreen = Var "LoadingScreen";
 local curStage = GAMESTATE:GetCurrentStage();
 local curStageIndex = GAMESTATE:GetCurrentStageIndex();
-
 local t = Def.ActorFrame {};
 
 t[#t+1] = Def.ActorFrame {
@@ -22,7 +21,7 @@ t[#t+1] = Def.ActorFrame {
               self:zoom(1);
             end;
           end;
-          --
+          -- StepMania is being stupid so we have to do this here;
           self:diffuse(StageToColor(curStage));
           self:diffusetopedge(ColorLightTone(StageToColor(curStage)));
         end;
