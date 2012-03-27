@@ -27,6 +27,7 @@ Grade GetGradeFromPercent( float fPercent );
 
 void PlayerStageStats::Init()
 {
+  m_bPlayerCanAchieveFullCombo = true;
 	m_bJoined = false;
 	m_vpPossibleSteps.clear();
 	m_iStepsPlayed = 0;
@@ -515,6 +516,10 @@ bool PlayerStageStats::FullComboOfScore( TapNoteScore tnsAllGreaterOrEqual ) con
 {
 	ASSERT( tnsAllGreaterOrEqual >= TNS_W5 );
 	ASSERT( tnsAllGreaterOrEqual <= TNS_W1 );
+   
+  //if we've set MissCombo to anything besides 0, it's not a full combo
+  if( !m_bPlayerCanAchieveFullCombo )
+    return false;
 
 	// If missed any holds, then it's not a full combo
 	if( m_iHoldNoteScores[HNS_LetGo] > 0 )
