@@ -32,6 +32,7 @@ public:
 	void ResetScoreForLesson();
 
 	bool		m_bJoined;
+  bool    m_bPlayerCanAchieveFullCombo;
 	vector<Steps*>  m_vpPossibleSteps;
 	int		m_iStepsPlayed; // how many of m_vpPossibleStepshow many of m_vpPossibleSteps were played
 	/**
