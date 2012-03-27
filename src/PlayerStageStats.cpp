@@ -742,6 +742,32 @@ public:
 
 	static int GetRadarPossible( T* p, lua_State *L ) { p->m_radarPossible.PushSelf(L); return 1; }
 	static int GetRadarActual( T* p, lua_State *L ) { p->m_radarActual.PushSelf(L); return 1; }
+  static int SetCurCombo( T* p, lua_State *L )
+  {
+    int arg = IArg(1);
+    if( arg >= 0 )
+    {
+      p->m_iCurMissCombo = 0;
+      p->m_iCurCombo = arg;
+      if ( arg > m_iCurMaxCombo )
+        p->m_iCurMaxCombo = arg;
+      return 1;
+     }
+     return 0;
+  }
+  static int SetCurMissCombo( T* p, lua_State *L)
+  {
+    int arg = IArg(1);
+    if( arg >= 0 )
+    {
+      p->m_iCurCombo = 0;
+      if( arg > 0 )
+        p->m_bPlayerCanAchieveFullCombo = false;
+      p->m_iCurMissCombo = arg;
+      return 1;
+     }
+     return 0;
+  }
 	static int SetScore( T* p, lua_State *L )                
 	{ 
 		if( IArg(1) >= 0 )
@@ -801,6 +827,8 @@ public:
 		ADD_METHOD( SetScore );
 		ADD_METHOD( GetCurMaxScore );
 		ADD_METHOD( SetCurMaxScore );
+    ADD_METHOD( SetCurCombo );
+    ADD_METHOD( SetCurMissCombo );
 	}
 };
 
