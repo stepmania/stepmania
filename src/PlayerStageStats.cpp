@@ -744,7 +744,8 @@ public:
 	static int GetRadarActual( T* p, lua_State *L ) { p->m_radarActual.PushSelf(L); return 1; }
   static int SetCurCombo( T* p, lua_State *L )
   {
-    int arg = IArg(1);
+    int arg;
+    arg = IArg(1);
     if( arg >= 0 )
     {
       p->m_iCurMissCombo = 0;
@@ -757,7 +758,8 @@ public:
   }
   static int SetCurMissCombo( T* p, lua_State *L)
   {
-    int arg = IArg(1);
+    int arg;
+    arg = IArg(1);
     if( arg >= 0 )
     {
       p->m_iCurCombo = 0;
