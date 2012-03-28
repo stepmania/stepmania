@@ -12,7 +12,6 @@
 
 ThemeMetric<float> ATTACK_DURATION_SECONDS	("ScoreKeeperRave","AttackDurationSeconds");
 
-
 static const float g_fSuperMeterPercentChangeInit[] =
 {
 	+0.02f, // SE_CheckpointHit
@@ -59,34 +58,45 @@ void ScoreKeeperRave::HandleTapRowScore( const NoteData &nd, int iRow )
 {
 	TapNoteScore scoreOfLastTap;
 	int iNumTapsInRow;
-	float fPercentToMove;
+	float fPercentToMove = 0.0f;
 
 	GetScoreOfLastTapInRow( nd, iRow, scoreOfLastTap, iNumTapsInRow );
 	if( iNumTapsInRow <= 0 )
 		return;
 	switch( scoreOfLastTap )
 	{
-	DEFAULT_FAIL( scoreOfLastTap );
-	case TNS_W1:	fPercentToMove = g_fSuperMeterPercentChange[SE_W1];	break;
-	case TNS_W2:	fPercentToMove = g_fSuperMeterPercentChange[SE_W2];	break;
-	case TNS_W3:	fPercentToMove = g_fSuperMeterPercentChange[SE_W3];	break;
-	case TNS_W4:	fPercentToMove = g_fSuperMeterPercentChange[SE_W4];	break;
-	case TNS_W5:	fPercentToMove = g_fSuperMeterPercentChange[SE_W5];	break;
-	case TNS_Miss:	fPercentToMove = g_fSuperMeterPercentChange[SE_Miss];	break;
+		DEFAULT_FAIL( scoreOfLastTap );
+		case TNS_W1:	fPercentToMove = g_fSuperMeterPercentChange[SE_W1];		break;
+		case TNS_W2:	fPercentToMove = g_fSuperMeterPercentChange[SE_W2];		break;
+		case TNS_W3:	fPercentToMove = g_fSuperMeterPercentChange[SE_W3];		break;
+		case TNS_W4:	fPercentToMove = g_fSuperMeterPercentChange[SE_W4];		break;
+		case TNS_W5:	fPercentToMove = g_fSuperMeterPercentChange[SE_W5];		break;
+		case TNS_Miss:	fPercentToMove = g_fSuperMeterPercentChange[SE_Miss];	break;
 	}
 	AddSuperMeterDelta( fPercentToMove );
 }
 
 void ScoreKeeperRave::HandleHoldScore( const TapNote &tn )
 {
+	// todo: should hit mine be handled in HandleTapRow score instead? -aj
 	TapNoteScore tapScore = tn.result.tns;
-	float fPercentToMove = 0;
+	float fPercentToMove = 0.0f;
 	switch( tapScore )
 	{
 		case TNS_HitMine:
 			fPercentToMove = g_fSuperMeterPercentChange[SE_HitMine];
-		default:
 			break;
+		default: break;
+	}
+
+	// Playing with this code enabled seems to feel "wrong", but I'm leaving it
+	// in for player feedback. -aj
+	HoldNoteScore holdScore = tn.HoldResult.hns;
+	switch( holdScore )
+	{
+		case HNS_Held: fPercentToMove = g_fSuperMeterPercentChange[SE_Held]; break;
+		case HNS_LetGo: fPercentToMove = g_fSuperMeterPercentChange[SE_LetGo]; break;
+		default: break;
 	}
 	AddSuperMeterDelta( fPercentToMove );
 }
@@ -126,7 +136,6 @@ void ScoreKeeperRave::AddSuperMeterDelta( float fUnscaledPercentChange )
 			fUnscaledPercentChange /= SCALE( fLifePercentage, 0.f, 1.f, 1.7f, 0.3f);
 	}
 
-
 	// mercy: drop super meter faster if at a higher level
 	if( fUnscaledPercentChange < 0 )
 		fUnscaledPercentChange *= SCALE( m_pPlayerState->m_fSuperMeter, 0.f, 1.f, 0.01f, 1.f );
@@ -161,7 +170,6 @@ void ScoreKeeperRave::AddSuperMeterDelta( float fUnscaledPercentChange )
 	}
 }
 
-
 void ScoreKeeperRave::LaunchAttack( AttackLevel al )
 {
 	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
@@ -173,12 +181,13 @@ void ScoreKeeperRave::LaunchAttack( AttackLevel al )
 		sAttackToGive = asAttacks[ RandomInt(NUM_ATTACKS_PER_LEVEL) ];
 	else
 	{
-		/* If you add any note skins here, you need to make sure they're cached, too. */
+		// "If you add any noteskins here, you need to make sure they're cached, too." -?
+		// Noteskins probably won't work here anymore. -aj
 		RString DefaultAttacks[8] = { "1.5x", "2.0x", "0.5x", "reverse", "sudden", "boost", "brake", "wave" };
 		sAttackToGive = DefaultAttacks[ RandomInt(8) ];
 	}
 
-  	PlayerNumber pnToAttack = OPPOSITE_PLAYER[pn];
+	PlayerNumber pnToAttack = OPPOSITE_PLAYER[pn];
 	PlayerState *pPlayerStateToAttack = GAMESTATE->m_pPlayerState[pnToAttack];
 
 	Attack a;
