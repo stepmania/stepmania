@@ -2339,6 +2339,12 @@ public:
 		p->m_SongOptions.Assign( m, so );
 		return 0;
 	}
+	static int GetStageResult( T* p, lua_State *L )
+	{
+		PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);
+		LuaHelpers::Push( L, p->GetStageResult(pn) );
+		return 1;
+	}
 	static int IsWinner( T* p, lua_State *L )
 	{
 		PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);
@@ -2552,6 +2558,7 @@ public:
 		ADD_METHOD( ApplyStageModifiers );
 		ADD_METHOD( ClearStageModifiersIllegalForCourse );
 		ADD_METHOD( SetSongOptions );
+		ADD_METHOD( GetStageResult );
 		ADD_METHOD( IsWinner );
 		ADD_METHOD( IsDraw );
 		ADD_METHOD( GetCurrentGame );

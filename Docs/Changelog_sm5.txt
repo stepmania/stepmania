@@ -9,6 +9,14 @@ ________________________________________________________________________________
 StepMania 5.0 alpha 2 | 201203??
 --------------------------------------------------------------------------------
 
+2012/03/28
+----------
+* [ScoreKeeperRave] Actually handle hold scores in HandleHoldScore().
+  Players should please provide feedback on how this affects gameplay, as this
+  is a temporary feature. [AJ]
+* [GameConstantsAndTypes] Made StageResult Lua-aware. [AJ]
+* [GameState] Added GetStageResult(pn) Lua binding. [AJ]
+
 2012/03/27
 ----------
 * [ScreenEditMenu] Don't hardcode stopping the music on pressing the back button.
