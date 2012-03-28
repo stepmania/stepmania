@@ -124,6 +124,13 @@ static const char *HealthStateNames[] = {
 XToString( HealthState );
 LuaXType( HealthState );
 
+static const char *StageResultNames[] = {
+	"Win",
+	"Lose",
+	"Draw",
+};
+XToString( StageResult );
+LuaXType( StageResult );
 
 static const char *CoinModeNames[] = {
 	"Home",

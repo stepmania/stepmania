@@ -405,11 +405,13 @@ LuaDeclareType( HealthState );
 /** @brief The different stage results during battle. */
 enum StageResult
 {
-	RESULT_WIN, /**< The player has won the battle. */
-	RESULT_LOSE, /**< The player has lost the battle. */
-	RESULT_DRAW /**< The player has tied with the competitor. */
+	RESULT_WIN,		/**< The player has won the battle. */
+	RESULT_LOSE,	/**< The player has lost the battle. */
+	RESULT_DRAW,	/**< The player has tied with the competitor. */
+	NUM_StageResult,
+	StageResult_Invalid
 };
-
+LuaDeclareType( StageResult );
 
 // Battle stuff
 /** @brief The number of inventory slots available for attacks. */
