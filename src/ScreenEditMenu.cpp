@@ -325,8 +325,6 @@ void ScreenEditMenu::MenuStart( const InputEventPlus &input )
 void ScreenEditMenu::MenuBack( const InputEventPlus &input )
 {
 	Cancel( SM_GoToPrevScreen );
-
-	SOUND->StopMusic();
 }
 
 void ScreenEditMenu::RefreshExplanationText()

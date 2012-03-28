@@ -9,6 +9,11 @@ ________________________________________________________________________________
 StepMania 5.0 alpha 2 | 201203??
 --------------------------------------------------------------------------------
 
+2012/03/27
+----------
+* [ScreenEditMenu] Don't hardcode stopping the music on pressing the back button.
+  This interferes with the StopMusicOnBack metric. [AJ]
+
 2012/03/20
 ----------
 * [Background] Fix 3D noteskins and dancing characters from clashing with each other. [shakesoda, AJ]
