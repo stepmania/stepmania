@@ -16,6 +16,8 @@ StepMania 5.0 alpha 2 | 201203??
   is a temporary feature. [AJ]
 * [GameConstantsAndTypes] Made StageResult Lua-aware. [AJ]
 * [GameState] Added GetStageResult(pn) Lua binding. [AJ]
+* [Player] Keysounds now respect the volume settings. [hanubeki]
+  Sourced from hanubeki-modified-sm-ssc rev. 16fc5b714582
 
 2012/03/27
 ----------
