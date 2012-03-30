@@ -601,7 +601,9 @@ libtomcrypt_a_CPPFLAGS = -I$(srcdir)/libtomcrypt/src/headers $(AM_CPPFLAGS)
 
 noinst_LIBRARIES += libtomcrypt.a
 
-main_CPPFLAGS = -I$(top_srcdir)/extern/jsoncpp/include
+main_CPPFLAGS = \
+	$(VIDEO_CFLAGS) \
+	-I$(top_srcdir)/extern/jsoncpp/include
 #-I$(top_srcdir)/extern/glew-1.5.8/include
 
 main_SOURCES = $(PNG) \
@@ -618,9 +620,10 @@ main_SOURCES = $(PNG) \
 		$(GlobalSingletons)
 
 main_LDADD = \
-		  $(AUDIO_LIBS) \
-		  $(XLIBS) \
-		  libtomcrypt.a libtommath.a
+		$(VIDEO_LIBS) \
+		$(AUDIO_LIBS) \
+		$(XLIBS) \
+		libtomcrypt.a libtommath.a
 
 nodist_stepmania_SOURCES = ver.cpp
 

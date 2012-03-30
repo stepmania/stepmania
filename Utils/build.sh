@@ -21,7 +21,7 @@ usage () {
 	echo '                              (do not copy binaries).'
 	echo '  -d,  --data                 generate GameData.smzip.'
 	echo '  -r,  --rebuild              rebuild StepMania (soft).'
-        echo '  -f,  --ffmpeg               build with ffmpeg 0.6.1.'
+        echo '  -f,  --ffmpeg               build with ffmpeg 0.10.2.'
 	echo '  -j#, --jobs=#               pass -j# to make.'
 	echo '  -h,  --help                 print this help and exit.'
 	echo '  -v,  --verbose              increase verbosity (up to 2).'
@@ -132,7 +132,7 @@ if [ -n "$s_data" ]; then
 fi
 
 if [ -n "$s_ffmpeg" ]; then
-	ffversion=0.6.1
+	ffversion=0.10.2
 	ffmpeg=ffmpeg-$ffversion
 	if [ ! -d $ffmpeg ]; then
 		message 'Downloading ffmpeg'
@@ -155,10 +155,10 @@ if [ -n "$s_ffmpeg" ]; then
 		call $get "http://ffmpeg.org/releases/$ffmarc"
 		message 'Extracting ffmpeg'
 		call tar -$zipcommand $ffmarc
-		message 'Cleaning up temporary files'
+#		message 'Cleaning up temporary files'
 #		call rm $ffmarc
 	fi
-	args="--enable-static --enable-gpl --enable-version3 --enable-nonfree --enable-libx264 --enable-libfaac --enable-libmp3lame --enable-libtheora --enable-libvorbis --enable-libvpx --enable-libxvid --disable-debug --enable-memalign-hack --disable-network --enable-small --disable-encoders --disable-ffserver --extra-cflags=-Dattribute_deprecated="
+	args="--enable-static --enable-gpl --enable-version3 --enable-nonfree --enable-libx264 --enable-libfaac --enable-libmp3lame --enable-libtheora --enable-libvorbis --disable-libvpx --disable-vaapi --enable-libxvid --disable-debug --enable-memalign-hack --disable-network --enable-small --disable-encoders --disable-ffserver --extra-cflags=-Dattribute_deprecated="
 	cd $ffmpeg
 	message 'Configuring ffmpeg'
 	call ./configure --prefix="`pwd`/_inst" $args
@@ -172,7 +172,7 @@ if [ ! -f _build/src/config.h ] || [ -n "$s_rebuild" ]; then
 	mkdir -p _build
 	cd _build
 	if [ -n "$s_ffmpeg" ]; then
-		call ../configure --with-ffmpeg=../$ffmpeg/_inst "$@"
+		call ../configure --with-ffmpeg --with-static-ffmpeg=../$ffmpeg/_inst "$@"
 	else
 		call ../configure "$@"
 	fi
