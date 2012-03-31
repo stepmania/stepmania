@@ -665,7 +665,9 @@ RString MovieDecoder_FFMpeg::Open( RString sFile )
 		return RString( averr_ssprintf(ret, "AVCodec (%s): Couldn't find codec parameters", sFile.c_str()) );
 
 	int stream_idx = avcodec::av_find_best_stream( m_fctx, avcodec::AVMEDIA_TYPE_VIDEO, -1, -1, NULL, 0 );
-	if ( stream_idx < 0 || stream_idx >= m_fctx->nb_streams || m_fctx->streams[stream_idx] == NULL )
+	if ( stream_idx < 0 ||
+		static_cast<unsigned int>(stream_idx) >= m_fctx->nb_streams ||
+		m_fctx->streams[stream_idx] == NULL )
 		return "Couldn't find any video streams";
 	m_pStream = m_fctx->streams[stream_idx];
 
