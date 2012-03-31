@@ -1679,7 +1679,7 @@ static const Style g_Style_Beat_Single7 =
 {	// STYLE_BEAT_SINGLE7
 	true,				// m_bUsedForGameplay
 	true,				// m_bUsedForEdit
-	false,				// m_bUsedForDemonstration
+	true,				// m_bUsedForDemonstration
 	false,				// m_bUsedForHowToPlay
 	"single7",			// m_szName
 	StepsType_beat_single7,	// m_StepsType
@@ -1723,7 +1723,7 @@ static const Style g_Style_Beat_Versus7 =
 {	// STYLE_BEAT_VERSUS7
 	true,				// m_bUsedForGameplay
 	true,				// m_bUsedForEdit
-	false,				// m_bUsedForDemonstration
+	true,				// m_bUsedForDemonstration
 	false,				// m_bUsedForHowToPlay
 	"versus7",			// m_szName
 	StepsType_beat_versus7,	// m_StepsType
