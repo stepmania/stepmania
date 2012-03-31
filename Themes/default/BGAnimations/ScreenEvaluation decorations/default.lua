@@ -128,7 +128,7 @@ for pn in ivalues(PlayerNumber) do
 		SetCommand=function(self)
 			local tStats = THEME:GetMetric(Var "LoadingScreen", "Summary") and STATSMAN:GetAccumPlayedStageStats() or STATSMAN:GetCurStageStats();
 			tStats = tStats:GetPlayerStageStats(pn);
-			if tStats:GetStageAward() then
+			if tStats:GetStageAward() and not tStats:GetFailed() then
 				self:settext( THEME:GetString( "StageAward", ToEnumShortString( tStats:GetStageAward() ) ) );
 			else
 				self:settext( "" );
