@@ -92,6 +92,7 @@ ThemePrefs.InitAll(Prefs)
 function InitUserPrefs()
 	local Prefs = {
 		UserPrefScoringMode = 'DDR Extreme',
+        UserPrefSoundPack   = 'default',
 		UserPrefProtimingP1 = false,
 		UserPrefProtimingP2 = false,
 	}

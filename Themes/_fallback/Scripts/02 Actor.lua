@@ -374,6 +374,18 @@ end
 -- command aliases:
 function Actor:SetSize(w,h) self:setsize(w,h) end
 
+-- Simple draworder mappings
+DrawOrder = {
+  Background	= -100,
+  Underlay		= 0,
+  Decorations	= 100,
+  Content		= 105,
+  Screen		= 120,
+  Overlay		= 200
+};
+
+-- function Actor:SetDrawOrder
+
 -- deprecated aliases:
 function Actor:hidden(bHide)
 	Warn("hidden is deprecated, use visible instead. (used on ".. self:GetName() ..")")
