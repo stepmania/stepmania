@@ -142,7 +142,6 @@ sub ZipFiles($$@)
 	chdir $CWD || die "chdir($CWD): $!";
 }
 
-
 my @files = (
 	"BackgroundEffects",
 	"BackgroundTransitions",
@@ -161,6 +160,7 @@ my @files = (
 	"NoteSkins/dance/midi-note-3d",
 	"NoteSkins/dance/midi-solo",
 	"NoteSkins/dance/midi-vivid",
+	"NoteSkins/dance/midi-vivid-3d",
 	"NoteSkins/dance/midi-routine-p1",
 	"NoteSkins/dance/midi-routine-p2",
 	## retro/retrobar
@@ -192,10 +192,8 @@ my @files = (
 	"NoteSkins/kb7/retrobar-razor_o2",
 	# themes
 	"Themes/_fallback",
-	"Themes/_portKit-sm4",
 	"Themes/default",
 	"Scripts"
 );
 
 ZipFiles( ".", "GameData", \@files );
-

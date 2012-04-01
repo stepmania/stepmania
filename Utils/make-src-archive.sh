@@ -39,7 +39,7 @@ rm -rf smlobby
 # *nix source archives.
 #rm -rf mad-0.15.0b
 
-rm -rf lua-5.0
+rm -rf lua-5.1
 rm -rf vorbis
 rm -rf BaseClasses
 rm -rf ddk
@@ -53,6 +53,7 @@ find . -type f -name '*.lib' | xargs rm -rf
 find . -type f -name '*.exe' | xargs rm -rf
 find . -type f -name '*.a' | xargs rm -rf
 find . -type f -name '*.o' | xargs rm -rf
+find . -type f -name '.hg*' | xargs rm -rf
 
 cd ..
 #rm -rf Utils/Font\ generation/

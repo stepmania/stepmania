@@ -3,7 +3,7 @@
 #---------------------------------------------------------------------------
 # Project related configuration options
 #---------------------------------------------------------------------------
-PROJECT_NAME           = sm-ssc
+PROJECT_NAME           = StepMania 5
 PROJECT_NUMBER         = 
 OUTPUT_DIRECTORY       = temp
 CREATE_SUBDIRS         = YES

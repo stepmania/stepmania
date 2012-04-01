@@ -21,7 +21,7 @@ usage () {
 	echo '                              (do not copy binaries).'
 	echo '  -d,  --data                 generate GameData.smzip.'
 	echo '  -r,  --rebuild              rebuild StepMania (soft).'
-        echo '  -f,  --ffmpeg               build with ffmpeg 0.10.2.'
+	echo '  -f,  --ffmpeg               build with ffmpeg 0.10.2.'
 	echo '  -j#, --jobs=#               pass -j# to make.'
 	echo '  -h,  --help                 print this help and exit.'
 	echo '  -v,  --verbose              increase verbosity (up to 2).'
@@ -113,8 +113,8 @@ call () {
 version () {
 	echo 'build.sh (StepMania) 2.64'
 	echo 'Copyright (C) 2006-2009 Steve Checkoway'
-	echo 'StepMania is Copyright (C) 2001-2011 Chris Danford et al.'
-	echo 'sm-ssc is Copyright (C) 2009-2011 the spinal shark collective'
+	echo 'StepMania is Copyright (C) 2001-2012 Chris Danford et al.'
+	echo 'sm-ssc is Copyright (C) 2009-2012 the spinal shark collective'
 	exit 0
 }
 
@@ -195,7 +195,6 @@ if [ ! -f stepmania -o ! -f GtkModule.so ] || [ -n "$s_rebuild" ]; then
 	success
 fi
 
-
 # (c) 2006-2009 Steve Checkoway
 # All rights reserved.
 # 
@@ -218,5 +217,3 @@ fi
 # OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
 # OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
 # PERFORMANCE OF THIS SOFTWARE.
-
-

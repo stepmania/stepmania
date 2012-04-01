@@ -22,4 +22,3 @@ VER=`echo "$VER" | sed -e 's/beta /beta/'`
 VER=`echo "$VER" | sed -e 's/ /-/g'`
 
 PRODUCTVER="$PRODUCT-$VER"
-
