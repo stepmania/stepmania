@@ -200,12 +200,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "StepMania Team \n http://www.stepmania.com/"
             VALUE "FileDescription", "StepMania"
-            VALUE "FileVersion", "5, 0, 0, 6"
-            VALUE "InternalName", "sm-ssc v1.3.2a"
+            VALUE "FileVersion", "5, 0, 0, 0"
+            VALUE "InternalName", "sm-ssc v1.3.3"
             VALUE "LegalCopyright", "Copyright © 2001-2012"
             VALUE "OriginalFilename", "StepMania.exe"
             VALUE "ProductName", "StepMania"
-            VALUE "ProductVersion", "5, 0, 0, 6"
+            VALUE "ProductVersion", "5, 0, 0, 0"
         END
     END
     BLOCK "VarFileInfo"
