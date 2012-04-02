@@ -3,6 +3,7 @@
 
 <Lua xmlns='http://www.stepmania.com' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='http://www.stepmania.com Lua.xsd'>
 	<GlobalFunctions>
+		<Function name='AllowOptionsMenu'/>
 		<Function name='Alpha'/>
 		<Function name='AreStagePlayerModsForced'/>
 		<Function name='AreStageSongModsForced'/>
@@ -39,7 +40,6 @@
 		<Function name='FormatNumberAndSuffix'/>
 		<Function name='FormatPercentScore'/>
 		<Function name='GameCompatibleModes'/>
-		<Function name='GamePrefComboOnRolls'/>
 		<Function name='GamePrefDefaultFail'/>
 		<Function name='GetCodeForGame'/>
 		<Function name='GetCoursesToShowRanking'/>
@@ -184,16 +184,7 @@
 		<Function name='URLEncode'/>
 		<Function name='UndocumentedFeature'/>
 		<Function name='UnlockRewardTypeToLocalizedString'/>
-		<Function name='UserPrefAutoSetStyle'/>
-		<Function name='UserPrefComboUnderField'/>
-		<Function name='UserPrefFlashyCombo'/>
-		<Function name='UserPrefGameplayFooter'/>
-		<Function name='UserPrefGameplayShowScore'/>
-		<Function name='UserPrefGameplayShowStepsDisplay'/>
-		<Function name='UserPrefLongFail'/>
-		<Function name='UserPrefNotePosition'/>
 		<Function name='UserPrefScoringMode'/>
-		<Function name='UserPrefShowLotsaOptions'/>
 		<Function name='Var'/>
 		<Function name='VersionDate'/>
 		<Function name='VersionTime'/>
@@ -776,6 +767,7 @@
 			<Function name='GetSongPercent'/>
 			<Function name='GetSongPosition'/>
 			<Function name='GetSortOrder'/>
+			<Function name='GetStageResult'/>
 			<Function name='GetStageSeed'/>
 			<Function name='GetWorkoutGoalComplete'/>
 			<Function name='HasEarnedExtraStage'/>
@@ -2196,6 +2188,11 @@
 			<EnumValue name='&apos;StageAward_90PercentW3&apos;' value='8'/>
 			<EnumValue name='&apos;StageAward_100PercentW3&apos;' value='9'/>
 		</Enum>
+		<Enum name='StageResult'>
+			<EnumValue name='&apos;StageResult_Win&apos;' value='0'/>
+			<EnumValue name='&apos;StageResult_Lose&apos;' value='1'/>
+			<EnumValue name='&apos;StageResult_Draw&apos;' value='2'/>
+		</Enum>
 		<Enum name='StepsType'>
 			<EnumValue name='&apos;StepsType_Dance_Single&apos;' value='0'/>
 			<EnumValue name='&apos;StepsType_Dance_Double&apos;' value='1'/>
@@ -2343,6 +2340,6 @@
 		<Constant name='right' value='&apos;HorizAlign_Right&apos;'/>
 		<Constant name='top' value='&apos;VertAlign_Top&apos;'/>
 	</Constants>
-	<Version>StepMania v5.0 alpha 1a</Version>
-	<Date>2012-03-20</Date>
+	<Version>StepMania v5.0 alpha 2</Version>
+	<Date>2012-04-02</Date>
 </Lua>

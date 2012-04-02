@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <!-- Before checking the documentation in, make sure that it validates by
-     going to http://tools.decisionsoft.com/schemaValidate/ and using
+     going to http://www.corefiling.com/opensource/schemaValidate.html and using
      Lua.xsd for the XML Schema and this file for the XML Instance. -->
 
 <!-- Using Link:
@@ -695,6 +695,14 @@ save yourself some time, copy this for undocumented things:
 	<Function name='Warn' return='void' arguments='string sString'>
 		Writes <code>sString</code> to info.txt and log.txt as
 		a warning. Aliased by <Link class='GLOBAL' function='Warn' />.
+	</Function>
+</Namespace>
+<Namespace name='MersenneTwister'>
+	<Function name='Random' return='float' arguments='...'>
+		Returns a random number. Without arguments, the number is in the range <code>0..1</code>. With a single argument (<code>n</code>), the number is in the range of <code>1..n</code>. With two arguments (<code>lower</code>, <code>upper</code>), the number is in the range of <code>l..u</code>.
+	</Function>
+	<Function name='Seed' return='void' arguments='int seed'>
+		Sets the seed of the random number generator to <code>seed</code>.
 	</Function>
 </Namespace>
 <Namespace name='RageFileUtil'>
@@ -1975,6 +1983,9 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='GetSortOrder' return='SortOder' arguments=''>
 		Returns the sort order, if the GameCommand has set one.
+	</Function>
+	<Function name='GetStageResult' return='StageResult' arguments='PlayerNumber pn'>
+		Returns the StageResult for player <code>pn</code>.
 	</Function>
 	<Function name='GetStageModifiers' return='string' arguments=''>
 		Returns any stage modifiers that may have been set.
@@ -3297,7 +3308,7 @@ save yourself some time, copy this for undocumented things:
 		Returns a PlayerOptions object for the specified ModsLevel.
 	</Function>
 	<Function name='GetPlayerOptionsString' return='string' arguments='ModsLevel ml'>
-		Returns a string of player options for the specified ModsLevel. (was GetPlayerOptions in v1.2.2 and prior)
+		Returns a string of player options for the specified ModsLevel. (was <code>GetPlayerOptions</code> before sm-ssc v1.2.3)
 	</Function>
 	<Function name='GetPlayerOptionsArray' return='{string}' arguments='ModsLevel ml'>
 		Returns a table of strings, containing the player options for the specified ModsLevel.
@@ -3823,7 +3834,7 @@ save yourself some time, copy this for undocumented things:
 </Class>
 <Class name='ScreenTextEntry'>
 	<Description>
-		See the Changelog for details on TextEntrySetting's format.
+		TextEntrySettings is implemented similar to the Attributes in BitmapText. Formatting issues prevent the sample from being properly shown here; please see Changelog_sm-ssc.txt for the TextEntrySettings format.
 	</Description>
 	<Function name='Load' return='void' arguments='TextEntrySettings args'>
 		Sets up a ScreenTextEntry's values.
