@@ -966,23 +966,23 @@ public:
 	DEFINE_METHOD( GetTiny, m_fEffects[PlayerOptions::EFFECT_TINY] )
 	static int SetTiny( T *p, lua_State *L ){ p->m_fEffects[PlayerOptions::EFFECT_TINY] = FArg(1); return 0; }
 	DEFINE_METHOD( GetFlip, m_fEffects[PlayerOptions::EFFECT_FLIP] )
-	static int SetFlip( T *p, lua_State *L ){ p->m_fEffects[PlayerOptions::EFFECT_DRUNK] = FArg(1); return 0; }
+	static int SetFlip( T *p, lua_State *L ){ p->m_fEffects[PlayerOptions::EFFECT_FLIP] = FArg(1); return 0; }
 	DEFINE_METHOD( GetInvert, m_fEffects[PlayerOptions::EFFECT_INVERT] )
-	static int SetInvert( T *p, lua_State *L ){ p->m_fEffects[PlayerOptions::EFFECT_DRUNK] = FArg(1); return 0; }
+	static int SetInvert( T *p, lua_State *L ){ p->m_fEffects[PlayerOptions::EFFECT_INVERT] = FArg(1); return 0; }
 	DEFINE_METHOD( GetTornado, m_fEffects[PlayerOptions::EFFECT_TORNADO] )
-	static int SetTornado( T *p, lua_State *L ){ p->m_fEffects[PlayerOptions::EFFECT_DRUNK] = FArg(1); return 0; }
+	static int SetTornado( T *p, lua_State *L ){ p->m_fEffects[PlayerOptions::EFFECT_TORNADO] = FArg(1); return 0; }
 	DEFINE_METHOD( GetTipsy, m_fEffects[PlayerOptions::EFFECT_TIPSY] )
-	static int SetTipsy( T *p, lua_State *L ){ p->m_fEffects[PlayerOptions::EFFECT_DRUNK] = FArg(1); return 0; }
+	static int SetTipsy( T *p, lua_State *L ){ p->m_fEffects[PlayerOptions::EFFECT_TIPSY] = FArg(1); return 0; }
 	DEFINE_METHOD( GetBumpy, m_fEffects[PlayerOptions::EFFECT_BUMPY] )
-	static int SetBumpy( T *p, lua_State *L ){ p->m_fEffects[PlayerOptions::EFFECT_DRUNK] = FArg(1); return 0; }
+	static int SetBumpy( T *p, lua_State *L ){ p->m_fEffects[PlayerOptions::EFFECT_BUMPY] = FArg(1); return 0; }
 	DEFINE_METHOD( GetBeat, m_fEffects[PlayerOptions::EFFECT_BEAT] )
-	static int SetBeat( T *p, lua_State *L ){ p->m_fEffects[PlayerOptions::EFFECT_DRUNK] = FArg(1); return 0; }
+	static int SetBeat( T *p, lua_State *L ){ p->m_fEffects[PlayerOptions::EFFECT_BEAT] = FArg(1); return 0; }
 	DEFINE_METHOD( GetXMode, m_fEffects[PlayerOptions::EFFECT_XMODE] )
-	static int SetXMode( T *p, lua_State *L ){ p->m_fEffects[PlayerOptions::EFFECT_DRUNK] = FArg(1); return 0; }
+	static int SetXMode( T *p, lua_State *L ){ p->m_fEffects[PlayerOptions::EFFECT_XMODE] = FArg(1); return 0; }
 	DEFINE_METHOD( GetTwirl, m_fEffects[PlayerOptions::EFFECT_TWIRL] )
-	static int SetTwirl( T *p, lua_State *L ){ p->m_fEffects[PlayerOptions::EFFECT_DRUNK] = FArg(1); return 0; }
+	static int SetTwirl( T *p, lua_State *L ){ p->m_fEffects[PlayerOptions::EFFECT_TWIRL] = FArg(1); return 0; }
 	DEFINE_METHOD( GetRoll, m_fEffects[PlayerOptions::EFFECT_ROLL] )
-	static int SetRoll( T *p, lua_State *L ){ p->m_fEffects[PlayerOptions::EFFECT_DRUNK] = FArg(1); return 0; }
+	static int SetRoll( T *p, lua_State *L ){ p->m_fEffects[PlayerOptions::EFFECT_ROLL] = FArg(1); return 0; }
 
 	// Appearance
 	DEFINE_METHOD( GetHidden, m_fAppearances[PlayerOptions::APPEARANCE_HIDDEN] )

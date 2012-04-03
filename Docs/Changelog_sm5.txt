@@ -9,6 +9,11 @@ ________________________________________________________________________________
 StepMania 5.0 alpha 2 | 201204??
 --------------------------------------------------------------------------------
 
+2012/04/03
+----------
+* [PlayerOptions] Fix setting some effect mods that were always set to Drunk.
+  I wonder who had too much to drink. [TaroNuke]
+
 2012/03/31
 ----------
 * [GameManager] Allow beat single7 and versus7 to be shown in Demonstration. [AJ]
