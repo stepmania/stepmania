@@ -1,7 +1,7 @@
 The following is a list of known issues with StepMania 5.
 
-* Hidden, Sudden, Stealth, and RandomVanish do not work with layered
-  note skins. Random Vanish, in particular, has caused crashes.
+* Hidden, Sudden, Stealth, and RandomVanish do not work with multi-layered
+  NoteSkins. Random Vanish, in particular, has caused crashes.
  * In a more technical and general sense, diffuse commands do not
    work properly with ActorFrames.
 
@@ -41,7 +41,7 @@ The following is a list of known issues with StepMania 5.
 * Japanese font maps are too large and get resized on load to something
   manageable. They should be cut into thirds vertically.
  * This makes debug builds in particular load very slowly, and reduces quality.
- 
+
 * The editor sometimes keeps playing music and won't scroll.
 
 * FFMPEG ruins our lives. I suspect init problems for Linux, since it
