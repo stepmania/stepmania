@@ -63,8 +63,11 @@ ret.Redir = function(sButton, sElement)
 		if Var "Button" == "Right" then sButton = "Right"; end
 		if Var "Button" == "Down" then sButton = "Down"; end
 		if Var "Button" == "Up" then sButton = "Up"; end
-		if Var "Button" == "UpLeft" then sButton = "UpLeft"; end
-		if Var "Button" == "UpRight" then sButton = "UpRight"; end
+		if GAMESTATE:GetCurrentGame():GetName() == "dance" then 
+			if Var "Button" == "UpLeft" then sButton = "UpLeft"; end
+			if Var "Button" == "UpRight" then sButton = "UpRight"; end
+		end
+		
 		end
 	end
 	
@@ -81,8 +84,9 @@ ret.Redir = function(sButton, sElement)
 			if Var "Button" == "UpLeft" and not string.find(sElement, "Explosion") then sButton = "SoloUpLeft"; end
 			if Var "Button" == "UpRight" and not string.find(sElement, "Explosion") then sButton = "SoloUpRight"; end
 		end
-	end
-	if GAMESTATE:GetCurrentGame():GetName() == "pump" then 
+	elseif GAMESTATE:GetCurrentGame():GetName() == "techno" then
+		-- TODO: Add Techno unique stuff.
+	elseif GAMESTATE:GetCurrentGame():GetName() == "pump" then 
 		--Making Pump it up be rythm color based, Only problem is that in sm player 1 and player 2 noteskins are both defined as player 1
 		--Need a way to get the parent but atm it ends up as nil because of no parent
 		--So Player 1 and 2 both use Player 1 images for now
@@ -149,8 +153,9 @@ function ret.Load()
 	--We define that we dont want the hold heads for UpLeft and UpRight to be rotated because we rotate them in a lua file
 		if Var "Button" == "UpLeft" and string.find(sElement, "Head") then t.BaseRotationZ = nil; end
 		if Var "Button" == "UpRight" and string.find(sElement, "Head") then t.BaseRotationZ = nil; end
-	end
-	if GAMESTATE:GetCurrentGame():GetName() == "pump" then 
+	elseif GAMESTATE:GetCurrentGame():GetName() == "techno" then
+		-- TODO: Add Techno unique stuff.
+	elseif GAMESTATE:GetCurrentGame():GetName() == "pump" then 
 	--Because the images for Pump it up are using the DownLeft for every direction aside from center, We let it be rotated here
 	--Because the rotate table is set up for dance and these are for PIU
 		if Var "Button" == "UpLeft" then t.BaseRotationZ = 90; end
@@ -191,8 +196,8 @@ ret.Rotate =
 	UpLeft = 135,
 	UpRight = -135,
 	Center = 0,
-	DownLeft = 0,
-	DownRight = -0,
+	DownLeft = 45,
+	DownRight = -45,
 };
 
 --Parts that should be Redirected to _Blank.png

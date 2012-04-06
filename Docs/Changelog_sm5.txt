@@ -1,4 +1,4 @@
-StepMania 5 Changelog
+﻿StepMania 5 Changelog
 ________________________________________________________________________________
 The StepMania 5 Changelog covers all post-sm-ssc changes. For a list of changes
 from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
@@ -8,6 +8,11 @@ ________________________________________________________________________________
 
 StepMania 5.0 alpha 2 | 201204??
 --------------------------------------------------------------------------------
+
+2012/04/06
+----------
+* Modify Jousway's planned noteskin to allow it to work with Technomotion
+  style gameplay. Expect minor bugs. [Jousway, Wolfman2000]
 
 2012/04/03
 ----------
