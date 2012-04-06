@@ -2458,13 +2458,11 @@ static const Style g_Style_Techno_Double8 =
 		},
 	},
 	{	// m_iInputColumn[NUM_GameController][NUM_GameButton]
-		{ Style::NO_MAPPING, Style::NO_MAPPING, Style::NO_MAPPING, Style::NO_MAPPING,
-			1, 3, 2, 0, 4, Style::END_MAPPING },
-		{ Style::NO_MAPPING, Style::NO_MAPPING, Style::NO_MAPPING, Style::NO_MAPPING,
-			6, 8, 7, 5, 9, Style::END_MAPPING },
+		{ 1, 6, 4, 3, 2, 5, Style::NO_MAPPING, 0, 7, Style::END_MAPPING },
+		{ 9, 14, 12, 11, 10, 13, Style::NO_MAPPING, 8, 15, Style::END_MAPPING },
 	},
 	{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
-		0,1,2,3,4,5,6,7,8,9
+		0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
 	},
 	false, // m_bNeedsZoomOutWith2Players
 	false, // m_bCanUseBeginnerHelper
