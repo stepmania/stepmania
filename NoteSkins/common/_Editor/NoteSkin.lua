@@ -85,7 +85,20 @@ ret.Redir = function(sButton, sElement)
 			if Var "Button" == "UpRight" and not string.find(sElement, "Explosion") then sButton = "SoloUpRight"; end
 		end
 	elseif GAMESTATE:GetCurrentGame():GetName() == "techno" then
-		-- TODO: Add Techno unique stuff.
+		-- See below for why two options.
+		if GAMESTATE:GetMasterPlayerNumber() == "PlayerNumber_P1" then
+			if Var "Button" == "Center" then sButton = "Centerp1"; end
+		elseif GAMESTATE:GetMasterPlayerNumber() == "PlayerNumber_P2" then
+			if Var "Button" == "Center" then sButton = "Centerp2"; end
+		end
+		if string.find(sButton, "Center") then
+			if string.find(sElement, "Bottomcap") then sButton = "Center"; end
+			if string.find(sElement, "Topcap") then sButton = "Center"; end
+			if string.find(sElement, "Body") then sButton = "Center"; end
+		end
+		if string.find(sElement, "Explosion") then sButton = "Center"; end
+		if sElement == "Tap Explosion Dim" then sElement = "Tap Explosion Bright"; end
+		--]]
 	elseif GAMESTATE:GetCurrentGame():GetName() == "pump" then 
 		--Making Pump it up be rythm color based, Only problem is that in sm player 1 and player 2 noteskins are both defined as player 1
 		--Need a way to get the parent but atm it ends up as nil because of no parent
@@ -154,7 +167,7 @@ function ret.Load()
 		if Var "Button" == "UpLeft" and string.find(sElement, "Head") then t.BaseRotationZ = nil; end
 		if Var "Button" == "UpRight" and string.find(sElement, "Head") then t.BaseRotationZ = nil; end
 	elseif GAMESTATE:GetCurrentGame():GetName() == "techno" then
-		-- TODO: Add Techno unique stuff.
+		if Var "Element" == "Tap Mine" then t.InitCommand=cmd(zoom,-0.8); end
 	elseif GAMESTATE:GetCurrentGame():GetName() == "pump" then 
 	--Because the images for Pump it up are using the DownLeft for every direction aside from center, We let it be rotated here
 	--Because the rotate table is set up for dance and these are for PIU
