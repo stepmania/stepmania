@@ -760,6 +760,12 @@ public:
 		}
 		return 0;
 	}
+  
+  static int FailPlayer( T* p, lua_State *L )
+  {
+    p->m_bFailed = true;
+    return 0;
+  }
 
 	LunaPlayerStageStats()
 	{
@@ -801,6 +807,7 @@ public:
 		ADD_METHOD( SetScore );
 		ADD_METHOD( GetCurMaxScore );
 		ADD_METHOD( SetCurMaxScore );
+    ADD_METHOD( FailPlayer );
 	}
 };
 
