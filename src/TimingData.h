@@ -337,9 +337,17 @@ public:
 			// optimization: check vector sizes before contents
 			if( us.size() != them.size() )
 				return false;
-
-			if( !std::equal(us.begin(), us.end(), them.begin()) )
-				return false;
+			
+			for( unsigned i = 0; i < us.size(); ++i )
+			{
+				/* UGLY: since TimingSegment's comparison compares base data,
+				 * and the derived versions only compare derived data, we must
+				 * manually call each. */
+				if( !(*us[i]).TimingSegment::operator==(*them[i]) )
+					return false;
+				if( !(*us[i]).operator==(*them[i]) )
+					return false;
+			}
 		}
 
 		COMPARE( m_fBeat0OffsetInSeconds );
