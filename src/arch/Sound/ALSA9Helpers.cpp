@@ -130,7 +130,7 @@ static RString DeviceName()
 {
 	if( !PREFSMAN->m_iSoundDevice.Get().empty() )
 		return PREFSMAN->m_iSoundDevice;
-	return "hw:0";
+	return "default";
 }
 
 void Alsa9Buf::GetSoundCardDebugInfo()

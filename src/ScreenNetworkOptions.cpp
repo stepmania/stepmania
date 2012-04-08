@@ -52,6 +52,7 @@ void ScreenNetworkOptions::Init()
 		vHands.push_back( pHand );
 		pHand->m_Def.m_sName = "Connection";
 		pHand->m_Def.m_bOneChoiceForAllPlayers = true;
+		pHand->m_Def.m_bAllowThemeItems = false;
 		if ( NSMAN->useSMserver )
 			pHand->m_Def.m_vsChoices.push_back(CLIENT_DISCONNECT);
 		else
@@ -63,6 +64,7 @@ void ScreenNetworkOptions::Init()
 		pHand->m_Def.m_sName = "Scoreboard";
 		pHand->m_Def.m_vsChoices.clear();
 		pHand->m_Def.m_bOneChoiceForAllPlayers = true;
+		pHand->m_Def.m_bAllowThemeItems = false;
 		pHand->m_Def.m_vsChoices.push_back(SCORE_OFF);
 		pHand->m_Def.m_vsChoices.push_back(SCORE_ON);
 	}

@@ -9,6 +9,11 @@ ________________________________________________________________________________
 StepMania 5.0 alpha 2 | 201204??
 --------------------------------------------------------------------------------
 
+2012/04/08
+----------
+* [ScreenNetworkOptions] Fixed a bug where localized text would not show up
+  properly. Fixes issue 759. [AJ]
+
 2012/04/06
 ----------
 * Modify Jousway's planned noteskin to allow it to work with Technomotion
