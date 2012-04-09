@@ -1580,6 +1580,11 @@ bool Song::IsEditAlreadyLoaded( Steps* pSteps ) const
 	return false;
 }
 
+bool Song::IsStepsUsingDifferentTiming(Steps *pSteps) const
+{
+	return pSteps->m_Timing != this->m_SongTiming;
+}
+
 bool Song::HasSignificantBpmChangesOrStops() const
 {
 	if( m_SongTiming.HasStops() || m_SongTiming.HasDelays() )
@@ -1819,6 +1824,11 @@ public:
 		lua_pushboolean( L, p->HasStepsTypeAndDifficulty(st, dc) );
 		return 1;
 	}
+	static int IsStepsUsingDifferentTiming(T* p, lua_State *L)
+	{
+		lua_pushboolean(L, p->IsStepsUsingDifferentTiming(Luna<Steps>::check( L, 1, true )));
+		return 1;
+	}
 	/* TODO: HasStepsTypeAndDifficulty and GetOneSteps should be in
 	 * a SongUtil Lua table and a method of Steps. */
 	static int GetOneSteps( T* p, lua_State *L )
@@ -1993,6 +2003,7 @@ public:
 		ADD_METHOD( IsDisplayBpmSecret );
 		ADD_METHOD( IsDisplayBpmConstant );
 		ADD_METHOD( IsDisplayBpmRandom );
+		ADD_METHOD( IsStepsUsingDifferentTiming );
 		ADD_METHOD( ShowInDemonstrationAndRanking );
 		ADD_METHOD( HasPreviewVid );
 		ADD_METHOD( GetPreviewVidPath );

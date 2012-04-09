@@ -418,6 +418,8 @@ public:
 	int GetNumStepsLoadedFromProfile( ProfileSlot slot ) const;
 	bool IsEditAlreadyLoaded( Steps* pSteps ) const;
 
+	bool IsStepsUsingDifferentTiming(Steps *pSteps ) const;
+
 	/**
 	 * @brief An array of keysound file names (e.g. "beep.wav").
 	 * The index in this array corresponds to the index in TapNote.

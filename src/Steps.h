@@ -174,11 +174,6 @@ public:
 
 	CachedObject<Steps> m_CachedObject;
 
-	/**
-	 * @brief Determine if the Steps use Split Timing by comparing the Song it's in.
-	 * @return true if the Step and Song use different timings, false otherwise. */
-	bool UsesSplitTiming() const;
-
 	void SetDisplayBPM(const DisplayBPM type)	{ this->displayBPMType = type; }
 	DisplayBPM GetDisplayBPM() const			{ return this->displayBPMType; }
 	void SetMinBPM(const float f)				{ this->specifiedBPMMin = f; }

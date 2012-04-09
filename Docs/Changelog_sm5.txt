@@ -13,6 +13,8 @@ StepMania 5.0 alpha 2 | 201204??
 ----------
 * [ScreenNetworkOptions] Fixed a bug where localized text would not show up
   properly. Fixes issue 759. [AJ]
+* [Steps, Song] Replace Steps:UsesSplitTiming with
+  Song:IsStepsUsingDifferentTiming for both C++ and Lua. [wolfman2000]
 
 2012/04/06
 ----------
