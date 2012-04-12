@@ -150,7 +150,7 @@ for section in ivalues(sections) do
 end
 
 creditScroller.BeginCommand=function(self)
-	SCREENMAN:GetTopScreen():PostScreenMessage( "SM_BeginFadingOut", (t.SecondsPerItem * (#t + item_padding_start) + 5) );
+	SCREENMAN:GetTopScreen():PostScreenMessage( 'SM_MenuTimer', (creditScroller.SecondsPerItem * (#creditScroller + item_padding_start) + 10) );
 end;
 
 return Def.ActorFrame{
