@@ -270,13 +270,10 @@ void ScoreKeeperNormal::AddTapScore( TapNoteScore tns )
 
 void ScoreKeeperNormal::AddHoldScore( HoldNoteScore hns )
 {
-	if( GAMESTATE->IsCourseMode() )
-	{
-		if( hns == HNS_Held )
-			AddScoreInternal( TNS_W1 );
-		else if ( hns == HNS_LetGo )
-			AddScoreInternal( TNS_W4 ); // required for subtractive score display to work properly.
-	}
+	if( hns == HNS_Held )
+		AddScoreInternal( TNS_W1 );
+	else if ( hns == HNS_LetGo )
+		AddScoreInternal( TNS_W4 ); // required for subtractive score display to work properly.
 }
 
 void ScoreKeeperNormal::AddTapRowScore( TapNoteScore score, const NoteData &nd, int iRow )
