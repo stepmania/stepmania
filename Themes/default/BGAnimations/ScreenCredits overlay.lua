@@ -121,7 +121,7 @@ local sectionOn = cmd(diffuse,color("#88DDFF");strokecolor,color("#446688");shad
 local item_padding_start = 4;
 
 local creditScroller = Def.ActorScroller {
-	SecondsPerItem = 1.25;
+	SecondsPerItem = 0.5;
 	NumItemsToDraw = 40;
 	TransformFunction = function( self, offset, itemIndex, numItems)
 		self:y(30*offset)
@@ -150,7 +150,7 @@ for section in ivalues(sections) do
 end
 
 creditScroller.BeginCommand=function(self)
-	SCREENMAN:GetTopScreen():PostScreenMessage( "SM_BeginFadingOut", (t.SecondsPerItem * (#t + item_padding_start) + 5) );
+	SCREENMAN:GetTopScreen():PostScreenMessage( 'SM_MenuTimer', (creditScroller.SecondsPerItem * (#creditScroller + item_padding_start) + 10) );
 end;
 
 return Def.ActorFrame{
