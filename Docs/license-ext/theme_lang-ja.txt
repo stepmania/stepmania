@@ -1,25 +1,24 @@
-Stepmania 5系本体用　日本語化セット9(2012/03/20)
+Stepmania 5系本体用　日本語化セット10(2012/04/22)
 作者：ナイラー
 -----------
 Stepmania5系本体では従来の日本語テーマ、および日本語ランゲージファイルが使用できなくなっています。
 個人的に日本語が見えているほうが安心できるので、とりあえずファイルを製作してみました。
 -----------
 以下のファイルが同梱されています。
-・fallbackja.ini(_fallbackテーマ用日本語ランゲージファイル) Ver 1.06-D
+・fallbackja.ini(_fallbackテーマ用日本語ランゲージファイル) Ver 1.06-E
 ・themeja.ini(デフォルトテーマ用日本語ランゲージファイル) Ver 1.04-B
-・Stepmania用小夏(仮)
 -----------
 今回の更新点
+☆今回からalpha 2対応。むしろalpha 1a以下非対応のほうが正確か。
 fallbackja.iniに対して
-・エディット関連のテキストの変更。
-・長いオブジェを「ロングノート」、譜面データを「譜面」と一貫して書き換えた(つもり)。
-・Toastyの設定の説明の変更。
+・エディット画面の左ペインを書き換え。
+　・Vキーでお邪魔設定に入ることはできなくなった模様。
+・グルーブレーダーの各要素の日本語を書き換え。
+・その他、エディット関連をわかりやすい日本語に変えたつもり。
 themeja.iniに対して
-・主にプレイオプションの訳の書き換え。
-・エンコード形式に合わせてスタイル名(の空白)を書き換え。
-Stepmania用小夏
-☆今回試験的に同梱しました。今まで公開していたバージョンと違いはありません。
-できる限りプリセットの日本語フォントに近い感じで半角カタカナを表示できます。
+・バージョンアップなし。
+(Stepmania用小夏、今回はなし。パッケージングするには重い。)
+
 -----------
 それぞれのファイルは、次の場所に配置してください。
 ・fallbackja.iniは、「Theme」フォルダの「_fallback」フォルダ内の「Language」フォルダに、
@@ -31,7 +30,6 @@ Stepmania用小夏
 これでオプションから日本語が設定できるようになります。
 操作の手順は、標準テーマなら
 「起動→Option→More Option→Appearance Options→Languageで日本語を選択」です。
-・Stepmania用小夏は「Fonts」フォルダ内の「_readme.txt」をお読みください。
 ----------
 誤訳、および訳さないほうがいい部分もありますが、そこは勘弁してください。
 ----------
@@ -40,13 +38,6 @@ Stepmania用小夏
 また少しでも改変した場合は改変者がその改変ファイルの改変・再配布条件を自由に設定することができます。
 純粋な再配布の場合、改変・再配布条件は元のファイル通り「改変・再配布は自由」としてください。
 
-Stepmania用小夏は文字に桝田道也氏のフォント「小夏」を使用しています。
-「小夏」はクリエイティブコモンズ3.0でライセンスされています。
-継承条件により、このファイルもクリエイティブコモンズ3.0でライセンスされます。
-条件についてはこちらをお読みください:
-http://creativecommons.org/licenses/by-sa/3.0/deed.ja
-「小夏」本体はこちらでダウンロードできます:
-http://www.masuseki.com/?u=be/konatu.htm
 ----------
 For international Stepmania distributors and players:
 My Japanese language pack (means "fallbackja.ini" and "themeja.ini") has no interception for your use.
@@ -54,14 +45,11 @@ You can redistribute these or remake from these two file(Included in Themes or S
 If you made a bit change at least,you can redistribute them fixed files on your own license(s).
 If not,you must keep their original license(redistributable,remakable) when you redistribute.
 
-KONATU for Stepmania used the resources of the font "KONATU",made by Mr.Michiya Masuda.
-It is licensed by Creative Commons 3.0. You should check the details from the address below:
-http://creativecommons.org/licenses/by-sa/3.0/
-The resource of KONATU is downlodable here:
-http://www.masuseki.com/?u=be/konatu.htm
-
 Sorry for my POOR English X(
 
 ----------
 何かありましたらTwitterの@Niler_jp、
 またはniler_jpn@live.jpまで。
+
+You can contact me on twitter(@Niler_jp),
+or my mail-address:niler_jpn@live.jp.
