@@ -243,7 +243,7 @@ static void GetFilterToFileNames( const RString sBaseDir, const Song *pSong, set
 	bool bSuccess = ini.GetValue( "GenreToSection", pSong->m_sGenre, sSection );
 	if( !bSuccess )
 	{
-		LOG->Warn( "Genre '%s' isn't mapped", pSong->m_sGenre.c_str() );
+		//LOG->Warn( "Genre '%s' isn't mapped", pSong->m_sGenre.c_str() );
 		return;
 	}
 
