@@ -1,0 +1,9 @@
+- Git clone from ffmpeg's repo.
+- Checkout the revision that matches the Windows build.
+
+./configure --arch=i386 --cc='clang -m32' --cxx='clang++ -m32' --prefix=/Build/ffmpeg-mac --disable-vda --enable-decoder=mjpeg
+make
+make install
+
+Then copy the .a files from /Build/ffmpeg-mac/lib to the ffmpeg directory.
+

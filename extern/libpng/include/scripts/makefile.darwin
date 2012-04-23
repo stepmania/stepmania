@@ -37,10 +37,11 @@ MKDIR_P=mkdir -p
 LN_SF=ln -sf
 RANLIB=ranlib
 RM_F=/bin/rm -f
+ARCH="-arch i386 -arch x86_64"
 
 # CFLAGS=-I$(ZLIBINC) -W -Wall -O3 -funroll-loops
-CFLAGS=-I$(ZLIBINC) -W -Wall -O -funroll-loops
-LDFLAGS=-L. -L$(ZLIBLIB) -lpng15 -lz
+CFLAGS=-I$(ZLIBINC) -W -Wall -O -funroll-loops $(ARCH)
+LDFLAGS=-L. -L$(ZLIBLIB) -lpng15 -lz $(ARCH)
 
 INCPATH=$(prefix)/include
 LIBPATH=$(exec_prefix)/lib

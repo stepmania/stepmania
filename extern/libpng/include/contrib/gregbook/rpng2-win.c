@@ -590,7 +590,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR cmd, int showmode)
                   "(unexpectedly) while reading PNG image file\n");
                 exit(3);
             } else /* if (error) */ {
-                // will print error message below
+                /* will print error message below */
             }
             break;
         }

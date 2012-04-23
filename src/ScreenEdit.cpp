@@ -1552,7 +1552,8 @@ void ScreenEdit::UpdateTextInfo()
 		if( m_pSong->m_sSubTitle.size() )
 			sText += ssprintf( SUBTITLE_FORMAT.GetValue(), SUBTITLE.GetValue().c_str(), m_pSong->m_sSubTitle.c_str() );
 		sText += ssprintf( SEGMENT_TYPE_FORMAT.GetValue(), SEGMENT_TYPE.GetValue().c_str(), TimingSegmentTypeToString(currentCycleSegment).c_str() );
-		sText += ssprintf( TAP_NOTE_TYPE_FORMAT.GetValue(), TAP_NOTE_TYPE.GetValue().c_str(), TapNoteTypeToString( m_selectedTap.type ).c_str() );
+        const RString tapnoteType = TapNoteTypeToString( m_selectedTap.type );
+		sText += ssprintf( TAP_NOTE_TYPE_FORMAT.GetValue(), TAP_NOTE_TYPE.GetValue().c_str(), tapnoteType.c_str() );
 	}
 	
 	GAMESTATE->SetProcessedTimingData(&m_pSteps->m_Timing);

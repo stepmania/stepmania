@@ -18,15 +18,15 @@ AC_PREREQ(2.59)
 
 dnl Version number stuff here:
 
-AC_INIT([libpng], [1.5.2], [png-mng-implement@lists.sourceforge.net])
+AC_INIT([libpng], [1.5.10], [png-mng-implement@lists.sourceforge.net])
 AM_INIT_AUTOMAKE
 dnl stop configure from automagically running automake
 AM_MAINTAINER_MODE
 
-PNGLIB_VERSION=1.5.2
+PNGLIB_VERSION=1.5.10
 PNGLIB_MAJOR=1
 PNGLIB_MINOR=5
-PNGLIB_RELEASE=2
+PNGLIB_RELEASE=10
 
 dnl End of version number stuff
 
@@ -36,6 +36,7 @@ AM_CONFIG_HEADER(config.h)
 # Checks for programs.
 AC_LANG([C])
 AC_PROG_CC
+AM_PROG_AS
 AC_PROG_LD
 AC_PROG_CPP
 AC_CHECK_TOOL(SED, sed, :)
@@ -75,6 +76,7 @@ AC_CHECK_HEADERS([malloc.h stdlib.h string.h strings.h])
 AC_C_CONST
 AC_TYPE_SIZE_T
 AC_STRUCT_TM
+AC_C_RESTRICT
 
 # Checks for library functions.
 AC_FUNC_STRTOD
@@ -89,10 +91,26 @@ AC_CHECK_LIB(z, zlibVersion, ,
     AC_CHECK_LIB(z, ${ZPREFIX}zlibVersion, ,
                  AC_ERROR([zlib not installed])))
 
+# The following is for pngvalid, to ensure it catches FP errors even on
+# platforms that don't enable FP exceptions, the function appears in the math
+# library (typically), it's not an error if it is not found.
+AC_CHECK_LIB([m], [feenableexcept])
+AC_CHECK_FUNCS([feenableexcept])
 
 LIBPNG_DEFINES=-DPNG_CONFIGURE_LIBPNG
 LIBPNG_DEFINES=$LIBPNG_DEFINES
 AC_SUBST(LIBPNG_DEFINES)
+
+AC_MSG_CHECKING([if using Solaris linker])
+SLD=`$LD --version 2>&1 | grep Solaris`
+if test "$SLD"; then
+    have_solaris_ld=yes
+    AC_MSG_RESULT(yes)
+else
+    have_solaris_ld=no
+    AC_MSG_RESULT(no)
+fi
+AM_CONDITIONAL(HAVE_SOLARIS_LD, test "$have_solaris_ld" = "yes")
 
 AC_MSG_CHECKING([if libraries can be versioned])
 # Special case for PE/COFF platforms: ld reports
@@ -104,7 +122,13 @@ case $host in
     AC_MSG_RESULT(no)
 ;;
 * )
-GLD=`$LD --help < /dev/null 2>/dev/null | grep version-script`
+
+if test "$have_solaris_ld" = "yes"; then
+    GLD=`$LD --help < /dev/null 2>&1 | grep 'M mapfile'`
+else
+    GLD=`$LD --help < /dev/null 2>/dev/null | grep version-script`
+fi
+
 if test "$GLD"; then
     have_ld_version_script=yes
     AC_MSG_RESULT(yes)
@@ -158,6 +182,19 @@ AC_ARG_WITH(binconfigs,
 	fi],
 	[binconfigs='${binconfigs}'])
 AC_SUBST([binconfigs])
+
+# Because GCC by default assembles code with an executable stack, even though it
+# compiles C code with a non-executable stack, it is necessary to do a fixup
+# here (this may by GCC specific)
+AC_SUBST([AM_CCASFLAGS], [-Wa,--noexecstack])
+
+AC_ARG_ENABLE([arm-neon],
+	AC_HELP_STRING([--enable-arm-neon], [Enable ARM NEON optimizations]),
+	[if test "${enableval}" = yes; then
+		AC_DEFINE([PNG_ARM_NEON], [1], [Enable ARM NEON optimizations])
+		AC_DEFINE([PNG_ALIGNED_MEMORY_SUPPORTED], [1], [Align row buffers])
+	fi])
+AM_CONDITIONAL([PNG_ARM_NEON], [test "${enable_arm_neon:-no}" = yes])
 
 # Config files, substituting as above
 AC_CONFIG_FILES([Makefile libpng.pc:libpng.pc.in])

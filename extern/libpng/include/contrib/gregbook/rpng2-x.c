@@ -591,7 +591,7 @@ int main(int argc, char **argv)
                   "(unexpectedly) while reading PNG image file\n");
                 exit(3);
             } else /* if (error) */ {
-                // will print error message below
+                /* will print error message below */
             }
             break;
         }

@@ -7,4 +7,4 @@ Specify the location of the zlib source (1.2.1 or later) as ZLIBSRC
 on the make command line.
 
 If you prefer to use the shared libraries, go to contrib/pngminus
-and build the pnm2png application there. 
+and build the pnm2png application there.

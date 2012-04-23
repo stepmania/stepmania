@@ -19,5 +19,6 @@
  */
 
 #define PNG_NO_WARNINGS
+#define PNG_ALIGN_TYPE PNG_ALIGN_NONE
 
 #endif /* MINWRPNGCONF_H */

@@ -2,9 +2,9 @@
 <!--
  * zlib.props - location of zlib source
  *
- * libpng version 1.5.1 - February 3, 2011
+ * libpng version 1.5.10 - March 29, 2012
  *
- * Copyright (c) 1998-2010 Glenn Randers-Pehrson
+ * Copyright (c) 1998-2011 Glenn Randers-Pehrson
  *
  * This code is released under the libpng license.
  * For conditions of distribution and use, see the disclaimer
@@ -19,12 +19,19 @@
   <PropertyGroup Label="Globals">
     <!-- Place the name of the directory containing the source of zlib used for
 	 debugging in this property.
+
          The directory need only contain the '.c' and '.h' files from the
 	 source.
+
 	 If you use a relative directory name (as below) then it must be
 	 relative to the project directories; these are one level deepers than
 	 the directories containing this file.
+
+	 If the version of zlib you use does not match that used when the
+	 distribution was built you will get warnings from pngtest that the zlib
+	 versions do not match.  The zlib version used in this build is recorded
+	 below:
      -->
-    <ZLibSrcDir>..\..\..\..\zlib-1.2.4</ZLibSrcDir>
+    <ZLibSrcDir>..\..\..\..\zlib-1.2.5</ZLibSrcDir>
   </PropertyGroup>
 </Project>

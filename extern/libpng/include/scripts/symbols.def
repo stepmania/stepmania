@@ -5,7 +5,7 @@
 LIBRARY
 
 EXPORTS
-;Version 1.5.1
+;Version 1.5.10
  png_access_version_number @1
  png_set_sig_bytes @2
  png_sig_cmp @3
@@ -226,3 +226,17 @@ EXPORTS
  png_get_current_pass_number @218
  png_process_data_pause @219
  png_process_data_skip @220
+ png_set_expand_16 @221
+ png_set_text_compression_level @222
+ png_set_text_compression_mem_level @223
+ png_set_text_compression_strategy @224
+ png_set_text_compression_window_bits @225
+ png_set_text_compression_method @226
+ png_set_alpha_mode @227
+ png_set_alpha_mode_fixed @228
+ png_set_scale_16 @229
+ png_get_cHRM_XYZ @230
+ png_get_cHRM_XYZ_fixed @231
+ png_set_cHRM_XYZ @232
+ png_set_cHRM_XYZ_fixed @233
+ png_set_check_for_invalid_index @234

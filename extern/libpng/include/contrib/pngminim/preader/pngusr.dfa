@@ -36,5 +36,5 @@ option STDIO on
 option READ_bKGD on
 option READ_GAMMA on
 option READ_EXPAND on
-option READ_16_TO_8 on
+option READ_STRIP_16_TO_8 on
 option READ_GRAY_TO_RGB on

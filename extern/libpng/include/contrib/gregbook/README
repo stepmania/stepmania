@@ -104,7 +104,7 @@ BUILD INSTRUCTIONS
      unpacked the source code.
 
      For MSVC, set up the necessary environment variables by invoking
- 
+
         %devstudio%\vc\bin\vcvars32.bat
 
      where where %devstudio% is the installation directory for MSVC /

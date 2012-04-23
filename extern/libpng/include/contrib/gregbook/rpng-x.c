@@ -252,8 +252,8 @@ int main(int argc, char **argv)
             else {
                 bgstr = *argv;
                 if (strlen(bgstr) != 7 || bgstr[0] != '#')
-                    ++error; 
-                else 
+                    ++error;
+                else
                     have_bg = TRUE;
             }
         } else {

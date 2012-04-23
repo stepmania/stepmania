@@ -4,10 +4,12 @@
 #CC=cc
 CC=gcc
 LD=$(CC)
-STRIP=strip
 
 # If awk fails try
 # make AWK=nawk
+
+# If cpp fails try
+# make CPP=/lib/cpp
 
 RM=rm -f
 COPY=cp
@@ -102,7 +104,6 @@ all: $(PROGDOCS) rpng2-x$(E)
 
 rpng2-x$(E): $(OBJS)
 	$(LD) -o rpng2-x$(E) $(OBJS) $(LIBS)
-	$(STRIP) rpng2-x$(E)
 
 # The DFA_XTRA setting turns all libpng options off then
 # turns on those required for this minimal build.
