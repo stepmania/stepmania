@@ -9,6 +9,11 @@ ________________________________________________________________________________
 StepMania 5.0 alpha 2 | 201204??
 --------------------------------------------------------------------------------
 
+2012/04/22
+----------
+* [LifeMeterBar] Reverted a change from 2010 that messed with how the life meter
+  subtracts life. The life difficulty should match StepMania 3.9 again. [AJ]
+
 2012/04/08
 ----------
 * [ScreenNetworkOptions] Fixed a bug where localized text would not show up
