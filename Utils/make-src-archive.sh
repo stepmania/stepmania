@@ -24,6 +24,12 @@ cp -dpR src $PRODUCTVER/
 cp Docs/Copying.MAD Docs/Licenses.txt Docs/Changelog_sm5.txt \
    Docs/Changelog_sm-ssc.txt Docs/Changelog_SSCformat.txt \
    Docs/credits.txt Docs/KnownIssues.txt \
+   Docs/license-ext/readme Docs/license-ext/Scoring-jp.txt \
+   Docs/license-ext/theme_lang-ja.txt Docs/vlgothic/Changelog \
+   Docs/license-ext/vlgothic/LICENSE Docs/license-ext/vlgothic/LICENSE.en\
+   Docs/license-ext/vlgothic/LICENSE_E.mplus Docs/license-ext/vlgothic/LICENSE_J.mplus \
+   Docs/license-ext/vlgothic/README Docs/license-ext/vlgothic/README.sazanami \
+   Docs/license-ext/vlgothic/README_J.mplus \
    Makefile.am aclocal.m4 configure Makefile.in configure.ac \
    $PRODUCTVER
 
