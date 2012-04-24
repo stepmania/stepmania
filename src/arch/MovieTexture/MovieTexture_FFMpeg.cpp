@@ -275,6 +275,9 @@ private:
 	float m_fLastFrameDelay;
 	int m_iFrameNumber;
 
+    unsigned char *m_buffer;
+    avcodec::AVIOContext *m_avioContext;
+    
 	avcodec::AVPacket m_Packet;
 	int m_iCurrentPacketOffset;
 	float m_fLastFrame;
@@ -310,6 +313,17 @@ MovieDecoder_FFMpeg::~MovieDecoder_FFMpeg()
 		avcodec::sws_freeContext(m_swsctx);
 		m_swsctx = NULL;
 	}
+    if (m_avioContext != NULL )
+    {
+        RageFile *file = (RageFile *)m_avioContext->opaque;
+        file->Close();
+        delete file;
+        avcodec::av_free(m_avioContext);
+    }
+    if ( m_buffer != NULL )
+    {
+        avcodec::av_free(m_buffer);
+    }
 }
 
 void MovieDecoder_FFMpeg::Init()
@@ -322,6 +336,8 @@ void MovieDecoder_FFMpeg::Init()
 	m_iFrameNumber = -1; /* decode one frame and you're on the 0th */
 	m_fTimestampOffset = 0;
 	m_swsctx = NULL;
+    m_avioContext = NULL;
+    m_buffer = NULL;
 
 	if( m_iCurrentPacketOffset != -1 )
 	{
@@ -560,85 +576,6 @@ static RString averr_ssprintf( int err, const char *fmt, ... )
 	return s + " (" + Error + ")";
 }
 
-int URLRageFile_open( avcodec::URLContext *h, const char *filename, int flags )
-{
-	if( strncmp( filename, "rage://", 7 ) )
-	{
-		LOG->Warn("URLRageFile_open: Unexpected path \"%s\"", filename );
-		return -EIO;
-	}
-	filename += 7;
-
-	int mode = 0;
-	if ( flags & URL_RDONLY )
-		mode = RageFile::READ;
-	else if ( flags & URL_WRONLY )
-		mode = RageFile::WRITE | RageFile::STREAMED;
-	else
-		FAIL_M( "O_RDWR unsupported" );
-
-	RageFileBasic *pFile = new RageFile;
-
-	{
-		RageFile *f = new RageFile;
-		if( !f->Open(filename, mode) )
-		{
-			LOG->Trace("Error opening \"%s\": %s", filename, f->GetError().c_str() );
-			delete f;
-			return -EIO;
-		}
-		pFile = f;
-	}
-
-	h->is_streamed = false;
-	h->priv_data = pFile;
-	return 0;
-}
-
-int URLRageFile_read( avcodec::URLContext *h, unsigned char *buf, int size )
-{
-	RageFileBasic *f = (RageFileBasic *) h->priv_data;
-	return f->Read( buf, size );
-}
-
-int URLRageFile_write( avcodec::URLContext *h, const unsigned char *buf, int size )
-{
-	RageFileBasic *f = (RageFileBasic *) h->priv_data;
-	return f->Write( buf, size );
-}
-
-int64_t URLRageFile_seek( avcodec::URLContext *h, int64_t pos, int whence )
-{
-	RageFileBasic *f = (RageFileBasic *) h->priv_data;
-	if( whence == AVSEEK_SIZE )
-		return f->GetFileSize();
-
-	if( whence != SEEK_SET && whence != SEEK_CUR && whence != SEEK_END )
-	{
-		LOG->Trace("Error: unsupported seek whence: %d", whence);
-		return -1;
-	}
-
-	return f->Seek( (int) pos, whence );
-}
-
-int URLRageFile_close( avcodec::URLContext *h )
-{
-	RageFileBasic *f = (RageFileBasic *) h->priv_data;
-	delete f;
-	return 0;
-}
-
-static avcodec::URLProtocol RageProtocol =
-{
-	"rage",
-	URLRageFile_open,
-	URLRageFile_read,
-	URLRageFile_write,
-	URLRageFile_seek,
-	URLRageFile_close
-};
-
 void MovieTexture_FFMpeg::RegisterProtocols()
 {
 	static bool Done = false;
@@ -648,15 +585,50 @@ void MovieTexture_FFMpeg::RegisterProtocols()
 
 	avcodec::avcodec_register_all();
 	avcodec::av_register_all();
-	avcodec::av_register_protocol2( &RageProtocol, sizeof(RageProtocol) );
+}
+
+#define STEPMANIA_FFMPEG_BUFFER_SIZE 4096
+
+static int AVIORageFile_ReadPacket( void *opaque, uint8_t *buf, int buf_size )
+{
+    RageFile *f = (RageFile *)opaque;
+    return f->Read( buf, buf_size );
+}
+
+static int64_t AVIORageFile_Seek( void *opaque, int64_t offset, int whence )
+{
+    RageFile *f = (RageFile *)opaque;   
+    if( whence == AVSEEK_SIZE )
+		return f->GetFileSize();
+    
+	if( whence != SEEK_SET && whence != SEEK_CUR && whence != SEEK_END )
+	{
+		LOG->Trace("Error: unsupported seek whence: %d", whence);
+		return -1;
+	}
+    
+	return f->Seek( (int) offset, whence );
 }
 
 RString MovieDecoder_FFMpeg::Open( RString sFile )
 {
 	MovieTexture_FFMpeg::RegisterProtocols();
-
+    
 	m_fctx = avcodec::avformat_alloc_context();
-	int ret = avcodec::avformat_open_input( &m_fctx, "rage://" + sFile, NULL, NULL );
+    
+    RageFile *f = new RageFile;
+    
+    if( !f->Open(sFile, RageFile::READ) )
+    {
+        RString errorMessage = f->GetError();
+        RString error = ssprintf("MovieDecoder_FFMpeg: Error opening \"%s\": %s", sFile.c_str(), errorMessage.c_str() );
+        delete f;
+        return error;
+    }
+    
+    m_buffer = (unsigned char *)avcodec::av_malloc(STEPMANIA_FFMPEG_BUFFER_SIZE);
+    m_avioContext = avcodec::avio_alloc_context(m_buffer, STEPMANIA_FFMPEG_BUFFER_SIZE, 0, f, AVIORageFile_ReadPacket, NULL, AVIORageFile_Seek);
+    int ret = avcodec::av_open_input_stream( &m_fctx, m_avioContext, sFile.c_str(), NULL, NULL );
 	if( ret < 0 )
 		return RString( averr_ssprintf(ret, "AVCodec: Couldn't open \"%s\"", sFile.c_str()) );
 
