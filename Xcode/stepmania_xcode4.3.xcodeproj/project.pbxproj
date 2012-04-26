@@ -2135,7 +2135,7 @@
 		AA28B47A058F2F5D0097C109 /* MemoryCardManager.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = MemoryCardManager.cpp; path = ../src/MemoryCardManager.cpp; sourceTree = "<group>"; };
 		AA28B47B058F2F5D0097C109 /* MemoryCardManager.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = MemoryCardManager.h; path = ../src/MemoryCardManager.h; sourceTree = "<group>"; };
 		AA29CE570558741A00961A51 /* Info-StepMania.plist */ = {isa = PBXFileReference; explicitFileType = text.plist; path = "Info-StepMania.plist"; sourceTree = SOURCE_ROOT; };
-		AA29CE580558741A00961A51 /* StepMania.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StepMania.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		AA29CE580558741A00961A51 /* StepMania (Debug).app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "StepMania (Debug).app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA2C9C9F0BAD6F54002441E9 /* CodeSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CodeSet.cpp; path = ../src/CodeSet.cpp; sourceTree = "<group>"; };
 		AA2C9CA00BAD6F54002441E9 /* CodeSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CodeSet.h; path = ../src/CodeSet.h; sourceTree = "<group>"; };
 		AA2CA89D0BB745BD002441E9 /* ScreenContinue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ScreenContinue.cpp; path = ../src/ScreenContinue.cpp; sourceTree = "<group>"; };
@@ -3422,7 +3422,7 @@
 		19C28FACFE9D520D11CA2CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				AA29CE580558741A00961A51 /* StepMania.app */,
+				AA29CE580558741A00961A51 /* StepMania (Debug).app */,
 				AAE7817E0AC7E37B00AEFC64 /* liblua-5.1-sm5.a */,
 				AA7A2B940AE09B520054C5BA /* lua */,
 				AA7A2BAB0AE09CD50054C5BA /* luac */,
@@ -6066,7 +6066,7 @@
 			name = stepmania;
 			productInstallPath = "$(HOME)/Applications";
 			productName = "SDL App";
-			productReference = AA29CE580558741A00961A51 /* StepMania.app */;
+			productReference = AA29CE580558741A00961A51 /* StepMania (Debug).app */;
 			productType = "com.apple.product-type.application";
 		};
 		AA40D1B409A08D650068C0D5 /* stepmania-bare */ = {
@@ -8455,7 +8455,7 @@
 					"-falign-loops=16",
 				);
 				OTHER_LDFLAGS = "-lbz2";
-				PRODUCT_NAME = StepMania;
+				PRODUCT_NAME = "StepMania (Debug)";
 				SYMROOT = "$(SRCROOT)/..";
 				WRAPPER_EXTENSION = app;
 			};
