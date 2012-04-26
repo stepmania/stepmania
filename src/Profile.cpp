@@ -2033,6 +2033,24 @@ public:
 	static int GetTotalHands( T* p, lua_State *L )		{ lua_pushnumber(L, p->m_iTotalHands ); return 1; }
 	static int GetTotalLifts( T* p, lua_State *L )		{ lua_pushnumber(L, p->m_iTotalLifts ); return 1; }
 	static int GetUserTable( T* p, lua_State *L )		{ p->m_UserTable.PushSelf(L); return 1; }
+	static int GetLastPlayedSong( T* p, lua_State *L )
+	{
+		Song *pS = p->m_lastSong.ToSong();
+		if( pS )
+			pS->PushSelf(L);
+		else
+			lua_pushnil( L );
+		return 1;
+	}
+	static int GetLastPlayedCourse( T* p, lua_State *L )
+	{
+		Course *pC = p->m_lastCourse.ToCourse();
+		if( pC )
+			pC->PushSelf(L);
+		else
+			lua_pushnil( L );
+		return 1;
+	}
 
 	LunaProfile()
 	{
@@ -2080,6 +2098,8 @@ public:
 		ADD_METHOD( GetTotalHands );
 		ADD_METHOD( GetTotalLifts );
 		ADD_METHOD( GetUserTable );
+		ADD_METHOD( GetLastPlayedSong );
+		ADD_METHOD( GetLastPlayedCourse );
 	}
 };
 
