@@ -13,7 +13,7 @@
 Preference<bool> g_bSoundPreload16bit( "SoundPreload16bit", true );
 
 /* If a sound is smaller than this, we'll load it entirely into memory. */
-Preference<int> g_iSoundPreloadMaxSamples( "SoundPreloadMaxSamples", 128*1024 );
+Preference<int> g_iSoundPreloadMaxSamples( "SoundPreloadMaxSamples", 1024*1024 );
 
 #define samplesize (m_bBufferIs16Bit? sizeof(int16_t):sizeof(float))
 #define framesize (samplesize * m_iChannels)
