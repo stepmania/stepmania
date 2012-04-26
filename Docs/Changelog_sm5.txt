@@ -9,6 +9,10 @@ ________________________________________________________________________________
 StepMania 5.0 alpha 2 | 201204??
 --------------------------------------------------------------------------------
 
+2012/04/25
+----------
+* [Profile] Added GetLastPlayedSong and GetLastPlayedCourse Lua bindings. [AJ]
+
 2012/04/22
 ----------
 * [LifeMeterBar] Reverted a change from 2010 that messed with how the life meter
