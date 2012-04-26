@@ -204,8 +204,8 @@ bool RageSound::Load( RString sSoundFilePath, bool bPrecache, const RageSoundLoa
 		{
 			/* We've preloaded the sound.  Pass it to SOUNDMAN, for reuse. */
 			SOUNDMAN->AddLoadedSound( sSoundFilePath, (RageSoundReader_Preload *) m_pSource );
-			bNeedBuffer = false;
 		}
+		bNeedBuffer = false;
 	}
 
 	m_pSource = new RageSoundReader_Extend( m_pSource );
