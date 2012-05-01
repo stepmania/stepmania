@@ -1511,13 +1511,20 @@ void MusicWheel::PlayerJoined()
 	// a song that has an illegal stepstype for the current amount of players.
 	// (e.g. a song that only has doubles difficulties and a second player joins.)
 	// We need to rebuild the wheel item data in this situation. -aj
+  // TaroNuke: Is at some point this going to remove the non selectable song/course choices?
 	if( !GAMESTATE->IsCourseMode() && !PREFSMAN->m_bAutogenSteps )
 	{
 		FOREACH_ENUM(SortOrder, so)
 		{
 			m_WheelItemDatasStatus[so] = INVALID;
-		}
-		RebuildWheelItems();
+    }
+    // TaroNuke: Refresh the screen - feel free to replace this with an actual reload screen function
+    SCREENMAN->SetNewScreen( "ScreenSelectMusic" );
+    // RebuildWheelItems();
+  }
+  else
+  {
+    SCREENMAN->SetNewScreen( "ScreenSelectCourse" );
 	}
 	SetOpenSection( m_sExpandedSectionName );
 }
