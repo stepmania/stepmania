@@ -16,11 +16,16 @@ void GhostArrowRow::Load( const PlayerState* pPlayerState, float fYReverseOffset
 	m_fYReverseOffsetPixels = fYReverseOffset;
 
 	const Style* pStyle = GAMESTATE->GetCurrentStyle();
+	const PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
+	NOTESKIN->SetPlayerNumber( pn );
 
 	// init arrows
 	for( int c=0; c<pStyle->m_iColsPerPlayer; c++ ) 
 	{
 		const RString &sButton = GAMESTATE->GetCurrentStyle()->ColToButtonName( c );
+
+		const GameInput GameI = GAMESTATE->GetCurrentStyle()->StyleInputToGameInput( c, pn );
+		NOTESKIN->SetGameController( GameI.controller );
 
 		m_bHoldShowing.push_back( TapNote::SubType_Invalid );
 		m_bLastHoldShowing.push_back( TapNote::SubType_Invalid );

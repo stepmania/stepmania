@@ -4,6 +4,7 @@
 #include "Actor.h"
 #include "RageTypes.h"
 #include "PlayerNumber.h"
+#include "GameInput.h"
 #include "IniFile.h"
 
 class Game;
@@ -24,7 +25,8 @@ public:
 
 	void SetCurrentNoteSkin( const RString &sNoteSkin ) { m_sCurrentNoteSkin = sNoteSkin; }
 	const RString &GetCurrentNoteSkin() { return m_sCurrentNoteSkin; }
-
+	void SetPlayerNumber( PlayerNumber pn ) { m_PlayerNumber = pn; }
+	void SetGameController( GameController gc ) { m_GameController = gc; }
 	RString GetPath( const RString &sButtonName, const RString &sElement );
 	bool PushActorTemplate( Lua *L, const RString &sButton, const RString &sElement, bool bSpriteOnly );
 	Actor *LoadActor( const RString &sButton, const RString &sElement, Actor *pParent = NULL, bool bSpriteOnly = false );
@@ -46,6 +48,10 @@ protected:
 	void LoadNoteSkinDataRecursive( const RString &sNoteSkinName, NoteSkinData& data_out );
 	RString m_sCurrentNoteSkin;
 	const Game* m_pCurGame;
+
+	// xxx: is this the best way to implement this? -freem
+	PlayerNumber m_PlayerNumber;
+	GameController m_GameController;
 };
 
 extern NoteSkinManager*	NOTESKIN;	// global and accessable from anywhere in our program

@@ -9,6 +9,11 @@ ________________________________________________________________________________
 StepMania 5.0 alpha 2 | 201205??
 --------------------------------------------------------------------------------
 
+2012/05/03
+----------
+* Add Var "Player" and Var "Controller" for NoteSkin. [hanubeki]
+  Sourced from http://code.google.com/r/hanubeki-modified-sm-ssc/source/detail?r=824cff29912d1c29a667046ba463d195e81c524a
+
 2012/05/02
 ----------
 * Make ReceptorArrowRow and GhostArrowRow respect the column draw order. [hanubeki]
