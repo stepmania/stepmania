@@ -6,8 +6,12 @@ ________________________________________________________________________________
 
 ================================================================================
 
-StepMania 5.0 alpha 2 | 201204??
+StepMania 5.0 alpha 2 | 201205??
 --------------------------------------------------------------------------------
+
+2012/05/02
+* Make ReceptorArrowRow and GhostArrowRow respect the column draw order. [hanubeki]
+  Sourced from http://code.google.com/r/hanubeki-modified-sm-ssc/source/detail?r=8ccf7449651eef51e8c42d031aa64da49a0b72ce
 
 2012/04/25
 ----------

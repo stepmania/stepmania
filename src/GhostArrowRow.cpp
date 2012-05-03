@@ -87,8 +87,10 @@ void GhostArrowRow::Update( float fDeltaTime )
 
 void GhostArrowRow::DrawPrimitives()
 {
-	for( unsigned c=0; c<m_Ghost.size(); c++ )
+	const Style* pStyle = GAMESTATE->GetCurrentStyle();
+	for( unsigned i=0; i<m_Ghost.size(); i++ )
 	{
+		const int c = pStyle->m_iColumnDrawOrder[i];
 		m_Ghost[c]->Draw();
 	}
 }

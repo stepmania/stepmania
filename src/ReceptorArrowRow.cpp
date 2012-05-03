@@ -66,8 +66,12 @@ void ReceptorArrowRow::Update( float fDeltaTime )
 
 void ReceptorArrowRow::DrawPrimitives()
 {
-	for( unsigned c=0; c<m_ReceptorArrow.size(); c++ ) 
+	const Style* pStyle = GAMESTATE->GetCurrentStyle();
+	for( unsigned i=0; i<m_ReceptorArrow.size(); i++ )
+	{
+		const int c = pStyle->m_iColumnDrawOrder[i];
 		m_ReceptorArrow[c]->Draw();
+	}
 }
 
 void ReceptorArrowRow::Step( int iCol, TapNoteScore score )
