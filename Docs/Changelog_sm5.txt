@@ -13,6 +13,8 @@ StepMania 5.0 alpha 2 | 201205??
 ----------
 * Add Var "Player" and Var "Controller" for NoteSkin. [hanubeki]
   Sourced from http://code.google.com/r/hanubeki-modified-sm-ssc/source/detail?r=824cff29912d1c29a667046ba463d195e81c524a
+* [CustomSpeedMods] If a player decides to remove 1x from the machine profile's
+  custom speed mods, re-add it back in to avoid crashes. [AJ]
 
 2012/05/02
 ----------

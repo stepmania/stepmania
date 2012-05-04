@@ -1,8 +1,12 @@
 --[[
-Custom Speed Mods v2.2 (for StepMania 5)
+Custom Speed Mods v2.3 (for StepMania 5/SM5TE)
 by AJ Kelly of KKI Labs ( http://kki.ajworld.net/ )
 
 changelog:
+
+v2.3 (StepMania 5 a2/SM5TE)
+* If someone has decided to remove 1x from the machine profile's speed mods,
+  silently fix it.
 
 v2.2 (StepMania 5 alpha 2) [by FSX]
 * Rewrite table management code.
@@ -174,11 +178,20 @@ local function GetSpeedMods()
 		PlayerNumber_P2 = ProfileDir('ProfileSlot_Player2')
 	}
 
-	-- figure out how many players we have to deal with.
-	local numPlayers = GAMESTATE:GetNumPlayersEnabled()
+	-- if someone is trying to be "smart" and removes 1x from the machine
+	-- profile's custom speed mods, re-add it to prevent crashes.
+	local machineMods = ParseSpeedModFile(profileDirs.Machine..baseFilename)
+	if machineMods then
+		local found1X = false
+		for k,v in pairs(machineMods) do found1X = (v == "1x") end
+		if not found1X then table.insert(machineMods,"1x") end
+	end
 
 	-- load machine to finalMods
-	finalMods = InvertTable(ParseSpeedModFile(profileDirs.Machine..baseFilename))
+	finalMods = InvertTable(machineMods)
+
+	-- figure out how many players we have to deal with.
+	local numPlayers = GAMESTATE:GetNumPlayersEnabled()
 
 	local playerMods = {}
 	for pn in ivalues(GAMESTATE:GetHumanPlayers()) do
@@ -253,7 +266,7 @@ function SpeedMods()
 end
 
 --[[
-Copyright © 2008-2011 AJ Kelly/KKI Labs.
+Copyright © 2008-2012 AJ Kelly/KKI Labs.
 Use freely, so long this notice and the above documentation remains.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
