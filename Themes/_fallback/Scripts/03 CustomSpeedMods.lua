@@ -57,10 +57,11 @@ end
 -- Tries to parse the file at path. If successful, returns a table of mods.
 -- If it can't open the file, it will write a fallback set of mods.
 local function ParseSpeedModFile(path)
-	local function Failure(file)
+	local function Failure()
 		-- error; write a fallback mod file and return it
 		local fallbackString = "0.5x,1x,1.5x,2x,3x,4x,5x,6x,7x,8x,C250,C450,m550"
 		Trace("[CustomSpeedMods]: Could not read SpeedMods; writing fallback to "..path)
+		local file = RageFileUtil.CreateRageFile()
 		file:Open(path, 2)
 		file:Write(fallbackString)
 		file:destroy()
@@ -78,18 +79,17 @@ local function ParseSpeedModFile(path)
 			string.gsub(mods[i], "%s", "")
 			if not(mods[i]:find("%d+.?%d*[xX]") or mods[i]:find("[cmCM]%d+")) then
 				mods[i] = nil
-				--hack for those lazy with their capitalization
-				if mods[i]:find("[mM]") then mods[i]=mods[i]:lower()
-				elseif mods[i]:find("[cC]") then mods[i]=mods[i]:upper() end
-			end
+			elseif mods[i]:find("[mM]") then mods[i]=mods[i]:lower()
+			elseif mods[i]:find("[cC]") then mods[i]=mods[i]:upper() end
 		end
 		
-    if #mods==0 then return Failure(file) end
+    if #mods==0 then file:destroy() return Failure() end
 		
 		file:destroy()
 		return mods
 	else
-		return Failure(file)
+		file:destroy()
+		return Failure()
 	end
 end
 
