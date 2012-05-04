@@ -7,6 +7,7 @@ changelog:
 v2.3 (StepMania 5 a2/SM5TE)
 * If someone has decided to remove 1x from the machine profile's speed mods,
   silently fix it.
+* Ignore Cmod and mmod capitalization errors.
 
 v2.2 (StepMania 5 alpha 2) [by FSX]
 * Rewrite table management code.
@@ -77,6 +78,9 @@ local function ParseSpeedModFile(path)
 			string.gsub(mods[i], "%s", "")
 			if not(mods[i]:find("%d+.?%d*[xX]") or mods[i]:find("[cmCM]%d+")) then
 				mods[i] = nil
+				--hack for those lazy with their capitalization
+				if mods[i]:find("[mM]") then mods[i]=mods[i]:lower()
+				elseif mods[i]:find("[cC]") then mods[i]=mods[i]:upper() end
 			end
 		end
 		
