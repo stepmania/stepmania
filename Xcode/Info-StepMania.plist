@@ -52,7 +52,7 @@
 	<key>LSMinimumSystemVersion</key>
 	<string>10.5.10</string>
 	<key>NSHumanReadableCopyright</key>
-	<string>Copyright 2001-2011</string>
+	<string>Copyright 2001-2012</string>
 	<key>NSPrincipalClass</key>
 	<string>SMApplication</string>
 </dict>
