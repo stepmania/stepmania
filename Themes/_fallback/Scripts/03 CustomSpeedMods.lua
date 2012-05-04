@@ -80,7 +80,7 @@ local function ParseSpeedModFile(path)
 			end
 		end
 		
-		if #mods==0 then return Failure() end
+    if #mods==0 then return Failure(file) end
 		
 		file:destroy()
 		return mods
@@ -266,7 +266,7 @@ function SpeedMods()
 end
 
 --[[
-Copyright © 2008-2012 AJ Kelly/KKI Labs.
+Copyright Â© 2008-2012 AJ Kelly/KKI Labs.
 Use freely, so long this notice and the above documentation remains.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
