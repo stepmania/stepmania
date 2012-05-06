@@ -37,7 +37,7 @@ update mode: all are valid.
 finalize mode: JudgementCommand invalid.
 	This is designed to let you give score bonuses.
 ]]
---[[
+
 ScoringModes["Oldschool"]=function(judg,pss,player,mode)
 	local tscore = 0
 	local tmaxscore = 1000000000
@@ -65,8 +65,10 @@ ScoringModes["Oldschool"]=function(judg,pss,player,mode)
 end
 
 ScoringModes['DDRMAX']=function(judge,pss,player,mode)
+  --If you know Japanese and English, and can translate these comments, please help.
+  --日本のコメントは、機械解釈されました。 あなたが彼らを人間を翻訳されたコメントと入れ替えるのを手伝うことができるならば、どうぞ。
 	--[en] in init mode, you start here. judge will be nil.
-	--[jp] 
+  --[jp] initモードで、あなたがここに出発すること。judgeが、nilです
 	local multLookup = {
 		TapNoteScore_W1=10,
 		TapNoteScore_W2=10,
@@ -91,34 +93,32 @@ ScoringModes['DDRMAX']=function(judge,pss,player,mode)
 	local bestscore = 0
 	local s = numNoteObjects<1 and 0 or ((numNoteObjects/2)*(1+numNoteObjects))
 	--[en] coroutine.yield() acts somewhat like return, but when the function is run by UpdateScoreKeepers() it will start here.
-	--[jp] xxx
+  --[jp] coroutine.yield（）はいくぶん「return」のようなふりをします、しかし、機能がUpdateScoreKeepers（）に通されるとき、それはここで始まります。
 	judge,pss,player,mode = coroutine.yield()
 	--[en] a while loop is only one way to make the mode selection system, but it's probably the easiest.
-	--ideally, this would just be 'while mode=="update" do', with finalize stuff after it,
-	--but I had written the code already when I thought of that.
-	--[jp] xxx
+  --[jp]「while」ループはモード選択システムを行う1つの方法だけです、しかし、それは多分最も簡単でしょう。
 	while true do
 		--update mode code
 		if mode == "update" then
 			--[en] this filters out holds and spurious judgments. DDRMAX ignores holds for scoring purposes.
-			--[jp] xxx
+			--[jp] これは、holdともっともらしい判断を除去します。 DDRMAXは、目的を記録するために、holdを無視します。
 			if (not notesToIgnore[judge.TapNoteScore]) and judge.HoldNoteScore==nil then
 				curstep=curstep+1
-				if curstep>numNoteObjects then error "is bery bad" end
+        if curstep>numNoteObjects then error "Got some things we shouldn't have" end
 				score=score+(pss:GetFailed() and 1 or (multLookup[judge.TapNoteScore]*math.floor(base/s)*curstep))+((curstep==numNoteObjects and pss:FullComboOfScore('TapNoteScore_W2')) and (10*(base-(math.floor(base/s)*numNoteObjects))) or 0)
 				bestscore = (curstep==numNoteObjects and 50000000 or bestscore+(10*math.floor(base/s)*curstep))
 			end
 			judge,pss,player,mode=coroutine.yield(score,bestscore)
 		end
 		if mode == "finalize" then
-			--[en] this code would work, but SM5 behavior prevents it from doing anything. it should give the groove radar bonuses.
-			--[jp] xyz
+      --[en] this code isn't accurate, but it's good enough
+			--[jp] このコードは正確でありません、しかし、それは十分によいです
 			local actradar = pss:GetRadarActual()
 			local possradar = pss:GetRadarPossible()
 			for k,v in pairs(radarCategoriesAndBonuses) do
 				local thispossradar=possradar:GetValue(k)
 				if thispossradar>0 then
-					score=score+math.floor((actradar:GetValue(k)/thispossradar)*thispossradar*v)
+score=score+math.floor((actradar:GetValue(k)/thispossradar)*(thispossradar*v))
 					bestscore=bestscore+(thispossradar*v)
 				end
 			end
@@ -126,7 +126,7 @@ ScoringModes['DDRMAX']=function(judge,pss,player,mode)
 		end
 	end
 	return score,bestscore
-end]]
+end
 
 for k,v in pairs(Scoring) do
 	if ScoringModes[k] == nil then
