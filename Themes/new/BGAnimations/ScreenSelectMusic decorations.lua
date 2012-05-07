@@ -2,8 +2,12 @@ local t = LoadFallbackB();
 --
 t[#t+1] = StandardDecorationFromFileOptional("BannerFrame","BannerFrame");
 t[#t+1] = StandardDecorationFromFileOptional("BPMDisplay","BPMDisplay");
+t[#t+1] = StandardDecorationFromFileOptional("TimeDisplay","TimeDisplay");
 t[#t+1] = StandardDecorationFromFileOptional("StageDisplay","StageDisplay");
--- StepsDisplay
+t[#t+1] = StandardDecorationFromFileOptional("SortDisplay","SortDisplay");
+t[#t+1] = StandardDecorationFromFileOptional("DifficultyList","DifficultyList");
+
+-- StepsDisplay creator
 local function CreateStepsDisplay( _pn )
   local function set(self, _pn)
     self:SetFromGameState( _pn);
@@ -23,13 +27,6 @@ local function CreateStepsDisplay( _pn )
 
   return t;
 end
--- Create Background For Each Player
---[[ for pn in ivalues(PlayerNumber) do
-  local MetricsName = "PlayerFrame" .. PlayerNumberToString(pn)
-	t[#t+1] = LoadActor(THEME:GetPathG(Var "LoadingScreen","PlayerFrame")) .. {
-		InitCommand=function(self) self:player(pn); self:name(MetricsName); ActorUtil.LoadAllCommandsAndSetXY(self,Var "LoadingScreen"); end;
-	};
-end ]]
 -- Create StepsDisplay for each player
 for pn in ivalues(PlayerNumber) do
 	local MetricsName = "StepsDisplay" .. PlayerNumberToString(pn);
@@ -37,5 +34,10 @@ for pn in ivalues(PlayerNumber) do
 		InitCommand=function(self) self:player(pn); self:name(MetricsName); ActorUtil.LoadAllCommandsAndSetXY(self,Var "LoadingScreen"); end;
 	};
 end
-
+-- Create PaneDisplay for each player
+t[#t+1] = StandardDecorationFromFileOptional("PaneDisplay","PaneDisplay");
+--[[ for pn in ivalues(PlayerNumber) do
+    local MetricsName = "PaneDisplay" .. PlayerNumberToString(pn);
+    t[#t+1] = StandardDecorationFromFileOptional(MetricsName,"PaneDisplay",PlayerNumber);
+end ]]
 return t;

@@ -41,7 +41,7 @@ return Def.ActorFrame {
   -- BPM Multiple Warning 
   Def.Quad {
     Name="BPMFlag";
-    InitCommand=cmd(x,-32;y,4;basezoomx,24;basezoomy,4;fadeleft,0.2;faderight,0.2;diffuse,ThemeColor.Primary;thump,1;effectclock,'beatnooffset');
+    InitCommand=cmd(x,32;y,-8;basezoomx,24;basezoomy,4;fadeleft,0.2;faderight,0.2;diffuse,ThemeColor.Primary;thump,1;effectclock,'beatnooffset');
     SingleBPMCommand=cmd(finishtweening;decelerate,0.1;zoom,0;zoomx,8;diffusealpha,0);
     MultipleBPMCommand=cmd(finishtweening;smooth,0.05;zoom,1;diffusealpha,1;);
   };
@@ -56,7 +56,7 @@ return Def.ActorFrame {
     Name="BPMText";
     File=THEME:GetPathF("Common","Normal");
     InitCommand=cmd(Load,"RollingNumbersBPMDisplay");
-    OnCommand=cmd(horizalign,left;x,-16);
+    OnCommand=cmd(horizalign,left;x,-46;y,6;zoom,0.75;maxwidth,92/0.75;);
     BeginCommand=cmd(playcommand,"Set");
     CurrentSongChangedMessageCommand=cmd(playcommand,"Set");
     SetCommand=function(self)

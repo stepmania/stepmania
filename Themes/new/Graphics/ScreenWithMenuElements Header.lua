@@ -2,11 +2,11 @@ local t = Def.ActorFrame {};
 local function UpdateTriangleFrame(self)
   local curBPS = GAMESTATE:GetSongBPS() and GAMESTATE:GetSongBPS() or 1;
   local c = self:GetChildren();
-  local auxRate = 6;
+  local auxRate = 3;
   --
   c.TriangleFrame:aux( math.mod( c.TriangleFrame:getaux() + ( curBPS * auxRate ), 360) );
-  c.TriangleFrame:rotationz( c.TriangleFrame:GetRotationZ() + ( curBPS * 1.5 ) );
-  c.TriangleFrame:zoom( 1.125 - ((c.TriangleFrame:getaux() / 360) * 0.5) );
+  c.TriangleFrame:rotationz( c.TriangleFrame:GetRotationZ() + ( curBPS * 0.75 ) );
+  c.TriangleFrame:zoom( 1.125 - ((c.TriangleFrame:getaux() / 360) * 0.35) );
   -- c.TriangleFrame:x( math.cos( math.rad(c.TriangleFrame:getaux()) ) * 8 );
   -- c.TriangleFrame:y(math.sin( math.rad(c.TriangleFrame:getaux()) ) * 8);
 end;
