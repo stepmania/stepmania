@@ -4,8 +4,11 @@ The StepMania 5 Changelog covers all post-sm-ssc changes. For a list of changes
 from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
-================================================================================
+2012/05/14
+----------
+* [Course] Added AllSongsAreFixed() Lua binding.
 
+================================================================================
 StepMania 5.0 alpha 2 | 20120504
 --------------------------------------------------------------------------------
 
@@ -128,6 +131,7 @@ set MemoryCards=1 in Save/Preferences.ini (or Save/Static.ini). [AJ]
 * [ScreenSelectMusic] Added PlaySoundOnEnteringOptionsMenu metric. [AJ]
 * [MusicWheel, WheelBase] Added collapse sound. [AJ]
 
+================================================================================
 StepMania 5.0 alpha 1a | 20120219
 --------------------------------------------------------------------------------
 

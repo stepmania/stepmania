@@ -1116,6 +1116,7 @@ public:
 		return 1;
 	}
 	DEFINE_METHOD( IsRanking, IsRanking() )
+	DEFINE_METHOD( AllSongsAreFixed, AllSongsAreFixed() )
 
 	LunaCourse()
 	{
@@ -1146,6 +1147,7 @@ public:
 		ADD_METHOD( IsAnEdit );
 		ADD_METHOD( IsPlayableIn );
 		ADD_METHOD( IsRanking );
+		ADD_METHOD( AllSongsAreFixed );
 	}
 };
 
