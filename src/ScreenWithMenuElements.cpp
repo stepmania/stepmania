@@ -31,6 +31,7 @@ void ScreenWithMenuElements::Init()
 {
 	PLAY_MUSIC.Load( m_sName, "PlayMusic" );
 	MUSIC_ALIGN_BEAT.Load( m_sName, "MusicAlignBeat" );
+	DELAY_MUSIC_SECONDS.Load( m_sName, "DelayMusicSeconds" );
 	CANCEL_TRANSITIONS_OUT.Load( m_sName, "CancelTransitionsOut" );
 	TIMER_SECONDS.Load( m_sName, "TimerSeconds" );
 	TIMER_METRICS_GROUP.Load( m_sName, "TimerMetricsGroup" );
@@ -217,7 +218,11 @@ void ScreenWithMenuElements::StartPlayingMusic()
 					{
 						pmp.sFile = sMusicPathFromLua;
 						pmp.bAlignBeat = MUSIC_ALIGN_BEAT;
+
 						// TODO: load other params into pmp here -aj
+						if( DELAY_MUSIC_SECONDS > 0.0f )
+							pmp.fStartSecond = -DELAY_MUSIC_SECONDS;
+
 						SOUND->PlayMusic( pmp );
 					}
 					else
@@ -238,6 +243,10 @@ void ScreenWithMenuElements::StartPlayingMusic()
 		{
 			pmp.sFile = m_sPathToMusic;
 			pmp.bAlignBeat = MUSIC_ALIGN_BEAT;
+
+			if( DELAY_MUSIC_SECONDS > 0.0f )
+				pmp.fStartSecond = -DELAY_MUSIC_SECONDS;
+
 			SOUND->PlayMusic( pmp );
 		}
 	}
