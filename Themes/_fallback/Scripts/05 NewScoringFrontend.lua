@@ -6,11 +6,12 @@ It's unnecessary and problematic.]]
 ScoringModes={}
 
 local function CreateOldScoringShim(name)
+	local func = Scoring[name]
 	return function(judg,pss,player,mode)
 		judg,pss,player,mode=coroutine.yield()
 		while true do
 			if mode=="update" then
-				Scoring[name](judg,pss)
+				func(judg,pss)
 				judg,pss,player,mode=coroutine.yield(pss:GetScore(),pss:GetCurMaxScore())
 			elseif mode=="finalize" then
 				return pss:GetScore(),pss:GetCurMaxScore()
@@ -133,6 +134,22 @@ for k,v in pairs(Scoring) do
 		ScoringModes[k] = CreateOldScoringShim(k)
 	end
 end
+
+--if you are using the old Scoring system in the standard way, your theme will not need to be updated
+local OldCallShimMt={
+	__index=function(t,k,v)
+		return function(judg, _)
+			if GetNumReadiedScoreKeepers()==0 then
+				--lazy programming
+				InitScoreKeepers(ArgsIfPlayerJoinedOrNil(v))
+			end
+			UpdateScoreKeepers(judg)
+		end
+	end
+}
+
+Scoring={}
+setmetatable(Scoring,OldCallShimMt)
 
 function UserPrefScoringMode()
   local baseChoices = {}

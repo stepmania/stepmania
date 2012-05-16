@@ -141,6 +141,15 @@ function table.find(t, sFind)
 	return nil
 end
 
+--Get the count of all items in a table
+function table.itemcount(t)
+	local i = 0
+	while next(t)~=nil do
+		i=i+1
+	end
+	return i
+end
+
 function math.round(num, pre)
 	if pre and pre < 0 then pre = 0 end
 	local mult = 10^(pre or 0) 
@@ -200,6 +209,12 @@ end
 function IsFreePlay()
 	return IsArcade() and (GAMESTATE:GetCoinMode() == 'CoinMode_Free') or false
 end
+
+function ArgsIfPlayerJoinedOrNil(arg1,arg2)
+	if arg1==nil then arg1=arg2
+	elseif arg2==nil then arg2=arg1 end
+	return (GAMESTATE:IsSideJoined(PLAYER_1) and arg1 or nil),(GAMESTATE:IsSideJoined(PLAYER_2) and arg2 or nil)
+end	
 
 function Center1Player()
 	local styleType = GAMESTATE:GetCurrentStyle():GetStyleType()
