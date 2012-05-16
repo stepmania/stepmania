@@ -678,6 +678,7 @@ static void InitializeConfOptions()
 
 	ADD( ConfOption( "AutogenGroupCourses",		MovePref<bool>,		"Off","On" ) );
 	ADD( ConfOption( "FastLoad",			MovePref<bool>,		"Off","On" ) );
+	ADD( ConfOption( "FastLoadAdditionalSongs",			MovePref<bool>,		"Off","On" ) );
 
 	// Background options
 	ADD( ConfOption( "RandomBackgroundMode",	MovePref<RandomBackgroundMode>, "Off","Animations","Random Movies" ) );

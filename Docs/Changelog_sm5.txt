@@ -6,11 +6,13 @@ ________________________________________________________________________________
 
 2012/05/16
 ----------
-* [ScreenWithMenuElements] Added DelayMusicSeconds metric.
+* [ScreenWithMenuElements] Added DelayMusicSeconds metric. [AJ]
+* [ScreenOptionsMasterPrefs] Allow for FastLoadAdditionalSongs preference
+  to be called via the "conf" command. [AJ]
 
 2012/05/14
 ----------
-* [Course] Added AllSongsAreFixed() Lua binding.
+* [Course] Added AllSongsAreFixed() Lua binding. [AJ]
 
 ================================================================================
 StepMania 5.0 alpha 2 | 20120504
