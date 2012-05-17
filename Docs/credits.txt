@@ -141,6 +141,9 @@ Deamon007
 cvpcs
  * Updated ffmpeg support to v0.10
 
+djpohly
+ * Various patches/fixes
+
 ==the beta testers==
 [SSC Beta Testing Team]
 KeithD
