@@ -49,6 +49,7 @@ protected:
 
 	ThemeMetric<bool>		PLAY_MUSIC;
 	ThemeMetric<bool>		MUSIC_ALIGN_BEAT;
+	ThemeMetric<float>		DELAY_MUSIC_SECONDS;
 	ThemeMetric<bool>		CANCEL_TRANSITIONS_OUT;
 	ThemeMetric<float>		TIMER_SECONDS;
 	ThemeMetric<RString>	TIMER_METRICS_GROUP;

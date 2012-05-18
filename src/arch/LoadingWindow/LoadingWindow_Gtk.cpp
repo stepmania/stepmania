@@ -92,7 +92,7 @@ void LoadingWindow_Gtk::SetIcon( const RageSurface *pIcon )
 
 void LoadingWindow_Gtk::SetSplash( const RString str )
 {
-	Module_SetSplash( str );
+	Module_SetSplash( FILEMAN->ResolvePath(str) );
 }
 
 void LoadingWindow_Gtk::SetProgress( const int progress )

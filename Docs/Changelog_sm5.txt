@@ -4,9 +4,19 @@ The StepMania 5 Changelog covers all post-sm-ssc changes. For a list of changes
 from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
+2012/05/17
+----------
+* [LoadingWindow_Gtk] Actually resolve the path to the Splash file. [djpohly]
+
+2012/05/16
+----------
+* [ScreenWithMenuElements] Added DelayMusicSeconds metric. [AJ]
+* [ScreenOptionsMasterPrefs] Allow for FastLoadAdditionalSongs preference
+  to be called via the "conf" command. [AJ]
+
 2012/05/14
 ----------
-* [Course] Added AllSongsAreFixed() Lua binding.
+* [Course] Added AllSongsAreFixed() Lua binding. [AJ]
 
 ================================================================================
 StepMania 5.0 alpha 2 | 20120504
