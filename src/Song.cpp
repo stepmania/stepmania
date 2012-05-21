@@ -175,14 +175,12 @@ void Song::AddBackgroundChange( BackgroundLayer iLayer, BackgroundChange seg )
 	}
 
 	ASSERT( iLayer >= 0 && iLayer < NUM_BackgroundLayer );
-	GetBackgroundChanges(iLayer).push_back( seg );
-	BackgroundUtil::SortBackgroundChangesArray( GetBackgroundChanges(iLayer) );
+	BackgroundUtil::AddBackgroundChange( GetBackgroundChanges(iLayer), seg );
 }
 
 void Song::AddForegroundChange( BackgroundChange seg )
 {
-	GetForegroundChanges().push_back( seg );
-	BackgroundUtil::SortBackgroundChangesArray( GetForegroundChanges() );
+	BackgroundUtil::AddBackgroundChange( GetForegroundChanges(), seg );
 }
 
 void Song::AddLyricSegment( LyricSegment seg )

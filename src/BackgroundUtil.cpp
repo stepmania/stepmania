@@ -129,6 +129,13 @@ void BackgroundUtil::SortBackgroundChangesArray( vector<BackgroundChange> &vBack
 	sort( vBackgroundChanges.begin(), vBackgroundChanges.end(), CompareBackgroundChanges );
 }
 
+void BackgroundUtil::AddBackgroundChange( vector<BackgroundChange> &vBackgroundChanges, BackgroundChange seg )
+{
+	vector<BackgroundChange>::iterator it;
+	it = upper_bound( vBackgroundChanges.begin(), vBackgroundChanges.end(), seg, CompareBackgroundChanges );
+	vBackgroundChanges.insert( it, seg );
+}
+
 void BackgroundUtil::GetBackgroundEffects( const RString &_sName, vector<RString> &vsPathsOut, vector<RString> &vsNamesOut )
 {
 	RString sName = _sName;
