@@ -309,14 +309,15 @@ void SongManager::LoadStepManiaSongDir( RString sDir, LoadingWindow *ld )
 				);
 			}
 			Song* pNewSong = new Song;
+			m_pSongs.push_back( pNewSong );
 			if( !pNewSong->LoadFromSongDir( sSongDirName ) )
 			{
 				// The song failed to load.
+				m_pSongs.pop_back();
 				delete pNewSong;
 				continue;
 			}
 
-			m_pSongs.push_back( pNewSong );
 			index_entry.push_back( pNewSong );
 			loaded++;
 			songIndex++;

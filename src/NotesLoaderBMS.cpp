@@ -14,6 +14,7 @@
 #include "NoteTypes.h"
 #include "NotesLoader.h"
 #include "PrefsManager.h"
+#include "BackgroundUtil.h"
 
 /* BMS encoding:	tap-hold
  * 4&8panel:	Player1		Player2
@@ -273,9 +274,14 @@ class BMSSong {
 	map<RString, int> mapKeysoundToIndex;
 	Song *out;
 
+	bool backgroundsPrecached = false;
+	void PrecacheBackgrounds(const RString &dir);
+	map<RString, RString> mapBackground;
+	
 public:
 	BMSSong( Song *song );
 	int AllocateKeysound( RString filename, RString path );
+	bool GetBackground( RString filename, RString path, RString &bgfile );
 	Song *GetSong();
 };
 
@@ -304,7 +310,7 @@ int BMSSong::AllocateKeysound( RString filename, RString path )
 
 	// try to normalize the filename first!
 
-	// FIXME: garbled song names seem to crash the app.
+	// FIXME: garbled file names seem to crash the app.
 	// this might not be the best place to put this code.
 	if( !utf8_is_valid(filename) )
 		return -1;
@@ -351,6 +357,88 @@ int BMSSong::AllocateKeysound( RString filename, RString path )
 	mapKeysoundToIndex[filename] = index;
 	mapKeysoundToIndex[normalizedFilename] = index;
 	return index;
+	
+}
+
+bool BMSSong::GetBackground( RString filename, RString path, RString &bgfile )
+{
+	// Check for already tried backgrounds
+	if( mapBackground.find( filename ) != mapBackground.end() )
+	{
+		RString bg = mapBackground[filename];
+		if( bg == "" )
+		{
+			return false;
+		}
+		bgfile = bg;
+		return true;
+	}
+	
+	// FIXME: garbled file names seem to crash the app.
+	// this might not be the best place to put this code.
+	if( !utf8_is_valid(filename) )
+		return -1;
+	
+	RString normalizedFilename = filename;
+	RString dir = out->GetSongDir();
+	
+	if (dir.empty())
+		dir = Dirname(path);
+	
+	if( !backgroundsPrecached )
+	{
+		PrecacheBackgrounds(dir);
+	}
+	
+	if( !IsAFile(dir + normalizedFilename) )
+	{
+		const char *exts[] = { "ogv", "avi", "mpg", "mpeg", "bmp", "png", "jpeg", NULL }; // XXX: stop duplicating these everywhere
+		for( unsigned i = 0; exts[i] != NULL; ++i )
+		{
+			RString fn = SetExtension( normalizedFilename, exts[i] );
+			if( IsAFile(dir + fn) )
+			{
+				normalizedFilename = fn;
+				break;
+			}
+		}
+	}
+	
+	if( !IsAFile(dir + normalizedFilename) )
+	{
+		mapBackground[filename] = "";
+		LOG->UserLog( "Song file", dir, "references bmp \"%s\" that can't be found", normalizedFilename.c_str() );
+		return false;
+	}
+	
+	mapBackground[filename] = normalizedFilename;
+	bgfile = normalizedFilename;
+	return true;
+	
+}
+
+void BMSSong::PrecacheBackgrounds(const RString &dir)
+{
+	if( backgroundsPrecached ) return;
+	backgroundsPrecached = true;
+	vector<RString> arrayPossibleFiles;
+	
+	const char *exts[] = { "ogv", "avi", "mpg", "mpeg", "bmp", "png", "jpeg", NULL }; // XXX: stop duplicating these everywhere
+	
+	for( unsigned i = 0; exts[i] != NULL; ++i )
+	{
+		GetDirListing( dir + RString("*.") + RString(exts[i]), arrayPossibleFiles );
+	}
+	
+	for( unsigned i = 0; i < arrayPossibleFiles.size(); i++ )
+	{
+		for( unsigned j = 0; exts[j] != NULL; ++j )
+		{
+			RString fn = SetExtension( arrayPossibleFiles[i], exts[j] );
+			mapBackground[fn] = arrayPossibleFiles[i];
+		}
+		mapBackground[arrayPossibleFiles[i]] = arrayPossibleFiles[i];
+	}
 }
 
 struct BMSChartInfo {
@@ -361,9 +449,12 @@ struct BMSChartInfo {
 	RString backgroundFile;
 	RString stageFile;
 	RString musicFile;
+	
+	map<int, RString> backgroundChanges;
 };
 
 class BMSChartReader {
+	
 	BMSChart *in;
 	Steps *out;
 	BMSSong *song;
@@ -785,6 +876,33 @@ bool BMSChartReader::ReadNoteData()
 				if( bpm > 0 ) td.SetBPMAtRow( row, measureAdjust * (currentBPM = bpm) );
 			}
 		}
+		else if( channel == 4 ) // bga change
+		{
+			/*
+			if( !bgaFound )
+			{
+				info.bgaRow = row;
+				bgaFound = true;
+			}
+			 */
+			RString search = ssprintf( "#bga%s", obj.value.c_str() );
+			BMSHeaders::iterator it = in->headers.find( search );
+			if( it != in->headers.end() )
+			{
+				// TODO: #BGA isn't supported yet.
+			}
+			else
+			{
+				search = ssprintf( "#bmp%s", obj.value.c_str() );
+				it = in->headers.find( search );
+				
+				RString bg;
+				if (song->GetBackground(it->second, in->path, bg))
+				{
+					info.backgroundChanges[row] = bg;
+				}
+			}
+		}
 		else if( channel == 8 ) // bpm change (extended)
 		{
 			RString search = ssprintf( "#bpm%s", obj.value.c_str() );
@@ -1071,6 +1189,19 @@ void BMSSongLoader::AddToSong()
  				else
  					out->m_sBackgroundFile = main.info.stageFile;
 				break;
+		}
+		
+		map<int, RString>::const_iterator it = main.info.backgroundChanges.begin();
+		
+		for (; it != main.info.backgroundChanges.end(); it++)
+		{
+			out->AddBackgroundChange(BACKGROUND_LAYER_1,
+									 BackgroundChange(NoteRowToBeat(it->first),
+													  it->second,
+													  "",
+													  1.f,
+													  SBE_StretchNoLoop));
+			fprintf(stderr, "Adding background change %s %d %s\n", dir.c_str(), it->first, it->second.c_str());
 		}
 
 		out->m_sMusicFile = main.info.musicFile;
