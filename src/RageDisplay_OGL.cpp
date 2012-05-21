@@ -2618,7 +2618,7 @@ bool RageDisplay_Legacy::SupportsTextureFormat(PixelFormat pixfmt, bool bRealtim
 		return glColorTableEXT && glGetColorTableParameterivEXT;
 	case GL_BGR:
 	case GL_BGRA:
-		return GLEW_EXT_bgra;
+		return !!GLEW_EXT_bgra;
 	default:
 		return true;
 	}

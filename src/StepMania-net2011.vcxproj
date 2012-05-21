@@ -144,7 +144,7 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)</Command>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <DisableSpecificWarnings>4063;4100;4127;4201;4244;4275;4355;4505;4512;4702;4786;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <MinimalRebuild>true</MinimalRebuild>
+      <MinimalRebuild>false</MinimalRebuild>
       <AdditionalOptions>/EHsc %(AdditionalOptions)</AdditionalOptions>
       <WholeProgramOptimization>false</WholeProgramOptimization>
     </ClCompile>
@@ -169,6 +169,7 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)</Command>
       <DataExecutionPrevention>
       </DataExecutionPrevention>
       <LinkErrorReporting>SendErrorReport</LinkErrorReporting>
+      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
     <PostBuildEvent>
       <Command>archutils\Win32\mapconv "$(IntDir)$(TargetName).map" "$(TargetDir)\StepMania-debug.vdi"</Command>
@@ -236,6 +237,7 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)</Command>
       <LinkErrorReporting>SendErrorReport</LinkErrorReporting>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
     <PostBuildEvent>
       <Command>archutils\Win32\mapconv "$(IntDir)$(TargetName).map" "$(TargetDir)\StepMania.vdi"
@@ -301,6 +303,7 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)</Command>
       </DataExecutionPrevention>
       <LinkErrorReporting>SendErrorReport</LinkErrorReporting>
       <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
+      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
     <PostBuildEvent>
       <Command>archutils\Win32\mapconv "$(IntDir)$(TargetName).map" "$(TargetDir)\StepMania-fastdebug.vdi"</Command>
@@ -347,6 +350,7 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)</Command>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <DisableSpecificWarnings>4063;4100;4127;4201;4244;4275;4355;4505;4512;4702;4786;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <WholeProgramOptimization>false</WholeProgramOptimization>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -369,6 +373,7 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)</Command>
       </DataExecutionPrevention>
       <TargetMachine>NotSet</TargetMachine>
       <LinkErrorReporting>SendErrorReport</LinkErrorReporting>
+      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
     <PostBuildEvent>
       <Command>archutils\Win32\mapconv "$(IntDir)$(TargetName)-SSE2.map" "$(TargetDir)\StepMania-SSE2.vdi"
