@@ -296,7 +296,7 @@ PrefsManager::PrefsManager() :
 
 	#if defined(HAVE_VERSION_INFO)
 		,
-		m_bUpdateCheckEnable			( "UpdateCheckEnable",				true )
+		m_bUpdateCheckEnable			( "UpdateCheckEnable",				false )
 		// TODO - Aldo_MX: Use PREFSMAN->m_iUpdateCheckIntervalSeconds & PREFSMAN->m_iUpdateCheckLastCheckedSecond
 		//,
 		//m_iUpdateCheckIntervalSeconds	( "UpdateCheckIntervalSeconds",		86400 ),	// 24 hours
