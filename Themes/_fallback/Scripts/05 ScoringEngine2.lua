@@ -48,29 +48,31 @@ function InitScoreKeepers(p1Mode, p2Mode)
 	for k,v in pairs(intab) do
 		if not ScoringModes[v] then
 			--SPOILER: UndocumentedFeature crashes the game intentionally.
-			UndocumentedFeature(k.."'s scoring mode \""..v.."\" doesn't exist.")
-		end
-		ReadiedScoreKeepers[k] = coroutine.create(ScoringModes[v])
-		--call each scoring mode one time in init mode
-		checks={coroutine.resume(ReadiedScoreKeepers[k],nil,STATSMAN:GetCurStageStats():GetPlayerStageStats("PlayerNumber_"..k), "PlayerNumber_"..k, "init")}
-		if not CoroutineIsGood(ReadiedScoreKeepers[k]) then SCREENMAN:SystemMessage("scoring init error: "..checks[2]) return false end
-		--very very very very safe filtering rule load code
-		if type(checks[2])=="table" then
-			if type(checks[2][1])..type(checks[2][2]) == "tabletable" then
-				local isGood=false
-				local tapscan = Enum.Reverse(TapNoteScore)
-				local holdscan = Enum.Reverse(HoldNoteScore)
-				local finaltable = {{},{}} 
-				for i=1,2 do
-					for k,v in pairs(checks[2][i]) do
-						finaltable[i][v]=true
-						if (not (i==2 and holdscan[v] or tapscan[v])) or v==nil then isGood=false break end
-						isGood=true
+			-- UndocumentedFeature(k.."'s scoring mode \""..v.."\" doesn't exist.")
+			-- UndocumentedFeature(k.."'s scoring mode doesn't exist.")
+		else
+			ReadiedScoreKeepers[k] = coroutine.create(ScoringModes[v])
+			--call each scoring mode one time in init mode
+			checks={coroutine.resume(ReadiedScoreKeepers[k],nil,STATSMAN:GetCurStageStats():GetPlayerStageStats("PlayerNumber_"..k), "PlayerNumber_"..k, "init")}
+			if not CoroutineIsGood(ReadiedScoreKeepers[k]) then SCREENMAN:SystemMessage("scoring init error: "..checks[2]) return false end
+			--very very very very safe filtering rule load code
+			if type(checks[2])=="table" then
+				if type(checks[2][1])..type(checks[2][2]) == "tabletable" then
+					local isGood=false
+					local tapscan = Enum.Reverse(TapNoteScore)
+					local holdscan = Enum.Reverse(HoldNoteScore)
+					local finaltable = {{},{}} 
+					for i=1,2 do
+						for k,v in pairs(checks[2][i]) do
+							finaltable[i][v]=true
+							if (not (i==2 and holdscan[v] or tapscan[v])) or v==nil then isGood=false break end
+							isGood=true
+						end
+						if not isGood then break end
 					end
-					if not isGood then break end
-				end
-				if isGood then
-					JudgmentFilters[k]=finaltable
+					if isGood then
+						JudgmentFilters[k]=finaltable
+					end
 				end
 			end
 		end
