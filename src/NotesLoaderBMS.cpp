@@ -274,7 +274,7 @@ class BMSSong {
 	map<RString, int> mapKeysoundToIndex;
 	Song *out;
 
-	bool backgroundsPrecached = false;
+	bool backgroundsPrecached;
 	void PrecacheBackgrounds(const RString &dir);
 	map<RString, RString> mapBackground;
 	
@@ -288,6 +288,7 @@ public:
 BMSSong::BMSSong( Song *song )
 {
 	out = song;
+	backgroundsPrecached = false;
 
 	// import existing keysounds from song
 	for( unsigned i = 0; i < out->m_vsKeysoundFile.size(); i ++ )
