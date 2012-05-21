@@ -1027,6 +1027,18 @@ int main(int argc, char* argv[])
 	LOG->Info( "TLS is %savailable", RageThread::GetSupportsTLS()? "":"not " );
 #endif
 
+	AdjustForChangedSystemCapabilities();
+
+	GAMEMAN		= new GameManager;
+	THEME		= new ThemeManager;
+	ANNOUNCER	= new AnnouncerManager;
+	NOTESKIN	= new NoteSkinManager;
+
+	// Switch to the last used game type, and set up the theme and announcer.
+	SwitchToLastPlayedGame();
+
+	CommandLineActions::Handle(pLoadingWindow);
+
 	// Aldo: Check for updates here!
 	if( PREFSMAN->m_bUpdateCheckEnable )
 	{
@@ -1063,18 +1075,6 @@ int main(int argc, char* argv[])
 			LOG->Info( "Unable to check for updates. The server might be offline." );
 		}
 	}
-
-	AdjustForChangedSystemCapabilities();
-
-	GAMEMAN		= new GameManager;
-	THEME		= new ThemeManager;
-	ANNOUNCER	= new AnnouncerManager;
-	NOTESKIN	= new NoteSkinManager;
-
-	// Switch to the last used game type, and set up the theme and announcer.
-	SwitchToLastPlayedGame();
-
-	CommandLineActions::Handle(pLoadingWindow);
 
 	if( GetCommandlineArgument("dopefish") )
 		GAMESTATE->m_bDopefish = true;
