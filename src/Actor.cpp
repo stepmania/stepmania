@@ -1351,6 +1351,7 @@ public:
 	static int x( T* p, lua_State *L )			{ p->SetX(FArg(1)); return 0; }
 	static int y( T* p, lua_State *L )			{ p->SetY(FArg(1)); return 0; }
 	static int z( T* p, lua_State *L )			{ p->SetZ(FArg(1)); return 0; }
+	static int xy( T* p, lua_State *L )			{ p->SetXY(FArg(1),FArg(2)); return 0; }
 	static int addx( T* p, lua_State *L )			{ p->AddX(FArg(1)); return 0; }
 	static int addy( T* p, lua_State *L )			{ p->AddY(FArg(1)); return 0; }
 	static int addz( T* p, lua_State *L )			{ p->AddZ(FArg(1)); return 0; }
@@ -1569,6 +1570,7 @@ public:
 		ADD_METHOD( x );
 		ADD_METHOD( y );
 		ADD_METHOD( z );
+		ADD_METHOD( xy );
 		ADD_METHOD( addx );
 		ADD_METHOD( addy );
 		ADD_METHOD( addz );

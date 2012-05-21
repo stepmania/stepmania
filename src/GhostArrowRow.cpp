@@ -16,11 +16,16 @@ void GhostArrowRow::Load( const PlayerState* pPlayerState, float fYReverseOffset
 	m_fYReverseOffsetPixels = fYReverseOffset;
 
 	const Style* pStyle = GAMESTATE->GetCurrentStyle();
+	const PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
+	NOTESKIN->SetPlayerNumber( pn );
 
 	// init arrows
 	for( int c=0; c<pStyle->m_iColsPerPlayer; c++ ) 
 	{
 		const RString &sButton = GAMESTATE->GetCurrentStyle()->ColToButtonName( c );
+
+		const GameInput GameI = GAMESTATE->GetCurrentStyle()->StyleInputToGameInput( c, pn );
+		NOTESKIN->SetGameController( GameI.controller );
 
 		m_bHoldShowing.push_back( TapNote::SubType_Invalid );
 		m_bLastHoldShowing.push_back( TapNote::SubType_Invalid );
@@ -87,8 +92,10 @@ void GhostArrowRow::Update( float fDeltaTime )
 
 void GhostArrowRow::DrawPrimitives()
 {
-	for( unsigned c=0; c<m_Ghost.size(); c++ )
+	const Style* pStyle = GAMESTATE->GetCurrentStyle();
+	for( unsigned i=0; i<m_Ghost.size(); i++ )
 	{
+		const int c = pStyle->m_iColumnDrawOrder[i];
 		m_Ghost[c]->Draw();
 	}
 }

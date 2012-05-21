@@ -209,7 +209,8 @@ void LightsManager::Update( float fDeltaTime )
 			int iSec = (int)RageTimer::GetTimeSinceStartFast();
 			int iTopIndex = iSec % 4;
 
-			CabinetLight cl = CabinetLight_Invalid;
+			// Aldo: Disabled this line, apparently it was a forgotten initialization
+			//CabinetLight cl = CabinetLight_Invalid;
 
 			switch( iTopIndex )
 			{

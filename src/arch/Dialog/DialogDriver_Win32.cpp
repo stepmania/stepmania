@@ -263,6 +263,22 @@ Dialog::Result DialogDriver_Win32::AbortRetry( RString sMessage, RString sID )
 	}
 } 
 
+Dialog::Result DialogDriver_Win32::YesNo( RString sMessage, RString sID )
+{
+	int iRet = 0;
+#if !defined(SMPACKAGE)
+	iRet = ::MessageBox(::GetHwnd(), ConvertUTF8ToACP(sMessage).c_str(), ConvertUTF8ToACP(::GetWindowTitle()).c_str(), MB_YESNO);
+#else
+	iRet = ::AfxMessageBox( ConvertUTF8ToACP(sMessage).c_str(), MB_RETRYCANCEL, 0 );
+#endif
+	switch( iRet )
+	{
+	case IDYES:	return Dialog::yes;
+	default:	ASSERT(0);
+	case IDNO:	return Dialog::no;
+	}
+}
+
 /*
  * (c) 2003-2004 Glenn Maynard, Chris Danford
  * All rights reserved.

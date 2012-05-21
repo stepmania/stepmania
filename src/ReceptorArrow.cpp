@@ -19,6 +19,11 @@ void ReceptorArrow::Load( const PlayerState* pPlayerState, int iColNo )
 	m_pPlayerState = pPlayerState;
 	m_iColNo = iColNo;
 
+	const PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
+	const GameInput GameI = GAMESTATE->GetCurrentStyle()->StyleInputToGameInput( iColNo, pn );
+	NOTESKIN->SetPlayerNumber( pn );
+	NOTESKIN->SetGameController( GameI.controller );
+
 	RString sButton = GAMESTATE->GetCurrentStyle()->ColToButtonName( iColNo );
 	m_pReceptor.Load( NOTESKIN->LoadActor(sButton, "Receptor") );
 	this->AddChild( m_pReceptor );

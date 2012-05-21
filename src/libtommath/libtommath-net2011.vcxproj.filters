@@ -1,0 +1,378 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{d28820c7-38c7-477c-8993-1124bc2d2caf}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="bn_error.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_fast_mp_invmod.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_fast_mp_montgomery_reduce.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_fast_s_mp_mul_digs.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_fast_s_mp_mul_high_digs.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_fast_s_mp_sqr.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_2expt.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_abs.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_add.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_add_d.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_addmod.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_and.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_clamp.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_clear.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_clear_multi.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_cmp.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_cmp_d.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_cmp_mag.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_cnt_lsb.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_copy.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_count_bits.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_div.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_div_2.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_div_2d.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_div_3.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_div_d.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_dr_is_modulus.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_dr_reduce.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_dr_setup.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_exch.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_expt_d.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_exptmod.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_exptmod_fast.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_exteuclid.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_fread.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_fwrite.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_gcd.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_get_int.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_grow.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_init.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_init_copy.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_init_multi.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_init_set.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_init_set_int.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_init_size.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_invmod.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_invmod_slow.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_is_square.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_jacobi.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_karatsuba_mul.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_karatsuba_sqr.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_lcm.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_lshd.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_mod.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_mod_2d.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_mod_d.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_montgomery_calc_normalization.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_montgomery_reduce.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_montgomery_setup.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_mul.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_mul_2.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_mul_2d.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_mul_d.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_mulmod.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_n_root.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_neg.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_or.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_prime_fermat.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_prime_is_divisible.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_prime_is_prime.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_prime_miller_rabin.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_prime_next_prime.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_prime_rabin_miller_trials.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_prime_random_ex.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_radix_size.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_radix_smap.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_rand.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_read_radix.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_read_signed_bin.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_read_unsigned_bin.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_reduce.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_reduce_2k.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_reduce_2k_l.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_reduce_2k_setup.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_reduce_2k_setup_l.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_reduce_is_2k.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_reduce_is_2k_l.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_reduce_setup.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_rshd.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_set.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_set_int.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_shrink.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_signed_bin_size.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_sqr.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_sqrmod.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_sqrt.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_sub.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_sub_d.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_submod.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_to_signed_bin.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_to_signed_bin_n.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_to_unsigned_bin.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_to_unsigned_bin_n.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_toom_mul.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_toom_sqr.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_toradix.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_toradix_n.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_unsigned_bin_size.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_xor.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_mp_zero.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_prime_tab.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_reverse.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_s_mp_add.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_s_mp_exptmod.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_s_mp_mul_digs.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_s_mp_mul_high_digs.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_s_mp_sqr.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bn_s_mp_sub.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bncore.c">
+      <Filter>src</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="tommath.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="tommath_class.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="tommath_superclass.h">
+      <Filter>src</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

@@ -215,8 +215,7 @@ if( not GAMESTATE:IsCourseMode() ) then
 			   params.TapNoteScore ~= 'TapNoteScore_Invalid' and
 			   params.TapNoteScore ~= 'TapNoteScore_None'
 			then
-				Scoring[GetUserPref("UserPrefScoringMode")](params, 
-					STATSMAN:GetCurStageStats():GetPlayerStageStats(params.Player))
+				UpdateScoreKeepers(params)
 			end
 		end;
 	};

@@ -4,10 +4,39 @@ The StepMania 5 Changelog covers all post-sm-ssc changes. For a list of changes
 from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
-================================================================================
+2012/05/19
+----------
+* [Actor] Made the xy command a source-code level command.
 
-StepMania 5.0 alpha 2 | 201204??
+2012/05/17
+----------
+* [LoadingWindow_Gtk] Actually resolve the path to the Splash file. [djpohly]
+
+2012/05/16
+----------
+* [ScreenWithMenuElements] Added DelayMusicSeconds metric. [AJ]
+* [ScreenOptionsMasterPrefs] Allow for FastLoadAdditionalSongs preference
+  to be called via the "conf" command. [AJ]
+
+2012/05/14
+----------
+* [Course] Added AllSongsAreFixed() Lua binding. [AJ]
+
+================================================================================
+StepMania 5.0 alpha 2 | 20120504
 --------------------------------------------------------------------------------
+
+2012/05/03
+----------
+* Add Var "Player" and Var "Controller" for NoteSkin. [hanubeki]
+  Sourced from http://code.google.com/r/hanubeki-modified-sm-ssc/source/detail?r=824cff29912d1c29a667046ba463d195e81c524a
+* [CustomSpeedMods] If a player decides to remove 1x from the machine profile's
+  custom speed mods, re-add it back in to avoid crashes. [AJ]
+
+2012/05/02
+----------
+* Make ReceptorArrowRow and GhostArrowRow respect the column draw order. [hanubeki]
+  Sourced from http://code.google.com/r/hanubeki-modified-sm-ssc/source/detail?r=8ccf7449651eef51e8c42d031aa64da49a0b72ce
 
 2012/04/25
 ----------
@@ -116,6 +145,7 @@ set MemoryCards=1 in Save/Preferences.ini (or Save/Static.ini). [AJ]
 * [ScreenSelectMusic] Added PlaySoundOnEnteringOptionsMenu metric. [AJ]
 * [MusicWheel, WheelBase] Added collapse sound. [AJ]
 
+================================================================================
 StepMania 5.0 alpha 1a | 20120219
 --------------------------------------------------------------------------------
 

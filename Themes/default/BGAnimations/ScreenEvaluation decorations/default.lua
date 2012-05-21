@@ -1,3 +1,7 @@
+if not GAMESTATE:IsCourseMode() then
+	FinalizeScoreKeepers()
+end
+
 local function GraphDisplay( pn )
 	local t = Def.ActorFrame {
 		Def.GraphDisplay {

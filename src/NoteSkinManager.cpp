@@ -2,6 +2,7 @@
 #include "NoteSkinManager.h"
 #include "RageFileManager.h"
 #include "RageLog.h"
+#include "GameInput.h"
 #include "GameState.h"
 #include "Game.h"
 #include "Style.h"
@@ -47,6 +48,8 @@ namespace
 NoteSkinManager::NoteSkinManager()
 {
 	m_pCurGame = NULL;
+	m_PlayerNumber = PlayerNumber_Invalid;
+	m_GameController = GameController_Invalid;
 
 	// Register with Lua.
 	{
@@ -378,6 +381,8 @@ bool NoteSkinManager::PushActorTemplate( Lua *L, const RString &sButton, const R
 	ASSERT( iter != g_mapNameToData.end() );
 	const NoteSkinData &data = iter->second;
 
+	LuaThreadVariable varPlayer( "Player", LuaReference::Create(m_PlayerNumber) );
+	LuaThreadVariable varController( "Controller", LuaReference::Create(m_GameController) );
 	LuaThreadVariable varButton( "Button", sButton );
 	LuaThreadVariable varElement( "Element", sElement );
 	LuaThreadVariable varSpriteOnly( "SpriteOnly", LuaReference::Create(bSpriteOnly) );

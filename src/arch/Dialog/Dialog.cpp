@@ -234,6 +234,30 @@ Dialog::Result Dialog::AbortRetry( RString sMessage, RString sID )
 	return ret;
 }
 
+Dialog::Result Dialog::YesNo( RString sMessage, RString sID )
+{
+	Dialog::Init();
+
+	if( LOG )
+		LOG->Trace( "Dialog: \"%s\" [%s]", sMessage.c_str(), sID.c_str() );
+
+	if( sID != "" && MessageIsIgnored(sID) )
+		return g_NullDriver.YesNo( sMessage, sID );
+
+	RageThread::SetIsShowingDialog( true );
+
+	// only show Dialog if windowed
+	Dialog::Result ret;
+	if( DialogsEnabled() )
+		ret = g_pImpl->YesNo( sMessage, sID );	// call derived version
+	else
+		ret = g_NullDriver.YesNo( sMessage, sID );
+	
+	RageThread::SetIsShowingDialog( false );
+
+	return ret;
+}
+
 /*
  * (c) 2003-2004 Glenn Maynard, Chris Danford
  * All rights reserved.

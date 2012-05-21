@@ -1,5 +1,6 @@
 #include "global.h"
 #include "RageSoundReader_ThreadedBuffer.h"
+#include "RageUtil.h"
 #include "RageTimer.h"
 #include "Foreach.h"
 #include "RageLog.h"

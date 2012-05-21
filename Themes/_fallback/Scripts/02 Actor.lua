@@ -156,25 +156,9 @@ function Actor:scale_or_crop_background()
 	self:zoomto(SCREEN_HEIGHT*graphicAspect,SCREEN_HEIGHT)
 end
 
--- xy(actorX,actorY)
--- Sets the x and y of an actor in one command.
-function Actor:xy(actorX,actorY)
-	self:x(actorX)
-	self:y(actorY)
-end
-
-function Actor:CenterX()
-	self:x(SCREEN_CENTER_X)
-end
-
-function Actor:CenterY()
-	self:y(SCREEN_CENTER_Y)
-end
-
-function Actor:Center()
-	self:x(SCREEN_CENTER_X)
-	self:y(SCREEN_CENTER_Y)
-end
+function Actor:CenterX() self:x(SCREEN_CENTER_X) end
+function Actor:CenterY() self:y(SCREEN_CENTER_Y) end
+function Actor:Center() self:xy(SCREEN_CENTER_X,SCREEN_CENTER_Y) end
 
 function Actor:bezier(...)
 	local a = {...}
@@ -392,7 +376,7 @@ function Actor:hidden(bHide)
 	self:visible(not bHide)
 end
 
--- (c) 2006-2011 Glenn Maynard, SSC
+-- (c) 2006-2012 Glenn Maynard, the Spinal Shark Collective, et al.
 -- All rights reserved.
 --
 -- Permission is hereby granted, free of charge, to any person obtaining a

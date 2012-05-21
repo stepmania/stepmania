@@ -10,7 +10,7 @@ local t = Def.ActorFrame {};
 t[#t+1] = Def.ActorFrame {
 	LoadActor(THEME:GetPathB("_frame","3x3"),"rounded black",160,20);
 	LoadFont("Common Normal") .. {
-		Text=curStage .. " (" .. curStageIndex .. ")";
+		Text=StageToLocalizedString( curStage ) .. " Stage (" .. curStageIndex .. ")";
 		InitCommand=cmd(zoom,0.75;y,-2;shadowlength,1;
 			diffuse,StageToColor(curStage);
 			diffusetopedge,ColorLightTone(StageToColor(curStage));

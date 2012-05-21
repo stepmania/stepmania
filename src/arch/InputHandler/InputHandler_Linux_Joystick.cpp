@@ -4,7 +4,6 @@
 #include "RageLog.h"
 #include "RageUtil.h"
 
-#include <stdio.h>
 #include <unistd.h>
 #include <fcntl.h>
 
@@ -135,7 +134,6 @@ void InputHandler_Linux_Joystick::InputThread()
 			continue;
 		RageTimer now;
 
-		printf("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\n");
 		for(int i = 0; i < NUM_JOYSTICKS; ++i)
 		{
 			if( fds[i] == -1 )

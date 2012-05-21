@@ -1,8 +1,13 @@
 --[[
-Custom Speed Mods v2.2 (for StepMania 5)
+Custom Speed Mods v2.3 (for StepMania 5/SM5TE)
 by AJ Kelly of KKI Labs ( http://kki.ajworld.net/ )
 
 changelog:
+
+v2.3 (StepMania 5 a2/SM5TE)
+* If someone has decided to remove 1x from the machine profile's speed mods,
+  silently fix it.
+* Ignore Cmod and mmod capitalization errors.
 
 v2.2 (StepMania 5 alpha 2) [by FSX]
 * Rewrite table management code.
@@ -52,10 +57,11 @@ end
 -- Tries to parse the file at path. If successful, returns a table of mods.
 -- If it can't open the file, it will write a fallback set of mods.
 local function ParseSpeedModFile(path)
-	local function Failure(file)
+	local function Failure()
 		-- error; write a fallback mod file and return it
 		local fallbackString = "0.5x,1x,1.5x,2x,3x,4x,5x,6x,7x,8x,C250,C450,m550"
 		Trace("[CustomSpeedMods]: Could not read SpeedMods; writing fallback to "..path)
+		local file = RageFileUtil.CreateRageFile()
 		file:Open(path, 2)
 		file:Write(fallbackString)
 		file:destroy()
@@ -73,15 +79,17 @@ local function ParseSpeedModFile(path)
 			string.gsub(mods[i], "%s", "")
 			if not(mods[i]:find("%d+.?%d*[xX]") or mods[i]:find("[cmCM]%d+")) then
 				mods[i] = nil
-			end
+			elseif mods[i]:find("[mM]") then mods[i]=mods[i]:lower()
+			elseif mods[i]:find("[cC]") then mods[i]=mods[i]:upper() end
 		end
 		
-		if #mods==0 then return Failure() end
+    if #mods==0 then file:destroy() return Failure() end
 		
 		file:destroy()
 		return mods
 	else
-		return Failure(file)
+		file:destroy()
+		return Failure()
 	end
 end
 
@@ -174,11 +182,20 @@ local function GetSpeedMods()
 		PlayerNumber_P2 = ProfileDir('ProfileSlot_Player2')
 	}
 
-	-- figure out how many players we have to deal with.
-	local numPlayers = GAMESTATE:GetNumPlayersEnabled()
+	-- if someone is trying to be "smart" and removes 1x from the machine
+	-- profile's custom speed mods, re-add it to prevent crashes.
+	local machineMods = ParseSpeedModFile(profileDirs.Machine..baseFilename)
+	if machineMods then
+		local found1X = false
+		for k,v in pairs(machineMods) do found1X = (v == "1x") end
+		if not found1X then table.insert(machineMods,"1x") end
+	end
 
 	-- load machine to finalMods
-	finalMods = InvertTable(ParseSpeedModFile(profileDirs.Machine..baseFilename))
+	finalMods = InvertTable(machineMods)
+
+	-- figure out how many players we have to deal with.
+	local numPlayers = GAMESTATE:GetNumPlayersEnabled()
 
 	local playerMods = {}
 	for pn in ivalues(GAMESTATE:GetHumanPlayers()) do
@@ -253,7 +270,7 @@ function SpeedMods()
 end
 
 --[[
-Copyright © 2008-2011 AJ Kelly/KKI Labs.
+Copyright Â© 2008-2012 AJ Kelly/KKI Labs.
 Use freely, so long this notice and the above documentation remains.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
