@@ -378,7 +378,7 @@ bool BMSSong::GetBackground( RString filename, RString path, RString &bgfile )
 	// FIXME: garbled file names seem to crash the app.
 	// this might not be the best place to put this code.
 	if( !utf8_is_valid(filename) )
-		return -1;
+		return false;
 	
 	RString normalizedFilename = filename;
 	RString dir = out->GetSongDir();
