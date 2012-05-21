@@ -11,6 +11,7 @@ public:
 	Dialog::Result OKCancel( RString sMessage, RString sID );
 	Dialog::Result AbortRetryIgnore( RString sMessage, RString sID );
 	Dialog::Result AbortRetry( RString sMessage, RString sID );
+	Dialog::Result YesNo( RString sMessage, RString sID );
 };
 
 #endif

@@ -54,6 +54,27 @@ void DialogDriver_MacOSX::Error( RString sError, RString sID )
 	ShowAlert( kCFUserNotificationStopAlertLevel, sError, CFSTR("OK") );
 }
 
+Dialog::Result DialogDriver_MacOSX::OKCancel( RString sMessage, RString sID )
+{
+	CFBundleRef bundle = CFBundleGetMainBundle();
+	CFStringRef sOK = LSTRING( bundle, "OK" );
+	CFStringRef sCancel = LSTRING( bundle, "Cancel" );
+	CFOptionFlags result = ShowAlert( kCFUserNotificationNoteAlertLevel, sMessage, sOK, sCancel );
+
+	CFRelease( sOK );
+	CFRelease( sCancel );
+	switch( result )
+	{
+	case kCFUserNotificationDefaultResponse:
+	case kCFUserNotificationCancelResponse:
+		return Dialog::cancel;
+	case kCFUserNotificationAlternateResponse:
+		return Dialog::ok;
+	default:
+		FAIL_M( ssprintf("Invalid response: %d.", int(result)) );
+	}
+}
+
 Dialog::Result DialogDriver_MacOSX::AbortRetryIgnore( RString sMessage, RString sID )
 {
 	CFBundleRef bundle = CFBundleGetMainBundle();
@@ -96,6 +117,27 @@ Dialog::Result DialogDriver_MacOSX::AbortRetry( RString sMessage, RString sID )
 		return Dialog::abort;
 	case kCFUserNotificationAlternateResponse:
 		return Dialog::retry;
+	default:
+		FAIL_M( ssprintf("Invalid response: %d.", int(result)) );
+	}
+}
+
+Dialog::Result DialogDriver_MacOSX::YesNo( RString sMessage, RString sID )
+{
+	CFBundleRef bundle = CFBundleGetMainBundle();
+	CFStringRef sYes = LSTRING( bundle, "Yes" );
+	CFStringRef sNo = LSTRING( bundle, "No" );
+	CFOptionFlags result = ShowAlert( kCFUserNotificationNoteAlertLevel, sMessage, sYes, sNo );
+
+	CFRelease( sYes );
+	CFRelease( sNo );
+	switch( result )
+	{
+	case kCFUserNotificationDefaultResponse:
+	case kCFUserNotificationCancelResponse:
+		return Dialog::no;
+	case kCFUserNotificationAlternateResponse:
+		return Dialog::yes;
 	default:
 		FAIL_M( ssprintf("Invalid response: %d.", int(result)) );
 	}

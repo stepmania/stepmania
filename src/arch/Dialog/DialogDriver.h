@@ -12,8 +12,9 @@ public:
 	virtual void Error( RString sMessage, RString sID ) { printf("Error: %s\n", sMessage.c_str()); }
 	virtual void OK( RString sMessage, RString sID ) {}
 	virtual Dialog::Result OKCancel( RString sMessage, RString sID ) { return Dialog::ok; }
-	virtual Dialog::Result AbortRetryIgnore( RString sMessage, RString sID ) { return Dialog::ignore; } 
-	virtual Dialog::Result AbortRetry( RString sMessage, RString sID ) { return Dialog::abort; } 
+	virtual Dialog::Result AbortRetryIgnore( RString sMessage, RString sID ) { return Dialog::ignore; }
+	virtual Dialog::Result AbortRetry( RString sMessage, RString sID ) { return Dialog::abort; }
+	virtual Dialog::Result YesNo( RString sMessage, RString sID ) { return Dialog::no; }
 
 	virtual RString Init() { return RString(); }
 	virtual ~DialogDriver() { }

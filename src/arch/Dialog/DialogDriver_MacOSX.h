@@ -8,8 +8,10 @@ class DialogDriver_MacOSX: public DialogDriver
 public:
 	void Error( RString sError, RString sID );
 	void OK( RString sMessage, RString sID );
+	Dialog::Result OKCancel( RString sMessage, RString sID );
 	Dialog::Result AbortRetryIgnore( RString sMessage, RString sID );
 	Dialog::Result AbortRetry( RString sMessage, RString sID );
+	Dialog::Result YesNo( RString sMessage, RString sID );
 };
 #define USE_DIALOG_DRIVER_COCOA
     
