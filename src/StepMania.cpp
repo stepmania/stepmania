@@ -1027,6 +1027,43 @@ int main(int argc, char* argv[])
 	LOG->Info( "TLS is %savailable", RageThread::GetSupportsTLS()? "":"not " );
 #endif
 
+	// Aldo: Check for updates here!
+	if( PREFSMAN->m_bUpdateCheckEnable )
+	{
+		// TODO - Aldo_MX: Use PREFSMAN->m_iUpdateCheckIntervalSeconds & PREFSMAN->m_iUpdateCheckLastCheckedSecond
+		unsigned long current_version = NetworkSyncManager::GetCurrentSMBuild( pLoadingWindow );
+		if( current_version )
+		{
+			if( current_version > version_num )
+			{
+				switch( Dialog::YesNo( "A new version of " PRODUCT_ID " is available. Do you want to download it?", "UpdateCheck" ) )
+				{
+				case Dialog::yes:
+					//PREFSMAN->SavePrefsToDisk();
+					// TODO: GoToURL for Linux
+					if( !HOOKS->GoToURL( SM_DOWNLOAD_URL ) )
+					{
+						Dialog::Error( "Please go to the following URL to download the latest version of " PRODUCT_ID ":\n\n" SM_DOWNLOAD_URL, "UpdateCheckConfirm" );
+					}
+					ShutdownGame();
+					return 0;
+				case Dialog::no:
+					break;
+				default:
+					ASSERT(0);
+				}
+			}
+			else if( version_num < current_version )
+			{
+				LOG->Info( "The current version is more recent than the public one, double check you downloaded it from " SM_DOWNLOAD_URL );
+			}
+		}
+		else
+		{
+			LOG->Info( "Unable to check for updates. The server might be offline." );
+		}
+	}
+
 	AdjustForChangedSystemCapabilities();
 
 	GAMEMAN		= new GameManager;
