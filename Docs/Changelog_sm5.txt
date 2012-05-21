@@ -4,6 +4,12 @@ The StepMania 5 Changelog covers all post-sm-ssc changes. For a list of changes
 from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
+2012/05/21
+----------
+* [NotesLoaderBMS] Support for #BMP based background changes. [theDtTvB]
+* [SongManager] Add song to the list of songs before loading it, this fixes
+  crashes in some BMS files. [theDtTvB]
+
 2012/05/19
 ----------
 * [Actor] Made the xy command a source-code level command.
