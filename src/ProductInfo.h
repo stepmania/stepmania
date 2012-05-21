@@ -52,6 +52,7 @@
 #define VIDEO_TROUBLESHOOTING_URL "http://www.stepmania.com/stepmaniawiki.php?title=Video_Driver_Troubleshooting"
 /** @brief The URL to report bugs on the program. */
 #define REPORT_BUG_URL "http://ssc.ajworld.net/sm-ssc/bugtracker/"
+#define SM_DOWNLOAD_URL	"http://code.google.com/p/sm-ssc/downloads/list"
 
 #define CAN_INSTALL_PACKAGES true
 

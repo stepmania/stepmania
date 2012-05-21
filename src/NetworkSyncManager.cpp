@@ -6,6 +6,11 @@
 
 NetworkSyncManager *NSMAN;
 
+// Aldo: used by GetCurrentSMVersion()
+#if defined(HAVE_VERSION_INFO)
+extern unsigned long version_num;
+#endif
+
 #if defined(WITHOUT_NETWORKING)
 NetworkSyncManager::NetworkSyncManager( LoadingWindow *ld ) { useSMserver=false; isSMOnline = false; }
 NetworkSyncManager::~NetworkSyncManager () { }
@@ -25,7 +30,12 @@ void NetworkSyncManager::SendChat( const RString& message ) { }
 void NetworkSyncManager::SelectUserSong() { }
 RString NetworkSyncManager::MD5Hex( const RString &sInput ) { return RString(); }
 int NetworkSyncManager::GetSMOnlineSalt() { return 0; }
-void NetworkSyncManager::GetListOfLANServers( vector<NetServerInfo>& AllServers ) { } 
+void NetworkSyncManager::GetListOfLANServers( vector<NetServerInfo>& AllServers ) { }
+	#if defined(HAVE_VERSION_INFO)
+		unsigned long NetworkSyncManager::GetCurrentSMBuild( LoadingWindow* ld ) { return version_num; }
+	#else
+		unsigned long NetworkSyncManager::GetCurrentSMBuild( LoadingWindow* ld ) { return 0; }
+	#endif
 #else
 #include "ezsockets.h"
 #include "ProfileManager.h"
@@ -834,6 +844,129 @@ void NetworkSyncManager::GetListOfLANServers( vector<NetServerInfo>& AllServers 
 {
 	AllServers = m_vAllLANServers;
 }
+
+// Aldo: Please move this method to a new class, I didn't want to create new files because I don't know how to properly update the files for each platform.
+// I preferred to misplace code rather than cause unneeded headaches to non-windows users, although it would be nice to have in the wiki which files to
+// update when adding new files and how (Xcode/stepmania_xcode4.3.xcodeproj has a really crazy structure :/).
+#if !defined(HAVE_VERSION_INFO)
+unsigned long NetworkSyncManager::GetCurrentSMBuild( LoadingWindow* ld ) { return 0; }
+#else
+unsigned long NetworkSyncManager::GetCurrentSMBuild( LoadingWindow* ld )
+{
+	// Aldo: Using my own host by now, upload update_check/check_sm5.php to an official URL and change the following constants accordingly:
+	const RString sHost = "aldo.mx";
+	const unsigned short uPort = 80;
+	const RString sResource = "/stepmania/check_sm5.php";
+	const RString sUserAgent = "StepMania AMX (+http://aldo.mx/stepmania/)";
+	const RString sReferer = "http://aldo.mx/stepmania/";
+	
+	if( ld )
+	{
+		ld->SetIndeterminate( true );
+		ld->SetText("Checking for updates...");
+	}
+
+	unsigned long uCurrentSMBuild = version_num;
+	bool bSuccess = false;
+	EzSockets* socket = new EzSockets();
+	socket->create();
+	socket->blocking = true;
+
+	if( socket->connect(sHost, uPort) )
+	{
+		RString sHTTPRequest = ssprintf(
+			"GET %s HTTP/1.1"			"\r\n"
+			"Host: %s"					"\r\n"
+			"User-Agent: %s"			"\r\n"
+			"Cache-Control: no-cache"	"\r\n"
+			"Referer: %s"				"\r\n"
+			"X-SM-Build: %lu"			"\r\n"
+			"\r\n",
+			sResource.c_str(), sHost.c_str(),
+			sUserAgent.c_str(), sReferer.c_str(),
+			version_num
+		);
+
+		socket->SendData(sHTTPRequest);
+		
+		// Aldo: EzSocket::pReadData() is a lower level function, I used it because I was having issues
+		// with EzSocket::ReadData() in 3.9, feel free to refactor this function, the low lever character
+		// manipulation might look scary to people not used to it.
+		char* cBuffer = new char[NETMAXBUFFERSIZE];
+		// Reading the first NETMAXBUFFERSIZE bytes (usually 1024), should be enough to get the HTTP Header only
+		int iBytes = socket->pReadData(cBuffer);
+		if( iBytes )
+		{
+			// \r\n\r\n = Separator from HTTP Header and Body
+			char* cBodyStart = strstr(cBuffer, "\r\n\r\n");
+			if( cBodyStart != NULL )
+			{
+				// Get the HTTP Header only
+				int iHeaderLength = cBodyStart - cBuffer;
+				char* cHeader = new char[iHeaderLength+1];
+				strncpy( cHeader, cBuffer, iHeaderLength );
+				cHeader[iHeaderLength] = '\0';	// needed to make it a valid C String
+
+				RString sHTTPHeader( cHeader );
+				SAFE_DELETE( cHeader );
+				Trim( sHTTPHeader );
+				//LOG->Trace( sHTTPHeader.c_str() );
+
+				vector<RString> svResponse;
+				split( sHTTPHeader, "\r\n", svResponse );
+			
+				// Check for 200 OK
+				if( svResponse[0].find("200") != RString::npos )
+				{
+					// Iterate through every field until an X-SM-Build field is found
+					for( unsigned h=1; h<svResponse.size(); h++ )
+					{
+						RString::size_type sFieldPos = svResponse[h].find(": ");
+						if( sFieldPos != RString::npos )
+						{
+							RString sFieldName = svResponse[h].Left(sFieldPos),
+								sFieldValue = svResponse[h].substr(sFieldPos+2);
+
+							Trim( sFieldName );
+							Trim( sFieldValue );
+
+							if( 0 == stricmp(sFieldName,"X-SM-Build") )
+							{
+								bSuccess = true;
+								uCurrentSMBuild = strtoul( sFieldValue, NULL, 10 );
+								break;
+							}
+						}
+					}
+				} // if( svResponse[0].find("200") != RString::npos )
+			} // if( cBodyStart != NULL )
+		} // if( iBytes )
+		SAFE_DELETE( cBuffer );
+	} // if( socket->connect(sHost, uPort) )
+	
+	socket->close();
+	SAFE_DELETE( socket );
+
+	if( ld )
+	{
+		ld->SetIndeterminate(false);
+		ld->SetTotalWork(100);
+
+		if( bSuccess )
+		{
+			ld->SetProgress(100);
+			ld->SetText("Checking for updates... OK");
+		}
+		else
+		{
+			ld->SetProgress(0);
+			ld->SetText("Checking for updates... ERROR");
+		}
+	}
+
+	return uCurrentSMBuild;
+}
+#endif
 
 static bool ConnectToServer( const RString &t ) 
 { 

@@ -176,6 +176,11 @@ public:
 	RString MD5Hex( const RString &sInput );
 
 	void GetListOfLANServers( vector<NetServerInfo>& AllServers );
+
+	// Aldo: Please move this method to a new class, I didn't want to create new files because I don't know how to properly update the files for each platform.
+	// I preferred to misplace code rather than cause unneeded headaches to non-windows users, although it would be nice to have in the wiki which files to
+	// update when adding new files.
+	static unsigned long GetCurrentSMBuild( LoadingWindow* ld );
 private:
 #if !defined(WITHOUT_NETWORKING)
 
