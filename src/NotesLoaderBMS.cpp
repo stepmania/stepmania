@@ -1201,7 +1201,6 @@ void BMSSongLoader::AddToSong()
 													  "",
 													  1.f,
 													  SBE_StretchNoLoop));
-			fprintf(stderr, "Adding background change %s %d %s\n", dir.c_str(), it->first, it->second.c_str());
 		}
 
 		out->m_sMusicFile = main.info.musicFile;
