@@ -69,7 +69,13 @@ AutoScreenMessage( SM_BackFromSongInformation );
 AutoScreenMessage( SM_BackFromBGChange );
 AutoScreenMessage( SM_BackFromInsertTapAttack );
 AutoScreenMessage( SM_BackFromInsertTapAttackPlayerOptions );
+AutoScreenMessage( SM_BackFromAttackAtTime );
 AutoScreenMessage( SM_BackFromInsertStepAttack );
+AutoScreenMessage( SM_BackFromAddingModToExistingAttack );
+AutoScreenMessage( SM_BackFromEditingModToExistingAttack );
+AutoScreenMessage( SM_BackFromEditingAttackStart );
+AutoScreenMessage( SM_BackFromEditingAttackLength );
+AutoScreenMessage( SM_BackFromAddingAttackToChart );
 AutoScreenMessage( SM_BackFromInsertStepAttackPlayerOptions );
 AutoScreenMessage( SM_BackFromInsertCourseAttack );
 AutoScreenMessage( SM_BackFromInsertCourseAttackPlayerOptions );
@@ -254,7 +260,7 @@ void ScreenEdit::InitEditMappings()
 		m_EditMappingsDeviceInput.button[EDIT_BUTTON_OPEN_BGCHANGE_LAYER2_MENU][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cb);
 		m_EditMappingsDeviceInput.hold[EDIT_BUTTON_OPEN_BGCHANGE_LAYER2_MENU][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT);
 		m_EditMappingsDeviceInput.hold[EDIT_BUTTON_OPEN_BGCHANGE_LAYER2_MENU][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT);
-		m_EditMappingsDeviceInput.button[EDIT_BUTTON_ADD_STEP_MODS][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cc);
+		// m_EditMappingsDeviceInput.button[EDIT_BUTTON_ADD_STEP_MODS][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cc);
 		// m_EditMappingsDeviceInput.button[EDIT_BUTTON_OPEN_STEP_ATTACK_MENU][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cv);
 
 		m_EditMappingsDeviceInput.button[EDIT_BUTTON_INSERT_SHIFT_PAUSES][0] = DeviceInput(DEVICE_KEYBOARD, KEY_INSERT);
@@ -522,6 +528,16 @@ static MenuDef g_EditHelp(
 	// fill this in dynamically
 );
 
+static MenuDef g_AttackAtTimeMenu(
+	"ScreenMiniMenuAttackAtTimeMenu"
+	// fill this in dynamically
+);
+
+static MenuDef g_IndividualAttack(
+	"ScreenMiniMenuIndividualAttack"
+	// fill this in dynamically
+);
+
 static MenuDef g_KeysoundTrack(
 							   "ScreenMiniMenuKeysoundTrack"
 							   ); // fill this in dynamically
@@ -692,6 +708,9 @@ static MenuDef g_AreaMenu(
 		"Clear clipboard",
 		true,
 		EditMode_Practice, true, true, 0, NULL ),
+	MenuRowDef(ScreenEdit::modify_attacks_at_row,
+		"Modify Attacks at current beat",
+		true, EditMode_CourseMods, true, true, 0, NULL),
 	MenuRowDef(ScreenEdit::modify_keysounds_at_row,
 		"Modify Keysounds at current beat",
 		true, EditMode_Full, true, true, 0, NULL)
@@ -1140,7 +1159,10 @@ void ScreenEdit::Init()
 	m_iShiftAnchor = -1;
 	m_iStartPlayingAt = -1;
 	m_iStopPlayingAt = -1;
-
+	
+	attackInProcess = -1;
+	modInProcess = -1;
+	
 	this->AddChild( &m_Background );
 
 	m_SnapDisplay.SetXY( EDIT_X, PLAYER_Y_STANDARD );
@@ -1432,6 +1454,29 @@ void ScreenEdit::Update( float fDeltaTime )
 	PlayTicks();
 }
 
+static vector<int> FindAllAttacksAtTime(const AttackArray& attacks, float fStartTime)
+{
+	vector<int> ret;
+	for (unsigned i = 0; i < attacks.size(); ++i)
+	{
+		if (fabs(attacks[i].fStartSecond - fStartTime) < 0.001f)
+		{
+			ret.push_back(i);
+		}
+	}
+	return ret;
+}
+
+static int FindAttackAtTime( const AttackArray& attacks, float fStartTime )
+{
+	for( unsigned i = 0; i < attacks.size(); ++i )
+	{
+		if( fabs(attacks[i].fStartSecond - fStartTime) < 0.001f )
+			return i;
+	}
+	return -1;
+}
+
 static LocalizedString CURRENT_BEAT("ScreenEdit", "Current beat");
 static LocalizedString CURRENT_SECOND("ScreenEdit", "Current second");
 static LocalizedString SNAP_TO("ScreenEdit", "Snap to");
@@ -1554,6 +1599,11 @@ void ScreenEdit::UpdateTextInfo()
 		sText += ssprintf( SEGMENT_TYPE_FORMAT.GetValue(), SEGMENT_TYPE.GetValue().c_str(), TimingSegmentTypeToString(currentCycleSegment).c_str() );
         const RString tapnoteType = TapNoteTypeToString( m_selectedTap.type );
 		sText += ssprintf( TAP_NOTE_TYPE_FORMAT.GetValue(), TAP_NOTE_TYPE.GetValue().c_str(), tapnoteType.c_str() );
+		
+		AttackArray &attacks =
+			(GAMESTATE->m_bIsUsingStepTiming ? m_pSteps->m_Attacks : m_pSong->m_Attacks);
+		float beat = GetAppropriateTiming().GetElapsedTimeFromBeat(GetBeat());
+		sText += ssprintf("Attack here?: %s\n", FindAttackAtTime(attacks, beat) > -1 ? "YES" : "NO");
 	}
 	
 	GAMESTATE->SetProcessedTimingData(&m_pSteps->m_Timing);
@@ -1727,16 +1777,6 @@ static void ShiftToRightSide( int &iCol, int iNumTracks )
 		iCol += iNumTracks/2;
 		break;
 	}
-}
-
-static int FindAttackAtTime( const AttackArray& attacks, float fStartTime )
-{
-	for( unsigned i = 0; i < attacks.size(); ++i )
-	{
-		if( fabs(attacks[i].fStartSecond - fStartTime) < 0.001f )
-			return i;
-	}
-	return -1;
 }
 
 static LocalizedString BG_CHANGE_STEP_TIMING	( "ScreenEdit", "You must be in Song Timing Mode to edit BG Changes." );
@@ -2471,31 +2511,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 		break;
 	case EDIT_BUTTON_OPEN_STEP_ATTACK_MENU:
 	{
-		TimingData &timing = GetAppropriateTiming();
-		float startTime = timing.GetElapsedTimeFromBeat(GetBeat());
-		AttackArray &attacks = 
-			(GAMESTATE->m_bIsUsingStepTiming ? m_pSteps->m_Attacks : m_pSong->m_Attacks);
-		int index = FindAttackAtTime(attacks, startTime);
-		
-		if (index >= 0)
-		{
-			const RString sDuration = ssprintf( "%.6f", attacks[index].fSecsRemaining );
-			
-			g_InsertStepAttack.rows[sa_remove].bEnabled = true;
-			if( g_InsertStepAttack.rows[sa_duration].choices.size() == 9 )
-				g_InsertStepAttack.rows[sa_duration].choices.push_back( sDuration );
-			else
-				g_InsertStepAttack.rows[sa_duration].choices.back() = sDuration;
-			g_InsertStepAttack.rows[sa_duration].iDefaultChoice = 9;
-		}
-		else
-		{
-			if( g_InsertStepAttack.rows[sa_duration].choices.size() == 10 )
-				g_InsertStepAttack.rows[sa_duration].choices.pop_back();
-			g_InsertStepAttack.rows[sa_duration].iDefaultChoice = 3;
-		}
-		EditMiniMenu( &g_InsertStepAttack, SM_BackFromInsertStepAttack );
-		
+		this->DoStepAttackMenu();
 		break;
 	}
 	case EDIT_BUTTON_OPEN_COURSE_ATTACK_MENU:
@@ -3245,6 +3261,12 @@ void ScreenEdit::HandleMessage( const Message &msg )
 
 static LocalizedString SAVE_SUCCESSFUL				( "ScreenEdit", "Save successful." );
 
+static LocalizedString ADD_NEW_MOD ("ScreenEdit", "Adding New Mod");
+static LocalizedString ADD_NEW_ATTACK ("ScreenEdit", "Adding New Attack");
+static LocalizedString EDIT_EXISTING_MOD ("ScreenEdit", "Edit Existing Mod");
+static LocalizedString EDIT_ATTACK_START ("ScreenEdit", "Edit Attack Start");
+static LocalizedString EDIT_ATTACK_LENGTH ("ScreenEdit", "Edit Attack Length");
+
 void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 {
 	if( SM != SM_UpdateTextInfo )
@@ -3575,6 +3597,196 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		SaveUndo();
 		m_NoteDataEdit.SetTapNote( g_iLastInsertTapAttackTrack, row, tn );
 		CheckNumberOfNotesAndUndo();
+	}
+	else if (SM == SM_BackFromEditingAttackStart && !ScreenTextEntry::s_bCancelledLast)
+	{
+		float time = StringToFloat(ScreenTextEntry::s_sLastAnswer);
+		AttackArray &attacks = 
+		(GAMESTATE->m_bIsUsingStepTiming ? m_pSteps->m_Attacks : m_pSong->m_Attacks);
+		Attack &attack = attacks[attackInProcess];
+		attack.fStartSecond = time;
+		SetDirty(true);
+	}
+	else if (SM == SM_BackFromEditingAttackLength && !ScreenTextEntry::s_bCancelledLast)
+	{
+		float time = StringToFloat(ScreenTextEntry::s_sLastAnswer);
+		AttackArray &attacks = 
+		(GAMESTATE->m_bIsUsingStepTiming ? m_pSteps->m_Attacks : m_pSong->m_Attacks);
+		Attack &attack = attacks[attackInProcess];
+		attack.fSecsRemaining = time;
+		SetDirty(true);
+	}
+	else if (SM == SM_BackFromAddingModToExistingAttack && !ScreenTextEntry::s_bCancelledLast)
+	{
+		RString mod = ScreenTextEntry::s_sLastAnswer;
+		Trim(mod);
+		if (mod.length() > 0)
+		{
+			AttackArray &attacks = 
+			(GAMESTATE->m_bIsUsingStepTiming ? m_pSteps->m_Attacks : m_pSong->m_Attacks);
+			Attack &attack = attacks[attackInProcess];
+			attack.sModifiers += "," + mod;
+			SetDirty(true);
+		}
+		
+	}
+	else if (SM == SM_BackFromEditingModToExistingAttack && !ScreenTextEntry::s_bCancelledLast)
+	{
+		AttackArray &attacks = 
+		(GAMESTATE->m_bIsUsingStepTiming ? m_pSteps->m_Attacks : m_pSong->m_Attacks);
+		Attack &attack = attacks[attackInProcess];
+		vector<RString> mods;
+		split(attack.sModifiers, ",", mods);		
+		RString mod = ScreenTextEntry::s_sLastAnswer;
+		Trim(mod);
+		if (mod.length() > 0)
+		{
+			mods[modInProcess - 2] = mod;
+		}
+		else
+		{
+			mods.erase(mods.begin() + (modInProcess - 2));
+		}
+		if (mods.size() > 0)
+		{
+			attack.sModifiers = join(",", mods);
+		}
+		else
+		{
+			attacks.erase(attacks.begin() + attackInProcess);
+		}
+		SetDirty(true);
+	}
+	else if (SM == SM_BackFromInsertStepAttack)
+	{
+		unsigned option = ScreenMiniMenu::s_iLastRowCode;
+		AttackArray &attacks = 
+		(GAMESTATE->m_bIsUsingStepTiming ? m_pSteps->m_Attacks : m_pSong->m_Attacks);
+		Attack &attack = attacks[attackInProcess];
+		vector<RString> mods;
+		split(attack.sModifiers, ",", mods);
+		modInProcess = option;
+		if (option == 0) // adjusting the starting time
+		{
+			ScreenTextEntry::TextEntry(SM_BackFromEditingAttackStart,
+									   EDIT_ATTACK_START,
+									   ssprintf("%.5f", attack.fStartSecond),
+									   10);
+		}
+		else if (option == 1) // adjusting the length of the attack
+		{
+			ScreenTextEntry::TextEntry(SM_BackFromEditingAttackLength,
+									   EDIT_ATTACK_LENGTH,
+									   ssprintf("%.5f", attack.fSecsRemaining),
+									   10);
+		}
+		else if (option >= 2 + mods.size()) // adding a new mod
+		{
+			ScreenTextEntry::TextEntry(SM_BackFromAddingModToExistingAttack,
+									   ADD_NEW_MOD,
+									   "",
+									   64);
+		}
+		else // modifying existing mod.
+		{
+			ScreenTextEntry::TextEntry(SM_BackFromEditingModToExistingAttack,
+									   EDIT_EXISTING_MOD,
+									   mods[option - 2],
+									   64);
+		}
+	}
+	else if (SM == SM_BackFromAddingAttackToChart && !ScreenTextEntry::s_bCancelledLast)
+	{
+		RString mod = ScreenTextEntry::s_sLastAnswer;
+		Trim(mod);
+		if (mod.length() > 0)
+		{
+			AttackArray &attacks = 
+			(GAMESTATE->m_bIsUsingStepTiming ? m_pSteps->m_Attacks : m_pSong->m_Attacks);
+			Attack attack;
+			attack.fStartSecond = GetAppropriateTiming().GetElapsedTimeFromBeat(GetBeat());
+			attack.fSecsRemaining = 5; // Users can change later.
+			attack.sModifiers = mod;
+			attacks.push_back(attack);
+			SetDirty(true);
+		}
+	}
+	else if (SM == SM_BackFromAttackAtTime)
+	{
+		int attackChoice = ScreenMiniMenu::s_iLastRowCode;
+		int attackDecision = ScreenMiniMenu::s_viLastAnswers[attackChoice];
+		TimingData &timing = GetAppropriateTiming();
+		float startTime = timing.GetElapsedTimeFromBeat(GetBeat());
+		AttackArray &attacks = 
+		(GAMESTATE->m_bIsUsingStepTiming ? m_pSteps->m_Attacks : m_pSong->m_Attacks);
+		vector<int> points = FindAllAttacksAtTime(attacks, startTime);
+		if (attackChoice == (int)points.size())
+		{
+			// TODO: Add attack code.
+			ScreenTextEntry::TextEntry(SM_BackFromAddingAttackToChart,
+									   ADD_NEW_ATTACK,
+									   "",
+									   64);
+		}
+		else
+		{
+			attackInProcess = points[attackChoice];
+			if (attackDecision == 1) // remove
+			{
+				attacks.erase(attacks.begin() + attackInProcess);
+				SetDirty(true);
+			}
+			else
+			{
+				Attack &attack = attacks[attackInProcess];
+				g_IndividualAttack.rows.clear();
+				
+				g_IndividualAttack.rows.push_back(MenuRowDef(0,
+															 "Starting Time",
+															 true,
+															 EditMode_CourseMods,
+															 true,
+															 true,
+															 0,
+															 NULL));
+				g_IndividualAttack.rows[0].SetOneUnthemedChoice(ssprintf("%.5f", attack.fStartSecond));
+				g_IndividualAttack.rows.push_back(MenuRowDef(1,
+															 "Secs Remaining",
+															 true,
+															 EditMode_CourseMods,
+															 true,
+															 true,
+															 0,
+															 NULL));
+				g_IndividualAttack.rows[1].SetOneUnthemedChoice(ssprintf("%.5f", attack.fSecsRemaining));
+				vector<RString> mods;
+				split(attack.sModifiers, ",", mods);
+				for (unsigned i = 0; i < mods.size(); ++i)
+				{
+					unsigned col = i + 2;
+					g_IndividualAttack.rows.push_back(MenuRowDef(col,
+																 ssprintf("Attack %d", i + 1),
+																 true,
+																 EditMode_CourseMods,
+																 false,
+																 true,
+																 0,
+																 NULL));
+					g_IndividualAttack.rows[col].SetOneUnthemedChoice(mods[i].c_str());
+				}
+				
+				g_IndividualAttack.rows.push_back(MenuRowDef(mods.size() + 2,
+															 "Add Mod",
+															 true,
+															 EditMode_CourseMods,
+															 true,
+															 true,
+															 0,
+															 NULL));
+				
+				EditMiniMenu(&g_IndividualAttack, SM_BackFromInsertStepAttack);
+			}
+		}
 	}
 	else if (SM == SM_BackFromInsertStepAttack)
 	{
@@ -4832,6 +5044,11 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 			m_Clipboard.ClearAll();
 			break;
 		}
+		case modify_attacks_at_row:
+		{
+			this->DoStepAttackMenu();
+			break;
+		}
 		case modify_keysounds_at_row:
 		{
 			this->DoKeyboardTrackMenu();
@@ -5587,6 +5804,46 @@ static RString GetDeviceButtonsLocalized( const vector<EditButton> &veb, const M
 	if( !vsHold.empty() )
 		s = join("/",vsHold) + " + " + s;
 	return s;
+}
+
+void ScreenEdit::DoStepAttackMenu()
+{
+	TimingData &timing = GetAppropriateTiming();
+	float startTime = timing.GetElapsedTimeFromBeat(GetBeat());
+	AttackArray &attacks = 
+		(GAMESTATE->m_bIsUsingStepTiming ? m_pSteps->m_Attacks : m_pSong->m_Attacks);
+	vector<int> points = FindAllAttacksAtTime(attacks, startTime);
+		
+	g_AttackAtTimeMenu.rows.clear();
+	unsigned index = 0;
+		
+	FOREACH(int, points, i)
+	{
+		const Attack &attack = attacks[*i];
+		RString desc = ssprintf("%.5f -> %.5f (%d mod[s])",
+			startTime, startTime + attack.fSecsRemaining,
+			attack.GetNumAttacks());
+			
+		g_AttackAtTimeMenu.rows.push_back(MenuRowDef(index++,
+			desc,
+			true,
+			EditMode_CourseMods,
+			false,
+			false,
+			0,
+			"Modify",
+			"Delete"));
+	}
+	g_AttackAtTimeMenu.rows.push_back(MenuRowDef(index,
+		"Add Attack",
+		true,
+		EditMode_CourseMods,
+		true,
+		true,
+		0,
+		NULL));
+		
+	EditMiniMenu(&g_AttackAtTimeMenu, SM_BackFromAttackAtTime);
 }
 
 static LocalizedString TRACK_NUM("ScreenEdit", "Track %d");

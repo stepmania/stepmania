@@ -250,6 +250,9 @@ protected:
 
 	/** @brief Display the keyboard track menu for the current row. */
 	void DoKeyboardTrackMenu();
+
+	/** @brief Display the step attack menu for the current row. */
+	void DoStepAttackMenu();
 	
 	void DoHelp();
 	
@@ -438,6 +441,7 @@ public:
 		last_second_at_beat,
 		undo,
 		clear_clipboard, /**< Clear the clipboards. */
+		modify_attacks_at_row, /**< Modify the chart attacks at this row. */
 		modify_keysounds_at_row, /**< Modify the keysounds at this row. */
 		NUM_AREA_MENU_CHOICES
 	};
@@ -674,6 +678,9 @@ public:
 	void EditMiniMenu(const MenuDef* pDef, 
 			  ScreenMessage SM_SendOnOK = SM_None, 
 			  ScreenMessage SM_SendOnCancel = SM_None );
+	
+	int attackInProcess;
+	int modInProcess;
 private:
 	/**
 	 * @brief Retrieve the appropriate TimingData based on GAMESTATE.
