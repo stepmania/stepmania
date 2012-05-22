@@ -1040,7 +1040,7 @@ int main(int argc, char* argv[])
 	CommandLineActions::Handle(pLoadingWindow);
 
 	// Aldo: Check for updates here!
-	if( PREFSMAN->m_bUpdateCheckEnable )
+	if( /* PREFSMAN->m_bUpdateCheckEnable (do this later) */ 0 )
 	{
 		// TODO - Aldo_MX: Use PREFSMAN->m_iUpdateCheckIntervalSeconds & PREFSMAN->m_iUpdateCheckLastCheckedSecond
 		unsigned long current_version = NetworkSyncManager::GetCurrentSMBuild( pLoadingWindow );
