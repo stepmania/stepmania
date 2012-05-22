@@ -2,6 +2,9 @@
 --essentially a really chunky layer to make SetScore elegant(ish)
 --arguments for scorekeepers: JudgmentMessageCommand,PlayerStageStats,PlayerNumber,State
 --[[changelog
+v1.42 21 May 2012
+*Add more type checking.
+*Don't crash on missing modes.
 v1.41 6 May 2012
 *Not really sure.
 *Included in SM5 for alpha 3.
@@ -27,12 +30,20 @@ function GetNumReadiedScoreKeepers()
 	return table.itemcount(ReadiedScoreKeepers)
 end
 
+--InitScoreKeepers(string p1Mode, string p2Mode)
+--Both are optional.
 function InitScoreKeepers(p1Mode, p2Mode)
 	local newStgK = {pcall(GameState.GetStageSeed,GAMESTATE)}
 	assert(newStgK[1], "it's too early to initialize the ScoreKeepers, the GameState isn't ready yet")
 	if newStgK[2] == stageKey then
 		Log "[InitScoreKeepers] unnecessary call"
 		return true
+	end
+	if p1Mode~=nil then
+		assert(type(p1Mode)=="string", "only pass string or nil")
+	end
+	if p2Mode~=nil then
+		assert(type(p2Mode)=="string", "only pass string or nil")
 	end
 	ReadiedScoreKeepers={}
 	JudgmentFilters={}
@@ -47,9 +58,7 @@ function InitScoreKeepers(p1Mode, p2Mode)
 	assert(next(intab), "InitScoreKeepers didn't get any args")
 	for k,v in pairs(intab) do
 		if not ScoringModes[v] then
-			--SPOILER: UndocumentedFeature crashes the game intentionally.
-			-- UndocumentedFeature(k.."'s scoring mode \""..v.."\" doesn't exist.")
-			-- UndocumentedFeature(k.."'s scoring mode doesn't exist.")
+			Warn(k.."'s scoring mode \""..v.."\" doesn't exist.")
 		else
 			ReadiedScoreKeepers[k] = coroutine.create(ScoringModes[v])
 			--call each scoring mode one time in init mode

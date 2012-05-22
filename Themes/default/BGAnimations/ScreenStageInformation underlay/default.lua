@@ -80,8 +80,8 @@ t[#t+1] = Def.ActorFrame {
 --Get scoring ready.
 if not GAMESTATE:IsCourseMode() then
 	InitScoreKeepers(
-		GAMESTATE:IsSideJoined(PLAYER_1) and GetUserPref("UserPrefScoringMode"), 
-		GAMESTATE:IsSideJoined(PLAYER_2) and GetUserPref("UserPrefScoringMode")
+	GAMESTATE:IsSideJoined(PLAYER_1) and GetUserPref("UserPrefScoringMode") or nil, 
+	GAMESTATE:IsSideJoined(PLAYER_2) and GetUserPref("UserPrefScoringMode") or nil
 	)
 end
 

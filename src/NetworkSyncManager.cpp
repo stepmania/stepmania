@@ -857,7 +857,7 @@ unsigned long NetworkSyncManager::GetCurrentSMBuild( LoadingWindow* ld )
 	const RString sHost = "aldo.mx";
 	const unsigned short uPort = 80;
 	const RString sResource = "/stepmania/check_sm5.php";
-	const RString sUserAgent = "StepMania AMX (+http://aldo.mx/stepmania/)";
+	const RString sUserAgent = PRODUCT_ID;
 	const RString sReferer = "http://aldo.mx/stepmania/";
 	
 	if( ld )
