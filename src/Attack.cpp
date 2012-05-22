@@ -81,6 +81,13 @@ RString Attack::GetTextDescription() const
 	return s;
 }
 
+int Attack::GetNumAttacks() const
+{
+	vector<RString> tmp;
+	split(this->sModifiers, ",", tmp);
+	return tmp.size();
+}
+
 bool AttackArray::ContainsTransformOrTurn() const
 {
 	FOREACH_CONST( Attack, *this, a )

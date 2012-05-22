@@ -65,6 +65,8 @@ struct Attack
 	bool ContainsTransformOrTurn() const;
 	static Attack FromGlobalCourseModifier( const RString &sModifiers );
 	RString GetTextDescription() const;
+	
+	int GetNumAttacks() const;
 };
 
 struct AttackArray : public vector<Attack>
