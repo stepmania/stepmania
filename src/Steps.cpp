@@ -501,16 +501,17 @@ void Steps::SetMeter( int meter )
 
 bool Steps::HasSignificantTimingChanges() const
 {
-	if( m_Timing.HasStops() || m_Timing.HasDelays() )
+	if( m_Timing.HasStops() || m_Timing.HasDelays() || m_Timing.HasWarps() ||
+		m_Timing.HasSpeedChanges() || m_Timing.HasScrollChanges() )
 		return true;
-	
-	/* TODO: Deal with DisplayBPM here...if possible?
-	 * Song's version may still be useful. */
-	
-	else if( m_Timing.HasBpmChanges() || m_Timing.HasWarps() || m_Timing.HasSpeedChanges() )
+
+	if( m_Timing.HasBpmChanges() )
 	{
-		return true;
+		// check to see if these changes are significant.
+		if( (GetMaxBPM() - GetMinBPM()) > 3.000f )
+			return true;
 	}
+
 	return false;
 }
 

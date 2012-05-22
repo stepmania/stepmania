@@ -16,6 +16,10 @@ StepMania 5.0 ???? ?? | 20120???
 * [ScreenEdit] Allow a new way of creating and modifying attacks using the
   Area Menu. Note: Using the C or V keys is no longer allowed for attacks.
   It will simplify things for later. [Wolfman2000]
+* [Steps] Modified HasSignificantTimingChanges; the following now disqualify
+  when using a CMod: Stops, Delays, Warps, Speed Changes, Scroll Changes.
+  Songs with a non-constant BPM will only disqualify if the High/Low difference
+  is greater than 3.00. [AJ]
 
 2012/05/19
 ----------
