@@ -2570,7 +2570,7 @@ public:
 		ADD_METHOD( SetPreferredSongGroup );
 		ADD_METHOD( GetPreferredSongGroup );
 		ADD_METHOD( GetHumanPlayers );
-    ADD_METHOD( GetEnabledPlayers );
+		ADD_METHOD( GetEnabledPlayers );
 		ADD_METHOD( GetCurrentStyle );
 		ADD_METHOD( IsAnyHumanPlayerUsingMemoryCard );
 		ADD_METHOD( GetNumStagesForCurrentSongAndStepsOrCourse );
