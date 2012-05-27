@@ -91,6 +91,7 @@ protected:
 	ThemeMetric<RageColor>	ROULETTE_COLOR;
 	ThemeMetric<RageColor>	RANDOM_COLOR;
 	ThemeMetric<RageColor>	PORTAL_COLOR;
+	ThemeMetric<RageColor>	EMPTY_COLOR;
 	vector <int> m_viWheelPositions;
 	ThemeMetric<RString>	CUSTOM_WHEEL_ITEM_NAMES;
 	ThemeMetricMap<RString>	CUSTOM_CHOICES;

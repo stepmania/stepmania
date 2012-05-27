@@ -99,9 +99,10 @@ void MusicWheel::Load( RString sType )
 	CUSTOM_CHOICES.Load(sType,CUSTOM_WHEEL_ITEM_NAME,vsCustomItemNames);
 	CUSTOM_CHOICE_COLORS.Load(sType,CUSTOM_WHEEL_ITEM_COLOR,vsCustomItemNames);
 
-	ROULETTE_COLOR				.Load(sType,"RouletteColor");
-	RANDOM_COLOR				.Load(sType,"RandomColor");
-	PORTAL_COLOR				.Load(sType,"PortalColor");
+	ROULETTE_COLOR	.Load(sType,"RouletteColor");
+	RANDOM_COLOR	.Load(sType,"RandomColor");
+	PORTAL_COLOR	.Load(sType,"PortalColor");
+	EMPTY_COLOR		.Load(sType,"EmptyColor");
 
 	WheelBase::Load( sType );
 
@@ -1050,7 +1051,7 @@ void MusicWheel::FilterWheelItemDatas(vector<MusicWheelItemData *> &aUnFilteredD
 
 	// If we've filtered all items, insert a dummy.
 	if( aFilteredData.empty() )
-		aFilteredData.push_back( new MusicWheelItemData(WheelItemDataType_Section, NULL, EMPTY_STRING, NULL, RageColor(1,0,0,1), 0) );
+		aFilteredData.push_back( new MusicWheelItemData(WheelItemDataType_Section, NULL, EMPTY_STRING, NULL, EMPTY_COLOR, 0) );
 }
 
 void MusicWheel::UpdateSwitch()
