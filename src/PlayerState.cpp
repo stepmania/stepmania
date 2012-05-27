@@ -263,6 +263,7 @@ public:
 	{
 		ADD_METHOD( GetPlayerNumber );
 		ADD_METHOD( GetMultiPlayerNumber );
+		ADD_METHOD( GetPlayerController );
 		ADD_METHOD( SetPlayerOptions );
 		ADD_METHOD( GetPlayerOptions );
 		ADD_METHOD( GetPlayerOptionsArray );
