@@ -11,6 +11,8 @@ StepMania 5.0 ???? ?? | 20120???
 2012/05/31
 ----------
 * [PaneDisplay] Added NullCountString metric. [AJ]
+* [PlayerOptions] Fixes to Get/Set[C, M, X]Mod Lua bindings. [hanubeki]
+  Source: http://code.google.com/r/hanubeki-modified-sm-ssc/source/detail?r=97761b5dc87b8c8a1b296985a09814337578c745
 
 2012/05/27
 ----------

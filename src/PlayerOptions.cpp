@@ -922,12 +922,18 @@ public:
 	static int GetCMod( T *p, lua_State *L )
 	{
 		if( p->m_fTimeSpacing )
-			lua_pushnumber( L, p->m_fTimeSpacing );
+			lua_pushnumber( L, p->m_fScrollBPM );
 		else
 			lua_pushnil(L);
 		return 1;
 	}
-	static int SetCMod( T *p, lua_State *L ) { p->m_fTimeSpacing = FArg(1); return 0; }
+	static int SetCMod( T *p, lua_State *L )
+	{
+		p->m_fTimeSpacing = FArg(1);
+		p->m_fTimeSpacing = 1;
+		p->m_fMaxScrollBPM = 0;
+		return 0;
+	}
 
 	static int GetXMod( T *p, lua_State *L )
 	{
@@ -937,10 +943,29 @@ public:
 			lua_pushnil(L);
 		return 1;
 	}
-	static int SetXMod( T *p, lua_State *L ) { p->m_fScrollSpeed = FArg(1); return 0; }
+	static int SetXMod( T *p, lua_State *L )
+	{
+		p->m_fScrollSpeed = FArg(1);
+		p->m_fTimeSpacing = 0;
+		p->m_fMaxScrollBPM = 0;
+		return 0;
+	}
 
-	static int GetMMod( T *p, lua_State *L ) { lua_pushnumber(L, p->m_fMaxScrollBPM); return 1; }
-	static int SetMMod( T *p, lua_State *L ) { p->m_fMaxScrollBPM = FArg(1); return 0; }
+	static int GetMMod( T *p, lua_State *L )
+	{
+		if( !p->m_fTimeSpacing && p->m_fMaxScrollBPM )
+			lua_pushnumber(L, p->m_fMaxScrollBPM);
+		else
+			lua_pushnil(L);
+
+		return 1;
+	}
+	static int SetMMod( T *p, lua_State *L )
+	{
+		p->m_fMaxScrollBPM = FArg(1);
+		p->m_fTimeSpacing = 0;
+		return 0;
+	}
 
 	// Accel
 	DEFINE_METHOD( GetBoost, m_fAccels[PlayerOptions::ACCEL_BOOST] )
