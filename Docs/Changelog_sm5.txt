@@ -8,9 +8,13 @@ ________________________________________________________________________________
 StepMania 5.0 ???? ?? | 20120???
 --------------------------------------------------------------------------------
 
+2012/05/31
+----------
+* [PaneDisplay] Added NullCountString metric. [AJ]
+
 2012/05/27
 ----------
-* [MusicWheel] Added EmptyColor metric.
+* [MusicWheel] Added EmptyColor metric. [AJ]
 * [PlayerState] Enabled GetPlayerController Lua binding.
 
 2012/05/21

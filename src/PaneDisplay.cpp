@@ -66,6 +66,7 @@ void PaneDisplay::Load( const RString &sMetricsGroup, PlayerNumber pn )
 	EMPTY_MACHINE_HIGH_SCORE_NAME.Load( sMetricsGroup, "EmptyMachineHighScoreName" );
 	NOT_AVAILABLE.Load( sMetricsGroup, "NotAvailable" );
 	COUNT_FORMAT.Load( sMetricsGroup, "CountFormat" );
+	NULL_COUNT_STRING.Load( sMetricsGroup, "NullCountString" );
 
 	FOREACH_ENUM( PaneCategory, pc )
 	{
@@ -114,8 +115,9 @@ void PaneDisplay::LoadFromNode( const XNode *pNode )
 
 void PaneDisplay::SetContent( PaneCategory c )
 {
-	RString str = "";	// fill this in
-	float val = 0;		// fill this in
+	// these get filled in later:
+	RString str = NULL_COUNT_STRING;
+	float val = 0;
 
 	const Song *pSong = GAMESTATE->m_pCurSong;
 	const Steps *pSteps = GAMESTATE->m_pCurSteps[m_PlayerNumber];
@@ -123,11 +125,6 @@ void PaneDisplay::SetContent( PaneCategory c )
 	const Trail *pTrail = GAMESTATE->m_pCurTrail[m_PlayerNumber];
 	const Profile *pProfile = PROFILEMAN->IsPersistentProfile(m_PlayerNumber) ? PROFILEMAN->GetProfile(m_PlayerNumber) : NULL;
 	bool bIsPlayerEdit = pSteps && pSteps->IsAPlayerEdit();
-
-	// Note: In SM3.9, all values would get set to a "?" if the current
-	// selection (pSong/pCourse, in this case) is invalid.
-	// We use fallback values (everything is blank).
-	// TODO: add a theme option to use a similar behavior. -aj
 
 	if(GAMESTATE->IsCourseMode() && !pTrail)
 	{

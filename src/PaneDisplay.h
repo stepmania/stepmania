@@ -58,6 +58,7 @@ private:
 	LocalizedString EMPTY_MACHINE_HIGH_SCORE_NAME;
 	LocalizedString NOT_AVAILABLE;
 	ThemeMetric<RString> COUNT_FORMAT;
+	ThemeMetric<RString> NULL_COUNT_STRING;
 };
 
 #endif
