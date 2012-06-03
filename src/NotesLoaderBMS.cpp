@@ -447,6 +447,7 @@ struct BMSChartInfo {
 	RString artist;
 	RString genre;
 
+	RString bannerFile;
 	RString backgroundFile;
 	RString stageFile;
 	RString musicFile;
@@ -524,6 +525,10 @@ void BMSChartReader::ReadHeaders()
 		else if( it->first == "#genre" )
 		{
 			info.genre = it->second;
+		}
+		else if( it->first == "#banner" )
+		{
+			info.bannerFile = it->second;
 		}
 		else if( it->first == "#backbmp" )
 		{
@@ -982,8 +987,7 @@ bool BMSChartReader::ReadNoteData()
 			{
 				if( nd.GetTapNote( t, row ) == TAP_EMPTY && !nd.IsHoldNoteAtRow( t, row ) )
 				{
-					TapNote tn = TAP_ORIGINAL_TAP;
-					tn.type = TapNote::autoKeysound;
+					TapNote tn = TAP_ORIGINAL_AUTO_KEYSOUND;
 					tn.iKeysoundIndex = ak.index;
 					nd.SetTapNote( t, row, tn );
 					found = true;
@@ -1173,6 +1177,7 @@ void BMSSongLoader::AddToSong()
 			NotesLoader::GetMainAndSubTitlesFromFullTitle( main.info.title, out->m_sMainTitle, out->m_sSubTitle );
 		out->m_sArtist = main.info.artist;
 		out->m_sGenre = main.info.genre;
+		out->m_sBannerFile = main.info.bannerFile;
 
 		switch( main.steps->m_StepsType )
 		{
