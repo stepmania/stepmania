@@ -1,4 +1,6 @@
 Mission Mode Specifications/Draft
+This is not currently implemented, nor are there any plans at the current time
+to implement it.
 
 -- #TITLE:; self explanitory
 #TITLE:;
