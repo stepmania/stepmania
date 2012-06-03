@@ -11,6 +11,8 @@ StepMania 5.0 ???? ?? | 20120???
 2012/06/02
 ----------
 * [PrefsManager] Added StretchBackgrounds preference. [AJ]
+* [BMSLoader] Add #banner support. [hanubeki]
+  Source: http://code.google.com/r/hanubeki-modified-sm-ssc/source/detail?r=bf8b57b9a662af59de66b9d06ca282f38f9126d9
 
 2012/05/31
 ----------
