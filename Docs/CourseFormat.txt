@@ -1,32 +1,40 @@
 Complete Course Template
 
 [[ Header Content ]]
--- Header Content is comprimised with any course-defining data such as the 
--- title, banner and other parameters.
+-- Header Content is any course-defining data, such as the title, banner,
+-- and other parameters.
+
 #COURSE:My Course!;
 --	The title of the course.
+
 #COURSETRANSLIT:My Course, Translated!;
---	The title of the course, translated into english.
+--	The title of the course, transliterated into english.
+
 #REPEAT:YES;
---	If this is present, the course does not end. Useful for endless & workout
---	courses.
+--	If this is present, the course does not end.
+--	Useful for endless & workout courses.
+
 #LIVES:4;
 --	The maximum(?) number of lives attainable in the course. Enabling this will
 --	automatically force your course into an Oni course.
+
 #BANNER:My Banner.png;
 --	A banner for your course.
+
 #BACKGROUND:My Background.png;
---	A background for your course. Currently only available in SM-SSC.
+--	A background for your course. Currently only available in SM5 and sm-ssc.
+
 #STYLE:SINGLE,VERSUS;
---	Denote which styles may be played on this course. This is useful in
---	particular to clone courses for doubles and single courses.
+--	Denote which styles may be played on this course. This is useful for
+--	cloning courses for doubles and single styles.
+
 #METER:Beginner:3;
 --	A custom-set meter for that course difficulty. You may set the difficulty
 --	for Beginner, Easy, Medium, Hard, Challenge and Edit difficulties.
 
 [[ Song Content ]]
--- Song Content is comprimised with any song-changing data such as modifiers,
--- followed by an actual song for teh game to play.
+-- Song Content makes up the entries in the course,
+-- and also allows for timed modifiers.
 
 -- Modifiers can be assigned in a variety of formats, the most effective three being the following:
 
@@ -51,7 +59,7 @@ Complete Course Template
 
 #SONG:*:Medium:2x;
 -- #SONG can take quite a variety of parameters, of which may be useful to you
--- for testing or randomocity purpose.
+-- for testing or other purposes.
 -- * is a wildcard item, meaning that StepMania will always pick a random song
 -- for this part of the course.
 -- You can also replace with BEST*,WORST*,GRADEBEST*, or GRADEWORST*, where * 
@@ -70,9 +78,11 @@ Complete Course Template
 #SONG:*:Medium:showcourse;
 -- For example, forces the course to never be hidden, noshowcourse being the
 -- reverse of such.
+
 -- nodifficult also exists to disable a player from changing difficulties, 
 -- barring the player from making it easier or harder ( Gauntlets & Survivals
 -- do not allow you to change difficulties ).
+
 -- Finally, award*, where * is a number, allows you to control how many lives
 -- the player gains from successfully completing a course in Oni mode.
 
