@@ -26,9 +26,19 @@ if GAMESTATE:IsCourseMode() then
 	t[#t+1] = LoadActor("CourseDisplay");
 else
 	t[#t+1] = Def.Sprite {
-		InitCommand=cmd(Center);
+		InitCommand=cmd(Center;diffusealpha,0);
 		BeginCommand=cmd(LoadFromCurrentSongBackground);
-		OnCommand=cmd(diffusealpha,0;scale_or_crop_background;sleep,0.5;linear,0.50;diffusealpha,1;sleep,3);
+		OnCommand=function(self)
+			if PREFSMAN:GetPreference("StretchBackgrounds") then
+				self:SetSize(SCREEN_WIDTH,SCREEN_HEIGHT)
+			else
+				self:scale_or_crop_background()
+			end
+			self:sleep(0.5)
+			self:linear(0.50)
+			self:diffusealpha(1)
+			self:sleep(3)
+		end;
 	};
 end
 

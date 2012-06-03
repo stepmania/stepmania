@@ -163,6 +163,7 @@ public:
 	Preference<int>	m_iDisplayColorDepth;
 	Preference<int>	m_iTextureColorDepth;
 	Preference<int>	m_iMovieColorDepth;
+	Preference<bool>	m_bStretchBackgrounds;
 	Preference<HighResolutionTextures>	m_HighResolutionTextures;
 	Preference<int>	m_iMaxTextureResolution;
 	Preference<int>	m_iRefreshRate;
