@@ -3,6 +3,7 @@
 #define X11_HELPER_H
 
 #include <X11/Xlib.h>		// Window
+#include <X11/Xutil.h>
 namespace X11Helper
 {
 	// All functions in here that return a bool return true on success, and

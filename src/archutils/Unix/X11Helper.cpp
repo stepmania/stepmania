@@ -1,6 +1,8 @@
 #include "global.h"
 #include "X11Helper.h"
 #include "RageLog.h"
+#include "ProductInfo.h"
+#include "Preference.h"
 #include "PrefsManager.h" // XXX: only used for m_bShowMouseCursor -aj
 
 Display *X11Helper::Dpy = NULL;
@@ -8,6 +10,8 @@ Window X11Helper::Win = None;
 
 static int ErrorCallback( Display*, XErrorEvent* );
 static int FatalCallback( Display* );
+
+static Preference<RString>		g_XWMName( "XWMName", PRODUCT_ID );
 
 bool X11Helper::OpenXConnection()
 {
@@ -60,6 +64,16 @@ bool X11Helper::MakeWindow( Window &win, int screenNum, int depth, Visual *visua
 			     depth, InputOutput, visual, mask, &winAttribs );
 	if( win == None )
 		return false;
+
+	XClassHint *hint = XAllocClassHint();
+	if ( hint == NULL ) {
+		LOG->Warn("Could not set class hint for X11 Window");
+	} else {
+		hint->res_name   = (char*)g_XWMName.Get().c_str();
+		hint->res_class  = (char*)PRODUCT_FAMILY;
+		XSetClassHint(Dpy, win, hint);
+		XFree(hint);
+	}
 
 	// Hide the mouse cursor in certain situations.
     if( !PREFSMAN->m_bShowMouseCursor )
