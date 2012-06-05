@@ -26,6 +26,7 @@ public:
 	 * @param pn the Player to give a GrooveRadar.
 	 * @param pSteps the Steps to use to make the radar. If NULL, there are no Steps. */
 	void SetFromSteps( PlayerNumber pn, Steps* pSteps );
+	void SetFromValues( PlayerNumber pn, vector<float> vals );
 
 	// Lua
 	void PushSelf( lua_State *L );
@@ -45,6 +46,7 @@ protected:
 
 		void SetEmpty();
 		void SetFromSteps( const RadarValues &rv );
+		void SetFromValues( vector<float> vals );
 
 		void SetRadius( float f ) { m_size.x = f; m_size.y = f; }
 

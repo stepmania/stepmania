@@ -78,6 +78,11 @@ void GrooveRadar::SetFromSteps( PlayerNumber pn, Steps* pSteps ) // NULL means n
 	m_GrooveRadarValueMap[pn].SetFromSteps( rv );
 }
 
+void GrooveRadar::SetFromValues( PlayerNumber pn, vector<float> vals )
+{
+	m_GrooveRadarValueMap[pn].SetFromValues(vals);
+}
+
 GrooveRadar::GrooveRadarValueMap::GrooveRadarValueMap()
 {
 	m_bValuesVisible = false;
@@ -103,6 +108,22 @@ void GrooveRadar::GrooveRadarValueMap::SetFromSteps( const RadarValues &rv )
 		const float fValueCurrent = m_fValuesOld[c] * (1-m_PercentTowardNew) + m_fValuesNew[c] * m_PercentTowardNew;
 		m_fValuesOld[c] = fValueCurrent;
 		m_fValuesNew[c] = rv[c];
+	}
+
+	if( !m_bValuesVisible ) // the values WERE invisible
+		m_PercentTowardNew = 1;
+	else
+		m_PercentTowardNew = 0;
+}
+
+void GrooveRadar::GrooveRadarValueMap::SetFromValues( vector<float> vals )
+{
+	m_bValuesVisible = true;
+	for( int c=0; c<NUM_SHOWN_RADAR_CATEGORIES; c++ )
+	{
+		const float fValueCurrent = m_fValuesOld[c] * (1-m_PercentTowardNew) + m_fValuesNew[c] * m_PercentTowardNew;
+		m_fValuesOld[c] = fValueCurrent;
+		m_fValuesNew[c] = vals[c];
 	}
 
 	if( !m_bValuesVisible ) // the values WERE invisible
@@ -205,11 +226,27 @@ public:
 		}
 		return 0;
 	}
+	static int SetFromValues( T* p, lua_State *L )
+	{
+		PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);
+		if( !lua_istable(L, 2) || lua_isnil(L,2) )
+		{
+			p->SetEmpty( pn );
+		}
+		else
+		{
+			vector<float> vals;
+			LuaHelpers::ReadArrayFromTable( vals, L );
+			p->SetFromValues(pn, vals);
+		}
+		return 0;
+	}
 	static int SetEmpty( T* p, lua_State *L )		{ p->SetEmpty( Enum::Check<PlayerNumber>(L, 1) ); return 0; }
 
 	LunaGrooveRadar()
 	{
 		ADD_METHOD( SetFromRadarValues );
+		ADD_METHOD( SetFromValues );
 		ADD_METHOD( SetEmpty );
 	}
 };
