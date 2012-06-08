@@ -170,7 +170,7 @@ t[#t+1] = Def.ActorFrame {
 		
 		if fTapNoteOffset ~= 1 then
 			-- we're safe, you can push the values
-			tTotalJudgments[#tTotalJudgments+1] = fTapNoteOffset;
+			tTotalJudgments[#tTotalJudgments+1] = math.abs(fTapNoteOffset);
 --~ 			tTotalJudgments[#tTotalJudgments+1] = bUseNegative and fTapNoteOffset or math.abs( fTapNoteOffset );
 		end
 		
