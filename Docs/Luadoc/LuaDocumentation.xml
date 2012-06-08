@@ -1272,7 +1272,7 @@ save yourself some time, copy this for undocumented things:
 		[02 Actor.lua] A customized version of pulse that is more appealing for on-beat effects.
 	</Function>
 	<Function name='xy' theme='_fallback' return='void' arguments='float actorX, float actorY'>
-		[02 Actor.lua] Sets the x and y location of the Actor in one command.
+		Sets the x and y location of the Actor in one command.
 	</Function>
 </Class>
 <Class name='ActorFrame'>
@@ -1731,6 +1731,9 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 </Class>
 <Class name='Course'>
+	<Function name='AllSongsAreFixed' return='bool' arguments=''>
+		Returns <code>true</code> if all of the songs in the course have been defined (as opposed to random songs).
+	</Function>
 	<Function name='GetAllTrails' return='{Trail}' arguments=''>
 		Returns a table of all the Trails in the Course.
 	</Function>
@@ -1981,11 +1984,8 @@ save yourself some time, copy this for undocumented things:
 	<Function name='GetSongGroup' return='string' arguments=''>
 		Returns the name of any song group that may have been set.
 	</Function>
-	<Function name='GetSortOrder' return='SortOder' arguments=''>
+	<Function name='GetSortOrder' return='SortOrder' arguments=''>
 		Returns the sort order, if the GameCommand has set one.
-	</Function>
-	<Function name='GetStageResult' return='StageResult' arguments='PlayerNumber pn'>
-		Returns the StageResult for player <code>pn</code>.
 	</Function>
 	<Function name='GetStageModifiers' return='string' arguments=''>
 		Returns any stage modifiers that may have been set.
@@ -2258,6 +2258,9 @@ save yourself some time, copy this for undocumented things:
 	<Function name='GetSortOrder' return='SortOrder' arguments=''>
 		Returns the current SortOrder.
 	</Function>
+	<Function name='GetStageResult' return='StageResult' arguments='PlayerNumber pn'>
+		Returns the StageResult for player <code>pn</code>.
+	</Function>
 	<Function name='GetStageIndex' return='int' arguments=''>
 		Returns the current stage index.
 	</Function>
@@ -2407,11 +2410,8 @@ save yourself some time, copy this for undocumented things:
 	<Function name='SetFromRadarValues' return='void' arguments='PlayerNumber pn, RadarValues rv'>
 		Sets the GrooveRadar values for Player <code>pn</code> from RadarValues <code>rv</code>
 	</Function>
-	<Function name='tweenoffscreen' return='void' arguments=''>
-		Tweens the GrooveRadar off screen.
-	</Function>
-	<Function name='tweenonscreen' return='void' arguments=''>
-		Tweens the GrooveRadar on screen.
+	<Function name='SetFromValues' return='void' arguments='PlayerNumber pn, {float vals}'>
+		Sets the GrooveRadar values for Player <code>pn</code> to the specified values in the table.
 	</Function>
 </Class>
 <Class name='HelpDisplay'>
@@ -3176,6 +3176,9 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 </Class>
 <Class name='PlayerStageStats'>
+	<Function name='FailPlayer' return='bool' arguments=''>
+		Fails the player.
+	</Function>
 	<Function name='FullCombo' return='bool' arguments=''>
 		Returns <code>true</code> if a full combo (TNS_W3 and up) was obtained.
 	</Function>
@@ -3370,6 +3373,12 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='GetHighScoreList' return='HighScoreList' arguments='Song s, Steps st'>
 		Gets the profile's HighScoreList for a specified Song and Steps. (Alternate arguments for Courses: <code>Course c, Trail t</code>)
+	</Function>
+	<Function name='GetLastPlayedCourse' return='Course' arguments=''>
+		Returns the last played Course for this profile.
+	</Function>
+	<Function name='GetLastPlayedSong' return='Song' arguments=''>
+		Returns the last played Song for this profile.
 	</Function>
 	<Function name='GetLastUsedHighScoreName' return='string' arguments=''>
 		Returns the last used high score name.
@@ -4013,6 +4022,9 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='IsMarathon' return='bool' arguments=''>
 		Returns <code>true</code> if the song meets the criteria for &quot;Marathon&quot; length.
+	</Function>
+	<Function name='IsStepsUsingDifferentTiming' return='bool' arguments='Steps s'>
+		Returns <code>true</code> if the song and the specified steps have different timing.
 	</Function>
 	<Function name='IsTutorial' return='bool' arguments=''>
 		Returns <code>true</code> if the song only has Beginner steps.

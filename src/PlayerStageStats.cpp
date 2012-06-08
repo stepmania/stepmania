@@ -761,11 +761,11 @@ public:
 		return 0;
 	}
   
-  static int FailPlayer( T* p, lua_State *L )
-  {
-    p->m_bFailed = true;
-    return 0;
-  }
+	static int FailPlayer( T* p, lua_State *L )
+	{
+		p->m_bFailed = true;
+		return 0;
+	}
 
 	LunaPlayerStageStats()
 	{

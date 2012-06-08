@@ -7,6 +7,7 @@
 		<Function name='Alpha'/>
 		<Function name='AreStagePlayerModsForced'/>
 		<Function name='AreStageSongModsForced'/>
+		<Function name='ArgsIfPlayerJoinedOrNil'/>
 		<Function name='Basename'/>
 		<Function name='BoostColor'/>
 		<Function name='Brightness'/>
@@ -34,6 +35,7 @@
 		<Function name='DeepCopy'/>
 		<Function name='EvalUsesCheckpointsWithJudgments'/>
 		<Function name='FailCombo'/>
+		<Function name='FinalizeScoreKeepers'/>
 		<Function name='FindSelection'/>
 		<Function name='FindValue'/>
 		<Function name='FormatNumSongsPlayed'/>
@@ -54,6 +56,7 @@
 		<Function name='GetGamePrefN'/>
 		<Function name='GetGradeFromPercent'/>
 		<Function name='GetLifeDifficulty'/>
+		<Function name='GetNumReadiedScoreKeepers'/>
 		<Function name='GetPlayerOrMachineProfile'/>
 		<Function name='GetProTiming'/>
 		<Function name='GetRandomSongBackground'/>
@@ -84,6 +87,7 @@
 		<Function name='Hour'/>
 		<Function name='Hue'/>
 		<Function name='InitGamePrefs'/>
+		<Function name='InitScoreKeepers'/>
 		<Function name='InitUserPrefs'/>
 		<Function name='IsArcade'/>
 		<Function name='IsFreePlay'/>
@@ -184,6 +188,7 @@
 		<Function name='URLEncode'/>
 		<Function name='UndocumentedFeature'/>
 		<Function name='UnlockRewardTypeToLocalizedString'/>
+		<Function name='UpdateScoreKeepers'/>
 		<Function name='UserPrefScoringMode'/>
 		<Function name='Var'/>
 		<Function name='VersionDate'/>
@@ -591,6 +596,7 @@
 			<Function name='LoadMultiPlayer'/>
 		</Class>
 		<Class name='Course'>
+			<Function name='AllSongsAreFixed'/>
 			<Function name='GetAllTrails'/>
 			<Function name='GetBackgroundPath'/>
 			<Function name='GetBannerPath'/>
@@ -820,6 +826,7 @@
 		<Class base='ActorFrame' name='GrooveRadar'>
 			<Function name='SetEmpty'/>
 			<Function name='SetFromRadarValues'/>
+			<Function name='SetFromValues'/>
 		</Class>
 		<Class base='BitmapText' name='HelpDisplay'>
 			<Function name='SetSecsBetweenSwitches'/>
@@ -1097,6 +1104,7 @@
 			<Function name='UsingReverse'/>
 		</Class>
 		<Class name='PlayerStageStats'>
+			<Function name='FailPlayer'/>
 			<Function name='FullCombo'/>
 			<Function name='FullComboOfScore'/>
 			<Function name='GetActualDancePoints'/>
@@ -1139,6 +1147,7 @@
 			<Function name='GetCurrentPlayerOptions'/>
 			<Function name='GetHealthState'/>
 			<Function name='GetMultiPlayerNumber'/>
+			<Function name='GetPlayerController'/>
 			<Function name='GetPlayerNumber'/>
 			<Function name='GetPlayerOptions'/>
 			<Function name='GetPlayerOptionsArray'/>
@@ -1165,6 +1174,8 @@
 			<Function name='GetGoalSeconds'/>
 			<Function name='GetGoalType'/>
 			<Function name='GetHighScoreList'/>
+			<Function name='GetLastPlayedCourse'/>
+			<Function name='GetLastPlayedSong'/>
 			<Function name='GetLastUsedHighScoreName'/>
 			<Function name='GetMostPopularCourse'/>
 			<Function name='GetMostPopularSong'/>
@@ -1418,6 +1429,7 @@
 			<Function name='IsEnabled'/>
 			<Function name='IsLong'/>
 			<Function name='IsMarathon'/>
+			<Function name='IsStepsUsingDifferentTiming'/>
 			<Function name='IsTutorial'/>
 			<Function name='MusicLengthSeconds'/>
 			<Function name='NormallyDisplayed'/>
@@ -1552,7 +1564,6 @@
 			<Function name='IsDisplayBpmRandom'/>
 			<Function name='IsDisplayBpmSecret'/>
 			<Function name='PredictMeter'/>
-			<Function name='UsesSplitTiming'/>
 		</Class>
 		<Class base='ActorFrame' name='StepsDisplay'>
 			<Function name='Load'/>
@@ -2341,5 +2352,5 @@
 		<Constant name='top' value='&apos;VertAlign_Top&apos;'/>
 	</Constants>
 	<Version>StepMania v5.0 alpha 2</Version>
-	<Date>2012-04-02</Date>
+	<Date>2012-06-08</Date>
 </Lua>
