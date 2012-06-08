@@ -139,10 +139,8 @@ end
 local OldCallShimMt={
 	__index=function(t,k,v)
 		return function(judg, _)
-			if GetNumReadiedScoreKeepers()==0 then
-				--lazy programming
-				InitScoreKeepers(ArgsIfPlayerJoinedOrNil(v))
-			end
+			--sacrifice some efficiency for reliability
+			InitScoreKeepers(ArgsIfPlayerJoinedOrNil(v))
 			UpdateScoreKeepers(judg)
 		end
 	end
