@@ -1,7 +1,10 @@
---ScoringEngine2 by FSX v1.41
+--ScoringEngine2 by FSX v1.43
 --essentially a really chunky layer to make SetScore elegant(ish)
 --arguments for scorekeepers: JudgmentMessageCommand,PlayerStageStats,PlayerNumber,State
 --[[changelog
+v1.43 12 Jun 2012
+*Remove a log that could create a lot of log noise
+in certain situations
 v1.42 21 May 2012
 *Add more type checking.
 *Don't crash on missing modes.
@@ -36,7 +39,6 @@ function InitScoreKeepers(p1Mode, p2Mode)
 	local newStgK = {pcall(GameState.GetStageSeed,GAMESTATE)}
 	assert(newStgK[1], "it's too early to initialize the ScoreKeepers, the GameState isn't ready yet")
 	if newStgK[2] == stageKey then
-		Log "[InitScoreKeepers] unnecessary call"
 		return true
 	end
 	if p1Mode~=nil then
