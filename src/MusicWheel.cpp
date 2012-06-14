@@ -11,7 +11,6 @@
 #include "Song.h"
 #include "Course.h"
 #include "Steps.h"
-#include "UnlockManager.h"
 #include "GameCommand.h"
 #include "ActorUtil.h"
 #include "SongUtil.h"
@@ -423,23 +422,8 @@ void MusicWheel::GetSongList( vector<Song*> &arraySongs, SortOrder so )
 	{
 		Song* pSong = apAllSongs[i];
 
-		int iLocked = UNLOCKMAN->SongIsLocked( pSong );
-		if( iLocked & LOCKED_DISABLED )
-			continue;
-
-		// If we're on an extra stage, and this song is selected, ignore #SELECTABLE.
-		if( pSong != GAMESTATE->m_pCurSong || !GAMESTATE->IsAnExtraStage() )
-		{
-			// Hide songs that asked to be hidden via #SELECTABLE.
-			if( iLocked & LOCKED_SELECTABLE )
-				continue;
-			if( so != SORT_ROULETTE && iLocked & LOCKED_ROULETTE )
-				continue;
-		}
-
-		/* Hide locked songs. If RANDOM_PICKS_LOCKED_SONGS, hide in Roulette
-		 * and Random, too. */
-		if( (so!=SORT_ROULETTE || !RANDOM_PICKS_LOCKED_SONGS) && iLocked )
+		// Hide in Roulette and Random
+		if( so != SORT_ROULETTE )
 			continue;
 
 		if( PREFSMAN->m_bOnlyPreferredDifficulties )
@@ -808,10 +792,6 @@ void MusicWheel::BuildWheelItemDatas( vector<MusicWheelItemData *> &arrayWheelIt
 			{
 				Course* pCourse = apCourses[i];
 
-				// if unlocks are on, make sure it is unlocked
-				if ( UNLOCKMAN->CourseIsLocked(pCourse) )
-					continue;
-
 				RString sThisSection = "";
 				if( so == SORT_ALL_COURSES )
 				{
@@ -947,35 +927,14 @@ void MusicWheel::FilterWheelItemDatas(vector<MusicWheelItemData *> &aUnFilteredD
 				continue;
 			}
 
-			int iLocked = UNLOCKMAN->SongIsLocked( pSong );
-			if( iLocked & LOCKED_DISABLED )
-			{
-				aiRemove[i] = true;
-				continue;
-			}
-
 			/* If we're on an extra stage, and this song is selected, ignore #SELECTABLE. */
 			if( pSong != GAMESTATE->m_pCurSong || !GAMESTATE->IsAnExtraStage() )
 			{
-				/* Hide songs that asked to be hidden via #SELECTABLE. */
-				if( iLocked & LOCKED_SELECTABLE )
+				if( so != SORT_ROULETTE )
 				{
 					aiRemove[i] = true;
 					continue;
 				}
-				if( so != SORT_ROULETTE && iLocked & LOCKED_ROULETTE )
-				{
-					aiRemove[i] = true;
-					continue;
-				}
-			}
-
-			/* Hide locked songs.  If RANDOM_PICKS_LOCKED_SONGS, hide in Roulette and Random,
-			 * too. */
-			if( (so!=SORT_ROULETTE || !RANDOM_PICKS_LOCKED_SONGS) && iLocked )
-			{
-				aiRemove[i] = true;
-				continue;
 			}
 
 			/* If the song has no steps for the current style, remove it. */

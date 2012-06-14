@@ -30,7 +30,6 @@
 #include "Inventory.h"
 #include "Course.h"
 #include "NoteDataUtil.h"
-#include "UnlockManager.h"
 #include "LightsManager.h"
 #include "ProfileManager.h"
 #include "StatsManager.h"

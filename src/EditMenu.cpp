@@ -11,7 +11,6 @@
 #include "Foreach.h"
 #include "CommonMetrics.h"
 #include "BannerCache.h"
-#include "UnlockManager.h"
 #include "SongUtil.h"
 
 static const char *EditMenuRowNames[] = {
@@ -39,16 +38,6 @@ StringToX( EditMenuAction );
 static RString ARROWS_X_NAME( size_t i )	{ return ssprintf("Arrows%dX",int(i+1)); }
 static RString ROW_Y_NAME( size_t i )		{ return ssprintf("Row%dY",int(i+1)); }
 
-void EditMenu::StripLockedStepsAndDifficulty( vector<StepsAndDifficulty> &v )
-{
-	const Song *pSong = GetSelectedSong();
-	for( int i=(int)v.size()-1; i>=0; i-- )
-	{
-		if( v[i].pSteps  &&  UNLOCKMAN->StepsIsLocked(pSong, v[i].pSteps) )
-				v.erase( v.begin()+i );
-	}
-}
-
 void EditMenu::GetSongsToShowForGroup( const RString &sGroup, vector<Song*> &vpSongsOut )
 {
 	vpSongsOut = SONGMAN->GetSongs( SHOW_GROUPS.GetValue()? sGroup:GROUP_ALL );
@@ -60,7 +49,7 @@ void EditMenu::GetSongsToShowForGroup( const RString &sGroup, vector<Song*> &vpS
 		for( int i=vpSongsOut.size()-1; i>=0; i-- )
 		{
 			const Song* pSong = vpSongsOut[i];
-			if( !pSong->NormallyDisplayed()  ||  pSong->IsTutorial() )
+			if( pSong->IsTutorial() )
 				vpSongsOut.erase( vpSongsOut.begin()+i );
 		}
 		break;
@@ -427,8 +416,6 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 				else
 				{
 					Steps *pSteps = SongUtil::GetStepsByDifficulty( GetSelectedSong(), GetSelectedStepsType(), dc );
-					if( pSteps && UNLOCKMAN->StepsIsLocked( GetSelectedSong(), pSteps ) )
-						pSteps = NULL;
 
 					switch( EDIT_MODE.GetValue() )
 					{

@@ -39,18 +39,11 @@ public:
 	 *
 	 * Don't filter here if the StepsType is StepsType_Invalid. */
 	StepsType m_st;
-	/** @brief Check a song's locked status for searching. */
-	enum Locked
-	{ 
-		Locked_Locked,		/**< We want songs that are locked. */
-		Locked_Unlocked,	/**< We want songs that are unlocked. */
-		Locked_DontCare		/**< We don't care if the songs are locked or not. */
-	} /** @brief The Song's locked status. */ m_Locked;
 
 	/** @brief Set up the initial criteria. */
 	StepsCriteria(): m_difficulty(Difficulty_Invalid),
 		m_iLowMeter(-1), m_iHighMeter(-1),
-		m_st(StepsType_Invalid), m_Locked(Locked_DontCare)
+		m_st(StepsType_Invalid)
 	{
 		//m_fLowBPM = -1;
 		//m_fHighBPM = -1;
@@ -70,7 +63,7 @@ public:
 	bool operator==( const StepsCriteria &other ) const
 	{
 #define X(x) (x == other.x)
-		return X(m_difficulty) && X(m_iLowMeter) && X(m_iHighMeter) && X(m_st) && X(m_Locked);
+		return X(m_difficulty) && X(m_iLowMeter) && X(m_iHighMeter) && X(m_st);
 #undef X
 	}
 	/**
@@ -151,7 +144,6 @@ namespace StepsUtil
 	void SortStepsPointerArrayByNumPlays( vector<Steps*> &vpStepsInOut, const Profile* pProfile, bool bDescending );
 	bool CompareStepsPointersByDescription(const Steps *pStep1, const Steps *pStep2);
 	void SortStepsByDescription( vector<Steps*> &vpStepsInOut );
-	void RemoveLockedSteps( const Song *pSong, vector<Steps*> &vpStepsInOut );
 };
 
 class StepsID

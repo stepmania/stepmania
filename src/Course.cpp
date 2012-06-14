@@ -15,7 +15,6 @@
 #include "SongCacheIndex.h"
 #include "Steps.h"
 #include "ThemeManager.h"
-#include "UnlockManager.h"
 #include "Game.h"
 #include "Style.h"
 
@@ -216,13 +215,11 @@ bool Course::IsPlayableIn( StepsType st ) const
 			soc.m_vpSongAllowedList.push_back( pSong );
 		}
 		soc.m_Tutorial = SongCriteria::Tutorial_No;
-		soc.m_Locked = SongCriteria::Locked_Unlocked;
 		if( !soc.m_bUseSongAllowedList )
 			soc.m_iMaxStagesForSong = 1;
 
 		StepsCriteria stc = e->stepsCriteria;
 		stc.m_st = st;
-		stc.m_Locked = StepsCriteria::Locked_Unlocked;
 
 		const bool bSameSongCriteria  = e != m_vEntries.begin() && (e-1)->songCriteria == soc;
 		const bool bSameStepsCriteria = e != m_vEntries.begin() && (e-1)->stepsCriteria == stc;
@@ -481,13 +478,11 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 			soc.m_vpSongAllowedList.push_back( pSong );
 		}
 		soc.m_Tutorial = SongCriteria::Tutorial_No;
-		soc.m_Locked = SongCriteria::Locked_Unlocked;
 		if( !soc.m_bUseSongAllowedList )
 			soc.m_iMaxStagesForSong = 1;
 
 		StepsCriteria stc = e->stepsCriteria;
 		stc.m_st = st;
-		stc.m_Locked = StepsCriteria::Locked_Unlocked;
 
 		const bool bSameSongCriteria  = e != entries.begin() && (e-1)->songCriteria == soc;
 		const bool bSameStepsCriteria = e != entries.begin() && (e-1)->stepsCriteria == stc;

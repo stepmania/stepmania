@@ -4,7 +4,7 @@
 #include "SongManager.h"
 #include "Song.h"
 #include "RageLog.h"
-#include "UnlockManager.h"
+#include "CourseUtil.h"
 
 RString COLUMN_DIFFICULTY_NAME( size_t i );
 RString COLUMN_STEPS_TYPE_NAME( size_t i );
@@ -53,8 +53,6 @@ static void GetAllCoursesToShow( vector<Course*> &vpOut, CourseType ct, int iNum
 
 	FOREACH_CONST( Course*, vpCourses, c)
 	{
-		if( UNLOCKMAN->CourseIsLocked(*c) )
-			continue;	// skip
 		if( !(*c)->ShowInDemonstrationAndRanking() )
 			continue;	// skip
 		vpOut.push_back( *c );
@@ -137,8 +135,6 @@ void ScoreScroller::ConfigureActor( Actor *pActor, int iItem )
 		{
 			const Song* pSong = data.m_pSong;
 			Steps *pSteps = SongUtil::GetStepsByDifficulty( pSong, st, dc, false );
-			if( pSteps  &&  UNLOCKMAN->StepsIsLocked(pSong, pSteps) )
-				pSteps = NULL;
 			LuaHelpers::Push( L, pSteps );
 		}
 		else if( data.m_pCourse != NULL )

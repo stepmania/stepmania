@@ -10,7 +10,6 @@
 #include "SongManager.h"
 #include "XmlFile.h"
 #include "Foreach.h"
-#include "UnlockManager.h"
 #include "ThemeMetric.h"
 #include "LocalizedString.h"
 #include "RageLog.h"
@@ -29,28 +28,10 @@ bool SongCriteria::Matches( const Song *pSong ) const
 	if( !m_sGroupName.empty()  &&  m_sGroupName != pSong->m_sGroupName )
 		return false;
 
-	if( UNLOCKMAN->SongIsLocked(pSong) & LOCKED_DISABLED )
-		return false;
-
 	if( m_bUseSongGenreAllowedList )
 	{
 		if( find(m_vsSongGenreAllowedList.begin(),m_vsSongGenreAllowedList.end(),pSong->m_sGenre) == m_vsSongGenreAllowedList.end() )
 			return false;
-	}
-
-	switch( m_Selectable )
-	{
-	DEFAULT_FAIL(m_Selectable);
-	case Selectable_Yes:
-		if( UNLOCKMAN  &&  UNLOCKMAN->SongIsLocked(pSong) & LOCKED_SELECTABLE )
-			return false;
-		break;
-	case Selectable_No:
-		if( UNLOCKMAN  &&  !(UNLOCKMAN->SongIsLocked(pSong) & LOCKED_SELECTABLE) )
-			return false;
-		break;
-	case Selectable_DontCare:
-		break;
 	}
 
 	if( m_bUseSongAllowedList )
@@ -74,21 +55,6 @@ bool SongCriteria::Matches( const Song *pSong ) const
 			return false;
 		break;
 	case Tutorial_DontCare:
-		break;
-	}
-
-	switch( m_Locked )
-	{
-	DEFAULT_FAIL(m_Locked);
-	case Locked_Locked:
-		if( UNLOCKMAN  &&  !(UNLOCKMAN->SongIsLocked(pSong) & LOCKED_LOCK) )
-			return false;
-		break;
-	case Locked_Unlocked:
-		if( UNLOCKMAN  &&  UNLOCKMAN->SongIsLocked(pSong) & LOCKED_LOCK )
-			return false;
-		break;
-	case Locked_DontCare:
 		break;
 	}
 
@@ -232,8 +198,6 @@ Steps* SongUtil::GetClosestNotes( const Song *pSong, StepsType st, Difficulty dc
 		Steps* pSteps = vpSteps[i];
 
 		if( pSteps->GetDifficulty() == Difficulty_Edit && dc != Difficulty_Edit )
-			continue;
-		if( bIgnoreLocked && UNLOCKMAN->StepsIsLocked(pSong,pSteps) )
 			continue;
 
 		int iDistance = abs(dc - pSteps->GetDifficulty());
@@ -656,7 +620,7 @@ RString SongUtil::GetSectionNameFromSongAndSort( const Song* pSong, SortOrder so
 			SongUtil::GetStepsTypeAndDifficultyFromSortOrder( so, st, dc );
 
 			Steps* pSteps = GetStepsByDifficulty(pSong,st,dc);
-			if( pSteps && !UNLOCKMAN->StepsIsLocked(pSong,pSteps) )
+			if( pSteps )
 				return ssprintf("%02d", pSteps->GetMeter() );
 			return SORT_NOT_AVAILABLE.GetValue();
 		}
@@ -696,7 +660,6 @@ void SongUtil::SortSongPointerArrayByStepsTypeAndMeter( vector<Song*> &vpSongsIn
 	g_mapSongSortVal.clear();
 	for(unsigned i = 0; i < vpSongsInOut.size(); ++i)
 	{
-		// Ignore locked steps.
 		const Steps* pSteps = GetClosestNotes( vpSongsInOut[i], st, dc, true );
 		RString &s = g_mapSongSortVal[vpSongsInOut[i]];
 		s = ssprintf("%03d", pSteps ? pSteps->GetMeter() : 0);
@@ -989,7 +952,6 @@ void SongUtil::GetPlayableSteps( const Song *pSong, vector<Steps*> &vOut )
 	FOREACHS( StepsType, vStepsType, st )
 		SongUtil::GetSteps( pSong, vOut, *st );
 
-	StepsUtil::RemoveLockedSteps( pSong, vOut );
 	StepsUtil::SortNotesArrayByDifficulty( vOut );
 	StepsUtil::SortStepsByTypeAndDifficulty( vOut );
 }

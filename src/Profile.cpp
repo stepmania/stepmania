@@ -17,7 +17,6 @@
 #include "RageFileDriverDeflate.h"
 #include "RageFileManager.h"
 #include "LuaManager.h"
-#include "UnlockManager.h"
 #include "XmlFile.h"
 #include "XmlFileUtil.h"
 #include "Foreach.h"

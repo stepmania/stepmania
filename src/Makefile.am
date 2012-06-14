@@ -57,7 +57,6 @@ PNG = \
 
 Screens = \
 Screen.cpp Screen.h ScreenAttract.cpp ScreenAttract.h \
-ScreenBookkeeping.cpp ScreenBookkeeping.h \
 ScreenContinue.cpp ScreenContinue.h \
 ScreenDebugOverlay.cpp ScreenDebugOverlay.h \
 ScreenDemonstration.cpp ScreenDemonstration.h ScreenDimensions.h \
@@ -90,7 +89,6 @@ ScreenOptionsManageProfiles.cpp ScreenOptionsManageProfiles.h \
 ScreenOptionsMaster.cpp ScreenOptionsMaster.h \
 ScreenOptionsMasterPrefs.cpp ScreenOptionsMasterPrefs.h \
 ScreenOptionsToggleSongs.cpp ScreenOptionsToggleSongs.h \
-ScreenPackages.cpp ScreenPackages.h ScreenPackagesSSC.cpp ScreenPackagesSSC.h \
 ScreenNetworkOptions.h ScreenNetworkOptions.cpp \
 ScreenPlayerOptions.cpp ScreenPlayerOptions.h \
 ScreenProfileLoad.cpp ScreenProfileLoad.h \
@@ -113,9 +111,6 @@ ScreenSplash.cpp ScreenSplash.h \
 ScreenTestInput.cpp ScreenTestInput.h \
 ScreenTestLights.cpp ScreenTestLights.h ScreenTestSound.cpp ScreenTestSound.h ScreenTextEntry.cpp ScreenTextEntry.h \
 ScreenTitleMenu.cpp ScreenTitleMenu.h \
-ScreenUnlockBrowse.cpp ScreenUnlockBrowse.h \
-ScreenUnlockCelebrate.cpp ScreenUnlockCelebrate.h \
-ScreenUnlockStatus.cpp ScreenUnlockStatus.h \
 ScreenWithMenuElements.cpp ScreenWithMenuElements.h
 
 if !WITHOUT_NETWORKING
@@ -483,8 +478,7 @@ NoteSkinManager.cpp NoteSkinManager.h \
 PrefsManager.cpp PrefsManager.h ProfileManager.cpp ProfileManager.h ScreenManager.cpp \
 ScreenManager.h SongManager.cpp SongManager.h \
 StatsManager.cpp StatsManager.h \
-ThemeManager.cpp ThemeManager.h \
-UnlockManager.cpp UnlockManager.h
+ThemeManager.cpp ThemeManager.h
 
 if !WITHOUT_NETWORKING
 # Compile NetworkSyncManager even if networking is disabled; it'll stub itself.

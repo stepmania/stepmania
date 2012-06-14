@@ -29,7 +29,6 @@
 #include "NotesWriterDWI.h"
 #include "NotesWriterSM.h"
 #include "NotesWriterSSC.h"
-#include "UnlockManager.h"
 #include "LyricsLoader.h"
 
 #include <time.h>
@@ -1210,11 +1209,6 @@ bool Song::HasEdits( StepsType st ) const
 	}
 
 	return false;
-}
-
-bool Song::NormallyDisplayed() const
-{
-	return UNLOCKMAN == NULL || !UNLOCKMAN->SongIsLocked(this);
 }
 
 bool Song::ShowInDemonstrationAndRanking() const { return !IsTutorial() && NormallyDisplayed(); }

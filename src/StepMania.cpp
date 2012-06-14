@@ -54,8 +54,6 @@
 #include "InputQueue.h"
 #include "SongCacheIndex.h"
 #include "BannerCache.h"
-//#include "BackgroundCache.h"
-#include "UnlockManager.h"
 #include "RageFileManager.h"
 #include "Bookkeeper.h"
 #include "LightsManager.h"
@@ -287,7 +285,6 @@ void ShutdownGame()
 	SAFE_DELETE( MODELMAN );
 	SAFE_DELETE( PROFILEMAN ); // PROFILEMAN needs the songs still loaded
 	SAFE_DELETE( CHARMAN );
-	SAFE_DELETE( UNLOCKMAN );
 	SAFE_DELETE( CRYPTMAN );
 	SAFE_DELETE( MEMCARDMAN );
 	SAFE_DELETE( SONGMAN );
@@ -1119,7 +1116,6 @@ int main(int argc, char* argv[])
 	CHARMAN		= new CharacterManager;
 	PROFILEMAN	= new ProfileManager;
 	PROFILEMAN->Init();				// must load after SONGMAN
-	UNLOCKMAN	= new UnlockManager;
 	SONGMAN->UpdatePopular();
 	SONGMAN->UpdatePreferredSort();
 	NSMAN 		= new NetworkSyncManager( pLoadingWindow );
