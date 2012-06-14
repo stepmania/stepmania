@@ -96,8 +96,7 @@ extern "C" void SetIcon( const RageSurface *pSrcImg )
 */
 extern "C" void SetSplash( const char *s )
 {
-	splash = gtk_image_new_from_file(s);
-	gtk_widget_show(splash);
+	gtk_image_set_from_file(GTK_IMAGE(splash), s);
 	gtk_main_iteration_do(FALSE);
 }
 
