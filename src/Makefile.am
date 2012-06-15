@@ -56,62 +56,13 @@ PNG = \
 ../extern/libpng/include/pngwtran.c ../extern/libpng/include/pngwutil.c
 
 Screens = \
-Screen.cpp Screen.h ScreenAttract.cpp ScreenAttract.h \
-ScreenContinue.cpp ScreenContinue.h \
-ScreenDebugOverlay.cpp ScreenDebugOverlay.h ScreenDimensions.h \
-ScreenEditMenu.cpp ScreenEditMenu.h ScreenEnding.cpp ScreenEnding.h \
-ScreenEvaluation.cpp ScreenEvaluation.h \
-ScreenExit.cpp ScreenExit.h ScreenNetEvaluation.cpp ScreenNetEvaluation.h \
-ScreenNetSelectMusic.cpp ScreenNetSelectMusic.h ScreenNetSelectBase.cpp ScreenNetSelectBase.h ScreenNetRoom.cpp ScreenNetRoom.h \
-ScreenGameplay.cpp ScreenGameplay.h \
-ScreenGameplayLesson.cpp ScreenGameplayLesson.h \
-ScreenGameplayNormal.cpp ScreenGameplayNormal.h \
-ScreenGameplayShared.cpp ScreenGameplayShared.h \
-ScreenGameplaySyncMachine.cpp ScreenGameplaySyncMachine.h \
-ScreenHighScores.cpp ScreenHighScores.h \
-ScreenHowToPlay.cpp ScreenHowToPlay.h \
-ScreenInstallOverlay.cpp ScreenInstallOverlay.h \
-ScreenInstructions.cpp ScreenInstructions.h \
-ScreenMapControllers.cpp ScreenMapControllers.h \
-ScreenMessage.cpp ScreenMessage.h ScreenMiniMenu.cpp ScreenMiniMenu.h \
-ScreenNameEntry.cpp ScreenNameEntry.h ScreenNameEntryTraditional.cpp ScreenNameEntryTraditional.h \
-ScreenOptions.cpp ScreenOptions.h \
-ScreenOptionsCourseOverview.cpp ScreenOptionsCourseOverview.h \
-ScreenOptionsEditCourse.cpp ScreenOptionsEditCourse.h \
-ScreenOptionsEditProfile.cpp ScreenOptionsEditProfile.h \
-ScreenOptionsExportPackage.cpp ScreenOptionsExportPackage.h \
-ScreenOptionsManageCourses.cpp ScreenOptionsManageCourses.h \
-ScreenOptionsManageEditSteps.cpp ScreenOptionsManageEditSteps.h \
-ScreenOptionsManageProfiles.cpp ScreenOptionsManageProfiles.h \
-ScreenOptionsMaster.cpp ScreenOptionsMaster.h \
+Screen.cpp Screen.h \
+ScreenExit.cpp ScreenExit.h \
 ScreenOptionsMasterPrefs.cpp ScreenOptionsMasterPrefs.h \
-ScreenNetworkOptions.h ScreenNetworkOptions.cpp \
-ScreenPlayerOptions.cpp ScreenPlayerOptions.h \
-ScreenProfileLoad.cpp ScreenProfileLoad.h \
-ScreenProfileSave.cpp ScreenProfileSave.h \
-ScreenPrompt.cpp ScreenPrompt.h ScreenRanking.cpp ScreenRanking.h \
-ScreenReloadSongs.cpp ScreenReloadSongs.h \
-ScreenSandbox.cpp ScreenSandbox.h \
-ScreenSaveSync.cpp ScreenSaveSync.h \
-ScreenServiceAction.cpp ScreenServiceAction.h \
-ScreenStatsOverlay.cpp ScreenStatsOverlay.h \
-ScreenSelect.cpp ScreenSelect.h ScreenSelectCharacter.cpp ScreenSelectCharacter.h \
-ScreenSelectLanguage.cpp  ScreenSelectLanguage.h \
-ScreenSelectMaster.cpp ScreenSelectMaster.h \
-ScreenSelectMusic.cpp ScreenSelectMusic.h \
-ScreenSelectProfile.cpp ScreenSelectProfile.h \
-ScreenSyncOverlay.cpp ScreenSyncOverlay.h \
-ScreenSystemLayer.cpp ScreenSystemLayer.h ScreenSetTime.cpp ScreenSetTime.h \
-ScreenSongOptions.cpp ScreenSongOptions.h \
-ScreenSplash.cpp ScreenSplash.h \
-ScreenTestInput.cpp ScreenTestInput.h \
-ScreenTestLights.cpp ScreenTestLights.h ScreenTestSound.cpp ScreenTestSound.h ScreenTextEntry.cpp ScreenTextEntry.h \
-ScreenTitleMenu.cpp ScreenTitleMenu.h \
+ScreenMiniMenu.cpp ScreenMiniMenu.h \
+ScreenOptions.cpp ScreenOptions.h \
+ScreenInstallOverlay.cpp ScreenInstallOverlay.h \
 ScreenWithMenuElements.cpp ScreenWithMenuElements.h
-
-if !WITHOUT_NETWORKING
-Screens += ScreenSMOnlineLogin.cpp ScreenSMOnlineLogin.h
-endif
 
 DataStructures = \
 Attack.cpp Attack.h AutoKeysounds.cpp AutoKeysounds.h \
@@ -178,10 +129,6 @@ TimingData.cpp TimingData.h TimingSegments.cpp TimingSegments.h \
 ThemeMetric.h \
 Trail.cpp Trail.h TrailUtil.cpp TrailUtil.h TitleSubstitution.cpp TitleSubstitution.h \
 Tween.cpp Tween.h
-
-if !WITHOUT_NETWORKING
-DataStructures += RoomWheel.cpp RoomWheel.h
-endif
 
 FileTypes = IniFile.cpp IniFile.h \
 MsdFile.cpp MsdFile.h \
@@ -332,17 +279,12 @@ MemoryCardDisplay.cpp MemoryCardDisplay.h \
 MenuTimer.cpp MenuTimer.h \
 ModIcon.cpp ModIcon.h ModIconRow.cpp ModIconRow.h \
 MusicWheel.cpp MusicWheel.h \
-MusicWheelItem.cpp MusicWheelItem.h \
 OptionRow.cpp OptionRow.h OptionsCursor.cpp OptionsCursor.h \
 PaneDisplay.cpp PaneDisplay.h ScrollBar.cpp ScrollBar.h \
 SnapDisplay.cpp SnapDisplay.h \
 TextBanner.cpp TextBanner.h WheelBase.cpp WheelBase.h WheelItemBase.cpp WheelItemBase.h \
 WheelNotifyIcon.cpp WheelNotifyIcon.h \
 WorkoutGraph.cpp WorkoutGraph.h 
-
-if !WITHOUT_NETWORKING
-ActorsInMenus += RoomInfoDisplay.cpp RoomInfoDisplay.h
-endif
 
 ActorsInGameplay = \
 ArrowEffects.cpp ArrowEffects.h AttackDisplay.cpp AttackDisplay.h \
@@ -471,8 +413,8 @@ LuaManager.cpp LuaManager.h LightsManager.cpp LightsManager.h \
 MemoryCardManager.cpp MemoryCardManager.h \
 MessageManager.cpp MessageManager.h NetworkSyncManager.cpp NetworkSyncManager.h \
 NoteSkinManager.cpp NoteSkinManager.h \
-PrefsManager.cpp PrefsManager.h ProfileManager.cpp ProfileManager.h ScreenManager.cpp \
-ScreenManager.h SongManager.cpp SongManager.h \
+PrefsManager.cpp PrefsManager.h ProfileManager.cpp ProfileManager.h \
+ScreenManager.cpp ScreenManager.h SongManager.cpp SongManager.h \
 StatsManager.cpp StatsManager.h \
 ThemeManager.cpp ThemeManager.h
 
