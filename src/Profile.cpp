@@ -126,7 +126,6 @@ void Profile::InitGeneralData()
 	m_iNumExtraStagesPassed = 0;
 	m_iNumExtraStagesFailed = 0;
 	m_iNumToasties = 0;
-	m_UnlockedEntryIDs.clear();
 	m_sLastPlayedMachineGuid = "";
 	m_LastPlayedDate.Init();
 	m_iTotalTapsAndHolds = 0;
@@ -250,9 +249,6 @@ int Profile::GetTotalStepsWithTopGrade( StepsType st, Difficulty d, Grade g ) co
 
 	FOREACH_CONST( Song*, SONGMAN->GetAllSongs(), pSong )
 	{
-		if( !(*pSong)->NormallyDisplayed() )
-			continue;	// skip
-
 		FOREACH_CONST( Steps*, (*pSong)->GetAllSteps(), pSteps )
 		{
 			if( (*pSteps)->m_StepsType != st )
@@ -312,9 +308,6 @@ float Profile::GetSongsPossible( StepsType st, Difficulty dc ) const
 	{
 		Song* pSong = vSongs[i];
 		
-		if( !pSong->NormallyDisplayed() )
-			continue;	// skip
-
 		vector<Steps*> vSteps = pSong->GetAllSteps();
 		for( unsigned j=0; j<vSteps.size(); j++ )
 		{
@@ -351,9 +344,6 @@ float Profile::GetSongsActual( StepsType st, Difficulty dc ) const
 		// get radar values to compute dance points.
 		if( pSong == NULL )
 			continue;
-
-		if( !pSong->NormallyDisplayed() )
-			continue;	// skip
 
 		CHECKPOINT_M( ssprintf("Profile::GetSongsActual: song %s", pSong->GetSongDir().c_str()) );
 		const HighScoresForASong &hsfas = i->second;
@@ -517,12 +507,6 @@ void Profile::SetDefaultModifiers( const Game* pGameType, const RString &sModifi
 	else
 		m_sDefaultModifiers[pGameType->m_szName] = sModifiers;
 }
-
-bool Profile::IsCodeUnlocked( RString sUnlockEntryID ) const
-{
-	return m_UnlockedEntryIDs.find( sUnlockEntryID ) != m_UnlockedEntryIDs.end();
-}
-
 
 Song *Profile::GetMostPopularSong() const
 {
@@ -1075,21 +1059,6 @@ XNode* Profile::SaveGeneralDataCreateNode() const
 	}
 
 	{
-		XNode* pUnlocks = pGeneralDataNode->AppendChild("Unlocks");
-		FOREACHS_CONST( RString, m_UnlockedEntryIDs, it )
-		{
-			XNode *pEntry = pUnlocks->AppendChild("UnlockEntry");
-			RString sUnlockEntry = it->c_str();
-			pEntry->AppendAttr( "UnlockEntryID", sUnlockEntry );
-			if( !UNLOCK_AUTH_STRING.GetValue().empty() )
-			{
-				RString sUnlockAuth = BinaryToHex( CRYPTMAN->GetMD5ForString(sUnlockEntry + UNLOCK_AUTH_STRING.GetValue()) );
-				pEntry->AppendAttr( "Auth", sUnlockAuth );
-			}
-		}
-	}
-
-	{
 		XNode* pNumSongsPlayedByPlayMode = pGeneralDataNode->AppendChild("NumSongsPlayedByPlayMode");
 		FOREACH_ENUM( PlayMode, pm )
 		{
@@ -1254,32 +1223,6 @@ void Profile::LoadGeneralDataFromNode( const XNode* pNode )
 			FOREACH_CONST_Child( pDefaultModifiers, game_type )
 			{
 				game_type->GetTextValue( m_sDefaultModifiers[game_type->GetName()] );
-			}
-		}
-	}
-
-	{
-		const XNode* pUnlocks = pNode->GetChild("Unlocks");
-		if( pUnlocks )
-		{
-			FOREACH_CONST_Child( pUnlocks, unlock )
-			{
-				RString sUnlockEntryID;
-				if( !unlock->GetAttrValue("UnlockEntryID",sUnlockEntryID) )
-					continue;
-
-				if( !UNLOCK_AUTH_STRING.GetValue().empty() )
-				{
-					RString sUnlockAuth;
-					if( !unlock->GetAttrValue("Auth", sUnlockAuth) )
-						continue;
-
-					RString sExpectedUnlockAuth = BinaryToHex( CRYPTMAN->GetMD5ForString(sUnlockEntryID + UNLOCK_AUTH_STRING.GetValue()) );
-					if( sUnlockAuth != sExpectedUnlockAuth )
-						continue;
-				}
-
-				m_UnlockedEntryIDs.insert( sUnlockEntryID );
 			}
 		}
 	}
@@ -1975,7 +1918,6 @@ public:
 	static int SetGoalSeconds( T* p, lua_State *L )			{ p->m_iGoalSeconds = IArg(1); return 0; }
 	static int GetCaloriesBurnedToday( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetCaloriesBurnedToday() ); return 1; }
 	static int GetTotalNumSongsPlayed( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_iNumTotalSongsPlayed ); return 1; }
-	static int IsCodeUnlocked( T* p, lua_State *L )			{ lua_pushboolean(L, p->IsCodeUnlocked(SArg(1)) ); return 1; }
 	static int GetSongsActual( T* p, lua_State *L )			{ lua_pushnumber(L, p->GetSongsActual(Enum::Check<StepsType>(L, 1),Enum::Check<Difficulty>(L, 2)) ); return 1; }
 	static int GetCoursesActual( T* p, lua_State *L )		{ lua_pushnumber(L, p->GetCoursesActual(Enum::Check<StepsType>(L, 1),Enum::Check<Difficulty>(L, 2)) ); return 1; }
 	static int GetSongsPossible( T* p, lua_State *L )		{ lua_pushnumber(L, p->GetSongsPossible(Enum::Check<StepsType>(L, 1),Enum::Check<Difficulty>(L, 2)) ); return 1; }
@@ -2068,7 +2010,6 @@ public:
 		ADD_METHOD( SetGoalSeconds );
 		ADD_METHOD( GetCaloriesBurnedToday );
 		ADD_METHOD( GetTotalNumSongsPlayed );
-		ADD_METHOD( IsCodeUnlocked );
 		ADD_METHOD( GetSongsActual );
 		ADD_METHOD( GetCoursesActual );
 		ADD_METHOD( GetSongsPossible );

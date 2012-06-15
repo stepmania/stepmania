@@ -447,7 +447,6 @@ class OptionRowHandlerListSteps : public OptionRowHandlerList
 			vector<Steps*> vpSteps;
 			Song *pSong = GAMESTATE->m_pCurSong;
 			SongUtil::GetSteps( pSong, vpSteps, GAMESTATE->GetCurrentStyle()->m_StepsType );
-			StepsUtil::RemoveLockedSteps( pSong, vpSteps );
 			StepsUtil::SortNotesArrayByDifficulty( vpSteps );
 			for( unsigned i=0; i<vpSteps.size(); i++ )
 			{
@@ -1350,11 +1349,6 @@ OptionRowHandler* OptionRowHandlerUtil::Make( const Commands &cmds )
 
 		if(	 sParam.CompareNoCase("NoteSkins")==0 )		MAKE( OptionRowHandlerListNoteSkins )
 		else if( sParam.CompareNoCase("Steps")==0 )		MAKE( OptionRowHandlerListSteps )
-		else if( sParam.CompareNoCase("StepsLocked")==0 )
-		{
-			MAKE( OptionRowHandlerListSteps ); 
-			pHand->m_Def.m_bOneChoiceForAllPlayers = true;
-		}
 		else if( sParam.CompareNoCase("Characters")==0 )	MAKE( OptionRowHandlerListCharacters )
 		else if( sParam.CompareNoCase("Styles")==0 )		MAKE( OptionRowHandlerListStyles )
 		else if( sParam.CompareNoCase("Groups")==0 )		MAKE( OptionRowHandlerListGroups )

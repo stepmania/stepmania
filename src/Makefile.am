@@ -58,9 +58,7 @@ PNG = \
 Screens = \
 Screen.cpp Screen.h ScreenAttract.cpp ScreenAttract.h \
 ScreenContinue.cpp ScreenContinue.h \
-ScreenDebugOverlay.cpp ScreenDebugOverlay.h \
-ScreenDemonstration.cpp ScreenDemonstration.h ScreenDimensions.h \
-ScreenEdit.cpp ScreenEdit.h \
+ScreenDebugOverlay.cpp ScreenDebugOverlay.h ScreenDimensions.h \
 ScreenEditMenu.cpp ScreenEditMenu.h ScreenEnding.cpp ScreenEnding.h \
 ScreenEvaluation.cpp ScreenEvaluation.h \
 ScreenExit.cpp ScreenExit.h ScreenNetEvaluation.cpp ScreenNetEvaluation.h \
@@ -74,7 +72,6 @@ ScreenHighScores.cpp ScreenHighScores.h \
 ScreenHowToPlay.cpp ScreenHowToPlay.h \
 ScreenInstallOverlay.cpp ScreenInstallOverlay.h \
 ScreenInstructions.cpp ScreenInstructions.h \
-ScreenJukebox.cpp ScreenJukebox.h \
 ScreenMapControllers.cpp ScreenMapControllers.h \
 ScreenMessage.cpp ScreenMessage.h ScreenMiniMenu.cpp ScreenMiniMenu.h \
 ScreenNameEntry.cpp ScreenNameEntry.h ScreenNameEntryTraditional.cpp ScreenNameEntryTraditional.h \
@@ -88,7 +85,6 @@ ScreenOptionsManageEditSteps.cpp ScreenOptionsManageEditSteps.h \
 ScreenOptionsManageProfiles.cpp ScreenOptionsManageProfiles.h \
 ScreenOptionsMaster.cpp ScreenOptionsMaster.h \
 ScreenOptionsMasterPrefs.cpp ScreenOptionsMasterPrefs.h \
-ScreenOptionsToggleSongs.cpp ScreenOptionsToggleSongs.h \
 ScreenNetworkOptions.h ScreenNetworkOptions.cpp \
 ScreenPlayerOptions.cpp ScreenPlayerOptions.h \
 ScreenProfileLoad.cpp ScreenProfileLoad.h \

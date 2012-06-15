@@ -33,7 +33,6 @@
 #include "ThemeManager.h"
 #include "TitleSubstitution.h"
 #include "TrailUtil.h"
-#include "UnlockManager.h"
 #include "SpecialFiles.h"
 
 SongManager*	SONGMAN = NULL;	// global and accessable from anywhere in our program
@@ -48,9 +47,6 @@ const RString ATTACK_FILE		= "/Data/RandomAttacks.txt";
 static const ThemeMetric<RageColor>	EXTRA_COLOR			( "SongManager", "ExtraColor" );
 static const ThemeMetric<int>		EXTRA_COLOR_METER		( "SongManager", "ExtraColorMeter" );
 static const ThemeMetric<bool>		USE_PREFERRED_SORT_COLOR	( "SongManager", "UsePreferredSortColor" );
-static const ThemeMetric<bool>		USE_UNLOCK_COLOR		( "SongManager", "UseUnlockColor" );
-static const ThemeMetric<RageColor>	UNLOCK_COLOR			( "SongManager", "UnlockColor" );
-static const ThemeMetric<bool>		MOVE_UNLOCKS_TO_BOTTOM_OF_PREFERRED_SORT	( "SongManager", "MoveUnlocksToBottomOfPreferredSort" );
 static const ThemeMetric<int>		EXTRA_STAGE2_DIFFICULTY_MAX	( "SongManager", "ExtraStage2DifficultyMax" );
 
 static Preference<RString> g_sDisabledSongs( "DisabledSongs", "" );
@@ -129,9 +125,8 @@ void SongManager::Reload( bool bAllowFastLoad, LoadingWindow *ld )
 
 	InitAll( ld );
 
-	// reload scores and unlocks afterward
+	// reload scores
 	PROFILEMAN->LoadMachineProfile();
-	UNLOCKMAN->Reload();
 
 	if( !bAllowFastLoad )
 		PREFSMAN->m_bFastLoad.Set( OldVal );
@@ -483,11 +478,6 @@ RageColor SongManager::GetSongColor( const Song* pSong ) const
 {
 	ASSERT( pSong );
 
-	// Use unlock color if applicable
-	const UnlockEntry *pUE = UNLOCKMAN->FindSong( pSong );
-	if( pUE && USE_UNLOCK_COLOR.GetValue() )
-		return UNLOCK_COLOR.GetValue();
-
 	if( USE_PREFERRED_SORT_COLOR )
 	{
 		FOREACH_CONST( PreferredSortSection, m_vPreferredSongSort, v )
@@ -588,11 +578,6 @@ RageColor SongManager::GetCourseGroupColor( const RString &sCourseGroup ) const
 
 RageColor SongManager::GetCourseColor( const Course* pCourse ) const
 {
-	// Use unlock color if applicable
-	const UnlockEntry *pUE = UNLOCKMAN->FindCourse( pCourse );
-	if( pUE  &&  USE_UNLOCK_COLOR.GetValue() )
-		return UNLOCK_COLOR.GetValue();
-
 	if( USE_PREFERRED_SORT_COLOR )
 	{
 		FOREACH_CONST( CoursePointerVector, m_vPreferredCourseSort, v )
@@ -690,44 +675,6 @@ void SongManager::GetPreferredSortCourses( CourseType ct, vector<Course*> &AddTo
 int SongManager::GetNumSongs() const
 {
 	return m_pSongs.size();
-}
-
-int SongManager::GetNumLockedSongs() const
-{
-	int iNum = 0;
-	FOREACH_CONST( Song*, m_pSongs, i )
-	{
-		// If locked for any reason, regardless of how it's locked.
-		if( UNLOCKMAN->SongIsLocked(*i) )
-			++iNum;
-	}
-	return iNum;
-}
-
-int SongManager::GetNumUnlockedSongs() const
-{
-	int iNum = 0;
-	FOREACH_CONST( Song*, m_pSongs, i )
-	{
-		// If locked for any reason other than LOCKED_LOCK:
-		if( UNLOCKMAN->SongIsLocked(*i) & ~LOCKED_LOCK )
-			continue;
-		++iNum;
-	}
-	return iNum;
-}
-
-int SongManager::GetNumSelectableAndUnlockedSongs() const
-{
-	int iNum = 0;
-	FOREACH_CONST( Song*, m_pSongs, i )
-	{
-		// If locked for any reason other than LOCKED_LOCK or LOCKED_SELECTABLE:
-		if( UNLOCKMAN->SongIsLocked(*i) & ~(LOCKED_LOCK|LOCKED_SELECTABLE) )
-			continue;
-		++iNum;
-	}
-	return iNum;
 }
 
 int SongManager::GetNumAdditionalSongs() const
@@ -1323,8 +1270,6 @@ Song* SongManager::GetRandomSong()
 		Song *pSong = m_pShuffledSongs[ i ];
 		if( pSong->IsTutorial() )
 			continue;
-		if( !pSong->NormallyDisplayed() )
-			continue;
 		return pSong;
 	}
 
@@ -1346,8 +1291,6 @@ Course* SongManager::GetRandomCourse()
 		if( pCourse->m_bIsAutogen && !PREFSMAN->m_bAutogenGroupCourses )
 			continue;
 		if( pCourse->GetCourseType() == COURSE_TYPE_ENDLESS )
-			continue;
-		if( UNLOCKMAN->CourseIsLocked(pCourse) )
 			continue;
 		return pCourse;
 	}
@@ -1465,20 +1408,6 @@ void SongManager::UpdatePopular()
 {
 	// update players best
 	vector<Song*> apBestSongs = m_pSongs;
-	for ( unsigned j=0; j < apBestSongs.size() ; ++j )
-	{
-		bool bFiltered = false;
-		// Filter out locked songs.
-		if( !apBestSongs[j]->NormallyDisplayed() )
-			bFiltered = true;
-		if( !bFiltered )
-			continue;
-
-		// Remove it.
-		swap( apBestSongs[j], apBestSongs.back() );
-		apBestSongs.erase( apBestSongs.end()-1 );
-		--j;
-	}
 
 	SongUtil::SortSongPointerArrayByTitle( apBestSongs );
 
@@ -1512,8 +1441,6 @@ void SongManager::UpdateShuffled()
 
 void SongManager::UpdatePreferredSort(RString sPreferredSongs, RString sPreferredCourses)
 {
-	ASSERT( UNLOCKMAN );
-
 	{
 		m_vPreferredSongSort.clear();
 
@@ -1548,8 +1475,6 @@ void SongManager::UpdatePreferredSort(RString sPreferredSongs, RString sPreferre
 				Song *pSong = FindSong( sLine );
 				if( pSong == NULL )
 					continue;
-				if( UNLOCKMAN->SongIsLocked(pSong) & LOCKED_SELECTABLE )
-					continue;
 				section.vpSongs.push_back( pSong );
 			}
 		}
@@ -1558,36 +1483,6 @@ void SongManager::UpdatePreferredSort(RString sPreferredSongs, RString sPreferre
 		{
 			m_vPreferredSongSort.push_back( section );
 			section = PreferredSortSection();
-		}
-
-		if( MOVE_UNLOCKS_TO_BOTTOM_OF_PREFERRED_SORT.GetValue() )
-		{
-			// move all unlock songs to a group at the bottom
-			PreferredSortSection PFSection;
-			PFSection.sName = "Unlocks";
-			FOREACH( UnlockEntry, UNLOCKMAN->m_UnlockEntries, ue )
-			{
-				if( ue->m_Type == UnlockRewardType_Song )
-				{
-					Song *pSong = ue->m_Song.ToSong();
-					if( pSong )
-						PFSection.vpSongs.push_back( pSong );
-				}
-			}
-
-			FOREACH( PreferredSortSection, m_vPreferredSongSort, v )
-			{
-				for( int i=v->vpSongs.size()-1; i>=0; i-- )
-				{
-					Song *pSong = v->vpSongs[i];
-					if( find(PFSection.vpSongs.begin(),PFSection.vpSongs.end(),pSong) != PFSection.vpSongs.end() )
-					{
-						v->vpSongs.erase( v->vpSongs.begin()+i );
-					}
-				}
-			}
-
-			m_vPreferredSongSort.push_back( PFSection );
 		}
 
 		// prune empty groups
@@ -1627,8 +1522,6 @@ void SongManager::UpdatePreferredSort(RString sPreferredSongs, RString sPreferre
 			Course *pCourse = FindCourse( sLine );
 			if( pCourse == NULL )
 				continue;
-			if( UNLOCKMAN->CourseIsLocked(pCourse) & LOCKED_SELECTABLE )
-				continue;
 			vpCourses.push_back( pCourse );
 		}
 
@@ -1636,32 +1529,6 @@ void SongManager::UpdatePreferredSort(RString sPreferredSongs, RString sPreferre
 		{
 			m_vPreferredCourseSort.push_back( vpCourses );
 			vpCourses.clear();
-		}
-
-		if( MOVE_UNLOCKS_TO_BOTTOM_OF_PREFERRED_SORT.GetValue() )
-		{
-			// move all unlock Courses to a group at the bottom
-			vector<Course*> vpUnlockCourses;
-			FOREACH( UnlockEntry, UNLOCKMAN->m_UnlockEntries, ue )
-			{
-				if( ue->m_Type == UnlockRewardType_Course )
-					if( ue->m_Course.IsValid() )
-						vpUnlockCourses.push_back( ue->m_Course.ToCourse() );
-			}
-
-			FOREACH( CoursePointerVector, m_vPreferredCourseSort, v )
-			{
-				for( int i=v->size()-1; i>=0; i-- )
-				{
-					Course *pCourse = (*v)[i];
-					if( find(vpUnlockCourses.begin(),vpUnlockCourses.end(),pCourse) != vpUnlockCourses.end() )
-					{
-						v->erase( v->begin()+i );
-					}
-				}
-			}
-
-			m_vPreferredCourseSort.push_back( vpUnlockCourses );
 		}
 
 		// prune empty groups
@@ -1917,9 +1784,6 @@ public:
 	static int GetRandomSong( T* p, lua_State *L )		{ Song *pS = p->GetRandomSong(); if(pS) pS->PushSelf(L); else lua_pushnil(L); return 1; }
 	static int GetRandomCourse( T* p, lua_State *L )	{ Course *pC = p->GetRandomCourse(); if(pC) pC->PushSelf(L); else lua_pushnil(L); return 1; }
 	static int GetNumSongs( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetNumSongs() ); return 1; }
-	static int GetNumLockedSongs( T* p, lua_State *L ) { lua_pushnumber( L, p->GetNumLockedSongs() ); return 1; }
-	static int GetNumUnlockedSongs( T* p, lua_State *L )    { lua_pushnumber( L, p->GetNumUnlockedSongs() ); return 1; }
-	static int GetNumSelectableAndUnlockedSongs( T* p, lua_State *L )    { lua_pushnumber( L, p->GetNumSelectableAndUnlockedSongs() ); return 1; }
 	static int GetNumAdditionalSongs( T* p, lua_State *L )  { lua_pushnumber( L, p->GetNumAdditionalSongs() ); return 1; }
 	static int GetNumSongGroups( T* p, lua_State *L )	{ lua_pushnumber( L, p->GetNumSongGroups() ); return 1; }
 	static int GetNumCourses( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetNumCourses() ); return 1; }
@@ -2049,9 +1913,6 @@ public:
 		ADD_METHOD( GetRandomCourse );
 		ADD_METHOD( GetCourseGroupNames );
 		ADD_METHOD( GetNumSongs );
-		ADD_METHOD( GetNumLockedSongs );
-		ADD_METHOD( GetNumUnlockedSongs );
-		ADD_METHOD( GetNumSelectableAndUnlockedSongs );
 		ADD_METHOD( GetNumAdditionalSongs );
 		ADD_METHOD( GetNumSongGroups );
 		ADD_METHOD( GetNumCourses );

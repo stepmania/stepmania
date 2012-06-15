@@ -1211,7 +1211,7 @@ bool Song::HasEdits( StepsType st ) const
 	return false;
 }
 
-bool Song::ShowInDemonstrationAndRanking() const { return !IsTutorial() && NormallyDisplayed(); }
+bool Song::ShowInDemonstrationAndRanking() const { return !IsTutorial(); }
 
 
 // Hack: see Song::TidyUpData comments.
@@ -1869,11 +1869,6 @@ public:
 		lua_pushnumber(L, p->GetStepsSeconds());
 		return 1;
 	}
-	static int NormallyDisplayed( T* p, lua_State *L )
-	{
-		lua_pushboolean(L, p->NormallyDisplayed());
-		return 1;
-	}
 	static int ShowInDemonstrationAndRanking( T* p, lua_State *L )
 	{
 		lua_pushboolean(L, p->ShowInDemonstrationAndRanking());
@@ -1985,7 +1980,6 @@ public:
 		ADD_METHOD( HasEdits );
 		ADD_METHOD( IsEasy );
 		ADD_METHOD( GetStepsSeconds );
-		ADD_METHOD( NormallyDisplayed );
 		ADD_METHOD( GetFirstBeat );
 		ADD_METHOD( GetFirstSecond );
 		ADD_METHOD( GetLastBeat );

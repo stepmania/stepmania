@@ -437,7 +437,6 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 					}
 				}
 			}
-			StripLockedStepsAndDifficulty( m_vpSteps );
 
 			FOREACH( StepsAndDifficulty, m_vpSteps, s )
 			{
@@ -488,7 +487,6 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 					m_vpSourceSteps.push_back( StepsAndDifficulty(*pSteps,dc) );
 			}
 		}
-		StripLockedStepsAndDifficulty( m_vpSteps );
 		CLAMP( m_iSelection[ROW_SOURCE_STEPS], 0, m_vpSourceSteps.size()-1 );
 		// fall through
 	case ROW_SOURCE_STEPS:

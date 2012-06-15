@@ -216,12 +216,6 @@ void FadingBanner::LoadIconFromCharacter( Character* pCharacter )
 	m_Banner[m_iIndexLatest].LoadIconFromCharacter( pCharacter );
 }
 
-void FadingBanner::LoadBannerFromUnlockEntry( const UnlockEntry* pUE )
-{
-	BeforeChange();
-	m_Banner[m_iIndexLatest].LoadBannerFromUnlockEntry( pUE );
-}
-
 void FadingBanner::LoadRoulette()
 {
 	BeforeChange();

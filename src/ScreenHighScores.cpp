@@ -26,8 +26,6 @@ static void GetAllSongsToShow( vector<Song*> &vpOut, int iNumMostRecentScoresToS
 	vpOut.clear();
 	FOREACH_CONST( Song*, SONGMAN->GetAllSongs(), s )
 	{
-		if( !(*s)->NormallyDisplayed() )
-			continue;	// skip
 		if( !(*s)->ShowInDemonstrationAndRanking() )
 			continue;	// skip
 		vpOut.push_back( *s );

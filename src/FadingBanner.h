@@ -23,7 +23,6 @@ public:
 	void LoadFromSongGroup( RString sSongGroup );
 	void LoadFromCourse( const Course* pCourse );
 	void LoadIconFromCharacter( Character* pCharacter );
-	void LoadBannerFromUnlockEntry( const UnlockEntry* pUE );
 	void LoadRoulette();
 	void LoadRandom();
 	void LoadFromSortOrder( SortOrder so );

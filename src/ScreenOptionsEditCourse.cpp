@@ -19,7 +19,6 @@ static void GetStepsForSong( Song *pSong, vector<Steps*> &vpStepsOut )
 	SongUtil::GetSteps( pSong, vpStepsOut, GAMESTATE->GetCurrentStyle()->m_StepsType );
 	// xxx: If the StepsType isn't valid for the current game, this will cause
 	// a crash when changing songs. -aj
-	StepsUtil::RemoveLockedSteps( pSong, vpStepsOut );
 	StepsUtil::SortNotesArrayByDifficulty( vpStepsOut );
 }
 
@@ -143,7 +142,6 @@ void ScreenOptionsEditCourse::Init()
 	SongCriteria sc;
 	sc.m_Selectable = SongCriteria::Selectable_Yes;
 	sc.m_Tutorial = SongCriteria::Tutorial_No;
-	sc.m_Locked = SongCriteria::Locked_Unlocked;
 
 	SongUtil::FilterSongs( sc, SONGMAN->GetAllSongs(), m_vpSongs, true );
 
