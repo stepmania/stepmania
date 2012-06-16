@@ -139,6 +139,8 @@ end
 local OldCallShimMt={
 	__index=function(t,k,v)
 		return function(judg, _)
+      --STUPID: don't bother if it's a mine.
+      if judg.TapNoteScore:find("Mine") then return end
 			--sacrifice some efficiency for reliability
 			InitScoreKeepers(ArgsIfPlayerJoinedOrNil(v))
 			UpdateScoreKeepers(judg)
