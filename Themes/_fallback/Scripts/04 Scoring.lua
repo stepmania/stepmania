@@ -236,60 +236,6 @@ r['DDR SuperNOVA'] = function(params, pss)
 	-- [ja] 計算して代入
 	pss:SetScore(math.floor(10000000 * sntmp_Score[p] / totalItems / 3));
 end;
-
------------------------------------------------------------
---DDR SuperNOVA 2 scoring by @waiei
------------------------------------------------------------
-local sn2tmp_Sub={0,0};
-local sn2tmp_Score={0,0};
-local sn2tmp_Steps={0,0};
-r['DDR SuperNOVA 2'] = function(params, pss)
-	local multLookup =
-	{
-		['TapNoteScore_W1'] = 10,
-		['TapNoteScore_W2'] = 10,
-		['TapNoteScore_W3'] = 5
-	};
-	setmetatable(multLookup, ZeroIfNotFound);
-	local radarValues = GetDirectRadar(params.Player);
-	local totalItems = GetTotalItems(radarValues);
-	local p = (params.Player == 'PlayerNumber_P1') and 1 or 2;
-
-	-- [ja] スコアが0の時に初期化
-	if pss:GetScore()==0 then
-		sn2tmp_Sub[p]=0;
-		sn2tmp_Score[p]=0;
-		sn2tmp_Steps[p]=0;
-	end;
-
-	-- [ja] maxAdd は 加算する最高点を 10 とした時の値（つまり、10=100% / 5=50%）
-	local maxAdd = 0;
-	-- [ja] O.K.判定時は問答無用で満点
-	if params.HoldNoteScore == 'HoldNoteScore_Held' then
-		maxAdd = 10;
-	else
-		-- [ja] N.G.判定時は問答無用で0点
-		if params.HoldNoteScore == 'HoldNoteScore_LetGo' then
-			maxAdd = 0;
-		-- [ja] それ以外ということは、ロングノート以外の判定である
-		else
-			maxAdd = multLookup[params.TapNoteScore];
-			if (params.TapNoteScore == 'TapNoteScore_W2') or (params.TapNoteScore=='TapNoteScore_W3') then
-				-- [ja] W2とW3の数を記録
-				sn2tmp_Sub[p]=sn2tmp_Sub[p]+1;
-			end;
-		end
-	end;
-	sn2tmp_Score[p]=sn2tmp_Score[p]+maxAdd;
-	-- [ja] 踏み踏みしたステップ数
-	sn2tmp_Steps[p]=sn2tmp_Steps[p]+1;
-	-- [ja] 現時点での、All W1判定の時のスコア
-	pss:SetCurMaxScore(math.floor(10000*sn2tmp_Steps[p]/totalItems) * 10);
-
-	-- [ja] 計算して代入
-	pss:SetScore((math.floor(10000*sn2tmp_Score[p]/totalItems) * 10) - (sn2tmp_Sub[p]*10) );
-end;
-
 -----------------------------------------------------------
 --Radar Master (disabled; todo: get this working with StepMania 5)
 -----------------------------------------------------------
@@ -340,15 +286,6 @@ r['MIGS'] = function(params,pss)
   curScore = math.max(0,curScore + ( pss:GetHoldNoteScores('HoldNoteScore_Held') * 6 ));
   pss:SetScore(curScore);
 end;
-
---------------------------------------------------------------
---1bilDP scoring because I can.
---------------------------------------------------------------
-r['Billions DP']= function(params,pss)
-  local poss = pss:GetPossibleDancePoints()
-  pss:SetScore(math.floor((pss:GetActualDancePoints()/poss)*1000000000))
-  pss:SetCurMaxScore(math.floor((pss:GetCurrentPossibleDancePoints()/poss)*1000000000))
-end
 -------------------------------------------------------------------------------
 -- Formulas end here.
 for v in ivalues(DisabledScoringModes) do r[v] = nil end
