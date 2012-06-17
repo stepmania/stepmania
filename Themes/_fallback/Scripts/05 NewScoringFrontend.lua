@@ -11,7 +11,7 @@ local function CreateOldScoringShim(name)
 		judg,pss,player,mode=coroutine.yield()
 		while true do
 			if mode=="update" then
-				func(judg,pss)
+      if not judg.TapNoteScore:find("Mine") then func(judg,pss) end
 				judg,pss,player,mode=coroutine.yield(pss:GetScore(),pss:GetCurMaxScore())
 			elseif mode=="finalize" then
 				return pss:GetScore(),pss:GetCurMaxScore()
@@ -139,8 +139,6 @@ end
 local OldCallShimMt={
 	__index=function(t,k,v)
 		return function(judg, _)
-      --STUPID: don't bother if it's a mine.
-      if judg.TapNoteScore:find("Mine") then return end
 			--sacrifice some efficiency for reliability
 			InitScoreKeepers(ArgsIfPlayerJoinedOrNil(v))
 			UpdateScoreKeepers(judg)
