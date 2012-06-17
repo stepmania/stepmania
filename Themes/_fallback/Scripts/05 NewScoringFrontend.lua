@@ -155,7 +155,7 @@ ScoringModes["DDR SuperNOVA 2"]=function(judge,pss,player,mode)
 	judge,pss,player,mode=coroutine.yield({{'TapNoteScore_None','TapNoteScore_CheckpointHit','TapNoteScore_CheckpointMiss'},{"HoldNoteScore_None"}})
 	local mineWasHit=false
 	while mode=="update" do
-		if judge.TapNoteScore:find("Mine") then mineWasHit == true end
+		if judge.TapNoteScore:find("Mine") then mineWasHit = true end
 		curScore=curScore+(stepScore*(not judge.HoldNoteScore and tnsMultiplier[judge.TapNoteScore] - 
 			(subtract10Points[judge.TapNoteScore] and 10 or 0) or 
 			(judge.HoldNoteScore=='HoldNoteScore_Held' and 1 or 0)))
