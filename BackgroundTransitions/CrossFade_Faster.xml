@@ -1,0 +1,4 @@
+<BackgroundTransition
+	LeavesCommand="stoptweening;linear,0.75;diffusealpha,0"
+	RootCommand=""
+/>

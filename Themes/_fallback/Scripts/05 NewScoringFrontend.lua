@@ -154,7 +154,7 @@ ScoringModes["DDR SuperNOVA 2"]=function(judge,pss,player,mode)
 	--this is how one activates ScoringEngine2's built-in filter system.
 	judge,pss,player,mode=coroutine.yield({{'TapNoteScore_None','TapNoteScore_CheckpointHit','TapNoteScore_CheckpointMiss'},{"HoldNoteScore_None"}})
 	local mineWasHit=false
-	while mode == "update" do
+	while mode=="update" do
 		if judge.TapNoteScore:find("Mine") then mineWasHit = true end
 		curScore=curScore+(stepScore*(not judge.HoldNoteScore and tnsMultiplier[judge.TapNoteScore] - 
 			(subtract10Points[judge.TapNoteScore] and 10 or 0) or 
@@ -178,7 +178,7 @@ ScoringModes["Billions DP"]=function(judge,pss,player,mode)
 	while true do
 		judge,pss,player,mode=coroutine.yield(curScore,curMaxScore)
 		curScore = (pss:GetActualDancePoints()/possibleDP)*1000000000
-		curMaxScore = (pss:GetCurrentPossibleDancePoints/possibleDP)*1000000000
+		curMaxScore = (pss:GetCurrentPossibleDancePoints()/possibleDP)*1000000000
 		if mode=="finalize" then return curScore,curMaxScore end
 	end
 end

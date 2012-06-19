@@ -4,6 +4,7 @@ The following is a list of known issues with StepMania 5.
   NoteSkins. Random Vanish, in particular, has caused crashes.
  * In a more technical and general sense, diffuse commands do not
    work properly with ActorFrames.
+ * This is most evident with the default dance mode noteskin.
 
 * The course editor is not working. (It could stand to be rewritten.)
 
@@ -22,7 +23,7 @@ The following is a list of known issues with StepMania 5.
 * Routine mode (dance or pump) isn't perfect yet.
  * Attempting to use the Jukebox to show Routine steps will lead to an infinite
    loop that is not escapable short of killing the program.
- * Practice mode and routine steps may cause a crash. (?)
+ * Attempting to select routine mode in the Practice menu causes a crash.
 
 * The attempted unlock code written around Previews 2-4 (?) does not seem to
   work at this time. Assistance may be needed here.
@@ -31,6 +32,7 @@ The following is a list of known issues with StepMania 5.
   shouldn't be all the time.
 
 * C-Mods have not been fully tested with all of the new segments yet.
+  Warp segments are ignored when C-Mods are used.
 
 * Split Timing needs adjustments with only one chart in place.
  * Either that, or all tags must be allowable in song timing.
@@ -46,12 +48,13 @@ The following is a list of known issues with StepMania 5.
 
 * FFMPEG ruins our lives. I suspect init problems for Linux, since it
   works perfectly fine seemingly at random. Unsure for other platforms.
+  * is this still an issue with ffmpeg 0.10? -freem
 
 * VBR MP3's don't seek correctly in the editor, which botches sync.
 
 * While ScreenHowToPlay no longer crashes (?), the steps do not show up.
-  The steps themselves are being read, as the character will react to where
-  the arrows would be.
+  The steps themselves are being read, as the character will still step
+  to the arrows would be.
 
 * There is no make install target for linux systems - this is important for
   packaging purposes in particular (it would be great to release .debs!)
@@ -60,3 +63,5 @@ The following is a list of known issues with StepMania 5.
 
 * Survival courses crash if you set a noteskin in the player options
   just before starting the course.
+
+* On some graphics cards, 3D models may cause crashes.

@@ -152,7 +152,7 @@ function FailCombo()
 end
 
 local RoutineSkins = {
-	dance	= { P1 = "midi-routine-p1", P2 = "midi-routine-p1" },
+	dance	= { P1 = "midi-routine-p1", P2 = "midi-routine-p2" },
 	pump	= { P1 = "cmd-routine-p1", P2 = "cmd-routine-p2" },
 	kb7		= { P1 = "default", P2 = "retrobar" },
 	-------------------------------------------------------------
