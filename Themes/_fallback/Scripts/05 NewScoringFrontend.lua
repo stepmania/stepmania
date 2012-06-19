@@ -11,7 +11,7 @@ local function CreateOldScoringShim(name)
 		judg,pss,player,mode=coroutine.yield()
 		while true do
 			if mode=="update" then
-				func(judg,pss)
+      if not judg.TapNoteScore:find("Mine") then func(judg,pss) end
 				judg,pss,player,mode=coroutine.yield(pss:GetScore(),pss:GetCurMaxScore())
 			elseif mode=="finalize" then
 				return pss:GetScore(),pss:GetCurMaxScore()
@@ -28,7 +28,9 @@ function GetDirectRadar(player)
 	return GAMESTATE:GetCurrentSteps(player):GetRadarValues(player)
 end
 
---The code here is an example of native modes.
+--[[----------------------------------------------------------------------------
+Scoring modes begin here.
+--]]----------------------------------------------------------------------------
 
 --[[There are three operation modes:
 init mode: The JudgmentCommand is invalid in this mode.
@@ -129,6 +131,61 @@ score=score+math.floor((actradar:GetValue(k)/thispossradar)*(thispossradar*v))
 	return score,bestscore
 end
 
+ScoringModes["DDR SuperNOVA 2"]=function(judge,pss,player,mode)
+	local function dTransform(number)
+		return 10*math.round(number/10)
+	end
+	local curScore=0
+	local curMaxScore=0
+	local tnsMultiplier={
+		TapNoteScore_W1=1,
+		TapNoteScore_W2=1,
+		TapNoteScore_W3=0.5,
+		TapNoteScore_AvoidMine=1}
+	local subtract10Points = {
+		TapNoteScore_W2=IsW1Allowed('TapNoteScore_W2'),
+		TapNoteScore_W3=true}
+	setmetatable(tnsMultiplier, ZeroIfNotFound)
+	local radar =  pss:GetRadarPossible()
+	local stepScore = 1000000/math.max(radar:GetValue('RadarCategory_TapsAndHolds')+
+		radar:GetValue('RadarCategory_Mines')+
+		radar:GetValue('RadarCategory_Holds')+
+		radar:GetValue('RadarCategory_Rolls'),1)
+	--this is how one activates ScoringEngine2's built-in filter system.
+	judge,pss,player,mode=coroutine.yield({{'TapNoteScore_None','TapNoteScore_CheckpointHit','TapNoteScore_CheckpointMiss'},{"HoldNoteScore_None"}})
+	local mineWasHit=false
+	while mode=="update" do
+		if judge.TapNoteScore:find("Mine") then mineWasHit = true end
+		curScore=curScore+(stepScore*(not judge.HoldNoteScore and tnsMultiplier[judge.TapNoteScore] - 
+			(subtract10Points[judge.TapNoteScore] and 10 or 0) or 
+			(judge.HoldNoteScore=='HoldNoteScore_Held' and 1 or 0)))
+		curMaxScore=curMaxScore+stepScore
+		judge,pss,player,mode=coroutine.yield(dTransform(curScore),dTransform(curMaxScore))
+	end
+	--We might not always be able to register mines in gameplay. Add the scores after gameplay if we couldn't.
+	if not mineWasHit and radar:GetValue('RadarCategory_Mines')~=0 then
+		curMaxScore=curMaxScore+(stepScore*radar:GetValue('RadarCategory_Mines'))
+		curScore=curScore+(stepScore*pss:GetRadarActual():GetValue('RadarCategory_Miines'))
+	end
+	return dTransform(curScore),dTransform(curMaxScore)
+end
+
+ScoringModes["Billions DP"]=function(judge,pss,player,mode)
+	local possibleDP=pss:GetPossibleDancePoints()
+	possibleDP=possibleDP>0 and possibleDP or 1
+	local curScore = 0
+	local curMaxScore = 0
+	while true do
+		judge,pss,player,mode=coroutine.yield(curScore,curMaxScore)
+		curScore = (pss:GetActualDancePoints()/possibleDP)*1000000000
+		curMaxScore = (pss:GetCurrentPossibleDancePoints()/possibleDP)*1000000000
+		if mode=="finalize" then return curScore,curMaxScore end
+	end
+end
+
+--[[----------------------------------------------------------------------------
+Scoring modes end here.
+--]]----------------------------------------------------------------------------
 for k,v in pairs(Scoring) do
 	if ScoringModes[k] == nil then
 		ScoringModes[k] = CreateOldScoringShim(k)
