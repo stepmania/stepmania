@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 45;
+	objectVersion = 46;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -6222,9 +6222,10 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 0430;
 			};
 			buildConfigurationList = AAC845130856A19700A9FEAB /* Build configuration list for PBXProject "stepmania_xcode4.3" */;
-			compatibilityVersion = "Xcode 3.1";
+			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 1;
 			knownRegions = (
@@ -7776,7 +7777,6 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)";
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "";
@@ -7808,7 +7808,6 @@
 				HEADER_SEARCH_PATHS = "../extern/libpng/**";
 				INSTALL_PATH = /usr/local/lib;
 				OTHER_LDFLAGS = "";
-				PREBINDING = NO;
 				PRODUCT_NAME = "png-1.5.1-sm5";
 				USER_HEADER_SEARCH_PATHS = "";
 			};
@@ -7819,7 +7818,6 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)";
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "";
@@ -7851,7 +7849,6 @@
 				HEADER_SEARCH_PATHS = "../extern/libpng/**";
 				INSTALL_PATH = /usr/local/lib;
 				OTHER_LDFLAGS = "";
-				PREBINDING = NO;
 				PRODUCT_NAME = "png-1.5.1-sm5";
 				USER_HEADER_SEARCH_PATHS = "";
 			};
@@ -7864,7 +7861,6 @@
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)";
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
@@ -7897,7 +7893,6 @@
 				HEADER_SEARCH_PATHS = "../extern/libpng/**";
 				INSTALL_PATH = /usr/local/lib;
 				OTHER_LDFLAGS = "";
-				PREBINDING = NO;
 				PRODUCT_NAME = "png-1.5.1-sm5";
 				USER_HEADER_SEARCH_PATHS = "";
 			};
@@ -7908,7 +7903,6 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)";
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "";
@@ -7939,7 +7933,6 @@
 				HEADER_SEARCH_PATHS = "../extern/glew-1.5.8/include";
 				INSTALL_PATH = /usr/local/lib;
 				OTHER_LDFLAGS = "";
-				PREBINDING = NO;
 				PRODUCT_NAME = "glew-sm5";
 				USER_HEADER_SEARCH_PATHS = "";
 			};
@@ -7950,7 +7943,6 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)";
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "";
@@ -7981,7 +7973,6 @@
 				HEADER_SEARCH_PATHS = "../extern/glew-1.5.8/include";
 				INSTALL_PATH = /usr/local/lib;
 				OTHER_LDFLAGS = "";
-				PREBINDING = NO;
 				PRODUCT_NAME = "glew-sm5";
 				USER_HEADER_SEARCH_PATHS = "";
 			};
@@ -7994,7 +7985,6 @@
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)";
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
@@ -8026,7 +8016,6 @@
 				HEADER_SEARCH_PATHS = "../extern/glew-1.5.8/include";
 				INSTALL_PATH = /usr/local/lib;
 				OTHER_LDFLAGS = "";
-				PREBINDING = NO;
 				PRODUCT_NAME = "glew-sm5";
 				USER_HEADER_SEARCH_PATHS = "";
 			};
@@ -8038,7 +8027,6 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_WARN_CXX0X_EXTENSIONS = NO;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)";
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = "";
 				GCC_PREFIX_HEADER = "";
@@ -8069,7 +8057,6 @@
 				GCC_WARN_UNUSED_VARIABLE = NO;
 				INSTALL_PATH = /usr/local/lib;
 				OTHER_LDFLAGS = "";
-				PREBINDING = NO;
 				PRODUCT_NAME = "pcre-sm5";
 			};
 			name = Native;
@@ -8080,7 +8067,6 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_WARN_CXX0X_EXTENSIONS = NO;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)";
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = "";
 				GCC_PREFIX_HEADER = "";
@@ -8111,7 +8097,6 @@
 				GCC_WARN_UNUSED_VARIABLE = NO;
 				INSTALL_PATH = /usr/local/lib;
 				OTHER_LDFLAGS = "";
-				PREBINDING = NO;
 				PRODUCT_NAME = "pcre-sm5";
 			};
 			name = PerformanceDebug;
@@ -8124,7 +8109,6 @@
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)";
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = "";
@@ -8156,7 +8140,6 @@
 				GCC_WARN_UNUSED_VARIABLE = NO;
 				INSTALL_PATH = /usr/local/lib;
 				OTHER_LDFLAGS = "";
-				PREBINDING = NO;
 				PRODUCT_NAME = "pcre-sm5";
 			};
 			name = Debug;
@@ -8167,7 +8150,6 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_WARN_CXX0X_EXTENSIONS = NO;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)";
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
@@ -8204,7 +8186,6 @@
 					"-framework",
 					AppKit,
 				);
-				PREBINDING = NO;
 				PRODUCT_NAME = "zlib-sm5";
 			};
 			name = Native;
@@ -8215,7 +8196,6 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_WARN_CXX0X_EXTENSIONS = NO;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)";
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
@@ -8252,7 +8232,6 @@
 					"-framework",
 					AppKit,
 				);
-				PREBINDING = NO;
 				PRODUCT_NAME = "zlib-sm5";
 			};
 			name = PerformanceDebug;
@@ -8265,7 +8244,6 @@
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)";
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
@@ -8304,7 +8282,6 @@
 					"-framework",
 					AppKit,
 				);
-				PREBINDING = NO;
 				PRODUCT_NAME = "zlib-sm5";
 			};
 			name = Debug;
@@ -8314,7 +8291,6 @@
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = YES;
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
@@ -8691,7 +8667,6 @@
 				FPM = "";
 				"FPM[arch=i386]" = FPM_INTEL;
 				"FPM[arch=ppc]" = FPM_PPC;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"HAVE_ASSERT_H=1",
@@ -8715,7 +8690,6 @@
 				GCC_WARN_SIGN_COMPARE = NO;
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/../src/mad-0.15.1b";
 				INSTALL_PATH = /usr/local/lib;
-				PREBINDING = NO;
 				PRODUCT_NAME = "mad-sm5";
 			};
 			name = Native;
@@ -8727,7 +8701,6 @@
 				FPM = "";
 				"FPM[arch=i386]" = FPM_INTEL;
 				"FPM[arch=ppc]" = FPM_PPC;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"HAVE_ASSERT_H=1",
@@ -8751,7 +8724,6 @@
 				GCC_WARN_SIGN_COMPARE = NO;
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/../src/mad-0.15.1b";
 				INSTALL_PATH = /usr/local/lib;
-				PREBINDING = NO;
 				PRODUCT_NAME = "mad-sm5";
 			};
 			name = PerformanceDebug;
@@ -8765,7 +8737,6 @@
 				"FPM[arch=i386]" = FPM_INTEL;
 				"FPM[arch=ppc]" = FPM_PPC;
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -8790,7 +8761,6 @@
 				GCC_WARN_SIGN_COMPARE = NO;
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/../src/mad-0.15.1b";
 				INSTALL_PATH = /usr/local/lib;
-				PREBINDING = NO;
 				PRODUCT_NAME = "mad-sm5";
 			};
 			name = Debug;
@@ -8899,7 +8869,6 @@
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = YES;
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
@@ -9070,7 +9039,6 @@
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = YES;
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
@@ -9238,7 +9206,6 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_WARN_CXX0X_EXTENSIONS = NO;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)";
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
@@ -9268,7 +9235,6 @@
 				GCC_WARN_UNUSED_VARIABLE = NO;
 				INSTALL_PATH = /usr/local/lib;
 				OTHER_LDFLAGS = "";
-				PREBINDING = NO;
 				PRODUCT_NAME = "jpeg-sm5";
 			};
 			name = Native;
@@ -9279,7 +9245,6 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_WARN_CXX0X_EXTENSIONS = NO;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)";
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
@@ -9309,7 +9274,6 @@
 				GCC_WARN_UNUSED_VARIABLE = NO;
 				INSTALL_PATH = /usr/local/lib;
 				OTHER_LDFLAGS = "";
-				PREBINDING = NO;
 				PRODUCT_NAME = "jpeg-sm5";
 			};
 			name = PerformanceDebug;
@@ -9322,7 +9286,6 @@
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)";
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
@@ -9353,7 +9316,6 @@
 				GCC_WARN_UNUSED_VARIABLE = NO;
 				INSTALL_PATH = /usr/local/lib;
 				OTHER_LDFLAGS = "";
-				PREBINDING = NO;
 				PRODUCT_NAME = "jpeg-sm5";
 			};
 			name = Debug;
