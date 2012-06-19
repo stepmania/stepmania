@@ -8,10 +8,11 @@ local curStageIndex = GAMESTATE:GetCurrentStageIndex();
 
 local t = Def.ActorFrame {};
 t[#t+1] = Def.ActorFrame {
-	LoadActor(THEME:GetPathB("_frame","3x3"),"rounded black",160,20);
+ 	LoadActor(THEME:GetPathB("_frame","3x3"),"rounded black",160,20);
 	LoadFont("Common Normal") .. {
-		Text=StageToLocalizedString( curStage ) .. " Stage (" .. curStageIndex .. ")";
-		InitCommand=cmd(zoom,0.75;y,-2;shadowlength,1;
+		Text=StageToLocalizedString( curStage ) .. " Stage";
+--~ 		Text=StageToLocalizedString( curStage ) .. " Stage (" .. curStageIndex .. ")";
+		InitCommand=cmd(shadowlength,1;
 			diffuse,StageToColor(curStage);
 			diffusetopedge,ColorLightTone(StageToColor(curStage));
 			-- shadowcolor,ColorDarkTone(StageToColor(curStage));

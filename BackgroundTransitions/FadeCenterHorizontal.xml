@@ -1,0 +1,4 @@
+<BackgroundTransition
+	LeavesCommand="croptop,-0.3;fadetop,0.3;cropbottom,-0.3;fadebottom,0.3;linear,1.0;croptop,.5;cropbottom,.5"
+	RootCommand=""
+/>

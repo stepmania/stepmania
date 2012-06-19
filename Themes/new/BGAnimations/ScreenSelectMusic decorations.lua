@@ -2,11 +2,34 @@ local t = LoadFallbackB();
 --
 t[#t+1] = StandardDecorationFromFileOptional("BannerFrame","BannerFrame");
 t[#t+1] = StandardDecorationFromFileOptional("BPMDisplay","BPMDisplay");
-t[#t+1] = StandardDecorationFromFileOptional("TimeDisplay","TimeDisplay");
+--~ t[#t+1] = StandardDecorationFromFileOptional("TimeDisplay","TimeDisplay");
 t[#t+1] = StandardDecorationFromFileOptional("StageDisplay","StageDisplay");
-t[#t+1] = StandardDecorationFromFileOptional("SortDisplay","SortDisplay");
-t[#t+1] = StandardDecorationFromFileOptional("DifficultyList","DifficultyList");
-
+--~ t[#t+1] = StandardDecorationFromFileOptional("SortDisplay","SortDisplay");
+--~ t[#t+1] = StandardDecorationFromFileOptional("DifficultyList","DifficultyList");
+t[#t+1] = Def.ActorFrame {
+  Def.Quad {
+    InitCommand=cmd(x,SCREEN_CENTER_X-320+24;y,SCREEN_CENTER_Y-192+16;zoomto,40-4,20;diffuse,PlayerColor(PLAYER_1));
+  };
+  LoadFont("Common Normal") .. {
+    Text=ToEnumShortString(PLAYER_1);
+    InitCommand=cmd(x,SCREEN_CENTER_X-320+24;y,SCREEN_CENTER_Y-192+16;diffuse,ThemeColor.Secondary);
+  };
+  LoadActor(THEME:GetPathG(Var "LoadingScreen", "OptionRows"),PLAYER_1) .. {
+    InitCommand=cmd(x,SCREEN_CENTER_X-320+24+40;y,SCREEN_CENTER_Y-192+16);
+  };
+};
+t[#t+1] = Def.ActorFrame {
+  Def.Quad {
+    InitCommand=cmd(x,SCREEN_CENTER_X-320+24;y,SCREEN_CENTER_Y-192+16+22;zoomto,40-4,20;diffuse,PlayerColor(PLAYER_2));
+  };
+  LoadFont("Common Normal") .. {
+    Text=ToEnumShortString(PLAYER_1);
+    InitCommand=cmd(x,SCREEN_CENTER_X-320+24;y,SCREEN_CENTER_Y-192+16+22;diffuse,ThemeColor.Secondary);
+  };
+  LoadActor(THEME:GetPathG(Var "LoadingScreen", "OptionRows"),PLAYER_1) .. {
+    InitCommand=cmd(x,SCREEN_CENTER_X-320+24+40;y,SCREEN_CENTER_Y-192+16+22);
+  };
+};
 -- StepsDisplay creator
 local function CreateStepsDisplay( _pn )
   local function set(self, _pn)
@@ -34,10 +57,4 @@ for pn in ivalues(PlayerNumber) do
 		InitCommand=function(self) self:player(pn); self:name(MetricsName); ActorUtil.LoadAllCommandsAndSetXY(self,Var "LoadingScreen"); end;
 	};
 end
--- Create PaneDisplay for each player
-t[#t+1] = StandardDecorationFromFileOptional("PaneDisplay","PaneDisplay");
---[[ for pn in ivalues(PlayerNumber) do
-    local MetricsName = "PaneDisplay" .. PlayerNumberToString(pn);
-    t[#t+1] = StandardDecorationFromFileOptional(MetricsName,"PaneDisplay",PlayerNumber);
-end ]]
 return t;
