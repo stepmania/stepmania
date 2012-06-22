@@ -840,6 +840,7 @@ public:
 	static int IsSongNew( T* p, lua_State *L )	{ lua_pushboolean(L, p->IsSongNew(Luna<Song>::check(L,1)) ); return 1; }
 	static int ProfileWasLoadedFromMemoryCard( T* p, lua_State *L )	{ lua_pushboolean(L, p->ProfileWasLoadedFromMemoryCard(Enum::Check<PlayerNumber>(L, 1)) ); return 1; }
 	static int LastLoadWasTamperedOrCorrupt( T* p, lua_State *L ) { lua_pushboolean(L, p->LastLoadWasTamperedOrCorrupt(Enum::Check<PlayerNumber>(L, 1)) ); return 1; }
+	static int GetPlayerName( T* p, lua_State *L )				{ PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1); lua_pushstring(L, p->GetPlayerName(pn)); return 1; }
 
 	LunaProfileManager()
 	{
@@ -856,6 +857,7 @@ public:
 		ADD_METHOD( IsSongNew );
 		ADD_METHOD( ProfileWasLoadedFromMemoryCard );
 		ADD_METHOD( LastLoadWasTamperedOrCorrupt );
+		ADD_METHOD( GetPlayerName );
 	}
 };
 
