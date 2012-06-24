@@ -9,5 +9,4 @@ t[#t+1] = LoadActor(Var "File1") .. {
 	LoseFocusCommand=cmd(pause);
 };
 
-
 return t;
