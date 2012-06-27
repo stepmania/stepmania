@@ -17,14 +17,14 @@ t[#t+1] = Def.ActorFrame {
 			if topScreen then
 				local screenName = topScreen:GetName()
 				if screenName == "ScreenEdit" or screenName == "ScreenPractice" then
-					self:diffusealpha(0.325)
+					self:diffusealpha(0.95)
 				else
-					self:diffusealpha(0)
+					self:diffusealpha(0.65)
 				end;
 			end;
 		end;
-		EditorShowMessageCommand=cmd(stoptweening;linear,0.5;diffusealpha,0.75);
-		EditorHideMessageCommand=cmd(stoptweening;linear,0.5;diffusealpha,0.325);
+		EditorShowMessageCommand=cmd(stoptweening;linear,0.5;diffusealpha,0.95);
+		EditorHideMessageCommand=cmd(stoptweening;linear,0.5;diffusealpha,0.65);
 	};
 };
 
