@@ -8,6 +8,11 @@ ________________________________________________________________________________
 StepMania 5.0 ???? ?? | 20120???
 --------------------------------------------------------------------------------
 
+2012/06/27
+----------
+* [SongManager] Ending a group's name in PreferredSongs with "/*" will now load
+  all songs from that group automatically. [AJ]
+
 2012/06/21
 ----------
 * [ProfileManager] Added GetPlayerName(pn) Lua binding. [AJ]
