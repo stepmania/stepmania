@@ -27,6 +27,7 @@
 #include "NotesLoaderSM.h"
 #include "NotesLoaderSSC.h"
 #include "NotesWriterDWI.h"
+#include "NotesWriterJSON.h"
 #include "NotesWriterSM.h"
 #include "NotesWriterSSC.h"
 #include "UnlockManager.h"

@@ -8,8 +8,8 @@ class Steps;
 
 namespace NotesWriterJson
 {
-	static bool WriteSong( const RString &sFile, const Song &out, bool bWriteSteps );
-	static bool WriteSteps( const RString &sFile, const Steps &out );
+	bool WriteSong( const RString &sFile, const Song &out, bool bWriteSteps );
+	bool WriteSteps( const RString &sFile, const Steps &out );
 };
 
 #endif
