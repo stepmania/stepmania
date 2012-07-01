@@ -375,6 +375,9 @@
     <ClCompile Include="ControllerStateDisplay.cpp">
       <Filter>Data Structures</Filter>
     </ClCompile>
+    <ClCompile Include="CreateZip.cpp">
+      <Filter>Data Structures</Filter>
+    </ClCompile>
     <ClCompile Include="CryptHelpers.cpp">
       <Filter>Data Structures</Filter>
     </ClCompile>
@@ -1869,6 +1872,9 @@
       <Filter>Data Structures</Filter>
     </ClInclude>
     <ClInclude Include="ControllerStateDisplay.h">
+      <Filter>Data Structures</Filter>
+    </ClInclude>
+    <ClInclude Include="CreateZip.h">
       <Filter>Data Structures</Filter>
     </ClInclude>
     <ClInclude Include="CryptHelpers.h">

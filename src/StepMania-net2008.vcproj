@@ -1173,6 +1173,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CreateZip.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\CreateZip.h"
+				>
+			</File>
+			<File
 				RelativePath="CryptHelpers.cpp"
 				>
 			</File>
