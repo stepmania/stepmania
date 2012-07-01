@@ -119,7 +119,7 @@ public:
 	/** 
 	  * @brief Save the current Song to a JSON file.
 	  * @return its success or failure. */
-	bool SaveToJsonFile();
+	bool SaveToJsonFile( RString sPath );
 	/** 
 	  * @brief Save the current Song to a cache file using the preferred format.
 	  * @return its success or failure. */

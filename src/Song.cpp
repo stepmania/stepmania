@@ -1049,7 +1049,7 @@ bool Song::SaveToSSCFile( RString sPath, bool bSavingCache )
 	return true;
 }
 
-bool Song::SaveToJsonFile( RString sPath)
+bool Song::SaveToJsonFile( RString sPath )
 {
 	LOG->Trace( "Song::SaveToJsonFile('%s')", sPath.c_str() );
 	return NotesWriterJson::WriteSong(sPath, *this, true);
