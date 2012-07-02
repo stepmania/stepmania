@@ -119,6 +119,7 @@ void ScreenHowToPlay::Init()
 			// xxx: hardcoded rotation. can be undone, but still. -freem
 			m_pmCharacter->SetRotationX( 40 );
 			m_pmCharacter->SetCullMode( CULL_NONE ); // many of the models floating around have the vertex order flipped
+			m_pmCharacter->RunCommands( displayChar->m_cmdInit ); // run InitCommand from file
 			ActorUtil::LoadAllCommandsAndSetXY( m_pmCharacter, m_sName );
 		}
 	}

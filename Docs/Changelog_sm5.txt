@@ -8,6 +8,10 @@ ________________________________________________________________________________
 StepMania 5.0 ???? ?? | 20120???
 --------------------------------------------------------------------------------
 
+2012/07/02
+----------
+* [ScreenHowToPlay] Run InitCommand on Characters if enabled. [AJ]
+
 2012/06/27
 ----------
 * [SongManager] Ending a group's name in PreferredSongs with "/*" will now load
