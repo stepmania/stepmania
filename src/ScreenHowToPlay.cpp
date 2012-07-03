@@ -128,9 +128,11 @@ void ScreenHowToPlay::Init()
 
 	if( USE_PLAYER )
 	{
+		GAMESTATE->SetMasterPlayerNumber(PLAYER_1);
+
 		m_pLifeMeterBar = new LifeMeterBar;
-		m_pLifeMeterBar->SetName("LifeMeterBar");
 		m_pLifeMeterBar->Load( GAMESTATE->m_pPlayerState[PLAYER_1], &STATSMAN->m_CurStageStats.m_player[PLAYER_1] );
+		m_pLifeMeterBar->SetName("LifeMeterBar");
 		ActorUtil::LoadAllCommandsAndSetXY( m_pLifeMeterBar, m_sName );
 		m_pLifeMeterBar->FillForHowToPlay( NUM_W2S, NUM_MISSES );
 
@@ -177,7 +179,6 @@ void ScreenHowToPlay::Init()
 
 		// Don't show judgment
 		PO_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions, ModsLevel_Stage, m_fBlind, 1.0f );
-		GAMESTATE->SetMasterPlayerNumber(PLAYER_1);
 		GAMESTATE->m_bDemonstrationOrJukebox = true;
 	}
 
@@ -248,7 +249,8 @@ void ScreenHowToPlay::Update( float fDelta )
 {
 	if( GAMESTATE->m_pCurSong != NULL )
 	{
-		GAMESTATE->UpdateSongPosition( m_fFakeSecondsIntoSong, GAMESTATE->m_pCurSong->m_SongTiming );
+		RageTimer tm;
+		GAMESTATE->UpdateSongPosition( m_fFakeSecondsIntoSong, GAMESTATE->m_pCurSong->m_SongTiming, tm, true );
 		m_fFakeSecondsIntoSong += fDelta;
 
 		static int iLastNoteRowCounted = 0;
