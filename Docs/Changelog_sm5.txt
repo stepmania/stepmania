@@ -11,6 +11,8 @@ StepMania 5.0 ???? ?? | 20120???
 2012/07/03
 ----------
 * [ScreenHowToPlay] Actually shows notes again. [AJ]
+* [ScreenGameplay] When ShowLifeMeterForDisabledPlayers is true, don't fill up
+  life in the meter for the disabled player. (LifeMeterBar only) [AJ]
 
 2012/07/02
 ----------
