@@ -8,6 +8,11 @@ ________________________________________________________________________________
 StepMania 5.0 ???? ?? | 20120???
 --------------------------------------------------------------------------------
 
+2012/07/05
+----------
+* [ScreenRanking] Added "NextPage" command. "SwitchPage" command is
+  now "SwitchedPage". [AJ]
+
 2012/07/03
 ----------
 * [ScreenHowToPlay] Actually shows notes again. [AJ]

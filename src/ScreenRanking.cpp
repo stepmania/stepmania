@@ -180,6 +180,7 @@ void ScreenRanking::HandleScreenMessage( const ScreenMessage SM )
 			++m_iNextPageToShow;
 			this->SortByDrawOrder();
 
+			this->PlayCommand( "NextPage" );
 			this->PostScreenMessage( SM_HidePage, fSecsToShow-PAGE_FADE_SECONDS );
 		}
 		else
@@ -189,7 +190,7 @@ void ScreenRanking::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if( SM == SM_HidePage )
 	{
-		this->PlayCommand( "SwitchPage" );
+		this->PlayCommand( "SwitchedPage" );
 		this->PostScreenMessage( SM_ShowNextPage, PAGE_FADE_SECONDS );
 	}
 
