@@ -12,6 +12,7 @@ StepMania 5.0 ???? ?? | 20120???
 ----------
 * [ScreenRanking] Added "NextPage" command. "SwitchPage" command is
   now "SwitchedPage". [AJ]
+* [ScreenRanking] Don't clobber alpha values when applying colors in SetPage. [AJ]
 
 2012/07/03
 ----------
