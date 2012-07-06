@@ -8,6 +8,10 @@ ________________________________________________________________________________
 StepMania 5.0 ???? ?? | 20120???
 --------------------------------------------------------------------------------
 
+2012/07/06
+----------
+* [ScoreDisplayRave] Add FrameBase and FrameOver to the metrics. [AJ]
+
 2012/07/05
 ----------
 * [ScreenRanking] Added "NextPage" command. "SwitchPage" command is

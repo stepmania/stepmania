@@ -30,6 +30,8 @@ void ScoreDisplayRave::Init( const PlayerState* pPlayerState, const PlayerStageS
 	PlayerNumber pn = pPlayerState->m_PlayerNumber;
 
 	m_sprFrameBase.Load( THEME->GetPathG("ScoreDisplayRave",ssprintf("frame base p%d",pn+1)) );
+	m_sprFrameBase->SetName( ssprintf("FrameBaseP%d",pn+1) );
+	LOAD_ALL_COMMANDS_AND_SET_XY( m_sprFrameBase );
 	this->AddChild( m_sprFrameBase );
 
 	for( int i=0; i<NUM_ATTACK_LEVELS; i++ )
@@ -44,6 +46,8 @@ void ScoreDisplayRave::Init( const PlayerState* pPlayerState, const PlayerStageS
 	this->AddChild( &m_textLevel );
 
 	m_sprFrameOverlay.Load( THEME->GetPathG("ScoreDisplayRave",ssprintf("frame overlay p%d",pn+1)) );
+	m_sprFrameOverlay->SetName( ssprintf("FrameOverP%d",pn+1) );
+	LOAD_ALL_COMMANDS_AND_SET_XY( m_sprFrameOverlay );
 	this->AddChild( m_sprFrameOverlay );
 }
 
