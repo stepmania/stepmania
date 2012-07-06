@@ -1545,6 +1545,24 @@ void SongManager::UpdatePreferredSort(RString sPreferredSongs, RString sPreferre
 			}
 			else
 			{
+				/* if the line ends in "/*", check if the section exists,
+				 * and if it does, add all the songs in that group to the list. */
+				if( EndsWith(sLine,"/*") )
+				{
+					RString group = sLine.Left( sLine.length() - RString("/*").length() );
+					if( DoesSongGroupExist(group) )
+					{
+						// add all songs in group
+						const vector<Song *> &vSongs = GetSongs( group );
+						FOREACH_CONST( Song*, vSongs, song )
+						{
+							if( UNLOCKMAN->SongIsLocked(*song) & LOCKED_SELECTABLE )
+								continue;
+							section.vpSongs.push_back( *song );
+						}
+					}
+				}
+
 				Song *pSong = FindSong( sLine );
 				if( pSong == NULL )
 					continue;

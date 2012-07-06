@@ -123,6 +123,7 @@ local ComboThresholds = {
 	beat	= { Hit = 1, Miss = 0, Fail = -1 },
 	kb7		= { Hit = 1, Miss = 0, Fail = -1 },
 	para	= { Hit = 2, Miss = 0, Fail = -1 },
+	maniax	= { Hit = 5, Miss = 0, Fail = -1 },
 	-------------------------------------------
 	default	= { Hit = 2, Miss = 2, Fail = -1 }
 }

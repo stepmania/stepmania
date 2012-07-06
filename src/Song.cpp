@@ -27,6 +27,7 @@
 #include "NotesLoaderSM.h"
 #include "NotesLoaderSSC.h"
 #include "NotesWriterDWI.h"
+#include "NotesWriterJson.h"
 #include "NotesWriterSM.h"
 #include "NotesWriterSSC.h"
 #include "UnlockManager.h"
@@ -1047,6 +1048,12 @@ bool Song::SaveToSSCFile( RString sPath, bool bSavingCache )
 		(*s)->SetSavedToDisk( true );
 
 	return true;
+}
+
+bool Song::SaveToJsonFile( RString sPath )
+{
+	LOG->Trace( "Song::SaveToJsonFile('%s')", sPath.c_str() );
+	return NotesWriterJson::WriteSong(sPath, *this, true);
 }
 
 bool Song::SaveToCacheFile()

@@ -811,6 +811,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="CourseWriterCRS.h">
 			</File>
 			<File
+				RelativePath="CreateZip.cpp">
+			</File>
+			<File
+				RelativePath="CreateZip.h">
+			</File>
+			<File
 				RelativePath="DateTime.cpp">
 			</File>
 			<File

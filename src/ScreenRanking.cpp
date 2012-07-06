@@ -180,6 +180,7 @@ void ScreenRanking::HandleScreenMessage( const ScreenMessage SM )
 			++m_iNextPageToShow;
 			this->SortByDrawOrder();
 
+			this->PlayCommand( "NextPage" );
 			this->PostScreenMessage( SM_HidePage, fSecsToShow-PAGE_FADE_SECONDS );
 		}
 		else
@@ -189,7 +190,7 @@ void ScreenRanking::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if( SM == SM_HidePage )
 	{
-		this->PlayCommand( "SwitchPage" );
+		this->PlayCommand( "SwitchedPage" );
 		this->PostScreenMessage( SM_ShowNextPage, PAGE_FADE_SECONDS );
 	}
 
@@ -225,16 +226,16 @@ float ScreenRanking::SetPage( const PageToShow &pts )
 
 	for( int l=0; l<NUM_RANKING_LINES; l++ )
 	{
-		m_textNames[l].SetDiffuse( STEPS_TYPE_COLOR.GetValue(pts.colorIndex) );
+		m_textNames[l].SetDiffuseColor( STEPS_TYPE_COLOR.GetValue(pts.colorIndex) );
 
 		m_textScores[l].SetVisible( bShowScores );
-		m_textScores[l].SetDiffuse( STEPS_TYPE_COLOR.GetValue(pts.colorIndex) );
+		m_textScores[l].SetDiffuseColor( STEPS_TYPE_COLOR.GetValue(pts.colorIndex) );
 		
 		m_textPoints[l].SetVisible( bShowPoints );
-		m_textPoints[l].SetDiffuse( STEPS_TYPE_COLOR.GetValue(pts.colorIndex) );
+		m_textPoints[l].SetDiffuseColor( STEPS_TYPE_COLOR.GetValue(pts.colorIndex) );
 		
 		m_textTime[l].SetVisible( bShowTime );
-		m_textTime[l].SetDiffuse( STEPS_TYPE_COLOR.GetValue(pts.colorIndex) );
+		m_textTime[l].SetDiffuseColor( STEPS_TYPE_COLOR.GetValue(pts.colorIndex) );
 	}
 
 	switch( RANKING_TYPE )
@@ -263,8 +264,8 @@ float ScreenRanking::SetPage( const PageToShow &pts )
 
 				m_textNames[l].SetText( hs.GetDisplayName() );
 				m_textScores[l].SetText( ssprintf("%09i",hs.GetScore()) );
-				m_textNames[l].SetDiffuse( STEPS_TYPE_COLOR.GetValue(pts.colorIndex) );
-				m_textScores[l].SetDiffuse( STEPS_TYPE_COLOR.GetValue(pts.colorIndex) );
+				m_textNames[l].SetDiffuseColor( STEPS_TYPE_COLOR.GetValue(pts.colorIndex) );
+				m_textScores[l].SetDiffuseColor( STEPS_TYPE_COLOR.GetValue(pts.colorIndex) );
 
 				if( bRecentHighScore )
 				{
@@ -312,10 +313,10 @@ float ScreenRanking::SetPage( const PageToShow &pts )
 					m_textTime[l].SetText( "" );
 					m_textScores[l].SetText( ssprintf("%09d",hs.GetScore()) );
 				}
-				m_textNames[l].SetDiffuse( STEPS_TYPE_COLOR.GetValue(pts.colorIndex) );
-				m_textPoints[l].SetDiffuse( STEPS_TYPE_COLOR.GetValue(pts.colorIndex) );
-				m_textTime[l].SetDiffuse( STEPS_TYPE_COLOR.GetValue(pts.colorIndex) );
-				m_textScores[l].SetDiffuse( STEPS_TYPE_COLOR.GetValue(pts.colorIndex) );
+				m_textNames[l].SetDiffuseColor( STEPS_TYPE_COLOR.GetValue(pts.colorIndex) );
+				m_textPoints[l].SetDiffuseColor( STEPS_TYPE_COLOR.GetValue(pts.colorIndex) );
+				m_textTime[l].SetDiffuseColor( STEPS_TYPE_COLOR.GetValue(pts.colorIndex) );
+				m_textScores[l].SetDiffuseColor( STEPS_TYPE_COLOR.GetValue(pts.colorIndex) );
 
 				if( bRecentHighScore )
 				{

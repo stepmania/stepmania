@@ -1233,9 +1233,12 @@ RString URLEncode( const RString &sStr )
 	return sOutput;
 }
 
+// remove various version control-related files
 static bool CVSOrSVN( const RString& s )
 {
-	return s.Right(3).EqualsNoCase("CVS")  ||  s.Right(4) == ".svn";
+	return s.Right(3).EqualsNoCase("CVS") ||
+			s.Right(4) == ".svn" ||
+			s.Right(3).EqualsNoCase(".hg");
 }
 
 void StripCvsAndSvn( vector<RString> &vs )

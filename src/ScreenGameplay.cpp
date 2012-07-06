@@ -10,6 +10,7 @@
 #include "Steps.h"
 #include "RageLog.h"
 #include "LifeMeter.h"
+#include "LifeMeterBar.h"
 #include "GameState.h"
 #include "ScoreDisplayNormal.h"
 #include "ScoreDisplayPercentage.h"
@@ -559,6 +560,16 @@ void ScreenGameplay::Init()
 				pi->m_pLifeMeter->SetName( ssprintf("Life%s",pi->GetName().c_str()) );
 				LOAD_ALL_COMMANDS_AND_SET_XY( pi->m_pLifeMeter );
 				this->AddChild( pi->m_pLifeMeter );
+
+				// HACK: When SHOW_LIFE_METER_FOR_DISABLED_PLAYERS is enabled,
+				// we don't want to have any life in the disabled player's life
+				// meter. I think this only happens with LifeMeterBars, but I'm
+				// not 100% sure of that. -freem
+				if( !GAMESTATE->IsPlayerEnabled(pi->m_pn) && SHOW_LIFE_METER_FOR_DISABLED_PLAYERS )
+				{
+					if(GAMESTATE->m_SongOptions.GetStage().m_LifeType == SongOptions::LIFE_BAR)
+						static_cast<LifeMeterBar*>(pi->m_pLifeMeter)->ChangeLife(-1.0f);
+				}
 			}
 			break;
 		case PLAY_MODE_BATTLE:

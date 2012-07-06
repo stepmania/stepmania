@@ -117,6 +117,10 @@ public:
 	/** @brief Save to the SSC and SM files no matter what. */
 	void Save();
 	/** 
+	  * @brief Save the current Song to a JSON file.
+	  * @return its success or failure. */
+	bool SaveToJsonFile( RString sPath );
+	/** 
 	  * @brief Save the current Song to a cache file using the preferred format.
 	  * @return its success or failure. */
 	bool SaveToCacheFile();

@@ -8,6 +8,32 @@ ________________________________________________________________________________
 StepMania 5.0 ???? ?? | 20120???
 --------------------------------------------------------------------------------
 
+2012/07/06
+----------
+* [ScoreDisplayRave] Add FrameBase and FrameOver to the metrics. [AJ]
+
+2012/07/05
+----------
+* [ScreenRanking] Added "NextPage" command. "SwitchPage" command is
+  now "SwitchedPage". [AJ]
+* [ScreenRanking] Don't clobber alpha values when applying colors in SetPage. [AJ]
+
+2012/07/03
+----------
+* [ScreenHowToPlay] Actually shows notes again. [AJ]
+* [ScreenGameplay] When ShowLifeMeterForDisabledPlayers is true, don't fill up
+  life in the meter for the disabled player. (LifeMeterBar only) [AJ]
+
+2012/07/02
+----------
+* [ScreenHowToPlay] Run InitCommand on Characters if enabled. [AJ]
+* [RageUtil] Add detection of ".hg" to StripCvsAndSvn. [AJ]
+
+2012/06/27
+----------
+* [SongManager] Ending a group's name in PreferredSongs with "/*" will now load
+  all songs from that group automatically. [AJ]
+
 2012/06/21
 ----------
 * [ProfileManager] Added GetPlayerName(pn) Lua binding. [AJ]
