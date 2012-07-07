@@ -11,6 +11,7 @@ StepMania 5.0 ???? ?? | 20120???
 2012/07/06
 ----------
 * [ScoreDisplayRave] Add FrameBase and FrameOver to the metrics. [AJ]
+* [PlayerStageStats] Added GetSongsPassed and GetSongsPlayed Lua bindings. [AJ]
 
 2012/07/05
 ----------

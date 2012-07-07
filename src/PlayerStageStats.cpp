@@ -718,6 +718,8 @@ public:
 	DEFINE_METHOD( GetPercentageOfTaps,			GetPercentageOfTaps( Enum::Check<TapNoteScore>(L, 1) ) )
 	DEFINE_METHOD( GetBestFullComboTapNoteScore, GetBestFullComboTapNoteScore() )
 	DEFINE_METHOD( GetFailed, 					m_bFailed )
+	DEFINE_METHOD( GetSongsPassed, 					m_iSongsPassed )
+	DEFINE_METHOD( GetSongsPlayed, 					m_iSongsPlayed )
 
 	static int GetPlayedSteps( T* p, lua_State *L )
 	{
@@ -807,7 +809,9 @@ public:
 		ADD_METHOD( SetScore );
 		ADD_METHOD( GetCurMaxScore );
 		ADD_METHOD( SetCurMaxScore );
-    ADD_METHOD( FailPlayer );
+		ADD_METHOD( FailPlayer );
+		ADD_METHOD( GetSongsPassed );
+		ADD_METHOD( GetSongsPlayed );
 	}
 };
 
