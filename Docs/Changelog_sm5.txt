@@ -8,6 +8,11 @@ ________________________________________________________________________________
 StepMania 5.0 ???? ?? | 20120???
 --------------------------------------------------------------------------------
 
+2012/07/09
+----------
+* [InputMapper] Use "|" for separating entries instead of ",", since some
+  companies have names like "x Ltd., something". [Mordae, AJ]
+
 2012/07/06
 ----------
 * [ScoreDisplayRave] Add FrameBase and FrameOver to the metrics. [AJ]

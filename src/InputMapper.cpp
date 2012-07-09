@@ -667,7 +667,9 @@ bool InputMapper::CheckForChangedInputDevicesAndRemap( RString &sMessageOut )
 
 	// Strip non-joysticks.
 	vector<RString> vsLastSeenJoysticks;
-	split( g_sLastSeenInputDevices, ",", vsLastSeenJoysticks );
+	// Don't use "," since some vendors have a name like "company Ltd., etc".
+	// For now, use a pipe character. -aj, fix from Mordae.
+	split( g_sLastSeenInputDevices, "|", vsLastSeenJoysticks );
 
 	vector<RString> vsCurrent;
 	vector<RString> vsCurrentJoysticks;
@@ -709,7 +711,8 @@ bool InputMapper::CheckForChangedInputDevicesAndRemap( RString &sMessageOut )
 
 	LOG->Info( "%s", sMessageOut.c_str() );
 
-	g_sLastSeenInputDevices.Set( join(",",vsCurrent) );
+	// see above comment about not using ",". -aj
+	g_sLastSeenInputDevices.Set( join("|",vsCurrent) );
 	PREFSMAN->SavePrefsToDisk();
 
 	return true;
