@@ -2,7 +2,7 @@ local maxSegments = 150
 
 local function CreateSegments(Player)
 	local t = Def.ActorFrame { };
-	local bars = Def.ActorFrame{ };
+	local bars = Def.ActorFrame{ Name="CoverBars" };
 	local bpmFrame = Def.ActorFrame{ Name="BPMFrame"; };
 	local stopFrame = Def.ActorFrame{ Name="StopFrame"; };
 	local delayFrame = Def.ActorFrame{ Name="DelayFrame"; };
@@ -59,11 +59,9 @@ local function CreateSegments(Player)
 							end;
 							OnCommand=function(self)
 								self:diffuse(color(firstDiffuse));
-								self:sleep(beatTime+1);
-								self:linear(2);
-								self:diffusealpha(0);
 							end;
 						};
+						--[[ there's a cool effect that can't happen because we don't fade out like we did before
 						Def.Quad {
 							InitCommand=function(self)
 								--self:diffuse(HSVA(192,1,0.8,0.8));
@@ -88,7 +86,7 @@ local function CreateSegments(Player)
 								self:linear(4);
 								self:diffusealpha(0);
 							end;
-						};
+						};]]
 					};
 				end;
 
@@ -143,6 +141,30 @@ local function CreateSegments(Player)
 			bars[#bars+1] = warpFrame;
 			bars[#bars+1] = fakeFrame;
 			t[#t+1] = bars;
+			--addition here: increase performance a ton by only rendering once
+			t[#t+1] = Def.ActorFrameTexture{Name="Target"}
+			t[#t+1] = Def.Sprite{Name="Actual"}
+			local FirstPass=true;
+			local function Draw(self)
+				kids=self:GetChildren();
+				if FirstPass then
+					kids.Target:setsize(fFrameWidth,fFrameHeight);
+					kids.Target:EnableAlphaBuffer(true);
+					kids.Target:Create();
+
+					kids.Target:GetTexture():BeginRenderingTo();
+					for k,v in pairs(kids) do
+						if k~="Target" and k~="Actual" then
+							v:Draw();
+						end
+					end
+					kids.Target:GetTexture():FinishRenderingTo();
+					kids.Actual:SetTexture(kids.Target:GetTexture());
+					FirstPass=false;
+				end
+				kids.Actual:Draw();
+			end
+			t.InitCommand=function(self) self:SetDrawCommand(Draw); end
 		end
 	end
 	return t
