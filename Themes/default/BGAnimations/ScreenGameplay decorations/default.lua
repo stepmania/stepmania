@@ -164,7 +164,7 @@ local function CreateSegments(Player)
 				end
 				kids.Actual:Draw();
 			end
-			t.InitCommand=function(self) self:SetDrawCommand(Draw); end
+			t.InitCommand=function(self) self:SetDrawFunction(Draw); end
 		end
 	end
 	return t
