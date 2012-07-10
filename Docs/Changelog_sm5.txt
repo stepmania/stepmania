@@ -5,8 +5,12 @@ from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
 ================================================================================
-StepMania 5.0 ???? ?? | 20120???
+StepMania 5.0 alpha 3 | 201207xx
 --------------------------------------------------------------------------------
+
+2012/07/10
+----------
+* [ScreenSelectMusic] Fix an issue where Control+<Letter> wouldn't work. [AJ]
 
 2012/07/09
 ----------
@@ -80,7 +84,7 @@ StepMania 5.0 ???? ?? | 20120???
 
 2012/05/19
 ----------
-* [Actor] Made the xy command a source-code level command.
+* [Actor] Made the xy command a source-code level command. [AJ]
 
 2012/05/17
 ----------

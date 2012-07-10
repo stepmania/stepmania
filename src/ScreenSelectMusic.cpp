@@ -411,6 +411,42 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 		return;
 	}
 
+	if( !IsTransitioning() && m_SelectionState != SelectionState_Finalized )
+	{
+		bool bHoldingCtrl = 
+		INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL)) ||
+		INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL));
+
+		wchar_t c = INPUTMAN->DeviceInputToChar(input.DeviceI,false);
+		MakeUpper( &c, 1 );
+
+		if( bHoldingCtrl && ( c >= 'A' ) && ( c <= 'Z' ) )
+		{
+			// Only allow changing the sort order if the wheel is not locked
+			// and we're not in course mode. -aj
+			if( !m_MusicWheel.WheelIsLocked() && !GAMESTATE->IsCourseMode() )
+			{
+				SortOrder so = GAMESTATE->m_SortOrder;
+				// When in Artist sort, this means first letter of the artist.
+				// Otherwise, if not in Title sort already, switch to Title sort.
+				if ( so != SORT_ARTIST )
+					so = SORT_TITLE;
+
+				GAMESTATE->m_PreferredSortOrder = so;
+				GAMESTATE->m_SortOrder.Set( so );
+				// Odd, changing the sort order requires us to call SetOpenSection more than once
+				m_MusicWheel.ChangeSort( so );
+				m_MusicWheel.SetOpenSection( ssprintf("%c", c ) );
+
+				m_MusicWheel.SelectSection( ssprintf("%c", c ) );
+				m_MusicWheel.ChangeSort( so );
+				m_MusicWheel.SetOpenSection( ssprintf("%c", c ) );
+				AfterMusicChange();
+				return;
+			}
+		}
+	}
+
 	if( !input.GameI.IsValid() )
 		return; // don't care
 
@@ -452,39 +488,6 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 
 	if( IsTransitioning() )
 		return; // ignore
-
-	bool bHoldingCtrl = 
-		INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL)) ||
-		INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL));
-
-	wchar_t c = INPUTMAN->DeviceInputToChar(input.DeviceI,false);
-	MakeUpper( &c, 1 );
-
-	if( bHoldingCtrl && ( c >= 'A' ) && ( c <= 'Z' ) )
-	{
-		// Only allow changing the sort order if the wheel is not locked
-		// and we're not in course mode. -aj
-		if( !m_MusicWheel.WheelIsLocked() && !GAMESTATE->IsCourseMode() )
-		{
-			SortOrder so = GAMESTATE->m_SortOrder;
-			// When in Artist sort, this means first letter of the artist.
-			// Otherwise, if not in Title sort already, switch to Title sort.
-			if ( so != SORT_ARTIST )
-				so = SORT_TITLE;
-
-			GAMESTATE->m_PreferredSortOrder = so;
-			GAMESTATE->m_SortOrder.Set( so );
-			// Odd, changing the sort order requires us to call SetOpenSection more than once
-			m_MusicWheel.ChangeSort( so );
-			m_MusicWheel.SetOpenSection( ssprintf("%c", c ) );
-
-			m_MusicWheel.SelectSection( ssprintf("%c", c ) );
-			m_MusicWheel.ChangeSort( so );
-			m_MusicWheel.SetOpenSection( ssprintf("%c", c ) );
-			AfterMusicChange();
-			return;
-		}
-	}
 
 	// Handle unselect steps
 	// xxx: select button could conflict with OptionsList here -aj
