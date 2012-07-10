@@ -1135,6 +1135,8 @@
 			<Function name='GetRadarActual'/>
 			<Function name='GetRadarPossible'/>
 			<Function name='GetScore'/>
+			<Function name='GetSongsPassed'/>
+			<Function name='GetSongsPlayed'/>
 			<Function name='GetStageAward'/>
 			<Function name='GetSurvivalSeconds'/>
 			<Function name='GetTapNoteScores'/>
@@ -1217,6 +1219,7 @@
 			<Function name='GetLocalProfileIndexFromID'/>
 			<Function name='GetMachineProfile'/>
 			<Function name='GetNumLocalProfiles'/>
+			<Function name='GetPlayerName'/>
 			<Function name='GetProfile'/>
 			<Function name='GetProfileDir'/>
 			<Function name='IsPersistentProfile'/>
@@ -2352,5 +2355,5 @@
 		<Constant name='top' value='&apos;VertAlign_Top&apos;'/>
 	</Constants>
 	<Version>StepMania v5.0 alpha 2</Version>
-	<Date>2012-06-08</Date>
+	<Date>2012-07-09</Date>
 </Lua>

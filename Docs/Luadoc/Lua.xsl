@@ -671,5 +671,12 @@
 	</code>
 </xsl:template>
 <xsl:template match="sm:br"><br /></xsl:template>
+<xsl:template match="sm:del">
+	<del>
+		<xsl:apply-templates>
+			<xsl:with-param name="curclass" select="$curclass" />
+		</xsl:apply-templates>
+	</del>
+</xsl:template>
 </xsl:stylesheet>
 <!-- vim: set tw=0: -->

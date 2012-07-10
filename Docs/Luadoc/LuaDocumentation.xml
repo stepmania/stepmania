@@ -1271,7 +1271,7 @@ save yourself some time, copy this for undocumented things:
 	<Function name='thump' theme='_fallback' return='void' arguments='float fEffectPeriod'>
 		[02 Actor.lua] A customized version of pulse that is more appealing for on-beat effects.
 	</Function>
-	<Function name='xy' theme='_fallback' return='void' arguments='float actorX, float actorY'>
+	<Function name='xy' return='void' arguments='float actorX, float actorY'>
 		Sets the x and y location of the Actor in one command.
 	</Function>
 </Class>
@@ -2410,8 +2410,8 @@ save yourself some time, copy this for undocumented things:
 	<Function name='SetFromRadarValues' return='void' arguments='PlayerNumber pn, RadarValues rv'>
 		Sets the GrooveRadar values for Player <code>pn</code> from RadarValues <code>rv</code>
 	</Function>
-	<Function name='SetFromValues' return='void' arguments='PlayerNumber pn, {float vals}'>
-		Sets the GrooveRadar values for Player <code>pn</code> to the specified values in the table.
+	<Function name='SetFromValues' return='void' arguments='PlayerNumber pn, table vals'>
+		Sets the GrooveRadar values for Player <code>pn</code> to the specified (floating point) values in the table.
 	</Function>
 </Class>
 <Class name='HelpDisplay'>
@@ -3269,6 +3269,12 @@ save yourself some time, copy this for undocumented things:
 	<Function name='GetScore' return='int' arguments=''>
 		Returns the score.
 	</Function>
+	<Function name='GetSongsPassed' return='int' arguments=''>
+		Returns the number of songs passed.
+	</Function>
+	<Function name='GetSongsPlayed' return='int' arguments=''>
+		Returns the number of songs played.
+	</Function>
 	<Function name='GetStageAward' return='StageAward' arguments=''>
 		Returns the stage award for this performance.
 	</Function>
@@ -3493,6 +3499,9 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='GetNumLocalProfiles' return='int' arguments=''>
 		Retuns the amount of local profiles.
+	</Function>
+	<Function name='GetPlayerName' return='string' arguments='PlayerNumber pn'>
+		Returns the player name for player <code>pn</code>.
 	</Function>
 	<Function name='GetProfile' return='Profile' arguments='PlayerNumber pn'>
 		Returns the profile for player <code>pn</code>.
