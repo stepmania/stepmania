@@ -159,6 +159,7 @@ local function CreateSegments(Player)
 						end
 					end
 					kids.Target:GetTexture():FinishRenderingTo();
+					
 					kids.Actual:SetTexture(kids.Target:GetTexture());
 					FirstPass=false;
 				end
@@ -229,18 +230,5 @@ end;
 t[#t+1] = StandardDecorationFromFileOptional("BPMDisplay","BPMDisplay");
 t[#t+1] = StandardDecorationFromFileOptional("StageDisplay","StageDisplay");
 t[#t+1] = StandardDecorationFromFileOptional("SongTitle","SongTitle");
-
-if( not GAMESTATE:IsCourseMode() ) then
-	t[#t+1] = Def.Actor{
-		JudgmentMessageCommand = function(self, params)
-			if params.TapNoteScore and
-			   params.TapNoteScore ~= 'TapNoteScore_Invalid' and
-			   params.TapNoteScore ~= 'TapNoteScore_None'
-			then
-				UpdateScoreKeepers(params)
-			end
-		end;
-	};
-end;
 
 return t
