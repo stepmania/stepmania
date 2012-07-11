@@ -8,6 +8,11 @@ ________________________________________________________________________________
 StepMania 5.0 alpha 3 | 201207xx
 --------------------------------------------------------------------------------
 
+2012/07/11
+----------
+* [ScreenEditMenu] Don't use "Blank" in the description for blank steps;
+  use a blank string instead. [AJ]
+
 2012/07/10
 ----------
 * [ScreenSelectMusic] Fix an issue where Control+<Letter> wouldn't work. [AJ]

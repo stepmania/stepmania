@@ -156,7 +156,6 @@ static LocalizedString SONG_DIR_READ_ONLY	( "ScreenEditMenu", "The song director
 static LocalizedString DELETED_AUTOGEN_STEPS	( "ScreenEditMenu", "These steps are produced by autogen.  You do not need to delete them." );
 static LocalizedString STEPS_WILL_BE_LOST	( "ScreenEditMenu", "These steps will be lost permanently." );
 static LocalizedString CONTINUE_WITH_DELETE	( "ScreenEditMenu", "Continue with delete?" );
-static LocalizedString BLANK			( "ScreenEditMenu", "Blank" );
 static LocalizedString ENTER_EDIT_DESCRIPTION	( "ScreenEditMenu", "Enter a description for this edit.");
 void ScreenEditMenu::MenuStart( const InputEventPlus &input )
 {
@@ -267,7 +266,7 @@ void ScreenEditMenu::MenuStart( const InputEventPlus &input )
 			{
 				pSteps->CreateBlank( st );
 				pSteps->SetMeter( 1 );
-				sEditName = BLANK;
+				sEditName = "";
 			}
 
 			pSteps->SetDifficulty( dc );	// override difficulty with the user's choice
