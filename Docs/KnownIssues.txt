@@ -52,10 +52,6 @@ The following is a list of known issues with StepMania 5.
 
 * VBR MP3's don't seek correctly in the editor, which botches sync.
 
-* While ScreenHowToPlay no longer crashes (?), the steps do not show up.
-  The steps themselves are being read, as the character will still step
-  to the arrows would be.
-
 * There is no make install target for linux systems - this is important for
   packaging purposes in particular (it would be great to release .debs!)
 
