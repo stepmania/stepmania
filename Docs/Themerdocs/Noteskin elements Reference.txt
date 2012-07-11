@@ -127,13 +127,6 @@ Right Green
 Right Yellow
 Right White
 
---guitar-- (not enabled yet)
-Fret1
-Fret2
-Fret3
-Fret4
-Fret5
-
 --lights-- (rofl)
 MarqueeUpLeft
 MarqueeUpRight
