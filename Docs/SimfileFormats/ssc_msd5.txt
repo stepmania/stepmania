@@ -1,5 +1,6 @@
 // sm-ssc step chart/msd5 hacky file format doc.
 // based off of .sm, which was based off of DWI's modified MSD format.
+#VERSION:;
 #TITLE:;
 #SUBTITLE:;
 #ARTIST:;
@@ -40,7 +41,7 @@
 #HASBANNER:;
 
 // begin
-#NOTEDATA# // marks a new note data section
+#NOTEDATA:; // marks a new note data section
 // information from #NOTES moved here
 #CHARTNAME:;
 #STEPSTYPE:;
