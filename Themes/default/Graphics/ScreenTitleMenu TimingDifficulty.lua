@@ -28,7 +28,7 @@ return Def.ActorFrame {
 	LoadFont("Common Normal") .. {
 		Text=GetTimingDifficulty();
 		AltText="";
-		InitCommand=cmd(x,72*0.75+8;zoom,0.875);
+		InitCommand=cmd(x,68*0.75+8;zoom,0.875;halign,0);
 		OnCommand=function(self)
 			(cmd(shadowlength,1;skewx,-0.125))(self);
 			if GetTimingDifficulty() == 9 then
