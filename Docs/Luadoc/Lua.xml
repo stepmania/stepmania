@@ -35,7 +35,6 @@
 		<Function name='DeepCopy'/>
 		<Function name='EvalUsesCheckpointsWithJudgments'/>
 		<Function name='FailCombo'/>
-		<Function name='FinalizeScoreKeepers'/>
 		<Function name='FindSelection'/>
 		<Function name='FindValue'/>
 		<Function name='FormatNumSongsPlayed'/>
@@ -47,7 +46,6 @@
 		<Function name='GetCoursesToShowRanking'/>
 		<Function name='GetCustomDifficulty'/>
 		<Function name='GetDefaultOptionLines'/>
-		<Function name='GetDirectRadar'/>
 		<Function name='GetEditModeSubScreens'/>
 		<Function name='GetExtraColorThreshold'/>
 		<Function name='GetGamePref'/>
@@ -56,7 +54,6 @@
 		<Function name='GetGamePrefN'/>
 		<Function name='GetGradeFromPercent'/>
 		<Function name='GetLifeDifficulty'/>
-		<Function name='GetNumReadiedScoreKeepers'/>
 		<Function name='GetPlayerOrMachineProfile'/>
 		<Function name='GetProTiming'/>
 		<Function name='GetRandomSongBackground'/>
@@ -71,7 +68,6 @@
 		<Function name='GetTimingDifficulty'/>
 		<Function name='GetTitleSafeH'/>
 		<Function name='GetTitleSafeV'/>
-		<Function name='GetTotalItems'/>
 		<Function name='GetUnlockEntryIndexToCelebrate'/>
 		<Function name='GetUserPref'/>
 		<Function name='GetUserPrefB'/>
@@ -87,7 +83,6 @@
 		<Function name='Hour'/>
 		<Function name='Hue'/>
 		<Function name='InitGamePrefs'/>
-		<Function name='InitScoreKeepers'/>
 		<Function name='InitUserPrefs'/>
 		<Function name='IsArcade'/>
 		<Function name='IsFreePlay'/>
@@ -98,7 +93,6 @@
 		<Function name='IsRoutine'/>
 		<Function name='IsSMOnlineLoggedIn'/>
 		<Function name='IsUsingWideScreen'/>
-		<Function name='IsW1Allowed'/>
 		<Function name='JudgmentLineToColor'/>
 		<Function name='JudgmentLineToLocalizedString'/>
 		<Function name='JudgmentLineToStrokeColor'/>
@@ -188,8 +182,6 @@
 		<Function name='URLEncode'/>
 		<Function name='UndocumentedFeature'/>
 		<Function name='UnlockRewardTypeToLocalizedString'/>
-		<Function name='UpdateScoreKeepers'/>
-		<Function name='UserPrefScoringMode'/>
 		<Function name='Var'/>
 		<Function name='VersionDate'/>
 		<Function name='VersionTime'/>
@@ -2354,6 +2346,6 @@
 		<Constant name='right' value='&apos;HorizAlign_Right&apos;'/>
 		<Constant name='top' value='&apos;VertAlign_Top&apos;'/>
 	</Constants>
-	<Version>StepMania v5.0 alpha 2</Version>
-	<Date>2012-07-09</Date>
+	<Version>StepMania v5.0 alpha 3</Version>
+	<Date>2012-07-11</Date>
 </Lua>
