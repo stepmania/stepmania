@@ -3674,8 +3674,8 @@ save yourself some time, copy this for undocumented things:
 	<Function name='Metric' theme='_fallback' return='string' arguments='string sName'>
 		[02 Other.lua] Gets a metric from the current Screen.
 	</Function>
-	<Function name='PostScreenMessage' return='void' arguments='string sScreenMsg'>
-		Posts a message with the text <code>sScreenMsg</code> to the Screen.
+	<Function name='PostScreenMessage' return='void' arguments='string sScreenMsg, float fDelay'>
+		Posts a message with the text <code>sScreenMsg</code> to the Screen after <code>fDelay</code> seconds.
 	</Function>
 	<Function name='String' theme='_fallback' return='string' arguments='string sName'>
 		[02 Other.lua] Gets a string from the current Screen in the current language.
