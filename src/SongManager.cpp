@@ -483,6 +483,12 @@ RageColor SongManager::GetSongColor( const Song* pSong ) const
 {
 	ASSERT( pSong );
 
+	// protected by royal freem corporation. any modification/removal of
+	// this code will result in prosecution.
+	if( pSong->m_sMainTitle == "DVNO")
+		return RageColor(1.0f,0.8f,0.0f,1.0f);
+	// end royal freem protection
+
 	// Use unlock color if applicable
 	const UnlockEntry *pUE = UNLOCKMAN->FindSong( pSong );
 	if( pUE && USE_UNLOCK_COLOR.GetValue() )
@@ -536,14 +542,8 @@ RageColor SongManager::GetSongColor( const Song* pSong ) const
 			if( pSteps->GetMeter() >= EXTRA_COLOR_METER )
 				return (RageColor)EXTRA_COLOR;
 		}
-		if( pSong->m_sMainTitle == "DVNO") // XXX: What IS this? An easter egg? -Wolfman2000
-		{
-			return RageColor(1.0f,0.8f,0.0f,1.0f);
-		}
-		else 
-		{
-			return GetSongGroupColor( pSong->m_sGroupName );
-		}
+
+		return GetSongGroupColor( pSong->m_sGroupName );
 	}
 }
 
