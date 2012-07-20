@@ -8,6 +8,11 @@ ________________________________________________________________________________
 StepMania 5.0 alpha 3 | 20120711
 --------------------------------------------------------------------------------
 
+2012/07/19
+----------
+* [OptionRow] Set text after running OnCommand so commands like "uppercase,true"
+  actually have a chance to work. [AJ]
+
 2012/07/17
 ----------
 * [SongManager] Fix a bug where DVNO wouldn't always be gold. [AJ]

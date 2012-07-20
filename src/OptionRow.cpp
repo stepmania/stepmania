@@ -350,10 +350,11 @@ void OptionRow::InitText( RowType type )
 				// init text
 				BitmapText *bt = new BitmapText( m_pParentType->m_textItem );
 				m_textItems.push_back( bt );
-				RString sText = GetThemedItemText( c );
-				bt->SetText( sText );
 				bt->SetBaseZoomX( fBaseZoom );
 				bt->PlayCommand( "On" );
+				// Set text after running OnCommand so e.g. uppercase,true works -aj
+				RString sText = GetThemedItemText( c );
+				bt->SetText( sText );
 
 				// set the X position of each item in the line
 				float fItemWidth = bt->GetZoomedWidth();
