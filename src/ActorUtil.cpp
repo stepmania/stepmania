@@ -454,6 +454,8 @@ namespace
 		LIST_METHOD( GetFileType ),
 		LIST_METHOD( ResolvePath ),
 		LIST_METHOD( IsRegisteredClass ),
+		LIST_METHOD( LoadAllCommands ),
+		LIST_METHOD( LoadAllCommandsFromName ), 
 		LIST_METHOD( LoadAllCommandsAndSetXY ),
 		{ NULL, NULL }
 	};
