@@ -108,7 +108,27 @@ bool Steps::GetNoteDataFromSimfile()
 	if (extension.empty() || extension == "ssc") // remember cache files.
 	{
 		SSCLoader loader;
-		return loader.LoadNoteDataFromSimfile(stepFile, *this);
+		if ( ! loader.LoadNoteDataFromSimfile(stepFile, *this) )
+		{
+			/*
+			HACK: 7/20/12 -- see bugzilla #740
+			users who edit songs using the ever popular .sm file
+			that remove or tamper with the .ssc file later on 
+			complain of blank steps in the editor after reloading.
+			Despite the blank steps being well justified since 
+			the cache files contain only the SSC step file,
+			give the user some leeway and search for a .sm replacement
+			*/
+			SMLoader backup_loader;
+			RString transformedStepFile = stepFile;
+			transformedStepFile.Replace(".ssc", ".sm");
+			
+			return backup_loader.LoadNoteDataFromSimfile(transformedStepFile, *this);
+		}
+		else
+		{
+			return true;
+		}
 	}
 	else if (extension == "sm")
 	{
