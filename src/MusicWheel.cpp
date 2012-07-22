@@ -1619,10 +1619,12 @@ class LunaMusicWheel: public Luna<MusicWheel>
 {
 public:
 	static int IsRouletting( T* p, lua_State *L ){ lua_pushboolean( L, p->IsRouletting() ); return 1; }
+	static int ResetSelection( T* p, lua_State *L ){ lua_pushboolean( L, p->SelectSongOrCourse() ); return 1; }
 
 	LunaMusicWheel()
 	{
 		ADD_METHOD( IsRouletting );
+		ADD_METHOD( ResetSelection );
 	}
 };
 

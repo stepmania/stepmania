@@ -889,6 +889,10 @@
 		<Class base='ActorFrame' name='ModIconRow'>
 			<Function name='Load'/>
 		</Class>
+		<Class base='WheelBase' name='MusicWheel'>
+			<Function name='IsRouletting'/>
+			<Function name='ResetSelection'/>
+		</Class>
 		<Class base='Actor' name='Model'>
 			<Function name='GetDefaultAnimation'/>
 			<Function name='GetNumStates'/>
