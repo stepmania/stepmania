@@ -38,6 +38,7 @@ public:
 	Song *GetPreferredSelectionForRandomOrPortal();
 
 	bool SelectSong( const Song *p );
+	bool TrySelectCourse( const Course *p ){ return TrySelectCourse(p); }
 	bool SelectSection( const RString & SectionName );
 	void SetOpenSection( RString group );
 	SortOrder GetSortOrder() const { return m_SortOrder; }

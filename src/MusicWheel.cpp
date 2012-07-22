@@ -1622,13 +1622,21 @@ public:
 	static int SelectSong( T* p, lua_State *L )
 	{
 		if( lua_isnil(L,1) ) { lua_pushboolean( L, false ); }
-		else { Song *pS = Luna<Song>::check( L, 1, true ); lua_pushboolean( L, p->SelectSong( pS ) ); }
+		else
+		{
+			Song *pS = Luna<Song>::check( L, 1, true );
+			lua_pushboolean( L, p->SelectSong( pS ) );
+		}
 		return 1;
 	}
 	static int SelectCourse( T* p, lua_State *L )
 	{
 		if( lua_isnil(L,1) ) { lua_pushboolean( L, false ); }
-		else { Course *pC = Luna<Course>::check( L, 1, true ); lua_pushboolean( L, p->SelectCourse( pC ) ); }
+		else
+		{
+			Course *pC = Luna<Course>::check( L, 1, true );
+			lua_pushboolean( L, p->TrySelectCourse( pC ) );
+		}
 		return 1;
 	}
 
