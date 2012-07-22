@@ -891,7 +891,8 @@
 		</Class>
 		<Class base='WheelBase' name='MusicWheel'>
 			<Function name='IsRouletting'/>
-			<Function name='ResetSelection'/>
+			<Function name='SelectSong'/>
+			<Function name='SelectCourse'/>
 		</Class>
 		<Class base='Actor' name='Model'>
 			<Function name='GetDefaultAnimation'/>

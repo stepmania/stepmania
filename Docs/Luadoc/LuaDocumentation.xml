@@ -2613,8 +2613,11 @@ save yourself some time, copy this for undocumented things:
 	<Function name='IsRouletting' return='bool' arguments=''>
 		Returns <code>true</code> if the MusicWheel is currently handling Roulette selection.
 	</Function>
-	<Function name='ResetSelection' return='bool' arguments=''>
-		Tries to set the MusicWheel's selection based on preferred song, preferred course, and current sort order. Returns <code>false</code> on failure.
+	<Function name='SelectSong' return='bool' arguments='Song sSong'>
+		Selects a song. Returns <code>false</code> on failure.
+	</Function>
+	<Function name='SelectCourse' return='bool' arguments='Course cCourse'>
+		Selects a course. Returns <code>false</code> on failure.
 	</Function>
 </Class> 
 <Class name='NoteSkinManager'>
