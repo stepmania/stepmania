@@ -1621,14 +1621,14 @@ public:
 	static int IsRouletting( T* p, lua_State *L ){ lua_pushboolean( L, p->IsRouletting() ); return 1; }
 	static int SelectSong( T* p, lua_State *L )
 	{
-		if( lua_isnil(L,1) ) { lua_pushboolean( L, false ); return 1; }
+		if( lua_isnil(L,1) ) { lua_pushboolean( L, false ); }
 		else { Song *pS = Luna<Song>::check( L, 1, true ); lua_pushboolean( L, p->SelectSong( pS ) ); }
 		return 1;
 	}
 	static int SelectCourse( T* p, lua_State *L )
 	{
-		if( lua_isnil(L,1) ) { lua_pushboolean( L, false ); return 1; }
-		else { Course *pC = Luna<Course>::check( L, 1, true ); lua_pushboolean( L, p->SelectSong( pC ) ); }
+		if( lua_isnil(L,1) ) { lua_pushboolean( L, false ); }
+		else { Course *pC = Luna<Course>::check( L, 1, true ); lua_pushboolean( L, p->SelectCourse( pC ) ); }
 		return 1;
 	}
 
