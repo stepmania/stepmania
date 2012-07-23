@@ -1,4 +1,4 @@
 return LoadFont("Common Normal") .. {
-	Text=string.format("%s [%s]", ProductVersion(), VersionDate());
+	Text=string.format("%s", ProductVersion());
 	AltText="StepMania";
 };

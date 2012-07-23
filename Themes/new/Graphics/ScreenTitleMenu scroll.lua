@@ -6,7 +6,7 @@ return Def.ActorFrame {
 		Name="ScrollerItem";
 		Text=THEME:GetString("ScreenTitleMenu",gc:GetText());
 		InitCommand=function(self)
-			ActorUtil.LoadAllCommandsAndSetXY(self,Var "LoadingScreen");
+			ActorUtil.LoadAllCommands(self,Var "LoadingScreen");
 		end;
   };
 };
