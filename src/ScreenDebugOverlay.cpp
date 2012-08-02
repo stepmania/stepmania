@@ -37,6 +37,7 @@ static float g_fImageScaleCurrent = 1;
 static float g_fImageScaleDestination = 1;
 
 // DebugLine theming
+static const ThemeMetric<RageColor>	BACKGROUND_COLOR	("ScreenDebugOverlay", "BackgroundColor");
 static const ThemeMetric<RageColor>	LINE_ON_COLOR	("ScreenDebugOverlay", "LineOnColor");
 static const ThemeMetric<RageColor>	LINE_OFF_COLOR	("ScreenDebugOverlay", "LineOffColor");
 static const ThemeMetric<float>		LINE_START_Y	("ScreenDebugOverlay", "LineStartY");
@@ -238,7 +239,7 @@ void ScreenDebugOverlay::Init()
 	m_bForcedHidden = false;
 
 	m_Quad.StretchTo( RectF( 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT ) );
-	m_Quad.SetDiffuse( RageColor(0, 0, 0, 0.5f) );
+	m_Quad.SetDiffuse( BACKGROUND_COLOR );
 	this->AddChild( &m_Quad );
 
 	// if you're going to add user commands, make sure to have the overrides
