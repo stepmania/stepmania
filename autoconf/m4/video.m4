@@ -17,7 +17,7 @@ have_ffmpeg=no
 if test "$with_ffmpeg" = "yes"; then
 	if test "$with_static_ffmpeg" = "yes" -o "$with_static_ffmpeg" = "no"; then
 		AC_CHECK_LIB(avutil, av_free, have_libavutil=yes, have_libavutil=no)
-		AC_CHECK_LIB(avcodec, avcodec_init, have_libavcodec=yes,  have_libavcodec=no)
+		AC_CHECK_LIB(avcodec, avcodec_register_all, have_libavcodec=yes,  have_libavcodec=no)
 		AC_CHECK_LIB(avformat, av_guess_format, have_libavformat=yes,  have_libavformat=no)
 		AC_CHECK_LIB(swscale, sws_scale, have_libswscale=yes,  have_libswscale=no)
 		if test "$have_libavutil" = "yes" -a "$have_libavformat" = "yes" -a "$have_libavcodec" = "yes" -a "$have_libswscale" = "yes"; then
@@ -46,7 +46,7 @@ if test "$with_ffmpeg" = "yes"; then
 		LIBS="$FFMPEG_LIBS -lpthread $LIBS"
 
 		AC_CHECK_FUNC([av_free], have_libavutil=yes, have_libavutil=no)
-		AC_CHECK_FUNC([avcodec_init], have_libavcodec=yes, have_libavcodec=no)
+		AC_CHECK_FUNC([avcodec_register_all], have_libavcodec=yes, have_libavcodec=no)
 		AC_CHECK_FUNC([av_guess_format], have_libavformat=yes, have_libavformat=no)
 		AC_CHECK_FUNC([sws_scale], have_libswscale=yes, have_libswscale=no)
 
