@@ -173,6 +173,7 @@ void ScoreKeeperNormal::OnNextSong( int iSongInCourseIndex, const Steps* pSteps,
 
 void ScoreKeeperNormal::AddTapScore( TapNoteScore tns )
 {
+	if(tns==TNS_HitMine || tns==TNS_AvoidMine || tns==TNS_CheckpointHit || tns==TNS_CheckpointMiss)
 	AddScoreInternal( tns );
 }
 
