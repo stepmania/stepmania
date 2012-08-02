@@ -1,4 +1,4 @@
 return LoadFont("Common Normal") .. {
-	Text=string.format("%s", ProductVersion());
-	AltText="StepMania";
+	Name="Version";
+	Text=string.format(THEME:GetString( Var "LoadingScreen", "Version" ), ProductVersion() );
 };
