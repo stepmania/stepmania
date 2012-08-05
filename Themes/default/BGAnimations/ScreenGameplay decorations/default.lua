@@ -183,6 +183,10 @@ for pn in ivalues(PlayerNumber) do
 			self:name(MetricsName); 
 			ActorUtil.LoadAllCommandsAndSetXY(self,Var "LoadingScreen"); 
 		end;
+		Def.Quad {
+			InitCommand=cmd(zoomto,420,20);
+			OnCommand=cmd(fadeleft,0.35;faderight,0.35;diffuse,Color.Black;diffusealpha,0.5);
+		};
  		LoadActor( THEME:GetPathG( 'SongMeterDisplay', 'frame ' .. PlayerNumberToString(pn) ) ) .. {
 			InitCommand=function(self)
 				self:name('Frame'); 
