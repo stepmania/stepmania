@@ -15,6 +15,7 @@ namespace avcodec
 	{
 		#include <libavformat/avformat.h>
 		#include <libswscale/swscale.h>
+		#include <libavutil/pixdesc.h>
 	}
 };
 
@@ -615,20 +616,23 @@ RString MovieDecoder_FFMpeg::Open( RString sFile )
 	MovieTexture_FFMpeg::RegisterProtocols();
     
 	m_fctx = avcodec::avformat_alloc_context();
+	if( !m_fctx )
+		return "AVCodec: Couldn't allocate context";
     
-    RageFile *f = new RageFile;
-    
-    if( !f->Open(sFile, RageFile::READ) )
-    {
-        RString errorMessage = f->GetError();
-        RString error = ssprintf("MovieDecoder_FFMpeg: Error opening \"%s\": %s", sFile.c_str(), errorMessage.c_str() );
-        delete f;
-        return error;
-    }
-    
-    m_buffer = (unsigned char *)avcodec::av_malloc(STEPMANIA_FFMPEG_BUFFER_SIZE);
-    m_avioContext = avcodec::avio_alloc_context(m_buffer, STEPMANIA_FFMPEG_BUFFER_SIZE, 0, f, AVIORageFile_ReadPacket, NULL, AVIORageFile_Seek);
-    int ret = avcodec::av_open_input_stream( &m_fctx, m_avioContext, sFile.c_str(), NULL, NULL );
+	RageFile *f = new RageFile;
+
+	if( !f->Open(sFile, RageFile::READ) )
+	{
+		RString errorMessage = f->GetError();
+		RString error = ssprintf("MovieDecoder_FFMpeg: Error opening \"%s\": %s", sFile.c_str(), errorMessage.c_str() );
+		delete f;
+		return error;
+	}
+
+	m_buffer = (unsigned char *)avcodec::av_malloc(STEPMANIA_FFMPEG_BUFFER_SIZE);
+	m_avioContext = avcodec::avio_alloc_context(m_buffer, STEPMANIA_FFMPEG_BUFFER_SIZE, 0, f, AVIORageFile_ReadPacket, NULL, AVIORageFile_Seek);
+	m_fctx->pb = m_avioContext;
+	int ret = avcodec::avformat_open_input( &m_fctx, sFile.c_str(), NULL, NULL );
 	if( ret < 0 )
 		return RString( averr_ssprintf(ret, "AVCodec: Couldn't open \"%s\"", sFile.c_str()) );
 
@@ -651,7 +655,7 @@ RString MovieDecoder_FFMpeg::Open( RString sFile )
 		return ssprintf( "AVCodec (%s): %s", sFile.c_str(), sError.c_str() );
 
 	LOG->Trace( "Bitrate: %i", m_pStream->codec->bit_rate );
-	LOG->Trace( "Codec pixel format: %s", avcodec::avcodec_get_pix_fmt_name(m_pStream->codec->pix_fmt) );
+	LOG->Trace( "Codec pixel format: %s", avcodec::av_get_pix_fmt_name(m_pStream->codec->pix_fmt) );
 
 	return RString();
 }
