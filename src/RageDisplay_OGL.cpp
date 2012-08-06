@@ -1775,7 +1775,7 @@ void RageDisplay_Legacy::SetBlendMode( BlendMode mode )
 		break;
 	case BLEND_NO_EFFECT:
 		iSourceRGB = GL_ZERO; iDestRGB = GL_ONE;
-		iSourceAlpha = GL_ZERO; iSourceAlpha = GL_ONE;
+		iSourceAlpha = GL_ZERO; iDestAlpha = GL_ONE;
 		break;
 	DEFAULT_FAIL( mode );
 	}
