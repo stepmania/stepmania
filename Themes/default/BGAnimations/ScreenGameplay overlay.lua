@@ -35,6 +35,6 @@ if GAMESTATE:GetCurrentCourse() then
 			};
 		end
 	end;
-end; --]]
+end;
 t.InitCommand=cmd(SetUpdateFunction,UpdateTime);
 return t
