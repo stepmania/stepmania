@@ -31,6 +31,9 @@ void MakeInputHandlers( const RString &drivers, vector<InputHandler *> &Add )
 #ifdef USE_INPUT_HANDLER_DIRECTINPUT
 		if( !s->CompareNoCase("DirectInput") )	ret = new InputHandler_DInput;
 #endif
+#ifdef USE_INPUT_HANDLER_PIUIO
+		if( !s->CompareNoCase("PIUIO") )	ret = new InputHandler_Linux_PIUIO;
+#endif
 #ifdef USE_INPUT_HANDLER_LINUX_JOYSTICK
 		if( !s->CompareNoCase("Joystick") )	ret = new InputHandler_Linux_Joystick;
 #endif
@@ -74,6 +77,9 @@ void MakeLightsDrivers( const RString &driver, vector<LightsDriver *> &Add )
 
 	LightsDriver *ret = NULL;
 
+#ifdef USE_LIGHTS_DRIVER_LINUX_PIUIO
+	if( !driver.CompareNoCase("PIUIO") )		ret = new LightsDriver_Linux_PIUIO;
+#endif
 #ifdef USE_LIGHTS_DRIVER_LINUX_PARALLEL
 	if( !driver.CompareNoCase("LinuxParallel") )	ret = new LightsDriver_LinuxParallel;
 #endif
