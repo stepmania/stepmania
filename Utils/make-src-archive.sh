@@ -1,69 +1,80 @@
-#!/bin/bash
-set -e
+#!/bin/sh
 
-test -e ProductInfo.h && cd ..
-if ! test -d src; then
-	echo Run this script from the top directory.
+LINUX= MAC= WIN=
+
+# Parse options
+while :; do
+	case "$1" in
+		-m) MAC=1; shift;;
+		-w) WIN=1; shift;;
+		*) break;;
+	esac
+done
+
+# Usage message
+if [ -z "$1" ]; then
+	echo "\
+Usage: $0 [-m] [-w] REV
+
+Generates a source tarball at \`dist/stepmania-TAG.tar.bz2'.
+  -m  Include Mac-specific build components
+  -w  Include Windows-specific build components\
+REV can be a Mercurial revision or tag
+" 1>&2
 	exit 1
 fi
 
-source Utils/GetProductVer.sh src/ProductInfo.h
-PRODUCTVER="$PRODUCTVER-src"
-
-if test -e $PRODUCTVER; then
-	echo "\"$PRODUCTVER\" already exists."
+# Get confirmation
+echo "WARNING!  This will do a clean update of the current repository." 1>&2
+echo "If you have any uncommitted changes or extra files in this repository," 1>&2
+echo "they will be LOST!" 1>&2
+echo
+read -sn1 -p "Do you want to continue [y/N]? " ISOK
+if [ "$ISOK" != y -a "$ISOK" != Y ]; then
+	echo n
 	exit 1
 fi
-echo Copying...
+echo y
 
-mkdir $PRODUCTVER
-cp -dpR autoconf $PRODUCTVER/
-#cp -dpR Utils $PRODUCTVER/
-cp -dpR src $PRODUCTVER/
+# Clean the source tree
+hg update -C "$1"
+hg clean --all
 
-cp Docs/Copying.MAD Docs/Licenses.txt Docs/Changelog_sm5.txt \
-   Docs/Changelog_sm-ssc.txt Docs/Changelog_SSCformat.txt \
-   Docs/credits.txt Docs/KnownIssues.txt \
-   Docs/license-ext/readme Docs/license-ext/Scoring-jp.txt \
-   Docs/license-ext/theme_lang-ja.txt Docs/vlgothic/Changelog \
-   Docs/license-ext/vlgothic/LICENSE Docs/license-ext/vlgothic/LICENSE.en\
-   Docs/license-ext/vlgothic/LICENSE_E.mplus Docs/license-ext/vlgothic/LICENSE_J.mplus \
-   Docs/license-ext/vlgothic/README Docs/license-ext/vlgothic/README.sazanami \
-   Docs/license-ext/vlgothic/README_J.mplus \
-   Makefile.am aclocal.m4 configure Makefile.in configure.ac \
-   $PRODUCTVER
+# This replaces autogen.sh.  Run now so our users don't have
+# to have autoconf and friends installed.
+autoreconf -i
 
-echo Pruning...
-cd $PRODUCTVER/src
-# Incomplete:
-rm -rf Texture Font Generator
-# Unused:
-rm -rf smlobby
+# Tarball will be placed here
+mkdir dist
 
-# Windows-only stuff.  Let's leave some in the archive to make the GPL happy.
-# I don't want to spend an extra half hour to upload separate Windows and
-# *nix source archives.
-#rm -rf mad-0.15.0b
-
-rm -rf lua-5.1
-rm -rf vorbis
-rm -rf BaseClasses
-rm -rf ddk
-rm -rf smpackage
-
-cd ..
-
-find . -type d -name 'CVS' | xargs rm -rf
-find . -type d -name '.svn' | xargs rm -rf
-find . -type f -name '*.lib' | xargs rm -rf
-find . -type f -name '*.exe' | xargs rm -rf
-find . -type f -name '*.a' | xargs rm -rf
-find . -type f -name '*.o' | xargs rm -rf
-find . -type f -name '.hg*' | xargs rm -rf
-
-cd ..
-#rm -rf Utils/Font\ generation/
-
-echo Archiving...
-tar zchvf "$PRODUCTVER".tar.gz $PRODUCTVER/
-
+# List excludes for tar's -X flag
+{
+	echo './dist'
+	echo '*/.hg*'
+	echo './autoconf/m4'
+	echo './autogen.sh'
+	echo './aclocal.m4'
+	echo '*/*.a[mc]'
+	echo './_assets'
+	echo './Utils/Font generation'
+	# OSX
+	if [ -z "$MAC" ]; then
+		echo './Xcode'
+	fi
+	# Windows/misc
+	if [ -z "$WIN" ]; then
+		echo './Program'
+		echo './Installer'
+		echo './sm-ssc.nsi'
+		echo './Utils/doxygen'
+		echo './Utils/Graphviz'
+		echo './Utils/NSIS'
+		echo './src/BaseClasses'
+		echo './src/Texture Font Generator'
+		echo './src/smpackage*'
+		echo '*.[ao]'
+		echo '*.lib'
+		echo '*.dll'
+		echo '*.exe'
+	fi
+} | tar cvjf "dist/StepMania-$1.tar.bz2" -X- . --transform "s,^\.,stepmania-$1,"
