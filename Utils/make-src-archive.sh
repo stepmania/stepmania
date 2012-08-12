@@ -52,6 +52,7 @@ mkdir dist
 	echo './dist'
 	echo '*/.hg*'
 	echo './autoconf/m4'
+	echo './autom4te.cache'
 	echo './autogen.sh'
 	echo './aclocal.m4'
 	echo '*/*.a[mc]'
@@ -76,5 +77,6 @@ mkdir dist
 		echo '*.lib'
 		echo '*.dll'
 		echo '*.exe'
+		echo '*.bat'
 	fi
-} | tar cvjf "dist/StepMania-$1.tar.bz2" -X- . --transform "s,^\.,stepmania-$1,"
+} | tar cvjf "dist/stepmania-$1-src.tar.bz2" -X- . --transform "s,^\.,stepmania-$1,"
