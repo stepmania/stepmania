@@ -600,9 +600,6 @@ static MenuDef g_AlterMenu(
 	MenuRowDef(ScreenEdit::copy,
 		"Copy",
 		true, EditMode_Practice, true, true, 0, NULL ),
-	MenuRowDef(ScreenEdit::copy_partial_timing,
-		"Copy Partial Timing",
-		true, EditMode_Practice, true, true, 0, NULL ),
 	MenuRowDef(ScreenEdit::clear,			"Clear area",				true, 
 	      EditMode_Practice, true, true, 0, NULL ),
 	MenuRowDef(ScreenEdit::quantize,			"Quantize",				true, 
@@ -674,9 +671,6 @@ static MenuDef g_AreaMenu(
 		true, EditMode_Practice, true, true, 0, NULL ),
 	MenuRowDef(ScreenEdit::paste_at_begin_marker,
 		"Paste at begin marker",
-		true, EditMode_Practice, true, true, 0, NULL ),
-    MenuRowDef(ScreenEdit::paste_partial_timing_at_beat,
-		"Paste Partial Timing at current beat",	
 		true, EditMode_Practice, true, true, 0, NULL ),
     MenuRowDef(ScreenEdit::insert_and_shift,
 		"Insert beat and shift down",
@@ -2072,7 +2066,6 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			g_AreaMenu.rows[shift_pauses_forward].bEnabled = (GetBeat() != 0);
 			g_AreaMenu.rows[paste_at_current_beat].bEnabled = !m_Clipboard.IsEmpty();
 			g_AreaMenu.rows[paste_at_begin_marker].bEnabled = !m_Clipboard.IsEmpty() != 0 && m_NoteFieldEdit.m_iBeginMarker!=-1;
-			g_AreaMenu.rows[paste_partial_timing_at_beat].bEnabled = !this->clipboardTiming.empty();
 			g_AreaMenu.rows[undo].bEnabled = m_bHasUndo;
 			EditMiniMenu( &g_AreaMenu, SM_BackFromAreaMenu );
 		}
@@ -4585,12 +4578,6 @@ void ScreenEdit::HandleAlterMenuChoice(AlterMenuChoice c, const vector<int> &iAn
 			m_Clipboard.CopyRange( m_NoteDataEdit, m_NoteFieldEdit.m_iBeginMarker, m_NoteFieldEdit.m_iEndMarker );
 		}
 			break;
-		case copy_partial_timing:
-		{
-			this->clipboardTiming = GetAppropriateTiming().CopyRange(m_NoteFieldEdit.m_iBeginMarker,
-																	 m_NoteFieldEdit.m_iEndMarker);
-			break;
-		}
 		case clear:
 		{
 			m_NoteDataEdit.ClearRange( m_NoteFieldEdit.m_iBeginMarker, m_NoteFieldEdit.m_iEndMarker );
@@ -4957,32 +4944,6 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 				m_NoteDataEdit.CopyRange( m_Clipboard, 0, iRowsToCopy, iDestFirstRow );
 			}
 			break;
-		case paste_partial_timing_at_beat:
-		{
-#if 0
-			int firstRow = BeatToNoteRow(GetAppropriatePosition().m_fSongBeat);
-
-			FOREACH_TimingSegmentType( tst )
-			{
-				/* TODO: Maybe wipe out the already there timing data first?
-				 * We need to identify the max row within the timing data first. */
-				const vector<TimingSegment*> &vSegs = clipboardTiming.GetTimingSegments(tst);
-
-				/* TODO: this is an exact dupe of TimingData::CopyRange... */
-				for (unsigned i = 0; i < vSegs.size(); i++)
-				{
-					const TimingSegment *seg = vSegs[i];
-					TimingSegment *cpy = seg->Copy();
-
-					int oldRow = cpy->GetRow() + firstRow;
-					int newRow = oldRow + firstRow;
-					cpy->SetRow(newRow);
-					GetAppropriateTiming().AddSegment( cpy );
-				}
-			}
-#endif
-			break;
-		}
 			
 		case insert_and_shift:
 			NoteDataUtil::InsertRows( m_NoteDataEdit, GetRow(),
