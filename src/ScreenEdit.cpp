@@ -1015,18 +1015,16 @@ static bool EnabledIfSet2GlobalMovieSongGroupAndGenre() { return ScreenMiniMenu:
 
 static RString GetOneBakedRandomFile( Song *pSong, bool bTryGenre = true )
 {
-	vector<RString> vsPathsOut; 
-	vector<RString> vsNamesOut;
+	vector<RString> vsPaths; 
+	vector<RString> vsNames;
 	BackgroundUtil::GetGlobalRandomMovies(
 		pSong,
 		"",
-		vsPathsOut, 
-		vsNamesOut,
+		vsPaths, 
+		vsNames,
 		bTryGenre );
-	if( !vsNamesOut.empty() )
-		return vsNamesOut[RandomInt(vsNamesOut.size())];
-	else
-		return RString();
+
+	return vsNames.empty() ? RString() : vsNames[RandomInt(vsNames.size())];
 }
 
 static MenuDef g_InsertTapAttack(
@@ -1081,11 +1079,6 @@ static void SetDefaultEditorNoteSkin( size_t num, RString &sNameOut, RString &de
 	sNameOut = ssprintf( "EditorNoteSkinP%d", int(num + 1) );
 
 	// XXX: We need more supported noteskins.
-	switch( num )
-	{
-	case 0: defaultValueOut = "default"; return;
-	case 1: defaultValueOut = "default"; return;
-	}
 	defaultValueOut = "default";
 }
 
@@ -1120,10 +1113,10 @@ void ScreenEdit::Init()
 	CopyToLastSave();
 
 	m_CurrentAction = MAIN_MENU_CHOICE_INVALID;
+	m_InputPlayerNumber = PLAYER_INVALID;
+
 	if( GAMESTATE->GetCurrentStyle()->m_StyleType == StyleType_TwoPlayersSharedSides )
 		m_InputPlayerNumber = PLAYER_1;
-	else
-		m_InputPlayerNumber = PLAYER_INVALID;
 
 	FOREACH_PlayerNumber( p )
 		GAMESTATE->m_bSideIsJoined[p] = false;
@@ -1137,9 +1130,7 @@ void ScreenEdit::Init()
 	*/
 	if( m_pSong->IsStepsUsingDifferentTiming(m_pSteps) )
 		GAMESTATE->m_bIsUsingStepTiming = true;
-	
 
-	
 	m_bReturnToRecordMenuAfterPlay = false;
 	m_fBeatToReturnTo = 0;
 	
@@ -1471,6 +1462,7 @@ static int FindAttackAtTime( const AttackArray& attacks, float fStartTime )
 	return -1;
 }
 
+// TODO: Fix this mess. -Colby
 static LocalizedString CURRENT_BEAT("ScreenEdit", "Current beat");
 static LocalizedString CURRENT_SECOND("ScreenEdit", "Current second");
 static LocalizedString SNAP_TO("ScreenEdit", "Snap to");
@@ -4065,12 +4057,7 @@ static void ChangeStepCredit( const RString &sNew )
 static void ChangeStepMeter( const RString &sNew )
 {
 	int diff = StringToInt(sNew);
-	// TODO: What's the clamping function again, and what's our max level?
-	if (diff < 1)
-	{
-		diff = 1;
-	}
-	GAMESTATE->m_pCurSteps[PLAYER_1]->SetMeter(diff);
+	GAMESTATE->m_pCurSteps[PLAYER_1]->SetMeter(MAX(diff, 1));
 }
 
 static void ChangeMainTitle( const RString &sNew )
