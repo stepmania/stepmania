@@ -4057,7 +4057,7 @@ static void ChangeStepCredit( const RString &sNew )
 static void ChangeStepMeter( const RString &sNew )
 {
 	int diff = StringToInt(sNew);
-	GAMESTATE->m_pCurSteps[PLAYER_1]->SetMeter(MAX(diff, 1));
+	GAMESTATE->m_pCurSteps[PLAYER_1]->SetMeter(max(diff, 1));
 }
 
 static void ChangeMainTitle( const RString &sNew )
