@@ -4062,6 +4062,17 @@ static void ChangeStepCredit( const RString &sNew )
 	pSteps->SetCredit(sNew);
 }
 
+static void ChangeStepMeter( const RString &sNew )
+{
+	int diff = StringToInt(sNew);
+	// TODO: What's the clamping function again, and what's our max level?
+	if (diff < 1)
+	{
+		diff = 1;
+	}
+	GAMESTATE->m_pCurSteps[PLAYER_1]->SetMeter(diff);
+}
+
 static void ChangeMainTitle( const RString &sNew )
 {
 	Song* pSong = GAMESTATE->m_pCurSong;
@@ -5091,7 +5102,10 @@ void ScreenEdit::HandleStepsInformationChoice( StepsInformationChoice c, const v
 			ScreenTextEntry::TextEntry(SM_BackFromDifficultyMeterChange,
 									   ENTER_NEW_METER,
 									   ssprintf("%d", m_pSteps->GetMeter()),
-									   4);
+									   4,
+									   NULL,
+									   ChangeStepMeter,
+									   NULL);
 			break;
 		}
 		case step_min_bpm:
