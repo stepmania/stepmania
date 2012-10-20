@@ -99,7 +99,7 @@ void SMALoader::ProcessSpeeds( TimingData &out, const RString line, const int ro
 		
 		if( vs2.size() == 2 ) // First one always seems to have 2.
 		{
-			vs2.push_back("0");
+			vs2.push_back("4");	// Aldo_MX: 4 is the default value
 		}
 		
 		if( vs2.size() < 3 )
