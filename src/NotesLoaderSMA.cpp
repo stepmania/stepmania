@@ -88,7 +88,7 @@ void SMALoader::ProcessSpeeds( TimingData &out, const RString line, const int ro
 {
 	vector<RString> vs1;
 	split( line, ",", vs1 );
-	
+
 	FOREACH_CONST( RString, vs1, s1 )
 	{
 		vector<RString> vs2;
@@ -99,7 +99,8 @@ void SMALoader::ProcessSpeeds( TimingData &out, const RString line, const int ro
 		
 		if( vs2.size() == 2 ) // First one always seems to have 2.
 		{
-			vs2.push_back("4");	// Aldo_MX: 4 is the default value
+			// Aldo_MX: 4 is the default value in SMA, although SM5 requires 0 for the first segment :/
+			vs2.push_back(s1 == vs1.begin() ? "0" : "4");
 		}
 		
 		if( vs2.size() < 3 )
