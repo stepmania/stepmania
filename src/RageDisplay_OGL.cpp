@@ -282,9 +282,13 @@ RString GetInfoLog( GLhandleARB h )
 
 GLhandleARB CompileShader( GLenum ShaderType, RString sFile, vector<RString> asDefines )
 {
-	if (!glewIsSupported("GL_ARB_fragment_shader"))
+	/* XXX: This would not be necessary if it wasn't for the special case for Cel. */
+	if (ShaderType == GL_FRAGMENT_SHADER_ARB && !glewIsSupported("GL_VERSION_2_0"))
+	{
+		LOG->Warn("Fragment shaders not supported by driver. Some effects will not be available.");
 		return 0;
-
+	}
+		
 	RString sBuffer;
 	{
 		RageFile file;
@@ -339,11 +343,18 @@ GLhandleARB CompileShader( GLenum ShaderType, RString sFile, vector<RString> asD
 
 GLhandleARB LoadShader( GLenum ShaderType, RString sFile, vector<RString> asDefines )
 {
-	// Don't do anything here if not the hardware/driver can't do it!
-	if (!GLEW_ARB_fragment_program && GLEW_ARB_shading_language_100 && ShaderType == GL_FRAGMENT_SHADER_ARB)
+	/* Vertex shaders are supported by more hardware than fragment shaders.
+	 * If this causes any trouble I will have to up the requirement for both
+	 * of them to at least GL 2.0. Regardless we need basic GLSL support.
+	 * -Colby */
+	if (!glewIsSupported("GL_ARB_shading_language_100 GL_ARB_shader_objects") ||
+		(ShaderType == GL_FRAGMENT_SHADER_ARB && !glewIsSupported("GL_VERSION_2_0")) ||
+		(ShaderType == GL_VERTEX_SHADER_ARB && !glewIsSupported("GL_ARB_vertex_shader")))
+	{
+		LOG->Warn("%s shaders not supported by driver. Some effects will not be available.",
+			(ShaderType == GL_FRAGMENT_SHADER_ARB) ? "Fragment" : "Vertex");
 		return 0;
-	if (!GLEW_ARB_vertex_shader && ShaderType == GL_VERTEX_SHADER_ARB)
-		return 0;
+	}
 
 	// XXX: dumb, but I don't feel like refactoring ragedisplay for this. -Colby
 	GLhandleARB secondaryShader = 0;
