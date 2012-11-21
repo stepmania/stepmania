@@ -59,6 +59,7 @@ static const StepsTypeInfo g_StepsTypeInfos[] = {
 	{ "pump-routine",	10,	true,	StepsTypeCategory_Routine },
 	// kb7
 	{ "kb7-single",		7,	true,	StepsTypeCategory_Single },
+	{ "kb7-small",		7,	true,	StepsTypeCategory_Single },
 	// ez2dancer
 	{ "ez2-single",		5,	true,	StepsTypeCategory_Single },	// Single: TL,LHH,D,RHH,TR
 	{ "ez2-double",		10,	true,	StepsTypeCategory_Double },	// Double: Single x2
