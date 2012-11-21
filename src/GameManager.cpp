@@ -59,7 +59,7 @@ static const StepsTypeInfo g_StepsTypeInfos[] = {
 	{ "pump-routine",	10,	true,	StepsTypeCategory_Routine },
 	// kb7
 	{ "kb7-single",		7,	true,	StepsTypeCategory_Single },
-	{ "kb7-small",		7,	true,	StepsTypeCategory_Single },
+	// { "kb7-small",		7,	true,	StepsTypeCategory_Single },
 	// ez2dancer
 	{ "ez2-single",		5,	true,	StepsTypeCategory_Single },	// Single: TL,LHH,D,RHH,TR
 	{ "ez2-double",		10,	true,	StepsTypeCategory_Double },	// Double: Single x2
@@ -957,7 +957,7 @@ static const Style g_Style_KB7_Single =
 };
 
 // ...
-// static const int KB7_COL_SPACING_SMALL = 10;
+/* static const int KB7_COL_SPACING_SMALL = 10;
 static const Style g_Style_KB7_Small =
 {	// STYLE_KB7_SMALL
 	true,				// m_bUsedForGameplay
@@ -998,7 +998,7 @@ static const Style g_Style_KB7_Small =
 	false, // m_bNeedsZoomOutWith2Players
 	false, // m_bCanUseBeginnerHelper
 	false, // m_bLockDifficulties
-};
+}; */
 
 static const Style g_Style_KB7_Versus =
 {	// STYLE_KB7_VERSUS
@@ -1045,7 +1045,7 @@ static const Style g_Style_KB7_Versus =
 static const Style *g_apGame_KB7_Styles[] =
 {
 	&g_Style_KB7_Single,
-	&g_Style_KB7_Small,
+	// &g_Style_KB7_Small,
 	&g_Style_KB7_Versus,
 	NULL
 };
