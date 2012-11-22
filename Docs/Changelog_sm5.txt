@@ -4,6 +4,13 @@ The StepMania 5 Changelog covers all post-sm-ssc changes. For a list of changes
 from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
+2012/11/22
+----------
+* [ProfileManager] Added SaveProfile, SaveLocalProfile, GetLocalProfileIDs,
+  ProfileFromMemoryCardIsNew, GetSongNumTimesPlayed, LocalProfileIDToDir, and
+  GetLocalProfileDisplayNames Lua bindings. [Alfred Sorenson]
+* [Profile] Add GetGUID Lua binding. [Alfred Sorenson]
+
 2012/07/26
 ----------
 * [ScreenDebugOverlay] Added BackgroundColor metric. [AJ]

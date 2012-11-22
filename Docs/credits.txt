@@ -57,6 +57,9 @@ Jason Felds (Wolfman2000)
  * Mac OS X maintainer
  * Various fixes/changes. (see Changelogs for more details)
 
+djpohly
+ * Various patches/fixes
+
 ==other contributors==
 (in no particular order)
 
@@ -141,8 +144,8 @@ Deamon007
 cvpcs
  * Updated ffmpeg support to v0.10
 
-djpohly
- * Various patches/fixes
+Alfred Sorenson
+ * Various small additions
 
 ==the beta testers==
 [SSC Beta Testing Team]

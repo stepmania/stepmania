@@ -2051,6 +2051,7 @@ public:
 			lua_pushnil( L );
 		return 1;
 	}
+	DEFINE_METHOD( GetGUID,		m_sGuid );
 
 	LunaProfile()
 	{
@@ -2100,6 +2101,7 @@ public:
 		ADD_METHOD( GetUserTable );
 		ADD_METHOD( GetLastPlayedSong );
 		ADD_METHOD( GetLastPlayedCourse );
+		ADD_METHOD( GetGUID );
 	}
 };
 

@@ -61,6 +61,7 @@ local contrib = {
 	"Samuel Kim (1a2a3a2a1a)", -- various beat mode fixes
 	"hanubeki (@803832)", -- beginner helper fix, among various other things
 	"v1toko", -- x-mode from StepNXA
+	"Alfred Sorenson", -- new lua bindings
 }
 
 local translators = {

@@ -842,6 +842,35 @@ public:
 	static int LastLoadWasTamperedOrCorrupt( T* p, lua_State *L ) { lua_pushboolean(L, p->LastLoadWasTamperedOrCorrupt(Enum::Check<PlayerNumber>(L, 1)) ); return 1; }
 	static int GetPlayerName( T* p, lua_State *L )				{ PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1); lua_pushstring(L, p->GetPlayerName(pn)); return 1; }
 
+	static int LocalProfileIDToDir( T* p, lua_State *L )
+	{
+		RString dir = USER_PROFILES_DIR + SArg(1) + "/";
+		lua_pushstring( L, dir );
+		return 1;
+	}
+	static int SaveProfile( T* p, lua_State *L ) { lua_pushboolean( L, p->SaveProfile(Enum::Check<PlayerNumber>(L, 1)) ); return 1; }
+	static int SaveLocalProfile( T* p, lua_State *L ) { lua_pushboolean( L, p->SaveLocalProfile(SArg(1)) ); return 1; }
+	static int ProfileFromMemoryCardIsNew( T* p, lua_State *L ) { lua_pushboolean( L, p->ProfileFromMemoryCardIsNew(Enum::Check<PlayerNumber>(L, 1)) ); return 1; }
+	static int GetSongNumTimesPlayed( T* p, lua_State *L )
+	{
+		lua_pushnumber(L, p->GetSongNumTimesPlayed(Luna<Song>::check(L,1),Enum::Check<ProfileSlot>(L, 2)) );
+		return 1;
+	}
+	static int GetLocalProfileIDs( T* p, lua_State *L )
+	{
+		vector<RString> vsProfileIDs;
+		p->GetLocalProfileIDs(vsProfileIDs);
+		LuaHelpers::CreateTableFromArray<RString>( vsProfileIDs, L );
+		return 1;
+	}
+	static int GetLocalProfileDisplayNames( T* p, lua_State *L )
+	{
+		vector<RString> vsProfileNames;
+		p->GetLocalProfileDisplayNames(vsProfileNames);
+		LuaHelpers::CreateTableFromArray<RString>( vsProfileNames, L );
+		return 1;
+	}
+
 	LunaProfileManager()
 	{
 		ADD_METHOD( IsPersistentProfile );
@@ -858,6 +887,14 @@ public:
 		ADD_METHOD( ProfileWasLoadedFromMemoryCard );
 		ADD_METHOD( LastLoadWasTamperedOrCorrupt );
 		ADD_METHOD( GetPlayerName );
+		//
+		ADD_METHOD( SaveProfile );
+		ADD_METHOD( SaveLocalProfile );
+		ADD_METHOD( ProfileFromMemoryCardIsNew );
+		ADD_METHOD( GetSongNumTimesPlayed );
+		ADD_METHOD( GetLocalProfileIDs );
+		ADD_METHOD( GetLocalProfileDisplayNames );
+		ADD_METHOD( LocalProfileIDToDir );
 	}
 };
 
