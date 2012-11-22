@@ -194,6 +194,7 @@
 		<Function name='Year'/>
 		<Function name='assert'/>
 		<Function name='clamp'/>
+		<Function name='class'/>
 		<Function name='collectgarbage'/>
 		<Function name='color'/>
 		<Function name='dofile'/>
@@ -889,11 +890,6 @@
 		<Class base='ActorFrame' name='ModIconRow'>
 			<Function name='Load'/>
 		</Class>
-		<Class base='WheelBase' name='MusicWheel'>
-			<Function name='IsRouletting'/>
-			<Function name='SelectSong'/>
-			<Function name='SelectCourse'/>
-		</Class>
 		<Class base='Actor' name='Model'>
 			<Function name='GetDefaultAnimation'/>
 			<Function name='GetNumStates'/>
@@ -1169,6 +1165,7 @@
 			<Function name='GetCoursesPossible'/>
 			<Function name='GetDisplayName'/>
 			<Function name='GetDisplayTotalCaloriesBurned'/>
+			<Function name='GetGUID'/>
 			<Function name='GetGoalCalories'/>
 			<Function name='GetGoalSeconds'/>
 			<Function name='GetGoalType'/>
@@ -1211,19 +1208,26 @@
 		</Class>
 		<Class name='ProfileManager'>
 			<Function name='GetLocalProfile'/>
+			<Function name='GetLocalProfileDisplayNames'/>
 			<Function name='GetLocalProfileFromIndex'/>
 			<Function name='GetLocalProfileIDFromIndex'/>
+			<Function name='GetLocalProfileIDs'/>
 			<Function name='GetLocalProfileIndexFromID'/>
 			<Function name='GetMachineProfile'/>
 			<Function name='GetNumLocalProfiles'/>
 			<Function name='GetPlayerName'/>
 			<Function name='GetProfile'/>
 			<Function name='GetProfileDir'/>
+			<Function name='GetSongNumTimesPlayed'/>
 			<Function name='IsPersistentProfile'/>
 			<Function name='IsSongNew'/>
 			<Function name='LastLoadWasTamperedOrCorrupt'/>
+			<Function name='LocalProfileIDToDir'/>
+			<Function name='ProfileFromMemoryCardIsNew'/>
 			<Function name='ProfileWasLoadedFromMemoryCard'/>
+			<Function name='SaveLocalProfile'/>
 			<Function name='SaveMachineProfile'/>
+			<Function name='SaveProfile'/>
 		</Class>
 		<Class name='RadarValues'>
 			<Function name='GetValue'/>
@@ -1720,7 +1724,9 @@
 		<Namespace name='ActorUtil'>
 			<Function name='GetFileType'/>
 			<Function name='IsRegisteredClass'/>
+			<Function name='LoadAllCommands'/>
 			<Function name='LoadAllCommandsAndSetXY'/>
+			<Function name='LoadAllCommandsFromName'/>
 			<Function name='ResolvePath'/>
 		</Namespace>
 		<Namespace name='Enum'>
@@ -2352,5 +2358,5 @@
 		<Constant name='top' value='&apos;VertAlign_Top&apos;'/>
 	</Constants>
 	<Version>StepMania v5.0 alpha 3</Version>
-	<Date>2012-07-11</Date>
+	<Date>2012-11-22</Date>
 </Lua>

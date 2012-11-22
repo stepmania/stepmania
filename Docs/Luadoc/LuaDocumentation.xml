@@ -3388,6 +3388,9 @@ save yourself some time, copy this for undocumented things:
 	<Function name='GetGoalType' return='GoalType' arguments=''>
 		Returns the current goal type.
 	</Function>
+	<Function name='GetGUID' return='string' arguments=''>
+		Returns the GUID of this Profile.
+	</Function>
 	<Function name='GetHighScoreList' return='HighScoreList' arguments='Song s, Steps st'>
 		Gets the profile's HighScoreList for a specified Song and Steps. (Alternate arguments for Courses: <code>Course c, Trail t</code>)
 	</Function>
@@ -3502,8 +3505,14 @@ save yourself some time, copy this for undocumented things:
 	<Function name='GetLocalProfile' return='Profile' arguments='string sProfileID'>
 		Returns the Profile for the specified profile ID.
 	</Function>
+	<Function name='GetLocalProfileDisplayNames' return='{string}' arguments=''>
+		Returns a table of the local profile display names.
+	</Function>
 	<Function name='GetLocalProfileFromIndex' return='Profile' arguments='int iIndex' />
 	<Function name='GetLocalProfileIDFromIndex' return='string' arguments='int iIndex' />
+	<Function name='GetLocalProfileIDs' return='{string}' arguments=''>
+		Returns a table of the local profile IDs.
+	</Function>
 	<Function name='GetLocalProfileIndexFromID' return='int' arguments='string sProfileID' />
 	<Function name='GetMachineProfile' return='Profile' arguments=''>
 		Retuns the machine profile.
@@ -3520,23 +3529,38 @@ save yourself some time, copy this for undocumented things:
 	<Function name='GetProfileDir' return='string' arguments='ProfileSlot slot'>
 		Returns the profile directory of the specified <code>ProfileSlot</code>.
 	</Function>
+	<Function name='GetSongNumTimesPlayed' return='int' arguments='Song s, ProfileSlot ps'>
+		Returns the number of times Song s has been played with the specified ProfileSlot.
+	</Function>
 	<Function name='IsPersistentProfile' return='bool' arguments='PlayerNumber pn'>
 		Returns <code>true</code> if player <code>pn</code>'s profile is persistent.
 	</Function>
 	<Function name='IsSongNew' return='bool' arguments='Song s'>
 		Returns <code>true</code> if Song <code>s</code> has never been played before (according to the machine profile).
 	</Function>
+	<Function name='LocalProfileIDToDir' return='' arguments=''>
+	</Function>
+	<Function name='ProfileFromMemoryCardIsNew' return='bool' arguments=''>
+		Returns <code>true</code> if the profile from the memory card is new.
+	</Function>
 	<Function name='ProfileWasLoadedFromMemoryCard' return='bool' arguments='PlayerNumber pn'>
 		Returns <code>true</code> if <code>pn</code>'s Profile was loaded from a memory card.
 	</Function>
+	
 	<Function name='LastLoadWasFromLastGood' return='bool' arguments='PlayerNumber pn'>
 		Returns <code>true</code> if the last load of player <code>pn</code>'s profile was a LastGood copy of the profile.
 	</Function>
 	<Function name='LastLoadWasTamperedOrCorrupt' return='bool' arguments='PlayerNumber pn'>
 		Returns <code>true</code> if the last load of player <code>pn</code>'s profile resulted in a tampered or corrupt profile.
 	</Function>
+	<Function name='SaveLocalProfile' return='bool' arguments='string ID'>
+		Saves the local profile with the specified ID.
+	</Function>
 	<Function name='SaveMachineProfile' return='void' arguments=''>
 		Saves the machine profile.
+	</Function>
+	<Function name='SaveProfile' return='bool' arguments='PlayerNumber pn'>
+		Saves the profile for player <code>pn</code>.
 	</Function>
 </Class>
 <Class name='RadarValues'>
