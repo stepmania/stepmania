@@ -16,7 +16,7 @@ function mt_class:extends(parent)
 end
 
 local function define(class, members)
-   class.__members__ = {}
+   class.__members__ = class.__members__ or {}
    local function copyMembersDown(origin,cls)
       if cls.super then
 	     for k,v in pairs(cls.super.__members__) do
