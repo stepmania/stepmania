@@ -845,13 +845,16 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 				else
 				{
 					// XXX: should this be called "TwoPartCancelled"?
-					Message msg("SongUnchosen");
-					msg.SetParam( "Player", input.pn );
-					MESSAGEMAN->Broadcast( msg );
-					// unset all steps
-					FOREACH_ENUM( PlayerNumber , p )
-						m_bStepsChosen[p] = false;
-					m_SelectionState = SelectionState_SelectingSong;
+                    float fSeconds = m_MenuTimer->GetSeconds();
+                    if( fSeconds > 10 ) {
+                        Message msg("SongUnchosen");
+                        msg.SetParam( "Player", input.pn );
+                        MESSAGEMAN->Broadcast( msg );
+                        // unset all steps
+                        FOREACH_ENUM( PlayerNumber , p )
+                            m_bStepsChosen[p] = false;
+                        m_SelectionState = SelectionState_SelectingSong;
+                    }
 				}
 			}
 		}
