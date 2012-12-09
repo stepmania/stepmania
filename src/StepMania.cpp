@@ -410,6 +410,10 @@ static void AdjustForChangedSystemCapabilities()
 #include "RageDisplay_OGL.h"
 #endif
 
+#if defined(SUPPORT_GLES2)
+#include "RageDisplay_GLES2.h"
+#endif
+
 #include "RageDisplay_Null.h"
 
 
@@ -737,6 +741,12 @@ RageDisplay *CreateDisplay()
 		{
 #if defined(SUPPORT_OPENGL)
 			pRet = new RageDisplay_Legacy;
+#endif
+		}
+		else if( sRenderer.CompareNoCase("gles2")==0 )
+		{
+#if defined(SUPPORT_GLES2)
+			pRet = new RageDisplay_GLES2;
 #endif
 		}
 		else if( sRenderer.CompareNoCase("d3d")==0 )
