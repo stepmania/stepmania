@@ -209,7 +209,7 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 		XRaiseWindow( Dpy, Win );
 
 		// We want to prevent the WM from catching anything that comes from the keyboard.
-		// We should do this every time on fullscreen and not only we entering from windowed mode because we could lost focus at resolution change and that will leave the user input locked.
+		// We should do this every time on fullscreen and not only we entering from windowed mode because we could lose focus at resolution change and that will leave the user input locked.
 		XGrabKeyboard( Dpy, Win, True, GrabModeAsync, GrabModeAsync, CurrentTime );
 	}
 	else
@@ -223,6 +223,9 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 			m_bWasWindowed = true;
 		}
 	}
+	// NOTE: nVidia's implementation of this is broken by default.
+	// The only ways around this are mucking with xorg.conf or querying
+	// nvidia-settings with "$ nvidia-settings -t -q RefreshRate".
 	int rate = XRRConfigCurrentRate( g_pScreenConfig );
 
 	// Make a window fixed size, don't let resize it or maximize it.
