@@ -414,7 +414,9 @@ RageFileDriverSlice.cpp RageFileDriverSlice.h \
 RageFileDriverTimeout.cpp RageFileDriverTimeout.h
 
 Rage = $(PCRE) $(Lua) $(jsoncpp) $(RageFile) $(RageSoundFileReaders) \
-RageBitmapTexture.cpp RageBitmapTexture.h RageDisplay.cpp RageDisplay.h RageDisplay_OGL.cpp RageDisplay_OGL.h \
+RageBitmapTexture.cpp RageBitmapTexture.h \
+RageDisplay.cpp RageDisplay.h \
+RageDisplay_OGL.cpp RageDisplay_OGL.h \
 RageDisplay_OGL_Helpers.cpp RageDisplay_OGL_Helpers.h glext.h \
 RageDisplay_Null.cpp RageDisplay_Null.h RageException.cpp RageException.h RageInput.cpp RageInput.h \
 RageInputDevice.cpp RageInputDevice.h RageLog.cpp RageLog.h RageMath.cpp RageMath.h \
@@ -621,6 +623,10 @@ main_SOURCES = $(PNG) \
 		$(Rage) \
 		$(Actors) \
 		$(GlobalSingletons)
+
+if !WITHOUT_GLES2
+main_SOURCES += RageDisplay_GLES2.cpp RageDisplay_GLES2.h
+endif
 
 main_LDADD = \
 		$(VIDEO_LIBS) \
