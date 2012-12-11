@@ -587,6 +587,7 @@ RageDisplay_GLES2::SetZTestMode( ZTestMode mode )
 	switch( mode )
 	{
 	case ZTEST_OFF:
+		glDisable( GL_DEPTH_TEST );
 		glDepthFunc( GL_ALWAYS );
 		State::bZTestEnabled = false;
 		break;
@@ -695,7 +696,22 @@ RageDisplay_GLES2::ClearZBuffer()
 void
 RageDisplay_GLES2::SetCullMode( CullMode mode )
 {
-	// TODO
+	if (mode != CULL_NONE)
+		glEnable(GL_CULL_FACE);
+	switch( mode )
+	{
+	case CULL_BACK:
+		glCullFace( GL_BACK );
+		break;
+	case CULL_FRONT:
+		glCullFace( GL_FRONT );
+		break;
+	case CULL_NONE:
+		glDisable( GL_CULL_FACE );
+		break;
+	default:
+		ASSERT(0);
+	}
 }
 
 void
