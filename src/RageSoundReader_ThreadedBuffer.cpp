@@ -4,7 +4,10 @@
 #include "RageTimer.h"
 #include "Foreach.h"
 #include "RageLog.h"
+
+#if !defined(_WINDOWS)
 #include <unistd.h>
+#endif
 
 /* Implement threaded read-ahead buffering.
  *
