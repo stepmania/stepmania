@@ -152,6 +152,7 @@ namespace
 			GL_BGR,
 			GL_UNSIGNED_BYTE,
 		}, {
+			// TODO: These don't work on ES2. Work out what needs to happen.
 			/* A1R5G5B5 (matches D3DFMT_A1R5G5B5) */
 			GL_RGB5_A1,
 			GL_BGRA,
@@ -246,6 +247,60 @@ RageDisplay_GLES2::Init( const VideoModeParams &p, bool bAllowUnacceleratedRende
 	/* Pretty-print the extension string: */
 	LOG->Info( "OGL Extensions:" );
 	{
+		// glGetString(GL_EXTENSIONS) doesn't work for GL3 core profiles.
+		// this will be useful in the future.
+#if 0
+		vector<string> extensions;
+		const char *ext = 0;
+		for (int i = 0; (ext = (const char*)glGetStringi(GL_EXTENSIONS, i)); i++)
+		{
+			extensions.push_back(string(ext));
+		}
+
+		sort( extensions.begin(), extensions.end() );
+		size_t next = 0;
+		while( next < extensions.size() )
+		{
+			size_t last = next;
+			string type;
+			for( size_t i = next; i<extensions.size(); ++i )
+			{
+				vector<string> segments;
+				split(extensions[i], '_', segments);
+				string this_type;
+				if (segments.size() > 2)
+					this_type = join("_", segments.begin(), segments.begin()+2);
+				if (i > next && this_type != type)
+					break;
+				type = this_type;
+				last = i;
+			}
+
+			if (next == last)
+			{
+				printf( "  %s\n", extensions[next].c_str() );
+				++next;
+				continue;
+			}
+
+			string sList = ssprintf( "  %s: ", type.c_str() );
+			while( next <= last )
+			{
+				vector<string> segments;
+				split( extensions[next], '_', segments );
+				string ext_short = join( "_", segments.begin()+2, segments.end() );
+				sList += ext_short;
+				if (next < last)
+					sList += ", ";
+				if (next == last || sList.size() + extensions[next+1].size() > 78)
+				{
+					printf( "%s\n", sList.c_str() );
+					sList = "    ";
+				}
+				++next;
+			}
+		}
+#else
 		const char *szExtensionString = (const char *) glGetString(GL_EXTENSIONS);
 		vector<RString> asExtensions;
 		split( szExtensionString, " ", asExtensions );
@@ -291,6 +346,7 @@ RageDisplay_GLES2::Init( const VideoModeParams &p, bool bAllowUnacceleratedRende
 				}
 				++iNextToPrint;
 			}
+#endif
 		}
 	}
 
@@ -315,16 +371,15 @@ RString RageDisplay_GLES2::TryVideoMode( const VideoModeParams &p, bool &bNewDev
 	LOG->Warn( "RageDisplay_GLES2::TryVideoMode( %d, %d, %d, %d, %d, %d )",
 		vm.windowed, vm.width, vm.height, vm.bpp, vm.rate, vm.vsync );
 
-	RString err;
-	err = g_pWind->TryVideoMode( vm, bNewDeviceOut );
+	RString err = g_pWind->TryVideoMode( vm, bNewDeviceOut );
 	if (err != "")
 		return err;	// failed to set video mode
 
-	// NOTE: This isn't needed in an actual GLES2 context...
-	glewInit();
-
 	if (bNewDeviceOut)
 	{
+		// NOTE: This isn't needed in an actual GLES2 context...
+		glewInit();
+
 		/* We have a new OpenGL context, so we have to tell our textures that
 		 * their OpenGL texture number is invalid. */
 		if (TEXTUREMAN)
@@ -476,7 +531,24 @@ RageDisplay_GLES2::SetBlendMode( BlendMode mode )
 bool
 RageDisplay_GLES2::SupportsTextureFormat( PixelFormat pixfmt, bool realtime )
 {
-	// TODO
+	/* If we support a pixfmt for texture formats but not for surface formats, then
+	 * we'll have to convert the texture to a supported surface format before uploading.
+	 * This is too slow for dynamic textures. */
+	if (realtime && !SupportsSurfaceFormat(pixfmt))
+		return false;
+
+	switch (g_GLPixFmtInfo[pixfmt].format)
+	{
+	case GL_COLOR_INDEX:
+		return false;
+	case GL_BGR:
+	case GL_BGRA:
+		//return !!GLEW_EXT_bgra;
+		return false; // no BGRA on ES2 (without exts)
+	default:
+		return true;
+	}
+
 	return true;
 }
 
@@ -516,7 +588,12 @@ RageDisplay_GLES2::DeleteTexture( unsigned iTexHandle )
 void
 RageDisplay_GLES2::ClearAllTextures()
 {
-	// TODO
+	FOREACH_ENUM( TextureUnit, i )
+		SetTexture( i, 0 );
+
+	// HACK:  Reset the active texture to 0.
+	// TODO:  Change all texture functions to take a stage number.
+	glActiveTexture(GL_TEXTURE0);
 }
 
 int
@@ -525,10 +602,30 @@ RageDisplay_GLES2::GetNumTextureUnits()
 	return Caps::iMaxTextureUnits;
 }
 
+static bool
+SetTextureUnit( TextureUnit tu )
+{
+	if ((int) tu > Caps::iMaxTextureUnits)
+		return false;
+	glActiveTexture( enum_add2(GL_TEXTURE0, tu) );
+	return true;
+}
+
 void
 RageDisplay_GLES2::SetTexture( TextureUnit tu, unsigned iTexture )
 {
-	// TODO
+	if (!SetTextureUnit( tu ))
+		return;
+
+	if (iTexture)
+	{
+		glEnable( GL_TEXTURE_2D );
+		glBindTexture( GL_TEXTURE_2D, iTexture );
+	}
+	else
+	{
+		glDisable( GL_TEXTURE_2D );
+	}
 }
 
 void 
@@ -546,7 +643,34 @@ RageDisplay_GLES2::SetTextureWrapping( TextureUnit tu, bool b )
 void
 RageDisplay_GLES2::SetTextureFiltering( TextureUnit tu, bool b )
 {
-	// TODO
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, b ? GL_LINEAR : GL_NEAREST);
+	
+	GLint iMinFilter = 0;
+	if (b)
+	{
+		GLint iWidth1 = -1;
+		GLint iWidth2 = -1;
+		glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &iWidth1);
+		glGetTexLevelParameteriv(GL_TEXTURE_2D, 1, GL_TEXTURE_WIDTH, &iWidth2);
+		if (iWidth1 > 1 && iWidth2 != 0)
+		{
+			/* Mipmaps are enabled. */
+			if (g_pWind->GetActualVideoModeParams().bTrilinearFiltering)
+				iMinFilter = GL_LINEAR_MIPMAP_LINEAR;
+			else
+				iMinFilter = GL_LINEAR_MIPMAP_NEAREST;
+		}
+		else
+		{
+			iMinFilter = GL_LINEAR;
+		}
+	}
+	else
+	{
+		iMinFilter = GL_NEAREST;
+	}
+
+	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, iMinFilter );
 }
 
 bool
@@ -738,6 +862,25 @@ RageDisplay_GLES2::SetMaterial(
 }
 
 void
+RageDisplay_GLES2::SetLineWidth(float fWidth)
+{
+	glLineWidth(fWidth);
+}
+
+void
+RageDisplay_GLES2::SetPolygonMode(PolygonMode pm)
+{
+	GLenum m;
+	switch (pm)
+	{
+	case POLYGON_FILL:	m = GL_FILL; break;
+	case POLYGON_LINE:	m = GL_LINE; break;
+	default:		ASSERT(0);	return;
+	}
+	glPolygonMode(GL_FRONT_AND_BACK, m);
+}
+
+void
 RageDisplay_GLES2::SetLighting( bool b )
 {
 	// TODO
@@ -824,8 +967,14 @@ RageDisplay_GLES2::DrawSymmetricQuadStripInternal( const RageSpriteVertex v[], i
 bool
 RageDisplay_GLES2::SupportsSurfaceFormat( PixelFormat pixfmt )
 {
-	// TODO
-	return true;
+	switch (g_GLPixFmtInfo[pixfmt].type)
+	{
+	case GL_UNSIGNED_SHORT_1_5_5_5_REV:
+		return false;
+		//return GLEW_EXT_bgra && g_bReversePackedPixelsWorks;
+	default:
+		return true;
+	}
 }
 
 /*

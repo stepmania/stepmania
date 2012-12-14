@@ -61,6 +61,9 @@ public:
 	void SetSphereEnvironmentMapping( TextureUnit tu, bool b );
 	void SetCelShaded( int stage );
 
+	void SetLineWidth(float fWidth);
+	void SetPolygonMode(PolygonMode pm);
+
 	RageCompiledGeometry* CreateCompiledGeometry();
 	void DeleteCompiledGeometry( RageCompiledGeometry* p );
 
@@ -78,6 +81,7 @@ protected:
 	RageSurface* CreateScreenshot();
 	RageMatrix GetOrthoMatrix( float l, float r, float b, float t, float zn, float zf ); 
 	bool SupportsSurfaceFormat( PixelFormat pixfmt );
+	bool SupportsRenderToTexture() const { return true; }
 };
 
 #endif
