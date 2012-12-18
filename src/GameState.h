@@ -394,6 +394,10 @@ private:
 	int	m_iAwardedExtraStages[NUM_PLAYERS];
 	bool	m_bEarnedExtraStage;
 
+	// Timing position corrections
+	RageTimer m_LastPositionTimer;
+	float m_LastPositionSeconds;
+
 	GameState(const GameState& rhs);
 	GameState& operator=(const GameState& rhs);
 

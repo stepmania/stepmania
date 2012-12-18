@@ -912,6 +912,8 @@ const float GameState::MUSIC_SECONDS_INVALID = -5000.0f;
 void GameState::ResetMusicStatistics()
 {
 	m_Position.Reset();
+	m_LastPositionTimer.Touch();
+	m_LastPositionSeconds = 0.0f;
 
 	Actor::SetBGMTime( 0, 0, 0, 0 );
 
@@ -960,7 +962,21 @@ void GameState::ResetStageStatistics()
 
 void GameState::UpdateSongPosition( float fPositionSeconds, const TimingData &timing, const RageTimer &timestamp, bool bUpdatePlayers )
 {
-	
+	/* It's not uncommon to get a lot of duplicated positions from the sound
+	 * driver, like so: 13.120953,13.130975,13.130975,13.130975,13.140998,...
+	 * This causes visual stuttering of the arrows. To compensate, keep a
+	 * RageTimer since the last change. */
+	if (fPositionSeconds == m_LastPositionSeconds)
+		fPositionSeconds += m_LastPositionTimer.Ago();
+	else
+	{
+		//LOG->Info("Time difference: %+f",
+		//	m_LastPositionTimer.Ago() - (fPositionSeconds - m_LastPositionSeconds)
+		//);
+		m_LastPositionTimer.Touch();
+		m_LastPositionSeconds = fPositionSeconds;
+	}
+
 	m_Position.UpdateSongPosition( fPositionSeconds, timing, timestamp );
 
 	if( bUpdatePlayers )
