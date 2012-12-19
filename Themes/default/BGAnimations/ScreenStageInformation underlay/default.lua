@@ -12,7 +12,9 @@ local tRemap = {
 	Stage_6th		= 6,
 };
 
-if tRemap[sStage] == PREFSMAN:GetPreference("SongsPerPlay") then
+local nSongCount = tRemap[sStage] + (GAMESTATE:GetCurrentSong():GetStageCost()-1);
+
+if nSongCount >= PREFSMAN:GetPreference("SongsPerPlay") then
 	sStage = "Stage_Final";
 else
 	sStage = sStage;
