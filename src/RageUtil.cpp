@@ -98,8 +98,8 @@ namespace
 {
 	MersenneTwister g_LuaPRNG;
 
-	/* To map from [0..2^32-1] to [0..1), we divide by 2^32. */
-	const double DIVISOR = pow( double(2), double(32) );
+	/* To map from [0..2^31-1] to [0..1), we divide by 2^31. */
+	const double DIVISOR = pow( double(2), double(31) );
 
 	static int Seed( lua_State *L )
 	{
