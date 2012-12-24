@@ -950,7 +950,7 @@ class DebugLineReloadCurrentScreen : public IDebugLine
 		SCREENMAN->PopAllScreens();
 
 		SOUND->StopMusic();
-		StepMania::ResetGame();
+		//StepMania::ResetGame();
 
 		SCREENMAN->SetNewScreen( sScreenName );
 		IDebugLine::DoAndLog( sMessageOut );
