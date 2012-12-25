@@ -4,12 +4,66 @@ The StepMania 5 Changelog covers all post-sm-ssc changes. For a list of changes
 from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
+2012/12/24
+----------
+* [ScreenDebugOverlay] Don't reset the gamestate when reloading screens. Reloading
+   ScreenSelectMusic or any other screen which relies on that works now. [shakesoda]
+* [RageUtil] Fix math.random() never returning > 0.5. [vyhd]
+
+2012/12/18
+----------
+* [default] Fix Final Stage not appearing on StageInformation if a Long or Marathon song is
+   played as the last song. [FSX]
+* [fallback] Add Song:GetStageCost() [FSX]
+
+2012/12/17
+----------
+* [Font] Fix a unicode-related crash which would sometimes happen on SMO. [shakesoda]
+* [GameState] Fix arrow stuttering for cases where you get duplicated values between
+   updates. This helped significantly for PulseAudio on Ubuntu 12.04, for me. [shakesoda]
+
+2012/12/13
+----------
+* [RageDisplay_GLES2] Carry over a bunch of functionality from RageDisplay_OGL, still not
+   usable however. [shakesoda]
+
+2012/11/26
+----------
+* [ScreenSelectMusic] Only unchoose steps if there are more than 10 seconds on the timer
+   to prevent unchoosing steps for an infinite timer. [Marcio Barrientos]
+
 2012/11/22
 ----------
 * [ProfileManager] Added SaveProfile, SaveLocalProfile, GetLocalProfileIDs,
   ProfileFromMemoryCardIsNew, GetSongNumTimesPlayed, LocalProfileIDToDir, and
   GetLocalProfileDisplayNames Lua bindings. [Alfred Sorenson]
 * [Profile] Add GetGUID Lua binding. [Alfred Sorenson]
+
+2012/11/13
+----------
+* [RageDisplay_OGL] Try to fix the shader compilation crash once and for all. [shakesoda]
+
+2012/10/31
+----------
+* [RageDisplay_GLES2] Initial GLES2 commit. Not functional. [shakesoda]
+
+2012/10/20
+----------
+* [NotesLoaderSMA] Fix default speed length for SMA files. [Aldo MX]
+* [NotesLoaderSMA] First segment required a zero. [Aldo MX]
+
+
+2012/10/17
+----------
+* [ScreenEdit] Don't allow ratings of 0. [shakesoda]
+
+2012/08/10
+----------
+* [InputHandler_Linux_PIUIO] Add interface to PIUIO kernel module. [djpohly]
+
+2012/08/04
+----------
+* General theme updates: made things faster, title menu updated. [Midiman]
 
 2012/07/26
 ----------
