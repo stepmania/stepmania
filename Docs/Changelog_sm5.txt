@@ -4,6 +4,14 @@ The StepMania 5 Changelog covers all post-sm-ssc changes. For a list of changes
 from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
+================================================================================
+StepMania 5.0 beta 1 | 20121225
+--------------------------------------------------------------------------------
+
+2012/12/25
+----------
+* [PlayerStageStats] Remove SetScore and SetCurMaxScore Lua bindings. [FSX]
+
 2012/12/24
 ----------
 * [ScreenDebugOverlay] Don't reset the gamestate when reloading screens. Reloading
