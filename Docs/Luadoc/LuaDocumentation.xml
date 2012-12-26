@@ -3301,12 +3301,6 @@ save yourself some time, copy this for undocumented things:
 	<Function name='IsDisqualified' return='bool' arguments=''>
 		Returns <code>true</code> if the player was disqualified from ranking.
 	</Function>
-	<Function name='SetCurMaxScore' return='int' arguments=''>
-		Sets the current possible maximum score.
-	</Function>
-	<Function name='SetScore' return='void' arguments='int iScore'>
-		Sets the Player's score to <code>iScore</code>.
-	</Function>
 </Class>
 <Class name='PlayerState'>
 	<Function name='GetCurrentPlayerOptions' return='PlayerOptions' arguments='' >

@@ -1135,8 +1135,6 @@
 			<Function name='GetTapNoteScores'/>
 			<Function name='IsDisqualified'/>
 			<Function name='MaxCombo'/>
-			<Function name='SetCurMaxScore'/>
-			<Function name='SetScore'/>
 		</Class>
 		<Class name='PlayerState'>
 			<Function name='GetCurrentPlayerOptions'/>
