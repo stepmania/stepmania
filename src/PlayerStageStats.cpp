@@ -744,24 +744,6 @@ public:
 
 	static int GetRadarPossible( T* p, lua_State *L ) { p->m_radarPossible.PushSelf(L); return 1; }
 	static int GetRadarActual( T* p, lua_State *L ) { p->m_radarActual.PushSelf(L); return 1; }
-	static int SetScore( T* p, lua_State *L )                
-	{ 
-		if( IArg(1) >= 0 )
-		{ 
-			p->m_iScore = IArg(1); 
-			return 1; 
-		} 
-		return 0; 
-	}
-	static int SetCurMaxScore( T* p, lua_State *L )
-	{
-		if( IArg(1) >= 0 )
-		{
-			p->m_iCurMaxScore = IArg(1);
-			return 1;
-		}
-		return 0;
-	}
   
 	static int FailPlayer( T* p, lua_State *L )
 	{
@@ -806,9 +788,7 @@ public:
 		ADD_METHOD( GetRadarPossible );
 		ADD_METHOD( GetBestFullComboTapNoteScore );
 		ADD_METHOD( GetFailed );
-		ADD_METHOD( SetScore );
 		ADD_METHOD( GetCurMaxScore );
-		ADD_METHOD( SetCurMaxScore );
 		ADD_METHOD( FailPlayer );
 		ADD_METHOD( GetSongsPassed );
 		ADD_METHOD( GetSongsPlayed );
