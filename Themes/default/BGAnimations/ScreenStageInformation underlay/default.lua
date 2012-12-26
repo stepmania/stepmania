@@ -4,6 +4,7 @@ if playMode ~= 'PlayMode_Regular' and playMode ~= 'PlayMode_Rave' and playMode ~
 end;
 local sStage = GAMESTATE:GetCurrentStage();
 local tRemap = {
+	Stage_Event		= 0,
 	Stage_1st		= 1,
 	Stage_2nd		= 2,
 	Stage_3rd		= 3,
