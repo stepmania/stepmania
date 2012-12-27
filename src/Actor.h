@@ -403,9 +403,9 @@ public:
 	void  AddRotationR( float rot );
 
 	void SetSkewX( float fAmount )			{ DestTweenState().fSkewX = fAmount; }
-	float GetSkewX( float fAmount ) const		{ return DestTweenState().fSkewX; }
+	float GetSkewX( float /* fAmount */ ) const		{ return DestTweenState().fSkewX; }
 	void SetSkewY( float fAmount )			{ DestTweenState().fSkewY = fAmount; }
-	float GetSkewY( float fAmount ) const		{ return DestTweenState().fSkewY; }
+	float GetSkewY( float /* fAmount */ ) const		{ return DestTweenState().fSkewY; }
 
 	float GetCropLeft() const			{ return DestTweenState().crop.left; }
 	float GetCropTop() const			{ return DestTweenState().crop.top; }
@@ -602,10 +602,10 @@ public:
 
 	// Animation
 	virtual int GetNumStates() const { return 1; }
-	virtual void SetState( int iNewState ) {}
+	virtual void SetState( int /* iNewState */ ) {}
 	virtual float GetAnimationLengthSeconds() const { return 0; }
-	virtual void SetSecondsIntoAnimation( float fSeconds ) {}
-	virtual void SetUpdateRate( float fRate ) {}
+	virtual void SetSecondsIntoAnimation( float ) {}
+	virtual void SetUpdateRate( float ) {}
 
 	HiddenPtr<LuaClass> m_pLuaInstance;
 

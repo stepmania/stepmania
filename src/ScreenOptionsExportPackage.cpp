@@ -88,12 +88,12 @@ void ScreenOptionsExportPackage::ProcessMenuStart( const InputEventPlus &input )
 
 // todo: process menu back in SubGroup mode
 
-void ScreenOptionsExportPackage::ImportOptions( int iRow, const vector<PlayerNumber> &vpns )
+void ScreenOptionsExportPackage::ImportOptions( int /* iRow */, const vector<PlayerNumber> & /* vpns */ )
 {
 
 }
 
-void ScreenOptionsExportPackage::ExportOptions( int iRow, const vector<PlayerNumber> &vpns )
+void ScreenOptionsExportPackage::ExportOptions( int /* iRow */, const vector<PlayerNumber> & /* vpns */ )
 {
 
 }

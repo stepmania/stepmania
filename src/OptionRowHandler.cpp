@@ -399,7 +399,7 @@ class OptionRowHandlerListNoteSkins : public OptionRowHandlerList
 // XXX: very similar to OptionRowHandlerSteps
 class OptionRowHandlerListSteps : public OptionRowHandlerList
 {
-	virtual void LoadInternal( const Commands &cmds )
+	virtual void LoadInternal( const Commands & )
 	{
 		m_Def.m_sName = "Steps";
 		m_Def.m_bAllowThemeItems = false;	// we theme the text ourself
@@ -666,7 +666,7 @@ public:
 
 class OptionRowHandlerListCharacters: public OptionRowHandlerList
 {
-	virtual void LoadInternal( const Commands &cmds )
+	virtual void LoadInternal( const Commands & )
 	{
 		m_Def.m_bOneChoiceForAllPlayers = false;
 		m_Def.m_bAllowThemeItems = false;
@@ -699,7 +699,7 @@ class OptionRowHandlerListCharacters: public OptionRowHandlerList
 
 class OptionRowHandlerListStyles: public OptionRowHandlerList
 {
-	virtual void LoadInternal( const Commands &cmds )
+	virtual void LoadInternal( const Commands & )
 	{
 		m_Def.m_bOneChoiceForAllPlayers = true;
 		m_Def.m_sName = "Style";
@@ -722,7 +722,7 @@ class OptionRowHandlerListStyles: public OptionRowHandlerList
 
 class OptionRowHandlerListGroups: public OptionRowHandlerList
 {
-	virtual void LoadInternal( const Commands &cmds )
+	virtual void LoadInternal( const Commands & )
 	{
 		m_Def.m_bOneChoiceForAllPlayers = true;
 		m_Def.m_bAllowThemeItems = false;	// we theme the text ourself
@@ -752,7 +752,7 @@ class OptionRowHandlerListGroups: public OptionRowHandlerList
 
 class OptionRowHandlerListDifficulties: public OptionRowHandlerList
 {
-	virtual void LoadInternal( const Commands &cmds )
+	virtual void LoadInternal( const Commands & )
 	{
 		m_Def.m_bOneChoiceForAllPlayers = true;
 		m_Def.m_sName = "Difficulty";
@@ -783,7 +783,7 @@ class OptionRowHandlerListDifficulties: public OptionRowHandlerList
 // XXX: very similar to OptionRowHandlerSongChoices
 class OptionRowHandlerListSongsInCurrentSongGroup: public OptionRowHandlerList
 {
-	virtual void LoadInternal( const Commands &cmds )
+	virtual void LoadInternal( const Commands & )
 	{
 		const vector<Song*> &vpSongs = SONGMAN->GetSongs( GAMESTATE->m_sPreferredSongGroup );
 
@@ -1139,7 +1139,7 @@ public:
 
 		m_Def.m_sName = m_pOpt->name;
 	}
-	virtual void ImportOption( OptionRow *pRow, const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const
+	virtual void ImportOption( OptionRow *, const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const
 	{
 		FOREACH_CONST( PlayerNumber, vpns, pn )
 		{

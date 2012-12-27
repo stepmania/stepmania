@@ -98,7 +98,7 @@ public:
 	virtual RageFileBasic *Copy() const { FAIL_M( "Copying unimplemented" ); }
 
 protected:
-	virtual int SeekInternal( int iOffset ) { FAIL_M( "Seeking unimplemented" ); }
+	virtual int SeekInternal( int /* iOffset */ ) { FAIL_M( "Seeking unimplemented" ); }
 	virtual int ReadInternal( void *pBuffer, size_t iBytes ) = 0;
 	virtual int WriteInternal( const void *pBuffer, size_t iBytes ) = 0;
 	virtual int FlushInternal() { return 0; }

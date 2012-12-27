@@ -1493,7 +1493,7 @@ void ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 }
 
 
-void ScreenSelectMusic::MenuBack( const InputEventPlus &input )
+void ScreenSelectMusic::MenuBack( const InputEventPlus & /* input */ )
 {
 	// Handle unselect song (ffff)
 	// todo: this isn't right at all. -aj

@@ -96,7 +96,7 @@ protected:
 	virtual void GetUSBStorageDevices( vector<UsbStorageDevice>& vDevicesOut ) { }
 
 	/* Test the device.  On failure, call pDevice->SetError() appropriately, and return false. */
-	virtual bool TestWrite( UsbStorageDevice* pDevice ) { return true; }
+	virtual bool TestWrite( UsbStorageDevice* ) { return true; }
 
 private:
 	vector<UsbStorageDevice> m_vDevicesLastSeen;

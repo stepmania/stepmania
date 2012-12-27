@@ -38,7 +38,7 @@ public:
 
 	// Override to find out whether the controller is currently plugged in.
 	// Not all InputHandlers will support this.  Not applicable to all InputHandlers.
-	virtual InputDeviceState GetInputDeviceState( InputDevice id ) { return InputDeviceState_Connected; }
+	virtual InputDeviceState GetInputDeviceState( InputDevice /* id */ ) { return InputDeviceState_Connected; }
 
 	/* In Windows, some devices need to be recreated if we recreate our main window.
 	 * Override this if you need to do that. */

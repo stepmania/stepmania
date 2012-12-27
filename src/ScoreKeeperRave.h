@@ -9,11 +9,11 @@ class ScoreKeeperRave : public ScoreKeeper
 {
 public:
 	ScoreKeeperRave( PlayerState *pPlayerState, PlayerStageStats *pPlayerStageStats );
-	void OnNextSong( int iSongInCourseIndex, const Steps *pSteps, const NoteData *pNoteData ) { }
+	void OnNextSong( int /* iSongInCourseIndex */, const Steps *, const NoteData * ) { }
 	void HandleTapScore( const TapNote &tn );
 	void HandleTapRowScore( const NoteData &nd, int iRow );
 	void HandleHoldScore( const TapNote &tn );
-	void HandleHoldActiveSeconds( float fMusicSecondsHeld ) {}
+	void HandleHoldActiveSeconds( float /* fMusicSecondsHeld */ ) {}
 	void HandleTapScoreNone();
 
 protected:

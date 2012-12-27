@@ -100,7 +100,7 @@ void ScreenEditMenu::HandleScreenMessage( const ScreenMessage SM )
 	ScreenWithMenuElements::HandleScreenMessage( SM );
 }
 
-void ScreenEditMenu::MenuUp( const InputEventPlus &input )
+void ScreenEditMenu::MenuUp( const InputEventPlus & )
 {
 	if( m_Selector.CanGoUp() )
 	{
@@ -109,7 +109,7 @@ void ScreenEditMenu::MenuUp( const InputEventPlus &input )
 	}
 }
 
-void ScreenEditMenu::MenuDown( const InputEventPlus &input )
+void ScreenEditMenu::MenuDown( const InputEventPlus & )
 {
 	if( m_Selector.CanGoDown() )
 	{
@@ -118,7 +118,7 @@ void ScreenEditMenu::MenuDown( const InputEventPlus &input )
 	}
 }
 
-void ScreenEditMenu::MenuLeft( const InputEventPlus &input )
+void ScreenEditMenu::MenuLeft( const InputEventPlus & )
 {
 	if( m_Selector.CanGoLeft() )
 	{
@@ -126,7 +126,7 @@ void ScreenEditMenu::MenuLeft( const InputEventPlus &input )
 	}
 }
 
-void ScreenEditMenu::MenuRight( const InputEventPlus &input )
+void ScreenEditMenu::MenuRight( const InputEventPlus & )
 {
 	if( m_Selector.CanGoRight() )
 	{
@@ -157,7 +157,8 @@ static LocalizedString DELETED_AUTOGEN_STEPS	( "ScreenEditMenu", "These steps ar
 static LocalizedString STEPS_WILL_BE_LOST	( "ScreenEditMenu", "These steps will be lost permanently." );
 static LocalizedString CONTINUE_WITH_DELETE	( "ScreenEditMenu", "Continue with delete?" );
 static LocalizedString ENTER_EDIT_DESCRIPTION	( "ScreenEditMenu", "Enter a description for this edit.");
-void ScreenEditMenu::MenuStart( const InputEventPlus &input )
+
+void ScreenEditMenu::MenuStart( const InputEventPlus & )
 {
 	if( IsTransitioning() )
 		return;

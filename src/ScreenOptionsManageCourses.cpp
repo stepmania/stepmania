@@ -213,7 +213,7 @@ void ScreenOptionsManageCourses::MenuSelect( const InputEventPlus &input )
 
 static LocalizedString YOU_HAVE_MAX( "ScreenOptionsManageCourses", "You have %d, the maximum number allowed." );
 static LocalizedString YOU_MUST_DELETE( "ScreenOptionsManageCourses", "You must delete an existing before creating a new." );
-void ScreenOptionsManageCourses::ProcessMenuStart( const InputEventPlus &input )
+void ScreenOptionsManageCourses::ProcessMenuStart( const InputEventPlus & )
 {
 	if( IsTransitioning() )
 		return;

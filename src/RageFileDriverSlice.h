@@ -17,7 +17,7 @@ public:
 	void DeleteFileWhenFinished() { m_bFileOwned = true; }
 
 	int ReadInternal( void *pBuffer, size_t iBytes );
-	int WriteInternal( const void *pBuffer, size_t iBytes ) { SetError( "Not implemented" ); return -1; }
+	int WriteInternal( const void * /* pBuffer */, size_t /* iBytes */ ) { SetError( "Not implemented" ); return -1; }
 	int SeekInternal( int iOffset );
 	int GetFileSize() const { return m_iFileSize; }
 	int GetFD() { return m_pFile->GetFD(); }

@@ -17,25 +17,25 @@ public:
 	void EndFrame();
 	VideoModeParams GetActualVideoModeParams() const { return m_Params; }
 	void SetBlendMode( BlendMode ) { }
-	bool SupportsTextureFormat( PixelFormat, bool realtime=false ) { return true; }
+	bool SupportsTextureFormat( PixelFormat, bool /* realtime */ =false ) { return true; }
 	bool SupportsPerVertexMatrixScale() { return false; }
 	unsigned CreateTexture( 
 		PixelFormat, 
 		RageSurface* /* img */,
 		bool /* bGenerateMipMaps */ ) { return 1; }
 	void UpdateTexture( 
-		unsigned iTexHandle, 
-		RageSurface* img,
-		int xoffset, int yoffset, int width, int height 
+		unsigned /* iTexHandle */, 
+		RageSurface* /* img */,
+		int /* xoffset */, int /* yoffset */, int /* width */, int /* height */ 
 		) { }
 	void DeleteTexture( unsigned /* iTexHandle */ ) { }
 	void ClearAllTextures() { }
 	int GetNumTextureUnits() { return 1; }
-	void SetTexture( TextureUnit tu, unsigned iTexture ) { }
-	void SetTextureMode( TextureUnit tu, TextureMode tm ) { }
-	void SetTextureWrapping( TextureUnit tu, bool ) { }
+	void SetTexture( TextureUnit, unsigned /* iTexture */ ) { }
+	void SetTextureMode( TextureUnit, TextureMode ) { }
+	void SetTextureWrapping( TextureUnit, bool ) { }
 	int GetMaxTextureSize() const { return 2048; }
-	void SetTextureFiltering( TextureUnit tu, bool ) { }
+	void SetTextureFiltering( TextureUnit, bool ) { }
 	bool IsZWriteEnabled() const { return false; }
 	bool IsZTestEnabled() const { return false; }
 	void SetZWrite( bool ) { }
@@ -54,7 +54,7 @@ public:
 	void SetLighting( bool ) { }
 	void SetLightOff( int /* index */ ) { }
 	void SetLightDirectional( 
-		int index, 
+		int /* index */, 
 		const RageColor & /* unreferenced: ambient */, 
 		const RageColor & /* unreferenced: diffuse */, 
 		const RageColor & /* unreferenced: specular */, 
@@ -67,14 +67,14 @@ public:
 	void DeleteCompiledGeometry( RageCompiledGeometry* );
 
 protected:
-	void DrawQuadsInternal( const RageSpriteVertex v[], int iNumVerts ) { }
-	void DrawQuadStripInternal( const RageSpriteVertex v[], int iNumVerts ) { }
-	void DrawFanInternal( const RageSpriteVertex v[], int iNumVerts ) { }
-	void DrawStripInternal( const RageSpriteVertex v[], int iNumVerts ) { }
-	void DrawTrianglesInternal( const RageSpriteVertex v[], int iNumVerts ) { }
-	void DrawCompiledGeometryInternal( const RageCompiledGeometry *p, int iMeshIndex ) { }
-	void DrawLineStripInternal( const RageSpriteVertex v[], int iNumVerts, float LineWidth ) { }
-	void DrawSymmetricQuadStripInternal( const RageSpriteVertex v[], int iNumVerts ) { }
+	void DrawQuadsInternal( const RageSpriteVertex v[], int /* iNumVerts */ ) { }
+	void DrawQuadStripInternal( const RageSpriteVertex v[], int /* iNumVerts */ ) { }
+	void DrawFanInternal( const RageSpriteVertex v[], int /* iNumVerts */ ) { }
+	void DrawStripInternal( const RageSpriteVertex v[], int /* iNumVerts */ ) { }
+	void DrawTrianglesInternal( const RageSpriteVertex v[], int /* iNumVerts */ ) { }
+	void DrawCompiledGeometryInternal( const RageCompiledGeometry *p, int /* iMeshIndex */ ) { }
+	void DrawLineStripInternal( const RageSpriteVertex v[], int /* iNumVerts */, float /* LineWidth */ ) { }
+	void DrawSymmetricQuadStripInternal( const RageSpriteVertex v[], int /* iNumVerts */ ) { }
 
 	VideoModeParams m_Params;
 	RString TryVideoMode( const VideoModeParams &p, bool & /* bNewDeviceOut */ ) { m_Params = p; return RString(); }

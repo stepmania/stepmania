@@ -331,7 +331,7 @@ void ScreenOptionsManageProfiles::AfterChangeRow( PlayerNumber pn )
 	ScreenOptions::AfterChangeRow( pn );
 }
 
-void ScreenOptionsManageProfiles::ProcessMenuStart( const InputEventPlus &input )
+void ScreenOptionsManageProfiles::ProcessMenuStart( const InputEventPlus & )
 {
 	if( IsTransitioning() )
 		return;
@@ -392,12 +392,12 @@ void ScreenOptionsManageProfiles::ProcessMenuStart( const InputEventPlus &input 
 	}
 }
 
-void ScreenOptionsManageProfiles::ImportOptions( int iRow, const vector<PlayerNumber> &vpns )
+void ScreenOptionsManageProfiles::ImportOptions( int /* iRow */, const vector<PlayerNumber> & /* vpns */ )
 {
 
 }
 
-void ScreenOptionsManageProfiles::ExportOptions( int iRow, const vector<PlayerNumber> &vpns )
+void ScreenOptionsManageProfiles::ExportOptions( int /* iRow */, const vector<PlayerNumber> & /* vpns */ )
 {
 
 }

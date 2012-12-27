@@ -158,7 +158,7 @@ public:
 	RString OptionTitle() const;
 	RString GetThemedItemText( int iChoice ) const;
 
-	virtual void LoadInternal( const Commands &cmds ) { }
+	virtual void LoadInternal( const Commands & ) { }
 
 	/* We may re-use OptionRowHandlers. This is called before each use. If the
 	 * contents of the row are dependent on external state (for example, the
@@ -173,11 +173,11 @@ public:
 	virtual ReloadChanged Reload() { return RELOAD_CHANGED_NONE; }
 
 	virtual int GetDefaultOption() const { return -1; }
-	virtual void ImportOption( OptionRow *pRow, const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const { }
+	virtual void ImportOption( OptionRow *, const vector<PlayerNumber> &, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const { }
 	// Returns an OPT mask.
-	virtual int ExportOption( const vector<PlayerNumber> &vpns, const vector<bool> vbSelected[NUM_PLAYERS] ) const { return 0; }
+	virtual int ExportOption( const vector<PlayerNumber> &, const vector<bool> vbSelected[NUM_PLAYERS] ) const { return 0; }
 	virtual void GetIconTextAndGameCommand( int iFirstSelection, RString &sIconTextOut, GameCommand &gcOut ) const;
-	virtual RString GetScreen( int iChoice ) const { return RString(); }
+	virtual RString GetScreen( int /* iChoice */ ) const { return RString(); }
 };
 
 /** @brief Utilities for the OptionRowHandlers. */

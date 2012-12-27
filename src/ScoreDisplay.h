@@ -13,14 +13,14 @@ class ScoreDisplay : public ActorFrame
 public:
 	virtual void Init( const PlayerState* pPlayerState, const PlayerStageStats* pPlayerStageStats );
 
-	virtual void SetScore( int iNewScore ) {}
+	virtual void SetScore( int ) {}
 	virtual void OnLoadSong() {};
 	/* Notification of a tap note judgment. This *is* called for the head of
 	 * hold notes. */
-	virtual void OnJudgment( TapNoteScore score ) {};
+	virtual void OnJudgment( TapNoteScore ) {};
 	/* Notification of a hold judgment. tscore is the score received for the
 	 * initial tap note. */
-	virtual void OnJudgment( HoldNoteScore score, TapNoteScore tscore ) {};
+	virtual void OnJudgment( HoldNoteScore, TapNoteScore ) {};
 
 protected:
 	const PlayerState* m_pPlayerState;	// needed to look up stats

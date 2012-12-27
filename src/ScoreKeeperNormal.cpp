@@ -161,7 +161,7 @@ void ScoreKeeperNormal::Load(
 	m_iRoundTo = 1;
 }
 
-void ScoreKeeperNormal::OnNextSong( int iSongInCourseIndex, const Steps* pSteps, const NoteData* pNoteData )
+void ScoreKeeperNormal::OnNextSong( int, const Steps* pSteps, const NoteData* )
 {
 
 	m_bIsBeginner = pSteps->GetDifficulty() == Difficulty_Beginner && !GAMESTATE->IsCourseMode();

@@ -12,17 +12,17 @@ class RageTexture
 public:
 	RageTexture( RageTextureID file );
 	virtual ~RageTexture() = 0;
-	virtual void Update( float fDeltaTime ) {}
+	virtual void Update( float /* fDeltaTime */ ) {}
 	virtual void Reload() {}
 	virtual void Invalidate() { }	/* only called by RageTextureManager::InvalidateTextures */
 	virtual unsigned GetTexHandle() const = 0;	// accessed by RageDisplay
 
 	// movie texture/animated texture stuff
-	virtual void SetPosition( float fSeconds ) {} // seek
-	virtual void DecodeSeconds( float fSeconds ) {} // decode
-	virtual void SetPlaybackRate( float fRate ) {}
+	virtual void SetPosition( float /* fSeconds */ ) {} // seek
+	virtual void DecodeSeconds( float /* fSeconds */ ) {} // decode
+	virtual void SetPlaybackRate( float ) {}
 	virtual bool IsAMovie() const { return false; }
-	virtual void SetLooping(bool looping) { }
+	virtual void SetLooping(bool) { }
 
 	int GetSourceWidth() const	{return m_iSourceWidth;}
 	int GetSourceHeight() const {return m_iSourceHeight;}

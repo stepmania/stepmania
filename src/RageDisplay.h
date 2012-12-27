@@ -242,7 +242,7 @@ public:
 	 * DeleteTexture. (UpdateTexture is not permitted.) Returns 0 if render-to-
 	 * texture is unsupported.
 	 */
-	virtual unsigned CreateRenderTarget( const RenderTargetParam &param, int &iTextureWidthOut, int &iTextureHeightOut ) { return 0; }
+	virtual unsigned CreateRenderTarget( const RenderTargetParam &, int & /* iTextureWidthOut */, int & /* iTextureHeightOut */ ) { return 0; }
 
 	/* Set the render target, or 0 to resume rendering to the framebuffer. An active render
 	 * target may not be used as a texture. If bPreserveTexture is true, the contents
@@ -299,8 +299,8 @@ public:
 	void DrawQuad( const RageSpriteVertex v[] ) { DrawQuads(v,4); } /* alias. upper-left, upper-right, lower-left, lower-right */
 
 	// hacks for cell-shaded models
-	virtual void SetPolygonMode( PolygonMode pm ) {}
-	virtual void SetLineWidth( float fWidth ) {}
+	virtual void SetPolygonMode( PolygonMode ) {}
+	virtual void SetLineWidth( float ) {}
 
 	enum GraphicsFileFormat
 	{
@@ -311,9 +311,9 @@ public:
 	};
 	bool SaveScreenshot( RString sPath, GraphicsFileFormat format );
 
-	virtual RString GetTextureDiagnostics( unsigned id ) const { return RString(); }
+	virtual RString GetTextureDiagnostics( unsigned /* id */ ) const { return RString(); }
 	virtual RageSurface* CreateScreenshot() = 0;	// allocates a surface.  Caller must delete it.
-	virtual RageSurface *GetTexture( unsigned iTexture ) { return NULL; } // allocates a surface.  Caller must delete it.
+	virtual RageSurface *GetTexture( unsigned /* iTexture */ ) { return NULL; } // allocates a surface.  Caller must delete it.
 
 protected:
 	virtual void DrawQuadsInternal( const RageSpriteVertex v[], int iNumVerts ) = 0;
