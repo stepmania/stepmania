@@ -2966,8 +2966,7 @@ const Style* GameManager::GetHowToPlayStyleForGame( const Game *pGame )
 			return style;
 	}
 
-	ASSERT(0);	// this Game is missing a Style that can be used with HowToPlay
-	return NULL;
+	FAIL_M(ssprintf("Game has no Style that can be used with HowToPlay: %s", pGame->m_szName));
 }
 
 void GameManager::GetCompatibleStyles( const Game *pGame, int iNumPlayers, vector<const Style*> &vpStylesOut )
@@ -3052,8 +3051,7 @@ int GameManager::GetIndexFromGame( const Game* pGame )
 		if( g_Games[g] == pGame )
 			return g;
 	}
-	ASSERT(0);
-	return 0;
+	FAIL_M(ssprintf("Game not found: %s", pGame->m_szName));
 }
 
 const Game* GameManager::GetGameFromIndex( int index )

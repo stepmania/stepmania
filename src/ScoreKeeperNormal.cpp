@@ -27,7 +27,8 @@ void PercentScoreWeightInit( size_t /*ScoreEvent*/ i, RString &sNameOut, int &de
 	sNameOut = "PercentScoreWeight" + ScoreEventToString( (ScoreEvent)i );
 	switch( i )
 	{
-	default:		ASSERT(0);
+	default:
+		FAIL_M(ssprintf("Invalid ScoreEvent: %i", i));
 	case SE_W1:		defaultValueOut = 3;	break;
 	case SE_W2:		defaultValueOut = 2;	break;
 	case SE_W3:		defaultValueOut = 1;	break;
@@ -47,7 +48,8 @@ void GradeWeightInit( size_t /*ScoreEvent*/ i, RString &sNameOut, int &defaultVa
 	sNameOut = "GradeWeight" + ScoreEventToString( (ScoreEvent)i );
 	switch( i )
 	{
-	default:		ASSERT(0);
+	default:
+		FAIL_M(ssprintf("Invalid ScoreEvent: %i", i));
 	case SE_W1:		defaultValueOut = 2;	break;
 	case SE_W2:		defaultValueOut = 2;	break;
 	case SE_W3:		defaultValueOut = 1;	break;

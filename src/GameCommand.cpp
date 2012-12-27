@@ -690,7 +690,7 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 			}
 			break;
 		default:
-			ASSERT(0);
+			FAIL_M(ssprintf("Invalid StyleType: %i", m_pStyle->m_StyleType));
 		}
 	}
 	if( m_dc != Difficulty_Invalid )

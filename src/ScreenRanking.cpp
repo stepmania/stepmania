@@ -238,7 +238,8 @@ float ScreenRanking::SetPage( const PageToShow &pts )
 		m_textTime[l].SetDiffuseColor( STEPS_TYPE_COLOR.GetValue(pts.colorIndex) );
 	}
 
-	switch( RANKING_TYPE )
+	RankingType rtype = RANKING_TYPE;
+	switch( rtype )
 	{
 	case RankingType_Category:
 		{
@@ -332,8 +333,7 @@ float ScreenRanking::SetPage( const PageToShow &pts )
 		}
 		return SECONDS_PER_PAGE;
 	default:
-		ASSERT(0);
-		return 0;
+		FAIL_M(ssprintf("Invalid RankingType: %i", rtype));
 	}
 }
 

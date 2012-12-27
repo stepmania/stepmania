@@ -183,10 +183,8 @@ static BOOL CALLBACK ErrorWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lP
 			break;
 		case IDC_BUTTON_RESTART:
 			Win32RestartProgram();
-			// not reached
-			ASSERT( 0 );
-			EndDialog( hWnd, 0 );
-			break;
+			// Possibly make W32RP a NORETURN call?
+			FAIL_M("Win32RestartProgram failed?");
 		case IDOK:
 			EndDialog( hWnd, 0 );
 			break;
@@ -242,8 +240,9 @@ Dialog::Result DialogDriver_Win32::AbortRetryIgnore( RString sMessage, RString I
 	{
 	case IDABORT:	return Dialog::abort;
 	case IDRETRY:	return Dialog::retry;
-	default:	ASSERT(0);
 	case IDIGNORE:	return Dialog::ignore;
+	default:
+		FAIL_M(ssprintf("Unexpected response to Abort/Retry/Ignore dialog: %i", iRet));
 	}
 } 
 
@@ -258,8 +257,9 @@ Dialog::Result DialogDriver_Win32::AbortRetry( RString sMessage, RString sID )
 	switch( iRet )
 	{
 	case IDRETRY:	return Dialog::retry;
-	default:	ASSERT(0);
 	case IDCANCEL:	return Dialog::abort;
+	default:
+		FAIL_M(ssprintf("Unexpected response to Retry/Cancel dialog: %i", iRet));
 	}
 } 
 
@@ -274,8 +274,9 @@ Dialog::Result DialogDriver_Win32::YesNo( RString sMessage, RString sID )
 	switch( iRet )
 	{
 	case IDYES:	return Dialog::yes;
-	default:	ASSERT(0);
 	case IDNO:	return Dialog::no;
+	default:
+		FAIL_M(ssprintf("Unexpected response to Yes/No dialog: %i", iRet));
 	}
 }
 

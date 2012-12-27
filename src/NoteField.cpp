@@ -1099,7 +1099,8 @@ void NoteField::DrawPrimitives()
 		if( !GAMESTATE->m_bIsUsingStepTiming )
 		{
 			// BGChange text
-			switch( GAMESTATE->m_EditMode )
+			EditMode mode = GAMESTATE->m_EditMode;
+			switch( mode )
 			{
 				case EditMode_Home:
 				case EditMode_CourseMods:
@@ -1161,7 +1162,7 @@ void NoteField::DrawPrimitives()
 					}
 					break;
 				default:
-					ASSERT(0);
+					FAIL_M(ssprintf("Invalid edit mode: %i", mode));
 			}
 		}
 

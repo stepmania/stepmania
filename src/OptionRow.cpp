@@ -379,7 +379,7 @@ void OptionRow::InitText( RowType type )
 		break;
 
 	default:
-		ASSERT(0);
+		FAIL_M(ssprintf("Invalid option row layout: %i", m_pHand->m_Def.m_layoutType));
 	}
 
 	for( unsigned c=0; c<m_textItems.size(); c++ )
@@ -632,7 +632,7 @@ void OptionRow::UpdateEnabledDisabled()
 		}
 		break;
 	default:
-		ASSERT(0);
+		FAIL_M(ssprintf("Invalid option row layout: %i", m_pHand->m_Def.m_layoutType));
 	}
 }
 
@@ -671,7 +671,7 @@ const BitmapText &OptionRow::GetTextItemForRow( PlayerNumber pn, int iChoiceOnRo
 		index = iChoiceOnRow;
 		break;
 	default:
-		ASSERT(0);
+		FAIL_M(ssprintf("Invalid option row layout: %i", m_pHand->m_Def.m_layoutType));
 	}
 
 	ASSERT_M( index < (int)m_textItems.size(), ssprintf("%i < %i", index, (int)m_textItems.size() ) );

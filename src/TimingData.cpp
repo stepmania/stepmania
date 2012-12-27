@@ -304,7 +304,7 @@ const TimingSegment* TimingData::GetSegmentAtRow( int iNoteRow, TimingSegmentTyp
 		}
 	}
 
-	ASSERT( 0 );
+	FAIL_M("Could not find timing segment for row");
 }
 
 TimingSegment* GetSegmentAtRow( int iNoteRow, TimingSegmentType tst )
@@ -954,8 +954,7 @@ void TimingData::NoteRowToMeasureAndBeat( int iNoteRow, int &iMeasureIndexOut, i
 		}
 	}
 
-	ASSERT(0);
-	return;
+	FAIL_M("Failed to get measure and beat for note row");
 }
 
 vector<RString> TimingData::ToVectorString(TimingSegmentType tst, int dec) const

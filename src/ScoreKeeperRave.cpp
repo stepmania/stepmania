@@ -127,7 +127,8 @@ void ScoreKeeperRave::AddSuperMeterDelta( float fUnscaledPercentChange )
 		{
 		case PLAYER_1:	fLifePercentage = GAMESTATE->m_fTugLifePercentP1;		break;
 		case PLAYER_2:	fLifePercentage = 1 - GAMESTATE->m_fTugLifePercentP1;	break;
-		default:	ASSERT(0);
+		default:
+			FAIL_M(ssprintf("Invalid player number: %i", m_pPlayerState->m_PlayerNumber));
 		}
 		CLAMP( fLifePercentage, 0.f, 1.f );
 		if( fUnscaledPercentChange > 0 )
@@ -163,7 +164,9 @@ void ScoreKeeperRave::AddSuperMeterDelta( float fUnscaledPercentChange )
 		{
 		case PLAYER_1:	bWinning = GAMESTATE->m_fTugLifePercentP1 > 0.5f;	break;
 		case PLAYER_2:	bWinning = GAMESTATE->m_fTugLifePercentP1 < 0.5f;	break;
-		default:		bWinning = false; ASSERT(0);
+		default:
+			bWinning = false;
+			FAIL_M(ssprintf("Invalid player number: %i", m_pPlayerState->m_PlayerNumber));
 		}
 		if( !bWinning )
 			m_pPlayerState->EndActiveAttacks();

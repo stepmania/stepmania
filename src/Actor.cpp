@@ -442,7 +442,7 @@ void Actor::BeginDraw()		// set the world matrix and calculate actor properties
 			}
 			break;
 		default:
-			ASSERT(0);	// invalid Effect
+			FAIL_M(ssprintf("Invalid effect: %i", m_Effect));
 		}
 	}
 
@@ -856,13 +856,10 @@ void Actor::SetEffectClockString( const RString &s )
 	else
 	{
 		CabinetLight cl = StringToCabinetLight( s );
-		if( cl != CabinetLight_Invalid )
-		{
-			this->SetEffectClock( (EffectClock) (cl + CLOCK_LIGHT_1) );
-			return;
-		}
-		else
-			ASSERT(0);
+		if( cl == CabinetLight_Invalid )
+			FAIL_M(ssprintf("Invalid cabinet light: %s", s.c_str()));
+
+		this->SetEffectClock( (EffectClock) (cl + CLOCK_LIGHT_1) );
 	}
 }
 

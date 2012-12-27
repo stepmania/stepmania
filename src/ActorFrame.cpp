@@ -186,10 +186,7 @@ void ActorFrame::MoveToTail( Actor* pActor )
 {
 	vector<Actor*>::iterator iter = find( m_SubActors.begin(), m_SubActors.end(), pActor );
 	if( iter == m_SubActors.end() )	// didn't find
-	{
-		ASSERT(0);	// called with a pActor that doesn't exist
-		return;
-	}
+		FAIL_M("Nonexistent actor");
 
 	m_SubActors.erase( iter );
 	m_SubActors.push_back( pActor );
@@ -199,10 +196,7 @@ void ActorFrame::MoveToHead( Actor* pActor )
 {
 	vector<Actor*>::iterator iter = find( m_SubActors.begin(), m_SubActors.end(), pActor );
 	if( iter == m_SubActors.end() )	// didn't find
-	{
-		ASSERT(0);	// called with a pActor that doesn't exist
-		return;
-	}
+		FAIL_M("Nonexistent actor");
 
 	m_SubActors.erase( iter );
 	m_SubActors.insert( m_SubActors.begin(), pActor );

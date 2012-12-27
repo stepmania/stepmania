@@ -1218,7 +1218,8 @@ bool GameState::IsHumanPlayer( PlayerNumber pn ) const
 			return true;	// if we can't join, then we're on a screen like MusicScroll or GameOver
 	}
 
-	switch( GetCurrentStyle()->m_StyleType )
+	StyleType type = GetCurrentStyle()->m_StyleType;
+	switch( type )
 	{
 	case StyleType_TwoPlayersTwoSides:
 	case StyleType_TwoPlayersSharedSides:
@@ -1227,8 +1228,7 @@ bool GameState::IsHumanPlayer( PlayerNumber pn ) const
 	case StyleType_OnePlayerTwoSides:
 		return pn == this->GetMasterPlayerNumber();
 	default:
-		ASSERT(0);		// invalid style type
-		return false;
+		FAIL_M(ssprintf("Invalid style type: %i", type));
 	}
 }
 
@@ -1544,15 +1544,15 @@ PlayerOptions::FailType GameState::GetPlayerFailType( const PlayerState *pPlayer
 
 bool GameState::ShowW1() const
 {
-	switch( PREFSMAN->m_AllowW1 )
+	AllowW1 pref = PREFSMAN->m_AllowW1;
+	switch( pref )
 	{
 	case ALLOW_W1_NEVER:		return false;
 	case ALLOW_W1_COURSES_ONLY:	return IsCourseMode();
 	case ALLOW_W1_EVERYWHERE:	return true;
-	default:	ASSERT(0);
+	default:
+		FAIL_M(ssprintf("Invalid AllowW1 preference: %i", pref));
 	}
-	// it should never hit here.
-	return false;
 }
 
 
@@ -1788,7 +1788,7 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 		}
 		break;
 	default:
-		ASSERT(0);
+		FAIL_M(ssprintf("Invalid play mode: %i", m_PlayMode));
 	}
 }
 
@@ -2088,7 +2088,7 @@ float GameState::GetGoalPercentComplete( PlayerNumber pn )
 	case GoalType_None:
 		return 0;	// never complete
 	default:
-		ASSERT(0);
+		FAIL_M(ssprintf("Invalid GoalType: %i", pProfile->m_GoalType));
 	}
 	if( fGoal == 0 )
 		return 0;

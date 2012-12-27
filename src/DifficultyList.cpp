@@ -168,7 +168,7 @@ void StepsDisplayList::UpdatePositions()
 		else if( second_end < (int) Rows.size() )
 			second_end++;
 		else
-			ASSERT(0); // do we have room to grow or don't we?
+			FAIL_M("Do we have room to grow, or don't we?");
 	}
 
 	int pos = 0;

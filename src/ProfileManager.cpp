@@ -580,10 +580,8 @@ const RString& ProfileManager::GetProfileDir( ProfileSlot slot ) const
 	case ProfileSlot_Machine:
 		return MACHINE_PROFILE_DIR;
 	default:
-		break;
+		FAIL_M("Invalid profile slot chosen: unable to get the directory!");
 	}
-	// it should never hit here.
-	FAIL_M("Invalid profile slot chosen: unable to get the directory!");
 }
 
 RString ProfileManager::GetProfileDirImportedFrom( ProfileSlot slot ) const
@@ -596,10 +594,8 @@ RString ProfileManager::GetProfileDirImportedFrom( ProfileSlot slot ) const
 	case ProfileSlot_Machine:
 		return RString();
 	default:
-		ASSERT(0);
+		FAIL_M("Invalid profile slot chosen: unable to get the directory!");
 	}
-	// it should never hit here.
-	return RString();
 }
 
 const Profile* ProfileManager::GetProfile( ProfileSlot slot ) const
@@ -612,10 +608,8 @@ const Profile* ProfileManager::GetProfile( ProfileSlot slot ) const
 	case ProfileSlot_Machine:
 		return m_pMachineProfile;
 	default:
-		ASSERT(0);
+		FAIL_M("Invalid profile slot chosen: unable to get the profile!");
 	}
-	// it should never hit here.
-	return NULL;
 }
 
 //
@@ -769,8 +763,7 @@ bool ProfileManager::IsPersistentProfile( ProfileSlot slot ) const
 	case ProfileSlot_Machine:
 		return true;
 	default:
-		ASSERT(0);
-		return false;
+		FAIL_M("Invalid profile slot chosen: unable to get profile info!");
 	}
 }
 

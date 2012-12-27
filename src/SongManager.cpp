@@ -1144,8 +1144,7 @@ Song *SongManager::GetSongFromSteps( Steps *pSteps ) const
 			}
 		}
 	}
-	ASSERT(0);
-	return NULL;
+	FAIL_M("No song found for steps");
 }
 
 void SongManager::DeleteSteps( Steps *pSteps )

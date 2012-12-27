@@ -171,7 +171,7 @@ void ScreenOptions::Init()
 		m_frameContainer.AddChild( &m_textExplanationTogether );
 		break;
 	default:
-		ASSERT(0);
+		FAIL_M(ssprintf("Invalid InputMode: %i", m_InputMode));
 	}
 
 	if( SHOW_SCROLL_BAR )
@@ -640,7 +640,7 @@ void ScreenOptions::PositionRows( bool bTween )
 		else if( second_end < (int) Rows.size() )
 			second_end++;
 		else
-			ASSERT(0); // do we have room to grow or don't we?
+			FAIL_M("Do we have room to grow or don't we?");
 	}
 
 	int pos = 0;
@@ -933,8 +933,7 @@ void ScreenOptions::ProcessMenuStart( const InputEventPlus &input )
 			break;
 		}
 		case NAV_THREE_KEY_MENU:
-			ASSERT(0); // unreachable
-			break;
+			FAIL_M("NAV_THREE_KEY_MENU should be unreachable");
 		case NAV_FIVE_KEY:
 			/* Jump to the exit row.  (If everyone's already on the exit row, then
 			 * we'll have already gone to the next screen above.) */

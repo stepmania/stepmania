@@ -148,7 +148,8 @@ void AdjustSync::HandleAutosync( float fNoteOffBySeconds, float fStepTime )
 {
 	if( GAMESTATE->IsCourseMode() )
 		return;
-	switch( GAMESTATE->m_SongOptions.GetCurrent().m_AutosyncType ) {
+	SongOptions::AutosyncType type = GAMESTATE->m_SongOptions.GetCurrent().m_AutosyncType;
+	switch( type ) {
 	case SongOptions::AUTOSYNC_OFF:
 		return;
 	case SongOptions::AUTOSYNC_TEMPO:
@@ -170,7 +171,7 @@ void AdjustSync::HandleAutosync( float fNoteOffBySeconds, float fStepTime )
 		break;
 	}
 	default:
-		ASSERT(0);
+		FAIL_M(ssprintf("Invalid autosync type: %i", type));
 	}
 }
 
@@ -192,7 +193,8 @@ void AdjustSync::AutosyncOffset()
 	const float stddev = calc_stddev( s_fAutosyncOffset, s_fAutosyncOffset+OFFSET_SAMPLE_COUNT );
 
 	RString sAutosyncType;
-	switch( GAMESTATE->m_SongOptions.GetCurrent().m_AutosyncType )
+	SongOptions::AutosyncType type = GAMESTATE->m_SongOptions.GetCurrent().m_AutosyncType;
+	switch( type )
 	{
 	case SongOptions::AUTOSYNC_SONG:
 		sAutosyncType = AUTOSYNC_SONG;
@@ -201,12 +203,12 @@ void AdjustSync::AutosyncOffset()
 		sAutosyncType = AUTOSYNC_MACHINE;
 		break;
 	default:
-		ASSERT(0);
+		FAIL_M(ssprintf("Invalid autosync type: %i", type));
 	}
 
 	if( stddev < .03f )  // If they stepped with less than .03 error
 	{
-		switch( GAMESTATE->m_SongOptions.GetCurrent().m_AutosyncType )
+		switch( type )
 		{
 			case SongOptions::AUTOSYNC_SONG:
 			{
@@ -223,7 +225,7 @@ void AdjustSync::AutosyncOffset()
 				PREFSMAN->m_fGlobalOffsetSeconds.Set( PREFSMAN->m_fGlobalOffsetSeconds + mean );
 				break;
 			default:
-				ASSERT(0);
+				FAIL_M(ssprintf("Invalid autosync type: %i", type));
 		}
 
 		SCREENMAN->SystemMessage( AUTOSYNC_CORRECTION_APPLIED.GetValue() );

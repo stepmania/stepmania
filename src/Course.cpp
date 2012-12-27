@@ -123,7 +123,8 @@ void Course::SetCourseType( CourseType ct )
 
 	switch( ct )
 	{
-	default:	ASSERT(0);
+	default:
+		FAIL_M(ssprintf("Invalid course type: %i", ct));
 	case COURSE_TYPE_NONSTOP:
 		break;
 	case COURSE_TYPE_ONI:
@@ -141,13 +142,15 @@ void Course::SetCourseType( CourseType ct )
 
 PlayMode Course::GetPlayMode() const
 {
-	switch( GetCourseType() )
+	CourseType ct = GetCourseType();
+	switch( ct )
 	{
 	case COURSE_TYPE_ENDLESS:	return PLAY_MODE_ENDLESS;
 	case COURSE_TYPE_ONI:		return PLAY_MODE_ONI;
 	case COURSE_TYPE_SURVIVAL:	return PLAY_MODE_ONI;
 	case COURSE_TYPE_NONSTOP:	return PLAY_MODE_NONSTOP;
-	default: ASSERT(0);		return PlayMode_Invalid;
+	default:
+		FAIL_M(ssprintf("Invalid course type: %i", ct));
 	}
 }
 

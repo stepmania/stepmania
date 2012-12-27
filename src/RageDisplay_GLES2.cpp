@@ -191,7 +191,8 @@ namespace
 				{
 				case 24: m = Swap24(m); break;
 				case 32: m = Swap32(m); break;
-				default: ASSERT(0);
+				default:
+					 FAIL_M(ssprintf("Unsupported BPP value: %i", pf.bpp));
 				}
 				pf.masks[mask] = m;
 			}
@@ -717,7 +718,8 @@ RageDisplay_GLES2::SetZTestMode( ZTestMode mode )
 		break;
 	case ZTEST_WRITE_ON_PASS: glDepthFunc( GL_LEQUAL ); break;
 	case ZTEST_WRITE_ON_FAIL: glDepthFunc( GL_GREATER ); break;
-	default:		  ASSERT( 0 );
+	default:
+		FAIL_M(ssprintf("Invalid ZTestMode: %i", mode));
 	}
 	State::bZTestEnabled = true;
 }
@@ -834,7 +836,7 @@ RageDisplay_GLES2::SetCullMode( CullMode mode )
 		glDisable( GL_CULL_FACE );
 		break;
 	default:
-		ASSERT(0);
+		FAIL_M(ssprintf("Invalid CullMode: %i", mode));
 	}
 }
 
@@ -875,7 +877,8 @@ RageDisplay_GLES2::SetPolygonMode(PolygonMode pm)
 	{
 	case POLYGON_FILL:	m = GL_FILL; break;
 	case POLYGON_LINE:	m = GL_LINE; break;
-	default:		ASSERT(0);	return;
+	default:
+		FAIL_M(ssprintf("Invalid PolygonMode: %i", pm));
 	}
 	glPolygonMode(GL_FRONT_AND_BACK, m);
 }

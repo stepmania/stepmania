@@ -452,10 +452,11 @@ void MovieTexture_DShow::CreateTexture()
 		return;
 
 	PixelFormat pixfmt;
-	switch( TEXTUREMAN->GetPrefs().m_iMovieColorDepth )
+	int depth = TEXTUREMAN->GetPrefs().m_iMovieColorDepth;
+	switch( depth )
 	{
 	default:
-		ASSERT(0);
+		FAIL_M(ssprintf("Unsupported movie color depth: %i", depth));
 	case 16:
 		if( DISPLAY->SupportsTextureFormat(PixelFormat_RGB5) )
 			pixfmt = PixelFormat_RGB5;

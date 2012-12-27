@@ -962,7 +962,7 @@ RString ThemeManager::GetMetricRaw( const IniFile &ini, const RString &sMetricsG
 					sDefaultMetricPath.c_str() );
 				return RString();
 			default:
-				ASSERT(0);
+				FAIL_M("Unexpected answer to Abort/Retry/Ignore dialog");
 		}
 	}
 }

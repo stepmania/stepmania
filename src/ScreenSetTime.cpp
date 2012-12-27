@@ -128,7 +128,8 @@ void ScreenSetTime::ChangeValue( int iDirection )
 	case year:		adjusted.tm_year += iDirection;	break;
 	case month:		adjusted.tm_mon += iDirection;	break;
 	case day:		adjusted.tm_mday += iDirection;	break;
-	default:		ASSERT(0);
+	default:
+		FAIL_M(ssprintf("Invalid SetTimeSelection: %i", m_Selection));
 	}
 
 	/* Normalize: */

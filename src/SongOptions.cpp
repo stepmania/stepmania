@@ -75,7 +75,8 @@ void SongOptions::GetMods( vector<RString> &AddTo ) const
 	case LIFE_TIME:
 		AddTo.push_back( "LifeTime" );
 		break;
-	default:	ASSERT(0);
+	default:
+		FAIL_M(ssprintf("Invalid LifeType: %i", m_LifeType));
 	}
 
 
@@ -95,7 +96,8 @@ void SongOptions::GetMods( vector<RString> &AddTo ) const
 	case AUTOSYNC_SONG:	AddTo.push_back("AutosyncSong");	break;
 	case AUTOSYNC_MACHINE:	AddTo.push_back("AutosyncMachine");	break;
 	case AUTOSYNC_TEMPO:	AddTo.push_back("AutosyncTempo");	break;
-	default:        	ASSERT(0);
+	default:
+		FAIL_M(ssprintf("Invalid autosync type: %i", m_AutosyncType));
 	}
 
 	switch( m_SoundEffectType )
@@ -103,7 +105,8 @@ void SongOptions::GetMods( vector<RString> &AddTo ) const
 	case SOUNDEFFECT_OFF:	                                	break;
 	case SOUNDEFFECT_SPEED:	AddTo.push_back("EffectSpeed");		break;
 	case SOUNDEFFECT_PITCH:	AddTo.push_back("EffectPitch");		break;
-	default:        	ASSERT(0);
+	default:
+		FAIL_M(ssprintf("Invalid sound effect type: %i", m_SoundEffectType));
 	}
 
 	if( m_bAssistClap )

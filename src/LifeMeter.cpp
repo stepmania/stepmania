@@ -12,7 +12,7 @@ LifeMeter *LifeMeter::MakeLifeMeter( SongOptions::LifeType t )
 	case SongOptions::LIFE_BATTERY: return new LifeMeterBattery;
 	case SongOptions::LIFE_TIME:    return new LifeMeterTime;
 	default:
-		ASSERT(0);
+		FAIL_M(ssprintf("Unrecognized LifeMeter type: %i", t));
 	}
 }
 

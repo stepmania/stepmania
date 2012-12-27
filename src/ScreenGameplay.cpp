@@ -121,7 +121,8 @@ void PlayerInfo::Load( PlayerNumber pn, MultiPlayer mp, bool bShowNoteField, int
 
 	if( !IsMultiPlayer() )
 	{
-		switch( GAMESTATE->m_PlayMode )
+		PlayMode mode = GAMESTATE->m_PlayMode;
+		switch( mode )
 		{
 		case PLAY_MODE_REGULAR:
 		case PLAY_MODE_NONSTOP:
@@ -140,7 +141,7 @@ void PlayerInfo::Load( PlayerNumber pn, MultiPlayer mp, bool bShowNoteField, int
 				m_pPrimaryScoreDisplay = new ScoreDisplayOni;
 			break;
 		default:
-			ASSERT(0);
+			FAIL_M(ssprintf("Invalid PlayMode: %i", mode));
 		}
 	}
 
@@ -245,8 +246,7 @@ bool PlayerInfo::IsEnabled()
 		return GAMESTATE->IsMultiPlayerEnabled( m_mp );
 	else if( m_bIsDummy )
 		return true;
-	ASSERT( 0 );
-	return false;
+	FAIL_M("Invalid non-dummy player.");
 }
 
 vector<PlayerInfo>::iterator 
@@ -1849,7 +1849,8 @@ void ScreenGameplay::Update( float fDeltaTime )
 			// Check to see if it's time to play a ScreenGameplay comment
 			m_fTimeSinceLastDancingComment += fDeltaTime;
 
-			switch( GAMESTATE->m_PlayMode )
+			PlayMode mode = GAMESTATE->m_PlayMode;
+			switch( mode )
 			{
 				case PLAY_MODE_REGULAR:
 				case PLAY_MODE_BATTLE:
@@ -1867,9 +1868,9 @@ void ScreenGameplay::Update( float fDeltaTime )
 					PlayAnnouncer( "gameplay comment oni", SECONDS_BETWEEN_COMMENTS );
 					break;
 				default:
-					ASSERT(0);
+					FAIL_M(ssprintf("Invalid PlayMode: %i", mode));
 			}
-	}
+		}
 		default: break;
 	}
 

@@ -581,7 +581,8 @@ RString SongUtil::GetSectionNameFromSongAndSort( const Song* pSong, SortOrder so
 			{
 			case SORT_TITLE:	s = pSong->GetTranslitMainTitle();	break;
 			case SORT_ARTIST:	s = pSong->GetTranslitArtist();		break;
-			default:	ASSERT(0);
+			default:
+				FAIL_M(ssprintf("Unexpected SortOrder: %i", so));
 			}
 			s = MakeSortString(s);	// resulting string will be uppercase
 
@@ -667,8 +668,7 @@ RString SongUtil::GetSectionNameFromSongAndSort( const Song* pSong, SortOrder so
 	case SORT_ONI_COURSES:
 	case SORT_ENDLESS_COURSES:
 	default:
-		ASSERT(0);
-		return RString();
+		FAIL_M(ssprintf("Invalid SortOrder: %i", so));
 	}
 }
 
@@ -782,9 +782,8 @@ RString SongUtil::MakeUniqueEditDescription( const Song *pSong, StepsType st, co
 			return sTemp;
 	}
 
-	// Edit limit guards should keep us from ever having more than 1000 edits per song.
-	ASSERT(0);
-	return RString();
+	// Edit limit guards should prevent this
+	FAIL_M("Exceeded limit of 1000 edits per song");
 }
 
 static LocalizedString YOU_MUST_SUPPLY_NAME	( "SongUtil", "You must supply a name for your new edit." );

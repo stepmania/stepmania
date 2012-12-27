@@ -1173,7 +1173,7 @@ XNode* NoteData::CreateNode() const
 
 void NoteData::LoadFromNode( const XNode* pNode )
 {
-	ASSERT(0);
+	FAIL_M("NoteData::LoadFromNode() not implemented");
 }
 
 template<typename ND, typename iter, typename TN>

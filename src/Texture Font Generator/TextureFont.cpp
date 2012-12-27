@@ -482,7 +482,7 @@ void TextureFont::Save( CString sBasePath, CString sBitmapAppendBeforeExtension,
 					sPageName += "-stroke";
 					break;
 				default:
-					ASSERT(0);
+					FAIL_M(ssprintf("Unexpected value for j: %i", j));
 				}
 
 				CString sFile;

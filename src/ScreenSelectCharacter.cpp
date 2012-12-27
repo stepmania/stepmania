@@ -193,10 +193,10 @@ PlayerNumber ScreenSelectCharacter::GetAffectedPlayerNumber( PlayerNumber pn )
 		return pn;
 	case CHOOSING_CPU_CHARACTER:
 		return CPU_PLAYER[pn];
-	default:
-		ASSERT(0);
 	case FINISHED_CHOOSING:
 		return pn;
+	default:
+		FAIL_M(ssprintf("Invalid character selection state: %i", m_SelectionRow[pn]));
 	}
 }
 
@@ -268,7 +268,7 @@ void ScreenSelectCharacter::AfterValueChange( PlayerNumber pn )
 		;	// do nothing
 		break;
 	default:
-		ASSERT(0);
+		FAIL_M(ssprintf("Invalid character selection state: %i", m_SelectionRow[pn]));
 	}
 }
 

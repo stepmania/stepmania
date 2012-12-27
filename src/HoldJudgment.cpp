@@ -54,8 +54,6 @@ void HoldJudgment::SetHoldJudgment( HoldNoteScore hns )
 
 	switch( hns )
 	{
-	case HNS_None:
-		ASSERT(0);
 	case HNS_Held:
 		m_sprJudgment->SetState( 0 );
 		m_sprJudgment->PlayCommand( "Held" );
@@ -64,8 +62,9 @@ void HoldJudgment::SetHoldJudgment( HoldNoteScore hns )
 		m_sprJudgment->SetState( 1 );
 		m_sprJudgment->PlayCommand( "LetGo" );
 		break;
+	case HNS_None:
 	default:
-		ASSERT(0);
+		FAIL_M(ssprintf("Cannot set hold judgment to %i", hns));
 	}
 }
 

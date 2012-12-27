@@ -163,7 +163,7 @@ static void LoadFromSMNoteDataStringWithPlayer( NoteData& out, const RString &sS
 					 * simply be invalid data in an .SM, and we don't want to die
 					 * due to invalid data. We should probably check for this when
 					 * we load SM data for the first time ... */
-					// ASSERT(0); 
+					// FAIL_M("Invalid data in SM");
 					tn = TAP_EMPTY;
 					break;
 				}
@@ -392,7 +392,8 @@ void NoteDataUtil::GetSMNoteDataString( const NoteData &in, RString &sRet )
 						case TapNote::hold_head_hold:	c = '2'; break;
 						case TapNote::hold_head_roll:	c = '4'; break;
 						//case TapNote::hold_head_mine:	c = 'N'; break;
-						default:	ASSERT(0);
+						default:
+							FAIL_M(ssprintf("Invalid tap note subtype: %i", tn.subType));
 						}
 						break;
 					case TapNote::hold_tail:		c = '3'; break;
@@ -402,7 +403,8 @@ void NoteDataUtil::GetSMNoteDataString( const NoteData &in, RString &sRet )
 					case TapNote::lift:			c = 'L'; break;
 					case TapNote::fake:			c = 'F'; break;
 					default: 
-						c = '\0'; FAIL_M( ssprintf("tn %i", tn.type) );	// invalid enum value
+						c = '\0';
+						FAIL_M(ssprintf("Invalid tap note type: %i", tn.type));
 					}
 					sRet.append( 1, c );
 

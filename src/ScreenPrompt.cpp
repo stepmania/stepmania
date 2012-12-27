@@ -142,9 +142,8 @@ bool ScreenPrompt::CanGoRight()
 	case PROMPT_YES_NO_CANCEL:
 		return m_Answer < ANSWER_CANCEL;
 	default:
-		ASSERT(0);
+		FAIL_M(ssprintf("Invalid PromptType: %i", g_PromptType));
 	}
-	return false;
 }
 
 void ScreenPrompt::Change( int dir )

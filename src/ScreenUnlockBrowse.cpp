@@ -11,10 +11,11 @@ void ScreenUnlockBrowse::Init()
 	FOREACH_CONST( UnlockEntry, UNLOCKMAN->m_UnlockEntries, ue )
 	{
 		GameCommand gc;
-		switch( ue->GetUnlockEntryStatus() )
+		UnlockEntryStatus st = ue->GetUnlockEntryStatus();
+		switch( st )
 		{
 		default:
-			ASSERT(0);
+			FAIL_M(ssprintf("Invalid UnlockEntryStatus: %i", st));
 		case UnlockEntryStatus_RequirementsMet:
 		case UnlockEntryStatus_Unlocked:
 			gc.m_bInvalid = false;

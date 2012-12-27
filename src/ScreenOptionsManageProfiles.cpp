@@ -264,7 +264,7 @@ void ScreenOptionsManageProfiles::HandleScreenMessage( const ScreenMessage SM )
 			switch( ScreenMiniMenu::s_iLastRowCode )
 			{
 			default:
-				ASSERT(0);
+				FAIL_M(ssprintf("Last row code not a valid ProfileAction: %i", ScreenMiniMenu::s_iLastRowCode));
 			case ProfileAction_SetDefaultP1:
 			case ProfileAction_SetDefaultP2:
 				{

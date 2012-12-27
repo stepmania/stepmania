@@ -144,7 +144,8 @@ bool RageFileDriverDirect::Remove( const RString &sPath_ )
 {
 	RString sPath = sPath_;
 	FDB->ResolvePath( sPath );
-	switch( this->GetFileType(sPath) )
+	RageFileManager::FileType type = this->GetFileType(sPath);
+	switch( type )
 	{
 	case RageFileManager::TYPE_FILE:
 		TRACE( ssprintf("remove '%s'", (m_sRoot + sPath).c_str()) );
@@ -166,8 +167,11 @@ bool RageFileDriverDirect::Remove( const RString &sPath_ )
 		FDB->DelFile( sPath );
 		return true;
 
-	case RageFileManager::TYPE_NONE: return false;
-	default: ASSERT(0); return false;
+	case RageFileManager::TYPE_NONE:
+		return false;
+
+	default:
+		FAIL_M(ssprintf("Invalid FileType: %i", type));
 	}
 }
 

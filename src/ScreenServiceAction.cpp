@@ -165,7 +165,7 @@ static RString TransferStatsMemoryCardToMachine()
 		s = ssprintf(PROFILE_CORRUPT.GetValue(),pn+1);
 		break;
 	default:
-		ASSERT(0);
+		FAIL_M(ssprintf("Invalid profile load result: %i", lr));
 	}
 
 	MEMCARDMAN->UnmountCard(pn);

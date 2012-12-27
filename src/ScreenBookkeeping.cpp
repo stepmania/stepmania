@@ -281,7 +281,7 @@ void ScreenBookkeeping::UpdateView()
 		}
 		break;
 	default:
-		ASSERT(0);
+		FAIL_M(ssprintf("Invalid BookkeepingView: %i", view));
 	}
 }
 

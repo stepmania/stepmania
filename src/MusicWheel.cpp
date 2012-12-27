@@ -762,7 +762,8 @@ void MusicWheel::BuildWheelItemDatas( vector<MusicWheelItemData *> &arrayWheelIt
 				FOREACH_ENUM( CourseType, i )
 					vct.push_back( i );
 				break;
-			default: ASSERT(0); break;
+			default:
+				FAIL_M(ssprintf("Wrong sort order: %i", so));
 			}
 
 			vector<Course*> apCourses;
@@ -1139,8 +1140,7 @@ void MusicWheel::UpdateSwitch()
 		}
 		break;
 	default:
-		ASSERT(0);	// all state changes should be handled explicitly
-		break;
+		FAIL_M(ssprintf("Invalid wheel state: %i", m_WheelState));
 	}
 }
 

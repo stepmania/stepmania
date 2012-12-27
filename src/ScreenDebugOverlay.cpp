@@ -135,14 +135,15 @@ static LocalizedString OR( "ScreenDebugOverlay", "or" );
 static RString GetDebugButtonName( const IDebugLine *pLine )
 {
 	RString s = INPUTMAN->GetDeviceSpecificInputString(pLine->m_Button);
-	switch( pLine->GetType() )
+	IDebugLine::Type type = pLine->GetType();
+	switch( type )
 	{
 	case IDebugLine::all_screens:
 		return s;
 	case IDebugLine::gameplay_only:
 		return ssprintf( IN_GAMEPLAY.GetValue(), s.c_str() );
 	default:
-		ASSERT(0);
+		FAIL_M(ssprintf("Invalid debug line type: %i", type));
 	}
 }
 
@@ -455,7 +456,8 @@ bool ScreenDebugOverlay::OverlayInput( const InputEventPlus &input )
 
 		// Gameplay buttons are available only in gameplay. Non-gameplay buttons
 		// are only available when the screen is displayed.
-		switch( (*p)->GetType() )
+		IDebugLine::Type type = (*p)->GetType();
+		switch( type )
 		{
 		case IDebugLine::all_screens:
 			if( !g_bIsDisplayed )
@@ -468,7 +470,7 @@ bool ScreenDebugOverlay::OverlayInput( const InputEventPlus &input )
 				continue;
 			break;
 		default:
-			ASSERT(0);
+			FAIL_M(ssprintf("Invalid debug line type: %i", type));
 		}
 
 		if( input.DeviceI == (*p)->m_Button )
@@ -569,12 +571,14 @@ class DebugLineAutoplay : public IDebugLine
 	virtual RString GetDisplayTitle() { return AUTO_PLAY.GetValue() + " (+Shift = AI) (+Alt = hide)"; }
 	virtual RString GetDisplayValue()
 	{
-		switch( GamePreferences::m_AutoPlay.Get() )
+		PlayerController pc = GamePreferences::m_AutoPlay.Get();
+		switch( pc )
 		{
 		case PC_HUMAN:		return OFF.GetValue();	break;
 		case PC_AUTOPLAY:	return ON.GetValue();	break;
 		case PC_CPU:		return CPU.GetValue();	break;
-		default:	ASSERT(0);	return RString();
+		default:
+			FAIL_M(ssprintf("Invalid PlayerController: %i", pc));
 		}
 	}
 	virtual Type GetType() const { return IDebugLine::gameplay_only; }
@@ -643,13 +647,15 @@ class DebugLineAutosync : public IDebugLine
 	virtual RString GetDisplayTitle() { return AUTOSYNC.GetValue(); }
 	virtual RString GetDisplayValue()
 	{ 
-		switch( GAMESTATE->m_SongOptions.GetSong().m_AutosyncType )
+		SongOptions::AutosyncType type = GAMESTATE->m_SongOptions.GetSong().m_AutosyncType;
+		switch( type )
 		{
 		case SongOptions::AUTOSYNC_OFF: 	return OFF.GetValue();  		break;
 		case SongOptions::AUTOSYNC_SONG:	return SONG.GetValue(); 		break;
 		case SongOptions::AUTOSYNC_MACHINE:	return MACHINE.GetValue(); 		break;
 		case SongOptions::AUTOSYNC_TEMPO:	return SYNC_TEMPO.GetValue();		break;
-		default:	ASSERT(0);
+		default:
+			FAIL_M(ssprintf("Invalid autosync type: %i", type));
 		}
 	}
 	virtual Type GetType() const { return IDebugLine::gameplay_only; }

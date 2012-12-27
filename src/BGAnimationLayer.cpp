@@ -272,7 +272,7 @@ void BGAnimationLayer::LoadFromAniLayerFile( const RString& sPath )
 					m_vParticleVelocity[i].y *= PARTICLE_SPEED;
 					break;
 				default:
-					ASSERT(0);
+					FAIL_M(ssprintf("Unrecognized layer effect: %i", effect));
 				}
 			}
 		}
@@ -334,14 +334,14 @@ void BGAnimationLayer::LoadFromAniLayerFile( const RString& sPath )
 						pSprite->SetEffectPulse( 1, 0.3f, 1.f );
 						break;
 					default:
-						ASSERT(0);
+						FAIL_M(ssprintf("Not a tile effect: %i", effect));
 					}
 				}
 			}
 		}
 		break;
 	default:
-		ASSERT(0);
+		FAIL_M(ssprintf("Unrecognized layer effect: %i", effect));
 	}
 
 
@@ -527,7 +527,7 @@ void BGAnimationLayer::LoadFromNode( const XNode* pNode )
 		}
 		break;
 	default:
-		ASSERT(0);
+		FAIL_M(ssprintf("Unrecognized layer type: %i", m_Type));
 	}
 
 	bool bStartOnRandomFrame = false;
@@ -641,7 +641,7 @@ void BGAnimationLayer::UpdateInternal( float fDeltaTime )
 		}
 		break;
 	default:
-		ASSERT(0);
+		FAIL_M(ssprintf("Unrecognized layer type: %i", m_Type));
 	}
 }
 

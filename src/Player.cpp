@@ -107,7 +107,8 @@ void TimingWindowSecondsInit( size_t /*TimingWindow*/ i, RString &sNameOut, floa
 	sNameOut = "TimingWindowSeconds" + TimingWindowToString( (TimingWindow)i );
 	switch( i )
 	{
-	default:	ASSERT(0);
+	default:
+		FAIL_M(ssprintf("Invalid timing window: %i", i));
 	case TW_W1:	defaultValueOut = 0.0225f;	break;
 	case TW_W2:	defaultValueOut = 0.045f;	break;
 	case TW_W3:	defaultValueOut = 0.090f;	break;
@@ -691,7 +692,7 @@ void Player::Load()
 					NoteDataUtil::Turn( m_NoteData, st, NoteDataUtil::right);
 					break;
 				default:
-					ASSERT(0);
+					FAIL_M(ssprintf("Count %i not in range 0-3", count));
 				}
 				count++;
 				count %= 4;
@@ -1309,7 +1310,7 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 			break;
 		*/
 		default:
-			ASSERT(0);
+			FAIL_M(ssprintf("Invalid tap note subtype: %i", subType));
 		}
 	}
 
@@ -2381,9 +2382,7 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 			break;
 		*/
 		default:
-			ASSERT(0);
-			score = TNS_None;
-			break;
+			FAIL_M(ssprintf("Invalid player controller type: %i", m_pPlayerState->m_PlayerController));
 		}
 
 		switch( pbt )

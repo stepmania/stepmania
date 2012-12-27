@@ -154,7 +154,8 @@ static void FixLilEndian()
 			{
 				case 24: m = Swap24(m); break;
 				case 32: m = Swap32(m); break;
-				default: ASSERT(0);
+				default:
+					 FAIL_M(ssprintf("Unsupported BPP value: %i", pf.bpp));
 			}
 			pf.masks[mask] = m;
 		}

@@ -195,7 +195,7 @@ void BPMDisplay::SetBpmFromSong( const Song* pSong )
 		CycleRandomly();
 		break;
 	default:
-		ASSERT(0);
+		FAIL_M(ssprintf("Invalid display BPM type: %i", pSong->m_DisplayBPMType));
 	}
 }
 

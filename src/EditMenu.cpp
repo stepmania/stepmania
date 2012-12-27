@@ -52,7 +52,8 @@ void EditMenu::StripLockedStepsAndDifficulty( vector<StepsAndDifficulty> &v )
 void EditMenu::GetSongsToShowForGroup( const RString &sGroup, vector<Song*> &vpSongsOut )
 {
 	vpSongsOut = SONGMAN->GetSongs( SHOW_GROUPS.GetValue()? sGroup:GROUP_ALL );
-	switch( EDIT_MODE.GetValue() )
+	EditMode mode = EDIT_MODE.GetValue();
+	switch( mode )
 	{
 	case EditMode_Practice:
 	case EditMode_CourseMods:
@@ -67,7 +68,7 @@ void EditMenu::GetSongsToShowForGroup( const RString &sGroup, vector<Song*> &vpS
 	case EditMode_Full:
 		break;
 	default:
-		ASSERT(0);
+		FAIL_M(ssprintf("Invalid edit mode: %i", mode));
 	}
 	SongUtil::SortSongPointerArrayByTitle( vpSongsOut );
 }
@@ -391,7 +392,8 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 			{
 				if( dc == Difficulty_Edit )
 				{
-					switch( EDIT_MODE.GetValue() )
+					EditMode mode = EDIT_MODE.GetValue();
+					switch( mode )
 					{
 					case EditMode_Full:
 					case EditMode_CourseMods:
@@ -408,10 +410,10 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 						// have only "New Edit"
 						break;
 					default:
-						ASSERT(0);
+						FAIL_M(ssprintf("Invalid edit mode: %i", mode));
 					}
 
-					switch( EDIT_MODE.GetValue() )
+					switch( mode )
 					{
 					case EditMode_Practice:
 					case EditMode_CourseMods:
@@ -421,7 +423,7 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 						m_vpSteps.push_back( StepsAndDifficulty(NULL,dc) );	// "New Edit"
 						break;
 					default:
-						ASSERT(0);
+						FAIL_M(ssprintf("Invalid edit mode: %i", mode));
 					}
 				}
 				else
@@ -430,6 +432,7 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 					if( pSteps && UNLOCKMAN->StepsIsLocked( GetSelectedSong(), pSteps ) )
 						pSteps = NULL;
 
+					EditMode mode = EDIT_MODE.GetValue();
 					switch( EDIT_MODE.GetValue() )
 					{
 					case EditMode_Home:
@@ -446,7 +449,7 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 						m_vpSteps.push_back( StepsAndDifficulty(pSteps,dc) );
 						break;
 					default:
-						ASSERT(0);
+						FAIL_M(ssprintf("Invalid edit mode: %i", mode));
 					}
 				}
 			}
@@ -532,7 +535,8 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 			m_Actions.clear();
 			if( GetSelectedSteps() )
 			{
-				switch( EDIT_MODE.GetValue() )
+				EditMode mode = EDIT_MODE.GetValue();
+				switch( mode )
 				{
 				case EditMode_Practice:
 				case EditMode_CourseMods:
@@ -544,7 +548,7 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 					m_Actions.push_back( EditMenuAction_Delete );
 					break;
 				default:
-					ASSERT(0);
+					FAIL_M(ssprintf("Invalid edit mode: %i", mode));
 				}
 			}
 			else
@@ -558,7 +562,7 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 		m_textValue[ROW_ACTION].SetText( EditMenuActionToLocalizedString(GetSelectedAction()) );
 		break;
 	default:
-		ASSERT(0);	// invalid row
+		FAIL_M(ssprintf("Invalid EditMenuRow: %i", row));
 	}
 }
 

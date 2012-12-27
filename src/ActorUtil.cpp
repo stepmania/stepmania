@@ -59,7 +59,7 @@ retry:
 			case Dialog::ignore:
 				return false;
 			default:
-				ASSERT(0);
+				FAIL_M("Invalid response to Abort/Retry/Ignore dialog");
 			}
 		}
 
@@ -81,7 +81,7 @@ retry:
 				asPaths.erase( asPaths.begin()+1, asPaths.end() );
 				break;
 			default:
-				ASSERT(0);
+				FAIL_M("Invalid response to Abort/Retry/Ignore dialog");
 			}
 		}
 

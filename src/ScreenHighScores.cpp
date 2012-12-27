@@ -216,9 +216,10 @@ void ScreenHighScores::Init()
 
 	m_Scroller.SetName( "Scroller" );
 	LOAD_ALL_COMMANDS( m_Scroller );
-	switch( HIGH_SCORES_TYPE )
+	HighScoresType type = HIGH_SCORES_TYPE;
+	switch( type )
 	{
-	DEFAULT_FAIL( HIGH_SCORES_TYPE.GetValue() );
+	DEFAULT_FAIL( type );
 	case HighScoresType_AllSteps:
 		m_Scroller.LoadSongs( MAX_ITEMS_TO_SHOW );
 		break;
@@ -228,9 +229,10 @@ void ScreenHighScores::Init()
 	case HighScoresType_AllCourses:
 		{
 			CourseType ct;
-			switch( HIGH_SCORES_TYPE )
+			switch( type )
 			{
-			default:	ASSERT(0);
+			default:
+				FAIL_M(ssprintf("Invalid HighScoresType: %i", type));
 			case HighScoresType_NonstopCourses:	ct = COURSE_TYPE_NONSTOP;	break;
 			case HighScoresType_OniCourses:		ct = COURSE_TYPE_ONI;		break;
 			case HighScoresType_SurvivalCourses:	ct = COURSE_TYPE_SURVIVAL;	break;

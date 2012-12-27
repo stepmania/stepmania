@@ -97,7 +97,8 @@ namespace
 		}
 		else // bShowCreditsMessage
 		{
-			switch( GAMESTATE->GetCoinMode() )
+			CoinMode mode = GAMESTATE->GetCoinMode();
+			switch( mode )
 			{
 			case CoinMode_Home:
 				if( GAMESTATE->PlayersCanJoin() )
@@ -126,7 +127,7 @@ namespace
 					return CREDITS_NOT_PRESENT.GetValue();
 
 			default:
-				ASSERT(0);
+				FAIL_M(ssprintf("Invalid CoinMode: %i", mode));
 			}
 		}
 	}

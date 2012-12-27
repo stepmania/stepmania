@@ -4445,7 +4445,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 						{
 						case save:			s = "ScreenMemcardSaveEditsAfterSave";	break;
 						case save_on_exit:	s = "ScreenMemcardSaveEditsAfterExit";	break;
-						default:		ASSERT(0);
+						default:		FAIL_M(ssprintf("Invalid menu choice: %i", c));
 						}
 						SCREENMAN->AddNewScreenToTop( s );
 						*/

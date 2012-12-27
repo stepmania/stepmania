@@ -109,7 +109,8 @@ void LifeMeterTime::ChangeLife( TapNoteScore tns )
 	float fMeterChange = 0;
 	switch( tns )
 	{
-	default:		ASSERT(0);
+	default:
+		FAIL_M(ssprintf("Invalid TapNoteScore: %i", tns));
 	case TNS_W1:		fMeterChange = g_fTimeMeterSecondsChange[SE_W1];		break;
 	case TNS_W2:		fMeterChange = g_fTimeMeterSecondsChange[SE_W2];		break;
 	case TNS_W3:		fMeterChange = g_fTimeMeterSecondsChange[SE_W3];		break;
@@ -134,7 +135,8 @@ void LifeMeterTime::ChangeLife( HoldNoteScore hns, TapNoteScore tns )
 	float fMeterChange = 0;
 	switch( hns )
 	{
-	default:	ASSERT(0);
+	default:
+		FAIL_M(ssprintf("Invalid HoldNoteScore: %i", hns));
 	case HNS_Held:	fMeterChange = g_fTimeMeterSecondsChange[SE_Held];	break;
 	case HNS_LetGo:	fMeterChange = g_fTimeMeterSecondsChange[SE_LetGo];	break;
 	}

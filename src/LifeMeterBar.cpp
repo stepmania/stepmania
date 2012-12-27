@@ -31,7 +31,8 @@ LifeMeterBar::LifeMeterBar()
 
 	m_pPlayerState = NULL;
 
-	switch( GAMESTATE->m_SongOptions.GetStage().m_DrainType )
+	SongOptions::DrainType dtype = GAMESTATE->m_SongOptions.GetStage().m_DrainType;
+	switch( dtype )
 	{
 	case SongOptions::DRAIN_NORMAL:
 		m_fLifePercentage = INITIAL_VALUE;
@@ -41,7 +42,8 @@ LifeMeterBar::LifeMeterBar()
 	case SongOptions::DRAIN_NO_RECOVER:
 	case SongOptions::DRAIN_SUDDEN_DEATH:
 		m_fLifePercentage = 1.0f;	break;
-	default:	ASSERT(0);
+	default:
+		FAIL_M(ssprintf("Invalid DrainType: %i", dtype));
 	}
 
 	const RString sType = "LifeMeterBar";
@@ -149,7 +151,8 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 void LifeMeterBar::ChangeLife( HoldNoteScore score, TapNoteScore tscore )
 {
 	float fDeltaLife=0.f;
-	switch( GAMESTATE->m_SongOptions.GetSong().m_DrainType )
+	SongOptions::DrainType dtype = GAMESTATE->m_SongOptions.GetSong().m_DrainType;
+	switch( dtype )
 	{
 	case SongOptions::DRAIN_NORMAL:
 		switch( score )
@@ -157,7 +160,7 @@ void LifeMeterBar::ChangeLife( HoldNoteScore score, TapNoteScore tscore )
 		case HNS_Held:		fDeltaLife = m_fLifePercentChange.GetValue(SE_Held);	break;
 		case HNS_LetGo:	fDeltaLife = m_fLifePercentChange.GetValue(SE_LetGo);	break;
 		default:
-			ASSERT(0);
+			FAIL_M(ssprintf("Invalid HoldNoteScore: %i", score));
 		}
 		if( IsHot()  &&  score == HNS_LetGo )
 			fDeltaLife = -0.10f;		// make it take a while to get back to "hot"
@@ -168,7 +171,7 @@ void LifeMeterBar::ChangeLife( HoldNoteScore score, TapNoteScore tscore )
 		case HNS_Held:		fDeltaLife = +0.000f;	break;
 		case HNS_LetGo:	fDeltaLife = m_fLifePercentChange.GetValue(SE_LetGo);	break;
 		default:
-			ASSERT(0);
+			FAIL_M(ssprintf("Invalid HoldNoteScore: %i", score));
 		}
 		break;
 	case SongOptions::DRAIN_SUDDEN_DEATH:
@@ -177,11 +180,11 @@ void LifeMeterBar::ChangeLife( HoldNoteScore score, TapNoteScore tscore )
 		case HNS_Held:		fDeltaLife = +0;	break;
 		case HNS_LetGo:	fDeltaLife = -1.0f;	break;
 		default:
-			ASSERT(0);
+			FAIL_M(ssprintf("Invalid HoldNoteScore: %i", score));
 		}
 		break;
 	default:
-		ASSERT(0);
+		FAIL_M(ssprintf("Invalid DrainType: %i", dtype));
 	}
 
 	ChangeLife( fDeltaLife );

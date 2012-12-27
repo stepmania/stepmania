@@ -102,22 +102,26 @@ void ScreenSyncOverlay::UpdateText()
 
 	if( g_bShowAutoplay )
 	{
-		switch( GamePreferences::m_AutoPlay.Get() )
+		PlayerController pc = GamePreferences::m_AutoPlay.Get();
+		switch( pc )
 		{
 		case PC_HUMAN:						break;
 		case PC_AUTOPLAY:	vs.push_back(AUTO_PLAY);	break;
 		case PC_CPU:		vs.push_back(AUTO_PLAY_CPU);	break;
-		default:	ASSERT(0);
+		default:
+			FAIL_M(ssprintf("Invalid PlayerController: %i", pc));
 		}
 	}
 
-	switch( GAMESTATE->m_SongOptions.GetCurrent().m_AutosyncType )
+	SongOptions::AutosyncType type = GAMESTATE->m_SongOptions.GetCurrent().m_AutosyncType;
+	switch( type )
 	{
 	case SongOptions::AUTOSYNC_OFF:							break;
 	case SongOptions::AUTOSYNC_SONG:	vs.push_back(AUTO_SYNC_SONG);		break;
 	case SongOptions::AUTOSYNC_MACHINE:	vs.push_back(AUTO_SYNC_MACHINE);	break;
 	case SongOptions::AUTOSYNC_TEMPO:	vs.push_back(AUTO_SYNC_TEMPO);		break;
-	default:	ASSERT(0);
+	default:
+		FAIL_M(ssprintf("Invalid autosync type: %i", type));
 	}
 
 	if( GAMESTATE->m_pCurSong != NULL  &&  !GAMESTATE->IsCourseMode() )	// sync controls available
@@ -287,7 +291,7 @@ bool ScreenSyncOverlay::OverlayInput( const InputEventPlus &input )
 		}
 		break;
 	default:
-		ASSERT(0);
+		FAIL_M(ssprintf("Invalid sync action choice: %i", a));
 	}
 
 	ShowHelp();

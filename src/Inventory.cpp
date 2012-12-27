@@ -46,12 +46,13 @@ void ReloadItems()
 
 Inventory::Inventory()
 {
-	switch( GAMESTATE->m_PlayMode )
+	PlayMode mode = GAMESTATE->m_PlayMode;
+	switch( mode )
 	{
 	case PLAY_MODE_BATTLE:
 		break;
 	default:
-		ASSERT(0);
+		FAIL_M(ssprintf("Inventory not valid for PlayMode %i", mode));
 	}
 }
 

@@ -51,8 +51,9 @@ float NoteTypeToBeat( NoteType nt )
 	case NOTE_TYPE_48TH:	return 1.0f/12; // sixteenth note triplets
 	case NOTE_TYPE_64TH:	return 1.0f/16; // sixty-fourth notes
 	case NOTE_TYPE_192ND:	return 1.0f/48; // sixty-fourth note triplets
-	default:	ASSERT(0); // and fall through
 	case NoteType_Invalid:	return 1.0f/48;
+	default:
+		FAIL_M(ssprintf("Unrecognized note type: %i", nt));
 	}
 }
 
@@ -132,7 +133,7 @@ XNode* TapNoteResult::CreateNode() const
 
 void TapNoteResult::LoadFromNode( const XNode* pNode )
 {
-	ASSERT(0);
+	FAIL_M("TapNoteResult::LoadFromNode() is not implemented");
 }
 
 XNode* HoldNoteResult::CreateNode() const
@@ -143,7 +144,7 @@ XNode* HoldNoteResult::CreateNode() const
 
 void HoldNoteResult::LoadFromNode( const XNode* pNode )
 {
-	ASSERT(0);
+	FAIL_M("HoldNoteResult::LoadFromNode() is not implemented");
 }
 
 XNode* TapNote::CreateNode() const
@@ -158,7 +159,7 @@ XNode* TapNote::CreateNode() const
 
 void TapNote::LoadFromNode( const XNode* pNode )
 {
-	ASSERT(0);
+	FAIL_M("TapNote::LoadFromNode() is not implemented");
 }
 
 float HoldNoteResult::GetLastHeldBeat() const

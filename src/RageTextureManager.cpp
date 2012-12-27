@@ -218,7 +218,7 @@ void RageTextureManager::DeleteTexture( RageTexture *t )
 		}
 	}
 
-	ASSERT(0);	// we tried to delete a texture that wasn't loaded.
+	FAIL_M("Tried to delete a texture that wasn't loaded");
 }
 
 void RageTextureManager::GarbageCollect( GCType type )
@@ -241,7 +241,8 @@ void RageTextureManager::GarbageCollect( GCType type )
 		bool bDeleteThis = false;
 		if( type==screen_changed )
 		{
-			switch( t->GetPolicy() )
+			RageTextureID::TexPolicy policy = t->GetPolicy();
+			switch( policy )
 			{
 			case RageTextureID::TEX_DEFAULT: 
 				/* If m_bDelayedDelete, wait until delayed_delete.  If !m_bDelayedDelete,
@@ -253,7 +254,8 @@ void RageTextureManager::GarbageCollect( GCType type )
 			case RageTextureID::TEX_VOLATILE:
 				bDeleteThis = true;
 				break;
-			default: ASSERT(0);
+			default:
+				FAIL_M(ssprintf("Invalid texture policy: %i", policy));
 			}
 		}
 

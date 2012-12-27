@@ -639,7 +639,7 @@ bool CheckVideoDefaultSettings()
 			goto found_defaults;
 		}
 	}
-	ASSERT( 0 ); // we must have matched at least one above
+	FAIL_M("Failed to match video driver");
 
 found_defaults:
 
@@ -1072,7 +1072,7 @@ int main(int argc, char* argv[])
 				case Dialog::no:
 					break;
 				default:
-					ASSERT(0);
+					FAIL_M("Invalid response to Yes/No dialog");
 				}
 			}
 			else if( version_num < current_version )

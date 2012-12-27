@@ -272,7 +272,7 @@ static void WriteDWINotesField( RageFile &f, const Steps &out, int start )
 				notedata.SetTapNote(start+5, row, TAP_EMPTY);
 				break;
 			default:
-				ASSERT(0);	// not a type supported by DWI.  We shouldn't have called in here if that's the case
+				FAIL_M(ssprintf("StepsType not supported by DWI: %i", out.m_StepsType));
 			}
 			f.Write( str );
 		}
@@ -299,8 +299,7 @@ static void WriteDWINotesField( RageFile &f, const Steps &out, int start )
 			f.Write( "'" );
 			break;
 		default:
-			ASSERT(0);
-			// fall though
+			FAIL_M(ssprintf("Invalid note type: %i", nt));
 		}
 		f.PutLine( "" );
 	}
@@ -327,14 +326,16 @@ static bool WriteDWINotesTag( RageFile &f, const Steps &out )
 	default:	return false;	// not a type supported by DWI
 	}
 
-	switch( out.GetDifficulty() )
+	Difficulty d = out.GetDifficulty();
+	switch( d )
 	{
 	case Difficulty_Beginner:	f.Write( "BEGINNER:" ); break;
 	case Difficulty_Easy:		f.Write( "BASIC:" );	break;
 	case Difficulty_Medium:		f.Write( "ANOTHER:" );	break;
 	case Difficulty_Hard:		f.Write( "MANIAC:" );	break;
 	case Difficulty_Challenge:	f.Write( "SMANIAC:" );	break;
-	default:	ASSERT(0);	return false;
+	default:
+		FAIL_M(ssprintf("Invalid difficulty: %i", d));
 	}
 
 	f.PutLine( ssprintf("%d:", out.GetMeter()) );

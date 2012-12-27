@@ -269,7 +269,7 @@ void InputHandler_DInput::UpdatePolled( DIDevice &device, const RageTimer &tm )
 	switch( device.type )
 	{
 	default:
-		ASSERT(0);
+		FAIL_M(ssprintf("Unsupported DI device type: %i", device.type));
 	case device.KEYBOARD:
 		{
 			unsigned char keys[256];

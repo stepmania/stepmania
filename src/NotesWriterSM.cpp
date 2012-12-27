@@ -49,7 +49,8 @@ static void WriteGlobalTags( RageFile &f, Song &out )
 	f.Write( "#SELECTABLE:" );
 	switch(out.m_SelectionDisplay)
 	{
-		default: ASSERT(0); // fall through
+		default:
+			FAIL_M(ssprintf("Invalid selection display: %i", out.m_SelectionDisplay));
 		case Song::SHOW_ALWAYS:	f.Write( "YES" );		break;
 		//case Song::SHOW_NONSTOP:	f.Write( "NONSTOP" );	break;
 		case Song::SHOW_NEVER:		f.Write( "NO" );		break;

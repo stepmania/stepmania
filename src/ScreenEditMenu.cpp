@@ -243,18 +243,18 @@ void ScreenEditMenu::MenuStart( const InputEventPlus & )
 		{
 			pSteps = pSong->CreateSteps();
 
-			switch( m_Selector.EDIT_MODE )
+			EditMode mode = m_Selector.EDIT_MODE;
+			switch( mode )
 			{
 			default:
-				ASSERT(0);
+				FAIL_M(ssprintf("Invalid EditMode: %i", mode));
 			case EditMode_Full:
 				break;
 			case EditMode_Home:
 				pSteps->SetLoadedFromProfile( ProfileSlot_Machine );
 				break;
 			case EditMode_Practice:
-				ASSERT(0);
-				break;
+				FAIL_M("Cannot create steps in EditMode_Practice");
 			}
 
 			RString sEditName;
@@ -283,7 +283,7 @@ void ScreenEditMenu::MenuStart( const InputEventPlus & )
 		}
 		break;
 	default:
-		ASSERT(0);
+		FAIL_M(ssprintf("Invalid edit menu action: %i", action));
 	}
 
 	// Go to the next screen.
@@ -318,7 +318,7 @@ void ScreenEditMenu::MenuStart( const InputEventPlus & )
 	case EditMenuAction_Delete:
 		break;
 	default:
-		ASSERT(0);
+		FAIL_M(ssprintf("Invalid edit menu action: %i", action));
 	}
 }
 

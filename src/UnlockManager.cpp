@@ -418,8 +418,7 @@ RString UnlockEntry::GetDescription() const
 	switch( m_Type )
 	{
 	default:
-		ASSERT(0);
-		return "";
+		FAIL_M(ssprintf("Invalid UnlockRewardType: %i", m_Type));
 	case UnlockRewardType_Song:
 		return pSong ? pSong->GetDisplayFullTitle() : "";
 	case UnlockRewardType_Steps:
@@ -446,8 +445,7 @@ RString	UnlockEntry::GetBannerFile() const
 	switch( m_Type )
 	{
 	default:
-		ASSERT(0);
-		return "";
+		FAIL_M(ssprintf("Invalid UnlockRewardType: %i", m_Type));
 	case UnlockRewardType_Song:
 	case UnlockRewardType_Steps:
 	case UnlockRewardType_Steps_Type:
@@ -465,8 +463,7 @@ RString	UnlockEntry::GetBackgroundFile() const
 	switch( m_Type )
 	{
 	default:
-		ASSERT(0);
-		return "";
+		FAIL_M(ssprintf("Invalid UnlockRewardType: %i", m_Type));
 	case UnlockRewardType_Song:
 	case UnlockRewardType_Steps:
 	case UnlockRewardType_Steps_Type:
@@ -631,7 +628,7 @@ void UnlockManager::Load()
 			// nothing to cache
 			break;
 		default:
-			ASSERT(0);
+			FAIL_M(ssprintf("Invalid UnlockRewardType: %i", e->m_Type));
 		}
 	}
 

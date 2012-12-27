@@ -84,7 +84,8 @@ ITween *ITween::CreateFromType( TweenType tt )
 	case TWEEN_ACCELERATE: return new TweenAccelerate;
 	case TWEEN_DECELERATE: return new TweenDecelerate;
 	case TWEEN_SPRING: return new TweenSpring;
-	default: ASSERT(0);
+	default:
+		FAIL_M(ssprintf("Invalid TweenType: %i", tt));
 	}
 }
 

@@ -71,7 +71,7 @@ void ModelManager::UnloadModel( RageModelGeometry *m )
 		}
 	}
 
-	ASSERT(0);	// we tried to delete a texture that wasn't loaded.
+	FAIL_M("Tried to delete a texture that wasn't loaded");
 }
 
 bool ModelManager::SetPrefs( const ModelManagerPrefs& prefs )

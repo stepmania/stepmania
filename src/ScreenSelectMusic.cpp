@@ -654,7 +654,7 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 			}
 			else
 			{
-				ASSERT(0);
+				FAIL_M("Logic bug: L/R keys in an impossible state?");
 			}
 
 			// Reset the repeat timer when the button is released.
@@ -1701,7 +1701,9 @@ void ScreenSelectMusic::AfterMusicChange()
 		s_lastSortOrder = GAMESTATE->m_SortOrder;
 	}
 
-	switch( m_MusicWheel.GetSelectedType() )
+	WheelItemDataType wtype = m_MusicWheel.GetSelectedType();
+	SampleMusicPreviewMode pmode;
+	switch( wtype )
 	{
 	case WheelItemDataType_Section:
 	case WheelItemDataType_Sort:
@@ -1728,7 +1730,7 @@ void ScreenSelectMusic::AfterMusicChange()
 			m_fSampleLengthSeconds = -1;
 		}
 
-		switch( m_MusicWheel.GetSelectedType() )
+		switch( wtype )
 		{
 			case WheelItemDataType_Section:
 				// reduce scope
@@ -1776,7 +1778,7 @@ void ScreenSelectMusic::AfterMusicChange()
 				}
 				break;
 			default:
-				ASSERT(0);
+				FAIL_M(ssprintf("Invalid WheelItemDataType: %i", wtype));
 		}
 		// override this if the sample music mode wants to.
 		/*
@@ -1792,7 +1794,8 @@ void ScreenSelectMusic::AfterMusicChange()
 	case WheelItemDataType_Song:
 	case WheelItemDataType_Portal:
 		// check SampleMusicPreviewMode here.
-		switch( SAMPLE_MUSIC_PREVIEW_MODE )
+		pmode = SAMPLE_MUSIC_PREVIEW_MODE;
+		switch( pmode )
 		{
 			case SampleMusicPreviewMode_ScreenMusic:
 				// play the screen music
@@ -1812,7 +1815,7 @@ void ScreenSelectMusic::AfterMusicChange()
 				m_fSampleLengthSeconds = pSong->m_fMusicSampleLengthSeconds;
 				break;
 			default:
-				ASSERT(0);
+				FAIL_M(ssprintf("Invalid preview mode: %i", pmode));
 		}
 
 		SongUtil::GetPlayableSteps( pSong, m_vpSteps );
@@ -1848,7 +1851,7 @@ void ScreenSelectMusic::AfterMusicChange()
 		break;
 	}
 	default:
-		ASSERT(0);
+		FAIL_M(ssprintf("Invalid WheelItemDataType: %i", wtype));
 	}
 
 	m_sprCDTitleFront.UnloadTexture();

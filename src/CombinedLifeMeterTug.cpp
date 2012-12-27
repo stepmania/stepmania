@@ -13,7 +13,8 @@ static void TugMeterPercentChangeInit( size_t /*ScoreEvent*/ i, RString &sNameOu
 	sNameOut = "TugMeterPercentChange" + ScoreEventToString( (ScoreEvent)i );
 	switch( i )
 	{
-	default:	ASSERT(0);
+	default:
+		FAIL_M(ssprintf("Invalid ScoreEvent: %i", i));
 	case SE_W1:			defaultValueOut = +0.010f;	break;
 	case SE_W2:			defaultValueOut = +0.008f;	break;
 	case SE_W3:			defaultValueOut = +0.004f;	break;
@@ -77,7 +78,8 @@ void CombinedLifeMeterTug::ChangeLife( PlayerNumber pn, TapNoteScore score )
 	case TNS_HitMine:	fPercentToMove = g_fTugMeterPercentChange[SE_HitMine]; break;
 	case TNS_CheckpointHit:	fPercentToMove = g_fTugMeterPercentChange[SE_CheckpointHit];	break;
 	case TNS_CheckpointMiss:fPercentToMove = g_fTugMeterPercentChange[SE_CheckpointMiss]; break;
-	default:	ASSERT(0);	break;
+	default:
+		FAIL_M(ssprintf("Invalid TapNotScore: %i", score));
 	}
 
 	ChangeLife( pn, fPercentToMove );
@@ -95,7 +97,8 @@ void CombinedLifeMeterTug::ChangeLife( PlayerNumber pn, HoldNoteScore score, Tap
 	{
 	case HNS_Held:			fPercentToMove = g_fTugMeterPercentChange[SE_Held];	break;
 	case HNS_LetGo:			fPercentToMove = g_fTugMeterPercentChange[SE_LetGo];	break;
-	default:	ASSERT(0);	break;
+	default:
+		FAIL_M(ssprintf("Invalid HoldNoteScore: %i", score));
 	}
 
 	ChangeLife( pn, fPercentToMove );
@@ -110,7 +113,8 @@ void CombinedLifeMeterTug::ChangeLife( PlayerNumber pn, float fPercentToMove )
 		{
 		case PLAYER_1:	fLifePercentage = GAMESTATE->m_fTugLifePercentP1;		break;
 		case PLAYER_2:	fLifePercentage = 1 - GAMESTATE->m_fTugLifePercentP1;	break;
-		default:	ASSERT(0);
+		default:
+			FAIL_M(ssprintf("Invalid player number: %i", pn));
 		}
 
 		/* Clamp the life meter only for calculating the multiplier. */
@@ -122,7 +126,8 @@ void CombinedLifeMeterTug::ChangeLife( PlayerNumber pn, float fPercentToMove )
 	{
 	case PLAYER_1:	GAMESTATE->m_fTugLifePercentP1 += fPercentToMove;	break;
 	case PLAYER_2:	GAMESTATE->m_fTugLifePercentP1 -= fPercentToMove;	break;
-	default:	ASSERT(0);
+	default:
+		FAIL_M(ssprintf("Invalid player number: %i", pn));
 	}
 }
 

@@ -233,7 +233,8 @@ void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
 	case FAIL_IMMEDIATE_CONTINUE:		AddTo.push_back("FailImmediateContinue");	break;
 	case FAIL_AT_END:			AddTo.push_back("FailAtEnd");	break;
 	case FAIL_OFF:				AddTo.push_back("FailOff");	break;
-	default:		ASSERT(0);
+	default:
+		FAIL_M(ssprintf("Invalid FailType: %i", m_FailType));
 	}
 
 	if( m_fSkew==0 && m_fPerspectiveTilt==0 )		{ if( m_bSetTiltOrSkew ) AddTo.push_back( "Overhead" ); }

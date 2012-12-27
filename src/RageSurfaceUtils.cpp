@@ -360,8 +360,9 @@ int RageSurfaceUtils::FindSurfaceTraits( const RageSurface *img )
 	{
 	case NEEDS_NO_ALPHA:	ret |= TRAIT_NO_TRANSPARENCY;	break;
 	case NEEDS_BOOL_ALPHA:	ret |= TRAIT_BOOL_TRANSPARENCY;	break;
-	case NEEDS_FULL_ALPHA:									break;
-	default:	ASSERT(0);
+	case NEEDS_FULL_ALPHA:	break;
+	default:
+		FAIL_M(ssprintf("Invalid alpha type: %i", alpha_type));
 	}
 
 	return ret;
@@ -670,8 +671,7 @@ void RageSurfaceUtils::Blit( const RageSurface *src, RageSurface *dst, int width
 		if( blit_generic(src, dst, width, height) )
 			break;
 
-		// We don't do RGBA->PAL.
-		ASSERT(0);
+		FAIL_M("We don't do RGBA->PAL");
 	} while(0);
 
 	/* The destination surface may be larger than the source. For example, we may be

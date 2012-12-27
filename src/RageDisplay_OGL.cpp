@@ -236,7 +236,8 @@ static void FixLittleEndian()
 			{
 			case 24: m = Swap24(m); break;
 			case 32: m = Swap32(m); break;
-			default: ASSERT(0);
+			default:
+				 FAIL_M(ssprintf("Unsupported BPP value: %i", pf.bpp));
 			}
 			pf.masks[mask] = m;
 		}
@@ -1840,7 +1841,8 @@ void RageDisplay_Legacy::SetZTestMode( ZTestMode mode )
 	case ZTEST_OFF:			glDepthFunc( GL_ALWAYS );	break;
 	case ZTEST_WRITE_ON_PASS:	glDepthFunc( GL_LEQUAL );	break;
 	case ZTEST_WRITE_ON_FAIL:	glDepthFunc( GL_GREATER );	break;
-	default:	ASSERT( 0 );
+	default:
+		FAIL_M(ssprintf("Invalid ZTestMode: %i", mode));
 	}
 }
 
@@ -1941,7 +1943,7 @@ void RageDisplay_Legacy::SetCullMode( CullMode mode )
 		glDisable( GL_CULL_FACE );
 		break;
 	default:
-		ASSERT(0);
+		FAIL_M(ssprintf("Invalid CullMode: %i", mode));
 	}
 }
 
@@ -2419,7 +2421,7 @@ void RenderTarget_FramebufferObject::Create( const RenderTargetParam &param, int
 	case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER_EXT: FAIL_M( "GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER_EXT" ); break;
 	case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER_EXT: FAIL_M( "GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER_EXT" ); break;
 	default:
-		ASSERT(0);
+		FAIL_M(ssprintf("Unexpected GL framebuffer status: %i", status));
 	}
 
 	glBindFramebufferEXT( GL_FRAMEBUFFER_EXT, 0 );
@@ -2531,7 +2533,8 @@ void RageDisplay_Legacy::SetPolygonMode(PolygonMode pm)
 	{
 	case POLYGON_FILL:	m = GL_FILL; break;
 	case POLYGON_LINE:	m = GL_LINE; break;
-	default:		ASSERT(0);	return;
+	default:
+		FAIL_M(ssprintf("Invalid PolygonMode: %i", pm));
 	}
 	glPolygonMode(GL_FRONT_AND_BACK, m);
 }
