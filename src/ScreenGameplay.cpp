@@ -1333,29 +1333,6 @@ void ScreenGameplay::LoadLights()
 	NoteData TapNoteData1;
 	pSteps->GetNoteData( TapNoteData1 );
 
-	if( asDifficulties.size() > 1 )
-	{
-		Difficulty d2 = Difficulty_Invalid;
-
-		// We've also specified for Player 2 to be based off current difficulty
-		if( asDifficulties[1].CompareNoCase("selected") == 0 && GAMESTATE->GetNumPlayersEnabled() > 1 )
-		{
-			// Base lights off current difficulty of active player
-			// Only do this for P2 in a two-player situation, since P1 is taken care of above
-			FOREACH_EnabledPlayerNumberInfo( m_vPlayerInfo, pi )
-			{
-				PlayerNumber pn = pi->GetStepsAndTrailIndex();
-
-				if( pn == PLAYER_2 )
-					d2 = GAMESTATE->m_pCurSteps[pn]->GetDifficulty();
-			}
-		}
-		else
-			d2 = StringToDifficulty( asDifficulties[1] );
-
-		/* fall through */
-	}
-
 	NoteDataUtil::LoadTransformedLights( TapNoteData1, m_CabinetLightsNoteData, GAMEMAN->GetStepsTypeInfo(StepsType_lights_cabinet).iNumTracks );
 }
 
@@ -1986,17 +1963,11 @@ void ScreenGameplay::UpdateLights()
 	bool bBlinkGameButton[NUM_GameController][NUM_GameButton];
 	ZERO( bBlinkCabinetLight );
 	ZERO( bBlinkGameButton );
-	bool bCrossedABeat = false;
 	{
 		const float fSongBeat = GAMESTATE->m_Position.m_fLightSongBeat;
 		const int iSongRow = BeatToNoteRowNotRounded( fSongBeat );
 
 		static int iRowLastCrossed = 0;
-
-		float fBeatLast = roundf(NoteRowToBeat(iRowLastCrossed));
-		float fBeatNow = roundf(NoteRowToBeat(iSongRow));
-
-		bCrossedABeat = fBeatLast != fBeatNow;
 
 		FOREACH_CabinetLight( cl )
 		{
