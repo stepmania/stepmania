@@ -16,55 +16,55 @@ public:
 	bool BeginFrame() { return true; }
 	void EndFrame();
 	VideoModeParams GetActualVideoModeParams() const { return m_Params; }
-	void SetBlendMode( BlendMode mode ) { }
-	bool SupportsTextureFormat( PixelFormat pixfmt, bool realtime=false ) { return true; }
+	void SetBlendMode( BlendMode ) { }
+	bool SupportsTextureFormat( PixelFormat, bool realtime=false ) { return true; }
 	bool SupportsPerVertexMatrixScale() { return false; }
 	unsigned CreateTexture( 
-		PixelFormat pixfmt, 
-		RageSurface* img,
-		bool bGenerateMipMaps ) { return 1; }
+		PixelFormat, 
+		RageSurface* /* img */,
+		bool /* bGenerateMipMaps */ ) { return 1; }
 	void UpdateTexture( 
 		unsigned iTexHandle, 
 		RageSurface* img,
 		int xoffset, int yoffset, int width, int height 
 		) { }
-	void DeleteTexture( unsigned iTexHandle ) { }
+	void DeleteTexture( unsigned /* iTexHandle */ ) { }
 	void ClearAllTextures() { }
 	int GetNumTextureUnits() { return 1; }
 	void SetTexture( TextureUnit tu, unsigned iTexture ) { }
 	void SetTextureMode( TextureUnit tu, TextureMode tm ) { }
-	void SetTextureWrapping( TextureUnit tu, bool b ) { }
+	void SetTextureWrapping( TextureUnit tu, bool ) { }
 	int GetMaxTextureSize() const { return 2048; }
-	void SetTextureFiltering( TextureUnit tu, bool b ) { }
+	void SetTextureFiltering( TextureUnit tu, bool ) { }
 	bool IsZWriteEnabled() const { return false; }
 	bool IsZTestEnabled() const { return false; }
-	void SetZWrite( bool b ) { }
-	void SetZBias( float f ) { }
-	void SetZTestMode( ZTestMode mode ) { }
+	void SetZWrite( bool ) { }
+	void SetZBias( float ) { }
+	void SetZTestMode( ZTestMode ) { }
 	void ClearZBuffer() { }
-	void SetCullMode( CullMode mode ) { }
-	void SetAlphaTest( bool b ) { }
+	void SetCullMode( CullMode ) { }
+	void SetAlphaTest( bool ) { }
 	void SetMaterial( 
-		const RageColor &emissive,
-		const RageColor &ambient,
-		const RageColor &diffuse,
-		const RageColor &specular,
-		float shininess
+		const RageColor & /* unreferenced: emissive */,
+		const RageColor & /* unreferenced: ambient */,
+		const RageColor & /* unreferenced: diffuse */,
+		const RageColor & /* unreferenced: specular */,
+		float /* unreferenced: shininess */
 		) { }
-	void SetLighting( bool b ) { }
-	void SetLightOff( int index ) { }
+	void SetLighting( bool ) { }
+	void SetLightOff( int /* index */ ) { }
 	void SetLightDirectional( 
 		int index, 
-		const RageColor &ambient, 
-		const RageColor &diffuse, 
-		const RageColor &specular, 
-		const RageVector3 &dir ) { }
+		const RageColor & /* unreferenced: ambient */, 
+		const RageColor & /* unreferenced: diffuse */, 
+		const RageColor & /* unreferenced: specular */, 
+		const RageVector3 & /* unreferenced: dir */ ) { }
 
-	void SetSphereEnvironmentMapping( TextureUnit tu, bool b ) { }
-	void SetCelShaded( int stage ) { }
+	void SetSphereEnvironmentMapping( TextureUnit /* tu */, bool /* b */ ) { }
+	void SetCelShaded( int /* stage */ ) { }
 
 	RageCompiledGeometry* CreateCompiledGeometry();
-	void DeleteCompiledGeometry( RageCompiledGeometry* p );
+	void DeleteCompiledGeometry( RageCompiledGeometry* );
 
 protected:
 	void DrawQuadsInternal( const RageSpriteVertex v[], int iNumVerts ) { }
@@ -77,10 +77,10 @@ protected:
 	void DrawSymmetricQuadStripInternal( const RageSpriteVertex v[], int iNumVerts ) { }
 
 	VideoModeParams m_Params;
-	RString TryVideoMode( const VideoModeParams &p, bool &bNewDeviceOut ) { m_Params = p; return RString(); }
+	RString TryVideoMode( const VideoModeParams &p, bool & /* bNewDeviceOut */ ) { m_Params = p; return RString(); }
 	RageSurface* CreateScreenshot();
 	RageMatrix GetOrthoMatrix( float l, float r, float b, float t, float zn, float zf ); 
-	bool SupportsSurfaceFormat( PixelFormat pixfmt ) { return true; }
+	bool SupportsSurfaceFormat( PixelFormat ) { return true; }
 };
 
 #endif

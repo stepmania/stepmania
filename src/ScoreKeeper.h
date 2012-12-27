@@ -37,9 +37,9 @@ public:
 	ScoreKeeper( PlayerState *pPlayerState, PlayerStageStats *pPlayerStageStats );
 	virtual ~ScoreKeeper() { }
 	virtual void Load(
-		const vector<Song*> &apSongs,
-		const vector<Steps*> &apSteps,
-		const vector<AttackArray> &asModifiers ) { }
+		const vector<Song*> &,
+		const vector<Steps*> &,
+		const vector<AttackArray> & ) { }
 
 	virtual void DrawPrimitives() { }
 	virtual void Update( float fDelta ) { }

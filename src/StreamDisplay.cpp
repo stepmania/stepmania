@@ -23,7 +23,7 @@ StreamDisplay::StreamDisplay()
 	m_bAlwaysBounce = false;
 }
 
-void StreamDisplay::Load( const RString &_sMetricsGroup )
+void StreamDisplay::Load( const RString & /* unreferenced: _sMetricsGroup  */)
 {
 	// XXX: actually load from the metrics group passed in -aj
 	RString sMetricsGroup = "StreamDisplay";

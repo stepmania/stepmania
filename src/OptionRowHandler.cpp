@@ -373,7 +373,7 @@ static void SortNoteSkins( vector<RString> &asSkinNames )
 
 class OptionRowHandlerListNoteSkins : public OptionRowHandlerList
 {
-	virtual void LoadInternal( const Commands &cmds )
+	virtual void LoadInternal( const Commands & )
 	{
 		m_Def.m_sName = "NoteSkins";
 		m_Def.m_bOneChoiceForAllPlayers = false;

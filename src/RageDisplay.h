@@ -227,12 +227,12 @@ public:
 	virtual RageTextureLock *CreateTextureLock() { return NULL; }
 	virtual void ClearAllTextures() = 0;
 	virtual int GetNumTextureUnits() = 0;
-	virtual void SetTexture( TextureUnit tu, unsigned iTexture ) = 0;
-	virtual void SetTextureMode( TextureUnit tu, TextureMode tm ) = 0;
-	virtual void SetTextureWrapping( TextureUnit tu, bool b ) = 0;
+	virtual void SetTexture( TextureUnit, unsigned /* iTexture */ ) = 0;
+	virtual void SetTextureMode( TextureUnit, TextureMode ) = 0;
+	virtual void SetTextureWrapping( TextureUnit, bool ) = 0;
 	virtual int GetMaxTextureSize() const = 0;
-	virtual void SetTextureFiltering( TextureUnit tu, bool b ) = 0;
-	virtual void SetEffectMode( EffectMode effect ) { }
+	virtual void SetTextureFiltering( TextureUnit, bool ) = 0;
+	virtual void SetEffectMode( EffectMode ) { }
 	virtual bool IsEffectModeSupported( EffectMode effect ) { return effect == EffectMode_Normal; }
 
 	bool SupportsRenderToTexture() const { return false; }
@@ -250,13 +250,13 @@ public:
 	 * bPreserveTexture is true the first time a render target is used, behave as if
 	 * bPreserveTexture was false.
 	 */
-	virtual void SetRenderTarget( unsigned iHandle, bool bPreserveTexture = true ) { }
+	virtual void SetRenderTarget( unsigned /* iHandle */, bool /* bPreserveTexture */ = true ) { }
 
 	virtual bool IsZTestEnabled() const = 0;
 	virtual bool IsZWriteEnabled() const = 0;
-	virtual void SetZWrite( bool b ) = 0;
-	virtual void SetZTestMode( ZTestMode mode ) = 0;
-	virtual void SetZBias( float f ) = 0;
+	virtual void SetZWrite( bool ) = 0;
+	virtual void SetZTestMode( ZTestMode ) = 0;
+	virtual void SetZBias( float ) = 0;
 	virtual void ClearZBuffer() = 0;
 
 	virtual void SetCullMode( CullMode mode ) = 0;

@@ -448,7 +448,7 @@ void FixupPath( RString &path, const RString &sSongPath )
 }
 
 // Songs in BlacklistImages will never be autodetected as song images.
-void Song::TidyUpData( bool fromCache, bool duringCache )
+void Song::TidyUpData( bool fromCache, bool /* duringCache */ )
 {
 	// We need to do this before calling any of HasMusic, HasHasCDTitle, etc.
 	ASSERT_M( m_sSongDir.Left(3) != "../", m_sSongDir ); // meaningless

@@ -126,20 +126,20 @@ public:
 	RString GetPrevScreen() const;
 
 	// let subclass override if they want
-	virtual void MenuUp(const InputEventPlus &input) { }
-	virtual void MenuDown(const InputEventPlus &input) { }
-	virtual void MenuLeft(const InputEventPlus &input) { }
-	virtual void MenuRight(const InputEventPlus &input) { }
-	virtual void MenuStart(const InputEventPlus &input) { }
-	virtual void MenuSelect(const InputEventPlus &input) { }
-	virtual void MenuBack(const InputEventPlus &input) { }
-	virtual void MenuCoin(const InputEventPlus &input) { }
+	virtual void MenuUp(const InputEventPlus &) { }
+	virtual void MenuDown(const InputEventPlus &) { }
+	virtual void MenuLeft(const InputEventPlus &) { }
+	virtual void MenuRight(const InputEventPlus &) { }
+	virtual void MenuStart(const InputEventPlus &) { }
+	virtual void MenuSelect(const InputEventPlus &) { }
+	virtual void MenuBack(const InputEventPlus &) { }
+	virtual void MenuCoin(const InputEventPlus &) { }
 	// todo? -aj
-	//virtual void LeftClick(const InputEventPlus &input) { }
-	//virtual void RightClick(const InputEventPlus &input) { }
-	//virtual void MiddleClick(const InputEventPlus &input) { }
-	//virtual void MouseWheelUp(const InputEventPlus &input) { }
-	//virtual void MouseWheelDown(const InputEventPlus &input) { }
+	//virtual void LeftClick(const InputEventPlus &) { }
+	//virtual void RightClick(const InputEventPlus &) { }
+	//virtual void MiddleClick(const InputEventPlus &) { }
+	//virtual void MouseWheelUp(const InputEventPlus &) { }
+	//virtual void MouseWheelDown(const InputEventPlus &) { }
 };
 
 #endif

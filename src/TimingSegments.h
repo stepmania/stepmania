@@ -78,7 +78,7 @@ struct TimingSegment
 	float GetBeat() const { return NoteRowToBeat(m_iStartRow); }
 	void SetBeat( float fBeat ) { SetRow( BeatToNoteRow(fBeat) ); }
 
-	virtual RString ToString(int dec) const
+	virtual RString ToString(int /* dec */) const
 	{
 		return FloatToString(GetBeat());
 	}

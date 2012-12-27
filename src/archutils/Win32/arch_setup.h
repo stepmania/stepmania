@@ -26,6 +26,13 @@ Enable them in the project file at your peril (or if you feel like
 learning of many pedantic style warnings and want to fix them).
 
 C2475: non dll-interface class 'stdext::exception' used as base for dll-interface class 'std::bad_cast', bug in VC <exception> when exceptions disabled
+C4100: unreferenced formal parameter
+  Many functions are like this, including virtual functions: unsure if it can be justified.
+  "case 'aaa' is not a valid value for switch of enum 'bbb'
+  Actually, this is a valid warning, but we do it all over the
+  place, eg. with ScreenMessages. Those should be fixed, but later. XXX
+C4127: conditional expression is constant.
+
 C4201: nonstandard extension used : nameless struct/union (Windows headers do this)
 C4786: turn off broken debugger warning
 C4512: assignment operator could not be generated (so?)
@@ -33,12 +40,8 @@ C4512: assignment operator could not be generated (so?)
  blocks, try/catch blocks), and I've never found it to be useful.
 C4702: assignment operator could not be generated (so?)
 // "unreferenced formal parameter"; we *want* that in many cases
-C4100:
- "case 'aaa' is not a valid value for switch of enum 'bbb'
- Actually, this is a valid warning, but we do it all over the
- place, eg. with ScreenMessages. Those should be fixed, but later. XXX
+
 C4063:
-C4127:
 C4786: VC6: identifier was truncated to '255' characters in the debug information
 C4505: removed unferenced local function from integer.cpp & algebra.h
 C4244: converting of data = possible data loss.  (This pragma should eventually go away)

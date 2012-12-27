@@ -1278,7 +1278,7 @@ NoteData::_all_tracks_iterator<ND, iter, TN> &NoteData::_all_tracks_iterator<ND,
 }
 
 template<typename ND, typename iter, typename TN>
-NoteData::_all_tracks_iterator<ND, iter, TN> NoteData::_all_tracks_iterator<ND, iter, TN>::operator++( int dummy ) // postincrement
+NoteData::_all_tracks_iterator<ND, iter, TN> NoteData::_all_tracks_iterator<ND, iter, TN>::operator++( int ) // postincrement
 {
 	_all_tracks_iterator<ND, iter, TN> ret( *this );
 	operator++();
