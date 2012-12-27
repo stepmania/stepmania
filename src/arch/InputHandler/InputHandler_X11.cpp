@@ -180,7 +180,7 @@ void InputHandler_X11::Update()
 			&event) )
 	{
 		const bool bKeyPress = event.type == KeyPress;
-		const bool bMousePress = event.type == ButtonPress;
+		//const bool bMousePress = event.type == ButtonPress;
 
 		if( event.type == MotionNotify )
 		{
