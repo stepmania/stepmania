@@ -543,7 +543,7 @@ ulg crc32(ulg crc, const uch *buf, size_t len)
 class TZip
 { 
 public:
-	TZip() : pfout(NULL),zfis(0),hfin(0),writ(0),oerr(false),hasputcen(false),ooffset(0)
+	TZip() : pfout(NULL),ooffset(0),oerr(false),writ(0),hasputcen(false),zfis(0),hfin(0)
 	{
 	}
 	~TZip()

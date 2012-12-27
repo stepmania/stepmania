@@ -1032,7 +1032,7 @@ public:
 	void AddToSong();
 };
 
-BMSSongLoader::BMSSongLoader( RString songDir, Song *outSong ): song(outSong), dir(songDir)
+BMSSongLoader::BMSSongLoader( RString songDir, Song *outSong ): dir(songDir), song(outSong)
 {
 }
 
