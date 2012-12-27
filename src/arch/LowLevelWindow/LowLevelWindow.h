@@ -25,7 +25,7 @@ public:
 	virtual void GetDisplayResolutions( DisplayResolutions &out ) const = 0;
 
 	virtual void LogDebugInformation() const { }
-	virtual bool IsSoftwareRenderer( RString &sError ) { return false; }
+	virtual bool IsSoftwareRenderer( RString & /* sError */ ) { return false; }
 
 	virtual void SwapBuffers() = 0;
 	virtual void Update() { }

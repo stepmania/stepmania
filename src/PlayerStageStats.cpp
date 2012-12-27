@@ -745,7 +745,7 @@ public:
 	static int GetRadarPossible( T* p, lua_State *L ) { p->m_radarPossible.PushSelf(L); return 1; }
 	static int GetRadarActual( T* p, lua_State *L ) { p->m_radarActual.PushSelf(L); return 1; }
   
-	static int FailPlayer( T* p, lua_State *L )
+	static int FailPlayer( T* p, lua_State * )
 	{
 		p->m_bFailed = true;
 		return 0;

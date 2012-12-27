@@ -71,7 +71,7 @@ void ActorFrameTexture::DrawPrimitives()
 class LunaActorFrameTexture : public Luna<ActorFrameTexture>
 {
 public:
-	static int Create( T* p, lua_State *L )				{ p->Create(); return 0; }
+	static int Create( T* p, lua_State * )				{ p->Create(); return 0; }
 	static int EnableDepthBuffer( T* p, lua_State *L )		{ p->EnableDepthBuffer(BArg(1)); return 0; }
 	static int EnableAlphaBuffer( T* p, lua_State *L )		{ p->EnableAlphaBuffer(BArg(1)); return 0; }
 	static int EnableFloat( T* p, lua_State *L )			{ p->EnableFloat(BArg(1)); return 0; }

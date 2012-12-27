@@ -14,13 +14,13 @@ public:
 
 	RageMovieTexture( RageTextureID ID ): RageTexture(ID) { }
 	virtual ~RageMovieTexture() { }
-	virtual void Update( float fDeltaTime ) { }
+	virtual void Update( float /* fDeltaTime */ ) { }
 
 	virtual void Reload() = 0;
 
 	virtual void SetPosition( float fSeconds ) = 0;
 	virtual void SetPlaybackRate( float fRate ) = 0;
-	virtual void SetLooping( bool looping=true ) { }
+	virtual void SetLooping( bool = true ) { }
 
 	bool IsAMovie() const { return true; }
 

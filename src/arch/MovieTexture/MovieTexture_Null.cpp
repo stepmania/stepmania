@@ -12,10 +12,10 @@ public:
 	virtual ~MovieTexture_Null();
 	void Invalidate() { texHandle = 0; }
 	unsigned GetTexHandle() const { return texHandle; }
-	void Update(float delta) { }
+	void Update(float /* delta */) { }
 	void Reload() { }
-	void SetPosition(float seconds) { }
-	void SetPlaybackRate(float rate) { }
+	void SetPosition(float /* seconds */) { }
+	void SetPlaybackRate(float) { }
 	void SetLooping(bool looping=true) { loop = looping; }
 
 private:

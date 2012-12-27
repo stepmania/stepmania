@@ -42,7 +42,7 @@ public:
 		const vector<AttackArray> & ) { }
 
 	virtual void DrawPrimitives() { }
-	virtual void Update( float fDelta ) { }
+	virtual void Update( float /* fDelta */ ) { }
 
 	// Note that pNoteData will include any transformations due to modifiers.
 	virtual void OnNextSong( int /* iSongInCourseIndex */, const Steps*, const NoteData* ) { };	// before a song plays (called multiple times if course)

@@ -837,7 +837,7 @@ public:
 		p->AddAttribute( iPos, attr );
 		return 0;
 	}
-	static int ClearAttributes( T* p, lua_State *L )	{ p->ClearAttributes(); return 0; }
+	static int ClearAttributes( T* p, lua_State * )	{ p->ClearAttributes(); return 0; }
 	static int strokecolor( T* p, lua_State *L )		{ RageColor c; c.FromStackCompat( L, 1 ); p->SetStrokeColor( c ); return 0; }
 	static int uppercase( T* p, lua_State *L )		{ p->SetUppercase( BArg(1) ); return 0; }
 	static int textglowmode( T* p, lua_State *L )	{ p->SetTextGlowMode( Enum::Check<TextGlowMode>(L, 1) ); return 0; }

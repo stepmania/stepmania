@@ -119,9 +119,9 @@ struct SMLoader
 				   const RString line,
 				   const int rowsPerBeat = -1);
 	
-	virtual void ProcessCombos(TimingData & out,
+	virtual void ProcessCombos(TimingData & /* out */,
 				   const RString line,
-				   const int rowsPerBeat = -1) {}
+				   const int /* rowsPerBeat */ = -1) {}
 	
 	/**
 	 * @brief Process the Fake Segments from the string.
