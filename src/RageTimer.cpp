@@ -32,7 +32,7 @@
 const RageTimer RageZeroTimer(0,0);
 static uint64_t g_iStartTime = ArchHooks::GetMicrosecondsSinceStart( true );
 
-static uint64_t GetTime( bool bAccurate )
+static uint64_t GetTime( bool /* bAccurate */ )
 {
 	return ArchHooks::GetMicrosecondsSinceStart( true );
 

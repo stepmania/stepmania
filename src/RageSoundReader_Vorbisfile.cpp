@@ -261,7 +261,7 @@ int RageSoundReader_Vorbisfile::Read( float *buf, int iFrames )
 
 int RageSoundReader_Vorbisfile::GetSampleRate() const
 {
-	ASSERT(vf);
+	ASSERT(vf != NULL);
 
 	vorbis_info *vi = ov_info(vf, -1);
 	ASSERT(vi != NULL);
@@ -271,7 +271,7 @@ int RageSoundReader_Vorbisfile::GetSampleRate() const
 
 int RageSoundReader_Vorbisfile::GetNextSourceFrame() const
 {
-	ASSERT(vf);
+	ASSERT(vf != NULL);
 
 	int iFrame = (int)ov_pcm_tell( vf );
 	return iFrame;

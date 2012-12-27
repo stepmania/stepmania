@@ -137,7 +137,7 @@ XNode *XNode::AppendChild( XNode *node )
 }
 
 // detach node and delete object
-bool XNode::RemoveChild( XNode *node, bool bDelete )
+bool XNode::RemoveChild( XNode *node, bool /* bDelete */ )
 {
 	XNodes::iterator it = find( m_childs.begin(), m_childs.end(), node );
 	if( it == m_childs.end() )

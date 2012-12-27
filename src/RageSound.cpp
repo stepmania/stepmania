@@ -53,7 +53,7 @@ RageSound::RageSound():
 	m_iStoppedSourceFrame(0), m_bPlaying(false),
 	m_bDeleteWhenFinished(false), m_sError("")
 {
-	ASSERT( SOUNDMAN );
+	ASSERT( SOUNDMAN != NULL );
 }
 
 RageSound::~RageSound()
@@ -65,7 +65,7 @@ RageSound::RageSound( const RageSound &cpy ):
 	RageSoundBase( cpy ),
 	m_Mutex( "RageSound" )
 {
-	ASSERT(SOUNDMAN);
+	ASSERT(SOUNDMAN != NULL);
 
 	m_pSource = NULL;
 
@@ -266,7 +266,7 @@ int RageSound::GetDataToPlay( float *pBuffer, int iFrames, int64_t &iStreamFrame
 //	LockMut(m_Mutex);
 
 	ASSERT_M( m_bPlaying, ssprintf("%p", this) );
-	ASSERT( m_pSource );
+	ASSERT( m_pSource != NULL );
 
 	iFramesStored = 0;
 	iStreamFrame = m_iStreamFrame;

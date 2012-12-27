@@ -580,8 +580,10 @@ const RString& ProfileManager::GetProfileDir( ProfileSlot slot ) const
 	case ProfileSlot_Machine:
 		return MACHINE_PROFILE_DIR;
 	default:
-		ASSERT(0);
+		break;
 	}
+	// it should never hit here.
+	FAIL_M("Invalid profile slot chosen: unable to get the directory!");
 }
 
 RString ProfileManager::GetProfileDirImportedFrom( ProfileSlot slot ) const
@@ -596,6 +598,8 @@ RString ProfileManager::GetProfileDirImportedFrom( ProfileSlot slot ) const
 	default:
 		ASSERT(0);
 	}
+	// it should never hit here.
+	return RString();
 }
 
 const Profile* ProfileManager::GetProfile( ProfileSlot slot ) const
@@ -610,6 +614,8 @@ const Profile* ProfileManager::GetProfile( ProfileSlot slot ) const
 	default:
 		ASSERT(0);
 	}
+	// it should never hit here.
+	return NULL;
 }
 
 //
@@ -822,7 +828,7 @@ public:
 	static int IsPersistentProfile( T* p, lua_State *L )	{ lua_pushboolean(L, p->IsPersistentProfile(Enum::Check<PlayerNumber>(L, 1)) ); return 1; }
 	static int GetProfile( T* p, lua_State *L )				{ PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1); Profile* pP = p->GetProfile(pn); ASSERT(pP != NULL); pP->PushSelf(L); return 1; }
 	static int GetMachineProfile( T* p, lua_State *L )		{ p->GetMachineProfile()->PushSelf(L); return 1; }
-	static int SaveMachineProfile( T* p, lua_State *L )		{ p->SaveMachineProfile(); return 0; }
+	static int SaveMachineProfile( T* p, lua_State * )		{ p->SaveMachineProfile(); return 0; }
 	static int GetLocalProfile( T* p, lua_State *L )
 	{
 		Profile *pProfile = p->GetLocalProfile(SArg(1));
@@ -842,7 +848,7 @@ public:
 	static int LastLoadWasTamperedOrCorrupt( T* p, lua_State *L ) { lua_pushboolean(L, p->LastLoadWasTamperedOrCorrupt(Enum::Check<PlayerNumber>(L, 1)) ); return 1; }
 	static int GetPlayerName( T* p, lua_State *L )				{ PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1); lua_pushstring(L, p->GetPlayerName(pn)); return 1; }
 
-	static int LocalProfileIDToDir( T* p, lua_State *L )
+	static int LocalProfileIDToDir( T* , lua_State *L )
 	{
 		RString dir = USER_PROFILES_DIR + SArg(1) + "/";
 		lua_pushstring( L, dir );

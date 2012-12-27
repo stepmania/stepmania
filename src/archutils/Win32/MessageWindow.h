@@ -17,7 +17,7 @@ public:
 	HWND GetHwnd() { return m_hWnd; }
 
 protected:
-	virtual bool HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam ) { return false; }
+	virtual bool HandleMessage( UINT /* msg */, WPARAM /* wParam */, LPARAM /* lParam */ ) { return false; }
 	void StopRunning();
 
 private:

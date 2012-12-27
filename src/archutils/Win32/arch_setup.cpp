@@ -7,7 +7,7 @@
 
 #if defined(WINDOWS)
 int main( int argc, char* argv[] );
-int __stdcall WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, char *pCmdLine, int nCmdShow )
+int __stdcall WinMain( HINSTANCE /* hInstance */, HINSTANCE  /* hPrevInstance */, char * /* pCmdLine */, int /* nCmdShow */ )
 {
 	char **argv;
 	int argc = GetWin32CmdLine( argv );

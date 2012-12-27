@@ -1551,6 +1551,8 @@ bool GameState::ShowW1() const
 	case ALLOW_W1_EVERYWHERE:	return true;
 	default:	ASSERT(0);
 	}
+	// it should never hit here.
+	return false;
 }
 
 
@@ -2424,7 +2426,7 @@ public:
 		LuaHelpers::CreateTableFromArray( vHP, L );
 		return 1;
 	}
-  static int GetEnabledPlayers(T* p, lua_State *L )
+  static int GetEnabledPlayers(T* , lua_State *L )
   {
     vector<PlayerNumber> vEP;
     FOREACH_EnabledPlayer( pn )
@@ -2438,7 +2440,7 @@ public:
 		LuaHelpers::Push( L, pStyle );
 		return 1;
 	}
-	static int IsAnyHumanPlayerUsingMemoryCard( T* p, lua_State *L )
+	static int IsAnyHumanPlayerUsingMemoryCard( T* , lua_State *L )
 	{
 		bool bUsingMemoryCard = false;
 		FOREACH_HumanPlayer( pn )
@@ -2449,7 +2451,11 @@ public:
 		lua_pushboolean(L, bUsingMemoryCard );
 		return 1;
 	}
-	static int GetNumStagesForCurrentSongAndStepsOrCourse( T* p, lua_State *L ) { lua_pushnumber(L, GAMESTATE->GetNumStagesForCurrentSongAndStepsOrCourse() ); return 1; }
+	static int GetNumStagesForCurrentSongAndStepsOrCourse( T* , lua_State *L )
+	{ 
+		lua_pushnumber(L, GAMESTATE->GetNumStagesForCurrentSongAndStepsOrCourse() );
+		return 1; 
+	}
 	static int GetNumStagesLeft( T* p, lua_State *L )
 	{
 		PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);

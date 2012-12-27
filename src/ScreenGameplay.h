@@ -172,7 +172,7 @@ public:
 	bool IsPaused() const { return m_bPaused; }
 
 protected:
-	virtual void UpdateStageStats( MultiPlayer mp ) {};	// overridden for multiplayer
+	virtual void UpdateStageStats( MultiPlayer /* mp */ ) {};	// overridden for multiplayer
 
 	virtual bool UseSongBackgroundAndForeground() const { return true; }
 
