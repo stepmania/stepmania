@@ -219,7 +219,6 @@ static void RunCrashHandler( const CrashData *crash )
 		/* non-fatal */
 	}
 
-	static int received = 0;
 	static int active = 0;
 
 	if( active )
@@ -250,7 +249,6 @@ static void RunCrashHandler( const CrashData *crash )
 		_exit( 1 );
 	}
 	active = 1;
-	received = getpid();
 
 	/* Stop other threads.  XXX: This prints a spurious ptrace error if any threads
 	 * are already suspended, which happens in ForceCrashHandlerDeadlock(). */

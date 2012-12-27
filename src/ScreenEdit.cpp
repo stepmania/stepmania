@@ -2618,7 +2618,6 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			}
 			else
 			{
-				bool bAlreadyBGChangeHere = false;
 				BackgroundLayer iLayer = BACKGROUND_LAYER_1;
 				BackgroundChange bgChange;
 				bgChange.m_fStartBeat = GAMESTATE->m_Position.m_fSongBeat;
@@ -2626,7 +2625,6 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 				{
 					if( bgc->m_fStartBeat == GAMESTATE->m_Position.m_fSongBeat )
 					{
-						bAlreadyBGChangeHere = true;
 						bgChange = *bgc;
 						m_pSong->GetBackgroundChanges(iLayer).erase( bgc );
 						break;

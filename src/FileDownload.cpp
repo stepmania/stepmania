@@ -56,12 +56,7 @@ RString FileTransfer::Update( float fDeltaTime )
 
 void FileTransfer::UpdateProgress()
 {
-	float DownloadedRatio;
-
-	if( m_iTotalBytes < 1 )
-		DownloadedRatio = 0;
-	else
-		DownloadedRatio = float(m_iDownloaded) / float(m_iTotalBytes);
+	// Code here did nothing...
 }
 
 void FileTransfer::Cancel()

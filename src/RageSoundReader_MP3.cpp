@@ -366,14 +366,12 @@ int RageSoundReader_MP3::fill_buffer()
 
 void fill_frame_index_cache( madlib_t *mad )
 {
-	int ms, percent, pos;
+	int pos;
 
 	/* Only update the frame cache if our timer is consistent. */
 	if(!mad->timer_accurate) return;
 
-	/* ms of the frame we just decoded: */
-	ms = mad_timer_count(mad->Timer, MAD_UNITS_MILLISECONDS);
-	percent = ms * 100 / mad->length;
+	/* the frame we just decoded: */
 	pos = get_this_frame_byte(mad);
 
 	/* Fill in the TOC percent. */

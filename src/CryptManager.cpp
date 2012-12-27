@@ -383,9 +383,9 @@ RString CryptManager::GetMD5ForString( RString sData )
 	int iHash = register_hash( &md5_desc );
 
 	hash_state hash;
-	int iRet = hash_descriptor[iHash].init( &hash );
-	iRet = hash_descriptor[iHash].process( &hash, (const unsigned char *) sData.data(), sData.size() );
-	iRet = hash_descriptor[iHash].done( &hash, digest );
+	hash_descriptor[iHash].init( &hash );
+	hash_descriptor[iHash].process( &hash, (const unsigned char *) sData.data(), sData.size() );
+	hash_descriptor[iHash].done( &hash, digest );
 
 	return RString( (const char *) digest, sizeof(digest) );
 }
@@ -397,9 +397,9 @@ RString CryptManager::GetSHA1ForString( RString sData )
 	int iHash = register_hash( &sha1_desc );
 
 	hash_state hash;
-	int iRet = hash_descriptor[iHash].init( &hash );
-	iRet = hash_descriptor[iHash].process( &hash, (const unsigned char *) sData.data(), sData.size() );
-	iRet = hash_descriptor[iHash].done( &hash, digest );
+	hash_descriptor[iHash].init( &hash );
+	hash_descriptor[iHash].process( &hash, (const unsigned char *) sData.data(), sData.size() );
+	hash_descriptor[iHash].done( &hash, digest );
 
 	return RString( (const char *) digest, sizeof(digest) );
 }

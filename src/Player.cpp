@@ -2110,10 +2110,7 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 	{
 		// TODO: remove use of PlayerNumber
 		PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
-		int iWeightPounds = 120;
 		Profile *pProfile = PROFILEMAN->GetProfile( pn );
-		if( pProfile )
-			iWeightPounds = pProfile->GetCalculatedWeightPounds();
 
 		int iNumTracksHeld = 0;
 		for( int t=0; t<m_NoteData.GetNumTracks(); t++ )

@@ -650,9 +650,6 @@ void ScreenOptions::PositionRows( bool bTween )
 
 		float fPos = (float) pos;
 
-		LuaExpressionTransform *pExpr = NULL;
-		pExpr = &m_exprRowPositionTransformFunction;
-
 		if( i < first_start )				fPos = -0.5f;
 		else if( i >= first_end && i < second_start )	fPos = ((int)NUM_ROWS_SHOWN)/2-0.5f;
 		else if( i >= second_end )			fPos = ((int)NUM_ROWS_SHOWN)-0.5f;
