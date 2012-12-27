@@ -82,15 +82,17 @@ using namespace std;
 #undef ASSERT
 #endif
 
+/* Keep this section synchronized with RageThreads.h until refactored */
 /** @brief RageThreads defines (don't pull in all of RageThreads.h here) */
 namespace Checkpoints
 {
 	void SetCheckpoint( const char *file, int line, const char *message );
 }
-/** @brief Set a checkpoint with no message. */
-#define CHECKPOINT (Checkpoints::SetCheckpoint(__FILE__, __LINE__, NULL))
 /** @brief Set a checkpoint with a specified message. */
-#define CHECKPOINT_M(m) (Checkpoints::SetCheckpoint(__FILE__, __LINE__, m))
+#define _CHECKPOINT_M(f, l, m) (Checkpoints::SetCheckpoint(f, l, m))
+#define CHECKPOINT_M(m) (_CHECKPOINT_M(__FILE__, __LINE__, m))
+/** @brief Set a checkpoint with no message. */
+#define CHECKPOINT (_CHECKPOINT_M(__FILE__, __LINE__, NULL))
 
 
 /**
@@ -125,19 +127,21 @@ void NORETURN sm_crash( const char *reason = "Internal error" );
  * This should probably be used instead of throwing an exception in most 
  * cases we expect never to happen (but not in cases that we do expect, 
  * such as DSound init failure.) */
-static inline void FAIL_M(const char * MESSAGE)
+static inline void NORETURN _FAIL_M(const char * file, int line, const char * message)
 {
-	CHECKPOINT_M(MESSAGE);
-	sm_crash(MESSAGE);
+	_CHECKPOINT_M(file, line, message);
+	sm_crash(message);
 }
+#define FAIL_M(m) (_FAIL_M(__FILE__, __LINE__, m))
 
-static inline void ASSERT_M(bool COND, const char * MESSAGE)
+static inline void _ASSERT_M(const char * file, int line, bool cond, const char * message)
 {
-	if (unlikely(!(COND)))
+	if (unlikely(!(cond)))
 	{
-		FAIL_M(MESSAGE);
+		_FAIL_M(file, line, message);
 	}
 }
+#define ASSERT_M(c, m) (_ASSERT_M(__FILE__, __LINE__, c, m))
 
 #if !defined(CO_EXIST_WITH_MFC)
 #define ASSERT(COND) ASSERT_M((COND), "Assertion '" #COND "' failed")

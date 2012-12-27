@@ -79,8 +79,10 @@ namespace Checkpoints
 	void GetLogs( char *pBuf, int iSize, const char *delim );
 };
 
-#define CHECKPOINT (Checkpoints::SetCheckpoint(__FILE__, __LINE__, NULL))
-#define CHECKPOINT_M(m) (Checkpoints::SetCheckpoint(__FILE__, __LINE__, m))
+/* Keep this section synchronized with global.h until refactored */
+#define _CHECKPOINT_M(f, l, m) (Checkpoints::SetCheckpoint(f, l, m))
+#define CHECKPOINT_M(m) (_CHECKPOINT_M(__FILE__, __LINE__, m))
+#define CHECKPOINT (_CHECKPOINT_M(__FILE__, __LINE__, NULL))
 
 /* Mutex class that follows the behavior of Windows mutexes: if the same
  * thread locks the same mutex twice, we just increase a refcount; a mutex
