@@ -108,7 +108,9 @@ typedef __int64 int64_t;
 typedef unsigned __int64 uint64_t;
 #if _MSC_VER < 1700	// 1700 = VC++ 2011
 #define INT64_C(i) i##i64
-#define UINT64_C(i) i##i64
+#ifndef UINT64_C
+#define UINT64_C(i) i##ui64
+#endif
 #endif // #if _MSC_VER < 1700
 #if _MSC_VER < 1600	// 1600 = VC++ 2010
 static inline int64_t llabs( int64_t i ) { return i >= 0? i: -i; }
