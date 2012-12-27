@@ -125,8 +125,20 @@ void NORETURN sm_crash( const char *reason = "Internal error" );
  * This should probably be used instead of throwing an exception in most 
  * cases we expect never to happen (but not in cases that we do expect, 
  * such as DSound init failure.) */
-#define FAIL_M(MESSAGE) do { CHECKPOINT_M(MESSAGE); sm_crash(MESSAGE); } while(0)
-#define ASSERT_M(COND, MESSAGE) do { if(unlikely(!(COND))) { FAIL_M(MESSAGE); } } while(0)
+static inline void FAIL_M(const char * MESSAGE)
+{
+	CHECKPOINT_M(MESSAGE);
+	sm_crash(MESSAGE);
+}
+
+static inline void ASSERT_M(bool COND, const char * MESSAGE)
+{
+	if (unlikely(!(COND)))
+	{
+		FAIL_M(MESSAGE);
+	}
+}
+
 #if !defined(CO_EXIST_WITH_MFC)
 #define ASSERT(COND) ASSERT_M((COND), "Assertion '" #COND "' failed")
 #endif
