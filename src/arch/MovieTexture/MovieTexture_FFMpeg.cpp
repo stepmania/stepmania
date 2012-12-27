@@ -699,7 +699,7 @@ void MovieDecoder_FFMpeg::Close()
 
 	if( m_fctx )
 	{
-		avcodec::av_close_input_file( m_fctx );
+		avcodec::avformat_close_input( &m_fctx );
 		m_fctx = NULL;
 	}
 

@@ -1545,7 +1545,7 @@ void SongManager::UpdatePreferredSort(RString sPreferredSongs, RString sPreferre
 			}
 			else
 			{
-				/* if the line ends in "/*", check if the section exists,
+				/* if the line ends in slash-star, check if the section exists,
 				 * and if it does, add all the songs in that group to the list. */
 				if( EndsWith(sLine,"/*") )
 				{
