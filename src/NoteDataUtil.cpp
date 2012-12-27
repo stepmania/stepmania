@@ -402,7 +402,7 @@ void NoteDataUtil::GetSMNoteDataString( const NoteData &in, RString &sRet )
 					case TapNote::lift:			c = 'L'; break;
 					case TapNote::fake:			c = 'F'; break;
 					default: 
-						FAIL_M( ssprintf("tn %i", tn.type) );	// invalid enum value
+						c = '\0'; FAIL_M( ssprintf("tn %i", tn.type) );	// invalid enum value
 					}
 					sRet.append( 1, c );
 

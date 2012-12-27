@@ -140,7 +140,7 @@ RString LowLevelWindow_Win32::TryVideoMode( const VideoModeParams &p, bool &bNew
 		bCanSetPixelFormat = false;
 	}
 
-	ASSERT( GraphicsWindow::GetHwnd() );
+	ASSERT( GraphicsWindow::GetHwnd() != NULL );
 
 	/* Set the display mode: switch to a fullscreen mode or revert to windowed mode. */
 	LOG->Trace("SetScreenMode ...");

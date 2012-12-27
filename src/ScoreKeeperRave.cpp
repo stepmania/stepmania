@@ -163,7 +163,7 @@ void ScoreKeeperRave::AddSuperMeterDelta( float fUnscaledPercentChange )
 		{
 		case PLAYER_1:	bWinning = GAMESTATE->m_fTugLifePercentP1 > 0.5f;	break;
 		case PLAYER_2:	bWinning = GAMESTATE->m_fTugLifePercentP1 < 0.5f;	break;
-		default:	ASSERT(0);
+		default:		bWinning = false; ASSERT(0);
 		}
 		if( !bWinning )
 			m_pPlayerState->EndActiveAttacks();

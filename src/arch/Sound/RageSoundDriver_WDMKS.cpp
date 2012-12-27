@@ -259,7 +259,7 @@ static bool WdmGetPinPropertyMulti(
 		return false;
 
 	*ksMultipleItem = (KSMULTIPLE_ITEM*) malloc( multipleItemSize );
-	ASSERT( *ksMultipleItem );
+	ASSERT( *ksMultipleItem != NULL );
 
 	if( !WdmSyncIoctl( hHandle, IOCTL_KS_PROPERTY, &ksPProp, sizeof(KSP_PIN), (void*)*ksMultipleItem, multipleItemSize, NULL, sError) )
 	{
@@ -1004,7 +1004,7 @@ bool WinWdmStream::Open( WinWdmFilter *pFilter,
 
 		/* Avoid any FileAlignment problems by using VirtualAlloc, which is always page aligned. */
 		p->Data = (char *) VirtualAlloc( NULL, m_iFramesPerChunk*m_iBytesPerOutputSample*m_iDeviceOutputChannels, MEM_COMMIT|MEM_RESERVE, PAGE_READWRITE );
-		ASSERT( p->Data );
+		ASSERT( p->Data != NULL );
 		p->FrameExtent = m_iFramesPerChunk*m_iBytesPerOutputSample*m_iDeviceOutputChannels;
 		p->DataUsed = m_iFramesPerChunk*m_iBytesPerOutputSample*m_iDeviceOutputChannels;
 		p->Size = sizeof(*p);
@@ -1178,7 +1178,7 @@ void RageSoundDriver_WDMKS::MixerThread()
 	/* Enable priority boosting. */
 	SetThreadPriorityBoost( GetCurrentThread(), FALSE );
 	
-	ASSERT( m_pStream->m_pPlaybackPin );
+	ASSERT( m_pStream->m_pPlaybackPin != NULL );
 
 	/* Some drivers (stock USB audio in XP) misbehave if we go from KSSTATE_STOP to
 	 * KSSTATE_RUN.  Always transition through KSSTATE_PAUSE. */

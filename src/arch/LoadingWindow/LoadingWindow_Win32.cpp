@@ -25,10 +25,10 @@ static HBITMAP LoadWin32Surface( RageSurface *&s )
 	RageSurfaceUtils::ConvertSurface( s, s->w, s->h, 32, 0xFF000000, 0x00FF0000, 0x0000FF00, 0 );
 
 	HDC hScreen = GetDC(NULL);
-	ASSERT_M( hScreen, werr_ssprintf(GetLastError(), "hScreen") );
+	ASSERT_M( hScreen != NULL, werr_ssprintf(GetLastError(), "hScreen") );
 
 	HBITMAP bitmap = CreateCompatibleBitmap( hScreen, s->w, s->h );
-	ASSERT_M( bitmap, werr_ssprintf(GetLastError(), "CreateCompatibleBitmap") );
+	ASSERT_M( bitmap != NULL, werr_ssprintf(GetLastError(), "CreateCompatibleBitmap") );
 
 	HDC BitmapDC = CreateCompatibleDC( hScreen );
 	SelectObject( BitmapDC, bitmap );

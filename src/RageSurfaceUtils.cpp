@@ -134,7 +134,7 @@ void RageSurfaceUtils::CopySurface( const RageSurface *src, RageSurface *dest )
 	// Copy the palette, if we have one.
 	if( src->format->BitsPerPixel == 8 && dest->format->BitsPerPixel == 8 )
 	{
-		ASSERT( dest->fmt.palette );
+		ASSERT( dest->fmt.palette != NULL );
 		*dest->fmt.palette = *src->fmt.palette;
 	}
 
@@ -791,7 +791,7 @@ RageSurface *RageSurfaceUtils::LoadSurface( RString file )
 	// Create the surface.
 	RageSurface *img = CreateSurface( h.width, h.height, h.bpp,
 			h.Rmask, h.Gmask, h.Bmask, h.Amask );
-	ASSERT( img );
+	ASSERT( img != NULL );
 
 	/* If the pitch has changed, this surface is either corrupt, or was
 	 * created with a different version whose CreateSurface() behavior

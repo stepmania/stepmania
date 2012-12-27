@@ -104,7 +104,7 @@ retry:
 
 Actor* ActorUtil::LoadFromNode( const XNode* pNode, Actor *pParentActor )
 {
-	ASSERT( pNode );
+	ASSERT( pNode != NULL );
 
 	// Remove this in favor of using conditionals in Lua. -Chris
 	// There are a number of themes out there that depend on this (including

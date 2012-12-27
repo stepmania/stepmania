@@ -219,7 +219,7 @@ RageSurface *RageMovieTextureDriver_FFMpeg::AVCodecCreateCompatibleSurface( int 
 		for( iAVTexfmtIndex = 0; AVPixelFormats[iAVTexfmtIndex].bpp; ++iAVTexfmtIndex )
 			if( AVPixelFormats[iAVTexfmtIndex].bHighColor == bPreferHighColor )
 				break;
-		ASSERT( AVPixelFormats[iAVTexfmtIndex].bpp );
+		ASSERT( AVPixelFormats[iAVTexfmtIndex].bpp != 0 );
 	}
 	
 	const AVPixelFormat_t *pfd = &AVPixelFormats[iAVTexfmtIndex];
@@ -664,7 +664,7 @@ RString MovieDecoder_FFMpeg::OpenCodec()
 {
 	Init();
 
-	ASSERT( m_pStream );
+	ASSERT( m_pStream != NULL );
 	if( m_pStream->codec->codec )
 		avcodec::avcodec_close( m_pStream->codec );
 
@@ -684,7 +684,7 @@ RString MovieDecoder_FFMpeg::OpenCodec()
 	int ret = avcodec::avcodec_open2( m_pStream->codec, pCodec, NULL );
 	if( ret < 0 )
 		return RString( averr_ssprintf(ret, "Couldn't open codec \"%s\"", pCodec->name) );
-	ASSERT( m_pStream->codec->codec );
+	ASSERT( m_pStream->codec->codec != NULL );
 
 	return RString();
 }

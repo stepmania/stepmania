@@ -146,7 +146,7 @@ void ActorFrame::AddChild( Actor *pActor )
 		Dialog::OK( ssprintf("Actor \"%s\" adds child \"%s\" more than once", GetLineage().c_str(), pActor->GetName().c_str()) );
 #endif
 
-	ASSERT( pActor );
+	ASSERT( pActor != NULL );
 	ASSERT( (void*)pActor != (void*)0xC0000005 );
 	m_SubActors.push_back( pActor );
 

@@ -410,7 +410,7 @@ int MusicThread_start( void *p )
 GameSoundManager::GameSoundManager()
 {
 	/* Init RageSoundMan first: */
-	ASSERT( SOUNDMAN );
+	ASSERT( SOUNDMAN != NULL );
 
 	g_Mutex = new RageEvent("GameSoundManager");
 	g_Playing = new MusicPlaying( new RageSound );

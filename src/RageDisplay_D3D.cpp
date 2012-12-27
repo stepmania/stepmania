@@ -1208,7 +1208,7 @@ void RageDisplay_D3D::SetZTestMode( ZTestMode mode )
 	case ZTEST_OFF:			dw = D3DCMP_ALWAYS;		break;
 	case ZTEST_WRITE_ON_PASS:	dw = D3DCMP_LESSEQUAL;	break;
 	case ZTEST_WRITE_ON_FAIL:	dw = D3DCMP_GREATER;	break;
-	default: ASSERT( 0 );
+	default: dw = D3DCMP_NEVER; ASSERT( 0 );
 	}
 	g_pd3dDevice->SetRenderState( D3DRS_ZFUNC, dw );
 }

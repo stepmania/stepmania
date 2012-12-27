@@ -175,7 +175,7 @@ bool FilenameDB::ResolvePath( RString &sPath )
 	const FileSet *fs = NULL;
 
 	static const RString slash("/");
-	while( 1 )
+	for(;;)
 	{
 		split( sPath, slash, iBegin, iSize, true );
 		if( iBegin == (int) sPath.size() )
@@ -284,7 +284,7 @@ FileSet *FilenameDB::GetFileSet( const RString &sDir_, bool bCreate )
 
 	m_Mutex.Lock();
 
-	while(1)
+	for(;;)
 	{
 		/* Look for the directory. */
 		map<RString, FileSet *>::iterator i = dirs.find( sLower );
@@ -476,12 +476,12 @@ void FilenameDB::DelFile( const RString &sPath )
 	m_Mutex.Unlock(); /* locked by GetFileSet */
 }
 
-void FilenameDB::FlushDirCache( const RString &sDir )
+void FilenameDB::FlushDirCache( const RString & /* sDir */ )
 {
 	FileSet *pFileSet = NULL;
 	m_Mutex.Lock();
 
-	while( true )
+	for(;;)
 	{
 		if( dirs.empty() )
 			break;

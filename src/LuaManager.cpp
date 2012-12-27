@@ -243,7 +243,7 @@ LuaManager::LuaManager()
 	LUA = this; // so that LUA is available when we call the Register functions
 
 	lua_State *L = lua_open();
-	ASSERT( L );
+	ASSERT( L != NULL );
 
 	lua_atpanic( L, LuaPanic );
 	m_pLuaMain = L;
@@ -478,7 +478,7 @@ int LuaThreadVariable::AdjustCount( lua_State *L, int iAdd )
 	ASSERT( lua_istable(L, -1) );
 
 	lua_rawgeti( L, -1, 0 );
-	ASSERT( lua_isnumber(L, -1) );
+	ASSERT( lua_isnumber(L, -1) != 0 );
 
 	int iCount = lua_tointeger( L, -1 );
 	lua_pop( L, 1 );

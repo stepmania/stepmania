@@ -19,12 +19,12 @@ public:
 	virtual int GetFileHash( const RString &sPath );
 	virtual int GetPathValue( const RString &sPath );
 	virtual void FlushDirCache( const RString &sPath );
-	virtual void CacheFile( const RString &sPath ) { }
-	virtual bool Move( const RString &sOldPath, const RString &sNewPath ) { return false; }
-	virtual bool Remove( const RString &sPath ) { return false; }
+	virtual void CacheFile( const RString & /* sPath */ ) { }
+	virtual bool Move( const RString & /* sOldPath */, const RString & /* sNewPath */ ) { return false; }
+	virtual bool Remove( const RString & /* sPath */ ) { return false; }
 
 	/* Optional: Move to a different place, as if reconstructed with a different path. */
-	virtual bool Remount( const RString &sPath ) { return false; }
+	virtual bool Remount( const RString & /* sPath */ ) { return false; }
 
 	/* Possible error returns from Open, in addition to standard errno.h values: */
 	enum { ERROR_WRITING_NOT_SUPPORTED = -1 };

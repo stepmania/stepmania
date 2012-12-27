@@ -330,9 +330,9 @@ static acolorhist_item *mediancut( acolorhist_item *achv, int colors, int sum, i
 	int boxes;
 
 	bv = (box_vector) malloc( sizeof(struct box) * newcolors );
-	ASSERT( bv );
+	ASSERT( bv != NULL );
 	acolormap = (acolorhist_item*) malloc( sizeof(struct acolorhist_item) * newcolors);
-	ASSERT( acolormap );
+	ASSERT( acolormap != NULL );
 
 	for ( int i = 0; i < newcolors; ++i )
 		PAM_ASSIGN( acolormap[i].acolor, 0, 0, 0, 0 );

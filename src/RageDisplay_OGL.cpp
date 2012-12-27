@@ -1358,7 +1358,7 @@ void RageCompiledGeometryHWOGL::Draw( int iMeshIndex ) const
 
 #define BUFFER_OFFSET(o) ((char*)(o))
 
-	ASSERT( glDrawRangeElements);
+	ASSERT( glDrawRangeElements != NULL );
 	glDrawRangeElements( 
 		GL_TRIANGLES, 
 		meshInfo.iVertexStart,	// minimum array index contained in indices
@@ -2109,7 +2109,7 @@ unsigned RageDisplay_Legacy::CreateTexture(
 	// allocate OpenGL texture resource
 	unsigned int iTexHandle;
 	glGenTextures( 1, reinterpret_cast<GLuint*>(&iTexHandle) );
-	ASSERT( iTexHandle );
+	ASSERT( iTexHandle != 0 );
 	
 	glBindTexture( GL_TEXTURE_2D, iTexHandle );
 
@@ -2360,7 +2360,7 @@ void RenderTarget_FramebufferObject::Create( const RenderTargetParam &param, int
 	
 	// Allocate OpenGL texture resource
 	glGenTextures( 1, reinterpret_cast<GLuint*>(&m_iTexHandle) );
-	ASSERT( m_iTexHandle );
+	ASSERT( m_iTexHandle != 0 );
 
 	int iTextureWidth = power_of_two( param.iWidth );
 	int iTextureHeight = power_of_two( param.iHeight );
@@ -2387,7 +2387,7 @@ void RenderTarget_FramebufferObject::Create( const RenderTargetParam &param, int
 
 	/* Create the framebuffer object. */
 	glGenFramebuffersEXT( 1, reinterpret_cast<GLuint*>(&m_iFrameBufferHandle) );
-	ASSERT( m_iFrameBufferHandle );
+	ASSERT( m_iFrameBufferHandle != 0 );
 
 	/* Attach the texture to it. */
 	glBindFramebufferEXT( GL_FRAMEBUFFER_EXT, m_iFrameBufferHandle );
@@ -2398,7 +2398,7 @@ void RenderTarget_FramebufferObject::Create( const RenderTargetParam &param, int
 	if (param.bWithDepthBuffer)
 	{
 		glGenRenderbuffersEXT( 1, reinterpret_cast<GLuint*>(&m_iDepthBufferHandle) );
-		ASSERT( m_iDepthBufferHandle );
+		ASSERT( m_iDepthBufferHandle != 0 );
 
 		glRenderbufferStorageEXT( GL_RENDERBUFFER_EXT, GL_DEPTH_COMPONENT16, iTextureWidth, iTextureHeight );
 		glFramebufferRenderbufferEXT( GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, m_iDepthBufferHandle );

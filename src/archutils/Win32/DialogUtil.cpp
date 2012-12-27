@@ -30,7 +30,7 @@ static HFONT CreatePointFontIndirect(const LOGFONT* lpLogFont)
 // nPointSize is actually scaled 10x
 static HFONT CreatePointFont(int nPointSize, LPCTSTR lpszFaceName)
 {
-	ASSERT(lpszFaceName);
+	ASSERT(lpszFaceName != NULL);
 
 	LOGFONT logFont;
 	memset(&logFont, 0, sizeof(LOGFONT));
@@ -43,10 +43,10 @@ static HFONT CreatePointFont(int nPointSize, LPCTSTR lpszFaceName)
 
 void DialogUtil::SetHeaderFont( HWND hdlg, int nID )
 {
-	ASSERT( hdlg );
+	ASSERT( hdlg != NULL );
 
 	HWND hControl = ::GetDlgItem( hdlg, nID );
-	ASSERT( hControl );
+	ASSERT( hControl != NULL );
 
 	// TODO: Fix font leak
 	const int FONT_POINTS = 16;
@@ -56,7 +56,7 @@ void DialogUtil::SetHeaderFont( HWND hdlg, int nID )
 
 void DialogUtil::LocalizeDialogAndContents( HWND hdlg )
 {
-	ASSERT( THEME );
+	ASSERT( THEME != NULL );
 
 	const int LARGE_STRING = 256;
 	char szTemp[LARGE_STRING] = "";

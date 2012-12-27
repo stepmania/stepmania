@@ -37,7 +37,7 @@ public:
 	~RageFileDriverMem();
 
 	RageFileBasic *Open( const RString &sPath, int mode, int &err );
-	void FlushDirCache( const RString &sPath ) { }
+	void FlushDirCache( const RString & /* sPath */ ) { }
 
 	bool Remove( const RString &sPath );
 

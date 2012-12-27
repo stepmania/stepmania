@@ -208,8 +208,8 @@ RageFileBasic *RageFileDriverDirectReadOnly::Open( const RString &sPath, int iMo
 
 	return RageFileDriverDirect::Open( sPath, iMode, iError );
 }
-bool RageFileDriverDirectReadOnly::Move( const RString &sOldPath, const RString &sNewPath ) { return false; }
-bool RageFileDriverDirectReadOnly::Remove( const RString &sPath ) { return false; }
+bool RageFileDriverDirectReadOnly::Move( const RString & /* sOldPath */, const RString & /* sNewPath */ ) { return false; }
+bool RageFileDriverDirectReadOnly::Remove( const RString & /* sPath */ ) { return false; }
 
 static const unsigned int BUFSIZE = 1024*64;
 RageFileObjDirect::RageFileObjDirect( const RString &sPath, int iFD, int iMode )
@@ -248,7 +248,7 @@ namespace
 		return true;
 	}
 #else
-	bool FlushDir( RString sPath, RString &sError )
+	bool FlushDir( RString /* sPath */, RString & /* sError */ )
 	{
 		return true;
 	}

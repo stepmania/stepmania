@@ -126,7 +126,7 @@ protected:
 	void DelFileSet( map<RString, FileSet *>::iterator dir );
 
 	/* The given path wasn't cached.  Cache it. */
-	virtual void PopulateFileSet( FileSet &fs, const RString &sPath ) { }
+	virtual void PopulateFileSet( FileSet & /* fs */, const RString & /* sPath */ ) { }
 };
 
 /* This FilenameDB must be populated in advance. */
@@ -134,7 +134,7 @@ class NullFilenameDB: public FilenameDB
 {
 public:
 	NullFilenameDB() { ExpireSeconds = -1; }
-	void CacheFile( const RString &sPath ) { }
+	void CacheFile( const RString & /* sPath */ ) { }
 };
 
 #endif

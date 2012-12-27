@@ -44,7 +44,7 @@ RString RageFile::GetPath() const
 
 bool RageFile::Open( const RString& path, int mode )
 {
-	ASSERT( FILEMAN );
+	ASSERT( FILEMAN != NULL );
 	Close();
 
 	m_Path = path;

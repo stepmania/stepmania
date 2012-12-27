@@ -50,7 +50,7 @@ void BGAnimation::AddLayersFromAniDir( const RString &_sAniDir, const XNode *pNo
 		{
 			const RString &sLayer = *s;
 			const XNode* pKey = pNode->GetChild( sLayer );
-			ASSERT( pKey );
+			ASSERT( pKey != NULL );
 
 			RString sImportDir;
 			if( pKey->GetAttrValue("Import", sImportDir) )

@@ -346,7 +346,7 @@ void Font::CapsOnly()
 
 void Font::SetDefaultGlyph( FontPage *pPage )
 {
-	ASSERT( pPage );
+	ASSERT( pPage != NULL );
 	ASSERT( !pPage->m_aGlyphs.empty() );
 	m_pDefault = pPage;
 }
