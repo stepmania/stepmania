@@ -43,7 +43,7 @@ void MersenneTwister::Reset( int iSeed )
 
 void MersenneTwister::GenerateValues()
 {
-	static const int mask[] = { 0, 0x9908B0DF };
+	static const unsigned mask[] = { 0, 0x9908B0DF };
 
 	for( int i = 0; i < 227; ++i )
 	{

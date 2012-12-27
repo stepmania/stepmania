@@ -380,7 +380,7 @@ public:
 	void ChangeCentering( int trans_x, int trans_y, int add_width, int add_height );
 
 	RageSurface *CreateSurfaceFromPixfmt( PixelFormat pixfmt, void *pixels, int width, int height, int pitch );
-	PixelFormat FindPixelFormat( int bpp, int Rmask, int Gmask, int Bmask, int Amask, bool realtime=false );
+	PixelFormat FindPixelFormat( int bpp, unsigned Rmask, unsigned Gmask, unsigned Bmask, unsigned Amask, bool realtime=false );
 
 	// Lua
 	void PushSelf( lua_State *L );

@@ -402,6 +402,7 @@ void RenderTarget_X11::Create( const RenderTargetParam &param, int &iTextureWidt
 	m_iWidth = param.iWidth;
 	m_iHeight = param.iHeight;
 
+	/* NOTE: int casts on GLX_DONT_CARE are for -Werror=narrowing */
 	int pConfigAttribs[] =
 	{
 		GLX_DRAWABLE_TYPE, GLX_PBUFFER_BIT,
@@ -410,10 +411,10 @@ void RenderTarget_X11::Create( const RenderTargetParam &param, int &iTextureWidt
 		GLX_RED_SIZE, 8,
 		GLX_GREEN_SIZE, 8,
 		GLX_BLUE_SIZE, 8,
-		GLX_ALPHA_SIZE, param.bWithAlpha? 8:GLX_DONT_CARE,
+		GLX_ALPHA_SIZE, param.bWithAlpha? 8: (int) GLX_DONT_CARE,
 
 		GLX_DOUBLEBUFFER, False,
-		GLX_DEPTH_SIZE, param.bWithDepthBuffer? 16:GLX_DONT_CARE,
+		GLX_DEPTH_SIZE, param.bWithDepthBuffer? 16: (int) GLX_DONT_CARE,
 		None
 	};
 	int iConfigs;
