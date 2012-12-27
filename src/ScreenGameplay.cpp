@@ -428,7 +428,7 @@ void ScreenGameplay::Init()
 			GAMESTATE->m_pCurSteps[p].Set( GAMESTATE->m_pCurSteps[ GAMESTATE->GetFirstHumanPlayer() ] );
 
 		FOREACH_EnabledPlayer(p)
-			ASSERT( GAMESTATE->m_pCurSteps[p].Get() );
+			ASSERT( GAMESTATE->m_pCurSteps[p].Get() != NULL );
 	}
 
 	/* Increment the course play count. */
@@ -814,28 +814,28 @@ void ScreenGameplay::InitSongQueues()
 	if( GAMESTATE->IsCourseMode() )
 	{
 		Course* pCourse = GAMESTATE->m_pCurCourse;
-		ASSERT( pCourse );
+		ASSERT( pCourse != NULL );
 
 		m_apSongsQueue.clear();
 		PlayerNumber pnMaster = GAMESTATE->GetMasterPlayerNumber();
 		Trail *pTrail = GAMESTATE->m_pCurTrail[pnMaster];
-		ASSERT( pTrail );
+		ASSERT( pTrail != NULL );
 		FOREACH_CONST( TrailEntry, pTrail->m_vEntries, e )
 		{
-			ASSERT( e->pSong );
+			ASSERT( e->pSong != NULL );
 			m_apSongsQueue.push_back( e->pSong );
 		}
 
 		FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
 		{
 			Trail *lTrail = GAMESTATE->m_pCurTrail[ pi->GetStepsAndTrailIndex() ];
-			ASSERT( lTrail );
+			ASSERT( lTrail != NULL );
 
 			pi->m_vpStepsQueue.clear();
 			pi->m_asModifiersQueue.clear();
 			FOREACH_CONST( TrailEntry, lTrail->m_vEntries, e )
 			{
-				ASSERT( e->pSteps );
+				ASSERT( e->pSteps != NULL );
 				pi->m_vpStepsQueue.push_back( e->pSteps );
 				AttackArray a;
 				e->GetAttackArray( a );
@@ -1094,7 +1094,7 @@ void ScreenGameplay::LoadNextSong()
 		Steps* pSteps = GAMESTATE->m_pCurSteps[ pi->GetStepsAndTrailIndex() ];
 		++pi->GetPlayerStageStats()->m_iStepsPlayed;
 
-		ASSERT( GAMESTATE->m_pCurSteps[ pi->GetStepsAndTrailIndex() ] );
+		ASSERT( GAMESTATE->m_pCurSteps[ pi->GetStepsAndTrailIndex() ] != NULL );
 		if( pi->m_ptextStepsDescription )
 			pi->m_ptextStepsDescription->SetText( pSteps->GetDescription() );
 
@@ -1285,7 +1285,7 @@ void ScreenGameplay::LoadLights()
 
 	// First, check if the song has explicit lights
 	m_CabinetLightsNoteData.Init();
-	ASSERT( GAMESTATE->m_pCurSong );
+	ASSERT( GAMESTATE->m_pCurSong != NULL );
 
 	const Steps *pSteps = SongUtil::GetClosestNotes( GAMESTATE->m_pCurSong, StepsType_lights_cabinet, Difficulty_Medium );
 	if( pSteps != NULL )

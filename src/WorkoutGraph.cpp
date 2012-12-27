@@ -62,7 +62,7 @@ void WorkoutGraph::SetInternal( int iMinSongsPlayed )
 	vector<int> viMeters;
 	FOREACH_CONST( TrailEntry, pTrail->m_vEntries, e )
 	{
-		ASSERT( e->pSteps );
+		ASSERT( e->pSteps != NULL );
 		viMeters.push_back( e->pSteps->GetMeter() );
 	}
 

@@ -140,7 +140,7 @@ void ScreenOptionsManageEditSteps::HandleScreenMessage( const ScreenMessage SM )
 		else	// a Steps
 		{
 			Steps *pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
-			ASSERT( pSteps );
+			ASSERT( pSteps != NULL );
 			const Style *pStyle = GAMEMAN->GetEditorStyleForStepsType( pSteps->m_StepsType );
 			GAMESTATE->SetCurrentStyle( pStyle );
 			// do base behavior

@@ -111,7 +111,7 @@ void ScreenOptionsManageProfiles::BeginScreen()
 	FOREACH_CONST( RString, m_vsLocalProfileID, s )
 	{
 		Profile *pProfile = PROFILEMAN->GetLocalProfile( *s );
-		ASSERT( pProfile );
+		ASSERT( pProfile != NULL );
 
 		RString sCommand = ssprintf( "gamecommand;screen,ScreenOptionsEditProfile;profileid,%s;name,dummy", s->c_str() );
 		OptionRowHandler *pHand = OptionRowHandlerUtil::Make( ParseCommands(sCommand) );
@@ -259,7 +259,7 @@ void ScreenOptionsManageProfiles::HandleScreenMessage( const ScreenMessage SM )
 		if( !ScreenMiniMenu::s_bCancelled )
 		{
 			Profile *pProfile = PROFILEMAN->GetLocalProfile( GAMESTATE->m_sEditLocalProfileID );
-			ASSERT( pProfile );
+			ASSERT( pProfile != NULL );
 
 			switch( ScreenMiniMenu::s_iLastRowCode )
 			{

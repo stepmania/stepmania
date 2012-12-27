@@ -105,7 +105,7 @@ void ScreenUnlockStatus::Init()
 			case UnlockRewardType_Song:
 				{
 					const Song *pSong = entry.m_Song.ToSong();
-					ASSERT( pSong );
+					ASSERT( pSong != NULL );
 		
 					RString title = pSong->GetDisplayMainTitle();
 					RString subtitle = pSong->GetDisplaySubTitle();
@@ -118,7 +118,7 @@ void ScreenUnlockStatus::Init()
 			case UnlockRewardType_Course:
 				{
 					const Course *pCourse = entry.m_Course.ToCourse();
-					ASSERT( pCourse );
+					ASSERT( pCourse != NULL );
 
 					text->SetMaxWidth( MaxWidth );
 					text->SetText( pCourse->GetDisplayFullTitle() );

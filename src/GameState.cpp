@@ -278,7 +278,7 @@ void GameState::Reset()
 	FOREACH_PlayerNumber( pn )
 		UnjoinPlayer( pn );
 
-	ASSERT( THEME );
+	ASSERT( THEME != NULL );
 
 	m_timeGameStarted.SetZero();
 	SetCurrentStyle( NULL );
@@ -339,7 +339,7 @@ void GameState::Reset()
 			m_pCurCharacters[p] = CHARMAN->GetRandomCharacter();
 		else
 			m_pCurCharacters[p] = CHARMAN->GetDefaultCharacter();
-		ASSERT( m_pCurCharacters[p] );
+		ASSERT( m_pCurCharacters[p] != NULL );
 	}
 
 	m_bTemporaryEventMode = false;
@@ -626,7 +626,7 @@ int GameState::GetNumStagesMultiplierForSong( const Song* pSong )
 {
 	int iNumStages = 1;
 
-	ASSERT( pSong );
+	ASSERT( pSong != NULL );
 	if( pSong->IsMarathon() )
 		iNumStages *= 3;
 	if( pSong->IsLong() )
@@ -1458,7 +1458,7 @@ void GameState::GetAllUsedNoteSkins( vector<RString> &out ) const
 		if( IsCourseMode() )
 		{
 			const Trail *pTrail = m_pCurTrail[pn];
-			ASSERT( pTrail );
+			ASSERT( pTrail != NULL );
 
 			FOREACH_CONST( TrailEntry, pTrail->m_vEntries, e )
 			{
@@ -1587,11 +1587,11 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 				SongAndSteps sas;
 				ASSERT( !STATSMAN->m_vPlayedStageStats[i].m_vpPlayedSongs.empty() );
 				sas.pSong = STATSMAN->m_vPlayedStageStats[i].m_vpPlayedSongs[0];
-				ASSERT( sas.pSong );
+				ASSERT( sas.pSong != NULL );
 				if( STATSMAN->m_vPlayedStageStats[i].m_player[pn].m_vpPossibleSteps.empty() )
 					continue;
 				sas.pSteps = STATSMAN->m_vPlayedStageStats[i].m_player[pn].m_vpPossibleSteps[0];
-				ASSERT( sas.pSteps );
+				ASSERT( sas.pSteps != NULL );
 				vSongAndSteps.push_back( sas );
 			}
 			CHECKPOINT;
@@ -1729,9 +1729,9 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 		{
 			CHECKPOINT;
 			Course* pCourse = m_pCurCourse;
-			ASSERT( pCourse );
+			ASSERT( pCourse != NULL );
 			Trail *pTrail = m_pCurTrail[pn];
-			ASSERT( pTrail );
+			ASSERT( pTrail != NULL );
 			CourseDifficulty cd = pTrail->m_CourseDifficulty;
 
 			// Find Machine Records

@@ -373,7 +373,7 @@ bool BackgroundImpl::Layer::CreateBackground( const Song *pSong, const Backgroun
 
 	Actor *pActor = ActorUtil::MakeActor( sEffectFile );
 
-	ASSERT( pActor );
+	ASSERT( pActor != NULL );
 	m_BGAnimations[bd] = pActor;
 
 	for( unsigned i=0; i<vsResolvedRef.size(); i++ )

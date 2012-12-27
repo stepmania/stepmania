@@ -1248,7 +1248,7 @@ void ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 			SOUND->PlayOnceFromAnnouncer( "select course comment general" );
 
 			Course *pCourse = m_MusicWheel.GetSelectedCourse();
-			ASSERT( pCourse );
+			ASSERT( pCourse != NULL );
 			GAMESTATE->m_PlayMode.Set( pCourse->GetPlayMode() );
 
 			// apply #LIVES
@@ -1323,7 +1323,7 @@ void ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 					{
 						/* Since m_vpSteps is sorted by Difficulty, the first
 						 * entry should be the easiest. */
-						ASSERT( m_vpSteps.size() );
+						ASSERT( m_vpSteps.size() != 0 );
 						Steps *pSteps = m_vpSteps[0];
 
 						FOREACH_PlayerNumber( p )
@@ -1438,12 +1438,12 @@ void ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 				PlayerNumber pn = GAMESTATE->GetMasterPlayerNumber();
 				if( GAMESTATE->IsCourseMode() )
 				{
-					ASSERT( GAMESTATE->m_pCurTrail[pn] );
+					ASSERT( GAMESTATE->m_pCurTrail[pn] != NULL );
 					stCurrent = GAMESTATE->m_pCurTrail[pn]->m_StepsType;
 				}
 				else
 				{
-					ASSERT( GAMESTATE->m_pCurSteps[pn] );
+					ASSERT( GAMESTATE->m_pCurSteps[pn] != NULL );
 					stCurrent = GAMESTATE->m_pCurSteps[pn]->m_StepsType;
 				}
 				vector<StepsType> vst;

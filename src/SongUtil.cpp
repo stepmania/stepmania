@@ -477,7 +477,7 @@ void SongUtil::SortSongPointerArrayByGrades( vector<Song*> &vpSongsInOut, bool b
 
 		int iCounts[NUM_Grade];
 		const Profile *pProfile = PROFILEMAN->GetMachineProfile();
-		ASSERT( pProfile );
+		ASSERT( pProfile != NULL );
 		pProfile->GetGrades( pSong, GAMESTATE->GetCurrentStyle()->m_StepsType, iCounts );
 
 		RString foo;
@@ -554,7 +554,7 @@ void SongUtil::SortSongPointerArrayByNumPlays( vector<Song*> &vpSongsInOut, Prof
 
 void SongUtil::SortSongPointerArrayByNumPlays( vector<Song*> &vpSongsInOut, const Profile* pProfile, bool bDescending )
 {
-	ASSERT( pProfile );
+	ASSERT( pProfile != NULL );
 	for(unsigned i = 0; i < vpSongsInOut.size(); ++i)
 		g_mapSongSortVal[vpSongsInOut[i]] = ssprintf("%9i", pProfile->GetSongNumTimesPlayed(vpSongsInOut[i]));
 	stable_sort( vpSongsInOut.begin(), vpSongsInOut.end(), bDescending ? CompareSongPointersBySortValueDescending : CompareSongPointersBySortValueAscending );

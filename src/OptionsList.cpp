@@ -101,7 +101,7 @@ void OptionListRow::SetFromHandler( const OptionRowHandler *pHandler )
 
 void OptionListRow::SetTextFromHandler( const OptionRowHandler *pHandler )
 {
-	ASSERT( pHandler );
+	ASSERT( pHandler != NULL );
 	for( unsigned i = 0; i < pHandler->m_Def.m_vsChoices.size(); ++i )
 	{
 		// init text

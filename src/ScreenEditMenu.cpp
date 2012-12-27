@@ -216,7 +216,7 @@ void ScreenEditMenu::MenuStart( const InputEventPlus & )
 	{
 		case EditMenuAction_Delete:
 		{
-			ASSERT( pSteps );
+			ASSERT( pSteps != NULL );
 			if( pSteps->IsAutogen() )
 			{
 				SCREENMAN->PlayInvalidSound();
@@ -234,7 +234,7 @@ void ScreenEditMenu::MenuStart( const InputEventPlus & )
 	case EditMenuAction_Practice:
 		break;
 	case EditMenuAction_Delete:
-		ASSERT( pSteps );
+		ASSERT( pSteps != NULL );
 		ScreenPrompt::Prompt( SM_None, STEPS_WILL_BE_LOST.GetValue() + "\n\n" + CONTINUE_WITH_DELETE.GetValue(),
 		                      PROMPT_YES_NO, ANSWER_NO );
 		break;
@@ -294,7 +294,7 @@ void ScreenEditMenu::MenuStart( const InputEventPlus & )
 	case EditMenuAction_Practice:
 		{
 			// Prepare for ScreenEdit
-			ASSERT( pSteps );
+			ASSERT( pSteps != NULL );
 			bool bPromptToNameSteps = (action == EditMenuAction_Create && dc == Difficulty_Edit);
 			if( bPromptToNameSteps )
 			{

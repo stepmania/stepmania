@@ -141,7 +141,7 @@ public:
 		const Command &command = cmds.v[0];
 		RString sParam = command.GetArg(1).s;
 		ASSERT( command.m_vsArgs.size() == 2 );
-		ASSERT( sParam.size() );
+		ASSERT( sParam.size() != 0 );
 
 		m_bUseModNameForIcon = true;
 
@@ -526,7 +526,7 @@ public:
 		const Command &command = cmds.v[0];
 		RString sParam = command.GetArg(1).s;
 		ASSERT( command.m_vsArgs.size() == 2 );
-		ASSERT( sParam.size() );
+		ASSERT( sParam.size() != 0 );
 
 		if( sParam == "EditSteps" )
 		{
@@ -707,7 +707,7 @@ class OptionRowHandlerListStyles: public OptionRowHandlerList
 
 		vector<const Style*> vStyles;
 		GAMEMAN->GetStylesForGame( GAMESTATE->m_pCurGame, vStyles );
-		ASSERT( vStyles.size() );
+		ASSERT( vStyles.size() != 0 );
 		FOREACH_CONST( const Style*, vStyles, s )
 		{
 			m_Def.m_vsChoices.push_back( GAMEMAN->StyleToLocalizedString(*s) ); 
@@ -731,7 +731,7 @@ class OptionRowHandlerListGroups: public OptionRowHandlerList
 
 		vector<RString> vSongGroups;
 		SONGMAN->GetSongGroupNames( vSongGroups );
-		ASSERT( vSongGroups.size() );
+		ASSERT( vSongGroups.size() != 0 );
 
 		{
 			m_Def.m_vsChoices.push_back( "AllGroups" );
@@ -861,7 +861,7 @@ public:
 		const Command &command = cmds.v[0];
 		ASSERT( command.m_vsArgs.size() == 2 );
 		RString sLuaFunction = command.m_vsArgs[1];
-		ASSERT( sLuaFunction.size() );
+		ASSERT( sLuaFunction.size() != 0 );
 
 		m_Def.m_bAllowThemeItems = false;	// Lua options are always dynamic and can theme themselves.
 
@@ -1115,7 +1115,7 @@ public:
 		const Command &command = cmds.v[0];
 		RString sParam = command.GetArg(1).s;
 		ASSERT( command.m_vsArgs.size() == 2 );
-		ASSERT( sParam.size() );
+		ASSERT( sParam.size() != 0 );
 
 		Init();
 
@@ -1199,7 +1199,7 @@ public:
 		const Command &command = cmds.v[0];
 		RString sParam = command.GetArg(1).s;
 		ASSERT( command.m_vsArgs.size() == 2 );
-		ASSERT( sParam.size() );
+		ASSERT( sParam.size() != 0 );
 
 		if( sParam == "EditStepsType" )
 		{

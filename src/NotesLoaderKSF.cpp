@@ -744,7 +744,7 @@ bool KSFLoader::LoadFromDir( const RString &sDir, Song &out )
 	GetDirListing( sDir + RString("*.ksf"), arrayKSFFileNames );
 
 	// We shouldn't have been called to begin with if there were no KSFs.
-	ASSERT( arrayKSFFileNames.size() );
+	ASSERT( arrayKSFFileNames.size() != 0 );
 
 	bool bKIUCompliant = false;
 	/* With Split Timing, there has to be a backup Song Timing in case

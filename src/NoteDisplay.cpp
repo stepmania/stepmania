@@ -145,7 +145,7 @@ static NoteResource *MakeNoteResource( const RString &sButton, const RString &sE
 		NoteResource *pRes = new NoteResource( nsap );
 
 		pRes->m_pActor = NOTESKIN->LoadActor( sButton, sElement, NULL, bSpriteOnly );
-		ASSERT( pRes->m_pActor );
+		ASSERT( pRes->m_pActor != NULL );
 
 		g_NoteResource[nsap] = pRes;
 		it = g_NoteResource.find( nsap );

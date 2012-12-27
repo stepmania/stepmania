@@ -166,7 +166,7 @@ void DancingCharacters::LoadNextSong()
 	m_fThisCameraStartBeat = 0;
 	m_fThisCameraEndBeat = 0;
 
-	ASSERT( GAMESTATE->m_pCurSong );
+	ASSERT( GAMESTATE->m_pCurSong != NULL );
 	m_fThisCameraEndBeat = GAMESTATE->m_pCurSong->GetFirstBeat();
 
 	FOREACH_PlayerNumber( p )

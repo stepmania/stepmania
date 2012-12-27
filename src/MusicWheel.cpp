@@ -151,7 +151,7 @@ void MusicWheel::BeginScreen()
 		const vector<MusicWheelItemData *> &from = getWheelItemsData(SORT_MODE_MENU);
 		for( unsigned i=0; i<from.size(); i++ )
 		{
-			ASSERT( &*from[i]->m_pAction );
+			ASSERT( &*from[i]->m_pAction != NULL );
 			if( from[i]->m_pAction->DescribesCurrentModeForAllPlayers() )
 			{
 				m_sLastModeMenuItem = from[i]->m_pAction->m_sName;

@@ -179,7 +179,7 @@ void BPMDisplay::NoBPM()
 
 void BPMDisplay::SetBpmFromSong( const Song* pSong )
 {
-	ASSERT( pSong );
+	ASSERT( pSong != NULL );
 	switch( pSong->m_DisplayBPMType )
 	{
 	case DISPLAY_BPM_ACTUAL:
@@ -201,7 +201,7 @@ void BPMDisplay::SetBpmFromSong( const Song* pSong )
 
 void BPMDisplay::SetBpmFromSteps( const Steps* pSteps )
 {
-	ASSERT( pSteps );
+	ASSERT( pSteps != NULL );
 	DisplayBpms bpms;
 	float fMinBPM, fMaxBPM;
 	pSteps->m_Timing.GetActualBPM( fMinBPM, fMaxBPM );
@@ -212,13 +212,13 @@ void BPMDisplay::SetBpmFromSteps( const Steps* pSteps )
 
 void BPMDisplay::SetBpmFromCourse( const Course* pCourse )
 {
-	ASSERT( pCourse );
-	ASSERT( GAMESTATE->GetCurrentStyle() );
+	ASSERT( pCourse != NULL );
+	ASSERT( GAMESTATE->GetCurrentStyle() != NULL );
 
 	StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
 	Trail *pTrail = pCourse->GetTrail( st );
 	// GetTranslitFullTitle because "Crashinfo.txt is garbled because of the ANSI output as usual." -f
-	ASSERT_M( pTrail, ssprintf("Course '%s' has no trail for StepsType '%s'", pCourse->GetTranslitFullTitle().c_str(), StringConversion::ToString(st).c_str() ) );
+	ASSERT_M( pTrail != NULL, ssprintf("Course '%s' has no trail for StepsType '%s'", pCourse->GetTranslitFullTitle().c_str(), StringConversion::ToString(st).c_str() ) );
 
 	m_fCycleTime = (float)COURSE_CYCLE_SPEED;
 

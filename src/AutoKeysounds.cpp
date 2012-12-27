@@ -278,7 +278,7 @@ void AutoKeysounds::FinishLoading()
 			delete pChain;
 		}
 	}
-	ASSERT_M( m_pSharedSound, ssprintf("No keysounds were loaded for the song %s!", pSong->m_sMainTitle.c_str() ));
+	ASSERT_M( m_pSharedSound != NULL, ssprintf("No keysounds were loaded for the song %s!", pSong->m_sMainTitle.c_str() ));
 
 	m_pSharedSound = new RageSoundReader_PitchChange( m_pSharedSound );
 	m_pSharedSound = new RageSoundReader_PostBuffering( m_pSharedSound );

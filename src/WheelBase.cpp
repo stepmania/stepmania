@@ -459,7 +459,7 @@ void WheelBase::RebuildWheelItems( int iDist )
 	// find the first wheel item shown
 	iFirstVisibleIndex -= NUM_WHEEL_ITEMS/2;
 
-	ASSERT(data.size());
+	ASSERT(data.size() != 0);
 	wrap( iFirstVisibleIndex, data.size() );
 
 	// iIndex is now the index of the lowest WheelItem to draw

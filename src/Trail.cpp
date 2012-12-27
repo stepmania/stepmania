@@ -108,7 +108,7 @@ const RadarValues &Trail::GetRadarValues() const
 		FOREACH_CONST( TrailEntry, m_vEntries, e )
 		{
 			const Steps *pSteps = e->pSteps;
-			ASSERT( pSteps );
+			ASSERT( pSteps != NULL );
 			// Hack: don't calculate for autogen entries
 			if( !pSteps->IsAutogen() && e->ContainsTransformOrTurn() )
 			{
@@ -187,7 +187,7 @@ void Trail::GetDisplayBpms( DisplayBpms &AddTo ) const
 		}
 
 		Song *pSong = e->pSong;
-		ASSERT( pSong );
+		ASSERT( pSong != NULL );
 		switch( pSong->m_DisplayBPMType )
 		{
 		case DISPLAY_BPM_ACTUAL:

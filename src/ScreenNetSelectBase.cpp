@@ -197,7 +197,7 @@ void ScreenNetSelectBase::UpdateUsers()
 /** ColorBitmapText ***********************************************************/
 void ColorBitmapText::SetText( const RString& _sText, const RString& _sAlternateText, int iWrapWidthPixels )
 {
-	ASSERT( m_pFont );
+	ASSERT( m_pFont != NULL );
 
 	RString sNewText = StringWillUseAlternate(_sText,_sAlternateText) ? _sAlternateText : _sText;
 

@@ -1135,7 +1135,7 @@ bool ScreenOptions::MoveRowRelative( PlayerNumber pn, int iDir, bool bRepeat )
 	//LOG->Trace( "MoveRowRelative(pn %i, dir %i, rep %i)", pn, iDir, bRepeat );
 
 	int iDest = -1;
-	ASSERT( m_pRows.size() );
+	ASSERT( m_pRows.size() != 0 );
 	for( int r=1; r<(int)m_pRows.size(); r++ )
 	{
 		int iDelta = r*iDir;

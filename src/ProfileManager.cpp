@@ -114,12 +114,12 @@ void ProfileManager::Init()
 		{
 			RString sCharacterID = FIXED_PROFILE_CHARACTER_ID( i );
 			Character *pCharacter = CHARMAN->GetCharacterFromID( sCharacterID );
-			ASSERT_M( pCharacter, sCharacterID );
+			ASSERT_M( pCharacter != NULL, sCharacterID );
 			RString sProfileID;
 			bool b = CreateLocalProfile( pCharacter->GetDisplayName(), sProfileID );
 			ASSERT( b );
 			Profile* pProfile = GetLocalProfile( sProfileID );
-			ASSERT_M( pProfile, sProfileID );
+			ASSERT_M( pProfile != NULL, sProfileID );
 			pProfile->m_sCharacterID = sCharacterID;
 			SaveLocalProfile( sProfileID );
 		}
@@ -473,7 +473,7 @@ bool ProfileManager::RenameLocalProfile( RString sProfileID, RString sNewName )
 	ASSERT( !sProfileID.empty() );
 
 	Profile *pProfile = ProfileManager::GetLocalProfile( sProfileID );
-	ASSERT( pProfile );
+	ASSERT( pProfile != NULL );
 	pProfile->m_sDisplayName = sNewName;
 
 	RString sProfileDir = LocalProfileIDToDir( sProfileID );
@@ -483,7 +483,7 @@ bool ProfileManager::RenameLocalProfile( RString sProfileID, RString sNewName )
 bool ProfileManager::DeleteLocalProfile( RString sProfileID )
 {
 	Profile *pProfile = ProfileManager::GetLocalProfile( sProfileID );
-	ASSERT( pProfile );
+	ASSERT( pProfile != NULL );
 	RString sProfileDir = LocalProfileIDToDir( sProfileID );
 
 	// flush directory cache in an attempt to get this working
@@ -820,7 +820,7 @@ class LunaProfileManager: public Luna<ProfileManager>
 {
 public:
 	static int IsPersistentProfile( T* p, lua_State *L )	{ lua_pushboolean(L, p->IsPersistentProfile(Enum::Check<PlayerNumber>(L, 1)) ); return 1; }
-	static int GetProfile( T* p, lua_State *L )				{ PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1); Profile* pP = p->GetProfile(pn); ASSERT(pP); pP->PushSelf(L); return 1; }
+	static int GetProfile( T* p, lua_State *L )				{ PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1); Profile* pP = p->GetProfile(pn); ASSERT(pP != NULL); pP->PushSelf(L); return 1; }
 	static int GetMachineProfile( T* p, lua_State *L )		{ p->GetMachineProfile()->PushSelf(L); return 1; }
 	static int SaveMachineProfile( T* p, lua_State *L )		{ p->SaveMachineProfile(); return 0; }
 	static int GetLocalProfile( T* p, lua_State *L )
@@ -832,7 +832,7 @@ public:
 			lua_pushnil(L);
 		return 1;
 	}
-	static int GetLocalProfileFromIndex( T* p, lua_State *L ) { Profile *pProfile = p->GetLocalProfileFromIndex(IArg(1)); ASSERT(pProfile); pProfile->PushSelf(L); return 1; }
+	static int GetLocalProfileFromIndex( T* p, lua_State *L ) { Profile *pProfile = p->GetLocalProfileFromIndex(IArg(1)); ASSERT(pProfile != NULL); pProfile->PushSelf(L); return 1; }
 	static int GetLocalProfileIDFromIndex( T* p, lua_State *L )	{ lua_pushstring(L, p->GetLocalProfileIDFromIndex(IArg(1)) ); return 1; }
 	static int GetLocalProfileIndexFromID( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetLocalProfileIndexFromID(SArg(1)) ); return 1; }
 	static int GetNumLocalProfiles( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetNumLocalProfiles() ); return 1; }

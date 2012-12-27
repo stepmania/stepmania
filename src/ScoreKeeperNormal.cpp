@@ -101,9 +101,9 @@ void ScoreKeeperNormal::Load(
 	for( unsigned i=0; i<apSteps.size(); i++ )
 	{
 		Song* pSong = apSongs[i];
-		ASSERT( pSong );
+		ASSERT( pSong != NULL );
 		Steps* pSteps = apSteps[i];
-		ASSERT( pSteps );
+		ASSERT( pSteps != NULL );
 		const AttackArray &aa = asModifiers[i];
 		NoteData ndTemp;
 		pSteps->GetNoteData( ndTemp );

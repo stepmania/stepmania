@@ -481,7 +481,7 @@ RageColor SongManager::GetSongGroupColor( const RString &sSongGroup ) const
 
 RageColor SongManager::GetSongColor( const Song* pSong ) const
 {
-	ASSERT( pSong );
+	ASSERT( pSong != NULL );
 
 	// protected by royal freem corporation. any modification/removal of
 	// this code will result in prosecution.
@@ -1129,7 +1129,7 @@ void SongManager::GetStepsLoadedFromProfile( vector<Steps*> &AddTo, ProfileSlot 
 
 Song *SongManager::GetSongFromSteps( Steps *pSteps ) const
 {
-	ASSERT( pSteps );
+	ASSERT( pSteps != NULL );
 	const vector<Song*> &vSongs = GetAllSongs();
 	FOREACH_CONST( Song*, vSongs, song )
 	{
@@ -1512,7 +1512,7 @@ void SongManager::UpdateShuffled()
 
 void SongManager::UpdatePreferredSort(RString sPreferredSongs, RString sPreferredCourses)
 {
-	ASSERT( UNLOCKMAN );
+	ASSERT( UNLOCKMAN != NULL );
 
 	{
 		m_vPreferredSongSort.clear();
@@ -1615,7 +1615,7 @@ void SongManager::UpdatePreferredSort(RString sPreferredSongs, RString sPreferre
 
 		FOREACH( PreferredSortSection, m_vPreferredSongSort, i )
 			FOREACH( Song*, i->vpSongs, j )
-				ASSERT( *j );
+				ASSERT( *j != NULL );
 	}
 
 	{
@@ -1689,7 +1689,7 @@ void SongManager::UpdatePreferredSort(RString sPreferredSongs, RString sPreferre
 
 		FOREACH( CoursePointerVector, m_vPreferredCourseSort, i )
 			FOREACH( Course*, *i, j )
-				ASSERT( *j );
+				ASSERT( *j != NULL );
 	}
 }
 

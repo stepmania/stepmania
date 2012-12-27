@@ -152,7 +152,7 @@ void ScreenJukebox::SetSong()
 				FOREACH_PlayerNumber( p )
 				{
 					GAMESTATE->m_pCurTrail[p].Set( lCourse->GetTrail( GAMESTATE->GetCurrentStyle()->m_StepsType ) );
-					ASSERT( GAMESTATE->m_pCurTrail[p] );
+					ASSERT( GAMESTATE->m_pCurTrail[p] != NULL );
 				}
 			}
 		}
@@ -172,7 +172,7 @@ ScreenJukebox::ScreenJukebox()
 void ScreenJukebox::Init()
 {
 	// ScreenJukeboxMenu must set this
-	ASSERT( GAMESTATE->GetCurrentStyle() );
+	ASSERT( GAMESTATE->GetCurrentStyle() != NULL );
 	GAMESTATE->m_PlayMode.Set( PLAY_MODE_REGULAR );
 
 	SetSong();

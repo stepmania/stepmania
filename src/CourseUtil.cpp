@@ -195,7 +195,7 @@ void CourseUtil::SortCoursePointerArrayByNumPlays( vector<Course*> &vpCoursesInO
 
 void CourseUtil::SortCoursePointerArrayByNumPlays( vector<Course*> &vpCoursesInOut, const Profile* pProfile, bool bDescending )
 {
-	ASSERT( pProfile );
+	ASSERT( pProfile != NULL );
 	for(unsigned i = 0; i < vpCoursesInOut.size(); ++i)
 		course_sort_val[vpCoursesInOut[i]] = ssprintf( "%09i", pProfile->GetCourseNumTimesPlayed(vpCoursesInOut[i]) );
 	stable_sort( vpCoursesInOut.begin(), vpCoursesInOut.end(), bDescending ? CompareCoursePointersBySortValueDescending : CompareCoursePointersBySortValueAscending );
@@ -448,7 +448,7 @@ bool EditCourseUtil::ValidateEditCourseName( const RString &sAnswer, RString &sE
 
 void EditCourseUtil::UpdateAndSetTrail()
 {
-	ASSERT( GAMESTATE->m_pCurStyle );
+	ASSERT( GAMESTATE->m_pCurStyle != NULL );
 	StepsType st = GAMESTATE->m_pCurStyle->m_StepsType;
 	Trail *pTrail = NULL;
 	if( GAMESTATE->m_pCurCourse )

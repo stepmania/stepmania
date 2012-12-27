@@ -281,7 +281,7 @@ void PlayerOptions::FromString( const RString &sMultipleMods )
 
 bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut )
 {
-	ASSERT_M( NOTESKIN, "The Noteskin Manager must be loaded in order to process mods." );
+	ASSERT_M( NOTESKIN != NULL, "The Noteskin Manager must be loaded in order to process mods." );
 
 	RString sBit = sOneMod;
 	sBit.MakeLower();
@@ -763,8 +763,8 @@ bool PlayerOptions::IsEasierForSongAndSteps( Song* pSong, Steps* pSteps, PlayerN
 
 bool PlayerOptions::IsEasierForCourseAndTrail( Course* pCourse, Trail* pTrail ) const
 {
-	ASSERT( pCourse );
-	ASSERT( pTrail );
+	ASSERT( pCourse != NULL );
+	ASSERT( pTrail != NULL );
 
 	FOREACH_CONST( TrailEntry, pTrail->m_vEntries, e )
 	{

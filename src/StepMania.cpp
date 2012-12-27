@@ -808,10 +808,10 @@ static void SwitchToLastPlayedGame()
 
 void StepMania::ChangeCurrentGame( const Game* g )
 {
-	ASSERT( g );
-	ASSERT( GAMESTATE );
-	ASSERT( ANNOUNCER );
-	ASSERT( THEME );
+	ASSERT( g != NULL );
+	ASSERT( GAMESTATE != NULL );
+	ASSERT( ANNOUNCER != NULL );
+	ASSERT( THEME != NULL );
 
 	GAMESTATE->SetCurGame( g );
 

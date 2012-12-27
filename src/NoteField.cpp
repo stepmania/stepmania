@@ -175,7 +175,7 @@ void NoteField::Load(
 	int iDrawDistanceAfterTargetsPixels, 
 	int iDrawDistanceBeforeTargetsPixels )
 {
-	ASSERT( pNoteData );
+	ASSERT( pNoteData != NULL );
 	m_pNoteData = pNoteData;
 	m_iDrawDistanceAfterTargetsPixels = iDrawDistanceAfterTargetsPixels;
 	m_iDrawDistanceBeforeTargetsPixels = iDrawDistanceBeforeTargetsPixels;
@@ -915,7 +915,7 @@ void NoteField::DrawPrimitives()
 
 	if( GAMESTATE->IsEditing() && pTiming != NULL )
 	{
-		ASSERT(GAMESTATE->m_pCurSong);
+		ASSERT(GAMESTATE->m_pCurSong != NULL);
 
 		const TimingData &timing = *pTiming;
 

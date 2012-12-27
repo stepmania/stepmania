@@ -9,7 +9,7 @@
 
 void Attack::GetAttackBeats( const Song *pSong, float &fStartBeat, float &fEndBeat ) const
 {
-	ASSERT( pSong );
+	ASSERT( pSong != NULL );
 	ASSERT_M( fStartSecond >= 0, ssprintf("StartSecond: %f",fStartSecond) );
 	
 	const TimingData &timing = pSong->m_SongTiming;
@@ -28,8 +28,8 @@ void Attack::GetRealtimeAttackBeats( const Song *pSong, const PlayerState* pPlay
 		return;
 	}
 
-	ASSERT( pPlayerState );
-	ASSERT( pSong );
+	ASSERT( pPlayerState != NULL );
+	ASSERT( pSong != NULL );
 
 	/* If reasonable, push the attack forward 8 beats so that notes on screen don't change suddenly. */
 	fStartBeat = min( GAMESTATE->m_Position.m_fSongBeat+8, pPlayerState->m_fLastDrawnBeat );

@@ -415,12 +415,12 @@ void Player::Init(
 
 		if( GAMESTATE->IsCourseMode() )
 		{
-			ASSERT( GAMESTATE->m_pCurTrail[pn] );
+			ASSERT( GAMESTATE->m_pCurTrail[pn] != NULL );
 			GAMESTATE->m_pCurTrail[pn]->GetDisplayBpms( bpms );
 		}
 		else
 		{
-			ASSERT( GAMESTATE->m_pCurSong );
+			ASSERT( GAMESTATE->m_pCurSong != NULL );
 			GAMESTATE->m_pCurSong->GetDisplayBpms( bpms );
 		}
 
@@ -931,7 +931,7 @@ void Player::Update( float fDeltaTime )
 	ASSERT_M( iNumCols <= MAX_COLS_PER_PLAYER, ssprintf("%i > %i", iNumCols, MAX_COLS_PER_PLAYER) );
 	for( int col=0; col < iNumCols; ++col )
 	{
-		ASSERT( m_pPlayerState );
+		ASSERT( m_pPlayerState != NULL );
 
 		// TODO: Remove use of PlayerNumber.
 		GameInput GameI = GAMESTATE->GetCurrentStyle()->StyleInputToGameInput( col, m_pPlayerState->m_PlayerNumber );
