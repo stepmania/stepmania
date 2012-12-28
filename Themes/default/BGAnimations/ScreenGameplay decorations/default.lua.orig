@@ -234,34 +234,5 @@ end;
 t[#t+1] = StandardDecorationFromFileOptional("BPMDisplay","BPMDisplay");
 t[#t+1] = StandardDecorationFromFileOptional("StageDisplay","StageDisplay");
 t[#t+1] = StandardDecorationFromFileOptional("SongTitle","SongTitle");
-t[#t+1] = Def.ActorFrame {
-	Def.ActorFrame { 
-		Name="LifeTest";
-		Owner=PLAYER_1;
-		InitCommand=cmd(x,Center1Player() and SCREEN_CENTER_X or THEME:GetMetric(Var "LoadingScreen","PlayerP1OnePlayerOneSideX");y,SCREEN_TOP+80);
-		LifeChangedMessageCommand=function(self,params)
-			local c = self:GetChildren();
-			if params.Player == PLAYER_1 then
-				local fLife = params.LifeMeter:GetLife();
-				c.LifeText:settextf("%03i", fLife * 100);
-			end
-		end;
-		HealthStateChangedMessageCommand=function(self, params)
-			local c = self.GetChildren();
-			if params.PlayerNumber == PLAYER_1 then
-				c.LifeText:settext( ToEnumShortString(params.HealthState) );
-			end
-		end;
-		--
-		LoadFont("Common Normal") .. {
-			Name="LifeText";
-			InitCommand=cmd(shadowlength,1);
-			HotCommand=cmd(stopeffect;diffuse,Color.White;diffuseshift;effectcolor2,Color.White;effectcolor1,Color.Orange);
-			AliveCommand=cmd(stopeffect;diffuse,Color.White;);
-			DangerCommand=cmd(stopeffect;diffuse,Color.White;diffuseshift;effectcolor2,Color.Red;effectcolor2,BoostColor(Color.Red,0.5));
-			DeadCommand=cmd(stopeffect;diffuse,Color.Black);
-		};
-	};
-};
 
 return t
