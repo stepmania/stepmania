@@ -8,7 +8,7 @@ local Prefs =
 {
 	AutoSetStyle =
 	{
-		Default = true,
+		Default = false,
 		Choices = { OptionNameString('Off'), OptionNameString('On') },
 		Values = { false, true }
 	},
@@ -20,7 +20,7 @@ local Prefs =
 	},
 	GameplayShowScore =
 	{
-		Default = false,
+		Default = true,
 		Choices = { OptionNameString('Off'), OptionNameString('On') },
 		Values = { false, true }
 	},
@@ -68,7 +68,7 @@ local Prefs =
 	},
 	TimingDisplay =
 	{
-		Default = true,
+		Default = false,
 		Choices = { OptionNameString('Off'), OptionNameString('On') },
 		Values = { false, true }
 	},

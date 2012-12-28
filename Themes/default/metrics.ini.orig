@@ -345,18 +345,18 @@ RollBodyIncrementsCombo=ThemePrefs.Get("ComboOnRolls")
 [RollingNumbersJudgment]
 
 [ScoreDisplayNormal]
-TextOnCommand=shadowlength,1;
+TextOnCommand=shadowlength,1;diffusebottomedge,BoostColor(Color('White'),0.75)
 
 [ScoreDisplayOni]
 TextX=
 TextY=
-TextOnCommand=shadowlength,1;
+TextOnCommand=shadowlength,1;diffusebottomedge,BoostColor(Color('White'),0.75)
 TextOffCommand=
 
 [ScoreDisplayOni Numbers]
 TextX=
 TextY=
-TextOnCommand=shadowlength,1;
+TextOnCommand=shadowlength,1;diffusebottomedge,BoostColor(Color('White'),0.75)
 TextOffCommand=
 
 [ScoreDisplayLifeTime]
@@ -369,8 +369,8 @@ DeltaSecondsOnCommand=y,80;spin;
 DeltaSecondsGainLifeCommand=zoom,0.5;
 
 [ScoreDisplayPercentage Percent]
-PercentP1OnCommand=shadowlength,1;diffuse,PlayerColor(PLAYER_1);strokecolor,ColorDarkTone(PlayerColor(PLAYER_1))
-PercentP2OnCommand=shadowlength,1;diffuse,PlayerColor(PLAYER_2);strokecolor,ColorDarkTone(PlayerColor(PLAYER_2))
+PercentP1OnCommand=shadowlength,1;diffuse,PlayerColor(PLAYER_1);diffusetopedge,BoostColor(PlayerColor(PLAYER_1),1.5)
+PercentP2OnCommand=shadowlength,1;diffuse,PlayerColor(PLAYER_2);diffusetopedge,BoostColor(PlayerColor(PLAYER_2),1.5)
 
 [ScoreDisplayRave]
 MeterP1OnCommand=draworder,-1;texcoordvelocity,1,0
@@ -951,7 +951,7 @@ BannerFrameOffCommand=bouncebegin,0.15;zoomx,0;
 ShowBPMDisplay=true
 BPMDisplayX=SCREEN_CENTER_X-160-90+2
 BPMDisplayY=SCREEN_TOP+160+(36/2)+8
-BPMDisplayOnCommand=finishtweening;maxwidth,128;horizalign,left;strokecolor,Color.Outline;addx,320;zoomx,0;decelerate,0.35;addx,-320;zoomx,1
+BPMDisplayOnCommand=finishtweening;maxwidth,128;horizalign,left;strokecolor,Color("Outline");addx,320;zoomx,0;decelerate,0.35;addx,-320;zoomx,1
 BPMDisplayOffCommand=bouncebegin,0.15;zoomx,0;
 #
 ShowBPMLabel=true
@@ -1407,8 +1407,8 @@ SongMeterDisplayOffCommand=
 #
 ShowSongTitle=not GAMESTATE:IsDemonstration();
 SongTitleX=SCREEN_CENTER_X
-SongTitleY=SCREEN_TOP+54
-SongTitleOnCommand=draworder,55;strokecolor,Color.Outline;shadowlength,1;basezoom,0.675;zoomy,0;sleep,1;smooth,0.5;zoom,1;
+SongTitleY=SCREEN_TOP+50
+SongTitleOnCommand=draworder,55;shadowlength,1;basezoom,0.5;zoomy,0;sleep,1.5+0.5;smooth,0.5;zoom,1;y,SCREEN_TOP+50
 SongTitleOffCommand=
 #
 SongMeterDisplayP1X=Center1Player() and SCREEN_CENTER_X or SCREEN_LEFT+16
@@ -1501,13 +1501,13 @@ DeltaSecondsP2OffCommand=
 #
 ScoreP1X=Center1Player() and SCREEN_CENTER_X or THEME:GetMetric(Var "LoadingScreen","PlayerP1OnePlayerOneSideX")
 # ScoreP1X=(PREFSMAN:GetPreference("Center1Player") and GAMESTATE:GetNumPlayersEnabled() == 1) and SCREEN_CENTER_X or THEME:GetMetric(Var "LoadingScreen","PlayerP1OnePlayerOneSideX")
-ScoreP1Y=SCREEN_BOTTOM-48
-ScoreP1OnCommand=draworder,101;visible,not GAMESTATE:GetCurrentCourse():GetCourseType() == "CourseType_Survival" and ThemePrefs.Get("GameplayShowScore");diffuse,PlayerColor(PLAYER_1);strokecolor,ColorDarkTone(PlayerColor(PLAYER_1));sleep,3+0.3;smooth,0.5;y,SCREEN_BOTTOM-48
+ScoreP1Y=SCREEN_BOTTOM-28
+ScoreP1OnCommand=draworder,101;visible,not GAMESTATE:GetCurrentCourse():GetCourseType() == "CourseType_Survival" and ThemePrefs.Get("GameplayShowScore");diffuse,PlayerColor(PLAYER_1);sleep,3+0.3;smooth,0.5;y,SCREEN_BOTTOM-48
 ScoreP1OffCommand=
 ScoreP2X=Center1Player() and SCREEN_CENTER_X or THEME:GetMetric(Var "LoadingScreen","PlayerP2OnePlayerOneSideX")
 # ScoreP2X=(PREFSMAN:GetPreference("Center1Player") and GAMESTATE:GetNumPlayersEnabled() == 1) and SCREEN_CENTER_X or THEME:GetMetric(Var "LoadingScreen","PlayerP2OnePlayerOneSideX")
-ScoreP2Y=SCREEN_BOTTOM-48
-ScoreP2OnCommand=draworder,101;visible,not GAMESTATE:GetCurrentCourse():GetCourseType() == "CourseType_Survival" and ThemePrefs.Get("GameplayShowScore");diffuse,PlayerColor(PLAYER_2);strokecolor,ColorDarkTone(PlayerColor(PLAYER_2));sleep,3+0.3;smooth,0.5;y,SCREEN_BOTTOM-48
+ScoreP2Y=SCREEN_BOTTOM-28
+ScoreP2OnCommand=draworder,101;visible,not GAMESTATE:GetCurrentCourse():GetCourseType() == "CourseType_Survival" and ThemePrefs.Get("GameplayShowScore");diffuse,PlayerColor(PLAYER_2);sleep,3+0.3;smooth,0.5;y,SCREEN_BOTTOM-48
 ScoreP2OffCommand=
 #
 StepsDescriptionP1X=Center1Player() and SCREEN_CENTER_X or THEME:GetMetric(Var "LoadingScreen","PlayerP1OnePlayerOneSideX")
@@ -1729,11 +1729,11 @@ ScoreLabelOffCommand=
 #
 ScoreNumberP1X=SCREEN_CENTER_X-160
 ScoreNumberP1Y=SCREEN_TOP+320
-ScoreNumberP1OnCommand=diffuse,PlayerColor(PLAYER_1);strokecolor,ColorDarkTone( PlayerColor(PLAYER_1) );shadowlength,1;zoom,0.775
+ScoreNumberP1OnCommand=diffuse,PlayerColor(PLAYER_1);diffusetopedge,BoostColor(PlayerColor(PLAYER_1),1.5);strokecolor,ColorDarkTone( PlayerColor(PLAYER_1) );shadowlength,1;zoom,0.775
 ScoreNumberP1OffCommand=
 ScoreNumberP2X=SCREEN_CENTER_X+160
 ScoreNumberP2Y=SCREEN_TOP+320
-ScoreNumberP2OnCommand=diffuse,PlayerColor(PLAYER_2);strokecolor,ColorDarkTone( PlayerColor(PLAYER_2) );shadowlength,1;zoom,0.775
+ScoreNumberP2OnCommand=diffuse,PlayerColor(PLAYER_2);diffusetopedge,BoostColor(PlayerColor(PLAYER_2),1.5);strokecolor,ColorDarkTone( PlayerColor(PLAYER_2) );shadowlength,1;zoom,0.775
 ScoreNumberP2OffCommand=
 #
 PercentFrameP1X=SCREEN_CENTER_X-160

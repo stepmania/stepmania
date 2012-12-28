@@ -1,0 +1,4530 @@
+# This probably is hard to understand from the way it was made in the first 
+# place, so instead just pay attention to each group, which has tons of notes.
+
+# 01 # Global
+# 02 # Managers
+# 03 # Singletons
+# 04 # Global Screen
+# 05 # Base Screens
+# 06 # Derivative Screens
+# 07 # Etc
+
+# 01 #
+[Global]
+# This basically means that all other themes get information from this theme.
+IsBaseTheme=1
+
+[Common]
+# How big the design of the theme is. for example, if a theme was designed for
+# 1080p, it would be shrunken for 640x480, as well as that, if it was designed
+# for 480p, it would be enlarged for bigger screens!
+ScreenWidth=1
+ScreenHeight=480
+
+# Allows you to pick all available game modes for your gametype: for example,
+# inserting enough coins for 1p would let you choose between solo, single
+# and double before each game
+AutoSetStyle=false
+
+# Default modifiers and noteskin.
+DefaultModifiers="1x"
+DefaultNoteSkinName="default"
+
+# Difficulties to show. Useful for custom games where you want to hide these.
+DifficultiesToShow="beginner,easy,medium,hard,challenge"
+# Same as above, but for courses.
+CourseDifficultiesToShow="easy,medium,hard"
+# Things to hide. You couldn't play cabinet anyways.
+StepsTypesToHide="lights-cabinet"
+
+# The number of entries before "Various" is shown on the BPMDisplay, etc.
+MaxCourseEntriesBeforeShowVarious=10
+
+# The screen that appears when pressing the operator button.
+OperatorMenuScreen="ScreenOptionsService"
+
+# The first screen in the attract cycle.
+FirstAttractScreen="ScreenDemonstration"
+
+# First screen that pops up when you start the game. ScreenInit in particular
+# shows the theme information before going to the title screen.
+InitialScreen="ScreenInit"
+
+# Music selection screen used after downloading files.
+SelectMusicScreen="ScreenSelectMusic"
+
+# Screens that show over everything else.
+# Only mess with this if you know what you're doing.
+OverlayScreens="ScreenSystemLayer,ScreenSyncOverlay,ScreenStatsOverlay,ScreenDebugOverlay,ScreenConsoleOverlay,ScreenInstallOverlay"
+
+# Used in PlayerStageStats for formatting scores.
+PercentScoreDecimalPlaces=2
+
+# 02 #
+
+[LightsManager]
+# Mostly useless since it doesn't work, as well as that barely anyone has 
+# lights to play around with.
+GameButtonsToShow=""
+# these metrics don't exist yet, but are planned:
+LightEffectRiseSeconds=0.075
+LightEffectFallOffSeconds=0.35
+LightEffectPulseTime=0.100
+
+[ProfileManager]
+# I wouldn't change these either.
+FixedProfiles=false
+NumFixedProfiles=1
+
+[SongManager]
+# SSC: Determine what the ES/OMES Modifiers are
+ExtraStagePlayerModifiers="default,1.5x,reverse"
+ExtraStageStageModifiers="failimmediatecontinue,norecover"
+OMESPlayerModifiers="default,1.5x,reverse"
+OMESStageModifiers="failimmediate,suddendeath"
+
+# How many different colors you can have in the MusicWheel
+NumSongGroupColors=10
+NumCourseGroupColors=1
+# Legacy metric: how difficult a song has to be for it to glow.
+ExtraColorMeter=GetExtraColorThreshold()
+ExtraColor=color("#ff0000")	-- red
+# The maximum difficulty the second extra stage can be.
+ExtraStage2DifficultyMax=8
+# Allow special colors for unlocks and 'preffered' sort
+UseUnlockColor=false
+UsePreferredSortColor=false
+# Unlocks go at the end so they're easy to find.
+MoveUnlocksToBottomOfPreferredSort=false
+# Lots of themes want more than one group color, so let them have this.
+SongGroupColor1=color("#00aeef") -- blue
+SongGroupColor2=color("#00aeef") -- blue
+SongGroupColor3=color("#00aeef") -- blue
+SongGroupColor4=color("#00aeef") -- blue
+SongGroupColor5=color("#00aeef") -- blue
+SongGroupColor6=color("#00aeef") -- blue
+SongGroupColor7=color("#00aeef") -- blue
+SongGroupColor8=color("#00aeef") -- blue
+SongGroupColor9=color("#00aeef") -- blue
+SongGroupColor10=color("#00aeef") -- blue
+SongGroupColor11=color("#00aeef") -- blue
+SongGroupColor12=color("#00aeef") -- blue
+SongGroupColor13=color("#00aeef") -- blue
+SongGroupColor14=color("#00aeef") -- blue
+SongGroupColor15=color("#00aeef") -- blue
+SongGroupColor16=color("#00aeef") -- blue
+SongGroupColor17=color("#00aeef") -- blue
+SongGroupColor18=color("#00aeef") -- blue
+SongGroupColor19=color("#00aeef") -- blue
+SongGroupColor20=color("#00aeef") -- blue
+SongGroupColor21=color("#00aeef") -- blue
+SongGroupColor22=color("#00aeef") -- blue
+SongGroupColor23=color("#00aeef") -- blue
+SongGroupColor24=color("#00aeef") -- blue
+SongGroupColor25=color("#00aeef") -- blue
+# Lots of themes want more than one course color, too
+CourseGroupColor1=color("1,1,1,1") -- white
+CourseGroupColor2=color("1,1,1,1") -- white
+CourseGroupColor3=color("1,1,1,1") -- white
+CourseGroupColor4=color("1,1,1,1") -- white
+CourseGroupColor5=color("1,1,1,1") -- white
+CourseGroupColor6=color("1,1,1,1") -- white
+CourseGroupColor7=color("1,1,1,1") -- white
+CourseGroupColor8=color("1,1,1,1") -- white
+CourseGroupColor9=color("1,1,1,1") -- white
+CourseGroupColor10=color("1,1,1,1") -- white
+UnlockColor=color("1,0.5,0,1")
+
+[UnlockManager]
+# Unlock harder/different steps based on passing easier steps.
+AutoLockChallengeSteps=false
+AutoLockEditSteps=false
+# determine if songs loaded via AdditionalSongs should be locked.
+SongsNotAdditional=true
+
+UnlockNames=""
+# useful commands:
+# require,(UnlockRequirement),(value);
+# where (UnlockRequirement) is one of the UnlockRequirement enum values.
+
+# song,(Song Name);
+# sets a Song to be unlocked
+
+# course,(Course Name);
+# sets a Course to be unlocked
+
+# roulette;
+# Song shows up in roulette (useful with Song only)
+
+# mod,(modifier);
+# sets a modifier to be unlocked.
+
+# code,(code);
+# assigns a code to the unlock
+
+# examples:
+# 1) The song "Pledge" requires 500 AP.
+# Unlock1Command=song,"Pledge";require,"UnlockRequirement_ArcadePoints",500
+
+# 2) The song "ABC" can be unlocked via roulette; pick an arbitrary code
+# to use to store the unlock.
+# Unlock2Command=song,"ABC";code,"59183751";roulette
+
+# 03 # 
+
+[ArrowEffects]
+# Complicated stuff you probably shouldn't ever mess with or else you'll 
+# destroy mods completely! It's unknown why these were made into metrics.
+FrameWidthEffectsPixelsPerSecond=400
+FrameWidthEffectsMinMultiplier=0.5
+FrameWidthEffectsMaxMultiplier=1.2
+FrameWidthLockEffectsToOverlapping=false
+FrameWidthLockEffectsTweenPixels=25
+ArrowSpacing=64
+DrawHiddenNotesAfterReceptor=true
+BlinkModFrequency=0.3333
+BoostModMinClamp=-400
+BoostModMaxClamp=400
+BrakeModMinClamp=-400
+BrakeModMaxClamp=400
+WaveModMagnitude=20
+WaveModHeight=38
+BoomerangPeakPercentage=0.75
+ExpandMultiplierFrequency=3
+ExpandMultiplierScaleFromLow=-1
+ExpandMultiplierScaleFromHigh=1
+ExpandMultiplierScaleToLow=0.75
+ExpandMultiplierScaleToHigh=1.75
+ExpandSpeedScaleFromLow=0
+ExpandSpeedScaleFromHigh=1
+ExpandSpeedScaleToLow=1
+# No need for the high here: that is already calculated in code.
+TipsyTimerFrequency=1.2
+TipsyColumnFrequency=1.8
+TipsyArrowMagnitude=0.4
+TipsyOffsetTimerFrequency=1.2
+TipsyOffsetColumnFrequency=2
+TipsyOffsetArrowMagnitude=0.4
+TornadoPositionScaleToLow=-1
+TornadoPositionScaleToHigh=1
+TornadoOffsetFrequency=6
+TornadoOffsetScaleFromLow=-1
+TornadoOffsetScaleFromHigh=1
+DrunkColumnFrequency=0.2
+DrunkOffsetFrequency=10
+DrunkArrowMagnitude=0.5
+BeatOffsetHeight=15
+BeatPIHeight=2
+MiniPercentBase=0.5
+MiniPercentGate=1
+TinyPercentBase=0.5
+TinyPercentGate=1
+DizzyHoldHeads=false
+QuantizeArrowYPosition=false
+
+[Background]
+# Background stuff. again, its usually a better idea to leave this alone
+# unless you truly need to change it, in which case you'd know what it does.
+ShowDancingCharacters=true
+UseStaticBackground=true
+# clamps the output of the background
+ClampOutputPercent=0.0
+#
+LeftEdge=SCREEN_LEFT
+RightEdge=SCREEN_RIGHT
+TopEdge=SCREEN_TOP
+BottomEdge=SCREEN_BOTTOM
+
+[Banner]
+# Scroll stuff when you roll over it, DDR Extreme style.
+ScrollRandom=false
+ScrollRoulette=false
+ScrollMode=false
+ScrollSortOrder=false
+# Control how fast the banner scrolls. Higher numbers mean slower.
+ScrollSpeedDivisor=2
+
+[BeginnerHelper]
+HelperX=0
+HelperY=SCREEN_CENTER_Y-80
+
+# All X,Y coordinates are relative to the HelperX,Y
+Player1X=-(SCREEN_CENTER_X/2)
+PlayerP1OnCommand=halign,0;rotationx,40;zoom,20
+Player2X=(SCREEN_CENTER_X/2)
+PlayerP2OnCommand=halign,1;rotationx,40;zoom,20
+
+ShowDancePad=false
+# "Pad should always be 3 units bigger in zoom than the dancer."
+DancePadOnCommand=halign,0;rotationx,36;zoom,23
+
+[BitmapText]
+# The colors in the 'roulette' text. you can have a lot!
+NumRainbowColors=7
+RainbowColor1=color("1.0,0.0,0.4,1")	-- red
+RainbowColor2=color("0.8,0.2,0.6,1")	-- pink
+RainbowColor3=color("0.4,0.3,0.5,1")	-- purple
+RainbowColor4=color("0.2,0.6,1.0,1")	-- sky blue
+RainbowColor5=color("0.2,0.8,0.8,1")	-- sea green
+RainbowColor6=color("0.2,0.8,0.4,1")	-- green
+RainbowColor7=color("1.0,0.8,0.2,1")	-- orange
+
+[BPMDisplay]
+# Various commands for the BPMDisplay, ranging from no bpm, a non changing bpm,
+# a bpm that changes, one that is 'random' ( boss songs ) and when a song is
+# an es/omes!
+SetNoBpmCommand=diffusetopedge,color("#777777");diffusebottomedge,color("#666666")
+SetNormalCommand=diffusetopedge,color("#fbfb57");diffusebottomedge,color("#fb9c57")
+SetChangeCommand=diffusetopedge,color("#fb9c57");diffusebottomedge,color("#fb5757")
+SetRandomCommand=diffusetopedge,color("#fb9c57");diffusebottomedge,color("#fb5757")
+SetExtraCommand=diffusetopedge,color("#fb5757");diffusebottomedge,color("#9c4242")
+# Determines if it shows both bpms ( 000-100 ) or cycles between the min and max.
+Cycle=true
+# Text when there is no BPM
+NoBpmText="000"
+# How fast it cycles, smaller is faster
+RandomCycleSpeed=0.1
+CourseCycleSpeed=0.2
+# Seperator between both bpms ( 100-200 ).
+Separator="-"
+# ??? when it cycles.
+ShowQMarksInRandomCycle=true
+QuestionMarksText="???"
+RandomText="!!!"
+# xxx: localize me -aj
+VariousText="000"
+FormatString="%03.0f"
+
+[CodeDetector]
+# Codes on the MusicWheel that change stuff!
+# For Future Reference:
+# @ = Holding
+# - = In Conjuction With / Then
+# ~ = Released
+# + = At The Same Time
+PrevSteps1=GetCodeForGame("PrevSteps1")
+PrevSteps2=GetCodeForGame("PrevSteps2")
+NextSteps1=GetCodeForGame("NextSteps1")
+NextSteps2=GetCodeForGame("NextSteps2")
+NextSort1=GetCodeForGame("NextSort1")
+NextSort2=GetCodeForGame("NextSort2")
+NextSort3=GetCodeForGame("NextSort3")
+NextSort4=GetCodeForGame("NextSort4")
+ModeMenu1=GetCodeForGame("ModeMenu1")
+ModeMenu2=GetCodeForGame("ModeMenu2")
+Mirror=GetCodeForGame("Mirror")
+Left=GetCodeForGame("Left")
+Right=GetCodeForGame("Right")
+Shuffle=GetCodeForGame("Shuffle")
+SuperShuffle=GetCodeForGame("SuperShuffle")
+NextTransform=GetCodeForGame("NextTransform")
+NextScrollSpeed=GetCodeForGame("NextScrollSpeed")
+PreviousScrollSpeed=GetCodeForGame("PreviousScrollSpeed")
+NextAccel=GetCodeForGame("NextAccel")
+NextEffect=GetCodeForGame("NextEffect")
+NextAppearance=GetCodeForGame("NextAppearance")
+NextTurn=GetCodeForGame("NextTurn")
+Reverse=GetCodeForGame("Reverse")
+HoldNotes=GetCodeForGame("HoldNotes")
+Mines=GetCodeForGame("Mines")
+Dark=GetCodeForGame("Dark")
+CancelAll=GetCodeForGame("CancelAll")
+NextGroup=GetCodeForGame("NextGroup")
+PrevGroup=GetCodeForGame("PrevGroup")
+CloseCurrentFolder=GetCodeForGame("CloseCurrentFolder")
+Hidden=GetCodeForGame("Hidden")
+RandomVanish=GetCodeForGame("RandomVanish")
+SaveScreenshot1=GetCodeForGame("SaveScreenshot1")
+SaveScreenshot2=GetCodeForGame("SaveScreenshot2")
+# on the player options menu.
+CancelAllPlayerOptions=GetCodeForGame("CancelAllPlayerOptions")
+# unused codes:
+Backwards=""
+# deprecated codes:
+NextTheme=""
+NextTheme2=""
+NextAnnouncer=""
+NextAnnouncer2=""
+BackInEventMode=""
+# NextTheme="Left,Left,Left,Right,Right,Right,Left,Right"
+# NextTheme2="MenuLeft,MenuLeft,MenuLeft,MenuRight,MenuRight,MenuRight,MenuLeft,MenuRight"
+# NextAnnouncer="Left,Left,Right,Right,Left,Left,Right,Right"
+# NextAnnouncer2="MenuLeft,MenuLeft,MenuRight,MenuRight,MenuLeft,MenuLeft,MenuRight,MenuRight"
+
+[CodeDetectorOnline]
+Fallback="CodeDetector"
+PrevSteps1="MenuUp,MenuUp"
+PrevSteps2=""
+NextSteps1="MenuDown,MenuDown"
+NextSteps2=""
+NextSort3=""
+NextSort4=""
+ModeMenu1=""
+Mirror=""
+Left=""
+Right=""
+Shuffle=""
+SuperShuffle=""
+NextScrollSpeed=""
+PreviousScrollSpeed=""
+NextAccel=""
+NextEffect=""
+NextAppearance=""
+Reverse=""
+HoldNotes=""
+CancelAll=""
+
+[CombinedLifeMeterTug]
+# We don't use it.
+MeterWidth=0.0
+MeterHeight=0.0
+
+[Combo]
+# System Direction
+ShowComboAt=HitCombo()
+ShowMissesAt=MissCombo()
+# Shrink and Grow the combo, DDR Style
+NumberMinZoom=0.8
+NumberMaxZoom=1
+NumberMaxZoomAt=100
+#
+LabelMinZoom=0.75*0.75
+LabelMaxZoom=0.75*0.75
+# Things the combo does when you bang on it, and what the text does
+PulseCommand=%function(self,param) self:stoptweening(); self:zoom(1.125*param.Zoom); self:linear(0.05); self:zoom(param.Zoom); end
+PulseLabelCommand=%function(self,param) self:stoptweening(); self:zoom(param.LabelZoom); self:linear(0.05); self:zoom(param.LabelZoom); end
+NumberOnCommand=y,240-216-1.5;shadowlength,1;halign,1;valign,1;skewx,-0.125;
+LabelOnCommand=x,6;y,22.5;shadowlength,1;zoom,0.75;diffusebottomedge,color("0.75,0.75,0.75,1");halign,0;valign,1
+
+[HoldJudgment]
+# System Direction
+HoldJudgmentLetGoCommand=finishtweening;visible,true;shadowlength,0;diffusealpha,1;zoom,1;y,-10;linear,0.8;y,10;sleep,0.5;linear,0.1;zoomy,0.5;zoomx,2;diffusealpha,0
+HoldJudgmentHeldCommand=finishtweening;visible,true;shadowlength,0;diffusealpha,1;zoom,1.25;linear,0.3;zoomx,1;zoomy,1;sleep,0.5;linear,0.1;zoomy,0.5;zoomx,2;diffusealpha,0
+
+[HelpDisplay]
+# The help display on the menus, and what it does.
+# How fast it changes between texts (seconds)
+TipShowTime=4
+# How long each switch takes (seconds)
+TipSwitchTime=1
+# The Command when its made
+TipOnCommand=shadowlength,0;diffuseblink
+
+[Judgment]
+# New #
+JudgmentOnCommand=
+
+# Things the judgment does when you bang on it.
+JudgmentW1Command=shadowlength,0;diffusealpha,1;zoom,1.3;linear,0.05;zoom,1;sleep,0.8;linear,0.1;zoomy,0.5;zoomx,2;diffusealpha,0;glowblink;effectperiod,0.05;effectcolor1,color("1,1,1,0");effectcolor2,color("1,1,1,0.25")
+JudgmentW2Command=shadowlength,0;diffusealpha,1;zoom,1.3;linear,0.05;zoom,1;sleep,0.8;linear,0.1;zoomy,0.5;zoomx,2;diffusealpha,0
+JudgmentW3Command=shadowlength,0;diffusealpha,1;zoom,1.2;linear,0.05;zoom,1;sleep,0.8;linear,0.1;zoomy,0.5;zoomx,2;diffusealpha,0;
+JudgmentW4Command=shadowlength,0;diffusealpha,1;zoom,1.1;linear,0.05;zoom,1;sleep,0.8;linear,0.1;zoomy,0.5;zoomx,2;diffusealpha,0;
+JudgmentW5Command=shadowlength,0;diffusealpha,1;zoom,1.0;vibrate;effectmagnitude,4,8,8;sleep,0.8;linear,0.1;zoomy,0.5;zoomx,2;diffusealpha,0
+JudgmentMissCommand=shadowlength,0;diffusealpha,1;zoom,1;y,-20;linear,0.8;y,20;sleep,0.8;linear,0.1;zoomy,0.5;zoomx,2;diffusealpha,0
+
+[Protiming]
+# Protiming isn't implemented yet.
+ProtimingOnCommand=y,24
+ProtimingW1Command=
+ProtimingW2Command=
+ProtimingW3Command=
+ProtimingW4Command=
+ProtimingW5Command=
+ProtimingMissCommand=
+
+[Course]
+# The course colors change depending on what course sort order is being used.
+# SortPreferredColor is used with preferred course sort.
+
+# [Song sort] number of songs in course
+# 1-3 songs: SortLevel5Color
+# 4-6 songs: SortLevel4Color
+# 7+ songs : SortLevel2Color
+
+# [Meter sort]
+# if all songs are fixed, return SortLevel1Color.
+# meter 1-4: SortLevel5Color
+# meter 5-6: SortLevel4Color
+# meter 7-9: SortLevel3Color
+# meter 10+: SortLevel2Color
+# [Meter sum sort] is about the same, except the values are
+# 1-19, 20-29, 30-39, and 40+.
+
+# [Rank sort]
+# Ranking 1: SortLevel5Color
+# Ranking 2: SortLevel3Color
+# Ranking 3: SortLevel1Color
+# Others   : SortLevel4Color
+
+SortPreferredColor=color("1,1,1,1")	-- Preferred is both for when courses are in preferred sort, or are autogen
+SortLevel1Color=color("1,0,0,1")
+SortLevel2Color=color("1,1,0,1")
+SortLevel3Color=color("1,0.5,0,1")
+SortLevel4Color=color("1,1,0,1")
+SortLevel5Color=color("0,1,0,1")
+
+[CustomDifficulty]
+# Custom system that lets you rename certain classes of difficulties to 
+# something else. Mostly for custom games and game emulation, PIU for example.
+
+Names="PumpHard,PumpFreestyle,PumpNightmare"
+#~ Names="PumpHard,PumpFreestyle,PumpNightmare,PumpHalfDoubleEasy,PumpHalfDoubleMedium,PumpHalfDoubleHard,PumpHalfDoubleExpert"
+# Dance Couple Beginner
+DanceCoupleBeginnerStepsType="StepsType_Dance_Couple"
+DanceCoupleBeginnerDifficulty="Difficulty_Beginner"
+DanceCoupleBeginnerCourseType=nil
+DanceCoupleBeginnerString="Beginner"
+# Dance Couple Easy
+DanceCoupleEasyStepsType="StepsType_Dance_Couple"
+DanceCoupleEasyDifficulty="Difficulty_Easy"
+DanceCoupleEasyCourseType=nil
+DanceCoupleEasyString="Easy"
+# Dance Couple Medium
+DanceCoupleMediumStepsType="StepsType_Dance_Couple"
+DanceCoupleMediumDifficulty="Difficulty_Medium"
+DanceCoupleMediumCourseType=nil
+DanceCoupleMediumString="Medium"
+# Dance Couple Hard
+DanceCoupleHardStepsType="StepsType_Dance_Couple"
+DanceCoupleHardDifficulty="Difficulty_Hard"
+DanceCoupleHardCourseType=nil
+DanceCoupleHardString="Hard"
+# Dance Couple Expert
+DanceCoupleExpertStepsType="StepsType_Dance_Couple"
+DanceCoupleExpertDifficulty="Difficulty_Expert"
+DanceCoupleExpertCourseType=nil
+DanceCoupleExpertString="Expert"
+# Pump Single Hard (Crazy)
+PumpHardStepsType="StepsType_Pump_Single"
+PumpHardDifficulty="Difficulty_Hard"
+PumpHardCourseType=nil
+PumpHardString="Crazy"
+# Pump Double Medium (Freestyle)
+PumpFreestyleStepsType="StepsType_Pump_Double"
+PumpFreestyleDifficulty="Difficulty_Medium"
+PumpFreestyleCourseType=nil
+PumpFreestyleString="Freestyle"
+# Pump Double Hard (Nightmare)
+PumpNightmareStepsType="StepsType_Pump_Double"
+PumpNightmareDifficulty="Difficulty_Hard"
+PumpNightmareCourseType=nil
+PumpNightmareString="Nightmare"
+# Pump Half-Double Easy
+PumpHalfDoubleEasyStepsType="StepsType_Pump_Halfdouble"
+PumpHalfDoubleEasyDifficulty="Difficulty_Easy"
+PumpHalfDoubleEasyCourseType=nil
+PumpHalfDoubleEasyString="HalfDoubleEasy"
+# Pump Half-Double Medium
+PumpHalfDoubleMediumStepsType="StepsType_Pump_Halfdouble"
+PumpHalfDoubleMediumDifficulty="Difficulty_Medium"
+PumpHalfDoubleMediumCourseType=nil
+PumpHalfDoubleMediumString="HalfDoubleMedium"
+# Pump Half-Double Hard
+PumpHalfDoubleHardStepsType="StepsType_Pump_Halfdouble"
+PumpHalfDoubleHardDifficulty="Difficulty_Hard"
+PumpHalfDoubleHardCourseType=nil
+PumpHalfDoubleHardString="HalfDoubleHard"
+# Pump Half-Double Expert
+PumpHalfDoubleExpertStepsType="StepsType_Pump_Halfdouble"
+PumpHalfDoubleExpertDifficulty="Difficulty_Expert"
+PumpHalfDoubleExpertCourseType=nil
+PumpHalfDoubleExpertString="HalfDoubleExpert"
+#
+# Difficulty_Beginner-StepsType_Pump_Single=Easy
+# Difficulty_Easy-StepsType_Pump_Single=Normal
+# Difficulty_Medium-StepsType_Pump_Single=Hard
+# Difficulty_Hard-StepsType_Pump_Single=Crazy
+# Difficulty_Medium-StepsType_Pump_Halfdouble=Half-Double
+# Difficulty_Medium-StepsType_Pump_Double=Freestyle
+# Difficulty_Hard-StepsType_Pump_Double=Nightmare
+# Difficulty_Edit-StepsType_Pump_Single=Edit
+# Difficulty_Edit-StepsType_Pump_Halfdouble=Edit
+# Difficulty_Edit-StepsType_Pump_Double=Edit
+# Course=Progressive
+[DifficultyList]
+# A list that shows difficulties in a song.
+CapitalizeDifficultyNames=false
+# How far away and how many items there are
+ItemsSpacingY=40
+NumShownItems=5
+#
+MoveCommand=decelerate,0.3
+
+[FadingBanner]
+# The banner on MusicWheel.
+BannerOnCommand=
+# When it loads
+BannerFadeFromCachedCommand=diffusealpha,1;stoptweening;linear,0.25;diffusealpha,0
+# When it loads into clarity
+BannerFadeOffCommand=diffusealpha,1;stoptweening;linear,0.25;diffusealpha,0
+# ResetFade is played in BeforeChange. It happens after the FadeFromCached/FadeOff command.
+BannerResetFadeCommand=diffusealpha,1
+
+BannerRouletteCommand=
+BannerRandomCommand=
+
+[Gameplay]
+# System Direction
+ComboIsPerRow=ComboPerRow()
+MissComboIsPerRow=true
+MinScoreToContinueCombo=ComboContinue()
+MinScoreToMaintainCombo=ComboMaintain()
+MaxScoreToIncrementMissCombo='TapNoteScore_Miss'
+MineHitIncrementsMissCombo=false
+AvoidMineIncrementsCombo=false
+# When you hit it, you know.
+ToastyTriggersAt=250
+
+[GameState]
+# Default song and sort. these don't really matter
+DefaultSong=""
+DefaultSort="Group"
+# How good of a grade you have to get to get an ES/OMES. Locked to an 'AA'
+GradeTierForExtra1="Grade_Tier03"
+GradeTierForExtra2="Grade_Tier03"
+# and how difficult that song you go thas to be
+MinDifficultyForExtra="Difficulty_Hard"
+# System Direction
+AreStagePlayerModsForced=AreStagePlayerModsForced
+AreStageSongModsForced=AreStageSongModsForced
+# Let players join while you play if they put in some coins
+AllowLateJoin=true
+# Various feats that you can earn
+ProfileRecordFeats=true
+CategoryRecordFeats=true
+# Disallow bad names
+UseNameBlacklist=false
+# Alow OMES
+AllowExtra2=true
+# Don't let the player change difficulties on an ES/OMES
+LockExtraStageSelection=true
+# Normally, in event mode, the premium value is ignored. Set this metric to
+# true to re-gain that behavior.
+DisablePremiumInEventMode=false
+# Let edit steps be allowed for earning extra stages.
+EditAllowedForExtra=false
+
+[GrooveRadar]
+# Polar graph that shows difficulty stuff in depth
+# how thick the line is
+EdgeWidth=2
+# How visible the middle is
+CenterAlpha=0.25
+# what to do with each player's part of the graph
+RadarValueMapP1OnCommand=diffuse,PlayerColor(PLAYER_1)
+RadarValueMapP2OnCommand=diffuse,PlayerColor(PLAYER_2)
+
+[HighScore]
+# Default highscore name for no entries ( like how street fighter has ' CAP ' )
+EmptyName="SSC!"
+
+[Inventory]
+# Defines the probability of using items (1/ItemUseRateSeconds).
+ItemUseRateSeconds=0.0
+
+[LifeMeterBar]
+# The default life bar you see in gameplay
+
+# Percentage in which the game starts yelling at you to stop sucking
+DangerThreshold=0.2
+# And how much it starts up at.
+InitialValue=0.5
+# And how much it takes to get ravin'
+HotValue=1.0
+# And how much there is to fill up ( only for debug )
+LifeMultiplier=1.0
+# How good you gotta hit it to keep it alive. ( W3 is 'Great' );
+MinStayAlive="TapNoteScore_W3"
+# If the life difficulty should be changed on extra stages
+ForceLifeDifficultyOnExtraStage=true
+# And what it should be changed to. Has no effect if the above is false.
+ExtraStageLifeDifficulty=1.0
+
+# How much it changes
+LifePercentChangeW1=0.008
+LifePercentChangeW2=0.008
+LifePercentChangeW3=0.004
+LifePercentChangeW4=0.000
+LifePercentChangeW5=-0.040
+LifePercentChangeMiss=-0.080
+LifePercentChangeHitMine=-0.160
+LifePercentChangeHeld=0.008
+LifePercentChangeLetGo=-0.080
+LifePercentChangeCheckpointMiss=-0.002
+LifePercentChangeCheckpointHit=0.002
+
+# And various positionings
+UnderX=0
+UnderY=0
+DangerX=0
+DangerY=0
+StreamX=0
+StreamY=0
+OverX=0
+OverY=0
+
+[LifeMeterBattery]
+# The bar that shows up in Oni mode.
+# any score below this one will cause you to lose a life.
+MinScoreToKeepLife='TapNoteScore_W3'
+# Defines the maximum number of lives in the meter. (0 means no limit)
+MaxLives=0
+# how many lives you'll lose upon doing so.
+SubtractLives=1
+# how many lives you'll lose hitting a mine
+MinesSubtractLives=1
+# how many lives a successful hold will net you.
+HeldAddLives=0
+# how many lives an unsuccessful hold will cost you.
+LetGoSubtractLives=1
+
+# How many lives trigger the "Danger" state.
+DangerThreshold=1
+# How long it flashes when you lose a life.
+BatteryBlinkTime=1.2
+# Where the batteries are
+BatteryP1X=-92
+BatteryP1Y=2
+BatteryP2X=92
+BatteryP2Y=2
+# Where your life count is
+NumLivesFormat="x%d"
+NumLivesP1X=-92
+NumLivesP1Y=0
+NumLivesP1GainLifeCommand=
+NumLivesP1LoseLifeCommand=zoom,1.5;linear,0.15;zoom,1
+NumLivesP2X=92
+NumLivesP2Y=0
+NumLivesP2GainLifeCommand=
+NumLivesP2LoseLifeCommand=zoom,1.5;linear,0.15;zoom,1
+
+[LifeMeterBattery Percent]
+# The percentage on the bar. I wouldn't even bother changing this, because I
+# havent and I *made* this theme :\
+Format=FormatPercentScore
+PercentUseRemainder=false
+ApplyScoreDisplayOptions=true
+DancePointsDigits=5
+#
+Format="%2d"
+#
+RemainderFormat=
+#
+PercentFormat="%2d"
+PercentP1X=0
+PercentP1Y=0
+PercentP1OnCommand=zoom,0.7;shadowlength,0;diffuse,PlayerColor(PLAYER_1)
+PercentP1OffCommand=
+PercentP2X=0
+PercentP2Y=0
+PercentP2OnCommand=zoom,0.7;shadowlength,0;diffuse,PlayerColor(PLAYER_2)
+PercentP2OffCommand=
+#
+DancePointsP1X=0
+DancePointsP1Y=0
+DancePointsP1OnCommand=zoom,0.7;shadowlength,0;diffuse,PlayerColor(PLAYER_1)
+DancePointsP1OffCommand=
+DancePointsP2X=0
+DancePointsP2Y=0
+DancePointsP2OnCommand=zoom,0.7;shadowlength,0;diffuse,PlayerColor(PLAYER_2)
+DancePointsP2OffCommand=
+
+[LifeMeterTime]
+# The Lifemeter that shows up when you're playing survival.
+
+# When it starts telling you to stop sucking.
+DangerThreshold=0.3
+# How good it's filled up when you start
+InitialValue=0.5
+MeterWidth=0.0
+MeterHeight=0.0
+# How little there is to fill?
+MinLifeTime=15
+
+[LyricDisplay]
+LyricFrontChangedCommand=LyricCommand,"Front"
+LyricBackChangedCommand=LyricCommand,"Back"
+
+InLength=0
+OutLength=0
+
+[NotesWriterSM]
+DescriptionUsesCreditField=false
+
+[OptionRow]
+ShowModIcons=false
+ShowUnderlines=true
+ShowBpmInSpeedTitle=false
+ModIconP1X=SCREEN_CENTER_X-280
+ModIconP2X=SCREEN_CENTER_X+280
+ModIconOnCommand=x,-30
+FrameX=SCREEN_CENTER_X-222
+FrameY=0
+FrameOnCommand=
+TitleX=SCREEN_CENTER_X-222
+TitleY=0
+TitleOnCommand=shadowlength,0;uppercase,true;wrapwidthpixels,SCREEN_WIDTH*0.2;zoom,0.6
+TitleGainFocusCommand=diffuse,color("1,1,1,1");strokecolor,color("0,0,0,1")
+TitleLoseFocusCommand=diffuse,color("0.5,0.5,0.5,1");strokecolor,color("0,0,0,1")
+ItemsStartX=SCREEN_CENTER_X-140
+ItemsEndX=SCREEN_CENTER_X+280
+ItemsGapX=14
+ItemsMinBaseZoom=0.65
+ItemsLongRowP1X=SCREEN_CENTER_X-60
+ItemsLongRowP2X=SCREEN_CENTER_X+100
+ItemsLongRowSharedX=SCREEN_CENTER_X
+ItemOnCommand=shadowlength,0;zoom,0.5
+ItemGainFocusCommand=
+ItemLoseFocusCommand=
+TweenSeconds=0.2
+ModIconMetricsGroup="ModIcon"
+ColorSelected=color("1,1,1,1")
+ColorNotSelected=color("0.5,0.5,0.5,1")
+ColorDisabled=color("0.25,0.25,0.25,1")
+
+[OptionRowService]
+Fallback="OptionRow"
+# Service Titles are all that are shown.
+ShowUnderlines=false
+ShowCursors=false
+#
+TitleX=SCREEN_CENTER_X
+TitleY=
+TitleOnCommand=shadowlength,0;uppercase,true;maxwidth,600;zoom,0.75
+TitleGainFocusCommand=diffuse,color("1,1,1,1");strokecolor,color("0,0,0,1")
+TitleLoseFocusCommand=diffuse,color("0.5,0.5,0.5,1");strokecolor,color("0,0,0,1")
+
+[OptionRowExit]
+Fallback="OptionRow"
+FrameOnCommand=visible,false
+TitleOnCommand=visible,false
+
+[OptionsCursor]
+LeftX=
+LeftY=
+LeftOnCommand=halign,1;
+MiddleX=
+MiddleY=
+MiddleOnCommand=
+RightX=
+RightY=
+RightOnCommand=halign,0;
+CanGoLeftX=
+CanGoLeftY=
+CanGoLeftOnCommand=halign,1;
+CanGoRightX=
+CanGoRightY=
+CanGoRightOnCommand=halign,0;
+
+[OptionsCursorP1]
+Fallback="OptionsCursor"
+LeftX=-2
+MiddleX=-2
+RightX=-2
+LeftY=-2
+MiddleY=-2
+RightY=-2
+
+[OptionsCursorP2]
+Fallback="OptionsCursor"
+LeftX=2
+MiddleX=2
+RightX=2
+LeftY=2
+MiddleY=2
+RightY=2
+
+[OptionsUnderline]
+Fallback="OptionsCursor"
+
+[OptionsUnderlineP1]
+Fallback="OptionsUnderline"
+LeftX=-4
+MiddleX=-4
+RightX=-4
+LeftY=10
+MiddleY=10
+RightY=10
+
+[OptionsUnderlineP2]
+Fallback="OptionsUnderline"
+LeftX=4
+MiddleX=4
+RightX=4
+LeftY=12
+MiddleY=12
+RightY=12
+
+[MenuTimer]
+WarningStart=10
+WarningBeepStart=10
+# I don't like it 
+# -- Midiman
+# MaxStallSeconds=7.5
+MaxStallSeconds=0
+#
+HurryUpTransition=5.5
+Text1OnCommand=stopeffect;stoptweening;shadowlength,0;
+Text1FormatFunction=function(fSeconds) fSeconds=math.min( 99, math.ceil(fSeconds) ); local digit = math.floor(fSeconds); return ""..digit end
+Text2OnCommand=stopeffect;stoptweening;shadowlength,0;visible,false
+Text2FormatFunction=function(fSeconds) fSeconds=math.min( 99, math.ceil(fSeconds) ); local digit = math.mod(fSeconds,10); return ""..digit end
+#
+FrameX=0
+FrameY=0
+FrameOnCommand=
+#
+Warning10Command=
+Warning9Command=
+Warning8Command=
+Warning7Command=
+Warning6Command=
+Warning5Command=
+Warning4Command=
+Warning3Command=
+Warning2Command=
+Warning1Command=
+Warning0Command=
+
+[MenuTimerNoSound]
+Fallback="MenuTimer"
+#
+WarningBeepStart=0
+
+[MusicList]
+SpacingX=0
+SpacingY=0
+StartY=0
+StartX=0
+#
+CropWidth=0
+NumRows=0
+NumColumns=0
+
+[MusicWheel]
+FadeSeconds=1
+SwitchSeconds=0.10
+RandomPicksLockedSongs=true
+UseSectionsWithPreferredGroup=false
+OnlyShowActiveSection=false
+RemindWheelPositions=false
+#
+RouletteSwitchSeconds=0.05
+RouletteSlowDownSwitches=5
+LockedInitialVelocity=15
+
+ScrollBarHeight=300
+ScrollBarOnCommand=visible,false
+#
+ItemTransformFunction=function(self,offsetFromCenter,itemIndex,numItems) self:x( (1-math.cos(offsetFromCenter/math.pi))*44 ); self:y( offsetFromCenter*38 ); end
+NumWheelItems=11
+MusicWheelSortOnCommand=
+MusicWheelSortOffCommand=
+MusicWheelItemSortOnCommand=
+MusicWheelItemSortOffCommand=
+HighlightOnCommand=
+HighlightOffCommand=
+HighlightSortOnCommand=
+HighlightSortOffCommand=
+WheelItemLockedColor=color("0,0,0,0.5")
+#
+NumSectionColors=1
+SectionColor1=color("1,1,1,1")
+#
+SongRealExtraColor=color("1,0,0,1")
+SortMenuColor=color("1,1,1,1")
+#
+RouletteColor=color("1,0,0,1")
+RandomColor=color("1,0,0,1")
+PortalColor=color("1,0,0,1")
+EmptyColor=color("1,0,0,1")
+
+SortOrders={ "SortOrder_Preferred", "SortOrder_Group", "SortOrder_Title", "SortOrder_BPM", "SortOrder_Artist", "SortOrder_Genre" }
+# SortOrders={ "SortOrder_Preferred", "SortOrder_Group", "SortOrder_Title", "SortOrder_BPM", "SortOrder_Popularity", "SortOrder_Artist", "SortOrder_Genre" }
+
+ShowRoulette=true
+ShowRandom=false
+ShowPortal=false
+
+ShowSectionsInBPMSort=true
+SortBPMDivision=20
+ShowSectionsInLengthSort=true
+SortLengthDivision=5
+
+MostPlayedSongsToShow=30
+RecentSongsToShow=30
+
+UseEasyMarkerFlag=false
+
+ModeMenuChoiceNames="Preferred,Group,Title,Bpm,Popularity,TopGrades,Artist,EasyMeter,MediumMeter,HardMeter,ChallengeMeter,DoubleEasyMeter,DoubleMediumMeter,DoubleHardMeter,DoubleChallengeMeter,Genre,Length,Recent"
+# ModeMenuChoiceNames="Preferred,Group,Title,Bpm,Popularity,TopGrades,Artist,EasyMeter,MediumMeter,HardMeter,ChallengeMeter,DoubleEasyMeter,DoubleMediumMeter,DoubleHardMeter,DoubleChallengeMeter,Genre,Length,Recent,NormalMode,BattleMode"
+ChoicePreferred="sort,Preferred"
+ChoiceGroup="sort,Group"
+ChoiceTitle="sort,Title"
+ChoiceBpm="sort,BPM"
+ChoicePopularity="sort,Popularity"
+ChoiceTopGrades="sort,TopGrades"
+ChoiceArtist="sort,Artist"
+ChoiceGenre="sort,Genre"
+ChoiceEasyMeter="sort,EasyMeter"
+ChoiceMediumMeter="sort,MediumMeter"
+ChoiceHardMeter="sort,HardMeter"
+ChoiceChallengeMeter="sort,ChallengeMeter"
+ChoiceDoubleEasyMeter="sort,DoubleEasyMeter"
+ChoiceDoubleMediumMeter="sort,DoubleMediumMeter"
+ChoiceDoubleHardMeter="sort,DoubleHardMeter"
+ChoiceDoubleChallengeMeter="sort,DoubleChallengeMeter"
+ChoiceLength="sort,Length"
+ChoiceRecent="sort,Recent"
+ChoiceNormalMode="playmode,regular"
+ChoiceBattleMode="playmode,battle"
+
+CustomWheelItemNames=""
+
+[CourseWheel]
+Fallback="MusicWheel"
+#
+ModeMenuChoiceNames="AllCourses,Nonstop,Oni,Endless,Survival"
+# xxx: force nonstop on all courses? sounds lame but meh
+ChoiceAllCourses="sort,AllCourses;playmode,nonstop;mod,bar"
+ChoiceNonstop="sort,Nonstop;playmode,nonstop;mod,bar"
+ChoiceOni="sort,Oni;playmode,oni;mod,battery"
+ChoiceEndless="sort,Endless;playmode,endless;mod,bar"
+ChoiceSurvival="sort,Oni;playmode,oni;mod,lifetime"
+
+[OnlineMusicWheel]
+Fallback="MusicWheel"
+# roulette + online causes a sorting issue that should be hammered out first. -aj
+ShowRoulette=false
+ShowRandom=false
+ShowPortal=false
+
+[MusicWheelItem]
+WheelNotifyIconX=106
+WheelNotifyIconY=0
+WheelNotifyIconOnCommand=visible,false
+#
+SongNameX=0
+SongNameY=0
+SongNameOnCommand=
+#
+CourseX=0
+CourseY=0
+CourseOnCommand=
+#
+SectionExpandedX=0
+SectionExpandedY=0
+SectionExpandedOnCommand=
+#
+SectionCollapsedX=0
+SectionCollapsedY=0
+SectionCollapsedOnCommand=
+SectionCountX=0
+SectionCountY=0
+SectionCountOnCommand=
+#
+RouletteX=0
+RouletteY=0
+RouletteOnCommand=
+#
+RandomX=0
+RandomY=0
+RandomOnCommand=
+#
+PortalX=0
+PortalY=0
+PortalOnCommand=
+#
+SortX=0
+SortY=0
+SortOnCommand=
+#
+ModeX=0
+ModeY=0
+ModeOnCommand=
+#
+CustomX=0
+CustomY=0
+CustomOnCommand=
+#
+GradeP1X=0
+GradeP1Y=0
+GradeP2X=0
+GradeP2Y=0
+GradesShowMachine=true
+
+[NoteField]
+ShowBoard=false
+ShowBeatBars=false
+#
+FadeBeforeTargetsPercent=0
+FadeFailTime=1.5
+#
+BarMeasureAlpha=1
+Bar4thAlpha=1
+Bar8thAlpha=1
+Bar16thAlpha=1
+#
+RoutineNoteSkinP1=RoutineSkinP1()
+RoutineNoteSkinP2=RoutineSkinP2()
+#
+AreaHighlightColor=color("1,0,0,0.3")
+BPMColor=color("1,0,0,1")
+StopColor=color("0.8,0.8,0,1")
+DelayColor=color("0,0.8,0.8,1")
+WarpColor=color("1,0,0.5,1")
+TimeSignatureColor=color("1,0.55,0,1")
+TickcountColor=color("0,1,0,1")
+ComboColor=color("0.55,1,0,1")
+LabelColor=color("1,0,0,1")
+SpeedColor=color("0.5,1,1,1")
+ScrollColor=color("0.3,0.8,1,1")
+FakeColor=color("1,1,0.5,1")
+#
+BPMIsLeftSide=true
+StopIsLeftSide=true
+DelayIsLeftSide=true
+WarpIsLeftSide=false
+TimeSignatureIsLeftSide=true
+TickcountIsLeftSide=false
+ComboIsLeftSide=false
+LabelIsLeftSide=false
+SpeedIsLeftSide=false
+ScrollIsLeftSide=true
+FakeIsLeftSide=true
+#
+BPMOffsetX=60
+StopOffsetX=50
+DelayOffsetX=120
+WarpOffsetX=90
+TimeSignatureOffsetX=30
+TickcountOffsetX=50
+ComboOffsetX=70
+LabelOffsetX=130
+SpeedOffsetX=30
+ScrollOffsetX=100
+FakeOffsetX=90
+
+[PlayerStageStats]
+# Original CVS Grading
+GradePercentTier01=1.000000
+GradePercentTier02=1.000000
+GradePercentTier03=0.930000
+GradePercentTier04=0.800000
+GradePercentTier05=0.650000
+GradePercentTier06=0.450000
+GradePercentTier07=-99999.000000
+GradeTier01IsAllW2s=false
+GradeTier02IsAllW2s=true
+GradeTier02IsFullCombo=false
+NumGradeTiersUsed=7
+
+[Player]
+ReceptorArrowsYStandard=-144
+ReceptorArrowsYReverse=144
+ReceptorNoSinkScoreCutoff=4
+JudgmentTransformCommand=%JudgmentTransformCommand
+JudgmentOnCommand=
+ComboTransformCommand=%ComboTransformCommand
+AttackDisplayXOffsetOneSideP1=0
+AttackDisplayXOffsetOneSideP2=0
+AttackDisplayXOffsetBothSides=0
+AttackDisplayY=-70
+AttackDisplayYReverse=70
+HoldJudgmentYStandard=-90
+HoldJudgmentYReverse=90
+BrightGhostComboThreshold=100
+DrawDistanceBeforeTargetsPixels=SCREEN_HEIGHT
+DrawDistanceAfterTargetsPixels=-128
+TapJudgmentsUnderField=false
+HoldJudgmentsUnderField=false
+ComboUnderField=false
+PenalizeTapScoreNone=false
+JudgeHoldNotesOnSameRowTogether=false
+HoldCheckpoints=IsGame("pump")
+CheckpointsUseTickcounts=IsGame("pump")
+; deprecated?
+CheckpointsUseTimeSignatures=false
+CheckpointsTapsSeparateJudgment=not IsGame("pump")
+; someone misunderstood me :x -Daisu
+CheckpointsFlashOnHold=IsGame("pump")
+ImmediateHoldLetGo=not IsGame("pump")
+RequireStepOnHoldHeads=not IsGame("pump")
+RequireStepOnMines=false
+InitialHoldLife=IsGame("pump") and 0.05 or 1
+MaxHoldLife=1
+RollBodyIncrementsCombo=false
+#ScoreMissedHoldsAndRolls=not IsGame("pump")
+ScoreMissedHoldsAndRolls=not IsGame("pump") and not IsGame("dance")
+PercentUntilColorCombo=0.25
+ComboStoppedAt=50
+AttackRunTimeRandom=6
+AttackRunTimeMine=7
+BattleRaveMirror=true
+MModHighCap=600
+
+[PlayerOptions]
+RandomSpeedChance=0.2
+RandomReverseChance=0.2
+RandomDarkChance=0.1
+RandomAccelChance=0.333
+RandomEffectChance=0.667
+RandomHiddenChance=0.05
+RandomSuddenChance=0.1
+
+[PlayerShared]
+Fallback="Player"
+#ComboXOffsetOneSideP1=-120
+#ComboXOffsetOneSideP2=120
+ComboXOffsetOneSideP1=0
+ComboXOffsetOneSideP2=0
+JudgmentTransformCommand=%JudgmentTransformSharedCommand
+
+[Profile]
+ShowCoinData=true
+UnlockAuthString=""
+
+[RadarValues]
+WriteComplexValues=true
+WriteSimpleValues=true
+
+[RollingNumbers]
+TextFormat="%09.0f"
+ApproachSeconds=0.2
+Commify=true
+LeadingZeroMultiplyColor=color("#777777FF")
+
+[RollingNumbersEvaluation]
+Fallback="RollingNumbers"
+ApproachSeconds=1
+
+[RollingNumbersJudgment]
+Fallback="RollingNumbers"
+TextFormat="%04.0f"
+ApproachSeconds=1
+Commify=false
+
+[RollingNumbersMaxCombo]
+Fallback="RollingNumbersJudgment"
+
+[ScoreDisplayNormal]
+FrameX=
+FrameY=
+FrameOnCommand=
+FrameOffCommand=
+TextX=
+TextY=
+TextOnCommand=
+TextOffCommand=
+
+[ScoreDisplayOni]
+
+[ScoreDisplayLifeTime]
+FrameX=
+FrameY=
+FrameOnCommand=
+FrameOffCommand=
+#
+TextX=
+TextY=
+TextOnCommand=
+TextOffCommand=
+#
+TimeRemainingX=
+TimeRemainingY=
+TimeRemainingOnCommand=
+TimeRemainingOffCommand=
+#
+DeltaSecondsOnCommand=
+DeltaSecondsNoneCommand=
+DeltaSecondsHitMineCommand=
+DeltaSecondsAvoidMineCommand=
+DeltaSecondsCheckpointMissCommand=
+DeltaSecondsCheckpointHitCommand=
+DeltaSecondsMissCommand=
+DeltaSecondsW5Command=
+DeltaSecondsW4Command=
+DeltaSecondsW3Command=
+DeltaSecondsW2Command=
+DeltaSecondsW1Command=
+DeltaSecondsLetGoCommand=
+DeltaSecondsHeldCommand=
+DeltaSecondsGainLifeCommand=
+
+[ScoreDisplayPercentage Percent]
+PercentFormat="%2d"
+PercentP1X=0
+PercentP1Y=0
+PercentP1OnCommand=shadowlength,0;diffuse,PlayerColor(PLAYER_1)
+PercentP1OffCommand=
+PercentP2X=0
+PercentP2Y=0
+PercentP2OnCommand=shadowlength,0;diffuse,PlayerColor(PLAYER_2)
+PercentP2OffCommand=
+PercentUseRemainder=false
+ApplyScoreDisplayOptions=true
+Format=FormatPercentScore
+PercentDecimalPlaces=2
+PercentTotalSize=5
+RemainderFormat=
+
+DancePointsDigits=5
+DancePointsP1X=0
+DancePointsP1Y=0
+DancePointsP1OnCommand=shadowlength,0;diffuse,PlayerColor(PLAYER_1)
+DancePointsP1OffCommand=
+DancePointsP2X=0
+DancePointsP2Y=0
+DancePointsP2OnCommand=shadowlength,0;diffuse,PlayerColor(PLAYER_2)
+DancePointsP2OffCommand=
+
+# are these even used? -f
+PercentP3X=0
+PercentP3Y=0
+PercentP3OnCommand=shadowlength,0;diffuse,PlayerColor(PLAYER_1)
+PercentP3OffCommand=
+PercentP4X=0
+PercentP4Y=0
+PercentP4OnCommand=shadowlength,0;diffuse,PlayerColor(PLAYER_2)
+PercentP4OffCommand=
+PercentP5X=0
+PercentP5Y=0
+PercentP5OnCommand=shadowlength,0;diffuse,PlayerColor(PLAYER_1)
+PercentP5OffCommand=
+PercentP6X=0
+PercentP6Y=0
+PercentP6OnCommand=shadowlength,0;diffuse,PlayerColor(PLAYER_2)
+PercentP6OffCommand=
+PercentP7X=0
+PercentP7Y=0
+PercentP7OnCommand=shadowlength,0;diffuse,PlayerColor(PLAYER_1)
+PercentP7OffCommand=
+PercentP8X=0
+PercentP8Y=0
+PercentP8OnCommand=shadowlength,0;diffuse,PlayerColor(PLAYER_2)
+PercentP8OffCommand=
+
+[ScoreDisplayRave]
+MeterP1X=
+MeterP1Y=
+MeterP1OnCommand=
+MeterP1OffCommand=
+MeterP2X=
+MeterP2Y=
+MeterP2OnCommand=zoomx,-1
+MeterP2OffCommand=
+
+LevelP1X=
+LevelP1Y=
+LevelP1OnCommand=
+LevelP1OffCommand=
+LevelP2X=
+LevelP2Y=
+LevelP2OnCommand=
+LevelP2OffCommand=
+
+FrameBaseP1X=
+FrameBaseP1Y=
+FrameBaseP1OnCommand=
+FrameBaseP1OffCommand=
+FrameBaseP2X=
+FrameBaseP2Y=
+FrameBaseP2OnCommand=
+FrameBaseP2OffCommand=
+
+FrameOverP1X=
+FrameOverP1Y=
+FrameOverP1OnCommand=
+FrameOverP1OffCommand=
+FrameOverP2X=
+FrameOverP2Y=
+FrameOverP2OnCommand=
+FrameOverP2OffCommand=
+
+[ScoreKeeperRave]
+AttackDurationSeconds=3.0
+
+[ScreenEvaluation Percent]
+PercentFormat="%2d"
+PercentP1X=0
+PercentP1Y=0
+PercentP1OnCommand=horizalign,right;vertalign,bottom;glowshift;effectperiod,2;shadowlength,0
+PercentP1OffCommand=
+PercentP2X=0
+PercentP2Y=0
+PercentP2OnCommand=horizalign,right;vertalign,bottom;glowshift;effectperiod,2;shadowlength,0
+PercentP2OffCommand=
+RemainderFormat=".%02d%%"
+PercentRemainderP1X=0
+PercentRemainderP1Y=0
+PercentRemainderP1OnCommand=horizalign,left;vertalign,bottom;glowshift;effectperiod,2;shadowlength,0
+PercentRemainderP1OffCommand=
+PercentRemainderP2X=0
+PercentRemainderP2Y=0
+PercentRemainderP2OnCommand=horizalign,left;vertalign,bottom;glowshift;effectperiod,2;shadowlength,0
+PercentRemainderP2OffCommand=
+DancePointsP1X=-26
+DancePointsP1Y=-32
+DancePointsP1OnCommand=glowshift;effectperiod,2;shadowlength,0
+DancePointsP1OffCommand=sleep,0.8;accelerate,0.3
+DancePointsP2X=-26
+DancePointsP2Y=-32
+DancePointsP2OnCommand=glowshift;effectperiod,2;shadowlength,0
+DancePointsP2OffCommand=sleep,0.8;accelerate,0.3
+DancePointsDigits=1
+PercentUseRemainder=true
+ApplyScoreDisplayOptions=false
+FormatPercentScore=FormatPercentScore
+Format=
+
+[SoundEffectControl]
+LockToHold=false
+
+[SoundEffectControl_Off]
+Fallback="SoundEffectControl"
+SoundProperty=""
+PropertyMin=1.0
+PropertyCenter=1.0
+PropertyMax=1.0
+
+[SoundEffectControl_Speed]
+Fallback="SoundEffectControl"
+SoundProperty="Speed"
+PropertyMin=4/8
+PropertyCenter=1.0
+PropertyMax=16/8
+
+[SoundEffectControl_Pitch]
+Fallback="SoundEffectControl"
+SoundProperty="Pitch"
+PropertyMin=7/8
+PropertyCenter=1.0
+PropertyMax=9/8
+
+[StepsDisplayListRow]
+FrameX=0
+FrameY=0
+FrameOnCommand=
+FrameOffCommand=
+FrameSetCommand=
+#
+ShowTicks=false
+NumTicks=0
+MaxTicks=0
+TicksSetCommand=
+#
+ShowMeter=false
+ZeroMeterString="0"
+MeterFormatString="%i"
+MeterX=0
+MeterY=0
+MeterOnCommand=
+MeterOffCommand=
+MeterSetCommand=
+#
+ShowDescription=false
+DescriptionX=0
+DescriptionY=0
+DescriptionOnCommand=
+DescriptionOffCommand=
+DescriptionSetCommand=
+#
+ShowCredit=false
+CreditX=0
+CreditY=0
+CreditOnCommand=
+CreditOffCommand=
+CreditSetCommand=
+#
+ShowAutogen=false
+AutogenSetCommand=
+#
+ShowStepsType=false
+StepsTypeSetCommand=
+
+[StreamDisplay]
+; a simple bar life meter:
+; PillTransformFunction=function(self,offsetFromCenter,itemIndex,numItems) local native_width=32; local zoomed_width=12; self:zoomx(zoomed_width/native_width); self:x((itemIndex-(numItems/2))*zoomed_width); end
+PillTransformFunction=function(self,offsetFromCenter,itemIndex,numItems) \
+	local zoomed_width=28; \
+	local zoomed_height=8; \
+	local spacing_x=11.3; \
+	self:zoomtoheight(zoomed_height); \
+	self:x((itemIndex-(numItems/2))*spacing_x); \
+	local zoomed_width=0; \
+	if (itemIndex % 2) == 0 then \
+		self:zoomtowidth(24); \
+		self:rotationz(90); \
+	else \
+		self:zoomtowidth(31); \
+		self:rotationz(-58); \
+	end; \
+end
+TextureCoordScaleX=10
+NumPills=20
+AlwaysBounceNormalBar=false
+VelocityMultiplier=4
+VelocityMin=-.06
+VelocityMax=.02
+SpringMultiplier=2.0
+ViscosityMultiplier=0.2
+
+[TextBanner]
+TitleOnCommand=
+SubtitleOnCommand=
+ArtistOnCommand=visible,false
+ArtistPrependString="/"
+AfterSetCommand=%TextBannerAfterSet
+
+[WheelNotifyIcon]
+ShowTraining=false
+BlinkPlayersBest=true
+NumIconsToShow=2
+
+# 04 #
+
+[Screen]
+ScreenInitCommand=
+ScreenOnCommand=
+AllowOperatorMenuButton=true
+# This metric is only for people who know what they are doing. If you set this
+# to false, you are expected to know how to cancel screens in Lua.
+# (that's SCREENMAN:GetTopScreen():Cancel(), for people who aren't AJ ;) )
+HandleBackButton=true
+RepeatRate=-1
+RepeatDelay=-1
+PrepareScreens=
+PersistScreens=
+GroupedScreens=
+CodeNames=""
+CancelCancelCommand=
+LightsMode="LightsMode_MenuStartAndDirections"
+ShowCreditDisplay=false
+
+[ScreenDebugOverlay]
+Class="ScreenDebugOverlay"
+Fallback="Screen"
+
+LineOnColor=color("1,1,1,1")
+LineOffColor=color("0.6,0.6,0.6,1")
+LineStartY=SCREEN_TOP+50
+LineSpacing=16
+LineButtonX=SCREEN_CENTER_X-50
+LineFunctionX=SCREEN_CENTER_X-30
+
+ButtonTextOnCommand=NoStroke;zoom,0.8
+ButtonTextToggledCommand=accelerate,0.025;glow,color("1,0,0,1");sleep,0.125;decelerate,0.2;glow,color("1,0,0,0");
+FunctionTextOnCommand=NoStroke;zoom,0.8
+
+PageStartX=SCREEN_CENTER_X-100
+PageSpacingX=120
+PageTextOnCommand=NoStroke;zoom,0.75
+PageTextGainFocusCommand=diffuse,color("1,1,1,1")
+PageTextLoseFocusCommand=diffuse,color("0.6,0.6,0.6,1")
+
+DebugMenuHeaderX=SCREEN_LEFT+80
+DebugMenuHeaderY=SCREEN_TOP+18
+DebugMenuHeaderOnCommand=diffusebottomedge,color("0.5,0.5,0.5,1");strokecolor,color("0,0,0,0.5")
+DebugMenuHeaderOffCommand=
+
+HeaderTextX=SCREEN_LEFT+80
+HeaderTextY=SCREEN_TOP+18
+HeaderTextOnCommand=diffusebottomedge,color("0.5,0.5,0.5,1");strokecolor,color("0,0,0,0.5")
+HeaderTextOffCommand=
+#
+
+[ScreenSystemLayer]
+Class="ScreenSystemLayer"
+Fallback="Screen"
+#
+ShowCreditDisplay=true
+CreditsJoinOnly=false
+#
+CreditsP1X=SCREEN_LEFT+10
+CreditsP1Y=SCREEN_BOTTOM-10
+CreditsP1RefreshCreditTextMessageCommand=queuecommand,"UpdateText";
+CreditsP1CoinInsertedMessageCommand=queuecommand,"UpdateText";
+CreditsP1CoinInsertedMessageCommand=queuecommand,"UpdateText";
+CreditsP1PlayerJoinedMessageCommand=queuecommand,"UpdateText";
+CreditsP1ScreenChangedMessageCommand=queuecommand,"UpdateVisible";queuecommand,"On"
+CreditsP1OnCommand=horizalign,left;vertalign,bottom;zoom,0.675;shadowlength,1;
+CreditsP1OffCommand=
+#
+CreditsP2X=SCREEN_RIGHT-10
+CreditsP2Y=SCREEN_BOTTOM-10
+CreditsP2RefreshCreditTextMessageCommand=queuecommand,"UpdateText";
+CreditsP2CoinInsertedMessageCommand=queuecommand,"UpdateText";
+CreditsP2PlayerJoinedMessageCommand=queuecommand,"UpdateText";
+CreditsP2ScreenChangedMessageCommand=queuecommand,"UpdateVisible";queuecommand,"On"
+CreditsP2OnCommand=horizalign,right;vertalign,bottom;zoom,0.675;shadowlength,1;
+CreditsP2OffCommand=
+
+[ScreenConsoleOverlay]
+Class="ScreenSystemLayer"
+Fallback="ScreenSystemLayer"
+#
+CreditsInitCommand=visible,false;zoom,0
+CreditsP1X=-9999
+CreditsP2X=-9999
+CreditsP1Y=-9999
+CreditsP2Y=-9999
+
+[ScreenInstallOverlay]
+Class="ScreenInstallOverlay"
+Fallback="Screen"
+
+StatusX=SCREEN_LEFT+40
+StatusY=SCREEN_BOTTOM-32
+StatusOnCommand=align,0,1
+
+[ScreenSyncOverlay]
+Class="ScreenSyncOverlay"
+Fallback="Screen"
+StatusOnCommand=x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y+150;shadowlength,2;strokecolor,color("#000000");
+AdjustmentsOnCommand=x,SCREEN_CENTER_X+160;y,SCREEN_CENTER_Y;
+#
+
+[ScreenStatsOverlay]
+Class="ScreenStatsOverlay"
+Fallback="Screen"
+StatsX=SCREEN_RIGHT-8
+StatsY=SCREEN_TOP+10
+StatsOnCommand=halign,1;valign,0;shadowlength,1;zoom,0.5
+ShowSkips=true
+SkipX=SCREEN_RIGHT-100
+SkipY=SCREEN_BOTTOM-100
+SkipOnCommand=zoom,0.5
+SkipWidth=190
+SkipSpacingY=14
+#
+
+[ScreenWithMenuElements]
+Class="ScreenWithMenuElements"
+Fallback="Screen"
+#
+TimerSeconds=-1
+#
+FirstUpdateCommand=
+PlayMusic=true
+MusicAlignBeat=true
+DelayMusicSeconds=0
+StopMusicOnBack=false
+WaitForChildrenBeforeTweeningOut=false
+CancelTransitionsOut=false
+#
+ShowCreditDisplay=true
+AllowDisabledPlayerInput=false
+MemoryCardIcons=false
+#
+MemoryCardDisplayP1X=
+MemoryCardDisplayP1Y=
+MemoryCardDisplayP1OnCommand=
+MemoryCardDisplayP1OffCommand=
+MemoryCardDisplayP2X=
+MemoryCardDisplayP2Y=
+MemoryCardDisplayP2OnCommand=
+MemoryCardDisplayP2OffCommand=
+#
+TimerStealth=false
+ForceTimer=false
+TimerMetricsGroup="MenuTimer"
+TimerX=
+TimerY=
+TimerOnCommand=
+TimerOffCommand=
+
+[ScreenWithMenuElementsBlank]
+Fallback="ScreenWithMenuElements"
+UpdateOnMessage=""
+ShowHelp=false
+
+[ScreenSelectMaster]
+Class="ScreenSelectMaster"
+Fallback="ScreenWithMenuElements"
+#
+DoSwitchAnyways=false
+WrapCursor=false
+AllowRepeatingInput=false
+PreSwitchPageSeconds=0
+PostSwitchPageSeconds=0
+ScrollerSecondsPerItem=0
+ScrollerNumItemsToDraw=16
+ScrollerTransform=function(self,offset,itemIndex,numItems) end
+ScrollerSubdivisions=1
+OverrideSleepAfterTweenOffSeconds=false
+SleepAfterTweenOffSeconds=0
+NumCodes=0
+OptionOrderUp=
+OptionOrderDown=
+OptionOrderLeft=
+OptionOrderRight=
+OptionOrderAuto=
+#
+ShowIcon=false
+ShowCursor=false
+ShowScroller=false
+WrapScroller=false
+LoopScroller=false
+#
+ScrollerX=SCREEN_CENTER_X
+ScrollerY=SCREEN_CENTER_Y
+PerChoiceIconElement=true
+PerChoiceScrollElement=true
+# All on page 1 by default.
+NumChoicesOnPage1=1024
+SharedSelection=true
+UseIconMetrics=false
+CursorP1OffsetXFromIcon=0
+CursorP1OffsetYFromIcon=0
+CursorP2OffsetXFromIcon=0
+CursorP2OffsetYFromIcon=0
+DisabledColor=color("#606060")
+DoublePressToSelect=false
+
+# Blank defaults for a few options.
+IconChoice1SwitchToPage1Command=
+IconChoice1SwitchToPage2Command=
+IconChoice1OnCommand=
+IconChoice1OffCommand=
+IconChoice1OffFocusedCommand=
+IconChoice1OffUnfocusedCommand=
+
+IconChoice2SwitchToPage1Command=
+IconChoice2SwitchToPage2Command=
+IconChoice2OnCommand=
+IconChoice2OffCommand=
+IconChoice2OffFocusedCommand=
+IconChoice2OffUnfocusedCommand=
+
+IconChoice3SwitchToPage1Command=
+IconChoice3SwitchToPage2Command=
+IconChoice3OnCommand=
+IconChoice3OffCommand=
+IconChoice3OffFocusedCommand=
+IconChoice3OffUnfocusedCommand=
+
+IconChoice4SwitchToPage1Command=
+IconChoice4SwitchToPage2Command=
+IconChoice4OnCommand=
+IconChoice4OffCommand=
+IconChoice4OffFocusedCommand=
+IconChoice4OffUnfocusedCommand=
+
+ExplanationPage1X=0
+ExplanationPage1Y=0
+ExplanationPage1SwitchToPage1Command=
+ExplanationPage1SwitchToPage2Command=
+ExplanationPage1OnCommand=visible,false
+ExplanationPage1OffCommand=
+ExplanationPage2X=0
+ExplanationPage2Y=0
+ExplanationPage2SwitchToPage1Command=
+ExplanationPage2SwitchToPage2Command=
+ExplanationPage2OnCommand=visible,false
+ExplanationPage2OffCommand=
+
+MorePage1X=0
+MorePage1Y=0
+MorePage1SwitchToPage1Command=
+MorePage1SwitchToPage2Command=
+MorePage1OnCommand=visible,false
+MorePage1OffCommand=
+MorePage2X=0
+MorePage2Y=0
+MorePage2SwitchToPage1Command=
+MorePage2SwitchToPage2Command=
+MorePage2OnCommand=visible,false
+MorePage2OffCommand=
+IdleCommentSeconds=0
+IdleTimeoutSeconds=0
+UpdateOnMessage=""
+
+[ScreenSelectMasterBlank]
+Fallback="ScreenSelectMaster"
+
+[ScreenTextEntry]
+Class="ScreenTextEntry"
+Fallback="ScreenWithMenuElements"
+PrevScreen=
+HelpText=
+TimerSeconds=-1
+ShowStyleIcon=false
+RowStartX=SCREEN_LEFT+100
+RowStartY=SCREEN_CENTER_Y-30
+RowEndX=SCREEN_RIGHT-100
+RowEndY=SCREEN_BOTTOM-96
+QuestionX=SCREEN_CENTER_X
+QuestionY=SCREEN_CENTER_Y-40
+QuestionOnCommand=wrapwidthpixels,600
+QuestionOffCommand=
+AnswerX=SCREEN_CENTER_X
+AnswerY=SCREEN_CENTER_Y+20
+AnswerOnCommand=zoom,1.5;shadowlength,0
+AnswerOffCommand=
+CursorOnCommand=
+CursorOffCommand=
+KeysInitCommand=zoom,0.8;shadowlength,0
+
+[ScreenInit]
+Class="ScreenAttract"
+Fallback="ScreenAttract"
+#
+PrevScreen="ScreenInit"
+NextScreen=Branch.AfterInit()
+StartScreen=Branch.TitleMenu()
+#
+ForceTimer=true
+TimerSeconds=5
+#
+PlayMusic=false
+#
+TimerMetricsGroup="MenuTimerNoSound"
+TimerOnCommand=visible,false
+
+[ScreenTitleMenu]
+Class="ScreenTitleMenu"
+Fallback="ScreenSelectMaster"
+#
+PrevScreen="ScreenInit"
+NextScreen="ScreenInit"
+#
+StopMusicOnBack=true
+#
+CoinModeChangeScreen=Branch.TitleMenu()
+#
+ScreenOnCommand=lockinput,0
+LightsMode="LightsMode_Joining"
+TimerSeconds=-1
+#
+SharedSelection=true
+AllowDisabledPlayerInput=true
+OverrideSleepAfterTweenOffSeconds=false
+DoSwitchAnyways=false
+#
+SleepAfterTweenOffSeconds=0
+#
+UpdateOnMessage=""
+#
+NumChoicesOnPage1=100
+DefaultChoice="GameStart"
+ChoiceNames="GameStart,Options,Edit,Jukebox,ReportBug,IRC,Exit"
+ChoiceGameStart="applydefaultoptions;text,Game Start;screen,"..Branch.StartGame()
+#ChoiceQuickPlay="applydefaultoptions;text,Quick Play;"
+ChoiceOptions="screen,ScreenOptionsService;text,Options"
+ChoiceEdit="text,Edit/Share;screen,"..Branch.OptionsEdit()
+ChoiceExit="screen,ScreenExit;text,Exit"
+# Aliases for the future.
+ChoiceOnline="screen,ScreenNetworkOptions;text,Play Online"
+ChoiceGameSelect="screen,ScreenSelectGame;text,Select Game"
+ChoiceJukebox="screen,ScreenJukeboxMenu;text,Jukebox"
+ChoiceReportBug="urlnoexit,http://ssc.ajworld.net/sm-ssc/bugtracker/;text,Report Bug"
+ChoiceIRC="urlnoexit,http://chat.mibbit.com/?server=irc.badnik.net&channel=%23sm-ssc&nick=StepMania_player;text,Chat on IRC"
+ChoiceSandbox="screen,ScreenTest;text,Sandbox"
+#
+AllowRepeatingInput=true
+ShowCursor=false
+WrapCursor=true
+WrapScroller=false
+LoopScroller=false
+ScrollerSubdivisions=1
+ShowIcon=false
+UseIconMetrics=false
+ShowScroller=true
+PerChoiceScrollElement=false
+PerChoiceIconElement=false
+ScrollerTransform=function(self,offset,itemIndex,numItems) self:y(32*(itemIndex-(numItems-1)/2)); end
+ScrollerSecondsPerItem=0
+ScrollerNumItemsToDraw=20
+ScrollerX=SCREEN_CENTER_X
+ScrollerY=SCREEN_CENTER_Y
+ScrollerOnCommand=
+ScrollerOffCommand=
+IdleCommentSeconds=-1
+IdleTimeoutSeconds=-1
+IdleTimeoutScreen=Branch.AfterInit()
+DoublePressToSelect=false
+OptionOrderUp=""
+OptionOrderDown=""
+OptionOrderLeft=""
+OptionOrderRight=""
+OptionOrderAuto=""
+#
+PreSwitchPageSeconds=
+PostSwitchPageSeconds=
+#
+CursorP1OffsetXFromIcon=0
+CursorP1OffsetYFromIcon=0
+CursorP2OffsetXFromIcon=0
+CursorP2OffsetYFromIcon=0
+#
+LogoX=SCREEN_CENTER_X
+LogoY=SCREEN_CENTER_Y-80
+LogoOnCommand=bob;effectperiod,4;effectmagnitude,0,8,0;zoom,0;bounceend,0.35;zoom,1
+LogoOffCommand=
+
+[ScreenProfileLoad]
+Class="ScreenProfileLoad"
+Fallback="ScreenWithMenuElementsBlank"
+NextScreen=Branch.AfterProfileLoad()
+PrevScreen=Branch.TitleMenu()
+TimerSeconds=-1
+#
+LoadEdits=true
+
+[ScreenSelectProfile]
+Fallback="ScreenWithMenuElements"
+Class="ScreenSelectProfile"
+#
+ScreenOnCommand=%function(self) self:lockinput(3); end;
+#
+NextScreen=Branch.AfterSelectProfile()
+PrevScreen=Branch.TitleMenu()
+StartScreen=Branch.AfterSelectProfile()
+#
+TimerSeconds=30
+#
+CodeNames=SelectProfileKeys()
+CodeUp="+MenuUp"
+CodeUp2="+Up"
+CodeDown="+MenuDown"
+CodeDown2="+Down"
+CodeStart="+Start"
+CodeBack="Back"
+CodeCenter="Center"
+CodeDownLeft="DownLeft"
+CodeDownRight="DownRight"
+
+[ScreenSelectStyle]
+# (formerly known as ScreenSelectPlayMode before sm-ssc v1.0 beta 3)
+Class="ScreenSelectMaster"
+Fallback="ScreenSelectMaster"
+NextScreen=Branch.AfterSelectStyle()
+PrevScreen=Branch.TitleMenu()
+TimerSeconds=30
+#
+DefaultChoice="Single"
+ChoiceNames=GameCompatibleModes()
+#
+OptionOrderAuto="1:2,2:1"
+# dance, pump, and likely others
+ChoiceSingle="name,Single;style,single;text,Single;screen,"..Branch.AfterSelectStyle()
+ChoiceDouble="name,Double;style,double;text,Double;screen,"..Branch.AfterSelectStyle()
+ChoiceSolo="name,Solo;style,solo;text,Solo;screen,"..Branch.AfterSelectStyle()
+ChoiceVersus="name,Versus;style,versus;text,Versus;screen,"..Branch.AfterSelectStyle()
+ChoiceCouple="name,Couple;style,couple;text,Couple;screen,"..Branch.AfterSelectStyle()
+ChoiceRoutine="name,Routine;style,routine;text,Routine;screen,"..Branch.AfterSelectStyle()
+# pump
+ChoiceHalfDouble="name,HalfDouble;style,halfdouble;text,HalfDouble;screen,"..Branch.AfterSelectStyle()
+# beat
+Choice5Keys="name,5Keys;style,single5;text,5Keys;screen,"..Branch.AfterSelectStyle()
+Choice7Keys="name,7Keys;style,single7;text,7Keys;screen,"..Branch.AfterSelectStyle()
+ChoiceVersus5="name,Versus5;style,versus5;text,Versus5;screen,"..Branch.AfterSelectStyle()
+ChoiceVersus7="name,Versus7;style,versus7;text,Versus7;screen,"..Branch.AfterSelectStyle()
+Choice10Keys="name,10Keys;style,double5;text,10Keys;screen,"..Branch.AfterSelectStyle()
+Choice14Keys="name,14Keys;style,double7;text,14Keys;screen,"..Branch.AfterSelectStyle()
+# kb7
+ChoiceKB7="name,kb7;style,single;screen,"..Branch.AfterSelectStyle()
+# techno
+ChoiceSingle4="name,Single4;style,single4;screen,"..Branch.AfterSelectStyle()
+ChoiceSingle5="name,Single5;style,single5;screen,"..Branch.AfterSelectStyle()
+ChoiceSingle8="name,Single8;style,single8;screen,"..Branch.AfterSelectStyle()
+ChoiceVersus4="name,Versus4;style,versus4;screen,"..Branch.AfterSelectStyle()
+ChoiceVersus5="name,Versus5;style,versus5;screen,"..Branch.AfterSelectStyle()
+ChoiceVersus8="name,Versus8;style,versus8;screen,"..Branch.AfterSelectStyle()
+ChoiceDouble4="name,Double4;style,double4;screen,"..Branch.AfterSelectStyle()
+ChoiceDouble5="name,Double5;style,double5;screen,"..Branch.AfterSelectStyle()
+ChoiceDouble8="name,Double8;style,double8;screen,"..Branch.AfterSelectStyle()
+#
+PerChoiceScrollElement=false
+PerChoiceIconElement=false
+#
+ShowScroller=true
+WrapScroller=true
+ShowIcon=false
+#
+
+[ScreenSelectPlayMode]
+# (formerly known as ScreenSelectPlayStyle before sm-ssc v1.0 beta 3)
+Class="ScreenSelectMaster"
+Fallback="ScreenSelectMaster"
+NextScreen=Branch.GetGameInformationScreen
+PrevScreen=Branch.TitleMenu()
+TimerSeconds=30
+#
+DefaultChoice="Normal"
+ChoiceNames="Normal,Rave,Nonstop,Oni,Endless"
+#
+PerChoiceScrollElement=false
+PerChoiceIconElement=false
+#
+ShowScroller=true
+WrapScroller=true
+ShowIcon=false
+#
+ChoiceEasy="applydefaultoptions;name,Easy;text,Easy;playmode,regular;difficulty,easy;screen,ScreenSelectMusic;setenv,sMode,Normal"
+ChoiceNormal="applydefaultoptions;name,Normal;text,Normal;playmode,regular;difficulty,easy;screen,ScreenSelectMusic;setenv,sMode,Normal"
+ChoiceHard="applydefaultoptions;name,Hard;text,Hard;playmode,regular;difficulty,hard;screen,ScreenSelectMusic;setenv,sMode,Normal"
+ChoiceRave="applydefaultoptions;name,Rave;text,Rave;playmode,rave;screen,ScreenSelectMusic;setenv,sMode,Rave"
+ChoiceNonstop="applydefaultoptions;name,Nonstop;text,Extended;playmode,nonstop;screen,ScreenSelectCourse;setenv,sMode,Nonstop"
+ChoiceOni="applydefaultoptions;name,Oni;text,Oni;playmode,oni;screen,ScreenSelectCourse;setenv,sMode,Oni"
+ChoiceEndless="applydefaultoptions;name,Endless;text,Endless;playmode,endless;screen,ScreenSelectCourse;setenv,sMode,Endless"
+
+[ScreenSelectCharacter]
+Class="ScreenSelectCharacter"
+Fallback="ScreenWithMenuElements"
+WaitForChildrenBeforeTweeningOut=true
+TitleP1OnCommand=x,140;y,80;addx,-SCREEN_WIDTH*0.6;bounceend,0.5;addx,SCREEN_WIDTH*0.6
+TitleP1OffCommand=sleep,0.2;bouncebegin,0.5;addx,-SCREEN_WIDTH*0.6
+TitleP2OnCommand=x,500;y,80;addx,SCREEN_WIDTH*0.6;bounceend,0.5;addx,-SCREEN_WIDTH*0.6
+TitleP2OffCommand=sleep,0.2;bouncebegin,0.5;addx,SCREEN_WIDTH*0.6
+CardP1OnCommand=x,140;y,180;addx,-SCREEN_WIDTH*0.6;bounceend,0.5;addx,SCREEN_WIDTH*0.6
+CardP1OffCommand=sleep,0.2;bouncebegin,0.5;addx,-SCREEN_WIDTH*0.6
+CardP2OnCommand=x,500;y,180;addx,SCREEN_WIDTH*0.6;bounceend,0.5;addx,-SCREEN_WIDTH*0.6
+CardP2OffCommand=sleep,0.2;bouncebegin,0.5;addx,SCREEN_WIDTH*0.6
+CardArrowsP1OnCommand=x,140;y,180;diffusealpha,0;linear,0.3;diffusealpha,1
+CardArrowsP1OffCommand=linear,0.3;diffusealpha,0
+CardArrowsP2OnCommand=x,500;y,180;diffusealpha,0;linear,0.3;diffusealpha,1
+CardArrowsP2OffCommand=linear,0.3;diffusealpha,0
+ExplanationOnCommand=x,SCREEN_CENTER_X;y,140;diffusealpha,0;linear,0.3;diffusealpha,1
+ExplanationOffCommand=linear,0.3;diffusealpha,0
+AttackFrameP1OnCommand=x,140;y,380;addx,-SCREEN_WIDTH*0.6;bounceend,0.5;addx,SCREEN_WIDTH*0.6
+AttackFrameP1OffCommand=sleep,0.2;bouncebegin,0.5;addx,-SCREEN_WIDTH*0.6
+AttackFrameP2OnCommand=x,500;y,380;addx,SCREEN_WIDTH*0.6;bounceend,0.5;addx,-SCREEN_WIDTH*0.6
+AttackFrameP2OffCommand=sleep,0.2;bouncebegin,0.5;addx,SCREEN_WIDTH*0.6
+AttackIconWidth=40
+AttackIconHeight=40
+AttackIconsP1StartX=SCREEN_CENTER_X-192
+AttackIconsP1StartY=SCREEN_CENTER_Y+116
+AttackIconsP2StartX=SCREEN_CENTER_X+168
+AttackIconsP2StartY=SCREEN_CENTER_Y+116
+AttackIconsSpacingX=42
+AttackIconsSpacingY=32
+AttackIconsP1OnCommand=addx,-SCREEN_WIDTH*0.6;bounceend,0.5;addx,SCREEN_WIDTH*0.6
+AttackIconsP1OffCommand=sleep,0.2;bouncebegin,0.5;addx,-SCREEN_WIDTH*0.6
+AttackIconsP2OnCommand=addx,SCREEN_WIDTH*0.6;bounceend,0.5;addx,-SCREEN_WIDTH*0.6
+AttackIconsP2OffCommand=sleep,0.2;bouncebegin,0.5;addx,SCREEN_WIDTH*0.6
+IconWidth=40
+IconHeight=40
+IconsP1OnCommand=addx,-SCREEN_WIDTH*0.6;bounceend,0.5;addx,SCREEN_WIDTH*0.6
+IconsP1OffCommand=sleep,0.2;bouncebegin,0.5;addx,-SCREEN_WIDTH*0.6
+IconsP2OnCommand=addx,SCREEN_WIDTH*0.6;bounceend,0.5;addx,-SCREEN_WIDTH*0.6
+IconsP2OffCommand=sleep,0.2;bouncebegin,0.5;addx,SCREEN_WIDTH*0.6
+SleepAfterTweenOffSeconds=0.8
+TimerSeconds=40
+ShowStyleIcon=true
+PrevScreen=ScreenTitleBranch()
+NextScreen=SongSelectionScreen()
+
+[ScreenGameInformation]
+Class="ScreenSelectMaster"
+Fallback="ScreenSelectMaster"
+NextScreen=GAMESTATE:IsCourseMode() and "ScreenSelectCourse" or "ScreenSelectMusic"
+PrevScreen=Branch.TitleMenu()
+TimerSeconds=15
+#
+DefaultChoice="Delay"
+ChoiceNames="Delay"
+#
+ChoiceDelay="screen,ScreenSelectMusic"
+#
+ShowScroller=false
+ShowIcon=false
+#
+
+[ScreenSelectMusic]
+Class="ScreenSelectMusic"
+Fallback="ScreenWithMenuElements"
+NextScreen=Branch.PlayerOptions()
+PrevScreen=Branch.TitleMenu()
+#
+MusicWheelType="MusicWheel"
+Codes=""
+#
+TimerSeconds=120
+DoRouletteOnMenuTimer=true
+RouletteTimerSeconds=15
+IdleCommentSeconds=20
+#
+DefaultSort=GAMESTATE:IsCourseMode() and "Group" or "AllCourses"
+#
+SampleMusicPreviewMode='SampleMusicPreviewMode_Normal'
+SampleMusicLoops=true
+SampleMusicFallbackFadeInSeconds=0
+#
+UseOptionsList=false
+OptionsListTimeout=0.25
+#
+UsePlayerSelectMenu=false
+SelectMenuScreenName="ScreenPlayerOptions"
+OptionsMenuAvailable=AllowOptionsMenu()
+SelectMenuAvailable=false
+ModeMenuAvailable=true
+#
+ShowOptionsMessageSeconds=1.5
+PlaySoundOnEnteringOptionsMenu=true
+#
+ScreenModsCommand=setupmusicstagemods
+#
+PreviousSongButton="MenuLeft"
+NextSongButton="MenuRight"
+#
+ChangeStepsWithGameButtons=false
+PreviousDifficultyButton="MenuUp"
+NextDifficultyButton="MenuDown"
+#
+ChangeGroupsWithGameButtons=false
+PreviousGroupButton="MenuUp"
+NextGroupButton="MenuDown"
+#
+TwoPartSelection=IsGame("pump")
+TwoPartConfirmsOnly=IsGame("pump")
+TwoPartTimerSeconds=30
+#
+SampleMusicDelay=0.25
+SampleMusicDelayInit=0
+AlignMusicBeat=false
+SelectMenuChangesDifficulty=true
+WrapChangeSteps=false
+#
+MusicWheelX=SCREEN_CENTER_X+160
+MusicWheelY=SCREEN_CENTER_Y
+MusicWheelOnCommand=
+MusicWheelOffCommand=
+#
+BannerX=SCREEN_CENTER_X-160
+BannerY=SCREEN_TOP+160-36
+BannerOnCommand=scaletoclipped,256,80
+BannerOffCommand=
+#
+CDTitleX=SCREEN_CENTER_X-160+90
+CDTitleY=SCREEN_TOP+160+(36/2)+8
+CDTitleFrontCommand=
+CDTitleBackCommand=
+CDTitleOnCommand=visible,false
+CDTitleOffCommand=
+#
+NullScoreString=string.format("% 9i",0)
+#
+ScoreFrameP1X=
+ScoreFrameP1Y=
+ScoreFrameP1OnCommand=visible,false
+ScoreFrameP1OffCommand=
+ScoreP1X=
+ScoreP1Y=
+ScoreP1OnCommand=visible,false
+ScoreP1OffCommand=
+#
+ScoreP2X=
+ScoreP2Y=
+ScoreP2OnCommand=visible,false
+ScoreP2OffCommand=
+ScoreFrameP2X=
+ScoreFrameP2Y=
+ScoreFrameP2OnCommand=visible,false
+ScoreFrameP2OffCommand=
+#
+ScoreP1SortChangeCommand=stoptweening;
+ScoreP2SortChangeCommand=stoptweening;
+ScoreFrameP1SortChangeCommand=stoptweening;
+ScoreFrameP2SortChangeCommand=stoptweening;
+
+[ScreenSelectCourse]
+Class="ScreenSelectMusic"
+Fallback="ScreenSelectMusic"
+#
+DefaultSort="Nonstop"
+ScreenModsCommand=setupcoursestagemods
+#
+MusicWheelType="CourseWheel"
+Codes="CourseCodeDetector"
+
+[CourseCodeDetector]
+Fallback="CodeDetector"
+NextSort1=
+NextSort2=
+NextSort3=
+NextSort4=
+
+[StepsDisplay]
+FrameX=0
+FrameY=0
+FrameOnCommand=
+FrameLoadCommand=%function(self,param) local bFlip = param.PlayerState and param.PlayerState:GetPlayerNumber() ~= PLAYER_1; self:zoomx(bFlip and -1 or 1); end
+FrameSetCommand=%function(self,param) if param.CustomDifficulty then self:diffuse(CustomDifficultyToColor(param.CustomDifficulty)) end end
+NumTicks=10
+MaxTicks=14
+TicksX=0
+TicksY=0
+TicksOnCommand=shadowlength,0;
+TicksSetCommand=%function(self,param) self:diffuse(CustomDifficultyToColor(param.CustomDifficulty)) if param.Meter > 9 then self:glowshift() else self:stopeffect() end end
+ShowTicks=false
+ShowMeter=true
+MeterFormatString="%i"
+ZeroMeterString="?"
+MeterX=30
+MeterY=0
+MeterOnCommand=shadowlength,0
+MeterSetCommand=%function(self,param) if param.CustomDifficulty then self:diffuse(CustomDifficultyToLightColor(param.CustomDifficulty)); self:strokecolor(CustomDifficultyToDarkColor(param.CustomDifficulty)); end end
+ShowDescription=true
+DescriptionX=-10
+DescriptionY=0
+DescriptionOnCommand=shadowlength,0;uppercase,true;
+DescriptionSetCommand=%function(self,param) if param.CustomDifficulty then self:diffuse(CustomDifficultyToLightColor(param.CustomDifficulty)); self:strokecolor(CustomDifficultyToDarkColor(param.CustomDifficulty)); end end
+ShowCredit=false
+CreditX=0
+CreditY=0
+CreditOnCommand=
+CreditSetCommand=
+ShowAutogen=true
+AutogenX=40
+AutogenY=0
+AutogenOnCommand=
+AutogenSetCommand=
+ShowStepsType=false
+StepsTypeX=0
+StepsTypeY=0
+StepsTypeOnCommand=
+
+[StepsDisplayGameplay]
+Fallback="StepsDisplay"
+
+[ScreenStageInformation]
+Class="ScreenSplash"
+Fallback="ScreenSplash"
+NextScreen=Branch.GameplayScreen()
+PrevScreen=Branch.BackOutOfStageInformation()
+PrepareScreen="ScreenGameplay"
+#
+ForceTimer=true
+TimerStealth=true
+TimerMetricsGroup="MenuTimerNoSound"
+WaitForChildrenBeforeTweeningOut=true
+TimerSeconds=1
+#
+ScreenBeginCommand=%SetFail
+
+[ScreenOptions]
+Fallback="ScreenWithMenuElements"
+
+NavigationMode="normal"
+InputMode="individual"
+ForceAllPlayers=false
+#
+RepeatRate=12
+RepeatDelay=0.25
+#
+OptionRowNormalMetricsGroup="OptionRow"
+OptionRowExitMetricsGroup="OptionRowExit"
+#
+NumRowsShown=8
+RowInitCommand=
+RowOnCommand=
+RowOffCommand=
+RowPositionTransformFunction=function(self,offsetFromCenter,itemIndex,numItems) self:y(SCREEN_CENTER_Y-146+36*offsetFromCenter) end
+#
+ShowExplanations=true
+ExplanationP1X=SCREEN_CENTER_X-256-20
+ExplanationP1Y=SCREEN_CENTER_Y+174
+ExplanationP1OnCommand=shadowlength,1;wrapwidthpixels,192/0.5;zoom,0.5;halign,0;cropright,1;linear,0.5;cropright,0
+ExplanationP1OffCommand=
+ExplanationP2X=SCREEN_CENTER_X+256+20
+ExplanationP2Y=SCREEN_CENTER_Y+174
+ExplanationP2OnCommand=shadowlength,1;wrapwidthpixels,192/0.5;zoom,0.5;halign,1;cropright,1;linear,0.5;cropright,0
+ExplanationP2OffCommand=
+ExplanationTogetherX=SCREEN_CENTER_X
+ExplanationTogetherY=SCREEN_CENTER_Y+184
+ExplanationTogetherOnCommand=shadowlength,0;zoom,0.75;wrapwidthpixels,(SCREEN_WIDTH*0.9375)*1.25;cropright,1;linear,0.5;cropright,0
+ExplanationTogetherOffCommand=stoptweening
+#
+DisqualifyP1X=
+DisqualifyP1Y=
+DisqualifyP1OnCommand=visible,false
+DisqualifyP1OffCommand=
+DisqualifyP2X=
+DisqualifyP2Y=
+DisqualifyP2OnCommand=visible,false
+DisqualifyP2OffCommand=
+#
+PageX=SCREEN_CENTER_X
+PageY=SCREEN_CENTER_Y
+PageOnCommand=
+ContainerOnCommand=
+ContainerOffCommand=
+#
+CursorOnCommand=
+CursorTweenSeconds=0.3
+#
+LineHighlightX=SCREEN_CENTER_X
+LineHighlightP1OnCommand=
+LineHighlightP1ChangeCommand=
+LineHighlightP1ChangeToExitCommand=
+LineHighlightP2OnCommand=
+LineHighlightP2ChangeCommand=
+LineHighlightP2ChangeToExitCommand=
+#
+ShowScrollBar=false
+ScrollBarHeight=0
+ScrollBarTime=0
+#
+ShowExitRow=true
+SeparateExitRow=true
+SeparateExitRowY=SCREEN_CENTER_Y+140
+#
+MoreX=
+MoreY=
+MoreOnCommand=visible,false
+MoreExitSelectedP1Command=
+MoreExitSelectedP2Command=
+MoreExitUnselectedP1Command=
+MoreExitUnselectedP2Command=
+#
+AllowRepeatingChangeValueInput=false
+WrapValueInRow=true
+
+[ScreenOptionsMaster]
+Fallback="ScreenOptions"
+Class="ScreenOptionsMaster"
+
+NoteSkinSortOrder=""
+StepsUseChartName=false
+StepsRowLayoutType="ShowAllInRow"
+
+# ExitItem is an exit row with the "Exit" text as a menu item; ExitTitle
+# uses the menu title.
+ExitItem="1;together;SelectNone;showoneinrow"
+ExitItemDefault=""
+ExitItem,1="screen," .. Screen.Metric("NextScreen") .. ";name,ExitItem"
+ExitTitle="1;together;SelectNone;showoneinrow"
+ExitTitleDefault=""
+ExitTitle,1="screen," .. Screen.Metric("NextScreen") .. ";name,ExitTitle"
+
+# Player options
+## legacy speed row
+Speed="12;"
+SpeedDefault="mod,1x,no randomspeed"
+Speed,1="mod,0.25x;name,x0.25"
+Speed,2="mod,0.50x;name,x0.50"
+Speed,3="mod,0.75x;name,x0.75"
+Speed,4="mod,1x;name,x1"
+Speed,5="mod,1.5x;name,x1.5"
+Speed,6="mod,2x;name,x1.75"
+Speed,7="mod,3x;name,x2"
+Speed,8="mod,4x;name,x2.25"
+Speed,9="mod,8x;name,x2.5"
+Speed,10="mod,C150;name,C150"
+Speed,11="mod,C300;name,C300"
+Speed,12="mod,1x,200% randomspeed;name,Random"
+
+Accel="5;selectmultiple"
+AccelDefault="mod,no boost,no brake,no wave,no expand,no boomerang"
+Accel,1="mod,boost;name,Boost"
+Accel,2="mod,brake;name,Brake"
+Accel,3="mod,wave;name,Wave"
+Accel,4="mod,expand;name,Expand"
+Accel,5="mod,boomerang;name,Boomerang"
+
+# Accel="6"
+# AccelDefault="mod,no boost,no brake,no wave,no expand,no boomerang"
+# Accel,1="name,Off"
+# Accel,2="mod,boost;name,Boost"
+# Accel,3="mod,brake;name,Brake"
+# Accel,4="mod,wave;name,Wave"
+# Accel,5="mod,expand;name,Expand"
+# Accel,6="mod,boomerang;name,Boomerang"
+
+Effect="15;selectmultiple"
+EffectDefault="mod,no drunk,no dizzy,,no twirl,no roll,no confusion,no mini,no tiny,no flip,no invert,no tornado,no tipsy,no bumpy,no beat,no xmode"
+Effect,1="mod,drunk;name,Drunk"
+Effect,2="mod,dizzy;name,Dizzy"
+Effect,3="mod,twirl;name,Twirl"
+Effect,4="mod,roll;name,Roll"
+Effect,5="mod,confusion;name,Confusion"
+Effect,6="mod,mini;name,Mini"
+Effect,7="mod,tiny;name,Tiny"
+Effect,8="mod,-100% mini;name,Big"
+Effect,9="mod,flip;name,Flip"
+Effect,10="mod,invert;name,Invert"
+Effect,11="mod,tornado;name,Tornado"
+Effect,12="mod,tipsy;name,Tipsy"
+Effect,13="mod,bumpy;name,Bumpy"
+Effect,14="mod,beat;name,Beat"
+Effect,15="mod,45% xmode;name,XMode"
+
+EffectsReceptor="6;selectmultiple"
+EffectsReceptorDefault="mod,no confusion,no invert,no flip,no mini,no xmode"
+EffectsReceptor,1="mod,confusion;name,Confusion"
+EffectsReceptor,2="mod,invert;name,Invert"
+EffectsReceptor,3="mod,Flip;name,Flip"
+EffectsReceptor,4="mod,mini;name,Mini"
+EffectsReceptor,5="mod,-35% mini;name,Big"
+EffectsReceptor,6="mod,45% xmode;name,XMode"
+
+EffectsArrow="8;selectmultiple"
+EffectsArrowDefault="mod,no drunk,no dizzy,no twirl,no roll,no beat,no tipsy,no tornado,no bumpy"
+EffectsArrow,1="mod,drunk;name,Drunk"
+EffectsArrow,2="mod,dizzy;name,Dizzy"
+EffectsArrow,3="mod,twirl;name,Twirl"
+EffectsArrow,4="mod,roll;name,Roll"
+EffectsArrow,5="mod,beat;name,Beat"
+EffectsArrow,6="mod,tipsy;name,Tipsy"
+EffectsArrow,7="mod,50% tornado;name,Tornado"
+EffectsArrow,8="mod,bumpy;name,Bumpy"
+
+# Effect="9"
+# EffectDefault="mod,no drunk,no dizzy,no confusion,no mini,no flip,no tornado,no tipsy"
+# Effect,1="name,Off"
+# Effect,2="mod,drunk;name,Drunk"
+# Effect,3="mod,dizzy;name,Dizzy"
+# Effect,4="mod,confusion;name,Confusion"
+# Effect,5="mod,mini;name,Mini"
+# Effect,6="mod,-100% mini;name,Big"
+# Effect,7="mod,flip;name,Flip"
+# Effect,8="mod,tornado;name,Tornado"
+# Effect,9="mod,tipsy;name,Tipsy"
+
+# XXX: what of hiddenoffset and suddenoffset?
+Appearance="4;selectmultiple"
+AppearanceDefault="mod,no hidden,no sudden,no stealth,no blink,no randomvanish"
+Appearance,1="mod,hidden;name,Hidden"
+Appearance,2="mod,sudden;name,Sudden"
+Appearance,3="mod,stealth;name,Stealth"
+Appearance,4="mod,blink;name,Blink"
+# Random Vanish causes crashes with certain noteskins (maybe all?) -aj
+#Appearance,5="mod,randomvanish;name,R.Vanish"
+
+# Appearance="6"
+# AppearanceDefault="mod,no hidden,no sudden,no stealth,no blink,no randomvanish"
+# Appearance,1="name,Visible"
+# Appearance,2="mod,hidden;name,Hidden"
+# Appearance,3="mod,sudden;name,Sudden"
+# Appearance,4="mod,stealth;name,Stealth"
+# Appearance,5="mod,blink;name,Blink"
+# Appearance,6="mod,randomvanish;name,R.Vanish"
+
+Turn="7;selectmultiple"
+TurnDefault="mod,no turn"
+Turn,1="mod,mirror;name,Mirror"
+Turn,2="mod,backwards;name,Backwards"
+Turn,3="mod,left;name,Left"
+Turn,4="mod,right;name,Right"
+Turn,5="mod,shuffle;name,Shuffle"
+Turn,6="mod,supershuffle;name,SuperShuffle"
+Turn,7="mod,softshuffle;name,SoftShuffle"
+
+# Turn="6"
+# TurnDefault="mod,no turn"
+# Turn,1="name,Off"
+# Turn,2="mod,mirror;name,Mirror"
+# Turn,3="mod,left;name,Left"
+# Turn,4="mod,right;name,Right"
+# Turn,5="mod,shuffle;name,Shuffle"
+# Turn,6="mod,supershuffle;name,SuperShuffle"
+
+Insert="7;selectmultiple"
+InsertDefault="mod,no wide,no big,no quick,no skippy,no echo,no stomp,no bmrize"
+Insert,1="mod,wide;name,Wide"
+Insert,2="mod,big;name,Big"
+Insert,3="mod,quick;name,Quick"
+Insert,4="mod,bmrize;name,BMRize"
+Insert,5="mod,skippy;name,Skippy"
+Insert,6="mod,echo;name,Echo"
+Insert,7="mod,stomp;name,Stomp"
+
+Remove="8;selectmultiple"
+RemoveDefault="mod,no little,no nojumps,no nohands,no noquads,no nostretch,no norolls,no nolifts,no nofakes"
+Remove,1="mod,little;name,Little"
+Remove,2="mod,nojumps;name,NoJumps"
+Remove,3="mod,nohands;name,NoHands"
+Remove,4="mod,noquads;name,NoQuads"
+Remove,5="mod,nostretch;name,NoStretch"
+Remove,6="mod,norolls;name,NoRolls"
+Remove,7="mod,nolifts;name,NoLifts"
+Remove,8="mod,nofakes;name,NoFakes"
+
+# Insert="8"
+# InsertDefault="mod,no little,no wide,no big,no quick,no skippy,no echo,no stomp"
+# Insert,1="name,Off"
+# Insert,2="mod,little;name,Little"
+# Insert,3="mod,wide;name,Wide"
+# Insert,4="mod,big;name,Big"
+# Insert,5="mod,quick;name,Quick"
+# Insert,6="mod,skippy;name,Skippy"
+# Insert,7="mod,echo;name,Echo"
+# Insert,8="mod,stomp;name,Stomp"
+
+Scroll="5;selectmultiple"
+ScrollDefault="mod,no reverse,no split,no alternate,no cross,no centered"
+Scroll,1="mod,reverse;name,Reverse"
+Scroll,2="mod,split;name,Split"
+Scroll,3="mod,alternate;name,Alternate"
+Scroll,4="mod,cross;name,Cross"
+Scroll,5="mod,centered;name,Centered"
+
+# Scroll="5"
+# ScrollDefault="mod,no reverse,no split,no alternate,no cross"
+# Scroll,1="name,Standard"
+# Scroll,2="mod,reverse;name,Reverse"
+# Scroll,3="mod,split;name,Split"
+# Scroll,4="mod,alternate;name,Alternate"
+# Scroll,5="mod,cross;name,Cross"
+
+Holds="4;selectmultiple"
+HoldsDefault="mod,no noholds,no planted,no twister,no holdrolls"
+Holds,1="mod,noholds;name,NoHolds"
+Holds,2="mod,planted;name,Planted"
+Holds,3="mod,twister;name,Twister"
+Holds,4="mod,holdrolls;name,HoldsToRolls"
+
+# Holds="7"
+# HoldsDefault="mod,no noholds,no planted,no twister,no nojumps,no nohands, no holdstorolls"
+# Holds,1="mod,noholds;name,Off"
+# Holds,2="name,On"
+# Holds,3="mod,planted;name,Planted"
+# Holds,4="mod,twister;name,Twister"
+# Holds,5="mod,holdstorolls;name,HoldsToRolls"
+# Holds,6="mod,nojumps;name,NoJumps"
+# Holds,7="mod,nohands;name,NoHands"
+
+Mines="4"
+MinesDefault="mod,no nomines,no mines,no attackmines"
+Mines,1="mod,nomines;name,Off"
+Mines,2="name,On"
+Mines,3="mod,mines;name,Add"
+Mines,4="mod,attackmines;name,AttackMines"
+
+Attacks="3"
+AttacksDefault="mod,no randomattacks, no noattacks"
+Attacks,1="name,On"
+Attacks,2="mod,randomattacks;name,RandomAttacks"
+Attacks,3="mod,noattacks;name,Off"
+
+PlayerAutoPlay="2"
+PlayerAutoPlayDefault="mod,no playerautoplay"
+PlayerAutoPlay,1="name,Off"
+PlayerAutoPlay,2="mod,playerautoplay;name,On"
+
+Hide="3;selectmultiple"
+HideDefault="mod,no dark,no blind,no cover"
+Hide,1="mod,dark;name,Dark"
+Hide,2="mod,blind;name,Blind"
+Hide,3="mod,80% cover;name,Cover"
+
+# Hide="3"
+# HideDefault="mod,no dark,no blind"
+# Hide,1="name,Off"
+# Hide,2="mod,dark;name,Dark"
+# Hide,3="mod,blind;name,Blind"
+
+Persp="5"
+PerspDefault="mod,overhead"
+Persp,1="mod,incoming;name,Incoming"
+Persp,2="mod,overhead;name,Overhead"
+Persp,3="mod,space;name,Space"
+Persp,4="mod,hallway;name,Hallway"
+Persp,5="mod,distant;name,Distant"
+
+# Song options
+# LifeType="3;together"
+LifeType=(GAMESTATE:IsCourseMode() and 3 or 2)..";together"
+LifeTypeDefault=""
+LifeType,1="mod,bar;name,Bar"
+LifeType,2="mod,battery;name,Battery"
+LifeType,3="mod,lifetime;name,LifeTime"
+#
+BarDrain="3;together"
+BarDrainDefault=""
+BarDrain,1="mod,normal-drain;name,Normal"
+BarDrain,2="mod,norecover;name,NoRecover"
+BarDrain,3="mod,suddendeath;name,SuddenDeath"
+#
+BatLives="10;together"
+BatLivesDefault=""
+BatLives,1="mod,1 life;name,1"
+BatLives,2="mod,2 lives;name,2"
+BatLives,3="mod,3 lives;name,3"
+BatLives,4="mod,4 lives;name,4"
+BatLives,5="mod,5 lives;name,5"
+BatLives,6="mod,6 lives;name,6"
+BatLives,7="mod,7 lives;name,7"
+BatLives,8="mod,8 lives;name,8"
+BatLives,9="mod,9 lives;name,9"
+BatLives,10="mod,10 lives;name,10"
+#
+Fail="4;together"
+FailDefault="mod,faildefault"
+Fail,1="mod,failimmediate;name,Immediate"
+Fail,2="mod,failimmediatecontinue;name,ImmediateContinue"
+Fail,3="mod,failatend;name,FailAtEnd"
+Fail,4="mod,failoff;name,Off"
+#
+Assist="4;together"
+AssistDefault=""
+Assist,1="mod,no clap,no metronome;name,Off"
+Assist,2="mod,clap,no metronome;name,Clap"
+Assist,3="mod,no clap,metronome;name,Metronome"
+Assist,4="mod,clap,metronome;name,Both"
+#
+Rate="21;together"
+RateDefault="mod,1.0xmusic;mod,no haste"
+Rate,1="mod,0.25xmusic;name,0.25x"
+Rate,2="mod,0.50xmusic;name,0.5x"
+Rate,3="mod,0.75xmusic;name,0.75x"
+Rate,4="mod,0.8xmusic;name,0.8x"
+Rate,5="mod,0.9xmusic;name,0.9x"
+Rate,6="mod,1.0xmusic;name,1.0x"
+Rate,7="mod,haste;name,Haste"
+Rate,8="mod,1.1xmusic;name,1.1x"
+Rate,9="mod,1.2xmusic;name,1.2x"
+Rate,10="mod,1.25xmusic;name,1.25x"
+Rate,11="mod,1.3xmusic;name,1.3x"
+Rate,12="mod,1.333xmusic;name,1.333x"
+Rate,13="mod,1.4xmusic;name,1.4x"
+Rate,14="mod,1.5xmusic;name,1.5x"
+Rate,15="mod,1.6xmusic;name,1.6x"
+Rate,16="mod,1.667xmusic;name,1.667x"
+Rate,17="mod,1.7xmusic;name,1.7x"
+Rate,18="mod,1.75xmusic;name,1.75x"
+Rate,19="mod,1.8xmusic;name,1.8x"
+Rate,20="mod,1.9xmusic;name,1.9x"
+Rate,21="mod,2.0xmusic;name,2.0x"
+#
+AutoAdjust="4;together"
+AutoAdjustDefault=""
+AutoAdjust,1="mod,no autosync;name,Off"
+AutoAdjust,2="mod,autosyncsong;name,Sync Song"
+AutoAdjust,3="mod,autosyncmachine;name,Sync Machine"
+AutoAdjust,4="mod,autosynctempo;name,Sync Tempo"
+#
+SoundEffect="3;together"
+SoundEffectDefault=""
+SoundEffect,1="mod,no effect;name,Off"
+SoundEffect,2="mod,EffectSpeed;name,EffectSpeed"
+SoundEffect,3="mod,EffectPitch;name,EffectPitch"
+#
+Background="3;together"
+BackgroundDefault=""
+Background,1="mod,no effect;name,Default"
+Background,2="mod,staticbg;name,StaticBG"
+Background,3="mod,randombg;name,RandomBG"
+#
+SaveScores="2;together"
+SaveScoresDefault=""
+SaveScores,1="mod,no savescore;name,Off"
+SaveScores,2="mod,savescore;name,On"
+#
+SaveReplays="2;together"
+SaveReplaysDefault=""
+SaveReplays,1="mod,no savereplay;name,Off"
+SaveReplays,2="mod,savereplay;name,On"
+
+#ScreenJukeboxMenu
+RandomModifiers="2;together"
+RandomModifiersDefault="mod,clear"
+RandomModifiers,1="name,Off"
+RandomModifiers,2="mod,random;name,Random"
+
+# ScreenOptionsEditMode
+Edit Steps="1;together;SelectNone"
+Edit StepsDefault=""
+Edit Steps,1="screen,ScreenOptionsManageEditSteps;name,Transfer To USB Drive"
+#
+Transfer To USB Drive="1;together;SelectNone"
+Transfer To USB DriveDefault=""
+Transfer To USB Drive,1="screen,ScreenOptionsManageEditSteps;name,Transfer To USB Drive"
+#
+Transfer From USB Drive="1;together;SelectNone"
+Transfer From USB DriveDefault=""
+Transfer From USB Drive,1="screen,ScreenOptionsManageEditSteps;name,Transfer From USB Drive"
+
+[ScreenOptionsSimple]
+Fallback="ScreenOptionsMaster"
+NavigationMode="menu"
+InputMode="together"
+ForceAllPlayers=true
+
+NumRowsShown=11
+RowPositionTransformFunction=function(self,offsetFromCenter,itemIndex,numItems) self:y(SCREEN_CENTER_Y-154+28*offsetFromCenter) end
+ShowExitRow=true
+SeparateExitRow=false
+SeparateExitRowY=SCREEN_CENTER_Y+180
+
+ExplanationTogetherX=SCREEN_CENTER_X
+ExplanationTogetherY=SCREEN_CENTER_Y+174
+ExplanationTogetherOnCommand=zoom,0.75;shadowlength,0;wrapwidthpixels,600/0.75;cropright,1;linear,0.5;cropright,0
+ExplanationTogetherOffCommand=stoptweening
+
+[ScreenOptionsSimpleService]
+Fallback="ScreenOptionsSimple"
+
+OptionRowNormalMetricsGroup="OptionRowService"
+
+LineHighlightP1OnCommand=visible,false
+LineHighlightP1ChangeCommand=
+LineHighlightP1ChangeToExitCommand=
+
+LineHighlightP2OnCommand=visible,false
+LineHighlightP2ChangeCommand=
+LineHighlightP2ChangeToExitCommand=
+
+CursorOnCommand=visible,false
+
+[ScreenOptionsService]
+AllowOperatorMenuButton=false
+Class="ScreenOptionsMaster"
+Fallback="ScreenOptionsSimpleService"
+#
+NextScreen=Branch.AfterInit()
+PrevScreen=Branch.AfterInit()
+
+LineNames="Sync,GameType,KeyConfig,TestInput,Input,Reload,Arcade,Appearance,GraphicSound,Profiles,Network,UI,Advanced,Credits"
+LineSync="gamecommand;screen,ScreenGameplaySyncMachine;name,Calibrate Machine Sync"
+LineGameType="gamecommand;screen,ScreenSelectGame;name,Select Game"
+LineKeyConfig="gamecommand;screen,ScreenMapControllers;name,Key Joy Mappings"
+LineTestInput="gamecommand;screen,ScreenTestInput;name,Test Input"
+LineInput="gamecommand;screen,ScreenOptionsInput;name,Input Options"
+LineReload="gamecommand;screen,ScreenReloadSongs;name,Reload Songs"
+LineArcade="gamecommand;screen,ScreenOptionsArcade;name,Arcade Options"
+LineAppearance="gamecommand;screen,ScreenAppearanceOptions;name,Appearance Options"
+
+LineGraphicSound="gamecommand;screen,ScreenOptionsGraphicsSound;name,Graphics/Sound Options"
+LineProfiles="gamecommand;screen,ScreenOptionsManageProfiles;name,Profiles"
+LineNetwork="gamecommand;screen,ScreenNetworkOptions;name,Network Options"
+LineUI="gamecommand;screen,ScreenOptionsUI;name,UI Options"
+LineAdvanced="gamecommand;screen,ScreenOptionsAdvanced;name,Advanced Options"
+LineMoreOptions="gamecommand;screen,ScreenOptionsExtended;name,More Options"
+LineCredits="gamecommand;screen,ScreenCredits;name,StepMania Credits"
+
+# Old
+#LineNames="SystemDirection,KeyConfig,GameType,6,8,Reload,Credits,MoreOptions"
+# LineNames="SystemDirection,1,2,Sync,13,3,10,11,4,12,6,5,Theme,8,9"
+
+# for ScreenOptionsExtended:
+#LineSystemDirection="gamecommand;screen,ScreenOptionsSystemDirection;name,System Direction"
+#Line2="gamecommand;screen,ScreenTestInput;name,Test Input"
+#Line3="gamecommand;screen,ScreenAppearanceOptions;name,Appearance Options"
+#Line4="gamecommand;screen,ScreenOptionsGraphicsSound;name,Graphics/Sound Options"
+#Line5="gamecommand;screen,ScreenOptionsAdvanced;name,Advanced Options"
+#Line6="gamecommand;screen,ScreenNetworkOptions;name,Network Options"
+#Line8="gamecommand;screen,ScreenOptionsManageProfiles;name,Profiles"
+#Line10="gamecommand;screen,ScreenOptionsUI;name,UI Options"
+#Line11="gamecommand;screen,ScreenOptionsInput;name,Input Options"
+#Line12="gamecommand;screen,ScreenOptionsArcade;name,Arcade Options"
+#LineTheme="gamecommand;screen,ScreenOptionsTheme;name,Theme Options"
+#LineMoreOptions="gamecommand;screen,ScreenOptionsExtended;name,More Options"
+#LineCredits="gamecommand;screen,ScreenCredits;name,StepMania Credits"
+
+[ScreenOptionsExtended]
+Fallback="ScreenOptionsService"
+NextScreen="ScreenOptionsService"
+PrevScreen="ScreenOptionsService"
+#
+LineNames="2,Sync,3,10,11,4,12,5"
+
+[ScreenOptionsServiceChild]
+Fallback="ScreenOptionsMaster"
+PrevScreen="ScreenOptionsService"
+NextScreen="ScreenOptionsService"
+TimerSeconds=-1
+TimerOnCommand=visible,false
+AllowOperatorMenuButton=false
+#
+ForceAllPlayers=true
+LightsMode="LightsMode_MenuStartAndDirections"
+NavigationMode="normal"
+InputMode="together"
+#
+ShowStyleIcon=false
+HelpText=Screen.String("HelpTextOptionsAndBack")
+#
+LineHighlightP1OnCommand=visible,false
+LineHighlightP1ChangeCommand=
+LineHighlightP1ChangeToExitCommand=
+#
+LineHighlightP2OnCommand=visible,false
+LineHighlightP2ChangeCommand=
+LineHighlightP2ChangeToExitCommand=
+#
+ExplanationTogetherX=SCREEN_CENTER_X
+ExplanationTogetherY=SCREEN_CENTER_Y+174
+ExplanationTogetherOnCommand=zoom,0.625;shadowlength,0;wrapwidthpixels,600/0.665;cropright,1;linear,0.5;cropright,0
+ExplanationTogetherOffCommand=stoptweening
+
+[ScreenOptionsServiceExtendedChild]
+Fallback="ScreenOptionsServiceChild"
+
+[ScreenMiniMenu]
+Class="ScreenMiniMenu"
+Fallback="ScreenOptions"
+PrevScreen=
+TimerSeconds=-1
+AllowRepeatingChangeValueInput=true
+#
+ShowHelp=false
+ShowExplanations=false
+ShowExitRow=false
+ShowStyleIcon=false
+#
+HeaderX=SCREEN_CENTER_X
+HeaderY=SCREEN_TOP+40
+HeaderOnCommand=
+HeaderOffCommand=
+#
+OptionRowNormalMetricsGroup="OptionRowMiniMenu"
+NumRowsShown=30
+RowPositionTransformFunction=function(self,offsetFromCenter,itemIndex,numItems) local indexOffset = itemIndex-(numItems-1)/2; self:y( SCREEN_CENTER_Y + indexOffset * 20 ); end
+ColorDisabled=color("0.8,0.8,0.8,0.975")
+#
+ContainerOnCommand=
+ContainerOffCommand=
+CursorOnCommand=visible,false
+
+[OptionRowMiniMenu]
+Fallback="OptionRow"
+IconsP1X=SCREEN_CENTER_X-280
+IconsP2X=SCREEN_CENTER_X+280
+IconsOnCommand=x,-30
+FrameX=SCREEN_CENTER_X-232
+TitleX=SCREEN_CENTER_X-150
+TitleOnCommand=halign,0;shadowlength,2;
+ItemsStartX=SCREEN_CENTER_X-150
+ItemsEndX=SCREEN_CENTER_X+280
+ItemsGapX=14
+ItemsLongRowP1X=SCREEN_CENTER_X-60
+ItemsLongRowP2X=SCREEN_CENTER_X+100
+ItemsLongRowSharedX=SCREEN_CENTER_X+150
+ItemOnCommand=
+ColorSelected=color("0.5,1,0.5,1")
+ColorNotSelected=color("1,1,1,1")
+ColorDisabled=color("0.65,0,0,1")
+TweenSeconds=0
+
+[ScreenMiniMenuContext]
+Fallback="ScreenMiniMenu"
+NumRowsShown=10
+RowPositionTransformFunction=function(self,offsetFromCenter,itemIndex,numItems) self:y(24*(offsetFromCenter-(numItems-1)/2)) end
+LineHighlightX=0
+ShowHelp=false
+OptionRowNormalMetricsGroup="OptionRowMiniMenuContext"
+
+[OptionRowMiniMenuContext]
+Fallback="OptionRowMiniMenu"
+TitleX=-54
+
+[ScreenMapControllers]
+Class="ScreenMapControllers"
+Fallback="ScreenOptionsServiceChild"
+NextScreen="ScreenOptionsService"
+HelpText=Screen.String("HelpTextMapControllers")
+#
+ScreenOnCommand=%function(self) MESSAGEMAN:Broadcast("KeyConfigRequestStall"); self:lockinput(5); end;
+#
+DevicesX=SCREEN_CENTER_X
+DevicesY=SCREEN_TOP+24
+DevicesOnCommand=zoom,0.75;draworder,5;strokecolor,color("0,0,0,1")
+DevicesOffCommand=
+#
+ButtonsToMap=""
+MappedToP1S1Command=x,SCREEN_CENTER_X-270
+MappedToP1S2Command=x,SCREEN_CENTER_X-195
+MappedToP1S3Command=x,SCREEN_CENTER_X-120
+MappedToP2S1Command=x,SCREEN_CENTER_X+120
+MappedToP2S2Command=x,SCREEN_CENTER_X+195
+MappedToP2S3Command=x,SCREEN_CENTER_X+270
+#
+MappedToOnCommand=diffuse,color("#808080");shadowlength,0;maxwidth,150;zoom,0.75
+MappedToWaitingCommand=diffuse,color("#FF8080");pulse;effectperiod,0.5;effectmagnitude,0.8,1.3,0
+MappedToMappedInputCommand=diffuse,color("#808080");diffuseshift;effectcolor2,color("#808080");effectcolor1,color("#FFFFFF")
+MappedToGainFocusCommand=diffuse,color("#808080");diffuseshift;effectcolor2,color("#808080");effectcolor1,color("#FFFFFF")
+MappedToLoseFocusCommand=diffuse,color("#808080");stopeffect
+#
+LineScrollerOnCommand=%function(self) self:draworder(-1); self:y(64) self:setsecondsperitem(0.1) self:SetTransformFromHeight(24) end
+LineScrollerOffCommand=
+LineHideCommand=visible,false
+LineOnCommand=%function(self) self:y(0); self:visible(true); local LeftToRight = math.mod(self.ItemIndex, 2) == 0 and 1 or -1; self:addx(-SCREEN_WIDTH * LeftToRight); end
+LineOffCommand=%function(self) local LeftToRight = math.mod(self.ItemIndex, 2) == 0 and 1 or -1; self:stoptweening() self:accelerate(0.3); self:addx(SCREEN_WIDTH * LeftToRight); self:queuecommand('Hide') end
+#
+ErrorX=SCREEN_CENTER_X
+ErrorY=SCREEN_CENTER_Y
+ErrorOnCommand=diffuse,color("#00FF00");zoom,0.8
+LabelP1OnCommand=x,SCREEN_CENTER_X*0.4;zoom,0.7;shadowlength,1
+LabelP1OffCommand=linear,0.5;diffusealpha,0
+LabelP2OnCommand=x,SCREEN_CENTER_X*1.6;zoom,0.7;shadowlength,1
+LabelP2OffCommand=linear,0.5;diffusealpha,0
+PrimaryOnCommand=x,SCREEN_CENTER_X;y,-6;zoom,0.7;shadowlength,1;ztest,true
+SecondaryOnCommand=x,SCREEN_CENTER_X;y,6;zoom,0.5;shadowlength,1;ztest,true
+ShowExitRow=true
+
+[ScreenTestInput]
+Class="ScreenTestInput"
+Fallback="ScreenOptionsServiceChild"
+NextScreen="ScreenOptionsService"
+PrevScreen="ScreenOptionsService"
+
+[ScreenOptionsSystemDirection]
+Fallback="ScreenOptionsServiceChild"
+PrevScreen="ScreenOptionsService"
+NextScreen="ScreenOptionsService"
+LineNames="1,2,3,4,5,6,7,8,9,FA,10,11,12,13,14,15,16,17,18,19,20,21,22"
+Line1="conf,Windowed"
+Line2="conf,DisplayResolution"
+Line3="conf,DisplayAspectRatio"
+Line4="conf,HighResolutionTextures"
+Line5="conf,Vsync"
+Line6="conf,SoundVolume"
+Line7="conf,TimingWindowScale"
+Line8="conf,LifeDifficulty"
+Line9="conf,AllowW1"
+LineFA="lua,GamePrefDefaultFail()"
+Line10="conf,AutogenSteps"
+Line11="conf,ShowBanners"
+Line12="conf,ShowCaution"
+Line13="conf,ShowInstructions"
+Line14="conf,ShowDanger"
+Line15="conf,ShowSongOptions"
+Line16="conf,EasterEggs"
+Line17="conf,Theme"
+Line18="conf,DefaultNoteskin"
+Line19="conf,PercentageScoring"
+Line20="conf,BGBrightness"
+Line21="conf,Center1Player"
+Line22="conf,EventMode"
+
+[ScreenOptionsGraphicsSound]
+Fallback="ScreenOptionsServiceChild"
+NextScreen="ScreenOptionsService"
+PrevScreen="ScreenOptionsService"
+LineNames="1,2,3,4,5,6,7,8,9,10,11,12,13,14,17,18,19,20"
+Line1="conf,Windowed"
+Line2="conf,DisplayResolution"
+Line3="conf,DisplayAspectRatio"
+Line4="conf,DisplayColorDepth"
+Line5="conf,HighResolutionTextures"
+Line6="conf,MaxTextureResolution"
+Line7="conf,TextureColorDepth"
+Line8="conf,MovieColorDepth"
+Line9="conf,SmoothLines"
+Line10="conf,CelShadeModels"
+Line11="conf,DelayedTextureDelete"
+Line12="conf,RefreshRate"
+Line13="conf,Vsync"
+Line14="conf,ShowStats"
+Line15="conf,ShowBanners"
+Line16="conf,AttractSoundFrequency"
+Line17="conf,SoundVolume"
+Line18="conf,EnableAttackSounds"
+Line19="conf,EnableMineHitSound"
+Line20="conf,VisualDelaySeconds"
+
+[ScreenOptionsAdvanced]
+Fallback="ScreenOptionsServiceChild"
+NextScreen="ScreenOptionsService"
+PrevScreen="ScreenOptionsService"
+LineNames="Score,3,4,8,11,13,14,15,16,28,29,30,31"
+LineScore="lua,UserPrefScoringMode()"
+Line3="conf,TimingWindowScale"
+Line4="conf,LifeDifficulty"
+Line8="lua,GamePrefDefaultFail()"
+Line11="conf,AllowW1"
+Line13="conf,HiddenSongs"
+Line14="conf,EasterEggs"
+Line15="conf,AllowExtraStage"
+Line16="conf,UseUnlockSystem"
+Line28="conf,AutogenSteps"
+Line29="conf,AutogenGroupCourses"
+Line30="conf,FastLoad"
+Line31="conf,FastLoadAdditionalSongs"
+
+# unused options
+#Line2="conf,ScoringType"
+#Line5="conf,ProgressiveLifebar"
+#Line6="conf,ProgressiveStageLifebar"
+#Line7="conf,ProgressiveNonstopLifebar"
+#Line8="conf,DefaultFailType"
+#Line24="conf,AutoPlay"
+#Line31="conf,OnlyPreferredDifficulties"
+
+[ScreenAppearanceOptions]
+Fallback="ScreenOptionsServiceChild"
+NextScreen="ScreenOptionsService"
+PrevScreen="ScreenOptionsService"
+LineNames="1,2,3,4,5,14,15,SB,17,18,19"
+Line1="conf,Language"
+Line2="conf,Announcer"
+Line3="conf,Theme"
+Line4="conf,DefaultNoteSkin"
+Line5="conf,PercentageScoring"
+Line14="conf,RandomBackgroundMode"
+Line15="conf,BGBrightness"
+LineSB="conf,StretchBackgrounds"
+Line17="conf,ShowDancingCharacters"
+Line18="conf,ShowBeginnerHelper"
+Line19="conf,NumBackgrounds"
+
+[ScreenOptionsUI]
+# user interface options that aren't related to themes, etc.
+# (some don't get used/modified too often)
+Fallback="ScreenOptionsServiceChild"
+NextScreen="ScreenOptionsService"
+PrevScreen="ScreenOptionsService"
+LineNames="1,3,4,6,7,9,10,11,12,14"
+Line1="conf,Center1Player"
+Line3="conf,DancePointsForOni"
+Line4="conf,MenuTimer"
+Line6="conf,MusicWheelUsesSections"
+Line7="conf,ShowBanners"
+Line8="conf,ShowCaution"
+Line9="conf,ShowDanger"
+Line10="conf,ShowInstructions"
+Line11="conf,ShowLyrics"
+Line12="conf,ShowNativeLanguage"
+Line14="conf,ShowSongOptions"
+
+# unused options
+#Line2="conf,CourseSortOrder"
+#Line5="conf,MoveRandomToEnd"
+
+[ScreenOptionsInput]
+Fallback="ScreenOptionsServiceChild"
+NextScreen="ScreenOptionsService"
+PrevScreen="ScreenOptionsService"
+LineNames="1,2,3,4,5"
+Line1="conf,AutoMapOnJoyChange"
+Line2="conf,OnlyDedicatedMenuButtons"
+Line3="conf,DelayedBack"
+Line4="conf,ArcadeOptionsNavigation"
+Line5="conf,MusicWheelSwitchSpeed"
+
+[ScreenOptionsArcade]
+Fallback="ScreenOptionsServiceChild"
+NextScreen="ScreenOptionsService"
+PrevScreen="ScreenOptionsService"
+# stuff tied to arcade features
+LineNames="1,2,3,4,5,6"
+Line1="conf,GetRankingName"
+Line2="conf,CoinMode"
+Line3="conf,SongsPerPlay"
+Line4="conf,CoinsPerCredit"
+Line5="conf,Premium"
+Line6="conf,EventMode"
+
+[ScreenOptionsTheme]
+Fallback="ScreenOptionsServiceChild"
+
+[ScreenSelectGame]
+Fallback="ScreenOptionsServiceChild"
+PrevScreen="ScreenOptionsService"
+NextScreen=Branch.TitleMenu()
+LineNames="1"
+Line1="conf,Game"
+
+[ScreenNetworkOptions]
+Class="ScreenNetworkOptions"
+Fallback="ScreenOptionsServiceChild"
+NextScreen=Branch.Network()
+PrevScreen=Branch.Network()
+
+[ScreenOptionsManageProfiles]
+Class="ScreenOptionsManageProfiles"
+Fallback="ScreenOptionsSimpleService"
+PrevScreen="ScreenOptionsService"
+NextScreen="ScreenOptionsService"
+PrepareScreens="ScreenMiniMenuContext"
+GroupedScreens="ScreenMiniMenuContext"
+PersistScreens="ScreenMiniMenuContext"
+
+TimerSeconds=-1
+
+[ScreenOptionsEditProfile]
+PageOnCommand=visible,false
+
+[ScreenReloadSongs]
+Class="ScreenReloadSongs"
+Fallback="Screen"
+NextScreen=Branch.TitleMenu()
+
+[ScreenPlayerOptions]
+Fallback="ScreenOptions"
+Class="ScreenPlayerOptions"
+#
+PrevScreen=Branch.BackOutOfPlayerOptions()
+NextScreen=Branch.SongOptions()
+#
+PlayMusic=false
+#
+TimerSeconds=30
+#
+LineNames="1,2,3A,3B,4,5,6,R,7,8,9,10,11,12,13,14,16,17"
+Line1="lua,SpeedMods()"
+# Line1="list,Speed"
+Line2="list,Accel"
+Line3A="list,EffectsReceptor"
+Line3B="list,EffectsArrow"
+#
+Line4="list,Appearance"
+Line5="list,Turn"
+Line6="list,Insert"
+LineR="list,Remove"
+Line7="list,Scroll"
+Line8="list,NoteSkins"
+Line9="list,Holds"
+Line10="list,Mines"
+Line11="list,Attacks"
+Line12="list,PlayerAutoPlay"
+Line13="list,Hide"
+Line14="list,Persp"
+Line16="list,Steps"
+Line17="list,Characters"
+#
+
+[ScreenPlayerOptionsRestricted]
+Fallback="ScreenPlayerOptions"
+NextScreen="ScreenStageInformation"
+LineNames="1,8,16,17"
+Line16="list,StepsLocked"
+Line17="list,Characters"
+
+[ScreenSongOptions]
+Fallback="ScreenOptions"
+Class="ScreenSongOptions"
+PrevScreen="ScreenPlayerOptions"
+NextScreen="ScreenStageInformation"
+TimerSeconds=30
+PlayMusic=false
+StopMusicOnBack=false
+#
+LineNames="1,2,3,4,5,6,7,8,9,10"
+#,11
+
+Line1="list,LifeType"
+Line2="list,BarDrain"
+Line3="list,BatLives"
+Line4="lua,GamePrefDefaultFail()"
+Line5="list,Assist"
+Line6="list,Rate"
+Line7="list,SoundEffect"
+Line8="list,AutoAdjust"
+Line9="list,Background"
+Line10="list,SaveScores"
+Line11="list,SaveReplays"
+## Line4="list,Fail"
+
+[ScreenSplash]
+Class="ScreenSplash"
+Fallback="ScreenWithMenuElementsBlank"
+MinimumScreenPrepareDelaySeconds=0
+AllowStartToSkip=false
+PrepareScreen=
+
+# 05 # A
+
+[ScreenExit]
+# Midiman:
+# Fun fact, if you don't enable this screen, Force Crashing will hang
+# StepMania, and leave it there to eat up time.
+Class="ScreenExit"
+Fallback="ScreenWithMenuElements"
+AllowOperatorMenuButton=false
+
+[ScreenAttract]
+Class="ScreenAttract"
+Fallback="ScreenWithMenuElementsBlank"
+StartScreen=Branch.TitleMenu()
+CancelScreen=Branch.TitleMenu()
+#
+LightsMode="LightsMode_Attract"
+PlayMusic=false
+#
+ResetGameState=true
+BackGoesToStartScreen=true
+AttractVolume=true
+#
+TimerMetricsGroup="MenuTimerNoSound"
+
+[ScreenRanking]
+Class="ScreenRanking"
+Fallback="ScreenAttract"
+TimerSeconds=-1
+#
+ResetGameState=true
+StepsTypesToHide="dance-couple,dance-solo,dance-routine,pump-halfdouble,pump-couple"
+PageFadeSeconds=1.0
+CoursesToShow=GetCoursesToShowRanking()
+SecondsPerPage=5
+#
+RankingType="RankingType_Category"
+#
+RowSpacingX=0
+RowSpacingY=60
+ColSpacingX=0
+ColSpacingY=0
+#
+StepsTypeColor1=color("1.0,1.0,1.0,1.0")
+StepsTypeColor2=color("1.0,1.0,1.0,1.0")
+StepsTypeColor3=color("1.0,1.0,1.0,1.0")
+StepsTypeColor4=color("1.0,1.0,1.0,1.0")
+StepsTypeColor5=color("1.0,1.0,1.0,1.0")
+#
+SongScoreSecondsPerRow=0.4
+ShowSurvivalTime=false
+#
+BannerOnCommand=x,SCREEN_CENTER_X+197;y,SCREEN_CENTER_Y-196;diffusealpha,1;scaletoclipped,220,58;addx,SCREEN_WIDTH;sleep,0.0;bounceend,1;addx,-SCREEN_WIDTH
+BannerOffCommand=sleep,0.0;linear,0.5;diffusealpha,0
+CategoryOnCommand=x,SCREEN_CENTER_X+197;y,SCREEN_CENTER_Y-208;diffusealpha,1;addx,SCREEN_WIDTH;sleep,0.0;bounceend,1;addx,-SCREEN_WIDTH
+CategoryOffCommand=sleep,0.0;linear,0.5;diffusealpha,0
+CourseTitleOnCommand=x,SCREEN_CENTER_X+197;y,SCREEN_CENTER_Y-208;diffusealpha,1;maxwidth,230;addx,SCREEN_WIDTH;sleep,0.0;bounceend,1;addx,-SCREEN_WIDTH
+CourseTitleOffCommand=sleep,0.0;linear,0.5;diffusealpha,0
+StepsTypeOnCommand=x,SCREEN_CENTER_X+200;y,SCREEN_CENTER_Y-180;diffusealpha,1;addx,SCREEN_WIDTH;sleep,0.0;bounceend,1;addx,-SCREEN_WIDTH
+StepsTypeOffCommand=sleep,0.0;linear,0.5;diffusealpha,0
+#
+BulletStartX=SCREEN_CENTER_X-220
+BulletStartY=SCREEN_CENTER_Y-100
+Bullet1OnCommand=diffusealpha,1;addx,SCREEN_WIDTH;sleep,0.2;bounceend,1;addx,-SCREEN_WIDTH
+Bullet2OnCommand=diffusealpha,1;addx,SCREEN_WIDTH;sleep,0.3;bounceend,1;addx,-SCREEN_WIDTH
+Bullet3OnCommand=diffusealpha,1;addx,SCREEN_WIDTH;sleep,0.4;bounceend,1;addx,-SCREEN_WIDTH
+Bullet4OnCommand=diffusealpha,1;addx,SCREEN_WIDTH;sleep,0.5;bounceend,1;addx,-SCREEN_WIDTH
+Bullet5OnCommand=diffusealpha,1;addx,SCREEN_WIDTH;sleep,0.6;bounceend,1;addx,-SCREEN_WIDTH
+Bullet1OffCommand=sleep,0.2;linear,0.5;diffusealpha,0
+Bullet2OffCommand=sleep,0.3;linear,0.5;diffusealpha,0
+Bullet3OffCommand=sleep,0.4;linear,0.5;diffusealpha,0
+Bullet4OffCommand=sleep,0.5;linear,0.5;diffusealpha,0
+Bullet5OffCommand=sleep,0.6;linear,0.5;diffusealpha,0
+#
+NameStartX=SCREEN_CENTER_X-140
+NameStartY=SCREEN_CENTER_Y-100
+Name1OnCommand=diffusealpha,1;halign,0;addx,SCREEN_WIDTH;sleep,0.2;bounceend,1;addx,-SCREEN_WIDTH
+Name2OnCommand=diffusealpha,1;halign,0;addx,SCREEN_WIDTH;sleep,0.3;bounceend,1;addx,-SCREEN_WIDTH
+Name3OnCommand=diffusealpha,1;halign,0;addx,SCREEN_WIDTH;sleep,0.4;bounceend,1;addx,-SCREEN_WIDTH
+Name4OnCommand=diffusealpha,1;halign,0;addx,SCREEN_WIDTH;sleep,0.5;bounceend,1;addx,-SCREEN_WIDTH
+Name5OnCommand=diffusealpha,1;halign,0;addx,SCREEN_WIDTH;sleep,0.6;bounceend,1;addx,-SCREEN_WIDTH
+Name1OffCommand=sleep,0.2;linear,0.5;diffusealpha,0
+Name2OffCommand=sleep,0.3;linear,0.5;diffusealpha,0
+Name3OffCommand=sleep,0.4;linear,0.5;diffusealpha,0
+Name4OffCommand=sleep,0.5;linear,0.5;diffusealpha,0
+Name5OffCommand=sleep,0.6;linear,0.5;diffusealpha,0
+#
+ScoreStartX=SCREEN_CENTER_X+200
+ScoreStartY=SCREEN_CENTER_Y-100
+Score1OnCommand=diffusealpha,1;halign,1;addx,SCREEN_WIDTH;sleep,0.2;bounceend,1;addx,-SCREEN_WIDTH
+Score2OnCommand=diffusealpha,1;halign,1;addx,SCREEN_WIDTH;sleep,0.3;bounceend,1;addx,-SCREEN_WIDTH
+Score3OnCommand=diffusealpha,1;halign,1;addx,SCREEN_WIDTH;sleep,0.4;bounceend,1;addx,-SCREEN_WIDTH
+Score4OnCommand=diffusealpha,1;halign,1;addx,SCREEN_WIDTH;sleep,0.5;bounceend,1;addx,-SCREEN_WIDTH
+Score5OnCommand=diffusealpha,1;halign,1;addx,SCREEN_WIDTH;sleep,0.6;bounceend,1;addx,-SCREEN_WIDTH
+Score1OffCommand=sleep,0.2;linear,0.5;diffusealpha,0
+Score2OffCommand=sleep,0.3;linear,0.5;diffusealpha,0
+Score3OffCommand=sleep,0.4;linear,0.5;diffusealpha,0
+Score4OffCommand=sleep,0.5;linear,0.5;diffusealpha,0
+Score5OffCommand=sleep,0.6;linear,0.5;diffusealpha,0
+#
+PointsStartX=SCREEN_CENTER_X+60
+PointsStartY=SCREEN_CENTER_Y-100
+Points1OnCommand=diffusealpha,1;addx,SCREEN_WIDTH;sleep,0.2;bounceend,1;addx,-SCREEN_WIDTH
+Points2OnCommand=diffusealpha,1;addx,SCREEN_WIDTH;sleep,0.3;bounceend,1;addx,-SCREEN_WIDTH
+Points3OnCommand=diffusealpha,1;addx,SCREEN_WIDTH;sleep,0.4;bounceend,1;addx,-SCREEN_WIDTH
+Points4OnCommand=diffusealpha,1;addx,SCREEN_WIDTH;sleep,0.5;bounceend,1;addx,-SCREEN_WIDTH
+Points5OnCommand=diffusealpha,1;addx,SCREEN_WIDTH;sleep,0.6;bounceend,1;addx,-SCREEN_WIDTH
+Points1OffCommand=sleep,0.2;linear,0.5;diffusealpha,0
+Points2OffCommand=sleep,0.3;linear,0.5;diffusealpha,0
+Points3OffCommand=sleep,0.4;linear,0.5;diffusealpha,0
+Points4OffCommand=sleep,0.5;linear,0.5;diffusealpha,0
+Points5OffCommand=sleep,0.6;linear,0.5;diffusealpha,0
+#
+TimeStartX=SCREEN_CENTER_X+240
+TimeStartY=SCREEN_CENTER_Y-100
+Time1OnCommand=diffusealpha,1;addx,SCREEN_WIDTH;sleep,0.2;bounceend,1;addx,-SCREEN_WIDTH
+Time2OnCommand=diffusealpha,1;addx,SCREEN_WIDTH;sleep,0.3;bounceend,1;addx,-SCREEN_WIDTH
+Time3OnCommand=diffusealpha,1;addx,SCREEN_WIDTH;sleep,0.4;bounceend,1;addx,-SCREEN_WIDTH
+Time4OnCommand=diffusealpha,1;addx,SCREEN_WIDTH;sleep,0.5;bounceend,1;addx,-SCREEN_WIDTH
+Time5OnCommand=diffusealpha,1;addx,SCREEN_WIDTH;sleep,0.6;bounceend,1;addx,-SCREEN_WIDTH
+Time1OffCommand=sleep,0.2;linear,0.5;diffusealpha,0
+Time2OffCommand=sleep,0.3;linear,0.5;diffusealpha,0
+Time3OffCommand=sleep,0.4;linear,0.5;diffusealpha,0
+Time4OffCommand=sleep,0.5;linear,0.5;diffusealpha,0
+Time5OffCommand=sleep,0.6;linear,0.5;diffusealpha,0
+#
+DifficultyStartX=SCREEN_CENTER_X-154
+DifficultyY=SCREEN_CENTER_Y-209
+DifficultyBeginnerOnCommand=
+DifficultyEasyOnCommand=
+DifficultyMediumOnCommand=
+DifficultyHardOnCommand=
+DifficultyChallengeOnCommand=
+DifficultyBeginnerOffCommand=
+DifficultyEasyOffCommand=
+DifficultyMediumOffCommand=
+DifficultyHardOffCommand=
+DifficultyChallengeOffCommand=
+#
+TitleOnCommand=x,-210;ztest,1;diffuse,0,0,0,1;maxwidth,160
+TitleOffCommand=
+FrameOnCommand=ztest,1
+FrameOffCommand=
+ScoreOffsetStartX=-154
+ScoreOffsetY=0
+ScoreOnCommand=zoom,0.7;ztest,1
+ScoreOffCommand=
+# 05 # B
+
+# 05 # C
+[ScreenGameplay]
+Fallback="ScreenWithMenuElementsBlank"
+Class="ScreenGameplayNormal"
+NextScreen=Branch.AfterGameplay()
+PrevScreen=Branch.BackOutOfStageInformation()
+TimerSeconds=-1
+#
+ShowLifeMeterForDisabledPlayers=false
+StopCourseEarly=false
+ShowEvaluationOnFail=true
+ShowScoreInRave=false
+UnpauseWithStart=true
+InitialBackgroundBrightness=1.0
+SecondsBetweenComments=10.0
+ScoreKeeperClass=ScoreKeeperClass()
+TickEarlySeconds=0
+LightsMode="LightsMode_Gameplay"
+SurvivalModOverride=true
+#
+PlayerType="Player"
+# useful in some obscure situations where the theme resolution has been increased.
+PlayerInitCommand=y,SCREEN_CENTER_Y;zoom,(THEME:GetMetric("Common","ScreenHeight")/480)
+StartGivesUp=true
+BackGivesUp=false
+# rage
+AllowCenter1Player=true
+#
+FailOnMissCombo=FailCombo()
+GivingUpGoesToPrevScreen=false
+GivingUpGoesToNextScreen=false
+#
+MinSecondsToStep=6.0
+MinSecondsToMusic=2.0
+MinSecondsToStepNextSong=2.0
+MusicFadeOutSeconds=0.5
+OutTransitionLength=5
+CourseTransitionLength=0.5
+BeginFailedDelay=1.0
+#
+PlayerP1OnePlayerOneSideX=math.floor(scale((0.85/3),0,1,SCREEN_LEFT,SCREEN_RIGHT))
+PlayerP2OnePlayerOneSideX=math.floor(scale((2.15/3),0,1,SCREEN_LEFT,SCREEN_RIGHT))
+PlayerP1TwoPlayersTwoSidesX=math.floor(scale((0.85/3),0,1,SCREEN_LEFT,SCREEN_RIGHT))
+PlayerP2TwoPlayersTwoSidesX=math.floor(scale((2.15/3),0,1,SCREEN_LEFT,SCREEN_RIGHT))
+PlayerP1OnePlayerTwoSidesX=SCREEN_CENTER_X
+PlayerP2OnePlayerTwoSidesX=SCREEN_CENTER_X
+PlayerP1TwoPlayersSharedSidesX=SCREEN_CENTER_X
+PlayerP2TwoPlayersSharedSidesX=SCREEN_CENTER_X
+#
+LyricDisplaySetNoReverseCommand=x,SCREEN_CENTER_X+0;y,SCREEN_CENTER_Y+160
+LyricDisplaySetReverseCommand=x,SCREEN_CENTER_X+0;y,SCREEN_CENTER_Y-140
+# This is used if one player is in reverse and the other isn't.
+LyricDisplaySetOneReverseCommand=x,SCREEN_CENTER_X+0;y,SCREEN_CENTER_Y-205
+LyricDisplayDefaultColor=color("0,1,0,1");
+#
+OniGameOverP1X=
+OniGameOverP1Y=
+OniGameOverP1OnCommand=
+OniGameOverP1OffCommand=
+#
+OniGameOverP2X=
+OniGameOverP2Y=
+OniGameOverP2OnCommand=
+OniGameOverP2OffCommand=
+#
+ActiveAttackListP1X=THEME:GetMetric(Var "LoadingScreen","PlayerP1OnePlayerOneSideX")
+ActiveAttackListP1Y=
+ActiveAttackListP1OnCommand=visible,false
+ActiveAttackListP1OffCommand=
+ActiveAttackListP2X=THEME:GetMetric(Var "LoadingScreen","PlayerP1OnePlayerOneSideX")
+ActiveAttackListP2Y=
+ActiveAttackListP2OnCommand=visible,false
+ActiveAttackListP2OffCommand=
+#
+CombinedLifeX=SCREEN_CENTER_X
+CombinedLifeY=SCREEN_CENTER_Y
+CombinedLifeOnCommand=visible,false
+CombinedLifeOffCommand=
+#
+LifeP1X=THEME:GetMetric(Var "LoadingScreen","PlayerP1OnePlayerOneSideX")
+LifeP1Y=SCREEN_TOP+24
+LifeP1OnCommand=
+LifeP1OffCommand=
+LifeP2X=THEME:GetMetric(Var "LoadingScreen","PlayerP2OnePlayerOneSideX")
+LifeP2Y=SCREEN_TOP+24
+LifeP2OnCommand=
+LifeP2OffCommand=
+#
+ScoreP1X=THEME:GetMetric(Var "LoadingScreen","PlayerP1OnePlayerOneSideX")
+ScoreP1Y=SCREEN_BOTTOM-28
+ScoreP1OnCommand=
+ScoreP1OffCommand=
+ScoreP2X=THEME:GetMetric(Var "LoadingScreen","PlayerP2OnePlayerOneSideX")
+ScoreP2Y=SCREEN_BOTTOM-28
+ScoreP2OnCommand=
+ScoreP2OffCommand=
+#
+SecondaryScoreP1X=THEME:GetMetric(Var "LoadingScreen","PlayerP1OnePlayerOneSideX")
+SecondaryScoreP1Y=SCREEN_BOTTOM-56
+SecondaryScoreP1OnCommand=
+SecondaryScoreP1OffCommand=
+SecondaryScoreP2X=THEME:GetMetric(Var "LoadingScreen","PlayerP2OnePlayerOneSideX")
+SecondaryScoreP2Y=SCREEN_BOTTOM-56
+SecondaryScoreP2OnCommand=
+SecondaryScoreP2OffCommand=
+#
+StepsDescriptionP1X=THEME:GetMetric(Var "LoadingScreen","PlayerP1OnePlayerOneSideX")
+StepsDescriptionP1Y=SCREEN_CENTER_Y-24
+StepsDescriptionP1OnCommand=visible,false
+StepsDescriptionP1OffCommand=
+StepsDescriptionP2X=THEME:GetMetric(Var "LoadingScreen","PlayerP2OnePlayerOneSideX")
+StepsDescriptionP2Y=SCREEN_CENTER_Y-24
+StepsDescriptionP2OnCommand=visible,false
+StepsDescriptionP2OffCommand=
+#
+PlayerOptionsP1X=THEME:GetMetric(Var "LoadingScreen","PlayerP1OnePlayerOneSideX")
+PlayerOptionsP1Y=SCREEN_CENTER_Y+24
+PlayerOptionsP1OnCommand=visible,false
+PlayerOptionsP1OffCommand=
+PlayerOptionsP2X=THEME:GetMetric(Var "LoadingScreen","PlayerP2OnePlayerOneSideX")
+PlayerOptionsP2Y=SCREEN_CENTER_Y+24
+PlayerOptionsP2OnCommand=visible,false
+PlayerOptionsP2OffCommand=
+#
+StepsDisplayP1X=SCREEN_CENTER_X-160
+StepsDisplayP1Y=SCREEN_BOTTOM-60
+StepsDisplayP1OnCommand=visible,false
+StepsDisplayP1OffCommand=
+#
+StepsDisplayP2X=SCREEN_CENTER_X+160
+StepsDisplayP2Y=SCREEN_BOTTOM-60
+StepsDisplayP2OnCommand=visible,false
+StepsDisplayP2OffCommand=
+#
+SongOptionsX=SCREEN_CENTER_X
+SongOptionsY=SCREEN_BOTTOM-32
+SongOptionsOnCommand=visible,false
+SongOptionsOffCommand=
+#
+DebugX=SCREEN_CENTER_X
+DebugY=SCREEN_BOTTOM-116
+DebugOnCommand=zoom,0.75
+DebugStartOnCommand=stoptweening;diffusealpha,0;linear,1/8;diffusealpha,1
+DebugBackOnCommand=stoptweening;diffusealpha,0;linear,1/8;diffusealpha,1
+DebugTweenOffCommand=stoptweening;linear,1/8;diffusealpha,0
+#
+SongNumberFormat="%d"
+SongNumberP1X=THEME:GetMetric(Var "LoadingScreen","PlayerP1OnePlayerOneSideX") - 60
+SongNumberP1Y=SCREEN_TOP+24+7
+SongNumberP1OnCommand=visible,false
+SongNumberP1OffCommand=
+SongNumberP2X=THEME:GetMetric(Var "LoadingScreen","PlayerP2OnePlayerOneSideX") + 60
+SongNumberP2Y=SCREEN_TOP+24+7
+SongNumberP2OnCommand=visible,false
+SongNumberP2OffCommand=
+
+SurviveTimeX=SCREEN_CENTER_X
+SurviveTimeY=SCREEN_CENTER_Y+120
+SurviveTimeOnCommand=
+
+# online scoreboard
+# P1 is used when the only player is P2
+ScoreboardC1P1X=SCREEN_CENTER_X*0.25
+ScoreboardC1P1Y=SCREEN_CENTER_Y*0.45
+ScoreboardC1P1OnCommand=zoom,0.825;strokecolor,Color("Outline");shadowlength,1
+ScoreboardC2P1X=SCREEN_CENTER_X*0.5
+ScoreboardC2P1Y=SCREEN_CENTER_Y*0.45
+ScoreboardC2P1OnCommand=zoom,0.825;strokecolor,Color("Outline");shadowlength,1
+ScoreboardC3P1X=SCREEN_CENTER_X*0.75
+ScoreboardC3P1Y=SCREEN_CENTER_Y*0.45
+ScoreboardC3P1OnCommand=zoom,0.825;strokecolor,Color("Outline");shadowlength,1
+# P2 is used when the only player is P1
+ScoreboardC1P2X=SCREEN_CENTER_X*1.25
+ScoreboardC1P2Y=SCREEN_CENTER_Y*0.45
+ScoreboardC1P2OnCommand=zoom,0.825;strokecolor,Color("Outline");shadowlength,1
+ScoreboardC2P2X=SCREEN_CENTER_X*1.5
+ScoreboardC2P2Y=SCREEN_CENTER_Y*0.45
+ScoreboardC2P2OnCommand=zoom,0.825;strokecolor,Color("Outline");shadowlength,1
+ScoreboardC3P2X=SCREEN_CENTER_X*1.75
+ScoreboardC3P2Y=SCREEN_CENTER_Y*0.45
+ScoreboardC3P2OnCommand=zoom,0.825;strokecolor,Color("Outline");shadowlength,1
+
+[ScreenGameplayEditCourse]
+Class="ScreenGameplayNormal"
+Fallback="ScreenGameplay"
+PrevScreen="ScreenOptionsCourseOverview"
+NextScreen="ScreenOptionsCourseOverview"
+
+[ScreenGameplayShared]
+Class="ScreenGameplayShared"
+Fallback="ScreenGameplay"
+PlayerType="PlayerShared"
+
+[ScreenEvaluation]
+Class="ScreenEvaluation"
+Fallback="ScreenWithMenuElements"
+NextScreen=Branch.AfterEvaluation()
+PrevScreen=Branch.AfterEvaluation()
+TimerSeconds=20
+LightsMode="LightsMode_MenuStartOnly"
+#
+Summary=false
+CheckpointsWithJudgments=EvalUsesCheckpointsWithJudgments()
+#
+PlayerOptionsSeparator=","
+PlayerOptionsHideFailType=false
+MaxComboNumDigits=4
+#
+ShowBannerArea=true
+RollingNumbersClass="RollingNumbersJudgment"
+RollingNumbersMaxComboClass="RollingNumbersMaxCombo"
+#
+ShowSharedJudgmentLineLabels=false
+ShowJudgmentLineW1=false
+ShowJudgmentLineW2=false
+ShowJudgmentLineW3=false
+ShowJudgmentLineW4=false
+ShowJudgmentLineW5=false
+ShowJudgmentLineHeld=false
+ShowJudgmentLineMiss=false
+ShowJudgmentLineMaxCombo=false
+ShowPeakComboAward=false
+ShowTimingDifficulty=false
+ShowStageDisplay=false
+ShowStageFrame=false
+ShowGraphDisplay=false
+ShowComboGraph=false
+ShowStepsDisplay=false
+ShowGradeArea=false
+ShowPointsArea=false
+ShowDetailArea=false
+ShowBonusArea=false
+ShowSurvivedArea=false
+ShowWinArea=false
+ShowScoreArea=false
+ShowTimeArea=false
+ShowItsARecord=false
+ShowStageAward=false
+#
+FailedSoundTime=0
+PassedSoundTime=0
+CheerDelaySeconds=2.5
+#
+BannerWidth=256
+BannerHeight=80
+#
+LargeBannerX=
+LargeBannerY=
+LargeBannerOnCommand=visible,false
+LargeBannerOffCommand=
+LargeBannerFrameX=
+LargeBannerFrameY=
+LargeBannerFrameOnCommand=visible,false
+LargeBannerFrameOffCommand=
+#
+PlayerOptionsP1X=
+PlayerOptionsP1Y=
+PlayerOptionsP1OnCommand=visible,false
+PlayerOptionsP1OffCommand=
+PlayerOptionsP2X=
+PlayerOptionsP2Y=
+PlayerOptionsP2OnCommand=visible,false
+PlayerOptionsP2OffCommand=
+#
+SongOptionsX=
+SongOptionsY=
+SongOptionsOnCommand=visible,false
+SongOptionsOffCommand=
+#
+DisqualifiedP1X=
+DisqualifiedP1Y=
+DisqualifiedP1OnCommand=visible,false
+DisqualifiedP1OffCommand=
+DisqualifiedP2X=
+DisqualifiedP2Y=
+DisqualifiedP2OnCommand=visible,false
+DisqualifiedP2OffCommand=
+#
+DetailLineFormat="%3d/%3d"
+#
+
+[ScreenEvaluationNormal]
+Fallback="ScreenEvaluation"
+#
+NextScreen=Branch.AfterEvaluation()
+PrevScreen=Branch.AfterEvaluation()
+
+[ScreenEvaluationSummary]
+Fallback="ScreenEvaluation"
+NextScreen=Branch.AfterSummary()
+Summary=true
+
+[ScreenNameEntry]
+# !!! #
+Class="ScreenNameEntry"
+Fallback="ScreenWithMenuElementsBlank"
+#
+TimerX=SCREEN_CENTER_X+0
+TimerY=SCREEN_CENTER_Y-210
+#
+CategoryY=SCREEN_CENTER_Y+190
+CategoryZoom=0.7
+#
+CharsZoomSmall=1.0
+CharsZoomLarge=1.5
+CharsSpacingY=40
+CharsChoices="    ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+ScrollingCharsCommand=diffuse,0.6,0.8,0.8,1
+SelectedCharsCommand=diffuse,0.8,1,1,1
+#
+ReceptorArrowsY=SCREEN_CENTER_Y-140
+NumCharsToDrawBehind=2
+NumCharsToDrawTotal=10
+FakeBeatsPerSec=2.5
+ForceTimer=true
+TimerSeconds=24
+TimerStealth=false
+ShowStyleIcon=false
+MaxRankingNameLength=4
+#
+NextScreen="ScreenProfileSave"
+#
+PlayerP1OnePlayerOneSideX=SCREEN_CENTER_X-160
+PlayerP2OnePlayerOneSideX=SCREEN_CENTER_X+160
+PlayerP1TwoPlayersTwoSidesX=SCREEN_CENTER_X-160
+PlayerP2TwoPlayersTwoSidesX=SCREEN_CENTER_X+160
+PlayerP1OnePlayerTwoSidesX=SCREEN_CENTER_X
+PlayerP2OnePlayerTwoSidesX=SCREEN_CENTER_X
+
+[ScreenNameEntryTraditional]
+Class="ScreenNameEntryTraditional"
+Fallback="ScreenWithMenuElements"
+NextScreen="ScreenProfileSaveSummary"
+CancelTransitionsOut=true
+TimerSeconds=30
+ForceTimer=true
+ForceTimerWait=true
+RepeatRate=15
+RepeatDelay=1/4
+HelpText="Enter your name!"
+#
+MaxRankingNameLength=4
+CodeNames="Backspace,Left,Right,NextRow1=NextRow,NextRow2=NextRow,PrevRow,JumpToEnter,Enter"
+CodeLeft="+MenuLeft"
+CodeRight="+MenuRight"
+CodePrevRow="+MenuUp"
+CodeNextRow1="+MenuDown"
+CodeNextRow2="Select,~Select"
+CodeBackspace="@Select-MenuLeft"
+CodeJumpToEnter="@Select-Start"
+CodeEnter="Start"
+
+[ScreenProfileSave]
+Class="ScreenProfileSave"
+Fallback="ScreenWithMenuElementsBlank"
+NextScreen=Branch.AfterProfileSave()
+PrevScreen=Branch.TitleMenu()
+TimerSeconds=-1
+
+[ScreenProfileSaveSummary]
+Fallback="ScreenProfileSave"
+NextScreen=Branch.AfterSaveSummary()
+PrevScreen=Branch.AfterSaveSummary()
+
+[ScreenGameOver]
+Class="ScreenEnding"
+Fallback="ScreenAttract"
+PrevScreen=Branch.TitleMenu()
+NextScreen=Branch.TitleMenu()
+StartScreen=Branch.TitleMenu()
+TimerSeconds=10
+ResetGameState=true
+#
+RemoveCardP1X=SCREEN_WIDTH*0.1
+RemoveCardP1Y=SCREEN_CENTER_Y
+RemoveCardP1OnCommand=
+RemoveCardP1OffCommand=
+#
+RemoveCardP2X=SCREEN_WIDTH*0.9
+RemoveCardP2Y=SCREEN_CENTER_Y
+RemoveCardP2OnCommand=
+RemoveCardP2OffCommand=
+
+[ScreenPrompt]
+Class="ScreenPrompt"
+Fallback="ScreenWithMenuElementsBlank"
+PrevScreen="ScreenEdit"
+TimerSeconds=-1
+
+QuestionX=SCREEN_CENTER_X
+QuestionY=SCREEN_CENTER_Y-60
+QuestionOnCommand=zoom,0.7;wrapwidthpixels,600
+QuestionOffCommand=
+#
+CursorOnCommand=
+CursorOffCommand=
+#
+Answer1Of1X=SCREEN_CENTER_X
+Answer1Of1Y=SCREEN_CENTER_Y+120
+Answer1Of1OnCommand=maxwidth,100
+Answer1Of1OffCommand=
+##
+Answer1Of2X=SCREEN_CENTER_X-50
+Answer1Of2Y=SCREEN_CENTER_Y+120
+Answer1Of2OnCommand=maxwidth,100
+Answer1Of2OffCommand=
+#
+Answer2Of2X=SCREEN_CENTER_X+50
+Answer2Of2Y=SCREEN_CENTER_Y+120
+Answer2Of2OnCommand=maxwidth,100
+Answer2Of2OffCommand=
+###
+Answer1Of3X=SCREEN_CENTER_X-170
+Answer1Of3Y=SCREEN_CENTER_Y+120
+Answer1Of3OnCommand=maxwidth,100
+Answer1Of3OffCommand=
+#
+Answer2Of3X=SCREEN_CENTER_X-20
+Answer2Of3Y=SCREEN_CENTER_Y+120
+Answer2Of3OnCommand=maxwidth,100
+Answer2Of3OffCommand=
+#
+Answer3Of3X=SCREEN_CENTER_X+150
+Answer3Of3Y=SCREEN_CENTER_Y+120
+Answer3Of3OnCommand=maxwidth,100
+Answer3Of3OffCommand=
+
+## stuff for edit mode: ##
+[ScreenOptionsEdit]
+Class="ScreenOptionsMaster"
+Fallback="ScreenOptionsSimpleService"
+# This NextScreen is only used for the "exit" choice.
+NextScreen=Branch.TitleMenu()
+PrevScreen=Branch.TitleMenu()
+
+LineNames="1,2,3,4"
+Line1="gamecommand;screen,ScreenEditMenu;name,Edit Songs/Steps"
+Line2="gamecommand;screen,ScreenPracticeMenu;name,Practice Songs/Steps"
+Line3="gamecommand;screen,ScreenEditCourseModsMenu;name,Edit Courses/Mods"
+Line4="gamecommand;screen,ScreenOptionsExportPackage;name,Export Packages"
+
+# broken:
+# Line4="gamecommand;screen,ScreenOptionsManageCourses;name,Edit Courses"
+# unused:
+# Line4="gamecommand;screen,ScreenServiceActionCopyEditsMachineToMemoryCard;name,Transfer Edits to USB"
+# Line5="gamecommand;screen,ScreenOptionsGraphicsSound;name,Transfer Edits from USB"
+# Line6="gamecommand;screen,ScreenOptionsAdvanced;name,Clear USB edits"
+
+[EditMenu]
+EditMode="EditMode_Full"
+ShowGroups=true
+
+Arrows1X=SCREEN_CENTER_X-176
+Arrows2X=SCREEN_CENTER_X+270
+ArrowsEnabledCommand=diffuse,color("1,1,1,1");shadowlengthy,1;shadowcolor,color("#002740");
+ArrowsDisabledCommand=diffuse,color("0.45,0.45,0.45,1");shadowlengthy,1;shadowcolor,color("#002740");
+
+GroupBannerX=SCREEN_CENTER_X+170
+GroupBannerY=SCREEN_CENTER_Y-140
+GroupBannerOnCommand=scaletoclipped,128,40
+
+SongBannerX=SCREEN_CENTER_X+170
+SongBannerY=SCREEN_CENTER_Y-90
+SongBannerOnCommand=scaletoclipped,128,40
+
+TextBannerType="TextBannerEditMode"
+SongTextBannerX=SCREEN_CENTER_X-128
+SongTextBannerY=SCREEN_CENTER_Y-90
+
+StepsDisplayX=SCREEN_CENTER_X+150
+StepsDisplayY=SCREEN_CENTER_Y-0
+StepsDisplaySourceX=SCREEN_CENTER_X+150
+StepsDisplaySourceY=SCREEN_CENTER_Y+80
+
+Row1Y=SCREEN_CENTER_Y-140
+Row2Y=SCREEN_CENTER_Y-90
+Row3Y=SCREEN_CENTER_Y-40
+Row4Y=SCREEN_CENTER_Y-0
+Row5Y=SCREEN_CENTER_Y+40
+Row6Y=SCREEN_CENTER_Y+80
+Row7Y=SCREEN_CENTER_Y+120
+
+Label1X=SCREEN_CENTER_X-250
+Label1Y=THEME:GetMetric("EditMenu","Row1Y")
+Label1OnCommand=shadowlength,1;zoom,0.75
+Label1OffCommand=
+Label2X=SCREEN_CENTER_X-250
+Label2Y=THEME:GetMetric("EditMenu","Row2Y")
+Label2OnCommand=shadowlength,1;zoom,0.75
+Label2OffCommand=
+Label3X=SCREEN_CENTER_X-250
+Label3Y=THEME:GetMetric("EditMenu","Row3Y")
+Label3OnCommand=shadowlength,1;zoom,0.75
+Label3OffCommand=
+Label4X=SCREEN_CENTER_X-250
+Label4Y=THEME:GetMetric("EditMenu","Row4Y")
+Label4OnCommand=shadowlength,1;zoom,0.75
+Label4OffCommand=
+Label5X=SCREEN_CENTER_X-250
+Label5Y=THEME:GetMetric("EditMenu","Row5Y")
+Label5OnCommand=shadowlength,1;zoom,0.75
+Label5OffCommand=
+Label6X=SCREEN_CENTER_X-250
+Label6Y=THEME:GetMetric("EditMenu","Row6Y")
+Label6OnCommand=shadowlength,1;zoom,0.75
+Label6OffCommand=
+Label7X=SCREEN_CENTER_X-250
+Label7Y=THEME:GetMetric("EditMenu","Row7Y")
+Label7OnCommand=shadowlength,1;zoom,0.75
+Label7OffCommand=
+
+Value1X=SCREEN_CENTER_X-24
+Value1Y=THEME:GetMetric("EditMenu","Row1Y")
+Value1OnCommand=shadowlength,1;zoom,0.75;maxwidth,SCREEN_CENTER_X*0.65
+Value1OffCommand=
+Value2X=SCREEN_CENTER_X+60
+Value2Y=THEME:GetMetric("EditMenu","Row2Y")
+Value2OnCommand=shadowlength,1;zoom,0.75;maxwidth,SCREEN_CENTER_X*0.65
+Value2OffCommand=
+Value3X=SCREEN_CENTER_X+60
+Value3Y=THEME:GetMetric("EditMenu","Row3Y")
+Value3OnCommand=shadowlength,1;zoom,0.75;maxwidth,SCREEN_CENTER_X*0.65
+Value3OffCommand=
+Value4X=SCREEN_CENTER_X
+Value4Y=THEME:GetMetric("EditMenu","Row4Y")
+Value4OnCommand=shadowlength,1;zoom,0.75;maxwidth,SCREEN_CENTER_X*0.65
+Value4OffCommand=
+Value5X=SCREEN_CENTER_X+60
+Value5Y=THEME:GetMetric("EditMenu","Row5Y")
+Value5OnCommand=shadowlength,1;zoom,0.75;maxwidth,SCREEN_CENTER_X*0.65
+Value5OffCommand=
+Value6X=SCREEN_CENTER_X
+Value6Y=THEME:GetMetric("EditMenu","Row6Y")
+Value6OnCommand=shadowlength,1;zoom,0.75;maxwidth,SCREEN_CENTER_X*0.65
+Value6OffCommand=
+Value7X=SCREEN_CENTER_X+60
+Value7Y=THEME:GetMetric("EditMenu","Row7Y")
+Value7OnCommand=shadowlength,1;zoom,0.75;maxwidth,SCREEN_CENTER_X*0.65
+Value7OffCommand=
+
+[TextBannerEditMode]
+Fallback="TextBanner"
+
+[ScreenEditMenu]
+Fallback="ScreenWithMenuElements"
+Class="ScreenEditMenu"
+NextScreen="ScreenEdit"
+PrevScreen="ScreenOptionsEdit"
+TimerSeconds=-1
+ShowStyleIcon=false
+HelpText=Screen.String("HelpTextOptionsAndBack")
+#
+EditMenuType="EditMenu"
+ExplanationX=SCREEN_CENTER_X
+ExplanationY=SCREEN_BOTTOM-56
+ExplanationOnCommand=wrapwidthpixels,SCREEN_WIDTH*0.9375/0.675;shadowlength,1;zoom,0.675
+NumStepsLoadedFromProfileX=SCREEN_RIGHT-180
+NumStepsLoadedFromProfileY=SCREEN_TOP+42
+NumStepsLoadedFromProfileOnCommand=visible,false
+
+# could use a redo but whatever
+[ScreenEdit]
+Class="ScreenEdit"
+Fallback="ScreenWithMenuElementsBlank"
+PrepareScreens=GetEditModeSubScreens()
+GroupedScreens=GetEditModeSubScreens()
+PersistScreens=GetEditModeSubScreens()
+
+EditMode="EditMode_Full"
+NextScreen="ScreenEditMenu"
+PrevScreen="ScreenEditMenu"
+ShowHelp=false
+AllowOperatorMenuButton=false
+ShowCreditDisplay=false
+ShowStyleIcon=false
+InvertScrollSpeedButtons=false
+TimerSeconds=-1
+EditModifiers=""
+EditHelpX=SCREEN_LEFT+4
+EditHelpY=SCREEN_TOP+16
+EditHelpOnCommand=halign,0;valign,0;zoom,0.5;shadowlength,1
+InfoX=SCREEN_RIGHT-128
+InfoY=SCREEN_TOP+16
+InfoOnCommand=halign,0;valign,0;zoom,0.5;shadowlength,1
+PlayRecordHelpX=SCREEN_LEFT+20
+PlayRecordHelpY=SCREEN_BOTTOM-20
+PlayRecordHelpOnCommand=halign,0;valign,0;shadowlength,1
+
+LoopOnChartEnd=true
+
+CurrentBeatFormat="%s:\n  %.3f\n"
+CurrentSecondFormat="%s:\n  %.3f\n"
+SnapToFormat="%s: %s\n"
+SelectionBeatBeginFormat="%s:\n  %.3f"
+SelectionBeatUnfinishedFormat=" ...\n"
+SelectionBeatEndFormat="-%.3f\n"
+DifficultyFormat="%s:\n  %s\n"
+RoutinePlayerFormat="%s: %d\n"
+DescriptionFormat="%s:\n  %s\n"
+StepAuthorFormat="%s:\n  %s\n"
+ChartNameFormat="%s:\n  %s\n"
+ChartStyleFormat="%s:\n  %s\n"
+MainTitleFormat="%s:\n  %s\n"
+SubtitleFormat="%s:\n  %s\n"
+TapNoteTypeFormat="%s: %s\n"
+SegmentTypeFormat="%s: %s\n"
+NumStepsFormat="%s: %d\n"
+NumJumpsFormat="%s: %d\n"
+NumHoldsFormat="%s: %d\n"
+NumMinesFormat="%s: %d\n"
+NumHandsFormat="%s: %d\n"
+NumRollsFormat="%s: %d\n"
+NumLiftsFormat="%s: %d\n"
+NumFakesFormat="%s: %d\n"
+NumStepsFormatTwoPlayer="%s: %d/%d\n"
+NumJumpsFormatTwoPlayer="%s: %d/%d\n"
+NumHoldsFormatTwoPlayer="%s: %d/%d\n"
+NumMinesFormatTwoPlayer="%s: %d/%d\n"
+NumHandsFormatTwoPlayer="%s: %d/%d\n"
+NumRollsFormatTwoPlayer="%s: %d/%d\n"
+NumLiftsFormatTwoPlayer="%s: %d/%d\n"
+NumFakesFormatTwoPlayer="%s: %d/%d\n"
+TimingModeFormat="%s:\n  %s\n"
+Beat0OffsetFormat="%s:\n  %.3f secs\n"
+PreviewStartFormat="%s:\n  %.3f secs\n"
+PreviewLengthFormat="%s:\n  %.3f secs\n"
+
+FadeInPreview=0
+FadeOutPreview=1.5
+
+[ScreenPracticeMenu]
+Fallback="ScreenEditMenu"
+Class="ScreenEditMenu"
+NextScreen="ScreenPractice"
+PrevScreen="ScreenOptionsEdit"
+EditMenuType="PracticeMenu"
+
+[PracticeMenu]
+Fallback="EditMenu"
+EditMode="EditMode_Practice"
+
+[ScreenPractice]
+Fallback="ScreenEdit"
+Class="ScreenEdit"
+NextScreen="ScreenOptionsEdit"
+PrevScreen="ScreenOptionsEdit"
+EditMode="EditMode_Practice"
+
+[ScreenEditCourseModsMenu]
+Fallback="ScreenEditMenu"
+Class="ScreenEditMenu"
+NextScreen="ScreenEditCourseMods"
+PrevScreen="ScreenOptionsEdit"
+EditMenuType="CourseModsMenu"
+
+[CourseModsMenu]
+Fallback="EditMenu"
+EditMode="EditMode_Full"
+
+[ScreenEditCourseMods]
+Fallback="ScreenEdit"
+Class="ScreenEdit"
+NextScreen="ScreenOptionsEdit"
+PrevScreen="ScreenOptionsEdit"
+EditMode="EditMode_CourseMods"
+
+[ScreenEditOptions]
+Fallback="ScreenOptions"
+Class="ScreenOptionsMaster"
+NextScreen="none"
+PrevScreen="none"
+CancelTransitionsOut=true
+PlayMusic=false
+TimerSeconds=-1
+ShowStyleIcon=false
+
+LineNames="1,2,3,4,5,6,R,7,8,9,10,Attacks,11,12,13,14,15,16"
+# uses legacy speed line
+Line1="lua,SpeedMods()"
+Line2="list,Accel"
+Line3="list,Effect"
+Line4="list,Appearance"
+Line5="list,Turn"
+Line6="list,Insert"
+LineR="list,Remove"
+Line7="list,Scroll"
+Line8="list,NoteSkins"
+Line9="list,Holds"
+Line10="list,Mines"
+LineAttacks="list,Attacks"
+Line11="list,Hide"
+Line12="list,Persp"
+Line13="list,Assist"
+Line14="list,Rate"
+Line15="list,AutoAdjust"
+Line16="conf,EditorShowBGChangesPlay"
+OutCancelCommand=
+
+[StepsDisplayEdit]
+Fallback="StepsDisplay"
+
+# oh, right, minimenus.
+[ScreenMiniMenuEditHelp]
+Fallback="ScreenMiniMenu"
+ShowFooter=false
+ColorDisabled=color("1,1,1,1")
+RowInitCommand=halign,0.5;valign,0.5;zoom,0.8;x,75;y,45;shadowlength,1
+OptionRowNormalMetricsGroup="OptionRowMiniMenuEditHelp"
+
+[ScreenMiniMenuAttackAtTimeMenu]
+Fallback="ScreenMiniMenu"
+ShowFooter=false
+
+[ScreenMiniMenuIndividualAttack]
+Fallback="ScreenMiniMenu"
+ShowFooter=false
+
+[ScreenMiniMenuKeysoundTrack]
+Fallback="ScreenMiniMenu"
+ShowFooter=false
+
+[OptionRowMiniMenuEditHelp]
+# Help menu ( Keys & Stuff )
+Fallback="OptionRowMiniMenu"
+
+TitleX=SCREEN_CENTER_X-312
+TitleOnCommand=halign,0;strokecolor,color("#222222FF");shadowlength,1;zoom,0.75
+
+RowPositionTransformFunction=function(self,offsetFromCenter,itemIndex,numItems) \
+	local indexOffset = itemIndex-(numItems-1)/2; \
+	self:y(SCREEN_CENTER_Y + indexOffset * 20); \
+end
+
+ItemsStartX=SCREEN_CENTER_X+260
+ItemsEndX=SCREEN_CENTER_X+260
+ItemsLongRowP1X=SCREEN_CENTER_X+260
+ItemsLongRowP2X=SCREEN_CENTER_X+260
+
+ItemOnCommand=x,SCREEN_CENTER_X+176;halign,0;strokecolor,color("#222222CC");shadowlength,1;zoom,0.75
+ColorDisabled=Color("Orange")
+
+[ScreenMiniMenuMainMenu]
+Fallback="ScreenMiniMenu"
+TitleX=SCREEN_CENTER_X-80
+
+[ScreenMiniMenuAreaMenu]
+Fallback="ScreenMiniMenu"
+
+[ScreenMiniMenuAlterMenu]
+Fallback="ScreenMiniMenu"
+
+[ScreenMiniMenuStepsInformation]
+Fallback="ScreenMiniMenu"
+
+[ScreenMiniMenuStepsData]
+Fallback="ScreenMiniMenu"
+
+[ScreenMiniMenuSongInformation]
+Fallback="ScreenMiniMenu"
+
+[ScreenMiniMenuTimingDataInformation]
+Fallback="ScreenMiniMenu"
+
+[ScreenMiniMenuBackgroundChange]
+Fallback="ScreenMiniMenu"
+
+[ScreenMiniMenuPreferences]
+Fallback="ScreenMiniMenu"
+
+[ScreenMiniMenuInsertTapAttack]
+Fallback="ScreenMiniMenu"
+
+[ScreenMiniMenuInsertCourseAttack]
+Fallback="ScreenMiniMenu"
+
+[ScreenMiniMenuCourseDisplay]
+Fallback="ScreenMiniMenu"
+
+[ScreenMiniMenuCourseOptions]
+Fallback="ScreenMiniMenu"
+
+# Export Packages
+[ScreenOptionsExportPackage]
+Class="ScreenOptionsExportPackage"
+Fallback="ScreenOptionsSimpleService"
+PrevScreen="ScreenOptionsEdit"
+NextScreen="ScreenOptionsEdit"
+
+[ScreenOptionsExportPackageSubPage]
+Class="ScreenOptionsExportPackageSubPage"
+Fallback="ScreenOptionsSimpleService"
+PrevScreen="ScreenOptionsExportPackage"
+NextScreen="ScreenOptionsExportPackage"
+
+#
+[ScreenOptionsManage]
+Fallback="ScreenOptionsSimpleService"
+TimerSeconds=-1
+AllowRepeatingChangeValueInput=true
+OptionRowNormalMetricsGroup="OptionRowManage"
+
+[OptionRowManage]
+Fallback="OptionRowService"
+TitleX=SCREEN_CENTER_X-150
+
+# Manage Courses
+[OptionRowCourseOverview]
+Fallback="OptionRowService"
+ItemsLongRowSharedX=SCREEN_CENTER_X-100
+ColorSelected=color("1,1,1,1")
+ColorNotSelected=color("0.9,0.9,0.9,1")
+ColorDisabled=color("0.5,0.5,0.5,1")
+
+[ScreenOptionsManageCourses]
+Class="ScreenOptionsManageCourses"
+Fallback="ScreenOptionsManage"
+PrevScreen="ScreenOptionsEdit"
+NextScreen="ScreenOptionsEditCourse"
+GroupedScreens="ScreenOptionsManageCourses,ScreenTextEntry,ScreenPrompt,ScreenOptionsEditCourseMods"
+PersistScreens="ScreenOptionsManageCourses,ScreenTextEntry,ScreenPrompt"
+PrepareScreens="ScreenTextEntry,ScreenPrompt"
+
+EditMode="EditMode_Full"
+CreateNewScreen="ScreenOptionsEditCourse"
+
+OptionRowNormalMetricsGroup="OptionRowCourse"
+
+[OptionRowCourse]
+Fallback="OptionRowService"
+TitleX=SCREEN_CENTER_X
+
+[ScreenOptionsEditCourse]
+Class="ScreenOptionsEditCourse"
+Fallback="ScreenOptionsSimpleService"
+PrevScreen="ScreenOptionsCourseOverview"
+NextScreen="ScreenOptionsCourseOverview"
+OptionRowNormalMetricsGroup="OptionRowEditCourse"
+
+[OptionRowEditCourse]
+Fallback="OptionRowService"
+TitleX=SCREEN_CENTER_X-200
+ItemsLongRowSharedX=SCREEN_CENTER_X
+
+[ScreenOptionsCourseOverview]
+Class="ScreenOptionsCourseOverview"
+Fallback="ScreenOptionsSimpleService"
+PrevScreen="ScreenOptionsManageCourses"
+NextScreen="ScreenOptionsManageCourses"
+# huh
+PlayScreen="ScreenGameplayEditCourse"
+EditScreen="ScreenOptionsEditCourse"
+OptionRowNormalMetricsGroup="OptionRowCourseOverview"
+
+# visual/interactive syncing
+[ScreenGameplaySyncMachine]
+Class="ScreenGameplaySyncMachine"
+Fallback="ScreenGameplay"
+PrevScreen="ScreenOptionsService"
+NextScreen="ScreenOptionsService"
+PlayerType="PlayerSyncMachine"
+
+#AllowCenter1Player=false
+SyncInfoOnCommand=x,PositionPerPlayer(GAMESTATE:GetMasterPlayerNumber(),SCREEN_CENTER_X+160,SCREEN_CENTER_X-160);y,SCREEN_CENTER_Y;zoom,0;decelerate,0.5;zoom,0.6
+
+# hidden by default:
+LifeP1OnCommand=visible,false
+LifeP2OnCommand=visible,false
+ScoreP1OnCommand=visible,false
+ScoreP2OnCommand=visible,false
+StageOnCommand=visible,false
+ScoreFrameOnCommand=visible,false
+LifeFrameOnCommand=visible,false
+DifficultyP1OnCommand=visible,false
+DifficultyP1ReverseOnCommand=visible,false
+DifficultyP2OnCommand=visible,false
+DifficultyP2ReverseOnCommand=visible,false
+SongOptionsOnCommand=visible,false
+
+[PlayerSyncMachine]
+Fallback="Player"
+ComboOnCommand=visible,false
+
+# SM5 helper screens
+[ScreenHowToInstallSongs]
+Class="ScreenSplash"
+Fallback="ScreenSplash"
+NextScreen=Branch.TitleMenu()
+PrevScreen=Branch.TitleMenu()
+ShowStyleIcon=false
+TimerSeconds=-1
+ShowHelp=false
+
+# stuff for legacy/deprecated online mode:
+[ScreenSMOnlineLogin]
+Class="ScreenSMOnlineLogin"
+Fallback="ScreenOptionsServiceChild"
+NextScreen=Branch.AfterSMOLogin
+PrevScreen=Branch.TitleMenu()
+ShowStyleIcon=false
+TimerSeconds=-1
+ShowHelp=false
+
+[ScreenNetSelectBase]
+Class="ScreenNetSelectBase"
+Fallback="ScreenWithMenuElements"
+
+ChatInputBoxX=SCREEN_CENTER_X*0.5
+ChatInputBoxY=SCREEN_CENTER_Y+112
+ChatInputBoxOnCommand=bounceend,0.5;diffusealpha,1;
+ChatInputBoxOffCommand=bouncebegin,0.5;zoomy,0
+ChatInputBoxWidth=SCREEN_CENTER_X*0.9
+ChatInputBoxHeight=64
+#--#
+ChatInputX=(SCREEN_CENTER_X*0.5)*0.125
+ChatInputY=SCREEN_CENTER_Y+90
+ChatTextInputWidth=SCREEN_CENTER_X*1.8
+ChatInputOnCommand=halign,0;valign,0;zoom,0.5;diffusealpha,0;linear,0.55;diffusealpha,1
+ChatInputOffCommand=diffusealpha,1;linear,0.5;diffusealpha,0
+#====#
+ChatOutputBoxX=SCREEN_CENTER_X*0.5
+ChatOutputBoxY=SCREEN_CENTER_Y-36
+ChatOutputBoxOnCommand=bounceend,0.5;diffusealpha,1;
+ChatOutputBoxOffCommand=bouncebegin,0.5;zoomy,0
+ChatOutputBoxWidth=SCREEN_CENTER_X*0.9
+ChatOutputBoxHeight=SCREEN_CENTER_Y*0.875
+#--#
+ChatOutputX=(SCREEN_CENTER_X*0.5)*0.125
+ChatOutputY=SCREEN_CENTER_Y+64
+ChatTextOutputWidth=SCREEN_CENTER_X*1.8
+ChatOutputLines=14
+ChatOutputOnCommand=halign,0;valign,1;zoom,0.5;diffusealpha,0;linear,0.55;diffusealpha,1
+ChatOutputOffCommand=diffusealpha,1;linear,0.5;diffusealpha,0
+
+UsersX=SCREEN_CENTER_X-265
+UsersY=SCREEN_CENTER_Y+172
+UserSpacingX=64
+UserLine2Y=16
+UsersOnCommand=draworder,2;zoom,1
+UsersOffCommand=linear,0.5;zoom,0
+Users0Command=draworder,2;diffuse,color("1.0,0.4,0.4,1.0")
+Users1Command=draworder,2;diffuse,color("1.0,1.0,1.0,1.0")
+Users2Command=draworder,2;diffuse,color("0.5,0.5,1.0,1.0")
+Users3Command=draworder,2;diffuse,color("0.5,1.0,0.5,1.0")
+Users4Command=draworder,2;diffuse,color("1.0,0.5,0.5,1.0")
+
+[ScreenNetSelectMusic]
+Class="ScreenNetSelectMusic"
+Fallback="ScreenNetSelectBase"
+PrevScreen="ScreenNetRoom"
+NextScreen="ScreenStageInformation"
+NoSongsScreen=Branch.TitleMenu()
+RoomSelectScreen="ScreenNetRoom"
+PlayerOptionsScreen="ScreenPlayerOptions"
+Codes="CodeDetectorOnline"
+
+ShowStyleIcon=false
+TimerSeconds=
+TimerStealth=true
+
+SampleMusicPreviewMode='SampleMusicPreviewMode_Normal'
+
+MusicWheelType="OnlineMusicWheel"
+MusicWheelX=SCREEN_CENTER_X+160
+MusicWheelY=SCREEN_CENTER_Y
+MusicWheelOnCommand=
+MusicWheelOffCommand=
+
+# todo: move these to Lua bganim
+BPMDisplayX=SCREEN_CENTER_X-160-90+2
+BPMDisplayY=SCREEN_TOP+160+(36/2)+8
+BPMDisplayOnCommand=
+BPMDisplayOffCommand=
+
+# todo: move these to Lua bganim
+ModIconsP1X=SCREEN_CENTER_X+144
+ModIconsP1Y=SCREEN_CENTER_Y-165
+ModIconsP1OnCommand=zoomy,0;linear,0.5;zoomy,1
+ModIconsP1OffCommand=linear,0.5;zoomy,0
+ModIconsP2X=SCREEN_CENTER_X+144
+ModIconsP2Y=SCREEN_CENTER_Y-164
+ModIconsP2OnCommand=zoomy,0;linear,0.5;zoomy,1
+ModIconsP2OffCommand=linear,0.5;zoomy,0
+
+# are these used?
+optionsX=SCREEN_CENTER_X-240
+optionsY=SCREEN_CENTER_Y-170
+optionsOnCommand=zoomx,0.0;zoomy,0.0;linear,0.5;zoomy,0.7;zoomx,0.7
+optionsOffCommand=linear,0.5;zoomx,0.0;zoomy,0.0
+
+# uses StepsDisplayNet
+StepsDisplayP1X=SCREEN_CENTER_X-223
+StepsDisplayP1Y=SCREEN_CENTER_Y+150
+StepsDisplayP1OnCommand=halign,1;zoomx,0.0;zoomy,0.0;linear,0.5;zoomy,1.0;zoomx,1.0
+StepsDisplayP1OffCommand=linear,0.5;zoomx,0.0;zoomy,0.0
+
+StepsDisplayP2X=SCREEN_CENTER_X-110
+StepsDisplayP2Y=SCREEN_CENTER_Y+150
+StepsDisplayP2OnCommand=halign,1;zoomx,0.0;zoomy,0.0;linear,0.5;zoomy,1.0;zoomx,1.0
+StepsDisplayP2OffCommand=linear,0.5;zoomx,0.0;zoomy,0.0
+
+[StepsDisplayNet]
+Fallback="StepsDisplay"
+
+[ScreenNetRoom]
+Class="ScreenNetRoom"
+Fallback="ScreenNetSelectBase"
+PrevScreen=Branch.TitleMenu()
+# XXX
+NextScreen="ScreenGameplayBranch"
+MusicSelectScreen="ScreenNetSelectMusic"
+
+RoomWheelX=SCREEN_CENTER_X+160
+RoomWheelY=SCREEN_CENTER_Y
+RoomWheelOnCommand=
+RoomWheelOffCommand=
+
+RoomInfoDisplayX=SCREEN_CENTER_X-160
+RoomInfoDisplayY=SCREEN_CENTER_Y
+
+OpenRoomColor=color("1.0,1.0,1.0,1.0")
+PasswdRoomColor=color("1.0,0.5,0.5,1.0")
+InGameRoomColor=color("1.0,0.1,0.1,1.0")
+
+[RoomWheel]
+Fallback="MusicWheel"
+RoomWheelItemStartOnCommand=
+RoomWheelItemFinishOnCommand=
+CreateRoomColor=color("0.0,0.9,0.25,1.0")
+ScrollBarOnCommand=visible,false
+
+[RoomWheelItem]
+TextX=-110
+TextY=-8
+TextOnCommand=halign,0;zoom,0.6;maxwidth,200;strokecolor,color("#000000FF");
+
+DescriptionX=-100
+DescriptionY=6
+DescriptionOnCommand=halign,0;zoom,0.4;maxwidth,400;strokecolor,color("#000000FF")
+
+[RoomInfoDisplay]
+RoomInfoDisplayOnCommand=diffuse,color("1.0,1.0,1.0,1");x,SCREEN_WIDTH+130;y,250;bounceend,0.5;x,SCREEN_WIDTH-160
+RoomInfoDisplayOffCommand=x,SCREEN_WIDTH-160;y,250;bouncebegin,0.5;x,SCREEN_WIDTH+130
+DeployDelay=1.5
+RetractDelay=5
+RoomTitleOnCommand=x,-120;y,-140;zoom,0.75
+RoomDescOnCommand=x,-120;y,-129;zoom,0.75
+LastRoundOnCommand=x,-120;y,-107;zoom,0.75
+SongTitleOnCommand=x,-110;y,-96;zoom,0.75
+SongSubTitleOnCommand=x,-110;y,-85;zoom,0.75
+SongArtistOnCommand=x,-110;y,-74;zoom,0.75
+PlayersOnCommand=x,-120;y,-52;zoom,0.75
+PlayerListElementX=-110
+PlayerListElementY=-41
+PlayerListElementOffsetX=0
+PlayerListElementOffsetY=11
+PlayerListElementOnCommand=zoom,0.75
+
+[ScreenSMOnlineSelectMusic]
+PrevScreen="ScreenNetRoom"
+Class="ScreenNetSelectMusic"
+RoomSelectScreen="ScreenNetRoom"
+Fallback="ScreenNetSelectMusic"
+
+[ScreenNetEvaluation]
+Class="ScreenNetEvaluation"
+Fallback="ScreenEvaluationNormal"
+NextScreen="ScreenProfileSave"
+
+# these three commands are deprecated:
+UsersBGWidth=SCREEN_CENTER_X*0.6
+UsersBGHeight=SCREEN_HEIGHT*0.6
+UsersBGCommand=diffuse,color("0,0,0,0.25")
+
+UsersBGOnCommand=finishtweening;zoom,1.25
+UsersBGOffCommand=finishtweening;zoom,1
+
+User1X=SCREEN_CENTER_X*0.35
+User1Y=SCREEN_CENTER_Y
+User1OnCommand=
+User1OffCommand=
+#--#
+UsersBG1X=SCREEN_CENTER_X*0.35
+UsersBG1Y=SCREEN_CENTER_Y*0.975
+UsersBG1OnCommand=
+UsersBG1OffCommand=
+#====#
+User2X=SCREEN_CENTER_X*1.65
+User2Y=SCREEN_CENTER_Y
+User2OnCommand=
+User2OffCommand=
+#--#
+UsersBG2X=SCREEN_CENTER_X*1.65
+UsersBG2Y=SCREEN_CENTER_Y*0.975
+UsersBG2OnCommand=
+UsersBG2OffCommand=
+
+UserDeSelCommand=finishtweening;linear,0.1;zoom,0.75
+UserSelCommand=finishtweening;linear,0.1;zoom,1.0
+
+UserTier02OrBetterCommand=rainbowscroll,true
+
+UserDX=0
+UserDY=24
+UserOnCommand=
+UserOffCommand=
+
+#
+[ModIcon]
+TextX=0
+TextY=0
+TextOnCommand=maxwidth,40;uppercase,true;shadowlength,0;diffuse,color("#f6ff00")
+CropTextToWidth=50
+StopWords="1X,default,Overhead,Off"
+
+[ModIconSelectMusic]
+Fallback="ModIcon"
+TextY=-1
+TextOnCommand=maxwidth,38;uppercase,true;shadowlength,0
+
+[ModIconRow]
+NumModIcons=6
+ModIconOnCommand=
+SpacingX=0
+SpacingY=52
+ModIconMetricsGroup="ModIcon"
+
+[ModIconRowSelectMusic]
+Fallback="ModIconRow"
+SpacingX=46
+SpacingY=0
+ModIconMetricsGroup="ModIconSelectMusic"
+
+#
+[GraphDisplay]
+BodyWidth=140
+BodyHeight=38
+
+[ComboGraph]
+BodyWidth=140
+
+# Arcade #################################
+[ScreenLogo]
+Fallback="ScreenAttract"
+PrevScreen=Branch.Init()
+NextScreen="ScreenHowToPlay"
+StartScreen=Branch.TitleMenu()
+TimerSeconds=5
+ForceTimer=true
+TimerMetricsGroup="MenuTimerNoSound"
+TimerOnCommand=visible,false
+
+[ScreenHowToPlay]
+Class="ScreenHowToPlay"
+Fallback="ScreenAttract"
+PrevScreen="ScreenLogo"
+NextScreen="ScreenDemonstration"
+StartScreen=Branch.TitleMenu()
+TimerSeconds=25
+TimerStealth=true
+SecondsToShow=25
+ForceTimer=true
+ResetGameState=false
+PlayMusic=true
+#
+UseLifeMeterBar=true
+LifeMeterBarX=SCREEN_CENTER_X+160
+LifeMeterBarY=SCREEN_TOP+40
+LifeMeterBarOnCommand=addy,-60;sleep,2.4;linear,0.2;addy,60
+#
+UseCharacter=true
+CharacterName=""
+CharacterX=SCREEN_CENTER_X-200
+CharacterY=SCREEN_CENTER_Y+160
+CharacterOnCommand=zoom,20;addy,-SCREEN_WIDTH;sleep,3.0;decelerate,0.4;addy,SCREEN_WIDTH
+#
+UsePad=true
+PadX=SCREEN_CENTER_X-280
+PadY=SCREEN_CENTER_Y+70
+PadOnCommand=zoom,15;rotationy,180;sleep,2.0;linear,1.0;rotationy,360;zoom,20;addx,190;addy,80
+#
+UsePlayer=true
+PlayerX=SCREEN_CENTER_X+160
+PlayerY=SCREEN_CENTER_Y
+PlayerOnCommand=
+#
+SongBPM=100
+NumW2s=4
+NumMisses=6
+
+[ScreenDemonstration]
+Fallback="ScreenGameplay"
+Class="ScreenDemonstration"
+NextScreen=Branch.NoiseTrigger()
+StartScreen=Branch.TitleMenu()
+PlayMusic=false
+SecondsToShow=60
+
+LightsMode="LightsMode_Demonstration"
+DifficultiesToShow="easy,medium"
+ShowCourseModifiersProbability=0
+AllowAdvancedModifiers=false
+AllowStyleTypes="TwoPlayersTwoSides"
+
+MinSecondsToStep=0
+MinSecondsToMusic=0
+
+[ScreenNoise]
+Fallback="ScreenAttract"
+Class="ScreenAttract"
+NextScreen="ScreenInit"
+PrevScreen="ScreenInit"
+TimerSeconds=3600
+TimerStealth=true
+ShowCreditDisplay=false
+
+[ScreenTitleJoin]
+Fallback="ScreenTitleMenu"
+ChoiceNames="GameStart"
+
+# ScrollerOnCommand=visible,false
+IdleCommentSeconds=-1
+IdleTimeoutSeconds=-1
+IdleTimeoutScreen=Branch.AfterInit()
+
+# Jukebox ###################
+[ScreenJukeboxMenu]
+Class="ScreenOptionsMaster"
+Fallback="ScreenPlayerOptions"
+NextScreen="ScreenJukebox"
+PrevScreen="ScreenTitleMenu"
+TimerSeconds=-1
+ShowStyleIcon=false
+
+InputMode="together"
+ForceAllPlayers=true
+
+LineNames="1,2,3,4"
+Line1="list,Styles"
+Line2="list,Groups"
+Line3="list,Difficulties"
+Line4="lua,OptionsRandomJukebox()"
+
+[ScreenJukebox]
+Class="ScreenJukebox"
+Fallback="ScreenGameplay"
+NextScreen="ScreenJukebox"
+StartScreen="ScreenTitleMenu"
+LightsMode="LightsMode_Demonstration"
+ShowCourseModifiersProbability=0
+AllowAdvancedModifiers=true
+
+[ScreenCredits]
+Class="ScreenSplash"
+Fallback="ScreenSplash"
+AllowStartToSkip=true
+NextScreen=Branch.TitleMenu()
+PrevScreen=Branch.TitleMenu()
+
+TimerStealth=true
+ForceTimer=true
+TimerMetricsGroup="MenuTimerNoSound"
+TimerOnCommand=visible,false
+
+[PaneDisplay]
+NullCountString=""
