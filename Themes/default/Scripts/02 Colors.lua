@@ -1,7 +1,7 @@
 ModeIconColors = {
 	Normal		= color("#FFEE00"), -- yellow
-	Rave		= color("#4400CC"), -- purple
-	Nonstop		= color("#00CCFF"), -- cyan
-	Oni			= color("#CC00FF"), -- redder purple
-	Endless		= color("#444488"), -- steel
+	Rave		= color("#db93ff"), -- violet
+	Nonstop		= color("#5ca9ff"), -- blue
+	Oni			= color("#00f1e2"), -- cyan
+	Endless		= color("#b4c3d2"), -- steel
 }

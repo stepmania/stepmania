@@ -10,7 +10,7 @@ t[#t+1] = Def.ActorFrame {
 	Def.ActorFrame {
 		InitCommand=cmd(hide_if,hideFancyElements;);
 		LoadActor("_checkerboard") .. {
-			InitCommand=cmd(rotationy,0;rotationz,0;rotationx,-90/4*3;zoomto,SCREEN_WIDTH*2,SCREEN_HEIGHT*2;customtexturerect,0,0,SCREEN_WIDTH*4/256,SCREEN_HEIGHT*4/256);
+			InitCommand=cmd(rotationy,0;rotationz,0;rotationx,-90/4*3.5;zoomto,SCREEN_WIDTH*2,SCREEN_HEIGHT*2;customtexturerect,0,0,SCREEN_WIDTH*4/256,SCREEN_HEIGHT*4/256);
 			OnCommand=cmd(texcoordvelocity,0,0.5;diffuse,color("#ffd400");diffusealpha,0.5;fadetop,1);
 		};
 	};
@@ -22,11 +22,7 @@ t[#t+1] = Def.ActorFrame {
 	}; --]]
 
 	Def.Quad {
-		InitCommand=cmd(vertalign,top;scaletoclipped,SCREEN_WIDTH+1,80;y,-SCREEN_CENTER_Y+20;fadebottom,0.75);
-		OnCommand=cmd(diffuse,color("#FFCB05"));
-	};
-	Def.Quad {
-		InitCommand=cmd(vertalign,bottom;scaletoclipped,SCREEN_WIDTH+1,80;y,SCREEN_CENTER_Y-20;fadetop,0.75);
+		InitCommand=cmd(vertalign,bottom;scaletoclipped,SCREEN_WIDTH+1,96;y,SCREEN_CENTER_Y-32;fadetop,0.75);
 		OnCommand=cmd(diffuse,color("#FFCB05"));
 	};
 --[[ 	LoadActor("_pattern") .. {
@@ -39,9 +35,6 @@ t[#t+1] = Def.ActorFrame {
 		effectcolor2,Color("White");effectcolor1,Color("Black");fadebottom,0.25;fadetop,0.25;croptop,48/480;cropbottom,48/480;blend,Blend.Add;
 		diffusealpha,0.155);
 	}; --]]		
-	LoadActor("_bg top") .. {
-		InitCommand=cmd(scaletoclipped,SCREEN_WIDTH+1,SCREEN_HEIGHT);
-	};
 };
 
 return t;
