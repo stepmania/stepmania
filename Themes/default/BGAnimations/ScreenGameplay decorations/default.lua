@@ -236,6 +236,8 @@ t[#t+1] = StandardDecorationFromFileOptional("StageDisplay","StageDisplay");
 t[#t+1] = StandardDecorationFromFileOptional("SongTitle","SongTitle");
 
 do
+	local w1PrefValue = PREFSMAN:GetPreference("AllowW1")
+	local showingW1 = w1PrefValue == 'AllowW1_Everywhere' or (w1PrefValue=='AllowW1_CoursesOnly' and GAMESTATE:IsCourseMode())
 	local pointLookup={
 		['TapNoteScore_W1']=5,
 		['TapNoteScore_W2']=4,
@@ -252,6 +254,10 @@ do
 	setmetatable(pointLookup,{__index=0})
 	t[#t+1] = {Class="Actor",
 		JudgmentMessageCommand=function(self,params)
+			if not showingW1 then
+				local withinW1Windows = math.abs(params.Offset)<=PREFSMAN:GetPreference("TimingWindowW1")
+				if withinW1Windows then params.TapNoteScore='TapNoteScore_W1' end
+			end
 			local PSS = STATSMAN:GetCurStageStats():GetPlayerStageStats(params.Player)
 			local holdNoteInfo = params.HoldNoteScore == nil and nil or params.HoldNoteScore == 'HoldNoteScore_Held' and true or false
 			PSS:SetScore(PSS:GetScore()+pointLookup[params.TapNoteScore]+(holdNoteInfo and 5 or 0))
