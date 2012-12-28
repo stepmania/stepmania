@@ -117,8 +117,8 @@ RString DSound::Init()
 
 		DSCAPS Caps;
 		Caps.dwSize = sizeof(Caps);
-		HRESULT hr;
-		if( FAILED(hr = m_pDS->GetCaps(&Caps)) )
+		HRESULT hrLocal;
+		if( FAILED(hrLocal = m_pDS->GetCaps(&Caps)) )
 		{
 			LOG->Warn( hr_ssprintf(hr, "m_pDS->GetCaps failed") );
 		}

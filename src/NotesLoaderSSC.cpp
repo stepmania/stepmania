@@ -857,7 +857,7 @@ bool SSCLoader::LoadEditFromMsd(const MsdFile &msd,
 		
 		else if( sValueName=="SONG" )
 		{
-			if( pSong )
+			if( pSong != NULL )
 			{
 				LOG->UserLog( "Edit file", sEditFilePath, "has more than one #SONG tag." );
 				return false;

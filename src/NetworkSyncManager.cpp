@@ -908,7 +908,7 @@ unsigned long NetworkSyncManager::GetCurrentSMBuild( LoadingWindow* ld )
 				cHeader[iHeaderLength] = '\0';	// needed to make it a valid C String
 
 				RString sHTTPHeader( cHeader );
-				SAFE_DELETE( cHeader );
+				SAFE_DELETE_ARRAY( cHeader );
 				Trim( sHTTPHeader );
 				//LOG->Trace( sHTTPHeader.c_str() );
 
@@ -941,7 +941,7 @@ unsigned long NetworkSyncManager::GetCurrentSMBuild( LoadingWindow* ld )
 				} // if( svResponse[0].find("200") != RString::npos )
 			} // if( cBodyStart != NULL )
 		} // if( iBytes )
-		SAFE_DELETE( cBuffer );
+		SAFE_DELETE_ARRAY( cBuffer );
 	} // if( socket->connect(sHost, uPort) )
 	
 	socket->close();

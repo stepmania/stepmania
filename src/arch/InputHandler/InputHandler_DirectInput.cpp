@@ -551,34 +551,34 @@ void InputHandler_DInput::UpdateBuffered( DIDevice &device, const RageTimer &tm 
 									//l = SCALE( int(evtbuf[i].dwData), -WHEEL_DELTA, WHEEL_DELTA, 1.0f, -1.0f );
 									if( l > 0 )
 									{
-										DeviceInput diUp = DeviceInput(dev, up, 1.0f, tm);
-										DeviceInput diDown = DeviceInput(dev, down, 0.0f, tm);
+										DeviceInput diLocalUp = DeviceInput(dev, up, 1.0f, tm);
+										DeviceInput diLocalDown = DeviceInput(dev, down, 0.0f, tm);
 										while( fWheelDelta >= WHEEL_DELTA )
 										{
-											ButtonPressed( diUp );
-											ButtonPressed( diDown );
+											ButtonPressed( diLocalUp );
+											ButtonPressed( diLocalDown );
 											INPUTFILTER->UpdateMouseWheel(fWheelDelta);
 											fWheelDelta -= WHEEL_DELTA;
 										}
 									}
 									else if( l < 0 )
 									{
-										DeviceInput diDown = DeviceInput(dev, down, 1.0f, tm);
-										DeviceInput diUp = DeviceInput(dev, up, 0.0f, tm);
+										DeviceInput diLocalDown = DeviceInput(dev, down, 1.0f, tm);
+										DeviceInput diLocalUp = DeviceInput(dev, up, 0.0f, tm);
 										while( fWheelDelta <= -WHEEL_DELTA )
 										{
-											ButtonPressed( diDown );
-											ButtonPressed( diUp );
+											ButtonPressed( diLocalDown );
+											ButtonPressed( diLocalUp );
 											INPUTFILTER->UpdateMouseWheel(fWheelDelta);
 											fWheelDelta += WHEEL_DELTA;
 										}
 									}
 									else
 									{
-										DeviceInput diUp = DeviceInput(dev, up, 0.0f, tm);
-										ButtonPressed( diUp );
-										DeviceInput diDown = DeviceInput(dev, down, 0.0f, tm);
-										ButtonPressed( diDown );
+										DeviceInput diLocalUp = DeviceInput(dev, up, 0.0f, tm);
+										ButtonPressed( diLocalUp );
+										DeviceInput diLocalDown = DeviceInput(dev, down, 0.0f, tm);
+										ButtonPressed( diLocalDown );
 									}
 								}
 								break;

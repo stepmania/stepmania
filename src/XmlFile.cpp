@@ -100,7 +100,7 @@ XNode *XNode::GetChild( const RString &sName )
 {
 	FOREACH_Child( this, it )
 	{
-		if( it->GetName() == sName )
+		if( it != NULL && it->GetName() == sName )
 			return it;
 	}
 	return NULL;
@@ -122,7 +122,7 @@ const XNode *XNode::GetChild( const RString &sName ) const
 {
 	FOREACH_CONST_Child( this, it )
 	{
-		if( it->GetName() == sName )
+		if( it != NULL && it->GetName() == sName )
 			return it;
 	}
 	return NULL;

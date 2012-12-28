@@ -773,11 +773,11 @@ BOOL CrashDialog::HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam )
 				XNode xml;
 				if( sError.empty() )
 				{
-					RString sError;
-					XmlFileUtil::Load( &xml, sResult, sError );
-					if( !sError.empty() )
+					RString sLocalError;
+					XmlFileUtil::Load( &xml, sResult, sLocalError );
+					if( !sLocalError.empty() )
 					{
-						sError = ssprintf( "Error parsing response: %s", sError.c_str() );
+						sLocalError = ssprintf( "Error parsing response: %s", sLocalError.c_str() );
 						xml.Clear();
 					}
 				}

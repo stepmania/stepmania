@@ -573,7 +573,7 @@ static RString averr_ssprintf( int err, const char *fmt, ... )
 	char* errbuf = new char[errbuf_size];
 	avcodec::av_strerror(err, errbuf, errbuf_size);
 	RString Error = ssprintf("%i: %s", err, errbuf);
-	delete errbuf;
+	delete [] errbuf;
 
 	return s + " (" + Error + ")";
 }
