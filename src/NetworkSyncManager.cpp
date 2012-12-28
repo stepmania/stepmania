@@ -860,7 +860,7 @@ unsigned long NetworkSyncManager::GetCurrentSMBuild( LoadingWindow* ld )
 	const RString sUserAgent = PRODUCT_ID;
 	const RString sReferer = "http://aldo.mx/stepmania/";
 	
-	if( ld )
+	if( ld != NULL )
 	{
 		ld->SetIndeterminate( true );
 		ld->SetText("Checking for updates...");
@@ -895,7 +895,7 @@ unsigned long NetworkSyncManager::GetCurrentSMBuild( LoadingWindow* ld )
 		char* cBuffer = new char[NETMAXBUFFERSIZE];
 		// Reading the first NETMAXBUFFERSIZE bytes (usually 1024), should be enough to get the HTTP Header only
 		int iBytes = socket->pReadData(cBuffer);
-		if( iBytes )
+		if( iBytes != 0 )
 		{
 			// \r\n\r\n = Separator from HTTP Header and Body
 			char* cBodyStart = strstr(cBuffer, "\r\n\r\n");
@@ -947,7 +947,7 @@ unsigned long NetworkSyncManager::GetCurrentSMBuild( LoadingWindow* ld )
 	socket->close();
 	SAFE_DELETE( socket );
 
-	if( ld )
+	if( ld != NULL )
 	{
 		ld->SetIndeterminate(false);
 		ld->SetTotalWork(100);
