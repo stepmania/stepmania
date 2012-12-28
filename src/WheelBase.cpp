@@ -532,7 +532,11 @@ public:
 
 		WheelItemBase *pItem = p->GetWheelItem( iItem );
 		if( pItem == NULL )
+		{
 			luaL_error( L, "%i out of bounds", iItem );
+			// the game would normally crash at the line above, but keep the compilers happy.
+			return 0;
+		}
 		pItem->PushSelf( L );
 
 		return 1;
