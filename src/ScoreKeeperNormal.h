@@ -16,7 +16,7 @@ AutoScreenMessage( SM_PlayToasty );
 /** @brief The default ScoreKeeper implementation. */
 class ScoreKeeperNormal: public ScoreKeeper
 {
-	void AddScoreInternal( TapNoteScore score );
+	void AddScoreInternal( TapNoteScore );
 
 	int	m_iScoreRemainder;
 	int	m_iMaxPossiblePoints;

@@ -204,34 +204,9 @@ void ScoreKeeperNormal::HandleTapScoreNone()
 	// TODO: networking code
 }
 
-void ScoreKeeperNormal::AddScoreInternal( TapNoteScore score )
+void ScoreKeeperNormal::AddScoreInternal( TapNoteScore )
 {
-	int &iScore = m_pPlayerStageStats->m_iScore;
-	int &iCurMaxScore = m_pPlayerStageStats->m_iCurMaxScore;
-
-	int p = 0;
-
-	switch( score )
-	{
-	case TNS_W1:	p = 5;	break;
-	case TNS_W2:	p = 4;	break;
-	case TNS_W3:	p = 3;	break;
-	case TNS_W4:	p = 2;	break;
-	case TNS_CheckpointHit:
-	case TNS_W5:	p = 1;	break;
-	case TNS_HitMine:	p = -1;	break;
-	default:		p = 0;	break;
-	}
-
-	iScore += p;
-	iCurMaxScore += 5;
-
-	if( iScore < 0 )
-		iScore = 0;
-
-	ASSERT_M( iScore >= 0, "iScore < 0" );
-
-	// LOG->Trace( "score: %i", iScore );
+	//dummied out for proper custom scoring support
 }
 
 void ScoreKeeperNormal::HandleTapScore( const TapNote &tn )
