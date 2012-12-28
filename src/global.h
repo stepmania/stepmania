@@ -82,17 +82,15 @@ using namespace std;
 #undef ASSERT
 #endif
 
-/* Keep this section synchronized with RageThreads.h until refactored */
 /** @brief RageThreads defines (don't pull in all of RageThreads.h here) */
 namespace Checkpoints
 {
 	void SetCheckpoint( const char *file, int line, const char *message );
 }
-/** @brief Set a checkpoint with a specified message. */
-#define _CHECKPOINT_M(f, l, m) (Checkpoints::SetCheckpoint(f, l, m))
-#define CHECKPOINT_M(m) (_CHECKPOINT_M(__FILE__, __LINE__, m))
 /** @brief Set a checkpoint with no message. */
-#define CHECKPOINT (_CHECKPOINT_M(__FILE__, __LINE__, NULL))
+#define CHECKPOINT (Checkpoints::SetCheckpoint(__FILE__, __LINE__, NULL))
+/** @brief Set a checkpoint with a specified message. */
+#define CHECKPOINT_M(m) (Checkpoints::SetCheckpoint(__FILE__, __LINE__, m))
 
 
 /**
@@ -129,8 +127,8 @@ void NORETURN sm_crash( const char *reason = "Internal error" );
  * such as DSound init failure.) */
 #define FAIL_M(MESSAGE) do { CHECKPOINT_M(MESSAGE); sm_crash(MESSAGE); } while(0)
 #define ASSERT_M(COND, MESSAGE) do { if(unlikely(!(COND))) { FAIL_M(MESSAGE); } } while(0)
-#define FAIL_M(m) (_FAIL_M(__FILE__, __LINE__, m))
-#define ASSERT_M(c, m) (_ASSERT_M(__FILE__, __LINE__, c, m))
+
+
 #if !defined(CO_EXIST_WITH_MFC)
 #define ASSERT(COND) ASSERT_M((COND), "Assertion '" #COND "' failed")
 #endif
