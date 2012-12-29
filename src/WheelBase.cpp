@@ -526,6 +526,7 @@ int WheelBase::FirstVisibleIndex()
 class LunaWheelBase: public Luna<WheelBase>
 {
 public:
+	static int Move( T* p, lua_State *L ){ p->Move( IArg(1) ); return 0; }
 	static int GetWheelItem( T* p, lua_State *L )
 	{
 		int iItem = IArg(1);
@@ -553,6 +554,7 @@ public:
 
 	LunaWheelBase()
 	{
+		ADD_METHOD( Move );
 		ADD_METHOD( GetWheelItem );
 		ADD_METHOD( IsSettled );
 		ADD_METHOD( IsLocked );
