@@ -833,10 +833,10 @@ void ScreenSelectMaster::MenuStart( const InputEventPlus &input )
 	if( (bool)SHARED_SELECTION || GetCurrentPage() == PAGE_2 )
 	{
 		// Only one player has to pick. Choose this for all the other players, too.
-		FOREACH_PlayerNumber( p )
+		FOREACH_EnabledPlayer( p )
 		{
 			ASSERT( !m_bChosen[p] );
-			fSecs = max( fSecs, DoMenuStart(p) );	// no harm in calling this for an unjoined player
+			fSecs = max( fSecs, DoMenuStart(p) );
 		}
 	}
 	else
