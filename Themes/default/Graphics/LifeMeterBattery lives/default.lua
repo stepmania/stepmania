@@ -2,52 +2,46 @@ local player = Var "Player"
 local blinkTime = 1.2
 local barWidth = 256;
 local barHeight = 32;
-local c
-
-local function CreateLives(numLives)
-	local t = {};
-	for i=1,numLives do
-		t[#t+1] = Def.Quad {
-			Name=i;
-			OnCommand=cmd(zoom,1024);
-		};
-	end
-	return t
-end
+local c;
+local LifeMeter, MaxLives, CurLives;
+local LifeRatio;
 
 local t = Def.ActorFrame {
-	Def.ActorFrame {
-		Name="LifeContainer";
+	Def.Quad {
+		Name="LifeFill";
+		InitCommand=cmd(zoomto,barWidth,barHeight);
+		--OnCommand=cmd(diffuseramp;effectcolor2,PlayerColor(player);effectcolor1,ColorMidTone(PlayerColor(player));
+		--	effectclock,'beatnooffset';effectperiod,1);
 	};
 	InitCommand=function(self)
-		c = self:GetChildren();
+		--c = self:GetChildren();
 	end;
 
 	BeginCommand=function(self,param)
-		MESSAGEMAN:Broadcast("SystemMessage",{ Message = "TEST", NoAnimate = true});
-		local c = self:GetChildren();
-		local screen = SCREENMAN:GetTopScreen();
-		local lifemeter = screen:GetLifeMeter(player);
-		MESSAGEMAN:Broadcast("SystemMessage",{ Message = "TEST2", NoAnimate = true});
-		local TotalLives = lifemeter:GetTotalLives();	
-		local CurLives = lifemeter:GetLivesLeft();
-		MESSAGEMAN:Broadcast("SystemMessage",{ Message = "ASSIGN CONTAINERS", NoAnimate = true});
-		c.LifeContainer[#c.LifeContainer+1] = CreateLives(TotalLives);
-		MESSAGEMAN:Broadcast("SystemMessage",{ Message = "LIVES = " .. TotalLives .. " | CUR = " .. CurLives .. " | ACTORS: " .. self:GetNumChildren(), NoAnimate = true});
+		local screen = SCREENMAN:GetTopScreen() or nil;
+		if screen ~= nil then 
+			LifeMeter = screen:GetLifeMeter(player);
+			MaxLives = LifeMeter:GetTotalLives();	
+			CurLives = LifeMeter:GetLivesLeft();
+			MESSAGEMAN:Broadcast("SystemMessage",
+				{ Message = "(" .. MaxLives .. ", " .. CurLives ")", NoAnimate = true });
+		else
+			MESSAGEMAN:Broadcast("SystemMessage", { Message = "WE DONE FUCKED UP"});
+		end
 	end;
 	LifeChangedMessageCommand=function(self,param)
 		if param.Player == player then
-			return
+			LifeRatio = CurLives / MaxLives;
 		end
 	end;
 	StartCommand=function(self,param)
 		if param.Player == player then
-			return
+			LifeRatio = CurLives / MaxLives;
 		end
 	end;
 	FinishCommand=function(self,param)
 		if param.Player == player then
-			return 
+			LifeRatio = CurLives / MaxLives;
 		end
 	end;
 	--[[ LoadActor("_lives")..{
