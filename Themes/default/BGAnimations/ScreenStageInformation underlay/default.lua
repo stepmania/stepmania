@@ -2,23 +2,26 @@ local playMode = GAMESTATE:GetPlayMode()
 if playMode ~= 'PlayMode_Regular' and playMode ~= 'PlayMode_Rave' and playMode ~= 'PlayMode_Battle' then
 	curStage = playMode;
 end;
-local sStage = GAMESTATE:GetCurrentStage();
-local tRemap = {
-	Stage_Event		= 0,
-	Stage_1st		= 1,
-	Stage_2nd		= 2,
-	Stage_3rd		= 3,
-	Stage_4th		= 4,
-	Stage_5th		= 5,
-	Stage_6th		= 6,
-};
 
-local nSongCount = tRemap[sStage] + (GAMESTATE:GetCurrentSong():GetStageCost()-1);
+if not GAMESTATE:IsCourseMode() then
+	local sStage = GAMESTATE:GetCurrentStage();
+	local tRemap = {
+		Stage_Event		= 0,
+		Stage_1st		= 1,
+		Stage_2nd		= 2,
+		Stage_3rd		= 3,
+		Stage_4th		= 4,
+		Stage_5th		= 5,
+		Stage_6th		= 6,
+	};
 
-if nSongCount >= PREFSMAN:GetPreference("SongsPerPlay") then
+	local nSongCount = tRemap[sStage] + (GAMESTATE:GetCurrentSong():GetStageCost()-1);
+
+	if nSongCount >= PREFSMAN:GetPreference("SongsPerPlay") then
 	sStage = "Stage_Final";
-else
-	sStage = sStage;
+	else
+		sStage = sStage;
+	end;
 end;
 
 local t = Def.ActorFrame {};
