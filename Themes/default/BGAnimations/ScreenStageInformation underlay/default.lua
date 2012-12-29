@@ -3,8 +3,10 @@ if playMode ~= 'PlayMode_Regular' and playMode ~= 'PlayMode_Rave' and playMode ~
 	curStage = playMode;
 end;
 
+local sStage = ""
+
 if not GAMESTATE:IsCourseMode() then
-	local sStage = GAMESTATE:GetCurrentStage();
+	sStage = GAMESTATE:GetCurrentStage();
 	local tRemap = {
 		Stage_Event		= 0,
 		Stage_1st		= 1,
