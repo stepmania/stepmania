@@ -394,6 +394,18 @@ void ScreenSelectMusic::Update( float fDeltaTime )
 }
 void ScreenSelectMusic::Input( const InputEventPlus &input )
 {
+	// HACK: This screen eats mouse inputs if we don't check for them first.
+	bool mouse_evt = false;
+	for (int i = MOUSE_LEFT; i <= MOUSE_WHEELDOWN; i++)
+	{
+		if (input.DeviceI == DeviceInput( DEVICE_MOUSE, (DeviceButton)i ))
+			mouse_evt = true;
+	}
+	if (mouse_evt)	
+	{
+		ScreenWithMenuElements::Input(input);
+		return;
+	}
 //	LOG->Trace( "ScreenSelectMusic::Input()" );
 
 	// reset announcer timer
@@ -504,23 +516,6 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 	if( m_SelectionState == SelectionState_Finalized  ||
 		m_bStepsChosen[input.pn] )
 		return; // ignore
-
-	// todo: Allow mousewheel to scroll MusicWheel -aj
-	/*
-	if( input.DeviceI.device == DEVICE_MOUSE )
-	{
-		if( input.DeviceI.button == MOUSE_WHEELUP )
-		{
-			MESSAGEMAN->Broadcast( "PreviousSong" );
-			m_MusicWheel.Move( -1 );
-		}
-		else if( input.DeviceI.button == MOUSE_WHEELDOWN )
-		{
-			MESSAGEMAN->Broadcast( "NextSong" );
-			m_MusicWheel.Move( +1 );
-		}
-	}
-	*/
 
 	if( USE_PLAYER_SELECT_MENU )
 	{
