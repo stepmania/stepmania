@@ -145,6 +145,7 @@ InputHandler_X11::InputHandler_X11()
 	XSelectInput( Dpy, Win,
 		winAttrib.your_event_mask | KeyPressMask | KeyReleaseMask
 		| ButtonPressMask | ButtonReleaseMask | PointerMotionMask
+		| FocusChangeMask
 	);
 }
 
@@ -152,12 +153,14 @@ InputHandler_X11::~InputHandler_X11()
 {
 	if( Dpy == NULL || Win == None )
 		return;
+	// TODO: Determine if we even need to set this back (or is the window
+	// destroyed just after this?)
 	XWindowAttributes winAttrib;
 
 	XGetWindowAttributes( Dpy, Win, &winAttrib );
 	XSelectInput( Dpy, Win,
 		winAttrib.your_event_mask &
-		~(KeyPressMask|KeyReleaseMask|ButtonPressMask|ButtonReleaseMask|PointerMotionMask)
+		~(KeyPressMask|KeyReleaseMask|ButtonPressMask|ButtonReleaseMask|PointerMotionMask|FocusChangeMask)
 	);
 }
 
@@ -173,10 +176,13 @@ void InputHandler_X11::Update()
 	DeviceButton lastDB = DeviceButton_Invalid;
 	lastEvent.type = 0;
 
+	// TODO: Rewrite to use XEventsQueued, XNextEvent, and XPeekEvent - this
+	// will likely make the logic simpler
 	// todo: add other masks? (like the ones for drag'n drop) -aj
 	while( XCheckWindowEvent(Dpy, Win,
 			KeyPressMask | KeyReleaseMask
-			| ButtonPressMask | ButtonReleaseMask | PointerMotionMask,
+			| ButtonPressMask | ButtonReleaseMask | PointerMotionMask
+			| FocusChangeMask,
 			&event) )
 	{
 		const bool bKeyPress = event.type == KeyPress;
@@ -199,6 +205,12 @@ void InputHandler_X11::Update()
 			// This is a new event so the last release was not a repeat.
 			ButtonPressed( DeviceInput(DEVICE_KEYBOARD, lastDB, 0) );
 			lastEvent.type = 0;
+		}
+
+		if( event.type == FocusOut )
+		{
+			// Release all buttons
+			INPUTFILTER->Reset();
 		}
 
 		// Get the first defined keysym for this event's key
