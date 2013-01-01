@@ -16,7 +16,7 @@ public:
 	void Paint();
 	void SetText( RString sText );
 	void SetIcon( const RageSurface *pIcon );
-	void SetSplash( const RString sPath );
+	void SetSplash( const RageSurface *pSplash );
 	void SetProgress( const int progress );
 	void SetTotalWork( const int totalWork );
 	void SetIndeterminate( bool indeterminate );

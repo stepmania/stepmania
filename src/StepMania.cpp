@@ -1093,11 +1093,14 @@ int main(int argc, char* argv[])
 		/* Now that THEME is loaded, load the icon and splash for the current
 		 * theme into the loading window. */
 		RString sError;
-		RageSurface *pIcon = RageSurfaceUtils::LoadFile( THEME->GetPathG( "Common", "window icon" ), sError );
-		if( pIcon )
-			pLoadingWindow->SetIcon( pIcon );
-		delete pIcon;
-		pLoadingWindow->SetSplash( THEME->GetPathG("Common","splash") );
+		RageSurface *pSurface = RageSurfaceUtils::LoadFile( THEME->GetPathG( "Common", "window icon" ), sError );
+		if( pSurface != NULL )
+			pLoadingWindow->SetIcon( pSurface );
+		delete pSurface;
+		pSurface = RageSurfaceUtils::LoadFile( THEME->GetPathG("Common","splash"), sError );
+		if( pSurface != NULL )
+			pLoadingWindow->SetSplash( pSurface );
+		delete pSurface;
 	}
 
 	if( PREFSMAN->m_iSoundWriteAhead )

@@ -9,7 +9,7 @@ public:
 	LoadingWindow_MacOSX();
 	~LoadingWindow_MacOSX();
 	void SetText( RString str );
-	void SetSplash( const RString path ) {}
+	void SetSplash( const RageSurface *pSplash ) {}
 	void SetProgress( const int progress );
 	void SetTotalWork( const int totalWork );
 	void SetIndeterminate( bool indeterminate );

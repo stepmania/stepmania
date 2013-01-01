@@ -28,7 +28,7 @@ namespace RageSurfaceUtils
 	void GetBitsPerChannel( const RageSurfaceFormat *fmt, uint32_t bits[4] );
 
 	void CopySurface( const RageSurface *src, RageSurface *dest );
-	bool ConvertSurface( RageSurface *src, RageSurface *&dst,
+	bool ConvertSurface( const RageSurface *src, RageSurface *&dst,
 		int width, int height, int bpp, uint32_t R, uint32_t G, uint32_t B, uint32_t A );
 	void ConvertSurface( RageSurface *&image,
 		int width, int height, int bpp, uint32_t R, uint32_t G, uint32_t B, uint32_t A );
