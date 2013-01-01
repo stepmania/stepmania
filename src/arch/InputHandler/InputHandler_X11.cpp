@@ -201,7 +201,7 @@ void InputHandler_X11::Update()
 			lastEvent.type = 0;
 		}
 
-		// Why only the zero index?
+		// Get the first defined keysym for this event's key
 		lastDB = XSymToDeviceButton( XLookupKeysym(&event.xkey, 0) );
 
 		if( lastDB == DeviceButton_Invalid )
