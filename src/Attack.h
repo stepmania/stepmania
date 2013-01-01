@@ -8,7 +8,7 @@ class PlayerState;
 /** @brief An action made against a Player to make things more difficult. */
 struct Attack
 {
-	static const inline float ATTACK_STARTS_NOW() { return -10000.f; }
+	static inline float ATTACK_STARTS_NOW() { return -10000.f; }
 
 	AttackLevel	level;
 	/**
