@@ -235,34 +235,4 @@ t[#t+1] = StandardDecorationFromFileOptional("BPMDisplay","BPMDisplay");
 t[#t+1] = StandardDecorationFromFileOptional("StageDisplay","StageDisplay");
 t[#t+1] = StandardDecorationFromFileOptional("SongTitle","SongTitle");
 
-do
-	local w1PrefValue = PREFSMAN:GetPreference("AllowW1")
-	local showingW1 = w1PrefValue == 'AllowW1_Everywhere' or (w1PrefValue=='AllowW1_CoursesOnly' and GAMESTATE:IsCourseMode())
-	local pointLookup={
-		['TapNoteScore_W1']=5,
-		['TapNoteScore_W2']=4,
-		['TapNoteScore_W3']=3,
-		['TapNoteScore_W4']=2,
-		['TapNoteScore_W5']=1,
-		['TapNoteScore_HitMine']=-1}
-	local ignorableTapNoteScores = {
-		['TapNoteScore_HitMine']=true,
-		['TapNoteScore_AvoidMine']=true,
-		['TapNoteScore_CheckpointHit']=true,
-		['TapNoteScore_CheckpointMiss']=true
-	}
-	setmetatable(pointLookup,{__index=0})
-	t[#t+1] = {Class="Actor",
-		JudgmentMessageCommand=function(self,params)
-			if not showingW1 then
-				local withinW1Windows = math.abs(params.Offset)<=PREFSMAN:GetPreference("TimingWindowW1")
-				if withinW1Windows then params.TapNoteScore='TapNoteScore_W1' end
-			end
-			local PSS = STATSMAN:GetCurStageStats():GetPlayerStageStats(params.Player)
-			local holdNoteInfo = params.HoldNoteScore == nil and nil or params.HoldNoteScore == 'HoldNoteScore_Held' and true or false
-			PSS:SetScore(PSS:GetScore()+pointLookup[params.TapNoteScore]+(holdNoteInfo and 5 or 0))
-			PSS:SetCurMaxScore(PSS:GetCurMaxScore()+(holdNoteInfo~=nil and 5 or 0)+(ignorableTapNoteScores[params.TapNoteScore] and 0 or 5))
-		end
-	}
-end
 return t

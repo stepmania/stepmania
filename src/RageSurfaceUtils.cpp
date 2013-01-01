@@ -140,7 +140,7 @@ void RageSurfaceUtils::CopySurface( const RageSurface *src, RageSurface *dest )
 	Blit( src, dest, -1, -1 );
 }
 
-bool RageSurfaceUtils::ConvertSurface( RageSurface *src, RageSurface *&dst,
+bool RageSurfaceUtils::ConvertSurface( const RageSurface *src, RageSurface *&dst,
 		int width, int height, int bpp,
 		uint32_t R, uint32_t G, uint32_t B, uint32_t A )
 {

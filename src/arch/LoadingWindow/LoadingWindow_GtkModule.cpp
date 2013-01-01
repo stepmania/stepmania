@@ -26,7 +26,7 @@ extern "C" const char *Init( int *argc, char ***argv )
 	gtk_window_set_position( GTK_WINDOW(window), GTK_WIN_POS_CENTER );
 	gtk_widget_set_size_request(window,468,-1);
 	gtk_window_set_deletable( GTK_WINDOW(window), FALSE );
-	gtk_window_set_policy(GTK_WINDOW(window),FALSE,FALSE,TRUE);
+	gtk_window_set_resizable(GTK_WINDOW(window),FALSE);
 	gtk_window_set_role( GTK_WINDOW(window), "sm-startup" );
 	//gtk_window_set_icon( GTK_WINDOW(window), );
 	gtk_widget_realize(window);
@@ -54,7 +54,7 @@ extern "C" const char *Init( int *argc, char ***argv )
 
 extern "C" void Shutdown()
 {
-	gtk_widget_hide_all(window);
+	gtk_widget_hide(window);
 	g_signal_emit_by_name (G_OBJECT (window), "destroy");
 	while( gtk_events_pending() )
 		gtk_main_iteration_do(FALSE);
@@ -65,6 +65,27 @@ extern "C" void SetText( const char *s )
 	gtk_label_set_text(GTK_LABEL(label), s);
 	gtk_widget_show(label);
 	gtk_main_iteration_do(FALSE);
+}
+
+void DeletePixels( guchar *pixels, gpointer data )
+{
+	delete[] (uint8_t *)pixels;
+}
+
+GdkPixbuf *MakePixbuf( const RageSurface *pSrc )
+{
+	RageSurface *pSurface;
+	if( !RageSurfaceUtils::ConvertSurface( pSrc, pSurface, pSrc->w, pSrc->h, 32,
+		0x000000FF, 0x0000FF00, 0x00FF0000, 0xFF000000 ) )
+	{
+		return NULL;
+	}
+	GdkPixbuf *pBuf = gdk_pixbuf_new_from_data( pSurface->pixels, GDK_COLORSPACE_RGB,
+		true, 8, pSurface->w, pSurface->h , pSurface->pitch, DeletePixels, NULL);
+	if( pBuf != NULL )
+		pSurface->pixels_owned = false;
+	delete pSurface;
+	return pBuf;
 }
 /*
 extern "C" void SetIcon( const RageSurface *pSrcImg )
@@ -94,9 +115,15 @@ extern "C" void SetIcon( const RageSurface *pSrcImg )
 	gtk_main_iteration_do(FALSE);
 }
 */
-extern "C" void SetSplash( const char *s )
+
+extern "C" void SetSplash( const RageSurface *pSplash )
 {
-	gtk_image_set_from_file(GTK_IMAGE(splash), s);
+	GdkPixbuf *pBuf = MakePixbuf( pSplash );
+	if( pBuf != NULL )
+	{
+		gtk_image_set_from_pixbuf(GTK_IMAGE(splash), pBuf);
+		g_object_unref(pBuf);
+	}
 	gtk_main_iteration_do(FALSE);
 }
 

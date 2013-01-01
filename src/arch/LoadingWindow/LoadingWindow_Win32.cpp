@@ -20,9 +20,28 @@
 static HBITMAP g_hBitmap = NULL;
 
 /* Load a RageSurface into a GDI surface. */
-static HBITMAP LoadWin32Surface( RageSurface *&s )
+static HBITMAP LoadWin32Surface( const RageSurface *pSplash, HWND hwnd )
 {
-	RageSurfaceUtils::ConvertSurface( s, s->w, s->h, 32, 0xFF000000, 0x00FF0000, 0x0000FF00, 0 );
+	RageSurface *s;
+	if( !RageSurfaceUtils::ConvertSurface( pSplash, s,
+		pSplash->w, pSplash->h, 32,
+		0xFF000000, 0x00FF0000, 0x0000FF00, 0 ) )
+	{
+		return NULL;
+	}
+
+	/* Resize the splash image to fit the dialog.  Stretch to fit horizontally,
+	 * maintaining aspect ratio. */
+	{
+		RECT r;
+		GetClientRect( hWnd, &r );
+
+		int iWidth = r.right;
+		float fRatio = (float) iWidth / s->w;
+		int iHeight = lrintf( s->h * fRatio );
+
+		RageSurfaceUtils::Zoom( s, iWidth, iHeight );
+	}
 
 	HDC hScreen = GetDC(NULL);
 	ASSERT_M( hScreen != NULL, werr_ssprintf(GetLastError(), "hScreen") );
@@ -50,32 +69,8 @@ static HBITMAP LoadWin32Surface( RageSurface *&s )
 
 	ReleaseDC( NULL, hScreen );
 
+	delete s;
 	return bitmap;
-}
-
-static HBITMAP LoadWin32Surface( RString sFile, HWND hWnd )
-{
-	RString error;
-	RageSurface *pSurface = RageSurfaceUtils::LoadFile( sFile, error );
-	if( pSurface == NULL )
-		return NULL;
-
-	/* Resize the splash image to fit the dialog.  Stretch to fit horizontally,
-	 * maintaining aspect ratio. */
-	{
-		RECT r;
-		GetClientRect( hWnd, &r );
-
-		int iWidth = r.right;
-		float fRatio = (float) iWidth / pSurface->w;
-		int iHeight = lrintf( pSurface->h * fRatio );
-
-		RageSurfaceUtils::Zoom( pSurface, iWidth, iHeight );
-	}
-
-	HBITMAP ret = LoadWin32Surface( pSurface );
-	delete pSurface;
-	return ret;
 }
 
 BOOL CALLBACK LoadingWindow_Win32::WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
@@ -118,7 +113,7 @@ void LoadingWindow_Win32::SetIcon( const RageSurface *pIcon )
 		SetClassLong( hwnd, GCL_HICON, (LONG) m_hIcon );
 }
 
-void LoadingWindow_Win32::SetSplash( const RString sPath )
+void LoadingWindow_Win32::SetSplash( const RageSurface *pSplash )
 {
 	if( g_hBitmap != NULL )
 	{
@@ -126,7 +121,7 @@ void LoadingWindow_Win32::SetSplash( const RString sPath )
 		g_hBitmap = NULL;
 	}
 
-	g_hBitmap = LoadWin32Surface( sPath, hwnd );
+	g_hBitmap = LoadWin32Surface( pSplash, hwnd );
 	if( g_hBitmap != NULL )
 	{
 		SendDlgItemMessage(

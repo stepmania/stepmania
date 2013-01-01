@@ -494,6 +494,19 @@ void ScreenOptions::Update( float fDeltaTime )
 
 void ScreenOptions::Input( const InputEventPlus &input )
 {
+	// HACK: This screen eats mouse inputs if we don't check for them first.
+	bool mouse_evt = false;
+	for (int i = MOUSE_LEFT; i <= MOUSE_WHEELDOWN; i++)
+	{
+		if (input.DeviceI == DeviceInput( DEVICE_MOUSE, (DeviceButton)i ))
+			mouse_evt = true;
+	}
+	if (mouse_evt)	
+	{
+		ScreenWithMenuElements::Input(input);
+		return;
+	}
+
 	/* Allow input when transitioning in (m_In.IsTransitioning()), but ignore it
 	 * when we're transitioning out. */
 	if( m_Cancel.IsTransitioning() || m_Out.IsTransitioning() || m_fLockInputSecs > 0 )

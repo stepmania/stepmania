@@ -5,6 +5,26 @@ from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
 ================================================================================
+StepMania 5.0 beta 1a | 20121228
+--------------------------------------------------------------------------------
+
+2012/12/28
+----------
+* [default] Improved autogen icon and Oni life display. [Midiman]
+* [ScreenSelectMusic] Fix mouse events being eaten. [shakesoda]
+* [ScreenEdit] Remove extra zeroes from editor text entry. [djpohly]
+* [WheelBase] Add WheelBase.Move Lua binding. [shakesoda]
+
+2012/12/27
+----------
+* [default] Various theme improvements. [Midiman]
+* [PlayerStageStats] Restore SetScore and SetCurMaxScore Lua bindings. [shakesoda]
+
+2012/12/26
+----------
+* Code restructuring. [djpohly/wolfman2000]
+
+================================================================================
 StepMania 5.0 beta 1 | 20121225
 --------------------------------------------------------------------------------
 

@@ -156,19 +156,21 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 
 		glXMakeCurrent( Dpy, Win, g_pContext );
 
+		// Map the window, ensuring we get the MapNotify event
 		XWindowAttributes winAttrib;
 		XGetWindowAttributes( Dpy, Win, &winAttrib );
 		XSelectInput( Dpy, Win, winAttrib.your_event_mask | StructureNotifyMask );
 		XMapWindow( Dpy, Win );
 
-		// XXX: Why do we need to wait for the MapNotify event?
-		while( true )
+		// Wait until we actually have a mapped window before trying to
+		// use it!
+		XEvent event;
+		do
 		{
-			XEvent event;
-			XMaskEvent( Dpy, StructureNotifyMask, &event );
-			if( event.type == MapNotify )
-				break;
-		}
+			XNextEvent( Dpy, &event );
+		} while (event.type != MapNotify);
+
+		// Set the event mask back to what it was
 		XSelectInput( Dpy, Win, winAttrib.your_event_mask );
 	}
 	else
