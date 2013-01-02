@@ -368,7 +368,7 @@ void ScreenEdit::InitEditMappings()
 	m_RecordMappingsDeviceInput.button[EDIT_BUTTON_REMOVE_NOTE][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LALT);
 	m_RecordMappingsDeviceInput.button[EDIT_BUTTON_REMOVE_NOTE][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RALT);
 	m_RecordMappingsDeviceInput.button[EDIT_BUTTON_RETURN_TO_EDIT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_ESC);
-	m_RecordMappingsDeviceInput.button[EDIT_BUTTON_RETURN_TO_EDIT][1] = DeviceInput(DEVICE_KEYBOARD, KEY_ENTER)
+	m_RecordMappingsDeviceInput.button[EDIT_BUTTON_RETURN_TO_EDIT][1] = DeviceInput(DEVICE_KEYBOARD, KEY_ENTER);
 	m_RecordMappingsMenuButton.button[EDIT_BUTTON_RETURN_TO_EDIT][0] = GAME_BUTTON_BACK;
 	m_RecordMappingsMenuButton.button[EDIT_BUTTON_RETURN_TO_EDIT][0] = GAME_BUTTON_START;
 
