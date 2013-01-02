@@ -1361,14 +1361,20 @@ void ScreenEdit::Update( float fDeltaTime )
 			if( fSecsHeld == 0 )
 				continue;
 
+			// TODO: Currently, this will ignore a hold note that's
+			// held past the end of selection.  Ideally the hold
+			// note should be created, ending right at the end of
+			// selection (or appropriate quantization).
 			float fStartPlayingAtBeat = NoteRowToBeat(m_iStartPlayingAt);
-			if( GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat <= fStartPlayingAtBeat )
+			float fStopPlayingAtBeat = NoteRowToBeat(m_iStopPlayingAt);
+			if( GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat <= fStartPlayingAtBeat ||
+			    GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat >= fStopPlayingAtBeat )
 				continue;
 
 			float fStartedHoldingSeconds = m_pSoundMusic->GetPositionSeconds() - fSecsHeld;
 			float fStartBeat = max( fStartPlayingAtBeat, m_pSteps->m_Timing.GetBeatFromElapsedTime(fStartedHoldingSeconds) );
 			float fEndBeat = max( fStartBeat, GetBeat() );
-			fEndBeat = min( fEndBeat, NoteRowToBeat(m_iStopPlayingAt) );
+			fEndBeat = min( fEndBeat, fStopPlayingAtBeat );
 
 			// Round start and end to the nearest snap interval
 			fStartBeat = Quantize( fStartBeat, NoteTypeToBeat(m_SnapDisplay.GetNoteType()) );
