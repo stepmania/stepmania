@@ -22,13 +22,9 @@ static HBITMAP g_hBitmap = NULL;
 /* Load a RageSurface into a GDI surface. */
 static HBITMAP LoadWin32Surface( const RageSurface *pSplash, HWND hWnd )
 {
-	RageSurface *s;
-	if( !RageSurfaceUtils::ConvertSurface( pSplash, s,
-		pSplash->w, pSplash->h, 32,
-		0xFF000000, 0x00FF0000, 0x0000FF00, 0 ) )
-	{
-		return NULL;
-	}
+	RageSurface *s = CreateSurface( pSplash->w, pSplash->h, 32,
+		0xFF000000, 0x00FF0000, 0x0000FF00, 0 );
+	RageSurfaceUtils::Blit( pSplash, s , -1, -1 );
 
 	/* Resize the splash image to fit the dialog.  Stretch to fit horizontally,
 	 * maintaining aspect ratio. */
