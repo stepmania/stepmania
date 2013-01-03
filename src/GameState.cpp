@@ -1788,7 +1788,7 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 		}
 		break;
 	default:
-		FAIL_M(ssprintf("Invalid play mode: %i", m_PlayMode));
+		FAIL_M(ssprintf("Invalid play mode: %i", int(m_PlayMode)));
 	}
 }
 
