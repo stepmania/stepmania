@@ -137,7 +137,7 @@ void DIDevice::Close()
 	Device->Release();
 
 	Device = NULL;
-	buttons = axes = hats = NULL;
+	buttons = axes = hats = 0;
 	Inputs.clear();
 }
 
