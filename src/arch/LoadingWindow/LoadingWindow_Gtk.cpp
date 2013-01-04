@@ -11,7 +11,7 @@ static void *Handle = NULL;
 static INIT Module_Init;
 static SHUTDOWN Module_Shutdown;
 static SETTEXT Module_SetText;
-//static SETICON Module_SetIcon;
+static SETICON Module_SetIcon;
 static SETSPLASH Module_SetSplash;
 static SETPROGRESS Module_SetProgress;
 static SETINDETERMINATE Module_SetIndeterminate;
@@ -45,11 +45,9 @@ RString LoadingWindow_Gtk::Init()
 	if( !Module_SetText )
 		return ModuleError("SetText");
 
-	/*
 	Module_SetIcon = (SETICON) dlsym(Handle, "SetIcon");
 	if( !Module_SetIcon )
 		return ModuleError("SetIcon");
-	*/
 
 	Module_SetSplash = (SETSPLASH) dlsym(Handle, "SetSplash");
 	if( !Module_SetSplash )
@@ -87,7 +85,7 @@ void LoadingWindow_Gtk::SetText( RString s )
 
 void LoadingWindow_Gtk::SetIcon( const RageSurface *pIcon )
 {
-	//Module_SetIcon( pIcon );
+	Module_SetIcon( pIcon );
 }
 
 void LoadingWindow_Gtk::SetSplash( const RageSurface *pSplash )

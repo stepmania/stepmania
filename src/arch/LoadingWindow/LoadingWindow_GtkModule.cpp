@@ -74,47 +74,30 @@ void DeletePixels( guchar *pixels, gpointer data )
 
 GdkPixbuf *MakePixbuf( const RageSurface *pSrc )
 {
-	RageSurface *pSurface;
-	if( !RageSurfaceUtils::ConvertSurface( pSrc, pSurface, pSrc->w, pSrc->h, 32,
-		0x000000FF, 0x0000FF00, 0x00FF0000, 0xFF000000 ) )
-	{
-		return NULL;
-	}
+	RageSurface *pSurface = CreateSurface( pSrc->w, pSrc->h, 32,
+		0x000000FF, 0x0000FF00, 0x00FF0000, 0xFF000000 );
+	RageSurfaceUtils::Blit( pSrc, pSurface , -1, -1 );
+
 	GdkPixbuf *pBuf = gdk_pixbuf_new_from_data( pSurface->pixels, GDK_COLORSPACE_RGB,
 		true, 8, pSurface->w, pSurface->h , pSurface->pitch, DeletePixels, NULL);
+
 	if( pBuf != NULL )
 		pSurface->pixels_owned = false;
+
 	delete pSurface;
 	return pBuf;
 }
-/*
+
 extern "C" void SetIcon( const RageSurface *pSrcImg )
 {
-	RageSurface *pImg;
+	GdkPixbuf *pBuf = MakePixbuf( pSrcImg );
+	if( pBuf != NULL )
 	{
-		pImg = CreateSurface( pSrcImg->w, pSrcImg->h, 32,
-			0x00FF0000,
-			0x0000FF00,
-			0x000000FF,
-			0xFF000000 );
-		RageSurfaceUtils::Blit( pSrcImg, pImg );
+		gtk_window_set_icon( GTK_WINDOW(window), pBuf );
+		g_object_unref(pBuf);
 	}
-
-	GdkPixbuf *pIcon;
-	pIcon = gdk_pixbuf_new_from_data(pImg->pixels,
-			GDK_COLORSPACE_RGB, true,
-			8,
-			pImg->w, pImg->h,
-			pImg->h * pImg->pitch, // not sure how to handle rowstride
-			NULL, NULL);
-
-	delete pImg;
-	pImg = NULL;
-
-	gtk_window_set_icon( GTK_WINDOW(window), pIcon );
 	gtk_main_iteration_do(FALSE);
 }
-*/
 
 extern "C" void SetSplash( const RageSurface *pSplash )
 {

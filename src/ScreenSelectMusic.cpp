@@ -1905,6 +1905,7 @@ void ScreenSelectMusic::OpenOptionsList(PlayerNumber pn)
 {
 	if( pn != PLAYER_INVALID )
 	{
+        m_MusicWheel.Move( 0 );
 		m_OptionsList[pn].Open();
 	}
 }

@@ -368,7 +368,9 @@ void ScreenEdit::InitEditMappings()
 	m_RecordMappingsDeviceInput.button[EDIT_BUTTON_REMOVE_NOTE][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LALT);
 	m_RecordMappingsDeviceInput.button[EDIT_BUTTON_REMOVE_NOTE][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RALT);
 	m_RecordMappingsDeviceInput.button[EDIT_BUTTON_RETURN_TO_EDIT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_ESC);
-	m_RecordMappingsMenuButton.button[EDIT_BUTTON_RETURN_TO_EDIT][1] = GAME_BUTTON_BACK;
+	m_RecordMappingsDeviceInput.button[EDIT_BUTTON_RETURN_TO_EDIT][1] = DeviceInput(DEVICE_KEYBOARD, KEY_ENTER);
+	m_RecordMappingsMenuButton.button[EDIT_BUTTON_RETURN_TO_EDIT][0] = GAME_BUTTON_BACK;
+	m_RecordMappingsMenuButton.button[EDIT_BUTTON_RETURN_TO_EDIT][1] = GAME_BUTTON_START;
 
 	m_RecordPausedMappingsDeviceInput.button[EDIT_BUTTON_PLAY_SELECTION][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cp);
 	m_RecordPausedMappingsDeviceInput.button[EDIT_BUTTON_RECORD_SELECTION][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cr);
@@ -1361,14 +1363,20 @@ void ScreenEdit::Update( float fDeltaTime )
 			if( fSecsHeld == 0 )
 				continue;
 
+			// TODO: Currently, this will ignore a hold note that's
+			// held past the end of selection.  Ideally the hold
+			// note should be created, ending right at the end of
+			// selection (or appropriate quantization).
 			float fStartPlayingAtBeat = NoteRowToBeat(m_iStartPlayingAt);
-			if( GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat <= fStartPlayingAtBeat )
+			float fStopPlayingAtBeat = NoteRowToBeat(m_iStopPlayingAt);
+			if( GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat <= fStartPlayingAtBeat ||
+			    GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat >= fStopPlayingAtBeat )
 				continue;
 
 			float fStartedHoldingSeconds = m_pSoundMusic->GetPositionSeconds() - fSecsHeld;
 			float fStartBeat = max( fStartPlayingAtBeat, m_pSteps->m_Timing.GetBeatFromElapsedTime(fStartedHoldingSeconds) );
 			float fEndBeat = max( fStartBeat, GetBeat() );
-			fEndBeat = min( fEndBeat, NoteRowToBeat(m_iStopPlayingAt) );
+			fEndBeat = min( fEndBeat, fStopPlayingAtBeat );
 
 			// Round start and end to the nearest snap interval
 			fStartBeat = Quantize( fStartBeat, NoteTypeToBeat(m_SnapDisplay.GetNoteType()) );
@@ -2742,6 +2750,10 @@ void ScreenEdit::InputRecord( const InputEventPlus &input, EditButton EditB )
 		return;		// ignore
 
 	const int iCol = GAMESTATE->GetCurrentStyle()->GameInputToColumn( input.GameI );
+
+	//Is this actually a column? If not, ignore the input.
+	if( iCol == -1 )
+		return;
 
 	switch( input.type )
 	{
