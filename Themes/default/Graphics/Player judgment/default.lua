@@ -8,7 +8,7 @@ local function ShowProtiming()
   end
 end;
 local bShowProtiming = ShowProtiming();
-
+local ProtimingWidth = 240;
 local function MakeAverage( t )
 	local sum = 0;
 	for i=1,#t do
@@ -83,31 +83,31 @@ t[#t+1] = Def.ActorFrame {
 	};
 	Def.Quad {
 		Name="ProtimingGraphBG";
-		InitCommand=cmd(visible,false;y,32;zoomto,192,16);
+		InitCommand=cmd(visible,false;y,32;zoomto,ProtimingWidth,16);
 		ResetCommand=cmd(finishtweening;diffusealpha,0.8;visible,false);
 		OnCommand=cmd(diffuse,Color("Black");diffusetopedge,color("0.1,0.1,0.1,1");diffusealpha,0.8;shadowlength,2;);
 	};
 	Def.Quad {
 		Name="ProtimingGraphWindowW3";
-		InitCommand=cmd(visible,false;y,32;zoomto,192-4,16-4);
+		InitCommand=cmd(visible,false;y,32;zoomto,ProtimingWidth-4,16-4);
 		ResetCommand=cmd(finishtweening;diffusealpha,1;visible,false);
 		OnCommand=cmd(diffuse,GameColor.Judgment["JudgmentLine_W3"];);
 	};
 	Def.Quad {
 		Name="ProtimingGraphWindowW2";
-		InitCommand=cmd(visible,false;y,32;zoomto,scale(PREFSMAN:GetPreference("TimingWindowSecondsW2"),0,PREFSMAN:GetPreference("TimingWindowSecondsW3"),0,192-4),16-4);
+		InitCommand=cmd(visible,false;y,32;zoomto,scale(PREFSMAN:GetPreference("TimingWindowSecondsW2"),0,PREFSMAN:GetPreference("TimingWindowSecondsW3"),0,ProtimingWidth-4),16-4);
 		ResetCommand=cmd(finishtweening;diffusealpha,1;visible,false);
 		OnCommand=cmd(diffuse,GameColor.Judgment["JudgmentLine_W2"];);
 	};
 	Def.Quad {
 		Name="ProtimingGraphWindowW1";
-		InitCommand=cmd(visible,false;y,32;zoomto,scale(PREFSMAN:GetPreference("TimingWindowSecondsW1"),0,PREFSMAN:GetPreference("TimingWindowSecondsW3"),0,192-4),16-4);
+		InitCommand=cmd(visible,false;y,32;zoomto,scale(PREFSMAN:GetPreference("TimingWindowSecondsW1"),0,PREFSMAN:GetPreference("TimingWindowSecondsW3"),0,ProtimingWidth-4),16-4);
 		ResetCommand=cmd(finishtweening;diffusealpha,1;visible,false);
 		OnCommand=cmd(diffuse,GameColor.Judgment["JudgmentLine_W1"];);
 	};
 	Def.Quad {
 		Name="ProtimingGraphUnderlay";
-		InitCommand=cmd(visible,false;y,32;zoomto,192-4,16-4);
+		InitCommand=cmd(visible,false;y,32;zoomto,ProtimingWidth-4,16-4);
 		ResetCommand=cmd(finishtweening;diffusealpha,0.25;visible,false);
 		OnCommand=cmd(diffuse,Color("Black");diffusealpha,0.25);
 	};
@@ -204,16 +204,16 @@ t[#t+1] = Def.ActorFrame {
 				scale(
 				fTapNoteOffset,
 				0,PREFSMAN:GetPreference("TimingWindowSecondsW3"),
-				0,188/2),
-			-188/2,188/2)
+				0,(ProtimingWidth-4)/2),
+			-(ProtimingWidth-4)/2,(ProtimingWidth-4)/2)
 		);
 		c.ProtimingGraphAverage:visible( bShowProtiming );
 		c.ProtimingGraphAverage:zoomtowidth( clamp(
 				scale(
 				MakeAverage( tTotalJudgments ),
 				0,PREFSMAN:GetPreference("TimingWindowSecondsW3"),
-				0,188),
-			0,188)
+				0,ProtimingWidth-4),
+			0,ProtimingWidth-4)
 		);
 -- 		c.ProtimingGraphAverage:zoomtowidth( clamp(MakeAverage( tTotalJudgments ) * 1880,0,188) );
 		c.ProtimingGraphCenter:visible( bShowProtiming );

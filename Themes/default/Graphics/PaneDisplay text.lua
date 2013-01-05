@@ -20,15 +20,15 @@ end;
 
 local function CreatePaneDisplayItem( _pnPlayer, _sLabel, _rcRadarCategory )
 	return Def.ActorFrame {
-		LoadFont("Common Normal") .. {
+		LoadFont("Common SemiBold") .. {
 			Text=string.upper( THEME:GetString("PaneDisplay",_sLabel) );
 			InitCommand=cmd(horizalign,left);
-			OnCommand=cmd(zoom,0.5;diffuse,color("0.9,0.9,0.9");shadowlength,1);
+			OnCommand=cmd(zoom,0.5875;diffuse,color("0.9,0.9,0.9");shadowlength,1);
 		};
 		LoadFont("Common Normal") .. {
-			Text="000";
-			InitCommand=cmd(x,32+8+8;horizalign,left);
-			OnCommand=cmd(zoom,0.5;shadowlength,1);
+			Text=string.format("%04i", 0);
+			InitCommand=cmd(x,96;horizalign,right);
+			OnCommand=cmd(zoom,0.5875;shadowlength,1);
 			CurrentSongChangedMessageCommand=cmd(playcommand,"Set");
 			CurrentStepsP1ChangedMessageCommand=cmd(playcommand,"Set");
 			CurrentStepsP2ChangedMessageCommand=cmd(playcommand,"Set");
@@ -39,9 +39,9 @@ local function CreatePaneDisplayItem( _pnPlayer, _sLabel, _rcRadarCategory )
 				local song = GAMESTATE:GetCurrentSong()
 				local course = GAMESTATE:GetCurrentCourse()
 				if not song and not course then
-					self:settext("000")
+					self:settextf("%04i", 0);
 				else
-					self:settextf("%03i", GetRadarData( _pnPlayer, _rcRadarCategory ) );
+					self:settextf("%04i", GetRadarData( _pnPlayer, _rcRadarCategory ) );
 				end
 			end;
 		};
@@ -83,7 +83,7 @@ local function CreatePaneDisplayGraph( _pnPlayer, _sLabel, _rcRadarCategory )
 			end;
 		};
 		LoadFont("Common Normal") .. {
-			InitCommand=cmd(x,14;zoom,0.45;halign,0;);
+			InitCommand=cmd(x,14;zoom,0.5;halign,0;);
 			OnCommand=cmd(shadowlength,1;strokecolor,color("0.15,0.15,0.15,0.625"));
 			CurrentSongChangedMessageCommand=cmd(playcommand,"Set");
 			CurrentStepsP1ChangedMessageCommand=cmd(playcommand,"Set");
@@ -121,32 +121,16 @@ t[#t+1] = Def.ActorFrame {
 	};
 	-- Center
 	CreatePaneDisplayItem( iPN, "Hands", 'RadarCategory_Hands' ) .. {
-		InitCommand=cmd(x,-128+16+8+74;y,-14);
+		InitCommand=cmd(x,8;y,-14);
 	};
 	CreatePaneDisplayItem( iPN, "Rolls", 'RadarCategory_Rolls' ) .. {
-		InitCommand=cmd(x,-128+16+8+74;y,-14+16);
+		InitCommand=cmd(x,8;y,-14+16);
 	};
 	CreatePaneDisplayItem( iPN, "Lifts", 'RadarCategory_Lifts' ) .. {
-		InitCommand=cmd(x,-128+16+8+74;y,-14+16*2);
+		InitCommand=cmd(x,8;y,-14+16*2);
 	};
 	CreatePaneDisplayItem( iPN, "Fakes", 'RadarCategory_Fakes' ) .. {
-		InitCommand=cmd(x,-128+16+8+74;y,-14+16*3);
-	};
-	-- Right
-	CreatePaneDisplayGraph( iPN, "S", 'RadarCategory_Stream' ) .. {
-		InitCommand=cmd(x,-128+16+8+74*2;y,-14);
-	};
-	CreatePaneDisplayGraph( iPN, "V", 'RadarCategory_Voltage' ) .. {
-		InitCommand=cmd(x,-128+16+8+74*2;y,-14+12);
-	};
-	CreatePaneDisplayGraph( iPN, "A", 'RadarCategory_Air' ) .. {
-		InitCommand=cmd(x,-128+16+8+74*2;y,-14+12*2);
-	};
-	CreatePaneDisplayGraph( iPN, "F", 'RadarCategory_Freeze' ) .. {
-		InitCommand=cmd(x,-128+16+8+74*2;y,-14+12*3);
-	};
-	CreatePaneDisplayGraph( iPN, "C", 'RadarCategory_Chaos' ) .. {
-		InitCommand=cmd(x,-128+16+8+74*2;y,-14+12*4);
+		InitCommand=cmd(x,8;y,-14+16*3);
 	};
 };
 return t;
