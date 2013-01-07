@@ -39,12 +39,12 @@ static void WriteGlobalTags( RageFile &f, Song &out )
 	f.PutLine( ssprintf( "#LYRICSPATH:%s;", SmEscape(out.m_sLyricsFile).c_str() ) );
 	f.PutLine( ssprintf( "#CDTITLE:%s;", SmEscape(out.m_sCDTitleFile).c_str() ) );
 	f.PutLine( ssprintf( "#MUSIC:%s;", SmEscape(out.m_sMusicFile).c_str() ) );
-	f.PutLine( ssprintf( "#OFFSET:%.3f;", out.m_SongTiming.m_fBeat0OffsetInSeconds ) );
-	f.PutLine( ssprintf( "#SAMPLESTART:%.3f;", out.m_fMusicSampleStartSeconds ) );
-	f.PutLine( ssprintf( "#SAMPLELENGTH:%.3f;", out.m_fMusicSampleLengthSeconds ) );
+	f.PutLine( ssprintf( "#OFFSET:%.6f;", out.m_SongTiming.m_fBeat0OffsetInSeconds ) );
+	f.PutLine( ssprintf( "#SAMPLESTART:%.6f;", out.m_fMusicSampleStartSeconds ) );
+	f.PutLine( ssprintf( "#SAMPLELENGTH:%.6f;", out.m_fMusicSampleLengthSeconds ) );
 	float specBeat = out.GetSpecifiedLastBeat();
 	if( specBeat > 0 )
-		f.PutLine( ssprintf("#LASTBEATHINT:%.3f;", specBeat) );
+		f.PutLine( ssprintf("#LASTBEATHINT:%.6f;", specBeat) );
 
 	f.Write( "#SELECTABLE:" );
 	switch(out.m_SelectionDisplay)
@@ -64,9 +64,9 @@ static void WriteGlobalTags( RageFile &f, Song &out )
 		break;
 	case DISPLAY_BPM_SPECIFIED:
 		if( out.m_fSpecifiedBPMMin == out.m_fSpecifiedBPMMax )
-			f.PutLine( ssprintf( "#DISPLAYBPM:%.3f;", out.m_fSpecifiedBPMMin ) );
+			f.PutLine( ssprintf( "#DISPLAYBPM:%.6f;", out.m_fSpecifiedBPMMin ) );
 		else
-			f.PutLine( ssprintf( "#DISPLAYBPM:%.3f:%.3f;", 
+			f.PutLine( ssprintf( "#DISPLAYBPM:%.6f:%.6f;", 
 					    out.m_fSpecifiedBPMMin, out.m_fSpecifiedBPMMax ) );
 		break;
 	case DISPLAY_BPM_RANDOM:
@@ -81,7 +81,7 @@ static void WriteGlobalTags( RageFile &f, Song &out )
 	{
 		const BPMSegment *bs = ToBPM(bpms[i]);
 
-		f.PutLine( ssprintf( "%.3f=%.3f", bs->GetBeat(), bs->GetBPM() ) );
+		f.PutLine( ssprintf( "%.6f=%.6f", bs->GetBeat(), bs->GetBPM() ) );
 		if( i != bpms.size()-1 )
 			f.Write( "," );
 	}
@@ -128,7 +128,7 @@ static void WriteGlobalTags( RageFile &f, Song &out )
 	vector<RString> stopLines;
 	FOREACHM(float, float, allPauses, ap)
 	{
-		stopLines.push_back(ssprintf("%.3f=%.3f", ap->first, ap->second));
+		stopLines.push_back(ssprintf("%.6f=%.6f", ap->first, ap->second));
 	}
 	f.PutLine(join(",\n", stopLines));
 
@@ -224,7 +224,7 @@ static RString GetSMNotesTag( const Song &song, const Steps &in )
 		for( RadarCategory rc = (RadarCategory)0; rc < categories; 
 		    enum_add<RadarCategory>( rc, 1 ) )
 		{
-			asRadarValues.push_back( ssprintf("%.3f", rv[rc]) );
+			asRadarValues.push_back( ssprintf("%.6f", rv[rc]) );
 		}
 	}
 	lines.push_back( ssprintf( "     %s:", join(",",asRadarValues).c_str() ) );
