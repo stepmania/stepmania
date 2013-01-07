@@ -2,7 +2,7 @@
 #include "TimingSegments.h"
 #include "EnumHelper.h"
 
-const double TimingSegment::EPSILON = 1e-4;
+const double TimingSegment::EPSILON = 1e-6;
 
 static const char *TimingSegmentTypeNames[] = {
 	"BPM",
