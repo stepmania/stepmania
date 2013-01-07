@@ -469,7 +469,7 @@ void NoteField::DrawBPMText( const float fBeat, const float fBPM )
 	m_textMeasureNumber.SetHorizAlign( BPM_IS_LEFT_SIDE ? align_right : align_left );
 	m_textMeasureNumber.SetDiffuse( BPM_COLOR );
 	m_textMeasureNumber.SetGlow( RageColor(1,1,1,RageFastCos(RageTimer::GetTimeSinceStartFast()*2)/2+0.5f) );
-	m_textMeasureNumber.SetText( ssprintf("%.3f", fBPM) );
+	m_textMeasureNumber.SetText( FloatToString(fBPM) );
 	m_textMeasureNumber.SetXY( (BPM_IS_LEFT_SIDE ? -xBase - xOffset : xBase + xOffset), fYPos );
 	m_textMeasureNumber.Draw();
 }
@@ -487,7 +487,7 @@ void NoteField::DrawFreezeText( const float fBeat, const float fSecs )
 	m_textMeasureNumber.SetDiffuse( STOP_COLOR );
 	m_textMeasureNumber.SetXY( (STOP_IS_LEFT_SIDE ? -xBase - xOffset : xBase + xOffset), fYPos );
 	m_textMeasureNumber.SetGlow( RageColor(1,1,1,RageFastCos(RageTimer::GetTimeSinceStartFast()*2)/2+0.5f) );
-	m_textMeasureNumber.SetText( ssprintf("%.3f", fSecs) );
+	m_textMeasureNumber.SetText( FloatToString(fSecs) );
 	m_textMeasureNumber.Draw();
 }
 
@@ -504,7 +504,7 @@ void NoteField::DrawDelayText( const float fBeat, const float fSecs )
 	m_textMeasureNumber.SetDiffuse( DELAY_COLOR );
 	m_textMeasureNumber.SetXY( (DELAY_IS_LEFT_SIDE ? -xBase - xOffset : xBase + xOffset), fYPos );
 	m_textMeasureNumber.SetGlow( RageColor(1,1,1,RageFastCos(RageTimer::GetTimeSinceStartFast()*2)/2+0.5f) );
-	m_textMeasureNumber.SetText( ssprintf("%.3f", fSecs) );
+	m_textMeasureNumber.SetText( FloatToString(fSecs) );
 	m_textMeasureNumber.Draw();
 }
 
@@ -520,7 +520,7 @@ void NoteField::DrawWarpText( const float fBeat, const float fNewBeat )
 	m_textMeasureNumber.SetHorizAlign( WARP_IS_LEFT_SIDE ? align_right : align_left );
 	m_textMeasureNumber.SetDiffuse( WARP_COLOR );
 	m_textMeasureNumber.SetGlow( RageColor(1,1,1,RageFastCos(RageTimer::GetTimeSinceStartFast()*2)/2+0.5f) );
-	m_textMeasureNumber.SetText( ssprintf("%.3f", fNewBeat) );
+	m_textMeasureNumber.SetText( FloatToString(fNewBeat) );
 	m_textMeasureNumber.SetXY( (WARP_IS_LEFT_SIDE ? -xBase - xOffset : xBase + xOffset), fYPos );
 	m_textMeasureNumber.Draw();
 }
@@ -605,7 +605,7 @@ void NoteField::DrawSpeedText( const float fBeat, float fPercent, float fWait, i
 	m_textMeasureNumber.SetHorizAlign( SPEED_IS_LEFT_SIDE ? align_right : align_left );
 	m_textMeasureNumber.SetDiffuse( SPEED_COLOR );
 	m_textMeasureNumber.SetGlow( RageColor(1,1,1,RageFastCos(RageTimer::GetTimeSinceStartFast()*2)/2+0.5f) );
-	m_textMeasureNumber.SetText( ssprintf("%.3f\n%s\n%.3f", fPercent, (iMode == 1 ? "S" : "B"), fWait) );
+	m_textMeasureNumber.SetText( ssprintf("%s\n%s\n%s", FloatToString(fPercent).c_str(), (iMode == 1 ? "S" : "B"), FloatToString(fWait).c_str()) );
 	m_textMeasureNumber.SetXY( (SPEED_IS_LEFT_SIDE ? -xBase - xOffset : xBase + xOffset), fYPos );
 	m_textMeasureNumber.Draw();
 }
@@ -622,7 +622,7 @@ void NoteField::DrawScrollText( const float fBeat, float fPercent )
 	m_textMeasureNumber.SetHorizAlign( SCROLL_IS_LEFT_SIDE ? align_right : align_left );
 	m_textMeasureNumber.SetDiffuse( SCROLL_COLOR );
 	m_textMeasureNumber.SetGlow( RageColor(1,1,1,RageFastCos(RageTimer::GetTimeSinceStartFast()*2)/2+0.5f) );
-	m_textMeasureNumber.SetText( ssprintf("%.3f", fPercent) );
+	m_textMeasureNumber.SetText( FloatToString(fPercent) );
 	m_textMeasureNumber.SetXY( (SCROLL_IS_LEFT_SIDE ? -xBase - xOffset : xBase + xOffset), fYPos );
 	m_textMeasureNumber.Draw();
 }
@@ -639,7 +639,7 @@ void NoteField::DrawFakeText( const float fBeat, const float fNewBeat )
 	m_textMeasureNumber.SetHorizAlign( FAKE_IS_LEFT_SIDE ? align_right : align_left );
 	m_textMeasureNumber.SetDiffuse( FAKE_COLOR );
 	m_textMeasureNumber.SetGlow( RageColor(1,1,1,RageFastCos(RageTimer::GetTimeSinceStartFast()*2)/2+0.5f) );
-	m_textMeasureNumber.SetText( ssprintf("%.3f", fNewBeat) );
+	m_textMeasureNumber.SetText( FloatToString(fNewBeat) );
 	m_textMeasureNumber.SetXY( (FAKE_IS_LEFT_SIDE ? -xBase - xOffset : xBase + xOffset), fYPos );
 	m_textMeasureNumber.Draw();
 }
