@@ -40,9 +40,12 @@ echo y
 hg update -C "$1"
 hg clean --all
 
-# This replaces autogen.sh.  Run now so our users don't have
-# to have autoconf and friends installed.
-autoreconf -i
+# This replaces autogen.sh.  Run now so our users don't need to have autoconf
+# and friends installed.
+#
+# Note: the -f flag is here so any symlinks in autoconf/ get replaced with real
+# files.
+autoreconf -if
 
 # Tarball will be placed here
 mkdir dist
