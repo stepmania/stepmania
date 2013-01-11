@@ -326,7 +326,7 @@ bool ScreenInstallOverlay::OverlayInput( const InputEventPlus &input )
 	}
 	*/
 
-	return false;
+	return Screen::OverlayInput(input);
 }
 
 void ScreenInstallOverlay::Update( float fDeltaTime )

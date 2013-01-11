@@ -167,12 +167,22 @@ void Screen::Update( float fDeltaTime )
 	}
 }
 
-/* ScreenManager sends input here first. Overlay screens can use it to get a first
- * pass at input. Return true if the input was handled and should not be passed
- * to lower screens, or false if not handled. If true is returned, Input() will
- * not be called, either. Normal screens should not overload this function. */
+/* ScreenManager sends input here if the screen is an overlay. Overlay screens
+ * can use it to get a first pass at input. Returns true if the input was
+ * handled and should not be passed to lower screens, or false if not handled.
+ * If true is returned, neither OverlayInput() nor Input() will not be called
+ * for any screen lower on the stack. Normal screens should not overload this
+ * function. */
 bool Screen::OverlayInput( const InputEventPlus &input )
 {
+	// Allow overlays to respond to codes
+	Message msg("");
+	if( m_Codes.InputMessage(input, msg) )
+	{
+		this->HandleMessage( msg );
+		return true;
+	}
+
 	return false;
 }
 

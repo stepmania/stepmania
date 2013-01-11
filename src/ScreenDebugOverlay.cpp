@@ -498,7 +498,7 @@ bool ScreenDebugOverlay::OverlayInput( const InputEventPlus &input )
 		}
 	}
 
-	return false;
+	return Screen::OverlayInput(input);
 }
 
 

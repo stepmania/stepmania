@@ -155,10 +155,10 @@ static LocalizedString SYNC_CHANGES_REVERTED		("ScreenSyncOverlay","Sync changes
 bool ScreenSyncOverlay::OverlayInput( const InputEventPlus &input )
 {
 	if( !IsGameplay() )
-		return false;
+		return Screen::OverlayInput(input);
 
 	if( input.DeviceI.device != DEVICE_KEYBOARD )
-		return false;
+		return Screen::OverlayInput(input);
 
 	enum Action
 	{
@@ -186,7 +186,7 @@ bool ScreenSyncOverlay::OverlayInput( const InputEventPlus &input )
 		break;
 
 	default:
-		return false;
+		return Screen::OverlayInput(input);
 	}
 
 	if( GAMESTATE->IsCourseMode() && a != ChangeGlobalOffset )
@@ -198,11 +198,8 @@ bool ScreenSyncOverlay::OverlayInput( const InputEventPlus &input )
 	switch( a )
 	{
 	case RevertSyncChanges:
-		switch( input.type )
-		{
-		case IET_FIRST_PRESS:	break;
-		default:	return false;
-		}
+		if( input.type != IET_FIRST_PRESS )
+			return false;
 		SCREENMAN->SystemMessage( SYNC_CHANGES_REVERTED );
 		AdjustSync::RevertSyncChanges();
 		break;
