@@ -68,53 +68,57 @@ void ScreenBookkeeping::Update( float fDelta )
 	ScreenWithMenuElements::Update( fDelta );
 }
 
-void ScreenBookkeeping::Input( const InputEventPlus &input )
+bool ScreenBookkeeping::Input( const InputEventPlus &input )
 {
 	if( input.type != IET_FIRST_PRESS && input.type != IET_REPEAT )
-		return;	// ignore
+		return false;	// ignore
 
-	Screen::Input( input );	// default handler
+	return Screen::Input( input );	// default handler
 }
 
-void ScreenBookkeeping::MenuLeft( const InputEventPlus &input )
+bool ScreenBookkeeping::MenuLeft( const InputEventPlus &input )
 {
 	m_iViewIndex--;
 	CLAMP( m_iViewIndex, 0, m_vBookkeepingViews.size()-1 );
 
 	UpdateView();
+	return true;
 }
 
-void ScreenBookkeeping::MenuRight( const InputEventPlus &input )
+bool ScreenBookkeeping::MenuRight( const InputEventPlus &input )
 {
 	m_iViewIndex++;
 	CLAMP( m_iViewIndex, 0, m_vBookkeepingViews.size()-1 );
 
 	UpdateView();
+	return true;
 }
 
-void ScreenBookkeeping::MenuStart( const InputEventPlus &input )
+bool ScreenBookkeeping::MenuStart( const InputEventPlus &input )
 {
-	if( !IsTransitioning() )
-	{
-		SCREENMAN->PlayStartSound();
-		StartTransitioningScreen( SM_GoToNextScreen );		
-	}
+	if( IsTransitioning() )
+		return false;
+
+	SCREENMAN->PlayStartSound();
+	StartTransitioningScreen( SM_GoToNextScreen );		
+	return true;
 }
 
-void ScreenBookkeeping::MenuBack( const InputEventPlus &input )
+bool ScreenBookkeeping::MenuBack( const InputEventPlus &input )
 {
-	if( !IsTransitioning() )
-	{
-		SCREENMAN->PlayStartSound();
-		StartTransitioningScreen( SM_GoToPrevScreen );		
-	}
+	if( IsTransitioning() )
+		return false;
+
+	SCREENMAN->PlayStartSound();
+	StartTransitioningScreen( SM_GoToPrevScreen );		
+	return true;
 }
 
-void ScreenBookkeeping::MenuCoin( const InputEventPlus &input )
+bool ScreenBookkeeping::MenuCoin( const InputEventPlus &input )
 {
 	UpdateView();
 
-	Screen::MenuCoin( input );
+	return Screen::MenuCoin( input );
 }
 
 static LocalizedString ALL_TIME		( "ScreenBookkeeping", "All-time Coin Total:" );

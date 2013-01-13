@@ -40,7 +40,7 @@ public:
 	void InitMenu( const vector<OptionRowHandler*> &vHands );
 	virtual ~ScreenOptions();
 	virtual void Update( float fDeltaTime );
-	virtual void Input( const InputEventPlus &input );
+	virtual bool Input( const InputEventPlus &input );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
 	virtual void TweenOnScreen();
@@ -84,14 +84,14 @@ protected:
 	virtual void AfterChangeRow( PlayerNumber pn );
 	virtual void AfterChangeValueOrRow( PlayerNumber pn );
 
-	virtual void MenuBack( const InputEventPlus &input );
-	virtual void MenuStart( const InputEventPlus &input );
+	virtual bool MenuBack( const InputEventPlus &input );
+	virtual bool MenuStart( const InputEventPlus &input );
 	virtual void ProcessMenuStart( const InputEventPlus &input );
-	virtual void MenuLeft( const InputEventPlus &input );
-	virtual void MenuRight( const InputEventPlus &input );
-	virtual void MenuUp( const InputEventPlus &input );
-	virtual void MenuDown( const InputEventPlus &input );
-	virtual void MenuSelect( const InputEventPlus &input );
+	virtual bool MenuLeft( const InputEventPlus &input );
+	virtual bool MenuRight( const InputEventPlus &input );
+	virtual bool MenuUp( const InputEventPlus &input );
+	virtual bool MenuDown( const InputEventPlus &input );
+	virtual bool MenuSelect( const InputEventPlus &input );
 	virtual void MenuUpDown( const InputEventPlus &input, int iDir );	// iDir == -1 or iDir == +1
 
 	int GetCurrentRow( PlayerNumber pn = PLAYER_1 ) const { return m_iCurrentRow[pn]; }

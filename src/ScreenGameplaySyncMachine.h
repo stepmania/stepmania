@@ -10,7 +10,7 @@ public:
 	virtual void Init();
 
 	virtual void Update( float fDelta );
-	virtual void Input( const InputEventPlus &input );
+	virtual bool Input( const InputEventPlus &input );
 
 	virtual ScreenType GetScreenType() const { return system_menu; }
 

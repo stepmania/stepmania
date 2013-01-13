@@ -492,7 +492,7 @@ void ScreenOptions::Update( float fDeltaTime )
 	ScreenWithMenuElements::Update( fDeltaTime );
 }
 
-void ScreenOptions::Input( const InputEventPlus &input )
+bool ScreenOptions::Input( const InputEventPlus &input )
 {
 	// HACK: This screen eats mouse inputs if we don't check for them first.
 	bool mouse_evt = false;
@@ -503,17 +503,16 @@ void ScreenOptions::Input( const InputEventPlus &input )
 	}
 	if (mouse_evt)	
 	{
-		ScreenWithMenuElements::Input(input);
-		return;
+		return ScreenWithMenuElements::Input(input);
 	}
 
 	/* Allow input when transitioning in (m_In.IsTransitioning()), but ignore it
 	 * when we're transitioning out. */
 	if( m_Cancel.IsTransitioning() || m_Out.IsTransitioning() || m_fLockInputSecs > 0 )
-		return;
+		return false;
 
 	if( !GAMESTATE->IsHumanPlayer(input.pn) )
-		return;
+		return false;
 
 	if( input.type == IET_RELEASE )
 	{
@@ -532,7 +531,7 @@ void ScreenOptions::Input( const InputEventPlus &input )
 	}
 
 	// default input handler
-	Screen::Input( input );
+	return Screen::Input( input );
 }
 
 void ScreenOptions::HandleScreenMessage( const ScreenMessage SM )
@@ -766,9 +765,10 @@ void ScreenOptions::AfterChangeValueOrRow( PlayerNumber pn )
 }
 
 
-void ScreenOptions::MenuBack( const InputEventPlus & )
+bool ScreenOptions::MenuBack( const InputEventPlus & )
 {
 	Cancel( SM_GoToPrevScreen );
+	return true;
 }
 
 bool ScreenOptions::AllAreOnLastRow() const
@@ -781,7 +781,7 @@ bool ScreenOptions::AllAreOnLastRow() const
 	return true;
 }
 
-void ScreenOptions::MenuStart( const InputEventPlus &input )
+bool ScreenOptions::MenuStart( const InputEventPlus &input )
 {
 	PlayerNumber pn = input.pn;
 	switch( input.type )
@@ -790,10 +790,10 @@ void ScreenOptions::MenuStart( const InputEventPlus &input )
 		m_bGotAtLeastOneStartPressed[pn] = true;
 		break;
 	case IET_RELEASE:
-		return;	// ignore
+		return false;	// ignore
 	default:	// repeat type
 		if( !m_bGotAtLeastOneStartPressed[pn] )
-			return;	// don't allow repeat
+			return false;	// don't allow repeat
 		break;
 	}
 
@@ -811,13 +811,14 @@ void ScreenOptions::MenuStart( const InputEventPlus &input )
 			{
 				if( MoveRowRelative(pn, -1, input.type != IET_FIRST_PRESS) )
 					m_SoundPrevRow.Play();
-				return;
+				return true;
 			}
 		}
 		default: break;
 	}
 
 	this->ProcessMenuStart( input );
+	return true;
 }
 
 void ScreenOptions::ProcessMenuStart( const InputEventPlus &input )
@@ -1244,7 +1245,7 @@ bool ScreenOptions::MoveRowAbsolute( PlayerNumber pn, int iRow )
 	return bChanged;
 }
 
-void ScreenOptions::MenuLeft( const InputEventPlus &input )
+bool ScreenOptions::MenuLeft( const InputEventPlus &input )
 {
 	if( m_OptionsNavigation == NAV_THREE_KEY_ALT )
 		MenuUpDown( input, -1 );
@@ -1253,9 +1254,10 @@ void ScreenOptions::MenuLeft( const InputEventPlus &input )
 
 	PlayerNumber pn = input.pn;
 	MESSAGEMAN->Broadcast( (MessageID)(Message_MenuLeftP1+pn) );
+	return true;
 }
 
-void ScreenOptions::MenuRight( const InputEventPlus &input )
+bool ScreenOptions::MenuRight( const InputEventPlus &input )
 {
 	if( m_OptionsNavigation == NAV_THREE_KEY_ALT )
 		MenuUpDown( input, +1 );
@@ -1264,25 +1266,29 @@ void ScreenOptions::MenuRight( const InputEventPlus &input )
 
 	PlayerNumber pn = input.pn;
 	MESSAGEMAN->Broadcast( (MessageID)(Message_MenuRightP1+pn) );
+	return true;
 }
 
-void ScreenOptions::MenuUp( const InputEventPlus &input )
+bool ScreenOptions::MenuUp( const InputEventPlus &input )
 {
 	MenuUpDown( input, -1 );
 	PlayerNumber pn = input.pn;
 	MESSAGEMAN->Broadcast( (MessageID)(Message_MenuUpP1+pn) );
+	return true;
 }
 
-void ScreenOptions::MenuDown( const InputEventPlus &input )
+bool ScreenOptions::MenuDown( const InputEventPlus &input )
 {
 	MenuUpDown( input, +1 );
 	PlayerNumber pn = input.pn;
 	MESSAGEMAN->Broadcast( (MessageID)(Message_MenuDownP1+pn) );
+	return true;
 }
 
-void ScreenOptions::MenuSelect( const InputEventPlus &input )
+bool ScreenOptions::MenuSelect( const InputEventPlus &input )
 {
 	MenuUpDown( input, -1 );
+	return true;
 }
 
 void ScreenOptions::MenuUpDown( const InputEventPlus &input, int iDir )

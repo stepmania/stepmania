@@ -17,7 +17,7 @@ public:
 	virtual void BeginScreen();
 
 	virtual void Update( float fDeltaTime );
-	virtual void Input( const InputEventPlus &input );
+	virtual bool Input( const InputEventPlus &input );
 
 private:
 	virtual void HandleMessage( const Message &msg );

@@ -13,11 +13,11 @@ public:
 	virtual ~ScreenSelect();
 
 	virtual void Update( float fDelta );
-	virtual void Input( const InputEventPlus &input );
+	virtual bool Input( const InputEventPlus &input );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 	virtual void HandleMessage( const Message &msg );
 
-	virtual void MenuBack( const InputEventPlus &input );
+	virtual bool MenuBack( const InputEventPlus &input );
 
 protected:
 	virtual int GetSelectionIndex( PlayerNumber pn ) = 0;

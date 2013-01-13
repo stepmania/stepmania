@@ -42,7 +42,7 @@ void ScreenSelectLanguage::BeginScreen()
 	ScreenSelectMaster::BeginScreen();
 }
 
-void ScreenSelectLanguage::MenuStart( const InputEventPlus &input )
+bool ScreenSelectLanguage::MenuStart( const InputEventPlus &input )
 {
 	int iIndex = this->GetSelectionIndex( input.pn );
 	RString sLangCode = m_aGameCommands[iIndex].m_sName;
@@ -52,11 +52,12 @@ void ScreenSelectLanguage::MenuStart( const InputEventPlus &input )
 
 	m_soundStart.Play();
 	this->PostScreenMessage( SM_BeginFadingOut, 0 );
+	return true;
 }
 
-void ScreenSelectLanguage::MenuBack( const InputEventPlus &input )
+bool ScreenSelectLanguage::MenuBack( const InputEventPlus &input )
 {
-	return;	// ignore the press
+	return false;	// ignore the press
 }
 
 /*

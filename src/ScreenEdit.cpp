@@ -1714,17 +1714,17 @@ void ScreenEdit::DrawPrimitives()
 
 }
 
-void ScreenEdit::Input( const InputEventPlus &input )
+bool ScreenEdit::Input( const InputEventPlus &input )
 {
 //	LOG->Trace( "ScreenEdit::Input()" );
 	
 	// invalidate input if cmd/meta is being held.
 	if( INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LMETA)) ||
 	    INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RMETA)) )
-		return;
+		return false;
 
 	if( m_In.IsTransitioning() || m_Out.IsTransitioning() )
-		return;
+		return false;
 
 	EditButton EditB = DeviceToEdit( input.DeviceI );
 	if( EditB == EditButton_Invalid )
@@ -1743,18 +1743,14 @@ void ScreenEdit::Input( const InputEventPlus &input )
 	{
 	DEFAULT_FAIL( m_EditState );
 	case STATE_EDITING:
-		InputEdit( input, EditB );
 		m_bTextInfoNeedsUpdate = true;
-		break;
+		return InputEdit( input, EditB );
 	case STATE_RECORDING:
-		InputRecord( input, EditB );
-		break;
+		return InputRecord( input, EditB );
 	case STATE_RECORDING_PAUSED:
-		InputRecordPaused( input, EditB );
-		break;
+		return InputRecordPaused( input, EditB );
 	case STATE_PLAYING:
-		InputPlay( input, EditB );
-		break;
+		return InputPlay( input, EditB );
 	}
 }
 
@@ -1779,13 +1775,15 @@ static LocalizedString SWITCHED_TO		( "ScreenEdit", "Switched to" );
 static LocalizedString NO_BACKGROUNDS_AVAILABLE	( "ScreenEdit", "No backgrounds available" );
 static ThemeMetric<bool> INVERT_SCROLL_BUTTONS	( "ScreenEdit", "InvertScrollSpeedButtons" );
 
-void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
+bool ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 {
 	if( input.type == IET_RELEASE )
 	{
 		if( EditPressed( EDIT_BUTTON_SCROLL_SELECT, input.DeviceI ) )
 			m_iShiftAnchor = -1;
-		return;
+		// XXX Key releases usually don't count as "handled," but what
+		// does it mean in this case?
+		return false;
 	}
 	TimingData &sTiming = GetAppropriateTiming();
 	float playerBeat = GetAppropriatePosition().m_fSongBeat;
@@ -1805,7 +1803,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 	case EDIT_BUTTON_COLUMN_9:
 		{
 			if( input.type != IET_FIRST_PRESS )
-				break;	// We only care about first presses
+				return false;	// We only care about first presses
 
 			int iCol = EditB - EDIT_BUTTON_COLUMN_0;
 
@@ -1815,7 +1813,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 				ShiftToRightSide( iCol, m_NoteDataEdit.GetNumTracks() );
 			
 			if( iCol >= m_NoteDataEdit.GetNumTracks() )
-				break; // this button is not in the range of columns for this Style
+				return false; // this button is not in the range of columns for this Style
 
 			const float fSongBeat = GetBeat();
 			const int iSongIndex = BeatToNoteRow( fSongBeat );
@@ -1854,7 +1852,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 				CheckNumberOfNotesAndUndo();
 			}
 		}
-		break;
+		return true;
 			
 	case EDIT_BUTTON_CYCLE_TAP_LEFT:
 		{
@@ -1866,7 +1864,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 				case TapNote::fake:	m_selectedTap = TAP_ORIGINAL_LIFT;	break;
 				DEFAULT_FAIL( m_selectedTap.type );
 			}
-			break;
+			return true;
 		}
 	case EDIT_BUTTON_CYCLE_TAP_RIGHT:
 		{
@@ -1878,21 +1876,21 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 				case TapNote::fake:	m_selectedTap = TAP_ORIGINAL_TAP;	break;
 				DEFAULT_FAIL( m_selectedTap.type );
 			}
-			break;
+			return true;
 		}
 	case EDIT_BUTTON_CYCLE_SEGMENT_LEFT:
 	{
 		int tmp = enum_add2( this->currentCycleSegment, -1 );
 		wrap( *ConvertValue<int>(&tmp), NUM_TimingSegmentType );
 		currentCycleSegment = (TimingSegmentType)tmp;
-		break;
+		return true;
 	}
 	case EDIT_BUTTON_CYCLE_SEGMENT_RIGHT:
 	{
 		int tmp = enum_add2( this->currentCycleSegment, +1 );
 		wrap( *ConvertValue<int>(&tmp), NUM_TimingSegmentType );
 		currentCycleSegment = (TimingSegmentType)tmp;
-		break;
+		return true;
 	}
 	case EDIT_BUTTON_SCROLL_SPEED_UP:
 	case EDIT_BUTTON_SCROLL_SPEED_DOWN:
@@ -1930,16 +1928,15 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			}
 
 			PO_GROUP_ASSIGN( pPlayerState->m_PlayerOptions, ModsLevel_Song, m_fScrollSpeed, fScrollSpeed );
-			break;
 		}
 
-		break;
+		return true;
 	case EDIT_BUTTON_SCROLL_HOME:
 		ScrollTo( 0 );
-		break;
+		return true;
 	case EDIT_BUTTON_SCROLL_END:
 		ScrollTo( m_NoteDataEdit.GetLastBeat() );
-		break;
+		return true;
 	case EDIT_BUTTON_SCROLL_UP_LINE:
 	case EDIT_BUTTON_SCROLL_UP_PAGE:
 	case EDIT_BUTTON_SCROLL_UP_TS:
@@ -1979,20 +1976,20 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 
 			ScrollTo( fDestinationBeat );
 		}
-		break;
+		return true;
 	case EDIT_BUTTON_SCROLL_NEXT_MEASURE:
 		{
 			float fDestinationBeat = GetBeat() + beatsPerMeasure;
 			fDestinationBeat = ftruncf( fDestinationBeat, (float)beatsPerMeasure );
 			ScrollTo( fDestinationBeat );
-			break;
+			return true;
 		}
 	case EDIT_BUTTON_SCROLL_PREV_MEASURE:
 		{
 			float fDestinationBeat = QuantizeUp( GetBeat(), (float)beatsPerMeasure );
 			fDestinationBeat -= (float)beatsPerMeasure;
 			ScrollTo( fDestinationBeat );
-			break;
+			return true;
 		}
 	case EDIT_BUTTON_SCROLL_NEXT:
 		{
@@ -2000,38 +1997,38 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			NoteDataUtil::GetNextEditorPosition( m_NoteDataEdit, iRow );
 			ScrollTo( NoteRowToBeat(iRow) );
 		}
-		break;
+		return true;
 	case EDIT_BUTTON_SCROLL_PREV:
 		{
 			int iRow = BeatToNoteRow( GetBeat() );
 			NoteDataUtil::GetPrevEditorPosition( m_NoteDataEdit, iRow );
 			ScrollTo( NoteRowToBeat(iRow) );
 		}
-		break;
+		return true;
 	case EDIT_BUTTON_SEGMENT_NEXT:
-	{
-		// TODO: Work around Stops and Delays. We MAY have to separate them.
-		TimingData &timing = GetAppropriateTiming();
-		ScrollTo(timing.GetNextSegmentBeatAtBeat(this->currentCycleSegment,
-												 GetBeat()));
-	}
-	break;
-	case EDIT_BUTTON_SEGMENT_PREV:
-	{
-		// TODO: Work around Stops and Delays. We MAY have to separate them.
-		TimingData &timing = GetAppropriateTiming();
-		ScrollTo(timing.GetPreviousSegmentBeatAtBeat(this->currentCycleSegment,
+		{
+			// TODO: Work around Stops and Delays. We MAY have to separate them.
+			TimingData &timing = GetAppropriateTiming();
+			ScrollTo(timing.GetNextSegmentBeatAtBeat(this->currentCycleSegment,
 													 GetBeat()));
-	}
-	break;
+		}
+		return true;
+	case EDIT_BUTTON_SEGMENT_PREV:
+		{
+			// TODO: Work around Stops and Delays. We MAY have to separate them.
+			TimingData &timing = GetAppropriateTiming();
+			ScrollTo(timing.GetPreviousSegmentBeatAtBeat(this->currentCycleSegment,
+														 GetBeat()));
+		}
+		return true;
 	case EDIT_BUTTON_SNAP_NEXT:
 		if( m_SnapDisplay.PrevSnapMode() )
 			OnSnapModeChange();
-		break;
+		return true;
 	case EDIT_BUTTON_SNAP_PREV:
 		if( m_SnapDisplay.NextSnapMode() )
 			OnSnapModeChange();
-		break;
+		return true;
 	case EDIT_BUTTON_LAY_SELECT:
 		{
 			const int iCurrentRow = BeatToNoteRow(GetAppropriatePosition().m_fSongBeat);
@@ -2059,7 +2056,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			}
 			m_soundMarker.Play();
 		}
-		break;
+		return true;
 	case EDIT_BUTTON_OPEN_AREA_MENU:
 		{
 			// TODO: Improve behavior if timing changes are shifted down on beat 0.
@@ -2069,7 +2066,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			g_AreaMenu.rows[undo].bEnabled = m_bHasUndo;
 			EditMiniMenu( &g_AreaMenu, SM_BackFromAreaMenu );
 		}
-		break;
+		return true;
 	case EDIT_BUTTON_OPEN_ALTER_MENU:
 		{
 			bool bAreaSelected = m_NoteFieldEdit.m_iBeginMarker!=-1 && m_NoteFieldEdit.m_iEndMarker!=-1;
@@ -2089,19 +2086,19 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 				g_AlterMenu.rows[routine_mirror_2_to_1].bEnabled = isRoutine;
 				EditMiniMenu(&g_AlterMenu, SM_BackFromAlterMenu);
 			}
-			break;
+			return true;
 
 		}
 	case EDIT_BUTTON_OPEN_EDIT_MENU:
 		EditMiniMenu( &g_MainMenu, SM_BackFromMainMenu );
-		break;
+		return true;
 	case EDIT_BUTTON_OPEN_INPUT_HELP:
 		DoHelp();
-		break;
+		return true;
 	case EDIT_BUTTON_OPEN_TIMING_MENU:
 		{
 			DisplayTimingMenu();
-			break;
+			return true;
 		}
 	case EDIT_BUTTON_OPEN_NEXT_STEPS:
 	case EDIT_BUTTON_OPEN_PREV_STEPS:
@@ -2136,7 +2133,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 				if( it==vSteps.begin() )
 				{
 					SCREENMAN->PlayInvalidSound();
-					return;
+					return true;
 				}
 				it--;
 				break;
@@ -2145,7 +2142,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 				if( it==vSteps.end() )
 				{
 					SCREENMAN->PlayInvalidSound();
-					return;
+					return true;
 				}
 				break;
 			}
@@ -2167,7 +2164,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			
 			ScrollTo( GetAppropriateTiming().GetBeatFromElapsedTime(curSecond) );
 		}
-		break;
+		return true;
 	case EDIT_BUTTON_BPM_UP:
 	case EDIT_BUTTON_BPM_DOWN:
 		{
@@ -2196,7 +2193,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			(fDelta>0 ? m_soundValueIncrease : m_soundValueDecrease).Play();
 			SetDirty( true );
 		}
-		break;
+		return true;
 	case EDIT_BUTTON_STOP_UP:
 	case EDIT_BUTTON_STOP_DOWN:
 		{
@@ -2228,7 +2225,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 				if( fDelta > 0 )
 					timing.AddSegment( StopSegment(GetRow(), fDelta) );
 				else
-					break;
+					return false;
 			}
 			else
 			{
@@ -2241,7 +2238,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			(fDelta>0 ? m_soundValueIncrease : m_soundValueDecrease).Play();
 			SetDirty( true );
 		}
-		break;
+		return true;
 	// TODO: Combine the stop and delay call somehow?
 	case EDIT_BUTTON_DELAY_UP:
 	case EDIT_BUTTON_DELAY_DOWN:
@@ -2274,7 +2271,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 				if( fDelta > 0 )
 					timing.AddSegment( DelaySegment(GetRow(), fDelta) );
 				else
-					break;
+					return false;
 			}
 			else
 			{
@@ -2287,7 +2284,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			(fDelta>0 ? m_soundValueIncrease : m_soundValueDecrease).Play();
 			SetDirty( true );
 		}
-			break;
+		return true;
 	case EDIT_BUTTON_OFFSET_UP:
 	case EDIT_BUTTON_OFFSET_DOWN:
 		{
@@ -2322,7 +2319,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			}
 			SetDirty( true );
 		}
-		break;
+		return true;
 	case EDIT_BUTTON_SAMPLE_START_UP:
 	case EDIT_BUTTON_SAMPLE_START_DOWN:
 	case EDIT_BUTTON_SAMPLE_LENGTH_DOWN:
@@ -2359,10 +2356,10 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			(fDelta>0 ? m_soundValueIncrease : m_soundValueDecrease).Play();
 			SetDirty( true );
 		}
-		break;
+		return true;
 	case EDIT_BUTTON_PLAY_SAMPLE_MUSIC:
 		PlayPreviewMusic();
-		break;
+		return true;
 	case EDIT_BUTTON_OPEN_BGCHANGE_LAYER1_MENU:
 	case EDIT_BUTTON_OPEN_BGCHANGE_LAYER2_MENU:
 		if( !GAMESTATE->m_bIsUsingStepTiming )
@@ -2469,7 +2466,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			SCREENMAN->SystemMessage( BG_CHANGE_STEP_TIMING );
 			SCREENMAN->PlayInvalidSound();
 		}
-		break;
+		return true;
 
 	case EDIT_BUTTON_OPEN_COURSE_MENU:
 		{
@@ -2501,18 +2498,18 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 
 			EditMiniMenu( &g_CourseMode, SM_BackFromCourseModeMenu );
 		}
-		break;
+		return true;
 	case EDIT_BUTTON_OPEN_STEP_ATTACK_MENU:
 	{
 		this->DoStepAttackMenu();
-		break;
+		return true;
 	}
 	case EDIT_BUTTON_OPEN_COURSE_ATTACK_MENU:
 		{
 			// TODO: Give Song/Step Timing switches/functions here?
 			Course *pCourse = GAMESTATE->m_pCurCourse;
 			if( pCourse == NULL )
-				break;
+				return false;
 			CourseEntry &ce = pCourse->m_vEntries[GAMESTATE->m_iEditCourseEntryIndex];
 			float fStartTime = m_pSteps->m_Timing.GetElapsedTimeFromBeat( GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat );
 			int iAttack = FindAttackAtTime( ce.attacks, fStartTime );
@@ -2537,7 +2534,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 
 			EditMiniMenu( &g_InsertCourseAttack, SM_BackFromInsertCourseAttack );
 		}
-		break;
+		return true;
 	case EDIT_BUTTON_ADD_STEP_MODS:
 	{
 		float start = -1;
@@ -2576,7 +2573,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 		g_fLastInsertAttackDurationSeconds = end - start;
 		toEdit.Assign( ModsLevel_Stage, po );
 		SCREENMAN->AddNewScreenToTop( "ScreenPlayerOptions", SM_BackFromInsertStepAttackPlayerOptions );
-		break;
+		return true;
 	}
 	case EDIT_BUTTON_ADD_COURSE_MODS:
 		{
@@ -2584,7 +2581,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			PlayerOptions po;
 			const Course *pCourse = GAMESTATE->m_pCurCourse;
 			if( pCourse == NULL )
-				break;
+				return false;
 			const CourseEntry &ce = pCourse->m_vEntries[GAMESTATE->m_iEditCourseEntryIndex];
 
 			if( m_NoteFieldEdit.m_iBeginMarker == -1 )
@@ -2613,7 +2610,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			SCREENMAN->AddNewScreenToTop( "ScreenPlayerOptions", SM_BackFromInsertCourseAttackPlayerOptions );
 
 		}
-		break;
+		return true;
 	case EDIT_BUTTON_BAKE_RANDOM_FROM_SONG_GROUP:
 	case EDIT_BUTTON_BAKE_RANDOM_FROM_SONG_GROUP_AND_GENRE:
 		{
@@ -2643,19 +2640,19 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 				m_soundMarker.Play();
 			}
 		}
-		break;
+		return true;
 
 	case EDIT_BUTTON_PLAY_FROM_START:
 		HandleMainMenuChoice( play_whole_song );
-		break;
+		return true;
 
 	case EDIT_BUTTON_PLAY_FROM_CURSOR:
 		HandleMainMenuChoice( play_current_beat_to_end );
-		break;
+		return true;
 
 	case EDIT_BUTTON_PLAY_SELECTION:
 		HandleMainMenuChoice( play_selection );
-		break;
+		return true;
 	case EDIT_BUTTON_RECORD_SELECTION:
 		if( m_NoteFieldEdit.m_iBeginMarker!=-1 && m_NoteFieldEdit.m_iEndMarker!=-1 )
 		{
@@ -2680,80 +2677,80 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			if( m_iStartPlayingAt >= m_iStopPlayingAt )
 			{
 				SCREENMAN->PlayInvalidSound();
-				return;
+				return true;
 			}
 
 			TransitionEditState( STATE_RECORDING );
 		}
-		break;
+		return true;
 	case EDIT_BUTTON_RECORD_FROM_CURSOR:
 		m_iStartPlayingAt = BeatToNoteRow(GetAppropriatePosition().m_fSongBeat);
 		m_iStopPlayingAt = max( m_iStartPlayingAt, m_NoteDataEdit.GetLastRow() );
 		TransitionEditState( STATE_RECORDING );
-		break;
+		return true;
 
 	case EDIT_BUTTON_INSERT:
 		HandleAreaMenuChoice( insert_and_shift );
 		SCREENMAN->PlayInvalidSound();
-		break;
+		return true;
 
 	case EDIT_BUTTON_INSERT_SHIFT_PAUSES:
 		HandleAreaMenuChoice( shift_pauses_forward );
 		SCREENMAN->PlayInvalidSound();
-		break;
+		return true;
 
 	case EDIT_BUTTON_DELETE:
 		HandleAreaMenuChoice( delete_and_shift );
 		SCREENMAN->PlayInvalidSound();
-		break;
+		return true;
 
 	case EDIT_BUTTON_DELETE_SHIFT_PAUSES:
 		HandleAreaMenuChoice( shift_pauses_backward );
 		SCREENMAN->PlayInvalidSound();
-		break;
+		return true;
 
 	case EDIT_BUTTON_SAVE:
 		HandleMainMenuChoice( ScreenEdit::save );
-		break;
+		return true;
 
 	case EDIT_BUTTON_UNDO:
 		Undo();
-		break;
+		return true;
 
 	case EDIT_BUTTON_SWITCH_PLAYERS:
-		if( m_InputPlayerNumber != PLAYER_INVALID )
-		{
-			enum_add( m_InputPlayerNumber, 1 );
-			if( m_InputPlayerNumber == NUM_PLAYERS )
-				m_InputPlayerNumber = PLAYER_1;
-			m_soundSwitchPlayer.Play();
-		}
-		break;
+		if( m_InputPlayerNumber == PLAYER_INVALID )
+			return false;
+		enum_add( m_InputPlayerNumber, 1 );
+		if( m_InputPlayerNumber == NUM_PLAYERS )
+			m_InputPlayerNumber = PLAYER_1;
+		m_soundSwitchPlayer.Play();
+		return true;
 	
 	case EDIT_BUTTON_SWITCH_TIMINGS:
 		GAMESTATE->m_bIsUsingStepTiming = !GAMESTATE->m_bIsUsingStepTiming;
 		m_soundSwitchTiming.Play();
-		break;
-	default: break;
+		return true;
+	default:
+		return false;
 	}
 }
 
-void ScreenEdit::InputRecord( const InputEventPlus &input, EditButton EditB )
+bool ScreenEdit::InputRecord( const InputEventPlus &input, EditButton EditB )
 {
 	if( input.type == IET_FIRST_PRESS  &&  EditB == EDIT_BUTTON_RETURN_TO_EDIT )
 	{
 		TransitionEditState( STATE_EDITING );
-		return;
+		return true;
 	}
 
 	if( input.pn != PLAYER_1 )
-		return;		// ignore
+		return false;		// ignore
 
 	const int iCol = GAMESTATE->GetCurrentStyle()->GameInputToColumn( input.GameI );
 
 	//Is this actually a column? If not, ignore the input.
 	if( iCol == -1 )
-		return;
+		return false;
 
 	switch( input.type )
 	{
@@ -2763,7 +2760,7 @@ void ScreenEdit::InputRecord( const InputEventPlus &input, EditButton EditB )
 			if( EditIsBeingPressed(EDIT_BUTTON_REMOVE_NOTE) )
 			{
 				// Remove notes in Update.
-				break;
+				return false;
 			}
 
 			// Add a tap
@@ -2772,11 +2769,11 @@ void ScreenEdit::InputRecord( const InputEventPlus &input, EditButton EditB )
 
 			const int iRow = BeatToNoteRow( fBeat );
 			if( iRow < 0 )
-				break;
+				return false;
 
 			// Don't add outside of the range.
 			if( iRow < m_iStartPlayingAt || iRow >= m_iStopPlayingAt )
-				return;
+				return false;
 
 			// Remove hold if any so that we don't have taps inside of a hold.
 			int iHeadRow;
@@ -2788,18 +2785,18 @@ void ScreenEdit::InputRecord( const InputEventPlus &input, EditButton EditB )
 			m_NoteDataRecord.SetTapNote( iCol, iRow, tn );
 			m_NoteFieldRecord.Step( iCol, TNS_W1 );
 		}
-		break;
+		return true;
 	case IET_REPEAT:
 	case IET_RELEASE:
 		// don't add or extend holds here; we do it in Update()
-		break;
+		return false;
 	}
 }
 
-void ScreenEdit::InputRecordPaused( const InputEventPlus &input, EditButton EditB )
+bool ScreenEdit::InputRecordPaused( const InputEventPlus &input, EditButton EditB )
 {
 	if( input.type != IET_FIRST_PRESS )
-		return;	// don't care
+		return false;	// don't care
 
 	switch( EditB )
 	{
@@ -2808,15 +2805,15 @@ void ScreenEdit::InputRecordPaused( const InputEventPlus &input, EditButton Edit
 		 * to do to undo is Undo() as usual, and copy the note data back in. */
 		Undo();
 		m_NoteDataRecord.CopyAll( m_NoteDataEdit );
-		break;
+		return true;
 
 	case EDIT_BUTTON_PLAY_SELECTION:
 		TransitionEditState( STATE_PLAYING );
-		break;
+		return true;
 
 	case EDIT_BUTTON_RECORD_SELECTION:
 		TransitionEditState( STATE_RECORDING );
-		break;
+		return true;
 
 	case EDIT_BUTTON_RECORD_FROM_CURSOR:
 		if( GAMESTATE->m_pCurSteps[0]->IsAnEdit() )
@@ -2826,7 +2823,7 @@ void ScreenEdit::InputRecordPaused( const InputEventPlus &input, EditButton Edit
 			{
 				// We're already at the end.
 				SCREENMAN->PlayInvalidSound();
-				return;
+				return true;
 			}
 		}
 
@@ -2841,16 +2838,17 @@ void ScreenEdit::InputRecordPaused( const InputEventPlus &input, EditButton Edit
 		}
 
 		TransitionEditState( STATE_RECORDING );
-		break;
+		return true;
 
 	case EDIT_BUTTON_RETURN_TO_EDIT:
 		TransitionEditState( STATE_EDITING );
-		break;
-	default: break;
+		return true;
+	default:
+		return false;
 	}
 }
 
-void ScreenEdit::InputPlay( const InputEventPlus &input, EditButton EditB )
+bool ScreenEdit::InputPlay( const InputEventPlus &input, EditButton EditB )
 {
 	switch( input.type )
 	{
@@ -2858,7 +2856,7 @@ void ScreenEdit::InputPlay( const InputEventPlus &input, EditButton EditB )
 	case IET_FIRST_PRESS:
 		break;
 	default:
-		return;
+		return false;
 	}
 
 	GameButtonType gbt = GAMESTATE->m_pCurGame->GetPerButtonInfo(input.GameI.button)->m_gbt;
@@ -2879,22 +2877,21 @@ void ScreenEdit::InputPlay( const InputEventPlus &input, EditButton EditB )
 			{
 				switch( gbt )
 				{
-				case GameButtonType_INVALID:
-					break;
 				case GameButtonType_Step:
 					if( iCol != -1 )
 						m_Player->Step( iCol, -1, input.DeviceI.ts, false, bRelease );
-					break;
+					return true;
 				case GameButtonType_Fret:
 					if( iCol != -1 )
 						m_Player->Fret( iCol, -1, input.DeviceI.ts, false, bRelease );
-					break;
+					return true;
 				case GameButtonType_Strum:
 					m_Player->Strum( iCol, -1, input.DeviceI.ts, false, bRelease );
+					return true;
+				default:
 					break;
 				}
 			}
-			break;
 		default: break;
 		}
 	}
@@ -2907,7 +2904,7 @@ void ScreenEdit::InputPlay( const InputEventPlus &input, EditButton EditB )
 			/* When exiting play mode manually, leave the cursor where it is. */
 			m_fBeatToReturnTo = GetAppropriatePosition().m_fSongBeat;
 			TransitionEditState( STATE_EDITING );
-			break;
+			return true;
 		case EDIT_BUTTON_OFFSET_UP:
 		case EDIT_BUTTON_OFFSET_DOWN:
 		{
@@ -2937,10 +2934,11 @@ void ScreenEdit::InputPlay( const InputEventPlus &input, EditButton EditB )
 				GAMESTATE->m_pCurSong->m_fMusicSampleStartSeconds += fOffsetDelta;
 			}
 		}
-			break;
+			return true;
 		default: break;
 		}
 	}
+	return false;
 }
 
 void ScreenEdit::TransitionEditState( EditState em )

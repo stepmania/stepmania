@@ -13,8 +13,8 @@ public:
 	virtual void BeginScreen();
 
 	virtual void HandleScreenMessage( const ScreenMessage SM );
-	virtual void MenuBack( const InputEventPlus &input );
-	virtual void MenuStart( const InputEventPlus &input );
+	virtual bool MenuBack( const InputEventPlus &input );
+	virtual bool MenuStart( const InputEventPlus &input );
 
 protected:
 	ThemeMetric<bool> ALLOW_START_TO_SKIP;

@@ -13,7 +13,7 @@ public:
 	void Init();
 	virtual void BeginScreen();
 	virtual void HandleScreenMessage( const ScreenMessage SM );
-	virtual void MenuSelect( const InputEventPlus &input );
+	virtual bool MenuSelect( const InputEventPlus &input );
 
 protected:
 	virtual void ImportOptions( int iRow, const vector<PlayerNumber> &vpns );

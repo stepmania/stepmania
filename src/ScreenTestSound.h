@@ -14,7 +14,7 @@ public:
 	virtual void Init();
 	~ScreenTestSound();
 
-	virtual void Input( const InputEventPlus &input );
+	virtual bool Input( const InputEventPlus &input );
 
 	void Update(float f);
 	void UpdateText(int n);

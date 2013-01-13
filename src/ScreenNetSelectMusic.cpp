@@ -90,19 +90,19 @@ void ScreenNetSelectMusic::Init()
 	m_bAllowInput = false;
 }
 
-void ScreenNetSelectMusic::Input( const InputEventPlus &input )
+bool ScreenNetSelectMusic::Input( const InputEventPlus &input )
 {
 	if( !m_bAllowInput || IsTransitioning() )
-		return;
+		return false;
 
 	if( input.type == IET_RELEASE )
 	{
 		m_MusicWheel.Move(0);
-		return;
+		return true;
 	}
 
 	if( input.type != IET_FIRST_PRESS && input.type != IET_REPEAT )
-		return;
+		return false;
 
 	bool bHoldingCtrl = 
 		INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL)) ||
@@ -113,6 +113,7 @@ void ScreenNetSelectMusic::Input( const InputEventPlus &input )
 	MakeUpper( &c, 1 );
 
 	// Ctrl+[A-Z] to go to that letter of the alphabet
+	bool handled = false;
 	if( bHoldingCtrl && ( c >= 'A' ) && ( c <= 'Z' ) )
 	{
 		SortOrder so = GAMESTATE->m_SortOrder;
@@ -130,9 +131,10 @@ void ScreenNetSelectMusic::Input( const InputEventPlus &input )
 		m_MusicWheel.ChangeSort( so );
 		m_MusicWheel.SetOpenSection( ssprintf("%c", c ) );
 		m_MusicWheel.Move(+1);
+		handled = true;
 	}
 
-	ScreenNetSelectBase::Input( input );
+	return ScreenNetSelectBase::Input( input ) || handled;
 }
 
 void ScreenNetSelectMusic::HandleScreenMessage( const ScreenMessage SM )
@@ -301,7 +303,7 @@ bool ScreenNetSelectMusic::LeftAndRightPressed( const PlayerNumber pn )
 		&& INPUTMAPPER->IsBeingPressed( GAME_BUTTON_RIGHT, pn );
 }
 
-void ScreenNetSelectMusic::MenuLeft( const InputEventPlus &input )
+bool ScreenNetSelectMusic::MenuLeft( const InputEventPlus &input )
 {
 	PlayerNumber pn = input.pn;
 
@@ -309,9 +311,10 @@ void ScreenNetSelectMusic::MenuLeft( const InputEventPlus &input )
 		m_MusicWheel.ChangeSort( SORT_MODE_MENU );
 	else
 		m_MusicWheel.Move( -1 );
+	return true;
 }
 
-void ScreenNetSelectMusic::MenuRight( const InputEventPlus &input )
+bool ScreenNetSelectMusic::MenuRight( const InputEventPlus &input )
 {
 	PlayerNumber pn = input.pn;
 
@@ -319,16 +322,18 @@ void ScreenNetSelectMusic::MenuRight( const InputEventPlus &input )
 		m_MusicWheel.ChangeSort( SORT_MODE_MENU );
 	else
 		m_MusicWheel.Move( +1 );
+	return true;
 }
 
-void ScreenNetSelectMusic::MenuUp( const InputEventPlus &input )
+bool ScreenNetSelectMusic::MenuUp( const InputEventPlus &input )
 {
 	NSMAN->ReportNSSOnOff(3);
 	GAMESTATE->m_EditMode = EditMode_Full;
 	SCREENMAN->AddNewScreenToTop( PLAYER_OPTIONS_SCREEN, SM_BackFromPlayerOptions );
+	return true;
 }
 
-void ScreenNetSelectMusic::MenuDown( const InputEventPlus &input )
+bool ScreenNetSelectMusic::MenuDown( const InputEventPlus &input )
 {
 	/* Tricky: If we have a player on player 2, and there is only player 2,
 	 * allow them to use player 1's controls to change their difficulty. */
@@ -341,7 +346,7 @@ void ScreenNetSelectMusic::MenuDown( const InputEventPlus &input )
 		pn = PLAYER_2;
 
 	if( GAMESTATE->m_pCurSong == NULL )
-		return;
+		return false;
 	StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
 	vector <Steps *> MultiSteps;
 	MultiSteps = GAMESTATE->m_pCurSong->GetStepsByStepsType( st );
@@ -383,22 +388,23 @@ void ScreenNetSelectMusic::MenuDown( const InputEventPlus &input )
 	}
 	UpdateDifficulties( pn );
 	GAMESTATE->m_PreferredDifficulty[pn].Set( m_DC[pn] );
+	return true;
 }
 
-void ScreenNetSelectMusic::MenuStart( const InputEventPlus &input )
+bool ScreenNetSelectMusic::MenuStart( const InputEventPlus &input )
 {
 	bool bResult = m_MusicWheel.Select();
 
 	if( !bResult )
-		return;
+		return true;
 
 	if( m_MusicWheel.GetSelectedType() != WheelItemDataType_Song )
-		return;
+		return true;
 
 	Song * pSong = m_MusicWheel.GetSelectedSong();
 
 	if( pSong == NULL )
-		return;
+		return false;
 
 	GAMESTATE->m_pCurSong.Set( pSong );
 
@@ -412,14 +418,16 @@ void ScreenNetSelectMusic::MenuStart( const InputEventPlus &input )
 	}
 	else
 		StartSelectedSong();
+	return true;
 }
 
-void ScreenNetSelectMusic::MenuBack( const InputEventPlus &input )
+bool ScreenNetSelectMusic::MenuBack( const InputEventPlus &input )
 {
 	SOUND->StopMusic();
 	TweenOffScreen();
 
 	Cancel( SM_GoToPrevScreen );
+	return true;
 }
 
 void ScreenNetSelectMusic::TweenOffScreen()

@@ -10,10 +10,10 @@
 class ScreenTestInput : public ScreenWithMenuElements
 {
 public:
-	virtual void Input( const InputEventPlus &input );
+	virtual bool Input( const InputEventPlus &input );
 
-	virtual void MenuStart( const InputEventPlus &input );
-	virtual void MenuBack( const InputEventPlus &input );
+	virtual bool MenuStart( const InputEventPlus &input );
+	virtual bool MenuBack( const InputEventPlus &input );
 };
 
 #endif

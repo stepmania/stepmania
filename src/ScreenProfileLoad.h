@@ -8,7 +8,7 @@ class ScreenProfileLoad: public ScreenWithMenuElements
 public:
 	virtual void Init();
 	virtual void BeginScreen();
-	virtual void Input( const InputEventPlus &input );
+	virtual bool Input( const InputEventPlus &input );
 	void Continue();
 
 	virtual void PushSelf( lua_State *L );

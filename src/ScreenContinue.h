@@ -11,7 +11,7 @@ public:
 	virtual void Init();
 
 	virtual void BeginScreen();
-	virtual void Input( const InputEventPlus &input );
+	virtual bool Input( const InputEventPlus &input );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 	virtual void HandleMessage( const Message &msg );
 	virtual bool AllowLateJoin() const { return true; }

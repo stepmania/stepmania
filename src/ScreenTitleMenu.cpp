@@ -41,15 +41,16 @@ void ScreenTitleMenu::Init()
 
 static LocalizedString THEME_		("ScreenTitleMenu","Theme");
 static LocalizedString ANNOUNCER_	("ScreenTitleMenu","Announcer");
-void ScreenTitleMenu::Input( const InputEventPlus &input )
+bool ScreenTitleMenu::Input( const InputEventPlus &input )
 {
 #if defined(DEBUG)
 	LOG->Trace( "ScreenTitleMenu::Input( %d-%d )", input.DeviceI.device, input.DeviceI.button );	// debugging gameport joystick problem
 #endif
 
 	if( m_In.IsTransitioning() || m_Cancel.IsTransitioning() ) /* not m_Out */
-		return;
+		return false;
 
+	bool bHandled = false;
 	if( input.type == IET_FIRST_PRESS )
 	{
 		// detect codes
@@ -57,6 +58,7 @@ void ScreenTitleMenu::Input( const InputEventPlus &input )
 			CodeDetector::EnteredCode(input.GameI.controller,CODE_NEXT_THEME2) )
 		{
 			GameLoop::ChangeTheme( THEME->GetNextSelectableTheme(), m_sName );
+			bHandled = true;
 		}
 		if( CodeDetector::EnteredCode(input.GameI.controller,CODE_NEXT_ANNOUNCER) ||
 			CodeDetector::EnteredCode(input.GameI.controller,CODE_NEXT_ANNOUNCER2) )
@@ -66,10 +68,11 @@ void ScreenTitleMenu::Input( const InputEventPlus &input )
 			if( sName=="" ) sName = "(none)";
 			SCREENMAN->SystemMessage( ANNOUNCER_.GetValue()+": "+sName );
 			SCREENMAN->SetNewScreen( m_sName );
+			bHandled = true;
 		}
 	}
 
-	ScreenSelectMaster::Input( input );
+	return ScreenSelectMaster::Input( input ) || bHandled;
 }
 
 void ScreenTitleMenu::HandleMessage( const Message &msg )

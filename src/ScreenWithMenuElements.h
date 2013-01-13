@@ -62,8 +62,8 @@ private:
 class ScreenWithMenuElementsSimple: public ScreenWithMenuElements
 {
 public:
-	void MenuStart( const InputEventPlus &input );
-	void MenuBack( const InputEventPlus &input );
+	bool MenuStart( const InputEventPlus &input );
+	bool MenuBack( const InputEventPlus &input );
 
 	// Lua
 	virtual void PushSelf( lua_State *L );

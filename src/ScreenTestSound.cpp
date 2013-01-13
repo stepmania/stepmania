@@ -127,10 +127,10 @@ void ScreenTestSound::Update(float f)
 	}
 }
 
-void ScreenTestSound::Input( const InputEventPlus &input )
+bool ScreenTestSound::Input( const InputEventPlus &input )
 {
 	if( input.type != IET_FIRST_PRESS )
-		return;	// ignore
+		return false;	// ignore
 
 	switch( input.DeviceI.device )
 	{
@@ -197,11 +197,13 @@ void ScreenTestSound::Input( const InputEventPlus &input )
 				obj.SetY(obj.GetY() + 10);
 				break;
 */
-			default: break;
+			default:
+				return false;
 		}
-		default: break;
+		default:
+			return false;
 	}
-
+	return true;
 }
 
 /*

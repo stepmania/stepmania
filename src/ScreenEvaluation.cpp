@@ -684,10 +684,10 @@ void ScreenEvaluation::Init()
 	}
 }
 
-void ScreenEvaluation::Input( const InputEventPlus &input )
+bool ScreenEvaluation::Input( const InputEventPlus &input )
 {
 	if( IsTransitioning() )
-		return;
+		return false;
 
 	if( input.GameI.IsValid() )
 	{
@@ -722,12 +722,12 @@ void ScreenEvaluation::Input( const InputEventPlus &input )
 					MEMCARDMAN->UnmountCard( pn );
 
 				m_bSavedScreenshot[pn] = true;
-				return;	// handled
+				return true;	// handled
 			}
 		}
 	}
 
-	ScreenWithMenuElements::Input( input );
+	return ScreenWithMenuElements::Input( input );
 }
 
 void ScreenEvaluation::HandleScreenMessage( const ScreenMessage SM )
@@ -740,19 +740,20 @@ void ScreenEvaluation::HandleScreenMessage( const ScreenMessage SM )
 	ScreenWithMenuElements::HandleScreenMessage( SM );
 }
 
-void ScreenEvaluation::MenuBack( const InputEventPlus &input )
+bool ScreenEvaluation::MenuBack( const InputEventPlus &input )
 {
-	MenuStart( input );
+	return MenuStart( input );
 }
 
-void ScreenEvaluation::MenuStart( const InputEventPlus &input )
+bool ScreenEvaluation::MenuStart( const InputEventPlus &input )
 {
 	if( IsTransitioning() )
-		return;
+		return false;
 
 	m_soundStart.Play();
 
 	HandleMenuStart();
+	return true;
 }
 
 void ScreenEvaluation::HandleMenuStart()

@@ -347,24 +347,26 @@ void ScreenWithMenuElements::StopTimer()
 
 REGISTER_SCREEN_CLASS( ScreenWithMenuElementsSimple );
 
-void ScreenWithMenuElementsSimple::MenuStart( const InputEventPlus &input )
+bool ScreenWithMenuElementsSimple::MenuStart( const InputEventPlus &input )
 {
 	if( IsTransitioning() )
-		return;
+		return false;
 	if( m_fLockInputSecs > 0 )
-		return;
+		return false;
 
 	StartTransitioningScreen( SM_GoToNextScreen );
+	return true;
 }
 
-void ScreenWithMenuElementsSimple::MenuBack( const InputEventPlus &input )
+bool ScreenWithMenuElementsSimple::MenuBack( const InputEventPlus &input )
 {
 	if( IsTransitioning() )
-		return;
+		return false;
 	if( m_fLockInputSecs > 0 )
-		return;
+		return false;
 
 	Cancel( SM_GoToPrevScreen );
+	return true;
 }
 
 // lua start

@@ -19,15 +19,15 @@ public:
 	virtual void Init();
 	virtual ~ScreenSelectCharacter();
 
-	virtual void Input( const InputEventPlus &input );
+	virtual bool Input( const InputEventPlus &input );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
-	void MenuLeft( const InputEventPlus &input );
-	void MenuRight( const InputEventPlus &input );
-	void MenuUp( const InputEventPlus &input );
-	void MenuDown( const InputEventPlus &input );
-	void MenuStart( const InputEventPlus &input );
-	void MenuBack( const InputEventPlus &input );
+	bool MenuLeft( const InputEventPlus &input );
+	bool MenuRight( const InputEventPlus &input );
+	bool MenuUp( const InputEventPlus &input );
+	bool MenuDown( const InputEventPlus &input );
+	bool MenuStart( const InputEventPlus &input );
+	bool MenuBack( const InputEventPlus &input );
 
 	void TweenOffScreen();
 

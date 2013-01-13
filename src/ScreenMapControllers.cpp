@@ -228,20 +228,21 @@ static bool IsAxis( const DeviceInput& DeviceI )
 	return false;
 }
 
-void ScreenMapControllers::Input( const InputEventPlus &input )
+bool ScreenMapControllers::Input( const InputEventPlus &input )
 {
 	if( m_fLockInputSecs > 0 )
-		return;
+		return false;
 	
 	if( input.type != IET_FIRST_PRESS && input.type != IET_REPEAT )
-		return;	// ignore
+		return false;	// ignore
 	if( IsTransitioning() )
-		return;	// ignore
+		return false;	// ignore
 
 	LOG->Trace( "ScreenMapControllers::Input():  device: %d, button: %d", 
 		input.DeviceI.device, input.DeviceI.button );
 
 	int button = input.DeviceI.button;
+	bool bHandled = false;
 
 	/* TRICKY: Some adapters map the PlayStation digital d-pad to both axes and
 	 * buttons. We want buttons to be used for any mappings where possible
@@ -253,7 +254,7 @@ void ScreenMapControllers::Input( const InputEventPlus &input )
 	if( !m_WaitingForPress.IsZero() )
 	{
 		if( input.type != IET_FIRST_PRESS )
-			return;
+			return false;
 
 		// Don't allow function keys to be mapped.
 		if( input.DeviceI.device == DEVICE_KEYBOARD && (input.DeviceI.button >= KEY_F1 && input.DeviceI.button <= KEY_F12) )
@@ -268,7 +269,7 @@ void ScreenMapControllers::Input( const InputEventPlus &input )
 				IsAxis(input.DeviceI) )
 			{
 				LOG->Trace("Ignored input; non-axis event already received");
-				return;	// ignore this press
+				return false;	// ignore this press
 			}
 
 			m_DeviceIToMap = input.DeviceI;
@@ -304,6 +305,7 @@ void ScreenMapControllers::Input( const InputEventPlus &input )
 
 				// commit to disk after each change
 				INPUTMAPPER->SaveMappingsToDisk();
+				bHandled = true;
 			}
 			break;
 		case KEY_LEFT: // Move the selection left, wrapping up.
@@ -320,6 +322,7 @@ void ScreenMapControllers::Input( const InputEventPlus &input )
 			}
 			AfterChangeFocus();
 			m_soundChange.Play();
+			bHandled = true;
 			break;
 		case KEY_RIGHT:	// Move the selection right, wrapping down.
 			if( m_iCurButton == (int) m_KeysToMap.size() )
@@ -335,6 +338,7 @@ void ScreenMapControllers::Input( const InputEventPlus &input )
 			}
 			AfterChangeFocus();
 			m_soundChange.Play();
+			bHandled = true;
 			break;
 		case KEY_UP: // Move the selection up.
 			if( m_iCurButton == 0 )
@@ -343,6 +347,7 @@ void ScreenMapControllers::Input( const InputEventPlus &input )
 			m_iCurButton--;
 			AfterChangeFocus();
 			m_soundChange.Play();
+			bHandled = true;
 			break;
 		case KEY_DOWN: // Move the selection down.
 			if( m_iCurButton == (int) m_KeysToMap.size() )
@@ -351,10 +356,12 @@ void ScreenMapControllers::Input( const InputEventPlus &input )
 			m_iCurButton++;
 			AfterChangeFocus();
 			m_soundChange.Play();
+			bHandled = true;
 			break;
 		case KEY_ESC: // Quit the screen.
 			SCREENMAN->PlayStartSound();
 			StartTransitioningScreen( SM_GoToNextScreen );
+			bHandled = true;
 			break;
 		case KEY_ENTER: // Change the selection.
 		case KEY_KP_ENTER:
@@ -373,6 +380,7 @@ void ScreenMapControllers::Input( const InputEventPlus &input )
 			m_WaitingForPress.Touch();
 			m_DeviceIToMap.MakeInvalid();
 			SCREENMAN->PlayStartSound();
+			bHandled = true;
 			break;
 		}
 	}
@@ -382,6 +390,7 @@ void ScreenMapControllers::Input( const InputEventPlus &input )
 	LOG->Trace( "m_iCurSlot: %d m_iCurController: %d m_iCurButton: %d", m_iCurSlot, m_iCurController, m_iCurButton );
 
 	Refresh();
+	return bHandled;
 }
 
 Actor *ScreenMapControllers::GetActorWithFocus()

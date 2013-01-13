@@ -10,7 +10,7 @@ class ScreenEnding : public ScreenAttract
 public:
 	ScreenEnding();
 	virtual void Init();
-	virtual void Input( const InputEventPlus &input );
+	virtual bool Input( const InputEventPlus &input );
 
 private:
 	Sprite	m_sprRemoveMemoryCard[NUM_PLAYERS];

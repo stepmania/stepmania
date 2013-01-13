@@ -4,23 +4,25 @@
 
 REGISTER_SCREEN_CLASS( ScreenInstructions );
 
-void ScreenInstructions::Input( const InputEventPlus &input )
+bool ScreenInstructions::Input( const InputEventPlus &input )
 {
 	if( IsTransitioning() )
-		return;
+		return false;
 
 	// default input handler
-	Screen::Input( input );
+	return Screen::Input( input );
 }
 
-void ScreenInstructions::MenuBack( const InputEventPlus &input )
+bool ScreenInstructions::MenuBack( const InputEventPlus &input )
 {
 	Cancel( SM_GoToPrevScreen );
+	return true;
 }
 
-void ScreenInstructions::MenuStart( const InputEventPlus &input )
+bool ScreenInstructions::MenuStart( const InputEventPlus &input )
 {
 	StartTransitioningScreen( SM_GoToNextScreen );
+	return true;
 }
 
 /*

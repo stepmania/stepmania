@@ -10,8 +10,8 @@ public:
 	virtual void Init();
 	virtual RString GetDefaultChoice();
 	virtual void BeginScreen();
-	virtual void MenuStart( const InputEventPlus &input );
-	virtual void MenuBack( const InputEventPlus &input );
+	virtual bool MenuStart( const InputEventPlus &input );
+	virtual bool MenuBack( const InputEventPlus &input );
 };
 
 #endif

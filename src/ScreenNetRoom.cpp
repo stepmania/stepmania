@@ -52,12 +52,12 @@ void ScreenNetRoom::Init()
 	NSMAN->ReportNSSOnOff( 7 );
 }
 
-void ScreenNetRoom::Input( const InputEventPlus &input )
+bool ScreenNetRoom::Input( const InputEventPlus &input )
 {
 	if( (input.MenuI == GAME_BUTTON_LEFT || input.MenuI == GAME_BUTTON_RIGHT) && input.type == IET_RELEASE )
 		m_RoomWheel.Move( 0 );
 
-	ScreenNetSelectBase::Input( input );
+	return ScreenNetSelectBase::Input( input );
 }
 
 void ScreenNetRoom::HandleScreenMessage( const ScreenMessage SM )
@@ -191,7 +191,7 @@ void ScreenNetRoom::TweenOffScreen()
 	NSMAN->ReportNSSOnOff( 6 );
 }
 
-void ScreenNetRoom::MenuStart( const InputEventPlus &input )
+bool ScreenNetRoom::MenuStart( const InputEventPlus &input )
 {
 	m_RoomWheel.Select();
 	RoomWheelItemData* rwd = dynamic_cast<RoomWheelItemData*>( m_RoomWheel.LastSelected() ); 
@@ -212,31 +212,41 @@ void ScreenNetRoom::MenuStart( const InputEventPlus &input )
 		}
 	}
 	ScreenNetSelectBase::MenuStart( input );
+	return true;
 }
 
-void ScreenNetRoom::MenuBack( const InputEventPlus &input )
+bool ScreenNetRoom::MenuBack( const InputEventPlus &input )
 {
 	TweenOffScreen();
 
 	Cancel( SM_GoToPrevScreen );
 
 	ScreenNetSelectBase::MenuBack( input );
+	return true;
 }
 
-void ScreenNetRoom::MenuLeft( const InputEventPlus &input )
+bool ScreenNetRoom::MenuLeft( const InputEventPlus &input )
 {
+	bool bHandled = false;
 	if( input.type == IET_FIRST_PRESS )
+	{
 		m_RoomWheel.Move( -1 );
+		bHandled = true;
+	}
 
-	ScreenNetSelectBase::MenuLeft( input );
+	return ScreenNetSelectBase::MenuLeft( input ) || bHandled;
 }
 
-void ScreenNetRoom::MenuRight( const InputEventPlus &input )
+bool ScreenNetRoom::MenuRight( const InputEventPlus &input )
 {
+	bool bHandled = false;
 	if( input.type == IET_FIRST_PRESS )
+	{
 		m_RoomWheel.Move( 1 );
+		bHandled = true;
+	}
 
-	ScreenNetSelectBase::MenuRight( input );
+	return ScreenNetSelectBase::MenuRight( input ) || bHandled;
 }
 
 void ScreenNetRoom::UpdateRoomsList()

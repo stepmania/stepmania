@@ -30,19 +30,19 @@ class ScreenNetRoom : public ScreenNetSelectBase
 {
 public:
 	virtual void Init();
-	virtual void Input( const InputEventPlus &input );
+	virtual bool Input( const InputEventPlus &input );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
 protected:
-	virtual void MenuStart( const InputEventPlus &input );
-	virtual void MenuBack( const InputEventPlus &input );
+	virtual bool MenuStart( const InputEventPlus &input );
+	virtual bool MenuBack( const InputEventPlus &input );
 
 	virtual void TweenOffScreen( );
 
 private:
 	void UpdateRoomsList();
-	void MenuLeft( const InputEventPlus &input );
-	void MenuRight( const InputEventPlus &input );
+	bool MenuLeft( const InputEventPlus &input );
+	bool MenuRight( const InputEventPlus &input );
 	void CreateNewRoom( const RString& rName,  const RString& rDesc, const RString& rPass );
 
 	RageSound m_soundChangeSel;

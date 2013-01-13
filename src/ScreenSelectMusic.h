@@ -33,13 +33,13 @@ public:
 	virtual void BeginScreen();
 
 	virtual void Update( float fDeltaTime );
-	virtual void Input( const InputEventPlus &input );
+	virtual bool Input( const InputEventPlus &input );
 	virtual void HandleMessage( const Message &msg );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 	virtual bool AllowLateJoin() const { return true; }
 
-	virtual void MenuStart( const InputEventPlus &input );
-	virtual void MenuBack( const InputEventPlus &input );
+	virtual bool MenuStart( const InputEventPlus &input );
+	virtual bool MenuBack( const InputEventPlus &input );
 
 	// ScreenWithMenuElements override: never play music here; we do it ourself.
 	virtual void StartPlayingMusic() { }

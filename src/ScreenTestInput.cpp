@@ -90,9 +90,10 @@ REGISTER_ACTOR_CLASS( InputList );
 
 REGISTER_SCREEN_CLASS( ScreenTestInput );
 
-void ScreenTestInput::Input( const InputEventPlus &input )
+bool ScreenTestInput::Input( const InputEventPlus &input )
 {
 	RString sMessage = input.DeviceI.ToString();
+	bool bHandled = false;
 	switch( input.type )
 	{
 		case IET_FIRST_PRESS:
@@ -105,29 +106,30 @@ void ScreenTestInput::Input( const InputEventPlus &input )
 				default: break;
 			}
 			MESSAGEMAN->Broadcast( sMessage );
+			bHandled = true;
 			break;
 		}
 		default: break;
 	}
 
-	Screen::Input( input );	// default handler
+	return Screen::Input( input ) || bHandled;	// default handler
 }
 
-void ScreenTestInput::MenuStart( const InputEventPlus &input )
+bool ScreenTestInput::MenuStart( const InputEventPlus &input )
 {
-	MenuBack( input );
+	return MenuBack( input );
 }
 
-void ScreenTestInput::MenuBack( const InputEventPlus &input )
+bool ScreenTestInput::MenuBack( const InputEventPlus &input )
 {
 	if( input.type != IET_REPEAT )
-		return;	// ignore
+		return false;	// ignore
 
-	if( !IsTransitioning() )
-	{
-		SCREENMAN->PlayStartSound();
-		StartTransitioningScreen( SM_GoToPrevScreen );
-	}
+	if( IsTransitioning() )
+		return false;
+	SCREENMAN->PlayStartSound();
+	StartTransitioningScreen( SM_GoToPrevScreen );
+	return true;
 }
 
 /*

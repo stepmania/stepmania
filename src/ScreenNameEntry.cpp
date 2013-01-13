@@ -330,15 +330,16 @@ void ScreenNameEntry::Update( float fDelta )
 	ScreenWithMenuElements::Update(fDelta);
 }
 
-void ScreenNameEntry::Input( const InputEventPlus &input )
+bool ScreenNameEntry::Input( const InputEventPlus &input )
 {
 	if( IsTransitioning() )
-		return;
+		return false;
 
 	if( input.type != IET_FIRST_PRESS || !input.GameI.IsValid() )
-		return; // ignore
+		return false; // ignore
 
 	const int iCol = GAMESTATE->GetCurrentStyle()->GameInputToColumn( input.GameI );
+	bool bHandled = false;
 	if( iCol != Column_Invalid && m_bStillEnteringName[input.pn] )
 	{
 		int iStringIndex = m_ColToStringIndex[input.pn][iCol];
@@ -350,9 +351,10 @@ void ScreenNameEntry::Input( const InputEventPlus &input )
 			m_textSelectedChars[input.pn][iCol].SetText( RString(1, c) );
 			m_sSelectedName[input.pn][iStringIndex] = c;
 		}
+		bHandled = true;
 	}
 
-	ScreenWithMenuElements::Input( input );
+	return ScreenWithMenuElements::Input( input ) || bHandled;
 }
 
 void ScreenNameEntry::HandleScreenMessage( const ScreenMessage SM )
@@ -374,12 +376,12 @@ void ScreenNameEntry::HandleScreenMessage( const ScreenMessage SM )
 }
 
 
-void ScreenNameEntry::MenuStart( const InputEventPlus &input )
+bool ScreenNameEntry::MenuStart( const InputEventPlus &input )
 {
 	PlayerNumber pn = input.pn;
 
 	if( !m_bStillEnteringName[pn] )
-		return;
+		return false;
 	m_bStillEnteringName[pn] = false;
 	m_Text[pn].SetDone();
 
@@ -395,6 +397,7 @@ void ScreenNameEntry::MenuStart( const InputEventPlus &input )
 
 	if( !AnyStillEntering() && !m_Out.IsTransitioning() )
 		StartTransitioningScreen( SM_GoToNextScreen );
+	return true;
 }
 
 /*

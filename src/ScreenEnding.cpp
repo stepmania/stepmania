@@ -109,20 +109,22 @@ void ScreenEnding::Init()
 	GAMESTATE->Reset();
 }
 
-void ScreenEnding::Input( const InputEventPlus &input )
+bool ScreenEnding::Input( const InputEventPlus &input )
 {
+	bool handled = false;
 	if( !IsTransitioning() )
 	{
 		switch( input.MenuI )
 		{
 			case GAME_BUTTON_START:
 				SCREENMAN->PostMessageToTopScreen( SM_BeginFadingOut, 0 );
+				handled = true;
 			default:
 				break;
 		}
 	}
 
-	ScreenAttract::Input( input );
+	return ScreenAttract::Input( input ) || handled;
 }
 
 /*

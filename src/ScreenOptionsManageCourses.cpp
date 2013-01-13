@@ -203,12 +203,13 @@ void ScreenOptionsManageCourses::AfterChangeRow( PlayerNumber pn )
 	ScreenOptions::AfterChangeRow( pn );
 }
 
-void ScreenOptionsManageCourses::MenuSelect( const InputEventPlus &input )
+bool ScreenOptionsManageCourses::MenuSelect( const InputEventPlus &input )
 {
 	if( input.type != IET_FIRST_PRESS )
-		return;
+		return false;
 	SetNextCombination();
 	m_soundDifficultyChanged.Play();
+	return true;
 }
 
 static LocalizedString YOU_HAVE_MAX( "ScreenOptionsManageCourses", "You have %d, the maximum number allowed." );

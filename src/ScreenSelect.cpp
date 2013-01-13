@@ -93,7 +93,7 @@ void ScreenSelect::Update( float fDelta )
 	ScreenWithMenuElements::Update( fDelta );
 }
 
-void ScreenSelect::Input( const InputEventPlus &input )
+bool ScreenSelect::Input( const InputEventPlus &input )
 {
 //	LOG->Trace( "ScreenSelect::Input()" );
 
@@ -114,14 +114,14 @@ void ScreenSelect::Input( const InputEventPlus &input )
 			SCREENMAN->PlayStartSound();
 
 		if( !ALLOW_DISABLED_PLAYER_INPUT )
-			return;	// don't let the screen handle the MENU_START press
+			return false;	// don't let the screen handle the MENU_START press
 	}
 
 	if( !GAMESTATE->IsPlayerEnabled(input.pn) )
 	{
 		// block input of disabled players
 		if( !ALLOW_DISABLED_PLAYER_INPUT )
-			return;
+			return false;
 
 		/* Never allow a START press by a player that's still not joined, even if
 		 * ALLOW_DISABLED_PLAYER_INPUT would allow other types of input. If we
@@ -129,10 +129,10 @@ void ScreenSelect::Input( const InputEventPlus &input )
 		 * players joined (eg. if ScreenTitleJoin is started in pay with no
 		 * credits). */
 		if( input.MenuI == GAME_BUTTON_START )
-			return;
+			return false;
 	}
 
-	ScreenWithMenuElements::Input( input ); // default input handler
+	return ScreenWithMenuElements::Input( input ); // default input handler
 }
 
 void ScreenSelect::HandleScreenMessage( const ScreenMessage SM )
@@ -195,9 +195,10 @@ void ScreenSelect::HandleMessage( const Message &msg )
 	ScreenWithMenuElements::HandleMessage( msg );
 }
 
-void ScreenSelect::MenuBack( const InputEventPlus &input )
+bool ScreenSelect::MenuBack( const InputEventPlus &input )
 {
 	Cancel( SM_GoToPrevScreen );
+	return true;
 }
 
 /*

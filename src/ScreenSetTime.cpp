@@ -100,15 +100,15 @@ void ScreenSetTime::Update( float fDelta )
 	m_textValue[day]	.SetText( ssprintf("%02d",now.tm_mday) );
 }
 
-void ScreenSetTime::Input( const InputEventPlus &input )
+bool ScreenSetTime::Input( const InputEventPlus &input )
 {
 	if( input.type != IET_FIRST_PRESS && input.type != IET_REPEAT )
-		return;	// ignore
+		return false;	// ignore
 
 	if( IsTransitioning() )
-		return;
+		return false;
 
-	Screen::Input( input );	// default handler
+	return Screen::Input( input );	// default handler
 }
 
 void ScreenSetTime::ChangeValue( int iDirection )
@@ -159,27 +159,31 @@ void ScreenSetTime::ChangeSelection( int iDirection )
 		m_soundChangeSelection.Play();
 }
 
-void ScreenSetTime::MenuUp( const InputEventPlus &input )
+bool ScreenSetTime::MenuUp( const InputEventPlus &input )
 {
 	ChangeSelection( -1 );
+	return true;
 }
 
-void ScreenSetTime::MenuDown( const InputEventPlus &input )
+bool ScreenSetTime::MenuDown( const InputEventPlus &input )
 {
 	ChangeSelection( +1 );
+	return true;
 }
 
-void ScreenSetTime::MenuLeft( const InputEventPlus &input )
+bool ScreenSetTime::MenuLeft( const InputEventPlus &input )
 {
 	ChangeValue( -1 );
+	return true;
 }
 
-void ScreenSetTime::MenuRight( const InputEventPlus &input )
+bool ScreenSetTime::MenuRight( const InputEventPlus &input )
 {
 	ChangeValue( +1 );
+	return true;
 }
 
-void ScreenSetTime::MenuStart( const InputEventPlus &input )
+bool ScreenSetTime::MenuStart( const InputEventPlus &input )
 {
 	bool bHoldingLeftAndRight = 
 		INPUTMAPPER->IsBeingPressed( GAME_BUTTON_RIGHT, input.pn ) &&
@@ -218,16 +222,19 @@ void ScreenSetTime::MenuStart( const InputEventPlus &input )
 	}
 	else
 		ChangeSelection( +1 );
+	return true;
 }
 
-void ScreenSetTime::MenuSelect( const InputEventPlus &input )
+bool ScreenSetTime::MenuSelect( const InputEventPlus &input )
 {
 	ChangeSelection( -1 );
+	return true;
 }
 
-void ScreenSetTime::MenuBack( const InputEventPlus &input )
+bool ScreenSetTime::MenuBack( const InputEventPlus &input )
 {
 	StartTransitioningScreen( SM_GoToPrevScreen );
+	return true;
 }
 
 /*

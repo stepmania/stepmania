@@ -30,11 +30,11 @@ public:
 	virtual RString GetDefaultChoice();
 	virtual void BeginScreen();
 
-	virtual void MenuLeft( const InputEventPlus &input );
-	virtual void MenuRight( const InputEventPlus &input );
-	virtual void MenuUp( const InputEventPlus &input );
-	virtual void MenuDown( const InputEventPlus &input );
-	virtual void MenuStart( const InputEventPlus &input );
+	virtual bool MenuLeft( const InputEventPlus &input );
+	virtual bool MenuRight( const InputEventPlus &input );
+	virtual bool MenuUp( const InputEventPlus &input );
+	virtual bool MenuDown( const InputEventPlus &input );
+	virtual bool MenuStart( const InputEventPlus &input );
 	virtual void TweenOnScreen();
 	virtual void TweenOffScreen();
 

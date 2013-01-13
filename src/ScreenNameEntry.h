@@ -13,10 +13,10 @@ public:
 	ScreenNameEntry();
 	virtual void Init();
 	virtual void Update( float fDeltaTime );
-	virtual void Input( const InputEventPlus &input );
+	virtual bool Input( const InputEventPlus &input );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
-	virtual void MenuStart( const InputEventPlus &input );
+	virtual bool MenuStart( const InputEventPlus &input );
 private:
 	class ScrollingText : public Actor
 	{

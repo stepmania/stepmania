@@ -139,12 +139,12 @@ bool ScreenNameEntryTraditional::AnyEntering() const
 	return false;
 }
 
-void ScreenNameEntryTraditional::Input( const InputEventPlus &input )
+bool ScreenNameEntryTraditional::Input( const InputEventPlus &input )
 {
 	if( IsTransitioning() )
-		return;
+		return false;
 
-	ScreenWithMenuElements::Input( input );
+	return ScreenWithMenuElements::Input( input );
 }
 
 bool ScreenNameEntryTraditional::Finish( PlayerNumber pn )

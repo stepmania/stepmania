@@ -46,10 +46,11 @@ void ScreenUnlockBrowse::BeginScreen()
 	HandleMessage( Message(MessageIDToString(Message_MenuSelectionChanged)) );
 }
 
-void ScreenUnlockBrowse::MenuStart( const InputEventPlus &input )
+bool ScreenUnlockBrowse::MenuStart( const InputEventPlus &input )
 {
 	m_soundStart.Play();
 	this->PostScreenMessage( SM_BeginFadingOut, 0 );
+	return true;
 }
 
 void ScreenUnlockBrowse::HandleMessage( const Message &msg )

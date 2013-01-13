@@ -57,8 +57,10 @@ void ScreenPlayerOptions::BeginScreen()
 	}
 }
 
-void ScreenPlayerOptions::Input( const InputEventPlus &input )
+bool ScreenPlayerOptions::Input( const InputEventPlus &input )
 {
+	bool bHandled = false;
+
 	if( m_bAskOptionsMessage &&
 		input.type == IET_FIRST_PRESS  &&
 		!m_In.IsTransitioning()  &&
@@ -69,6 +71,7 @@ void ScreenPlayerOptions::Input( const InputEventPlus &input )
 			m_bGoToOptions = true;
 			this->PlayCommand( "GoToOptions" );
 			SCREENMAN->PlayStartSound();
+			bHandled = true;
 		}
 	}
 
@@ -90,9 +93,10 @@ void ScreenPlayerOptions::Input( const InputEventPlus &input )
 			this->UpdateDisqualified( r, pn );
 			m_pRows[r]->SetChoiceInRowWithFocus( pn, iOldFocus );
 		}
+		bHandled = true;
 	}
 
-	ScreenOptionsMaster::Input( input );
+	bHandled = ScreenOptionsMaster::Input( input ) || bHandled;
 
 	// UGLY: Update m_Disqualified whenever Start is pressed
 	if( GAMESTATE->IsHumanPlayer(pn) && input.MenuI == GAME_BUTTON_START )
@@ -100,6 +104,7 @@ void ScreenPlayerOptions::Input( const InputEventPlus &input )
 		int row = m_iCurrentRow[pn];
 		UpdateDisqualified( row, pn );
 	}
+	return bHandled;
 }
 
 void ScreenPlayerOptions::HandleScreenMessage( const ScreenMessage SM )

@@ -392,7 +392,7 @@ void ScreenSelectMusic::Update( float fDeltaTime )
 
 	CheckBackgroundRequests( false );
 }
-void ScreenSelectMusic::Input( const InputEventPlus &input )
+bool ScreenSelectMusic::Input( const InputEventPlus &input )
 {
 	// HACK: This screen eats mouse inputs if we don't check for them first.
 	bool mouse_evt = false;
@@ -403,8 +403,7 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 	}
 	if (mouse_evt)	
 	{
-		ScreenWithMenuElements::Input(input);
-		return;
+		return ScreenWithMenuElements::Input(input);
 	}
 //	LOG->Trace( "ScreenSelectMusic::Input()" );
 
@@ -416,11 +415,11 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 	if( input.DeviceI.device == DEVICE_KEYBOARD && input.DeviceI.button == KEY_F9 )
 	{
 		if( input.type != IET_FIRST_PRESS ) 
-			return;
+			return false;
 		PREFSMAN->m_bShowNativeLanguage.Set( !PREFSMAN->m_bShowNativeLanguage );
 		MESSAGEMAN->Broadcast( "DisplayLanguageChanged" );
 		m_MusicWheel.RebuildWheelItems();
-		return;
+		return true;
 	}
 
 	if( !IsTransitioning() && m_SelectionState != SelectionState_Finalized )
@@ -454,20 +453,20 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 				m_MusicWheel.ChangeSort( so );
 				m_MusicWheel.SetOpenSection( ssprintf("%c", c ) );
 				AfterMusicChange();
-				return;
+				return true;
 			}
 		}
 	}
 
 	if( !input.GameI.IsValid() )
-		return; // don't care
+		return false; // don't care
 
 	// Handle late joining
 	if( m_SelectionState != SelectionState_Finalized  &&  input.MenuI == GAME_BUTTON_START  &&  input.type == IET_FIRST_PRESS  &&  GAMESTATE->JoinInput(input.pn) )
-		return; // don't handle this press again below
+		return true; // don't handle this press again below
 
 	if( !GAMESTATE->IsHumanPlayer(input.pn) )
-		return;
+		return false;
 
 	// Check for "Press START again for options" button press
 	if( m_SelectionState == SelectionState_Finalized  &&
@@ -476,13 +475,13 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 	    OPTIONS_MENU_AVAILABLE.GetValue() )
 	{
 		if( m_bGoToOptions )
-			return; // got it already
+			return false; // got it already
 		if( !m_bAllowOptionsMenu )
-			return; // not allowed
+			return false; // not allowed
 
 		if( !m_bAllowOptionsMenuRepeat && input.type == IET_REPEAT )
 		{
-			return; // not allowed yet
+			return false; // not allowed yet
 		}
 
 		m_bGoToOptions = true;
@@ -495,11 +494,11 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 		this->ClearMessageQueue( SM_BeginFadingOut );
 		this->PostScreenMessage( SM_BeginFadingOut, this->GetTweenTimeLeft() );
 
-		return;
+		return true;
 	}
 
 	if( IsTransitioning() )
-		return; // ignore
+		return false; // ignore
 
 	// Handle unselect steps
 	// xxx: select button could conflict with OptionsList here -aj
@@ -510,12 +509,12 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 		msg.SetParam( "Player", input.pn );
 		MESSAGEMAN->Broadcast( msg );
 		m_bStepsChosen[input.pn] = false;
-		return;
+		return true;
 	}
 
 	if( m_SelectionState == SelectionState_Finalized  ||
 		m_bStepsChosen[input.pn] )
-		return; // ignore
+		return false; // ignore
 
 	if( USE_PLAYER_SELECT_MENU )
 	{
@@ -533,9 +532,7 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 		{
 			if( m_OptionsList[pn].IsOpened() )
 			{
-				m_OptionsList[pn].Input( input );
-
-				return;
+				return m_OptionsList[pn].Input( input );
 			}
 			else
 			{
@@ -587,7 +584,7 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 			g_CanOpenOptionsList.Touch();
 		if( g_CanOpenOptionsList.Ago() > OPTIONS_LIST_TIMEOUT )
 			m_bAcceptSelectRelease[input.pn] = false;
-		return;
+		return true;
 	}
 
 	if( m_SelectionState == SelectionState_SelectingSong  &&
@@ -596,7 +593,7 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 		{
 			// If we're rouletting, hands off.
 			if( m_MusicWheel.IsRouletting() )
-				return;
+				return false;
 
 			bool bLeftIsDown = false;
 			bool bRightIsDown = false;
@@ -669,7 +666,7 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 	{
 		// Avoid any event not being first press
 		if( input.type != IET_FIRST_PRESS )
-			return;
+			return false;
 
 		if( m_SelectionState == SelectionState_SelectingSong )
 		{
@@ -695,7 +692,7 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 	if( CHANGE_GROUPS_WITH_GAME_BUTTONS )
 	{
 		if( input.type != IET_FIRST_PRESS)
-			return;
+			return false;
 
 		if( m_SelectionState == SelectionState_SelectingSong )
 		{
@@ -856,9 +853,9 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 	}
 
 	if( input.type == IET_FIRST_PRESS && DetectCodes(input) )
-		return;
+		return true;
 
-	ScreenWithMenuElements::Input( input );
+	return ScreenWithMenuElements::Input( input );
 }
 
 bool ScreenSelectMusic::DetectCodes( const InputEventPlus &input )
@@ -1168,21 +1165,21 @@ void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 	ScreenWithMenuElements::HandleScreenMessage( SM );
 }
 
-void ScreenSelectMusic::MenuStart( const InputEventPlus &input )
+bool ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 {
 	if( input.type != IET_FIRST_PRESS )
-		return;
+		return false;
 
 	/* If select is being pressed at the same time, this is probably an attempt
 	 * to change the sort, not to pick a song or difficulty. If it gets here,
 	 * the actual select press was probably hit during a tween and ignored.
 	 * Ignore it. */
 	if( input.pn != PLAYER_INVALID && INPUTMAPPER->IsBeingPressed(GAME_BUTTON_SELECT, input.pn) )
-		return;
+		return false;
 
 	// Honor locked input for start presses.
 	if( m_fLockInputSecs > 0 )
-		return;
+		return false;
 
 	switch( m_SelectionState )
 	{
@@ -1190,7 +1187,7 @@ void ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 	case SelectionState_SelectingSong:
 		// If false, we don't have a selection just yet.
 		if( !m_MusicWheel.Select() )
-			return;
+			return false;
 
 		// a song was selected
 		if( m_MusicWheel.GetSelectedSong() != NULL )
@@ -1258,7 +1255,7 @@ void ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 		else
 		{
 			// We haven't made a selection yet.
-			return;
+			return false;
 		}
 		// I believe this is for those who like pump pro. -aj
 		MESSAGEMAN->Broadcast("SongChosen");
@@ -1355,7 +1352,7 @@ void ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 							{
 								/* They selected non-Routine steps, so we can't
 								 * select Routine steps. */
-								return;
+								return false;
 							}
 						}
 					}
@@ -1371,7 +1368,7 @@ void ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 				Message msg("StepsChosen");
 				msg.SetParam( "Player", pn );
 				MESSAGEMAN->Broadcast( msg );
-				return;
+				return true;
 			}
 		}
 		break;
@@ -1485,10 +1482,11 @@ void ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 			m_MenuTimer->Start();
 		}
 	}
+	return true;
 }
 
 
-void ScreenSelectMusic::MenuBack( const InputEventPlus & /* input */ )
+bool ScreenSelectMusic::MenuBack( const InputEventPlus & /* input */ )
 {
 	// Handle unselect song (ffff)
 	// todo: this isn't right at all. -aj
@@ -1506,13 +1504,14 @@ void ScreenSelectMusic::MenuBack( const InputEventPlus & /* input */ )
 		msg.SetParam( "Player", input.pn );
 		MESSAGEMAN->Broadcast( msg );
 		m_SelectionState = SelectionState_SelectingSong;
-		return;
+		return true;
 	}
 	*/
 
 	m_BackgroundLoader.Abort();
 
 	Cancel( SM_GoToPrevScreen );
+	return true;
 }
 
 void ScreenSelectMusic::AfterStepsOrTrailChange( const vector<PlayerNumber> &vpns )

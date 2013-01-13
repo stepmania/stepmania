@@ -19,92 +19,96 @@ void ScreenSelectProfile::Init()
 	ScreenWithMenuElements::Init();
 }
 
-void ScreenSelectProfile::Input( const InputEventPlus &input )
+bool ScreenSelectProfile::Input( const InputEventPlus &input )
 {
 	if( IsTransitioning() )
-		return;
+		return false;
 
-	ScreenWithMenuElements::Input( input );
+	return ScreenWithMenuElements::Input( input );
 }
 
-void ScreenSelectProfile::MenuLeft( const InputEventPlus &input )
+bool ScreenSelectProfile::MenuLeft( const InputEventPlus &input )
 {
 	PlayerNumber pn = input.pn;
 	if( m_fLockInputSecs > 0 )
-		return;
+		return false;
 	if( input.type == IET_RELEASE )
-		return;
+		return false;
 	if( input.type != IET_FIRST_PRESS )
 	{
 		/*
 		if( !ALLOW_REPEATING_INPUT )
-			return;
+			return false;
 		*/
 		if( m_TrackingRepeatingInput != input.MenuI )
-			return;
+			return false;
 	}
 	m_TrackingRepeatingInput = input.MenuI;
 	MESSAGEMAN->Broadcast( (MessageID)(Message_MenuLeftP1+pn) );
+	return true;
 }
 
-void ScreenSelectProfile::MenuRight( const InputEventPlus &input )
+bool ScreenSelectProfile::MenuRight( const InputEventPlus &input )
 {
 	PlayerNumber pn = input.pn;
 	if( m_fLockInputSecs > 0 )
-		return;
+		return false;
 	if( input.type == IET_RELEASE )
-		return;
+		return false;
 	if( input.type != IET_FIRST_PRESS )
 	{
 		/*
 		if( !ALLOW_REPEATING_INPUT )
-			return;
+			return false;
 		*/
 		if( m_TrackingRepeatingInput != input.MenuI )
-			return;
+			return false;
 	}
 	m_TrackingRepeatingInput = input.MenuI;
 	MESSAGEMAN->Broadcast( (MessageID)(Message_MenuRightP1+pn) );
+	return true;
 }
 
-void ScreenSelectProfile::MenuUp( const InputEventPlus &input )
+bool ScreenSelectProfile::MenuUp( const InputEventPlus &input )
 {
 	PlayerNumber pn = input.pn;
 	if( m_fLockInputSecs > 0 )
-		return;
+		return false;
 	if( input.type == IET_RELEASE )
-		return;
+		return false;
 	if( input.type != IET_FIRST_PRESS )
 	{
 		/*
 		if( !ALLOW_REPEATING_INPUT )
-			return;
+			return false;
 		*/
 		if( m_TrackingRepeatingInput != input.MenuI )
-			return;
+			return false;
 	}
 	m_TrackingRepeatingInput = input.MenuI;
 	MESSAGEMAN->Broadcast( (MessageID)(Message_MenuUpP1+pn) );
+	return true;
 }
 
-void ScreenSelectProfile::MenuDown( const InputEventPlus &input )
+bool ScreenSelectProfile::MenuDown( const InputEventPlus &input )
 {
 	PlayerNumber pn = input.pn;
 	if( m_fLockInputSecs > 0 )
-		return;
+		return false;
 	if( input.type == IET_RELEASE )
-		return;
+		return false;
 	if( input.type != IET_FIRST_PRESS )
 	{
 		/*
 		if( !ALLOW_REPEATING_INPUT )
-			return;
+			return false;
 		*/
 		if( m_TrackingRepeatingInput != input.MenuI )
-			return;
+			return false;
 	}
 	m_TrackingRepeatingInput = input.MenuI;
 	MESSAGEMAN->Broadcast( (MessageID)(Message_MenuDownP1+pn) );
+	return true;
 }
 
 bool ScreenSelectProfile::SetProfileIndex( PlayerNumber pn, int iProfileIndex )

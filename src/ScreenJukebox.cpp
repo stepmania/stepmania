@@ -239,24 +239,24 @@ void ScreenJukebox::Init()
 	m_DancingState = STATE_DANCING;
 }
 
-void ScreenJukebox::Input( const InputEventPlus &input )
+bool ScreenJukebox::Input( const InputEventPlus &input )
 {
 	//LOG->Trace( "ScreenJukebox::Input()" );
 
 	if( input.type != IET_FIRST_PRESS )
-		return; // ignore
+		return false; // ignore
 
 	switch( input.MenuI )
 	{
 		case GAME_BUTTON_LEFT:
 		case GAME_BUTTON_RIGHT:
 			SCREENMAN->PostMessageToTopScreen( SM_NotesEnded, 0 );
-			return;
+			return true;
 		default:
 			break;
 	}
 
-	ScreenAttract::AttractInput( input, this );
+	return ScreenAttract::AttractInput( input, this );
 }
 
 void ScreenJukebox::HandleScreenMessage( const ScreenMessage SM )

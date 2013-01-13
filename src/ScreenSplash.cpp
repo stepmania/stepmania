@@ -34,18 +34,20 @@ void ScreenSplash::HandleScreenMessage( const ScreenMessage SM )
 	ScreenWithMenuElements::HandleScreenMessage( SM );
 }
 
-void ScreenSplash::MenuBack( const InputEventPlus &input )
+bool ScreenSplash::MenuBack( const InputEventPlus &input )
 {
 	Cancel( SM_GoToPrevScreen );
+	return true;
 }
 
-void ScreenSplash::MenuStart( const InputEventPlus &input )
+bool ScreenSplash::MenuStart( const InputEventPlus &input )
 {
 	if( IsTransitioning() )
-		return;
+		return false;
 	if( !ALLOW_START_TO_SKIP )
-		return;
+		return false;
 	StartTransitioningScreen( SM_GoToNextScreen );
+	return true;
 }
 
 /*

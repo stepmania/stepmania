@@ -7,11 +7,11 @@ class ScreenUnlockCelebrate : public ScreenUnlockBrowse
 {
 public:
 	virtual void Init();
-	virtual void MenuLeft( const InputEventPlus &input ) { }
-	virtual void MenuRight( const InputEventPlus &input ) { }
-	virtual void MenuUp( const InputEventPlus &input ) { }
-	virtual void MenuDown( const InputEventPlus &input ) { }
-	virtual void MenuBack( const InputEventPlus &input ) { MenuStart( input ); }
+	virtual bool MenuLeft( const InputEventPlus &input ) { return false; }
+	virtual bool MenuRight( const InputEventPlus &input ) { return false; }
+	virtual bool MenuUp( const InputEventPlus &input ) { return false; }
+	virtual bool MenuDown( const InputEventPlus &input ) { return false; }
+	virtual bool MenuBack( const InputEventPlus &input ) { return MenuStart( input ); }
 protected:
 };
 

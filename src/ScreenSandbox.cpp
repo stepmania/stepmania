@@ -22,9 +22,9 @@ void ScreenSandbox::HandleScreenMessage( const ScreenMessage SM )
 	Screen::HandleScreenMessage( SM );
 }
 
-void ScreenSandbox::Input( const InputEventPlus &input )
+bool ScreenSandbox::Input( const InputEventPlus &input )
 {
-	Screen::Input( input );
+	return Screen::Input( input );
 }
 
 void ScreenSandbox::Update( float fDeltaTime )

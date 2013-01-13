@@ -11,7 +11,7 @@ public:
 	ScreenTitleMenu();
 	virtual void Init();
 
-	virtual void Input( const InputEventPlus &input );
+	virtual bool Input( const InputEventPlus &input );
 
 	virtual void HandleMessage( const Message &msg );
 };

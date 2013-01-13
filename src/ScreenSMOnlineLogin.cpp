@@ -185,9 +185,9 @@ void ScreenSMOnlineLogin::HandleScreenMessage(const ScreenMessage SM)
 	ScreenOptions::HandleScreenMessage(SM);
 }
 
-void ScreenSMOnlineLogin::MenuStart( const InputEventPlus &input )
+bool ScreenSMOnlineLogin::MenuStart( const InputEventPlus &input )
 {
-	ScreenOptions::MenuStart( input );
+	return ScreenOptions::MenuStart( input );
 }
 
 RString ScreenSMOnlineLogin::GetSelectedProfileID()

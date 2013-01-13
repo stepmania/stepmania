@@ -106,29 +106,27 @@ void ScreenPrompt::BeginScreen()
 	PositionCursor();
 }
 
-void ScreenPrompt::Input( const InputEventPlus &input )
+bool ScreenPrompt::Input( const InputEventPlus &input )
 {
 	if( IsTransitioning() )
-		return;
+		return false;
 
 	if( input.type == IET_RELEASE )
-		return;
+		return false;
 
 	if( input.DeviceI.device==DEVICE_KEYBOARD )
 	{
 		switch( input.DeviceI.button )
 		{
 			case KEY_LEFT:
-				this->MenuLeft( input );
-				return;
+				return this->MenuLeft( input );
 			case KEY_RIGHT:
-				this->MenuRight( input );
-				return;
+				return this->MenuRight( input );
 			default: break;
 		}
 	}
 
-	ScreenWithMenuElements::Input( input );
+	return ScreenWithMenuElements::Input( input );
 }
 
 bool ScreenPrompt::CanGoRight()
@@ -157,30 +155,39 @@ void ScreenPrompt::Change( int dir )
 	m_sndChange.Play();
 }
 
-void ScreenPrompt::MenuLeft( const InputEventPlus &input )
+bool ScreenPrompt::MenuLeft( const InputEventPlus &input )
 {
 	if( CanGoLeft() )
+	{
 		Change( -1 );
+		return true;
+	}
+	return false;
 }
 
-void ScreenPrompt::MenuRight( const InputEventPlus &input )
+bool ScreenPrompt::MenuRight( const InputEventPlus &input )
 {
 	if( CanGoRight() )
+	{
 		Change( +1 );
+		return true;
+	}
+	return false;
 }
 
-void ScreenPrompt::MenuStart( const InputEventPlus &input )
+bool ScreenPrompt::MenuStart( const InputEventPlus &input )
 {
 	if( m_Out.IsTransitioning() || m_Cancel.IsTransitioning() )
-		return;
+		return false;
 
 	End( false );
+	return true;
 }
 
-void ScreenPrompt::MenuBack( const InputEventPlus &input )
+bool ScreenPrompt::MenuBack( const InputEventPlus &input )
 {
 	if( m_Out.IsTransitioning() || m_Cancel.IsTransitioning() )
-		return;
+		return false;
 
 	switch( g_PromptType )
 	{
@@ -190,8 +197,9 @@ void ScreenPrompt::MenuBack( const InputEventPlus &input )
 		break;
 	case PROMPT_YES_NO_CANCEL:
 		End( true );
-		break;
+		return true;
 	}
+	return false;
 }
 
 void ScreenPrompt::End( bool bCancelled )

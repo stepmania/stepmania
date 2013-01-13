@@ -191,11 +191,12 @@ void ScreenTextEntry::Update( float fDelta )
 	}
 }
 
-void ScreenTextEntry::Input( const InputEventPlus &input )
+bool ScreenTextEntry::Input( const InputEventPlus &input )
 {
 	if( IsTransitioning() )
-		return;
+		return false;
 
+	bool bHandled = false;
 	if( input.DeviceI == DeviceInput(DEVICE_KEYBOARD, KEY_BACK) )
 	{
 		switch( input.type )
@@ -203,6 +204,7 @@ void ScreenTextEntry::Input( const InputEventPlus &input )
 			case IET_FIRST_PRESS:
 			case IET_REPEAT:
 				BackspaceInAnswer();
+				bHandled = true;
 			default:
 				break;
 		}
@@ -216,10 +218,11 @@ void ScreenTextEntry::Input( const InputEventPlus &input )
 			TryAppendToAnswer( WStringToRString(wstring()+c) );
 
 			TextEnteredDirectly();
+			bHandled = true;
 		}
 	}
 
-	ScreenWithMenuElements::Input( input );
+	return ScreenWithMenuElements::Input( input ) || bHandled;
 }
 
 void ScreenTextEntry::TryAppendToAnswer( RString s )
@@ -257,11 +260,15 @@ void ScreenTextEntry::BackspaceInAnswer()
 	UpdateAnswerText();
 }
 
-void ScreenTextEntry::MenuStart( const InputEventPlus &input )
+bool ScreenTextEntry::MenuStart( const InputEventPlus &input )
 {
 	// HACK: Only allow the screen to end on the Enter key.-aj
 	if( input.DeviceI == DeviceInput(DEVICE_KEYBOARD, KEY_ENTER) && input.type==IET_FIRST_PRESS )
+	{
 		End( false );
+		return true;
+	}
+	return false;
 }
 
 void ScreenTextEntry::End( bool bCancelled )
@@ -303,10 +310,12 @@ void ScreenTextEntry::End( bool bCancelled )
 	s_sLastAnswer = bCancelled ? RString("") : WStringToRString(m_sAnswer);
 }
 
-void ScreenTextEntry::MenuBack( const InputEventPlus &input )
+bool ScreenTextEntry::MenuBack( const InputEventPlus &input )
 {
-	if( input.type == IET_FIRST_PRESS )
-		End( true );
+	if( input.type != IET_FIRST_PRESS )
+		return false;
+	End( true );
+	return true;
 }
 
 void ScreenTextEntry::TextEntrySettings::FromStack( lua_State *L )
@@ -698,10 +707,39 @@ void ScreenTextEntryVisual::MoveY( int iDir )
 	PositionCursor();
 }
 
-void ScreenTextEntryVisual::MenuStart( const InputEventPlus &input )
+bool ScreenTextEntryVisual::MenuLeft( const InputEventPlus &input )
 {
 	if( input.type != IET_FIRST_PRESS )
-		return;
+		return false;
+	MoveX(-1);
+	return true;
+}
+bool ScreenTextEntryVisual::MenuRight( const InputEventPlus &input )
+{
+	if( input.type != IET_FIRST_PRESS )
+		return false;
+	MoveX(+1);
+	return true;
+}
+bool ScreenTextEntryVisual::MenuUp( const InputEventPlus &input )
+{
+	if( input.type != IET_FIRST_PRESS )
+		return false;
+	MoveY(-1);
+	return true;
+}
+bool ScreenTextEntryVisual::MenuDown( const InputEventPlus &input )
+{
+	if( input.type != IET_FIRST_PRESS )
+		return false;
+	MoveY(+1);
+	return true;
+}
+
+bool ScreenTextEntryVisual::MenuStart( const InputEventPlus &input )
+{
+	if( input.type != IET_FIRST_PRESS )
+		return false;
 	if( m_iFocusY == KEYBOARD_ROW_SPECIAL )
 	{
 		switch( m_iFocusX )
@@ -719,13 +757,14 @@ void ScreenTextEntryVisual::MenuStart( const InputEventPlus &input )
 			End( false );
 			break;
 		default:
-			break;
+			return false;
 		}
 	}
 	else
 	{
 		TryAppendToAnswer( g_szKeys[m_iFocusY][m_iFocusX] );
 	}
+	return true;
 }
 
 /*

@@ -273,17 +273,17 @@ void ScreenHighScores::BeginScreen()
 	}
 }
 
-void ScreenHighScores::Input( const InputEventPlus &input )
+bool ScreenHighScores::Input( const InputEventPlus &input )
 {
 	//LOG->Trace( "ScreenRanking::Input()" );
 	if( IsTransitioning() )
-		return;
+		return false;
 
 	// If manually scrolling, pass the input to Screen::Input so it will call Menu*
 	if( (bool)MANUAL_SCROLLING )
-		Screen::Input( input );
+		return Screen::Input( input );
 	else
-		ScreenAttract::Input( input );
+		return ScreenAttract::Input( input );
 }
 
 void ScreenHighScores::HandleScreenMessage( const ScreenMessage SM )
@@ -296,22 +296,24 @@ void ScreenHighScores::HandleScreenMessage( const ScreenMessage SM )
 	ScreenAttract::HandleScreenMessage( SM );
 }
 
-void ScreenHighScores::MenuStart( const InputEventPlus &input )
+bool ScreenHighScores::MenuStart( const InputEventPlus &input )
 {
 	if( !MANUAL_SCROLLING )
-		return;
+		return false;
 	if( !IsTransitioning() )
 		StartTransitioningScreen( SM_GoToNextScreen );
 	SCREENMAN->PlayStartSound();
+	return true;
 }
 
-void ScreenHighScores::MenuBack( const InputEventPlus &input )
+bool ScreenHighScores::MenuBack( const InputEventPlus &input )
 {
 	if( !MANUAL_SCROLLING )
-		return;
+		return false;
 	if( !IsTransitioning() )
 		StartTransitioningScreen( SM_GoToNextScreen );
 	SCREENMAN->PlayStartSound();
+	return true;
 }
 
 void ScreenHighScores::DoScroll( int iDir )

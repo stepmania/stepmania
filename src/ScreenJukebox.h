@@ -11,7 +11,7 @@ public:
 	ScreenJukebox();
 	virtual void Init();
 
-	virtual void Input( const InputEventPlus &input );
+	virtual bool Input( const InputEventPlus &input );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
 	void SetSong();

@@ -9,11 +9,11 @@ class ScreenSelectProfile : public ScreenWithMenuElements
 {
 public:
 	virtual void Init();
-	virtual void Input( const InputEventPlus &input );
-	virtual void MenuLeft( const InputEventPlus &input );
-	virtual void MenuRight( const InputEventPlus &input );
-	virtual void MenuUp( const InputEventPlus &input );
-	virtual void MenuDown( const InputEventPlus &input );
+	virtual bool Input( const InputEventPlus &input );
+	virtual bool MenuLeft( const InputEventPlus &input );
+	virtual bool MenuRight( const InputEventPlus &input );
+	virtual bool MenuUp( const InputEventPlus &input );
+	virtual bool MenuDown( const InputEventPlus &input );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
 	GameButton m_TrackingRepeatingInput;

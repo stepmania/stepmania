@@ -100,38 +100,42 @@ void ScreenEditMenu::HandleScreenMessage( const ScreenMessage SM )
 	ScreenWithMenuElements::HandleScreenMessage( SM );
 }
 
-void ScreenEditMenu::MenuUp( const InputEventPlus & )
+bool ScreenEditMenu::MenuUp( const InputEventPlus & )
 {
 	if( m_Selector.CanGoUp() )
 	{
 		m_Selector.Up();
 		RefreshExplanationText();
 	}
+	return true;
 }
 
-void ScreenEditMenu::MenuDown( const InputEventPlus & )
+bool ScreenEditMenu::MenuDown( const InputEventPlus & )
 {
 	if( m_Selector.CanGoDown() )
 	{
 		m_Selector.Down();
 		RefreshExplanationText();
 	}
+	return true;
 }
 
-void ScreenEditMenu::MenuLeft( const InputEventPlus & )
+bool ScreenEditMenu::MenuLeft( const InputEventPlus & )
 {
 	if( m_Selector.CanGoLeft() )
 	{
 		m_Selector.Left();
 	}
+	return true;
 }
 
-void ScreenEditMenu::MenuRight( const InputEventPlus & )
+bool ScreenEditMenu::MenuRight( const InputEventPlus & )
 {
 	if( m_Selector.CanGoRight() )
 	{
 		m_Selector.Right();
 	}
+	return true;
 }
 
 static RString GetCopyDescription( const Steps *pSourceSteps )
@@ -158,16 +162,16 @@ static LocalizedString STEPS_WILL_BE_LOST	( "ScreenEditMenu", "These steps will 
 static LocalizedString CONTINUE_WITH_DELETE	( "ScreenEditMenu", "Continue with delete?" );
 static LocalizedString ENTER_EDIT_DESCRIPTION	( "ScreenEditMenu", "Enter a description for this edit.");
 
-void ScreenEditMenu::MenuStart( const InputEventPlus & )
+bool ScreenEditMenu::MenuStart( const InputEventPlus & )
 {
 	if( IsTransitioning() )
-		return;
+		return false;
 
 	if( m_Selector.CanGoDown() )
 	{
 		m_Selector.Down();
 		RefreshExplanationText();
-		return;
+		return true;
 	}
 
 	Song* pSong		= m_Selector.GetSelectedSong();
@@ -188,7 +192,7 @@ void ScreenEditMenu::MenuStart( const InputEventPlus & )
 	if( !pSong->HasMusic() )
 	{
 		ScreenPrompt::Prompt( SM_None, MISSING_MUSIC_FILE );
-		return;
+		return true;
 	}
 
 	switch( m_Selector.EDIT_MODE )
@@ -201,7 +205,7 @@ void ScreenEditMenu::MenuStart( const InputEventPlus & )
 			if( !file.Open( sTempFile, RageFile::WRITE ) )
 			{
 				ScreenPrompt::Prompt( SM_None, SONG_DIR_READ_ONLY );
-				return;
+				return true;
 			}
 
 			file.Close();
@@ -221,7 +225,7 @@ void ScreenEditMenu::MenuStart( const InputEventPlus & )
 			{
 				SCREENMAN->PlayInvalidSound();
 				SCREENMAN->SystemMessage( DELETED_AUTOGEN_STEPS.GetValue() );
-				return;
+				return true;
 			}
 		}
 		default: break;
@@ -314,17 +318,18 @@ void ScreenEditMenu::MenuStart( const InputEventPlus & )
 				StartTransitioningScreen( SM_GoToNextScreen );
 			}
 		}
-		break;
+		return true;
 	case EditMenuAction_Delete:
-		break;
+		return true;
 	default:
 		FAIL_M(ssprintf("Invalid edit menu action: %i", action));
 	}
 }
 
-void ScreenEditMenu::MenuBack( const InputEventPlus &input )
+bool ScreenEditMenu::MenuBack( const InputEventPlus &input )
 {
 	Cancel( SM_GoToPrevScreen );
+	return true;
 }
 
 void ScreenEditMenu::RefreshExplanationText()

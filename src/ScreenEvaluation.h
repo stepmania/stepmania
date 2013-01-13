@@ -50,11 +50,11 @@ class ScreenEvaluation : public ScreenWithMenuElements
 {
 public:
 	virtual void Init();
-	virtual void Input( const InputEventPlus &input );
+	virtual bool Input( const InputEventPlus &input );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
-	virtual void MenuBack( const InputEventPlus &input );
-	virtual void MenuStart( const InputEventPlus &input );
+	virtual bool MenuBack( const InputEventPlus &input );
+	virtual bool MenuStart( const InputEventPlus &input );
 	virtual void PushSelf( lua_State *L );
 	StageStats *GetStageStats() { return m_pStageStats; }
 

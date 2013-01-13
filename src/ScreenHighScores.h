@@ -55,13 +55,13 @@ public:
 	virtual void BeginScreen();
 
 	void HandleScreenMessage( const ScreenMessage SM );
-	virtual void Input( const InputEventPlus &input );
-	virtual void MenuStart( const InputEventPlus &input );
-	virtual void MenuBack( const InputEventPlus &input );
-	virtual void MenuLeft( const InputEventPlus &input )	{ DoScroll(-1); }
-	virtual void MenuRight( const InputEventPlus &input )	{ DoScroll(+1); }
-	virtual void MenuUp( const InputEventPlus &input )	{ DoScroll(-1); }
-	virtual void MenuDown( const InputEventPlus &input )	{ DoScroll(+1); }
+	virtual bool Input( const InputEventPlus &input );
+	virtual bool MenuStart( const InputEventPlus &input );
+	virtual bool MenuBack( const InputEventPlus &input );
+	virtual bool MenuLeft( const InputEventPlus &input )	{ DoScroll(-1); return true; }
+	virtual bool MenuRight( const InputEventPlus &input )	{ DoScroll(+1); return true; }
+	virtual bool MenuUp( const InputEventPlus &input )	{ DoScroll(-1); return true; }
+	virtual bool MenuDown( const InputEventPlus &input )	{ DoScroll(+1); return true; }
 
 private:
 	void DoScroll( int iDir );

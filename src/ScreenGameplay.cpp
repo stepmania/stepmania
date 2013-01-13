@@ -2155,7 +2155,7 @@ void ScreenGameplay::AbortGiveUp( bool bShowText )
 }
 
 
-void ScreenGameplay::Input( const InputEventPlus &input )
+bool ScreenGameplay::Input( const InputEventPlus &input )
 {
 	//LOG->Trace( "ScreenGameplay::Input()" );
 
@@ -2171,10 +2171,14 @@ void ScreenGameplay::Input( const InputEventPlus &input )
 			if( m_PauseController == GameController_Invalid || m_PauseController == input.GameI.controller )
 			{
 				// IMO, it's better to have this configurable. -DaisuMaster
-				if( UNPAUSE_WITH_START ) this->PauseGame( false );
+				if( UNPAUSE_WITH_START )
+				{
+					this->PauseGame( false );
+					return true;
+				}
 			}
 		}
-		return;
+		return false;
 	}
 
 	if( m_DancingState != STATE_OUTRO  &&
@@ -2206,7 +2210,7 @@ void ScreenGameplay::Input( const InputEventPlus &input )
 				m_GiveUpTimer.Touch(); // start the timer
 			}
 
-			return;
+			return true;
 		}
 
 		/* Only handle GAME_BUTTON_BACK as a regular BACK button if BACK_GIVES_UP is
@@ -2236,13 +2240,13 @@ void ScreenGameplay::Input( const InputEventPlus &input )
 				m_textDebug.PlayCommand( "TweenOff" );
 			}
 
-			return;
+			return true;
 		}
 	}
 
 	bool bRelease = input.type == IET_RELEASE;
 	if( !input.GameI.IsValid() )
-		return;
+		return false;
 
 	int iCol = GAMESTATE->GetCurrentStyle()->GameInputToColumn( input.GameI );
 
@@ -2253,7 +2257,7 @@ void ScreenGameplay::Input( const InputEventPlus &input )
 	case IET_RELEASE:
 		break;
 	default:
-		return;
+		return false;
 	}
 
 	if( GAMESTATE->m_bMultiplayer )
@@ -2265,6 +2269,7 @@ void ScreenGameplay::Input( const InputEventPlus &input )
 				if( input.mp == pi->m_mp )
 					pi->m_pPlayer->Step( iCol, -1, input.DeviceI.ts, false, bRelease );
 			}
+			return true;
 		}
 	}
 	else
@@ -2284,22 +2289,23 @@ void ScreenGameplay::Input( const InputEventPlus &input )
 				switch( gbt )
 				{
 				case GameButtonType_INVALID:
-					break;
+					return false;
 				case GameButtonType_Step:
 					if( iCol != -1 )
 						pi.m_pPlayer->Step( iCol, -1, input.DeviceI.ts, false, bRelease );
-					break;
+					return true;
 				case GameButtonType_Fret:
 					if( iCol != -1 )
 						pi.m_pPlayer->Fret( iCol, -1, input.DeviceI.ts, false, bRelease );
-					break;
+					return true;
 				case GameButtonType_Strum:
 					pi.m_pPlayer->Strum( iCol, -1, input.DeviceI.ts, false, bRelease );
-					break;
+					return true;
 				}
 			}
 		}
 	}
+	return false;
 }
 
 

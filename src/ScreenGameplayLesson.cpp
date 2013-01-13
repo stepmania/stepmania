@@ -63,19 +63,19 @@ void ScreenGameplayLesson::Init()
 		pi->GetPlayerState()->m_PlayerController = PC_AUTOPLAY;
 }
 
-void ScreenGameplayLesson::Input( const InputEventPlus &input )
+bool ScreenGameplayLesson::Input( const InputEventPlus &input )
 {
 	//LOG->Trace( "ScreenGameplayLesson::Input()" );
 
 	if( m_iCurrentPageIndex != -1 )
 	{
 		// show a lesson page
-		Screen::Input( input );
+		return Screen::Input( input );
 	}
 	else
 	{
 		// in the "your turn" section"
-		ScreenGameplay::Input( input );
+		return ScreenGameplay::Input( input );
 	}
 }
 
@@ -126,25 +126,27 @@ void ScreenGameplayLesson::HandleScreenMessage( const ScreenMessage SM )
 	ScreenGameplay::HandleScreenMessage( SM );
 }
 
-void ScreenGameplayLesson::MenuStart( const InputEventPlus &input )
+bool ScreenGameplayLesson::MenuStart( const InputEventPlus &input )
 {
 	// XXX: Allow repeats?
 	if( m_iCurrentPageIndex == -1 )
-		return;
+		return false;
 	ChangeLessonPage( +1 );
+	return true;
 }
 
-void ScreenGameplayLesson::MenuBack( const InputEventPlus &input )
+bool ScreenGameplayLesson::MenuBack( const InputEventPlus &input )
 {
 	// XXX: Allow repeats?
 	if( m_iCurrentPageIndex == 0 )
 	{
 		BeginBackingOutFromGameplay();
-		return;
+		return true;
 	}
 	if( m_iCurrentPageIndex == -1 )
-		return;
+		return false;
 	ChangeLessonPage( -1 );
+	return true;
 }
 
 void ScreenGameplayLesson::ChangeLessonPage( int iDir )

@@ -10,7 +10,7 @@ public:
 
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
-	virtual void MenuStart( const InputEventPlus &input );
+	virtual bool MenuStart( const InputEventPlus &input );
 
 private:
 	void ImportOptions( int iRow, const vector<PlayerNumber> &vpns );

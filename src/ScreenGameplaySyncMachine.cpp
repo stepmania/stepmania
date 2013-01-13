@@ -67,7 +67,7 @@ void ScreenGameplaySyncMachine::Update( float fDelta )
 	RefreshText();
 }
 
-void ScreenGameplaySyncMachine::Input( const InputEventPlus &input )
+bool ScreenGameplaySyncMachine::Input( const InputEventPlus &input )
 {
 	// Hack to make this work from Player2's controls
 	InputEventPlus _input = input;
@@ -77,7 +77,7 @@ void ScreenGameplaySyncMachine::Input( const InputEventPlus &input )
 	if( _input.pn != PLAYER_INVALID )
 		_input.pn = PLAYER_1;
 
-	ScreenGameplay::Input( _input );
+	return ScreenGameplay::Input( _input );
 }
 
 void ScreenGameplaySyncMachine::HandleScreenMessage( const ScreenMessage SM )

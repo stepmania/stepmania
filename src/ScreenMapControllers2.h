@@ -37,11 +37,11 @@ public:
 	//virtual void EndScreen();
 
 	virtual void Update( float fDeltaTime );
-	virtual void Input( const InputEventPlus &input );
+	virtual bool Input( const InputEventPlus &input );
 
-	virtual void MenuUp( const InputEventPlus &input );
-	virtual void MenuDown( const InputEventPlus &input );
-	virtual void MenuStart( const InputEventPlus &input );
+	virtual bool MenuUp( const InputEventPlus &input );
+	virtual bool MenuDown( const InputEventPlus &input );
+	virtual bool MenuStart( const InputEventPlus &input );
 	virtual void TweenOnScreen();
 
 	MapControlsState GetMapControlsState(){ return m_MapControlsState; }

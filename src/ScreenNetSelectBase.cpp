@@ -68,13 +68,13 @@ void ScreenNetSelectBase::Init()
 	return;
 }
 
-void ScreenNetSelectBase::Input( const InputEventPlus &input )
+bool ScreenNetSelectBase::Input( const InputEventPlus &input )
 {
 	if( m_In.IsTransitioning() || m_Out.IsTransitioning() )
-		return;
+		return false;
 
 	if( input.type != IET_FIRST_PRESS && input.type != IET_REPEAT )
-		return;
+		return false;
 
 	bool bHoldingCtrl = 
 		INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL)) ||
@@ -91,7 +91,7 @@ void ScreenNetSelectBase::Input( const InputEventPlus &input )
 				NSMAN->SendChat( m_sTextInput );
 			m_sTextInput="";
 			UpdateTextInput();
-			return;
+			return true;
 		}
 		break;
 	case KEY_BACK:
@@ -116,10 +116,10 @@ void ScreenNetSelectBase::Input( const InputEventPlus &input )
 			break;
 
 		if( c >= ' ' )
-			return;
+			return true;
 		break;
 	}
-	Screen::Input( input );
+	return Screen::Input( input );
 }
 
 void ScreenNetSelectBase::HandleScreenMessage( const ScreenMessage SM )

@@ -186,13 +186,14 @@ bool Screen::OverlayInput( const InputEventPlus &input )
 	return false;
 }
 
-void Screen::Input( const InputEventPlus &input )
+/* Returns true if the input was handled, or false if not handled. */
+bool Screen::Input( const InputEventPlus &input )
 {
 	Message msg("");
 	if( m_Codes.InputMessage(input, msg) )
 	{
 		this->HandleMessage( msg );
-		return;
+		return true;
 	}
 
 	// Don't send release messages with the default handler.
@@ -202,7 +203,7 @@ void Screen::Input( const InputEventPlus &input )
 	case IET_REPEAT:
 		break; // OK
 	default:
-		return; // don't care
+		return false; // don't care
 	}
 
 	// Always broadcast mouse input so themers can grab it. -aj
@@ -221,22 +222,22 @@ void Screen::Input( const InputEventPlus &input )
 	// default input handler used by most menus
 	switch( input.MenuI )
 	{
-		case GAME_BUTTON_MENUUP:	this->MenuUp	( input );	return;
-		case GAME_BUTTON_MENUDOWN:	this->MenuDown	( input );	return;
-		case GAME_BUTTON_MENULEFT:	this->MenuLeft	( input );	return;
-		case GAME_BUTTON_MENURIGHT:	this->MenuRight	( input );	return;
+		case GAME_BUTTON_MENUUP:    return this->MenuUp   ( input );
+		case GAME_BUTTON_MENUDOWN:  return this->MenuDown ( input );
+		case GAME_BUTTON_MENULEFT:  return this->MenuLeft ( input );
+		case GAME_BUTTON_MENURIGHT: return this->MenuRight( input );
 		case GAME_BUTTON_BACK:
 			// Don't make the user hold the back button if they're pressing escape and escape is the back button.
 			if( !PREFSMAN->m_bDelayedBack || input.type==IET_REPEAT || (input.DeviceI.device == DEVICE_KEYBOARD && input.DeviceI.button == KEY_ESC) )
 			{
 				if( HANDLE_BACK_BUTTON )
-					this->MenuBack( input );
+					return this->MenuBack( input );
 			}
-			return;
-		case GAME_BUTTON_START:	this->MenuStart	( input );	return;
-		case GAME_BUTTON_SELECT:this->MenuSelect( input );	return;
-		case GAME_BUTTON_COIN:	this->MenuCoin	( input );	return;
-		default: return;
+			return false;
+		case GAME_BUTTON_START:  return this->MenuStart ( input );
+		case GAME_BUTTON_SELECT: return this->MenuSelect( input );
+		case GAME_BUTTON_COIN:   return this->MenuCoin  ( input );
+		default: return false;
 	}
 }
 

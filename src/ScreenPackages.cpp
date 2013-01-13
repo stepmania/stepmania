@@ -159,7 +159,7 @@ void ScreenPackages::Update( float fDeltaTime )
 }
 
 static LocalizedString ENTER_URL ("ScreenPackages","Enter URL");
-void ScreenPackages::MenuStart( const InputEventPlus &input )
+bool ScreenPackages::MenuStart( const InputEventPlus &input )
 {
 	if ( m_iDLorLST == 1 )
 	{
@@ -169,12 +169,13 @@ void ScreenPackages::MenuStart( const InputEventPlus &input )
 			EnterURL( m_Links[m_iLinksPos] );
 	}
 	ScreenWithMenuElements::MenuStart( input );
+	return true;
 }
 
-void ScreenPackages::MenuUp( const InputEventPlus &input )
+bool ScreenPackages::MenuUp( const InputEventPlus &input )
 {
 	if ( m_bIsDownloading )
-		return;
+		return false;
 	if ( m_iDLorLST == 0)
 	{
 		if ( m_iPackagesPos > 0)
@@ -192,12 +193,13 @@ void ScreenPackages::MenuUp( const InputEventPlus &input )
 		}
 	}
 	ScreenWithMenuElements::MenuUp( input );
+	return true;
 }
 
-void ScreenPackages::MenuDown( const InputEventPlus &input )
+bool ScreenPackages::MenuDown( const InputEventPlus &input )
 {
 	if ( m_bIsDownloading )
-		return;
+		return false;
 
 	if ( m_iDLorLST == 0)
 	{
@@ -216,14 +218,15 @@ void ScreenPackages::MenuDown( const InputEventPlus &input )
 		}
 	}
 	ScreenWithMenuElements::MenuDown( input );
+	return true;
 }
 
-void ScreenPackages::MenuLeft( const InputEventPlus &input )
+bool ScreenPackages::MenuLeft( const InputEventPlus &input )
 {
 	if ( m_bIsDownloading )
-		return;
+		return false;
 	if ( !m_bCanDL )
-		return;
+		return false;
 
 	/*
 	m_sprExistingBG.StopTweening();
@@ -243,12 +246,13 @@ void ScreenPackages::MenuLeft( const InputEventPlus &input )
 		COMMAND( m_sprWebBG, "Away" );
 	}
 	ScreenWithMenuElements::MenuLeft( input );
+	return true;
 }
 
-void ScreenPackages::MenuRight( const InputEventPlus &input )
+bool ScreenPackages::MenuRight( const InputEventPlus &input )
 {
 	if ( m_bIsDownloading )
-		return;
+		return false;
 
 	// Huh?
 	//MenuLeft( input );
@@ -267,21 +271,23 @@ void ScreenPackages::MenuRight( const InputEventPlus &input )
 	}
 
 	ScreenWithMenuElements::MenuRight( input );
+	return true;
 }
 
 static LocalizedString DOWNLOAD_CANCELLED( "ScreenPackages", "Download cancelled." );
-void ScreenPackages::MenuBack( const InputEventPlus &input )
+bool ScreenPackages::MenuBack( const InputEventPlus &input )
 {
 	if ( m_bIsDownloading )
 	{
 		SCREENMAN->SystemMessage( DOWNLOAD_CANCELLED );
 		CancelDownload( );
-		return;
+		return true;
 	}
 
 	TweenOffScreen();
 	Cancel( SM_GoToPrevScreen );
 	ScreenWithMenuElements::MenuBack( input );
+	return true;
 }
 
 void ScreenPackages::TweenOffScreen( )

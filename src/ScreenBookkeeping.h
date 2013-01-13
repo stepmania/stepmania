@@ -25,13 +25,13 @@ public:
 	virtual void Init();
 
 	virtual void Update( float fDelta );
-	virtual void Input( const InputEventPlus &input );
+	virtual bool Input( const InputEventPlus &input );
 
-	virtual void MenuLeft( const InputEventPlus &input );
-	virtual void MenuRight( const InputEventPlus &input );
-	virtual void MenuStart( const InputEventPlus &input );
-	virtual void MenuBack( const InputEventPlus &input );
-	virtual void MenuCoin( const InputEventPlus &input );
+	virtual bool MenuLeft( const InputEventPlus &input );
+	virtual bool MenuRight( const InputEventPlus &input );
+	virtual bool MenuStart( const InputEventPlus &input );
+	virtual bool MenuBack( const InputEventPlus &input );
+	virtual bool MenuCoin( const InputEventPlus &input );
 
 private:
 

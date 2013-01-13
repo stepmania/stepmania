@@ -88,36 +88,38 @@ void ScreenNetEvaluation::RedoUserTexts()
 	}
 }
 
-void ScreenNetEvaluation::MenuLeft( const InputEventPlus &input )
+bool ScreenNetEvaluation::MenuLeft( const InputEventPlus &input )
 {
-	MenuUp( input );
+	return MenuUp( input );
 }
 
-void ScreenNetEvaluation::MenuUp( const InputEventPlus &input )
+bool ScreenNetEvaluation::MenuUp( const InputEventPlus &input )
 {
 	if( m_iActivePlayers == 0 || !m_bHasStats )
-		return;
+		return false;
 
 	COMMAND( m_textUsers[m_iCurrentPlayer], "DeSel" );
 	m_iCurrentPlayer = (m_iCurrentPlayer + m_iActivePlayers - 1) % m_iActivePlayers;
 	COMMAND( m_textUsers[m_iCurrentPlayer], "Sel" );
 	UpdateStats();
+	return true;
 }
 
-void ScreenNetEvaluation::MenuRight( const InputEventPlus &input )
+bool ScreenNetEvaluation::MenuRight( const InputEventPlus &input )
 {
-	MenuDown( input );
+	return MenuDown( input );
 }
 
-void ScreenNetEvaluation::MenuDown( const InputEventPlus &input )
+bool ScreenNetEvaluation::MenuDown( const InputEventPlus &input )
 {
 	if ( m_iActivePlayers == 0 || !m_bHasStats )
-		return;
+		return false;
 
 	COMMAND( m_textUsers[m_iCurrentPlayer], "DeSel" );
 	m_iCurrentPlayer = (m_iCurrentPlayer + 1) % m_iActivePlayers;
 	COMMAND( m_textUsers[m_iCurrentPlayer], "Sel" );
 	UpdateStats();
+	return true;
 }
 
 void ScreenNetEvaluation::HandleScreenMessage( const ScreenMessage SM )

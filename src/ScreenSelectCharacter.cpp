@@ -157,14 +157,14 @@ ScreenSelectCharacter::~ScreenSelectCharacter()
 }
 
 
-void ScreenSelectCharacter::Input( const InputEventPlus &input )
+bool ScreenSelectCharacter::Input( const InputEventPlus &input )
 {
 	LOG->Trace( "ScreenSelectCharacter::Input()" );
 
 	if( IsTransitioning() )
-		return;
+		return false;
 
-	ScreenWithMenuElements::Input( input );	// default input handler
+	return ScreenWithMenuElements::Input( input );	// default input handler
 }
 
 void ScreenSelectCharacter::HandleScreenMessage( const ScreenMessage SM )
@@ -273,25 +273,27 @@ void ScreenSelectCharacter::AfterValueChange( PlayerNumber pn )
 }
 
 
-void ScreenSelectCharacter::MenuLeft( const InputEventPlus &input )
+bool ScreenSelectCharacter::MenuLeft( const InputEventPlus &input )
 {
-	MenuUp( input );
+	return MenuUp( input );
 }
 
-void ScreenSelectCharacter::MenuRight( const InputEventPlus &input )
+bool ScreenSelectCharacter::MenuRight( const InputEventPlus &input )
 {
-	MenuDown( input );
+	return MenuDown( input );
 }
 
-void ScreenSelectCharacter::MenuUp( const InputEventPlus &input )
+bool ScreenSelectCharacter::MenuUp( const InputEventPlus &input )
 {
 	Move( input.pn, -1 );
+	return true;
 }
 
 
-void ScreenSelectCharacter::MenuDown( const InputEventPlus &input )
+bool ScreenSelectCharacter::MenuDown( const InputEventPlus &input )
 {
 	Move( input.pn, +1 );
+	return true;
 }
 
 void ScreenSelectCharacter::Move( PlayerNumber pn, int deltaValue )
@@ -322,9 +324,10 @@ bool ScreenSelectCharacter::AllAreFinishedChoosing() const
 	return true;
 }
 
-void ScreenSelectCharacter::MenuStart( const InputEventPlus &input )
+bool ScreenSelectCharacter::MenuStart( const InputEventPlus &input )
 {
 	MakeSelection( input.pn );
+	return true;
 }
 
 void ScreenSelectCharacter::MakeSelection( PlayerNumber pn )
@@ -364,9 +367,10 @@ void ScreenSelectCharacter::MakeSelection( PlayerNumber pn )
 	}
 }
 
-void ScreenSelectCharacter::MenuBack( const InputEventPlus &input )
+bool ScreenSelectCharacter::MenuBack( const InputEventPlus &input )
 {
 	Cancel( SM_GoToPrevScreen );
+	return true;
 }
 
 void ScreenSelectCharacter::TweenOffScreen()

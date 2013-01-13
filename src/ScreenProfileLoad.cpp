@@ -19,8 +19,9 @@ void ScreenProfileLoad::BeginScreen()
 	ScreenWithMenuElements::BeginScreen();
 }
 
-void ScreenProfileLoad::Input( const InputEventPlus &input )
+bool ScreenProfileLoad::Input( const InputEventPlus &input )
 {
+	return false;
 }
 
 void ScreenProfileLoad::Continue()

@@ -13,7 +13,7 @@ public:
 	virtual void BeginScreen();
 
 	virtual void HandleScreenMessage( const ScreenMessage SM );
-	virtual void Input( const InputEventPlus &input );
+	virtual bool Input( const InputEventPlus &input );
 
 	bool EnterKey( PlayerNumber pn, wchar_t sLetter );
 	bool Backspace( PlayerNumber pn );

@@ -10,8 +10,9 @@ void ScreenProfileSave::BeginScreen()
 	ScreenWithMenuElements::BeginScreen();
 }
 
-void ScreenProfileSave::Input( const InputEventPlus &input )
+bool ScreenProfileSave::Input( const InputEventPlus &input )
 {
+	return false;
 }
 
 void ScreenProfileSave::Continue()

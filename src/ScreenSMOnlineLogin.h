@@ -8,7 +8,7 @@ class ScreenSMOnlineLogin : public ScreenOptions
 public:
 	virtual void Init();
 	virtual void HandleScreenMessage(const ScreenMessage SM);
-	virtual void MenuStart( const InputEventPlus &input );
+	virtual bool MenuStart( const InputEventPlus &input );
 	void SendLogin( RString sPassword );
 
 private:

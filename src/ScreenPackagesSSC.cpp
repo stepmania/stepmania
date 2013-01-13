@@ -24,16 +24,17 @@ void ScreenPackagesSSC::HandleScreenMessage( const ScreenMessage SM )
 	ScreenWithMenuElements::HandleScreenMessage( SM );
 }
 
-void ScreenPackagesSSC::Input( const InputEventPlus &input )
+bool ScreenPackagesSSC::Input( const InputEventPlus &input )
 {
-	ScreenWithMenuElements::Input( input );
+	return ScreenWithMenuElements::Input( input );
 }
 
-void ScreenPackagesSSC::MenuBack( const InputEventPlus &input )
+bool ScreenPackagesSSC::MenuBack( const InputEventPlus &input )
 {
 	TweenOffScreen();
 	Cancel( SM_GoToPrevScreen );
 	ScreenWithMenuElements::MenuBack( input );
+	return true;
 }
 
 void ScreenPackagesSSC::Update( float fDeltaTime )

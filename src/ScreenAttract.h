@@ -13,11 +13,11 @@ public:
 	virtual void Init();
 	virtual void BeginScreen();
 
-	static void AttractInput( const InputEventPlus &input, ScreenWithMenuElements *pScreen );
+	static bool AttractInput( const InputEventPlus &input, ScreenWithMenuElements *pScreen );
 	static void GoToStartScreen( RString sScreenName );
 	static void SetAttractVolume( bool bInAttract );
 
-	virtual void Input( const InputEventPlus &input );
+	virtual bool Input( const InputEventPlus &input );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 	virtual void Cancel( ScreenMessage smSendWhenDone );
 

@@ -55,7 +55,7 @@ public:
 	/** @brief Close all menus (for menu timer). */
 	void Close();
 
-	void Input( const InputEventPlus &input );
+	bool Input( const InputEventPlus &input );
 	bool IsOpened() const { return m_asMenuStack.size() > 0; }
 
 	bool Start();	// return true if the last menu was popped in response to this press

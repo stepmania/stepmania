@@ -363,7 +363,7 @@ void OptionsList::MoveItem( const RString &sRowName, int iMove )
 {
 }
 
-void OptionsList::Input( const InputEventPlus &input )
+bool OptionsList::Input( const InputEventPlus &input )
 {
 	Message msg("");
 	if( m_Codes.InputMessage(input, msg) )
@@ -377,14 +377,14 @@ void OptionsList::Input( const InputEventPlus &input )
 		if( input.MenuI == GAME_BUTTON_LEFT || input.MenuI == GAME_BUTTON_RIGHT )
 		{
 			if( input.type != IET_FIRST_PRESS )
-				return;
+				return false;
 
 			m_bAcceptStartRelease = false;
 
 			const RString &sCurrentRow = m_asMenuStack.back();
 			vector<bool> &bSelections = m_bSelections[sCurrentRow];
 			if( m_iMenuStackSelection == (int)bSelections.size() )
-				return;
+				return false;
 
 			RString sDest = pHandler->GetScreen( m_iMenuStackSelection );
 			if( m_setDirectRows.find(sDest) != m_setDirectRows.end() && sDest.size() )
@@ -406,20 +406,20 @@ void OptionsList::Input( const InputEventPlus &input )
 					MESSAGEMAN->Broadcast( lMsg );
 				}
 			}
-			return;
+			return true;
 		}
 	}
 
 	if( input.MenuI == GAME_BUTTON_LEFT )
 	{
 		if( input.type == IET_RELEASE )
-			return;
+			return false;
 
 		if( INPUTMAPPER->IsBeingPressed(GAME_BUTTON_RIGHT, pn) )
 		{
 			if( input.type == IET_FIRST_PRESS )
 				SwitchMenu( -1 );
-			return;
+			return true;
 		}
 
 		--m_iMenuStackSelection;
@@ -429,18 +429,18 @@ void OptionsList::Input( const InputEventPlus &input )
 		Message lMsg("OptionsListLeft");
 		lMsg.SetParam( "Player", input.pn );
 		MESSAGEMAN->Broadcast( lMsg );
-		return;
+		return true;
 	}
 	else if( input.MenuI == GAME_BUTTON_RIGHT )
 	{
 		if( input.type == IET_RELEASE )
-			return;
+			return false;
 
 		if( INPUTMAPPER->IsBeingPressed(GAME_BUTTON_LEFT, pn) )
 		{
 			if( input.type == IET_FIRST_PRESS )
 				SwitchMenu( +1 );
-			return;
+			return true;
 		}
 
 		++m_iMenuStackSelection;
@@ -450,7 +450,7 @@ void OptionsList::Input( const InputEventPlus &input )
 		Message lMsg("OptionsListRight");
 		lMsg.SetParam( "Player", input.pn );
 		MESSAGEMAN->Broadcast( lMsg );
-		return;
+		return true;
 	}
 	else if( input.MenuI == GAME_BUTTON_START )
 	{
@@ -458,7 +458,7 @@ void OptionsList::Input( const InputEventPlus &input )
 		{
 			m_bStartIsDown = true;
 			m_bAcceptStartRelease = true;
-			return;
+			return true;
 		}
 		if( input.type == IET_RELEASE )
 		{
@@ -467,19 +467,20 @@ void OptionsList::Input( const InputEventPlus &input )
 			m_bStartIsDown = false;
 		}
 
-		return;
+		return true;
 	}
 	else if( input.MenuI == GAME_BUTTON_SELECT )
 	{
 		if( input.type != IET_FIRST_PRESS )
-			return;
+			return false;
 //		if( input.type == IET_RELEASE )
 		{
 			Close();
-			return;
+			return true;
 		}
-		return;
+		return true;
 	}
+	return false;
 }
 
 void OptionsList::SwitchToCurrentRow()

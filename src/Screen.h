@@ -60,7 +60,7 @@ public:
 
 	virtual void Update( float fDeltaTime );
 	virtual bool OverlayInput( const InputEventPlus &input );
-	virtual void Input( const InputEventPlus &input );
+	virtual bool Input( const InputEventPlus &input );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 	void SetLockInputSecs( float f ) { m_fLockInputSecs = f; }
 
@@ -126,20 +126,20 @@ public:
 	RString GetPrevScreen() const;
 
 	// let subclass override if they want
-	virtual void MenuUp(const InputEventPlus &) { }
-	virtual void MenuDown(const InputEventPlus &) { }
-	virtual void MenuLeft(const InputEventPlus &) { }
-	virtual void MenuRight(const InputEventPlus &) { }
-	virtual void MenuStart(const InputEventPlus &) { }
-	virtual void MenuSelect(const InputEventPlus &) { }
-	virtual void MenuBack(const InputEventPlus &) { }
-	virtual void MenuCoin(const InputEventPlus &) { }
+	virtual bool MenuUp(const InputEventPlus &) { return false; }
+	virtual bool MenuDown(const InputEventPlus &) { return false; }
+	virtual bool MenuLeft(const InputEventPlus &) { return false; }
+	virtual bool MenuRight(const InputEventPlus &) { return false; }
+	virtual bool MenuStart(const InputEventPlus &) { return false; }
+	virtual bool MenuSelect(const InputEventPlus &) { return false; }
+	virtual bool MenuBack(const InputEventPlus &) { return false; }
+	virtual bool MenuCoin(const InputEventPlus &) { return false; }
 	// todo? -aj
-	//virtual void LeftClick(const InputEventPlus &) { }
-	//virtual void RightClick(const InputEventPlus &) { }
-	//virtual void MiddleClick(const InputEventPlus &) { }
-	//virtual void MouseWheelUp(const InputEventPlus &) { }
-	//virtual void MouseWheelDown(const InputEventPlus &) { }
+	//virtual bool LeftClick(const InputEventPlus &) { }
+	//virtual bool RightClick(const InputEventPlus &) { }
+	//virtual bool MiddleClick(const InputEventPlus &) { }
+	//virtual bool MouseWheelUp(const InputEventPlus &) { }
+	//virtual bool MouseWheelDown(const InputEventPlus &) { }
 };
 
 #endif

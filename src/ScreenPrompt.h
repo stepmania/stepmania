@@ -30,7 +30,7 @@ public:
 
 	virtual void Init();
 	virtual void BeginScreen();
-	virtual void Input( const InputEventPlus &input );
+	virtual bool Input( const InputEventPlus &input );
 
 	static PromptAnswer s_LastAnswer;
 	static bool s_bCancelledLast;
@@ -42,10 +42,10 @@ protected:
 	bool CanGoLeft() { return m_Answer > 0; }
 	bool CanGoRight();
 	void Change( int dir );
-	void MenuLeft( const InputEventPlus &input );
-	void MenuRight( const InputEventPlus &input );
-	void MenuBack( const InputEventPlus &input );
-	void MenuStart( const InputEventPlus &input );
+	bool MenuLeft( const InputEventPlus &input );
+	bool MenuRight( const InputEventPlus &input );
+	bool MenuBack( const InputEventPlus &input );
+	bool MenuStart( const InputEventPlus &input );
 
 	virtual void End( bool bCancelled );
 	void PositionCursor();

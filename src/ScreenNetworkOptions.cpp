@@ -107,7 +107,7 @@ void ScreenNetworkOptions::HandleScreenMessage( const ScreenMessage SM )
 	ScreenOptions::HandleScreenMessage( SM );
 }
 
-void ScreenNetworkOptions::MenuStart( const InputEventPlus &input )
+bool ScreenNetworkOptions::MenuStart( const InputEventPlus &input )
 {
 	switch( GetCurrentRow() )
 	{
@@ -122,13 +122,13 @@ void ScreenNetworkOptions::MenuStart( const InputEventPlus &input )
 			SCREENMAN->SystemMessage( DISCONNECTED );
 			UpdateConnectStatus( );
 		}
-		break;
+		return true;
 	case PO_SCOREBOARD:
 		if (m_pRows[PO_SCOREBOARD]->GetOneSharedSelection() == NO_SCOREBOARD_ON)
 			PREFSMAN->m_bEnableScoreboard.Set(true);
 		else
 			PREFSMAN->m_bEnableScoreboard.Set(false);
-		break;
+		return true;
 	/*
 	case NetworkOptionRow::PO_SERVERS:
 		if ( !AllServers.empty() )
@@ -143,10 +143,10 @@ void ScreenNetworkOptions::MenuStart( const InputEventPlus &input )
 			//If the server list is empty, keep passing the message on so exit works
 			ScreenOptions::MenuStart( input );
 		}
-		break;
+		return true;
 	*/
 	default:
-		ScreenOptions::MenuStart( input );
+		return ScreenOptions::MenuStart( input );
 	}
 }
 

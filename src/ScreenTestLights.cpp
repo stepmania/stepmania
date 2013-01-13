@@ -88,15 +88,15 @@ void ScreenTestLights::Update( float fDeltaTime )
 }
 
 
-void ScreenTestLights::Input( const InputEventPlus &input )
+bool ScreenTestLights::Input( const InputEventPlus &input )
 {
 	if( input.type != IET_FIRST_PRESS && input.type != IET_REPEAT )
-		return;	// ignore
+		return false;	// ignore
 
-	ScreenWithMenuElements::Input( input );	// default handler
+	return ScreenWithMenuElements::Input( input );	// default handler
 }
 
-void ScreenTestLights::MenuLeft( const InputEventPlus &input )
+bool ScreenTestLights::MenuLeft( const InputEventPlus &input )
 {
 	if( LIGHTSMAN->GetLightsMode() != LIGHTSMODE_TEST_MANUAL_CYCLE )
 		LIGHTSMAN->SetLightsMode( LIGHTSMODE_TEST_MANUAL_CYCLE );
@@ -105,9 +105,10 @@ void ScreenTestLights::MenuLeft( const InputEventPlus &input )
 	else
 		LIGHTSMAN->PrevTestGameButtonLight();
 	m_timerBackToAutoCycle.Touch();
+	return true;
 }
 
-void ScreenTestLights::MenuRight( const InputEventPlus &input )
+bool ScreenTestLights::MenuRight( const InputEventPlus &input )
 {
 	if( LIGHTSMAN->GetLightsMode() != LIGHTSMODE_TEST_MANUAL_CYCLE )
 		LIGHTSMAN->SetLightsMode( LIGHTSMODE_TEST_MANUAL_CYCLE );
@@ -116,20 +117,21 @@ void ScreenTestLights::MenuRight( const InputEventPlus &input )
 	else
 		LIGHTSMAN->NextTestGameButtonLight();
 	m_timerBackToAutoCycle.Touch();
+	return true;
 }
 
-void ScreenTestLights::MenuStart( const InputEventPlus &input )
+bool ScreenTestLights::MenuStart( const InputEventPlus &input )
 {
-	MenuBack( input );
+	return MenuBack( input );
 }
 
-void ScreenTestLights::MenuBack( const InputEventPlus &input )
+bool ScreenTestLights::MenuBack( const InputEventPlus &input )
 {
-	if( !IsTransitioning() )
-	{
-		SCREENMAN->PlayStartSound();
-		StartTransitioningScreen( SM_GoToPrevScreen );		
-	}
+	if( IsTransitioning() )
+		return false;
+	SCREENMAN->PlayStartSound();
+	StartTransitioningScreen( SM_GoToPrevScreen );		
+	return true;
 }
 
 /*

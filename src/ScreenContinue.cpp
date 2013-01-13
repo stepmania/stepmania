@@ -48,16 +48,16 @@ void ScreenContinue::BeginScreen()
 	ScreenWithMenuElementsSimple::BeginScreen();
 }
 
-void ScreenContinue::Input( const InputEventPlus &input )
+bool ScreenContinue::Input( const InputEventPlus &input )
 {
 	if( input.MenuI == GAME_BUTTON_COIN &&  input.type == IET_FIRST_PRESS )
 		ResetTimer();
 
 	if( input.MenuI == GAME_BUTTON_START  &&  input.type == IET_FIRST_PRESS  &&  GAMESTATE->JoinInput(input.pn) )
-		return;	// handled
+		return true;	// handled
 
 	if( IsTransitioning() )
-		return;
+		return true;
 
 	if( input.type == IET_FIRST_PRESS  &&  GAMESTATE->IsHumanPlayer(input.pn)  &&  FORCE_TIMER_WAIT )
 	{
@@ -75,13 +75,13 @@ void ScreenContinue::Input( const InputEventPlus &input )
 				Message msg("HurryTimer");
 				msg.SetParam( "PlayerNumber", input.pn );
 				this->HandleMessage( msg );
-				return;	// handled
+				return true;	// handled
 			}
 			default: break;
 		}
 	}
 
-	ScreenWithMenuElementsSimple::Input( input );
+	return ScreenWithMenuElementsSimple::Input( input );
 }
 
 void ScreenContinue::HandleScreenMessage( const ScreenMessage SM )

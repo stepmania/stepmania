@@ -33,7 +33,7 @@ class ScreenNetSelectBase : public ScreenWithMenuElements
 public:
 	virtual void Init();
 
-	void Input( const InputEventPlus &input );
+	bool Input( const InputEventPlus &input );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 	virtual void TweenOffScreen();
 
