@@ -418,7 +418,7 @@ static bool GetValueFromMap( const map<U, V> &m, const U &key, V &val )
 	return true;
 }
 
-bool ScreenDebugOverlay::OverlayInput( const InputEventPlus &input )
+bool ScreenDebugOverlay::Input( const InputEventPlus &input )
 {
 	if( input.DeviceI == g_Mappings.holdForDebug1 || 
 		input.DeviceI == g_Mappings.holdForDebug2 )
@@ -498,7 +498,7 @@ bool ScreenDebugOverlay::OverlayInput( const InputEventPlus &input )
 		}
 	}
 
-	return Screen::OverlayInput(input);
+	return Screen::Input(input);
 }
 
 

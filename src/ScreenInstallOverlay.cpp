@@ -316,7 +316,7 @@ void ScreenInstallOverlay::Init()
 	this->AddChild( &m_textStatus );
 }
 
-bool ScreenInstallOverlay::OverlayInput( const InputEventPlus &input )
+bool ScreenInstallOverlay::Input( const InputEventPlus &input )
 {
 	/*
 	if( input.DeviceI.button == g_buttonLogin && input.type == IET_FIRST_PRESS )
@@ -326,7 +326,7 @@ bool ScreenInstallOverlay::OverlayInput( const InputEventPlus &input )
 	}
 	*/
 
-	return Screen::OverlayInput(input);
+	return Screen::Input(input);
 }
 
 void ScreenInstallOverlay::Update( float fDeltaTime )

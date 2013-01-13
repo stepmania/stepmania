@@ -59,7 +59,6 @@ public:
 	virtual void EndScreen();
 
 	virtual void Update( float fDeltaTime );
-	virtual bool OverlayInput( const InputEventPlus &input );
 	virtual bool Input( const InputEventPlus &input );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 	void SetLockInputSecs( float f ) { m_fLockInputSecs = f; }

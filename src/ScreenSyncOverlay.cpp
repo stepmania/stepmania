@@ -152,13 +152,13 @@ void ScreenSyncOverlay::UpdateText()
 
 static LocalizedString CANT_SYNC_WHILE_PLAYING_A_COURSE	("ScreenSyncOverlay","Can't sync while playing a course.");
 static LocalizedString SYNC_CHANGES_REVERTED		("ScreenSyncOverlay","Sync changes reverted.");
-bool ScreenSyncOverlay::OverlayInput( const InputEventPlus &input )
+bool ScreenSyncOverlay::Input( const InputEventPlus &input )
 {
 	if( !IsGameplay() )
-		return Screen::OverlayInput(input);
+		return Screen::Input(input);
 
 	if( input.DeviceI.device != DEVICE_KEYBOARD )
-		return Screen::OverlayInput(input);
+		return Screen::Input(input);
 
 	enum Action
 	{
@@ -186,7 +186,7 @@ bool ScreenSyncOverlay::OverlayInput( const InputEventPlus &input )
 		break;
 
 	default:
-		return Screen::OverlayInput(input);
+		return Screen::Input(input);
 	}
 
 	if( GAMESTATE->IsCourseMode() && a != ChangeGlobalOffset )

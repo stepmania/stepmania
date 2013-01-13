@@ -13,7 +13,7 @@ public:
 	virtual void Init();
 
 	void Update( float fDeltaTime );
-	bool OverlayInput( const InputEventPlus &input );
+	bool Input( const InputEventPlus &input );
 
 private:
 	void UpdateText();

@@ -16,7 +16,7 @@ public:
 	virtual ~ScreenDebugOverlay();
 	virtual void Init();
 
-	bool OverlayInput( const InputEventPlus &input );
+	bool Input( const InputEventPlus &input );
 
 	void Update( float fDeltaTime );
 

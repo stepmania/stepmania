@@ -504,14 +504,12 @@ void ScreenManager::Input( const InputEventPlus &input )
 //	LOG->Trace( "ScreenManager::Input( %d-%d, %d-%d, %d-%d, %d-%d )", 
 //		DeviceI.device, DeviceI.button, GameI.controller, GameI.button, MenuI.player, MenuI.button, StyleI.player, StyleI.col );
 
-	// First, give overlay screens a shot at the input.  If OverlayInput returns
-	// true, it handled the input, so don't pass it further.  OverlayInput could
-	// probably be merged with Input, but that would require changing all Input
-	// overloads, as well as all MenuLeft, etc. overloads.
+	// First, give overlay screens a shot at the input.  If Input returns
+	// true, it handled the input, so don't pass it further.
 	for( unsigned i = 0; i < g_OverlayScreens.size(); ++i )
 	{
 		Screen *pScreen = g_OverlayScreens[i];
-		if( pScreen->OverlayInput(input) )
+		if( pScreen->Input(input) )
 			return;
 	}
 
