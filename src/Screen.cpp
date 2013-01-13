@@ -175,15 +175,9 @@ void Screen::Update( float fDeltaTime )
  * function. */
 bool Screen::OverlayInput( const InputEventPlus &input )
 {
-	// Allow overlays to respond to codes
-	Message msg("");
-	if( m_Codes.InputMessage(input, msg) )
-	{
-		this->HandleMessage( msg );
-		return true;
-	}
-
-	return false;
+	// XXX Eventually merge this function with Input() once the necessary
+	// changes are made in ScreenManager.
+	return this->Input(input);
 }
 
 /* Returns true if the input was handled, or false if not handled. */
