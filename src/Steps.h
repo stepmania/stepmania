@@ -171,6 +171,8 @@ public:
 	void PushSelf( lua_State *L );
 
 	StepsType			m_StepsType;
+	/** @brief The Song these Steps are associated with */
+	Song				*m_pSong;
 
 	CachedObject<Steps> m_CachedObject;
 

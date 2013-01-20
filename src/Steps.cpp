@@ -42,7 +42,7 @@ static const char *DisplayBPMNames[] =
 XToString( DisplayBPM );
 LuaXType( DisplayBPM );
 
-Steps::Steps(): m_StepsType(StepsType_Invalid), 
+Steps::Steps(): m_StepsType(StepsType_Invalid), m_pSong(NULL),
 	parent(NULL), m_pNoteData(new NoteData), m_bNoteDataIsFilled(false), 
 	m_sNoteDataCompressed(""), m_sFilename(""), m_bSavedToDisk(false), 
 	m_LoadedFromProfile(ProfileSlot_Invalid), m_iHash(0),
