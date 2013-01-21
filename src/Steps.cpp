@@ -42,7 +42,7 @@ static const char *DisplayBPMNames[] =
 XToString( DisplayBPM );
 LuaXType( DisplayBPM );
 
-Steps::Steps(): m_StepsType(StepsType_Invalid), m_pSong(NULL),
+Steps::Steps(Song *song): m_StepsType(StepsType_Invalid), m_pSong(song),
 	parent(NULL), m_pNoteData(new NoteData), m_bNoteDataIsFilled(false), 
 	m_sNoteDataCompressed(""), m_sFilename(""), m_bSavedToDisk(false), 
 	m_LoadedFromProfile(ProfileSlot_Invalid), m_iHash(0),
@@ -465,6 +465,7 @@ void Steps::CopyFrom( Steps* pSource, StepsType ntTo, float fMusicLengthSeconds 
 	noteData.SetNumTracks( GAMEMAN->GetStepsTypeInfo(ntTo).iNumTracks );
 	parent = NULL;
 	m_Timing = pSource->m_Timing;
+	this->m_pSong = pSource->m_pSong;
 	this->m_Attacks = pSource->m_Attacks;
 	this->m_sAttackString = pSource->m_sAttackString;
 	this->SetNoteData( noteData );

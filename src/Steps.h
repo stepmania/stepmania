@@ -42,7 +42,7 @@ class Steps
 {
 public:
 	/** @brief Set up the Steps with initial values. */
-	Steps();
+	Steps( Song* song );
 	/** @brief Destroy the Steps that are no longer needed. */
 	~Steps();
 

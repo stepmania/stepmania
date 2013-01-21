@@ -301,7 +301,7 @@ bool SMALoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 			else
 			{
 				state = SMA_GETTING_STEP_INFO;
-				pNewNotes = new Steps;
+				pNewNotes = new Steps(&out);
 			}
 		}
 		

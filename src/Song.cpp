@@ -191,7 +191,7 @@ void Song::AddLyricSegment( LyricSegment seg )
 
 Steps *Song::CreateSteps()
 {
-	Steps *pSteps = new Steps;
+	Steps *pSteps = new Steps(this);
 	InitSteps( pSteps );
 	return pSteps;
 }
@@ -415,7 +415,7 @@ bool Song::ReloadFromSongDir( RString sDir )
 	// The leftovers in the map are steps that didn't exist before we reverted
 	for( map<StepsID, Steps*>::const_iterator it = mNewSteps.begin(); it != mNewSteps.end(); ++it )
 	{
-		Steps *NewSteps = new Steps();
+		Steps *NewSteps = new Steps(this);
 		*NewSteps = *(it->second);
 		AddSteps( NewSteps );
 	}
@@ -1136,7 +1136,7 @@ void Song::AutoGen( StepsType ntTo, StepsType ntFrom )
 		const Steps* pOriginalNotes = m_vpSteps[j];
 		if( pOriginalNotes->m_StepsType == ntFrom )
 		{
-			Steps* pNewNotes = new Steps;
+			Steps* pNewNotes = new Steps(this);
 			pNewNotes->AutogenFrom( pOriginalNotes, ntTo );
 			this->AddSteps( pNewNotes );
 		}

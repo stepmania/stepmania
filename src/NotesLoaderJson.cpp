@@ -218,7 +218,7 @@ static void Deserialize( Song &out, const Json::Value &root )
 
 	{
 		vector<Steps*> vpSteps;
-		JsonUtil::DeserializeVectorPointers<Steps>( vpSteps, Deserialize, root["Charts"] );
+		JsonUtil::DeserializeVectorPointersParam<Steps,Song*>( vpSteps, Deserialize, root["Charts"], &out );
 		FOREACH( Steps*, vpSteps, iter )
 			out.AddSteps( *iter );
 	}
