@@ -144,7 +144,6 @@ public:
 	int GetSongRank(Song* pSong);
 
 	void GetStepsLoadedFromProfile( vector<Steps*> &AddTo, ProfileSlot slot ) const;
-	Song *GetSongFromSteps( Steps *pSteps ) const;
 	void DeleteSteps( Steps *pSteps );	// transfers ownership of pSteps
 	bool WasLoadedFromAdditionalSongs( const Song *pSong ) const;
 	bool WasLoadedFromAdditionalCourses( const Course *pCourse ) const;

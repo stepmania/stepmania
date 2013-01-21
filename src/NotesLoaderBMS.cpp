@@ -1243,7 +1243,7 @@ void BMSSongLoader::AddToSong()
 
 bool BMSLoader::LoadNoteDataFromSimfile( const RString & cachePath, Steps & out )
 {
-	Song *pSong = SONGMAN->GetSongFromSteps( &out );
+	Song *pSong = out.m_pSong;
 
 	// before doing anything else, load the chart first!
 	BMSChart chart;
