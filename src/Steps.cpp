@@ -520,6 +520,11 @@ void Steps::SetMeter( int meter )
 	m_iMeter = meter;
 }
 
+const TimingData *Steps::GetTimingData() const
+{
+	return m_Timing.empty() ? &m_pSong->m_SongTiming : &m_Timing;
+}
+
 bool Steps::HasSignificantTimingChanges() const
 {
 	if( m_Timing.HasStops() || m_Timing.HasDelays() || m_Timing.HasWarps() ||
