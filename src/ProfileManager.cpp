@@ -534,7 +534,7 @@ void ProfileManager::LoadMachineProfile()
 	if( lr == ProfileLoadResult_FailedNoProfile )
 	{
 		m_pMachineProfile->InitAll();
-		m_pMachineProfile->SaveAllToDir( MACHINE_PROFILE_DIR, PREFSMAN->m_bSignProfileData );
+		m_pMachineProfile->SaveAllToDir( MACHINE_PROFILE_DIR, false ); /* don't sign machine profiles */
 	}
 
 	// If the machine name has changed, make sure we use the new name
