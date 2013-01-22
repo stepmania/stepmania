@@ -682,7 +682,10 @@ private:
 	/**
 	 * @brief Retrieve the appropriate TimingData based on GAMESTATE.
 	 * @return the proper TimingData. */
-	TimingData & GetAppropriateTiming() const;
+	const TimingData & GetAppropriateTiming() const;
+	/**
+	 * @brief Retrieve the appropriate TimingData to use for updating. */
+	TimingData & GetAppropriateTimingForUpdate();
 	/**
 	 * @brief Retrieve the appropriate SongPosition data based on GAMESTATE.
 	 * @return the proper SongPosition. */
