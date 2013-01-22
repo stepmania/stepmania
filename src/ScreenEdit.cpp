@@ -86,6 +86,7 @@ AutoScreenMessage( SM_DoRevertToLastSave );
 AutoScreenMessage( SM_DoRevertFromDisk );
 AutoScreenMessage( SM_BackFromTimingDataInformation );
 AutoScreenMessage( SM_BackFromDifficultyMeterChange );
+AutoScreenMessage( SM_BackFromBeat0Change );
 AutoScreenMessage( SM_BackFromBPMChange );
 AutoScreenMessage( SM_BackFromStopChange );
 AutoScreenMessage( SM_BackFromDelayChange );
@@ -3312,6 +3313,27 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		GAMESTATE->m_pCurSteps[PLAYER_1]->SetMeter(i);
 		SetDirty( true );
 	}
+	else if( SM == SM_BackFromBeat0Change && !ScreenTextEntry::s_bCancelledLast )
+	{
+		float fBeat0 = StringToFloat( ScreenTextEntry::s_sLastAnswer );
+
+		TimingData &timing = GetAppropriateTimingForUpdate();
+		float old = timing.m_fBeat0OffsetInSeconds;
+		timing.m_fBeat0OffsetInSeconds = fBeat0;
+		float delta = timing.m_fBeat0OffsetInSeconds - old;
+
+		if (GAMESTATE->m_bIsUsingStepTiming)
+		{
+			GAMESTATE->m_pCurSteps[PLAYER_1]->m_Attacks.UpdateStartTimes(delta);
+		}
+		else
+		{
+			GAMESTATE->m_pCurSong->m_Attacks.UpdateStartTimes(delta);
+			GAMESTATE->m_pCurSong->m_fMusicSampleStartSeconds += delta;
+		}
+
+		SetDirty( true );
+	}
 	else if( SM == SM_BackFromBPMChange && !ScreenTextEntry::s_bCancelledLast )
 	{
 		float fBPM = StringToFloat( ScreenTextEntry::s_sLastAnswer );
@@ -4114,26 +4136,6 @@ static void ChangeArtistTranslit( const RString &sNew )
 {
 	Song* pSong = GAMESTATE->m_pCurSong;
 	pSong->m_sArtistTranslit = sNew;
-}
-
-static void ChangeBeat0Offset( const RString &sNew )
-{
-	TimingData &timing = (GAMESTATE->m_bIsUsingStepTiming ?
-			      GAMESTATE->m_pCurSteps[PLAYER_1]->m_Timing :
-			      GAMESTATE->m_pCurSong->m_SongTiming);
-	float old = timing.m_fBeat0OffsetInSeconds;
-	timing.m_fBeat0OffsetInSeconds = StringToFloat(sNew);
-	float delta = timing.m_fBeat0OffsetInSeconds - old;
-
-	if (GAMESTATE->m_bIsUsingStepTiming)
-	{
-		GAMESTATE->m_pCurSteps[PLAYER_1]->m_Attacks.UpdateStartTimes(delta);
-	}
-	else
-	{
-		GAMESTATE->m_pCurSong->m_Attacks.UpdateStartTimes(delta);
-		GAMESTATE->m_pCurSong->m_fMusicSampleStartSeconds += delta;
-	}
 }
 
 static void ChangeLastSecondHint( const RString &sNew )
@@ -5231,11 +5233,14 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 	{
 	DEFAULT_FAIL( c );
 	case beat_0_offset:
-		ScreenTextEntry::TextEntry( SM_None, ENTER_BEAT_0_OFFSET,
-					   FloatToString(GetAppropriateTiming().m_fBeat0OffsetInSeconds), 20,
-					   ScreenTextEntry::FloatValidate, ChangeBeat0Offset, NULL );
+		ScreenTextEntry::TextEntry(
+			SM_BackFromBeat0Change,
+			ENTER_BEAT_0_OFFSET,
+			FloatToString(GetAppropriateTiming().m_fBeat0OffsetInSeconds),
+			20
+			);
 		break;
-		case bpm:
+	case bpm:
 		ScreenTextEntry::TextEntry( 
 			SM_BackFromBPMChange, 
 			ENTER_BPM_VALUE, 
