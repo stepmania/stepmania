@@ -537,11 +537,11 @@ void Song::TidyUpData( bool fromCache, bool /* duringCache */ )
 		m_fMusicLengthSeconds = 0;
 	}
 
-	m_SongTiming.TidyUpData();
+	m_SongTiming.TidyUpData( false );
 	
 	FOREACH( Steps *, m_vpSteps, s )
 	{
-		(*s)->m_Timing.TidyUpData();
+		(*s)->m_Timing.TidyUpData( false );
 	}
 
 	/* Generate these before we autogen notes, so the new notes can inherit

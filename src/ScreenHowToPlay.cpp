@@ -151,7 +151,7 @@ void ScreenHowToPlay::Init()
 		Steps *pSteps = SongUtil::GetClosestNotes( &m_Song, pStyle->m_StepsType, Difficulty_Beginner );
 		ASSERT_M( pSteps != NULL, ssprintf("No playable steps of StepsType '%s' for ScreenHowToPlay", StringConversion::ToString(pStyle->m_StepsType).c_str()) );
 
-		pSteps->m_Timing.TidyUpData();
+		pSteps->m_Timing.TidyUpData( false );
 		NoteData tempNoteData;
 		pSteps->GetNoteData( tempNoteData );
 		pStyle->GetTransformedNoteDataForStyle( PLAYER_1, tempNoteData, m_NoteData );

@@ -863,8 +863,13 @@ float TimingData::GetDisplayedSpeedPercent( float fSongBeat, float fMusicSeconds
 
 }
 
-void TimingData::TidyUpData()
+void TimingData::TidyUpData(bool allowEmpty)
 {
+	// Empty TimingData is used to implement steps with no timing of their
+	// own.  Don't override this.
+	if( allowEmpty && empty() )
+		return;
+
 	// If there are no BPM segments, provide a default.
 	vector<TimingSegment *> *segs = m_avpTimingSegments;
 	if( segs[SEGMENT_BPM].empty() )

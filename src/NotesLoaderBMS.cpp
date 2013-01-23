@@ -1002,7 +1002,7 @@ bool BMSChartReader::ReadNoteData()
 	delete holdStart;
 	delete lastNote;
 
-	td.TidyUpData();
+	td.TidyUpData( false );
 	out->SetNoteData(nd);
 	out->m_Timing = td;
 	out->TidyUpData();

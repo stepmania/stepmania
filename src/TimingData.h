@@ -378,8 +378,10 @@ public:
 
 	/**
 	 * @brief Tidy up the timing data, e.g. provide default BPMs, labels, tickcounts.
+	 * @param allowEmpty true if completely empty TimingData should be left
+	 *                   alone, false if it should be changed
 	 */
-	void TidyUpData();
+	void TidyUpData(bool allowEmpty);
 
 	// Lua
 	void PushSelf( lua_State *L );
