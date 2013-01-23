@@ -233,6 +233,10 @@ bool ScreenSyncOverlay::Input( const InputEventPlus &input )
 				FOREACH( Steps*, const_cast<vector<Steps *>&>(vpSteps), s )
 				{
 					TimingData &pTiming = (*s)->m_Timing;
+					// Empty means it inherits song timing,
+					// which has already been updated.
+					if( pTiming.empty() )
+						continue;
 					float second = sTiming.GetElapsedTimeFromBeat(GAMESTATE->m_Position.m_fSongBeat);
 					seg = pTiming.GetBPMSegmentAtBeat(pTiming.GetBeatFromElapsedTime(second));
 					seg->SetBPS( seg->GetBPS() + fDelta );
@@ -278,6 +282,10 @@ bool ScreenSyncOverlay::Input( const InputEventPlus &input )
 						const vector<Steps *>& vpSteps = GAMESTATE->m_pCurSong->GetAllSteps();
 						FOREACH( Steps*, const_cast<vector<Steps *>&>(vpSteps), s )
 						{
+							// Empty means it inherits song timing,
+							// which has already been updated.
+							if( (*s)->m_Timing.empty() )
+								continue;
 							(*s)->m_Timing.m_fBeat0OffsetInSeconds += fDelta;
 						}
 					}

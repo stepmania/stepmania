@@ -1779,7 +1779,7 @@ void ScreenSelectMusic::AfterMusicChange()
 		if(SAMPLE_MUSIC_PREVIEW_MODE == SampleMusicPreviewMode_LastSong)
 		{
 			m_sSampleMusicToPlay = pSong->GetMusicPath();
-			m_pSampleMusicTimingData = &pSong->m_Timing;
+			m_pSampleMusicTimingData = &pSong->m_SongTiming;
 			m_fSampleStartSeconds = pSong->m_fMusicSampleStartSeconds;
 			m_fSampleLengthSeconds = pSong->m_fMusicSampleLengthSeconds;
 		}

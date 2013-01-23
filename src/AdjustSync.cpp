@@ -216,6 +216,10 @@ void AdjustSync::AutosyncOffset()
 				const vector<Steps *>& vpSteps = GAMESTATE->m_pCurSong->GetAllSteps();
 				FOREACH( Steps*, const_cast<vector<Steps *>&>(vpSteps), s )
 				{
+					// Empty TimingData means it's inherited
+					// from the song and is already changed.
+					if( (*s)->m_Timing.empty() )
+						continue;
 					(*s)->m_Timing.m_fBeat0OffsetInSeconds += mean;
 				}
 				break;

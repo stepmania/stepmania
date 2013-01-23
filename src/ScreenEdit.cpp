@@ -1375,7 +1375,7 @@ void ScreenEdit::Update( float fDeltaTime )
 				continue;
 
 			float fStartedHoldingSeconds = m_pSoundMusic->GetPositionSeconds() - fSecsHeld;
-			float fStartBeat = max( fStartPlayingAtBeat, m_pSteps->m_Timing.GetBeatFromElapsedTime(fStartedHoldingSeconds) );
+			float fStartBeat = max( fStartPlayingAtBeat, m_pSteps->GetTimingData()->GetBeatFromElapsedTime(fStartedHoldingSeconds) );
 			float fEndBeat = max( fStartBeat, GetBeat() );
 			fEndBeat = min( fEndBeat, fStopPlayingAtBeat );
 
@@ -1420,11 +1420,11 @@ void ScreenEdit::Update( float fDeltaTime )
 		float fLastBeat = NoteRowToBeat(m_iStopPlayingAt);
 		if( bButtonIsBeingPressed && m_EditState == STATE_RECORDING )
 		{
-			float fSeconds = m_pSteps->m_Timing.GetElapsedTimeFromBeat( fLastBeat );
-			fLastBeat = m_pSteps->m_Timing.GetBeatFromElapsedTime( fSeconds + 0.5f );
+			float fSeconds = m_pSteps->GetTimingData()->GetElapsedTimeFromBeat( fLastBeat );
+			fLastBeat = m_pSteps->GetTimingData()->GetBeatFromElapsedTime( fSeconds + 0.5f );
 		}
 
-		float fStopAtSeconds = m_pSteps->m_Timing.GetElapsedTimeFromBeat( NoteRowToBeat(m_iStopPlayingAt) ) + 1;
+		float fStopAtSeconds = m_pSteps->GetTimingData()->GetElapsedTimeFromBeat( NoteRowToBeat(m_iStopPlayingAt) ) + 1;
 		if( GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fMusicSeconds > fStopAtSeconds )
 		{
 			TransitionEditState( ( LOOP_ON_CHART_END ? STATE_PLAYING : STATE_EDITING ) );
@@ -1601,7 +1601,7 @@ void ScreenEdit::UpdateTextInfo()
 		sText += ssprintf("Attack here?: %s\n", FindAttackAtTime(attacks, beat) > -1 ? "YES" : "NO");
 	}
 	
-	GAMESTATE->SetProcessedTimingData(&m_pSteps->m_Timing);
+	GAMESTATE->SetProcessedTimingData(m_pSteps->GetTimingData());
 	const StepsTypeCategory &cat = GAMEMAN->GetStepsTypeInfo(m_pSteps->m_StepsType).m_StepsTypeCategory;
 	if (cat == StepsTypeCategory_Couple || cat == StepsTypeCategory_Routine)
 	{
@@ -2512,7 +2512,7 @@ bool ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			if( pCourse == NULL )
 				return false;
 			CourseEntry &ce = pCourse->m_vEntries[GAMESTATE->m_iEditCourseEntryIndex];
-			float fStartTime = m_pSteps->m_Timing.GetElapsedTimeFromBeat( GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat );
+			float fStartTime = m_pSteps->GetTimingData()->GetElapsedTimeFromBeat( GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat );
 			int iAttack = FindAttackAtTime( ce.attacks, fStartTime );
 
 			if( iAttack >= 0 )
@@ -2594,7 +2594,8 @@ bool ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			else
 			{
 				// TODO: Give Song/Step Timing switches/functions here? 
-				fStart = m_pSteps->m_Timing.GetElapsedTimeFromBeat( NoteRowToBeat(m_NoteFieldEdit.m_iBeginMarker) );
+				TimingData *timing = m_pSteps->GetTimingData();
+				fStart = timing->GetElapsedTimeFromBeat( NoteRowToBeat(m_NoteFieldEdit.m_iBeginMarker) );
 				int iAttack = FindAttackAtTime( ce.attacks, fStart );
 
 				if( iAttack >= 0 )
@@ -2603,7 +2604,7 @@ bool ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 				if( m_NoteFieldEdit.m_iEndMarker == -1 )
 					fEnd = m_pSong->m_fMusicLengthSeconds;
 				else
-					fEnd = m_pSteps->m_Timing.GetElapsedTimeFromBeat( NoteRowToBeat(m_NoteFieldEdit.m_iEndMarker) );
+					fEnd = timing->GetElapsedTimeFromBeat( NoteRowToBeat(m_NoteFieldEdit.m_iEndMarker) );
 			}
 			g_fLastInsertAttackPositionSeconds = fStart;
 			g_fLastInsertAttackDurationSeconds = fEnd - fStart;
@@ -3049,8 +3050,10 @@ void ScreenEdit::TransitionEditState( EditState em )
 		
 		if (!GAMESTATE->m_bIsUsingStepTiming)
 		{
+			// Substitute the song timing for the step timing during
+			// previuw if we're in song mode
 			backupStepTiming = GAMESTATE->m_pCurSteps[PLAYER_1]->m_Timing;
-			GAMESTATE->m_pCurSteps[PLAYER_1]->m_Timing = GAMESTATE->m_pCurSong->m_SongTiming;
+			GAMESTATE->m_pCurSteps[PLAYER_1]->m_Timing.Clear();
 		}
 
 		/* Reset the note skin, in case preferences have changed. */
@@ -3839,7 +3842,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		
 		// TODO: Handle Song/Step Timing functions/switches here?
 
-		g_fLastInsertAttackPositionSeconds = m_pSteps->m_Timing.GetElapsedTimeFromBeat( GAMESTATE->m_Position.m_fSongBeat );
+		g_fLastInsertAttackPositionSeconds = m_pSteps->GetTimingData()->GetElapsedTimeFromBeat( GAMESTATE->m_Position.m_fSongBeat );
 		g_fLastInsertAttackDurationSeconds = StringToFloat( g_InsertCourseAttack.rows[0].choices[iDurationChoice] );
 		iAttack = FindAttackAtTime( ce.attacks, g_fLastInsertAttackPositionSeconds );
 
@@ -3935,7 +3938,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		if( ScreenPrompt::s_LastAnswer == ANSWER_YES )
 		{
 			SaveUndo();
-			m_pSteps->m_Timing = m_pSong->m_SongTiming;
+			m_pSteps->m_Timing.Clear();
 			SetDirty( true );
 		}
 	}
@@ -4180,7 +4183,7 @@ const TimingData & ScreenEdit::GetAppropriateTiming() const
 {
 	if( GAMESTATE->m_bIsUsingStepTiming )
 	{
-		return m_pSteps->m_Timing;
+		return *m_pSteps->GetTimingData();
 	}
 	return m_pSong->m_SongTiming;
 }
@@ -4211,12 +4214,12 @@ inline void ScreenEdit::SetBeat(float fBeat)
 	if( !GAMESTATE->m_bIsUsingStepTiming )
 	{
 		GAMESTATE->m_Position.m_fSongBeat = fBeat;
-		GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat = m_pSteps->m_Timing.GetBeatFromElapsedTime(m_pSong->m_SongTiming.GetElapsedTimeFromBeat(fBeat));
+		GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat = m_pSteps->GetTimingData()->GetBeatFromElapsedTime(m_pSong->m_SongTiming.GetElapsedTimeFromBeat(fBeat));
 	}
 	else
 	{
 		GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat = fBeat;
-		GAMESTATE->m_Position.m_fSongBeat = m_pSong->m_SongTiming.GetBeatFromElapsedTime(m_pSteps->m_Timing.GetElapsedTimeFromBeat(fBeat));
+		GAMESTATE->m_Position.m_fSongBeat = m_pSong->m_SongTiming.GetBeatFromElapsedTime(m_pSteps->GetTimingData()->GetElapsedTimeFromBeat(fBeat));
 	}
 }
 
@@ -4285,7 +4288,7 @@ static LocalizedString SAVE_CHANGES_BEFORE_EXITING	( "ScreenEdit", "Do you want 
 
 void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAnswers )
 {
-	GAMESTATE->SetProcessedTimingData(&m_pSteps->m_Timing);
+	GAMESTATE->SetProcessedTimingData(m_pSteps->GetTimingData());
 	switch( c )
 	{
 		DEFAULT_FAIL( c );

@@ -115,7 +115,7 @@ const RadarValues &Trail::GetRadarValues() const
 				NoteData nd;
 				pSteps->GetNoteData( nd );
 				RadarValues rv_orig;
-				GAMESTATE->SetProcessedTimingData(const_cast<TimingData *>(&pSteps->m_Timing));
+				GAMESTATE->SetProcessedTimingData(const_cast<TimingData *>(pSteps->GetTimingData()));
 				NoteDataUtil::CalculateRadarValues( nd, e->pSong->m_fMusicLengthSeconds, rv_orig );
 				PlayerOptions po;
 				po.FromString( e->Modifiers );

@@ -66,7 +66,7 @@ void Steps::GetDisplayBpms( DisplayBpms &AddTo ) const
 	else
 	{
 		float fMinBPM, fMaxBPM;
-		this->m_Timing.GetActualBPM( fMinBPM, fMaxBPM );
+		this->GetTimingData()->GetActualBPM( fMinBPM, fMaxBPM );
 		AddTo.Add( fMinBPM );
 		AddTo.Add( fMaxBPM );
 	}
@@ -291,7 +291,7 @@ void Steps::CalculateRadarValues( float fMusicLengthSeconds )
 	FOREACH_PlayerNumber( pn )
 		m_CachedRadarValues[pn].Zero();
 
-	GAMESTATE->SetProcessedTimingData(&this->m_Timing);
+	GAMESTATE->SetProcessedTimingData(this->GetTimingData());
 	if( tempNoteData.IsComposite() )
 	{
 		vector<NoteData> vParts;
@@ -527,11 +527,12 @@ const TimingData *Steps::GetTimingData() const
 
 bool Steps::HasSignificantTimingChanges() const
 {
-	if( m_Timing.HasStops() || m_Timing.HasDelays() || m_Timing.HasWarps() ||
-		m_Timing.HasSpeedChanges() || m_Timing.HasScrollChanges() )
+	const TimingData *timing = GetTimingData();
+	if( timing->HasStops() || timing->HasDelays() || timing->HasWarps() ||
+		timing->HasSpeedChanges() || timing->HasScrollChanges() )
 		return true;
 
-	if( m_Timing.HasBpmChanges() )
+	if( timing->HasBpmChanges() )
 	{
 		// check to see if these changes are significant.
 		if( (GetMaxBPM() - GetMinBPM()) > 3.000f )
@@ -584,7 +585,7 @@ public:
 	}
 	static int GetTimingData( T* p, lua_State *L )
 	{
-		p->m_Timing.PushSelf(L);
+		p->GetTimingData()->PushSelf(L);
 		return 1;
 	}
 	static int GetHash( T* p, lua_State *L ) { lua_pushnumber( L, p->GetHash() ); return 1; }

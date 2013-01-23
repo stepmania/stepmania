@@ -198,7 +198,7 @@ Steps *Song::CreateSteps()
 
 void Song::InitSteps(Steps *pSteps)
 {
-	pSteps->m_Timing = this->m_SongTiming;
+	// TimingData is initially empty (i.e. defaults to song timing)
 	pSteps->m_sAttackString = this->m_sAttackString;
 	pSteps->m_Attacks = this->m_Attacks;
 	pSteps->SetDisplayBPM(this->m_DisplayBPMType);
@@ -541,7 +541,7 @@ void Song::TidyUpData( bool fromCache, bool /* duringCache */ )
 	
 	FOREACH( Steps *, m_vpSteps, s )
 	{
-		(*s)->m_Timing.TidyUpData( false );
+		(*s)->m_Timing.TidyUpData( true );
 	}
 
 	/* Generate these before we autogen notes, so the new notes can inherit
@@ -889,9 +889,9 @@ void Song::ReCalculateRadarValuesAndLastSecond(bool fromCache, bool duringCache)
 		if( tempNoteData.GetLastRow() != 0 )
 		{
 			localFirst = min(localFirst,
-				 pSteps->m_Timing.GetElapsedTimeFromBeat(tempNoteData.GetFirstBeat()));
+				 pSteps->GetTimingData()->GetElapsedTimeFromBeat(tempNoteData.GetFirstBeat()));
 			localLast = max(localLast,
-				pSteps->m_Timing.GetElapsedTimeFromBeat(tempNoteData.GetLastBeat()));
+				pSteps->GetTimingData()->GetElapsedTimeFromBeat(tempNoteData.GetLastBeat()));
 		}
 	wipe_notedata:
 		if (duringCache)
@@ -1587,7 +1587,8 @@ bool Song::IsEditAlreadyLoaded( Steps* pSteps ) const
 
 bool Song::IsStepsUsingDifferentTiming(Steps *pSteps) const
 {
-	return pSteps->m_Timing != this->m_SongTiming;
+	// XXX This no longer depends on Song at all
+	return !pSteps->m_Timing.empty();
 }
 
 bool Song::HasSignificantBpmChangesOrStops() const
