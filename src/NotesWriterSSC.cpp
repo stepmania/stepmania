@@ -373,7 +373,7 @@ static RString GetSSCNoteData( const Song &song, const Steps &in, bool bSavingCa
 	// timing.  Write out the corresponding tags.
 	if( !in.m_Timing.empty() )
 	{
-		lines.push_back( ssprintf( "#OFFSET:%.f;", in.m_Timing.m_fBeat0OffsetInSeconds ) );
+		lines.push_back( ssprintf( "#OFFSET:%.6f;", in.m_Timing.m_fBeat0OffsetInSeconds ) );
 		GetTimingTags( lines, in.m_Timing );
 	}
 
