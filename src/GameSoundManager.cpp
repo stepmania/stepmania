@@ -647,23 +647,22 @@ void GameSoundManager::Update( float fDeltaTime )
 
 		FOREACH_CabinetLight( cl )
 		{	
-			// for each index we crossed since the last update:
+			// Are we "holding" the light?
+			if( lights.IsHoldNoteAtRow( cl, iSongRow ) )
+			{
+				LIGHTSMAN->BlinkCabinetLight( cl );
+				continue;
+			}
+
+			// Otherwise, for each index we crossed since the last update:
 			FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( lights, cl, r, iRowLastCrossed+1, iSongRow+1 )
 			{
 				if( lights.GetTapNote( cl, r ).type != TapNote::empty )
 				{
 					LIGHTSMAN->BlinkCabinetLight( cl );
-					goto done_with_cabinet_light;
+					break;
 				}
 			}
-
-			if( lights.IsHoldNoteAtRow( cl, iSongRow ) )
-			{
-				LIGHTSMAN->BlinkCabinetLight( cl );
-				goto done_with_cabinet_light;
-			}
-done_with_cabinet_light:
-			;
 		}
 
 		iRowLastCrossed = iSongRow;
