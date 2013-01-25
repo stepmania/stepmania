@@ -181,6 +181,20 @@ namespace JsonUtil
 		}
 	}
 
+	/* For classes with one-parameter constructors, such as Steps */
+	template<class T, class P>
+	static void DeserializeVectorPointersParam(vector<T*> &v, void fn(T &, const Json::Value &), const Json::Value &root, const P param)
+	{
+		for(unsigned i=0; i<v.size(); i++)
+			SAFE_DELETE(v[i]);
+		v.resize(root.size());
+		for(unsigned i=0; i<v.size(); i++)
+		{
+			v[i] = new T(param);
+			fn(*v[i], root[i]);
+		}
+	}
+
 	template<class T>
 	static void DeserializeArrayValues(vector<T> &v, const Json::Value &root)
 	{

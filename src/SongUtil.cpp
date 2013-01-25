@@ -795,7 +795,7 @@ static LocalizedString EDIT_NAME_CANNOT_CONTAIN	( "SongUtil", "The edit name can
 bool SongUtil::ValidateCurrentEditStepsDescription( const RString &sAnswer, RString &sErrorOut )
 {
 	Steps *pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
-	Song *pSong = SONGMAN->GetSongFromSteps( pSteps );
+	Song *pSong = pSteps->m_pSong;
 
 	ASSERT( pSteps->IsAnEdit() );
 

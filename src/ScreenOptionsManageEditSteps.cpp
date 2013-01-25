@@ -87,7 +87,7 @@ void ScreenOptionsManageEditSteps::BeginScreen()
 		vHands.push_back( OptionRowHandlerUtil::MakeNull() );
 		OptionRowDefinition &def = vHands.back()->m_Def;
 		
-		Song *pSong = SONGMAN->GetSongFromSteps( *s );
+		Song *pSong = (*s)->m_pSong;
 
 		def.m_sName = pSong->GetTranslitFullTitle() + " - " + (*s)->GetDescription();
 		def.m_bAllowThemeTitle = false;	// not themable
@@ -153,7 +153,7 @@ void ScreenOptionsManageEditSteps::HandleScreenMessage( const ScreenMessage SM )
 			ASSERT( ScreenTextEntry::s_sLastAnswer != "" );	// validate should have assured this
 
 			Steps *pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
-			Song *pSong = SONGMAN->GetSongFromSteps( pSteps );
+			Song *pSong = pSteps->m_pSong;
 
 			RString sOldDescription = pSteps->GetDescription();
 			pSteps->SetDescription( ScreenTextEntry::s_sLastAnswer );
@@ -190,7 +190,7 @@ void ScreenOptionsManageEditSteps::HandleScreenMessage( const ScreenMessage SM )
 			case StepsEditAction_Edit:
 				{
 					Steps *pSteps = GetStepsWithFocus();
-					Song *pSong = SONGMAN->GetSongFromSteps( pSteps );
+					Song *pSong = pSteps->m_pSong;
 					GAMESTATE->m_pCurSong.Set( pSong );
 					GAMESTATE->m_pCurSteps[PLAYER_1].Set( pSteps );
 
@@ -230,7 +230,7 @@ void ScreenOptionsManageEditSteps::HandleScreenMessage( const ScreenMessage SM )
 void ScreenOptionsManageEditSteps::AfterChangeRow( PlayerNumber pn )
 {
 	Steps *pSteps = GetStepsWithFocus();
-	Song *pSong = pSteps ? SONGMAN->GetSongFromSteps( pSteps ) : NULL;
+	Song *pSong = pSteps ? pSteps->m_pSong : NULL;
 	
 	GAMESTATE->m_pCurSong.Set( pSong );
 	GAMESTATE->m_pCurSteps[PLAYER_1].Set( pSteps );

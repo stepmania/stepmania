@@ -42,7 +42,7 @@ class Steps
 {
 public:
 	/** @brief Set up the Steps with initial values. */
-	Steps();
+	Steps( Song* song );
 	/** @brief Destroy the Steps that are no longer needed. */
 	~Steps();
 
@@ -158,6 +158,12 @@ public:
 	TimingData m_Timing;
 
 	/**
+	 * @brief Retrieves the appropriate timing data for the Steps.  Falls
+	 * back on the Song if needed. */
+	const TimingData *GetTimingData() const;
+	TimingData *GetTimingData() { return const_cast<TimingData*>( static_cast<const Steps*>( this )->GetTimingData() ); };
+
+	/**
 	 * @brief Determine if the Steps have any major timing changes during gameplay.
 	 * @return true if it does, or false otherwise. */
 	bool HasSignificantTimingChanges() const;
@@ -171,6 +177,8 @@ public:
 	void PushSelf( lua_State *L );
 
 	StepsType			m_StepsType;
+	/** @brief The Song these Steps are associated with */
+	Song				*m_pSong;
 
 	CachedObject<Steps> m_CachedObject;
 

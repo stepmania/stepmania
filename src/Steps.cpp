@@ -42,7 +42,7 @@ static const char *DisplayBPMNames[] =
 XToString( DisplayBPM );
 LuaXType( DisplayBPM );
 
-Steps::Steps(): m_StepsType(StepsType_Invalid), 
+Steps::Steps(Song *song): m_StepsType(StepsType_Invalid), m_pSong(song),
 	parent(NULL), m_pNoteData(new NoteData), m_bNoteDataIsFilled(false), 
 	m_sNoteDataCompressed(""), m_sFilename(""), m_bSavedToDisk(false), 
 	m_LoadedFromProfile(ProfileSlot_Invalid), m_iHash(0),
@@ -66,7 +66,7 @@ void Steps::GetDisplayBpms( DisplayBpms &AddTo ) const
 	else
 	{
 		float fMinBPM, fMaxBPM;
-		this->m_Timing.GetActualBPM( fMinBPM, fMaxBPM );
+		this->GetTimingData()->GetActualBPM( fMinBPM, fMaxBPM );
 		AddTo.Add( fMinBPM );
 		AddTo.Add( fMaxBPM );
 	}
@@ -291,7 +291,7 @@ void Steps::CalculateRadarValues( float fMusicLengthSeconds )
 	FOREACH_PlayerNumber( pn )
 		m_CachedRadarValues[pn].Zero();
 
-	GAMESTATE->SetProcessedTimingData(&this->m_Timing);
+	GAMESTATE->SetProcessedTimingData(this->GetTimingData());
 	if( tempNoteData.IsComposite() )
 	{
 		vector<NoteData> vParts;
@@ -465,6 +465,7 @@ void Steps::CopyFrom( Steps* pSource, StepsType ntTo, float fMusicLengthSeconds 
 	noteData.SetNumTracks( GAMEMAN->GetStepsTypeInfo(ntTo).iNumTracks );
 	parent = NULL;
 	m_Timing = pSource->m_Timing;
+	this->m_pSong = pSource->m_pSong;
 	this->m_Attacks = pSource->m_Attacks;
 	this->m_sAttackString = pSource->m_sAttackString;
 	this->SetNoteData( noteData );
@@ -519,13 +520,19 @@ void Steps::SetMeter( int meter )
 	m_iMeter = meter;
 }
 
+const TimingData *Steps::GetTimingData() const
+{
+	return m_Timing.empty() ? &m_pSong->m_SongTiming : &m_Timing;
+}
+
 bool Steps::HasSignificantTimingChanges() const
 {
-	if( m_Timing.HasStops() || m_Timing.HasDelays() || m_Timing.HasWarps() ||
-		m_Timing.HasSpeedChanges() || m_Timing.HasScrollChanges() )
+	const TimingData *timing = GetTimingData();
+	if( timing->HasStops() || timing->HasDelays() || timing->HasWarps() ||
+		timing->HasSpeedChanges() || timing->HasScrollChanges() )
 		return true;
 
-	if( m_Timing.HasBpmChanges() )
+	if( timing->HasBpmChanges() )
 	{
 		// check to see if these changes are significant.
 		if( (GetMaxBPM() - GetMinBPM()) > 3.000f )
@@ -578,7 +585,7 @@ public:
 	}
 	static int GetTimingData( T* p, lua_State *L )
 	{
-		p->m_Timing.PushSelf(L);
+		p->GetTimingData()->PushSelf(L);
 		return 1;
 	}
 	static int GetHash( T* p, lua_State *L ) { lua_pushnumber( L, p->GetHash() ); return 1; }

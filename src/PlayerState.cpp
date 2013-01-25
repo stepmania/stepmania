@@ -199,9 +199,10 @@ const SongPosition &PlayerState::GetDisplayedPosition() const
 
 const TimingData &PlayerState::GetDisplayedTiming() const
 {
-	if( GAMESTATE->m_bIsUsingStepTiming && GAMESTATE->m_pCurSteps[m_PlayerNumber] != NULL )
-		return GAMESTATE->m_pCurSteps[m_PlayerNumber]->m_Timing;
-	return GAMESTATE->m_pCurSong->m_SongTiming;
+	Steps *steps = GAMESTATE->m_pCurSteps[m_PlayerNumber];
+	if( steps == NULL )
+		return GAMESTATE->m_pCurSong->m_SongTiming;
+	return *steps->GetTimingData();
 }
 
 

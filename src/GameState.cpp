@@ -985,7 +985,7 @@ void GameState::UpdateSongPosition( float fPositionSeconds, const TimingData &ti
 		{
 			if( m_pCurSteps[pn] )
 			{
-				m_pPlayerState[pn]->m_Position.UpdateSongPosition( fPositionSeconds, m_pCurSteps[pn]->m_Timing, timestamp );
+				m_pPlayerState[pn]->m_Position.UpdateSongPosition( fPositionSeconds, *m_pCurSteps[pn]->GetTimingData(), timestamp );
 				Actor::SetPlayerBGMBeat( pn, m_pPlayerState[pn]->m_Position.m_fSongBeatVisible, m_pPlayerState[pn]->m_Position.m_fSongBeatNoOffset );
 			}
 		}

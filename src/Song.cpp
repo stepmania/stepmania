@@ -191,14 +191,14 @@ void Song::AddLyricSegment( LyricSegment seg )
 
 Steps *Song::CreateSteps()
 {
-	Steps *pSteps = new Steps;
+	Steps *pSteps = new Steps(this);
 	InitSteps( pSteps );
 	return pSteps;
 }
 
 void Song::InitSteps(Steps *pSteps)
 {
-	pSteps->m_Timing = this->m_SongTiming;
+	// TimingData is initially empty (i.e. defaults to song timing)
 	pSteps->m_sAttackString = this->m_sAttackString;
 	pSteps->m_Attacks = this->m_Attacks;
 	pSteps->SetDisplayBPM(this->m_DisplayBPMType);
@@ -415,7 +415,7 @@ bool Song::ReloadFromSongDir( RString sDir )
 	// The leftovers in the map are steps that didn't exist before we reverted
 	for( map<StepsID, Steps*>::const_iterator it = mNewSteps.begin(); it != mNewSteps.end(); ++it )
 	{
-		Steps *NewSteps = new Steps();
+		Steps *NewSteps = new Steps(this);
 		*NewSteps = *(it->second);
 		AddSteps( NewSteps );
 	}
@@ -537,11 +537,11 @@ void Song::TidyUpData( bool fromCache, bool /* duringCache */ )
 		m_fMusicLengthSeconds = 0;
 	}
 
-	m_SongTiming.TidyUpData();
+	m_SongTiming.TidyUpData( false );
 	
 	FOREACH( Steps *, m_vpSteps, s )
 	{
-		(*s)->m_Timing.TidyUpData();
+		(*s)->m_Timing.TidyUpData( true );
 	}
 
 	/* Generate these before we autogen notes, so the new notes can inherit
@@ -889,9 +889,9 @@ void Song::ReCalculateRadarValuesAndLastSecond(bool fromCache, bool duringCache)
 		if( tempNoteData.GetLastRow() != 0 )
 		{
 			localFirst = min(localFirst,
-				 pSteps->m_Timing.GetElapsedTimeFromBeat(tempNoteData.GetFirstBeat()));
+				 pSteps->GetTimingData()->GetElapsedTimeFromBeat(tempNoteData.GetFirstBeat()));
 			localLast = max(localLast,
-				pSteps->m_Timing.GetElapsedTimeFromBeat(tempNoteData.GetLastBeat()));
+				pSteps->GetTimingData()->GetElapsedTimeFromBeat(tempNoteData.GetLastBeat()));
 		}
 	wipe_notedata:
 		if (duringCache)
@@ -1136,7 +1136,7 @@ void Song::AutoGen( StepsType ntTo, StepsType ntFrom )
 		const Steps* pOriginalNotes = m_vpSteps[j];
 		if( pOriginalNotes->m_StepsType == ntFrom )
 		{
-			Steps* pNewNotes = new Steps;
+			Steps* pNewNotes = new Steps(this);
 			pNewNotes->AutogenFrom( pOriginalNotes, ntTo );
 			this->AddSteps( pNewNotes );
 		}
@@ -1587,7 +1587,8 @@ bool Song::IsEditAlreadyLoaded( Steps* pSteps ) const
 
 bool Song::IsStepsUsingDifferentTiming(Steps *pSteps) const
 {
-	return pSteps->m_Timing != this->m_SongTiming;
+	// XXX This no longer depends on Song at all
+	return !pSteps->m_Timing.empty();
 }
 
 bool Song::HasSignificantBpmChangesOrStops() const

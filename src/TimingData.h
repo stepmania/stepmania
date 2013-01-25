@@ -220,11 +220,11 @@ public:
 	void SetLabelAtBeat( float fBeat, const RString sLabel ) { SetLabelAtRow( BeatToNoteRow( fBeat ), sLabel ); }
 	bool DoesLabelExist( const RString& sLabel ) const;
 
-	float GetSpeedPercentAtRow( int iNoteRow ) { return GetSpeedSegmentAtRow(iNoteRow)->GetRatio(); }
-	float GetSpeedPercentAtBeat( float fBeat ) { return GetSpeedPercentAtRow( BeatToNoteRow(fBeat) ); }
+	float GetSpeedPercentAtRow( int iNoteRow ) const { return GetSpeedSegmentAtRow(iNoteRow)->GetRatio(); }
+	float GetSpeedPercentAtBeat( float fBeat ) const { return GetSpeedPercentAtRow( BeatToNoteRow(fBeat) ); }
 
-	float GetSpeedWaitAtRow( int iNoteRow ) { return GetSpeedSegmentAtRow(iNoteRow)->GetDelay(); }
-	float GetSpeedWaitAtBeat( float fBeat ) { return GetSpeedWaitAtRow( BeatToNoteRow(fBeat) ); }
+	float GetSpeedWaitAtRow( int iNoteRow ) const { return GetSpeedSegmentAtRow(iNoteRow)->GetDelay(); }
+	float GetSpeedWaitAtBeat( float fBeat ) const { return GetSpeedWaitAtRow( BeatToNoteRow(fBeat) ); }
 
 	// XXX: is there any point to having specific unit types?
 	SpeedSegment::BaseUnit GetSpeedModeAtRow( int iNoteRow ) const { return GetSpeedSegmentAtRow(iNoteRow)->GetUnit(); }
@@ -378,8 +378,10 @@ public:
 
 	/**
 	 * @brief Tidy up the timing data, e.g. provide default BPMs, labels, tickcounts.
+	 * @param allowEmpty true if completely empty TimingData should be left
+	 *                   alone, false if it should be changed
 	 */
-	void TidyUpData();
+	void TidyUpData(bool allowEmpty);
 
 	// Lua
 	void PushSelf( lua_State *L );

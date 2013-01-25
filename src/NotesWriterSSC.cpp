@@ -369,10 +369,11 @@ static RString GetSSCNoteData( const Song &song, const Steps &in, bool bSavingCa
 
 	lines.push_back( ssprintf( "#CREDIT:%s;", SmEscape(in.GetCredit()).c_str() ) );
 
-	// XXX: Is there a better way to write this?
-	if (const_cast<TimingData &>(song.m_SongTiming) != in.m_Timing)
+	// If the Steps TimingData is not empty, then they have their own
+	// timing.  Write out the corresponding tags.
+	if( !in.m_Timing.empty() )
 	{
-		lines.push_back( ssprintf( "#OFFSET:%.f;", in.m_Timing.m_fBeat0OffsetInSeconds ) );
+		lines.push_back( ssprintf( "#OFFSET:%.6f;", in.m_Timing.m_fBeat0OffsetInSeconds ) );
 		GetTimingTags( lines, in.m_Timing );
 	}
 

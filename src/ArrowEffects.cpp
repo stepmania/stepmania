@@ -262,7 +262,7 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 			fBeatsUntilStep = GetDisplayedBeat(pPlayerState, fNoteBeat) - GetDisplayedBeat(pPlayerState, fSongBeat);
 		float fYOffsetBeatSpacing = fBeatsUntilStep;
 		float fSpeedMultiplier = bShowEffects ? 
-			pCurSteps->m_Timing.GetDisplayedSpeedPercent(
+			pCurSteps->GetTimingData()->GetDisplayedSpeedPercent(
 								     position.m_fSongBeatVisible,
 								     position.m_fMusicSecondsVisible ) : 1.0f;
 		fYOffset += fSpeedMultiplier * fYOffsetBeatSpacing * (1-pPlayerState->m_PlayerOptions.GetCurrent().m_fTimeSpacing);
@@ -271,7 +271,7 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 	if( pPlayerState->m_PlayerOptions.GetCurrent().m_fTimeSpacing != 0.0f )
 	{
 		float fSongSeconds = GAMESTATE->m_Position.m_fMusicSecondsVisible;
-		float fNoteSeconds = pCurSteps->m_Timing.GetElapsedTimeFromBeat(fNoteBeat);
+		float fNoteSeconds = pCurSteps->GetTimingData()->GetElapsedTimeFromBeat(fNoteBeat);
 		float fSecondsUntilStep = fNoteSeconds - fSongSeconds;
 		float fBPM = pPlayerState->m_PlayerOptions.GetCurrent().m_fScrollBPM;
 		float fBPS = fBPM/60.f;

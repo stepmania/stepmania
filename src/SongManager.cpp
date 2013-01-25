@@ -1127,30 +1127,9 @@ void SongManager::GetStepsLoadedFromProfile( vector<Steps*> &AddTo, ProfileSlot 
 	}
 }
 
-Song *SongManager::GetSongFromSteps( Steps *pSteps ) const
-{
-	ASSERT( pSteps != NULL );
-	const vector<Song*> &vSongs = GetAllSongs();
-	FOREACH_CONST( Song*, vSongs, song )
-	{
-		vector<Steps*> vSteps;
-		SongUtil::GetSteps( *song, vSteps );
-
-		FOREACH_CONST( Steps*, vSteps, steps )
-		{
-			if( *steps == pSteps )
-			{
-				return *song;
-			}
-		}
-	}
-	FAIL_M("No song found for steps");
-}
-
 void SongManager::DeleteSteps( Steps *pSteps )
 {
-	Song *pSong = GetSongFromSteps( pSteps );
-	pSong->DeleteSteps( pSteps );
+	pSteps->m_pSong->DeleteSteps( pSteps );
 }
 
 bool SongManager::WasLoadedFromAdditionalSongs( const Song *pSong ) const
@@ -1942,11 +1921,12 @@ public:
 	static int GetNumCourses( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetNumCourses() ); return 1; }
 	static int GetNumAdditionalCourses( T* p, lua_State *L ){ lua_pushnumber( L, p->GetNumAdditionalCourses() ); return 1; }
 	static int GetNumCourseGroups( T* p, lua_State *L )	{ lua_pushnumber( L, p->GetNumCourseGroups() ); return 1; }
+	/* Note: this could now be implemented as Luna<Steps>::GetSong */
 	static int GetSongFromSteps( T* p, lua_State *L )
 	{
 		Song *pSong = NULL;
-		if( lua_isnil(L,1) ) { pSong = p->GetSongFromSteps( NULL ); }
-		else { Steps *pSteps = Luna<Steps>::check(L,1); pSong = p->GetSongFromSteps( pSteps ); }
+		if( lua_isnil(L,1) ) { pSong = NULL; }
+		else { Steps *pSteps = Luna<Steps>::check(L,1); pSong = pSteps->m_pSong; }
 		if(pSong) pSong->PushSelf(L);
 		else lua_pushnil(L);
 		return 1;

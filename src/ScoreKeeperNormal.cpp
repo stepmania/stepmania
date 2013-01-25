@@ -122,7 +122,7 @@ void ScoreKeeperNormal::Load(
 		 * forced and not chosen by the user. */
 		NoteDataUtil::TransformNoteData( nd, aa, pSteps->m_StepsType, pSong );
 		RadarValues rvPre;
-		GAMESTATE->SetProcessedTimingData(&pSteps->m_Timing);
+		GAMESTATE->SetProcessedTimingData(pSteps->GetTimingData());
 		NoteDataUtil::CalculateRadarValues( nd, pSong->m_fMusicLengthSeconds, rvPre );
 
 		/* Apply user transforms to find out how the notes will really look.
@@ -283,7 +283,7 @@ void ScoreKeeperNormal::HandleTapNoteScoreInternal( TapNoteScore tns, TapNoteSco
 		m_pPlayerStageStats->m_iActualDancePoints += TapNoteScoreToDancePoints( tns );
 
 	// update judged row totals. Respect Combo segments here.
-	TimingData &td = GAMESTATE->m_pCurSteps[m_pPlayerState->m_PlayerNumber]->m_Timing;
+	TimingData &td = *GAMESTATE->m_pCurSteps[m_pPlayerState->m_PlayerNumber]->GetTimingData();
 	ComboSegment *cs = td.GetComboSegmentAtRow(row);
 	if (tns == TNS_CheckpointHit || tns >= m_MinScoreToContinueCombo)
 	{
@@ -316,7 +316,7 @@ void ScoreKeeperNormal::HandleComboInternal( int iNumHitContinueCombo, int iNumH
 	{
 		m_pPlayerStageStats->m_iCurMissCombo = 0;
 	}
-	TimingData &td = GAMESTATE->m_pCurSteps[m_pPlayerState->m_PlayerNumber]->m_Timing;
+	TimingData &td = *GAMESTATE->m_pCurSteps[m_pPlayerState->m_PlayerNumber]->GetTimingData();
 	if( iNumBreakCombo == 0 )
 	{
 		int multiplier = ( iRow == -1 ? 1 : td.GetComboSegmentAtRow( iRow )->GetCombo() );
@@ -336,7 +336,7 @@ void ScoreKeeperNormal::HandleRowComboInternal( TapNoteScore tns, int iNumTapsIn
 	{
 		iNumTapsInRow = min( iNumTapsInRow, 1);
 	}
-	TimingData &td = GAMESTATE->m_pCurSteps[m_pPlayerState->m_PlayerNumber]->m_Timing;
+	TimingData &td = *GAMESTATE->m_pCurSteps[m_pPlayerState->m_PlayerNumber]->GetTimingData();
 	if ( tns >= m_MinScoreToContinueCombo )
 	{
 		m_pPlayerStageStats->m_iCurMissCombo = 0;
