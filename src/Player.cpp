@@ -2437,53 +2437,41 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 			break;
 		case ButtonType_Hopo:
 			{
-				bool bDidHopo = true;
-
-				for (;;)
+				// only can hopo on a row with one note
+				if( m_NoteData.GetNumTapNotesInRow(iRowOfOverlappingNoteOrRow) != 1 )
 				{
-					// only can hopo on a row with one note
-					if( m_NoteData.GetNumTapNotesInRow(iRowOfOverlappingNoteOrRow) != 1 )
-					{
-						bDidHopo = false;
-						break;
-					}
-
-					// con't hopo on the same note 2x in a row
-					if( col == m_pPlayerState->m_iLastHopoNoteCol )
-					{
-						bDidHopo = false;
-						break;
-					}
-
-					const TapNote &tn = m_NoteData.GetTapNote( col, iRowOfOverlappingNoteOrRow );
-					ASSERT( tn.type != TapNote::empty );
-
-					int iRowsAgoLastNote = 100000;	// TODO: find more reasonable value based on HOPO_CHAIN_SECONDS?
-					NoteData::all_tracks_reverse_iterator iter = m_NoteData.GetTapNoteRangeAllTracksReverse( iRowsAgoLastNote-iRowsAgoLastNote, iRowOfOverlappingNoteOrRow-1 );
-					ASSERT( !iter.IsAtEnd() );	// there must have been a note that started the hopo
-					if( !NoteDataWithScoring::IsRowCompletelyJudged(m_NoteData, iter.Row()) )
-					{
-						bDidHopo = false;
-						break;
-					}
-
-					const TapNoteResult &lastTNR = NoteDataWithScoring::LastTapNoteWithResult( m_NoteData, iter.Row() ).result;
-					if( lastTNR.tns <= TNS_Miss )
-					{
-						bDidHopo = false;
-					}
+					score = TNS_None;
 					break;
 				}
 
-				if( !bDidHopo )
+				// con't hopo on the same note 2x in a row
+				if( col == m_pPlayerState->m_iLastHopoNoteCol )
 				{
 					score = TNS_None;
+					break;
 				}
-				else
+
+				const TapNote &tn = m_NoteData.GetTapNote( col, iRowOfOverlappingNoteOrRow );
+				ASSERT( tn.type != TapNote::empty );
+
+				int iRowsAgoLastNote = 100000;	// TODO: find more reasonable value based on HOPO_CHAIN_SECONDS?
+				NoteData::all_tracks_reverse_iterator iter = m_NoteData.GetTapNoteRangeAllTracksReverse( iRowsAgoLastNote-iRowsAgoLastNote, iRowOfOverlappingNoteOrRow-1 );
+				ASSERT( !iter.IsAtEnd() );	// there must have been a note that started the hopo
+				if( !NoteDataWithScoring::IsRowCompletelyJudged(m_NoteData, iter.Row()) )
 				{
-					m_pPlayerState->m_fLastHopoNoteMusicSeconds = fStepSeconds;
-					m_pPlayerState->m_iLastHopoNoteCol = col;
+					score = TNS_None;
+					break;
 				}
+
+				const TapNoteResult &lastTNR = NoteDataWithScoring::LastTapNoteWithResult( m_NoteData, iter.Row() ).result;
+				if( lastTNR.tns <= TNS_Miss )
+				{
+					score = TNS_None;
+					break;
+				}
+
+				m_pPlayerState->m_fLastHopoNoteMusicSeconds = fStepSeconds;
+				m_pPlayerState->m_iLastHopoNoteCol = col;
 			}
 			break;
 		case ButtonType_Step:
