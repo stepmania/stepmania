@@ -8,9 +8,15 @@ ________________________________________________________________________________
 StepMania 5.0 beta 2 | 20130???
 --------------------------------------------------------------------------------
 
+2013/01/23
+----------
+* [TimingData, ScreenEdit] Fixed behavior in the editor whereby making changes
+  to Song Timing would unexpectedly change all charts to Steps Timing.
+  (Thanks to DJ OMiY for reporting and isolating the problem.)
+
 2013/01/11
 ----------
-* [Screen] Allow overlay screens to accept codes
+* [Screen] Allow overlay screens to accept codes.
 
 2013/01/06
 ----------
