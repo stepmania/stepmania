@@ -390,20 +390,19 @@ bool ScreenSelectMaster::Move( PlayerNumber pn, MenuDir dir )
 
 	int iSwitchToIndex = m_iChoice[pn];
 	set<int> seen;
-try_again:
 
-	map<int,int>::const_iterator iter = m_mapCurrentChoiceToNextChoice[dir].find( iSwitchToIndex );
-	if( iter != m_mapCurrentChoiceToNextChoice[dir].end() )
-		iSwitchToIndex = iter->second;
+	do
+	{
+		map<int,int>::const_iterator iter = m_mapCurrentChoiceToNextChoice[dir].find( iSwitchToIndex );
+		if( iter != m_mapCurrentChoiceToNextChoice[dir].end() )
+			iSwitchToIndex = iter->second;
 
-	if( iSwitchToIndex < 0 || iSwitchToIndex >= (int) m_aGameCommands.size() ) // out of choice range
-		return false; // can't go that way
-	if( seen.find(iSwitchToIndex) != seen.end() )
-		return false; // went full circle and none found
-	seen.insert( iSwitchToIndex );
-
-	if( !m_aGameCommands[iSwitchToIndex].IsPlayable() && !DO_SWITCH_ANYWAYS )
-		goto try_again;
+		if( iSwitchToIndex < 0 || iSwitchToIndex >= (int) m_aGameCommands.size() ) // out of choice range
+			return false; // can't go that way
+		if( seen.find(iSwitchToIndex) != seen.end() )
+			return false; // went full circle and none found
+		seen.insert( iSwitchToIndex );
+	} while( !m_aGameCommands[iSwitchToIndex].IsPlayable() && !DO_SWITCH_ANYWAYS );
 
 	return ChangeSelection( pn, dir, iSwitchToIndex );
 }

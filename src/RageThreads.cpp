@@ -751,12 +751,11 @@ void RageSemaphore::Post()
 
 void RageSemaphore::Wait( bool bFailOnTimeout )
 {
-retry:
-	if( m_pSema->Wait() )
-		return;
-
-	if( !bFailOnTimeout || RageThread::GetIsShowingDialog() )
-		goto retry;
+	do
+	{
+		if( m_pSema->Wait() )
+			return;
+	} while( !bFailOnTimeout || RageThread::GetIsShowingDialog() );
 
 	/* We waited too long.  We're probably deadlocked, though unlike mutexes, we can't
 	 * tell which thread we're stuck on. */

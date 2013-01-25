@@ -332,58 +332,58 @@ void CSMPackageInstallDlg::OnOK()
 			ProgressInit = 1;
 		}
 
-retry_unzip:
-
-		// Extract the files
-		const RString sFile = vs[i];
-		LOG->Trace( "Extracting: "+sFile );
-
-		RString sError;
+		Dialog::Result result;
+		do
 		{
-			int iErr;
-			RageFileBasic *pFileFrom = zip.Open( sFile, RageFile::READ, iErr );
-			if( pFileFrom == NULL )
+			// Extract the files
+			const RString sFile = vs[i];
+			LOG->Trace( "Extracting: "+sFile );
+
+			RString sError;
 			{
-				sError = ssprintf( ERROR_OPENING_SOURCE_FILE.GetValue(), sFile.c_str(), ssprintf("%d",iErr).c_str() );
-				goto show_error;
+				int iErr;
+				RageFileBasic *pFileFrom = zip.Open( sFile, RageFile::READ, iErr );
+				if( pFileFrom == NULL )
+				{
+					sError = ssprintf( ERROR_OPENING_SOURCE_FILE.GetValue(), sFile.c_str(), ssprintf("%d",iErr).c_str() );
+					goto show_error;
+				}
+
+				int iError;
+				RageFileBasic *pFileTo = dir.Open( sFile, RageFile::WRITE, iError );
+				if( pFileTo == NULL )
+				{
+					sError = ssprintf( ERROR_OPENING_DESTINATION_FILE.GetValue(), sFile.c_str(), pFileTo->GetError().c_str() );
+					goto show_error;
+				}
+
+				RString sErr;
+				if( !FileCopy(*pFileFrom, *pFileTo, sErr) )
+				{
+					sError = ssprintf( ERROR_COPYING_FILE.GetValue(), sFile.c_str(), sErr.c_str() );
+					goto show_error;
+				}
+
+				SAFE_DELETE( pFileFrom );
+				SAFE_DELETE( pFileTo );
 			}
 
-			int iError;
-			RageFileBasic *pFileTo = dir.Open( sFile, RageFile::WRITE, iError );
-			if( pFileTo == NULL )
-			{
-				sError = ssprintf( ERROR_OPENING_DESTINATION_FILE.GetValue(), sFile.c_str(), pFileTo->GetError().c_str() );
-				goto show_error;
-			}
-
-			RString sErr;
-			if( !FileCopy(*pFileFrom, *pFileTo, sErr) )
-			{
-				sError = ssprintf( ERROR_COPYING_FILE.GetValue(), sFile.c_str(), sErr.c_str() );
-				goto show_error;
-			}
-
-			SAFE_DELETE( pFileFrom );
-			SAFE_DELETE( pFileTo );
-		}
-
-		goto done_with_file;
+			break;
 
 show_error:
-		switch( Dialog::AbortRetryIgnore(sError) )
-		{
-		case Dialog::abort:
-			exit(1);	// better way to exit?
-			break;
-		case Dialog::retry:
-			goto retry_unzip;
-			break;
-		case Dialog::ignore:
-			// do nothing
-			break;
-		}
-
-done_with_file:
+			Dialog::Result result = Dialog::AbortRetryIgnore(sError);
+			switch( result )
+			{
+			case Dialog::abort:
+				exit(1);	// better way to exit?
+				break;
+			case Dialog::retry:
+				break;
+			case Dialog::ignore:
+				// do nothing
+				break;
+			}
+		} while( result == Dialog::retry );
 
 		pProgress1->StepIt(); //increase the progress bar of 1 step
 	}
