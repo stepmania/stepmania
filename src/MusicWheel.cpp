@@ -1574,6 +1574,7 @@ Song *MusicWheel::GetPreferredSelectionForRandomOrPortal()
 #define NUM_PROBES 1000
 	for( int i=0; i<NUM_PROBES; i++ )
 	{
+		bool isValid = true;
 		/* Maintaining difficulties is higher priority than maintaining
 		 * the current group. */
 		if( i == NUM_PROBES/4 )
@@ -1595,11 +1596,18 @@ Song *MusicWheel::GetPreferredSelectionForRandomOrPortal()
 			continue;
 
 		FOREACH( Difficulty, vDifficultiesToRequire, d )
+		{
 			if( !pSong->HasStepsTypeAndDifficulty(st,*d) )
-				goto try_next;
-		return wid[iSelection]->m_pSong;
-try_next:
-		;
+			{
+				isValid = false;
+				break;
+			}
+		}
+
+		if (isValid)
+		{
+			return wid[iSelection]->m_pSong;
+		}
 	}
 	LOG->Warn( "Couldn't find any songs" );
 	return wid[0]->m_pSong;
