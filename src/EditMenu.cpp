@@ -288,10 +288,9 @@ bool EditMenu::RowIsSelectable( EditMenuRow row )
 void EditMenu::Up()
 {
 	EditMenuRow dest = m_SelectedRow;
-try_again:
-	dest = (EditMenuRow)(dest-1);
-	if( !RowIsSelectable(dest) )
-		goto try_again;
+	do{
+		dest = (EditMenuRow)(dest - 1);
+	} while (!RowIsSelectable(dest));
 	ASSERT( dest >= 0 );
 	ChangeToRow( dest );
 	m_soundChangeRow.Play();
@@ -300,10 +299,10 @@ try_again:
 void EditMenu::Down()
 {
 	EditMenuRow dest = m_SelectedRow;
-try_again:
-	dest = (EditMenuRow)(dest+1);
-	if( !RowIsSelectable(dest) )
-		goto try_again;
+	do
+	{
+		dest = (EditMenuRow)(dest + 1);
+	} while (!RowIsSelectable(dest));
 	ASSERT( dest < NUM_EditMenuRow );
 	ChangeToRow( dest );
 	m_soundChangeRow.Play();
