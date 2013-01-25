@@ -279,33 +279,31 @@ void BackgroundUtil::GetGlobalBGAnimations( const Song *pSong, const RString &sM
 	StripCvsAndSvn( vsPathsOut, vsNamesOut );
 }
 
-void BackgroundUtil::GetGlobalRandomMovies( 
-	const Song *pSong, 
-	const RString &sMatch, 
-	vector<RString> &vsPathsOut, 
-	vector<RString> &vsNamesOut,
-	bool bTryInsideOfSongGroupAndGenreFirst,
-	bool bTryInsideOfSongGroupFirst )
-{
-	vsPathsOut.clear();
-	vsNamesOut.clear();
-
-	// Check for an exact match
-	if( !sMatch.empty() )
+namespace {
+	/**
+	 * @brief Fetches the appropriate path(s) for global random movies.
+	 */
+	void GetGlobalRandomMoviePaths(
+		const Song *pSong,
+		const RString &sMatch,
+		vector<RString> &vsPathsOut,
+		bool bTryInsideOfSongGroupAndGenreFirst,
+		bool bTryInsideOfSongGroupFirst )
 	{
-		GetDirListing( SONG_MOVIES_DIR+pSong->m_sGroupName+"/"+sMatch, vsPathsOut, false, true );	// search in SongMovies/SongGroupName/ first
-		GetDirListing( SONG_MOVIES_DIR+sMatch, vsPathsOut, false, true );
-		GetDirListing( RANDOMMOVIES_DIR+sMatch, vsPathsOut, false, true );
-		if( !vsPathsOut.empty() )
-			goto found_files;
+		// Check for an exact match
+		if( !sMatch.empty() )
+		{
+			GetDirListing( SONG_MOVIES_DIR+pSong->m_sGroupName+"/"+sMatch, vsPathsOut, false, true );	// search in SongMovies/SongGroupName/ first
+			GetDirListing( SONG_MOVIES_DIR+sMatch, vsPathsOut, false, true );
+			GetDirListing( RANDOMMOVIES_DIR+sMatch, vsPathsOut, false, true );
+			if( vsPathsOut.empty() && sMatch != NO_SONG_BG_FILE )
+			{
+				LOG->Warn( "Background missing: %s", sMatch.c_str() );
+			}
+			return;
+		}
 
-		if( sMatch != NO_SONG_BG_FILE )
-			LOG->Warn( "Background missing: %s", sMatch.c_str() );
-		return;
-	}
-
-	// Search for the most appropriate background
-	{
+		// Search for the most appropriate background
 		set<RString> ssFileNameWhitelist;
 		if( bTryInsideOfSongGroupAndGenreFirst  &&  pSong  &&  !pSong->m_sGenre.empty() )
 			GetFilterToFileNames( RANDOMMOVIES_DIR, pSong, ssFileNameWhitelist );
@@ -342,11 +340,27 @@ void BackgroundUtil::GetGlobalRandomMovies(
 			}
 
 			if( !vsPathsOut.empty() )
-				goto found_files;
+			{
+				// Return only the first directory found
+				return;
+			}
 		}
 	}
 
-found_files:
+}
+
+void BackgroundUtil::GetGlobalRandomMovies(
+	const Song *pSong,
+	const RString &sMatch,
+	vector<RString> &vsPathsOut,
+	vector<RString> &vsNamesOut,
+	bool bTryInsideOfSongGroupAndGenreFirst,
+	bool bTryInsideOfSongGroupFirst )
+{
+	vsPathsOut.clear();
+	vsNamesOut.clear();
+
+	GetGlobalRandomMoviePaths( pSong, sMatch, vsPathsOut, bTryInsideOfSongGroupAndGenreFirst, bTryInsideOfSongGroupFirst );
 
 	FOREACH_CONST( RString, vsPathsOut, s )
 	{
