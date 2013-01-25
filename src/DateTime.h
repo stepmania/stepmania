@@ -143,7 +143,6 @@ struct DateTime
 	/**
 	 * @brief Attempt to turn a string into a DateTime.
 	 *
-	 * As a warning for the squeamish, this code uses the goto keyword.
 	 * @param sDateTime the string to attempt to convert.
 	 * @return true if the conversion worked, or false otherwise. */
 	bool FromString( const RString sDateTime );
