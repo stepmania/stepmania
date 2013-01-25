@@ -34,58 +34,66 @@ void ActorUtil::Register( const RString& sClassName, CreateActorFn pfn )
 
 bool ActorUtil::ResolvePath( RString &sPath, const RString &sName )
 {
-retry:
-	CollapsePath( sPath );
-
-	// If we know this is an exact match, don't bother with the GetDirListing,
-	// so "foo" doesn't partial match "foobar" if "foo" exists.
-	RageFileManager::FileType ft = FILEMAN->GetFileType( sPath );
-	if( ft != RageFileManager::TYPE_FILE && ft != RageFileManager::TYPE_DIR )
+	bool done = false;
+	// comply with VS C4701.
+	RageFileManager::FileType ft = RageFileManager::TYPE_NONE;
+		
+	while (!done)
 	{
-		vector<RString> asPaths;
-		GetDirListing( sPath + "*", asPaths, false, true );	// return path too
+		// Does this have to be collapsed every time?
+		CollapsePath( sPath );
 
-		if( asPaths.empty() )
+		// If we know this is an exact match, don't bother with the GetDirListing,
+		// so "foo" doesn't partial match "foobar" if "foo" exists.
+		ft = FILEMAN->GetFileType( sPath );
+		if( ft != RageFileManager::TYPE_FILE && ft != RageFileManager::TYPE_DIR )
 		{
-			RString sError = ssprintf( "%s: references a file \"%s\" which doesn't exist", sName.c_str(), sPath.c_str() );
-			switch( Dialog::AbortRetryIgnore( sError, "BROKEN_FILE_REFERENCE" ) )
+			vector<RString> asPaths;
+			GetDirListing( sPath + "*", asPaths, false, true );	// return path too
+
+			if( asPaths.empty() )
 			{
-			case Dialog::abort:
-				RageException::Throw( "%s", sError.c_str() ); 
-				break;
-			case Dialog::retry:
-				FILEMAN->FlushDirCache();
-				goto retry;
-			case Dialog::ignore:
-				return false;
-			default:
-				FAIL_M("Invalid response to Abort/Retry/Ignore dialog");
+				RString sError = ssprintf( "%s: references a file \"%s\" which doesn't exist", sName.c_str(), sPath.c_str() );
+				switch( Dialog::AbortRetryIgnore( sError, "BROKEN_FILE_REFERENCE" ) )
+				{
+				case Dialog::abort:
+					RageException::Throw( "%s", sError.c_str() ); 
+					break;
+				case Dialog::retry:
+					FILEMAN->FlushDirCache();
+					continue;
+				case Dialog::ignore:
+					return false;
+				default:
+					FAIL_M("Invalid response to Abort/Retry/Ignore dialog");
+				}
 			}
-		}
 
-		THEME->FilterFileLanguages( asPaths );
+			THEME->FilterFileLanguages( asPaths );
 
-		if( asPaths.size() > 1 )
-		{
-			RString sError = ssprintf( "%s: references a file \"%s\" which has multiple matches", sName.c_str(), sPath.c_str() );
-			sError += "\n" + join( "\n", asPaths );
-			switch( Dialog::AbortRetryIgnore( sError, "BROKEN_FILE_REFERENCE" ) )
+			if( asPaths.size() > 1 )
 			{
-			case Dialog::abort:
-				RageException::Throw( "%s", sError.c_str() ); 
-				break;
-			case Dialog::retry:
-				FILEMAN->FlushDirCache();
-				goto retry;
-			case Dialog::ignore:
-				asPaths.erase( asPaths.begin()+1, asPaths.end() );
-				break;
-			default:
-				FAIL_M("Invalid response to Abort/Retry/Ignore dialog");
+				RString sError = ssprintf( "%s: references a file \"%s\" which has multiple matches", sName.c_str(), sPath.c_str() );
+				sError += "\n" + join( "\n", asPaths );
+				switch( Dialog::AbortRetryIgnore( sError, "BROKEN_FILE_REFERENCE" ) )
+				{
+				case Dialog::abort:
+					RageException::Throw( "%s", sError.c_str() ); 
+					break;
+				case Dialog::retry:
+					FILEMAN->FlushDirCache();
+					continue;
+				case Dialog::ignore:
+					asPaths.erase( asPaths.begin()+1, asPaths.end() );
+					break;
+				default:
+					FAIL_M("Invalid response to Abort/Retry/Ignore dialog");
+				}
 			}
-		}
 
-		sPath = asPaths[0];
+			sPath = asPaths[0];
+		}
+		done = true;
 	}
 
 	if( ft == RageFileManager::TYPE_DIR )
