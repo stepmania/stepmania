@@ -869,31 +869,30 @@ void Song::ReCalculateRadarValuesAndLastSecond(bool fromCache, bool duringCache)
 		
 		// calculate lastSecond
 
-		// If it's autogen, then first/last beat will come from the parent.
-		if( pSteps->IsAutogen() )
-			goto wipe_notedata;
-
-		/* Don't calculate with edits unless the song only contains an edit
+		/* 1. If it's autogen, then first/last beat will come from the parent.
+		 * 2. Don't calculate with edits unless the song only contains an edit
 		 * chart, like those in Mungyodance 3. Otherwise, edits installed on
 		 * the machine could extend the length of the song. */
-		if( pSteps->IsAnEdit() && m_vpSteps.size() > 1 )
-			goto wipe_notedata;
-
-		// Don't set first/last beat based on lights.  They often start very 
-		// early and end very late.
-		if( pSteps->m_StepsType == StepsType_lights_cabinet )
-			continue; // no need to wipe this.
-
-		/* Many songs have stray, empty song patterns. Ignore them, so they
-		 * don't force the first beat of the whole song to 0. */
-		if( tempNoteData.GetLastRow() != 0 )
+		if( !pSteps->IsAutogen() &&
+				!( pSteps->IsAnEdit() && m_vpSteps.size() > 1 ) )
 		{
-			localFirst = min(localFirst,
-				 pSteps->GetTimingData()->GetElapsedTimeFromBeat(tempNoteData.GetFirstBeat()));
-			localLast = max(localLast,
-				pSteps->GetTimingData()->GetElapsedTimeFromBeat(tempNoteData.GetLastBeat()));
+			// Don't set first/last beat based on lights.  They often start very 
+			// early and end very late.
+			if( pSteps->m_StepsType == StepsType_lights_cabinet )
+				continue; // no need to wipe this.
+
+			/* Many songs have stray, empty song patterns. Ignore them, so they
+			 * don't force the first beat of the whole song to 0. */
+			if( tempNoteData.GetLastRow() != 0 )
+			{
+				localFirst = min(localFirst,
+					pSteps->GetTimingData()->GetElapsedTimeFromBeat(tempNoteData.GetFirstBeat()));
+				localLast = max(localLast,
+					pSteps->GetTimingData()->GetElapsedTimeFromBeat(tempNoteData.GetLastBeat()));
+			}
 		}
-	wipe_notedata:
+
+		// Wipe NoteData
 		if (duringCache)
 		{
 			NoteData dummy;

@@ -457,30 +457,28 @@ class OptionRowHandlerListSteps : public OptionRowHandlerList
 				if (STEPS_USE_CHART_NAME)
 				{
 					s = pSteps->GetChartName();
-					// TODO: find a way to make this use lua or metrics.
-					if (!(s == "" || s == "blank" || s == "Blank"))
-					{
-						goto nameGotten;
-					}
 				}
-				if( pSteps->GetDifficulty() == Difficulty_Edit )
+				// TODO: find a way to make this use lua or metrics.
+				if (s == "" || s == "blank" || s == "Blank")
 				{
-					s = pSteps->GetChartName();
-					if (s == "" || s == "blank" || s == "Blank")
-						s = pSteps->GetDescription();
-				}
-				else
-				{
-					if( pSteps->IsAnEdit() )
+					if( pSteps->GetDifficulty() == Difficulty_Edit )
 					{
 						s = pSteps->GetChartName();
 						if (s == "" || s == "blank" || s == "Blank")
 							s = pSteps->GetDescription();
 					}
 					else
-						s = CustomDifficultyToLocalizedString( GetCustomDifficulty( pSteps->m_StepsType, pSteps->GetDifficulty(), CourseType_Invalid ) );
+					{
+						if( pSteps->IsAnEdit() )
+						{
+							s = pSteps->GetChartName();
+							if (s == "" || s == "blank" || s == "Blank")
+								s = pSteps->GetDescription();
+						}
+						else
+							s = CustomDifficultyToLocalizedString( GetCustomDifficulty( pSteps->m_StepsType, pSteps->GetDifficulty(), CourseType_Invalid ) );
+					}
 				}
-			nameGotten:
 				s += ssprintf( " %d", pSteps->GetMeter() );
 				m_Def.m_vsChoices.push_back( s );
 				GameCommand mc;
