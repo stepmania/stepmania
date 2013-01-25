@@ -2439,19 +2439,20 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 			{
 				bool bDidHopo = true;
 
+				for (;;)
 				{
 					// only can hopo on a row with one note
 					if( m_NoteData.GetNumTapNotesInRow(iRowOfOverlappingNoteOrRow) != 1 )
 					{
 						bDidHopo = false;
-						goto done_checking_hopo;
+						break;
 					}
 
 					// con't hopo on the same note 2x in a row
 					if( col == m_pPlayerState->m_iLastHopoNoteCol )
 					{
 						bDidHopo = false;
-						goto done_checking_hopo;
+						break;
 					}
 
 					const TapNote &tn = m_NoteData.GetTapNote( col, iRowOfOverlappingNoteOrRow );
@@ -2463,17 +2464,17 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 					if( !NoteDataWithScoring::IsRowCompletelyJudged(m_NoteData, iter.Row()) )
 					{
 						bDidHopo = false;
-						goto done_checking_hopo;
+						break;
 					}
 
 					const TapNoteResult &lastTNR = NoteDataWithScoring::LastTapNoteWithResult( m_NoteData, iter.Row() ).result;
 					if( lastTNR.tns <= TNS_Miss )
 					{
 						bDidHopo = false;
-						goto done_checking_hopo;
 					}
+					break;
 				}
-done_checking_hopo:
+
 				if( !bDidHopo )
 				{
 					score = TNS_None;
