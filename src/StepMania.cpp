@@ -626,6 +626,7 @@ bool CheckVideoDefaultSettings()
 	LOG->Trace( "Last seen video driver: %s", PREFSMAN->m_sLastSeenVideoDriver.Get().c_str() );
 
 	VideoCardDefaults defaults;
+	bool found = false;
 
 	for( unsigned i=0; i<ARRAYLEN(g_VideoCardDefaults); i++ )
 	{
@@ -636,12 +637,14 @@ bool CheckVideoDefaultSettings()
 		if( regex.Compare(sVideoDriver) )
 		{
 			LOG->Trace( "Card matches '%s'.", sDriverRegex.size()? sDriverRegex.c_str():"(unknown card)" );
-			goto found_defaults;
+			found = true;
+			break;
 		}
 	}
-	FAIL_M("Failed to match video driver");
-
-found_defaults:
+	if (!found)
+	{
+		FAIL_M("Failed to match video driver");
+	}
 
 	bool bSetDefaultVideoParams = false;
 	if( PREFSMAN->m_sVideoRenderers.Get() == "" )
