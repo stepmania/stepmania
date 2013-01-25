@@ -121,19 +121,18 @@ bool DateTime::FromString( const RString sDateTime )
 		&tm_hour,
 		&tm_min,
 		&tm_sec );
-	if( ret == 6 )
-		goto success;
+	if( ret != 6 )
+	{
+		ret = sscanf( sDateTime, "%d-%d-%d", 
+			&tm_year,
+			&tm_mon,
+			&tm_mday );
+		if( ret != 3 )
+		{
+			return false;
+		}
+	}
 
-	ret = sscanf( sDateTime, "%d-%d-%d", 
-		&tm_year,
-		&tm_mon,
-		&tm_mday );
-	if( ret == 3 )
-		goto success;
-
-	return false;
-
-success:
 	tm_year -= 1900;
 	tm_mon -= 1;
 	return true;
