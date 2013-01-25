@@ -668,7 +668,7 @@ try_element_again:
 			break;
 		case Dialog::retry:
 			ReloadMetrics();
-			goto try_element_again;
+			return GetPathInfoToRaw( out, sThemeName_, category, sMetricsGroup_, sElement_ );
 		case Dialog::ignore:
 			break;
 		}
@@ -710,7 +710,7 @@ try_element_again:
 	{
 	case Dialog::retry:
 		ReloadMetrics();
-		goto try_element_again;
+		return GetPathInfoToRaw( out, sThemeName_, category, sMetricsGroup_, sElement_ );
 	case Dialog::ignore:
 		GetPathInfo( out, category, "", "_missing" );
 		return true;

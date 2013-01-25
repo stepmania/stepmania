@@ -274,7 +274,6 @@ apActorCommands NoteSkinManager::GetMetricA( const RString &sButtonName, const R
 
 RString NoteSkinManager::GetPath( const RString &sButtonName, const RString &sElement )
 {
-try_again:
 	const RString CacheString = m_sCurrentNoteSkin + "/" + sButtonName + "/" + sElement;
 	map<RString,RString>::iterator it = g_PathCache.find( CacheString );
 	if( it != g_PathCache.end() )
@@ -327,7 +326,7 @@ try_again:
 			FOREACH_CONST( RString, data.vsDirSearchOrder, dir )
 				FILEMAN->FlushDirCache( *dir );
 			g_PathCache.clear();
-			goto try_again;
+			return GetPath( sButtonName, sElement );
 		}
 		
 		RageException::Throw( "%s", message.c_str() ); 
@@ -362,7 +361,7 @@ try_again:
 				FOREACH_CONST( RString, data.vsDirSearchOrder, dir )
 					FILEMAN->FlushDirCache( *dir );
 				g_PathCache.clear();
-				goto try_again;
+				return GetPath( sButtonName, sElement );
 			}
 
 			RageException::Throw( "%s", message.c_str() ); 
