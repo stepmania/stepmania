@@ -1967,6 +1967,7 @@ void NoteDataUtil::ConvertTapsToHolds( NoteData &inout, int iSimultaneousHolds, 
 				int iTapsLeft = iSimultaneousHolds;
 
 				int r2 = r+1;
+				bool addHold = true;
 				FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( inout, next_row, r+1, iEndIndex )
 				{
 					r2 = next_row;
@@ -1974,7 +1975,10 @@ void NoteDataUtil::ConvertTapsToHolds( NoteData &inout, int iSimultaneousHolds, 
 					// If there are two taps in a row on the same track, 
 					// don't convert the earlier one to a hold.
 					if( inout.GetTapNote(t,r2).type != TapNote::empty )
-						goto dont_add_hold;
+					{
+						addHold = false;
+						break;
+					}
 
 					set<int> tracksDown;
 					inout.GetTracksHeldAtRow( r2, tracksDown );
@@ -1983,7 +1987,15 @@ void NoteDataUtil::ConvertTapsToHolds( NoteData &inout, int iSimultaneousHolds, 
 					if( iTapsLeft == 0 )
 						break;	// we found the ending row for this hold
 					else if( iTapsLeft < 0 )
-						goto dont_add_hold;
+					{
+						addHold = false;
+						break;
+					}
+				}
+
+				if (!addHold)
+				{
+					continue;
 				}
 
 				// If the steps end in a tap, convert that tap
@@ -1994,8 +2006,6 @@ void NoteDataUtil::ConvertTapsToHolds( NoteData &inout, int iSimultaneousHolds, 
 				inout.AddHoldNote( t, r, r2, TAP_ORIGINAL_HOLD_HEAD );
 				iTrackAddedThisRow++;
 			}
-dont_add_hold:
-			;
 		}
 	}
 
