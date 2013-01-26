@@ -47,6 +47,7 @@ public:
 	void PushSelf( lua_State *L );
 
 private:
+	void GetPaneTextAndLevel( PaneCategory c, RString & sTextOut, float & fLevelOut );
 	void SetContent( PaneCategory c );
 
 	BitmapText		m_textContents[NUM_PaneCategory];
