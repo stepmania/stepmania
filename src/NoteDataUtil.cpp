@@ -1722,40 +1722,26 @@ void NoteDataUtil::InsertIntelligentTaps(
 		int iTrackOfNoteLater = -1;
 		inout.GetTapFirstNonEmptyTrack( iRowLater, iTrackOfNoteLater );
 		int iTrackOfNoteToAdd = 0;
-		
-		for (;;)
+		if( bSkippy  &&
+			iTrackOfNoteEarlier != iTrackOfNoteLater &&   // Don't make skips on the same note
+			bEarlierHasNonEmptyTrack )
 		{
-			if( bSkippy  &&
-				iTrackOfNoteEarlier != iTrackOfNoteLater )	// Don't make skips on the same note
-			{
-				if( bEarlierHasNonEmptyTrack )
-				{
-					iTrackOfNoteToAdd = iTrackOfNoteEarlier;
-					break;
-				}
-			}
-
+			iTrackOfNoteToAdd = iTrackOfNoteEarlier;
+		}
+		else if( abs(iTrackOfNoteEarlier-iTrackOfNoteLater) >= 2 )
+		{
 			// try to choose a track between the earlier and later notes
-			if( abs(iTrackOfNoteEarlier-iTrackOfNoteLater) >= 2 )
-			{
-				iTrackOfNoteToAdd = min(iTrackOfNoteEarlier,iTrackOfNoteLater)+1;
-				break;
-			}
-		
+			iTrackOfNoteToAdd = min(iTrackOfNoteEarlier,iTrackOfNoteLater)+1;
+		}
+		else if( min(iTrackOfNoteEarlier,iTrackOfNoteLater)-1 >= 0 )
+		{
 			// try to choose a track just to the left
-			if( min(iTrackOfNoteEarlier,iTrackOfNoteLater)-1 >= 0 )
-			{
-				iTrackOfNoteToAdd = min(iTrackOfNoteEarlier,iTrackOfNoteLater)-1;
-				break;
-			}
-
+			iTrackOfNoteToAdd = min(iTrackOfNoteEarlier,iTrackOfNoteLater)-1;
+		}
+		else if( max(iTrackOfNoteEarlier,iTrackOfNoteLater)+1 < inout.GetNumTracks() )
+		{
 			// try to choose a track just to the right
-			if( max(iTrackOfNoteEarlier,iTrackOfNoteLater)+1 < inout.GetNumTracks() )
-			{
-				iTrackOfNoteToAdd = max(iTrackOfNoteEarlier,iTrackOfNoteLater)+1;
-				break;
-			}
-			break;
+			iTrackOfNoteToAdd = max(iTrackOfNoteEarlier,iTrackOfNoteLater)+1;
 		}
 
 		inout.SetTapNote(iTrackOfNoteToAdd, iRowToAdd, TAP_ADDITION_TAP);
