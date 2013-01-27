@@ -64,20 +64,23 @@ IniFile =
 
 		while not file:AtEOF() do
 			local str = file:GetLine()
+			
+			--ignore comments.
+			if not str:find("^%s*#") then
+				-- is this a section?
+				local _, _, sec = str:find( "%[(.+)%]" )
 
-			-- is this a section?
-			local _, _, sec = str:find( "%[(.+)%]" )
-
-			-- if so, set focus there; otherwise, try to
-			-- read a key/value pair (ignore blank lines)
-			if sec then
-				-- if this section doesn't exist, create it
-				tbl[sec] = tbl[sec] and tbl[sec] or { }
-				current = tbl[sec]
-				--Warn( "Switching section to " .. sec )
-			else
-				local k, v = IniFile.StrToKeyVal( str )
-				if k and v then current[k] = v end
+				-- if so, set focus there; otherwise, try to
+				-- read a key/value pair (ignore blank lines)
+				if sec then
+					-- if this section doesn't exist, create it
+					tbl[sec] = tbl[sec] and tbl[sec] or { }
+					current = tbl[sec]
+					--Warn( "Switching section to " .. sec )
+				else
+					local k, v = IniFile.StrToKeyVal( str )
+					if k and v then current[k] = v end
+				end
 			end
 		end
 
