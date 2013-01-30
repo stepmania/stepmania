@@ -1,0 +1,96 @@
+This document describes the implementation of TimingData in StepMania, as of
+shortly after version 5.0 beta 1a.
+
+
+== What is TimingData? ==
+
+TimingData refers to the information in a chart (a "Steps") or a song which
+maps real time to beats and vice versa.  This includes all BPMs and the
+initial offset, as well as time gimmicks like stops, warps, and delays.  The
+TimingData object itself only has a few members:
+* the name of the file that specified the data (for display only)
+* the beat 0 offset
+* a vector of TimingSegments for each type (BPM, warp, label, etc.)
+
+Each TimingSegment specifies a starting point in the chart, as well as any
+parameters which are specific to that segment type.  For a list of the
+different types of TimingSegments, see TimingSegments.h.
+
+
+== Split Timing ==
+
+TimingData is primarily used for charts and songs, to specify the BPM and
+offset and to implement gimmicks, as well as to synchronize effects with
+background music.  (It also provides features such as labels and time
+signatures which can be useful when editing a chart.)
+
+Prior to StepMania 5, each song had a single TimingData structure which was
+then used by all of the charts associated with that song.  StepMania 5
+introduces a feature known as Split Timing, wherein a chart can have
+individual TimingData ("Steps Timing") which is independent of the song's
+TimingData ("Song Timing").  This allows for Pump-style gimmicks which can
+differ between difficulties on the same song.
+
+
+== Implementation ==
+
+In the code, Song Timing is contained in the m_SongTiming field of a Song
+object.  Song Timing is used by default for any chart which does not specify
+its own timing information.
+
+If a chart has its own timing information, this is contained in the m_Timing
+field of the Steps object.  If the chart does not have separate timing
+information, the m_Timing structure will be empty (i.e. none of the vectors
+will contain any TimingSegments).  The TimingData::empty() function provides a
+simply way to determine this.
+
+The most common way to get the TimingData for a chart is to use the
+GetTimingData() function of the Steps object.  This function will perform the
+appropriate fallback to Song Timing if the chart's timing is empty.  If, as in
+the editor or sync implementations, it is necessary to access the Steps Timing
+or Song Timing individually, the corresponding fields can be used instead.
+
+=== Editing ===
+
+The editor has a "timing mode" setting which can be toggled between Song
+Timing and Steps Timing (in the code, GAMESTATE->m_bIsUsingStepTiming).  This
+mode determines which set of TimingData will be updated when changes are made
+with hotkeys or the Timing menu.  It defaults to Steps Timing if the chart
+being loaded has individual TimingData, and Song Timing otherwise.
+Considering that we also want this to behave according to whether a chart has
+individual timing, there are four possibilities when making a change:
+
+1. Song Timing mode, chart DOES NOT HAVE individual timings: changes will be
+   made to the Song Timing, and the chart will not have individual timings
+   added to it.  Because of this, the changes to Song Timing will "show
+   through" to this chart.
+2. Song Timing mode, chart HAS individual timings: changes will be made to the
+   Song Timing only.  The timings in the chart will be left untouched.  Because
+   of this, the changes to Song Timing will not affect this chart.
+3. Steps Timing mode, chart HAS individual timings: changes will be made to the
+   Steps Timing only and will affect only this chart.
+4. Steps Timing mode, chart DOES NOT HAVE individual timings: first, the Song
+   Timing will be copied into this chart.  The changes are then made to the
+   Steps Timing only and will affect only this chart.
+
+Case #4 describes how Steps Timing is added to a chart: simply select Steps
+Timing mode and start making changes.  To remove Steps Timing, use the
+corresponding item in the Timing menu.
+
+
+== File formats ==
+
+A quick note is in order about Split Timing support in the different file
+formats supported by StepMania:
+
+* SSC files support Split Timing natively.  Timing tags such as #BPMS in the
+  file header apply to the song, whereas the same tags inside a #NOTEDATA
+  section apply only to the current chart.
+* SM files do not support Split Timing, since there is no way to specify
+  individual timing for a chart.
+* SMA files appear to support Split Timing in the same fashion as SSC files.
+* The KSF and BMS formats use one file for each chart, and therefore already
+  have per-chart timing information.  When reading these formats, *every
+  chart* has Steps Timing.
+* The DWI format does not support Split Timing, so Steps Timing is not written
+  to DWI files.
