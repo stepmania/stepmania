@@ -1,6 +1,8 @@
 #ifndef ATTACK_H
 #define ATTACK_H
 
+#define ATTACK_STARTS_NOW (-10000.f)
+
 #include "GameConstantsAndTypes.h"
 #include "PlayerNumber.h"
 class Song;
@@ -8,8 +10,6 @@ class PlayerState;
 /** @brief An action made against a Player to make things more difficult. */
 struct Attack
 {
-	static const inline float ATTACK_STARTS_NOW() { return -10000.f; }
-
 	AttackLevel	level;
 	/**
 	 * @brief the starting point of this attack.
@@ -27,14 +27,14 @@ struct Attack
 	void MakeBlank()
 	{
 		level = ATTACK_LEVEL_1;
-		fStartSecond = ATTACK_STARTS_NOW();
+		fStartSecond = ATTACK_STARTS_NOW;
 		fSecsRemaining = 0;
 		sModifiers = RString();
 		bOn = false;
 		bGlobal = false;
 		bShowInAttackList = true;
 	}
-	Attack(): level(ATTACK_LEVEL_1), fStartSecond(ATTACK_STARTS_NOW()),
+	Attack(): level(ATTACK_LEVEL_1), fStartSecond(ATTACK_STARTS_NOW),
 		fSecsRemaining(0), sModifiers(RString()),
 		bOn(false), bGlobal(false), bShowInAttackList(true)
 		{} // MakeBlank() is effectively called here.

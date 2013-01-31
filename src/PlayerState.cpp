@@ -66,7 +66,7 @@ void PlayerState::Update( float fDelta )
 		// You must add sattack by calling GameState::LaunchAttack,
 		// or else the sentinel value won't be 
 		// converted into the current music time.  
-		ASSERT( attack.fStartSecond != attack.ATTACK_STARTS_NOW() );
+		ASSERT( attack.fStartSecond != ATTACK_STARTS_NOW );
 
 		bool bCurrentlyEnabled =
 			attack.bGlobal ||
@@ -116,7 +116,7 @@ void PlayerState::LaunchAttack( const Attack& a )
 	 * started so it can be removed later.  For m_ModsToApply, leave the sentinel in,
 	 * so Player::Update knows to apply attack transforms correctly. (yuck) */
 	m_ModsToApply.push_back( attack );
-	if( attack.fStartSecond == attack.ATTACK_STARTS_NOW() )
+	if( attack.fStartSecond == ATTACK_STARTS_NOW )
 		attack.fStartSecond = m_Position.m_fMusicSeconds;
 	m_ActiveAttacks.push_back( attack );
 
