@@ -7,7 +7,9 @@
 #define SUPPORT_D3D
 
 #if defined(__MINGW32__)
-#define _WINDOWS // This isn't defined under MinGW
+#if !defined(_WINDOWS)
+#define _WINDOWS // This isn't defined under all versions of MinGW
+#endif
 #define NEED_CSTDLIB_WORKAROUND // Needed for llabs() in MinGW
 #endif
 
@@ -53,7 +55,7 @@ C4355: 'this' : used in base member initializer list
 
 // Disable false deprecation warnings in VC2005.
 #define _CRT_SECURE_NO_DEPRECATE
-#define _SCL_SECURE_NO_DEPRECATE 
+#define _SCL_SECURE_NO_DEPRECATE
 
 // Disable false deprecation warnings in VC2008.
 #define _CRT_NONSTDC_NO_WARNINGS
@@ -66,7 +68,7 @@ C4355: 'this' : used in base member initializer list
 #define WIN32_LEAN_AND_MEAN
 #define VC_EXTRALEAN
 
-/* Pull in NT-only definitions. Note that we support Win98 and WinME; you can 
+/* Pull in NT-only definitions. Note that we support Win98 and WinME; you can
  * make NT calls, but be sure to fall back on 9x if they're not supported. */
 #define _WIN32_WINNT 0x0601
 #define _WIN32_IE 0x0400
@@ -208,7 +210,7 @@ inline uint16_t ArchSwap16( uint16_t n )
 /*
  * (c) 2002-2004 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -218,7 +220,7 @@ inline uint16_t ArchSwap16( uint16_t n )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF
