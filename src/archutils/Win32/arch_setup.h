@@ -4,7 +4,9 @@
 #define HAVE_FFMPEG
 
 #define SUPPORT_OPENGL
+#if defined(_MSC_VER)
 #define SUPPORT_D3D
+#endif
 
 #if defined(__MINGW32__)
 #if !defined(_WINDOWS)
