@@ -88,7 +88,7 @@ formats supported by StepMania:
   section apply only to the current chart.
 * SM files do not support Split Timing, since there is no way to specify
   individual timing for a chart.
-* SMA files appear to support Split Timing in the same fashion as SSC files.
+* SMA files support Split Timing in a similar fashion to SSC files.
 * The KSF and BMS formats use one file for each chart, and therefore already
   have per-chart timing information.  When reading these formats, *every
   chart* has Steps Timing.
