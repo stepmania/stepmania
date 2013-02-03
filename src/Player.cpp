@@ -2802,6 +2802,11 @@ void Player::UpdateJudgedRows()
 		for( ; !iter.IsAtEnd()  &&  iter.Row() <= iEndRow; ++iter )
 		{
 			int iRow = iter.Row();
+
+			// Do not worry about mines in WarpSegments or FakeSegments
+			if (!m_Timing->IsJudgableAtRow(iRow))
+				continue;
+
 			TapNote &tn = *iter;
 
 			if( iRow != iLastSeenRow )
