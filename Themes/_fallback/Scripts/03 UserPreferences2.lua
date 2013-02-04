@@ -31,8 +31,7 @@ ThemeInfo is documented at http://kki.ajworld.net/wiki/ThemeInfo.lua
 
 After that's set up, read the docs.
 ]]
--- xxx: DON'T WRITE TO DATA!
-local PrefPath = "Data/UserPrefs/".. THEME:GetThemeDisplayName() .."/"
+local PrefPath = "Save/UserPrefs/".. THEME:GetThemeDisplayName() .."/"
 
 --[[ begin internal stuff; no need to edit below this line. ]]
 

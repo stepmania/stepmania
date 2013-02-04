@@ -31,8 +31,7 @@ ThemeInfo is documented at http://kki.ajworld.net/wiki/ThemeInfo.lua
 
 After that's set up, read the docs.
 ]]
--- xxx: DON'T USE DATA!!
-local PrefPath = "Data/GamePrefs/"
+local PrefPath = "Save/GamePrefs/"
 
 --[[ begin internal stuff; no need to edit below this line. ]]
 
