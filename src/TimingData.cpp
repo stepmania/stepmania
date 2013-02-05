@@ -218,6 +218,10 @@ bool TimingData::IsWarpAtRow( int iNoteRow ) const
 		return false;
 
 	int i = GetSegmentIndexAtRow( SEGMENT_WARP, iNoteRow );
+	if (i == -1)
+	{
+		return false;
+	}
 	const WarpSegment *s = ToWarp(warps[i]);
 	float beatRow = NoteRowToBeat(iNoteRow);
 	if( s->GetBeat() <= beatRow && beatRow < (s->GetBeat() + s->GetLength() ) )
