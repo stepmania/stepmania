@@ -247,6 +247,10 @@ bool TimingData::IsFakeAtRow( int iNoteRow ) const
 		return false;
 
 	int i = GetSegmentIndexAtRow( SEGMENT_FAKE, iNoteRow );
+	if (i == -1)
+	{
+		return false;
+	}
 	const FakeSegment *s = ToFake(fakes[i]);
 	float beatRow = NoteRowToBeat(iNoteRow);
 	if( s->GetBeat() <= beatRow && beatRow < ( s->GetBeat() + s->GetLength() ) )
