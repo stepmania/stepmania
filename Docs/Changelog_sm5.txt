@@ -11,7 +11,10 @@ StepMania 5.0 beta 2 | 20130???
 2013/02/04
 ----------
 * [Player] Add a "Column" parameter to the StepMessage to allow the theme or
-  chart to discover which column is being triggered. [djpohly]
+  chart to discover which column is being triggered.
+* [ArchHooks] Unix: Move UserPackages to Packages in the per-user directory,
+  and remove Data from the per-user directory.  Users who have installed
+  packages to UserPackages will need to migrate them to Packages instead.
 
 2013/02/03
 ----------
