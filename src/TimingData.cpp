@@ -157,8 +157,8 @@ int TimingData::GetSegmentIndexAtRow(TimingSegmentType tst, int iRow ) const
 		}
 	}
 	
-	return INVALID_INDEX; // this should not be reached. :(
-
+	// iRow is before the first segment of type tst
+	return INVALID_INDEX;
 }
 
 struct ts_less : binary_function <TimingSegment*, TimingSegment*, bool>
