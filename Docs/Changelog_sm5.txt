@@ -11,7 +11,12 @@ StepMania 5.0 beta 2 | 20130???
 2013/02/04
 ----------
 * [Player] Add a "Column" parameter to the StepMessage to allow the theme or
-  chart to discover which column is being triggered.
+  chart to discover which column is being triggered. [djpohly]
+
+2013/02/03
+----------
+* [Player] Fix a stutter that can take place when mines are skipped during
+  warp segments. [phantom, wolfman2000]
 
 2013/01/23
 ----------
