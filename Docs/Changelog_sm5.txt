@@ -8,6 +8,11 @@ ________________________________________________________________________________
 StepMania 5.0 beta 2 | 20130???
 --------------------------------------------------------------------------------
 
+2013/02/04
+----------
+* [Player] Add a "Column" parameter to the StepMessage to allow the theme or
+  chart to discover which column is being triggered.
+
 2013/01/23
 ----------
 * [TimingData, ScreenEdit] Fixed behavior in the editor whereby making changes
