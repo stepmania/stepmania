@@ -4,6 +4,8 @@
 #include "PrefsManager.h"
 #include "archutils/Darwin/DarwinThreadHelpers.h"
 #include <CoreServices/CoreServices.h>
+#include <AudioToolbox/AudioServices.h>
+#include <CoreAudio/CoreAudio.h>
 
 REGISTER_SOUND_DRIVER_CLASS2( AudioUnit, AU );
 
