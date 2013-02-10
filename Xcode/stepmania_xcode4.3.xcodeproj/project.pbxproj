@@ -1737,10 +1737,6 @@
 		EE4FD2E614A8F066002B5758 /* jquant1.c in Sources */ = {isa = PBXBuildFile; fileRef = EE4FD29E14A8F066002B5758 /* jquant1.c */; };
 		EE4FD2E714A8F066002B5758 /* jquant2.c in Sources */ = {isa = PBXBuildFile; fileRef = EE4FD29F14A8F066002B5758 /* jquant2.c */; };
 		EE4FD30814A8F281002B5758 /* libjpeg-sm5.a in Frameworks */ = {isa = PBXBuildFile; fileRef = EE4FD26014A8EFE1002B5758 /* libjpeg-sm5.a */; };
-		EE879B60132DEE720078FDDC /* RageDisplay_Legacy_Helpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EE879B5C132DEE720078FDDC /* RageDisplay_Legacy_Helpers.cpp */; };
-		EE879B61132DEE720078FDDC /* RageDisplay_Legacy_Helpers.h in Headers */ = {isa = PBXBuildFile; fileRef = EE879B5D132DEE720078FDDC /* RageDisplay_Legacy_Helpers.h */; };
-		EE879B62132DEE720078FDDC /* RageDisplay_Legacy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EE879B5E132DEE720078FDDC /* RageDisplay_Legacy.cpp */; };
-		EE879B63132DEE720078FDDC /* RageDisplay_Legacy.h in Headers */ = {isa = PBXBuildFile; fileRef = EE879B5F132DEE720078FDDC /* RageDisplay_Legacy.h */; };
 		EE906F6612BF3A1B00146C96 /* ScreenInstallOverlay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EE906F6412BF3A1B00146C96 /* ScreenInstallOverlay.cpp */; };
 		EE906F6712BF3A1B00146C96 /* ScreenInstallOverlay.h in Headers */ = {isa = PBXBuildFile; fileRef = EE906F6512BF3A1B00146C96 /* ScreenInstallOverlay.h */; };
 		EE906F8212BF3AF800146C96 /* JsonUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EE906F8012BF3AF800146C96 /* JsonUtil.cpp */; };
@@ -3229,10 +3225,6 @@
 		EE4FD29C14A8F066002B5758 /* jmemnobs.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jmemnobs.c; path = ../extern/libjpeg/jmemnobs.c; sourceTree = SOURCE_ROOT; };
 		EE4FD29E14A8F066002B5758 /* jquant1.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jquant1.c; path = ../extern/libjpeg/jquant1.c; sourceTree = SOURCE_ROOT; };
 		EE4FD29F14A8F066002B5758 /* jquant2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jquant2.c; path = ../extern/libjpeg/jquant2.c; sourceTree = SOURCE_ROOT; };
-		EE879B5C132DEE720078FDDC /* RageDisplay_Legacy_Helpers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RageDisplay_Legacy_Helpers.cpp; path = ../src/RageDisplay_Legacy_Helpers.cpp; sourceTree = SOURCE_ROOT; };
-		EE879B5D132DEE720078FDDC /* RageDisplay_Legacy_Helpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RageDisplay_Legacy_Helpers.h; path = ../src/RageDisplay_Legacy_Helpers.h; sourceTree = SOURCE_ROOT; };
-		EE879B5E132DEE720078FDDC /* RageDisplay_Legacy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RageDisplay_Legacy.cpp; path = ../src/RageDisplay_Legacy.cpp; sourceTree = SOURCE_ROOT; };
-		EE879B5F132DEE720078FDDC /* RageDisplay_Legacy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RageDisplay_Legacy.h; path = ../src/RageDisplay_Legacy.h; sourceTree = SOURCE_ROOT; };
 		EE879BAA132E06C50078FDDC /* glew.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glew.c; path = src/glew.c; sourceTree = "<group>"; };
 		EE906F6412BF3A1B00146C96 /* ScreenInstallOverlay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ScreenInstallOverlay.cpp; path = ../src/ScreenInstallOverlay.cpp; sourceTree = SOURCE_ROOT; };
 		EE906F6512BF3A1B00146C96 /* ScreenInstallOverlay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ScreenInstallOverlay.h; path = ../src/ScreenInstallOverlay.h; sourceTree = SOURCE_ROOT; };
@@ -3968,10 +3960,6 @@
 				AA6EFD6E04770A7C005F316C /* RageBitmapTexture.h */,
 				AA6EFD6F04770A7C005F316C /* RageDisplay.cpp */,
 				AA6EFD7004770A7C005F316C /* RageDisplay.h */,
-				EE879B5E132DEE720078FDDC /* RageDisplay_Legacy.cpp */,
-				EE879B5F132DEE720078FDDC /* RageDisplay_Legacy.h */,
-				EE879B5C132DEE720078FDDC /* RageDisplay_Legacy_Helpers.cpp */,
-				EE879B5D132DEE720078FDDC /* RageDisplay_Legacy_Helpers.h */,
 				AAF7458E061181F700B19AD1 /* RageDisplay_Null.cpp */,
 				AAF7458F061181F700B19AD1 /* RageDisplay_Null.h */,
 				AA6EFD7204770A7C005F316C /* RageException.cpp */,
@@ -5446,8 +5434,6 @@
 				2BA7925F1304F20D002BD8E1 /* NotesLoaderSSC.h in Headers */,
 				2BA792611304F20D002BD8E1 /* NotesWriterSSC.h in Headers */,
 				2B30D6831315EA7E00044B68 /* MouseDevice.h in Headers */,
-				EE879B61132DEE720078FDDC /* RageDisplay_Legacy_Helpers.h in Headers */,
-				EE879B63132DEE720078FDDC /* RageDisplay_Legacy.h in Headers */,
 				2B76698B132FF71500586512 /* NotesLoaderSMA.h in Headers */,
 				2BD06FEE137242680018CB9F /* json_batchallocator.h in Headers */,
 				B75CE3B5137963350076A82D /* SongPosition.h in Headers */,
@@ -6852,8 +6838,6 @@
 				EE906F8A12BF3C7C00146C96 /* FileDownload.cpp in Sources */,
 				2BA792601304F20D002BD8E1 /* NotesWriterSSC.cpp in Sources */,
 				2B30D6821315EA7E00044B68 /* MouseDevice.cpp in Sources */,
-				EE879B60132DEE720078FDDC /* RageDisplay_Legacy_Helpers.cpp in Sources */,
-				EE879B62132DEE720078FDDC /* RageDisplay_Legacy.cpp in Sources */,
 				2BD06FF1137242680018CB9F /* json_reader.cpp in Sources */,
 				2BD06FF2137242680018CB9F /* json_value.cpp in Sources */,
 				2BD06FF4137242680018CB9F /* json_writer.cpp in Sources */,

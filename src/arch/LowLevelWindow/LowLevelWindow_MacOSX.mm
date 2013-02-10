@@ -3,7 +3,6 @@
 #import "DisplayResolutions.h"
 #import "RageUtil.h"
 #import "RageThreads.h"
-#import "RageDisplay_Legacy_Helpers.h"
 #import "arch/ArchHooks/ArchHooks.h"
 
 #import <Cocoa/Cocoa.h>
