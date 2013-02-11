@@ -39,6 +39,7 @@ const RString EDIT_COURSES_SUBDIR  = "EditCourses/";
 //const RString UPLOAD_SUBDIR         = "Upload/";
 const RString RIVAL_SUBDIR         = "Rivals/";
 
+ThemeMetric<bool> SHOW_COIN_DATA( "Profile", "ShowCoinData" );
 static Preference<bool> g_bProfileDataCompress( "ProfileDataCompress", false );
 static ThemeMetric<RString> UNLOCK_AUTH_STRING( "Profile", "UnlockAuthString" );
 #define GUID_SIZE_BYTES 8
@@ -948,6 +949,8 @@ XNode *Profile::SaveStatsXmlCreateNode() const
 	xml->AppendChild( SaveCategoryScoresCreateNode() );
 	xml->AppendChild( SaveScreenshotDataCreateNode() );
 	xml->AppendChild( SaveCalorieDataCreateNode() );
+	if( SHOW_COIN_DATA.GetValue() && IsMachine() )
+		xml->AppendChild( SaveCoinDataCreateNode() );
 
 	return xml;
 }
@@ -1834,6 +1837,48 @@ bool Profile::IsMachine() const
 {
 	// TODO: Think of a better way to handle this
 	return this == PROFILEMAN->GetMachineProfile();
+}
+
+
+XNode* Profile::SaveCoinDataCreateNode() const
+{
+	CHECKPOINT;
+
+	const Profile* pProfile = this;
+	ASSERT( pProfile != NULL );
+
+	XNode* pNode = new XNode( "CoinData" );
+
+	{
+		int coins[NUM_LAST_DAYS];
+		BOOKKEEPER->GetCoinsLastDays( coins );
+		XNode* p = pNode->AppendChild( "LastDays" );
+		for( int i=0; i<NUM_LAST_DAYS; i++ )
+			p->AppendChild( LastDayToString(i), coins[i] );
+	}
+	{
+		int coins[NUM_LAST_WEEKS];
+		BOOKKEEPER->GetCoinsLastWeeks( coins );
+		XNode* p = pNode->AppendChild( "LastWeeks" );
+		for( int i=0; i<NUM_LAST_WEEKS; i++ )
+			p->AppendChild( LastWeekToString(i), coins[i] );
+	}
+	{
+		int coins[DAYS_IN_WEEK];
+		BOOKKEEPER->GetCoinsByDayOfWeek( coins );
+		XNode* p = pNode->AppendChild( "DayOfWeek" );
+		for( int i=0; i<DAYS_IN_WEEK; i++ )
+			p->AppendChild( DayOfWeekToString(i), coins[i] );
+	}
+	{
+		int coins[HOURS_IN_DAY];
+		BOOKKEEPER->GetCoinsByHour( coins );
+		XNode* p = pNode->AppendChild( "Hour" );
+		for( int i=0; i<HOURS_IN_DAY; i++ )
+			p->AppendChild( HourInDayToString(i), coins[i] );
+	}
+
+	return pNode;
 }
 
 void Profile::MoveBackupToDir( RString sFromDir, RString sToDir )

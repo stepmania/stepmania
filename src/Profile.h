@@ -369,6 +369,8 @@ public:
 	XNode* SaveScreenshotDataCreateNode() const;
 	XNode* SaveCalorieDataCreateNode() const;
 
+	XNode* SaveCoinDataCreateNode() const;
+
 	void SaveStatsWebPageToDir( RString sDir ) const;
 	void SaveMachinePublicKeyToDir( RString sDir ) const;
 
