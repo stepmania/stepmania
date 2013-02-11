@@ -3,6 +3,7 @@
 #import "DisplayResolutions.h"
 #import "RageUtil.h"
 #import "RageThreads.h"
+#import "RageDisplay_OGL_Helpers.h"
 #import "arch/ArchHooks/ArchHooks.h"
 
 #import <Cocoa/Cocoa.h>
@@ -256,7 +257,7 @@ void RenderTarget_MacOSX::Create( const RenderTargetParam &param, int &iTextureW
 		      iTextureWidth, iTextureHeight, 0, param.bWithAlpha? GL_RGBA:GL_RGB,
 		      GL_UNSIGNED_BYTE, NULL );
 	GLenum error = glGetError();
-	ASSERT_M( error == GL_NO_ERROR, RageDisplay_Legacy_Helpers::GLToString(error) );
+	ASSERT_M(error == GL_NO_ERROR, RageDisplay_Legacy_Helpers::GLToString(error));
 	
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
