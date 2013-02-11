@@ -8891,7 +8891,7 @@
 					"-falign-loops=16",
 				);
 				OTHER_LDFLAGS = "-lbz2";
-				PRODUCT_NAME = StepMania;
+				PRODUCT_NAME = "StepMania (Performance-Debug)";
 				STRIP_INSTALLED_PRODUCT = NO;
 				SYMROOT = "$(SRCROOT)/..";
 				WRAPPER_EXTENSION = app;
