@@ -361,7 +361,13 @@ void GameState::Reset()
 
 void GameState::JoinPlayer( PlayerNumber pn )
 {
-	m_iPlayerStageTokens[pn] = PREFSMAN->m_iSongsPerPlay;
+	/* If joint premium and we're not taking away a credit for the 2nd join,
+	 * give the new player the same number of stage tokens that the old player
+	 * has. */
+	if( GetCoinMode() == CoinMode_Pay && GetPremium() == Premium_2PlayersFor1Credit && GetNumSidesJoined() == 1 )
+		m_iPlayerStageTokens[pn] = m_iPlayerStageTokens[this->GetMasterPlayerNumber()];
+	else
+		m_iPlayerStageTokens[pn] = PREFSMAN->m_iSongsPerPlay;
 
 	m_bSideIsJoined[pn] = true;
 
@@ -483,7 +489,17 @@ bool GameState::JoinPlayers()
 
 int GameState::GetCoinsNeededToJoin() const
 {
-  return 0;
+	int iCoinsToCharge = 0;
+
+	if( GetCoinMode() == CoinMode_Pay )
+		iCoinsToCharge = PREFSMAN->m_iCoinsPerCredit;
+
+	// If joint premium, don't take away a credit for the second join.
+	if( GetPremium() == Premium_2PlayersFor1Credit  &&
+		GetNumSidesJoined() == 1 )
+		iCoinsToCharge = 0;
+
+	return iCoinsToCharge;
 }
 
 /* Game flow:
@@ -2039,7 +2055,10 @@ bool GameState::IsEventMode() const
 
 CoinMode GameState::GetCoinMode() const
 {
-	return GamePreferences::m_CoinMode;
+	if( IsEventMode() && GamePreferences::m_CoinMode == CoinMode_Pay )
+		return CoinMode_Free;
+	else
+		return GamePreferences::m_CoinMode;
 }
 
 ThemeMetric<bool> DISABLE_PREMIUM_IN_EVENT_MODE("GameState","DisablePremiumInEventMode");

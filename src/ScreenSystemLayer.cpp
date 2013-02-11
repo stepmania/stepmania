@@ -106,6 +106,20 @@ namespace
 				else
 					return CREDITS_NOT_PRESENT.GetValue();
 
+			case CoinMode_Pay:
+			{
+				int iCredits = GAMESTATE->m_iCoins / PREFSMAN->m_iCoinsPerCredit;
+				int iCoins = GAMESTATE->m_iCoins % PREFSMAN->m_iCoinsPerCredit;
+				RString sCredits = CREDITS_CREDITS;
+				// todo: allow themers to change these strings -aj
+				if( iCredits > 0 || PREFSMAN->m_iCoinsPerCredit == 1 )
+					sCredits += ssprintf("  %d", iCredits);
+				if( PREFSMAN->m_iCoinsPerCredit > 1 )
+					sCredits += ssprintf("  %d/%d", iCoins, PREFSMAN->m_iCoinsPerCredit.Get() );
+				if( iCredits >= MAX_NUM_CREDITS )
+					sCredits += "  " + CREDITS_MAX.GetValue();
+				return sCredits;
+			}
 			case CoinMode_Free:
 				if( GAMESTATE->PlayersCanJoin() )
 					return CREDITS_FREE_PLAY.GetValue();

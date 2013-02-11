@@ -714,8 +714,8 @@ static void InitializeConfOptions()
 
 	// Machine options
 	ADD( ConfOption( "MenuTimer",			MovePref<bool>,		"Off","On" ) );
-	ADD( ConfOption( "CoinMode",			MovePref<CoinMode>,	"Home","Free Play" ) );
-	ADD( ConfOption( "CoinModeNoHome",		CoinModeNoHome,		"Free Play" ) );
+	ADD( ConfOption( "CoinMode",			MovePref<CoinMode>,	"Home","Pay","Free Play" ) );
+	ADD( ConfOption( "CoinModeNoHome",		CoinModeNoHome,		"Pay","Free Play" ) );
 	g_ConfOptions.back().m_sPrefName = "CoinMode";
 
 	ADD( ConfOption( "SongsPerPlay",		SongsPerPlay,		"|1","|2","|3","|4","|5" ) );
