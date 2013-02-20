@@ -21,8 +21,6 @@
 extern "C"
 {
 	#include <libavcodec/avcodec.h>
-	#undef PixelFormat
-	typedef AVPixelFormat PixelFormat;
 }
 #endif
 

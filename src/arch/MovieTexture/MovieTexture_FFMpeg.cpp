@@ -16,8 +16,6 @@ namespace avcodec
 		#include <libavformat/avformat.h>
 		#include <libswscale/swscale.h>
 		#include <libavutil/pixdesc.h>
-		#undef PixelFormat
-		typedef AVPixelFormat PixelFormat;
 	}
 };
 
