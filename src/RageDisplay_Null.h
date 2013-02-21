@@ -11,16 +11,16 @@ public:
 
 	virtual RString GetApiDescription() const { return "Null"; }
 	virtual void GetDisplayResolutions( DisplayResolutions &out ) const;
-	const PixelFormatDesc *GetPixelFormatDesc(PixelFormat pf) const;
+	const RagePixelFormatDesc *GetPixelFormatDesc(RagePixelFormat pf) const;
 
 	bool BeginFrame() { return true; }
 	void EndFrame();
 	VideoModeParams GetActualVideoModeParams() const { return m_Params; }
 	void SetBlendMode( BlendMode ) { }
-	bool SupportsTextureFormat( PixelFormat, bool /* realtime */ =false ) { return true; }
+	bool SupportsTextureFormat( RagePixelFormat, bool /* realtime */ =false ) { return true; }
 	bool SupportsPerVertexMatrixScale() { return false; }
 	unsigned CreateTexture( 
-		PixelFormat, 
+		RagePixelFormat, 
 		RageSurface* /* img */,
 		bool /* bGenerateMipMaps */ ) { return 1; }
 	void UpdateTexture( 
@@ -80,7 +80,7 @@ protected:
 	RString TryVideoMode( const VideoModeParams &p, bool & /* bNewDeviceOut */ ) { m_Params = p; return RString(); }
 	RageSurface* CreateScreenshot();
 	RageMatrix GetOrthoMatrix( float l, float r, float b, float t, float zn, float zf ); 
-	bool SupportsSurfaceFormat( PixelFormat ) { return true; }
+	bool SupportsSurfaceFormat( RagePixelFormat ) { return true; }
 };
 
 #endif

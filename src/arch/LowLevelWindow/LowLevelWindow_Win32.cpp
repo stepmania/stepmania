@@ -64,20 +64,20 @@ void LowLevelWindow_Win32::GetDisplayResolutions( DisplayResolutions &out ) cons
 	GraphicsWindow::GetDisplayResolutions( out );
 }
 
-int ChooseWindowPixelFormat( const VideoModeParams &p, PIXELFORMATDESCRIPTOR *PixelFormat )
+int ChooseWindowPixelFormat( const VideoModeParams &p, PIXELFORMATDESCRIPTOR *pixfmt )
 {
 	ASSERT( GraphicsWindow::GetHwnd() != NULL );
 	ASSERT( GraphicsWindow::GetHDC() != NULL );
 
-	ZERO( *PixelFormat );
-	PixelFormat->nSize		= sizeof(PIXELFORMATDESCRIPTOR);
-	PixelFormat->nVersion		= 1;
-	PixelFormat->dwFlags		= PFD_DRAW_TO_WINDOW | PFD_DOUBLEBUFFER | PFD_SUPPORT_OPENGL;
-	PixelFormat->iPixelType		= PFD_TYPE_RGBA;
-	PixelFormat->cColorBits		= p.bpp == 16? 16:24;
-	PixelFormat->cDepthBits		= 16;
+	ZERO( *pixfmt );
+	pixfmt->nSize		= sizeof(PIXELFORMATDESCRIPTOR);
+	pixfmt->nVersion		= 1;
+	pixfmt->dwFlags		= PFD_DRAW_TO_WINDOW | PFD_DOUBLEBUFFER | PFD_SUPPORT_OPENGL;
+	pixfmt->iPixelType		= PFD_TYPE_RGBA;
+	pixfmt->cColorBits		= p.bpp == 16? 16:24;
+	pixfmt->cDepthBits		= 16;
 
-	return ChoosePixelFormat( GraphicsWindow::GetHDC(), PixelFormat );
+	return ChoosePixelFormat( GraphicsWindow::GetHDC(), pixfmt );
 }
 
 void DumpPixelFormat( const PIXELFORMATDESCRIPTOR &pfd )
@@ -148,8 +148,8 @@ RString LowLevelWindow_Win32::TryVideoMode( const VideoModeParams &p, bool &bNew
 	if( !sErr.empty() )
 		return sErr;
 
-	PIXELFORMATDESCRIPTOR PixelFormat;
-	int iPixelFormat = ChooseWindowPixelFormat( p, &PixelFormat );
+	PIXELFORMATDESCRIPTOR pixfmt;
+	int iPixelFormat = ChooseWindowPixelFormat( p, &pixfmt );
 	if( iPixelFormat == 0 )
 	{
 		/* Destroy the window. */
@@ -201,7 +201,7 @@ RString LowLevelWindow_Win32::TryVideoMode( const VideoModeParams &p, bool &bNew
 	if( bNeedToSetPixelFormat )
 	{
 		/* Set the pixel format. */
-		if( !SetPixelFormat(GraphicsWindow::GetHDC(), iPixelFormat, &PixelFormat) )
+		if( !SetPixelFormat(GraphicsWindow::GetHDC(), iPixelFormat, &pixfmt) )
 		{
 			/* Destroy the window. */
 			DestroyGraphicsWindowAndOpenGLContext();

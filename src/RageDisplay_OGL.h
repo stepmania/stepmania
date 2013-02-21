@@ -33,7 +33,7 @@ public:
 	virtual RString GetApiDescription() const { return "OpenGL"; }
 	virtual void GetDisplayResolutions( DisplayResolutions &out ) const;
 	void ResolutionChanged();
-	const PixelFormatDesc *GetPixelFormatDesc(PixelFormat pf) const;
+	const RagePixelFormatDesc *GetPixelFormatDesc(RagePixelFormat pf) const;
 
 	bool SupportsThreadedRendering();
 	void BeginConcurrentRenderingMainThread();
@@ -45,10 +45,10 @@ public:
 	void EndFrame();
 	VideoModeParams GetActualVideoModeParams() const;
 	void SetBlendMode( BlendMode mode );
-	bool SupportsTextureFormat( PixelFormat pixfmt, bool realtime=false );
+	bool SupportsTextureFormat( RagePixelFormat pixfmt, bool realtime=false );
 	bool SupportsPerVertexMatrixScale();
 	unsigned CreateTexture( 
-		PixelFormat pixfmt, 
+		RagePixelFormat pixfmt, 
 		RageSurface* img,
 		bool bGenerateMipMaps );
 	void UpdateTexture( 
@@ -120,8 +120,8 @@ protected:
 
 	RString TryVideoMode( const VideoModeParams &p, bool &bNewDeviceOut );
 	RageSurface* CreateScreenshot();
-	PixelFormat GetImgPixelFormat( RageSurface* &img, bool &FreeImg, int width, int height, bool bPalettedTexture );
-	bool SupportsSurfaceFormat( PixelFormat pixfmt );
+	RagePixelFormat GetImgPixelFormat( RageSurface* &img, bool &FreeImg, int width, int height, bool bPalettedTexture );
+	bool SupportsSurfaceFormat( RagePixelFormat pixfmt );
 	
 	void SendCurrentMatrices();
 };

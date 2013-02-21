@@ -48,7 +48,7 @@ RageDisplay*		DISPLAY	= NULL;
 Preference<bool>  LOG_FPS( "LogFPS", true );
 Preference<float> g_fFrameLimitPercent( "FrameLimitPercent", 0.0f );
 
-static const char *PixelFormatNames[] = {
+static const char *RagePixelFormatNames[] = {
 	"RGBA8",
 	"BGRA8",
 	"RGBA4",
@@ -60,7 +60,7 @@ static const char *PixelFormatNames[] = {
 	"A1BGR5",
 	"X1RGB5",
 };
-XToString( PixelFormat );
+XToString( RagePixelFormat );
 
 /* bNeedReloadTextures is set to true if the device was re-created and we need
  * to reload textures.  On failure, an error message is returned. 
@@ -626,10 +626,10 @@ RageMatrix RageDisplay::GetPerspectiveMatrix(float fovy, float aspect, float zNe
 	return GetFrustumMatrix(xmin, xmax, ymin, ymax, zNear, zFar);
 }
 
-RageSurface *RageDisplay::CreateSurfaceFromPixfmt( PixelFormat pixfmt,
+RageSurface *RageDisplay::CreateSurfaceFromPixfmt( RagePixelFormat pixfmt,
 						void *pixels, int width, int height, int pitch )
 {
-	const PixelFormatDesc *tpf = GetPixelFormatDesc(pixfmt);
+	const RagePixelFormatDesc *tpf = GetPixelFormatDesc(pixfmt);
 
 	RageSurface *surf = CreateSurfaceFrom(
 		width, height, tpf->bpp, 
@@ -639,14 +639,14 @@ RageSurface *RageDisplay::CreateSurfaceFromPixfmt( PixelFormat pixfmt,
 	return surf;
 }
 
-PixelFormat RageDisplay::FindPixelFormat( int iBPP, unsigned iRmask, unsigned iGmask, unsigned iBmask, unsigned iAmask, bool bRealtime )
+RagePixelFormat RageDisplay::FindPixelFormat( int iBPP, unsigned iRmask, unsigned iGmask, unsigned iBmask, unsigned iAmask, bool bRealtime )
 {
-	PixelFormatDesc tmp = { iBPP, { iRmask, iGmask, iBmask, iAmask } };
+	RagePixelFormatDesc tmp = { iBPP, { iRmask, iGmask, iBmask, iAmask } };
 
-	FOREACH_ENUM( PixelFormat, iPixFmt )
+	FOREACH_ENUM( RagePixelFormat, iPixFmt )
 	{
-		const PixelFormatDesc *pf = GetPixelFormatDesc( PixelFormat(iPixFmt) );
-		if( !SupportsTextureFormat(PixelFormat(iPixFmt), bRealtime) )
+		const RagePixelFormatDesc *pf = GetPixelFormatDesc( RagePixelFormat(iPixFmt) );
+		if( !SupportsTextureFormat(RagePixelFormat(iPixFmt), bRealtime) )
 			continue;
 
 		if( memcmp(pf, &tmp, sizeof(tmp)) )
@@ -654,7 +654,7 @@ PixelFormat RageDisplay::FindPixelFormat( int iBPP, unsigned iRmask, unsigned iG
 		return iPixFmt;
 	}
 
-	return PixelFormat_Invalid;
+	return RagePixelFormat_Invalid;
 }
 
 /* These convert to OpenGL's coordinate system: -1,-1 is the bottom-left,

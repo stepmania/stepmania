@@ -11,7 +11,7 @@
 #include "RageSurface.h"
 #include "DisplayResolutions.h"
 
-static RageDisplay::PixelFormatDesc PIXEL_FORMAT_DESC[NUM_PixelFormat] = {
+static RageDisplay::RagePixelFormatDesc PIXEL_FORMAT_DESC[NUM_RagePixelFormat] = {
 	{
 		/* R8G8B8A8 */
 		32,
@@ -90,7 +90,7 @@ void RageDisplay_Null::GetDisplayResolutions( DisplayResolutions &out ) const
 
 RageSurface* RageDisplay_Null::CreateScreenshot()
 {
-	const PixelFormatDesc &desc = PIXEL_FORMAT_DESC[PixelFormat_RGB8];
+	const RagePixelFormatDesc &desc = PIXEL_FORMAT_DESC[RagePixelFormat_RGB8];
 	RageSurface *image = CreateSurface(
 		640, 480, desc.bpp,
 		desc.masks[0], desc.masks[1], desc.masks[2], desc.masks[3] );
@@ -100,9 +100,9 @@ RageSurface* RageDisplay_Null::CreateScreenshot()
 	return image;
 }
 
-const RageDisplay::PixelFormatDesc *RageDisplay_Null::GetPixelFormatDesc(PixelFormat pf) const
+const RageDisplay::RagePixelFormatDesc *RageDisplay_Null::GetPixelFormatDesc(RagePixelFormat pf) const
 {
-	ASSERT( pf >= 0 && pf < NUM_PixelFormat );
+	ASSERT( pf >= 0 && pf < NUM_RagePixelFormat );
 	return &PIXEL_FORMAT_DESC[pf];
 }
 

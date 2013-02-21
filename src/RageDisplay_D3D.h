@@ -13,17 +13,17 @@ public:
 	virtual RString GetApiDescription() const { return "D3D"; }
 	virtual void GetDisplayResolutions( DisplayResolutions &out ) const;
 	void ResolutionChanged();
-	const PixelFormatDesc *GetPixelFormatDesc(PixelFormat pf) const;
+	const RagePixelFormatDesc *GetPixelFormatDesc(RagePixelFormat pf) const;
 
 	bool BeginFrame();	
 	void EndFrame();
 	VideoModeParams GetActualVideoModeParams() const;
 	void SetBlendMode( BlendMode mode );
-	bool SupportsTextureFormat( PixelFormat pixfmt, bool realtime=false );
+	bool SupportsTextureFormat( RagePixelFormat pixfmt, bool realtime=false );
 	bool SupportsThreadedRendering();
 	bool SupportsPerVertexMatrixScale() { return false; }
 	unsigned CreateTexture( 
-		PixelFormat pixfmt, 
+		RagePixelFormat pixfmt, 
 		RageSurface* img, 
 		bool bGenerateMipMaps );
 	void UpdateTexture( 

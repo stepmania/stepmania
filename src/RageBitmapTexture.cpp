@@ -166,7 +166,7 @@ void RageBitmapTexture::Create()
 	if( pImg->w != m_iImageWidth || pImg->h != m_iImageHeight ) 
 		RageSurfaceUtils::Zoom( pImg, m_iImageWidth, m_iImageHeight );
 
-	if( actualID.iGrayscaleBits != -1 && DISPLAY->SupportsTextureFormat(PixelFormat_PAL) )
+	if( actualID.iGrayscaleBits != -1 && DISPLAY->SupportsTextureFormat(RagePixelFormat_PAL) )
 	{
 		RageSurface *pGrayscale = RageSurfaceUtils::PalettizeToGrayscale( pImg, actualID.iGrayscaleBits, actualID.iAlphaBits );
 
@@ -175,12 +175,12 @@ void RageBitmapTexture::Create()
 	}
 
 	// Figure out which texture format we want the renderer to use.
-	PixelFormat pixfmt;
+	RagePixelFormat pixfmt;
 
 	// If the source is palleted, always load as paletted if supported.
-	if( pImg->format->BitsPerPixel == 8 && DISPLAY->SupportsTextureFormat(PixelFormat_PAL) )
+	if( pImg->format->BitsPerPixel == 8 && DISPLAY->SupportsTextureFormat(RagePixelFormat_PAL) )
 	{
-		pixfmt = PixelFormat_PAL;
+		pixfmt = RagePixelFormat_PAL;
 	}
 	else
 	{
@@ -199,16 +199,16 @@ void RageBitmapTexture::Create()
 				{
 				case 0:
 				case 1:
-					pixfmt = PixelFormat_RGB5A1;
+					pixfmt = RagePixelFormat_RGB5A1;
 					break;
 				default:
-					pixfmt = PixelFormat_RGBA4;
+					pixfmt = RagePixelFormat_RGBA4;
 					break;
 				}
 			}
 			break;
 		case 32:
-			pixfmt = PixelFormat_RGBA8;
+			pixfmt = RagePixelFormat_RGBA8;
 			break;
 		default: FAIL_M( ssprintf("%i", actualID.iColorDepth) );
 		}
@@ -217,9 +217,9 @@ void RageBitmapTexture::Create()
 	// Make we're using a supported format. Every card supports either RGBA8 or RGBA4.
 	if( !DISPLAY->SupportsTextureFormat(pixfmt) )
 	{
-		pixfmt = PixelFormat_RGBA8;
+		pixfmt = RagePixelFormat_RGBA8;
 		if( !DISPLAY->SupportsTextureFormat(pixfmt) )
-			pixfmt = PixelFormat_RGBA4;
+			pixfmt = RagePixelFormat_RGBA4;
 	}
 
 	/* Dither if appropriate.
@@ -228,10 +228,10 @@ void RageBitmapTexture::Create()
 	 * on at least one color channel than the source. For example, it doesn't
 	 * make sense to do this when pixfmt is RGBA5551 if the image is only RGBA555. */
 	if( actualID.bDither && 
-		(pixfmt==PixelFormat_RGBA4 || pixfmt==PixelFormat_RGB5A1) )
+		(pixfmt==RagePixelFormat_RGBA4 || pixfmt==RagePixelFormat_RGB5A1) )
 	{
 		// Dither down to the destination format.
-		const RageDisplay::PixelFormatDesc *pfd = DISPLAY->GetPixelFormatDesc(pixfmt);
+		const RageDisplay::RagePixelFormatDesc *pfd = DISPLAY->GetPixelFormatDesc(pixfmt);
 		RageSurface *dst = CreateSurface( pImg->w, pImg->h, pfd->bpp,
 			pfd->masks[0], pfd->masks[1], pfd->masks[2], pfd->masks[3] );
 
@@ -318,7 +318,7 @@ void RageBitmapTexture::Create()
 
 
 	RString sProperties;
-	sProperties += PixelFormatToString( pixfmt ) + " ";
+	sProperties += RagePixelFormatToString( pixfmt ) + " ";
 	if( actualID.iAlphaBits == 0 ) sProperties += "opaque ";
 	if( actualID.iAlphaBits == 1 ) sProperties += "matte ";
 	if( actualID.bStretch ) sProperties += "stretch ";

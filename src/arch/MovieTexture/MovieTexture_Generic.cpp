@@ -110,7 +110,7 @@ class RageMovieTexture_Generic_Intermediate : public RageTexture
 public:
 	RageMovieTexture_Generic_Intermediate( RageTextureID ID, int iWidth, int iHeight, 
 		int iImageWidth, int iImageHeight, int iTextureWidth, int iTextureHeight,
-		RageSurfaceFormat SurfaceFormat, PixelFormat pixfmt ):
+		RageSurfaceFormat SurfaceFormat, RagePixelFormat pixfmt ):
 		RageTexture(ID),
 		m_SurfaceFormat( SurfaceFormat )
 	{
@@ -170,7 +170,7 @@ private:
 
 	unsigned m_uTexHandle;
 	RageSurfaceFormat m_SurfaceFormat;
-	PixelFormat m_PixFmt;
+	RagePixelFormat m_PixFmt;
 };
 
 void MovieTexture_Generic::Invalidate()
@@ -222,13 +222,13 @@ void MovieTexture_Generic::CreateTexture()
 
 	}
 
-	PixelFormat pixfmt = DISPLAY->FindPixelFormat( m_pSurface->format->BitsPerPixel,
+	RagePixelFormat pixfmt = DISPLAY->FindPixelFormat( m_pSurface->format->BitsPerPixel,
 			m_pSurface->format->Mask[0],
 			m_pSurface->format->Mask[1],
 			m_pSurface->format->Mask[2],
 			m_pSurface->format->Mask[3] );
 
-	if( pixfmt == PixelFormat_Invalid )
+	if( pixfmt == RagePixelFormat_Invalid )
 	{
 		/* We weren't given a natively-supported pixel format.  Pick a supported
 		 * one.  This is a fallback case, and implies a second conversion. */
@@ -238,22 +238,22 @@ void MovieTexture_Generic::CreateTexture()
 		default:
 			FAIL_M(ssprintf("Unsupported movie color depth: %i", depth));
 		case 16:
-			if( DISPLAY->SupportsTextureFormat(PixelFormat_RGB5) )
-				pixfmt = PixelFormat_RGB5;
+			if( DISPLAY->SupportsTextureFormat(RagePixelFormat_RGB5) )
+				pixfmt = RagePixelFormat_RGB5;
 			else
-				pixfmt = PixelFormat_RGBA4;
+				pixfmt = RagePixelFormat_RGBA4;
 
 			break;
 
 		case 32:
-			if( DISPLAY->SupportsTextureFormat(PixelFormat_RGB8) )
-				pixfmt = PixelFormat_RGB8;
-			else if( DISPLAY->SupportsTextureFormat(PixelFormat_RGBA8) )
-				pixfmt = PixelFormat_RGBA8;
-			else if( DISPLAY->SupportsTextureFormat(PixelFormat_RGB5) )
-				pixfmt = PixelFormat_RGB5;
+			if( DISPLAY->SupportsTextureFormat(RagePixelFormat_RGB8) )
+				pixfmt = RagePixelFormat_RGB8;
+			else if( DISPLAY->SupportsTextureFormat(RagePixelFormat_RGBA8) )
+				pixfmt = RagePixelFormat_RGBA8;
+			else if( DISPLAY->SupportsTextureFormat(RagePixelFormat_RGB5) )
+				pixfmt = RagePixelFormat_RGB5;
 			else
-				pixfmt = PixelFormat_RGBA4;
+				pixfmt = RagePixelFormat_RGBA4;
 			break;
 		}
 	}

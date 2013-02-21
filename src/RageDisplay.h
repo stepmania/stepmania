@@ -51,25 +51,25 @@ protected:
 	bool m_bAnyNeedsTextureMatrixScale;
 };
 
-enum PixelFormat
+enum RagePixelFormat
 {
-	PixelFormat_RGBA8,
-	PixelFormat_BGRA8,
-	PixelFormat_RGBA4,
-	PixelFormat_RGB5A1,
-	PixelFormat_RGB5,
-	PixelFormat_RGB8,
-	PixelFormat_PAL,
+	RagePixelFormat_RGBA8,
+	RagePixelFormat_BGRA8,
+	RagePixelFormat_RGBA4,
+	RagePixelFormat_RGB5A1,
+	RagePixelFormat_RGB5,
+	RagePixelFormat_RGB8,
+	RagePixelFormat_PAL,
 	/* The above formats differ between OpenGL and D3D. These are provided as
 	* alternatives for OpenGL that match some format in D3D.  Don't use them
 	* directly; they'll be matched automatically by FindPixelFormat. */
-	PixelFormat_BGR8,
-	PixelFormat_A1BGR5,
-	PixelFormat_X1RGB5,
-	NUM_PixelFormat,
-	PixelFormat_Invalid
+	RagePixelFormat_BGR8,
+	RagePixelFormat_A1BGR5,
+	RagePixelFormat_X1RGB5,
+	NUM_RagePixelFormat,
+	RagePixelFormat_Invalid
 };
-const RString& PixelFormatToString( PixelFormat i );
+const RString& RagePixelFormatToString( RagePixelFormat i );
 
 /** @brief The parameters used for the present Video Mode. */
 class VideoModeParams
@@ -168,12 +168,12 @@ class RageDisplay
 
 public:
 
-	struct PixelFormatDesc {
+	struct RagePixelFormatDesc {
 		int bpp;
 		unsigned int masks[4];
 	};
 
-	virtual const PixelFormatDesc *GetPixelFormatDesc( PixelFormat pf ) const = 0;
+	virtual const RagePixelFormatDesc *GetPixelFormatDesc( RagePixelFormat pf ) const = 0;
 
 	RageDisplay();
 	virtual ~RageDisplay();
@@ -198,7 +198,7 @@ public:
 
 	virtual void SetBlendMode( BlendMode mode ) = 0;
 
-	virtual bool SupportsTextureFormat( PixelFormat pixfmt, bool realtime=false ) = 0;
+	virtual bool SupportsTextureFormat( RagePixelFormat pixfmt, bool realtime=false ) = 0;
 	virtual bool SupportsThreadedRendering() { return false; }
 	virtual bool SupportsPerVertexMatrixScale() = 0;
 
@@ -212,7 +212,7 @@ public:
 	/* return 0 if failed or internal texture resource handle 
 	 * (unsigned in OpenGL, texture pointer in D3D) */
 	virtual unsigned CreateTexture( 
-		PixelFormat pixfmt,		// format of img and of texture in video mem
+		RagePixelFormat pixfmt,		// format of img and of texture in video mem
 		RageSurface* img,		// must be in pixfmt
 		bool bGenerateMipMaps
 		) = 0;
@@ -379,8 +379,8 @@ public:
 	void CenteringPopMatrix();
 	void ChangeCentering( int trans_x, int trans_y, int add_width, int add_height );
 
-	RageSurface *CreateSurfaceFromPixfmt( PixelFormat pixfmt, void *pixels, int width, int height, int pitch );
-	PixelFormat FindPixelFormat( int bpp, unsigned Rmask, unsigned Gmask, unsigned Bmask, unsigned Amask, bool realtime=false );
+	RageSurface *CreateSurfaceFromPixfmt( RagePixelFormat pixfmt, void *pixels, int width, int height, int pitch );
+	RagePixelFormat FindPixelFormat( int bpp, unsigned Rmask, unsigned Gmask, unsigned Bmask, unsigned Amask, bool realtime=false );
 
 	// Lua
 	void PushSelf( lua_State *L );

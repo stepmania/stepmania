@@ -101,7 +101,7 @@ static void SetPalette( unsigned TexResource )
 #define D3DFVF_RageModelVertex (D3DFVF_XYZ|D3DFVF_NORMAL|D3DFVF_TEX1)
 
 
-static const RageDisplay::PixelFormatDesc PIXEL_FORMAT_DESC[NUM_PixelFormat] = {
+static const RageDisplay::RagePixelFormatDesc PIXEL_FORMAT_DESC[NUM_RagePixelFormat] = {
 	{
 		/* A8B8G8R8 */
 		32,
@@ -155,7 +155,7 @@ static const RageDisplay::PixelFormatDesc PIXEL_FORMAT_DESC[NUM_PixelFormat] = {
 	}
 };
 
-static D3DFORMAT D3DFORMATS[NUM_PixelFormat] = 
+static D3DFORMAT D3DFORMATS[NUM_RagePixelFormat] = 
 {
 	D3DFMT_A8R8G8B8,
 	D3DFMT_UNKNOWN,
@@ -169,9 +169,9 @@ static D3DFORMAT D3DFORMATS[NUM_PixelFormat] =
 	D3DFMT_UNKNOWN, // X1R5G5B5
 };
 
-const RageDisplay::PixelFormatDesc *RageDisplay_D3D::GetPixelFormatDesc(PixelFormat pf) const
+const RageDisplay::RagePixelFormatDesc *RageDisplay_D3D::GetPixelFormatDesc(RagePixelFormat pf) const
 {
-	ASSERT( pf < NUM_PixelFormat );
+	ASSERT( pf < NUM_RagePixelFormat );
 	return &PIXEL_FORMAT_DESC[pf];
 }
 
@@ -598,11 +598,11 @@ void RageDisplay_D3D::EndFrame()
 	RageDisplay::EndFrame();
 }
 
-bool RageDisplay_D3D::SupportsTextureFormat( PixelFormat pixfmt, bool realtime )
+bool RageDisplay_D3D::SupportsTextureFormat( RagePixelFormat pixfmt, bool realtime )
 {
 	// Some cards (Savage) don't support alpha in palettes.
 	// Don't allow paletted textures if this is the case.
-	if( pixfmt == PixelFormat_PAL  &&  !(g_DeviceCaps.TextureCaps & D3DPTEXTURECAPS_ALPHAPALETTE) )
+	if( pixfmt == RagePixelFormat_PAL  &&  !(g_DeviceCaps.TextureCaps & D3DPTEXTURECAPS_ALPHAPALETTE) )
 		return false;
 
 	if( D3DFORMATS[pixfmt] == D3DFMT_UNKNOWN )
@@ -660,7 +660,7 @@ RageSurface* RageDisplay_D3D::CreateScreenshot()
 		pCopy->LockRect( &lr, &rect, D3DLOCK_READONLY );
 	}
 
-	RageSurface *surface = CreateSurfaceFromPixfmt( PixelFormat_RGBA8, lr.pBits, desc.Width, desc.Height, lr.Pitch);
+	RageSurface *surface = CreateSurfaceFromPixfmt( RagePixelFormat_RGBA8, lr.pBits, desc.Width, desc.Height, lr.Pitch);
 	ASSERT( surface != NULL );
 
 	// We need to make a copy, since lr.pBits will go away when we call UnlockRect().
@@ -1342,7 +1342,7 @@ void RageDisplay_D3D::DeleteTexture( unsigned iTexHandle )
 
 
 unsigned RageDisplay_D3D::CreateTexture( 
-	PixelFormat pixfmt,
+	RagePixelFormat pixfmt,
 	RageSurface* img,
 	bool bGenerateMipMaps )
 {
@@ -1352,11 +1352,11 @@ unsigned RageDisplay_D3D::CreateTexture(
 
 	if( FAILED(hr) )
 		RageException::Throw( "CreateTexture(%i,%i,%s) failed: %s", 
-		img->w, img->h, PixelFormatToString(pixfmt).c_str(), GetErrorString(hr).c_str() );
+		img->w, img->h, RagePixelFormatToString(pixfmt).c_str(), GetErrorString(hr).c_str() );
 
 	unsigned uTexHandle = (unsigned)pTex;
 
-	if( pixfmt == PixelFormat_PAL )
+	if( pixfmt == RagePixelFormat_PAL )
 	{
 		// Save palette
 		TexturePalette pal;
@@ -1403,11 +1403,11 @@ void RageDisplay_D3D::UpdateTexture(
 
 	// Copy bits
 	int texpixfmt;
-	for(texpixfmt = 0; texpixfmt < NUM_PixelFormat; ++texpixfmt)
+	for(texpixfmt = 0; texpixfmt < NUM_RagePixelFormat; ++texpixfmt)
 		if(D3DFORMATS[texpixfmt] == desc.Format) break;
-	ASSERT( texpixfmt != NUM_PixelFormat );
+	ASSERT( texpixfmt != NUM_RagePixelFormat );
 
-	RageSurface *Texture = CreateSurfaceFromPixfmt(PixelFormat(texpixfmt), lr.pBits, width, height, lr.Pitch);
+	RageSurface *Texture = CreateSurfaceFromPixfmt(RagePixelFormat(texpixfmt), lr.pBits, width, height, lr.Pitch);
 	ASSERT( Texture != NULL );
 	RageSurfaceUtils::Blit( img, Texture, width, height );
 

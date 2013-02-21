@@ -10,16 +10,16 @@ public:
 
 	virtual RString GetApiDescription() const;
 	virtual void GetDisplayResolutions( DisplayResolutions &out ) const;
-	const PixelFormatDesc *GetPixelFormatDesc(PixelFormat pf) const;
+	const RagePixelFormatDesc *GetPixelFormatDesc(RagePixelFormat pf) const;
 
 	bool BeginFrame();
 	void EndFrame();
 	VideoModeParams GetActualVideoModeParams() const;
 	void SetBlendMode( BlendMode mode );
-	bool SupportsTextureFormat( PixelFormat pixfmt, bool realtime=false );
+	bool SupportsTextureFormat( RagePixelFormat pixfmt, bool realtime=false );
 	bool SupportsPerVertexMatrixScale();
 	unsigned CreateTexture( 
-		PixelFormat pixfmt, 
+		RagePixelFormat pixfmt, 
 		RageSurface* img,
 		bool bGenerateMipMaps );
 	void UpdateTexture( 
@@ -80,7 +80,7 @@ protected:
 	RString TryVideoMode( const VideoModeParams &p, bool &bNewDeviceOut );
 	RageSurface* CreateScreenshot();
 	RageMatrix GetOrthoMatrix( float l, float r, float b, float t, float zn, float zf ); 
-	bool SupportsSurfaceFormat( PixelFormat pixfmt );
+	bool SupportsSurfaceFormat( RagePixelFormat pixfmt );
 	bool SupportsRenderToTexture() const { return true; }
 };
 

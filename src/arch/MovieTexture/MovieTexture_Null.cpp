@@ -44,12 +44,12 @@ MovieTexture_Null::MovieTexture_Null(RageTextureID ID) : RageMovieTexture(ID)
 
 	CreateFrameRects();
 
-	PixelFormat pixfmt = PixelFormat_RGBA4;
+	RagePixelFormat pixfmt = RagePixelFormat_RGBA4;
 	if( !DISPLAY->SupportsTextureFormat(pixfmt) )
-		pixfmt = PixelFormat_RGBA8;
+		pixfmt = RagePixelFormat_RGBA8;
 	ASSERT( DISPLAY->SupportsTextureFormat(pixfmt) );
 
-	const RageDisplay::PixelFormatDesc *pfd = DISPLAY->GetPixelFormatDesc( pixfmt );
+	const RageDisplay::RagePixelFormatDesc *pfd = DISPLAY->GetPixelFormatDesc( pixfmt );
 	RageSurface *img = CreateSurface( size, size, pfd->bpp,
 		pfd->masks[0], pfd->masks[1], pfd->masks[2], pfd->masks[3] );
 	memset( img->pixels, 0, img->pitch*img->h );

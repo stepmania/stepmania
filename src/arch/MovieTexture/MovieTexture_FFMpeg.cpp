@@ -179,7 +179,7 @@ static int FindCompatibleAVFormat( bool bHighColor )
 			continue;
 		}
 
-		PixelFormat pixfmt = DISPLAY->FindPixelFormat( fmt.bpp,
+		RagePixelFormat pixfmt = DISPLAY->FindPixelFormat( fmt.bpp,
 				fmt.masks[0],
 				fmt.masks[1],
 				fmt.masks[2],
@@ -187,7 +187,7 @@ static int FindCompatibleAVFormat( bool bHighColor )
 				true /* realtime */
 				);
 
-		if( pixfmt == PixelFormat_Invalid )
+		if( pixfmt == RagePixelFormat_Invalid )
 			continue;
 
 		return i;

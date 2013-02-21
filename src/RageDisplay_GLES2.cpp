@@ -23,8 +23,8 @@
 
 namespace
 {
-	RageDisplay::PixelFormatDesc
-	PIXEL_FORMAT_DESC[NUM_PixelFormat] = {
+	RageDisplay::RagePixelFormatDesc
+	PIXEL_FORMAT_DESC[NUM_RagePixelFormat] = {
 		{
 			/* R8G8B8A8 */
 			32,
@@ -96,8 +96,8 @@ namespace
 	};
 
 	/* g_GLPixFmtInfo is used for both texture formats and surface formats.
-	 * For example, it's fine to ask for a PixelFormat_RGB5 texture, but to
-	 * supply a surface matching PixelFormat_RGB8.  OpenGL will simply
+	 * For example, it's fine to ask for a RagePixelFormat_RGB5 texture, but to
+	 * supply a surface matching RagePixelFormat_RGB8.  OpenGL will simply
 	 * discard the extra bits.
 	 *
 	 * It's possible for a format to be supported as a texture format but
@@ -110,7 +110,7 @@ namespace
 		GLenum internalfmt; /* target format */
 		GLenum format; /* target format */
 		GLenum type; /* data format */
-	} const g_GLPixFmtInfo[NUM_PixelFormat] = {
+	} const g_GLPixFmtInfo[NUM_RagePixelFormat] = {
 		{
 			/* R8G8B8A8 */
 			GL_RGBA8,
@@ -175,9 +175,9 @@ namespace
 			return;
 		bInitialized = true;
 
-		for( int i = 0; i < NUM_PixelFormat; ++i )
+		for( int i = 0; i < NUM_RagePixelFormat; ++i )
 		{
-			RageDisplay::PixelFormatDesc &pf = PIXEL_FORMAT_DESC[i];
+			RageDisplay::RagePixelFormatDesc &pf = PIXEL_FORMAT_DESC[i];
 
 			/* OpenGL and RageSurface handle byte formats differently; we need
 			 * to flip non-paletted masks to make them line up. */
@@ -453,7 +453,7 @@ RageDisplay_GLES2::GetDisplayResolutions( DisplayResolutions &out ) const
 RageSurface*
 RageDisplay_GLES2::CreateScreenshot()
 {
-	const PixelFormatDesc &desc = PIXEL_FORMAT_DESC[PixelFormat_RGB8];
+	const RagePixelFormatDesc &desc = PIXEL_FORMAT_DESC[RagePixelFormat_RGB8];
 	RageSurface *image = CreateSurface(
 		640, 480, desc.bpp,
 		desc.masks[0], desc.masks[1], desc.masks[2], desc.masks[3] );
@@ -463,10 +463,10 @@ RageDisplay_GLES2::CreateScreenshot()
 	return image;
 }
 
-const RageDisplay::PixelFormatDesc*
-RageDisplay_GLES2::GetPixelFormatDesc(PixelFormat pf) const
+const RageDisplay::RagePixelFormatDesc*
+RageDisplay_GLES2::GetPixelFormatDesc(RagePixelFormat pf) const
 {
-	ASSERT( pf >= 0 && pf < NUM_PixelFormat );
+	ASSERT( pf >= 0 && pf < NUM_RagePixelFormat );
 	return &PIXEL_FORMAT_DESC[pf];
 }
 
@@ -530,7 +530,7 @@ RageDisplay_GLES2::SetBlendMode( BlendMode mode )
 }
 
 bool
-RageDisplay_GLES2::SupportsTextureFormat( PixelFormat pixfmt, bool realtime )
+RageDisplay_GLES2::SupportsTextureFormat( RagePixelFormat pixfmt, bool realtime )
 {
 	/* If we support a pixfmt for texture formats but not for surface formats, then
 	 * we'll have to convert the texture to a supported surface format before uploading.
@@ -561,7 +561,7 @@ RageDisplay_GLES2::SupportsPerVertexMatrixScale()
 
 unsigned
 RageDisplay_GLES2::CreateTexture(
-	PixelFormat pixfmt,
+	RagePixelFormat pixfmt,
 	RageSurface* img,
 	bool bGenerateMipMaps
 	)
@@ -968,7 +968,7 @@ RageDisplay_GLES2::DrawSymmetricQuadStripInternal( const RageSpriteVertex v[], i
 }
 
 bool
-RageDisplay_GLES2::SupportsSurfaceFormat( PixelFormat pixfmt )
+RageDisplay_GLES2::SupportsSurfaceFormat( RagePixelFormat pixfmt )
 {
 	switch (g_GLPixFmtInfo[pixfmt].type)
 	{

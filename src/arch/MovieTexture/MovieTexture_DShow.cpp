@@ -451,32 +451,32 @@ void MovieTexture_DShow::CreateTexture()
 	if( m_uTexHandle )
 		return;
 
-	PixelFormat pixfmt;
+	RagePixelFormat pixfmt;
 	int depth = TEXTUREMAN->GetPrefs().m_iMovieColorDepth;
 	switch( depth )
 	{
 	default:
 		FAIL_M(ssprintf("Unsupported movie color depth: %i", depth));
 	case 16:
-		if( DISPLAY->SupportsTextureFormat(PixelFormat_RGB5) )
-			pixfmt = PixelFormat_RGB5;
+		if( DISPLAY->SupportsTextureFormat(RagePixelFormat_RGB5) )
+			pixfmt = RagePixelFormat_RGB5;
 		else
-			pixfmt = PixelFormat_RGBA4;	// everything supports RGBA4
+			pixfmt = RagePixelFormat_RGBA4;	// everything supports RGBA4
 		break;
 	case 32:
-		if( DISPLAY->SupportsTextureFormat(PixelFormat_RGB8) )
-			pixfmt = PixelFormat_RGB8;
-		else if( DISPLAY->SupportsTextureFormat(PixelFormat_RGBA8) )
-			pixfmt = PixelFormat_RGBA8;
-		else if( DISPLAY->SupportsTextureFormat(PixelFormat_RGB5) )
-			pixfmt = PixelFormat_RGB5;
+		if( DISPLAY->SupportsTextureFormat(RagePixelFormat_RGB8) )
+			pixfmt = RagePixelFormat_RGB8;
+		else if( DISPLAY->SupportsTextureFormat(RagePixelFormat_RGBA8) )
+			pixfmt = RagePixelFormat_RGBA8;
+		else if( DISPLAY->SupportsTextureFormat(RagePixelFormat_RGB5) )
+			pixfmt = RagePixelFormat_RGB5;
 		else
-			pixfmt = PixelFormat_RGBA4;	// everything supports RGBA4
+			pixfmt = RagePixelFormat_RGBA4;	// everything supports RGBA4
 		break;
 	}
 
 
-	const RageDisplay::PixelFormatDesc *pfd = DISPLAY->GetPixelFormatDesc(pixfmt);
+	const RageDisplay::RagePixelFormatDesc *pfd = DISPLAY->GetPixelFormatDesc(pixfmt);
 	RageSurface *img = CreateSurface( m_iTextureWidth, m_iTextureHeight,
 		pfd->bpp, pfd->masks[0], pfd->masks[1], pfd->masks[2], pfd->masks[3] );
 
