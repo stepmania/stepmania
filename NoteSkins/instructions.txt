@@ -12,18 +12,19 @@ MyDance                 | Whichever gametype folder (see Step 2)
 
 Valid gametypes:
 
-name    | description
+Name    | Description
 --------|------------
-beat    | beatmania (5 and 7 keys)
-dance   | dance dance revolution (4 panels)
-ds3ddx  | ds3d DX
-ez2     | Ez2Dancer
-karaoke | karaoke (unimplemented)
-kb7     | keyboard 7 (<del>7</del> 6 keys now?)
-lights  | lights (unused)
-maniax  | dance maniax (4 receptors)
-techno  | techno motion (4, 5, and 8 panels)
-popn    | pop'n music (5 and 9 keys)
-pump    | pump it up (5 panels)
+dance   | Dance Dance Revolution + Solo (3, 4, 6 and 8(Double) Panels)
+pump    | Pump It Up (5, 3(Double), 10(Double))
+kb7     | DJMax 7 Keys/O2Jam (6 Keys + 1 Center)
+ez2     | Ez2Dancer (3 Panels with 2 Hands, 3 Panels with 4 Hands and 6 Panels with 4 Hands(Double))
+para    | Para Para Paradise (5 Panels)
+ds3ddx  | ds3d DX (4 Panels with 4 Hands)
+beat    | Beatmania (5,7 and 14(double) Keys + Scratch, "10(double) Keys Gameplay Broken")
+maniax  | Dance Maniax (4 and 8(Double) Hand Receptors)
+techno  | Techno otion (4, 5, 8, 8(Double), 10(Double) and 16(Double) Panels)
+popn    | Pop'n Music (5 and 9 Keys)
+lights  | Lights (For Arcade Cab Lights, Unused)
+karaoke | Karaoke (Unimplemented)
 
 3) extract based on steps 1 and 2.
