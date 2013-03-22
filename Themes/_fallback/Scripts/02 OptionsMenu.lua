@@ -95,6 +95,50 @@ function OptionsRandomJukebox()
 	return t
 end
 
+function OptionsWeight()
+	local Choices = {}
+	local function IdxToWeight(i)
+		local lbs = 45+5*i
+		return lbs, lbs/2.204
+	end
+	for i=1,90 do
+		table.insert(Choices,string.format('%d lbs/%d kg',IdxToWeight(i)))
+	end
+	local t =
+	{
+		Name = "OptionsWeight",
+		LayoutType = "ShowAllInRow",
+		SelectType = "SelectOne",
+		Choices = Choices,
+		OneChoiceForAllPlayers = false,
+		LoadSelections = function(self,ops,pn)
+			local savedWeightIdx = math.floor((PROFILEMAN:GetProfile(pn):GetWeightPounds()-45)/5)
+			if self.Choices[savedWeightIdx] then
+				ops[savedWeightIdx] = true
+			elseif savedWeightIdx>#self.Choices then
+				ops[#self.Choices] = true
+			--if their weight is 0, they probably just haven't picked a weight.
+			--default to 130 pounds.
+			elseif savedWeightIdx == -9 then
+				ops[17] = true
+			else
+				ops[1]=true
+			end
+		end,
+		SaveSelections = function(self,ops,pn)
+			for k, v in ipairs(ops)
+				if v == true then
+					PROFILEMAN:GetProfile(pn):SetWeightPounds(IdxToWeight(i))
+					break
+				end
+			end
+		end,
+	}
+	setmetatable(t, t)
+	return t
+end
+			
+
 -- (c) 2005 Glenn Maynard
 -- All rights reserved.
 -- 
