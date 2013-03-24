@@ -8,6 +8,11 @@ ________________________________________________________________________________
 StepMania 5.0 beta 2 | 20130???
 --------------------------------------------------------------------------------
 
+2013/03/24
+----------
+* [MusicWheel] Add the ChangeSort method to the Lua interface to allow the
+  theme to switch sorting methods.
+
 2013/02/04
 ----------
 * [Player] Add a "Column" parameter to the StepMessage to allow the theme or
