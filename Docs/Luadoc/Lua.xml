@@ -116,6 +116,7 @@
 		<Function name='OptionRowScreenFilter'/>
 		<Function name='OptionsRandomJukebox'/>
 		<Function name='OptionsRowTest'/>
+		<Function name='OptionsWeight'/>
 		<Function name='PeakComboAwardToLocalizedString'/>
 		<Function name='PlayModeToLocalizedString'/>
 		<Function name='PlayerColor'/>
@@ -584,10 +585,6 @@
 			<Function name='Load'/>
 			<Function name='Set'/>
 		</Class>
-		<Class base='ActorFrame' name='ControllerStateDisplay'>
-			<Function name='LoadGameController'/>
-			<Function name='LoadMultiPlayer'/>
-		</Class>
 		<Class name='Course'>
 			<Function name='AllSongsAreFixed'/>
 			<Function name='GetAllTrails'/>
@@ -899,6 +896,12 @@
 			<Function name='position'/>
 			<Function name='rate'/>
 		</Class>
+		<Class base='WheelBase' name='MusicWheel'>
+			<Function name='ChangeSort'/>
+			<Function name='IsRouletting'/>
+			<Function name='SelectCourse'/>
+			<Function name='SelectSong'/>
+		</Class>
 		<Class name='NoteSkinManager'>
 			<Function name='DoesNoteSkinExist'/>
 			<Function name='GetMetricA'/>
@@ -1135,6 +1138,8 @@
 			<Function name='GetTapNoteScores'/>
 			<Function name='IsDisqualified'/>
 			<Function name='MaxCombo'/>
+			<Function name='SetCurMaxScore'/>
+			<Function name='SetScore'/>
 		</Class>
 		<Class name='PlayerState'>
 			<Function name='GetCurrentPlayerOptions'/>
@@ -1402,6 +1407,7 @@
 			<Function name='GetSampleStart'/>
 			<Function name='GetSongDir'/>
 			<Function name='GetSongFilePath'/>
+			<Function name='GetStageCost'/>
 			<Function name='GetStepsByStepsType'/>
 			<Function name='GetStepsSeconds'/>
 			<Function name='GetTimingData'/>
@@ -1706,6 +1712,7 @@
 			<Function name='GetWheelItem'/>
 			<Function name='IsLocked'/>
 			<Function name='IsSettled'/>
+			<Function name='Move'/>
 			<Function name='SetOpenSection'/>
 		</Class>
 		<Class base='ActorFrame' name='WheelItemBase'>
@@ -2355,6 +2362,6 @@
 		<Constant name='right' value='&apos;HorizAlign_Right&apos;'/>
 		<Constant name='top' value='&apos;VertAlign_Top&apos;'/>
 	</Constants>
-	<Version>StepMania v5.0 alpha 3</Version>
-	<Date>2012-11-22</Date>
+	<Version>StepMania v5.0 beta 1a</Version>
+	<Date>2013-03-24</Date>
 </Lua>
