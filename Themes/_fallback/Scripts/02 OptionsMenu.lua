@@ -126,7 +126,7 @@ function OptionsWeight()
 			end
 		end,
 		SaveSelections = function(self,ops,pn)
-			for k, v in ipairs(ops)
+			for k, v in ipairs(ops) do
 				if v == true then
 					PROFILEMAN:GetProfile(pn):SetWeightPounds(IdxToWeight(i))
 					break
