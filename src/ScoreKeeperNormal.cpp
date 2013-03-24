@@ -27,8 +27,7 @@ void PercentScoreWeightInit( size_t /*ScoreEvent*/ i, RString &sNameOut, int &de
 	sNameOut = "PercentScoreWeight" + ScoreEventToString( (ScoreEvent)i );
 	switch( i )
 	{
-	default:
-		FAIL_M(ssprintf("Invalid ScoreEvent: %i", i));
+	default:		ASSERT(0);
 	case SE_W1:		defaultValueOut = 3;	break;
 	case SE_W2:		defaultValueOut = 2;	break;
 	case SE_W3:		defaultValueOut = 1;	break;
@@ -48,8 +47,7 @@ void GradeWeightInit( size_t /*ScoreEvent*/ i, RString &sNameOut, int &defaultVa
 	sNameOut = "GradeWeight" + ScoreEventToString( (ScoreEvent)i );
 	switch( i )
 	{
-	default:
-		FAIL_M(ssprintf("Invalid ScoreEvent: %i", i));
+	default:		ASSERT(0);
 	case SE_W1:		defaultValueOut = 2;	break;
 	case SE_W2:		defaultValueOut = 2;	break;
 	case SE_W3:		defaultValueOut = 1;	break;
@@ -103,9 +101,9 @@ void ScoreKeeperNormal::Load(
 	for( unsigned i=0; i<apSteps.size(); i++ )
 	{
 		Song* pSong = apSongs[i];
-		ASSERT( pSong != NULL );
+		ASSERT( pSong );
 		Steps* pSteps = apSteps[i];
-		ASSERT( pSteps != NULL );
+		ASSERT( pSteps );
 		const AttackArray &aa = asModifiers[i];
 		NoteData ndTemp;
 		pSteps->GetNoteData( ndTemp );
@@ -122,7 +120,7 @@ void ScoreKeeperNormal::Load(
 		 * forced and not chosen by the user. */
 		NoteDataUtil::TransformNoteData( nd, aa, pSteps->m_StepsType, pSong );
 		RadarValues rvPre;
-		GAMESTATE->SetProcessedTimingData(pSteps->GetTimingData());
+		GAMESTATE->SetProcessedTimingData(&pSteps->m_Timing);
 		NoteDataUtil::CalculateRadarValues( nd, pSong->m_fMusicLengthSeconds, rvPre );
 
 		/* Apply user transforms to find out how the notes will really look.
@@ -163,26 +161,119 @@ void ScoreKeeperNormal::Load(
 	m_iRoundTo = 1;
 }
 
-void ScoreKeeperNormal::OnNextSong( int, const Steps* pSteps, const NoteData* )
+void ScoreKeeperNormal::OnNextSong( int iSongInCourseIndex, const Steps* pSteps, const NoteData* pNoteData )
 {
+/*
+  Note on NONSTOP Mode scoring
 
+  Nonstop mode requires the player to play 4 songs in succession, with the total maximum possible score for
+  the four song set being 100,000,000. This comes from the sum of the four stages' maximum possible scores,
+  which, regardless of song or difficulty is:
+
+  10,000,000 for the first song
+  20,000,000 for the second song
+  30,000,000 for the third song
+  40,000,000 for the fourth song
+
+  We extend this to work with nonstop courses of any length.
+
+  We also keep track of this scoring type in endless, with 100mil per iteration
+  of all songs, though this score isn't actually seen anywhere right now.
+*/
+	// Calculate the score multiplier
+	m_iMaxPossiblePoints = 0;
+	if( GAMESTATE->IsCourseMode() )
+	{
+		const int numSongsInCourse = m_apSteps.size();
+		ASSERT( numSongsInCourse != 0 );
+
+		const int iIndex = iSongInCourseIndex % numSongsInCourse;
+		m_bIsLastSongInCourse = (iIndex+1 == numSongsInCourse);
+
+		if( numSongsInCourse < 10 )
+		{
+			const int courseMult = (numSongsInCourse * (numSongsInCourse + 1)) / 2;
+			ASSERT(courseMult >= 0);
+
+			m_iMaxPossiblePoints = (100000000 * (iIndex+1)) / courseMult;
+		}
+		else
+		{
+			/* When we have lots of songs, the scale above biases too much: in a
+			 * course with 50 songs, the first song is worth 80k, the last 4mil, which
+			 * is too much of a difference.
+			 *
+			 * With this, each song in a 50-song course will be worth 2mil. */
+			m_iMaxPossiblePoints = 100000000 / numSongsInCourse;
+		}
+	}
+	else
+	{
+		// long ver and marathon ver songs have higher max possible scores
+		int iLengthMultiplier = GameState::GetNumStagesMultiplierForSong( GAMESTATE->m_pCurSong );
+		
+		/* This is no longer just simple additive/subtractive scoring,
+		 * but start with capping the score at the size of the score counter. */
+		m_iMaxPossiblePoints = 10 * 10000000 * iLengthMultiplier;
+	}
+	ASSERT( m_iMaxPossiblePoints >= 0 );
+	m_iMaxScoreSoFar += m_iMaxPossiblePoints;
+
+	GAMESTATE->SetProcessedTimingData(const_cast<TimingData *>(&pSteps->m_Timing));
+	
+	m_iNumTapsAndHolds = pNoteData->GetNumRowsWithTapOrHoldHead() + pNoteData->GetNumHoldNotes()
+		+ pNoteData->GetNumRolls();
+
+	m_iPointBonus = m_iMaxPossiblePoints;
+	m_pPlayerStageStats->m_iMaxScore = m_iMaxScoreSoFar;
+
+	/* MercifulBeginner shouldn't clamp weights in course mode, even if a beginner
+	 * song is in a course, since that makes PlayerStageStats::GetGrade hard. */
 	m_bIsBeginner = pSteps->GetDifficulty() == Difficulty_Beginner && !GAMESTATE->IsCourseMode();
+
+	ASSERT( m_iPointBonus >= 0 );
 
 	m_iTapNotesHit = 0;
 	
 	GAMESTATE->SetProcessedTimingData(NULL);
 }
 
+static int GetScore(int p, int Z, int S, int n)
+{
+	/* There's a problem with the scoring system described below. Z/S is truncated
+	 * to an int. However, in some cases we can end up with very small base scores.
+	 * Each song in a 50-song nonstop course will be worth 2mil, which is a base of
+	 * 200k; Z/S will end up being zero.
+	 *
+	 * If we rearrange the equation to (p*Z*n) / S, this problem goes away.
+	 * (To do that, we need to either use 64-bit ints or rearrange it a little
+	 * more and use floats, since p*Z*n won't fit a 32-bit int.)  However, this
+	 * changes the scoring rules slightly.
+	 */
+
+#if 0
+	// This is the actual method described below.
+	return p * (Z / S) * n;
+#elif 1
+	// This doesn't round down Z/S.
+	return int(int64_t(p) * n * Z / S);
+#else
+	// This also doesn't round down Z/S. Use this if you don't have 64-bit ints.
+	return int(p * n * (float(Z) / S));
+#endif
+
+}
+
 void ScoreKeeperNormal::AddTapScore( TapNoteScore tns )
 {
-	if(tns==TNS_HitMine || tns==TNS_AvoidMine || tns==TNS_CheckpointHit || tns==TNS_CheckpointMiss)
-	AddScoreInternal( tns );
 }
 
 void ScoreKeeperNormal::AddHoldScore( HoldNoteScore hns )
 {
 	if( hns == HNS_Held )
 		AddScoreInternal( TNS_W1 );
+	else if ( hns == HNS_LetGo )
+		AddScoreInternal( TNS_W4 ); // required for subtractive score display to work properly.
 }
 
 void ScoreKeeperNormal::AddTapRowScore( TapNoteScore score, const NoteData &nd, int iRow )
@@ -209,27 +300,71 @@ void ScoreKeeperNormal::AddScoreInternal( TapNoteScore score )
 	int &iScore = m_pPlayerStageStats->m_iScore;
 	int &iCurMaxScore = m_pPlayerStageStats->m_iCurMaxScore;
 
-	int p = 0;
+	// See Aaron In Japan for more details about the scoring formulas.
+	// Note: this assumes no custom scoring systems are in use.
+	int p = 0;	// score multiplier
 
 	switch( score )
 	{
-	case TNS_W1:	p = 5;	break;
-	case TNS_W2:	p = 4;	break;
-	case TNS_W3:	p = 3;	break;
-	case TNS_W4:	p = 2;	break;
-	case TNS_CheckpointHit:
-	case TNS_W5:	p = 1;	break;
-	case TNS_HitMine:	p = -1;	break;
+	case TNS_W1:	p = 10;	break;
+	case TNS_W2:	p = GAMESTATE->ShowW1()? 9:10; break;
+	case TNS_W3:	p = 5;	break;
 	default:		p = 0;	break;
 	}
 
-	iScore += p;
-	iCurMaxScore += 5;
+	m_iTapNotesHit++;
 
-	if( iScore < 0 )
-		iScore = 0;
+	const int N = m_iNumTapsAndHolds;
+	const int sum = (N * (N + 1)) / 2;
+	const int Z = m_iMaxPossiblePoints/10;
 
-	ASSERT_M( iScore >= 0, "iScore < 0" );
+	// Don't use a multiplier if the player has failed
+	if( m_pPlayerStageStats->m_bFailed )
+	{
+		iScore += p;
+		// make score evenly divisible by 5
+		// only update this on the next step, to make it less *obvious*
+		/* Round to the nearest 5, instead of always rounding down, so a base score
+		* of 9 will round to 10, not 5. */
+		if (p > 0)
+			iScore = ((iScore+2) / 5) * 5;
+	}
+	else
+	{
+		iScore += GetScore(p, Z, sum, m_iTapNotesHit);
+		const int &iCurrentCombo = m_pPlayerStageStats->m_iCurCombo;
+		iScore += m_ComboBonusFactor[score] * iCurrentCombo;
+	}
+
+	// Subtract the maximum this step could have been worth from the bonus.
+	m_iPointBonus -= GetScore(10, Z, sum, m_iTapNotesHit);
+	// And add the maximum this step could have been worth to the max score up to now.
+	iCurMaxScore += GetScore(10, Z, sum, m_iTapNotesHit);
+
+	if ( m_iTapNotesHit == m_iNumTapsAndHolds && score >= TNS_W2 )
+	{
+		if( !m_pPlayerStageStats->m_bFailed )
+			iScore += m_iPointBonus;
+		if ( m_bIsLastSongInCourse )
+		{
+			iScore += 100000000 - m_iMaxScoreSoFar;
+			iCurMaxScore += 100000000 - m_iMaxScoreSoFar;
+
+			/* If we're in Endless mode, we'll come around here again, so reset
+			* the bonus counter. */
+			m_iMaxScoreSoFar = 0;
+		}
+		iCurMaxScore += m_iPointBonus;
+	}
+
+	ASSERT_M( iScore >= 0, "iScore < 0 before re-rounding" );
+
+	// Undo rounding from the last tap, and re-round.
+	iScore += m_iScoreRemainder;
+	m_iScoreRemainder = (iScore % m_iRoundTo);
+	iScore = iScore - m_iScoreRemainder;
+
+	ASSERT_M( iScore >= 0, "iScore < 0 after re-rounding" );
 
 	// LOG->Trace( "score: %i", iScore );
 }
@@ -283,7 +418,7 @@ void ScoreKeeperNormal::HandleTapNoteScoreInternal( TapNoteScore tns, TapNoteSco
 		m_pPlayerStageStats->m_iActualDancePoints += TapNoteScoreToDancePoints( tns );
 
 	// update judged row totals. Respect Combo segments here.
-	TimingData &td = *GAMESTATE->m_pCurSteps[m_pPlayerState->m_PlayerNumber]->GetTimingData();
+	TimingData &td = GAMESTATE->m_pCurSteps[m_pPlayerState->m_PlayerNumber]->m_Timing;
 	ComboSegment *cs = td.GetComboSegmentAtRow(row);
 	if (tns == TNS_CheckpointHit || tns >= m_MinScoreToContinueCombo)
 	{
@@ -316,7 +451,7 @@ void ScoreKeeperNormal::HandleComboInternal( int iNumHitContinueCombo, int iNumH
 	{
 		m_pPlayerStageStats->m_iCurMissCombo = 0;
 	}
-	TimingData &td = *GAMESTATE->m_pCurSteps[m_pPlayerState->m_PlayerNumber]->GetTimingData();
+	TimingData &td = GAMESTATE->m_pCurSteps[m_pPlayerState->m_PlayerNumber]->m_Timing;
 	if( iNumBreakCombo == 0 )
 	{
 		int multiplier = ( iRow == -1 ? 1 : td.GetComboSegmentAtRow( iRow )->GetCombo() );
@@ -336,7 +471,7 @@ void ScoreKeeperNormal::HandleRowComboInternal( TapNoteScore tns, int iNumTapsIn
 	{
 		iNumTapsInRow = min( iNumTapsInRow, 1);
 	}
-	TimingData &td = *GAMESTATE->m_pCurSteps[m_pPlayerState->m_PlayerNumber]->GetTimingData();
+	TimingData &td = GAMESTATE->m_pCurSteps[m_pPlayerState->m_PlayerNumber]->m_Timing;
 	if ( tns >= m_MinScoreToContinueCombo )
 	{
 		m_pPlayerStageStats->m_iCurMissCombo = 0;
