@@ -1657,6 +1657,9 @@ public:
 	}
 };
 
+LUA_REGISTER_DERIVED_CLASS( MusicWheel, WheelBase )
+// lua end
+
 /*
  * (c) 2001-2004 Chris Danford, Chris Gomez, Glenn Maynard
  * All rights reserved.

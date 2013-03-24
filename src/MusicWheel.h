@@ -50,6 +50,9 @@ public:
 	RString JumpToPrevGroup();
 	const MusicWheelItemData *GetCurWheelItemData( int i ) { return (const MusicWheelItemData *) m_CurWheelItemData[i]; }
 
+	// Lua
+	void PushSelf( lua_State *L );
+
 protected:
 	MusicWheelItem *MakeItem();
 
