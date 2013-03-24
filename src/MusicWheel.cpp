@@ -1626,6 +1626,16 @@ void MusicWheel::FinishChangingSorts()
 class LunaMusicWheel: public Luna<MusicWheel>
 {
 public:
+	static int ChangeSort( T* p, lua_State *L )
+	{
+		if( lua_isnil(L,1) ) { lua_pushboolean( L, false ); }
+		else
+		{
+			SortOrder so = Enum::Check<SortOrder>(L, 1);
+			lua_pushboolean( L, p->ChangeSort( so ) );
+		}
+		return 1;
+	}
 	static int IsRouletting( T* p, lua_State *L ){ lua_pushboolean( L, p->IsRouletting() ); return 1; }
 	static int SelectSong( T* p, lua_State *L )
 	{
@@ -1651,6 +1661,7 @@ public:
 
 	LunaMusicWheel()
 	{
+		ADD_METHOD( ChangeSort );
 		ADD_METHOD( IsRouletting );
 		ADD_METHOD( SelectSong );
 		ADD_METHOD( SelectCourse );
