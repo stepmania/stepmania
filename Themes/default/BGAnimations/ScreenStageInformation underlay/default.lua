@@ -5,7 +5,7 @@ end;
 
 local sStage = ""
 
-if not GAMESTATE:IsCourseMode() then
+if not (GAMESTATE:IsCourseMode() or GAMESTATE:IsExtraStage() or GAMESTATE:IsExtraStage2()) then
 	sStage = GAMESTATE:GetCurrentStage();
 	local tRemap = {
 		Stage_Event		= 0,
