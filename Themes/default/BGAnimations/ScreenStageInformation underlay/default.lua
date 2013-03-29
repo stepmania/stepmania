@@ -1,12 +1,13 @@
 local playMode = GAMESTATE:GetPlayMode()
-if playMode ~= 'PlayMode_Regular' and playMode ~= 'PlayMode_Rave' and playMode ~= 'PlayMode_Battle' then
-	curStage = playMode;
-end;
 
 local sStage = ""
+sStage = GAMESTATE:GetCurrentStage()
+
+if playMode ~= 'PlayMode_Regular' and playMode ~= 'PlayMode_Rave' and playMode ~= 'PlayMode_Battle' then
+  sStage = playMode;
+end;
 
 if not (GAMESTATE:IsCourseMode() or GAMESTATE:IsExtraStage() or GAMESTATE:IsExtraStage2()) then
-	sStage = GAMESTATE:GetCurrentStage();
 	local tRemap = {
 		Stage_Event		= 0,
 		Stage_1st		= 1,
