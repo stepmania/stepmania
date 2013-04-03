@@ -808,8 +808,6 @@ bool RageDisplay_Legacy::IsZWriteEnabled() const
 
 */
 
-
-
 void
 RageDisplay_GLES2::ClearZBuffer()
 {
@@ -961,6 +959,7 @@ RageDisplay_GLES2::DrawLineStripInternal( const RageSpriteVertex v[], int iNumVe
 	// TODO
 }
 
+// Is this even used?
 void
 RageDisplay_GLES2::DrawSymmetricQuadStripInternal( const RageSpriteVertex v[], int iNumVerts )
 {
