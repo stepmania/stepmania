@@ -33,7 +33,7 @@ local function Update(self)
 	end;
 	
 	if height >= 60 and width >= 80 then
-		if height+20 >= width then
+		if height*(80/60) >= width then
 		cdtitle:zoom(60/height);
 		else
 		cdtitle:zoom(80/width);
