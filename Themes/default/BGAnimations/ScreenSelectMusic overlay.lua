@@ -1,12 +1,18 @@
---I'ma call it the fuck you people with fucking huge cdtitles script, With Love - Jousway
 local t = Def.ActorFrame {
-
+	OnCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_BOTTOM-96;zoomy,0;sleep,0.5;decelerate,0.25;zoomy,1);
+	OffCommand=cmd(bouncebegin,0.15;zoomx,0);
+	LoadActor(THEME:GetPathG("CDTitle", "Con")) .. {
+		InitCommand=cmd(diffuse,Color("Orange"));
+	};
+	LoadFont("Common Normal") .. {
+		Text="Author";
+		InitCommand=cmd(zoom,0.7;y,-36,diffuse,0,0,0,1;shadowlength,1); -- strokecolor,Color("Black")
+	};
 	Def.Sprite {
 		Name="CDTitle";
-		InitCommand=cmd(x,SCREEN_CENTER_X-43;y,SCREEN_TOP+210);
-		OnCommand=cmd(draworder,106;shadowlength,1;zoom,0.75;diffusealpha,1;zoom,0;bounceend,0.35;zoom,0.75;spin;effectmagnitude,0,180,0);
-	};
-	
+		InitCommand=cmd(y,19);
+		--OnCommand=cmd(draworder,106;shadowlength,1;zoom,0.75;diffusealpha,1;zoom,0;bounceend,0.35;zoom,0.75;spin;effectmagnitude,0,180,0);
+	};	
 };
 
 local function Update(self)
@@ -26,16 +32,16 @@ local function Update(self)
 		cdtitle:visible(false);
 	end;
 	
-	if height >= 70 and width >= 70 then
-		if height >= width then
-		cdtitle:zoom(70/height);
+	if height >= 60 and width >= 80 then
+		if height+20 >= width then
+		cdtitle:zoom(60/height);
 		else
-		cdtitle:zoom(70/width);
+		cdtitle:zoom(80/width);
 		end;
-	elseif height >= 70 then
-		cdtitle:zoom(70/height);
-	elseif width >= 70 then
-		cdtitle:zoom(70/width);
+	elseif height >= 60 then
+		cdtitle:zoom(60/height);
+	elseif width >= 80 then
+		cdtitle:zoom(80/width);
 	else 
 		cdtitle:zoom(1);
 	end;
