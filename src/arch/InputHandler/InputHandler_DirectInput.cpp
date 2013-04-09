@@ -27,9 +27,9 @@ static BOOL CALLBACK EnumDevicesCallback( const DIDEVICEINSTANCE *pdidInstance, 
 
 	switch( pdidInstance->dwDevType & 0xFF )
 	{
-	case DIDEVTYPE_KEYBOARD: device.type = device.KEYBOARD; break;
-	case DIDEVTYPE_JOYSTICK: device.type = device.JOYSTICK; break;
-	case DIDEVTYPE_MOUSE: device.type = device.MOUSE; break;
+	case DI8DEVTYPE_KEYBOARD: device.type = device.KEYBOARD; break;
+	case DI8DEVTYPE_JOYSTICK: device.type = device.JOYSTICK; break;
+	case DI8DEVTYPE_MOUSE: device.type = device.MOUSE; break;
 	default: return DIENUM_CONTINUE;
 	}
 
@@ -86,7 +86,7 @@ static int GetNumHidDevices()
 static int GetNumJoysticksSlow()
 {
 	int iCount = 0;
-	HRESULT hr = g_dinput->EnumDevices( DIDEVTYPE_JOYSTICK, CountDevicesCallback, &iCount, DIEDFL_ATTACHEDONLY );
+	HRESULT hr = g_dinput->EnumDevices( DI8DEVTYPE_JOYSTICK, CountDevicesCallback, &iCount, DIEDFL_ATTACHEDONLY );
 	if( hr != DI_OK )
 	{
 		LOG->Warn( hr_ssprintf(hr, "g_dinput->EnumDevices") );
@@ -104,23 +104,23 @@ InputHandler_DInput::InputHandler_DInput()
 	g_iNumJoysticks = 0;
 
 	AppInstance inst;
-	HRESULT hr = DirectInputCreate(inst.Get(), DIRECTINPUT_VERSION, &g_dinput, NULL);
+	HRESULT hr = DirectInput8Create(inst.Get(), DIRECTINPUT_VERSION, IID_IDirectInput8, (LPVOID *) &g_dinput, NULL);
 	if( hr != DI_OK )
 		RageException::Throw( hr_ssprintf(hr, "InputHandler_DInput: DirectInputCreate") );
 
 	LOG->Trace( "InputHandler_DInput: IDirectInput::EnumDevices(DIDEVTYPE_KEYBOARD)" );
-	hr = g_dinput->EnumDevices( DIDEVTYPE_KEYBOARD, EnumDevicesCallback, NULL, DIEDFL_ATTACHEDONLY );
+	hr = g_dinput->EnumDevices( DI8DEVTYPE_KEYBOARD, EnumDevicesCallback, NULL, DIEDFL_ATTACHEDONLY );
 	if( hr != DI_OK )
 		RageException::Throw( hr_ssprintf(hr, "InputHandler_DInput: IDirectInput::EnumDevices") );
 
 	LOG->Trace( "InputHandler_DInput: IDirectInput::EnumDevices(DIDEVTYPE_JOYSTICK)" );
-	hr = g_dinput->EnumDevices( DIDEVTYPE_JOYSTICK, EnumDevicesCallback, NULL, DIEDFL_ATTACHEDONLY );
+	hr = g_dinput->EnumDevices( DI8DEVTYPE_JOYSTICK, EnumDevicesCallback, NULL, DIEDFL_ATTACHEDONLY );
 	if( hr != DI_OK )
 		RageException::Throw( hr_ssprintf(hr, "InputHandler_DInput: IDirectInput::EnumDevices") );
 
 	// mouse
 	LOG->Trace( "InputHandler_DInput: IDirectInput::EnumDevices(DIDEVTYPE_MOUSE)" );
-	hr = g_dinput->EnumDevices( DIDEVTYPE_MOUSE, EnumDevicesCallback, NULL, DIEDFL_ATTACHEDONLY );
+	hr = g_dinput->EnumDevices( DI8DEVTYPE_MOUSE, EnumDevicesCallback, NULL, DIEDFL_ATTACHEDONLY );
 	if( hr != DI_OK )
 		RageException::Throw( hr_ssprintf(hr, "InputHandler_DInput: IDirectInput::EnumDevices") );
 
@@ -244,7 +244,7 @@ static int TranslatePOV(DWORD value)
 	return HAT_VALS[value];
 }
 
-static HRESULT GetDeviceState( LPDIRECTINPUTDEVICE2 dev, int size, void *ptr )
+static HRESULT GetDeviceState( LPDIRECTINPUTDEVICE8 dev, int size, void *ptr )
 {
 	HRESULT hr = dev->GetDeviceState( size, ptr );
 	if( hr == DIERR_INPUTLOST || hr == DIERR_NOTACQUIRED )

@@ -3,9 +3,9 @@
 
 #include "InputFilter.h"
 
-#define DIRECTINPUT_VERSION 0x0500
+#define DIRECTINPUT_VERSION 0x0800
 #include <dinput.h>
-extern LPDIRECTINPUT g_dinput;
+extern LPDIRECTINPUT8 g_dinput;
 
 #define INPUT_QSIZE	32
 
@@ -23,7 +23,7 @@ typedef struct input_t
 struct DIDevice
 {
 	DIDEVICEINSTANCE JoystickInst;
-	LPDIRECTINPUTDEVICE2 Device;
+	LPDIRECTINPUTDEVICE8 Device;
 	RString m_sName;
 
 	enum { KEYBOARD, JOYSTICK, MOUSE } type;

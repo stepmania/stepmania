@@ -3,9 +3,9 @@
 #include "RageUtil.h"
 
 #include <windows.h>
-#include <dxerr8.h>
+#include <dxerr.h>
 #if defined(_MSC_VER)
-#  pragma comment(lib, "dxerr8.lib")
+#  pragma comment(lib, "dxerr.lib")
 #endif
 
 RString hr_ssprintf( int hr, const char *fmt, ... )
@@ -15,7 +15,7 @@ RString hr_ssprintf( int hr, const char *fmt, ... )
 	RString s = vssprintf( fmt, va );
 	va_end(va);
 
-	const char *szError = DXGetErrorString8( hr );
+	const char *szError = DXGetErrorString( hr );
 	return s + ssprintf( " (%s)", szError );
 }
 

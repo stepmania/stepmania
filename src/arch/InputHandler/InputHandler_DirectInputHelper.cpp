@@ -7,12 +7,12 @@
 #include "archutils/Win32/GraphicsWindow.h"
 
 #if defined(_MSC_VER)
-#pragma comment(lib, "dinput.lib")
+#pragma comment(lib, "dinput8.lib")
 #if defined(_WINDOWS)
 #pragma comment(lib, "dxguid.lib")
 #endif
 #endif
-LPDIRECTINPUT g_dinput = NULL;
+LPDIRECTINPUT8 g_dinput = NULL;
 
 static int ConvertScancodeToKey( int scancode );
 static BOOL CALLBACK DIJoystick_EnumDevObjectsProc(LPCDIDEVICEOBJECTINSTANCE dev, LPVOID data);
@@ -34,7 +34,7 @@ bool DIDevice::Open()
 	LOG->Trace( "Opening device '%s'", m_sName.c_str() );
 	buffered = true;
 
-	LPDIRECTINPUTDEVICE tmpdevice;
+	LPDIRECTINPUTDEVICE8 tmpdevice;
 
 	// load joystick
 	HRESULT hr = g_dinput->CreateDevice( JoystickInst.guidInstance, &tmpdevice, NULL );
@@ -43,7 +43,7 @@ bool DIDevice::Open()
 		LOG->Info( hr_ssprintf(hr, "OpenDevice: IDirectInput_CreateDevice") );
 		return false;
 	}
-	hr = tmpdevice->QueryInterface( IID_IDirectInputDevice2, (LPVOID *) &Device );
+	hr = tmpdevice->QueryInterface( IID_IDirectInputDevice8, (LPVOID *) &Device );
 	tmpdevice->Release();
 	if ( hr != DI_OK )
 	{

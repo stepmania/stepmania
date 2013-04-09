@@ -13,18 +13,18 @@
 #include "DisplayResolutions.h"
 #include "LocalizedString.h"
 
-#include <d3dx8core.h>
-#include <d3d8.h>
-#include <dxerr8.h>
+#include <D3dx9tex.h>
+#include <d3d9.h>
+#include <dxerr.h>
 
 #include "archutils/Win32/GraphicsWindow.h"
 
 // Static libraries
-// load Windows D3D8 dynamically
+// load Windows D3D9 dynamically
 #if defined(_MSC_VER)
-	//#pragma comment(lib, "d3d8.lib")
-	#pragma comment(lib, "d3dx8.lib")
-	#pragma comment(lib, "DxErr8.lib")
+	#pragma comment(lib, "d3d9.lib")
+	#pragma comment(lib, "d3dx9.lib")
+	#pragma comment(lib, "DxErr.lib")
 #endif
 
 #include <math.h>
@@ -32,18 +32,22 @@
 
 RString GetErrorString( HRESULT hr )
 {
-	return DXGetErrorString8(hr);
+	return DXGetErrorString(hr);
 }
 
 // Globals
-HMODULE				g_D3D8_Module = NULL;
-LPDIRECT3D8			g_pd3d = NULL;
-LPDIRECT3DDEVICE8	g_pd3dDevice = NULL;
-D3DCAPS8			g_DeviceCaps;
+HMODULE				g_D3D9_Module = NULL;
+LPDIRECT3D9			g_pd3d = NULL;
+LPDIRECT3DDEVICE9	g_pd3dDevice = NULL;
+D3DCAPS9			g_DeviceCaps;
 D3DDISPLAYMODE		g_DesktopMode;
 D3DPRESENT_PARAMETERS	g_d3dpp;
 int					g_ModelMatrixCnt=0;
 static bool		g_bSphereMapping[NUM_TextureUnit] = { false, false };
+
+// TODO: Instead of defining this here, enumerate the possible formats and select whatever one we want to use. This format should
+// be fine for the uses of this application though.
+const D3DFORMAT g_DefaultAdapterFormat = D3DFMT_X8R8G8B8;
 
 /* Direct3D doesn't associate a palette with textures. Instead, we load a
  * palette into a slot. We need to keep track of which texture's palette is
@@ -181,8 +185,8 @@ RageDisplay_D3D::RageDisplay_D3D()
 
 }
 
-static LocalizedString D3D_NOT_INSTALLED ( "RageDisplay_D3D", "DirectX 8.1 or greater is not installed.  You can download it from:" );
-const RString D3D_URL = "http://www.microsoft.com/downloads/details.aspx?FamilyID=a19bed22-0b25-4e5d-a584-6389d8a3dad0&displaylang=en";
+static LocalizedString D3D_NOT_INSTALLED ( "RageDisplay_D3D", "DirectX 9.0c or greater is not installed.  You can download it from:" );
+const RString D3D_URL = "http://www.microsoft.com/en-us/download/details.aspx?id=8109";
 static LocalizedString HARDWARE_ACCELERATION_NOT_AVAILABLE ( "RageDisplay_D3D", 
 	"Your system is reporting that Direct3D hardware acceleration is not available.  Please obtain an updated driver from your video card manufacturer." );
 RString RageDisplay_D3D::Init( const VideoModeParams &p, bool /* bAllowUnacceleratedRenderer */ )
@@ -192,24 +196,10 @@ RString RageDisplay_D3D::Init( const VideoModeParams &p, bool /* bAllowUnacceler
 	LOG->Trace( "RageDisplay_D3D::RageDisplay_D3D()" );
 	LOG->MapLog("renderer", "Current renderer: Direct3D");
 
-	typedef IDirect3D8 * (WINAPI * Direct3DCreate8_t) (UINT SDKVersion);
-	Direct3DCreate8_t pDirect3DCreate8;
-
-	g_D3D8_Module = LoadLibrary("D3D8.dll");
-	if(!g_D3D8_Module)
-		return D3D_NOT_INSTALLED.GetValue() + "\n" + D3D_URL;
-
-	pDirect3DCreate8 = (Direct3DCreate8_t) GetProcAddress(g_D3D8_Module, "Direct3DCreate8");
-	if(!pDirect3DCreate8)
-	{
-		LOG->Trace( "Direct3DCreate8 not found" );
-		return D3D_NOT_INSTALLED.GetValue();
-	}
-
-	g_pd3d = pDirect3DCreate8( D3D_SDK_VERSION );
+	g_pd3d = Direct3DCreate9(D3D_SDK_VERSION);
 	if(!g_pd3d)
 	{
-		LOG->Trace( "Direct3DCreate8 failed" );
+		LOG->Trace( "Direct3DCreate9 failed" );
 		return D3D_NOT_INSTALLED.GetValue();
 	}
 
@@ -217,7 +207,7 @@ RString RageDisplay_D3D::Init( const VideoModeParams &p, bool /* bAllowUnacceler
 		return HARDWARE_ACCELERATION_NOT_AVAILABLE.GetValue();
 			
 
-	D3DADAPTER_IDENTIFIER8	identifier;
+	D3DADAPTER_IDENTIFIER9	identifier;
 	g_pd3d->GetAdapterIdentifier( D3DADAPTER_DEFAULT, 0, &identifier );
 
 	LOG->Trace( 
@@ -232,8 +222,11 @@ RString RageDisplay_D3D::Init( const VideoModeParams &p, bool /* bAllowUnacceler
 
 	LOG->Trace( "This display adaptor supports the following modes:" );
 	D3DDISPLAYMODE mode;
-	for( UINT u=0; u<g_pd3d->GetAdapterModeCount(D3DADAPTER_DEFAULT); u++ )
-		if( SUCCEEDED( g_pd3d->EnumAdapterModes( D3DADAPTER_DEFAULT, u, &mode ) ) )
+
+	UINT modeCount = g_pd3d->GetAdapterModeCount(D3DADAPTER_DEFAULT, g_DefaultAdapterFormat);
+
+	for( UINT u=0; u < modeCount; u++ )
+		if( SUCCEEDED( g_pd3d->EnumAdapterModes( D3DADAPTER_DEFAULT, g_DefaultAdapterFormat, u, &mode ) ) )
 			LOG->Trace( "  %ux%u %uHz, format %d", mode.Width, mode.Height, mode.RefreshRate, mode.Format );
 
 	g_PaletteIndex.clear();
@@ -271,22 +264,22 @@ RageDisplay_D3D::~RageDisplay_D3D()
 	/* Even after we call Release(), D3D may still affect our window. It seems
 	 * to subclass the window, and never release it. Free the DLL after
 	 * destroying the window. */
-	if( g_D3D8_Module )
+	if( g_D3D9_Module )
 	{
-		FreeLibrary( g_D3D8_Module );
-		g_D3D8_Module = NULL;
+		FreeLibrary( g_D3D9_Module );
+		g_D3D9_Module = NULL;
 	}
 }
 
 void RageDisplay_D3D::GetDisplayResolutions( DisplayResolutions &out ) const
 {
 	out.clear();
-	int iCnt = g_pd3d->GetAdapterModeCount( D3DADAPTER_DEFAULT );
+	int iCnt = g_pd3d->GetAdapterModeCount( D3DADAPTER_DEFAULT, g_DefaultAdapterFormat );
 
 	for( int i = 0; i < iCnt; ++i )
 	{
 		D3DDISPLAYMODE mode;
-		g_pd3d->EnumAdapterModes( D3DADAPTER_DEFAULT, i, &mode );
+		g_pd3d->EnumAdapterModes( D3DADAPTER_DEFAULT, g_DefaultAdapterFormat, i, &mode );
 
 		DisplayResolution res = { mode.Width, mode.Height };
 		out.insert( res );
@@ -313,6 +306,7 @@ D3DFORMAT FindBackBufferType(bool bWindowed, int iBPP)
 		vBackBufferFormats.push_back( D3DFMT_X8R8G8B8 );
 		vBackBufferFormats.push_back( D3DFMT_A8R8G8B8 );
 	}
+
 	if( !bWindowed && iBPP != 16 && iBPP != 32 )
 	{
 		GraphicsWindow::Shutdown();
@@ -395,14 +389,14 @@ static bool D3DReduceParams( D3DPRESENT_PARAMETERS *pp )
 	current.Width = pp->BackBufferWidth;
 	current.RefreshRate = pp->FullScreen_RefreshRateInHz;
 
-	const int iCnt = g_pd3d->GetAdapterModeCount( D3DADAPTER_DEFAULT );
+	const int iCnt = g_pd3d->GetAdapterModeCount( D3DADAPTER_DEFAULT, g_DefaultAdapterFormat );
 	int iBest = -1;
 	int iBestScore = 0;
 	LOG->Trace( "cur: %ux%u %uHz, format %i", current.Width, current.Height, current.RefreshRate, current.Format );
 	for( int i = 0; i < iCnt; ++i )
 	{
 		D3DDISPLAYMODE mode;
-		g_pd3d->EnumAdapterModes( D3DADAPTER_DEFAULT, i, &mode );
+		g_pd3d->EnumAdapterModes( D3DADAPTER_DEFAULT, g_DefaultAdapterFormat, i, &mode );
 
 		// Never change the format.
 		if( mode.Format != current.Format )
@@ -455,7 +449,7 @@ static bool D3DReduceParams( D3DPRESENT_PARAMETERS *pp )
 		return false;
 
 	D3DDISPLAYMODE BestMode;
-	g_pd3d->EnumAdapterModes( D3DADAPTER_DEFAULT, iBest, &BestMode );
+	g_pd3d->EnumAdapterModes( D3DADAPTER_DEFAULT, g_DefaultAdapterFormat, iBest, &BestMode );
 	pp->BackBufferHeight = BestMode.Height;
 	pp->BackBufferWidth = BestMode.Width;
 	pp->FullScreen_RefreshRateInHz = BestMode.RefreshRate;
@@ -480,9 +474,9 @@ static void SetPresentParametersFromVideoModeParams( const VideoModeParams &p, D
 	pD3Dpp->AutoDepthStencilFormat	= D3DFMT_D16;
 
 	if( p.windowed )
-		pD3Dpp->FullScreen_PresentationInterval = D3DPRESENT_INTERVAL_DEFAULT;
+		pD3Dpp->PresentationInterval = D3DPRESENT_INTERVAL_DEFAULT;
 	else
-		pD3Dpp->FullScreen_PresentationInterval = p.vsync ? D3DPRESENT_INTERVAL_ONE : D3DPRESENT_INTERVAL_IMMEDIATE;
+		pD3Dpp->PresentationInterval = p.vsync ? D3DPRESENT_INTERVAL_ONE : D3DPRESENT_INTERVAL_IMMEDIATE;
 
 	pD3Dpp->FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
 	if( !p.windowed && p.rate != REFRESH_DEFAULT )
@@ -496,7 +490,7 @@ static void SetPresentParametersFromVideoModeParams( const VideoModeParams &p, D
 		pD3Dpp->MultiSampleType, pD3Dpp->SwapEffect, pD3Dpp->hDeviceWindow,
 		pD3Dpp->Windowed, pD3Dpp->EnableAutoDepthStencil, pD3Dpp->AutoDepthStencilFormat,
 		pD3Dpp->Flags, pD3Dpp->FullScreen_RefreshRateInHz,
-		pD3Dpp->FullScreen_PresentationInterval
+		pD3Dpp->PresentationInterval
 	);
 }
 
@@ -627,55 +621,59 @@ bool RageDisplay_D3D::SupportsThreadedRendering()
 
 RageSurface* RageDisplay_D3D::CreateScreenshot()
 {
+	RageSurface * result = NULL;
+
 	// Get the back buffer.
-	IDirect3DSurface8* pSurface;
-	g_pd3dDevice->GetBackBuffer( 0, D3DBACKBUFFER_TYPE_MONO, &pSurface );
-
-	// Get the back buffer description.
-	D3DSURFACE_DESC desc;
-	pSurface->GetDesc( &desc );
-
-	// Copy the back buffer into a surface of a type we support.
-	IDirect3DSurface8* pCopy;
-	g_pd3dDevice->CreateImageSurface( desc.Width, desc.Height, D3DFMT_A8R8G8B8, &pCopy );
-	
-	// Aldo_MX: D3DXLoadSurfaceFromSurface requires d3dx8core.h, I replaced it with CopyRects to
-	// remove this dependency so its possible to compile SM with any DirectX SDK up to Aug 2007
-	D3DXLoadSurfaceFromSurface( pCopy, NULL, NULL, pSurface, NULL, NULL, D3DX_DEFAULT, 0 );
-	//g_pd3dDevice->CopyRects( pSurface, NULL, 0, pCopy, NULL );
-
-	pSurface->Release();
-
-	// Update desc from the copy.
-	pCopy->GetDesc( &desc );
-
-	D3DLOCKED_RECT lr;
-
+	IDirect3DSurface9* pSurface;
+	if( SUCCEEDED( g_pd3dDevice->GetBackBuffer( 0, 0, D3DBACKBUFFER_TYPE_MONO, &pSurface ) ) )
 	{
-		RECT rect; 
-		rect.left = 0;
-		rect.top = 0;
-		rect.right = desc.Width;
-		rect.bottom = desc.Height;
-		pCopy->LockRect( &lr, &rect, D3DLOCK_READONLY );
+		// Get the back buffer description.
+		D3DSURFACE_DESC desc;
+		pSurface->GetDesc( &desc );
+
+		// Copy the back buffer into a surface of a type we support.
+		IDirect3DSurface9* pCopy;
+		if( SUCCEEDED( g_pd3dDevice->CreateOffscreenPlainSurface( desc.Width, desc.Height, D3DFMT_A8R8G8B8, D3DPOOL_SCRATCH, &pCopy, NULL ) ) )
+		{
+			if( SUCCEEDED( D3DXLoadSurfaceFromSurface( pCopy, NULL, NULL, pSurface, NULL, NULL, D3DX_FILTER_NONE, 0) ) )
+			{
+				// Update desc from the copy.
+				pCopy->GetDesc( &desc );
+
+				D3DLOCKED_RECT lr;
+
+				{
+					RECT rect;
+					rect.left = 0;
+					rect.top = 0;
+					rect.right = desc.Width;
+					rect.bottom = desc.Height;
+
+					pCopy->LockRect( &lr, &rect, D3DLOCK_READONLY );
+				}
+
+				RageSurface *surface = CreateSurfaceFromPixfmt( RagePixelFormat_RGBA8, lr.pBits, desc.Width, desc.Height, lr.Pitch);
+				ASSERT( surface != NULL );
+
+				// We need to make a copy, since lr.pBits will go away when we call UnlockRect().
+				result = 
+					CreateSurface( surface->w, surface->h,
+						surface->format->BitsPerPixel,
+						surface->format->Rmask, surface->format->Gmask,
+						surface->format->Bmask, surface->format->Amask );
+				RageSurfaceUtils::CopySurface( surface, result );
+				delete surface;
+
+				pCopy->UnlockRect();
+			}
+
+			pCopy->Release();
+		}
+
+		pSurface->Release();
 	}
 
-	RageSurface *surface = CreateSurfaceFromPixfmt( RagePixelFormat_RGBA8, lr.pBits, desc.Width, desc.Height, lr.Pitch);
-	ASSERT( surface != NULL );
-
-	// We need to make a copy, since lr.pBits will go away when we call UnlockRect().
-	RageSurface *SurfaceCopy = 
-		CreateSurface( surface->w, surface->h,
-			surface->format->BitsPerPixel,
-			surface->format->Rmask, surface->format->Gmask,
-			surface->format->Bmask, surface->format->Amask );
-	RageSurfaceUtils::CopySurface( surface, SurfaceCopy );
-	delete surface;
-
-	pCopy->UnlockRect();
-	pCopy->Release();
-
-	return SurfaceCopy;
+	return result;
 }
 
 VideoModeParams RageDisplay_D3D::GetActualVideoModeParams() const 
@@ -704,7 +702,7 @@ void RageDisplay_D3D::SendCurrentMatrices()
 		g_pd3dDevice->SetTextureStageState( tu, D3DTSS_TEXTURETRANSFORMFLAGS, D3DTTFF_COUNT2 );
 
 		// If no texture is set for this texture unit, don't bother setting it up.
-		IDirect3DBaseTexture8* pTexture = NULL;
+		IDirect3DBaseTexture9* pTexture = NULL;
 		g_pd3dDevice->GetTexture( tu, &pTexture );
 		if( pTexture == NULL )
 			 continue;
@@ -789,7 +787,7 @@ public:
 			g_pd3dDevice->SetTransform( D3DTS_TEXTURE0, (D3DMATRIX*)&m );
 		}
 
-		g_pd3dDevice->SetVertexShader( D3DFVF_RageModelVertex );
+		g_pd3dDevice->SetFVF( D3DFVF_RageModelVertex );
 		g_pd3dDevice->DrawIndexedPrimitiveUP(
 			D3DPT_TRIANGLELIST,			// PrimitiveType
 			meshInfo.iVertexStart,		// MinIndex
@@ -839,7 +837,7 @@ void RageDisplay_D3D::DrawQuadsInternal( const RageSpriteVertex v[], int iNumVer
 		vIndices[i*6+5] = i*4+0;
 	}
 
-	g_pd3dDevice->SetVertexShader( D3DFVF_RageSpriteVertex );
+	g_pd3dDevice->SetFVF( D3DFVF_RageSpriteVertex );
 	SendCurrentMatrices();
 	g_pd3dDevice->DrawIndexedPrimitiveUP(
 		D3DPT_TRIANGLELIST, // PrimitiveType
@@ -875,7 +873,7 @@ void RageDisplay_D3D::DrawQuadStripInternal( const RageSpriteVertex v[], int iNu
 		vIndices[i*6+5] = i*2+3;
 	}
 
-	g_pd3dDevice->SetVertexShader( D3DFVF_RageSpriteVertex );
+	g_pd3dDevice->SetFVF( D3DFVF_RageSpriteVertex );
 	SendCurrentMatrices();
 	g_pd3dDevice->DrawIndexedPrimitiveUP(
 		D3DPT_TRIANGLELIST, // PrimitiveType
@@ -917,7 +915,7 @@ void RageDisplay_D3D::DrawSymmetricQuadStripInternal( const RageSpriteVertex v[]
 		vIndices[i*12+11] = i*3+5;
 	}
 
-	g_pd3dDevice->SetVertexShader( D3DFVF_RageSpriteVertex );
+	g_pd3dDevice->SetFVF( D3DFVF_RageSpriteVertex );
 	SendCurrentMatrices();
 	g_pd3dDevice->DrawIndexedPrimitiveUP(
 		D3DPT_TRIANGLELIST, // PrimitiveType
@@ -933,7 +931,7 @@ void RageDisplay_D3D::DrawSymmetricQuadStripInternal( const RageSpriteVertex v[]
 
 void RageDisplay_D3D::DrawFanInternal( const RageSpriteVertex v[], int iNumVerts )
 {
-	g_pd3dDevice->SetVertexShader( D3DFVF_RageSpriteVertex );
+	g_pd3dDevice->SetFVF( D3DFVF_RageSpriteVertex );
 	SendCurrentMatrices();
 	g_pd3dDevice->DrawPrimitiveUP(
 		D3DPT_TRIANGLEFAN, // PrimitiveType
@@ -945,7 +943,7 @@ void RageDisplay_D3D::DrawFanInternal( const RageSpriteVertex v[], int iNumVerts
 
 void RageDisplay_D3D::DrawStripInternal( const RageSpriteVertex v[], int iNumVerts )
 {
-	g_pd3dDevice->SetVertexShader( D3DFVF_RageSpriteVertex );
+	g_pd3dDevice->SetFVF( D3DFVF_RageSpriteVertex );
 	SendCurrentMatrices();
 	g_pd3dDevice->DrawPrimitiveUP(
 		D3DPT_TRIANGLESTRIP, // PrimitiveType
@@ -957,7 +955,7 @@ void RageDisplay_D3D::DrawStripInternal( const RageSpriteVertex v[], int iNumVer
 
 void RageDisplay_D3D::DrawTrianglesInternal( const RageSpriteVertex v[], int iNumVerts )
 {
-	g_pd3dDevice->SetVertexShader( D3DFVF_RageSpriteVertex );
+	g_pd3dDevice->SetFVF( D3DFVF_RageSpriteVertex );
 	SendCurrentMatrices();
 	g_pd3dDevice->DrawPrimitiveUP(
 		D3DPT_TRIANGLELIST, // PrimitiveType
@@ -1040,7 +1038,7 @@ void RageDisplay_D3D::SetTexture( TextureUnit tu, unsigned iTexture )
 	}
 	else
 	{
-		IDirect3DTexture8* pTex = (IDirect3DTexture8*) iTexture;
+		IDirect3DTexture9* pTex = (IDirect3DTexture9*) iTexture;
 		g_pd3dDevice->SetTexture( tu, pTex );
 
 		/* Intentionally commented out. Don't mess with texture stage state
@@ -1095,8 +1093,8 @@ void RageDisplay_D3D::SetTextureFiltering( TextureUnit tu, bool b )
 	if( tu >= (int) g_DeviceCaps.MaxSimultaneousTextures ) // not supported
 		return;
 
-	g_pd3dDevice->SetTextureStageState( tu, D3DTSS_MINFILTER, b ? D3DTEXF_LINEAR : D3DTEXF_POINT );
-	g_pd3dDevice->SetTextureStageState( tu, D3DTSS_MAGFILTER, b ? D3DTEXF_LINEAR : D3DTEXF_POINT );
+	g_pd3dDevice->SetSamplerState( tu, D3DSAMP_MINFILTER, b ? D3DTEXF_LINEAR : D3DTEXF_POINT );
+	g_pd3dDevice->SetSamplerState( tu, D3DSAMP_MAGFILTER, b ? D3DTEXF_LINEAR : D3DTEXF_POINT );
 }
 
 void RageDisplay_D3D::SetBlendMode( BlendMode mode )
@@ -1179,7 +1177,7 @@ bool RageDisplay_D3D::IsZWriteEnabled() const
 
 void RageDisplay_D3D::SetZBias( float f )
 {
-	D3DVIEWPORT8 viewData;
+	D3DVIEWPORT9 viewData;
 	g_pd3dDevice->GetViewport( &viewData );
 	viewData.MinZ = SCALE( f, 0.0f, 1.0f, 0.05f, 0.0f );
 	viewData.MaxZ = SCALE( f, 0.0f, 1.0f, 1.0f, 0.95f );
@@ -1226,8 +1224,8 @@ void RageDisplay_D3D::SetTextureWrapping( TextureUnit tu, bool b )
 		return;
 
 	int mode = b ? D3DTADDRESS_WRAP : D3DTADDRESS_CLAMP;
-	g_pd3dDevice->SetTextureStageState( tu, D3DTSS_ADDRESSU, mode );
-	g_pd3dDevice->SetTextureStageState( tu, D3DTSS_ADDRESSV, mode );
+	g_pd3dDevice->SetSamplerState( tu, D3DSAMP_ADDRESSU, mode );
+	g_pd3dDevice->SetSamplerState( tu, D3DSAMP_ADDRESSV, mode );
 }
 
 void RageDisplay_D3D::SetMaterial( 
@@ -1247,7 +1245,7 @@ void RageDisplay_D3D::SetMaterial(
 
 	if( bLighting )
 	{
-		D3DMATERIAL8 mat;
+		D3DMATERIAL9 mat;
 		memcpy( &mat.Diffuse, diffuse, sizeof(float)*4 );
 		memcpy( &mat.Ambient, ambient, sizeof(float)*4 );
 		memcpy( &mat.Specular, specular, sizeof(float)*4 );
@@ -1285,7 +1283,7 @@ void RageDisplay_D3D::SetLightDirectional(
 {
 	g_pd3dDevice->LightEnable( index, true );
 
-	D3DLIGHT8 light;
+	D3DLIGHT9 light;
 	ZERO( light );
 	light.Type = D3DLIGHT_DIRECTIONAL;
 
@@ -1330,7 +1328,7 @@ void RageDisplay_D3D::DeleteTexture( unsigned iTexHandle )
 	if( iTexHandle == 0 )
 		return;
 
-	IDirect3DTexture8* pTex = (IDirect3DTexture8*) iTexHandle;
+	IDirect3DTexture9* pTex = (IDirect3DTexture9*) iTexHandle;
 	pTex->Release();
 
 	// Delete palette (if any)
@@ -1347,8 +1345,8 @@ unsigned RageDisplay_D3D::CreateTexture(
 	bool bGenerateMipMaps )
 {
 	HRESULT hr;
-	IDirect3DTexture8* pTex;
-	hr = g_pd3dDevice->CreateTexture( power_of_two(img->w), power_of_two(img->h), 1, 0, D3DFORMATS[pixfmt], D3DPOOL_MANAGED, &pTex );
+	IDirect3DTexture9* pTex;
+	hr = g_pd3dDevice->CreateTexture( power_of_two(img->w), power_of_two(img->h), 1, 0, D3DFORMATS[pixfmt], D3DPOOL_MANAGED, &pTex, NULL );
 
 	if( FAILED(hr) )
 		RageException::Throw( "CreateTexture(%i,%i,%s) failed: %s", 
@@ -1384,7 +1382,7 @@ void RageDisplay_D3D::UpdateTexture(
 	RageSurface* img,
 	int xoffset, int yoffset, int width, int height )
 {
-	IDirect3DTexture8* pTex = (IDirect3DTexture8*)uTexHandle;
+	IDirect3DTexture9* pTex = (IDirect3DTexture9*)uTexHandle;
 	ASSERT( pTex != NULL );
 
 	RECT rect; 

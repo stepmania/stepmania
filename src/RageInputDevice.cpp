@@ -7,8 +7,6 @@
 #include "Foreach.h"
 #include "LocalizedString.h"
 
-//static LocalizedString D3D_NOT_INSTALLED ( "RageDisplay_D3D", "DirectX 8.1 or greater is not installed.  You can download it from:" );
-
 static const char *InputDeviceStateNames[] = {
 	"Connected",
 	"Unplugged",
