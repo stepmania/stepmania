@@ -1813,8 +1813,7 @@
 		</Enum>
 		<Enum name='CoinMode'>
 			<EnumValue name='&apos;CoinMode_Home&apos;' value='0'/>
-			<EnumValue name='&apos;CoinMode_Pay&apos;' value='1'/>
-			<EnumValue name='&apos;CoinMode_Free&apos;' value='2'/>
+			<EnumValue name='&apos;CoinMode_Free&apos;' value='1'/>
 		</Enum>
 		<Enum name='CourseSortOrders'>
 			<EnumValue name='&apos;CourseSortOrders_Preferred&apos;' value='0'/>
