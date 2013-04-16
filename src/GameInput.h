@@ -26,7 +26,6 @@ enum GameButton
 	GAME_BUTTON_START,
 	GAME_BUTTON_SELECT,
 	GAME_BUTTON_BACK,
-	GAME_BUTTON_COIN, /**< Insert a coin to play. */
 	GAME_BUTTON_OPERATOR, /**< Access the operator menu. */
 	GAME_BUTTON_EFFECT_UP,
 	GAME_BUTTON_EFFECT_DOWN,

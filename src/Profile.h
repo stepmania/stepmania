@@ -281,8 +281,8 @@ public:
 	/**
 	 * @brief The basics for Calorie Data.
 	 *
-	 * Why track calories in a map, and not in a static sized array like 
-	 * Bookkeeping?  The machine's clock is not guaranteed to be set correctly.
+	 * Why track calories in a map, and not in a static sized array?
+	 * The machine's clock is not guaranteed to be set correctly.
 	 * If calorie array is in a static sized array, playing on a machine with 
 	 * a mis-set clock could wipe out all your past data.  With this scheme, 
 	 * the worst that could happen is that playing on a mis-set machine will 

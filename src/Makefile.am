@@ -57,7 +57,6 @@ PNG = \
 
 Screens = \
 Screen.cpp Screen.h ScreenAttract.cpp ScreenAttract.h \
-ScreenBookkeeping.cpp ScreenBookkeeping.h \
 ScreenContinue.cpp ScreenContinue.h \
 ScreenDebugOverlay.cpp ScreenDebugOverlay.h \
 ScreenDemonstration.cpp ScreenDemonstration.h ScreenDimensions.h \
@@ -472,7 +471,6 @@ RollingNumbers.cpp RollingNumbers.h Sprite.cpp Sprite.h
 
 GlobalSingletons = \
 AnnouncerManager.cpp AnnouncerManager.h \
-Bookkeeper.cpp Bookkeeper.h \
 CharacterManager.cpp CharacterManager.h \
 CryptManager.cpp CryptManager.h \
 FontManager.cpp FontManager.h GameSoundManager.cpp GameSoundManager.h \

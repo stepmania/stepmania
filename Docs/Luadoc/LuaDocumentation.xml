@@ -2339,7 +2339,7 @@ save yourself some time, copy this for undocumented things:
 		Resets the specific Player's mods to the default settings.
 	</Function>
 	<Function name='SaveLocalData' return='void' arguments=''>
-		Saves the bookkeeping and machine profile data.
+		Saves the machine profile data.
 	</Function>
 	<Function name='SetCharacter' return='void' arguments='PlayerNumber pn, string sCharID'>
 		Sets the current <Link class='Character' /> for the specified <Link class='ENUM' function='PlayerNumber' />.

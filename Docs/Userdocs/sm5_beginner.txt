@@ -156,7 +156,6 @@ menus were re-shuffled around for the StepMania 4 alphas.
 The typical StepMania 3.9 Options Menu:
 * Appearance Options
 * Background Options
-* Bookkeeping
 * Center Image
 * Coin Options
 * Config Key/Joy Mappings

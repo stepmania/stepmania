@@ -123,9 +123,6 @@
     <ClCompile Include="ScreenAttract.cpp">
       <Filter>Screens</Filter>
     </ClCompile>
-    <ClCompile Include="ScreenBookkeeping.cpp">
-      <Filter>Screens</Filter>
-    </ClCompile>
     <ClCompile Include="ScreenContinue.cpp">
       <Filter>Screens</Filter>
     </ClCompile>
@@ -1293,9 +1290,6 @@
     <ClCompile Include="AnnouncerManager.cpp">
       <Filter>Global Singletons</Filter>
     </ClCompile>
-    <ClCompile Include="Bookkeeper.cpp">
-      <Filter>Global Singletons</Filter>
-    </ClCompile>
     <ClCompile Include="CharacterManager.cpp">
       <Filter>Global Singletons</Filter>
     </ClCompile>
@@ -1623,9 +1617,6 @@
       <Filter>Screens</Filter>
     </ClInclude>
     <ClInclude Include="ScreenAttract.h">
-      <Filter>Screens</Filter>
-    </ClInclude>
-    <ClInclude Include="ScreenBookkeeping.h">
       <Filter>Screens</Filter>
     </ClInclude>
     <ClInclude Include="ScreenContinue.h">
@@ -2823,9 +2814,6 @@
       <Filter>Actors</Filter>
     </ClInclude>
     <ClInclude Include="AnnouncerManager.h">
-      <Filter>Global Singletons</Filter>
-    </ClInclude>
-    <ClInclude Include="Bookkeeper.h">
       <Filter>Global Singletons</Filter>
     </ClInclude>
     <ClInclude Include="CharacterManager.h">

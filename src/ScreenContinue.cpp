@@ -50,9 +50,6 @@ void ScreenContinue::BeginScreen()
 
 bool ScreenContinue::Input( const InputEventPlus &input )
 {
-	if( input.MenuI == GAME_BUTTON_COIN &&  input.type == IET_FIRST_PRESS )
-		ResetTimer();
-
 	if( input.MenuI == GAME_BUTTON_START  &&  input.type == IET_FIRST_PRESS  &&  GAMESTATE->JoinInput(input.pn) )
 		return true;	// handled
 

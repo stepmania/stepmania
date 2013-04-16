@@ -15,7 +15,6 @@
 #include "RageTextureManager.h"
 #include "MemoryCardManager.h"
 #include "NoteSkinManager.h"
-#include "Bookkeeper.h"
 #include "ProfileManager.h"
 #include "CodeDetector.h"
 #include "RageInput.h"
@@ -1035,7 +1034,7 @@ class DebugLineWriteProfiles : public IDebugLine
 	virtual RString GetPageName() const { return "Profiles"; }
 	virtual void DoAndLog( RString &sMessageOut )
 	{
-		// Also save bookkeeping and profile info for debugging
+		// Also save profile info for debugging
 		// so we don't have to play through a whole song to get new output.
 		if( g_ProfileSlot == ProfileSlot_Machine )
 			GAMESTATE->SaveLocalData();

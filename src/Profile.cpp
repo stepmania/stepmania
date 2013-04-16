@@ -21,7 +21,6 @@
 #include "XmlFile.h"
 #include "XmlFileUtil.h"
 #include "Foreach.h"
-#include "Bookkeeper.h"
 #include "Game.h"
 #include "CharacterManager.h"
 #include "Character.h"
@@ -1848,35 +1847,6 @@ XNode* Profile::SaveCoinDataCreateNode() const
 	ASSERT( pProfile != NULL );
 
 	XNode* pNode = new XNode( "CoinData" );
-
-	{
-		int coins[NUM_LAST_DAYS];
-		BOOKKEEPER->GetCoinsLastDays( coins );
-		XNode* p = pNode->AppendChild( "LastDays" );
-		for( int i=0; i<NUM_LAST_DAYS; i++ )
-			p->AppendChild( LastDayToString(i), coins[i] );
-	}
-	{
-		int coins[NUM_LAST_WEEKS];
-		BOOKKEEPER->GetCoinsLastWeeks( coins );
-		XNode* p = pNode->AppendChild( "LastWeeks" );
-		for( int i=0; i<NUM_LAST_WEEKS; i++ )
-			p->AppendChild( LastWeekToString(i), coins[i] );
-	}
-	{
-		int coins[DAYS_IN_WEEK];
-		BOOKKEEPER->GetCoinsByDayOfWeek( coins );
-		XNode* p = pNode->AppendChild( "DayOfWeek" );
-		for( int i=0; i<DAYS_IN_WEEK; i++ )
-			p->AppendChild( DayOfWeekToString(i), coins[i] );
-	}
-	{
-		int coins[HOURS_IN_DAY];
-		BOOKKEEPER->GetCoinsByHour( coins );
-		XNode* p = pNode->AppendChild( "Hour" );
-		for( int i=0; i<HOURS_IN_DAY; i++ )
-			p->AppendChild( HourInDayToString(i), coins[i] );
-	}
 
 	return pNode;
 }

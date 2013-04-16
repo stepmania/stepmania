@@ -401,9 +401,7 @@
 		AA29CE310558741A00961A51 /* PercentageDisplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAD620A5052EC78B00D02EE9 /* PercentageDisplay.cpp */; };
 		AA29CE320558741A00961A51 /* ScoreDisplayPercentage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6DAF0805300B3D00D02EE9 /* ScoreDisplayPercentage.cpp */; };
 		AA29CE340558741A00961A51 /* ScreenTestInput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAC622FA05389A0500D02EE9 /* ScreenTestInput.cpp */; };
-		AA29CE350558741A00961A51 /* ScreenBookkeeping.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AADBE360053D5F8A00D02EE9 /* ScreenBookkeeping.cpp */; };
 		AA29CE360558741A00961A51 /* ScreenNameEntryTraditional.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AADBE362053D5F8A00D02EE9 /* ScreenNameEntryTraditional.cpp */; };
-		AA29CE370558741A00961A51 /* Bookkeeper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AADBE368053DA38C00D02EE9 /* Bookkeeper.cpp */; };
 		AA29CE380558741A00961A51 /* GraphDisplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAFF551D0549F39700D02EE9 /* GraphDisplay.cpp */; };
 		AA29CE390558741A00961A51 /* ComboGraph.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAFF55210549F43A00D02EE9 /* ComboGraph.cpp */; };
 		AA29CE3A0558741A00961A51 /* Attack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAFF5541054E736D00D02EE9 /* Attack.cpp */; };
@@ -618,9 +616,7 @@
 		AA40D28E09A08D650068C0D5 /* PercentageDisplay.h in Headers */ = {isa = PBXBuildFile; fileRef = AAD620A6052EC78B00D02EE9 /* PercentageDisplay.h */; };
 		AA40D28F09A08D650068C0D5 /* ScoreDisplayPercentage.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6DAF0905300B3D00D02EE9 /* ScoreDisplayPercentage.h */; };
 		AA40D29109A08D650068C0D5 /* ScreenTestInput.h in Headers */ = {isa = PBXBuildFile; fileRef = AAC622FB05389A0500D02EE9 /* ScreenTestInput.h */; };
-		AA40D29209A08D650068C0D5 /* ScreenBookkeeping.h in Headers */ = {isa = PBXBuildFile; fileRef = AADBE361053D5F8A00D02EE9 /* ScreenBookkeeping.h */; };
 		AA40D29309A08D650068C0D5 /* ScreenNameEntryTraditional.h in Headers */ = {isa = PBXBuildFile; fileRef = AADBE363053D5F8A00D02EE9 /* ScreenNameEntryTraditional.h */; };
-		AA40D29409A08D650068C0D5 /* Bookkeeper.h in Headers */ = {isa = PBXBuildFile; fileRef = AADBE369053DA38C00D02EE9 /* Bookkeeper.h */; };
 		AA40D29509A08D650068C0D5 /* GraphDisplay.h in Headers */ = {isa = PBXBuildFile; fileRef = AAFF551E0549F39700D02EE9 /* GraphDisplay.h */; };
 		AA40D29609A08D650068C0D5 /* ComboGraph.h in Headers */ = {isa = PBXBuildFile; fileRef = AAFF55220549F43A00D02EE9 /* ComboGraph.h */; };
 		AA40D29709A08D650068C0D5 /* Attack.h in Headers */ = {isa = PBXBuildFile; fileRef = AAFF5542054E736D00D02EE9 /* Attack.h */; };
@@ -936,9 +932,7 @@
 		AA40D44409A08D650068C0D5 /* PercentageDisplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAD620A5052EC78B00D02EE9 /* PercentageDisplay.cpp */; };
 		AA40D44509A08D650068C0D5 /* ScoreDisplayPercentage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6DAF0805300B3D00D02EE9 /* ScoreDisplayPercentage.cpp */; };
 		AA40D44709A08D650068C0D5 /* ScreenTestInput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAC622FA05389A0500D02EE9 /* ScreenTestInput.cpp */; };
-		AA40D44809A08D650068C0D5 /* ScreenBookkeeping.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AADBE360053D5F8A00D02EE9 /* ScreenBookkeeping.cpp */; };
 		AA40D44909A08D650068C0D5 /* ScreenNameEntryTraditional.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AADBE362053D5F8A00D02EE9 /* ScreenNameEntryTraditional.cpp */; };
-		AA40D44A09A08D650068C0D5 /* Bookkeeper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AADBE368053DA38C00D02EE9 /* Bookkeeper.cpp */; };
 		AA40D44B09A08D650068C0D5 /* GraphDisplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAFF551D0549F39700D02EE9 /* GraphDisplay.cpp */; };
 		AA40D44C09A08D650068C0D5 /* ComboGraph.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAFF55210549F43A00D02EE9 /* ComboGraph.cpp */; };
 		AA40D44D09A08D650068C0D5 /* Attack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAFF5541054E736D00D02EE9 /* Attack.cpp */; };
@@ -3063,12 +3057,8 @@
 		AADB4E8C04D50FB900D02EE9 /* SignalHandler.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = SignalHandler.h; sourceTree = "<group>"; };
 		AADB4E8F04D5263200D02EE9 /* arch_setup.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = arch_setup.h; sourceTree = "<group>"; };
 		AADB4F5904D9220700D02EE9 /* Crash.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = Crash.h; sourceTree = "<group>"; };
-		AADBE360053D5F8A00D02EE9 /* ScreenBookkeeping.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScreenBookkeeping.cpp; path = ../src/ScreenBookkeeping.cpp; sourceTree = "<group>"; };
-		AADBE361053D5F8A00D02EE9 /* ScreenBookkeeping.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ScreenBookkeeping.h; path = ../src/ScreenBookkeeping.h; sourceTree = "<group>"; };
 		AADBE362053D5F8A00D02EE9 /* ScreenNameEntryTraditional.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScreenNameEntryTraditional.cpp; path = ../src/ScreenNameEntryTraditional.cpp; sourceTree = "<group>"; };
 		AADBE363053D5F8A00D02EE9 /* ScreenNameEntryTraditional.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ScreenNameEntryTraditional.h; path = ../src/ScreenNameEntryTraditional.h; sourceTree = "<group>"; };
-		AADBE368053DA38C00D02EE9 /* Bookkeeper.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = Bookkeeper.cpp; path = ../src/Bookkeeper.cpp; sourceTree = "<group>"; };
-		AADBE369053DA38C00D02EE9 /* Bookkeeper.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = Bookkeeper.h; path = ../src/Bookkeeper.h; sourceTree = "<group>"; };
 		AADD1CC2095C233E0088C9DF /* LocalizedString.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = LocalizedString.cpp; path = ../src/LocalizedString.cpp; sourceTree = "<group>"; };
 		AADD1CC3095C233F0088C9DF /* LocalizedString.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = LocalizedString.h; path = ../src/LocalizedString.h; sourceTree = "<group>"; };
 		AAE2D6D30A67481E00071546 /* ScoreKeeper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ScoreKeeper.cpp; path = ../src/ScoreKeeper.cpp; sourceTree = "<group>"; };
@@ -3641,8 +3631,6 @@
 				AA6E000B047711F3005F316C /* Screen.h */,
 				AA6E0010047711F3005F316C /* ScreenAttract.cpp */,
 				AA6E0011047711F3005F316C /* ScreenAttract.h */,
-				AADBE360053D5F8A00D02EE9 /* ScreenBookkeeping.cpp */,
-				AADBE361053D5F8A00D02EE9 /* ScreenBookkeeping.h */,
 				AA2CA89D0BB745BD002441E9 /* ScreenContinue.cpp */,
 				AA2CA89E0BB745BD002441E9 /* ScreenContinue.h */,
 				AA07A5550843E72B00E33D21 /* ScreenDebugOverlay.cpp */,
@@ -3800,8 +3788,6 @@
 			children = (
 				AA6E00FF0477128A005F316C /* AnnouncerManager.cpp */,
 				AA6E01000477128A005F316C /* AnnouncerManager.h */,
-				AADBE368053DA38C00D02EE9 /* Bookkeeper.cpp */,
-				AADBE369053DA38C00D02EE9 /* Bookkeeper.h */,
 				AA77E74508B64B1400FA24CA /* CharacterManager.cpp */,
 				AA77E74608B64B1400FA24CA /* CharacterManager.h */,
 				AAC0BFDF0E2951EC00F56EEB /* CryptHelpers.cpp */,
@@ -5642,9 +5628,7 @@
 				AA40D28E09A08D650068C0D5 /* PercentageDisplay.h in Headers */,
 				AA40D28F09A08D650068C0D5 /* ScoreDisplayPercentage.h in Headers */,
 				AA40D29109A08D650068C0D5 /* ScreenTestInput.h in Headers */,
-				AA40D29209A08D650068C0D5 /* ScreenBookkeeping.h in Headers */,
 				AA40D29309A08D650068C0D5 /* ScreenNameEntryTraditional.h in Headers */,
-				AA40D29409A08D650068C0D5 /* Bookkeeper.h in Headers */,
 				AA40D29509A08D650068C0D5 /* GraphDisplay.h in Headers */,
 				AA40D29609A08D650068C0D5 /* ComboGraph.h in Headers */,
 				AA40D29709A08D650068C0D5 /* Attack.h in Headers */,
@@ -6630,9 +6614,7 @@
 				AA29CE310558741A00961A51 /* PercentageDisplay.cpp in Sources */,
 				AA29CE320558741A00961A51 /* ScoreDisplayPercentage.cpp in Sources */,
 				AA29CE340558741A00961A51 /* ScreenTestInput.cpp in Sources */,
-				AA29CE350558741A00961A51 /* ScreenBookkeeping.cpp in Sources */,
 				AA29CE360558741A00961A51 /* ScreenNameEntryTraditional.cpp in Sources */,
-				AA29CE370558741A00961A51 /* Bookkeeper.cpp in Sources */,
 				AA29CE380558741A00961A51 /* GraphDisplay.cpp in Sources */,
 				AA29CE390558741A00961A51 /* ComboGraph.cpp in Sources */,
 				AA29CE3A0558741A00961A51 /* Attack.cpp in Sources */,
@@ -7033,9 +7015,7 @@
 				AA40D44409A08D650068C0D5 /* PercentageDisplay.cpp in Sources */,
 				AA40D44509A08D650068C0D5 /* ScoreDisplayPercentage.cpp in Sources */,
 				AA40D44709A08D650068C0D5 /* ScreenTestInput.cpp in Sources */,
-				AA40D44809A08D650068C0D5 /* ScreenBookkeeping.cpp in Sources */,
 				AA40D44909A08D650068C0D5 /* ScreenNameEntryTraditional.cpp in Sources */,
-				AA40D44A09A08D650068C0D5 /* Bookkeeper.cpp in Sources */,
 				AA40D44B09A08D650068C0D5 /* GraphDisplay.cpp in Sources */,
 				AA40D44C09A08D650068C0D5 /* ComboGraph.cpp in Sources */,
 				AA40D44D09A08D650068C0D5 /* Attack.cpp in Sources */,

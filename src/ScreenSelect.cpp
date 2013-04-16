@@ -101,10 +101,7 @@ bool ScreenSelect::Input( const InputEventPlus &input )
 	m_timerIdleComment.GetDeltaTime();
 	m_timerIdleTimeout.GetDeltaTime();
 
-	/* Choices may change when more coins are inserted. */
-	if( input.MenuI == GAME_BUTTON_COIN && input.type == IET_FIRST_PRESS )
-		this->UpdateSelectableChoices();
-
+	
 	if( input.MenuI == GAME_BUTTON_START && input.type == IET_FIRST_PRESS && GAMESTATE->JoinInput(input.pn) )
 	{
 		// HACK: Only play start sound for the 2nd player who joins. The 

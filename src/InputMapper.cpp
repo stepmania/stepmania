@@ -65,7 +65,6 @@ static const AutoMappings g_DefaultKeyMappings = AutoMappings(
 	AutoMappingEntry( 0, KEY_KP_ENTER,	GAME_BUTTON_START,	true ),
 	AutoMappingEntry( 0, KEY_KP_C0,	GAME_BUTTON_SELECT,	true ),
 	AutoMappingEntry( 0, KEY_HYPHEN,	GAME_BUTTON_BACK,	true ), // laptop keyboards.
-	AutoMappingEntry( 0, KEY_F1,	GAME_BUTTON_COIN,	false ),
 	AutoMappingEntry( 0, KEY_SCRLLOCK,	GAME_BUTTON_OPERATOR,	false )
 );
 
@@ -302,7 +301,6 @@ static const AutoMappings g_AutoMappings[] =
 		AutoMappingEntry( 0, JOY_BUTTON_9,      GAME_BUTTON_SELECT,     false ),
 		AutoMappingEntry( 0, JOY_BUTTON_10,     GAME_BUTTON_START,      false ),
 		AutoMappingEntry( 0, JOY_BUTTON_5,      GAME_BUTTON_BACK,       false ),
-		AutoMappingEntry( 0, JOY_BUTTON_6,      GAME_BUTTON_COIN,       false ),
 			   // Player 2.
 		AutoMappingEntry( 0, JOY_BUTTON_32,     DANCE_BUTTON_LEFT,      true ),
 		AutoMappingEntry( 0, JOY_BUTTON_30,     DANCE_BUTTON_RIGHT,     true ),
@@ -316,8 +314,7 @@ static const AutoMappings g_AutoMappings[] =
 		AutoMappingEntry( 0, JOY_BUTTON_24,     DANCE_BUTTON_UPLEFT,    true ),
 		AutoMappingEntry( 0, JOY_BUTTON_25,     GAME_BUTTON_SELECT,     true ),
 		AutoMappingEntry( 0, JOY_BUTTON_26,     GAME_BUTTON_START,      true ),
-		AutoMappingEntry( 0, JOY_BUTTON_21,     GAME_BUTTON_BACK,       true ),
-		AutoMappingEntry( 0, JOY_BUTTON_22,     GAME_BUTTON_COIN,       true )
+		AutoMappingEntry( 0, JOY_BUTTON_21,     GAME_BUTTON_BACK,       true )
 	   ),
 	   AutoMappings(
 		"dance",
@@ -348,8 +345,7 @@ static const AutoMappings g_AutoMappings[] =
 		AutoMappingEntry( 0, JOY_BUTTON_8,      /* R1 */	       DANCE_BUTTON_UPRIGHT,   false ),
 		AutoMappingEntry( 0, JOY_BUTTON_10,     /* Select */    GAME_BUTTON_BACK,       false ),
 		AutoMappingEntry( 0, JOY_BUTTON_9,      /* Start	*/     GAME_BUTTON_START,      false ),
-		AutoMappingEntry( 0, JOY_BUTTON_5,      /* R1 */	       GAME_BUTTON_SELECT,     false ),
-		AutoMappingEntry( 0, JOY_BUTTON_6,      /* R2 */	       GAME_BUTTON_COIN,       false )
+		AutoMappingEntry( 0, JOY_BUTTON_5,      /* R1 */	       GAME_BUTTON_SELECT,     false )
 	   ),
 	   AutoMappings(
 		"dance",
@@ -1014,7 +1010,6 @@ static const InputScheme::GameButtonInfo g_CommonGameButtonInfo[] =
 	{ "Start",	GAME_BUTTON_START },
 	{ "Select",	GAME_BUTTON_SELECT },
 	{ "Back",	GAME_BUTTON_BACK },
-	{ "Coin",	GAME_BUTTON_COIN },
 	{ "Operator",	GAME_BUTTON_OPERATOR },
 	{ "EffectUp",	GAME_BUTTON_EFFECT_UP },
 	{ "EffectDown",	GAME_BUTTON_EFFECT_DOWN },
