@@ -55,7 +55,7 @@ wstring ConvertCodepageToWString( RString s, int iCodePage )
 	int iBytes = MultiByteToWideChar( iCodePage, 0, s.data(), s.size(), NULL, 0 );
 	ASSERT_M( iBytes > 0, werr_ssprintf( GetLastError(), "MultiByteToWideChar" ).c_str() );
 
-	wchar_t *pTemp = new wchar_t[iBytes];
+	wchar_t *pTemp = smnew wchar_t[iBytes];
 	MultiByteToWideChar( iCodePage, 0, s.data(), s.size(), pTemp, iBytes );
 	wstring sRet( pTemp, iBytes );
 	delete [] pTemp;

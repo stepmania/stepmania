@@ -127,11 +127,11 @@ MemoryCardDriver *MemoryCardDriver::Create()
 	MemoryCardDriver *ret = NULL;
 
 #ifdef ARCH_MEMORY_CARD_DRIVER
-	ret = new ARCH_MEMORY_CARD_DRIVER;
+	ret = smnew ARCH_MEMORY_CARD_DRIVER;
 #endif
 
 	if( !ret )
-		ret = new MemoryCardDriver_Null;
+		ret = smnew MemoryCardDriver_Null;
 	
 	return ret;
 }

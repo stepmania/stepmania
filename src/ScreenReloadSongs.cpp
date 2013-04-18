@@ -58,7 +58,7 @@ void ScreenReloadSongs::Init()
 	m_Loading.SetXY( SCREEN_CENTER_X, SCREEN_CENTER_Y );
 	this->AddChild( &m_Loading );
 
-	m_pLoadingWindow = new ScreenReloadSongsLoadingWindow( m_Loading );
+	m_pLoadingWindow = smnew ScreenReloadSongsLoadingWindow( m_Loading );
  }
 
 ScreenReloadSongs::~ScreenReloadSongs()

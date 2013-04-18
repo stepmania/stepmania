@@ -71,7 +71,7 @@ void LifeMeterTime::Load( const PlayerState *pPlayerState, PlayerStageStats *pPl
 	m_quadDangerGlow.SetEffectClock( Actor::CLOCK_BGM_BEAT );
 	this->AddChild( &m_quadDangerGlow );
 
-	m_pStream = new StreamDisplay;
+	m_pStream = smnew StreamDisplay;
 	bool bExtra = GAMESTATE->IsAnExtraStage();
 	m_pStream->Load( bExtra ? "StreamDisplayExtra" : "StreamDisplay" );
 	this->AddChild( m_pStream );

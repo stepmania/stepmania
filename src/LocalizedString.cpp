@@ -9,7 +9,7 @@ static SubscriptionManager<LocalizedString> m_Subscribers;
 class LocalizedStringImplDefault: public ILocalizedStringImpl
 {
 public:
-	static ILocalizedStringImpl *Create() { return new LocalizedStringImplDefault; }
+	static ILocalizedStringImpl *Create() { return smnew LocalizedStringImplDefault; }
 
 	void Load( const RString& sGroup, const RString& sName )
 	{

@@ -129,7 +129,7 @@ void RageFileManagerReadAhead::ReadAhead( RageFileBasic *pFile, int iBytes )
 
 	int iStart = lseek( iFD, 0, SEEK_CUR );
 
-	RageFileReadAheadThread *pReadAhead = new RageFileReadAheadThread( iFD, iStart, iBytes );
+	RageFileReadAheadThread *pReadAhead = smnew RageFileReadAheadThread( iFD, iStart, iBytes );
 	g_apReadAheads.push_back( pReadAhead );
 	
 	for( size_t i = 0; i < g_apReadAheads.size(); ++i )

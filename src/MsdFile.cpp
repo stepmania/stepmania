@@ -35,7 +35,7 @@ void MsdFile::ReadBuf( const char *buf, int len, bool bUnescape )
 
 	bool ReadingValue=false;
 	int i = 0;
-	char *cProcessed = new char[len];
+	char *cProcessed = smnew char[len];
 	int iProcessedLen = -1;
 	while( i < len )
 	{

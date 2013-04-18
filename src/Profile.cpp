@@ -940,7 +940,7 @@ bool Profile::SaveAllToDir( RString sDir, bool bSignData ) const
 
 XNode *Profile::SaveStatsXmlCreateNode() const
 {
-	XNode *xml = new XNode( "Stats" );
+	XNode *xml = smnew XNode( "Stats" );
 
 	xml->AppendChild( SaveGeneralDataCreateNode() );
 	xml->AppendChild( SaveSongScoresCreateNode() );
@@ -1023,7 +1023,7 @@ void Profile::SaveEditableDataToDir( RString sDir ) const
 
 XNode* Profile::SaveGeneralDataCreateNode() const
 {
-	XNode* pGeneralDataNode = new XNode( "GeneralData" );
+	XNode* pGeneralDataNode = smnew XNode( "GeneralData" );
 
 	// TRICKY: These are write-only elements that are normally never read again.
 	// This data is required by other apps (like internet ranking), but is 
@@ -1384,7 +1384,7 @@ XNode* Profile::SaveSongScoresCreateNode() const
 	const Profile* pProfile = this;
 	ASSERT( pProfile != NULL );
 
-	XNode* pNode = new XNode( "SongScores" );
+	XNode* pNode = smnew XNode( "SongScores" );
 
 	FOREACHM_CONST( SongID, HighScoresForASong, m_SongHighScores, i )
 	{
@@ -1465,7 +1465,7 @@ XNode* Profile::SaveCourseScoresCreateNode() const
 	const Profile* pProfile = this;
 	ASSERT( pProfile != NULL );
 
-	XNode* pNode = new XNode( "CourseScores" );
+	XNode* pNode = smnew XNode( "CourseScores" );
 
 	FOREACHM_CONST( CourseID, HighScoresForACourse, m_CourseHighScores, i )
 	{
@@ -1573,7 +1573,7 @@ XNode* Profile::SaveCategoryScoresCreateNode() const
 	const Profile* pProfile = this;
 	ASSERT( pProfile != NULL );
 
-	XNode* pNode = new XNode( "CategoryScores" );
+	XNode* pNode = smnew XNode( "CategoryScores" );
 
 	FOREACH_ENUM( StepsType,st )
 	{
@@ -1681,7 +1681,7 @@ XNode* Profile::SaveScreenshotDataCreateNode() const
 	const Profile* pProfile = this;
 	ASSERT( pProfile != NULL );
 
-	XNode* pNode = new XNode( "ScreenshotData" );
+	XNode* pNode = smnew XNode( "ScreenshotData" );
 
 	FOREACH_CONST( Screenshot, m_vScreenshots, ss )
 	{
@@ -1723,7 +1723,7 @@ XNode* Profile::SaveCalorieDataCreateNode() const
 	const Profile* pProfile = this;
 	ASSERT( pProfile != NULL );
 
-	XNode* pNode = new XNode( "CalorieData" );
+	XNode* pNode = smnew XNode( "CalorieData" );
 
 	FOREACHM_CONST( DateTime, Calories, m_mapDayToCaloriesBurned, i )
 	{
@@ -1760,7 +1760,7 @@ static void SaveRecentScore( XNode* xml )
 
 XNode* Profile::HighScoreForASongAndSteps::CreateNode() const
 {
-	XNode* pNode = new XNode( "HighScoreForASongAndSteps" );
+	XNode* pNode = smnew XNode( "HighScoreForASongAndSteps" );
 
 	pNode->AppendChild( songID.CreateNode() );
 	pNode->AppendChild( stepsID.CreateNode() );
@@ -1780,9 +1780,9 @@ void Profile::SaveStepsRecentScore( const Song* pSong, const Steps* pSteps, High
 	ASSERT( h.stepsID.IsValid() );
 	h.hs = hs;
 
-	auto_ptr<XNode> xml( new XNode("Stats") );
+	auto_ptr<XNode> xml( smnew XNode("Stats") );
 	xml->AppendChild( "MachineGuid",  PROFILEMAN->GetMachineProfile()->m_sGuid );
-	XNode *recent = xml->AppendChild( new XNode("RecentSongScores") );
+	XNode *recent = xml->AppendChild( smnew XNode("RecentSongScores") );
 	recent->AppendChild( h.CreateNode() );
 
 	SaveRecentScore( xml.get() );
@@ -1791,7 +1791,7 @@ void Profile::SaveStepsRecentScore( const Song* pSong, const Steps* pSteps, High
 
 XNode* Profile::HighScoreForACourseAndTrail::CreateNode() const
 {
-	XNode* pNode = new XNode( "HighScoreForACourseAndTrail" );
+	XNode* pNode = smnew XNode( "HighScoreForACourseAndTrail" );
 
 	pNode->AppendChild( courseID.CreateNode() );
 	pNode->AppendChild( trailID.CreateNode() );
@@ -1807,9 +1807,9 @@ void Profile::SaveCourseRecentScore( const Course* pCourse, const Trail* pTrail,
 	h.trailID.FromTrail( pTrail );
 	h.hs = hs;
 
-	auto_ptr<XNode> xml( new XNode("Stats") );
+	auto_ptr<XNode> xml( smnew XNode("Stats") );
 	xml->AppendChild( "MachineGuid",  PROFILEMAN->GetMachineProfile()->m_sGuid );
-	XNode *recent = xml->AppendChild( new XNode("RecentCourseScores") );
+	XNode *recent = xml->AppendChild( smnew XNode("RecentCourseScores") );
 	recent->AppendChild( h.CreateNode() );
 	SaveRecentScore( xml.get() );
 }
@@ -1846,7 +1846,7 @@ XNode* Profile::SaveCoinDataCreateNode() const
 	const Profile* pProfile = this;
 	ASSERT( pProfile != NULL );
 
-	XNode* pNode = new XNode( "CoinData" );
+	XNode* pNode = smnew XNode( "CoinData" );
 
 	return pNode;
 }

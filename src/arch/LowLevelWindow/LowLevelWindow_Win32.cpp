@@ -403,7 +403,7 @@ void RenderTarget_Win32::FinishRenderingTo()
 
 RenderTarget* LowLevelWindow_Win32::CreateRenderTarget()
 {
-	return new RenderTarget_Win32( this );
+	return smnew RenderTarget_Win32( this );
 }
 
 /*

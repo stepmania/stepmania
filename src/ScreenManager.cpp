@@ -220,7 +220,7 @@ using namespace ScreenManagerUtil;
 RegisterScreenClass::RegisterScreenClass( const RString& sClassName, CreateScreenFn pfn )
 {
 	if( g_pmapRegistrees == NULL )
-		g_pmapRegistrees = new map<RString,CreateScreenFn>;
+		g_pmapRegistrees = smnew map<RString,CreateScreenFn>;
 
 	map<RString,CreateScreenFn>::iterator iter = g_pmapRegistrees->find( sClassName );
 	ASSERT_M( iter == g_pmapRegistrees->end(), ssprintf("Screen class '%s' already registered.", sClassName.c_str()) );
@@ -240,7 +240,7 @@ ScreenManager::ScreenManager()
 		LUA->Release( L );
 	}
 
-	g_pSharedBGA = new Actor;
+	g_pSharedBGA = smnew Actor;
 
 	m_bZeroNextUpdate = false;
 	m_PopTopScreen = SM_Invalid;
@@ -303,7 +303,7 @@ void ScreenManager::ThemeChanged()
 
 	// force recreate of new BGA
 	SAFE_DELETE( g_pSharedBGA );
-	g_pSharedBGA = new Actor;
+	g_pSharedBGA = smnew Actor;
 
 	this->RefreshCreditsMessages();
 }
@@ -642,7 +642,7 @@ bool ScreenManager::ActivatePreparedScreenAndBackground( const RString &sScreenN
 		Actor *pNewBGA = NULL;
 		if( sNewBGA.empty() )
 		{
-			pNewBGA = new Actor;
+			pNewBGA = smnew Actor;
 		}
 		else
 		{
@@ -662,7 +662,7 @@ bool ScreenManager::ActivatePreparedScreenAndBackground( const RString &sScreenN
 		if( pNewBGA == NULL )
 		{
 			bLoadedBoth = false;
-			pNewBGA = new Actor;
+			pNewBGA = smnew Actor;
 		}
 
 		/* Move the old background back to the prepared list, or delete it if

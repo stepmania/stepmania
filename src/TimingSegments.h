@@ -121,7 +121,7 @@ struct FakeSegment : public TimingSegment
 	TimingSegmentType GetType() const { return SEGMENT_FAKE; }
 	SegmentEffectType GetEffectType() const { return SegmentEffectType_Range; }
 
-	TimingSegment* Copy() const { return new FakeSegment(*this); }
+	TimingSegment* Copy() const { return smnew FakeSegment(*this); }
 
 	bool IsNotable() const { return m_iLengthRows > 0; }
 	void DebugPrint() const;
@@ -179,7 +179,7 @@ struct WarpSegment : public TimingSegment
 {
 	TimingSegmentType GetType() const { return SEGMENT_WARP; }
 	SegmentEffectType GetEffectType() const { return SegmentEffectType_Range; }
-	TimingSegment* Copy() const { return new WarpSegment(*this); }
+	TimingSegment* Copy() const { return smnew WarpSegment(*this); }
 
 	bool IsNotable() const { return m_iLengthRows > 0; }
 	void DebugPrint() const;
@@ -246,7 +246,7 @@ struct TickcountSegment : public TimingSegment
 	bool IsNotable() const { return true; } // indefinite segments are always true
 	void DebugPrint() const;
 
-	TimingSegment* Copy() const { return new TickcountSegment(*this); }
+	TimingSegment* Copy() const { return smnew TickcountSegment(*this); }
 
 	TickcountSegment( int iStartRow = ROW_INVALID, int iTicks = DEFAULT_TICK_COUNT ) :
 		TimingSegment(iStartRow), m_iTicksPerBeat(iTicks) { }
@@ -292,7 +292,7 @@ struct ComboSegment : public TimingSegment
 	bool IsNotable() const { return true; } // indefinite segments are always true
 	void DebugPrint() const;
 
-	TimingSegment* Copy() const { return new ComboSegment(*this); }
+	TimingSegment* Copy() const { return smnew ComboSegment(*this); }
 
 	ComboSegment( int iStartRow = ROW_INVALID, int iCombo = 1, int iMissCombo = 1 ) :
 		TimingSegment(iStartRow), m_iCombo(iCombo),
@@ -348,7 +348,7 @@ struct LabelSegment : public TimingSegment
 	bool IsNotable() const { return true; } // indefinite segments are always true
 	void DebugPrint() const;
 
-	TimingSegment* Copy() const { return new LabelSegment(*this); }
+	TimingSegment* Copy() const { return smnew LabelSegment(*this); }
 
 	LabelSegment( int iStartRow = ROW_INVALID, const RString& sLabel = RString() ) :
 		TimingSegment(iStartRow), m_sLabel(sLabel) { }
@@ -391,7 +391,7 @@ struct BPMSegment : public TimingSegment
 	bool IsNotable() const { return true; } // indefinite segments are always true
 	void DebugPrint() const;
 
-	TimingSegment* Copy() const { return new BPMSegment(*this); }
+	TimingSegment* Copy() const { return smnew BPMSegment(*this); }
 
 	// note that this takes a BPM, not a BPS (compatibility)
 	BPMSegment( int iStartRow = ROW_INVALID, float fBPM = 0.0f ) :
@@ -443,7 +443,7 @@ struct TimeSignatureSegment : public TimingSegment
 	bool IsNotable() const { return true; } // indefinite segments are always true
 	void DebugPrint() const;
 
-	TimingSegment* Copy() const { return new TimeSignatureSegment(*this); }
+	TimingSegment* Copy() const { return smnew TimeSignatureSegment(*this); }
 
 	TimeSignatureSegment( int iStartRow = ROW_INVALID,
 	  int iNum = 4, int iDenom = 4 ) :
@@ -517,7 +517,7 @@ struct SpeedSegment : public TimingSegment
 	bool IsNotable() const { return true; } // indefinite segments are always true
 	void DebugPrint() const;
 
-	TimingSegment* Copy() const { return new SpeedSegment(*this); }
+	TimingSegment* Copy() const { return smnew SpeedSegment(*this); }
 
 	/** @brief The type of unit used for segment scaling. */
 	enum BaseUnit { UNIT_BEATS, UNIT_SECONDS };
@@ -591,7 +591,7 @@ struct ScrollSegment : public TimingSegment
 	bool IsNotable() const { return true; } // indefinite segments are always true
 	void DebugPrint() const;
 
-	TimingSegment* Copy() const { return new ScrollSegment(*this); }
+	TimingSegment* Copy() const { return smnew ScrollSegment(*this); }
 
 	ScrollSegment( int iStartRow = ROW_INVALID, float fRatio = 1.0f ) :
 		TimingSegment(iStartRow), m_fRatio(fRatio) { }
@@ -635,7 +635,7 @@ struct StopSegment : public TimingSegment
 	bool IsNotable() const { return m_fSeconds > 0; }
 	void DebugPrint() const;
 
-	TimingSegment* Copy() const { return new StopSegment(*this); }
+	TimingSegment* Copy() const { return smnew StopSegment(*this); }
 
 	StopSegment( int iStartRow = ROW_INVALID, float fSeconds = 0.0f ) :
 		TimingSegment(iStartRow), m_fSeconds(fSeconds) { }
@@ -678,7 +678,7 @@ struct DelaySegment : public TimingSegment
 	bool IsNotable() const { return m_fSeconds > 0; }
 	void DebugPrint() const;
 
-	TimingSegment* Copy() const { return new DelaySegment(*this); }
+	TimingSegment* Copy() const { return smnew DelaySegment(*this); }
 
 	DelaySegment( int iStartRow = ROW_INVALID, float fSeconds = 0 ) :
 		TimingSegment(iStartRow), m_fSeconds(fSeconds) { }

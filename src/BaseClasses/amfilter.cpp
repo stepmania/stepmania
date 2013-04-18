@@ -641,7 +641,7 @@ CBaseFilter::EnumPins(IEnumPins **ppEnum)
 
     /* Create a new ref counted enumerator */
 
-    *ppEnum = new CEnumPins(this,
+    *ppEnum = smnew CEnumPins(this,
                         NULL);
 
     return *ppEnum == NULL ? E_OUTOFMEMORY : NOERROR;
@@ -733,7 +733,7 @@ CBaseFilter::JoinFilterGraph(
 
     if (pName) {
         DWORD nameLen = lstrlenW(pName)+1;
-        m_pName = new WCHAR[nameLen];
+        m_pName = smnew WCHAR[nameLen];
         if (m_pName) {
             CopyMemory(m_pName, pName, nameLen*sizeof(WCHAR));
         } else {
@@ -1026,7 +1026,7 @@ CEnumPins::Clone(IEnumPins **ppEnum)
         hr =  VFW_E_ENUM_OUT_OF_SYNC;
     } else {
 
-        *ppEnum = new CEnumPins(m_pFilter,
+        *ppEnum = smnew CEnumPins(m_pFilter,
                                 this);
         if (*ppEnum == NULL) {
             hr = E_OUTOFMEMORY;
@@ -1286,7 +1286,7 @@ CEnumMediaTypes::Clone(IEnumMediaTypes **ppEnum)
         hr = VFW_E_ENUM_OUT_OF_SYNC;
     } else {
 
-        *ppEnum = new CEnumMediaTypes(m_pPin,
+        *ppEnum = smnew CEnumMediaTypes(m_pPin,
                                       this);
 
         if (*ppEnum == NULL) {
@@ -1478,7 +1478,7 @@ CBasePin::CBasePin(TCHAR *pObjectName,
 
     if (pName) {
         DWORD nameLen = lstrlenW(pName)+1;
-        m_pName = new WCHAR[nameLen];
+        m_pName = smnew WCHAR[nameLen];
         if (m_pName) {
             CopyMemory(m_pName, pName, nameLen*sizeof(WCHAR));
         }
@@ -1524,7 +1524,7 @@ CBasePin::CBasePin(CHAR *pObjectName,
 
     if (pName) {
         DWORD nameLen = lstrlenW(pName)+1;
-        m_pName = new WCHAR[nameLen];
+        m_pName = smnew WCHAR[nameLen];
         if (m_pName) {
             CopyMemory(m_pName, pName, nameLen*sizeof(WCHAR));
         }
@@ -2244,7 +2244,7 @@ CBasePin::EnumMediaTypes(
 
     /* Create a new ref counted enumerator */
 
-    *ppEnum = new CEnumMediaTypes(this,
+    *ppEnum = smnew CEnumMediaTypes(this,
                               NULL);
 
     if (*ppEnum == NULL) {
@@ -4889,7 +4889,7 @@ CBaseAllocator::CSampleList::Remove(CMediaSample * pSample)
 /* This goes in the factory template table to create new instances */
 CUnknown *CMemAllocator::CreateInstance(LPUNKNOWN pUnk, HRESULT *phr)
 {
-    CUnknown *pUnkRet = new CMemAllocator(NAME("CMemAllocator"), pUnk, phr);
+    CUnknown *pUnkRet = smnew CMemAllocator(NAME("CMemAllocator"), pUnk, phr);
     return pUnkRet;
 }
 
@@ -5047,7 +5047,7 @@ CMemAllocator::Alloc(void)
     for (; m_lAllocated < m_lCount; m_lAllocated++, pNext += lAlignedSize) {
 
 
-        pSample = new CMediaSample(
+        pSample = smnew CMediaSample(
                             NAME("Default memory media sample"),
                 this,
                             &hr,

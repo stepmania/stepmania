@@ -90,7 +90,7 @@ RageFileDriverReadAhead::~RageFileDriverReadAhead()
 
 RageFileDriverReadAhead *RageFileDriverReadAhead::Copy() const
 {
-	RageFileDriverReadAhead *pRet = new RageFileDriverReadAhead( *this );
+	RageFileDriverReadAhead *pRet = smnew RageFileDriverReadAhead( *this );
 	return pRet;
 }
 

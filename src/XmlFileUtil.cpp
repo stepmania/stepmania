@@ -311,7 +311,7 @@ RString::size_type LoadInternal( XNode *pNode, const RString &xml, RString &sErr
 	// generate child nodes
 	while( iOffset < xml.size() )
 	{
-		XNode *node = new XNode;
+		XNode *node = smnew XNode;
 
 		iOffset = LoadInternal( node, xml, sErrorOut, iOffset );
 		if( iOffset == string::npos )
@@ -531,7 +531,7 @@ class XNodeLuaValue: public XNodeValue
 {
 public:
 	LuaReference m_Value;
-	XNodeValue *Copy() const { return new XNodeLuaValue( *this ); }
+	XNodeValue *Copy() const { return smnew XNodeLuaValue( *this ); }
 
 	template<typename T>
 	T GetValue() const { T val; GetValue(val); return val; }
@@ -593,7 +593,7 @@ namespace
 			LuaHelpers::RunExpression( L, sExpression, sFile );
 		}
 
-		XNodeLuaValue *pRet = new XNodeLuaValue;
+		XNodeLuaValue *pRet = smnew XNodeLuaValue;
 		pRet->SetValueFromStack( L );
 		return pRet;
 	}
@@ -627,11 +627,11 @@ namespace
 {
 	XNode *XNodeFromTableRecursive( lua_State *L, const RString &sName, LuaReference &ProcessedTables )
 	{
-		XNode *pNode = new XNode( sName );
+		XNode *pNode = smnew XNode( sName );
 
 		// Set the value of the node to the table.
 		{
-			XNodeLuaValue *pValue = new XNodeLuaValue;
+			XNodeLuaValue *pValue = smnew XNodeLuaValue;
 			lua_pushvalue( L, -1 );
 			pValue->SetValueFromStack( L );
 			pNode->AppendAttrFrom( XNode::TEXT_ATTRIBUTE, pValue );
@@ -681,7 +681,7 @@ namespace
 			LuaHelpers::Pop( L, nName );
 
 			// Otherwise, add an attribute.
-			XNodeLuaValue *pValue = new XNodeLuaValue;
+			XNodeLuaValue *pValue = smnew XNodeLuaValue;
 			pValue->SetValueFromStack( L );
 			pNode->AppendAttrFrom( nName, pValue );
 		}

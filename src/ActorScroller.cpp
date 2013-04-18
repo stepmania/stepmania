@@ -14,7 +14,7 @@
  * that string instead create an ActorFrameAutoDeleteChildren object. */
 //REGISTER_ACTOR_CLASS( ActorScroller );
 REGISTER_ACTOR_CLASS_WITH_NAME( ActorScrollerAutoDeleteChildren, ActorScroller );
-ActorScroller *ActorScroller::Copy() const { return new ActorScroller(*this); }
+ActorScroller *ActorScroller::Copy() const { return smnew ActorScroller(*this); }
 
 
 ActorScroller::ActorScroller()

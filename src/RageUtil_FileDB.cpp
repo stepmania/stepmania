@@ -326,7 +326,7 @@ FileSet *FilenameDB::GetFileSet( const RString &sDir_, bool bCreate )
 
 	/* Create the FileSet and insert it.  Set it to !m_bFilled, so if other threads
 	 * happen to try to use this directory before we finish filling it, they'll wait. */
-	FileSet *pRet = new FileSet;
+	FileSet *pRet = smnew FileSet;
 	pRet->m_bFilled = false;
 	dirs[sLower] = pRet;
 

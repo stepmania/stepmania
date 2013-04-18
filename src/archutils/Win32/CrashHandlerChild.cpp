@@ -736,7 +736,7 @@ BOOL CrashDialog::HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam )
 			SendDlgItemMessage( hDlg, IDC_PROGRESS, PBM_SETPOS, 0, 0 );
 
 			// Create the form data to send.
-			m_pPost = new NetworkPostData;
+			m_pPost = smnew NetworkPostData;
 			m_pPost->SetData( "Product", PRODUCT_ID );
 			m_pPost->SetData( "Version", PRODUCT_VER );
 			m_pPost->SetData( "Arch", HOOKS->GetArchName().c_str() );

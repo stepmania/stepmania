@@ -7,7 +7,7 @@
 #include "RageUtil.h"
 #include "LuaBinding.h"
 
-DynamicActorScroller *DynamicActorScroller::Copy() const { return new DynamicActorScroller(*this); }
+DynamicActorScroller *DynamicActorScroller::Copy() const { return smnew DynamicActorScroller(*this); }
 
 void DynamicActorScroller::LoadFromNode( const XNode *pNode )
 {

@@ -570,7 +570,7 @@ static RString averr_ssprintf( int err, const char *fmt, ... )
 	va_end(va); 
 
 	size_t errbuf_size = 512;
-	char* errbuf = new char[errbuf_size];
+	char* errbuf = smnew char[errbuf_size];
 	avcodec::av_strerror(err, errbuf, errbuf_size);
 	RString Error = ssprintf("%i: %s", err, errbuf);
 	delete errbuf;
@@ -620,7 +620,7 @@ RString MovieDecoder_FFMpeg::Open( RString sFile )
 	if( !m_fctx )
 		return "AVCodec: Couldn't allocate context";
     
-	RageFile *f = new RageFile;
+	RageFile *f = smnew RageFile;
 
 	if( !f->Open(sFile, RageFile::READ) )
 	{
@@ -719,13 +719,13 @@ RageSurface *MovieDecoder_FFMpeg::CreateCompatibleSurface( int iTextureWidth, in
 }
 
 MovieTexture_FFMpeg::MovieTexture_FFMpeg( RageTextureID ID ):
-	MovieTexture_Generic( ID, new MovieDecoder_FFMpeg )
+	MovieTexture_Generic( ID, smnew MovieDecoder_FFMpeg )
 {
 }
 
 RageMovieTexture *RageMovieTextureDriver_FFMpeg::Create( RageTextureID ID, RString &sError )
 {
-	MovieTexture_FFMpeg *pRet = new MovieTexture_FFMpeg( ID );
+	MovieTexture_FFMpeg *pRet = smnew MovieTexture_FFMpeg( ID );
 	sError = pRet->Init();
 	if( !sError.empty() )
 		SAFE_DELETE( pRet );

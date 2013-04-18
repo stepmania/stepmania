@@ -27,7 +27,7 @@ RageFileObj::RageFileObj( const RageFileObj &cpy ):
 	/* If the original file has a buffer, copy it. */
 	if( cpy.m_pReadBuffer != NULL )
 	{
-		m_pReadBuffer = new char[BSIZE];
+		m_pReadBuffer = smnew char[BSIZE];
 		memcpy( m_pReadBuffer, cpy.m_pReadBuffer, BSIZE );
 
 		int iOffsetIntoBuffer = cpy.m_pReadBuf - cpy.m_pReadBuffer;
@@ -40,7 +40,7 @@ RageFileObj::RageFileObj( const RageFileObj &cpy ):
 
 	if( cpy.m_pWriteBuffer != NULL )
 	{
-		m_pWriteBuffer = new char[cpy.m_iWriteBufferSize];
+		m_pWriteBuffer = smnew char[cpy.m_iWriteBufferSize];
 		memcpy( m_pWriteBuffer, cpy.m_pWriteBuffer, m_iWriteBufferUsed );
 	}
 	else
@@ -286,14 +286,14 @@ int RageFileObj::Flush()
 void RageFileObj::EnableReadBuffering()
 {
 	if( m_pReadBuffer == NULL )
-		m_pReadBuffer = new char[BSIZE];
+		m_pReadBuffer = smnew char[BSIZE];
 }
 
 void RageFileObj::EnableWriteBuffering( int iBytes )
 {
 	if( m_pWriteBuffer == NULL )
 	{
-		m_pWriteBuffer = new char[iBytes];
+		m_pWriteBuffer = smnew char[iBytes];
 		m_iWriteBufferPos = m_iFilePos;
 		m_iWriteBufferSize = iBytes;
 	}

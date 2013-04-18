@@ -9,7 +9,7 @@ public:
 	RageSoundReader_Merge();
 	virtual ~RageSoundReader_Merge();
 	RageSoundReader_Merge( const RageSoundReader_Merge &cpy );
-	virtual RageSoundReader_Merge *Copy() const { return new RageSoundReader_Merge( *this ); }
+	virtual RageSoundReader_Merge *Copy() const { return smnew RageSoundReader_Merge( *this ); }
 
 	virtual int GetLength() const;
 	virtual int GetLength_Fast() const;

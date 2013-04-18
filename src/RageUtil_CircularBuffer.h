@@ -58,7 +58,7 @@ public:
 		m_iBlockSize = cpy.m_iBlockSize;
 		if( size )
 		{
-			buf = new T[size];
+			buf = smnew T[size];
 			memcpy( buf, cpy.buf, size*sizeof(T) );
 		}
 		else
@@ -123,7 +123,7 @@ public:
 			size = n+1;
 			size = ((size + iBlockSize - 1) / iBlockSize) * iBlockSize; // round up
 
-			buf = new T[size];
+			buf = smnew T[size];
 		}
 		else
 			size = 0;

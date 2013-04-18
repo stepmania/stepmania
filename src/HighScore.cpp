@@ -91,7 +91,7 @@ HighScoreImpl::HighScoreImpl()
 
 XNode *HighScoreImpl::CreateNode() const
 {
-	XNode *pNode = new XNode( "HighScore" );
+	XNode *pNode = smnew XNode( "HighScore" );
 	const bool bWriteSimpleValues = RadarValues::WRITE_SIMPLE_VALIES;
 	const bool bWriteComplexValues = RadarValues::WRITE_COMPLEX_VALIES;
 
@@ -162,16 +162,16 @@ void HighScoreImpl::LoadFromNode( const XNode *pNode )
 	grade = clamp( grade, Grade_Tier01, Grade_Failed );
 }
 
-REGISTER_CLASS_TRAITS( HighScoreImpl, new HighScoreImpl(*pCopy) )
+REGISTER_CLASS_TRAITS( HighScoreImpl, smnew HighScoreImpl(*pCopy) )
 
 HighScore::HighScore()
 {
-	m_Impl = new HighScoreImpl;
+	m_Impl = smnew HighScoreImpl;
 }
 
 void HighScore::Unset()
 {
-	m_Impl = new HighScoreImpl;
+	m_Impl = smnew HighScoreImpl;
 }
 
 bool HighScore::IsEmpty() const
@@ -328,7 +328,7 @@ const HighScore& HighScoreList::GetTopScore() const
 
 XNode* HighScoreList::CreateNode() const
 {
-	XNode* pNode = new XNode( "HighScoreList" );
+	XNode* pNode = smnew XNode( "HighScoreList" );
 
 	pNode->AppendChild( "NumTimesPlayed", iNumTimesPlayed );
 	pNode->AppendChild( "LastPlayed", dtLastPlayed.GetString() );
@@ -408,7 +408,7 @@ void HighScoreList::ClampSize( bool bIsMachine )
 
 XNode* Screenshot::CreateNode() const
 {
-	XNode* pNode = new XNode( "Screenshot" );
+	XNode* pNode = smnew XNode( "Screenshot" );
 
 	// TRICKY:  Don't write "name to fill in" markers.
 	pNode->AppendChild( "FileName",	sFileName );

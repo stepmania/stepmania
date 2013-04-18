@@ -22,16 +22,16 @@ RageSoundReader_FileReader *RageSoundReader_FileReader::TryOpenFile( RageFileBas
 
 #ifndef NO_WAV_SUPPORT
 	if( !format.CompareNoCase("wav") )
-		Sample = new RageSoundReader_WAV;
+		Sample = smnew RageSoundReader_WAV;
 #endif
 #ifndef NO_MP3_SUPPORT
 	if( !format.CompareNoCase("mp3") )
-		Sample = new RageSoundReader_MP3;
+		Sample = smnew RageSoundReader_MP3;
 #endif
 
 #ifndef NO_VORBIS_SUPPORT
 	if( !format.CompareNoCase("oga") || !format.CompareNoCase("ogg") )
-		Sample = new RageSoundReader_Vorbisfile;
+		Sample = smnew RageSoundReader_Vorbisfile;
 #endif
 
 	if( !Sample )
@@ -90,7 +90,7 @@ RageSoundReader_FileReader *RageSoundReader_FileReader::OpenFile( RString filena
 {
 	HiddenPtr<RageFileBasic> pFile;
 	{
-		RageFile *pFileOpen = new RageFile;
+		RageFile *pFileOpen = smnew RageFile;
 		if( !pFileOpen->Open(filename) )
 		{
 			error = pFileOpen->GetError();
@@ -104,7 +104,7 @@ RageSoundReader_FileReader *RageSoundReader_FileReader::OpenFile( RString filena
 	{
 		if( pFile->GetFileSize() < 1024*50 )
 		{
-			RageFileObjMem *pMem = new RageFileObjMem;
+			RageFileObjMem *pMem = smnew RageFileObjMem;
 			bool bRet = FileCopy( *pFile, *pMem, error, NULL );
 			if( !bRet )
 			{

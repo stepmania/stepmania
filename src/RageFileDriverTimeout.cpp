@@ -461,7 +461,7 @@ int ThreadedFileWorker::Read( RageFileBasic *&pFile, void *pBuf, int iSize, RStr
 
 	m_pRequestFile = pFile;
 	m_iRequestSize = iSize;
-	m_pResultBuffer = new char[iSize];
+	m_pResultBuffer = smnew char[iSize];
 
 	if( !DoRequest(REQ_READ) )
 	{
@@ -503,7 +503,7 @@ int ThreadedFileWorker::Write( RageFileBasic *&pFile, const void *pBuf, int iSiz
 
 	m_pRequestFile = pFile;
 	m_iRequestSize = iSize;
-	m_pRequestBuffer = new char[iSize];
+	m_pRequestBuffer = smnew char[iSize];
 	memcpy( m_pRequestBuffer, pBuf, iSize );
 
 	if( !DoRequest(REQ_WRITE) )
@@ -756,7 +756,7 @@ public:
 			return NULL;
 		}
 
-		return new RageFileObjTimeout( m_pWorker, pCopy, m_iFileSize, m_iMode );
+		return smnew RageFileObjTimeout( m_pWorker, pCopy, m_iFileSize, m_iMode );
 	}
 
 protected:
@@ -868,9 +868,9 @@ private:
 };
 
 RageFileDriverTimeout::RageFileDriverTimeout( const RString &sPath ):
-        RageFileDriver( new TimedFilenameDB() )
+        RageFileDriver( smnew TimedFilenameDB() )
 {
-	m_pWorker = new ThreadedFileWorker( sPath );
+	m_pWorker = smnew ThreadedFileWorker( sPath );
 
 	((TimedFilenameDB *) FDB)->SetWorker( m_pWorker );
 }
@@ -896,7 +896,7 @@ RageFileBasic *RageFileDriverTimeout::Open( const RString &sPath, int iMode, int
 		}
 	}
 
-	return new RageFileObjTimeout( m_pWorker, pChildFile, iSize, iMode );
+	return smnew RageFileObjTimeout( m_pWorker, pChildFile, iSize, iMode );
 }
 
 void RageFileDriverTimeout::FlushDirCache( const RString &sPath )
@@ -937,7 +937,7 @@ RageFileDriverTimeout::~RageFileDriverTimeout()
 static struct FileDriverEntry_Timeout: public FileDriverEntry
 {
         FileDriverEntry_Timeout(): FileDriverEntry( "TIMEOUT" ) { }
-        RageFileDriver *Create( const RString &sRoot ) const { return new RageFileDriverTimeout( sRoot ); }
+        RageFileDriver *Create( const RString &sRoot ) const { return smnew RageFileDriverTimeout( sRoot ); }
 } const g_RegisterDriver;
 
 /*

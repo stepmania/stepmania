@@ -25,14 +25,14 @@ public:
 	set<T*> &Get()
 	{
 		if( m_pSubscribers == NULL )
-			m_pSubscribers = new set<T*>;
+			m_pSubscribers = smnew set<T*>;
 		return *m_pSubscribers;
 	}
 
 	void Subscribe( T* p )
 	{
 		if( m_pSubscribers == NULL )
-			m_pSubscribers = new set<T*>;
+			m_pSubscribers = smnew set<T*>;
 #ifdef DEBUG
 		typename set<T*>::iterator iter = m_pSubscribers->find( p );
 		ASSERT_M( iter == m_pSubscribers->end(), "already subscribed" );

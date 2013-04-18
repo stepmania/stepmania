@@ -231,7 +231,7 @@ static vector<RegisterWithLuaFn>	*g_vRegisterActorTypes = NULL;
 void LuaManager::Register( RegisterWithLuaFn pfn )
 {
 	if( g_vRegisterActorTypes == NULL )
-		g_vRegisterActorTypes = new vector<RegisterWithLuaFn>;
+		g_vRegisterActorTypes = smnew vector<RegisterWithLuaFn>;
 
 	g_vRegisterActorTypes->push_back( pfn );
 }
@@ -239,7 +239,7 @@ void LuaManager::Register( RegisterWithLuaFn pfn )
 
 LuaManager::LuaManager()
 {
-	pImpl = new Impl;
+	pImpl = smnew Impl;
 	LUA = this; // so that LUA is available when we call the Register functions
 
 	lua_State *L = lua_open();
@@ -374,8 +374,8 @@ void LuaManager::RegisterTypes()
 
 LuaThreadVariable::LuaThreadVariable( const RString &sName, const RString &sValue )
 {
-	m_Name = new LuaReference;
-	m_pOldValue = new LuaReference;
+	m_Name = smnew LuaReference;
+	m_pOldValue = smnew LuaReference;
 
 	Lua *L = LUA->Get();
 	LuaHelpers::Push( L, sName );
@@ -387,8 +387,8 @@ LuaThreadVariable::LuaThreadVariable( const RString &sName, const RString &sValu
 
 LuaThreadVariable::LuaThreadVariable( const RString &sName, const LuaReference &Value )
 {
-	m_Name = new LuaReference;
-	m_pOldValue = new LuaReference;
+	m_Name = smnew LuaReference;
+	m_pOldValue = smnew LuaReference;
 
 	Lua *L = LUA->Get();
 	LuaHelpers::Push( L, sName );
@@ -402,8 +402,8 @@ LuaThreadVariable::LuaThreadVariable( const RString &sName, const LuaReference &
 // name and value are on the stack
 LuaThreadVariable::LuaThreadVariable( lua_State *L )
 {
-	m_Name = new LuaReference;
-	m_pOldValue = new LuaReference;
+	m_Name = smnew LuaReference;
+	m_pOldValue = smnew LuaReference;
 
 	lua_pushvalue( L, -2 );
 	m_Name->SetFromStack( L );
@@ -548,7 +548,7 @@ namespace
 
 XNode *LuaHelpers::GetLuaInformation()
 {
-	XNode *pLuaNode = new XNode( "Lua" );
+	XNode *pLuaNode = smnew XNode( "Lua" );
 
 	XNode *pGlobalsNode = pLuaNode->AppendChild( "GlobalFunctions" );
 	XNode *pClassesNode = pLuaNode->AppendChild( "Classes" );
@@ -1043,7 +1043,7 @@ namespace
 		FOREACH_LUATABLE( L, 2 )
 		{
 			lua_pushvalue( L, -2 );
-			LuaThreadVariable *pVar = new LuaThreadVariable( L );
+			LuaThreadVariable *pVar = smnew LuaThreadVariable( L );
 			apVars.push_back( pVar );
 		}
 

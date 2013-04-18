@@ -28,7 +28,7 @@ RageFileDriverSlice::~RageFileDriverSlice()
 
 RageFileDriverSlice *RageFileDriverSlice::Copy() const
 {
-	RageFileDriverSlice *pRet = new RageFileDriverSlice( *this );
+	RageFileDriverSlice *pRet = smnew RageFileDriverSlice( *this );
 	return pRet;
 }
 

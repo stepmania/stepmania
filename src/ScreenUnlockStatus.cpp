@@ -53,7 +53,7 @@ void ScreenUnlockStatus::Init()
 		if( pSong == NULL)
 			continue;
 
-		Sprite* pSpr = new Sprite;
+		Sprite* pSpr = smnew Sprite;
 
 		// new unlock graphic
 		pSpr->Load( THEME->GetPathG("ScreenUnlockStatus",ssprintf("%04d icon", i)) );
@@ -94,7 +94,7 @@ void ScreenUnlockStatus::Init()
 		{
 			const UnlockEntry &entry = UNLOCKMAN->m_UnlockEntries[i-1];
 			
-			BitmapText* text = new BitmapText;
+			BitmapText* text = smnew BitmapText;
 
 			text->LoadFromFont( THEME->GetPathF("ScreenUnlockStatus","text") );
 			text->SetHorizAlign( align_left );
@@ -169,7 +169,7 @@ void ScreenUnlockStatus::Init()
 
 			if (UNLOCK_TEXT_SCROLL >= 2)
 			{
-				Sprite* IconCount = new Sprite;
+				Sprite* IconCount = smnew Sprite;
 
 				// new unlock graphic
 				IconCount->Load( THEME->GetPathG("ScreenUnlockStatus",ssprintf("%04d icon", i)) );
@@ -232,7 +232,7 @@ void ScreenUnlockStatus::Init()
 			if( pSong == NULL )
 				continue;
 
-			BitmapText* NewText = new BitmapText;
+			BitmapText* NewText = smnew BitmapText;
 
 			NewText->LoadFromFont( THEME->GetPathF("ScreenUnlockStatus","text") );
 			NewText->SetHorizAlign( align_left );
@@ -256,7 +256,7 @@ void ScreenUnlockStatus::Init()
 			}
 
 			// new unlock graphic
-			Sprite* NewIcon = new Sprite;
+			Sprite* NewIcon = smnew Sprite;
 			NewIcon->Load( THEME->GetPathG("ScreenUnlockStatus",ssprintf("%04d icon", NextIcon)) );
 			NewIcon->SetXY( UNLOCK_TEXT_SCROLL_ICON_X, ScrollingTextStartY);
 			NewIcon->SetHeight(UNLOCK_TEXT_SCROLL_ICON_SIZE);

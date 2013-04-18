@@ -115,7 +115,7 @@ void CircularShift( vector<T> &v, int dist )
 }
 
 template<typename Type, typename Ret>
-static Ret *CreateClass() { return new Type; }
+static Ret *CreateClass() { return smnew Type; }
 
 /*
  * Helper function to remove all objects from an STL container for which the

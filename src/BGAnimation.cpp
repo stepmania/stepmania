@@ -78,7 +78,7 @@ void BGAnimation::AddLayersFromAniDir( const RString &_sAniDir, const XNode *pNo
 			else
 			{
 				// import as a single layer
-				BGAnimationLayer* bgLayer = new BGAnimationLayer;
+				BGAnimationLayer* bgLayer = smnew BGAnimationLayer;
 				bgLayer->LoadFromNode( pKey );
 				this->AddChild( bgLayer );
 			}
@@ -149,7 +149,7 @@ void BGAnimation::LoadFromAniDir( const RString &_sAniDir )
 			const RString sPath = asImagePaths[i];
 			if( Basename(sPath).Left(1) == "_" )
 				continue; // don't directly load files starting with an underscore
-			BGAnimationLayer* pLayer = new BGAnimationLayer;
+			BGAnimationLayer* pLayer = smnew BGAnimationLayer;
 			pLayer->LoadFromAniLayerFile( asImagePaths[i] );
 			AddChild( pLayer );
 		}
@@ -169,7 +169,7 @@ void BGAnimation::LoadFromNode( const XNode* pNode )
 	float fLengthSeconds = 0;
 	if( pNode->GetAttrValue( "LengthSeconds", fLengthSeconds ) )
 	{
-		Actor *pActor = new Actor;
+		Actor *pActor = smnew Actor;
 		pActor->SetName( "BGAnimation dummy" );
 		pActor->SetVisible( false );
 		apActorCommands ap = ActorUtil::ParseActorCommands( ssprintf("sleep,%f",fLengthSeconds) );

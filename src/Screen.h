@@ -21,7 +21,7 @@ typedef Screen* (*CreateScreenFn)(const RString& sClassName);
  */
 struct RegisterScreenClass { RegisterScreenClass( const RString &sClassName, CreateScreenFn pfn ); };
 #define REGISTER_SCREEN_CLASS( className ) \
-	static Screen* Create##className( const RString &sName ) { LuaThreadVariable var( "LoadingScreen", sName ); Screen *pRet = new className; pRet->SetName( sName ); Screen::InitScreen( pRet ); return pRet; } \
+	static Screen* Create##className( const RString &sName ) { LuaThreadVariable var( "LoadingScreen", sName ); Screen *pRet = smnew className; pRet->SetName( sName ); Screen::InitScreen( pRet ); return pRet; } \
 	static RegisterScreenClass register_##className( #className, Create##className )
 
 /** @brief The different types of screens available. */

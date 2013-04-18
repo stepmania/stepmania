@@ -47,7 +47,7 @@ Font* FontManager::LoadFont( const RString &sFontOrTextureFilePath, RString sCha
 		return pFont;
 	}
 
-	Font *f = new Font;
+	Font *f = smnew Font;
 	f->Load(sFontOrTextureFilePath, sChars);
 	g_mapPathToFont[NewName] = f;
 	return f;

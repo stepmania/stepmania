@@ -138,7 +138,7 @@ struct ThreadSlot *g_pUnknownThreadSlot = NULL;
  * so possibly racing over them is harmless (simply using a stale thread ID, etc). */
 static RageMutex &GetThreadSlotsLock()
 {
-	static RageMutex *pLock = new RageMutex( "ThreadSlots" );
+	static RageMutex *pLock = smnew RageMutex( "ThreadSlots" );
 	return *pLock;
 }
 
@@ -531,7 +531,7 @@ RageMutex::RageMutex( const RString &name ):
 
 /*	if( g_FreeMutexIDs == NULL )
 	{
-		g_FreeMutexIDs = new set<int>;
+		g_FreeMutexIDs = smnew set<int>;
 		for( int i = 0; i < MAX_MUTEXES; ++i )
 			g_FreeMutexIDs->insert( i );
 	}
@@ -555,7 +555,7 @@ RageMutex::RageMutex( const RString &name ):
 	g_FreeMutexIDs->erase( g_FreeMutexIDs->begin() );
 
 	if( g_MutexList == NULL )
-		g_MutexList = new vector<RageMutex*>;
+		g_MutexList = smnew vector<RageMutex*>;
 
 	g_MutexList->push_back( this );
 */

@@ -8,9 +8,9 @@ LifeMeter *LifeMeter::MakeLifeMeter( SongOptions::LifeType t )
 {
 	switch( t )
 	{
-	case SongOptions::LIFE_BAR:     return new LifeMeterBar;
-	case SongOptions::LIFE_BATTERY: return new LifeMeterBattery;
-	case SongOptions::LIFE_TIME:    return new LifeMeterTime;
+	case SongOptions::LIFE_BAR:     return smnew LifeMeterBar;
+	case SongOptions::LIFE_BATTERY: return smnew LifeMeterBattery;
+	case SongOptions::LIFE_TIME:    return smnew LifeMeterTime;
 	default:
 		FAIL_M(ssprintf("Unrecognized LifeMeter type: %i", t));
 	}

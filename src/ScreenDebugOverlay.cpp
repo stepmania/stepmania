@@ -59,7 +59,7 @@ public:
 	IDebugLine()
 	{ 
 		if( g_pvpSubscribers == NULL )
-			g_pvpSubscribers = new vector<IDebugLine*>;
+			g_pvpSubscribers = smnew vector<IDebugLine*>;
 		g_pvpSubscribers->push_back( this );
 	}
 	virtual ~IDebugLine() { }
@@ -260,7 +260,7 @@ void ScreenDebugOverlay::Init()
 
 		RString sButton = INPUTMAN->GetDeviceSpecificInputString( di );
 
-		BitmapText *p = new BitmapText;
+		BitmapText *p = smnew BitmapText;
 		p->SetName( "PageText" );
 		p->LoadFromFont( THEME->GetPathF("ScreenDebugOverlay", "page") );
 		LOAD_ALL_COMMANDS_AND_ON_COMMAND( p );
@@ -274,7 +274,7 @@ void ScreenDebugOverlay::Init()
 	FOREACH_CONST( IDebugLine*, *g_pvpSubscribers, p )
 	{
 		{
-			BitmapText *bt = new BitmapText;
+			BitmapText *bt = smnew BitmapText;
 			bt->SetName( "ButtonText" );
 			bt->LoadFromFont( THEME->GetPathF("ScreenDebugOverlay", "line") );
 			bt->SetHorizAlign( align_right );
@@ -284,7 +284,7 @@ void ScreenDebugOverlay::Init()
 			this->AddChild( bt );
 		}
 		{
-			BitmapText *bt = new BitmapText;
+			BitmapText *bt = smnew BitmapText;
 			bt->SetName( "FunctionText" );
 			bt->LoadFromFont( THEME->GetPathF("ScreenDebugOverlay", "line") );
 			bt->SetHorizAlign( align_left );

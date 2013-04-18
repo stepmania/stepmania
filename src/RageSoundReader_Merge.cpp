@@ -74,7 +74,7 @@ void RageSoundReader_Merge::Finish( int iPreferredSampleRate )
 		{
 			RageSoundReader *&pSound = (*it);
 
-			RageSoundReader_Resample_Good *pResample = new RageSoundReader_Resample_Good( pSound, iPreferredSampleRate );
+			RageSoundReader_Resample_Good *pResample = smnew RageSoundReader_Resample_Good( pSound, iPreferredSampleRate );
 			pSound = pResample;
 		}
 
@@ -85,7 +85,7 @@ void RageSoundReader_Merge::Finish( int iPreferredSampleRate )
 	FOREACH( RageSoundReader *, m_aSounds, it )
 	{
 		if( (*it)->GetNumChannels() != this->GetNumChannels() )
-			(*it) = new RageSoundReader_Pan( (*it) );
+			(*it) = smnew RageSoundReader_Pan( (*it) );
 	}
 
 	/* If we have more than two channels, then all sounds must have the same number of

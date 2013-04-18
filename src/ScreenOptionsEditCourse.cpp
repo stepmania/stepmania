@@ -213,7 +213,7 @@ void ScreenOptionsEditCourse::BeginScreen()
 		}
 		
 		{
-			EditCourseOptionRowHandlerSteps *pHand = new EditCourseOptionRowHandlerSteps;
+			EditCourseOptionRowHandlerSteps *pHand = smnew EditCourseOptionRowHandlerSteps;
 			pHand->Load( i );
 			pHand->m_Def.m_vsChoices.push_back( "n/a" );
 			pHand->m_Def.m_sName = ssprintf(STEPS.GetValue() + " %d",i+1);

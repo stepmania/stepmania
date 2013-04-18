@@ -57,11 +57,11 @@ const RString &EnumToString( int iVal, int iMax, const char **szNameArray, auto_
 	{
 		for( int i = 0; i < iMax; ++i )
 		{
-			auto_ptr<RString> ap( new RString( szNameArray[i] ) );
+			auto_ptr<RString> ap( smnew RString( szNameArray[i] ) );
 			pNameCache[i] = ap;
 		}
 
-		auto_ptr<RString> ap( new RString );
+		auto_ptr<RString> ap( smnew RString );
 		pNameCache[iMax+1] = ap;
 	}
 

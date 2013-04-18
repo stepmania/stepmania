@@ -9,7 +9,7 @@ class XNode;
 typedef Actor* (*CreateActorFn)();
 
 template<typename T>
-Actor *CreateActor() { return new T; }
+Actor *CreateActor() { return smnew T; }
 
 /**
  * @brief Register the requested Actor with the specified external name.
@@ -19,7 +19,7 @@ Actor *CreateActor() { return new T; }
 	struct Register##className { \
 		Register##className() { ActorUtil::Register(#externalClassName, CreateActor<className>); } \
 	}; \
-	className *className::Copy() const { return new className(*this); } \
+	className *className::Copy() const { return smnew className(*this); } \
 	static Register##className register##className
 
 /**

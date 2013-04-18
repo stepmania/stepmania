@@ -42,7 +42,7 @@ void AutoActor::Load( const RString &sPath )
 
 	// If a Condition is false, MakeActor will return NULL.
 	if( m_pActor == NULL )
-		m_pActor = new Actor;
+		m_pActor = smnew Actor;
 }
 
 void AutoActor::LoadB( const RString &sMetricsGroup, const RString &sElement )

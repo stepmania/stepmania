@@ -18,7 +18,7 @@
  */
 //REGISTER_ACTOR_CLASS( ActorFrame );
 REGISTER_ACTOR_CLASS_WITH_NAME( ActorFrameAutoDeleteChildren, ActorFrame );
-ActorFrame *ActorFrame::Copy() const { return new ActorFrame(*this); }
+ActorFrame *ActorFrame::Copy() const { return smnew ActorFrame(*this); }
 
 
 ActorFrame::ActorFrame()

@@ -41,7 +41,7 @@ public:
 	WheelItemBase( RString sType );
 	WheelItemBase( const WheelItemBase &cpy );
 	virtual void DrawPrimitives();
-	virtual WheelItemBase *Copy() const { return new WheelItemBase(*this); }
+	virtual WheelItemBase *Copy() const { return smnew WheelItemBase(*this); }
 
 	void Load( RString sType );
 	void DrawGrayBar( Actor& bar );

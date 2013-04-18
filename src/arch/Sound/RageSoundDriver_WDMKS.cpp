@@ -370,7 +370,7 @@ WinWdmPin *WinWdmFilter::CreatePin( unsigned long iPinId, RString &sError )
 	}
 
 	/* Allocate the new PIN object */
-	WinWdmPin *pPin = new WinWdmPin( this, iPinId );
+	WinWdmPin *pPin = smnew WinWdmPin( this, iPinId );
 
 	/* Get DATARANGEs */
 	KSMULTIPLE_ITEM *pDataRangesItem;
@@ -537,7 +537,7 @@ bool WinWdmPin::IsFormatSupported( const WAVEFORMATEX *pFormat ) const
 WinWdmFilter *WinWdmFilter::Create( const RString &sFilterName, const RString &sFriendlyName, RString &sError )
 {
 	/* Allocate the new filter object */
-	WinWdmFilter *pFilter = new WinWdmFilter;
+	WinWdmFilter *pFilter = smnew WinWdmFilter;
 
 	pFilter->m_sFilterName = sFilterName;
 	pFilter->m_sFriendlyName = sFriendlyName;
@@ -1321,7 +1321,7 @@ RString RageSoundDriver_WDMKS::Init()
 	}
 	apFilters.clear();
 
-	m_pStream = new WinWdmStream;
+	m_pStream = smnew WinWdmStream;
 	if( !m_pStream->Open( m_pFilter,
 		PREFSMAN->m_iSoundWriteAhead,
 		DeviceSampleFormat_Int16,

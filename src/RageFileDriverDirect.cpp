@@ -24,18 +24,18 @@
 static struct FileDriverEntry_DIR: public FileDriverEntry
 {
 	FileDriverEntry_DIR(): FileDriverEntry( "DIR" ) { }
-	RageFileDriver *Create( const RString &sRoot ) const { return new RageFileDriverDirect( sRoot ); }
+	RageFileDriver *Create( const RString &sRoot ) const { return smnew RageFileDriverDirect( sRoot ); }
 } const g_RegisterDriver;
 
 /* Direct read-only filesystem access: */
 static struct FileDriverEntry_DIRRO: public FileDriverEntry
 {
 	FileDriverEntry_DIRRO(): FileDriverEntry( "DIRRO" ) { }
-	RageFileDriver *Create( const RString &sRoot ) const { return new RageFileDriverDirectReadOnly( sRoot ); }
+	RageFileDriver *Create( const RString &sRoot ) const { return smnew RageFileDriverDirectReadOnly( sRoot ); }
 } const g_RegisterDriver2;
 
 RageFileDriverDirect::RageFileDriverDirect( const RString &sRoot ):
-	RageFileDriver( new DirectFilenameDB(sRoot) )
+	RageFileDriver( smnew DirectFilenameDB(sRoot) )
 {
 	Remount( sRoot );
 }
@@ -89,7 +89,7 @@ static RageFileObjDirect *MakeFileObjDirect( RString sPath, int iMode, int &iErr
 	}
 #endif
 
-	return new RageFileObjDirect( sPath, iFD, iMode );
+	return smnew RageFileObjDirect( sPath, iFD, iMode );
 }
 
 RageFileBasic *RageFileDriverDirect::Open( const RString &sPath_, int iMode, int &iError )

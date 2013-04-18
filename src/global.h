@@ -152,6 +152,14 @@ void ShowWarningOrTrace( const char *file, int line, const char *message, bool b
 #define DEBUG_ASSERT_M(x,y)
 #endif
 
+// Define a macro for new that specifies file and line information in debug only. This is used to output detailed information about
+// memory leaks and makes it possible to track down the exact new call that caused them.
+#if _DEBUG
+	#define smnew new(_NORMAL_BLOCK, __FILE__, __LINE__)
+#else
+	#define smnew new
+#endif
+
 /* Use UNIQUE_NAME to get the line number concatenated to x. This is useful for
  * generating unique identifiers in other macros.  */
 /* XXX: VC2003 expanding __LINE__ to nothing in the first version.  Investigate why. -Chris */

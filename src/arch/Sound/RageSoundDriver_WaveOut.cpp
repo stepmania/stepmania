@@ -132,7 +132,7 @@ RString RageSoundDriver_WaveOut::Init()
 	for(int b = 0; b < num_chunks; ++b)
 	{
 		m_aBuffers[b].dwBufferLength = chunksize;
-		m_aBuffers[b].lpData = new char[chunksize];
+		m_aBuffers[b].lpData = smnew char[chunksize];
 		ret = waveOutPrepareHeader( m_hWaveOut, &m_aBuffers[b], sizeof(m_aBuffers[b]) );
 		if( ret != MMSYSERR_NOERROR )
 			return wo_ssprintf( ret, "waveOutPrepareHeader failed" );

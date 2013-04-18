@@ -95,7 +95,7 @@ CryptManager::CryptManager()
 
 	ltc_mp = ltm_desc;
 
-	g_pPRNG = new PRNGWrapper( &yarrow_desc );
+	g_pPRNG = smnew PRNGWrapper( &yarrow_desc );
 }
 
 void CryptManager::GenerateGlobalKeys()

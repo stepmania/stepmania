@@ -307,7 +307,7 @@ RageTextureID BannerCache::LoadCachedBanner( RString sBannerPath )
 
 	LOG->Trace( "Loading banner texture %s; src %ix%i; image %ix%i",
 		    ID.filename.c_str(), iSourceWidth, iSourceHeight, pImage->w, pImage->h );
-	RageTexture *pTexture = new BannerTexture( ID, pImage, iSourceWidth, iSourceHeight );
+	RageTexture *pTexture = smnew BannerTexture( ID, pImage, iSourceWidth, iSourceHeight );
 
 	ID.Policy = RageTextureID::TEX_VOLATILE;
 	TEXTUREMAN->RegisterTexture( ID, pTexture );

@@ -84,7 +84,7 @@ const RString &X##ToLocalizedString( X x ) \
 	if( g_##X##Name[0].get() == NULL ) { \
 		for( unsigned i = 0; i < NUM_##X; ++i ) \
 		{ \
-			auto_ptr<LocalizedString> ap( new LocalizedString(#X, X##ToString((X)i)) ); \
+			auto_ptr<LocalizedString> ap( smnew LocalizedString(#X, X##ToString((X)i)) ); \
 			g_##X##Name[i] = ap; \
 		} \
 	} \

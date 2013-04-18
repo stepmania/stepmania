@@ -81,11 +81,11 @@ enum
 RageLog::RageLog(): m_bLogToDisk(false), m_bInfoToDisk(false),
 m_bUserLogToDisk(false), m_bFlush(false), m_bShowLogOutput(false)
 {
-	g_fileLog = new RageFile;
-	g_fileInfo = new RageFile;
-	g_fileUserLog = new RageFile;
+	g_fileLog = smnew RageFile;
+	g_fileInfo = smnew RageFile;
+	g_fileUserLog = smnew RageFile;
 	
-	g_Mutex = new RageMutex( "Log" );
+	g_Mutex = smnew RageMutex( "Log" );
 }
 
 RageLog::~RageLog()

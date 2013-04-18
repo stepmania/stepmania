@@ -65,9 +65,9 @@ static ThemeMetric<int>		NUM_FIXED_PROFILES	( "ProfileManager", "NumFixedProfile
 
 ProfileManager::ProfileManager()
 {
-	m_pMachineProfile = new Profile;
+	m_pMachineProfile = smnew Profile;
 	FOREACH_PlayerNumber(pn)
-		m_pMemoryCardProfile[pn] = new Profile;
+		m_pMemoryCardProfile[pn] = smnew Profile;
 
 	// Register with Lua.
 	{
@@ -435,7 +435,7 @@ bool ProfileManager::CreateLocalProfile( RString sName, RString &sProfileIDOut )
 	RString sProfileID = ssprintf( "%08d", iProfileNumber );
 
 	// Create the new profile.
-	Profile *pProfile = new Profile;
+	Profile *pProfile = smnew Profile;
 	pProfile->m_sDisplayName = sName;
 	pProfile->m_sCharacterID = CHARMAN->GetRandomCharacter()->m_sCharacterID;
 

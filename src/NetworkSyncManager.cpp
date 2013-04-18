@@ -72,7 +72,7 @@ NetworkSyncManager::NetworkSyncManager( LoadingWindow *ld )
 	BroadcastReception = NULL;
 
 	ld->SetText( INITIALIZING_CLIENT_NETWORK );
-	NetPlayerClient = new EzSockets;
+	NetPlayerClient = smnew EzSockets;
 	NetPlayerClient->blocking = false;
 	m_ServerVersion = 0;
    
@@ -212,7 +212,7 @@ void NetworkSyncManager::StartUp()
 	if( GetCommandlineArgument( "netip", &ServerIP ) )
 		PostStartUp( ServerIP );
 
-	BroadcastReception = new EzSockets;
+	BroadcastReception = smnew EzSockets;
 	BroadcastReception->create( IPPROTO_UDP );
 	BroadcastReception->bind( 8765 );
 	BroadcastReception->blocking = false;
@@ -868,7 +868,7 @@ unsigned long NetworkSyncManager::GetCurrentSMBuild( LoadingWindow* ld )
 
 	unsigned long uCurrentSMBuild = version_num;
 	bool bSuccess = false;
-	EzSockets* socket = new EzSockets();
+	EzSockets* socket = smnew EzSockets();
 	socket->create();
 	socket->blocking = true;
 
@@ -892,7 +892,7 @@ unsigned long NetworkSyncManager::GetCurrentSMBuild( LoadingWindow* ld )
 		// Aldo: EzSocket::pReadData() is a lower level function, I used it because I was having issues
 		// with EzSocket::ReadData() in 3.9, feel free to refactor this function, the low lever character
 		// manipulation might look scary to people not used to it.
-		char* cBuffer = new char[NETMAXBUFFERSIZE];
+		char* cBuffer = smnew char[NETMAXBUFFERSIZE];
 		// Reading the first NETMAXBUFFERSIZE bytes (usually 1024), should be enough to get the HTTP Header only
 		int iBytes = socket->pReadData(cBuffer);
 		if( iBytes )
@@ -903,7 +903,7 @@ unsigned long NetworkSyncManager::GetCurrentSMBuild( LoadingWindow* ld )
 			{
 				// Get the HTTP Header only
 				int iHeaderLength = cBodyStart - cBuffer;
-				char* cHeader = new char[iHeaderLength+1];
+				char* cHeader = smnew char[iHeaderLength+1];
 				strncpy( cHeader, cBuffer, iHeaderLength );
 				cHeader[iHeaderLength] = '\0';	// needed to make it a valid C String
 

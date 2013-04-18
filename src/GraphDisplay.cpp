@@ -228,10 +228,10 @@ void GraphDisplay::Load( RString sMetricsGroup )
 	m_sprBacking->ZoomToHeight( m_size.y );
 	this->AddChild( m_sprBacking );
 
-	m_pGraphBody = new GraphBody( THEME->GetPathG(sMetricsGroup,"Body") );
+	m_pGraphBody = smnew GraphBody( THEME->GetPathG(sMetricsGroup,"Body") );
 	this->AddChild( m_pGraphBody );
 
-	m_pGraphLine = new GraphLine;
+	m_pGraphLine = smnew GraphLine;
 	m_pGraphLine->SetName("Line");
 	ActorUtil::LoadAllCommands( m_pGraphLine, sMetricsGroup );
 	this->AddChild( m_pGraphLine );

@@ -68,7 +68,7 @@ static SubscriptionManager<IThemeMetric> g_Subscribers;
 class LocalizedStringImplThemeMetric : public ILocalizedStringImpl, public ThemeMetric<RString>
 {
 public:
-	static ILocalizedStringImpl *Create() { return new LocalizedStringImplThemeMetric; }
+	static ILocalizedStringImpl *Create() { return smnew LocalizedStringImplThemeMetric; }
 
 	void Load( const RString& sGroup, const RString& sName )
 	{
@@ -275,7 +275,7 @@ bool ThemeManager::DoesLanguageExist( const RString &sLanguage )
 void ThemeManager::LoadThemeMetrics( const RString &sThemeName_, const RString &sLanguage_ )
 {
 	if( g_pLoadedThemeData == NULL )
-		g_pLoadedThemeData = new LoadedThemeData;
+		g_pLoadedThemeData = smnew LoadedThemeData;
 
 	// Don't delete and recreate LoadedThemeData.  There are references iniMetrics and iniStrings 
 	// on the stack, so Clear them instead.
@@ -1052,7 +1052,7 @@ void ThemeManager::GetMetric( const RString &sMetricsGroup, const RString &sValu
 #if !defined(SMPACKAGE)
 apActorCommands ThemeManager::GetMetricA( const RString &sMetricsGroup, const RString &sValueName )
 {
-	LuaReference *pRef = new LuaReference;
+	LuaReference *pRef = smnew LuaReference;
 	GetMetric( sMetricsGroup, sValueName, *pRef );
 	return apActorCommands( pRef );
 }

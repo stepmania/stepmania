@@ -5,7 +5,7 @@
 #include "ActorUtil.h"
 
 REGISTER_ACTOR_CLASS_WITH_NAME( ActorFrameTextureAutoDeleteChildren, ActorFrameTexture );
-ActorFrameTexture *ActorFrameTexture::Copy() const { return new ActorFrameTexture(*this); }
+ActorFrameTexture *ActorFrameTexture::Copy() const { return smnew ActorFrameTexture(*this); }
 
 ActorFrameTexture::ActorFrameTexture()
 {
@@ -44,7 +44,7 @@ void ActorFrameTexture::Create()
 	param.bFloat = m_bFloat;
 	param.iWidth = (int) m_size.x;
 	param.iHeight = (int) m_size.y;
-	m_pRenderTarget = new RageTextureRenderTarget( id, param );
+	m_pRenderTarget = smnew RageTextureRenderTarget( id, param );
 	m_pRenderTarget->m_bWasUsed = true;
 
 	/* This passes ownership of m_pRenderTarget to TEXTUREMAN, but we retain

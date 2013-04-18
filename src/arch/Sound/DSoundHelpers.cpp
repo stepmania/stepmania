@@ -257,7 +257,7 @@ RString DSoundBuf::Init( DSound &ds, DSoundBuf::hw hardware,
 	else if( (int) waveformat.nSamplesPerSec != m_iSampleRate )
 		LOG->Warn( "Secondary buffer set to %i instead of %i", waveformat.nSamplesPerSec, m_iSampleRate );
 
-	m_pTempBuffer = new char[m_iBufferSize];
+	m_pTempBuffer = smnew char[m_iBufferSize];
 
 	return RString();
 }

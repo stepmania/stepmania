@@ -15,7 +15,7 @@ public:
 	RageSoundReader_ThreadedBuffer( RageSoundReader *pSource );
 	RageSoundReader_ThreadedBuffer( const RageSoundReader_ThreadedBuffer &cpy );
 	~RageSoundReader_ThreadedBuffer();
-	RageSoundReader_ThreadedBuffer *Copy() const { return new RageSoundReader_ThreadedBuffer(*this); }
+	RageSoundReader_ThreadedBuffer *Copy() const { return smnew RageSoundReader_ThreadedBuffer(*this); }
 
 	virtual int SetPosition( int iFrame );
 	virtual int Read( float *pBuffer, int iLength );

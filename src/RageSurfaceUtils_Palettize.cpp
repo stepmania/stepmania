@@ -175,8 +175,8 @@ void RageSurfaceUtils::Palettize( RageSurface *&pImg, int iColors, bool bDither 
 	if( bDither )
 	{
 		// Initialize Floyd-Steinberg error vectors.
-		thiserr = new pixerror_t[pImg->w + 2];
-		nexterr = new pixerror_t[pImg->w + 2];
+		thiserr = smnew pixerror_t[pImg->w + 2];
+		nexterr = smnew pixerror_t[pImg->w + 2];
 
 		memset( thiserr, 0, sizeof(pixerror_t) * (pImg->w + 2) );
 	}

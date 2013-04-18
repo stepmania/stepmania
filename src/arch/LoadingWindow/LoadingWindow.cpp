@@ -7,9 +7,9 @@
 LoadingWindow *LoadingWindow::Create()
 {
 	if( !PREFSMAN->m_bShowLoadingWindow )
-		return new LoadingWindow_Null;
+		return smnew LoadingWindow_Null;
 #if defined(UNIX) && !defined(HAVE_GTK)
-	return new LoadingWindow_Null;
+	return smnew LoadingWindow_Null;
 #endif
 	// Don't load NULL by default.
 	const RString drivers = "win32,macosx,gtk";
@@ -26,15 +26,15 @@ LoadingWindow *LoadingWindow::Create()
 		Driver = DriversToTry[i];
 
 #ifdef USE_LOADING_WINDOW_MACOSX
-		if( !DriversToTry[i].CompareNoCase("MacOSX") )	ret = new LoadingWindow_MacOSX;
+		if( !DriversToTry[i].CompareNoCase("MacOSX") )	ret = smnew LoadingWindow_MacOSX;
 #endif
 #ifdef USE_LOADING_WINDOW_GTK
-		if( !DriversToTry[i].CompareNoCase("Gtk") )	ret = new LoadingWindow_Gtk;
+		if( !DriversToTry[i].CompareNoCase("Gtk") )	ret = smnew LoadingWindow_Gtk;
 #endif
 #ifdef USE_LOADING_WINDOW_WIN32
-		if( !DriversToTry[i].CompareNoCase("Win32") )	ret = new LoadingWindow_Win32;
+		if( !DriversToTry[i].CompareNoCase("Win32") )	ret = smnew LoadingWindow_Win32;
 #endif
-		if( !DriversToTry[i].CompareNoCase("Null") )	ret = new LoadingWindow_Null;
+		if( !DriversToTry[i].CompareNoCase("Null") )	ret = smnew LoadingWindow_Null;
 
 		if( ret == NULL )
 			continue;

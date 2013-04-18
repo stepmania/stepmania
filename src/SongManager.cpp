@@ -308,7 +308,7 @@ void SongManager::LoadStepManiaSongDir( RString sDir, LoadingWindow *ld )
 					)
 				);
 			}
-			Song* pNewSong = new Song;
+			Song* pNewSong = smnew Song;
 			m_pSongs.push_back( pNewSong );
 			if( !pNewSong->LoadFromSongDir( sSongDirName ) )
 			{
@@ -359,7 +359,7 @@ void SongManager::LoadGroupSymLinks(RString sDir, RString sGroupFolder)
 		msdF.ReadFile( sDir+sGroupFolder+"/"+arraySymLinks[s].c_str(), false );  // don't unescape
 		RString	sSymDestination = msdF.GetParam(0,1); // Should only be 1 value & param...period.
 
-		Song* pNewSong = new Song;
+		Song* pNewSong = smnew Song;
 		if( !pNewSong->LoadFromSongDir( sSymDestination ) )
 		{
 			delete pNewSong; // The song failed to load.
@@ -823,7 +823,7 @@ void SongManager::InitCoursesFromDisk( LoadingWindow *ld )
 					Basename(*sCoursePath).c_str()));
 			}
 
-			Course* pCourse = new Course;
+			Course* pCourse = smnew Course;
 			CourseLoaderCRS::LoadFromCRSFile( *sCoursePath, *pCourse );
 
 			if( g_bHideIncompleteCourses.Get() && pCourse->m_bIncomplete )
@@ -855,12 +855,12 @@ void SongManager::InitAutogenCourses()
 		RString sGroupName = saGroupNames[g];
 
 		// Generate random courses from each group.
-		pCourse = new Course;
+		pCourse = smnew Course;
 		CourseUtil::AutogenEndlessFromGroup( sGroupName, Difficulty_Medium, *pCourse );
 		pCourse->m_sScripter = "Autogen";
 		m_pCourses.push_back( pCourse );
 
-		pCourse = new Course;
+		pCourse = smnew Course;
 		CourseUtil::AutogenNonstopFromGroup( sGroupName, Difficulty_Medium, *pCourse );
 		pCourse->m_sScripter = "Autogen";
 		m_pCourses.push_back( pCourse );
@@ -869,7 +869,7 @@ void SongManager::InitAutogenCourses()
 	vector<Song*> apCourseSongs = GetAllSongs();
 
 	// Generate "All Songs" endless course.
-	pCourse = new Course;
+	pCourse = smnew Course;
 	CourseUtil::AutogenEndlessFromGroup( "", Difficulty_Medium, *pCourse );
 	pCourse->m_sScripter = "Autogen";
 	m_pCourses.push_back( pCourse );
@@ -905,7 +905,7 @@ void SongManager::InitAutogenCourses()
 				sCurArtistTranslit.CompareNoCase("Unknown artist") &&
 				sCurArtist.CompareNoCase("Unknown artist") )
 			{
-				pCourse = new Course;
+				pCourse = smnew Course;
 				CourseUtil::AutogenOniFromArtist( sCurArtist, sCurArtistTranslit, aSongs, Difficulty_Hard, *pCourse );
 				pCourse->m_sScripter = "Autogen";
 				m_pCourses.push_back( pCourse );

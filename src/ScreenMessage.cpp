@@ -22,7 +22,7 @@ static map<RString, ScreenMessage> *m_pScreenMessages;
 ScreenMessage ScreenMessageHelpers::ToScreenMessage( const RString &sName )
 {
 	if( m_pScreenMessages == NULL )
-		m_pScreenMessages = new map<RString, ScreenMessage>;
+		m_pScreenMessages = smnew map<RString, ScreenMessage>;
 
 	if( m_pScreenMessages->find( sName ) == m_pScreenMessages->end() )
 		(*m_pScreenMessages)[sName] = (ScreenMessage)sName;

@@ -194,7 +194,7 @@ DllGetClassObject(
             // found a template - make a class factory based on this
             // template
 
-            *pv = (LPVOID) (LPUNKNOWN) new CClassFactory(pT);
+            *pv = (LPVOID) (LPUNKNOWN) smnew CClassFactory(pT);
             if(*pv == NULL) {
                 return E_OUTOFMEMORY;
             }

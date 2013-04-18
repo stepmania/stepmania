@@ -12,7 +12,7 @@
  * Note that there are no non-const operator* or operator-> overloads, because that would
  * cause all const access by code with non-const permissions to deep-copy.  For example,
  *
- *   AutoPtrCopyOnWrite<int> a( new int(1) );
+ *   AutoPtrCopyOnWrite<int> a( smnew int(1) );
  *   AutoPtrCopyOnWrite<int> b( a );
  *   printf( "%i\n", *a );
  *
@@ -27,11 +27,11 @@ class AutoPtrCopyOnWrite
 {
 public:
 	/* This constructor only exists to make us work with STL containers. */
-	inline AutoPtrCopyOnWrite(): m_pPtr(NULL), m_iRefCount(new int(1))
+	inline AutoPtrCopyOnWrite(): m_pPtr(NULL), m_iRefCount(smnew int(1))
 	{
 	}
 
-	explicit inline AutoPtrCopyOnWrite( T *p ): m_pPtr(p), m_iRefCount(new int(1))
+	explicit inline AutoPtrCopyOnWrite( T *p ): m_pPtr(p), m_iRefCount(smnew int(1))
 	{
 	}
 
@@ -70,8 +70,8 @@ public:
 		if( *m_iRefCount > 1 )
 		{
 			--*m_iRefCount;
-			m_pPtr = new T(*m_pPtr);
-			m_iRefCount = new int(1);
+			m_pPtr = smnew T(*m_pPtr);
+			m_iRefCount = smnew int(1);
 		}
 
 		return m_pPtr;

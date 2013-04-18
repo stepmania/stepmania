@@ -809,7 +809,7 @@ public:
 	LuaReference *m_pLuaTable;
 	LuaReference m_EnabledForPlayersFunc;
 
-	OptionRowHandlerLua() { m_pLuaTable = new LuaReference; Init(); }
+	OptionRowHandlerLua() { m_pLuaTable = smnew LuaReference; Init(); }
 	virtual ~OptionRowHandlerLua() { delete m_pLuaTable; }
 	void Init()
 	{
@@ -1336,7 +1336,7 @@ OptionRowHandler* OptionRowHandlerUtil::Make( const Commands &cmds )
 
 	const RString &name = cmds.v[0].GetName();
 
-#define MAKE( type )	{ type *p = new type; p->Load( cmds ); pHand = p; }
+#define MAKE( type )	{ type *p = smnew type; p->Load( cmds ); pHand = p; }
 
 	// XXX: merge these, and merge "Steps" and "list,Steps"
 	if( name == "list" )

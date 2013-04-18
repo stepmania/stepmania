@@ -80,7 +80,7 @@ void ScreenHowToPlay::Init()
 
 	if( (bool)USE_PAD && DoesFileExist( GetAnimPath(ANIM_DANCE_PAD) ) )
 	{
-		m_pmDancePad = new Model;
+		m_pmDancePad = smnew Model;
 		m_pmDancePad->SetName( "Pad" );
 		m_pmDancePad->LoadMilkshapeAscii( GetAnimPath(ANIM_DANCE_PAD) );
 		// xxx: hardcoded rotation. can be undone, but still. -freem
@@ -102,7 +102,7 @@ void ScreenHowToPlay::Init()
 		RString sModelPath = displayChar->GetModelPath();
 		if( sModelPath != "" )
 		{
-			m_pmCharacter = new Model;
+			m_pmCharacter = smnew Model;
 			m_pmCharacter->SetName( "Character" );
 			m_pmCharacter->LoadMilkshapeAscii( displayChar->GetModelPath() );
 			m_pmCharacter->LoadMilkshapeAsciiBones( "Step-LEFT", GetAnimPath( ANIM_LEFT ) );
@@ -130,7 +130,7 @@ void ScreenHowToPlay::Init()
 	{
 		GAMESTATE->SetMasterPlayerNumber(PLAYER_1);
 
-		m_pLifeMeterBar = new LifeMeterBar;
+		m_pLifeMeterBar = smnew LifeMeterBar;
 		m_pLifeMeterBar->Load( GAMESTATE->m_pPlayerState[PLAYER_1], &STATSMAN->m_CurStageStats.m_player[PLAYER_1] );
 		m_pLifeMeterBar->SetName("LifeMeterBar");
 		ActorUtil::LoadAllCommandsAndSetXY( m_pLifeMeterBar, m_sName );

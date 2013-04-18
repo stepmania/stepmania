@@ -142,7 +142,7 @@ static NoteResource *MakeNoteResource( const RString &sButton, const RString &sE
 	map<NoteSkinAndPath, NoteResource *>::iterator it = g_NoteResource.find( nsap );
 	if( it == g_NoteResource.end() )
 	{
-		NoteResource *pRes = new NoteResource( nsap );
+		NoteResource *pRes = smnew NoteResource( nsap );
 
 		pRes->m_pActor = NOTESKIN->LoadActor( sButton, sElement, NULL, bSpriteOnly );
 		ASSERT( pRes->m_pActor != NULL );
@@ -233,7 +233,7 @@ XToString( ActiveType );
 
 NoteDisplay::NoteDisplay()
 {
-	cache = new NoteMetricCache_t;
+	cache = smnew NoteMetricCache_t;
 }
 
 NoteDisplay::~NoteDisplay()

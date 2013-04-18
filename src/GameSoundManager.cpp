@@ -113,7 +113,7 @@ static void StartMusic( MusicToPlay &ToPlay )
 		/* StopPlaying() can take a while, so don't hold the lock while we stop the sound.
 		 * Be sure to leave the rest of g_Playing in place. */
 		RageSound *pOldSound = g_Playing->m_Music;
-		g_Playing->m_Music = new RageSound;
+		g_Playing->m_Music = smnew RageSound;
 		L.Unlock();
 
 		delete pOldSound;
@@ -125,13 +125,13 @@ static void StartMusic( MusicToPlay &ToPlay )
 	MusicPlaying *NewMusic;
 	{
 		g_Mutex->Unlock();
-		RageSound *pSound = new RageSound;
+		RageSound *pSound = smnew RageSound;
 		RageSoundLoadParams params;
 		params.m_bSupportRateChanging = ToPlay.bApplyMusicRate;
 		pSound->Load( ToPlay.m_sFile, false, &params );
 		g_Mutex->Lock();
 
-		NewMusic = new MusicPlaying( pSound );
+		NewMusic = smnew MusicPlaying( pSound );
 	}
 
 	NewMusic->m_Timing = g_Playing->m_Timing;
@@ -273,7 +273,7 @@ static void StartMusic( MusicToPlay &ToPlay )
 static void DoPlayOnce( RString sPath )
 {
 	/* We want this to start quickly, so don't try to prebuffer it. */
-	RageSound *pSound = new RageSound;
+	RageSound *pSound = smnew RageSound;
 	pSound->Load( sPath, false );
 
 	pSound->Play();
@@ -357,7 +357,7 @@ static void StartQueuedSounds()
 			/* StopPlaying() can take a while, so don't hold the lock while we stop the sound. */
 			g_Mutex->Lock();
 			RageSound *pOldSound = g_Playing->m_Music;
-			g_Playing->m_Music = new RageSound;
+			g_Playing->m_Music = smnew RageSound;
 			g_Mutex->Unlock();
 
 			delete pOldSound;
@@ -412,8 +412,8 @@ GameSoundManager::GameSoundManager()
 	/* Init RageSoundMan first: */
 	ASSERT( SOUNDMAN != NULL );
 
-	g_Mutex = new RageEvent("GameSoundManager");
-	g_Playing = new MusicPlaying( new RageSound );
+	g_Mutex = smnew RageEvent("GameSoundManager");
+	g_Playing = smnew MusicPlaying( smnew RageSound );
 
 	g_UpdatingTimer = true;
 

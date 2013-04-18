@@ -757,7 +757,7 @@ DWORD WINAPI DbgRegisterObjectCreation(const CHAR *szObjectName,
 
     /* Create a place holder for this object description */
 
-    ObjectDesc *pObject = new ObjectDesc;
+    ObjectDesc *pObject = smnew ObjectDesc;
     ASSERT(pObject);
 
     /* It is valid to pass a NULL object name */
@@ -1047,7 +1047,7 @@ CDisp::CDisp(IPin *pPin) {
         lstrcpy(str, TEXT("NULL IPin"));
     }
 
-    m_pString = (PTCHAR) new TCHAR[lstrlen(str)+64];
+    m_pString = (PTCHAR) smnew TCHAR[lstrlen(str)+64];
     if(!m_pString) {
         return;
     }
@@ -1065,7 +1065,7 @@ CDisp::CDisp(IUnknown *pUnk) {
         if(SUCCEEDED(hr)) {
             QueryFilterInfoReleaseGraph(fi);
 
-            m_pString = new TCHAR[lstrlenW(fi.achName)  + 1];
+            m_pString = smnew TCHAR[lstrlenW(fi.achName)  + 1];
             if(m_pString) {
                 wsprintf(m_pString, TEXT("%ls"), fi.achName);
             }

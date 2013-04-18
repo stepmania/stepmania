@@ -24,7 +24,7 @@ static bool IsRegistered( const RString& sClassName )
 void ActorUtil::Register( const RString& sClassName, CreateActorFn pfn )
 {
 	if( g_pmapRegistrees == NULL )
-		g_pmapRegistrees = new map<RString,CreateActorFn>;
+		g_pmapRegistrees = smnew map<RString,CreateActorFn>;
 
 	map<RString,CreateActorFn>::iterator iter = g_pmapRegistrees->find( sClassName );
 	ASSERT_M( iter == g_pmapRegistrees->end(), ssprintf("Actor class '%s' already registered.", sClassName.c_str()) );
@@ -126,7 +126,7 @@ Actor* ActorUtil::LoadFromNode( const XNode* pNode, Actor *pParentActor )
 		RString sError = ssprintf( "%s: invalid Class \"%s\"",
 			ActorUtil::GetWhere(pNode).c_str(), sClass.c_str() );
 		Dialog::OK( sError );
-		return new Actor;	// Return a dummy object so that we don't crash in AutoActor later.
+		return smnew Actor;	// Return a dummy object so that we don't crash in AutoActor later.
 	}
 
 	const CreateActorFn &pfn = iter->second;
@@ -214,7 +214,7 @@ Actor* ActorUtil::MakeActor( const RString &sPath_, Actor *pParentActor )
 			if( pNode.get() == NULL )
 			{
 				// XNode will warn about the error
-				return new Actor;
+				return smnew Actor;
 			}
 
 			Actor *pRet = ActorUtil::LoadFromNode( pNode.get(), pParentActor );
@@ -304,7 +304,7 @@ apActorCommands ActorUtil::ParseActorCommands( const RString &sCommands, const R
 {
 	Lua *L = LUA->Get();
 	LuaHelpers::ParseCommandList( L, sCommands, sName );
-	LuaReference *pRet = new LuaReference;
+	LuaReference *pRet = smnew LuaReference;
 	pRet->SetFromStack( L );
 	LUA->Release( L );
 

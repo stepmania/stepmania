@@ -741,7 +741,7 @@ void Font::Load( const RString &sIniPath, RString sChars )
 	{
 		const RString &sTexturePath = asTexturePaths[i];
 
-		FontPage *pPage = new FontPage;
+		FontPage *pPage = smnew FontPage;
 
 		// Grab the page name, eg "foo" from "Normal [foo].png".
 		RString sPagename = GetPageNameFromFileName( sTexturePath );

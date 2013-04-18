@@ -38,7 +38,7 @@ vector<float> Actor::g_vfCurrentBGMBeatPlayer(NUM_PlayerNumber, 0);
 vector<float> Actor::g_vfCurrentBGMBeatPlayerNoOffset(NUM_PlayerNumber, 0);
 
 
-Actor *Actor::Copy() const { return new Actor(*this); }
+Actor *Actor::Copy() const { return smnew Actor(*this); }
 
 static float g_fCabinetLights[NUM_CabinetLight];
 
@@ -149,7 +149,7 @@ static bool GetMessageNameFromCommandName( const RString &sCommandName, RString 
 
 Actor::Actor()
 {
-	m_pLuaInstance = new LuaClass;
+	m_pLuaInstance = smnew LuaClass;
 	Lua *L = LUA->Get();
 		m_pLuaInstance->PushSelf( L );
 		lua_newtable( L );
@@ -192,7 +192,7 @@ Actor::Actor( const Actor &cpy ):
 	CPY( m_current );
 	CPY( m_start );
 	for( unsigned i = 0; i < cpy.m_Tweens.size(); ++i )
-		m_Tweens.push_back( new TweenStateAndInfo(*cpy.m_Tweens[i]) );
+		m_Tweens.push_back( smnew TweenStateAndInfo(*cpy.m_Tweens[i]) );
 
 	CPY( m_bFirstUpdate );
 
@@ -260,7 +260,7 @@ void Actor::LoadFromNode( const XNode* pNode )
 		else if( sKeyName == "BaseZoomZ" )		SetBaseZoomZ( pValue->GetValue<float>() );
 		else if( EndsWith(sKeyName,"Command") )
 		{
-			LuaReference *pRef = new LuaReference;
+			LuaReference *pRef = smnew LuaReference;
 			pValue->PushValue( L );
 			pRef->SetFromStack( L );
 			RString sCmdName = sKeyName.Left( sKeyName.size()-7 );
@@ -762,7 +762,7 @@ void Actor::BeginTweening( float time, ITween *pTween )
 	}
 
 	// add a new TweenState to the tail, and initialize it
-	m_Tweens.push_back( new TweenStateAndInfo );
+	m_Tweens.push_back( smnew TweenStateAndInfo );
 
 	// latest
 	TweenState &TS = m_Tweens.back()->state;
@@ -1474,7 +1474,7 @@ public:
 	static int queuemessage( T* p, lua_State *L )		{ p->QueueMessage(SArg(1)); return 0; }
 	static int addcommand( T* p, lua_State *L )
 	{
-		LuaReference *pRef = new LuaReference;
+		LuaReference *pRef = smnew LuaReference;
 		pRef->SetFromStack( L );
 		p->AddCommand( SArg(1), apActorCommands(pRef) );
 		return 0;

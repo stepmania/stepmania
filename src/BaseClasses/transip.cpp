@@ -310,7 +310,7 @@ CTransInPlaceFilter::GetPin(int n) {
 
     if(m_pInput == NULL) {
 
-        m_pInput = new CTransInPlaceInputPin(NAME("TransInPlace input pin")
+        m_pInput = smnew CTransInPlaceInputPin(NAME("TransInPlace input pin")
             , this        // Owner filter
             , &hr         // Result code
             , L"Input"    // Pin name
@@ -324,7 +324,7 @@ CTransInPlaceFilter::GetPin(int n) {
 
     if(m_pInput!=NULL && m_pOutput == NULL) {
 
-        m_pOutput = new CTransInPlaceOutputPin(NAME("TransInPlace output pin")
+        m_pOutput = smnew CTransInPlaceOutputPin(NAME("TransInPlace output pin")
             , this       // Owner filter
             , &hr        // Result code
             , L"Output"  // Pin name

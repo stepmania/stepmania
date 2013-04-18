@@ -263,7 +263,7 @@ private:
         InitializeCriticalSection(&CritSect);
         hSemPut = CreateSemaphore(NULL, n, n, NULL);
         hSemGet = CreateSemaphore(NULL, 0, n, NULL);
-        QueueObjects = new T[n];
+        QueueObjects = smnew T[n];
     }
 
 

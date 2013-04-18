@@ -12,7 +12,7 @@ static void InitThreadIdMutex()
 {
 	if( g_pThreadIdMutex != NULL )
 		return;
-	g_pThreadIdMutex = new MutexImpl_Win32(NULL);
+	g_pThreadIdMutex = smnew MutexImpl_Win32(NULL);
 }
 
 static uint64_t g_ThreadIds[MAX_THREADS];
@@ -127,7 +127,7 @@ static int GetOpenSlot( uint64_t iID )
 
 ThreadImpl *MakeThisThread()
 {
-	ThreadImpl_Win32 *thread = new ThreadImpl_Win32;
+	ThreadImpl_Win32 *thread = smnew ThreadImpl_Win32;
 
 	SetThreadName( GetCurrentThreadId(), RageThread::GetCurrentThreadName() );
 
@@ -153,7 +153,7 @@ ThreadImpl *MakeThisThread()
 
 ThreadImpl *MakeThread( int (*pFunc)(void *pData), void *pData, uint64_t *piThreadID )
 {
-	ThreadImpl_Win32 *thread = new ThreadImpl_Win32;
+	ThreadImpl_Win32 *thread = smnew ThreadImpl_Win32;
 	thread->m_pFunc = pFunc;
 	thread->m_pData = pData;
 
@@ -256,7 +256,7 @@ uint64_t GetInvalidThreadId()
 
 MutexImpl *MakeMutex( RageMutex *pParent )
 {
-	return new MutexImpl_Win32( pParent );
+	return smnew MutexImpl_Win32( pParent );
 }
 
 EventImpl_Win32::EventImpl_Win32( MutexImpl_Win32 *pParent )
@@ -427,7 +427,7 @@ EventImpl *MakeEvent( MutexImpl *pMutex )
 {
 	MutexImpl_Win32 *pWin32Mutex = (MutexImpl_Win32 *) pMutex;
 
-	return new EventImpl_Win32( pWin32Mutex );
+	return smnew EventImpl_Win32( pWin32Mutex );
 }
 
 SemaImpl_Win32::SemaImpl_Win32( int iInitialValue )
@@ -482,7 +482,7 @@ bool SemaImpl_Win32::TryWait()
 
 SemaImpl *MakeSemaphore( int iInitialValue )
 {
-	return new SemaImpl_Win32( iInitialValue );
+	return smnew SemaImpl_Win32( iInitialValue );
 }
 
 /*

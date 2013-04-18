@@ -14,7 +14,7 @@ public:
 	virtual int GetNextSourceFrame() const;
 	virtual bool SetProperty( const RString &sProperty, float fValue );
 
-	RageSoundReader_Extend *Copy() const { return new RageSoundReader_Extend(*this); }
+	RageSoundReader_Extend *Copy() const { return smnew RageSoundReader_Extend(*this); }
 	~RageSoundReader_Extend() { }
 
 private:

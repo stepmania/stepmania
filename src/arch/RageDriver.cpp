@@ -4,7 +4,7 @@
 void DriverList::Add( const istring &sName, CreateRageDriverFn pfn )
 {
 	if( m_pRegistrees == NULL )
-		m_pRegistrees = new map<istring, CreateRageDriverFn>;
+		m_pRegistrees = smnew map<istring, CreateRageDriverFn>;
 	
 	ASSERT( m_pRegistrees->find(sName) == m_pRegistrees->end() );
 	(*m_pRegistrees)[sName] = pfn;

@@ -96,7 +96,7 @@ static map<RString,SubscribersSet> g_MessageToSubscribers;
 Message::Message( const RString &s )
 {
 	m_sName = s;
-	m_pParams = new LuaTable;
+	m_pParams = smnew LuaTable;
 	m_bBroadcast = false;
 }
 
@@ -105,11 +105,11 @@ Message::Message( const RString &s, const LuaReference &params )
 	m_sName = s;
 	m_bBroadcast = false;
 	Lua *L = LUA->Get();
-	m_pParams = new LuaTable; // XXX: creates an extra table
+	m_pParams = smnew LuaTable; // XXX: creates an extra table
 	params.PushSelf( L );
 	m_pParams->SetFromStack( L );
 	LUA->Release( L );
-//	m_pParams = new LuaTable( params );
+//	m_pParams = smnew LuaTable( params );
 }
 
 Message::~Message()

@@ -138,7 +138,7 @@ public:
 			RString sName;
 			T defaultValue;
 			pfn( i, sName, defaultValue );
-			m_v.push_back( new Preference<T>(sName, defaultValue) );
+			m_v.push_back( smnew Preference<T>(sName, defaultValue) );
 		}
 	}
 

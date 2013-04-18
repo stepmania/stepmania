@@ -231,7 +231,7 @@ public:
 		if( m_sError.size() != 0 )
 			return false;
 
-		m_pBuffer = new float[m_iFramesPerBlock*m_WavData.m_iChannels];
+		m_pBuffer = smnew float[m_iFramesPerBlock*m_WavData.m_iChannels];
 		m_iBufferAvail = m_iBufferUsed = 0;
 
 		m_File.Seek( m_WavData.m_iDataChunkPos );
@@ -558,10 +558,10 @@ RageSoundReader_FileReader::OpenResult RageSoundReader_WAV::Open( RageFileBasic 
 	{
 	case 1: // PCM
 	case 3: // FLOAT
-		m_pImpl = new WavReaderPCM( *m_pFile, m_WavData );
+		m_pImpl = smnew WavReaderPCM( *m_pFile, m_WavData );
 		break;
 	case 2: // ADPCM
-		m_pImpl = new WavReaderADPCM( *m_pFile, m_WavData );
+		m_pImpl = smnew WavReaderADPCM( *m_pFile, m_WavData );
 		break;
 	case 85: // MP3
 		/* Return unknown, so other decoders will be tried.  MAD can read MP3s embedded in WAVs. */
@@ -615,7 +615,7 @@ RageSoundReader_WAV::~RageSoundReader_WAV()
 
 RageSoundReader_WAV *RageSoundReader_WAV::Copy() const
 {
-	RageSoundReader_WAV *ret = new RageSoundReader_WAV;
+	RageSoundReader_WAV *ret = smnew RageSoundReader_WAV;
 	RageFileBasic *pFile = m_pFile->Copy();
 	pFile->Seek( 0 );
 	ret->Open( pFile );

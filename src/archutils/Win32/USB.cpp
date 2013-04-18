@@ -132,7 +132,7 @@ bool WindowsFileIO::Open( RString path, int iBlockSize )
 
 	if( m_pBuffer )
 		delete[] m_pBuffer;
-	m_pBuffer = new char[m_iBlockSize];
+	m_pBuffer = smnew char[m_iBlockSize];
 
 	if( m_Handle != INVALID_HANDLE_VALUE )
 		CloseHandle( m_Handle );
@@ -193,7 +193,7 @@ int WindowsFileIO::read( void *p )
 
 int WindowsFileIO::read_several(const vector<WindowsFileIO *> &sources, void *p, int &actual, float timeout)
 {
-	HANDLE *Handles = new HANDLE[sources.size()];
+	HANDLE *Handles = smnew HANDLE[sources.size()];
 	for( unsigned i = 0; i < sources.size(); ++i )
 		Handles[i] = sources[i]->m_Handle;
 

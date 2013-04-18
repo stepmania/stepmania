@@ -30,7 +30,7 @@ int g_cTemplates = sizeof(g_Templates) / sizeof(g_Templates[0]);
 /* This goes in the factory template table to create new instances */
 CUnknown * WINAPI CSystemClock::CreateInstance(LPUNKNOWN pUnk,HRESULT *phr)
 {
-    return new CSystemClock(NAME("System reference clock"),pUnk, phr);
+    return smnew CSystemClock(NAME("System reference clock"),pUnk, phr);
 }
 
 

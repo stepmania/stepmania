@@ -243,7 +243,7 @@ void OptionRow::InitText( RowType type )
 	FOREACH_PlayerNumber( p )
 		m_Underline[p].clear();
 
-	m_textTitle = new BitmapText( m_pParentType->m_textTitle );
+	m_textTitle = smnew BitmapText( m_pParentType->m_textTitle );
 	m_Frame.AddChild( m_textTitle );
 
 	m_sprFrame = m_pParentType->m_sprFrame->Copy();
@@ -257,7 +257,7 @@ void OptionRow::InitText( RowType type )
 		case RowType_Normal:
 			FOREACH_PlayerNumber( p )
 			{
-				m_ModIcons[p] = new ModIcon( m_pParentType->m_ModIcon );
+				m_ModIcons[p] = smnew ModIcon( m_pParentType->m_ModIcon );
 				m_ModIcons[p]->SetDrawOrder(-1); // under title
 				m_ModIcons[p]->PlayCommand( "On" );
 
@@ -310,7 +310,7 @@ void OptionRow::InitText( RowType type )
 		// init text
 		FOREACH_PlayerNumber( p )
 		{
-			BitmapText *pText = new BitmapText( m_pParentType->m_textItem );
+			BitmapText *pText = smnew BitmapText( m_pParentType->m_textItem );
 			m_textItems.push_back( pText );
 
 			pText->PlayCommand( "On" );
@@ -331,7 +331,7 @@ void OptionRow::InitText( RowType type )
 			// init underlines
 			if( m_pParentType->SHOW_UNDERLINES  &&  GetRowType() != OptionRow::RowType_Exit )
 			{
-				OptionsCursor *pCursor = new OptionsCursor( m_pParentType->m_Underline[p] );
+				OptionsCursor *pCursor = smnew OptionsCursor( m_pParentType->m_Underline[p] );
 				m_Underline[p].push_back( pCursor );
 
 				int iWidth, iX, iY;
@@ -348,7 +348,7 @@ void OptionRow::InitText( RowType type )
 			for( unsigned c=0; c<m_pHand->m_Def.m_vsChoices.size(); c++ )
 			{
 				// init text
-				BitmapText *bt = new BitmapText( m_pParentType->m_textItem );
+				BitmapText *bt = smnew BitmapText( m_pParentType->m_textItem );
 				m_textItems.push_back( bt );
 				bt->SetBaseZoomX( fBaseZoom );
 				bt->PlayCommand( "On" );
@@ -366,7 +366,7 @@ void OptionRow::InitText( RowType type )
 				{
 					FOREACH_PlayerNumber( p )
 					{
-						OptionsCursor *ul = new OptionsCursor( m_pParentType->m_Underline[p] );
+						OptionsCursor *ul = smnew OptionsCursor( m_pParentType->m_Underline[p] );
 						m_Underline[p].push_back( ul );
 						ul->SetX( fX );
 						ul->SetBarWidth( int(fItemWidth) );

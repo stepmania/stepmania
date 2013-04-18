@@ -88,7 +88,7 @@ DWORD_PTR CAMSchedule::AddAdvisePacket
         --m_dwCacheCount;
     }
     else {
-        p = new CAdvisePacket();
+        p = smnew CAdvisePacket();
     }
     if(p) {
         p->m_rtEventTime = time1; p->m_rtPeriod = time2;

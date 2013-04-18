@@ -92,7 +92,7 @@ void NoteField::CacheNoteSkin( const RString &sNoteSkin_ )
 	LockNoteSkin l( sNoteSkinLower );
 
 	LOG->Trace("NoteField::CacheNoteSkin: cache %s", sNoteSkinLower.c_str() );
-	NoteDisplayCols *nd = new NoteDisplayCols( GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer );
+	NoteDisplayCols *nd = smnew NoteDisplayCols( GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer );
 
 	for( int c=0; c<GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer; c++ ) 
 		nd->display[c].Load( c, m_pPlayerState, m_fYReverseOffsetPixels );

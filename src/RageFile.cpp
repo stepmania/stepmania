@@ -27,7 +27,7 @@ RageFile::RageFile( const RageFile &cpy ):
 
 RageFile *RageFile::Copy() const
 {
-	return new RageFile( *this );
+	return smnew RageFile( *this );
 }
 
 RString RageFile::GetPath() const
@@ -430,7 +430,7 @@ namespace RageFileUtil
 {
 	int CreateRageFile( lua_State *L )
 	{
-		RageFile *pFile = new RageFile;
+		RageFile *pFile = smnew RageFile;
 		pFile->PushSelf( L );
 		return 1;
 	}

@@ -78,7 +78,7 @@ void Inventory::Load( PlayerState* pPlayerState )
 			m_soundAcquireItem.Load( THEME->GetPathS("Inventory","aquire item") );
 			for( unsigned i=0; i<g_Items.size(); i++ )
 			{
-				RageSound* pSound = new RageSound;
+				RageSound* pSound = smnew RageSound;
 				pSound->Load( THEME->GetPathS("Inventory",ssprintf("use item %u",i+1)) );
 				m_vpSoundUseItem.push_back( pSound );
 			}

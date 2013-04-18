@@ -140,7 +140,7 @@ public:
 	int GetLength_Fast() const { return 0; }
 	int SetPosition( int iFrame )  { return 1; }
 	int Read( float *pBuf, int iFrames ) { return RageSoundReader::END_OF_FILE; }
-	RageSoundReader *Copy() const { return new RageSoundReader_Silence; }
+	RageSoundReader *Copy() const { return smnew RageSoundReader_Silence; }
 	int GetSampleRate() const { return 44100; }
 	unsigned GetNumChannels() const { return 1; }
 	int GetNextSourceFrame() const { return 0; }
@@ -180,7 +180,7 @@ bool RageSound::Load( RString sSoundFilePath, bool bPrecache, const RageSoundLoa
 			LOG->Warn( "RageSound::Load: error opening sound \"%s\": %s",
 				sSoundFilePath.c_str(), error.c_str() );
 
-			pSound = new RageSoundReader_Silence;
+			pSound = smnew RageSoundReader_Silence;
 		}
 
 		/* If the sound is prebuffered into memory, we don't need to buffer reads. */
@@ -208,19 +208,19 @@ bool RageSound::Load( RString sSoundFilePath, bool bPrecache, const RageSoundLoa
 		bNeedBuffer = false;
 	}
 
-	m_pSource = new RageSoundReader_Extend( m_pSource );
+	m_pSource = smnew RageSoundReader_Extend( m_pSource );
 	if( bNeedBuffer )
-		m_pSource = new RageSoundReader_ThreadedBuffer( m_pSource );
-	m_pSource = new RageSoundReader_PostBuffering( m_pSource );
+		m_pSource = smnew RageSoundReader_ThreadedBuffer( m_pSource );
+	m_pSource = smnew RageSoundReader_PostBuffering( m_pSource );
 
 	if( pParams->m_bSupportRateChanging )
 	{
-		RageSoundReader_PitchChange *pRate = new RageSoundReader_PitchChange( m_pSource );
+		RageSoundReader_PitchChange *pRate = smnew RageSoundReader_PitchChange( m_pSource );
 		m_pSource = pRate;
 	}
 
 	if( pParams->m_bSupportPan )
-		m_pSource = new RageSoundReader_Pan( m_pSource );
+		m_pSource = smnew RageSoundReader_Pan( m_pSource );
 
 	m_sFilePath = sSoundFilePath;
 
@@ -239,7 +239,7 @@ void RageSound::LoadSoundReader( RageSoundReader *pSound )
 	bool bSupportRateChange = false;
 	if( iNeededRate != pSound->GetSampleRate() || bSupportRateChange )
 	{
-		RageSoundReader_Resample_Good *Resample = new RageSoundReader_Resample_Good( pSound, iNeededRate );
+		RageSoundReader_Resample_Good *Resample = smnew RageSoundReader_Resample_Good( pSound, iNeededRate );
 		pSound = Resample;
 	}
 
@@ -414,7 +414,7 @@ void RageSound::Play( const RageSoundParams *pParams )
 
 void RageSound::PlayCopy( const RageSoundParams *pParams ) const
 {
-	RageSound *pSound = new RageSound( *this );
+	RageSound *pSound = smnew RageSound( *this );
 
 	if( pParams )
 		pSound->SetParams( *pParams );

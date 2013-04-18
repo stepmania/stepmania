@@ -188,7 +188,7 @@ void TimingData::MultiplyBPMInBeatRange( int iStartIndex, int iEndIndex, float f
 		 * split it into two. */
 		if( iStartIndexThisSegment < iStartIndex && iStartIndexNextSegment > iStartIndex )
 		{
-			BPMSegment * b = new BPMSegment(iStartIndexNextSegment,
+			BPMSegment * b = smnew BPMSegment(iStartIndexNextSegment,
 											bs->GetBPS());
 			bpms.insert(bpms.begin()+i+1, b);
 
@@ -200,7 +200,7 @@ void TimingData::MultiplyBPMInBeatRange( int iStartIndex, int iEndIndex, float f
 		// If this BPM segment crosses the end of the range, split it into two.
 		if( iStartIndexThisSegment < iEndIndex && iStartIndexNextSegment > iEndIndex )
 		{
-			BPMSegment * b = new BPMSegment(iEndIndex,
+			BPMSegment * b = smnew BPMSegment(iEndIndex,
 											bs->GetBPS());
 			bpms.insert(bpms.begin()+i+1, b);
 		}
@@ -272,16 +272,16 @@ bool TimingData::IsFakeAtRow( int iNoteRow ) const
 static const TimingSegment* DummySegments[NUM_TimingSegmentType] =
 {
 	NULL, // BPMSegment
-	new StopSegment,
-	new DelaySegment,
+	smnew StopSegment,
+	smnew DelaySegment,
 	NULL, // TimeSignatureSegment
-	new WarpSegment,
+	smnew WarpSegment,
 	NULL, // LabelSegment
 	NULL, // TickcountSegment
 	NULL, // ComboSegment
 	NULL, // SpeedSegment
 	NULL, // ScrollSegment
-	new FakeSegment
+	smnew FakeSegment
 };
 
 const TimingSegment* TimingData::GetSegmentAtRow( int iNoteRow, TimingSegmentType tst ) const

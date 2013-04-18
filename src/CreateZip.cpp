@@ -676,7 +676,7 @@ ZRESULT TZip::open_file(const TCHAR *fn)
 	hfin=0; bufin=0; crc=CRCVAL_INITIAL; isize=0; csize=0; ired=0;
 	if (fn==0) 
 		return ZR_ARGS;
-	hfin = new RageFile();
+	hfin = smnew RageFile();
 	if( !hfin->Open(fn) )
 	{
 		SAFE_DELETE( hfin );
@@ -933,8 +933,8 @@ ZRESULT TZip::Add(const TCHAR *odstzn, const TCHAR *src,unsigned long flags)
 		return oerr;
 
 	// Keep a copy of the zipfileinfo, for our end-of-zip directory
-	char *cextra = new char[zfi.cext]; memcpy(cextra,zfi.cextra,zfi.cext); zfi.cextra=cextra;
-	TZipFileInfo *pzfi = new TZipFileInfo; memcpy(pzfi,&zfi,sizeof(zfi));
+	char *cextra = smnew char[zfi.cext]; memcpy(cextra,zfi.cextra,zfi.cext); zfi.cextra=cextra;
+	TZipFileInfo *pzfi = smnew TZipFileInfo; memcpy(pzfi,&zfi,sizeof(zfi));
 	if (zfis==NULL) 
 		zfis=pzfi;
 	else 
@@ -999,7 +999,7 @@ CreateZip::CreateZip()
 
 bool CreateZip::Start( RageFile *f)
 {
-	hz = new TZip();
+	hz = smnew TZip();
 	lasterrorZ = hz->Start(f);
 	return lasterrorZ == ZR_OK;
 }

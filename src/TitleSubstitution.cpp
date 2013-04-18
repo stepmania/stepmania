@@ -69,7 +69,7 @@ void TitleTrans::LoadFromNode( const XNode* pNode )
 void TitleSubst::AddTrans(const TitleTrans &tr)
 {
 	ASSERT( tr.TitleFrom.IsSet() || tr.SubFrom.IsSet() || tr.ArtistFrom.IsSet() );
-	ttab.push_back(new TitleTrans(tr));
+	ttab.push_back(smnew TitleTrans(tr));
 }
 
 void TitleSubst::Subst( TitleFields &tf )
