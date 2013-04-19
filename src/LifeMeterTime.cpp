@@ -48,6 +48,12 @@ LifeMeterTime::LifeMeterTime()
 {
 	m_fLifeTotalGainedSeconds = 0;
 	m_fLifeTotalLostSeconds = 0;
+	m_pStream = NULL;
+}
+
+LifeMeterTime::~LifeMeterTime()
+{
+	delete m_pStream;
 }
 
 void LifeMeterTime::Load( const PlayerState *pPlayerState, PlayerStageStats *pPlayerStageStats )
