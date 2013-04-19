@@ -27,6 +27,7 @@ void PlayerOptions::Init()
 {
 	m_bSetScrollSpeed = false;
 	m_fMaxScrollBPM = 0;		m_SpeedfMaxScrollBPM = 1.0f;
+	m_fAvgScrollBPM = 0;	m_SpeedfAvgScrollBPM = 1.0f;
 	m_fTimeSpacing = 0;		m_SpeedfTimeSpacing = 1.0f;
 	m_fScrollSpeed = 1.0f;		m_SpeedfScrollSpeed = 1.0f;
 	m_fScrollBPM = 200;		m_SpeedfScrollBPM = 1.0f;
@@ -62,6 +63,7 @@ void PlayerOptions::Approach( const PlayerOptions& other, float fDeltaSeconds )
 	APPROACH( fTimeSpacing );
 	APPROACH( fScrollSpeed );
 	//APPROACH( fMaxScrollBPM ); // if uncommented, causes crashes. -aj
+	//APPROACH( fAvgScrollBPM ); // not sure if this crashes, but playing safe. -Wolfman2000
 	fapproach( m_fScrollBPM, other.m_fScrollBPM, fDeltaSeconds * other.m_SpeedfScrollBPM*150 );
 	for( int i=0; i<NUM_ACCELS; i++ )
 		APPROACH( fAccels[i] );
@@ -118,7 +120,12 @@ void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
 
 	if( !m_fTimeSpacing )
 	{
-		if( m_fMaxScrollBPM )
+		if( m_fAvgScrollBPM )
+		{
+			RString s = ssprintf( "a%.0f", m_fAvgScrollBPM );
+			AddTo.push_back( s );
+		}
+		else if( m_fMaxScrollBPM )
 		{
 			RString s = ssprintf( "m%.0f", m_fMaxScrollBPM );
 			AddTo.push_back( s );
@@ -342,6 +349,7 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 		SET_FLOAT( fTimeSpacing )
 		m_fTimeSpacing = 0;
 		m_fMaxScrollBPM = 0;
+		m_fAvgScrollBPM = 0;
 	}
 	else if( sscanf( sBit, "c%f", &level ) == 1 )
 	{
@@ -351,6 +359,7 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 		SET_FLOAT( fTimeSpacing )
 		m_fTimeSpacing = 1;
 		m_fMaxScrollBPM = 0;
+		m_fAvgScrollBPM = 0;
 	}
 	// oITG's m-mods
 	// XXX: will not properly tween, I don't think.
@@ -363,6 +372,14 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 		*/
 		SET_FLOAT( fMaxScrollBPM )
 		m_fTimeSpacing = 0;
+		m_fAvgScrollBPM = 0;
+	}
+	// Third Style inspired a-mods
+	else if( sscanf( sBit, "a%f", &level ) == 1 )
+	{
+		SET_FLOAT( fAvgScrollBPM );
+		m_fTimeSpacing = 0;
+		m_fMaxScrollBPM = 0;
 	}
 
 	else if( sBit == "clearall" )				Init();
@@ -666,6 +683,7 @@ bool PlayerOptions::operator==( const PlayerOptions &other ) const
 	COMPARE(m_fScrollSpeed);
 	COMPARE(m_fScrollBPM);
 	COMPARE(m_fMaxScrollBPM);
+	COMPARE(m_fAvgScrollBPM);
 	COMPARE(m_fRandomSpeed);
 	COMPARE(m_FailType);
 	COMPARE(m_bMuteOnError);
@@ -734,9 +752,9 @@ bool PlayerOptions::IsEasierForSongAndSteps( Song* pSong, Steps* pSteps, PlayerN
 	
 	if( m_fCover )	return true;
 	
-	// M-mods make songs with indefinite BPMs easier because
+	// M-mods and a-mods make songs with indefinite BPMs easier because
 	// they ensure that the song has a scrollable speed.
-	if( m_fMaxScrollBPM != 0 )
+	if( m_fMaxScrollBPM != 0 || m_fAvgScrollBPM != 0 )
 	{
 		// BPM display is obfuscated
 //		if( pSong->m_DisplayBPMType == DISPLAY_BPM_RANDOM )
@@ -830,6 +848,7 @@ RString PlayerOptions::GetSavedPrefsString() const
 	SAVE( m_fScrollSpeed );
 	SAVE( m_fScrollBPM );
 	SAVE( m_fMaxScrollBPM );
+	SAVE( m_fAvgScrollBPM );
 	SAVE( m_fScrolls[SCROLL_REVERSE] );
 	SAVE( m_fPerspectiveTilt );
 	SAVE( m_bTransforms[TRANSFORM_NOHOLDS] );
@@ -859,6 +878,7 @@ void PlayerOptions::ResetPrefs( ResetPrefsType type )
 		CPY( m_fScrollSpeed );
 		CPY( m_fScrollBPM );
 		CPY( m_fMaxScrollBPM );
+		CPY( m_fAvgScrollBPM );
 		break;
 	case saved_prefs_invalid_for_course:
 		break;
@@ -933,6 +953,7 @@ public:
 		p->m_fTimeSpacing = FArg(1);
 		p->m_fTimeSpacing = 1;
 		p->m_fMaxScrollBPM = 0;
+		p->m_fAvgScrollBPM = 0;
 		return 0;
 	}
 
@@ -949,6 +970,7 @@ public:
 		p->m_fScrollSpeed = FArg(1);
 		p->m_fTimeSpacing = 0;
 		p->m_fMaxScrollBPM = 0;
+		p->m_fAvgScrollBPM = 0;
 		return 0;
 	}
 
@@ -965,6 +987,23 @@ public:
 	{
 		p->m_fMaxScrollBPM = FArg(1);
 		p->m_fTimeSpacing = 0;
+		p->m_fAvgScrollBPM = 0;
+		return 0;
+	}
+	static int GetAMod( T * p, lua_State * L )
+	{
+		if (!p->m_fTimeSpacing && p->m_fAvgScrollBPM)
+			lua_pushnumber(L, p->m_fAvgScrollBPM);
+		else
+			lua_pushnil(L);
+
+		return 1;
+	}
+	static int SetAMod( T * p, lua_State * L )
+	{
+		p->m_fAvgScrollBPM = FArg(1);
+		p->m_fTimeSpacing = 0;
+		p->m_fMaxScrollBPM = 0;
 		return 0;
 	}
 
@@ -1185,6 +1224,8 @@ public:
 		ADD_METHOD( SetXMod );
 		ADD_METHOD( GetMMod );
 		ADD_METHOD( SetMMod );
+		ADD_METHOD( GetAMod );
+		ADD_METHOD( SetAMod );
 
 		// Accel
 		ADD_METHOD( GetBoost );

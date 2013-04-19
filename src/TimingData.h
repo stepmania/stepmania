@@ -286,6 +286,8 @@ public:
 	bool IsJudgableAtRow( int row ) const { return !IsWarpAtRow(row) && !IsFakeAtRow(row); }
 	bool IsJudgableAtBeat( float beat ) const { return IsJudgableAtRow( BeatToNoteRow( beat ) ); }
 
+	float GetBPMUsedMostOften();
+
 	void MultiplyBPMInBeatRange( int iStartIndex, int iEndIndex, float fFactor );
 
 	void NoteRowToMeasureAndBeat( int iNoteRow, int &iMeasureIndexOut, int &iBeatIndexOut, int &iRowsRemainder ) const;
@@ -376,6 +378,8 @@ public:
 		return m_avpTimingSegments[tst];
 	}
 
+	void SetLastRowFromTime(float seconds);
+
 	/**
 	 * @brief Tidy up the timing data, e.g. provide default BPMs, labels, tickcounts.
 	 * @param allowEmpty true if completely empty TimingData should be left
@@ -395,6 +399,9 @@ public:
 
 	/** @brief The initial offset of a song. */
 	float	m_fBeat0OffsetInSeconds;
+
+	/** @brief The row of the final song. */
+	int lastRow;
 
 	// XXX: this breaks encapsulation. get rid of it ASAP
 	vector<RString> ToVectorString(TimingSegmentType tst, int dec = 6) const;
