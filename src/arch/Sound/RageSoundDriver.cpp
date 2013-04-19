@@ -5,8 +5,6 @@
 #include "Foreach.h"
 #include "arch/arch_default.h"
 
-DriverList RageSoundDriver::m_pDriverList;
-
 RageSoundDriver *RageSoundDriver::Create( const RString& sDrivers )
 {
 	vector<RString> DriversToTry;
@@ -14,7 +12,7 @@ RageSoundDriver *RageSoundDriver::Create( const RString& sDrivers )
 	
 	FOREACH_CONST( RString, DriversToTry, Driver )
 	{
-		RageDriver *pDriver = m_pDriverList.Create( *Driver );
+		RageDriver *pDriver = GetDriverList().Create( *Driver );
 		if( pDriver == NULL )
 		{
 			LOG->Trace( "Unknown sound driver: %s", Driver->c_str() );

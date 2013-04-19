@@ -79,7 +79,11 @@ static Preference<bool> g_bDelayedScreenLoad( "DelayedScreenLoad", false );
 //static Preference<bool> g_bPruneFonts( "PruneFonts", true );
 
 // Screen registration
-static map<RString,CreateScreenFn>	*g_pmapRegistrees = NULL;
+map<RString, CreateScreenFn> & GetRegistrees()
+{
+	static map<RString, CreateScreenFn> registrees;
+	return registrees;
+}
 
 /** @brief Utility functions for the ScreenManager. */
 namespace ScreenManagerUtil
@@ -219,13 +223,12 @@ using namespace ScreenManagerUtil;
 
 RegisterScreenClass::RegisterScreenClass( const RString& sClassName, CreateScreenFn pfn )
 {
-	if( g_pmapRegistrees == NULL )
-		g_pmapRegistrees = smnew map<RString,CreateScreenFn>;
+	map<RString,CreateScreenFn> & registrees = GetRegistrees();
 
-	map<RString,CreateScreenFn>::iterator iter = g_pmapRegistrees->find( sClassName );
-	ASSERT_M( iter == g_pmapRegistrees->end(), ssprintf("Screen class '%s' already registered.", sClassName.c_str()) );
+	map<RString,CreateScreenFn>::iterator iter = registrees.find( sClassName );
+	ASSERT_M( iter == registrees.end(), ssprintf("Screen class '%s' already registered.", sClassName.c_str()) );
 
-	(*g_pmapRegistrees)[sClassName] = pfn;
+	registrees[sClassName] = pfn;
 }
 
 
@@ -532,8 +535,10 @@ Screen* ScreenManager::MakeNewScreen( const RString &sScreenName )
 
 	RString sClassName = THEME->GetMetric( sScreenName,"Class" );
 
-	map<RString,CreateScreenFn>::iterator iter = g_pmapRegistrees->find( sClassName );
-	if( iter == g_pmapRegistrees->end() )
+	map<RString,CreateScreenFn> & registrees = GetRegistrees();
+
+	map<RString,CreateScreenFn>::iterator iter = registrees.find( sClassName );
+	if( iter == registrees.end() )
 		RageException::Throw( "Screen \"%s\" has an invalid class \"%s\".", sScreenName.c_str(), sClassName.c_str() );
 
 	this->ZeroNextUpdate();
@@ -871,7 +876,7 @@ public:
 	}
 	static int SystemMessage( T* p, lua_State *L )		{ p->SystemMessage( SArg(1) ); return 0; }
 	static int ScreenIsPrepped( T* p, lua_State *L )	{ lua_pushboolean( L, ScreenManagerUtil::ScreenIsPrepped( SArg(1) ) ); return 1; }
-	static int ScreenClassExists( T* p, lua_State *L )	{ lua_pushboolean( L, g_pmapRegistrees->find( SArg(1) ) != g_pmapRegistrees->end() ); return 1; }
+	static int ScreenClassExists( T* p, lua_State *L )	{ lua_pushboolean( L, GetRegistrees().find( SArg(1) ) != GetRegistrees().end() ); return 1; }
 	static int AddNewScreenToTop( T* p, lua_State *L )
 	{
 		ScreenMessage SM = SM_None;

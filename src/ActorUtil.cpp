@@ -14,22 +14,26 @@
 
 
 // Actor registration
-static map<RString,CreateActorFn>	*g_pmapRegistrees = NULL;
+map<RString,CreateActorFn> & GetRegistrees()
+{
+	static map<RString, CreateActorFn> registrees;
+	return registrees;
+}
 
 static bool IsRegistered( const RString& sClassName )
 {
-	return g_pmapRegistrees->find( sClassName ) != g_pmapRegistrees->end();
+	map<RString, CreateActorFn> & registrees = GetRegistrees();
+	return registrees.find( sClassName ) != registrees.end();
 }
 
 void ActorUtil::Register( const RString& sClassName, CreateActorFn pfn )
 {
-	if( g_pmapRegistrees == NULL )
-		g_pmapRegistrees = smnew map<RString,CreateActorFn>;
+	map<RString, CreateActorFn> & registrees = GetRegistrees();
 
-	map<RString,CreateActorFn>::iterator iter = g_pmapRegistrees->find( sClassName );
-	ASSERT_M( iter == g_pmapRegistrees->end(), ssprintf("Actor class '%s' already registered.", sClassName.c_str()) );
+	map<RString,CreateActorFn>::iterator iter = registrees.find( sClassName );
+	ASSERT_M( iter == registrees.end(), ssprintf("Actor class '%s' already registered.", sClassName.c_str()) );
 
-	(*g_pmapRegistrees)[sClassName] = pfn;
+	registrees[sClassName] = pfn;
 }
 
 bool ActorUtil::ResolvePath( RString &sPath, const RString &sName )
@@ -119,8 +123,10 @@ Actor* ActorUtil::LoadFromNode( const XNode* pNode, Actor *pParentActor )
 	if( !bHasClass )
 		bHasClass = pNode->GetAttrValue( "Type", sClass );
 
-	map<RString,CreateActorFn>::iterator iter = g_pmapRegistrees->find( sClass );
-	if( iter == g_pmapRegistrees->end() )
+	map<RString, CreateActorFn> & registrees = GetRegistrees();
+
+	map<RString,CreateActorFn>::iterator iter = registrees.find( sClass );
+	if( iter == registrees.end() )
 	{
 		// sClass is invalid
 		RString sError = ssprintf( "%s: invalid Class \"%s\"",

@@ -4,7 +4,11 @@
 #include "RageUtil.h"
 #include "SubscriptionManager.h"
 
-static SubscriptionManager<LocalizedString> m_Subscribers;
+SubscriptionManager<LocalizedString> & GetSubscribers()
+{
+	static SubscriptionManager<LocalizedString> subscribers;
+	return subscribers;
+}
 
 class LocalizedStringImplDefault: public ILocalizedStringImpl
 {
@@ -27,7 +31,7 @@ static LocalizedString::MakeLocalizer g_pMakeLocalizedStringImpl = LocalizedStri
 void LocalizedString::RegisterLocalizer( MakeLocalizer pFunc )
 {
 	g_pMakeLocalizedStringImpl = pFunc;
-	FOREACHS( LocalizedString*, *m_Subscribers.m_pSubscribers, l )
+	FOREACHS( LocalizedString*, GetSubscribers().m_pSubscribers, l )
 	{
 		LocalizedString *pLoc = *l;
 		pLoc->CreateImpl();
@@ -36,7 +40,7 @@ void LocalizedString::RegisterLocalizer( MakeLocalizer pFunc )
 
 LocalizedString::LocalizedString( const RString& sGroup, const RString& sName )
 {
-	m_Subscribers.Subscribe( this );
+	GetSubscribers().Subscribe( this );
 
 	m_sGroup = sGroup;
 	m_sName = sName;
@@ -47,7 +51,7 @@ LocalizedString::LocalizedString( const RString& sGroup, const RString& sName )
 
 LocalizedString::~LocalizedString()
 {
-	m_Subscribers.Unsubscribe( this );
+	GetSubscribers().Unsubscribe( this );
 
 	SAFE_DELETE( m_pImpl );
 }

@@ -52,15 +52,18 @@ static LocalizedString ON			( "ScreenDebugOverlay", "on" );
 static LocalizedString OFF			( "ScreenDebugOverlay", "off" );
 
 class IDebugLine;
-static vector<IDebugLine*> *g_pvpSubscribers = NULL;
+vector<IDebugLine*> & GetSubscribers()
+{
+	static vector<IDebugLine*> subscribers;
+	return subscribers;
+}
+
 class IDebugLine
 {
 public:
 	IDebugLine()
 	{ 
-		if( g_pvpSubscribers == NULL )
-			g_pvpSubscribers = smnew vector<IDebugLine*>;
-		g_pvpSubscribers->push_back( this );
+		GetSubscribers().push_back( this );
 	}
 	virtual ~IDebugLine() { }
 	enum Type { all_screens, gameplay_only };
@@ -215,7 +218,7 @@ void ScreenDebugOverlay::Init()
 
 	map<RString,int> iNextDebugButton;
 	int iNextGameplayButton = 0;
-	FOREACH( IDebugLine*, *g_pvpSubscribers, p )
+	FOREACH( IDebugLine*, GetSubscribers(), p )
 	{
 		RString sPageName = (*p)->GetPageName();
 
@@ -271,7 +274,7 @@ void ScreenDebugOverlay::Init()
 		this->AddChild( p );
 	}
 
-	FOREACH_CONST( IDebugLine*, *g_pvpSubscribers, p )
+	FOREACH_CONST( IDebugLine*, GetSubscribers(), p )
 	{
 		{
 			BitmapText *bt = smnew BitmapText;
@@ -350,13 +353,15 @@ void ScreenDebugOverlay::UpdateText()
 		m_vptextPages[iPage]->PlayCommand( (iPage == m_iCurrentPage) ? "GainFocus" :  "LoseFocus" );
 	}
 
+	vector<IDebugLine*> & subscribers = GetSubscribers();
+
 	// todo: allow changing of various spacing/location things -aj
 	int iOffset = 0;
-	FOREACH_CONST( IDebugLine*, *g_pvpSubscribers, p )
+	FOREACH_CONST( IDebugLine*, subscribers, p )
 	{
 		RString sPageName = (*p)->GetPageName();
 
-		int i = p-g_pvpSubscribers->begin();
+		int i = p-subscribers.begin();
 
 		float fY = LINE_START_Y + iOffset * LINE_SPACING;
 
@@ -447,11 +452,13 @@ bool ScreenDebugOverlay::Input( const InputEventPlus &input )
 		return true;
 	}
 
-	FOREACH_CONST( IDebugLine*, *g_pvpSubscribers, p )
+	vector<IDebugLine*> & subscribers = GetSubscribers();
+
+	FOREACH_CONST( IDebugLine*, subscribers, p )
 	{
 		RString sPageName = (*p)->GetPageName();
 
-		int i = p-g_pvpSubscribers->begin();
+		int i = p-subscribers.begin();
 
 		// Gameplay buttons are available only in gameplay. Non-gameplay buttons
 		// are only available when the screen is displayed.

@@ -11,12 +11,11 @@ public:
 
 typedef RageDriver *(*CreateRageDriverFn)();
 
-/* This is created and accessed during C++ static initialization; it must be a POD. */
 struct DriverList
 {
 	void Add( const istring &sName, CreateRageDriverFn pfn );
 	RageDriver *Create( const RString &sDriverName );
-	map<istring, CreateRageDriverFn> *m_pRegistrees;
+	map<istring, CreateRageDriverFn> m_pRegistrees;
 };
 
 struct RegisterRageDriver

@@ -17,7 +17,12 @@ class RageSoundDriver: public RageDriver
 public:
 	/* Pass an empty string to get the default sound driver list. */
 	static RageSoundDriver *Create( const RString &sDrivers );
-	static DriverList m_pDriverList;
+
+	static DriverList & GetDriverList()
+	{
+		static DriverList driverList;
+		return driverList;
+	}
 
 	friend class RageSoundManager;
 
@@ -209,7 +214,7 @@ private:
 
 // Can't use Create##name because many of these have -sw suffixes.
 #define REGISTER_SOUND_DRIVER_CLASS2( name, x ) \
-	static RegisterRageDriver register_##x( &RageSoundDriver::m_pDriverList, #name, CreateClass<RageSoundDriver_##x, RageDriver> )
+	static RegisterRageDriver register_##x( &RageSoundDriver::GetDriverList(), #name, CreateClass<RageSoundDriver_##x, RageDriver> )
 #define REGISTER_SOUND_DRIVER_CLASS( name ) REGISTER_SOUND_DRIVER_CLASS2( name, name )
 
 

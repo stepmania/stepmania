@@ -7,23 +7,27 @@
 #include "SubscriptionManager.h"
 #include "Foreach.h"
 
-static SubscriptionManager<IPreference> m_Subscribers;
+SubscriptionManager<IPreference> & GetSubscribers()
+{
+	static SubscriptionManager<IPreference> subscribers;
+	return subscribers;
+}
 
 IPreference::IPreference( const RString& sName ):
 	m_sName( sName ),
 	m_bIsStatic( false )
 {
-	m_Subscribers.Subscribe( this );
+	GetSubscribers().Subscribe( this );
 }
 
 IPreference::~IPreference()
 {
-	m_Subscribers.Unsubscribe( this );
+	GetSubscribers().Unsubscribe( this );
 }
 
 IPreference *IPreference::GetPreferenceByName( const RString &sName )
 {
-	FOREACHS( IPreference*, *m_Subscribers.m_pSubscribers, p )
+	FOREACHS( IPreference*, GetSubscribers().m_pSubscribers, p )
 	{
 		if( !(*p)->GetName().CompareNoCase( sName ) )
 			return *p;
@@ -34,20 +38,20 @@ IPreference *IPreference::GetPreferenceByName( const RString &sName )
 
 void IPreference::LoadAllDefaults()
 {
-	FOREACHS_CONST( IPreference*, *m_Subscribers.m_pSubscribers, p )
+	FOREACHS_CONST( IPreference*, GetSubscribers().m_pSubscribers, p )
 		(*p)->LoadDefault();
 }
 
 void IPreference::ReadAllPrefsFromNode( const XNode* pNode, bool bIsStatic )
 {
 	ASSERT( pNode != NULL );
-	FOREACHS_CONST( IPreference*, *m_Subscribers.m_pSubscribers, p )
+	FOREACHS_CONST( IPreference*, GetSubscribers().m_pSubscribers, p )
 		(*p)->ReadFrom( pNode, bIsStatic );
 }
 
 void IPreference::SavePrefsToNode( XNode* pNode )
 {
-	FOREACHS_CONST( IPreference*, *m_Subscribers.m_pSubscribers, p )
+	FOREACHS_CONST( IPreference*, GetSubscribers().m_pSubscribers, p )
 		(*p)->WriteTo( pNode );
 }
 
@@ -55,7 +59,7 @@ void IPreference::ReadAllDefaultsFromNode( const XNode* pNode )
 {
 	if( pNode == NULL )
 		return;
-	FOREACHS_CONST( IPreference*, *m_Subscribers.m_pSubscribers, p )
+	FOREACHS_CONST( IPreference*, GetSubscribers().m_pSubscribers, p )
 		(*p)->ReadDefaultFrom( pNode );
 }
 
