@@ -383,30 +383,6 @@ static void MusicWheelSwitchSpeed( int &sel, bool ToSel, const ConfOption *pConf
 	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYLEN(mapping) );
 }
 
-// Gameplay options
-static void CoinModeNoHome( int &sel, bool ToSel, const ConfOption *pConfOption )
-{
-	// The mapping without home is easy: subtract one to compensate for the missing CoinMode_Home
-	if( ToSel )
-	{
-		MovePref<CoinMode>( sel, ToSel, pConfOption );
-		if( sel > static_cast<int>(CoinMode_Home) )
-			--sel;
-	}
-	else
-	{
-		if( sel >= static_cast<int>(CoinMode_Home) )
-			++sel;
-		MovePref<CoinMode>( sel, ToSel, pConfOption );
-	}
-}
-
-static void CoinsPerCredit( int &sel, bool ToSel, const ConfOption *pConfOption )
-{
-	const int mapping[] = { 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16 };
-	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYLEN(mapping) );
-}
-
 static void JointPremium( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const Premium mapping[] = { Premium_DoubleFor1Credit, Premium_2PlayersFor1Credit };
@@ -644,8 +620,8 @@ static void InitializeConfOptions()
 	// a new choice in the interface into a new preference. The easiest is when
 	// the interface choices are an exact mapping to the values the preference
 	// can be. In that case, the easiest thing to do is use MovePref<bool or enum>.
-	// The next easiest case is when there is a hardcoded mapping that is not 1-1,
-	// such as CoinModeNoHome. In that case, you need to remap the result of
+	// The next easiest case is when there is a hardcoded mapping that is not 1-1.
+	// In that case, you need to remap the result of
 	// MovePref<enum> to the correct mapping.  Harder yet is when there is a
 	// float or a dynamic set of options, such as Language or Theme.
 	// Those require individual attention.
@@ -714,8 +690,7 @@ static void InitializeConfOptions()
 
 	// Machine options
 	ADD( ConfOption( "MenuTimer",			MovePref<bool>,		"Off","On" ) );
-	ADD( ConfOption( "CoinMode",			MovePref<CoinMode>,	"Home","Pay","Free Play" ) );
-	ADD( ConfOption( "CoinModeNoHome",		CoinModeNoHome,		"Pay","Free Play" ) );
+	ADD( ConfOption( "CoinMode",			MovePref<CoinMode>,	"Home","Free Play" ) );
 	g_ConfOptions.back().m_sPrefName = "CoinMode";
 
 	ADD( ConfOption( "SongsPerPlay",		SongsPerPlay,		"|1","|2","|3","|4","|5" ) );
@@ -730,7 +705,6 @@ static void InitializeConfOptions()
 	ADD( ConfOption( "ProgressiveStageLifebar",	MovePref<int>,		"Off","|1","|2","|3","|4","|5","|6","|7","|8","Insanity") );
 	ADD( ConfOption( "ProgressiveNonstopLifebar",	MovePref<int>,		"Off","|1","|2","|3","|4","|5","|6","|7","|8","Insanity") );
 	ADD( ConfOption( "DefaultFailType",		DefaultFailType,	"Immediate","ImmediateContinue","EndOfSong","Off" ) );	
-	ADD( ConfOption( "CoinsPerCredit",		CoinsPerCredit,		"|1","|2","|3","|4","|5","|6","|7","|8","|9","|10","|11","|12","|13","|14","|15","|16" ) );
 	ADD( ConfOption( "Premium",			MovePref<Premium>,	"Off","Double for 1 Credit","2 Players for 1 Credit" ) );
 	ADD( ConfOption( "JointPremium",		JointPremium,		"Off","2 Players for 1 Credit" ) );
 	g_ConfOptions.back().m_sPrefName = "Premium";
