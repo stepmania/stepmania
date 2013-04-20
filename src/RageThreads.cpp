@@ -138,8 +138,8 @@ struct ThreadSlot *g_pUnknownThreadSlot = NULL;
  * so possibly racing over them is harmless (simply using a stale thread ID, etc). */
 static RageMutex &GetThreadSlotsLock()
 {
-	static RageMutex *pLock = new RageMutex( "ThreadSlots" );
-	return *pLock;
+	static RageMutex lock( "ThreadSlots" );
+	return lock;
 }
 
 static int FindEmptyThreadSlot()

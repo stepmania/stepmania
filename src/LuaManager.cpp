@@ -226,16 +226,16 @@ static int LuaPanic( lua_State *L )
 }
 
 // Actor registration
-static vector<RegisterWithLuaFn>	*g_vRegisterActorTypes = NULL;
+vector<RegisterWithLuaFn> & GetRegisteredActorTypes()
+{
+	static vector<RegisterWithLuaFn> registeredActorTypes;
+	return registeredActorTypes;
+}
 
 void LuaManager::Register( RegisterWithLuaFn pfn )
 {
-	if( g_vRegisterActorTypes == NULL )
-		g_vRegisterActorTypes = new vector<RegisterWithLuaFn>;
-
-	g_vRegisterActorTypes->push_back( pfn );
+	GetRegisteredActorTypes().push_back( pfn );
 }
-
 
 LuaManager::LuaManager()
 {
@@ -360,13 +360,12 @@ void LuaManager::RegisterTypes()
 {
 	Lua *L = Get();
 
-	if( g_vRegisterActorTypes )
+	vector<RegisterWithLuaFn> & registeredActorTypes = GetRegisteredActorTypes();
+
+	for( unsigned i=0; i<registeredActorTypes.size(); i++ )
 	{
-		for( unsigned i=0; i<g_vRegisterActorTypes->size(); i++ )
-		{
-			RegisterWithLuaFn fn = (*g_vRegisterActorTypes)[i];
-			fn( L );
-		}
+		RegisterWithLuaFn fn = registeredActorTypes[i];
+		fn( L );
 	}
 
 	Release( L );

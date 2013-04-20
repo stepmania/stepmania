@@ -741,14 +741,15 @@ void Font::Load( const RString &sIniPath, RString sChars )
 	{
 		const RString &sTexturePath = asTexturePaths[i];
 
-		FontPage *pPage = new FontPage;
-
 		// Grab the page name, eg "foo" from "Normal [foo].png".
 		RString sPagename = GetPageNameFromFileName( sTexturePath );
 
 		// Ignore stroke textures
 		if( sTexturePath.find("-stroke") != string::npos )
 			continue;
+
+		// Create this down here so it doesn't leak if the continue gets triggered.
+		FontPage *pPage = new FontPage;
 
 		// Load settings for this page from the INI.
 		FontPageSettings cfg;

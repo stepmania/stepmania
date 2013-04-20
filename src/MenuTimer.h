@@ -15,6 +15,7 @@ class MenuTimer : public ActorFrame
 {
 public:
 	MenuTimer();
+	virtual ~MenuTimer();
 	void Load( RString sMetricsGroup );
 	
 	virtual void Update( float fDeltaTime ); 

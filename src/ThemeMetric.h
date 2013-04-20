@@ -187,6 +187,7 @@ public:
 	{
 		Load( RString(), NULL, 0 );
 	}
+	virtual ~ThemeMetric1D() { }
 	void Load( const RString& sGroup, MetricName1D pfn, size_t N )
 	{
 		m_metric.resize( N );

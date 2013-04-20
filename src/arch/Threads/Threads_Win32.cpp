@@ -7,12 +7,10 @@
 
 const int MAX_THREADS=128;
 
-static MutexImpl_Win32 *g_pThreadIdMutex = NULL;
-static void InitThreadIdMutex()
+MutexImpl_Win32 & GetThreadMutex()
 {
-	if( g_pThreadIdMutex != NULL )
-		return;
-	g_pThreadIdMutex = new MutexImpl_Win32(NULL);
+	static MutexImpl_Win32 mutex(NULL);
+	return mutex;
 }
 
 static uint64_t g_ThreadIds[MAX_THREADS];
@@ -108,9 +106,9 @@ static DWORD WINAPI StartThread( LPVOID pData )
 
 static int GetOpenSlot( uint64_t iID )
 {
-	InitThreadIdMutex();
+	MutexImpl_Win32 & mutex = GetThreadMutex();
 
-	g_pThreadIdMutex->Lock();
+	mutex.Lock();
 
 	// Find an open slot in g_ThreadIds.
 	int slot = 0;
@@ -120,7 +118,7 @@ static int GetOpenSlot( uint64_t iID )
 
 	g_ThreadIds[slot] = iID;
 
-	g_pThreadIdMutex->Unlock();
+	mutex.Unlock();
 
 	return slot;
 }

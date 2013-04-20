@@ -62,8 +62,6 @@ bool RageMovieTexture::GetFourCC( RString fn, RString &handler, RString &type )
 #undef HANDLE_ERROR
 }
 
-DriverList RageMovieTextureDriver::m_pDriverList;
-
 // Helper for MakeRageMovieTexture()
 static void DumpAVIDebugInfo( const RString& fn )
 {
@@ -97,7 +95,7 @@ RageMovieTexture *RageMovieTexture::Create( RageTextureID ID )
 	FOREACH_CONST( RString, DriversToTry, Driver )
 	{
 		LOG->Trace( "Initializing driver: %s", Driver->c_str() );
-		RageDriver *pDriverBase = RageMovieTextureDriver::m_pDriverList.Create( *Driver );
+		RageDriver *pDriverBase = RageMovieTextureDriver::GetDriverList().Create( *Driver );
 		
 		if( pDriverBase == NULL )
 		{
