@@ -807,7 +807,7 @@ protected:
 
 RageCompiledGeometry* RageDisplay_D3D::CreateCompiledGeometry()
 {
-	return smnew RageCompiledGeometrySWD3D;
+	return new RageCompiledGeometrySWD3D;
 }
 
 void RageDisplay_D3D::DeleteCompiledGeometry( RageCompiledGeometry* p )

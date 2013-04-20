@@ -19,22 +19,22 @@ LuaXType( TweenType );
 struct TweenLinear: public ITween
 {
 	float Tween( float f ) const { return f; }
-	ITween *Copy() const { return smnew TweenLinear(*this); }
+	ITween *Copy() const { return new TweenLinear(*this); }
 };
 struct TweenAccelerate: public ITween
 {
 	float Tween( float f ) const { return f*f; }
-	ITween *Copy() const { return smnew TweenAccelerate(*this); }
+	ITween *Copy() const { return new TweenAccelerate(*this); }
 };
 struct TweenDecelerate: public ITween
 {
 	float Tween( float f ) const { return 1 - (1-f) * (1-f); }
-	ITween *Copy() const { return smnew TweenDecelerate(*this); }
+	ITween *Copy() const { return new TweenDecelerate(*this); }
 };
 struct TweenSpring: public ITween
 {
 	float Tween( float f ) const { return 1 - RageFastCos( f*PI*2.5f )/(1+f*3); }
-	ITween *Copy() const { return smnew TweenSpring(*this); }
+	ITween *Copy() const { return new TweenSpring(*this); }
 };
 
 
@@ -44,7 +44,7 @@ struct TweenSpring: public ITween
 struct InterpolateBezier1D: public ITween
 {
 	float Tween( float f ) const;
-	ITween *Copy() const { return smnew InterpolateBezier1D(*this); }
+	ITween *Copy() const { return new InterpolateBezier1D(*this); }
 
 	RageQuadratic m_Bezier;
 };
@@ -60,7 +60,7 @@ float InterpolateBezier1D::Tween( float f ) const
 struct InterpolateBezier2D: public ITween
 {
 	float Tween( float f ) const;
-	ITween *Copy() const { return smnew InterpolateBezier2D(*this); }
+	ITween *Copy() const { return new InterpolateBezier2D(*this); }
 
 	RageBezier2D m_Bezier;
 };
@@ -80,10 +80,10 @@ ITween *ITween::CreateFromType( TweenType tt )
 {
 	switch( tt )
 	{
-	case TWEEN_LINEAR: return smnew TweenLinear;
-	case TWEEN_ACCELERATE: return smnew TweenAccelerate;
-	case TWEEN_DECELERATE: return smnew TweenDecelerate;
-	case TWEEN_SPRING: return smnew TweenSpring;
+	case TWEEN_LINEAR: return new TweenLinear;
+	case TWEEN_ACCELERATE: return new TweenAccelerate;
+	case TWEEN_DECELERATE: return new TweenDecelerate;
+	case TWEEN_SPRING: return new TweenSpring;
 	default:
 		FAIL_M(ssprintf("Invalid TweenType: %i", tt));
 	}
@@ -109,13 +109,13 @@ ITween *ITween::CreateFromStack( Lua *L, int iStackPos )
 		lua_pop( L, iArgs );
 		if( iArgs == 4 )
 		{
-			InterpolateBezier1D *pBezier = smnew InterpolateBezier1D;
+			InterpolateBezier1D *pBezier = new InterpolateBezier1D;
 			pBezier->m_Bezier.SetFromBezier( fC[0], fC[1], fC[2], fC[3] );
 			return pBezier;
 		}
 		else if( iArgs == 8 )
 		{
-			InterpolateBezier2D *pBezier = smnew InterpolateBezier2D;
+			InterpolateBezier2D *pBezier = new InterpolateBezier2D;
 			pBezier->m_Bezier.SetFromBezier( fC[0], fC[1], fC[2], fC[3], fC[4], fC[5], fC[6], fC[7] );
 			return pBezier;
 		}

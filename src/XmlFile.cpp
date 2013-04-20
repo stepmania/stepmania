@@ -31,7 +31,7 @@ XNode::XNode( const XNode &cpy ):
 	FOREACH_CONST_Attr( &cpy, pAttr )
 		this->AppendAttrFrom( pAttr->first, pAttr->second->Copy() );
 	FOREACH_CONST_Child( &cpy, c )
-		this->AppendChild( smnew XNode(*c) );
+		this->AppendChild( new XNode(*c) );
 }
 
 void XNode::Clear()
@@ -190,7 +190,7 @@ XNodeValue *XNode::AppendAttr( const RString &sName )
 	DEBUG_ASSERT( sName.size() );
 	pair<XAttrs::iterator,bool> ret = m_attrs.insert( make_pair(sName, (XNodeValue *) NULL) );
 	if( ret.second )
-		ret.first->second = smnew XNodeStringValue;
+		ret.first->second = new XNodeStringValue;
 	return ret.first->second; // already existed
 }
 

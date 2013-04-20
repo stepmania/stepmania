@@ -176,7 +176,7 @@ void RoomInfoDisplay::SetRoomInfo( const RoomInfo& info)
 		m_playerList.resize(info.players.size());
 		for (size_t i = oldsize; i < m_playerList.size(); i++)
 		{
-			m_playerList[i] = smnew BitmapText;
+			m_playerList[i] = new BitmapText;
 			m_playerList[i]->LoadFromFont( THEME->GetPathF(GetName(),"text") );
 			m_playerList[i]->SetName("PlayerListElement");
 			m_playerList[i]->SetHorizAlign( align_left );

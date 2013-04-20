@@ -52,7 +52,7 @@ RageSurfaceFormat::RageSurfaceFormat( const RageSurfaceFormat &cpy ):
 {
 	memcpy( this, &cpy, sizeof(RageSurfaceFormat) );
 	if( palette )
-		palette = smnew RageSurfacePalette( *palette );
+		palette = new RageSurfacePalette( *palette );
 }
 
 RageSurfaceFormat::~RageSurfaceFormat()
@@ -136,7 +136,7 @@ RageSurface::RageSurface( const RageSurface &cpy )
 	pixels_owned = true;
 	if( cpy.pixels )
 	{
-		pixels = smnew uint8_t[ pitch*h ];
+		pixels = new uint8_t[ pitch*h ];
 		memcpy( pixels, cpy.pixels, pitch*h );
 	}
 	else
@@ -193,7 +193,7 @@ void SetupFormat( RageSurfaceFormat &fmt,
 		// Loss for paletted textures is zero; the actual palette entries are 8-bit.
 		ZERO( fmt.Loss );
 
-		fmt.palette = smnew RageSurfacePalette;
+		fmt.palette = new RageSurfacePalette;
 		fmt.palette->ncolors = 256;
 	}
 	else
@@ -217,7 +217,7 @@ void SetupFormat( RageSurfaceFormat &fmt,
 
 RageSurface *CreateSurface( int width, int height, int BitsPerPixel, uint32_t Rmask, uint32_t Gmask, uint32_t Bmask, uint32_t Amask )
 {
-	RageSurface *pImg = smnew RageSurface;
+	RageSurface *pImg = new RageSurface;
 
 	SetupFormat( pImg->fmt, width, height, BitsPerPixel, Rmask, Gmask, Bmask, Amask );
 
@@ -225,12 +225,12 @@ RageSurface *CreateSurface( int width, int height, int BitsPerPixel, uint32_t Rm
 	pImg->h = height;
 	pImg->flags = 0;
 	pImg->pitch = width*BitsPerPixel/8;
-	pImg->pixels = smnew uint8_t[ pImg->pitch*height ];
+	pImg->pixels = new uint8_t[ pImg->pitch*height ];
 
 	/*
 	if( BitsPerPixel == 8 )
 	{
-		pImg->fmt.palette = smnew RageSurfacePalette;
+		pImg->fmt.palette = new RageSurfacePalette;
 	}
 	*/
 
@@ -239,7 +239,7 @@ RageSurface *CreateSurface( int width, int height, int BitsPerPixel, uint32_t Rm
 
 RageSurface *CreateSurfaceFrom( int width, int height, int BitsPerPixel, uint32_t Rmask, uint32_t Gmask, uint32_t Bmask, uint32_t Amask, uint8_t *pPixels, uint32_t pitch )
 {
-	RageSurface *pImg = smnew RageSurface;
+	RageSurface *pImg = new RageSurface;
 
 	SetupFormat( pImg->fmt, width, height, BitsPerPixel, Rmask, Gmask, Bmask, Amask );
 

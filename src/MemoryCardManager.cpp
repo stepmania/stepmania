@@ -142,7 +142,7 @@ ThreadedMemoryCardWorker::ThreadedMemoryCardWorker():
 	if( g_bMemoryCards )
 		m_pDriver = MemoryCardDriver::Create();
 	else
-		m_pDriver = smnew MemoryCardDriver_Null;
+		m_pDriver = new MemoryCardDriver_Null;
 
 	m_MountThreadState = detect_and_mount;
 	SetHeartbeat( 0.1f );
@@ -268,7 +268,7 @@ MemoryCardManager::MemoryCardManager()
 		LUA->Release( L );
 	}
 
-	g_pWorker = smnew ThreadedMemoryCardWorker;
+	g_pWorker = new ThreadedMemoryCardWorker;
 
 	FOREACH_PlayerNumber( p )
 	{

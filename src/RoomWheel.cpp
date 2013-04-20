@@ -29,7 +29,7 @@ void RoomWheel::Load( RString sType )
 	m_offset = 0;
 	LOG->Trace( "RoomWheel::Load('%s')", sType.c_str() );
 
-	AddPermanentItem( smnew RoomWheelItemData(WheelItemDataType_Generic, "Create Room", "Create a new game room", THEME->GetMetricC( m_sName, "CreateRoomColor")) );
+	AddPermanentItem( new RoomWheelItemData(WheelItemDataType_Generic, "Create Room", "Create a new game room", THEME->GetMetricC( m_sName, "CreateRoomColor")) );
 
 	BuildWheelItemsData( m_CurWheelItemData );
 	RebuildWheelItems();
@@ -37,7 +37,7 @@ void RoomWheel::Load( RString sType )
 
 WheelItemBase *RoomWheel::MakeItem()
 {
-	return smnew RoomWheelItem;
+	return new RoomWheelItem;
 }
 
 RoomWheelItem::RoomWheelItem( RString sType ):
@@ -90,7 +90,7 @@ void RoomWheelItem::Load( RString sType )
 void RoomWheel::BuildWheelItemsData( vector<WheelItemBaseData*> &arrayWheelItemDatas )
 {
 	if( arrayWheelItemDatas.empty() )
-		arrayWheelItemDatas.push_back( smnew RoomWheelItemData(WheelItemDataType_Generic, EMPTY_STRING, "", RageColor(1,0,0,1)) );
+		arrayWheelItemDatas.push_back( new RoomWheelItemData(WheelItemDataType_Generic, EMPTY_STRING, "", RageColor(1,0,0,1)) );
 }
 
 void RoomWheel::AddPermanentItem( RoomWheelItemData *itemdata  )
@@ -137,7 +137,7 @@ void RoomWheel::RemoveItem( int index )
 	if( m_CurWheelItemData.size() < 1 )
 	{
 		m_bEmpty = true;
-		m_CurWheelItemData.push_back( smnew WheelItemBaseData(WheelItemDataType_Generic, "- EMPTY -", RageColor(1,0,0,1)) );
+		m_CurWheelItemData.push_back( new WheelItemBaseData(WheelItemDataType_Generic, "- EMPTY -", RageColor(1,0,0,1)) );
 	}
 
 	RebuildWheelItems();

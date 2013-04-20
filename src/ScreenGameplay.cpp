@@ -129,16 +129,16 @@ void PlayerInfo::Load( PlayerNumber pn, MultiPlayer mp, bool bShowNoteField, int
 		case PLAY_MODE_BATTLE:
 		case PLAY_MODE_RAVE:
 			if( PREFSMAN->m_bPercentageScoring )
-				m_pPrimaryScoreDisplay = smnew ScoreDisplayPercentage;
+				m_pPrimaryScoreDisplay = new ScoreDisplayPercentage;
 			else
-				m_pPrimaryScoreDisplay = smnew ScoreDisplayNormal;
+				m_pPrimaryScoreDisplay = new ScoreDisplayNormal;
 			break;
 		case PLAY_MODE_ONI:
 		case PLAY_MODE_ENDLESS:
 			if( GAMESTATE->m_SongOptions.GetStage().m_LifeType == SongOptions::LIFE_TIME )
-				m_pPrimaryScoreDisplay = smnew ScoreDisplayLifeTime;
+				m_pPrimaryScoreDisplay = new ScoreDisplayLifeTime;
 			else
-				m_pPrimaryScoreDisplay = smnew ScoreDisplayOni;
+				m_pPrimaryScoreDisplay = new ScoreDisplayOni;
 			break;
 		default:
 			FAIL_M(ssprintf("Invalid PlayMode: %i", mode));
@@ -154,7 +154,7 @@ void PlayerInfo::Load( PlayerNumber pn, MultiPlayer mp, bool bShowNoteField, int
 	switch( GAMESTATE->m_PlayMode )
 	{
 		case PLAY_MODE_RAVE:
-			m_pSecondaryScoreDisplay = smnew ScoreDisplayRave;
+			m_pSecondaryScoreDisplay = new ScoreDisplayRave;
 			m_pSecondaryScoreDisplay->SetName( "ScoreDisplayRave" );
 		default:
 			break;
@@ -168,14 +168,14 @@ void PlayerInfo::Load( PlayerNumber pn, MultiPlayer mp, bool bShowNoteField, int
 	switch( GAMESTATE->m_PlayMode )
 	{
 		case PLAY_MODE_RAVE:
-			m_pSecondaryScoreKeeper = smnew ScoreKeeperRave( pPlayerState, pPlayerStageStats );
+			m_pSecondaryScoreKeeper = new ScoreKeeperRave( pPlayerState, pPlayerStageStats );
 		default:
 			break;
 	}
 
 	m_ptextPlayerOptions = NULL;
 	m_pActiveAttackList = NULL;
-	m_pPlayer = smnew Player( m_NoteData, bShowNoteField );
+	m_pPlayer = new Player( m_NoteData, bShowNoteField );
 	m_pInventory = NULL;
 	m_pStepsDisplay = NULL;
 
@@ -194,7 +194,7 @@ void PlayerInfo::LoadDummyP1( int iDummyIndex, int iAddToDifficulty )
 	m_iAddToDifficulty = iAddToDifficulty;
 
 	// don't init any of the scoring objects
-	m_pPlayer = smnew Player( m_NoteData, true );
+	m_pPlayer = new Player( m_NoteData, true );
 
 	// PlayerOptions needs to be set now so that we load the correct NoteSkin.
 	m_PlayerStateDummy = *GAMESTATE->m_pPlayerState[PLAYER_1];
@@ -352,8 +352,8 @@ void ScreenGameplay::Init()
 
 	if( UseSongBackgroundAndForeground() )
 	{
-		m_pSongBackground = smnew Background;
-		m_pSongForeground = smnew Foreground;
+		m_pSongBackground = new Background;
+		m_pSongForeground = new Foreground;
 	}
 
 	ScreenWithMenuElements::Init();
@@ -528,7 +528,7 @@ void ScreenGameplay::Init()
 	{
 		case PLAY_MODE_BATTLE:
 		case PLAY_MODE_RAVE:
-			m_pCombinedLifeMeter = smnew CombinedLifeMeterTug;
+			m_pCombinedLifeMeter = new CombinedLifeMeterTug;
 			m_pCombinedLifeMeter->SetName( "CombinedLife" );
 			LOAD_ALL_COMMANDS_AND_SET_XY( *m_pCombinedLifeMeter );
 			this->AddChild( m_pCombinedLifeMeter );
@@ -629,7 +629,7 @@ void ScreenGameplay::Init()
 		{
 			ASSERT( pi->m_ptextCourseSongNumber == NULL );
 			SONG_NUMBER_FORMAT.Load( m_sName, "SongNumberFormat" );
-			pi->m_ptextCourseSongNumber = smnew BitmapText;
+			pi->m_ptextCourseSongNumber = new BitmapText;
 			pi->m_ptextCourseSongNumber->LoadFromFont( THEME->GetPathF(m_sName,"SongNum") );
 			pi->m_ptextCourseSongNumber->SetName( ssprintf("SongNumber%s",pi->GetName().c_str()) );
 			LOAD_ALL_COMMANDS_AND_SET_XY( pi->m_ptextCourseSongNumber );
@@ -639,7 +639,7 @@ void ScreenGameplay::Init()
 		}
 
 		ASSERT( pi->m_ptextStepsDescription == NULL );
-		pi->m_ptextStepsDescription = smnew BitmapText;
+		pi->m_ptextStepsDescription = new BitmapText;
 		pi->m_ptextStepsDescription->LoadFromFont( THEME->GetPathF(m_sName,"StepsDescription") );
 		pi->m_ptextStepsDescription->SetName( ssprintf("StepsDescription%s",pi->GetName().c_str()) );
 		LOAD_ALL_COMMANDS_AND_SET_XY( pi->m_ptextStepsDescription );
@@ -647,7 +647,7 @@ void ScreenGameplay::Init()
 
 		// Player/Song options
 		ASSERT( pi->m_ptextPlayerOptions == NULL );
-		pi->m_ptextPlayerOptions = smnew BitmapText;
+		pi->m_ptextPlayerOptions = new BitmapText;
 		pi->m_ptextPlayerOptions->LoadFromFont( THEME->GetPathF(m_sName,"player options") );
 		pi->m_ptextPlayerOptions->SetName( ssprintf("PlayerOptions%s",pi->GetName().c_str()) );
 		LOAD_ALL_COMMANDS_AND_SET_XY( pi->m_ptextPlayerOptions );
@@ -655,7 +655,7 @@ void ScreenGameplay::Init()
 
 		// Difficulty icon and meter
 		ASSERT( pi->m_pStepsDisplay == NULL );
-		pi->m_pStepsDisplay = smnew StepsDisplay;
+		pi->m_pStepsDisplay = new StepsDisplay;
 		pi->m_pStepsDisplay->Load("StepsDisplayGameplay", pi->GetPlayerState() );
 		pi->m_pStepsDisplay->SetName( ssprintf("StepsDisplay%s",pi->GetName().c_str()) );
 		PlayerNumber pn = pi->GetStepsAndTrailIndex();
@@ -668,7 +668,7 @@ void ScreenGameplay::Init()
 		switch( GAMESTATE->m_PlayMode )
 		{
 		case PLAY_MODE_BATTLE:
-			pi->m_pInventory = smnew Inventory;
+			pi->m_pInventory = new Inventory;
 			pi->m_pInventory->Load( p );
 			this->AddChild( pi->m_pInventory );
 			break;
@@ -686,7 +686,7 @@ void ScreenGameplay::Init()
 	FOREACH_VisiblePlayerInfo( m_vPlayerInfo, pi )
 	{
 		ASSERT( pi->m_pActiveAttackList == NULL );
-		pi->m_pActiveAttackList = smnew ActiveAttackList;
+		pi->m_pActiveAttackList = new ActiveAttackList;
 		pi->m_pActiveAttackList->LoadFromFont( THEME->GetPathF(m_sName,"ActiveAttackList") );
 		pi->m_pActiveAttackList->Init( pi->GetPlayerState() );
 		pi->m_pActiveAttackList->SetName( ssprintf("ActiveAttackList%s",pi->GetName().c_str()) );
@@ -2756,7 +2756,7 @@ void ScreenGameplay::SaveReplay()
 		{
 			Profile *pTempProfile = PROFILEMAN->GetProfile(pn);
 
-			XNode *p = smnew XNode("ReplayData");
+			XNode *p = new XNode("ReplayData");
 			// append version number (in case the format changes)
 			p->AppendAttr("Version",0);
 
@@ -2777,7 +2777,7 @@ void ScreenGameplay::SaveReplay()
 			p->AppendChild(pStepsInfoNode);
 
 			// player information node (rival data sup)
-			XNode *pPlayerInfoNode = smnew XNode("Player");
+			XNode *pPlayerInfoNode = new XNode("Player");
 			pPlayerInfoNode->AppendChild("DisplayName", pTempProfile->m_sDisplayName);
 			pPlayerInfoNode->AppendChild("Guid", pTempProfile->m_sGuid);
 			p->AppendChild(pPlayerInfoNode);

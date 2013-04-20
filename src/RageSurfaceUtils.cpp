@@ -1033,7 +1033,7 @@ void RageSurfaceUtils::FlipVertically( RageSurface *img )
 {
 	const int pitch = img->pitch;
 	const int bytes_per_row = img->format->BytesPerPixel * img->w;
-	char *row = smnew char[bytes_per_row];
+	char *row = new char[bytes_per_row];
 
 	for( int y=0; y < img->h/2; y++ )
 	{

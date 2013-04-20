@@ -239,7 +239,7 @@ void LuaManager::Register( RegisterWithLuaFn pfn )
 
 LuaManager::LuaManager()
 {
-	pImpl = smnew Impl;
+	pImpl = new Impl;
 	LUA = this; // so that LUA is available when we call the Register functions
 
 	lua_State *L = lua_open();
@@ -373,8 +373,8 @@ void LuaManager::RegisterTypes()
 
 LuaThreadVariable::LuaThreadVariable( const RString &sName, const RString &sValue )
 {
-	m_Name = smnew LuaReference;
-	m_pOldValue = smnew LuaReference;
+	m_Name = new LuaReference;
+	m_pOldValue = new LuaReference;
 
 	Lua *L = LUA->Get();
 	LuaHelpers::Push( L, sName );
@@ -386,8 +386,8 @@ LuaThreadVariable::LuaThreadVariable( const RString &sName, const RString &sValu
 
 LuaThreadVariable::LuaThreadVariable( const RString &sName, const LuaReference &Value )
 {
-	m_Name = smnew LuaReference;
-	m_pOldValue = smnew LuaReference;
+	m_Name = new LuaReference;
+	m_pOldValue = new LuaReference;
 
 	Lua *L = LUA->Get();
 	LuaHelpers::Push( L, sName );
@@ -401,8 +401,8 @@ LuaThreadVariable::LuaThreadVariable( const RString &sName, const LuaReference &
 // name and value are on the stack
 LuaThreadVariable::LuaThreadVariable( lua_State *L )
 {
-	m_Name = smnew LuaReference;
-	m_pOldValue = smnew LuaReference;
+	m_Name = new LuaReference;
+	m_pOldValue = new LuaReference;
 
 	lua_pushvalue( L, -2 );
 	m_Name->SetFromStack( L );
@@ -547,7 +547,7 @@ namespace
 
 XNode *LuaHelpers::GetLuaInformation()
 {
-	XNode *pLuaNode = smnew XNode( "Lua" );
+	XNode *pLuaNode = new XNode( "Lua" );
 
 	XNode *pGlobalsNode = pLuaNode->AppendChild( "GlobalFunctions" );
 	XNode *pClassesNode = pLuaNode->AppendChild( "Classes" );
@@ -1042,7 +1042,7 @@ namespace
 		FOREACH_LUATABLE( L, 2 )
 		{
 			lua_pushvalue( L, -2 );
-			LuaThreadVariable *pVar = smnew LuaThreadVariable( L );
+			LuaThreadVariable *pVar = new LuaThreadVariable( L );
 			apVars.push_back( pVar );
 		}
 

@@ -19,7 +19,7 @@
 
 CUnknown * CSeekingPassThru::CreateInstance(LPUNKNOWN pUnk, HRESULT *phr)
 {
-    return smnew CSeekingPassThru(NAME("Seeking PassThru"),pUnk, phr);
+    return new CSeekingPassThru(NAME("Seeking PassThru"),pUnk, phr);
 }
 
 
@@ -59,12 +59,12 @@ STDMETHODIMP CSeekingPassThru::Init(BOOL bRendererSeeking, IPin *pPin)
     } else {
         m_pPosPassThru =
             bRendererSeeking ?
-                smnew CRendererPosPassThru(
+                new CRendererPosPassThru(
                     NAME("Render Seeking COM object"),
                     (IUnknown *)this,
                     &hr,
                     pPin) :
-                smnew CPosPassThru(
+                new CPosPassThru(
                     NAME("Render Seeking COM object"),
                     (IUnknown *)this,
                     &hr,

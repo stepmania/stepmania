@@ -246,7 +246,7 @@ Player::Player( NoteData &nd, bool bVisibleParts ) : m_NoteData(nd)
 	m_pAttackDisplay = NULL;
 	if( bVisibleParts )
 	{
-		m_pAttackDisplay = smnew AttackDisplay;
+		m_pAttackDisplay = new AttackDisplay;
 		this->AddChild( m_pAttackDisplay );
 	}
 
@@ -255,10 +255,10 @@ Player::Player( NoteData &nd, bool bVisibleParts ) : m_NoteData(nd)
 	m_pNoteField = NULL;
 	if( bVisibleParts )
 	{
-		m_pNoteField = smnew NoteField;
+		m_pNoteField = new NoteField;
 		m_pNoteField->SetName( "NoteField" );
 	}
-	m_pJudgedRows = smnew JudgedRows;
+	m_pJudgedRows = new JudgedRows;
 
 	m_bSendJudgmentAndComboMessages = true;
 }
@@ -517,7 +517,7 @@ void Player::Init(
 	{
 		for( int i = 0; i < GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer; ++i )
 		{
-			HoldJudgment *pJudgment = smnew HoldJudgment;
+			HoldJudgment *pJudgment = new HoldJudgment;
 			// xxx: assumes sprite; todo: don't force 1x2 -aj
 			pJudgment->Load( THEME->GetPathG("HoldJudgment","label 1x2") );
 			m_vpHoldJudgment[i] = pJudgment;
@@ -754,19 +754,19 @@ void Player::Load()
 		SendComboMessages( m_pPlayerStageStats->m_iCurCombo, m_pPlayerStageStats->m_iCurMissCombo );
 
 	SAFE_DELETE( m_pIterNeedsTapJudging );
-	m_pIterNeedsTapJudging = smnew NoteData::all_tracks_iterator( m_NoteData.GetTapNoteRangeAllTracks(iNoteRow, MAX_NOTE_ROW) );
+	m_pIterNeedsTapJudging = new NoteData::all_tracks_iterator( m_NoteData.GetTapNoteRangeAllTracks(iNoteRow, MAX_NOTE_ROW) );
 
 	SAFE_DELETE( m_pIterNeedsHoldJudging );
-	m_pIterNeedsHoldJudging = smnew NoteData::all_tracks_iterator( m_NoteData.GetTapNoteRangeAllTracks(iNoteRow, MAX_NOTE_ROW ) );
+	m_pIterNeedsHoldJudging = new NoteData::all_tracks_iterator( m_NoteData.GetTapNoteRangeAllTracks(iNoteRow, MAX_NOTE_ROW ) );
 
 	SAFE_DELETE( m_pIterUncrossedRows );
-	m_pIterUncrossedRows = smnew NoteData::all_tracks_iterator( m_NoteData.GetTapNoteRangeAllTracks(iNoteRow, MAX_NOTE_ROW ) );
+	m_pIterUncrossedRows = new NoteData::all_tracks_iterator( m_NoteData.GetTapNoteRangeAllTracks(iNoteRow, MAX_NOTE_ROW ) );
 
 	SAFE_DELETE( m_pIterUnjudgedRows );
-	m_pIterUnjudgedRows = smnew NoteData::all_tracks_iterator( m_NoteData.GetTapNoteRangeAllTracks(iNoteRow, MAX_NOTE_ROW ) );
+	m_pIterUnjudgedRows = new NoteData::all_tracks_iterator( m_NoteData.GetTapNoteRangeAllTracks(iNoteRow, MAX_NOTE_ROW ) );
 
 	SAFE_DELETE( m_pIterUnjudgedMineRows );
-	m_pIterUnjudgedMineRows = smnew NoteData::all_tracks_iterator( m_NoteData.GetTapNoteRangeAllTracks(iNoteRow, MAX_NOTE_ROW ) );
+	m_pIterUnjudgedMineRows = new NoteData::all_tracks_iterator( m_NoteData.GetTapNoteRangeAllTracks(iNoteRow, MAX_NOTE_ROW ) );
 }
 
 void Player::SendComboMessages( int iOldCombo, int iOldMissCombo )

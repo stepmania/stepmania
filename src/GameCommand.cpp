@@ -26,7 +26,7 @@
 
 static LocalizedString COULD_NOT_LAUNCH_BROWSER( "GameCommand", "Could not launch web browser." );
 
-REGISTER_CLASS_TRAITS( GameCommand, smnew GameCommand(*pCopy) );
+REGISTER_CLASS_TRAITS( GameCommand, new GameCommand(*pCopy) );
 
 void GameCommand::Init()
 {

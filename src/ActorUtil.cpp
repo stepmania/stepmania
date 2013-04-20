@@ -132,7 +132,7 @@ Actor* ActorUtil::LoadFromNode( const XNode* pNode, Actor *pParentActor )
 		RString sError = ssprintf( "%s: invalid Class \"%s\"",
 			ActorUtil::GetWhere(pNode).c_str(), sClass.c_str() );
 		Dialog::OK( sError );
-		return smnew Actor;	// Return a dummy object so that we don't crash in AutoActor later.
+		return new Actor;	// Return a dummy object so that we don't crash in AutoActor later.
 	}
 
 	const CreateActorFn &pfn = iter->second;
@@ -220,7 +220,7 @@ Actor* ActorUtil::MakeActor( const RString &sPath_, Actor *pParentActor )
 			if( pNode.get() == NULL )
 			{
 				// XNode will warn about the error
-				return smnew Actor;
+				return new Actor;
 			}
 
 			Actor *pRet = ActorUtil::LoadFromNode( pNode.get(), pParentActor );
@@ -310,7 +310,7 @@ apActorCommands ActorUtil::ParseActorCommands( const RString &sCommands, const R
 {
 	Lua *L = LUA->Get();
 	LuaHelpers::ParseCommandList( L, sCommands, sName );
-	LuaReference *pRet = smnew LuaReference;
+	LuaReference *pRet = new LuaReference;
 	pRet->SetFromStack( L );
 	LUA->Release( L );
 

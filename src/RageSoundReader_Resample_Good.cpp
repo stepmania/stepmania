@@ -151,13 +151,13 @@ public:
 	AlignedBuffer( int iSize )
 	{
 		m_iSize = iSize;
-		m_pBuf = smnew T[m_iSize];
+		m_pBuf = new T[m_iSize];
 	}
 
 	AlignedBuffer( const AlignedBuffer &cpy )
 	{
 		m_iSize = cpy.m_iSize;
-		m_pBuf = smnew T[m_iSize];
+		m_pBuf = new T[m_iSize];
 		memcpy( m_pBuf, cpy.m_pBuf, sizeof(T)*m_iSize );
 	}
 	~AlignedBuffer()
@@ -422,13 +422,13 @@ namespace PolyphaseFilterCache
 			return result;
 		}
 		int iWinSize = L*iUpFactor;
-		float *pFIR = smnew float[iWinSize];
+		float *pFIR = new float[iWinSize];
 		GenerateSincLowPassFilter( pFIR, iWinSize, fCutoffFrequency );
 		ApplyKaiserWindow( pFIR, iWinSize, 8 );
 		NormalizeVector( pFIR, iWinSize );
 		MultiplyVector( &pFIR[0], &pFIR[iWinSize], (float) iUpFactor );
 
-		PolyphaseFilter *pPolyphase = smnew PolyphaseFilter( iUpFactor );
+		PolyphaseFilter *pPolyphase = new PolyphaseFilter( iUpFactor );
 		pPolyphase->Generate( pFIR );
 		delete [] pFIR;
 
@@ -484,7 +484,7 @@ public:
 
 		SetDownFactor( iUpFactor );
 
-		m_pState = smnew PolyphaseFilter::State( iUpFactor );
+		m_pState = new PolyphaseFilter::State( iUpFactor );
 	}
 
 	~RageSoundResampler_Polyphase()
@@ -506,7 +506,7 @@ public:
 	void Reset()
 	{
 		delete m_pState;
-		m_pState = smnew PolyphaseFilter::State( m_iUpFactor );
+		m_pState = new PolyphaseFilter::State( m_iUpFactor );
 	}
 
 	int NumInputsForOutputSamples( int iOut ) const { return m_pPolyphase->NumInputsForOutputSamples(*m_pState, iOut, m_iDownFactor); }
@@ -516,7 +516,7 @@ public:
 	RageSoundResampler_Polyphase( const RageSoundResampler_Polyphase &cpy )
 	{
 		m_pPolyphase = cpy.m_pPolyphase; // don't copy
-		m_pState = smnew PolyphaseFilter::State(*cpy.m_pState);
+		m_pState = new PolyphaseFilter::State(*cpy.m_pState);
 		m_iUpFactor = cpy.m_iUpFactor;
 		m_iDownFactor = cpy.m_iDownFactor;
 	}
@@ -631,7 +631,7 @@ void RageSoundReader_Resample_Good::ReopenResampler()
 		if( m_fRate != -1 )
 			iMaxDownFactor *= 5;
 
-		RageSoundResampler_Polyphase *p = smnew RageSoundResampler_Polyphase( iUpFactor, iMinDownFactor, iMaxDownFactor );
+		RageSoundResampler_Polyphase *p = new RageSoundResampler_Polyphase( iUpFactor, iMinDownFactor, iMaxDownFactor );
 		m_apResamplers.push_back( p );
 	}
 
@@ -734,14 +734,14 @@ RageSoundReader_Resample_Good::RageSoundReader_Resample_Good( const RageSoundRea
 	RageSoundReader_Filter(cpy)
 {
 	for( size_t i = 0; i < cpy.m_apResamplers.size(); ++i )
-		this->m_apResamplers.push_back( smnew RageSoundResampler_Polyphase(*cpy.m_apResamplers[i]) );
+		this->m_apResamplers.push_back( new RageSoundResampler_Polyphase(*cpy.m_apResamplers[i]) );
 	this->m_iSampleRate = cpy.m_iSampleRate;
 	this->m_fRate = cpy.m_fRate;
 }
 
 RageSoundReader_Resample_Good *RageSoundReader_Resample_Good::Copy() const
 {
-	return smnew RageSoundReader_Resample_Good( *this );
+	return new RageSoundReader_Resample_Good( *this );
 }
 
 /*

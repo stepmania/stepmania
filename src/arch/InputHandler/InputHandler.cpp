@@ -189,7 +189,7 @@ void InputHandler::Create( const RString &drivers_, vector<InputHandler *> &Add 
 	}
 
 	// Always add
-	Add.push_back( smnew InputHandler_MonkeyKeyboard );
+	Add.push_back( new InputHandler_MonkeyKeyboard );
 }
 
 

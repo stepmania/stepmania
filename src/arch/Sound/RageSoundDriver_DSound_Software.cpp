@@ -93,7 +93,7 @@ RString RageSoundDriver_DSound_Software::Init()
 		g_iMaxWriteahead = PREFSMAN->m_iSoundWriteAhead;
 
 	/* Create a DirectSound stream, but don't force it into hardware. */
-	m_pPCM = smnew DSoundBuf;
+	m_pPCM = new DSoundBuf;
 	m_iSampleRate = PREFSMAN->m_iSoundPreferredSampleRate;
 	if( m_iSampleRate == 0 )
 		m_iSampleRate = 44100;

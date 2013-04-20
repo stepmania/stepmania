@@ -36,7 +36,7 @@ RageModelGeometry* ModelManager::LoadMilkshapeAscii( const RString& sFile, bool 
 		return pGeom;
 	}
 
-	RageModelGeometry* pGeom = smnew RageModelGeometry;
+	RageModelGeometry* pGeom = new RageModelGeometry;
 	pGeom->LoadMilkshapeAscii( sFile, bNeedNormals );
 
 	m_mapFileToGeometry[sFile] = pGeom;

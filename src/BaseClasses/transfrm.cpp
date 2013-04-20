@@ -89,7 +89,7 @@ CTransformFilter::GetPin(int n) {
 
     if(m_pInput == NULL) {
 
-        m_pInput = smnew CTransformInputPin(NAME("Transform input pin"),
+        m_pInput = new CTransformInputPin(NAME("Transform input pin"),
             this,              // Owner filter
             &hr,               // Result code
             L"XForm In");      // Pin name
@@ -101,7 +101,7 @@ CTransformFilter::GetPin(int n) {
             return NULL;
         }
         m_pOutput = (CTransformOutputPin *)
-            smnew CTransformOutputPin(NAME("Transform output pin"),
+            new CTransformOutputPin(NAME("Transform output pin"),
             this,            // Owner filter
             &hr,             // Result code
             L"XForm Out");   // Pin name

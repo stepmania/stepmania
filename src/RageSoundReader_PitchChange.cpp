@@ -17,8 +17,8 @@
 RageSoundReader_PitchChange::RageSoundReader_PitchChange( RageSoundReader *pSource ):
 	RageSoundReader_Filter( NULL )
 {
-	m_pSpeedChange = smnew RageSoundReader_SpeedChange( pSource );
-	m_pResample = smnew RageSoundReader_Resample_Good( m_pSpeedChange, m_pSpeedChange->GetSampleRate() );
+	m_pSpeedChange = new RageSoundReader_SpeedChange( pSource );
+	m_pResample = new RageSoundReader_Resample_Good( m_pSpeedChange, m_pSpeedChange->GetSampleRate() );
 	m_pSource = m_pResample;
 	m_fSpeedRatio = 1.0f;
 	m_fPitchRatio = 1.0f;

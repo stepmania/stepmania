@@ -695,9 +695,9 @@ bool BMSChartReader::ReadNoteData()
 	td.SetBPMAtRow( 0, currentBPM = initialBPM );
 
 	// set up note transformation vector.
-	int *transform = smnew int[tracks];
-	int *holdStart = smnew int[tracks];
-	int *lastNote = smnew int[tracks];
+	int *transform = new int[tracks];
+	int *holdStart = new int[tracks];
+	int *lastNote = new int[tracks];
 
 	for( int i = 0; i < tracks; i ++ ) holdStart[i] = -1;
 	for( int i = 0; i < tracks; i ++ ) lastNote[i] = -1;

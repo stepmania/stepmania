@@ -100,7 +100,7 @@ static bool ConvertFromCP( RString &sText, int iCodePage )
 		return false;
 	const size_t size = CFStringGetMaximumSizeForEncoding( CFStringGetLength(old), kCFStringEncodingUTF8 );
 	
-	char *buf = smnew char[size+1];
+	char *buf = new char[size+1];
 	buf[0] = '\0';
 	bool result = CFStringGetCString( old, buf, size, kCFStringEncodingUTF8 );
 	sText = buf;

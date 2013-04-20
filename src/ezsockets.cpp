@@ -44,8 +44,8 @@ EzSockets::EzSockets()
 
 	sock = INVALID_SOCKET;
 	blocking = true;
-	scks = smnew fd_set;
-	times = smnew timeval;
+	scks = new fd_set;
+	times = new timeval;
 	times->tv_sec = 0;
 	times->tv_usec = 0;
 	state = skDISCONNECTED;

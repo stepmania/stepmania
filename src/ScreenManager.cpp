@@ -243,7 +243,7 @@ ScreenManager::ScreenManager()
 		LUA->Release( L );
 	}
 
-	g_pSharedBGA = smnew Actor;
+	g_pSharedBGA = new Actor;
 
 	m_bZeroNextUpdate = false;
 	m_PopTopScreen = SM_Invalid;
@@ -306,7 +306,7 @@ void ScreenManager::ThemeChanged()
 
 	// force recreate of new BGA
 	SAFE_DELETE( g_pSharedBGA );
-	g_pSharedBGA = smnew Actor;
+	g_pSharedBGA = new Actor;
 
 	this->RefreshCreditsMessages();
 }
@@ -647,7 +647,7 @@ bool ScreenManager::ActivatePreparedScreenAndBackground( const RString &sScreenN
 		Actor *pNewBGA = NULL;
 		if( sNewBGA.empty() )
 		{
-			pNewBGA = smnew Actor;
+			pNewBGA = new Actor;
 		}
 		else
 		{
@@ -667,7 +667,7 @@ bool ScreenManager::ActivatePreparedScreenAndBackground( const RString &sScreenN
 		if( pNewBGA == NULL )
 		{
 			bLoadedBoth = false;
-			pNewBGA = smnew Actor;
+			pNewBGA = new Actor;
 		}
 
 		/* Move the old background back to the prepared list, or delete it if

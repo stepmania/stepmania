@@ -1618,7 +1618,7 @@ CDispParams::CDispParams(UINT nArgs, VARIANT* pArgs, HRESULT *phr) {
     cArgs = nArgs;
 
     if(cArgs) {
-        rgvarg = smnew VARIANT[cArgs];
+        rgvarg = new VARIANT[cArgs];
         if(NULL == rgvarg) {
             cArgs = 0;
             if(phr) {
@@ -1681,7 +1681,7 @@ CDispParams::CDispParams(UINT nArgs, VARIANT* pArgs, HRESULT *phr) {
                             // the pointer points just after the WORD
 
                             WORD len = * (WORD*) (pSrc->bstrVal - (sizeof(WORD) / sizeof(OLECHAR)));
-                            OLECHAR* pch = smnew OLECHAR[len + (sizeof(WORD)/sizeof(OLECHAR))];
+                            OLECHAR* pch = new OLECHAR[len + (sizeof(WORD)/sizeof(OLECHAR))];
                             if(pch) {
                                 WORD *pui = (WORD*)pch;
                                 *pui = len;
@@ -2041,7 +2041,7 @@ CCmdQueue::New(
     *ppCmd = NULL;
 
     CDeferredCommand* pCmd;
-    pCmd = smnew CDeferredCommand(this,
+    pCmd = new CDeferredCommand(this,
         NULL,       // not aggregated
         &hr,
         pUnk,       // this guy will execute

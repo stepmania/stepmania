@@ -161,7 +161,7 @@ NetworkStream *CreateNetworkStream()
 			return NULL;
 	}
 
-	return smnew NetworkStream_Win32;
+	return new NetworkStream_Win32;
 }
 
 /** @brief WinSock implementation of NetworkStream. */

@@ -1112,7 +1112,7 @@ Song *SongID::ToSong() const
 
 XNode* SongID::CreateNode() const
 {
-	XNode* pNode = smnew XNode( "Song" );
+	XNode* pNode = new XNode( "Song" );
 	pNode->AppendAttr( "Dir", sDir );
 	return pNode;
 }

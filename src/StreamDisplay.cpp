@@ -47,7 +47,7 @@ void StreamDisplay::Load( const RString & /* unreferenced: _sMetricsGroup  */)
 
 		for( int i=0; i<iNumPills; i++ )
 		{
-			Sprite *pSpr = smnew Sprite;
+			Sprite *pSpr = new Sprite;
 
 			pSpr->Load( THEME->GetPathG( sMetricsGroup, StreamTypeToString(st) ) );
 			m_vpSprPill[st].push_back( pSpr );

@@ -107,7 +107,7 @@ HRESULT CBaseRenderer::GetMediaPositionInterface(REFIID riid,void **ppv)
     // control interface (IMediaPosition) which in fact simply takes the
     // calls normally from the filter graph and passes them upstream
 
-    m_pPosition = smnew CRendererPosPassThru(NAME("Renderer CPosPassThru"),
+    m_pPosition = new CRendererPosPassThru(NAME("Renderer CPosPassThru"),
                                            CBaseFilter::GetOwner(),
                                            (HRESULT *) &hr,
                                            GetPin(0));
@@ -598,7 +598,7 @@ CBasePin *CBaseRenderer::GetPin(int n)
         // hr's value if an error occurs.
         HRESULT hr = NOERROR;
 
-        m_pInputPin = smnew CRendererInputPin(this,&hr,L"In");
+        m_pInputPin = new CRendererInputPin(this,&hr,L"In");
         if (NULL == m_pInputPin) {
             return NULL;
         }

@@ -135,7 +135,7 @@ public:
 
 RageCompiledGeometry* RageDisplay_Null::CreateCompiledGeometry()
 {
-	return smnew RageCompiledGeometryNull;
+	return new RageCompiledGeometryNull;
 }
 
 void RageDisplay_Null::DeleteCompiledGeometry( RageCompiledGeometry* p )

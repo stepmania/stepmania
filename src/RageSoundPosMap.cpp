@@ -29,7 +29,7 @@ struct pos_map_impl
 
 pos_map_queue::pos_map_queue()
 {
-	m_pImpl = smnew pos_map_impl;
+	m_pImpl = new pos_map_impl;
 }
 
 pos_map_queue::~pos_map_queue()
@@ -40,13 +40,13 @@ pos_map_queue::~pos_map_queue()
 pos_map_queue::pos_map_queue( const pos_map_queue &cpy )
 {
 	*this = cpy;
-	m_pImpl = smnew pos_map_impl( *cpy.m_pImpl );
+	m_pImpl = new pos_map_impl( *cpy.m_pImpl );
 }
 
 pos_map_queue &pos_map_queue::operator=( const pos_map_queue &rhs )
 {
 	delete m_pImpl;
-	m_pImpl = smnew pos_map_impl( *rhs.m_pImpl );
+	m_pImpl = new pos_map_impl( *rhs.m_pImpl );
 	return *this;
 }
 

@@ -92,7 +92,7 @@ COutputQueue::COutputQueue(
 
     //  Create our sample batch
 
-    m_ppSamples = smnew PMEDIASAMPLE[m_lBatchSize];
+    m_ppSamples = new PMEDIASAMPLE[m_lBatchSize];
     if(m_ppSamples == NULL) {
         *phr = E_OUTOFMEMORY;
         return;
@@ -108,7 +108,7 @@ COutputQueue::COutputQueue(
             *phr = AmHresultFromWin32(dwError);
             return;
         }
-        m_List = smnew CSampleList(NAME("Sample Queue List"),
+        m_List = new CSampleList(NAME("Sample Queue List"),
             lListSize,
             FALSE         // No lock
             );
@@ -411,7 +411,7 @@ COutputQueue::NewSegment(
             // critical section) that the packet immediately following a
             // NEW_SEGMENT value is a NewSegmentPacket containing the
             // parameters.
-            NewSegmentPacket * ppack = smnew NewSegmentPacket;
+            NewSegmentPacket * ppack = new NewSegmentPacket;
             if(ppack == NULL) {
                 return;
             }

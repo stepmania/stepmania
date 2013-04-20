@@ -13,7 +13,7 @@ SubscriptionManager<LocalizedString> & GetSubscribers()
 class LocalizedStringImplDefault: public ILocalizedStringImpl
 {
 public:
-	static ILocalizedStringImpl *Create() { return smnew LocalizedStringImplDefault; }
+	static ILocalizedStringImpl *Create() { return new LocalizedStringImplDefault; }
 
 	void Load( const RString& sGroup, const RString& sName )
 	{

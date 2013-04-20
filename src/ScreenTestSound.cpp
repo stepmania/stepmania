@@ -147,7 +147,7 @@ bool ScreenTestSound::Input( const InputEventPlus &input )
 				/* We want to be able to read the position of copied sounds; if we let
 				 * RageSound copy itself, then the copy will be owned by RageSoundManager
 				 * and we won't be allowed to touch it.  Copy it ourself. */
-				RageSound *pCopy = smnew RageSound( s[selected].s );
+				RageSound *pCopy = new RageSound( s[selected].s );
 				m_sSoundCopies[selected].push_back( pCopy );
 				pCopy->Play();
 				break;

@@ -39,7 +39,7 @@ CharacterManager::CharacterManager()
 		if( sCharName.CompareNoCase("default")==0 )
 			FoundDefault = true;
 
-		Character* pChar = smnew Character;
+		Character* pChar = new Character;
 		if( pChar->Load( as[i] ) )
 			m_pCharacters.push_back( pChar );
 		else

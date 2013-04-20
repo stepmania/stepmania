@@ -306,7 +306,7 @@ void LuaBinding::ApplyDerivedType( Lua *L, const RString &sClassName, void *pSel
 }
 
 #include "RageUtil_AutoPtr.h"
-REGISTER_CLASS_TRAITS( LuaClass, smnew LuaClass(*pCopy) )
+REGISTER_CLASS_TRAITS( LuaClass, new LuaClass(*pCopy) )
 
 void *LuaBinding::GetPointerFromStack( Lua *L, const RString &sType, int iArg )
 {

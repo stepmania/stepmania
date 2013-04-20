@@ -81,7 +81,7 @@ MusicWheelItem::MusicWheelItem( RString sType ):
 		if( i == MusicWheelItemType_Song )
 			continue;
 
-		m_pText[i] = smnew BitmapText;
+		m_pText[i] = new BitmapText;
 		m_pText[i]->SetName( MusicWheelItemTypeToString(i) );
 		ActorUtil::LoadAllCommands( m_pText[i], "MusicWheelItem" );
 		m_pText[i]->LoadFromFont( THEME->GetPathF(sType,MusicWheelItemTypeToString(i)) );
@@ -90,7 +90,7 @@ MusicWheelItem::MusicWheelItem( RString sType ):
 		this->AddChild( m_pText[i] );
 	}
 
-	m_pTextSectionCount = smnew BitmapText;
+	m_pTextSectionCount = new BitmapText;
 	m_pTextSectionCount->SetName( "SectionCount" );
 	ActorUtil::LoadAllCommands( m_pTextSectionCount, "MusicWheelItem" );
 	m_pTextSectionCount->LoadFromFont( THEME->GetPathF(sType,"SectionCount") );
@@ -151,12 +151,12 @@ MusicWheelItem::MusicWheelItem( const MusicWheelItem &cpy ):
 		}
 		else
 		{
-			m_pText[i] = smnew BitmapText( *cpy.m_pText[i] );
+			m_pText[i] = new BitmapText( *cpy.m_pText[i] );
 			this->AddChild( m_pText[i] );
 		}
 	}
 
-	m_pTextSectionCount = smnew BitmapText( *cpy.m_pTextSectionCount );
+	m_pTextSectionCount = new BitmapText( *cpy.m_pTextSectionCount );
 	this->AddChild( m_pTextSectionCount );
 
 	this->AddChild( &m_WheelNotifyIcon );

@@ -131,7 +131,7 @@ GameState::GameState() :
 	m_iEditCourseEntryIndex(	Message_EditCourseEntryIndexChanged ),
 	m_sEditLocalProfileID(		Message_EditLocalProfileIDChanged )
 {
-	g_pImpl = smnew GameStateImpl;
+	g_pImpl = new GameStateImpl;
 
 	SetCurrentStyle( NULL );
 
@@ -148,17 +148,17 @@ GameState::GameState() :
 
 	FOREACH_PlayerNumber( p )
 	{
-		m_pPlayerState[p] = smnew PlayerState;
+		m_pPlayerState[p] = new PlayerState;
 		m_pPlayerState[p]->m_PlayerNumber = p;
 	}
 	FOREACH_MultiPlayer( p )
 	{
-		m_pMultiPlayerState[p] = smnew PlayerState;
+		m_pMultiPlayerState[p] = new PlayerState;
 		m_pMultiPlayerState[p]->m_PlayerNumber = PLAYER_1;
 		m_pMultiPlayerState[p]->m_mp = p;
 	}
 
-	m_Environment = smnew LuaTable;
+	m_Environment = new LuaTable;
 
 	m_bDopefish = false;
 

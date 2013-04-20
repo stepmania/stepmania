@@ -159,7 +159,7 @@ void ScreenOptionsManageCourses::HandleScreenMessage( const ScreenMessage SM )
 		if( iCurRow == 0 )	// "create new"
 		{
 			/* Allocate the Course now, but don't save the file until the user explicitly chooses Save */
-			Course *pCourse = smnew Course;
+			Course *pCourse = new Course;
 			EditCourseUtil::LoadDefaults( *pCourse );
 			pCourse->m_LoadedFromProfile = ProfileSlot_Machine;
 			SONGMAN->AddCourse( pCourse );

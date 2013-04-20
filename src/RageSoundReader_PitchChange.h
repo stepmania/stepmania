@@ -19,7 +19,7 @@ public:
 	void SetSpeedRatio( float fRatio ) { m_fSpeedRatio = fRatio; }
 	void SetPitchRatio( float fRatio ) { m_fPitchRatio = fRatio; }
 
-	virtual RageSoundReader_PitchChange *Copy() const { return smnew RageSoundReader_PitchChange(*this); }
+	virtual RageSoundReader_PitchChange *Copy() const { return new RageSoundReader_PitchChange(*this); }
 
 private:
 	RageSoundReader_SpeedChange *m_pSpeedChange; // freed by RageSoundReader_Filter

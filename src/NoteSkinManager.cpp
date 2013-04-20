@@ -401,14 +401,14 @@ Actor *NoteSkinManager::LoadActor( const RString &sButton, const RString &sEleme
 	if( !PushActorTemplate(L, sButton, sElement, bSpriteOnly) )
 	{
 		// ActorUtil will warn about the error
-		return smnew Actor;
+		return new Actor;
 	}
 
 	auto_ptr<XNode> pNode( XmlFileUtil::XNodeFromTable(L) );
 	if( pNode.get() == NULL )
 	{
 		// XNode will warn about the error
-		return smnew Actor;
+		return new Actor;
 	}
 
 	LUA->Release( L );

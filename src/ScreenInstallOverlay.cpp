@@ -143,7 +143,7 @@ public:
 	DownloadTask(const RString &sControlFileUri)
 	{
 		//SCREENMAN->SystemMessage( "Downloading control file." );
-		m_pTransfer = smnew FileTransfer();
+		m_pTransfer = new FileTransfer();
 		m_pTransfer->StartDownload( sControlFileUri, "" );
 		m_DownloadState = control;
 	}
@@ -226,7 +226,7 @@ public:
 					m_vsQueuedPackageUrls.pop_back();
 					m_sCurrentPackageTempFile = MakeTempFileName(sUrl);
 					ASSERT(m_pTransfer == NULL);
-					m_pTransfer = smnew FileTransfer();
+					m_pTransfer = new FileTransfer();
 					m_pTransfer->StartDownload( sUrl, m_sCurrentPackageTempFile );
 				}
 			}
@@ -245,7 +245,7 @@ public:
 					m_vsQueuedPackageUrls.pop_back();
 					m_sCurrentPackageTempFile = MakeTempFileName(sUrl);
 					ASSERT(m_pTransfer == NULL);
-					m_pTransfer = smnew FileTransfer();
+					m_pTransfer = new FileTransfer();
 					m_pTransfer->StartDownload( sUrl, m_sCurrentPackageTempFile );
 				}
 			}
@@ -294,7 +294,7 @@ PlayAfterLaunchInfo DoInstalls( CommandLineActions::CommandLineArgs args )
 	{
 		RString s = args.argv[i];
 		if( IsStepManiaProtocol(s) )
-			g_pDownloadTasks.push_back( smnew DownloadTask(s) );
+			g_pDownloadTasks.push_back( new DownloadTask(s) );
 		else if( IsPackageFile(s) )
 			InstallSmzipOsArg(s, ret);
 	}

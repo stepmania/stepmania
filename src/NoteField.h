@@ -87,7 +87,7 @@ protected:
 		NoteDisplay		*display;
 		ReceptorArrowRow	m_ReceptorArrowRow;
 		GhostArrowRow		m_GhostArrowRow;
-		NoteDisplayCols( int iNumCols ) { display = smnew NoteDisplay[iNumCols]; }
+		NoteDisplayCols( int iNumCols ) { display = new NoteDisplay[iNumCols]; }
 		~NoteDisplayCols() { delete [] display; }
 	};
 

@@ -36,7 +36,7 @@ class XNodeStringValue: public XNodeValue
 public:
 	RString	m_sValue;
 
-	XNodeValue *Copy() const { return smnew XNodeStringValue( *this ); }
+	XNodeValue *Copy() const { return new XNodeStringValue( *this ); }
 
 	void GetValue( RString &out ) const;
 	void GetValue( int &out ) const;
@@ -111,7 +111,7 @@ public:
 	// modify DOM
 	template <typename T>
 	XNode *AppendChild( const RString &sName, T value )	{ XNode *p=AppendChild(sName); p->AppendAttr(XNode::TEXT_ATTRIBUTE, value); return p; }
-	XNode *AppendChild( const RString &sName )		{ XNode *p=smnew XNode(sName); return AppendChild(p); }
+	XNode *AppendChild( const RString &sName )		{ XNode *p=new XNode(sName); return AppendChild(p); }
 	XNode *AppendChild( XNode *node );
 	bool RemoveChild( XNode *node, bool bDelete = true );
 

@@ -150,7 +150,7 @@ static bool GrabDriver( RageFileDriver *pDriver )
 class RageFileDriverMountpoints: public RageFileDriver
 {
 public:
-	RageFileDriverMountpoints(): RageFileDriver( smnew FilenameDB ) { }
+	RageFileDriverMountpoints(): RageFileDriver( new FilenameDB ) { }
 	RageFileBasic *Open( const RString &sPath, int iMode, int &iError )
 	{
 		iError = (iMode == RageFile::WRITE)? ERROR_WRITING_NOT_SUPPORTED:ENOENT;
@@ -264,10 +264,10 @@ RageFileManager::RageFileManager( const RString &argv0 )
 	CHECKPOINT_M( argv0 );
 	ChangeToDirOfExecutable( argv0 );
 	
-	g_Mutex = smnew RageEvent("RageFileManager");
+	g_Mutex = new RageEvent("RageFileManager");
 
-	g_Mountpoints = smnew RageFileDriverMountpoints;
-	LoadedDriver *pLoadedDriver = smnew LoadedDriver;
+	g_Mountpoints = new RageFileDriverMountpoints;
+	LoadedDriver *pLoadedDriver = new LoadedDriver;
 	pLoadedDriver->m_pDriver = g_Mountpoints;
 	pLoadedDriver->m_sMountPoint = "/";
 	pLoadedDriver->m_sType = "mountpoints";
@@ -515,7 +515,7 @@ bool RageFileManager::Mount( const RString &sType, const RString &sRoot_, const 
 
 	CHECKPOINT;
 
-	LoadedDriver *pLoadedDriver = smnew LoadedDriver;
+	LoadedDriver *pLoadedDriver = new LoadedDriver;
 	pLoadedDriver->m_pDriver = pDriver;
 	pLoadedDriver->m_sType = sType;
 	pLoadedDriver->m_sRoot = sRoot;
@@ -532,7 +532,7 @@ void RageFileManager::Mount( RageFileDriver *pDriver, const RString &sMountPoint
 	
 	AdjustMountpoint( sMountPoint );
 
-	LoadedDriver *pLoadedDriver = smnew LoadedDriver;
+	LoadedDriver *pLoadedDriver = new LoadedDriver;
 	pLoadedDriver->m_pDriver = pDriver;
 	pLoadedDriver->m_sType = "";
 	pLoadedDriver->m_sRoot = "";

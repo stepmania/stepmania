@@ -233,7 +233,7 @@ void RageSoundReader_Split::AddSourceChannelToSound( int iFromChannel, int iToCh
 
 RageSoundSplitter::RageSoundSplitter( RageSoundReader *pSource )
 {
-	m_pImpl = smnew RageSoundSplitterImpl( pSource );
+	m_pImpl = new RageSoundSplitterImpl( pSource );
 }
 
 RageSoundSplitter::~RageSoundSplitter()
@@ -243,7 +243,7 @@ RageSoundSplitter::~RageSoundSplitter()
 
 RageSoundReader_Split *RageSoundSplitter::CreateSound()
 {
-	return smnew RageSoundReader_Split( m_pImpl );
+	return new RageSoundReader_Split( m_pImpl );
 }
 
 /*

@@ -73,7 +73,7 @@ static RString ov_ssprintf( int err, const char *fmt, ...)
 RageSoundReader_FileReader::OpenResult RageSoundReader_Vorbisfile::Open( RageFileBasic *pFile )
 {
 	m_pFile = pFile;
-	vf = smnew OggVorbis_File;
+	vf = new OggVorbis_File;
 	memset( vf, 0, sizeof(*vf) );
 
 	ov_callbacks callbacks;
@@ -293,7 +293,7 @@ RageSoundReader_Vorbisfile *RageSoundReader_Vorbisfile::Copy() const
 {
 	RageFileBasic *pFile = m_pFile->Copy();
 	pFile->Seek(0);
-	RageSoundReader_Vorbisfile *ret = smnew RageSoundReader_Vorbisfile;
+	RageSoundReader_Vorbisfile *ret = new RageSoundReader_Vorbisfile;
 
 	/* If we were able to open the sound in the first place, we expect to
 	 * be able to reopen it. */

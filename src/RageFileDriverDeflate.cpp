@@ -22,7 +22,7 @@ RageFileObjInflate::RageFileObjInflate( RageFileBasic *pFile, int iUncompressedS
 	m_bFileOwned = false;
 	m_pFile = pFile;
 	decomp_buf_avail = 0;
-	m_pInflate = smnew z_stream;
+	m_pInflate = new z_stream;
 	memset( m_pInflate, 0, sizeof(z_stream) );
 
 	m_iUncompressedSize = iUncompressedSize;
@@ -44,7 +44,7 @@ RageFileObjInflate::RageFileObjInflate( const RageFileObjInflate &cpy ):
 	/* Copy the entire decode state. */
 	m_pFile = cpy.m_pFile->Copy();
 	m_bFileOwned = true;
-	m_pInflate = smnew z_stream;
+	m_pInflate = new z_stream;
 	m_iUncompressedSize = cpy.m_iUncompressedSize;
 	m_iFilePos = cpy.m_iFilePos;
 	inflateCopy( m_pInflate, const_cast<z_stream*>(cpy.m_pInflate) );
@@ -56,7 +56,7 @@ RageFileObjInflate::RageFileObjInflate( const RageFileObjInflate &cpy ):
 
 RageFileObjInflate *RageFileObjInflate::Copy() const
 {
-	return smnew RageFileObjInflate( *this );
+	return new RageFileObjInflate( *this );
 }
 	
 
@@ -186,7 +186,7 @@ RageFileObjDeflate::RageFileObjDeflate( RageFileBasic *pFile )
 	m_pFile = pFile;
 	m_bFileOwned = false;
 
-	m_pDeflate = smnew z_stream;
+	m_pDeflate = new z_stream;
 	memset( m_pDeflate, 0, sizeof(z_stream) );
 
 	int err = deflateInit2( m_pDeflate,
@@ -408,9 +408,9 @@ RageFileObjInflate *GunzipFile( RageFileBasic *pFile_, RString &sError, uint32_t
 	if( sError != "" )
 		return NULL;
 	
-	RageFileDriverSlice *pSliceFile = smnew RageFileDriverSlice( pFile.release(), iDataPos, iFooterPos-iDataPos );
+	RageFileDriverSlice *pSliceFile = new RageFileDriverSlice( pFile.release(), iDataPos, iFooterPos-iDataPos );
 	pSliceFile->DeleteFileWhenFinished();
-	RageFileObjInflate *pInflateFile = smnew RageFileObjInflate( pSliceFile, iUncompressedSize );
+	RageFileObjInflate *pInflateFile = new RageFileObjInflate( pSliceFile, iUncompressedSize );
 	pInflateFile->DeleteFileWhenFinished();
 
 	/* Enable CRC calculation only if the caller is interested. */
@@ -517,7 +517,7 @@ void GzipString( const RString &sIn, RString &sOut )
 
 bool GunzipString( const RString &sIn, RString &sOut, RString &sError )
 {
-	RageFileObjMem *mem = smnew RageFileObjMem;
+	RageFileObjMem *mem = new RageFileObjMem;
 	mem->PutString( sIn );
 
 	uint32_t iCRC32;

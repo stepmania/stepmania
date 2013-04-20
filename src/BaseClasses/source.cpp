@@ -75,7 +75,7 @@ HRESULT CSource::AddPin(CSourceStream *pStream) {
     CAutoLock lock(&m_cStateLock);
 
     /*  Allocate space for this pin and the old ones */
-    CSourceStream **paStreams = smnew CSourceStream *[m_iPins + 1];
+    CSourceStream **paStreams = new CSourceStream *[m_iPins + 1];
     if(paStreams == NULL) {
         return E_OUTOFMEMORY;
     }

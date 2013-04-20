@@ -33,7 +33,7 @@ bool BackgroundDef::operator==( const BackgroundDef &other ) const
 
 XNode *BackgroundDef::CreateNode() const
 {
-	XNode* pNode = smnew XNode( "BackgroundDef" );
+	XNode* pNode = new XNode( "BackgroundDef" );
 
 	if( !m_sEffect.empty() )
 		pNode->AppendAttr( "Effect", m_sEffect );

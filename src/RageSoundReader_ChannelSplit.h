@@ -12,7 +12,7 @@ class RageSoundReader_Split: public RageSoundReader
 public:
 	RageSoundReader_Split( const RageSoundReader_Split &cpy );
 	~RageSoundReader_Split();
-	virtual RageSoundReader_Split *Copy() const { return smnew RageSoundReader_Split(*this); }
+	virtual RageSoundReader_Split *Copy() const { return new RageSoundReader_Split(*this); }
 
 	virtual int GetLength() const;
 	virtual int GetLength_Fast() const;

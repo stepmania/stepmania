@@ -86,7 +86,7 @@ void BGAnimationLayer::LoadFromAniLayerFile( const RString& sPath )
 		else
 			sSongBGPath = THEME->GetPathG("Common","fallback background");
 
-		Sprite* pSprite = smnew Sprite;
+		Sprite* pSprite = new Sprite;
 		pSprite->Load( Sprite::SongBGTexture(sSongBGPath) );
 		pSprite->StretchTo( FullScreenRectF );
 		this->AddChild( pSprite );
@@ -163,7 +163,7 @@ void BGAnimationLayer::LoadFromAniLayerFile( const RString& sPath )
 	case EFFECT_CENTER:
 		{
 			m_Type = TYPE_SPRITE;
-			Sprite* pSprite = smnew Sprite;
+			Sprite* pSprite = new Sprite;
 			this->AddChild( pSprite );
 			pSprite->Load( sPath );
 			pSprite->SetXY( SCREEN_CENTER_X, SCREEN_CENTER_Y );
@@ -179,7 +179,7 @@ void BGAnimationLayer::LoadFromAniLayerFile( const RString& sPath )
 	case EFFECT_STRETCH_TWIST:
 		{
 			m_Type = TYPE_SPRITE;
-			Sprite* pSprite = smnew Sprite;
+			Sprite* pSprite = new Sprite;
 			this->AddChild( pSprite );
 			RageTextureID ID(sPath);
 			ID.bStretch = true;
@@ -200,7 +200,7 @@ void BGAnimationLayer::LoadFromAniLayerFile( const RString& sPath )
 	case EFFECT_STRETCH_SPIN:
 		{
 			m_Type = TYPE_SPRITE;
-			Sprite* pSprite = smnew Sprite;
+			Sprite* pSprite = new Sprite;
 			this->AddChild( pSprite );
 			pSprite->Load( Sprite::SongBGTexture(sPath) );
 			const RectF StretchedFullScreenRectF(
@@ -231,7 +231,7 @@ void BGAnimationLayer::LoadFromAniLayerFile( const RString& sPath )
 
 			for( int i=0; i<iNumParticles; i++ )
 			{
-				Sprite* pSprite = smnew Sprite;
+				Sprite* pSprite = new Sprite;
 				this->AddChild( pSprite );
 				pSprite->Load( sPath );
 				pSprite->SetZoom( 0.7f + 0.6f*i/(float)iNumParticles );
@@ -303,7 +303,7 @@ void BGAnimationLayer::LoadFromAniLayerFile( const RString& sPath )
 			{
 				for( int y=0; y<m_iNumTilesHigh; y++ )
 				{
-					Sprite* pSprite = smnew Sprite;
+					Sprite* pSprite = new Sprite;
 					this->AddChild( pSprite );
 					pSprite->Load( ID );
 					pSprite->SetTextureWrapping( true );	// gets rid of some "cracks"

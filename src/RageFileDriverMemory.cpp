@@ -37,7 +37,7 @@ struct RageFileObjMemFile
 RageFileObjMem::RageFileObjMem( RageFileObjMemFile *pFile )
 {
 	if( pFile == NULL )
-		pFile = smnew RageFileObjMemFile;
+		pFile = new RageFileObjMemFile;
 
 	m_pFile = pFile;
 	m_iFilePos = 0;
@@ -95,7 +95,7 @@ RageFileObjMem::RageFileObjMem( const RageFileObjMem &cpy ):
 
 RageFileObjMem *RageFileObjMem::Copy() const
 {
-	RageFileObjMem *pRet = smnew RageFileObjMem( *this );
+	RageFileObjMem *pRet = new RageFileObjMem( *this );
 	return pRet;
 }
 
@@ -112,7 +112,7 @@ void RageFileObjMem::PutString( const RString &sBuf )
 }
 
 RageFileDriverMem::RageFileDriverMem():
-	RageFileDriver( smnew NullFilenameDB ),
+	RageFileDriver( new NullFilenameDB ),
 	m_Mutex("RageFileDriverMem")
 {
 }
@@ -135,7 +135,7 @@ RageFileBasic *RageFileDriverMem::Open( const RString &sPath, int mode, int &err
 		/* If the file exists, delete it. */
 		Remove( sPath );
 
-		RageFileObjMemFile *pFile = smnew RageFileObjMemFile;
+		RageFileObjMemFile *pFile = new RageFileObjMemFile;
 
 		/* Add one reference, representing the file in the filesystem. */
 		RageFileObjMemFile::AddReference( pFile );
@@ -143,7 +143,7 @@ RageFileBasic *RageFileDriverMem::Open( const RString &sPath, int mode, int &err
 		m_Files.push_back( pFile );
 		FDB->AddFile( sPath, 0, 0, pFile );
 
-		return smnew RageFileObjMem( pFile );
+		return new RageFileObjMem( pFile );
 	}
 
 	RageFileObjMemFile *pFile = (RageFileObjMemFile *) FDB->GetFilePriv( sPath );
@@ -153,7 +153,7 @@ RageFileBasic *RageFileDriverMem::Open( const RString &sPath, int mode, int &err
 		return NULL;
 	}
 
-	return smnew RageFileObjMem( pFile );
+	return new RageFileObjMem( pFile );
 }
 
 bool RageFileDriverMem::Remove( const RString &sPath )
@@ -178,7 +178,7 @@ bool RageFileDriverMem::Remove( const RString &sPath )
 static struct FileDriverEntry_MEM: public FileDriverEntry
 {
 	FileDriverEntry_MEM(): FileDriverEntry( "MEM" ) { }
-	RageFileDriver *Create( const RString &sRoot ) const { return smnew RageFileDriverMem(); }
+	RageFileDriver *Create( const RString &sRoot ) const { return new RageFileDriverMem(); }
 } const g_RegisterDriver;
 
 /*

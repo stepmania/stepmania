@@ -30,7 +30,7 @@ InputHandler_Win32_Para::InputHandler_Win32_Para()
 	const int para_usb_vid = 0x0507;
 	const int para_usb_pid = 0x0011;
 
-	USBDevice *dev = smnew USBDevice;
+	USBDevice *dev = new USBDevice;
 
 	if( dev->Open(para_usb_vid, para_usb_pid, sizeof(long), 0, InitHack) )
 	{

@@ -74,7 +74,7 @@ LifeMeterBar::LifeMeterBar()
 	ActorUtil::LoadAllCommandsAndSetXY( m_sprDanger, sType );
 	this->AddChild( m_sprDanger );
 
-	m_pStream = smnew StreamDisplay;
+	m_pStream = new StreamDisplay;
 	m_pStream->Load( bExtra ? "StreamDisplayExtra" : "StreamDisplay" );
 	m_pStream->SetName( "Stream" );
 	ActorUtil::LoadAllCommandsAndSetXY( m_pStream, sType );

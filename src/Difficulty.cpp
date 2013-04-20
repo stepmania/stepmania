@@ -28,7 +28,7 @@ const RString &CourseDifficultyToLocalizedString( CourseDifficulty x )
 	{
 		FOREACH_ENUM( Difficulty,i)
 		{
-			auto_ptr<LocalizedString> ap( smnew LocalizedString("CourseDifficulty", DifficultyToString(i)) );
+			auto_ptr<LocalizedString> ap( new LocalizedString("CourseDifficulty", DifficultyToString(i)) );
 			g_CourseDifficultyName[i] = ap;
 		}
 	}

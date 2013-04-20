@@ -211,7 +211,7 @@ void ScreenOptions::InitMenu( const vector<OptionRowHandler*> &vHands )
 
 	for( unsigned r=0; r<vHands.size(); r++ )		// foreach row
 	{
-		m_pRows.push_back( smnew OptionRow(&m_OptionRowTypeNormal) );
+		m_pRows.push_back( new OptionRow(&m_OptionRowTypeNormal) );
 		OptionRow &row = *m_pRows.back();
 		row.SetDrawOrder( 1 );
 		m_frameContainer.AddChild( &row );
@@ -223,7 +223,7 @@ void ScreenOptions::InitMenu( const vector<OptionRowHandler*> &vHands )
 
 	if( SHOW_EXIT_ROW )
 	{
-		m_pRows.push_back( smnew OptionRow(&m_OptionRowTypeExit) );
+		m_pRows.push_back( new OptionRow(&m_OptionRowTypeExit) );
 		OptionRow &row = *m_pRows.back();
 		row.LoadExit();
 		row.SetDrawOrder( 1 );

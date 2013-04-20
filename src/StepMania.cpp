@@ -188,7 +188,7 @@ static void StartDisplay()
 		PREFSMAN->m_fCenterImageAddWidth,
 		PREFSMAN->m_fCenterImageAddHeight );
 
-	TEXTUREMAN	= smnew RageTextureManager;
+	TEXTUREMAN	= new RageTextureManager;
 	TEXTUREMAN->SetPrefs( 
 		RageTextureManagerPrefs( 
 			PREFSMAN->m_iTextureColorDepth, 
@@ -200,7 +200,7 @@ static void StartDisplay()
 			)
 		);
 
-	MODELMAN	= smnew ModelManager;
+	MODELMAN	= new ModelManager;
 	MODELMAN->SetPrefs( 
 		ModelManagerPrefs(
 			PREFSMAN->m_bDelayedModelDelete 
@@ -740,25 +740,25 @@ RageDisplay *CreateDisplay()
 		if( sRenderer.CompareNoCase("opengl")==0 )
 		{
 #if defined(SUPPORT_OPENGL)
-			pRet = smnew RageDisplay_Legacy;
+			pRet = new RageDisplay_Legacy;
 #endif
 		}
 		else if( sRenderer.CompareNoCase("gles2")==0 )
 		{
 #if defined(SUPPORT_GLES2)
-			pRet = smnew RageDisplay_GLES2;
+			pRet = new RageDisplay_GLES2;
 #endif
 		}
 		else if( sRenderer.CompareNoCase("d3d")==0 )
 		{
 // TODO: ANGLE/RageDisplay_Modern
 #if defined(SUPPORT_D3D)
-			pRet = smnew RageDisplay_D3D;
+			pRet = new RageDisplay_D3D;
 #endif
 		}
 		else if( sRenderer.CompareNoCase("null")==0 )
 		{
-			return smnew RageDisplay_Null;
+			return new RageDisplay_Null;
 		}
 		else
 		{
@@ -941,11 +941,6 @@ static LocalizedString COULDNT_OPEN_LOADING_WINDOW( "LoadingWindow", "Couldn't o
 
 int main(int argc, char* argv[])
 {
-#if _DEBUG
-	// This will dump any memory leaks to the debug output when the application closes.
-	_CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
-#endif
-
 	RageThreadRegister thread( "Main thread" );
 	RageException::SetCleanupHandler( HandleException );
 
@@ -955,10 +950,10 @@ int main(int argc, char* argv[])
 	HOOKS = ArchHooks::Create();
 	HOOKS->Init();
 
-	LUA		= smnew LuaManager;
+	LUA		= new LuaManager;
 
 	// Almost everything uses this to read and write files.  Load this early.
-	FILEMAN = smnew RageFileManager( argv[0] );
+	FILEMAN = new RageFileManager( argv[0] );
 	FILEMAN->MountInitialFilesystems();
 	
 	bool bPortable = DoesFileExist("Portable.ini");
@@ -966,12 +961,12 @@ int main(int argc, char* argv[])
 		FILEMAN->MountUserFilesystems();
 	
 	// Set this up next. Do this early, since it's needed for RageException::Throw.
-	LOG		= smnew RageLog;
+	LOG		= new RageLog;
 
 	// Whew--we should be able to crash safely now!
 
 	// load preferences and mount any alternative trees.
-	PREFSMAN	= smnew PrefsManager;
+	PREFSMAN	= new PrefsManager;
 
 	/* Allow HOOKS to check for multiple instances.  We need to do this after PREFS is initialized,
 	 * so ArchHooks can use a preference to turn this off.  We want to do this before ApplyLogPreferences,
@@ -1023,7 +1018,7 @@ int main(int argc, char* argv[])
 
 	// Create game objects
 
-	GAMESTATE	= smnew GameState;
+	GAMESTATE	= new GameState;
 
 	// This requires PREFSMAN, for PREFSMAN->m_bShowLoadingWindow.
 	LoadingWindow *pLoadingWindow = LoadingWindow::Create();
@@ -1044,10 +1039,10 @@ int main(int argc, char* argv[])
 
 	AdjustForChangedSystemCapabilities();
 
-	GAMEMAN		= smnew GameManager;
-	THEME		= smnew ThemeManager;
-	ANNOUNCER	= smnew AnnouncerManager;
-	NOTESKIN	= smnew NoteSkinManager;
+	GAMEMAN		= new GameManager;
+	THEME		= new ThemeManager;
+	ANNOUNCER	= new AnnouncerManager;
+	NOTESKIN	= new NoteSkinManager;
 
 	// Switch to the last used game type, and set up the theme and announcer.
 	SwitchToLastPlayedGame();
@@ -1111,37 +1106,37 @@ int main(int argc, char* argv[])
 	if( PREFSMAN->m_iSoundWriteAhead )
 		LOG->Info( "Sound writeahead has been overridden to %i", PREFSMAN->m_iSoundWriteAhead.Get() );
 
-	SOUNDMAN	= smnew RageSoundManager;
+	SOUNDMAN	= new RageSoundManager;
 	SOUNDMAN->Init();
 	SOUNDMAN->SetMixVolume();
-	SOUND		= smnew GameSoundManager;
-	LIGHTSMAN	= smnew LightsManager;
-	INPUTFILTER	= smnew InputFilter;
-	INPUTMAPPER	= smnew InputMapper;
+	SOUND		= new GameSoundManager;
+	LIGHTSMAN	= new LightsManager;
+	INPUTFILTER	= new InputFilter;
+	INPUTMAPPER	= new InputMapper;
 
 	StepMania::ChangeCurrentGame( GAMESTATE->GetCurrentGame() );
 
-	INPUTQUEUE	= smnew InputQueue;
-	SONGINDEX	= smnew SongCacheIndex;
-	BANNERCACHE	= smnew BannerCache;
-	//BACKGROUNDCACHE	= smnew BackgroundCache;
+	INPUTQUEUE	= new InputQueue;
+	SONGINDEX	= new SongCacheIndex;
+	BANNERCACHE	= new BannerCache;
+	//BACKGROUNDCACHE	= new BackgroundCache;
 
 	// depends on SONGINDEX:
-	SONGMAN		= smnew SongManager;
+	SONGMAN		= new SongManager;
 	SONGMAN->InitAll( pLoadingWindow );	// this takes a long time
-	CRYPTMAN	= smnew CryptManager;		// need to do this before ProfileMan
+	CRYPTMAN	= new CryptManager;		// need to do this before ProfileMan
 	if( PREFSMAN->m_bSignProfileData )
 		CRYPTMAN->GenerateGlobalKeys();
-	MEMCARDMAN	= smnew MemoryCardManager;
-	CHARMAN		= smnew CharacterManager;
-	PROFILEMAN	= smnew ProfileManager;
+	MEMCARDMAN	= new MemoryCardManager;
+	CHARMAN		= new CharacterManager;
+	PROFILEMAN	= new ProfileManager;
 	PROFILEMAN->Init();				// must load after SONGMAN
-	UNLOCKMAN	= smnew UnlockManager;
+	UNLOCKMAN	= new UnlockManager;
 	SONGMAN->UpdatePopular();
 	SONGMAN->UpdatePreferredSort();
-	NSMAN 		= smnew NetworkSyncManager( pLoadingWindow );
-	MESSAGEMAN	= smnew MessageManager;
-	STATSMAN	= smnew StatsManager;
+	NSMAN 		= new NetworkSyncManager( pLoadingWindow );
+	MESSAGEMAN	= new MessageManager;
+	STATSMAN	= new StatsManager;
 
 	// Initialize which courses are ranking courses here.
 	SONGMAN->UpdateRankingCourses();
@@ -1165,11 +1160,11 @@ int main(int argc, char* argv[])
 
 	/* Input handlers can have dependences on the video system so
 	 * INPUTMAN must be initialized after DISPLAY. */
-	INPUTMAN	= smnew RageInput;
+	INPUTMAN	= new RageInput;
 
 	// These things depend on the TextureManager, so do them after!
-	FONT		= smnew FontManager;
-	SCREENMAN	= smnew ScreenManager;
+	FONT		= new FontManager;
+	SCREENMAN	= new ScreenManager;
 
 	StepMania::ResetGame();
 

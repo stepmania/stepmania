@@ -606,7 +606,7 @@ int RageSoundReader_MP3::resync()
 
 RageSoundReader_MP3::RageSoundReader_MP3()
 {
-	mad = smnew madlib_t;
+	mad = new madlib_t;
 	m_bAccurateSync = false;
 
 	mad_stream_init( &mad->Stream );
@@ -680,7 +680,7 @@ RageSoundReader_FileReader::OpenResult RageSoundReader_MP3::Open( RageFileBasic 
 
 RageSoundReader_MP3 *RageSoundReader_MP3::Copy() const
 {
-	RageSoundReader_MP3 *ret = smnew RageSoundReader_MP3;
+	RageSoundReader_MP3 *ret = new RageSoundReader_MP3;
 
 	ret->m_pFile = m_pFile->Copy();
 	ret->m_pFile->Seek( 0 );

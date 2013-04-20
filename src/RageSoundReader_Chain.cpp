@@ -162,7 +162,7 @@ void RageSoundReader_Chain::Finish()
 		{
 			RageSoundReader *&pSound = (*it);
 
-			RageSoundReader_Resample_Good *pResample = smnew RageSoundReader_Resample_Good( pSound, m_iPreferredSampleRate );
+			RageSoundReader_Resample_Good *pResample = new RageSoundReader_Resample_Good( pSound, m_iPreferredSampleRate );
 			pSound = pResample;
 		}
 
@@ -229,7 +229,7 @@ void RageSoundReader_Chain::ActivateSound( Sound *s )
 	 * as this sound, and does not need to be panned, we can omit this. */
 	if( s->fPan != 0.0f || s->pSound->GetNumChannels() != this->GetNumChannels() )
 	{
-		s->pSound = smnew RageSoundReader_Pan( s->pSound );
+		s->pSound = new RageSoundReader_Pan( s->pSound );
 		s->pSound->SetProperty( "Pan", s->fPan );
 	}
 

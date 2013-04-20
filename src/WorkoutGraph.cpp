@@ -88,7 +88,7 @@ void WorkoutGraph::SetInternal( int iMinSongsPlayed )
 	{
 		int iIndex = iter - viMeters.begin();
 		float fOffsetFromCenter = iIndex - (iBlocksWide-1)/2.0f;
-		Sprite *p = smnew Sprite;
+		Sprite *p = new Sprite;
 		p->Load( THEME->GetPathG("WorkoutGraph","bar") );
 		p->SetVertAlign( align_bottom );
 		p->ZoomToWidth( fBlockSize );

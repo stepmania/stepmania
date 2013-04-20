@@ -15,12 +15,12 @@
 static struct FileDriverEntry_ZIP: public FileDriverEntry
 {
 	FileDriverEntry_ZIP(): FileDriverEntry( "ZIP" ) { }
-	RageFileDriver *Create( const RString &sRoot ) const { return smnew RageFileDriverZip( sRoot ); }
+	RageFileDriver *Create( const RString &sRoot ) const { return new RageFileDriverZip( sRoot ); }
 } const g_RegisterDriver;
 
 
 RageFileDriverZip::RageFileDriverZip():
-	RageFileDriver( smnew NullFilenameDB ),
+	RageFileDriver( new NullFilenameDB ),
 	m_Mutex( "RageFileDriverZip" )
 {
 	m_bFileOwned = false;
@@ -28,7 +28,7 @@ RageFileDriverZip::RageFileDriverZip():
 }
 
 RageFileDriverZip::RageFileDriverZip( const RString &sPath ):
-	RageFileDriver( smnew NullFilenameDB ),
+	RageFileDriver( new NullFilenameDB ),
 	m_Mutex( "RageFileDriverZip" )
 {
 	m_bFileOwned = false;
@@ -44,7 +44,7 @@ bool RageFileDriverZip::Load( const RString &sPath )
 	m_sPath = sPath;
 	m_Mutex.SetName( ssprintf("RageFileDriverZip(%s)", sPath.c_str()) );
 
-	RageFile *pFile = smnew RageFile;
+	RageFile *pFile = new RageFile;
 
 	if( !pFile->Open(sPath) )
 	{
@@ -154,7 +154,7 @@ bool RageFileDriverZip::ParseZipfile()
 		if( got == 0 ) /* skip */
 			continue;
 
-		FileInfo *pInfo = smnew FileInfo( info );
+		FileInfo *pInfo = new FileInfo( info );
 		m_pFiles.push_back( pInfo );
 		FDB->AddFile( "/" + pInfo->m_sName, pInfo->m_iUncompressedSize, pInfo->m_iCRC32, pInfo );
 	}
@@ -322,7 +322,7 @@ RageFileBasic *RageFileDriverZip::Open( const RString &sPath, int iMode, int &iE
 	 * threadsafe), so we can unlock now. */
 	m_Mutex.Unlock();
 
-	RageFileDriverSlice *pSlice = smnew RageFileDriverSlice( m_pZip->Copy(), info->m_iDataOffset, info->m_iCompressedSize );
+	RageFileDriverSlice *pSlice = new RageFileDriverSlice( m_pZip->Copy(), info->m_iDataOffset, info->m_iCompressedSize );
 	pSlice->DeleteFileWhenFinished();
 	
 	switch( info->m_iCompressionMethod )
@@ -331,7 +331,7 @@ RageFileBasic *RageFileDriverZip::Open( const RString &sPath, int iMode, int &iE
 		return pSlice;
 	case DEFLATED:
 	{
-		RageFileObjInflate *pInflate = smnew RageFileObjInflate( pSlice, info->m_iUncompressedSize );
+		RageFileObjInflate *pInflate = new RageFileObjInflate( pSlice, info->m_iUncompressedSize );
 		pInflate->DeleteFileWhenFinished();
 		return pInflate;
 	}

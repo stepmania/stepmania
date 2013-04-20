@@ -31,7 +31,7 @@
 
 RageMovieTexture *RageMovieTextureDriver_DShow::Create( RageTextureID ID, RString &sError )
 {
-	MovieTexture_DShow *pRet = smnew MovieTexture_DShow( ID );
+	MovieTexture_DShow *pRet = new MovieTexture_DShow( ID );
 	sError = pRet->Init();
 	if( !sError.empty() )
 		SAFE_DELETE( pRet );
@@ -349,7 +349,7 @@ RString MovieTexture_DShow::Create()
 		RageException::Throw( hr_ssprintf(hr, "Could not create CLSID_FilterGraph!") );
 
 	// Create the Texture Renderer object
-	CTextureRenderer *pCTR = smnew CTextureRenderer;
+	CTextureRenderer *pCTR = new CTextureRenderer;
 
 	/* Get a pointer to the IBaseFilter on the TextureRenderer, and add it to the
 	 * graph.  When m_pGB is released, it will free pFTR. */

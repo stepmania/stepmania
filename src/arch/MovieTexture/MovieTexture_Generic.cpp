@@ -35,7 +35,7 @@ MovieTexture_Generic::MovieTexture_Generic( RageTextureID ID, MovieDecoder *pDec
 	m_bWantRewind = false;
 	m_fClock = 0;
 	m_bFrameSkipMode = false;
-	m_pSprite = smnew Sprite;
+	m_pSprite = new Sprite;
 }
 
 RString MovieTexture_Generic::Init()
@@ -270,13 +270,13 @@ void MovieTexture_Generic::CreateTexture()
 
 		RageTextureID TargetID( GetID() );
 		TargetID.filename += " target";
-		m_pRenderTarget = smnew RageTextureRenderTarget( TargetID, param );
+		m_pRenderTarget = new RageTextureRenderTarget( TargetID, param );
 
 		/* Create the intermediate texture.  This receives the YUV image. */
 		RageTextureID IntermedID( GetID() );
 		IntermedID.filename += " intermediate";
 
-		m_pTextureIntermediate = smnew RageMovieTexture_Generic_Intermediate( IntermedID,
+		m_pTextureIntermediate = new RageMovieTexture_Generic_Intermediate( IntermedID,
 			m_pDecoder->GetWidth(), m_pDecoder->GetHeight(),
 			m_pSurface->w, m_pSurface->h,
 			power_of_two(m_pSurface->w), power_of_two(m_pSurface->h),

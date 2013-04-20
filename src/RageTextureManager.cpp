@@ -141,11 +141,11 @@ RageTexture* RageTextureManager::LoadTextureInternal( RageTextureID ID )
 
 	RageTexture* pTexture;
 	if( ID.filename == g_sDefaultTextureName )
-		pTexture = smnew RageTexture_Default;
+		pTexture = new RageTexture_Default;
 	else if( sExt == "ogv" || sExt == "avi" || sExt == "mpg" || sExt == "mpeg" )
 		pTexture = RageMovieTexture::Create( ID );
 	else
-		pTexture = smnew RageBitmapTexture( ID );
+		pTexture = new RageBitmapTexture( ID );
 
 	m_mapPathToTexture[ID] = pTexture;
 

@@ -168,7 +168,7 @@ XNode* MakeRecentScoreNode( const StageStats &ss, Trail *pTrail, const PlayerSta
 	XNode* pNode = NULL;
 	if( GAMESTATE->IsCourseMode() )
 	{
-		pNode = smnew XNode( "HighScoreForACourseAndTrail" );
+		pNode = new XNode( "HighScoreForACourseAndTrail" );
 
 		CourseID courseID;
 		courseID.FromCourse(GAMESTATE->m_pCurCourse );
@@ -181,7 +181,7 @@ XNode* MakeRecentScoreNode( const StageStats &ss, Trail *pTrail, const PlayerSta
 	}
 	else
 	{
-		pNode = smnew XNode( "HighScoreForASongAndSteps" );
+		pNode = new XNode( "HighScoreForASongAndSteps" );
 
 		SongID songID;
 		songID.FromSong( ss.m_vpPossibleSongs[0] );
@@ -257,14 +257,14 @@ void StatsManager::CommitStatsToProfiles( const StageStats *pSS )
 
 	// Save recent scores
 	{
-		auto_ptr<XNode> xml( smnew XNode("Stats") );
+		auto_ptr<XNode> xml( new XNode("Stats") );
 		xml->AppendChild( "MachineGuid",  PROFILEMAN->GetMachineProfile()->m_sGuid );
 
 		XNode *recent = NULL;
 		if( GAMESTATE->IsCourseMode() )
-			recent = xml->AppendChild( smnew XNode("RecentCourseScores") );
+			recent = xml->AppendChild( new XNode("RecentCourseScores") );
 		else
-			recent = xml->AppendChild( smnew XNode("RecentSongScores") );
+			recent = xml->AppendChild( new XNode("RecentSongScores") );
 
 		if(!GAMESTATE->m_bMultiplayer)
 		{

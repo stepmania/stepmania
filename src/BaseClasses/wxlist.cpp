@@ -396,7 +396,7 @@ POSITION CBaseList::AddTailI(void *pObject)
 
     pNode = (CNode *) m_Cache.RemoveFromCache();
     if (pNode == NULL) {
-        pNode = smnew CNode;
+        pNode = new CNode;
     }
 
     /* Check we have a valid object */
@@ -445,7 +445,7 @@ POSITION CBaseList::AddHeadI(void *pObject)
 
     pNode = (CNode *) m_Cache.RemoveFromCache();
     if (pNode == NULL) {
-        pNode = smnew CNode;
+        pNode = new CNode;
     }
 
     /* Check we have a valid object */
@@ -549,7 +549,7 @@ POSITION  CBaseList::AddAfterI(POSITION pos, void * pObj)
 
     CNode *pNode = (CNode *) m_Cache.RemoveFromCache();
     if (pNode == NULL) {
-        pNode = smnew CNode;
+        pNode = new CNode;
     }
 
     /* Check we have a valid object */
@@ -616,7 +616,7 @@ POSITION CBaseList::AddBeforeI(POSITION pos, void * pObj)
 
     CNode * pNode = (CNode *) m_Cache.RemoveFromCache();
     if (pNode == NULL) {
-        pNode = smnew CNode;
+        pNode = new CNode;
     }
 
     /* Check we have a valid object */

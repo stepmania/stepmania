@@ -27,7 +27,7 @@ void RadarValues::Zero()
 
 XNode* RadarValues::CreateNode( bool bIncludeSimpleValues, bool bIncludeComplexValues ) const
 {
-	XNode* pNode = smnew XNode( "RadarValues" );
+	XNode* pNode = new XNode( "RadarValues" );
 
 	// TRICKY: Don't print a remainder for the integer values.
 	FOREACH_ENUM( RadarCategory, rc )

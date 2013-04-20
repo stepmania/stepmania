@@ -1615,7 +1615,7 @@ CImageSample *CImageAllocator::CreateImageSample(LPBYTE pData,LONG Length)
 
     // Allocate the new sample and check the return codes
 
-    pSample = smnew CImageSample((CBaseAllocator *) this,   // Base class
+    pSample = new CImageSample((CBaseAllocator *) this,   // Base class
                                NAME("Video sample"),      // DEBUG name
                                (HRESULT *) &hr,           // Return code
                                (LPBYTE) pData,            // DIB address
@@ -2023,7 +2023,7 @@ HPALETTE CImagePalette::MakePalette(const VIDEOINFOHEADER *pVideoInfo, LPSTR szD
     LOGPALETTE *lp;                     // Used to create a palette
     HPALETTE hPalette;                  // Logical palette object
 
-    lp = (LOGPALETTE *) smnew BYTE[sizeof(LOGPALETTE) + SIZE_PALETTE];
+    lp = (LOGPALETTE *) new BYTE[sizeof(LOGPALETTE) + SIZE_PALETTE];
     if (lp == NULL) {
         return NULL;
     }

@@ -275,7 +275,7 @@ Steps *StepsID::ToSteps( const Song *p, bool bAllowNull ) const
 
 XNode* StepsID::CreateNode() const
 {
-	XNode* pNode = smnew XNode( "Steps" );
+	XNode* pNode = new XNode( "Steps" );
 
 	pNode->AppendAttr( "StepsType", GAMEMAN->GetStepsTypeInfo(st).szName );
 	pNode->AppendAttr( "Difficulty", DifficultyToString(dc) );

@@ -1,7 +1,7 @@
 #include "global.h"
 #include "LuaReference.h"
 
-REGISTER_CLASS_TRAITS( LuaReference, smnew LuaReference(*pCopy) )
+REGISTER_CLASS_TRAITS( LuaReference, new LuaReference(*pCopy) )
 
 LuaReference::LuaReference()
 {
@@ -170,7 +170,7 @@ namespace LuaHelpers
 
 	template<> bool FromStack<apActorCommands>( lua_State *L, apActorCommands &Object, int iOffset )
 	{
-		LuaReference *pRef = smnew LuaReference;
+		LuaReference *pRef = new LuaReference;
 		FromStack( L, *pRef, iOffset );
 		Object = apActorCommands( pRef );
 		return true;

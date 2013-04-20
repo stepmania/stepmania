@@ -273,7 +273,7 @@ RString GetInfoLog( GLhandleARB h )
 	if (!iLength)
 		return RString();
 
-	GLcharARB *pInfoLog = smnew GLcharARB[iLength];
+	GLcharARB *pInfoLog = new GLcharARB[iLength];
 	glGetInfoLogARB( h, iLength, &iLength, pInfoLog );
 	RString sRet = pInfoLog;
 	delete [] pInfoLog;
@@ -873,10 +873,10 @@ static void SetupVertices( const RageSpriteVertex v[], int iNumVerts )
 		delete [] Color;
 		delete [] Texture;
 		delete [] Normal;
-		Vertex = smnew float[Size*3];
-		Color = smnew GLubyte[Size*4];
-		Texture = smnew float[Size*2];
-		Normal = smnew float[Size*3];
+		Vertex = new float[Size*3];
+		Color = new GLubyte[Size*4];
+		Texture = new float[Size*2];
+		Normal = new float[Size*3];
 	}
 
 	for( unsigned i = 0; i < unsigned(iNumVerts); ++i )
@@ -1380,9 +1380,9 @@ void RageCompiledGeometryHWOGL::Draw( int iMeshIndex ) const
 RageCompiledGeometry* RageDisplay_Legacy::CreateCompiledGeometry()
 {
 	if (GLEW_ARB_vertex_buffer_object)
-		return smnew RageCompiledGeometryHWOGL;
+		return new RageCompiledGeometryHWOGL;
 	else
-		return smnew RageCompiledGeometrySWOGL;
+		return new RageCompiledGeometrySWOGL;
 }
 
 void RageDisplay_Legacy::DeleteCompiledGeometry( RageCompiledGeometry* p )
@@ -2279,7 +2279,7 @@ RageTextureLock *RageDisplay_Legacy::CreateTextureLock()
 	if (!GLEW_ARB_pixel_buffer_object)
 		return NULL;
 
-	return smnew RageTextureLock_OGL;
+	return new RageTextureLock_OGL;
 }
 
 void RageDisplay_Legacy::UpdateTexture( 
@@ -2452,7 +2452,7 @@ unsigned RageDisplay_Legacy::CreateRenderTarget( const RenderTargetParam &param,
 {
 	RenderTarget *pTarget;
 	if (GLEW_EXT_framebuffer_object)
-		pTarget = smnew RenderTarget_FramebufferObject;
+		pTarget = new RenderTarget_FramebufferObject;
 	else
 		pTarget = g_pWind->CreateRenderTarget();
 

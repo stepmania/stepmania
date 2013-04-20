@@ -141,7 +141,7 @@ namespace
 		// Apply the new window title, icon and aspect ratio.
 		StepMania::ApplyGraphicOptions();
 
-		SCREENMAN = smnew ScreenManager();
+		SCREENMAN = new ScreenManager();
 
 		StepMania::ResetGame();
 		SCREENMAN->ThemeChanged();
@@ -340,7 +340,7 @@ int ConcurrentRenderer::StartRenderThread( void *p )
 void GameLoop::StartConcurrentRendering()
 {
 	if( g_pConcurrentRenderer == NULL )
-		g_pConcurrentRenderer = smnew ConcurrentRenderer;
+		g_pConcurrentRenderer = new ConcurrentRenderer;
 	g_pConcurrentRenderer->Start();
 }
 

@@ -188,7 +188,7 @@ void TimingData::MultiplyBPMInBeatRange( int iStartIndex, int iEndIndex, float f
 		 * split it into two. */
 		if( iStartIndexThisSegment < iStartIndex && iStartIndexNextSegment > iStartIndex )
 		{
-			BPMSegment * b = smnew BPMSegment(iStartIndexNextSegment,
+			BPMSegment * b = new BPMSegment(iStartIndexNextSegment,
 											bs->GetBPS());
 			bpms.insert(bpms.begin()+i+1, b);
 
@@ -200,7 +200,7 @@ void TimingData::MultiplyBPMInBeatRange( int iStartIndex, int iEndIndex, float f
 		// If this BPM segment crosses the end of the range, split it into two.
 		if( iStartIndexThisSegment < iEndIndex && iStartIndexNextSegment > iEndIndex )
 		{
-			BPMSegment * b = smnew BPMSegment(iEndIndex,
+			BPMSegment * b = new BPMSegment(iEndIndex,
 											bs->GetBPS());
 			bpms.insert(bpms.begin()+i+1, b);
 		}

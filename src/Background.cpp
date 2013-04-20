@@ -211,7 +211,7 @@ void BackgroundImpl::Init()
 	}
 
 	if( bOneOrMoreChars && !bShowingBeginnerHelper && SHOW_DANCING_CHARACTERS )
-		m_pDancingCharacters = smnew DancingCharacters;
+		m_pDancingCharacters = new DancingCharacters;
 
 	RageColor c = GetBrightnessColor(0);
 
@@ -318,7 +318,7 @@ bool BackgroundImpl::Layer::CreateBackground( const Song *pSong, const Backgroun
 
 		ASSERT( !sResolved.empty() );
 
-		vsResolvedRef[i] = smnew LuaThreadVariable( ssprintf("File%d",i+1), sResolved );
+		vsResolvedRef[i] = new LuaThreadVariable( ssprintf("File%d",i+1), sResolved );
 	}
 
 	RString sEffect = bd.m_sEffect;
@@ -947,7 +947,7 @@ void BrightnessOverlay::FadeToActualBrightness()
 	SetActualBrightness();
 }
 
-Background::Background()				{ m_pImpl = smnew BackgroundImpl; this->AddChild(m_pImpl); }
+Background::Background()				{ m_pImpl = new BackgroundImpl; this->AddChild(m_pImpl); }
 Background::~Background()				{ SAFE_DELETE( m_pImpl ); }
 void Background::Init()					{ m_pImpl->Init(); }
 void Background::LoadFromSong( const Song *pSong )	{ m_pImpl->LoadFromSong(pSong); }

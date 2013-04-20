@@ -163,7 +163,7 @@ namespace JsonUtil
 		v.resize(root.size());
 		for(unsigned i=0; i<v.size(); i++)
 		{
-			v[i] = smnew T;
+			v[i] = new T;
 			fn(*v[i], root[i]);
 		}
 	}
@@ -176,7 +176,7 @@ namespace JsonUtil
 		v.resize(root.size());
 		for(unsigned i=0; i<v.size(); i++)
 		{
-			v[i] = smnew T;
+			v[i] = new T;
 			fn(*v[i], root[i]);
 		}
 	}
@@ -190,7 +190,7 @@ namespace JsonUtil
 		v.resize(root.size());
 		for(unsigned i=0; i<v.size(); i++)
 		{
-			v[i] = smnew T(param);
+			v[i] = new T(param);
 			fn(*v[i], root[i]);
 		}
 	}

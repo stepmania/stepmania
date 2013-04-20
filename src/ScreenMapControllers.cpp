@@ -90,7 +90,7 @@ void ScreenMapControllers::Init()
 		KeyToMap *pKey = &m_KeysToMap[b];
 
 		{
-			BitmapText *pName = smnew BitmapText;
+			BitmapText *pName = new BitmapText;
 			pName->SetName( "Primary" );
 			pName->LoadFromFont( THEME->GetPathF(m_sName,"title") );
 			RString sText = GameButtonToLocalizedString( INPUTMAPPER->GetInputScheme(), pKey->m_GameButton );
@@ -99,7 +99,7 @@ void ScreenMapControllers::Init()
 			m_Line[iRow].AddChild( pName );
 		}
 		{
-			BitmapText *pSecondary = smnew BitmapText;
+			BitmapText *pSecondary = new BitmapText;
 			pSecondary->SetName( "Secondary" );
 			pSecondary->LoadFromFont( THEME->GetPathF(m_sName,"title") );
 			GameButton mb = INPUTMAPPER->GetInputScheme()->GameButtonToMenuButton( pKey->m_GameButton );
@@ -115,7 +115,7 @@ void ScreenMapControllers::Init()
 		{			
 			for( int s=0; s<NUM_SHOWN_GAME_TO_DEVICE_SLOTS; s++ ) 
 			{
-				pKey->m_textMappedTo[c][s] = smnew BitmapText;
+				pKey->m_textMappedTo[c][s] = new BitmapText;
 				pKey->m_textMappedTo[c][s]->SetName( "MappedTo" );
 				pKey->m_textMappedTo[c][s]->LoadFromFont( THEME->GetPathF(m_sName,"entry") );
 				pKey->m_textMappedTo[c][s]->RunCommands( MAPPED_TO_COMMAND(c,s) );

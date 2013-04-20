@@ -23,7 +23,7 @@ void ReceptorArrowRow::Load( const PlayerState* pPlayerState, float fYReverseOff
 
 	for( int c=0; c<pStyle->m_iColsPerPlayer; c++ ) 
 	{
-		m_ReceptorArrow.push_back( smnew ReceptorArrow );
+		m_ReceptorArrow.push_back( new ReceptorArrow );
 		m_ReceptorArrow[c]->SetName( "ReceptorArrow" );
 		m_ReceptorArrow[c]->Load( m_pPlayerState, c );
 		this->AddChild( m_ReceptorArrow[c] );

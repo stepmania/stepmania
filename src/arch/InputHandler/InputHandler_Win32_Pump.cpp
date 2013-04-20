@@ -19,7 +19,7 @@ InputHandler_Win32_Pump::InputHandler_Win32_Pump()
 		0x0003 /* shipped with Exceed */ 
 	};
 
-	m_pDevice = smnew USBDevice[NUM_PUMPS];
+	m_pDevice = new USBDevice[NUM_PUMPS];
 
 	int iNumFound = 0;
 	for( int p = 0; p < ARRAYSIZE(pump_usb_pids); ++p )

@@ -93,7 +93,7 @@ static float g_fTimeBeforeRepeats, g_fTimeBetweenRepeats;
 
 InputFilter::InputFilter()
 {
-	queuemutex = smnew RageMutex("InputFilter");
+	queuemutex = new RageMutex("InputFilter");
 
 	Reset();
 	ResetRepeatRate();

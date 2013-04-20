@@ -64,8 +64,8 @@ BeginnerHelper::BeginnerHelper()
 	FOREACH_PlayerNumber( pn )
 		m_bPlayerEnabled[pn] = false;
 	FOREACH_PlayerNumber( pn )
-		m_pDancer[pn] = smnew Model;
-	m_pDancePad = smnew Model;
+		m_pDancer[pn] = new Model;
+	m_pDancePad = new Model;
 }
 
 BeginnerHelper::~BeginnerHelper()

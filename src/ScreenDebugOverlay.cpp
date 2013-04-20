@@ -263,7 +263,7 @@ void ScreenDebugOverlay::Init()
 
 		RString sButton = INPUTMAN->GetDeviceSpecificInputString( di );
 
-		BitmapText *p = smnew BitmapText;
+		BitmapText *p = new BitmapText;
 		p->SetName( "PageText" );
 		p->LoadFromFont( THEME->GetPathF("ScreenDebugOverlay", "page") );
 		LOAD_ALL_COMMANDS_AND_ON_COMMAND( p );
@@ -277,7 +277,7 @@ void ScreenDebugOverlay::Init()
 	FOREACH_CONST( IDebugLine*, GetSubscribers(), p )
 	{
 		{
-			BitmapText *bt = smnew BitmapText;
+			BitmapText *bt = new BitmapText;
 			bt->SetName( "ButtonText" );
 			bt->LoadFromFont( THEME->GetPathF("ScreenDebugOverlay", "line") );
 			bt->SetHorizAlign( align_right );
@@ -287,7 +287,7 @@ void ScreenDebugOverlay::Init()
 			this->AddChild( bt );
 		}
 		{
-			BitmapText *bt = smnew BitmapText;
+			BitmapText *bt = new BitmapText;
 			bt->SetName( "FunctionText" );
 			bt->LoadFromFont( THEME->GetPathF("ScreenDebugOverlay", "line") );
 			bt->SetHorizAlign( align_left );

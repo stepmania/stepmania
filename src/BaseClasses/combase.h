@@ -25,7 +25,7 @@ b. Make a static CreateInstance function that takes an LPUNKNOWN, an HRESULT *
    as we do not copy the string. To stop large amounts of memory being used
    in retail builds by all these static strings use the NAME macro,
 
-   CMyFilter = smnew CImplFilter(NAME("My filter"),pUnknown,phr);
+   CMyFilter = new CImplFilter(NAME("My filter"),pUnknown,phr);
    if (FAILED(hr)) {
        return hr;
    }

@@ -749,7 +749,7 @@ void Font::Load( const RString &sIniPath, RString sChars )
 			continue;
 
 		// Create this down here so it doesn't leak if the continue gets triggered.
-		FontPage *pPage = smnew FontPage;
+		FontPage *pPage = new FontPage;
 
 		// Load settings for this page from the INI.
 		FontPageSettings cfg;

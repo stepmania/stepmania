@@ -472,7 +472,7 @@ bool CourseLoaderCRS::LoadEditFromFile( const RString &sEditFilePath, ProfileSlo
 		LOG->UserLog( "Edit file", sEditFilePath, "couldn't be opened: %s", msd.GetError().c_str() );
 		return false;
 	}
-	Course *pCourse = smnew Course;
+	Course *pCourse = new Course;
 
 	pCourse->m_sPath = sEditFilePath;
 	LoadFromMsd( sEditFilePath, msd, *pCourse, true );
@@ -485,7 +485,7 @@ bool CourseLoaderCRS::LoadEditFromFile( const RString &sEditFilePath, ProfileSlo
 
 bool CourseLoaderCRS::LoadEditFromBuffer( const RString &sBuffer, const RString &sPath, ProfileSlot slot )
 {
-	Course *pCourse = smnew Course;
+	Course *pCourse = new Course;
 	if( !LoadFromBuffer(sPath, sBuffer, *pCourse) )
 	{
 		delete pCourse;

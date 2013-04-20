@@ -44,7 +44,7 @@ void ScreenWithMenuElements::Init()
 		FOREACH_PlayerNumber( p )
 		{
 			ASSERT( m_MemoryCardDisplay[p] == NULL );
-			m_MemoryCardDisplay[p] = smnew MemoryCardDisplay;
+			m_MemoryCardDisplay[p] = new MemoryCardDisplay;
 			m_MemoryCardDisplay[p]->Load( p );
 			m_MemoryCardDisplay[p]->SetName( ssprintf("MemoryCardDisplayP%d",p+1) );
 			LOAD_ALL_COMMANDS_AND_SET_XY( m_MemoryCardDisplay[p] );
@@ -55,7 +55,7 @@ void ScreenWithMenuElements::Init()
 	if( TIMER_SECONDS != -1 )
 	{
 		ASSERT( m_MenuTimer == NULL );	// don't load twice
-		m_MenuTimer = smnew MenuTimer;
+		m_MenuTimer = new MenuTimer;
 		m_MenuTimer->Load( TIMER_METRICS_GROUP.GetValue() );
 		m_MenuTimer->SetName( "Timer" );
 		if( TIMER_STEALTH )

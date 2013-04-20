@@ -101,7 +101,7 @@ public:
     void PutThreadMsg(UINT uMsg, DWORD dwMsgFlags,
                       LPVOID lpMsgParam, CAMEvent *pEvent = NULL) {
         CAutoLock lck(&m_Lock);
-        CMsg* pMsg = smnew CMsg(uMsg, dwMsgFlags, lpMsgParam, pEvent);
+        CMsg* pMsg = new CMsg(uMsg, dwMsgFlags, lpMsgParam, pEvent);
         m_ThreadQueue.AddTail(pMsg);
         
         if (m_lWaiting != 0) {
