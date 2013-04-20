@@ -9,7 +9,7 @@
 
 TimingSegment* GetSegmentAtRow( int iNoteRow, TimingSegmentType tst );
 
-TimingData::TimingData(float fOffset) : m_fBeat0OffsetInSeconds(fOffset), lastRow(-1)
+TimingData::TimingData(float fOffset) : m_fBeat0OffsetInSeconds(fOffset)
 {
 }
 
@@ -19,7 +19,6 @@ void TimingData::Copy( const TimingData& cpy )
 	Clear();
 
 	m_fBeat0OffsetInSeconds = cpy.m_fBeat0OffsetInSeconds;
-	lastRow = cpy.lastRow;
 	m_sFile = cpy.m_sFile;
 
 	FOREACH_TimingSegmentType( tst )
@@ -169,90 +168,6 @@ struct ts_less : binary_function <TimingSegment*, TimingSegment*, bool>
 		return (*x) < (*y);
 	}
 };
-
-void TimingData::SetLastRowFromTime(float seconds)
-{
-	float beat = 0;
-	// TODO: Address this.
-	float dummy1, dummy5;
-	bool dummy2, dummy3;
-	int dummy4;
-	GetBeatAndBPSFromElapsedTime(seconds, beat, dummy1, dummy2, dummy3, dummy4, dummy5);
-	this->lastRow = BeatToNoteRow(beat);
-}
-
-float TimingData::GetBPMUsedMostOften()
-{
-	if (this == NULL)
-	{
-		return -1; // not taking ANY chances.
-	}
-
-	if (!HasBpmChanges())
-	{
-		return GetBPMSegmentAtRow(0)->GetBPM();
-	}
-
-	// TODO: Find a way to make this const compatible.
-	vector<TimingSegment *> &bpms = m_avpTimingSegments[SEGMENT_BPM];
-	map<float, float> lengths;
-	map<float, float>::iterator location;
-
-	BPMSegment *prev = ToBPM(GetBPMSegmentAtRow(0));
-	BPMSegment *curr = ToBPM(bpms[1]);
-	BPMSegment *next = curr;
-	float runningTime = GetElapsedTimeFromBeat(next->GetBeat());
-	lengths.insert(make_pair(prev->GetBPM(), runningTime));
-
-	for( unsigned i = 1; i < bpms.size(); ++i )
-	{
-		bool isLast = (i + 1 == bpms.size());
-
-		if (isLast)
-		{
-			runningTime = GetElapsedTimeFromBeat(NoteRowToBeat(lastRow));
-		}
-		else
-		{
-			next = ToBPM(bpms[i + 1]);
-			runningTime = GetElapsedTimeFromBeat(next->GetBeat());
-		}
-
-		float curBPM = curr->GetBPM();
-		location = lengths.find(curBPM);
-		float elapsedTime = runningTime - lengths[prev->GetBPM()];
-		if (location == lengths.end())
-		{
-			lengths[curBPM] = elapsedTime;
-		}
-		else
-		{
-			lengths[curBPM] += elapsedTime;
-		}
-
-		if (!isLast)
-		{
-			prev = curr;
-			curr = next;
-		}
-	}
-
-	// at this point, go through the map.
-	float highestKey = -1;
-	float highestValue = -1;
-
-	// TODO: C++11 this.
-	FOREACHM_CONST(float, float, lengths, it)
-	{
-		if (it->second > highestValue)
-		{
-			highestValue = it->second;
-			highestKey = it->first;
-		}
-	}
-
-	return highestKey;
-}
 
 // Multiply the BPM in the range [fStartBeat,fEndBeat) by fFactor.
 void TimingData::MultiplyBPMInBeatRange( int iStartIndex, int iEndIndex, float fFactor )

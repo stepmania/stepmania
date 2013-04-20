@@ -408,35 +408,9 @@ void Player::Init(
 		break;
 	}
 
-	// calculate A-mod speed here, so we can adjust properly on a per-song basis.
-	// XXX: can we find a better location for this?
-	// XXX: Yes, I copied the same comment practically. --wolfman2000
-	if (m_pPlayerState->m_PlayerOptions.GetCurrent().m_fAvgScrollBPM != 0)
-	{
-		float avgBPM;
-		if (GAMESTATE->IsCourseMode() )
-		{
-			vector<TrailEntry> &entries = GAMESTATE->m_pCurTrail[pn]->m_vEntries;
-			float foundBPMs = 0;
-			FOREACH_CONST( TrailEntry, entries, e )
-			{
-				foundBPMs += e->pSong->m_SongTiming.GetBPMUsedMostOften();
-			}
-			avgBPM = foundBPMs / entries.size();
-		}
-		else
-		{
-			avgBPM = GAMESTATE->m_pCurSong->m_SongTiming.GetBPMUsedMostOften();
-		}
-
-		// set an X-mod equal to Anum / avgBPM (e.g. A600 with 150 becomes 4x)	
-		PO_GROUP_ASSIGN(m_pPlayerState->m_PlayerOptions, ModsLevel_Preferred, m_fScrollSpeed,
-				m_pPlayerState->m_PlayerOptions.GetPreferred().m_fAvgScrollBPM / avgBPM);
-	}
-
 	// calculate M-mod speed here, so we can adjust properly on a per-song basis.
 	// XXX: can we find a better location for this?
-	else if( m_pPlayerState->m_PlayerOptions.GetCurrent().m_fMaxScrollBPM != 0 )
+	if( m_pPlayerState->m_PlayerOptions.GetCurrent().m_fMaxScrollBPM != 0 )
 	{
 		DisplayBpms bpms;
 

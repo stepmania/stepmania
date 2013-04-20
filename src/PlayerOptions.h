@@ -22,7 +22,6 @@ public:
 	PlayerOptions(): m_bSetScrollSpeed(false),
 		m_fTimeSpacing(0), m_SpeedfTimeSpacing(1.0f),
 		m_fMaxScrollBPM(0), m_SpeedfMaxScrollBPM(1.0f),
-		m_fAvgScrollBPM(0), m_SpeedfAvgScrollBPM(1.0f),
 		m_fScrollSpeed(1.0f), m_SpeedfScrollSpeed(1.0f),
 		m_fScrollBPM(200), m_SpeedfScrollBPM(1.0f),
 		m_fDark(0), m_SpeedfDark(1.0f),
@@ -159,9 +158,8 @@ public:
 	/* All floats have a corresponding speed setting, which determines how fast
 	 * PlayerOptions::Approach approaches. */
 	bool	m_bSetScrollSpeed;				// true if the scroll speed was set by FromString
-	float	m_fTimeSpacing,			m_SpeedfTimeSpacing;	// instead of Beat spacing (CMods, mMods, aMods)
+	float	m_fTimeSpacing,			m_SpeedfTimeSpacing;	// instead of Beat spacing (CMods, mMods)
 	float	m_fMaxScrollBPM,		m_SpeedfMaxScrollBPM;
-	float	m_fAvgScrollBPM,		m_SpeedfAvgScrollBPM;
 	float	m_fScrollSpeed,			m_SpeedfScrollSpeed;	// used if !m_bTimeSpacing (xMods)
 	float	m_fScrollBPM,			m_SpeedfScrollBPM;		// used if m_bTimeSpacing (CMod)
 	float	m_fAccels[NUM_ACCELS],		m_SpeedfAccels[NUM_ACCELS];

@@ -847,13 +847,9 @@ void Song::ReCalculateRadarValuesAndLastSecond(bool fromCache, bool duringCache)
 {
 	if( fromCache && this->GetFirstSecond() >= 0 && this->GetLastSecond() > 0 )
 	{
-		this->m_SongTiming.SetLastRowFromTime(this->GetLastSecond());
 		// this is loaded from cache, then we just have to calculate the radar values.
 		for( unsigned i=0; i<m_vpSteps.size(); i++ )
-		{
 			m_vpSteps[i]->CalculateRadarValues( m_fMusicLengthSeconds );
-			m_vpSteps[i]->m_Timing.SetLastRowFromTime(this->GetLastSecond());
-		}
 		return;
 	}
 
@@ -908,12 +904,6 @@ void Song::ReCalculateRadarValuesAndLastSecond(bool fromCache, bool duringCache)
 	// Yes, for some reason we can have freaky stuff take place here.
 	this->firstSecond = (localFirst < localLast) ? localFirst : 0;
 	this->lastSecond = localLast;
-
-	this->m_SongTiming.SetLastRowFromTime(localLast);
-	for( unsigned i = 0; i < this->m_vpSteps.size(); ++i)
-	{
-		this->m_vpSteps[i]->m_Timing.SetLastRowFromTime(localLast);
-	}
 }
 
 // Return whether the song is playable in the given style.
