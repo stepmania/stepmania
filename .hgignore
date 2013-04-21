@@ -15,6 +15,8 @@ ffmpeg-*
 *.exp
 *.dmg
 *.orig
+*.sdf
+*.opensdf
 ___*
 .hg
 .hgignore
