@@ -14,7 +14,7 @@
 
 
 // Actor registration
-map<RString,CreateActorFn> & GetRegistrees()
+map<RString,CreateActorFn> & GetActorUtilRegistrees()
 {
 	static map<RString, CreateActorFn> registrees;
 	return registrees;
@@ -22,13 +22,13 @@ map<RString,CreateActorFn> & GetRegistrees()
 
 static bool IsRegistered( const RString& sClassName )
 {
-	map<RString, CreateActorFn> & registrees = GetRegistrees();
+	map<RString, CreateActorFn> & registrees = GetActorUtilRegistrees();
 	return registrees.find( sClassName ) != registrees.end();
 }
 
 void ActorUtil::Register( const RString& sClassName, CreateActorFn pfn )
 {
-	map<RString, CreateActorFn> & registrees = GetRegistrees();
+	map<RString, CreateActorFn> & registrees = GetActorUtilRegistrees();
 
 	map<RString,CreateActorFn>::iterator iter = registrees.find( sClassName );
 	ASSERT_M( iter == registrees.end(), ssprintf("Actor class '%s' already registered.", sClassName.c_str()) );
@@ -123,7 +123,7 @@ Actor* ActorUtil::LoadFromNode( const XNode* pNode, Actor *pParentActor )
 	if( !bHasClass )
 		bHasClass = pNode->GetAttrValue( "Type", sClass );
 
-	map<RString, CreateActorFn> & registrees = GetRegistrees();
+	map<RString, CreateActorFn> & registrees = GetActorUtilRegistrees();
 
 	map<RString,CreateActorFn>::iterator iter = registrees.find( sClass );
 	if( iter == registrees.end() )

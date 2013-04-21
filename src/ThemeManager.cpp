@@ -64,7 +64,7 @@ LoadedThemeData *g_pLoadedThemeData = NULL;
 // For self-registering metrics
 #include "SubscriptionManager.h"
 
-SubscriptionManager<IThemeMetric> & GetSubscribers()
+SubscriptionManager<IThemeMetric> & GetMetricSubscribers()
 {
 	static SubscriptionManager<IThemeMetric> subscribers;
 	return subscribers;
@@ -100,7 +100,7 @@ public:
 
 void ThemeManager::Subscribe( IThemeMetric *p )
 {
-	GetSubscribers().Subscribe( p );
+	GetMetricSubscribers().Subscribe( p );
 
 	// It's ThemeManager's responsibility to make sure all of its subscribers
 	// are updated with current data.  If a metric is created after 
@@ -112,7 +112,7 @@ void ThemeManager::Subscribe( IThemeMetric *p )
 
 void ThemeManager::Unsubscribe( IThemeMetric *p )
 {
-	GetSubscribers().Unsubscribe( p );
+	GetMetricSubscribers().Unsubscribe( p );
 }
 
 
@@ -434,13 +434,13 @@ void ThemeManager::SwitchThemeAndLanguage( const RString &sThemeName_, const RSt
 void ThemeManager::ReloadSubscribers()
 {
 	// reload subscribers
-	FOREACHS_CONST( IThemeMetric*, GetSubscribers().m_pSubscribers, p )
+	FOREACHS_CONST( IThemeMetric*, GetMetricSubscribers().m_pSubscribers, p )
 		(*p)->Read();
 }
 
 void ThemeManager::ClearSubscribers()
 {
-	FOREACHS_CONST( IThemeMetric*, GetSubscribers().m_pSubscribers, p )
+	FOREACHS_CONST( IThemeMetric*, GetMetricSubscribers().m_pSubscribers, p )
 		(*p)->Clear();
 }
 

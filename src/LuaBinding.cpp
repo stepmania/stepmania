@@ -6,7 +6,7 @@
 
 #include "SubscriptionManager.h"
 
-SubscriptionManager<LuaBinding> & GetSubscribers()
+SubscriptionManager<LuaBinding> & GetBindingSubscribers()
 {
 	static SubscriptionManager<LuaBinding> subscribers;
 	return subscribers;
@@ -16,7 +16,7 @@ namespace
 {
 	void RegisterTypes( lua_State *L )
 	{
-		SubscriptionManager<LuaBinding> & subscribers = GetSubscribers();
+		SubscriptionManager<LuaBinding> & subscribers = GetBindingSubscribers();
 
 		if( subscribers.m_pSubscribers.empty() )
 			return;
@@ -66,12 +66,12 @@ REGISTER_WITH_LUA_FUNCTION( RegisterTypes );
 
 LuaBinding::LuaBinding()
 {
-	GetSubscribers().Subscribe( this );
+	GetBindingSubscribers().Subscribe( this );
 }
 
 LuaBinding::~LuaBinding()
 {
-	GetSubscribers().Unsubscribe( this );
+	GetBindingSubscribers().Unsubscribe( this );
 }
 
 void LuaBinding::Register( lua_State *L )
