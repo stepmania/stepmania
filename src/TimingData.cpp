@@ -342,9 +342,9 @@ const TimingSegment* TimingData::GetSegmentAtRow( int iNoteRow, TimingSegmentTyp
 	FAIL_M("Could not find timing segment for row");
 }
 
-TimingSegment* GetSegmentAtRow( int iNoteRow, TimingSegmentType tst )
+TimingSegment* TimingData::GetSegmentAtRow( int iNoteRow, TimingSegmentType tst )
 {
-	return const_cast<TimingSegment*>( GetSegmentAtRow(iNoteRow, tst) );
+	return const_cast<TimingSegment*>( static_cast<const TimingData*>(this)->GetSegmentAtRow(iNoteRow, tst) );
 }
 
 static void EraseSegment( vector<TimingSegment*> &vSegs, int index, TimingSegment *cur )
