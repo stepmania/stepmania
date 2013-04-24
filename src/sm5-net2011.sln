@@ -1,6 +1,7 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sm-ssc", "StepMania-net2011.vcxproj", "{AF209DBD-24BD-4356-8DFE-41751B221195}"
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "StepMania", "StepMania-net2011.vcxproj", "{AF209DBD-24BD-4356-8DFE-41751B221195}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libtommath", "libtommath\libtommath-net2011.vcxproj", "{FEDE5283-1518-4B1D-8124-5C54DB17EA57}"
 EndProject
