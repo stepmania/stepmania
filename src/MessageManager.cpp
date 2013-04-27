@@ -205,10 +205,9 @@ void MessageManager::Broadcast( Message &msg ) const
 	if( iter == g_MessageToSubscribers.end() )
 		return;
 
-	FOREACHS_CONST( IMessageSubscriber*, iter->second, p )
+	for (IMessageSubscriber *subscriber : iter->second)
 	{
-		IMessageSubscriber *pSub = *p;
-		pSub->HandleMessage( msg );
+		subscriber->HandleMessage( msg );
 	}
 }
 
