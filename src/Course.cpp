@@ -745,9 +745,9 @@ const Style *Course::GetCourseStyle( const Game *pGame, int iNumPlayers ) const
 	for( int s=0; s < (int) vpStyles.size(); ++s ) 
 	{
 		const Style *pStyle = vpStyles[s];
-		FOREACHS_CONST( RString, m_setStyles, style )
+		for (RString const &style : m_setStyles)
 		{
-			if( !style->CompareNoCase(pStyle->m_szName) )
+			if( !style.CompareNoCase(pStyle->m_szName) )
 				return pStyle;
 		}
 	}
