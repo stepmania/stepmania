@@ -195,9 +195,9 @@ void InputFilter::ResetDevice( InputDevice device )
 	RageTimer now;
 
 	const ButtonStateMap ButtonStates( g_ButtonStates );
-	FOREACHM_CONST( DeviceButtonPair, ButtonState, ButtonStates, b )
+	for (std::pair<DeviceButtonPair const, ButtonState> const &b : ButtonStates)
 	{
-		const DeviceButtonPair &db = b->first;
+		const DeviceButtonPair &db = b.first;
 		if( db.device == device )
 			ButtonPressed( DeviceInput(device, db.button, 0, now) );
 	}
