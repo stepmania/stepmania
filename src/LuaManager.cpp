@@ -677,28 +677,28 @@ XNode *LuaHelpers::GetLuaInformation()
 	}
 
 	/* Classes */
-	FOREACHM_CONST( RString, LClass, mClasses, c )
+	for (auto const &c : mClasses)
 	{
 		XNode *pClassNode = pClassesNode->AppendChild( "Class" );
 
-		pClassNode->AppendAttr( "name", c->first );
-		if( !c->second.m_sBaseName.empty() )
-			pClassNode->AppendAttr( "base", c->second.m_sBaseName );
-		FOREACH_CONST( RString, c->second.m_vMethods, m )
+		pClassNode->AppendAttr( "name", c.first );
+		if( !c.second.m_sBaseName.empty() )
+			pClassNode->AppendAttr( "base", c.second.m_sBaseName );
+		for (RString const & m : c.second.m_vMethods)
 		{
 			XNode *pMethodNode = pClassNode->AppendChild( "Function" );
-			pMethodNode->AppendAttr( "name", *m );
+			pMethodNode->AppendAttr( "name", m );
 		}
 	}
 
 	/* Singletons */
-	FOREACHM_CONST( RString, RString, mSingletons, s )
+	for (auto const &s : mSingletons)
 	{
-		if( mClasses.find(s->first) != mClasses.end() )
+		if( mClasses.find(s.first) != mClasses.end() )
 			continue;
 		XNode *pSingletonNode = pSingletonsNode->AppendChild( "Singleton" );
-		pSingletonNode->AppendAttr( "name", s->first );
-		pSingletonNode->AppendAttr( "class", s->second );
+		pSingletonNode->AppendAttr( "name", s.first );
+		pSingletonNode->AppendAttr( "class", s.second );
 	}
 
 	/* Namespaces */
@@ -732,21 +732,21 @@ XNode *LuaHelpers::GetLuaInformation()
 	}
 
 	/* Constants, String Constants */
-	FOREACHM_CONST( RString, float, mConstants, c )
+	for (auto const &c : mConstants)
 	{
 		XNode *pConstantNode = pConstantsNode->AppendChild( "Constant" );
 
-		pConstantNode->AppendAttr( "name", c->first );
-		if( c->second == truncf(c->second) )
-			pConstantNode->AppendAttr( "value", int(c->second) );
+		pConstantNode->AppendAttr( "name", c.first );
+		if( c.second == truncf(c.second) )
+			pConstantNode->AppendAttr( "value", static_cast<int>(c.second) );
 		else
-			pConstantNode->AppendAttr( "value", c->second );
+			pConstantNode->AppendAttr( "value", c.second );
 	}
-	FOREACHM_CONST( RString, RString, mStringConstants, s )
+	for (auto const &s : mStringConstants)
 	{
 		XNode *pConstantNode = pConstantsNode->AppendChild( "Constant" );
-		pConstantNode->AppendAttr( "name", s->first );
-		pConstantNode->AppendAttr( "value", ssprintf("'%s'", s->second.c_str()) );
+		pConstantNode->AppendAttr( "name", s.first );
+		pConstantNode->AppendAttr( "value", ssprintf("'%s'", s.second.c_str()) );
 	}
 
 	return pLuaNode;
