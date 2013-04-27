@@ -847,24 +847,23 @@ void MusicWheel::BuildWheelItemDatas( vector<MusicWheelItemData *> &arrayWheelIt
 	}
 
 	// init music status icons
-	for( unsigned i=0; i<arrayWheelItemDatas.size(); i++ )
+	for (MusicWheelItemData *WID : arrayWheelItemDatas)
 	{
-		MusicWheelItemData& WID = *arrayWheelItemDatas[i];
-		if( WID.m_pSong != NULL )
+		if( WID->m_pSong != NULL )
 		{
-			WID.m_Flags.bHasBeginnerOr1Meter = WID.m_pSong->IsEasy( GAMESTATE->GetCurrentStyle()->m_StepsType ) && SHOW_EASY_FLAG;
-			WID.m_Flags.bEdits = false;
+			WID->m_Flags.bHasBeginnerOr1Meter = WID->m_pSong->IsEasy( GAMESTATE->GetCurrentStyle()->m_StepsType ) && SHOW_EASY_FLAG;
+			WID->m_Flags.bEdits = false;
 			set<StepsType> vStepsType;
-			SongUtil::GetPlayableStepsTypes( WID.m_pSong, vStepsType );
+			SongUtil::GetPlayableStepsTypes( WID->m_pSong, vStepsType );
 			for (StepsType const &type : vStepsType)
-				WID.m_Flags.bEdits |= WID.m_pSong->HasEdits( type );
-			WID.m_Flags.iStagesForSong = GameState::GetNumStagesMultiplierForSong( WID.m_pSong );
+				WID->m_Flags.bEdits |= WID->m_pSong->HasEdits( type );
+			WID->m_Flags.iStagesForSong = GameState::GetNumStagesMultiplierForSong( WID->m_pSong );
 		}
-		else if( WID.m_pCourse != NULL )
+		else if( WID->m_pCourse != NULL )
 		{
-			WID.m_Flags.bHasBeginnerOr1Meter = false;
-			WID.m_Flags.bEdits = WID.m_pCourse->IsAnEdit();
-			WID.m_Flags.iStagesForSong = 1;
+			WID->m_Flags.bHasBeginnerOr1Meter = false;
+			WID->m_Flags.bEdits = WID->m_pCourse->IsAnEdit();
+			WID->m_Flags.iStagesForSong = 1;
 		}
 	}
 }
