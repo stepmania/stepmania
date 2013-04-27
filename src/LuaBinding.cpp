@@ -16,8 +16,8 @@ namespace
 
 		/* Register base classes first. */
 		map<RString, LuaBinding *> mapToRegister;
-		FOREACHS( LuaBinding*, *m_Subscribers.m_pSubscribers, p )
-			mapToRegister[(*p)->GetClassName()] = (*p);
+		for (LuaBinding *binding : *m_Subscribers.m_pSubscribers)
+			mapToRegister[binding->GetClassName()] = binding;
 
 		set<RString> setRegisteredAlready;
 
