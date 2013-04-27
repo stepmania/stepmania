@@ -346,9 +346,8 @@ void ActorUtil::LoadAllCommandsFromName( Actor& actor, const RString &sMetricsGr
 	set<RString> vsValueNames;
 	THEME->GetMetricsThatBeginWith( sMetricsGroup, sName, vsValueNames );
 
-	FOREACHS_CONST( RString, vsValueNames, v )
+	for (RString const & sv : vsValueNames)
 	{
-		const RString &sv = *v;
 		static const RString sEnding = "Command"; 
 		if( EndsWith(sv,sEnding) )
 		{
