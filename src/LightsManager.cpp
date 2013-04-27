@@ -89,8 +89,8 @@ static void GetUsedGameInputs( vector<GameInput> &vGameInputsOut )
 		}
 	}
 
-	FOREACHS_CONST( GameInput, vGIs, gi )
-		vGameInputsOut.push_back( *gi );
+	for (GameInput const &input : vGIs)
+		vGameInputsOut.push_back( input );
 }
 
 LightsManager*	LIGHTSMAN = NULL;	// global and accessable from anywhere in our program
