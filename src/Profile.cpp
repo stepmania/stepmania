@@ -1073,7 +1073,7 @@ XNode* Profile::SaveGeneralDataCreateNode() const
 
 	{
 		XNode* pUnlocks = pGeneralDataNode->AppendChild("Unlocks");
-		for (RString const unlockEntry : m_UnlockedEntryIDs)
+		for (RString const &unlockEntry : m_UnlockedEntryIDs)
 		{
 			XNode *pEntry = pUnlocks->AppendChild("UnlockEntry");
 			pEntry->AppendAttr( "UnlockEntryID", unlockEntry );
