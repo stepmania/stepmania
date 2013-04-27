@@ -2873,11 +2873,11 @@ void Player::UpdateJudgedRows()
 			tn.result.bHidden = true;
 		}
 
-		FOREACHS( RageSound *, setSounds, s )
+		for (RageSound *sound : setSounds)
 		{
 			// Only play one copy of each mine sound at a time per player.
-			(*s)->Stop();
-			(*s)->Play();
+			sound->Stop();
+			sound->Play();
 		}
 	}
 }
