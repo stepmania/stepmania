@@ -3004,20 +3004,20 @@ void Player::CrossedRows( int iLastRowCrossed, const RageTimer &now )
 	 * TODO: Move this to a separate function. */
 	if( HOLD_CHECKPOINTS && m_pPlayerState->m_PlayerController != PC_AUTOPLAY )
 	{
-		int iCheckpointFrequencyRows = ROWS_PER_BEAT/2;
-		if( CHECKPOINTS_USE_TICKCOUNTS )
-		{
-			int tickCurrent = m_Timing->GetTickcountAtRow( iLastRowCrossed );
-			// There are some charts that don't want tickcounts involved at all.
-			iCheckpointFrequencyRows = (tickCurrent > 0 ? ROWS_PER_BEAT / tickCurrent : 0);
-		}
-		else if( CHECKPOINTS_USE_TIME_SIGNATURES )
-		{
-			TimeSignatureSegment * tSignature = m_Timing->GetTimeSignatureSegmentAtRow( iLastRowCrossed );
-
-			// Most songs are in 4/4 time. The frequency for checking tick counts should reflect that.
-			iCheckpointFrequencyRows = ROWS_PER_BEAT * tSignature->GetDen() / (tSignature->GetNum() * 4);
-		}
+		int const iCheckpointFrequencyRows = [&]() {
+			if (CHECKPOINTS_USE_TICKCOUNTS)
+			{
+				int currentTick = m_Timing->GetTickcountAtRow(iLastRowCrossed);
+				// some charts don't want tickcounts involved.
+				return (currentTick > 0 ? ROWS_PER_BEAT / currentTick : 0);
+			}
+			if (CHECKPOINTS_USE_TIME_SIGNATURES)
+			{
+				TimeSignatureSegment const *seg = m_Timing->GetTimeSignatureSegmentAtRow(iLastRowCrossed);
+				return ROWS_PER_BEAT * seg->GetDen() / (seg->GetNum() * 4);
+			}
+			return ROWS_PER_BEAT / 2;
+		}();
 
 		if( iCheckpointFrequencyRows > 0 )
 		{
