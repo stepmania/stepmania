@@ -726,10 +726,10 @@ bool ThemeManager::GetPathInfoToAndFallback( PathInfo &out, ElementCategory cate
 	int n = 100;
 	while( n-- )
 	{
-		FOREACHD_CONST( Theme, g_vThemes, iter )
+		for (Theme const &theme : g_vThemes)
 		{
 			// search with requested name
-			if( GetPathInfoToRaw( out, iter->sThemeName, category, sMetricsGroup, sElement ) )
+			if( GetPathInfoToRaw( out, theme.sThemeName, category, sMetricsGroup, sElement ) )
 				return true;
 		}
 
