@@ -133,10 +133,8 @@ int64_t pos_map_queue::Search( int64_t iSourceFrame, bool *bApproximate ) const
 	 * it maps to. */
 	int64_t iClosestPosition = 0, iClosestPositionDist = INT_MAX;
 	const pos_map_t *pClosestBlock = &*m_pImpl->m_Queue.begin(); /* print only */
-	FOREACHL_CONST( pos_map_t, m_pImpl->m_Queue, it )
+	for (pos_map_t const &pm : m_pImpl->m_Queue)
 	{
-		const pos_map_t &pm = *it;
-
 		if( iSourceFrame >= pm.m_iSourceFrame &&
 			iSourceFrame < pm.m_iSourceFrame+pm.m_iFrames )
 		{

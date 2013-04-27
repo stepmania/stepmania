@@ -22,10 +22,6 @@ for( set<elemType>::iterator var = (vect).begin(); var != (vect).end(); ++var )
 #define FOREACHS_CONST( elemType, vect, var ) 	\
 for( set<elemType>::const_iterator var = (vect).begin(); var != (vect).end(); ++var )
 
-/** @brief General foreach loop iterating over a list, using a constant iterator. */
-#define FOREACHL_CONST( elemType, vect, var ) 			\
-for( list<elemType>::const_iterator var = (vect).begin(); var != (vect).end(); ++var )
-
 /** @brief General foreach loop iterating over a map. */
 #define FOREACHM( keyType, valType, vect, var ) 			\
 for( map<keyType, valType>::iterator var = (vect).begin(); var != (vect).end(); ++var )
