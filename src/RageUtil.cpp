@@ -1890,8 +1890,8 @@ void ReplaceEntityText( RString &sText, const map<char,RString> &m )
 {
 	RString sFind;
 
-	FOREACHM_CONST( char, RString, m, c )
-		sFind.append( 1, c->first );
+	for (std::pair<char, RString> const &c : m)
+		sFind.append( 1, c.first );
 
 	RString sRet;
 
