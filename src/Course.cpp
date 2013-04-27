@@ -742,9 +742,8 @@ const Style *Course::GetCourseStyle( const Game *pGame, int iNumPlayers ) const
 	vector<const Style*> vpStyles;
 	GAMEMAN->GetCompatibleStyles( pGame, iNumPlayers, vpStyles );
 
-	for( int s=0; s < (int) vpStyles.size(); ++s ) 
+	for (Style const *pStyle : vpStyles)
 	{
-		const Style *pStyle = vpStyles[s];
 		for (RString const &style : m_setStyles)
 		{
 			if( !style.CompareNoCase(pStyle->m_szName) )
