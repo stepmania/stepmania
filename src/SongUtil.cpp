@@ -963,9 +963,9 @@ void SongUtil::GetPlayableStepsTypes( const Song *pSong, set<StepsType> &vOut )
 	 * stages left to play. */
 	// this being const may have caused some problems... -aj
 	const vector<StepsType> &vstToShow = CommonMetrics::STEPS_TYPES_TO_SHOW.GetValue();
-	FOREACHS( StepsType, vStepsTypes, st )
+	for (StepsType const &type : vStepsTypes)
 	{
-		bool bShowThisStepsType = find( vstToShow.begin(), vstToShow.end(), *st ) != vstToShow.end();
+		bool bShowThisStepsType = find( vstToShow.begin(), vstToShow.end(), type ) != vstToShow.end();
 
 		int iNumPlayers = GAMESTATE->GetNumPlayersEnabled();
 		iNumPlayers = max( iNumPlayers, 1 );
@@ -975,7 +975,7 @@ void SongUtil::GetPlayableStepsTypes( const Song *pSong, set<StepsType> &vOut )
 			GAMESTATE->GetNumStagesMultiplierForSong(pSong);
 
 		if( bShowThisStepsType && bEnoughStages )
-			vOut.insert( *st );
+			vOut.insert( type );
 	}
 }
 
@@ -984,8 +984,8 @@ void SongUtil::GetPlayableSteps( const Song *pSong, vector<Steps*> &vOut )
 	set<StepsType> vStepsType;
 	GetPlayableStepsTypes( pSong, vStepsType );
 
-	FOREACHS( StepsType, vStepsType, st )
-		SongUtil::GetSteps( pSong, vOut, *st );
+	for (StepsType const &type : vStepsType)
+		SongUtil::GetSteps( pSong, vOut, type );
 
 	StepsUtil::RemoveLockedSteps( pSong, vOut );
 	StepsUtil::SortNotesArrayByDifficulty( vOut );
