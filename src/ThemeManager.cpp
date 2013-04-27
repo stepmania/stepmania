@@ -431,8 +431,8 @@ void ThemeManager::ReloadSubscribers()
 	// reload subscribers
 	if( g_Subscribers.m_pSubscribers )
 	{
-		FOREACHS_CONST( IThemeMetric*, *g_Subscribers.m_pSubscribers, p )
-			(*p)->Read();
+		for (IThemeMetric *metric : *g_Subscribers.m_pSubscribers)
+			metric->Read();
 	}
 }
 
@@ -440,8 +440,8 @@ void ThemeManager::ClearSubscribers()
 {
 	if( g_Subscribers.m_pSubscribers )
 	{
-		FOREACHS_CONST( IThemeMetric*, *g_Subscribers.m_pSubscribers, p )
-			(*p)->Clear();
+		for (IThemeMetric *metric : *g_Subscribers.m_pSubscribers)
+			metric->Clear();
 	}
 }
 
