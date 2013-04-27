@@ -150,9 +150,9 @@ void BannerCache::LoadBanner( RString sBannerPath )
 void BannerCache::OutputStats() const
 {
 	int iTotalSize = 0;
-	FOREACHM_CONST( RString, RageSurface *, g_BannerPathToImage, it )
+	for (std::pair<RString const &, RageSurface *> it : g_BannerPathToImage)
 	{
-		const RageSurface *pImage = it->second;
+		const RageSurface *pImage = it.second;
 		const int iSize = pImage->pitch * pImage->h;
 		iTotalSize += iSize;
 	}
