@@ -1046,8 +1046,8 @@ public:
 
 static void InvalidateObjects()
 {
-	FOREACHS( InvalidateObject*, g_InvalidateList, it )
-		(*it)->Invalidate();
+	for (InvalidateObject *it : g_InvalidateList)
+		it->Invalidate();
 }
 
 class RageCompiledGeometryHWOGL : public RageCompiledGeometrySWOGL, public InvalidateObject
