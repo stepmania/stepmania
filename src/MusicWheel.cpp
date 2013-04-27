@@ -460,9 +460,9 @@ void MusicWheel::GetSongList( vector<Song*> &arraySongs, SortOrder so )
 				set<StepsType> vStepsType;
 				SongUtil::GetPlayableStepsTypes( pSong, vStepsType );
 
-				FOREACHS( StepsType, vStepsType, st )
+				for (StepsType const &type : vStepsType)
 				{
-					if(pSong->HasStepsType(*st))
+					if(pSong->HasStepsType(type))
 					{
 						arraySongs.push_back( pSong );
 						break;
@@ -856,8 +856,8 @@ void MusicWheel::BuildWheelItemDatas( vector<MusicWheelItemData *> &arrayWheelIt
 			WID.m_Flags.bEdits = false;
 			set<StepsType> vStepsType;
 			SongUtil::GetPlayableStepsTypes( WID.m_pSong, vStepsType );
-			FOREACHS( StepsType, vStepsType, st )
-				WID.m_Flags.bEdits |= WID.m_pSong->HasEdits( *st );
+			for (StepsType const &type : vStepsType)
+				WID.m_Flags.bEdits |= WID.m_pSong->HasEdits( type );
 			WID.m_Flags.iStagesForSong = GameState::GetNumStagesMultiplierForSong( WID.m_pSong );
 		}
 		else if( WID.m_pCourse != NULL )
