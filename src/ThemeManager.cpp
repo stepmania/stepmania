@@ -63,12 +63,7 @@ LoadedThemeData *g_pLoadedThemeData = NULL;
 
 // For self-registering metrics
 #include "SubscriptionManager.h"
-
-SubscriptionManager<IThemeMetric> & GetMetricSubscribers()
-{
-	static SubscriptionManager<IThemeMetric> subscribers;
-	return subscribers;
-}
+static SubscriptionManager<IThemeMetric> g_Subscribers;
 
 class LocalizedStringImplThemeMetric : public ILocalizedStringImpl, public ThemeMetric<RString>
 {
@@ -100,7 +95,7 @@ public:
 
 void ThemeManager::Subscribe( IThemeMetric *p )
 {
-	GetMetricSubscribers().Subscribe( p );
+	g_Subscribers.Subscribe( p );
 
 	// It's ThemeManager's responsibility to make sure all of its subscribers
 	// are updated with current data.  If a metric is created after 
@@ -112,7 +107,7 @@ void ThemeManager::Subscribe( IThemeMetric *p )
 
 void ThemeManager::Unsubscribe( IThemeMetric *p )
 {
-	GetMetricSubscribers().Unsubscribe( p );
+	g_Subscribers.Unsubscribe( p );
 }
 
 
@@ -434,14 +429,20 @@ void ThemeManager::SwitchThemeAndLanguage( const RString &sThemeName_, const RSt
 void ThemeManager::ReloadSubscribers()
 {
 	// reload subscribers
-	FOREACHS_CONST( IThemeMetric*, GetMetricSubscribers().m_pSubscribers, p )
-		(*p)->Read();
+	if( g_Subscribers.m_pSubscribers )
+	{
+		FOREACHS_CONST( IThemeMetric*, *g_Subscribers.m_pSubscribers, p )
+			(*p)->Read();
+	}
 }
 
 void ThemeManager::ClearSubscribers()
 {
-	FOREACHS_CONST( IThemeMetric*, GetMetricSubscribers().m_pSubscribers, p )
-		(*p)->Clear();
+	if( g_Subscribers.m_pSubscribers )
+	{
+		FOREACHS_CONST( IThemeMetric*, *g_Subscribers.m_pSubscribers, p )
+			(*p)->Clear();
+	}
 }
 
 void ThemeManager::RunLuaScripts( const RString &sMask, bool bUseThemeDir )

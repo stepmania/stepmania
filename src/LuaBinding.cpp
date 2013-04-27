@@ -5,25 +5,18 @@
 #include "Foreach.h"
 
 #include "SubscriptionManager.h"
-
-SubscriptionManager<LuaBinding> & GetBindingSubscribers()
-{
-	static SubscriptionManager<LuaBinding> subscribers;
-	return subscribers;
-}
+static SubscriptionManager<LuaBinding> m_Subscribers;
 
 namespace
 {
 	void RegisterTypes( lua_State *L )
 	{
-		SubscriptionManager<LuaBinding> & subscribers = GetBindingSubscribers();
-
-		if( subscribers.m_pSubscribers.empty() )
+		if( m_Subscribers.m_pSubscribers == NULL )
 			return;
 
 		/* Register base classes first. */
 		map<RString, LuaBinding *> mapToRegister;
-		FOREACHS( LuaBinding*, subscribers.m_pSubscribers, p )
+		FOREACHS( LuaBinding*, *m_Subscribers.m_pSubscribers, p )
 			mapToRegister[(*p)->GetClassName()] = (*p);
 
 		set<RString> setRegisteredAlready;
@@ -66,12 +59,12 @@ REGISTER_WITH_LUA_FUNCTION( RegisterTypes );
 
 LuaBinding::LuaBinding()
 {
-	GetBindingSubscribers().Subscribe( this );
+	m_Subscribers.Subscribe( this );
 }
 
 LuaBinding::~LuaBinding()
 {
-	GetBindingSubscribers().Unsubscribe( this );
+	m_Subscribers.Unsubscribe( this );
 }
 
 void LuaBinding::Register( lua_State *L )

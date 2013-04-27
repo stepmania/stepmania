@@ -10,12 +10,7 @@ class LightsDriver: public RageDriver
 {
 public:
 	static void Create( const RString &sDriver, vector<LightsDriver *> &apAdd );
-
-	static DriverList & GetDriverList()
-	{
-		static DriverList driverList;
-		return driverList;
-	}
+	static DriverList m_pDriverList;
 
 	LightsDriver() {};
 	virtual ~LightsDriver() {};
@@ -24,7 +19,7 @@ public:
 };
 
 #define REGISTER_SOUND_DRIVER_CLASS2( name, x ) \
-	static RegisterRageDriver register_##x( &LightsDriver::GetDriverList(), #name, CreateClass<LightsDriver_##x, RageDriver> )
+	static RegisterRageDriver register_##x( &LightsDriver::m_pDriverList, #name, CreateClass<LightsDriver_##x, RageDriver> )
 #define REGISTER_SOUND_DRIVER_CLASS( name ) REGISTER_SOUND_DRIVER_CLASS2( name, name )
 
 #endif

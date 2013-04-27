@@ -11,7 +11,6 @@
 #include "RageUtil.h"
 #include "RageMath.h"
 #include "RageThreads.h"
-#include "RageUtil_AutoPtr.h"
 
 #include <numeric>
 
@@ -398,28 +397,25 @@ int PolyphaseFilter::NumInputsForOutputSamples( const State &State, int iOut, in
 	return iIn;
 }
 /** @brief Utilities for working with the PolyphaseFilter cache. */
-typedef AutoPtrCopyOnWrite<PolyphaseFilter> PolyphaseFilterAutoPtr;
 namespace PolyphaseFilterCache
 {
 	/* Cache filter data, and reuse it without copying.  All operations after creation
 	 * are const, so this doesn't cause thread-safety problems. */
-	typedef map<pair<int,float>, PolyphaseFilterAutoPtr> FilterMap;
+	typedef map<pair<int,float>, PolyphaseFilter *> FilterMap;
 	static RageMutex PolyphaseFiltersLock("PolyphaseFiltersLock");
 	static FilterMap g_mapPolyphaseFilters;
 		
-	const PolyphaseFilterAutoPtr MakePolyphaseFilter( int iUpFactor, float fCutoffFrequency )
+	const PolyphaseFilter *MakePolyphaseFilter( int iUpFactor, float fCutoffFrequency )
 	{
-		PolyphaseFilterAutoPtr result;
-
 		PolyphaseFiltersLock.Lock();
 		pair<int,float> params( make_pair(iUpFactor, fCutoffFrequency) );
 		FilterMap::const_iterator it = g_mapPolyphaseFilters.find(params);
 		if( it != g_mapPolyphaseFilters.end() )
 		{
 			/* We already have a filter for this upsampling factor and cutoff; use it. */
-			result = it->second;
+			PolyphaseFilter *pPolyphase = it->second;
 			PolyphaseFiltersLock.Unlock();
-			return result;
+			return pPolyphase;
 		}
 		int iWinSize = L*iUpFactor;
 		float *pFIR = new float[iWinSize];
@@ -432,14 +428,12 @@ namespace PolyphaseFilterCache
 		pPolyphase->Generate( pFIR );
 		delete [] pFIR;
 
-		result = PolyphaseFilterAutoPtr(pPolyphase);
-
-		g_mapPolyphaseFilters[params] = result;
+		g_mapPolyphaseFilters[params] = pPolyphase;
 		PolyphaseFiltersLock.Unlock();
-		return result;
+		return pPolyphase;
 	}
 
-	const PolyphaseFilterAutoPtr FindNearestPolyphaseFilter( int iUpFactor, float fCutoffFrequency )
+	const PolyphaseFilter *FindNearestPolyphaseFilter( int iUpFactor, float fCutoffFrequency )
 	{
 		/* Find a cached filter with the same iUpFactor and a nearby cutoff frequency.
 		 * Round the cutoff down, if possible; it's better to filter out too much than
@@ -450,7 +444,7 @@ namespace PolyphaseFilterCache
 		if( it != g_mapPolyphaseFilters.begin() )
 			--it;
 		ASSERT( it->first.first == iUpFactor );
-		PolyphaseFilterAutoPtr pPolyphase = it->second;
+		PolyphaseFilter *pPolyphase = it->second;
 		PolyphaseFiltersLock.Unlock();
 		return pPolyphase;
 	}
@@ -473,7 +467,7 @@ public:
 		 * when filtering.  This will only cause the low-pass filter to be rounded;
 		 * the conversion ratio will always be exact. */
 		m_iUpFactor = iUpFactor;
-		m_pPolyphase = PolyphaseFilterAutoPtr(NULL);
+		m_pPolyphase = NULL;
 
 		int iFilterIncrement = max( (iMaxDownFactor - iMinDownFactor)/10, 1 );
 		for( int iDownFactor = iMinDownFactor; iDownFactor <= iMaxDownFactor; iDownFactor += iFilterIncrement )
@@ -538,13 +532,13 @@ private:
 		return fCutoffFrequency;
 	}
 
-	const PolyphaseFilterAutoPtr GetFilter( int iDownFactor ) const
+	const PolyphaseFilter *GetFilter( int iDownFactor ) const
 	{
 		float fCutoffFrequency = GetCutoffFrequency( iDownFactor );
 		return PolyphaseFilterCache::FindNearestPolyphaseFilter( m_iUpFactor, fCutoffFrequency );
 	}
 	
-	PolyphaseFilterAutoPtr m_pPolyphase;
+	const PolyphaseFilter *m_pPolyphase;
 	PolyphaseFilter::State *m_pState;
 	int m_iUpFactor;
 	int m_iDownFactor;

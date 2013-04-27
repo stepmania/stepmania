@@ -17,25 +17,22 @@ AutoScreenMessage(SM_Pause);
 AutoScreenMessage(SM_Success);
 AutoScreenMessage(SM_Failure);
 
-map<RString, ScreenMessage> & GetScreenMessages()
-{
-	static map<RString, ScreenMessage> screenMessages;
-	return screenMessages;
-}
+static map<RString, ScreenMessage> *m_pScreenMessages;
 
 ScreenMessage ScreenMessageHelpers::ToScreenMessage( const RString &sName )
 {
-	map<RString, ScreenMessage> & screenMessages = GetScreenMessages();
+	if( m_pScreenMessages == NULL )
+		m_pScreenMessages = new map<RString, ScreenMessage>;
 
-	if( screenMessages.find( sName ) == screenMessages.end() )
-		screenMessages[sName] = (ScreenMessage)sName;
+	if( m_pScreenMessages->find( sName ) == m_pScreenMessages->end() )
+		(*m_pScreenMessages)[sName] = (ScreenMessage)sName;
 
-	return screenMessages[sName];
+	return (*m_pScreenMessages)[sName];
 }
 
 RString	ScreenMessageHelpers::ScreenMessageToString( ScreenMessage SM )
 {
-	FOREACHM( RString, ScreenMessage, GetScreenMessages(), it )
+	FOREACHM( RString, ScreenMessage, *m_pScreenMessages, it )
 		if( SM == it->second )
 			return (*it).first;
 

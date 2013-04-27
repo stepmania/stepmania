@@ -4,6 +4,8 @@
 #include "Foreach.h"
 #include "arch/arch_default.h"
 
+DriverList LightsDriver::m_pDriverList;
+
 void LightsDriver::Create( const RString &sDrivers, vector<LightsDriver *> &Add )
 {
 	LOG->Trace( "Initializing lights drivers: %s", sDrivers.c_str() );
@@ -13,7 +15,7 @@ void LightsDriver::Create( const RString &sDrivers, vector<LightsDriver *> &Add 
 	
 	FOREACH_CONST( RString, asDriversToTry, Driver )
 	{
-		RageDriver *pRet = GetDriverList().Create( *Driver );
+		RageDriver *pRet = m_pDriverList.Create( *Driver );
 		if( pRet == NULL )
 		{
 			LOG->Trace( "Unknown lights driver: %s", Driver->c_str() );

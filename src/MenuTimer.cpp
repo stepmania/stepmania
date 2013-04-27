@@ -22,11 +22,6 @@ MenuTimer::MenuTimer()
 	WARNING_COMMAND = NULL;
 }
 
-MenuTimer::~MenuTimer()
-{
-	delete WARNING_COMMAND;
-}
-
 void MenuTimer::Load( RString sMetricsGroup )
 {
 	m_sprFrame.Load( THEME->GetPathG(sMetricsGroup, "Frame") );

@@ -268,55 +268,28 @@ bool TimingData::IsFakeAtRow( int iNoteRow ) const
  *
  * Note that types whose SegmentEffectAreas are "Indefinite" are NULL here,
  * because they should never need to be used; we always have at least one such
- * segment in the TimingData, and if not, we'll crash anyway. -- vyhd
- *
- * I've modified the dummy segments a bit to use a static function trick to make
- * sure the objects gets destructed instead of leaking a bunch of pointers.
- */
-TimingSegment * GetDummyTimingSegment( TimingSegmentType tst )
+ * segment in the TimingData, and if not, we'll crash anyway. -- vyhd */
+static const TimingSegment* DummySegments[NUM_TimingSegmentType] =
 {
-	TimingSegment * result = NULL;
-
-	switch( tst )
-	{
-		case SEGMENT_STOP:
-		{
-			static StopSegment stopSegment;
-			result = &stopSegment;
-			break;
-		}
-
-		case SEGMENT_DELAY:
-		{
-			static DelaySegment delaySegment;
-			result = &delaySegment;
-			break;
-		}
-
-		case SEGMENT_WARP:
-		{
-			static WarpSegment warpSegment;
-			result = &warpSegment;
-			break;
-		}
-
-		case SEGMENT_FAKE:
-		{
-			static FakeSegment fakeSegment;
-			result = &fakeSegment;
-			break;
-		}
-	}
-
-	return result;
-}
+	NULL, // BPMSegment
+	new StopSegment,
+	new DelaySegment,
+	NULL, // TimeSignatureSegment
+	new WarpSegment,
+	NULL, // LabelSegment
+	NULL, // TickcountSegment
+	NULL, // ComboSegment
+	NULL, // SpeedSegment
+	NULL, // ScrollSegment
+	new FakeSegment
+};
 
 const TimingSegment* TimingData::GetSegmentAtRow( int iNoteRow, TimingSegmentType tst ) const
 {
 	const vector<TimingSegment*> &vSegments = GetTimingSegments(tst);
 
 	if( vSegments.empty() )
-		return GetDummyTimingSegment(tst);
+		return DummySegments[tst];
 
 	int index = GetSegmentIndexAtRow( tst, iNoteRow );
 	const TimingSegment *seg = vSegments[index];
@@ -335,7 +308,7 @@ const TimingSegment* TimingData::GetSegmentAtRow( int iNoteRow, TimingSegmentTyp
 			if( seg->GetRow() == iNoteRow )
 				return seg;
 			else
-				return GetDummyTimingSegment(tst);
+				return DummySegments[tst];
 		}
 	}
 

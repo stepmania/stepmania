@@ -23,12 +23,7 @@ class InputHandler: public RageDriver
 {
 public:
 	static void Create( const RString &sDrivers, vector<InputHandler *> &apAdd );
-
-	static DriverList & GetDriverList()
-	{
-		static DriverList driverList;
-		return driverList;
-	}
+	static DriverList m_pDriverList;
 
 	InputHandler(): m_LastUpdate(), m_iInputsSinceUpdate(0) {}
 	virtual ~InputHandler() { }
@@ -74,7 +69,7 @@ private:
 };
 
 #define REGISTER_INPUT_HANDLER_CLASS2( name, x ) \
-	static RegisterRageDriver register_##name( &InputHandler::GetDriverList(), #name, CreateClass<InputHandler_##x, RageDriver> )
+	static RegisterRageDriver register_##name( &InputHandler::m_pDriverList, #name, CreateClass<InputHandler_##x, RageDriver> )
 #define REGISTER_INPUT_HANDLER_CLASS( name ) REGISTER_INPUT_HANDLER_CLASS2( name, name )
 
 

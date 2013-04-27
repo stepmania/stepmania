@@ -25,12 +25,7 @@ class DialogDriver_Null : public DialogDriver { };
 typedef DialogDriver *(*CreateDialogDriverFn)();
 struct RegisterDialogDriver
 {
-	static map<istring, CreateDialogDriverFn> & GetRegistrees()
-	{
-		static map<istring, CreateDialogDriverFn> registrees;
-		return registrees;
-	}
-
+	static map<istring, CreateDialogDriverFn> *g_pRegistrees;
 	RegisterDialogDriver( const istring &sName, CreateDialogDriverFn pfn );
 };
 #define REGISTER_DIALOG_DRIVER_CLASS( name ) \
