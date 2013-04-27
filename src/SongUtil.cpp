@@ -907,10 +907,9 @@ void SongUtil::GetAllSongGenres( vector<RString> &vsOut )
 		if( !(*song)->m_sGenre.empty() )
 			genres.insert( (*song)->m_sGenre );
 	}
-
-	FOREACHS_CONST( RString, genres, s )
+	for (RString const genre : genres)
 	{
-		vsOut.push_back( *s );
+		vsOut.push_back( genre );
 	}
 }
 
