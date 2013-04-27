@@ -31,8 +31,8 @@ bool NoteData::IsComposite() const
 {
 	for( int track = 0; track < GetNumTracks(); ++track )
 	{
-		FOREACHM_CONST( int, TapNote, m_TapNotes[track], tn )
-			if( tn->second.pn != PLAYER_INVALID )
+		for (std::pair<int, TapNote> const &tn : m_TapNotes[track])
+			if( tn.second.pn != PLAYER_INVALID )
 				return true;
 	}
 	return false;
