@@ -401,8 +401,8 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 							vector<Steps*> v;
 							SongUtil::GetSteps( GetSelectedSong(), v, GetSelectedStepsType(), Difficulty_Edit );
 							StepsUtil::SortStepsByDescription( v );
-							FOREACH_CONST( Steps*, v, p )
-								m_vpSteps.push_back( StepsAndDifficulty(*p,dc) );
+							for (Steps *p : v)
+								m_vpSteps.push_back( StepsAndDifficulty(p,dc) );
 						}
 						break;
 					case EditMode_Home:
@@ -499,8 +499,8 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 				vector<Steps*> v;
 				SongUtil::GetSteps( GetSelectedSong(), v, GetSelectedSourceStepsType(), dc );
 				StepsUtil::SortStepsByDescription( v );
-				FOREACH_CONST( Steps*, v, pSteps )
-					m_vpSourceSteps.push_back( StepsAndDifficulty(*pSteps,dc) );
+				for (Steps *pSteps : v)
+					m_vpSourceSteps.push_back( StepsAndDifficulty(pSteps,dc) );
 			}
 		}
 		StripLockedStepsAndDifficulty( m_vpSteps );
