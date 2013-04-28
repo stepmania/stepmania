@@ -8346,7 +8346,6 @@
 					"\"$(SRCROOT)/ffmpeg/lib\"",
 				);
 				LINKER_DISPLAYS_MANGLED_NAMES = NO;
-				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				OBJROOT = "$(SRCROOT)/build";
 				OTHER_CPLUSPLUSFLAGS = (
 					"-finline-limit=300",
@@ -8852,7 +8851,6 @@
 					"\"$(SRCROOT)/ffmpeg/lib\"",
 				);
 				LINKER_DISPLAYS_MANGLED_NAMES = NO;
-				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				OBJROOT = "$(SRCROOT)/build";
 				OTHER_CPLUSPLUSFLAGS = (
 					"-finline-limit=300",
@@ -9104,7 +9102,6 @@
 					"\"$(SRCROOT)/ffmpeg/lib\"",
 				);
 				LINKER_DISPLAYS_MANGLED_NAMES = NO;
-				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				OBJROOT = "$(SRCROOT)/build";
 				OTHER_CPLUSPLUSFLAGS = (
 					"-finline-limit=300",
