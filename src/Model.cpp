@@ -727,42 +727,42 @@ void Model::Update( float fDelta )
 int Model::GetNumStates() const
 {
 	int iMaxStates = 0;
-	FOREACH_CONST( msMaterial, m_Materials, m )
-		iMaxStates = max( iMaxStates, m->diffuse.GetNumStates() );
+	for (msMaterial const &m : m_Materials)
+		iMaxStates = max( iMaxStates, m.diffuse.GetNumStates() );
 	return iMaxStates;
 }
 
 void Model::SetState( int iNewState )
 {
-	FOREACH( msMaterial, m_Materials, m )
+	for (msMaterial &m : m_Materials)
 	{
-		m->diffuse.SetState( iNewState );
-		m->alpha.SetState( iNewState );
+		m.diffuse.SetState( iNewState );
+		m.alpha.SetState( iNewState );
 	}
 }
 
 float Model::GetAnimationLengthSeconds() const
 {
 	float fSeconds = 0;
-	FOREACH_CONST( msMaterial, m_Materials, m )
-		fSeconds = max( fSeconds, m->diffuse.GetAnimationLengthSeconds() );
+	for (msMaterial const &m : m_Materials)
+		fSeconds = max( fSeconds, m.diffuse.GetAnimationLengthSeconds() );
 	return fSeconds;
 }
 
 void Model::SetSecondsIntoAnimation( float fSeconds )
 {
-	FOREACH( msMaterial, m_Materials, m )
+	for (msMaterial &m : m_Materials)
 	{
-		m->diffuse.SetSecondsIntoAnimation( fSeconds );
-		m->alpha.SetSecondsIntoAnimation( fSeconds );
+		m.diffuse.SetSecondsIntoAnimation( fSeconds );
+		m.alpha.SetSecondsIntoAnimation( fSeconds );
 	}
 }
 
 bool Model::MaterialsNeedNormals() const
 {
-	FOREACH_CONST( msMaterial, m_Materials, m )
+	for (msMaterial const &m : m_Materials)
 	{
-		if( m->NeedsNormals() )
+		if( m.NeedsNormals() )
 			return true;
 	}
 	return false;
