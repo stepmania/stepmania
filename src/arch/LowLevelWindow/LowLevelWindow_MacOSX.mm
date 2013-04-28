@@ -109,7 +109,7 @@ public:
 - (void) setParams:(NSValue *)params
 {
 	const VideoModeParams &p = *(const VideoModeParams *)[params pointerValue];
-	NSRect contentRect = { { 0, 0 }, { p.width, p.height } };	
+	NSRect contentRect = { { 0, 0 }, { static_cast<CGFloat>(p.width), static_cast<CGFloat>(p.height) } };	
 
 	[m_Window setContentSize:contentRect.size];
 	[m_Window setTitle:[NSString stringWithUTF8String:p.sWindowTitle.c_str()]];		
