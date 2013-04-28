@@ -1698,9 +1698,9 @@ void SongManager::RefreshCourseGroupInfo()
 {
 	m_mapCourseGroupToInfo.clear();
 
-	FOREACH_CONST( Course*, m_pCourses, c )
+	for (Course const * c : m_pCourses)
 	{
-		m_mapCourseGroupToInfo[(*c)->m_sGroupName];	// insert
+		m_mapCourseGroupToInfo[c->m_sGroupName];	// insert
 	}
 }
 
