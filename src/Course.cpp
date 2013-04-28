@@ -208,7 +208,7 @@ void Course::Init()
 bool Course::IsPlayableIn( StepsType st ) const
 {
 	// Stripped down version of GetTrailUnsorted
-	FOREACH_CONST( CourseEntry, m_vEntries, e )
+	for (std::vector<CourseEntry>::const_iterator e = m_vEntries.begin(); e != m_vEntries.end(); ++e)
 	{
 		SongCriteria soc = e->songCriteria;
 
@@ -472,7 +472,7 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 	vector<SongAndSteps> vSongAndSteps;
 
 	// Resolve each entry to a Song and Steps.
-	FOREACH_CONST( CourseEntry, entries, e )
+	for (std::vector<CourseEntry>::const_iterator e = entries.begin(); e != entries.end(); ++e)
 	{
 		SongAndSteps resolved;	// fill this in
 		SongCriteria soc = e->songCriteria;
@@ -521,19 +521,19 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 		vector<Song*> vpSongs;
 		typedef vector<Steps*> StepsVector;
 		map<Song*,StepsVector> mapSongToSteps;
-		FOREACH_CONST( SongAndSteps, vSongAndSteps, sas )
+		for (SongAndSteps const &sas : vSongAndSteps)
 		{
-			StepsVector &v = mapSongToSteps[sas->pSong];
+			StepsVector &v = mapSongToSteps[sas.pSong];
 
-			v.push_back( sas->pSteps );
+			v.push_back( sas.pSteps );
 			if( v.size() == 1 )
-				vpSongs.push_back( sas->pSong );
+				vpSongs.push_back( sas.pSong );
 		}
 
 		CourseSortSongs( e->songSort, vpSongs, rnd );
 
 		ASSERT( e->iChooseIndex >= 0 );
-		if( e->iChooseIndex < int(vSongAndSteps.size()) )
+		if( e->iChooseIndex < static_cast<int>(vSongAndSteps.size()) )
 		{
 			resolved.pSong = vpSongs[e->iChooseIndex];
 			const vector<Steps*> &mappedSongs = mapSongToSteps[resolved.pSong];
@@ -697,9 +697,9 @@ int Course::GetMeter( StepsType st, CourseDifficulty cd ) const
 
 bool Course::HasMods() const
 {
-	FOREACH_CONST( CourseEntry, m_vEntries, e )
+	for (CourseEntry const &e : m_vEntries)
 	{
-		if( !e->attacks.empty() )
+		if( !e.attacks.empty() )
 			return true;
 	}
 
@@ -712,13 +712,12 @@ bool Course::HasTimedMods() const
 	// HasTimedMods now searches for bGlobal in the attacks; if one of
 	// them is false, it has timed mods. Also returning false will probably
 	// take longer than expected. -aj
-	FOREACH_CONST( CourseEntry, m_vEntries, e )
+	for (CourseEntry const &e : m_vEntries)
 	{
-		if( !e->attacks.empty() )
+		if( !e.attacks.empty() )
 		{
-			for( unsigned s=0; s < e->attacks.size(); s++ )
+			for (Attack const &attack : e.attacks)
 			{
-				const Attack attack = e->attacks[s];
 				if(!attack.bGlobal)
 					return true;
 			}
@@ -729,9 +728,9 @@ bool Course::HasTimedMods() const
 
 bool Course::AllSongsAreFixed() const
 {
-	FOREACH_CONST( CourseEntry, m_vEntries, e )
+	for (CourseEntry const &e : m_vEntries)
 	{
-		if( !e->IsFixedSong() )
+		if( !e.IsFixedSong() )
 			return false;
 	}
 	return true;
@@ -760,9 +759,9 @@ void Course::InvalidateTrailCache()
 
 void Course::Invalidate( const Song *pStaleSong )
 {
-	FOREACH_CONST( CourseEntry, m_vEntries, e )
+	for (CourseEntry const &e : m_vEntries)
 	{
-		Song *pSong = e->songID.ToSong();
+		Song *pSong = e.songID.ToSong();
 		if( pSong == pStaleSong )	// a fixed entry that references the stale Song
 		{
 			RevertFromDisk();
@@ -858,11 +857,11 @@ bool Course::GetTotalSeconds( StepsType st, float& fSecondsOut ) const
 
 bool Course::CourseHasBestOrWorst() const
 {
-	FOREACH_CONST( CourseEntry, m_vEntries, e )
+	for (CourseEntry const &e : m_vEntries)
 	{
-		if( e->iChooseIndex == SongSort_MostPlays  &&  e->iChooseIndex != -1 )
+		if( e.iChooseIndex == SongSort_MostPlays  &&  e.iChooseIndex != -1 )
 			return true;
-		if( e->iChooseIndex == SongSort_FewestPlays  &&  e->iChooseIndex != -1 )
+		if( e.iChooseIndex == SongSort_FewestPlays  &&  e.iChooseIndex != -1 )
 			return true;
 	}
 
@@ -941,15 +940,14 @@ bool Course::IsRanking() const
 
 const CourseEntry *Course::FindFixedSong( const Song *pSong ) const
 {
-	FOREACH_CONST( CourseEntry, m_vEntries, e )
+	for (CourseEntry const &entry : m_vEntries)
 	{
-		const CourseEntry &entry = *e;
 		Song *lSong = entry.songID.ToSong();
 		if( pSong == lSong )
 			return &entry;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 void Course::GetAllCachedTrails( vector<Trail *> &out )
