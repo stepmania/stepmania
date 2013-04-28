@@ -50,8 +50,8 @@ RageSoundManager::~RageSoundManager()
 {
 	/* Don't lock while deleting the driver (the decoder thread might deadlock). */
 	delete m_pDriver;
-	FOREACHM( RString, RageSoundReader_Preload *, m_mapPreloadedSounds, s )
-		delete s->second;
+	for (std::pair<RString const &, RageSoundReader_Preload *> s : m_mapPreloadedSounds)
+		delete s.second;
 	m_mapPreloadedSounds.clear();
 }
 
