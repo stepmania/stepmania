@@ -42,11 +42,11 @@ RageTextureManager::RageTextureManager():
 
 RageTextureManager::~RageTextureManager()
 {
-	FOREACHM( RageTextureID, RageTexture*, m_mapPathToTexture, i )
+	for (std::pair<RageTextureID const &, RageTexture *> i : m_mapPathToTexture)
 	{
-		RageTexture* pTexture = i->second;
+		RageTexture* pTexture = i.second;
 		if( pTexture->m_iRefCount )
-			LOG->Trace( "TEXTUREMAN LEAK: '%s', RefCount = %d.", i->first.filename.c_str(), pTexture->m_iRefCount );
+			LOG->Trace( "TEXTUREMAN LEAK: '%s', RefCount = %d.", i.first.filename.c_str(), pTexture->m_iRefCount );
 		SAFE_DELETE( pTexture );
 	}
 }
