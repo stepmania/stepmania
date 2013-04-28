@@ -9,6 +9,7 @@
 #include "RageLog.h"
 #include "RageDisplay.h"
 #include "Foreach.h"
+#include <numeric>
 
 #define MS_MAX_NAME	32
 
@@ -148,10 +149,8 @@ void AnimatedTexture::SetState( int iState )
 
 float AnimatedTexture::GetAnimationLengthSeconds() const
 {
-	float fTotalSeconds = 0;
-	FOREACH_CONST( AnimatedTextureState, vFrames, ats )
-		fTotalSeconds += ats->fDelaySecs;
-	return fTotalSeconds;
+	return std::accumulate(vFrames.begin(), vFrames.end(), 0.f,
+		[](float total, AnimatedTextureState state) { return total += state.fDelaySecs; });
 }
 
 void AnimatedTexture::SetSecondsIntoAnimation( float fSeconds )
