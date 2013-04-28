@@ -1817,23 +1817,23 @@ void GameState::StoreRankingName( PlayerNumber pn, RString sName )
 	if( !PREFSMAN->m_bAllowMultipleHighScoreWithSameName )
 	{
 		// erase all but the highest score for each name
-		FOREACHM( SongID, Profile::HighScoresForASong, pProfile->m_SongHighScores, iter )
-			FOREACHM( StepsID, Profile::HighScoresForASteps, iter->second.m_StepsHighScores, iter2 )
-				iter2->second.hsl.RemoveAllButOneOfEachName();
+		for (auto &songIter : pProfile->m_SongHighScores)
+			for (auto &stepIter : songIter.second.m_StepsHighScores)
+				stepIter.second.hsl.RemoveAllButOneOfEachName();
 
-		FOREACHM( CourseID, Profile::HighScoresForACourse, pProfile->m_CourseHighScores, iter )
-			FOREACHM( TrailID, Profile::HighScoresForATrail, iter->second.m_TrailHighScores, iter2 )
-				iter2->second.hsl.RemoveAllButOneOfEachName();
+		for (auto &courseIter : pProfile->m_CourseHighScores)
+			for (auto &trailIter : courseIter.second.m_TrailHighScores)
+				trailIter.second.hsl.RemoveAllButOneOfEachName();
 	}
 
 	// clamp high score sizes
-	FOREACHM( SongID, Profile::HighScoresForASong, pProfile->m_SongHighScores, iter )
-		FOREACHM( StepsID, Profile::HighScoresForASteps, iter->second.m_StepsHighScores, iter2 )
-			iter2->second.hsl.ClampSize( true );
+	for (auto &songIter : pProfile->m_SongHighScores)
+		for (auto &stepIter : songIter.second.m_StepsHighScores)
+			stepIter.second.hsl.ClampSize( true );
 
-	FOREACHM( CourseID, Profile::HighScoresForACourse, pProfile->m_CourseHighScores, iter )
-		FOREACHM( TrailID, Profile::HighScoresForATrail, iter->second.m_TrailHighScores, iter2 )
-			iter2->second.hsl.ClampSize( true );
+	for (auto &courseIter : pProfile->m_CourseHighScores)
+		for (auto &trailIter : courseIter.second.m_TrailHighScores)
+			trailIter.second.hsl.ClampSize( true );
 }
 
 bool GameState::AllAreInDangerOrWorse() const
