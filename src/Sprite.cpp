@@ -13,6 +13,7 @@
 #include "Foreach.h"
 #include "LuaBinding.h"
 #include "LuaManager.h"
+#include <numeric>
 
 REGISTER_ACTOR_CLASS( Sprite );
 
@@ -742,10 +743,7 @@ void Sprite::SetState( int iNewState )
 
 float Sprite::GetAnimationLengthSeconds() const
 {
-	float fTotal = 0;
-	FOREACH_CONST( State, m_States, s )
-		fTotal += s->fDelay;
-	return fTotal;
+	return std::accumulate(m_States.begin(), m_States.end(), 0.f, [](float total, State const &s) { return total += s.fDelay; });
 }
 
 void Sprite::SetSecondsIntoAnimation( float fSeconds )
