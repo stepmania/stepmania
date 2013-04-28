@@ -161,8 +161,8 @@ void BannerCache::OutputStats() const
 
 void BannerCache::UnloadAllBanners()
 {
-	FOREACHM( RString, RageSurface *, g_BannerPathToImage, it )
-		delete it->second;
+	for (std::pair<RString const &, RageSurface *> it : g_BannerPathToImage)
+		delete it.second;
 
 	g_BannerPathToImage.clear();
 }
