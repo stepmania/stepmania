@@ -452,13 +452,13 @@ void Player::Init(
 
 			if( GAMESTATE->IsCourseMode() )
 			{
-				FOREACH_CONST( TrailEntry, GAMESTATE->m_pCurTrail[pn]->m_vEntries, e )
+				for (TrailEntry const &e : GAMESTATE->m_pCurTrail[pn]->m_vEntries)
 				{
 					float fMaxForEntry;
 					if (M_MOD_HIGH_CAP > 0)
-						e->pSong->m_SongTiming.GetActualBPM( fThrowAway, fMaxForEntry, M_MOD_HIGH_CAP );
+						e.pSong->m_SongTiming.GetActualBPM( fThrowAway, fMaxForEntry, M_MOD_HIGH_CAP );
 					else 
-						e->pSong->m_SongTiming.GetActualBPM( fThrowAway, fMaxForEntry );
+						e.pSong->m_SongTiming.GetActualBPM( fThrowAway, fMaxForEntry );
 					fMaxBPM = max( fMaxForEntry, fMaxBPM );
 				}
 			}
@@ -3268,12 +3268,12 @@ void Player::HandleHoldCheckpoint(int iRow,
 		// added for http://ssc.ajworld.net/sm-ssc/bugtracker/view.php?id=16 -aj
 		if( CHECKPOINTS_FLASH_ON_HOLD )
 		{
-			FOREACH_CONST( int, viColsWithHold, i )
+			for (int const &i : viColsWithHold)
 			{
 				bool bBright = m_pPlayerStageStats 
 					&& m_pPlayerStageStats->m_iCurCombo>(int)BRIGHT_GHOST_COMBO_THRESHOLD;
 				if( m_pNoteField )
-					m_pNoteField->DidHoldNote( *i, HNS_Held, bBright );
+					m_pNoteField->DidHoldNote( i, HNS_Held, bBright );
 			}
 		}
 	}
