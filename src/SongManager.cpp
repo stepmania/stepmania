@@ -1702,11 +1702,6 @@ void SongManager::RefreshCourseGroupInfo()
 	{
 		m_mapCourseGroupToInfo[(*c)->m_sGroupName];	// insert
 	}
-
-	// TODO: Search for course group banners
-	FOREACHM( RString, CourseGroupInfo, m_mapCourseGroupToInfo, iter )
-	{
-	}
 }
 
 void SongManager::LoadStepEditsFromProfileDir( const RString &sProfileDir, ProfileSlot slot )
