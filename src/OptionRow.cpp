@@ -63,8 +63,8 @@ void OptionRow::Clear()
 
 	if( m_pHand != NULL )
 	{
-		FOREACH_CONST( RString, m_pHand->m_vsReloadRowMessages, m )
-			MESSAGEMAN->Unsubscribe( this, *m );
+		for (RString const &m : m_pHand->m_vsReloadRowMessages)
+			MESSAGEMAN->Unsubscribe( this, m );
 	}
 	SAFE_DELETE( m_pHand );
 
@@ -125,8 +125,8 @@ void OptionRow::LoadNormal( OptionRowHandler *pHand, bool bFirstItemGoesDown )
 	m_pHand = pHand;
 	m_bFirstItemGoesDown = bFirstItemGoesDown;
 
-	FOREACH_CONST( RString, m_pHand->m_vsReloadRowMessages, m )
-		MESSAGEMAN->Subscribe( this, *m );
+	for (RString const &m : m_pHand->m_vsReloadRowMessages)
+		MESSAGEMAN->Subscribe( this, m );
 
 	ChoicesChanged( RowType_Normal );
 }
@@ -857,10 +857,13 @@ void OptionRow::Reload()
 void OptionRow::HandleMessage( const Message &msg )
 {
 	bool bReload = false;
-	FOREACH_CONST( RString, m_pHand->m_vsReloadRowMessages, m )
+	for (RString const &m : m_pHand->m_vsReloadRowMessages)
 	{
-		if( *m == msg.GetName() )
+		if( m == msg.GetName() )
+		{
 			bReload = true;
+			break;
+		}
 	}
 	if( bReload )
 		Reload();
@@ -882,12 +885,9 @@ void OptionRow::ImportOptions( const vector<PlayerNumber> &vpns )
 {
 	ASSERT( m_pHand->m_Def.m_vsChoices.size() > 0 );
 
-	FOREACH_CONST( PlayerNumber, vpns, iter )
+	for (PlayerNumber const &p : vpns)
 	{
-		PlayerNumber p = *iter;
-
-		FOREACH( bool, m_vbSelected[p], b )
-			*b = false;
+		std::fill_n(m_vbSelected[p].begin(), m_vbSelected[p].size(), false);
 
 		ASSERT( m_vbSelected[p].size() == m_pHand->m_Def.m_vsChoices.size() );
 		ERASE_ONE_BOOL_AT_FRONT_IF_NEEDED( m_vbSelected[p] );
@@ -895,10 +895,8 @@ void OptionRow::ImportOptions( const vector<PlayerNumber> &vpns )
 
 	m_pHand->ImportOption( this, vpns, m_vbSelected );
 
-	FOREACH_CONST( PlayerNumber, vpns, iter )
+	for (PlayerNumber const &p : vpns)
 	{
-		PlayerNumber p = *iter;
-
 		INSERT_ONE_BOOL_AT_FRONT_IF_NEEDED( m_vbSelected[p] );
 		VerifySelected( m_pHand->m_Def.m_selectType, m_vbSelected[p], m_pHand->m_Def.m_sName );
 	}
@@ -910,9 +908,8 @@ int OptionRow::ExportOptions( const vector<PlayerNumber> &vpns, bool bRowHasFocu
 
 	int iChangeMask = 0;
 
-	FOREACH_CONST( PlayerNumber, vpns, iter )
+	for (PlayerNumber const &p : vpns)
 	{
-		PlayerNumber p = *iter;
 		bool bFocus = bRowHasFocus[p];
 
 		VerifySelected( m_pHand->m_Def.m_selectType, m_vbSelected[p], m_pHand->m_Def.m_sName );
@@ -927,9 +924,8 @@ int OptionRow::ExportOptions( const vector<PlayerNumber> &vpns, bool bRowHasFocu
 
 	iChangeMask |= m_pHand->ExportOption( vpns, m_vbSelected );
 
-	FOREACH_CONST( PlayerNumber, vpns, iter )
+	for (PlayerNumber const &p : vpns)
 	{
-		PlayerNumber p = *iter;
 		bool bFocus = bRowHasFocus[p];
 
 		int iChoice = GetChoiceInRowWithFocus( p );
