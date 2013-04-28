@@ -134,8 +134,8 @@ static void InitNames()
 	g_mapNamesToString[MOUSE_WHEELUP] = "mousewheel up";
 	g_mapNamesToString[MOUSE_WHEELDOWN] = "mousewheel down";
 
-	FOREACHM( DeviceButton, RString, g_mapNamesToString, m )
-		g_mapStringToNames[m->second] = m->first;
+	for (std::pair<DeviceButton const &, RString const &> m : g_mapNamesToString)
+		g_mapStringToNames[m.second] = m.first;
 }
 
 /* Return a reversible representation of a DeviceButton. This is not affected
