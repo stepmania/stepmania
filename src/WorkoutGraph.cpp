@@ -60,10 +60,10 @@ void WorkoutGraph::SetInternal( int iMinSongsPlayed )
 		return;
 
 	vector<int> viMeters;
-	FOREACH_CONST( TrailEntry, pTrail->m_vEntries, e )
+	for (TrailEntry const &e : pTrail->m_vEntries)
 	{
-		ASSERT( e->pSteps != NULL );
-		viMeters.push_back( e->pSteps->GetMeter() );
+		ASSERT( e.pSteps != NULL );
+		viMeters.push_back( e.pSteps->GetMeter() );
 	}
 
 	int iBlocksWide = viMeters.size();
@@ -84,17 +84,17 @@ void WorkoutGraph::SetInternal( int iMinSongsPlayed )
 	m_sprEmpty.ZoomToWidth( iBlocksWide * fBlockSize );
 	m_sprEmpty.ZoomToHeight( iBlocksHigh * fBlockSize );
 
-	FOREACH_CONST( int, viMeters, iter )
+	int index = 0;
+	for (int const &meter : viMeters)
 	{
-		int iIndex = iter - viMeters.begin();
-		float fOffsetFromCenter = iIndex - (iBlocksWide-1)/2.0f;
+		float fOffsetFromCenter = (index++) - (iBlocksWide-1)/2.0f;
 		Sprite *p = new Sprite;
 		p->Load( THEME->GetPathG("WorkoutGraph","bar") );
 		p->SetVertAlign( align_bottom );
 		p->ZoomToWidth( fBlockSize );
-		int iMetersToCover = (MAX_METER - *iter);
+		int iMetersToCover = (MAX_METER - meter);
 		p->SetCustomImageRect( RectF(0,(float)iMetersToCover/(float)iBlocksHigh,1,1) );
-		p->ZoomToHeight( *iter * fBlockSize );
+		p->ZoomToHeight( meter * fBlockSize );
 		p->SetX( fOffsetFromCenter * fBlockSize );
 		m_vpBars.push_back( p );
 		this->AddChild( p );
