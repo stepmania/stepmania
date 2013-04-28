@@ -177,18 +177,16 @@ void GraphDisplay::Set( const StageStats &ss, const PlayerStageStats &pss )
 	// Show song boundaries
 	float fSec = 0;
 	vector<Song *> const &possibleSongs = ss.m_vpPossibleSongs;
-	for (vector<Song *>::const_iterator song = possibleSongs.begin(); song != possibleSongs.end(); ++song)
-	{
-		if( song == ss.m_vpPossibleSongs.end()-1 )
-			continue;
-		fSec += (*song)->GetStepsSeconds();
+
+	std::for_each(possibleSongs.begin(), possibleSongs.end() - 1, [&](Song *song) {
+		fSec += song->GetStepsSeconds();
 
 		Actor *p = m_sprSongBoundary->Copy();
 		m_vpSongBoundaries.push_back( p );
 		float fX = SCALE( fSec, 0, fTotalStepSeconds, m_quadVertices.left, m_quadVertices.right );
 		p->SetX( fX );
 		this->AddChild( p );
-	}
+	});
 
 	if( !pss.m_bFailed )
 	{
