@@ -176,7 +176,8 @@ void GraphDisplay::Set( const StageStats &ss, const PlayerStageStats &pss )
 
 	// Show song boundaries
 	float fSec = 0;
-	FOREACH_CONST( Song*, ss.m_vpPossibleSongs, song )
+	vector<Song *> const &possibleSongs = ss.m_vpPossibleSongs;
+	for (vector<Song *>::const_iterator song = possibleSongs.begin(); song != possibleSongs.end(); ++song)
 	{
 		if( song == ss.m_vpPossibleSongs.end()-1 )
 			continue;
