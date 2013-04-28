@@ -1062,16 +1062,16 @@ void NoteField::DrawPrimitives()
 			ASSERT_M( GAMESTATE->m_iEditCourseEntryIndex >= 0  &&  GAMESTATE->m_iEditCourseEntryIndex < (int)pCourse->m_vEntries.size(), 
 				ssprintf("%i",GAMESTATE->m_iEditCourseEntryIndex.Get()) );
 			const CourseEntry &ce = pCourse->m_vEntries[GAMESTATE->m_iEditCourseEntryIndex];
-			FOREACH_CONST( Attack, ce.attacks, a )
+			for (Attack const &a : ce.attacks)
 			{
-				float fSecond = a->fStartSecond;
+				float fSecond = a.fStartSecond;
 				float fBeat = timing.GetBeatFromElapsedTime( fSecond );
 
 				if( BeatToNoteRow(fBeat) >= iFirstRowToDraw &&
 					BeatToNoteRow(fBeat) <= iLastRowToDraw)
 				{
 					if( IS_ON_SCREEN(fBeat) )
-						DrawAttackText( fBeat, *a );
+						DrawAttackText( fBeat, a );
 				}
 			}
 		}
@@ -1083,14 +1083,14 @@ void NoteField::DrawPrimitives()
 			// XXX: We're somehow getting here when attacks is null. Find the actual cause later.
 			if (&attacks)
 			{
-				FOREACH_CONST(Attack, attacks, a)
+				for (Attack const &a : attacks)
 				{
-					float fBeat = timing.GetBeatFromElapsedTime(a->fStartSecond);
+					float fBeat = timing.GetBeatFromElapsedTime(a.fStartSecond);
 					if (BeatToNoteRow(fBeat) >= iFirstRowToDraw &&
 						BeatToNoteRow(fBeat) <= iLastRowToDraw &&
 						IS_ON_SCREEN(fBeat))
 					{
-						this->DrawAttackText(fBeat, *a);
+						this->DrawAttackText(fBeat, a);
 					}
 				}
 			}
@@ -1145,19 +1145,19 @@ void NoteField::DrawPrimitives()
 							if( IS_ON_SCREEN(fLowestBeat) )
 							{
 								vector<RString> vsBGChanges;
-								FOREACH_CONST( BackgroundLayer, viLowestIndex, bl )
+								for (BackgroundLayer const &bl : viLowestIndex)
 								{
-									ASSERT( iter[*bl] != GAMESTATE->m_pCurSong->GetBackgroundChanges(*bl).end() );
-									const BackgroundChange& change = *iter[*bl];
+									ASSERT( iter[bl] != GAMESTATE->m_pCurSong->GetBackgroundChanges(bl).end() );
+									const BackgroundChange& change = *iter[bl];
 									RString s = change.GetTextDescription();
-									if( *bl!=0 )
-										s = ssprintf("%d: ",*bl) + s;
+									if( bl!=0 )
+										s = ssprintf("%d: ",bl) + s;
 									vsBGChanges.push_back( s );
 								}
 								DrawBGChangeText( fLowestBeat, join("\n",vsBGChanges) );
 							}
-							FOREACH_CONST( BackgroundLayer, viLowestIndex, bl )
-								iter[*bl]++;
+							for (BackgroundLayer const &bl : viLowestIndex)
+								iter[bl]++;
 						}
 					}
 					break;
