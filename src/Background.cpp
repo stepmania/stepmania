@@ -517,10 +517,10 @@ void BackgroundImpl::LoadFromSong( const Song* pSong )
 		int iSize = min( (int)g_iNumBackgrounds, (int)vsNames.size() );
 		vsNames.resize( iSize );
 
-		FOREACH_CONST( RString, vsNames, s )
+		for (RString const &s : vsNames)
 		{
 			BackgroundDef bd;
-			bd.m_sFile1 = *s;
+			bd.m_sFile1 = s;
 			m_RandomBGAnimations.push_back( bd );
 		}
 	}
@@ -549,9 +549,9 @@ void BackgroundImpl::LoadFromSong( const Song* pSong )
 			Layer &layer = m_Layer[i];
 
 			// Load all song-specified backgrounds
-			FOREACH_CONST( BackgroundChange, pSong->GetBackgroundChanges(i), bgc )
+			for (BackgroundChange const &bgc : pSong->GetBackgroundChanges(i))
 			{
-				BackgroundChange change = *bgc;
+				BackgroundChange change = bgc;
 				BackgroundDef &bd = change.m_def;
 				
 				bool bIsAlreadyLoaded = layer.m_BGAnimations.find(bd) != layer.m_BGAnimations.end();
@@ -620,9 +620,9 @@ void BackgroundImpl::LoadFromSong( const Song* pSong )
 	FOREACH_BackgroundLayer( i )
 	{
 		Layer &layer = m_Layer[i];
-		FOREACH_CONST( BackgroundChange, layer.m_aBGChanges, bgc )
+		for (BackgroundChange const &bgc : layer.m_aBGChanges)
 		{
-			const BackgroundDef &bd = bgc->m_def;
+			const BackgroundDef &bd = bgc.m_def;
 			if( bd == m_StaticBackgroundDef )
 			{
 				bStaticBackgroundUsed = true;
