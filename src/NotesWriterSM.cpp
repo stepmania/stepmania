@@ -117,10 +117,10 @@ static void WriteGlobalTags( RageFile &f, Song &out )
 			timing.AddSegment( StopSegment(fs->GetRow(), 0) );
 	}
 	// Delays can't be negative: thus, no effect.
-	FOREACH_CONST(TimingSegment *, delays, ss)
+	for (TimingSegment const *ss : delays)
 	{
-		float fBeat = NoteRowToBeat( (*ss)->GetRow()-1 );
-		float fPause = ToDelay(*ss)->GetPause();
+		float fBeat = NoteRowToBeat( ss->GetRow()-1 );
+		float fPause = ToDelay(ss)->GetPause();
 		allPauses.insert( pair<float,float>(fBeat, fPause) );
 	}
 
@@ -143,8 +143,8 @@ static void WriteGlobalTags( RageFile &f, Song &out )
 		else
 			f.Write( ssprintf("#BGCHANGES%d:", b+1) );
 
-		FOREACH_CONST( BackgroundChange, out.GetBackgroundChanges(b), bgc )
-			f.PutLine( (*bgc).ToString() +"," );
+		for (BackgroundChange const &bgc : out.GetBackgroundChanges(b))
+			f.PutLine( bgc.ToString() +"," );
 
 		/* If there's an animation plan at all, add a dummy "-nosongbg-" tag to indicate that
 		 * this file doesn't want a song BG entry added at the end.  See SMLoader::TidyUpData.
@@ -158,9 +158,9 @@ static void WriteGlobalTags( RageFile &f, Song &out )
 	if( out.GetForegroundChanges().size() )
 	{
 		f.Write( "#FGCHANGES:" );
-		FOREACH_CONST( BackgroundChange, out.GetForegroundChanges(), bgc )
+		for (BackgroundChange const &bgc : out.GetForegroundChanges())
 		{
-			f.PutLine( (*bgc).ToString() +"," );
+			f.PutLine( bgc.ToString() +"," );
 		}
 		f.PutLine( ";" );
 	}
@@ -253,9 +253,8 @@ bool NotesWriterSM::Write( RString sPath, Song &out, const vector<Steps*>& vpSte
 
 	WriteGlobalTags( f, out );
 
-	FOREACH_CONST( Steps*, vpStepsToSave, s ) 
+	for (Steps const *pSteps : vpStepsToSave)
 	{
-		const Steps* pSteps = *s;
 		RString sTag = GetSMNotesTag( out, *pSteps );
 		f.PutLine( sTag );
 	}
