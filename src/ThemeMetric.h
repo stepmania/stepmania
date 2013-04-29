@@ -267,8 +267,8 @@ public:
 	void Load( const RString& sGroup, MetricNameMap pfn, const vector<RString> vsValueNames )
 	{
 		m_metric.clear();
-		FOREACH_CONST( RString, vsValueNames, s )
-			m_metric[*s].Load( sGroup, pfn(*s) );
+		for (RString const &s : vsValueNames)
+			m_metric[s].Load( sGroup, pfn(s) );
 	}
 	void Read()
 	{
