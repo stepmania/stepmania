@@ -115,10 +115,10 @@ void SSCLoader::ProcessScrolls( TimingData &out, const RString sParam )
 	vector<RString> vs1;
 	split( sParam, ",", vs1 );
 	
-	FOREACH_CONST( RString, vs1, s1 )
+	for (RString const &s1 : vs1)
 	{
 		vector<RString> vs2;
-		split( *s1, "=", vs2 );
+		split( s1, "=", vs2 );
 		
 		if( vs2.size() < 2 )
 		{
