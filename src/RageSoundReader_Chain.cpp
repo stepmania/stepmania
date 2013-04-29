@@ -103,11 +103,11 @@ int RageSoundReader_Chain::GetSampleRateInternal() const
 		return m_iPreferredSampleRate;
 
 	int iRate = -1;
-	FOREACH_CONST( RageSoundReader *, m_apLoadedSounds, it )
+	for (RageSoundReader const *it : m_apLoadedSounds)
 	{
 		if( iRate == -1 )
-			iRate = (*it)->GetSampleRate();
-		else if( iRate != (*it)->GetSampleRate() )
+			iRate = it->GetSampleRate();
+		else if( iRate != it->GetSampleRate() )
 			return -1;
 	}
 	return iRate;
