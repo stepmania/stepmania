@@ -57,9 +57,9 @@ static void GetUsedGameInputs( vector<GameInput> &vGameInputsOut )
 	split( GAME_BUTTONS_TO_SHOW.GetValue(), ",", asGameButtons );
 	FOREACH_ENUM( GameController,  gc )
 	{
-		FOREACH_CONST( RString, asGameButtons, button )
+		for (RString const &button : asGameButtons)
 		{
-			GameButton gb = StringToGameButton( INPUTMAPPER->GetInputScheme(), *button );
+			GameButton gb = StringToGameButton( INPUTMAPPER->GetInputScheme(), button );
 			if( gb != GameButton_Invalid )
 			{
 				GameInput gi = GameInput( gc, gb );
