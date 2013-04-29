@@ -283,8 +283,8 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 		else
 			f.Write( ssprintf("#BGCHANGES%d:", b+1) );
 
-		FOREACH_CONST( BackgroundChange, out.GetBackgroundChanges(b), bgc )
-			f.PutLine( (*bgc).ToString() +"," );
+		for (BackgroundChange const &bgc : out.GetBackgroundChanges(b))
+			f.PutLine( bgc.ToString() +"," );
 
 		/* If there's an animation plan at all, add a dummy "-nosongbg-" tag to
 		 * indicate that this file doesn't want a song BG entry added at the end.
@@ -298,9 +298,9 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 	if( out.GetForegroundChanges().size() )
 	{
 		f.Write( "#FGCHANGES:" );
-		FOREACH_CONST( BackgroundChange, out.GetForegroundChanges(), bgc )
+		for (BackgroundChange const &bgc : out.GetForegroundChanges())
 		{
-			f.PutLine( (*bgc).ToString() +"," );
+			f.PutLine( bgc.ToString() +"," );
 		}
 		f.PutLine( ";" );
 	}
@@ -450,9 +450,8 @@ bool NotesWriterSSC::Write( RString sPath, const Song &out, const vector<Steps*>
 	}
 
 	// Save specified Steps to this file
-	FOREACH_CONST( Steps*, vpStepsToSave, s ) 
+	for (Steps const *pSteps : vpStepsToSave)
 	{
-		const Steps* pSteps = *s;
 		RString sTag = GetSSCNoteData( out, *pSteps, bSavingCache );
 		f.PutLine( sTag );
 	}
