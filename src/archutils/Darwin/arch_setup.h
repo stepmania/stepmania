@@ -44,7 +44,7 @@ extern "C" int SM_main( int argc, char *argv[] );
 #define HAVE_BYTE_SWAPS
 
 // Define the work around if needed.
-#include <bits/c++config.h>
+#include <unistd.h>
 #include <stdint.h>
 #if _GLIBCXX_USE_C99
 # define NEED_CSTDLIB_WORKAROUND
