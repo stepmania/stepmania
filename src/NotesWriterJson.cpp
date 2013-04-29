@@ -183,11 +183,11 @@ bool NotesWriterJson::WriteSong( const RString &sFile, const Song &out, bool bWr
 	if( bWriteSteps )
 	{
 		vector<const Steps*> vpSteps;
-		FOREACH_CONST( Steps*, out.GetAllSteps(), iter )
+		for (Steps * iter : out.GetAllSteps())
 		{
-			if( (*iter)->IsAutogen() )
+			if( iter->IsAutogen() )
 				continue;
-			vpSteps.push_back( *iter );
+			vpSteps.push_back( iter );
 		}
 		JsonUtil::SerializeVectorPointers<Steps>( vpSteps, Serialize, root["Charts"] );
 	}
