@@ -86,10 +86,10 @@ int StageStats::GetAverageMeter( PlayerNumber pn ) const
 void StageStats::AddStats( const StageStats& other )
 {
 	ASSERT( !other.m_vpPlayedSongs.empty() );
-	FOREACH_CONST( Song*, other.m_vpPlayedSongs, s )
-		m_vpPlayedSongs.push_back( *s );
-	FOREACH_CONST( Song*, other.m_vpPossibleSongs, s )
-		m_vpPossibleSongs.push_back( *s );
+	for (Song *s : other.m_vpPlayedSongs)
+		m_vpPlayedSongs.push_back( s );
+	for (Song *s : other.m_vpPossibleSongs)
+		m_vpPossibleSongs.push_back( s );
 	m_Stage = Stage_Invalid; // meaningless
 	m_iStageIndex = -1; // meaningless
 
@@ -122,8 +122,8 @@ bool StageStats::AllFailed() const
 float StageStats::GetTotalPossibleStepsSeconds() const
 {
 	float fSecs = 0;
-	FOREACH_CONST( Song*, m_vpPossibleSongs, s )
-		fSecs += (*s)->GetStepsSeconds();
+	for (Song const *s : m_vpPlayedSongs)
+		fSecs += s->GetStepsSeconds();
 	return fSecs / m_fMusicRate;
 }
 
