@@ -56,8 +56,8 @@ static StageStats AccumPlayedStageStats( const vector<StageStats>& vss )
 		ssreturn.m_playMode = vss[0].m_playMode;
 	}
 
-	FOREACH_CONST( StageStats, vss, ss )
-		ssreturn.AddStats( *ss );
+	for (StageStats const &ss :vss)
+		ssreturn.AddStats( ss );
 
 	unsigned uNumSongs = ssreturn.m_vpPlayedSongs.size();
 
@@ -410,10 +410,11 @@ public:
 		FOREACH_HumanPlayer( p )
 		{
 			// If this player failed any stage, then their final grade is an F.
+#ifdef MACOSX
 			bool bPlayerFailedOneStage = false;
-			FOREACH_CONST( StageStats, STATSMAN->m_vPlayedStageStats, ss )
+			for (StageStats const &ss : STATSMAN->m_vPlayedStageStats)
 			{
-				if( ss->m_player[p].m_bFailed )
+				if( ss.m_player[p].m_bFailed )
 				{
 					bPlayerFailedOneStage = true;
 					break;
@@ -421,6 +422,10 @@ public:
 			}
 
 			if( bPlayerFailedOneStage )
+#else
+			if (std::any_of(STATSMAN->m_vPlayedStageStats.begin(), STATSMAN->m_vPlayedStageStats.end(),
+				[&](StageStats const &ss) { return ss.m_player[p].m_bFailed; }))
+#endif
 				continue;
 
 			top_grade = min( top_grade, stats.m_player[p].GetGrade() );
