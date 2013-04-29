@@ -312,11 +312,11 @@ void DirectFilenameDB::PopulateFileSet( FileSet &fs, const RString &path )
 		vsFilesToRemove.push_back( sFileLNameToIgnore );
 	}
 	
-	FOREACH_CONST( RString, vsFilesToRemove, iter )
+	for (RString const &iter : vsFilesToRemove)
 	{
 		// Erase the file corresponding to the ignore marker
 		File fileToDelete;
-		fileToDelete.SetName( *iter );
+		fileToDelete.SetName( iter );
 		set<File>::iterator iter2 = fs.files.find( fileToDelete );
 		if( iter2 != fs.files.end() )
 			fs.files.erase( iter2 );
