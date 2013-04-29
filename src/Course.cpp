@@ -697,6 +697,7 @@ int Course::GetMeter( StepsType st, CourseDifficulty cd ) const
 
 bool Course::HasMods() const
 {
+#ifdef MACOSX
 	for (CourseEntry const &e : m_vEntries)
 	{
 		if( !e.attacks.empty() )
@@ -704,6 +705,9 @@ bool Course::HasMods() const
 	}
 
 	return false;
+#else
+	return std::any_of(m_vEntries.begin(), m_vEntries.end(), [](CourseEntry const &e) { return !e.attacks.empty(); });
+#endif
 }
 
 bool Course::HasTimedMods() const
@@ -714,26 +718,38 @@ bool Course::HasTimedMods() const
 	// take longer than expected. -aj
 	for (CourseEntry const &e : m_vEntries)
 	{
-		if( !e.attacks.empty() )
+		if( e.attacks.empty() )
 		{
-			for (Attack const &attack : e.attacks)
-			{
-				if(!attack.bGlobal)
-					return true;
-			}
+			continue;
 		}
+#ifdef MACOSX
+		for (Attack const &attack : e.attacks)
+		{
+			if(!attack.bGlobal)
+				return true;
+		}
+#else
+		if (std::any_of(e.attacks.begin(), e.attacks.end(), [](Attack const &a) { return !a.bGlobal; }))
+		{
+			return true;
+		}
+#endif
 	}
 	return false;
 }
 
 bool Course::AllSongsAreFixed() const
 {
+#ifdef MACOSX
 	for (CourseEntry const &e : m_vEntries)
 	{
 		if( !e.IsFixedSong() )
 			return false;
 	}
 	return true;
+#else
+	return std::all_of(m_vEntries.begin(), m_vEntries.end(), [](CourseEntry const &e) { return e.IsFixedSong(); });
+#endif
 }
 
 const Style *Course::GetCourseStyle( const Game *pGame, int iNumPlayers ) const
