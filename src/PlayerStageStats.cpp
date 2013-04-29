@@ -5,6 +5,7 @@
 #include "Foreach.h"
 #include "LuaManager.h"
 #include <float.h>
+#include <numeric>
 #include "GameState.h"
 #include "Course.h"
 #include "Steps.h"
@@ -70,8 +71,8 @@ void PlayerStageStats::Init()
 void PlayerStageStats::AddStats( const PlayerStageStats& other )
 {
 	m_bJoined = other.m_bJoined;
-	FOREACH_CONST( Steps*, other.m_vpPossibleSteps, s )
-		m_vpPossibleSteps.push_back( *s );
+	for (Steps *s : other.m_vpPossibleSteps)
+		m_vpPossibleSteps.push_back( s );
 	m_iStepsPlayed += other.m_iStepsPlayed;
 	m_fAliveSeconds += other.m_fAliveSeconds;
 	m_bFailed |= other.m_bFailed;
@@ -313,12 +314,16 @@ int PlayerStageStats::GetLessonScoreActual() const
 
 int PlayerStageStats::GetLessonScoreNeeded() const
 {
-	float fScore = 0;
+#ifdef MACOSX
+	float score = 0;
 
-	FOREACH_CONST( Steps*, m_vpPossibleSteps, steps )
-		fScore += (*steps)->GetRadarValues( PLAYER_1 ).m_Values.v.fNumTapsAndHolds;
-
-	return lrintf( fScore * LESSON_PASS_THRESHOLD );
+	for (Steps const *steps : m_vpPossibleSteps)
+		score += steps->GetRadarValues( PLAYER_1 ).m_Values.v.fNumTapsAndHolds;
+#else
+	float score = std::accumulate(m_vpPossibleSteps.begin(), m_vpPossibleSteps.end(), 0.f, 
+		[](float total, Steps const *steps) { return total += steps->GetRadarValues(PLAYER_1).m_Values.v.fNumTapsAndHolds; });
+#endif
+	return lrintf( score * LESSON_PASS_THRESHOLD );
 }
 
 void PlayerStageStats::ResetScoreForLesson()
