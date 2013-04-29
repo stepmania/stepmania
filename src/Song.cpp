@@ -968,9 +968,8 @@ bool Song::SaveToSMFile()
 		FileCopy( sPath, sPath + ".old" );
 	
 	vector<Steps*> vpStepsToSave;
-	FOREACH_CONST( Steps*, m_vpSteps, s ) 
+	for (Steps *pSteps : m_vpSteps)
 	{
-		Steps *pSteps = *s;
 		if( pSteps->IsAutogen() )
 			continue; // don't write autogen notes
 		
@@ -998,9 +997,8 @@ bool Song::SaveToSSCFile( RString sPath, bool bSavingCache )
 		FileCopy( path, path + ".old" );
 
 	vector<Steps*> vpStepsToSave;
-	FOREACH_CONST( Steps*, m_vpSteps, s ) 
+	for (Steps *pSteps : m_vpSteps)
 	{
-		Steps *pSteps = *s;
 		if( pSteps->IsAutogen() )
 			continue; // don't write autogen notes
 
@@ -1192,11 +1190,11 @@ bool Song::IsEasy( StepsType st ) const
 bool Song::IsTutorial() const
 {
 	// A Song is considered a Tutorial if it has only Beginner steps.
-	FOREACH_CONST( Steps*, m_vpSteps, s )
+	for (Steps const *s : m_vpSteps)
 	{
-		if( (*s)->m_StepsType == StepsType_lights_cabinet )
+		if( s->m_StepsType == StepsType_lights_cabinet )
 			continue; // ignore
-		if( (*s)->GetDifficulty() != Difficulty_Beginner )
+		if( s->GetDifficulty() != Difficulty_Beginner )
 			return false;
 	}
 
@@ -1205,9 +1203,9 @@ bool Song::IsTutorial() const
 
 bool Song::HasEdits( StepsType st ) const
 {
-	for( unsigned i=0; i<m_vpSteps.size(); i++ )
+#ifdef MACOSX
+	for (Steps const *pSteps : m_vpSteps)
 	{
-		Steps* pSteps = m_vpSteps[i];
 		if( pSteps->m_StepsType == st &&
 			pSteps->GetDifficulty() == Difficulty_Edit )
 		{
@@ -1216,6 +1214,10 @@ bool Song::HasEdits( StepsType st ) const
 	}
 
 	return false;
+#else
+	return std::any_of(m_vpSteps.begin(), m_vpSteps.end(),
+		[&](Steps const *step) { return step->m_StepsType == st && step->GetDifficulty() == Difficulty_Edit; });
+#endif
 }
 
 bool Song::NormallyDisplayed() const
@@ -1303,9 +1305,9 @@ vector<BackgroundChange> &Song::GetForegroundChanges()
 vector<RString> Song::GetChangesToVectorString(const vector<BackgroundChange> & changes) const
 {
 	vector<RString> ret;
-	FOREACH_CONST( BackgroundChange, changes, bgc )
+	for (BackgroundChange const &bgc : changes)
 	{
-		ret.push_back((*bgc).ToString());
+		ret.push_back(bgc.ToString());
 	}
 	return ret;
 }
