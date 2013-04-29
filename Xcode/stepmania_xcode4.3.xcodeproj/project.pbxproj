@@ -8316,6 +8316,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = AA8B8C49091F48C000D14C5F /* product.xcconfig */;
 			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				COMBINE_HIDPI_IMAGES = YES;
 				CONFIGURATION_BUILD_DIR = "$(SYMROOT)";
 				FULL_NAME = "$(PRODUCT_NAME).$(WRAPPER_EXTENSION)";
@@ -8352,7 +8353,6 @@
 					"-fconstant-cfstrings",
 					"-fno-exceptions",
 					"-falign-loops=16",
-					"-std=c++11",
 				);
 				OTHER_LDFLAGS = "-lbz2";
 				PRODUCT_NAME = "StepMania (Debug)";
@@ -8818,6 +8818,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = AA8B8C49091F48C000D14C5F /* product.xcconfig */;
 			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				COMBINE_HIDPI_IMAGES = YES;
 				CONFIGURATION_BUILD_DIR = "$(SYMROOT)";
 				COPY_PHASE_STRIP = NO;
@@ -8857,7 +8858,6 @@
 					"-fconstant-cfstrings",
 					"-fno-exceptions",
 					"-falign-loops=16",
-					"-std=c++11",
 				);
 				OTHER_LDFLAGS = "-lbz2";
 				PRODUCT_NAME = "StepMania (Performance-Debug)";
@@ -9074,6 +9074,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = AA8B8C49091F48C000D14C5F /* product.xcconfig */;
 			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				COMBINE_HIDPI_IMAGES = YES;
 				CONFIGURATION_BUILD_DIR = "$(SYMROOT)";
 				FULL_NAME = "$(PRODUCT_NAME).$(WRAPPER_EXTENSION)";
@@ -9108,7 +9109,6 @@
 					"-fconstant-cfstrings",
 					"-fno-exceptions",
 					"-falign-loops=16",
-					"-std=c++11",
 				);
 				OTHER_LDFLAGS = "-lbz2";
 				PRODUCT_NAME = StepMania;
