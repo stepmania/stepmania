@@ -90,23 +90,27 @@ int Attack::GetNumAttacks() const
 
 bool AttackArray::ContainsTransformOrTurn() const
 {
-	FOREACH_CONST( Attack, *this, a )
+#ifdef MACOSX
+	for (Attack const &a : *this)
 	{
-		if( a->ContainsTransformOrTurn() )
+		if( a.ContainsTransformOrTurn() )
 			return true;
 	}
 	return false;
+#else
+	return std::any_of((*this).begin(), (*this).end(), [](Attack const &a) { return a.ContainsTransformOrTurn(); });
+#endif
 }
 
 vector<RString> AttackArray::ToVectorString() const
 {
 	vector<RString> ret;
-	FOREACH_CONST( Attack, *this, a )
+	for (Attack const &a : *this)
 	{
 		ret.push_back(ssprintf("TIME=%f:LEN=%f:MODS=%s",
-				       a->fStartSecond,
-				       a->fSecsRemaining,
-				       a->sModifiers.c_str()));
+				       a.fStartSecond,
+				       a.fSecsRemaining,
+				       a.sModifiers.c_str()));
 	}
 	return ret;
 }
