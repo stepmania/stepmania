@@ -354,10 +354,10 @@ void DisplayBpms::Add( float f )
 float DisplayBpms::GetMin() const
 {
 	float fMin = FLT_MAX;
-	FOREACH_CONST( float, vfBpms, f )
+	for (float const &f : vfBpms)
 	{
-		if( *f != -1 )
-			fMin = min( fMin, *f );
+		if( f != -1 )
+			fMin = min( fMin, f );
 	}
 	if( fMin == FLT_MAX )
 		return 0;
@@ -373,10 +373,10 @@ float DisplayBpms::GetMax() const
 float DisplayBpms::GetMaxWithin(float highest) const
 {
 	float fMax = 0;
-	FOREACH_CONST( float, vfBpms, f )
+	for (float const &f : vfBpms)
 	{
-		if( *f != -1 )
-			fMax = clamp(max( fMax, *f ), 0, highest);
+		if( f != -1 )
+			fMax = clamp(max( fMax, f ), 0, highest);
 	}
 	return fMax;
 }
@@ -388,12 +388,16 @@ bool DisplayBpms::BpmIsConstant() const
 
 bool DisplayBpms::IsSecret() const
 {
-	FOREACH_CONST( float, vfBpms, f )
+#ifdef MACOSX
+	for (float const &f : vfBpms)
 	{
-		if( *f == -1 )
+		if( f == -1 )
 			return true;
 	}
 	return false;
+#else
+	return std::any_of(vfBpms.begin(), vfBpms.end(), [](float const &f) { return f == -1; });
+#endif
 }
 
 static const char *StyleTypeNames[] = {
