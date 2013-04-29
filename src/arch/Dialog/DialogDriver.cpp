@@ -23,9 +23,9 @@ DialogDriver *DialogDriver::Create()
 
 	ASSERT( asDriversToTry.size() != 0 );
 
-	FOREACH_CONST( RString, asDriversToTry, Driver )
+	for (RString const &Driver : asDriversToTry)
 	{
-		map<istring, CreateDialogDriverFn>::const_iterator iter = RegisterDialogDriver::g_pRegistrees->find( istring(*Driver) );
+		map<istring, CreateDialogDriverFn>::const_iterator iter = RegisterDialogDriver::g_pRegistrees->find( istring(Driver) );
 
 		if( iter == RegisterDialogDriver::g_pRegistrees->end() )
 			continue;
@@ -37,7 +37,7 @@ DialogDriver *DialogDriver::Create()
 		if( sError.empty() )
 			return pRet;
 		if( LOG )
-			LOG->Info( "Couldn't load driver %s: %s", Driver->c_str(), sError.c_str() );
+			LOG->Info( "Couldn't load driver %s: %s", Driver.c_str(), sError.c_str() );
 		SAFE_DELETE( pRet );
 	}
 	return NULL;
