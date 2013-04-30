@@ -40,11 +40,11 @@ void ThemeMetricDifficultiesToShow::Read()
 	split( ThemeMetric<RString>::GetValue(), ",", v );
 	ASSERT( v.size() > 0 );
 
-	FOREACH_CONST( RString, v, i )
+	for (RString const &i : v)
 	{
-		Difficulty d = StringToDifficulty( *i );
+		Difficulty d = StringToDifficulty( i );
 		if( d == Difficulty_Invalid )
-			RageException::Throw( "Unknown difficulty \"%s\" in CourseDifficultiesToShow.", i->c_str() );
+			RageException::Throw( "Unknown difficulty \"%s\" in CourseDifficultiesToShow.", i.c_str() );
 		m_v.push_back( d );
 	}
 }
@@ -70,11 +70,11 @@ void ThemeMetricCourseDifficultiesToShow::Read()
 	split( ThemeMetric<RString>::GetValue(), ",", v );
 	ASSERT( v.size() > 0 );
 
-	FOREACH_CONST( RString, v, i )
+	for (RString const &i : v)
 	{
-		CourseDifficulty d = StringToDifficulty( *i );
+		CourseDifficulty d = StringToDifficulty( i );
 		if( d == Difficulty_Invalid )
-			RageException::Throw( "Unknown CourseDifficulty \"%s\" in CourseDifficultiesToShow.", i->c_str() );
+			RageException::Throw( "Unknown CourseDifficulty \"%s\" in CourseDifficultiesToShow.", i.c_str() );
 		m_v.push_back( d );
 	}
 }
@@ -87,12 +87,12 @@ static void RemoveStepsTypes( vector<StepsType>& inout, RString sStepsTypesToRem
 	ASSERT( v.size() > 0 );
 
 	// subtract StepsTypes
-	FOREACH_CONST( RString, v, i )
+	for (RString const &i : v)
 	{
-		StepsType st = GAMEMAN->StringToStepsType(*i);
+		StepsType st = GAMEMAN->StringToStepsType(i);
 		if( st == StepsType_Invalid )
 		{
-			LOG->Warn( "Invalid StepsType value '%s' in '%s'", i->c_str(), sStepsTypesToRemove.c_str() );
+			LOG->Warn( "Invalid StepsType value '%s' in '%s'", i.c_str(), sStepsTypesToRemove.c_str() );
 			continue;
 		}
 
