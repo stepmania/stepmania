@@ -32,9 +32,9 @@ void ScreenDemonstration::Init()
 		vector<RString> v;
 		split( ALLOW_STYLE_TYPES, ",", v );
 		vector<StyleType> vStyleTypeAllow;
-		FOREACH_CONST( RString, v, s )
+		for (RString const &s : v)
 		{
-			StyleType st = StringToStyleType( *s );
+			StyleType st = StringToStyleType( s );
 			ASSERT( st != StyleType_Invalid );
 			vStyleTypeAllow.push_back( st );
 		}
