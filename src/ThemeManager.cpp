@@ -580,8 +580,6 @@ bool ThemeManager::GetPathInfoToRaw( PathInfo &out, const RString &sThemeName_, 
 	const RString sMetricsGroup = sMetricsGroup_;
 	const RString sElement = sElement_;
 
-try_element_again:
-
 	const RString sThemeDir = GetThemeDirFromName( sThemeName );
 	const RString &sCategory = ElementCategoryToString(category);
 
