@@ -1523,9 +1523,8 @@ void ScreenSelectMusic::AfterStepsOrTrailChange( const vector<PlayerNumber> &vpn
 		MESSAGEMAN->Broadcast("TwoPartConfirmCanceled");
 	}
 
-	FOREACH_CONST( PlayerNumber, vpns, p )
+	for (PlayerNumber const &pn : vpns)
 	{
-		PlayerNumber pn = *p;
 		ASSERT( GAMESTATE->IsHumanPlayer(pn) );
 
 		if( GAMESTATE->m_pCurSong )
@@ -1583,12 +1582,11 @@ void ScreenSelectMusic::SwitchToPreferredDifficulty()
 			// Find the closest match to the user's preferred difficulty and StepsType.
 			int iCurDifference = -1;
 			int &iSelection = m_iSelection[pn];
-			FOREACH_CONST( Steps*, m_vpSteps, s )
+			int i = 0;
+			for (Steps *s : m_vpSteps)
 			{
-				int i = s - m_vpSteps.begin();
-
 				// If the current steps are listed, use them.
-				if( GAMESTATE->m_pCurSteps[pn] == *s )
+				if( GAMESTATE->m_pCurSteps[pn] == s )
 				{
 					iSelection = i;
 					break;
@@ -1596,10 +1594,10 @@ void ScreenSelectMusic::SwitchToPreferredDifficulty()
 
 				if( GAMESTATE->m_PreferredDifficulty[pn] != Difficulty_Invalid  )
 				{
-					int iDifficultyDifference = abs( (*s)->GetDifficulty() - GAMESTATE->m_PreferredDifficulty[pn] );
+					int iDifficultyDifference = abs( s->GetDifficulty() - GAMESTATE->m_PreferredDifficulty[pn] );
 					int iStepsTypeDifference = 0;
 					if( GAMESTATE->m_PreferredStepsType != StepsType_Invalid )
-						iStepsTypeDifference = abs( (*s)->m_StepsType - GAMESTATE->m_PreferredStepsType );
+						iStepsTypeDifference = abs( s->m_StepsType - GAMESTATE->m_PreferredStepsType );
 					int iTotalDifference = iStepsTypeDifference * NUM_Difficulty + iDifficultyDifference;
 
 					if( iCurDifference == -1 || iTotalDifference < iCurDifference )
@@ -1608,6 +1606,7 @@ void ScreenSelectMusic::SwitchToPreferredDifficulty()
 						iCurDifference = iTotalDifference;
 					}
 				}
+				i += 1;
 			}
 
 			CLAMP( iSelection, 0, m_vpSteps.size()-1 );
@@ -1620,10 +1619,9 @@ void ScreenSelectMusic::SwitchToPreferredDifficulty()
 			// Find the closest match to the user's preferred difficulty.
 			int iCurDifference = -1;
 			int &iSelection = m_iSelection[pn];
-			FOREACH_CONST( Trail*, m_vpTrails, t )
+			int i = 0;
+			for (Trail *t : m_vpTrails)
 			{
-				int i = t - m_vpTrails.begin();
-
 				// If the current trail is listed, use it.
 				if( GAMESTATE->m_pCurTrail[pn] == m_vpTrails[i] )
 				{
@@ -1633,8 +1631,8 @@ void ScreenSelectMusic::SwitchToPreferredDifficulty()
 
 				if( GAMESTATE->m_PreferredCourseDifficulty[pn] != Difficulty_Invalid  &&  GAMESTATE->m_PreferredStepsType != StepsType_Invalid  )
 				{
-					int iDifficultyDifference = abs( (*t)->m_CourseDifficulty - GAMESTATE->m_PreferredCourseDifficulty[pn] );
-					int iStepsTypeDifference = abs( (*t)->m_StepsType - GAMESTATE->m_PreferredStepsType );
+					int iDifficultyDifference = abs( t->m_CourseDifficulty - GAMESTATE->m_PreferredCourseDifficulty[pn] );
+					int iStepsTypeDifference = abs( t->m_StepsType - GAMESTATE->m_PreferredStepsType );
 					int iTotalDifference = iStepsTypeDifference * NUM_CourseDifficulty + iDifficultyDifference;
 
 					if( iCurDifference == -1 || iTotalDifference < iCurDifference )
@@ -1643,6 +1641,7 @@ void ScreenSelectMusic::SwitchToPreferredDifficulty()
 						iCurDifference = iTotalDifference;
 					}
 				}
+				i += 1;
 			}
 
 			CLAMP( iSelection, 0, m_vpTrails.size()-1 );
