@@ -686,51 +686,22 @@ int SongManager::GetNumSongs() const
 
 int SongManager::GetNumLockedSongs() const
 {
-	int iNum = 0;
-	FOREACH_CONST( Song*, m_pSongs, i )
-	{
-		// If locked for any reason, regardless of how it's locked.
-		if( UNLOCKMAN->SongIsLocked(*i) )
-			++iNum;
-	}
-	return iNum;
+	return std::count_if(m_pSongs.begin(), m_pSongs.end(), [](Song const *s) { return UNLOCKMAN->SongIsLocked(s); });
 }
 
 int SongManager::GetNumUnlockedSongs() const
 {
-	int iNum = 0;
-	FOREACH_CONST( Song*, m_pSongs, i )
-	{
-		// If locked for any reason other than LOCKED_LOCK:
-		if( UNLOCKMAN->SongIsLocked(*i) & ~LOCKED_LOCK )
-			continue;
-		++iNum;
-	}
-	return iNum;
+	return std::count_if(m_pSongs.begin(), m_pSongs.end(), [](Song const *s) { return UNLOCKMAN->SongIsLocked(s) & ~LOCKED_LOCK; });
 }
 
 int SongManager::GetNumSelectableAndUnlockedSongs() const
 {
-	int iNum = 0;
-	FOREACH_CONST( Song*, m_pSongs, i )
-	{
-		// If locked for any reason other than LOCKED_LOCK or LOCKED_SELECTABLE:
-		if( UNLOCKMAN->SongIsLocked(*i) & ~(LOCKED_LOCK|LOCKED_SELECTABLE) )
-			continue;
-		++iNum;
-	}
-	return iNum;
+	return std::count_if(m_pSongs.begin(), m_pSongs.end(), [](Song const *s) { return UNLOCKMAN->SongIsLocked(s) & ~(LOCKED_LOCK | LOCKED_SELECTABLE); });
 }
 
 int SongManager::GetNumAdditionalSongs() const
 {
-	int iNum = 0;
-	FOREACH_CONST( Song*, m_pSongs, i )
-	{
-		if( WasLoadedFromAdditionalSongs( *i ) )
-			++iNum;
-	}
-	return iNum;
+	return std::count_if(m_pSongs.begin(), m_pSongs.end(), [&](Song const *s) { return WasLoadedFromAdditionalSongs(s); });
 }
 
 int SongManager::GetNumSongGroups() const
@@ -745,13 +716,7 @@ int SongManager::GetNumCourses() const
 
 int SongManager::GetNumAdditionalCourses() const
 {
-	int iNum = 0;
-	FOREACH_CONST( Course*, m_pCourses, i )
-	{
-		if( WasLoadedFromAdditionalCourses( *i ) )
-			++iNum;
-	}
-	return iNum;
+	return std::count_if(m_pCourses.begin(), m_pCourses.end(), [&](Course const *c) { return WasLoadedFromAdditionalCourses(c); });
 }
 
 int SongManager::GetNumCourseGroups() const
@@ -779,10 +744,10 @@ void SongManager::InitCoursesFromDisk( LoadingWindow *ld )
 	vsCourseDirs.push_back( ADDITIONAL_COURSES_DIR );
 
 	vector<RString> vsCourseGroupNames;
-	FOREACH_CONST( RString, vsCourseDirs, sDir )
+	for (RString const &sDir : vsCourseDirs)
 	{
 		// Find all group directories in Courses dir
-		GetDirListing( *sDir + "*", vsCourseGroupNames, true, true );
+		GetDirListing( sDir + "*", vsCourseGroupNames, true, true );
 		StripCvsAndSvn( vsCourseGroupNames );
 		StripMacResourceForks( vsCourseGroupNames );
 	}
@@ -792,11 +757,11 @@ void SongManager::InitCoursesFromDisk( LoadingWindow *ld )
 	SortRStringArray( vsCourseGroupNames );
 
 	int courseIndex = 0;
-	FOREACH_CONST( RString, vsCourseGroupNames, sCourseGroup )	// for each dir in /Courses/
+	for (RString const &sCourseGroup : vsCourseGroupNames) // for each dir in /Courses/
 	{
 		// Find all CRS files in this group directory
 		vector<RString> vsCoursePaths;
-		GetDirListing( *sCourseGroup + "/*.crs", vsCoursePaths, false, true );
+		GetDirListing( sCourseGroup + "/*.crs", vsCoursePaths, false, true );
 		SortRStringArray( vsCoursePaths );
 
 		if( ld )
@@ -805,18 +770,18 @@ void SongManager::InitCoursesFromDisk( LoadingWindow *ld )
 			ld->SetTotalWork( vsCoursePaths.size() );
 		}
 
-		FOREACH_CONST( RString, vsCoursePaths, sCoursePath )
+		for (RString const &sCoursePath : vsCoursePaths)
 		{
 			if( ld )
 			{
 				ld->SetProgress(courseIndex);
 				ld->SetText( LOADING_COURSES.GetValue()+ssprintf("\n%s\n%s",
-					Basename(*sCourseGroup).c_str(),
-					Basename(*sCoursePath).c_str()));
+					Basename(sCourseGroup).c_str(),
+					Basename(sCoursePath).c_str()));
 			}
 
 			Course* pCourse = new Course;
-			CourseLoaderCRS::LoadFromCRSFile( *sCoursePath, *pCourse );
+			CourseLoaderCRS::LoadFromCRSFile( sCoursePath, *pCourse );
 
 			if( g_bHideIncompleteCourses.Get() && pCourse->m_bIncomplete )
 			{
@@ -1008,12 +973,10 @@ void SongManager::DeleteCourse( Course *pCourse )
 
 void SongManager::InvalidateCachedTrails()
 {
-	FOREACH_CONST( Course *, m_pCourses, pCourse )
+	for (Course *pCourse : m_pCourses)
 	{
-		const Course &c = **pCourse;
-		
-		if( c.IsAnEdit() )
-			c.m_TrailCache.clear();
+		if( pCourse->IsAnEdit() )
+			pCourse->m_TrailCache.clear();
 	}
 }
 
@@ -1021,15 +984,13 @@ void SongManager::InvalidateCachedTrails()
  * change screens. */
 void SongManager::Cleanup()
 {
-	for( unsigned i=0; i<m_pSongs.size(); i++ )
+	for (Song *pSong : m_pShuffledSongs)
 	{
-		Song* pSong = m_pSongs[i];
 		if (pSong)
 		{
 			const vector<Steps*>& vpSteps = pSong->GetAllSteps();
-			for( unsigned n=0; n<vpSteps.size(); n++ )
+			for (Steps *pSteps : vpSteps)
 			{
-				Steps* pSteps = vpSteps[n];
 				pSteps->Compress();
 			}
 		}
@@ -1081,9 +1042,8 @@ void SongManager::SaveEnabledSongsToPref()
 	// Intentionally drop disabled song entries for songs that aren't currently loaded.
 
 	const vector<Song*> &apSongs = SONGMAN->GetAllSongs();
-	FOREACH_CONST( Song *, apSongs, s )
+	for (Song *pSong : apSongs)
 	{
-		Song *pSong = (*s);
 		SongID sid;
 		sid.FromSong( pSong );
 		if( !pSong->GetEnabled() )
@@ -1094,16 +1054,16 @@ void SongManager::SaveEnabledSongsToPref()
 
 void SongManager::LoadEnabledSongsFromPref()
 {
-	FOREACH( Song *, m_pSongs, s )
-		(*s)->SetEnabled( true );
+	for (Song *s : m_pSongs)
+		s->SetEnabled( true );
 
 	vector<RString> asDisabledSongs;
 	split( g_sDisabledSongs, ";", asDisabledSongs, true );
 
-	FOREACH_CONST( RString, asDisabledSongs, s )
+	for (RString const &s : asDisabledSongs)
 	{
 		SongID sid;
-		sid.FromString( *s );
+		sid.FromString( s );
 		Song *pSong = sid.ToSong();
 		if( pSong )
 			pSong->SetEnabled( false );
@@ -1113,9 +1073,9 @@ void SongManager::LoadEnabledSongsFromPref()
 void SongManager::GetStepsLoadedFromProfile( vector<Steps*> &AddTo, ProfileSlot slot ) const
 {
 	const vector<Song*> &vSongs = GetAllSongs();
-	FOREACH_CONST( Song*, vSongs, song )
+	for (Song *song : vSongs)
 	{
-		(*song)->GetStepsLoadedFromProfile( slot, AddTo );
+		song->GetStepsLoadedFromProfile( slot, AddTo );
 	}
 }
 
@@ -1332,9 +1292,9 @@ Song* SongManager::GetSongFromDir( RString sDir ) const
 
 	sDir.Replace( '\\', '/' );
 
-	FOREACH_CONST( Song*, m_pSongs, s )
-		if( sDir.EqualsNoCase((*s)->GetSongDir()) )
-			return *s;
+	for (Song *s : m_pSongs)
+		if( sDir.EqualsNoCase(s->GetSongDir()) )
+			return s;
 
 	return NULL;
 }
@@ -1344,10 +1304,10 @@ Course* SongManager::GetCourseFromPath( RString sPath ) const
 	if( sPath == "" )
 		return NULL;
 
-	FOREACH_CONST( Course*, m_pCourses, c )
+	for (Course *c : m_pCourses)
 	{
-		if( sPath.CompareNoCase((*c)->m_sPath) == 0 )
-			return *c;
+		if( sPath.CompareNoCase(c->m_sPath) == 0 )
+			return c;
 	}
 
 	return NULL;
@@ -1358,9 +1318,9 @@ Course* SongManager::GetCourseFromName( RString sName ) const
 	if( sName == "" )
 		return NULL;
 
-	for( unsigned int i=0; i<m_pCourses.size(); i++ )
-		if( sName.CompareNoCase(m_pCourses[i]->GetDisplayFullTitle()) == 0 )
-			return m_pCourses[i];
+	for (Course *c : m_pCourses)
+		if( sName.CompareNoCase(c->GetDisplayFullTitle()) == 0 )
+			return c;
 
 	return NULL;
 }
@@ -1397,10 +1357,10 @@ Song *SongManager::FindSong( RString sGroup, RString sSong ) const
 {
 	// foreach song
 	const vector<Song *> &vSongs = GetSongs( sGroup.empty()? GROUP_ALL:sGroup );
-	FOREACH_CONST( Song*, vSongs, s )
+	for (Song *s : vSongs)
 	{
-		if( (*s)->Matches(sGroup, sSong) )
-			return *s;
+		if( s->Matches(sGroup, sSong) )
+			return s;
 	}
 
 	return NULL;
@@ -1422,10 +1382,10 @@ Course *SongManager::FindCourse( RString sPath ) const
 
 Course *SongManager::FindCourse( RString sGroup, RString sName ) const
 {
-	FOREACH_CONST( Course*, m_pCourses, c )
+	for (Course *c : m_pCourses)
 	{
-		if( (*c)->Matches(sGroup, sName) )
-			return *c;
+		if( c->Matches(sGroup, sName) )
+			return c;
 	}
 
 	return NULL;
@@ -1524,11 +1484,11 @@ void SongManager::UpdatePreferredSort(RString sPreferredSongs, RString sPreferre
 					{
 						// add all songs in group
 						const vector<Song *> &vSongs = GetSongs( group );
-						FOREACH_CONST( Song*, vSongs, song )
+						for (Song *song : vSongs)
 						{
-							if( UNLOCKMAN->SongIsLocked(*song) & LOCKED_SELECTABLE )
+							if( UNLOCKMAN->SongIsLocked(song) & LOCKED_SELECTABLE )
 								continue;
-							section.vpSongs.push_back( *song );
+							section.vpSongs.push_back( song );
 						}
 					}
 				}
