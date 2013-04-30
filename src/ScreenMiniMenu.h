@@ -111,11 +111,11 @@ struct MenuRowDef
 	bool SetDefaultChoiceIfPresent( RString sChoice )
 	{
 		iDefaultChoice = 0;
-		FOREACH_CONST( RString, choices, s )
+		for (unsigned i = 0; i < choices.size(); ++i)
 		{
-			if( sChoice == *s )
+			if (choices[i] == sChoice)
 			{
-				iDefaultChoice = s - choices.begin();
+				iDefaultChoice = i;
 				return true;
 			}
 		}
