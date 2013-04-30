@@ -353,7 +353,7 @@ void PrefsManager::StoreGamePrefs()
 	ASSERT( !m_sCurrentGame.Get().empty() );
 
 	// save off old values
-	GamePrefs &gp = m_mapGameNameToGamePrefs[m_sCurrentGame];
+	GamePrefs &gp = m_mapGameNameToGamePrefs.at(m_sCurrentGame);
 	gp.m_sAnnouncer = m_sAnnouncer;
 	gp.m_sTheme = m_sTheme;
 	gp.m_sDefaultModifiers = m_sDefaultModifiers;
