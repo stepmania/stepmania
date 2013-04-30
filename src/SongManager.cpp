@@ -255,9 +255,8 @@ void SongManager::LoadStepManiaSongDir( RString sDir, LoadingWindow *ld )
 
 	groupIndex = 0;
 	songCount = 0;
-	FOREACH_CONST( RString, arrayGroupDirs, s )	// foreach dir in /Songs/
+	for (RString const &sGroupDirName : arrayGroupDirs)
 	{
-		RString sGroupDirName = *s;
 		// TODO: If this check fails, log a warning instead of crashing.
 		SanityCheckGroupDir(sDir+sGroupDirName);
 
@@ -282,9 +281,8 @@ void SongManager::LoadStepManiaSongDir( RString sDir, LoadingWindow *ld )
 
 	groupIndex = 0;
 	songIndex = 0;
-	FOREACH_CONST( RString, arrayGroupDirs, s )	// foreach dir in /Songs/
+	for (RString const &sGroupDirName : arrayGroupDirs)
 	{
-		RString sGroupDirName = *s;	
 		vector<RString> &arraySongDirs = arrayGroupSongDirs[groupIndex++];
 
 		LOG->Trace("Attempting to load %i songs from \"%s\"", int(arraySongDirs.size()),
@@ -496,16 +494,15 @@ RageColor SongManager::GetSongColor( const Song* pSong ) const
 
 	if( USE_PREFERRED_SORT_COLOR )
 	{
-		FOREACH_CONST( PreferredSortSection, m_vPreferredSongSort, v )
+		int sortIndex = 0;
+		for (PreferredSortSection const &v : m_vPreferredSongSort)
 		{
-			FOREACH_CONST( Song*, v->vpSongs, s )
+			if (std::any_of(v.vpSongs.begin(), v.vpSongs.end(), [&](Song const *s) { return s == pSong; }))
 			{
-				if( *s == pSong )
-				{
-					int i = v - m_vPreferredSongSort.begin();
-					return SONG_GROUP_COLOR.GetValue( i%NUM_SONG_GROUP_COLORS );
-				}
+				return SONG_GROUP_COLOR.GetValue( sortIndex % NUM_SONG_GROUP_COLORS );
 			}
+
+			sortIndex += 1;
 		}
 
 		int i = m_vPreferredSongSort.size();
@@ -595,17 +592,15 @@ RageColor SongManager::GetCourseColor( const Course* pCourse ) const
 
 	if( USE_PREFERRED_SORT_COLOR )
 	{
-		FOREACH_CONST( CoursePointerVector, m_vPreferredCourseSort, v )
+		int courseIndex = 0;
+		for (CoursePointerVector const &v : m_vPreferredCourseSort)
 		{
-			FOREACH_CONST( Course*, *v, s )
+			if (std::any_of(v.begin(), v.end(), [&](Course const *s) { return s == pCourse; }))
 			{
-				if( *s == pCourse )
-				{
-					int i = v - m_vPreferredCourseSort.begin();
-					CHECKPOINT_M( ssprintf( "%i, NUM_COURSE_GROUP_COLORS = %i", i, NUM_COURSE_GROUP_COLORS.GetValue()) );
-					return COURSE_GROUP_COLOR.GetValue( i % NUM_COURSE_GROUP_COLORS );
-				}
+				CHECKPOINT_M( ssprintf( "%i, NUM_COURSE_GROUP_COLORS = %i", courseIndex, NUM_COURSE_GROUP_COLORS.GetValue()) );
+				return COURSE_GROUP_COLOR.GetValue( courseIndex % NUM_COURSE_GROUP_COLORS );
 			}
+			courseIndex += 1;
 		}
 
 		int i = m_vPreferredCourseSort.size();
@@ -650,19 +645,17 @@ void SongManager::GetPreferredSortSongs( vector<Song*> &AddTo ) const
 		AddTo.insert( AddTo.end(), m_pSongs.begin(), m_pSongs.end() );
 		return;
 	}
-
-	FOREACH_CONST( PreferredSortSection, m_vPreferredSongSort, v )
-		AddTo.insert( AddTo.end(), v->vpSongs.begin(), v->vpSongs.end() );
+	for (PreferredSortSection const &v : m_vPreferredSongSort)
+		AddTo.insert( AddTo.end(), v.vpSongs.begin(), v.vpSongs.end() );
 }
 
 RString SongManager::SongToPreferredSortSectionName( const Song *pSong ) const
 {
-	FOREACH_CONST( PreferredSortSection, m_vPreferredSongSort, v )
+	for (PreferredSortSection const &v : m_vPreferredSongSort)
 	{
-		FOREACH_CONST( Song*, v->vpSongs, s )
+		if (std::any_of(v.vpSongs.begin(), v.vpSongs.end(), [&](Song const *s) { return s == pSong; }))
 		{
-			if( *s == pSong )
-				return v->sName;
+			return v.sName;
 		}
 	}
 	return RString();
@@ -676,11 +669,10 @@ void SongManager::GetPreferredSortCourses( CourseType ct, vector<Course*> &AddTo
 		return;
 	}
 
-	FOREACH_CONST( CoursePointerVector, m_vPreferredCourseSort, v )
+	for (CoursePointerVector const &v : m_vPreferredCourseSort)
 	{
-		FOREACH_CONST( Course*, *v, c )
+		for (Course *pCourse : v)
 		{
-			Course *pCourse = *c;
 			if( pCourse->GetCourseType() == ct )
 				AddTo.push_back( pCourse );
 		}
