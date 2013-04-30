@@ -298,31 +298,31 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 	vector<RString> asParts;
 	split( sBit, " ", asParts, true );
 
-	FOREACH_CONST( RString, asParts, s )
+	for (RString const &s : asParts)
 	{
-		if( *s == "no" )
+		if( s == "no" )
 		{
 			level = 0;
 		}
-		else if( isdigit((*s)[0]) || (*s)[0] == '-' )
+		else if( isdigit(s[0]) || s[0] == '-' )
 		{
 			/* If the last character is a *, they probably said "123*" when
 			 * they meant "*123". */
-			if( s->Right(1) == "*" )
+			if( s.Right(1) == "*" )
 			{
 				// XXX: We know what they want, is there any reason not to handle it?
 				// Yes. We should be strict in handling the format. -Chris
-				sErrorOut = ssprintf("Invalid player options \"%s\"; did you mean '*%d'?", s->c_str(), StringToInt(*s) );
+				sErrorOut = ssprintf("Invalid player options \"%s\"; did you mean '*%d'?", s.c_str(), StringToInt(s) );
 				return false;
 			}
 			else
 			{
-				level = StringToFloat( *s ) / 100.0f;
+				level = StringToFloat( s ) / 100.0f;
 			}
 		}
-		else if( *s[0]=='*' )
+		else if( s[0]=='*' )
 		{
-			sscanf( *s, "*%f", &speed );
+			sscanf( s, "*%f", &speed );
 			if( !isfinite(speed) )
 				speed = 1.0f;
 		}
@@ -767,22 +767,17 @@ bool PlayerOptions::IsEasierForCourseAndTrail( Course* pCourse, Trail* pTrail ) 
 	ASSERT( pCourse != NULL );
 	ASSERT( pTrail != NULL );
 
-	FOREACH_CONST( TrailEntry, pTrail->m_vEntries, e )
-	{
-		if( e->pSong && IsEasierForSongAndSteps(e->pSong, e->pSteps, PLAYER_1) )
-			return true;
-	}
-	return false;
+	return std::any_of(pTrail->m_vEntries.begin(), pTrail->m_vEntries.end(), [&](TrailEntry const &e) {
+		return e.pSong && IsEasierForSongAndSteps(e.pSong, e.pSteps, PLAYER_1);
+	});
 }
 
 void PlayerOptions::GetLocalizedMods( vector<RString> &AddTo ) const
 {
 	vector<RString> vMods;
 	GetMods( vMods );
-	FOREACH_CONST( RString, vMods, s )
+	for (RString const &sOneMod : vMods)
 	{
-		const RString& sOneMod = *s;
-
 		ASSERT( !sOneMod.empty() );
 
 		vector<RString> asTokens;
