@@ -8317,6 +8317,7 @@
 			baseConfigurationReference = AA8B8C49091F48C000D14C5F /* product.xcconfig */;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_CXX_LIBRARY = "libc++";
 				COMBINE_HIDPI_IMAGES = YES;
 				CONFIGURATION_BUILD_DIR = "$(SYMROOT)";
 				FULL_NAME = "$(PRODUCT_NAME).$(WRAPPER_EXTENSION)";
@@ -8819,6 +8820,7 @@
 			baseConfigurationReference = AA8B8C49091F48C000D14C5F /* product.xcconfig */;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_CXX_LIBRARY = "libc++";
 				COMBINE_HIDPI_IMAGES = YES;
 				CONFIGURATION_BUILD_DIR = "$(SYMROOT)";
 				COPY_PHASE_STRIP = NO;
@@ -9075,6 +9077,7 @@
 			baseConfigurationReference = AA8B8C49091F48C000D14C5F /* product.xcconfig */;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_CXX_LIBRARY = "libc++";
 				COMBINE_HIDPI_IMAGES = YES;
 				CONFIGURATION_BUILD_DIR = "$(SYMROOT)";
 				FULL_NAME = "$(PRODUCT_NAME).$(WRAPPER_EXTENSION)";

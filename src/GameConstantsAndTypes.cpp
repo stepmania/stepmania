@@ -388,16 +388,7 @@ bool DisplayBpms::BpmIsConstant() const
 
 bool DisplayBpms::IsSecret() const
 {
-#ifdef MACOSX
-	for (float const &f : vfBpms)
-	{
-		if( f == -1 )
-			return true;
-	}
-	return false;
-#else
 	return std::any_of(vfBpms.begin(), vfBpms.end(), [](float const &f) { return f == -1; });
-#endif
 }
 
 static const char *StyleTypeNames[] = {

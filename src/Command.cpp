@@ -81,14 +81,7 @@ static void SplitWithQuotes( const RString sSource, const char Delimitor, vector
 
 RString Commands::GetOriginalCommandString() const
 {
-#ifdef MACOSX
-	RString s;
-	for (Command const &c : v)
-		s += c.GetOriginalCommandString();
-	return s;
-#else
 	return std::accumulate(v.begin(), v.end(), RString(), [](RString &res, Command const &c) { return res += c.GetOriginalCommandString(); });
-#endif
 }
 
 void ParseCommands( const RString &sCommands, Commands &vCommandsOut )

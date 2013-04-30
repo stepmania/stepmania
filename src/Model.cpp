@@ -760,16 +760,7 @@ void Model::SetSecondsIntoAnimation( float fSeconds )
 
 bool Model::MaterialsNeedNormals() const
 {
-#ifdef MACOSX
-	for (msMaterial const &m : m_Materials)
-	{
-		if( m.NeedsNormals() )
-			return true;
-	}
-	return false;
-#else
 	return std::any_of(m_Materials.begin(), m_Materials.end(), [](msMaterial const &m) { return m.NeedsNormals(); });
-#endif
 }
 
 // lua start

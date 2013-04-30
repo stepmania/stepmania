@@ -1203,21 +1203,8 @@ bool Song::IsTutorial() const
 
 bool Song::HasEdits( StepsType st ) const
 {
-#ifdef MACOSX
-	for (Steps const *pSteps : m_vpSteps)
-	{
-		if( pSteps->m_StepsType == st &&
-			pSteps->GetDifficulty() == Difficulty_Edit )
-		{
-			return true;
-		}
-	}
-
-	return false;
-#else
 	return std::any_of(m_vpSteps.begin(), m_vpSteps.end(),
 		[&](Steps const *step) { return step->m_StepsType == st && step->GetDifficulty() == Difficulty_Edit; });
-#endif
 }
 
 bool Song::NormallyDisplayed() const

@@ -410,22 +410,8 @@ public:
 		FOREACH_HumanPlayer( p )
 		{
 			// If this player failed any stage, then their final grade is an F.
-#ifdef MACOSX
-			bool bPlayerFailedOneStage = false;
-			for (StageStats const &ss : STATSMAN->m_vPlayedStageStats)
-			{
-				if( ss.m_player[p].m_bFailed )
-				{
-					bPlayerFailedOneStage = true;
-					break;
-				}
-			}
-
-			if( bPlayerFailedOneStage )
-#else
 			if (std::any_of(STATSMAN->m_vPlayedStageStats.begin(), STATSMAN->m_vPlayedStageStats.end(),
 				[&](StageStats const &ss) { return ss.m_player[p].m_bFailed; }))
-#endif
 				continue;
 
 			top_grade = min( top_grade, stats.m_player[p].GetGrade() );

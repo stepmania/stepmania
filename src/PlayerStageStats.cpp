@@ -314,15 +314,8 @@ int PlayerStageStats::GetLessonScoreActual() const
 
 int PlayerStageStats::GetLessonScoreNeeded() const
 {
-#ifdef MACOSX
-	float score = 0;
-
-	for (Steps const *steps : m_vpPossibleSteps)
-		score += steps->GetRadarValues( PLAYER_1 ).m_Values.v.fNumTapsAndHolds;
-#else
-	float score = std::accumulate(m_vpPossibleSteps.begin(), m_vpPossibleSteps.end(), 0.f, 
+	float score = std::accumulate(m_vpPossibleSteps.begin(), m_vpPossibleSteps.end(), 0.f,
 		[](float total, Steps const *steps) { return total += steps->GetRadarValues(PLAYER_1).m_Values.v.fNumTapsAndHolds; });
-#endif
 	return lrintf( score * LESSON_PASS_THRESHOLD );
 }
 

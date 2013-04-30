@@ -493,21 +493,7 @@ void EditCourseUtil::LoadDefaults( Course &out )
 		vector<Course*> vpCourses;
 		EditCourseUtil::GetAllEditCourses( vpCourses );
 
-#ifdef MACOSX
-		bool bNameInUse = false;
-		for (Course const *p : vpCourses)
-		{
-			if( out.m_sMainTitle == p->m_sMainTitle )
-			{
-				bNameInUse = true;
-				break;
-			}
-		}
-
-		if( !bNameInUse )
-#else
 		if (std::any_of(vpCourses.begin(), vpCourses.end(), [&](Course const *p) { return out.m_sMainTitle == p->m_sMainTitle; }))
-#endif
 			break;
 	}
 

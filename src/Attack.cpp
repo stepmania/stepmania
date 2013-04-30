@@ -90,16 +90,7 @@ int Attack::GetNumAttacks() const
 
 bool AttackArray::ContainsTransformOrTurn() const
 {
-#ifdef MACOSX
-	for (Attack const &a : *this)
-	{
-		if( a.ContainsTransformOrTurn() )
-			return true;
-	}
-	return false;
-#else
 	return std::any_of((*this).begin(), (*this).end(), [](Attack const &a) { return a.ContainsTransformOrTurn(); });
-#endif
 }
 
 vector<RString> AttackArray::ToVectorString() const
