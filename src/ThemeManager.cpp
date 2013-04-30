@@ -304,8 +304,8 @@ void ThemeManager::LoadThemeMetrics( const RString &sThemeName_, const RString &
 		{
 			vector<RString> vs;
 			GetOptionalLanguageIniPaths(vs,sThemeName,sLanguage);
-			FOREACH_CONST(RString,vs,s)
-				iniStrings.ReadFile( *s );
+			for (RString const &s : vs)
+				iniStrings.ReadFile( s );
 		}
 		iniStrings.ReadFile( GetLanguageIniPath(sThemeName,SpecialFiles::BASE_LANGUAGE) );
 		if( sLanguage.CompareNoCase(SpecialFiles::BASE_LANGUAGE) )
@@ -473,10 +473,9 @@ void ThemeManager::RunLuaScripts( const RString &sMask, bool bUseThemeDir )
 		SortRStringArray( arrayScriptDirs );
 		StripCvsAndSvn( arrayScriptDirs );
 		StripMacResourceForks( arrayScriptDirs );
-		FOREACH_CONST( RString, arrayScriptDirs, s )	// foreach dir in /Scripts/
+		for( RString const &sScriptDirName : arrayScriptDirs )	// foreach dir in /Scripts/
 		{
 			// Find all Lua files in this directory, add them to asElementPaths
-			RString sScriptDirName = *s;
 			GetDirListing( sScriptDir + "Scripts/" + sScriptDirName + "/" + sMask, asElementChildPaths, false, true );
 			for( unsigned i = 0; i < asElementChildPaths.size(); ++i )
 			{
@@ -1093,18 +1092,18 @@ void ThemeManager::GetLanguagesForTheme( const RString &sThemeName, vector<RStri
 	vector<RString> as;
 	GetDirListing( sLanguageDir + "*.ini", as );
 	
-	FOREACH_CONST( RString, as, s )
+	for (RString const &s : as)
 	{
 		// ignore metrics.ini
-		if( s->CompareNoCase(SpecialFiles::METRICS_FILE)==0 )
+		if( s.CompareNoCase(SpecialFiles::METRICS_FILE)==0 )
 			continue;
 
 		// Ignore filenames with a space.  These are optional language inis that probably came from a mounted package.
-		if( s->find(" ") != RString::npos )
+		if( s.find(" ") != RString::npos )
 			continue;
 
 		// strip ".ini"
-		RString s2 = s->Left( s->size()-4 );
+		RString s2 = s.Left( s.size()-4 );
 
 		asLanguagesOut.push_back( s2 );
 	}
