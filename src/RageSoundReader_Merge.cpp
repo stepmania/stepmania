@@ -30,8 +30,8 @@ RageSoundReader_Merge::RageSoundReader_Merge( const RageSoundReader_Merge &cpy )
 	m_iNextSourceFrame = cpy.m_iNextSourceFrame;
 	m_fCurrentStreamToSourceRatio = cpy.m_fCurrentStreamToSourceRatio;
 
-	FOREACH_CONST( RageSoundReader *, cpy.m_aSounds, it )
-		m_aSounds.push_back( (*it)->Copy() );
+	for (RageSoundReader const *it : cpy.m_aSounds)
+		m_aSounds.push_back( it->Copy() );
 }
 
 void RageSoundReader_Merge::AddSound( RageSoundReader *pSound )
@@ -42,12 +42,13 @@ void RageSoundReader_Merge::AddSound( RageSoundReader *pSound )
 /* If every sound has the same sample rate, return it.  Otherwise, return -1. */
 int RageSoundReader_Merge::GetSampleRateInternal() const
 {
+	// TODO: Convert to a set and compare values?
 	int iRate = -1;
-	FOREACH_CONST( RageSoundReader *, m_aSounds, it )
+	for (RageSoundReader const *it : m_aSounds)
 	{
 		if( iRate == -1 )
-			iRate = (*it)->GetSampleRate();
-		else if( iRate != (*it)->GetSampleRate() )
+			iRate = it->GetSampleRate();
+		else if( iRate != it->GetSampleRate() )
 			return -1;
 	}
 	return iRate;
