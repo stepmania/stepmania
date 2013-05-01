@@ -82,18 +82,18 @@ void ScreenOptionsManageEditSteps::BeginScreen()
 
 	SONGMAN->GetStepsLoadedFromProfile( m_vpSteps, ProfileSlot_Machine );
 
-	FOREACH_CONST( Steps*, m_vpSteps, s )
+	for (Steps const *s : m_vpSteps)
 	{
 		vHands.push_back( OptionRowHandlerUtil::MakeNull() );
 		OptionRowDefinition &def = vHands.back()->m_Def;
 		
-		Song *pSong = (*s)->m_pSong;
+		Song *pSong = s->m_pSong;
 
-		def.m_sName = pSong->GetTranslitFullTitle() + " - " + (*s)->GetDescription();
+		def.m_sName = pSong->GetTranslitFullTitle() + " - " + s->GetDescription();
 		def.m_bAllowThemeTitle = false;	// not themable
 		def.m_sExplanationName = "Select Edit Steps";
 		def.m_vsChoices.clear();
-		StepsType st = (*s)->m_StepsType;
+		StepsType st = s->m_StepsType;
 		RString sType = GAMEMAN->GetStepsTypeInfo(st).GetLocalizedString();
 		def.m_vsChoices.push_back( sType );
 		def.m_bAllowThemeItems = false;	// already themed
