@@ -70,7 +70,9 @@ void ScreenOptionsMaster::Init()
 void ScreenOptionsMaster::ImportOptions( int r, const vector<PlayerNumber> &vpns )
 {
 	for (PlayerNumber const &pn : vpns)
+	{
 		ASSERT( GAMESTATE->IsHumanPlayer(pn) );
+	}
 	OptionRow &row = *m_pRows[r];
 	row.ImportOptions( vpns );
 }
