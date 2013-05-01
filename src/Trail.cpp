@@ -230,17 +230,17 @@ public:
 	static int GetArtists( T* p, lua_State *L )
 	{
 		vector<RString> asArtists, asAltArtists;
-		FOREACH_CONST( TrailEntry, p->m_vEntries, e )
+		for (TrailEntry const &e : p->m_vEntries)
 		{
-			if( e->bSecret )
+			if( e.bSecret )
 			{
 				asArtists.push_back( "???" );
 				asAltArtists.push_back( "???" );
 			}
 			else
 			{
-				asArtists.push_back( e->pSong->GetDisplayArtist() );
-				asAltArtists.push_back( e->pSong->GetTranslitArtist() );
+				asArtists.push_back( e.pSong->GetDisplayArtist() );
+				asAltArtists.push_back( e.pSong->GetTranslitArtist() );
 			}
 		}
 
