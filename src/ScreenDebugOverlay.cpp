@@ -70,7 +70,7 @@ public:
 	virtual RString GetPageName() const { return "Main"; }
 	virtual bool ForceOffAfterUse() const { return false; }
 	virtual bool IsEnabled() const = 0;
-	virtual void DoAndLog( RString &sMessageOut )
+	virtual void DoAndLog( RString &sMessageOut ) const
 	{
 		RString s1 = GetDisplayTitle();
 		RString s2 = GetDisplayValue();
@@ -448,15 +448,16 @@ bool ScreenDebugOverlay::Input( const InputEventPlus &input )
 		return true;
 	}
 
-	FOREACH_CONST( IDebugLine*, *g_pvpSubscribers, p )
+	// Explicitly be tricky to keep the values aligned.
+	int i = -1;
+	for (IDebugLine const *p : *g_pvpSubscribers)
 	{
-		RString sPageName = (*p)->GetPageName();
-
-		int i = p-g_pvpSubscribers->begin();
+		RString sPageName = p->GetPageName();
+		++i;
 
 		// Gameplay buttons are available only in gameplay. Non-gameplay buttons
 		// are only available when the screen is displayed.
-		IDebugLine::Type type = (*p)->GetType();
+		IDebugLine::Type type = p->GetType();
 		switch( type )
 		{
 		case IDebugLine::all_screens:
@@ -473,17 +474,17 @@ bool ScreenDebugOverlay::Input( const InputEventPlus &input )
 			FAIL_M(ssprintf("Invalid debug line type: %i", type));
 		}
 
-		if( input.DeviceI == (*p)->m_Button )
+		if( input.DeviceI == p->m_Button )
 		{
 			if( input.type != IET_FIRST_PRESS )
 				return true; // eat the input but do nothing
 
 			// do the action
 			RString sMessage;
-			(*p)->DoAndLog( sMessage );
+			p->DoAndLog( sMessage );
 			if( !sMessage.empty() )
 				LOG->Trace("DEBUG: %s", sMessage.c_str() );
-			if( (*p)->ForceOffAfterUse() )
+			if( p->ForceOffAfterUse() )
 				m_bForcedHidden = true;
 
 			// update text to show the effect of what changed above
