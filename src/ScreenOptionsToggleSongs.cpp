@@ -20,11 +20,10 @@ void ScreenOptionsToggleSongs::BeginScreen()
 
 	vector<RString> asAllGroups;
 	SONGMAN->GetSongGroupNames(asAllGroups);
-	FOREACH_CONST( RString, asAllGroups , s )
+	for (RString const &sGroup : asAllGroups)
 	{
 		vHands.push_back( OptionRowHandlerUtil::MakeNull() );
 		OptionRowDefinition &def = vHands.back()->m_Def;
-		RString sGroup = *s;
 
 		def.m_sName = sGroup;
 		def.m_sExplanationName = "Select Group";
@@ -76,9 +75,8 @@ void ScreenOptionsToggleSongsSubPage::BeginScreen()
 	vector<OptionRowHandler*> vHands;
 
 	const vector<Song *> &apAllSongs = SONGMAN->GetSongs(ToggleSongs::m_sGroup);
-	FOREACH_CONST( Song *, apAllSongs , s )
+	for (Song *pSong : apAllSongs)
 	{
-		Song *pSong = *s;
 		if( UNLOCKMAN->SongIsLocked(pSong) & ~LOCKED_DISABLED )
 			continue;
 
