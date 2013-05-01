@@ -65,11 +65,11 @@ public:
 	virtual ~IDebugLine() { }
 	enum Type { all_screens, gameplay_only };
 	virtual Type GetType() const { return all_screens; }
-	virtual RString GetDisplayTitle() = 0;
-	virtual RString GetDisplayValue() { return IsEnabled() ? ON.GetValue():OFF.GetValue(); }
+	virtual RString GetDisplayTitle() const = 0;
+	virtual RString GetDisplayValue() const { return IsEnabled() ? ON.GetValue():OFF.GetValue(); }
 	virtual RString GetPageName() const { return "Main"; }
 	virtual bool ForceOffAfterUse() const { return false; }
-	virtual bool IsEnabled() = 0;
+	virtual bool IsEnabled() const = 0;
 	virtual void DoAndLog( RString &sMessageOut )
 	{
 		RString s1 = GetDisplayTitle();
@@ -568,8 +568,8 @@ static LocalizedString SYNC_TEMPO		( "ScreenDebugOverlay", "Tempo" );
 
 class DebugLineAutoplay : public IDebugLine
 {
-	virtual RString GetDisplayTitle() { return AUTO_PLAY.GetValue() + " (+Shift = AI) (+Alt = hide)"; }
-	virtual RString GetDisplayValue()
+	virtual RString GetDisplayTitle() const { return AUTO_PLAY.GetValue() + " (+Shift = AI) (+Alt = hide)"; }
+	virtual RString GetDisplayValue() const 
 	{
 		PlayerController pc = GamePreferences::m_AutoPlay.Get();
 		switch( pc )
@@ -582,7 +582,7 @@ class DebugLineAutoplay : public IDebugLine
 		}
 	}
 	virtual Type GetType() const { return IDebugLine::gameplay_only; }
-	virtual bool IsEnabled() { return GamePreferences::m_AutoPlay.Get() != PC_HUMAN; }
+	virtual bool IsEnabled() const { return GamePreferences::m_AutoPlay.Get() != PC_HUMAN; }
 	virtual void DoAndLog( RString &sMessageOut )
 	{
 		ASSERT( GAMESTATE->GetMasterPlayerNumber() != PLAYER_INVALID );
@@ -612,9 +612,9 @@ class DebugLineAutoplay : public IDebugLine
 
 class DebugLineAssist : public IDebugLine
 {
-	virtual RString GetDisplayTitle() { return ASSIST.GetValue(); }
+	virtual RString GetDisplayTitle() const { return ASSIST.GetValue(); }
 	virtual Type GetType() const { return gameplay_only; }
-	virtual RString GetDisplayValue() { 
+	virtual RString GetDisplayValue() const { 
 		SongOptions so;
 		so.m_bAssistClap = GAMESTATE->m_SongOptions.GetSong().m_bAssistClap;
 		so.m_bAssistMetronome = GAMESTATE->m_SongOptions.GetSong().m_bAssistMetronome;
@@ -623,7 +623,7 @@ class DebugLineAssist : public IDebugLine
 		else
 			return OFF.GetValue();
 	}
-	virtual bool IsEnabled() { return GAMESTATE->m_SongOptions.GetSong().m_bAssistClap || GAMESTATE->m_SongOptions.GetSong().m_bAssistMetronome; }
+	virtual bool IsEnabled() const { return GAMESTATE->m_SongOptions.GetSong().m_bAssistClap || GAMESTATE->m_SongOptions.GetSong().m_bAssistMetronome; }
 	virtual void DoAndLog( RString &sMessageOut )
 	{
 		ASSERT( GAMESTATE->GetMasterPlayerNumber() != PLAYER_INVALID );
@@ -644,8 +644,8 @@ class DebugLineAssist : public IDebugLine
 
 class DebugLineAutosync : public IDebugLine
 {
-	virtual RString GetDisplayTitle() { return AUTOSYNC.GetValue(); }
-	virtual RString GetDisplayValue()
+	virtual RString GetDisplayTitle() const { return AUTOSYNC.GetValue(); }
+	virtual RString GetDisplayValue() const 
 	{ 
 		SongOptions::AutosyncType type = GAMESTATE->m_SongOptions.GetSong().m_AutosyncType;
 		switch( type )
@@ -659,7 +659,7 @@ class DebugLineAutosync : public IDebugLine
 		}
 	}
 	virtual Type GetType() const { return IDebugLine::gameplay_only; }
-	virtual bool IsEnabled() { return GAMESTATE->m_SongOptions.GetSong().m_AutosyncType!=SongOptions::AUTOSYNC_OFF; }
+	virtual bool IsEnabled() const { return GAMESTATE->m_SongOptions.GetSong().m_AutosyncType!=SongOptions::AUTOSYNC_OFF; }
 	virtual void DoAndLog( RString &sMessageOut )
 	{
 		int as = GAMESTATE->m_SongOptions.GetSong().m_AutosyncType + 1;
@@ -676,9 +676,9 @@ class DebugLineAutosync : public IDebugLine
 
 class DebugLineCoinMode : public IDebugLine
 {
-	virtual RString GetDisplayTitle() { return COIN_MODE.GetValue(); }
-	virtual RString GetDisplayValue() { return CoinModeToString(GamePreferences::m_CoinMode); }
-	virtual bool IsEnabled() { return true; }
+	virtual RString GetDisplayTitle() const { return COIN_MODE.GetValue(); }
+	virtual RString GetDisplayValue() const { return CoinModeToString(GamePreferences::m_CoinMode); }
+	virtual bool IsEnabled() const { return true; }
 	virtual void DoAndLog( RString &sMessageOut )
 	{
 		int cm = GamePreferences::m_CoinMode+1;
@@ -691,8 +691,8 @@ class DebugLineCoinMode : public IDebugLine
 
 class DebugLineSlow : public IDebugLine
 {
-	virtual RString GetDisplayTitle() { return SLOW.GetValue(); }
-	virtual bool IsEnabled() { return g_bIsSlow; }
+	virtual RString GetDisplayTitle() const { return SLOW.GetValue(); }
+	virtual bool IsEnabled() const { return g_bIsSlow; }
 	virtual void DoAndLog( RString &sMessageOut )
 	{
 		g_bIsSlow = !g_bIsSlow;
@@ -703,8 +703,8 @@ class DebugLineSlow : public IDebugLine
 
 class DebugLineHalt : public IDebugLine
 {
-	virtual RString GetDisplayTitle() { return HALT.GetValue(); }
-	virtual bool IsEnabled() { return g_bIsHalt; }
+	virtual RString GetDisplayTitle() const { return HALT.GetValue(); }
+	virtual bool IsEnabled() const { return g_bIsHalt; }
 	virtual void DoAndLog( RString &sMessageOut )
 	{
 		g_bIsHalt = !g_bIsHalt;
@@ -716,8 +716,8 @@ class DebugLineHalt : public IDebugLine
 
 class DebugLineLightsDebug : public IDebugLine
 {
-	virtual RString GetDisplayTitle() { return LIGHTS_DEBUG.GetValue(); }
-	virtual bool IsEnabled() { return PREFSMAN->m_bDebugLights.Get(); }
+	virtual RString GetDisplayTitle() const { return LIGHTS_DEBUG.GetValue(); }
+	virtual bool IsEnabled() const { return PREFSMAN->m_bDebugLights.Get(); }
 	virtual void DoAndLog( RString &sMessageOut )
 	{
 		PREFSMAN->m_bDebugLights.Set( !PREFSMAN->m_bDebugLights );
@@ -727,8 +727,8 @@ class DebugLineLightsDebug : public IDebugLine
 
 class DebugLineMonkeyInput : public IDebugLine
 {
-	virtual RString GetDisplayTitle() { return MONKEY_INPUT.GetValue(); }
-	virtual bool IsEnabled() { return PREFSMAN->m_bMonkeyInput.Get(); }
+	virtual RString GetDisplayTitle() const { return MONKEY_INPUT.GetValue(); }
+	virtual bool IsEnabled() const { return PREFSMAN->m_bMonkeyInput.Get(); }
 	virtual void DoAndLog( RString &sMessageOut )
 	{
 		PREFSMAN->m_bMonkeyInput.Set( !PREFSMAN->m_bMonkeyInput );
@@ -738,8 +738,8 @@ class DebugLineMonkeyInput : public IDebugLine
 
 class DebugLineStats : public IDebugLine
 {
-	virtual RString GetDisplayTitle() { return RENDERING_STATS.GetValue(); }
-	virtual bool IsEnabled() { return PREFSMAN->m_bShowStats.Get(); }
+	virtual RString GetDisplayTitle() const { return RENDERING_STATS.GetValue(); }
+	virtual bool IsEnabled() const { return PREFSMAN->m_bShowStats.Get(); }
 	virtual void DoAndLog( RString &sMessageOut )
 	{
 		PREFSMAN->m_bShowStats.Set( !PREFSMAN->m_bShowStats );
@@ -749,8 +749,8 @@ class DebugLineStats : public IDebugLine
 
 class DebugLineVsync : public IDebugLine
 {
-	virtual RString GetDisplayTitle() { return VSYNC.GetValue(); }
-	virtual bool IsEnabled() { return PREFSMAN->m_bVsync.Get(); }
+	virtual RString GetDisplayTitle() const { return VSYNC.GetValue(); }
+	virtual bool IsEnabled() const { return PREFSMAN->m_bVsync.Get(); }
 	virtual void DoAndLog( RString &sMessageOut )
 	{
 		PREFSMAN->m_bVsync.Set( !PREFSMAN->m_bVsync );
@@ -761,8 +761,8 @@ class DebugLineVsync : public IDebugLine
 
 class DebugLineAllowMultitexture : public IDebugLine
 {
-	virtual RString GetDisplayTitle() { return MULTITEXTURE.GetValue(); }
-	virtual bool IsEnabled() { return PREFSMAN->m_bAllowMultitexture.Get(); }
+	virtual RString GetDisplayTitle() const { return MULTITEXTURE.GetValue(); }
+	virtual bool IsEnabled() const { return PREFSMAN->m_bAllowMultitexture.Get(); }
 	virtual void DoAndLog( RString &sMessageOut )
 	{
 		PREFSMAN->m_bAllowMultitexture.Set( !PREFSMAN->m_bAllowMultitexture );
@@ -772,8 +772,8 @@ class DebugLineAllowMultitexture : public IDebugLine
 
 class DebugLineShowMasks : public IDebugLine
 {
-	virtual RString GetDisplayTitle() { return SCREEN_SHOW_MASKS.GetValue(); }
-	virtual bool IsEnabled() { return GetPref()->Get(); }
+	virtual RString GetDisplayTitle() const { return SCREEN_SHOW_MASKS.GetValue(); }
+	virtual bool IsEnabled() const { return GetPref()->Get(); }
 	virtual RString GetPageName() const { return "Theme"; }
 	virtual void DoAndLog( RString &sMessageOut )
 	{
@@ -781,7 +781,7 @@ class DebugLineShowMasks : public IDebugLine
 		IDebugLine::DoAndLog( sMessageOut );
 	}
 
-	Preference<bool> *GetPref()
+	Preference<bool> *GetPref() const 
 	{
 		return Preference<bool>::GetPreferenceByName("ShowMasks");
 	}
@@ -797,8 +797,8 @@ static bool IsSelectProfilePersistent()
 
 class DebugLineProfileSlot : public IDebugLine
 {
-	virtual RString GetDisplayTitle() { return PROFILE.GetValue(); }
-	virtual RString GetDisplayValue()
+	virtual RString GetDisplayTitle() const { return PROFILE.GetValue(); }
+	virtual RString GetDisplayValue() const 
 	{
 		switch( g_ProfileSlot )
 		{
@@ -808,7 +808,7 @@ class DebugLineProfileSlot : public IDebugLine
 			default: return RString();
 		}
 	}
-	virtual bool IsEnabled() { return IsSelectProfilePersistent(); }
+	virtual bool IsEnabled() const { return IsSelectProfilePersistent(); }
 	virtual RString GetPageName() const { return "Profiles"; }
 	virtual void DoAndLog( RString &sMessageOut )
 	{
@@ -823,9 +823,9 @@ class DebugLineProfileSlot : public IDebugLine
 
 class DebugLineClearProfileStats : public IDebugLine
 {
-	virtual RString GetDisplayTitle() { return CLEAR_PROFILE_STATS.GetValue(); }
-	virtual RString GetDisplayValue() { return RString(); }
-	virtual bool IsEnabled() { return IsSelectProfilePersistent(); }
+	virtual RString GetDisplayTitle() const { return CLEAR_PROFILE_STATS.GetValue(); }
+	virtual RString GetDisplayValue() const { return RString(); }
+	virtual bool IsEnabled() const { return IsSelectProfilePersistent(); }
 	virtual RString GetPageName() const { return "Profiles"; }
 	virtual void DoAndLog( RString &sMessageOut )
 	{
@@ -920,9 +920,9 @@ static void FillProfileStats( Profile *pProfile )
 
 class DebugLineFillProfileStats : public IDebugLine
 {
-	virtual RString GetDisplayTitle() { return FILL_PROFILE_STATS.GetValue(); }
-	virtual RString GetDisplayValue() { return RString(); }
-	virtual bool IsEnabled() { return IsSelectProfilePersistent(); }
+	virtual RString GetDisplayTitle() const { return FILL_PROFILE_STATS.GetValue(); }
+	virtual RString GetDisplayValue() const { return RString(); }
+	virtual bool IsEnabled() const { return IsSelectProfilePersistent(); }
 	virtual RString GetPageName() const { return "Profiles"; }
 	virtual void DoAndLog( RString &sMessageOut )
 	{
@@ -934,9 +934,9 @@ class DebugLineFillProfileStats : public IDebugLine
 
 class DebugLineSendNotesEnded : public IDebugLine
 {
-	virtual RString GetDisplayTitle() { return SEND_NOTES_ENDED.GetValue(); }
-	virtual RString GetDisplayValue() { return RString(); }
-	virtual bool IsEnabled() { return true; }
+	virtual RString GetDisplayTitle() const { return SEND_NOTES_ENDED.GetValue(); }
+	virtual RString GetDisplayValue() const { return RString(); }
+	virtual bool IsEnabled() const { return true; }
 	virtual void DoAndLog( RString &sMessageOut )
 	{
 		SCREENMAN->PostMessageToTopScreen( SM_NotesEnded, 0 );
@@ -946,9 +946,9 @@ class DebugLineSendNotesEnded : public IDebugLine
 
 class DebugLineReloadCurrentScreen : public IDebugLine
 {
-	virtual RString GetDisplayTitle() { return RELOAD.GetValue(); }
-	virtual RString GetDisplayValue() { return SCREENMAN && SCREENMAN->GetTopScreen()? SCREENMAN->GetTopScreen()->GetName() : RString(); }
-	virtual bool IsEnabled() { return true; }
+	virtual RString GetDisplayTitle() const { return RELOAD.GetValue(); }
+	virtual RString GetDisplayValue() const { return SCREENMAN && SCREENMAN->GetTopScreen()? SCREENMAN->GetTopScreen()->GetName() : RString(); }
+	virtual bool IsEnabled() const { return true; }
 	virtual RString GetPageName() const { return "Theme"; }
 	virtual void DoAndLog( RString &sMessageOut )
 	{
@@ -966,9 +966,9 @@ class DebugLineReloadCurrentScreen : public IDebugLine
 
 class DebugLineRestartCurrentScreen : public IDebugLine
 {
-	virtual RString GetDisplayTitle() { return RESTART.GetValue(); }
-	virtual RString GetDisplayValue() { return SCREENMAN && SCREENMAN->GetTopScreen()? SCREENMAN->GetTopScreen()->GetName() : RString(); }
-	virtual bool IsEnabled() { return true; }
+	virtual RString GetDisplayTitle() const { return RESTART.GetValue(); }
+	virtual RString GetDisplayValue() const { return SCREENMAN && SCREENMAN->GetTopScreen()? SCREENMAN->GetTopScreen()->GetName() : RString(); }
+	virtual bool IsEnabled() const { return true; }
 	virtual bool ForceOffAfterUse() const { return true; }
 	virtual RString GetPageName() const { return "Theme"; }
 	virtual void DoAndLog( RString &sMessageOut )
@@ -981,9 +981,9 @@ class DebugLineRestartCurrentScreen : public IDebugLine
 
 class DebugLineCurrentScreenOn : public IDebugLine
 {
-	virtual RString GetDisplayTitle() { return SCREEN_ON.GetValue(); }
-	virtual RString GetDisplayValue() { return SCREENMAN && SCREENMAN->GetTopScreen()? SCREENMAN->GetTopScreen()->GetName() : RString(); }
-	virtual bool IsEnabled() { return true; }
+	virtual RString GetDisplayTitle() const { return SCREEN_ON.GetValue(); }
+	virtual RString GetDisplayValue() const { return SCREENMAN && SCREENMAN->GetTopScreen()? SCREENMAN->GetTopScreen()->GetName() : RString(); }
+	virtual bool IsEnabled() const { return true; }
 	virtual bool ForceOffAfterUse() const { return true; }
 	virtual RString GetPageName() const { return "Theme"; }
 	virtual void DoAndLog( RString &sMessageOut )
@@ -996,9 +996,9 @@ class DebugLineCurrentScreenOn : public IDebugLine
 
 class DebugLineCurrentScreenOff : public IDebugLine
 {
-	virtual RString GetDisplayTitle() { return SCREEN_OFF.GetValue(); }
-	virtual RString GetDisplayValue() { return SCREENMAN && SCREENMAN->GetTopScreen()? SCREENMAN->GetTopScreen()->GetName() : RString(); }
-	virtual bool IsEnabled() { return true; }
+	virtual RString GetDisplayTitle() const { return SCREEN_OFF.GetValue(); }
+	virtual RString GetDisplayValue() const { return SCREENMAN && SCREENMAN->GetTopScreen()? SCREENMAN->GetTopScreen()->GetName() : RString(); }
+	virtual bool IsEnabled() const { return true; }
 	virtual bool ForceOffAfterUse() const { return true; }
 	virtual RString GetPageName() const { return "Theme"; }
 	virtual void DoAndLog( RString &sMessageOut )
@@ -1011,9 +1011,9 @@ class DebugLineCurrentScreenOff : public IDebugLine
 
 class DebugLineReloadTheme : public IDebugLine
 {
-	virtual RString GetDisplayTitle() { return RELOAD_THEME_AND_TEXTURES.GetValue(); }
-	virtual RString GetDisplayValue() { return RString(); }
-	virtual bool IsEnabled() { return true; }
+	virtual RString GetDisplayTitle() const { return RELOAD_THEME_AND_TEXTURES.GetValue(); }
+	virtual RString GetDisplayValue() const { return RString(); }
+	virtual bool IsEnabled() const { return true; }
 	virtual RString GetPageName() const { return "Theme"; }
 	virtual void DoAndLog( RString &sMessageOut )
 	{
@@ -1029,9 +1029,9 @@ class DebugLineReloadTheme : public IDebugLine
 
 class DebugLineWriteProfiles : public IDebugLine
 {
-	virtual RString GetDisplayTitle() { return WRITE_PROFILES.GetValue(); }
-	virtual RString GetDisplayValue() { return RString(); }
-	virtual bool IsEnabled() { return IsSelectProfilePersistent(); }
+	virtual RString GetDisplayTitle() const { return WRITE_PROFILES.GetValue(); }
+	virtual RString GetDisplayValue() const { return RString(); }
+	virtual bool IsEnabled() const { return IsSelectProfilePersistent(); }
 	virtual RString GetPageName() const { return "Profiles"; }
 	virtual void DoAndLog( RString &sMessageOut )
 	{
@@ -1051,9 +1051,9 @@ class DebugLineWriteProfiles : public IDebugLine
 
 class DebugLineWritePreferences : public IDebugLine
 {
-	virtual RString GetDisplayTitle() { return WRITE_PREFERENCES.GetValue(); }
-	virtual RString GetDisplayValue() { return RString(); }
-	virtual bool IsEnabled() { return true; }
+	virtual RString GetDisplayTitle() const { return WRITE_PREFERENCES.GetValue(); }
+	virtual RString GetDisplayValue() const { return RString(); }
+	virtual bool IsEnabled() const { return true; }
 	virtual void DoAndLog( RString &sMessageOut )
 	{
 		PREFSMAN->SavePrefsToDisk();
@@ -1063,9 +1063,9 @@ class DebugLineWritePreferences : public IDebugLine
 
 class DebugLineMenuTimer : public IDebugLine
 {
-	virtual RString GetDisplayTitle() { return MENU_TIMER.GetValue(); }
-	virtual RString GetDisplayValue() { return RString(); }
-	virtual bool IsEnabled() { return PREFSMAN->m_bMenuTimer.Get(); }
+	virtual RString GetDisplayTitle() const { return MENU_TIMER.GetValue(); }
+	virtual RString GetDisplayValue() const { return RString(); }
+	virtual bool IsEnabled() const { return PREFSMAN->m_bMenuTimer.Get(); }
 	virtual void DoAndLog( RString &sMessageOut )
 	{
 		PREFSMAN->m_bMenuTimer.Set( !PREFSMAN->m_bMenuTimer );
@@ -1075,9 +1075,9 @@ class DebugLineMenuTimer : public IDebugLine
 
 class DebugLineFlushLog : public IDebugLine
 {
-	virtual RString GetDisplayTitle() { return FLUSH_LOG.GetValue(); }
-	virtual RString GetDisplayValue() { return RString(); }
-	virtual bool IsEnabled() { return true; }
+	virtual RString GetDisplayTitle() const { return FLUSH_LOG.GetValue(); }
+	virtual RString GetDisplayValue() const { return RString(); }
+	virtual bool IsEnabled() const { return true; }
 	virtual void DoAndLog( RString &sMessageOut )
 	{
 		LOG->Flush();
@@ -1087,9 +1087,9 @@ class DebugLineFlushLog : public IDebugLine
 
 class DebugLinePullBackCamera : public IDebugLine
 {
-	virtual RString GetDisplayTitle() { return PULL_BACK_CAMERA.GetValue(); }
-	virtual RString GetDisplayValue() { return RString(); }
-	virtual bool IsEnabled() { return g_fImageScaleDestination != 1; }
+	virtual RString GetDisplayTitle() const { return PULL_BACK_CAMERA.GetValue(); }
+	virtual RString GetDisplayValue() const { return RString(); }
+	virtual bool IsEnabled() const { return g_fImageScaleDestination != 1; }
 	virtual void DoAndLog( RString &sMessageOut )
 	{
 		if( g_fImageScaleDestination == 1 )
@@ -1102,15 +1102,15 @@ class DebugLinePullBackCamera : public IDebugLine
 
 class DebugLineVolumeUp : public IDebugLine
 {
-	virtual RString GetDisplayTitle() { return VOLUME_UP.GetValue(); }
-	virtual RString GetDisplayValue() { return ssprintf("%.0f%%", GetPref()->Get()*100); }
-	virtual bool IsEnabled() { return true; }
+	virtual RString GetDisplayTitle() const { return VOLUME_UP.GetValue(); }
+	virtual RString GetDisplayValue() const { return ssprintf("%.0f%%", GetPref()->Get()*100); }
+	virtual bool IsEnabled() const { return true; }
 	virtual void DoAndLog( RString &sMessageOut )
 	{
 		ChangeVolume( +0.1f );
 		IDebugLine::DoAndLog( sMessageOut );
 	}
-	Preference<float> *GetPref()
+	Preference<float> *GetPref() const
 	{
 		return Preference<float>::GetPreferenceByName("SoundVolume");
 	}
@@ -1118,9 +1118,9 @@ class DebugLineVolumeUp : public IDebugLine
 
 class DebugLineVolumeDown : public IDebugLine
 {
-	virtual RString GetDisplayTitle() { return VOLUME_DOWN.GetValue(); }
-	virtual RString GetDisplayValue() { return RString(); }
-	virtual bool IsEnabled() { return true; }
+	virtual RString GetDisplayTitle() const { return VOLUME_DOWN.GetValue(); }
+	virtual RString GetDisplayValue() const { return RString(); }
+	virtual bool IsEnabled() const { return true; }
 	virtual void DoAndLog( RString &sMessageOut )
 	{
 		ChangeVolume( -0.1f );
@@ -1135,15 +1135,15 @@ class DebugLineVolumeDown : public IDebugLine
 
 class DebugLineVisualDelayUp : public IDebugLine
 {
-	virtual RString GetDisplayTitle() { return VISUAL_DELAY_UP.GetValue(); }
-	virtual RString GetDisplayValue() { return ssprintf("%.03f",GetPref()->Get()); }
-	virtual bool IsEnabled() { return true; }
+	virtual RString GetDisplayTitle() const { return VISUAL_DELAY_UP.GetValue(); }
+	virtual RString GetDisplayValue() const { return ssprintf("%.03f",GetPref()->Get()); }
+	virtual bool IsEnabled() const { return true; }
 	virtual void DoAndLog( RString &sMessageOut )
 	{
 		ChangeVisualDelay( +0.001f );
 		IDebugLine::DoAndLog( sMessageOut );
 	}
-	Preference<float> *GetPref()
+	Preference<float> *GetPref() const 
 	{
 		return Preference<float>::GetPreferenceByName("VisualDelaySeconds");
 	}
@@ -1151,9 +1151,9 @@ class DebugLineVisualDelayUp : public IDebugLine
 
 class DebugLineVisualDelayDown : public IDebugLine
 {
-	virtual RString GetDisplayTitle() { return VISUAL_DELAY_DOWN.GetValue(); }
-	virtual RString GetDisplayValue() { return RString(); }
-	virtual bool IsEnabled() { return true; }
+	virtual RString GetDisplayTitle() const { return VISUAL_DELAY_DOWN.GetValue(); }
+	virtual RString GetDisplayValue() const { return RString(); }
+	virtual bool IsEnabled() const { return true; }
 	virtual void DoAndLog( RString &sMessageOut )
 	{
 		ChangeVisualDelay( -0.001f );
@@ -1168,17 +1168,17 @@ class DebugLineVisualDelayDown : public IDebugLine
 
 class DebugLineForceCrash : public IDebugLine
 {
-	virtual RString GetDisplayTitle() { return FORCE_CRASH.GetValue(); }
-	virtual RString GetDisplayValue() { return RString(); }
-	virtual bool IsEnabled() { return false; }
+	virtual RString GetDisplayTitle() const { return FORCE_CRASH.GetValue(); }
+	virtual RString GetDisplayValue() const { return RString(); }
+	virtual bool IsEnabled() const { return false; }
 	virtual void DoAndLog( RString &sMessageOut ) { FAIL_M("DebugLineCrash"); }
 };
 
 class DebugLineUptime : public IDebugLine
 {
-	virtual RString GetDisplayTitle() { return UPTIME.GetValue(); }
-	virtual RString GetDisplayValue() { return SecondsToMMSSMsMsMs(RageTimer::GetTimeSinceStart()); }
-	virtual bool IsEnabled() { return false; }
+	virtual RString GetDisplayTitle() const { return UPTIME.GetValue(); }
+	virtual RString GetDisplayValue() const { return SecondsToMMSSMsMsMs(RageTimer::GetTimeSinceStart()); }
+	virtual bool IsEnabled() const { return false; }
 	virtual void DoAndLog( RString &sMessageOut ) {}
 };
 
