@@ -28,26 +28,19 @@ RString ClearMachineStats()
 static LocalizedString MACHINE_EDITS_CLEARED( "ScreenServiceAction", "%d edits cleared, %d errors." );
 static RString ClearMachineEdits()
 {
-	int iNumAttempted = 0;
-	int iNumSuccessful = 0;
-	
 	vector<RString> vsEditFiles;
 	GetDirListing( PROFILEMAN->GetProfileDir(ProfileSlot_Machine)+EDIT_STEPS_SUBDIR+"*.edit", vsEditFiles, false, true );
 	GetDirListing( PROFILEMAN->GetProfileDir(ProfileSlot_Machine)+EDIT_COURSES_SUBDIR+"*.crs", vsEditFiles, false, true );
-	FOREACH_CONST( RString, vsEditFiles, i )
-	{
-		iNumAttempted++;
-		bool bSuccess = FILEMAN->Remove( *i );
-		if( bSuccess )
-			iNumSuccessful++;
-	}
+
+	int editCount = vsEditFiles.size();
+	int removedCount = std::count_if(vsEditFiles.begin(), vsEditFiles.end(), [](RString const &i) { return FILEMAN->Remove(i); });
 
 	// reload the machine profile
 	PROFILEMAN->SaveMachineProfile();
 	PROFILEMAN->LoadMachineProfile();
 	
-	int iNumErrors = iNumAttempted-iNumSuccessful;
-	return ssprintf(MACHINE_EDITS_CLEARED.GetValue(),iNumSuccessful,iNumErrors);
+	int errorCount = editCount - removedCount;
+	return ssprintf(MACHINE_EDITS_CLEARED.GetValue(), editCount, errorCount);
 }
 
 static PlayerNumber GetFirstReadyMemoryCard()
@@ -73,9 +66,6 @@ static RString ClearMemoryCardEdits()
 	if( pn == PLAYER_INVALID )
 		return MEMORY_CARD_EDITS_NOT_CLEARED.GetValue();
 
-	int iNumAttempted = 0;
-	int iNumSuccessful = 0;
-	
 	if( !MEMCARDMAN->IsMounted(pn) )
 		MEMCARDMAN->MountCard(pn);
 
@@ -83,17 +73,12 @@ static RString ClearMemoryCardEdits()
 	vector<RString> vsEditFiles;
 	GetDirListing( sDir+EDIT_STEPS_SUBDIR+"*.edit", vsEditFiles, false, true );
 	GetDirListing( sDir+EDIT_COURSES_SUBDIR+"*.crs", vsEditFiles, false, true );
-	FOREACH_CONST( RString, vsEditFiles, i )
-	{
-		iNumAttempted++;
-		bool bSuccess = FILEMAN->Remove( *i );
-		if( bSuccess )
-			iNumSuccessful++;
-	}
+	int editCount = vsEditFiles.size();
+	int removedCount = std::count_if(vsEditFiles.begin(), vsEditFiles.end(), [](RString const &i) { return FILEMAN->Remove(i); });
 
 	MEMCARDMAN->UnmountCard(pn);
 
-	return ssprintf(EDITS_CLEARED.GetValue(),iNumSuccessful,iNumAttempted-iNumSuccessful);
+	return ssprintf(EDITS_CLEARED.GetValue(), editCount, editCount - removedCount);
 }
 
 
@@ -177,11 +162,11 @@ static void CopyEdits( const RString &sFromProfileDir, const RString &sToProfile
 
 		vector<RString> vsFiles;
 		GetDirListing( sFromDir+"*.edit", vsFiles, false, false );
-		FOREACH_CONST( RString, vsFiles, i )
+		for (RString const &i : vsFiles)
 		{
-			if( DoesFileExist(sToDir+*i) )
+			if( DoesFileExist(sToDir + i) )
 				iNumOverwritten++;
-			bool bSuccess = FileCopy( sFromDir+*i, sToDir+*i );
+			bool bSuccess = FileCopy( sFromDir + i, sToDir + i );
 			if( bSuccess )
 				iNumSucceeded++;
 			else
@@ -189,7 +174,7 @@ static void CopyEdits( const RString &sFromProfileDir, const RString &sToProfile
 
 			// Test whether the song we need for this edit is present and ignore this edit if not present.
 			SSCLoader loaderSSC;
-			if( !loaderSSC.LoadEditFromFile( sFromDir+*i, ProfileSlot_Machine, false ) )
+			if( !loaderSSC.LoadEditFromFile( sFromDir + i, ProfileSlot_Machine, false ) )
 			{
 				iNumIgnored++;
 				continue;
@@ -205,11 +190,11 @@ static void CopyEdits( const RString &sFromProfileDir, const RString &sToProfile
 
 		vector<RString> vsFiles;
 		GetDirListing( sFromDir+"*.crs", vsFiles, false, false );
-		FOREACH_CONST( RString, vsFiles, i )
+		for (RString const &i : vsFiles)
 		{
-			if( DoesFileExist(sToDir+*i) )
+			if( DoesFileExist(sToDir + i) )
 				iNumOverwritten++;
-			bool bSuccess = FileCopy( sFromDir+*i, sToDir+*i );
+			bool bSuccess = FileCopy( sFromDir + i, sToDir + i );
 			if( bSuccess )
 				iNumSucceeded++;
 			else
@@ -366,12 +351,12 @@ static RString CopyEditsMemoryCardToMachine()
 	vector<RString> vs;
 	vs.push_back( ssprintf( COPIED_FROM_CARD.GetValue(), pn+1 ) );
 
-	FOREACH_CONST( RString, vsSubDirs, sSubDir )
+	for (RString const &sSubDir : vsSubDirs)
 	{
-		RString sFromDir = MEM_CARD_MOUNT_POINT[pn] + (RString)(*sSubDir) + "/";
+		RString sFromDir = MEM_CARD_MOUNT_POINT[pn] + sSubDir + "/";
 		RString sToDir = PROFILEMAN->GetProfileDir(ProfileSlot_Machine);
 
-		RString s = CopyEdits( sFromDir, sToDir, *sSubDir );
+		RString s = CopyEdits( sFromDir, sToDir, sSubDir );
 		vs.push_back( s );
 	}
 	
