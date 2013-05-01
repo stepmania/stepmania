@@ -120,9 +120,9 @@ void ScreenJukebox::SetSong()
 					AttackArray aAttacks = pEntry->attacks;
 					if( !pEntry->sModifiers.empty() )
 						aAttacks.push_back( Attack::FromGlobalCourseModifier( pEntry->sModifiers ) );
-					FOREACH_CONST( Attack, aAttacks, a )
+					for (Attack const &a: aAttacks)
 					{
-						RString s = a->sModifiers;
+						RString s = a.sModifiers;
 						s.MakeLower();
 						// todo: allow themers to modify this list? -aj
 						if( s.find("dark") != string::npos ||
