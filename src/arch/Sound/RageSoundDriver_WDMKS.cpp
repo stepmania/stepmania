@@ -721,13 +721,12 @@ WinWdmPin *WinWdmFilter::InstantiateRenderPin(
 	 */
 	vector<int> aSampleRates;
 	{
-		for( size_t j = 0; j < m_apPins.size(); ++j )
+		for (WinWdmPin *pPin : m_apPins)
 		{
-			WinWdmPin *pPin = m_apPins[j];
-			FOREACH_CONST( KSDATARANGE_AUDIO, pPin->m_dataRangesItem, range )
+			for (KSDATARANGE_AUDIO const &range : pPin->m_dataRangesItem)
 			{
-				aSampleRates.push_back( range->MinimumSampleFrequency );
-				aSampleRates.push_back( range->MaximumSampleFrequency );
+				aSampleRates.push_back( range.MinimumSampleFrequency );
+				aSampleRates.push_back( range.MaximumSampleFrequency );
 			}
 		}
 
@@ -1287,26 +1286,27 @@ RString RageSoundDriver_WDMKS::Init()
 	{
 		const WinWdmFilter *pFilter = apFilters[i];
 		LOG->Trace( "Device #%i: %s", i, pFilter->m_sFriendlyName.c_str() );
-		for( size_t j = 0; j < pFilter->m_apPins.size(); ++j )
+		int j = 0;
+		for (WinWdmPin *pPin : pFilter->m_apPins)
 		{
-			WinWdmPin *pPin = pFilter->m_apPins[j];
-			LOG->Trace( "  Pin %i", j );
-			FOREACH_CONST( KSDATARANGE_AUDIO, pPin->m_dataRangesItem, range )
+			LOG->Trace( "  Pin %i", j++ );
+			for (KSDATARANGE_AUDIO const &range : pPin->m_dataRangesItem)
 			{
 				RString sSubFormat;
-				if( !memcmp(&range->DataRange.SubFormat, &KSDATAFORMAT_SUBTYPE_WILDCARD, sizeof(GUID)) )
+				GUID const &rawSubFormat = range.DataRange.SubFormat;
+				if( !memcmp(&rawSubFormat, &KSDATAFORMAT_SUBTYPE_WILDCARD, sizeof(GUID)) )
 					sSubFormat = "WILDCARD";
-				else if( !memcmp(&range->DataRange.SubFormat, &KSDATAFORMAT_SUBTYPE_PCM, sizeof(GUID)) )
+				else if( !memcmp(&rawSubFormat, &KSDATAFORMAT_SUBTYPE_PCM, sizeof(GUID)) )
 					sSubFormat = "PCM";
-				else if( !memcmp(&range->DataRange.SubFormat, &KSDATAFORMAT_SUBTYPE_IEEE_FLOAT, sizeof(GUID)) )
+				else if( !memcmp(&rawSubFormat, &KSDATAFORMAT_SUBTYPE_IEEE_FLOAT, sizeof(GUID)) )
 					sSubFormat = "FLOAT";
 
 				LOG->Trace( "     Range: %i channels, sample %i-%i, %i-%ihz (%s)", 
-					range->MaximumChannels,
-					range->MinimumBitsPerSample,
-					range->MaximumBitsPerSample,
-					range->MinimumSampleFrequency,
-					range->MaximumSampleFrequency,
+					range.MaximumChannels,
+					range.MinimumBitsPerSample,
+					range.MaximumBitsPerSample,
+					range.MinimumSampleFrequency,
+					range.MaximumSampleFrequency,
 					sSubFormat.c_str()
 				);
 			}
