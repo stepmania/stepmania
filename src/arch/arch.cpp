@@ -24,43 +24,43 @@ void MakeInputHandlers( const RString &drivers, vector<InputHandler *> &Add )
 
 	RString Driver;
 
-	FOREACH_CONST( RString, DriversToTry, s )
+	for (RString const &s: DriversToTry)
 	{
 		InputHandler *ret = NULL;
 
 #ifdef USE_INPUT_HANDLER_DIRECTINPUT
-		if( !s->CompareNoCase("DirectInput") )	ret = new InputHandler_DInput;
+		if( !s.CompareNoCase("DirectInput") )	ret = new InputHandler_DInput;
 #endif
 #ifdef USE_INPUT_HANDLER_PIUIO
-		if( !s->CompareNoCase("PIUIO") )	ret = new InputHandler_Linux_PIUIO;
+		if( !s.CompareNoCase("PIUIO") )	ret = new InputHandler_Linux_PIUIO;
 #endif
 #ifdef USE_INPUT_HANDLER_LINUX_JOYSTICK
-		if( !s->CompareNoCase("Joystick") )	ret = new InputHandler_Linux_Joystick;
+		if( !s.CompareNoCase("Joystick") )	ret = new InputHandler_Linux_Joystick;
 #endif
 #ifdef USE_INPUT_HANDLER_LINUX_TTY
-		if( !s->CompareNoCase("tty") )		ret = new InputHandler_Linux_tty;
+		if( !s.CompareNoCase("tty") )		ret = new InputHandler_Linux_tty;
 #endif
 #ifdef USE_INPUT_HANDLER_SDL
-		if( !s->CompareNoCase("SDL") )		ret = new InputHandler_SDL;
+		if( !s.CompareNoCase("SDL") )		ret = new InputHandler_SDL;
 #endif
 #ifdef USE_INPUT_HANDLER_WIN32_PARA
-		if( !s->CompareNoCase("Para") )		ret = new InputHandler_Win32_Para;
+		if( !s.CompareNoCase("Para") )		ret = new InputHandler_Win32_Para;
 #endif
 #ifdef USE_INPUT_HANDLER_WIN32_PUMP
-		if( !s->CompareNoCase("Pump") )		ret = new InputHandler_Win32_Pump;
+		if( !s.CompareNoCase("Pump") )		ret = new InputHandler_Win32_Pump;
 #endif
 #ifdef USE_INPUT_HANDLER_WIN32_MIDI
-		if( !s->CompareNoCase("MIDI") )		ret = new InputHandler_Win32_MIDI;
+		if( !s.CompareNoCase("MIDI") )		ret = new InputHandler_Win32_MIDI;
 #endif
 #ifdef USE_INPUT_HANDLER_X11
-		if( !s->CompareNoCase("X11") )		ret = new InputHandler_X11;
+		if( !s.CompareNoCase("X11") )		ret = new InputHandler_X11;
 #endif
 #ifdef USE_INPUT_HANDLER_MACOSX_HID
-		if( !s->CompareNoCase("MacOSX") )	ret = new InputHandler_MacOSX_HID;
+		if( !s.CompareNoCase("MacOSX") )	ret = new InputHandler_MacOSX_HID;
 #endif
 
 		if( ret == NULL )
-			LOG->Trace( "Unknown Input Handler name: %s", s->c_str() );
+			LOG->Trace( "Unknown Input Handler name: %s", s.c_str() );
 		else
 			Add.push_back( ret );
 	}

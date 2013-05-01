@@ -38,8 +38,8 @@ void InputHandler_MacOSX_HID::QueueCallback( void *target, int result, void *ref
 		//LOG->Trace( "Got event with cookie %p, value %d", event.elementCookie, int(event.value) );
 		dev->GetButtonPresses( vPresses, event.elementCookie, event.value, now );
 	}
-	FOREACH_CONST( DeviceInput, vPresses, i )
-		INPUTFILTER->ButtonPressed( *i );
+	for (DeviceInput &i : vPresses)
+		INPUTFILTER->ButtonPressed( i );
 }
 
 static void RunLoopStarted( CFRunLoopObserverRef o, CFRunLoopActivity a, void *sem )
@@ -277,8 +277,8 @@ InputHandler_MacOSX_HID::InputHandler_MacOSX_HID() : m_Sem( "Input thread starte
 
 void InputHandler_MacOSX_HID::GetDevicesAndDescriptions( vector<InputDeviceInfo>& vDevices )
 {
-	FOREACH_CONST( HIDDevice *, m_vDevices, i )
-		(*i)->GetDevicesAndDescriptions( vDevices );
+	for (HIDDevice *i : m_vDevices)
+		i->GetDevicesAndDescriptions( vDevices );
 }
 
 RString InputHandler_MacOSX_HID::GetDeviceSpecificInputString( const DeviceInput &di )
