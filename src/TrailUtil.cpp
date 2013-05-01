@@ -15,7 +15,7 @@ int TrailUtil::GetNumSongs( const Trail *pTrail )
 float TrailUtil::GetTotalSeconds( const Trail *pTrail )
 {
 	auto const &entries = pTrail->m_vEntries;
-	return std::accumulate(entries.begin(), entries.end(), 0.f, [](float total, TrailEntry const &e) { return total += e.pSong->m_fMusicLengthSeconds; });
+	return std::accumulate(entries.begin(), entries.end(), 0.f, [](float total, TrailEntry const &e) { return total + e.pSong->m_fMusicLengthSeconds; });
 }
 
 ///////////////////////////////////////////////////////////////////////

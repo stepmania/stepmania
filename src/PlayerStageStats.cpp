@@ -315,7 +315,7 @@ int PlayerStageStats::GetLessonScoreActual() const
 int PlayerStageStats::GetLessonScoreNeeded() const
 {
 	float score = std::accumulate(m_vpPossibleSteps.begin(), m_vpPossibleSteps.end(), 0.f,
-		[](float total, Steps const *steps) { return total += steps->GetRadarValues(PLAYER_1).m_Values.v.fNumTapsAndHolds; });
+		[](float total, Steps const *steps) { return total + steps->GetRadarValues(PLAYER_1).m_Values.v.fNumTapsAndHolds; });
 	return lrintf( score * LESSON_PASS_THRESHOLD );
 }
 

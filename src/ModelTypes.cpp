@@ -150,7 +150,7 @@ void AnimatedTexture::SetState( int iState )
 float AnimatedTexture::GetAnimationLengthSeconds() const
 {
 	return std::accumulate(vFrames.begin(), vFrames.end(), 0.f,
-		[](float total, AnimatedTextureState const &state) { return total += state.fDelaySecs; });
+		[](float total, AnimatedTextureState const &state) { return total + state.fDelaySecs; });
 }
 
 void AnimatedTexture::SetSecondsIntoAnimation( float fSeconds )

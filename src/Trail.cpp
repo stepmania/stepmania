@@ -159,14 +159,14 @@ int Trail::GetMeter() const
 int Trail::GetTotalMeter() const
 {
 	return std::accumulate(m_vEntries.begin(), m_vEntries.end(), 0, [](int total, TrailEntry const &e) {
-		return total += e.pSteps->GetMeter();
+		return total + e.pSteps->GetMeter();
 	});
 }
 
 float Trail::GetLengthSeconds() const
 {
 	return std::accumulate(m_vEntries.begin(), m_vEntries.end(), 0.f, [](float total, TrailEntry const &e) {
-		return total += e.pSong->m_fMusicLengthSeconds;
+		return total + e.pSong->m_fMusicLengthSeconds;
 	});
 }
 

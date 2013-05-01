@@ -743,7 +743,7 @@ void Sprite::SetState( int iNewState )
 
 float Sprite::GetAnimationLengthSeconds() const
 {
-	return std::accumulate(m_States.begin(), m_States.end(), 0.f, [](float total, State const &s) { return total += s.fDelay; });
+	return std::accumulate(m_States.begin(), m_States.end(), 0.f, [](float total, State const &s) { return total + s.fDelay; });
 }
 
 void Sprite::SetSecondsIntoAnimation( float fSeconds )

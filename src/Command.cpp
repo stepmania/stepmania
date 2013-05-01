@@ -81,7 +81,7 @@ static void SplitWithQuotes( const RString sSource, const char Delimitor, vector
 
 RString Commands::GetOriginalCommandString() const
 {
-	return std::accumulate(v.begin(), v.end(), RString(), [](RString &res, Command const &c) { return res += c.GetOriginalCommandString(); });
+	return std::accumulate(v.begin(), v.end(), RString(), [](RString &res, Command const &c) { return res + c.GetOriginalCommandString(); });
 }
 
 void ParseCommands( const RString &sCommands, Commands &vCommandsOut )
