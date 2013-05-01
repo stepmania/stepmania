@@ -670,10 +670,10 @@ XNode *LuaHelpers::GetLuaInformation()
 
 	/* Globals */
 	sort( vFunctions.begin(), vFunctions.end() );
-	FOREACH_CONST( RString, vFunctions, func )
+	for (RString const &func : vFunctions)
 	{
 		XNode *pFunctionNode = pGlobalsNode->AppendChild( "Function" );
-		pFunctionNode->AppendAttr( "name", *func );
+		pFunctionNode->AppendAttr( "name", func );
 	}
 
 	/* Classes */
@@ -708,10 +708,10 @@ XNode *LuaHelpers::GetLuaInformation()
 		const vector<RString> &vNamespace = iter->second;
 		pNamespaceNode->AppendAttr( "name", iter->first );
 
-		FOREACH_CONST( RString, vNamespace, func )
+		for (RString const &func: vNamespace)
 		{
 			XNode *pFunctionNode = pNamespaceNode->AppendChild( "Function" );
-			pFunctionNode->AppendAttr( "name", *func );
+			pFunctionNode->AppendAttr( "name", func );
 		}
 	}
 
@@ -861,9 +861,8 @@ void LuaHelpers::ParseCommandList( Lua *L, const RString &sCommands, const RStri
 
 		s << "return function(self)\n";
 
-		FOREACH_CONST( Command, cmds.v, c )
+		for (Command const &cmd : cmds.v)
 		{
-			const Command& cmd = (*c);
 			RString local_sName = cmd.GetName();
 			s << "\tself:" << local_sName << "(";
 
