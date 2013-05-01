@@ -40,14 +40,14 @@ public:
 		if( pSong ) // playing a song
 		{
 			GetStepsForSong( pSong, m_vpSteps );
-			FOREACH_CONST( Steps*, m_vpSteps, steps )
+			for (Steps const *steps : m_vpSteps)
 			{
 				RString s;
-				if( (*steps)->GetDifficulty() == Difficulty_Edit )
-					s = (*steps)->GetDescription();
+				if( steps->GetDifficulty() == Difficulty_Edit )
+					s = steps->GetDescription();
 				else
-					s = CustomDifficultyToLocalizedString( StepsToCustomDifficulty(*steps) );
-				s += ssprintf( " %d", (*steps)->GetMeter() );
+					s = CustomDifficultyToLocalizedString( StepsToCustomDifficulty(steps) );
+				s += ssprintf( " %d", steps->GetMeter() );
 				m_Def.m_vsChoices.push_back( s );
 			}
 			m_Def.m_vEnabledForPlayers.clear();
@@ -201,8 +201,8 @@ void ScreenOptionsEditCourse::BeginScreen()
 	{
 		{
 			MenuRowDef mrd = MenuRowDef( -1, "---", true, EditMode_Practice, true, false, 0, EMPTY.GetValue() );
-			FOREACH_CONST( Song*, m_vpSongs, s )
-				mrd.choices.push_back( (*s)->GetDisplayFullTitle() );
+			for (Song const *s : m_vpSongs)
+				mrd.choices.push_back( s->GetDisplayFullTitle() );
 			mrd.sName = ssprintf(SONG.GetValue() + " %d",i+1);
 			OptionRowHandler *pHand = OptionRowHandlerUtil::MakeSimple( mrd );
 			pHand->m_Def.m_bAllowThemeTitle = false;	// already themed
