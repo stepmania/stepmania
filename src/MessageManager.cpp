@@ -236,8 +236,8 @@ void IMessageSubscriber::ClearMessages( const RString sMessage )
 MessageSubscriber::MessageSubscriber( const MessageSubscriber &cpy ):
 	IMessageSubscriber(cpy)
 {
-	FOREACH_CONST( RString, cpy.m_vsSubscribedTo, msg )
-		this->SubscribeToMessage( *msg );
+	for (RString const &msg : cpy.m_vsSubscribedTo)
+		this->SubscribeToMessage( msg );
 }
 
 MessageSubscriber &MessageSubscriber::operator=(const MessageSubscriber &cpy)
@@ -247,8 +247,8 @@ MessageSubscriber &MessageSubscriber::operator=(const MessageSubscriber &cpy)
 
 	UnsubscribeAll();
 
-	FOREACH_CONST( RString, cpy.m_vsSubscribedTo, msg )
-		this->SubscribeToMessage( *msg );
+	for (RString const &msg : cpy.m_vsSubscribedTo)
+		this->SubscribeToMessage( msg );
 
 	return *this;
 }
@@ -267,8 +267,8 @@ void MessageSubscriber::SubscribeToMessage( MessageID message )
 
 void MessageSubscriber::UnsubscribeAll()
 {
-	FOREACH_CONST( RString, m_vsSubscribedTo, s )
-		MESSAGEMAN->Unsubscribe( this, *s );
+	for (RString const &s : m_vsSubscribedTo)
+		MESSAGEMAN->Unsubscribe( this, s );
 	m_vsSubscribedTo.clear();
 }
 
