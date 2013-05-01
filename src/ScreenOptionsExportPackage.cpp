@@ -43,12 +43,12 @@ void ScreenOptionsExportPackage::BeginScreen()
 	// announcers, characters, others?
 
 	vector<OptionRowHandler*> OptionRowHandlers;
-	FOREACH_CONST( RString, m_vsPackageTypes, s )
+	for (RString const &s : m_vsPackageTypes)
 	{
 		OptionRowHandler *pHand = OptionRowHandlerUtil::MakeNull();
 		OptionRowDefinition &def = pHand->m_Def;
 
-		def.m_sName = *s;
+		def.m_sName = s;
 		def.m_bAllowExplanation = false;
 		//def.m_sExplanationName = "# files, # MB, # subdirs";
 		def.m_bAllowThemeTitle = false;
@@ -125,8 +125,8 @@ void ScreenOptionsExportPackageSubPage::BeginScreen()
 		// add noteskins
 		vector<RString> vs;
 		GetDirListing( SpecialFiles::NOTESKINS_DIR + "*", vs, true, true );
-		FOREACH_CONST( RString, vs, s )
-			GetDirListing( *s + "*", m_vsPossibleDirsToExport, true, true );
+		for (RString const &s : vs)
+			GetDirListing( s + "*", m_vsPossibleDirsToExport, true, true );
 	}
 	else if( *s_packageType == "Courses" )
 	{
@@ -136,10 +136,10 @@ void ScreenOptionsExportPackageSubPage::BeginScreen()
 		GetDirListing( SpecialFiles::COURSES_DIR + "*", vs, true, true );
 		StripCvsAndSvn( vs );
 		StripMacResourceForks( vs );
-		FOREACH_CONST( RString, vs, s )
+		for (RString const &s : vs)
 		{
-			m_vsPossibleDirsToExport.push_back( *s );
-			GetDirListing( *s + "/*", m_vsPossibleDirsToExport, true, true );
+			m_vsPossibleDirsToExport.push_back( s );
+			GetDirListing( s + "/*", m_vsPossibleDirsToExport, true, true );
 		}
 	}
 	else if( *s_packageType == "Songs" )
@@ -147,9 +147,9 @@ void ScreenOptionsExportPackageSubPage::BeginScreen()
 		// Add song groups
 		vector<RString> asAllGroups;
 		SONGMAN->GetSongGroupNames(asAllGroups);
-		FOREACH_CONST( RString, asAllGroups , s )
+		for (RString const &s : asAllGroups)
 		{
-			m_vsPossibleDirsToExport.push_back(*s);
+			m_vsPossibleDirsToExport.push_back(s);
 		}
 	}
 	else if( *s_packageType == "SubGroup" )
@@ -157,17 +157,17 @@ void ScreenOptionsExportPackageSubPage::BeginScreen()
 		//ExportPackages::m_sFolder
 		vector<RString> vs;
 		GetDirListing( SpecialFiles::SONGS_DIR + "/" + ExportPackages::m_sFolder + "/*", vs, true, true );
-		FOREACH_CONST( RString, vs, s )
+		for (RString const &s : vs)
 		{
-			m_vsPossibleDirsToExport.push_back( *s );
-			GetDirListing( *s + "/*", m_vsPossibleDirsToExport, true, true );
+			m_vsPossibleDirsToExport.push_back( s );
+			GetDirListing( s + "/*", m_vsPossibleDirsToExport, true, true );
 		}
 	}
 	StripCvsAndSvn( m_vsPossibleDirsToExport );
 	StripMacResourceForks( m_vsPossibleDirsToExport );
 
 	vector<OptionRowHandler*> OptionRowHandlers;
-	FOREACH_CONST( RString, m_vsPossibleDirsToExport, s )
+	for (RString const &s : m_vsPossibleDirsToExport)
 	{
 		OptionRowHandler *pHand = OptionRowHandlerUtil::MakeNull();
 		OptionRowDefinition &def = pHand->m_Def;
@@ -175,7 +175,7 @@ void ScreenOptionsExportPackageSubPage::BeginScreen()
 		def.m_bAllowThemeTitle = false;
 		def.m_bAllowThemeItems = false;
 		def.m_bAllowExplanation = false;
-		def.m_sName = *s;
+		def.m_sName = s;
 		def.m_sExplanationName = "# files, # MB, # subdirs";
 
 		def.m_vsChoices.push_back( "" );
