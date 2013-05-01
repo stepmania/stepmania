@@ -137,16 +137,9 @@ void ScreenPlayerOptions::UpdateDisqualified( int row, PlayerNumber pn )
 	m_bRowCausesDisqualified[pn][row] = bRowCausesDisqualified;
 
 	// Update disqualified graphic
-	bool bDisqualified = false;
-	FOREACH_CONST( bool, m_bRowCausesDisqualified[pn], b )
-	{
-		if( *b )
-		{
-			bDisqualified = true;
-			break;
-		}
-	}
-	m_sprDisqualify[pn]->SetVisible( bDisqualified );
+	bool disqualified = std::any_of(m_bRowCausesDisqualified[pn].begin(), m_bRowCausesDisqualified[pn].end(), [](bool const &b) { return b; });
+
+	m_sprDisqualify[pn]->SetVisible( disqualified );
 
 	// restore previous player options in case the user escapes back after this
 	GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.Assign( ModsLevel_Preferred, poOrig );
