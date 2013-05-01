@@ -397,11 +397,11 @@ void ProfileManager::RefreshLocalProfilesFromDisk()
 
 	vector<RString> vsProfileID;
 	GetDirListing( USER_PROFILES_DIR + "*", vsProfileID, true, true );
-	FOREACH_CONST( RString, vsProfileID, p )
+	for (RString const &p : vsProfileID)
 	{
 		g_vLocalProfile.push_back( DirAndProfile() );
 		DirAndProfile &dap = g_vLocalProfile.back();
-		dap.sDir = *p + "/";
+		dap.sDir = p + "/";
 		dap.profile.LoadAllFromDir( dap.sDir, PREFSMAN->m_bSignProfileData );
 	}
 }
@@ -409,11 +409,11 @@ void ProfileManager::RefreshLocalProfilesFromDisk()
 const Profile *ProfileManager::GetLocalProfile( const RString &sProfileID ) const
 {
 	RString sDir = LocalProfileIDToDir( sProfileID );
-	FOREACH_CONST( DirAndProfile, g_vLocalProfile, dap )
+	for (DirAndProfile const &dap : g_vLocalProfile)
 	{
-		const RString &sOther = dap->sDir;
+		const RString &sOther = dap.sDir;
 		if( sOther == sDir )
-			return &dap->profile;
+			return &dap.profile;
 	}
 
 	return NULL;
@@ -428,8 +428,8 @@ bool ProfileManager::CreateLocalProfile( RString sName, RString &sProfileIDOut )
 	int iMaxProfileNumber = -1;
 	vector<RString> vs;
 	GetLocalProfileIDs( vs );
-	FOREACH_CONST( RString, vs, s )
-		iMaxProfileNumber = StringToInt( *s );
+	for (RString const &s : vs)
+		iMaxProfileNumber = StringToInt( s );
 
 	int iProfileNumber = iMaxProfileNumber + 1;
 	RString sProfileID = ssprintf( "%08d", iProfileNumber );
@@ -498,10 +498,10 @@ bool ProfileManager::DeleteLocalProfile( RString sProfileID )
 				g_vLocalProfile.erase( i );
 
 				// Delete all references to this profileID
-				FOREACH_CONST( Preference<RString>*, m_sDefaultLocalProfileID.m_v, j )
+				for (Preference<RString> *j : m_sDefaultLocalProfileID.m_v)
 				{
-					if( (*j)->Get() == sProfileID )
-						(*j)->Set( "" );
+					if( j->Get() == sProfileID )
+						j->Set( "" );
 				}
 				return true;
 			}
@@ -770,9 +770,9 @@ bool ProfileManager::IsPersistentProfile( ProfileSlot slot ) const
 void ProfileManager::GetLocalProfileIDs( vector<RString> &vsProfileIDsOut ) const
 {
 	vsProfileIDsOut.clear();
-	FOREACH_CONST( DirAndProfile, g_vLocalProfile, i)
+	for (DirAndProfile const &i : g_vLocalProfile)
 	{
-		RString sID = LocalProfileDirToID( i->sDir );
+		RString sID = LocalProfileDirToID( i.sDir );
 		vsProfileIDsOut.push_back( sID );
 	}
 }
@@ -780,17 +780,19 @@ void ProfileManager::GetLocalProfileIDs( vector<RString> &vsProfileIDsOut ) cons
 void ProfileManager::GetLocalProfileDisplayNames( vector<RString> &vsProfileDisplayNamesOut ) const
 {
 	vsProfileDisplayNamesOut.clear();
-	FOREACH_CONST( DirAndProfile, g_vLocalProfile, i)
-		vsProfileDisplayNamesOut.push_back( i->profile.m_sDisplayName );
+	for (DirAndProfile const &i : g_vLocalProfile)
+		vsProfileDisplayNamesOut.push_back( i.profile.m_sDisplayName );
 }
 
 int ProfileManager::GetLocalProfileIndexFromID( RString sProfileID ) const
 {
 	RString sDir = LocalProfileIDToDir( sProfileID );
-	FOREACH_CONST( DirAndProfile, g_vLocalProfile, i )
+	int j = 0;
+	for (DirAndProfile const &i : g_vLocalProfile)
 	{
-		if( i->sDir == sDir )
-			return i - g_vLocalProfile.begin();
+		if( i.sDir == sDir )
+			return j;
+		++j;
 	}
 	return -1;
 }
