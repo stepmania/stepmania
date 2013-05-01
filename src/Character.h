@@ -40,7 +40,7 @@ public:
 	void PushSelf( Lua *L );
 
 	// smart accessor
-	const RString &GetDisplayName() { return !m_sDisplayName.empty() ? m_sDisplayName : m_sCharacterID; }
+	const RString &GetDisplayName() const { return !m_sDisplayName.empty() ? m_sDisplayName : m_sCharacterID; }
 
 	RString m_sCharDir;
 	RString m_sCharacterID;
