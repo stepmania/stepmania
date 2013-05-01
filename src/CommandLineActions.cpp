@@ -37,17 +37,17 @@ static void Nsis()
 
 	vector<RString> vs;
 	GetDirListing(INSTALLER_LANGUAGES_DIR + "*.ini", vs, false, false);
-	FOREACH_CONST(RString, vs, s)
+	for (RString const &s : vs)
 	{
 		RString sThrowAway, sLangCode;
-		splitpath(*s, sThrowAway, sLangCode, sThrowAway);
+		splitpath(s, sThrowAway, sLangCode, sThrowAway);
 		const LanguageInfo *pLI = GetLanguageInfo(sLangCode);
 
 		RString sLangNameUpper = pLI->szEnglishName;
 		sLangNameUpper.MakeUpper();
 
 		IniFile ini;
-		if(!ini.ReadFile(INSTALLER_LANGUAGES_DIR + *s))
+		if(!ini.ReadFile(INSTALLER_LANGUAGES_DIR + s))
 			RageException::Throw("Error opening file for read.");
 		FOREACH_CONST_Child(&ini, child)
 		{
