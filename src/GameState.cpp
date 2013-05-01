@@ -1426,10 +1426,10 @@ void GameState::GetAllUsedNoteSkins( vector<RString> &out ) const
 			const Trail *pTrail = m_pCurTrail[pn];
 			ASSERT( pTrail != NULL );
 
-			FOREACH_CONST( TrailEntry, pTrail->m_vEntries, e )
+			for (TrailEntry const &e : pTrail->m_vEntries)
 			{
 				PlayerOptions po;
-				po.FromString( e->Modifiers );
+				po.FromString( e.Modifiers );
 				if( !po.m_sNoteSkin.empty() )
 					out.push_back( po.m_sNoteSkin );
 			}
@@ -1930,15 +1930,15 @@ Difficulty GameState::GetClosestShownDifficulty( PlayerNumber pn ) const
 
 	Difficulty iClosest = (Difficulty) 0;
 	int iClosestDist = -1;
-	FOREACH_CONST( Difficulty, v, dc )
+	for (Difficulty const &dc : v)
 	{
-		int iDist = m_PreferredDifficulty[pn] - *dc;
+		int iDist = m_PreferredDifficulty[pn] - dc;
 		if( iDist < 0 )
 			continue;
 		if( iClosestDist != -1 && iDist > iClosestDist )
 			continue;
 		iClosestDist = iDist;
-		iClosest = *dc;
+		iClosest = dc;
 	}
 
 	return iClosest;
