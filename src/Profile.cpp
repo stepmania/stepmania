@@ -191,10 +191,10 @@ Character *Profile::GetCharacter() const
 {
 	vector<Character*> vpCharacters;
 	CHARMAN->GetCharacters( vpCharacters );
-	FOREACH_CONST( Character*, vpCharacters, c )
+	for (Character *c : vpCharacters)
 	{
-		if( (*c)->m_sCharacterID.CompareNoCase(m_sCharacterID)==0 )
-			return *c;
+		if( c->m_sCharacterID.CompareNoCase(m_sCharacterID)==0 )
+			return c;
 	}
 	return CHARMAN->GetDefaultCharacter();
 }
@@ -247,20 +247,20 @@ int Profile::GetTotalStepsWithTopGrade( StepsType st, Difficulty d, Grade g ) co
 {
 	int iCount = 0;
 
-	FOREACH_CONST( Song*, SONGMAN->GetAllSongs(), pSong )
+	for (Song *pSong : SONGMAN->GetAllSongs())
 	{
-		if( !(*pSong)->NormallyDisplayed() )
+		if( !pSong->NormallyDisplayed() )
 			continue;	// skip
 
-		FOREACH_CONST( Steps*, (*pSong)->GetAllSteps(), pSteps )
+		for (Steps *pSteps : pSong->GetAllSteps())
 		{
-			if( (*pSteps)->m_StepsType != st )
+			if( pSteps->m_StepsType != st )
 				continue;	// skip
 
-			if( (*pSteps)->GetDifficulty() != d )
+			if( pSteps->GetDifficulty() != d )
 				continue;	// skip
 
-			const HighScoreList &hsl = GetStepsHighScoreList( *pSong, *pSteps );
+			const HighScoreList &hsl = GetStepsHighScoreList( pSong, pSteps );
 			if( hsl.vHighScores.empty() )
 				continue;	// skip
 
@@ -279,18 +279,18 @@ int Profile::GetTotalTrailsWithTopGrade( StepsType st, CourseDifficulty d, Grade
 	// add course high scores
 	vector<Course*> vCourses;
 	SONGMAN->GetAllCourses( vCourses, false );
-	FOREACH_CONST( Course*, vCourses, pCourse )
+	for (Course const *pCourse : vCourses)
 	{
 		// Don't count any course that has any entries that change over time.
-		if( !(*pCourse)->AllSongsAreFixed() )
+		if( !pCourse->AllSongsAreFixed() )
 			continue;
 
 		vector<Trail*> vTrails;
-		Trail* pTrail = (*pCourse)->GetTrail( st, d );
+		Trail* pTrail = pCourse->GetTrail( st, d );
 		if( pTrail == NULL )
 			continue;
 
-		const HighScoreList &hsl = GetCourseHighScoreList( *pCourse, pTrail );
+		const HighScoreList &hsl = GetCourseHighScoreList( pCourse, pTrail );
 		if( hsl.vHighScores.empty() )
 			continue;	// skip
 
@@ -397,32 +397,24 @@ static void GetHighScoreCourses( vector<Course*> &vpCoursesOut )
 
 	vector<Course*> vpCourses;
 	SONGMAN->GetAllCourses( vpCourses, false );
-	FOREACH_CONST( Course*, vpCourses, c )
+
+	for (Course *c : vpCourses)
 	{
 		// Don't count any course that has any entries that change over time.
-		if( !(*c)->AllSongsAreFixed() )
+		if( !c->AllSongsAreFixed() )
 			continue;
 
-		vpCoursesOut.push_back( *c );
+		vpCoursesOut.push_back( c );
 	}
 }
 
 float Profile::GetCoursesPossible( StepsType st, CourseDifficulty cd ) const
 {
-	int iTotalTrails = 0;
-
 	vector<Course*> vpCourses;
 	GetHighScoreCourses( vpCourses );
-	FOREACH_CONST( Course*, vpCourses, c )
-	{
-		Trail* pTrail = (*c)->GetTrail(st,cd);
-		if( pTrail == NULL )
-			continue;
-
-		iTotalTrails++;
-	}
-	
-	return (float) iTotalTrails;
+	return std::count_if(vpCourses.begin(), vpCourses.end(), [&](Course const *c) {
+		return c->GetTrail(st, cd) != nullptr;
+	});
 }
 
 float Profile::GetCoursesActual( StepsType st, CourseDifficulty cd ) const
@@ -431,13 +423,13 @@ float Profile::GetCoursesActual( StepsType st, CourseDifficulty cd ) const
 
 	vector<Course*> vpCourses;
 	GetHighScoreCourses( vpCourses );
-	FOREACH_CONST( Course*, vpCourses, c )
+	for (Course const *c : vpCourses)
 	{
-		Trail *pTrail = (*c)->GetTrail( st, cd );
+		Trail *pTrail = c->GetTrail( st, cd );
 		if( pTrail == NULL )
 			continue;
 
-		const HighScoreList& hsl = GetCourseHighScoreList( *c, pTrail );
+		const HighScoreList& hsl = GetCourseHighScoreList( c, pTrail );
 		fTotalPercents += hsl.GetTopScore().GetPercentDP();
 	}
 
@@ -624,12 +616,10 @@ bool Profile::HasPassedSteps( const Song* pSong, const Steps* pSteps ) const
 
 bool Profile::HasPassedAnyStepsInSong( const Song* pSong ) const
 {
-	FOREACH_CONST( Steps*, pSong->GetAllSteps(), steps )
-	{
-		if( HasPassedSteps( pSong, *steps ) )
-			return true;
-	}
-	return false;
+	auto const &steps = pSong->GetAllSteps();
+	return std::any_of(steps.begin(), steps.end(), [&](Steps const *s) {
+		return HasPassedSteps(pSong, s);
+	});
 }
 
 void Profile::IncrementStepsPlayCount( const Song* pSong, const Steps* pSteps )
@@ -1526,13 +1516,13 @@ void Profile::LoadCourseScoresFromNode( const XNode* pCourseScores )
 				splitpath( courseID.GetPath(), sDir, sFName, sExt );
 				RString sFullFileName = sFName + sExt;
 
-				FOREACH_CONST( Course*, vpAllCourses, c )
+				for (Course *c : vpAllCourses)
 				{
-					RString sOther = (*c)->m_sPath.Right(sFullFileName.size());
+					RString sOther = c->m_sPath.Right(sFullFileName.size());
 
 					if( sFullFileName.CompareNoCase(sOther) == 0 )
 					{
-						pC = *c;
+						pC = c;
 						courseID.FromCourse( pC );
 						break;
 					}
@@ -1678,9 +1668,9 @@ XNode* Profile::SaveScreenshotDataCreateNode() const
 
 	XNode* pNode = new XNode( "ScreenshotData" );
 
-	FOREACH_CONST( Screenshot, m_vScreenshots, ss )
+	for (Screenshot const &ss : m_vScreenshots)
 	{
-		pNode->AppendChild( ss->CreateNode() );
+		pNode->AppendChild( ss.CreateNode() );
 	}
 
 	return pNode;
