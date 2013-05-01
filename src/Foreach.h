@@ -4,9 +4,6 @@
 /** @brief General foreach loop iterating over a vector. */
 #define FOREACH( elemType, vect, var ) 			\
 for( vector<elemType>::iterator var = (vect).begin(); var != (vect).end(); ++var )
-/** @brief General foreach loop iterating over a vector, using a constant iterator. */
-#define FOREACH_CONST( elemType, vect, var ) 	\
-for( vector<elemType>::const_iterator var = (vect).begin(); var != (vect).end(); ++var )
 
 #endif
 
