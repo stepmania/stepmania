@@ -78,20 +78,20 @@ void InputMapper::AddDefaultMappingsForCurrentGameIfUnmapped()
 	vector<AutoMappingEntry> aMaps;
 	aMaps.reserve( 32 );
 
-	FOREACH_CONST( AutoMappingEntry, g_DefaultKeyMappings.m_vMaps, iter )
-		aMaps.push_back( *iter );
-	FOREACH_CONST( AutoMappingEntry, m_pInputScheme->m_pAutoMappings->m_vMaps, iter )
-		aMaps.push_back( *iter );
+	for (AutoMappingEntry const &iter : g_DefaultKeyMappings.m_vMaps)
+		aMaps.push_back( iter );
+	for (AutoMappingEntry const &iter : m_pInputScheme->m_pAutoMappings->m_vMaps)
+		aMaps.push_back( iter );
 
 	/* There may be duplicate GAME_BUTTON maps.  Process the list backwards,
 	 * so game-specific mappings override g_DefaultKeyMappings. */
 	std::reverse( aMaps.begin(), aMaps.end() );
 
-	FOREACH( AutoMappingEntry, aMaps, m )
+	for (AutoMappingEntry const &m : aMaps)
 	{
-		DeviceButton key = m->m_deviceButton;
+		DeviceButton key = m.m_deviceButton;
 		DeviceInput DeviceI( DEVICE_KEYBOARD, key );
-		GameInput GameI( m->m_bSecondController ? GameController_2 : GameController_1, m->m_gb );
+		GameInput GameI( m.m_bSecondController ? GameController_2 : GameController_1, m.m_gb );
 		if( !IsMapped(DeviceI) )	// if this key isn't already being used by another user-made mapping
 		{
 			if( !GameI.IsValid() )
@@ -526,10 +526,10 @@ void InputMapper::Unmap( InputDevice id )
 void InputMapper::ApplyMapping( const vector<AutoMappingEntry> &vMmaps, GameController gc, InputDevice id )
 {
 	map<GameInput, int> MappedButtons;
-	FOREACH_CONST( AutoMappingEntry, vMmaps, iter )
+	for (AutoMappingEntry const &iter : vMmaps)
 	{
 		GameController map_gc = gc;
-		if( iter->m_bSecondController )
+		if( iter.m_bSecondController )
 		{
 			map_gc = (GameController)(map_gc+1);
 
@@ -540,8 +540,8 @@ void InputMapper::ApplyMapping( const vector<AutoMappingEntry> &vMmaps, GameCont
 				continue;
 		}
 
-		DeviceInput di( id, iter->m_deviceButton );
-		GameInput gi( map_gc, iter->m_gb );
+		DeviceInput di( id, iter.m_deviceButton );
+		GameInput gi( map_gc, iter.m_gb );
 		int iSlot = MappedButtons[gi];
 		++MappedButtons[gi];
 		SetInputMap( di, gi, iSlot );//maps[k].iSlotIndex );
@@ -559,10 +559,10 @@ void InputMapper::AutoMapJoysticksForCurrentGame()
 		// file automaps - Add these first so that they can match before the hard-coded mappings
 		vector<RString> vs;
 		GetDirListing( AUTOMAPPINGS_DIR "*.ini", vs, false, true );
-		FOREACH_CONST( RString, vs, sFilePath )
+		for (RString const &sFilePath : vs)
 		{
 			InputMappings km;
-			km.ReadMappings( m_pInputScheme, *sFilePath, true );
+			km.ReadMappings( m_pInputScheme, sFilePath, true );
 
 			AutoMappings mapping( m_pInputScheme->m_szName, km.m_sDeviceRegex, km.m_sDescription );
 
@@ -597,13 +597,13 @@ void InputMapper::AutoMapJoysticksForCurrentGame()
 
 	// apply auto mappings
 	int iNumJoysticksMapped = 0;
-	FOREACH_CONST( InputDeviceInfo, vDevices, device )
+	for (InputDeviceInfo const &device : vDevices)
 	{
-		InputDevice id = device->id;
-		const RString &sDescription = device->sDesc;
-		FOREACH_CONST( AutoMappings, vAutoMappings, mapping )
+		InputDevice id = device.id;
+		const RString &sDescription = device.sDesc;
+		for (AutoMappings const &mapping : vAutoMappings)
 		{
-			Regex regex( mapping->m_sDriverRegex );
+			Regex regex( mapping.m_sDriverRegex );
 			if( !regex.Compare(sDescription) )
 				continue;	// driver names don't match
 
@@ -613,10 +613,10 @@ void InputMapper::AutoMapJoysticksForCurrentGame()
 				break;	// stop mapping.  We already mapped one device for each game controller.
 
 			LOG->Info( "Applying default joystick mapping #%d for device '%s' (%s)",
-				iNumJoysticksMapped+1, mapping->m_sDriverRegex.c_str(), mapping->m_sControllerName.c_str() );
+				iNumJoysticksMapped+1, mapping.m_sDriverRegex.c_str(), mapping.m_sControllerName.c_str() );
 
 			Unmap( id );
-			ApplyMapping( mapping->m_vMaps, gc, id );
+			ApplyMapping( mapping.m_vMaps, gc, id );
 
 			iNumJoysticksMapped++;
 		}
