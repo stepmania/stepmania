@@ -250,10 +250,9 @@ void ScreenDebugOverlay::Init()
 	m_textHeader.SetText( DEBUG_MENU );
 	this->AddChild( &m_textHeader );
 
-	FOREACH_CONST( RString, m_asPages, s )
+	int iPage = 0;
+	for (RString const &s : m_asPages)
 	{
-		int iPage = s - m_asPages.begin();
-
 		DeviceInput di;
 		bool b = GetKeyFromMap( g_Mappings.pageButton, iPage, di );
 		ASSERT( b );
@@ -266,12 +265,13 @@ void ScreenDebugOverlay::Init()
 		LOAD_ALL_COMMANDS_AND_ON_COMMAND( p );
 		// todo: Y value is still hardcoded. -aj
 		p->SetXY( PAGE_START_X+iPage*PAGE_SPACING_X, SCREEN_TOP+20 );
-		p->SetText( *s + " (" + sButton + ")" );
+		p->SetText( s + " (" + sButton + ")" );
 		m_vptextPages.push_back( p );
 		this->AddChild( p );
+		++iPage;
 	}
 
-	FOREACH_CONST( IDebugLine*, *g_pvpSubscribers, p )
+	for (IDebugLine const *unused : *g_pvpSubscribers)
 	{
 		{
 			BitmapText *bt = new BitmapText;
@@ -344,10 +344,11 @@ void ScreenDebugOverlay::Update( float fDeltaTime )
 
 void ScreenDebugOverlay::UpdateText()
 {
-	FOREACH_CONST( RString, m_asPages, s )
+	int iPage = 0;
+	for (RString const &unused : m_asPages)
 	{
-		int iPage = s - m_asPages.begin();
 		m_vptextPages[iPage]->PlayCommand( (iPage == m_iCurrentPage) ? "GainFocus" :  "LoseFocus" );
+		++iPage;
 	}
 
 	// todo: allow changing of various spacing/location things -aj
