@@ -284,22 +284,22 @@ RString NoteSkinManager::GetPath( const RString &sButtonName, const RString &sEl
 	const NoteSkinData &data = iter->second;
 
 	RString sPath;	// fill this in below
-	FOREACH_CONST( RString, data.vsDirSearchOrder, lIter )
+	for (RString const &directory : data.vsDirSearchOrder)
 	{
 		if( sButtonName.empty() )
-			sPath = GetPathFromDirAndFile( *lIter, sElement );
+			sPath = GetPathFromDirAndFile( directory, sElement );
 		else
-			sPath = GetPathFromDirAndFile( *lIter, sButtonName+" "+sElement );
+			sPath = GetPathFromDirAndFile( directory, sButtonName+" "+sElement );
 		if( !sPath.empty() )
 			break;	// done searching
 	}
 
 	if( sPath.empty() )
 	{
-		FOREACH_CONST( RString, data.vsDirSearchOrder, lIter )
+		for (RString const &directory : data.vsDirSearchOrder)
 		{
 			if( !sButtonName.empty() )
-				sPath = GetPathFromDirAndFile( *lIter, "Fallback "+sElement );
+				sPath = GetPathFromDirAndFile( directory, "Fallback "+sElement );
 			if( !sPath.empty() )
 				break;	// done searching
 		}
@@ -308,12 +308,14 @@ RString NoteSkinManager::GetPath( const RString &sButtonName, const RString &sEl
 	if( sPath.empty() )
 	{
 		RString sPaths;
-		FOREACH_CONST( RString, data.vsDirSearchOrder, dir )
+
+		// TODO: Find a more elegant way of doing this.
+		for (RString const &dir : data.vsDirSearchOrder)
 		{
 			if( !sPaths.empty() )
 				sPaths += ", ";
 
-			sPaths += *dir;
+			sPaths += dir;
 		}
 
 		RString message = ssprintf(
@@ -323,8 +325,8 @@ RString NoteSkinManager::GetPath( const RString &sButtonName, const RString &sEl
 
 		if( Dialog::AbortRetryIgnore(message) == Dialog::retry )
 		{
-			FOREACH_CONST( RString, data.vsDirSearchOrder, dir )
-				FILEMAN->FlushDirCache( *dir );
+			for (RString const &dir : data.vsDirSearchOrder)
+				FILEMAN->FlushDirCache( dir );
 			g_PathCache.clear();
 			return GetPath( sButtonName, sElement );
 		}
@@ -342,9 +344,9 @@ RString NoteSkinManager::GetPath( const RString &sButtonName, const RString &sEl
 		GetFileContents( sPath, sNewFileName, true );
 		RString sRealPath;
 
-		FOREACH_CONST( RString, data.vsDirSearchOrder, lIter )
+		for (RString const &directory : data.vsDirSearchOrder)
 		{
-			 sRealPath = GetPathFromDirAndFile( *lIter, sNewFileName );
+			 sRealPath = GetPathFromDirAndFile( directory, sNewFileName );
 			 if( !sRealPath.empty() )
 				 break;	// done searching
 		}
@@ -358,8 +360,8 @@ RString NoteSkinManager::GetPath( const RString &sButtonName, const RString &sEl
 
 			if( Dialog::AbortRetryIgnore(message) == Dialog::retry )
 			{
-				FOREACH_CONST( RString, data.vsDirSearchOrder, dir )
-					FILEMAN->FlushDirCache( *dir );
+				for (RString const &dir : data.vsDirSearchOrder)
+					FILEMAN->FlushDirCache( dir );
 				g_PathCache.clear();
 				return GetPath( sButtonName, sElement );
 			}
