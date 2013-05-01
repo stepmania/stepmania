@@ -1325,11 +1325,11 @@ void ScreenEdit::MakeFilteredMenuDef( const MenuDef* pDef, MenuDef &menu )
 	menu.rows.clear();
 
 	vector<MenuRowDef> aRows;
-	FOREACH_CONST( MenuRowDef, pDef->rows, r )
+	for (MenuRowDef const &r : pDef->rows)
 	{
 		// Don't add rows that aren't applicable to this edit mode.
-		if( EDIT_MODE >= r->emShowIn )
-			menu.rows.push_back( *r );
+		if( EDIT_MODE >= r.emShowIn )
+			menu.rows.push_back( r );
 	}
 }
 
@@ -3480,10 +3480,12 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 			Course *pCourse = SONGMAN->FindCourse( name );
 
 			int iCourseEntryIndex = -1;
-			FOREACH_CONST( CourseEntry, pCourse->m_vEntries, i )
+			int index = 0;
+			for (CourseEntry const &i : pCourse->m_vEntries)
 			{
-				if( i->songID.ToSong() == GAMESTATE->m_pCurSong.Get() )
-					iCourseEntryIndex = i - pCourse->m_vEntries.begin();
+				if( i.songID.ToSong() == GAMESTATE->m_pCurSong.Get() )
+					iCourseEntryIndex = index;
+				++index;
 			}
 
 			ASSERT( iCourseEntryIndex != -1 );
@@ -3994,27 +3996,26 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		Song *pSong = GAMESTATE->m_pCurSong;
 		const vector<Steps*> &apSteps = pSong->GetAllSteps();
 		vector<Steps*> apToDelete;
-		FOREACH_CONST( Steps *, apSteps, s )
+		for (Steps *s : apSteps)
 		{
 			// If we're not on the same style, let it go.
-			if( GAMESTATE->m_pCurSteps[PLAYER_1]->m_StepsType != (*s)->m_StepsType )
+			if( GAMESTATE->m_pCurSteps[PLAYER_1]->m_StepsType != s->m_StepsType )
 				continue;
 			// If autogenned, it isn't being saved.
-			if( (*s)->IsAutogen() )
+			if( s->IsAutogen() )
 				continue;
 			// If the notedata has content, let it go.
-			if( !(*s)->GetNoteData().IsEmpty() )
+			if( !s->GetNoteData().IsEmpty() )
 				continue;
 			// It's hard to say if these steps were saved to disk or not.
 			/*
-			if( !(*s)->GetSavedToDisk() )
+			if( !(s->GetSavedToDisk() )
 				continue;
 			 */
-			apToDelete.push_back( *s );
+			apToDelete.push_back( s );
 		}
-		FOREACH_CONST( Steps *, apToDelete, s )
+		for (Steps *pSteps : apToDelete)
 		{
-			Steps *pSteps = *s;
 			pSong->DeleteSteps( pSteps );
 			if( m_pSteps == pSteps )
 				m_pSteps = NULL;
@@ -5522,8 +5523,8 @@ void ScreenEdit::CopyToLastSave()
 	m_SongLastSave = *GAMESTATE->m_pCurSong;
 	m_vStepsLastSave.clear();
 	const vector<Steps*> &vSteps = GAMESTATE->m_pCurSong->GetStepsByStepsType( GAMESTATE->m_pCurSteps[PLAYER_1]->m_StepsType );
-	FOREACH_CONST( Steps*, vSteps, it )
-		m_vStepsLastSave.push_back( **it );
+	for (Steps *it : vSteps)
+		m_vStepsLastSave.push_back( *it );
 }
 
 void ScreenEdit::CopyFromLastSave()
@@ -5771,15 +5772,15 @@ static RString GetDeviceButtonsLocalized( const vector<EditButton> &veb, const M
 {
 	vector<RString> vsPress;
 	vector<RString> vsHold;
-	FOREACH_CONST( EditButton, veb, eb )
+	for (EditButton const &eb : veb)
 	{
-		if( !IsMapped( *eb, editmap ) )
+		if( !IsMapped( eb, editmap ) )
 			continue;
 
 		for( int s=0; s<NUM_EDIT_TO_DEVICE_SLOTS; s++ )
 		{
-			DeviceInput diPress = editmap.button[*eb][s];
-			DeviceInput diHold = editmap.hold[*eb][s];
+			DeviceInput diPress = editmap.button[eb][s];
+			DeviceInput diHold = editmap.hold[eb][s];
 			if( diPress.IsValid() )
 				vsPress.push_back( Capitalize(INPUTMAN->GetLocalizedInputString(diPress)) );
 			if( diHold.IsValid() )
