@@ -353,16 +353,16 @@ void ScreenDebugOverlay::UpdateText()
 
 	// todo: allow changing of various spacing/location things -aj
 	int iOffset = 0;
-	FOREACH_CONST( IDebugLine*, *g_pvpSubscribers, p )
+	int i = 0;
+	for (IDebugLine const *p : *g_pvpSubscribers)
 	{
-		RString sPageName = (*p)->GetPageName();
-
-		int i = p-g_pvpSubscribers->begin();
+		RString sPageName = p->GetPageName();
 
 		float fY = LINE_START_Y + iOffset * LINE_SPACING;
 
 		BitmapText &txt1 = *m_vptextButton[i];
 		BitmapText &txt2 = *m_vptextFunction[i];
+		++i;
 		if( sPageName != GetCurrentPageName() )
 		{
 			txt1.SetVisible( false );
@@ -379,15 +379,15 @@ void ScreenDebugOverlay::UpdateText()
 		txt2.SetX( LINE_FUNCTION_X );
 		txt2.SetY( fY );
 
-		RString s1 = (*p)->GetDisplayTitle();
-		RString s2 = (*p)->GetDisplayValue();
+		RString s1 = p->GetDisplayTitle();
+		RString s2 = p->GetDisplayValue();
 
-		bool bOn = (*p)->IsEnabled();
+		bool bOn = p->IsEnabled();
 
 		txt1.SetDiffuse( bOn ? LINE_ON_COLOR:LINE_OFF_COLOR );
 		txt2.SetDiffuse( bOn ? LINE_ON_COLOR:LINE_OFF_COLOR );
 
-		RString sButton = GetDebugButtonName( *p );
+		RString sButton = GetDebugButtonName( p );
 		if( !sButton.empty() )
 			sButton += ": ";
 		txt1.SetText( sButton );
