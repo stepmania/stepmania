@@ -24,13 +24,13 @@ REGISTER_SCREEN_CLASS( ScreenHighScores );
 static void GetAllSongsToShow( vector<Song*> &vpOut, int iNumMostRecentScoresToShow )
 {
 	vpOut.clear();
-	FOREACH_CONST( Song*, SONGMAN->GetAllSongs(), s )
+	for (Song *s : SONGMAN->GetAllSongs())
 	{
-		if( !(*s)->NormallyDisplayed() )
+		if( !s->NormallyDisplayed() )
 			continue;	// skip
-		if( !(*s)->ShowInDemonstrationAndRanking() )
+		if( !s->ShowInDemonstrationAndRanking() )
 			continue;	// skip
-		vpOut.push_back( *s );
+		vpOut.push_back( s );
 	}
 
 	if( (int)vpOut.size() > iNumMostRecentScoresToShow )
@@ -51,13 +51,13 @@ static void GetAllCoursesToShow( vector<Course*> &vpOut, CourseType ct, int iNum
 	else
 		SONGMAN->GetCourses( ct, vpCourses, false );
 
-	FOREACH_CONST( Course*, vpCourses, c)
+	for (Course *c : vpCourses)
 	{
-		if( UNLOCKMAN->CourseIsLocked(*c) )
+		if( UNLOCKMAN->CourseIsLocked(c) )
 			continue;	// skip
-		if( !(*c)->ShowInDemonstrationAndRanking() )
+		if( !c->ShowInDemonstrationAndRanking() )
 			continue;	// skip
-		vpOut.push_back( *c );
+		vpOut.push_back( c );
 	}
 	if( (int)vpOut.size() > iNumMostRecentScoresToShow )
 	{
