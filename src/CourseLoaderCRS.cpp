@@ -342,8 +342,8 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 			RString sStyles = sParams[1];
 			vector<RString> asStyles;
 			split( sStyles, ",", asStyles );
-			FOREACH( RString, asStyles, s )
-				out.m_setStyles.insert( *s );
+			for (RString const &s : asStyles)
+				out.m_setStyles.insert( s );
 
 		}
 		else
