@@ -127,11 +127,11 @@ void NoteField::CacheAllUsedNoteSkins()
 	vector<RString> asSkinsLower;
 	GAMESTATE->GetAllUsedNoteSkins( asSkinsLower );
 	asSkinsLower.push_back( m_pPlayerState->m_PlayerOptions.GetStage().m_sNoteSkin );
-	FOREACH( RString, asSkinsLower, s )
-		s->MakeLower();
-
-	for( unsigned i=0; i < asSkinsLower.size(); ++i )
-		CacheNoteSkin( asSkinsLower[i] );
+	for (RString &s : asSkinsLower)
+	{
+		s.MakeLower();
+		CacheNoteSkin(s);
+	}
 
 	/* If we're changing note skins in the editor, we can have old note skins lying
 	 * around.  Remove them so they don't accumulate. */
