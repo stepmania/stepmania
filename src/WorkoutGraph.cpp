@@ -23,8 +23,10 @@ WorkoutGraph::WorkoutGraph()
 
 WorkoutGraph::~WorkoutGraph()
 {
-	FOREACH( Sprite*, m_vpBars, a )
-		delete *a;
+	for (Sprite *s : m_vpBars)
+	{
+		delete s;
+	}
 	m_vpBars.clear();
 }
 
@@ -48,10 +50,10 @@ void WorkoutGraph::SetFromCurrentWorkout()
 
 void WorkoutGraph::SetInternal( int iMinSongsPlayed )
 {
-	FOREACH( Sprite*, m_vpBars, p )
+	for (Sprite *s : m_vpBars)
 	{
-		this->RemoveChild( *p );
-		delete *p;
+		this->RemoveChild( s );
+		delete s;
 	}
 	m_vpBars.clear();
 
@@ -105,8 +107,8 @@ void WorkoutGraph::SetFromGameStateAndHighlightSong( int iSongIndex )
 {
 	SetInternal( iSongIndex+1 );
 
-	FOREACH( Sprite*, m_vpBars, spr )
-		(*spr)->StopEffect();
+	for (Sprite *s : m_vpBars)
+		s->StopEffect();
 
 	int iBarIndex = iSongIndex - m_iSongsChoppedOffAtBeginning;
 
