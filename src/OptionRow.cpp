@@ -707,8 +707,7 @@ void OptionRow::SetOneSelection( PlayerNumber pn, int iChoice )
 	vector<bool> &vb = m_vbSelected[pn];
 	if( vb.empty() )
 		return;
-	FOREACH( bool, vb, b )
-		*b = false;
+	std::fill_n(vb.begin(), vb.size(), false);
 	vb[iChoice] = true;
 }
 
