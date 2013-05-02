@@ -345,18 +345,19 @@ void NoteDataUtil::GetSMNoteDataString( const NoteData &in, RString &sRet )
 
 	SplitCompositeNoteData( in, parts );
 
-	FOREACH( NoteData, parts, nd )
+	for (NoteData &nd : parts)
 	{
-		InsertHoldTails( *nd );
-		fLastBeat = max( fLastBeat, nd->GetLastBeat() );
+		InsertHoldTails( nd );
+		fLastBeat = max( fLastBeat, nd.GetLastBeat() );
 	}
 
 	int iLastMeasure = int( fLastBeat/BEATS_PER_MEASURE );
 
 	sRet = "";
-	FOREACH( NoteData, parts, nd )
+	int partNum = 0;
+	for (NoteData const &nd : parts)
 	{
-		if( nd != parts.begin() )
+		if( partNum++ != 0 )
 			sRet.append( "&\n" );
 		for( int m = 0; m <= iLastMeasure; ++m ) // foreach measure
 		{
@@ -364,7 +365,7 @@ void NoteDataUtil::GetSMNoteDataString( const NoteData &in, RString &sRet )
 				sRet.append( 1, ',' );
 			sRet += ssprintf("  // measure %d\n", m);
 
-			NoteType nt = GetSmallestNoteTypeForMeasure( *nd, m );
+			NoteType nt = GetSmallestNoteTypeForMeasure( nd, m );
 			int iRowSpacing;
 			if( nt == NoteType_Invalid )
 				iRowSpacing = 1;
@@ -378,9 +379,9 @@ void NoteDataUtil::GetSMNoteDataString( const NoteData &in, RString &sRet )
 
 			for( int r=iMeasureStartRow; r<=iMeasureLastRow; r+=iRowSpacing )
 			{
-				for( int t = 0; t < nd->GetNumTracks(); ++t )
+				for( int t = 0; t < nd.GetNumTracks(); ++t )
 				{
-					const TapNote &tn = nd->GetTapNote(t, r);
+					const TapNote &tn = nd.GetTapNote(t, r);
 					char c;
 					switch( tn.type )
 					{
@@ -1026,8 +1027,8 @@ void NoteDataUtil::RemoveSimultaneousNotes( NoteData &in, int iMaxSimultaneous, 
 		vector<NoteData> vParts;
 		
 		SplitCompositeNoteData( in, vParts );
-		FOREACH( NoteData, vParts, nd )
-			RemoveSimultaneousNotes( *nd, iMaxSimultaneous, iStartIndex, iEndIndex );
+		for (NoteData &nd : vParts)
+			RemoveSimultaneousNotes( nd, iMaxSimultaneous, iStartIndex, iEndIndex );
 		in.Init();
 		in.SetNumTracks( vParts.front().GetNumTracks() );
 		CombineCompositeNoteData( in, vParts );
