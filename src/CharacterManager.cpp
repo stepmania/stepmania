@@ -82,10 +82,10 @@ Character* CharacterManager::GetRandomCharacter()
 
 Character* CharacterManager::GetDefaultCharacter()
 {
-	for( unsigned i=0; i<m_pCharacters.size(); i++ )
+	for (Character *c : m_pCharacters)
 	{
-		if( m_pCharacters[i]->IsDefaultCharacter() )
-			return m_pCharacters[i];
+		if( c->IsDefaultCharacter() )
+			return c;
 	}
 
 	/* We always have the default character. */
@@ -95,14 +95,14 @@ Character* CharacterManager::GetDefaultCharacter()
 
 void CharacterManager::DemandGraphics()
 {
-	FOREACH( Character*, m_pCharacters, c )
-		(*c)->DemandGraphics();
+	for (Character *c : m_pCharacters)
+		c->DemandGraphics();
 }
 
 void CharacterManager::UndemandGraphics()
 {
-	FOREACH( Character*, m_pCharacters, c )
-		(*c)->UndemandGraphics();
+	for (Character *c : m_pCharacters)
+		c->UndemandGraphics();
 }
 
 Character* CharacterManager::GetCharacterFromID( RString sCharacterID )
