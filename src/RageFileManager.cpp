@@ -215,11 +215,11 @@ static RString GetDirOfExecutable( RString argv0 )
 
 			vector<RString> vPath;
 			split( path, ":", vPath );
-			FOREACH( RString, vPath, i )
+			for (RString &i : vPath)
 			{
-				if( access(*i + "/" + argv0, X_OK|R_OK) )
+				if( access(i + "/" + argv0, X_OK|R_OK) )
 					continue;
-				sPath = *i;
+				sPath = i;
 				break;
 			}
 			if( sPath.empty() )
