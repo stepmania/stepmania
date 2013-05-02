@@ -33,8 +33,8 @@ RageSoundReader_Chain::~RageSoundReader_Chain()
 	while( !m_apActiveSounds.empty() )
 		ReleaseSound( m_apActiveSounds.front() );
 
-	FOREACH( RageSoundReader *, m_apLoadedSounds, it )
-		delete *it;
+	for (RageSoundReader *it : m_apLoadedSounds)
+		delete it;
 }
 
 RageSoundReader_Chain *RageSoundReader_Chain::Copy() const
@@ -118,19 +118,19 @@ void RageSoundReader_Chain::Finish()
 	/* Figure out how many channels we have.  All sounds must either have 1 or 2 channels,
 	 * which will be converted as needed, or have the same number of channels. */
 	m_iChannels = 1;
-	FOREACH( RageSoundReader *, m_apLoadedSounds, it )
-		m_iChannels = max( m_iChannels, (*it)->GetNumChannels() );
+	for (RageSoundReader *it : m_apLoadedSounds)
+		m_iChannels = max( m_iChannels, it->GetNumChannels() );
 
 	if( m_iChannels > 2 )
 	{
-		FOREACH( RageSoundReader *, m_apLoadedSounds, it )
+		for (RageSoundReader *it : m_apLoadedSounds)
 		{
-			if( (*it)->GetNumChannels() != m_iChannels )
+			if( it->GetNumChannels() != m_iChannels )
 			{
 				LOG->Warn( "Discarded sound with %i channels, not %i",
-					(*it)->GetNumChannels(), m_iChannels );
-				delete (*it);
-				(*it) = NULL;
+					it->GetNumChannels(), m_iChannels );
+				delete it;
+				it = NULL;
 			}
 		}
 	}
@@ -158,22 +158,19 @@ void RageSoundReader_Chain::Finish()
 	m_iActualSampleRate = GetSampleRateInternal();
 	if( m_iActualSampleRate == -1 )
 	{
-		FOREACH( RageSoundReader *, m_apLoadedSounds, it )
+		for (RageSoundReader *it : m_apLoadedSounds)
 		{
-			RageSoundReader *&pSound = (*it);
-
-			RageSoundReader_Resample_Good *pResample = new RageSoundReader_Resample_Good( pSound, m_iPreferredSampleRate );
-			pSound = pResample;
+			RageSoundReader_Resample_Good *pResample = new RageSoundReader_Resample_Good( it, m_iPreferredSampleRate );
+			it = pResample;
 		}
 
 		m_iActualSampleRate = m_iPreferredSampleRate;
 	}
 
 	/* Attempt to preload all sounds. */
-	FOREACH( RageSoundReader *, m_apLoadedSounds, it )
+	for (RageSoundReader *it : m_apLoadedSounds)
 	{
-		RageSoundReader *&pSound = (*it);
-		RageSoundReader_Preload::PreloadSound( pSound );
+		RageSoundReader_Preload::PreloadSound( it );
 	}
 
 	/* Sort the sounds by start time. */
