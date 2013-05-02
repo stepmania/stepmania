@@ -221,11 +221,11 @@ static bool ExportPackage( RString sPackageName, RString sDirToExport, RString &
 	GetDirListingRecursive( sDirToExport, "*", vs );
 	SMPackageUtil::StripIgnoredSmzipFiles( vs );
 	LOG->Trace("Adding files...");
-	FOREACH( RString, vs, s )
+	for (RString &s : vs)
 	{
-		if( !zip.AddFile( *s ) )
+		if( !zip.AddFile( s ) )
 		{
-			sErrorOut = ssprintf( "Couldn't add file: %s", s->c_str() );
+			sErrorOut = ssprintf( "Couldn't add file: %s", s.c_str() );
 			return false;
 		}
 	}
