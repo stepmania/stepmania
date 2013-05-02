@@ -1594,14 +1594,9 @@ Song *MusicWheel::GetPreferredSelectionForRandomOrPortal()
 		if( i < 900 && pSong->IsTutorial() )
 			continue;
 
-		FOREACH( Difficulty, vDifficultiesToRequire, d )
-		{
-			if( !pSong->HasStepsTypeAndDifficulty(st,*d) )
-			{
-				isValid = false;
-				break;
-			}
-		}
+		isValid = std::none_of(vDifficultiesToRequire.begin(), vDifficultiesToRequire.end(), [&](Difficulty const &d) {
+			return !pSong->HasStepsTypeAndDifficulty(st, d);
+		});
 
 		if (isValid)
 		{
