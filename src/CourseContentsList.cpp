@@ -14,8 +14,8 @@ REGISTER_ACTOR_CLASS( CourseContentsList );
 
 CourseContentsList::~CourseContentsList()
 {
-	FOREACH( Actor *, m_vpDisplay, d )
-		delete *d;
+	for (Actor *d : m_vpDisplay)
+		delete d;
 	m_vpDisplay.clear();
 }
 
