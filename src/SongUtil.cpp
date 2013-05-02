@@ -951,8 +951,8 @@ void SongUtil::GetPlayableStepsTypes( const Song *pSong, set<StepsType> &vOut )
 	}
 
 	set<StepsType> vStepsTypes;
-	FOREACH( const Style*, vpPossibleStyles, s )
-		vStepsTypes.insert( (*s)->m_StepsType );
+	for (Style const *s : vpPossibleStyles)
+		vStepsTypes.insert( s->m_StepsType );
 
 	/* filter out hidden StepsTypes, and remove steps that we don't have enough
 	 * stages left to play. */
@@ -1005,15 +1005,9 @@ bool SongUtil::IsSongPlayable( Song *s )
 {
 	const vector<Steps*> & steps = s->GetAllSteps();
 	// I'm sure there is a foreach loop, but I don't
-	FOREACH( Steps*, const_cast<vector<Steps*>&>(steps), step )
-	{
-		if (IsStepsPlayable(s, *step))
-		{
-			return true;
-		}
-	}
-	
-	return false;
+	return std::any_of(steps.begin(), steps.end(), [&](Steps *step) {
+		return IsStepsPlayable(s, step);
+	});
 }
 
 bool SongUtil::GetStepsTypeAndDifficultyFromSortOrder( SortOrder so, StepsType &stOut, Difficulty &dcOut )
