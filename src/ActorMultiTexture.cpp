@@ -35,8 +35,8 @@ ActorMultiTexture::ActorMultiTexture( const ActorMultiTexture &cpy ):
 	CPY( m_aTextureUnits );
 #undef CPY
 
-	FOREACH( TextureUnitState, m_aTextureUnits, tex )
-		tex->m_pTexture = TEXTUREMAN->CopyTexture( tex->m_pTexture );
+	for (TextureUnitState &tex : m_aTextureUnits)
+		tex.m_pTexture = TEXTUREMAN->CopyTexture( tex.m_pTexture );
 }
 
 void ActorMultiTexture::SetTextureCoords( const RectF &r )
@@ -58,8 +58,8 @@ void ActorMultiTexture::SetSizeFromTexture( RageTexture *pTexture )
 
 void ActorMultiTexture::ClearTextures()
 {
-	FOREACH( TextureUnitState, m_aTextureUnits, tex )
-		TEXTUREMAN->UnloadTexture( tex->m_pTexture );
+	for (TextureUnitState &tex : m_aTextureUnits)
+		TEXTUREMAN->UnloadTexture( tex.m_pTexture );
 	m_aTextureUnits.clear();
 }
 
