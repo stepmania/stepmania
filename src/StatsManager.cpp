@@ -309,8 +309,8 @@ void StatsManager::UnjoinPlayer( PlayerNumber pn )
 	/* A player has been unjoined.  Clear his data from m_vPlayedStageStats, and
 	 * purge any m_vPlayedStageStats that no longer have any player data because
 	 * all of the players that were playing at the time have been unjoined. */
-	FOREACH( StageStats, m_vPlayedStageStats, ss )
-		ss->m_player[pn] = PlayerStageStats();
+	for(StageStats &ss : m_vPlayedStageStats)
+		ss.m_player[pn] = PlayerStageStats();
 
 	for( int i = 0; i < (int) m_vPlayedStageStats.size(); ++i )
 	{
