@@ -1054,8 +1054,8 @@ namespace
 		lua_call( L, iArgs, LUA_MULTRET );
 		int iVals = lua_gettop(L);
 
-		FOREACH( LuaThreadVariable *, apVars, v )
-			delete *v;
+		for (LuaThreadVariable *v : apVars)
+			delete v;
 		return iVals;
 	}
 
