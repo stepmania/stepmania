@@ -301,8 +301,8 @@ void ActorScroller::PositionItemsAndDrawPrimitives( bool bDrawPrimitives )
 	if( bDelayedDraw )
 	{
 		ActorUtil::SortByZPosition( subs );
-		FOREACH( Actor*, subs, a )
-			(*a)->Draw();
+		for (Actor *a : subs)
+			a->Draw();
 	}
 }
 
