@@ -533,8 +533,7 @@ void Player::Init(
 	}
 
 	m_vbFretIsDown.resize( GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer );
-	FOREACH( bool, m_vbFretIsDown, b )
-		*b = false;
+	std::fill_n(m_vbFretIsDown.begin(), m_vbFretIsDown.size(), false);
 
 	m_fActiveRandomAttackStart = -1.0f;
 }
@@ -1098,11 +1097,11 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 	int iFirstTrackWithMaxEndRow = -1;
 
 	TapNote::SubType subType = TapNote::SubType_Invalid;
-	FOREACH( TrackRowTapNote, vTN, trtn )
+	for (TrackRowTapNote const &trtn : vTN)
 	{
-		int iTrack = trtn->iTrack;
-		ASSERT( iStartRow == trtn->iRow );
-		TapNote &tn = *trtn->pTN;
+		int iTrack = trtn.iTrack;
+		ASSERT( iStartRow == trtn.iRow );
+		TapNote &tn = *trtn.pTN;
 		int iEndRow = iStartRow + tn.iDuration;
 		if( subType == TapNote::SubType_Invalid )
 			subType = tn.subType;
@@ -1123,15 +1122,15 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 	//LOG->Trace( ssprintf("first track with max end row = %i",iFirstTrackWithMaxEndRow) );
 	//LOG->Trace( ssprintf("max end row - start row (in beats) = %f",NoteRowToBeat(iMaxEndRow)-NoteRowToBeat(iStartRow)) );
 
-	FOREACH( TrackRowTapNote, vTN, trtn )
+	for (TrackRowTapNote const &trtn : vTN)
 	{
-		TapNote &tn = *trtn->pTN;
+		TapNote &tn = *trtn.pTN;
 
 		// set hold flags so NoteField can do intelligent drawing
 		tn.HoldResult.bHeld = false;
 		tn.HoldResult.bActive = false;
 
-		int iRow = trtn->iRow;
+		int iRow = trtn.iRow;
 		//LOG->Trace( ssprintf("this row: %i",iRow) );
 
 		// If the song beat is in the range of this hold:
@@ -1164,9 +1163,9 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 
 	bool bSteppedOnHead = true;
 	bool bHeadJudged = true;
-	FOREACH( TrackRowTapNote, vTN, trtn )
+	for (TrackRowTapNote const &trtn : vTN)
 	{
-		TapNote &tn = *trtn->pTN;
+		TapNote &tn = *trtn.pTN;
 		TapNoteScore tns = tn.result.tns;
 		//LOG->Trace( ssprintf("[C++] tap note score: %s",StringConversion::ToString(tns).c_str()) );
 
@@ -1204,9 +1203,9 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 	}
 
 	bool bIsHoldingButton = true;
-	FOREACH( TrackRowTapNote, vTN, trtn )
+	for (TrackRowTapNote const &trtn : vTN)
 	{
-		int iTrack = trtn->iTrack;
+		int iTrack = trtn.iTrack;
 
 		// TODO: Remove use of PlayerNumber.
 		PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
@@ -1237,13 +1236,13 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 		 * Update iLastHeldRow. Do this even if we're a little beyond the end
 		 * of the hold note, to make sure iLastHeldRow is clamped to iEndRow
 		 * if the hold note is held all the way. */
-		FOREACH( TrackRowTapNote, vTN, trtn )
+		for (TrackRowTapNote const &trtn : vTN)
 		{
-			TapNote &tn = *trtn->pTN;
+			TapNote &tn = *trtn.pTN;
 			int iEndRow = iStartRow + tn.iDuration;
 
 			//LOG->Trace(ssprintf("trying for min between iSongRow (%i) and iEndRow (%i) (duration %i)",iSongRow,iEndRow,tn.iDuration));
-			trtn->pTN->HoldResult.iLastHeldRow = min( iSongRow, iEndRow );
+			tn.HoldResult.iLastHeldRow = min( iSongRow, iEndRow );
 		}
 	}
 
@@ -1253,9 +1252,9 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 		switch( subType )
 		{
 		case TapNote::hold_head_hold:
-			FOREACH( TrackRowTapNote, vTN, trtn )
+			for (TrackRowTapNote const &trtn : vTN)
 			{
-				TapNote &tn = *trtn->pTN;
+				TapNote &tn = *trtn.pTN;
 
 				// set hold flag so NoteField can do intelligent drawing
 				tn.HoldResult.bHeld = bIsHoldingButton && bInitiatedNote;
@@ -1292,9 +1291,9 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 			}
 			break;
 		case TapNote::hold_head_roll:
-			FOREACH( TrackRowTapNote, vTN, trtn )
+			for (TrackRowTapNote const &trtn : vTN)
 			{
-				TapNote &tn = *trtn->pTN;
+				TapNote &tn = *trtn.pTN;
 				tn.HoldResult.bHeld = true;
 				tn.HoldResult.bActive = bInitiatedNote;
 			}
@@ -1366,10 +1365,10 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 			//LOG->Trace("(hold checkpoints are allowed and enabled.)");
 			int iCheckpointsHit = 0;
 			int iCheckpointsMissed = 0;
-			FOREACH( TrackRowTapNote, vTN, v )
+			for (TrackRowTapNote const &v : vTN)
 			{
-				iCheckpointsHit += v->pTN->HoldResult.iCheckpointsHit;
-				iCheckpointsMissed += v->pTN->HoldResult.iCheckpointsMissed;
+				iCheckpointsHit += v.pTN->HoldResult.iCheckpointsHit;
+				iCheckpointsMissed += v.pTN->HoldResult.iCheckpointsMissed;
 			}
 			bLetGoOfHoldNote = iCheckpointsMissed > 0 || iCheckpointsHit == 0;
 
@@ -1407,9 +1406,9 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 				bool bBright = m_pPlayerStageStats && m_pPlayerStageStats->m_iCurCombo>(int)BRIGHT_GHOST_COMBO_THRESHOLD;
 				if( m_pNoteField )
 				{
-					FOREACH( TrackRowTapNote, vTN, trtn )
+					for (TrackRowTapNote const &trtn : vTN)
 					{
-						int iTrack = trtn->iTrack;
+						int iTrack = trtn.iTrack;
 						m_pNoteField->DidHoldNote( iTrack, HNS_Held, bBright );	// bright ghost flash
 					}
 				}
@@ -1432,9 +1431,9 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 
 	float fLifeFraction = fLife / MAX_HOLD_LIFE;
 
-	FOREACH( TrackRowTapNote, vTN, trtn )
+	for (TrackRowTapNote const &trtn : vTN)
 	{
-		TapNote &tn = *trtn->pTN;
+		TapNote &tn = *trtn.pTN;
 		tn.HoldResult.fLife = fLife;
 		tn.HoldResult.hns = hns;
 		// Stop the playing keysound for the hold note.
