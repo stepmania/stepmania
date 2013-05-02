@@ -454,13 +454,15 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 			}
 			StripLockedStepsAndDifficulty( m_vpSteps );
 
-			FOREACH( StepsAndDifficulty, m_vpSteps, s )
+			int i = 0;
+			for (StepsAndDifficulty const &s : m_vpSteps)
 			{
-				if( s->dc == dcOld )
+				if( s.dc == dcOld )
 				{
-					m_iSelection[ROW_STEPS] = s - m_vpSteps.begin();
+					m_iSelection[ROW_STEPS] = i;
 					break;
 				}
+				++i;
 			}
 		}
 
