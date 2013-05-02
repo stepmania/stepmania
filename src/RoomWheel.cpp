@@ -17,8 +17,10 @@ AutoScreenMessage( SM_RoomInfoDeploy );
 
 RoomWheel::~RoomWheel()
 {
-	FOREACH( WheelItemBaseData*, m_CurWheelItemData, i )
-		SAFE_DELETE( *i );
+	for (WheelItemBaseData *i : m_CurWheelItemData)
+	{	
+		SAFE_DELETE( i );
+	}
 	m_CurWheelItemData.clear();
 }
 
