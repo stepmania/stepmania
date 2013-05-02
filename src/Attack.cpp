@@ -108,9 +108,9 @@ vector<RString> AttackArray::ToVectorString() const
 
 void AttackArray::UpdateStartTimes(float delta)
 {
-	FOREACH(Attack, *this, a)
+	for (Attack &a : *this)
 	{
-		a->fStartSecond += delta;
+		a.fStartSecond += delta;
 	}
 }
 
