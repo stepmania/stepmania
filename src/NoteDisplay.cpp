@@ -394,11 +394,11 @@ void NoteDisplay::DrawHoldPart( vector<Sprite*> &vpSpr, int iCol, int fYStep, fl
 	ASSERT( !vpSpr.empty() );
 
 	Sprite *pSprite = vpSpr.front();
-	FOREACH( Sprite *, vpSpr, s )
+	for (Sprite *s : vpSpr)
 	{
-		(*s)->SetZoom( ArrowEffects::GetZoom(m_pPlayerState) );
-		ASSERT( (*s)->GetUnzoomedWidth() == pSprite->GetUnzoomedWidth() );
-		ASSERT( (*s)->GetUnzoomedHeight() == pSprite->GetUnzoomedHeight() );
+		s->SetZoom( ArrowEffects::GetZoom(m_pPlayerState) );
+		ASSERT( s->GetUnzoomedWidth() == pSprite->GetUnzoomedWidth() );
+		ASSERT( s->GetUnzoomedHeight() == pSprite->GetUnzoomedHeight() );
 	}
 
 	// draw manually in small segments
@@ -498,11 +498,12 @@ void NoteDisplay::DrawHoldPart( vector<Sprite*> &vpSpr, int iCol, int fYStep, fl
 			 * start off the strip again. */
 			if( !bAllAreTransparent )
 			{
-				FOREACH( Sprite*, vpSpr, spr )
+				int i = 0;
+				for (Sprite *spr : vpSpr)
 				{
-					RageTexture* pTexture = (*spr)->GetTexture();
+					RageTexture* pTexture = spr->GetTexture();
 					DISPLAY->SetTexture( TextureUnit_1, pTexture->GetTexHandle() );
-					DISPLAY->SetBlendMode( spr == vpSpr.begin() ? BLEND_NORMAL : BLEND_ADD );
+					DISPLAY->SetBlendMode( (i++ == 0) ? BLEND_NORMAL : BLEND_ADD );
 					DISPLAY->SetCullMode( CULL_NONE );
 					DISPLAY->SetTextureWrapping( TextureUnit_1, bWrapping );
 					queue.Draw();
