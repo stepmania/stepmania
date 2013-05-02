@@ -142,10 +142,10 @@ void AutoKeysounds::LoadTracks( const Song *pSong, RageSoundReader *&pShared, Ra
 
 
 	vector<RageSoundReader *> vpSounds;
-	FOREACH( RString, vsMusicFile, s )
+	for (RString const &s : vsMusicFile)
 	{
 		RString sError;
-		RageSoundReader *pSongReader = RageSoundReader_FileReader::OpenFile( *s, sError );
+		RageSoundReader *pSongReader = RageSoundReader_FileReader::OpenFile( s, sError );
 		vpSounds.push_back( pSongReader );
 	}
 
@@ -162,8 +162,8 @@ void AutoKeysounds::LoadTracks( const Song *pSong, RageSoundReader *&pShared, Ra
 	{
 		RageSoundReader_Merge *pMerge = new RageSoundReader_Merge;
 
-		FOREACH( RageSoundReader *, vpSounds, so )
-			pMerge->AddSound( *so );
+		for (RageSoundReader *so : vpSounds)
+			pMerge->AddSound( so );
 		pMerge->Finish( SOUNDMAN->GetDriverSampleRate() );
 
 		RageSoundReader *pSongReader = pMerge;
@@ -308,8 +308,8 @@ void AutoKeysounds::FinishLoading()
 	{
 		RageSoundReader_Merge *pMerge = new RageSoundReader_Merge;
 
-		FOREACH( RageSoundReader *, apSounds, ps )
-			pMerge->AddSound( *ps );
+		for (RageSoundReader *ps : apSounds)
+			pMerge->AddSound( ps );
 
 		pMerge->Finish( SOUNDMAN->GetDriverSampleRate() );
 
