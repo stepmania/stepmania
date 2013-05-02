@@ -40,6 +40,7 @@ class ScoreKeeperNormal: public ScoreKeeper
 	ThemeMetric<TapNoteScore>	m_MaxScoreToIncrementMissCombo;
 	ThemeMetric<bool>		m_MineHitIncrementsMissCombo;
 	ThemeMetric<bool>		m_AvoidMineIncrementsCombo;
+	ThemeMetric<bool>		m_UseInternalScoring;
 
 	//ThemeMetric<LuaReference>	m_vToastyTriggers;
 	ThemeMetric<int>	m_ToastyTrigger;
