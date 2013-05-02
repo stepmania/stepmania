@@ -82,8 +82,7 @@ ActorFrame::ActorFrame( const ActorFrame &cpy ):
 
 void ActorFrame::InitState()
 {
-	FOREACH( Actor*, m_SubActors, a )
-		(*a)->InitState();
+	std::for_each(m_SubActors.begin(), m_SubActors.end(), [](Actor *a) { a->InitState(); });
 	Actor::InitState();
 }
 
@@ -162,17 +161,16 @@ void ActorFrame::RemoveChild( Actor *pActor )
 
 void ActorFrame::TransferChildren( ActorFrame *pTo )
 {
-	FOREACH( Actor*, m_SubActors, i )
-		pTo->AddChild( *i );
+	std::for_each(m_SubActors.begin(), m_SubActors.end(), [&](Actor *a) { pTo->AddChild(a); });
 	RemoveAllChildren();
 }
 
 Actor* ActorFrame::GetChild( const RString &sName )
 {
-	FOREACH( Actor*, m_SubActors, a )
+	for (Actor *a : m_SubActors)
 	{
-		if( (*a)->GetName() == sName )
-			return *a;
+		if( a->GetName() == sName )
+			return a;
 	}
 	return NULL;
 }
@@ -276,10 +274,10 @@ void ActorFrame::EndDraw()
 void ActorFrame::PushChildrenTable( lua_State *L )
 {
 	lua_newtable( L );
-	FOREACH( Actor*, m_SubActors, a )
+	for (Actor *a: m_SubActors)
 	{
-		LuaHelpers::Push( L, (*a)->GetName() );
-		(*a)->PushSelf( L );
+		LuaHelpers::Push( L, a->GetName() );
+		a->PushSelf( L );
 		lua_rawset( L, -3 );
 	}
 }
