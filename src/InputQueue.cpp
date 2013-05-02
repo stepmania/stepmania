@@ -167,11 +167,11 @@ bool InputQueueCode::Load( RString sButtonsNames )
 
 	vector<RString> asPresses;
 	split( sButtonsNames, ",", asPresses, false );
-	FOREACH( RString, asPresses, sPress )
+	for (RString &sPress : asPresses)
 	{
 		vector<RString> asButtonNames;
 
-		split( *sPress, "-", asButtonNames, false );
+		split( sPress, "-", asButtonNames, false );
 
 		if( asButtonNames.size() < 1 )
 		{
@@ -181,10 +181,8 @@ bool InputQueueCode::Load( RString sButtonsNames )
 		}
 
 		m_aPresses.push_back( ButtonPress() );
-		for( unsigned i=0; i<asButtonNames.size(); i++ )	// for each button in this code
+		for (RString sButtonName : asButtonNames)	// for each button in this code
 		{
-			RString sButtonName = asButtonNames[i];
-
 			bool bHold = false;
 			bool bNotHold = false;
 			while(1)
