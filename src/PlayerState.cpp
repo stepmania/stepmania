@@ -137,8 +137,8 @@ void PlayerState::RemoveActiveAttacks( AttackLevel al )
 
 void PlayerState::EndActiveAttacks()
 {
-	FOREACH( Attack, m_ActiveAttacks, a )
-		a->fSecsRemaining = 0;
+	for (Attack &a : m_ActiveAttacks)
+		a.fSecsRemaining = 0;
 }
 
 void PlayerState::RemoveAllInventory()
