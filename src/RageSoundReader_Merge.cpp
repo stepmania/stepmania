@@ -18,8 +18,8 @@ RageSoundReader_Merge::RageSoundReader_Merge()
 
 RageSoundReader_Merge::~RageSoundReader_Merge()
 {
-	FOREACH( RageSoundReader *, m_aSounds, it )
-		delete *it;
+	for (RageSoundReader *it : m_aSounds)
+		delete it;
 }
 
 RageSoundReader_Merge::RageSoundReader_Merge( const RageSoundReader_Merge &cpy ):
@@ -59,8 +59,8 @@ void RageSoundReader_Merge::Finish( int iPreferredSampleRate )
 	/* Figure out how many channels we have.  All sounds must either have 1 or 2 channels,
 	 * which will be converted as needed, or have the same number of channels. */
 	m_iChannels = 1;
-	FOREACH( RageSoundReader *, m_aSounds, it )
-		m_iChannels = max( m_iChannels, (*it)->GetNumChannels() );
+	for (RageSoundReader *it : m_aSounds)
+		m_iChannels = max( m_iChannels, it->GetNumChannels() );
 
 	/*
 	 * We might get different sample rates from our sources.  If they're all the same
@@ -71,22 +71,20 @@ void RageSoundReader_Merge::Finish( int iPreferredSampleRate )
 	m_iSampleRate = GetSampleRateInternal();
 	if( m_iSampleRate == -1 )
 	{
-		FOREACH( RageSoundReader *, m_aSounds, it )
+		for (RageSoundReader *it : m_aSounds)
 		{
-			RageSoundReader *&pSound = (*it);
-
-			RageSoundReader_Resample_Good *pResample = new RageSoundReader_Resample_Good( pSound, iPreferredSampleRate );
-			pSound = pResample;
+			RageSoundReader_Resample_Good *pResample = new RageSoundReader_Resample_Good( it, iPreferredSampleRate );
+			it = pResample;
 		}
 
 		m_iSampleRate = iPreferredSampleRate;
 	}
 
 	/* If we have two channels, and any sounds have only one, convert them by adding a Pan filter. */
-	FOREACH( RageSoundReader *, m_aSounds, it )
+	for (RageSoundReader *it : m_aSounds)
 	{
-		if( (*it)->GetNumChannels() != this->GetNumChannels() )
-			(*it) = new RageSoundReader_Pan( (*it) );
+		if( it->GetNumChannels() != this->GetNumChannels() )
+			it = new RageSoundReader_Pan( it );
 	}
 
 	/* If we have more than two channels, then all sounds must have the same number of
@@ -94,18 +92,18 @@ void RageSoundReader_Merge::Finish( int iPreferredSampleRate )
 	if( m_iChannels > 2 )
 	{
 		vector<RageSoundReader *> aSounds;
-		FOREACH( RageSoundReader *, m_aSounds, it )
+		for (RageSoundReader *it : m_aSounds)
 		{
-			if( (*it)->GetNumChannels() != m_iChannels )
+			if( it->GetNumChannels() != m_iChannels )
 			{
 				LOG->Warn( "Discarded sound with %i channels, not %i",
-					(*it)->GetNumChannels(), m_iChannels );
-				delete (*it);
-				(*it) = NULL;
+					it->GetNumChannels(), m_iChannels );
+				delete it;
+				it = NULL;
 			}
 			else
 			{
-				aSounds.push_back( *it );
+				aSounds.push_back( it );
 			}
 		}
 		m_aSounds = aSounds;
