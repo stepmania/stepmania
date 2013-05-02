@@ -1007,9 +1007,9 @@ void SongManager::Invalidate( const Song *pStaleSong )
 	// Can we regenerate only the autogen courses that are affected?
 	DeleteAutogenCourses();
 
-	FOREACH( Course*, this->m_pCourses, pCourse )
+	for (Course *c : this->m_pCourses)
 	{
-		(*pCourse)->Invalidate( pStaleSong );
+		c->Invalidate( pStaleSong );
 	}
 
 	InitAutogenCourses();
@@ -1456,10 +1456,8 @@ void SongManager::UpdatePreferredSort(RString sPreferredSongs, RString sPreferre
 		PreferredSortSection section;
 		map<Song *, float> mapSongToPri;
 
-		FOREACH( RString, asLines, s )
+		for (RString sLine : asLines)
 		{
-			RString sLine = *s;
-
 			bool bSectionDivider = BeginsWith(sLine, "---");
 			if( bSectionDivider )
 			{
@@ -1513,17 +1511,17 @@ void SongManager::UpdatePreferredSort(RString sPreferredSongs, RString sPreferre
 			// move all unlock songs to a group at the bottom
 			PreferredSortSection PFSection;
 			PFSection.sName = "Unlocks";
-			FOREACH( UnlockEntry, UNLOCKMAN->m_UnlockEntries, ue )
+			for (UnlockEntry const &ue : UNLOCKMAN->m_UnlockEntries)
 			{
-				if( ue->m_Type == UnlockRewardType_Song )
+				if( ue.m_Type == UnlockRewardType_Song )
 				{
-					Song *pSong = ue->m_Song.ToSong();
+					Song *pSong = ue.m_Song.ToSong();
 					if( pSong )
 						PFSection.vpSongs.push_back( pSong );
 				}
 			}
 
-			FOREACH( PreferredSortSection, m_vPreferredSongSort, v )
+			for (vector<PreferredSortSection>::iterator v = m_vPreferredSongSort.begin(); v != m_vPreferredSongSort.end(); ++v)
 			{
 				for( int i=v->vpSongs.size()-1; i>=0; i-- )
 				{
@@ -1543,9 +1541,11 @@ void SongManager::UpdatePreferredSort(RString sPreferredSongs, RString sPreferre
 			if( m_vPreferredSongSort[i].vpSongs.empty() )
 				m_vPreferredSongSort.erase( m_vPreferredSongSort.begin()+i );
 
-		FOREACH( PreferredSortSection, m_vPreferredSongSort, i )
-			FOREACH( Song*, i->vpSongs, j )
-				ASSERT( *j != NULL );
+		for (PreferredSortSection const &i : m_vPreferredSongSort)
+			for (Song const *j : i.vpSongs)
+			{
+				ASSERT( j != NULL );
+			}
 	}
 
 	{
@@ -1558,9 +1558,8 @@ void SongManager::UpdatePreferredSort(RString sPreferredSongs, RString sPreferre
 
 		vector<Course*> vpCourses;
 
-		FOREACH( RString, asLines, s )
+		for (RString sLine : asLines)
 		{
-			RString sLine = *s;
 			bool bSectionDivider = BeginsWith( sLine, "---" );
 			if( bSectionDivider )
 			{
@@ -1590,14 +1589,14 @@ void SongManager::UpdatePreferredSort(RString sPreferredSongs, RString sPreferre
 		{
 			// move all unlock Courses to a group at the bottom
 			vector<Course*> vpUnlockCourses;
-			FOREACH( UnlockEntry, UNLOCKMAN->m_UnlockEntries, ue )
+			for (UnlockEntry const &ue : UNLOCKMAN->m_UnlockEntries)
 			{
-				if( ue->m_Type == UnlockRewardType_Course )
-					if( ue->m_Course.IsValid() )
-						vpUnlockCourses.push_back( ue->m_Course.ToCourse() );
+				if( ue.m_Type == UnlockRewardType_Course )
+					if( ue.m_Course.IsValid() )
+						vpUnlockCourses.push_back( ue.m_Course.ToCourse() );
 			}
 
-			FOREACH( CoursePointerVector, m_vPreferredCourseSort, v )
+			for (auto v = m_vPreferredCourseSort.begin(); v != m_vPreferredCourseSort.end(); ++v)
 			{
 				for( int i=v->size()-1; i>=0; i-- )
 				{
@@ -1617,9 +1616,11 @@ void SongManager::UpdatePreferredSort(RString sPreferredSongs, RString sPreferre
 			if( m_vPreferredCourseSort[i].empty() )
 				m_vPreferredCourseSort.erase( m_vPreferredCourseSort.begin()+i );
 
-		FOREACH( CoursePointerVector, m_vPreferredCourseSort, i )
-			FOREACH( Course*, *i, j )
-				ASSERT( *j != NULL );
+		for (CoursePointerVector const &i : m_vPreferredCourseSort)
+			for (Course *j : i)
+			{
+				ASSERT( j != NULL );
+			}
 	}
 }
 
@@ -1635,14 +1636,14 @@ void SongManager::UpdateRankingCourses()
 	vector<RString> RankingCourses;
 	split( THEME->GetMetric("ScreenRanking","CoursesToShow"),",", RankingCourses);
 
-	FOREACH( Course*, m_pCourses, c )
+	for (Course *c : m_pCourses)
 	{
-		bool bLotsOfStages = (*c)->GetEstimatedNumStages() > 7;
-		(*c)->m_SortOrder_Ranking = bLotsOfStages? 3 : 2;
+		bool bLotsOfStages = c->GetEstimatedNumStages() > 7;
+		c->m_SortOrder_Ranking = bLotsOfStages? 3 : 2;
 			
 		for( unsigned j = 0; j < RankingCourses.size(); j++ )
-			if( !RankingCourses[j].CompareNoCase((*c)->m_sPath) )
-				(*c)->m_SortOrder_Ranking = 1;
+			if( !RankingCourses[j].CompareNoCase(c->m_sPath) )
+				c->m_SortOrder_Ranking = 1;
 	}
 }
 
@@ -1728,14 +1729,13 @@ void SongManager::FreeAllLoadedFromProfile( ProfileSlot slot )
 {
 	// Profile courses may refer to profile steps, so free profile courses first.
 	vector<Course*> apToDelete;
-	FOREACH( Course*, m_pCourses, c )
+	for (Course *pCourse : m_pCourses)
 	{
-		Course *pCourse = *c;
 		if( pCourse->GetLoadedFromProfileSlot() == ProfileSlot_Invalid )
 			continue;
 
 		if( slot == ProfileSlot_Invalid || pCourse->GetLoadedFromProfileSlot() == slot )
-			apToDelete.push_back( *c );
+			apToDelete.push_back( pCourse );
 	}
 
 	/* We don't use DeleteCourse here, so we don't UpdatePopular and
@@ -1757,22 +1757,20 @@ void SongManager::FreeAllLoadedFromProfile( ProfileSlot slot )
 	set<Steps*> setInUse;
 	if( STATSMAN )
 		STATSMAN->GetStepsInUse( setInUse );
-	FOREACH( Song*, m_pSongs, s )
-		(*s)->FreeAllLoadedFromProfile( slot, &setInUse );
+	for (Song *s : m_pSongs)
+		s->FreeAllLoadedFromProfile( slot, &setInUse );
 }
 
 int SongManager::GetNumStepsLoadedFromProfile()
 {
 	int iCount = 0;
-	FOREACH( Song*, m_pSongs, s )
+	for (Song const *s : m_pSongs)
 	{
-		vector<Steps*> vpAllSteps = (*s)->GetAllSteps();
+		vector<Steps*> vpAllSteps = s->GetAllSteps();
 
-		FOREACH( Steps*, vpAllSteps, ss )
-		{
-			if( (*ss)->GetLoadedFromProfileSlot() != ProfileSlot_Invalid )
-				iCount++;
-		}
+		iCount += std::count_if(vpAllSteps.begin(), vpAllSteps.end(), [](Steps const *step) {
+			return step->GetLoadedFromProfileSlot() != ProfileSlot_Invalid;
+		});
 	}
 
 	return iCount;
