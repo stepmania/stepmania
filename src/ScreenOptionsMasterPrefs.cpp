@@ -163,9 +163,9 @@ static void GameChoices( vector<RString> &out )
 {
 	vector<const Game*> aGames;
 	GAMEMAN->GetEnabledGames( aGames );
-	FOREACH( const Game*, aGames, g )
+	for (Game const *g : aGames)
 	{
-		RString sGameName = (*g)->m_szName;
+		RString sGameName = g->m_szName;
 		out.push_back( sGameName );
 	}
 }
@@ -248,8 +248,8 @@ static void Language( int &sel, bool ToSel, const ConfOption *pConfOption )
 static void ThemeChoices( vector<RString> &out )
 {
 	THEME->GetSelectableThemeNames( out );
-	FOREACH( RString, out, s )
-		*s = THEME->GetThemeDisplayName( *s );
+	for (RString &s : out)
+		s = THEME->GetThemeDisplayName( s );
 }
 
 static void DisplayResolutionChoices( vector<RString> &out )
