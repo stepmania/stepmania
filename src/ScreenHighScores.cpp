@@ -127,11 +127,11 @@ void ScoreScroller::ConfigureActor( Actor *pActor, int iItem )
 	lua_pushvalue( L, -1 );
 	msg.SetParamFromStack( L, "Entries" );
 
-	FOREACH( DifficultyAndStepsType, m_DifficultiesToShow, iter )
+	int i = 0;
+	for (DifficultyAndStepsType &iter : m_DifficultiesToShow)
 	{
-		int i = iter-m_DifficultiesToShow.begin();
-		Difficulty dc = iter->first;
-		StepsType st = iter->second;
+		Difficulty dc = iter.first;
+		StepsType st = iter.second;
 
 		if( data.m_pSong != NULL )
 		{
@@ -150,6 +150,7 @@ void ScoreScroller::ConfigureActor( Actor *pActor, int iItem )
 		// Because pSteps or pTrail can be NULL, what we're creating in Lua is not an array.
 		// It must be iterated using pairs(), not ipairs().
 		lua_setfield( L, -2, ssprintf("%d",i+1) );
+		++i;
 	}
 	lua_pop( L, 1 );
 	LUA->Release( L );
