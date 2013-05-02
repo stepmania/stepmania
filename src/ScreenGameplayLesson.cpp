@@ -33,24 +33,25 @@ void ScreenGameplayLesson::Init()
 	vector<RString> vs;
 	GetDirListing( sDir+"Page*", vs, true, true );
 	m_vPages.resize( vs.size() );
-	FOREACH( RString, vs, s )
+	int i = 0;
+	for (RString const &s : vs)
 	{
-		int i = s - vs.begin();
 		AutoActor &aa = m_vPages[i];
 
-		LuaThreadVariable iIndex( "PageIndex", LuaReference::Create(i) );
+		LuaThreadVariable iIndex( "PageIndex", LuaReference::Create(i++) );
 		LuaThreadVariable iPages( "NumPages", LuaReference::Create( (int)vs.size() ) );
-		aa.Load( *s );
+		aa.Load( s );
 
 		aa->SetDrawOrder( DRAW_ORDER_OVERLAY+1 );
 		this->AddChild( aa );
 	}
-
-	FOREACH( AutoActor, m_vPages, aa )
+	
+	i = 0;
+	for (AutoActor &aa : m_vPages)
 	{
-		bool bIsFirst = aa == m_vPages.begin();
-		(*aa)->PlayCommand( bIsFirst ? "Show" : "Hide" );
-		(*aa)->PlayCommand( "On" );
+		bool bIsFirst = (i++ == 0);
+		aa->PlayCommand( bIsFirst ? "Show" : "Hide" );
+		aa->PlayCommand( "On" );
 	}
 
 	// Reset stage number (not relevant in lessons)
