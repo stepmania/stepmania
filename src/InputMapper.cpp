@@ -959,16 +959,16 @@ void InputScheme::MenuButtonToGameInputs( GameButton MenuI, PlayerNumber pn, vec
 
 	vector<GameButton> aGameButtons;
 	MenuButtonToGameButtons( MenuI, aGameButtons );
-	FOREACH( GameButton, aGameButtons, gb )
+	for (GameButton const &gb : aGameButtons)
 	{
 		if( pn == PLAYER_INVALID )
 		{
-			GameIout.push_back( GameInput(GameController_1, *gb) );
-			GameIout.push_back( GameInput(GameController_2, *gb) );
+			GameIout.push_back( GameInput(GameController_1, gb) );
+			GameIout.push_back( GameInput(GameController_2, gb) );
 		}
 		else
 		{
-			GameIout.push_back( GameInput((GameController)pn, *gb) );
+			GameIout.push_back( GameInput((GameController)pn, gb) );
 		}
 	}
 }
