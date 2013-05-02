@@ -120,8 +120,8 @@ void InputHandler_MacOSX_HID::StartDevices()
 	int n = 0;
 
 	ASSERT( m_LoopRef );
-	FOREACH( HIDDevice *, m_vDevices, i )
-		(*i)->StartQueue( m_LoopRef, InputHandler_MacOSX_HID::QueueCallback, this, n++ );
+	for (HIDDevice *i : m_vDevices)
+		i->StartQueue( m_LoopRef, InputHandler_MacOSX_HID::QueueCallback, this, n++ );
 
 	CFRunLoopSourceRef runLoopSource = IONotificationPortGetRunLoopSource( m_NotifyPort );
 
@@ -130,8 +130,8 @@ void InputHandler_MacOSX_HID::StartDevices()
 
 InputHandler_MacOSX_HID::~InputHandler_MacOSX_HID()
 {
-	FOREACH( HIDDevice *, m_vDevices, i )
-		delete *i;
+	for (HIDDevice *i : m_vDevices)
+		delete i;
 	if( PREFSMAN->m_bThreadedInput )
 	{
 		CFRunLoopSourceSignal( m_SourceRef );
@@ -142,8 +142,8 @@ InputHandler_MacOSX_HID::~InputHandler_MacOSX_HID()
 		LOG->Trace( "Input handler thread shut down." );
 	}
 
-	FOREACH( io_iterator_t, m_vIters, i )
-		IOObjectRelease( *i );
+	for (io_iterator_t &i : m_vIters)
+		IOObjectRelease( i );
 	IONotificationPortDestroy( m_NotifyPort );
 }
 

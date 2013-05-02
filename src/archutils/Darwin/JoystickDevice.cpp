@@ -248,7 +248,7 @@ int JoystickDevice::AssignIDs( InputDevice startID )
 {
 	if( !IsJoystick(startID) )
 		return -1;
-	FOREACH( Joystick, m_vSticks, i )
+	for (auto i = m_vSticks.begin(); i != m_vSticks.end(); ++i)
 	{
 		if( !IsJoystick(startID) )
 		{
