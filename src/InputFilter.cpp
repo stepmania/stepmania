@@ -327,8 +327,8 @@ void InputFilter::Update( float fDeltaTime )
 		ReportButtonChange( di, IET_REPEAT );
 	}
 
-	FOREACH( ButtonStateMap::iterator, ButtonsToErase, it )
-		g_ButtonStates.erase( *it );
+	for (ButtonStateMap::iterator &it : ButtonsToErase)
+		g_ButtonStates.erase( it );
 }
 
 template<typename T, typename IT>
