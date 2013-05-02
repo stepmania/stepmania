@@ -123,9 +123,9 @@ void SongOptions::GetMods( vector<RString> &AddTo ) const
 void SongOptions::GetLocalizedMods( vector<RString> &v ) const
 {
 	GetMods( v );
-	FOREACH( RString, v, s )
+	for (RString &s : v)
 	{
-		*s = CommonMetrics::LocalizeOptionItem( *s, true );
+		s = CommonMetrics::LocalizeOptionItem( s, true );
 	}
 }
 
@@ -152,9 +152,9 @@ void SongOptions::FromString( const RString &sMultipleMods )
 	vector<RString> vs;
 	split( sTemp, ",", vs, true );
 	RString sThrowAway;
-	FOREACH( RString, vs, s )
+	for (RString &s : vs)
 	{
-		FromOneModString( *s, sThrowAway );
+		FromOneModString( s, sThrowAway );
 	}
 }
 
