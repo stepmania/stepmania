@@ -2405,12 +2405,12 @@ bool ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 				// Fill in lines enabled/disabled
 				bool bAlreadyBGChangeHere = false;
 				BackgroundChange bgChange; 
-				FOREACH( BackgroundChange, m_pSong->GetBackgroundChanges(g_CurrentBGChangeLayer), bgc )
+				for (BackgroundChange &bgc : m_pSong->GetBackgroundChanges(g_CurrentBGChangeLayer))
 				{
-					if( bgc->m_fStartBeat == GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat )
+					if( bgc.m_fStartBeat == GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat )
 					{
 						bAlreadyBGChangeHere = true;
-						bgChange = *bgc;
+						bgChange = bgc;
 					}
 				}
 
@@ -2628,12 +2628,13 @@ bool ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 				BackgroundLayer iLayer = BACKGROUND_LAYER_1;
 				BackgroundChange bgChange;
 				bgChange.m_fStartBeat = GAMESTATE->m_Position.m_fSongBeat;
-				FOREACH( BackgroundChange, m_pSong->GetBackgroundChanges(iLayer), bgc )
+				auto & changes = m_pSong->GetBackgroundChanges(iLayer);
+				for (auto bgc = changes.begin(); bgc != changes.end(); ++bgc)
 				{
 					if( bgc->m_fStartBeat == GAMESTATE->m_Position.m_fSongBeat )
 					{
 						bgChange = *bgc;
-						m_pSong->GetBackgroundChanges(iLayer).erase( bgc );
+						changes.erase( bgc );
 						break;
 					}
 				}
@@ -5388,13 +5389,14 @@ void ScreenEdit::HandleBGChangeChoice( BGChangeChoice c, const vector<int> &iAns
 {
 	BackgroundChange newChange;
 
-	FOREACH( BackgroundChange, m_pSong->GetBackgroundChanges(g_CurrentBGChangeLayer), iter )
+	auto &changes = m_pSong->GetBackgroundChanges(g_CurrentBGChangeLayer);
+	for (auto iter = changes.begin(); iter != changes.end(); ++iter)
 	{
 		if( iter->m_fStartBeat == GAMESTATE->m_Position.m_fSongBeat )
 		{
 			newChange = *iter;
 			// delete the old change.  We'll add a new one below.
-			m_pSong->GetBackgroundChanges(g_CurrentBGChangeLayer).erase( iter );
+			changes.erase( iter );
 			break;
 		}
 	}
@@ -5489,8 +5491,8 @@ void ScreenEdit::SetupCourseAttacks()
 			}
 		}
 
-		FOREACH( Attack, Attacks, attack )
-			GAMESTATE->m_pPlayerState[PLAYER_1]->LaunchAttack( *attack );
+		for (Attack &attack: Attacks)
+			GAMESTATE->m_pPlayerState[PLAYER_1]->LaunchAttack( attack );
 	}
 	else 
 	{
@@ -5503,11 +5505,11 @@ void ScreenEdit::SetupCourseAttacks()
 			
 			if (attacks.size() > 0)
 			{
-				FOREACH(Attack, attacks, attack)
+				for (Attack &attack : attacks)
 				{
-					float fBeat = GetAppropriateTiming().GetBeatFromElapsedTime(attack->fStartSecond);
+					float fBeat = GetAppropriateTiming().GetBeatFromElapsedTime(attack.fStartSecond);
 					if (fBeat >= GetBeat())
-						GAMESTATE->m_pPlayerState[PLAYER_1]->LaunchAttack( *attack );
+						GAMESTATE->m_pPlayerState[PLAYER_1]->LaunchAttack( attack );
 				}
 			}
 		}
@@ -5760,8 +5762,8 @@ static void ProcessKeyName( RString &s )
 
 static void ProcessKeyNames( vector<RString> &vs )
 {
-	FOREACH( RString, vs, s )
-		ProcessKeyName( *s );
+	for (RString &s : vs)
+		ProcessKeyName( s );
 
 	sort( vs.begin(), vs.end() );
 	vector<RString>::iterator toDelete = unique( vs.begin(), vs.end() );
@@ -5807,10 +5809,10 @@ void ScreenEdit::DoStepAttackMenu()
 		
 	g_AttackAtTimeMenu.rows.clear();
 	unsigned index = 0;
-		
-	FOREACH(int, points, i)
+	
+	for (int &i : points)
 	{
-		const Attack &attack = attacks[*i];
+		const Attack &attack = attacks[i];
 		RString desc = ssprintf("%g -> %g (%d mod[s])",
 			startTime, startTime + attack.fSecsRemaining,
 			attack.GetNumAttacks());
@@ -5847,9 +5849,9 @@ void ScreenEdit::DoKeyboardTrackMenu()
 	vector<RString> &kses = m_pSong->m_vsKeysoundFile;
 	
 	vector<RString> choices;
-	FOREACH(RString, kses, ks)
+	for (RString const &ks : kses)
 	{
-		choices.push_back(*ks);
+		choices.push_back(ks);
 	}
 	choices.push_back(NEWKEYSND);
 	choices.push_back(NO_KEYSND);
