@@ -86,8 +86,10 @@ Song::Song()
 
 Song::~Song()
 {
-	FOREACH( Steps*, m_vpSteps, s )
-		SAFE_DELETE( *s );
+	for (Steps *s : m_vpSteps)
+	{
+		SAFE_DELETE( s );
+	}
 	m_vpSteps.clear();
 	
 	// It's the responsibility of the owner of this Song to make sure
@@ -149,8 +151,10 @@ void Song::SetSpecifiedLastSecond(const float f)
 // Reset to an empty song.
 void Song::Reset()
 {
-	FOREACH( Steps*, m_vpSteps, s )
-		SAFE_DELETE( *s );
+	for (Steps *s : m_vpSteps)
+	{	
+		SAFE_DELETE( s );
+	}
 	m_vpSteps.clear();
 	FOREACH_ENUM( StepsType, st )
 		m_vpStepsByType[st].clear();
@@ -166,7 +170,8 @@ void Song::Reset()
 void Song::AddBackgroundChange( BackgroundLayer iLayer, BackgroundChange seg )
 {
 	// Delete old background change at this start beat, if any.
-	FOREACH( BackgroundChange, GetBackgroundChanges(iLayer), bgc )
+	auto &changes = GetBackgroundChanges(iLayer);
+	for (vector<BackgroundChange>::iterator bgc = changes.begin(); bgc != changes.end(); ++bgc)
 	{
 		if( bgc->m_fStartBeat == seg.m_fStartBeat )
 		{
@@ -334,11 +339,11 @@ bool Song::LoadFromSongDir( RString sDir )
 			sCacheFilePath = RString();
 	}
 
-	FOREACH( Steps*, m_vpSteps, s )
+	for (Steps *s : m_vpSteps)
 	{
 		/* Compress all Steps. During initial caching, this will remove cached
 		 * NoteData; during cached loads, this will just remove cached SMData. */
-		(*s)->Compress();
+		s->Compress();
 	}
 
 	// Load the cached banners, if it's not loaded already.
@@ -539,9 +544,9 @@ void Song::TidyUpData( bool fromCache, bool /* duringCache */ )
 
 	m_SongTiming.TidyUpData( false );
 	
-	FOREACH( Steps *, m_vpSteps, s )
+	for (Steps *s : m_vpSteps)
 	{
-		(*s)->m_Timing.TidyUpData( true );
+		s->m_Timing.TidyUpData( true );
 	}
 
 	/* Generate these before we autogen notes, so the new notes can inherit
@@ -1041,8 +1046,8 @@ bool Song::SaveToSSCFile( RString sPath, bool bSavingCache )
 	}
 
 	// Mark these steps saved to disk.
-	FOREACH( Steps*, vpStepsToSave, s )
-		(*s)->SetSavedToDisk( true );
+	for (Steps *s : vpStepsToSave)
+		s->SetSavedToDisk( true );
 
 	return true;
 }
