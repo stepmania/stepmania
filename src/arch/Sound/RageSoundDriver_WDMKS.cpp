@@ -750,17 +750,17 @@ WinWdmPin *WinWdmFilter::InstantiateRenderPin(
 	aTryPCM.push_back( false );
 	aTryPCM.push_back( true );
 
-	FOREACH( bool, aTryPCM, bTryPCM )
+	for (auto bTryPCM = aTryPCM.begin(); bTryPCM != aTryPCM.end(); ++bTryPCM)
 	{
-		FOREACH( int, aSampleRates, iSampleRate )
+		for (int const &iSampleRate : aSampleRates)
 		{
-			FOREACH( int, aChannels, iChannels )
+			for (int const &iChannels : aChannels)
 			{
-				FOREACH( DeviceSampleFormat, SampleFormats, fmt )
+				for (DeviceSampleFormat &fmt : SampleFormats)
 				{
-					PreferredOutputSampleFormat = *fmt;
-					iPreferredOutputChannels = *iChannels;
-					iPreferredSampleRate = *iSampleRate;
+					PreferredOutputSampleFormat = fmt;
+					iPreferredOutputChannels = iChannels;
+					iPreferredSampleRate = iSampleRate;
 
 					WAVEFORMATEXTENSIBLE wfx;
 					FillWFEXT( &wfx, PreferredOutputSampleFormat, iPreferredSampleRate, iPreferredOutputChannels );
