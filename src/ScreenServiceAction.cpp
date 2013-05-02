@@ -386,21 +386,21 @@ void ScreenServiceAction::BeginScreen()
 	split( sActions, ",", vsActions );
 
 	vector<RString> vsResults;
-	FOREACH( RString, vsActions, s )
+	for (RString const &s : vsActions)
 	{
 		RString (*pfn)() = NULL;
 
-		if( *s == "ClearMachineStats" )			pfn = ClearMachineStats;
-		else if( *s == "ClearMachineEdits" )			pfn = ClearMachineEdits;
-		else if( *s == "ClearMemoryCardEdits" )			pfn = ClearMemoryCardEdits;
-		else if( *s == "TransferStatsMachineToMemoryCard" )	pfn = TransferStatsMachineToMemoryCard;
-		else if( *s == "TransferStatsMemoryCardToMachine" )	pfn = TransferStatsMemoryCardToMachine;
-		else if( *s == "CopyEditsMachineToMemoryCard" )		pfn = CopyEditsMachineToMemoryCard;
-		else if( *s == "CopyEditsMemoryCardToMachine" )		pfn = CopyEditsMemoryCardToMachine;
-		else if( *s == "SyncEditsMachineToMemoryCard" )		pfn = SyncEditsMachineToMemoryCard;
-		else if( *s == "ResetPreferences" )			pfn = ResetPreferences;
+		if( s == "ClearMachineStats" )			pfn = ClearMachineStats;
+		else if( s == "ClearMachineEdits" )			pfn = ClearMachineEdits;
+		else if( s == "ClearMemoryCardEdits" )			pfn = ClearMemoryCardEdits;
+		else if( s == "TransferStatsMachineToMemoryCard" )	pfn = TransferStatsMachineToMemoryCard;
+		else if( s == "TransferStatsMemoryCardToMachine" )	pfn = TransferStatsMemoryCardToMachine;
+		else if( s == "CopyEditsMachineToMemoryCard" )		pfn = CopyEditsMachineToMemoryCard;
+		else if( s == "CopyEditsMemoryCardToMachine" )		pfn = CopyEditsMemoryCardToMachine;
+		else if( s == "SyncEditsMachineToMemoryCard" )		pfn = SyncEditsMachineToMemoryCard;
+		else if( s == "ResetPreferences" )			pfn = ResetPreferences;
 		
-		ASSERT_M( pfn != NULL, *s );
+		ASSERT_M( pfn != NULL, s );
 		
 		RString sResult = pfn();
 		vsResults.push_back( sResult );
