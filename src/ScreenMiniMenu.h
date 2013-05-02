@@ -57,9 +57,9 @@ struct MenuRowDef
 			emShowIn(s), iDefaultChoice(d), choices(),
 			bThemeTitle(bTT), bThemeItems(bTI)
 	{
-		FOREACH(RString, options, str)
+		for (RString &str : options)
 		{
-			if (*str != "") choices.push_back(*str);
+			if (str != "") choices.push_back(str);
 		}
 	}
 	
