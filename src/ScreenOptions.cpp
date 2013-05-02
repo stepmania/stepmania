@@ -232,16 +232,15 @@ void ScreenOptions::InitMenu( const vector<OptionRowHandler*> &vHands )
 
 	m_frameContainer.SortByDrawOrder();
 
-	FOREACH( OptionRow*, m_pRows, p )
+	int iIndex = 0;
+	for (OptionRow *p : m_pRows)
 	{
-		int iIndex = p - m_pRows.begin();
-
 		Lua *L = LUA->Get();
-		LuaHelpers::Push( L, iIndex );
-		(*p)->m_pLuaInstance->Set( L, "iIndex" );
+		LuaHelpers::Push( L, iIndex++ );
+		p->m_pLuaInstance->Set( L, "iIndex" );
 		LUA->Release( L );
 
-		(*p)->RunCommands( ROW_INIT_COMMAND );
+		p->RunCommands( ROW_INIT_COMMAND );
 	}
 
 	// poke once at all the explanation metrics so that we catch missing ones early
@@ -334,8 +333,8 @@ void ScreenOptions::TweenOnScreen()
 {
 	ScreenWithMenuElements::TweenOnScreen();
 
-	FOREACH( OptionRow*, m_pRows, p )
-		(*p)->RunCommands( ROW_ON_COMMAND );
+	for (OptionRow *p : m_pRows)
+		p->RunCommands( ROW_ON_COMMAND );
 
 	m_frameContainer.SortByDrawOrder();
 }
@@ -344,8 +343,8 @@ void ScreenOptions::TweenOffScreen()
 {
 	ScreenWithMenuElements::TweenOffScreen();
 
-	FOREACH( OptionRow*, m_pRows, p )
-		(*p)->RunCommands( ROW_OFF_COMMAND );
+	for (OptionRow *p : m_pRows)
+		p->RunCommands( ROW_OFF_COMMAND );
 }
 
 ScreenOptions::~ScreenOptions()
