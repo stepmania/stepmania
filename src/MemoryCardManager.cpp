@@ -337,7 +337,7 @@ void MemoryCardManager::UpdateAssignments()
 		if( assigned_device.IsBlank() )     // no card assigned to this player
 			continue;
 
-		FOREACH( UsbStorageDevice, vUnassignedDevices, d )
+		for (vector<UsbStorageDevice>::iterator d = vUnassignedDevices.begin(); d != vUnassignedDevices.end(); ++d)
 		{
 			if( *d == assigned_device )
 			{
@@ -372,8 +372,8 @@ void MemoryCardManager::UpdateAssignments()
 		}
 
 		LOG->Trace( "Looking for a card for Player %d", p+1 );
-				
-		FOREACH( UsbStorageDevice, vUnassignedDevices, d )
+		
+		for (vector<UsbStorageDevice>::iterator d = vUnassignedDevices.begin(); d != vUnassignedDevices.end(); ++d)
 		{
 			// search for card dir match
 			if( !m_sMemoryCardOsMountPoint[p].Get().empty() &&
