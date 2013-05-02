@@ -51,11 +51,11 @@ bool MemoryCardDriver::DoOneUpdate( bool bMount, vector<UsbStorageDevice>& vStor
 	GetUSBStorageDevices( vStorageDevicesOut );
 
 	// log connects
-	FOREACH( UsbStorageDevice, vStorageDevicesOut, newd )
+	for (UsbStorageDevice &newd : vStorageDevicesOut)
 	{
-		vector<UsbStorageDevice>::iterator iter = find( vOld.begin(), vOld.end(), *newd );
+		vector<UsbStorageDevice>::iterator iter = find( vOld.begin(), vOld.end(), newd );
 		if( iter == vOld.end() )    // didn't find
-			LOG->Trace( "New device connected: %s", newd->sDevice.c_str() );
+			LOG->Trace( "New device connected: %s", newd.sDevice.c_str() );
 	}
 
 	/* When we first see a device, regardless of bMount, just return it as CHECKING,
