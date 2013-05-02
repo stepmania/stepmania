@@ -197,8 +197,8 @@ void OptionsList::Load( RString sType, PlayerNumber pn )
 
 	vector<RString> asDirectLines;
 	split( DIRECT_LINES, ",", asDirectLines, true );
-	FOREACH( RString, asDirectLines, s )
-		m_setDirectRows.insert( *s );
+	for (RString const &s : asDirectLines)
+		m_setDirectRows.insert( s );
 
 	vector<RString> setToLoad;
 	split( TOP_MENUS, ",", setToLoad );
