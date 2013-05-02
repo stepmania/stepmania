@@ -61,9 +61,9 @@ void AdjustSync::ResetOriginalSyncData()
 	{
 		s_vpTimingDataOriginal.push_back(GAMESTATE->m_pCurSong->m_SongTiming);
 		const vector<Steps *>& vpSteps = GAMESTATE->m_pCurSong->GetAllSteps();
-		FOREACH( Steps*, const_cast<vector<Steps *>&>(vpSteps), s )
+		for (Steps const *s : vpSteps)
 		{
-			s_vpTimingDataOriginal.push_back((*s)->m_Timing);
+			s_vpTimingDataOriginal.push_back(s->m_Timing);
 		}
 	}
 	else
@@ -128,9 +128,9 @@ void AdjustSync::RevertSyncChanges()
 
 	unsigned location = 1;
 	const vector<Steps *>& vpSteps = GAMESTATE->m_pCurSong->GetAllSteps();
-	FOREACH( Steps*, const_cast<vector<Steps *>&>(vpSteps), s )
+	for (Steps *s : vpSteps)
 	{
-		(*s)->m_Timing = s_vpTimingDataOriginal[location];
+		s->m_Timing = s_vpTimingDataOriginal[location];
 		location++;
 	}
 
@@ -214,13 +214,13 @@ void AdjustSync::AutosyncOffset()
 			{
 				GAMESTATE->m_pCurSong->m_SongTiming.m_fBeat0OffsetInSeconds += mean;
 				const vector<Steps *>& vpSteps = GAMESTATE->m_pCurSong->GetAllSteps();
-				FOREACH( Steps*, const_cast<vector<Steps *>&>(vpSteps), s )
+				for (Steps *s : vpSteps)
 				{
 					// Empty TimingData means it's inherited
 					// from the song and is already changed.
-					if( (*s)->m_Timing.empty() )
+					if( s->m_Timing.empty() )
 						continue;
-					(*s)->m_Timing.m_fBeat0OffsetInSeconds += mean;
+					s->m_Timing.m_fBeat0OffsetInSeconds += mean;
 				}
 				break;
 			}
