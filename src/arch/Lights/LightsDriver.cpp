@@ -1,7 +1,7 @@
 #include "global.h"
 #include "LightsDriver.h"
 #include "RageLog.h"
-#include "Foreach.h"
+
 #include "arch/arch_default.h"
 
 DriverList LightsDriver::m_pDriverList;

@@ -8,7 +8,7 @@
 #include "LuaManager.h"
 #include "ProductInfo.h"
 #include "DateTime.h"
-#include "Foreach.h"
+
 #include "arch/Dialog/Dialog.h"
 #include "RageFileManager.h"
 #include "SpecialFiles.h"

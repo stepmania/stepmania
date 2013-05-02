@@ -8,7 +8,7 @@
 #include "ActorUtil.h"
 #include "XmlFile.h"
 #include "LuaManager.h"
-#include "Foreach.h"
+
 
 int OptionToPreferredColumn( RString sOptionText );
 

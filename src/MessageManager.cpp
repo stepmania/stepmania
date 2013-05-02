@@ -1,6 +1,6 @@
 #include "global.h"
 #include "MessageManager.h"
-#include "Foreach.h"
+
 #include "RageUtil.h"
 #include "RageThreads.h"
 #include "EnumHelper.h"

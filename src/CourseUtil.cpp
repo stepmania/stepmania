@@ -8,7 +8,7 @@
 #include "XmlFile.h"
 #include "GameState.h"
 #include "Style.h"
-#include "Foreach.h"
+
 #include "GameState.h"
 #include "LocalizedString.h"
 #include "RageLog.h"

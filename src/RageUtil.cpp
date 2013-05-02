@@ -3,7 +3,7 @@
 #include "RageMath.h"
 #include "RageLog.h"
 #include "RageFile.h"
-#include "Foreach.h"
+
 #include "LocalizedString.h"
 #include "LuaBinding.h"
 #include "LuaManager.h"

@@ -6,7 +6,7 @@
 #include "AdjustSync.h"
 #include "BackgroundUtil.h"
 #include "CommonMetrics.h"
-#include "Foreach.h"
+
 #include "GameManager.h"
 #include "GamePreferences.h"
 #include "GameSoundManager.h"

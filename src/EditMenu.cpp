@@ -8,7 +8,7 @@
 #include "Steps.h"
 #include "Song.h"
 #include "StepsUtil.h"
-#include "Foreach.h"
+
 #include "CommonMetrics.h"
 #include "BannerCache.h"
 #include "UnlockManager.h"

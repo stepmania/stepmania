@@ -5,7 +5,7 @@
 #include "RageLog.h"
 #include "RageFile.h"
 #include "RageThreads.h"
-#include "Foreach.h"
+
 #include "arch/Dialog/Dialog.h"
 #include "XmlFile.h"
 #include "Command.h"

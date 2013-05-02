@@ -6,7 +6,7 @@
 #include "ActorUtil.h"
 #include "Song.h"
 #include "BackgroundUtil.h"
-#include "Foreach.h"
+
 
 Foreground::~Foreground()
 {

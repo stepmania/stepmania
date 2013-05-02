@@ -14,7 +14,7 @@ using namespace RageDisplay_Legacy_Helpers;
 #include "RageTypes.h"
 #include "RageUtil.h"
 #include "EnumHelper.h"
-#include "Foreach.h"
+
 #include "DisplayResolutions.h"
 #include "LocalizedString.h"
 

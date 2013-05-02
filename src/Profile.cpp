@@ -20,7 +20,7 @@
 #include "UnlockManager.h"
 #include "XmlFile.h"
 #include "XmlFileUtil.h"
-#include "Foreach.h"
+
 #include "Game.h"
 #include "CharacterManager.h"
 #include "Character.h"

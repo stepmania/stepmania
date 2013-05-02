@@ -16,7 +16,7 @@
 #include "ActorUtil.h"
 #include "SongUtil.h"
 #include "CourseUtil.h"
-#include "Foreach.h"
+
 #include "Style.h"
 #include "PlayerState.h"
 #include "CommonMetrics.h"

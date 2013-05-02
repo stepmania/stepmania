@@ -12,7 +12,7 @@
 #include "GameState.h"
 #include "StepMania.h"
 #include "Game.h"
-#include "Foreach.h"
+
 #include "GameConstantsAndTypes.h"
 #include "DisplayResolutions.h"
 #include "LocalizedString.h"

@@ -8,7 +8,7 @@
 #include "RageUtil.h"
 #include "RageSoundMixBuffer.h"
 #include "RageSoundUtil.h"
-#include "Foreach.h"
+
 
 /*
  * Keyed sounds should pass this object to SoundReader_Preload, to preprocess it.

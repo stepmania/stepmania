@@ -16,7 +16,7 @@
 #include "SongUtil.h"
 #include "StepsUtil.h"
 #include "GameManager.h"
-#include "Foreach.h"
+
 #include "GameSoundManager.h"
 #include "CommonMetrics.h"
 #include "CharacterManager.h"

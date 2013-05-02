@@ -10,7 +10,7 @@
 #include "PrefsManager.h"
 #include "StepMania.h"
 #include "RageSoundManager.h"
-#include "Foreach.h"
+
 #include "OptionRowHandler.h"
 #include "ScreenOptionsMasterPrefs.h"
 #include "CommonMetrics.h"

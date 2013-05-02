@@ -1783,7 +1783,6 @@ cl /Zl /nologo /c verstub.cpp /Fo"$(IntDir)"</Command>
     <ClInclude Include="Difficulty.h" />
     <ClInclude Include="EnumHelper.h" />
     <ClInclude Include="FileDownload.h" />
-    <ClInclude Include="Foreach.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameCommand.h" />
     <ClInclude Include="GameConstantsAndTypes.h" />

@@ -8,7 +8,7 @@
 #include "Course.h"
 #include "CourseLoaderCRS.h"
 #include "CourseUtil.h"
-#include "Foreach.h"
+
 #include "GameManager.h"
 #include "GameState.h"
 #include "LocalizedString.h"

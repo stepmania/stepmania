@@ -70,7 +70,7 @@
 #include "FontManager.h"
 #include "Screen.h"
 #include "ScreenDimensions.h"
-#include "Foreach.h"
+
 #include "ActorUtil.h"
 
 ScreenManager*	SCREENMAN = NULL;	// global and accessable from anywhere in our program

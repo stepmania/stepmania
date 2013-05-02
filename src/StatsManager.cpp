@@ -2,7 +2,7 @@
 #include "StatsManager.h"
 #include "RageFileManager.h"
 #include "GameState.h"
-#include "Foreach.h"
+
 #include "ProfileManager.h"
 #include "Profile.h"
 #include "PrefsManager.h"

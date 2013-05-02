@@ -7,7 +7,7 @@
 #include "StepsDisplay.h"
 #include "StepsUtil.h"
 #include "CommonMetrics.h"
-#include "Foreach.h"
+
 #include "SongUtil.h"
 #include "XmlFile.h"
 

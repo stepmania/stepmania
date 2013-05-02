@@ -1,7 +1,7 @@
 #include "global.h"
 #include "CommonMetrics.h"
 #include "RageUtil.h"
-#include "Foreach.h"
+
 #include "GameManager.h"
 #include "RageLog.h"
 #include "GameState.h"

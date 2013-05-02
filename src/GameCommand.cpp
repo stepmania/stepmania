@@ -13,7 +13,7 @@
 #include "PrefsManager.h"
 #include "Game.h"
 #include "Style.h"
-#include "Foreach.h"
+
 #include "arch/Dialog/Dialog.h"
 #include "GameSoundManager.h"
 #include "PlayerState.h"

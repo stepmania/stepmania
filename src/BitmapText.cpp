@@ -9,7 +9,7 @@
 #include "Font.h"
 #include "ActorUtil.h"
 #include "LuaBinding.h"
-#include "Foreach.h"
+
 
 REGISTER_ACTOR_CLASS( BitmapText );
 

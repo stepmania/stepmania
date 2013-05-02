@@ -11,7 +11,7 @@
 #include "ThemeManager.h"
 #include "RageTextureManager.h"
 #include "ActorUtil.h"
-#include "Foreach.h"
+
 #include "Style.h"
 #include "ThemeMetric.h"
 #include "ScreenDimensions.h"

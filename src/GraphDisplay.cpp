@@ -8,7 +8,7 @@
 #include "RageLog.h"
 #include "RageMath.h"
 #include "StageStats.h"
-#include "Foreach.h"
+
 #include "Song.h"
 #include "XmlFile.h"
 

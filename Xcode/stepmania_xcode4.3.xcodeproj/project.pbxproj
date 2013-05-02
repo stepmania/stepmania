@@ -670,7 +670,6 @@
 		AA40D2F509A08D650068C0D5 /* RageSurface_Load_XPM.h in Headers */ = {isa = PBXBuildFile; fileRef = AABBF6730659E78D00738526 /* RageSurface_Load_XPM.h */; };
 		AA40D2F609A08D650068C0D5 /* RageSurface_Load.h in Headers */ = {isa = PBXBuildFile; fileRef = AABBF6750659E78D00738526 /* RageSurface_Load.h */; };
 		AA40D2F809A08D650068C0D5 /* Difficulty.h in Headers */ = {isa = PBXBuildFile; fileRef = AAD6A713065E0FDF0042165A /* Difficulty.h */; };
-		AA40D2F909A08D650068C0D5 /* Foreach.h in Headers */ = {isa = PBXBuildFile; fileRef = AA70E3640663112800DAE1FD /* Foreach.h */; };
 		AA40D2FA09A08D650068C0D5 /* Trail.h in Headers */ = {isa = PBXBuildFile; fileRef = AA70E3660663112800DAE1FD /* Trail.h */; };
 		AA40D2FB09A08D650068C0D5 /* TrailUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = AA70E3680663112800DAE1FD /* TrailUtil.h */; };
 		AA40D2FC09A08D650068C0D5 /* ScreenNetworkOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = AA42F5E7067068D30013509E /* ScreenNetworkOptions.h */; };
@@ -2499,7 +2498,6 @@
 		AA6EFFC104770FFD005F316C /* Quad.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = Quad.h; path = ../src/Quad.h; sourceTree = "<group>"; };
 		AA6EFFC204770FFD005F316C /* Sprite.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = Sprite.cpp; path = ../src/Sprite.cpp; sourceTree = "<group>"; };
 		AA6EFFC304770FFD005F316C /* Sprite.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = Sprite.h; path = ../src/Sprite.h; sourceTree = "<group>"; };
-		AA70E3640663112800DAE1FD /* Foreach.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = Foreach.h; sourceTree = "<group>"; };
 		AA70E3650663112800DAE1FD /* Trail.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = Trail.cpp; path = ../src/Trail.cpp; sourceTree = "<group>"; };
 		AA70E3660663112800DAE1FD /* Trail.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = Trail.h; path = ../src/Trail.h; sourceTree = "<group>"; };
 		AA70E3670663112800DAE1FD /* TrailUtil.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = TrailUtil.cpp; path = ../src/TrailUtil.cpp; sourceTree = "<group>"; };
@@ -3471,7 +3469,6 @@
 		29B97315FDCFA39411CA2CEA /* Other Source */ = {
 			isa = PBXGroup;
 			children = (
-				AA70E3640663112800DAE1FD /* Foreach.h */,
 				3659B56D0F902143002B6B68 /* CommandLineActions.cpp */,
 				3659B56E0F902143002B6B68 /* CommandLineActions.h */,
 			);
@@ -5682,7 +5679,6 @@
 				AA40D2F509A08D650068C0D5 /* RageSurface_Load_XPM.h in Headers */,
 				AA40D2F609A08D650068C0D5 /* RageSurface_Load.h in Headers */,
 				AA40D2F809A08D650068C0D5 /* Difficulty.h in Headers */,
-				AA40D2F909A08D650068C0D5 /* Foreach.h in Headers */,
 				AA40D2FA09A08D650068C0D5 /* Trail.h in Headers */,
 				AA40D2FB09A08D650068C0D5 /* TrailUtil.h in Headers */,
 				AA40D2FC09A08D650068C0D5 /* ScreenNetworkOptions.h in Headers */,

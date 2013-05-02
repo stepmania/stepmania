@@ -8,7 +8,7 @@
 #include "RageTextureManager.h"
 #include "RageLog.h"
 #include "RageDisplay.h"
-#include "Foreach.h"
+
 #include <numeric>
 
 #define MS_MAX_NAME	32

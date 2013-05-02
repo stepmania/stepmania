@@ -2,7 +2,7 @@
 #include "global.h"
 #include "Course.h"
 #include "CourseLoaderCRS.h"
-#include "Foreach.h"
+
 #include "GameManager.h"
 #include "GameState.h"
 #include "LocalizedString.h"

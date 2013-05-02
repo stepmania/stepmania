@@ -11,7 +11,7 @@
 #include "RageLog.h"
 #include "RageUtil.h"
 #include "DateTime.h"
-#include "Foreach.h"
+
 #include "LuaManager.h"
 
 const RString XNode::TEXT_ATTRIBUTE = "__TEXT__";

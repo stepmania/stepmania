@@ -2,7 +2,7 @@
 #include "RageSoundDriver.h"
 #include "RageLog.h"
 #include "RageUtil.h"
-#include "Foreach.h"
+
 #include "arch/arch_default.h"
 
 DriverList RageSoundDriver::m_pDriverList;

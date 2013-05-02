@@ -14,7 +14,7 @@
 #include "ScreenManager.h"
 #include "ActorUtil.h"
 #endif
-#include "Foreach.h"
+
 #include "ThemeMetric.h"
 #include "SubscriptionManager.h"
 #include "LuaManager.h"

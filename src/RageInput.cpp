@@ -2,7 +2,7 @@
 #include "RageInput.h"
 #include "RageLog.h"
 #include "arch/InputHandler/InputHandler.h"
-#include "Foreach.h"
+
 #include "Preference.h"
 #include "LuaManager.h"
 #include "LocalizedString.h"

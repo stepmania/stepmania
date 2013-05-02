@@ -6,7 +6,7 @@
 #include "LocalizedString.h"
 #include "arch/arch_default.h"
 #include "InputHandler_MonkeyKeyboard.h"
-#include "Foreach.h"
+
 
 void InputHandler::UpdateTimer()
 {

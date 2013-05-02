@@ -8,7 +8,6 @@
 #include "PrefsManager.h"
 #include "arch.h"
 #include "arch_platform.h"
-#include "Foreach.h"
 #include "LocalizedString.h"
 #include "arch/arch_default.h"
 

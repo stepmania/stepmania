@@ -9,7 +9,7 @@
 #include "RageInput.h"
 #include "SpecialFiles.h"
 #include "LocalizedString.h"
-#include "Foreach.h"
+
 #include "arch/Dialog/Dialog.h"
 
 #define AUTOMAPPINGS_DIR "/Data/AutoMappings/"

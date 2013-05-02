@@ -30,7 +30,7 @@
 #include "RageSoundManager.h"
 #include "RageLog.h"
 #include "RageSoundReader_FileReader.h"
-#include "Foreach.h"
+
 
 void AutoKeysounds::Load( PlayerNumber pn, const NoteData& ndAutoKeysoundsOnly )
 {

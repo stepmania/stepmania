@@ -3,7 +3,7 @@
 #include "ScreenManager.h"
 #include "GameConstantsAndTypes.h"
 #include "ThemeManager.h"
-#include "Foreach.h"
+
 #include "ScreenDimensions.h"
 #include "GameState.h"
 #include "FontCharAliases.h"

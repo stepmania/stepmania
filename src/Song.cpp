@@ -20,7 +20,7 @@
 #include "NoteDataUtil.h"
 #include "SongUtil.h"
 #include "StepsUtil.h"
-#include "Foreach.h"
+
 #include "BackgroundUtil.h"
 #include "SpecialFiles.h"
 #include "NotesLoader.h"

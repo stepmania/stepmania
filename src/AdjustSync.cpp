@@ -41,7 +41,7 @@
 #include "LocalizedString.h"
 #include "PrefsManager.h"
 #include "ScreenManager.h"
-#include "Foreach.h"
+
 
 vector<TimingData> AdjustSync::s_vpTimingDataOriginal;
 float AdjustSync::s_fGlobalOffsetSecondsOriginal = 0.0f;

@@ -3,7 +3,7 @@
 #include "RageLog.h"
 #include "RageUtil.h"
 #include "RageTimer.h"
-#include "Foreach.h"
+
 
 #include <list>
 

@@ -3,7 +3,7 @@
 #include "GameState.h"
 #include "RageUtil.h"
 #include "Song.h"
-#include "Foreach.h"
+
 #include "PlayerOptions.h"
 #include "PlayerState.h"
 

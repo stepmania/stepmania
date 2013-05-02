@@ -5,7 +5,7 @@
 #include "RageMath.h"
 #include "RageLog.h"
 #include "arch/Dialog/Dialog.h"
-#include "Foreach.h"
+
 #include "XmlFile.h"
 #include "LuaBinding.h"
 #include "ThemeManager.h"

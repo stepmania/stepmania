@@ -10,7 +10,7 @@
 #include "RageUtil.h"
 #include "ActorUtil.h"
 #include "arch/Dialog/Dialog.h"
-#include "Foreach.h"
+
 #include "LuaBinding.h"
 #include "LuaManager.h"
 #include <numeric>

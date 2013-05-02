@@ -37,7 +37,7 @@
 #include "StatsManager.h"
 #include "PlayerAI.h" // for NUM_SKILL_LEVELS
 #include "NetworkSyncManager.h"
-#include "Foreach.h"
+
 #include "DancingCharacters.h"
 #include "ScreenDimensions.h"
 #include "ThemeMetric.h"

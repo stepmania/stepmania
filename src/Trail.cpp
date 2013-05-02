@@ -1,6 +1,6 @@
 #include "global.h"
 #include "Trail.h"
-#include "Foreach.h"
+
 #include "GameState.h"
 #include "Steps.h"
 #include "Song.h"

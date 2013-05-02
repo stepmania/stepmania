@@ -15,7 +15,7 @@
 #include "RageLog.h"
 #include "RageTimer.h"
 #include "RageSoundReader_Preload.h"
-#include "Foreach.h"
+
 #include "LocalizedString.h"
 #include "Preference.h"
 

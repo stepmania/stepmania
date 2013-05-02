@@ -8,7 +8,7 @@
 #include "RageFileDriver.h"
 #include "RageFileDriverTimeout.h"
 #include "MessageManager.h"
-#include "Foreach.h"
+
 #include "RageUtil_WorkerThread.h"
 #include "arch/MemoryCard/MemoryCardDriver_Null.h"
 #include "LuaManager.h"

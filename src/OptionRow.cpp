@@ -2,7 +2,7 @@
 #include "OptionRow.h"
 #include "RageUtil.h"
 #include "RageLog.h"
-#include "Foreach.h"
+
 #include "OptionRowHandler.h"
 #include "CommonMetrics.h"
 #include "GameState.h"

@@ -2,7 +2,7 @@
 #include "PlayerStageStats.h"
 #include "RageLog.h"
 #include "ThemeManager.h"
-#include "Foreach.h"
+
 #include "LuaManager.h"
 #include <float.h>
 #include <numeric>

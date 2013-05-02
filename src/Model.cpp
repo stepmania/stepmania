@@ -10,7 +10,7 @@
 #include "RageLog.h"
 #include "ActorUtil.h"
 #include "ModelManager.h"
-#include "Foreach.h"
+
 #include "LuaBinding.h"
 #include "PrefsManager.h"
 

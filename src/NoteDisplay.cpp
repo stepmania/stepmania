@@ -11,7 +11,7 @@
 #include "Sprite.h"
 #include "NoteTypes.h"
 #include "LuaBinding.h"
-#include "Foreach.h"
+
 #include "RageMath.h"
 
 const RString& NoteNotePartToString( NotePart i );

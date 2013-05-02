@@ -6,7 +6,7 @@
 #include "RageUtil_FileDB.h"
 #include "RageLog.h"
 #include "RageThreads.h"
-#include "Foreach.h"
+
 #include "arch/ArchHooks/ArchHooks.h"
 #include "LuaManager.h"
 

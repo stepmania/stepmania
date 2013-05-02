@@ -2,7 +2,7 @@
 #include "MemoryCardDriver.h"
 #include "RageFileManager.h"
 #include "RageLog.h"
-#include "Foreach.h"
+
 #include "ProfileManager.h"
 
 static const RString TEMP_MOUNT_POINT = "/@mctemptimeout/";

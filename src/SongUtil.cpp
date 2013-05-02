@@ -9,7 +9,7 @@
 #include "PrefsManager.h"
 #include "SongManager.h"
 #include "XmlFile.h"
-#include "Foreach.h"
+
 #include "UnlockManager.h"
 #include "ThemeMetric.h"
 #include "LocalizedString.h"

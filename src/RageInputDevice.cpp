@@ -4,7 +4,7 @@
 #include "global.h"
 #include "RageInputDevice.h"
 #include "RageUtil.h"
-#include "Foreach.h"
+
 #include "LocalizedString.h"
 
 static const char *InputDeviceStateNames[] = {

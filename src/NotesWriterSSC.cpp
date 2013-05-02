@@ -3,7 +3,7 @@
 #include <cstring>
 #include "NotesWriterSSC.h"
 #include "BackgroundUtil.h"
-#include "Foreach.h"
+
 #include "GameManager.h"
 #include "LocalizedString.h"
 #include "NoteTypes.h"

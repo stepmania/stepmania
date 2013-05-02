@@ -9,7 +9,7 @@
 #include "ActorUtil.h"
 #include "RageDisplay.h"
 #include "ScreenDimensions.h"
-#include "Foreach.h"
+
 
 /* Tricky: We need ActorFrames created in Lua to auto delete their children.
  * We don't want classes that derive from ActorFrame to auto delete their 

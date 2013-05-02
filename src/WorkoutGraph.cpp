@@ -8,7 +8,7 @@
 #include "GameState.h"
 #include "ThemeManager.h"
 #include "StatsManager.h"
-#include "Foreach.h"
+
 #include "Course.h"
 #include "Style.h"
 

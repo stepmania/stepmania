@@ -8,7 +8,7 @@
 #include "Style.h"
 #include "GameState.h"
 #include "RadarValues.h"
-#include "Foreach.h"
+
 #include <utility>
 
 // TODO: Remove these constants that aren't time signature-aware

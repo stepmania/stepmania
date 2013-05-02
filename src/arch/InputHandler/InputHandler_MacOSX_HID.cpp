@@ -1,7 +1,6 @@
 #include "global.h"
 #include "RageLog.h"
 #include "InputHandler_MacOSX_HID.h"
-#include "Foreach.h"
 #include "PrefsManager.h"
 #include "InputFilter.h"
 #include "archutils/Darwin/DarwinThreadHelpers.h"

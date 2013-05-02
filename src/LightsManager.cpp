@@ -10,7 +10,7 @@
 #include "PrefsManager.h"
 #include "Actor.h"
 #include "Preference.h"
-#include "Foreach.h"
+
 #include "GameManager.h"
 #include "CommonMetrics.h"
 #include "Style.h"

@@ -8,7 +8,7 @@
 #include "XmlFile.h"
 #include "XmlFileUtil.h"
 #include "LuaManager.h"
-#include "Foreach.h"
+
 
 #include "arch/Dialog/Dialog.h"
 

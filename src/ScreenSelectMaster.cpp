@@ -10,7 +10,7 @@
 #include "ActorUtil.h"
 #include "RageLog.h"
 #include <set>
-#include "Foreach.h"
+
 #include "InputEventPlus.h"
 
 static const char *MenuDirNames[] = {

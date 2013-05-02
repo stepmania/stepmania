@@ -2,7 +2,7 @@
 #include "RageFileDriverDirectHelpers.h"
 #include "RageUtil.h"
 #include "RageLog.h"
-#include "Foreach.h"
+
 
 #include <cerrno>
 #include <sys/types.h>

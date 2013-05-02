@@ -4,7 +4,7 @@
 #include "BGAnimationLayer.h"
 #include "RageUtil.h"
 #include "ActorUtil.h"
-#include "Foreach.h"
+
 #include "LuaManager.h"
 #include "PrefsManager.h"
 

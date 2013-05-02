@@ -5,7 +5,7 @@
 #include "PlayerNumber.h"
 #include "ThemeManager.h"
 #include "XmlFile.h"
-#include "Foreach.h"
+
 #include "RadarValues.h"
 
 ThemeMetric<RString> EMPTY_NAME("HighScore","EmptyName");

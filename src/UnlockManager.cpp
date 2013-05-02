@@ -11,7 +11,7 @@
 #include "ProfileManager.h"
 #include "Profile.h"
 #include "ThemeManager.h"
-#include "Foreach.h"
+
 #include "Steps.h"
 #include <float.h>
 #include "CommonMetrics.h"

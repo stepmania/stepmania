@@ -20,7 +20,7 @@
 #include "MenuTimer.h"
 #include "StatsManager.h"
 #include "StepsUtil.h"
-#include "Foreach.h"
+
 #include "Style.h"
 #include "PlayerState.h"
 #include "CommonMetrics.h"

@@ -9,7 +9,7 @@
 #include "RageTexture.h"
 #include "RageUtil.h"
 #include "ActorUtil.h"
-#include "Foreach.h"
+
 #include "LuaBinding.h"
 #include "LuaManager.h"
 

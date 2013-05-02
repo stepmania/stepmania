@@ -2,7 +2,7 @@
 #include "CharacterManager.h"
 #include "Character.h"
 #include "GameState.h"
-#include "Foreach.h"
+
 #include "LuaManager.h"
 
 #define CHARACTERS_DIR "/Characters/"

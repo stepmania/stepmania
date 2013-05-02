@@ -1883,9 +1883,6 @@
     <ClInclude Include="FileDownload.h">
       <Filter>Data Structures</Filter>
     </ClInclude>
-    <ClInclude Include="Foreach.h">
-      <Filter>Data Structures</Filter>
-    </ClInclude>
     <ClInclude Include="Game.h">
       <Filter>Data Structures</Filter>
     </ClInclude>

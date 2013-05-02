@@ -4,7 +4,7 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "NoteTypes.h"
-#include "Foreach.h"
+
 #include <float.h>
 
 TimingSegment* GetSegmentAtRow( int iNoteRow, TimingSegmentType tst );

@@ -5,7 +5,7 @@
 #include "RageLog.h"
 #include "FontCharAliases.h"
 #include "RageFile.h"
-#include "Foreach.h"
+
 #include "XmlFile.h"
 #include "XmlFileUtil.h"
 

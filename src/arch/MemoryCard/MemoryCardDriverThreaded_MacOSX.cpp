@@ -1,6 +1,5 @@
 #include "global.h"
 #include "MemoryCardDriverThreaded_MacOSX.h"
-#include "Foreach.h"
 #include "RageUtil.h"
 #include "RageLog.h"
 

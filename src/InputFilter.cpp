@@ -5,7 +5,7 @@
 #include "RageUtil.h"
 #include "RageThreads.h"
 #include "Preference.h"
-#include "Foreach.h"
+
 // for mouse stuff: -aj
 #include "PrefsManager.h"
 #include "ScreenDimensions.h"

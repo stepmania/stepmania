@@ -10,7 +10,7 @@
 #include "RageDisplay.h"
 #include "arch/Dialog/Dialog.h"
 #include "PrefsManager.h"
-#include "Foreach.h"
+
 #include "ActorUtil.h"
 #include "XmlFileUtil.h"
 #include "Sprite.h"

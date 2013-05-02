@@ -6,7 +6,7 @@
 #include "RageUtil.h"
 #include "RageSoundMixBuffer.h"
 #include "RageSoundUtil.h"
-#include "Foreach.h"
+
 
 RageSoundReader_Merge::RageSoundReader_Merge()
 {

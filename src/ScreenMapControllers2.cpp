@@ -9,7 +9,6 @@
 #include "ScreenDimensions.h"
 #include "InputEventPlus.h"
 #include "LocalizedString.h"
-#include "Foreach.h"
 #include "LuaBinding.h"
 
 static const float g_fSecondsToWaitForInput = 0.05f;

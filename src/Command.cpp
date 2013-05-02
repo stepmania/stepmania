@@ -3,7 +3,7 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "arch/Dialog/Dialog.h"
-#include "Foreach.h"
+
 #include <numeric>
 
 RString Command::GetName() const 

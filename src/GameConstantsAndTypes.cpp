@@ -4,7 +4,7 @@
 #include "RageUtil.h"
 #include "ThemeMetric.h"
 #include "EnumHelper.h"
-#include "Foreach.h"
+
 #include "LuaManager.h"
 #include "GameManager.h"
 #include "LocalizedString.h"

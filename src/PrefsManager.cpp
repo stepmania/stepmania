@@ -1,6 +1,6 @@
 #include "global.h"
 #include "PrefsManager.h"
-#include "Foreach.h"
+
 #include "IniFile.h"
 #include "LuaManager.h"
 #include "Preference.h"

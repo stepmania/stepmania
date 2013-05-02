@@ -25,7 +25,7 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "RageDisplay.h"
-#include "Foreach.h"
+
 
 #include <map>
 

@@ -7,7 +7,7 @@
 #include "SpecialFiles.h"
 #include "RageLog.h"
 #include "Preference.h"
-#include "Foreach.h"
+
 
 FileTransfer::FileTransfer()
 {

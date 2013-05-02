@@ -8,7 +8,7 @@
 #include "CommonMetrics.h"
 #include "Course.h"
 #include "CryptManager.h"
-#include "Foreach.h"
+
 #include "Game.h"
 #include "GameCommand.h"
 #include "GameConstantsAndTypes.h"

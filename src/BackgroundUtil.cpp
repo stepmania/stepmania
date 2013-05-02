@@ -2,7 +2,7 @@
 #include "BackgroundUtil.h"
 #include "RageUtil.h"
 #include "Song.h"
-#include "Foreach.h"
+
 #include "IniFile.h"
 #include "RageLog.h"
 #include <set>

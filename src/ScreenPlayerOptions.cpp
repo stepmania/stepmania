@@ -11,7 +11,7 @@
 #include "CodeDetector.h"
 #include "ScreenDimensions.h"
 #include "PlayerState.h"
-#include "Foreach.h"
+
 #include "InputEventPlus.h"
 
 REGISTER_SCREEN_CLASS( ScreenPlayerOptions );

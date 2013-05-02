@@ -7,7 +7,7 @@
 #include "Course.h"
 #include "Steps.h"
 #include "ThemeManager.h"
-#include "Foreach.h"
+
 #include "Style.h"
 #include "CommonMetrics.h"
 #include <float.h>

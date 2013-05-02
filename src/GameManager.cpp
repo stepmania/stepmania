@@ -10,7 +10,7 @@
 #include "LightsManager.h"	// for NUM_CabinetLight
 #include "Game.h"
 #include "Style.h"
-#include "Foreach.h"
+
 
 GameManager*	GAMEMAN = NULL;	// global and accessable from anywhere in our program
 

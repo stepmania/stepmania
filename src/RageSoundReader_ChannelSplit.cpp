@@ -38,7 +38,7 @@
 #include "RageUtil.h"
 #include "RageSoundMixBuffer.h"
 #include "RageSoundUtil.h"
-#include "Foreach.h"
+
 #include <set>
 
 class RageSoundReader_Split;

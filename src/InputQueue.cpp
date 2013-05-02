@@ -3,7 +3,7 @@
 #include "RageTimer.h"
 #include "RageLog.h"
 #include "InputEventPlus.h"
-#include "Foreach.h"
+
 #include "InputMapper.h"
 
 InputQueue*	INPUTQUEUE = NULL;	// global and accessable from anywhere in our program

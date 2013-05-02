@@ -1,6 +1,6 @@
 #include "global.h"
 #include "ActorScroller.h"
-#include "Foreach.h"
+
 #include "RageUtil.h"
 #include "XmlFile.h"
 #include "arch/Dialog/Dialog.h"

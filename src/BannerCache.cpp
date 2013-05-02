@@ -1,7 +1,7 @@
 #include "global.h"
 
 #include "BannerCache.h"
-#include "Foreach.h"
+
 #include "RageDisplay.h"
 #include "RageUtil.h"
 #include "RageLog.h"

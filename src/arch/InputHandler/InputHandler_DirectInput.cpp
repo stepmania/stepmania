@@ -10,7 +10,7 @@
 #include "archutils/Win32/RegistryAccess.h"
 #include "InputFilter.h"
 #include "PrefsManager.h"
-#include "Foreach.h"
+
 
 #include "InputHandler_DirectInputHelper.h"
 
