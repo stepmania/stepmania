@@ -43,16 +43,7 @@ extern "C" int SM_main( int argc, char *argv[] );
 #define ArchSwap16(n) OSSwapInt16((n))
 #define HAVE_BYTE_SWAPS
 
-// Define the work around if needed.
 #include <unistd.h>
-#include <stdint.h>
-#if _GLIBCXX_USE_C99
-# define NEED_CSTDLIB_WORKAROUND
-#else
-inline int64_t llabs( int64_t x ) { return x < 0LL ? -x : x; }
-#endif
-
-#define attribute_deprecated // Shut ffmpeg up!
 
 #endif
 

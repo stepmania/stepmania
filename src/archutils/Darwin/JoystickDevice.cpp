@@ -262,7 +262,7 @@ int JoystickDevice::AssignIDs( InputDevice startID )
 
 void JoystickDevice::GetDevicesAndDescriptions( vector<InputDeviceInfo>& vDevices ) const
 {
-	for (Joystick &i : m_vSticks)
+	for (auto &i : m_vSticks)
 		vDevices.push_back( InputDeviceInfo(i.id,GetDescription()) );
 }
 
