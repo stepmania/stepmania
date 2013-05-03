@@ -277,7 +277,7 @@ void ScreenDebugOverlay::Init()
 		++iPage;
 	}
 
-	for (IDebugLine const *unused : *g_pvpSubscribers)
+	for (unsigned unused = 0; unused < g_pvpSubscribers->size(); ++unused)
 	{
 		{
 			BitmapText *bt = new BitmapText;
