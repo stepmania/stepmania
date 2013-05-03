@@ -351,7 +351,7 @@ void ScreenDebugOverlay::Update( float fDeltaTime )
 void ScreenDebugOverlay::UpdateText()
 {
 	int iPage = 0;
-	for (RString const &unused : m_asPages)
+	for (unsigned unused = 0; unused < m_asPages.size(); ++unused)
 	{
 		m_vptextPages[iPage]->PlayCommand( (iPage == m_iCurrentPage) ? "GainFocus" :  "LoseFocus" );
 		++iPage;
