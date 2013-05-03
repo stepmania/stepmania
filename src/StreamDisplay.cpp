@@ -21,6 +21,8 @@ StreamDisplay::StreamDisplay()
 	m_fPassingAlpha = 0;
 	m_fHotAlpha = 0;
 	m_bAlwaysBounce = false;
+
+	m_bDeleteChildren = true;
 }
 
 void StreamDisplay::Load( const RString & /* unreferenced: _sMetricsGroup  */)
