@@ -256,9 +256,10 @@ void ScreenDebugOverlay::Init()
 	m_textHeader.SetText( DEBUG_MENU );
 	this->AddChild( &m_textHeader );
 
-	FOREACH_CONST( RString, m_asPages, s )
+	auto start = m_asPages.begin();
+	for (vector<RString>::const_iterator s = m_asPages.begin(); s != m_asPages.end(); ++s)
 	{
-		int iPage = s - m_asPages.begin();
+		int iPage = s - start;
 
 		DeviceInput di;
 		bool b = GetKeyFromMap( g_Mappings.pageButton, iPage, di );
@@ -277,7 +278,7 @@ void ScreenDebugOverlay::Init()
 		this->AddChild( p );
 	}
 
-	FOREACH_CONST( IDebugLine*, *g_pvpSubscribers, p )
+	for (auto p = g_pvpSubscribers->begin(); p != g_pvpSubscribers->end(); ++p)
 	{
 		{
 			BitmapText *bt = new BitmapText;
@@ -350,19 +351,21 @@ void ScreenDebugOverlay::Update( float fDeltaTime )
 
 void ScreenDebugOverlay::UpdateText()
 {
-	FOREACH_CONST( RString, m_asPages, s )
+	auto start = m_asPages.begin();
+	for (vector<RString>::const_iterator s = m_asPages.begin(); s != m_asPages.end(); ++s)
 	{
-		int iPage = s - m_asPages.begin();
+		int iPage = s - start;
 		m_vptextPages[iPage]->PlayCommand( (iPage == m_iCurrentPage) ? "GainFocus" :  "LoseFocus" );
 	}
 
 	// todo: allow changing of various spacing/location things -aj
 	int iOffset = 0;
-	FOREACH_CONST( IDebugLine*, *g_pvpSubscribers, p )
+	auto subStart = g_pvpSubscribers->begin();
+	for (vector<IDebugLine *>::const_iterator p = subStart; p != g_pvpSubscribers->end(); ++p)
 	{
 		RString sPageName = (*p)->GetPageName();
 
-		int i = p-g_pvpSubscribers->begin();
+		int i = p - subStart;
 
 		float fY = LINE_START_Y + iOffset * LINE_SPACING;
 
@@ -453,11 +456,12 @@ bool ScreenDebugOverlay::Input( const InputEventPlus &input )
 		return true;
 	}
 
-	FOREACH_CONST( IDebugLine*, *g_pvpSubscribers, p )
+	auto start = g_pvpSubscribers->begin();
+	for (vector<IDebugLine *>::const_iterator p = start; p != g_pvpSubscribers->end(); ++p)
 	{
 		RString sPageName = (*p)->GetPageName();
 
-		int i = p-g_pvpSubscribers->begin();
+		int i = p - start;
 
 		// Gameplay buttons are available only in gameplay. Non-gameplay buttons
 		// are only available when the screen is displayed.
