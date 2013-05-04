@@ -255,7 +255,7 @@ void RenderTarget_MacOSX::Create( const RenderTargetParam &param, int &iTextureW
 	
 	glTexImage2D( GL_TEXTURE_2D, 0, param.bWithAlpha? GL_RGBA8:GL_RGB8,
 		      iTextureWidth, iTextureHeight, 0, param.bWithAlpha? GL_RGBA:GL_RGB,
-		      GL_UNSIGNED_BYTE, NULL );
+		      GL_UNSIGNED_BYTE, nullptr );
 	GLenum error = glGetError();
 	ASSERT_M(error == GL_NO_ERROR, RageDisplay_Legacy_Helpers::GLToString(error));
 	
@@ -483,10 +483,10 @@ int LowLevelWindow_MacOSX::ChangeDisplayMode( const VideoModeParams& p )
 	}
 	
 	if( p.rate == REFRESH_DEFAULT )
-		newMode = CGDisplayBestModeForParameters( kCGDirectMainDisplay, p.bpp, p.width, p.height, NULL );
+		newMode = CGDisplayBestModeForParameters( kCGDirectMainDisplay, p.bpp, p.width, p.height, nullptr );
 	else
 		newMode = CGDisplayBestModeForParametersAndRefreshRate( kCGDirectMainDisplay, p.bpp,
-									p.width, p.height, p.rate, NULL );
+									p.width, p.height, p.rate, nullptr );
 	
 	
 	err = CGDisplaySwitchToMode( kCGDirectMainDisplay, newMode );

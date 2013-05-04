@@ -151,7 +151,7 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 			glXDestroyContext( Dpy, g_pContext );
 		if( g_pBackgroundContext )
 			glXDestroyContext( Dpy, g_pBackgroundContext );
-		g_pContext = glXCreateContext( Dpy, xvi, NULL, True );
+		g_pContext = glXCreateContext( Dpy, xvi, nullptr, True );
 		g_pBackgroundContext = glXCreateContext( Dpy, xvi, g_pContext, True );
 
 		glXMakeCurrent( Dpy, Win, g_pContext );
@@ -459,7 +459,7 @@ void RenderTarget_X11::Create( const RenderTargetParam &param, int &iTextureWidt
 	iTextureHeightOut = iTextureHeight;
 
 	glTexImage2D( GL_TEXTURE_2D, 0, param.bWithAlpha? GL_RGBA8:GL_RGB8,
-			iTextureWidth, iTextureHeight, 0, param.bWithAlpha? GL_RGBA:GL_RGB, GL_UNSIGNED_BYTE, NULL );
+			iTextureWidth, iTextureHeight, 0, param.bWithAlpha? GL_RGBA:GL_RGB, GL_UNSIGNED_BYTE, nullptr );
 	GLenum error = glGetError();
 	ASSERT_M( error == GL_NO_ERROR, GLToString(error) );
 
@@ -505,7 +505,7 @@ bool LowLevelWindow_X11::SupportsRenderToTexture() const
 {
 	// Server must support pbuffers:
 	const int iScreen = DefaultScreen( Dpy );
-	float fVersion = strtof( glXQueryServerString(Dpy, iScreen, GLX_VERSION), NULL );
+	float fVersion = strtof( glXQueryServerString(Dpy, iScreen, GLX_VERSION), nullptr );
 	if( fVersion < 1.3f )
 		return false;
 
@@ -540,7 +540,7 @@ void LowLevelWindow_X11::BeginConcurrentRendering()
 
 void LowLevelWindow_X11::EndConcurrentRendering()
 {
-	bool b = glXMakeCurrent( Dpy, None, NULL );
+	bool b = glXMakeCurrent( Dpy, None, nullptr );
 	ASSERT(b);
 }
 

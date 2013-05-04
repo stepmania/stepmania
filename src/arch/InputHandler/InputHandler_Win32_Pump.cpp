@@ -27,7 +27,7 @@ InputHandler_Win32_Pump::InputHandler_Win32_Pump()
 		const int pump_usb_pid = pump_usb_pids[p];
 		for( int i = 0; i < NUM_PUMPS; ++i )
 		{
-			if( m_pDevice[i].Open(pump_usb_vid, pump_usb_pid, sizeof(long), i, NULL) )
+			if( m_pDevice[i].Open(pump_usb_vid, pump_usb_pid, sizeof(long), i, nullptr) )
 			{
 				iNumFound++;
 				LOG->Info( "Found Pump pad %i", iNumFound );

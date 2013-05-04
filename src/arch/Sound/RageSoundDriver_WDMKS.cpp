@@ -143,7 +143,7 @@ static bool WdmSyncIoctl(
 
 	OVERLAPPED overlapped;
 	memset( &overlapped, 0, sizeof(overlapped) );
-	overlapped.hEvent = CreateEvent( NULL, FALSE, FALSE, NULL );
+	overlapped.hEvent = CreateEvent( NULL, FALSE, FALSE, nullptr );
 	if( !overlapped.hEvent )
 	{
 		sError = werr_ssprintf( GetLastError(), "CreateEvent" );
@@ -201,7 +201,7 @@ static bool WdmGetPropertySimple( HANDLE hHandle, const GUID *pGuidPropertySet, 
 	if( pInstance )
 		memcpy( &ksProperty[1], pInstance, iInstanceSize );
 
-	return WdmSyncIoctl( hHandle, IOCTL_KS_PROPERTY, ksProperty, iPropertySize, pValue, iValueSize, NULL, sError );
+	return WdmSyncIoctl( hHandle, IOCTL_KS_PROPERTY, ksProperty, iPropertySize, pValue, iValueSize, nullptr, sError );
 }
 
 static bool WdmSetPropertySimple(
@@ -222,7 +222,7 @@ static bool WdmSetPropertySimple(
 	if( instance )
 		memcpy( ((char*)ksProperty + sizeof(KSPROPERTY)), instance, iInstanceSize );
 
-	return WdmSyncIoctl( hHandle, IOCTL_KS_PROPERTY, ksProperty, iPropertySize, pValue, iValueSize, NULL, sError );
+	return WdmSyncIoctl( hHandle, IOCTL_KS_PROPERTY, ksProperty, iPropertySize, pValue, iValueSize, nullptr, sError );
 }
 
 static bool WdmGetPinPropertySimple( HANDLE hHandle, unsigned long iPinId, const GUID *pGuidPropertySet, unsigned long iProperty,
@@ -235,7 +235,7 @@ static bool WdmGetPinPropertySimple( HANDLE hHandle, unsigned long iPinId, const
 	ksPProp.PinId = iPinId;
 	ksPProp.Reserved = 0;
 
-	return WdmSyncIoctl( hHandle, IOCTL_KS_PROPERTY, &ksPProp, sizeof(KSP_PIN), pValue, iInstanceSize, NULL, sError );
+	return WdmSyncIoctl( hHandle, IOCTL_KS_PROPERTY, &ksPProp, sizeof(KSP_PIN), pValue, iInstanceSize, nullptr, sError );
 }
 
 static bool WdmGetPinPropertyMulti(
@@ -255,13 +255,13 @@ static bool WdmGetPinPropertyMulti(
 	ksPProp.Reserved = 0;
 
 	unsigned long multipleItemSize = 0;
-	if( !WdmSyncIoctl(hHandle, IOCTL_KS_PROPERTY, &ksPProp.Property, sizeof(KSP_PIN), NULL, 0, &multipleItemSize, sError) )
+	if( !WdmSyncIoctl(hHandle, IOCTL_KS_PROPERTY, &ksPProp.Property, sizeof(KSP_PIN), nullptr, 0, &multipleItemSize, sError) )
 		return false;
 
 	*ksMultipleItem = (KSMULTIPLE_ITEM*) malloc( multipleItemSize );
 	ASSERT( *ksMultipleItem != nullptr );
 
-	if( !WdmSyncIoctl( hHandle, IOCTL_KS_PROPERTY, &ksPProp, sizeof(KSP_PIN), (void*)*ksMultipleItem, multipleItemSize, NULL, sError) )
+	if( !WdmSyncIoctl( hHandle, IOCTL_KS_PROPERTY, &ksPProp, sizeof(KSP_PIN), (void*)*ksMultipleItem, multipleItemSize, nullptr, sError) )
 	{
 		free( ksMultipleItem );
 		return false;
@@ -442,7 +442,7 @@ bool WinWdmPin::SetState( KSSTATE state, RString &sError )
 {
 	ASSERT( m_hHandle != nullptr );
 	return WdmSetPropertySimple( m_hHandle, &KSPROPSETID_Connection, KSPROPERTY_CONNECTION_STATE,
-		&state, sizeof(state), NULL, 0, sError );
+		&state, sizeof(state), nullptr, 0, sError );
 }
 
 bool WinWdmPin::Instantiate( const WAVEFORMATEX *pFormat, RString &sError )
@@ -587,7 +587,7 @@ bool WinWdmFilter::Use( RString &sError )
 	{
 		/* Open the filter */
 		m_hHandle = CreateFile( m_sFilterName, GENERIC_READ | GENERIC_WRITE, 0,
-			NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_OVERLAPPED, NULL );
+			NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_OVERLAPPED, nullptr );
 
 		if( m_hHandle == nullptr )
 		{
@@ -804,7 +804,7 @@ static bool GetDevicePath( HANDLE hHandle, SP_DEVICE_INTERFACE_DATA *pInterfaceD
 	devInfoData.cbSize = sizeof(SP_DEVINFO_DATA);
 	devInfoData.Reserved = 0;
 
-	if( !SetupDiGetDeviceInterfaceDetail(hHandle, pInterfaceData, devInterfaceDetails, sizeInterface, NULL, &devInfoData) )
+	if( !SetupDiGetDeviceInterfaceDetail(hHandle, pInterfaceData, devInterfaceDetails, sizeInterface, nullptr, &devInfoData) )
 		return false;
 	sPath = devInterfaceDetails->DevicePath;
 	return true;
@@ -816,7 +816,7 @@ static bool BuildFilterList( vector<WinWdmFilter*> &aFilters, RString &sError )
 	const GUID *pCategoryGuid = (GUID*) &KSCATEGORY_RENDER;
 
 	/* Open a handle to search for devices (filters) */
-	HDEVINFO hHandle = SetupDiGetClassDevs( pCategoryGuid, NULL, NULL, DIGCF_PRESENT | DIGCF_DEVICEINTERFACE );
+	HDEVINFO hHandle = SetupDiGetClassDevs( pCategoryGuid, nullptr, nullptr, DIGCF_PRESENT | DIGCF_DEVICEINTERFACE );
 	if( hHandle == INVALID_HANDLE_VALUE )
 	{
 		sError = werr_ssprintf( GetLastError(), "SetupDiGetClassDevs" );
@@ -831,7 +831,7 @@ static bool BuildFilterList( vector<WinWdmFilter*> &aFilters, RString &sError )
 		SP_DEVICE_INTERFACE_DATA interfaceData;
 		interfaceData.cbSize = sizeof(SP_DEVICE_INTERFACE_DATA);
 		interfaceData.Reserved = 0;
-		if( !SetupDiEnumDeviceInterfaces(hHandle, NULL, pCategoryGuid, device, &interfaceData) )
+		if( !SetupDiEnumDeviceInterfaces(hHandle, nullptr, pCategoryGuid, device, &interfaceData) )
 			break; /* No more devices */
 		if( !interfaceData.Flags || (interfaceData.Flags & SPINT_REMOVED) )
 			continue;
@@ -899,7 +899,7 @@ struct WinWdmStream
 	{
 		memset( this, 0, sizeof(*this) );
 		for( int i = 0; i < MAX_CHUNKS; ++i )
-			m_Signal[i].hEvent = CreateEvent( NULL, FALSE, FALSE, NULL );
+			m_Signal[i].hEvent = CreateEvent( NULL, FALSE, FALSE, nullptr );
 		m_pPlaybackPin = nullptr;
 	}
 
@@ -969,12 +969,12 @@ bool WinWdmStream::Open( WinWdmFilter *pFilter,
 		KSALLOCATOR_FRAMING ksaf;
 		KSALLOCATOR_FRAMING_EX ksafex;
 		if( WdmGetPropertySimple(m_pPlaybackPin->m_hHandle, &KSPROPSETID_Connection, KSPROPERTY_CONNECTION_ALLOCATORFRAMING,
-			&ksaf, sizeof(ksaf), NULL, 0, sError) )
+			&ksaf, sizeof(ksaf), nullptr, 0, sError) )
 		{
 			iFrameSize = ksaf.FrameSize;
 		}
 		else if( WdmGetPropertySimple(m_pPlaybackPin->m_hHandle, &KSPROPSETID_Connection, KSPROPERTY_CONNECTION_ALLOCATORFRAMING_EX,
-				&ksafex, sizeof(ksafex), NULL, 0, sError) )
+				&ksafex, sizeof(ksafex), nullptr, 0, sError) )
 		{
 			iFrameSize = ksafex.FramingItem[0].FramingRange.Range.MinFrameSize;
 		}
@@ -1021,8 +1021,8 @@ error:
 bool WinWdmStream::SubmitPacket( int iPacket, RString &sError )
 {
 	KSSTREAM_HEADER *p = &m_Packets[iPacket];
-	int iRet = DeviceIoControl( m_pPlaybackPin->m_hHandle, IOCTL_KS_WRITE_STREAM, NULL, 0,
-		p, p->Size, NULL, &m_Signal[iPacket] );
+	int iRet = DeviceIoControl( m_pPlaybackPin->m_hHandle, IOCTL_KS_WRITE_STREAM, nullptr, 0,
+		p, p->Size, nullptr, &m_Signal[iPacket] );
 	ASSERT_M( iRet == 0, "DeviceIoControl" );
 
 	DWORD iError = GetLastError();
@@ -1254,7 +1254,7 @@ int64_t RageSoundDriver_WDMKS::GetPosition() const
 
 	RString sError;
 	WdmGetPropertySimple( m_pStream->m_pPlaybackPin->m_hHandle, &KSPROPSETID_Audio, KSPROPERTY_AUDIO_POSITION,
-		&pos, sizeof(pos), NULL, 0, sError );
+		&pos, sizeof(pos), nullptr, 0, sError );
 	ASSERT_M( sError == "", sError );
 
 	pos.PlayOffset /= m_pStream->m_iBytesPerOutputSample * m_pStream->m_iDeviceOutputChannels;
@@ -1267,7 +1267,7 @@ RageSoundDriver_WDMKS::RageSoundDriver_WDMKS()
 	m_pFilter = nullptr;
 	m_bShutdown = false;
 	m_iLastCursorPos = 0;
-	m_hSignal = CreateEvent( NULL, FALSE, FALSE, NULL ); /* abort event */
+	m_hSignal = CreateEvent( NULL, FALSE, FALSE, nullptr ); /* abort event */
 }
 
 RString RageSoundDriver_WDMKS::Init()

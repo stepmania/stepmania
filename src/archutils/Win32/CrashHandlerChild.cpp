@@ -123,7 +123,7 @@ namespace VDDebugInfo
 		GetVDIPath( pctx->sFilename, ARRAYLEN(pctx->sFilename) );
 		pctx->sError = RString();
 
-		HANDLE h = CreateFile( pctx->sFilename, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL );
+		HANDLE h = CreateFile( pctx->sFilename, GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr );
 		if( h == INVALID_HANDLE_VALUE )
 		{
 			pctx->sError = werr_ssprintf( GetLastError(), "CreateFile failed" );
@@ -131,7 +131,7 @@ namespace VDDebugInfo
 		}
 
 		do {
-			DWORD dwFileSize = GetFileSize( h, NULL );
+			DWORD dwFileSize = GetFileSize( h, nullptr );
 			if( dwFileSize == INVALID_FILE_SIZE )
 				break;
 
@@ -140,7 +140,7 @@ namespace VDDebugInfo
 				break;
 
 			DWORD dwActual;
-			int iRet = ReadFile(h, pBuf, dwFileSize, &dwActual, NULL);
+			int iRet = ReadFile(h, pBuf, dwFileSize, &dwActual, nullptr);
 			CloseHandle(h);
 			pctx->sRawBlock.ReleaseBuffer( dwActual );
 
@@ -266,7 +266,7 @@ namespace SymbolLookup
 		{
 			SymSetOptions( SYMOPT_UNDNAME | SYMOPT_DEFERRED_LOADS );
 
-			if( !SymInitialize(g_hParent, NULL, TRUE) )
+			if( !SymInitialize(g_hParent, nullptr, TRUE) )
 				return false;
 
 			bInitted = true;
@@ -745,7 +745,7 @@ BOOL CrashDialog::HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam )
 
 			m_pPost->Start( CRASH_REPORT_HOST, CRASH_REPORT_PORT, CRASH_REPORT_PATH );
 
-			SetTimer( hDlg, 0, 100, NULL );
+			SetTimer( hDlg, 0, 100, nullptr );
 			break;
 		}
 		break;

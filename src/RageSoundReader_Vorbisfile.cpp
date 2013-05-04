@@ -82,7 +82,7 @@ RageSoundReader_FileReader::OpenResult RageSoundReader_Vorbisfile::Open( RageFil
 	callbacks.close_func = OggRageFile_close_func;
 	callbacks.tell_func  = OggRageFile_tell_func;
 
-	int ret = ov_open_callbacks( pFile, vf, NULL, 0, callbacks );
+	int ret = ov_open_callbacks( pFile, vf, nullptr, 0, callbacks );
 	if( ret < 0 )
 	{
 		SetError( ov_ssprintf(ret, "ov_open failed") );

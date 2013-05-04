@@ -547,7 +547,7 @@ void MovieDecoder_FFMpeg::GetFrame( RageSurface *pSurface )
 		m_swsctx = avcodec::sws_getCachedContext( m_swsctx,
 				GetWidth(), GetHeight(), m_pStream->codec->pix_fmt,
 				GetWidth(), GetHeight(), m_AVTexfmt,
-				sws_flags, NULL, NULL, NULL );
+				sws_flags, nullptr, nullptr, nullptr );
 		if( m_swsctx == nullptr )
 		{
 			LOG->Warn("Cannot initialize sws conversion context for (%d,%d) %d->%d", GetWidth(), GetHeight(), m_pStream->codec->pix_fmt, m_AVTexfmt);
@@ -631,17 +631,17 @@ RString MovieDecoder_FFMpeg::Open( RString sFile )
 	}
 
 	m_buffer = (unsigned char *)avcodec::av_malloc(STEPMANIA_FFMPEG_BUFFER_SIZE);
-	m_avioContext = avcodec::avio_alloc_context(m_buffer, STEPMANIA_FFMPEG_BUFFER_SIZE, 0, f, AVIORageFile_ReadPacket, NULL, AVIORageFile_Seek);
+	m_avioContext = avcodec::avio_alloc_context(m_buffer, STEPMANIA_FFMPEG_BUFFER_SIZE, 0, f, AVIORageFile_ReadPacket, nullptr, AVIORageFile_Seek);
 	m_fctx->pb = m_avioContext;
-	int ret = avcodec::avformat_open_input( &m_fctx, sFile.c_str(), NULL, NULL );
+	int ret = avcodec::avformat_open_input( &m_fctx, sFile.c_str(), nullptr, nullptr );
 	if( ret < 0 )
 		return RString( averr_ssprintf(ret, "AVCodec: Couldn't open \"%s\"", sFile.c_str()) );
 
-	ret = avcodec::avformat_find_stream_info( m_fctx, NULL );
+	ret = avcodec::avformat_find_stream_info( m_fctx, nullptr );
 	if( ret < 0 )
 		return RString( averr_ssprintf(ret, "AVCodec (%s): Couldn't find codec parameters", sFile.c_str()) );
 
-	int stream_idx = avcodec::av_find_best_stream( m_fctx, avcodec::AVMEDIA_TYPE_VIDEO, -1, -1, NULL, 0 );
+	int stream_idx = avcodec::av_find_best_stream( m_fctx, avcodec::AVMEDIA_TYPE_VIDEO, -1, -1, nullptr, 0 );
 	if ( stream_idx < 0 ||
 		static_cast<unsigned int>(stream_idx) >= m_fctx->nb_streams ||
 		m_fctx->streams[stream_idx] == nullptr )
@@ -682,7 +682,7 @@ RString MovieDecoder_FFMpeg::OpenCodec()
 
 	LOG->Trace("Opening codec %s", pCodec->name );
 
-	int ret = avcodec::avcodec_open2( m_pStream->codec, pCodec, NULL );
+	int ret = avcodec::avcodec_open2( m_pStream->codec, pCodec, nullptr );
 	if( ret < 0 )
 		return RString( averr_ssprintf(ret, "Couldn't open codec \"%s\"", pCodec->name) );
 	ASSERT( m_pStream->codec->codec != nullptr );

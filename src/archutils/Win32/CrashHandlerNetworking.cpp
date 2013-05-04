@@ -174,7 +174,7 @@ NetworkStream_Win32::NetworkStream_Win32():
 #if defined(WINDOWS)
 	m_hResolve = nullptr;
 	m_hResolveHwnd = nullptr;
-	m_hCompletionEvent = CreateEvent( NULL, true, false, NULL );
+	m_hCompletionEvent = CreateEvent( NULL, true, false, nullptr );
 #endif
 }
 

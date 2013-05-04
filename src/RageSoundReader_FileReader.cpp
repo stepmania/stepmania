@@ -105,7 +105,7 @@ RageSoundReader_FileReader *RageSoundReader_FileReader::OpenFile( RString filena
 		if( pFile->GetFileSize() < 1024*50 )
 		{
 			RageFileObjMem *pMem = new RageFileObjMem;
-			bool bRet = FileCopy( *pFile, *pMem, error, NULL );
+			bool bRet = FileCopy( *pFile, *pMem, error, nullptr );
 			if( !bRet )
 			{
 				delete pMem;

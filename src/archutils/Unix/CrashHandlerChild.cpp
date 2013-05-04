@@ -157,7 +157,7 @@ static void child_process()
 	
 	FD_ZERO( &rs );
 	FD_SET( 3, &rs );
-	int ret = select( 4, &rs, NULL, NULL, &timeout );
+	int ret = select( 4, &rs, nullptr, nullptr, &timeout );
 	
 	if( ret == 0 )
 	{

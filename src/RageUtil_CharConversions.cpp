@@ -11,7 +11,7 @@
 /* Convert from the given codepage to UTF-8.  Return true if successful. */
 static bool CodePageConvert( RString &sText, int iCodePage )
 {
-	int iSize = MultiByteToWideChar( iCodePage, MB_ERR_INVALID_CHARS, sText.data(), sText.size(), NULL, 0 );
+	int iSize = MultiByteToWideChar( iCodePage, MB_ERR_INVALID_CHARS, sText.data(), sText.size(), nullptr, 0 );
 	if( iSize == 0 )
 	{
 		LOG->Trace( "%s\n", werr_ssprintf(GetLastError(), "err: ").c_str() );

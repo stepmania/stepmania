@@ -25,7 +25,7 @@ MessageWindow::MessageWindow( const RString &sClassName )
 		RageException::Throw( "%s", werr_ssprintf( GetLastError(), "RegisterClass" ).c_str() );
 
 	// XXX: on 2k/XP, use HWND_MESSAGE as parent
-	m_hWnd = CreateWindow( sClassName, sClassName, WS_DISABLED, 0, 0, 0, 0, NULL, NULL, inst, NULL );
+	m_hWnd = CreateWindow( sClassName, sClassName, WS_DISABLED, 0, 0, 0, 0, nullptr, nullptr, inst, nullptr );
 	ASSERT( m_hWnd != nullptr );
 
 	SetProp( m_hWnd, "MessageWindow", this );

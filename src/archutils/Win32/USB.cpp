@@ -20,7 +20,7 @@ static RString GetUSBDevicePath( int iNum )
 	GUID guid;
 	HidD_GetHidGuid( &guid );
 
-	HDEVINFO DeviceInfo = SetupDiGetClassDevs( &guid, NULL, NULL, (DIGCF_PRESENT | DIGCF_DEVICEINTERFACE) );
+	HDEVINFO DeviceInfo = SetupDiGetClassDevs( &guid, nullptr, nullptr, (DIGCF_PRESENT | DIGCF_DEVICEINTERFACE) );
 
 	SP_DEVICE_INTERFACE_DATA DeviceInterface;
 	DeviceInterface.cbSize = sizeof(SP_DEVICE_INTERFACE_DATA);
@@ -33,14 +33,14 @@ static RString GetUSBDevicePath( int iNum )
 	}
 
 	unsigned long iSize;
-	SetupDiGetDeviceInterfaceDetail( DeviceInfo, &DeviceInterface, NULL, 0, &iSize, 0 );
+	SetupDiGetDeviceInterfaceDetail( DeviceInfo, &DeviceInterface, nullptr, 0, &iSize, 0 );
 
 	PSP_INTERFACE_DEVICE_DETAIL_DATA DeviceDetail = (PSP_INTERFACE_DEVICE_DETAIL_DATA) malloc( iSize );
 	DeviceDetail->cbSize = sizeof(SP_INTERFACE_DEVICE_DETAIL_DATA);
 
 	RString sRet;
 	if( SetupDiGetDeviceInterfaceDetail(DeviceInfo, &DeviceInterface,
-		DeviceDetail, iSize, &iSize, NULL) ) 
+		DeviceDetail, iSize, &iSize, nullptr) ) 
 		sRet = DeviceDetail->DevicePath;
 	free( DeviceDetail );
 
@@ -56,7 +56,7 @@ bool USBDevice::Open( int iVID, int iPID, int iBlockSize, int iNum, void (*pfnIn
 	while( (path = GetUSBDevicePath(iIndex++)) != "" )
 	{
 		HANDLE h = CreateFile( path, GENERIC_READ,
-			FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0, NULL );
+			FILE_SHARE_READ | FILE_SHARE_WRITE, nullptr, OPEN_EXISTING, 0, nullptr );
 
 		if( h == INVALID_HANDLE_VALUE )
 			continue;
@@ -138,7 +138,7 @@ bool WindowsFileIO::Open( RString path, int iBlockSize )
 		CloseHandle( m_Handle );
 
 	m_Handle = CreateFile( path, GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE,
-		NULL, OPEN_EXISTING, FILE_FLAG_OVERLAPPED, NULL );
+		NULL, OPEN_EXISTING, FILE_FLAG_OVERLAPPED, nullptr );
 
 	if( m_Handle == INVALID_HANDLE_VALUE )
 		return false;

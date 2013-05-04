@@ -96,7 +96,7 @@ static void TestTLS()
 
 	RageThread TestThread;
 	TestThread.SetName( "TestTLS" );
-	TestThread.Create( TestTLSThread, NULL );
+	TestThread.Create( TestTLSThread, nullptr );
 	TestThread.Wait();
 
 	if( g_iTestTLS == 1 )
@@ -153,7 +153,7 @@ int64_t ArchHooks::GetMicrosecondsSinceStart( bool bAccurate )
 int64_t ArchHooks::GetMicrosecondsSinceStart( bool bAccurate )
 {
 	struct timeval tv;
-	gettimeofday( &tv, NULL );
+	gettimeofday( &tv, nullptr );
 
 	int64_t iRet = int64_t(tv.tv_sec) * 1000000 + int64_t(tv.tv_usec);
 	ret = FixupTimeIfBackwards( ret );

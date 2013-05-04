@@ -185,7 +185,7 @@ public:
 	}
 	ThemeMetric1D()
 	{
-		Load( RString(), NULL, 0 );
+		Load( RString(), nullptr, 0 );
 	}
 	void Load( const RString& sGroup, MetricName1D pfn, size_t N )
 	{

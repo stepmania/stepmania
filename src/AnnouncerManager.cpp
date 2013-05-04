@@ -101,7 +101,7 @@ static const char *aliases[][2] = {
 	{ "gameplay combo 900", "gameplay 900 combo" },
 	{ "gameplay combo 1000", "gameplay 1000 combo" },
 
-	{ NULL, NULL }
+	{ NULL, nullptr }
 };
 
 /* Find an announcer directory with sounds in it.  First search sFolderName,

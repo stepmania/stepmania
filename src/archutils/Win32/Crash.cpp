@@ -84,7 +84,7 @@ void WriteToChild( HANDLE hPipe, const void *pData, size_t iSize )
 	while( iSize )
 	{
 		DWORD iActual;
-		if( !WriteFile(hPipe, pData, iSize, &iActual, NULL) )
+		if( !WriteFile(hPipe, pData, iSize, &iActual, nullptr) )
 			return;
 		iSize -= iActual;
 	}
@@ -252,7 +252,7 @@ void RunChild()
 		 * since GetModuleFileNameEx might not be available. Run the requests here. */
 		HMODULE hMod;
 		DWORD iActual;
-		if( !ReadFile( hFromStdout, &hMod, sizeof(hMod), &iActual, NULL) )
+		if( !ReadFile( hFromStdout, &hMod, sizeof(hMod), &iActual, nullptr) )
 			break;
 
 		TCHAR szName[MAX_PATH];
@@ -331,7 +331,7 @@ static long MainExceptionHandler( EXCEPTION_POINTERS *pExc )
 	/* Now things get more risky. If we're fullscreen, the window will obscure
 	 * the crash dialog. Try to hide the window. Things might blow up here; do
 	 * this after DoSave, so we always write a crash dump. */
-	if( GetWindowThreadProcessId( g_hForegroundWnd, NULL ) == GetCurrentThreadId() )
+	if( GetWindowThreadProcessId( g_hForegroundWnd, nullptr ) == GetCurrentThreadId() )
 	{
 		/* The thread that crashed was the thread that created the main window.
 		 * Hide the window. This will also restore the video mode, if necessary. */
@@ -445,7 +445,7 @@ static bool PointsToValidCall( unsigned long ptr )
 
 	memset( buf, 0, sizeof(buf) );
 
-	while(len > 0 && !ReadProcessMemory(GetCurrentProcess(), (void *)(ptr-len), buf+7-len, len, NULL))
+	while(len > 0 && !ReadProcessMemory(GetCurrentProcess(), (void *)(ptr-len), buf+7-len, len, nullptr))
 		--len;
 
 	return IsValidCall(buf+7, len);
@@ -521,7 +521,7 @@ void CrashHandler::do_backtrace( const void **buf, size_t size,
 			break;
 
 		lpAddr += 4;
-	} while( ReadProcessMemory(hProcess, lpAddr-4, &data, 4, NULL));
+	} while( ReadProcessMemory(hProcess, lpAddr-4, &data, 4, nullptr));
 
 	*buf = nullptr;
 }

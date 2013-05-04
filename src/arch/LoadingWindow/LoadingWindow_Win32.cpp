@@ -60,7 +60,7 @@ static HBITMAP LoadWin32Surface( const RageSurface *pSplash, HWND hWnd )
 		}
 	}
 
-	SelectObject( BitmapDC, NULL );
+	SelectObject( BitmapDC, nullptr );
 	DeleteObject( BitmapDC );
 
 	ReleaseDC( NULL, hScreen );
@@ -144,7 +144,7 @@ void LoadingWindow_Win32::SetSplash( const RageSurface *pSplash )
 LoadingWindow_Win32::LoadingWindow_Win32()
 {
 	m_hIcon = nullptr;
-	hwnd = CreateDialog( handle.Get(), MAKEINTRESOURCE(IDD_LOADING_DIALOG), NULL, WndProc );
+	hwnd = CreateDialog( handle.Get(), MAKEINTRESOURCE(IDD_LOADING_DIALOG), nullptr, WndProc );
 	for( unsigned i = 0; i < 3; ++i )
 		text[i] = "ABC"; /* always set on first call */
 	SetText( "" );

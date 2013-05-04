@@ -20,7 +20,7 @@ static void DestroyGraphicsWindowAndOpenGLContext()
 {
 	if( g_HGLRC != nullptr )
 	{
-		wglMakeCurrent( NULL, NULL );
+		wglMakeCurrent( NULL, nullptr );
 		wglDeleteContext( g_HGLRC );
 		g_HGLRC = nullptr;
 	}
@@ -184,7 +184,7 @@ RString LowLevelWindow_Win32::TryVideoMode( const VideoModeParams &p, bool &bNew
 		LOG->Trace( "Mode requires new pixel format, and we've already set one; resetting OpenGL context" );
 		if( g_HGLRC != nullptr )
 		{
-			wglMakeCurrent( NULL, NULL );
+			wglMakeCurrent( NULL, nullptr );
 			wglDeleteContext( g_HGLRC );
 			g_HGLRC = nullptr;
 			wglDeleteContext( g_HGLRC_Background );
@@ -262,7 +262,7 @@ void LowLevelWindow_Win32::BeginConcurrentRendering()
 
 void LowLevelWindow_Win32::EndConcurrentRendering()
 {
-	wglMakeCurrent( NULL, NULL );
+	wglMakeCurrent( NULL, nullptr );
 }
 
 static LocalizedString OPENGL_NOT_AVAILABLE( "LowLevelWindow_Win32", "OpenGL hardware acceleration is not available." );
@@ -357,7 +357,7 @@ void RenderTarget_Win32::Create(const RenderTargetParam &param, int &iTextureWid
 		internalformat = param.bWithAlpha? GL_RGBA8:GL_RGB8;
 
 	glTexImage2D(GL_TEXTURE_2D, 0, internalformat, iTextureWidth,
-		iTextureHeight, 0, type, GL_UNSIGNED_BYTE, NULL);
+		iTextureHeight, 0, type, GL_UNSIGNED_BYTE, nullptr);
 
 	glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
 	glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );

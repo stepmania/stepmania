@@ -80,7 +80,7 @@ static RageSurface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 	png_info *info_ptr = png_create_info_struct(png);
 	if( info_ptr == nullptr )
 	{
-		png_destroy_read_struct( &png, NULL, NULL );
+		png_destroy_read_struct( &png, nullptr, nullptr );
 		sprintf( errorbuf, "creating png_create_info_struct failed");
 		return nullptr;
 	}
@@ -89,7 +89,7 @@ static RageSurface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 	CHECKPOINT;
 	if( setjmp(png_jmpbuf(png) ))
 	{
-		png_destroy_read_struct( &png, &info_ptr, NULL );
+		png_destroy_read_struct( &png, &info_ptr, nullptr );
 		delete img;
 		return nullptr;
 	}
@@ -101,15 +101,15 @@ static RageSurface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 
 	png_uint_32 width, height;
 	int bit_depth, color_type;
-	png_get_IHDR( png, info_ptr, &width, &height, &bit_depth, &color_type, NULL, NULL, NULL );
+	png_get_IHDR( png, info_ptr, &width, &height, &bit_depth, &color_type, nullptr, nullptr, nullptr );
 
 	/* If bHeaderOnly is true, don't allocate the pixel storage space or decompress
 	 * the image.  Just return an empty surface with only the width and height set. */
 	if( bHeaderOnly )
 	{
 		CHECKPOINT;
-		img = CreateSurfaceFrom( width, height, 32, 0, 0, 0, 0, NULL, width*4 );
-		png_destroy_read_struct( &png, &info_ptr, NULL );
+		img = CreateSurfaceFrom( width, height, 32, 0, 0, 0, 0, nullptr, width*4 );
+		png_destroy_read_struct( &png, &info_ptr, nullptr );
 
 		return img;
 	}
@@ -165,7 +165,7 @@ static RageSurface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 	if( color_type == PNG_COLOR_TYPE_GRAY )
 	{
 		png_color_16 *trans;
-		if( png_get_tRNS( png, info_ptr, NULL, NULL, &trans ) == PNG_INFO_tRNS )
+		if( png_get_tRNS( png, info_ptr, nullptr, nullptr, &trans ) == PNG_INFO_tRNS )
 			iColorKey = trans->gray;
 	}
 	else if( color_type == PNG_COLOR_TYPE_PALETTE )
@@ -177,7 +177,7 @@ static RageSurface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 
 		png_byte *trans = nullptr;
 		int num_trans = 0;
-		png_get_tRNS( png, info_ptr, &trans, &num_trans, NULL );
+		png_get_tRNS( png, info_ptr, &trans, &num_trans, nullptr );
 
 		for( int i = 0; i < num_palette; ++i )
 		{
@@ -246,7 +246,7 @@ static RageSurface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 
 	CHECKPOINT;
 	png_read_end( png, info_ptr );
-	png_destroy_read_struct( &png, &info_ptr, NULL );
+	png_destroy_read_struct( &png, &info_ptr, nullptr );
 
 	return img;
 }

@@ -54,7 +54,7 @@ void RageSoundDriver_OSS::MixerThread()
 		usleep( 10000 );
 
 		struct timeval tv = { 0, 10000 };
-		select(fd+1, NULL, &f, NULL, &tv);
+		select(fd+1, nullptr, &f, nullptr, &tv);
 	}
 }
 

@@ -81,7 +81,7 @@ RString RageSoundDriver_PulseAudio::Init()
 	pa_context_set_state_callback(m_PulseCtx, StaticCtxStateCb, this);
 	
 	LOG->Trace("Pulse: pa_context_connect()...");
-	error = pa_context_connect(m_PulseCtx, NULL, (pa_context_flags_t)0, NULL);
+	error = pa_context_connect(m_PulseCtx, nullptr, (pa_context_flags_t)0, nullptr);
 	
 	if(error < 0)
 	{
@@ -224,8 +224,8 @@ void RageSoundDriver_PulseAudio::m_InitStream(void)
 
 	 /* connect the stream for playback */
 	LOG->Trace("Pulse: pa_stream_connect_playback()...");
-	error = pa_stream_connect_playback(m_PulseStream, NULL, &attr,
-			PA_STREAM_AUTO_TIMING_UPDATE, NULL, NULL);
+	error = pa_stream_connect_playback(m_PulseStream, nullptr, &attr,
+			PA_STREAM_AUTO_TIMING_UPDATE, nullptr, nullptr);
 	if(error < 0)
 	{
 		if(asprintf(&m_Error, "pa_stream_connect_playback(): %s",
@@ -316,7 +316,7 @@ void RageSoundDriver_PulseAudio::StreamWriteCb(pa_stream *s, size_t length)
 	int64_t pos1 = m_LastPosition;
 	int64_t pos2 = pos1 + nbframes/2; /* Mix() position in stereo frames */
 	this->Mix( buf, pos2-pos1, pos1, pos2);
-	if(pa_stream_write(m_PulseStream, buf, length, NULL, 0, PA_SEEK_RELATIVE) < 0)
+	if(pa_stream_write(m_PulseStream, buf, length, nullptr, 0, PA_SEEK_RELATIVE) < 0)
 	{
 		RageException::Throw("Pulse: pa_stream_write()");
 	}

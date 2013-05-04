@@ -839,7 +839,7 @@ public:
 				fadeOut = FArg(5);
 			}
 		}
-		p->PlayMusic(musicPath, NULL, false, musicStart, musicLength,
+		p->PlayMusic(musicPath, nullptr, false, musicStart, musicLength,
 					 fadeIn, fadeOut);
 		return 0;
 	}

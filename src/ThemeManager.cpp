@@ -602,11 +602,11 @@ bool ThemeManager::GetPathInfoToRaw( PathInfo &out, const RString &sThemeName_, 
 		{
 			// BGAnimations, Fonts, Graphics, Sounds, Other
 			static const char *masks[NUM_ElementCategory][15] = {
-				{ "redir", "lua", "xml", "png", "jpg", "jpeg", "bmp", "gif", "ogv", "avi", "mpg", "mpeg", "txt", "", NULL},
-				{ "redir", "ini", NULL },
-				{ "redir", "lua", "xml", "png", "jpg", "jpeg", "bmp", "gif", "ogv", "avi", "mpg", "mpeg", "txt", "", NULL},
-				{ "redir", "lua", "mp3", "oga", "ogg", "wav", NULL },
-				{ "*", NULL },
+				{ "redir", "lua", "xml", "png", "jpg", "jpeg", "bmp", "gif", "ogv", "avi", "mpg", "mpeg", "txt", "", nullptr},
+				{ "redir", "ini", nullptr },
+				{ "redir", "lua", "xml", "png", "jpg", "jpeg", "bmp", "gif", "ogv", "avi", "mpg", "mpeg", "txt", "", nullptr},
+				{ "redir", "lua", "mp3", "oga", "ogg", "wav", nullptr },
+				{ "*", nullptr },
 			};
 			const char **asset_masks = masks[category];
 

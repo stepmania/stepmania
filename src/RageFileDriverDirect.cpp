@@ -136,7 +136,7 @@ bool RageFileDriverDirect::Move( const RString &sOldPath_, const RString &sNewPa
 	}
 
 	FDB->DelFile( sOldPath );
-	FDB->AddFile( sNewPath, size, hash, NULL );
+	FDB->AddFile( sNewPath, size, hash, nullptr );
 	return true;
 }
 

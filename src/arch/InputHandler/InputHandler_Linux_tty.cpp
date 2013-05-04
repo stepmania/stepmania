@@ -171,7 +171,7 @@ void InputHandler_Linux_tty::Update()
 		FD_SET(fd, &fdset);
 
 		struct timeval zero = {0,0};
-		if ( select(fd+1, &fdset, NULL, NULL, &zero) <= 0 )
+		if ( select(fd+1, &fdset, nullptr, nullptr, &zero) <= 0 )
 			return;
 
 		unsigned char keybuf[BUFSIZ];

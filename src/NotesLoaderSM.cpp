@@ -169,11 +169,11 @@ void SMLoader::ProcessAttacks( AttackArray &attacks, MsdFile::value_t params )
 		Trim( sBits[0] );
 		
 		if( !sBits[0].CompareNoCase("TIME") )
-			attack.fStartSecond = strtof( sBits[1], NULL );
+			attack.fStartSecond = strtof( sBits[1], nullptr );
 		else if( !sBits[0].CompareNoCase("LEN") )
-			attack.fSecsRemaining = strtof( sBits[1], NULL );
+			attack.fSecsRemaining = strtof( sBits[1], nullptr );
 		else if( !sBits[0].CompareNoCase("END") )
-			end = strtof( sBits[1], NULL );
+			end = strtof( sBits[1], nullptr );
 		else if( !sBits[0].CompareNoCase("MODS") )
 		{
 			Trim(sBits[1]);

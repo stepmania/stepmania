@@ -130,7 +130,7 @@ void InputHandler_Linux_Joystick::InputThread()
 			break;
 
 		struct timeval zero = {0,100000};
-		if( select(max_fd+1, &fdset, NULL, NULL, &zero) <= 0 )
+		if( select(max_fd+1, &fdset, nullptr, nullptr, &zero) <= 0 )
 			continue;
 		RageTimer now;
 

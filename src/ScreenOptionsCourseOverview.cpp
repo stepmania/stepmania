@@ -39,12 +39,12 @@ static bool CurrentCourseIsSaved()
 
 static const MenuRowDef g_MenuRows[] = 
 {
-	MenuRowDef( -1,	"Play",		true, EditMode_Practice, true, false, 0, NULL ),
-	MenuRowDef( -1,	"Edit Course",	true, EditMode_Practice, true, false, 0, NULL ),
-	MenuRowDef( -1,	"Shuffle",	true, EditMode_Practice, true, false, 0, NULL ),
-	MenuRowDef( -1,	"Rename",	CurrentCourseIsSaved, EditMode_Practice, true, false, 0, NULL ),
-	MenuRowDef( -1,	"Delete",	CurrentCourseIsSaved, EditMode_Practice, true, false, 0, NULL ),
-	MenuRowDef( -1,	"Save",		true, EditMode_Practice, true, false, 0, NULL ),
+	MenuRowDef( -1,	"Play",		true, EditMode_Practice, true, false, 0, nullptr ),
+	MenuRowDef( -1,	"Edit Course",	true, EditMode_Practice, true, false, 0, nullptr ),
+	MenuRowDef( -1,	"Shuffle",	true, EditMode_Practice, true, false, 0, nullptr ),
+	MenuRowDef( -1,	"Rename",	CurrentCourseIsSaved, EditMode_Practice, true, false, 0, nullptr ),
+	MenuRowDef( -1,	"Delete",	CurrentCourseIsSaved, EditMode_Practice, true, false, 0, nullptr ),
+	MenuRowDef( -1,	"Save",		true, EditMode_Practice, true, false, 0, nullptr ),
 };
 
 REGISTER_SCREEN_CLASS( ScreenOptionsCourseOverview );

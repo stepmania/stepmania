@@ -763,7 +763,7 @@ bool SongUtil::IsChartNameUnique( const Song* pSong, StepsType st, const RString
 
 RString SongUtil::MakeUniqueEditDescription( const Song *pSong, StepsType st, const RString &sPreferredDescription )
 {
-	if( IsEditDescriptionUnique( pSong, st, sPreferredDescription, NULL ) )
+	if( IsEditDescriptionUnique( pSong, st, sPreferredDescription, nullptr ) )
 		return sPreferredDescription;
 
 	RString sTemp;
@@ -774,7 +774,7 @@ RString SongUtil::MakeUniqueEditDescription( const Song *pSong, StepsType st, co
 		RString sNum = ssprintf("%d", i+1);
 		sTemp = sPreferredDescription.Left( MAX_STEPS_DESCRIPTION_LENGTH - sNum.size() ) + sNum;
 
-		if( IsEditDescriptionUnique(pSong, st, sTemp, NULL) )
+		if( IsEditDescriptionUnique(pSong, st, sTemp, nullptr) )
 			return sTemp;
 	}
 
@@ -1157,7 +1157,7 @@ namespace
 		LIST_METHOD( GetPlayableSteps ),
 		LIST_METHOD( IsStepsTypePlayable ),
 		LIST_METHOD( IsStepsPlayable ),
-		{ NULL, NULL }
+		{ NULL, nullptr }
 	};
 }
 

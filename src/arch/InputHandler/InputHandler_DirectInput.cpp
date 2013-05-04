@@ -104,23 +104,23 @@ InputHandler_DInput::InputHandler_DInput()
 	g_iNumJoysticks = 0;
 
 	AppInstance inst;
-	HRESULT hr = DirectInput8Create(inst.Get(), DIRECTINPUT_VERSION, IID_IDirectInput8, (LPVOID *) &g_dinput, NULL);
+	HRESULT hr = DirectInput8Create(inst.Get(), DIRECTINPUT_VERSION, IID_IDirectInput8, (LPVOID *) &g_dinput, nullptr);
 	if( hr != DI_OK )
 		RageException::Throw( hr_ssprintf(hr, "InputHandler_DInput: DirectInputCreate") );
 
 	LOG->Trace( "InputHandler_DInput: IDirectInput::EnumDevices(DIDEVTYPE_KEYBOARD)" );
-	hr = g_dinput->EnumDevices( DI8DEVTYPE_KEYBOARD, EnumDevicesCallback, NULL, DIEDFL_ATTACHEDONLY );
+	hr = g_dinput->EnumDevices( DI8DEVTYPE_KEYBOARD, EnumDevicesCallback, nullptr, DIEDFL_ATTACHEDONLY );
 	if( hr != DI_OK )
 		RageException::Throw( hr_ssprintf(hr, "InputHandler_DInput: IDirectInput::EnumDevices") );
 
 	LOG->Trace( "InputHandler_DInput: IDirectInput::EnumDevices(DIDEVTYPE_JOYSTICK)" );
-	hr = g_dinput->EnumDevices( DI8DEVTYPE_JOYSTICK, EnumDevicesCallback, NULL, DIEDFL_ATTACHEDONLY );
+	hr = g_dinput->EnumDevices( DI8DEVTYPE_JOYSTICK, EnumDevicesCallback, nullptr, DIEDFL_ATTACHEDONLY );
 	if( hr != DI_OK )
 		RageException::Throw( hr_ssprintf(hr, "InputHandler_DInput: IDirectInput::EnumDevices") );
 
 	// mouse
 	LOG->Trace( "InputHandler_DInput: IDirectInput::EnumDevices(DIDEVTYPE_MOUSE)" );
-	hr = g_dinput->EnumDevices( DI8DEVTYPE_MOUSE, EnumDevicesCallback, NULL, DIEDFL_ATTACHEDONLY );
+	hr = g_dinput->EnumDevices( DI8DEVTYPE_MOUSE, EnumDevicesCallback, nullptr, DIEDFL_ATTACHEDONLY );
 	if( hr != DI_OK )
 		RageException::Throw( hr_ssprintf(hr, "InputHandler_DInput: IDirectInput::EnumDevices") );
 
@@ -731,7 +731,7 @@ void InputHandler_DInput::InputThreadMain()
 	SetThreadPriorityBoost( GetCurrentThread(), FALSE );
 
 	vector<DIDevice*> BufferedDevices;
-	HANDLE Handle = CreateEvent( NULL, FALSE, FALSE, NULL );
+	HANDLE Handle = CreateEvent( NULL, FALSE, FALSE, nullptr );
 	for( unsigned i = 0; i < Devices.size(); ++i )
 	{
 		if( !Devices[i].buffered )

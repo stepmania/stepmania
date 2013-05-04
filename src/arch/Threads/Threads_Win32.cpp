@@ -174,7 +174,7 @@ ThreadImpl *MakeThread( int (*pFunc)(void *pData), void *pData, uint64_t *piThre
 MutexImpl_Win32::MutexImpl_Win32( RageMutex *pParent ):
 	MutexImpl( pParent )
 {
-	mutex = CreateMutex( NULL, false, NULL );
+	mutex = CreateMutex( NULL, false, nullptr );
 	ASSERT_M( mutex != nullptr, werr_ssprintf(GetLastError(), "CreateMutex") );
 }
 
@@ -263,9 +263,9 @@ EventImpl_Win32::EventImpl_Win32( MutexImpl_Win32 *pParent )
 {
 	m_pParent = pParent;
 	m_iNumWaiting = 0;
-	m_WakeupSema = CreateSemaphore( NULL, 0, 0x7fffffff, NULL );
+	m_WakeupSema = CreateSemaphore( NULL, 0, 0x7fffffff, nullptr );
 	InitializeCriticalSection( &m_iNumWaitingLock );
-	m_WaitersDone = CreateEvent( NULL, FALSE, FALSE, NULL );
+	m_WaitersDone = CreateEvent( NULL, FALSE, FALSE, nullptr );
 }
 
 EventImpl_Win32::~EventImpl_Win32()
@@ -432,7 +432,7 @@ EventImpl *MakeEvent( MutexImpl *pMutex )
 
 SemaImpl_Win32::SemaImpl_Win32( int iInitialValue )
 {
-	sem = CreateSemaphore( NULL, iInitialValue, 999999999, NULL );
+	sem = CreateSemaphore( NULL, iInitialValue, 999999999, nullptr );
 	m_iCounter = iInitialValue;
 }
 
@@ -444,7 +444,7 @@ SemaImpl_Win32::~SemaImpl_Win32()
 void SemaImpl_Win32::Post()
 {
 	++m_iCounter;
-	ReleaseSemaphore( sem, 1, NULL );
+	ReleaseSemaphore( sem, 1, nullptr );
 }
 
 bool SemaImpl_Win32::Wait()

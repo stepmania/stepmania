@@ -345,7 +345,7 @@ RString MovieTexture_DShow::Create()
 		RageException::Throw( hr_ssprintf(hr, "Could not CoInitialize") );
 
 	// Create the filter graph
-	if( FAILED( hr=m_pGB.CoCreateInstance(CLSID_FilterGraph, NULL, CLSCTX_INPROC) ) )
+	if( FAILED( hr=m_pGB.CoCreateInstance(CLSID_FilterGraph, nullptr, CLSCTX_INPROC) ) )
 		RageException::Throw( hr_ssprintf(hr, "Could not create CLSID_FilterGraph!") );
 
 	// Create the Texture Renderer object

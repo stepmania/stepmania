@@ -58,7 +58,7 @@ void GrooveRadar::LoadFromNode( const XNode* pNode )
 
 void GrooveRadar::SetEmpty( PlayerNumber pn )
 {
-	SetFromSteps( pn, NULL );
+	SetFromSteps( pn, nullptr );
 }
 
 void GrooveRadar::SetFromRadarValues( PlayerNumber pn, const RadarValues &rv )

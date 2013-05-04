@@ -57,7 +57,7 @@ SaveSignals::SaveSignals()
 	for( int i = 0; signals[i] != -1; ++i )
 	{
 		struct sigaction sa;
-		sigaction( signals[i], NULL, &sa );
+		sigaction( signals[i], nullptr, &sa );
 		old_handlers.push_back( sa );
 	}
 }
@@ -66,7 +66,7 @@ SaveSignals::~SaveSignals()
 {
 	/* Restore the old signal handlers. */
 	for( unsigned i = 0; i < old_handlers.size(); ++i )
-		sigaction( signals[i], &old_handlers[i], NULL );
+		sigaction( signals[i], &old_handlers[i], nullptr );
 }
 
 static void SigHandler( int signal, siginfo_t *si, void *ucp )
@@ -86,7 +86,7 @@ static void SigHandler( int signal, siginfo_t *si, void *ucp )
 		struct sigaction old;
 		sigaction( signal, &sa, &old );
 		raise( signal );
-		sigaction( signal, &old, NULL );
+		sigaction( signal, &old, nullptr );
 	}
 }
 
@@ -166,7 +166,7 @@ void SignalHandler::OnClose( handler h )
 			ss.ss_sp = (char*)p; /* cast for Darwin */
 			ss.ss_size = AltStackSize;
 			ss.ss_flags = 0;
-			if( sigaltstack( &ss, NULL ) == -1 )
+			if( sigaltstack( &ss, nullptr ) == -1 )
 			{
 				LOG->Info( "sigaltstack failed: %s", strerror(errno) );
 				p = nullptr; /* no SA_ONSTACK */
@@ -185,11 +185,11 @@ void SignalHandler::OnClose( handler h )
 		/* Set up our signal handlers. */
 		sa.sa_sigaction = SigHandler;
 		for( int i = 0; signals[i] != -1; ++i )
-			sigaction( signals[i], &sa, NULL );
+			sigaction( signals[i], &sa, nullptr );
 
 		/* Block SIGPIPE, so we get EPIPE. */
 		sa.sa_handler = SIG_IGN;
-		sigaction( SIGPIPE, &sa, NULL );
+		sigaction( SIGPIPE, &sa, nullptr );
 	}
 	handlers.push_back(h);
 }

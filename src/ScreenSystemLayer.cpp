@@ -136,7 +136,7 @@ namespace
 	const luaL_Reg ScreenSystemLayerHelpersTable[] =
 	{
 		LIST_METHOD( GetCreditsMessage ),
-		{ NULL, NULL }
+		{ NULL, nullptr }
 	};
 }
 

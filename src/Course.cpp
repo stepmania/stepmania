@@ -294,7 +294,7 @@ RString Course::GetTranslitFullTitle() const
 /* This is called by many simple functions, like Course::GetTotalSeconds, and may
  * be called on all songs to sort.  It can take time to execute, so we cache the
  * results.  Returned pointers remain valid for the lifetime of the Course.  If the
- * course difficulty doesn't exist, NULL is returned. */
+ * course difficulty doesn't exist, nullptr is returned. */
 Trail* Course::GetTrail( StepsType st, CourseDifficulty cd ) const
 {
 	ASSERT( cd != Difficulty_Invalid );

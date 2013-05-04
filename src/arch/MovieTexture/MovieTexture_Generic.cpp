@@ -162,7 +162,7 @@ private:
 			m_SurfaceFormat.Mask[0],
 			m_SurfaceFormat.Mask[1],
 			m_SurfaceFormat.Mask[2],
-			m_SurfaceFormat.Mask[3], NULL, 1 );
+			m_SurfaceFormat.Mask[3], nullptr, 1 );
 
 		m_uTexHandle = DISPLAY->CreateTexture( m_PixFmt, pSurface, false );
 		delete pSurface;

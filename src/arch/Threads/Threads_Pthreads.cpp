@@ -81,7 +81,7 @@ ThreadImpl *MakeThread( int (*pFunc)(void *pData), void *pData, uint64_t *piThre
 
 	thread->m_StartFinishedSem = new SemaImpl_Pthreads( 0 );
 
-	int ret = pthread_create( &thread->thread, NULL, StartThread, thread );
+	int ret = pthread_create( &thread->thread, nullptr, StartThread, thread );
 	ASSERT_M( ret == 0, ssprintf( "MakeThread: pthread_create: %s", strerror(errno)) );
 
 	// Don't return until StartThread sets m_piThreadID.
@@ -94,7 +94,7 @@ ThreadImpl *MakeThread( int (*pFunc)(void *pData), void *pData, uint64_t *piThre
 MutexImpl_Pthreads::MutexImpl_Pthreads( RageMutex *pParent ):
 	MutexImpl( pParent )
 {
-	pthread_mutex_init( &mutex, NULL );
+	pthread_mutex_init( &mutex, nullptr );
 }
 
 MutexImpl_Pthreads::~MutexImpl_Pthreads()
@@ -129,7 +129,7 @@ bool MutexImpl_Pthreads::Lock()
 			/* Wait for ten seconds. If it takes longer than that, we're 
 			 * probably deadlocked. */
 			timeval tv;
-			gettimeofday( &tv, NULL );
+			gettimeofday( &tv, nullptr );
 
 			timespec ts;
 			ts.tv_sec = tv.tv_sec + len;
@@ -327,7 +327,7 @@ bool EventImpl_Pthreads::Wait( RageTimer *pTimeout )
 	{
 		// The RageTimer clock is different than the wait clock; convert it.
 		timeval tv;
-		gettimeofday( &tv, NULL );
+		gettimeofday( &tv, nullptr );
 
 		RageTimer timeofday( tv.tv_sec, tv.tv_usec );
 
@@ -427,9 +427,9 @@ bool SemaImpl_Pthreads::TryWait()
 // Use conditions, to work around OS X "forgetting" to implement semaphores.
 SemaImpl_Pthreads::SemaImpl_Pthreads( int iInitialValue )
 {
-	int ret = pthread_cond_init( &m_Cond, NULL );
+	int ret = pthread_cond_init( &m_Cond, nullptr );
 	ASSERT_M( ret == 0, ssprintf( "SemaImpl_Pthreads: pthread_cond_init: %s", strerror(errno)) );
-	ret = pthread_mutex_init( &m_Mutex, NULL );
+	ret = pthread_mutex_init( &m_Mutex, nullptr );
 	ASSERT_M( ret == 0, ssprintf( "SemaImpl_Pthreads: pthread_mutex_init: %s", strerror(errno)) );
 		
 	m_iValue = iInitialValue;
@@ -456,7 +456,7 @@ bool SemaImpl_Pthreads::Wait()
 	if( UseTimedlock() )
 	{
 		timeval tv;
-		gettimeofday( &tv, NULL );
+		gettimeofday( &tv, nullptr );
 
 		/* Wait for ten seconds.  If it takes longer than that, we're probably deadlocked. */
 		timespec ts;

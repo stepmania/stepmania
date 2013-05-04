@@ -598,7 +598,7 @@ static void CheckPalettedTextures()
 		glTexImage2D( GL_PROXY_TEXTURE_2D,
 				0, glTexFormat, 
 				16, 16, 0,
-				glImageFormat, glImageType, NULL );
+				glImageFormat, glImageType, nullptr );
 		GL_CHECK_ERROR( "glTexImage2D" );
 
 		GLuint iFormat = 0;
@@ -662,7 +662,7 @@ static void CheckReversePackedPixels()
 	glTexImage2D( GL_PROXY_TEXTURE_2D,
 				0, GL_RGBA, 
 				16, 16, 0,
-				GL_BGRA, GL_UNSIGNED_SHORT_1_5_5_5_REV, NULL );
+				GL_BGRA, GL_UNSIGNED_SHORT_1_5_5_5_REV, nullptr );
 
 	const GLenum glError = glGetError();
 	if (glError == GL_NO_ERROR)
@@ -1272,7 +1272,7 @@ void RageCompiledGeometryHWOGL::Draw( int iMeshIndex ) const
 	DebugAssertNoGLError();
 	glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nPositions );
 	DebugAssertNoGLError();
-	glVertexPointer(3, GL_FLOAT, 0, NULL );
+	glVertexPointer(3, GL_FLOAT, 0, nullptr );
 	DebugAssertNoGLError();
 
 	glDisableClientState(GL_COLOR_ARRAY);
@@ -1282,7 +1282,7 @@ void RageCompiledGeometryHWOGL::Draw( int iMeshIndex ) const
 	DebugAssertNoGLError();
 	glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nTextureCoords );
 	DebugAssertNoGLError();
-	glTexCoordPointer(2, GL_FLOAT, 0, NULL);
+	glTexCoordPointer(2, GL_FLOAT, 0, nullptr);
 	DebugAssertNoGLError();
 
 	// TRICKY:  Don't bind and send normals if lighting is disabled.  This 
@@ -1301,7 +1301,7 @@ void RageCompiledGeometryHWOGL::Draw( int iMeshIndex ) const
 		DebugAssertNoGLError();
 		glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nNormals );
 		DebugAssertNoGLError();
-		glNormalPointer(GL_FLOAT, 0, NULL);
+		glNormalPointer(GL_FLOAT, 0, nullptr);
 		DebugAssertNoGLError();
 	}
 	else
@@ -1321,7 +1321,7 @@ void RageCompiledGeometryHWOGL::Draw( int iMeshIndex ) const
 			DebugAssertNoGLError();
 			glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nTextureMatrixScale );
 			DebugAssertNoGLError();
-			glVertexAttribPointerARB( g_iAttribTextureMatrixScale, 2, GL_FLOAT, false, 0, NULL );
+			glVertexAttribPointerARB( g_iAttribTextureMatrixScale, 2, GL_FLOAT, false, 0, nullptr );
 			DebugAssertNoGLError();
 
 			glUseProgramObjectARB( g_bTextureMatrixShader );
@@ -2174,7 +2174,7 @@ unsigned RageDisplay_Legacy::CreateTexture(
 		glTexImage2D(
 			GL_TEXTURE_2D, 0, glTexFormat, 
 			power_of_two(pImg->w), power_of_two(pImg->h), 0,
-			glImageFormat, glImageType, NULL );
+			glImageFormat, glImageType, nullptr );
 		if (pImg->pixels)
 			glTexSubImage2D( GL_TEXTURE_2D, 0,
 				0, 0,
@@ -2236,7 +2236,7 @@ public:
 		glBindBufferARB( GL_PIXEL_UNPACK_BUFFER_ARB, m_iBuffer );
 
 		int iSize = pSurface->h * pSurface->pitch;
-		glBufferDataARB( GL_PIXEL_UNPACK_BUFFER_ARB, iSize, NULL, GL_STREAM_DRAW );
+		glBufferDataARB( GL_PIXEL_UNPACK_BUFFER_ARB, iSize, nullptr, GL_STREAM_DRAW );
 
 		void *pSurfaceMemory = glMapBufferARB( GL_PIXEL_UNPACK_BUFFER_ARB, GL_WRITE_ONLY );
 		pSurface->pixels = (uint8_t *) pSurfaceMemory;
@@ -2379,7 +2379,7 @@ void RenderTarget_FramebufferObject::Create( const RenderTargetParam &param, int
 		internalformat = param.bWithAlpha? GL_RGBA8:GL_RGB8;
 	
 	glTexImage2D( GL_TEXTURE_2D, 0, internalformat,
-			iTextureWidth, iTextureHeight, 0, type, GL_UNSIGNED_BYTE, NULL );
+			iTextureWidth, iTextureHeight, 0, type, GL_UNSIGNED_BYTE, nullptr );
 	DebugAssertNoGLError();
 
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );

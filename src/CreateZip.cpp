@@ -975,7 +975,7 @@ ZRESULT TZip::AddCentral()
 	ulg center_size = writ - pos_at_start_of_central;
 	if (okay)
 	{ 
-		int res = putend(numentries, center_size, pos_at_start_of_central+ooffset, 0, NULL, swrite,this);
+		int res = putend(numentries, center_size, pos_at_start_of_central+ooffset, 0, nullptr, swrite,this);
 		if (res!=ZE_OK)
 			okay=false;
 		writ += 4 + ENDHEAD + 0;

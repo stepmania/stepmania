@@ -79,7 +79,7 @@ namespace Checkpoints
 	void GetLogs( char *pBuf, int iSize, const char *delim );
 };
 
-#define CHECKPOINT (Checkpoints::SetCheckpoint(__FILE__, __LINE__, NULL))
+#define CHECKPOINT (Checkpoints::SetCheckpoint(__FILE__, __LINE__, nullptr))
 #define CHECKPOINT_M(m) (Checkpoints::SetCheckpoint(__FILE__, __LINE__, m))
 
 /* Mutex class that follows the behavior of Windows mutexes: if the same

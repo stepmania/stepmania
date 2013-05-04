@@ -1076,7 +1076,7 @@ namespace
 		LIST_METHOD( ReadFile ),
 		LIST_METHOD( RunWithThreadVariables ),
 		LIST_METHOD( GetThreadVariable ),
-		{ NULL, NULL }
+		{ NULL, nullptr }
 	};
 }
 

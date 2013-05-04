@@ -79,7 +79,7 @@ GdkPixbuf *MakePixbuf( const RageSurface *pSrc )
 	RageSurfaceUtils::Blit( pSrc, pSurface , -1, -1 );
 
 	GdkPixbuf *pBuf = gdk_pixbuf_new_from_data( pSurface->pixels, GDK_COLORSPACE_RGB,
-		true, 8, pSurface->w, pSurface->h , pSurface->pitch, DeletePixels, NULL);
+		true, 8, pSurface->w, pSurface->h , pSurface->pitch, DeletePixels, nullptr);
 
 	if( pBuf != nullptr )
 		pSurface->pixels_owned = false;

@@ -47,7 +47,7 @@ bool MemoryCardDriverThreaded_Windows::TestWrite( UsbStorageDevice* pDevice )
 	{
 		HANDLE hFile = CreateFile( ssprintf( "%stmp%i", pDevice->sOsMountDir.c_str(), RandomInt(100000)),
 			GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE,
-			NULL, CREATE_NEW, FILE_ATTRIBUTE_TEMPORARY | FILE_FLAG_DELETE_ON_CLOSE, NULL );
+			NULL, CREATE_NEW, FILE_ATTRIBUTE_TEMPORARY | FILE_FLAG_DELETE_ON_CLOSE, nullptr );
 
 		if( hFile == INVALID_HANDLE_VALUE )
 		{
@@ -193,7 +193,7 @@ void MemoryCardDriverThreaded_Windows::Unmount( UsbStorageDevice* pDevice )
 	/* Try to flush the device before returning.  This requires administrator priviliges. */
 	HANDLE hDevice = CreateFile( pDevice->sDevice, GENERIC_WRITE,
 		FILE_SHARE_READ | FILE_SHARE_WRITE,
-		NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL );
+		NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr );
 
 	if( hDevice == INVALID_HANDLE_VALUE )
 	{

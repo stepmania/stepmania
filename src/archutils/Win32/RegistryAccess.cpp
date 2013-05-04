@@ -66,7 +66,7 @@ bool RegistryAccess::GetRegValue( const RString &sKey, const RString &sName, RSt
 	char sBuffer[MAX_PATH];
 	DWORD iSize = sizeof(sBuffer);
 	DWORD iType;
-	LONG iRet = RegQueryValueEx( hKey, sName, NULL, &iType, (LPBYTE)sBuffer, &iSize );
+	LONG iRet = RegQueryValueEx( hKey, sName, nullptr, &iType, (LPBYTE)sBuffer, &iSize );
 	RegCloseKey( hKey );
 	if( iRet != ERROR_SUCCESS )
 		return false;
@@ -92,7 +92,7 @@ bool RegistryAccess::GetRegValue( const RString &sKey, const RString &sName, int
 	DWORD iValue;
 	DWORD iSize = sizeof(iValue);
 	DWORD iType;
-	LONG iRet = RegQueryValueEx( hKey, sName, NULL, &iType, (LPBYTE) &iValue, &iSize );
+	LONG iRet = RegQueryValueEx( hKey, sName, nullptr, &iType, (LPBYTE) &iValue, &iSize );
 	RegCloseKey( hKey );
 	if( iRet != ERROR_SUCCESS ) 
 		return false;
@@ -126,7 +126,7 @@ bool RegistryAccess::GetRegSubKeys( const RString &sKey, vector<RString> &lst, c
 		FILETIME ft;
 		char szBuffer[MAX_PATH];
 		DWORD iSize = sizeof(szBuffer);
-		LONG iRet = RegEnumKeyEx( hKey, index, szBuffer, &iSize, NULL, NULL, NULL, &ft);
+		LONG iRet = RegEnumKeyEx( hKey, index, szBuffer, &iSize, nullptr, nullptr, nullptr, &ft);
 		if( iRet == ERROR_NO_MORE_ITEMS )
 			break;
 

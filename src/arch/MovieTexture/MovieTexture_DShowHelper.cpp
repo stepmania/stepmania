@@ -13,7 +13,7 @@ struct __declspec(uuid("{71771540-2017-11cf-ae26-0020afd79767}")) CLSID_TextureR
 static HRESULT CBV_ret;
 CTextureRenderer::CTextureRenderer():
 	CBaseVideoRenderer(__uuidof(CLSID_TextureRenderer), 
-	NAME("Texture Renderer"), NULL, &CBV_ret),
+	NAME("Texture Renderer"), nullptr, &CBV_ret),
 	m_OneFrameDecoded( "m_OneFrameDecoded", 0 )
 {
 	if( FAILED(CBV_ret) )

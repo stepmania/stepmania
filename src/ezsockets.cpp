@@ -201,7 +201,7 @@ bool EzSockets::IsError()
 	FD_ZERO(scks);
 	FD_SET((unsigned)sock, scks);
 
-	if (select(sock+1, NULL, NULL, scks, times) >=0 )
+	if (select(sock+1, nullptr, nullptr, scks, times) >=0 )
 		return false;
 
 	state = skERROR;
@@ -213,7 +213,7 @@ bool EzSockets::CanWrite()
 	FD_ZERO(scks);
 	FD_SET((unsigned)sock, scks);
 
-	return select(sock+1, NULL, scks, NULL, times) > 0;
+	return select(sock+1, nullptr, scks, nullptr, times) > 0;
 }
 
 void EzSockets::update()

@@ -8,7 +8,7 @@ RString werr_ssprintf( int err, const char *fmt, ... )
 {
 	char buf[1024] = "";
 	FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM,
-		0, err, 0, buf, sizeof(buf), NULL);
+		0, err, 0, buf, sizeof(buf), nullptr);
 
 	// Why is FormatMessage returning text ending with \r\n? (who? -aj)
 	// Perhaps it's because you're on Windows, where newlines are \r\n. -aj
@@ -31,12 +31,12 @@ RString ConvertWstringToCodepage( wstring s, int iCodePage )
 		return RString();
 
 	int iBytes = WideCharToMultiByte( iCodePage, 0, s.data(), s.size(), 
-					NULL, 0, NULL, FALSE );
+					NULL, 0, nullptr, FALSE );
 	ASSERT_M( iBytes > 0, werr_ssprintf( GetLastError(), "WideCharToMultiByte" ).c_str() );
 
 	RString ret;
 	WideCharToMultiByte( CP_ACP, 0, s.data(), s.size(), 
-					ret.GetBuffer( iBytes ), iBytes, NULL, FALSE );
+					ret.GetBuffer( iBytes ), iBytes, nullptr, FALSE );
 	ret.ReleaseBuffer( iBytes );
 
 	return ret;
@@ -52,7 +52,7 @@ wstring ConvertCodepageToWString( RString s, int iCodePage )
 	if( s.empty() )
 		return wstring();
 
-	int iBytes = MultiByteToWideChar( iCodePage, 0, s.data(), s.size(), NULL, 0 );
+	int iBytes = MultiByteToWideChar( iCodePage, 0, s.data(), s.size(), nullptr, 0 );
 	ASSERT_M( iBytes > 0, werr_ssprintf( GetLastError(), "MultiByteToWideChar" ).c_str() );
 
 	wchar_t *pTemp = new wchar_t[iBytes];

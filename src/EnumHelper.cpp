@@ -111,7 +111,7 @@ namespace
 static const luaL_Reg EnumLib[] = {
 	{ "GetName", GetName },
 	{ "Reverse", Reverse },
-	{ NULL, NULL }
+	{ NULL, nullptr }
 };
 
 static void PushEnumMethodTable( lua_State *L )

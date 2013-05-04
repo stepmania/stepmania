@@ -104,7 +104,7 @@ RageSoundDriver_WaveOut::RageSoundDriver_WaveOut()
 	m_bShutdown = false;
 	m_iLastCursorPos = 0;
 
-	m_hSoundEvent = CreateEvent( NULL, false, true, NULL );
+	m_hSoundEvent = CreateEvent( NULL, false, true, nullptr );
 
 	m_hWaveOut = nullptr;
 }

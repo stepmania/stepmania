@@ -165,12 +165,12 @@ void EditMenu::Load( const RString &sType )
 	this->AddChild( &m_SongTextBanner );
 
 	m_StepsDisplay.SetName( "StepsDisplay" );
-	m_StepsDisplay.Load( "StepsDisplayEdit", NULL );
+	m_StepsDisplay.Load( "StepsDisplayEdit", nullptr );
 	ActorUtil::SetXY( m_StepsDisplay, sType );
 	this->AddChild( &m_StepsDisplay );
 
 	m_StepsDisplaySource.SetName( "StepsDisplaySource" );
-	m_StepsDisplaySource.Load( "StepsDisplayEdit", NULL );
+	m_StepsDisplaySource.Load( "StepsDisplayEdit", nullptr );
 	ActorUtil::SetXY( m_StepsDisplaySource, sType );
 	this->AddChild( &m_StepsDisplaySource );
 

@@ -745,7 +745,7 @@ bool RageSoundReader_MP3::MADLIB_rewind()
 
 	mad_stream_finish(&mad->Stream);
 	mad_stream_init(&mad->Stream);
-	mad_stream_buffer(&mad->Stream, NULL, 0);
+	mad_stream_buffer(&mad->Stream, nullptr, 0);
 	mad->inbuf_filepos = 0;
 
 	/* Be careful.  We need to leave header_bytes alone, so if we try to SetPosition_estimate

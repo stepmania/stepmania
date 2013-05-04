@@ -235,7 +235,7 @@ void ArchHooks_MacOSX::DumpDebugInfo()
 	}
 
 	size_t size;
-#define GET_PARAM( name, var ) (size = sizeof(var), sysctlbyname(name, &var, &size, NULL, 0) )
+#define GET_PARAM( name, var ) (size = sizeof(var), sysctlbyname(name, &var, &size, nullptr, 0) )
 	// Get memory
 	float fRam;
 	char ramPower;
@@ -285,18 +285,18 @@ void ArchHooks_MacOSX::DumpDebugInfo()
 			break;
 		}
 		sModel = szModel;
-		CFURLRef urlRef = CFBundleCopyResourceURL( CFBundleGetMainBundle(), CFSTR("Hardware.plist"), NULL, NULL );
+		CFURLRef urlRef = CFBundleCopyResourceURL( CFBundleGetMainBundle(), CFSTR("Hardware.plist"), nullptr, nullptr );
 
 		if( urlRef == nullptr )
 			break;
 		CFDataRef dataRef = nullptr;
 		SInt32 error;
-		CFURLCreateDataAndPropertiesFromResource( NULL, urlRef, &dataRef, NULL, NULL, &error );
+		CFURLCreateDataAndPropertiesFromResource( NULL, urlRef, &dataRef, nullptr, nullptr, &error );
 		CFRelease( urlRef );
 		if( dataRef == nullptr )
 			break;
 		// This also works with binary property lists for some reason.
-		CFPropertyListRef plRef = CFPropertyListCreateFromXMLData( NULL, dataRef, kCFPropertyListImmutable, NULL );
+		CFPropertyListRef plRef = CFPropertyListCreateFromXMLData( NULL, dataRef, kCFPropertyListImmutable, nullptr );
 		CFRelease( dataRef );
 		if( plRef == nullptr )
 			break;
@@ -358,8 +358,8 @@ RString ArchHooks::GetPreferredLanguage()
 bool ArchHooks_MacOSX::GoToURL( RString sUrl )
 {
 	CFURLRef url = CFURLCreateWithBytes( kCFAllocatorDefault, (const UInt8*)sUrl.data(),
-						 sUrl.length(), kCFStringEncodingUTF8, NULL );
-	OSStatus result = LSOpenCFURLRef( url, NULL );
+						 sUrl.length(), kCFStringEncodingUTF8, nullptr );
+	OSStatus result = LSOpenCFURLRef( url, nullptr );
 
 	CFRelease( url );
 	return result == 0;
@@ -395,7 +395,7 @@ static void PathForFolderType( char dir[PATH_MAX], OSType folderType )
 void ArchHooks::MountInitialFilesystems( const RString &sDirOfExecutable )
 {
 	char dir[PATH_MAX];
-	CFURLRef dataUrl = CFBundleCopyResourceURL( CFBundleGetMainBundle(), CFSTR("StepMania"), CFSTR("smzip"), NULL );
+	CFURLRef dataUrl = CFBundleCopyResourceURL( CFBundleGetMainBundle(), CFSTR("StepMania"), CFSTR("smzip"), nullptr );
 
 	FILEMAN->Mount( "dir", sDirOfExecutable, "/" );
 

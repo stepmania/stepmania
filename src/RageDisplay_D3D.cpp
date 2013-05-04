@@ -573,7 +573,7 @@ bool RageDisplay_D3D::BeginFrame()
 		}
 	}
 
-	g_pd3dDevice->Clear( 0, NULL, D3DCLEAR_TARGET|D3DCLEAR_ZBUFFER,
+	g_pd3dDevice->Clear( 0, nullptr, D3DCLEAR_TARGET|D3DCLEAR_ZBUFFER,
 						 D3DCOLOR_XRGB(0,0,0), 1.0f, 0x00000000 );
 	g_pd3dDevice->BeginScene();
 
@@ -633,9 +633,9 @@ RageSurface* RageDisplay_D3D::CreateScreenshot()
 
 		// Copy the back buffer into a surface of a type we support.
 		IDirect3DSurface9* pCopy;
-		if( SUCCEEDED( g_pd3dDevice->CreateOffscreenPlainSurface( desc.Width, desc.Height, D3DFMT_A8R8G8B8, D3DPOOL_SCRATCH, &pCopy, NULL ) ) )
+		if( SUCCEEDED( g_pd3dDevice->CreateOffscreenPlainSurface( desc.Width, desc.Height, D3DFMT_A8R8G8B8, D3DPOOL_SCRATCH, &pCopy, nullptr ) ) )
 		{
-			if( SUCCEEDED( D3DXLoadSurfaceFromSurface( pCopy, NULL, NULL, pSurface, NULL, NULL, D3DX_FILTER_NONE, 0) ) )
+			if( SUCCEEDED( D3DXLoadSurfaceFromSurface( pCopy, nullptr, nullptr, pSurface, nullptr, nullptr, D3DX_FILTER_NONE, 0) ) )
 			{
 				// Update desc from the copy.
 				pCopy->GetDesc( &desc );
@@ -1029,7 +1029,7 @@ void RageDisplay_D3D::SetTexture( TextureUnit tu, unsigned iTexture )
 
 	if( iTexture == 0 )
 	{
-		g_pd3dDevice->SetTexture( tu, NULL );
+		g_pd3dDevice->SetTexture( tu, nullptr );
 
 		/* Intentionally commented out. Don't mess with texture stage state
 		 * when just setting the texture. Model sets its texture modes before
@@ -1215,7 +1215,7 @@ void RageDisplay_D3D::SetZTestMode( ZTestMode mode )
 
 void RageDisplay_D3D::ClearZBuffer()
 {
-	g_pd3dDevice->Clear( 0, NULL, D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(0,0,0), 1.0f, 0x00000000 );
+	g_pd3dDevice->Clear( 0, nullptr, D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(0,0,0), 1.0f, 0x00000000 );
 }
 
 void RageDisplay_D3D::SetTextureWrapping( TextureUnit tu, bool b )
@@ -1346,7 +1346,7 @@ unsigned RageDisplay_D3D::CreateTexture(
 {
 	HRESULT hr;
 	IDirect3DTexture9* pTex;
-	hr = g_pd3dDevice->CreateTexture( power_of_two(img->w), power_of_two(img->h), 1, 0, D3DFORMATS[pixfmt], D3DPOOL_MANAGED, &pTex, NULL );
+	hr = g_pd3dDevice->CreateTexture( power_of_two(img->w), power_of_two(img->h), 1, 0, D3DFORMATS[pixfmt], D3DPOOL_MANAGED, &pTex, nullptr );
 
 	if( FAILED(hr) )
 		RageException::Throw( "CreateTexture(%i,%i,%s) failed: %s", 

@@ -37,7 +37,7 @@ bool DIDevice::Open()
 	LPDIRECTINPUTDEVICE8 tmpdevice;
 
 	// load joystick
-	HRESULT hr = g_dinput->CreateDevice( JoystickInst.guidInstance, &tmpdevice, NULL );
+	HRESULT hr = g_dinput->CreateDevice( JoystickInst.guidInstance, &tmpdevice, nullptr );
 	if ( hr != DI_OK )
 	{
 		LOG->Info( hr_ssprintf(hr, "OpenDevice: IDirectInput_CreateDevice") );

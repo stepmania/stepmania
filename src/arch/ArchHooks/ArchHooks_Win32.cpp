@@ -100,7 +100,7 @@ bool ArchHooks_Win32::CheckForMultipleInstances(int argc, char* argv[])
 	/* Search for the existing window.  Prefer to use the class name, which is less likely to
 	 * have a false match, and will match the gameplay window.  If that fails, try the window
 	 * name, which should match the loading window. */
-	HWND hWnd = FindWindow( PRODUCT_ID, NULL );
+	HWND hWnd = FindWindow( PRODUCT_ID, nullptr );
 	if( hWnd == nullptr )
 		hWnd = FindWindow( NULL, PRODUCT_ID );
 

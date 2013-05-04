@@ -94,7 +94,7 @@ static int waittid( int ThreadID, int *status, int options )
 static int PtraceAttach( int ThreadID )
 {
 	int ret;
-	ret = ptrace( PTRACE_ATTACH, ThreadID, NULL, NULL );
+	ret = ptrace( PTRACE_ATTACH, ThreadID, nullptr, nullptr );
 	if( ret == -1 )
 	{
 		printf("ptrace failed: %s\n", strerror(errno) );
@@ -114,7 +114,7 @@ static int PtraceAttach( int ThreadID )
 
 static int PtraceDetach( int ThreadID )
 {
-	return ptrace( PTRACE_DETACH, ThreadID, NULL, NULL );
+	return ptrace( PTRACE_DETACH, ThreadID, nullptr, nullptr );
 }
 
 
@@ -217,7 +217,7 @@ bool GetThreadBacktraceContext( uint64_t ThreadID, BacktraceContext *ctx )
 
 #if defined(CPU_X86_64) || defined(CPU_X86)
 	user_regs_struct regs;
-	if( ptrace( PTRACE_GETREGS, pid_t(ThreadID), NULL, &regs ) == -1 )
+	if( ptrace( PTRACE_GETREGS, pid_t(ThreadID), nullptr, &regs ) == -1 )
 		return false;
 
 	ctx->pid = pid_t(ThreadID);

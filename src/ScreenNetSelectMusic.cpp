@@ -53,7 +53,7 @@ void ScreenNetSelectMusic::Init()
 		m_DC[p] = GAMESTATE->m_PreferredDifficulty[p];
 
 		m_StepsDisplays[p].SetName( ssprintf("StepsDisplayP%d",p+1) );
-		m_StepsDisplays[p].Load( "StepsDisplayNet", NULL );
+		m_StepsDisplays[p].Load( "StepsDisplayNet", nullptr );
 		LOAD_ALL_COMMANDS_AND_SET_XY( m_StepsDisplays[p] );
 		this->AddChild( &m_StepsDisplays[p] );
 	}
@@ -475,7 +475,7 @@ void ScreenNetSelectMusic::UpdateDifficulties( PlayerNumber pn )
 	if( GAMESTATE->m_pCurSong == nullptr )
 	{
 		m_StepsDisplays[pn].SetFromStepsTypeAndMeterAndDifficultyAndCourseType( StepsType_Invalid, 0, Difficulty_Beginner, CourseType_Invalid ); 
-		//m_DifficultyIcon[pn].SetFromSteps( pn, NULL );	// It will blank it out 
+		//m_DifficultyIcon[pn].SetFromSteps( pn, nullptr );	// It will blank it out 
 		return;
 	}
 
@@ -499,7 +499,7 @@ void ScreenNetSelectMusic::MusicChanged()
 
 		SOUND->StopMusic();
 		// todo: handle playing section music correctly. -aj
-		// SOUND->PlayMusic( m_sSectionMusicPath, NULL, true, 0, -1 );
+		// SOUND->PlayMusic( m_sSectionMusicPath, nullptr, true, 0, -1 );
 		return;
 	} 
 

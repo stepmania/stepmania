@@ -42,7 +42,7 @@ void BacktraceNames::Demangle()
 		return;
 	
 	int status = 0;
-	char *name = abi::__cxa_demangle( Symbol, NULL, NULL, &status );
+	char *name = abi::__cxa_demangle( Symbol, nullptr, nullptr, &status );
 	if( name )
 	{
 		Symbol = name;
@@ -375,7 +375,7 @@ void BacktraceNames::FromAddr( const void *p )
         char *p;
         asprintf(&p, "%d", ppid);
 
-        execl("/usr/bin/atos", "/usr/bin/atos", "-p", p, addy, NULL);
+        execl("/usr/bin/atos", "/usr/bin/atos", "-p", p, addy, nullptr);
         
         fprintf(stderr, "execl(atos) failed: %s\n", strerror(errno));
         free(addy);

@@ -154,7 +154,7 @@ bool RoomWheel::Select()
 		return WheelBase::Select();
 	if( m_iSelection == 0 )
 	{
-		// Since this is not actually an option outside of this wheel, NULL is a good idea.
+		// Since this is not actually an option outside of this wheel, nullptr is a good idea.
 		m_LastSelection = nullptr;
 		ScreenTextEntry::TextEntry( SM_BackFromRoomName, ENTER_ROOM_NAME, "", 255 );
 	}

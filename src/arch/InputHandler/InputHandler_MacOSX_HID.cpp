@@ -65,7 +65,7 @@ int InputHandler_MacOSX_HID::Run( void *data )
 	{
 		/* The function copies the information out of the structure, so the memory
 		 * pointed to by context does not need to persist beyond the function call. */
-		CFRunLoopObserverContext context = { 0, &This->m_Sem, NULL, NULL, NULL };
+		CFRunLoopObserverContext context = { 0, &This->m_Sem, nullptr, nullptr, nullptr };
 		CFRunLoopObserverRef o = CFRunLoopObserverCreate( kCFAllocatorDefault, kCFRunLoopEntry,
 								  false, 0, RunLoopStarted, &context);
 		CFRunLoopAddObserver( This->m_LoopRef, o, kCFRunLoopDefaultMode );
@@ -82,7 +82,7 @@ int InputHandler_MacOSX_HID::Run( void *data )
 		void *info = This->m_LoopRef;
 		void (*perform)(void *) = (void (*)(void *))CFRunLoopStop;
 		// { version, info, retain, release, copyDescription, equal, hash, schedule, cancel, perform }
-		CFRunLoopSourceContext context = { 0, info, NULL, NULL, NULL, NULL, NULL, NULL, NULL, perform };
+		CFRunLoopSourceContext context = { 0, info, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, perform };
 
 		// Pass 1 so that it is called after all inputs have been handled (they will have order = 0)
 		This->m_SourceRef = CFRunLoopSourceCreate( kCFAllocatorDefault, 1, &context );

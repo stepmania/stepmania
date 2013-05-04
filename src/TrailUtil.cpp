@@ -123,7 +123,7 @@ namespace
 	{
 		LIST_METHOD( GetNumSongs ),
 		LIST_METHOD( GetTotalSeconds ),
-		{ NULL, NULL }
+		{ NULL, nullptr }
 	};
 }
 

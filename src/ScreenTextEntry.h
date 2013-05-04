@@ -67,7 +67,7 @@ public:
 		void(*OnOK)(const RString &sPassword) = nullptr, 
 		void(*OnCancel)() = nullptr )
 	{
-		TextEntry( smSendOnPop, sQuestion, "", 255, NULL, OnOK, OnCancel, true );
+		TextEntry( smSendOnPop, sQuestion, "", 255, nullptr, OnOK, OnCancel, true );
 	}
 
 	struct TextEntrySettings {

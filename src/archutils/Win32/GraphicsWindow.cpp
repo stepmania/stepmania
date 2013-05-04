@@ -283,7 +283,7 @@ void GraphicsWindow::CreateGraphicsWindow( const VideoModeParams &p, bool bForce
 
 		AppInstance inst;
 		HWND hWnd = CreateWindow( g_sClassName, "app", iWindowStyle,
-						0, 0, 0, 0, NULL, NULL, inst, NULL );
+						0, 0, 0, 0, nullptr, nullptr, inst, nullptr );
 		if( hWnd == nullptr )
 			RageException::Throw( "%s", werr_ssprintf( GetLastError(), "CreateWindow" ).c_str() );
 
@@ -363,9 +363,9 @@ void GraphicsWindow::CreateGraphicsWindow( const VideoModeParams &p, bool bForce
 	 * If we don't do this, then starting up in a D3D fullscreen window may
 	 * cause all other windows on the system to be resized. */
 	MSG msg;
-	while( PeekMessage( &msg, NULL, 0, 0, PM_NOREMOVE ) )
+	while( PeekMessage( &msg, nullptr, 0, 0, PM_NOREMOVE ) )
 	{
-		GetMessage( &msg, NULL, 0, 0 );
+		GetMessage( &msg, nullptr, 0, 0 );
 		DispatchMessage( &msg );
 	}
 }
@@ -399,10 +399,10 @@ void GraphicsWindow::DestroyGraphicsWindow()
 	CHECKPOINT;
 
 	MSG msg;
-	while( PeekMessage( &msg, NULL, 0, 0, PM_NOREMOVE ) )
+	while( PeekMessage( &msg, nullptr, 0, 0, PM_NOREMOVE ) )
 	{
 		CHECKPOINT;
-		GetMessage( &msg, NULL, 0, 0 );
+		GetMessage( &msg, nullptr, 0, 0 );
 		CHECKPOINT;
 		DispatchMessage( &msg );
 	}
@@ -487,9 +487,9 @@ const VideoModeParams &GraphicsWindow::GetParams()
 void GraphicsWindow::Update()
 {
 	MSG msg;
-	while( PeekMessage( &msg, NULL, 0, 0, PM_NOREMOVE ) )
+	while( PeekMessage( &msg, nullptr, 0, 0, PM_NOREMOVE ) )
 	{
-		GetMessage( &msg, NULL, 0, 0 );
+		GetMessage( &msg, nullptr, 0, 0 );
 		DispatchMessage( &msg );
 	}
 

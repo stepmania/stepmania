@@ -328,7 +328,7 @@ int BMSSong::AllocateKeysound( RString filename, RString path )
 
 	if( !IsAFile(dir + normalizedFilename) )
 	{
-		const char *exts[] = { "oga", "ogg", "wav", "mp3", NULL }; // XXX: stop duplicating these everywhere
+		const char *exts[] = { "oga", "ogg", "wav", "mp3", nullptr }; // XXX: stop duplicating these everywhere
 		for( unsigned i = 0; exts[i] != nullptr; ++i )
 		{
 			RString fn = SetExtension( normalizedFilename, exts[i] );
@@ -393,7 +393,7 @@ bool BMSSong::GetBackground( RString filename, RString path, RString &bgfile )
 	
 	if( !IsAFile(dir + normalizedFilename) )
 	{
-		const char *exts[] = { "ogv", "avi", "mpg", "mpeg", "bmp", "png", "jpeg", NULL }; // XXX: stop duplicating these everywhere
+		const char *exts[] = { "ogv", "avi", "mpg", "mpeg", "bmp", "png", "jpeg", nullptr }; // XXX: stop duplicating these everywhere
 		for( unsigned i = 0; exts[i] != nullptr; ++i )
 		{
 			RString fn = SetExtension( normalizedFilename, exts[i] );
@@ -424,7 +424,7 @@ void BMSSong::PrecacheBackgrounds(const RString &dir)
 	backgroundsPrecached = true;
 	vector<RString> arrayPossibleFiles;
 	
-	const char *exts[] = { "ogv", "avi", "mpg", "mpeg", "bmp", "png", "jpeg", NULL }; // XXX: stop duplicating these everywhere
+	const char *exts[] = { "ogv", "avi", "mpg", "mpeg", "bmp", "png", "jpeg", nullptr }; // XXX: stop duplicating these everywhere
 	
 	for( unsigned i = 0; exts[i] != nullptr; ++i )
 	{

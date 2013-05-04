@@ -437,7 +437,7 @@ namespace RageFileUtil
 	const luaL_Reg RageFileUtilTable[] =
 	{
 		LIST_METHOD( CreateRageFile ),
-		{ NULL, NULL }
+		{ NULL, nullptr }
 	};
 	LUA_REGISTER_NAMESPACE( RageFileUtil );
 }

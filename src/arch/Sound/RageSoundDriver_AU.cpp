@@ -80,7 +80,7 @@ static void SetSampleRate( AudioUnit au, Float64 desiredRate )
 		return;
 	
 	if( (error = AudioDeviceGetPropertyInfo(OutputDevice, 0, false, kAudioDevicePropertyAvailableNominalSampleRates,
-						&size, NULL)) )
+						&size, nullptr)) )
 	{
 		LOG->Warn( WERROR("Couldn't get available nominal sample rates info", error) );
 		return;
@@ -114,7 +114,7 @@ static void SetSampleRate( AudioUnit au, Float64 desiredRate )
 	if( bestRate == 0.0 )
 		return;
 		
-	if( (error = AudioDeviceSetProperty(OutputDevice, NULL, 0, false, kAudioDevicePropertyNominalSampleRate,
+	if( (error = AudioDeviceSetProperty(OutputDevice, nullptr, 0, false, kAudioDevicePropertyNominalSampleRate,
 					    sizeof(Float64), &bestRate)) )
 	{
 		LOG->Warn( WERROR("Couldn't set the device's sample rate", error) );
@@ -204,7 +204,7 @@ RString RageSoundDriver_AU::Init()
 	{
 		CFRunLoopObserverRef observerRef;
 		CFRunLoopRef runLoopRef;
-		CFRunLoopObserverContext context = { 0, this, NULL, NULL, NULL };
+		CFRunLoopObserverContext context = { 0, this, nullptr, nullptr, nullptr };
 		UInt32 size = sizeof( CFRunLoopRef );
 
 		if( (error = AudioHardwareGetProperty(kAudioHardwarePropertyRunLoop, &size, &runLoopRef)) )
@@ -300,7 +300,7 @@ float RageSoundDriver_AU::GetPlayLatency() const
 	size = sizeof( UInt32 );
 
 	do {
-		if( (error = AudioDeviceGetPropertyInfo(OutputDevice, 0, false, kAudioDevicePropertyStreams, &size, NULL)) )
+		if( (error = AudioDeviceGetPropertyInfo(OutputDevice, 0, false, kAudioDevicePropertyStreams, &size, nullptr)) )
 		{
 			LOG->Warn( WERROR("Device has no streams", error) );
 			break;

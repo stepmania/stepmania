@@ -10,7 +10,7 @@ bool Vector::CheckForVector()
 	int32_t result = 0;
 	size_t size = 4;
 
-	return !sysctlbyname( "hw.vectorunit", &result, &size, NULL, 0 ) && result;
+	return !sysctlbyname( "hw.vectorunit", &result, &size, nullptr, 0 ) && result;
 }
 
 /* for( unsigned pos = 0; pos < size; ++pos )

@@ -222,7 +222,7 @@ void DialogDriver_Win32::Error( RString sError, RString sID )
 
 	// throw up a pretty error dialog
 	AppInstance handle;
-	DialogBox( handle.Get(), MAKEINTRESOURCE(IDD_ERROR_DIALOG), NULL, ErrorWndProc );
+	DialogBox( handle.Get(), MAKEINTRESOURCE(IDD_ERROR_DIALOG), nullptr, ErrorWndProc );
 #else
 	::AfxMessageBox( ConvertUTF8ToACP(sError).c_str(), MB_OK, 0 );
 #endif

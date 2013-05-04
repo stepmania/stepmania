@@ -46,7 +46,7 @@ void DSound::SetPrimaryBufferMode()
 	format.lpwfxFormat = nullptr;
 
 	IDirectSoundBuffer *pBuffer;
-	HRESULT hr = this->GetDS()->CreateSoundBuffer( &format, &pBuffer, NULL );
+	HRESULT hr = this->GetDS()->CreateSoundBuffer( &format, &pBuffer, nullptr );
 	if( FAILED(hr) )
 	{
 		LOG->Warn(hr_ssprintf(hr, "Couldn't create primary buffer"));
@@ -106,7 +106,7 @@ DSound::DSound()
 RString DSound::Init()
 {
 	HRESULT hr;
-	if( FAILED( hr = DirectSoundCreate(NULL, &m_pDS, NULL) ) )
+	if( FAILED( hr = DirectSoundCreate(NULL, &m_pDS, nullptr) ) )
 		return hr_ssprintf( hr, "DirectSoundCreate" );
 
 	static bool bShownInfo = false;
@@ -228,7 +228,7 @@ RString DSoundBuf::Init( DSound &ds, DSoundBuf::hw hardware,
 
 	format.lpwfxFormat = &waveformat;
 
-	HRESULT hr = ds.GetDS()->CreateSoundBuffer( &format, &m_pBuffer, NULL );
+	HRESULT hr = ds.GetDS()->CreateSoundBuffer( &format, &m_pBuffer, nullptr );
 	if( FAILED(hr) )
 		return hr_ssprintf( hr, "CreateSoundBuffer failed (%i hz)", m_iSampleBits );
 

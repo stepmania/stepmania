@@ -467,7 +467,7 @@ namespace
 		LIST_METHOD( LoadAllCommands ),
 		LIST_METHOD( LoadAllCommandsFromName ), 
 		LIST_METHOD( LoadAllCommandsAndSetXY ),
-		{ NULL, NULL }
+		{ NULL, nullptr }
 	};
 }
 

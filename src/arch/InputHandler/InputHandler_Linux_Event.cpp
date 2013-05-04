@@ -355,7 +355,7 @@ void InputHandler_Linux_Event::InputThread()
 			break;
 
 		struct timeval zero = {0,100000};
-		if( select(iMaxFD+1, &fdset, NULL, NULL, &zero) <= 0 )
+		if( select(iMaxFD+1, &fdset, nullptr, nullptr, &zero) <= 0 )
 			continue;
 		RageTimer now;
 

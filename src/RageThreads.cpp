@@ -57,7 +57,7 @@ struct ThreadSlot
 		int m_iLine;
 		char m_szFormattedBuf[1024];
 
-		ThreadCheckpoint() { Set( NULL, 0, NULL ); }
+		ThreadCheckpoint() { Set( NULL, 0, nullptr ); }
 		void Set( const char *szFile, int iLine, const char *szMessage = nullptr );
 		const char *GetFormattedCheckpoint();
 	};

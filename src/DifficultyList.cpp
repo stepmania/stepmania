@@ -72,7 +72,7 @@ void StepsDisplayList::LoadFromNode( const XNode* pNode )
 	{
 		// todo: Use Row1, Row2 for names? also m_sName+"Row" -aj
 		m_Lines[m].m_Meter.SetName( "Row" );
-		m_Lines[m].m_Meter.Load( "StepsDisplayListRow", NULL );
+		m_Lines[m].m_Meter.Load( "StepsDisplayListRow", nullptr );
 		this->AddChild( &m_Lines[m].m_Meter );
 	}
 

@@ -12,7 +12,7 @@ void WindowsDialogBox::Run( int iDialog )
 	GetModuleFileName( NULL, szFullAppPath, MAX_PATH );
 	HINSTANCE hHandle = LoadLibrary( szFullAppPath );
 
-	DialogBoxParam( hHandle, MAKEINTRESOURCE(iDialog), NULL, DlgProc, (LPARAM) this );
+	DialogBoxParam( hHandle, MAKEINTRESOURCE(iDialog), nullptr, DlgProc, (LPARAM) this );
 }
 
 BOOL APIENTRY WindowsDialogBox::DlgProc( HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam )
