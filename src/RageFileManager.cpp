@@ -92,7 +92,7 @@ RageFileDriver *RageFileManager::GetFileDriver( RString sMountpoint )
 
 void RageFileManager::ReleaseFileDriver( RageFileDriver *pDriver )
 {
-	ASSERT( pDriver != NULL );
+	ASSERT( pDriver != nullptr );
 
 	g_Mutex->Lock();
 	unsigned i;

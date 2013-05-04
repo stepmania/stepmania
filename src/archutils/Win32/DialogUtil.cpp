@@ -30,7 +30,7 @@ static HFONT CreatePointFontIndirect(const LOGFONT* lpLogFont)
 // nPointSize is actually scaled 10x
 static HFONT CreatePointFont(int nPointSize, LPCTSTR lpszFaceName)
 {
-	ASSERT(lpszFaceName != NULL);
+	ASSERT(lpszFaceName != nullptr);
 
 	LOGFONT logFont;
 	memset(&logFont, 0, sizeof(LOGFONT));
@@ -43,10 +43,10 @@ static HFONT CreatePointFont(int nPointSize, LPCTSTR lpszFaceName)
 
 void DialogUtil::SetHeaderFont( HWND hdlg, int nID )
 {
-	ASSERT( hdlg != NULL );
+	ASSERT( hdlg != nullptr );
 
 	HWND hControl = ::GetDlgItem( hdlg, nID );
-	ASSERT( hControl != NULL );
+	ASSERT( hControl != nullptr );
 
 	// TODO: Fix font leak
 	const int FONT_POINTS = 16;
@@ -56,7 +56,7 @@ void DialogUtil::SetHeaderFont( HWND hdlg, int nID )
 
 void DialogUtil::LocalizeDialogAndContents( HWND hdlg )
 {
-	ASSERT( THEME != NULL );
+	ASSERT( THEME != nullptr );
 
 	const int LARGE_STRING = 256;
 	char szTemp[LARGE_STRING] = "";
@@ -70,7 +70,7 @@ void DialogUtil::LocalizeDialogAndContents( HWND hdlg )
 		::SetWindowText( hdlg, ConvertUTF8ToACP(s).c_str() );
 	}
 
-	for( HWND hwndChild = ::GetTopWindow(hdlg); hwndChild != NULL; hwndChild = ::GetNextWindow(hwndChild,GW_HWNDNEXT) )
+	for( HWND hwndChild = ::GetTopWindow(hdlg); hwndChild != nullptr; hwndChild = ::GetNextWindow(hwndChild,GW_HWNDNEXT) )
 	{
 		::GetWindowText( hwndChild, szTemp, ARRAYLEN(szTemp) );
 		RString s = szTemp;

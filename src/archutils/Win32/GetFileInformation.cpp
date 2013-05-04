@@ -144,7 +144,7 @@ bool GetProcessFileName( uint32_t iProcessID, RString &sName )
 			}
 		}
 
-		if( pGetProcessImageFileName != NULL )
+		if( pGetProcessImageFileName != nullptr )
 		{
 			HANDLE hProc = OpenProcess( PROCESS_VM_READ|PROCESS_QUERY_INFORMATION, NULL, iProcessID );
 			if( hProc == NULL )

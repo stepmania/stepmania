@@ -203,7 +203,7 @@ struct BannerTexture: public RageTexture
 	
 	void Create()
 	{
-		ASSERT( m_pImage != NULL );
+		ASSERT( m_pImage != nullptr );
 
 		/* The image is preprocessed; do as little work as possible. */
 
@@ -239,7 +239,7 @@ struct BannerTexture: public RageTexture
 
 		ASSERT( DISPLAY->SupportsTextureFormat(pf) );
 
-		ASSERT(m_pImage != NULL);
+		ASSERT(m_pImage != nullptr);
 		m_uTexHandle = DISPLAY->CreateTexture( pf, m_pImage, false );
 
 		CreateFrameRects();
@@ -290,7 +290,7 @@ RageTextureID BannerCache::LoadCachedBanner( RString sBannerPath )
 	 * when converting; this way, the conversion will end up in the map so we
 	 * only have to convert once. */
 	RageSurface *&pImage = g_BannerPathToImage[sBannerPath];
-	ASSERT( pImage != NULL );
+	ASSERT( pImage != nullptr );
 
 	int iSourceWidth = 0, iSourceHeight = 0;
 	BannerData.GetValue( sBannerPath, "Width", iSourceWidth );

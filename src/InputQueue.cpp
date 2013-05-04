@@ -38,7 +38,7 @@ bool InputQueue::WasPressedRecently( GameController c, const GameButton button, 
 		if( iep.GameI.button != button )
 			continue;
 
-		if( pIEP != NULL )
+		if( pIEP != nullptr )
 			*pIEP = iep;
 
 		return true;

@@ -96,7 +96,7 @@ void LifeMeterTime::OnLoadSong()
 		return;
 
 	Course* pCourse = GAMESTATE->m_pCurCourse;
-	ASSERT( pCourse != NULL );
+	ASSERT( pCourse != nullptr );
 
 	float fOldLife = m_fLifeTotalLostSeconds;
 	float fGainSeconds = pCourse->m_vEntries[GAMESTATE->GetCourseSongIndex()].fGainSeconds;

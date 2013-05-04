@@ -31,7 +31,7 @@ public:
 	static const char *GetThreadNameByID( uint64_t iID );
 	static bool EnumThreadIDs( int n, uint64_t &iID );
 	int Wait();
-	bool IsCreated() const { return m_pSlot != NULL; }
+	bool IsCreated() const { return m_pSlot != nullptr; }
 
 	/* A system can define HAVE_TLS, indicating that it can compile thread_local
 	 * code, but an individual environment may not actually have functional TLS.

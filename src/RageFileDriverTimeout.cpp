@@ -177,7 +177,7 @@ ThreadedFileWorker::~ThreadedFileWorker()
 {
 	StopThread();
 
-	if( m_pChildDriver != NULL )
+	if( m_pChildDriver != nullptr )
 		FILEMAN->ReleaseFileDriver( m_pChildDriver );
 
 	/* Unregister ourself. */
@@ -216,7 +216,7 @@ void ThreadedFileWorker::HandleRequest( int iRequest )
 		break;
 
 	case REQ_CLOSE:
-		ASSERT( m_pRequestFile != NULL );
+		ASSERT( m_pRequestFile != nullptr );
 		delete m_pRequestFile;
 
 		/* Clear m_pRequestFile, so RequestTimedOut doesn't double-delete. */
@@ -224,38 +224,38 @@ void ThreadedFileWorker::HandleRequest( int iRequest )
 		break;
 
 	case REQ_GET_FILE_SIZE:
-		ASSERT( m_pRequestFile != NULL );
+		ASSERT( m_pRequestFile != nullptr );
 		m_iResultRequest = m_pRequestFile->GetFileSize();
 		break;
 
 	case REQ_SEEK:
-		ASSERT( m_pRequestFile != NULL );
+		ASSERT( m_pRequestFile != nullptr );
 		m_iResultRequest = m_pRequestFile->Seek( m_iRequestPos );
 		m_sResultError = m_pRequestFile->GetError();
 		break;
 
 	case REQ_READ:
-		ASSERT( m_pRequestFile != NULL );
-		ASSERT( m_pResultBuffer != NULL );
+		ASSERT( m_pRequestFile != nullptr );
+		ASSERT( m_pResultBuffer != nullptr );
 		m_iResultRequest = m_pRequestFile->Read( m_pResultBuffer, m_iRequestSize );
 		m_sResultError = m_pRequestFile->GetError();
 		break;
 
 	case REQ_WRITE:
-		ASSERT( m_pRequestFile != NULL );
-		ASSERT( m_pRequestBuffer != NULL );
+		ASSERT( m_pRequestFile != nullptr );
+		ASSERT( m_pRequestBuffer != nullptr );
 		m_iResultRequest = m_pRequestFile->Write( m_pRequestBuffer, m_iRequestSize );
 		m_sResultError = m_pRequestFile->GetError();
 		break;
 
 	case REQ_FLUSH:
-		ASSERT( m_pRequestFile != NULL );
+		ASSERT( m_pRequestFile != nullptr );
 		m_iResultRequest = m_pRequestFile->Flush();
 		m_sResultError = m_pRequestFile->GetError();
 		break;
 
 	case REQ_COPY:
-		ASSERT( m_pRequestFile != NULL );
+		ASSERT( m_pRequestFile != nullptr );
 		m_pResultFile = m_pRequestFile->Copy();
 		break;
 
@@ -328,7 +328,7 @@ RageFileBasic *ThreadedFileWorker::Open( const RString &sPath, int iMode, int &i
 
 void ThreadedFileWorker::Close( RageFileBasic *pFile )
 {
-	ASSERT( m_pChildDriver != NULL ); /* how did you get a file to begin with? */
+	ASSERT( m_pChildDriver != nullptr ); /* how did you get a file to begin with? */
 
 	if( pFile == NULL )
 		return;
@@ -353,7 +353,7 @@ void ThreadedFileWorker::Close( RageFileBasic *pFile )
 
 int ThreadedFileWorker::GetFileSize( RageFileBasic *&pFile )
 {
-	ASSERT( m_pChildDriver != NULL ); /* how did you get a file to begin with? */
+	ASSERT( m_pChildDriver != nullptr ); /* how did you get a file to begin with? */
 	
 	/* If we're currently in a timed-out state, fail. */
 	if( IsTimedOut() )
@@ -381,7 +381,7 @@ int ThreadedFileWorker::GetFileSize( RageFileBasic *&pFile )
 
 int ThreadedFileWorker::GetFD( RageFileBasic *&pFile )
 {
-	ASSERT( m_pChildDriver != NULL ); /* how did you get a file to begin with? */
+	ASSERT( m_pChildDriver != nullptr ); /* how did you get a file to begin with? */
 	
 	/* If we're currently in a timed-out state, fail. */
 	if( IsTimedOut() )
@@ -409,7 +409,7 @@ int ThreadedFileWorker::GetFD( RageFileBasic *&pFile )
 
 int ThreadedFileWorker::Seek( RageFileBasic *&pFile, int iPos, RString &sError )
 {
-	ASSERT( m_pChildDriver != NULL ); /* how did you get a file to begin with? */
+	ASSERT( m_pChildDriver != nullptr ); /* how did you get a file to begin with? */
 
 	/* If we're currently in a timed-out state, fail. */
 	if( IsTimedOut() )
@@ -444,7 +444,7 @@ int ThreadedFileWorker::Seek( RageFileBasic *&pFile, int iPos, RString &sError )
 
 int ThreadedFileWorker::Read( RageFileBasic *&pFile, void *pBuf, int iSize, RString &sError )
 {
-	ASSERT( m_pChildDriver != NULL ); /* how did you get a file to begin with? */
+	ASSERT( m_pChildDriver != nullptr ); /* how did you get a file to begin with? */
 
 	/* If we're currently in a timed-out state, fail. */
 	if( IsTimedOut() )
@@ -486,7 +486,7 @@ int ThreadedFileWorker::Read( RageFileBasic *&pFile, void *pBuf, int iSize, RStr
 
 int ThreadedFileWorker::Write( RageFileBasic *&pFile, const void *pBuf, int iSize, RString &sError )
 {
-	ASSERT( m_pChildDriver != NULL ); /* how did you get a file to begin with? */
+	ASSERT( m_pChildDriver != nullptr ); /* how did you get a file to begin with? */
 
 	/* If we're currently in a timed-out state, fail. */
 	if( IsTimedOut() )
@@ -527,7 +527,7 @@ int ThreadedFileWorker::Write( RageFileBasic *&pFile, const void *pBuf, int iSiz
 
 int ThreadedFileWorker::Flush( RageFileBasic *&pFile, RString &sError )
 {
-	ASSERT( m_pChildDriver != NULL ); /* how did you get a file to begin with? */
+	ASSERT( m_pChildDriver != nullptr ); /* how did you get a file to begin with? */
 
 	/* If we're currently in a timed-out state, fail. */
 	if( IsTimedOut() )
@@ -562,7 +562,7 @@ int ThreadedFileWorker::Flush( RageFileBasic *&pFile, RString &sError )
 
 RageFileBasic *ThreadedFileWorker::Copy( RageFileBasic *&pFile, RString &sError )
 {
-	ASSERT( m_pChildDriver != NULL ); /* how did you get a file to begin with? */
+	ASSERT( m_pChildDriver != nullptr ); /* how did you get a file to begin with? */
 
 	/* If we're currently in a timed-out state, fail. */
 	if( IsTimedOut() )
@@ -619,7 +619,7 @@ bool ThreadedFileWorker::PopulateFileSet( FileSet &fs, const RString &sPath )
 
 int ThreadedFileWorker::Move( const RString &sOldPath, const RString &sNewPath )
 {
-	ASSERT( m_pChildDriver != NULL ); /* how did you get a file to begin with? */
+	ASSERT( m_pChildDriver != nullptr ); /* how did you get a file to begin with? */
 
 	/* If we're currently in a timed-out state, fail. */
 	if( IsTimedOut() )
@@ -639,7 +639,7 @@ int ThreadedFileWorker::Move( const RString &sOldPath, const RString &sNewPath )
 
 int ThreadedFileWorker::Remove( const RString &sPath )
 {
-	ASSERT( m_pChildDriver != NULL ); /* how did you get a file to begin with? */
+	ASSERT( m_pChildDriver != nullptr ); /* how did you get a file to begin with? */
 
 	/* If we're currently in a timed-out state, fail. */
 	if( IsTimedOut() )
@@ -710,7 +710,7 @@ public:
 
 	~RageFileObjTimeout()
 	{
-		if( m_pFile != NULL )
+		if( m_pFile != nullptr )
 		{
 			Flush();
 			m_pWorker->Close( m_pFile );
@@ -853,13 +853,13 @@ public:
 
 	void SetWorker( ThreadedFileWorker *pWorker )
 	{
-		ASSERT( pWorker != NULL );
+		ASSERT( pWorker != nullptr );
 		m_pWorker = pWorker;
 	}
 
 	void PopulateFileSet( FileSet &fs, const RString &sPath )
 	{
-		ASSERT( m_pWorker != NULL );
+		ASSERT( m_pWorker != nullptr );
 		m_pWorker->PopulateFileSet( fs, sPath );
 	}
 

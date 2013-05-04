@@ -24,7 +24,7 @@ public:
 	/** 
 	 * @brief Determine if this actor is presently loaded.
 	 * @return true if it is loaded, or false otherwise. */
-	bool IsLoaded() const		{ return m_pActor != NULL; }
+	bool IsLoaded() const		{ return m_pActor != nullptr; }
 	void Load( Actor *pActor );	// transfer pointer
 	void Load( const RString &sPath );
 	void LoadB( const RString &sMetricsGroup, const RString &sElement );	// load a background and set up LuaThreadVariables for recursive loading

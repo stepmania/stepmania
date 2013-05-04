@@ -770,14 +770,14 @@ void ScreenManager::PopAllScreens()
 void ScreenManager::PostMessageToTopScreen( ScreenMessage SM, float fDelay )
 {
 	Screen* pTopScreen = GetTopScreen();
-	if( pTopScreen != NULL )
+	if( pTopScreen != nullptr )
 		pTopScreen->PostScreenMessage( SM, fDelay );
 }
 
 void ScreenManager::SendMessageToTopScreen( ScreenMessage SM )
 {
 	Screen* pTopScreen = GetTopScreen();
-	if( pTopScreen != NULL )
+	if( pTopScreen != nullptr )
 		pTopScreen->HandleScreenMessage( SM );
 }
 
@@ -858,7 +858,7 @@ public:
 	static int GetTopScreen( T* p, lua_State *L )
 	{
 		Actor *pScreen = p->GetTopScreen();
-		if( pScreen != NULL )
+		if( pScreen != nullptr )
 			pScreen->PushSelf(L);
 		else
 			lua_pushnil( L );

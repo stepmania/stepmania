@@ -107,7 +107,7 @@ RageMovieTexture *RageMovieTexture::Create( RageTextureID ID )
 		}
 		
 		RageMovieTextureDriver *pDriver = dynamic_cast<RageMovieTextureDriver *>( pDriverBase );
-		ASSERT( pDriver != NULL );
+		ASSERT( pDriver != nullptr );
 
 		RString sError;
 		ret = pDriver->Create( ID, sError );

@@ -69,13 +69,13 @@ void RageSoundManager::Shutdown()
 
 void RageSoundManager::StartMixing( RageSoundBase *pSound )
 {
-	if( m_pDriver != NULL )
+	if( m_pDriver != nullptr )
 		m_pDriver->StartMixing( pSound );
 }
 
 void RageSoundManager::StopMixing( RageSoundBase *pSound )
 {
-	if( m_pDriver != NULL )
+	if( m_pDriver != nullptr )
 		m_pDriver->StopMixing( pSound );
 }
 
@@ -118,7 +118,7 @@ void RageSoundManager::Update()
 
 	g_SoundManMutex.Unlock(); /* finished with m_mapPreloadedSounds */
 
-	if( m_pDriver != NULL )
+	if( m_pDriver != nullptr )
 		m_pDriver->Update();
 }
 

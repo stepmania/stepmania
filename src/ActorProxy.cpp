@@ -16,7 +16,7 @@ bool ActorProxy::EarlyAbortDraw() const
 
 void ActorProxy::DrawPrimitives()
 {
-	if( m_pActorTarget != NULL )
+	if( m_pActorTarget != nullptr )
 	{
 		bool bVisible = m_pActorTarget->GetVisible();
 		m_pActorTarget->SetVisible( true );
@@ -47,7 +47,7 @@ public:
 	static int GetTarget( T* p, lua_State *L )
 	{
 		Actor *pTarget = p->GetTarget();
-		if( pTarget != NULL )
+		if( pTarget != nullptr )
 			pTarget->PushSelf( L );
 		else
 			lua_pushnil( L );

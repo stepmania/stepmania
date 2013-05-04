@@ -146,7 +146,7 @@ static void parent_process( int to_child, const CrashData *crash )
 	/* 4. Write RecentLogs. */
 	int cnt = 0;
 	const char *ps[1024];
-	while( cnt < 1024 && (ps[cnt] = RageLog::GetRecentLog( cnt )) != NULL )
+	while( cnt < 1024 && (ps[cnt] = RageLog::GetRecentLog( cnt )) != nullptr )
 		++cnt;
 
 	parent_write(to_child, &cnt, sizeof(cnt));

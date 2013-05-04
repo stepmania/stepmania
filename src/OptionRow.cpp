@@ -61,7 +61,7 @@ void OptionRow::Clear()
 	FOREACH_PlayerNumber( p )
 		m_Underline[p].clear();
 
-	if( m_pHand != NULL )
+	if( m_pHand != nullptr )
 	{
 		for (RString const &m : m_pHand->m_vsReloadRowMessages)
 			MESSAGEMAN->Unsubscribe( this, m );
@@ -197,7 +197,7 @@ RString OptionRow::GetRowTitle() const
 		if( GAMESTATE->m_pCurCourse )
 		{
 			const Trail* pTrail = GAMESTATE->m_pCurTrail[GAMESTATE->GetMasterPlayerNumber()];
-			ASSERT( pTrail != NULL );
+			ASSERT( pTrail != nullptr );
 			const int iNumCourseEntries = pTrail->m_vEntries.size();
 			if( iNumCourseEntries > CommonMetrics::MAX_COURSE_ENTRIES_BEFORE_VARIOUS )
 				bShowBpmInSpeedTitle = false;
@@ -216,7 +216,7 @@ RString OptionRow::GetRowTitle() const
 				const Course *pCourse = GAMESTATE->m_pCurCourse;
 				StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
 				const Trail* pTrail = pCourse->GetTrail( st );
-				ASSERT( pTrail != NULL );
+				ASSERT( pTrail != nullptr );
 				pTrail->GetDisplayBpms( bpms );
 			}
 
@@ -651,7 +651,7 @@ void OptionRow::SetModIcon( PlayerNumber pn, const RString &sText, GameCommand &
 	msg.SetParam( "GameCommand", &gc );
 	msg.SetParam( "Text", sText );
 	m_sprFrame->HandleMessage( msg );
-	if( m_ModIcons[pn] != NULL )
+	if( m_ModIcons[pn] != nullptr )
 		m_ModIcons[pn]->Set( sText );
 }
 

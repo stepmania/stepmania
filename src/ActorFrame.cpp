@@ -145,7 +145,7 @@ void ActorFrame::AddChild( Actor *pActor )
 		Dialog::OK( ssprintf("Actor \"%s\" adds child \"%s\" more than once", GetLineage().c_str(), pActor->GetName().c_str()) );
 #endif
 
-	ASSERT( pActor != NULL );
+	ASSERT( pActor != nullptr );
 	ASSERT( (void*)pActor != (void*)0xC0000005 );
 	m_SubActors.push_back( pActor );
 
@@ -285,14 +285,14 @@ void ActorFrame::PushChildrenTable( lua_State *L )
 void ActorFrame::PlayCommandOnChildren( const RString &sCommandName, const LuaReference *pParamTable )
 {
 	const apActorCommands *pCmd = GetCommand( sCommandName );
-	if( pCmd != NULL )
+	if( pCmd != nullptr )
 		RunCommandsOnChildren( *pCmd, pParamTable );
 }
 
 void ActorFrame::PlayCommandOnLeaves( const RString &sCommandName, const LuaReference *pParamTable )
 {
 	const apActorCommands *pCmd = GetCommand( sCommandName );
-	if( pCmd != NULL )
+	if( pCmd != nullptr )
 		RunCommandsOnLeaves( **pCmd, pParamTable );
 }
 

@@ -149,7 +149,7 @@ bool BeginnerHelper::Init( int iDancePadType )
 
 		// Load character data
 		const Character *Character = GAMESTATE->m_pCurCharacters[pl];
-		ASSERT( Character != NULL );
+		ASSERT( Character != nullptr );
 
 		m_pDancer[pl]->SetName( ssprintf("PlayerP%d",pl+1) );
 
@@ -204,7 +204,7 @@ void BeginnerHelper::AddPlayer( PlayerNumber pn, const NoteData &ns )
 		return;
 	
 	const Character *Character = GAMESTATE->m_pCurCharacters[pn];
-	ASSERT( Character != NULL );
+	ASSERT( Character != nullptr );
 	if( !DoesFileExist(Character->GetModelPath()) )
 		return;
 

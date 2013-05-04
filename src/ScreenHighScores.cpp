@@ -116,9 +116,9 @@ void ScoreScroller::ConfigureActor( Actor *pActor, int iItem )
 	const ScoreRowItemData &data = m_vScoreRowItemData[iItem];
 
 	Message msg("Set");
-	if( data.m_pSong != NULL )
+	if( data.m_pSong != nullptr )
 		msg.SetParam( "Song", data.m_pSong );
-	if( data.m_pCourse != NULL )
+	if( data.m_pCourse != nullptr )
 		msg.SetParam( "Course", data.m_pCourse );
 
 
@@ -133,7 +133,7 @@ void ScoreScroller::ConfigureActor( Actor *pActor, int iItem )
 		Difficulty dc = iter.first;
 		StepsType st = iter.second;
 
-		if( data.m_pSong != NULL )
+		if( data.m_pSong != nullptr )
 		{
 			const Song* pSong = data.m_pSong;
 			Steps *pSteps = SongUtil::GetStepsByDifficulty( pSong, st, dc, false );
@@ -141,7 +141,7 @@ void ScoreScroller::ConfigureActor( Actor *pActor, int iItem )
 				pSteps = NULL;
 			LuaHelpers::Push( L, pSteps );
 		}
-		else if( data.m_pCourse != NULL )
+		else if( data.m_pCourse != nullptr )
 		{
 			const Course* pCourse = data.m_pCourse;
 			Trail *pTrail = pCourse->GetTrail( st, dc );

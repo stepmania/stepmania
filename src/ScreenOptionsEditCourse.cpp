@@ -335,7 +335,7 @@ void ScreenOptionsEditCourse::ExportOptions( int iRow, const vector<PlayerNumber
 				if( pSong )
 				{
 					Steps *pSteps = this->GetStepsForEntry( iEntryIndex );
-					ASSERT_M( pSteps != NULL, "No Steps for this Song!" );
+					ASSERT_M( pSteps != nullptr, "No Steps for this Song!" );
 					CourseEntry ce;
 					ce.songID.FromSong( pSong );
 					ce.stepsCriteria.m_difficulty = pSteps->GetDifficulty();
@@ -395,7 +395,7 @@ void ScreenOptionsEditCourse::SetCurrentSong()
 			if( index != 0 )
 				pSong = m_vpSongs[ index - 1 ];
 		}
-		if ( pSong != NULL )
+		if ( pSong != nullptr )
 		{
 			GAMESTATE->m_pCurSong.Set( pSong );
 		}
@@ -412,7 +412,7 @@ void ScreenOptionsEditCourse::SetCurrentSteps()
 		OptionRow &row = *m_pRows[ EntryIndexAndRowTypeToRow(iEntryIndex, RowType_Steps) ];
 		int iStepsIndex = row.GetOneSharedSelection();
 		const EditCourseOptionRowHandlerSteps *pHand = dynamic_cast<const EditCourseOptionRowHandlerSteps *>( row.GetHandler() );
-		ASSERT( pHand != NULL );
+		ASSERT( pHand != nullptr );
 		Steps *pSteps = pHand->GetSteps( iStepsIndex );
 		GAMESTATE->m_pCurSteps[PLAYER_1].Set( pSteps );
 	}

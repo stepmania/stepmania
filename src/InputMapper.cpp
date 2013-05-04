@@ -1111,7 +1111,7 @@ void InputMappings::WriteMappings( const InputScheme *pInputScheme, RString sFil
 	ini.DeleteKey( pInputScheme->m_szName );
 
 	XNode *pKey = ini.GetChild( pInputScheme->m_szName );
-	if( pKey != NULL )
+	if( pKey != nullptr )
 		ini.RemoveChild( pKey );
 	pKey = ini.AppendChild( pInputScheme->m_szName );
 

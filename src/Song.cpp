@@ -508,7 +508,7 @@ void Song::TidyUpData( bool fromCache, bool /* duringCache */ )
 			// Don't use this file.
 			m_sMusicFile = "";
 		}
-		else if ( Sample != NULL )
+		else if ( Sample != nullptr )
 		{
 			m_fMusicLengthSeconds = Sample->GetLength() / 1000.0f;
 			delete Sample;
@@ -919,12 +919,12 @@ bool Song::SongCompleteForStyle( const Style *st ) const
 
 bool Song::HasStepsType( StepsType st ) const
 {
-	return SongUtil::GetOneSteps( this, st ) != NULL;
+	return SongUtil::GetOneSteps( this, st ) != nullptr;
 }
 
 bool Song::HasStepsTypeAndDifficulty( StepsType st, Difficulty dc ) const
 {
-	return SongUtil::GetOneSteps( this, st, dc ) != NULL;
+	return SongUtil::GetOneSteps( this, st, dc ) != nullptr;
 }
 
 void Song::Save()
@@ -1526,7 +1526,7 @@ void Song::FreeAllLoadedFromProfile( ProfileSlot slot, const set<Steps*> *setInU
 			continue;
 		if( slot != ProfileSlot_Invalid && pSteps->GetLoadedFromProfileSlot() != slot )
 			continue;
-		if( setInUse != NULL && setInUse->find(pSteps) != setInUse->end() )
+		if( setInUse != nullptr && setInUse->find(pSteps) != setInUse->end() )
 			continue;
 		apToRemove.push_back( pSteps );
 	}

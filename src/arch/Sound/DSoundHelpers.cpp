@@ -139,7 +139,7 @@ RString DSound::Init()
 
 DSound::~DSound()
 {
-	if( m_pDS != NULL )
+	if( m_pDS != nullptr )
 		m_pDS->Release();
 	CoUninitialize();
 }
@@ -310,7 +310,7 @@ static bool contained( int iStart, int iEnd, int iPos )
 
 DSoundBuf::~DSoundBuf()
 {
-	if( m_pBuffer != NULL )
+	if( m_pBuffer != nullptr )
 		m_pBuffer->Release();
 	delete [] m_pTempBuffer;
 }

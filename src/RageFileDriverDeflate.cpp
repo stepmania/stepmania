@@ -400,7 +400,7 @@ RageFileObjInflate *GunzipFile( RageFileBasic *pFile_, RString &sError, uint32_t
 	
 	uint32_t iExpectedCRC32 = FileReading::read_u32_le( *pFile, sError );
 	uint32_t iUncompressedSize = FileReading::read_u32_le( *pFile, sError );
-	if( iCRC32 != NULL )
+	if( iCRC32 != nullptr )
 		*iCRC32 = iExpectedCRC32;
 	
 	FileReading::Seek( *pFile, iDataPos, sError );
@@ -414,7 +414,7 @@ RageFileObjInflate *GunzipFile( RageFileBasic *pFile_, RString &sError, uint32_t
 	pInflateFile->DeleteFileWhenFinished();
 
 	/* Enable CRC calculation only if the caller is interested. */
-	if( iCRC32 != NULL )
+	if( iCRC32 != nullptr )
 		pInflateFile->EnableCRC32();
 
 	return pInflateFile;

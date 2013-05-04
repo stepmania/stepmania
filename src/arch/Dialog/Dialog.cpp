@@ -67,13 +67,13 @@ static bool DialogsEnabled()
 
 void Dialog::Init()
 {
-	if( g_pImpl != NULL )
+	if( g_pImpl != nullptr )
 		return;
 
 	g_pImpl = DialogDriver::Create();
 
 	// DialogDriver_Null should have worked, at least.
-	ASSERT( g_pImpl != NULL );
+	ASSERT( g_pImpl != nullptr );
 }
 
 void Dialog::Shutdown()

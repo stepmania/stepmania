@@ -177,7 +177,7 @@ bool StepMania::GetHighResolutionTextures()
 
 static void StartDisplay()
 {
-	if( DISPLAY != NULL )
+	if( DISPLAY != nullptr )
 		return; // already started
 
 	DISPLAY = CreateDisplay();
@@ -808,10 +808,10 @@ static void SwitchToLastPlayedGame()
 
 void StepMania::ChangeCurrentGame( const Game* g )
 {
-	ASSERT( g != NULL );
-	ASSERT( GAMESTATE != NULL );
-	ASSERT( ANNOUNCER != NULL );
-	ASSERT( THEME != NULL );
+	ASSERT( g != nullptr );
+	ASSERT( GAMESTATE != nullptr );
+	ASSERT( ANNOUNCER != nullptr );
+	ASSERT( THEME != nullptr );
 
 	GAMESTATE->SetCurGame( g );
 
@@ -1094,11 +1094,11 @@ int main(int argc, char* argv[])
 		 * theme into the loading window. */
 		RString sError;
 		RageSurface *pSurface = RageSurfaceUtils::LoadFile( THEME->GetPathG( "Common", "window icon" ), sError );
-		if( pSurface != NULL )
+		if( pSurface != nullptr )
 			pLoadingWindow->SetIcon( pSurface );
 		delete pSurface;
 		pSurface = RageSurfaceUtils::LoadFile( THEME->GetPathG("Common","splash"), sError );
-		if( pSurface != NULL )
+		if( pSurface != nullptr )
 			pLoadingWindow->SetSplash( pSurface );
 		delete pSurface;
 	}

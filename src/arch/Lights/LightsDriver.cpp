@@ -23,7 +23,7 @@ void LightsDriver::Create( const RString &sDrivers, vector<LightsDriver *> &Add 
 		}
 
 		LightsDriver *pDriver = dynamic_cast<LightsDriver *>( pRet );
-		ASSERT( pDriver != NULL );
+		ASSERT( pDriver != nullptr );
 
 		LOG->Info( "Lights driver: %s", Driver.c_str() );
 		Add.push_back( pDriver );

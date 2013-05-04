@@ -400,7 +400,7 @@ void ScreenServiceAction::BeginScreen()
 		else if( s == "SyncEditsMachineToMemoryCard" )		pfn = SyncEditsMachineToMemoryCard;
 		else if( s == "ResetPreferences" )			pfn = ResetPreferences;
 		
-		ASSERT_M( pfn != NULL, s );
+		ASSERT_M( pfn != nullptr, s );
 		
 		RString sResult = pfn();
 		vsResults.push_back( sResult );

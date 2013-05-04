@@ -1359,7 +1359,7 @@ void RageCompiledGeometryHWOGL::Draw( int iMeshIndex ) const
 
 #define BUFFER_OFFSET(o) ((char*)(o))
 
-	ASSERT( glDrawRangeElements != NULL );
+	ASSERT( glDrawRangeElements != nullptr );
 	glDrawRangeElements( 
 		GL_TRIANGLES, 
 		meshInfo.iVertexStart,	// minimum array index contained in indices
@@ -1735,7 +1735,7 @@ void RageDisplay_Legacy::SetBlendMode( BlendMode mode )
 {
 	glEnable(GL_BLEND);
 
-	if (glBlendEquation != NULL)
+	if (glBlendEquation != nullptr)
 	{
 		if (mode == BLEND_INVERT_DEST)
 			glBlendEquation( GL_FUNC_SUBTRACT );
@@ -2487,7 +2487,7 @@ void RageDisplay_Legacy::SetRenderTarget( unsigned iTexture, bool bPreserveTextu
 	}
 
 	/* If we already had a render target, disable it. */
-	if (g_pCurrentRenderTarget != NULL)
+	if (g_pCurrentRenderTarget != nullptr)
 		SetRenderTarget(0, true);
 
 	/* Enable the new render target. */

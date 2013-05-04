@@ -47,7 +47,7 @@ void PercentageDisplay::LoadFromNode( const XNode* pNode )
 	this->AddChild( &m_textPercent );
 
 	pChild = pNode->GetChild( "PercentRemainder" );
-	if( !ShowDancePointsNotPercentage()  &&  pChild != NULL )
+	if( !ShowDancePointsNotPercentage()  &&  pChild != nullptr )
 	{
 		m_bUseRemainder = true;
 		m_textPercentRemainder.LoadFromNode( pChild );

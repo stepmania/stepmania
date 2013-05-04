@@ -351,7 +351,7 @@ bool NoteData::IsHoldHeadOrBodyAtRow( int iTrack, int iRow, int *pHeadRow ) cons
 	const TapNote &tn = GetTapNote( iTrack, iRow );
 	if( tn.type == TapNote::hold_head )
 	{
-		if( pHeadRow != NULL )
+		if( pHeadRow != nullptr )
 			*pHeadRow = iRow;
 		return true;
 	}

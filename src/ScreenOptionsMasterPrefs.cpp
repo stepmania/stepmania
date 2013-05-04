@@ -101,9 +101,9 @@ static void MoveMap( int &sel, IPreference &opt, bool ToSel, const T *mapping, u
 template <class T>
 static void MoveMap( int &sel, const ConfOption *pConfOption, bool ToSel, const T *mapping, unsigned cnt )
 {
-	ASSERT( pConfOption != NULL );
+	ASSERT( pConfOption != nullptr );
 	IPreference *pPref = IPreference::GetPreferenceByName( pConfOption->m_sPrefName );
-	ASSERT_M( pPref != NULL, pConfOption->m_sPrefName );
+	ASSERT_M( pPref != nullptr, pConfOption->m_sPrefName );
 
 	MoveMap( sel, *pPref, ToSel, mapping, cnt );
 }
@@ -112,7 +112,7 @@ template <class T>
 static void MovePref( int &iSel, bool bToSel, const ConfOption *pConfOption )
 {
 	IPreference *pPref = IPreference::GetPreferenceByName( pConfOption->m_sPrefName );
-	ASSERT_M( pPref != NULL, pConfOption->m_sPrefName );
+	ASSERT_M( pPref != nullptr, pConfOption->m_sPrefName );
 
 	if( bToSel )
 	{
@@ -132,7 +132,7 @@ template <>
 void MovePref<bool>( int &iSel, bool bToSel, const ConfOption *pConfOption )
 {
 	IPreference *pPref = IPreference::GetPreferenceByName( pConfOption->m_sPrefName );
-	ASSERT_M( pPref != NULL, pConfOption->m_sPrefName );
+	ASSERT_M( pPref != nullptr, pConfOption->m_sPrefName );
 
 	if( bToSel )
 	{
@@ -790,7 +790,7 @@ ConfOption *ConfOption::Find( RString name )
 
 void ConfOption::UpdateAvailableOptions()
 {
-	if( MakeOptionsListCB != NULL )
+	if( MakeOptionsListCB != nullptr )
 	{
 		names.clear();
 		MakeOptionsListCB( names );

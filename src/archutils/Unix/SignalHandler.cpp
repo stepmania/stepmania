@@ -160,7 +160,7 @@ void SignalHandler::OnClose( handler h )
 		if( bUseAltSigStack )
 			p = CreateStack( AltStackSize );
 
-		if( p != NULL )
+		if( p != nullptr )
 		{
 			stack_t ss;
 			ss.ss_sp = (char*)p; /* cast for Darwin */
@@ -176,7 +176,7 @@ void SignalHandler::OnClose( handler h )
 		struct sigaction sa;
 
 		sa.sa_flags = 0;
-		if( p != NULL )
+		if( p != nullptr )
 			sa.sa_flags |= SA_ONSTACK;
 		sa.sa_flags |= SA_NODEFER;
 		sa.sa_flags |= SA_SIGINFO;

@@ -315,14 +315,14 @@ MovieDecoder_FFMpeg::~MovieDecoder_FFMpeg()
 		avcodec::sws_freeContext(m_swsctx);
 		m_swsctx = NULL;
 	}
-    if (m_avioContext != NULL )
+    if (m_avioContext != nullptr )
     {
         RageFile *file = (RageFile *)m_avioContext->opaque;
         file->Close();
         delete file;
         avcodec::av_free(m_avioContext);
     }
-    if ( m_buffer != NULL )
+    if ( m_buffer != nullptr )
     {
         avcodec::av_free(m_buffer);
     }
@@ -665,7 +665,7 @@ RString MovieDecoder_FFMpeg::OpenCodec()
 {
 	Init();
 
-	ASSERT( m_pStream != NULL );
+	ASSERT( m_pStream != nullptr );
 	if( m_pStream->codec->codec )
 		avcodec::avcodec_close( m_pStream->codec );
 
@@ -685,7 +685,7 @@ RString MovieDecoder_FFMpeg::OpenCodec()
 	int ret = avcodec::avcodec_open2( m_pStream->codec, pCodec, NULL );
 	if( ret < 0 )
 		return RString( averr_ssprintf(ret, "Couldn't open codec \"%s\"", pCodec->name) );
-	ASSERT( m_pStream->codec->codec != NULL );
+	ASSERT( m_pStream->codec->codec != nullptr );
 
 	return RString();
 }

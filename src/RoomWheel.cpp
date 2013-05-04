@@ -180,7 +180,7 @@ void RoomWheel::Move( int n )
 	if( n == 0 && m_iSelection >= m_offset )
 	{
 		const RoomWheelItemData* data = GetItem( m_iSelection-m_offset );
-		if( data != NULL )
+		if( data != nullptr )
 			SCREENMAN->PostMessageToTopScreen( SM_RoomInfoDeploy, 0 );
 	}
 	else

@@ -298,7 +298,7 @@ MemoryCardManager::~MemoryCardManager()
 	// Unregister with Lua.
 	LUA->UnsetGlobal( "MEMCARDMAN" );
 
-	ASSERT( g_pWorker != NULL );
+	ASSERT( g_pWorker != nullptr );
 	SAFE_DELETE(g_pWorker);
 
 	FOREACH_PlayerNumber( pn )

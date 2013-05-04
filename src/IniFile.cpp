@@ -165,7 +165,7 @@ bool IniFile::DeleteKey(const RString &keyname)
 bool IniFile::RenameKey(const RString &from, const RString &to)
 {
 	// If to already exists, do nothing.
-	if( GetChild(to) != NULL )
+	if( GetChild(to) != nullptr )
 		return false;
 
 	XNode* pNode = GetChild( from );

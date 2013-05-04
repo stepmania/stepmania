@@ -94,11 +94,11 @@ RString UnlockManager::FindEntryID( const RString &sName ) const
 	const UnlockEntry *pEntry = NULL;
 	
 	const Song *pSong = SONGMAN->FindSong( sName );
-	if( pSong != NULL )
+	if( pSong != nullptr )
 		pEntry = FindSong( pSong );
 
 	const Course *pCourse = SONGMAN->FindCourse( sName );
-	if( pCourse != NULL )
+	if( pCourse != nullptr )
 		pEntry = FindCourse( pCourse );
 	
 	if( pEntry == NULL )
@@ -146,7 +146,7 @@ int UnlockManager::SongIsLocked( const Song *pSong ) const
 	if( PREFSMAN->m_bUseUnlockSystem )
 	{
 		const UnlockEntry *p = FindSong( pSong );
-		if( p != NULL && p->IsLocked() )
+		if( p != nullptr && p->IsLocked() )
 		{
 			iRet |= LOCKED_LOCK;
 			if( !p->m_sEntryID.empty() && m_RouletteCodes.find( p->m_sEntryID ) != m_RouletteCodes.end() )
@@ -709,7 +709,7 @@ void UnlockManager::PreferUnlockEntryID( RString sUnlockEntryID )
 		if( pEntry.m_sEntryID != sUnlockEntryID )
 			continue;
 
-		if( pEntry.m_Song.ToSong() != NULL )
+		if( pEntry.m_Song.ToSong() != nullptr )
 			GAMESTATE->m_pPreferredSong = pEntry.m_Song.ToSong();
 		if( pEntry.m_Course.ToCourse() )
 			GAMESTATE->m_pPreferredCourse = pEntry.m_Course.ToCourse();

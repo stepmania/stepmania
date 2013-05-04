@@ -258,7 +258,7 @@ void GameCommand::LoadOne( const Command& cmd )
 		// This must be processed after "song" and "style" commands.
 		if( !m_bInvalid )
 		{
-			Song *pSong = (m_pSong != NULL)? m_pSong:GAMESTATE->m_pCurSong;
+			Song *pSong = (m_pSong != nullptr)? m_pSong:GAMESTATE->m_pCurSong;
 			const Style *pStyle = m_pStyle ? m_pStyle : GAMESTATE->GetCurrentStyle();
 			if( pSong == NULL || pStyle == NULL )
 				RageException::Throw( "Must set Song and Style to set Steps." );
@@ -293,7 +293,7 @@ void GameCommand::LoadOne( const Command& cmd )
 		// This must be processed after "course" and "style" commands.
 		if( !m_bInvalid )
 		{
-			Course *pCourse = (m_pCourse != NULL)? m_pCourse:GAMESTATE->m_pCurCourse;
+			Course *pCourse = (m_pCourse != nullptr)? m_pCourse:GAMESTATE->m_pCurCourse;
 			const Style *pStyle = m_pStyle ? m_pStyle : GAMESTATE->GetCurrentStyle();
 			if( pCourse == NULL || pStyle == NULL )
 				RageException::Throw( "Must set Course and Style to set Steps." );
@@ -464,10 +464,10 @@ bool GameCommand::IsPlayable( RString *why ) const
 
 	/* Don't allow a PlayMode that's incompatible with our current Style (if set),
 	 * and vice versa. */
-	if( m_pm != PlayMode_Invalid || m_pStyle != NULL )
+	if( m_pm != PlayMode_Invalid || m_pStyle != nullptr )
 	{
 		const PlayMode pm = (m_pm != PlayMode_Invalid) ? m_pm : GAMESTATE->m_PlayMode;
-		const Style *style = (m_pStyle != NULL)? m_pStyle: GAMESTATE->GetCurrentStyle();
+		const Style *style = (m_pStyle != nullptr)? m_pStyle: GAMESTATE->GetCurrentStyle();
 		if( !AreStyleAndPlayModeCompatible( style, pm ) )
 		{
 			if( why )
@@ -572,7 +572,7 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 	if( m_pm != PlayMode_Invalid )
 		GAMESTATE->m_PlayMode.Set( m_pm );
 
-	if( m_pStyle != NULL )
+	if( m_pStyle != nullptr )
 	{
 		GAMESTATE->SetCurrentStyle( m_pStyle );
 
@@ -718,16 +718,16 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 bool GameCommand::IsZero() const
 {
 	if( 	m_pm != PlayMode_Invalid ||
-		m_pStyle != NULL ||
+		m_pStyle != nullptr ||
 		m_dc != Difficulty_Invalid ||
 		m_sAnnouncer != "" ||
 		m_sPreferredModifiers != "" ||
 		m_sStageModifiers != "" ||
-		m_pSong != NULL || 
-		m_pSteps != NULL || 
-		m_pCourse != NULL || 
-		m_pTrail != NULL || 
-		m_pCharacter != NULL || 
+		m_pSong != nullptr || 
+		m_pSteps != nullptr || 
+		m_pCourse != nullptr || 
+		m_pTrail != nullptr || 
+		m_pCharacter != nullptr || 
 		m_CourseDifficulty != Difficulty_Invalid ||
 		!m_sSongGroup.empty() ||
 		m_SortOrder != SortOrder_Invalid ||

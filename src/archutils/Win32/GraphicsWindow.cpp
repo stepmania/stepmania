@@ -290,7 +290,7 @@ void GraphicsWindow::CreateGraphicsWindow( const VideoModeParams &p, bool bForce
 		/* If an old window exists, transfer focus to the new window before
 		 * deleting it, or some other window may temporarily get focus, which
 		 * can cause it to be resized. */
-		if( g_hWndMain != NULL )
+		if( g_hWndMain != nullptr )
 		{
 			// While we change to the new window, don't do ChangeDisplaySettings in WM_ACTIVATE.
 			g_bRecreatingVideoMode = true;
@@ -318,14 +318,14 @@ void GraphicsWindow::CreateGraphicsWindow( const VideoModeParams &p, bool bForce
 	} while(0);
 
 	// Update the window icon.
-	if( g_hIcon != NULL )
+	if( g_hIcon != nullptr )
 	{
 		SetClassLong( g_hWndMain, GCL_HICON, (LONG) LoadIcon(NULL,IDI_APPLICATION) );
 		DestroyIcon( g_hIcon );
 		g_hIcon = NULL;
 	}
 	g_hIcon = IconFromFile( p.sIconFile );
-	if( g_hIcon != NULL )
+	if( g_hIcon != nullptr )
 		SetClassLong( g_hWndMain, GCL_HICON, (LONG) g_hIcon );
 
 	/* The window style may change as a result of switching to or from fullscreen;
@@ -373,7 +373,7 @@ void GraphicsWindow::CreateGraphicsWindow( const VideoModeParams &p, bool bForce
 /** @brief Shut down the window, but don't reset the video mode. */
 void GraphicsWindow::DestroyGraphicsWindow()
 {
-	if( g_HDC != NULL )
+	if( g_HDC != nullptr )
 	{
 		ReleaseDC( g_hWndMain, g_HDC );
 		g_HDC = NULL;
@@ -381,7 +381,7 @@ void GraphicsWindow::DestroyGraphicsWindow()
 
 	CHECKPOINT;
 
-	if( g_hWndMain != NULL )
+	if( g_hWndMain != nullptr )
 	{
 		DestroyWindow( g_hWndMain );
 		g_hWndMain = NULL;
@@ -390,7 +390,7 @@ void GraphicsWindow::DestroyGraphicsWindow()
 
 	CHECKPOINT;
 
-	if( g_hIcon != NULL )
+	if( g_hIcon != nullptr )
 	{
 		DestroyIcon( g_hIcon );
 		g_hIcon = NULL;
@@ -475,7 +475,7 @@ void GraphicsWindow::Shutdown()
 
 HDC GraphicsWindow::GetHDC()
 {
-	ASSERT( g_HDC != NULL );
+	ASSERT( g_HDC != nullptr );
 	return g_HDC;
 }
 
@@ -495,7 +495,7 @@ void GraphicsWindow::Update()
 
 	HOOKS->SetHasFocus( g_bHasFocus );
 
-	if( g_bResolutionChanged && DISPLAY != NULL )
+	if( g_bResolutionChanged && DISPLAY != nullptr )
 	{
 		//LOG->Warn( "Changing resolution" );
 

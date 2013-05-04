@@ -735,7 +735,7 @@ void RageDisplay_Legacy::SetBlendMode( BlendMode mode )
 {
 	glEnable(GL_BLEND);
 
-	if (glBlendEquation != NULL)
+	if (glBlendEquation != nullptr)
 	{
 		if (mode == BLEND_INVERT_DEST)
 			glBlendEquation( GL_FUNC_SUBTRACT );

@@ -261,7 +261,7 @@ namespace
 		} while(0);
 
 		g_CondattrSetclock = NULL;
-		if( pLib != NULL )
+		if( pLib != nullptr )
 			dlclose( pLib );
 		pLib = NULL;
 	}
@@ -290,7 +290,7 @@ EventImpl_Pthreads::EventImpl_Pthreads( MutexImpl_Pthreads *pParent )
 	pthread_condattr_t condattr;
 	pthread_condattr_init( &condattr );
 
-	if( g_CondattrSetclock != NULL )
+	if( g_CondattrSetclock != nullptr )
 		g_CondattrSetclock( &condattr, GetClock() );
 
 	pthread_cond_init( &m_Cond, &condattr );
@@ -315,7 +315,7 @@ bool EventImpl_Pthreads::Wait( RageTimer *pTimeout )
 	 * (no condattr_setclock), pthread_cond_timedwait has an inherent race
 	 * condition: the system clock may change before we call it. */
 	timespec abstime;
-	if( g_CondattrSetclock != NULL || GetClock() == CLOCK_REALTIME )
+	if( g_CondattrSetclock != nullptr || GetClock() == CLOCK_REALTIME )
 	{
 		/* If we support condattr_setclock, we'll set the condition to use
 		 * the same clock as RageTimer and can use it directly. If the

@@ -176,13 +176,13 @@ private:
 void MovieTexture_Generic::Invalidate()
 {
 	m_uTexHandle = 0;
-	if( m_pTextureIntermediate != NULL )
+	if( m_pTextureIntermediate != nullptr )
 		m_pTextureIntermediate->Invalidate();
 }
 
 void MovieTexture_Generic::CreateTexture()
 {
-	if( m_uTexHandle || m_pRenderTarget != NULL )
+	if( m_uTexHandle || m_pRenderTarget != nullptr )
 		return;
 
 	CHECKPOINT;
@@ -214,7 +214,7 @@ void MovieTexture_Generic::CreateTexture()
 
 		m_pSurface = m_pDecoder->CreateCompatibleSurface( m_iImageWidth, m_iImageHeight,
 			TEXTUREMAN->GetPrefs().m_iMovieColorDepth == 32, fmt );
-		if( m_pTextureLock != NULL )
+		if( m_pTextureLock != nullptr )
 		{
 			delete [] m_pSurface->pixels;
 			m_pSurface->pixels = NULL;
@@ -452,17 +452,17 @@ void MovieTexture_Generic::UpdateFrame()
 	/* Just in case we were invalidated: */
 	CreateTexture();
 
-	if( m_pTextureLock != NULL )
+	if( m_pTextureLock != nullptr )
 	{
-		int iHandle = m_pTextureIntermediate != NULL? m_pTextureIntermediate->GetTexHandle(): this->GetTexHandle();
+		int iHandle = m_pTextureIntermediate != nullptr? m_pTextureIntermediate->GetTexHandle(): this->GetTexHandle();
 		m_pTextureLock->Lock( iHandle, m_pSurface );
 	}
 
 	m_pDecoder->GetFrame( m_pSurface );
-	if( m_pTextureLock != NULL )
+	if( m_pTextureLock != nullptr )
 		m_pTextureLock->Unlock( m_pSurface, true );
 
-	if( m_pRenderTarget != NULL )
+	if( m_pRenderTarget != nullptr )
 	{
 		CHECKPOINT;
 
@@ -525,7 +525,7 @@ void MovieTexture_Generic::SetPosition( float fSeconds )
 
 unsigned MovieTexture_Generic::GetTexHandle() const
 {
-	if( m_pRenderTarget != NULL )
+	if( m_pRenderTarget != nullptr )
 		return m_pRenderTarget->GetTexHandle();
 
 	return m_uTexHandle;

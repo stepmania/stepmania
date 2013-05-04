@@ -151,7 +151,7 @@ void MusicWheel::BeginScreen()
 		const vector<MusicWheelItemData *> &from = getWheelItemsData(SORT_MODE_MENU);
 		for( unsigned i=0; i<from.size(); i++ )
 		{
-			ASSERT( &*from[i]->m_pAction != NULL );
+			ASSERT( &*from[i]->m_pAction != nullptr );
 			if( from[i]->m_pAction->DescribesCurrentModeForAllPlayers() )
 			{
 				m_sLastModeMenuItem = from[i]->m_pAction->m_sName;
@@ -184,7 +184,7 @@ void MusicWheel::BeginScreen()
 
 	/* Invalidate current Song if it can't be played
 	 * because there are not enough stages remaining. */
-	if( GAMESTATE->m_pCurSong != NULL && 
+	if( GAMESTATE->m_pCurSong != nullptr && 
 		GameState::GetNumStagesMultiplierForSong( GAMESTATE->m_pCurSong ) > GAMESTATE->GetSmallestNumStagesLeftForAnyHumanPlayer() )
 	{
 		GAMESTATE->m_pCurSong.Set( NULL );
@@ -194,10 +194,10 @@ void MusicWheel::BeginScreen()
 	 * because there are not enough stages remaining. */
 	FOREACH_ENUM( PlayerNumber, p )
 	{
-		if( GAMESTATE->m_pCurSteps[p] != NULL )
+		if( GAMESTATE->m_pCurSteps[p] != nullptr )
 		{
 			vector<Steps*> vpPossibleSteps;
-			if( GAMESTATE->m_pCurSong != NULL )
+			if( GAMESTATE->m_pCurSong != nullptr )
 				SongUtil::GetPlayableSteps( GAMESTATE->m_pCurSong, vpPossibleSteps );
 			bool bStepsIsPossible = find( vpPossibleSteps.begin(), vpPossibleSteps.end(), GAMESTATE->m_pCurSteps[p] ) == vpPossibleSteps.end();
 			if( !bStepsIsPossible )
@@ -849,7 +849,7 @@ void MusicWheel::BuildWheelItemDatas( vector<MusicWheelItemData *> &arrayWheelIt
 	// init music status icons
 	for (MusicWheelItemData *WID : arrayWheelItemDatas)
 	{
-		if( WID->m_pSong != NULL )
+		if( WID->m_pSong != nullptr )
 		{
 			WID->m_Flags.bHasBeginnerOr1Meter = WID->m_pSong->IsEasy( GAMESTATE->GetCurrentStyle()->m_StepsType ) && SHOW_EASY_FLAG;
 			WID->m_Flags.bEdits = false;
@@ -859,7 +859,7 @@ void MusicWheel::BuildWheelItemDatas( vector<MusicWheelItemData *> &arrayWheelIt
 				WID->m_Flags.bEdits |= WID->m_pSong->HasEdits( type );
 			WID->m_Flags.iStagesForSong = GameState::GetNumStagesMultiplierForSong( WID->m_pSong );
 		}
-		else if( WID->m_pCourse != NULL )
+		else if( WID->m_pCourse != nullptr )
 		{
 			WID->m_Flags.bHasBeginnerOr1Meter = false;
 			WID->m_Flags.bEdits = WID->m_pCourse->IsAnEdit();

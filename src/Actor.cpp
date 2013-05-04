@@ -1249,7 +1249,7 @@ void Actor::AddCommand( const RString &sCmdName, apActorCommands apac )
 
 bool Actor::HasCommand( const RString &sCmdName ) const
 {
-	return GetCommand(sCmdName) != NULL;
+	return GetCommand(sCmdName) != nullptr;
 }
 
 const apActorCommands *Actor::GetCommand( const RString &sCommandName ) const
@@ -1268,7 +1268,7 @@ void Actor::HandleMessage( const Message &msg )
 void Actor::PlayCommandNoRecurse( const Message &msg )
 {
 	const apActorCommands *pCmd = GetCommand( msg.GetName() );
-	if( pCmd != NULL )
+	if( pCmd != nullptr )
 		RunCommands( *pCmd, &msg.GetParamTable() );
 }
 

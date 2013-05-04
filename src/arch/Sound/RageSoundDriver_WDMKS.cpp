@@ -259,7 +259,7 @@ static bool WdmGetPinPropertyMulti(
 		return false;
 
 	*ksMultipleItem = (KSMULTIPLE_ITEM*) malloc( multipleItemSize );
-	ASSERT( *ksMultipleItem != NULL );
+	ASSERT( *ksMultipleItem != nullptr );
 
 	if( !WdmSyncIoctl( hHandle, IOCTL_KS_PROPERTY, &ksPProp, sizeof(KSP_PIN), (void*)*ksMultipleItem, multipleItemSize, NULL, sError) )
 	{
@@ -440,7 +440,7 @@ void WinWdmPin::Close()
 /* Set the state of this (instantiated) pin */
 bool WinWdmPin::SetState( KSSTATE state, RString &sError )
 {
-	ASSERT( m_hHandle != NULL );
+	ASSERT( m_hHandle != nullptr );
 	return WdmSetPropertySimple( m_hHandle, &KSPROPSETID_Connection, KSPROPERTY_CONNECTION_STATE,
 		&state, sizeof(state), NULL, 0, sError );
 }
@@ -471,14 +471,14 @@ bool WinWdmPin::Instantiate( const WAVEFORMATEX *pFormat, RString &sError )
 
 KSPIN_CONNECT *WinWdmPin::MakeFormat( const WAVEFORMATEX *pFormat ) const
 {
-	ASSERT( pFormat != NULL );
+	ASSERT( pFormat != nullptr );
 
 	unsigned long iWfexSize = sizeof(WAVEFORMATEX) + pFormat->cbSize;
 	unsigned long iDataFormatSize = sizeof(KSDATAFORMAT) + iWfexSize;
 	unsigned long iSize = sizeof(KSPIN_CONNECT) + iDataFormatSize;
 
 	KSPIN_CONNECT *pPinConnect = (KSPIN_CONNECT *) malloc( iSize );
-	ASSERT( pPinConnect != NULL );
+	ASSERT( pPinConnect != nullptr );
 
 	memset( pPinConnect, 0, iSize );
 	pPinConnect->PinId				= m_iPinId;
@@ -556,7 +556,7 @@ WinWdmFilter *WinWdmFilter::Create( const RString &sFilterName, const RString &s
 	{
 		/* Create the pin with this Id */
 		WinWdmPin *pNewPin = pFilter->CreatePin( iPinId, sError );
-		if( pNewPin != NULL )
+		if( pNewPin != nullptr )
 			pFilter->m_apPins.push_back( pNewPin );
 	}
 
@@ -610,7 +610,7 @@ void WinWdmFilter::Release()
 	--m_iUsageCount;
 	if( m_iUsageCount == 0 )
 	{
-		if( m_hHandle != NULL )
+		if( m_hHandle != nullptr )
 		{
 			CloseHandle( m_hHandle );
 			m_hHandle = NULL;
@@ -779,7 +779,7 @@ WinWdmPin *WinWdmFilter::InstantiateRenderPin(
 						iPreferredSampleRate, wfx.Format.wFormatTag );
 					WinWdmPin *pPlaybackPin = InstantiateRenderPin( (WAVEFORMATEX *) &wfx, sError );
 
-					if( pPlaybackPin != NULL )
+					if( pPlaybackPin != nullptr )
 					{
 						LOG->Trace( "KS: success" );
 						return pPlaybackPin;
@@ -862,7 +862,7 @@ static bool BuildFilterList( vector<WinWdmFilter*> &aFilters, RString &sError )
 		aFilters.push_back( pNewFilter );
 	}
 
-	if( hHandle != NULL )
+	if( hHandle != nullptr )
 		SetupDiDestroyDeviceInfoList( hHandle );
 
 	return true;
@@ -1003,7 +1003,7 @@ bool WinWdmStream::Open( WinWdmFilter *pFilter,
 
 		/* Avoid any FileAlignment problems by using VirtualAlloc, which is always page aligned. */
 		p->Data = (char *) VirtualAlloc( NULL, m_iFramesPerChunk*m_iBytesPerOutputSample*m_iDeviceOutputChannels, MEM_COMMIT|MEM_RESERVE, PAGE_READWRITE );
-		ASSERT( p->Data != NULL );
+		ASSERT( p->Data != nullptr );
 		p->FrameExtent = m_iFramesPerChunk*m_iBytesPerOutputSample*m_iDeviceOutputChannels;
 		p->DataUsed = m_iFramesPerChunk*m_iBytesPerOutputSample*m_iDeviceOutputChannels;
 		p->Size = sizeof(*p);
@@ -1177,7 +1177,7 @@ void RageSoundDriver_WDMKS::MixerThread()
 	/* Enable priority boosting. */
 	SetThreadPriorityBoost( GetCurrentThread(), FALSE );
 	
-	ASSERT( m_pStream->m_pPlaybackPin != NULL );
+	ASSERT( m_pStream->m_pPlaybackPin != nullptr );
 
 	/* Some drivers (stock USB audio in XP) misbehave if we go from KSSTATE_STOP to
 	 * KSSTATE_RUN.  Always transition through KSSTATE_PAUSE. */

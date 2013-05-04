@@ -18,14 +18,14 @@ static HGLRC g_HGLRC_Background = NULL;
 
 static void DestroyGraphicsWindowAndOpenGLContext()
 {
-	if( g_HGLRC != NULL )
+	if( g_HGLRC != nullptr )
 	{
 		wglMakeCurrent( NULL, NULL );
 		wglDeleteContext( g_HGLRC );
 		g_HGLRC = NULL;
 	}
 
-	if( g_HGLRC_Background != NULL )
+	if( g_HGLRC_Background != nullptr )
 	{
 		wglDeleteContext( g_HGLRC_Background );
 		g_HGLRC_Background = NULL;
@@ -39,7 +39,7 @@ static void DestroyGraphicsWindowAndOpenGLContext()
 void *LowLevelWindow_Win32::GetProcAddress( RString s )
 {
 	void *pRet = wglGetProcAddress( s );
-	if( pRet != NULL )
+	if( pRet != nullptr )
 		return pRet;
 
 	return ::GetProcAddress( GetModuleHandle(NULL), s );
@@ -66,8 +66,8 @@ void LowLevelWindow_Win32::GetDisplayResolutions( DisplayResolutions &out ) cons
 
 int ChooseWindowPixelFormat( const VideoModeParams &p, PIXELFORMATDESCRIPTOR *pixfmt )
 {
-	ASSERT( GraphicsWindow::GetHwnd() != NULL );
-	ASSERT( GraphicsWindow::GetHDC() != NULL );
+	ASSERT( GraphicsWindow::GetHwnd() != nullptr );
+	ASSERT( GraphicsWindow::GetHDC() != nullptr );
 
 	ZERO( *pixfmt );
 	pixfmt->nSize		= sizeof(PIXELFORMATDESCRIPTOR);
@@ -140,7 +140,7 @@ RString LowLevelWindow_Win32::TryVideoMode( const VideoModeParams &p, bool &bNew
 		bCanSetPixelFormat = false;
 	}
 
-	ASSERT( GraphicsWindow::GetHwnd() != NULL );
+	ASSERT( GraphicsWindow::GetHwnd() != nullptr );
 
 	/* Set the display mode: switch to a fullscreen mode or revert to windowed mode. */
 	LOG->Trace("SetScreenMode ...");
@@ -182,7 +182,7 @@ RString LowLevelWindow_Win32::TryVideoMode( const VideoModeParams &p, bool &bNew
 		 * We have to create the new window first.
 		 */
 		LOG->Trace( "Mode requires new pixel format, and we've already set one; resetting OpenGL context" );
-		if( g_HGLRC != NULL )
+		if( g_HGLRC != nullptr )
 		{
 			wglMakeCurrent( NULL, NULL );
 			wglDeleteContext( g_HGLRC );
@@ -248,7 +248,7 @@ RString LowLevelWindow_Win32::TryVideoMode( const VideoModeParams &p, bool &bNew
 
 bool LowLevelWindow_Win32::SupportsThreadedRendering()
 {
-	return g_HGLRC_Background != NULL;
+	return g_HGLRC_Background != nullptr;
 }
 
 void LowLevelWindow_Win32::BeginConcurrentRendering()

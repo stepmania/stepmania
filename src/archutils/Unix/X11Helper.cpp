@@ -28,7 +28,7 @@ bool X11Helper::OpenXConnection()
 void X11Helper::CloseXConnection()
 {
 	// The window should have been shut down
-	DEBUG_ASSERT( Dpy != NULL );
+	DEBUG_ASSERT( Dpy != nullptr );
 	DEBUG_ASSERT( Win == None );
 	XCloseDisplay( Dpy );
 	Dpy = NULL;

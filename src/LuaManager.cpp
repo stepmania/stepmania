@@ -86,12 +86,12 @@ namespace LuaHelpers
 	{
 		size_t iLen;
 		const char *pStr = lua_tolstring( L, iOffset, &iLen );
-		if( pStr != NULL )
+		if( pStr != nullptr )
 			Object.assign( pStr, iLen );
 		else
 			Object.clear();
 
-		return pStr != NULL;
+		return pStr != nullptr;
 	}
 }
 
@@ -174,7 +174,7 @@ static int GetLuaStack( lua_State *L )
 		
 		if( !strcmp(ar.what, "C") )
 		{
-			for( int i = 1; i <= ar.nups && (name = lua_getupvalue(L, -1, i)) != NULL; ++i )
+			for( int i = 1; i <= ar.nups && (name = lua_getupvalue(L, -1, i)) != nullptr; ++i )
 			{
 				vArgs.push_back( ssprintf("%s = %s", name, lua_tostring(L, -1)) );
 				lua_pop( L, 1 ); // pop value
@@ -182,7 +182,7 @@ static int GetLuaStack( lua_State *L )
 		}
 		else
 		{
-			for( int i = 1; (name = lua_getlocal(L, &ar, i)) != NULL; ++i )
+			for( int i = 1; (name = lua_getlocal(L, &ar, i)) != nullptr; ++i )
 			{
 				vArgs.push_back( ssprintf("%s = %s", name, lua_tostring(L, -1)) );
 				lua_pop( L, 1 ); // pop value
@@ -243,7 +243,7 @@ LuaManager::LuaManager()
 	LUA = this; // so that LUA is available when we call the Register functions
 
 	lua_State *L = lua_open();
-	ASSERT( L != NULL );
+	ASSERT( L != nullptr );
 
 	lua_atpanic( L, LuaPanic );
 	m_pLuaMain = L;

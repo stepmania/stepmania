@@ -65,7 +65,7 @@ void ActorMultiTexture::ClearTextures()
 
 int ActorMultiTexture::AddTexture( RageTexture *pTexture )
 {
-	ASSERT( pTexture != NULL );
+	ASSERT( pTexture != nullptr );
 	LOG->Trace( "ActorMultiTexture::AddTexture( %s )", pTexture->GetID().filename.c_str() );
 
 	m_aTextureUnits.push_back( TextureUnitState() );

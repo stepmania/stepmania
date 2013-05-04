@@ -477,7 +477,7 @@ void SongUtil::SortSongPointerArrayByGrades( vector<Song*> &vpSongsInOut, bool b
 
 		int iCounts[NUM_Grade];
 		const Profile *pProfile = PROFILEMAN->GetMachineProfile();
-		ASSERT( pProfile != NULL );
+		ASSERT( pProfile != nullptr );
 		pProfile->GetGrades( pSong, GAMESTATE->GetCurrentStyle()->m_StepsType, iCounts );
 
 		RString foo;
@@ -554,7 +554,7 @@ void SongUtil::SortSongPointerArrayByNumPlays( vector<Song*> &vpSongsInOut, Prof
 
 void SongUtil::SortSongPointerArrayByNumPlays( vector<Song*> &vpSongsInOut, const Profile* pProfile, bool bDescending )
 {
-	ASSERT( pProfile != NULL );
+	ASSERT( pProfile != nullptr );
 	for(unsigned i = 0; i < vpSongsInOut.size(); ++i)
 		g_mapSongSortVal[vpSongsInOut[i]] = ssprintf("%9i", pProfile->GetSongNumTimesPlayed(vpSongsInOut[i]));
 	stable_sort( vpSongsInOut.begin(), vpSongsInOut.end(), bDescending ? CompareSongPointersBySortValueDescending : CompareSongPointersBySortValueAscending );
@@ -802,7 +802,7 @@ bool SongUtil::ValidateCurrentEditStepsDescription( const RString &sAnswer, RStr
 	}
 
 	static const RString sInvalidChars = "\\/:*?\"<>|";
-	if( strpbrk(sAnswer, sInvalidChars) != NULL )
+	if( strpbrk(sAnswer, sInvalidChars) != nullptr )
 	{
 		sErrorOut = ssprintf( EDIT_NAME_CANNOT_CONTAIN.GetValue(), sInvalidChars.c_str() );
 		return false;
@@ -852,7 +852,7 @@ bool SongUtil::ValidateCurrentStepsChartName(const RString &answer, RString &err
 	if (answer.empty()) return true;
 	
 	static const RString sInvalidChars = "\\/:*?\"<>|";
-	if( strpbrk(answer, sInvalidChars) != NULL )
+	if( strpbrk(answer, sInvalidChars) != nullptr )
 	{
 		error = ssprintf( CHART_NAME_CANNOT_CONTAIN.GetValue(), sInvalidChars.c_str() );
 		return false;
@@ -886,7 +886,7 @@ bool SongUtil::ValidateCurrentStepsCredit( const RString &sAnswer, RString &sErr
 	
 	// Borrow from EditDescription testing. Perhaps this should be abstracted? -Wolfman2000
 	static const RString sInvalidChars = "\\/:*?\"<>|";
-	if( strpbrk(sAnswer, sInvalidChars) != NULL )
+	if( strpbrk(sAnswer, sInvalidChars) != nullptr )
 	{
 		sErrorOut = ssprintf( AUTHOR_NAME_CANNOT_CONTAIN.GetValue(), sInvalidChars.c_str() );
 		return false;
@@ -1119,7 +1119,7 @@ RString SongID::ToString() const
 
 bool SongID::IsValid() const
 {
-	return ToSong() != NULL;
+	return ToSong() != nullptr;
 }
 
 // lua start

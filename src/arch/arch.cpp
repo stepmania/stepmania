@@ -91,7 +91,7 @@ void MakeLightsDrivers( const RString &driver, vector<LightsDriver *> &Add )
 
 	if( ret == NULL && driver.CompareNoCase("Null") )
 		LOG->Trace( "Unknown lights driver name: %s", driver.c_str() );
-	else if( ret != NULL )
+	else if( ret != nullptr )
 		Add.push_back( ret );
 
 	Add.push_back( new LightsDriver_SystemMessage );

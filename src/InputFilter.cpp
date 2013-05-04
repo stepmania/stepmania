@@ -347,7 +347,7 @@ bool InputFilter::IsBeingPressed( const DeviceInput &di, const DeviceInputList *
 	if( pButtonState == NULL )
 		pButtonState = &g_CurrentState;
 	const DeviceInput *pDI = FindItemBinarySearch( pButtonState->begin(), pButtonState->end(), di );
-	return pDI != NULL && pDI->bDown;
+	return pDI != nullptr && pDI->bDown;
 }
 
 float InputFilter::GetSecsHeld( const DeviceInput &di, const DeviceInputList *pButtonState ) const

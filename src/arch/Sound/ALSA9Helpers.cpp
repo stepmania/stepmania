@@ -258,7 +258,7 @@ RString Alsa9Buf::Init( int channels_,
 
 Alsa9Buf::~Alsa9Buf()
 {
-	if( pcm != NULL )
+	if( pcm != nullptr )
 		dsnd_pcm_close( pcm );
 }
 

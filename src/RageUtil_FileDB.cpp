@@ -349,7 +349,7 @@ FileSet *FilenameDB::GetFileSet( const RString &sDir_, bool bCreate )
 
 		/* This also re-locks m_Mutex for us. */
 		FileSet *pParent = GetFileSet( sParent );
-		if( pParent != NULL )
+		if( pParent != nullptr )
 		{
 			set<File>::iterator it = pParent->files.find( File(Basename(sDir)) );
 			if( it != pParent->files.end() )
@@ -361,7 +361,7 @@ FileSet *FilenameDB::GetFileSet( const RString &sDir_, bool bCreate )
 		m_Mutex.Lock();
 	}
 
-	if( pParentDirp != NULL )
+	if( pParentDirp != nullptr )
 		*pParentDirp = pRet;
 
 	pRet->age.Touch();
@@ -559,7 +559,7 @@ void *FilenameDB::GetFilePriv( const RString &path )
 
 	const File *pFile = GetFile( path );
 	void *pRet = NULL;
-	if( pFile != NULL )
+	if( pFile != nullptr )
 		pRet = pFile->priv;
 
 	m_Mutex.Unlock(); /* locked by GetFileSet */

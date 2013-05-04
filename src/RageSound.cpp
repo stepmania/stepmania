@@ -53,7 +53,7 @@ RageSound::RageSound():
 	m_iStoppedSourceFrame(0), m_bPlaying(false),
 	m_bDeleteWhenFinished(false), m_sError("")
 {
-	ASSERT( SOUNDMAN != NULL );
+	ASSERT( SOUNDMAN != nullptr );
 }
 
 RageSound::~RageSound()
@@ -65,7 +65,7 @@ RageSound::RageSound( const RageSound &cpy ):
 	RageSoundBase( cpy ),
 	m_Mutex( "RageSound" )
 {
-	ASSERT(SOUNDMAN != NULL);
+	ASSERT(SOUNDMAN != nullptr);
 
 	m_pSource = NULL;
 
@@ -130,7 +130,7 @@ void RageSound::DeleteSelfWhenFinishedPlaying()
 
 bool RageSound::IsLoaded() const
 {
-	return m_pSource != NULL;
+	return m_pSource != nullptr;
 }
 
 class RageSoundReader_Silence: public RageSoundReader
@@ -266,7 +266,7 @@ int RageSound::GetDataToPlay( float *pBuffer, int iFrames, int64_t &iStreamFrame
 //	LockMut(m_Mutex);
 
 	ASSERT_M( m_bPlaying, ssprintf("%p", this) );
-	ASSERT( m_pSource != NULL );
+	ASSERT( m_pSource != nullptr );
 
 	iFramesStored = 0;
 	iStreamFrame = m_iStreamFrame;

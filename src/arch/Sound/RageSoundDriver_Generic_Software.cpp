@@ -250,7 +250,7 @@ void RageSoundDriver::Update()
 			while( m_Sounds[i].m_PosMapQueue.read( &p, 1 ) )
 			{
 				RageSoundBase *pSound = m_Sounds[i].m_pSound;
-				if( pSound != NULL )
+				if( pSound != nullptr )
 					pSound->CommitPlayingPosition( p.iStreamFrame, p.iHardwareFrame, p.iFrames );
 			}
 		}

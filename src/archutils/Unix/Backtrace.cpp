@@ -119,7 +119,7 @@ static int get_readable_ranges( const void **starts, const void **ends, int size
 			/* If, for some reason, either end is NULL, skip it; that's our terminator. */
 			const void *start = (const void *) xtoi( line );
 			const void *end = (const void *) xtoi( hyphen+1 );
-			if( start != NULL && end != NULL )
+			if( start != nullptr && end != nullptr )
 			{
 				*starts++ = start;
 				*ends++ = end;

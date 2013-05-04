@@ -40,10 +40,10 @@ static HBITMAP LoadWin32Surface( const RageSurface *pSplash, HWND hWnd )
 	}
 
 	HDC hScreen = GetDC(NULL);
-	ASSERT_M( hScreen != NULL, werr_ssprintf(GetLastError(), "hScreen") );
+	ASSERT_M( hScreen != nullptr, werr_ssprintf(GetLastError(), "hScreen") );
 
 	HBITMAP bitmap = CreateCompatibleBitmap( hScreen, s->w, s->h );
-	ASSERT_M( bitmap != NULL, werr_ssprintf(GetLastError(), "CreateCompatibleBitmap") );
+	ASSERT_M( bitmap != nullptr, werr_ssprintf(GetLastError(), "CreateCompatibleBitmap") );
 
 	HDC BitmapDC = CreateCompatibleDC( hScreen );
 	SelectObject( BitmapDC, bitmap );
@@ -113,24 +113,24 @@ BOOL CALLBACK LoadingWindow_Win32::WndProc( HWND hWnd, UINT msg, WPARAM wParam, 
 
 void LoadingWindow_Win32::SetIcon( const RageSurface *pIcon )
 {
-	if( m_hIcon != NULL )
+	if( m_hIcon != nullptr )
 		DestroyIcon( m_hIcon );
 
 	m_hIcon = IconFromSurface( pIcon );
-	if( m_hIcon != NULL )
+	if( m_hIcon != nullptr )
 		SetClassLong( hwnd, GCL_HICON, (LONG) m_hIcon );
 }
 
 void LoadingWindow_Win32::SetSplash( const RageSurface *pSplash )
 {
-	if( g_hBitmap != NULL )
+	if( g_hBitmap != nullptr )
 	{
 		DeleteObject( g_hBitmap );
 		g_hBitmap = NULL;
 	}
 
 	g_hBitmap = LoadWin32Surface( pSplash, hwnd );
-	if( g_hBitmap != NULL )
+	if( g_hBitmap != nullptr )
 	{
 		SendDlgItemMessage(
 			hwnd, IDC_SPLASH,
@@ -155,7 +155,7 @@ LoadingWindow_Win32::~LoadingWindow_Win32()
 {
 	if( hwnd )
 		DestroyWindow( hwnd );
-	if( m_hIcon != NULL )
+	if( m_hIcon != nullptr )
 		DestroyIcon( m_hIcon );
 }
 

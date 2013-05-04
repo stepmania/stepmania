@@ -363,7 +363,7 @@ void NetworkSyncManager::StartRequest( short position )
 	ctr = char( position*16 );
 	m_packet.Write1( ctr );
 
-	if( GAMESTATE->m_pCurSong != NULL )
+	if( GAMESTATE->m_pCurSong != nullptr )
 	{
 		m_packet.WriteNT( GAMESTATE->m_pCurSong->m_sMainTitle );
 		m_packet.WriteNT( GAMESTATE->m_pCurSong->m_sSubTitle );
@@ -376,7 +376,7 @@ void NetworkSyncManager::StartRequest( short position )
 		m_packet.WriteNT( "" );
 	}
 
-	if( GAMESTATE->m_pCurCourse != NULL )
+	if( GAMESTATE->m_pCurCourse != nullptr )
 		m_packet.WriteNT( GAMESTATE->m_pCurCourse->GetDisplayFullTitle() );
 	else
 		m_packet.WriteNT( RString() );
@@ -899,7 +899,7 @@ unsigned long NetworkSyncManager::GetCurrentSMBuild( LoadingWindow* ld )
 		{
 			// \r\n\r\n = Separator from HTTP Header and Body
 			char* cBodyStart = strstr(cBuffer, "\r\n\r\n");
-			if( cBodyStart != NULL )
+			if( cBodyStart != nullptr )
 			{
 				// Get the HTTP Header only
 				int iHeaderLength = cBodyStart - cBuffer;
@@ -939,7 +939,7 @@ unsigned long NetworkSyncManager::GetCurrentSMBuild( LoadingWindow* ld )
 						}
 					}
 				} // if( svResponse[0].find("200") != RString::npos )
-			} // if( cBodyStart != NULL )
+			} // if( cBodyStart != nullptr )
 		} // if( iBytes )
 		SAFE_DELETE( cBuffer );
 	} // if( socket->connect(sHost, uPort) )

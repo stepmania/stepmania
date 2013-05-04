@@ -201,7 +201,7 @@ RageSurfaceUtils::OpenResult RageSurface_Load_BMP( const RString &sPath, RageSur
 	img = NULL;
 	ret = LoadBMP( f, img, error );
 
-	if( ret != RageSurfaceUtils::OPEN_OK && img != NULL )
+	if( ret != RageSurfaceUtils::OPEN_OK && img != nullptr )
 	{
 		delete img;
 		img = NULL;

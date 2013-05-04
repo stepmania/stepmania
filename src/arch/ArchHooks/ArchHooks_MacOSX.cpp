@@ -339,7 +339,7 @@ RString ArchHooks::GetPreferredLanguage()
 	CFStringRef lang;
 
 	if( CFArrayGetCount(languages) > 0 &&
-		(lang = (CFStringRef)CFArrayGetValueAtIndex(languages, 0)) != NULL )
+		(lang = (CFStringRef)CFArrayGetValueAtIndex(languages, 0)) != nullptr )
 	{
 		// MacRoman agrees with ASCII in the low-order 7 bits.
 		const char *str = CFStringGetCStringPtr( lang, kCFStringEncodingMacRoman );

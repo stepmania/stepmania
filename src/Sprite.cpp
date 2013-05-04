@@ -57,7 +57,7 @@ Sprite::Sprite( const Sprite &cpy ):
 	CPY( m_fTexCoordVelocityY );
 #undef CPY
 
-	if( cpy.m_pTexture != NULL )
+	if( cpy.m_pTexture != nullptr )
 		m_pTexture = TEXTUREMAN->CopyTexture( cpy.m_pTexture );
 	else
 		m_pTexture = NULL;
@@ -152,7 +152,7 @@ void Sprite::LoadFromNode( const XNode* pNode )
 		vector<State> aStates;
 
 		const XNode *pFrames = pNode->GetChild( "Frames" );
-		if( pFrames != NULL )
+		if( pFrames != nullptr )
 		{
 			/* All attributes are optional.  If Frame is omitted, use the previous state's
 			 * frame (or 0 if the first).
@@ -178,7 +178,7 @@ void Sprite::LoadFromNode( const XNode* pNode )
 				newState.rect = *m_pTexture->GetTextureCoordRect( iFrameIndex );
 
 				const XNode *pPoints[2] = { pFrame->GetChild( "1" ), pFrame->GetChild( "2" ) };
-				if( pPoints[0] != NULL && pPoints[1] != NULL )
+				if( pPoints[0] != nullptr && pPoints[1] != nullptr )
 				{
 					RectF r = newState.rect;
 
@@ -232,7 +232,7 @@ void Sprite::LoadFromNode( const XNode* pNode )
 
 void Sprite::UnloadTexture()
 {
-	if( m_pTexture != NULL ) // If there was a previous bitmap...
+	if( m_pTexture != nullptr ) // If there was a previous bitmap...
 	{
 		TEXTUREMAN->UnloadTexture( m_pTexture ); // Unload it.
 		m_pTexture = NULL;
@@ -273,7 +273,7 @@ void Sprite::EnableAnimation( bool bEnable )
 
 void Sprite::SetTexture( RageTexture *pTexture )
 {
-	ASSERT( pTexture != NULL );
+	ASSERT( pTexture != nullptr );
 
 	if( m_pTexture != pTexture )
 	{
@@ -1052,7 +1052,7 @@ public:
 	static int GetTexture( T* p, lua_State *L )
 	{
 		RageTexture *pTexture = p->GetTexture();
-		if( pTexture != NULL )
+		if( pTexture != nullptr )
 			pTexture->PushSelf(L);
 		else
 			lua_pushnil( L );

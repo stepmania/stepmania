@@ -1102,8 +1102,8 @@ void ScreenEdit::Init()
 
 	SubscribeToMessage( "Judgment" );
 
-	ASSERT( GAMESTATE->m_pCurSong != NULL );
-	ASSERT( GAMESTATE->m_pCurSteps[PLAYER_1] != NULL );
+	ASSERT( GAMESTATE->m_pCurSong != nullptr );
+	ASSERT( GAMESTATE->m_pCurSteps[PLAYER_1] != nullptr );
 
 	EDIT_MODE.Load( m_sName, "EditMode" );
 	ScreenWithMenuElements::Init();
@@ -2112,7 +2112,7 @@ bool ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			
 			// save current steps
 			Steps* pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
-			ASSERT( pSteps != NULL );
+			ASSERT( pSteps != nullptr );
 			pSteps->SetNoteData( m_NoteDataEdit );
 
 			// Get all Steps of this StepsType
@@ -3087,7 +3087,7 @@ void ScreenEdit::TransitionEditState( EditState em )
 			/* FirstBeat affects backgrounds, so commit changes to memory (not to disk)
 			 * and recalc it. */
 			Steps* pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
-			ASSERT( pSteps != NULL );
+			ASSERT( pSteps != nullptr );
 			pSteps->SetNoteData( m_NoteDataEdit );
 			m_pSong->ReCalculateRadarValuesAndLastSecond();
 
@@ -3493,7 +3493,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 
 			GAMESTATE->m_pCurCourse.Set( pCourse );
 			GAMESTATE->m_iEditCourseEntryIndex.Set( iCourseEntryIndex );
-			ASSERT( GAMESTATE->m_pCurCourse != NULL );
+			ASSERT( GAMESTATE->m_pCurCourse != nullptr );
 		}
 	}
 	else if (SM == SM_BackFromKeysoundTrack)
@@ -5520,8 +5520,8 @@ void ScreenEdit::SetupCourseAttacks()
 
 void ScreenEdit::CopyToLastSave()
 {
-	ASSERT( GAMESTATE->m_pCurSong != NULL );
-	ASSERT( GAMESTATE->m_pCurSteps[PLAYER_1] != NULL );
+	ASSERT( GAMESTATE->m_pCurSong != nullptr );
+	ASSERT( GAMESTATE->m_pCurSteps[PLAYER_1] != nullptr );
 	m_SongLastSave = *GAMESTATE->m_pCurSong;
 	m_vStepsLastSave.clear();
 	const vector<Steps*> &vSteps = GAMESTATE->m_pCurSong->GetStepsByStepsType( GAMESTATE->m_pCurSteps[PLAYER_1]->m_StepsType );
@@ -5543,7 +5543,7 @@ void ScreenEdit::CopyFromLastSave()
 
 void ScreenEdit::RevertFromDisk()
 {
-	ASSERT( GAMESTATE->m_pCurSteps[PLAYER_1] != NULL );
+	ASSERT( GAMESTATE->m_pCurSteps[PLAYER_1] != nullptr );
 	StepsID id;
 	id.FromSteps( GAMESTATE->m_pCurSteps[PLAYER_1] );
 	ASSERT( id.IsValid() );

@@ -428,7 +428,7 @@ void ScreenGameplay::Init()
 			GAMESTATE->m_pCurSteps[p].Set( GAMESTATE->m_pCurSteps[ GAMESTATE->GetFirstHumanPlayer() ] );
 
 		FOREACH_EnabledPlayer(p)
-			ASSERT( GAMESTATE->m_pCurSteps[p].Get() != NULL );
+			ASSERT( GAMESTATE->m_pCurSteps[p].Get() != nullptr );
 	}
 
 	/* Increment the course play count. */
@@ -814,28 +814,28 @@ void ScreenGameplay::InitSongQueues()
 	if( GAMESTATE->IsCourseMode() )
 	{
 		Course* pCourse = GAMESTATE->m_pCurCourse;
-		ASSERT( pCourse != NULL );
+		ASSERT( pCourse != nullptr );
 
 		m_apSongsQueue.clear();
 		PlayerNumber pnMaster = GAMESTATE->GetMasterPlayerNumber();
 		Trail *pTrail = GAMESTATE->m_pCurTrail[pnMaster];
-		ASSERT( pTrail != NULL );
+		ASSERT( pTrail != nullptr );
 		for (TrailEntry const &e : pTrail->m_vEntries)
 		{
-			ASSERT( e.pSong != NULL );
+			ASSERT( e.pSong != nullptr );
 			m_apSongsQueue.push_back( e.pSong );
 		}
 
 		FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
 		{
 			Trail *lTrail = GAMESTATE->m_pCurTrail[ pi->GetStepsAndTrailIndex() ];
-			ASSERT( lTrail != NULL );
+			ASSERT( lTrail != nullptr );
 
 			pi->m_vpStepsQueue.clear();
 			pi->m_asModifiersQueue.clear();
 			for (TrailEntry const &e : lTrail->m_vEntries)
 			{
-				ASSERT( e.pSteps != NULL );
+				ASSERT( e.pSteps != nullptr );
 				pi->m_vpStepsQueue.push_back( e.pSteps );
 				AttackArray a;
 				e.GetAttackArray( a );
@@ -1094,7 +1094,7 @@ void ScreenGameplay::LoadNextSong()
 		Steps* pSteps = GAMESTATE->m_pCurSteps[ pi->GetStepsAndTrailIndex() ];
 		++pi->GetPlayerStageStats()->m_iStepsPlayed;
 
-		ASSERT( GAMESTATE->m_pCurSteps[ pi->GetStepsAndTrailIndex() ] != NULL );
+		ASSERT( GAMESTATE->m_pCurSteps[ pi->GetStepsAndTrailIndex() ] != nullptr );
 		if( pi->m_ptextStepsDescription )
 			pi->m_ptextStepsDescription->SetText( pSteps->GetDescription() );
 
@@ -1285,10 +1285,10 @@ void ScreenGameplay::LoadLights()
 
 	// First, check if the song has explicit lights
 	m_CabinetLightsNoteData.Init();
-	ASSERT( GAMESTATE->m_pCurSong != NULL );
+	ASSERT( GAMESTATE->m_pCurSong != nullptr );
 
 	const Steps *pSteps = SongUtil::GetClosestNotes( GAMESTATE->m_pCurSong, StepsType_lights_cabinet, Difficulty_Medium );
-	if( pSteps != NULL )
+	if( pSteps != nullptr )
 	{
 		pSteps->GetNoteData( m_CabinetLightsNoteData );
 		return;
@@ -1751,7 +1751,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 				DancingCharacters *pCharacter = NULL;
 				if( m_pSongBackground )
 					pCharacter = m_pSongBackground->GetDancingCharacters();
-				if( pCharacter != NULL )
+				if( pCharacter != nullptr )
 				{
 					TapNoteScore tns = pi->m_pPlayer->GetLastTapNoteScore();
 

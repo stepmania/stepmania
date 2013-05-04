@@ -131,7 +131,7 @@ bool DIDevice::Open()
 void DIDevice::Close()
 {
 	// Don't try to close a device that isn't open.
-	ASSERT( Device != NULL );
+	ASSERT( Device != nullptr );
 
 	Device->Unacquire();
 	Device->Release();

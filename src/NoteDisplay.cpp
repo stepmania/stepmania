@@ -145,7 +145,7 @@ static NoteResource *MakeNoteResource( const RString &sButton, const RString &sE
 		NoteResource *pRes = new NoteResource( nsap );
 
 		pRes->m_pActor = NOTESKIN->LoadActor( sButton, sElement, NULL, bSpriteOnly );
-		ASSERT( pRes->m_pActor != NULL );
+		ASSERT( pRes->m_pActor != nullptr );
 
 		g_NoteResource[nsap] = pRes;
 		it = g_NoteResource.find( nsap );
@@ -158,7 +158,7 @@ static NoteResource *MakeNoteResource( const RString &sButton, const RString &sE
 
 static void DeleteNoteResource( NoteResource *pRes )
 {
-	ASSERT( pRes != NULL );
+	ASSERT( pRes != nullptr );
 
 	ASSERT_M( pRes->m_iRefCount > 0, ssprintf("RefCount %i > 0", pRes->m_iRefCount) );
 	--pRes->m_iRefCount;

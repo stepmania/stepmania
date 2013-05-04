@@ -44,7 +44,7 @@ RString RageFile::GetPath() const
 
 bool RageFile::Open( const RString& path, int mode )
 {
-	ASSERT( FILEMAN != NULL );
+	ASSERT( FILEMAN != nullptr );
 	Close();
 
 	m_Path = path;
@@ -122,14 +122,14 @@ bool RageFile::AtEOF() const
 
 void RageFile::ClearError()
 {
-	if( m_File != NULL )
+	if( m_File != nullptr )
 		m_File->ClearError();
 	m_sError = "";
 }
 
 RString RageFile::GetError() const
 {
-	if( m_File != NULL && m_File->GetError() != "" )
+	if( m_File != nullptr && m_File->GetError() != "" )
 		return m_File->GetError();
 	return m_sError;
 }
@@ -137,7 +137,7 @@ RString RageFile::GetError() const
 
 void RageFile::SetError( const RString &err )
 {
-	if( m_File != NULL )
+	if( m_File != nullptr )
 		m_File->ClearError();
 	m_sError = err;
 }

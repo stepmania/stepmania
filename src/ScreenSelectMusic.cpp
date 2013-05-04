@@ -1190,7 +1190,7 @@ bool ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 			return false;
 
 		// a song was selected
-		if( m_MusicWheel.GetSelectedSong() != NULL )
+		if( m_MusicWheel.GetSelectedSong() != nullptr )
 		{
 			if(TWO_PART_CONFIRMS_ONLY && SAMPLE_MUSIC_PREVIEW_MODE == SampleMusicPreviewMode_StartToPreview)
 			{
@@ -1235,12 +1235,12 @@ bool ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 			if( GAMESTATE->IsCourseMode() )
 				GAMESTATE->m_PlayMode.Set( PLAY_MODE_REGULAR );
 		}
-		else if( m_MusicWheel.GetSelectedCourse() != NULL )
+		else if( m_MusicWheel.GetSelectedCourse() != nullptr )
 		{
 			SOUND->PlayOnceFromAnnouncer( "select course comment general" );
 
 			Course *pCourse = m_MusicWheel.GetSelectedCourse();
-			ASSERT( pCourse != NULL );
+			ASSERT( pCourse != nullptr );
 			GAMESTATE->m_PlayMode.Set( pCourse->GetPlayMode() );
 
 			// apply #LIVES
@@ -1430,12 +1430,12 @@ bool ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 				PlayerNumber pn = GAMESTATE->GetMasterPlayerNumber();
 				if( GAMESTATE->IsCourseMode() )
 				{
-					ASSERT( GAMESTATE->m_pCurTrail[pn] != NULL );
+					ASSERT( GAMESTATE->m_pCurTrail[pn] != nullptr );
 					stCurrent = GAMESTATE->m_pCurTrail[pn]->m_StepsType;
 				}
 				else
 				{
-					ASSERT( GAMESTATE->m_pCurSteps[pn] != NULL );
+					ASSERT( GAMESTATE->m_pCurSteps[pn] != nullptr );
 					stCurrent = GAMESTATE->m_pCurSteps[pn]->m_StepsType;
 				}
 				vector<StepsType> vst;

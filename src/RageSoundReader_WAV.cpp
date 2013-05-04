@@ -289,7 +289,7 @@ public:
 		int iMaxSize = min( (int) m_WavData.m_iBlockAlign - 7 * m_WavData.m_iChannels, (m_WavData.m_iDataChunkSize+m_WavData.m_iDataChunkPos) - m_File.Tell() );
 
 		char *pBuf = (char *) alloca( iMaxSize );
-		ASSERT( pBuf != NULL );
+		ASSERT( pBuf != nullptr );
 
 		int iBlockSize = m_File.Read( pBuf, iMaxSize );
 		if( iBlockSize == 0 )
@@ -581,25 +581,25 @@ RageSoundReader_FileReader::OpenResult RageSoundReader_WAV::Open( RageFileBasic 
 
 int RageSoundReader_WAV::GetLength() const
 {
-	ASSERT( m_pImpl != NULL );
+	ASSERT( m_pImpl != nullptr );
 	return m_pImpl->GetLength();
 }
 
 int RageSoundReader_WAV::SetPosition( int iFrame )
 {
-	ASSERT( m_pImpl != NULL );
+	ASSERT( m_pImpl != nullptr );
 	return m_pImpl->SetPosition( iFrame );
 }
 
 int RageSoundReader_WAV::GetNextSourceFrame() const
 {
-	ASSERT( m_pImpl != NULL );
+	ASSERT( m_pImpl != nullptr );
 	return m_pImpl->GetNextSourceFrame();
 }
 
 int RageSoundReader_WAV::Read( float *pBuf, int iFrames )
 {
-	ASSERT( m_pImpl != NULL );
+	ASSERT( m_pImpl != nullptr );
 	return m_pImpl->Read( pBuf, iFrames );
 }
 

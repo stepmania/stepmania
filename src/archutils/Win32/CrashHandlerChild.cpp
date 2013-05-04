@@ -40,7 +40,7 @@ namespace VDDebugInfo
 	struct Context
 	{
 		Context() { pRVAHeap=NULL; }
-		bool Loaded() const { return pRVAHeap != NULL; }
+		bool Loaded() const { return pRVAHeap != nullptr; }
 		RString sRawBlock;
 
 		int nBuildNumber;
@@ -677,7 +677,7 @@ BOOL CrashDialog::HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam )
 		switch(LOWORD(wParam))
 		{
 		case IDC_BUTTON_CLOSE:
-			if( m_pPost != NULL )
+			if( m_pPost != nullptr )
 			{
 				// Cancel reporting, and revert the dialog as if "report" had not been pressed.
 				m_pPost->Cancel();
@@ -698,7 +698,7 @@ BOOL CrashDialog::HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam )
 			{
 				RString sLogPath;
 				FILE *pFile = fopen( SpliceProgramPath("../Portable.ini"), "r" );
-				if(pFile != NULL)
+				if(pFile != nullptr)
 				{
 					sLogPath = SpliceProgramPath("../Logs/log.txt");
 					fclose( pFile );

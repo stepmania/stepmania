@@ -441,7 +441,7 @@ bool GetXMLInternal( const XNode *pNode, RageFileBasic &f, bool bWriteTabs, int 
 
 		// Text Value
 		const XNodeValue *pText = pNode->GetAttr( XNode::TEXT_ATTRIBUTE );
-		if( pText != NULL )
+		if( pText != nullptr )
 		{
 			if( !pNode->m_childs.empty() )
 			{

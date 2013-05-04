@@ -493,7 +493,7 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 			if( dc != Difficulty_Edit )
 			{
 				Steps *pSteps = SongUtil::GetStepsByDifficulty( GetSelectedSong(), GetSelectedSourceStepsType(), dc );
-				if( pSteps != NULL )
+				if( pSteps != nullptr )
 					m_vpSourceSteps.push_back( StepsAndDifficulty(pSteps,dc) );
 			}
 			else

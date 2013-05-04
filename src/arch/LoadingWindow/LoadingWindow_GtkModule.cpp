@@ -81,7 +81,7 @@ GdkPixbuf *MakePixbuf( const RageSurface *pSrc )
 	GdkPixbuf *pBuf = gdk_pixbuf_new_from_data( pSurface->pixels, GDK_COLORSPACE_RGB,
 		true, 8, pSurface->w, pSurface->h , pSurface->pitch, DeletePixels, NULL);
 
-	if( pBuf != NULL )
+	if( pBuf != nullptr )
 		pSurface->pixels_owned = false;
 
 	delete pSurface;
@@ -91,7 +91,7 @@ GdkPixbuf *MakePixbuf( const RageSurface *pSrc )
 extern "C" void SetIcon( const RageSurface *pSrcImg )
 {
 	GdkPixbuf *pBuf = MakePixbuf( pSrcImg );
-	if( pBuf != NULL )
+	if( pBuf != nullptr )
 	{
 		gtk_window_set_icon( GTK_WINDOW(window), pBuf );
 		g_object_unref(pBuf);
@@ -102,7 +102,7 @@ extern "C" void SetIcon( const RageSurface *pSrcImg )
 extern "C" void SetSplash( const RageSurface *pSplash )
 {
 	GdkPixbuf *pBuf = MakePixbuf( pSplash );
-	if( pBuf != NULL )
+	if( pBuf != nullptr )
 	{
 		gtk_image_set_from_pixbuf(GTK_IMAGE(splash), pBuf);
 		g_object_unref(pBuf);

@@ -690,7 +690,7 @@ int Course::GetMeter( StepsType st, CourseDifficulty cd ) const
 	if( m_iCustomMeter[cd] != -1 )
 		return m_iCustomMeter[cd];
 	const Trail* pTrail = GetTrail( st );
-	if( pTrail != NULL )
+	if( pTrail != nullptr )
 		return pTrail->GetMeter();
 	return 0;
 }
@@ -893,7 +893,7 @@ void Course::UpdateCourseStats( StepsType st )
 	for(unsigned i = 0; i < m_vEntries.size(); i++)
 	{
 		Song *pSong = m_vEntries[i].songID.ToSong();
-		if( pSong != NULL )
+		if( pSong != nullptr )
 			continue;
 
 		if ( m_SortOrder_Ranking == 2 )
@@ -904,7 +904,7 @@ void Course::UpdateCourseStats( StepsType st )
 
 	const Trail* pTrail = GetTrail( st, Difficulty_Medium );
 
-	m_SortOrder_TotalDifficulty += pTrail != NULL? pTrail->GetTotalMeter():0;
+	m_SortOrder_TotalDifficulty += pTrail != nullptr? pTrail->GetTotalMeter():0;
 
 	// OPTIMIZATION: Ranking info isn't dependent on style, so call it
 	// sparingly. It's handled on startup and when themes change.

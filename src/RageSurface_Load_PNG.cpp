@@ -229,7 +229,7 @@ static RageSurface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 	default:
 		FAIL_M(ssprintf( "%i", type) );
 	}
-	ASSERT( img != NULL );
+	ASSERT( img != nullptr );
 
 	/* alloca to prevent memleaks if libpng longjmps us */
 	png_byte **row_pointers = (png_byte **) alloca( sizeof(png_byte*) * height );

@@ -536,7 +536,7 @@ public:
 			m_ppStepsToFill = &GAMESTATE->m_pEditSourceSteps;
 			m_pst = &GAMESTATE->m_stEditSource;
 			m_vsReloadRowMessages.push_back( MessageIDToString(Message_EditSourceStepsTypeChanged) );
-			if( GAMESTATE->m_pCurSteps[0].Get() != NULL )
+			if( GAMESTATE->m_pCurSteps[0].Get() != nullptr )
 				m_Def.m_vEnabledForPlayers.clear();	// hide row
 		}
 		else
@@ -1120,7 +1120,7 @@ public:
 		{
 			LOG->Warn( "Invalid Conf type \"%s\"", sParam.c_str() );
 			pConfOption = ConfOption::Find( "Invalid" );
-			ASSERT_M( pConfOption != NULL, "ConfOption::Find(Invalid)" );
+			ASSERT_M( pConfOption != nullptr, "ConfOption::Find(Invalid)" );
 		}
 
 		pConfOption->UpdateAvailableOptions();
@@ -1201,7 +1201,7 @@ public:
 			m_pstToFill = &GAMESTATE->m_stEditSource;
 			m_vsReloadRowMessages.push_back( MessageIDToString(Message_CurrentStepsP1Changed) );
 			m_vsReloadRowMessages.push_back( MessageIDToString(Message_EditStepsTypeChanged) );
-			if( GAMESTATE->m_pCurSteps[0].Get() != NULL )
+			if( GAMESTATE->m_pCurSteps[0].Get() != nullptr )
 				m_Def.m_vEnabledForPlayers.clear();	// hide row
 		}
 		else

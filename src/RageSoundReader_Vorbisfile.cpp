@@ -191,7 +191,7 @@ int RageSoundReader_Vorbisfile::Read( float *buf, int iFrames )
 
 			{
 				vorbis_info *vi = ov_info( vf, -1 );
-				ASSERT( vi != NULL );
+				ASSERT( vi != nullptr );
 
 				if( (unsigned) vi->channels != channels )
 					RageException::Throw( "File \"%s\" changes channel count from %i to %i; not supported.",
@@ -261,17 +261,17 @@ int RageSoundReader_Vorbisfile::Read( float *buf, int iFrames )
 
 int RageSoundReader_Vorbisfile::GetSampleRate() const
 {
-	ASSERT(vf != NULL);
+	ASSERT(vf != nullptr);
 
 	vorbis_info *vi = ov_info(vf, -1);
-	ASSERT(vi != NULL);
+	ASSERT(vi != nullptr);
 
 	return vi->rate;
 }
 
 int RageSoundReader_Vorbisfile::GetNextSourceFrame() const
 {
-	ASSERT(vf != NULL);
+	ASSERT(vf != nullptr);
 
 	int iFrame = (int)ov_pcm_tell( vf );
 	return iFrame;

@@ -51,7 +51,7 @@ void WheelItemBase::Load( RString sType )
 
 void WheelItemBase::LoadFromWheelItemData( const WheelItemBaseData* pWID, int iIndex, bool bHasFocus, int iDrawIndex )
 {
-	ASSERT( pWID != NULL );
+	ASSERT( pWID != nullptr );
 	m_pData = pWID;
 }
 
@@ -76,7 +76,7 @@ void WheelItemBase::DrawPrimitives()
 {
 	ActorFrame::DrawPrimitives();
 
-	if( m_pGrayBar != NULL )
+	if( m_pGrayBar != nullptr )
 		DrawGrayBar( *m_pGrayBar );
 }
 

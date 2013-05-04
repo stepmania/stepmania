@@ -73,7 +73,7 @@ void RageBitmapTexture::Create()
 		RString sWarning = ssprintf( "RageBitmapTexture: Couldn't load %s: %s", actualID.filename.c_str(), error.c_str() );
 		Dialog::OK( sWarning );
 		pImg = RageSurfaceUtils::MakeDummySurface( 64, 64 );
-		ASSERT( pImg != NULL );
+		ASSERT( pImg != nullptr );
 	}
 
 	if( actualID.bHotPinkColorKey )

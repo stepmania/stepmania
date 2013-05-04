@@ -10,7 +10,7 @@ const int MAX_THREADS=128;
 static MutexImpl_Win32 *g_pThreadIdMutex = NULL;
 static void InitThreadIdMutex()
 {
-	if( g_pThreadIdMutex != NULL )
+	if( g_pThreadIdMutex != nullptr )
 		return;
 	g_pThreadIdMutex = new MutexImpl_Win32(NULL);
 }
@@ -159,7 +159,7 @@ ThreadImpl *MakeThread( int (*pFunc)(void *pData), void *pData, uint64_t *piThre
 
 	thread->ThreadHandle = CreateThread( NULL, 0, &StartThread, thread, CREATE_SUSPENDED, &thread->ThreadId );
 	*piThreadID = (uint64_t) thread->ThreadId;
-	ASSERT_M( thread->ThreadHandle != NULL, ssprintf("%s", werr_ssprintf(GetLastError(), "CreateThread")) );
+	ASSERT_M( thread->ThreadHandle != nullptr, ssprintf("%s", werr_ssprintf(GetLastError(), "CreateThread")) );
 
 	int slot = GetOpenSlot( thread->ThreadId );
 	g_ThreadHandles[slot] = thread->ThreadHandle;
@@ -175,7 +175,7 @@ MutexImpl_Win32::MutexImpl_Win32( RageMutex *pParent ):
 	MutexImpl( pParent )
 {
 	mutex = CreateMutex( NULL, false, NULL );
-	ASSERT_M( mutex != NULL, werr_ssprintf(GetLastError(), "CreateMutex") );
+	ASSERT_M( mutex != nullptr, werr_ssprintf(GetLastError(), "CreateMutex") );
 }
 
 MutexImpl_Win32::~MutexImpl_Win32()
@@ -185,7 +185,7 @@ MutexImpl_Win32::~MutexImpl_Win32()
 
 static bool SimpleWaitForSingleObject( HANDLE h, DWORD ms )
 {
-	ASSERT( h != NULL );
+	ASSERT( h != nullptr );
 
 	DWORD ret = WaitForSingleObject( h, ms );
 	switch( ret )
@@ -353,7 +353,7 @@ bool EventImpl_Win32::Wait( RageTimer *pTimeout )
 	LeaveCriticalSection( &m_iNumWaitingLock );
 
 	unsigned iMilliseconds = INFINITE;
-	if( pTimeout != NULL )
+	if( pTimeout != nullptr )
 	{
 		float fSecondsInFuture = -pTimeout->Ago();
 		iMilliseconds = (unsigned) max( 0, int( fSecondsInFuture * 1000 ) );

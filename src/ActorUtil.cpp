@@ -103,7 +103,7 @@ bool ActorUtil::ResolvePath( RString &sPath, const RString &sName )
 
 Actor* ActorUtil::LoadFromNode( const XNode* pNode, Actor *pParentActor )
 {
-	ASSERT( pNode != NULL );
+	ASSERT( pNode != nullptr );
 
 	// Remove this in favor of using conditionals in Lua. -Chris
 	// There are a number of themes out there that depend on this (including

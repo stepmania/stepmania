@@ -220,7 +220,7 @@ void RunChild()
 		// 4. Write RecentLogs.
 		int cnt = 0;
 		const TCHAR *ps[1024];
-		while( cnt < 1024 && (ps[cnt] = RageLog::GetRecentLog( cnt )) != NULL )
+		while( cnt < 1024 && (ps[cnt] = RageLog::GetRecentLog( cnt )) != nullptr )
 				++cnt;
 
 		WriteToChild(hToStdin, &cnt, sizeof(cnt));
@@ -462,7 +462,7 @@ void CrashHandler::do_backtrace( const void **buf, size_t size,
 	 * due to stack corruption, we might not be able to get any frames from the
 	 * stack. Pull it out of pContext->Eip, which is always valid, and then
 	 * discard the first stack frame if it's the same. */
-	if( buf+1 != pLast && pContext->Eip != NULL )
+	if( buf+1 != pLast && pContext->Eip != 0 )
 	{
 		*buf = (void *) pContext->Eip;
 		++buf;

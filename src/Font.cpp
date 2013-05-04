@@ -26,7 +26,7 @@ void FontPage::Load( const FontPageSettings &cfg )
 		ID1.AdditionalTextureHints = cfg.m_sTextureHints;
 
 	m_FontPageTextures.m_pTextureMain = TEXTUREMAN->LoadTexture( ID1 );
-	ASSERT( m_FontPageTextures.m_pTextureMain != NULL );
+	ASSERT( m_FontPageTextures.m_pTextureMain != nullptr );
 
 	RageTextureID ID2 = ID1;
 	// "arial 20 16x16 [main].png" => "arial 20 16x16 [main-stroke].png"
@@ -36,7 +36,7 @@ void FontPage::Load( const FontPageSettings &cfg )
 		if( IsAFile(ID2.filename) )
 		{
 			m_FontPageTextures.m_pTextureStroke = TEXTUREMAN->LoadTexture( ID2 );
-			ASSERT( m_FontPageTextures.m_pTextureStroke != NULL );
+			ASSERT( m_FontPageTextures.m_pTextureStroke != nullptr );
 			ASSERT_M( m_FontPageTextures.m_pTextureMain->GetSourceFrameWidth() == m_FontPageTextures.m_pTextureStroke->GetSourceFrameWidth(), ssprintf("'%s' and '%s' must have the same frame widths", ID1.filename.c_str(), ID2.filename.c_str()) );
 			ASSERT_M( m_FontPageTextures.m_pTextureMain->GetNumFrames() == m_FontPageTextures.m_pTextureStroke->GetNumFrames(), ssprintf("'%s' and '%s' must have the same frame dimensions", ID1.filename.c_str(), ID2.filename.c_str()) );
 		}
@@ -187,12 +187,12 @@ void FontPage::SetExtraPixels( int iDrawExtraPixelsLeft, int iDrawExtraPixelsRig
 
 FontPage::~FontPage()
 {
-	if( m_FontPageTextures.m_pTextureMain != NULL )
+	if( m_FontPageTextures.m_pTextureMain != nullptr )
 	{
 		TEXTUREMAN->UnloadTexture( m_FontPageTextures.m_pTextureMain );
 		m_FontPageTextures.m_pTextureMain = NULL;
 	}
-	if( m_FontPageTextures.m_pTextureStroke != NULL )
+	if( m_FontPageTextures.m_pTextureStroke != nullptr )
 	{
 		TEXTUREMAN->UnloadTexture( m_FontPageTextures.m_pTextureStroke );
 		m_FontPageTextures.m_pTextureStroke = NULL;
@@ -346,7 +346,7 @@ void Font::CapsOnly()
 
 void Font::SetDefaultGlyph( FontPage *pPage )
 {
-	ASSERT( pPage != NULL );
+	ASSERT( pPage != nullptr );
 	ASSERT( !pPage->m_aGlyphs.empty() );
 	m_pDefault = pPage;
 }

@@ -164,9 +164,9 @@ RageSoundDriver_WaveOut::~RageSoundDriver_WaveOut()
 		LOG->Trace( "Mixer thread shut down." );
 	}
 
-	if( m_hWaveOut != NULL )
+	if( m_hWaveOut != nullptr )
 	{
-		for( int b = 0; b < num_chunks && m_aBuffers[b].lpData != NULL; ++b )
+		for( int b = 0; b < num_chunks && m_aBuffers[b].lpData != nullptr; ++b )
 		{
 			waveOutUnprepareHeader( m_hWaveOut, &m_aBuffers[b], sizeof(m_aBuffers[b]) );
 			delete [] m_aBuffers[b].lpData;

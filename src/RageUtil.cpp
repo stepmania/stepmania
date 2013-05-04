@@ -1027,7 +1027,7 @@ bool GetCommandlineArgument( const RString &option, RString *argument, int iInde
 RString GetCwd()
 {
 	char buf[PATH_MAX];
-	bool ret = getcwd(buf, PATH_MAX) != NULL;
+	bool ret = getcwd(buf, PATH_MAX) != nullptr;
 	ASSERT(ret);
 	return buf;
 }
@@ -2274,7 +2274,7 @@ bool FileCopy( RageFileBasic &in, RageFileBasic &out, RString &sError, bool *bRe
 		if( in.Read(data, 1024*32) == -1 )
 		{
 			sError = ssprintf( "read error: %s", in.GetError().c_str() );
-			if( bReadError != NULL )
+			if( bReadError != nullptr )
 				*bReadError = true;
 			return false;
 		}
@@ -2284,7 +2284,7 @@ bool FileCopy( RageFileBasic &in, RageFileBasic &out, RString &sError, bool *bRe
 		if( i == -1 )
 		{
 			sError = ssprintf( "write error: %s", out.GetError().c_str() );
-			if( bReadError != NULL )
+			if( bReadError != nullptr )
 				*bReadError = false;
 			return false;
 		}
@@ -2293,7 +2293,7 @@ bool FileCopy( RageFileBasic &in, RageFileBasic &out, RString &sError, bool *bRe
 	if( out.Flush() == -1 )
 	{
 		sError = ssprintf( "write error: %s", out.GetError().c_str() );
-		if( bReadError != NULL )
+		if( bReadError != nullptr )
 			*bReadError = false;
 		return false;
 	}

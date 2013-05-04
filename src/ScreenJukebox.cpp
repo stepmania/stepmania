@@ -34,7 +34,7 @@ void ScreenJukebox::SetSong()
 	/* Check to see if there is a theme course. If there is a course that has
 	 * the exact same name as the theme, then we pick a song from this course. */
 	Course *pCourse = SONGMAN->GetCourseFromName( THEME->GetCurThemeName() );
-	if( pCourse != NULL )
+	if( pCourse != nullptr )
 		for ( unsigned i = 0; i < pCourse->m_vEntries.size(); i++ )
 			if( pCourse->m_vEntries[i].IsFixedSong() )
 				vSongs.push_back( pCourse->m_vEntries[i].songID.ToSong() );
@@ -73,7 +73,7 @@ void ScreenJukebox::SetSong()
 
 		Song* pSong = vSongs[RandomInt(vSongs.size())];
 
-		ASSERT( pSong != NULL );
+		ASSERT( pSong != nullptr );
 		if( !pSong->HasMusic() )
 			continue;	// skip
 		if( !pSong->NormallyDisplayed() )
@@ -152,7 +152,7 @@ void ScreenJukebox::SetSong()
 				FOREACH_PlayerNumber( p )
 				{
 					GAMESTATE->m_pCurTrail[p].Set( lCourse->GetTrail( GAMESTATE->GetCurrentStyle()->m_StepsType ) );
-					ASSERT( GAMESTATE->m_pCurTrail[p] != NULL );
+					ASSERT( GAMESTATE->m_pCurTrail[p] != nullptr );
 				}
 			}
 		}
@@ -172,7 +172,7 @@ ScreenJukebox::ScreenJukebox()
 void ScreenJukebox::Init()
 {
 	// ScreenJukeboxMenu must set this
-	ASSERT( GAMESTATE->GetCurrentStyle() != NULL );
+	ASSERT( GAMESTATE->GetCurrentStyle() != nullptr );
 	GAMESTATE->m_PlayMode.Set( PLAY_MODE_REGULAR );
 
 	SetSong();

@@ -123,7 +123,7 @@ void StepsUtil::SortStepsPointerArrayByNumPlays( vector<Steps*> &vStepsPointers,
 		}
 	}
 
-	ASSERT( pProfile != NULL );
+	ASSERT( pProfile != nullptr );
 	for(unsigned i = 0; i < vStepsPointers.size(); ++i)
 	{
 		Steps* pSteps = vStepsPointers[i];

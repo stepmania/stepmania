@@ -44,9 +44,9 @@ void StageStats::AssertValid( PlayerNumber pn ) const
 		CHECKPOINT_M( m_vpPlayedSongs[0]->GetTranslitFullTitle() );
 	ASSERT( m_player[pn].m_iStepsPlayed > 0 );
 	ASSERT( m_player[pn].m_vpPossibleSteps.size() != 0 );
-	ASSERT( m_player[pn].m_vpPossibleSteps[0] != NULL );
+	ASSERT( m_player[pn].m_vpPossibleSteps[0] != nullptr );
 	ASSERT_M( m_playMode < NUM_PlayMode, ssprintf("playmode %i", m_playMode) );
-	ASSERT( m_pStyle != NULL );
+	ASSERT( m_pStyle != nullptr );
 	ASSERT_M( m_player[pn].m_vpPossibleSteps[0]->GetDifficulty() < NUM_Difficulty, ssprintf("Invalid Difficulty %i", m_player[pn].m_vpPossibleSteps[0]->GetDifficulty()) );
 	ASSERT_M( (int) m_vpPlayedSongs.size() == m_player[pn].m_iStepsPlayed, ssprintf("%i Songs Played != %i Steps Played for player %i", (int)m_vpPlayedSongs.size(), (int)m_player[pn].m_iStepsPlayed, pn) );
 	ASSERT_M( m_vpPossibleSongs.size() == m_player[pn].m_vpPossibleSteps.size(), ssprintf("%i Possible Songs != %i Possible Steps for player %i", (int)m_vpPossibleSongs.size(), (int)m_player[pn].m_vpPossibleSteps.size(), pn) );
@@ -59,9 +59,9 @@ void StageStats::AssertValid( MultiPlayer pn ) const
 	if( m_vpPlayedSongs[0] )
 		CHECKPOINT_M( m_vpPlayedSongs[0]->GetTranslitFullTitle() );
 	ASSERT( m_multiPlayer[pn].m_vpPossibleSteps.size() != 0 );
-	ASSERT( m_multiPlayer[pn].m_vpPossibleSteps[0] != NULL );
+	ASSERT( m_multiPlayer[pn].m_vpPossibleSteps[0] != nullptr );
 	ASSERT_M( m_playMode < NUM_PlayMode, ssprintf("playmode %i", m_playMode) );
-	ASSERT( m_pStyle != NULL );
+	ASSERT( m_pStyle != nullptr );
 	ASSERT_M( m_player[pn].m_vpPossibleSteps[0]->GetDifficulty() < NUM_Difficulty, ssprintf("difficulty %i", m_player[pn].m_vpPossibleSteps[0]->GetDifficulty()) );
 	ASSERT( (int) m_vpPlayedSongs.size() == m_player[pn].m_iStepsPlayed );
 	ASSERT( m_vpPossibleSongs.size() == m_player[pn].m_vpPossibleSteps.size() );
@@ -239,14 +239,14 @@ void StageStats::FinalizeScores( bool bSummary )
 		{
 			// Save this stage to recent scores
 			Course* pCourse = GAMESTATE->m_pCurCourse;
-			ASSERT( pCourse != NULL );
+			ASSERT( pCourse != nullptr );
 			Trail* pTrail = GAMESTATE->m_pCurTrail[p];
 
 			PROFILEMAN->AddCourseScore( pCourse, pTrail, p, hs, m_player[p].m_iPersonalHighScoreIndex, m_player[p].m_iMachineHighScoreIndex );
 		}
 		else
 		{
-			ASSERT( pSteps != NULL );
+			ASSERT( pSteps != nullptr );
 
 			PROFILEMAN->AddStepsScore( pSong, pSteps, p, hs, m_player[p].m_iPersonalHighScoreIndex, m_player[p].m_iMachineHighScoreIndex );
 		}
@@ -272,9 +272,9 @@ void StageStats::FinalizeScores( bool bSummary )
 		else if( GAMESTATE->IsCourseMode() )
 		{
 			Course* pCourse = GAMESTATE->m_pCurCourse;
-			ASSERT( pCourse != NULL );
+			ASSERT( pCourse != nullptr );
 			Trail *pTrail = GAMESTATE->m_pCurTrail[p];
-			ASSERT( pTrail != NULL );
+			ASSERT( pTrail != nullptr );
 			pHSL = &pProfile->GetCourseHighScoreList( pCourse, pTrail );
 		}
 		else

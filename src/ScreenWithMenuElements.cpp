@@ -156,7 +156,7 @@ ScreenWithMenuElements::~ScreenWithMenuElements()
 	SAFE_DELETE( m_MenuTimer );
 	FOREACH_PlayerNumber( p )
 	{
-		if( m_MemoryCardDisplay[p] != NULL )
+		if( m_MemoryCardDisplay[p] != nullptr )
 			SAFE_DELETE( m_MemoryCardDisplay[p] );
 	}
 	for (Actor *actor : m_vDecorations)

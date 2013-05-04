@@ -108,7 +108,7 @@ public:
 	static float GetMaxStepDistanceSeconds();
 	static float GetWindowSeconds( TimingWindow tw );
 	const NoteData &GetNoteData() const { return m_NoteData; }
-	bool HasVisibleParts() const { return m_pNoteField != NULL; }
+	bool HasVisibleParts() const { return m_pNoteField != nullptr; }
 
 	void SetActorWithJudgmentPosition( Actor *pActor ) { m_pActorWithJudgmentPosition = pActor; }
 	void SetActorWithComboPosition( Actor *pActor ) { m_pActorWithComboPosition = pActor; }

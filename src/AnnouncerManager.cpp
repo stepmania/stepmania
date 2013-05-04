@@ -120,7 +120,7 @@ RString AnnouncerManager::GetPathTo( RString sAnnouncerName, RString sFolderName
 
 	/* Search for the announcer folder in the list of aliases. */
 	int i;
-	for(i = 0; aliases[i][0] != NULL; ++i)
+	for(i = 0; aliases[i][0] != nullptr; ++i)
 	{
 		if(!sFolderName.EqualsNoCase(aliases[i][0]))
 			continue; /* no match */

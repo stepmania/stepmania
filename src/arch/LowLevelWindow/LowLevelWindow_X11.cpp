@@ -347,7 +347,7 @@ void LowLevelWindow_X11::GetDisplayResolutions( DisplayResolutions &out ) const
 
 bool LowLevelWindow_X11::SupportsThreadedRendering()
 {
-	return g_pBackgroundContext != NULL;
+	return g_pBackgroundContext != nullptr;
 }
 
 class RenderTarget_X11: public RenderTarget

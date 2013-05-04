@@ -653,7 +653,7 @@ RageSurface* RageDisplay_D3D::CreateScreenshot()
 				}
 
 				RageSurface *surface = CreateSurfaceFromPixfmt( RagePixelFormat_RGBA8, lr.pBits, desc.Width, desc.Height, lr.Pitch);
-				ASSERT( surface != NULL );
+				ASSERT( surface != nullptr );
 
 				// We need to make a copy, since lr.pBits will go away when we call UnlockRect().
 				result = 
@@ -1383,7 +1383,7 @@ void RageDisplay_D3D::UpdateTexture(
 	int xoffset, int yoffset, int width, int height )
 {
 	IDirect3DTexture9* pTex = (IDirect3DTexture9*)uTexHandle;
-	ASSERT( pTex != NULL );
+	ASSERT( pTex != nullptr );
 
 	RECT rect; 
 	rect.left = xoffset;
@@ -1406,7 +1406,7 @@ void RageDisplay_D3D::UpdateTexture(
 	ASSERT( texpixfmt != NUM_RagePixelFormat );
 
 	RageSurface *Texture = CreateSurfaceFromPixfmt(RagePixelFormat(texpixfmt), lr.pBits, width, height, lr.Pitch);
-	ASSERT( Texture != NULL );
+	ASSERT( Texture != nullptr );
 	RageSurfaceUtils::Blit( img, Texture, width, height );
 
 	delete Texture;

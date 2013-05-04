@@ -1367,7 +1367,7 @@ XNode* Profile::SaveSongScoresCreateNode() const
 	CHECKPOINT;
 
 	const Profile* pProfile = this;
-	ASSERT( pProfile != NULL );
+	ASSERT( pProfile != nullptr );
 
 	XNode* pNode = new XNode( "SongScores" );
 
@@ -1448,7 +1448,7 @@ XNode* Profile::SaveCourseScoresCreateNode() const
 	CHECKPOINT;
 
 	const Profile* pProfile = this;
-	ASSERT( pProfile != NULL );
+	ASSERT( pProfile != nullptr );
 
 	XNode* pNode = new XNode( "CourseScores" );
 
@@ -1556,7 +1556,7 @@ XNode* Profile::SaveCategoryScoresCreateNode() const
 	CHECKPOINT;
 
 	const Profile* pProfile = this;
-	ASSERT( pProfile != NULL );
+	ASSERT( pProfile != nullptr );
 
 	XNode* pNode = new XNode( "CategoryScores" );
 
@@ -1628,7 +1628,7 @@ void Profile::LoadCategoryScoresFromNode( const XNode* pCategoryScores )
 
 void Profile::SaveStatsWebPageToDir( RString sDir ) const
 {
-	ASSERT( PROFILEMAN != NULL );
+	ASSERT( PROFILEMAN != nullptr );
 }
 
 void Profile::SaveMachinePublicKeyToDir( RString sDir ) const
@@ -1664,7 +1664,7 @@ XNode* Profile::SaveScreenshotDataCreateNode() const
 	CHECKPOINT;
 
 	const Profile* pProfile = this;
-	ASSERT( pProfile != NULL );
+	ASSERT( pProfile != nullptr );
 
 	XNode* pNode = new XNode( "ScreenshotData" );
 
@@ -1706,7 +1706,7 @@ XNode* Profile::SaveCalorieDataCreateNode() const
 	CHECKPOINT;
 
 	const Profile* pProfile = this;
-	ASSERT( pProfile != NULL );
+	ASSERT( pProfile != nullptr );
 
 	XNode* pNode = new XNode( "CalorieData" );
 

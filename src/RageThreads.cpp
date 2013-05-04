@@ -94,12 +94,12 @@ void ThreadSlot::ThreadCheckpoint::Set( const char *szFile, int iLine, const cha
 	m_szMessage = szMessage;
 
 	/* Skip any path components. */
-	if( m_szFile != NULL )
+	if( m_szFile != nullptr )
 	{
 		const char *p = strrchr( m_szFile, '/' );
 		if( p == NULL )
 			p = strrchr( m_szFile, '\\' );
-		if( p != NULL && p[1] != '\0' )
+		if( p != nullptr && p[1] != '\0' )
 			m_szFile = p+1;
 	}
 
@@ -215,7 +215,7 @@ RageThread::RageThread( const RageThread &cpy ):
 
 RageThread::~RageThread()
 {
-	if( m_pSlot != NULL )
+	if( m_pSlot != nullptr )
 		Wait();
 }
 
@@ -310,8 +310,8 @@ bool RageThread::EnumThreadIDs( int n, uint64_t &iID )
 
 int RageThread::Wait()
 {
-	ASSERT( m_pSlot != NULL );
-	ASSERT( m_pSlot->m_pImpl != NULL );
+	ASSERT( m_pSlot != nullptr );
+	ASSERT( m_pSlot->m_pImpl != nullptr );
 	int ret = m_pSlot->m_pImpl->Wait();
 
 	LockMut( GetThreadSlotsLock() );
@@ -323,14 +323,14 @@ int RageThread::Wait()
 }
 
 void RageThread::Halt(bool Kill) {
-	ASSERT( m_pSlot != NULL );
-	ASSERT( m_pSlot->m_pImpl != NULL );
+	ASSERT( m_pSlot != nullptr );
+	ASSERT( m_pSlot->m_pImpl != nullptr );
 	m_pSlot->m_pImpl->Halt(Kill);
 }
 
 void RageThread::Resume() {
-	ASSERT( m_pSlot != NULL );
-	ASSERT( m_pSlot->m_pImpl != NULL );
+	ASSERT( m_pSlot != nullptr );
+	ASSERT( m_pSlot->m_pImpl != nullptr );
 	m_pSlot->m_pImpl->Resume();
 }
 
@@ -432,7 +432,7 @@ void Checkpoints::GetLogs( char *pBuf, int iSize, const char *delim )
 		strcat( pBuf, buf );
 		strcat( pBuf, delim );
 		
-		for( int line = 1; (buf = GetCheckpointLog(slotno, line)) != NULL; ++line )
+		for( int line = 1; (buf = GetCheckpointLog(slotno, line)) != nullptr; ++line )
 		{
 			strcat( pBuf, buf );
 			strcat( pBuf, delim );
@@ -704,7 +704,7 @@ bool RageEvent::Wait( RageTimer *pTimeout )
 	ASSERT( m_LockCnt == 0 );
 
 	/* A zero RageTimer also means no timeout. */
-	if( pTimeout != NULL && pTimeout->IsZero() )
+	if( pTimeout != nullptr && pTimeout->IsZero() )
 		pTimeout = NULL;
 	bool bRet = m_pEvent->Wait( pTimeout );
 

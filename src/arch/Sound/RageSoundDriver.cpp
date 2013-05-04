@@ -23,7 +23,7 @@ RageSoundDriver *RageSoundDriver::Create( const RString& sDrivers )
 		}
 
 		RageSoundDriver *pRet = dynamic_cast<RageSoundDriver *>( pDriver );
-		ASSERT( pRet != NULL );
+		ASSERT( pRet != nullptr );
 
 		const RString sError = pRet->Init();
 		if( sError.empty() )

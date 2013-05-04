@@ -270,7 +270,7 @@ static int get_this_frame_byte( const madlib_t *mad )
 	int ret = mad->inbuf_filepos;
 
 	/* If we have a frame, adjust. */
-	if( mad->Stream.this_frame != NULL )
+	if( mad->Stream.this_frame != nullptr )
 		ret += mad->Stream.this_frame-mad->inbuf;
 
 	return ret;
@@ -331,7 +331,7 @@ int RageSoundReader_MP3::fill_buffer()
 {
 	/* Need more data. */
 	int inbytes = 0;
-	if( mad->Stream.next_frame != NULL )
+	if( mad->Stream.next_frame != nullptr )
 	{
 		/* Pull out remaining data from the last buffer. */
 		inbytes = mad->Stream.bufend-mad->Stream.next_frame;

@@ -814,7 +814,7 @@ static wchar_t ScancodeAndKeysToChar( DWORD scancode, unsigned char keys[256] )
 	unsigned short result[2]; // ToAscii writes a max of 2 chars
 	ZERO( result );
 
-	if( pToUnicodeEx != NULL )
+	if( pToUnicodeEx != nullptr )
 	{
 		int iNum = pToUnicodeEx( vk, scancode, keys, (LPWSTR)result, 2, 0, layout );
 		if( iNum == 1 )

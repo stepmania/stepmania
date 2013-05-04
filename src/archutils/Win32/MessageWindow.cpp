@@ -26,7 +26,7 @@ MessageWindow::MessageWindow( const RString &sClassName )
 
 	// XXX: on 2k/XP, use HWND_MESSAGE as parent
 	m_hWnd = CreateWindow( sClassName, sClassName, WS_DISABLED, 0, 0, 0, 0, NULL, NULL, inst, NULL );
-	ASSERT( m_hWnd != NULL );
+	ASSERT( m_hWnd != nullptr );
 
 	SetProp( m_hWnd, "MessageWindow", this );
 }
@@ -60,7 +60,7 @@ void MessageWindow::StopRunning()
 LRESULT CALLBACK MessageWindow::WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
 {
 	MessageWindow *pThis = (MessageWindow *) GetProp( hWnd, "MessageWindow" );
-	if( pThis != NULL && pThis->HandleMessage(msg, wParam, lParam) )
+	if( pThis != nullptr && pThis->HandleMessage(msg, wParam, lParam) )
 		return 0;
 
 	return DefWindowProc( hWnd, msg, wParam, lParam );

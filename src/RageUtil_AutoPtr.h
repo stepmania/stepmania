@@ -131,7 +131,7 @@ public:
 
 	HiddenPtr( const HiddenPtr<T> &cpy ): m_pPtr(NULL)
 	{
-		if( cpy.m_pPtr != NULL )
+		if( cpy.m_pPtr != nullptr )
 			m_pPtr = HiddenPtrTraits<T>::Copy( cpy.m_pPtr );
 	}
 

@@ -32,7 +32,7 @@ RageSoundDriver_PulseAudio::~RageSoundDriver_PulseAudio()
 	pa_threaded_mainloop_stop(m_PulseMainLoop);
 	pa_threaded_mainloop_free(m_PulseMainLoop);
 	
-	if(m_Error != NULL)
+	if(m_Error != nullptr)
 	{
 		free(m_Error);
 	}

@@ -104,7 +104,7 @@ bool ArchHooks_Win32::CheckForMultipleInstances(int argc, char* argv[])
 	if( hWnd == NULL )
 		hWnd = FindWindow( NULL, PRODUCT_ID );
 
-	if( hWnd != NULL )
+	if( hWnd != nullptr )
 	{
 		/* If the application has a model dialog box open, we want to be sure to give focus to it,
 		 * not the main window. */
@@ -113,7 +113,7 @@ bool ArchHooks_Win32::CheckForMultipleInstances(int argc, char* argv[])
 		data.hResult = NULL;
 		EnumWindows( GetEnabledPopup, (LPARAM) &data );
 
-		if( data.hResult != NULL )
+		if( data.hResult != nullptr )
 			SetForegroundWindow( data.hResult );
 		else
 			SetForegroundWindow( hWnd );

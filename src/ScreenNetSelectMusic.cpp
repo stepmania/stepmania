@@ -162,7 +162,7 @@ void ScreenNetSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 		// you have multiple copies of the "same" song you can chose which copy to play.
 		Song* CurSong = m_MusicWheel.GetSelectedSong();
 
-		if(CurSong != NULL )
+		if(CurSong != nullptr )
 
 			if( ( !CurSong->GetTranslitArtist().CompareNoCase( NSMAN->m_sArtist ) ) &&
 					( !CurSong->GetTranslitMainTitle().CompareNoCase( NSMAN->m_sMainTitle ) ) &&

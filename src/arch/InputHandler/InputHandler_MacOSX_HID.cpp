@@ -29,7 +29,7 @@ void InputHandler_MacOSX_HID::QueueCallback( void *target, int result, void *ref
 
 	while( (result = CALL(queue, getNextEvent, &event, zeroTime, 0)) == kIOReturnSuccess )
 	{
-		if( event.longValueSize != 0 && event.longValue != NULL )
+		if( event.longValueSize != 0 && event.longValue != nullptr )
 		{
 			free( event.longValue );
 			continue;

@@ -175,7 +175,7 @@ void NoteField::Load(
 	int iDrawDistanceAfterTargetsPixels, 
 	int iDrawDistanceBeforeTargetsPixels )
 {
-	ASSERT( pNoteData != NULL );
+	ASSERT( pNoteData != nullptr );
 	m_pNoteData = pNoteData;
 	m_iDrawDistanceAfterTargetsPixels = iDrawDistanceAfterTargetsPixels;
 	m_iDrawDistanceBeforeTargetsPixels = iDrawDistanceBeforeTargetsPixels;
@@ -814,7 +814,7 @@ void NoteField::DrawPrimitives()
 	//LOG->Trace( "NoteField::DrawPrimitives()" );
 
 	// This should be filled in on the first update.
-	ASSERT( m_pCurDisplay != NULL );
+	ASSERT( m_pCurDisplay != nullptr );
 
 	ArrowEffects::Update();
 
@@ -873,7 +873,7 @@ void NoteField::DrawPrimitives()
 
 	unsigned i = 0;
 	// Draw beat bars
-	if( ( GAMESTATE->IsEditing() || SHOW_BEAT_BARS ) && pTiming != NULL )
+	if( ( GAMESTATE->IsEditing() || SHOW_BEAT_BARS ) && pTiming != nullptr )
 	{
 		const vector<TimingSegment *> &tSigs = *segs[SEGMENT_TIME_SIG];
 		int iMeasureIndex = 0;
@@ -913,9 +913,9 @@ void NoteField::DrawPrimitives()
 		}
 	}
 
-	if( GAMESTATE->IsEditing() && pTiming != NULL )
+	if( GAMESTATE->IsEditing() && pTiming != nullptr )
 	{
-		ASSERT(GAMESTATE->m_pCurSong != NULL);
+		ASSERT(GAMESTATE->m_pCurSong != nullptr);
 
 		const TimingData &timing = *pTiming;
 

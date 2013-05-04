@@ -37,7 +37,7 @@ void TrailID::FromTrail( const Trail *p )
 
 Trail *TrailID::ToTrail( const Course *p, bool bAllowNull ) const
 {
-	ASSERT( p != NULL );
+	ASSERT( p != nullptr );
 
 	Trail *pRet = NULL;
 	if( !m_Cache.Get(&pRet) )

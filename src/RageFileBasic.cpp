@@ -25,7 +25,7 @@ RageFileObj::RageFileObj( const RageFileObj &cpy ):
 	RageFileBasic(cpy)
 {
 	/* If the original file has a buffer, copy it. */
-	if( cpy.m_pReadBuffer != NULL )
+	if( cpy.m_pReadBuffer != nullptr )
 	{
 		m_pReadBuffer = new char[BSIZE];
 		memcpy( m_pReadBuffer, cpy.m_pReadBuffer, BSIZE );
@@ -38,7 +38,7 @@ RageFileObj::RageFileObj( const RageFileObj &cpy ):
 		m_pReadBuffer = NULL;
 	}
 
-	if( cpy.m_pWriteBuffer != NULL )
+	if( cpy.m_pWriteBuffer != nullptr )
 	{
 		m_pWriteBuffer = new char[cpy.m_iWriteBufferSize];
 		memcpy( m_pWriteBuffer, cpy.m_pWriteBuffer, m_iWriteBufferUsed );
@@ -105,7 +105,7 @@ int RageFileObj::Read( void *pBuffer, size_t iBytes )
 
 	while( !m_bEOF && iBytes > 0 )
 	{
-		if( m_pReadBuffer != NULL && m_iReadBufAvail )
+		if( m_pReadBuffer != nullptr && m_iReadBufAvail )
 		{
 			/* Copy data out of the buffer first. */
 			int iFromBuffer = min( (int) iBytes, m_iReadBufAvail );
@@ -230,7 +230,7 @@ int RageFileObj::EmptyWriteBuf()
 
 int RageFileObj::Write( const void *pBuffer, size_t iBytes )
 {
-	if( m_pWriteBuffer != NULL )
+	if( m_pWriteBuffer != nullptr )
 	{
 		/* If the file position has moved away from the write buffer, or the
 		 * incoming data won't fit in the buffer, flush. */
@@ -429,7 +429,7 @@ int RageFileObj::PutLine( const RString &sStr )
 int RageFileObj::FillReadBuf()
 {
 	/* Don't call this unless buffering is enabled. */
-	ASSERT( m_pReadBuffer != NULL );
+	ASSERT( m_pReadBuffer != nullptr );
 
 	/* The buffer starts at m_Buffer; any data in it starts at m_pReadBuf; space between
 	 * the two is old data that we've read.  (Don't mangle that data; we can use it

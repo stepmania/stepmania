@@ -631,7 +631,7 @@ unsigned TZip::swrite(void *param,const char *buf, unsigned size)
 unsigned int TZip::write(const char *buf,unsigned int size)
 { 
 	const char *srcbuf=buf;
-	if (pfout != NULL)
+	if (pfout != nullptr)
 	{
 		unsigned long writ = pfout->Write( srcbuf, size );
 		return writ;

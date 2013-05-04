@@ -475,7 +475,7 @@ void NetworkStream_Win32::Cancel()
 	m_State = STATE_CANCELLED;
 
 	// If resolving, abort the resolve.
-	if( m_hResolve != NULL )
+	if( m_hResolve != nullptr )
 	{
 		/* When we cancel the request, no message at all will be sent to the window,
 		 * so we need to do it ourself to inform it that it was cancelled. Be sure

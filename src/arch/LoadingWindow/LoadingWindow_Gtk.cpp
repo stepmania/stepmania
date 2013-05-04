@@ -62,14 +62,14 @@ RString LoadingWindow_Gtk::Init()
 		return ModuleError("SetIndeterminate");
 
 	const char *ret = Module_Init( &g_argc, &g_argv );
-	if( ret != NULL )
+	if( ret != nullptr )
 		return ret;
 	return "";
 }
 
 LoadingWindow_Gtk::~LoadingWindow_Gtk()
 {
-	if( Module_Shutdown != NULL )
+	if( Module_Shutdown != nullptr )
 		Module_Shutdown();
 	Module_Shutdown = NULL;
 

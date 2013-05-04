@@ -281,7 +281,7 @@ void ConcurrentRenderer::Stop()
 
 void ConcurrentRenderer::RenderThread()
 {
-	ASSERT( SCREENMAN != NULL );
+	ASSERT( SCREENMAN != nullptr );
 
 	while( !m_bShutdown )
 	{

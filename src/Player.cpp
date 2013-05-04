@@ -416,12 +416,12 @@ void Player::Init(
 
 		if( GAMESTATE->IsCourseMode() )
 		{
-			ASSERT( GAMESTATE->m_pCurTrail[pn] != NULL );
+			ASSERT( GAMESTATE->m_pCurTrail[pn] != nullptr );
 			GAMESTATE->m_pCurTrail[pn]->GetDisplayBpms( bpms );
 		}
 		else
 		{
-			ASSERT( GAMESTATE->m_pCurSong != NULL );
+			ASSERT( GAMESTATE->m_pCurSong != nullptr );
 			GAMESTATE->m_pCurSong->GetDisplayBpms( bpms );
 		}
 
@@ -891,14 +891,14 @@ void Player::Update( float fDeltaTime )
 		const bool bReverse = m_pPlayerState->m_PlayerOptions.GetCurrent().GetReversePercentForColumn(0) == 1;
 		float fPercentCentered = m_pPlayerState->m_PlayerOptions.GetCurrent().m_fScrolls[PlayerOptions::SCROLL_CENTERED];
 
-		if( m_pActorWithJudgmentPosition != NULL )
+		if( m_pActorWithJudgmentPosition != nullptr )
 		{
 			const Actor::TweenState &ts1 = m_tsJudgment[bReverse?1:0][0];
 			const Actor::TweenState &ts2 = m_tsJudgment[bReverse?1:0][1];
 			Actor::TweenState::MakeWeightedAverage( m_pActorWithJudgmentPosition->DestTweenState(), ts1, ts2, fPercentCentered );
 		}
 
-		if( m_pActorWithComboPosition != NULL )
+		if( m_pActorWithComboPosition != nullptr )
 		{
 			const Actor::TweenState &ts1 = m_tsCombo[bReverse?1:0][0];
 			const Actor::TweenState &ts2 = m_tsCombo[bReverse?1:0][1];
@@ -908,9 +908,9 @@ void Player::Update( float fDeltaTime )
 		float fNoteFieldZoom = 1 - fMiniPercent*0.5f;
 		if( m_pNoteField )
 			m_pNoteField->SetZoom( fNoteFieldZoom );
-		if( m_pActorWithJudgmentPosition != NULL )
+		if( m_pActorWithJudgmentPosition != nullptr )
 			m_pActorWithJudgmentPosition->SetZoom( m_pActorWithJudgmentPosition->GetZoom() * fJudgmentZoom );
-		if( m_pActorWithComboPosition != NULL )
+		if( m_pActorWithComboPosition != nullptr )
 			m_pActorWithComboPosition->SetZoom( m_pActorWithComboPosition->GetZoom() * fJudgmentZoom );
 	}
 
@@ -931,7 +931,7 @@ void Player::Update( float fDeltaTime )
 	ASSERT_M( iNumCols <= MAX_COLS_PER_PLAYER, ssprintf("%i > %i", iNumCols, MAX_COLS_PER_PLAYER) );
 	for( int col=0; col < iNumCols; ++col )
 	{
-		ASSERT( m_pPlayerState != NULL );
+		ASSERT( m_pPlayerState != nullptr );
 
 		// TODO: Remove use of PlayerNumber.
 		GameInput GameI = GAMESTATE->GetCurrentStyle()->StyleInputToGameInput( col, m_pPlayerState->m_PlayerNumber );
@@ -1216,7 +1216,7 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 			if( m_pPlayerState->m_PlayerController == PC_AUTOPLAY )
 			{
 				STATSMAN->m_CurStageStats.m_bUsedAutoplay = true;
-				if( m_pPlayerStageStats != NULL )
+				if( m_pPlayerStageStats != nullptr )
 					m_pPlayerStageStats->m_bDisqualified = true;
 			}
 		}
@@ -3162,9 +3162,9 @@ void Player::HandleTapRowScore( unsigned row )
 			m_pSecondaryScoreKeeper->HandleTapScore( tn );
 	}
 
-	if( m_pPrimaryScoreKeeper != NULL )
+	if( m_pPrimaryScoreKeeper != nullptr )
 		m_pPrimaryScoreKeeper->HandleTapRowScore( m_NoteData, row );
-	if( m_pSecondaryScoreKeeper != NULL )
+	if( m_pSecondaryScoreKeeper != nullptr )
 		m_pSecondaryScoreKeeper->HandleTapRowScore( m_NoteData, row );
 
 	const int iCurCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurCombo : 0;

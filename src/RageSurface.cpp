@@ -64,7 +64,7 @@ void RageSurfaceFormat::GetRGB( uint32_t val, uint8_t *r, uint8_t *g, uint8_t *b
 {
 	if( BytesPerPixel == 1 )
 	{
-		ASSERT( palette != NULL );
+		ASSERT( palette != nullptr );
 		*r = palette->colors[val].r;
 		*g = palette->colors[val].g;
 		*b = palette->colors[val].b;

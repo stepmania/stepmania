@@ -31,7 +31,7 @@ static RageSurface *TryOpenFile( RString sPath, bool bHeaderOnly, RString &error
 
 	if( result == RageSurfaceUtils::OPEN_OK )
 	{
-		ASSERT( ret != NULL );
+		ASSERT( ret != nullptr );
 		return ret;
 	}
 

@@ -40,7 +40,7 @@ void IPreference::LoadAllDefaults()
 
 void IPreference::ReadAllPrefsFromNode( const XNode* pNode, bool bIsStatic )
 {
-	ASSERT( pNode != NULL );
+	ASSERT( pNode != nullptr );
 	for (IPreference *p : *m_Subscribers.m_pSubscribers)
 		p->ReadFrom( pNode, bIsStatic );
 }

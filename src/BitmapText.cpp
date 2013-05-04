@@ -95,7 +95,7 @@ BitmapText & BitmapText::operator=(const BitmapText &cpy)
 	if( m_pFont )
 		FONT->UnloadFont( m_pFont );
 
-	if( cpy.m_pFont != NULL )
+	if( cpy.m_pFont != nullptr )
 		m_pFont = FONT->CopyFont( cpy.m_pFont );
 	else
 		m_pFont = NULL;
@@ -363,7 +363,7 @@ void BitmapText::DrawChars( bool bUseStrokeTexture )
  * in sAlternateText, too, just use sText. */
 void BitmapText::SetText( const RString& _sText, const RString& _sAlternateText, int iWrapWidthPixels )
 {
-	ASSERT( m_pFont != NULL );
+	ASSERT( m_pFont != nullptr );
 
 	RString sNewText = StringWillUseAlternate(_sText,_sAlternateText) ? _sAlternateText : _sText;
 
@@ -505,7 +505,7 @@ void BitmapText::UpdateBaseZoom()
 
 bool BitmapText::StringWillUseAlternate( const RString& sText, const RString& sAlternateText ) const
 {
-	ASSERT( m_pFont != NULL );
+	ASSERT( m_pFont != nullptr );
 
 	// Can't use the alternate if there isn't one.
 	if( !sAlternateText.size() )
@@ -711,7 +711,7 @@ void BitmapText::SetHorizAlign( float f )
 
 void BitmapText::SetWrapWidthPixels( int iWrapWidthPixels )
 {
-	ASSERT( m_pFont != NULL ); // always load a font first
+	ASSERT( m_pFont != nullptr ); // always load a font first
 	if( m_iWrapWidthPixels == iWrapWidthPixels )
 		return;
 	m_iWrapWidthPixels = iWrapWidthPixels;

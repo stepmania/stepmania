@@ -775,7 +775,7 @@ float ScreenSelectMaster::DoMenuStart( PlayerNumber pn )
 	}
 	if( SHOW_CURSOR )
 	{
-		if(m_sprCursor[pn] != NULL)
+		if(m_sprCursor[pn] != nullptr)
 		{
 			m_sprCursor[pn]->PlayCommand( "Choose" );
 			fSecs = max( fSecs, m_sprCursor[pn]->GetTweenTimeLeft() );

@@ -101,7 +101,7 @@ void OptionListRow::SetFromHandler( const OptionRowHandler *pHandler )
 
 void OptionListRow::SetTextFromHandler( const OptionRowHandler *pHandler )
 {
-	ASSERT( pHandler != NULL );
+	ASSERT( pHandler != nullptr );
 	for( unsigned i = 0; i < pHandler->m_Def.m_vsChoices.size(); ++i )
 	{
 		// init text
@@ -632,7 +632,7 @@ void OptionsList::SelectionsChanged( const RString &sRowName )
 	const OptionRowHandler *pHandler = m_Rows[sRowName];
 	vector<bool> &bSelections = m_bSelections[sRowName];
 
-	if( pHandler->m_Def.m_bOneChoiceForAllPlayers && m_pLinked != NULL )
+	if( pHandler->m_Def.m_bOneChoiceForAllPlayers && m_pLinked != nullptr )
 	{
 		vector<bool> &bLinkedSelections = m_pLinked->m_bSelections[sRowName];
 		bLinkedSelections = bSelections;

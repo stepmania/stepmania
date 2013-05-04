@@ -268,7 +268,7 @@ void Steps::TidyUpData()
 void Steps::CalculateRadarValues( float fMusicLengthSeconds )
 {
 	// If we're autogen, don't calculate values.  GetRadarValues will take from our parent.
-	if( parent != NULL )
+	if( parent != nullptr )
 		return;
 
 	if( m_bAreCachedRadarValuesJustLoaded )

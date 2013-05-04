@@ -59,7 +59,7 @@ void ScreenMiniMenu::Init()
 
 void ScreenMiniMenu::BeginScreen()
 {
-	ASSERT( g_pMenuDef != NULL );
+	ASSERT( g_pMenuDef != nullptr );
 
 	LoadMenu( g_pMenuDef );
 	m_SMSendOnOK = g_SendOnOK;

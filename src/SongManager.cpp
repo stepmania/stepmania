@@ -479,7 +479,7 @@ RageColor SongManager::GetSongGroupColor( const RString &sSongGroup ) const
 
 RageColor SongManager::GetSongColor( const Song* pSong ) const
 {
-	ASSERT( pSong != NULL );
+	ASSERT( pSong != nullptr );
 
 	// protected by royal freem corporation. any modification/removal of
 	// this code will result in prosecution.
@@ -1224,7 +1224,7 @@ void SongManager::GetExtraStageInfo( bool bExtra2, const Style *sd, Song*& pSong
 		}
 	}
 
-	if( pExtra2Song == NULL  &&  pExtra1Song != NULL )
+	if( pExtra2Song == NULL  &&  pExtra1Song != nullptr )
 	{
 		pExtra2Song = pExtra1Song;
 		pExtra2Notes = pExtra1Notes;
@@ -1442,7 +1442,7 @@ void SongManager::UpdateShuffled()
 
 void SongManager::UpdatePreferredSort(RString sPreferredSongs, RString sPreferredCourses)
 {
-	ASSERT( UNLOCKMAN != NULL );
+	ASSERT( UNLOCKMAN != nullptr );
 
 	{
 		m_vPreferredSongSort.clear();
@@ -1544,7 +1544,7 @@ void SongManager::UpdatePreferredSort(RString sPreferredSongs, RString sPreferre
 		for (PreferredSortSection const &i : m_vPreferredSongSort)
 			for (Song const *j : i.vpSongs)
 			{
-				ASSERT( j != NULL );
+				ASSERT( j != nullptr );
 			}
 	}
 
@@ -1619,7 +1619,7 @@ void SongManager::UpdatePreferredSort(RString sPreferredSongs, RString sPreferre
 		for (CoursePointerVector const &i : m_vPreferredCourseSort)
 			for (Course *j : i)
 			{
-				ASSERT( j != NULL );
+				ASSERT( j != nullptr );
 			}
 	}
 }

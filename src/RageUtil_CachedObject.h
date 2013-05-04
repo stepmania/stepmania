@@ -31,7 +31,7 @@ public:
 
 	~CachedObject()
 	{
-		if( m_pObject != NULL )
+		if( m_pObject != nullptr )
 			ClearCacheSpecific( m_pObject );
 	}
 
@@ -145,7 +145,7 @@ public:
 		CachedObjectHelpers::Lock();
 		m_pCache = p;
 		m_bCacheIsSet = true;
-		if( p != NULL )
+		if( p != nullptr )
 			p->m_CachedObject.m_pObject = p;
 		CachedObjectHelpers::Unlock();
 	}

@@ -30,7 +30,7 @@ void ScreenOptionsEditProfile::BeginScreen()
 	vector<OptionRowHandler*> vHands;
 
 	Profile *pProfile = PROFILEMAN->GetLocalProfile( GAMESTATE->m_sEditLocalProfileID );
-	ASSERT( pProfile != NULL );
+	ASSERT( pProfile != nullptr );
 
 	{
 		vHands.push_back( OptionRowHandlerUtil::MakeNull() );
@@ -64,7 +64,7 @@ ScreenOptionsEditProfile::~ScreenOptionsEditProfile()
 void ScreenOptionsEditProfile::ImportOptions( int iRow, const vector<PlayerNumber> &vpns )
 {
 	Profile *pProfile = PROFILEMAN->GetLocalProfile( GAMESTATE->m_sEditLocalProfileID );
-	ASSERT( pProfile != NULL );
+	ASSERT( pProfile != nullptr );
 	OptionRow &row = *m_pRows[iRow];
 
 	switch( iRow )
@@ -78,7 +78,7 @@ void ScreenOptionsEditProfile::ImportOptions( int iRow, const vector<PlayerNumbe
 void ScreenOptionsEditProfile::ExportOptions( int iRow, const vector<PlayerNumber> &vpns )
 {
 	Profile *pProfile = PROFILEMAN->GetLocalProfile( GAMESTATE->m_sEditLocalProfileID );
-	ASSERT( pProfile != NULL );
+	ASSERT( pProfile != nullptr );
 	OptionRow &row = *m_pRows[iRow];
 	int iIndex = row.GetOneSharedSelection( true );
 	RString sValue;

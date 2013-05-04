@@ -351,13 +351,13 @@ void MusicWheelItem::RefreshGrades()
 			if( pWID->m_pSong )
 			{
 				const Steps* pSteps = SongUtil::GetStepsByDifficulty( pWID->m_pSong, st, dc );
-				if( pSteps != NULL )
+				if( pSteps != nullptr )
 					pHSL = &pProfile->GetStepsHighScoreList(pWID->m_pSong, pSteps);
 			}
 			else if( pWID->m_pCourse )
 			{
 				const Trail *pTrail = pWID->m_pCourse->GetTrail( st, dc );
-				if( pTrail != NULL )
+				if( pTrail != nullptr )
 					pHSL = &pProfile->GetCourseHighScoreList( pWID->m_pCourse, pTrail );
 			}
 		}

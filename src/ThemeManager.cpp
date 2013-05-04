@@ -410,7 +410,7 @@ void ThemeManager::SwitchThemeAndLanguage( const RString &sThemeName_, const RSt
 	{
 #if !defined(SMPACKAGE)
 		// reload common sounds
-		if( SCREENMAN != NULL )
+		if( SCREENMAN != nullptr )
 			SCREENMAN->ThemeChanged();
 #endif
 
@@ -869,7 +869,7 @@ void ThemeManager::ReloadMetrics()
 
 RString ThemeManager::GetMetricsGroupFallback( const RString &sMetricsGroup )
 {
-	ASSERT( g_pLoadedThemeData != NULL );
+	ASSERT( g_pLoadedThemeData != nullptr );
 
 	// always look in iniMetrics for "Fallback"
 	RString sFallback;
@@ -1163,7 +1163,7 @@ RString ThemeManager::GetString( const RString &sMetricsGroup, const RString &sV
 	sValueName.Replace( "\r\n", "\\n" );
 	sValueName.Replace( "\n", "\\n" );
 
-	ASSERT( g_pLoadedThemeData != NULL );
+	ASSERT( g_pLoadedThemeData != nullptr );
 	RString s = GetMetricRaw( g_pLoadedThemeData->iniStrings, sMetricsGroup, sValueName );
 	FontCharAliases::ReplaceMarkers( s );
 
@@ -1209,7 +1209,7 @@ void ThemeManager::GetMetricsThatBeginWith( const RString &sMetricsGroup_, const
 	while( !sMetricsGroup.empty() )
 	{
 		const XNode *cur = g_pLoadedThemeData->iniMetrics.GetChild( sMetricsGroup );
-		if( cur != NULL )
+		if( cur != nullptr )
 		{
 			// Iterate over all metrics that match.
 			for( XAttrs::const_iterator j = cur->m_attrs.lower_bound( sValueName ); j != cur->m_attrs.end(); ++j )

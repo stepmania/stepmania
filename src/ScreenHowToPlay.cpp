@@ -149,7 +149,7 @@ void ScreenHowToPlay::Init()
 		const Style* pStyle = GAMESTATE->GetCurrentStyle();
 
 		Steps *pSteps = SongUtil::GetClosestNotes( &m_Song, pStyle->m_StepsType, Difficulty_Beginner );
-		ASSERT_M( pSteps != NULL, ssprintf("No playable steps of StepsType '%s' for ScreenHowToPlay", StringConversion::ToString(pStyle->m_StepsType).c_str()) );
+		ASSERT_M( pSteps != nullptr, ssprintf("No playable steps of StepsType '%s' for ScreenHowToPlay", StringConversion::ToString(pStyle->m_StepsType).c_str()) );
 
 		m_Song.m_SongTiming.TidyUpData( false );
 		pSteps->m_Timing.TidyUpData( true );
@@ -248,7 +248,7 @@ void ScreenHowToPlay::Step()
 
 void ScreenHowToPlay::Update( float fDelta )
 {
-	if( GAMESTATE->m_pCurSong != NULL )
+	if( GAMESTATE->m_pCurSong != nullptr )
 	{
 		RageTimer tm;
 		GAMESTATE->UpdateSongPosition( m_fFakeSecondsIntoSong, GAMESTATE->m_pCurSong->m_SongTiming, tm, true );
