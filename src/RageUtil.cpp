@@ -1758,13 +1758,6 @@ int StringToInt( const RString &sString )
 	return ret;
 }
 
-RString IntToString( const int &iNum )
-{
-	stringstream ss;
-	ss << iNum;
-	return ss.str();
-}
-
 float StringToFloat( const RString &sString )
 {
 	float ret = strtof( sString, nullptr );
