@@ -176,7 +176,7 @@ bool SongOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut )
 	Regex lives("^([0-9]+) ?(lives|life)$");
 	if( lives.Compare(sBit, matches) )
 	{
-		m_iBatteryLives = StringToInt( matches[0] );
+		m_iBatteryLives = std::stoi( matches[0] );
 		return true;
 	}
 

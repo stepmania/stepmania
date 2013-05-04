@@ -565,7 +565,7 @@ void BMSChartReader::ReadHeaders()
 		}
 		else if( it->first == "#playlevel" )
 		{
-			out->SetMeter( StringToInt(it->second) );
+			out->SetMeter( std::stoi(it->second) );
 		}
 	}
 }

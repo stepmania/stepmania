@@ -109,7 +109,7 @@ void SMLoader::LoadFromTokens(
 		// have a meter on certain steps. Make the meter 1 in these instances.
 		sMeter = "1";
 	}
-	out.SetMeter( StringToInt(sMeter) );
+	out.SetMeter( std::stoi(sMeter) );
 
 	out.SetSMNoteData( sNoteData );
 
@@ -393,8 +393,8 @@ void SMLoader::ProcessTimeSignatures( TimingData &out, const RString line, const
 		}
 
 		const float fBeat = RowToBeat( vs2[0], rowsPerBeat );
-		const int iNumerator = StringToInt( vs2[1] );
-		const int iDenominator = StringToInt( vs2[2] );
+		const int iNumerator = std::stoi( vs2[1] );
+		const int iDenominator = std::stoi( vs2[2] );
 
 		if( fBeat < 0 )
 		{
@@ -486,7 +486,7 @@ void SMLoader::ProcessSpeeds( TimingData &out, const RString line, const int row
 		const float fDelay = StringToFloat( vs2[2] );
 
 		// XXX: ugly...
-		int iUnit = StringToInt(vs2[3]);
+		int iUnit = std::stoi(vs2[3]);
 		SpeedSegment::BaseUnit unit = (iUnit == 0) ?
 			SpeedSegment::UNIT_BEATS : SpeedSegment::UNIT_SECONDS;
 
@@ -587,7 +587,7 @@ bool SMLoader::LoadFromBGChangesString( BackgroundChange &change, const RString 
 		// Backward compatibility:
 		if( change.m_def.m_sEffect.empty() )
 		{
-			bool bLoop = StringToInt( aBGChangeValues[5] ) != 0;
+			bool bLoop = std::stoi( aBGChangeValues[5] ) != 0;
 			if( !bLoop )
 				change.m_def.m_sEffect = SBE_StretchNoLoop;
 		}
@@ -597,7 +597,7 @@ bool SMLoader::LoadFromBGChangesString( BackgroundChange &change, const RString 
 		// Backward compatibility:
 		if( change.m_def.m_sEffect.empty() )
 		{
-			bool bRewindMovie = StringToInt( aBGChangeValues[4] ) != 0;
+			bool bRewindMovie = std::stoi( aBGChangeValues[4] ) != 0;
 			if( bRewindMovie )
 				change.m_def.m_sEffect = SBE_StretchRewind;
 		}
@@ -606,7 +606,7 @@ bool SMLoader::LoadFromBGChangesString( BackgroundChange &change, const RString 
 		// param 9 overrides this.
 		// Backward compatibility:
 		if( change.m_sTransition.empty() )
-			change.m_sTransition = (StringToInt( aBGChangeValues[3] ) != 0) ? "CrossFade" : "";
+			change.m_sTransition = (std::stoi( aBGChangeValues[3] ) != 0) ? "CrossFade" : "";
 		// fall through
 	case 3:
 		change.m_fRate = StringToFloat( aBGChangeValues[2] );
@@ -869,7 +869,7 @@ bool SMLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCache
 			 * used 3.9+ features are not excluded here */
 			else if(sParams[1].EqualsNoCase("ES") || sParams[1].EqualsNoCase("OMES"))
 				out.m_SelectionDisplay = out.SHOW_ALWAYS;
-			else if( StringToInt(sParams[1]) > 0 )
+			else if( std::stoi(sParams[1]) > 0 )
 				out.m_SelectionDisplay = out.SHOW_ALWAYS;
 			else
 				LOG->UserLog( "Song file", sPath, "has an unknown #SELECTABLE value, \"%s\"; ignored.", sParams[1].c_str() );

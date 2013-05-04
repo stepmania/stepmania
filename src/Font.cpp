@@ -428,7 +428,7 @@ void Font::LoadFontPageSettings( FontPageSettings &cfg, IniFile &ini, const RStr
 			// If val is an integer, it's a width, eg. "10=27".
 			if( IsAnInt(sName) )
 			{
-				cfg.m_mapGlyphWidths[StringToInt(sName)] = pValue->GetValue<int>();
+				cfg.m_mapGlyphWidths[std::stoi(sName)] = pValue->GetValue<int>();
 				continue;
 			}
 
@@ -530,7 +530,7 @@ void Font::LoadFontPageSettings( FontPageSettings &cfg, IniFile &ini, const RStr
 				TrimLeft( sRowStr );
 
 				ASSERT( IsAnInt(sRowStr) );
-				const int iRow = StringToInt( sRowStr );
+				const int iRow = std::stoi( sRowStr );
 				const int iFirstFrame = iRow * iNumFramesWide;
 
 				if( iRow > iNumFramesHigh )

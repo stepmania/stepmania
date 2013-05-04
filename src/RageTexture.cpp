@@ -51,8 +51,8 @@ void RageTexture::GetFrameDimensionsFromFileName( RString sPath, int* piFramesWi
 		*piFramesWide = *piFramesHigh = 1;
 		return;
 	}
-	*piFramesWide = StringToInt(asMatch[0]);
-	*piFramesHigh = StringToInt(asMatch[1]);
+	*piFramesWide = std::stoi(asMatch[0]);
+	*piFramesHigh = std::stoi(asMatch[1]);
 }
 
 const RectF *RageTexture::GetTextureCoordRect( int iFrameNo ) const

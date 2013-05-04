@@ -263,8 +263,8 @@ float HHMMSSToSeconds( const RString &sHHMMSS )
 		arrayBits.insert(arrayBits.begin(), "0" );	// pad missing bits
 
 	float fSeconds = 0;
-	fSeconds += StringToInt( arrayBits[0] ) * 60 * 60;
-	fSeconds += StringToInt( arrayBits[1] ) * 60;
+	fSeconds += std::stoi( arrayBits[0] ) * 60 * 60;
+	fSeconds += std::stoi( arrayBits[1] ) * 60;
 	fSeconds += StringToFloat( arrayBits[2] );
 
 	return fSeconds;
@@ -1751,13 +1751,6 @@ void MakeLower( wchar_t *p, size_t iLen )
 	UnicodeUpperLower( p, iLen, g_LowerCase );
 }
 
-int StringToInt( const RString &sString )
-{
-	int ret;
-	istringstream ( sString ) >> ret;
-	return ret;
-}
-
 float StringToFloat( const RString &sString )
 {
 	float ret = strtof( sString, nullptr );
@@ -2207,7 +2200,7 @@ namespace StringConversion
 		if( sValue.size() == 0 )
 			return false;
 
-		out = (StringToInt(sValue) != 0);
+		out = (std::stoi(sValue) != 0);
 		return true;
 	}
 

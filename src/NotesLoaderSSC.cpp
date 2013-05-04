@@ -104,8 +104,8 @@ void SSCLoader::ProcessCombos( TimingData &out, const RString line, const int ro
 			continue;
 		}
 		const float fComboBeat = StringToFloat( arrayComboValues[0] );
-		const int iCombos = StringToInt( arrayComboValues[1] );
-		const int iMisses = (size == 2 ? iCombos : StringToInt(arrayComboValues[2]));
+		const int iCombos = std::stoi( arrayComboValues[1] );
+		const int iMisses = (size == 2 ? iCombos : std::stoi(arrayComboValues[2]));
 		out.AddSegment( ComboSegment( BeatToNoteRow(fComboBeat), iCombos, iMisses ) );
 	}
 }
@@ -206,7 +206,7 @@ bool SSCLoader::LoadNoteDataFromSimfile( const RString & cachePath, Steps &out )
 			
 			else if( valueName=="METER" )
 			{
-				if (out.GetMeter() != StringToInt(matcher))
+				if (out.GetMeter() != std::stoi(matcher))
 					tryingSteps = false;
 			}
 			
@@ -426,7 +426,7 @@ bool SSCLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 					 * used 3.9+ features are not excluded here */
 					else if(sParams[1].EqualsNoCase("ES") || sParams[1].EqualsNoCase("OMES"))
 						out.m_SelectionDisplay = out.SHOW_ALWAYS;
-					else if( StringToInt(sParams[1]) > 0 )
+					else if( std::stoi(sParams[1]) > 0 )
 						out.m_SelectionDisplay = out.SHOW_ALWAYS;
 					else
 						LOG->UserLog( "Song file", sPath, "has an unknown #SELECTABLE value, \"%s\"; ignored.", sParams[1].c_str() );
@@ -549,13 +549,13 @@ bool SSCLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 				else if( sValueName=="HASMUSIC" )
 				{
 					if( bFromCache )
-						out.m_bHasMusic = StringToInt( sParams[1] ) != 0;
+						out.m_bHasMusic = std::stoi( sParams[1] ) != 0;
 				}
 
 				else if( sValueName=="HASBANNER" )
 				{
 					if( bFromCache )
-						out.m_bHasBanner = StringToInt( sParams[1] ) != 0;
+						out.m_bHasBanner = std::stoi( sParams[1] ) != 0;
 				}
 
 				// This tag will get us to the next section.
@@ -603,7 +603,7 @@ bool SSCLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 
 				else if( sValueName=="METER" )
 				{
-					pNewNotes->SetMeter( StringToInt( sParams[1] ) );
+					pNewNotes->SetMeter( std::stoi( sParams[1] ) );
 				}
 
 				else if( sValueName=="RADARVALUES" )
@@ -918,7 +918,7 @@ bool SSCLoader::LoadEditFromMsd(const MsdFile &msd,
 
 		else if( sValueName=="METER" )
 		{
-			pNewNotes->SetMeter( StringToInt( sParams[1] ) );
+			pNewNotes->SetMeter( std::stoi( sParams[1] ) );
 			bSSCFormat = true;
 		}
 
