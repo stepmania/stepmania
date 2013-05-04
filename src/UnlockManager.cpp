@@ -565,15 +565,18 @@ void UnlockManager::Load()
 	// Make sure that we don't have duplicate unlock IDs. This can cause problems
 	// with UnlockCelebrate and with codes.
 	unsigned size = m_UnlockEntries.size();
-	for (unsigned i = 0; i < size - 1; ++i)
+	if (size > 1)
 	{
-		UnlockEntry const &ue1 = m_UnlockEntries[i];
-		for (unsigned j = i + 1; j < size; ++j)
+		for (unsigned i = 0; i < size - 1; ++i)
 		{
-			UnlockEntry const &ue2 = m_UnlockEntries[j];
-			// at this point, these two are definitely different. Assert.
-			ASSERT_M( ue1.m_sEntryID != ue2.m_sEntryID, ssprintf("duplicate unlock entry id %s", ue1.m_sEntryID.c_str()));
+			UnlockEntry const &ue1 = m_UnlockEntries[i];
+			for (unsigned j = i + 1; j < size; ++j)
+			{
+				UnlockEntry const &ue2 = m_UnlockEntries[j];
+				// at this point, these two are definitely different. Assert.
+				ASSERT_M( ue1.m_sEntryID != ue2.m_sEntryID, ssprintf("duplicate unlock entry id %s", ue1.m_sEntryID.c_str()));
 			
+			}
 		}
 	}
 
