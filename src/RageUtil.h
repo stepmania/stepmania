@@ -406,7 +406,10 @@ void MakeLower( char *p, size_t iLen );
 void MakeUpper( wchar_t *p, size_t iLen );
 void MakeLower( wchar_t *p, size_t iLen );
 
+// TODO: Have the three functions below be moved to better locations.
 float StringToFloat( const RString &sString );
+bool StringToFloat( const RString &sString, float &fOut );
+
 /**
  * @brief Have a standard way of converting floats to strings.
  *
@@ -414,7 +417,6 @@ float StringToFloat( const RString &sString );
  * @param num the number to convert.
  * @return the string as trimmed as it can be. */
 RString FloatToString( const float &num );
-bool StringToFloat( const RString &sString, float &fOut );
 
 RString WStringToRString( const wstring &sString );
 RString WcharToUTF8( wchar_t c );
