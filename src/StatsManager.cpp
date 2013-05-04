@@ -257,7 +257,7 @@ void StatsManager::CommitStatsToProfiles( const StageStats *pSS )
 
 	// Save recent scores
 	{
-		auto_ptr<XNode> xml( new XNode("Stats") );
+		unique_ptr<XNode> xml( new XNode("Stats") );
 		xml->AppendChild( "MachineGuid",  PROFILEMAN->GetMachineProfile()->m_sGuid );
 
 		XNode *recent = nullptr;

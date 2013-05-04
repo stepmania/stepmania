@@ -23,13 +23,13 @@ LuaXType( Difficulty );
 
 const RString &CourseDifficultyToLocalizedString( CourseDifficulty x )
 {
-	static auto_ptr<LocalizedString> g_CourseDifficultyName[NUM_Difficulty];
+	static unique_ptr<LocalizedString> g_CourseDifficultyName[NUM_Difficulty];
 	if( g_CourseDifficultyName[0].get() == nullptr )
 	{
 		FOREACH_ENUM( Difficulty,i)
 		{
-			auto_ptr<LocalizedString> ap( new LocalizedString("CourseDifficulty", DifficultyToString(i)) );
-			g_CourseDifficultyName[i] = ap;
+			unique_ptr<LocalizedString> ap( new LocalizedString("CourseDifficulty", DifficultyToString(i)) );
+			g_CourseDifficultyName[i] = move(ap);
 		}
 	}
 	return g_CourseDifficultyName[x]->GetValue();

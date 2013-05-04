@@ -406,7 +406,7 @@ Actor *NoteSkinManager::LoadActor( const RString &sButton, const RString &sEleme
 		return new Actor;
 	}
 
-	auto_ptr<XNode> pNode( XmlFileUtil::XNodeFromTable(L) );
+	unique_ptr<XNode> pNode( XmlFileUtil::XNodeFromTable(L) );
 	if( pNode.get() == nullptr )
 	{
 		// XNode will warn about the error

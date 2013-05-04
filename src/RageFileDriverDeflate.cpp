@@ -303,7 +303,7 @@ int RageFileObjDeflate::FlushInternal()
  */
 RageFileObjInflate *GunzipFile( RageFileBasic *pFile_, RString &sError, uint32_t *iCRC32 )
 {
-	auto_ptr<RageFileBasic> pFile(pFile_);
+	unique_ptr<RageFileBasic> pFile(pFile_);
 
 	sError = "";
 
