@@ -428,8 +428,10 @@ bool ProfileManager::CreateLocalProfile( RString sName, RString &sProfileIDOut )
 	int iMaxProfileNumber = -1;
 	vector<RString> vs;
 	GetLocalProfileIDs( vs );
-	for (RString const &s : vs)
-		iMaxProfileNumber = std::stoi( s );
+	if (vs.size() > 0)
+	{
+		iMaxProfileNumber = std::stoi(vs.back());
+	}
 
 	int iProfileNumber = iMaxProfileNumber + 1;
 	RString sProfileID = ssprintf( "%08d", iProfileNumber );
