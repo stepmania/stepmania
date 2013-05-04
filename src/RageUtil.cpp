@@ -658,7 +658,7 @@ const LanguageInfo *GetLanguageInfo( const RString &sIsoCode )
 			return &g_langs[i];
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 RString join( const RString &sDeliminator, const vector<RString> &sSource)

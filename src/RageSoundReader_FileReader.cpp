@@ -35,7 +35,7 @@ RageSoundReader_FileReader *RageSoundReader_FileReader::TryOpenFile( RageFileBas
 #endif
 
 	if( !Sample )
-		return NULL;
+		return nullptr;
 
 	OpenResult ret = Sample->Open( pFile );
 	pFile = NULL; // Sample owns it now
@@ -81,7 +81,7 @@ RageSoundReader_FileReader *RageSoundReader_FileReader::TryOpenFile( RageFileBas
 		default: break;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 #include "RageFileDriverMemory.h"
@@ -95,7 +95,7 @@ RageSoundReader_FileReader *RageSoundReader_FileReader::OpenFile( RString filena
 		{
 			error = pFileOpen->GetError();
 			delete pFileOpen;
-			return NULL;
+			return nullptr;
 		}
 		pFile = pFileOpen;
 	}
@@ -109,7 +109,7 @@ RageSoundReader_FileReader *RageSoundReader_FileReader::OpenFile( RString filena
 			if( !bRet )
 			{
 				delete pMem;
-				return NULL;
+				return nullptr;
 			}
 
 			pFile = pMem;
@@ -153,7 +153,7 @@ RageSoundReader_FileReader *RageSoundReader_FileReader::OpenFile( RString filena
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 /*

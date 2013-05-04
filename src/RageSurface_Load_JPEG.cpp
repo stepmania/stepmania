@@ -132,7 +132,7 @@ static RageSurface *RageSurface_Load_JPEG( RageFile *f, const char *fn, char err
 		
 		jpeg_destroy_decompress( &cinfo );
 		delete img;
-		return NULL;
+		return nullptr;
 	}
 
 	/* Now we can initialize the JPEG decompression object. */
@@ -161,7 +161,7 @@ static RageSurface *RageSurface_Load_JPEG( RageFile *f, const char *fn, char err
 	case JCS_CMYK:
 		sprintf( errorbuf, "Color format \"%s\" not supported", cinfo.jpeg_color_space == JCS_YCCK? "YCCK":"CMYK" );
 		jpeg_destroy_decompress( &cinfo );
-		return NULL;
+		return nullptr;
 
 	default:
 		cinfo.out_color_space = JCS_RGB;

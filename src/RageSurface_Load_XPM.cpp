@@ -11,7 +11,7 @@
 #define CheckLine() \
 	if( xpm[line] == nullptr ) { \
 		error = "short file"; \
-		return NULL; \
+		return nullptr; \
 	}
 
 RageSurface *RageSurface_Load_XPM( char * const *xpm, RString &error )
@@ -24,13 +24,13 @@ RageSurface *RageSurface_Load_XPM( char * const *xpm, RString &error )
 	if( sscanf( xpm[line++], "%i %i %i %i", &width, &height, &num_colors, &color_length ) != 4 )
 	{
 		error = "parse error reading specs";
-		return NULL;
+		return nullptr;
 	}
 
 	if( width > 2048 || height > 2048 || num_colors > 1024*16 || color_length > 4 )
 	{
 		error = "spec error";
-		return NULL;
+		return nullptr;
 	}
 
 	vector<RageSurfaceColor> colors;
@@ -85,7 +85,7 @@ RageSurface *RageSurface_Load_XPM( char * const *xpm, RString &error )
 		{
 			error = ssprintf( "row %i is not expected length (%i != %i)", y, int(row.size()), width*color_length );
 			delete img;
-		    return NULL;
+		    return nullptr;
 		}
 
 		int8_t *p = (int8_t *) img->pixels;
@@ -100,7 +100,7 @@ RageSurface *RageSurface_Load_XPM( char * const *xpm, RString &error )
 			{
 				error = ssprintf( "%ix%i is unknown color \"%s\"", x, y, color_name.c_str() );
 				delete img;
-				return NULL;
+				return nullptr;
 			}
 
 			if( colors.size() <= 256 )

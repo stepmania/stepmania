@@ -138,7 +138,7 @@ int RageSoundManager::GetDriverSampleRate() const
 	return m_pDriver->GetSampleRate();
 }
 
-/* If the given path is loaded, return a copy; otherwise return NULL.
+/* If the given path is loaded, return a copy; otherwise return nullptr.
  * It's the caller's responsibility to delete the result. */
 RageSoundReader *RageSoundManager::GetLoadedSound( const RString &sPath_ )
 {
@@ -149,7 +149,7 @@ RageSoundReader *RageSoundManager::GetLoadedSound( const RString &sPath_ )
 	map<RString, RageSoundReader_Preload *>::const_iterator it;
 	it = m_mapPreloadedSounds.find( sPath );
 	if( it == m_mapPreloadedSounds.end() )
-		return NULL;
+		return nullptr;
 
 	return it->second->Copy();
 }

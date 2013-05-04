@@ -605,7 +605,7 @@ struct char_traits_char_nocase: public char_traits<char>
 
 		if(fasttoupper(*s) == a)
 			return s;
-		return NULL;
+		return nullptr;
 	}
 };
 typedef basic_string<char,char_traits_char_nocase> istring;

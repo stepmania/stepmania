@@ -291,7 +291,7 @@ FileSet *FilenameDB::GetFileSet( const RString &sDir_, bool bCreate )
 		if( !bCreate )
 		{
 			if( i == dirs.end() )
-				return NULL;
+				return nullptr;
 			return i->second;
 		}
 
@@ -548,7 +548,7 @@ const File *FilenameDB::GetFile( const RString &sPath )
 	set<File>::iterator it;
 	it = fs->files.find( File(Name) );
 	if( it == fs->files.end() )
-		return NULL;
+		return nullptr;
 
 	return &*it;
 }

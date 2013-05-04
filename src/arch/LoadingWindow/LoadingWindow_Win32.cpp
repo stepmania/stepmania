@@ -74,7 +74,7 @@ static HBITMAP LoadWin32Surface( RString sFile, HWND hWnd )
         RString error;
         RageSurface *pSurface = RageSurfaceUtils::LoadFile( sFile, error );
         if( pSurface == nullptr )
-                return NULL;
+                return nullptr;
 
         HBITMAP ret = LoadWin32Surface( pSurface, hWnd );
         delete pSurface;

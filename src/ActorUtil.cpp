@@ -111,7 +111,7 @@ Actor* ActorUtil::LoadFromNode( const XNode* pNode, Actor *pParentActor )
 	{
 		bool bCond;
 		if( pNode->GetAttrValue("Condition", bCond) && !bCond )
-			return NULL;
+			return nullptr;
 	}
 
 	RString sClass;
@@ -145,7 +145,7 @@ namespace
 	{
 		RString sScript;
 		if( !GetFileContents(sFile, sScript) )
-			return NULL;
+			return nullptr;
 
 		Lua *L = LUA->Get();
 
@@ -155,7 +155,7 @@ namespace
 			LUA->Release( L );
 			sError = ssprintf( "Lua runtime error: %s", sError.c_str() );
 			Dialog::OK( sError, "LUA_ERROR" );
-			return NULL;
+			return nullptr;
 		}
 
 		XNode *pRet = NULL;

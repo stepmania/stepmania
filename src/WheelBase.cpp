@@ -320,7 +320,7 @@ WheelItemBaseData* WheelBase::GetItem( unsigned int iIndex )
 	if( !m_bEmpty && iIndex < m_CurWheelItemData.size() )
 		return m_CurWheelItemData[iIndex];
 
-	return NULL;
+	return nullptr;
 }
 
 int WheelBase::IsMoving() const
@@ -502,7 +502,7 @@ void WheelBase::RebuildWheelItems( int iDist )
 WheelItemBaseData* WheelBase::LastSelected()
 {
 	if( m_bEmpty )
-		return NULL;
+		return nullptr;
 	else
 		return m_LastSelection;
 }

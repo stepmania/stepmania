@@ -119,9 +119,9 @@ static void *CreateStack( int size )
 	p = (char *) mmap( NULL, size+PageSize, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0 );
 
 	if( p == (void *) -1 )
-		return NULL;
+		return nullptr;
 	// if( posix_memalign( (void**) &p, PageSize, RealSize ) != 0 )
-	//	return NULL;
+	//	return nullptr;
 
 	if( find_stack_direction() < 0 )
 	{

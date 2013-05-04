@@ -13,11 +13,11 @@ void DriverList::Add( const istring &sName, CreateRageDriverFn pfn )
 RageDriver *DriverList::Create( const RString &sDriverName )
 {
 	if( m_pRegistrees == nullptr )
-		return NULL;
+		return nullptr;
 
 	map<istring, CreateRageDriverFn>::const_iterator iter = m_pRegistrees->find( istring(sDriverName) );
 	if( iter == m_pRegistrees->end() )
-		return NULL;
+		return nullptr;
 	return (iter->second)();
 }
 

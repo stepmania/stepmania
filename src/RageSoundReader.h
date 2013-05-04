@@ -15,7 +15,7 @@ public:
 	virtual int GetSampleRate() const = 0;
 	virtual unsigned GetNumChannels() const = 0;
 	virtual bool SetProperty( const RString & /* sProperty */, float /* fValue */ ) { return false; }
-	virtual RageSoundReader *GetSource() { return NULL; }
+	virtual RageSoundReader *GetSource() { return nullptr; }
 
 	/* Return values for Read(). */
 	enum {

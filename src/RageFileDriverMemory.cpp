@@ -150,7 +150,7 @@ RageFileBasic *RageFileDriverMem::Open( const RString &sPath, int mode, int &err
 	if( pFile == nullptr )
 	{
 		err = ENOENT;
-		return NULL;
+		return nullptr;
 	}
 
 	return new RageFileObjMem( pFile );

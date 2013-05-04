@@ -40,7 +40,7 @@ DialogDriver *DialogDriver::Create()
 			LOG->Info( "Couldn't load driver %s: %s", Driver.c_str(), sError.c_str() );
 		SAFE_DELETE( pRet );
 	}
-	return NULL;
+	return nullptr;
 }
 
 

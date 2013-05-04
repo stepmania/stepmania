@@ -26,7 +26,7 @@ HANDLE Win32ThreadIdToHandle( uint64_t iID )
 			return g_ThreadHandles[i];
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 void ThreadImpl_Win32::Halt( bool Kill )

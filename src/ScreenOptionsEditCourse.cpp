@@ -429,7 +429,7 @@ Song *ScreenOptionsEditCourse::GetSongForEntry( int iEntryIndex )
 
 	int index = row.GetOneSharedSelection();
 	if( index == 0 )
-		return NULL;
+		return nullptr;
 	return m_vpSongs[ index - 1 ];
 }
 

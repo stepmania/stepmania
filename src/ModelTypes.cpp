@@ -131,7 +131,7 @@ void AnimatedTexture::Update( float fDelta )
 RageTexture* AnimatedTexture::GetCurrentTexture()
 {
 	if( vFrames.empty() )
-		return NULL;
+		return nullptr;
 	ASSERT( m_iCurState < (int)vFrames.size() );
 	return vFrames[m_iCurState].pTexture;
 }

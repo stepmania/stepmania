@@ -158,7 +158,7 @@ Steps* SongUtil::GetOneSteps(
 	vector<Steps*> vpSteps;
 	GetSteps( pSong, vpSteps, st, dc, iMeterLow, iMeterHigh, sDescription, sCredit, bIncludeAutoGen, uHash, 1 );	// get max 1
 	if( vpSteps.empty() )
-		return NULL;
+		return nullptr;
 	else
 		return vpSteps[0];
 }
@@ -178,7 +178,7 @@ Steps* SongUtil::GetStepsByDifficulty( const Song *pSong, StepsType st, Difficul
 		return pSteps;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 Steps* SongUtil::GetStepsByMeter( const Song *pSong, StepsType st, int iMeterLow, int iMeterHigh )
@@ -196,7 +196,7 @@ Steps* SongUtil::GetStepsByMeter( const Song *pSong, StepsType st, int iMeterLow
 		return pSteps;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 Steps* SongUtil::GetStepsByDescription( const Song *pSong, StepsType st, RString sDescription )
@@ -204,7 +204,7 @@ Steps* SongUtil::GetStepsByDescription( const Song *pSong, StepsType st, RString
 	vector<Steps*> vNotes;
 	GetSteps( pSong, vNotes, st, Difficulty_Invalid, -1, -1, sDescription, "" );
 	if( vNotes.size() == 0 )
-		return NULL;
+		return nullptr;
 	else 
 		return vNotes[0];
 }
@@ -214,7 +214,7 @@ Steps* SongUtil::GetStepsByCredit( const Song *pSong, StepsType st, RString sCre
 	vector<Steps*> vNotes;
 	GetSteps(pSong, vNotes, st, Difficulty_Invalid, -1, -1, "", sCredit );
 	if( vNotes.size() == 0 )
-		return NULL;
+		return nullptr;
 	else
 		return vNotes[0];
 }

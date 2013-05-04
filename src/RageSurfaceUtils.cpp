@@ -772,20 +772,20 @@ RageSurface *RageSurfaceUtils::LoadSurface( RString file )
 {
 	RageFile f;
 	if( !f.Open( file ) )
-		return NULL;
+		return nullptr;
 
 	SurfaceHeader h;
 	if( f.Read( &h, sizeof(h) ) != sizeof(h) )
-		return NULL;
+		return nullptr;
 
 	RageSurfacePalette palette;
 	if( h.bpp == 8 )
 	{
 		if( f.Read( &palette.ncolors, sizeof(palette.ncolors) ) != sizeof(palette.ncolors) )
-			return NULL;
+			return nullptr;
 		ASSERT_M( palette.ncolors <= 256, ssprintf("%i", palette.ncolors) );
 		if( f.Read( palette.colors, palette.ncolors * sizeof(RageSurfaceColor) ) != int(palette.ncolors * sizeof(RageSurfaceColor)) )
-			return NULL;
+			return nullptr;
 	}
 
 	// Create the surface.
@@ -801,13 +801,13 @@ RageSurface *RageSurfaceUtils::LoadSurface( RString file )
 		LOG->Trace( "Error loading \"%s\": expected pitch %i, got %i (%ibpp, %i width)",
 				file.c_str(), h.pitch, img->pitch, h.bpp, h.width );
 		delete img;
-		return NULL;
+		return nullptr;
 	}
 
 	if( f.Read( img->pixels, h.height * h.pitch ) != h.height * h.pitch )
 	{
 		delete img;
-		return NULL;
+		return nullptr;
 	}
 
 	// Set the palette.

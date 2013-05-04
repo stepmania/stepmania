@@ -18,7 +18,7 @@ public:
 	void FinishLoading();
 	RageSound *GetSound() { return &m_sSound; }
 	RageSoundReader *GetSharedSound() { return m_pSharedSound; }
-	RageSoundReader *GetPlayerSound( PlayerNumber pn ) { if( pn == PLAYER_INVALID ) return NULL; return m_pPlayerSounds[pn]; }
+	RageSoundReader *GetPlayerSound( PlayerNumber pn ) { if( pn == PLAYER_INVALID ) return nullptr; return m_pPlayerSounds[pn]; }
 
 protected:	
 	void LoadAutoplaySoundsInto( RageSoundReader_Chain *pChain );

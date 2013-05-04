@@ -336,7 +336,7 @@ const T *FindItemBinarySearch( IT begin, IT end, const T &i )
 {
 	IT it = lower_bound( begin, end, i );
 	if( it == end || *it != i )
-		return NULL;
+		return nullptr;
 
 	return &*it;
 }

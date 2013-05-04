@@ -73,7 +73,7 @@ const XNodeValue *XNode::GetAttr( const RString &attrname ) const
 	XAttrs::const_iterator it = m_attrs.find( attrname );
 	if( it != m_attrs.end() )
 		return it->second;
-	return NULL;
+	return nullptr;
 }
 
 bool XNode::PushAttrValue( lua_State *L, const RString &sName ) const
@@ -93,7 +93,7 @@ XNodeValue *XNode::GetAttr( const RString &attrname )
 	XAttrs::iterator it = m_attrs.find( attrname );
 	if( it != m_attrs.end() )
 		return it->second;
-	return NULL;
+	return nullptr;
 }
 
 XNode *XNode::GetChild( const RString &sName )
@@ -103,7 +103,7 @@ XNode *XNode::GetChild( const RString &sName )
 		if( it->GetName() == sName )
 			return it;
 	}
-	return NULL;
+	return nullptr;
 }
 
 bool XNode::PushChildValue( lua_State *L, const RString &sName ) const
@@ -125,7 +125,7 @@ const XNode *XNode::GetChild( const RString &sName ) const
 		if( it->GetName() == sName )
 			return it;
 	}
-	return NULL;
+	return nullptr;
 }
 
 XNode *XNode::AppendChild( XNode *node )

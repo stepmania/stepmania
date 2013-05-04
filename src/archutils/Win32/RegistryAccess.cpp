@@ -36,14 +36,14 @@ static bool GetRegKeyType( const RString &sIn, RString &sOut, HKEY &key )
 }
 
 /* Given a full key, eg. "HKEY_LOCAL_MACHINE\hardware\foo", open it and return it.
- * On error, return NULL. */
+ * On error, return nullptr. */
 enum RegKeyMode { READ, WRITE };
 static HKEY OpenRegKey( const RString &sKey, RegKeyMode mode, bool bWarnOnError = true )
 {
 	RString sSubkey;
 	HKEY hType;
 	if( !GetRegKeyType(sKey, sSubkey, hType) )
-		return NULL;
+		return nullptr;
 
 	HKEY hRetKey;
 	LONG retval = RegOpenKeyEx( hType, sSubkey, 0, (mode==READ) ? KEY_READ:KEY_WRITE, &hRetKey );
@@ -51,7 +51,7 @@ static HKEY OpenRegKey( const RString &sKey, RegKeyMode mode, bool bWarnOnError 
 	{
 		if( bWarnOnError )
 			LOG->Warn( werr_ssprintf(retval, "RegOpenKeyEx(%x,%s) error", hType, sSubkey.c_str()) );
-		return NULL;
+		return nullptr;
 	}
 
 	return hRetKey;
@@ -196,7 +196,7 @@ bool RegistryAccess::CreateKey( const RString &sKey )
 	RString sSubkey;
 	HKEY hType;
 	if( !GetRegKeyType(sKey, sSubkey, hType) )
-		return NULL;
+		return nullptr;
 
 	HKEY hKey;
 	DWORD dwDisposition = 0;

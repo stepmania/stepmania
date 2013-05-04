@@ -154,7 +154,7 @@ public:
 	RageFileBasic *Open( const RString &sPath, int iMode, int &iError )
 	{
 		iError = (iMode == RageFile::WRITE)? ERROR_WRITING_NOT_SUPPORTED:ENOENT;
-		return NULL;
+		return nullptr;
 	}
 	/* Never flush FDB, except in LoadFromDrivers. */
 	void FlushDirCache( const RString &sPath ) { }
@@ -855,7 +855,7 @@ RageFileBasic *RageFileManager::OpenForReading( const RString &sPath, int mode, 
 	}
 	UnreferenceAllDrivers( apDriverList );
 
-	return NULL;
+	return nullptr;
 }
 
 RageFileBasic *RageFileManager::OpenForWriting( const RString &sPath, int mode, int &iError )
@@ -936,7 +936,7 @@ RageFileBasic *RageFileManager::OpenForWriting( const RString &sPath, int mode, 
 
 	UnreferenceAllDrivers( apDriverList );
 
-	return NULL;
+	return nullptr;
 }
 
 bool RageFileManager::IsAFile( const RString &sPath ) { return GetFileType(sPath) == TYPE_FILE; }

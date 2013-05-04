@@ -109,7 +109,7 @@ void ThreadSlot::ThreadCheckpoint::Set( const char *szFile, int iLine, const cha
 const char *ThreadSlot::ThreadCheckpoint::GetFormattedCheckpoint()
 {
 	if( m_szFile == nullptr )
-		return NULL;
+		return nullptr;
 
 	/* Make sure it's terminated: */
 	m_szFormattedBuf[ sizeof(m_szFormattedBuf)-1 ] = 0;
@@ -120,7 +120,7 @@ const char *ThreadSlot::ThreadCheckpoint::GetFormattedCheckpoint()
 const char *ThreadSlot::GetFormattedCheckpoint( int lineno )
 {
 	if( lineno >= CHECKPOINT_COUNT || lineno >= m_iNumCheckpoints )
-		return NULL;
+		return nullptr;
 
 	if( m_iNumCheckpoints == CHECKPOINT_COUNT )
 	{
@@ -194,7 +194,7 @@ static ThreadSlot *GetThreadSlotFromID( uint64_t iID )
 		if( g_ThreadSlots[entry].m_iID == iID )
 			return &g_ThreadSlots[entry];
 	}
-	return NULL;
+	return nullptr;
 }
 
 static ThreadSlot *GetCurThreadSlot()
@@ -406,11 +406,11 @@ static const char *GetCheckpointLog( int slotno, int lineno )
 {
 	ThreadSlot &slot = g_ThreadSlots[slotno];
 	if( !slot.m_bUsed )
-		return NULL;
+		return nullptr;
 
 	/* Only show the "Unknown thread" entry if it has at least one checkpoint. */
 	if( &slot == g_pUnknownThreadSlot && slot.GetFormattedCheckpoint(0) == nullptr )
-		return NULL;
+		return nullptr;
 
 	if( lineno != 0 )
 		return slot.GetFormattedCheckpoint( lineno-1 );

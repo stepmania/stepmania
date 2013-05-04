@@ -399,14 +399,14 @@ static RageSurface *ReadImage( RageFile &f, int len, int height,
 	if( !state.Init(f) )
 	{
 //		RWSetMsg("error reading image");
-		return NULL;
+		return nullptr;
 	}
 	/* If this is an "uninteresting picture" ignore it. */
 	if( ignore )
 	{
 		while( state.ReadByte(f) >= 0 )
 			;
-		return NULL;
+		return nullptr;
 	}
 
 	RageSurface *image = CreateSurface( len, height, 8, 0, 0, 0, 0 );

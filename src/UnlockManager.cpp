@@ -203,7 +203,7 @@ const UnlockEntry *UnlockManager::FindSong( const Song *pSong ) const
 	for (UnlockEntry const &e : m_UnlockEntries)
 		if( e.m_Song.ToSong() == pSong  &&  e.m_dc == Difficulty_Invalid )
 			return &e;
-	return NULL;
+	return nullptr;
 }
 
 const UnlockEntry *UnlockManager::FindSteps( const Song *pSong, const Steps *pSteps ) const
@@ -212,7 +212,7 @@ const UnlockEntry *UnlockManager::FindSteps( const Song *pSong, const Steps *pSt
 	for (UnlockEntry const &e : m_UnlockEntries)
 		if( e.m_Song.ToSong() == pSong  &&  e.m_dc == pSteps->GetDifficulty() )
 			return &e;
-	return NULL;
+	return nullptr;
 }
 
 const UnlockEntry *UnlockManager::FindStepsType(const Song *pSong,
@@ -225,7 +225,7 @@ const UnlockEntry *UnlockManager::FindStepsType(const Song *pSong,
 	   e.m_dc == pSteps->GetDifficulty() &&
 	   e.m_StepsType == pSteps->m_StepsType)
 		return &e;
-	return NULL;
+	return nullptr;
 }
 
 const UnlockEntry *UnlockManager::FindCourse( const Course *pCourse ) const
@@ -233,7 +233,7 @@ const UnlockEntry *UnlockManager::FindCourse( const Course *pCourse ) const
 	for (UnlockEntry const &e : m_UnlockEntries)
 		if( e.m_Course.ToCourse() == pCourse )
 			return &e;
-	return NULL;
+	return nullptr;
 }
 
 const UnlockEntry *UnlockManager::FindModifier( const RString &sOneMod ) const
@@ -241,7 +241,7 @@ const UnlockEntry *UnlockManager::FindModifier( const RString &sOneMod ) const
 	for (UnlockEntry const &e : m_UnlockEntries)
 		if( e.GetModifier().CompareNoCase(sOneMod) == 0 )
 			return &e;
-	return NULL;
+	return nullptr;
 }
 
 static float GetArcadePoints( const Profile *pProfile )

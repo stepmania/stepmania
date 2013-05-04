@@ -314,12 +314,12 @@ RageFileObjInflate *GunzipFile( RageFileBasic *pFile_, RString &sError, uint32_t
 		char magic[2];
 		FileReading::ReadBytes( *pFile, magic, 2, sError );
 		if( sError != "" )
-			return NULL;
+			return nullptr;
 
 		if( magic[0] != '\x1f' || magic[1] != '\x8b' )
 		{
 			sError = "Not a gzipped file";
-			return NULL;
+			return nullptr;
 		}
 	}
 
@@ -329,7 +329,7 @@ RageFileObjInflate *GunzipFile( RageFileBasic *pFile_, RString &sError, uint32_t
 	FileReading::read_8( *pFile, sError ); /* xfl */
 	FileReading::read_8( *pFile, sError ); /* os */
 	if( sError != "" )
-		return NULL;
+		return nullptr;
 
 #define FTEXT    1<<0
 #define FHCRC    1<<1
@@ -340,7 +340,7 @@ RageFileObjInflate *GunzipFile( RageFileBasic *pFile_, RString &sError, uint32_t
 	if( iCompressionMethod != 8 )
 	{
 		sError = ssprintf( "Unsupported compression: %i", iCompressionMethod );
-		return NULL;
+		return nullptr;
 	}
 
 	/* Warning: flags other than FNAME are untested, since gzip doesn't
@@ -348,7 +348,7 @@ RageFileObjInflate *GunzipFile( RageFileBasic *pFile_, RString &sError, uint32_t
 	if( iFlags & UNSUPPORTED_MASK )
 	{
 		sError = ssprintf( "Unsupported flags: %x", iFlags );
-		return NULL;
+		return nullptr;
 	}
 
 	if( iFlags & FEXTRA )
@@ -375,12 +375,12 @@ RageFileObjInflate *GunzipFile( RageFileBasic *pFile_, RString &sError, uint32_t
 		uint16_t iExpectedCRC16 = FileReading::read_u16_le( *pFile, sError );
 		uint16_t iActualCRC16 = int16_t( iActualCRC32 & 0xFFFF );
 		if( sError != "" )
-			return NULL;
+			return nullptr;
 
 		if( iActualCRC16 != iExpectedCRC16 )
 		{
 			sError = "Header CRC error";
-			return NULL;
+			return nullptr;
 		}
 	}
 
@@ -389,7 +389,7 @@ RageFileObjInflate *GunzipFile( RageFileBasic *pFile_, RString &sError, uint32_t
 	pFile->EnableCRC32( false );
 
 	if( sError != "" )
-		return NULL;
+		return nullptr;
 
 	int iDataPos = pFile->Tell();
 
@@ -406,7 +406,7 @@ RageFileObjInflate *GunzipFile( RageFileBasic *pFile_, RString &sError, uint32_t
 	FileReading::Seek( *pFile, iDataPos, sError );
 	
 	if( sError != "" )
-		return NULL;
+		return nullptr;
 	
 	RageFileDriverSlice *pSliceFile = new RageFileDriverSlice( pFile.release(), iDataPos, iFooterPos-iDataPos );
 	pSliceFile->DeleteFileWhenFinished();

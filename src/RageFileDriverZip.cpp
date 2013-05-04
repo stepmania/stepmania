@@ -296,14 +296,14 @@ RageFileBasic *RageFileDriverZip::Open( const RString &sPath, int iMode, int &iE
 	if( iMode & RageFile::WRITE )
 	{
 		iErr = ERROR_WRITING_NOT_SUPPORTED;
-		return NULL;
+		return nullptr;
 	}
 
 	FileInfo *info = (FileInfo *) FDB->GetFilePriv( sPath );
 	if( info == nullptr )
 	{
 		iErr = ENOENT;
-		return NULL;
+		return nullptr;
 	}
 
 	m_Mutex.Lock();
@@ -314,7 +314,7 @@ RageFileBasic *RageFileDriverZip::Open( const RString &sPath, int iMode, int &iE
 		if( !ReadLocalFileHeader(*info) )
 		{
 			m_Mutex.Unlock();
-			return NULL;
+			return nullptr;
 		}
 	}
 
@@ -338,7 +338,7 @@ RageFileBasic *RageFileDriverZip::Open( const RString &sPath, int iMode, int &iE
 	default:
 		/* unknown compression method */
 		iErr = ENOSYS;
-		return NULL;
+		return nullptr;
 	}
 }
 

@@ -299,14 +299,14 @@ RageFileBasic *ThreadedFileWorker::Open( const RString &sPath, int iMode, int &i
 	if( m_pChildDriver == nullptr )
 	{
 		iErr = ENODEV;
-		return NULL;
+		return nullptr;
 	}
 
 	/* If we're currently in a timed-out state, fail. */
 	if( IsTimedOut() )
 	{
 		iErr = EFAULT; /* Win32 has no ETIMEDOUT */
-		return NULL;
+		return nullptr;
 	}
 
 	m_sRequestPath = sPath;
@@ -316,7 +316,7 @@ RageFileBasic *ThreadedFileWorker::Open( const RString &sPath, int iMode, int &i
 	{
 		LOG->Trace( "Open(%s) timed out", sPath.c_str() );
 		iErr = EFAULT; /* Win32 has no ETIMEDOUT */
-		return NULL;
+		return nullptr;
 	}
 
 	iErr = m_iResultRequest;
@@ -574,7 +574,7 @@ RageFileBasic *ThreadedFileWorker::Copy( RageFileBasic *&pFile, RString &sError 
 	if( pFile == nullptr )
 	{
 		sError = "Operation timed out";
-		return NULL;
+		return nullptr;
 	}
 
 	m_pRequestFile = pFile;
@@ -583,7 +583,7 @@ RageFileBasic *ThreadedFileWorker::Copy( RageFileBasic *&pFile, RString &sError 
 		/* If we time out, we can no longer access pFile. */
 		sError = "Operation timed out";
 		pFile = NULL;
-		return NULL;
+		return nullptr;
 	}
 
 	RageFileBasic *pRet = m_pResultFile;
@@ -747,13 +747,13 @@ public:
 		if( m_pFile == nullptr )
 		{
 //			SetError( "Operation timed out" );
-			return NULL;
+			return nullptr;
 		}
 
 		if( pCopy == nullptr )
 		{
 //			SetError( sError );
-			return NULL;
+			return nullptr;
 		}
 
 		return new RageFileObjTimeout( m_pWorker, pCopy, m_iFileSize, m_iMode );
@@ -879,7 +879,7 @@ RageFileBasic *RageFileDriverTimeout::Open( const RString &sPath, int iMode, int
 {
 	RageFileBasic *pChildFile = m_pWorker->Open( sPath, iMode, iErr );
 	if( pChildFile == nullptr )
-		return NULL;
+		return nullptr;
 
 	/* RageBasicFile::GetFileSize isn't allowed to fail, but we are; grab the file
 	 * size now and store it. */
@@ -892,7 +892,7 @@ RageFileBasic *RageFileDriverTimeout::Open( const RString &sPath, int iMode, int
 			/* When m_pWorker->GetFileSize fails, it takes ownership of pChildFile. */
 			ASSERT( pChildFile == nullptr );
 			iErr = EFAULT;
-			return NULL;
+			return nullptr;
 		}
 	}
 

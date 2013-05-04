@@ -326,7 +326,7 @@ void *LuaBinding::GetPointerFromStack( Lua *L, const RString &sType, int iArg )
 		return *pData;
 	}
 	else
-		return NULL;
+		return nullptr;
 }
 
 /* Tricky: when an instance table is copied, we want to do a deep

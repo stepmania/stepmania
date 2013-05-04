@@ -243,7 +243,7 @@ void StepsID::FromSteps( const Steps *p )
 Steps *StepsID::ToSteps( const Song *p, bool bAllowNull ) const
 {
 	if( st == StepsType_Invalid || dc == Difficulty_Invalid )
-		return NULL;
+		return nullptr;
 
 	SongID songID;
 	songID.FromSong( p );

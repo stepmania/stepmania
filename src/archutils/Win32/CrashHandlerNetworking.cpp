@@ -158,7 +158,7 @@ NetworkStream *CreateNetworkStream()
 		WSADATA WSAData;
 		WORD iVersionRequested = MAKEWORD(2,0);
 		if( WSAStartup(iVersionRequested, &WSAData) != 0 )
-			return NULL;
+			return nullptr;
 	}
 
 	return new NetworkStream_Win32;

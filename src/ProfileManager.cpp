@@ -416,7 +416,7 @@ const Profile *ProfileManager::GetLocalProfile( const RString &sProfileID ) cons
 			return &dap.profile;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 bool ProfileManager::CreateLocalProfile( RString sName, RString &sProfileIDOut )

@@ -90,7 +90,7 @@ Character* CharacterManager::GetDefaultCharacter()
 
 	/* We always have the default character. */
 	FAIL_M("There must be a default character available!");
-	return NULL;
+	return nullptr;
 }
 
 void CharacterManager::DemandGraphics()
@@ -113,7 +113,7 @@ Character* CharacterManager::GetCharacterFromID( RString sCharacterID )
 			return m_pCharacters[i];
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 

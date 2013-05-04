@@ -785,7 +785,7 @@ ConfOption *ConfOption::Find( RString name )
 		return opt;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 void ConfOption::UpdateAvailableOptions()

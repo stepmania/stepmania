@@ -1804,7 +1804,7 @@ const Profile::HighScoresForASong *Profile::GetHighScoresForASong( const SongID&
 	map<SongID,HighScoresForASong>::const_iterator it;
 	it = m_SongHighScores.find( songID );
 	if( it == m_SongHighScores.end() )
-		return NULL;
+		return nullptr;
 	return &it->second;
 }
 
@@ -1813,7 +1813,7 @@ const Profile::HighScoresForACourse *Profile::GetHighScoresForACourse( const Cou
 	map<CourseID,HighScoresForACourse>::const_iterator it;
 	it = m_CourseHighScores.find( courseID );
 	if( it == m_CourseHighScores.end() )
-		return NULL;
+		return nullptr;
 	return &it->second;
 }
 

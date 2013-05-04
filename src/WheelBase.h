@@ -61,7 +61,7 @@ public:
 	bool IsEmpty() { return m_bEmpty; }
 	WheelItemBaseData* GetItem(unsigned int index);
 	WheelItemBaseData* LastSelected();
-	WheelItemBase *GetWheelItem( int i ) { if( i < 0 || i >= (int) m_WheelBaseItems.size() ) return NULL; return m_WheelBaseItems[i]; }
+	WheelItemBase *GetWheelItem( int i ) { if( i < 0 || i >= (int) m_WheelBaseItems.size() ) return nullptr; return m_WheelBaseItems[i]; }
 	RString GetExpandedSectionName() { return m_sExpandedSectionName; }
 	int GetCurrentIndex() { return m_iSelection; }
 

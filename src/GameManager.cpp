@@ -2921,7 +2921,7 @@ const Style* GameManager::GetEditorStyleForStepsType( StepsType st )
 	}
 
 	ASSERT_M(0, ssprintf("The current game cannot use this Style with the editor!"));
-	return NULL;
+	return nullptr;
 }
 
 
@@ -3012,7 +3012,7 @@ const Style *GameManager::GetFirstCompatibleStyle( const Game *pGame, int iNumPl
 			return s;
 	FAIL_M( ssprintf("No compatible styles for %s - %s with %d player%s.", pGame->m_szName,
 			 GetStepsTypeInfo(st).szName, iNumPlayers, iNumPlayers==1?"":"s") );
-	return NULL;
+	return nullptr;
 }
 
 
@@ -3100,7 +3100,7 @@ const Game* GameManager::StringToGame( RString sGame )
 		if( !sGame.CompareNoCase(g_Games[i]->m_szName) )
 			return g_Games[i];
 
-	return NULL;
+	return nullptr;
 }
 
 
@@ -3113,7 +3113,7 @@ const Style* GameManager::GameAndStringToStyle( const Game *game, RString sStyle
 			return style;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 // lua start

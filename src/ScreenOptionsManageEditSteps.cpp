@@ -294,9 +294,9 @@ Steps *ScreenOptionsManageEditSteps::GetStepsWithFocus() const
 {
 	int iCurRow = m_iCurrentRow[GAMESTATE->GetMasterPlayerNumber()];
 	if( iCurRow == 0 )
-		return NULL;
+		return nullptr;
 	else if( m_pRows[iCurRow]->GetRowType() == OptionRow::RowType_Exit )
-		return NULL;
+		return nullptr;
 	
 	// a Steps
 	int iStepsIndex = iCurRow - 1;

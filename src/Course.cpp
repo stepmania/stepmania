@@ -313,7 +313,7 @@ Trail* Course::GetTrail( StepsType st, CourseDifficulty cd ) const
 		{
 			CacheData &cache = it->second;
 			if( cache.null )
-				return NULL;
+				return nullptr;
 			return &cache.trail;
 		}
 	}
@@ -331,7 +331,7 @@ Trail* Course::GetTrailForceRegenCache( StepsType st, CourseDifficulty cd ) cons
 	{
 		// This course difficulty doesn't exist.
 		cache.null = true;
-		return NULL;
+		return nullptr;
 	}
 
 	// If we have cached RadarValues for this trail, insert them.
@@ -738,7 +738,7 @@ const Style *Course::GetCourseStyle( const Game *pGame, int iNumPlayers ) const
 				return pStyle;
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 void Course::InvalidateTrailCache()

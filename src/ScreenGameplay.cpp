@@ -2727,7 +2727,7 @@ PlayerInfo *ScreenGameplay::GetPlayerInfo( PlayerNumber pn )
 		if( pi->m_pn == pn )
 			return &*pi;
 	}
-	return NULL;
+	return nullptr;
 }
 
 PlayerInfo *ScreenGameplay::GetDummyPlayerInfo( int iDummyIndex )
@@ -2737,7 +2737,7 @@ PlayerInfo *ScreenGameplay::GetDummyPlayerInfo( int iDummyIndex )
 		if( pi->m_bIsDummy  &&  pi->m_iDummyIndex == iDummyIndex )
 			return &*pi;
 	}
-	return NULL;
+	return nullptr;
 }
 
 void ScreenGameplay::SaveReplay()

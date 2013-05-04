@@ -58,7 +58,7 @@ static const char *LookupException( DWORD code )
 		if( exceptions[i].code == code )
 			return exceptions[i].name;
 
-	return NULL;
+	return nullptr;
 }
 
 static CrashInfo g_CrashInfo;
@@ -154,13 +154,13 @@ static const char *CrashGetModuleBaseName(HMODULE hmod, char *pszBaseName)
 
 	__try {
 		if( !GetModuleFileName(hmod, szPath1, sizeof(szPath1)) )
-			return NULL;
+			return nullptr;
 
 		char *pszFile;
 		DWORD dw = GetFullPathName( szPath1, sizeof(szPath2), szPath2, &pszFile );
 
 		if( !dw || dw > sizeof(szPath2) )
-			return NULL;
+			return nullptr;
 
 		strcpy( pszBaseName, pszFile );
 
@@ -174,7 +174,7 @@ static const char *CrashGetModuleBaseName(HMODULE hmod, char *pszBaseName)
 		if( period )
 			*period = 0;
 	} __except(1) {
-		return NULL;
+		return nullptr;
 	}
 
 	return pszBaseName;

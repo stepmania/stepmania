@@ -2072,7 +2072,7 @@ bool GameState::PlayerIsUsingModifier( PlayerNumber pn, const RString &sModifier
 Profile* GameState::GetEditLocalProfile()
 {
 	if( m_sEditLocalProfileID.Get().empty() )
-		return NULL;
+		return nullptr;
 	return PROFILEMAN->GetLocalProfile( m_sEditLocalProfileID );
 }
 

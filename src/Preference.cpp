@@ -29,7 +29,7 @@ IPreference *IPreference::GetPreferenceByName( const RString &sName )
 			return p;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 void IPreference::LoadAllDefaults()

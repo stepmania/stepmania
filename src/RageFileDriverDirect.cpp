@@ -76,7 +76,7 @@ static RageFileObjDirect *MakeFileObjDirect( RString sPath, int iMode, int &iErr
 	if( iFD == -1 )
 	{
 		iError = errno;
-		return NULL;
+		return nullptr;
 	}
 
 #if defined(UNIX)
@@ -85,7 +85,7 @@ static RageFileObjDirect *MakeFileObjDirect( RString sPath, int iMode, int &iErr
 	{
 		iError = EISDIR;
 		close( iFD );
-		return NULL;
+		return nullptr;
 	}
 #endif
 
@@ -207,7 +207,7 @@ RageFileBasic *RageFileDriverDirectReadOnly::Open( const RString &sPath, int iMo
 	if( iMode & RageFile::WRITE )
 	{
 		iError = EROFS;
-		return NULL;
+		return nullptr;
 	}
 
 	return RageFileDriverDirect::Open( sPath, iMode, iError );

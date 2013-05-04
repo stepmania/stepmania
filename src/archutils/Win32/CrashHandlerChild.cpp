@@ -286,7 +286,7 @@ namespace SymbolLookup
 		pSymbol->MaxNameLen = sizeof(buffer) - sizeof(SYMBOL_INFO) + 1;
 
 		if( !SymFromAddr(g_hParent, ptr, &disp, pSymbol) )
-			return NULL;
+			return nullptr;
 
 		return pSymbol;
 	}

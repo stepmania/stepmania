@@ -565,7 +565,7 @@ static acolorhist_item *pam_computeacolorhist( const RageSurface *src, int maxac
 {
 	acolorhash_hash acht;
 	if ( !pam_computeacolorhash( src, maxacolors, acolorsP, acht ) )
-		return NULL;
+		return nullptr;
 
 	acolorhist_item *achv = pam_acolorhashtoacolorhist( acht, *acolorsP );
 	return achv;

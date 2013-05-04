@@ -1242,7 +1242,7 @@ void SongManager::GetExtraStageInfo( bool bExtra2, const Style *sd, Song*& pSong
 Song* SongManager::GetRandomSong()
 {
 	if( m_pShuffledSongs.empty() )
-		return NULL;
+		return nullptr;
 
 	static int i = 0;
 
@@ -1258,13 +1258,13 @@ Song* SongManager::GetRandomSong()
 		return pSong;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 Course* SongManager::GetRandomCourse()
 {
 	if( m_pShuffledCourses.empty() )
-		return NULL;
+		return nullptr;
 
 	static int i = 0;
 
@@ -1282,7 +1282,7 @@ Course* SongManager::GetRandomCourse()
 		return pCourse;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 Song* SongManager::GetSongFromDir( RString sDir ) const
@@ -1296,13 +1296,13 @@ Song* SongManager::GetSongFromDir( RString sDir ) const
 		if( sDir.EqualsNoCase(s->GetSongDir()) )
 			return s;
 
-	return NULL;
+	return nullptr;
 }
 
 Course* SongManager::GetCourseFromPath( RString sPath ) const
 {
 	if( sPath == "" )
-		return NULL;
+		return nullptr;
 
 	for (Course *c : m_pCourses)
 	{
@@ -1310,19 +1310,19 @@ Course* SongManager::GetCourseFromPath( RString sPath ) const
 			return c;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 Course* SongManager::GetCourseFromName( RString sName ) const
 {
 	if( sName == "" )
-		return NULL;
+		return nullptr;
 
 	for (Course *c : m_pCourses)
 		if( sName.CompareNoCase(c->GetDisplayFullTitle()) == 0 )
 			return c;
 
-	return NULL;
+	return nullptr;
 }
 
 
@@ -1350,7 +1350,7 @@ Song *SongManager::FindSong( RString sPath ) const
 	else if( bits.size() == 2 )
 		return FindSong( bits[0], bits[1] );
 
-	return NULL;
+	return nullptr;
 }
 
 Song *SongManager::FindSong( RString sGroup, RString sSong ) const
@@ -1363,7 +1363,7 @@ Song *SongManager::FindSong( RString sGroup, RString sSong ) const
 			return s;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 Course *SongManager::FindCourse( RString sPath ) const
@@ -1377,7 +1377,7 @@ Course *SongManager::FindCourse( RString sPath ) const
 	else if( bits.size() == 2 )
 		return FindCourse( bits[0], bits[1] );
 
-	return NULL;
+	return nullptr;
 }
 
 Course *SongManager::FindCourse( RString sGroup, RString sName ) const
@@ -1388,7 +1388,7 @@ Course *SongManager::FindCourse( RString sGroup, RString sName ) const
 			return c;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 void SongManager::UpdatePopular()

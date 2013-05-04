@@ -217,7 +217,7 @@ static const char *osx_find_link_edit( const struct mach_header *header )
 			return (char *) ( scmd->vmaddr - scmd->fileoff );
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 void BacktraceNames::FromAddr( const void *p )

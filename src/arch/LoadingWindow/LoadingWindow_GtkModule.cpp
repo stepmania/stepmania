@@ -49,7 +49,7 @@ extern "C" const char *Init( int *argc, char ***argv )
 
 	gtk_widget_show_all(window);
 	gtk_main_iteration_do(FALSE);
-	return NULL;
+	return nullptr;
 }
 
 extern "C" void Shutdown()

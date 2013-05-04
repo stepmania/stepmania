@@ -835,7 +835,7 @@ RageSurface* RageDisplay_Legacy::CreateScreenshot()
 RageSurface *RageDisplay_Legacy::GetTexture( unsigned iTexture )
 {
 	if (iTexture == 0)
-		return NULL; // XXX
+		return nullptr; // XXX
 
 	FlushGLErrors();
 
@@ -2277,7 +2277,7 @@ private:
 RageTextureLock *RageDisplay_Legacy::CreateTextureLock()
 {
 	if (!GLEW_ARB_pixel_buffer_object)
-		return NULL;
+		return nullptr;
 
 	return new RageTextureLock_OGL;
 }

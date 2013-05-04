@@ -74,7 +74,7 @@ static RageSurface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 	if( png == nullptr )
 	{
 		sprintf( errorbuf, "creating png_create_read_struct failed");
-		return NULL;
+		return nullptr;
 	}
 
 	png_info *info_ptr = png_create_info_struct(png);
@@ -82,7 +82,7 @@ static RageSurface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 	{
 		png_destroy_read_struct( &png, NULL, NULL );
 		sprintf( errorbuf, "creating png_create_info_struct failed");
-		return NULL;
+		return nullptr;
 	}
 
 	RageSurface *volatile img = NULL;
@@ -91,7 +91,7 @@ static RageSurface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 	{
 		png_destroy_read_struct( &png, &info_ptr, NULL );
 		delete img;
-		return NULL;
+		return nullptr;
 	}
 	CHECKPOINT;
 

@@ -284,13 +284,13 @@ WinWdmPin *WinWdmFilter::CreatePin( unsigned long iPinId, RString &sError )
 			&communication, sizeof(KSPIN_COMMUNICATION), sError) )
 		{
 			sError = "KSPROPERTY_PIN_COMMUNICATION: " + sError;
-			return NULL;
+			return nullptr;
 		}
 
 		if( communication != KSPIN_COMMUNICATION_SINK && communication != KSPIN_COMMUNICATION_BOTH )
 		{
 			sError = "Not an audio output device";
-			return NULL;
+			return nullptr;
 		}
 	}
 
@@ -301,13 +301,13 @@ WinWdmPin *WinWdmFilter::CreatePin( unsigned long iPinId, RString &sError )
 			&dataFlow, sizeof(KSPIN_DATAFLOW), sError) )
 		{
 			sError = "KSPROPERTY_PIN_DATAFLOW: " + sError;
-			return NULL;
+			return nullptr;
 		}
 
 		if( dataFlow != KSPIN_DATAFLOW_IN )
 		{
 			sError = "Not KSPIN_DATAFLOW_IN";
-			return NULL;
+			return nullptr;
 		}
 	}
 
@@ -317,7 +317,7 @@ WinWdmPin *WinWdmFilter::CreatePin( unsigned long iPinId, RString &sError )
 		if( !WdmGetPinPropertyMulti(m_hHandle, iPinId, &KSPROPSETID_Pin, KSPROPERTY_PIN_INTERFACES, &pItem, sError) )
 		{
 			sError = "KSPROPERTY_PIN_INTERFACES: " + sError;
-			return NULL;
+			return nullptr;
 		}
 
 		KSIDENTIFIER *identifier = (KSIDENTIFIER *) &pItem[1];
@@ -337,7 +337,7 @@ WinWdmPin *WinWdmFilter::CreatePin( unsigned long iPinId, RString &sError )
 		free( pItem );
 
 		if( sError != "" )
-			return NULL;
+			return nullptr;
 	}
 
 	/* Get the MEDIUM properties list */
@@ -346,7 +346,7 @@ WinWdmPin *WinWdmFilter::CreatePin( unsigned long iPinId, RString &sError )
 		if( !WdmGetPinPropertyMulti( m_hHandle, iPinId, &KSPROPSETID_Pin, KSPROPERTY_PIN_MEDIUMS, &pItem, sError) )
 		{
 			sError = "KSPROPERTY_PIN_MEDIUMS: " + sError;
-			return NULL;
+			return nullptr;
 		}
 
 		const KSIDENTIFIER *identifier = (KSIDENTIFIER *) &pItem[1];
@@ -366,7 +366,7 @@ WinWdmPin *WinWdmFilter::CreatePin( unsigned long iPinId, RString &sError )
 		free( pItem );
 
 		if( sError != "" )
-			return NULL;
+			return nullptr;
 	}
 
 	/* Allocate the new PIN object */
@@ -421,7 +421,7 @@ WinWdmPin *WinWdmFilter::CreatePin( unsigned long iPinId, RString &sError )
 error:
 	/* Error cleanup */
 	delete pPin;
-	return NULL;
+	return nullptr;
 }
 
 /* If the pin handle is open, close it */
@@ -575,7 +575,7 @@ WinWdmFilter *WinWdmFilter::Create( const RString &sFilterName, const RString &s
 error:
 	/* Error cleanup */
 	delete pFilter;
-	return NULL;
+	return nullptr;
 }
 
 /*
@@ -634,7 +634,7 @@ WinWdmPin *WinWdmFilter::InstantiateRenderPin( const WAVEFORMATEX *wfex, RString
 	}
 
 	sError = "No pin supports format";
-	return NULL;
+	return nullptr;
 }
 
 template<typename T, typename U>
@@ -790,7 +790,7 @@ WinWdmPin *WinWdmFilter::InstantiateRenderPin(
 	}
 
 	sError = "No compatible format found";
-	return NULL;
+	return nullptr;
 }
 
 static bool GetDevicePath( HANDLE hHandle, SP_DEVICE_INTERFACE_DATA *pInterfaceData, RString &sPath )

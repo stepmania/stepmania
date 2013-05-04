@@ -172,7 +172,7 @@ Actor* ActorFrame::GetChild( const RString &sName )
 		if( a->GetName() == sName )
 			return a;
 	}
-	return NULL;
+	return nullptr;
 }
 
 void ActorFrame::RemoveAllChildren()

@@ -1323,7 +1323,7 @@ OptionRowHandler* OptionRowHandlerUtil::Make( const Commands &cmds )
 	OptionRowHandler* pHand = NULL;
 
 	if( cmds.v.size() == 0 )
-		return NULL;
+		return nullptr;
 
 	const RString &name = cmds.v[0].GetName();
 
@@ -1335,7 +1335,7 @@ OptionRowHandler* OptionRowHandlerUtil::Make( const Commands &cmds )
 		const Command &command = cmds.v[0];
 		RString sParam = command.GetArg(1).s;
 		if( command.m_vsArgs.size() != 2 || !sParam.size() )
-			return NULL;
+			return nullptr;
 
 		if(	 sParam.CompareNoCase("NoteSkins")==0 )		MAKE( OptionRowHandlerListNoteSkins )
 		else if( sParam.CompareNoCase("Steps")==0 )		MAKE( OptionRowHandlerListSteps )

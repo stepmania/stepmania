@@ -224,7 +224,7 @@ public:
 	virtual void DeleteTexture( unsigned iTexHandle ) = 0;
 	/* Return an object to lock pixels for streaming. If not supported, returns NULL.
 	 * Delete the object normally. */
-	virtual RageTextureLock *CreateTextureLock() { return NULL; }
+	virtual RageTextureLock *CreateTextureLock() { return nullptr; }
 	virtual void ClearAllTextures() = 0;
 	virtual int GetNumTextureUnits() = 0;
 	virtual void SetTexture( TextureUnit, unsigned /* iTexture */ ) = 0;
@@ -313,7 +313,7 @@ public:
 
 	virtual RString GetTextureDiagnostics( unsigned /* id */ ) const { return RString(); }
 	virtual RageSurface* CreateScreenshot() = 0;	// allocates a surface.  Caller must delete it.
-	virtual RageSurface *GetTexture( unsigned /* iTexture */ ) { return NULL; } // allocates a surface.  Caller must delete it.
+	virtual RageSurface *GetTexture( unsigned /* iTexture */ ) { return nullptr; } // allocates a surface.  Caller must delete it.
 
 protected:
 	virtual void DrawQuadsInternal( const RageSpriteVertex v[], int iNumVerts ) = 0;

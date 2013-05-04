@@ -118,7 +118,7 @@ InputHandler *RageInput::GetHandlerForDevice( const InputDevice id )
 {
 	map<InputDevice, InputHandler *>::iterator it = g_mapDeviceToHandler.find(id);
 	if( it == g_mapDeviceToHandler.end() )
-		return NULL;
+		return nullptr;
 	return it->second;
 }
 

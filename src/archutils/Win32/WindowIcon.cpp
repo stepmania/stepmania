@@ -83,7 +83,7 @@ HICON IconFromSurface( const RageSurface *pSrcImg )
 	if( icon == nullptr )
 	{
 		LOG->Trace( "%s", werr_ssprintf( GetLastError(), "CreateIconFromResourceEx" ).c_str() );
-		return NULL;
+		return nullptr;
 	}
 
 	return icon;
@@ -96,7 +96,7 @@ HICON IconFromFile( const RString &sIconFile )
 	if( pImg == nullptr )
 	{
 		LOG->Warn( "Couldn't open icon \"%s\": %s", sIconFile.c_str(), sError.c_str() );
-		return NULL;
+		return nullptr;
 	}
 
 	HICON icon = IconFromSurface( pImg );

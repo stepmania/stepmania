@@ -180,7 +180,7 @@ static HIDDevice *MakeDevice( InputDevice id )
 		return new JoystickDevice;
 	if( IsPump(id) )
 		return new PumpDevice;
-	return NULL;
+	return nullptr;
 }
 
 void InputHandler_MacOSX_HID::AddDevices( int usagePage, int usage, InputDevice &id )
