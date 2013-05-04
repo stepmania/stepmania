@@ -18,7 +18,7 @@
 #include "SpecialFiles.h"
 
 /** @brief Have the NoteSkinManager available throughout the program. */
-NoteSkinManager*	NOTESKIN = NULL;
+NoteSkinManager*	NOTESKIN = nullptr;
 
 const RString GAME_COMMON_NOTESKIN_NAME = "common";
 const RString GAME_BASE_NOTESKIN_NAME = "default";
@@ -47,7 +47,7 @@ namespace
 
 NoteSkinManager::NoteSkinManager()
 {
-	m_pCurGame = NULL;
+	m_pCurGame = nullptr;
 	m_PlayerNumber = PlayerNumber_Invalid;
 	m_GameController = GameController_Invalid;
 

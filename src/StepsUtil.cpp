@@ -248,7 +248,7 @@ Steps *StepsID::ToSteps( const Song *p, bool bAllowNull ) const
 	SongID songID;
 	songID.FromSong( p );
 
-	Steps *pRet = NULL;
+	Steps *pRet = nullptr;
 	if( dc == Difficulty_Edit )
 	{
 		pRet = SongUtil::GetOneSteps( p, st, dc, -1, -1, sDescription, "", uHash, true );

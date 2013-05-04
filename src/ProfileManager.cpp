@@ -25,7 +25,7 @@
 #include "CharacterManager.h"
 
 
-ProfileManager*	PROFILEMAN = NULL;	// global and accessable from anywhere in our program
+ProfileManager*	PROFILEMAN = nullptr;	// global and accessable from anywhere in our program
 
 static void DefaultLocalProfileIDInit( size_t /*PlayerNumber*/ i, RString &sNameOut, RString &defaultValueOut )
 {

@@ -641,7 +641,7 @@ namespace StringConversion
 
 class RageFileBasic;
 bool FileCopy( const RString &sSrcFile, const RString &sDstFile );
-bool FileCopy( RageFileBasic &in, RageFileBasic &out, RString &sError, bool *bReadError = NULL );
+bool FileCopy( RageFileBasic &in, RageFileBasic &out, RString &sError, bool *bReadError = nullptr );
 
 template<class T>
 void GetAsNotInBs( const vector<T> &as, const vector<T> &bs, vector<T> &difference )

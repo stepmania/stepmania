@@ -24,7 +24,7 @@ RageFileDriverZip::RageFileDriverZip():
 	m_Mutex( "RageFileDriverZip" )
 {
 	m_bFileOwned = false;
-	m_pZip = NULL;
+	m_pZip = nullptr;
 }
 
 RageFileDriverZip::RageFileDriverZip( const RString &sPath ):
@@ -32,7 +32,7 @@ RageFileDriverZip::RageFileDriverZip( const RString &sPath ):
 	m_Mutex( "RageFileDriverZip" )
 {
 	m_bFileOwned = false;
-	m_pZip = NULL;
+	m_pZip = nullptr;
 	Load( sPath );
 }
 

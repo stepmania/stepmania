@@ -24,12 +24,12 @@ using namespace X11Helper;
 #include <X11/extensions/XTest.h>
 #endif
 
-static GLXContext g_pContext = NULL;
-static GLXContext g_pBackgroundContext = NULL;
+static GLXContext g_pContext = nullptr;
+static GLXContext g_pBackgroundContext = nullptr;
 static Window g_AltWindow = None;
 static Rotation g_OldRotation;
 static int g_iOldSize;
-XRRScreenConfiguration *g_pScreenConfig = NULL;
+XRRScreenConfiguration *g_pScreenConfig = nullptr;
 
 static LocalizedString FAILED_CONNECTION_XSERVER( "LowLevelWindow_X11", "Failed to establish a connection with the X server" );
 LowLevelWindow_X11::LowLevelWindow_X11()
@@ -65,15 +65,15 @@ LowLevelWindow_X11::~LowLevelWindow_X11()
 	if( g_pContext )
 	{
 		glXDestroyContext( Dpy, g_pContext );
-		g_pContext = NULL;
+		g_pContext = nullptr;
 	}
 	if( g_pBackgroundContext )
 	{
 		glXDestroyContext( Dpy, g_pBackgroundContext );
-		g_pBackgroundContext = NULL;
+		g_pBackgroundContext = nullptr;
 	}
 	XRRFreeScreenConfigInfo( g_pScreenConfig );
-	g_pScreenConfig = NULL;
+	g_pScreenConfig = nullptr;
 
 	XDestroyWindow( Dpy, Win );
 	Win = None;
@@ -379,9 +379,9 @@ RenderTarget_X11::RenderTarget_X11( LowLevelWindow_X11 *pWind )
 {
 	m_pWind = pWind;
 	m_iPbuffer = 0;
-	m_pPbufferContext = NULL;
+	m_pPbufferContext = nullptr;
 	m_iTexHandle = 0;
-	m_pOldContext = NULL;
+	m_pOldContext = nullptr;
 	m_pOldDrawable = 0;
 }
 
@@ -496,7 +496,7 @@ void RenderTarget_X11::FinishRenderingTo()
 	glBindTexture( GL_TEXTURE_2D, 0 );
 
 	glXMakeCurrent( Dpy, m_pOldDrawable, m_pOldContext );
-	m_pOldContext = NULL;
+	m_pOldContext = nullptr;
 	m_pOldDrawable = 0;
 
 }

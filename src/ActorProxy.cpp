@@ -6,7 +6,7 @@ REGISTER_ACTOR_CLASS( ActorProxy );
 
 ActorProxy::ActorProxy()
 {
-	m_pActorTarget = NULL;
+	m_pActorTarget = nullptr;
 }
 
 bool ActorProxy::EarlyAbortDraw() const

@@ -225,7 +225,7 @@ Steps* SongUtil::GetClosestNotes( const Song *pSong, StepsType st, Difficulty dc
 	ASSERT( dc != Difficulty_Invalid );
 
 	const vector<Steps*>& vpSteps = (st == StepsType_Invalid)? pSong->GetAllSteps() : pSong->GetStepsByStepsType(st);
-	Steps *pClosest = NULL;
+	Steps *pClosest = nullptr;
 	int iClosestDistance = 999;
 	for( unsigned i=0; i<vpSteps.size(); i++ )	// for each of the Song's Steps
 	{
@@ -1082,7 +1082,7 @@ void SongID::FromSong( const Song *p )
 
 Song *SongID::ToSong() const
 {
-	Song *pRet = NULL;
+	Song *pRet = nullptr;
 	if( !m_Cache.Get(&pRet) )
 	{
 		// HACK for backwards compatibility: Re-add the leading "/".

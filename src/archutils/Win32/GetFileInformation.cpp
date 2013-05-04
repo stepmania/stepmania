@@ -118,9 +118,9 @@ bool GetProcessFileName( uint32_t iProcessID, RString &sName )
 
 	// This method only works in NT/2K/XP.
 	do {
-		static HINSTANCE hPSApi = NULL;
+		static HINSTANCE hPSApi = nullptr;
 		typedef DWORD (WINAPI* pfnGetProcessImageFileNameA)(HANDLE hProcess, LPSTR lpImageFileName, DWORD nSize);
-		static pfnGetProcessImageFileNameA pGetProcessImageFileName = NULL;
+		static pfnGetProcessImageFileNameA pGetProcessImageFileName = nullptr;
 		static bool bTried = false;
 
 		if( !bTried )

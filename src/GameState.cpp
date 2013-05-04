@@ -41,7 +41,7 @@
 #include <ctime>
 #include <set>
 
-GameState*	GAMESTATE = NULL;	// global and accessable from anywhere in our program
+GameState*	GAMESTATE = nullptr;	// global and accessable from anywhere in our program
 
 #define NAME_BLACKLIST_FILE "/Data/NamesBlacklist.txt"
 
@@ -75,7 +75,7 @@ struct GameStateImpl
 		m_Subscriber.SubscribeToMessage( "RefreshCreditText" );
 	}
 };
-static GameStateImpl *g_pImpl = NULL;
+static GameStateImpl *g_pImpl = nullptr;
 
 ThemeMetric<bool> ALLOW_LATE_JOIN("GameState","AllowLateJoin");
 ThemeMetric<bool> USE_NAME_BLACKLIST("GameState","UseNameBlacklist");
@@ -106,7 +106,7 @@ static Preference<Premium> g_Premium( "Premium", Premium_DoubleFor1Credit );
 Preference<bool> GameState::m_bAutoJoin( "AutoJoin", false );
 
 GameState::GameState() :
-	processedTiming( NULL ),
+	processedTiming(nullptr),
 	m_pCurGame(				Message_CurrentGameChanged ),
 	m_pCurStyle(			Message_CurrentStyleChanged ),
 	m_PlayMode(				Message_PlayModeChanged ),
@@ -133,9 +133,9 @@ GameState::GameState() :
 {
 	g_pImpl = new GameStateImpl;
 
-	SetCurrentStyle( NULL );
+	SetCurrentStyle(nullptr);
 
-	m_pCurGame.Set( NULL );
+	m_pCurGame.Set(nullptr);
 	m_timeGameStarted.SetZero();
 	m_bDemonstrationOrJukebox = false;
 
@@ -254,8 +254,8 @@ void GameState::ResetPlayer( PlayerNumber pn )
 	m_PreferredCourseDifficulty[pn].Set( Difficulty_Medium );
 	m_iPlayerStageTokens[pn] = 0;
 	m_iAwardedExtraStages[pn] = 0;
-	m_pCurSteps[pn].Set( NULL );
-	m_pCurTrail[pn].Set( NULL );
+	m_pCurSteps[pn].Set(nullptr);
+	m_pCurTrail[pn].Set(nullptr);
 	m_pPlayerState[pn]->Reset();
 	PROFILEMAN->UnloadProfile( pn );
 	ResetPlayerOptions(pn);
@@ -278,7 +278,7 @@ void GameState::Reset()
 	ASSERT( THEME != nullptr );
 
 	m_timeGameStarted.SetZero();
-	SetCurrentStyle( NULL );
+	SetCurrentStyle(nullptr);
 	FOREACH_MultiPlayer( p )
 		m_MultiPlayerStatus[p] = MultiPlayerStatus_NotJoined;
 	FOREACH_PlayerNumber( pn )
@@ -307,9 +307,9 @@ void GameState::Reset()
 	m_iStageSeed = rand();
 
 	m_pCurSong.Set( GetDefaultSong() );
-	m_pPreferredSong = NULL;
-	m_pCurCourse.Set( NULL );
-	m_pPreferredCourse = NULL;
+	m_pPreferredSong = nullptr;
+	m_pCurCourse.Set(nullptr);
+	m_pPreferredCourse = nullptr;
 
 	FOREACH_MultiPlayer( p )
 		m_pMultiPlayerState[p]->Reset();
@@ -343,7 +343,7 @@ void GameState::Reset()
 	LIGHTSMAN->SetLightsMode( LIGHTSMODE_ATTRACT );
 
 	m_stEdit.Set( StepsType_Invalid );
-	m_pEditSourceSteps.Set( NULL );
+	m_pEditSourceSteps.Set(nullptr);
 	m_stEditSource.Set( StepsType_Invalid );
 	m_iEditCourseEntryIndex.Set( -1 );
 	m_sEditLocalProfileID.Set( "" );
@@ -610,7 +610,7 @@ int GameState::GetNumStagesForCurrentSongAndStepsOrCourse() const
 		int numSidesJoined = GetNumSidesJoined();
 		if( pStyle == nullptr )
 		{
-			const Steps *pSteps = NULL;
+			const Steps *pSteps = nullptr;
 			if( this->GetMasterPlayerNumber() != PlayerNumber_Invalid )
 				pSteps = m_pCurSteps[this->GetMasterPlayerNumber()];
 			// Don't call GetFirstCompatibleStyle if numSidesJoined == 0.
@@ -2169,7 +2169,7 @@ public:
 	static int GetCurrentSong( T* p, lua_State *L )			{ if(p->m_pCurSong) p->m_pCurSong->PushSelf(L); else lua_pushnil(L); return 1; }
 	static int SetCurrentSong( T* p, lua_State *L )
 	{
-		if( lua_isnil(L,1) ) { p->m_pCurSong.Set( NULL ); }
+		if( lua_isnil(L,1) ) { p->m_pCurSong.Set(nullptr); }
 		else { Song *pS = Luna<Song>::check( L, 1, true ); p->m_pCurSong.Set( pS ); }
 		return 0;
 	}
@@ -2184,7 +2184,7 @@ public:
 	static int SetCurrentSteps( T* p, lua_State *L )
 	{
 		PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);
-		if( lua_isnil(L,2) )	{ p->m_pCurSteps[pn].Set( NULL ); }
+		if( lua_isnil(L,2) )	{ p->m_pCurSteps[pn].Set(nullptr); }
 		else					{ Steps *pS = Luna<Steps>::check(L,2); p->m_pCurSteps[pn].Set( pS ); }
 		ASSERT(p->m_pCurSteps[pn]->m_StepsType == p->m_pCurStyle->m_StepsType);
 
@@ -2195,7 +2195,7 @@ public:
 	static int GetCurrentCourse( T* p, lua_State *L )		{ if(p->m_pCurCourse) p->m_pCurCourse->PushSelf(L); else lua_pushnil(L); return 1; }
 	static int SetCurrentCourse( T* p, lua_State *L )
 	{
-		if( lua_isnil(L,1) ) { p->m_pCurCourse.Set( NULL ); }
+		if( lua_isnil(L,1) ) { p->m_pCurCourse.Set(nullptr); }
 		else { Course *pC = Luna<Course>::check(L,1); p->m_pCurCourse.Set( pC ); }
 		return 0;
 	}
@@ -2210,7 +2210,7 @@ public:
 	static int SetCurrentTrail( T* p, lua_State *L )
 	{
 		PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);
-		if( lua_isnil(L,2) )	{ p->m_pCurTrail[pn].Set( NULL ); }
+		if( lua_isnil(L,2) )	{ p->m_pCurTrail[pn].Set(nullptr); }
 		else					{ Trail *pS = Luna<Trail>::check(L,2); p->m_pCurTrail[pn].Set( pS ); }
 		MESSAGEMAN->Broadcast( (MessageID)(Message_CurrentTrailP1Changed+pn) );
 		return 0;
@@ -2218,7 +2218,7 @@ public:
 	static int GetPreferredSong( T* p, lua_State *L )		{ if(p->m_pPreferredSong) p->m_pPreferredSong->PushSelf(L); else lua_pushnil(L); return 1; }
 	static int SetPreferredSong( T* p, lua_State *L )
 	{
-		if( lua_isnil(L,1) ) { p->m_pPreferredSong = NULL; }
+		if( lua_isnil(L,1) ) { p->m_pPreferredSong = nullptr; }
 		else { Song *pS = Luna<Song>::check(L,1); p->m_pPreferredSong = pS; }
 		return 0;
 	}

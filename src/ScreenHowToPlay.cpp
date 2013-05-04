@@ -69,9 +69,9 @@ ScreenHowToPlay::ScreenHowToPlay()
 	m_iNumW2s = NUM_W2S;
 
 	// initialize these because they might not be used.
-	m_pLifeMeterBar = NULL;
-	m_pmCharacter = NULL;
-	m_pmDancePad = NULL;
+	m_pLifeMeterBar = nullptr;
+	m_pmCharacter = nullptr;
+	m_pmDancePad = nullptr;
 }
 
 void ScreenHowToPlay::Init()

@@ -12,7 +12,7 @@ class StyleID
 
 public:
 	StyleID(): sGame(""), sStyle("") { }
-	void Unset() { FromStyle(NULL); }
+	void Unset() { FromStyle(nullptr); }
 	void FromStyle( const Style *p );
 	const Style *ToStyle() const;
 	bool operator<( const StyleID &rhs ) const;

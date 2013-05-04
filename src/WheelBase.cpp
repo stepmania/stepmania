@@ -39,7 +39,7 @@ WheelBase::~WheelBase()
 		SAFE_DELETE( i );
 	}
 	m_WheelBaseItems.clear();
-	m_LastSelection = NULL;
+	m_LastSelection = nullptr;
 }
 
 void WheelBase::Load( RString sType ) 
@@ -48,7 +48,7 @@ void WheelBase::Load( RString sType )
 	ASSERT( this->GetNumChildren() == 0 ); // only load once
 
 	m_bEmpty = false;
-	m_LastSelection = NULL;
+	m_LastSelection = nullptr;
 	m_iSelection = 0;
 	m_fTimeLeftInState = 0;
 	m_fPositionOffsetFromSelection = 0;

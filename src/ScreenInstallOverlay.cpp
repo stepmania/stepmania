@@ -366,7 +366,7 @@ void ScreenInstallOverlay::Update( float fDeltaTime )
 
 	if( !playAfterLaunchInfo.sSongDir.empty() )
 	{
-		Song* pSong = NULL;
+		Song* pSong = nullptr;
 		GAMESTATE->Reset();
 		RString sInitialScreen;
 		if( playAfterLaunchInfo.sSongDir.length() > 0 )

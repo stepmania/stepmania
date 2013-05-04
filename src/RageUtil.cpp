@@ -31,7 +31,7 @@ MersenneTwister::MersenneTwister( int iSeed ) : m_iNext(0)
 void MersenneTwister::Reset( int iSeed )
 {
 	if( iSeed == 0 )
-		iSeed = time(NULL);
+		iSeed = time(nullptr);
 
 	m_Values[0] = iSeed;
 	m_iNext = 0;
@@ -370,7 +370,7 @@ RString FormatNumberAndSuffix( int i )
 
 struct tm GetLocalTime()
 {
-	const time_t t = time(NULL);
+	const time_t t = time(nullptr);
 	struct tm tm;
 	localtime_r( &t, &tm );
 	return tm;
@@ -390,7 +390,7 @@ RString vssprintf( const char *szFormat, va_list argList )
 	RString sStr;
 
 #if defined(WIN32) && !defined(__MINGW32__)
-	char *pBuf = NULL;
+	char *pBuf = nullptr;
 	int iChars = 1;
 	int iUsed = 0;
 	int iTry = 0;
@@ -971,7 +971,7 @@ void MakeValidFilename( RString &sName )
 }
 
 int g_argc = 0;
-char **g_argv = NULL;
+char **g_argv = nullptr;
 
 void SetCommandlineArguments( int argc, char **argv )
 {
@@ -1369,16 +1369,16 @@ void Regex::Set( const RString &sStr )
 void Regex::Release()
 {
 	pcre_free( m_pReg );
-	m_pReg = NULL;
+	m_pReg = nullptr;
 	m_sPattern = RString();
 }
 
-Regex::Regex( const RString &sStr ): m_pReg(NULL), m_iBackrefs(0), m_sPattern(RString())
+Regex::Regex( const RString &sStr ): m_pReg(nullptr), m_iBackrefs(0), m_sPattern(RString())
 {
 	Set( sStr );
 }
 
-Regex::Regex( const Regex &rhs ): m_pReg(NULL), m_iBackrefs(0), m_sPattern(RString())
+Regex::Regex( const Regex &rhs ): m_pReg(nullptr), m_iBackrefs(0), m_sPattern(RString())
 {
 	Set( rhs.m_sPattern );
 }

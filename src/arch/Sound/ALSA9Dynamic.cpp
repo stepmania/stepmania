@@ -6,13 +6,13 @@
 #define ALSA_PCM_NEW_SW_PARAMS_API
 #include <alsa/asoundlib.h>
 
-static void *Handle = NULL;
+static void *Handle = nullptr;
 
 #include "RageUtil.h"
 #include "ALSA9Dynamic.h"
 
-/* foo_f dfoo = NULL */
-#define FUNC(ret, name, proto) name##_f d##name = NULL
+/* foo_f dfoo = nullptr */
+#define FUNC(ret, name, proto) name##_f d##name = nullptr
 #include "ALSA9Functions.h"
 #undef FUNC
 
@@ -62,8 +62,8 @@ void UnloadALSA()
 {
 	if( Handle )
 		dlclose( Handle );
-	Handle = NULL;
-#define FUNC(ret, name, proto) d##name = NULL;
+	Handle = nullptr;
+#define FUNC(ret, name, proto) d##name = nullptr;
 #include "ALSA9Functions.h"
 #undef FUNC
 }

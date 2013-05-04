@@ -98,7 +98,7 @@ public:
 	 * they can be ignored most of the time, so we continue to work if a file
 	 * is broken or missing.
 	 */
-	bool Load( RString sFile, bool bPrecache, const RageSoundLoadParams *pParams = NULL );
+	bool Load( RString sFile, bool bPrecache, const RageSoundLoadParams *pParams = nullptr );
 
 	/* Using this version means the "don't care" about caching. Currently, 
 	 * this always will not cache the sound; this may become a preference. */
@@ -121,7 +121,7 @@ public:
 	RString GetError() const { return m_sError; }
 
 	void Play( const RageSoundParams *params=NULL );
-	void PlayCopy( const RageSoundParams *pParams = NULL ) const;
+	void PlayCopy( const RageSoundParams *pParams = nullptr ) const;
 	void Stop();
 
 	/* Cleanly pause or unpause the sound. If the sound wasn't already playing,
@@ -173,7 +173,7 @@ private:
 
 	RString m_sError;
 
-	int GetSourceFrameFromHardwareFrame( int64_t iHardwareFrame, bool *bApproximate = NULL ) const;
+	int GetSourceFrameFromHardwareFrame( int64_t iHardwareFrame, bool *bApproximate = nullptr ) const;
 
 	bool SetPositionFrames( int frames = -1 );
 	RageSoundParams::StopMode_t GetStopMode() const; // resolves M_AUTO

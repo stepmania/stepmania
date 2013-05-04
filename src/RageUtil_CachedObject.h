@@ -18,13 +18,13 @@ template<typename T>
 class CachedObject
 {
 public:
-	CachedObject(): m_pObject(NULL)
+	CachedObject(): m_pObject(nullptr)
 	{
 		/* A new object is being constructed, so invalidate negative caching. */
 		ClearCacheNegative();
 	}
 
-	CachedObject( const CachedObject &cpy ): m_pObject(NULL)
+	CachedObject( const CachedObject &cpy ): m_pObject(nullptr)
 	{
 		ClearCacheNegative();
 	}
@@ -43,7 +43,7 @@ public:
 		CachedObjectHelpers::Lock();
 		for( typename set<ObjectPointer *>::iterator p = m_spObjectPointers.begin(); p != m_spObjectPointers.end(); ++p )
 		{
-			(*p)->m_pCache = NULL;
+			(*p)->m_pCache = nullptr;
 			(*p)->m_bCacheIsSet = false;
 		}
 		CachedObjectHelpers::Unlock();
@@ -57,7 +57,7 @@ public:
 		{
 			if( (*p)->m_pCache == pObject )
 			{
-				(*p)->m_pCache = NULL;
+				(*p)->m_pCache = nullptr;
 				(*p)->m_bCacheIsSet = false;
 			}
 		}
@@ -109,7 +109,7 @@ class CachedObjectPointer
 public:
 	typedef CachedObject<T> Object;
 
-	CachedObjectPointer() : m_pCache(NULL), m_bCacheIsSet(false)
+	CachedObjectPointer() : m_pCache(nullptr), m_bCacheIsSet(false)
 	{
 		Object::Register( this );
 	}
@@ -153,7 +153,7 @@ public:
 	void Unset()
 	{
 		CachedObjectHelpers::Lock();
-		m_pCache = NULL;
+		m_pCache = nullptr;
 		m_bCacheIsSet = false;
 		CachedObjectHelpers::Unlock();
 	}

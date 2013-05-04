@@ -12,7 +12,7 @@ static bool g_bVector = Vector::CheckForVector();
 RageSoundMixBuffer::RageSoundMixBuffer()
 {
 	m_iBufSize = m_iBufUsed = 0;
-	m_pMixbuf = NULL;
+	m_pMixbuf = nullptr;
 	m_iOffset = 0;
 }
 

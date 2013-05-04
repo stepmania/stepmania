@@ -37,7 +37,7 @@ protected:
 
 	struct ScoreRowItemData // for all_steps and all_courses
 	{
-		ScoreRowItemData() { m_pSong = NULL; m_pCourse = NULL; }
+		ScoreRowItemData() { m_pSong = nullptr; m_pCourse = nullptr; }
 
 		Song *m_pSong;
 		Course *m_pCourse;

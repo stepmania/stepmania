@@ -55,7 +55,7 @@ void RageSoundReader_Chain::AddSound( int iIndex, float fOffsetSecs, float fPan 
 	s.iIndex = iIndex;
 	s.iOffsetMS = lrintf( fOffsetSecs * 1000 );
 	s.fPan = fPan;
-	s.pSound = NULL;
+	s.pSound = nullptr;
 	m_aSounds.push_back( s );
 }
 
@@ -130,7 +130,7 @@ void RageSoundReader_Chain::Finish()
 				LOG->Warn( "Discarded sound with %i channels, not %i",
 					it->GetNumChannels(), m_iChannels );
 				delete it;
-				it = NULL;
+				it = nullptr;
 			}
 		}
 	}
@@ -240,7 +240,7 @@ void RageSoundReader_Chain::ReleaseSound( Sound *s )
 	RageSoundReader *&pSound = s->pSound;
 
 	delete pSound;
-	pSound = NULL;
+	pSound = nullptr;
 
 	m_apActiveSounds.erase( it );
 }

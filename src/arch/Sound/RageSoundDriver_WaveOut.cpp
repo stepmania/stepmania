@@ -106,7 +106,7 @@ RageSoundDriver_WaveOut::RageSoundDriver_WaveOut()
 
 	m_hSoundEvent = CreateEvent( NULL, false, true, NULL );
 
-	m_hWaveOut = NULL;
+	m_hWaveOut = nullptr;
 }
 
 RString RageSoundDriver_WaveOut::Init()

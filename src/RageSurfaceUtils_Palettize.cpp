@@ -170,7 +170,7 @@ void RageSurfaceUtils::Palettize( RageSurface *&pImg, int iColors, bool bDither 
 	acolorhash_hash acht;
 
 	bool fs_direction = 0;
-	pixerror_t *thiserr = NULL, *nexterr = NULL;
+	pixerror_t *thiserr = nullptr, *nexterr = nullptr;
 
 	if( bDither )
 	{
@@ -222,7 +222,7 @@ void RageSurfaceUtils::Palettize( RageSurface *&pImg, int iColors, bool bDither 
 			if( ind == -1 )
 			{
 				// No; search acolormap for closest match.
-				static int square_table[512], *pSquareTable = NULL;
+				static int square_table[512], *pSquareTable = nullptr;
 				if( pSquareTable == nullptr )
 				{
 					pSquareTable = square_table+256;

@@ -88,7 +88,7 @@ void ScreenOptionsCourseOverview::BeginScreen()
 	ScreenOptions::BeginScreen();
 
 	// clear the current song in case it's set when we back out from gameplay
-	GAMESTATE->m_pCurSong.Set( NULL );
+	GAMESTATE->m_pCurSong.Set(nullptr);
 }
 
 ScreenOptionsCourseOverview::~ScreenOptionsCourseOverview()
@@ -115,7 +115,7 @@ void ScreenOptionsCourseOverview::HandleScreenMessage( const ScreenMessage SM )
 	if( SM == SM_GoToPrevScreen )
 	{
 		// If we're pointing to an unsaved course, it will be inaccessible once we're back on ScreenOptionsManageCourses.
-		GAMESTATE->m_pCurCourse.Set( NULL );
+		GAMESTATE->m_pCurCourse.Set(nullptr);
 	}
 	else if( SM == SM_GoToNextScreen )
 	{
@@ -169,8 +169,8 @@ void ScreenOptionsCourseOverview::HandleScreenMessage( const ScreenMessage SM )
 				return;
 			}
 
-			GAMESTATE->m_pCurCourse.Set( NULL );
-			GAMESTATE->m_pCurTrail[PLAYER_1].Set( NULL );
+			GAMESTATE->m_pCurCourse.Set(nullptr);
+			GAMESTATE->m_pCurTrail[PLAYER_1].Set(nullptr);
 
 			/* Our course is gone, so back out. */
 			StartTransitioningScreen( SM_GoToPrevScreen );

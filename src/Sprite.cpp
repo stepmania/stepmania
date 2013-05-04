@@ -20,7 +20,7 @@ REGISTER_ACTOR_CLASS( Sprite );
 
 Sprite::Sprite()
 {
-	m_pTexture = NULL;
+	m_pTexture = nullptr;
 	m_iCurState = 0;
 	m_fSecsIntoState = 0.0f;
 	m_bUsingCustomTexCoords = false;
@@ -60,7 +60,7 @@ Sprite::Sprite( const Sprite &cpy ):
 	if( cpy.m_pTexture != nullptr )
 		m_pTexture = TEXTUREMAN->CopyTexture( cpy.m_pTexture );
 	else
-		m_pTexture = NULL;
+		m_pTexture = nullptr;
 }
 
 void Sprite::InitState()
@@ -235,7 +235,7 @@ void Sprite::UnloadTexture()
 	if( m_pTexture != nullptr ) // If there was a previous bitmap...
 	{
 		TEXTUREMAN->UnloadTexture( m_pTexture ); // Unload it.
-		m_pTexture = NULL;
+		m_pTexture = nullptr;
 
 		/* Make sure we're reset to frame 0, so if we're reused, we aren't left
 		 * on a frame number that may be greater than the number of frames in
@@ -301,7 +301,7 @@ void Sprite::LoadFromTexture( RageTextureID ID )
 {
 	// LOG->Trace( "Sprite::LoadFromTexture( %s )", ID.filename.c_str() );
 
-	RageTexture *pTexture = NULL;
+	RageTexture *pTexture = nullptr;
 	if( m_pTexture && m_pTexture->GetID() == ID )
 		pTexture = m_pTexture;
 	else

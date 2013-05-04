@@ -12,7 +12,7 @@
 #pragma comment(lib, "dxguid.lib")
 #endif
 #endif
-LPDIRECTINPUT8 g_dinput = NULL;
+LPDIRECTINPUT8 g_dinput = nullptr;
 
 static int ConvertScancodeToKey( int scancode );
 static BOOL CALLBACK DIJoystick_EnumDevObjectsProc(LPCDIDEVICEOBJECTINSTANCE dev, LPVOID data);
@@ -24,7 +24,7 @@ DIDevice::DIDevice()
 	dev = InputDevice_Invalid;
 	buffered = true;
 	memset(&JoystickInst, 0, sizeof(JoystickInst));
-	Device = NULL;
+	Device = nullptr;
 }
 
 bool DIDevice::Open()
@@ -136,7 +136,7 @@ void DIDevice::Close()
 	Device->Unacquire();
 	Device->Release();
 
-	Device = NULL;
+	Device = nullptr;
 	buttons = axes = hats = 0;
 	Inputs.clear();
 }

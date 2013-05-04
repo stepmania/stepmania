@@ -150,7 +150,7 @@ MovieTexture_DShow::MovieTexture_DShow( RageTextureID ID ) :
 	m_bPlaying = false;
 
 	m_uTexHandle = 0;
-	buffer = NULL;
+	buffer = nullptr;
 }
 
 RString MovieTexture_DShow::Init()
@@ -258,7 +258,7 @@ void MovieTexture_DShow::CheckFrame()
 
 	delete pFromDShow;
 
-	buffer = NULL;
+	buffer = nullptr;
 
 	CHECKPOINT;
 
@@ -310,12 +310,12 @@ RString MovieTexture_DShow::GetActiveFilterList()
 {
 	RString ret;
 	
-	IEnumFilters *pEnum = NULL;
+	IEnumFilters *pEnum = nullptr;
 	HRESULT hr = m_pGB->EnumFilters(&pEnum);
 	if (FAILED(hr))
 		return hr_ssprintf(hr, "EnumFilters");
 
-	IBaseFilter *pF = NULL;
+	IBaseFilter *pF = nullptr;
 	while( S_OK == pEnum->Next(1, &pF, 0) )
 	{
 		FILTER_INFO FilterInfo;
@@ -341,7 +341,7 @@ RString MovieTexture_DShow::Create()
 
 	actualID.iAlphaBits = 0;
 
-	if( FAILED( hr=CoInitialize(NULL) ) )
+	if( FAILED( hr=CoInitialize(nullptr) ) )
 		RageException::Throw( hr_ssprintf(hr, "Could not CoInitialize") );
 
 	// Create the filter graph

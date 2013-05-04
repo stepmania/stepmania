@@ -429,7 +429,7 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 				{
 					Steps *pSteps = SongUtil::GetStepsByDifficulty( GetSelectedSong(), GetSelectedStepsType(), dc );
 					if( pSteps && UNLOCKMAN->StepsIsLocked( GetSelectedSong(), pSteps ) )
-						pSteps = NULL;
+						pSteps = nullptr;
 
 					EditMode mode = EDIT_MODE.GetValue();
 					switch( EDIT_MODE.GetValue() )

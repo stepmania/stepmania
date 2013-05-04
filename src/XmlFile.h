@@ -67,14 +67,14 @@ typedef vector<XNode*> XNodes;
 		++Var )
 /** @brief Loop through each child. */
 #define FOREACH_Child( pNode, Var ) \
-	XNode *Var = NULL; \
+	XNode *Var = nullptr; \
 	for( XNodes::iterator Var##Iter = (pNode)->m_childs.begin(); \
 		Var = (Var##Iter != (pNode)->m_childs.end())? *Var##Iter:NULL, \
 		Var##Iter != (pNode)->m_childs.end(); \
 		++Var##Iter )
 /** @brief Loop through each child, using a constant iterator. */
 #define FOREACH_CONST_Child( pNode, Var ) \
-	const XNode *Var = NULL; \
+	const XNode *Var = nullptr; \
 	for( XNodes::const_iterator Var##Iter = (pNode)->m_childs.begin(); \
 		Var = (Var##Iter != (pNode)->m_childs.end())? *Var##Iter:NULL, \
 		Var##Iter != (pNode)->m_childs.end(); \

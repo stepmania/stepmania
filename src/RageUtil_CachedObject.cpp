@@ -20,7 +20,7 @@ struct User
 		Object *p;
 		if( !cache.Get(&p) )
 		{
-			p = NULL;
+			p = nullptr;
 			cache.Set(p);
 		}
 		return p;

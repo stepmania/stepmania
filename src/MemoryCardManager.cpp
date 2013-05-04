@@ -13,7 +13,7 @@
 #include "arch/MemoryCard/MemoryCardDriver_Null.h"
 #include "LuaManager.h"
 
-MemoryCardManager*	MEMCARDMAN = NULL;	// global and accessable from anywhere in our program
+MemoryCardManager*	MEMCARDMAN = nullptr;	// global and accessable from anywhere in our program
 
 static void MemoryCardOsMountPointInit( size_t /*PlayerNumber*/ i, RString &sNameOut, RString &defaultValueOut )
 {
@@ -253,7 +253,7 @@ bool ThreadedMemoryCardWorker::Unmount( const UsbStorageDevice *pDevice )
 	return true;
 }
 
-static ThreadedMemoryCardWorker *g_pWorker = NULL;
+static ThreadedMemoryCardWorker *g_pWorker = nullptr;
 
 MemoryCardManager::MemoryCardManager()
 {

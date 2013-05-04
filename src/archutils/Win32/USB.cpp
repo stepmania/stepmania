@@ -115,7 +115,7 @@ WindowsFileIO::WindowsFileIO()
 {
 	ZeroMemory( &m_Overlapped, sizeof(m_Overlapped) );
 	m_Handle = INVALID_HANDLE_VALUE;
-	m_pBuffer = NULL;
+	m_pBuffer = nullptr;
 }
 
 WindowsFileIO::~WindowsFileIO()

@@ -61,8 +61,8 @@ void ScreenOptionsManageEditSteps::BeginScreen()
 	SONGMAN->FreeAllLoadedFromProfile( ProfileSlot_Machine );
 	SONGMAN->LoadStepEditsFromProfileDir( PROFILEMAN->GetProfileDir(ProfileSlot_Machine), ProfileSlot_Machine );
 	SONGMAN->LoadCourseEditsFromProfileDir( PROFILEMAN->GetProfileDir(ProfileSlot_Machine), ProfileSlot_Machine );
-	GAMESTATE->m_pCurSong.Set( NULL );
-	GAMESTATE->m_pCurSteps[PLAYER_1].Set( NULL );
+	GAMESTATE->m_pCurSong.Set(nullptr);
+	GAMESTATE->m_pCurSteps[PLAYER_1].Set(nullptr);
 
 	vector<OptionRowHandler*> vHands;
 
@@ -177,7 +177,7 @@ void ScreenOptionsManageEditSteps::HandleScreenMessage( const ScreenMessage SM )
 			Steps *pSteps = GetStepsWithFocus();
 			FILEMAN->Remove( pSteps->GetFilename() );
 			SONGMAN->DeleteSteps( pSteps );
-			GAMESTATE->m_pCurSteps[PLAYER_1].Set( NULL );
+			GAMESTATE->m_pCurSteps[PLAYER_1].Set(nullptr);
 			SCREENMAN->SetNewScreen( this->m_sName ); // reload
 		}
 	}

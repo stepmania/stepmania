@@ -53,7 +53,7 @@ struct MenuRowDef
 	
 	MenuRowDef(int r, RString n, bool e, EditMode s,
 			   bool bTT, bool bTI, int d, vector<RString> options):
-			iRowCode(r), sName(n), bEnabled(e), pfnEnabled(NULL),
+			iRowCode(r), sName(n), bEnabled(e), pfnEnabled(nullptr),
 			emShowIn(s), iDefaultChoice(d), choices(),
 			bThemeTitle(bTT), bThemeItems(bTI)
 	{
@@ -77,7 +77,7 @@ struct MenuRowDef
 		   const char *c20=NULL, const char *c21=NULL, 
 		   const char *c22=NULL, const char *c23=NULL, 
 		   const char *c24=NULL, const char *c25=NULL ):
-		iRowCode(r), sName(n), bEnabled(e), pfnEnabled(NULL),
+		iRowCode(r), sName(n), bEnabled(e), pfnEnabled(nullptr),
 		emShowIn(s), iDefaultChoice(d), choices(),
 		bThemeTitle(bTT), bThemeItems(bTI)
 	{
@@ -92,7 +92,7 @@ struct MenuRowDef
 	
 	MenuRowDef( int r, RString n, bool e, EditMode s, bool bTT, bool bTI,
 		   int d, int low, int high ):
-		iRowCode(r), sName(n), bEnabled(e), pfnEnabled(NULL),
+		iRowCode(r), sName(n), bEnabled(e), pfnEnabled(nullptr),
 		emShowIn(s), iDefaultChoice(d), choices(),
 		bThemeTitle(bTT), bThemeItems(bTI)
 	{

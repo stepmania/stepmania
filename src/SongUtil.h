@@ -201,7 +201,7 @@ public:
 	 *
 	 * This used to call Unset() to do the same thing. */
 	SongID(): sDir(""), m_Cache() { m_Cache.Unset(); }
-	void Unset() { FromSong(NULL); }
+	void Unset() { FromSong(nullptr); }
 	void FromSong( const Song *p );
 	Song *ToSong() const;
 	bool operator<( const SongID &other ) const

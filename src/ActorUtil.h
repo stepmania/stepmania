@@ -108,8 +108,8 @@ namespace ActorUtil
 	inline void LoadAllCommandsAndSetXYAndOnCommand( Actor* pActor, const RString &sMetricsGroup ) { if(pActor) LoadAllCommandsAndSetXYAndOnCommand( *pActor, sMetricsGroup ); }
 
 	// Return a Sprite, BitmapText, or Model depending on the file type
-	Actor* LoadFromNode( const XNode* pNode, Actor *pParentActor = NULL );
-	Actor* MakeActor( const RString &sPath, Actor *pParentActor = NULL );
+	Actor* LoadFromNode( const XNode* pNode, Actor *pParentActor = nullptr );
+	Actor* MakeActor( const RString &sPath, Actor *pParentActor = nullptr );
 	RString GetSourcePath( const XNode *pNode );
 	RString GetWhere( const XNode *pNode );
 	bool GetAttrPath( const XNode *pNode, const RString &sName, RString &sOut );

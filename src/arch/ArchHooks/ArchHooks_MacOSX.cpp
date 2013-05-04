@@ -88,12 +88,12 @@ void ArchHooks_MacOSX::Init()
 	CFPropertyListRef old = CFPreferencesCopyAppValue( key, appID );
 	CFURLRef path = CFBundleCopyBundleURL( bundle );
 	CFPropertyListRef value = CFURLCopyFileSystemPath( path, kCFURLPOSIXPathStyle );
-	CFMutableDictionaryRef newDict = NULL;
+	CFMutableDictionaryRef newDict = nullptr;
 
 	if( old && CFGetTypeID(old) != CFDictionaryGetTypeID() )
 	{
 		CFRelease( old );
-		old = NULL;
+		old = nullptr;
 	}
 
 	if( !old )
@@ -289,7 +289,7 @@ void ArchHooks_MacOSX::DumpDebugInfo()
 
 		if( urlRef == nullptr )
 			break;
-		CFDataRef dataRef = NULL;
+		CFDataRef dataRef = nullptr;
 		SInt32 error;
 		CFURLCreateDataAndPropertiesFromResource( NULL, urlRef, &dataRef, NULL, NULL, &error );
 		CFRelease( urlRef );

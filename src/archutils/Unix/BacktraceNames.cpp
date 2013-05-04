@@ -242,8 +242,8 @@ void BacktraceNames::FromAddr( const void *p )
 	const struct load_command *cmd = (struct load_command *) &header[1];
 	unsigned long diff = 0xffffffff;
 
-	const char *dli_sname = NULL;
-	void *dli_saddr = NULL;
+	const char *dli_sname = nullptr;
+	void *dli_saddr = nullptr;
 
 	for( unsigned long i = 0; i < header->ncmds; i++, cmd = next_load_command(cmd) )
 	{

@@ -19,7 +19,7 @@
 #include "GameManager.h"
 #include "Style.h"
 
-UnlockManager*	UNLOCKMAN = NULL;	// global and accessable from anywhere in our program
+UnlockManager*	UNLOCKMAN = nullptr;	// global and accessable from anywhere in our program
 
 #define UNLOCK_NAMES		THEME->GetMetric ("UnlockManager","UnlockNames")
 #define UNLOCK(x)		THEME->GetMetricR("UnlockManager", ssprintf("Unlock%sCommand",x.c_str()));
@@ -91,7 +91,7 @@ void UnlockManager::UnlockSong( const Song *song )
 
 RString UnlockManager::FindEntryID( const RString &sName ) const
 {
-	const UnlockEntry *pEntry = NULL;
+	const UnlockEntry *pEntry = nullptr;
 	
 	const Song *pSong = SONGMAN->FindSong( sName );
 	if( pSong != nullptr )

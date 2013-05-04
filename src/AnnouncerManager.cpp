@@ -5,7 +5,7 @@
 #include "RageFile.h"
 #include <cstring>
 
-AnnouncerManager*	ANNOUNCER = NULL;	// global object accessable from anywhere in the program
+AnnouncerManager*	ANNOUNCER = nullptr;	// global object accessable from anywhere in the program
 
 
 const RString EMPTY_ANNOUNCER_NAME = "Empty";

@@ -455,7 +455,7 @@ wchar_t InputHandler_MacOSX_HID::DeviceButtonToChar( DeviceButton button, bool b
 		{
 			// Fall back on the 'KCHR' resource.
 			static unsigned long state = 0;
-			static Ptr keymap = NULL;
+			static Ptr keymap = nullptr;
 			Ptr new_keymap;
 
 			new_keymap = (Ptr)GetScriptManagerVariable(smKCHRCache);

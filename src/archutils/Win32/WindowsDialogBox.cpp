@@ -3,7 +3,7 @@
 
 WindowsDialogBox::WindowsDialogBox()
 {
-	m_hWnd = NULL;
+	m_hWnd = nullptr;
 }
 
 void WindowsDialogBox::Run( int iDialog )

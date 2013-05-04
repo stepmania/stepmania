@@ -7,7 +7,7 @@
 
 #include <dlfcn.h>
 
-static void *Handle = NULL;
+static void *Handle = nullptr;
 static INIT Module_Init;
 static SHUTDOWN Module_Shutdown;
 static SETTEXT Module_SetText;
@@ -71,11 +71,11 @@ LoadingWindow_Gtk::~LoadingWindow_Gtk()
 {
 	if( Module_Shutdown != nullptr )
 		Module_Shutdown();
-	Module_Shutdown = NULL;
+	Module_Shutdown = nullptr;
 
 	if( Handle )
 		dlclose( Handle );
-	Handle = NULL;
+	Handle = nullptr;
 }
 
 void LoadingWindow_Gtk::SetText( RString s )

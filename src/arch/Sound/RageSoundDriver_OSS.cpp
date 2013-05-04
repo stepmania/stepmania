@@ -77,7 +77,7 @@ bool RageSoundDriver_OSS::GetData()
 		
 	const int chunksize = ab.fragsize;
 	
-	static int16_t *buf = NULL;
+	static int16_t *buf = nullptr;
 	if(!buf)
 		buf = new int16_t[chunksize / sizeof(int16_t)];
 

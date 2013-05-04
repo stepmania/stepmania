@@ -99,7 +99,7 @@ void RageSoundReader_Merge::Finish( int iPreferredSampleRate )
 				LOG->Warn( "Discarded sound with %i channels, not %i",
 					it->GetNumChannels(), m_iChannels );
 				delete it;
-				it = NULL;
+				it = nullptr;
 			}
 			else
 			{

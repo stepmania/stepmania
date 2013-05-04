@@ -16,9 +16,9 @@ REGISTER_SOUND_DRIVER_CLASS2( Pulse, PulseAudio );
 /* Constructor */
 RageSoundDriver_PulseAudio::RageSoundDriver_PulseAudio()
 : RageSoundDriver(),
-m_LastPosition(0), m_SampleRate(0), m_Error(NULL),
+m_LastPosition(0), m_SampleRate(0), m_Error(nullptr),
 m_Sem("Pulseaudio Synchronization Semaphore"),
-m_PulseMainLoop(NULL), m_PulseCtx(NULL), m_PulseStream(NULL)
+m_PulseMainLoop(nullptr), m_PulseCtx(nullptr), m_PulseStream(nullptr)
 {
 	m_SampleRate = PREFSMAN->m_iSoundPreferredSampleRate;
 	if( m_SampleRate == 0 )
@@ -137,7 +137,7 @@ void RageSoundDriver_PulseAudio::m_InitStream(void)
 	{
 		if(asprintf(&m_Error, "invalid sample spec!") == -1)
 		{
-			m_Error = NULL;
+			m_Error = nullptr;
 		}
 		m_Sem.Post();
 		return;
@@ -155,7 +155,7 @@ void RageSoundDriver_PulseAudio::m_InitStream(void)
 	{
 		if(asprintf(&m_Error, "pa_stream_new(): %s", pa_strerror(pa_context_errno(m_PulseCtx))) == -1)
 		{
-			m_Error = NULL;
+			m_Error = nullptr;
 		}
 		m_Sem.Post();
 		return;
@@ -231,7 +231,7 @@ void RageSoundDriver_PulseAudio::m_InitStream(void)
 		if(asprintf(&m_Error, "pa_stream_connect_playback(): %s",
 				pa_strerror(pa_context_errno(m_PulseCtx))) == -1)
 		{
-			m_Error = NULL;
+			m_Error = nullptr;
 		}
 		m_Sem.Post();
 		return;
@@ -261,7 +261,7 @@ void RageSoundDriver_PulseAudio::CtxStateCb(pa_context *c)
 	case PA_CONTEXT_FAILED:
 		if(asprintf(&m_Error, "context connection failed: %s", pa_strerror(pa_context_errno(m_PulseCtx))) == -1)
 		{
-			m_Error = NULL;
+			m_Error = nullptr;
 		}
 		m_Sem.Post();
 		return;

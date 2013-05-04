@@ -52,7 +52,7 @@ static LocalizedString ON			( "ScreenDebugOverlay", "on" );
 static LocalizedString OFF			( "ScreenDebugOverlay", "off" );
 
 class IDebugLine;
-static vector<IDebugLine*> *g_pvpSubscribers = NULL;
+static vector<IDebugLine*> *g_pvpSubscribers = nullptr;
 class IDebugLine
 {
 public:

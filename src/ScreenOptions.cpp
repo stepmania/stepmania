@@ -589,7 +589,7 @@ void ScreenOptions::PositionRows( bool bTween )
 	int P2Choice = GAMESTATE->IsHumanPlayer(PLAYER_2)? m_iCurrentRow[PLAYER_2]: m_iCurrentRow[PLAYER_1];
 
 	vector<OptionRow*> Rows( m_pRows );
-	OptionRow *pSeparateExitRow = NULL;
+	OptionRow *pSeparateExitRow = nullptr;
 
 	if( (bool)SEPARATE_EXIT_ROW && !Rows.empty() && Rows.back()->GetRowType() == OptionRow::RowType_Exit )
 	{
@@ -744,7 +744,7 @@ void ScreenOptions::AfterChangeValueOrRow( PlayerNumber pn )
 	}
 
 	const RString text = GetExplanationText( iCurRow );
-	BitmapText *pText = NULL;
+	BitmapText *pText = nullptr;
 	switch( m_InputMode )
 	{
 		case INPUTMODE_INDIVIDUAL:

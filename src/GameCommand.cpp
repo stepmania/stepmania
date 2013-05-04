@@ -36,7 +36,7 @@ void GameCommand::Init()
 	m_bInvalid = true;
 	m_iIndex = -1;
 	m_MultiPlayer = MultiPlayer_Invalid;
-	m_pStyle = NULL;
+	m_pStyle = nullptr;
 	m_pm = PlayMode_Invalid;
 	m_dc = Difficulty_Invalid;
 	m_CourseDifficulty = Difficulty_Invalid;
@@ -45,11 +45,11 @@ void GameCommand::Init()
 	m_sAnnouncer = "";
 	m_sScreen = "";
 	m_LuaFunction.Unset();
-	m_pSong = NULL;
-	m_pSteps = NULL;
-	m_pCourse = NULL;
-	m_pTrail = NULL;
-	m_pCharacter = NULL;
+	m_pSong = nullptr;
+	m_pSteps = nullptr;
+	m_pCourse = nullptr;
+	m_pTrail = nullptr;
+	m_pCharacter = nullptr;
 	m_SortOrder = SortOrder_Invalid;
 	m_sSoundPath = "";
 	m_vsScreensToPrepare.clear();

@@ -30,7 +30,7 @@ extern const char *const version_time;
 
 bool child_read( int fd, void *p, int size );
 
-const char *g_pCrashHandlerArgv0 = NULL;
+const char *g_pCrashHandlerArgv0 = nullptr;
 
 
 static void output_stack_trace( FILE *out, const void **BacktracePointers )

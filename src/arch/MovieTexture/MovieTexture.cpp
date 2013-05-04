@@ -92,7 +92,7 @@ RageMovieTexture *RageMovieTexture::Create( RageTextureID ID )
 	if( DriversToTry.empty() )
 		RageException::Throw( "%s", MOVIE_DRIVERS_EMPTY.GetValue().c_str() );
 	
-	RageMovieTexture *ret = NULL;
+	RageMovieTexture *ret = nullptr;
 	
 	for (RString const &Driver : DriversToTry)
 	{

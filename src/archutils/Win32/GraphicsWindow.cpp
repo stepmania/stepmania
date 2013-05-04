@@ -22,7 +22,7 @@ static HDC g_HDC;
 static VideoModeParams g_CurrentParams;
 static bool g_bResolutionChanged = false;
 static bool g_bHasFocus = true;
-static HICON g_hIcon = NULL;
+static HICON g_hIcon = nullptr;
 static bool m_bWideWindowClass;
 static bool g_bD3D = false;
 
@@ -36,7 +36,7 @@ static RString GetNewWindow()
 {
 	HWND h = GetForegroundWindow();
 	if( h == nullptr )
-		return "(NULL)";
+		return "(nullptr)";
 
 	DWORD iProcessID;
 	GetWindowThreadProcessId( h, &iProcessID );
@@ -110,7 +110,7 @@ static LRESULT CALLBACK GraphicsWindow_WndProc( HWND hWnd, UINT msg, WPARAM wPar
 		case WM_SETCURSOR:
 			if( !g_CurrentParams.windowed )
 			{
-				SetCursor( NULL );
+				SetCursor(nullptr);
 				return 1;
 			}
 			break;
@@ -322,7 +322,7 @@ void GraphicsWindow::CreateGraphicsWindow( const VideoModeParams &p, bool bForce
 	{
 		SetClassLong( g_hWndMain, GCL_HICON, (LONG) LoadIcon(NULL,IDI_APPLICATION) );
 		DestroyIcon( g_hIcon );
-		g_hIcon = NULL;
+		g_hIcon = nullptr;
 	}
 	g_hIcon = IconFromFile( p.sIconFile );
 	if( g_hIcon != nullptr )
@@ -376,7 +376,7 @@ void GraphicsWindow::DestroyGraphicsWindow()
 	if( g_HDC != nullptr )
 	{
 		ReleaseDC( g_hWndMain, g_HDC );
-		g_HDC = NULL;
+		g_HDC = nullptr;
 	}
 
 	CHECKPOINT;
@@ -384,7 +384,7 @@ void GraphicsWindow::DestroyGraphicsWindow()
 	if( g_hWndMain != nullptr )
 	{
 		DestroyWindow( g_hWndMain );
-		g_hWndMain = NULL;
+		g_hWndMain = nullptr;
 		CrashHandler::SetForegroundWindow( g_hWndMain );
 	}
 
@@ -393,7 +393,7 @@ void GraphicsWindow::DestroyGraphicsWindow()
 	if( g_hIcon != nullptr )
 	{
 		DestroyIcon( g_hIcon );
-		g_hIcon = NULL;
+		g_hIcon = nullptr;
 	}
 
 	CHECKPOINT;

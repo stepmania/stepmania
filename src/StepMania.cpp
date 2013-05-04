@@ -732,7 +732,7 @@ RageDisplay *CreateDisplay()
 	if( asRenderers.empty() )
 		RageException::Throw( "%s", ERROR_NO_VIDEO_RENDERERS.GetValue().c_str() );
 
-	RageDisplay *pRet = NULL;
+	RageDisplay *pRet = nullptr;
 	for( unsigned i=0; i<asRenderers.size(); i++ )
 	{
 		RString sRenderer = asRenderers[i];
@@ -1025,7 +1025,7 @@ int main(int argc, char* argv[])
 	if(pLoadingWindow == nullptr)
 		RageException::Throw("%s", COULDNT_OPEN_LOADING_WINDOW.GetValue().c_str());
 
-	srand( time(NULL) ); // seed number generator
+	srand( time(nullptr) ); // seed number generator
 
 	/* Do this early, so we have debugging output if anything else fails. LOG and
 	 * Dialog must be set up first. It shouldn't take long, but it might take a

@@ -9,7 +9,7 @@
 
 ReceptorArrowRow::ReceptorArrowRow()
 {
-	m_pPlayerState = NULL;
+	m_pPlayerState = nullptr;
 	m_fYReverseOffsetPixels = 0;
 	m_fFadeToFailPercent = 0;
 }

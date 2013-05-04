@@ -172,7 +172,7 @@ bool FilenameDB::ResolvePath( RString &sPath )
 
 	/* Resolve each component. */
 	RString ret = "";
-	const FileSet *fs = NULL;
+	const FileSet *fs = nullptr;
 
 	static const RString slash("/");
 	for(;;)
@@ -340,7 +340,7 @@ FileSet *FilenameDB::GetFileSet( const RString &sDir_, bool bCreate )
 	 * to the newly-created directory.  Find the pointer we need to set.  Be careful of
 	 * order of operations, here: since we just unlocked, any this->dirs searches we did
 	 * previously are no longer valid. */
-	FileSet **pParentDirp = NULL;
+	FileSet **pParentDirp = nullptr;
 	if( sDir != "/" )
 	{
 		RString sParent = Dirname( sDir );
@@ -449,7 +449,7 @@ void FilenameDB::DelFileSet( map<RString, FileSet *>::iterator dir )
 		{
 			File &ff = (File &) *f;
 			if( ff.dirp == fs )
-				ff.dirp = NULL;
+				ff.dirp = nullptr;
 		}
 	}
 
@@ -478,7 +478,7 @@ void FilenameDB::DelFile( const RString &sPath )
 
 void FilenameDB::FlushDirCache( const RString & /* sDir */ )
 {
-	FileSet *pFileSet = NULL;
+	FileSet *pFileSet = nullptr;
 	m_Mutex.Lock();
 
 	for(;;)
@@ -524,7 +524,7 @@ void FilenameDB::FlushDirCache( const RString & /* sDir */ )
 					FileSet *pParent = it->second;
 					set<File>::iterator fileit = pParent->files.find( File(Basename(sDir)) );
 					if( fileit != pParent->files.end() )
-						fileit->dirp = NULL;
+						fileit->dirp = nullptr;
 				}
 			}
 		}
@@ -558,7 +558,7 @@ void *FilenameDB::GetFilePriv( const RString &path )
 	ASSERT( !m_Mutex.IsLockedByThisThread() );
 
 	const File *pFile = GetFile( path );
-	void *pRet = NULL;
+	void *pRet = nullptr;
 	if( pFile != nullptr )
 		pRet = pFile->priv;
 

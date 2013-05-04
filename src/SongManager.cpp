@@ -36,7 +36,7 @@
 #include "UnlockManager.h"
 #include "SpecialFiles.h"
 
-SongManager*	SONGMAN = NULL;	// global and accessable from anywhere in our program
+SongManager*	SONGMAN = nullptr;	// global and accessable from anywhere in our program
 
 const RString ADDITIONAL_SONGS_DIR	= "/AdditionalSongs/";
 const RString ADDITIONAL_COURSES_DIR	= "/AdditionalCourses/";
@@ -1191,10 +1191,10 @@ void SongManager::GetExtraStageInfo( bool bExtra2, const Style *sd, Song*& pSong
 		return;
 
 	// Choose a hard song for the extra stage
-	Song*	pExtra1Song = NULL;		// the absolute hardest Song and Steps.  Use this for extra stage 1.
-	Steps*	pExtra1Notes = NULL;
-	Song*	pExtra2Song = NULL;		// a medium-hard Song and Steps.  Use this for extra stage 2.
-	Steps*	pExtra2Notes = NULL;
+	Song*	pExtra1Song = nullptr;		// the absolute hardest Song and Steps.  Use this for extra stage 1.
+	Steps*	pExtra1Notes = nullptr;
+	Song*	pExtra2Song = nullptr;		// a medium-hard Song and Steps.  Use this for extra stage 2.
+	Steps*	pExtra2Notes = nullptr;
 	
 	const vector<Song*> &apSongs = GetSongs( sGroup );
 	for( unsigned s=0; s<apSongs.size(); s++ )	// foreach song
@@ -1869,8 +1869,8 @@ public:
 	/* Note: this could now be implemented as Luna<Steps>::GetSong */
 	static int GetSongFromSteps( T* p, lua_State *L )
 	{
-		Song *pSong = NULL;
-		if( lua_isnil(L,1) ) { pSong = NULL; }
+		Song *pSong = nullptr;
+		if( lua_isnil(L,1) ) { pSong = nullptr; }
 		else { Steps *pSteps = Luna<Steps>::check(L,1); pSong = pSteps->m_pSong; }
 		if(pSong) pSong->PushSelf(L);
 		else lua_pushnil(L);

@@ -7,7 +7,7 @@
 #include "LuaManager.h"
 #include "LocalizedString.h"
 
-RageInput* INPUTMAN = NULL; // globally accessable input device
+RageInput* INPUTMAN = nullptr; // globally accessable input device
 
 static Preference<RString> g_sInputDrivers( "InputDrivers", "" ); // "" == DEFAULT_INPUT_DRIVER_LIST
 

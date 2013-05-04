@@ -242,7 +242,7 @@ private:
 	MessageID mSendWhenChanged;
 	T *val;
 public:
-	explicit BroadcastOnChangePtr( MessageID m ) { mSendWhenChanged = m; val = NULL; }
+	explicit BroadcastOnChangePtr( MessageID m ) { mSendWhenChanged = m; val = nullptr; }
 	T* Get() const { return val; }
 	void Set( T* t ) { val = t; if(MESSAGEMAN) MESSAGEMAN->Broadcast( MessageIDToString(mSendWhenChanged) ); }
 	/* This is only intended to be used for setting temporary values; always

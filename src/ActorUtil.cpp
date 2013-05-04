@@ -14,7 +14,7 @@
 
 
 // Actor registration
-static map<RString,CreateActorFn>	*g_pmapRegistrees = NULL;
+static map<RString,CreateActorFn>	*g_pmapRegistrees = nullptr;
 
 static bool IsRegistered( const RString& sClassName )
 {
@@ -158,7 +158,7 @@ namespace
 			return nullptr;
 		}
 
-		XNode *pRet = NULL;
+		XNode *pRet = nullptr;
 		if( ActorUtil::LoadTableFromStackShowErrors(L) )
 			pRet = XmlFileUtil::XNodeFromTable( L );
 

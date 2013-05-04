@@ -5,7 +5,7 @@
 #include "Preference.h"
 #include "PrefsManager.h" // XXX: only used for m_bShowMouseCursor -aj
 
-Display *X11Helper::Dpy = NULL;
+Display *X11Helper::Dpy = nullptr;
 Window X11Helper::Win = None;
 
 static int ErrorCallback( Display*, XErrorEvent* );
@@ -31,7 +31,7 @@ void X11Helper::CloseXConnection()
 	DEBUG_ASSERT( Dpy != nullptr );
 	DEBUG_ASSERT( Win == None );
 	XCloseDisplay( Dpy );
-	Dpy = NULL;
+	Dpy = nullptr;
 }
 
 bool X11Helper::MakeWindow( Window &win, int screenNum, int depth, Visual *visual, int width, int height, bool overrideRedirect )

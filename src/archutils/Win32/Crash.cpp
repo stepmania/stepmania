@@ -73,7 +73,7 @@ static void GetReason( const EXCEPTION_RECORD *pRecord, CrashInfo *crash )
 		strcpy( crash->m_CrashReason, reason );
 }
 
-static HWND g_hForegroundWnd = NULL;
+static HWND g_hForegroundWnd = nullptr;
 void CrashHandler::SetForegroundWindow( HWND hWnd )
 {
 	g_hForegroundWnd = hWnd;
@@ -105,7 +105,7 @@ bool StartChild( HANDLE &hProcess, HANDLE &hToStdin, HANDLE &hFromStdout )
 		SECURITY_ATTRIBUTES sa;
 		sa.nLength = sizeof(SECURITY_ATTRIBUTES);
 		sa.bInheritHandle = true;
-		sa.lpSecurityDescriptor = NULL;
+		sa.lpSecurityDescriptor = nullptr;
 
 		CreatePipe( &si.hStdInput, &hToStdin, &sa, 0 );
 		CreatePipe( &hFromStdout, &si.hStdOutput, &sa, 0 );
@@ -166,7 +166,7 @@ static const char *CrashGetModuleBaseName(HMODULE hmod, char *pszBaseName)
 
 		pszFile = pszBaseName;
 
-		char *period = NULL;
+		char *period = nullptr;
 		while( *pszFile++ )
 			if( pszFile[-1]=='.' )
 				period = pszFile-1;
@@ -299,7 +299,7 @@ static long MainExceptionHandler( EXCEPTION_POINTERS *pExc )
 		/* If we get here, then we've been called recursively, which means we
 		 * crashed. If InHere is greater than 1, then we crashed after writing
 		 * the crash dump; say so. */
-		SetUnhandledExceptionFilter(NULL);
+		SetUnhandledExceptionFilter(nullptr);
 		MessageBox( NULL,
 			InHere == 1?
 			"The error reporting interface has crashed.\n":
@@ -345,7 +345,7 @@ static long MainExceptionHandler( EXCEPTION_POINTERS *pExc )
 
 	InHere = false;
 
-	SetUnhandledExceptionFilter( NULL );
+	SetUnhandledExceptionFilter(nullptr);
 
 	/* Forcibly terminate; if we keep going, we'll try to shut down threads and
 	 * do other things that may deadlock, which is confusing for users. */
@@ -474,7 +474,7 @@ void CrashHandler::do_backtrace( const void **buf, size_t size,
 		LDT_ENTRY sel;
 		if( !GetThreadSelectorEntry( hThread, pContext->SegFs, &sel ) )
 		{
-			*buf = NULL;
+			*buf = nullptr;
 			return;
 		}
 
@@ -523,7 +523,7 @@ void CrashHandler::do_backtrace( const void **buf, size_t size,
 		lpAddr += 4;
 	} while( ReadProcessMemory(hProcess, lpAddr-4, &data, 4, NULL));
 
-	*buf = NULL;
+	*buf = nullptr;
 }
 
 // Trigger the crash handler. This works even in the debugger.

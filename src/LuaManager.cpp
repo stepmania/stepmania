@@ -16,7 +16,7 @@
 #include <cassert>
 #include <map>
 
-LuaManager *LUA = NULL;
+LuaManager *LUA = nullptr;
 struct Impl
 {
 	Impl(): g_pLock("Lua") {}
@@ -25,7 +25,7 @@ struct Impl
 
 	RageMutex g_pLock;
 };
-static Impl *pImpl = NULL;
+static Impl *pImpl = nullptr;
 
 #if defined(_MSC_VER)
 	/* "interaction between '_setjmp' and C++ object destruction is non-portable"
@@ -226,7 +226,7 @@ static int LuaPanic( lua_State *L )
 }
 
 // Actor registration
-static vector<RegisterWithLuaFn>	*g_vRegisterActorTypes = NULL;
+static vector<RegisterWithLuaFn>	*g_vRegisterActorTypes = nullptr;
 
 void LuaManager::Register( RegisterWithLuaFn pfn )
 {
@@ -315,7 +315,7 @@ void LuaManager::Release( Lua *&p )
 
 	if( bDoUnlock )
 		pImpl->g_pLock.Unlock();
-	p = NULL;
+	p = nullptr;
 }
 
 /*

@@ -36,9 +36,9 @@ RString GetErrorString( HRESULT hr )
 }
 
 // Globals
-HMODULE				g_D3D9_Module = NULL;
-LPDIRECT3D9			g_pd3d = NULL;
-LPDIRECT3DDEVICE9	g_pd3dDevice = NULL;
+HMODULE				g_D3D9_Module = nullptr;
+LPDIRECT3D9			g_pd3d = nullptr;
+LPDIRECT3DDEVICE9	g_pd3dDevice = nullptr;
 D3DCAPS9			g_DeviceCaps;
 D3DDISPLAYMODE		g_DesktopMode;
 D3DPRESENT_PARAMETERS	g_d3dpp;
@@ -252,13 +252,13 @@ RageDisplay_D3D::~RageDisplay_D3D()
 	if( g_pd3dDevice )
 	{
 		g_pd3dDevice->Release();
-		g_pd3dDevice = NULL;
+		g_pd3dDevice = nullptr;
 	}
 
 	if( g_pd3d )
 	{
 		g_pd3d->Release();
-		g_pd3d = NULL;
+		g_pd3d = nullptr;
 	}
 
 	/* Even after we call Release(), D3D may still affect our window. It seems
@@ -267,7 +267,7 @@ RageDisplay_D3D::~RageDisplay_D3D()
 	if( g_D3D9_Module )
 	{
 		FreeLibrary( g_D3D9_Module );
-		g_D3D9_Module = NULL;
+		g_D3D9_Module = nullptr;
 	}
 }
 
@@ -621,7 +621,7 @@ bool RageDisplay_D3D::SupportsThreadedRendering()
 
 RageSurface* RageDisplay_D3D::CreateScreenshot()
 {
-	RageSurface * result = NULL;
+	RageSurface * result = nullptr;
 
 	// Get the back buffer.
 	IDirect3DSurface9* pSurface;
@@ -702,7 +702,7 @@ void RageDisplay_D3D::SendCurrentMatrices()
 		g_pd3dDevice->SetTextureStageState( tu, D3DTSS_TEXTURETRANSFORMFLAGS, D3DTTFF_COUNT2 );
 
 		// If no texture is set for this texture unit, don't bother setting it up.
-		IDirect3DBaseTexture9* pTexture = NULL;
+		IDirect3DBaseTexture9* pTexture = nullptr;
 		g_pd3dDevice->GetTexture( tu, &pTexture );
 		if( pTexture == nullptr )
 			 continue;

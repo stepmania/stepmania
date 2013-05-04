@@ -12,8 +12,8 @@ SoundEffectControl::SoundEffectControl()
 	m_bLocked = false;
 	m_fSample = 0.0f;
 	m_fLastLevel = 0.0f;
-	m_pPlayerState = NULL;
-	m_pNoteData = NULL;
+	m_pPlayerState = nullptr;
+	m_pNoteData = nullptr;
 }
 
 void SoundEffectControl::Load( const RString &sType, PlayerState *pPlayerState, const NoteData *pNoteData )

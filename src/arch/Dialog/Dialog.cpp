@@ -23,7 +23,7 @@ DialogDriver *MakeDialogDriver()
 	ASSERT( asDriversToTry.size() != 0 );
 
 	RString sDriver;
-	DialogDriver *pRet = NULL;
+	DialogDriver *pRet = nullptr;
 
 	for( unsigned i = 0; pRet == nullptr && i < asDriversToTry.size(); ++i )
 	{
@@ -56,7 +56,7 @@ DialogDriver *MakeDialogDriver()
 	return pRet;
 }
 
-static DialogDriver *g_pImpl = NULL;
+static DialogDriver *g_pImpl = nullptr;
 static DialogDriver_Null g_NullDriver;
 static bool g_bWindowed = true; // Start out true so that we'll show errors before DISPLAY is init'd.
 
@@ -79,7 +79,7 @@ void Dialog::Init()
 void Dialog::Shutdown()
 {
 	delete g_pImpl;
-	g_pImpl = NULL;
+	g_pImpl = nullptr;
 }
 
 static bool MessageIsIgnored( RString sID )

@@ -19,7 +19,7 @@ MenuTimer::MenuTimer()
 	m_fStallSecondsLeft = 0;
 	m_bPaused = false;
 	m_bSilent = false;
-	WARNING_COMMAND = NULL;
+	WARNING_COMMAND = nullptr;
 }
 
 MenuTimer::~MenuTimer()

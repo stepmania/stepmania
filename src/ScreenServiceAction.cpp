@@ -388,7 +388,7 @@ void ScreenServiceAction::BeginScreen()
 	vector<RString> vsResults;
 	for (RString const &s : vsActions)
 	{
-		RString (*pfn)() = NULL;
+		RString (*pfn)() = nullptr;
 
 		if( s == "ClearMachineStats" )			pfn = ClearMachineStats;
 		else if( s == "ClearMachineEdits" )			pfn = ClearMachineEdits;

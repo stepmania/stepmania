@@ -7,12 +7,12 @@
 
 const int MAX_THREADS=128;
 
-static MutexImpl_Win32 *g_pThreadIdMutex = NULL;
+static MutexImpl_Win32 *g_pThreadIdMutex = nullptr;
 static void InitThreadIdMutex()
 {
 	if( g_pThreadIdMutex != nullptr )
 		return;
-	g_pThreadIdMutex = new MutexImpl_Win32(NULL);
+	g_pThreadIdMutex = new MutexImpl_Win32(nullptr);
 }
 
 static uint64_t g_ThreadIds[MAX_THREADS];
@@ -55,7 +55,7 @@ int ThreadImpl_Win32::Wait()
 	GetExitCodeThread( ThreadHandle, &ret );
 
 	CloseHandle( ThreadHandle );
-	ThreadHandle = NULL;
+	ThreadHandle = nullptr;
 
 	return ret;
 }
@@ -97,7 +97,7 @@ static DWORD WINAPI StartThread( LPVOID pData )
 	{
 		if( g_ThreadIds[i] == RageThread::GetCurrentThreadID() )
 		{
-			g_ThreadHandles[i] = NULL;
+			g_ThreadHandles[i] = nullptr;
 			g_ThreadIds[i] = 0;
 			break;
 		}
@@ -140,7 +140,7 @@ ThreadImpl *MakeThisThread()
 //		LOG->Warn( werr_ssprintf( GetLastError(), "DuplicateHandle(%p, %p) failed",
 //			CurProc, GetCurrentThread() ) );
 
-		thread->ThreadHandle = NULL;
+		thread->ThreadHandle = nullptr;
 	}
 
 	thread->ThreadId = GetCurrentThreadId();

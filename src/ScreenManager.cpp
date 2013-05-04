@@ -73,13 +73,13 @@
 
 #include "ActorUtil.h"
 
-ScreenManager*	SCREENMAN = NULL;	// global and accessable from anywhere in our program
+ScreenManager*	SCREENMAN = nullptr;	// global and accessable from anywhere in our program
 
 static Preference<bool> g_bDelayedScreenLoad( "DelayedScreenLoad", false );
 //static Preference<bool> g_bPruneFonts( "PruneFonts", true );
 
 // Screen registration
-static map<RString,CreateScreenFn>	*g_pmapRegistrees = NULL;
+static map<RString,CreateScreenFn>	*g_pmapRegistrees = nullptr;
 
 /** @brief Utility functions for the ScreenManager. */
 namespace ScreenManagerUtil
@@ -97,7 +97,7 @@ namespace ScreenManagerUtil
 
 		LoadedScreen()
 		{
-			m_pScreen = NULL;
+			m_pScreen = nullptr;
 			m_bDeleteWhenDone = true;
 			m_SendOnPop = SM_None;
 		}
@@ -561,7 +561,7 @@ void ScreenManager::PrepareScreen( const RString &sScreenName )
 
 	if( !sNewBGA.empty() && sNewBGA != g_pSharedBGA->GetName() )
 	{
-		Actor *pNewBGA = NULL;
+		Actor *pNewBGA = nullptr;
 		for (Actor *a : g_vPreparedBackgrounds)
 		{
 			if( a->GetName() == sNewBGA )
@@ -632,7 +632,7 @@ bool ScreenManager::ActivatePreparedScreenAndBackground( const RString &sScreenN
 	RString sNewBGA = THEME->GetPathB(sScreenName,"background");
 	if( sNewBGA != g_pSharedBGA->GetName() )
 	{
-		Actor *pNewBGA = NULL;
+		Actor *pNewBGA = nullptr;
 		if( sNewBGA.empty() )
 		{
 			pNewBGA = new Actor;

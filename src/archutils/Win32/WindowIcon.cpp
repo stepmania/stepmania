@@ -77,7 +77,7 @@ HICON IconFromSurface( const RageSurface *pSrcImg )
 	HICON icon = CreateIconFromResourceEx( (BYTE *) pBitmap, iSize + iSizeImage, TRUE, 0x00030000, pImg->w, pImg->h, LR_DEFAULTCOLOR );
 
 	delete pImg;
-	pImg = NULL;
+	pImg = nullptr;
 	free( pBitmap );
 
 	if( icon == nullptr )

@@ -34,7 +34,7 @@ static RageSurfaceUtils::OpenResult LoadBMP( RageFile &f, RageSurface *&img, RSt
 		return RageSurfaceUtils::OPEN_UNKNOWN_FILE_FORMAT;
 	}
 
-	img = NULL;
+	img = nullptr;
 
 	read_u32_le( f, sError ); /* file size */
 	read_u32_le( f, sError ); /* unused */
@@ -198,13 +198,13 @@ RageSurfaceUtils::OpenResult RageSurface_Load_BMP( const RString &sPath, RageSur
 	}
 
 	RageSurfaceUtils::OpenResult ret;
-	img = NULL;
+	img = nullptr;
 	ret = LoadBMP( f, img, error );
 
 	if( ret != RageSurfaceUtils::OPEN_OK && img != nullptr )
 	{
 		delete img;
-		img = NULL;
+		img = nullptr;
 	}
 
 	return ret;

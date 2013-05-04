@@ -38,8 +38,8 @@ static ThemeMetric1D<RString> ROUTINE_NOTESKIN( "NoteField", RoutineNoteSkinName
 
 NoteField::NoteField()
 {
-	m_pNoteData = NULL;
-	m_pCurDisplay = NULL;
+	m_pNoteData = nullptr;
+	m_pCurDisplay = nullptr;
 
 	m_textMeasureNumber.LoadFromFont( THEME->GetPathF("NoteField","MeasureNumber") );
 	m_textMeasureNumber.SetZoom( 1.0f );
@@ -77,7 +77,7 @@ void NoteField::Unload()
 		it != m_NoteDisplays.end(); ++it )
 		delete it->second;
 	m_NoteDisplays.clear();
-	m_pCurDisplay = NULL;
+	m_pCurDisplay = nullptr;
 	memset( m_pDisplays, 0, sizeof(m_pDisplays) );
 }
 

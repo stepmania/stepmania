@@ -248,13 +248,13 @@ public:
 	static int ScaleToClipped( T* p, lua_State *L )			{ p->ScaleToClipped(FArg(1),FArg(2)); return 0; }
 	static int LoadFromSong( T* p, lua_State *L )
 	{ 
-		if( lua_isnil(L,1) ) { p->LoadFromSong( NULL ); }
+		if( lua_isnil(L,1) ) { p->LoadFromSong(nullptr); }
 		else { Song *pS = Luna<Song>::check(L,1); p->LoadFromSong( pS ); }
 		return 0;
 	}
 	static int LoadFromCourse( T* p, lua_State *L )
 	{ 
-		if( lua_isnil(L,1) ) { p->LoadFromCourse( NULL ); }
+		if( lua_isnil(L,1) ) { p->LoadFromCourse(nullptr); }
 		else { Course *pC = Luna<Course>::check(L,1); p->LoadFromCourse( pC ); }
 		return 0;
 	}
@@ -265,25 +265,25 @@ public:
 	}
 	static int LoadIconFromCharacter( T* p, lua_State *L )
 	{ 
-		if( lua_isnil(L,1) ) { p->LoadIconFromCharacter( NULL ); }
+		if( lua_isnil(L,1) ) { p->LoadIconFromCharacter(nullptr); }
 		else { Character *pC = Luna<Character>::check(L,1); p->LoadIconFromCharacter( pC ); }
 		return 0;
 	}
 	static int LoadCardFromCharacter( T* p, lua_State *L )
 	{ 
-		if( lua_isnil(L,1) ) { p->LoadIconFromCharacter( NULL ); }
+		if( lua_isnil(L,1) ) { p->LoadIconFromCharacter(nullptr); }
 		else { Character *pC = Luna<Character>::check(L,1); p->LoadIconFromCharacter( pC ); }
 		return 0;
 	}
 	static int LoadBannerFromUnlockEntry( T* p, lua_State *L )
 	{ 
-		if( lua_isnil(L,1) ) { p->LoadBannerFromUnlockEntry( NULL ); }
+		if( lua_isnil(L,1) ) { p->LoadBannerFromUnlockEntry(nullptr); }
 		else { UnlockEntry *pUE = Luna<UnlockEntry>::check(L,1); p->LoadBannerFromUnlockEntry( pUE ); }
 		return 0;
 	}
 	static int LoadBackgroundFromUnlockEntry( T* p, lua_State *L )
 	{ 
-		if( lua_isnil(L,1) ) { p->LoadBackgroundFromUnlockEntry( NULL ); }
+		if( lua_isnil(L,1) ) { p->LoadBackgroundFromUnlockEntry(nullptr); }
 		else { UnlockEntry *pUE = Luna<UnlockEntry>::check(L,1); p->LoadBackgroundFromUnlockEntry( pUE ); }
 		return 0;
 	}

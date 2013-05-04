@@ -172,8 +172,8 @@ NetworkStream_Win32::NetworkStream_Win32():
 	m_State = STATE_IDLE;
 	m_Socket = NULL;
 #if defined(WINDOWS)
-	m_hResolve = NULL;
-	m_hResolveHwnd = NULL;
+	m_hResolve = nullptr;
+	m_hResolveHwnd = nullptr;
 	m_hCompletionEvent = CreateEvent( NULL, true, false, NULL );
 #endif
 }
@@ -355,7 +355,7 @@ void NetworkStream_Win32::Open( const RString &sHost, int iPort, ConnectionType 
 	m_iPort = iPort;
 
 	// Look up the hostname.
-	hostent *pHost = NULL;
+	hostent *pHost = nullptr;
 	char pBuf[MAXGETHOSTSTRUCT];
 	{
 		pHost = (hostent *) pBuf;
@@ -374,8 +374,8 @@ void NetworkStream_Win32::Open( const RString &sHost, int iPort, ConnectionType 
 		mw.Run();
 
 		m_Mutex.Lock();
-		m_hResolve = NULL;
-		m_hResolveHwnd = NULL;
+		m_hResolve = nullptr;
+		m_hResolveHwnd = nullptr;
 		if( m_State == STATE_CANCELLED )
 		{
 			m_Mutex.Unlock();

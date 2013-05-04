@@ -591,11 +591,11 @@ public:
 	void PlayCommandNoRecurse( const Message &msg );
 
 	// Commands by reference
-	virtual void RunCommands( const LuaReference& cmds, const LuaReference *pParamTable = NULL );
-	void RunCommands( const apActorCommands& cmds, const LuaReference *pParamTable = NULL ) { this->RunCommands( *cmds, pParamTable ); }	// convenience
-	virtual void RunCommandsRecursively( const LuaReference& cmds, const LuaReference *pParamTable = NULL ) { RunCommands(cmds, pParamTable); }
+	virtual void RunCommands( const LuaReference& cmds, const LuaReference *pParamTable = nullptr );
+	void RunCommands( const apActorCommands& cmds, const LuaReference *pParamTable = nullptr ) { this->RunCommands( *cmds, pParamTable ); }	// convenience
+	virtual void RunCommandsRecursively( const LuaReference& cmds, const LuaReference *pParamTable = nullptr ) { RunCommands(cmds, pParamTable); }
 	// If we're a leaf, then execute this command.
-	virtual void RunCommandsOnLeaves( const LuaReference& cmds, const LuaReference *pParamTable = NULL ) { RunCommands(cmds, pParamTable); }
+	virtual void RunCommandsOnLeaves( const LuaReference& cmds, const LuaReference *pParamTable = nullptr ) { RunCommands(cmds, pParamTable); }
 
 	// Messages
 	virtual void HandleMessage( const Message &msg );

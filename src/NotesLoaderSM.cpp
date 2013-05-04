@@ -969,7 +969,7 @@ bool SMLoader::LoadEditFromBuffer( const RString &sBuffer, const RString &sEditF
 
 bool SMLoader::LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePath, ProfileSlot slot, bool bAddStepsToSong )
 {
-	Song* pSong = NULL;
+	Song* pSong = nullptr;
 
 	for( unsigned i=0; i<msd.GetNumValues(); i++ )
 	{

@@ -252,7 +252,7 @@ bool ScreenNetRoom::MenuRight( const InputEventPlus &input )
 void ScreenNetRoom::UpdateRoomsList()
 {
 	int difference = 0;
-	RoomWheelItemData* itemData = NULL;
+	RoomWheelItemData* itemData = nullptr;
 
 	difference = m_RoomWheel.GetNumItems() - m_Rooms.size();
 

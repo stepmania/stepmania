@@ -234,7 +234,7 @@ private:
 	enum State { RENDERING_IDLE, RENDERING_START, RENDERING_ACTIVE, RENDERING_END };
 	State m_State;
 };
-static ConcurrentRenderer *g_pConcurrentRenderer = NULL;
+static ConcurrentRenderer *g_pConcurrentRenderer = nullptr;
 
 ConcurrentRenderer::ConcurrentRenderer():
 	m_Event("ConcurrentRenderer")

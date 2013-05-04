@@ -25,7 +25,7 @@ class CircBuf
 public:
 	CircBuf()
 	{
-		buf = NULL;
+		buf = nullptr;
 		clear();
 	}
 
@@ -63,7 +63,7 @@ public:
 		}
 		else
 		{
-			buf = NULL;
+			buf = nullptr;
 		}
 	}
 
@@ -113,7 +113,7 @@ public:
 
 		clear();
 		delete[] buf;
-		buf = NULL;
+		buf = nullptr;
 
 		/* Reserve an extra byte.  We'll never fill more than n bytes; the extra
 		 * byte is to guarantee that read_pos != write_pos when the buffer is full,
@@ -164,7 +164,7 @@ public:
 		{
 			/* The buffer looks like "DDeeeeeeeeDD" (e = empty, D = data). */
 			pPointers[0] = buf+wpos;
-			pPointers[1] = NULL;
+			pPointers[1] = nullptr;
 
 			pSizes[0] = rpos - wpos;
 			pSizes[1] = 0;
@@ -197,7 +197,7 @@ public:
 		{
 			/* The buffer looks like "eeeeDDDDeeee" (e = empty, D = data). */
 			pPointers[0] = buf+rpos;
-			pPointers[1] = NULL;
+			pPointers[1] = nullptr;
 
 			pSizes[0] = wpos - rpos;
 			pSizes[1] = 0;
@@ -214,8 +214,8 @@ public:
 		else
 		{
 			/* The buffer looks like "eeeeeeeeeeee" (e = empty, D = data). */
-			pPointers[0] = NULL;
-			pPointers[1] = NULL;
+			pPointers[0] = nullptr;
+			pPointers[1] = nullptr;
 
 			pSizes[0] = 0;
 			pSizes[1] = 0;

@@ -87,7 +87,7 @@ RageSoundReader_FileReader::OpenResult RageSoundReader_Vorbisfile::Open( RageFil
 	{
 		SetError( ov_ssprintf(ret, "ov_open failed") );
 		delete vf;
-		vf = NULL;
+		vf = nullptr;
 		switch( ret )
 		{
 		case OV_ENOTVORBIS:
@@ -279,7 +279,7 @@ int RageSoundReader_Vorbisfile::GetNextSourceFrame() const
 
 RageSoundReader_Vorbisfile::RageSoundReader_Vorbisfile()
 {
-	vf = NULL;
+	vf = nullptr;
 }
 
 RageSoundReader_Vorbisfile::~RageSoundReader_Vorbisfile()

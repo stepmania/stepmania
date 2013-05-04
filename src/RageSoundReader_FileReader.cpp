@@ -18,7 +18,7 @@
 
 RageSoundReader_FileReader *RageSoundReader_FileReader::TryOpenFile( RageFileBasic *pFile, RString &error, RString format, bool &bKeepTrying )
 {
-	RageSoundReader_FileReader *Sample = NULL;
+	RageSoundReader_FileReader *Sample = nullptr;
 
 #ifndef NO_WAV_SUPPORT
 	if( !format.CompareNoCase("wav") )
@@ -38,7 +38,7 @@ RageSoundReader_FileReader *RageSoundReader_FileReader::TryOpenFile( RageFileBas
 		return nullptr;
 
 	OpenResult ret = Sample->Open( pFile );
-	pFile = NULL; // Sample owns it now
+	pFile = nullptr; // Sample owns it now
 	if( ret == OPEN_OK )
 		return Sample;
 

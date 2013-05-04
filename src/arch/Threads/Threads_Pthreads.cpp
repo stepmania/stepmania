@@ -215,7 +215,7 @@ static const clockid_t CLOCK_MONOTONIC = 1;
 namespace
 {
 	typedef int (* CONDATTR_SET_CLOCK)( pthread_condattr_t *attr, clockid_t clock_id );
-	CONDATTR_SET_CLOCK g_CondattrSetclock = NULL;
+	CONDATTR_SET_CLOCK g_CondattrSetclock = nullptr;
 	bool bInitialized = false;
 
 #if defined(UNIX)
@@ -230,7 +230,7 @@ namespace
 			return;
 		bInitialized = true;
 
-		void *pLib = NULL;
+		void *pLib = nullptr;
 
 		do {
 			{
@@ -260,10 +260,10 @@ namespace
 			return;
 		} while(0);
 
-		g_CondattrSetclock = NULL;
+		g_CondattrSetclock = nullptr;
 		if( pLib != nullptr )
 			dlclose( pLib );
-		pLib = NULL;
+		pLib = nullptr;
 	}
 #elif defined(MACOSX)
 	void InitMonotonic() { bInitialized = true; }

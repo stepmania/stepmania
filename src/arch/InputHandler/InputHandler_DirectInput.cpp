@@ -184,7 +184,7 @@ InputHandler_DInput::~InputHandler_DInput()
 
 	Devices.clear();
 	g_dinput->Release();
-	g_dinput = NULL;
+	g_dinput = nullptr;
 }
 
 void InputHandler_DInput::WindowReset()
@@ -782,7 +782,7 @@ void InputHandler_DInput::InputThreadMain()
 			continue;
 
 		Devices[i].Device->Unacquire();
-		Devices[i].Device->SetEventNotification( NULL );
+		Devices[i].Device->SetEventNotification(nullptr);
 	}
 
 	CloseHandle(Handle);

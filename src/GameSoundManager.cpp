@@ -18,7 +18,7 @@
 #include "SongUtil.h"
 #include "LuaManager.h"
 
-GameSoundManager *SOUND = NULL;
+GameSoundManager *SOUND = nullptr;
 
 /*
  * When playing music, automatically search for an SM file for timing data.  If one is

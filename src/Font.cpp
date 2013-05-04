@@ -190,12 +190,12 @@ FontPage::~FontPage()
 	if( m_FontPageTextures.m_pTextureMain != nullptr )
 	{
 		TEXTUREMAN->UnloadTexture( m_FontPageTextures.m_pTextureMain );
-		m_FontPageTextures.m_pTextureMain = NULL;
+		m_FontPageTextures.m_pTextureMain = nullptr;
 	}
 	if( m_FontPageTextures.m_pTextureStroke != nullptr )
 	{
 		TEXTUREMAN->UnloadTexture( m_FontPageTextures.m_pTextureStroke );
-		m_FontPageTextures.m_pTextureStroke = NULL;
+		m_FontPageTextures.m_pTextureStroke = nullptr;
 	}
 }
 
@@ -221,7 +221,7 @@ int Font::GetLineHeightInSourcePixels( const wstring &szLine ) const
 }
 
 
-Font::Font(): m_iRefCount(1), path(""), m_apPages(), m_pDefault(NULL),
+Font::Font(): m_iRefCount(1), path(""), m_apPages(), m_pDefault(nullptr),
 	m_iCharToGlyph(), m_bRightToLeft(false),
 	// strokes aren't shown by default, hence the Color.
 	m_DefaultStrokeColor(RageColor(0,0,0,0)), m_sChars("") {}
@@ -238,7 +238,7 @@ void Font::Unload()
 	m_apPages.clear();
 
 	m_iCharToGlyph.clear();
-	m_pDefault = NULL;
+	m_pDefault = nullptr;
 
 	/* Don't clear the refcount. We've unloaded, but that doesn't mean things
 	 * aren't still pointing to us. */

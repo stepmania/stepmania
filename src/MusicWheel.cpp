@@ -187,7 +187,7 @@ void MusicWheel::BeginScreen()
 	if( GAMESTATE->m_pCurSong != nullptr && 
 		GameState::GetNumStagesMultiplierForSong( GAMESTATE->m_pCurSong ) > GAMESTATE->GetSmallestNumStagesLeftForAnyHumanPlayer() )
 	{
-		GAMESTATE->m_pCurSong.Set( NULL );
+		GAMESTATE->m_pCurSong.Set(nullptr);
 	}
 
 	/* Invalidate current Steps if it can't be played
@@ -201,7 +201,7 @@ void MusicWheel::BeginScreen()
 				SongUtil::GetPlayableSteps( GAMESTATE->m_pCurSong, vpPossibleSteps );
 			bool bStepsIsPossible = find( vpPossibleSteps.begin(), vpPossibleSteps.end(), GAMESTATE->m_pCurSteps[p] ) == vpPossibleSteps.end();
 			if( !bStepsIsPossible )
-				GAMESTATE->m_pCurSteps[p].Set( NULL );
+				GAMESTATE->m_pCurSteps[p].Set(nullptr);
 		}
 	}
 
@@ -910,7 +910,7 @@ void MusicWheel::FilterWheelItemDatas(vector<MusicWheelItemData *> &aUnFilteredD
 
 	const int iMaxStagesForSong = GAMESTATE->GetSmallestNumStagesLeftForAnyHumanPlayer();
 
-	Song *pExtraStageSong = NULL;
+	Song *pExtraStageSong = nullptr;
 	if( GAMESTATE->IsAnExtraStage() )
 	{
 		Steps *pSteps;
@@ -1342,7 +1342,7 @@ void MusicWheel::SetOpenSection( RString group )
 	if ( REMIND_WHEEL_POSITIONS && HIDE_INACTIVE_SECTIONS )
 		m_viWheelPositions.resize( SONGMAN->GetNumSongGroups() );
 
-	const WheelItemBaseData *old = NULL;
+	const WheelItemBaseData *old = nullptr;
 	if( !m_CurWheelItemData.empty() )
 		old = GetCurWheelItemData(m_iSelection);
 

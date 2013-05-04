@@ -109,7 +109,7 @@ public:
 class NetworkSyncManager 
 {
 public:
-	NetworkSyncManager( LoadingWindow *ld = NULL );
+	NetworkSyncManager( LoadingWindow *ld = nullptr );
 	~NetworkSyncManager();
 
     // If "useSMserver" then send score to server

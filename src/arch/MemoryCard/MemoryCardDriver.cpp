@@ -124,7 +124,7 @@ bool MemoryCardDriver::DoOneUpdate( bool bMount, vector<UsbStorageDevice>& vStor
 #include "arch/arch_default.h"
 MemoryCardDriver *MemoryCardDriver::Create()
 {
-	MemoryCardDriver *ret = NULL;
+	MemoryCardDriver *ret = nullptr;
 
 #ifdef ARCH_MEMORY_CARD_DRIVER
 	ret = new ARCH_MEMORY_CARD_DRIVER;

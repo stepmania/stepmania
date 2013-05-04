@@ -85,7 +85,7 @@ static RageSurface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 		return nullptr;
 	}
 
-	RageSurface *volatile img = NULL;
+	RageSurface *volatile img = nullptr;
 	CHECKPOINT;
 	if( setjmp(png_jmpbuf(png) ))
 	{
@@ -175,7 +175,7 @@ static RageSurface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 		int ret = png_get_PLTE( png, info_ptr, &palette, &num_palette );
 		ASSERT( ret == PNG_INFO_PLTE );
 
-		png_byte *trans = NULL;
+		png_byte *trans = nullptr;
 		int num_trans = 0;
 		png_get_tRNS( png, info_ptr, &trans, &num_trans, NULL );
 

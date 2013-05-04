@@ -11,7 +11,7 @@ struct RageFileObjMemFile;
 class RageFileObjMem: public RageFileObj
 {
 public:
-	RageFileObjMem( RageFileObjMemFile *pFile = NULL );
+	RageFileObjMem( RageFileObjMemFile *pFile = nullptr );
 	RageFileObjMem( const RageFileObjMem &cpy );
 	~RageFileObjMem();
 

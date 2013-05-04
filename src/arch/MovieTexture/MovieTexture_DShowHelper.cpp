@@ -19,7 +19,7 @@ CTextureRenderer::CTextureRenderer():
 	if( FAILED(CBV_ret) )
 		RageException::Throw( hr_ssprintf(CBV_ret, "Could not create texture renderer object!") );
 
-	m_pTexture = NULL;
+	m_pTexture = nullptr;
 }
 
 CTextureRenderer::~CTextureRenderer()

@@ -1050,9 +1050,9 @@ void ScreenSelectMusic::HandleMessage( const Message &msg )
 
 		// TODO: Invalidate the CurSteps only if they are no longer playable.
 		// That way, after music change will clamp to the nearest in the StepsDisplayList.
-		GAMESTATE->m_pCurSteps[master_pn].SetWithoutBroadcast( NULL );
+		GAMESTATE->m_pCurSteps[master_pn].SetWithoutBroadcast(nullptr);
 		FOREACH_ENUM( PlayerNumber, p )
-			GAMESTATE->m_pCurSteps[p].SetWithoutBroadcast( NULL );
+			GAMESTATE->m_pCurSteps[p].SetWithoutBroadcast(nullptr);
 
 		/* If a course is selected, it may no longer be playable.
 		 * Let MusicWheel know about the late join. */
@@ -1421,7 +1421,7 @@ bool ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 		if( CommonMetrics::AUTO_SET_STYLE )
 		{
 			// Now that Steps have been chosen, set a Style that can play them.
-			const Style *pStyle = NULL;
+			const Style *pStyle = nullptr;
 			if( GAMESTATE->IsCourseMode() )
 				pStyle = GAMESTATE->m_pCurCourse->GetCourseStyle( GAMESTATE->m_pCurGame, GAMESTATE->GetNumSidesJoined() );
 			if( pStyle == nullptr )
@@ -1535,7 +1535,7 @@ void ScreenSelectMusic::AfterStepsOrTrailChange( const vector<PlayerNumber> &vpn
 			Steps* pSteps = m_vpSteps.empty()? NULL: m_vpSteps[m_iSelection[pn]];
 
 			GAMESTATE->m_pCurSteps[pn].Set( pSteps );
-			GAMESTATE->m_pCurTrail[pn].Set( NULL );
+			GAMESTATE->m_pCurTrail[pn].Set(nullptr);
 
 			int iScore = 0;
 			if( pSteps )
@@ -1553,7 +1553,7 @@ void ScreenSelectMusic::AfterStepsOrTrailChange( const vector<PlayerNumber> &vpn
 			Course* pCourse = GAMESTATE->m_pCurCourse;
 			Trail* pTrail = m_vpTrails.empty()? NULL: m_vpTrails[m_iSelection[pn]];
 
-			GAMESTATE->m_pCurSteps[pn].Set( NULL );
+			GAMESTATE->m_pCurSteps[pn].Set(nullptr);
 			GAMESTATE->m_pCurTrail[pn].Set( pTrail );
 
 			int iScore = 0;
@@ -1681,7 +1681,7 @@ void ScreenSelectMusic::AfterMusicChange()
 	{
 		m_sSampleMusicToPlay = "";
 	}
-	m_pSampleMusicTimingData = NULL;
+	m_pSampleMusicTimingData = nullptr;
 	g_sCDTitlePath = "";
 	g_sBannerPath = "";
 	g_bWantFallbackCdTitle = false;
@@ -1825,7 +1825,7 @@ void ScreenSelectMusic::AfterMusicChange()
 	case WheelItemDataType_Course:
 	{
 		const Course *lCourse = m_MusicWheel.GetSelectedCourse();
-		const Style *pStyle = NULL;
+		const Style *pStyle = nullptr;
 		if( CommonMetrics::AUTO_SET_STYLE )
 			pStyle = pCourse->GetCourseStyle( GAMESTATE->m_pCurGame, GAMESTATE->GetNumSidesJoined() );
 		if( pStyle == nullptr )

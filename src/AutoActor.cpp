@@ -13,7 +13,7 @@ void AutoActor::Unload()
 AutoActor::AutoActor( const AutoActor &cpy )
 { 
 	if( cpy.m_pActor == nullptr )
-		m_pActor = NULL;
+		m_pActor = nullptr;
 	else
 		m_pActor = cpy.m_pActor->Copy();
 }
@@ -23,7 +23,7 @@ AutoActor &AutoActor::operator=( const AutoActor &cpy )
 	Unload();
 
 	if( cpy.m_pActor == nullptr )
-		m_pActor = NULL;
+		m_pActor = nullptr;
 	else
 		m_pActor = cpy.m_pActor->Copy();
 	return *this;

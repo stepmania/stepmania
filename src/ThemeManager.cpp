@@ -26,7 +26,7 @@
 #include "XmlFileUtil.h"
 #include <deque>
 
-ThemeManager*	THEME = NULL;	// global object accessable from anywhere in the program
+ThemeManager*	THEME = nullptr;	// global object accessable from anywhere in the program
 
 static const RString THEME_INFO_INI = "ThemeInfo.ini";
 
@@ -58,7 +58,7 @@ public:
 		iniStrings.Clear();
 	}
 };
-LoadedThemeData *g_pLoadedThemeData = NULL;
+LoadedThemeData *g_pLoadedThemeData = nullptr;
 
 
 // For self-registering metrics

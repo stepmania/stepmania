@@ -7,8 +7,8 @@ REGISTER_CLASS_TRAITS( RageFileBasic, pCopy->Copy() );
 
 RageFileObj::RageFileObj()
 {
-	m_pReadBuffer = NULL;
-	m_pWriteBuffer = NULL;
+	m_pReadBuffer = nullptr;
+	m_pWriteBuffer = nullptr;
 
 	ResetReadBuf();
 
@@ -35,7 +35,7 @@ RageFileObj::RageFileObj( const RageFileObj &cpy ):
 	}
 	else
 	{
-		m_pReadBuffer = NULL;
+		m_pReadBuffer = nullptr;
 	}
 
 	if( cpy.m_pWriteBuffer != nullptr )
@@ -45,7 +45,7 @@ RageFileObj::RageFileObj( const RageFileObj &cpy ):
 	}
 	else
 	{
-		m_pWriteBuffer = NULL;
+		m_pWriteBuffer = nullptr;
 	}
 
 	m_iReadBufAvail = cpy.m_iReadBufAvail;

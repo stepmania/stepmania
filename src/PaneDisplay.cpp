@@ -179,7 +179,7 @@ void PaneDisplay::GetPaneTextAndLevel( PaneCategory c, RString & sTextOut, float
 
 	{
 		RadarValues rv;
-		HighScoreList *pHSL = NULL;
+		HighScoreList *pHSL = nullptr;
 		ProfileSlot slot = ProfileSlot_Machine;
 		switch( c )
 		{

@@ -25,13 +25,13 @@ public:
 	GameCommand(): m_Commands(), m_sName(""), m_sText(""),
 		m_bInvalid(true), m_sInvalidReason(""),
 		m_iIndex(-1), m_MultiPlayer(MultiPlayer_Invalid),
-		m_pStyle(NULL), m_pm(PlayMode_Invalid),
+		m_pStyle(nullptr), m_pm(PlayMode_Invalid),
 		m_dc(Difficulty_Invalid),
 		m_CourseDifficulty(Difficulty_Invalid),
 		m_sAnnouncer(""), m_sPreferredModifiers(""),
 		m_sStageModifiers(""), m_sScreen(""), m_LuaFunction(),
-		m_pSong(NULL), m_pSteps(NULL), m_pCourse(NULL),
-		m_pTrail(NULL), m_pCharacter(NULL), m_SetEnv(),
+		m_pSong(nullptr), m_pSteps(nullptr), m_pCourse(nullptr),
+		m_pTrail(nullptr), m_pCharacter(nullptr), m_SetEnv(),
 		m_sSongGroup(""), m_SortOrder(SortOrder_Invalid),
 		m_sSoundPath(""), m_vsScreensToPrepare(), m_iWeightPounds(-1),
 		m_iGoalCalories(-1), m_GoalType(GoalType_Invalid),
@@ -56,7 +56,7 @@ public:
 
 	bool DescribesCurrentMode( PlayerNumber pn ) const;
 	bool DescribesCurrentModeForAllPlayers() const;
-	bool IsPlayable( RString *why = NULL ) const;
+	bool IsPlayable( RString *why = nullptr ) const;
 	bool IsZero() const;
 
 	/* If true, Apply() will apply m_sScreen. If false, it won't, and you need

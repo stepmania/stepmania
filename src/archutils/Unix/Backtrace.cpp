@@ -137,8 +137,8 @@ static int get_readable_ranges( const void **starts, const void **ends, int size
 
 	close(fd);
 
-	*starts++ = NULL;
-	*ends++ = NULL;
+	*starts++ = nullptr;
+	*ends++ = nullptr;
 
 	return got;
 }
@@ -157,7 +157,7 @@ static int find_address( const void *p, const void **starts, const void **ends )
 	return -1;
 }
 
-static void *SavedStackPointer = NULL;
+static void *SavedStackPointer = nullptr;
 
 void InitializeBacktrace()
 {
@@ -364,7 +364,7 @@ static void do_backtrace( const void **buf, size_t size, const BacktraceContext 
 		frame = frame->link;
 	}
 
-	buf[i] = NULL;
+	buf[i] = nullptr;
 }
 
 #if defined(CPU_X86)
@@ -396,7 +396,7 @@ void GetBacktrace( const void **buf, size_t size, const BacktraceContext *ctx )
 	{
 		ctx = &CurrentCtx;
 
-		CurrentCtx.ip = NULL;
+		CurrentCtx.ip = nullptr;
 		CurrentCtx.bp = __builtin_frame_address(0);
 		CurrentCtx.sp = __builtin_frame_address(0);
 		CurrentCtx.pid = GetCurrentThreadId();
@@ -523,7 +523,7 @@ void GetBacktrace( const void **buf, size_t size, const BacktraceContext *ctx )
 	if( g_StackPointer == 0 )
 	{
 		buf[0] = BACKTRACE_METHOD_NOT_AVAILABLE;
-		buf[1] = NULL;
+		buf[1] = nullptr;
 		return;
 	}
 	
@@ -532,7 +532,7 @@ void GetBacktrace( const void **buf, size_t size, const BacktraceContext *ctx )
 	{
 		ctx = &CurrentCtx;
 		
-		CurrentCtx.ip = NULL;
+		CurrentCtx.ip = nullptr;
 		CurrentCtx.bp = __builtin_frame_address(0);
 		CurrentCtx.sp = __builtin_frame_address(0);
 	}
@@ -562,7 +562,7 @@ void GetBacktrace( const void **buf, size_t size, const BacktraceContext *ctx )
 	{
 		/* There isn't much we can do if this is the case. The stack should be read/write
 		 * and since it isn't, give up. */
-		buf[i] = NULL;
+		buf[i] = nullptr;
 		return;
 	}
 	const Frame *frame = (Frame *)ctx->sp;
@@ -620,7 +620,7 @@ void GetBacktrace( const void **buf, size_t size, const BacktraceContext *ctx )
 		frame = frame->link;
 	}
 
-	buf[i] = NULL;	
+	buf[i] = nullptr;	
 }
 #undef PROT_RW
 #undef PROT_EXE
@@ -656,7 +656,7 @@ void GetBacktrace( const void **buf, size_t size, const BacktraceContext *ctx )
 		/* __builtin_frame_address is broken on OS X; it sometimes returns bogus results. */
 		register void *r1 __asm__ ("r1");
 		CurrentCtx.FramePtr = (const Frame *) r1;
-		CurrentCtx.PC = NULL;
+		CurrentCtx.PC = nullptr;
 	}
 	
 	const Frame *frame = ctx->FramePtr;
@@ -673,7 +673,7 @@ void GetBacktrace( const void **buf, size_t size, const BacktraceContext *ctx )
 		frame = frame->stackPointer;
 	}
 
-	buf[i] = NULL;
+	buf[i] = nullptr;
 }
 
 #elif defined(BACKTRACE_METHOD_PPC_LINUX)
@@ -704,7 +704,7 @@ void GetBacktrace( const void **buf, size_t size, const BacktraceContext *ctx )
 
 		register void *r1 __asm__("1");
 		CurrentCtx.FramePtr = (const Frame *)r1;
-		CurrentCtx.PC = NULL;
+		CurrentCtx.PC = nullptr;
 	}
 
 	const Frame *frame = (const Frame *)ctx->FramePtr;
@@ -718,7 +718,7 @@ void GetBacktrace( const void **buf, size_t size, const BacktraceContext *ctx )
 		if( frame->linkReg )
 			buf[i++] = frame->linkReg;
 	}
-	buf[i] = NULL;
+	buf[i] = nullptr;
 }
 
 #else
@@ -729,7 +729,7 @@ void InitializeBacktrace() { }
 void GetBacktrace( const void **buf, size_t size, const BacktraceContext *ctx )
 {
     buf[0] = BACKTRACE_METHOD_NOT_AVAILABLE;
-    buf[1] = NULL;
+    buf[1] = nullptr;
 }
 
 #endif

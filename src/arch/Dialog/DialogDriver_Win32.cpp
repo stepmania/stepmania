@@ -194,7 +194,7 @@ static BOOL CALLBACK ErrorWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lP
 		{
 			HDC hdc = (HDC)wParam;
 			HWND hwndStatic = (HWND)lParam;
-			HBRUSH hbr = NULL;
+			HBRUSH hbr = nullptr;
 
 			// TODO:  Change any attributes of the DC here
 			switch( GetDlgCtrlID(hwndStatic) )

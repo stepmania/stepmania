@@ -64,7 +64,7 @@ static const GLenum RageSpriteVertexFormat = GL_T2F_C4F_N3F_V3F;
 static GLhandleARB g_bTextureMatrixShader = 0;
 
 static map<unsigned, RenderTarget *> g_mapRenderTargets;
-static RenderTarget *g_pCurrentRenderTarget = NULL;
+static RenderTarget *g_pCurrentRenderTarget = nullptr;
 
 static LowLevelWindow *g_pWind;
 
@@ -262,7 +262,7 @@ RageDisplay_Legacy::RageDisplay_Legacy()
 	FixLittleEndian();
 	RageDisplay_Legacy_Helpers::Init();
 
-	g_pWind = NULL;
+	g_pWind = nullptr;
 	g_bTextureMatrixShader = 0;
 }
 
@@ -650,8 +650,8 @@ static void CheckPalettedTextures()
 
 	/* If 8-bit palettes don't work, disable them entirely--don't trust 4-bit
 	 * palettes if it can't even get 8-bit ones right. */
-	glColorTableEXT = NULL;
-	glGetColorTableParameterivEXT = NULL;
+	glColorTableEXT = nullptr;
+	glGetColorTableParameterivEXT = nullptr;
 	LOG->Info( "Paletted textures disabled: %s.", sError.c_str() );
 }
 
@@ -2252,7 +2252,7 @@ public:
 		if (bChanged)
 			DISPLAY->UpdateTexture( m_iTexHandle, pSurface, 0, 0, pSurface->w, pSurface->h );
 
-		pSurface->pixels = NULL;
+		pSurface->pixels = nullptr;
 
 		m_iTexHandle = 0;
 		glBindBufferARB( GL_PIXEL_UNPACK_BUFFER_ARB, 0 );
@@ -2482,7 +2482,7 @@ void RageDisplay_Legacy::SetRenderTarget( unsigned iTexture, bool bPreserveTextu
 
 		if (g_pCurrentRenderTarget)
 			g_pCurrentRenderTarget->FinishRenderingTo();
-		g_pCurrentRenderTarget = NULL;
+		g_pCurrentRenderTarget = nullptr;
 		return;
 	}
 

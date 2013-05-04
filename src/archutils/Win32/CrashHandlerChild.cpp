@@ -84,7 +84,7 @@ namespace VDDebugInfo
 
 		const unsigned char *src = (const unsigned char *) pctx->sRawBlock.data();
 
-		pctx->pRVAHeap = NULL;
+		pctx->pRVAHeap = nullptr;
 
 		static const char *header = "symbolic debug information";
 		if( memcmp(src, header, strlen(header)) )
@@ -119,7 +119,7 @@ namespace VDDebugInfo
 			return true;
 
 		pctx->sRawBlock = RString();
-		pctx->pRVAHeap = NULL;
+		pctx->pRVAHeap = nullptr;
 		GetVDIPath( pctx->sFilename, ARRAYLEN(pctx->sFilename) );
 		pctx->sError = RString();
 
@@ -623,7 +623,7 @@ CrashDialog::CrashDialog( const RString &sCrashReport, const CompleteCrashData &
 	m_CrashData( CrashData )
 {
 	LoadLocalizedStrings();
-	m_pPost = NULL;
+	m_pPost = nullptr;
 }
 
 CrashDialog::~CrashDialog()
@@ -656,7 +656,7 @@ BOOL CrashDialog::HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam )
 		{
 			HDC hdc = (HDC)wParam;
 			HWND hwndStatic = (HWND)lParam;
-			HBRUSH hbr = NULL;
+			HBRUSH hbr = nullptr;
 
 			// TODO: Change any attributes of the DC here
 			switch( GetDlgCtrlID(hwndStatic) )
@@ -839,7 +839,7 @@ void ChildProcess()
 
 	// Now that we've done that, the process is gone. Don't use g_hParent.
 	CloseHandle( SymbolLookup::g_hParent );
-	SymbolLookup::g_hParent = NULL;
+	SymbolLookup::g_hParent = nullptr;
 
 	CrashDialog cd( sCrashReport, Data );
 #if defined(AUTOMATED_CRASH_REPORTS)

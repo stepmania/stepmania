@@ -13,7 +13,7 @@
 
 RageFile::RageFile()
 {
-	m_File = NULL;
+	m_File = nullptr;
 }
 	
 RageFile::RageFile( const RageFile &cpy ):
@@ -83,7 +83,7 @@ void RageFile::Close()
 	delete m_File;
 	if( m_Mode & WRITE )
 		FILEMAN->CacheFile( m_File, m_Path );
-	m_File = NULL;
+	m_File = nullptr;
 }
 
 #define ASSERT_OPEN ASSERT_M( IsOpen(), ssprintf("\"%s\" is not open.", m_Path.c_str()) );

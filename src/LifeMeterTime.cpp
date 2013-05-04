@@ -48,7 +48,7 @@ LifeMeterTime::LifeMeterTime()
 {
 	m_fLifeTotalGainedSeconds = 0;
 	m_fLifeTotalLostSeconds = 0;
-	m_pStream = NULL;
+	m_pStream = nullptr;
 }
 
 LifeMeterTime::~LifeMeterTime()

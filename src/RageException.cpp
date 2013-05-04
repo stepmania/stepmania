@@ -15,7 +15,7 @@ using CrashHandler::DebugBreak;
 #endif
 
 static uint64_t g_HandlerThreadID = RageThread::GetInvalidThreadID();
-static void (*g_CleanupHandler)( const RString &sError ) = NULL;
+static void (*g_CleanupHandler)( const RString &sError ) = nullptr;
 void RageException::SetCleanupHandler( void (*pHandler)(const RString &sError) )
 {
 	g_HandlerThreadID = RageThread::GetCurrentThreadID();

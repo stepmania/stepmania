@@ -25,11 +25,11 @@ MovieTexture_Generic::MovieTexture_Generic( RageTextureID ID, MovieDecoder *pDec
 	m_pDecoder = pDecoder;
 
 	m_uTexHandle = 0;
-	m_pRenderTarget = NULL;
-	m_pTextureIntermediate = NULL;
+	m_pRenderTarget = nullptr;
+	m_pTextureIntermediate = nullptr;
 	m_bLoop = true;
-	m_pSurface = NULL;
-	m_pTextureLock = NULL;
+	m_pSurface = nullptr;
+	m_pTextureLock = nullptr;
 	m_ImageWaiting = FRAME_NONE;
 	m_fRate = 1;
 	m_bWantRewind = false;
@@ -88,10 +88,10 @@ MovieTexture_Generic::~MovieTexture_Generic()
 void MovieTexture_Generic::DestroyTexture()
 {
 	delete m_pSurface;
-	m_pSurface = NULL;
+	m_pSurface = nullptr;
 
 	delete m_pTextureLock;
-	m_pTextureLock = NULL;
+	m_pTextureLock = nullptr;
 
 	if( m_uTexHandle )
 	{
@@ -100,9 +100,9 @@ void MovieTexture_Generic::DestroyTexture()
 	}
 
 	delete m_pRenderTarget;
-	m_pRenderTarget = NULL;
+	m_pRenderTarget = nullptr;
 	delete m_pTextureIntermediate;
-	m_pTextureIntermediate = NULL;
+	m_pTextureIntermediate = nullptr;
 }
 
 class RageMovieTexture_Generic_Intermediate : public RageTexture
@@ -217,7 +217,7 @@ void MovieTexture_Generic::CreateTexture()
 		if( m_pTextureLock != nullptr )
 		{
 			delete [] m_pSurface->pixels;
-			m_pSurface->pixels = NULL;
+			m_pSurface->pixels = nullptr;
 		}
 
 	}

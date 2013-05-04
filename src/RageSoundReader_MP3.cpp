@@ -754,7 +754,7 @@ bool RageSoundReader_MP3::MADLIB_rewind()
 	 * set it, then we'll be desynced by a frame after an accurate seek. */
 //	mad->header_bytes = 0;
 	mad->first_frame = true;
-	mad->Stream.this_frame = NULL;
+	mad->Stream.this_frame = nullptr;
 
 	return true;
 }

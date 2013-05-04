@@ -14,16 +14,16 @@ ComboGraph::ComboGraph()
 {
 	DeleteChildrenWhenDone( true );
 
-	m_pNormalCombo = NULL;
-	m_pMaxCombo = NULL;
-	m_pComboNumber = NULL;
+	m_pNormalCombo = nullptr;
+	m_pMaxCombo = nullptr;
+	m_pComboNumber = nullptr;
 }
 
 void ComboGraph::Load( RString sMetricsGroup )
 {
 	BODY_WIDTH.Load( sMetricsGroup, "BodyWidth" );
 
-	Actor *pActor = NULL;
+	Actor *pActor = nullptr;
 
 	m_pBacking = ActorUtil::MakeActor( THEME->GetPathG(sMetricsGroup,"Backing") );
 	m_pBacking->ZoomToWidth( BODY_WIDTH );

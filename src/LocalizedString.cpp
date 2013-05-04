@@ -39,7 +39,7 @@ LocalizedString::LocalizedString( const RString& sGroup, const RString& sName )
 
 	m_sGroup = sGroup;
 	m_sName = sName;
-	m_pImpl = NULL;
+	m_pImpl = nullptr;
 
 	CreateImpl();
 }

@@ -33,9 +33,9 @@ RString MOD_ICON_X_NAME( size_t p )		{ return ssprintf("ModIconP%dX",int(p+1)); 
 OptionRow::OptionRow( const OptionRowType *pSource )
 {
 	m_pParentType = pSource;
-	m_pHand = NULL;
+	m_pHand = nullptr;
 
-	m_textTitle = NULL;
+	m_textTitle = nullptr;
 	ZERO( m_ModIcons );
 
 	Clear();

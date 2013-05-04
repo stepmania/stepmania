@@ -32,7 +32,7 @@ REGISTER_SCREEN_CLASS( ScreenEditMenu );
 void ScreenEditMenu::Init()
 {
 	// HACK: Disable any style set by the editor.
-	GAMESTATE->m_pCurStyle.Set( NULL );
+	GAMESTATE->m_pCurStyle.Set(nullptr);
 
 	// Enable all players.
 	FOREACH_PlayerNumber( pn )
@@ -152,7 +152,7 @@ static void SetCurrentStepsDescription( const RString &s )
 static void DeleteCurrentSteps()
 {
 	GAMESTATE->m_pCurSong->DeleteSteps( GAMESTATE->m_pCurSteps[0] );
-	GAMESTATE->m_pCurSteps[0].Set( NULL );
+	GAMESTATE->m_pCurSteps[0].Set(nullptr);
 }
 
 static LocalizedString MISSING_MUSIC_FILE	( "ScreenEditMenu", "This song is missing a music file and cannot be edited." );
@@ -184,7 +184,7 @@ bool ScreenEditMenu::MenuStart( const InputEventPlus & )
 	EditMenuAction action	= m_Selector.GetSelectedAction();
 
 	GAMESTATE->m_pCurSong.Set( pSong );
-	GAMESTATE->m_pCurCourse.Set( NULL );
+	GAMESTATE->m_pCurCourse.Set(nullptr);
 	GAMESTATE->SetCurrentStyle( GAMEMAN->GetEditorStyleForStepsType(st) );
 	GAMESTATE->m_pCurSteps[PLAYER_1].Set( pSteps );
 
@@ -283,7 +283,7 @@ bool ScreenEditMenu::MenuStart( const InputEventPlus & )
 
 			GAMESTATE->m_pCurSong.Set( pSong );
 			GAMESTATE->m_pCurSteps[PLAYER_1].Set( pSteps );
-			GAMESTATE->m_pCurCourse.Set( NULL );
+			GAMESTATE->m_pCurCourse.Set(nullptr);
 		}
 		break;
 	default:

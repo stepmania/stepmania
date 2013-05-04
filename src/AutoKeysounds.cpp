@@ -122,9 +122,9 @@ void AutoKeysounds::LoadTracks( const Song *pSong, RageSoundReader *&pShared, Ra
 	// two-track sound.
 	//bool bTwoPlayers = GAMESTATE->GetNumPlayersEnabled() == 2;
 
-	pPlayer1 = NULL;
-	pPlayer2 = NULL;
-	pShared = NULL;
+	pPlayer1 = nullptr;
+	pPlayer2 = nullptr;
+	pShared = nullptr;
 
 	vector<RString> vsMusicFile;
 	const RString sMusicPath = pSong->GetMusicPath();

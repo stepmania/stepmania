@@ -138,7 +138,7 @@ void ScoreScroller::ConfigureActor( Actor *pActor, int iItem )
 			const Song* pSong = data.m_pSong;
 			Steps *pSteps = SongUtil::GetStepsByDifficulty( pSong, st, dc, false );
 			if( pSteps  &&  UNLOCKMAN->StepsIsLocked(pSong, pSteps) )
-				pSteps = NULL;
+				pSteps = nullptr;
 			LuaHelpers::Push( L, pSteps );
 		}
 		else if( data.m_pCourse != nullptr )

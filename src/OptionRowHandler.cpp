@@ -510,8 +510,8 @@ public:
 	void Init()
 	{
 		OptionRowHandler::Init();
-		m_ppStepsToFill = NULL;
-		m_pDifficultyToFill = NULL;
+		m_ppStepsToFill = nullptr;
+		m_pDifficultyToFill = nullptr;
 		m_vSteps.clear();
 		m_vDifficulties.clear();
 	}
@@ -569,7 +569,7 @@ public:
 
 			if( sParam == "EditSteps" )
 			{
-				m_vSteps.push_back( NULL );
+				m_vSteps.push_back(nullptr);
 				m_vDifficulties.push_back( Difficulty_Edit );
 			}
 
@@ -596,7 +596,7 @@ public:
 		else
 		{
 			m_vDifficulties.push_back( Difficulty_Edit );
-			m_vSteps.push_back( NULL );
+			m_vSteps.push_back(nullptr);
 			m_Def.m_vsChoices.push_back( "none" );
 		}
 
@@ -672,7 +672,7 @@ class OptionRowHandlerListCharacters: public OptionRowHandlerList
 		{
 			m_Def.m_vsChoices.push_back( OFF );
 			GameCommand mc;
-			mc.m_pCharacter = NULL;
+			mc.m_pCharacter = nullptr;
 			m_aListEntries.push_back( mc );
 		}
 
@@ -1100,7 +1100,7 @@ public:
 	void Init()
 	{
 		OptionRowHandler::Init();
-		m_pOpt = NULL;
+		m_pOpt = nullptr;
 	}
 	virtual void LoadInternal( const Commands &cmds )
 	{
@@ -1180,7 +1180,7 @@ public:
 	void Init()
 	{
 		OptionRowHandler::Init();
-		m_pstToFill = NULL;
+		m_pstToFill = nullptr;
 		m_vStepsTypesToShow.clear();
 	}
 
@@ -1320,7 +1320,7 @@ public:
 
 OptionRowHandler* OptionRowHandlerUtil::Make( const Commands &cmds )
 {
-	OptionRowHandler* pHand = NULL;
+	OptionRowHandler* pHand = nullptr;
 
 	if( cmds.v.size() == 0 )
 		return nullptr;
@@ -1362,7 +1362,7 @@ OptionRowHandler* OptionRowHandlerUtil::Make( const Commands &cmds )
 
 OptionRowHandler* OptionRowHandlerUtil::MakeNull()
 {
-	OptionRowHandler* pHand = NULL;
+	OptionRowHandler* pHand = nullptr;
 	Commands cmds;
 	MAKE( OptionRowHandlerNull )
 	return pHand;

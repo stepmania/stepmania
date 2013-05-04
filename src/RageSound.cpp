@@ -48,7 +48,7 @@ RageSoundLoadParams::RageSoundLoadParams():
 	m_bSupportRateChanging(false), m_bSupportPan(false) {}
 
 RageSound::RageSound():
-	m_Mutex( "RageSound" ), m_pSource(NULL), 
+	m_Mutex( "RageSound" ), m_pSource(nullptr), 
 	m_sFilePath(""), m_Param(), m_iStreamFrame(0),
 	m_iStoppedSourceFrame(0), m_bPlaying(false),
 	m_bDeleteWhenFinished(false), m_sError("")
@@ -67,7 +67,7 @@ RageSound::RageSound( const RageSound &cpy ):
 {
 	ASSERT(SOUNDMAN != nullptr);
 
-	m_pSource = NULL;
+	m_pSource = nullptr;
 
 	*this = cpy;
 }
@@ -90,7 +90,7 @@ RageSound &RageSound::operator=( const RageSound &cpy )
 	if( cpy.m_pSource )
 		m_pSource = cpy.m_pSource->Copy();
 	else
-		m_pSource = NULL;
+		m_pSource = nullptr;
 
 	m_sFilePath = cpy.m_sFilePath;
 
@@ -105,7 +105,7 @@ void RageSound::Unload()
 	LockMut(m_Mutex);
 
 	delete m_pSource;
-	m_pSource = NULL;
+	m_pSource = nullptr;
 	
 	m_sFilePath = "";
 }
@@ -364,7 +364,7 @@ void RageSound::SoundIsFinishedPlaying()
 		return;
 
 	/* Get our current hardware position. */
-	int64_t iCurrentHardwareFrame = SOUNDMAN->GetPosition( NULL );
+	int64_t iCurrentHardwareFrame = SOUNDMAN->GetPosition(nullptr);
 
 	m_Mutex.Lock();
 

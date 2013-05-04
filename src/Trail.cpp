@@ -125,7 +125,7 @@ const RadarValues &Trail::GetRadarValues() const
 				NoteDataUtil::TransformNoteData( nd, e.Attacks, pSteps->m_StepsType, e.pSong );
 				RadarValues transformed_rv;
 				NoteDataUtil::CalculateRadarValues( nd, e.pSong->m_fMusicLengthSeconds, transformed_rv );
-				GAMESTATE->SetProcessedTimingData(NULL);
+				GAMESTATE->SetProcessedTimingData(nullptr);
 				rv += transformed_rv;
 			}
 			else

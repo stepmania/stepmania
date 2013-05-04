@@ -115,7 +115,7 @@ static void *CreateStack( int size )
 	 *
 	 * mmap entries always show up individually in /proc/#/maps.  We could use posix_memalign as
 	 * a fallback, but we'd have to put a barrier page on both sides to guarantee that. */
-	char *p = NULL;
+	char *p = nullptr;
 	p = (char *) mmap( NULL, size+PageSize, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0 );
 
 	if( p == (void *) -1 )
@@ -156,7 +156,7 @@ void SignalHandler::OnClose( handler h )
 		/* Allocate a separate signal stack.  This makes the crash handler work
 		 * if we run out of stack space. */
 		const int AltStackSize = 1024*64;
-		void *p = NULL;
+		void *p = nullptr;
 		if( bUseAltSigStack )
 			p = CreateStack( AltStackSize );
 
@@ -169,7 +169,7 @@ void SignalHandler::OnClose( handler h )
 			if( sigaltstack( &ss, NULL ) == -1 )
 			{
 				LOG->Info( "sigaltstack failed: %s", strerror(errno) );
-				p = NULL; /* no SA_ONSTACK */
+				p = nullptr; /* no SA_ONSTACK */
 			}
 		}
 		

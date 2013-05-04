@@ -56,7 +56,7 @@ public:
 		else
 		{
 			m_Def.m_vsChoices.push_back( "n/a" );
-			m_vpSteps.push_back( NULL );
+			m_vpSteps.push_back(nullptr);
 			m_Def.m_vEnabledForPlayers.clear();
 		}
 
@@ -274,7 +274,7 @@ void ScreenOptionsEditCourse::ImportOptions( int iRow, const vector<PlayerNumber
 			DEFAULT_FAIL( rowType );
 			case RowType_Song:
 				{
-					Song *pSong = NULL;
+					Song *pSong = nullptr;
 					if( iEntryIndex < (int)GAMESTATE->m_pCurCourse->m_vEntries.size() )
 						pSong = GAMESTATE->m_pCurCourse->m_vEntries[iEntryIndex].songID.ToSong();
 
@@ -379,14 +379,14 @@ void ScreenOptionsEditCourse::SetCurrentSong()
 
 	if( row.GetRowType() == OptionRow::RowType_Exit )
 	{
-		GAMESTATE->m_pCurSong.Set( NULL );
-		GAMESTATE->m_pCurSteps[PLAYER_1].Set( NULL );
+		GAMESTATE->m_pCurSong.Set(nullptr);
+		GAMESTATE->m_pCurSteps[PLAYER_1].Set(nullptr);
 	}
 	else
 	{
 		iRow = m_iCurrentRow[PLAYER_1];
 		int iEntryIndex = RowToEntryIndex( iRow );
-		Song *pSong = NULL;
+		Song *pSong = nullptr;
 		if( iEntryIndex != -1 )
 		{
 			int iCurrentSongRow = EntryIndexAndRowTypeToRow(iEntryIndex,RowType_Song);
@@ -418,7 +418,7 @@ void ScreenOptionsEditCourse::SetCurrentSteps()
 	}
 	else
 	{
-		GAMESTATE->m_pCurSteps[PLAYER_1].Set( NULL );
+		GAMESTATE->m_pCurSteps[PLAYER_1].Set(nullptr);
 	}
 }
 

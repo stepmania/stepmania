@@ -38,7 +38,7 @@ struct WinWdmPin
 {
 	WinWdmPin( WinWdmFilter *pParentFilter, int iPinId )
 	{
-		m_hHandle = NULL;
+		m_hHandle = nullptr;
 		m_pParentFilter = pParentFilter;
 		m_iPinId = iPinId;
 	}
@@ -92,7 +92,7 @@ struct WinWdmFilter
 
 	WinWdmFilter()
 	{
-		m_hHandle = NULL;
+		m_hHandle = nullptr;
 		m_iUsageCount = 0;
 	}
 
@@ -129,8 +129,8 @@ static RString GUIDToString( const GUID *pGuid )
 		pGuid->Data4[4], pGuid->Data4[5], pGuid->Data4[6], pGuid->Data4[7] );
 }
 
-static HMODULE      DllKsUser = NULL;
-static KSCREATEPIN *FunctionKsCreatePin = NULL;
+static HMODULE      DllKsUser = nullptr;
+static KSCREATEPIN *FunctionKsCreatePin = nullptr;
 
 /* Low level pin/filter access functions */
 static bool WdmSyncIoctl(
@@ -313,7 +313,7 @@ WinWdmPin *WinWdmFilter::CreatePin( unsigned long iPinId, RString &sError )
 
 	/* Get the INTERFACE property list */
 	{
-		KSMULTIPLE_ITEM *pItem = NULL;
+		KSMULTIPLE_ITEM *pItem = nullptr;
 		if( !WdmGetPinPropertyMulti(m_hHandle, iPinId, &KSPROPSETID_Pin, KSPROPERTY_PIN_INTERFACES, &pItem, sError) )
 		{
 			sError = "KSPROPERTY_PIN_INTERFACES: " + sError;
@@ -342,7 +342,7 @@ WinWdmPin *WinWdmFilter::CreatePin( unsigned long iPinId, RString &sError )
 
 	/* Get the MEDIUM properties list */
 	{
-		KSMULTIPLE_ITEM *pItem = NULL;
+		KSMULTIPLE_ITEM *pItem = nullptr;
 		if( !WdmGetPinPropertyMulti( m_hHandle, iPinId, &KSPROPSETID_Pin, KSPROPERTY_PIN_MEDIUMS, &pItem, sError) )
 		{
 			sError = "KSPROPERTY_PIN_MEDIUMS: " + sError;
@@ -405,7 +405,7 @@ WinWdmPin *WinWdmFilter::CreatePin( unsigned long iPinId, RString &sError )
 		}
 	}
 	free( pDataRangesItem );
-	pDataRangesItem = NULL;
+	pDataRangesItem = nullptr;
 
 	if( pPin->m_dataRangesItem.size() == 0 )
 	{
@@ -433,7 +433,7 @@ void WinWdmPin::Close()
 	SetState( KSSTATE_PAUSE, sError );
 	SetState( KSSTATE_STOP, sError );
 	CloseHandle( m_hHandle );
-	m_hHandle = NULL;
+	m_hHandle = nullptr;
 	m_pParentFilter->Release();
 }
 
@@ -465,7 +465,7 @@ bool WinWdmPin::Instantiate( const WAVEFORMATEX *pFormat, RString &sError )
 
 	sError = werr_ssprintf( iRet, "FunctionKsCreatePin" );
 	m_pParentFilter->Release();
-	m_hHandle = NULL;
+	m_hHandle = nullptr;
 	return false;
 }
 
@@ -613,7 +613,7 @@ void WinWdmFilter::Release()
 		if( m_hHandle != nullptr )
 		{
 			CloseHandle( m_hHandle );
-			m_hHandle = NULL;
+			m_hHandle = nullptr;
 		}
 	}
 }
@@ -885,7 +885,7 @@ static bool PaWinWdm_Initialize( RString &sError )
 	{
 		sError = "no KsCreatePin in ksuser.dll";
 		FreeLibrary( DllKsUser );
-		DllKsUser = NULL;
+		DllKsUser = nullptr;
 		return false;
 	}
 
@@ -900,7 +900,7 @@ struct WinWdmStream
 		memset( this, 0, sizeof(*this) );
 		for( int i = 0; i < MAX_CHUNKS; ++i )
 			m_Signal[i].hEvent = CreateEvent( NULL, FALSE, FALSE, NULL );
-		m_pPlaybackPin = NULL;
+		m_pPlaybackPin = nullptr;
 	}
 
 	~WinWdmStream()
@@ -920,11 +920,11 @@ struct WinWdmStream
 	{
 		if( m_pPlaybackPin )
 			m_pPlaybackPin->Close();
-		m_pPlaybackPin = NULL;
+		m_pPlaybackPin = nullptr;
 		for( int i = 0; i < 2; ++i )
 		{
 			VirtualFree( m_Packets[i].Data, 0, MEM_RELEASE );
-			m_Packets[i].Data = NULL;
+			m_Packets[i].Data = nullptr;
 		}
 	}
 
@@ -1263,8 +1263,8 @@ int64_t RageSoundDriver_WDMKS::GetPosition() const
 
 RageSoundDriver_WDMKS::RageSoundDriver_WDMKS()
 {
-	m_pStream = NULL;
-	m_pFilter = NULL;
+	m_pStream = nullptr;
+	m_pFilter = nullptr;
 	m_bShutdown = false;
 	m_iLastCursorPos = 0;
 	m_hSignal = CreateEvent( NULL, FALSE, FALSE, NULL ); /* abort event */

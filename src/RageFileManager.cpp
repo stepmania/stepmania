@@ -18,7 +18,7 @@
 #include <paths.h>
 #endif
 
-RageFileManager *FILEMAN = NULL;
+RageFileManager *FILEMAN = nullptr;
 
 /* Lock this before touching any of these globals (except FILEMAN itself). */
 static RageEvent *g_Mutex;
@@ -38,7 +38,7 @@ struct LoadedDriver
 
 	int m_iRefs;
 
-	LoadedDriver() { m_pDriver = NULL; m_iRefs = 0; }
+	LoadedDriver() { m_pDriver = nullptr; m_iRefs = 0; }
 	RString GetPath( const RString &sPath ) const;
 };
 
@@ -73,7 +73,7 @@ RageFileDriver *RageFileManager::GetFileDriver( RString sMountpoint )
 		sMountpoint += '/';
 
 	g_Mutex->Lock();
-	RageFileDriver *pRet = NULL;
+	RageFileDriver *pRet = nullptr;
 	for( unsigned i = 0; i < g_pDrivers.size(); ++i )
 	{
 		if( g_pDrivers[i]->m_sType == "mountpoints" )
@@ -170,7 +170,7 @@ public:
 				FDB->AddFile( apDrivers[i]->m_sMountPoint, 0, 0 );
 	}
 };
-static RageFileDriverMountpoints *g_Mountpoints = NULL;
+static RageFileDriverMountpoints *g_Mountpoints = nullptr;
 
 static RString GetDirOfExecutable( RString argv0 )
 {
@@ -311,10 +311,10 @@ RageFileManager::~RageFileManager()
 	g_pDrivers.clear();
 
 //	delete g_Mountpoints; // g_Mountpoints was in g_pDrivers
-	g_Mountpoints = NULL;
+	g_Mountpoints = nullptr;
 
 	delete g_Mutex;
-	g_Mutex = NULL;
+	g_Mutex = nullptr;
 }
 
 /* path must be normalized (FixSlashesInPlace, CollapsePath). */

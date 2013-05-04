@@ -68,8 +68,8 @@ int NetworkSyncManager::GetSMOnlineSalt()
 static LocalizedString INITIALIZING_CLIENT_NETWORK	( "NetworkSyncManager", "Initializing Client Network..." );
 NetworkSyncManager::NetworkSyncManager( LoadingWindow *ld )
 {
-	LANserver = NULL;	//So we know if it has been created yet
-	BroadcastReception = NULL;
+	LANserver = nullptr;	//So we know if it has been created yet
+	BroadcastReception = nullptr;
 
 	ld->SetText( INITIALIZING_CLIENT_NETWORK );
 	NetPlayerClient = new EzSockets;

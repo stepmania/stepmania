@@ -55,13 +55,13 @@ public:
 	// Commands
 	virtual void PushSelf( lua_State *L );
 	void PushChildrenTable( lua_State *L );
-	void PlayCommandOnChildren( const RString &sCommandName, const LuaReference *pParamTable = NULL );
-	void PlayCommandOnLeaves( const RString &sCommandName, const LuaReference *pParamTable = NULL );
+	void PlayCommandOnChildren( const RString &sCommandName, const LuaReference *pParamTable = nullptr );
+	void PlayCommandOnLeaves( const RString &sCommandName, const LuaReference *pParamTable = nullptr );
 
-	virtual void RunCommandsRecursively( const LuaReference& cmds, const LuaReference *pParamTable = NULL );
-	virtual void RunCommandsOnChildren( const LuaReference& cmds, const LuaReference *pParamTable = NULL ); /* but not on self */
-	void RunCommandsOnChildren( const apActorCommands& cmds, const LuaReference *pParamTable = NULL ) { this->RunCommandsOnChildren( *cmds, pParamTable ); }	// convenience
-	virtual void RunCommandsOnLeaves( const LuaReference& cmds, const LuaReference *pParamTable = NULL ); /* but not on self */
+	virtual void RunCommandsRecursively( const LuaReference& cmds, const LuaReference *pParamTable = nullptr );
+	virtual void RunCommandsOnChildren( const LuaReference& cmds, const LuaReference *pParamTable = nullptr ); /* but not on self */
+	void RunCommandsOnChildren( const apActorCommands& cmds, const LuaReference *pParamTable = nullptr ) { this->RunCommandsOnChildren( *cmds, pParamTable ); }	// convenience
+	virtual void RunCommandsOnLeaves( const LuaReference& cmds, const LuaReference *pParamTable = nullptr ); /* but not on self */
 
 	virtual void UpdateInternal( float fDeltaTime );
 	virtual void BeginDraw();
@@ -93,8 +93,8 @@ public:
 	virtual float GetTweenTimeLeft() const;
 
 	virtual void HandleMessage( const Message &msg );
-	virtual void RunCommands( const LuaReference& cmds, const LuaReference *pParamTable = NULL );
-	void RunCommands( const apActorCommands& cmds, const LuaReference *pParamTable = NULL ) { this->RunCommands( *cmds, pParamTable ); }	// convenience
+	virtual void RunCommands( const LuaReference& cmds, const LuaReference *pParamTable = nullptr );
+	void RunCommands( const apActorCommands& cmds, const LuaReference *pParamTable = nullptr ) { this->RunCommands( *cmds, pParamTable ); }	// convenience
 
 protected:
 	void LoadChildrenFromNode( const XNode* pNode );

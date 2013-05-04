@@ -255,7 +255,7 @@ public:
 	void GetTracksHeldAtRow( int row, set<int>& addTo );
 	int GetNumTracksHeldAtRow( int row );
 
-	bool IsHoldNoteAtRow( int iTrack, int iRow, int *pHeadRow = NULL ) const;
+	bool IsHoldNoteAtRow( int iTrack, int iRow, int *pHeadRow = nullptr ) const;
 	bool IsHoldHeadOrBodyAtRow( int iTrack, int iRow, int *pHeadRow ) const;
 
 	// statistics

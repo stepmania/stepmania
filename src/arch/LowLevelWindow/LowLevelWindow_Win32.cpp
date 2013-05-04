@@ -13,8 +13,8 @@
 #include <GL/glew.h>
 
 static PIXELFORMATDESCRIPTOR g_CurrentPixelFormat;
-static HGLRC g_HGLRC = NULL;
-static HGLRC g_HGLRC_Background = NULL;
+static HGLRC g_HGLRC = nullptr;
+static HGLRC g_HGLRC_Background = nullptr;
 
 static void DestroyGraphicsWindowAndOpenGLContext()
 {
@@ -22,13 +22,13 @@ static void DestroyGraphicsWindowAndOpenGLContext()
 	{
 		wglMakeCurrent( NULL, NULL );
 		wglDeleteContext( g_HGLRC );
-		g_HGLRC = NULL;
+		g_HGLRC = nullptr;
 	}
 
 	if( g_HGLRC_Background != nullptr )
 	{
 		wglDeleteContext( g_HGLRC_Background );
-		g_HGLRC_Background = NULL;
+		g_HGLRC_Background = nullptr;
 	}
 
 	ZERO( g_CurrentPixelFormat );
@@ -42,7 +42,7 @@ void *LowLevelWindow_Win32::GetProcAddress( RString s )
 	if( pRet != nullptr )
 		return pRet;
 
-	return ::GetProcAddress( GetModuleHandle(NULL), s );
+	return ::GetProcAddress( GetModuleHandle(nullptr), s );
 }
 
 LowLevelWindow_Win32::LowLevelWindow_Win32()
@@ -186,9 +186,9 @@ RString LowLevelWindow_Win32::TryVideoMode( const VideoModeParams &p, bool &bNew
 		{
 			wglMakeCurrent( NULL, NULL );
 			wglDeleteContext( g_HGLRC );
-			g_HGLRC = NULL;
+			g_HGLRC = nullptr;
 			wglDeleteContext( g_HGLRC_Background );
-			g_HGLRC_Background = NULL;
+			g_HGLRC_Background = nullptr;
 		}
 
 		bNewDeviceOut = true;
@@ -234,7 +234,7 @@ RString LowLevelWindow_Win32::TryVideoMode( const VideoModeParams &p, bool &bNew
 		{
 			LOG->Warn( werr_ssprintf(GetLastError(), "wglShareLists failed") );
 			wglDeleteContext( g_HGLRC_Background );
-			g_HGLRC_Background = NULL;
+			g_HGLRC_Background = nullptr;
 		}
 
 		if( !wglMakeCurrent( GraphicsWindow::GetHDC(), g_HGLRC ) )
@@ -323,8 +323,8 @@ RenderTarget_Win32::RenderTarget_Win32(LowLevelWindow_Win32 *pWind)
 {
 	m_pWind = pWind;
 	m_texHandle = 0;
-	m_hOldDeviceContext = NULL;
-	m_hOldRenderContext = NULL;
+	m_hOldDeviceContext = nullptr;
+	m_hOldRenderContext = nullptr;
 }
 
 RenderTarget_Win32::~RenderTarget_Win32()

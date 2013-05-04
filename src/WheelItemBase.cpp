@@ -38,9 +38,9 @@ WheelItemBase::WheelItemBase( const WheelItemBase &cpy ):
 WheelItemBase::WheelItemBase(RString sType)
 {
 	SetName( sType );
-	m_pData = NULL;
+	m_pData = nullptr;
 	m_bExpanded = false;
-	m_pGrayBar = NULL;
+	m_pGrayBar = nullptr;
 	Load(sType);
 }
 

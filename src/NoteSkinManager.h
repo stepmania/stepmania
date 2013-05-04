@@ -25,11 +25,12 @@ public:
 
 	void SetCurrentNoteSkin( const RString &sNoteSkin ) { m_sCurrentNoteSkin = sNoteSkin; }
 	const RString &GetCurrentNoteSkin() { return m_sCurrentNoteSkin; }
-	void SetPlayerNumber( PlayerNumber pn ) { m_PlayerNumber = pn; }
+
+	void SetPlayerNumber( PlayerNumber pn ) { m_PlayerNumber = pn; }
 	void SetGameController( GameController gc ) { m_GameController = gc; }
 	RString GetPath( const RString &sButtonName, const RString &sElement );
 	bool PushActorTemplate( Lua *L, const RString &sButton, const RString &sElement, bool bSpriteOnly );
-	Actor *LoadActor( const RString &sButton, const RString &sElement, Actor *pParent = NULL, bool bSpriteOnly = false );
+	Actor *LoadActor( const RString &sButton, const RString &sElement, Actor *pParent = nullptr, bool bSpriteOnly = false );
 
 	RString		GetMetric( const RString &sButtonName, const RString &sValue );
 	int		GetMetricI( const RString &sButtonName, const RString &sValueName );

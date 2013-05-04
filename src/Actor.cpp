@@ -86,7 +86,7 @@ void Actor::InitState()
 {
 	StopTweening();
 
-	m_pTempState = NULL;
+	m_pTempState = nullptr;
 
 	m_baseRotation = RageVector3( 0, 0, 0 );
 	m_baseScale = RageVector3( 1, 1, 1 );
@@ -161,7 +161,7 @@ Actor::Actor()
 	
 	m_size = RageVector2( 1, 1 );
 	InitState();
-	m_pParent = NULL;
+	m_pParent = nullptr;
 	m_bFirstUpdate = true;
 }
 
@@ -176,7 +176,7 @@ Actor::Actor( const Actor &cpy ):
 {
 	/* Don't copy an Actor in the middle of rendering. */
 	ASSERT( cpy.m_pTempState == nullptr );
-	m_pTempState = NULL;
+	m_pTempState = nullptr;
 
 #define CPY(x) x = cpy.x
 	CPY( m_sName );
@@ -569,7 +569,7 @@ void Actor::SetTextureRenderStates()
 void Actor::EndDraw()
 {
 	DISPLAY->PopMatrix();
-	m_pTempState = NULL;
+	m_pTempState = nullptr;
 }
 
 void Actor::UpdateTweening( float fDeltaTime )
@@ -1298,7 +1298,7 @@ void Actor::SetParent( Actor *pParent )
 
 Actor::TweenInfo::TweenInfo()
 {
-	m_pTween = NULL;
+	m_pTween = nullptr;
 }
 
 Actor::TweenInfo::~TweenInfo()
@@ -1308,7 +1308,7 @@ Actor::TweenInfo::~TweenInfo()
 
 Actor::TweenInfo::TweenInfo( const TweenInfo &cpy )
 {
-	m_pTween = NULL;
+	m_pTween = nullptr;
 	*this = cpy;
 }
 

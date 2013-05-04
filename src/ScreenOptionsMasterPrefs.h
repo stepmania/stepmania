@@ -43,7 +43,7 @@ struct ConfOption
 		name = n;
 		m_sPrefName = name; // copy from name (not n), to allow refcounting
 		MoveData = m;
-		MakeOptionsListCB = NULL;
+		MakeOptionsListCB = nullptr;
 		m_iEffects = 0;
 		m_bAllowThemeItems = true;
 #define PUSH( c )	if(c) names.push_back(c);

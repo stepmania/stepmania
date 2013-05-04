@@ -43,7 +43,7 @@ XToString( DisplayBPM );
 LuaXType( DisplayBPM );
 
 Steps::Steps(Song *song): m_StepsType(StepsType_Invalid), m_pSong(song),
-	parent(NULL), m_pNoteData(new NoteData), m_bNoteDataIsFilled(false), 
+	parent(nullptr), m_pNoteData(new NoteData), m_bNoteDataIsFilled(false), 
 	m_sNoteDataCompressed(""), m_sFilename(""), m_bSavedToDisk(false), 
 	m_LoadedFromProfile(ProfileSlot_Invalid), m_iHash(0),
 	m_sDescription(""), m_sChartStyle(""), 
@@ -321,7 +321,7 @@ void Steps::CalculateRadarValues( float fMusicLengthSeconds )
 		NoteDataUtil::CalculateRadarValues( tempNoteData, fMusicLengthSeconds, m_CachedRadarValues[0] );
 		fill_n( m_CachedRadarValues + 1, NUM_PLAYERS-1, m_CachedRadarValues[0] );
 	}
-	GAMESTATE->SetProcessedTimingData(NULL);
+	GAMESTATE->SetProcessedTimingData(nullptr);
 }
 
 void Steps::Decompress() const
@@ -444,7 +444,7 @@ void Steps::DeAutogen( bool bCopyNoteData )
 	m_iMeter		= Real()->m_iMeter;
 	copy( Real()->m_CachedRadarValues, Real()->m_CachedRadarValues + NUM_PLAYERS, m_CachedRadarValues );
 	m_sCredit		= Real()->m_sCredit;
-	parent = NULL;
+	parent = nullptr;
 
 	if( bCopyNoteData )
 		Compress();
@@ -463,7 +463,7 @@ void Steps::CopyFrom( Steps* pSource, StepsType ntTo, float fMusicLengthSeconds 
 	NoteData noteData;
 	pSource->GetNoteData( noteData );
 	noteData.SetNumTracks( GAMEMAN->GetStepsTypeInfo(ntTo).iNumTracks );
-	parent = NULL;
+	parent = nullptr;
 	m_Timing = pSource->m_Timing;
 	this->m_pSong = pSource->m_pSong;
 	this->m_Attacks = pSource->m_Attacks;

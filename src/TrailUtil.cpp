@@ -39,7 +39,7 @@ Trail *TrailID::ToTrail( const Course *p, bool bAllowNull ) const
 {
 	ASSERT( p != nullptr );
 
-	Trail *pRet = NULL;
+	Trail *pRet = nullptr;
 	if( !m_Cache.Get(&pRet) )
 	{
 		if( st != StepsType_Invalid && cd != Difficulty_Invalid )

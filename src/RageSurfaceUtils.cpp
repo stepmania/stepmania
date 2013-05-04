@@ -151,7 +151,7 @@ bool RageSurfaceUtils::ConvertSurface( const RageSurface *src, RageSurface *&dst
 	if( width == src->w && height == src->h && src->format->Equivalent( *dst->format ) )
 	{
 		delete dst;
-		dst = NULL;
+		dst = nullptr;
 		return false;
 	}
 

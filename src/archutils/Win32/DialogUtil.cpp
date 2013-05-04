@@ -9,7 +9,7 @@
 // pLogFont->nHeight is interpreted as PointSize * 10
 static HFONT CreatePointFontIndirect(const LOGFONT* lpLogFont)
 {
-	HDC hDC = ::GetDC(NULL);
+	HDC hDC = ::GetDC(nullptr);
 
 	// convert nPointSize to logical units based on pDC
 	LOGFONT logFont = *lpLogFont;

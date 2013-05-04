@@ -200,7 +200,7 @@ public:
 	WavReaderADPCM( RageFileBasic &f, const RageSoundReader_WAV::WavData &data ):
 		WavReader(f, data)
 	{
-		m_pBuffer = NULL;
+		m_pBuffer = nullptr;
 	}
 
 	virtual ~WavReaderADPCM()
@@ -605,7 +605,7 @@ int RageSoundReader_WAV::Read( float *pBuf, int iFrames )
 
 RageSoundReader_WAV::RageSoundReader_WAV()
 {
-	m_pImpl = NULL;
+	m_pImpl = nullptr;
 }
 
 RageSoundReader_WAV::~RageSoundReader_WAV()

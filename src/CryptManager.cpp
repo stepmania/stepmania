@@ -79,7 +79,7 @@ static const int KEY_LENGTH = 1024;
  * 
  */
 
-static PRNGWrapper *g_pPRNG = NULL;
+static PRNGWrapper *g_pPRNG = nullptr;
 
 
 CryptManager::CryptManager()

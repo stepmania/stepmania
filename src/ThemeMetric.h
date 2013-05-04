@@ -219,7 +219,7 @@ class ThemeMetric2D : public IThemeMetric
 	vector<ThemeMetricTVector> m_metric;
 
 public:
-	ThemeMetric2D( const RString& sGroup = "", MetricName2D pfn = NULL, size_t N = 0, size_t M = 0 )
+	ThemeMetric2D( const RString& sGroup = "", MetricName2D pfn = nullptr, size_t N = 0, size_t M = 0 )
 	{
 		Load( sGroup, pfn, N, M );
 	}
@@ -260,7 +260,7 @@ class ThemeMetricMap : public IThemeMetric
 	map<RString,ThemeMetricT> m_metric;
 
 public:
-	ThemeMetricMap( const RString& sGroup = "", MetricNameMap pfn = NULL, const vector<RString> vsValueNames = vector<RString>() )
+	ThemeMetricMap( const RString& sGroup = "", MetricNameMap pfn = nullptr, const vector<RString> vsValueNames = vector<RString>() )
 	{
 		Load( sGroup, pfn, vsValueNames );
 	}

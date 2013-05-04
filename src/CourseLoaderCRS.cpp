@@ -250,7 +250,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 				vector<RString> bits;
 				split( sSong, "/", bits );
 
-				Song *pSong = NULL;
+				Song *pSong = nullptr;
 				if( bits.size() == 2 )
 				{
 					new_entry.songCriteria.m_sGroupName = bits[0];

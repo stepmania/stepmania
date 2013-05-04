@@ -17,7 +17,7 @@ ActorFrameTexture::ActorFrameTexture()
 	++i;
 	m_sTextureName = ssprintf( ConvertI64FormatString("ActorFrameTexture %lli"), i );
 
-	m_pRenderTarget = NULL;
+	m_pRenderTarget = nullptr;
 }
 
 ActorFrameTexture::ActorFrameTexture( const ActorFrameTexture &cpy ):

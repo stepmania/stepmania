@@ -110,7 +110,7 @@ bool ArchHooks_Win32::CheckForMultipleInstances(int argc, char* argv[])
 		 * not the main window. */
 		CallbackData data;
 		data.hParent = hWnd;
-		data.hResult = NULL;
+		data.hResult = nullptr;
 		EnumWindows( GetEnabledPopup, (LPARAM) &data );
 
 		if( data.hResult != nullptr )

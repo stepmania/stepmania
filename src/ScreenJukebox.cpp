@@ -166,7 +166,7 @@ void ScreenJukebox::SetSong()
 ScreenJukebox::ScreenJukebox()
 {
 	m_bDemonstration = false;
-	m_pCourseEntry = NULL;
+	m_pCourseEntry = nullptr;
 }
 
 void ScreenJukebox::Init()

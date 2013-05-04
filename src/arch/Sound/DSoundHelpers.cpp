@@ -43,7 +43,7 @@ void DSound::SetPrimaryBufferMode()
 	format.dwSize = sizeof(format);
 	format.dwFlags = DSBCAPS_PRIMARYBUFFER;
 	format.dwBufferBytes = 0;
-	format.lpwfxFormat = NULL;
+	format.lpwfxFormat = nullptr;
 
 	IDirectSoundBuffer *pBuffer;
 	HRESULT hr = this->GetDS()->CreateSoundBuffer( &format, &pBuffer, NULL );
@@ -98,9 +98,9 @@ void DSound::SetPrimaryBufferMode()
 DSound::DSound()
 {
 	HRESULT hr;
-	if( FAILED( hr = CoInitialize(NULL) ) )
+	if( FAILED( hr = CoInitialize(nullptr) ) )
 		RageException::Throw( hr_ssprintf(hr, "CoInitialize") );
-	m_pDS = NULL;
+	m_pDS = nullptr;
 }
 
 RString DSound::Init()
@@ -163,8 +163,8 @@ bool DSound::IsEmulated() const
 
 DSoundBuf::DSoundBuf()
 {
-	m_pBuffer = NULL;
-	m_pTempBuffer = NULL;
+	m_pBuffer = nullptr;
+	m_pTempBuffer = nullptr;
 }
 
 RString DSoundBuf::Init( DSound &ds, DSoundBuf::hw hardware,

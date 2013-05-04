@@ -42,7 +42,7 @@ BitmapText::BitmapText()
 	}
 	iReloadCounter++;
 
-	m_pFont = NULL;
+	m_pFont = nullptr;
 	m_bUppercase = false;
 
 	m_bRainbowScroll = false;
@@ -98,7 +98,7 @@ BitmapText & BitmapText::operator=(const BitmapText &cpy)
 	if( cpy.m_pFont != nullptr )
 		m_pFont = FONT->CopyFont( cpy.m_pFont );
 	else
-		m_pFont = NULL;
+		m_pFont = nullptr;
 
 	return *this;
 }
@@ -106,7 +106,7 @@ BitmapText & BitmapText::operator=(const BitmapText &cpy)
 BitmapText::BitmapText( const BitmapText &cpy ):
 	Actor( cpy )
 {
-	m_pFont = NULL;
+	m_pFont = nullptr;
 
 	*this = cpy;
 }
@@ -143,7 +143,7 @@ bool BitmapText::LoadFromFont( const RString& sFontFilePath )
 	if( m_pFont )
 	{
 		FONT->UnloadFont( m_pFont );
-		m_pFont = NULL;
+		m_pFont = nullptr;
 	}
 
 	m_pFont = FONT->LoadFont( sFontFilePath );
@@ -162,7 +162,7 @@ bool BitmapText::LoadFromTextureAndChars( const RString& sTexturePath, const RSt
 	if( m_pFont )
 	{
 		FONT->UnloadFont( m_pFont );
-		m_pFont = NULL;
+		m_pFont = nullptr;
 	}
 
 	m_pFont = FONT->LoadFont( sTexturePath, sChars );

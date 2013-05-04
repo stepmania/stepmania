@@ -294,8 +294,8 @@ MovieDecoder_FFMpeg::MovieDecoder_FFMpeg()
 {
 	FixLilEndian();
 
-	m_fctx = NULL;
-	m_pStream = NULL;
+	m_fctx = nullptr;
+	m_pStream = nullptr;
 	m_iCurrentPacketOffset = -1;
 
 	m_fLastFrame = 0;
@@ -313,7 +313,7 @@ MovieDecoder_FFMpeg::~MovieDecoder_FFMpeg()
 	if (m_swsctx)
 	{
 		avcodec::sws_freeContext(m_swsctx);
-		m_swsctx = NULL;
+		m_swsctx = nullptr;
 	}
     if (m_avioContext != nullptr )
     {
@@ -337,9 +337,9 @@ void MovieDecoder_FFMpeg::Init()
 	m_fPTS = -1;
 	m_iFrameNumber = -1; /* decode one frame and you're on the 0th */
 	m_fTimestampOffset = 0;
-	m_swsctx = NULL;
-    m_avioContext = NULL;
-    m_buffer = NULL;
+	m_swsctx = nullptr;
+    m_avioContext = nullptr;
+    m_buffer = nullptr;
 
 	if( m_iCurrentPacketOffset != -1 )
 	{
@@ -695,13 +695,13 @@ void MovieDecoder_FFMpeg::Close()
 	if( m_pStream && m_pStream->codec->codec )
 	{
 		avcodec::avcodec_close( m_pStream->codec );
-		m_pStream = NULL;
+		m_pStream = nullptr;
 	}
 
 	if( m_fctx )
 	{
 		avcodec::avformat_close_input( &m_fctx );
-		m_fctx = NULL;
+		m_fctx = nullptr;
 	}
 
 	Init();

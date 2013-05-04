@@ -20,7 +20,7 @@ void Foreground::Unload()
 	m_BGAnimations.clear();
 	m_SubActors.clear();
 	m_fLastMusicSeconds = -9999;
-	m_pSong = NULL;
+	m_pSong = nullptr;
 }
 
 void Foreground::LoadFromSong( const Song *pSong )

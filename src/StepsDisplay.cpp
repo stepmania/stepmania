@@ -293,7 +293,7 @@ public:
 	{ 
 		if( lua_isnil(L,1) )
 		{
-			p->SetFromSteps( NULL );
+			p->SetFromSteps(nullptr);
 		}
 		else
 		{
@@ -306,7 +306,7 @@ public:
 	{ 
 		if( lua_isnil(L,1) )
 		{
-			p->SetFromTrail( NULL );
+			p->SetFromTrail(nullptr);
 		}
 		else
 		{

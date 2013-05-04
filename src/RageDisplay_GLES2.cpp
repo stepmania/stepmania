@@ -220,7 +220,7 @@ RageDisplay_GLES2::RageDisplay_GLES2()
 	FixLittleEndian();
 //	RageDisplay_GLES2_Helpers::Init();
 
-	g_pWind = NULL;
+	g_pWind = nullptr;
 }
 
 RString

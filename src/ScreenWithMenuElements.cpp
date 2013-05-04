@@ -21,10 +21,10 @@
 REGISTER_SCREEN_CLASS( ScreenWithMenuElements );
 ScreenWithMenuElements::ScreenWithMenuElements()
 {
-	m_MenuTimer = NULL;
+	m_MenuTimer = nullptr;
 	FOREACH_PlayerNumber( p )
-		m_MemoryCardDisplay[p] = NULL;
-	m_MenuTimer = NULL;
+		m_MemoryCardDisplay[p] = nullptr;
+	m_MenuTimer = nullptr;
 }
 
 void ScreenWithMenuElements::Init()

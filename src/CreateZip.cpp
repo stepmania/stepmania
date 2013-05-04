@@ -543,7 +543,7 @@ ulg crc32(ulg crc, const uch *buf, size_t len)
 class TZip
 { 
 public:
-	TZip() : pfout(NULL),ooffset(0),oerr(false),writ(0),hasputcen(false),zfis(0),hfin(0)
+	TZip() : pfout(nullptr),ooffset(0),oerr(false),writ(0),hasputcen(false),zfis(0),hfin(0)
 	{
 	}
 	~TZip()
@@ -717,7 +717,7 @@ ZRESULT TZip::set_times()
 
 	unsigned short dosdate,dostime; 
 	filetime2dosdatetime(*ptm,&dosdate,&dostime);
-	times.atime = time(NULL);
+	times.atime = time(nullptr);
 	times.mtime = times.atime;
 	times.ctime = times.atime;
 	timestamp = (unsigned short)dostime | (((unsigned long)dosdate)<<16);

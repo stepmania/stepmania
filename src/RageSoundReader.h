@@ -40,7 +40,7 @@ public:
 	virtual float GetStreamToSourceRatio() const = 0;
 
 	virtual RString GetError() const = 0;
-	int RetriedRead( float *pBuffer, int iFrames, int *iSourceFrame = NULL, float *fRate = NULL );
+	int RetriedRead( float *pBuffer, int iFrames, int *iSourceFrame = nullptr, float *fRate = nullptr );
 };
 
 #endif

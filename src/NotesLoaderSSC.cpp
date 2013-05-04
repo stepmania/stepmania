@@ -250,7 +250,7 @@ bool SSCLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 
 	int state = GETTING_SONG_INFO;
 	const unsigned values = msd.GetNumValues();
-	Steps* pNewNotes = NULL;
+	Steps* pNewNotes = nullptr;
 	TimingData stepsTiming;
 	bool bHasOwnTiming = false;
 
@@ -836,8 +836,8 @@ bool SSCLoader::LoadEditFromMsd(const MsdFile &msd,
 				ProfileSlot slot,
 				bool bAddStepsToSong )
 {
-	Song* pSong = NULL;
-	Steps* pNewNotes = NULL;
+	Song* pSong = nullptr;
+	Steps* pNewNotes = nullptr;
 	bool bSSCFormat = false;
 	bool bHasOwnTiming = false;
 	TimingData stepsTiming;

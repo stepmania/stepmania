@@ -119,7 +119,7 @@ struct NoteResource
 	NoteResource( const NoteSkinAndPath &nsap ): m_nsap(nsap)
 	{
 		m_iRefCount = 0;
-		m_pActor = NULL;
+		m_pActor = nullptr;
 	}
 
 	~NoteResource()
@@ -173,7 +173,7 @@ static void DeleteNoteResource( NoteResource *pRes )
 
 NoteColorActor::NoteColorActor()
 {
-	m_p = NULL;
+	m_p = nullptr;
 }
 
 NoteColorActor::~NoteColorActor()
@@ -197,7 +197,7 @@ Actor *NoteColorActor::Get()
 
 NoteColorSprite::NoteColorSprite()
 {
-	m_p = NULL;
+	m_p = nullptr;
 }
 
 NoteColorSprite::~NoteColorSprite()
@@ -750,7 +750,7 @@ void NoteDisplay::DrawTap(const TapNote& tn, int iCol, float fBeat,
 			  float fDrawDistanceBeforeTargetsPixels, 
 			  float fFadeInPercentOfDrawFar)
 {
-	Actor* pActor = NULL;
+	Actor* pActor = nullptr;
 	NotePart part = NotePart_Tap;
 	/*
 	if( tn.source == TapNote::addition )

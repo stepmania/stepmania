@@ -100,13 +100,13 @@ PlayerInfo::PlayerInfo(): m_pn(PLAYER_INVALID), m_mp(MultiPlayer_Invalid),
 	m_bIsDummy(false), m_iDummyIndex(0), m_iAddToDifficulty(0),
 	m_bPlayerEnabled(false), m_PlayerStateDummy(), 
 	m_PlayerStageStatsDummy(), m_SoundEffectControl(),
-	m_vpStepsQueue(), m_asModifiersQueue(), m_pLifeMeter(NULL), 
-	m_ptextCourseSongNumber(NULL), m_ptextStepsDescription(NULL),
-	m_pPrimaryScoreDisplay(NULL), m_pSecondaryScoreDisplay(NULL),
-	m_pPrimaryScoreKeeper(NULL), m_pSecondaryScoreKeeper(NULL),
-	m_ptextPlayerOptions(NULL), m_pActiveAttackList(NULL),
-	m_NoteData(), m_pPlayer(NULL), m_pInventory(NULL), 
-	m_pStepsDisplay(NULL), m_sprOniGameOver() {}
+	m_vpStepsQueue(), m_asModifiersQueue(), m_pLifeMeter(nullptr), 
+	m_ptextCourseSongNumber(nullptr), m_ptextStepsDescription(nullptr),
+	m_pPrimaryScoreDisplay(nullptr), m_pSecondaryScoreDisplay(nullptr),
+	m_pPrimaryScoreKeeper(nullptr), m_pSecondaryScoreKeeper(nullptr),
+	m_ptextPlayerOptions(nullptr), m_pActiveAttackList(nullptr),
+	m_NoteData(), m_pPlayer(nullptr), m_pInventory(nullptr), 
+	m_pStepsDisplay(nullptr), m_sprOniGameOver() {}
 
 void PlayerInfo::Load( PlayerNumber pn, MultiPlayer mp, bool bShowNoteField, int iAddToDifficulty )
 {
@@ -115,9 +115,9 @@ void PlayerInfo::Load( PlayerNumber pn, MultiPlayer mp, bool bShowNoteField, int
 	m_bPlayerEnabled = IsEnabled();
 	m_bIsDummy = false;
 	m_iAddToDifficulty = iAddToDifficulty;
-	m_pLifeMeter = NULL;
-	m_ptextCourseSongNumber = NULL;
-	m_ptextStepsDescription = NULL;
+	m_pLifeMeter = nullptr;
+	m_ptextCourseSongNumber = nullptr;
+	m_ptextStepsDescription = nullptr;
 
 	if( !IsMultiPlayer() )
 	{
@@ -173,11 +173,11 @@ void PlayerInfo::Load( PlayerNumber pn, MultiPlayer mp, bool bShowNoteField, int
 			break;
 	}
 
-	m_ptextPlayerOptions = NULL;
-	m_pActiveAttackList = NULL;
+	m_ptextPlayerOptions = nullptr;
+	m_pActiveAttackList = nullptr;
 	m_pPlayer = new Player( m_NoteData, bShowNoteField );
-	m_pInventory = NULL;
-	m_pStepsDisplay = NULL;
+	m_pInventory = nullptr;
+	m_pStepsDisplay = nullptr;
 
 	if( IsMultiPlayer() )
 	{
@@ -321,8 +321,8 @@ GetNextVisiblePlayerInfo( vector<PlayerInfo>::iterator iter, vector<PlayerInfo> 
 
 ScreenGameplay::ScreenGameplay()
 {
-	m_pSongBackground = NULL;
-	m_pSongForeground = NULL;
+	m_pSongBackground = nullptr;
+	m_pSongForeground = nullptr;
 }
 
 void ScreenGameplay::Init()
@@ -376,10 +376,10 @@ void ScreenGameplay::Init()
 	if( !GAMESTATE->m_bDemonstrationOrJukebox )
 		MEMCARDMAN->PauseMountingThread();
 
-	m_pSoundMusic = NULL;
+	m_pSoundMusic = nullptr;
 	m_bPaused = false;
 
-	m_pCombinedLifeMeter = NULL;
+	m_pCombinedLifeMeter = nullptr;
 
 	if( GAMESTATE->m_pCurSong == nullptr && GAMESTATE->m_pCurCourse == nullptr )
 		return;	// ScreenDemonstration will move us to the next screen.  We just need to survive for one update without crashing.
@@ -1748,7 +1748,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 			// update 2d dancing characters
 			FOREACH_EnabledPlayerNumberInfo( m_vPlayerInfo, pi )
 			{
-				DancingCharacters *pCharacter = NULL;
+				DancingCharacters *pCharacter = nullptr;
 				if( m_pSongBackground )
 					pCharacter = m_pSongBackground->GetDancingCharacters();
 				if( pCharacter != nullptr )
@@ -2345,7 +2345,7 @@ void ScreenGameplay::SaveStats()
 		pss.m_radarPossible += rv;
 		NoteDataWithScoring::GetActualRadarValues( nd, pss, fMusicLen, rv );
 		pss.m_radarActual += rv;
-		GAMESTATE->SetProcessedTimingData(NULL);
+		GAMESTATE->SetProcessedTimingData(nullptr);
 	}
 }
 
@@ -2469,7 +2469,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 	else if( SM == SM_LeaveGameplay )
 	{
 		// update dancing characters for win / lose
-		DancingCharacters *pDancers = NULL;
+		DancingCharacters *pDancers = nullptr;
 		if( m_pSongBackground )
 			pDancers = m_pSongBackground->GetDancingCharacters();
 		if( pDancers )

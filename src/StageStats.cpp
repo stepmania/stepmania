@@ -20,7 +20,7 @@ StageStats::StageStats()
 	m_playMode = PlayMode_Invalid;
 	m_Stage = Stage_Invalid;
 	m_iStageIndex = -1;
-	m_pStyle = NULL;
+	m_pStyle = nullptr;
 	m_vpPlayedSongs.clear();
 	m_vpPossibleSongs.clear();
 	m_EarnedExtraStage = EarnedExtraStage_No;
@@ -264,7 +264,7 @@ void StageStats::FinalizeScores( bool bSummary )
 		Profile* pProfile = PROFILEMAN->GetMachineProfile();
 		StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
 
-		const HighScoreList *pHSL = NULL;
+		const HighScoreList *pHSL = nullptr;
 		if( bSummary )
 		{
 			pHSL = &pProfile->GetCategoryHighScoreList( st, m_player[p].m_rc );

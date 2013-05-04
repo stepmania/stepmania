@@ -90,7 +90,7 @@ public:
 	Steps *pSteps;
 	/** @brief Set up a blank Song and 
 	 * <a class="el" href="class_steps.html">Step</a>. */
-	SongAndSteps() : pSong(NULL), pSteps(NULL) { }
+	SongAndSteps() : pSong(nullptr), pSteps(nullptr) { }
 	/**
 	 * @brief Set up the specified Song and 
 	 * <a class="el" href="class_steps.html">Step</a>.
@@ -170,7 +170,7 @@ public:
 	 * the same thing. */
 	StepsID(): st(StepsType_Invalid), dc(Difficulty_Invalid),
 		sDescription(""), uHash(0), m_Cache() {}
-	void Unset() { FromSteps(NULL); }
+	void Unset() { FromSteps(nullptr); }
 	void FromSteps( const Steps *p );
 	Steps *ToSteps( const Song *p, bool bAllowNull ) const;
 	bool operator<( const StepsID &rhs ) const;

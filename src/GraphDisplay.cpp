@@ -126,7 +126,7 @@ public:
 	~GraphBody()
 	{
 		TEXTUREMAN->UnloadTexture( m_pTexture );
-		m_pTexture = NULL;
+		m_pTexture = nullptr;
 	}
 
 	void DrawPrimitives()
@@ -150,8 +150,8 @@ public:
 
 GraphDisplay::GraphDisplay()
 {
-	m_pGraphLine = NULL;
-	m_pGraphBody = NULL;
+	m_pGraphLine = nullptr;
+	m_pGraphBody = nullptr;
 }
 
 GraphDisplay::~GraphDisplay()

@@ -1095,7 +1095,7 @@ REGISTER_SCREEN_CLASS( ScreenEdit );
 
 void ScreenEdit::Init()
 {
-	m_pSoundMusic = NULL;
+	m_pSoundMusic = nullptr;
 	
 	GAMESTATE->m_bIsUsingStepTiming = false;
 	GAMESTATE->m_bInStepEditor = true;
@@ -1672,7 +1672,7 @@ void ScreenEdit::UpdateTextInfo()
 
 	m_textInfo.SetText( sText );
 	
-	GAMESTATE->SetProcessedTimingData(NULL);
+	GAMESTATE->SetProcessedTimingData(nullptr);
 }
 
 void ScreenEdit::DrawPrimitives()
@@ -3474,7 +3474,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	else if( SM == SM_BackFromCourseModeMenu )
 	{
 		const int num = ScreenMiniMenu::s_viLastAnswers[0];
-		GAMESTATE->m_pCurCourse.Set( NULL );
+		GAMESTATE->m_pCurCourse.Set(nullptr);
 		if( num != 0 )
 		{
 			const RString name = g_CourseMode.rows[0].choices[num];
@@ -4019,9 +4019,9 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		{
 			pSong->DeleteSteps( pSteps );
 			if( m_pSteps == pSteps )
-				m_pSteps = NULL;
+				m_pSteps = nullptr;
 			if( GAMESTATE->m_pCurSteps[PLAYER_1].Get() == pSteps )
-				GAMESTATE->m_pCurSteps[PLAYER_1].Set( NULL );
+				GAMESTATE->m_pCurSteps[PLAYER_1].Set(nullptr);
 		}
 		
 
@@ -4554,7 +4554,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 			}
 			break;
 	};
-	GAMESTATE->SetProcessedTimingData(NULL);
+	GAMESTATE->SetProcessedTimingData(nullptr);
 }
 
 void ScreenEdit::HandleAlterMenuChoice(AlterMenuChoice c, const vector<int> &iAnswers, bool bAllowUndo)

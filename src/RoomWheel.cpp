@@ -131,7 +131,7 @@ void RoomWheel::RemoveItem( int index )
 
 	// If this item's data happened to be last selected, make it NULL.
 	if( m_LastSelection == *i )
-		m_LastSelection = NULL;
+		m_LastSelection = nullptr;
 
 	SAFE_DELETE( *i );
 	m_CurWheelItemData.erase( i );
@@ -155,7 +155,7 @@ bool RoomWheel::Select()
 	if( m_iSelection == 0 )
 	{
 		// Since this is not actually an option outside of this wheel, NULL is a good idea.
-		m_LastSelection = NULL;
+		m_LastSelection = nullptr;
 		ScreenTextEntry::TextEntry( SM_BackFromRoomName, ENTER_ROOM_NAME, "", 255 );
 	}
 	return false;

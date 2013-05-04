@@ -162,7 +162,7 @@ bool SMALoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 	out.m_sSongFileName = sPath;
 	
 	int state = SMA_GETTING_SONG_INFO;
-	Steps* pNewNotes = NULL;
+	Steps* pNewNotes = nullptr;
 	int iRowsPerBeat = -1; // Start with an invalid value: needed for checking.
 	
 	for( unsigned i=0; i<msd.GetNumValues(); i++ )

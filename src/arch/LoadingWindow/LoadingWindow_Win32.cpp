@@ -17,7 +17,7 @@
 #include "LocalizedString.h"
 
 #include "RageSurfaceUtils_Zoom.h"
-static HBITMAP g_hBitmap = NULL;
+static HBITMAP g_hBitmap = nullptr;
 
 /* Load a RageSurface into a GDI surface. */
 static HBITMAP LoadWin32Surface( const RageSurface *pSplash, HWND hWnd )
@@ -39,7 +39,7 @@ static HBITMAP LoadWin32Surface( const RageSurface *pSplash, HWND hWnd )
 		RageSurfaceUtils::Zoom( s, iWidth, iHeight );
 	}
 
-	HDC hScreen = GetDC(NULL);
+	HDC hScreen = GetDC(nullptr);
 	ASSERT_M( hScreen != nullptr, werr_ssprintf(GetLastError(), "hScreen") );
 
 	HBITMAP bitmap = CreateCompatibleBitmap( hScreen, s->w, s->h );
@@ -104,7 +104,7 @@ BOOL CALLBACK LoadingWindow_Win32::WndProc( HWND hWnd, UINT msg, WPARAM wParam, 
 
 	case WM_DESTROY:
 		DeleteObject( g_hBitmap );
-		g_hBitmap = NULL;
+		g_hBitmap = nullptr;
 		break;
 	}
 
@@ -126,7 +126,7 @@ void LoadingWindow_Win32::SetSplash( const RageSurface *pSplash )
 	if( g_hBitmap != nullptr )
 	{
 		DeleteObject( g_hBitmap );
-		g_hBitmap = NULL;
+		g_hBitmap = nullptr;
 	}
 
 	g_hBitmap = LoadWin32Surface( pSplash, hwnd );
@@ -143,7 +143,7 @@ void LoadingWindow_Win32::SetSplash( const RageSurface *pSplash )
 
 LoadingWindow_Win32::LoadingWindow_Win32()
 {
-	m_hIcon = NULL;
+	m_hIcon = nullptr;
 	hwnd = CreateDialog( handle.Get(), MAKEINTRESOURCE(IDD_LOADING_DIALOG), NULL, WndProc );
 	for( unsigned i = 0; i < 3; ++i )
 		text[i] = "ABC"; /* always set on first call */

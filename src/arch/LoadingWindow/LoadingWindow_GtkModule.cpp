@@ -33,7 +33,7 @@ extern "C" const char *Init( int *argc, char ***argv )
 
 	splash = gtk_image_new_from_file(splash_image_path);
 
-	label = gtk_label_new(NULL);
+	label = gtk_label_new(nullptr);
 	gtk_label_set_justify(GTK_LABEL(label),GTK_JUSTIFY_CENTER);
 	gtk_label_set_ellipsize(GTK_LABEL(label),PANGO_ELLIPSIZE_END);
 	gtk_label_set_line_wrap(GTK_LABEL(label),FALSE);

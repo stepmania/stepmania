@@ -43,7 +43,7 @@ RageSurfaceFormat::RageSurfaceFormat():
 	Rmask(Mask[0]), Gmask(Mask[1]), Bmask(Mask[2]), Amask(Mask[3]),
 	Rshift(Shift[0]), Gshift(Shift[1]), Bshift(Shift[2]), Ashift(Shift[3])
 {
-	palette = NULL;	
+	palette = nullptr;	
 }
 
 RageSurfaceFormat::RageSurfaceFormat( const RageSurfaceFormat &cpy ):
@@ -121,7 +121,7 @@ bool RageSurfaceFormat::Equivalent( const RageSurfaceFormat &rhs ) const
 RageSurface::RageSurface()
 {
 	format = &fmt;
-	pixels = NULL;
+	pixels = nullptr;
 	pixels_owned = true;
 }
 
@@ -140,7 +140,7 @@ RageSurface::RageSurface( const RageSurface &cpy )
 		memcpy( pixels, cpy.pixels, pitch*h );
 	}
 	else
-		pixels = NULL;
+		pixels = nullptr;
 }
 
 RageSurface::~RageSurface()

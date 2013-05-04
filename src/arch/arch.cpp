@@ -25,7 +25,7 @@ void MakeInputHandlers( const RString &drivers, vector<InputHandler *> &Add )
 
 	for (RString const &s: DriversToTry)
 	{
-		InputHandler *ret = NULL;
+		InputHandler *ret = nullptr;
 
 #ifdef USE_INPUT_HANDLER_DIRECTINPUT
 		if( !s.CompareNoCase("DirectInput") )	ret = new InputHandler_DInput;
@@ -74,7 +74,7 @@ void MakeLightsDrivers( const RString &driver, vector<LightsDriver *> &Add )
 {
 	LOG->Trace( "Initializing lights driver: %s", driver.c_str() );
 
-	LightsDriver *ret = NULL;
+	LightsDriver *ret = nullptr;
 
 #ifdef USE_LIGHTS_DRIVER_LINUX_PIUIO
 	if( !driver.CompareNoCase("PIUIO") )		ret = new LightsDriver_Linux_PIUIO;
@@ -113,7 +113,7 @@ LoadingWindow *MakeLoadingWindow()
 	ASSERT( DriversToTry.size() != 0 );
 
 	RString Driver;
-	LoadingWindow *ret = NULL;
+	LoadingWindow *ret = nullptr;
 
 	for( unsigned i = 0; ret == nullptr && i < DriversToTry.size(); ++i )
 	{
@@ -161,7 +161,7 @@ LowLevelWindow *MakeLowLevelWindow()
 #include "MemoryCard/Selector_MemoryCardDriver.h"
 MemoryCardDriver *MakeMemoryCardDriver()
 {
-	MemoryCardDriver *ret = NULL;
+	MemoryCardDriver *ret = nullptr;
 
 #ifdef ARCH_MEMORY_CARD_DRIVER
 	ret = new ARCH_MEMORY_CARD_DRIVER;
@@ -194,7 +194,7 @@ RageMovieTexture *MakeRageMovieTexture( RageTextureID ID )
 		RageException::Throw( MOVIE_DRIVERS_EMPTY.GetValue() );
 
 	RString Driver;
-	RageMovieTexture *ret = NULL;
+	RageMovieTexture *ret = nullptr;
 
 	for( unsigned i=0; ret== nullptr && i<DriversToTry.size(); ++i )
 	{
@@ -241,7 +241,7 @@ RageSoundDriver *MakeRageSoundDriver( const RString &drivers )
 		RageException::Throw( SOUND_DRIVERS_CANNOT_EMPTY.GetValue() );
 
 	RString Driver;
-	RageSoundDriver *ret = NULL;
+	RageSoundDriver *ret = nullptr;
 
 	for( unsigned i = 0; ret == nullptr && i < DriversToTry.size(); ++i )
 	{

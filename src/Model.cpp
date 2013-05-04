@@ -24,13 +24,13 @@ Model::Model()
 	m_bTextureWrapping = true;
 	SetUseZBuffer( true );
 	SetCullMode( CULL_BACK );
-	m_pGeometry = NULL;
-	m_pCurAnimation = NULL;
+	m_pGeometry = nullptr;
+	m_pCurAnimation = nullptr;
 	m_fDefaultAnimationRate = 1;
 	m_fCurAnimationRate = 1;
 	m_bLoop = true;
 	m_bDrawCelShaded = false;
-	m_pTempGeometry = NULL;
+	m_pTempGeometry = nullptr;
 }
 
 Model::~Model()
@@ -43,12 +43,12 @@ void Model::Clear()
 	if( m_pGeometry )
 	{
 		MODELMAN->UnloadModel( m_pGeometry );
-		m_pGeometry = NULL;
+		m_pGeometry = nullptr;
 	}
 	m_vpBones.clear();
 	m_Materials.clear();
 	m_mapNameToAnimation.clear();
-	m_pCurAnimation = NULL;
+	m_pCurAnimation = nullptr;
 
 	if( m_pTempGeometry )
 		DISPLAY->DeleteCompiledGeometry( m_pTempGeometry );
@@ -607,7 +607,7 @@ void Model::SetBones( const msAnimation* pAnimation, float fFrame, vector<myBone
 		}
 
 		// search for the adjacent position keys
-		const msPositionKey *pLastPositionKey = NULL, *pThisPositionKey = NULL;
+		const msPositionKey *pLastPositionKey = nullptr, *pThisPositionKey = nullptr;
 		for( size_t j = 0; j < pBone->PositionKeys.size(); ++j )
 		{
 			const msPositionKey *pPositionKey = &pBone->PositionKeys[j];
@@ -631,7 +631,7 @@ void Model::SetBones( const msAnimation* pAnimation, float fFrame, vector<myBone
 			vPos = pLastPositionKey->Position;
 
 		// search for the adjacent rotation keys
-		const msRotationKey *pLastRotationKey = NULL, *pThisRotationKey = NULL;
+		const msRotationKey *pLastRotationKey = nullptr, *pThisRotationKey = nullptr;
 		for( size_t j = 0; j < pBone->RotationKeys.size(); ++j )
 		{
 			const msRotationKey *pRotationKey = &pBone->RotationKeys[j];

@@ -172,7 +172,7 @@ void OptionListRow::PositionCursor( Actor *pCursor, int iSelection )
 OptionsList::OptionsList()
 {
 	m_iCurrentRow = 0;
-	m_pLinked = NULL;
+	m_pLinked = nullptr;
 }
 
 OptionsList::~OptionsList()
@@ -265,7 +265,7 @@ void OptionsList::Open()
 	Push( TOP_MENU );
 
 	this->FinishTweening();
-	m_Row[!m_iCurrentRow].SetFromHandler( NULL );
+	m_Row[!m_iCurrentRow].SetFromHandler(nullptr);
 	this->PlayCommand( "TweenOn" );
 }
 

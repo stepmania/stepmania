@@ -450,7 +450,7 @@ void EditCourseUtil::UpdateAndSetTrail()
 {
 	ASSERT( GAMESTATE->m_pCurStyle != nullptr );
 	StepsType st = GAMESTATE->m_pCurStyle->m_StepsType;
-	Trail *pTrail = NULL;
+	Trail *pTrail = nullptr;
 	if( GAMESTATE->m_pCurCourse )
 		pTrail = GAMESTATE->m_pCurCourse->GetTrailForceRegenCache( st );
 	GAMESTATE->m_pCurTrail[PLAYER_1].Set( pTrail );
@@ -458,7 +458,7 @@ void EditCourseUtil::UpdateAndSetTrail()
 
 void EditCourseUtil::PrepareForPlay()
 {
-	GAMESTATE->m_pCurSong.Set( NULL );	// CurSong will be set if we back out.  Set it back to NULL so that ScreenStage won't show the last song.
+	GAMESTATE->m_pCurSong.Set(nullptr);	// CurSong will be set if we back out.  Set it back to NULL so that ScreenStage won't show the last song.
 	GAMESTATE->m_PlayMode.Set( PLAY_MODE_ENDLESS );
 	GAMESTATE->m_bSideIsJoined[0] = true;
 
@@ -549,7 +549,7 @@ Course *CourseID::ToCourse() const
 	if( sPath2.Left(1) != "/" )
 		sPath2 = "/" + sPath2;
 
-	Course *pCourse = NULL;
+	Course *pCourse = nullptr;
 	if( m_Cache.Get(&pCourse) )
 		return pCourse;
 	if( pCourse == nullptr && !sPath2.empty() )

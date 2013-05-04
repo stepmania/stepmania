@@ -2,7 +2,7 @@
 #include "HIDDevice.h"
 #include "RageUtil.h"
 
-HIDDevice::HIDDevice() : m_Interface( NULL ), m_Queue( NULL ), m_bRunning( false )
+HIDDevice::HIDDevice() : m_Interface(nullptr), m_Queue(nullptr), m_bRunning( false )
 {
 }
 
@@ -108,7 +108,7 @@ bool HIDDevice::Open( io_object_t device )
 	if( hresult != S_OK )
 	{
 		LOG->Warn( "Couldn't get device interface from plugin interface." );
-		m_Interface = NULL;
+		m_Interface = nullptr;
 		return false;
 	}
 
@@ -117,7 +117,7 @@ bool HIDDevice::Open( io_object_t device )
 	{
 		PrintIOErr( ret, "Failed to open the interface." );
 		CALL( m_Interface, Release );
-		m_Interface = NULL;
+		m_Interface = nullptr;
 		return false;
 	}
 
@@ -133,9 +133,9 @@ bool HIDDevice::Open( io_object_t device )
 	{
 		PrintIOErr( ret, "Failed to create the queue." );
 		CALL( m_Queue, Release );
-		m_Queue = NULL;
+		m_Queue = nullptr;
 		CALL( m_Interface, Release );
-		m_Interface = NULL;
+		m_Interface = nullptr;
 		return false;
 	}
 

@@ -223,27 +223,27 @@ Player::Player( NoteData &nd, bool bVisibleParts ) : m_NoteData(nd)
 {
 	m_bLoaded = false;
 
-	m_pPlayerState = NULL;
-	m_pPlayerStageStats = NULL;
+	m_pPlayerState = nullptr;
+	m_pPlayerStageStats = nullptr;
 	m_fNoteFieldHeight = 0;
 
-	m_pLifeMeter = NULL;
-	m_pCombinedLifeMeter = NULL;
-	m_pScoreDisplay = NULL;
-	m_pSecondaryScoreDisplay = NULL;
-	m_pPrimaryScoreKeeper = NULL;
-	m_pSecondaryScoreKeeper = NULL;
-	m_pInventory = NULL;
-	m_pIterNeedsTapJudging = NULL;
-	m_pIterNeedsHoldJudging = NULL;
-	m_pIterUncrossedRows = NULL;
-	m_pIterUnjudgedRows = NULL;
-	m_pIterUnjudgedMineRows = NULL;
+	m_pLifeMeter = nullptr;
+	m_pCombinedLifeMeter = nullptr;
+	m_pScoreDisplay = nullptr;
+	m_pSecondaryScoreDisplay = nullptr;
+	m_pPrimaryScoreKeeper = nullptr;
+	m_pSecondaryScoreKeeper = nullptr;
+	m_pInventory = nullptr;
+	m_pIterNeedsTapJudging = nullptr;
+	m_pIterNeedsHoldJudging = nullptr;
+	m_pIterUncrossedRows = nullptr;
+	m_pIterUnjudgedRows = nullptr;
+	m_pIterUnjudgedMineRows = nullptr;
 
 	m_bPaused = false;
 	m_bDelay = false;
 
-	m_pAttackDisplay = NULL;
+	m_pAttackDisplay = nullptr;
 	if( bVisibleParts )
 	{
 		m_pAttackDisplay = new AttackDisplay;
@@ -252,7 +252,7 @@ Player::Player( NoteData &nd, bool bVisibleParts ) : m_NoteData(nd)
 
 	PlayerAI::InitFromDisk();
 
-	m_pNoteField = NULL;
+	m_pNoteField = nullptr;
 	if( bVisibleParts )
 	{
 		m_pNoteField = new NoteField;
@@ -504,14 +504,14 @@ void Player::Init(
 	}
 	else
 	{
-		m_pActorWithComboPosition = NULL;
-		m_pActorWithJudgmentPosition = NULL;
+		m_pActorWithComboPosition = nullptr;
+		m_pActorWithJudgmentPosition = nullptr;
 	}
 
 	// Load HoldJudgments
 	m_vpHoldJudgment.resize( GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer );
 	for( int i = 0; i < GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer; ++i )
-		m_vpHoldJudgment[i] = NULL;
+		m_vpHoldJudgment[i] = nullptr;
 
 	if( HasVisibleParts() )
 	{
@@ -2209,7 +2209,7 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 		const float fSecondsFromExact = fabsf( fNoteOffset );
 
 		TapNote tnDummy = TAP_ORIGINAL_TAP;
-		TapNote *pTN = NULL;
+		TapNote *pTN = nullptr;
 		switch( pbt )
 		{
 		DEFAULT_FAIL(pbt);

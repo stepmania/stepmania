@@ -42,30 +42,30 @@ public:
 		RString sQuestion, 
 		RString sInitialAnswer, 
 		int iMaxInputLength, 
-		bool(*Validate)(const RString &sAnswer,RString &sErrorOut) = NULL, 
-		void(*OnOK)(const RString &sAnswer) = NULL, 
-		void(*OnCancel)() = NULL,
+		bool(*Validate)(const RString &sAnswer,RString &sErrorOut) = nullptr, 
+		void(*OnOK)(const RString &sAnswer) = nullptr, 
+		void(*OnCancel)() = nullptr,
 		bool bPassword = false,
-		bool (*ValidateAppend)(const RString &sAnswerBeforeChar, RString &sAppend) = NULL,
-		RString (*FormatAnswerForDisplay)(const RString &sAnswer) = NULL
+		bool (*ValidateAppend)(const RString &sAnswerBeforeChar, RString &sAppend) = nullptr,
+		RString (*FormatAnswerForDisplay)(const RString &sAnswer) = nullptr
 		);
 	static void TextEntry( 
 		ScreenMessage smSendOnPop, 
 		RString sQuestion, 
 		RString sInitialAnswer, 
 		int iMaxInputLength, 
-		bool(*Validate)(const RString &sAnswer,RString &sErrorOut) = NULL, 
-		void(*OnOK)(const RString &sAnswer) = NULL, 
-		void(*OnCancel)() = NULL,
+		bool(*Validate)(const RString &sAnswer,RString &sErrorOut) = nullptr, 
+		void(*OnOK)(const RString &sAnswer) = nullptr, 
+		void(*OnCancel)() = nullptr,
 		bool bPassword = false,
-		bool (*ValidateAppend)(const RString &sAnswerBeforeChar, RString &sAppend) = NULL,
-		RString (*FormatAnswerForDisplay)(const RString &sAnswer) = NULL
+		bool (*ValidateAppend)(const RString &sAnswerBeforeChar, RString &sAppend) = nullptr,
+		RString (*FormatAnswerForDisplay)(const RString &sAnswer) = nullptr
 		);
 	static void Password( 
 		ScreenMessage smSendOnPop, 
 		const RString &sQuestion, 
-		void(*OnOK)(const RString &sPassword) = NULL, 
-		void(*OnCancel)() = NULL )
+		void(*OnOK)(const RString &sPassword) = nullptr, 
+		void(*OnCancel)() = nullptr )
 	{
 		TextEntry( smSendOnPop, sQuestion, "", 255, NULL, OnOK, OnCancel, true );
 	}

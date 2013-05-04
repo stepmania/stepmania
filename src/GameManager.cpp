@@ -12,7 +12,7 @@
 #include "Style.h"
 
 
-GameManager*	GAMEMAN = NULL;	// global and accessable from anywhere in our program
+GameManager*	GAMEMAN = nullptr;	// global and accessable from anywhere in our program
 
 enum 
 {
@@ -3028,7 +3028,7 @@ void GameManager::GetEnabledGames( vector<const Game*>& aGamesOut )
 
 const Game* GameManager::GetDefaultGame()
 {
-	const Game *pDefault = NULL;
+	const Game *pDefault = nullptr;
 	if( pDefault == nullptr )
 	{
 		for( size_t i=0; pDefault == nullptr && i < ARRAYLEN(g_Games); ++i )

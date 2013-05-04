@@ -212,7 +212,7 @@ Alsa9Buf::Alsa9Buf()
 	last_cursor_pos = 0;
 	preferred_writeahead = 8192;
 	preferred_chunksize = 1024;
-	pcm = NULL;
+	pcm = nullptr;
 }
 
 RString Alsa9Buf::Init( int channels_,

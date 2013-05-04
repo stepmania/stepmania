@@ -467,7 +467,7 @@ public:
 		 * when filtering.  This will only cause the low-pass filter to be rounded;
 		 * the conversion ratio will always be exact. */
 		m_iUpFactor = iUpFactor;
-		m_pPolyphase = NULL;
+		m_pPolyphase = nullptr;
 
 		int iFilterIncrement = max( (iMaxDownFactor - iMinDownFactor)/10, 1 );
 		for( int iDownFactor = iMinDownFactor; iDownFactor <= iMaxDownFactor; iDownFactor += iFilterIncrement )

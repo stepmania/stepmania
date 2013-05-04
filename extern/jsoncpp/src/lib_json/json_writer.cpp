@@ -542,7 +542,7 @@ StyledWriter::normalizeEOL( const std::string &text )
 // //////////////////////////////////////////////////////////////////
 
 StyledStreamWriter::StyledStreamWriter( std::string indentation )
-   : document_(NULL)
+   : document_(nullptr)
    , rightMargin_( 74 )
    , indentation_( indentation )
 {
@@ -559,7 +559,7 @@ StyledStreamWriter::write( std::ostream &out, const Value &root )
    writeValue( root );
    writeCommentAfterValueOnSameLine( root );
    *document_ << "\n";
-   document_ = NULL; // Forget the stream, for safety.
+   document_ = nullptr; // Forget the stream, for safety.
 }
 
 

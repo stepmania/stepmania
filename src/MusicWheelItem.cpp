@@ -75,7 +75,7 @@ MusicWheelItem::MusicWheelItem( RString sType ):
 
 	FOREACH_ENUM( MusicWheelItemType, i )
 	{
-		m_pText[i] = NULL;
+		m_pText[i] = nullptr;
 
 		// Don't init text for Type_Song. It uses a TextBanner.
 		if( i == MusicWheelItemType_Song )
@@ -147,7 +147,7 @@ MusicWheelItem::MusicWheelItem( const MusicWheelItem &cpy ):
 	{
 		if( cpy.m_pText[i] == nullptr )
 		{
-			m_pText[i] = NULL;
+			m_pText[i] = nullptr;
 		}
 		else
 		{
@@ -345,7 +345,7 @@ void MusicWheelItem::RefreshGrades()
 
 		Profile *pProfile = PROFILEMAN->GetProfile(ps);
 
-		HighScoreList *pHSL = NULL;
+		HighScoreList *pHSL = nullptr;
 		if( PROFILEMAN->IsPersistentProfile(ps) && dc != Difficulty_Invalid )
 		{
 			if( pWID->m_pSong )

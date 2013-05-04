@@ -136,7 +136,7 @@ void ScoreKeeperNormal::Load(
 		NoteDataUtil::TransformNoteData( nd, m_pPlayerState->m_PlayerOptions.GetStage(), pSteps->m_StepsType );
 		RadarValues rvPost;
 		NoteDataUtil::CalculateRadarValues( nd, pSong->m_fMusicLengthSeconds, rvPost );
-		GAMESTATE->SetProcessedTimingData(NULL);
+		GAMESTATE->SetProcessedTimingData(nullptr);
 
 		iTotalPossibleDancePoints += this->GetPossibleDancePoints( rvPre, rvPost );
 		iTotalPossibleGradePoints += this->GetPossibleGradePoints( rvPre, rvPost );
@@ -238,7 +238,7 @@ void ScoreKeeperNormal::OnNextSong( int iSongInCourseIndex, const Steps* pSteps,
 
 	m_iTapNotesHit = 0;
 	
-	GAMESTATE->SetProcessedTimingData(NULL);
+	GAMESTATE->SetProcessedTimingData(nullptr);
 }
 
 static int GetScore(int p, int Z, int S, int n)

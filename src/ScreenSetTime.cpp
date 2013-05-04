@@ -81,7 +81,7 @@ void ScreenSetTime::Update( float fDelta )
 {
 	Screen::Update( fDelta );
 
-	time_t iNow = time(NULL);
+	time_t iNow = time(nullptr);
 	iNow += m_TimeOffset;
 
 	tm now;
@@ -113,7 +113,7 @@ bool ScreenSetTime::Input( const InputEventPlus &input )
 
 void ScreenSetTime::ChangeValue( int iDirection )
 {
-	time_t iNow = time(NULL);
+	time_t iNow = time(nullptr);
 	time_t iAdjusted = iNow + m_TimeOffset;
 
 	tm adjusted;
@@ -194,7 +194,7 @@ bool ScreenSetTime::MenuStart( const InputEventPlus &input )
 	else if( m_Selection == NUM_SetTimeSelection -1 )	// last row
 	{
 		/* Save the new time. */
-		time_t iNow = time(NULL);
+		time_t iNow = time(nullptr);
 		time_t iAdjusted = iNow + m_TimeOffset;
 
 		tm adjusted;

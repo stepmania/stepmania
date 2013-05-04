@@ -45,7 +45,7 @@ void StepsDisplayList::LoadFromNode( const XNode* pNode )
 	MOVE_COMMAND.Load( m_sName, "MoveCommand" );
 
 	m_Lines.resize( MAX_METERS );
-	m_CurSong = NULL;
+	m_CurSong = nullptr;
 
 	FOREACH_ENUM( PlayerNumber, pn )
 	{

@@ -40,8 +40,8 @@ static inline RString FourCCToString( uint32_t num )
 	return s;
 }
 
-RageSoundDriver_AU::RageSoundDriver_AU() : m_OutputUnit(NULL), m_iSampleRate(0), m_bDone(false), m_bStarted(false),
-	m_pIOThread(NULL), m_pNotificationThread(NULL), m_Semaphore("Sound")
+RageSoundDriver_AU::RageSoundDriver_AU() : m_OutputUnit(nullptr), m_iSampleRate(0), m_bDone(false), m_bStarted(false),
+	m_pIOThread(nullptr), m_pNotificationThread(nullptr), m_Semaphore("Sound")
 {
 }
 

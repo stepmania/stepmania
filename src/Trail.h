@@ -15,8 +15,8 @@ struct lua_State;
 struct TrailEntry
 {
 	TrailEntry(): 
-		pSong(NULL), 
-		pSteps(NULL),
+		pSong(nullptr), 
+		pSteps(nullptr),
 		Modifiers(""),
 		Attacks(),
 		bSecret(false),

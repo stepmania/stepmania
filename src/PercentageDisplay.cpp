@@ -16,8 +16,8 @@ REGISTER_ACTOR_CLASS( PercentageDisplay );
 
 PercentageDisplay::PercentageDisplay()
 {
-	m_pPlayerState = NULL;
-	m_pPlayerStageStats = NULL;
+	m_pPlayerState = nullptr;
+	m_pPlayerStageStats = nullptr;
 
 	m_Last = -1;
 	m_LastMax = -1;

@@ -9,7 +9,7 @@
 REGISTER_DIALOG_DRIVER_CLASS( MacOSX );
 
 static CFOptionFlags ShowAlert( CFOptionFlags flags, const RString& sMessage, CFStringRef OK,
-				CFStringRef alt = NULL, CFStringRef other = NULL)
+				CFStringRef alt = nullptr, CFStringRef other = nullptr)
 {
 	CFOptionFlags result;
 	CFStringRef text = CFStringCreateWithCString( NULL, sMessage, kCFStringEncodingUTF8 );
