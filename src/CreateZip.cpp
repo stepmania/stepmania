@@ -532,7 +532,7 @@ const ulg crc_table[256] = {
 
 ulg crc32(ulg crc, const uch *buf, size_t len)
 {
-	if (buf==NULL) return 0L;
+	if (buf== nullptr) return 0L;
 	crc = crc ^ 0xffffffffL;
 	while (len >= 8) {DO8(buf); len -= 8;}
 	if (len) do {DO1(buf);} while (--len);
@@ -935,12 +935,12 @@ ZRESULT TZip::Add(const TCHAR *odstzn, const TCHAR *src,unsigned long flags)
 	// Keep a copy of the zipfileinfo, for our end-of-zip directory
 	char *cextra = new char[zfi.cext]; memcpy(cextra,zfi.cextra,zfi.cext); zfi.cextra=cextra;
 	TZipFileInfo *pzfi = new TZipFileInfo; memcpy(pzfi,&zfi,sizeof(zfi));
-	if (zfis==NULL) 
+	if (zfis== nullptr) 
 		zfis=pzfi;
 	else 
 	{
 		TZipFileInfo *z=zfis; 
-		while (z->nxt!=NULL) 
+		while (z->nxt!= nullptr) 
 			z=z->nxt; 
 		z->nxt=pzfi;
 	}
@@ -954,7 +954,7 @@ ZRESULT TZip::AddCentral()
 	ulg pos_at_start_of_central = writ;
 	//ulg tot_unc_size=0, tot_compressed_size=0;
 	bool okay=true;
-	for (TZipFileInfo *zfi=zfis; zfi!=NULL; )
+	for (TZipFileInfo *zfi=zfis; zfi!= nullptr; )
 	{
 		if (okay)
 		{

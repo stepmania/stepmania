@@ -757,7 +757,7 @@ void Sprite::SetSecondsIntoAnimation( float fSeconds )
 
 RString	Sprite::GetTexturePath() const
 {
-	if( m_pTexture==NULL )
+	if( m_pTexture== nullptr )
 		return RString();
 
 	return m_pTexture->GetID().filename;

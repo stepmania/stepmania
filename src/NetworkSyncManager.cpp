@@ -338,11 +338,11 @@ void NetworkSyncManager::StartRequest( short position )
 
 	Steps * tSteps;
 	tSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
-	if( tSteps!=NULL && GAMESTATE->IsPlayerEnabled(PLAYER_1) )
+	if( tSteps!= nullptr && GAMESTATE->IsPlayerEnabled(PLAYER_1) )
 		ctr = uint8_t(ctr+tSteps->GetMeter()*16);
 
 	tSteps = GAMESTATE->m_pCurSteps[PLAYER_2];
-	if( tSteps!=NULL && GAMESTATE->IsPlayerEnabled(PLAYER_2) )
+	if( tSteps!= nullptr && GAMESTATE->IsPlayerEnabled(PLAYER_2) )
 		ctr = uint8_t( ctr+tSteps->GetMeter() );
 
 	m_packet.Write1( ctr );
@@ -350,11 +350,11 @@ void NetworkSyncManager::StartRequest( short position )
 	ctr=0;
 
 	tSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
-	if( tSteps!=NULL && GAMESTATE->IsPlayerEnabled(PLAYER_1) )
+	if( tSteps!= nullptr && GAMESTATE->IsPlayerEnabled(PLAYER_1) )
 		ctr = uint8_t( ctr + (int)tSteps->GetDifficulty()*16 );
 
 	tSteps = GAMESTATE->m_pCurSteps[PLAYER_2];
-	if( tSteps!=NULL && GAMESTATE->IsPlayerEnabled(PLAYER_2) )
+	if( tSteps!= nullptr && GAMESTATE->IsPlayerEnabled(PLAYER_2) )
 		ctr = uint8_t( ctr + (int)tSteps->GetDifficulty() );
 
 	m_packet.Write1( ctr );

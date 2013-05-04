@@ -772,7 +772,7 @@ void Profile::IncrementCategoryPlayCount( StepsType st, RankingCategory rc )
 #define WARN_AND_BREAK_M(m) { WARN_M(m); break; }
 #define LOAD_NODE(X)	{ \
 	const XNode* X = xml->GetChild(#X); \
-	if( X==NULL ) LOG->Warn("Failed to read section " #X); \
+	if( X== nullptr ) LOG->Warn("Failed to read section " #X); \
 	else Load##X##FromNode(X); }
 
 ProfileLoadResult Profile::LoadAllFromDir( RString sDir, bool bRequireSignature )

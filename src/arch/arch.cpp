@@ -196,7 +196,7 @@ RageMovieTexture *MakeRageMovieTexture( RageTextureID ID )
 	RString Driver;
 	RageMovieTexture *ret = NULL;
 
-	for( unsigned i=0; ret==NULL && i<DriversToTry.size(); ++i )
+	for( unsigned i=0; ret== nullptr && i<DriversToTry.size(); ++i )
 	{
 		Driver = DriversToTry[i];
 		LOG->Trace( "Initializing driver: %s", Driver.c_str() );

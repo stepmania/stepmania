@@ -98,14 +98,14 @@ public:
 	const XNodeValue *GetAttr( const RString &sAttrName ) const; 
 	XNodeValue *GetAttr( const RString &sAttrName ); 
 	template <typename T>
-	bool GetAttrValue( const RString &sName, T &out ) const	{ const XNodeValue *pAttr=GetAttr(sName); if(pAttr==NULL) return false; pAttr->GetValue(out); return true; }
+	bool GetAttrValue( const RString &sName, T &out ) const	{ const XNodeValue *pAttr=GetAttr(sName); if(pAttr== nullptr) return false; pAttr->GetValue(out); return true; }
 	bool PushAttrValue( lua_State *L, const RString &sName ) const;
 
 	// in one level child nodes
 	const XNode *GetChild( const RString &sName ) const;
 	XNode *GetChild( const RString &sName );
 	template <typename T>
-	bool GetChildValue( const RString &sName, T &out ) const { const XNode *pChild=GetChild(sName); if(pChild==NULL) return false; pChild->GetTextValue(out); return true; }
+	bool GetChildValue( const RString &sName, T &out ) const { const XNode *pChild=GetChild(sName); if(pChild== nullptr) return false; pChild->GetTextValue(out); return true; }
 	bool PushChildValue( lua_State *L, const RString &sName ) const;
 
 	// modify DOM

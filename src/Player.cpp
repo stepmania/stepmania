@@ -799,7 +799,7 @@ void Player::Update( float fDeltaTime )
 
 	//LOG->Trace( "Player::Update(%f)", fDeltaTime );
 
-	if( GAMESTATE->m_pCurSong==NULL || IsOniDead() )
+	if( GAMESTATE->m_pCurSong== nullptr || IsOniDead() )
 		return;
 
 	ActorFrame::Update( fDeltaTime );
