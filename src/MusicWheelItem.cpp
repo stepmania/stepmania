@@ -145,7 +145,7 @@ MusicWheelItem::MusicWheelItem( const MusicWheelItem &cpy ):
 
 	FOREACH_ENUM( MusicWheelItemType, i )
 	{
-		if( cpy.m_pText[i] == NULL )
+		if( cpy.m_pText[i] == nullptr )
 		{
 			m_pText[i] = NULL;
 		}
@@ -307,13 +307,13 @@ void MusicWheelItem::RefreshGrades()
 {
 	const MusicWheelItemData *pWID = dynamic_cast<const MusicWheelItemData*>( m_pData );
 
-	if( pWID == NULL )
+	if( pWID == nullptr )
 		return; // LoadFromWheelItemData() hasn't been called yet.
 	FOREACH_HumanPlayer( p )
 	{
 		m_pGradeDisplay[p]->SetVisible( false );
 
-		if( pWID->m_pSong == NULL && pWID->m_pCourse == NULL )
+		if( pWID->m_pSong == nullptr && pWID->m_pCourse == nullptr )
 			continue;
 
 		Difficulty dc;

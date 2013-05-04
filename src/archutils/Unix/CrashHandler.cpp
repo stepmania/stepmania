@@ -30,7 +30,7 @@ static void safe_print( int fd, ... )
 	while( true )
 	{
 		const char *p = va_arg( ap, const char * );
-		if( p == NULL )
+		if( p == nullptr )
 			break;
 		size_t len = strlen( p );
 		while( len )
@@ -203,7 +203,7 @@ static void parent_process( int to_child, const CrashData *crash )
 
 static void RunCrashHandler( const CrashData *crash )
 {
-	if( g_pCrashHandlerArgv0 == NULL )
+	if( g_pCrashHandlerArgv0 == nullptr )
 	{
 		safe_print( fileno(stderr), "Crash handler failed: CrashHandlerHandleArgs was not called\n", NULL );
 		_exit( 1 );

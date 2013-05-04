@@ -14,7 +14,7 @@ static CFOptionFlags ShowAlert( CFOptionFlags flags, const RString& sMessage, CF
 	CFOptionFlags result;
 	CFStringRef text = CFStringCreateWithCString( NULL, sMessage, kCFStringEncodingUTF8 );
 
-	if( text == NULL )
+	if( text == nullptr )
 	{
 		RString error = ssprintf( "CFString for dialog string \"%s\" could not be created.", sMessage.c_str() );
 		WARN( error );

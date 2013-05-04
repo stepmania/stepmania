@@ -35,7 +35,7 @@ static UINT g_iQueryCancelAutoPlayMessage = 0;
 static RString GetNewWindow()
 {
 	HWND h = GetForegroundWindow();
-	if( h == NULL )
+	if( h == nullptr )
 		return "(NULL)";
 
 	DWORD iProcessID;
@@ -277,14 +277,14 @@ void GraphicsWindow::CreateGraphicsWindow( const VideoModeParams &p, bool bForce
 	// Adjust g_CurrentParams to reflect the actual display settings.
 	AdjustVideoModeParams( g_CurrentParams );
 
-	if( g_hWndMain == NULL || bForceRecreateWindow )
+	if( g_hWndMain == nullptr || bForceRecreateWindow )
 	{
 		int iWindowStyle = GetWindowStyle( p.windowed );
 
 		AppInstance inst;
 		HWND hWnd = CreateWindow( g_sClassName, "app", iWindowStyle,
 						0, 0, 0, 0, NULL, NULL, inst, NULL );
-		if( hWnd == NULL )
+		if( hWnd == nullptr )
 			RageException::Throw( "%s", werr_ssprintf( GetLastError(), "CreateWindow" ).c_str() );
 
 		/* If an old window exists, transfer focus to the new window before

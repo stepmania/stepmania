@@ -21,10 +21,10 @@ BOOL APIENTRY WindowsDialogBox::DlgProc( HWND hDlg, UINT msg, WPARAM wParam, LPA
 		SetProp( hDlg, "WindowsDialogBox", (HANDLE) lParam );
 
 	WindowsDialogBox *pThis = (WindowsDialogBox *) GetProp( hDlg, "WindowsDialogBox" );
-	if( pThis == NULL )
+	if( pThis == nullptr )
 		return FALSE;
 
-	if( pThis->m_hWnd == NULL )
+	if( pThis->m_hWnd == nullptr )
 		pThis->m_hWnd = hDlg;
 
 	return pThis->HandleMessage( msg, wParam, lParam );

@@ -68,7 +68,7 @@ void GrooveRadar::SetFromRadarValues( PlayerNumber pn, const RadarValues &rv )
 
 void GrooveRadar::SetFromSteps( PlayerNumber pn, Steps* pSteps ) // NULL means no Song
 {
-	if( pSteps == NULL )
+	if( pSteps == nullptr )
 	{
 		m_GrooveRadarValueMap[pn].SetEmpty();
 		return;

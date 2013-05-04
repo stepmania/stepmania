@@ -298,7 +298,7 @@ bool MusicWheel::SelectSection( const RString & SectionName )
 
 bool MusicWheel::SelectSong( const Song *p )
 {
-	if( p == NULL )
+	if( p == nullptr )
 		return false;
 
 	unsigned i;
@@ -326,7 +326,7 @@ bool MusicWheel::SelectSong( const Song *p )
 
 bool MusicWheel::SelectCourse( const Course *p )
 {
-	if( p == NULL )
+	if( p == nullptr )
 		return false;
 
 	unsigned i;

@@ -257,7 +257,7 @@ static ThreadedMemoryCardWorker *g_pWorker = NULL;
 
 MemoryCardManager::MemoryCardManager()
 {
-	ASSERT( g_pWorker == NULL );
+	ASSERT( g_pWorker == nullptr );
 
 	// Register with Lua.
 	{
@@ -608,7 +608,7 @@ bool MemoryCardManager::MountCard( PlayerNumber pn, int iTimeout )
 	m_bMounted[pn] = true;
 
 	RageFileDriver *pDriver = FILEMAN->GetFileDriver( MEM_CARD_MOUNT_POINT_INTERNAL[pn] );
-	if( pDriver == NULL )
+	if( pDriver == nullptr )
 	{
 		LOG->Warn( "FILEMAN->GetFileDriver(%s) failed", MEM_CARD_MOUNT_POINT_INTERNAL[pn].c_str() );
 		return true;

@@ -60,7 +60,7 @@ static HKEY OpenRegKey( const RString &sKey, RegKeyMode mode, bool bWarnOnError 
 bool RegistryAccess::GetRegValue( const RString &sKey, const RString &sName, RString &sVal )
 {
 	HKEY hKey = OpenRegKey( sKey, READ );
-	if( hKey == NULL )
+	if( hKey == nullptr )
 		return false;
 
 	char sBuffer[MAX_PATH];
@@ -86,7 +86,7 @@ bool RegistryAccess::GetRegValue( const RString &sKey, const RString &sName, RSt
 bool RegistryAccess::GetRegValue( const RString &sKey, const RString &sName, int &iVal, bool bWarnOnError )
 {
 	HKEY hKey = OpenRegKey( sKey, READ, bWarnOnError );
-	if( hKey == NULL )
+	if( hKey == nullptr )
 		return false;
 
 	DWORD iValue;
@@ -115,7 +115,7 @@ bool RegistryAccess::GetRegValue( const RString &sKey, const RString &sName, boo
 bool RegistryAccess::GetRegSubKeys( const RString &sKey, vector<RString> &lst, const RString &regex, bool bReturnPathToo )
 {
 	HKEY hKey = OpenRegKey( sKey, READ );
-	if( hKey == NULL )
+	if( hKey == nullptr )
 		return false;
 
 	Regex re(regex);
@@ -155,7 +155,7 @@ bool RegistryAccess::GetRegSubKeys( const RString &sKey, vector<RString> &lst, c
 bool RegistryAccess::SetRegValue( const RString &sKey, const RString &sName, const RString &sVal )
 {
 	HKEY hKey = OpenRegKey( sKey, WRITE );
-	if( hKey == NULL )
+	if( hKey == nullptr )
 		return false;
 
 	bool bSuccess = true;
@@ -177,7 +177,7 @@ bool RegistryAccess::SetRegValue( const RString &sKey, const RString &sName, con
 bool RegistryAccess::SetRegValue( const RString &sKey, const RString &sName, bool bVal )
 {
 	HKEY hKey = OpenRegKey( sKey, WRITE );
-	if( hKey == NULL )
+	if( hKey == nullptr )
 		return false;
 
 	bool bSuccess = true;

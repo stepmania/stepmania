@@ -368,7 +368,7 @@ void NoteField::DrawBoard( int iDrawDistanceAfterTargetsPixels, int iDrawDistanc
 
 	// todo: make this an AutoActor instead? -aj
 	Sprite *pSprite = dynamic_cast<Sprite *>( (Actor*)m_sprBoard );
-	if( pSprite == NULL )
+	if( pSprite == nullptr )
 		RageException::Throw( "Board must be a Sprite" );
 
 	RectF rect = *pSprite->GetCurrentTextureCoordRect();

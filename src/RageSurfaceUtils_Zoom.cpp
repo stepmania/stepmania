@@ -135,7 +135,7 @@ void RageSurfaceUtils::Zoom( RageSurface *&src, int dstwidth, int dstheight )
 {
 	ASSERT_M( dstwidth > 0, ssprintf("%i",dstwidth) );
 	ASSERT_M( dstheight > 0, ssprintf("%i",dstheight) );
-	if( src == NULL )
+	if( src == nullptr )
 		return;
 
 	if( src->w == dstwidth && src->h == dstheight )

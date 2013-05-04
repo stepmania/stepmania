@@ -255,7 +255,7 @@ static void GetFilterToFileNames( const RString sBaseDir, const Song *pSong, set
 	}
 
 	XNode *pSection = ini.GetChild( sSection );
-	if( pSection == NULL )
+	if( pSection == nullptr )
 	{
 		ASSERT_M( 0, ssprintf("File '%s' refers to a section '%s' that is missing.", sPath.c_str(), sSection.c_str()) );
 		return;

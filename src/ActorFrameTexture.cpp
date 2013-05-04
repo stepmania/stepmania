@@ -34,7 +34,7 @@ ActorFrameTexture::~ActorFrameTexture()
 
 void ActorFrameTexture::Create()
 {
-	ASSERT( m_pRenderTarget == NULL );
+	ASSERT( m_pRenderTarget == nullptr );
 	RageTextureID id( m_sTextureName );
 	id.Policy = RageTextureID::TEX_VOLATILE;
 
@@ -54,7 +54,7 @@ void ActorFrameTexture::Create()
 
 void ActorFrameTexture::DrawPrimitives()
 {
-	if( m_pRenderTarget == NULL )
+	if( m_pRenderTarget == nullptr )
 		return;
 
 	m_pRenderTarget->BeginRenderingTo( m_bPreserveTexture );
@@ -80,7 +80,7 @@ public:
 	static int GetTexture( T* p, lua_State *L )
 	{
 		RageTexture *pTexture = p->GetTexture();
-		if( pTexture == NULL )
+		if( pTexture == nullptr )
 			return 0;
 		pTexture->PushSelf(L);
 		return 1;

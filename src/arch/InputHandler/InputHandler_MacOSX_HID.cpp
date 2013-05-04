@@ -151,7 +151,7 @@ static CFDictionaryRef GetMatchingDictionary( int usagePage, int usage )
 	// Build the matching dictionary.
 	CFMutableDictionaryRef dict;
 
-	if( (dict = IOServiceMatching(kIOHIDDeviceKey)) == NULL )
+	if( (dict = IOServiceMatching(kIOHIDDeviceKey)) == nullptr )
 		FAIL_M( "Couldn't create a matching dictionary." );
 	// Refine the search by only looking for joysticks
 	CFNumberRef usagePageRef = CFInt( usagePage );

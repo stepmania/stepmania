@@ -407,7 +407,7 @@ Actor *NoteSkinManager::LoadActor( const RString &sButton, const RString &sEleme
 	}
 
 	auto_ptr<XNode> pNode( XmlFileUtil::XNodeFromTable(L) );
-	if( pNode.get() == NULL )
+	if( pNode.get() == nullptr )
 	{
 		// XNode will warn about the error
 		return new Actor;
@@ -421,7 +421,7 @@ Actor *NoteSkinManager::LoadActor( const RString &sButton, const RString &sEleme
 	{
 		// Make sure pActor is a Sprite (or something derived from Sprite).
 		Sprite *pSprite = dynamic_cast<Sprite *>( pRet );
-		if( pSprite == NULL )
+		if( pSprite == nullptr )
 			LOG->Warn( "%s: %s %s must be a Sprite", m_sCurrentNoteSkin.c_str(), sButton.c_str(), sElement.c_str() );
 	}
 

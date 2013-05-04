@@ -41,11 +41,11 @@ bool GotoURL( RString sUrl )
 		return false;
 
 	char *szPos = strstr( key, "\"%1\"" );
-	if( szPos == NULL )
+	if( szPos == nullptr )
 	{
 		// No quotes found. Check for %1 without quotes
 		szPos = strstr( key, "%1" );
-		if( szPos == NULL )
+		if( szPos == nullptr )
 			szPos = key+lstrlen(key)-1;	// No parameter.
 		else
 			*szPos = '\0';	// Remove the parameter

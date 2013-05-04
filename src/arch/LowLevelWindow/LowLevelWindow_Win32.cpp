@@ -47,8 +47,8 @@ void *LowLevelWindow_Win32::GetProcAddress( RString s )
 
 LowLevelWindow_Win32::LowLevelWindow_Win32()
 {
-	ASSERT( g_HGLRC == NULL );
-	ASSERT( g_HGLRC_Background == NULL );
+	ASSERT( g_HGLRC == nullptr );
+	ASSERT( g_HGLRC_Background == nullptr );
 
 	GraphicsWindow::Initialize( false );
 }
@@ -127,7 +127,7 @@ RString LowLevelWindow_Win32::TryVideoMode( const VideoModeParams &p, bool &bNew
 	bool bCanSetPixelFormat = true;
 
 	/* Do we have an old window? */
-	if( GraphicsWindow::GetHwnd() == NULL )
+	if( GraphicsWindow::GetHwnd() == nullptr )
 	{
 		/* No.  Always create and show the window before changing the video mode.
 		 * Otherwise, some other window may have focus, and changing the video mode will
@@ -214,17 +214,17 @@ RString LowLevelWindow_Win32::TryVideoMode( const VideoModeParams &p, bool &bNew
 		DumpPixelFormat( g_CurrentPixelFormat );
 	}
 
-	if( g_HGLRC == NULL )
+	if( g_HGLRC == nullptr )
 	{
 		g_HGLRC = wglCreateContext( GraphicsWindow::GetHDC() );
-		if ( g_HGLRC == NULL )
+		if ( g_HGLRC == nullptr )
 		{
 			DestroyGraphicsWindowAndOpenGLContext();
 			return hr_ssprintf( GetLastError(), "wglCreateContext" );
 		}
 
 		g_HGLRC_Background = wglCreateContext( GraphicsWindow::GetHDC() );
-		if( g_HGLRC_Background == NULL )
+		if( g_HGLRC_Background == nullptr )
 		{
 			DestroyGraphicsWindowAndOpenGLContext();
 			return hr_ssprintf( GetLastError(), "wglCreateContext" );

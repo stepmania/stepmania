@@ -67,7 +67,7 @@ bool RageFile::Open( const RString& path, int mode )
 	int error;
 	m_File = FILEMAN->Open( path, mode, error );
 
-	if( m_File == NULL )
+	if( m_File == nullptr )
 	{
 		SetError( strerror(error) );
 		return false;
@@ -78,7 +78,7 @@ bool RageFile::Open( const RString& path, int mode )
 
 void RageFile::Close()
 {
-	if( m_File == NULL )
+	if( m_File == nullptr )
 		return;
 	delete m_File;
 	if( m_Mode & WRITE )

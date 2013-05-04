@@ -633,7 +633,7 @@ void Player::Load()
 	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
 
 	bool bOniDead = GAMESTATE->m_SongOptions.GetStage().m_LifeType == SongOptions::LIFE_BATTERY  &&  
-		(m_pPlayerStageStats == NULL || m_pPlayerStageStats->m_bFailed);
+		(m_pPlayerStageStats == nullptr || m_pPlayerStageStats->m_bFailed);
 
 	/* The editor reuses Players ... so we really need to make sure everything
 	 * is reset and not tweening.  Perhaps ActorFrame should recurse to subactors;

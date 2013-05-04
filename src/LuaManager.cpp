@@ -230,7 +230,7 @@ static vector<RegisterWithLuaFn>	*g_vRegisterActorTypes = NULL;
 
 void LuaManager::Register( RegisterWithLuaFn pfn )
 {
-	if( g_vRegisterActorTypes == NULL )
+	if( g_vRegisterActorTypes == nullptr )
 		g_vRegisterActorTypes = new vector<RegisterWithLuaFn>;
 
 	g_vRegisterActorTypes->push_back( pfn );

@@ -175,7 +175,7 @@ bool BitmapText::LoadFromTextureAndChars( const RString& sTexturePath, const RSt
 void BitmapText::BuildChars()
 {
 	// If we don't have a font yet, we'll do this when it loads.
-	if( m_pFont == NULL )
+	if( m_pFont == nullptr )
 		return;
 
 	// calculate line lengths and widths

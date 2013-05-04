@@ -88,7 +88,7 @@ bool GameCommand::DescribesCurrentMode( PlayerNumber pn ) const
 	// HACK: don't compare m_dc if m_pSteps is set.  This causes problems 
 	// in ScreenSelectOptionsMaster::ImportOptions if m_PreferredDifficulty 
 	// doesn't match the difficulty of m_pCurSteps.
-	if( m_pSteps == NULL  &&  m_dc != Difficulty_Invalid )
+	if( m_pSteps == nullptr  &&  m_dc != Difficulty_Invalid )
 	{
 		// Why is this checking for all players?
 		FOREACH_HumanPlayer( human )
@@ -244,7 +244,7 @@ void GameCommand::LoadOne( const Command& cmd )
 	else if( sName == "song" )
 	{
 		m_pSong = SONGMAN->FindSong( sValue );
-		if( m_pSong == NULL )
+		if( m_pSong == nullptr )
 		{
 			m_sInvalidReason = ssprintf( "Song \"%s\" not found", sValue.c_str() );
 			m_bInvalid |= true;
@@ -260,7 +260,7 @@ void GameCommand::LoadOne( const Command& cmd )
 		{
 			Song *pSong = (m_pSong != nullptr)? m_pSong:GAMESTATE->m_pCurSong;
 			const Style *pStyle = m_pStyle ? m_pStyle : GAMESTATE->GetCurrentStyle();
-			if( pSong == NULL || pStyle == NULL )
+			if( pSong == nullptr || pStyle == nullptr )
 				RageException::Throw( "Must set Song and Style to set Steps." );
 
 			Difficulty dc = StringToDifficulty( sSteps );
@@ -268,7 +268,7 @@ void GameCommand::LoadOne( const Command& cmd )
 				m_pSteps = SongUtil::GetStepsByDifficulty( pSong, pStyle->m_StepsType, dc );
 			else
 				m_pSteps = SongUtil::GetStepsByDescription( pSong, pStyle->m_StepsType, sSteps );
-			if( m_pSteps == NULL )
+			if( m_pSteps == nullptr )
 			{
 				m_sInvalidReason = "steps not found";
 				m_bInvalid |= true;
@@ -279,7 +279,7 @@ void GameCommand::LoadOne( const Command& cmd )
 	else if( sName == "course" )
 	{
 		m_pCourse = SONGMAN->FindCourse( "", sValue );
-		if( m_pCourse == NULL )
+		if( m_pCourse == nullptr )
 		{
 			m_sInvalidReason = ssprintf( "Course \"%s\" not found", sValue.c_str() );
 			m_bInvalid |= true;
@@ -295,14 +295,14 @@ void GameCommand::LoadOne( const Command& cmd )
 		{
 			Course *pCourse = (m_pCourse != nullptr)? m_pCourse:GAMESTATE->m_pCurCourse;
 			const Style *pStyle = m_pStyle ? m_pStyle : GAMESTATE->GetCurrentStyle();
-			if( pCourse == NULL || pStyle == NULL )
+			if( pCourse == nullptr || pStyle == nullptr )
 				RageException::Throw( "Must set Course and Style to set Steps." );
 
 			const CourseDifficulty cd = StringToDifficulty( sTrail );
 			ASSERT_M( cd != Difficulty_Invalid, ssprintf("Invalid difficulty '%s'", sTrail.c_str()) );
 
 			m_pTrail = pCourse->GetTrail( pStyle->m_StepsType, cd );
-			if( m_pTrail == NULL )
+			if( m_pTrail == nullptr )
 			{
 				m_sInvalidReason = "trail not found";
 				m_bInvalid |= true;
@@ -389,7 +389,7 @@ void GameCommand::LoadOne( const Command& cmd )
 		if( cmd.m_vsArgs.size() == 3 )
 		{
 			IPreference *pPref = IPreference::GetPreferenceByName( cmd.m_vsArgs[1] );
-			if( pPref == NULL )
+			if( pPref == nullptr )
 			{
 				m_sInvalidReason = ssprintf("unknown preference \"%s\"", cmd.m_vsArgs[1].c_str() );
 				m_bInvalid |= true;
@@ -418,7 +418,7 @@ void GameCommand::LoadOne( const Command& cmd )
 
 static bool AreStyleAndPlayModeCompatible( const Style *style, PlayMode pm )
 {
-	if( style == NULL || pm == PlayMode_Invalid )
+	if( style == nullptr || pm == PlayMode_Invalid )
 		return true;
 
 	switch( pm )

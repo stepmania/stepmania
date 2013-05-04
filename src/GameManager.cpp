@@ -3029,15 +3029,15 @@ void GameManager::GetEnabledGames( vector<const Game*>& aGamesOut )
 const Game* GameManager::GetDefaultGame()
 {
 	const Game *pDefault = NULL;
-	if( pDefault == NULL )
+	if( pDefault == nullptr )
 	{
-		for( size_t i=0; pDefault == NULL && i < ARRAYLEN(g_Games); ++i )
+		for( size_t i=0; pDefault == nullptr && i < ARRAYLEN(g_Games); ++i )
 		{
 			if( IsGameEnabled(g_Games[i]) )
 				pDefault = g_Games[i];
 		}
 
-		if( pDefault == NULL )
+		if( pDefault == nullptr )
 			RageException::Throw( "No NoteSkins found" );
 	}
 	

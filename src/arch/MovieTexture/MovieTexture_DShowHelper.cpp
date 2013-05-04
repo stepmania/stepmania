@@ -69,7 +69,7 @@ void CTextureRenderer::SetRenderTarget( MovieTexture_DShow* pTexture )
 // DoRenderSample: A sample has been delivered. Copy it.
 HRESULT CTextureRenderer::DoRenderSample( IMediaSample * pSample )
 {
-	if( m_pTexture == NULL )
+	if( m_pTexture == nullptr )
 	{
 		LOG->Warn( "DoRenderSample called while m_pTexture was NULL!" );
 		return S_OK;

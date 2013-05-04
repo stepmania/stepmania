@@ -44,7 +44,7 @@ LightsDriver_Win32Parallel::LightsDriver_Win32Parallel()
 {
 	// init io.dll
 	hDLL = LoadLibrary("parallel_lights_io.dll");
-	if(hDLL == NULL)
+	if(hDLL == nullptr)
 	{
 		MessageBox(NULL, "Could not LoadLibrary( parallel_lights_io.dll ).", "ERROR", MB_OK );
 		return;

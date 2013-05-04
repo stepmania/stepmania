@@ -41,7 +41,7 @@ void PercentageDisplay::LoadFromNode( const XNode* pNode )
 	}
 
 	const XNode *pChild = pNode->GetChild( "Percent" );
-	if( pChild == NULL )
+	if( pChild == nullptr )
 		RageException::Throw( "%s: PercentageDisplay: missing the node \"Percent\"", ActorUtil::GetWhere(pNode).c_str() );
 	m_textPercent.LoadFromNode( pChild );
 	this->AddChild( &m_textPercent );

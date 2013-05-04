@@ -17,21 +17,21 @@ public:
 	// impossible to enfore that in C++.  Instead, we'll allocate the 
 	// collection ourself on first use.  SubscriptionHandler itself is
 	// a POD type, so a static SubscriptionHandler will always have
-	// m_pSubscribers == NULL (before any static constructors are called).
+	// m_pSubscribers == nullptr (before any static constructors are called).
 	set<T*>* m_pSubscribers;
 
 	// Use this to access m_pSubscribers, so you don't have to worry about
 	// it being NULL.
 	set<T*> &Get()
 	{
-		if( m_pSubscribers == NULL )
+		if( m_pSubscribers == nullptr )
 			m_pSubscribers = new set<T*>;
 		return *m_pSubscribers;
 	}
 
 	void Subscribe( T* p )
 	{
-		if( m_pSubscribers == NULL )
+		if( m_pSubscribers == nullptr )
 			m_pSubscribers = new set<T*>;
 #ifdef DEBUG
 		typename set<T*>::iterator iter = m_pSubscribers->find( p );

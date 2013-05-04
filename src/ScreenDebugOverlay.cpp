@@ -58,7 +58,7 @@ class IDebugLine
 public:
 	IDebugLine()
 	{ 
-		if( g_pvpSubscribers == NULL )
+		if( g_pvpSubscribers == nullptr )
 			g_pvpSubscribers = new vector<IDebugLine*>;
 		g_pvpSubscribers->push_back( this );
 	}

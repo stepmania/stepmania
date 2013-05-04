@@ -97,7 +97,7 @@ void ThreadSlot::ThreadCheckpoint::Set( const char *szFile, int iLine, const cha
 	if( m_szFile != nullptr )
 	{
 		const char *p = strrchr( m_szFile, '/' );
-		if( p == NULL )
+		if( p == nullptr )
 			p = strrchr( m_szFile, '\\' );
 		if( p != nullptr && p[1] != '\0' )
 			m_szFile = p+1;
@@ -108,7 +108,7 @@ void ThreadSlot::ThreadCheckpoint::Set( const char *szFile, int iLine, const cha
 
 const char *ThreadSlot::ThreadCheckpoint::GetFormattedCheckpoint()
 {
-	if( m_szFile == NULL )
+	if( m_szFile == nullptr )
 		return NULL;
 
 	/* Make sure it's terminated: */
@@ -231,7 +231,7 @@ const char *ThreadSlot::GetThreadName() const
 void RageThread::Create( int (*fn)(void *), void *data )
 {
 	/* Don't create a thread that's already running: */
-	ASSERT( m_pSlot == NULL );
+	ASSERT( m_pSlot == nullptr );
 
 	InitThreads();
 
@@ -286,7 +286,7 @@ const char *RageThread::GetCurrentThreadName()
 const char *RageThread::GetThreadNameByID( uint64_t iID )
 {
 	ThreadSlot *slot = GetThreadSlotFromID( iID );
-	if( slot == NULL )
+	if( slot == nullptr )
 		return "???";
 
 	return slot->GetThreadName();
@@ -341,7 +341,7 @@ void RageThread::HaltAllThreads( bool Kill )
 	{
 		if( !g_ThreadSlots[entry].m_bUsed )
 			continue;
-		if( ThisThreadID == g_ThreadSlots[entry].m_iID || g_ThreadSlots[entry].m_pImpl == NULL )
+		if( ThisThreadID == g_ThreadSlots[entry].m_iID || g_ThreadSlots[entry].m_pImpl == nullptr )
 			continue;
 		g_ThreadSlots[entry].m_pImpl->Halt( Kill );
 	}
@@ -354,7 +354,7 @@ void RageThread::ResumeAllThreads()
 	{
 		if( !g_ThreadSlots[entry].m_bUsed )
 			continue;
-		if( ThisThreadID == g_ThreadSlots[entry].m_iID || g_ThreadSlots[entry].m_pImpl == NULL )
+		if( ThisThreadID == g_ThreadSlots[entry].m_iID || g_ThreadSlots[entry].m_pImpl == nullptr )
 			continue;
 
 		g_ThreadSlots[entry].m_pImpl->Resume();
@@ -381,10 +381,10 @@ void Checkpoints::LogCheckpoints( bool on )
 void Checkpoints::SetCheckpoint( const char *file, int line, const char *message )
 {
 	ThreadSlot *slot = GetCurThreadSlot();
-	if( slot == NULL )
+	if( slot == nullptr )
 		slot = GetUnknownThreadSlot();
 	/* We can't ASSERT here, since that uses checkpoints. */
-	if( slot == NULL )
+	if( slot == nullptr )
 		sm_crash( "GetUnknownThreadSlot() returned NULL" );
 	
 	/* Ignore everything up to and including the first "src/". */
@@ -409,7 +409,7 @@ static const char *GetCheckpointLog( int slotno, int lineno )
 		return NULL;
 
 	/* Only show the "Unknown thread" entry if it has at least one checkpoint. */
-	if( &slot == g_pUnknownThreadSlot && slot.GetFormattedCheckpoint(0) == NULL )
+	if( &slot == g_pUnknownThreadSlot && slot.GetFormattedCheckpoint(0) == nullptr )
 		return NULL;
 
 	if( lineno != 0 )
@@ -427,7 +427,7 @@ void Checkpoints::GetLogs( char *pBuf, int iSize, const char *delim )
 	for( int slotno = 0; slotno < MAX_THREADS; ++slotno )
 	{
 		const char *buf = GetCheckpointLog( slotno, 0 );
-		if( buf == NULL )
+		if( buf == nullptr )
 			continue;
 		strcat( pBuf, buf );
 		strcat( pBuf, delim );
@@ -529,7 +529,7 @@ RageMutex::RageMutex( const RString &name ):
 	m_LockedBy(GetInvalidThreadId()), m_LockCnt(0)
 {
 
-/*	if( g_FreeMutexIDs == NULL )
+/*	if( g_FreeMutexIDs == nullptr )
 	{
 		g_FreeMutexIDs = new set<int>;
 		for( int i = 0; i < MAX_MUTEXES; ++i )
@@ -554,7 +554,7 @@ RageMutex::RageMutex( const RString &name ):
 
 	g_FreeMutexIDs->erase( g_FreeMutexIDs->begin() );
 
-	if( g_MutexList == NULL )
+	if( g_MutexList == nullptr )
 		g_MutexList = new vector<RageMutex*>;
 
 	g_MutexList->push_back( this );

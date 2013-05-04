@@ -219,7 +219,7 @@ void MovieTexture_DShow::Reload()
  * and is waiting for us to do something with it. */
 void MovieTexture_DShow::CheckFrame()
 {
-	if(buffer == NULL)
+	if(buffer == nullptr)
 		return;
 
 	CHECKPOINT;
@@ -440,7 +440,7 @@ void MovieTexture_DShow::NewData(const char *data)
 
 	buffer_finished.Wait();
 
-	ASSERT( buffer == NULL );
+	ASSERT( buffer == nullptr );
 
 	buffer_lock.Post();
 }

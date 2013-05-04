@@ -79,7 +79,7 @@ void ArchHooks_MacOSX::Init()
 
 	CFBundleRef bundle = CFBundleGetMainBundle();
 	CFStringRef appID = CFBundleGetIdentifier( bundle );
-	if( appID == NULL )
+	if( appID == nullptr )
 	{
 		// We were probably launched through a symlink. Don't bother hunting down the real path.
 		return;
@@ -287,18 +287,18 @@ void ArchHooks_MacOSX::DumpDebugInfo()
 		sModel = szModel;
 		CFURLRef urlRef = CFBundleCopyResourceURL( CFBundleGetMainBundle(), CFSTR("Hardware.plist"), NULL, NULL );
 
-		if( urlRef == NULL )
+		if( urlRef == nullptr )
 			break;
 		CFDataRef dataRef = NULL;
 		SInt32 error;
 		CFURLCreateDataAndPropertiesFromResource( NULL, urlRef, &dataRef, NULL, NULL, &error );
 		CFRelease( urlRef );
-		if( dataRef == NULL )
+		if( dataRef == nullptr )
 			break;
 		// This also works with binary property lists for some reason.
 		CFPropertyListRef plRef = CFPropertyListCreateFromXMLData( NULL, dataRef, kCFPropertyListImmutable, NULL );
 		CFRelease( dataRef );
-		if( plRef == NULL )
+		if( plRef == nullptr )
 			break;
 		if( CFGetTypeID(plRef) != CFDictionaryGetTypeID() )
 		{
@@ -327,7 +327,7 @@ RString ArchHooks::GetPreferredLanguage()
 	CFTypeRef t = CFPreferencesCopyAppValue( CFSTR("AppleLanguages"), app );
 	RString ret = "en";
 
-	if( t == NULL )
+	if( t == nullptr )
 		return ret;
 	if( CFGetTypeID(t) != CFArrayGetTypeID() )
 	{

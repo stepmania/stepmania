@@ -101,10 +101,10 @@ RString UnlockManager::FindEntryID( const RString &sName ) const
 	if( pCourse != nullptr )
 		pEntry = FindCourse( pCourse );
 	
-	if( pEntry == NULL )
+	if( pEntry == nullptr )
 		pEntry = FindModifier( sName );
 
-	if( pEntry == NULL )
+	if( pEntry == nullptr )
 	{
 		LOG->Warn( "Couldn't find locked entry \"%s\"", sName.c_str() );
 		return "";
@@ -120,7 +120,7 @@ int UnlockManager::CourseIsLocked( const Course *pCourse ) const
 	if( PREFSMAN->m_bUseUnlockSystem )
 	{
 		const UnlockEntry *p = FindCourse( pCourse );
-		if( p == NULL )
+		if( p == nullptr )
 			return false;
 		if( p->IsLocked() )
 			iRet |= LOCKED_LOCK;
@@ -130,7 +130,7 @@ int UnlockManager::CourseIsLocked( const Course *pCourse ) const
 	for (CourseEntry const &ce : pCourse->m_vEntries)
 	{
 		const Song *pSong = ce.songID.ToSong();
-		if( pSong == NULL )
+		if( pSong == nullptr )
 			continue;
 		int iSongLock = SongIsLocked( pSong );
 		if( iSongLock & LOCKED_DISABLED )
@@ -168,7 +168,7 @@ bool UnlockManager::StepsIsLocked( const Song *pSong, const Steps *pSteps ) cons
 		return false;
 
 	const UnlockEntry *p = FindSteps( pSong, pSteps );
-	if( p == NULL )
+	if( p == nullptr )
 		return false;
 
 	return p->IsLocked();
@@ -180,7 +180,7 @@ bool UnlockManager::StepsTypeIsLocked(const Song *pSong, const Steps *pSteps, co
 		return false;
 	
 	const UnlockEntry *p = FindStepsType( pSong, pSteps, pSType );
-	if( p == NULL )
+	if( p == nullptr )
 		return false;
 	
 	return p->IsLocked();
@@ -192,7 +192,7 @@ bool UnlockManager::ModifierIsLocked( const RString &sOneMod ) const
 		return false;
 
 	const UnlockEntry *p = FindModifier( sOneMod );
-	if( p == NULL )
+	if( p == nullptr )
 		return false;
 
 	return p->IsLocked();
@@ -515,11 +515,11 @@ void UnlockManager::Load()
 		for (Song const *s : SONGMAN->GetAllSongs())
 		{
 			// If no hard steps to play to unlock, skip
-			if( SongUtil::GetOneSteps(s, StepsType_Invalid, Difficulty_Hard) == NULL )
+			if( SongUtil::GetOneSteps(s, StepsType_Invalid, Difficulty_Hard) == nullptr )
 				continue;
 			
 			// If no challenge steps to unlock, skip
-			if( SongUtil::GetOneSteps(s, StepsType_Invalid, Difficulty_Challenge) == NULL )
+			if( SongUtil::GetOneSteps(s, StepsType_Invalid, Difficulty_Challenge) == nullptr )
 				continue;
 
 			if( SONGS_NOT_ADDITIONAL && SONGMAN->WasLoadedFromAdditionalSongs(s) )
@@ -540,11 +540,11 @@ void UnlockManager::Load()
 		for (Song const *s : SONGMAN->GetAllSongs())
 		{
 			// no challenge steps to play: skip.
-			if (SongUtil::GetOneSteps(s, StepsType_Invalid, Difficulty_Challenge) == NULL)
+			if (SongUtil::GetOneSteps(s, StepsType_Invalid, Difficulty_Challenge) == nullptr)
 				continue;
 			
 			// no edit steps to unlock: skip.
-			if (SongUtil::GetOneSteps(s, StepsType_Invalid, Difficulty_Edit) == NULL)
+			if (SongUtil::GetOneSteps(s, StepsType_Invalid, Difficulty_Edit) == nullptr)
 				continue;
 			
 			// don't add additional songs.

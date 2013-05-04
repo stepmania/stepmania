@@ -218,7 +218,7 @@ using namespace ScreenManagerUtil;
 
 RegisterScreenClass::RegisterScreenClass( const RString& sClassName, CreateScreenFn pfn )
 {
-	if( g_pmapRegistrees == NULL )
+	if( g_pmapRegistrees == nullptr )
 		g_pmapRegistrees = new map<RString,CreateScreenFn>;
 
 	map<RString,CreateScreenFn>::iterator iter = g_pmapRegistrees->find( sClassName );
@@ -573,7 +573,7 @@ void ScreenManager::PrepareScreen( const RString &sScreenName )
 
 		// Create the new background before deleting the previous so that we keep
 		// any common textures loaded.
-		if( pNewBGA == NULL )
+		if( pNewBGA == nullptr )
 		{
 			LOG->Trace( "Loading screen background \"%s\"", sNewBGA.c_str() );
 			Actor *pActor = ActorUtil::MakeActor( sNewBGA );
@@ -615,7 +615,7 @@ bool ScreenManager::ActivatePreparedScreenAndBackground( const RString &sScreenN
 	bool bLoadedBoth = true;
 
 	// Find the prepped screen.
-	if( GetTopScreen() == NULL || GetTopScreen()->GetName() != sScreenName )
+	if( GetTopScreen() == nullptr || GetTopScreen()->GetName() != sScreenName )
 	{
 		LoadedScreen ls;
 		if( !GetPreppedScreen(sScreenName, ls) )
@@ -652,7 +652,7 @@ bool ScreenManager::ActivatePreparedScreenAndBackground( const RString &sScreenN
 
 		/* If the BGA isn't loaded yet, load a dummy actor. If we're not going to use the same
 		 * BGA for the new screen, always move the old BGA back to g_vPreparedBackgrounds now. */
-		if( pNewBGA == NULL )
+		if( pNewBGA == nullptr )
 		{
 			bLoadedBoth = false;
 			pNewBGA = new Actor;

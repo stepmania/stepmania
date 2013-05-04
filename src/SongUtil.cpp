@@ -563,7 +563,7 @@ void SongUtil::SortSongPointerArrayByNumPlays( vector<Song*> &vpSongsInOut, cons
 
 RString SongUtil::GetSectionNameFromSongAndSort( const Song* pSong, SortOrder so )
 {
-	if( pSong == NULL )
+	if( pSong == nullptr )
 		return RString();
 
 	switch( so )

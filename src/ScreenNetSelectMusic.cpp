@@ -345,7 +345,7 @@ bool ScreenNetSelectMusic::MenuDown( const InputEventPlus &input )
 		!GAMESTATE->IsPlayerEnabled( PLAYER_1 ) )
 		pn = PLAYER_2;
 
-	if( GAMESTATE->m_pCurSong == NULL )
+	if( GAMESTATE->m_pCurSong == nullptr )
 		return false;
 	StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
 	vector <Steps *> MultiSteps;
@@ -403,7 +403,7 @@ bool ScreenNetSelectMusic::MenuStart( const InputEventPlus &input )
 
 	Song * pSong = m_MusicWheel.GetSelectedSong();
 
-	if( pSong == NULL )
+	if( pSong == nullptr )
 		return false;
 
 	GAMESTATE->m_pCurSong.Set( pSong );
@@ -472,7 +472,7 @@ void ScreenNetSelectMusic::StartSelectedSong()
 
 void ScreenNetSelectMusic::UpdateDifficulties( PlayerNumber pn )
 {
-	if( GAMESTATE->m_pCurSong == NULL )
+	if( GAMESTATE->m_pCurSong == nullptr )
 	{
 		m_StepsDisplays[pn].SetFromStepsTypeAndMeterAndDifficultyAndCourseType( StepsType_Invalid, 0, Difficulty_Beginner, CourseType_Invalid ); 
 		//m_DifficultyIcon[pn].SetFromSteps( pn, NULL );	// It will blank it out 
@@ -492,7 +492,7 @@ void ScreenNetSelectMusic::UpdateDifficulties( PlayerNumber pn )
 
 void ScreenNetSelectMusic::MusicChanged()
 {
-	if( GAMESTATE->m_pCurSong == NULL )
+	if( GAMESTATE->m_pCurSong == nullptr )
 	{
 		FOREACH_EnabledPlayer (pn)
 			UpdateDifficulties( pn );

@@ -15,9 +15,9 @@ static Preference<RString>		g_XWMName( "XWMName", PRODUCT_ID );
 
 bool X11Helper::OpenXConnection()
 {
-	DEBUG_ASSERT( Dpy == NULL && Win == None );
+	DEBUG_ASSERT( Dpy == nullptr && Win == None );
 	Dpy = XOpenDisplay(0);
-	if( Dpy == NULL )
+	if( Dpy == nullptr )
 		return false;
 
 	XSetIOErrorHandler( FatalCallback );
@@ -66,7 +66,7 @@ bool X11Helper::MakeWindow( Window &win, int screenNum, int depth, Visual *visua
 		return false;
 
 	XClassHint *hint = XAllocClassHint();
-	if ( hint == NULL ) {
+	if ( hint == nullptr ) {
 		LOG->Warn("Could not set class hint for X11 Window");
 	} else {
 		hint->res_name   = (char*)g_XWMName.Get().c_str();

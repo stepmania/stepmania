@@ -482,7 +482,7 @@ void BGAnimationLayer::LoadFromNode( const XNode* pNode )
 			for( int i=0; i<iNumParticles; i++ )
 			{
 				Actor* pActor = ActorUtil::MakeActor( sFile, this );
-				if( pActor == NULL )
+				if( pActor == nullptr )
 					continue;
 				this->AddChild( pActor );
 				pActor->SetXY( randomf(float(FullScreenRectF.left),float(FullScreenRectF.right)),

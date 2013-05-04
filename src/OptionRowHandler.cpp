@@ -782,7 +782,7 @@ class OptionRowHandlerListSongsInCurrentSongGroup: public OptionRowHandlerList
 	{
 		const vector<Song*> &vpSongs = SONGMAN->GetSongs( GAMESTATE->m_sPreferredSongGroup );
 
-		if( GAMESTATE->m_pCurSong == NULL )
+		if( GAMESTATE->m_pCurSong == nullptr )
 			GAMESTATE->m_pCurSong.Set( vpSongs[0] );
 
 		m_Def.m_sName = "SongsInCurrentSongGroup";
@@ -873,7 +873,7 @@ public:
 		lua_pushstring( L, "Name" );
 		lua_gettable( L, -2 );
 		const char *pStr = lua_tostring( L, -1 );
-		if( pStr == NULL )
+		if( pStr == nullptr )
 			RageException::Throw( "\"%s\" \"Name\" entry is not a string.", sLuaFunction.c_str() );
 		m_Def.m_sName = pStr;
 		lua_pop( L, 1 );
@@ -891,7 +891,7 @@ public:
 		lua_pushstring( L, "LayoutType" );
 		lua_gettable( L, -2 );
 		pStr = lua_tostring( L, -1 );
-		if( pStr == NULL )
+		if( pStr == nullptr )
 			RageException::Throw( "\"%s\" \"LayoutType\" entry is not a string.", sLuaFunction.c_str() );
 		m_Def.m_layoutType = StringToLayoutType( pStr );
 		ASSERT( m_Def.m_layoutType != LayoutType_Invalid );
@@ -900,7 +900,7 @@ public:
 		lua_pushstring( L, "SelectType" );
 		lua_gettable( L, -2 );
 		pStr = lua_tostring( L, -1 );
-		if( pStr == NULL )
+		if( pStr == nullptr )
 			RageException::Throw( "\"%s\" \"SelectType\" entry is not a string.", sLuaFunction.c_str() );
 		m_Def.m_selectType = StringToSelectType( pStr );
 		ASSERT( m_Def.m_selectType != SelectType_Invalid );
@@ -917,7 +917,7 @@ public:
 		{
 			// `key' is at index -2 and `value' at index -1
 			const char *pValue = lua_tostring( L, -1 );
-			if( pValue == NULL )
+			if( pValue == nullptr )
 				RageException::Throw( "\"%s\" Column entry is not a string.", sLuaFunction.c_str() );
 //				LOG->Trace( "'%s'", pValue);
 
@@ -949,7 +949,7 @@ public:
 			{
 				// `key' is at index -2 and `value' at index -1
 				const char *pValue = lua_tostring( L, -1 );
-				if( pValue == NULL )
+				if( pValue == nullptr )
 					RageException::Throw( "\"%s\" Column entry is not a string.", sLuaFunction.c_str() );
 				LOG->Trace( "Found ReloadRowMessage '%s'", pValue);
 
@@ -1116,7 +1116,7 @@ public:
 		m_Def.m_bOneChoiceForAllPlayers = true;
 
 		ConfOption *pConfOption = ConfOption::Find( sParam );
-		if( pConfOption == NULL )
+		if( pConfOption == nullptr )
 		{
 			LOG->Warn( "Invalid Conf type \"%s\"", sParam.c_str() );
 			pConfOption = ConfOption::Find( "Invalid" );

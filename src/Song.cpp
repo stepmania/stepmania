@@ -501,7 +501,7 @@ void Song::TidyUpData( bool fromCache, bool /* duringCache */ )
 		/* XXX: Checking if the music file exists eliminates a warning
 		 * originating from BMS files (which have no music file, per se)
 		 * but it's something of a hack. */
-		if( Sample == NULL && m_sMusicFile != "" )
+		if( Sample == nullptr && m_sMusicFile != "" )
 		{
 			LOG->UserLog( "Sound file", GetMusicPath(), "couldn't be opened: %s", error.c_str() );
 
@@ -1214,7 +1214,7 @@ bool Song::HasEdits( StepsType st ) const
 
 bool Song::NormallyDisplayed() const
 {
-	return UNLOCKMAN == NULL || !UNLOCKMAN->SongIsLocked(this);
+	return UNLOCKMAN == nullptr || !UNLOCKMAN->SongIsLocked(this);
 }
 
 bool Song::ShowInDemonstrationAndRanking() const { return !IsTutorial() && NormallyDisplayed(); }

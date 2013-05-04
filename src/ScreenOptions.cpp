@@ -997,7 +997,7 @@ RString ScreenOptions::GetNextScreenForFocusedItem( PlayerNumber pn ) const
 		return RString();
 
 	const OptionRowHandler *pHand = pRow->GetHandler();
-	if( pHand == NULL )
+	if( pHand == nullptr )
 		return RString();
 	return pHand->GetScreen( iChoice );
 }

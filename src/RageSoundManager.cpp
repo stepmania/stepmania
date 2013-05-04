@@ -42,7 +42,7 @@ static LocalizedString COULDNT_FIND_SOUND_DRIVER( "RageSoundManager", "Couldn't 
 void RageSoundManager::Init()
 {
 	m_pDriver = RageSoundDriver::Create( g_sSoundDrivers );
-	if( m_pDriver == NULL )
+	if( m_pDriver == nullptr )
 		RageException::Throw( "%s", COULDNT_FIND_SOUND_DRIVER.GetValue().c_str() );
 }
 
@@ -81,7 +81,7 @@ void RageSoundManager::StopMixing( RageSoundBase *pSound )
 
 bool RageSoundManager::Pause( RageSoundBase *pSound, bool bPause )
 {
-	if( m_pDriver == NULL )
+	if( m_pDriver == nullptr )
 		return false;
 	else
 		return m_pDriver->PauseMixing( pSound, bPause );
@@ -89,7 +89,7 @@ bool RageSoundManager::Pause( RageSoundBase *pSound, bool bPause )
 
 int64_t RageSoundManager::GetPosition( RageTimer *pTimer ) const
 {
-	if( m_pDriver == NULL )
+	if( m_pDriver == nullptr )
 		return 0;
 	return m_pDriver->GetHardwareFrame( pTimer );
 }
@@ -124,7 +124,7 @@ void RageSoundManager::Update()
 
 float RageSoundManager::GetPlayLatency() const
 {
-	if( m_pDriver == NULL )
+	if( m_pDriver == nullptr )
 		return 0;
 
 	return m_pDriver->GetPlayLatency();
@@ -132,7 +132,7 @@ float RageSoundManager::GetPlayLatency() const
 
 int RageSoundManager::GetDriverSampleRate() const
 {
-	if( m_pDriver == NULL )
+	if( m_pDriver == nullptr )
 		return 44100;
 
 	return m_pDriver->GetSampleRate();

@@ -669,7 +669,7 @@ void Course::GetTrails( vector<Trail*> &AddTo, StepsType st ) const
 	FOREACH_ShownCourseDifficulty( cd )
 	{
 		Trail *pTrail = GetTrail( st, cd );
-		if( pTrail == NULL )
+		if( pTrail == nullptr )
 			continue;
 		AddTo.push_back( pTrail );
 	}
@@ -968,7 +968,7 @@ void Course::CalculateRadarValues()
 			if( AllSongsAreFixed() )
 			{
 				Trail *pTrail = GetTrail( st, cd );
-				if( pTrail == NULL )
+				if( pTrail == nullptr )
 					continue;
 				RadarValues rv = pTrail->GetRadarValues();
 				m_RadarCache[CacheEntry(st, cd)] = rv;

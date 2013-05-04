@@ -180,7 +180,7 @@ RageFileObjDirect *RageFileObjDirect::Copy() const
 	int iErr;
 	RageFileObjDirect *ret = MakeFileObjDirect( m_sPath, m_iMode, iErr );
 
-	if( ret == NULL )
+	if( ret == nullptr )
 		RageException::Throw( "Couldn't reopen \"%s\": %s", m_sPath.c_str(), strerror(iErr) );
 
 	ret->Seek( (int)lseek( m_iFD, 0, SEEK_CUR ) );

@@ -32,7 +32,7 @@ enum CourseOverviewRow
 static bool CurrentCourseIsSaved()
 {
 	Course *pCourse = GAMESTATE->m_pCurCourse;
-	if( pCourse == NULL )
+	if( pCourse == nullptr )
 		return false;
 	return !pCourse->m_sPath.empty();
 }

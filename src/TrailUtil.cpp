@@ -22,7 +22,7 @@ float TrailUtil::GetTotalSeconds( const Trail *pTrail )
 
 void TrailID::FromTrail( const Trail *p )
 {
-	if( p == NULL )
+	if( p == nullptr )
 	{
 		st = StepsType_Invalid;
 		cd = Difficulty_Invalid;
@@ -47,7 +47,7 @@ Trail *TrailID::ToTrail( const Course *p, bool bAllowNull ) const
 		m_Cache.Set( pRet );
 	}
 
-	if( !bAllowNull && pRet == NULL )
+	if( !bAllowNull && pRet == nullptr )
 		RageException::Throw( "%i, %i, \"%s\"", st, cd, p->GetDisplayFullTitle().c_str() );	
 
 	return pRet;

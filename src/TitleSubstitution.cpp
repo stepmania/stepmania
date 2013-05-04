@@ -143,7 +143,7 @@ void TitleSubst::Load(const RString &filename, const RString &section)
 	}
 
 	XNode *pGroup = xml.GetChild( section );
-	if( pGroup == NULL )
+	if( pGroup == nullptr )
 		return;
 	FOREACH_CONST_Child( pGroup, child )
 	{

@@ -73,7 +73,7 @@ static void GetFileList( const RString &sPath, vector<RString> &out )
 	out.clear();
 
 	DIR *dp = opendir( sPath );
-	if( dp == NULL )
+	if( dp == nullptr )
 		return; // false; // XXX warn
 
 	while( const struct dirent *ent = readdir(dp) )

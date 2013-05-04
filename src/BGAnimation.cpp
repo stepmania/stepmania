@@ -112,7 +112,7 @@ void BGAnimation::LoadFromAniDir( const RString &_sAniDir )
 			
 			XNode* pBGAnimation = ini.GetChild( "BGAnimation" );
 			XNode dummy( "BGAnimation" );
-			if( pBGAnimation == NULL )
+			if( pBGAnimation == nullptr )
 				pBGAnimation = &dummy;
 			
 			LoadFromNode( pBGAnimation );

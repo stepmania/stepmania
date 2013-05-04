@@ -95,7 +95,7 @@ bool GetProcessFileName( uint32_t iProcessID, RString &sName )
 	 * kernel32.lib functions. */
 	do {
 		HANDLE hSnap = CreateToolhelp32Snapshot( TH32CS_SNAPMODULE, iProcessID );
-		if( hSnap == NULL )
+		if( hSnap == nullptr )
 		{
 			sName = werr_ssprintf( GetLastError(), "CreateToolhelp32Snapshot" );
 			break;
@@ -128,7 +128,7 @@ bool GetProcessFileName( uint32_t iProcessID, RString &sName )
 			bTried = true;
 
 			hPSApi = LoadLibrary("psapi.dll");
-			if( hPSApi == NULL )
+			if( hPSApi == nullptr )
 			{
 				sName = werr_ssprintf( GetLastError(), "LoadLibrary" );
 				break;
@@ -136,7 +136,7 @@ bool GetProcessFileName( uint32_t iProcessID, RString &sName )
 			else
 			{
 				pGetProcessImageFileName = (pfnGetProcessImageFileNameA) GetProcAddress( hPSApi, "GetProcessImageFileNameA" );
-				if( pGetProcessImageFileName == NULL )
+				if( pGetProcessImageFileName == nullptr )
 				{
 					sName = werr_ssprintf( GetLastError(), "GetProcAddress" );
 					break;
@@ -147,7 +147,7 @@ bool GetProcessFileName( uint32_t iProcessID, RString &sName )
 		if( pGetProcessImageFileName != nullptr )
 		{
 			HANDLE hProc = OpenProcess( PROCESS_VM_READ|PROCESS_QUERY_INFORMATION, NULL, iProcessID );
-			if( hProc == NULL )
+			if( hProc == nullptr )
 			{
 				sName = werr_ssprintf( GetLastError(), "OpenProcess" );
 				break;

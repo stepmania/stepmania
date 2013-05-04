@@ -87,7 +87,7 @@ static int get_readable_ranges( const void **starts, const void **ends, int size
 		while( got < size-1 )
 		{
 			char *p = (char *) memchr( file, '\n', file_used );
-			if( p == NULL )
+			if( p == nullptr )
 				break;
 			*p++ = 0;
 
@@ -98,13 +98,13 @@ static int get_readable_ranges( const void **starts, const void **ends, int size
 
 			/* Search for the hyphen. */
 			char *hyphen = strchr( line, '-' );
-			if( hyphen == NULL )
+			if( hyphen == nullptr )
 				continue; /* Parse error. */
 
 
 			/* Search for the space. */
 			char *space = strchr( hyphen, ' ' );
-			if( space == NULL )
+			if( space == nullptr )
 				continue; /* Parse error. */
 
 			/* " rwxp".  If space[1] isn't 'r', then the block isn't readable. */
@@ -392,7 +392,7 @@ void GetBacktrace( const void **buf, size_t size, const BacktraceContext *ctx )
 	InitializeBacktrace();
 	
 	BacktraceContext CurrentCtx;
-	if( ctx == NULL )
+	if( ctx == nullptr )
 	{
 		ctx = &CurrentCtx;
 
@@ -528,7 +528,7 @@ void GetBacktrace( const void **buf, size_t size, const BacktraceContext *ctx )
 	}
 	
 	BacktraceContext CurrentCtx;
-	if( ctx == NULL )
+	if( ctx == nullptr )
 	{
 		ctx = &CurrentCtx;
 		
@@ -649,7 +649,7 @@ void InitializeBacktrace() { }
 void GetBacktrace( const void **buf, size_t size, const BacktraceContext *ctx )
 {
 	BacktraceContext CurrentCtx;
-	if( ctx == NULL )
+	if( ctx == nullptr )
 	{
 		ctx = &CurrentCtx;
 
@@ -698,7 +698,7 @@ void GetBacktrace( const void **buf, size_t size, const BacktraceContext *ctx )
 {
 	BacktraceContext CurrentCtx;
 
-	if( ctx == NULL )
+	if( ctx == nullptr )
 	{
 		ctx = &CurrentCtx;
 

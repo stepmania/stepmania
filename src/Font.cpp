@@ -269,7 +269,7 @@ void Font::MergeFont(Font &f)
 	 * page.  It'll usually be overridden later on by one of our own font
 	 * pages; this will be used only if we don't have any font pages at
 	 * all. */
-	if( m_pDefault == NULL )
+	if( m_pDefault == nullptr )
 		m_pDefault = f.m_pDefault;
 
 	for(map<wchar_t,glyph*>::iterator it = f.m_iCharToGlyph.begin();
@@ -605,7 +605,7 @@ RString FontPageSettings::MapRange( RString sMapping, int iMapOffset, int iGlyph
 	}
 
 	const wchar_t *pMapping = FontCharmaps::get_char_map( sMapping );
-	if( pMapping == NULL )
+	if( pMapping == nullptr )
 		return "Unknown mapping";
 
 	while( *pMapping != 0 && iMapOffset )

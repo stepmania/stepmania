@@ -205,7 +205,7 @@ void StepsUtil::RemoveLockedSteps( const Song *pSong, vector<Steps*> &vpSteps )
 
 void StepsID::FromSteps( const Steps *p )
 {
-	if( p == NULL )
+	if( p == nullptr )
 	{
 		st = StepsType_Invalid;
 		dc = Difficulty_Invalid;
@@ -258,7 +258,7 @@ Steps *StepsID::ToSteps( const Song *p, bool bAllowNull ) const
 		pRet = SongUtil::GetOneSteps( p, st, dc, -1, -1, "", "", 0, true );
 	}
 	
-	if( !bAllowNull && pRet == NULL )
+	if( !bAllowNull && pRet == nullptr )
 		FAIL_M( ssprintf("%i, %i, \"%s\"", st, dc, sDescription.c_str()) );
 
 	m_Cache.Set( pRet );

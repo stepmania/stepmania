@@ -366,7 +366,7 @@ bool NoteData::IsHoldHeadOrBodyAtRow( int iTrack, int iRow, int *pHeadRow ) cons
 bool NoteData::IsHoldNoteAtRow( int iTrack, int iRow, int *pHeadRow ) const
 {
 	int iDummy;
-	if( pHeadRow == NULL )
+	if( pHeadRow == nullptr )
 		pHeadRow = &iDummy;
 
 	/* Starting at iRow, search upwards. If we find a TapNote::hold_head, we're within

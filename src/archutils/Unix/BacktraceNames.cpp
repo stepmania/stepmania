@@ -119,7 +119,7 @@ void BacktraceNames::FromAddr( const void *p )
      * between one function and the next, because the first lookup will succeed.
      */
     Dl_info di;
-    if( !dladdr((void *) p, &di) || di.dli_sname == NULL )
+    if( !dladdr((void *) p, &di) || di.dli_sname == nullptr )
     {
 		if( !dladdr( ((char *) p) - 8, &di) )
 			return;
@@ -175,7 +175,7 @@ static int osx_find_image( const void *p )
 	for( unsigned i = 0; i < image_count; i++ )
 	{
 		const struct mach_header *header = _dyld_get_image_header(i);
-		if( header == NULL )
+		if( header == nullptr )
 			continue;
 
 		/* The load commands directly follow the mach_header. */
@@ -233,7 +233,7 @@ void BacktraceNames::FromAddr( const void *p )
 
 	/* Find the link-edit pointer. */
 	const char *link_edit = osx_find_link_edit( _dyld_get_image_header(index) );
-	if( link_edit == NULL )
+	if( link_edit == nullptr )
 		return;
 	link_edit += _dyld_get_image_vmaddr_slide( index );
 
@@ -297,7 +297,7 @@ void BacktraceNames::FromAddr( const void *p )
     Address = (intptr_t) p;
 
     char **foo = backtrace_symbols(&p, 1);
-    if( foo == NULL )
+    if( foo == nullptr )
         return;
     FromString( foo[0] );
     free(foo);

@@ -6,7 +6,7 @@
 map<istring, CreateDialogDriverFn> *RegisterDialogDriver::g_pRegistrees;
 RegisterDialogDriver::RegisterDialogDriver( const istring &sName, CreateDialogDriverFn pfn )
 {
-	if( g_pRegistrees == NULL )
+	if( g_pRegistrees == nullptr )
 		g_pRegistrees = new map<istring, CreateDialogDriverFn>;
 
 	ASSERT( g_pRegistrees->find(sName) == g_pRegistrees->end() );

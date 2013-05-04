@@ -608,7 +608,7 @@ int GameState::GetNumStagesForCurrentSongAndStepsOrCourse() const
 	{
 		const Style *pStyle = m_pCurStyle;
 		int numSidesJoined = GetNumSidesJoined();
-		if( pStyle == NULL )
+		if( pStyle == nullptr )
 		{
 			const Steps *pSteps = NULL;
 			if( this->GetMasterPlayerNumber() != PlayerNumber_Invalid )
@@ -806,9 +806,9 @@ void GameState::LoadCurrentSettingsFromProfile( PlayerNumber pn )
 	// Only set the PreferredStepsType if it wasn't already set by a GameCommand (or by an earlier profile)
 	if( m_PreferredStepsType == StepsType_Invalid  &&  pProfile->m_LastStepsType != StepsType_Invalid )
 		m_PreferredStepsType.Set( pProfile->m_LastStepsType );
-	if( m_pPreferredSong == NULL )
+	if( m_pPreferredSong == nullptr )
 		m_pPreferredSong = pProfile->m_lastSong.ToSong();
-	if( m_pPreferredCourse == NULL )
+	if( m_pPreferredCourse == nullptr )
 		m_pPreferredCourse = pProfile->m_lastCourse.ToCourse();
 }
 
@@ -1094,7 +1094,7 @@ RString GameState::GetPlayerDisplayName( PlayerNumber pn ) const
 
 bool GameState::PlayersCanJoin() const
 {
-	bool b = GetNumSidesJoined() == 0 || GetCurrentStyle() == NULL;	// selecting a style finalizes the players
+	bool b = GetNumSidesJoined() == 0 || GetCurrentStyle() == nullptr;	// selecting a style finalizes the players
 	if( ALLOW_LATE_JOIN.IsLoaded()  &&  ALLOW_LATE_JOIN )
 	{
 		Screen *pScreen = SCREENMAN->GetTopScreen();
@@ -1176,7 +1176,7 @@ bool GameState::IsHumanPlayer( PlayerNumber pn ) const
 	if( pn == PLAYER_INVALID )
 		return false;
 
-	if( GetCurrentStyle() == NULL )	// no style chosen
+	if( GetCurrentStyle() == nullptr )	// no style chosen
 	{
 		if( PlayersCanJoin() )
 			return m_bSideIsJoined[pn];	// only allow input from sides that have already joined
@@ -1989,7 +1989,7 @@ Difficulty GameState::GetEasiestStepsDifficulty() const
 	Difficulty dc = Difficulty_Invalid;
 	FOREACH_HumanPlayer( p )
 	{
-		if( m_pCurSteps[p] == NULL )
+		if( m_pCurSteps[p] == nullptr )
 		{
 			LOG->Warn( "GetEasiestStepsDifficulty called but p%i hasn't chosen notes", p+1 );
 			continue;
@@ -2004,7 +2004,7 @@ Difficulty GameState::GetHardestStepsDifficulty() const
 	Difficulty dc = Difficulty_Beginner;
 	FOREACH_HumanPlayer( p )
 	{
-		if( m_pCurSteps[p] == NULL )
+		if( m_pCurSteps[p] == nullptr )
 		{
 			LOG->Warn( "GetHardestStepsDifficulty called but p%i hasn't chosen notes", p+1 );
 			continue;
@@ -2349,7 +2349,7 @@ public:
 	static int GetCurrentStepsCredits( T* t, lua_State *L )
 	{
 		const Song* pSong = t->m_pCurSong;
-		if( pSong == NULL )
+		if( pSong == nullptr )
 			return 0;
 
 		// use a vector and not a set so that ordering is maintained
@@ -2357,7 +2357,7 @@ public:
 		FOREACH_HumanPlayer( p )
 		{
 			const Steps* pSteps = GAMESTATE->m_pCurSteps[p];
-			if( pSteps == NULL )
+			if( pSteps == nullptr )
 				return 0;
 			bool bAlreadyAdded = find( vpStepsToShow.begin(), vpStepsToShow.end(), pSteps ) != vpStepsToShow.end();
 			if( !bAlreadyAdded )

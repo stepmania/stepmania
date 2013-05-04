@@ -133,12 +133,12 @@ RString RageSoundDriver_AU::Init()
 	
 	Component comp = FindNextComponent( NULL, &desc );
 	
-	if( comp == NULL ) 
+	if( comp == nullptr ) 
 		return "Failed to find the default output unit.";
 	
 	OSStatus error = OpenAComponent( comp, &m_OutputUnit );
 	
-	if( error != noErr || m_OutputUnit == NULL )
+	if( error != noErr || m_OutputUnit == nullptr )
 		return ERROR( "Could not open the default output unit", error );
 	
 	// Set up a callback function to generate output to the output unit
@@ -341,7 +341,7 @@ OSStatus RageSoundDriver_AU::Render( void *inRefCon,
 {
 	RageSoundDriver_AU *This = (RageSoundDriver_AU *)inRefCon;
 
-	if( unlikely(This->m_pIOThread == NULL) )
+	if( unlikely(This->m_pIOThread == nullptr) )
 		This->m_pIOThread = new RageThreadRegister( "HAL I/O thread" );
 
 	AudioBuffer &buf = ioData->mBuffers[0];

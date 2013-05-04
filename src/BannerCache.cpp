@@ -79,7 +79,7 @@ void BannerCache::Demand()
 
 		const RString sCachePath = GetBannerCachePath(sBannerPath);
 		RageSurface *pImage = RageSurfaceUtils::LoadSurface( sCachePath );
-		if( pImage == NULL )
+		if( pImage == nullptr )
 		{
 			continue; /* doesn't exist */
 		}
@@ -123,7 +123,7 @@ void BannerCache::LoadBanner( RString sBannerPath )
 
 		CHECKPOINT_M( ssprintf( "BannerCache::LoadBanner: %s", sCachePath.c_str() ) );
 		RageSurface *pImage = RageSurfaceUtils::LoadSurface( sCachePath );
-		if( pImage == NULL )
+		if( pImage == nullptr )
 		{
 			if( tries == 0 )
 			{
@@ -368,7 +368,7 @@ void BannerCache::CacheBannerInternal( RString sBannerPath )
 {
 	RString sError;
 	RageSurface *pImage = RageSurfaceUtils::LoadFile( sBannerPath, sError );
-	if( pImage == NULL )
+	if( pImage == nullptr )
 	{
 		LOG->UserLog( "Cache file", sBannerPath, "couldn't be loaded: %s", sError.c_str() );
 		return;

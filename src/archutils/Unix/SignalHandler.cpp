@@ -141,7 +141,7 @@ static void *CreateStack( int size )
 /* Hook up events to fatal signals, so we can clean up if we're killed. */
 void SignalHandler::OnClose( handler h )
 {
-	if( saved_sigs == NULL )
+	if( saved_sigs == nullptr )
 	{
 		saved_sigs = new SaveSignals;
 

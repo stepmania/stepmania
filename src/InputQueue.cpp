@@ -112,7 +112,7 @@ bool InputQueueCode::EnteredCode( GameController controller ) const
 					break;
 				}
 			}
-			if( pIEP == NULL )
+			if( pIEP == nullptr )
 				break;	// didn't find the button
 
 			// Check that m_aButtonsToHold were being held when the buttons were pressed.

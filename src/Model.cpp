@@ -79,7 +79,7 @@ void Model::LoadPieces( const RString &sMeshesPath, const RString &sMaterialsPat
 	// TRICKY: Load materials before geometry so we can figure out whether the materials require normals.
 	LoadMaterialsFromMilkshapeAscii( sMaterialsPath );
 
-	ASSERT( m_pGeometry == NULL );
+	ASSERT( m_pGeometry == nullptr );
 	m_pGeometry = MODELMAN->LoadMilkshapeAscii( sMeshesPath, this->MaterialsNeedNormals() );
 
 	// Validate material indices.
@@ -284,7 +284,7 @@ bool Model::LoadMilkshapeAsciiBones( const RString &sAniName, const RString &sPa
 
 bool Model::EarlyAbortDraw() const
 {
-	return m_pGeometry == NULL || m_pGeometry->m_Meshes.empty();
+	return m_pGeometry == nullptr || m_pGeometry->m_Meshes.empty();
 }
 
 void Model::DrawCelShaded()
@@ -567,7 +567,7 @@ void Model::SetPosition( float fSeconds )
 
 void Model::AdvanceFrame( float fDeltaTime )
 {
-	if( m_pGeometry == NULL || 
+	if( m_pGeometry == nullptr || 
 		m_pGeometry->m_Meshes.empty() || 
 		!m_pCurAnimation )
 	{
@@ -625,9 +625,9 @@ void Model::SetBones( const msAnimation* pAnimation, float fFrame, vector<myBone
 			const float s = SCALE( fFrame, pLastPositionKey->fTime, pThisPositionKey->fTime, 0, 1 );
 			vPos = pLastPositionKey->Position + (pThisPositionKey->Position - pLastPositionKey->Position) * s;
 		}
-		else if( pLastPositionKey == NULL )
+		else if( pLastPositionKey == nullptr )
 			vPos = pThisPositionKey->Position;
-		else if( pThisPositionKey == NULL )
+		else if( pThisPositionKey == nullptr )
 			vPos = pLastPositionKey->Position;
 
 		// search for the adjacent rotation keys
@@ -649,11 +649,11 @@ void Model::SetBones( const msAnimation* pAnimation, float fFrame, vector<myBone
 			const float s = SCALE( fFrame, pLastRotationKey->fTime, pThisRotationKey->fTime, 0, 1 );
 			RageQuatSlerp( &vRot, pLastRotationKey->Rotation, pThisRotationKey->Rotation, s );
 		}
-		else if( pLastRotationKey == NULL )
+		else if( pLastRotationKey == nullptr )
 		{
 			vRot = pThisRotationKey->Rotation;
 		}
-		else if( pThisRotationKey == NULL )
+		else if( pThisRotationKey == nullptr )
 		{
 			vRot = pLastRotationKey->Rotation;
 		}
@@ -678,7 +678,7 @@ void Model::SetBones( const msAnimation* pAnimation, float fFrame, vector<myBone
 
 void Model::UpdateTempGeometry()
 {
-	if( m_pGeometry == NULL || m_pTempGeometry == NULL )
+	if( m_pGeometry == nullptr || m_pTempGeometry == nullptr )
 		return;
 
 	for( unsigned i = 0; i < m_pGeometry->m_Meshes.size(); ++i )

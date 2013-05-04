@@ -139,7 +139,7 @@ public:
 	template<class U>
 	HiddenPtr( const HiddenPtr<U> &cpy )
 	{
-		if( cpy.m_pPtr == NULL )
+		if( cpy.m_pPtr == nullptr )
 			m_pPtr = NULL;
 		else
 			m_pPtr = HiddenPtrTraits<U>::Copy( cpy.m_pPtr );

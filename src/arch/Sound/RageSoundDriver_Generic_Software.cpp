@@ -482,7 +482,7 @@ int64_t RageSoundDriver::ClampHardwareFrame( int64_t iHardwareFrame ) const
 
 int64_t RageSoundDriver::GetHardwareFrame( RageTimer *pTimestamp ) const
 {
-	if( pTimestamp == NULL )
+	if( pTimestamp == nullptr )
 		return ClampHardwareFrame( GetPosition() );
 
 	/*

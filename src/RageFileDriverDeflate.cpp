@@ -522,7 +522,7 @@ bool GunzipString( const RString &sIn, RString &sOut, RString &sError )
 
 	uint32_t iCRC32;
 	RageFileBasic *pFile = GunzipFile( mem, sError, &iCRC32 );
-	if( pFile == NULL )
+	if( pFile == nullptr )
 		return false;
 
 	pFile->Read( sOut );

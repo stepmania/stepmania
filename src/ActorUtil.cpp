@@ -23,7 +23,7 @@ static bool IsRegistered( const RString& sClassName )
 
 void ActorUtil::Register( const RString& sClassName, CreateActorFn pfn )
 {
-	if( g_pmapRegistrees == NULL )
+	if( g_pmapRegistrees == nullptr )
 		g_pmapRegistrees = new map<RString,CreateActorFn>;
 
 	map<RString,CreateActorFn>::iterator iter = g_pmapRegistrees->find( sClassName );
@@ -211,7 +211,7 @@ Actor* ActorUtil::MakeActor( const RString &sPath_, Actor *pParentActor )
 	case FT_Lua:
 		{
 			auto_ptr<XNode> pNode( LoadXNodeFromLuaShowErrors(sPath) );
-			if( pNode.get() == NULL )
+			if( pNode.get() == nullptr )
 			{
 				// XNode will warn about the error
 				return new Actor;

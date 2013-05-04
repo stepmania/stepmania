@@ -11,7 +11,7 @@ namespace
 {
 	void RegisterTypes( lua_State *L )
 	{
-		if( m_Subscribers.m_pSubscribers == NULL )
+		if( m_Subscribers.m_pSubscribers == nullptr )
 			return;
 
 		/* Register base classes first. */
@@ -358,7 +358,7 @@ LuaClass &LuaClass::operator=( const LuaClass &cpy )
 
 LuaClass::~LuaClass()
 {
-	if( LUA == NULL )
+	if( LUA == nullptr )
 		return;
 
 	Lua *L = LUA->Get();

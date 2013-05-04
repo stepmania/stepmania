@@ -118,7 +118,7 @@ void ActorFrame::LoadChildrenFromNode( const XNode* pNode )
 	// Load children
 	const XNode* pChildren = pNode->GetChild("children");
 	bool bArrayOnly = false;
-	if( pChildren == NULL )
+	if( pChildren == nullptr )
 	{
 		bArrayOnly = true;
 		pChildren = pNode;
@@ -544,7 +544,7 @@ public:
 	{
 		// this one is tricky, we need to get an Actor from Lua.
 		Actor *pActor = ActorUtil::MakeActor( SArg(1) );
-		if ( pActor == NULL )
+		if ( pActor == nullptr )
 		{
 			lua_pushboolean( L, 0 );
 			return 1;

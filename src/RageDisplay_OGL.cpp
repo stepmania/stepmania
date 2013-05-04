@@ -2228,7 +2228,7 @@ public:
 	void Lock( unsigned iTexHandle, RageSurface *pSurface )
 	{
 		ASSERT( m_iTexHandle == 0 );
-		ASSERT( pSurface->pixels == NULL );
+		ASSERT( pSurface->pixels == nullptr );
 
 		CreateObject();
 

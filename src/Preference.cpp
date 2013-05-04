@@ -53,7 +53,7 @@ void IPreference::SavePrefsToNode( XNode* pNode )
 
 void IPreference::ReadAllDefaultsFromNode( const XNode* pNode )
 {
-	if( pNode == NULL )
+	if( pNode == nullptr )
 		return;
 	for (IPreference *p : *m_Subscribers.m_pSubscribers)
 		p->ReadDefaultFrom( pNode );

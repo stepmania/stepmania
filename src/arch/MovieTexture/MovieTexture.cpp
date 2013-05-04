@@ -100,7 +100,7 @@ RageMovieTexture *RageMovieTexture::Create( RageTextureID ID )
 		LOG->Trace( "Initializing driver: %s", driverString );
 		RageDriver *pDriverBase = RageMovieTextureDriver::m_pDriverList.Create( Driver );
 		
-		if( pDriverBase == NULL )
+		if( pDriverBase == nullptr )
 		{
 			LOG->Trace( "Unknown movie driver name: %s", driverString );
 			continue;
@@ -113,7 +113,7 @@ RageMovieTexture *RageMovieTexture::Create( RageTextureID ID )
 		ret = pDriver->Create( ID, sError );
 		delete pDriver;
 
-		if( ret == NULL )
+		if( ret == nullptr )
 		{
 			LOG->Trace( "Couldn't load driver %s: %s", driverString, sError.c_str() );
 			SAFE_DELETE( ret );

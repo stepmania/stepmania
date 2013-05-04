@@ -79,7 +79,7 @@ const XNodeValue *XNode::GetAttr( const RString &attrname ) const
 bool XNode::PushAttrValue( lua_State *L, const RString &sName ) const
 {
 	const XNodeValue *pAttr = GetAttr(sName);
-	if( pAttr == NULL )
+	if( pAttr == nullptr )
 	{
 		lua_pushnil( L );
 		return false;
@@ -109,7 +109,7 @@ XNode *XNode::GetChild( const RString &sName )
 bool XNode::PushChildValue( lua_State *L, const RString &sName ) const
 {
 	const XNode *pChild = GetChild(sName);
-	if( pChild == NULL )
+	if( pChild == nullptr )
 	{
 		lua_pushnil( L );
 		return false;

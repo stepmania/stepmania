@@ -1540,7 +1540,7 @@ static ThemeMetric<RString> PREVIEW_START_FORMAT("ScreenEdit", "PreviewStartForm
 static ThemeMetric<RString> PREVIEW_LENGTH_FORMAT("ScreenEdit", "PreviewLengthFormat");
 void ScreenEdit::UpdateTextInfo()
 {
-	if( m_pSteps == NULL )
+	if( m_pSteps == nullptr )
 		return;
 
 	// Don't update the text during playback or record.  It causes skips.
@@ -2509,7 +2509,7 @@ bool ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 		{
 			// TODO: Give Song/Step Timing switches/functions here?
 			Course *pCourse = GAMESTATE->m_pCurCourse;
-			if( pCourse == NULL )
+			if( pCourse == nullptr )
 				return false;
 			CourseEntry &ce = pCourse->m_vEntries[GAMESTATE->m_iEditCourseEntryIndex];
 			float fStartTime = m_pSteps->GetTimingData()->GetElapsedTimeFromBeat( GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat );
@@ -2581,7 +2581,7 @@ bool ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			float fStart, fEnd;
 			PlayerOptions po;
 			const Course *pCourse = GAMESTATE->m_pCurCourse;
-			if( pCourse == NULL )
+			if( pCourse == nullptr )
 				return false;
 			const CourseEntry &ce = pCourse->m_vEntries[GAMESTATE->m_iEditCourseEntryIndex];
 
@@ -3232,7 +3232,7 @@ void ScreenEdit::HandleMessage( const Message &msg )
 		if( GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.GetCurrent().m_bMuteOnError )
 		{
 			RageSoundReader *pSoundReader = m_AutoKeysounds.GetPlayerSound( pn );
-			if( pSoundReader == NULL )
+			if( pSoundReader == nullptr )
 				pSoundReader = m_AutoKeysounds.GetSharedSound();
 
 			HoldNoteScore hns;

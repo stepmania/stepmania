@@ -84,7 +84,7 @@ void ScreenJukebox::SetSong()
 		Difficulty dc = vDifficultiesToShow[ RandomInt(vDifficultiesToShow.size()) ];
 		Steps* pSteps = SongUtil::GetStepsByDifficulty( pSong, GAMESTATE->GetCurrentStyle()->m_StepsType, dc );
 
-		if( pSteps == NULL )
+		if( pSteps == nullptr )
 			continue;	// skip
 
 		if( !PREFSMAN->m_bAutogenSteps && pSteps->IsAutogen())
@@ -110,7 +110,7 @@ void ScreenJukebox::SetSong()
 			{
 				Course *lCourse = apCourses[j];
 				const CourseEntry *pEntry = lCourse->FindFixedSong( pSong );
-				if( pEntry == NULL || pEntry->attacks.size() == 0 )
+				if( pEntry == nullptr || pEntry->attacks.size() == 0 )
 					continue;
 
 				if( !ALLOW_ADVANCED_MODIFIERS )
@@ -226,7 +226,7 @@ void ScreenJukebox::Init()
 	// Now that we've set up, init the base class.
 	ScreenGameplay::Init();
 
-	if( GAMESTATE->m_pCurSong == NULL )	// we didn't find a song.
+	if( GAMESTATE->m_pCurSong == nullptr )	// we didn't find a song.
 	{
 		this->PostScreenMessage( SM_GoToNextScreen, 0 );	// Abort demonstration.
 		return;

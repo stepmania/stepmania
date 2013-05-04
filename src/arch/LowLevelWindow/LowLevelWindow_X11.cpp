@@ -103,7 +103,7 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 	putenv( buf );
 #endif
 
-	if( g_pContext == NULL || p.bpp != CurrentParams.bpp || m_bWasWindowed != p.windowed )
+	if( g_pContext == nullptr || p.bpp != CurrentParams.bpp || m_bWasWindowed != p.windowed )
 	{
 		// Different depth, or we didn't make a window before. New context.
 		bNewDeviceOut = true;
@@ -132,7 +132,7 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 		visAttribs[i++] = None;
 
 		XVisualInfo *xvi = glXChooseVisual( Dpy, DefaultScreen(Dpy), visAttribs );
-		if( xvi == NULL )
+		if( xvi == nullptr )
 			return "No visual available for that depth.";
 
 		// I get strange behavior if I add override redirect after creating the window.

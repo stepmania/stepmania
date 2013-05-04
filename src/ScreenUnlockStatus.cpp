@@ -50,7 +50,7 @@ void ScreenUnlockStatus::Init()
 		const UnlockEntry &entry = UNLOCKMAN->m_UnlockEntries[i-1];
 		const Song *pSong = entry.m_Song.ToSong();
 
-		if( pSong == NULL)
+		if( pSong == nullptr)
 			continue;
 
 		Sprite* pSpr = new Sprite;
@@ -229,7 +229,7 @@ void ScreenUnlockStatus::Init()
 
 			const UnlockEntry &entry = UNLOCKMAN->m_UnlockEntries[NextIcon-1];
 			const Song *pSong = entry.m_Song.ToSong();
-			if( pSong == NULL )
+			if( pSong == nullptr )
 				continue;
 
 			BitmapText* NewText = new BitmapText;

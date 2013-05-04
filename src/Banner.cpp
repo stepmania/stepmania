@@ -109,7 +109,7 @@ void Banner::SetScrolling( bool bScroll, float Percent)
 
 void Banner::LoadFromSong( Song* pSong ) // NULL means no song
 {
-	if( pSong == NULL )	LoadFallback();
+	if( pSong == nullptr )	LoadFallback();
 	else if( pSong->HasBanner() ) Load( pSong->GetBannerPath() );
 	else					LoadFallback();
 
@@ -132,7 +132,7 @@ void Banner::LoadFromSongGroup( RString sSongGroup )
 
 void Banner::LoadFromCourse( const Course *pCourse )		// NULL means no course
 {
-	if( pCourse == NULL )				LoadFallback();
+	if( pCourse == nullptr )				LoadFallback();
 	else if( pCourse->GetBannerPath() != "" )	Load( pCourse->GetBannerPath() );
 	else						LoadCourseFallback();
 
@@ -141,7 +141,7 @@ void Banner::LoadFromCourse( const Course *pCourse )		// NULL means no course
 
 void Banner::LoadCardFromCharacter( const Character *pCharacter )
 {
-	if( pCharacter == NULL )			LoadFallback();
+	if( pCharacter == nullptr )			LoadFallback();
 	else if( pCharacter->GetCardPath() != "" )	Load( pCharacter->GetCardPath() );
 	else						LoadFallback();
 
@@ -150,7 +150,7 @@ void Banner::LoadCardFromCharacter( const Character *pCharacter )
 
 void Banner::LoadIconFromCharacter( const Character *pCharacter )
 {
-	if( pCharacter == NULL )			LoadFallbackCharacterIcon();
+	if( pCharacter == nullptr )			LoadFallbackCharacterIcon();
 	else if( pCharacter->GetIconPath() != "" )	Load( pCharacter->GetIconPath(), false );
 	else						LoadFallbackCharacterIcon();
 
@@ -159,7 +159,7 @@ void Banner::LoadIconFromCharacter( const Character *pCharacter )
 
 void Banner::LoadBannerFromUnlockEntry( const UnlockEntry* pUE )
 {
-	if( pUE == NULL )
+	if( pUE == nullptr )
 		LoadFallback();
 	else 
 	{
@@ -171,7 +171,7 @@ void Banner::LoadBannerFromUnlockEntry( const UnlockEntry* pUE )
 
 void Banner::LoadBackgroundFromUnlockEntry( const UnlockEntry* pUE )
 {
-	if( pUE == NULL )
+	if( pUE == nullptr )
 		LoadFallback();
 	else 
 	{

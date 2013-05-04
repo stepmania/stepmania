@@ -16,7 +16,7 @@ void LightsDriver::Create( const RString &sDrivers, vector<LightsDriver *> &Add 
 	for (RString const &Driver : asDriversToTry)
 	{
 		RageDriver *pRet = m_pDriverList.Create( Driver );
-		if( pRet == NULL )
+		if( pRet == nullptr )
 		{
 			LOG->Trace( "Unknown lights driver: %s", Driver.c_str() );
 			continue;

@@ -39,7 +39,7 @@ void ComboGraph::Load( RString sMetricsGroup )
 
 	pActor = ActorUtil::MakeActor( THEME->GetPathG(sMetricsGroup,"ComboNumber") );
 	m_pComboNumber = dynamic_cast<BitmapText *>( pActor );
-	if( m_pComboNumber == NULL )
+	if( m_pComboNumber == nullptr )
 		RageException::Throw( "ComboGraph: \"sMetricsGroup\" \"ComboNumber\" must be a BitmapText" );
 	this->AddChild( m_pComboNumber );
 }	

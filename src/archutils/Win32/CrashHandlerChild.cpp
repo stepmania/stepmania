@@ -136,7 +136,7 @@ namespace VDDebugInfo
 				break;
 
 			char *pBuf = pctx->sRawBlock.GetBuffer( dwFileSize );
-			if( pBuf == NULL )
+			if( pBuf == nullptr )
 				break;
 
 			DWORD dwActual;
@@ -480,7 +480,7 @@ static void DoSave( const RString &sReport )
 
 	SetFileAttributes( sName, FILE_ATTRIBUTE_NORMAL );
 	FILE *pFile = fopen( sName, "w+" );
-	if( pFile == NULL )
+	if( pFile == nullptr )
 		return;
 	fprintf( pFile, "%s", sReport.c_str() );
 
@@ -751,7 +751,7 @@ BOOL CrashDialog::HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam )
 		break;
 	case WM_TIMER:
 		{
-			if( m_pPost == NULL )
+			if( m_pPost == nullptr )
 				break;
 
 			float fProgress = m_pPost->GetProgress();

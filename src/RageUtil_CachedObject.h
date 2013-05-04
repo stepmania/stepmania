@@ -70,7 +70,7 @@ public:
 		CachedObjectHelpers::Lock();
 		for( typename set<ObjectPointer *>::iterator p = m_spObjectPointers.begin(); p != m_spObjectPointers.end(); ++p )
 		{
-			if( (*p)->m_pCache == NULL )
+			if( (*p)->m_pCache == nullptr )
 				(*p)->m_bCacheIsSet = false;
 		}
 		CachedObjectHelpers::Unlock();

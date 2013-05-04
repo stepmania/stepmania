@@ -195,7 +195,7 @@ bool ProfileManager::LoadLocalProfileFromMachine( PlayerNumber pn )
 	m_bWasLoadedFromMemoryCard[pn] = false;
 	m_bLastLoadWasFromLastGood[pn] = false;
 
-	if( GetLocalProfile(sProfileID) == NULL )
+	if( GetLocalProfile(sProfileID) == nullptr )
 	{
 		m_sProfileDir[pn] = "";
 		return false;
@@ -457,7 +457,7 @@ bool ProfileManager::CreateLocalProfile( RString sName, RString &sProfileIDOut )
 void ProfileManager::AddLocalProfileByID( Profile *pProfile, RString sProfileID )
 {
 	// make sure this id doesn't already exist
-	ASSERT_M( GetLocalProfile(sProfileID) == NULL,
+	ASSERT_M( GetLocalProfile(sProfileID) == nullptr,
 		ssprintf("creating \"%s\" \"%s\" that already exists",
 		pProfile->m_sDisplayName.c_str(), sProfileID.c_str()) );
 

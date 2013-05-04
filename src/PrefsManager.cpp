@@ -428,7 +428,7 @@ void PrefsManager::ReadPrefsFromIni( const IniFile &ini, const RString &sSection
 
 	/*
 	IPreference *pPref = PREFSMAN->GetPreferenceByName( *sName );
-	if( pPref == NULL )
+	if( pPref == nullptr )
 	{
 		LOG->Warn( "Unknown preference in [%s]: %s", sClassName.c_str(), sName->c_str() );
 		continue;
@@ -495,7 +495,7 @@ void PrefsManager::SavePrefsToIni( IniFile &ini )
 		StoreGamePrefs();
 
 	XNode* pNode = ini.GetChild( "Options" );
-	if( pNode == NULL )
+	if( pNode == nullptr )
 		pNode = ini.AppendChild( "Options" );
 	IPreference::SavePrefsToNode( pNode );
 
@@ -536,7 +536,7 @@ public:
 	{
 		RString sName = SArg(1);
 		IPreference *pPref = IPreference::GetPreferenceByName( sName );
-		if( pPref == NULL )
+		if( pPref == nullptr )
 		{
 			LOG->Warn( "GetPreference: unknown preference \"%s\"", sName.c_str() );
 			lua_pushnil( L );
@@ -551,7 +551,7 @@ public:
 		RString sName = SArg(1);
 
 		IPreference *pPref = IPreference::GetPreferenceByName( sName );
-		if( pPref == NULL )
+		if( pPref == nullptr )
 		{
 			LOG->Warn( "SetPreference: unknown preference \"%s\"", sName.c_str() );
 			return 0;
@@ -566,7 +566,7 @@ public:
 		RString sName = SArg(1);
 
 		IPreference *pPref = IPreference::GetPreferenceByName( sName );
-		if( pPref == NULL )
+		if( pPref == nullptr )
 		{
 			LOG->Warn( "SetPreferenceToDefault: unknown preference \"%s\"", sName.c_str() );
 			return 0;
@@ -581,7 +581,7 @@ public:
 		RString sName = SArg(1);
 
 		IPreference *pPref = IPreference::GetPreferenceByName( sName );
-		if( pPref == NULL )
+		if( pPref == nullptr )
 		{
 			lua_pushboolean( L, false );
 			return 1;

@@ -25,7 +25,7 @@ void CourseContentsList::LoadFromNode( const XNode* pNode )
 	pNode->GetAttrValue( "MaxSongs", iMaxSongs );
 
 	const XNode *pDisplayNode = pNode->GetChild( "Display" );
-	if( pDisplayNode == NULL )
+	if( pDisplayNode == nullptr )
 		RageException::Throw( "%s: CourseContentsList: missing the Display child", ActorUtil::GetWhere(pNode).c_str() );
 
 	for( int i=0; i<iMaxSongs; i++ )
@@ -45,7 +45,7 @@ void CourseContentsList::SetFromGameState()
 	if( GAMESTATE->GetMasterPlayerNumber() == PlayerNumber_Invalid )
 		return;
 	const Trail *pMasterTrail = GAMESTATE->m_pCurTrail[GAMESTATE->GetMasterPlayerNumber()];
-	if( pMasterTrail == NULL )
+	if( pMasterTrail == nullptr )
 		return;
 	unsigned uNumEntriesToShow = pMasterTrail->m_vEntries.size(); 
 	CLAMP( uNumEntriesToShow, 0, m_vpDisplay.size() );
@@ -78,21 +78,21 @@ void CourseContentsList::SetItemFromGameState( Actor *pActor, int iCourseEntryIn
 	FOREACH_HumanPlayer(pn)
 	{
 		const Trail *pTrail = GAMESTATE->m_pCurTrail[pn];
-		if( pTrail == NULL
+		if( pTrail == nullptr
 			|| iCourseEntryIndex >= (int) pTrail->m_vEntries.size()
 			|| iCourseEntryIndex >= (int) pCourse->m_vEntries.size() )
 			continue;
 
 		const TrailEntry *te = &pTrail->m_vEntries[iCourseEntryIndex];
 		const CourseEntry *ce = &pCourse->m_vEntries[iCourseEntryIndex];
-		if( te == NULL )
+		if( te == nullptr )
 			continue;
 
 		RString s;
 		Difficulty dc;
 		if( te->bSecret )
 		{
-			if( ce == NULL )
+			if( ce == nullptr )
 				continue;
 
 			int iLow = ce->stepsCriteria.m_iLowMeter;

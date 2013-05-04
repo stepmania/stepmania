@@ -496,7 +496,7 @@ void OptionRow::PositionUnderlines( PlayerNumber pn )
 void OptionRow::PositionIcons( PlayerNumber pn )
 {
 	ModIcon *pIcon = m_ModIcons[pn];
-	if( pIcon == NULL )
+	if( pIcon == nullptr )
 		return;
 
 	pIcon->SetX( m_pParentType->MOD_ICON_X.GetValue(pn) );

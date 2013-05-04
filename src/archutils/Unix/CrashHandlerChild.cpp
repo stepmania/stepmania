@@ -198,7 +198,7 @@ static void child_process()
 	sCrashInfoPath += "/crashinfo.txt";
 	
 	FILE *CrashDump = fopen( sCrashInfoPath, "w+" );
-	if(CrashDump == NULL)
+	if(CrashDump == nullptr)
 	{
 		fprintf( stderr, "Couldn't open " + sCrashInfoPath + ": %s\n", strerror(errno) );
 		exit(1);
@@ -277,7 +277,7 @@ static void child_process()
 	/* stdout may have been inadvertently closed by the crash in the parent;
 	 * write to /dev/tty instead. */
 	FILE *tty = fopen( "/dev/tty", "w" );
-	if( tty == NULL )
+	if( tty == nullptr )
 		tty = stderr;
 	
 	fputs( 	"\n"

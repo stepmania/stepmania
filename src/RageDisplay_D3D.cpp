@@ -344,7 +344,7 @@ D3DFORMAT FindBackBufferType(bool bWindowed, int iBPP)
 
 RString SetD3DParams( bool &bNewDeviceOut )
 {
-	if( g_pd3dDevice == NULL ) // device is not yet created. We need to create it
+	if( g_pd3dDevice == nullptr ) // device is not yet created. We need to create it
 	{
 		bNewDeviceOut = true;
 		HRESULT hr = g_pd3d->CreateDevice(
@@ -704,7 +704,7 @@ void RageDisplay_D3D::SendCurrentMatrices()
 		// If no texture is set for this texture unit, don't bother setting it up.
 		IDirect3DBaseTexture9* pTexture = NULL;
 		g_pd3dDevice->GetTexture( tu, &pTexture );
-		if( pTexture == NULL )
+		if( pTexture == nullptr )
 			 continue;
 		pTexture->Release();
 

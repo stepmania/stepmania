@@ -27,10 +27,10 @@ static RString ModuleError( const RString s )
 
 RString LoadingWindow_Gtk::Init()
 {
-	ASSERT( Handle == NULL );
+	ASSERT( Handle == nullptr );
 
 	Handle = dlopen( RageFileManagerUtil::sDirOfExecutable + "/" + "GtkModule.so", RTLD_NOW );
-	if( Handle == NULL )
+	if( Handle == nullptr )
 		return ssprintf( "dlopen(): %s", dlerror() );
 
 	Module_Init = (INIT) dlsym(Handle, "Init");

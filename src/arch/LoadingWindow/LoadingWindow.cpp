@@ -21,7 +21,7 @@ LoadingWindow *LoadingWindow::Create()
 	RString Driver;
 	LoadingWindow *ret = NULL;
 
-	for( unsigned i = 0; ret == NULL && i < DriversToTry.size(); ++i )
+	for( unsigned i = 0; ret == nullptr && i < DriversToTry.size(); ++i )
 	{
 		Driver = DriversToTry[i];
 
@@ -36,7 +36,7 @@ LoadingWindow *LoadingWindow::Create()
 #endif
 		if( !DriversToTry[i].CompareNoCase("Null") )	ret = new LoadingWindow_Null;
 
-		if( ret == NULL )
+		if( ret == nullptr )
 			continue;
 
 		RString sError = ret->Init();

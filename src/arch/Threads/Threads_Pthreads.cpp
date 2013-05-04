@@ -235,12 +235,12 @@ namespace
 		do {
 			{
 				pLib = dlopen( NULL, RTLD_LAZY );
-				if( pLib == NULL )
+				if( pLib == nullptr )
 					break;
 
 				g_CondattrSetclock = (CONDATTR_SET_CLOCK) dlsym( pLib, "pthread_condattr_setclock" );
 
-				if( g_CondattrSetclock == NULL )
+				if( g_CondattrSetclock == nullptr )
 					break;
 			}
 
@@ -305,7 +305,7 @@ EventImpl_Pthreads::~EventImpl_Pthreads()
 #if defined(HAVE_PTHREAD_COND_TIMEDWAIT)
 bool EventImpl_Pthreads::Wait( RageTimer *pTimeout )
 {
-	if( pTimeout == NULL )
+	if( pTimeout == nullptr )
 	{
 		pthread_cond_wait( &m_Cond, &m_pParent->mutex );
 		return true;

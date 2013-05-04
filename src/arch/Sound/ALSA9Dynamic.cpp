@@ -31,10 +31,10 @@ RString LoadALSA()
 	if( !IsADirectory("/rootfs/proc/asound/") )
 		return "/proc/asound/ does not exist";
 
-	ASSERT( Handle == NULL );
+	ASSERT( Handle == nullptr );
 
 	Handle = dlopen( lib, RTLD_NOW );
-	if( Handle == NULL )
+	if( Handle == nullptr )
 		return ssprintf("dlopen(%s): %s", lib.c_str(), dlerror());
 
 	RString error;

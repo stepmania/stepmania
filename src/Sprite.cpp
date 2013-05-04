@@ -164,7 +164,7 @@ void Sprite::LoadFromNode( const XNode* pNode )
 			for( int i=0; true; i++ )
 			{
 				const XNode *pFrame = pFrames->GetChild( ssprintf("%i", i+1) ); // +1 for Lua's arrays
-				if( pFrame == NULL )
+				if( pFrame == nullptr )
 					break;
 
 				State newState;
@@ -315,7 +315,7 @@ void Sprite::LoadStatesFromTexture()
 	// Assume the frames of this animation play in sequential order with 0.1 second delay.
 	m_States.clear();
 
-	if( m_pTexture == NULL )
+	if( m_pTexture == nullptr )
 	{
 		State newState;
 		newState.fDelay = 0.1f;
@@ -566,7 +566,7 @@ void Sprite::DrawTexture( const TweenState *state )
 
 bool Sprite::EarlyAbortDraw() const
 {
-	return m_pTexture == NULL;
+	return m_pTexture == nullptr;
 }
 
 void Sprite::DrawPrimitives()

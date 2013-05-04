@@ -77,7 +77,7 @@ int RageSoundReader_Chain::LoadSound( RString sPath )
 	RString sError;
 	bool bPrebuffer;
 	RageSoundReader *pReader = RageSoundReader_FileReader::OpenFile( sPath, sError, &bPrebuffer );
-	if( pReader == NULL )
+	if( pReader == nullptr )
 	{
 		LOG->Warn( "RageSoundReader_Chain: error opening sound \"%s\": %s",
 			sPath.c_str(), sError.c_str() );
@@ -140,7 +140,7 @@ void RageSoundReader_Chain::Finish()
 	{
 		Sound &sound = m_aSounds[i];
 
-		if( m_apLoadedSounds[sound.iIndex] == NULL )
+		if( m_apLoadedSounds[sound.iIndex] == nullptr )
 		{
 			m_aSounds.erase( m_aSounds.begin()+i );
 			continue;

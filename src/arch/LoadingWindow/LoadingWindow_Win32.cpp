@@ -73,7 +73,7 @@ static HBITMAP LoadWin32Surface( RString sFile, HWND hWnd )
 {
         RString error;
         RageSurface *pSurface = RageSurfaceUtils::LoadFile( sFile, error );
-        if( pSurface == NULL )
+        if( pSurface == nullptr )
                 return NULL;
 
         HBITMAP ret = LoadWin32Surface( pSurface, hWnd );
@@ -92,7 +92,7 @@ BOOL CALLBACK LoadingWindow_Win32::WndProc( HWND hWnd, UINT msg, WPARAM wParam, 
 			if( !vs.empty() )
 				g_hBitmap = LoadWin32Surface( vs[0], hWnd );
 		}
-		if( g_hBitmap == NULL )
+		if( g_hBitmap == nullptr )
 			g_hBitmap = LoadWin32Surface( "Data/splash.bmp", hWnd );
 		SendMessage( 
 			GetDlgItem(hWnd,IDC_SPLASH), 

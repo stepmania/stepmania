@@ -45,7 +45,7 @@ RString RageSoundDriver_PulseAudio::Init()
 
 	LOG->Trace("Pulse: pa_threaded_mainloop_new()...");
 	m_PulseMainLoop = pa_threaded_mainloop_new();
-	if(m_PulseMainLoop == NULL)
+	if(m_PulseMainLoop == nullptr)
 	{
 		return "pa_threaded_mainloop_new() failed!";
 	}
@@ -63,7 +63,7 @@ RString RageSoundDriver_PulseAudio::Init()
 			"StepMania", plist);
 	pa_proplist_free(plist);
 	
-	if(m_PulseCtx == NULL)
+	if(m_PulseCtx == nullptr)
 	{
 		return "pa_context_new_with_proplist() failed!";
 	}
@@ -72,7 +72,7 @@ RString RageSoundDriver_PulseAudio::Init()
 	m_PulseCtx = pa_context_new(
 			pa_threaded_mainloop_get_api(m_PulseMainLoop),
 			"Stepmania");
-	if(m_PulseCtx == NULL)
+	if(m_PulseCtx == nullptr)
 	{
 		return "pa_context_new() failed!";
 	}
@@ -104,7 +104,7 @@ RString RageSoundDriver_PulseAudio::Init()
 	* An error may occur, if it appends, m_Error becomes non-NULL. */
 	m_Sem.Wait();
 
-	if(m_Error == NULL)
+	if(m_Error == nullptr)
 	{
 		return "";
 	}
@@ -151,7 +151,7 @@ void RageSoundDriver_PulseAudio::m_InitStream(void)
 	/* create the stream */
 	LOG->Trace("Pulse: pa_stream_new()...");
 	m_PulseStream = pa_stream_new(m_PulseCtx, "Stepmania Audio", &ss, &map);
-	if(m_PulseStream == NULL)
+	if(m_PulseStream == nullptr)
 	{
 		if(asprintf(&m_Error, "pa_stream_new(): %s", pa_strerror(pa_context_errno(m_PulseCtx))) == -1)
 		{

@@ -24,7 +24,7 @@ LuaXType( Difficulty );
 const RString &CourseDifficultyToLocalizedString( CourseDifficulty x )
 {
 	static auto_ptr<LocalizedString> g_CourseDifficultyName[NUM_Difficulty];
-	if( g_CourseDifficultyName[0].get() == NULL )
+	if( g_CourseDifficultyName[0].get() == nullptr )
 	{
 		FOREACH_ENUM( Difficulty,i)
 		{

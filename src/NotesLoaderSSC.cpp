@@ -868,7 +868,7 @@ bool SSCLoader::LoadEditFromMsd(const MsdFile &msd,
 			sSongFullTitle.Replace( '\\', '/' );
 
 			pSong = SONGMAN->FindSong( sSongFullTitle );
-			if( pSong == NULL )
+			if( pSong == nullptr )
 			{
 				LOG->UserLog("Edit file",
 					     sEditFilePath,
@@ -1005,7 +1005,7 @@ bool SSCLoader::LoadEditFromMsd(const MsdFile &msd,
 		}
 		else if( sValueName=="NOTES" )
 		{
-			if( pSong == NULL )
+			if( pSong == nullptr )
 			{
 				LOG->UserLog("Edit file",
 					     sEditFilePath,

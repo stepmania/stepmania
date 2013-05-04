@@ -68,7 +68,7 @@ void RageBitmapTexture::Create()
 	RageSurface *pImg = RageSurfaceUtils::LoadFile( actualID.filename, error );
 
 	/* Tolerate corrupt/unknown images. */
-	if( pImg == NULL )
+	if( pImg == nullptr )
 	{
 		RString sWarning = ssprintf( "RageBitmapTexture: Couldn't load %s: %s", actualID.filename.c_str(), error.c_str() );
 		Dialog::OK( sWarning );

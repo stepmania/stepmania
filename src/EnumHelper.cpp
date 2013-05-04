@@ -53,7 +53,7 @@ int CheckEnum( lua_State *L, LuaReference &table, int iPos, int iInvalid, const 
 // szNameArray is of size iMax; pNameCache is of size iMax+2.
 const RString &EnumToString( int iVal, int iMax, const char **szNameArray, auto_ptr<RString> *pNameCache )
 {
-	if( unlikely(pNameCache[0].get() == NULL) )
+	if( unlikely(pNameCache[0].get() == nullptr) )
 	{
 		for( int i = 0; i < iMax; ++i )
 		{

@@ -160,7 +160,7 @@ bool RageSound::Load( RString sSoundFilePath, bool bPrecache, const RageSoundLoa
 {
 	LOG->Trace( "RageSound: Load \"%s\" (precache: %i)", sSoundFilePath.c_str(), bPrecache );
 
-	if( pParams == NULL )
+	if( pParams == nullptr )
 	{
 		static const RageSoundLoadParams Defaults;
 		pParams = &Defaults;
@@ -170,12 +170,12 @@ bool RageSound::Load( RString sSoundFilePath, bool bPrecache, const RageSoundLoa
 	 * of that.  Since RageSoundReader_Preload is refcounted, this is cheap. */
 	RageSoundReader *pSound = SOUNDMAN->GetLoadedSound( sSoundFilePath );
 	bool bNeedBuffer = true;
-	if( pSound == NULL )
+	if( pSound == nullptr )
 	{
 		RString error;
 		bool bPrebuffer;
 		pSound = RageSoundReader_FileReader::OpenFile( sSoundFilePath, error, &bPrebuffer );
-		if( pSound == NULL )
+		if( pSound == nullptr )
 		{
 			LOG->Warn( "RageSound::Load: error opening sound \"%s\": %s",
 				sSoundFilePath.c_str(), error.c_str() );
@@ -394,7 +394,7 @@ void RageSound::SoundIsFinishedPlaying()
 
 void RageSound::Play( const RageSoundParams *pParams )
 {
-	if( m_pSource == NULL )
+	if( m_pSource == nullptr )
 	{
 		LOG->Warn( "RageSound::Play: sound not loaded" );
 		return;
@@ -430,7 +430,7 @@ void RageSound::Stop()
 
 bool RageSound::Pause( bool bPause )
 {
-	if( m_pSource == NULL )
+	if( m_pSource == nullptr )
 	{
 		LOG->Warn( "RageSound::Pause: sound not loaded" );
 		return false;
@@ -441,7 +441,7 @@ bool RageSound::Pause( bool bPause )
 
 float RageSound::GetLengthSeconds()
 {
-	if( m_pSource == NULL )
+	if( m_pSource == nullptr )
 	{
 		LOG->Warn( "RageSound::GetLengthSeconds: sound not loaded" );
 		return -1;
@@ -515,7 +515,7 @@ bool RageSound::SetPositionFrames( int iFrames )
 {
 	LockMut( m_Mutex );
 
-	if( m_pSource == NULL )
+	if( m_pSource == nullptr )
 	{
 		LOG->Warn( "RageSound::SetPositionFrames(%d): sound not loaded", iFrames );
 		return false;
@@ -559,7 +559,7 @@ void RageSound::SetParams( const RageSoundParams &p )
 
 void RageSound::ApplyParams()
 {
-	if( m_pSource == NULL )
+	if( m_pSource == nullptr )
 		return;
 
 	m_pSource->SetProperty( "Pitch", m_Param.m_fPitch );

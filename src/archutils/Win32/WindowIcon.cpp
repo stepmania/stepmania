@@ -80,7 +80,7 @@ HICON IconFromSurface( const RageSurface *pSrcImg )
 	pImg = NULL;
 	free( pBitmap );
 
-	if( icon == NULL )
+	if( icon == nullptr )
 	{
 		LOG->Trace( "%s", werr_ssprintf( GetLastError(), "CreateIconFromResourceEx" ).c_str() );
 		return NULL;
@@ -93,7 +93,7 @@ HICON IconFromFile( const RString &sIconFile )
 {
 	RString sError;
 	RageSurface *pImg = RageSurfaceUtils::LoadFile( sIconFile, sError );
-	if( pImg == NULL )
+	if( pImg == nullptr )
 	{
 		LOG->Warn( "Couldn't open icon \"%s\": %s", sIconFile.c_str(), sError.c_str() );
 		return NULL;

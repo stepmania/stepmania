@@ -223,7 +223,7 @@ void RageSurfaceUtils::Palettize( RageSurface *&pImg, int iColors, bool bDither 
 			{
 				// No; search acolormap for closest match.
 				static int square_table[512], *pSquareTable = NULL;
-				if( pSquareTable == NULL )
+				if( pSquareTable == nullptr )
 				{
 					pSquareTable = square_table+256;
 					for( int c = -256; c < 256; ++c )

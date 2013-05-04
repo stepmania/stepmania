@@ -534,7 +534,7 @@ public:
 		int iItem = IArg(1);
 
 		WheelItemBase *pItem = p->GetWheelItem( iItem );
-		if( pItem == NULL )
+		if( pItem == nullptr )
 			luaL_error( L, "%i out of bounds", iItem );
 		pItem->PushSelf( L );
 

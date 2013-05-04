@@ -542,13 +542,13 @@ void MovieDecoder_FFMpeg::GetFrame( RageSurface *pSurface )
 	 * XXX 2: The problem of doing this in Open() is that m_AVTexfmt is not
 	 * already initialized with its correct value.
 	 */
-	if( m_swsctx == NULL )
+	if( m_swsctx == nullptr )
 	{
 		m_swsctx = avcodec::sws_getCachedContext( m_swsctx,
 				GetWidth(), GetHeight(), m_pStream->codec->pix_fmt,
 				GetWidth(), GetHeight(), m_AVTexfmt,
 				sws_flags, NULL, NULL, NULL );
-		if( m_swsctx == NULL )
+		if( m_swsctx == nullptr )
 		{
 			LOG->Warn("Cannot initialize sws conversion context for (%d,%d) %d->%d", GetWidth(), GetHeight(), m_pStream->codec->pix_fmt, m_AVTexfmt);
 			return;
@@ -644,7 +644,7 @@ RString MovieDecoder_FFMpeg::Open( RString sFile )
 	int stream_idx = avcodec::av_find_best_stream( m_fctx, avcodec::AVMEDIA_TYPE_VIDEO, -1, -1, NULL, 0 );
 	if ( stream_idx < 0 ||
 		static_cast<unsigned int>(stream_idx) >= m_fctx->nb_streams ||
-		m_fctx->streams[stream_idx] == NULL )
+		m_fctx->streams[stream_idx] == nullptr )
 		return "Couldn't find any video streams";
 	m_pStream = m_fctx->streams[stream_idx];
 
@@ -670,7 +670,7 @@ RString MovieDecoder_FFMpeg::OpenCodec()
 		avcodec::avcodec_close( m_pStream->codec );
 
 	avcodec::AVCodec *pCodec = avcodec::avcodec_find_decoder( m_pStream->codec->codec_id );
-	if( pCodec == NULL )
+	if( pCodec == nullptr )
 		return ssprintf( "Couldn't find decoder %i", m_pStream->codec->codec_id );
 
 	m_pStream->codec->workaround_bugs   = 1;

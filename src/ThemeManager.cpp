@@ -274,7 +274,7 @@ bool ThemeManager::DoesLanguageExist( const RString &sLanguage )
 
 void ThemeManager::LoadThemeMetrics( const RString &sThemeName_, const RString &sLanguage_ )
 {
-	if( g_pLoadedThemeData == NULL )
+	if( g_pLoadedThemeData == nullptr )
 		g_pLoadedThemeData = new LoadedThemeData;
 
 	// Don't delete and recreate LoadedThemeData.  There are references iniMetrics and iniStrings 

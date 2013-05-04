@@ -287,7 +287,7 @@ int Profile::GetTotalTrailsWithTopGrade( StepsType st, CourseDifficulty d, Grade
 
 		vector<Trail*> vTrails;
 		Trail* pTrail = pCourse->GetTrail( st, d );
-		if( pTrail == NULL )
+		if( pTrail == nullptr )
 			continue;
 
 		const HighScoreList &hsl = GetCourseHighScoreList( pCourse, pTrail );
@@ -347,7 +347,7 @@ float Profile::GetSongsActual( StepsType st, Difficulty dc ) const
 
 		// If the Song isn't loaded on the current machine, then we can't 
 		// get radar values to compute dance points.
-		if( pSong == NULL )
+		if( pSong == nullptr )
 			continue;
 
 		if( !pSong->NormallyDisplayed() )
@@ -364,7 +364,7 @@ float Profile::GetSongsActual( StepsType st, Difficulty dc ) const
 
 			// If the Steps isn't loaded on the current machine, then we can't 
 			// get radar values to compute dance points.
-			if( pSteps == NULL )
+			if( pSteps == nullptr )
 				continue;
 
 			if( pSteps->m_StepsType != st )
@@ -426,7 +426,7 @@ float Profile::GetCoursesActual( StepsType st, CourseDifficulty cd ) const
 	for (Course const *c : vpCourses)
 	{
 		Trail *pTrail = c->GetTrail( st, cd );
-		if( pTrail == NULL )
+		if( pTrail == nullptr )
 			continue;
 
 		const HighScoreList& hsl = GetCourseHighScoreList( c, pTrail );
@@ -468,7 +468,7 @@ int Profile::GetSongNumTimesPlayed( const Song* pSong ) const
 int Profile::GetSongNumTimesPlayed( const SongID& songID ) const
 {
 	const HighScoresForASong *hsSong = GetHighScoresForASong( songID );
-	if( hsSong == NULL )
+	if( hsSong == nullptr )
 		return 0;
 
 	int iTotalNumTimesPlayed = 0;
@@ -635,7 +635,7 @@ void Profile::GetGrades( const Song* pSong, StepsType st, int iCounts[NUM_Grade]
 
 	memset( iCounts, 0, sizeof(int)*NUM_Grade );
 	const HighScoresForASong *hsSong = GetHighScoresForASong( songID );
-	if( hsSong == NULL )
+	if( hsSong == nullptr )
 		return;
 
 	FOREACH_ENUM( Grade,g)
@@ -689,7 +689,7 @@ int Profile::GetCourseNumTimesPlayed( const Course* pCourse ) const
 int Profile::GetCourseNumTimesPlayed( const CourseID &courseID ) const
 {
 	const HighScoresForACourse *hsCourse = GetHighScoresForACourse( courseID );
-	if( hsCourse == NULL )
+	if( hsCourse == nullptr )
 		return 0;
 
 	int iTotalNumTimesPlayed = 0;
@@ -802,7 +802,7 @@ ProfileLoadResult Profile::LoadAllFromDir( RString sDir, bool bRequireSignature 
 
 	int iError;
 	auto_ptr<RageFileBasic> pFile( FILEMAN->Open(fn, RageFile::READ, iError) );
-	if( pFile.get() == NULL )
+	if( pFile.get() == nullptr )
 	{
 		LOG->Trace( "Error opening %s: %s", fn.c_str(), strerror(iError) );
 		return ProfileLoadResult_FailedTampered;
@@ -813,7 +813,7 @@ ProfileLoadResult Profile::LoadAllFromDir( RString sDir, bool bRequireSignature 
 		RString sError;
 		uint32_t iCRC32;
 		RageFileObjInflate *pInflate = GunzipFile( pFile.release(), sError, &iCRC32 );
-		if( pInflate == NULL )
+		if( pInflate == nullptr )
 		{
 			LOG->Trace( "Error opening %s: %s", fn.c_str(), sError.c_str() );
 			return ProfileLoadResult_FailedTampered;
@@ -1433,7 +1433,7 @@ void Profile::LoadSongScoresFromNode( const XNode* pSongScores )
 				WARN_AND_CONTINUE;
 
 			const XNode *pHighScoreListNode = pSteps->GetChild("HighScoreList");
-			if( pHighScoreListNode == NULL )
+			if( pHighScoreListNode == nullptr )
 				WARN_AND_CONTINUE;
 			
 			HighScoreList &hsl = m_SongHighScores[songID].m_StepsHighScores[stepsID].hsl;
@@ -1510,7 +1510,7 @@ void Profile::LoadCourseScoresFromNode( const XNode* pCourseScores )
 		// and search for matches of just the file name.
 		{
 			Course *pC = courseID.ToCourse();
-			if( pC == NULL )
+			if( pC == nullptr )
 			{
 				RString sDir, sFName, sExt;
 				splitpath( courseID.GetPath(), sDir, sFName, sExt );
@@ -1542,7 +1542,7 @@ void Profile::LoadCourseScoresFromNode( const XNode* pCourseScores )
 				WARN_AND_CONTINUE;
 
 			const XNode *pHighScoreListNode = pTrail->GetChild("HighScoreList");
-			if( pHighScoreListNode == NULL )
+			if( pHighScoreListNode == nullptr )
 				WARN_AND_CONTINUE;
 			
 			HighScoreList &hsl = m_CourseHighScores[courseID].m_TrailHighScores[trailID].hsl;
@@ -1617,7 +1617,7 @@ void Profile::LoadCategoryScoresFromNode( const XNode* pCategoryScores )
 				WARN_AND_CONTINUE_M( str );
 
 			const XNode *pHighScoreListNode = pRadarCategory->GetChild("HighScoreList");
-			if( pHighScoreListNode == NULL )
+			if( pHighScoreListNode == nullptr )
 				WARN_AND_CONTINUE;
 			
 			HighScoreList &hsl = this->GetCategoryHighScoreList( st, rc );

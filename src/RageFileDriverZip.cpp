@@ -38,7 +38,7 @@ RageFileDriverZip::RageFileDriverZip( const RString &sPath ):
 
 bool RageFileDriverZip::Load( const RString &sPath )
 {
-	ASSERT( m_pZip == NULL ); /* don't load twice */
+	ASSERT( m_pZip == nullptr ); /* don't load twice */
 
 	m_bFileOwned = true;
 	m_sPath = sPath;
@@ -60,7 +60,7 @@ bool RageFileDriverZip::Load( const RString &sPath )
 
 bool RageFileDriverZip::Load( RageFileBasic *pFile )
 {
-	ASSERT( m_pZip == NULL ); /* don't load twice */
+	ASSERT( m_pZip == nullptr ); /* don't load twice */
 	m_sPath = ssprintf("%p", pFile);
 	m_Mutex.SetName( ssprintf("RageFileDriverZip(%p)", pFile) );
 
@@ -300,7 +300,7 @@ RageFileBasic *RageFileDriverZip::Open( const RString &sPath, int iMode, int &iE
 	}
 
 	FileInfo *info = (FileInfo *) FDB->GetFilePriv( sPath );
-	if( info == NULL )
+	if( info == nullptr )
 	{
 		iErr = ENOENT;
 		return NULL;

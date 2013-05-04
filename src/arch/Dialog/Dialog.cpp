@@ -25,7 +25,7 @@ DialogDriver *MakeDialogDriver()
 	RString sDriver;
 	DialogDriver *pRet = NULL;
 
-	for( unsigned i = 0; pRet == NULL && i < asDriversToTry.size(); ++i )
+	for( unsigned i = 0; pRet == nullptr && i < asDriversToTry.size(); ++i )
 	{
 		sDriver = asDriversToTry[i];
 
@@ -39,7 +39,7 @@ DialogDriver *MakeDialogDriver()
 		if( !asDriversToTry[i].CompareNoCase("Null") )	pRet = new DialogDriver_Null;
 #endif
 
-		if( pRet == NULL )
+		if( pRet == nullptr )
 		{
 			continue;
 		}
@@ -98,7 +98,7 @@ void Dialog::IgnoreMessage( RString sID )
 {
 	// We can't ignore messages before PREFSMAN is around.
 #if !defined(SMPACKAGE)
-	if( PREFSMAN == NULL )
+	if( PREFSMAN == nullptr )
 	{
 		if( sID != "" && LOG )
 			LOG->Warn( "Dialog: message \"%s\" set ID too early for ignorable messages", sID.c_str() );		

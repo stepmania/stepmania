@@ -58,7 +58,7 @@ void MakeInputHandlers( const RString &drivers, vector<InputHandler *> &Add )
 		if( !s.CompareNoCase("MacOSX") )	ret = new InputHandler_MacOSX_HID;
 #endif
 
-		if( ret == NULL )
+		if( ret == nullptr )
 			LOG->Trace( "Unknown Input Handler name: %s", s.c_str() );
 		else
 			Add.push_back( ret );
@@ -89,7 +89,7 @@ void MakeLightsDrivers( const RString &driver, vector<LightsDriver *> &Add )
 	if( !driver.CompareNoCase("Parallel") )		ret = new LightsDriver_Win32Parallel;
 #endif
 
-	if( ret == NULL && driver.CompareNoCase("Null") )
+	if( ret == nullptr && driver.CompareNoCase("Null") )
 		LOG->Trace( "Unknown lights driver name: %s", driver.c_str() );
 	else if( ret != nullptr )
 		Add.push_back( ret );
@@ -115,7 +115,7 @@ LoadingWindow *MakeLoadingWindow()
 	RString Driver;
 	LoadingWindow *ret = NULL;
 
-	for( unsigned i = 0; ret == NULL && i < DriversToTry.size(); ++i )
+	for( unsigned i = 0; ret == nullptr && i < DriversToTry.size(); ++i )
 	{
 		Driver = DriversToTry[i];
 
@@ -132,7 +132,7 @@ LoadingWindow *MakeLoadingWindow()
 		if( !DriversToTry[i].CompareNoCase("Win32") )	ret = new LoadingWindow_Win32;
 #endif
 
-		if( ret == NULL )
+		if( ret == nullptr )
 			continue;
 
 		RString sError = ret->Init();
@@ -209,7 +209,7 @@ RageMovieTexture *MakeRageMovieTexture( RageTextureID ID )
 #ifdef USE_MOVIE_TEXTURE_NULL
 		if( !Driver.CompareNoCase("Null") ) ret = new MovieTexture_Null(ID);
 #endif
-		if( ret == NULL )
+		if( ret == nullptr )
 		{
 			LOG->Trace( "Unknown movie driver name: %s", Driver.c_str() );
 			continue;
@@ -243,7 +243,7 @@ RageSoundDriver *MakeRageSoundDriver( const RString &drivers )
 	RString Driver;
 	RageSoundDriver *ret = NULL;
 
-	for( unsigned i = 0; ret == NULL && i < DriversToTry.size(); ++i )
+	for( unsigned i = 0; ret == nullptr && i < DriversToTry.size(); ++i )
 	{
 		Driver = DriversToTry[i];
 		LOG->Trace( "Initializing driver: %s", DriversToTry[i].c_str() );
@@ -273,7 +273,7 @@ RageSoundDriver *MakeRageSoundDriver( const RString &drivers )
 		if( !DriversToTry[i].CompareNoCase("WaveOut") )		ret = new RageSound_WaveOut;
 #endif
 
-		if( ret == NULL )
+		if( ret == nullptr )
 		{
 			LOG->Trace( "Unknown sound driver name: %s", DriversToTry[i].c_str() );
 			continue;

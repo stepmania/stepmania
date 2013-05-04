@@ -138,7 +138,7 @@ static bool WdmSyncIoctl(
 	void *pOut, unsigned long iOutSize, unsigned long *pBytesReturned, RString &sError )
 {
 	unsigned long iDummyBytesReturned;
-	if( pBytesReturned == NULL )
+	if( pBytesReturned == nullptr )
 		pBytesReturned = &iDummyBytesReturned;
 
 	OVERLAPPED overlapped;
@@ -427,7 +427,7 @@ error:
 /* If the pin handle is open, close it */
 void WinWdmPin::Close()
 {
-	if( m_hHandle == NULL )
+	if( m_hHandle == nullptr )
 		return;
 	RString sError;
 	SetState( KSSTATE_PAUSE, sError );
@@ -583,13 +583,13 @@ error:
  */
 bool WinWdmFilter::Use( RString &sError )
 {
-	if( m_hHandle == NULL )
+	if( m_hHandle == nullptr )
 	{
 		/* Open the filter */
 		m_hHandle = CreateFile( m_sFilterName, GENERIC_READ | GENERIC_WRITE, 0,
 			NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_OVERLAPPED, NULL );
 
-		if( m_hHandle == NULL )
+		if( m_hHandle == nullptr )
 		{
 			sError = werr_ssprintf( GetLastError(), "CreateFile(%s)", m_sFilterName.c_str() );
 			return false;
@@ -853,7 +853,7 @@ static bool BuildFilterList( vector<WinWdmFilter*> &aFilters, RString &sError )
 		}
 
 		WinWdmFilter *pNewFilter = WinWdmFilter::Create( sDevicePath, szFriendlyName, sError );
-		if( pNewFilter == NULL )
+		if( pNewFilter == nullptr )
 		{
 			LOG->Trace( "Filter \"%s\" not created: %s", szFriendlyName, sError.c_str() );
 			continue;
@@ -870,10 +870,10 @@ static bool BuildFilterList( vector<WinWdmFilter*> &aFilters, RString &sError )
 
 static bool PaWinWdm_Initialize( RString &sError )
 {
-	if( DllKsUser == NULL )
+	if( DllKsUser == nullptr )
 	{
 		DllKsUser = LoadLibrary( "ksuser.dll" );
-		if( DllKsUser == NULL )
+		if( DllKsUser == nullptr )
 		{
 			sError = werr_ssprintf( GetLastError(), "LoadLibrary(ksuser.dll)" );
 			return false;
@@ -881,7 +881,7 @@ static bool PaWinWdm_Initialize( RString &sError )
 	}
 
 	FunctionKsCreatePin = (KSCREATEPIN*) GetProcAddress( DllKsUser, "KsCreatePin" );
-	if( FunctionKsCreatePin == NULL )
+	if( FunctionKsCreatePin == nullptr )
 	{
 		sError = "no KsCreatePin in ksuser.dll";
 		FreeLibrary( DllKsUser );
@@ -956,7 +956,7 @@ bool WinWdmStream::Open( WinWdmFilter *pFilter,
 				iPreferredSampleRate,
 				sError );
 
-	if( m_pPlaybackPin == NULL )
+	if( m_pPlaybackPin == nullptr )
 		goto error;
 
 	m_DeviceSampleFormat = PreferredOutputSampleFormat;

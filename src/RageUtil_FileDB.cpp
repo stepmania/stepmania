@@ -181,7 +181,7 @@ bool FilenameDB::ResolvePath( RString &sPath )
 		if( iBegin == (int) sPath.size() )
 			break;
 
-		if( fs == NULL )
+		if( fs == nullptr )
 			fs = GetFileSet( ret );
 		else
 			m_Mutex.Lock(); /* for access to fs */

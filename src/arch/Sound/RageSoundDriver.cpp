@@ -16,7 +16,7 @@ RageSoundDriver *RageSoundDriver::Create( const RString& sDrivers )
 	{
 		RageDriver *pDriver = m_pDriverList.Create( Driver );
 		char const * driverString = Driver.c_str();
-		if( pDriver == NULL )
+		if( pDriver == nullptr )
 		{
 			LOG->Trace( "Unknown sound driver: %s", driverString );
 			continue;

@@ -153,7 +153,7 @@ public:
 	}
 	RString GetStatus() const
 	{
-		if( m_pTransfer == NULL )
+		if( m_pTransfer == nullptr )
 			return "";
 		else
 			return m_pTransfer->GetStatus();
@@ -224,7 +224,7 @@ public:
 					RString sUrl = m_vsQueuedPackageUrls.back();
 					m_vsQueuedPackageUrls.pop_back();
 					m_sCurrentPackageTempFile = MakeTempFileName(sUrl);
-					ASSERT(m_pTransfer == NULL);
+					ASSERT(m_pTransfer == nullptr);
 					m_pTransfer = new FileTransfer();
 					m_pTransfer->StartDownload( sUrl, m_sCurrentPackageTempFile );
 				}
@@ -243,7 +243,7 @@ public:
 					RString sUrl = m_vsQueuedPackageUrls.back();
 					m_vsQueuedPackageUrls.pop_back();
 					m_sCurrentPackageTempFile = MakeTempFileName(sUrl);
-					ASSERT(m_pTransfer == NULL);
+					ASSERT(m_pTransfer == nullptr);
 					m_pTransfer = new FileTransfer();
 					m_pTransfer->StartDownload( sUrl, m_sCurrentPackageTempFile );
 				}
@@ -252,7 +252,7 @@ public:
 		}
 		bool bFinished = m_DownloadState == packages  &&  
 			m_vsQueuedPackageUrls.empty() && 
-			m_pTransfer == NULL;
+			m_pTransfer == nullptr;
 		if( bFinished )
 		{
 			Message msg( "DownloadFinished" );

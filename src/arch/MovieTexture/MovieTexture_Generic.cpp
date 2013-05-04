@@ -206,9 +206,9 @@ void MovieTexture_Generic::CreateTexture()
 	m_iTextureWidth = power_of_two( m_iImageWidth );
 	m_iTextureHeight = power_of_two( m_iImageHeight );
 	MovieDecoderPixelFormatYCbCr fmt = PixelFormatYCbCr_Invalid;
-	if( m_pSurface == NULL )
+	if( m_pSurface == nullptr )
 	{
-		ASSERT( m_pTextureLock == NULL );
+		ASSERT( m_pTextureLock == nullptr );
 		if( g_bMovieTextureDirectUpdates )
 			m_pTextureLock = DISPLAY->CreateTextureLock();
 
@@ -467,7 +467,7 @@ void MovieTexture_Generic::UpdateFrame()
 		CHECKPOINT;
 
 		/* If we have no m_pTextureLock, we still have to upload the texture. */
-		if( m_pTextureLock == NULL )
+		if( m_pTextureLock == nullptr )
 			DISPLAY->UpdateTexture(
 				m_pTextureIntermediate->GetTexHandle(),
 				m_pSurface,
@@ -482,7 +482,7 @@ void MovieTexture_Generic::UpdateFrame()
 	else
 	{
 		CHECKPOINT;
-		if( m_pTextureLock == NULL )
+		if( m_pTextureLock == nullptr )
 			DISPLAY->UpdateTexture(
 				m_uTexHandle,
 				m_pSurface,

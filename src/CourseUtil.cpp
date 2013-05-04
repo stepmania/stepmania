@@ -110,7 +110,7 @@ void CourseUtil::SortCoursePointerArrayByTotalDifficulty( vector<Course*> &vpCou
 #if 0
 RString GetSectionNameFromCourseAndSort( const Course *pCourse, SortOrder so )
 {
-	if( pCourse == NULL )
+	if( pCourse == nullptr )
 		return RString();
 	// more code here
 }
@@ -552,10 +552,10 @@ Course *CourseID::ToCourse() const
 	Course *pCourse = NULL;
 	if( m_Cache.Get(&pCourse) )
 		return pCourse;
-	if( pCourse == NULL && !sPath2.empty() )
+	if( pCourse == nullptr && !sPath2.empty() )
 		pCourse = SONGMAN->GetCourseFromPath( sPath2 );
 
-	if( pCourse == NULL && !sFullTitle.empty() )
+	if( pCourse == nullptr && !sFullTitle.empty() )
 		pCourse = SONGMAN->GetCourseFromName( sFullTitle );
 	m_Cache.Set( pCourse );
 

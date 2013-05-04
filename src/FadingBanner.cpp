@@ -166,7 +166,7 @@ bool FadingBanner::LoadFromCachedBanner( const RString &path )
 
 void FadingBanner::LoadFromSong( const Song* pSong )
 {
-	if( pSong == NULL )
+	if( pSong == nullptr )
 	{
 		LoadFallback();
 		return;
@@ -195,7 +195,7 @@ void FadingBanner::LoadFromSongGroup( RString sSongGroup )
 
 void FadingBanner::LoadFromCourse( const Course* pCourse )
 {
-	if( pCourse == NULL )
+	if( pCourse == nullptr )
 	{
 		LoadFallback();
 		return;

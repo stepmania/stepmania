@@ -47,7 +47,7 @@ void OptionListRow::SetFromHandler( const OptionRowHandler *pHandler )
 	this->FinishTweening();
 	this->RemoveAllChildren();
 
-	if( pHandler == NULL )
+	if( pHandler == nullptr )
 		return;
 
 	int iNum = max( pHandler->m_Def.m_vsChoices.size(), m_Text.size() )+1;
@@ -217,7 +217,7 @@ void OptionsList::Load( RString sType, PlayerNumber pn )
 		ParseCommands( sRowCommands, cmds );
 
 		OptionRowHandler *pHand = OptionRowHandlerUtil::Make( cmds );
-		if( pHand == NULL )
+		if( pHand == nullptr )
 			RageException::Throw( "Invalid OptionRowHandler '%s' in %s::Line%s", cmds.GetOriginalCommandString().c_str(), m_sName.c_str(), sLineName.c_str() );
 
 		m_Rows[sLineName] = pHand;

@@ -11,7 +11,7 @@ ActorProxy::ActorProxy()
 
 bool ActorProxy::EarlyAbortDraw() const
 {
-	return m_pActorTarget == NULL || Actor::EarlyAbortDraw();
+	return m_pActorTarget == nullptr || Actor::EarlyAbortDraw();
 }
 
 void ActorProxy::DrawPrimitives()

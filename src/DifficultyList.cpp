@@ -50,7 +50,7 @@ void StepsDisplayList::LoadFromNode( const XNode* pNode )
 	FOREACH_ENUM( PlayerNumber, pn )
 	{
 		const XNode *pChild = pNode->GetChild( ssprintf("CursorP%i",pn+1) );
-		if( pChild == NULL )
+		if( pChild == nullptr )
 			RageException::Throw( "%s: StepsDisplayList: missing the node \"CursorP%d\"", ActorUtil::GetWhere(pNode).c_str(), pn+1 );
 		m_Cursors[pn].LoadActorFromNode( pChild, this );
 
@@ -61,7 +61,7 @@ void StepsDisplayList::LoadFromNode( const XNode* pNode )
 		 * in separate tweening stacks.  This means the Cursor command can't change diffuse
 		 * colors; I think we do need a diffuse color stack ... */
 		pChild = pNode->GetChild( ssprintf("CursorP%iFrame",pn+1) );
-		if( pChild == NULL )
+		if( pChild == nullptr )
 			RageException::Throw( "%s: StepsDisplayList: missing the node \"CursorP%dFrame\"", ActorUtil::GetWhere(pNode).c_str(), pn+1 );
 		m_CursorFrames[pn].LoadFromNode( pChild );
 		m_CursorFrames[pn].AddChild( m_Cursors[pn] );
@@ -88,7 +88,7 @@ int StepsDisplayList::GetCurrentRowIndex( PlayerNumber pn ) const
 	{
 		const Row &row = m_Rows[i];
 
-		if( GAMESTATE->m_pCurSteps[pn] == NULL )
+		if( GAMESTATE->m_pCurSteps[pn] == nullptr )
 		{
 			if( row.m_dc == ClosestDifficulty )
 				return i;
@@ -253,7 +253,7 @@ void StepsDisplayList::SetFromGameState()
 	const Song *pSong = GAMESTATE->m_pCurSong;
 	unsigned i = 0;
 
-	if( pSong == NULL )
+	if( pSong == nullptr )
 	{
 		// FIXME: This clamps to between the min and the max difficulty, but
 		// it really should round to the nearest difficulty that's in 

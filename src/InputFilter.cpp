@@ -344,7 +344,7 @@ const T *FindItemBinarySearch( IT begin, IT end, const T &i )
 bool InputFilter::IsBeingPressed( const DeviceInput &di, const DeviceInputList *pButtonState ) const
 {
 	LockMut(*queuemutex);
-	if( pButtonState == NULL )
+	if( pButtonState == nullptr )
 		pButtonState = &g_CurrentState;
 	const DeviceInput *pDI = FindItemBinarySearch( pButtonState->begin(), pButtonState->end(), di );
 	return pDI != nullptr && pDI->bDown;
@@ -353,10 +353,10 @@ bool InputFilter::IsBeingPressed( const DeviceInput &di, const DeviceInputList *
 float InputFilter::GetSecsHeld( const DeviceInput &di, const DeviceInputList *pButtonState ) const
 {
 	LockMut(*queuemutex);
-	if( pButtonState == NULL )
+	if( pButtonState == nullptr )
 		pButtonState = &g_CurrentState;
 	const DeviceInput *pDI = FindItemBinarySearch( pButtonState->begin(), pButtonState->end(), di );
-	if( pDI == NULL )
+	if( pDI == nullptr )
 		return 0;
 	return pDI->ts.Ago();
 }
@@ -364,10 +364,10 @@ float InputFilter::GetSecsHeld( const DeviceInput &di, const DeviceInputList *pB
 float InputFilter::GetLevel( const DeviceInput &di, const DeviceInputList *pButtonState ) const
 {
 	LockMut(*queuemutex);
-	if( pButtonState == NULL )
+	if( pButtonState == nullptr )
 		pButtonState = &g_CurrentState;
 	const DeviceInput *pDI = FindItemBinarySearch( pButtonState->begin(), pButtonState->end(), di );
-	if( pDI == NULL )
+	if( pDI == nullptr )
 		return 0.0f;
 	return pDI->level;
 }

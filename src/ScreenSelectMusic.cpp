@@ -238,7 +238,7 @@ void ScreenSelectMusic::BeginScreen()
 		GAMESTATE->SetCurrentStyle( pStyle );
 	}
 
-	if( GAMESTATE->GetCurrentStyle() == NULL )
+	if( GAMESTATE->GetCurrentStyle() == nullptr )
 		RageException::Throw( "The Style has not been set.  A theme must set the Style before loading ScreenSelectMusic." );
 
 	if( GAMESTATE->m_PlayMode == PlayMode_Invalid )
@@ -1107,7 +1107,7 @@ void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 			m_MenuTimer->SetSeconds( ROULETTE_TIMER_SECONDS );
 			m_MenuTimer->Start();
 		}
-		else if( DO_ROULETTE_ON_MENU_TIMER  &&  m_MusicWheel.GetSelectedSong() == NULL  &&  m_MusicWheel.GetSelectedCourse() == NULL )
+		else if( DO_ROULETTE_ON_MENU_TIMER  &&  m_MusicWheel.GetSelectedSong() == nullptr  &&  m_MusicWheel.GetSelectedCourse() == nullptr )
 		{
 			m_MusicWheel.StartRoulette();
 			m_MenuTimer->SetSeconds( ROULETTE_TIMER_SECONDS );
@@ -1118,7 +1118,7 @@ void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 			// Finish sort changing so that the wheel can respond immediately to
 			// our request to choose random.
 			m_MusicWheel.FinishChangingSorts();
-			if( m_MusicWheel.GetSelectedSong() == NULL && m_MusicWheel.GetSelectedCourse() == NULL )
+			if( m_MusicWheel.GetSelectedSong() == nullptr && m_MusicWheel.GetSelectedCourse() == nullptr )
 				m_MusicWheel.StartRandom();
 
 			MenuStart( InputEventPlus() );
@@ -1424,7 +1424,7 @@ bool ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 			const Style *pStyle = NULL;
 			if( GAMESTATE->IsCourseMode() )
 				pStyle = GAMESTATE->m_pCurCourse->GetCourseStyle( GAMESTATE->m_pCurGame, GAMESTATE->GetNumSidesJoined() );
-			if( pStyle == NULL )
+			if( pStyle == nullptr )
 			{
 				StepsType stCurrent;
 				PlayerNumber pn = GAMESTATE->GetMasterPlayerNumber();
@@ -1828,7 +1828,7 @@ void ScreenSelectMusic::AfterMusicChange()
 		const Style *pStyle = NULL;
 		if( CommonMetrics::AUTO_SET_STYLE )
 			pStyle = pCourse->GetCourseStyle( GAMESTATE->m_pCurGame, GAMESTATE->GetNumSidesJoined() );
-		if( pStyle == NULL )
+		if( pStyle == nullptr )
 			pStyle = GAMESTATE->GetCurrentStyle();
 		lCourse->GetTrails( m_vpTrails, pStyle->m_StepsType );
 

@@ -176,7 +176,7 @@ void RageTextureManager::VolatileTexture( RageTextureID ID )
 
 void RageTextureManager::UnloadTexture( RageTexture *t )
 {
-	if( t == NULL )
+	if( t == nullptr )
 		return;
 
 	t->m_iRefCount--;

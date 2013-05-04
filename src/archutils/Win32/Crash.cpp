@@ -67,7 +67,7 @@ static void GetReason( const EXCEPTION_RECORD *pRecord, CrashInfo *crash )
 	// fill out bomb reason
 	const char *reason = LookupException( pRecord->ExceptionCode );
 
-	if( reason == NULL )
+	if( reason == nullptr )
 		wsprintf( crash->m_CrashReason, "unknown exception 0x%08lx", pRecord->ExceptionCode );
 	else
 		strcpy( crash->m_CrashReason, reason );

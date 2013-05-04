@@ -32,7 +32,7 @@ void MeterDisplay::LoadFromNode( const XNode* pNode )
 	LOG->Trace( "MeterDisplay::LoadFromNode(%s)", ActorUtil::GetWhere(pNode).c_str() );
 
 	const XNode *pStream = pNode->GetChild( "Stream" );
-	if( pStream == NULL )
+	if( pStream == nullptr )
 		RageException::Throw( "%s: MeterDisplay: missing the \"Stream\" attribute", ActorUtil::GetWhere(pNode).c_str() );
 	m_sprStream.LoadActorFromNode( pStream, this );
 	this->AddChild( m_sprStream );

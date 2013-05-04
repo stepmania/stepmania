@@ -96,7 +96,7 @@ static bool ConvertFromCP( RString &sText, int iCodePage )
 	
 	CFStringRef old = CFStringCreateWithCString( kCFAllocatorDefault, sText, encoding );
 	
-	if( old == NULL )
+	if( old == nullptr )
 		return false;
 	const size_t size = CFStringGetMaximumSizeForEncoding( CFStringGetLength(old), kCFStringEncodingUTF8 );
 	

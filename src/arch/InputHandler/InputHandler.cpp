@@ -179,7 +179,7 @@ void InputHandler::Create( const RString &drivers_, vector<InputHandler *> &Add 
 	for (RString const &s : DriversToTry)
 	{
 		RageDriver *pDriver = InputHandler::m_pDriverList.Create( s );
-		if( pDriver == NULL )
+		if( pDriver == nullptr )
 		{
 			LOG->Trace( "Unknown Input Handler name: %s", s.c_str() );
 			continue;

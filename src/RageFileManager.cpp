@@ -502,7 +502,7 @@ bool RageFileManager::Mount( const RString &sType, const RString &sRoot_, const 
 
 	CHECKPOINT;
 	RageFileDriver *pDriver = MakeFileDriver( sType, sRoot );
-	if( pDriver == NULL )
+	if( pDriver == nullptr )
 	{
 		CHECKPOINT;
 
@@ -595,7 +595,7 @@ void RageFileManager::Unmount( const RString &sType, const RString &sRoot_, cons
 void RageFileManager::Remount( RString sMountpoint, RString sPath )
 {
 	RageFileDriver *pDriver = GetFileDriver( sMountpoint );
-	if( pDriver == NULL )
+	if( pDriver == nullptr )
 	{
 		if( LOG )
 			LOG->Warn( "Remount(%s,%s): mountpoint not found", sMountpoint.c_str(), sPath.c_str() );

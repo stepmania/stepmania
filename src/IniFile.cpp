@@ -148,7 +148,7 @@ bool IniFile::WriteFile( RageFileBasic &f ) const
 bool IniFile::DeleteValue(const RString &keyname, const RString &valuename)
 {
 	XNode* pNode = GetChild( keyname );
-	if( pNode == NULL )
+	if( pNode == nullptr )
 		return false;
 	return pNode->RemoveAttr( valuename );
 }
@@ -157,7 +157,7 @@ bool IniFile::DeleteValue(const RString &keyname, const RString &valuename)
 bool IniFile::DeleteKey(const RString &keyname)
 {
 	XNode* pNode = GetChild( keyname );
-	if( pNode == NULL )
+	if( pNode == nullptr )
 		return false;
 	return RemoveChild( pNode );
 }
@@ -169,7 +169,7 @@ bool IniFile::RenameKey(const RString &from, const RString &to)
 		return false;
 
 	XNode* pNode = GetChild( from );
-	if( pNode == NULL )
+	if( pNode == nullptr )
 		return false;
 
 	pNode->SetName( to );

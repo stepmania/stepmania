@@ -129,7 +129,7 @@ int RageFileObj::Read( void *pBuffer, size_t iBytes )
 
 		/* If buffering is disabled, or the block is bigger than the buffer,
 		 * read the remainder of the data directly into the desteination buffer. */
-		if( m_pReadBuffer == NULL || iBytes >= BSIZE )
+		if( m_pReadBuffer == nullptr || iBytes >= BSIZE )
 		{
 			/* We have a lot more to read, so don't waste time copying it into the
 			 * buffer. */
@@ -204,7 +204,7 @@ int RageFileObj::Read( void *pBuffer, size_t iBytes, int iNmemb )
 /* Empty the write buffer to disk.  Return -1 on error, 0 on success. */
 int RageFileObj::EmptyWriteBuf()
 {
-	if( m_pWriteBuffer == NULL )
+	if( m_pWriteBuffer == nullptr )
 		return 0;
 
 	if( m_iWriteBufferUsed )
@@ -285,13 +285,13 @@ int RageFileObj::Flush()
 
 void RageFileObj::EnableReadBuffering()
 {
-	if( m_pReadBuffer == NULL )
+	if( m_pReadBuffer == nullptr )
 		m_pReadBuffer = new char[BSIZE];
 }
 
 void RageFileObj::EnableWriteBuffering( int iBytes )
 {
-	if( m_pWriteBuffer == NULL )
+	if( m_pWriteBuffer == nullptr )
 	{
 		m_pWriteBuffer = new char[iBytes];
 		m_iWriteBufferPos = m_iFilePos;
@@ -339,7 +339,7 @@ int RageFileObj::GetLine( RString &sOut )
 		/* Find the end of the block we'll move to out. */
 		char *p = (char *) memchr( m_pReadBuf, '\n', m_iReadBufAvail );
 		bool bReAddCR = false;
-		if( p == NULL )
+		if( p == nullptr )
 		{
 			/* Hack: If the last character of the buffer is \r, then it's likely that an
 			 * \r\n has been split across buffers.  Move everything else, then move the

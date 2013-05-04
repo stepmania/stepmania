@@ -158,7 +158,7 @@ void DirectFilenameDB::CacheFile( const RString &sPath )
 	CHECKPOINT_M( root+sPath );
 	RString sDir = Dirname( sPath );
 	FileSet *pFileSet = GetFileSet( sDir, false );
-	if( pFileSet == NULL )
+	if( pFileSet == nullptr )
 	{
 		// This directory isn't cached so do nothing.
 		m_Mutex.Unlock(); // Locked by GetFileSet()
@@ -251,7 +251,7 @@ void DirectFilenameDB::PopulateFileSet( FileSet &fs, const RString &path )
 	 * scans are I/O-bound. */
 	 
 	DIR *pDir = opendir(root+sPath);
-	if( pDir == NULL )
+	if( pDir == nullptr )
 		return;
 
 	while( struct dirent *pEnt = readdir(pDir) )

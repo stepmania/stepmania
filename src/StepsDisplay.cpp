@@ -150,7 +150,7 @@ void StepsDisplay::SetFromGameState( PlayerNumber pn )
 
 void StepsDisplay::SetFromSteps( const Steps* pSteps )
 {
-	if( pSteps == NULL )
+	if( pSteps == nullptr )
 	{
 		Unset();
 		return;
@@ -162,7 +162,7 @@ void StepsDisplay::SetFromSteps( const Steps* pSteps )
 
 void StepsDisplay::SetFromTrail( const Trail* pTrail )
 {
-	if( pTrail == NULL )
+	if( pTrail == nullptr )
 	{
 		Unset();
 		return;
