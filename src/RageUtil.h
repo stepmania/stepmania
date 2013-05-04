@@ -411,6 +411,12 @@ void MakeLower( wchar_t *p, size_t iLen );
  * @return the integer we are after. */
 int StringToInt( const RString &sString );
 float StringToFloat( const RString &sString );
+/**
+ * @brief Have a standard way of converting floats to strings.
+ *
+ * Note: this needs to be moved out of RageUtil at some point. It doesn't belong here.
+ * @param num the number to convert.
+ * @return the string as trimmed as it can be. */
 RString FloatToString( const float &num );
 bool StringToFloat( const RString &sString, float &fOut );
 
