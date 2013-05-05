@@ -268,6 +268,7 @@ bool SMLoader::ProcessBPMs( TimingData &out, const RString line, const int rowsP
 					out.AddSegment( WarpSegment(BeatToNoteRow(highspeedBeat), fBeat - highspeedBeat) );
 					highspeedBeat = -1;
 				}
+				else
 				{
 					out.AddSegment( BPMSegment(BeatToNoteRow(fBeat), fNewBPM) );
 				}
