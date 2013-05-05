@@ -418,8 +418,8 @@ void SongManager::FreeSongs()
 	m_sSongGroupBannerPaths.clear();
 	//m_sSongGroupBackgroundPaths.clear();
 
-	for( unsigned i=0; i<m_pSongs.size(); i++ )
-		SAFE_DELETE( m_pSongs[i] );
+	for (Song *song : m_pSongs)
+		SAFE_DELETE( song );
 	m_pSongs.clear();
 	m_mapSongGroupIndex.clear();
 
