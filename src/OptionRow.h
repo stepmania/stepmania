@@ -9,6 +9,7 @@
 #include "ModIcon.h"
 #include "ThemeMetric.h"
 #include "AutoActor.h"
+#include <array>
 
 class OptionRowHandler;
 class GameCommand;
@@ -138,7 +139,7 @@ protected:
 	ModIcon		*m_ModIcons[NUM_PLAYERS];
 
 	bool		m_bFirstItemGoesDown;
-	bool		m_bRowHasFocus[NUM_PLAYERS];
+	std::array<bool, NUM_PLAYERS> m_bRowHasFocus;
 
 	int			m_iChoiceInRowWithFocus[NUM_PLAYERS];	// this choice has input focus
 	// Only one will true at a time if m_pHand->m_Def.bMultiSelect
