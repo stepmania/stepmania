@@ -447,7 +447,7 @@ private:
 	/** @brief the Steps that belong to this Song. */
 	vector<Steps*> m_vpSteps;
 	/** @brief the Steps of a particular StepsType that belong to this Song. */
-	vector<Steps*> m_vpStepsByType[NUM_StepsType];
+	std::array<vector<Steps *>, NUM_StepsType> m_vpStepsByType;
 };
 
 #endif
