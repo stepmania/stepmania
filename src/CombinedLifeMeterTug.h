@@ -3,6 +3,7 @@
 
 #include "CombinedLifeMeter.h"
 #include "MeterDisplay.h"
+#include <array>
 
 /** @brief Dance Magic-like tug-o-war life meter. */
 class CombinedLifeMeterTug : public CombinedLifeMeter
@@ -18,7 +19,7 @@ public:
 protected:
 	void ChangeLife( PlayerNumber pn, float fPercentToMove );
 
-	MeterDisplay	m_Stream[NUM_PLAYERS];
+	std::array<MeterDisplay, NUM_PLAYERS> m_Stream;
 	AutoActor	m_sprSeparator;
 	AutoActor	m_sprFrame;
 };
