@@ -392,7 +392,7 @@ public:
 	 *
 	 * This is for informational purposes only.
 	 */
-	RString					m_sFile;
+	std::string					m_sFile;
 
 	/** @brief The initial offset of a song. */
 	float	m_fBeat0OffsetInSeconds;
