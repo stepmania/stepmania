@@ -457,7 +457,7 @@ enum
 
 void TimingData::GetBeatAndBPSFromElapsedTimeNoOffset( float fElapsedTime, float &fBeatOut, float &fBPSOut, bool &bFreezeOut, bool &bDelayOut, int &iWarpBeginOut, float &fWarpDestinationOut ) const
 {
-	const vector<TimingSegment *> * segs = m_avpTimingSegments;
+	const auto &segs = m_avpTimingSegments;
 	vector<TimingSegment *>::const_iterator itBPMS = segs[SEGMENT_BPM].begin();
 	vector<TimingSegment *>::const_iterator itWS   = segs[SEGMENT_WARP].begin();
 	vector<TimingSegment *>::const_iterator itSS   = segs[SEGMENT_STOP].begin();
@@ -595,7 +595,7 @@ float TimingData::GetElapsedTimeFromBeat( float fBeat ) const
 
 float TimingData::GetElapsedTimeFromBeatNoOffset( float fBeat ) const
 {
-	const vector<TimingSegment *> * segs = m_avpTimingSegments;
+	const auto & segs = m_avpTimingSegments;
 	vector<TimingSegment *>::const_iterator itBPMS = segs[SEGMENT_BPM].begin();
 	vector<TimingSegment *>::const_iterator itWS   = segs[SEGMENT_WARP].begin();
 	vector<TimingSegment *>::const_iterator itSS   = segs[SEGMENT_STOP].begin();
@@ -879,7 +879,7 @@ void TimingData::TidyUpData(bool allowEmpty)
 		return;
 
 	// If there are no BPM segments, provide a default.
-	vector<TimingSegment *> *segs = m_avpTimingSegments;
+	auto &segs = m_avpTimingSegments;
 	if( segs[SEGMENT_BPM].empty() )
 	{
 		LOG->UserLog( "Song file", m_sFile, "has no BPM segments, default provided." );
