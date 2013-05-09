@@ -214,12 +214,8 @@ bool SMLoader::ProcessBPMs( TimingData &out, const RString line, const int rowsP
 {
 	vector<RString> arrayBPMChangeExpressions;
 	split( line, ",", arrayBPMChangeExpressions );
-	
-	// prepare storage variables for negative BPMs -> Warps.
-	float negBeat = -1;
-	float negBPM = 1;
-	float highspeedBeat = -1;
-	bool bNotEmpty = false;
+
+	vector< pair<float, float> > vBPMChanges;
 	
 	for( unsigned b=0; b<arrayBPMChangeExpressions.size(); b++ )
 	{
@@ -234,10 +230,24 @@ bool SMLoader::ProcessBPMs( TimingData &out, const RString line, const int rowsP
 			continue;
 		}
 
-		bNotEmpty = true;
-
 		const float fBeat = RowToBeat( arrayBPMChangeValues[0], rowsPerBeat );
 		const float fNewBPM = StringToFloat( arrayBPMChangeValues[1] );
+
+		vBPMChanges.push_back( make_pair(fBeat, fNewBPM) );
+	}
+
+	// prepare storage variables for negative BPMs -> Warps.
+	float negBeat = -1;
+	float negBPM = 1;
+	float highspeedBeat = -1;
+	bool bNotEmpty = false;
+	
+	for( unsigned b=0; b<vBPMChanges.size(); b++ )
+	{
+		const float fBeat = vBPMChanges[b].first;
+		const float fNewBPM = vBPMChanges[b].second;
+
+		bNotEmpty = true;
 
 		if( fNewBPM < 0.0f )
 		{
@@ -284,9 +294,7 @@ void SMLoader::ProcessStops( TimingData &out, const RString line, const int rows
 	vector<RString> arrayFreezeExpressions;
 	split( line, ",", arrayFreezeExpressions );
 	
-	// Prepare variables for negative stop conversion.
-	float negBeat = -1;
-	float negPause = 0;
+	vector< pair<float, float> > vStops;
 
 	for( unsigned f=0; f<arrayFreezeExpressions.size(); f++ )
 	{
@@ -303,6 +311,18 @@ void SMLoader::ProcessStops( TimingData &out, const RString line, const int rows
 
 		const float fFreezeBeat = RowToBeat( arrayFreezeValues[0], rowsPerBeat );
 		const float fFreezeSeconds = StringToFloat( arrayFreezeValues[1] );
+
+		vStops.push_back( make_pair(fFreezeBeat, fFreezeSeconds) );
+	}
+	
+	// Prepare variables for negative stop conversion.
+	float negBeat = -1;
+	float negPause = 0;
+
+	for( unsigned f=0; f<vStops.size(); f++ )
+	{
+		const float fFreezeBeat = vStops[f].first;
+		const float fFreezeSeconds = vStops[f].second;
 
 		// Process the prior stop.
 		if( negPause > 0 )
