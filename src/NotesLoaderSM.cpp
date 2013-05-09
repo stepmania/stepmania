@@ -1074,8 +1074,8 @@ bool SMLoader::LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePath
 		}
 	}
 
-	return true;
-
+	// Edit had no valid #NOTES sections
+	return false;
 }
 
 void SMLoader::GetApplicableFiles( const RString &sPath, vector<RString> &out )

@@ -1084,9 +1084,8 @@ bool SSCLoader::LoadEditFromMsd(const MsdFile &msd,
 		}
 	}
 
-	//return true;
-	// only load a SSC edit if it passes the checks. -aj
-	return bSSCFormat;
+	// Edit had no valid #NOTES sections
+	return false;
 }
 
 /*
