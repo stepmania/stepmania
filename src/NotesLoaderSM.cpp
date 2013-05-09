@@ -210,13 +210,11 @@ void SMLoader::ProcessInstrumentTracks( Song &out, const RString &sParam )
 	}
 }
 
-bool SMLoader::ProcessBPMs( TimingData &out, const RString line, const int rowsPerBeat )
+void SMLoader::ParseBPMs( vector< pair<float, float> > &out, const RString line, const int rowsPerBeat )
 {
 	vector<RString> arrayBPMChangeExpressions;
 	split( line, ",", arrayBPMChangeExpressions );
 
-	vector< pair<float, float> > vBPMChanges;
-	
 	for( unsigned b=0; b<arrayBPMChangeExpressions.size(); b++ )
 	{
 		vector<RString> arrayBPMChangeValues;
@@ -233,9 +231,12 @@ bool SMLoader::ProcessBPMs( TimingData &out, const RString line, const int rowsP
 		const float fBeat = RowToBeat( arrayBPMChangeValues[0], rowsPerBeat );
 		const float fNewBPM = StringToFloat( arrayBPMChangeValues[1] );
 
-		vBPMChanges.push_back( make_pair(fBeat, fNewBPM) );
+		out.push_back( make_pair(fBeat, fNewBPM) );
 	}
+}
 
+bool SMLoader::ProcessBPMs( TimingData &out, const vector< pair<float, float> > &vBPMChanges )
+{
 	// prepare storage variables for negative BPMs -> Warps.
 	float negBeat = -1;
 	float negBPM = 1;
@@ -289,13 +290,11 @@ bool SMLoader::ProcessBPMs( TimingData &out, const RString line, const int rowsP
 	return bNotEmpty;
 }
 
-void SMLoader::ProcessStops( TimingData &out, const RString line, const int rowsPerBeat )
+void SMLoader::ParseStops( vector< pair<float, float> > &out, const RString line, const int rowsPerBeat )
 {
 	vector<RString> arrayFreezeExpressions;
 	split( line, ",", arrayFreezeExpressions );
 	
-	vector< pair<float, float> > vStops;
-
 	for( unsigned f=0; f<arrayFreezeExpressions.size(); f++ )
 	{
 		vector<RString> arrayFreezeValues;
@@ -312,9 +311,12 @@ void SMLoader::ProcessStops( TimingData &out, const RString line, const int rows
 		const float fFreezeBeat = RowToBeat( arrayFreezeValues[0], rowsPerBeat );
 		const float fFreezeSeconds = StringToFloat( arrayFreezeValues[1] );
 
-		vStops.push_back( make_pair(fFreezeBeat, fFreezeSeconds) );
+		out.push_back( make_pair(fFreezeBeat, fFreezeSeconds) );
 	}
-	
+}
+
+void SMLoader::ProcessStops( TimingData &out, const vector< pair<float, float> > &vStops )
+{
 	// Prepare variables for negative stop conversion.
 	float negBeat = -1;
 	float negPause = 0;
@@ -798,12 +800,16 @@ bool SMLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCache
 		}
 		else if( sValueName=="BPMS" )
 		{
-			ProcessBPMs(out.m_SongTiming, sParams[1]);
+			vector< pair<float, float> > vBPMChanges;
+			ParseBPMs(vBPMChanges, sParams[1]);
+			ProcessBPMs(out.m_SongTiming, vBPMChanges);
 		}
 
 		else if( sValueName=="STOPS" || sValueName=="FREEZES" )
 		{
-			ProcessStops(out.m_SongTiming, sParams[1]);
+			vector< pair<float, float> > vStops;
+			ParseStops(vStops, sParams[1]);
+			ProcessStops(out.m_SongTiming, vStops);
 		}
 
 		else if( sValueName=="DELAYS" )

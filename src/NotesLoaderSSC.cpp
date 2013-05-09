@@ -473,7 +473,9 @@ bool SSCLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 				 * if the steps do not have their own timing. */
 				else if( sValueName=="STOPS" )
 				{
-					SMLoader::ProcessStops(out.m_SongTiming, sParams[1]);
+					vector< pair<float, float> > vStops;
+					SMLoader::ParseStops(vStops, sParams[1]);
+					SMLoader::ProcessStops(out.m_SongTiming, vStops);
 				}
 				else if( sValueName=="DELAYS" )
 				{
@@ -482,7 +484,9 @@ bool SSCLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 
 				else if( sValueName=="BPMS" )
 				{
-					SMLoader::ProcessBPMs(out.m_SongTiming, sParams[1]);
+					vector< pair<float, float> > vBPMChanges;
+					SMLoader::ParseBPMs(vBPMChanges, sParams[1]);
+					SMLoader::ProcessBPMs(out.m_SongTiming, vBPMChanges);
 				}
 				
 				else if( sValueName=="WARPS" ) // Older versions allowed em here.
@@ -659,7 +663,9 @@ bool SSCLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 				{
 					if (out.m_fVersion >= VERSION_SPLIT_TIMING)
 					{
-						if( SMLoader::ProcessBPMs(stepsTiming, sParams[1]) )
+						vector< pair<float, float> > vBPMChanges;
+						SMLoader::ParseBPMs(vBPMChanges, sParams[1]);
+						if( SMLoader::ProcessBPMs(stepsTiming, vBPMChanges) )
 							bHasOwnTiming = true;
 					}
 				}
@@ -668,7 +674,9 @@ bool SSCLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 				{
 					if (out.m_fVersion >= VERSION_SPLIT_TIMING)
 					{
-						SMLoader::ProcessStops(stepsTiming, sParams[1]);
+						vector< pair<float, float> > vStops;
+						SMLoader::ParseStops(vStops, sParams[1]);
+						SMLoader::ProcessStops(stepsTiming, vStops);
 						bHasOwnTiming = true;
 					}
 				}
@@ -945,14 +953,18 @@ bool SSCLoader::LoadEditFromMsd(const MsdFile &msd,
 
 		else if( sValueName=="BPMS" )
 		{
-			if( SMLoader::ProcessBPMs(stepsTiming, sParams[1]) )
+			vector< pair<float, float> > vBPMChanges;
+			SMLoader::ParseBPMs(vBPMChanges, sParams[1]);
+			if( SMLoader::ProcessBPMs(stepsTiming, vBPMChanges) )
 				bHasOwnTiming = true;
 			bSSCFormat = true;
 		}
 		
 		else if( sValueName=="STOPS" )
 		{
-			SMLoader::ProcessStops(stepsTiming, sParams[1]);
+			vector< pair<float, float> > vStops;
+			SMLoader::ParseStops(vStops, sParams[1]);
+			SMLoader::ProcessStops(stepsTiming, vStops);
 			bSSCFormat = true;
 		}
 		

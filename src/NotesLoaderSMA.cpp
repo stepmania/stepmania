@@ -365,14 +365,18 @@ bool SMALoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 		{
 			TimingData &timing = (state == SMA_GETTING_STEP_INFO
 					      ? pNewNotes->m_Timing : out.m_SongTiming);
-			ProcessBPMs( timing, sParams[1], iRowsPerBeat );
+			vector< pair<float, float> > vBPMChanges;
+			ParseBPMs( vBPMChanges, sParams[1], iRowsPerBeat );
+			ProcessBPMs( timing, vBPMChanges );
 		}
 
 		else if( sValueName=="STOPS" || sValueName=="FREEZES" )
 		{
 			TimingData &timing = (state == SMA_GETTING_STEP_INFO
 					      ? pNewNotes->m_Timing : out.m_SongTiming);
-			ProcessStops( timing, sParams[1], iRowsPerBeat );
+			vector< pair<float, float> > vStops;
+			ParseStops( vStops, sParams[1], iRowsPerBeat );
+			ProcessStops( timing, vStops );
 		}
 
 		else if( sValueName=="DELAYS" )
