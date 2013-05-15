@@ -738,6 +738,7 @@ bool SMLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCache
 		return false;
 	}
 
+	vector< pair<float, float> > vBPMChanges, vStops;
 	out.m_SongTiming.m_sFile = sPath;
 	out.m_sSongFileName = sPath;
 
@@ -800,16 +801,12 @@ bool SMLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCache
 		}
 		else if( sValueName=="BPMS" )
 		{
-			vector< pair<float, float> > vBPMChanges;
 			ParseBPMs(vBPMChanges, sParams[1]);
-			ProcessBPMs(out.m_SongTiming, vBPMChanges);
 		}
 
 		else if( sValueName=="STOPS" || sValueName=="FREEZES" )
 		{
-			vector< pair<float, float> > vStops;
 			ParseStops(vStops, sParams[1]);
-			ProcessStops(out.m_SongTiming, vStops);
 		}
 
 		else if( sValueName=="DELAYS" )
@@ -960,8 +957,11 @@ bool SMLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCache
 			LOG->UserLog( "Song file", sPath, "has an unexpected value named \"%s\".", sValueName.c_str() );
 	}
 
-	// Ensure all warps from negative time changes are in order.
+	// Turn negative time changes into warps
+	ProcessBPMs(out.m_SongTiming, vBPMChanges);
+	ProcessStops(out.m_SongTiming, vStops);
 	out.m_SongTiming.SortSegments( SEGMENT_WARP );
+
 	TidyUpData( out, bFromCache );
 	return true;
 }
