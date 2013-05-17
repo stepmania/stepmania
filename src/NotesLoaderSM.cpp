@@ -235,7 +235,7 @@ void SMLoader::ParseBPMs( vector< pair<float, float> > &out, const RString line,
 	}
 }
 
-bool SMLoader::ProcessBPMs( TimingData &out, const vector< pair<float, float> > &vBPMChanges )
+void SMLoader::ProcessBPMs( TimingData &out, const vector< pair<float, float> > &vBPMChanges )
 {
 	// prepare storage variables for negative BPMs -> Warps.
 	float negBeat = -1;
@@ -286,8 +286,6 @@ bool SMLoader::ProcessBPMs( TimingData &out, const vector< pair<float, float> > 
 			}
 		}
 	}
-
-	return bNotEmpty;
 }
 
 void SMLoader::ParseStops( vector< pair<float, float> > &out, const RString line, const int rowsPerBeat )

@@ -79,9 +79,8 @@ struct SMLoader
 	/**
 	 * @brief Process the BPM Segments from the string.
 	 * @param out the TimingData being modified.
-	 * @param vBPMChanges the vector of BPM Changes data.
-	 * @return true if there was at least one segment found, false otherwise. */
-	bool ProcessBPMs(TimingData & out,
+	 * @param vBPMChanges the vector of BPM Changes data. */
+	void ProcessBPMs(TimingData & out,
 	                 const vector< pair<float, float> > &vBPMChanges);
 	/**
 	 * @brief Parse Stops data from a string.
