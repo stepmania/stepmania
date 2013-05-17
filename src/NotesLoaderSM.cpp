@@ -801,11 +801,13 @@ bool SMLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCache
 		}
 		else if( sValueName=="BPMS" )
 		{
+			vBPMChanges.clear();
 			ParseBPMs(vBPMChanges, sParams[1]);
 		}
 
 		else if( sValueName=="STOPS" || sValueName=="FREEZES" )
 		{
+			vStops.clear();
 			ParseStops(vStops, sParams[1]);
 		}
 
