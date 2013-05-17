@@ -304,8 +304,7 @@ bool SMALoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 				// This should generally return song timing
 				TimingData &timing = (state == SMA_GETTING_STEP_INFO
 						? pNewNotes->m_Timing : out.m_SongTiming);
-				ProcessBPMs( timing, vBPMChanges );
-				ProcessStops( timing, vStops );
+				ProcessBPMsAndStops(timing, vBPMChanges, vStops);
 
 				state = SMA_GETTING_STEP_INFO;
 				pNewNotes = new Steps(&out);
@@ -459,8 +458,7 @@ bool SMALoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 			// Handle timing changes and convert negative bpms/stops
 			TimingData &timing = (state == SMA_GETTING_STEP_INFO
 					      ? pNewNotes->m_Timing : out.m_SongTiming);
-			ProcessBPMs( timing, vBPMChanges );
-			ProcessStops( timing, vStops );
+			ProcessBPMsAndStops(timing, vBPMChanges, vStops);
 		}
 		else if( sValueName=="TIMESIGNATURES" || sValueName=="LEADTRACK"  )
 			;

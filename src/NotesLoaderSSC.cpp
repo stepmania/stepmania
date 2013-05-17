@@ -565,8 +565,7 @@ bool SSCLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 				else if( sValueName=="NOTEDATA" )
 				{
 					// Process timings and convert negative bpms/stops
-					SMLoader::ProcessBPMs(out.m_SongTiming, vBPMChanges);
-					SMLoader::ProcessStops(out.m_SongTiming, vStops);
+					SMLoader::ProcessBPMsAndStops(out.m_SongTiming, vBPMChanges, vStops);
 
 					state = GETTING_STEP_INFO;
 					pNewNotes = out.CreateSteps();
@@ -656,8 +655,7 @@ bool SSCLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 					// Process timings and convert negative bpms/stops
 					if( !vBPMChanges.empty() )
 						bHasOwnTiming = true;
-					SMLoader::ProcessBPMs(stepsTiming, vBPMChanges);
-					SMLoader::ProcessStops(stepsTiming, vStops);
+					SMLoader::ProcessBPMsAndStops(stepsTiming, vBPMChanges, vStops);
 
 					state = GETTING_SONG_INFO;
 					if( bHasOwnTiming )
@@ -808,8 +806,7 @@ bool SSCLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 					// Process timings and convert negative bpms/stops
 					if( !vBPMChanges.empty() )
 						bHasOwnTiming = true;
-					SMLoader::ProcessBPMs(stepsTiming, vBPMChanges);
-					SMLoader::ProcessStops(stepsTiming, vStops);
+					SMLoader::ProcessBPMsAndStops(stepsTiming, vBPMChanges, vStops);
 
 					state = GETTING_SONG_INFO;
 					if( bHasOwnTiming )
@@ -1047,8 +1044,7 @@ bool SSCLoader::LoadEditFromMsd(const MsdFile &msd,
 				return true;
 
 			// Process timings and convert negative bpms/stops
-			SMLoader::ProcessBPMs(stepsTiming, vBPMChanges);
-			SMLoader::ProcessStops(stepsTiming, vStops);
+			SMLoader::ProcessBPMsAndStops(stepsTiming, vBPMChanges, vStops);
 
 			if( bSSCFormat )
 			{

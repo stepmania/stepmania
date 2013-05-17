@@ -362,6 +362,14 @@ void SMLoader::ProcessStops( TimingData &out, const vector< pair<float, float> >
 	}
 }
 
+void SMLoader::ProcessBPMsAndStops(TimingData &out,
+		const vector< pair<float, float> > &vBPMs,
+		const vector< pair<float, float> > &vStops)
+{
+	ProcessBPMs(out, vBPMs);
+	ProcessStops(out, vStops);
+}
+
 void SMLoader::ProcessDelays( TimingData &out, const RString line, const int rowsPerBeat )
 {
 	vector<RString> arrayDelayExpressions;
@@ -958,8 +966,7 @@ bool SMLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCache
 	}
 
 	// Turn negative time changes into warps
-	ProcessBPMs(out.m_SongTiming, vBPMChanges);
-	ProcessStops(out.m_SongTiming, vStops);
+	ProcessBPMsAndStops(out.m_SongTiming, vBPMChanges, vStops);
 	out.m_SongTiming.SortSegments( SEGMENT_WARP );
 
 	TidyUpData( out, bFromCache );

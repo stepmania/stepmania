@@ -97,6 +97,14 @@ struct SMLoader
 	void ProcessStops(TimingData & out,
 	                  const vector< pair<float, float> > &vStops);
 	/**
+	 * @brief Process BPM and stop segments from the data.
+	 * @param out the TimingData being modified.
+	 * @param vBPMs the vector of BPM changes.
+	 * @param vStops the vector of stops. */
+	void ProcessBPMsAndStops(TimingData &out,
+			const vector< pair<float, float> > &vBPMs,
+			const vector< pair<float, float> > &vStops);
+	/**
 	 * @brief Process the Delay Segments from the string.
 	 * @param out the TimingData being modified.
 	 * @param line the string in question.
