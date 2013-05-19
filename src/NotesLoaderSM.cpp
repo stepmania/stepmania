@@ -363,9 +363,16 @@ void SMLoader::ProcessStops( TimingData &out, const vector< pair<float, float> >
 }
 
 void SMLoader::ProcessBPMsAndStops(TimingData &out,
-		const vector< pair<float, float> > &vBPMs,
-		const vector< pair<float, float> > &vStops)
+		vector< pair<float, float> > &vBPMs,
+		vector< pair<float, float> > &vStops)
 {
+	// Sort BPM changes and stops
+	// TODO: Make sorted lists a precondition rather than sorting them here.
+	// The caller may know that the lists are sorted already (e.g. if
+	// loaded from cache).
+	stable_sort(vBPMs.begin(), vBPMs.end());
+	stable_sort(vStops.begin(), vStops.end());
+
 	ProcessBPMs(out, vBPMs);
 	ProcessStops(out, vStops);
 }
