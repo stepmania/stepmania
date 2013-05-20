@@ -744,18 +744,6 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, set<RString> &Bla
 		}
 	}
 
-	if (out.m_sArtist == "The Dancing Monkeys Project" && out.m_sMainTitle.find_first_of('-') != string::npos)
-	{
-		// Dancing Monkeys had a bug/feature where the artist was replaced. Restore it.
-		vector<RString> titleParts;
-		split(out.m_sMainTitle, "-", titleParts);
-		out.m_sArtist = titleParts.front;
-		Trim(out.m_sArtist);
-		titleParts.erase(titleParts.begin());
-		out.m_sMainTitle = join("-", titleParts);
-		Trim(out.m_sMainTitle);
-	}
-
 	return true;
 }
 

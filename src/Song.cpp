@@ -465,6 +465,18 @@ void Song::TidyUpData( bool fromCache, bool /* duringCache */ )
 	FixupPath( m_sBackgroundFile, m_sSongDir );
 	FixupPath( m_sCDTitleFile, m_sSongDir );
 
+	if (this->m_sArtist == "The Dancing Monkeys Project" && this->m_sMainTitle.find_first_of('-') != string::npos)
+	{
+		// Dancing Monkeys had a bug/feature where the artist was replaced. Restore it.
+		vector<RString> titleParts;
+		split(this->m_sMainTitle, "-", titleParts);
+		this->m_sArtist = titleParts.front();
+		Trim(this->m_sArtist);
+		titleParts.erase(titleParts.begin());
+		this->m_sMainTitle = join("-", titleParts);
+		Trim(this->m_sMainTitle);
+	}
+
 	if( !HasMusic() )
 	{
 		vector<RString> arrayPossibleMusic;
