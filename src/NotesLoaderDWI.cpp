@@ -632,7 +632,15 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, set<RString> &Bla
 			out.m_fMusicSampleStartSeconds = ParseBrokenDWITimestamp(sParams[1], sParams[2], sParams[3]);
 
 		else if( sValueName.EqualsNoCase("SAMPLELENGTH") )
-			out.m_fMusicSampleLengthSeconds = ParseBrokenDWITimestamp(sParams[1], sParams[2], sParams[3]);
+		{
+			float sampleLength = ParseBrokenDWITimestamp(sParams[1], sParams[2], sParams[3]);
+			if (sampleLength > 0 && sampleLength < 1) {
+				// there were multiple versions of this tag allegedly: ensure a decent length if requested.
+				sampleLength *= 1000;
+			}
+			out.m_fMusicSampleLengthSeconds = sampleLength;
+
+		}
 
 		else if( sValueName.EqualsNoCase("FREEZE") )
 		{
