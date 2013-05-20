@@ -230,6 +230,11 @@ void SMLoader::ParseBPMs( vector< pair<float, float> > &out, const RString line,
 
 		const float fBeat = RowToBeat( arrayBPMChangeValues[0], rowsPerBeat );
 		const float fNewBPM = StringToFloat( arrayBPMChangeValues[1] );
+		if( fNewBPM == 0 ) {
+			LOG->UserLog("Song file", this->GetSongTitle(),
+				     "has a zero BPM; ignored.");
+			continue;
+		}
 
 		out.push_back( make_pair(fBeat, fNewBPM) );
 	}
@@ -308,6 +313,11 @@ void SMLoader::ParseStops( vector< pair<float, float> > &out, const RString line
 
 		const float fFreezeBeat = RowToBeat( arrayFreezeValues[0], rowsPerBeat );
 		const float fFreezeSeconds = StringToFloat( arrayFreezeValues[1] );
+		if( fFreezeSeconds == 0 ) {
+			LOG->UserLog("Song file", this->GetSongTitle(),
+				     "has a zero-length stop; ignored.");
+			continue;
+		}
 
 		out.push_back( make_pair(fFreezeBeat, fFreezeSeconds) );
 	}
