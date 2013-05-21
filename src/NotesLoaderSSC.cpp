@@ -654,8 +654,10 @@ bool SSCLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 				{
 					// Process timings and convert negative bpms/stops
 					if( !vBPMChanges.empty() )
+					{
 						bHasOwnTiming = true;
-					SMLoader::ProcessBPMsAndStops(stepsTiming, vBPMChanges, vStops);
+						SMLoader::ProcessBPMsAndStops(stepsTiming, vBPMChanges, vStops);
+					}
 
 					state = GETTING_SONG_INFO;
 					if( bHasOwnTiming )
@@ -805,8 +807,10 @@ bool SSCLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 				{
 					// Process timings and convert negative bpms/stops
 					if( !vBPMChanges.empty() )
+					{
 						bHasOwnTiming = true;
-					SMLoader::ProcessBPMsAndStops(stepsTiming, vBPMChanges, vStops);
+						SMLoader::ProcessBPMsAndStops(stepsTiming, vBPMChanges, vStops);
+					}
 
 					state = GETTING_SONG_INFO;
 					if( bHasOwnTiming )
@@ -1044,7 +1048,10 @@ bool SSCLoader::LoadEditFromMsd(const MsdFile &msd,
 				return true;
 
 			// Process timings and convert negative bpms/stops
-			SMLoader::ProcessBPMsAndStops(stepsTiming, vBPMChanges, vStops);
+			if( !vBPMChanges.empty() )
+			{
+				SMLoader::ProcessBPMsAndStops(stepsTiming, vBPMChanges, vStops);
+			}
 
 			if( bSSCFormat )
 			{
