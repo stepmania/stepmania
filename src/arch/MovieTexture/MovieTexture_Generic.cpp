@@ -197,10 +197,11 @@ void MovieTexture_Generic::CreateTexture()
 	else if( fSourceAspectRatio > 1 )
 		m_iSourceWidth = lrintf( m_iSourceWidth * fSourceAspectRatio );
 
-	/* Cap the max texture size to the hardware max. */
-	int iMaxSize = min( GetID().iMaxSize, DISPLAY->GetMaxTextureSize() );
-	m_iImageWidth = min( m_iSourceWidth, iMaxSize );
-	m_iImageHeight = min( m_iSourceHeight, iMaxSize );
+	/* HACK: Don't cap movie textures to the max texture size, since we
+	 * render them onto the texture at the source dimensions.  If we find a
+	 * fast way to resize movies, we can change this back. */
+	m_iImageWidth = m_iSourceWidth;
+	m_iImageHeight = m_iSourceHeight;
 
 	/* Texture dimensions need to be a power of two; jump to the next. */
 	m_iTextureWidth = power_of_two( m_iImageWidth );
