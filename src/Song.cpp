@@ -42,7 +42,7 @@
  * @brief The internal version of the cache for StepMania.
  *
  * Increment this value to invalidate the current cache. */
-const int FILE_CACHE_VERSION = 208;
+const int FILE_CACHE_VERSION = 210;
 
 /** @brief How long does a song sample last by default? */
 const float DEFAULT_MUSIC_SAMPLE_LENGTH = 12.f;
@@ -464,6 +464,18 @@ void Song::TidyUpData( bool fromCache, bool /* duringCache */ )
 	FixupPath( m_sLyricsFile, m_sSongDir );
 	FixupPath( m_sBackgroundFile, m_sSongDir );
 	FixupPath( m_sCDTitleFile, m_sSongDir );
+
+	if (this->m_sArtist == "The Dancing Monkeys Project" && this->m_sMainTitle.find_first_of('-') != string::npos)
+	{
+		// Dancing Monkeys had a bug/feature where the artist was replaced. Restore it.
+		vector<RString> titleParts;
+		split(this->m_sMainTitle, "-", titleParts);
+		this->m_sArtist = titleParts.front();
+		Trim(this->m_sArtist);
+		titleParts.erase(titleParts.begin());
+		this->m_sMainTitle = join("-", titleParts);
+		Trim(this->m_sMainTitle);
+	}
 
 	if( !HasMusic() )
 	{
