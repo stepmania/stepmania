@@ -277,7 +277,7 @@ namespace {
 	}
 }
 
-// Precondition: no BPM change or stop has 0 for its value (change->second).
+// Precondition: no BPM change or stop has 0 for its value (change.second).
 //     (The ParseBPMs and ParseStops functions make sure of this.)
 // Postcondition: all BPM changes, stops, and warps are added to the out
 //     parameter, already sorted by beat.
@@ -367,23 +367,22 @@ void SMLoader::ProcessBPMsAndStops(TimingData &out,
 	{
 		// Get the next change in order, with BPMs taking precedence
 		// when they fall on the same beat.
-		vector< pair<float, float> >::const_iterator & change =
-			(ibpm == ibpmend || (istop != istopend && istop->first < ibpm->first))
-			? istop : ibpm;
+		bool changeIsBpm = istop == istopend || (ibpm != ibpmend && ibpm->first <= istop->first);
+		const pair<float, float> & change = changeIsBpm ? *ibpm : *istop;
 
 		// Calculate the effects of time at the current BPM.  "Infinite"
 		// BPMs (SM4 warps) imply that zero time passes, so skip this
 		// step in that case.
 		if (bpm <= FAST_BPM_WARP)
 		{
-			timeofs += (change->first - prevbeat) * 60/bpm;
+			timeofs += (change.first - prevbeat) * 60/bpm;
 
 			// If we were in a warp and it finished during this
 			// timeframe, create the warp segment.
 			if (warpstart >= 0 && bpm > 0 && timeofs > 0)
 			{
 				// timeofs represents how far past the end we are
-				warpend = change->first - (timeofs * bpm/60);
+				warpend = change.first - (timeofs * bpm/60);
 				out.AddSegment(WarpSegment(BeatToNoteRow(warpstart),
 							warpend - warpstart));
 
@@ -399,16 +398,16 @@ void SMLoader::ProcessBPMsAndStops(TimingData &out,
 		}
 
 		// Save the current beat for the next round of calculations
-		prevbeat = change->first;
+		prevbeat = change.first;
 
 		// Now handle the timing changes themselves
-		if (change == ibpm)
+		if (changeIsBpm)
 		{
 			// Does this BPM change start a new warp?
-			if (warpstart < 0 && (change->second < 0 || change->second > FAST_BPM_WARP))
+			if (warpstart < 0 && (change.second < 0 || change.second > FAST_BPM_WARP))
 			{
 				// Yes.
-				warpstart = change->first;
+				warpstart = change.first;
 				prewarpbpm = bpm;
 				timeofs = 0;
 			}
@@ -416,49 +415,49 @@ void SMLoader::ProcessBPMsAndStops(TimingData &out,
 			{
 				// No, and we aren't currently warping either.
 				// Just a normal BPM change.
-				out.AddSegment(BPMSegment(BeatToNoteRow(change->first), change->second));
+				out.AddSegment(BPMSegment(BeatToNoteRow(change.first), change.second));
 			}
-			bpm = change->second;
+			bpm = change.second;
 			ibpm++;
 		}
-		else if (change == istop)
+		else
 		{
 			// Does this stop start a new warp?
-			if (warpstart < 0 && change->second < 0)
+			if (warpstart < 0 && change.second < 0)
 			{
 				// Yes.
-				warpstart = change->first;
+				warpstart = change.first;
 				prewarpbpm = bpm;
-				timeofs = change->second;
+				timeofs = change.second;
 			}
 			else if (warpstart < 0)
 			{
 				// No, and we aren't currently warping either.
 				// Just a normal stop.
-				out.AddSegment(StopSegment(BeatToNoteRow(change->first), change->second));
+				out.AddSegment(StopSegment(BeatToNoteRow(change.first), change.second));
 			}
 			else
 			{
 				// We're warping already.  Stops affect the time
 				// offset directly.
-				timeofs += change->second;
+				timeofs += change.second;
 
 				// If a stop overcompensates for the time
 				// deficit, the warp ends and we stop for the
 				// amount it goes over.
-				if (change->second > 0 && timeofs > 0)
+				if (change.second > 0 && timeofs > 0)
 				{
-					warpend = change->first;
+					warpend = change.first;
 					out.AddSegment(WarpSegment(BeatToNoteRow(warpstart),
 								warpend - warpstart));
-					out.AddSegment(StopSegment(BeatToNoteRow(change->first), timeofs));
+					out.AddSegment(StopSegment(BeatToNoteRow(change.first), timeofs));
 
 					// Now, are we still warping because of
 					// the BPM value?
 					if (bpm < 0 || bpm > FAST_BPM_WARP)
 					{
 						// Yep.
-						warpstart = change->first;
+						warpstart = change.first;
 						// prewarpbpm remains the same
 						timeofs = 0;
 					}
