@@ -9,7 +9,7 @@ extern LPDIRECTINPUT8 g_dinput;
 
 #define INPUT_QSIZE	32
 
-typedef struct input_t
+struct input_t
 {
 	// DirectInput offset for this input type:
 	DWORD ofs;
@@ -18,7 +18,21 @@ typedef struct input_t
 	enum Type { KEY, BUTTON, AXIS, HAT } type;
 
 	int num;
-} input_t;
+
+	// Comparitor for finding the input_t with the matching ofs member in std containers.
+	class Compare
+	{
+	public:
+
+		Compare(DWORD _ofs) : ofs(_ofs) { }
+
+		bool operator()(const input_t & input) const { return input.ofs == ofs; }
+
+	private:
+
+		DWORD ofs;
+	};
+};
 
 struct DIDevice
 {

@@ -151,30 +151,59 @@ static BOOL CALLBACK DIJoystick_EnumDevObjectsProc(LPCDIDEVICEOBJECTINSTANCE dev
 	if(!(dev->dwType & SupportedMask))
 		return DIENUM_CONTINUE; // unsupported
 
-	in.ofs = dev->dwOfs;
-
 	if(dev->dwType & DIDFT_BUTTON) {
 		if( device->buttons == 24 )
 			return DIENUM_CONTINUE; // too many buttons
 
+		in.ofs = DIJOFS_BUTTON(device->buttons);
 		in.type = in.BUTTON;
 		in.num = device->buttons;
-		device->buttons++;
 	} else if(dev->dwType & DIDFT_POV) {
+		in.ofs = DIJOFS_POV(device->hats);
 		in.type = in.HAT;
 		in.num = device->hats;
-		device->hats++;
 	} else { // dev->dwType & DIDFT_AXIS
 		DIPROPRANGE diprg;
 		DIPROPDWORD dilong;
+
+		// Figure out which axis we're looking at and store the correct DIJOFS_* value.
+		if( dev->guidType == GUID_XAxis )
+		{
+			in.ofs = DIJOFS_X;
+		}
+		else if( dev->guidType == GUID_YAxis )
+		{
+			in.ofs = DIJOFS_Y;
+		}
+		else if( dev->guidType == GUID_ZAxis )
+		{
+			in.ofs = DIJOFS_Z;
+		}
+		else if( dev->guidType == GUID_RxAxis )
+		{
+			in.ofs = DIJOFS_RX;
+		}
+		else if( dev->guidType == GUID_RyAxis )
+		{
+			in.ofs = DIJOFS_RY;
+		}
+		else if( dev->guidType == GUID_RzAxis )
+		{
+			in.ofs = DIJOFS_RZ;
+		}
+		else
+		{
+			// No idea what this is so ignore it.
+			return DIENUM_CONTINUE;
+		}
 
 		in.type = in.AXIS;
 		in.num = device->axes;
 
 		diprg.diph.dwSize		= sizeof(diprg);
 		diprg.diph.dwHeaderSize	= sizeof(diprg.diph);
-		diprg.diph.dwObj		= dev->dwOfs;
-		diprg.diph.dwHow		= DIPH_BYOFFSET;
+		diprg.diph.dwObj		= dev->dwType;
+		diprg.diph.dwHow		= DIPH_BYID;
 		diprg.lMin				= -100;
 		diprg.lMax				= 100;
 
@@ -185,17 +214,38 @@ static BOOL CALLBACK DIJoystick_EnumDevObjectsProc(LPCDIDEVICEOBJECTINSTANCE dev
 		// Set dead zone to 0.
 		dilong.diph.dwSize		= sizeof(dilong);
 		dilong.diph.dwHeaderSize	= sizeof(dilong.diph);
-		dilong.diph.dwObj		= dev->dwOfs;
-		dilong.diph.dwHow		= DIPH_BYOFFSET;
+		dilong.diph.dwObj		= dev->dwType;
+		dilong.diph.dwHow		= DIPH_BYID;
 		dilong.dwData = 0;
 		hr = device->Device->SetProperty( DIPROP_DEADZONE, &dilong.diph );
 		if ( hr != DI_OK )
 			return DIENUM_CONTINUE; // don't use this axis
-
-		device->axes++;
 	}
 
-	device->Inputs.push_back(in);
+	/* For some devices it's possible to find multiple objects of the same type. When trying to
+	 * figure out which device caused an event it doesn't matter which one it finds so there's
+	 * no need to include a duplicate if one has already been added.
+	 */
+	if( std::find_if( device->Inputs.begin(), device->Inputs.end(), input_t::Compare( in.ofs ) ) == device->Inputs.end() )
+	{
+		device->Inputs.push_back(in);
+
+		// Increment the number of buttons/axes/hats only after it has been added.
+		switch ( in.type )
+		{
+			case input_t::BUTTON:
+				++device->buttons;
+				break;
+
+			case input_t::AXIS:
+				++device->axes;
+				break;
+
+			case input_t::HAT:
+				++device->hats;
+				break;
+		}
+	}
 
 	return DIENUM_CONTINUE;
 }
