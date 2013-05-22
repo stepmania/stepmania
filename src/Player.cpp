@@ -1104,13 +1104,6 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 		ASSERT( iStartRow == trtn->iRow );
 		TapNote &tn = *trtn->pTN;
 		int iEndRow = iStartRow + tn.iDuration;
-		
-		if( iEndRow < iSongRow && vTN.size() > 1 )
-		{
-				trtn = --vTN.erase(trtn);
-				continue;
-		}
-		
 		if( subType == TapNote::SubType_Invalid )
 			subType = tn.subType;
 
