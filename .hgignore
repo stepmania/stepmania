@@ -24,6 +24,8 @@ ___*
 .svn
 .cvsignore
 .DS_Store
+*.diff
+*.patch
 Thumbs.db
 GameData.smzip
 config.log
