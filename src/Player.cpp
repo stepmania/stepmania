@@ -2961,10 +2961,6 @@ void Player::CrossedRows( int iLastRowCrossed, const RageTimer &now )
 		{
 			// crossed a not-empty row
 
-			// If we're doing random vanish, randomise notes on the fly.
-			if( m_pPlayerState->m_PlayerOptions.GetCurrent().m_fAppearances[PlayerOptions::APPEARANCE_RANDOMVANISH]==1 )
-				RandomizeNotes( iRow );
-
 			// check to see if there's a note at the crossed row
 			if( m_pPlayerState->m_PlayerController != PC_HUMAN )
 			{
@@ -3091,37 +3087,6 @@ void Player::CrossedRows( int iLastRowCrossed, const RageTimer &now )
 	}
 
 	m_iFirstUncrossedRow = iLastRowCrossed+1;
-}
-
-void Player::RandomizeNotes( int iNoteRow )
-{
-	// change the row to look ahead from based upon their speed mod
-	/* This is incorrect: if m_fScrollSpeed is 0.5, we'll never change
-	 * any odd rows, and if it's 2, we'll shuffle each row twice. */
-	int iNewNoteRow = iNoteRow + ROWS_PER_BEAT*2;
-	iNewNoteRow = int( iNewNoteRow / m_pPlayerState->m_PlayerOptions.GetCurrent().m_fScrollSpeed );
-
-	int iNumOfTracks = m_NoteData.GetNumTracks();
-	for( int t=0; t+1 < iNumOfTracks; t++ )
-	{
-		/* Only swap a tap and an empty. */
-		NoteData::iterator iter = m_NoteData.FindTapNote( t, iNewNoteRow );
-		if( iter == m_NoteData.end(t) || iter->second.type != TapNote::tap )
-			continue;
-
-		const int iSwapWith = RandomInt( iNumOfTracks );
-		
-		// Make sure this is empty.
-		if( m_NoteData.FindTapNote(iSwapWith, iNewNoteRow) != m_NoteData.end(iSwapWith) )
-			continue;
-
-		/* Make sure the destination row isn't in the middle of a hold. */
-		if( m_NoteData.IsHoldNoteAtRow(iSwapWith, iNoteRow) )
-			continue;
-
-		m_NoteData.SetTapNote( iSwapWith, iNewNoteRow, iter->second );
-		m_NoteData.RemoveTapNote( t, iter );
-	}
 }
 
 void Player::HandleTapRowScore( unsigned row )

@@ -98,7 +98,6 @@ public:
 	// called by Fret for Hammer-ons and Pull-offs
 	void Hopo( int col, int row, const RageTimer &tm, bool bHeld, bool bRelease )	{ StepStrumHopo(col, row, tm, bHeld, bRelease, ButtonType_Hopo); }
 
-	void RandomizeNotes( int iNoteRow );
 	void FadeToFail();
 	void CacheAllUsedNoteSkins();
 	TapNoteScore GetLastTapNoteScore() const { return m_LastTapNoteScore; }
