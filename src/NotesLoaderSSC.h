@@ -74,6 +74,8 @@ struct SSCLoader : public SMLoader
 	 * @return true if successful, false otherwise. */
 	virtual bool LoadNoteDataFromSimfile( const RString &cachePath, Steps &out );
 	
+	void ProcessBPMs( TimingData &, const RString );
+	void ProcessStops( TimingData &, const RString );
 	void ProcessWarps( TimingData &, const RString, const float );
 	void ProcessLabels( TimingData &, const RString );
 	virtual void ProcessCombos( TimingData &, const RString, const int = -1 );
