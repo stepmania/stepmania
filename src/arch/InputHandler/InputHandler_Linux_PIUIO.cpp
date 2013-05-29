@@ -24,9 +24,7 @@ InputHandler_Linux_PIUIO::InputHandler_Linux_PIUIO()
 	fd = open( "/dev/piuio0", O_RDONLY );
 	if( fd < 0 )
 	{
-		/* As it happens, most people don't have one of these. Don't log this.
-		 * TODO: Log it if it's in the device list. - Colby */
-		//LOG->Warn( "Couldn't open PIUIO device: %s", strerror(errno) );
+		LOG->Warn( "Couldn't open PIUIO device: %s", strerror(errno) );
 		return;
 	}
 
