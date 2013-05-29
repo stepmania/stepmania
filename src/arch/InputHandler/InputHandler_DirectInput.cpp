@@ -25,12 +25,18 @@ static BOOL CALLBACK EnumDevicesCallback( const DIDEVICEINSTANCE *pdidInstance, 
 {
 	DIDevice device;
 
-	switch( pdidInstance->dwDevType & 0xFF )
+	switch( GET_DIDEVICE_TYPE(pdidInstance->dwDevType) )
 	{
-	case DI8DEVTYPE_KEYBOARD: device.type = device.KEYBOARD; break;
-	case DI8DEVTYPE_JOYSTICK: device.type = device.JOYSTICK; break;
-	case DI8DEVTYPE_MOUSE: device.type = device.MOUSE; break;
-	default: return DIENUM_CONTINUE;
+		case DI8DEVTYPE_JOYSTICK:
+		case DI8DEVTYPE_GAMEPAD:
+		{
+			device.type = device.JOYSTICK;
+			break;
+		}
+
+		case DI8DEVTYPE_KEYBOARD: device.type = device.KEYBOARD; break;
+		case DI8DEVTYPE_MOUSE: device.type = device.MOUSE; break;
+		default: return DIENUM_CONTINUE;
 	}
 
 	device.JoystickInst = *pdidInstance;
@@ -109,18 +115,18 @@ InputHandler_DInput::InputHandler_DInput()
 		RageException::Throw( hr_ssprintf(hr, "InputHandler_DInput: DirectInputCreate") );
 
 	LOG->Trace( "InputHandler_DInput: IDirectInput::EnumDevices(DIDEVTYPE_KEYBOARD)" );
-	hr = g_dinput->EnumDevices( DI8DEVTYPE_KEYBOARD, EnumDevicesCallback, NULL, DIEDFL_ATTACHEDONLY );
+	hr = g_dinput->EnumDevices( DI8DEVCLASS_KEYBOARD, EnumDevicesCallback, NULL, DIEDFL_ATTACHEDONLY );
 	if( hr != DI_OK )
 		RageException::Throw( hr_ssprintf(hr, "InputHandler_DInput: IDirectInput::EnumDevices") );
 
 	LOG->Trace( "InputHandler_DInput: IDirectInput::EnumDevices(DIDEVTYPE_JOYSTICK)" );
-	hr = g_dinput->EnumDevices( DI8DEVTYPE_JOYSTICK, EnumDevicesCallback, NULL, DIEDFL_ATTACHEDONLY );
+	hr = g_dinput->EnumDevices( DI8DEVCLASS_GAMECTRL, EnumDevicesCallback, NULL, DIEDFL_ATTACHEDONLY );
 	if( hr != DI_OK )
 		RageException::Throw( hr_ssprintf(hr, "InputHandler_DInput: IDirectInput::EnumDevices") );
 
 	// mouse
 	LOG->Trace( "InputHandler_DInput: IDirectInput::EnumDevices(DIDEVTYPE_MOUSE)" );
-	hr = g_dinput->EnumDevices( DI8DEVTYPE_MOUSE, EnumDevicesCallback, NULL, DIEDFL_ATTACHEDONLY );
+	hr = g_dinput->EnumDevices( DI8DEVCLASS_POINTER, EnumDevicesCallback, NULL, DIEDFL_ATTACHEDONLY );
 	if( hr != DI_OK )
 		RageException::Throw( hr_ssprintf(hr, "InputHandler_DInput: IDirectInput::EnumDevices") );
 
