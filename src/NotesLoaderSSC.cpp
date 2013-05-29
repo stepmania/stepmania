@@ -566,7 +566,6 @@ bool SSCLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 				{
 					// Process timings and convert negative bpms/stops
 					SMLoader::ProcessBPMsAndStops(out.m_SongTiming, vBPMChanges, vStops);
-					vBPMChanges.clear();
 
 					state = GETTING_STEP_INFO;
 					pNewNotes = out.CreateSteps();
@@ -811,7 +810,6 @@ bool SSCLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 					{
 						bHasOwnTiming = true;
 						SMLoader::ProcessBPMsAndStops(stepsTiming, vBPMChanges, vStops);
-						vBPMChanges.clear();
 					}
 
 					state = GETTING_SONG_INFO;
