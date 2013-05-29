@@ -1206,27 +1206,32 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 	bool bIsHoldingButton = true;
 	FOREACH( TrackRowTapNote, vTN, trtn )
 	{
-		int iTrack = trtn->iTrack;
-
-		// TODO: Remove use of PlayerNumber.
-		PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
-
-		if( m_pPlayerState->m_PlayerController != PC_HUMAN )
+		/*if this hold is already done, pretend it's always being pressed.
+		fixes/masks the phantom hold issue. -FSX*/
+		if( (iStartRow + *trtn->pTN.iDuration) > iSongRow )
 		{
-			// TODO: Make the CPU miss sometimes.
-			if( m_pPlayerState->m_PlayerController == PC_AUTOPLAY )
+			int iTrack = trtn->iTrack;
+
+			// TODO: Remove use of PlayerNumber.
+			PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
+
+			if( m_pPlayerState->m_PlayerController != PC_HUMAN )
 			{
-				STATSMAN->m_CurStageStats.m_bUsedAutoplay = true;
-				if( m_pPlayerStageStats != NULL )
-					m_pPlayerStageStats->m_bDisqualified = true;
+			// TODO: Make the CPU miss sometimes.
+				if( m_pPlayerState->m_PlayerController == PC_AUTOPLAY )
+				{
+					STATSMAN->m_CurStageStats.m_bUsedAutoplay = true;
+					if( m_pPlayerStageStats != NULL )
+						m_pPlayerStageStats->m_bDisqualified = true;
+				}
 			}
-		}
-		else
-		{
-			GameInput GameI = GAMESTATE->GetCurrentStyle()->StyleInputToGameInput( iTrack, pn );
+			else
+			{
+				GameInput GameI = GAMESTATE->GetCurrentStyle()->StyleInputToGameInput( iTrack, pn );
 			// this previously read as bIsHoldingButton &=
 			// was there a specific reason for this? - Friez
-			bIsHoldingButton &= INPUTMAPPER->IsBeingPressed( GameI, m_pPlayerState->m_mp );
+				bIsHoldingButton &= INPUTMAPPER->IsBeingPressed( GameI, m_pPlayerState->m_mp );
+			}
 		}
 	}
 
