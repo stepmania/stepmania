@@ -488,7 +488,7 @@ void SMLoader::ProcessBPMsAndStops(TimingData &out,
 			// No, so it ends the entire chart immediately.
 			// XXX There must be a less hacky and more accurate way
 			// to do this.
-			warpend = 99999999;
+			warpend = 99999999.0f;
 		}
 		else
 		{
