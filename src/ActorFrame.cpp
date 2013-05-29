@@ -247,12 +247,18 @@ void ActorFrame::DrawPrimitives()
 		vector<Actor*> subs = m_SubActors;
 		ActorUtil::SortByZPosition( subs );
 		for( unsigned i=0; i<subs.size(); i++ )
+		{
+			subs[i]->SetInternalGlow(m_pTempState->glow);
 			subs[i]->Draw();
+		}
 	}
 	else
 	{
 		for( unsigned i=0; i<m_SubActors.size(); i++ )
+		{
+			m_SubActors[i]->SetInternalGlow(m_pTempState->glow);
 			m_SubActors[i]->Draw();
+		}
 	}
 }
 

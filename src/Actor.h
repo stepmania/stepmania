@@ -343,6 +343,7 @@ public:
 	void  SetBaseRotationZ( float rot )		{ m_baseRotation.z = rot; }
 	void  SetBaseRotation( const RageVector3 &rot )	{ m_baseRotation = rot; }
 	virtual void  SetBaseAlpha( float fAlpha )	{ m_fBaseAlpha = fAlpha; }
+	void  SetInternalGlow( const RageColor &c )	{ m_internalGlow = c; }
 
 	/**
 	 * @brief Retrieve the general zoom factor, using the x coordinate of the Actor.
@@ -636,6 +637,7 @@ protected:
 	RageVector3	m_baseRotation;
 	RageVector3	m_baseScale;
 	float m_fBaseAlpha;
+	RageColor m_internalGlow;
 
 	RageVector2	m_size;
 	TweenState	m_current;
