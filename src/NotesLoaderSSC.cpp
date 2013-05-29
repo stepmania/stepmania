@@ -14,6 +14,72 @@
 #include "Attack.h"
 #include "PrefsManager.h"
 
+void SSCLoader::ProcessBPMs( TimingData &out, const RString sParam )
+{
+	vector<RString> arrayBPMExpressions;
+	split( sParam, ",", arrayBPMExpressions );
+	
+	for( unsigned b=0; b<arrayBPMExpressions.size(); b++ )
+	{
+		vector<RString> arrayBPMValues;
+		split( arrayBPMExpressions[b], "=", arrayBPMValues );
+		if( arrayBPMValues.size() != 2 )
+		{
+			LOG->UserLog("Song file",
+				     this->GetSongTitle(),
+				     "has an invalid #BPMS value \"%s\" (must have exactly one '='), ignored.",
+				     arrayBPMExpressions[b].c_str() );
+			continue;
+		}
+		
+		const float fBeat = StringToFloat( arrayBPMValues[0] );
+		const float fNewBPM = StringToFloat( arrayBPMValues[1] );
+		if( fBeat >= 0 && fNewBPM > 0 )
+		{
+			out.AddSegment( BPMSegment(BeatToNoteRow(fBeat), fNewBPM) );
+		}
+		else
+		{
+			LOG->UserLog("Song file",
+				     this->GetSongTitle(),
+				     "has an invalid BPM at beat %f, BPM %f.",
+				     fBeat, fNewBPM );
+		}
+	}
+}
+
+void SSCLoader::ProcessStops( TimingData &out, const RString sParam )
+{
+	vector<RString> arrayStopExpressions;
+	split( sParam, ",", arrayStopExpressions );
+	
+	for( unsigned b=0; b<arrayStopExpressions.size(); b++ )
+	{
+		vector<RString> arrayStopValues;
+		split( arrayStopExpressions[b], "=", arrayStopValues );
+		if( arrayStopValues.size() != 2 )
+		{
+			LOG->UserLog("Song file",
+				     this->GetSongTitle(),
+				     "has an invalid #STOPS value \"%s\" (must have exactly one '='), ignored.",
+				     arrayStopExpressions[b].c_str() );
+			continue;
+		}
+		
+		const float fBeat = StringToFloat( arrayStopValues[0] );
+		const float fNewStop = StringToFloat( arrayStopValues[1] );
+		if( fBeat >= 0 && fNewStop > 0 )
+			out.AddSegment( StopSegment(BeatToNoteRow(fBeat), fNewStop) );
+		else
+		{
+			LOG->UserLog("Song file",
+				     this->GetSongTitle(),
+				     "has an invalid Stop at beat %f, length %f.",
+				     fBeat, fNewStop );
+		}
+	}
+}
+
 void SSCLoader::ProcessWarps( TimingData &out, const RString sParam, const float fVersion )
 {
 	vector<RString> arrayWarpExpressions;
@@ -253,7 +319,6 @@ bool SSCLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 	Steps* pNewNotes = NULL;
 	TimingData stepsTiming;
 	bool bHasOwnTiming = false;
-	vector< pair<float, float> > vBPMChanges, vStops;
 
 	for( unsigned i = 0; i < values; i++ )
 	{
@@ -474,8 +539,7 @@ bool SSCLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 				 * if the steps do not have their own timing. */
 				else if( sValueName=="STOPS" )
 				{
-					vStops.clear();
-					SMLoader::ParseStops(vStops, sParams[1]);
+					ProcessStops(out.m_SongTiming, sParams[1]);
 				}
 				else if( sValueName=="DELAYS" )
 				{
@@ -484,8 +548,7 @@ bool SSCLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 
 				else if( sValueName=="BPMS" )
 				{
-					vBPMChanges.clear();
-					SMLoader::ParseBPMs(vBPMChanges, sParams[1]);
+					ProcessBPMs(out.m_SongTiming, sParams[1]);
 				}
 				
 				else if( sValueName=="WARPS" ) // Older versions allowed em here.
@@ -564,9 +627,6 @@ bool SSCLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 				// This tag will get us to the next section.
 				else if( sValueName=="NOTEDATA" )
 				{
-					// Process timings and convert negative bpms/stops
-					SMLoader::ProcessBPMsAndStops(out.m_SongTiming, vBPMChanges, vStops);
-
 					state = GETTING_STEP_INFO;
 					pNewNotes = out.CreateSteps();
 					stepsTiming = TimingData( out.m_SongTiming.m_fBeat0OffsetInSeconds );
@@ -652,16 +712,10 @@ bool SSCLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 
 				else if( sValueName=="NOTES" || sValueName=="NOTES2" )
 				{
-					// Process timings and convert negative bpms/stops
-					if( !vBPMChanges.empty() )
-					{
-						bHasOwnTiming = true;
-						SMLoader::ProcessBPMsAndStops(stepsTiming, vBPMChanges, vStops);
-					}
-
 					state = GETTING_SONG_INFO;
 					if( bHasOwnTiming )
 						pNewNotes->m_Timing = stepsTiming;
+					bHasOwnTiming = false;
 					pNewNotes->SetSMNoteData( sParams[1] );
 					pNewNotes->TidyUpData();
 					pNewNotes->SetFilename(sPath);
@@ -672,8 +726,8 @@ bool SSCLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 				{
 					if (out.m_fVersion >= VERSION_SPLIT_TIMING)
 					{
-						vBPMChanges.clear();
-						SMLoader::ParseBPMs(vBPMChanges, sParams[1]);
+						ProcessBPMs(stepsTiming, sParams[1]);
+						bHasOwnTiming = true;
 					}
 				}
 				
@@ -681,8 +735,7 @@ bool SSCLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 				{
 					if (out.m_fVersion >= VERSION_SPLIT_TIMING)
 					{
-						vStops.clear();
-						SMLoader::ParseStops(vStops, sParams[1]);
+						ProcessStops(stepsTiming, sParams[1]);
 						bHasOwnTiming = true;
 					}
 				}
@@ -805,16 +858,10 @@ bool SSCLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 				}
 				else if( sValueName=="STEPFILENAME" )
 				{
-					// Process timings and convert negative bpms/stops
-					if( !vBPMChanges.empty() )
-					{
-						bHasOwnTiming = true;
-						SMLoader::ProcessBPMsAndStops(stepsTiming, vBPMChanges, vStops);
-					}
-
 					state = GETTING_SONG_INFO;
 					if( bHasOwnTiming )
 						pNewNotes->m_Timing = stepsTiming;
+					bHasOwnTiming = false;
 					pNewNotes->SetFilename(sParams[1]);
 					out.AddSteps( pNewNotes );
 				}
@@ -860,8 +907,8 @@ bool SSCLoader::LoadEditFromMsd(const MsdFile &msd,
 	Song* pSong = NULL;
 	Steps* pNewNotes = NULL;
 	bool bSSCFormat = false;
+	bool bHasOwnTiming = false;
 	TimingData stepsTiming;
-	vector< pair<float, float> > vBPMChanges, vStops;
 
 	for( unsigned i=0; i<msd.GetNumValues(); i++ )
 	{
@@ -966,64 +1013,72 @@ bool SSCLoader::LoadEditFromMsd(const MsdFile &msd,
 
 		else if( sValueName=="BPMS" )
 		{
-			vBPMChanges.clear();
-			SMLoader::ParseBPMs(vBPMChanges, sParams[1]);
+			ProcessBPMs(stepsTiming, sParams[1]);
 			bSSCFormat = true;
+			bHasOwnTiming = true;
 		}
 		
 		else if( sValueName=="STOPS" )
 		{
-			vStops.clear();
-			SMLoader::ParseStops(vStops, sParams[1]);
+			ProcessStops(stepsTiming, sParams[1]);
 			bSSCFormat = true;
+			bHasOwnTiming = true;
 		}
 		
 		else if( sValueName=="DELAYS" )
 		{
 			SMLoader::ProcessDelays(stepsTiming, sParams[1]);
 			bSSCFormat = true;
+			bHasOwnTiming = true;
 		}
 		
 		else if( sValueName=="TIMESIGNATURES" )
 		{
 			SMLoader::ProcessTimeSignatures(stepsTiming, sParams[1]);
 			bSSCFormat = true;
+			bHasOwnTiming = true;
 		}
 		
 		else if( sValueName=="TICKCOUNTS" )
 		{
 			SMLoader::ProcessTickcounts(stepsTiming, sParams[1]);
 			bSSCFormat = true;
+			bHasOwnTiming = true;
 		}
 		
 		else if( sValueName=="COMBOS" )
 		{
 			ProcessCombos(stepsTiming, sParams[1]);
 			bSSCFormat = true;
+			bHasOwnTiming = true;
 		}
 		
 		else if( sValueName=="WARPS" )
 		{
 			ProcessWarps(stepsTiming, sParams[1], pSong->m_fVersion);
 			bSSCFormat = true;
+			bHasOwnTiming = true;
 		}
 		
 		else if( sValueName=="SPEEDS" )
 		{
 			ProcessSpeeds( stepsTiming, sParams[1] );
 			bSSCFormat = true;
+			bHasOwnTiming = true;
 		}
 		
 		else if( sValueName=="FAKES" )
 		{
 			ProcessFakes( stepsTiming, sParams[1] );
 			bSSCFormat = true;
+			bHasOwnTiming = true;
 		}
 		
 		else if( sValueName=="LABELS" )
 		{
 			ProcessLabels(stepsTiming, sParams[1]);
 			bSSCFormat = true;
+			bHasOwnTiming = true;
 		}
 		else if( sValueName=="NOTES" )
 		{
@@ -1047,18 +1102,10 @@ bool SSCLoader::LoadEditFromMsd(const MsdFile &msd,
 			if( !bAddStepsToSong )
 				return true;
 
-			// Process timings and convert negative bpms/stops
-			if( !vBPMChanges.empty() )
-			{
-				SMLoader::ProcessBPMsAndStops(stepsTiming, vBPMChanges, vStops);
-			}
-
 			if( bSSCFormat )
 			{
-				if ( !vBPMChanges.empty() )
-				{
+				if ( bHasOwnTiming )
 					pNewNotes->m_Timing = stepsTiming;
-				}
 				pNewNotes->SetSMNoteData( sParams[1] );
 				pNewNotes->TidyUpData();
 				pSong->AddSteps( pNewNotes );
