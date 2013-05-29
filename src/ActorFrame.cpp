@@ -248,6 +248,7 @@ void ActorFrame::DrawPrimitives()
 		ActorUtil::SortByZPosition( subs );
 		for( unsigned i=0; i<subs.size(); i++ )
 		{
+			subs[i]->SetInternalDiffuse(m_pTempState->diffuse[0]);
 			subs[i]->SetInternalGlow(m_pTempState->glow);
 			subs[i]->Draw();
 		}
@@ -256,6 +257,7 @@ void ActorFrame::DrawPrimitives()
 	{
 		for( unsigned i=0; i<m_SubActors.size(); i++ )
 		{
+			m_SubActors[i]->SetInternalDiffuse(m_pTempState->diffuse[0]);
 			m_SubActors[i]->SetInternalGlow(m_pTempState->glow);
 			m_SubActors[i]->Draw();
 		}

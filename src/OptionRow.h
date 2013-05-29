@@ -55,7 +55,6 @@ class OptionRow : public ActorFrame
 public:
 	OptionRow( const OptionRowType *pType );
 	~OptionRow();
-	void Update( float fDeltaTime );
 
 	void Clear();
 	void LoadNormal( OptionRowHandler *pHand, bool bFirstItemGoesDown );

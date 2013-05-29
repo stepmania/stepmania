@@ -343,6 +343,7 @@ public:
 	void  SetBaseRotationZ( float rot )		{ m_baseRotation.z = rot; }
 	void  SetBaseRotation( const RageVector3 &rot )	{ m_baseRotation = rot; }
 	virtual void  SetBaseAlpha( float fAlpha )	{ m_fBaseAlpha = fAlpha; }
+	void  SetInternalDiffuse( const RageColor &c )	{ m_internalDiffuse = c; }
 	void  SetInternalGlow( const RageColor &c )	{ m_internalGlow = c; }
 
 	/**
@@ -637,6 +638,7 @@ protected:
 	RageVector3	m_baseRotation;
 	RageVector3	m_baseScale;
 	float m_fBaseAlpha;
+	RageColor m_internalDiffuse;
 	RageColor m_internalGlow;
 
 	RageVector2	m_size;

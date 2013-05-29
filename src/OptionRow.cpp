@@ -636,14 +636,6 @@ void OptionRow::UpdateEnabledDisabled()
 	}
 }
 
-void OptionRow::Update( float fDeltaTime )
-{
-	ActorFrame::Update( fDeltaTime );
-
-	float fAlpha = m_Frame.GetCurrentDiffuseAlpha();
-	m_Frame.SetBaseAlpha( fAlpha );
-}
-
 void OptionRow::SetModIcon( PlayerNumber pn, const RString &sText, GameCommand &gc )
 {
 	// update row frame

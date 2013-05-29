@@ -91,6 +91,7 @@ void Actor::InitState()
 	m_baseRotation = RageVector3( 0, 0, 0 );
 	m_baseScale = RageVector3( 1, 1, 1 );
 	m_fBaseAlpha = 1;
+	m_internalDiffuse = RageColor( 1, 1, 1, 1 );
 	m_internalGlow = RageColor( 0, 0, 0, 0 );
 
 	m_start.Init();
@@ -187,6 +188,7 @@ Actor::Actor( const Actor &cpy ):
 	CPY( m_baseRotation );
 	CPY( m_baseScale );
 	CPY( m_fBaseAlpha );
+	CPY( m_internalDiffuse );
 	CPY( m_internalGlow );
 
 
@@ -449,6 +451,9 @@ void Actor::BeginDraw()		// set the world matrix and calculate actor properties
 	}
 
 	if( m_fBaseAlpha != 1 )
+		m_internalDiffuse.a *= m_fBaseAlpha;
+
+	if( m_internalDiffuse != RageColor(1, 1, 1, 1) )
 	{
 		if( m_pTempState != &tempState )
 		{
@@ -457,7 +462,10 @@ void Actor::BeginDraw()		// set the world matrix and calculate actor properties
 		}
 
 		for( int i=0; i<4; i++ )
-			tempState.diffuse[i].a *= m_fBaseAlpha;
+		{
+			tempState.diffuse[i] *= m_internalDiffuse;
+		}
+		m_internalDiffuse = RageColor(1, 1, 1, 1);
 	}
 
 	if( m_internalGlow.a > 0 )

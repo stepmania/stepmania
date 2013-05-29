@@ -46,7 +46,7 @@ void ReceptorArrowRow::Update( float fDeltaTime )
 		// m_fDark==1 or m_fFadeToFailPercent==1 should make fBaseAlpha==0
 		float fBaseAlpha = (1 - m_pPlayerState->m_PlayerOptions.GetCurrent().m_fDark) * (1 - m_fFadeToFailPercent);
 		CLAMP( fBaseAlpha, 0.0f, 1.0f );
-		m_ReceptorArrow[c]->SetBaseAlpha( fBaseAlpha );
+		SetBaseAlpha( fBaseAlpha );
 
 		// set arrow XYZ
 		float fX = ArrowEffects::GetXPos( m_pPlayerState, c, 0 );
