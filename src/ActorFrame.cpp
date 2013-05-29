@@ -376,12 +376,9 @@ void ActorFrame::UpdateInternal( float fDeltaTime )
 	}
 
 PropagateActorFrameCommand( FinishTweening )
-PropagateActorFrameCommand1Param( SetDiffuse,		RageColor )
 PropagateActorFrameCommand1Param( SetZTestMode,		ZTestMode )
 PropagateActorFrameCommand1Param( SetZWrite,		bool )
 PropagateActorFrameCommand1Param( HurryTweening,	float )
-PropagateActorFrameCommand1Param( SetDiffuseAlpha,	float )
-PropagateActorFrameCommand1Param( SetBaseAlpha,		float )
 
 
 float ActorFrame::GetTweenTimeLeft() const
