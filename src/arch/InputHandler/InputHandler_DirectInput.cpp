@@ -92,7 +92,7 @@ static int GetNumHidDevices()
 static int GetNumJoysticksSlow()
 {
 	int iCount = 0;
-	HRESULT hr = g_dinput->EnumDevices( DI8DEVTYPE_JOYSTICK, CountDevicesCallback, &iCount, DIEDFL_ATTACHEDONLY );
+	HRESULT hr = g_dinput->EnumDevices( DI8DEVCLASS_GAMECTRL, CountDevicesCallback, &iCount, DIEDFL_ATTACHEDONLY );
 	if( hr != DI_OK )
 	{
 		LOG->Warn( hr_ssprintf(hr, "g_dinput->EnumDevices") );
