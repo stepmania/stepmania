@@ -885,7 +885,8 @@ bool ScreenSelectMusic::DetectCodes( const InputEventPlus &input )
 	{
 		if( GAMESTATE->IsAnExtraStageAndSelectionLocked() )
 			m_soundLocked.Play();
-		else
+		else if( !GAMESTATE->IsCourseMode() )
+			// Only change sorts in non-course mode
 			m_MusicWheel.NextSort();
 	}
 	else if( !GAMESTATE->IsAnExtraStageAndSelectionLocked() && CodeDetector::DetectAndAdjustMusicOptions(input.GameI.controller) )
