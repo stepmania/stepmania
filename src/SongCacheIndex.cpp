@@ -98,6 +98,12 @@ void SongCacheIndex::ReadCacheIndex()
 	EmptyDir( SpecialFiles::CACHE_DIR+"Courses/" );
 
 	CacheIndex.Clear();
+	/* This is right now in place because our song file paths are apparently being
+	 * cached in two distinct areas, and songs were loading from paths in FILEMAN.
+	 * This is admittedly a hack for now, but this does bring up a good question on
+	 * whether we really need a dedicated cache for future versions of StepMania.
+	 */
+	FILEMAN->FlushDirCache();
 }
 
 void SongCacheIndex::AddCacheIndex(const RString &path, unsigned hash)
