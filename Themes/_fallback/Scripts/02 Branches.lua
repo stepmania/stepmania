@@ -45,19 +45,11 @@ Branch = {
 		return hour > 3 and hour < 6 and "ScreenNoise" or "ScreenInit"
 	end,
 	TitleMenu = function()
-		-- home mode is the most assumed use of sm-ssc.
+		-- home mode is the most assumed use of sm5.
 		if GAMESTATE:GetCoinMode() == "CoinMode_Home" then
 			return "ScreenTitleMenu"
 		end
-		-- arcade junk:
-		if GAMESTATE:GetCoinsNeededToJoin() > GAMESTATE:GetCoins() then
-			-- if no credits are inserted, don't show the Join screen. SM4 has
-			-- this as the initial screen, but that means we'd be stuck in a
-			-- loop with ScreenInit. No good.
-			return "ScreenTitleJoin"
-		else
-			return "ScreenTitleJoin"
-		end
+		return "ScreenTitleJoin"
 	end,
 	StartGame = function()
 		-- Check to see if there are 0 songs installed. Also make sure to check
