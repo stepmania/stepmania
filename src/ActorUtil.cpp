@@ -400,7 +400,12 @@ FileType ActorUtil::GetFileType( const RString &sPath )
 	else if( 
 		sExt=="ogv" || 
 		sExt=="avi" || 
-		sExt=="mpeg" || 
+		sExt=="mpeg" ||
+		sExt=="mp4"	||
+		sExt=="mkv"	||
+		sExt=="mov" ||
+		sExt=="flv" ||
+		sExt=="f4v" ||			
 		sExt=="mpg" )		return FT_Movie;
 	else if( 
 		sExt=="txt" )		return FT_Model;
