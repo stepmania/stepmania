@@ -822,6 +822,12 @@ void Song::TidyUpData( bool fromCache, bool /* duringCache */ )
 		GetDirListing( m_sSongDir + RString("*.avi"), arrayPossibleMovies );
 		GetDirListing( m_sSongDir + RString("*.mpg"), arrayPossibleMovies );
 		GetDirListing( m_sSongDir + RString("*.mpeg"), arrayPossibleMovies );
+		GetDirListing( m_sSongDir + RString("*.mp4"), arrayPossibleMovies );
+		GetDirListing( m_sSongDir + RString("*.mkv"), arrayPossibleMovies );
+		GetDirListing( m_sSongDir + RString("*.flv"), arrayPossibleMovies );
+		GetDirListing( m_sSongDir + RString("*.f4v"), arrayPossibleMovies );
+		GetDirListing( m_sSongDir + RString("*.mov"), arrayPossibleMovies );
+
 		/* Use this->GetBeatFromElapsedTime(0) instead of 0 to start when the
 		 * music starts. */
 		if( arrayPossibleMovies.size() == 1 )

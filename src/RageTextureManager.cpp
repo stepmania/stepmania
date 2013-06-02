@@ -142,7 +142,7 @@ RageTexture* RageTextureManager::LoadTextureInternal( RageTextureID ID )
 	RageTexture* pTexture;
 	if( ID.filename == g_sDefaultTextureName )
 		pTexture = new RageTexture_Default;
-	else if( sExt == "ogv" || sExt == "avi" || sExt == "mpg" || sExt == "mpeg" )
+	else if( sExt == "ogv" || sExt == "avi" || sExt == "mpg" || sExt == "mpeg" || sExt == "mp4" || sExt == "mkv" || sExt == "mov" || sExt == "flv" || sExt == "f4v")
 		pTexture = RageMovieTexture::Create( ID );
 	else
 		pTexture = new RageBitmapTexture( ID );
