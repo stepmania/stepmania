@@ -4,6 +4,7 @@
 
 #include <fstream>
 #include <math.h>
+#include <cassert>
 
 TextureFont::TextureFont()
 {
@@ -482,7 +483,7 @@ void TextureFont::Save( CString sBasePath, CString sBitmapAppendBeforeExtension,
 					sPageName += "-stroke";
 					break;
 				default:
-					FAIL_M(ssprintf("Unexpected value for j: %i", j));
+					assert(false);
 				}
 
 				CString sFile;
