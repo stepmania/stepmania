@@ -8,8 +8,7 @@
 #include <string.h>
 #include <ctype.h>
 
-#define MAX_CNAMBUF		(0x20000)
-#define MAX_FNAMBUF		(0x800000)
+#define MAX_FNAMBUF		(0x0FFFFFFF)
 #define MAX_SEGMENTS	(64)
 #define MAX_GROUPS		(64)
 
