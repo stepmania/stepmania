@@ -13,7 +13,7 @@ t[#t+1] = Def.ActorFrame {
 	};
 	LoadFont("Common Normal") .. {
 		InitCommand=cmd(zoom,0.75;shadowlength,1;glowshift;strokecolor,Color("Outline");diffuse,Color("Orange");diffusetopedge,Color("Yellow");textglowmode,'TextGlowMode_Inner');
-		Text="TESTING";
+		Text="PRESS ENTER";
 		OnCommand=cmd(playcommand,"Refresh");
 		CoinInsertedMessageCommand=cmd(playcommand,"Refresh");
 		CoinModeChangedMessageCommand=cmd(playcommand,"Refresh");
