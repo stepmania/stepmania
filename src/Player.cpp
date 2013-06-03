@@ -1206,27 +1206,32 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 	bool bIsHoldingButton = true;
 	FOREACH( TrackRowTapNote, vTN, trtn )
 	{
-		int iTrack = trtn->iTrack;
-
-		// TODO: Remove use of PlayerNumber.
-		PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
-
-		if( m_pPlayerState->m_PlayerController != PC_HUMAN )
+		/*if this hold is already done, pretend it's always being pressed.
+		fixes/masks the phantom hold issue. -FSX*/
+		if( (iStartRow + trtn->pTN->iDuration) > iSongRow )
 		{
-		// TODO: Make the CPU miss sometimes.
-			if( m_pPlayerState->m_PlayerController == PC_AUTOPLAY )
+			int iTrack = trtn->iTrack;
+
+			// TODO: Remove use of PlayerNumber.
+			PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
+
+			if( m_pPlayerState->m_PlayerController != PC_HUMAN )
 			{
-				STATSMAN->m_CurStageStats.m_bUsedAutoplay = true;
-				if( m_pPlayerStageStats != NULL )
-					m_pPlayerStageStats->m_bDisqualified = true;
+			// TODO: Make the CPU miss sometimes.
+				if( m_pPlayerState->m_PlayerController == PC_AUTOPLAY )
+				{
+					STATSMAN->m_CurStageStats.m_bUsedAutoplay = true;
+					if( m_pPlayerStageStats != NULL )
+						m_pPlayerStageStats->m_bDisqualified = true;
+				}
 			}
-		}
-		else
-		{
-			GameInput GameI = GAMESTATE->GetCurrentStyle()->StyleInputToGameInput( iTrack, pn );
-		// this previously read as bIsHoldingButton &=
-		// was there a specific reason for this? - Friez
-			bIsHoldingButton &= INPUTMAPPER->IsBeingPressed( GameI, m_pPlayerState->m_mp );
+			else
+			{
+				GameInput GameI = GAMESTATE->GetCurrentStyle()->StyleInputToGameInput( iTrack, pn );
+			// this previously read as bIsHoldingButton &=
+			// was there a specific reason for this? - Friez
+				bIsHoldingButton &= INPUTMAPPER->IsBeingPressed( GameI, m_pPlayerState->m_mp );
+			}
 		}
 	}
 
@@ -1258,11 +1263,11 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 				TapNote &tn = *trtn->pTN;
 
 				// set hold flag so NoteField can do intelligent drawing
-				tn.HoldResult.bHeld = bIsHoldingButton && bInitiatedNote ||;
+				tn.HoldResult.bHeld = bIsHoldingButton && bInitiatedNote;
 				tn.HoldResult.bActive = bInitiatedNote;
 			}
 
-			if( bInitiatedNote && bIsHoldingButton || ((iStartRow + trtn->pTN->iDuration) > iSongRow ) )
+			if( bInitiatedNote && bIsHoldingButton )
 			{
 				//LOG->Trace("bInitiatedNote && bIsHoldingButton; Increasing hold life to MAX_HOLD_LIFE");
 				// Increase life
