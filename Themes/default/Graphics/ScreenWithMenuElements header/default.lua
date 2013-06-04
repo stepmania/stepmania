@@ -1,7 +1,7 @@
 local t = Def.ActorFrame {};
 
 t[#t+1] = Def.Quad {
-	InitCommand=cmd(vertalign,top;zoomto,SCREEN_WIDTH+1,48;diffuse,Color.Black);
+	InitCommand=cmd(vertalign,top;zoomto,SCREEN_WIDTH+1,50;diffuse,Color.Black);
 }
 --[[ t[#t+1] = LoadActor("Header") .. {
 	InitCommand=cmd(vertalign,top;zoomtowidth,SCREEN_WIDTH+1;diffuse,color("#ffd400"));

@@ -1,10 +1,8 @@
 local gc = Var("GameCommand");
 local t = Def.ActorFrame {};
-t[#t+1] = Def.ActorFrame { 
-  GainFocusCommand=THEME:GetMetric(Var "LoadingScreen","IconGainFocusCommand");
-  LoseFocusCommand=THEME:GetMetric(Var "LoadingScreen","IconLoseFocusCommand");
---	IconGainFocusCommand=cmd(stoptweening;glowshift;decelerate,0.125;zoom,1);
---	IconLoseFocusCommand=cmd(stoptweening;stopeffect;decelerate,0.125;zoom,fZoom);
+t[#t+1] = Def.ActorFrame {
+	GainFocusCommand=cmd(stoptweening;bob;effectmagnitude,0,6,0;decelerate,0.125;zoom,1);
+	LoseFocusCommand=cmd(stoptweening;stopeffect;decelerate,0.125;zoom,0.6);
 
 	LoadActor("_background base")..{
 		InitCommand=cmd(diffuse,ModeIconColors[gc:GetName()]);
@@ -17,9 +15,13 @@ t[#t+1] = Def.ActorFrame {
 	-- todo: generate a better font for these.
 	LoadFont("_helveticaneuelt std extblk cn 42px")..{
 		InitCommand=cmd(y,-12;zoom,1.1;diffuse,color("#000000");uppercase,true;settext,gc:GetText(););
+		GainFocusCommand=cmd(diffuse,Color.Black;stopeffect);
+		LoseFocusCommand=cmd(diffuse,Color.Black;stopeffect);
 	};
 	LoadFont("_helveticaneuelt std extblk cn 42px")..{
 		InitCommand=cmd(y,27.5;zoom,0.45;maxwidth,320*1.6;uppercase,true;settext,THEME:GetString(Var "LoadingScreen", gc:GetName().."Explanation"));
+		GainFocusCommand=cmd(diffuse,Color.White;stopeffect);
+		LoseFocusCommand=cmd(diffuse,Color.White;stopeffect);
 	};
 	LoadActor("_background base") .. {
 		DisabledCommand=cmd(diffuse,color("0,0,0,0.5"));

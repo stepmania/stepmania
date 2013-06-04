@@ -166,6 +166,46 @@ t[#t+1] = StandardDecorationFromFileOptional("SongTime","SongTime") .. {
 }
 
 if not GAMESTATE:IsCourseMode() then
+	local function CDTitleUpdate(self)
+		local song = GAMESTATE:GetCurrentSong();
+		local cdtitle = self:GetChild("CDTitle");
+		local height = cdtitle:GetHeight();
+		local width = cdtitle:GetWidth();
+		
+		if song then
+			if song:HasCDTitle() then
+				cdtitle:visible(true);
+				cdtitle:Load(song:GetCDTitlePath());
+			else
+				cdtitle:visible(false);
+			end;
+		else
+			cdtitle:visible(false);
+		end;
+		
+		if height >= 60 and width >= 80 then
+			if height*(80/60) >= width then
+			cdtitle:zoom(60/height);
+			else
+			cdtitle:zoom(80/width);
+			end;
+		elseif height >= 60 then
+			cdtitle:zoom(60/height);
+		elseif width >= 80 then
+			cdtitle:zoom(80/width);
+		else 
+			cdtitle:zoom(1);
+		end;
+	end;
+	t[#t+1] = Def.ActorFrame {
+		OnCommand=cmd(draworder,105;x,SCREEN_CENTER_X-76;y,SCREEN_CENTER_Y-72;zoomy,0;sleep,0.5;decelerate,0.25;zoomy,1;SetUpdateFunction,CDTitleUpdate);
+		OffCommand=cmd(bouncebegin,0.15;zoomx,0);
+		Def.Sprite {
+			Name="CDTitle";
+			InitCommand=cmd(y,19);
+			--OnCommand=cmd(draworder,106;shadowlength,1;zoom,0.75;diffusealpha,1;zoom,0;bounceend,0.35;zoom,0.75;spin;effectmagnitude,0,180,0);
+		};	
+	};
 	t[#t+1] = StandardDecorationFromFileOptional("NewSong","NewSong") .. {
 	-- 	ShowCommand=THEME:GetMetric(Var "LoadingScreen", "NewSongShowCommand" );
 	-- 	HideCommand=THEME:GetMetric(Var "LoadingScreen", "NewSongHideCommand" );
