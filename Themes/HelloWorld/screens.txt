@@ -78,6 +78,7 @@ ScreenUnlockCelebrate
 
 *<base=ScreenWithMenuElements>
 ScreenAttract
+ScreenBookkeeping
 ScreenEdit
 ScreenEditMenu
 ScreenEvaluation

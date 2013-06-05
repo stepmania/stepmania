@@ -420,6 +420,18 @@ void LightsManager::Update( float fDeltaTime )
 		}
 	}
 
+	// If not joined, has enough credits, and not too late to join, then
+	// blink the menu buttons rapidly so they'll press Start
+	{
+		int iBeat = (int)(GAMESTATE->m_Position.m_fLightSongBeat*4);
+		bool bBlinkOn = (iBeat%2)==0;
+		FOREACH_PlayerNumber( pn )
+		{
+			if( !GAMESTATE->m_bSideIsJoined[pn] && GAMESTATE->PlayersCanJoin() && GAMESTATE->EnoughCreditsToJoin() )
+				m_LightsState.m_bGameButtonLights[pn][GAME_BUTTON_START] = bBlinkOn;
+		}
+	}
+
 	// apply new light values we set above
 	FOREACH( LightsDriver*, m_vpDrivers, iter )
 		(*iter)->Set( &m_LightsState );

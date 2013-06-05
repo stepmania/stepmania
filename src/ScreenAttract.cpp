@@ -82,12 +82,17 @@ bool ScreenAttract::AttractInput( const InputEventPlus &input, ScreenWithMenuEle
 				break;
 			// fall through
 		case GAME_BUTTON_START:
+		case GAME_BUTTON_COIN:
 			switch( GAMESTATE->GetCoinMode() )
 			{
 				case CoinMode_Home:
 				case CoinMode_Free:
 					if( pScreen->IsTransitioning() )
 						return false;
+
+					// HandleGlobalInputs() already played the coin sound. Don't play it again.
+					if( input.MenuI != GAME_BUTTON_COIN )
+						SCREENMAN->PlayStartSound();
 
 					pScreen->Cancel( SM_GoToStartScreen );
 					return true;

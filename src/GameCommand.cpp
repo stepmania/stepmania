@@ -60,6 +60,8 @@ void GameCommand::Init()
 	m_sUrl = "";
 	m_bUrlExits = true;
 
+	m_bInsertCredit = false;
+	m_bClearCredits = false;
 	m_bStopMusic = false;
 	m_bApplyDefaultOptions = false;
 	m_bFadeMusic = false;
@@ -367,6 +369,16 @@ void GameCommand::LoadOne( const Command& cmd )
 		m_vsScreensToPrepare.push_back( sValue );
 	}
 
+	else if( sName == "insertcredit" )
+	{
+		m_bInsertCredit = true;
+	}
+
+	else if( sName == "clearcredits" )
+	{
+		m_bClearCredits = true;
+	}
+
 	else if( sName == "stopmusic" )
 	{
 		m_bStopMusic = true;
@@ -416,6 +428,36 @@ void GameCommand::LoadOne( const Command& cmd )
 	}
 }
 
+int GetNumCreditsPaid()
+{
+	int iNumCreditsPaid = GAMESTATE->GetNumSidesJoined();
+
+	// players other than the first joined for free
+	if( GAMESTATE->GetPremium() == Premium_2PlayersFor1Credit )
+		iNumCreditsPaid = min( iNumCreditsPaid, 1 );
+
+	return iNumCreditsPaid;
+}
+
+
+int GetCreditsRequiredToPlayStyle( const Style *style )
+{
+	if( GAMESTATE->GetPremium() == Premium_2PlayersFor1Credit )
+		return 1;
+
+	switch( style->m_StyleType )
+	{
+	case StyleType_OnePlayerOneSide:
+		return 1;
+	case StyleType_TwoPlayersSharedSides:
+	case StyleType_TwoPlayersTwoSides:
+		return 2;
+	case StyleType_OnePlayerTwoSides:
+		return (GAMESTATE->GetPremium() == Premium_DoubleFor1Credit) ? 1 : 2;
+	DEFAULT_FAIL( style->m_StyleType );
+	}
+}
+
 static bool AreStyleAndPlayModeCompatible( const Style *style, PlayMode pm )
 {
 	if( style == NULL || pm == PlayMode_Invalid )
@@ -451,8 +493,33 @@ bool GameCommand::IsPlayable( RString *why ) const
 
 	if ( m_pStyle )
 	{
-		int iCredits = NUM_PLAYERS; // not iNumCreditsPaid
-		
+		int iCredits = GAMESTATE->m_iCoins / PREFSMAN->m_iCoinsPerCredit;
+		const int iNumCreditsPaid = GetNumCreditsPaid();
+		const int iNumCreditsRequired = GetCreditsRequiredToPlayStyle(m_pStyle);
+
+		switch( GAMESTATE->GetCoinMode() )
+		{
+			case CoinMode_Home:
+			case CoinMode_Free:
+				iCredits = NUM_PLAYERS; // not iNumCreditsPaid
+			default: break;
+		}
+
+		/* With PREFSMAN->m_bDelayedCreditsReconcile disabled, enough credits must
+		 * be paid. (This means that enough sides must be joined.)  Enabled, simply
+		 * having enough credits lying in the machine is sufficient; we'll deduct the
+		 * extra in Apply(). */
+		int iNumCreditsAvailable = iNumCreditsPaid;
+		if( PREFSMAN->m_bDelayedCreditsReconcile )
+			iNumCreditsAvailable += iCredits;
+
+		if( iNumCreditsAvailable < iNumCreditsRequired )
+		{
+			if( why )
+				*why = ssprintf( "need %i credits, have %i", iNumCreditsRequired, iNumCreditsAvailable );
+			return false;
+		}
+
 		/* If both sides are joined, disallow singles modes, since easy to select
 		 * them accidentally, instead of versus mode. */
 		if( m_pStyle->m_StyleType == StyleType_OnePlayerOneSide &&
@@ -692,6 +759,14 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 
 	FOREACH_CONST( RString, m_vsScreensToPrepare, s )
 		SCREENMAN->PrepareScreen( *s );
+
+	if( m_bInsertCredit )
+	{
+		StepMania::InsertCredit();
+	}
+
+	if( m_bClearCredits )
+		StepMania::ClearCredits();
 
 	if( m_bApplyDefaultOptions )
 	{

@@ -1,6 +1,7 @@
 #include "global.h"
 #include "ScreenServiceAction.h"
 #include "ThemeManager.h"
+#include "Bookkeeper.h"
 #include "Profile.h"
 #include "ProfileManager.h"
 #include "ScreenManager.h"
@@ -15,6 +16,14 @@
 #include "LocalizedString.h"
 #include "StepMania.h"
 #include "NotesLoaderSSC.h"
+
+static LocalizedString BOOKKEEPING_DATA_CLEARED( "ScreenServiceAction", "Bookkeeping data cleared." );
+static RString ClearBookkeepingData()
+{
+	BOOKKEEPER->ClearAll();
+	BOOKKEEPER->WriteToDisk();
+	return BOOKKEEPING_DATA_CLEARED.GetValue();
+}
 
 static LocalizedString MACHINE_STATS_CLEARED( "ScreenServiceAction", "Machine stats cleared." );
 RString ClearMachineStats()
@@ -405,7 +414,8 @@ void ScreenServiceAction::BeginScreen()
 	{
 		RString (*pfn)() = NULL;
 
-		if( *s == "ClearMachineStats" )			pfn = ClearMachineStats;
+		if(	 *s == "ClearBookkeepingData" )			pfn = ClearBookkeepingData;
+		else if( *s == "ClearMachineStats" )			pfn = ClearMachineStats;
 		else if( *s == "ClearMachineEdits" )			pfn = ClearMachineEdits;
 		else if( *s == "ClearMemoryCardEdits" )			pfn = ClearMemoryCardEdits;
 		else if( *s == "TransferStatsMachineToMemoryCard" )	pfn = TransferStatsMachineToMemoryCard;

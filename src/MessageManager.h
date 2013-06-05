@@ -12,6 +12,7 @@ enum MessageID
 	Message_CurrentGameChanged,
 	Message_CurrentStyleChanged,
 	Message_PlayModeChanged,
+	Message_CoinsChanged,
 	Message_CurrentSongChanged,
 	Message_CurrentStepsP1Changed,
 	Message_CurrentStepsP2Changed,

@@ -382,6 +382,7 @@ cl /Zl /nologo /c verstub.cpp /Fo"$(IntDir)"</Command>
   <ItemGroup>
     <ClCompile Include="Screen.cpp" />
     <ClCompile Include="ScreenAttract.cpp" />
+    <ClCompile Include="ScreenBookkeeping.cpp" />
     <ClCompile Include="ScreenContinue.cpp" />
     <ClCompile Include="ScreenDebugOverlay.cpp" />
     <ClCompile Include="ScreenDemonstration.cpp" />
@@ -787,6 +788,7 @@ cl /Zl /nologo /c verstub.cpp /Fo"$(IntDir)"</Command>
     <ClCompile Include="RollingNumbers.cpp" />
     <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="AnnouncerManager.cpp" />
+    <ClCompile Include="Bookkeeper.cpp" />
     <ClCompile Include="CharacterManager.cpp" />
     <ClCompile Include="CommandLineActions.cpp">
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">HAVE_VERSION_INFO;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -1694,6 +1696,7 @@ cl /Zl /nologo /c verstub.cpp /Fo"$(IntDir)"</Command>
   <ItemGroup>
     <ClInclude Include="Screen.h" />
     <ClInclude Include="ScreenAttract.h" />
+    <ClInclude Include="ScreenBookkeeping.h" />
     <ClInclude Include="ScreenContinue.h" />
     <ClInclude Include="ScreenDebugOverlay.h" />
     <ClInclude Include="ScreenDemonstration.h" />
@@ -2106,6 +2109,7 @@ cl /Zl /nologo /c verstub.cpp /Fo"$(IntDir)"</Command>
     <ClInclude Include="RollingNumbers.h" />
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="AnnouncerManager.h" />
+    <ClInclude Include="Bookkeeper.h" />
     <ClInclude Include="CharacterManager.h" />
     <ClInclude Include="CommandLineActions.h" />
     <ClInclude Include="CryptManager.h" />

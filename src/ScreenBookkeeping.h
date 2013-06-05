@@ -1,39 +1,56 @@
-#ifndef STEP_MANIA_H
-#define STEP_MANIA_H
+/* ScreenBookkeeping - Show coin drop stats. */
 
-class Game;
-class RageTimer;
-class VideoModeParams;
+#ifndef ScreenBookkeeping_H
+#define ScreenBookkeeping_H
 
-int main( int argc, char* argv[] );
+#include "ScreenWithMenuElements.h"
+#include "BitmapText.h"
 
-/** @brief Utility functions for controlling the whole game. */
-namespace StepMania
+const int NUM_BOOKKEEPING_COLS = 4;
+
+enum BookkeepingView
 {
-	void ApplyGraphicOptions();
-	void ResetPreferences();
-	void ResetGame();
-	RString GetInitialScreen();
-	RString GetSelectMusicScreen();
-	void ChangeCurrentGame( const Game* g );
+	BookkeepingView_SongPlays,
+	BookkeepingView_LastDays,
+	BookkeepingView_LastWeeks,
+	BookkeepingView_DayOfWeek,
+	BookkeepingView_HourOfDay,
+	NUM_BookkeepingView,
+	BookkeepingView_Invalid,
+};
 
-	// If successful, return filename of screenshot in sDir, else return ""
-	RString SaveScreenshot( RString sDir, bool bSaveCompressed, bool bMakeSignature, int iIndex = -1 );
+class ScreenBookkeeping : public ScreenWithMenuElements
+{
+public:
+	virtual void Init();
 
-	void InsertCoin( int iNum = 1, bool bCountInBookkeeping = true );
-	void InsertCredit();
-	void ClearCredits();
+	virtual void Update( float fDelta );
+	virtual bool Input( const InputEventPlus &input );
 
-	void GetPreferredVideoModeParams( VideoModeParams &paramsOut );
-	bool GetHighResolutionTextures();
-}
+	virtual bool MenuLeft( const InputEventPlus &input );
+	virtual bool MenuRight( const InputEventPlus &input );
+	virtual bool MenuStart( const InputEventPlus &input );
+	virtual bool MenuBack( const InputEventPlus &input );
+	virtual bool MenuCoin( const InputEventPlus &input );
+
+private:
+
+	void UpdateView();
+
+	int m_iViewIndex;
+	vector<BookkeepingView> m_vBookkeepingViews;
+
+	BitmapText	m_textAllTime;
+	BitmapText	m_textTitle;
+	BitmapText	m_textData[NUM_BOOKKEEPING_COLS];
+};
 
 #endif
 
 /*
- * (c) 2001-2004 Chris Danford
+ * (c) 2003-2004 Chris Danford
  * All rights reserved.
- *
+ * 
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -43,7 +60,7 @@ namespace StepMania
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- *
+ * 
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

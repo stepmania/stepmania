@@ -445,6 +445,14 @@
 				>
 			</File>
 			<File
+				RelativePath="ScreenBookkeeping.cpp"
+				>
+			</File>
+			<File
+				RelativePath="ScreenBookkeeping.h"
+				>
+			</File>
+			<File
 				RelativePath="ScreenContinue.cpp"
 				>
 			</File>
@@ -3934,6 +3942,14 @@
 			</File>
 			<File
 				RelativePath="AnnouncerManager.h"
+				>
+			</File>
+			<File
+				RelativePath="Bookkeeper.cpp"
+				>
+			</File>
+			<File
+				RelativePath="Bookkeeper.h"
 				>
 			</File>
 			<File

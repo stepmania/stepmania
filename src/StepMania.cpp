@@ -57,6 +57,7 @@
 //#include "BackgroundCache.h"
 #include "UnlockManager.h"
 #include "RageFileManager.h"
+#include "Bookkeeper.h"
 #include "LightsManager.h"
 #include "ModelManager.h"
 #include "CryptManager.h"
@@ -300,6 +301,7 @@ void ShutdownGame()
 	SAFE_DELETE( NOTESKIN );
 	SAFE_DELETE( THEME );
 	SAFE_DELETE( ANNOUNCER );
+	SAFE_DELETE( BOOKKEEPER );
 	SAFE_DELETE( LIGHTSMAN );
 	SAFE_DELETE( SOUNDMAN );
 	SAFE_DELETE( FONT );
@@ -1110,6 +1112,7 @@ int main(int argc, char* argv[])
 	SOUNDMAN->Init();
 	SOUNDMAN->SetMixVolume();
 	SOUND		= new GameSoundManager;
+	BOOKKEEPER	= new Bookkeeper;
 	LIGHTSMAN	= new LightsManager;
 	INPUTFILTER	= new InputFilter;
 	INPUTMAPPER	= new InputMapper;
@@ -1232,6 +1235,63 @@ RString StepMania::SaveScreenshot( RString sDir, bool bSaveCompressed, bool bMak
 	return sFileName;
 }
 
+void StepMania::InsertCoin( int iNum, bool bCountInBookkeeping )
+{
+	if( bCountInBookkeeping )
+	{
+		LIGHTSMAN->PulseCoinCounter();
+		BOOKKEEPER->CoinInserted();
+	}
+	int iNumCoinsOld = GAMESTATE->m_iCoins;
+	GAMESTATE->m_iCoins.Set( GAMESTATE->m_iCoins + iNum );
+
+	int iCredits = GAMESTATE->m_iCoins / PREFSMAN->m_iCoinsPerCredit;
+	bool bMaxCredits = iCredits >= MAX_NUM_CREDITS;
+	if( bMaxCredits )
+		GAMESTATE->m_iCoins.Set( MAX_NUM_CREDITS * PREFSMAN->m_iCoinsPerCredit );
+
+	LOG->Trace("%i coins inserted, %i needed to play", GAMESTATE->m_iCoins.Get(), PREFSMAN->m_iCoinsPerCredit.Get() );
+	if( iNumCoinsOld != GAMESTATE->m_iCoins )
+		SCREENMAN->PlayCoinSound();
+	else
+		SCREENMAN->PlayInvalidSound();
+
+	/* If AutoJoin and a player is already joined, then try to join a player.
+	 * (If no players are joined, they'll join on the first JoinInput.) */
+	if( GAMESTATE->m_bAutoJoin.Get() && GAMESTATE->GetNumSidesJoined() > 0 )
+	{
+		if( GAMESTATE->GetNumSidesJoined() > 0 && GAMESTATE->JoinPlayers() )
+			SCREENMAN->PlayStartSound();
+	}
+
+	// TODO: remove this redundant message and things that depend on it
+	Message msg( "CoinInserted" );
+	// below params are unused
+	//msg.SetParam( "Coins", GAMESTATE->m_iCoins );
+	//msg.SetParam( "Inserted", iNum );
+	//msg.SetParam( "MaxCredits", bMaxCredits );
+	MESSAGEMAN->Broadcast( msg );
+}
+
+void StepMania::InsertCredit()
+{
+	InsertCoin( PREFSMAN->m_iCoinsPerCredit, false );
+}
+
+void StepMania::ClearCredits()
+{
+	LOG->Trace("%i coins cleared", GAMESTATE->m_iCoins.Get() );
+	GAMESTATE->m_iCoins.Set( 0 );
+	SCREENMAN->PlayInvalidSound();
+
+	// TODO: remove this redundant message and things that depend on it
+	Message msg( "CoinInserted" );
+	// below params are unused
+	//msg.SetParam( "Coins", GAMESTATE->m_iCoins );
+	//msg.SetParam( "Clear", true );
+	MESSAGEMAN->Broadcast( msg );
+}
+
 /* Returns true if the key has been handled and should be discarded, false if
  * the key should be sent on to screens. */
 static LocalizedString SERVICE_SWITCH_PRESSED ( "StepMania", "Service switch pressed" );
@@ -1260,12 +1320,21 @@ bool HandleGlobalInputs( const InputEventPlus &input )
 			}
 			return true;
 
+		case GAME_BUTTON_COIN:
+			// Handle a coin insertion.
+			if( GAMESTATE->IsEditing() )	// no coins while editing
+			{
+				LOG->Trace( "Ignored coin insertion (editing)" );
+				break;
+			}
+			StepMania::InsertCoin();
+			return false; // Attract needs to know because it goes to TitleMenu on > 1 credit
 		default: break;
 	}
 
 	/* Re-added for StepMania 3.9 theming veterans, plus it's just faster than
 	 * the debug menu. The Shift button only reloads the metrics, unlike in 3.9
-	 * (where it saved machine profile). -aj */
+	 * (where it saved bookkeeping and machine profile). -aj */
 	bool bIsShiftHeld = INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT), &input.InputList) ||
 		INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT), &input.InputList);
 	bool bIsCtrlHeld = INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL), &input.InputList) ||

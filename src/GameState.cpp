@@ -3,6 +3,7 @@
 #include "Actor.h"
 #include "AdjustSync.h"
 #include "AnnouncerManager.h"
+#include "Bookkeeper.h"
 #include "Character.h"
 #include "CharacterManager.h"
 #include "CommonMetrics.h"
@@ -110,6 +111,7 @@ GameState::GameState() :
 	m_pCurGame(				Message_CurrentGameChanged ),
 	m_pCurStyle(			Message_CurrentStyleChanged ),
 	m_PlayMode(				Message_PlayModeChanged ),
+	m_iCoins(				Message_CoinsChanged ),
 	m_sPreferredSongGroup(	Message_PreferredSongGroupChanged ),
 	m_sPreferredCourseGroup(	Message_PreferredCourseGroupChanged ),
 	m_PreferredStepsType(	Message_PreferredStepsTypeChanged ),
@@ -136,6 +138,7 @@ GameState::GameState() :
 	SetCurrentStyle( NULL );
 
 	m_pCurGame.Set( NULL );
+	m_iCoins.Set( 0 );
 	m_timeGameStarted.SetZero();
 	m_bDemonstrationOrJukebox = false;
 
@@ -283,6 +286,7 @@ void GameState::Reset()
 		m_MultiPlayerStatus[p] = MultiPlayerStatus_NotJoined;
 	FOREACH_PlayerNumber( pn )
 		MEMCARDMAN->UnlockCard( pn );
+	//m_iCoins = 0;	// don't reset coin count!
 	m_bMultiplayer = false;
 	m_iNumMultiplayerNoteFields = 1;
 	*m_Environment = LuaTable();
@@ -441,6 +445,14 @@ namespace
 		if( GAMESTATE->m_bSideIsJoined[pn] )
 			return false;
 
+		// subtract coins
+		int iCoinsNeededToJoin = GAMESTATE->GetCoinsNeededToJoin();
+
+		if( GAMESTATE->m_iCoins < iCoinsNeededToJoin )
+			return false;	// not enough coins
+
+		GAMESTATE->m_iCoins.Set( GAMESTATE->m_iCoins - iCoinsNeededToJoin );
+
 		GAMESTATE->JoinPlayer( pn );
 
 		return true;
@@ -467,6 +479,18 @@ bool GameState::JoinPlayers()
 			bJoined = true;
 	}
 	return bJoined;
+}
+
+int GameState::GetCoinsNeededToJoin() const
+{
+	int iCoinsToCharge = 0;
+
+	// If joint premium, don't take away a credit for the second join.
+	if( GetPremium() == Premium_2PlayersFor1Credit  &&
+		GetNumSidesJoined() == 1 )
+		iCoinsToCharge = 0;
+
+	return iCoinsToCharge;
 }
 
 /* Game flow:
@@ -585,6 +609,7 @@ bool GameState::HaveProfileToSave()
 
 void GameState::SaveLocalData()
 {
+	BOOKKEEPER->WriteToDisk();
 	PROFILEMAN->SaveMachineProfile();
 }
 
@@ -2272,7 +2297,10 @@ public:
 		return 1;
 	}
 	DEFINE_METHOD( GetGameplayLeadIn,		m_bGameplayLeadIn )
+	DEFINE_METHOD( GetCoins,			m_iCoins )
 	DEFINE_METHOD( IsSideJoined,			m_bSideIsJoined[Enum::Check<PlayerNumber>(L, 1)] )
+	DEFINE_METHOD( GetCoinsNeededToJoin,		GetCoinsNeededToJoin() )
+	DEFINE_METHOD( EnoughCreditsToJoin,		EnoughCreditsToJoin() )
 	DEFINE_METHOD( PlayersCanJoin,			PlayersCanJoin() )
 	DEFINE_METHOD( GetNumSidesJoined,		GetNumSidesJoined() )
 	DEFINE_METHOD( GetCoinMode,			GetCoinMode() )
@@ -2525,7 +2553,10 @@ public:
 		ADD_METHOD( GetSongDelay );*/
 		ADD_METHOD( GetSongPosition );
 		ADD_METHOD( GetGameplayLeadIn );
+		ADD_METHOD( GetCoins );
 		ADD_METHOD( IsSideJoined );
+		ADD_METHOD( GetCoinsNeededToJoin );
+		ADD_METHOD( EnoughCreditsToJoin );
 		ADD_METHOD( PlayersCanJoin );
 		ADD_METHOD( GetNumSidesJoined );
 		ADD_METHOD( GetCoinMode );
