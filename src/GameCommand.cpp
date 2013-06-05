@@ -451,6 +451,8 @@ bool GameCommand::IsPlayable( RString *why ) const
 
 	if ( m_pStyle )
 	{
+		int iCredits = NUM_PLAYERS; // not iNumCreditsPaid
+		
 		/* If both sides are joined, disallow singles modes, since easy to select
 		 * them accidentally, instead of versus mode. */
 		if( m_pStyle->m_StyleType == StyleType_OnePlayerOneSide &&
