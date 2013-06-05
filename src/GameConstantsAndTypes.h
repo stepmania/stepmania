@@ -432,6 +432,7 @@ const int ITEM_NONE = -1;
 enum CoinMode
 {
 	CoinMode_Home, /**< The full range of options are available. */
+	CoinMode_Pay, /**< Coins must be inserted before a game can begin. */
 	CoinMode_Free, /**< It costs no money to play, but otherwise is similar to Pay mode. */
 	NUM_CoinMode,
 	CoinMode_Invalid
