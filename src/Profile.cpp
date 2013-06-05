@@ -38,6 +38,7 @@ const RString EDIT_COURSES_SUBDIR  = "EditCourses/";
 //const RString UPLOAD_SUBDIR         = "Upload/";
 const RString RIVAL_SUBDIR         = "Rivals/";
 
+ThemeMetric<bool> SHOW_COIN_DATA( "Profile", "ShowCoinData" );
 static Preference<bool> g_bProfileDataCompress( "ProfileDataCompress", false );
 static ThemeMetric<RString> UNLOCK_AUTH_STRING( "Profile", "UnlockAuthString" );
 #define GUID_SIZE_BYTES 8
@@ -947,6 +948,8 @@ XNode *Profile::SaveStatsXmlCreateNode() const
 	xml->AppendChild( SaveCategoryScoresCreateNode() );
 	xml->AppendChild( SaveScreenshotDataCreateNode() );
 	xml->AppendChild( SaveCalorieDataCreateNode() );
+	if( SHOW_COIN_DATA.GetValue() && IsMachine() )
+		xml->AppendChild( SaveCoinDataCreateNode() );
 
 	return xml;
 }
@@ -1833,6 +1836,19 @@ bool Profile::IsMachine() const
 {
 	// TODO: Think of a better way to handle this
 	return this == PROFILEMAN->GetMachineProfile();
+}
+
+
+XNode* Profile::SaveCoinDataCreateNode() const
+{
+	CHECKPOINT;
+
+	const Profile* pProfile = this;
+	ASSERT( pProfile != NULL );
+
+	XNode* pNode = new XNode( "CoinData" );
+
+	return pNode;
 }
 
 void Profile::MoveBackupToDir( RString sFromDir, RString sToDir )
