@@ -694,6 +694,18 @@ void UnlockManager::UnlockEntryIndex( int iEntryIndex )
 	UnlockEntryID( sEntryID );
 }
 
+void UnlockManager::LockEntryID( RString entryID )
+{
+	PROFILEMAN->GetMachineProfile()->m_UnlockedEntryIDs.erase( entryID );
+	SONGMAN->InvalidateCachedTrails();
+}
+
+void UnlockManager::LockEntryIndex( int entryIndex )
+{
+	RString entryID = m_UnlockEntries[entryIndex].m_sEntryID;
+	LockEntryID( entryID );
+}
+
 void UnlockManager::PreferUnlockEntryID( RString sUnlockEntryID )
 {
 	for( unsigned i = 0; i < m_UnlockEntries.size(); ++i )
@@ -915,6 +927,18 @@ public:
 	static int FindEntryID( T* p, lua_State *L )			{ RString sName = SArg(1); RString s = p->FindEntryID(sName); if( s.empty() ) lua_pushnil(L); else lua_pushstring(L, s); return 1; }
 	static int UnlockEntryID( T* p, lua_State *L )			{ RString sUnlockEntryID = SArg(1); p->UnlockEntryID(sUnlockEntryID); return 0; }
 	static int UnlockEntryIndex( T* p, lua_State *L )		{ int iUnlockEntryID = IArg(1); p->UnlockEntryIndex(iUnlockEntryID); return 0; }
+	static int LockEntryID( T * p, lua_State * L)
+	{
+		RString entryID = SArg(1);
+		p->LockEntryID( entryID );
+		return 0;
+	}
+	static int LockEntryIndex( T * p, lua_State * L)
+	{
+		int entryIndex = IArg(1);
+		p->LockEntryIndex( entryIndex );
+		return 0;
+	}
 	static int PreferUnlockEntryID( T* p, lua_State *L )		{ RString sUnlockEntryID = SArg(1); p->PreferUnlockEntryID(sUnlockEntryID); return 0; }
 	static int GetNumUnlocks( T* p, lua_State *L )			{ lua_pushnumber( L, p->GetNumUnlocks() ); return 1; }
 	static int GetNumUnlocked( T* p, lua_State *L )			{ lua_pushnumber( L, p->GetNumUnlocked() ); return 1; }
@@ -977,6 +1001,8 @@ public:
 		ADD_METHOD( PreferUnlockEntryID );
 		ADD_METHOD( UnlockEntryID );
 		ADD_METHOD( UnlockEntryIndex );
+		ADD_METHOD( LockEntryID );
+		ADD_METHOD( LockEntryIndex );
 		ADD_METHOD( IsSongLocked );
 		//ADD_METHOD( UnlockSong );
 		//ADD_METHOD( GetUnlocksByType );
