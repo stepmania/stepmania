@@ -4255,6 +4255,7 @@ Fallback="Player"
 ComboOnCommand=visible,false
 
 [Profile]
+ShowCoinData=true
 UnlockAuthString=
 
 [NoteField]
