@@ -48,16 +48,10 @@ return Def.ActorFrame {
 	LoadFont("_arial black 20px")..{
 		InitCommand=cmd(xy,SCREEN_CENTER_X,SCREEN_HEIGHT-20;zoom,1;shadowlength,0;playcommand,"Text");
 		TextCommand=function(self)
-			if GAMESTATE:GetCoinMode() == 'CoinMode_Pay' then
-				local Coins = GAMESTATE:GetCoins()
-				local CoinForCredit = GAMESTATE:GetCoinsNeededToJoin()
-				local Credits = math.floor(Coins/CoinForCredit)
-				local Remain = Coins % CoinForCredit
-				self:settext(string.format("CREDIT(S) %i[%i/%i]", Credits, Remain, CoinForCredit))
-			elseif GAMESTATE:GetCoinMode() == 'CoinMode_Free' then
-				self:settext("Free Play")
-			else --homemode
+			if GAMESTATE:GetCoinMode() == 'CoinMode_Home' then
 				self:settext("Home Mode");
+			else
+				self:settext("Free Play")
 			end
 		end;
 		PlayerJoinedMessageCommand=cmd(playcommand,"Text");

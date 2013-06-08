@@ -20,12 +20,11 @@ function EvaluationNext()
 end
 
 function GameOverNext()
-	if (GAMESTATE:GetCoinMode() == 'CoinMode_Pay' and GAMESTATE:GetCoins() > 0)
-	or GAMESTATE:GetCoinMode() == 'CoinMode_Free'
+	if GAMESTATE:GetCoinMode() == 'CoinMode_Home'
 	then
-		return "ScreenTitleMenu"
-	else
 		return "ScreenInit"
+	else
+		return "ScreenTitleMenu"
 	end
 end
 
