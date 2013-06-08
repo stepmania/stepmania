@@ -493,17 +493,9 @@ bool GameCommand::IsPlayable( RString *why ) const
 
 	if ( m_pStyle )
 	{
-		int iCredits = GAMESTATE->m_iCoins / PREFSMAN->m_iCoinsPerCredit;
+		int iCredits = NUM_PLAYERS;
 		const int iNumCreditsPaid = GetNumCreditsPaid();
 		const int iNumCreditsRequired = GetCreditsRequiredToPlayStyle(m_pStyle);
-
-		switch( GAMESTATE->GetCoinMode() )
-		{
-			case CoinMode_Home:
-			case CoinMode_Free:
-				iCredits = NUM_PLAYERS; // not iNumCreditsPaid
-			default: break;
-		}
 
 		/* With PREFSMAN->m_bDelayedCreditsReconcile disabled, enough credits must
 		 * be paid. (This means that enough sides must be joined.)  Enabled, simply
@@ -519,23 +511,6 @@ bool GameCommand::IsPlayable( RString *why ) const
 				*why = ssprintf( "need %i credits, have %i", iNumCreditsRequired, iNumCreditsAvailable );
 			return false;
 		}
-
-		/* If you've paid too much already, don't allow the mode. (If we allow this,
-		 * the credits will be "refunded" in Apply(), but that's confusing.) */
-		/* Do allow the mode if they've already joined in more credits than 
-		 * are required. Otherwise, people who put in two credits to play 
-		 * doubles on a doubles-premium machiune will get locked out.
-		 * the refund logic isn't that awkward because you never see the 
-		 * credits number jump up - the credits display is hidden if both 
-		 * sides are joined. -Chris */
-		/*
-		if( PREFSMAN->m_iCoinMode == COIN_PAY && iNumCreditsPaid > iNumCreditsRequired )
-		{
-			if( why )
-				*why = ssprintf( "too many credits paid (%i > %i)", iNumCreditsPaid, iNumCreditsRequired );
-			return false;
-		}
-		*/
 
 		/* If both sides are joined, disallow singles modes, since easy to select
 		 * them accidentally, instead of versus mode. */
@@ -661,19 +636,6 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 	if( m_pStyle != NULL )
 	{
 		GAMESTATE->SetCurrentStyle( m_pStyle );
-
-		// It's possible to choose a style that didn't have enough players joined.
-		// If enough players aren't joined, then  we need to subtract credits
-		// for the sides that will be joined as a result of applying this option.
-		if( GAMESTATE->GetCoinMode() == CoinMode_Pay )
-		{
-			int iNumCreditsRequired = GetCreditsRequiredToPlayStyle(m_pStyle);
-			int iNumCreditsPaid = GetNumCreditsPaid();
-			int iNumCreditsOwed = iNumCreditsRequired - iNumCreditsPaid;
-			GAMESTATE->m_iCoins.Set( GAMESTATE->m_iCoins - iNumCreditsOwed * PREFSMAN->m_iCoinsPerCredit );
-			LOG->Trace( "Deducted %i coins, %i remaining",
-					iNumCreditsOwed * PREFSMAN->m_iCoinsPerCredit, GAMESTATE->m_iCoins.Get() );
-		}
 
 		// If only one side is joined and we picked a style that requires both
 		// sides, join the other side.
