@@ -384,20 +384,35 @@ static void MusicWheelSwitchSpeed( int &sel, bool ToSel, const ConfOption *pConf
 }
 
 // Gameplay options
-static void CoinModeNoHome( int &sel, bool ToSel, const ConfOption *pConfOption )
+static void CoinModeWithHome( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
-	// The mapping without home is easy: subtract one to compensate for the missing CoinMode_Home
 	if( ToSel )
 	{
+		// Two options: Home and Free
 		MovePref<CoinMode>( sel, ToSel, pConfOption );
-		if( sel > static_cast<int>(CoinMode_Home) )
-			--sel;
+		if( sel != 0 )
+			sel = 1;
 	}
 	else
 	{
-		if( sel >= static_cast<int>(CoinMode_Home) )
-			++sel;
-		MovePref<CoinMode>( sel, ToSel, pConfOption );
+		int tmp = static_cast<int>(CoinMode_Home);
+		if( sel != 0 )
+		{
+			sel = 1;
+			tmp = static_cast<int>(CoinMode_Free);
+		}
+		MovePref<CoinMode>( tmp , ToSel, pConfOption );
+	}
+}
+
+static void CoinModeNoHome( int &sel, bool ToSel, const ConfOption *pConfOption )
+{
+	// We only have one play mode that isn't Home
+	sel = 0;
+	if( !ToSel )
+	{
+		int tmp = static_cast<int>(CoinMode_Free);
+		MovePref<CoinMode>( tmp, ToSel, pConfOption );
 	}
 }
 
@@ -714,8 +729,8 @@ static void InitializeConfOptions()
 
 	// Machine options
 	ADD( ConfOption( "MenuTimer",			MovePref<bool>,		"Off","On" ) );
-	ADD( ConfOption( "CoinMode",			MovePref<CoinMode>,	"Home","Pay","Free Play" ) );
-	ADD( ConfOption( "CoinModeNoHome",		CoinModeNoHome,		"Pay","Free Play" ) );
+	ADD( ConfOption( "CoinMode",			CoinModeWithHome,	"Home","Free Play" ) );
+	ADD( ConfOption( "CoinModeNoHome",		CoinModeNoHome,		"Free Play" ) );
 	g_ConfOptions.back().m_sPrefName = "CoinMode";
 
 	ADD( ConfOption( "SongsPerPlay",		SongsPerPlay,		"|1","|2","|3","|4","|5" ) );
