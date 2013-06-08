@@ -677,13 +677,14 @@ class DebugLineAutosync : public IDebugLine
 class DebugLineCoinMode : public IDebugLine
 {
 	virtual RString GetDisplayTitle() { return COIN_MODE.GetValue(); }
-	virtual RString GetDisplayValue() { return CoinModeToString(GamePreferences::m_CoinMode); }
+	virtual RString GetDisplayValue() { return CoinModeToString(GAMESTATE->GetCoinMode()); }
 	virtual bool IsEnabled() { return true; }
 	virtual void DoAndLog( RString &sMessageOut )
 	{
-		int cm = GamePreferences::m_CoinMode+1;
-		wrap( cm, NUM_CoinMode );
-		GamePreferences::m_CoinMode.Set( CoinMode(cm) );
+		if (GAMESTATE->GetCoinMode() == CoinMode_Home)
+			GamePreferences::m_CoinMode.Set(CoinMode_Free);
+		else
+			GamePreferences::m_CoinMode.Set(CoinMode_Home);
 		SCREENMAN->RefreshCreditsMessages();
 		IDebugLine::DoAndLog( sMessageOut );
 	}
