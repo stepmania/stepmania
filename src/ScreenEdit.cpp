@@ -5853,6 +5853,7 @@ void ScreenEdit::DoKeyboardTrackMenu()
 	choices.push_back(NEWKEYSND);
 	choices.push_back(NO_KEYSND);
 	int numKeysounds = kses.size();
+	int foundKeysounds = 0;
 	for (int i = 0; i < m_NoteDataEdit.GetNumTracks(); ++i)
 	{
 		const TapNote &tn = m_NoteDataEdit.GetTapNote(i, this->GetRow());
@@ -5861,12 +5862,16 @@ void ScreenEdit::DoKeyboardTrackMenu()
 		{
 			keyIndex = numKeysounds;
 		}
+		else
+		{
+			++foundKeysounds;
+		}
 		
 		g_KeysoundTrack.rows.push_back(MenuRowDef(i, ssprintf(TRACK_NUM.GetValue(), i + 1),
 												  true, EditMode_Full, false, false, keyIndex, choices));
 	}
 	g_KeysoundTrack.rows.push_back(MenuRowDef(m_NoteDataEdit.GetNumTracks(), "Remove Keysound",
-											  true, EditMode_Full, false, false, 0, kses));
+											  foundKeysounds > 0, EditMode_Full, false, false, 0, kses));
 	
 	EditMiniMenu(&g_KeysoundTrack, SM_BackFromKeysoundTrack);
 }
