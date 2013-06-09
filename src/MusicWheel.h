@@ -38,7 +38,7 @@ public:
 	Song *GetPreferredSelectionForRandomOrPortal();
 
 	bool SelectSong( const Song *p );
-	bool TrySelectCourse( const Course *p ){ return TrySelectCourse(p); }
+	bool SelectCourse( const Course *p );
 	bool SelectSection( const RString & SectionName );
 	void SetOpenSection( RString group );
 	SortOrder GetSortOrder() const { return m_SortOrder; }
@@ -58,7 +58,6 @@ protected:
 
 	void GetSongList( vector<Song*> &arraySongs, SortOrder so );
 	bool SelectSongOrCourse();
-	bool SelectCourse( const Course *p );
 	bool SelectModeMenuItem();
 
 	virtual void UpdateSwitch();

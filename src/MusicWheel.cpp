@@ -1653,7 +1653,7 @@ public:
 		else
 		{
 			Course *pC = Luna<Course>::check( L, 1, true );
-			lua_pushboolean( L, p->TrySelectCourse( pC ) );
+			lua_pushboolean( L, p->SelectCourse( pC ) );
 		}
 		return 1;
 	}
