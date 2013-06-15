@@ -1,8 +1,8 @@
 local gc = Var("GameCommand");
 local t = Def.ActorFrame {};
 t[#t+1] = Def.ActorFrame {
-	GainFocusCommand=cmd(stoptweening;bob;effectmagnitude,0,6,0;decelerate,0.125;zoom,1);
-	LoseFocusCommand=cmd(stoptweening;stopeffect;decelerate,0.125;zoom,0.6);
+	GainFocusCommand=cmd(stoptweening;bob;effectmagnitude,0,6,0;decelerate,0.05;zoom,1);
+	LoseFocusCommand=cmd(stoptweening;stopeffect;decelerate,0.1;zoom,0.6);
 
 	LoadActor("_background base")..{
 		InitCommand=cmd(diffuse,ModeIconColors[gc:GetName()]);

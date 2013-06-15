@@ -7,10 +7,9 @@ t[#t+1] = Def.ActorFrame {
 		OnCommand=cmd(diffuse,color("#FFCB05");diffusebottomedge,color("#F0BA00"));
 	};
 	Def.ActorFrame {
-		OnCommand=cmd(spin;effectmagnitude,0,0,10);
 		Def.ActorFrame {
-			InitCommand=cmd(rotationx,30;hide_if,hideFancyElements;);
-			OnCommand=cmd(sleep,2;queuecommand,"Shift");
+			InitCommand=cmd(hide_if,hideFancyElements;);
+			OffCommand=cmd(decelerate,0.25;rotationx,-90/4*3.5;y,SCREEN_CENTER_Y);
 			ShiftCommand=cmd(
 				smooth,1.25;z,256;
 				sleep,2;
