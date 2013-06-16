@@ -30,7 +30,7 @@
  * </li></ul>
  */
 #ifndef PRODUCT_VER_BARE
-#define PRODUCT_VER_BARE v5.0 beta 2
+#define PRODUCT_VER_BARE v5.0 beta 2a
 #endif
 
 /**
