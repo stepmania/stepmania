@@ -446,6 +446,9 @@ Section "Main Section" SecMain
 	; xxx: how many of these do we really need?
 	File "Program\msvcp100.dll"
 	File "Program\msvcr100.dll"
+	File "Program\msvcp110.dll"
+	File "Program\msvcr110.dll"
+	File "Program\vccorlib110.dll"
 	; FFmpeg and related
 	File "Program\avcodec-53.dll"
 	;File "Program\avdevice-52.dll"
