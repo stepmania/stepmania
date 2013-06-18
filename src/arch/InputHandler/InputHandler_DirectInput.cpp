@@ -31,6 +31,7 @@ static BOOL CALLBACK EnumDevicesCallback( const DIDEVICEINSTANCE *pdidInstance, 
 	{
 		case DI8DEVTYPE_JOYSTICK:
 		case DI8DEVTYPE_GAMEPAD:
+		case DI8DEVTYPE_1STPERSON:
 		case DI8DEVTYPE_SUPPLEMENTAL:
 		{
 			device.type = device.JOYSTICK;
