@@ -198,6 +198,13 @@ void ArchHooks_Unix::Init()
 #endif
 }
 
+bool ArchHooks_Unix::GoToURL( RString sUrl )
+{
+	RString command = "xdg-open " + sUrl;
+	int result = system( command.c_str() );
+	return result != -1 && WEXITSTATUS( result ) == 0;
+}
+
 #ifndef _CS_GNU_LIBC_VERSION
 #define _CS_GNU_LIBC_VERSION 2
 #endif
