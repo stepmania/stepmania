@@ -1,3 +1,5 @@
+AUTOMAKE_OPTIONS = subdir-objects
+
 ## Do not install stepmania in the traditional way.
 noinst_PROGRAMS = stepmania
 TESTS = 

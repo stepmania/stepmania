@@ -60,7 +60,8 @@ src/libtomcrypt/Release-*
 src/libtommath/build-*
 src/libtommath/Release-*
 src/*.old
-src/.deps
+*/.deps
+*/.dirstamp
 src/*.a
 src/*.so
 GtkModule.so
