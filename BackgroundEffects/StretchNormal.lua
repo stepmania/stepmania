@@ -11,8 +11,12 @@ local t = Def.ActorFrame {
 			self:diffuse(Color1)
 			self:effectclock("music")
 		end;
-		GainFocusCommand=cmd(play);
-		LoseFocusCommand=cmd(pause);
+		GainFocusCommand=function(self)
+			self:play();
+		end;
+		LoseFocusCommand=function(self)
+			self:pause();
+		end;
 	};
 };
 

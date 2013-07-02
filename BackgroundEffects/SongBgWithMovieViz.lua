@@ -7,8 +7,10 @@ local t = Def.ActorFrame {
 		OnCommand=function(self)
 			self:LoadFromCurrentSongBackground()
 			self:xy(SCREEN_CENTER_X,SCREEN_CENTER_Y)
-			if stretchBG then self:SetSize(SCREEN_WIDTH,SCREEN_HEIGHT)
-			else self:scale_or_crop_background();
+			if stretchBG then
+				self:SetSize(SCREEN_WIDTH,SCREEN_HEIGHT)
+			else
+				self:scale_or_crop_background();
 			end
 			self:diffuse(Color1)
 			self:effectclock("music")
@@ -16,9 +18,20 @@ local t = Def.ActorFrame {
 	};
 
 	LoadActor(Var "File1") .. {
-		OnCommand=cmd(blend,"BlendMode_Add";x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y;scale_or_crop_background;diffuse,Color2;effectclock,"music");
-		GainFocusCommand=cmd(play);
-		LoseFocusCommand=cmd(pause);
+		OnCommand=function(self)
+			self:blend("BlendMode_Add");
+			self:x(SCREEN_CENTER_X);
+			self:y(SCREEN_CENTER_Y);
+			self:scale_or_crop_background();
+			self:diffuse(Color2);
+			self:effectclock("music");
+		end;
+		GainFocusCommand=function(self)
+			self:play();
+		end;
+		LoseFocusCommand=function(self)
+			self:pause();
+		end;
 	};
 };
 
