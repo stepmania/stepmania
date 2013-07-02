@@ -42,8 +42,8 @@ local MetaData = {
 				startTime = { path, rate, offset, commands }
 				Any ommitted arguments will default to nil, except for rate, which would use 1.0
 			]]
-			0 = {"path/to/bga", 1.0, 0.000, 0, cmd(rainbow) },
-			0 = {"path/to/bga2", 1.0, 0.000, 0, cmd(thump) }
+			0 = {"path/to/bga", 1.0, 0.000, 0, function(self) self:rainbow(); end; },
+			0 = {"path/to/bga2", 1.0, 0.000, 0, function(self) self:thump(); end; }
 		},
 	},
 	--[[
