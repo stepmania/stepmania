@@ -1,11 +1,19 @@
 local t = Def.ActorFrame {};
 --
 t[#t+1] = Def.ActorFrame {
-	InitCommand=cmd(Center);
+	InitCommand=function(self)
+		self:Center();
 	--
 	Def.Quad {
-		InitCommand=cmd(zoomto,SCREEN_WIDTH,SCREEN_HEIGHT;diffuse,Color.Black;diffusealpha,0);
-		StartTransitioningCommand=cmd(decelerate,0.25;diffusealpha,1);
+		InitCommand=function(self)
+			self:zoomto(SCREEN_WIDTH, SCREEN_HEIGHT);
+			self:diffuse(Color.Black);
+			self:diffusealpha(0);
+		end;
+		StartTransitioningCommand=function(self)
+			self:decelerate(0.25);
+			self:diffusealpha(1);
+		end;
 	};
 };
 --

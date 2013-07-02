@@ -1,15 +1,26 @@
 local t = Def.ActorFrame {};
 --
 t[#t+1] = Def.ActorFrame {
-	InitCommand=cmd(Center);
+	InitCommand=function(self)
+		self:Center();
+	end;
 	--
 	Def.Quad {
-		InitCommand=cmd(zoomto,SCREEN_WIDTH,SCREEN_HEIGHT;diffuse,Color.Black;diffusealpha,0);
-		StartTransitioningCommand=cmd(decelerate,0.125;diffusealpha,1);
+		InitCommand=function(self)
+			self:zoomto(SCREEN_WIDTH, SCREEN_HEIGHT);
+			self:diffuse(Color.Black);
+			self:diffusealpha(0);
+		end;
+		StartTransitioningCommand=function(self)
+			self:decelerate(0.125);
+			self:diffusealpha(1);
+		end;
 	};
 	-- Sounds
 	LoadActor(THEME:GetPathS(Var "LoadingScreen","cancel")) .. {
-		StartTransitioningCommand=cmd(play);
+		StartTransitioningCommand=function(self)
+			self:play();
+		end;
 	};
 };
 --
