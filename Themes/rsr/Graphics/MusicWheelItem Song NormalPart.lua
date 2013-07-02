@@ -1,6 +1,11 @@
 return Def.ActorFrame {
 	Def.Quad {
-		InitCommand=cmd(x,4;zoomto,256-4,46);
-		OnCommand=cmd(diffuse,color("0,0,0,0.5"));
+		InitCommand=function(self)
+			self:x(4);
+			self:zoomto(252, 46);
+		end;
+		OnCommand=function(self)
+			self:diffuse(color("0,0,0,0.5"));
+		end;
 	};
 };
