@@ -10,7 +10,9 @@ local function CreateStepDisplay(pn)
 	end
 
 	local t = Def.StepsDisplay {
-		InitCommand=cmd(Load,"StepsDisplay",GAMESTATE:GetPlayerState(pn););
+		InitCommand=function(self)
+			self:Load("StepsDisplay", GAMESTATE:GetPlayerState(pn));
+		end;
 	};
 
 	if pn == PLAYER_1 then
@@ -27,17 +29,24 @@ end
 for pn in ivalues(PlayerNumber) do
 	local MetricsName = "StepsDisplay" .. PlayerNumberToString(pn);
 	t[#t+1] = CreateStepDisplay(pn) .. {
-		InitCommand=function(self) self:player(pn); self:name(MetricsName); ActorUtil.LoadAllCommandsAndSetXY(self,Var "LoadingScreen"); end;
+		InitCommand=function(self)
+			self:player(pn);
+			self:name(MetricsName);
+			ActorUtil.LoadAllCommandsAndSetXY(self,Var "LoadingScreen");
+		end;
 		PlayerJoinedMessageCommand=function(self, params)
 			if params.Player == pn then
 				self:visible(true);
-				(cmd(zoom,0;bounceend,0.3;zoom,1))(self);
+				self:zoom(0);
+				self:bounceend(0.3);
+				self:zoom(1);
 			end;
 		end;
 		PlayerUnjoinedMessageCommand=function(self, params)
 			if params.Player == pn then
 				self:visible(true);
-				(cmd(bouncebegin,0.3;zoom,0))(self);
+				self:bouncebegin(0.3);
+				self:zoom(0);
 			end;
 		end;
 	};

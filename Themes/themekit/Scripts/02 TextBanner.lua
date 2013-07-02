@@ -7,13 +7,24 @@ function TextBannerAfterSet(self,param)
 	local Subtitle=self:GetChild("Subtitle"); 
 	local Artist=self:GetChild("Artist"); 
 	if Subtitle:GetText() == "" then 
-		(cmd(maxwidth,mainMaxWidth;y,-8;zoom,1;))(Title);
-		(cmd(visible,false))(Subtitle);
-		(cmd(zoom,0.66;maxwidth,artistMaxWidth;y,8))(Artist);
+		Title:maxwidth(mainMaxWidth);
+		Title:y(-8);
+		Title:zoom(1);
+		Subtitle:visible(false);
+		Artist:zoom(0.66);
+		Artist:maxwidth(artistMaxWidth);
+		Artist:y(8);
 	else
 		-- subtitle below
-		(cmd(maxwidth,mainMaxWidth*1.25;y,-11;zoom,0.75;))(Title);
-		(cmd(visible,true;zoom,0.6;y,0;maxwidth,subMaxWidth))(Subtitle); 
-		(cmd(zoom,0.6;maxwidth,artistMaxWidth;y,10))(Artist); 
+		Title:maxwidth(mainMaxWidth * 1.25);
+		Title:y(-11);
+		Title:zoom(0.75);
+		Subtitle:visible(true);
+		Subtitle:zoom(0.6);
+		Subtitle:y(0);
+		Subtitle:maxwidth(subMaxWidth);
+		Artist:zoom(0.6);
+		Artist:maxwidth(artistMaxWidth);
+		Artist:y(10);
 	end
 end

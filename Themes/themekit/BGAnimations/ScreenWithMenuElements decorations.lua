@@ -6,7 +6,9 @@ local t = Def.ActorFrame {};
 t[#t+1] = StandardDecorationFromFileOptional("Header","Header");
 -- Text displayed at the top of the screen
 t[#t+1] = StandardDecorationFromFileOptional("TextHeader","TextHeader") .. {
-	BeginCommand=cmd(playcommand,"Set");
+	BeginCommand=function(self)
+		self:playcommand("Set");
+	end;
 	SetCommand=function(self)
 		local sText = '_';
 		if SCREENMAN:GetTopScreen() then
