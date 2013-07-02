@@ -1,6 +1,9 @@
 local t = Def.ActorFrame{
 	LoadActor(THEME:GetPathG("_click","target"))..{
-		InitCommand=cmd(diffusealpha,0;Real);
+		InitCommand=function(self)
+			self:diffusealpha(0);
+			self:Real();
+		end;
 		LeftClickMessageCommand=function(self)
 			MESSAGEMAN:Broadcast("MouseInput", { Input = "Left" });
 		end;
@@ -31,7 +34,11 @@ local t = Def.ActorFrame{
 	};
 	LoadFont("common normal")..{
 		Name="Coords";
-		InitCommand=cmd(shadowlength,1;zoom,0.5;align,0,1);
+		InitCommand=function(self)
+			self:shadowlength(1);
+			self:zoom(0.5);
+			self:align(0, 1);
+		end;
 		MouseInputMessageCommand=function(self,param)
 			local cX = INPUTFILTER:GetMouseX()
 			local cY = INPUTFILTER:GetMouseY()
