@@ -1,5 +1,12 @@
 local t = Def.Quad {
-	InitCommand=cmd(diffuse,color("#000000");stretchto,SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM);
-	StartTransitioningCommand=cmd(diffusealpha,0;linear,0.3;diffusealpha,1);
+	InitCommand=function(self)
+		self:diffuse(color("#000000"));
+		self:stretchto(SCREEN_LEFT, SCREEN_TOP, SCREEN_RIGHT, SCREEN_BOTTOM);
+	end;
+	StartTransitioningCommand=function(self)
+		self:diffusealpha(0);
+		self:linear(0.3);
+		self:diffusealpha(1);
+	end;
 };
 return t;
