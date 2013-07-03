@@ -7,6 +7,11 @@ tests/*.err
 ffmpeg-*
 *.ncb
 *.suo
+*.tlog
+*.lastbuildstate
+*.unsuccessfulbuild
+*.log
+*.ipch
 *.obj
 *.app
 *.dep
