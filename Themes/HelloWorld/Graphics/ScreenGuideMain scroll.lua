@@ -4,35 +4,86 @@ local itemName = gc:GetName()
 local t = Def.ActorFrame{
 	-- focused frame
 	LoadActor( THEME:GetPathG("SectionMenu","ItemFocused") )..{
-		GainFocusCommand=cmd(decelerate,0.25;diffusealpha,1);
-		LoseFocusCommand=cmd(stoptweening;decelerate,0.25;diffusealpha,0);
+		GainFocusCommand=function(self)
+			self:decelerate(0.25);
+			self:diffusealpha(1);
+		end;
+		LoseFocusCommand=function(self)
+			self:stoptweening();
+			self:decelerate(0.25);
+			self:diffusealpha(0);
+		end;
 	};
 	-- unfocused
 	LoadActor( THEME:GetPathG("SectionMenu","ItemUnfocused") )..{
-		GainFocusCommand=cmd(decelerate,0.25;diffusealpha,0);
-		LoseFocusCommand=cmd(stoptweening;decelerate,0.25;diffusealpha,1);
+		GainFocusCommand=function(self)
+			self:decelerate(0.25);
+			self:diffusealpha(0);
+		end;
+		LoseFocusCommand=function(self)
+			self:stoptweening();
+			self:decelerate(0.25);
+			self:diffusealpha(1);
+		end;
 	};
 
 	LoadActor( THEME:GetPathG("_section", "Guide") )..{
-		InitCommand=cmd(x,-240;y,-23;Real;halign,0);
-		GainFocusCommand=cmd(decelerate,0.25;diffusealpha,0.9);
-		LoseFocusCommand=cmd(stoptweening;decelerate,0.25;diffusealpha,0.45);
+		InitCommand=function(self)
+			self:x(-240);
+			self:y(-23);
+			self:Real();
+			self:halign,(0);
+		end;
+		GainFocusCommand=function(self)
+			self:decelerate(0.25);
+			self:diffusealpha(0.9);
+		end;
+		LoseFocusCommand=function(self)
+			self:stoptweening();
+			self:decelerate(0.25);
+			self:diffusealpha(0.45);
+		end;
 	};
 
 	Def.ActorFrame{
 		LoadFont("_frutiger roman 24px")..{
 			Name="SectionName";
 			Text=THEME:GetString("ScreenGuideMain",itemName);
-			InitCommand=cmd(x,-246;y,-6;halign,0;diffuse,color("#222222FF"));
-			GainFocusCommand=cmd(decelerate,0.25;diffusealpha,1);
-			LoseFocusCommand=cmd(stoptweening;decelerate,0.25;diffusealpha,0.5);
+			InitCommand=function(self)
+				self:x(-246);
+				self:y(-6);
+				self:halign(0);
+				self:diffuse(color("#222222FF"));
+			end;
+			GainFocusCommand=function(self)
+				self:decelerate(0.25);
+				self:diffusealpha(1);
+			end;
+			LoseFocusCommand=function(self)
+				self:stoptweening();
+				self:decelerate(0.25);
+				self:diffusealpha(0.5);
+			end;
 		};
 		LoadFont("_frutiger roman 24px")..{
 			Name="SectionDesc";
 			Text=THEME:GetString("ScreenGuideMain",itemName.."Desc");
-			InitCommand=cmd(x,-244;y,10;align,0,0;diffuse,color("#222222FF");zoom,0.5);
-			GainFocusCommand=cmd(decelerate,0.25;diffusealpha,1);
-			LoseFocusCommand=cmd(stoptweening;decelerate,0.25;diffusealpha,0.5);
+			InitCommand=function(self)
+				self:x(-244);
+				self:y(10);
+				self:align(0, 0);
+				self:diffuse(color("#222222FF"));
+				self:zoom(0.5);
+			end;
+			GainFocusCommand=function(self)
+				self:decelerate(0.25);
+				self:diffusealpha(1);
+			end;
+			LoseFocusCommand=function(self)
+				self:stoptweening();
+				self:decelerate(0.25);
+				self:diffusealpha(0.5);
+			end;
 		};
 	};
 };

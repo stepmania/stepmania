@@ -23,12 +23,40 @@ local t = Def.ActorFrame{
 		-- then an error will pop up telling you where you need to add the
 		-- string.
 		Text=THEME:GetString( 'ScreenTitleMenu', gc:GetText() );
-		InitCommand=cmd(zoom,0.85;y,-1;shadowlength,0;diffuse,color("#000000");halign,1;strokecolor,color("0,0,0,0"););
-		DisabledCommand=cmd( diffuse,color("0.45,0,0,1") );
-		GainFocusCommand=cmd(stoptweening;accelerate,0.15;diffuse,color("#000000");strokecolor,color("0.85,0.9,1,0.75"););
-		LoseFocusCommand=cmd(stoptweening;accelerate,0.2;diffuse,color("#888888");strokecolor,color("0,0,0,0"););
-		OffFocusedCommand=cmd(sleep,0.45;decelerate,1;addx,-32;diffuse,color("#FF000000"););
-		OffUnfocusedCommand=cmd(sleep,0.125*gc:GetIndex();linear,0.5;addx,SCREEN_CENTER_X;);
+		InitCommand=function(self)
+			self:zoom(0.85);
+			self:y(-1);
+			self:shadowlength(0);
+			self:diffuse(color("#000000"));
+			self:halign(1);
+			self:strokecolor(color("0,0,0,0"));
+		end;
+		DisabledCommand=function(self)
+			self:diffuse(color("0.45,0,0,1"));
+		end;
+		GainFocusCommand=function(self)
+			self:stoptweening();
+			self:accelerate(0.15);
+			self:diffuse(color("#000000"));
+			self:strokecolor(color("0.85,0.9,1,0.75"));
+		end;
+		LoseFocusCommand=function(self)
+			self:stoptweening();
+			self:accelerate(0.2);
+			self:diffuse(color("#888888"));
+			self:strokecolor(color("0,0,0,0"));
+		end;
+		OffFocusedCommand=function(self)
+			self:sleep(0.45);
+			self:decelerate(1);
+			self:addx(-32);
+			self:diffuse(color("#FF000000"));
+		end;
+		OffUnfocusedCommand=function(self)
+			self:sleep(0.125 * gc:GetIndex());
+			self:linear(0.5);
+			self:addx(SCREEN_CENTER_X);
+		end;
 	};
 };
 

@@ -2,7 +2,10 @@ local raveChildren
 
 local bg = Def.ActorFrame{
 	Def.Quad{
-		InitCommand=cmd(FullScreen;diffuse,color("0,0,0,0"));
+		InitCommand=function(self)
+			self:FullScreen();
+			self:diffuse(color("0,0,0,0"));
+		end;
 		OnCommand=cmd(linear,5;diffusealpha,1);
 	};
 

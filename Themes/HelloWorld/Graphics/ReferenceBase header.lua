@@ -1,21 +1,50 @@
 local t = Def.ActorFrame{
 	Def.Quad{
-		InitCommand=cmd(zoomto,SCREEN_WIDTH,96;diffuse,color("#EEF4FFCC"));
+		InitCommand=function(self)
+			self:zoomto(SCREEN_WIDTH, 96);
+			self:diffuse(color("#EEF4FFCC"));
+		end;
 	};
 	Def.ActorFrame{
-		InitCommand=cmd(y,12);
+		InitCommand=function(self)
+			self:y(12);
+		end;
 		LoadFont("_frutiger roman 24px")..{
 			Name="Header";
 			Text=ScreenString("Header");
-			InitCommand=cmd(x,-312;y,-34;halign,0;diffuse,color("#111111FF");diffusetopedge,color("#11111188");shadowlength,-1;shadowcolor,color("#FFFFFF44"));
+			InitCommand=function(self)
+				self:x(-312);
+				self:y(-34);
+				self:halign(0);
+				self:diffuse(color("#111111FF"));
+				self:diffusetopedge(color("#11111188"));
+				self:shadowlength(-1);
+				self:shadowcolor(color("#FFFFFF44"));
+			end;
 		};
 		Def.Quad{
-			InitCommand=cmd(zoomto,SCREEN_WIDTH*0.975,2;y,-20;diffuse,color("#111111FF");diffusetopedge,color("#11111188");shadowlength,-1;shadowcolor,color("#FFFFFF44");fadeleft,0.1;faderight,0.625);
+			InitCommand=function(self)
+				self:zoomto(SCREEN_WIDTH * 0.975, 2);
+				self:y(-20);
+				self:diffuse(color("#111111FF"));
+				self:diffusetopedge(color("#11111188"));
+				self:shadowlength(-1);
+				self:shadowcolor(color("#FFFFFF44"));
+				self:fadeleft(0.1);
+				self:faderight(0.625);
+			end;
 		};
 		LoadFont("_frutiger roman 24px")..{
 			Name="Explanation";
 			Text=ScreenString("Explanation");
-			InitCommand=cmd(x,-312;y,-14;align,0,0;diffuse,color("#111111FF");zoom,0.65;wrapwidthpixels,(SCREEN_WIDTH));
+			InitCommand=function(self)
+				self:x(-312);
+				self:y(-14);
+				self:align(0, 0);
+				self:diffuse(color("#111111FF"));
+				self:zoom(0.65);
+				self:wrapwidthpixels(SCREEN_WIDTH);
+			end;
 		};
 	};
 };

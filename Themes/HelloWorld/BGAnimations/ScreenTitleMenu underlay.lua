@@ -15,24 +15,55 @@ return Def.ActorFrame {
 	Def.ActorFrame{
 		Name="Flourishes";
 		-- it has to be 0.05 since 0.9 uses up space on both sides.
-		InitCommand=cmd(x,SCREEN_LEFT+(SCREEN_WIDTH*0.05);y,SCREEN_CENTER_Y;);
+		InitCommand=function(self)
+			self:x(SCREEN_LEFT + (SCREEN_WIDTH * 0.05);
+			self:y(SCREEN_CENTER_Y);
+		end;
 
 		Def.Quad{
 			Name="Red";
-			InitCommand=cmd(horizalign,left;zoomto,0,4;diffuse,color("#DA8989");diffuserightedge,color("#FFBBBB"));
-			OnCommand=cmd(sleep,0.1;linear,lineTime;zoomx,lineWidth);
+			InitCommand=function(self)
+				self:horizalign(left);
+				self:zoomto(0, 4);
+				self:diffuse(color("#DA8989"));
+				self:diffuserightedge(color("#FFBBBB"));
+			end;
+			OnCommand=function(self)
+				self:sleep(0.1);
+				self:linear(lineTime);
+				self:zoomx(lineWidth);
+			end;
 		};
 
 		Def.Quad{
 			Name="Yellow";
-			InitCommand=cmd(y,4;horizalign,left;zoomto,0,4;diffuse,color("#DAD989");diffuserightedge,color("#FFFCBB"));
-			OnCommand=cmd(sleep,0.05;linear,lineTime;zoomx,lineWidth);
+			InitCommand=function(self)
+				self:y(4);
+				self:horizalign(left);
+				self:zoomto(0, 4);
+				self:diffuse(color("#DAD989"));
+				self:diffuserightedge(color("#FFFCBB"));
+			end;
+			OnCommand=function(self)
+				self:sleep(0.05);
+				self:linear(lineTime);
+				self:zoomx(lineWidth);
+			end;
 		};
 
 		Def.Quad{
 			Name="Blue";
-			InitCommand=cmd(y,8;horizalign,left;zoomto,0,4;diffuse,color("#89C6DA");diffuserightedge,color("#BBEEFF"));
-			OnCommand=cmd(linear,lineTime;zoomx,lineWidth);
+			InitCommand=function(self)
+				self:y(8);
+				self:horizalign(left);
+				self:zoomto(0, 4);
+				self:diffuse(color("#89C6DA"));
+				self:diffuserightedge(color("#BBEEFF"));
+			end;
+			OnCommand=function(self)
+				self:linear(lineTime);
+				self:zoomx(lineWidth);
+			end;
 		};
 	};
 
@@ -48,25 +79,61 @@ return Def.ActorFrame {
 		-- and moves it 60 pixels to the left of horizontal center.
 		-- diffusealpha,0 makes the object invisible,
 		-- which is handy for transitions...
-		InitCommand=cmd(x,SCREEN_CENTER_X*0.8125;y,SCREEN_CENTER_Y-44;diffusealpha,0;);
+		InitCommand=function(self)
+			self:x(SCREEN_CENTER_X * 0.8125);
+			self:y(SCREEN_CENTER_Y - 44);
+			self:diffusealpha(0);
+		end;
 		-- ...as we see in the OnCommand. linear means to perform the next
 		-- commands over a span of time (in seconds).
 		-- diffusealpha,1 makes the logo fade in when applied here.
-		OnCommand=cmd(linear,0.5;diffusealpha,1;);
+		OnCommand=function(self)
+			self:linear(0.5);
+			self:diffusealpha(1);
+		end;
 	};
 
 	-- Creative Commons logo, using a local file in the same directory:
 	LoadActor( "creativecommons" )..{
-		InitCommand=cmd(x,SCREEN_LEFT+64;y,SCREEN_BOTTOM-43;Real);
-		OnCommand=cmd(addy,32;cropbottom,1;fadebottom,1;decelerate,0.8;cropbottom,0;fadebottom,0;addy,-32);
+		InitCommand=function(self)
+			self:x(SCREEN_LEFT + 64);
+			self:y(SCREEN_BOTTOM - 43);
+			self:Real();
+		end;
+		OnCommand=function(self)
+			self:addy(32);
+			self:cropbottom(1);
+			self:fadebottom(1);
+			self:decelerate(0.8);
+			self:cropbottom(0);
+			self:fadebottom(0);
+			self:addy(-32);
+		end;
 	};
 	-- Making a cheap reflection effect for the sake of showing off the fov and
 	-- vanishpoint commands on ActorFrames.
 	Def.ActorFrame{
-		InitCommand=cmd(fov,45;vanishpoint,SCREEN_LEFT+64,SCREEN_BOTTOM-20;);
+		InitCommand=function(self)
+			self:fov(45);
+			self:vanishpoint(SCREEN_LEFT + 64, SCREEN_BOTTOM - 20);
+		end;
 		LoadActor( "creativecommons" )..{
-			InitCommand=cmd(x,SCREEN_LEFT+64;y,SCREEN_BOTTOM-20;valign,0;zoomy,-0.6;rotationx,-60;diffusealpha,0.6;Real;);
-			OnCommand=cmd(croptop,1;fadetop,0;decelerate,0.8;croptop,0;fadetop,1;);
+			InitCommand=function(self)
+				self:x(SCREEN_LEFT + 64);
+				self:y(SCREEN_BOTTOM - 20);
+				self:valign(0);
+				self:zoomy(-0.6);
+				self:rotationx(-60);
+				self:diffusealpha(0.6);
+				self:Real();
+			end;
+			OnCommand=function(self)
+				self:croptop(1);
+				self:fadetop(0);
+				self:decelerate(0.8);
+				self:croptop(0);
+				self:fadetop(1);
+			end;
 		};
 	};
 };
