@@ -1,6 +1,12 @@
 return LoadFont("Common", "Normal")..{
 	Text="EXIT";
-	InitCommand=cmd(CenterX);
-	GainFocusCommand=cmd(diffuse,color("#FF0000"));
-	LoseFocusCommand=cmd(diffuse,color("#FFFFFF"));
+	InitCommand=function(self)
+		self:CenterX();
+	end;
+	GainFocusCommand=function(self)
+		self:diffuse(color("#FF0000"));
+	end;
+	LoseFocusCommand=function(self)
+		self:diffuse(color("#FFFFFF"));
+	end;
 }
