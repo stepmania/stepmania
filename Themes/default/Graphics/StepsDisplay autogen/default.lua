@@ -1,16 +1,31 @@
 local t = Def.ActorFrame{};
 
 t[#t+1] = LoadActor("_badge") .. {
-	InitCommand=cmd(shadowlength,1;diffuse,Color.Green;pulse;effectmagnitude,0.875,1,1;effecttiming,0,0,1,0
-		effectclock,'beatnooffset';effectperiod,2);
+	InitCommand=function(self)
+		self:shadowlength(1);
+		self:diffuse(Color.Green);
+		self:pulse();
+		self:effectmagnitude(0.875, 1, 1);
+		self:effecttiming(0, 0, 1, 0);
+		self:effectclock('beatnooffset');
+		self:effectperiod(2);
+	end;
 };
 t[#t+1] = Def.Quad {
-	InitCommand=cmd(zoomto,40,20;diffuse,Color.Black;
-		diffusealpha,0.5;fadeleft,0.25;faderight,0.25);
+	InitCommand=function(self)
+		self:zoomto(40, 20);
+		self:diffuse(Color.Black);
+		self:diffusealpha(0.5);
+		self:fadeleft(0.25);
+		self:faderight(0.25);
+	end;
 };
 t[#t+1] = LoadFont("Common","Normal") .. {
 	Text="AG";
-	InitCommand=cmd(shadowlength,1;zoom,0.875);
+	InitCommand=function(self)
+		self:shadowlength(1);
+		self:zoom(0.875);
+	end;
 };
 
 return t;

@@ -1,13 +1,22 @@
 local t = Def.ActorFrame {
-   InitCommand=cmd(fov,90);
+	InitCommand=function(self)
+		self:fov(90);
+	end;
 };
 t[#t+1] = Def.ActorFrame {
-  InitCommand=cmd(Center);
+	InitCommand=function(self)
+		self:Center();
+	end;
 	LoadActor( THEME:GetPathB("ScreenWithMenuElements","background/_bg top") ) .. {
-		InitCommand=cmd(scaletoclipped,SCREEN_WIDTH,SCREEN_HEIGHT);
+		InitCommand=function(self)
+			self:scaletoclipped(SCREEN_WIDTH, SCREEN_HEIGHT);
+		end;
 	};
 	Def.Quad{
-		InitCommand=cmd(scaletoclipped,SCREEN_WIDTH,SCREEN_HEIGHT;diffuse,color("0.2,0.2,0.2,0"));
+		InitCommand=function(self)
+			self:scaletoclipped(SCREEN_WIDTH, SCREEN_HEIGHT);
+			self:diffuse(color("0.2,0.2,0.2,0"));
+		end;
 		OnCommand=function(self)
 			local topScreen = SCREENMAN:GetTopScreen()
 			if topScreen then
@@ -19,8 +28,16 @@ t[#t+1] = Def.ActorFrame {
 				end;
 			end;
 		end;
-		EditorShowMessageCommand=cmd(stoptweening;linear,0.5;diffusealpha,0.95);
-		EditorHideMessageCommand=cmd(stoptweening;linear,0.5;diffusealpha,0.65);
+		EditorShowMessageCommand=function(self)
+			self:stoptweening();
+			self:linear(0.5);
+			self:diffusealpha(0.95);
+		end;
+		EditorHideMessageCommand=function(self)
+			self:stoptweening();
+			self:linear(0.5);
+			self:diffusealpha(0.95);
+		end;
 	};
 };
 

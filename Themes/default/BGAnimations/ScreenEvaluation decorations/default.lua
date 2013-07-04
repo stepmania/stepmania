@@ -1,7 +1,9 @@
 local function GraphDisplay( pn )
 	local t = Def.ActorFrame {
 		Def.GraphDisplay {
-			InitCommand=cmd(Load,"GraphDisplay";);
+			InitCommand=function(self)
+				self:Load("GraphDisplay");
+			end;
 			BeginCommand=function(self)
 				local ss = SCREENMAN:GetTopScreen():GetStageStats();
 				self:Set( ss, ss:GetPlayerStageStats(pn) );
@@ -15,7 +17,9 @@ end
 local function ComboGraph( pn )
 	local t = Def.ActorFrame {
 		Def.ComboGraph {
-			InitCommand=cmd(Load,"ComboGraph";);
+			InitCommand=function(self)
+				self:Load("ComboGraph");
+			end;
 			BeginCommand=function(self)
 				local ss = SCREENMAN:GetTopScreen():GetStageStats();
 				self:Set( ss, ss:GetPlayerStageStats(pn) );
@@ -28,8 +32,14 @@ end
 
 local function PercentScore( pn )
 	local t = LoadFont("Common normal")..{
-		InitCommand=cmd(zoom,0.625;shadowlength,1;player,pn);
-		BeginCommand=cmd(playcommand,"Set");
+		InitCommand=function(self)
+			self:zoom(0.625);
+			self:shadowlength(1);
+			self:player(pn);
+		end;
+		BeginCommand=function(self)
+			self:playcommand("Set");
+		end;
 		SetCommand=function(self)
 			-- todo: color by difficulty
 			local SongOrCourse, StepsOrTrail;
@@ -82,7 +92,10 @@ end
 if ShowStandardDecoration("StepsDisplay") then
 	for pn in ivalues(PlayerNumber) do
 		local t2 = Def.StepsDisplay {
-			InitCommand=cmd(Load,"StepsDisplayEvaluation",pn;SetFromGameState,pn;);
+			InitCommand=function(self)
+				self:Load("StepsDisplayEvaluation",pn);
+				self:SetFromGameState(pn);
+			end;
 			UpdateNetEvalStatsMessageCommand=function(self,param)
 				if GAMESTATE:IsPlayerEnabled(pn) then
 					self:SetFromSteps(param.Steps)
@@ -124,7 +137,9 @@ for pn in ivalues(PlayerNumber) do
 			self:name(MetricsName); 
 			ActorUtil.LoadAllCommandsAndSetXY(self,Var "LoadingScreen"); 
 		end;
-		BeginCommand=cmd(playcommand,"Set");
+		BeginCommand=function(self)
+			self:playcommand("Set");
+		end;
 		SetCommand=function(self)
 			local tStats = THEME:GetMetric(Var "LoadingScreen", "Summary") and STATSMAN:GetAccumPlayedStageStats() or STATSMAN:GetCurStageStats();
 			tStats = tStats:GetPlayerStageStats(pn);
@@ -145,7 +160,9 @@ for pn in ivalues(PlayerNumber) do
 			self:name(MetricsName); 
 			ActorUtil.LoadAllCommandsAndSetXY(self,Var "LoadingScreen"); 
 		end;
-		BeginCommand=cmd(playcommand,"Set");
+		BeginCommand=function(self)
+			self:playcommand("Set");
+		end;
 		SetCommand=function(self)
 			local tStats = THEME:GetMetric(Var "LoadingScreen", "Summary") and STATSMAN:GetAccumPlayedStageStats() or STATSMAN:GetCurStageStats();
 			tStats = tStats:GetPlayerStageStats(pn);
@@ -219,38 +236,81 @@ t[#t+1] = StandardDecorationFromFileOptional("SongInformation","SongInformation"
 			self:playcommand("Hide")
 		end
 	end;
--- 	OnCommand=cmd(playcommand,"Set");
-	CurrentSongChangedMessageCommand=cmd(playcommand,"Set");
-	CurrentCourseChangedMessageCommand=cmd(playcommand,"Set");
-	DisplayLanguageChangedMessageCommand=cmd(playcommand,"Set");
+	CurrentSongChangedMessageCommand=function(self)
+		self:playcommand("Set");
+	end;
+	CurrentCourseChangedMessageCommand=function(self)
+		self:playcommand("Set");
+	end;
+	DisplayLanguageChangedMessageCommand=function(self)
+		self:playcommand("Set");
+	end;
 };
 t[#t+1] = StandardDecorationFromFileOptional("LifeDifficulty","LifeDifficulty");
 t[#t+1] = StandardDecorationFromFileOptional("TimingDifficulty","TimingDifficulty");
 t[#t+1] = StandardDecorationFromFileOptional("GameType","GameType");
 t[#t+1] = Def.ActorFrame {
 	Condition=GAMESTATE:HasEarnedExtraStage() and GAMESTATE:IsExtraStage() and not GAMESTATE:IsExtraStage2();
-	InitCommand=cmd(draworder,105);
+	InitCommand=function(self)
+		self:draworder(105);
+	end;
 	LoadActor( THEME:GetPathS("ScreenEvaluation","try Extra1" ) ) .. {
 		Condition=THEME:GetMetric( Var "LoadingScreen","Summary" ) == false;
-		OnCommand=cmd(play);
+		OnCommand=function(self)
+			self:play();
+		end;
 	};
 	LoadActor( THEME:GetPathG("ScreenStageInformation","Stage extra1" ) ) .. {
 		Condition=THEME:GetMetric( Var "LoadingScreen","Summary" ) == false;
-		InitCommand=cmd(Center);
-		OnCommand=cmd(diffusealpha,0;zoom,0.85;bounceend,1;zoom,1;diffusealpha,1;sleep,0;glow,Color("White");decelerate,1;glow,Color("Invisible");smooth,0.35;zoom,0.25;y,SCREEN_BOTTOM-72);
+		InitCommand=function(self)
+			self:Center();
+		end;
+		OnCommand=function(self)
+			self:diffusealpha(0);
+			self:zoom(0.85);
+			self:bounceend(1);
+			self:zoom(1);
+			self:diffusealpha(1);
+			self:sleep(0);
+			self:glow(Color("White"));
+			self:decelerate(1);
+			self:glow(Color("Invisible"));
+			self:smooth(0.35);
+			self:zoom(0.25);
+			self:y(SCREEN_BOTTOM-72);
+		end;
 	};
 };
 t[#t+1] = Def.ActorFrame {
 	Condition=GAMESTATE:HasEarnedExtraStage() and not GAMESTATE:IsExtraStage() and GAMESTATE:IsExtraStage2();
-	InitCommand=cmd(draworder,105);
+	InitCommand=function(self)
+		self:draworder(105);
+	end;
 	LoadActor( THEME:GetPathS("ScreenEvaluation","try Extra2" ) ) .. {
 		Condition=THEME:GetMetric( Var "LoadingScreen","Summary" ) == false;
-		OnCommand=cmd(play);
+		OnCommand=function(self)
+			self:play();
+		end;
 	};
 	LoadActor( THEME:GetPathG("ScreenStageInformation","Stage extra2" ) ) .. {
 		Condition=THEME:GetMetric( Var "LoadingScreen","Summary" ) == false;
-		InitCommand=cmd(Center);
-		OnCommand=cmd(diffusealpha,0;zoom,0.85;bounceend,1;zoom,1;diffusealpha,1;sleep,0;glow,Color("White");decelerate,1;glow,Color("Invisible");smooth,0.35;zoom,0.25;y,SCREEN_BOTTOM-72);
+		InitCommand=function(self)
+			self:Center();
+		end;
+		OnCommand=function(self)
+			self:diffusealpha(0);
+			self:zoom(0.85);
+			self:bounceend(1);
+			self:zoom(1);
+			self:diffusealpha(1);
+			self:sleep(0);
+			self:glow(Color("White"));
+			self:decelerate(1);
+			self:glow(Color("Invisible"));
+			self:smooth(0.35);
+			self:zoom(0.25);
+			self:y(SCREEN_BOTTOM-72);
+		end;
 	};
 };
 return t

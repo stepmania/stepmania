@@ -1,3 +1,9 @@
 return LoadFont("Combo Numbers") .. {
-	InitCommand=cmd(zoom,12/54;y,-1;shadowlengthx,0;shadowlengthy,1;strokecolor,color("#00000077"););
+	InitCommand=function(self)
+		self:zoom(12/54);
+		self:y(-1);
+		self:shadowlengthx(0);
+		self:shadowlengthy(1);
+		self:strokecolor(color("#00000077"));
+	end;
 };

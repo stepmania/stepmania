@@ -1,6 +1,8 @@
 local t = Def.ActorFrame{
 	LoadActor("EditMenu Left")..{
-		BeginCommand=cmd(zoomx,-1);
+		BeginCommand=function(self)
+			self:zoomx(-1);
+		end;
 	};
 };
 

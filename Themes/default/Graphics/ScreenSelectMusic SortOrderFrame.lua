@@ -1,8 +1,15 @@
 return Def.ActorFrame {
 	LoadActor(THEME:GetPathG("OptionRowExit","frame")) .. {
-		InitCommand=cmd(diffusebottomedge,Color("Orange"));
+		InitCommand=function(self)
+			self:diffusebottomedge(Color("Orange"));
+		end;
 	};
 	LoadActor(THEME:GetPathG("_icon","Sort")) .. {
-		InitCommand=cmd(x,-60;shadowlength,1;diffuse,Color("Orange");diffusetopedge,Color("Yellow"));
+		InitCommand=function(self)
+			self:x(-60);
+			self:shadowlength(1);
+			self:diffuse(Color("Orange"));
+			self:diffusetopedge(Color("Yellow"));
+		end;
 	};
 };

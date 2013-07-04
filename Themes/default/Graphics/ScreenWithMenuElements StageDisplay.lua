@@ -6,7 +6,10 @@ local t = Def.ActorFrame {};
 t[#t+1] = Def.ActorFrame {
 	LoadActor(THEME:GetPathB("_frame","3x3"),"rounded black",64,12);
 	LoadFont("Common Normal") .. {
-		InitCommand=cmd(y,-1;shadowlength,1;);
+		InitCommand=function(self)
+			self:y(-1);
+			self:shadowlength(1);
+		end;
 		BeginCommand=function(self)
 			local top = SCREENMAN:GetTopScreen()
 			if top then

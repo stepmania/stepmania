@@ -1,7 +1,11 @@
 local t = Def.ActorFrame {
 	Def.Quad {
-		InitCommand=cmd(zoomto,32,32);
-		OnCommand=cmd(spin);
+		InitCommand=function(self)
+			self:zoomto(32, 32);
+		end;
+		OnCommand=function(self)
+			self:spin();
+		end;
 	};
 };
 

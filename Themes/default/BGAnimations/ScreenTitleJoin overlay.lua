@@ -4,7 +4,13 @@ local t = Def.ActorFrame{};
 if GAMESTATE:IsEventMode() then
 	t[#t+1] = LoadFont("Common normal")..{
 		Text=Screen.String("EventMode");
-		InitCommand=cmd(CenterX;y,SCREEN_BOTTOM-72;zoom,0.75;diffuse,HSV(56,0.8,1);shadowlength,1);
+		InitCommand=function(self)
+			self:CenterX();
+			self:y(SCREEN_BOTTOM - 72);
+			self:zoom(0.75);
+			self:diffuse(HSV(56,0.8,1));
+			self:shadowlength(1);
+		end;
 	};
 end;
 
