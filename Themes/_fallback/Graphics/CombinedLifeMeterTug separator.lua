@@ -1,3 +1,6 @@
 return Def.Quad{
-	InitCommand=cmd(zoomto,4,22;diffuse,color("#AABBDD"));
+	InitCommand=function(self)
+		self:zoomto(4, 22);
+		self:diffuse(color("#AABBDD"));
+	end;
 };

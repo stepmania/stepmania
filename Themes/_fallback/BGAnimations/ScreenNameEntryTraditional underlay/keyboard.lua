@@ -20,11 +20,17 @@ end
 local MapNameToLetter = {};
 local MapLetterToName = {};
 local letter = LoadFont("Common Normal")..{
-	InitCommand=cmd(zoom,0.8;shadowlength,0);
+	InitCommand=function(self)
+		self:zoom(0.8);
+		self:shadowlength(0);
+	end;
 	PulseCommand = function(self)
 		self:finishtweening();
 		local z = self:GetZoomX();
-		(cmd(accelerate,0.15;zoom,1.2;decelerate,0.15;zoom,z))(self);
+		self:accelerate(0.15);
+		self:zoom(1.2);
+		self:decelerate(0.15);
+		self:zoom(z);
 	end;
 };
 
@@ -56,22 +62,28 @@ for pn in ivalues(PlayerNumber) do
 		LoadActor(CursorFiles[pn])
 	)..{
 		Name = CursorFiles[pn];
-		BeginCommand = cmd(visible,SCREENMAN:GetTopScreen():GetEnteringName(pn));
-		OnCommand = cmd(
-				zoom,0;
-				rotationz,-360*2;
-				sleep,0.55;
-				decelerate,0.5;
-				zoom,1;
-				rotationz,0;
-			);
-		OffCommand = cmd(sleep,0.3;queuecommand,"TweenOff");
+		BeginCommand = function(self)
+			self:visible(SCREENMAN:GetTopScreen():GetEnteringName(pn));
+		end;
+		OnCommand = function(self)
+			self:zoom(0);
+			self:rotationz(-360 * 2);
+			self:sleep(0.55);
+			self:decelerate(0.5);
+			self:zoom(1);
+			self:rotationz(0);
+		end;
+		OffCommand = function(self)
+			self:sleep(0.3);
+			self:queuecommand("TweenOff");
+		end;
 		PlayerFinishedMessageCommand = function(self,param)
 			if param.PlayerNumber ~= pn then return end
 			self:playcommand("TweenOff" );
 		end;
 		TweenOffCommand = function(self,param)
-			(cmd(accelerate,0.25;zoomx,0;))(self);
+			self:accelerate(0.25);
+			self:zoomx(0);
 		end;
 	};
 end
@@ -231,7 +243,12 @@ return Def.ActorFrame {
 
 		Selection[pn] = key;
 		c.Cursors[pn]:stoptweening();
-		c.Cursors[pn]:playcommand( "SetSize", { Width=Keys[key].Width+6; tween=cmd(stoptweening;linear,0.10); } );
+		c.Cursors[pn]:playcommand( "SetSize", { 
+			Width=Keys[key].Width+6; tween=function(self)
+				self:stoptweening();
+				self:linear(0.10);
+			end;
+		} );
 		c.Cursors[pn]:x( Keys[key].Text:GetX() );
 		c.Cursors[pn]:y( Keys[key].Text:GetY() );
 		if not param.NoStore then
@@ -249,11 +266,14 @@ return Def.ActorFrame {
 	OnCommand = function(self, param)
 		for key in ivalues(Letters) do
 			local fDist = distance( Keys[key].Text:GetX(), Keys[key].Text:GetY(), 0, 100 );
-			local f = cmd(
-				diffusealpha,0;zoom,0;
-				sleep,0.25 + (fDist / 400);
-				decelerate,0.5;
-				diffusealpha,1;zoom,0.8);
+			local f = function(self)
+				self:diffusealpha(0);
+				self:zoom(0);
+				self:sleep(0.25 + (fDist / 400));
+				self:decelerate(0.5);
+				self:diffusealpha(1);
+				self:zoom(0.8);
+			end;
 			f(Keys[key].Text);
 		end
 	end;
@@ -261,10 +281,12 @@ return Def.ActorFrame {
 	OffCommand = function(self, param)
 		for key in ivalues(Letters) do
 			local fDist = distance( Keys[key].Text:GetX(), Keys[key].Text:GetY(), 0, 100 );
-			local f = cmd(
-				sleep,0.0 + (fDist / 400);
-				decelerate,0.5;
-				diffusealpha,0;zoom,0);
+			local f = function(self)
+				self:sleep(0.0 + (fDist / 400));
+				self:decelerate(0.5);
+				self:diffusealpha(0);
+				self:zoom(0);
+			end;
 			f(Keys[key].Text);
 		end
 	end;

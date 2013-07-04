@@ -23,8 +23,17 @@ Library = {
 		local t = Def.ActorFrame {
 			Name="Radar";
 			Def.GrooveRadar {
-				OnCommand=cmd(zoom,0;sleep,0.583;decelerate,0.150;zoom,1);
-				OffCommand=cmd(sleep,0.183;decelerate,0.167;zoom,0);
+				OnCommand=function(self)
+					self:zoom(0);
+					self:sleep(0.583);
+					self:decelerate(0.150);
+					self:zoom(1);
+				end;
+				OffCommand=function(self)
+					self:sleep(0.183);
+					self:decelerate(0.167);
+					self:zoom(0);
+				end;
 				CurrentSongChangedMessageCommand=function(self)
 					for pn in ivalues(GAMESTATE:GetHumanPlayers()) do
 						radarSet(self, pn);

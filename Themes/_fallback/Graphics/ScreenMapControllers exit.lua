@@ -1,10 +1,32 @@
 return LoadFont("Common Normal") .. {
 	Text="Exit";
-	InitCommand=cmd(x,SCREEN_CENTER_X;zoom,0.75;shadowlength,0;diffuse,color("#808080"));
-	OnCommand=cmd(diffusealpha,0;decelerate,0.5;diffusealpha,1);
-	OffCommand=cmd(stoptweening;accelerate,0.3;diffusealpha,0;queuecommand,"Hide");
-	HideCommand=cmd(visible,false);
+	InitCommand=function(self)
+		self:x(SCREEN_CENTER_X);
+		self:zoom(0.75);
+		self:shadowlength(0);
+		self:diffuse(color("#808080"));
+	end;
+	OnCommand=function(self)
+		self:diffusealpha(0);
+		self:decelerate(0.5);
+		self:diffusealpha(1);
+	end;
+	OffCommand=function(self)
+		self:stoptweening();
+		self:accelerate(0.3);
+		self:diffusealpha(0);
+		self:queuecommand("Hide");
+	end;
+	HideCommand=function(self)
+		self:visible(false);
+	end;
 
-	GainFocusCommand=cmd(diffuseshift;effectcolor2,color("#808080");effectcolor1,color("#FFFFFF"));
-	LoseFocusCommand=cmd(stopeffect);
+	GainFocusCommand=function(self)
+		self:diffuseshift();
+		self:effectcolor2(color("#808080"));
+		self:effectcolor1(color("#FFFFFF"));
+	end;
+	LoseFocusCommand=function(self)
+		self:stopeffect();
+	end;
 };
