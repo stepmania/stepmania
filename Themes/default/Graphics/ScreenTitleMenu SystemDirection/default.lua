@@ -35,21 +35,38 @@ local function MakeIcon( sTarget )
 		Def.ActorFrame {
 			-- Life goes up to 1-5
 			Def.ActorFrame {
-				InitCommand=cmd(y,12);
+				InitCommand=function(self)
+					self:y(12);
+				end;
 				MakeDisplayBar( 6, 5 ) .. {
-					InitCommand=cmd(x,-16;visible,( GetLifeDifficulty() >= 1 ));
+					InitCommand=function(self)
+						self:x(-16);
+						self:visible( GetLifeDifficulty() >= 1 );
+					end;
 				};
 				MakeDisplayBar( 6, 9 ) .. {
-					InitCommand=cmd(x,-8;visible,( GetLifeDifficulty() >= 2 ));
+					InitCommand=function(self)
+						self:x(-8);
+						self:visible( GetLifeDifficulty() >= 2 );
+					end;
 				};
 				MakeDisplayBar( 6, 13 ) .. {
-					InitCommand=cmd(x,0;visible,( GetLifeDifficulty() >= 3 ));
+					InitCommand=function(self)
+						self:x(0);
+						self:visible( GetLifeDifficulty() >= 3 );
+					end;
 				};
 				MakeDisplayBar( 6, 16 ) .. {
-					InitCommand=cmd(x,8;visible,( GetLifeDifficulty() >= 4 ));
+					InitCommand=function(self)
+						self:x(8);
+						self:visible( GetLifeDifficulty() >= 4 );
+					end;
 				};
 				MakeDisplayBar( 6, 20 ) .. {
-					InitCommand=cmd(x,16;visible,( GetLifeDifficulty() >= 5 ));
+					InitCommand=function(self)
+						self:x(16);
+						self:visible( GetLifeDifficulty() >= 5 );
+					end;
 				};
 			};
 			Condition=sTarget[1] == "LifeDifficulty";
@@ -57,47 +74,69 @@ local function MakeIcon( sTarget )
 		Def.ActorFrame {
 			-- Timing goes up to 1-8
 			Def.ActorFrame {
-				InitCommand=cmd(y,12);
+				InitCommand=function(self)
+					self:y(12);
+				end;
 				MakeDisplayBar( 4, 5 ) .. {
-					InitCommand=cmd(x,-20;visible,( GetTimingDifficulty() >= 1 ));
+					InitCommand=function(self)
+						self:x(-20);
+						self:visible( GetTimingDifficulty() >= 1 );
+					end;
 				};
 				MakeDisplayBar( 4, 9 ) .. {
-					InitCommand=cmd(x,-15;visible,( GetTimingDifficulty() >= 2 ));
+					InitCommand=function(self)
+						self:x(-215);
+						self:visible( GetTimingDifficulty() >= 2 );
+					end;
 				};
 				MakeDisplayBar( 4, 13 ) .. {
-					InitCommand=cmd(x,-10;visible,( GetTimingDifficulty() >= 3 ));
+					InitCommand=function(self)
+						self:x(-10);
+						self:visible( GetTimingDifficulty() >= 3 );
+					end;
 				};
 				MakeDisplayBar( 4, 16 ) .. {
-					InitCommand=cmd(x,-5;visible,( GetTimingDifficulty() >= 4 ));
+					InitCommand=function(self)
+						self:x(-5);
+						self:visible( GetTimingDifficulty() >= 4 );
+					end;
 				};
 				MakeDisplayBar( 4, 20 ) .. {
-					InitCommand=cmd(x,5;visible,( GetTimingDifficulty() >= 5 ));
+					InitCommand=function(self)
+						self:x(5);
+						self:visible( GetTimingDifficulty() >= 5 );
+					end;
 				};
 				MakeDisplayBar( 4, 20 ) .. {
-					InitCommand=cmd(x,10;visible,( GetTimingDifficulty() >= 6 ));
+					function(self)
+						self:x(10);
+						self:visible( GetTimingDifficulty() >= 6 );
+					end;
 				};
 				MakeDisplayBar( 4, 20 ) .. {
-					InitCommand=cmd(x,15;visible,( GetTimingDifficulty() >= 7 ));
+					function(self)
+						self:x(15);
+						self:visible( GetTimingDifficulty() >= 7 );
+					end;
 				};
 				MakeDisplayBar( 4, 20 ) .. {
-					InitCommand=cmd(x,20;visible,( GetTimingDifficulty() >= 8 ));
+					function(self)
+						self:x(20);
+						self:visible( GetTimingDifficulty() >= 8 );
+					end;
 				};
 			};
 			Condition=sTarget[1] == "TimingDifficulty";
 		};
-		--
---[[ 		for i=1,8 do
-			t[#t+1] = Def.Quad {
-				InitCommand=cmd(vertalign,bottom;zoomto,4,10+(i*4));
-			};
-		end --]]
 	};
 	return t
 end;
 
 for i=1,#tInfo do
 	t[#t+1] = MakeIcon( tInfo[i] ) .. {
-		InitCommand=cmd(x,(i-1)*fSpacingX);
+		InitCommand=function(self)
+			self:x((i - 1) * fSpacingX);
+		end;
 	};
 end
 

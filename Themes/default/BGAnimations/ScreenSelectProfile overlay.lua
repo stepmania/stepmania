@@ -4,10 +4,7 @@ function GetLocalProfiles()
 	for p = 0,PROFILEMAN:GetNumLocalProfiles()-1 do
 		local profile=PROFILEMAN:GetLocalProfileFromIndex(p);
 		local item = Def.ActorFrame {
---[[ 			Def.Quad {
-				InitCommand=cmd(zoomto,200,1;y,40/2);
-				OnCommand=cmd(diffuse,Color('Outline'););
-			}; --]]
+
 			LoadFont("Common Normal") .. {
 				Text=profile:GetDisplayName();
 				InitCommand=cmd(shadowlength,1;y,-10;zoom,1;ztest,true);
@@ -41,20 +38,10 @@ function LoadPlayerStuff(Player)
 
 	local pn = (Player == PLAYER_1) and 1 or 2;
 
---[[ 	local t = LoadActor(THEME:GetPathB('', '_frame 3x3'), 'metal', 200, 230) .. {
-		Name = 'BigFrame';
-	}; --]]
 	local t = Def.ActorFrame {
 		Name = 'JoinFrame';
 		LoadCard(Color('Orange'));
---[[ 		Def.Quad {
-			InitCommand=cmd(zoomto,200+4,230+4);
-			OnCommand=cmd(shadowlength,1;diffuse,color("0,0,0,0.5"));
-		};
-		Def.Quad {
-			InitCommand=cmd(zoomto,200,230);
-			OnCommand=cmd(diffuse,Color('Orange');diffusealpha,0.5);
-		}; --]]
+
 		LoadFont("Common Normal") .. {
 			Text=THEME:GetString("ScreenSelectProfile","PressStart");
 			InitCommand=cmd(shadowlength,1);
@@ -69,15 +56,9 @@ function LoadPlayerStuff(Player)
 	};
 	table.insert( ret, t );
 
---[[ 	t = LoadActor(THEME:GetPathB('', '_frame 3x3'), 'metal', 170, 20) .. {
-		Name = 'SmallFrame';
-	}; --]]
 	t = Def.ActorFrame {
 		Name = 'SmallFrame';
---[[ 		Def.Quad {
-			InitCommand=cmd(zoomto,170+4,32+4);
-			OnCommand=cmd(shadowlength,1);
-		}; --]]
+
 		InitCommand=cmd(y,-2);
 		Def.Quad {
 			InitCommand=cmd(zoomto,200-10,40+2);
@@ -101,15 +82,11 @@ function LoadPlayerStuff(Player)
 	t = Def.ActorScroller{
 		Name = 'ProfileScroller';
 		NumItemsToDraw=6;
--- 		InitCommand=cmd(y,-230/2+20;);
 		OnCommand=cmd(y,1;SetFastCatchup,true;SetMask,200,58;SetSecondsPerItem,0.15);
 		TransformFunction=function(self, offset, itemIndex, numItems)
 			local focus = scale(math.abs(offset),0,2,1,0);
 			self:visible(false);
 			self:y(math.floor( offset*40 ));
--- 			self:zoomy( focus );
--- 			self:z(-math.abs(offset));
--- 			self:zoom(focus);
 		end;
 		children = GetLocalProfiles();
 	};
@@ -117,25 +94,10 @@ function LoadPlayerStuff(Player)
 	
 	t = Def.ActorFrame {
 		Name = "EffectFrame";
-	--[[ 		Def.Quad {
-				InitCommand=cmd(y,-230/2;vertalign,top;zoomto,200,8;fadebottom,1);
-				OnCommand=cmd(diffuse,Color("Black");diffusealpha,0.25);
-			};
-			Def.Quad {
-				InitCommand=cmd(y,230/2;vertalign,bottom;zoomto,200,8;fadetop,1);
-				OnCommand=cmd(diffuse,Color("Black");diffusealpha,0.25);
-			}; --]]
 	};
 	table.insert( ret, t );
---[[ 	t = Def.BitmapText {
-		OnCommand = cmd(y,160);
-		Name = 'SelectedProfileText';
-		Font = "Common Normal";
-		Text = 'No profile';
-	}; --]]
 	t = LoadFont("Common Normal") .. {
 		Name = 'SelectedProfileText';
-		--InitCommand=cmd(y,160;shadowlength,1;diffuse,PlayerColor(Player));
 		InitCommand=cmd(y,160;shadowlength,1;);
 	};
 	table.insert( ret, t );
@@ -260,37 +222,67 @@ local t = Def.ActorFrame {
 	children = {
 		Def.ActorFrame {
 			Name = 'P1Frame';
-			InitCommand=cmd(x,SCREEN_CENTER_X-160;y,SCREEN_CENTER_Y);
-			OnCommand=cmd(zoom,0;bounceend,0.35;zoom,1);
-			OffCommand=cmd(bouncebegin,0.35;zoom,0);
+			InitCommand=function(self)
+				self:x(SCREEN_CENTER_X - 160);
+				self:y(SCREEN_CENTER_Y);
+			end;
+			OnCommand=function(self)
+				self:zoom(0);
+				self:bounceend(0.35);
+				self:zoom(1);
+			end;
+			OffCommand=function(self)
+				self:bouncebegin(0.35);
+				self:zoom(0);
+			end;
 			PlayerJoinedMessageCommand=function(self,param)
 				if param.Player == PLAYER_1 then
-					(cmd(;zoom,1.15;bounceend,0.175;zoom,1.0;))(self);
+					self:zoom(1.15);
+					self:bounceend(0.175);
+					self:zoom(1.0);
 				end;
 			end;
 			children = LoadPlayerStuff(PLAYER_1);
 		};
 		Def.ActorFrame {
 			Name = 'P2Frame';
-			InitCommand=cmd(x,SCREEN_CENTER_X+160;y,SCREEN_CENTER_Y);
-			OnCommand=cmd(zoom,0;bounceend,0.35;zoom,1);
-			OffCommand=cmd(bouncebegin,0.35;zoom,0);
+			InitCommand=function(self)
+				self:x(SCREEN_CENTER_X + 160);
+				self:y(SCREEN_CENTER_Y);
+			end;
+			OnCommand=function(self)
+				self:zoom(0);
+				self:bounceend(0.35);
+				self:zoom(1);
+			end;
+			OffCommand=function(self)
+				self:bouncebegin(0.35);
+				self:zoom(0);
+			end;
 			PlayerJoinedMessageCommand=function(self,param)
 				if param.Player == PLAYER_2 then
-					(cmd(zoom,1.15;bounceend,0.175;zoom,1.0;))(self);
+					self:zoom(1.15);
+					self:bounceend(0.175);
+					self:zoom(1.0);
 				end;
 			end;
 			children = LoadPlayerStuff(PLAYER_2);
 		};
 		-- sounds
 		LoadActor( THEME:GetPathS("Common","start") )..{
-			StartButtonMessageCommand=cmd(play);
+			StartButtonMessageCommand=function(self)
+				self:play();
+			end;
 		};
 		LoadActor( THEME:GetPathS("Common","cancel") )..{
-			BackButtonMessageCommand=cmd(play);
+			BackButtonMessageCommand=function(self)
+				self:play();
+			end;
 		};
 		LoadActor( THEME:GetPathS("Common","value") )..{
-			DirectionButtonMessageCommand=cmd(play);
+			DirectionButtonMessageCommand=function(self)
+				self:play();
+			end;
 		};
 	};
 };
