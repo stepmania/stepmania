@@ -14,22 +14,16 @@ local displaySingle = Def.ActorFrame{
 	-- manual bpm display
 	LoadFont("BPMDisplay", "bpm")..{
 		Name="BPMDisplay";
-		InitCommand=cmd(zoom,0.675;shadowlength,1);
+		InitCommand=function(self)
+			self:zoom(0.675);
+			self:shadowlength(1);
+		end;
 	};
-
-	--[[
-	Def.SongBPMDisplay {
-		File=THEME:GetPathF("BPMDisplay", "bpm");
-		Name="BPMDisplay";
-		InitCommand=cmd(zoom,0.675;shadowlength,1);
-		SetCommand=function(self) self:SetFromGameState() end;
-		CurrentSongChangedMessageCommand=cmd(playcommand,"Set");
-		CurrentCourseChangedMessageCommand=cmd(playcommand,"Set");
-	};
-	--]]
 };
 
-displaySingle.InitCommand=cmd(SetUpdateFunction,UpdateSingleBPM);
+displaySingle.InitCommand=function(self)
+	self:SetUpdateFunction(UpdateSingleBPM);
+end;
 
 if numPlayers == 1 then
 	return displaySingle
@@ -79,15 +73,25 @@ else
 		-- manual bpm displays
 		LoadFont("BPMDisplay", "bpm")..{
 			Name="DisplayP1";
-			InitCommand=cmd(x,-playerOffset;zoom,0.6;shadowlength,1);
+			InitCommand=function(self)
+				self:x(-playerOffset);
+				self:zoom(0.6);
+				self:shadowlength(1);
+			end;
 		};
 		LoadFont("BPMDisplay", "bpm")..{
 			Name="DisplayP2";
-			InitCommand=cmd(x,playerOffset;zoom,0.6;shadowlength,1);
+			InitCommand=function(self)
+				self:x(playerOffset);
+				self:zoom(0.6);
+				self:shadowlength(1);
+			end;
 		};
 	};
 
-	displayTwoPlayers.InitCommand=cmd(SetUpdateFunction,Update2PBPM);
+	displayTwoPlayers.InitCommand=function(self)
+		self:SetUpdateFunction(Update2PBPM);
+	end;
 
 	return displayTwoPlayers
 end

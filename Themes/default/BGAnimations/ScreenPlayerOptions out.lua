@@ -6,33 +6,47 @@ local t = Def.ActorFrame {
 	LoadActor( THEME:GetPathB("Screen", "out") );
 
 	LoadFont( "common normal" ) .. {
-		InitCommand=cmd(settext,"Press &START; for more options";x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y+100;visible,false);
-		AskForGoToOptionsCommand=cmd(
-			visible,true;
-			diffusealpha,0;
-			linear,0.15;
-			zoomy,1;
-			diffusealpha,1;
-			sleep,1;
-			linear,0.15;
-			diffusealpha,0;
-			zoomy,0;
-		);
-		GoToOptionsCommand=cmd(visible,false);
+		InitCommand=function(self)
+			self:settext("Press &START; for more options");
+			self:x(SCREEN_CENTER_X);
+			self:y(SCREEN_CENTER_Y + 100);
+			self:visible(false);
+		end;
+		AskForGoToOptionsCommand=function(self)
+			self:visible(true);
+			self:diffusealpha(0);
+			self:linear(0.15);
+			self:zoomy(1);
+			self:diffusealpha(1);
+			self:sleep(1);
+			self:linear(0.15);
+			self:diffusealpha(0);
+			self:zoomy(0);
+		end;
+		GoToOptionsCommand=function(self)
+			self:visible(false);
+		end;
 	};
 	LoadFont( "common normal" ) .. {
-		InitCommand=cmd(settext,"entering options...";x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y+100;visible,false);
-		AskForGoToOptionsCommand=cmd(
-			visible,false;
-			linear,0.15;
-			zoomy,1;
-			diffusealpha,1;
-			sleep,1;
-			linear,0.15;
-			diffusealpha,0;
-			zoomy,0;
-		);
-		GoToOptionsCommand=cmd(visible,true);
+		InitCommand=function(self)
+			self:settext("entering options...");
+			self:x(SCREEN_CENTER_X);
+			self:y(SCREEN_CENTER_Y + 100);
+			self:visible(false);
+		end;
+		AskForGoToOptionsCommand=function(self)
+			self:visible(false);
+			self:linear(0.15);
+			self:zoomy(1);
+			self:diffusealpha(1);
+			self:sleep(1);
+			self:linear(0.15);
+			self:diffusealpha(0);
+			self:zoomy(0);
+		end;
+		GoToOptionsCommand=function(self)
+			self:visible(true);
+		end;
 	};
 };
 

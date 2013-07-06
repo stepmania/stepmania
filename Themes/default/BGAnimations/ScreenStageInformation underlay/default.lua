@@ -29,14 +29,23 @@ end;
 
 local t = Def.ActorFrame {};
 t[#t+1] = Def.Quad {
-	InitCommand=cmd(Center;zoomto,SCREEN_WIDTH,SCREEN_HEIGHT;diffuse,Color("Black"));
+	InitCommand=function(self)
+		self:Center();
+		self:zoomto(SCREEN_WIDTH, SCREEN_HEIGHT);
+		self:diffuse(Color("Black"));
+	end;
 };
 if GAMESTATE:IsCourseMode() then
 	t[#t+1] = LoadActor("CourseDisplay");
 else
 	t[#t+1] = Def.Sprite {
-		InitCommand=cmd(Center;diffusealpha,0);
-		BeginCommand=cmd(LoadFromCurrentSongBackground);
+		InitCommand=function(self)
+			self:Center();
+			self:diffusealpha(0);
+		end;
+		BeginCommand=function(self)
+			self:LoadFromCurrentSongBackground();
+		end;
 		OnCommand=function(self)
 			if PREFSMAN:GetPreference("StretchBackgrounds") then
 				self:SetSize(SCREEN_WIDTH,SCREEN_HEIGHT)
@@ -52,29 +61,80 @@ else
 end
 
 t[#t+1] = Def.ActorFrame {
-	InitCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y);
-	OnCommand=cmd(stoptweening;zoom,1.25;decelerate,3;zoom,1);
+	InitCommand=function(self)
+		self:x(SCREEN_CENTER_X);
+		self:y(SCREEN_CENTER_Y);
+	end;
+	OnCommand=function(self)
+		self:stoptweening();
+		self:zoom(1.25);
+		self:decelerate(3);
+		self:zoom(1);
+	end;
 	
 	LoadActor( THEME:GetPathG("ScreenStageInformation", "Stage " .. ToEnumShortString(sStage) ) ) .. {
-		OnCommand=cmd(diffusealpha,0;linear,0.25;diffusealpha,1;sleep,1.75;linear,0.5;zoomy,0;zoomx,2;diffusealpha,0);
+		OnCommand=function(self)
+			self:diffusealpha(0);
+			self:linear(0.25);
+			self:diffusealpha(1);
+			self:sleep(1.75);
+			self:linear(0.5);
+			self:zoomy(0);
+			self:zoomx(2);
+			self:diffusealpha(0);
+		end;
 	};
 };
 
 t[#t+1] = Def.ActorFrame {
-  InitCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y+96);
-  OnCommand=cmd(stoptweening;addy,-16;decelerate,3;addy,16);
+	InitCommand=function(self)
+		self:x(SCREEN_CENTER_X);
+		self:y(SCREEN_CENTER_Y + 96);
+	end;
+	OnCommand=function(self)
+		self:stoptweening();
+		self:addy(-16);
+		self:decelerate(3);
+		self:addy(16);
+	end;
 	LoadFont("Common Normal") .. {
 		Text=GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse():GetDisplayFullTitle() or GAMESTATE:GetCurrentSong():GetDisplayFullTitle();
-		InitCommand=cmd(strokecolor,Color("Outline");y,-20);
-		OnCommand=cmd(diffusealpha,0;linear,0.5;diffusealpha,1;sleep,1.5;linear,0.5;diffusealpha,0);
+		InitCommand=function(self)
+			self:strokecolor(Color("Outline"));
+			self:y(-20);
+		end;
+		OnCommand=function(self)
+			self:diffusealpha(0);
+			self:linear(0.5);
+			self:diffusealpha(1);
+			self:sleep(1.5);
+			self:linear(0.5);
+			self:diffusealpha(0);
+		end;
 	};
 	LoadFont("Common Normal") .. {
 		Text=GAMESTATE:IsCourseMode() and ToEnumShortString( GAMESTATE:GetCurrentCourse():GetCourseType() ) or GAMESTATE:GetCurrentSong():GetDisplayArtist();
-		InitCommand=cmd(strokecolor,Color("Outline");zoom,0.75);
-		OnCommand=cmd(diffusealpha,0;linear,0.5;diffusealpha,1;sleep,1.5;linear,0.5;diffusealpha,0);
+		InitCommand=function(self)
+			self:strokecolor(Color("Outline"));
+			self:zoom(0.75);
+		end;
+		OnCommand=function(self)
+			self:diffusealpha(0);
+			self:linear(0.5);
+			self:diffusealpha(1);
+			self:sleep(1.5);
+			self:linear(0.5);
+			self:diffusealpha(0);
+		end;
 	};
 	LoadFont("Common Normal") .. {
-		InitCommand=cmd(strokecolor,Color("Outline");diffuse,Color("Orange");diffusebottomedge,Color("Yellow");zoom,0.75;y,20);
+		InitCommand=function(self)
+			self:strokecolor(Color("Outline"));
+			self:diffuse(Color("Orange"));
+			self:diffusebottomedge(Color("Yellow"));
+			self:zoom(0.75);
+			self:y(20);
+		end;
 		BeginCommand=function(self)
 			local text = "";
 			local SongOrCourse;
@@ -92,7 +152,14 @@ t[#t+1] = Def.ActorFrame {
 			end;
 			self:settext(text);
 		end;
-		OnCommand=cmd(diffusealpha,0;linear,0.5;diffusealpha,1;sleep,1.5;linear,0.5;diffusealpha,0);
+		OnCommand=function(self)
+			self:diffusealpha(0);
+			self:linear(0.5);
+			self:diffusealpha(1);
+			self:sleep(1.5);
+			self:linear(0.5);
+			self:diffusealpha(0);
+		end;
 	};
 };
 

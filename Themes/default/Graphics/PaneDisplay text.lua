@@ -22,13 +22,25 @@ local function CreatePaneDisplayItem( _pnPlayer, _sLabel, _rcRadarCategory )
 	return Def.ActorFrame {
 		LoadFont("Common SemiBold") .. {
 			Text=string.upper( THEME:GetString("PaneDisplay",_sLabel) );
-			InitCommand=cmd(horizalign,left);
-			OnCommand=cmd(zoom,0.5875;diffuse,color("0.9,0.9,0.9");shadowlength,1);
+			InitCommand=function(self)
+				self:horizalign(left);
+			end;
+			OnCommand=function(self)
+				self:zoom(0.5875);
+				self:diffuse(color("0.9,0.9,0.9"));
+				self:shadowlength(1);
+			end;
 		};
 		LoadFont("Common Normal") .. {
 			Text=string.format("%04i", 0);
-			InitCommand=cmd(x,96;horizalign,right);
-			OnCommand=cmd(zoom,0.5875;shadowlength,1);
+			InitCommand=function(self)
+				self:x(96);
+				self:horizalign(right);
+			end;
+			OnCommand=function(self)
+				self:zoom(0.5875);
+				self:shadowlength(1);
+			end;
 			CurrentSongChangedMessageCommand=function(self)
 				self:playcommand("Set");
 			end;
@@ -64,16 +76,37 @@ local function CreatePaneDisplayGraph( _pnPlayer, _sLabel, _rcRadarCategory )
 	return Def.ActorFrame {
 		LoadFont("Common Normal") .. {
 			Text=_sLabel;
-			InitCommand=cmd(horizalign,left);
-			OnCommand=cmd(zoom,0.5;shadowlength,1);
+			InitCommand=function(self)
+				self:horizalign(left);
+			end;
+			OnCommand=function(self)
+				self:zoom(0.5);
+				self:shadowlength(1);
+			end;
 		};
 		Def.Quad { 
-			InitCommand=cmd(x,12;zoomto,50,10;horizalign,left);
-			OnCommand=cmd(diffuse,Color("Black");shadowlength,1;diffusealpha,0.5);
+			InitCommand=function(self)
+				self:x(12);
+				self:zoomto(50, 10);
+				self:horizalign(left);
+			end;
+			OnCommand=function(self)
+				self:diffuse(Color("Black"));
+				self:shadowlength(1);
+				self:diffusealpha(0.5);
+			end;
 		};
 		Def.Quad {
-			InitCommand=cmd(x,12;zoomto,50,10;horizalign,left);
-			OnCommand=cmd(shadowlength,0;diffuse,Color("Green");diffusebottomedge,ColorLightTone(Color("Green")));
+			InitCommand=function(self)
+				self:x(12);
+				self:zoomto(50, 10);
+				self:horizalign(left);
+			end;
+			OnCommand=function(self)
+				self:shadowlength(0);
+				self:diffuse(Color("Green"));
+				self:diffusebottomedge(ColorLightTone(Color("Green")));
+			end;
 			CurrentSongChangedMessageCommand=function(self)
 				self:playcommand("Set");
 			end;
@@ -107,8 +140,15 @@ local function CreatePaneDisplayGraph( _pnPlayer, _sLabel, _rcRadarCategory )
 			end;
 		};
 		LoadFont("Common Normal") .. {
-			InitCommand=cmd(x,14;zoom,0.5;halign,0;);
-			OnCommand=cmd(shadowlength,1;strokecolor,color("0.15,0.15,0.15,0.625"));
+			InitCommand=function(self)
+				self:x(14);
+				self:zoom(0.5);
+				self:halign(0);
+			end;
+			OnCommand=function(self)
+				self:shadowlength(1);
+				self:strokecolor(color("0.15,0.15,0.15,0.625"));
+			end;
 			CurrentSongChangedMessageCommand=function(self)
 				self:playcommand("Set");
 			end;

@@ -184,8 +184,15 @@ for pn in ivalues(PlayerNumber) do
 			ActorUtil.LoadAllCommandsAndSetXY(self,Var "LoadingScreen"); 
 		end;
 		Def.Quad {
-			InitCommand=cmd(zoomto,420,20);
-			OnCommand=cmd(fadeleft,0.35;faderight,0.35;diffuse,Color.Black;diffusealpha,0.5);
+			InitCommand=function(self)
+				self:zoomto(420, 20);
+			end;
+			OnCommand=function(self)
+				self:fadeleft(0.35);
+				self:faderight(0.35);
+				self:diffuse(Color.Black);
+				self:diffusealpha(0.5);
+			end;
 		};
  		LoadActor( THEME:GetPathG( 'SongMeterDisplay', 'frame ' .. PlayerNumberToString(pn) ) ) .. {
 			InitCommand=function(self)
@@ -194,23 +201,49 @@ for pn in ivalues(PlayerNumber) do
 			end;
 		};
 		Def.Quad {
-			InitCommand=cmd(zoomto,2,8);
-			OnCommand=cmd(x,songMeterScale(0.25);diffuse,PlayerColor(pn);diffusealpha,0.5);
+			InitCommand=function(self)
+				self:zoomto(2,8);
+			end;
+			OnCommand=function(self)
+				self:x(songMeterScale(0.25));
+				self:diffuse(PlayerColor(pn));
+				self:diffusealpha(0.5);
+			end;
 		};
 		Def.Quad {
-			InitCommand=cmd(zoomto,2,8);
-			OnCommand=cmd(x,songMeterScale(0.5);diffuse,PlayerColor(pn);diffusealpha,0.5);
+			InitCommand=function(self)
+				self:zoomto(2,8);
+			end;
+			OnCommand=function(self)
+				self:x(songMeterScale(0.5));
+				self:diffuse(PlayerColor(pn));
+				self:diffusealpha(0.5);
+			end;
 		};
 		Def.Quad {
-			InitCommand=cmd(zoomto,2,8);
-			OnCommand=cmd(x,songMeterScale(0.75);diffuse,PlayerColor(pn);diffusealpha,0.5);
+			InitCommand=function(self)
+				self:zoomto(2,8);
+			end;
+			OnCommand=function(self)
+				self:x(songMeterScale(0.75));
+				self:diffuse(PlayerColor(pn));
+				self:diffusealpha(0.5);
+			end;
 		};
 		Def.SongMeterDisplay {
 			StreamWidth=THEME:GetMetric( MetricsName, 'StreamWidth' );
 			Stream=LoadActor( THEME:GetPathG( 'SongMeterDisplay', 'stream ' .. PlayerNumberToString(pn) ) )..{
-				InitCommand=cmd(diffuse,PlayerColor(pn);diffusealpha,0.5;blend,Blend.Add;);
+				InitCommand=function(self)
+					self:diffuse(PlayerColor(pn));
+					self:diffusealpha(0.5);
+					self:blend(Blend.Add);
+				end;
 			};
-			Tip=LoadActor( THEME:GetPathG( 'SongMeterDisplay', 'tip ' .. PlayerNumberToString(pn) ) ) .. { InitCommand=cmd(visible,false); };
+			Tip=LoadActor( THEME:GetPathG( 'SongMeterDisplay', 'tip ' .. PlayerNumberToString(pn) ) ) .. { 
+				InitCommand=function(self)
+					self:visible(false);
+				end;
+			};
 		};
 	};
 	if ThemePrefs.Get("TimingDisplay") == true then

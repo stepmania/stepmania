@@ -6,13 +6,90 @@ assert( Height );
 local FullFile = THEME:GetPathB('','_frame files 3x3/'..File )
 local Frame = LoadActor( FullFile )
 return Def.ActorFrame {
-	Frame .. { InitCommand=cmd(setstate,0;pause;horizalign,right;vertalign,bottom;x,-Width/2;y,-Height/2) };
-	Frame .. { InitCommand=cmd(setstate,1;pause;zoomtowidth,Width;vertalign,bottom;zoomtowidth,Width;y,-Height/2) };
-	Frame .. { InitCommand=cmd(setstate,2;pause;horizalign,left;vertalign,bottom;x,Width/2;y,-Height/2) };
-	Frame .. { InitCommand=cmd(setstate,3;pause;horizalign,right;x,-Width/2;zoomtoheight,Height) };
-	Frame .. { InitCommand=cmd(setstate,4;pause;zoomtowidth,Width;zoomtoheight,Height) };
-	Frame .. { InitCommand=cmd(setstate,5;pause;horizalign,left;x,Width/2;zoomtoheight,Height) };
-	Frame .. { InitCommand=cmd(setstate,6;pause;horizalign,right;vertalign,top;x,-Width/2;y,Height/2) };
-	Frame .. { InitCommand=cmd(setstate,7;pause;zoomtowidth,Width;vertalign,top;zoomtowidth,Width;y,Height/2) };
-	Frame .. { InitCommand=cmd(setstate,8;pause;horizalign,left;vertalign,top;x,Width/2;y,Height/2) };
+	Frame .. { 
+		InitCommand=function(self)
+			self:setstate(0);
+			self:pause();
+			self:horizalign(right);
+			self:vertalign(bottom);
+			self:x(-Width / 2);
+			self:y(-Height / 2);
+		end;
+	};
+	Frame .. { 
+		InitCommand=function(self)
+			self:setstate(1);
+			self:pause();
+			self:zoomtowidth(Width);
+			self:vertalign(bottom);
+			self:zoomtowidth(Width);
+			self:y(-Height / 2);
+		end;
+	};
+	Frame .. { 
+		InitCommand=function(self)
+			self:setstate(2);
+			self:pause();
+			self:horizalign(left);
+			self:vertalign(bottom);
+			self:x(Width / 2);
+			self:y(-Height / 2);
+		end;
+	};
+	Frame .. { 
+		InitCommand=function(self)
+			self:setstate(3);
+			self:pause();
+			self:horizalign(right);
+			self:x(-Width / 2);
+			self:zoomtoheight(Height);
+		end;
+	};
+	Frame .. { 
+		InitCommand=function(self)
+			self:setstate(4);
+			self:pause();
+			self:zoomtowidth(Width);
+			self:zoomtoheight(Height);
+		end;
+	};
+	Frame .. { 
+		InitCommand=function(self)
+			self:setstate(5);
+			self:pause();
+			self:horizalign(left);
+			self:x(Width / 2);
+			self:zoomtoheight(Height);
+		end;
+	};
+	Frame .. { 
+		InitCommand=function(self)
+			self:setstate(6);
+			self:pause();
+			self:horizalign(right);
+			self:vertalign(top);
+			self:x(-Width / 2);
+			self:y(Height / 2);
+		end;
+	};
+	Frame .. { 
+		InitCommand=function(self)
+			self:setstate(7);
+			self:pause();
+			self:zoomtowidth(Width);
+			self:vertalign(top);
+			self:zoomtowidth(Width);
+			self:y(Height / 2);
+		end;
+	};
+	Frame .. { 
+		InitCommand=function(self)
+			self:setstate(8);
+			self:pause();
+			self:horizalign(left);
+			self:vertalign(top);
+			self:x(Width / 2);
+			self:y(Height / 2);
+		end;
+	};
 };

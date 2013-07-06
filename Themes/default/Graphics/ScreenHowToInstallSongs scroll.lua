@@ -3,14 +3,40 @@ local squareSize = 8; -- was 18
 
 return Def.ActorFrame {
 	Def.Quad{
-		InitCommand=cmd(x,-12;zoom,squareSize;rotationz,45;diffuse,color("#222222"));
-		GainFocusCommand=cmd(stoptweening;accelerate,0.25;zoom,squareSize;rotationz,45;);
-		LoseFocusCommand=cmd(stoptweening;decelerate,0.25;zoom,0;rotationz,360+45);
+		InitCommand=function(self)
+			self:x(-12);
+			self:zoom(squareSize);
+			self:rotationz(45);
+			self:diffuse(color("#222222"));
+		end;
+		GainFocusCommand=function(self)
+			self:stoptweening();
+			self:accelerate(0.25);
+			self:zoom(squareSize);
+			self:rotationz(45);
+		end;
+		LoseFocusCommand=function(self)
+			self:stoptweening();
+			self:decelerate(0.25);
+			self:zoom(0);
+			self:rotationz(360+45);
+		end;
 	};
 	LoadFont("Common Normal") .. {
 		Text=gc:GetText();
-		InitCommand=cmd(halign,0;zoom,0.625);
-		GainFocusCommand=cmd(stoptweening;decelerate,0.25;diffuse,color("1,1,1,1"));
-		LoseFocusCommand=cmd(stoptweening;accelerate,0.25;diffuse,color("0.5,0.5,0.5,1"));
+		InitCommand=function(self)
+			self:halign(0);
+			self:zoom(0.625);
+		end;
+		GainFocusCommand=function(self)
+			self:stoptweening();
+			self:decelerate(0.25);
+			self:diffuse(color("1,1,1,1"));
+		end;
+		LoseFocusCommand=function(self)
+			self:stoptweening();
+			self:accelerate(0.25);
+			self:diffuse(color("0.5,0.5,0.5,1"));
+		end;
 	};
 };

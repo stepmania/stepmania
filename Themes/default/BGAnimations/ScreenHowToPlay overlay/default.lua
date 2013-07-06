@@ -1,75 +1,292 @@
 return Def.ActorFrame {
 	Def.ActorFrame {
-		OnCommand=cmd(x,SCREEN_CENTER_X-20);
+		OnCommand=function(self)
+			self:x(SCREEN_CENTER_X-20);
+		end;
 
 		-- Initial glow around receptors
 		LoadActor("tapglow") .. {
-			OnCommand=cmd(x,85;y,95;zoom,0.7;rotationz,90;diffuseshift;effectcolor1,1,0.93333,0.266666,0.4;effectcolor2,1,1,1,1;effectperiod,0.25;effectmagnitude,0,1,0;diffusealpha,0;sleep,6;linear,0;diffusealpha,1;sleep,1.7;linear,0;diffusealpha,0);
+			OnCommand=function(self)
+				self:x(85);
+				self:y(95);
+				self:zoom(0.7);
+				self:rotationz(90);
+				self:diffuseshift();
+				self:effectcolor1(1, 0.93333, 0.266666, 0.4);
+				self:effectcolor2(1, 1, 1, 1);
+				self:effectperiod(0.25);
+				self:effectmagnitude(0, 1, 0);
+				self:diffusealpha(0);
+				self:sleep(6);
+				self:linear(0);
+				self:diffusealpha(1);
+				self:sleep(1.7);
+				self:linear(0);
+				self:diffusealpha(0);
+			end;
 		};
 		LoadActor("tapglow") .. {
-			OnCommand=cmd(x,275;y,95;zoom,0.7;rotationz,270;diffuseshift;effectcolor1,1,0.93333,0.266666,0.4;effectcolor2,1,1,1,1;effectperiod,0.25;effectmagnitude,0,1,0;diffusealpha,0;sleep,6;linear,0;diffusealpha,1;sleep,1.7;linear,0;diffusealpha,0);
+			OnCommand=function(self)
+				self:x(275);
+				self:y(95);
+				self:zoom(0.7);
+				self:rotationz(270);
+				self:diffuseshift();
+				self:effectcolor1(1, 0.93333, 0.266666, 0.4);
+				self:effectcolor2(1, 1, 1, 1);
+				self:effectperiod(0.25);
+				self:effectmagnitude(0, 1, 0);
+				self:diffusealpha(0);
+				self:sleep(6);
+				self:linear(0);
+				self:diffusealpha(1);
+				self:sleep(1.7);
+				self:linear(0);
+				self:diffusealpha(0);
+			end;
 		};
 		LoadActor("tapglow") .. {
-			OnCommand=cmd(x,212;y,95;zoom,0.7;rotationz,180;diffuseshift;effectcolor1,1,0.93333,0.266666,0.4;effectcolor2,1,1,1,1;effectperiod,0.25;effectmagnitude,0,1,0;diffusealpha,0;sleep,6;linear,0;diffusealpha,1;sleep,1.7;linear,0;diffusealpha,0);
+			OnCommand=function(self)
+				self:x(212);
+				self:y(95);
+				self:zoom(0.7);
+				self:rotationz(180);
+				self:diffuseshift();
+				self:effectcolor1(1, 0.93333, 0.266666, 0.4);
+				self:effectcolor2(1, 1, 1, 1);
+				self:effectperiod(0.25);
+				self:effectmagnitude(0, 1, 0);
+				self:diffusealpha(0);
+				self:sleep(6);
+				self:linear(0);
+				self:diffusealpha(1);
+				self:sleep(1.7);
+				self:linear(0);
+				self:diffusealpha(0);
+			end;
 		};
 		LoadActor("tapglow") .. {
-			OnCommand=cmd(x,148;y,95;zoom,0.7;diffuseshift;effectcolor1,1,0.93333,0.266666,0.4;effectcolor2,1,1,1,1;effectperiod,0.25;effectmagnitude,0,1,0;diffusealpha,0;sleep,6;linear,0;diffusealpha,1;sleep,1.7;linear,0;diffusealpha,0);
+			OnCommand=function(self)
+				self:x(148);
+				self:y(95);
+				self:zoom(0.7);
+				self:diffuseshift();
+				self:effectcolor1(1, 0.93333, 0.266666, 0.4);
+				self:effectcolor2(1, 1, 1, 1);
+				self:effectperiod(0.25);
+				self:effectmagnitude(0, 1, 0);
+				self:diffusealpha(0);
+				self:sleep(6);
+				self:linear(0);
+				self:diffusealpha(1);
+				self:sleep(1.7);
+				self:linear(0);
+				self:diffusealpha(0);
+			end;
 		};
 
 		LoadActor("tapglow") .. {
-			OnCommand=cmd(x,148;y,95;zoom,0.7;diffuseshift;effectcolor1,1,0.93333,0.266666,0.4;effectcolor2,1,1,1,1;effectperiod,0.25;effectmagnitude,0,1,0;diffusealpha,0;sleep,9.7;linear,0;diffusealpha,1;sleep,1.7;linear,0;diffusealpha,0);
+			OnCommand=function(self)
+				self:x(148);
+				self:y(95);
+				self:zoom(0.7);
+				self:diffuseshift();
+				self:effectcolor1(1, 0.93333, 0.266666, 0.4);
+				self:effectcolor2(1, 1, 1, 1);
+				self:effectperiod(0.25);
+				self:effectmagnitude(0, 1, 0);
+				self:diffusealpha(0);
+				self:sleep(9.7);
+				self:linear(0);
+				self:diffusealpha(1);
+				self:sleep(1.7);
+				self:linear(0);
+				self:diffusealpha(0);
+			end;
 		};
 
 		-- 2nd step UP
 		LoadActor("tapglow") .. {
-			OnCommand=cmd(x,212;y,95;zoom,0.7;rotationz,180;diffuseshift;effectcolor1,1,0.93333,0.266666,0.4;effectcolor2,1,1,1,1;effectperiod,0.25;effectmagnitude,0,1,0;diffusealpha,0;sleep,12.7;linear,0;diffusealpha,1;sleep,1.7;linear,0;diffusealpha,0);
+			OnCommand=function(self)
+				self:x(212);
+				self:y(95);
+				self:zoom(0.7);
+				self:rotationz(180);
+				self:diffuseshift();
+				self:effectcolor1(1, 0.93333, 0.266666, 0.4);
+				self:effectcolor2(1, 1, 1, 1);
+				self:effectperiod(0.25);
+				self:effectmagnitude(0, 1, 0);
+				self:diffusealpha(0);
+				self:sleep(12.7);
+				self:linear(0);
+				self:diffusealpha(1);
+				self:sleep(1.7);
+				self:linear(0);
+				self:diffusealpha(0);
+			end;
 		};
 
 		-- 3rd step UP
 		LoadActor("tapglow") .. {
-			OnCommand=cmd(x,84;y,95;zoom,0.7;rotationz,90;diffuseshift;effectcolor1,1,0.93333,0.266666,0.4;effectcolor2,1,1,1,1;effectperiod,0.25;effectmagnitude,0,1,0;diffusealpha,0;sleep,15.7;linear,0;diffusealpha,1;sleep,1.7;linear,0;diffusealpha,0);
+			OnCommand=function(self)
+				self:x(84);
+				self:y(95);
+				self:zoom(0.7);
+				self:rotationz(90);
+				self:diffuseshift();
+				self:effectcolor1(1, 0.93333, 0.266666, 0.4);
+				self:effectcolor2(1, 1, 1, 1);
+				self:effectperiod(0.25);
+				self:effectmagnitude(0, 1, 0);
+				self:diffusealpha(0);
+				self:sleep(15.7);
+				self:linear(0);
+				self:diffusealpha(1);
+				self:sleep(1.7);
+				self:linear(0);
+				self:diffusealpha(0);
+			end;
 		};
 
 		-- 4th step jump
 		LoadActor("tapglow") .. {
-			OnCommand=cmd(x,85;y,95;zoom,0.7;rotationz,90;diffuseshift;effectcolor1,1,0.93333,0.266666,0.4;effectcolor2,1,1,1,1;effectperiod,0.25;effectmagnitude,0,1,0;diffusealpha,0;sleep,18.7;linear,0;diffusealpha,1;sleep,1.7;linear,0;diffusealpha,0);
+			OnCommand=function(self)
+				self:x(85);
+				self:y(95);
+				self:zoom(0.7);
+				self:rotationz(90);
+				self:diffuseshift();
+				self:effectcolor1(1, 0.93333, 0.266666, 0.4);
+				self:effectcolor2(1, 1, 1, 1);
+				self:effectperiod(0.25);
+				self:effectmagnitude(0, 1, 0);
+				self:diffusealpha(0);
+				self:sleep(18.7);
+				self:linear(0);
+				self:diffusealpha(1);
+				self:sleep(1.7);
+				self:linear(0);
+				self:diffusealpha(0);
+			end;
 		};
 		LoadActor("tapglow") .. {
-			OnCommand=cmd(x,275;y,95;zoom,0.7;rotationz,270;diffuseshift;effectcolor1,1,0.93333,0.266666,0.4;effectcolor2,1,1,1,1;effectperiod,0.25;effectmagnitude,0,1,0;diffusealpha,0;sleep,18.7;linear,0;diffusealpha,1;sleep,1.7;linear,0;diffusealpha,0);
+			OnCommand=function(self)
+				self:x(275);
+				self:y(95);
+				self:zoom(0.7);
+				self:rotationz(270);
+				self:diffuseshift();
+				self:effectcolor1(1, 0.93333, 0.266666, 0.4);
+				self:effectcolor2(1, 1, 1, 1);
+				self:effectperiod(0.25);
+				self:effectmagnitude(0, 1, 0);
+				self:diffusealpha(0);
+				self:sleep(18.7);
+				self:linear(0);
+				self:diffusealpha(1);
+				self:sleep(1.7);
+				self:linear(0);
+				self:diffusealpha(0);
+			end;
 		};
 
 		-- miss step
 		LoadActor("healthhilight") .. {
-			OnCommand=cmd(x,180;y,40;diffuseshift;effectcolor1,1,0.93333,0.266666,0.4;effectcolor2,1,1,1,1;effectperiod,0.25;effectmagnitude,0,1,0;diffusealpha,0;sleep,22.7;linear,0;diffusealpha,1;sleep,1.7;linear,0;diffusealpha,0);
+			OnCommand=function(self)
+				self:x(180);
+				self:y(40);
+				self:zoom(0.7);
+				self:diffuseshift();
+				self:effectcolor1(1, 0.93333, 0.266666, 0.4);
+				self:effectcolor2(1, 1, 1, 1);
+				self:effectperiod(0.25);
+				self:effectmagnitude(0, 1, 0);
+				self:diffusealpha(0);
+				self:sleep(22.7);
+				self:linear(0);
+				self:diffusealpha(1);
+				self:sleep(1.7);
+				self:linear(0);
+				self:diffusealpha(0);
+			end;
 		};
 	};
 
 	-- messages
 	LoadFont("Common Normal") .. {
 		Text=ScreenString("How To Play StepMania"),
-		InitCommand=cmd(zbuffer,1;z,20;x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y;shadowlength,1;strokecolor,Color("Outline"));
-		OnCommand=cmd(diffusealpha,0;zoom,4;sleep,0.0;linear,0.3;diffusealpha,1;zoom,1;sleep,1.8;linear,0.3;zoom,0.75;x,170;y,60);
+		InitCommand=function(self)
+			self:zbuffer(1);
+			self:z(20);
+			self:x(SCREEN_CENTER_X);
+			self:y(SCREEN_CENTER_Y);
+			self:shadowlength(1);
+			self:strokecolor(Color("Outline"));
+		end;
+		OnCommand=function(self)
+			self:diffusealpha(0);
+			self:zoom(4);
+			self:sleep(0.0);
+			self:linear(0.3);
+			self:diffusealpha(1);
+			self:zoom(1);
+			self:sleep(1.8);
+			self:linear(0.3);
+			self:zoom(0.75);
+			self:x(170);
+			self:y(60);
+		end;
 	};
 	LoadActor("feet") .. {
-		OnCommand=cmd(z,20;x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y;addx,-SCREEN_WIDTH;sleep,2.4;decelerate,0.3;addx,SCREEN_WIDTH;sleep,2;linear,0.3;zoomy,0);
+		OnCommand=function(self)
+			self:z(20);
+			self:x(SCREEN_CENTER_X);
+			self:y(SCREEN_CENTER_Y);
+			self:addx(-SCREEN_WIDTH);
+			self:sleep(2.4);
+			self:decelerate(0.3);
+			self:addx(SCREEN_WIDTH);
+			self:sleep(2);
+			self:linear(0.3);
+			self:zoomy(0);
+		end;
 	};
 
 	LoadActor("_message tap")..{
-		OnCommand=cmd(sleep,6;queuecommand,"Show");
+		OnCommand=function(self)
+			self:sleep(6);
+			self:queuecommand("Show");
+		end;
 	};
 	LoadActor("_message tap")..{
-		OnCommand=cmd(sleep,9.7;queuecommand,"Show");
+		OnCommand=function(self)
+			self:sleep(9.7);
+			self:queuecommand("Show");
+		end;
 	};
 	LoadActor("_message tap")..{
-		OnCommand=cmd(sleep,12.7;queuecommand,"Show");
+		OnCommand=function(self)
+			self:sleep(12.7);
+			self:queuecommand("Show");
+		end;
 	};
 	LoadActor("_message tap")..{
-		OnCommand=cmd(sleep,15.7;queuecommand,"Show");
+		OnCommand=function(self)
+			self:sleep(15.7);
+			self:queuecommand("Show");
+		end;
 	};
 	LoadActor("_message jump")..{
-		OnCommand=cmd(sleep,18.7;queuecommand,"Show");
+		OnCommand=function(self)
+			self:sleep(18.7);
+			self:queuecommand("Show");
+		end;
 	};
 	LoadActor("_message miss")..{
-		OnCommand=cmd(sleep,22.7;queuecommand,"Show");
+		OnCommand=function(self)
+			self:sleep(22.7);
+			self:queuecommand("Show");
+		end;
 	};
 };

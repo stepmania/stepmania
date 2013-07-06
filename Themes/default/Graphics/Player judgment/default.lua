@@ -56,7 +56,10 @@ local t = Def.ActorFrame {};
 t[#t+1] = Def.ActorFrame {
 	LoadActor(THEME:GetPathG("Judgment","Normal")) .. {
 		Name="Judgment";
-		InitCommand=cmd(pause;visible,false);
+		InitCommand=function(self)
+			self:pause();
+			self:visible(false);
+		end;
 		OnCommand=THEME:GetMetric("Judgment","JudgmentOnCommand");
 		ResetCommand=function(self)
 			self:finishtweening();
@@ -67,7 +70,9 @@ t[#t+1] = Def.ActorFrame {
 	LoadFont("Combo Numbers") .. {
 		Name="ProtimingDisplay";
 		Text="";
-		InitCommand=cmd(visible,false);
+		InitCommand=function(self)
+			self:visible(false);
+		end;
 		OnCommand=THEME:GetMetric("Protiming","ProtimingOnCommand");
 		ResetCommand=function(self)
 			self:finishtweening();
@@ -78,7 +83,9 @@ t[#t+1] = Def.ActorFrame {
 	LoadFont("Common Normal") .. {
 		Name="ProtimingAverage";
 		Text="";
-		InitCommand=cmd(visible,false);
+		InitCommand=function(self)
+			self:visible(false);
+		end;
 		OnCommand=THEME:GetMetric("Protiming","AverageOnCommand");
 		ResetCommand=function(self)
 			self:finishtweening();
@@ -89,7 +96,9 @@ t[#t+1] = Def.ActorFrame {
 	LoadFont("Common Normal") .. {
 		Name="TextDisplay";
 		Text=THEME:GetString("Protiming","MS");
-		InitCommand=cmd(visible,false);
+		InitCommand=function(self)
+			self:visible(false);
+		end;
 		OnCommand=THEME:GetMetric("Protiming","TextOnCommand");
 		ResetCommand=function(self)
 			self:finishtweening();
@@ -99,79 +108,148 @@ t[#t+1] = Def.ActorFrame {
 	};
 	Def.Quad {
 		Name="ProtimingGraphBG";
-		InitCommand=cmd(visible,false;y,32;zoomto,ProtimingWidth,16);
-		ResetCommand=cmd(finishtweening;diffusealpha,0.8;visible,false);
-		OnCommand=cmd(diffuse,Color("Black");diffusetopedge,color("0.1,0.1,0.1,1");diffusealpha,0.8;shadowlength,2;);
+		InitCommand=function(self)
+			self:visible(false);
+			self:y(32);
+			self:zoomto(ProtimingWidth, 16);
+		end;
+		ResetCommand=function(self)
+			self:finishtweening();
+			self:diffusealpha(0.8);
+			self:visible(false);
+		end;
+		OnCommand=function(self)
+			self:diffuse(Color("Black"));
+			self:diffusetopedge(color("0.1,0.1,0.1,1"));
+			self:diffusealpha(0.8);
+			self:shadowlength(2);
+		end;
 	};
 	Def.Quad {
 		Name="ProtimingGraphWindowW3";
-		InitCommand=cmd(visible,false;y,32;zoomto,ProtimingWidth-4,16-4);
+		InitCommand=function(self)
+			self:visible(false);
+			self:y(32);
+			self:zoomto(ProtimingWidth - 4, 16 - 4);
+		end;
 		ResetCommand=function(self)
 			self:finishtweening();
 			self:diffusealpha(1);
 			self:visible(false);
 		end;
-		OnCommand=cmd(diffuse,GameColor.Judgment["JudgmentLine_W3"];);
+		OnCommand=function(self)
+			self:diffuse(GameColor.Judgment["JudgmentLine_W3"]);
+		end;
 	};
 	Def.Quad {
 		Name="ProtimingGraphWindowW2";
-		InitCommand=cmd(visible,false;y,32;zoomto,scale(PREFSMAN:GetPreference("TimingWindowSecondsW2"),0,PREFSMAN:GetPreference("TimingWindowSecondsW3"),0,ProtimingWidth-4),16-4);
+		InitCommand=function(self)
+			self:visible(false);
+			self:y(32);
+			self:zoomto(scale(
+				PREFSMAN:GetPreference("TimingWindowSecondsW2"),
+				0,
+				PREFSMAN:GetPreference("TimingWindowSecondsW3"),
+				0,
+				ProtimingWidth-4),16-4);
+		end;
 		ResetCommand=function(self)
 			self:finishtweening();
 			self:diffusealpha(1);
 			self:visible(false);
 		end;
-		OnCommand=cmd(diffuse,GameColor.Judgment["JudgmentLine_W2"];);
+		OnCommand=function(self)
+			self:diffuse(GameColor.Judgment["JudgmentLine_W2"]);
+		end;
 	};
 	Def.Quad {
 		Name="ProtimingGraphWindowW1";
-		InitCommand=cmd(visible,false;y,32;zoomto,scale(PREFSMAN:GetPreference("TimingWindowSecondsW1"),0,PREFSMAN:GetPreference("TimingWindowSecondsW3"),0,ProtimingWidth-4),16-4);
+		InitCommand=function(self)
+			self:visible(false);
+			self:y(32);
+			self:zoomto(scale(
+				PREFSMAN:GetPreference("TimingWindowSecondsW1"),
+				0,
+				PREFSMAN:GetPreference("TimingWindowSecondsW3"),
+				0,
+				ProtimingWidth-4),16-4);
+		end;
 		ResetCommand=function(self)
 			self:finishtweening();
 			self:diffusealpha(1);
 			self:visible(false);
 		end;
-		OnCommand=cmd(diffuse,GameColor.Judgment["JudgmentLine_W1"];);
+		OnCommand=function(self)
+			self:diffuse(GameColor.Judgment["JudgmentLine_W1"]);
+		end;
 	};
 	Def.Quad {
 		Name="ProtimingGraphUnderlay";
-		InitCommand=cmd(visible,false;y,32;zoomto,ProtimingWidth-4,16-4);
+		InitCommand=function(self)
+			self:visible(false);
+			self:y(32);
+			self:zoomto(ProtimingWidth-4,16-4);
+		end;
 		ResetCommand=function(self)
 			self:finishtweening();
 			self:diffusealpha(0.25);
 			self:visible(false);
 		end;
-		OnCommand=cmd(diffuse,Color("Black");diffusealpha,0.25);
+		OnCommand=function(self)
+			self:diffuse(Color("Black"));
+			self:diffusealpha(0.25);
+		end;
 	};
 	Def.Quad {
 		Name="ProtimingGraphFill";
-		InitCommand=cmd(visible,false;y,32;zoomto,0,16-4;horizalign,left;);
+		InitCommand=function(self)
+			self:visible(false);
+			self:y(32);
+			self:zoomto(0,16-4);
+			self:horizalign(left);
+		end;
 		ResetCommand=function(self)
 			self:finishtweening();
 			self:diffusealpha(1);
 			self:visible(false);
 		end;
-		OnCommand=cmd(diffuse,Color("Red"););
+		OnCommand=function(self)
+			self:diffuse(Color("Red"));
+		end;
 	};
 	Def.Quad {
 		Name="ProtimingGraphAverage";
-		InitCommand=cmd(visible,false;y,32;zoomto,2,7;);
+		InitCommand=function(self)
+			self:visible(false);
+			self:y(32);
+			self:zoomto(2,7);
+		end;
 		ResetCommand=function(self)
 			self:finishtweening();
 			self:diffusealpha(0.85);
 			self:visible(false);
 		end;
-		OnCommand=cmd(diffuse,Color("Orange");diffusealpha,0.85);
+		OnCommand=function(self)
+			self:diffuse(Color("Orange"));
+			self:diffusealpha(0.85);
+		end;
 	};
 	Def.Quad {
 		Name="ProtimingGraphCenter";
-		InitCommand=cmd(visible,false;y,32;zoomto,2,16-4;);
+		InitCommand=function(self)
+			self:visible(false);
+			self:y(32);
+			self:zoomto(2,16-4);
+		end;
 		ResetCommand=function(self)
 			self:finishtweening();
 			self:diffusealpha(1);
 			self:visible(false);
 		end;
-		OnCommand=cmd(diffuse,Color("White");diffusealpha,1);
+		OnCommand=function(self)
+			self:diffuse(Color("White"));
+			self:diffusealpha(1);
+		end;
 	};
 	InitCommand = function(self)
 		c = self:GetChildren();

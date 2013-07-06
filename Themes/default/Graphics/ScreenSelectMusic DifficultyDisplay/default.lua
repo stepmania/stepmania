@@ -60,20 +60,45 @@ for idx,diff in pairs(Difficulty) do
 			c.Meter:settext( meter );
 			self:playcommand( bHasStepsTypeAndDifficulty and "Show" or "Hide" );
 		end;
-		CurrentSongChangedMessageCommand=cmd(playcommand,"Set");
+		CurrentSongChangedMessageCommand=function(self)
+			self:playcommand("Set");
+		end;
 		--
 		LoadActor("_barpeice " .. sDifficulty ) .. {
 			Name="BarPeice";
-			ShowCommand=cmd(stoptweening;linear,0.1;diffuse,CustomDifficultyToColor( sDifficulty ));
-			HideCommand=cmd(stoptweening;decelerate,0.05;diffuse,CustomDifficultyToDarkColor( sDifficulty ));
-			InitCommand=cmd(diffuse,CustomDifficultyToColor( sDifficulty ));
+			ShowCommand=function(self)
+				self:stoptweening();
+				self:linear(0.1);
+				self:diffuse(CustomDifficultyToColor( sDifficulty ));
+			end;
+			HideCommand=function(self)
+				self:stoptweening();
+				self:decelerate(0.05);
+				self:diffuse(CustomDifficultyToDarkColor( sDifficulty ));
+			end;
+			InitCommand=function(self)
+				self:diffuse(CustomDifficultyToColor( sDifficulty ));
+			end;
 		};
 		LoadFont("StepsDisplay","Meter") .. {
 			Name="Meter";
 			Text=(sDifficulty == "Edit") and "0 Edits" or "0";
-			ShowCommand=cmd(stoptweening;linear,0.1;diffuse,CustomDifficultyToColor( sDifficulty ));
-			HideCommand=cmd(stoptweening;decelerate,0.05;diffuse,CustomDifficultyToDarkColor( sDifficulty ));
-			InitCommand=cmd(x,-64-8+tLocation[sDifficulty];shadowlength,1;zoom,0.75;diffuse,CustomDifficultyToColor( sDifficulty ));
+			ShowCommand=function(self)
+				self:stoptweening();
+				self:linear(0.1);
+				self:diffuse(CustomDifficultyToColor( sDifficulty ));
+			end;
+			HideCommand=function(self)
+				self:stoptweening();
+				self:decelerate(0.05);
+				self:diffuse(CustomDifficultyToDarkColor( sDifficulty ));
+			end;
+			InitCommand=function(self)
+				self:x(-64 - 8 + tLocation[sDifficulty]);
+				self:shadowlength(1);
+				self:zoom(0.75);
+				self:diffuse(CustomDifficultyToColor( sDifficulty ));
+			end;
 		};
 	};
 end
