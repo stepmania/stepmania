@@ -1,4 +1,4 @@
---If a Command has "NOTESKIN:GetMetricA" in it, that means it gets the command from the metrics.ini, else use cmd(); to define command.
+--If a Command has "NOTESKIN:GetMetricA" in it, that means it gets the command from the metrics.ini, else use function(self) end; to define command.
 --If you dont know how "NOTESKIN:GetMetricA" works here is an explanation.
 --NOTESKIN:GetMetricA("The [Group] in the metrics.ini", "The actual Command to fallback on in the metrics.ini");
 
@@ -7,7 +7,13 @@ local t = Def.ActorFrame {
 		Texture=NOTESKIN:GetPath( "_Down", "Tap Note" );
 		Frame0000=69;
 		Delay0000=1;
-		InitCommand=cmd(;glowblink;effectcolor1,0.4,0.4,0.4,0.4;effectcolor2,0.8,0.8,0.8,0.4;effectclock,'beat';effecttiming,0.2,0,0.8,0);
+		InitCommand=function(self)
+			self:glowblink();
+			self:effectcolor1(0.4, 0.4, 0.4, 0.4);
+			self:effectcolor2(0.8, 0.8, 0.8, 0.4);
+			self:effectclock('beat');
+			self:effecttiming(0.2, 0, 0.8, 0);
+		end;
 		NoneCommand=NOTESKIN:GetMetricA("ReceptorArrow", "NoneCommand");
 		PressCommand=NOTESKIN:GetMetricA("ReceptorArrow", "PressCommand");
 		LiftCommand=NOTESKIN:GetMetricA("ReceptorArrow", "LiftCommand");

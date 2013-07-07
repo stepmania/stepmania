@@ -1,3 +1,5 @@
 return LoadActor("UpLeft Tap Explosion Bright")..{
-	CheckpointHitCommand=cmd(diffusealpha,0);
+	CheckpointHitCommand=function(self)
+		self:diffusealpha(0);
+	end;
 };

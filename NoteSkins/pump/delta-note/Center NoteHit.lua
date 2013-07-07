@@ -1,3 +1,6 @@
 return LoadActor("_CenterHit")..{
-	InitCommand=cmd(x,2;y,2);
+	InitCommand=function(self)
+		self:x(2);
+		self:y(2);
+	end;
 }

@@ -1,3 +1,6 @@
 return LoadActor("_DownLeftHit")..{
-	InitCommand=cmd(y,5;x,2);
+	InitCommand=fnction(self)
+		self:y(5);
+		self:x(2);
+	end;
 }

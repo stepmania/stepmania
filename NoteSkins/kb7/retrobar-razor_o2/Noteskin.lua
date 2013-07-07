@@ -69,7 +69,9 @@ local function NoteskinLoader()
 			t = Def.Actor {};
 		end
 		return t .. {
-			cmd(visible,false);
+			function(self)
+				self:visible(false);
+			end;
 		};
 	end;
 

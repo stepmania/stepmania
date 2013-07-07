@@ -2,19 +2,39 @@ local t = Def.ActorFrame{}
 
 
 t[#t+1] = LoadActor("Center_blend")..{
-	InitCommand=cmd(diffuseshift;effectcolor1,color("#9b8737FF");effectcolor2,color("#9b8737FF");fadetop,0.5);
+	InitCommand=function(self)
+		self:diffuseshift();
+		self:effectcolor1(color("#9b8737FF"));
+		self:effectcolor2(color("#9b8737FF"));
+		self:fadetop(0.5);
+	end;
 }
 
 t[#t+1] = LoadActor("Center_blend")..{
-	InitCommand=cmd(blend,Blend.Add;diffuseshift;effectcolor1,color("#ccb752FF");effectcolor2,color("#ccb75233");effectclock,"bgm";effecttiming,1,0,0,0;);
+	InitCommand=function(self)
+		self:blend(Blend.Add);
+		self:diffuseshift();
+		self:effectcolor1(color("#ccb752FF"));
+		self:effectcolor2(color("#ccb75233"));
+		self:effectclock("bgm");
+		self:effecttiming(1, 0, 0, 0);
+	end;
 }
 
 t[#t+1] = LoadActor("Center_fill")..{
-	InitCommand=cmd(blend,Blend.Add;diffuseshift;effectcolor1,color("#ccb752FF");effectcolor2,color("#ccb752FF"));
+	InitCommand=function(self)
+		self:blend(Blend.Add);
+		self:diffuseshift();
+		self:effectcolor1(color("#ccb752FF"));
+		self:effectcolor2(color("#ccb752FF"));
+	end;
 }
 
 t[#t+1] = LoadActor("Center_feet")..{
-	InitCommand=cmd(blend,Blend.Add;diffusealpha,0.6);
+	InitCommand=function(self)
+		self:blend(Blend.Add);
+		self:diffusealpha(0.6);
+	end;
 }
 
 

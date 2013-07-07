@@ -1,39 +1,112 @@
 return Def.ActorFrame {
 
 	NOTESKIN:LoadActor(Var "Button","NoteHit") .. {
-		InitCommand=cmd(animate,0;blend,Blend.Add;diffusealpha,0);
+		InitCommand=function(self)
+			self:animate(0);
+			self:blend(Blend.Add);
+			self:diffusealpha(0);
+		end;
 
-		NoneCommand=cmd(playcommand,"Glow");
-		PressCommand=cmd(playcommand,"Glow");
-		W1Command=cmd(setstate,0;playcommand,"W2");
-		W2Command=cmd(setstate,0;playcommand,"Glow");
-		W3Command=cmd(setstate,1;playcommand,"Glow");
-		W4Command=cmd(setstate,2;playcommand,"Glow");
-		W5Command=cmd();
-		HitMineCommand=cmd(playcommand,"Glow");
-		HeldCommand=cmd(setstate,0;playcommand,"Glow");
-		GlowCommand=cmd(stoptweening,zoom,1.05;diffusealpha,1;linear,0.25;zoom,1.1;diffusealpha,0);
+		NoneCommand=function(self)
+			self:playcommand("Glow");
+		end;
+		PressCommand=function(self)
+			self:playcommand("Glow");
+		end;
+		W1Command=function(self)
+			self:setstate(0);
+			self:playcommand("W2");
+		end;
+		W2Command=function(self)
+			self:setstate(0);
+			self:playcommand("Glow");
+		end;
+		W3Command=function(self)
+			self:setstate(1);
+			self:playcommand("Glow");
+		end;
+		W4Command=function(self)
+			self:setstate(2);
+			self:playcommand("Glow");
+		end;
+		W5Command=function(self) end;
+		HitMineCommand=function(self)
+			self:playcommand("Glow");
+		end;
+		HeldCommand=function(self)
+			self:setstate(0);
+			self:playcommand("Glow");
+		end;
+		GlowCommand=function(self)
+			self:stoptweening();
+			self:zoom(1.05);
+			self:diffusealpha(1);
+			self:linear(0.25);
+			self:zoom(1.1);
+			self:diffusealpha(0);
+		end;
 	};
 
 	NOTESKIN:LoadActor(Var "Button","NoteHit") .. {
-		InitCommand=cmd(animate,0;blend,Blend.Add;diffusealpha,0);
+		InitCommand=function(self)
+			self:animate(0);
+			self:blend(Blend.Add);
+			self:diffusealpha(0);
+		end;
 
-		NoneCommand=cmd(playcommand,"Glow");
-		PressCommand=cmd(playcommand,"Glow");
-		W1Command=cmd(setstate,0;playcommand,"W2");
-		W2Command=cmd(setstate,0;playcommand,"Glow");
-		W3Command=cmd(setstate,1;playcommand,"Glow");
-		W4Command=cmd(setstate,2;playcommand,"Glow");
-		W5Command=cmd();
-		HitMineCommand=cmd(playcommand,"Glow");
-		HeldCommand=cmd(setstate,0;playcommand,"Glow");
-		GlowCommand=cmd(stoptweening,zoom,1;diffusealpha,0.4;linear,0.3;zoom,1.2;diffusealpha,0);
+		NoneCommand=function(self)
+			self:playcommand("Glow");
+		end;
+		PressCommand=function(self)
+			self:playcommand("Glow");
+		end;
+		W1Command=function(self)
+			self:setstate(0);
+			self:playcommand("W2");
+		end;
+		W2Command=function(self)
+			self:setstate(0);
+			self:playcommand("Glow");
+		end;
+		W3Command=function(self)
+			self:setstate(1);
+			self:playcommand("Glow");
+		end;
+		W4Command=function(self)
+			self:setstate(2);
+			self:playcommand("Glow");
+		end;
+		W5Command=function(self) end;
+		HitMineCommand=function(self)
+			self:playcommand("Glow");
+		end;
+		HeldCommand=function(self)
+			self:setstate(0);
+			self:playcommand("Glow");
+		end;
+		GlowCommand=function(self)
+			self:stoptweening();
+			self:zoom(1);
+			self:diffusealpha(0.4);
+			self:linear(0.3);
+			self:zoom(1.2);
+			self:diffusealpha(0);
+		end;
 	};
 
 	NOTESKIN:LoadActor(Var "Button","NoteHit") .. {
-		InitCommand=cmd(animate,0;zoom,1.1;blend,Blend.Add;visible,false);
-		HoldingOnCommand=cmd(visible,true);
-		HoldingOffCommand=cmd(visible,false);
+		InitCommand=function(self)
+			self:animate(0);
+			self:zoom(1.1);
+			self:blend(Blend.Add);
+			self:visible(false);
+		end;
+		HoldingOnCommand=function(self)
+			self:visible(true);
+		end;
+		HoldingOffCommand=function(self)
+			self:visible(false);
+		end;
 	};
 
 

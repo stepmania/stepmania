@@ -20,18 +20,18 @@ end
 
 return Def.ActorFrame {
 	-- COMMANDS --
-	InitCommand=cmd(SetUpdateFunction,Beat);
+	InitCommand=function(self)
+		self:SetUpdateFunction(Beat);
+	end;
 	
 	-- LAYERS --
 	NOTESKIN:LoadActor("Center", "Outline Receptor")..{
 		Name="Outline Full";
 		Condition=Var "Button" == "Center" and GAMESTATE:GetCurrentStyle():GetStepsType() ~= 'StepsType_Pump_Halfdouble';
-		--InitCommand=cmd(x,96);
 	};
 	NOTESKIN:LoadActor("DownLeft", "Outline Receptor")..{
 		Name="Outline Half";
 		Condition=Var "Button" == "DownLeft" and GAMESTATE:GetCurrentStyle():GetStepsType() == 'StepsType_Pump_Halfdouble';
-		--InitCommand=cmd(x,96);
 	};
 	
 	NOTESKIN:LoadActor(Var "Button", "Ready Receptor")..{
@@ -39,26 +39,28 @@ return Def.ActorFrame {
 		Frames={
 			{ Frame = 0, Delay = 0 }
 		};
-		PressCommand=cmd(finishtweening;linear,0.05;zoom,0.9;linear,0.1;zoom,1);
+		PressCommand=function(self)
+			self:finishtweening();
+			self:linear(0.05);
+			self:zoom(0.9);
+			self:linear(0.1);
+			self:zoom(1);
+		end;
 	};
 	NOTESKIN:LoadActor(Var "Button", "Ready Receptor")..{
 		Name="Glow";
 		Frames= {
 			{ Frame = 1, Delay = 0 }
 		};
-		InitCommand=cmd(blend,'BlendMode_Add');
-		PressCommand=cmd(finishtweening;linear,0.05;zoom,0.9;linear,0.1;zoom,1);
+		InitCommand=function(self)
+			self:blend('BlendMode_Add');
+		end;
+		PressCommand=function(self)
+			self:finishtweening();
+			self:linear(0.05);
+			self:zoom(0.9);
+			self:linear(0.1);
+			self:zoom(1);
+		end;
 	};
-	--[[
-	NOTESKIN:LoadActor(Var "Button", "Ready Receptor")..{
-		Name="Tap";
-		Frames = { Frame = 2 };
-		InitCommand=cmd(zoom,1;diffusealpha,0;glow,1,1,1,0);
-		--NOTESKIN:GetMetricA(Var "Button", "TapInitCommand");
-		--
-		PressCommand=cmd(finishtweening;glow,1,1,1,1;zoom,1;linear,0.2;glow,1,1,1,0;zoom,1.2);
-		--NOTESKIN:GetMetricA(Var "Button", "TapHeldCommand");
-		--
-	};
-	--]]
 }

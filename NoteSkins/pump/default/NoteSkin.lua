@@ -119,7 +119,11 @@ local function func()
 	end
 	
 	if sElement == "Tap Lift" then
-		t.InitCommand=cmd(pulse;effectclock,"beat";effectmagnitude,1,0.75,0);
+		t.InitCommand=function(self)
+			self:pulse();
+			self:effectclock("beat");
+			self:effectmagnitude(1, 0.75, 0);
+		end;
 	end
 	
 	return t

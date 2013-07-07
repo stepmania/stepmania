@@ -1,3 +1,5 @@
 return LoadActor("_bar hold explosion bright")..{
-	CheckpointHitCommand=cmd(diffusealpha,0);
+	CheckpointHitCommand=function(self)
+		self:diffusealpha(0);
+	end;
 };

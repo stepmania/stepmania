@@ -1,11 +1,13 @@
---If a Command has "NOTESKIN:GetMetricA" in it, that means it gets the command from the metrics.ini, else use cmd(); to define command.
+--If a Command has "NOTESKIN:GetMetricA" in it, that means it gets the command from the metrics.ini, else use function(self) end; to define command.
 --If you dont know how "NOTESKIN:GetMetricA" works here is an explanation.
 --NOTESKIN:GetMetricA("The [Group] in the metrics.ini", "The actual Command to fallback on in the metrics.ini");
 
 local t = Def.ActorFrame {
 	Def.Sprite {
 		Texture=NOTESKIN:GetPath("_Center", "Go Receptor" );
-		InitCommand=cmd(effectclock,"beat");
+		InitCommand=function(self)
+			self:effectclock("beat");
+		end;
 		NoneCommand=NOTESKIN:GetMetricA("ReceptorArrow", "NoneCommand");
 		PressCommand=NOTESKIN:GetMetricA("ReceptorArrow", "PressCommand");
 		LiftCommand=NOTESKIN:GetMetricA("ReceptorArrow", "LiftCommand");

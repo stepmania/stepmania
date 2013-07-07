@@ -167,7 +167,11 @@ function ret.Load()
 		if Var "Button" == "UpLeft" and string.find(sElement, "Head") then t.BaseRotationZ = nil; end
 		if Var "Button" == "UpRight" and string.find(sElement, "Head") then t.BaseRotationZ = nil; end
 	elseif GAMESTATE:GetCurrentGame():GetName() == "techno" then
-		if Var "Element" == "Tap Mine" then t.InitCommand=cmd(zoom,-0.8); end
+		if Var "Element" == "Tap Mine" then 
+			t.InitCommand=function(self)
+				self:zoom(-0.8);
+			end;
+		end
 	elseif GAMESTATE:GetCurrentGame():GetName() == "pump" then 
 	--Because the images for Pump it up are using the DownLeft for every direction aside from center, We let it be rotated here
 	--Because the rotate table is set up for dance and these are for PIU
@@ -175,7 +179,11 @@ function ret.Load()
 		if Var "Button" == "UpRight" then t.BaseRotationZ = 180; end
 		if Var "Button" == "DownLeft" then t.BaseRotationZ = nil; end
 		if Var "Button" == "DownRight" then t.BaseRotationZ = -90; end	
-		if Var "Element" == "Tap Mine" then t.InitCommand=cmd(zoom,-0.8); end
+		if Var "Element" == "Tap Mine" then 
+			t.InitCommand=function(self)
+				self:zoom(-0.8);
+			end;
+		end
 	end
 	return t;
 end

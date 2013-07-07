@@ -1,29 +1,59 @@
 local t = Def.ActorFrame { };
 t[#t+1] = NOTESKIN:LoadActor( Var "Button", "Hold Explosion" ) .. {
-	HoldingOnCommand=cmd(visible,true);
-	HoldingOffCommand=cmd(visible,false);
-	InitCommand=cmd(visible,false;finishtweening;blend,"BlendMode_Add");
+	HoldingOnCommand=function(self)
+		self:visible(true);
+	end;
+	HoldingOffCommand=function(self)
+		self:visible(false);
+	end;
+	InitCommand=function(self)
+		self:visible(false);
+		self:finishtweening();
+		self:blend("BlendMode_Add");
+	end;
 	Frames = Sprite.LinearFrames(
 		NOTESKIN:GetMetricF( "GhostArrowDim", "HoldFrames" ),
 		NOTESKIN:GetMetricF( "GhostArrowDim", "HoldSeconds" ) );
 };
 
 t[#t+1] = NOTESKIN:LoadActor( Var "Button", "Roll Explosion" ) .. {
-	RollOnCommand=cmd(visible,true);
-	RollOffCommand=cmd(visible,false);
-	InitCommand=cmd(visible,false;finishtweening;blend,"BlendMode_Add");
+	RollOnCommand=function(self)
+		self:visible(true);
+	end;
+	RollOffCommand=function(self)
+		self:visible(false);
+	end;
+	InitCommand=function(self)
+		self:visible(false);
+		self:finishtweening();
+		self:blend("BlendMode_Add");
+	end;
 	Frames = Sprite.LinearFrames(
 		NOTESKIN:GetMetricF( "GhostArrowDim", "HoldFrames" ),
 		NOTESKIN:GetMetricF( "GhostArrowDim", "HoldSeconds" ) );
 };
 
 t[#t+1] = NOTESKIN:LoadActor( Var "Button", "Tap Explosion Dim" ) .. {
-	InitCommand=cmd(diffusealpha,0;blend,"BlendMode_Add");
-	HeldCommand=cmd(zoom,1;linear,0.06;zoom,1.1;linear,0.06;diffusealpha,0);
+	InitCommand=function(self)
+		self:diffusealpha(0);
+		self:blend("BlendMode_Add");
+	end;
+	HeldCommand=function(self)
+		self:zoom(1);
+		self:linear(0.06);
+		self:zoom(1.1);
+		self:linear(0.06);
+		self:diffusealpha(0);
+	end;
 	ColumnJudgmentCommand=function(self, params)
 		if params.TapNoteScore == "TapNoteScore_HitMine" then return; end
 
-		(cmd(finishtweening;loop,0;diffusealpha,1;setstate,0;sleep,self:GetAnimationLengthSeconds()-0.001;diffusealpha,0))(self);
+		self:finishtweening();
+		self:loop(0);
+		self:diffusealpha(1);
+		self:setstate(0);
+		self:sleep(self:GetAnimationLengthSeconds()-0.001);
+		self:diffusealpha(0);
 	end;
 	Frames = Sprite.LinearFrames(
 		NOTESKIN:GetMetricF( "GhostArrowDim", "JudgmentFrames" ),
@@ -31,7 +61,9 @@ t[#t+1] = NOTESKIN:LoadActor( Var "Button", "Tap Explosion Dim" ) .. {
 };
 
 local mine = NOTESKIN:LoadActor( Var "Button", "HitMine Explosion" ) .. {
-	InitCommand=cmd(diffusealpha,0);
+	InitCommand=function(self)
+		self:diffusealpha(0);
+	end;
 	Frames = Sprite.LinearFrames(
 		NOTESKIN:GetMetricF( "GhostArrowDim", "MineFrames" ),
 		NOTESKIN:GetMetricF( "GhostArrowDim", "MineSeconds" ) );
@@ -47,7 +79,11 @@ t[#t+1] = Def.ActorFrame {
 
 		local c = self:GetChild(Next);
 		Next = Next == "1" and "2" or "1";
-		(cmd(stoptweening;setstate,0;diffusealpha,1;sleep,self:GetAnimationLengthSeconds()-0.001;diffusealpha,0))(c);
+		c:stoptweening();
+		c:setstate(0);
+		c:diffusealpha(1);
+		c:sleep(self:GetAnimationLengthSeconds()-0.001);
+		c:diffusealpha(0);
 	end;
 };
 
