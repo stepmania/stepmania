@@ -8,6 +8,8 @@
 #include <cerrno>
 #include <fcntl.h>
 #include <dirent.h>
+#include <limits.h>
+#include <stdlib.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 
@@ -169,6 +171,9 @@ void MemoryCardDriverThreaded_Linux::GetUSBStorageDevices( vector<UsbStorageDevi
 				usleep(10000);
 			}
 
+			/* Wait for udev to finish handling device node creation */
+			ExecuteCommand( "udevadm settle" );
+
 			/* If the first partition device exists, eg. /sys/block/uba/uba1, use it. */
 			if( access(usbd.sSysPath + sDevice + "1", F_OK) != -1 )
 			{
@@ -292,24 +297,36 @@ void MemoryCardDriverThreaded_Linux::GetUSBStorageDevices( vector<UsbStorageDevi
 				LOG->Warn( "error reading '%s': %s", fn.c_str(), f.GetError().c_str() );
 				return;
 			}
-			
+
 			char szScsiDevice[1024];
 			char szMountPoint[1024];
 			int iRet = sscanf( sLine, "%s %s", szScsiDevice, szMountPoint );
 			if( iRet != 2 )
 				continue;	// don't process this line
-			
-			
+
+			/* Get the real kernel device name, which should match
+			 * the name from /sys/block, by following symlinks in
+			 * /dev.  This allows us to specify persistent names in
+			 * /etc/fstab using things like /dev/device/by-path. */
+			char szUnderlyingDevice[PATH_MAX];
+			if( realpath(szScsiDevice, szUnderlyingDevice) == NULL )
+			{
+				LOG->Warn( "realpath(\"%s\"): %s", szScsiDevice, strerror(errno) );
+				continue;
+			}
+
 			RString sMountPoint = szMountPoint;
 			TrimLeft( sMountPoint );
 			TrimRight( sMountPoint );
-			
+
 			// search for the mountpoint corresponding to the device
 			for( unsigned i=0; i<vDevicesOut.size(); i++ )
 			{
 				UsbStorageDevice& usbd = vDevicesOut[i];
-				if( usbd.sDevice == szScsiDevice )	// found our match
+				if( usbd.sDevice == szUnderlyingDevice )	// found our match
 				{
+					// Use the device entry from fstab so the mount command works
+					usbd.sDevice = szScsiDevice;
 					usbd.sOsMountDir = sMountPoint;
 					break;	// stop looking for a match
 				}
