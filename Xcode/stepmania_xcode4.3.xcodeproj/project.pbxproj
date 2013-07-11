@@ -8375,7 +8375,7 @@
 				);
 				OTHER_LDFLAGS = "-lbz2";
 				PRODUCT_NAME = "StepMania (Debug)";
-				SDKROOT = macosx10.6;
+				SDKROOT = "";
 				SYMROOT = "$(SRCROOT)/..";
 				WRAPPER_EXTENSION = app;
 			};
@@ -8893,7 +8893,7 @@
 				);
 				OTHER_LDFLAGS = "-lbz2";
 				PRODUCT_NAME = "StepMania (Performance-Debug)";
-				SDKROOT = macosx10.6;
+				SDKROOT = "";
 				STRIP_INSTALLED_PRODUCT = NO;
 				SYMROOT = "$(SRCROOT)/..";
 				WRAPPER_EXTENSION = app;
@@ -9141,7 +9141,7 @@
 				);
 				OTHER_LDFLAGS = "-lbz2";
 				PRODUCT_NAME = StepMania;
-				SDKROOT = macosx10.6;
+				SDKROOT = "";
 				SYMROOT = "$(SRCROOT)/..";
 				WRAPPER_EXTENSION = app;
 			};
