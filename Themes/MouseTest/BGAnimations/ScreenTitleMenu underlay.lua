@@ -3,11 +3,7 @@ local t = Def.ActorFrame{};
 local mou = Def.ActorFrame{
 	LoadFont("common normal")..{
 		Name="Coords";
-		InitCommand=function(self)
-			self:align(0, 0);
-			self:x(SCREEN_LEFT + 8);
-			self:y(SCREEN_BOTTOM - 48);
-		end;
+		InitCommand=cmd(align,0,0;x,SCREEN_LEFT+8;y,SCREEN_BOTTOM-48);
 	};
 };
 local function UpdateMouse(self)
@@ -17,33 +13,19 @@ local function UpdateMouse(self)
 	local text = "[Mouse] X: ".. mouseX .." Y: ".. mouseY;
 	coords:settext(text)
 end
-mou.InitCommand=function(self)
-	self:SetUpdateFunction();
-	UpdateMouse();
-end;
+mou.InitCommand=cmd(SetUpdateFunction,UpdateMouse);
 t[#t+1] = mou;
 
 t[#t+1] = Def.ActorFrame{
 	LoadFont("Common normal")..{
 		Name="Title";
 		Text=THEME:GetString("MouseTest","Title");
-		InitCommand=function(self)
-			self:CenterX();
-			self:y(SCREEN_TOP + 28);
-			self:diffuse(color("#333333"));
-		end;
+		InitCommand=cmd(CenterX;y,SCREEN_TOP+28;diffuse,color("#333333"));
 	};
 	LoadFont("Common normal")..{
 		Name="Instructions";
 		Text=THEME:GetString("MouseTest","Instructions");
-		InitCommand=function(self)
-			self:x(SCREEN_LEFT + 12);
-			self:align(0, 0);
-			self:y(SCREEN_TOP + 42);
-			self:diffuse(color("#333333"));
-			self:zoom(2 / 3);
-			self:wrapwidthpixels(SCREEN_WIDTH * 1.5);
-		end;
+		InitCommand=cmd(x,SCREEN_LEFT+12;align,0,0;y,SCREEN_TOP+42;diffuse,color("#333333");zoom,16/24;wrapwidthpixels,SCREEN_WIDTH*1.5);
 	};
 };
 

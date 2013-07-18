@@ -12,50 +12,30 @@ local itemColors = {
 };
 
 local t = Def.ActorFrame{
+	--[[
+	Def.Actor{
+		Name="TitleMenuController";
+		GainFocusCommand=function(self)
+			MESSAGEMAN:Broadcast("TitleChange",{NewColor=itemColors[index+1]});
+		end;
+	};
+	]]
 	LoadFont("Common Normal")..{
 		Text=Screen.String(text);
-		InitCommand=function(self)
-			self:diffuse(color("1,1,1,1"));
-		end;
-		DisabledCommand=function(self)
-			self:diffuse(color("0.5,0.5,0.5,0.85"));
-		end;
-		GainFocusCommand=function(self)
-			self:stoptweening();
-			self:linear(0.25);
-			self:diffuse(color("1,0.2,0.2,1"));
-		end;
-		LoseFocusCommand=function(self)
-			self:stoptweening();
-			self:linear(0.25);
-			self:diffuse(color("1,1,1,1"));
-		end;
+		InitCommand=cmd(diffuse,color("1,1,1,1"));
+		DisabledCommand=cmd(diffuse,color("0.5,0.5,0.5,0.85"));
+		--GainFocusCommand=cmd(stoptweening;linear,0.25;diffuse,itemColors[index+1]);
+		GainFocusCommand=cmd(stoptweening;linear,0.25;diffuse,color("1,0.2,0.2,1"));
+		LoseFocusCommand=cmd(stoptweening;linear,0.25;diffuse,color("1,1,1,1"));
 	};
 	--[[ begin triangle ]]
 	Def.Quad{
-		InitCommand=function(self)
-			self:x(-SCREEN_WIDTH * 0.105);
-			self:zoomto(8, 24);
-			self:zwrite(true);
-			self:blend('BlendMode_NoEffect');
-		end;
+		InitCommand=cmd(x,-SCREEN_WIDTH*0.105;zoomto,8,24;zwrite,true;blend,'BlendMode_NoEffect');
 	};
 	Def.Quad{
-		InitCommand=function(self)
-			self:x(-SCREEN_WIDTH * 0.1);
-			self:zoomto(12, 12);
-			self:rotationz(45);
-			self:diffuselowerleft(color("0,0,0,0"));
-			self:ztest(true);
-		end;
-		GainFocusCommand=function(self)
-			self:stoptweening();
-			self:visible(true);
-		end;
-		LoseFocusCommand=function(self)
-			self:stoptweening();
-			self:visible(false);
-		end;
+		InitCommand=cmd(x,-SCREEN_WIDTH*0.1;zoomto,12,12;rotationz,45;diffuselowerleft,color("0,0,0,0");ztest,true);
+		GainFocusCommand=cmd(stoptweening;visible,true);
+		LoseFocusCommand=cmd(stoptweening;visible,false);
 	};
 	--[[ end triangle ]]
 };
