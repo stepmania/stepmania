@@ -11,6 +11,8 @@ local colors = {
 local t = Def.ActorFrame {};
 -- Background!
 t[#t+1] = Def.ActorFrame {
+-- 	GainFocusCommand=cmd(visible,true);
+-- 	LoseFocusCommand=cmd(visible,false);
 	LoadActor(THEME:GetPathG("ScreenSelectPlayMode","BackgroundFrame")) .. {
 		InitCommand=function(self)
 			self:diffuse(Color("Black"));

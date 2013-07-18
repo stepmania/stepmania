@@ -8,11 +8,7 @@ local LifeRatio;
 
 local t = Def.ActorFrame {
 	LoadActor("_lives")..{
-		InitCommand=function(self)
-			self:pause();
-			self:horizalign(left);
-			self:x(barWidth / -2);
-		end;
+		InitCommand=cmd(pause;horizalign,left;x,-(barWidth/2));
 		BeginCommand=function(self,param)
 			local screen = SCREENMAN:GetTopScreen();
 			local glifemeter = screen:GetLifeMeter(player);
@@ -40,9 +36,7 @@ local t = Def.ActorFrame {
 				self:setstate( math.max(param.LivesLeft-1,0) );			
 			end			
 		end;
-		FinishCommand=function(self)
-			self:playcommand("Start");
-		end;
+		FinishCommand=cmd(playcommand,"Start");
 	};
 };
 

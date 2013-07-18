@@ -35,30 +35,14 @@ local function CreatePaneDisplayItem( _pnPlayer, _sLabel, _rcRadarCategory )
 			Text=string.format("%04i", 0);
 			InitCommand=function(self)
 				self:x(96);
-				self:horizalign(right);
-			end;
-			OnCommand=function(self)
-				self:zoom(0.5875);
-				self:shadowlength(1);
-			end;
-			CurrentSongChangedMessageCommand=function(self)
-				self:playcommand("Set");
-			end;
-			CurrentStepsP1ChangedMessageCommand=function(self)
-				self:playcommand("Set");
-			end;
-			CurrentStepsP2ChangedMessageCommand=function(self)
-				self:playcommand("Set");
-			end;
-			CurrentTrailP1ChangedMessageCommand=function(self)
-				self:playcommand("Set");
-			end;
-			CurrentTrailP2ChangedMessageCommand=function(self)
-				self:playcommand("Set");
-			end;
-			CurrentCourseChangedMessageCommand=function(self)
-				self:playcommand("Set");
-			end;
+			InitCommand=cmd(x,96;horizalign,right);
+			OnCommand=cmd(zoom,0.5875;shadowlength,1);
+			CurrentSongChangedMessageCommand=cmd(playcommand,"Set");
+			CurrentStepsP1ChangedMessageCommand=cmd(playcommand,"Set");
+			CurrentStepsP2ChangedMessageCommand=cmd(playcommand,"Set");
+			CurrentTrailP1ChangedMessageCommand=cmd(playcommand,"Set");
+			CurrentTrailP2ChangedMessageCommand=cmd(playcommand,"Set");
+			CurrentCourseChangedMessageCommand=cmd(playcommand,"Set");
 			SetCommand=function(self)
 				local song = GAMESTATE:GetCurrentSong()
 				local course = GAMESTATE:GetCurrentCourse()
@@ -99,32 +83,14 @@ local function CreatePaneDisplayGraph( _pnPlayer, _sLabel, _rcRadarCategory )
 		Def.Quad {
 			InitCommand=function(self)
 				self:x(12);
-				self:zoomto(50, 10);
-				self:horizalign(left);
-			end;
-			OnCommand=function(self)
-				self:shadowlength(0);
-				self:diffuse(Color("Green"));
-				self:diffusebottomedge(ColorLightTone(Color("Green")));
-			end;
-			CurrentSongChangedMessageCommand=function(self)
-				self:playcommand("Set");
-			end;
-			CurrentStepsP1ChangedMessageCommand=function(self)
-				self:playcommand("Set");
-			end;
-			CurrentStepsP2ChangedMessageCommand=function(self)
-				self:playcommand("Set");
-			end;
-			CurrentTrailP1ChangedMessageCommand=function(self)
-				self:playcommand("Set");
-			end;
-			CurrentTrailP2ChangedMessageCommand=function(self)
-				self:playcommand("Set");
-			end;
-			CurrentCourseChangedMessageCommand=function(self)
-				self:playcommand("Set");
-			end;
+			InitCommand=cmd(x,12;zoomto,50,10;horizalign,left);
+			OnCommand=cmd(shadowlength,0;diffuse,Color("Green");diffusebottomedge,ColorLightTone(Color("Green")));
+			CurrentSongChangedMessageCommand=cmd(playcommand,"Set");
+			CurrentStepsP1ChangedMessageCommand=cmd(playcommand,"Set");
+			CurrentStepsP2ChangedMessageCommand=cmd(playcommand,"Set");
+			CurrentTrailP1ChangedMessageCommand=cmd(playcommand,"Set");
+			CurrentTrailP2ChangedMessageCommand=cmd(playcommand,"Set");
+			CurrentCourseChangedMessageCommand=cmd(playcommand,"Set");
 			SetCommand=function(self)
 				local song = GAMESTATE:GetCurrentSong()
 				local course = GAMESTATE:GetCurrentCourse()
@@ -142,31 +108,14 @@ local function CreatePaneDisplayGraph( _pnPlayer, _sLabel, _rcRadarCategory )
 		LoadFont("Common Normal") .. {
 			InitCommand=function(self)
 				self:x(14);
-				self:zoom(0.5);
-				self:halign(0);
-			end;
-			OnCommand=function(self)
-				self:shadowlength(1);
-				self:strokecolor(color("0.15,0.15,0.15,0.625"));
-			end;
-			CurrentSongChangedMessageCommand=function(self)
-				self:playcommand("Set");
-			end;
-			CurrentStepsP1ChangedMessageCommand=function(self)
-				self:playcommand("Set");
-			end;
-			CurrentStepsP2ChangedMessageCommand=function(self)
-				self:playcommand("Set");
-			end;
-			CurrentTrailP1ChangedMessageCommand=function(self)
-				self:playcommand("Set");
-			end;
-			CurrentTrailP2ChangedMessageCommand=function(self)
-				self:playcommand("Set");
-			end;
-			CurrentCourseChangedMessageCommand=function(self)
-				self:playcommand("Set");
-			end;
+			InitCommand=cmd(x,14;zoom,0.5;halign,0;);
+			OnCommand=cmd(shadowlength,1;strokecolor,color("0.15,0.15,0.15,0.625"));
+			CurrentSongChangedMessageCommand=cmd(playcommand,"Set");
+			CurrentStepsP1ChangedMessageCommand=cmd(playcommand,"Set");
+			CurrentStepsP2ChangedMessageCommand=cmd(playcommand,"Set");
+			CurrentTrailP1ChangedMessageCommand=cmd(playcommand,"Set");
+			CurrentTrailP2ChangedMessageCommand=cmd(playcommand,"Set");
+			CurrentCourseChangedMessageCommand=cmd(playcommand,"Set");
 			SetCommand=function(self)
 				local song = GAMESTATE:GetCurrentSong()
 				local course = GAMESTATE:GetCurrentCourse()
@@ -184,53 +133,29 @@ end;
 t[#t+1] = Def.ActorFrame {
 	-- Left 
 	CreatePaneDisplayItem( iPN, "Taps", 'RadarCategory_TapsAndHolds' ) .. {
-		InitCommand=function(self)
-			self:x(-128 + 16 + 8);
-			self:y(-14 + 16 * 0);
-		end;
+		InitCommand=cmd(x,-128+16+8;y,-14);
 	};
 	CreatePaneDisplayItem( iPN, "Jumps", 'RadarCategory_Jumps' ) .. {
-		InitCommand=function(self)
-			self:x(-128 + 16 + 8);
-			self:y(-14 + 16 * 1);
-		end;
+		InitCommand=cmd(x,-128+16+8;y,-14+16);
 	};
 	CreatePaneDisplayItem( iPN, "Holds", 'RadarCategory_Holds' ) .. {
-		InitCommand=function(self)
-			self:x(-128 + 16 + 8);
-			self:y(-14 + 16 * 2);
-		end;
+		InitCommand=cmd(x,-128+16+8;y,-14+16*2);
 	};
 	CreatePaneDisplayItem( iPN, "Mines", 'RadarCategory_Mines' ) .. {
-		InitCommand=function(self)
-			self:x(-128 + 16 + 8);
-			self:y(-14 + 16 * 3);
-		end;
+		InitCommand=cmd(x,-128+16+8;y,-14+16*3);
 	};
 	-- Center
 	CreatePaneDisplayItem( iPN, "Hands", 'RadarCategory_Hands' ) .. {
-		InitCommand=function(self)
-			self:x(8);
-			self:y(-14 + 16 * 0);
-		end;
+		InitCommand=cmd(x,8;y,-14);
 	};
 	CreatePaneDisplayItem( iPN, "Rolls", 'RadarCategory_Rolls' ) .. {
-		InitCommand=function(self)
-			self:x(8);
-			self:y(-14 + 16 * 1);
-		end;
+		InitCommand=cmd(x,8;y,-14+16);
 	};
 	CreatePaneDisplayItem( iPN, "Lifts", 'RadarCategory_Lifts' ) .. {
-		InitCommand=function(self)
-			self:x(8);
-			self:y(-14 + 16 * 2);
-		end;
+		InitCommand=cmd(x,8;y,-14+16*2);
 	};
 	CreatePaneDisplayItem( iPN, "Fakes", 'RadarCategory_Fakes' ) .. {
-		InitCommand=function(self)
-			self:x(8);
-			self:y(-14 + 16 * 3);
-		end;
+		InitCommand=cmd(x,8;y,-14+16*3);
 	};
 };
 return t;

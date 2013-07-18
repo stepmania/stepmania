@@ -3,29 +3,9 @@
 local t = Def.ActorFrame{
 	LoadFont("Common Normal")..{
 		Name="Header";
-		InitCommand=function(self)
-			self:x(SCREEN_LEFT + 24);
-			self:y(SCREEN_TOP + 24);
-			self:halign(0);
-			self:diffuse(color("#CCCCCC"));
-			self:settext(Screen.String("BodyHeader"));
-			self:shadowlength(1);
-			self:shadowcolor(HSV(40,0,0.6));
-			self:diffusetopedge(color("#FFFFFF"));
-		end;
-		OnCommand=function(self)
-			self:queuecommand("Anim");
-		end;
-		AnimCommand=function(self)
-			self:cropright(1);
-			self:faderight(1);
-			self:addx(96);
-			self:decelerate(1);
-			self:addx(-96);
-			self:skewx(-0.1);
-			self:cropright(0);
-			self:faderight(0);
-		end;
+		InitCommand=cmd(x,SCREEN_LEFT+24;y,SCREEN_TOP+24;halign,0;diffuse,color("#CCCCCC");settext,Screen.String("BodyHeader");shadowlength,1;shadowcolor,HSV(40,0,0.6);diffusetopedge,color("#FFFFFF"));
+		OnCommand=cmd(queuecommand,"Anim");
+		AnimCommand=cmd(cropright,1;faderight,1;addx,96;decelerate,1;addx,-96;skewx,-0.1;cropright,0;faderight,0;);
 	};
 	-- todo: add explantion paragraph here (above the scroller)
 };
