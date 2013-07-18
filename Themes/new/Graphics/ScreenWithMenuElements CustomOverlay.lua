@@ -1,13 +1,6 @@
 return Def.ActorFrame {
-	InitCommand=function(self)
-		self:x(SCREEN_CENTER_X);
-		self:y(SCREEN_BOTTOM);
-	end;
+	InitCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_BOTTOM);
 	Def.Quad {
-		InitCommand=function(
-			self:vertalign(bottom);
-			self:zoomto(SCREEN_WIDTH, 32);
-			self:diffuse(Color.Black);
-		end;
+		InitCommand=cmd(vertalign,bottom;zoomto,SCREEN_WIDTH,32;diffuse,Color.Black);
 	};
 };

@@ -1,21 +1,10 @@
 return Def.ActorFrame {
 	-- Default BG
 	Def.Quad {
-		InitCommand=function(self)
-			self:vertalign(bottom);
-			self:zoomto(SCREEN_WIDTH, 60);
-			self:diffuse(Color.Black);
-			self:diffusealpha(0.65);
-		end;
+		InitCommand=cmd(vertalign,bottom;zoomto,SCREEN_WIDTH,60;diffuse,Color.Black;diffusealpha,0.65);
 	};
 	-- Highlight
 	Def.Quad {
-		InitCommand=function(self)
-			self:vertalign(bottom);
-			self:zoomto(SCREEN_WIDTH, 1);
-			self:diffuse(Color.Blue);
-			self:fadeleft(1);
-			self:y(-58);
-		end;
+		InitCommand=cmd(vertalign,bottom;zoomto,SCREEN_WIDTH,1;diffuse,Color.Blue;fadeleft,1;y,-58);
 	};
 };
