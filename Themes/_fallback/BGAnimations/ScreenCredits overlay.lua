@@ -117,18 +117,8 @@ local sections = {
 
 -- To add people or sections modify the above.
 
-local lineOn = function(self)
-	self:zoom(0.875);
-	self:strokecolor(color("#444444"));
-	self:shadowcolor(color("#444444"));
-	self:shadowlength(3);
-end;
-local sectionOn = function(self)
-	self:diffuse(color("#88DDFF"));
-	self:strokecolor(color("#446688"));
-	self:shadowcolor(color("#446688"));
-	self:shadowlength(3);
-end;
+local lineOn = cmd(zoom,0.875;strokecolor,color("#444444");shadowcolor,color("#444444");shadowlength,3)
+local sectionOn = cmd(diffuse,color("#88DDFF");strokecolor,color("#446688");shadowcolor,color("#446688");shadowlength,3)
 local item_padding_start = 4;
 
 local creditScroller = Def.ActorScroller {
@@ -137,9 +127,7 @@ local creditScroller = Def.ActorScroller {
 	TransformFunction = function( self, offset, itemIndex, numItems)
 		self:y(30*offset)
 	end;
-	OnCommand = function(self)
-		self:scrollwithpadding(item_padding_start, 15);
-	end;
+	OnCommand = cmd(scrollwithpadding,item_padding_start,15);
 }
 
 local function AddLine( text, command )
@@ -168,9 +156,6 @@ end;
 
 return Def.ActorFrame{
 	creditScroller..{
-		InitCommand=function(self)
-			self:CenterX();
-			self:y(SCREEN_BOTTOM - 64);
-		end;
+		InitCommand=cmd(CenterX;y,SCREEN_BOTTOM-64),
 	}
 };

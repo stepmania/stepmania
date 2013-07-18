@@ -12,9 +12,7 @@ local LabelMinZoom = THEME:GetMetric("Combo", "LabelMinZoom");
 local LabelMaxZoom = THEME:GetMetric("Combo", "LabelMaxZoom");
 
 local t = Def.ActorFrame {
-	InitCommand=function(self)
-		self:vertalign(bottom);
-	end;
+	InitCommand=cmd(vertalign,bottom);
 	LoadFont( "Combo", "numbers" ) .. {
 		Name="Number";
 		OnCommand = THEME:GetMetric("Combo", "NumberOnCommand");
@@ -41,14 +39,11 @@ local t = Def.ActorFrame {
 			return
 		end; --]]
 	TwentyFiveMilestoneCommand=function(self,parent)
-		self:skewy(-0.125);
-		self:decelerate(0.325);
-		self:skewy(0);
+		(cmd(skewy,-0.125;decelerate,0.325;skewy,0))(self);
 	end;
 	ToastyAchievedMessageCommand=function(self,params)
 		if params.PlayerNumber == player then
-			self:thump(2);
-			self:effectclock('beat');
+			(cmd(thump,2;effectclock,'beat'))(self);
 		end;
 	end;
 	ComboCommand=function(self, param)
@@ -93,19 +88,26 @@ local t = Def.ActorFrame {
 			c.Number:diffuse(Color("White"));
 -- 			c.Number:diffuse(PlayerColor(player));
 			c.Number:stopeffect();
-			c.Label.diffuse(Color("White"));
-			c.Label.diffusebottomedge(color("0.5,0.5,0.5,1"));
+			(cmd(diffuse,Color("White");diffusebottomedge,color("0.5,0.5,0.5,1")))(c.Label);
 		else
 			c.Number:diffuse(color("#ff0000"));
 			c.Number:stopeffect();
-			c.Label.diffuse(Color("Red"));
-			c.Label.diffusebottomedge(color("0.5,0,0,1"));
+			(cmd(diffuse,Color("Red");diffusebottomedge,color("0.5,0,0,1")))(c.Label);
 		end
 		-- Pulse
 		Pulse( c.Number, param );
 		PulseLabel( c.Label, param );
 		-- Milestone Logic
 	end;
+--[[ 	ScoreChangedMessageCommand=function(self,param)
+		local iToastyCombo = param.ToastyCombo;
+		if iToastyCombo and (iToastyCombo > 0) then
+-- 			(cmd(thump;effectmagnitude,1,1.2,1;effectclock,'beat'))(c.Number)
+-- 			(cmd(thump;effectmagnitude,1,1.2,1;effectclock,'beat'))(c.Number)
+		else
+-- 			c.Number:stopeffect();
+		end;
+	end; --]]
 };
 
 return t;

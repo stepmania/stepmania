@@ -1,24 +1,13 @@
 local x = Def.ActorFrame{
 	Def.Quad{
-		InitCommand=function(self)
-			self:Center();
-			self:zoomto(SCREEN_WIDTH, 80);
-			self:diffuse(color("0,0,0,0.5"));
-		end;
-		OnCommand=function(self) end;
-		OffCommand=function(self) end;
+		InitCommand=cmd(Center;zoomto,SCREEN_WIDTH,80;diffuse,color("0,0,0,0.5"));
+		OnCommand=cmd();
+		OffCommand=cmd();
 	};
 	LoadFont("Common Normal")..{
 		Text=ScreenString("Saving Profiles");
-		InitCommand=function(self)
-			self:Center();
-			self:diffuse(color("1,1,1,1"));
-			self:shadowlength(1);
-		end;
-		OffCommand=function(self)
-			self:linear(0.15);
-			self:diffusealpha(0);
-		end;
+		InitCommand=cmd(Center;diffuse,color("1,1,1,1");shadowlength,1);
+		OffCommand=cmd(linear,0.15;diffusealpha,0);
 	};
 };
 

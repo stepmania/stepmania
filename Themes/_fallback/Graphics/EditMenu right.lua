@@ -1,16 +1,8 @@
 return Def.ActorFrame {
 	Def.Quad {
-		InitCommand=function(self)
-			self:zoomto(10, 10);
-			self:y(-5);
-			self:skewx(1);
-		end;
+		InitCommand=cmd(zoomto,10,10;y,-5;skewx,1);
 	};
 	Def.Quad {
-		InitCommand=function(self)
-			self:zoomto(10, 10);
-			self:y(5);
-			self:skewx(-1);
-		end;
+		InitCommand=cmd(zoomto,10,10;y,5;skewx,-1);
 	};
 }

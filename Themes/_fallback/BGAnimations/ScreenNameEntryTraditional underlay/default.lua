@@ -7,33 +7,21 @@ local Players = GAMESTATE:GetHumanPlayers();
 local t = Def.ActorFrame {};
 -- Is Anyone Enabled To Join
 t[#t+1] = Def.ActorFrame {
-	InitCommand=function(self)
-		self:x(SCREEN_CENTER_X);
-		self:y(SCREEN_CENTER_Y);
-	end;
+  InitCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y);
 	LoadFont("Common Normal") .. {
 		Text="A player has a high score";
-		BeginCommand=function(self)
-			self:visible(SCREENMAN:GetTopScreen():GetAnyEntering());
-		end;
+		BeginCommand=cmd(visible,SCREENMAN:GetTopScreen():GetAnyEntering());
 	};
 	LoadFont("Common Normal") .. {
 		Text="No players has a high score";
-		BeginCommand=function(self)
-			self:visible(not SCREENMAN:GetTopScreen():GetAnyEntering());
-		end;
+		BeginCommand=cmd(visible,not SCREENMAN:GetTopScreen():GetAnyEntering());
 	};
---[[ 	
-	for pn in ivalues(Players) do
+--[[ 	for pn in ivalues(Players) do
 		LoadFont("Common Normal") .. {
 			Text=ToEnumShortString(pn);
-			InitCommand=function(self)
-				self:x(128 * tMath[pn]);
-				self:y(32);
-			end
+			InitCommand=cmd(x,128 * tMath[pn];y,32);
 		};
-	end
---]]
+	end --]]
 };
 --
 t[#t+1] = Def.Actor {

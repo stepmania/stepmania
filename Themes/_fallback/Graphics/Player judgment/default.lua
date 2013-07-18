@@ -31,29 +31,16 @@ local t = Def.ActorFrame {};
 t[#t+1] = Def.ActorFrame {
 	LoadActor(THEME:GetPathG("Judgment","Normal")) .. {
 		Name="Judgment";
-		InitCommand=function(self)
-			self:pause();
-			self:visible(false);
-		end;
+		InitCommand=cmd(pause;visible,false);
 		OnCommand=THEME:GetMetric("Judgment","JudgmentOnCommand");
-		ResetCommand=function(self)
-			self:finishtweening();
-			self:stopeffect();
-			self:visible(false);
-		end;
+		ResetCommand=cmd(finishtweening;stopeffect;visible,false);
 	};
 	LoadFont("Common Normal") .. {
 		Name="ProtimingDisplay";
 		Text="";
-		InitCommand=function(self)
-			self:visible(false);
-		end;
+		InitCommand=cmd(visible,false);
 		OnCommand=THEME:GetMetric("Protiming","ProtimingOnCommand");
-		ResetCommand=function(self)
-			self:finishtweening();
-			self:stopeffect();
-			self:visible(false);
-		end;
+		ResetCommand=cmd(finishtweening;stopeffect;visible,false);
 	};
 	
 	InitCommand = function(self)

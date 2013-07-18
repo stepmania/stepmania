@@ -22,14 +22,8 @@ end
 
 function LoadSongBackground()
 	return Def.Sprite {
-		InitCommand=function(self)
-			self:x(SCREEN_CENTER_X);
-			self:y(SCREEN_CENTER_Y);
-		end;
-		BeginCommand=function(self)
-			self:LoadFromSongBackground(GAMESTATE:GetCurrentSong());
-			self:scale_or_crop_background();
-		end;
+		InitCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y),
+		BeginCommand=cmd(LoadFromSongBackground,GAMESTATE:GetCurrentSong();scale_or_crop_background)
 	}
 end
 

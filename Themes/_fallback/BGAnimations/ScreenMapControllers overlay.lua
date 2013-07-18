@@ -1,68 +1,26 @@
 local waitTime = 7.5
 
 local t = Def.ActorFrame {
-	InitCommand=function(self)
-		self:x(SCREEN_CENTER_X);
-		self:y(SCREEN_CENTER_Y);
-	end;
-	OnCommand=function(self)
-		self:queuecommand("TweenOn");
-		self:sleep(waitTime);
-		self:queuecommand("TweenOff");
-	end;
+	InitCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y);
+	OnCommand=cmd(queuecommand,"TweenOn";sleep,waitTime;queuecommand,"TweenOff");
 }
 t[#t+1] = Def.Quad {
-	InitCommand=function(self)
-		self:zoomto(SCREEN_WIDTH, SCREEN_HEIGHT);
-		self:diffuse(Color.Black);
-	end;
-	TweenOnCommand=function(self)
-		self:diffusealpha(1);
-		self:linear(0.5);
-		self:diffusealpha(0.8);
-	end;
-	TweenOffCommand=function(self)
-		self:linear(0.5);
-		self:diffusealpha(0);
-	end;
+	InitCommand=cmd(zoomto,SCREEN_WIDTH,SCREEN_HEIGHT;diffuse,Color.Black);
+	TweenOnCommand=cmd(diffusealpha,1;linear,0.5;diffusealpha,0.8);
+	TweenOffCommand=cmd(linear,0.5;diffusealpha,0);
 };
 t[#t+1] = Def.ActorFrame {
 	LoadFont("Common Normal") .. {
 		Text=ScreenString("WarningHeader");
-		InitCommand=function(self)
-			self:y(-70);
-			self:diffuse(Color.Red);
-		end;
-		TweenOnCommand=function(self)
-			self:diffusealpha(0);
-			self:zoomx(2);
-			self:zoomy(0);
-			self:sleep(0.5);
-			self:smooth(0.25);
-			self:zoom(1);
-			self:diffusealpha(1);
-		end;
-		TweenOffCommand=function(self)
-			self:linear(0.5);
-			self:diffusealpha(0);
-		end;
+		InitCommand=cmd(y,-70;diffuse,Color.Red);
+		TweenOnCommand=cmd(diffusealpha,0;zoomx,2;zoomy,0;sleep,0.5;smooth,0.25;zoom,1;diffusealpha,1);
+		TweenOffCommand=cmd(linear,0.5;diffusealpha,0);
 	};
 	LoadFont("Common Normal") .. {
 		Text=ScreenString("WarningText");
-		InitCommand=function(self)
-			self:y(10);
-			self:wrapwidthpixels(SCREEN_WIDTH - 48);
-		end;
-		TweenOnCommand=function(self)
-			self:diffusealpha(0);
-			self:sleep(0.5125);
-			self:linear(0.125);
-			self:diffusealpha(1);
-		end;
-		TweenOffCommand=function(self)
-			self:linear(0.5);
-			self:diffusealpha(0);
-		end;
+		InitCommand=cmd(y,10;wrapwidthpixels,SCREEN_WIDTH-48);
+		TweenOnCommand=cmd(diffusealpha,0;sleep,0.5125;linear,0.125;diffusealpha,1);
+		TweenOffCommand=cmd(linear,0.5;diffusealpha,0);
 	};
 };
 

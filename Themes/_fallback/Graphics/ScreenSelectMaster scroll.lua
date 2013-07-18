@@ -6,10 +6,6 @@ t[#t+1] = LoadFont("Common Normal") .. {
     Text=gc:GetName();
 };
 
-t.GainFocusCommand=function(self)
-	self:visible(true);
-end;
-t.LoseFocusCommand=function(self)
-	self:visible(false);
-end;
+t.GainFocusCommand=cmd(visible,true);
+t.LoseFocusCommand=cmd(visible,false);
 return t;

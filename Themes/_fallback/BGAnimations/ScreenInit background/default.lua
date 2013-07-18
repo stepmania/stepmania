@@ -1,83 +1,39 @@
 local t = Def.ActorFrame {};
 
 t[#t+1] = Def.ActorFrame {
-  InitCommand=function(self)
-		self:Center();
-	end;
+  InitCommand=cmd(Center);
 	Def.Quad {
-		InitCommand=function(self)
-			self:scaletoclipped(SCREEN_WIDTH, SCREEN_HEIGHT);
-		end;
-		OnCommand=function(self)
-			self:diffuse(color("0,0,0,1"));
-			self:diffusetopedge(color("0.1,0.1,0.1,1"));
-		end;
+		InitCommand=cmd(scaletoclipped,SCREEN_WIDTH,SCREEN_HEIGHT);
+		OnCommand=cmd(diffuse,color("0,0,0,1");diffusetopedge,color("0.1,0.1,0.1,1"));
 	};
 };
 t[#t+1] = Def.ActorFrame {
-  InitCommand=function(self)
-		self:Center();
-	end;
+  InitCommand=cmd(Center);
 	Def.ActorFrame {
 		Def.Quad {
-			InitCommand=function(self)
-				self:zoomto(SCREEN_WIDTH, 128);
-			end;
-			OnCommand=function(self)
-				self:diffusealpha(1);
-				self:sleep(1.5);
-				self:linear(0.25);
-			end;
+			InitCommand=cmd(zoomto,SCREEN_WIDTH,128);
+			OnCommand=cmd(diffusealpha,1;sleep,1.5;linear,0.25);
 		};
 		LoadActor("ssc") .. {
-			OnCommand=function(self)
-				self:diffusealpha(0);
-				self:linear(1);
-				self:diffusealpha(1);
-				self:sleep(0.75);
-				self:linear(0.25);
-				self:diffusealpha(0);
-			end;
+			OnCommand=cmd(diffusealpha,0;linear,1;diffusealpha,1;sleep,0.75;linear,0.25;diffusealpha,0);
 		};
 	};
 	Def.ActorFrame {
-		OnCommand=function(self)
-			self:playcommandonchildren("ChildrenOn");
-		end;
-		ChildrenOnCommand=function(self)
-			self:diffusealpha(0);
-			self:sleep(2);
-			self:linear(0.25);
-			self:diffusealpha(1);
-		end;
+	  OnCommand=cmd(playcommandonchildren,"ChildrenOn");
+	  ChildrenOnCommand=cmd(diffusealpha,0;sleep,2;linear,0.25;diffusealpha,1);
 		LoadFont("Common Normal") .. {
 			Text=ProductID();
-			InitCommand=function(self)
-				self:y(-20);
-				self:zoom(0.75);
-			end;
-			OnCommand=function(self)
-				self:diffuse(color("0,0,0,1"));
-				self:strokecolor(color("#f7941d"));
-			end;
+			InitCommand=cmd(y,-20;zoom,0.75);
+			OnCommand=cmd(diffuse,color("0,0,0,1");strokecolor,color("#f7941d"));
 		};
 		LoadFont("Common Normal") .. {
 			Text=THEME:GetThemeDisplayName();
-			OnCommand=function(self)
-				self:diffuse(color("0,0,0,1"));
-				self:strokecolor(color("#f7941d"));
-			end;
+			OnCommand=cmd(diffuse,color("0,0,0,1");strokecolor,color("#f7941d"));
 		};
 		LoadFont("Common Normal") .. {
 			Text="Created by " .. THEME:GetThemeAuthor();
-			InitCommand=function(self)
-				self:y(24);
-				self:zoom(0.75);
-			end;
-			OnCommand=function(self)
-				self:diffuse(color("0,0,0,1"));
-				self:strokecolor(color("#f7941d"));
-			end;
+			InitCommand=cmd(y,24;zoom,0.75);
+			OnCommand=cmd(diffuse,color("0,0,0,1");strokecolor,color("#f7941d"));
 		};
 	};
 };
