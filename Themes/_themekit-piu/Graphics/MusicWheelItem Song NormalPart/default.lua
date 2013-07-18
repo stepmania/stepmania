@@ -2,9 +2,7 @@ return Def.ActorFrame {
 	Draw.RoundBox(276,212,20,20,color("#323232"));
 	Def.Banner {
 		Name="SongBanner";
-		InitCommand=function(self)
-			self:scaletoclipped(256, 192);
-		end;
+		InitCommand=cmd(scaletoclipped,256,192);
 		SetMessageCommand=function(self,params)
 			local path = params.Song:GetBannerPath()
 			if not path then path = THEME:GetPathG("Common","fallback banner") end

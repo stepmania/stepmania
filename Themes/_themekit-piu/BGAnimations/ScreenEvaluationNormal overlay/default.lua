@@ -15,11 +15,7 @@ local function Labels()
 		local _ = idx-1
 		t[#t+1] = LoadFont("_arial black 20px")..{
 			Text=k;
-			InitCommand=function(self)
-				self:y(_ * 40);
-				self:diffuse(color("#000000"));
-				self:Stroke(color("#ffffff"));
-			end;
+			InitCommand=cmd(y,_*40;diffuse,color("#000000");Stroke,color("#ffffff"));
 		};
 	end
 	
@@ -71,11 +67,7 @@ local function Scores(player)
 		
 		t[#t+1] = LoadFont("_arial black 20px")..{
 			Text=string.format("%03d", number); --curstats:GetTapNoteScores(k)
-			InitCommand=function(self)
-				self:y(_ * 40);
-				self:diffuse(color("#000000"));
-				self:Stroke(color("#ffffff"));
-			end;
+			InitCommand=cmd(y,_*40;diffuse,color("#000000");Stroke,color("#ffffff"));
 		};
 	end
 	
@@ -99,47 +91,28 @@ local function Grade(player)
 	
 	return LoadFont("_impact 50px")..{
 		Text=captions[grade];
+		--OnCommand=cmd(zoom,2;diffuse,color("#000000");Stroke,color("#ffffff");diffusealpha,0;sleep,1;linear,1;zoom,1;diffuse,color("#000000");Stroke,color("#ffffff");;diffusealpha,1);
 	}
 end
 
 return Def.ActorFrame {
 	LoadFont("_impact 50px")..{
 		Text="Evaluation";
-		InitCommand=function(self)
-			self:CenterX();
-			self:y(50);
-			self:diffuse(color("#000000"));
-			self:Stroke(color("#ffffff"));
-		end;
+		InitCommand=cmd(CenterX;y,50;diffuse,color("#000000");Stroke,color("#ffffff"));
 	};
 	Labels()..{
-		InitCommand=function(self)
-			self:CenterX();
-			self:FromTop(130);
-		end;
+		InitCommand=cmd(CenterX;FromTop,130);
 	};
 	Scores(PLAYER_1)..{
-		InitCommand=function(self)
-			self:FromCenterX(-160);
-			self:FromTop(130);
-		end;
+		InitCommand=cmd(FromCenterX,-160;FromTop,130);
 	};
 	Scores(PLAYER_2)..{
-		InitCommand=function(self)
-			self:FromCenterX(160);
-			self:FromTop(130);
-		end;
+		InitCommand=cmd(FromCenterX,160;FromTop,130);
 	};
 	Grade(PLAYER_1)..{
-		InitCommand=function(self)
-			self:FromLeft(50);
-			self:FromTop(240);
-		end;
+		InitCommand=cmd(FromLeft,50;FromTop,240);
 	};
 	Grade(PLAYER_2)..{
-		InitCommand=function(self)
-			self:FromRight(-50);
-			self:FromTop(240);
-		end;
+		InitCommand=cmd(FromRight,-50;FromTop,240);
 	};
 }

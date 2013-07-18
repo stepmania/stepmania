@@ -20,7 +20,5 @@ if not path then
 end
 
 return LoadActor(path)..{
-	InitCommand=function(self)
-		self:scaletocover(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-	end;
+	InitCommand=cmd(scaletocover,0,0,SCREEN_WIDTH,SCREEN_HEIGHT);
 };

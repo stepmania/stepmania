@@ -7,9 +7,7 @@ local function PlayerName(player)
 	
 	return LoadFont("_arial black 20px")..{
 		--Text="PlaceHolder";
-		InitCommand=function(self)
-			self:zoomx(1);
-		end;
+		InitCommand=cmd(zoomx,1);
 		SetCommand=function(self)
 			self:settext("");
 			if PROFILEMAN:IsPersistentProfile(player) then
@@ -26,38 +24,17 @@ local function PlayerName(player)
 				self:settext(name)
 			end
 		end;
-		PlayerJoinedMessageCommand=function(self)
-			self:playcommand("Set");
-		end;
-		CoinInsertedMessageCommand=function(self)
-			self:playcommand("Set");
-		end;
-		CoinModeChangedMessageCommand=function(self)
-			self:playcommand("Set");
-		end;
-		ScreenChangedMessageCommand=function(self)
-			self:playcommand("Set");
-		end;
-		StorageDevicesChangedMessageCommand=function(self)
-			self:playcommand("Set");
-		end;
+		PlayerJoinedMessageCommand=cmd(playcommand,"Set");
+		CoinInsertedMessageCommand=cmd(playcommand,"Set");
+		CoinModeChangedMessageCommand=cmd(playcommand,"Set");
+		ScreenChangedMessageCommand=cmd(playcommand,"Set");
+		StorageDevicesChangedMessageCommand=cmd(playcommand,"Set");
 	};
 end
 
 return Def.ActorFrame {
 	LoadFont("_fixedsys")..{
-		InitCommand=function(self)
-			self:blend('BlendMode_Add');
-			self:xy(10, 5);
-			self:shadowlength(0);
-			self:Stroke(0, 0, 0, 1);
-			self:wrapwidthpixels(SCREEN_WIDTH * 0.45);
-			self:maxwidth(SCREEN_WIDTH * 0.45);
-			self:horizalign(left);
-			self:SetTextureFiltering(false);
-			self:vertalign(top);
-			self:zoom(1.5);
-		end;
+		InitCommand=cmd(blend,'BlendMode_Add'xy,10,5;shadowlength,0;Stroke,{0,0,0,1};wrapwidthpixels,SCREEN_WIDTH*0.45;maxwidth,SCREEN_WIDTH*0.45;horizalign,left;SetTextureFiltering,false;vertalign,top;zoom,1.5);
 		SystemMessageMessageCommand=function(self,params)
 			self:settext(params.Message);
 			self:finishtweening();
@@ -65,18 +42,11 @@ return Def.ActorFrame {
 			self:sleep(3);
 			self:diffusealpha(0);
 		end;
-		HideSystemMessageMessageCommand=function(self)
-			self:finishtweening();
-		end;
+		HideSystemMessageMessageCommand=cmd(finishtweening);
 	};
 	
 	LoadFont("_arial black 20px")..{
-		InitCommand=function(self)
-			self:xy(SCREEN_CENTER_X, SCREEN_HEIGHT - 20);
-			self:zoom(1);
-			self:shadowlength(0);
-			self:playcommand("Text");
-		end;
+		InitCommand=cmd(xy,SCREEN_CENTER_X,SCREEN_HEIGHT-20;zoom,1;shadowlength,0;playcommand,"Text");
 		TextCommand=function(self)
 			if GAMESTATE:GetCoinMode() == 'CoinMode_Home' then
 				self:settext("Home Mode");
@@ -84,18 +54,10 @@ return Def.ActorFrame {
 				self:settext("Free Play")
 			end
 		end;
-		PlayerJoinedMessageCommand=function(self)
-			self:playcommand("Text");
-		end;
-		CoinInsertedMessageCommand=function(self)
-			self:playcommand("Text");
-		end;
-		CoinModeChangedMessageCommand=function(self)
-			self:playcommand("Text");
-		end;
-		ScreenChangedMessageCommand=function(self)
-			self:playcommand("Text");
-		end;
+		PlayerJoinedMessageCommand=cmd(playcommand,"Text");
+		CoinInsertedMessageCommand=cmd(playcommand,"Text");
+		CoinModeChangedMessageCommand=cmd(playcommand,"Text");
+		ScreenChangedMessageCommand=cmd(playcommand,"Text");
 	};
 	
 	ScreenChangedMessageCommand=function(self)
@@ -103,15 +65,9 @@ return Def.ActorFrame {
 	end;
 	
 	PlayerName(PLAYER_1)..{
-		InitCommand=function(self)
-			self:xy(20, SCREEN_HEIGHT - 20);
-			self:horizalign(left);
-		end;
+		InitCommand=cmd(xy,20,SCREEN_HEIGHT-20;horizalign,left);
 	};
 	PlayerName(PLAYER_2)..{
-		InitCommand=function(self)
-			self:xy(SCREEN_WIDTH - 20, SCREEN_HEIGHT - 20);
-			self:horizalign(right);
-		end;
+		InitCommand=cmd(xy,SCREEN_WIDTH-20,SCREEN_HEIGHT-20;horizalign,right);
 	};
 }

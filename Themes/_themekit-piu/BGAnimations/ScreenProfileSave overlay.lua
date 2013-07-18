@@ -12,15 +12,10 @@ return Def.ActorFrame {
 	end;
 	--
 	Draw.Box(SCREEN_WIDTH,50)..{
-		InitCommand=function(self) self:Center(); end;
+		InitCommand=cmd(Center);
 	};
 	LoadFont("_arial black 20px")..{
 		Text="Saving Profiles...";
-		InitCommand=function(self)
-			self:Center();
-			self:skewx(-0.1);
-			self:diffuse(color("#000000"));
-			self:Stroke(color("#ffffff"));
-		end;
+		InitCommand=cmd(Center;skewx,-0.1;diffuse,color("#000000");Stroke,color("#ffffff"));
 	};
 }

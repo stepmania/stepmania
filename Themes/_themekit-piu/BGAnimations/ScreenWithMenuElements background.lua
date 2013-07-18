@@ -1,11 +1,5 @@
 local particles = {
-	Def.Quad { 
-		InitCommand=function(self)
-			self:FullScreen();
-			self:diffuse(color("#003200"));
-			self:diffusetopedge(color("#000000"));
-		end;
-	}
+	Def.Quad { InitCommand=cmd(FullScreen;diffuse,color("#003200");diffusetopedge,color("#000000")); }
 }
 
 for i=1,30 do
@@ -19,9 +13,7 @@ for i=1,30 do
 			
 			self:diffuse(math.random(0.2,1),math.random(0.2,1),math.random(0.2,1),math.random(0.75,0.95))
 		end;
-		ScreenChangedMessageCommand=function(self)
-			self:playcommand("Init");
-		end;
+		ScreenChangedMessageCommand=cmd(playcommand,"Init");
 	}
 end
 

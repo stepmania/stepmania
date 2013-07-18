@@ -17,18 +17,8 @@ local function ModIcons(p)
 			};
 			LoadActor("i can flash")..{
 				Name="sfx";
-				InitCommand=function(self)
-					self:blend(Blend.Add);
-					self:zoom(0.125);
-				end;
-				SFXCommand=function(self)
-					self:stoptweening();
-					self:diffusealpha(1);
-					self:zoom(0.5);
-					self:linear(0.2);
-					self:zoom(1);
-					self:diffusealpha(0);
-				end;
+				InitCommand=cmd(blend,Blend.Add;zoom,0.125);
+				SFXCommand=cmd(stoptweening;diffusealpha,1;zoom,0.5;linear,0.2;zoom,1;diffusealpha,0);
 			};
 		}
 	end
@@ -47,12 +37,8 @@ local function ModIcons(p)
 			self:SetLoop(true);
 			self:playcommand("Set");
 		end;
-		PlayerOptionsChangedMessageCommand=function(self)
-			self:playcommand("Set");
-		end;
-		PlayerJoinedMessageCommand=function(self)
-			self:playcommand("Set");
-		end;
+		PlayerOptionsChangedMessageCommand=cmd(playcommand,"Set");
+		PlayerJoinedMessageCommand=cmd(playcommand,"Set");
 		--Here's where the magic happens
 		SetCommand=function(self)
 			local playermods = GAMESTATE:GetPlayerState(p):GetPlayerOptionsArray('ModsLevel_Preferred')
@@ -205,69 +191,34 @@ local function SongInformationDisplay()
 			self:diffusealpha(0);
 			self:queuecommand("Set")
 		end;
-		OffCommand=function(self)
-			self:finishtweening();
-		end;
+		OffCommand=cmd(finishtweening);
 	};
 end
 
 return Def.ActorFrame {
 	DifficultyMeter(PLAYER_1)..{
-		InitCommand=function(self)
-			self:FromCenterX(-120);
-			self:FromTop(100);
-			self:zoom(0.75);
-			self:diffuse(color("#646464"));
-			self:Stroke(color("#ffffff"));
-		end;
-		CurrentStepsP1ChangedMessageCommand=function(self)
-			self:playcommand("Set");
-		end;
+		InitCommand=cmd(FromCenterX,-120;FromTop,100;zoom,0.75;diffuse,color("#646464");Stroke,color("#ffffff"));
+		CurrentStepsP1ChangedMessageCommand=cmd(playcommand,"Set");
 	};
 	DifficultyMeter(PLAYER_2)..{
-		InitCommand=function(self)
-			self:FromCenterX(120);
-			self:FromTop(100);
-			self:zoom(0.75);
-			self:diffuse(color("#646464"));
-			self:Stroke(color("#ffffff"));
-		end;
-		CurrentStepsP2ChangedMessageCommand=function(self)
-			self:playcommand("Set");
-		end;
+		InitCommand=cmd(FromCenterX,120;FromTop,100;zoom,0.75;diffuse,color("#646464");Stroke,color("#ffffff"));
+		CurrentStepsP2ChangedMessageCommand=cmd(playcommand,"Set");
 	};
 	Draw.RoundBox(SCREEN_WIDTH*0.75+10,50,color("#ffffff"))..{
-		InitCommand=function(self)
-			self:CenterX();
-			self:FromBottom(-75);
-		end;
+		InitCommand=cmd(CenterX;FromBottom,-75);
 	};
 	Draw.RoundBox(SCREEN_WIDTH*0.75,40,5,5,color("#0000c8"))..{
-		InitCommand=function(self)
-			self:CenterX();
-			self:FromBottom(-75);
-		end;
+		InitCommand=cmd(CenterX;FromBottom,-75);
 	};
 	SongInformationDisplay()..{
-		InitCommand=function(self)
-			self:CenterX();
-			self:FromBottom(-75);
-			self:diffuse(color("#009600"));
-			self:Stroke(color("#000000"));
-		end;
+		InitCommand=cmd(CenterX;FromBottom,-75;diffuse,color("#009600");Stroke,color("#000000"));
 	};
 	ModIcons(PLAYER_1)..{
-		InitCommand=function(self)
-			self:FromLeft(30);
-			self:FromTop(240);
-		end;
+		InitCommand=cmd(FromLeft,30;FromTop,240);
 		Condition=not GetUserPrefB("OptionsMode");
 	};
 	ModIcons(PLAYER_2)..{
-		InitCommand=function(self)
-			self:FromRight(-30);
-			self:FromTop(240);
-		end;
+		InitCommand=cmd(FromRight,-30;FromTop,240);
 		Condition=not GetUserPrefB("OptionsMode");
 	};
 }

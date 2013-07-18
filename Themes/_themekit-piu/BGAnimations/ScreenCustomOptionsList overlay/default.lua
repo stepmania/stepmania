@@ -168,7 +168,7 @@ local function OptionsListDisplay(player)
 						self:playcommand("SetChoices");
 						--self:diffuse(color("#000000"));
 					end;
-
+					-- cmd(diffuse,color("#000000"));
 					ChoiceToggleMessageCommand=function(self,params)
 						if params.PlayerNumber ~= player then return end
 						if params.Row ~= k then return end

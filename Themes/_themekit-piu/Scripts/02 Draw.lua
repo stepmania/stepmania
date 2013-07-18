@@ -12,9 +12,7 @@ Def.ActorFrame {
 	Draw.RoundBox(410,310,20,20,color(#000000));
 	Draw.RoundBox(400,300,10,10);
 	Draw.Box(256,64,color("#ffcc66"))..{
-		InitCommand=function(self)
-			self:y(-300);
-		end;
+		InitCommand=cmd(y,-300);
 	};
 }
 </code>
@@ -193,7 +191,7 @@ Draw = {
 				self:GetChild("BottomLeft"):xy(-w/2+hr/2,h/2-vr/2);
 				self:GetChild("BottomRight"):xy(w/2-hr/2,h/2-vr/2);
 				--coloree :3
-				self:runcommandsonleaves(function(self) self:diffuse(c) end);
+				self:runcommandsonleaves(cmd(diffuse,c))
 			end;
 			--lol sound effects
 			--wrrr whrr wrrr

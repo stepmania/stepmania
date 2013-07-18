@@ -76,9 +76,7 @@ local function update(self)
 end
 
 return Def.ActorFrame {
-	InitCommand=function(self)
-		self:SetUpdateFunction(update);
-	end;
+	InitCommand=cmd(SetUpdateFunction,update);
 	SpeedModLaunchedMessageCommand=function(self,params)
 		local approach = params.Approach
 		local value = params.Value
@@ -113,4 +111,5 @@ return Def.ActorFrame {
 		--SCREENMAN:SystemMessage(playerstate:GetPlayerOptions('ModsLevel_Preferred'));
 		--SCREENMAN:SystemMessage(value)
 	end;
+	--LoadFont()..{ Name="_debug"; InitCommand=cmd(x,50;CenterY;rotationz,90); };
 }

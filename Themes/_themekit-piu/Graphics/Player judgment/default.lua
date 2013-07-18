@@ -43,94 +43,23 @@ return Def.ActorFrame {
 		this.combo:visible(false);
 		this.label:visible(false);
 		
+		--self:runcommandsonleaves(cmd( SetTextureFiltering,false ))
 	end;
 
 	--judges
 	LoadActor("judge")..{
 		Name="judgm";
-		NormalCommand=function(self)
-			self:shadowlength(0);
-			self:diffusealpha(1);
-			self:zoomx(0.913);
-			self:zoomy(1.175);
-			self:decelerate(0.175);
-			self:zoomx(0.62);
-			self:zoomy(0.78);
-			self:accelerate(0.06);
-			self:zoomx(0.63);
-			self:zoomy(0.82);
-			self:sleep(0.04);
-			self:diffusealpha(0.5);
-			self:zoomx(0.97);
-			self:zoomy(0.82);
-			self:sleep(0.04);
-			self:zoomx(0.63);
-			self:zoomy(0.82);
-			self:decelerate(0.175);
-			self:zoomx(0.82);
-			self:zoomy(0.82);
-			self:diffusealpha(0);
-		end;
+		NormalCommand=cmd(shadowlength,0;diffusealpha,1;zoomx,0.913;zoomy,1.175;decelerate,0.175;zoomx,0.62;zoomy,0.78;accelerate,0.06;zoomx,0.63;zoomy,0.82;sleep,0.04;diffusealpha,0.5;zoomx,0.97;zoomy,0.82;sleep,0.04;zoomx,0.63;zoomy,0.82;decelerate,0.175;zoomx,0.82;zoomy,0.82;diffusealpha,0)
 	};
 	--label
 	LoadActor("label")..{
 		Name="label";
-		NormalCommand=function(self)
-			self:shadowlength(0);
-			self:diffusealpha(1);
-			self:zoomx(1.58);
-			self:zoomy(1.6);
-			self:y(100);
-			self:decelerate(0.175);
-			self:zoomx(1.09);
-			self:zoomy(1.1);
-			self:y(70);
-			self:accelerate(0.06);
-			self:zoomx(1.14);
-			self:zoomy(1.1);
-			self:y(71);
-			self:sleep(0.04);
-			self:diffusealpha(0.5);
-			self:zoomx(1.66);
-			self:zoomy(1.1);
-			self:sleep(0.04);
-			self:zoomx(1.14);
-			self:zoomy(1.1);
-			self:decelerate(0.175);
-			self:zoomx(1.34);
-			self:zoomy(1.1);
-			self:diffusealpha(0);
-		end;
+		NormalCommand=cmd(shadowlength,0;diffusealpha,1;zoomx,1.58;zoomy,1.6;y,100;decelerate,0.175;zoomx,1.09;zoomy,1.1;y,70;accelerate,0.06;zoomx,1.14;zoomy,1.1;y,71;sleep,0.04;diffusealpha,0.5;zoomx,1.66;zoomy,1.1;sleep,0.04;zoomx,1.14;zoomy,1.1;decelerate,0.175;zoomx,1.34;zoomy,1.1;diffusealpha,0)
 	};
 	--combo
 	LoadFont("combo")..{
 		Name="combo";
-		NormalCommand=function(self)
-			self:shadowlength(0);
-			self:diffusealpha(1);
-			self:zoomx(1.58);
-			self:zoomy(1.6);
-			self:y(30);
-			self:decelerate(0.175);
-			self:zoomx(1.09);
-			self:zoomy(1.1);
-			self:y(21);
-			self:accelerate(0.06);
-			self:zoomx(1.14);
-			self:zoomy(1.1);
-			self:y(22);
-			self:sleep(0.04);
-			self:diffusealpha(0.5);
-			self:zoomx(1.66);
-			self:zoomy(1.1);
-			self:sleep(0.04);
-			self:zoomx(1.14);
-			self:zoomy(1.1);
-			self:decelerate(0.175);
-			self:zoomx(1.34);
-			self:zoomy(1.1);
-			self:diffusealpha(0);
-		end;
+		NormalCommand=cmd(shadowlength,0;diffusealpha,1;zoomx,1.58;zoomy,1.6;y,30;decelerate,0.175;zoomx,1.09;zoomy,1.1;y,21;accelerate,0.06;zoomx,1.14;zoomy,1.1;y,22;sleep,0.04;diffusealpha,0.5;zoomx,1.66;zoomy,1.1;sleep,0.04;zoomx,1.14;zoomy,1.1;decelerate,0.175;zoomx,1.34;zoomy,1.1;diffusealpha,0)
 	};
 	
 	--"PERFECT"!

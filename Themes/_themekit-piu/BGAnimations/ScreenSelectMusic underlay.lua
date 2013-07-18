@@ -53,21 +53,14 @@ return Def.ActorFrame {
 		--SCREENMAN:SystemMessage(ToEnumShortString(player).." mods: "..playermods);
 	end;
 	LoadSound("START")..{
-		OffCommand=function(self)
-			self:play();
+		OffCommand=cmd(play);
 	};
 	LoadSound("ScreenSelectMusic","Options")..{
-		PlayerOptionsChangedMessageCommand=function(self)
-			self:stop();
-			self:play();
+		PlayerOptionsChangedMessageCommand=cmd(stop;play);
 	};
 	LoadSound("3-2")..{
-		SongChosenMessageCommand=function(self)
-			self:stop();
-			self:play();
-		end;
-		OffCommand=function(self)
-			self:play();
-		end;
+		--TwoPartConfirmCanceledMessageCommand=cmd(play);
+		SongChosenMessageCommand=cmd(stop;play);
+		OffCommand=cmd(play);
 	};
 }
