@@ -256,7 +256,7 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 	 * entirely time spacing (respectively). Occasionally, we tween between them. */
 	if( pPlayerState->m_PlayerOptions.GetCurrent().m_fTimeSpacing != 1.0f )
 	{
-		float bShowEffects = !( GAMESTATE->m_bInStepEditor || !GAMESTATE->m_bIsUsingStepTiming );
+		float bShowEffects = !GAMESTATE->m_bInStepEditor;
 		float fBeatsUntilStep = fNoteBeat - fSongBeat;
 		if( bShowEffects )
 			fBeatsUntilStep = GetDisplayedBeat(pPlayerState, fNoteBeat) - GetDisplayedBeat(pPlayerState, fSongBeat);
