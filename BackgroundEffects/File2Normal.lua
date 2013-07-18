@@ -5,36 +5,16 @@ local stretchBG = PREFSMAN:GetPreference("StretchBackgrounds")
 local t = Def.ActorFrame {};
 
 t[#t+1] = LoadActor(Var "File1") .. {
-	OnCommand=function(self)
-		self:x(SCREEN_CENTER_X);
-		self:y(SCREEN_CENTER_Y);
-		self:scale_or_crop_background();
-		self:diffuse(Color1);
-		self:effectclock("music");
-	end;
-	GainFocusCommand=function(self)
-		self:play();
-	end;
-	LoseFocusCommand=function(self)
-		self:pause();
-	end;
+	OnCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y;scale_or_crop_background;diffuse,Color1;effectclock,"music");
+	GainFocusCommand=cmd(play);
+	LoseFocusCommand=cmd(pause);
 };
 
 if Var("File2") ~= nil then
 	t[#t+1] = LoadActor(Var("File2")) .. {
-	OnCommand=function(self)
-		self:x(SCREEN_CENTER_X);
-		self:y(SCREEN_CENTER_Y);
-		self:scale_or_crop_background();
-		self:diffuse(Color2); -- originally Color1: assuming mistake.
-		self:effectclock("music");
-	end;
-	GainFocusCommand=function(self)
-		self:play();
-	end;
-	LoseFocusCommand=function(self)
-		self:pause();
-	end;
+	OnCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y;scale_or_crop_background;diffuse,Color1;effectclock,"music");
+	GainFocusCommand=cmd(play);
+	LoseFocusCommand=cmd(pause);
 	};
 end;
 
