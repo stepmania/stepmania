@@ -139,9 +139,9 @@ function ActorFrame:propagatecommand(...)
 end
 
 -- Shortcut for alignment.
---   function(self) self:align(0.5,0.5); end;  -- align center
---   function(self) self:align(0.0,0.0); end;  -- align top-left
---   function(self) self:align(0.5,0.0); end;  -- align top-center
+--   cmd(align,0.5,0.5)  -- align center
+--   cmd(align,0.0,0.0)  -- align top-left
+--   cmd(align,0.5,0.0)  -- align top-center
 function Actor:align(h, v)
 	self:halign( h )
 	self:valign( v )

@@ -4,7 +4,5 @@ return Def.Quad{
 
 	-- colors can either be entered as hex ("#FFFFFFFF") or 0..1 ("1.0,1.0,1.0,1.0")
 	-- where the values are Red, Green, Blue, and Alpha (transparency).
-	InitCommand=function(self)
-		self:FullScreen();
-		self:diffuse(color("#fffdf2"));
+	InitCommand=cmd(FullScreen;diffuse,color("#fffdf2"));
 };
