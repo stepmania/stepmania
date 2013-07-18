@@ -56,99 +56,100 @@ local t = Def.ActorFrame {};
 t[#t+1] = Def.ActorFrame {
 	LoadActor(THEME:GetPathG("Judgment","Normal")) .. {
 		Name="Judgment";
-		InitCommand=function(self)
-			self:pause();
-			self:visible(false);
-		end;
+		InitCommand=cmd(pause;visible,false);
 		OnCommand=THEME:GetMetric("Judgment","JudgmentOnCommand");
 		ResetCommand=cmd(finishtweening;stopeffect;visible,false);
 	};
 	LoadFont("Combo Numbers") .. {
 		Name="ProtimingDisplay";
 		Text="";
-		InitCommand=function(self)
-			self:visible(false);
-		end;
+		InitCommand=cmd(visible,false);
 		OnCommand=THEME:GetMetric("Protiming","ProtimingOnCommand");
 		ResetCommand=cmd(finishtweening;stopeffect;visible,false);
 	};
 	LoadFont("Common Normal") .. {
 		Name="ProtimingAverage";
 		Text="";
-		InitCommand=function(self)
-			self:visible(false);
-		end;
+		InitCommand=cmd(visible,false);
 		OnCommand=THEME:GetMetric("Protiming","AverageOnCommand");
 		ResetCommand=cmd(finishtweening;stopeffect;visible,false);
 	};
 	LoadFont("Common Normal") .. {
 		Name="TextDisplay";
 		Text=THEME:GetString("Protiming","MS");
-		InitCommand=function(self)
-			self:visible(false);
-		end;
+		InitCommand=cmd(visible,false);
 		OnCommand=THEME:GetMetric("Protiming","TextOnCommand");
 		ResetCommand=cmd(finishtweening;stopeffect;visible,false);
 	};
 	Def.Quad {
 		Name="ProtimingGraphBG";
-		InitCommand=function(self)
-			self:visible(false);
-			self:y(32);
-			self:zoomto(ProtimingWidth, 16);
-		end;
-		ResetCommand=function(self)
-			self:finishtweening();
-			self:diffusealpha(0.8);
-			self:visible(false);
-		end;
-		OnCommand=function(self)
-			self:diffuse(Color("Black"));
-			self:diffusetopedge(color("0.1,0.1,0.1,1"));
-			self:diffusealpha(0.8);
-			self:shadowlength(2);
-		end;
+		InitCommand=cmd(visible,false;y,32;zoomto,ProtimingWidth,16);
+		ResetCommand=cmd(finishtweening;diffusealpha,0.8;visible,false);
+		OnCommand=cmd(diffuse,Color("Black");diffusetopedge,color("0.1,0.1,0.1,1");diffusealpha,0.8;shadowlength,2;);
 	};
 	Def.Quad {
 		Name="ProtimingGraphWindowW3";
 		InitCommand=cmd(visible,false;y,32;zoomto,ProtimingWidth-4,16-4);
-		ResetCommand=cmd(finishtweening;diffusealpha,1;visible,false);
+		ResetCommand=function(self)
+			self:finishtweening();
+			self:diffusealpha(1);
+			self:visible(false);
+		end;
 		OnCommand=cmd(diffuse,GameColor.Judgment["JudgmentLine_W3"];);
 	};
 	Def.Quad {
 		Name="ProtimingGraphWindowW2";
 		InitCommand=cmd(visible,false;y,32;zoomto,scale(PREFSMAN:GetPreference("TimingWindowSecondsW2"),0,PREFSMAN:GetPreference("TimingWindowSecondsW3"),0,ProtimingWidth-4),16-4);
-		ResetCommand=cmd(finishtweening;diffusealpha,1;visible,false);
+		ResetCommand=function(self)
+			self:finishtweening();
+			self:diffusealpha(1);
+			self:visible(false);
+		end;
 		OnCommand=cmd(diffuse,GameColor.Judgment["JudgmentLine_W2"];);
 	};
 	Def.Quad {
 		Name="ProtimingGraphWindowW1";
 		InitCommand=cmd(visible,false;y,32;zoomto,scale(PREFSMAN:GetPreference("TimingWindowSecondsW1"),0,PREFSMAN:GetPreference("TimingWindowSecondsW3"),0,ProtimingWidth-4),16-4);
-		ResetCommand=cmd(finishtweening;diffusealpha,1;visible,false);
+		ResetCommand=function(self)
+			self:finishtweening();
+			self:diffusealpha(1);
+			self:visible(false);
+		end;
 		OnCommand=cmd(diffuse,GameColor.Judgment["JudgmentLine_W1"];);
 	};
 	Def.Quad {
 		Name="ProtimingGraphUnderlay";
 		InitCommand=cmd(visible,false;y,32;zoomto,ProtimingWidth-4,16-4);
-		ResetCommand=cmd(finishtweening;diffusealpha,0.25;visible,false);
+		ResetCommand=function(self)
+			self:finishtweening();
+			self:diffusealpha(0.25);
+			self:visible(false);
+		end;
 		OnCommand=cmd(diffuse,Color("Black");diffusealpha,0.25);
 	};
 	Def.Quad {
 		Name="ProtimingGraphFill";
 		InitCommand=cmd(visible,false;y,32;zoomto,0,16-4;horizalign,left;);
-		ResetCommand=cmd(finishtweening;diffusealpha,1;visible,false);
+		ResetCommand=function(self)
+			self:finishtweening();
+			self:diffusealpha(1);
+			self:visible(false);
+		end;
 		OnCommand=cmd(diffuse,Color("Red"););
 	};
 	Def.Quad {
 		Name="ProtimingGraphAverage";
 		InitCommand=cmd(visible,false;y,32;zoomto,2,7;);
-		ResetCommand=cmd(finishtweening;diffusealpha,0.85;visible,false);
+		ResetCommand=function(self)
+			self:finishtweening();
+			self:diffusealpha(0.85);
+			self:visible(false);
+		end;
 		OnCommand=cmd(diffuse,Color("Orange");diffusealpha,0.85);
 	};
 	Def.Quad {
 		Name="ProtimingGraphCenter";
 		InitCommand=cmd(visible,false;y,32;zoomto,2,16-4;);
-		ResetCommand=cmd(finishtweening;diffusealpha,1;visible,false);
 		OnCommand=cmd(diffuse,Color("White");diffusealpha,1);
 	};
 	InitCommand = function(self)
@@ -221,7 +222,6 @@ t[#t+1] = Def.ActorFrame {
 		c.ProtimingGraphFill:visible( bShowProtiming );
 		c.ProtimingGraphFill:finishtweening();
 		c.ProtimingGraphFill:decelerate(1/60);
--- 		c.ProtimingGraphFill:zoomtowidth( clamp(fTapNoteOffset * 188,-188/2,188/2) );
 		c.ProtimingGraphFill:zoomtowidth( clamp(
 				scale(
 				fTapNoteOffset,

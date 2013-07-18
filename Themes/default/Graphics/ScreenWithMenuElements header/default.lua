@@ -1,28 +1,20 @@
 local t = Def.ActorFrame {};
 
 t[#t+1] = Def.Quad {
-	InitCommand=function(self)
-		self:vertalign(top);
-		self:zoomto(SCREEN_WIDTH+1,50);
-		self:diffuse(Color.Black);
-	end;
+	InitCommand=cmd(vertalign,top;zoomto,SCREEN_WIDTH+1,50;diffuse,Color.Black);
 }
-
+--[[ t[#t+1] = LoadActor("Header") .. {
+	InitCommand=cmd(vertalign,top;zoomtowidth,SCREEN_WIDTH+1;diffuse,color("#ffd400"));
+}; ]]
+--[[ t[#t+1] = LoadActor("_texture stripe") .. {
+	InitCommand=cmd(vertalign,top;zoomto,SCREEN_WIDTH+64,44;customtexturerect,0,0,SCREEN_WIDTH+64/8,44/32);
+	OnCommand=cmd(fadebottom,0.8;texcoordvelocity,1,0;skewx,-0.0025;diffuse,Color("Black");diffusealpha,0.235);
+}; --]]
 t[#t+1] = LoadFont("Common Bold") .. {
 	Name="HeaderText";
 	Text=Screen.String("HeaderText");
-	InitCommand=function(self)
-		self:x(-SCREEN_CENTER_X+24);
-		self:y(24);
-		self:zoom(1);
-		self:horizalign(left);
-		self:shadowlength(0);
-		self:maxwidth(200);
-	end;
-	OnCommand=function(self)
-		self:strokecolor(Color.Invisible);
-		self:diffusebottomedge(color("0.75,0.75,0.75"));
-	end;
+	InitCommand=cmd(x,-SCREEN_CENTER_X+24;y,24;zoom,1;horizalign,left;shadowlength,0;maxwidth,200);
+	OnCommand=cmd(strokecolor,Color.Invisible;diffusebottomedge,color("0.75,0.75,0.75"));
 	UpdateScreenHeaderMessageCommand=function(self,param)
 		self:settext(param.Header);
 	end;

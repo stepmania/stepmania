@@ -8,24 +8,12 @@ local fSpacingX = 72;
 local function MakeDisplayBar( fZoomX, fZoomY )
 	return Def.ActorFrame {
 		Def.Quad {
-			InitCommand=function(self)
-				self:vertalign(bottom);
-				self:y(1);
-				self:zoomto(fZoomX+2,fZoomY+2);
-			end;
-			OnCommand=function(self)
-				self:diffuse(Color("Black"));
-			end;
+			InitCommand=cmd(vertalign,bottom;y,1;zoomto,fZoomX+2,fZoomY+2);
+			OnCommand=cmd(diffuse,Color("Black"));
 		};
 		Def.Quad {
-			InitCommand=function(self)
-				self:vertalign(bottom);
-				self:zoomto(fZoomX,fZoomY);
-			end;
-			OnCommand=function(self)
-				self:diffuse(Color("Orange"));
-				self:diffusetopedge(Color("Yellow"));
-			end;
+			InitCommand=cmd(vertalign,bottom;zoomto,fZoomX,fZoomY);
+			OnCommand=cmd(diffuse,Color("Orange");diffusetopedge,Color("Yellow"));
 		};
 	};
 end
@@ -34,19 +22,13 @@ local function MakeIcon( sTarget )
 		LoadActor(THEME:GetPathG("MenuTimer","Frame"));
 		LoadFont("Common Normal") .. {
 			Text=sTarget[2];
-			InitCommand=function(self)
-				self:y(24+2);
-				self:zoom(0.5);
-				self:shadowlength(1);
-			end;
+			InitCommand=cmd(y,24+2;zoom,0.5;shadowlength,1);
 		};
 		--
 		LoadFont("Common Normal") .. {
 			Text="0";
-			OnCommand=function(self)
-				self:settext(( PREFSMAN:GetPreference("EventMode") ) 
-				and "∞" or PREFSMAN:GetPreference("SongsPerPlay"));
-			end;
+			OnCommand=cmd(settext,
+			( PREFSMAN:GetPreference("EventMode") ) and "∞" or PREFSMAN:GetPreference("SongsPerPlay")
 			);
 			Condition=sTarget[1] == "EventMode";
 		};

@@ -17,35 +17,16 @@ local function Clock()
 	-- clock
 	clock = Def.ActorFrame {
 		Name="Clock",
-		InitCommand=function(self)
-			self:x(50);
-			self:y(12);
-			self:playcommand("Update")
-		end;
+		InitCommand=cmd(x,50;y,12;playcommand,"Update"),
 		ScreenChangedMessageCommand=UpdateVisible,
-		UpdateCommand=function(self)
-			self:runcommandsonleaves(function(self) 
-				self:queuecommand("Update");
-			end;);
-		end;
-		Def.RoundedBox(90,26)..{ 
-			InitCommand=function(self)
-				self:x(-22);
-				self:y(-4);
-			end;
-		};
+		UpdateCommand=cmd(runcommandsonleaves,cmd(queuecommand,"Update")),
+		Def.RoundedBox(90,26)..{ InitCommand=cmd(x,-22;y,-4) },
 		Def.ActorFrame {
 			Name="ClockText",
-			InitCommand=function(self)
-				self:y(-2);
-			end;
+			InitCommand=cmd(y,-2),
 			LoadFont("Common", "normal")..{
 				Text="00:00:",
-				InitCommand=function(self)
-					self:horizalign(right);
-					self:shadowlength(0);
-					self:diffusebottomedge(color("0.9,0.9,0.9"));
-				end;
+				InitCommand=cmd(horizalign,right;shadowlength,0;diffusebottomedge,color("0.9,0.9,0.9")),
 				UpdateCommand=function(self)
 					local hour, min = Hour(), Minute()
 					if hour > 12 and GetUserPrefB("Use12HourClock") then
@@ -60,11 +41,7 @@ local function Clock()
 			},
 			LoadFont("Common", "normal")..{
 				Text="00",
-				InitCommand=function(self)
-					self:horizalign(left);
-					self:shadowlength(0);
-					self:diffusebottomedge(color("0.9,0.9,0.9"));
-				end;
+				InitCommand=cmd(horizalign,left;shadowlength,0;diffusebottomedge,color("0.9,0.9,0.9")),
 				UpdateCommand=function(self)
 					local sec = Second()
 					self:settext(string.format('%02i', sec))
@@ -74,15 +51,7 @@ local function Clock()
 			},
 			LoadFont("Common", "normal")..{
 				Text="",
-				InitCommand=function(self)
-					self:x(28);
-					self:y(-3);
-					self:horizalign(left);
-					self:shadowlength(0);
-					self:diffusebottomedge(color("0.9,0.9,0.9"));
-					self:visible(false);
-					self:zoom(0.75);
-				end;
+				InitCommand=cmd(x,28;y,-3;horizalign,left;shadowlength,0;diffusebottomedge,color("0.9,0.9,0.9");visible,false;zoom,0.75),
 				UpdateCommand=function(self)
 					if not GetUserPrefB("Use12HourClock") then
 						self:visible(false)

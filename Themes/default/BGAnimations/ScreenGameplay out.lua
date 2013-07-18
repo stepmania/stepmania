@@ -3,10 +3,7 @@ local raveChildren
 local bg = Def.ActorFrame{
 	Def.Quad{
 		InitCommand=cmd(FullScreen;diffuse,color("0,0,0,0"));
-		OnCommand=function(self)
-			self:linear(5);
-			self:diffusealpha(1);
-		end;
+		OnCommand=cmd(linear,5;diffusealpha,1);
 	};
 
 	Def.ActorFrame{
@@ -34,54 +31,18 @@ local bg = Def.ActorFrame{
 
 		LoadActor(THEME:GetPathG("_rave result","P1"))..{
 			Name="P1Win";
-			InitCommand=function(self)
-				self:Center();
-				self:cropbottom(1);
-				self:fadebottom(1);
-			end;
-			OnCommand=function(self)
-				self:sleep(2);
-				self:linear(0.5);
-				self:cropbottom(0);
-				self:fadebottom(0);
-				self:sleep(1.75);
-				self:linear(0.25);
-				self:diffusealpha(0);
-			end;
+			InitCommand=cmd(Center;cropbottom,1;fadebottom,1;);
+			OnCommand=cmd(sleep,2;linear,0.5;cropbottom,0;fadebottom,0;sleep,1.75;linear,0.25;diffusealpha,0);
 		};
 		LoadActor(THEME:GetPathG("_rave result","P2"))..{
 			Name="P2Win";
-			InitCommand=function(self)
-				self:Center();
-				self:cropbottom(1);
-				self:fadebottom(1);
-			end;
-			OnCommand=function(self)
-				self:sleep(2);
-				self:linear(0.5);
-				self:cropbottom(0);
-				self:fadebottom(0);
-				self:sleep(1.75);
-				self:linear(0.25);
-				self:diffusealpha(0);
-			end;
+			InitCommand=cmd(Center;cropbottom,1;fadebottom,1;);
+			OnCommand=cmd(sleep,2;linear,0.5;cropbottom,0;fadebottom,0;sleep,1.75;linear,0.25;diffusealpha,0);
 		};
 		LoadActor(THEME:GetPathG("_rave result","draw"))..{
 			Name="Draw";
-			InitCommand=function(self)
-				self:Center();
-				self:cropbottom(1);
-				self:fadebottom(1);
-			end;
-			OnCommand=function(self)
-				self:sleep(2);
-				self:linear(0.5);
-				self:cropbottom(0);
-				self:fadebottom(0);
-				self:sleep(1.75);
-				self:linear(0.25);
-				self:diffusealpha(0);
-			end;
+			InitCommand=cmd(Center;cropbottom,1;fadebottom,1;);
+			OnCommand=cmd(sleep,2;linear,0.5;cropbottom,0;fadebottom,0;sleep,1.75;linear,0.25;diffusealpha,0);
 		};
 	};
 };

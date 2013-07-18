@@ -7,9 +7,7 @@ local function StepsDisplay(pn)
 	end
 
 	local t = Def.StepsDisplay {
-		InitCommand=function(self)
-			self:Load("StepsDisplay", GAMESTATE:GetPlayerState(pn));
-		end;
+		InitCommand=cmd(Load,"StepsDisplay",GAMESTATE:GetPlayerState(pn););
 	};
 
 	if pn == PLAYER_1 then
@@ -26,13 +24,8 @@ t[#t+1] = StandardDecorationFromFileOptional("AlternateHelpDisplay","AlternateHe
 
 local function PercentScore(pn)
 	local t = LoadFont("Common normal")..{
-		InitCommand=function(self)
-			self:zoom(0.625);
-			self:shadowlength(1);
-		end;
-		BeginCommand=function(self)
-			self:playcommand("Set");
-		end;
+		InitCommand=cmd(zoom,0.625;shadowlength,1);
+		BeginCommand=cmd(playcommand,"Set");
 		SetCommand=function(self)
 			local SongOrCourse, StepsOrTrail;
 			if GAMESTATE:IsCourseMode() then
@@ -79,28 +72,16 @@ local function PercentScore(pn)
 			end;
 			self:settext(text);
 		end;
-		CurrentSongChangedMessageCommand=function(self)
-			self:playcommand("Set");
-		end;
-		CurrentCourseChangedMessageCommand=function(self)
-			self:playcommand("Set");
-		end;
+		CurrentSongChangedMessageCommand=cmd(playcommand,"Set");
+		CurrentCourseChangedMessageCommand=cmd(playcommand,"Set");
 	};
 
 	if pn == PLAYER_1 then
-		t.CurrentStepsP1ChangedMessageCommand=function(self)
-			self:playcommand("Set");
-		end;
-		t.CurrentTrailP1ChangedMessageCommand=function(self)
-			self:playcommand("Set");
-		end;
+		t.CurrentStepsP1ChangedMessageCommand=cmd(playcommand,"Set");
+		t.CurrentTrailP1ChangedMessageCommand=cmd(playcommand,"Set");
 	else
-		t.CurrentStepsP2ChangedMessageCommand=function(self)
-			self:playcommand("Set");
-		end;
-		t.CurrentTrailP2ChangedMessageCommand=function(self)
-			self:playcommand("Set");
-		end;
+		t.CurrentStepsP2ChangedMessageCommand=cmd(playcommand,"Set");
+		t.CurrentTrailP2ChangedMessageCommand=cmd(playcommand,"Set");
 	end
 
 	return t;
@@ -114,16 +95,13 @@ for pn in ivalues(PlayerNumber) do
 		PlayerJoinedMessageCommand=function(self, params)
 			if params.Player == pn then
 				self:visible(true);
-				self:zoom(0);
-				self:bounceend(0.3);
-				self:zoom(1);
+				(cmd(zoom,0;bounceend,0.3;zoom,1))(self);
 			end;
 		end;
 		PlayerUnjoinedMessageCommand=function(self, params)
 			if params.Player == pn then
 				self:visible(true);
-				self:bouncebegin(0.3);
-				self:zoom(0);
+				(cmd(bouncebegin,0.3;zoom,0))(self);
 			end;
 		end;
 	};
@@ -181,18 +159,10 @@ t[#t+1] = StandardDecorationFromFileOptional("SongTime","SongTime") .. {
 		end;
 		self:settext( SecondsToMSS(length) );
 	end;
-	CurrentSongChangedMessageCommand=function(self)
-		self:playcommand("Set");
-	end;
-	CurrentCourseChangedMessageCommand=function(self)
-		self:playcommand("Set");
-	end;
-	CurrentTrailP1ChangedMessageCommand=function(self)
-		self:playcommand("Set");
-	end;
-	CurrentTrailP2ChangedMessageCommand=function(self)
-		self:playcommand("Set");
-	end;
+	CurrentSongChangedMessageCommand=cmd(playcommand,"Set");
+	CurrentCourseChangedMessageCommand=cmd(playcommand,"Set");
+	CurrentTrailP1ChangedMessageCommand=cmd(playcommand,"Set");
+	CurrentTrailP2ChangedMessageCommand=cmd(playcommand,"Set");
 }
 
 if not GAMESTATE:IsCourseMode() then
@@ -228,37 +198,20 @@ if not GAMESTATE:IsCourseMode() then
 		end;
 	end;
 	t[#t+1] = Def.ActorFrame {
-		OnCommand=function(self)
-			self:draworder(105);
-			self:x(SCREEN_CENTER_X-76);
-			self:y(SCREEN_CENTER_Y-72);
-			self:zoomy(0);
-			self:sleep(0.5);
-			self:decelerate(0.25);
-			self:zoomy(1);
-			self:SetUpdateFunction(CDTitleUpdate);
-		end;
-		OffCommand=function(self)
-			self:bouncebegin(0.15);
-			self:zoomx(0);
-		end;
+		OnCommand=cmd(draworder,105;x,SCREEN_CENTER_X-76;y,SCREEN_CENTER_Y-72;zoomy,0;sleep,0.5;decelerate,0.25;zoomy,1;SetUpdateFunction,CDTitleUpdate);
+		OffCommand=cmd(bouncebegin,0.15;zoomx,0);
 		Def.Sprite {
 			Name="CDTitle";
-			InitCommand=function(self)
-				self:y(19);
-			end;
+			InitCommand=cmd(y,19);
+			--OnCommand=cmd(draworder,106;shadowlength,1;zoom,0.75;diffusealpha,1;zoom,0;bounceend,0.35;zoom,0.75;spin;effectmagnitude,0,180,0);
 		};	
 	};
 	t[#t+1] = StandardDecorationFromFileOptional("NewSong","NewSong") .. {
-		InitCommand=function(self)
-			self:playcommand("Set");
-		end;
-		BeginCommand=function(self)
-			self:playcommand("Set");
-		end;
-		CurrentSongChangedMessageCommand=function(self)
-			self:playcommand("Set");
-		end;
+	-- 	ShowCommand=THEME:GetMetric(Var "LoadingScreen", "NewSongShowCommand" );
+	-- 	HideCommand=THEME:GetMetric(Var "LoadingScreen", "NewSongHideCommand" );
+		InitCommand=cmd(playcommand,"Set");
+		BeginCommand=cmd(playcommand,"Set");
+		CurrentSongChangedMessageCommand=cmd(playcommand,"Set");
 		SetCommand=function(self)
 	-- 		local pTargetProfile;
 			local sSong;
@@ -279,9 +232,7 @@ end;
 
 if GAMESTATE:IsCourseMode() then
 	t[#t+1] = StandardDecorationFromFileOptional("NumCourseSongs","NumCourseSongs")..{
-		InitCommand=function(self)
-			self:horizalign(right);
-		end;
+		InitCommand=cmd(horizalign,right);
 		SetCommand=function(self)
 			local curSelection= nil;
 			local sAppend = "";
@@ -298,23 +249,23 @@ if GAMESTATE:IsCourseMode() then
 				self:visible(false);
 			end;
 		end;
-		CurrentCourseChangedMessageCommand=function(self)
-			self:playcommand("Set");
-		end;
+		CurrentCourseChangedMessageCommand=cmd(playcommand,"Set");
 	};
 end
 
 t[#t+1] = StandardDecorationFromFileOptional("DifficultyDisplay","DifficultyDisplay");
 t[#t+1] = StandardDecorationFromFileOptional("SortOrderFrame","SortOrderFrame") .. {
-
+--[[ 	BeginCommand=cmd(playcommand,"Set");
+	SortOrderChangedMessageCommand=cmd(playcommand,"Set";);
+	SetCommand=function(self)
+		local s = SortOrderToLocalizedString( GAMESTATE:GetSortOrder() );
+		self:settext( s );
+		self:playcommand("Sort");
+	end; --]]
 };
 t[#t+1] = StandardDecorationFromFileOptional("SortOrder","SortOrderText") .. {
-	BeginCommand=function(self)
-		self:playcommand("Set");
-	end;
-	SortOrderChangedMessageCommand=function(self)
-		self:playcommand("Set");
-	end;
+	BeginCommand=cmd(playcommand,"Set");
+	SortOrderChangedMessageCommand=cmd(playcommand,"Set";);
 	SetCommand=function(self)
 		local s = SortOrderToLocalizedString( GAMESTATE:GetSortOrder() );
 		self:settext( s );
@@ -334,15 +285,10 @@ t[#t+1] = StandardDecorationFromFileOptional("SongOptions","SongOptionsText") ..
 -- Sounds
 t[#t+1] = Def.ActorFrame {
 	LoadActor(THEME:GetPathS("_switch","up")) .. {
-		SelectMenuOpenedMessageCommand=function(self)
-			self:playcommand("Set");
-		end;
+		SelectMenuOpenedMessageCommand=cmd(stop;play);
 	};
 	LoadActor(THEME:GetPathS("_switch","down")) .. {
-		SelectMenuClosedMessageCommand=function(self)
-			self:stop();
-			self:play();
-		end;
+		SelectMenuClosedMessageCommand=cmd(stop;play);
 	};
 };
 

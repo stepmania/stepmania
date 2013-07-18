@@ -10,21 +10,10 @@ function GetLocalProfiles()
 			}; --]]
 			LoadFont("Common Normal") .. {
 				Text=profile:GetDisplayName();
-				InitCommand=function(self)
-					self:shadowlength(1);
-					self:y(-10);
-					self:zoom(1);
-					self:ztest(true);
-				end;
+				InitCommand=cmd(shadowlength,1;y,-10;zoom,1;ztest,true);
 			};
 			LoadFont("Common Normal") .. {
-				InitCommand=function(self)
-					self:shadowlength(1);
-					self:y(8);
-					self:zoom(0.5);
-					self:vertspacing(-8);
-					self:ztest(true);
-				end;
+				InitCommand=cmd(shadowlength,1;y,8;zoom,0.5;vertspacing,-8;ztest,true);
 				BeginCommand=function(self)
 					local numSongsPlayed = profile:GetNumTotalSongsPlayed();
 					local s = numSongsPlayed == 1 and "Song" or "Songs";
@@ -41,9 +30,7 @@ end;
 function LoadCard(cColor)
 	local t = Def.ActorFrame {
 		LoadActor( THEME:GetPathG("ScreenSelectProfile","CardBackground") ) .. {
-			InitCommand=function(self)
-				self:diffuse(cColor);
-			end;
+			InitCommand=cmd(diffuse,cColor);
 		};
 		LoadActor( THEME:GetPathG("ScreenSelectProfile","CardFrame") );
 	};
@@ -70,14 +57,8 @@ function LoadPlayerStuff(Player)
 		}; --]]
 		LoadFont("Common Normal") .. {
 			Text=THEME:GetString("ScreenSelectProfile","PressStart");
-			InitCommand=function(self)
-				self:shadowlength(1);
-			end;
-			OnCommand=function(self)
-				self:diffuseshift();
-				self:effectcolor1(Color('White'));
-				self:effectcolor2(color("0.5,0.5,0.5"));
-			end;
+			InitCommand=cmd(shadowlength,1);
+			OnCommand=cmd(diffuseshift;effectcolor1,Color('White');effectcolor2,color("0.5,0.5,0.5"));
 		};
 	};
 	table.insert( ret, t );
@@ -96,45 +77,20 @@ function LoadPlayerStuff(Player)
 
 		InitCommand=cmd(y,-2);
 		Def.Quad {
-			InitCommand=function(self)
-				self:zoomto(200-10, 40+2);
-			end;
-			OnCommand=function(self)
-				self:diffuse(Color('Black'));
-				self:diffusealpha(0.5);
-			end;
+			InitCommand=cmd(zoomto,200-10,40+2);
+			OnCommand=cmd(diffuse,Color('Black');diffusealpha,0.5);
 		};
 		Def.Quad {
-			InitCommand=function(self)
-				self:zoomto(200-10, 40);
-			end;
-			OnCommand=function(self)
-				self:diffuse(PlayerColor(Player));
-				self:fadeleft(0.25);
-				self:faderight(0.25);
-				self:glow(color("1,1,1,0.25"));
-			end;
+			InitCommand=cmd(zoomto,200-10,40);
+			OnCommand=cmd(diffuse,PlayerColor(Player);fadeleft,0.25;faderight,0.25;glow,color("1,1,1,0.25"));
 		};
 		Def.Quad {
-			InitCommand=function(self)
-				self:zoomto(200-10, 40);
-				self:y(-40 / 2 + 20);
-			end;
-			OnCommand=function(self)
-				self:diffuse(Color("Black"));
-				self:fadebottom(1);
-				self:diffusealpha(0.35);
-			end;
+			InitCommand=cmd(zoomto,200-10,40;y,-40/2+20);
+			OnCommand=cmd(diffuse,Color("Black");fadebottom,1;diffusealpha,0.35);
 		};
 		Def.Quad {
-			InitCommand=function(self)
-				self:zoomto(200 - 10, 1);
-				self:y(-40 / 2 + 1);
-			end;
-			OnCommand=function(self)
-				self:diffuse(PlayerColor(Player));
-				self:glow(color("1,1,1,0.25"));
-			end;
+			InitCommand=cmd(zoomto,200-10,1;y,-40/2+1);
+			OnCommand=cmd(diffuse,PlayerColor(Player);glow,color("1,1,1,0.25"));
 		};	
 	};
 	table.insert( ret, t );

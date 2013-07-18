@@ -22,27 +22,31 @@ local function CreatePaneDisplayItem( _pnPlayer, _sLabel, _rcRadarCategory )
 	return Def.ActorFrame {
 		LoadFont("Common SemiBold") .. {
 			Text=string.upper( THEME:GetString("PaneDisplay",_sLabel) );
-			InitCommand=function(self)
-				self:horizalign(left);
-			end;
-			OnCommand=function(self)
-				self:zoom(0.5875);
-				self:diffuse(color("0.9,0.9,0.9"));
-				self:shadowlength(1);
-			end;
+			InitCommand=cmd(horizalign,left);
+			OnCommand=cmd(zoom,0.5875;diffuse,color("0.9,0.9,0.9");shadowlength,1);
 		};
 		LoadFont("Common Normal") .. {
 			Text=string.format("%04i", 0);
-			InitCommand=function(self)
-				self:x(96);
 			InitCommand=cmd(x,96;horizalign,right);
 			OnCommand=cmd(zoom,0.5875;shadowlength,1);
-			CurrentSongChangedMessageCommand=cmd(playcommand,"Set");
-			CurrentStepsP1ChangedMessageCommand=cmd(playcommand,"Set");
-			CurrentStepsP2ChangedMessageCommand=cmd(playcommand,"Set");
-			CurrentTrailP1ChangedMessageCommand=cmd(playcommand,"Set");
-			CurrentTrailP2ChangedMessageCommand=cmd(playcommand,"Set");
-			CurrentCourseChangedMessageCommand=cmd(playcommand,"Set");
+			CurrentSongChangedMessageCommand=function(self)
+				self:playcommand("Set");
+			end;
+			CurrentStepsP1ChangedMessageCommand=function(self)
+				self:playcommand("Set");
+			end;
+			CurrentStepsP2ChangedMessageCommand=function(self)
+				self:playcommand("Set");
+			end;
+			CurrentTrailP1ChangedMessageCommand=function(self)
+				self:playcommand("Set");
+			end;
+			CurrentTrailP2ChangedMessageCommand=function(self)
+				self:playcommand("Set");
+			end;
+			CurrentCourseChangedMessageCommand=function(self)
+				self:playcommand("Set");
+			end;
 			SetCommand=function(self)
 				local song = GAMESTATE:GetCurrentSong()
 				local course = GAMESTATE:GetCurrentCourse()
@@ -60,37 +64,34 @@ local function CreatePaneDisplayGraph( _pnPlayer, _sLabel, _rcRadarCategory )
 	return Def.ActorFrame {
 		LoadFont("Common Normal") .. {
 			Text=_sLabel;
-			InitCommand=function(self)
-				self:horizalign(left);
-			end;
-			OnCommand=function(self)
-				self:zoom(0.5);
-				self:shadowlength(1);
-			end;
+			InitCommand=cmd(horizalign,left);
+			OnCommand=cmd(zoom,0.5;shadowlength,1);
 		};
 		Def.Quad { 
-			InitCommand=function(self)
-				self:x(12);
-				self:zoomto(50, 10);
-				self:horizalign(left);
-			end;
-			OnCommand=function(self)
-				self:diffuse(Color("Black"));
-				self:shadowlength(1);
-				self:diffusealpha(0.5);
-			end;
+			InitCommand=cmd(x,12;zoomto,50,10;horizalign,left);
+			OnCommand=cmd(diffuse,Color("Black");shadowlength,1;diffusealpha,0.5);
 		};
 		Def.Quad {
-			InitCommand=function(self)
-				self:x(12);
 			InitCommand=cmd(x,12;zoomto,50,10;horizalign,left);
 			OnCommand=cmd(shadowlength,0;diffuse,Color("Green");diffusebottomedge,ColorLightTone(Color("Green")));
-			CurrentSongChangedMessageCommand=cmd(playcommand,"Set");
-			CurrentStepsP1ChangedMessageCommand=cmd(playcommand,"Set");
-			CurrentStepsP2ChangedMessageCommand=cmd(playcommand,"Set");
-			CurrentTrailP1ChangedMessageCommand=cmd(playcommand,"Set");
-			CurrentTrailP2ChangedMessageCommand=cmd(playcommand,"Set");
-			CurrentCourseChangedMessageCommand=cmd(playcommand,"Set");
+			CurrentSongChangedMessageCommand=function(self)
+				self:playcommand("Set");
+			end;
+			CurrentStepsP1ChangedMessageCommand=function(self)
+				self:playcommand("Set");
+			end;
+			CurrentStepsP2ChangedMessageCommand=function(self)
+				self:playcommand("Set");
+			end;
+			CurrentTrailP1ChangedMessageCommand=function(self)
+				self:playcommand("Set");
+			end;
+			CurrentTrailP2ChangedMessageCommand=function(self)
+				self:playcommand("Set");
+			end;
+			CurrentCourseChangedMessageCommand=function(self)
+				self:playcommand("Set");
+			end;
 			SetCommand=function(self)
 				local song = GAMESTATE:GetCurrentSong()
 				local course = GAMESTATE:GetCurrentCourse()
@@ -106,16 +107,26 @@ local function CreatePaneDisplayGraph( _pnPlayer, _sLabel, _rcRadarCategory )
 			end;
 		};
 		LoadFont("Common Normal") .. {
-			InitCommand=function(self)
-				self:x(14);
 			InitCommand=cmd(x,14;zoom,0.5;halign,0;);
 			OnCommand=cmd(shadowlength,1;strokecolor,color("0.15,0.15,0.15,0.625"));
-			CurrentSongChangedMessageCommand=cmd(playcommand,"Set");
-			CurrentStepsP1ChangedMessageCommand=cmd(playcommand,"Set");
-			CurrentStepsP2ChangedMessageCommand=cmd(playcommand,"Set");
-			CurrentTrailP1ChangedMessageCommand=cmd(playcommand,"Set");
-			CurrentTrailP2ChangedMessageCommand=cmd(playcommand,"Set");
-			CurrentCourseChangedMessageCommand=cmd(playcommand,"Set");
+			CurrentSongChangedMessageCommand=function(self)
+				self:playcommand("Set");
+			end;
+			CurrentStepsP1ChangedMessageCommand=function(self)
+				self:playcommand("Set");
+			end;
+			CurrentStepsP2ChangedMessageCommand=function(self)
+				self:playcommand("Set");
+			end;
+			CurrentTrailP1ChangedMessageCommand=function(self)
+				self:playcommand("Set");
+			end;
+			CurrentTrailP2ChangedMessageCommand=function(self)
+				self:playcommand("Set");
+			end;
+			CurrentCourseChangedMessageCommand=function(self)
+				self:playcommand("Set");
+			end;
 			SetCommand=function(self)
 				local song = GAMESTATE:GetCurrentSong()
 				local course = GAMESTATE:GetCurrentCourse()

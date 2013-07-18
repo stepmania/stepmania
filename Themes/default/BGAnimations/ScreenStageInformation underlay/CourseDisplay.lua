@@ -4,9 +4,7 @@ local course = GAMESTATE:GetCurrentCourse()
 local t = Def.ActorFrame{
 	-- background
 	Def.Sprite{
-		InitCommand=function(self)
-			self:(Center);
-		end;
+		InitCommand=cmd(Center);
 		BeginCommand=function(self)
 			if course:GetBackgroundPath() then
 				self:Load( course:GetBackgroundPath() )
@@ -15,28 +13,13 @@ local t = Def.ActorFrame{
 				self:LoadFromCurrentSongBackground()
 			end
 		end;
-		OnCommand=function(self)
-			self:diffusealpha(0);
-			self:scale_or_crop_background();
-			self:sleep(0.5);
-			self:linear(0.50);
-			self:diffusealpha(1);
-			self:sleep(3);
-		end;
+		OnCommand=cmd(diffusealpha,0;scale_or_crop_background;sleep,0.5;linear,0.50;diffusealpha,1;sleep,3);
 	};
 	-- alternate background
 	Def.Sprite{
-		InitCommand=function(self)
-			self:(Center);
-		end;
-		BeginCommand=function(self)
-			self:LoadFromCurrentSongBackground();
-			self:scale_or_crop_background();
-			self:diffusealpha(0);
-		OnCommand=function(self)
-			self:sleep(4);
-			self:playcommand("Show");
-		end;
+		InitCommand=cmd(Center;);
+		BeginCommand=cmd(LoadFromCurrentSongBackground;scale_or_crop_background;diffusealpha,0);
+		OnCommand=cmd(sleep,4;playcommand,"Show");
 		ShowCommand=function(self)
 			if course:HasBackground() then
 				self:accelerate(0.25)
