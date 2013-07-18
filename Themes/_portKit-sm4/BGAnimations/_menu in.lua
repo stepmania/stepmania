@@ -1,16 +1,8 @@
 return Def.ActorFrame {
 	LoadActor( THEME:GetPathS("", "_swoosh normal") ) .. {
-
+		--StartTransitioningCommand=cmd(play);
 	};
 	LoadActor("_moveon") .. {
-		OnCommand=function(self)
-			self:x(SCREEN_CENTER_X);
-			self:y(SCREEN_CENTER_Y);
-			self:diffusealpha(1);
-			self:linear(0.2);
-			self:diffusealpha(0);
-			self:zoomx(1);
-			self:zoomy(0);
-		end;
+		OnCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y;diffusealpha,1;linear,0.2;diffusealpha,0;zoomx,1;zoomy,0;);
 	};
 };
