@@ -10,14 +10,8 @@ local function CreateDebugGrid()
 	for a=1,numY do
 		for b=1,numX do 
 			t[#t+1] = Def.Quad {
-				InitCommand=function(self)
-					self:x(b * tGridSizeMajor[1] - (tGridSizeMajor[1] / 2));
-					self:y(a * tGridSizeMajor[2] - (tGridSizeMajor[2] / 2));
-				end;
-				OnCommand=function(self)
-					self:zoomto(tGridSizeMajor[1] - 2, tGridSizeMajor[2] - 2);
-					self:diffuse(color("1,1,1,0.25"));
-				end;
+				InitCommand=cmd(x,b*tGridSizeMajor[1]-(tGridSizeMajor[1]/2);y,a*tGridSizeMajor[2]-(tGridSizeMajor[2]/2));
+				OnCommand=cmd(zoomto,tGridSizeMajor[1]-2,tGridSizeMajor[2]-2;diffuse,color("1,1,1,0.25"));
 			};
 		end;
 	end;
@@ -26,90 +20,42 @@ end --]]
 
 --
 t[#t+1] = Def.ActorFrame {
-	InitCommand=function(self)
-		self:x(SCREEN_CENTER_X);
-		self:y(SCREEN_CENTER_Y);
-	end;
+	InitCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y);
 	LoadActor("VOL1-29-NTSC") .. {
-		InitCommand=function(self)
-			self:scaletoclipped(SCREEN_WIDTH, SCREEN_HEIGHT);
-		end;
-		OnCommand=function(self)
-			self:diffusealpha(0.75);
-		end;
+		InitCommand=cmd(scaletoclipped,SCREEN_WIDTH,SCREEN_HEIGHT);
+		OnCommand=cmd(diffusealpha,0.75);
 	};
 };
 --
 local bShow = 0;
 t[#t+1] = Def.ActorFrame {
-	InitCommand=funtion(self)
-		self:visible(false);
-	end;
+	InitCommand=cmd(visible,false);
 	ToggleConsoleDisplayMessageCommand=function(self)
 		bShow = 1 - bShow;
 		self:visible( bShow == 1 );
 	end;
 	-- Grid
---[[ 	
-	LoadActor("_32") .. {
-		InitCommand=function(self)
-			self:x(SCREEN_CENTER_X);
-			self:y(SCREEN_CENTER_Y);
-			self:zoomto(SCREEN_WIDTH, SCREEN_HEIGHT);
-			self:customtexturerect(0, 0, SCREEN_WIDTH / 32, SCREEN_HEIGHT / 32);
-		end;
-		OnCommand=function(self)
-			self:diffuse(color("0,0,0,0.5"));
-		end;
+--[[ 	LoadActor("_32") .. {
+		InitCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y;zoomto,SCREEN_WIDTH,SCREEN_HEIGHT;customtexturerect,0,0,SCREEN_WIDTH/32,SCREEN_HEIGHT/32);
+		OnCommand=cmd(diffuse,color("0,0,0,0.5"));
 	};
 	LoadActor("_16") .. {
-		InitCommand=function(self)
-			self:x(SCREEN_CENTER_X);
-			self:y(SCREEN_CENTER_Y);
-			self:zoomto(SCREEN_WIDTH, SCREEN_HEIGHT);
-			self:customtexturerect(0, 0, SCREEN_WIDTH / 16, SCREEN_HEIGHT / 16);
-		end;
-		OnCommand=function(self)
-			self:diffuse(color("1,1,1,0.125"));
-		end;
-	};
---]]
---[[ 	
-	LoadActor("_8") .. {
-		InitCommand=function(self)
-			self:x(SCREEN_CENTER_X);
-			self:y(SCREEN_CENTER_Y);
-			self:zoomto(SCREEN_WIDTH, SCREEN_HEIGHT);
-			self:customtexturerect(0, 0, SCREEN_WIDTH / 8, SCREEN_HEIGHT / 8);
-		end;
-		OnCommand=function(self)
-			self:diffuse(color("#00BFE833"));
-		end;
-	};
---]]
+		InitCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y;zoomto,SCREEN_WIDTH,SCREEN_HEIGHT;customtexturerect,0,0,SCREEN_WIDTH/16,SCREEN_HEIGHT/16);
+		OnCommand=cmd(diffuse,color("1,1,1,0.125"));
+	}; --]]
+--[[ 	LoadActor("_8") .. {
+		InitCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y;zoomto,SCREEN_WIDTH,SCREEN_HEIGHT;customtexturerect,0,0,SCREEN_WIDTH/8,SCREEN_HEIGHT/8);
+		OnCommand=cmd(diffuse,color("#00BFE833"));
+	}; --]]
 	-- Left
 	Def.Quad {
-		InitCommand=function(self)
-			self:horizalign(left);
-			self:x(SCREEN_LEFT);
-			self:y(SCREEN_CENTER_Y);
-			self:zoomto(16, SCREEN_HEIGHT);
-		end;
-		OnCommand=function(self)
-			self:diffuse(color("0,0,0,0.5"));
-		end;
+		InitCommand=cmd(horizalign,left;x,SCREEN_LEFT;y,SCREEN_CENTER_Y;zoomto,16,SCREEN_HEIGHT);
+		OnCommand=cmd(diffuse,color("0,0,0,0.5"));
 	};
 	-- Right
 	Def.Quad {
-		InitCommand=function(self)
-			self:horizalign(right);
-			self:x(SCREEN_RIGHT);
-			self:y(SCREEN_CENTER_Y);
-			self:zoomto(16, SCREEN_HEIGHT);
-		end;
-		OnCommand=function(self)
-			self:diffuse(color("0,0,0,0.5"));
-		end;
+		InitCommand=cmd(horizalign,right;x,SCREEN_RIGHT;y,SCREEN_CENTER_Y;zoomto,16,SCREEN_HEIGHT);
+		OnCommand=cmd(diffuse,color("0,0,0,0.5"));
 	};
 };
 --
