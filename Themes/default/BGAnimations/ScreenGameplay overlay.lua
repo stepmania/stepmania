@@ -36,7 +36,5 @@ if GAMESTATE:GetCurrentCourse() then
 		end
 	end;
 end;
-t.InitCommand=function(self)
-	self:SetUpdateFunction(UpdateTime);
-end;
+t.InitCommand=cmd(SetUpdateFunction,UpdateTime);
 return t

@@ -1,7 +1,5 @@
 return LoadFont("ScreenGameplay","SongTitle") .. {
-	CurrentSongChangedMessageCommand=function(self)
-		self:playcommand("Refresh");
-	end;
+	CurrentSongChangedMessageCommand=cmd(playcommand,"Refresh");
 	RefreshCommand=function(self)
 		local vSong = GAMESTATE:GetCurrentSong();
 		local vCourse = GAMESTATE:GetCurrentCourse();

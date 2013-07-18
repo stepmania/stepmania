@@ -5,14 +5,7 @@ local record = stats:GetPersonalHighScoreIndex()
 local hasPersonalRecord = record ~= -1
 
 return LoadFont("Common normal")..{
-	InitCommand=function(self)
-		self:zoom(0.55);
-		self:shadowlength(1);
-		self:NoStroke();
-		self:glowshift();
-		self:effectcolor1(color("1,1,1,0"));
-		self:effectcolor2(color("1,1,1,0.25"));
-	end;
+	InitCommand=cmd(zoom,0.55;shadowlength,1;NoStroke;glowshift;effectcolor1,color("1,1,1,0");effectcolor2,color("1,1,1,0.25"));
 	BeginCommand=function(self)
 		self:visible(hasPersonalRecord);
 		local text = string.format(THEME:GetString("ScreenEvaluation", "PersonalRecord"), record+1)

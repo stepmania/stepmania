@@ -1,29 +1,10 @@
 return Def.ActorFrame {
 	Def.Quad {
-		InitCommand=function(self)
-			self:horizalign(left);
-			self:vertalign(top);
-			self:y(SCREEN_TOP + 8);
-		end;
-		OnCommand=function(self)
-			self:diffuse(Color.Black);
-			self:diffusealpha(0.5);
-			self:zoomto(256, 84);
-			self:faderight(1);
-		end;
+		InitCommand=cmd(horizalign,left;vertalign,top;y,SCREEN_TOP+8);
+		OnCommand=cmd(diffuse,Color.Black;diffusealpha,0.5;zoomto,256,84;faderight,1);
 	};
 	Def.Quad {
-		InitCommand=function(self)
-			self:horizalign(right);
-			self:vertalign(top);
-			self:x(SCREEN_RIGHT);
-			self:y(SCREEN_TOP+8);
-		end;
-		OnCommand=function(self)
-			self:diffuse(Color.Black);
-			self:diffusealpha(0.5);
-			self:zoomto(256, 46);
-			self:fadeleft(1);
-		end;
+		InitCommand=cmd(horizalign,right;vertalign,top;x,SCREEN_RIGHT;y,SCREEN_TOP+8);
+		OnCommand=cmd(diffuse,Color.Black;diffusealpha,0.5;zoomto,256,46;fadeleft,1);
 	};
 };

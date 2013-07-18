@@ -18,11 +18,7 @@ local t = Def.ActorFrame {};
 t[#t+1] = Def.ActorFrame {
 	LoadActor(THEME:GetPathB("_frame","3x3"),"rounded black",64,16);
 	LoadFont("Common Normal") .. {
-		InitCommand=function(self)
-			self:y(-1);
-			self:shadowlength(1);
-			self:playcommand("Set");
-		end;
+		InitCommand=cmd(y,-1;shadowlength,1;playcommand,"Set");
 		SetCommand=function(self)
 			if GAMESTATE:GetCurrentCourse() then
 				self:settext( GAMESTATE:GetCurrentStageIndex()+1 .. " / " .. GAMESTATE:GetCurrentCourse():GetEstimatedNumStages() );

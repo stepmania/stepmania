@@ -15,9 +15,7 @@ for pn=1,#players do
 		end,
 		Def.Quad {
 			InitCommand=function(self)
-				self:fadeleft(0.1);
-				self:faderight(0.1);
-				self:zoomtoheight(SCREEN_HEIGHT);
+				(cmd('fadeleft,0.1;faderight,0.1;zoomtoheight,SCREEN_HEIGHT'))(self)
 				self:zoomtowidth(
 					Center1Player() and SCREEN_WIDTH-32 or SCREEN_CENTER_X-16
 				)

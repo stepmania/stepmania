@@ -1,10 +1,6 @@
 return Def.ActorFrame {
 	LoadFont("Common Normal") .. {
 		Text="BPM";
-		InitCommand=function(self)
-			self:horizalign(right);
-			self:zoom(0.75);
-			self:strokecolor(Color("Outline"));
-		end;
+		InitCommand=cmd(horizalign,right;zoom,0.75;strokecolor,Color("Outline"));
 	};
 };

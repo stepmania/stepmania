@@ -2,20 +2,8 @@ local vStats = STATSMAN:GetCurStageStats();
 
 local function CreateStats( pnPlayer )
 	-- Actor Templates
-	local aLabel = LoadFont("Common Normal") .. { 
-		InitCommand=function(self)
-			self:zoom(0.5);
-			self:shadowlength(1);
-			self:horizalign(left);
-		end;
-	};
-	local aText = LoadFont("Common Normal") .. { 
-		InitCommand=function(self)
-			self:zoom(0.5);
-			self:shadowlength(1);
-			self:horizalign(left);
-		end;
-	};
+	local aLabel = LoadFont("Common Normal") .. { InitCommand=cmd(zoom,0.5;shadowlength,1;horizalign,left); };
+	local aText = LoadFont("Common Normal") .. { InitCommand=cmd(zoom,0.5;shadowlength,1;horizalign,left); };
 	-- DA STATS, JIM!!
 	local pnStageStats = vStats:GetPlayerStageStats( pnPlayer );
 	-- Organized Stats.
@@ -45,94 +33,24 @@ local function CreateStats( pnPlayer )
 
 	local t = Def.ActorFrame {};
 	t[#t+1] = Def.ActorFrame {
-		InitCommand=function(self)
-			self:y(-34);
-		end;
+		InitCommand=cmd(y,-34);
 		LoadActor(THEME:GetPathG("ScreenTitleMenu","PreferenceFrame")) .. {
-			InitCommand=function(self)
-				self:zoom(0.875);
-				self:diffuse(PlayerColor( pnPlayer ));
-			end;
+			InitCommand=cmd(zoom,0.875;diffuse,PlayerColor( pnPlayer ));
 		};
-		aLabel .. { 
-			Text=THEME:GetString("ScreenEvaluation","ITG DP:");
-			InitCommand=function(self)
-				self:x(-64);
-			end;
-		};
-		aText .. { 
-			Text=string.format("%04i",tValues["ITG"]); 
-			InitCommand=function(self)
-				self:x(-8);
-				self:y(5);
-				self:vertalign(bottom);
-				self:zoom(0.6);
-			end;
-		};
-		aText .. { 
-			Text="/"; 
-			InitCommand=function(self)
-				self:x(28);
-				self:y(5);
-				self:vertalign(bottom);
-				self:zoom(0.5);
-				self:diffusealpha(0.5);
-			end;
-		};
-		aText .. { 
-			Text=string.format("%04i",tValues["ITG_MAX"]); 
-			InitCommand=function(self)
-				self:x(32);
-				self:y(5);
-				self:vertalign(bottom);
-				self:zoom(0.5);
-			end;
-		};
+		aLabel .. { Text=THEME:GetString("ScreenEvaluation","ITG DP:"); InitCommand=cmd(x,-64) };
+		aText .. { Text=string.format("%04i",tValues["ITG"]); InitCommand=cmd(x,-8;y,5;vertalign,bottom;zoom,0.6); };
+		aText .. { Text="/"; InitCommand=cmd(x,28;y,5;vertalign,bottom;zoom,0.5;diffusealpha,0.5); };
+		aText .. { Text=string.format("%04i",tValues["ITG_MAX"]); InitCommand=cmd(x,32;y,5;vertalign,bottom;zoom,0.5); };
 	};
 	t[#t+1] = Def.ActorFrame {
-		InitCommand=function(self)
-			self:y(-6);
-		end;
+		InitCommand=cmd(y,-6);
 		LoadActor(THEME:GetPathG("ScreenTitleMenu","PreferenceFrame")) .. {
-			InitCommand=function(self)
-				self:zoom(0.875);
-				self:diffuse(PlayerColor( pnPlayer ));
-			end;
+			InitCommand=cmd(zoom,0.875;diffuse,PlayerColor( pnPlayer ));
 		};
-		aLabel .. { 
-			Text=THEME:GetString("ScreenEvaluation","MIGS DP:"); 
-			InitCommand=function(self)
-				self:x(-64);
-			end;
-		};
-		aText .. { 
-			Text=string.format("%04i",tValues["MIGS"]); 
-			InitCommand=function(self)
-				self:x(-8);
-				self:y(5);
-				self:vertalign(bottom);
-				self:zoom(0.6);
-			end;
-		};
-		aText .. { 
-			Text="/"; 
-			InitCommand=function(self)
-				self:x(28);
-				self:y(5);
-				self:vertalign(bottom);
-				self:zoom(0.5);
-				self:diffusealpha(0.5);
-			end;
-		};
-		aText .. { 
-			Text=string.format("%04i",tValues["MIGS_MAX"]); 
-			InitCommand=function(self)
-				self:x(32);
-				self:y(5);
-				self:vertalign(bottom);
-				self:zoom(0.5);
-			end;
-		};
+		aLabel .. { Text=THEME:GetString("ScreenEvaluation","MIGS DP:"); InitCommand=cmd(x,-64) };
+		aText .. { Text=string.format("%04i",tValues["MIGS"]); InitCommand=cmd(x,-8;y,5;vertalign,bottom;zoom,0.6); };
+		aText .. { Text="/"; InitCommand=cmd(x,28;y,5;vertalign,bottom;zoom,0.5;diffusealpha,0.5); };
+		aText .. { Text=string.format("%04i",tValues["MIGS_MAX"]); InitCommand=cmd(x,32;y,5;vertalign,bottom;zoom,0.5); };
 	};
 	return t
 end;
@@ -140,19 +58,11 @@ end;
 local t = Def.ActorFrame {};
 GAMESTATE:IsPlayerEnabled(PLAYER_1)
 t[#t+1] = Def.ActorFrame {
-	InitCommand=function(self)
-		self:hide_if(not GAMESTATE:IsPlayerEnabled(PLAYER_1));
-		self:x(WideScale(math.floor(SCREEN_CENTER_X * 0.3) - 8, math.floor(SCREEN_CENTER_X * 0.5) - 8));
-		self:y(SCREEN_CENTER_Y-34);
-	end;
+	InitCommand=cmd(hide_if,not GAMESTATE:IsPlayerEnabled(PLAYER_1);x,WideScale(math.floor(SCREEN_CENTER_X*0.3)-8,math.floor(SCREEN_CENTER_X*0.5)-8);y,SCREEN_CENTER_Y-34);
 	CreateStats( PLAYER_1 );
 };
 t[#t+1] = Def.ActorFrame {
-	InitCommand=function(self)
-		self:hide_if(not GAMESTATE:IsPlayerEnabled(PLAYER_2));
-		self:x(WideScale(math.floor(SCREEN_CENTER_X * 1.7) + 8, math.floor(SCREEN_CENTER_X * 1.5) + 8));
-		self:y(SCREEN_CENTER_Y-34);
-	end;
+	InitCommand=cmd(hide_if,not GAMESTATE:IsPlayerEnabled(PLAYER_2);x,WideScale(math.floor(SCREEN_CENTER_X*1.7)+8,math.floor(SCREEN_CENTER_X*1.5)+8);y,SCREEN_CENTER_Y-34);
 	CreateStats( PLAYER_2 );
 };
 return t

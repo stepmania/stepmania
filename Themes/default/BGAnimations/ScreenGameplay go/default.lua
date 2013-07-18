@@ -4,22 +4,6 @@ if IsNetSMOnline() then
 end
 
 return LoadActor("go") .. {
-	InitCommand=function(self)
-		self:Center();
-		self:draworder(105);
-	end;
-	StartTransitioningCommand=function(self)
-		self:zoom(1.3);
-		self:diffusealpha(0);
-		self:bounceend(0.25);
-		self:zoom(1);
-		self:diffusealpha(1);
-		self:linear(0.15);
-		self:glow(BoostColor(Color("Blue"),1.75));
-		self:decelerate(0.3);
-		self:glow(1, 1, 1, 0);
-		self:sleep(1-0.45);
-		self:linear(0.25);
-		self:diffusealpha(0);
-	end;
+	InitCommand=cmd(Center;draworder,105);
+	StartTransitioningCommand=cmd(zoom,1.3;diffusealpha,0;bounceend,0.25;zoom,1;diffusealpha,1;linear,0.15;glow,BoostColor(Color("Blue"),1.75);decelerate,0.3;glow,1,1,1,0;sleep,1-0.45;linear,0.25;diffusealpha,0;);
 };
