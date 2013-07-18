@@ -1,6 +1,3 @@
 return NOTESKIN:LoadActor("DownRight","Tap Note")..{
-	InitCommand=function(self)
-		self:effectclock("beat");
-		self:effectmagnitude(0.5, 1, 0);
-	end;
+	InitCommand=cmd(effectclock,"beat";effectmagnitude,0.5,1,0)
 };

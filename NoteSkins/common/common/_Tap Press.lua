@@ -1,9 +1,7 @@
 local File = ...;
 
 return LoadActor( File ) .. {
-	InitCommand=function(self)
-		self:playcommand("Lift");
-	end;
+	InitCommand=cmd(playcommand,"Lift");
 	ReverseOnCommand=NOTESKIN:GetMetricA("Press", "ReverseOnCommand");
 	ReverseOffCommand=NOTESKIN:GetMetricA("Press", "ReverseOffCommand");
 	PressCommand=NOTESKIN:GetMetricA("Press", "PressCommand");

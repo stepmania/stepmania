@@ -8,53 +8,25 @@ local t = Def.ActorFrame {
 		Texture="_circle";
 		Frame0000=0;
 		Delay0000=1;
-		InitCommand=function(self)
-			self:y(15);
-			self:effectclock("beat");
-			self:diffuseramp();
-			self:effectcolor1(color("1,1,1,0"));
-			self:effectcolor2(color("1,1,1,0.35"));
-			self:effectoffset(0);
-		end;
+		InitCommand=cmd(y,15;effectclock,"beat";diffuseramp;effectcolor1,color("1,1,1,0");effectcolor2,color("1,1,1,0.35");effectoffset,0);
 	};
 	Def.Sprite {
 		Texture="_circle";
 		Frame0000=0;
 		Delay0000=1;
-		InitCommand=function(self)
-			self:y(5);
-			self:effectclock("beat");
-			self:diffuseramp();
-			self:effectcolor1(color("1,1,1,0"));
-			self:effectcolor2(color("1,1,1,0.35"));
-			self:effectoffset(0.25);
-		end;
+		InitCommand=cmd(y,5;effectclock,"beat";diffuseramp;effectcolor1,color("1,1,1,0");effectcolor2,color("1,1,1,0.35");effectoffset,0.25);
 	};
 	Def.Sprite {
 		Texture="_circle";
 		Frame0000=0;
 		Delay0000=1;
-		InitCommand=function(self)
-			self:y(-5);
-			self:effectclock("beat");
-			self:diffuseramp();
-			self:effectcolor1(color("1,1,1,0"));
-			self:effectcolor2(color("1,1,1,0.35"));
-			self:effectoffset(0.5);
-		end;
+		InitCommand=cmd(y,-5;effectclock,"beat";diffuseramp;effectcolor1,color("1,1,1,0");effectcolor2,color("1,1,1,0.35");effectoffset,0.5);
 	};
 	Def.Sprite {
 		Texture="_circle";
 		Frame0000=0;
 		Delay0000=1;
-		InitCommand=function(self)
-			self:y(-15);
-			self:effectclock("beat");
-			self:diffuseramp();
-			self:effectcolor1(color("1,1,1,0"));
-			self:effectcolor2(color("1,1,1,0.35"));
-			self:effectoffset(0.75);
-		end;
+		InitCommand=cmd(y,-15;effectclock,"beat";diffuseramp;effectcolor1,color("1,1,1,0");effectcolor2,color("1,1,1,0.35");effectoffset,0.75);
 	};
 };
 return t;

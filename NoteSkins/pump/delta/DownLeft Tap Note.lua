@@ -2,40 +2,19 @@ local t = Def.ActorFrame{}
 
 
 t[#t+1] = LoadActor("DownLeft_blend")..{
-	InitCommand=fnction(self)
-		self:diffuseshift();
-		self:effectcolor1(color("#376f9b66"));
-		self:effectcolor2(color("#376f9b66"));
-	end;
+	InitCommand=cmd(diffuseshift;effectcolor1,color("#376f9b66");effectcolor2,color("#376f9b66"));
 }
 
 t[#t+1] = LoadActor("DownLeft_blend")..{
-	InitCommand=function(self)
-		self:blend(Blend.Add);
-		self:diffuseshift();
-		self:effectcolor1(color("#5899ccFF"));
-		self:effectcolor2(color("#5899cc66"));
-		self:effectclock("bgm");
-		self:effecttiming(1, 0, 0, 0);
-	end;
+	InitCommand=cmd(blend,Blend.Add;diffuseshift;effectcolor1,color("#5899ccFF");effectcolor2,color("#5899cc66");effectclock,"bgm";effecttiming,1,0,0,0;);
 }
 
 t[#t+1] = LoadActor("DownLeft_blend")..{
-	InitCommand=function(self)
-		self:diffuseshift();
-		self:effectcolor1(color("#5899ccFF"));
-		self:effectcolor2(color("#5899ccFF"));
-		self:fadetop(1);
-	end;
+	InitCommand=cmd(diffuseshift;effectcolor1,color("#5899ccFF");effectcolor2,color("#5899ccFF");fadetop,1);
 }
 
 t[#t+1] = LoadActor("DownLeft_fill")..{
-	InitCommand=function(self)
-		self:blend(Blend.Add);
-		self:diffuseshift();
-		self:effectcolor1(color("#5899ccFF"));
-		self:effectcolor2(color("#5899ccFF"));
-	end;
+	InitCommand=cmd(blend,Blend.Add;diffuseshift;effectcolor1,color("#5899ccFF");effectcolor2,color("#5899ccFF"));
 }
 
 

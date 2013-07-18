@@ -4,15 +4,9 @@ return Def.ActorFrame {
 			{ Frame = 2; Delay = 1; };
 		};
 
-		InitCommand=function(self)
-			self:playcommand("Set");
-		end;
-		GameplayLeadInChangedMessageCommand=function(self)
-			self:playcommand("Set");
-		end;
-		SetCommand=function(self)
-			self:visible(GAMESTATE:GetGameplayLeadIn());
-		end;
+		InitCommand=cmd(playcommand, "Set");
+		GameplayLeadInChangedMessageCommand=cmd(playcommand,"Set");
+		SetCommand=cmd(visible,GAMESTATE:GetGameplayLeadIn());
 	};
 
 	LoadActor( "_Tap Receptor", NOTESKIN:LoadActor(Var "Button", "Go Receptor") ) .. {
@@ -22,14 +16,8 @@ return Def.ActorFrame {
 			{ Frame = 2; };
 		};
 	
-		InitCommand=function(self)
-			self:playcommand("Set");
-		end;
-		GameplayLeadInChangedMessageCommand=function(self)
-			self:playcommand("Set");
-		end;
-		SetCommand=function(self)
-			self:visible(not GAMESTATE:GetGameplayLeadIn());
-		end;
+		InitCommand=cmd(playcommand, "Set");
+		GameplayLeadInChangedMessageCommand=cmd(playcommand,"Set");
+		SetCommand=cmd(visible,not GAMESTATE:GetGameplayLeadIn());
 	};
 }
