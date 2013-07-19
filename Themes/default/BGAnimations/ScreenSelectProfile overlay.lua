@@ -74,7 +74,10 @@ function LoadPlayerStuff(Player)
 	}; --]]
 	t = Def.ActorFrame {
 		Name = 'SmallFrame';
-
+--[[ 		Def.Quad {
+			InitCommand=cmd(zoomto,170+4,32+4);
+			OnCommand=cmd(shadowlength,1);
+		}; --]]
 		InitCommand=cmd(y,-2);
 		Def.Quad {
 			InitCommand=cmd(zoomto,200-10,40+2);
@@ -98,6 +101,7 @@ function LoadPlayerStuff(Player)
 	t = Def.ActorScroller{
 		Name = 'ProfileScroller';
 		NumItemsToDraw=6;
+-- 		InitCommand=cmd(y,-230/2+20;);
 		OnCommand=cmd(y,1;SetFastCatchup,true;SetMask,200,58;SetSecondsPerItem,0.15);
 		TransformFunction=function(self, offset, itemIndex, numItems)
 			local focus = scale(math.abs(offset),0,2,1,0);
@@ -131,6 +135,7 @@ function LoadPlayerStuff(Player)
 	}; --]]
 	t = LoadFont("Common Normal") .. {
 		Name = 'SelectedProfileText';
+		--InitCommand=cmd(y,160;shadowlength,1;diffuse,PlayerColor(Player));
 		InitCommand=cmd(y,160;shadowlength,1;);
 	};
 	table.insert( ret, t );
