@@ -225,6 +225,10 @@ if HAVE_PULSE
 Sound += arch/Sound/RageSoundDriver_PulseAudio.cpp arch/Sound/RageSoundDriver_PulseAudio.h
 endif
 
+if HAVE_JACK
+Sound += arch/Sound/RageSoundDriver_JACK.cpp arch/Sound/RageSoundDriver_JACK.h
+endif
+
 if HAVE_OSS
 Sound += arch/Sound/RageSoundDriver_OSS.cpp arch/Sound/RageSoundDriver_OSS.h
 endif

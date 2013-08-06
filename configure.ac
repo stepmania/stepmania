@@ -265,6 +265,16 @@ if test x$have_pulse = xyes; then
 	LIBS="$LIBS -lpulse"
 fi
 
+dnl Search for JACK unless --without-jack or --with-jack=no is given; require it for --with-jack
+AC_ARG_WITH([jack], [AS_HELP_STRING([--without-jack], [Disable JACK sound driver])])
+AS_IF([test "x$with_jack" != "xno"], [
+       AC_SEARCH_LIBS([jack_client_open], [jack], [have_jack=yes], [
+		       AS_IF([test "x$with_jack" != x], [
+			      AC_MSG_ERROR([--with-jack was specified but JACK was not found])
+			     ])
+		       ])
+])
+
 AC_MSG_CHECKING(if cstdlib breaks llabs)
 AC_LANG_PUSH(C++)
 AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <stdlib.h>
@@ -283,6 +293,7 @@ AC_DEFINE(__STDC_FORMAT_MACROS, 1, [Use PRId64 and similar])
 
 AM_CONDITIONAL(HAVE_ALSA, test x$alsa != xfalse )
 AM_CONDITIONAL(HAVE_GTK, test "$enable_gtk2" != "no" )
+AM_CONDITIONAL(HAVE_JACK, test x$have_jack = xyes)
 AM_CONDITIONAL(HAVE_OSS, test x$ac_cv_header_sys_soundcard_h = xyes )
 AM_CONDITIONAL(HAVE_PULSE, test x$have_pulse = xyes)
 AM_CONDITIONAL(USE_CRASH_HANDLER, test "$use_crash_handler" = "yes" )
