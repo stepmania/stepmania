@@ -170,6 +170,13 @@ void RageSoundDriver::Mix( float *pBuf, int iFrames, int64_t iFrameNumber, int64
 	MixIntoBuffer( iFrames, iFrameNumber, iCurrentFrame ).read( pBuf );
 }
 
+void RageSoundDriver::MixDeinterlaced( float **pBufs, int channels, int iFrames, int64_t iFrameNumber, int64_t iCurrentFrame )
+{
+	for (int i = 0; i < channels; ++i )
+		memset( pBufs[i], 0, iFrames*sizeof(float) );
+	MixIntoBuffer( iFrames, iFrameNumber, iCurrentFrame ).read_deinterlace( pBufs, channels );
+}
+
 void RageSoundDriver::DecodeThread()
 {
 	SetupDecodingThread();
