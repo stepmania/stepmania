@@ -17,6 +17,7 @@ public:
 
 	void read( int16_t *pBuf );
 	void read( float *pBuf );
+	void read_deinterlace( float **pBufs, int channels );
 	float *read() { return m_pMixbuf; }
 	unsigned size() const { return m_iBufUsed; }
 	void SetWriteOffset( int iOffset );
