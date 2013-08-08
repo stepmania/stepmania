@@ -22,12 +22,16 @@ private:
 	jack_port_t *port_l;
 	jack_port_t *port_r;
 
+	int sample_rate;
+
 	// Helper for Init()
 	RString ConnectPorts();
 
 	// JACK callbacks and trampolines
 	int ProcessCallback(jack_nframes_t nframes);
 	static int ProcessTrampoline(jack_nframes_t nframes, void *arg);
+	int SampleRateCallback(jack_nframes_t nframes);
+	static int SampleRateTrampoline(jack_nframes_t nframes, void *arg);
 };
 
 #endif

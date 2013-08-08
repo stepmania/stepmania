@@ -31,12 +31,19 @@ RString RageSoundDriver_JACK::Init()
 	if (client == NULL)
 		return "Couldn't connect to JACK server";
 
-	LOG->Trace("JACK connected at %u Hz", jack_get_sample_rate(client));
+	sample_rate = jack_get_sample_rate(client);
+	LOG->Trace("JACK connected at %u Hz", sample_rate);
 
 	// Set callback for processing audio
 	if (jack_set_process_callback(client, ProcessTrampoline, this))
 	{
 		error = "Couldn't set JACK process callback";
+		goto out_close;
+	}
+
+	if (jack_set_sample_rate_callback(client, SampleRateTrampoline, this))
+	{
+		error = "Couldn't set JACK sample-rate callback";
 		goto out_close;
 	}
 
@@ -136,7 +143,9 @@ int64_t RageSoundDriver_JACK::GetPosition() const
 
 int RageSoundDriver_JACK::GetSampleRate() const
 {
-	return jack_get_sample_rate(client);
+	// For now, let's pretend there isn't a race condition between this and
+	// SampleRateCallback().
+	return sample_rate;
 }
 
 int RageSoundDriver_JACK::ProcessCallback(jack_nframes_t nframes)
@@ -152,10 +161,23 @@ int RageSoundDriver_JACK::ProcessCallback(jack_nframes_t nframes)
 	return 0;
 }
 
+int RageSoundDriver_JACK::SampleRateCallback(jack_nframes_t nframes)
+{
+	// For now, let's pretend there isn't a race condition between this and
+	// GetSampleRate().
+	sample_rate = jack_get_sample_rate(client);
+	return 0;
+}
+
 // Static callback trampoline
 int RageSoundDriver_JACK::ProcessTrampoline(jack_nframes_t nframes, void *arg)
 {
 	return ((RageSoundDriver_JACK *) arg)->ProcessCallback(nframes);
+}
+
+int RageSoundDriver_JACK::SampleRateTrampoline(jack_nframes_t nframes, void *arg)
+{
+	return ((RageSoundDriver_JACK *) arg)->SampleRateCallback(nframes);
 }
 
 /*
