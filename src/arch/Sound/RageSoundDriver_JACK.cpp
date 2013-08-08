@@ -83,6 +83,8 @@ RString RageSoundDriver_JACK::Init()
 		goto out_deactivate;
 
 	// Success!
+	StartDecodeThread();
+	LOG->Trace("JACK sound driver started successfully");
 	return RString();
 
 
@@ -150,13 +152,14 @@ int RageSoundDriver_JACK::GetSampleRate() const
 
 int RageSoundDriver_JACK::ProcessCallback(jack_nframes_t nframes)
 {
-	jack_default_audio_sample_t *out_l =
-		(jack_default_audio_sample_t *) jack_port_get_buffer(port_l, nframes);
-	jack_default_audio_sample_t *out_r =
-		(jack_default_audio_sample_t *) jack_port_get_buffer(port_r, nframes);
+	jack_default_audio_sample_t *bufs[2];
 
-	memset(out_l, 0, nframes * sizeof(jack_default_audio_sample_t));
-	memset(out_r, 0, nframes * sizeof(jack_default_audio_sample_t));
+	bufs[0] = (jack_default_audio_sample_t *) jack_port_get_buffer(port_l, nframes);
+	bufs[1] = (jack_default_audio_sample_t *) jack_port_get_buffer(port_r, nframes);
+
+	jack_time_t now = jack_last_frame_time(client);
+
+	MixDeinterlaced( bufs, 2, nframes, now, now + nframes * 2 );
 
 	return 0;
 }
