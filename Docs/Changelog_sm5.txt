@@ -5,8 +5,86 @@ from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
 ================================================================================
-StepMania 5.0 beta 2 | 20130???
+StepMania current development
 --------------------------------------------------------------------------------
+
+2013/08/08
+----------
+* [SoundDriver_JACK] New sound driver (experimental!).  To use this, specify
+  JACK in your SoundDrivers preference, and set SoundDevice to a
+  comma-separated list of ports to connect to, for example:
+  "SoundDevice=system:playback_1,system:playback_2".
+
+2013/07/18
+----------
+* [ScreenEdit] Display scroll segments in editor and preview for both Song and
+  Steps Timing.
+
+2013/07/09
+----------
+* [MemoryCardDriver] Allow Unix fstab to specify memory card devices by alias
+  (e.g. /dev/disk/by-path/*)
+
+2013/06/29
+----------
+* [ArchHooks_Unix] Support the GoToUrl function. [phantom10111]
+
+2013/06/18
+----------
+* [InputHandler_DirectInput] Add support for all possible input device types
+  under new DirectX library. [Shenjoku]
+* Add --enable-lto option for configure on Linux. [phantom10111]
+
+================================================================================
+StepMania 5.0 beta 2a | 20130616
+--------------------------------------------------------------------------------
+
+2013/06/15
+----------
+* Fix some minor DLL issues on Windows. [wolfman2000]
+* Theme updates to make it faster. [Midiman]
+
+2013/06/09
+----------
+* [ScreenJukebox] Check for existing steps when starting jukebox.
+* [ScreenEdit] Fix crash related to keysounds. [wolfman2000]
+
+2013/06/04
+----------
+* Fix theme glitches caused by the change to Home/Free modes.
+* [UnlockManager] Allow entries to be explicitly locked by the theme.
+  [wolfman2000]
+
+================================================================================
+StepMania 5.0 beta 2 | 20130602
+--------------------------------------------------------------------------------
+
+2013/06/02
+----------
+* Add several video container formats that are supported by FFmpeg: mkv, mp4,
+  mov, flv, f4v.
+
+2013/05/31
+----------
+* [ArchHooks_MacOSX] Add per-user folders in ~/Application Support.
+
+2013/05/30
+----------
+* [ScreenSelectMusic] Fix crash when sorting in Oni mode.
+
+2013/05/28
+----------
+* [ActorFrame] Propagate glow and diffuse to children of ActorFrames.  This
+  should fix any visual problems with layered noteskins and mods.
+
+2013/05/25
+----------
+* Remove the "random" part of the Random Vanish mod to prevent crashing.
+  [wolfman2000]
+
+2013/05/21
+----------
+* [MovieTexture_FFMpeg] Fix crashing with large videos.
 
 2013/05/20
 ----------
