@@ -4590,8 +4590,8 @@ void ScreenEdit::HandleAlterMenuChoice(AlterMenuChoice c, const vector<int> &iAn
 	{
 		case cut:
 		{
-			HandleAlterMenuChoice( copy );
-			HandleAlterMenuChoice( clear );
+			HandleAlterMenuChoice( copy, false );
+			HandleAlterMenuChoice( clear, false );
 		}
 			break;
 		case copy:
@@ -4617,7 +4617,7 @@ void ScreenEdit::HandleAlterMenuChoice(AlterMenuChoice c, const vector<int> &iAn
 		case turn:
 		{
 			const NoteData OldClipboard( m_Clipboard );
-			HandleAlterMenuChoice( cut );
+			HandleAlterMenuChoice( cut, false );
 			
 			StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
 			TurnType tt = (TurnType)iAnswers[c];
@@ -4632,7 +4632,7 @@ void ScreenEdit::HandleAlterMenuChoice(AlterMenuChoice c, const vector<int> &iAn
 				case super_shuffle:	NoteDataUtil::Turn( m_Clipboard, st, NoteDataUtil::super_shuffle );	break;
 			}
 			
-			HandleAreaMenuChoice( paste_at_begin_marker );
+			HandleAreaMenuChoice( paste_at_begin_marker, false );
 			m_Clipboard = OldClipboard;
 		}
 			break;
@@ -4672,7 +4672,7 @@ void ScreenEdit::HandleAlterMenuChoice(AlterMenuChoice c, const vector<int> &iAn
 		case alter:
 		{
 			const NoteData OldClipboard( m_Clipboard );
-			HandleAlterMenuChoice( cut );
+			HandleAlterMenuChoice( cut, false );
 			
 			AlterType at = (AlterType)iAnswers[c];
 			switch( at )
@@ -4701,7 +4701,7 @@ void ScreenEdit::HandleAlterMenuChoice(AlterMenuChoice c, const vector<int> &iAn
 				case shift_right:		NoteDataUtil::ShiftRight( m_Clipboard );		break;
 			}
 			
-			HandleAreaMenuChoice( paste_at_begin_marker );
+			HandleAreaMenuChoice( paste_at_begin_marker, false );
 			m_Clipboard = OldClipboard;
 			break;
 		}
