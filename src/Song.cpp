@@ -362,6 +362,9 @@ bool Song::LoadFromSongDir( RString sDir )
 	return true;	// do load this song
 }
 
+/* This function feels EXTREMELY hacky - copying things on top of pointers so
+ * they don't break elsewhere.  Maybe it could be rewritten to politely ask the
+ * Song/Steps objects to reload themselves. -- djpohly */
 bool Song::ReloadFromSongDir( RString sDir )
 {
 	RemoveAutoGenNotes();
@@ -373,10 +376,14 @@ bool Song::ReloadFromSongDir( RString sDir )
 	copy.RemoveAutoGenNotes();
 	*this = copy;
 
-	// First we assemble a map to let us easily find the new steps
+	/* Go through the steps, first setting their Song pointer to this song
+	 * (instead of the copy used above), and constructing a map to let us
+	 * easily find the new steps. */
 	map<StepsID, Steps*> mNewSteps;
 	for( vector<Steps*>::const_iterator it = m_vpSteps.begin(); it != m_vpSteps.end(); ++it )
 	{
+		(*it)->m_pSong = this;
+
 		StepsID id;
 		id.FromSteps( *it );
 		mNewSteps[id] = *it;
