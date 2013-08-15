@@ -1,6 +1,8 @@
 InitUserPrefs();
 
-local t = Def.ActorFrame {
+local t = Def.ActorFrame {}
+
+t[#t+1] = Def.ActorFrame {
 	OnCommand=function(self)
 		if not FILEMAN:DoesFileExist("Save/ThemePrefs.ini") then
 			Trace("ThemePrefs doesn't exist; creating file")
