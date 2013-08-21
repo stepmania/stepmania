@@ -25,10 +25,19 @@ static BOOL CALLBACK EnumDevicesCallback( const DIDEVICEINSTANCE *pdidInstance, 
 {
 	DIDevice device;
 
+	LOG->Info( "DInput: Enumerating device - Type: 0x%08X Instance Name: \"%s\" Product Name: \"%s\"", pdidInstance->dwDevType, pdidInstance->tszInstanceName, pdidInstance->tszProductName );
+
 	switch( GET_DIDEVICE_TYPE(pdidInstance->dwDevType) )
 	{
 		case DI8DEVTYPE_JOYSTICK:
 		case DI8DEVTYPE_GAMEPAD:
+		case DI8DEVTYPE_DRIVING:
+		case DI8DEVTYPE_FLIGHT:
+		case DI8DEVTYPE_1STPERSON:
+		case DI8DEVTYPE_DEVICECTRL:
+		case DI8DEVTYPE_SCREENPOINTER:
+		case DI8DEVTYPE_REMOTE:
+		case DI8DEVTYPE_SUPPLEMENTAL:
 		{
 			device.type = device.JOYSTICK;
 			break;
@@ -36,7 +45,7 @@ static BOOL CALLBACK EnumDevicesCallback( const DIDEVICEINSTANCE *pdidInstance, 
 
 		case DI8DEVTYPE_KEYBOARD: device.type = device.KEYBOARD; break;
 		case DI8DEVTYPE_MOUSE: device.type = device.MOUSE; break;
-		default: return DIENUM_CONTINUE;
+		default: LOG->Info( "DInput: Unrecognized device ignored." ); return DIENUM_CONTINUE;
 	}
 
 	device.JoystickInst = *pdidInstance;

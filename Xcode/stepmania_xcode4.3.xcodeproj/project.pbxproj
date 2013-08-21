@@ -8365,7 +8365,7 @@
 					"\"$(SRCROOT)/ffmpeg/lib\"",
 				);
 				LINKER_DISPLAYS_MANGLED_NAMES = NO;
-				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				OBJROOT = "$(SRCROOT)/build";
 				OTHER_CPLUSPLUSFLAGS = (
 					"-finline-limit=300",
@@ -8375,6 +8375,7 @@
 				);
 				OTHER_LDFLAGS = "-lbz2";
 				PRODUCT_NAME = "StepMania (Debug)";
+				SDKROOT = "";
 				SYMROOT = "$(SRCROOT)/..";
 				WRAPPER_EXTENSION = app;
 			};
@@ -8882,7 +8883,7 @@
 					"\"$(SRCROOT)/ffmpeg/lib\"",
 				);
 				LINKER_DISPLAYS_MANGLED_NAMES = NO;
-				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				OBJROOT = "$(SRCROOT)/build";
 				OTHER_CPLUSPLUSFLAGS = (
 					"-finline-limit=300",
@@ -8892,6 +8893,7 @@
 				);
 				OTHER_LDFLAGS = "-lbz2";
 				PRODUCT_NAME = "StepMania (Performance-Debug)";
+				SDKROOT = "";
 				STRIP_INSTALLED_PRODUCT = NO;
 				SYMROOT = "$(SRCROOT)/..";
 				WRAPPER_EXTENSION = app;
@@ -9129,7 +9131,7 @@
 					"\"$(SRCROOT)/ffmpeg/lib\"",
 				);
 				LINKER_DISPLAYS_MANGLED_NAMES = NO;
-				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				OBJROOT = "$(SRCROOT)/build";
 				OTHER_CPLUSPLUSFLAGS = (
 					"-finline-limit=300",
@@ -9139,6 +9141,7 @@
 				);
 				OTHER_LDFLAGS = "-lbz2";
 				PRODUCT_NAME = StepMania;
+				SDKROOT = "";
 				SYMROOT = "$(SRCROOT)/..";
 				WRAPPER_EXTENSION = app;
 			};

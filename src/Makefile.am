@@ -1,3 +1,5 @@
+AUTOMAKE_OPTIONS = subdir-objects
+
 ## Do not install stepmania in the traditional way.
 noinst_PROGRAMS = stepmania
 TESTS = 
@@ -221,6 +223,10 @@ Sound = arch/Sound/RageSoundDriver.h arch/Sound/RageSoundDriver.cpp \
 
 if HAVE_PULSE
 Sound += arch/Sound/RageSoundDriver_PulseAudio.cpp arch/Sound/RageSoundDriver_PulseAudio.h
+endif
+
+if HAVE_JACK
+Sound += arch/Sound/RageSoundDriver_JACK.cpp arch/Sound/RageSoundDriver_JACK.h
 endif
 
 if HAVE_OSS

@@ -214,15 +214,6 @@ inline void	ssasn(std::string& sDst, PCSTR pA)
 		sDst.assign(pA);
 #endif
 }
-/**
- * @brief Erase the destination string.
- * @param sDst the destination string.
- * @param nNull the null value.
- */
-inline void ssasn(std::string& sDst, const int nNull)
-{
-	sDst.erase();
-}	
 #undef StrSizeType
 
 

@@ -48,6 +48,37 @@ case $compile in
 	;;
 esac
 
+AC_ARG_ENABLE(lto, AS_HELP_STRING([--enable-lto], [Enable LTO]), enable_lto=$enableval, enable_lto=no)
+if test x$enable_lto = xyes; then
+	if test "$CXX" != "g++"; then
+		AC_MSG_ERROR([g++ compiler is needed to use lto (if you have it installed, pass CXX=g++ to ./configure)])
+	fi
+	gxx_version="`g++ -dumpversion`"
+	gxx_version_major=$(echo $gxx_version | cut -d'.' -f1)
+	gxx_version_minor=$(echo $gxx_version | cut -d'.' -f2)
+	if test [ "$gxx_version_major" -lt "4" ] || test [ "$gxx_version_minor" -lt "5" ]; then
+		AC_MSG_ERROR([Your g++ version is too old and doesn't support lto])
+	fi
+	CFLAGS="$CFLAGS -O0 -flto"
+	CXXFLAGS="$CXXFLAGS -O0 -flto"
+	LDFLAGS="$LDFLAGS -flto"
+	case $compile in
+		release)
+		LDFLAGS="$LDFLAGS -O3"
+		;;
+		debug)
+		LDFLAGS="$LDFLAGS -g"
+		;;
+		fast)
+		LDFLAGS="$LDFLAGS -O2 -fno-inline"
+		;;
+	esac
+	if test [ "$gxx_version_minor" -ge "8" ]; then
+		CFLAGS="$CFLAGS -fno-fat-lto-objects"
+		CXXFLAGS="$CXXFLAGS -fno-fat-lto-objects"
+	fi
+fi
+
 
 # Some (broken?) versions of gcc treat char as unsigned, check for that.
 AC_LANG_PUSH([C])
@@ -234,6 +265,16 @@ if test x$have_pulse = xyes; then
 	LIBS="$LIBS -lpulse"
 fi
 
+dnl Search for JACK unless --without-jack or --with-jack=no is given; require it for --with-jack
+AC_ARG_WITH([jack], [AS_HELP_STRING([--without-jack], [Disable JACK sound driver])])
+AS_IF([test "x$with_jack" != "xno"], [
+       AC_SEARCH_LIBS([jack_client_open], [jack], [have_jack=yes], [
+		       AS_IF([test "x$with_jack" != x], [
+			      AC_MSG_ERROR([--with-jack was specified but JACK was not found])
+			     ])
+		       ])
+])
+
 AC_MSG_CHECKING(if cstdlib breaks llabs)
 AC_LANG_PUSH(C++)
 AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <stdlib.h>
@@ -252,6 +293,7 @@ AC_DEFINE(__STDC_FORMAT_MACROS, 1, [Use PRId64 and similar])
 
 AM_CONDITIONAL(HAVE_ALSA, test x$alsa != xfalse )
 AM_CONDITIONAL(HAVE_GTK, test "$enable_gtk2" != "no" )
+AM_CONDITIONAL(HAVE_JACK, test x$have_jack = xyes)
 AM_CONDITIONAL(HAVE_OSS, test x$ac_cv_header_sys_soundcard_h = xyes )
 AM_CONDITIONAL(HAVE_PULSE, test x$have_pulse = xyes)
 AM_CONDITIONAL(USE_CRASH_HANDLER, test "$use_crash_handler" = "yes" )

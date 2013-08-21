@@ -27,13 +27,13 @@ return Def.ActorFrame {
 			PlayerJoinedMessageCommand=function(self, params)
 				if params.Player == PLAYER_1 then
 					self:visible(true);
-					(cmd(zoom,0;bounceend,0.3;zoom,1))(self);
+					(cmd(zoom,0;bounceend,1;zoom,1))(self);
 				end;
 			end;
 			PlayerUnjoinedMessageCommand=function(self, params)
 				if params.Player == PLAYER_1 then
 					self:visible(true);
-					(cmd(bouncebegin,0.3;zoom,0))(self);
+					(cmd(bouncebegin,1;zoom,0))(self);
 				end;
 			end;
 			LoadActor(THEME:GetPathG("_StepsDisplayListRow","Cursor")) .. {
@@ -54,13 +54,13 @@ return Def.ActorFrame {
 			PlayerJoinedMessageCommand=function(self, params)
 				if params.Player == PLAYER_2 then
 					self:visible(true);
-					(cmd(zoom,0;bounceend,0.3;zoom,1))(self);
+					(cmd(zoom,0;bounceend,1;zoom,1))(self);
 				end;
 			end;
 			PlayerUnjoinedMessageCommand=function(self, params)
 				if params.Player == PLAYER_2 then
 					self:visible(true);
-					(cmd(bouncebegin,0.3;zoom,0))(self);
+					(cmd(bouncebegin,1;zoom,0))(self);
 				end;
 			end;
 			LoadActor(THEME:GetPathG("_StepsDisplayListRow","Cursor")) .. {
@@ -77,10 +77,10 @@ return Def.ActorFrame {
 			};
 		};
 		CursorP1Frame = Def.Actor{
-			ChangeCommand=cmd(stoptweening;decelerate,0.125);
+			ChangeCommand=cmd(stoptweening;decelerate,0.05);
 		};
 		CursorP2Frame = Def.Actor{
-			ChangeCommand=cmd(stoptweening;decelerate,0.125);
+			ChangeCommand=cmd(stoptweening;decelerate,0.05);
 		};
 	};
 };

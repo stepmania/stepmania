@@ -14,13 +14,12 @@ public:
 	virtual bool Input( const InputEventPlus &input );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
-	void SetSong();
-
 protected:
 	bool m_bDemonstration;
 
 	const CourseEntry *m_pCourseEntry;
 
+	void SetSong();
 	virtual void InitSongQueues();
 };
 

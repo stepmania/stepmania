@@ -1,40 +1,45 @@
-/* RageSoundMixBuffer - Simple audio mixing. */
+#ifndef RAGE_SOUND_JACK
+#define RAGE_SOUND_JACK
 
-#ifndef RAGE_SOUND_MIX_BUFFER_H
-#define RAGE_SOUND_MIX_BUFFER_H
+#include "RageSoundDriver.h"
+#include <jack/jack.h>
 
-class RageSoundMixBuffer
+#define USE_RAGE_SOUND_JACK
+
+class RageSoundDriver_JACK: public RageSoundDriver
 {
 public:
-	RageSoundMixBuffer();
-	~RageSoundMixBuffer();
+	RageSoundDriver_JACK();
+	~RageSoundDriver_JACK();
 
-	/* Mix the given buffer of samples. */
-	void write( const float *pBuf, unsigned iSize, int iSourceStride = 1, int iDestStride = 1 );
+	RString Init();
 
-	/* Extend the buffer as if write() was called with a buffer of silence. */
-	void Extend( unsigned iSamples );
-
-	void read( int16_t *pBuf );
-	void read( float *pBuf );
-	void read_deinterlace( float **pBufs, int channels );
-	float *read() { return m_pMixbuf; }
-	unsigned size() const { return m_iBufUsed; }
-	void SetWriteOffset( int iOffset );
+	int GetSampleRate() const;
+	int64_t GetPosition() const;
 
 private:
-	float *m_pMixbuf;
-	unsigned m_iBufSize; /* actual allocated samples */
-	unsigned m_iBufUsed; /* used samples */
-	int m_iOffset;
+	jack_client_t *client;
+	jack_port_t *port_l;
+	jack_port_t *port_r;
+
+	int sample_rate;
+
+	// Helper for Init()
+	RString ConnectPorts();
+
+	// JACK callbacks and trampolines
+	int ProcessCallback(jack_nframes_t nframes);
+	static int ProcessTrampoline(jack_nframes_t nframes, void *arg);
+	int SampleRateCallback(jack_nframes_t nframes);
+	static int SampleRateTrampoline(jack_nframes_t nframes, void *arg);
 };
 
 #endif
 
 /*
- * Copyright (c) 2002-2004 Glenn Maynard
+ * (c) 2013 Devin J. Pohly
  * All rights reserved.
- *
+ * 
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -44,7 +49,7 @@ private:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- *
+ * 
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

@@ -12,6 +12,8 @@
 #include "archutils/Unix/AssertionHandler.h"
 #include <unistd.h>
 #include <sys/time.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 
 #if defined(CRASH_HANDLER)
 #include "archutils/Unix/CrashHandler.h"
@@ -196,6 +198,31 @@ void ArchHooks_Unix::Init()
 #if defined(HAVE_TLS) && !defined(BSD)
 	TestTLS();
 #endif
+}
+
+bool ArchHooks_Unix::GoToURL( RString sUrl )
+{
+	int status;
+	pid_t p = fork();
+	if ( p == -1 )
+	{
+		// Call to fork failed
+		return false;
+	}
+	else if ( p == 0 )
+	{
+		// Child
+		const char * const argv[] = { "xdg-open", sUrl.c_str(), NULL };
+		execv( "/usr/bin/xdg-open", const_cast<char * const *>( argv ));
+		// If we reach here, the call to execvp failed
+		exit( 1 );
+	}
+	else
+	{
+		// Parent
+		waitpid( p, &status, 0 );
+		return WEXITSTATUS( status ) == 0;
+	}
 }
 
 #ifndef _CS_GNU_LIBC_VERSION

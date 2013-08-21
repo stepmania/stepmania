@@ -264,6 +264,9 @@ RageSoundDriver *MakeRageSoundDriver( const RString &drivers )
 #ifdef USE_RAGE_SOUND_DSOUND_SOFTWARE
 		if( !DriversToTry[i].CompareNoCase("DirectSound-sw") )	ret = new RageSound_DSound_Software;
 #endif
+#ifdef USE_RAGE_SOUND_JACK
+		if( !DriversToTry[i].CompareNoCase("JACK") )		ret = new RageSound_JACK;
+#endif
 #ifdef USE_RAGE_SOUND_NULL
 		if( !DriversToTry[i].CompareNoCase("Null") )		ret = new RageSound_Null;
 #endif

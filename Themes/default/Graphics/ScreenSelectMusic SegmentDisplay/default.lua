@@ -3,8 +3,8 @@ local iconPath = "_timingicons"
 local leftColX = -144
 local rightColX = -leftColX
 
-local showCmd = cmd(stoptweening;accelerate,0.125;diffusealpha,1)
-local hideCmd = cmd(stoptweening;accelerate,0.125;diffusealpha,0)
+local showCmd = cmd(stoptweening;accelerate,0.1;diffusealpha,1)
+local hideCmd = cmd(stoptweening;accelerate,0.1;diffusealpha,0)
 
 local SegmentTypes = {
 	Stops	=	{ Frame = 0, xPos = leftColX, yPos = 0 },

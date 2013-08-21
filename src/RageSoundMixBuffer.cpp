@@ -90,6 +90,14 @@ void RageSoundMixBuffer::read( float *pBuf )
 	m_iBufUsed = 0;
 }
 
+void RageSoundMixBuffer::read_deinterlace( float **pBufs, int channels )
+{
+	for( int i = 0; i < m_iBufUsed / channels; ++i )
+		for( int ch = 0; ch < channels; ++ch )
+			pBufs[ch][i] = m_pMixbuf[channels * i + ch];
+	m_iBufUsed = 0;
+}
+
 /*
  * Copyright (c) 2002-2004 Glenn Maynard
  * All rights reserved.

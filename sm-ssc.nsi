@@ -444,13 +444,11 @@ Section "Main Section" SecMain
 !ifdef INSTALL_PROGRAM_LIBRARIES
 	; microsoft!
 	; xxx: how many of these do we really need?
-	File "Program\mfc71.dll"
-	File "Program\msvcr71.dll"
-	File "Program\msvcr80.dll"
-	File "Program\msvcr90.dll"
-	File "Program\msvcp71.dll"
-	File "Program\msvcp80.dll"
-	File "Program\msvcp90.dll"
+	File "Program\msvcp100.dll"
+	File "Program\msvcr100.dll"
+	File "Program\msvcp110.dll"
+	File "Program\msvcr110.dll"
+	File "Program\vccorlib110.dll"
 	; FFmpeg and related
 	File "Program\avcodec-53.dll"
 	;File "Program\avdevice-52.dll"

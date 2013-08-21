@@ -1,3 +1,9 @@
+[Redistributables]
+You may have to download the Visual C++ Redistritable Packages in order to
+run the game. The link is available here:
+
+http://www.microsoft.com/en-us/download/details.aspx?id=30679
+
 [Using Google Chrome?]
 If you are using Google Chrome as your primary web browser, you will have to perform some extra steps to get stepmania:// URI handling to work:
 

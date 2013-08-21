@@ -920,17 +920,14 @@ void NoteField::DrawPrimitives()
 		const TimingData &timing = *pTiming;
 
 		// Scroll text
-		if( GAMESTATE->m_bIsUsingStepTiming )
+		for (i = 0; i < segs[SEGMENT_SCROLL]->size(); i++)
 		{
-			for (i = 0; i < segs[SEGMENT_SCROLL]->size(); i++)
+			ScrollSegment *seg = ToScroll( segs[SEGMENT_SCROLL]->at(i) );
+			if( seg->GetRow() >= iFirstRowToDraw && seg->GetRow() <= iLastRowToDraw )
 			{
-				ScrollSegment *seg = ToScroll( segs[SEGMENT_SCROLL]->at(i) );
-				if( seg->GetRow() >= iFirstRowToDraw && seg->GetRow() <= iLastRowToDraw )
-				{
-					float fBeat = seg->GetBeat();
-					if( IS_ON_SCREEN(fBeat) )
-						DrawScrollText( fBeat, seg->GetRatio() );
-				}
+				float fBeat = seg->GetBeat();
+				if( IS_ON_SCREEN(fBeat) )
+					DrawScrollText( fBeat, seg->GetRatio() );
 			}
 		}
 
