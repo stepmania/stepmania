@@ -97,13 +97,38 @@ namespace
 		}
 		else // bShowCreditsMessage
 		{
-			if( GAMESTATE->PlayersCanJoin() )
-				return CREDITS_NOT_PRESENT.GetValue();
-
 			CoinMode mode = GAMESTATE->GetCoinMode();
-			if( mode == CoinMode_Home )
-				return CREDITS_PRESS_START.GetValue();
-			return CREDITS_FREE_PLAY.GetValue();
+			switch( mode )
+			{
+			case CoinMode_Home:
+				if( GAMESTATE->PlayersCanJoin() )
+					return CREDITS_PRESS_START.GetValue();
+				else
+					return CREDITS_NOT_PRESENT.GetValue();
+
+			case CoinMode_Pay:
+			{
+				int iCredits = GAMESTATE->m_iCoins / PREFSMAN->m_iCoinsPerCredit;
+				int iCoins = GAMESTATE->m_iCoins % PREFSMAN->m_iCoinsPerCredit;
+				RString sCredits = CREDITS_CREDITS;
+				// todo: allow themers to change these strings -aj
+				if( iCredits > 0 || PREFSMAN->m_iCoinsPerCredit == 1 )
+					sCredits += ssprintf("  %d", iCredits);
+				if( PREFSMAN->m_iCoinsPerCredit > 1 )
+					sCredits += ssprintf("  %d/%d", iCoins, PREFSMAN->m_iCoinsPerCredit.Get() );
+				if( iCredits >= MAX_NUM_CREDITS )
+					sCredits += "  " + CREDITS_MAX.GetValue();
+				return sCredits;
+			}
+			case CoinMode_Free:
+				if( GAMESTATE->PlayersCanJoin() )
+					return CREDITS_FREE_PLAY.GetValue();
+				else
+					return CREDITS_NOT_PRESENT.GetValue();
+
+			default:
+				FAIL_M(ssprintf("Invalid CoinMode: %i", mode));
+			}
 		}
 	}
 
