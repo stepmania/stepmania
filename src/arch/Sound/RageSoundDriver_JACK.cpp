@@ -34,6 +34,9 @@ RString RageSoundDriver_JACK::Init()
 	sample_rate = jack_get_sample_rate(client);
 	LOG->Trace("JACK connected at %u Hz", sample_rate);
 
+	// Start this before callbacks
+	StartDecodeThread();
+
 	// Set callback for processing audio
 	if (jack_set_process_callback(client, ProcessTrampoline, this))
 	{
@@ -83,7 +86,6 @@ RString RageSoundDriver_JACK::Init()
 		goto out_deactivate;
 
 	// Success!
-	StartDecodeThread();
 	LOG->Trace("JACK sound driver started successfully");
 	return RString();
 
