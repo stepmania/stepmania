@@ -258,7 +258,7 @@ int MovieDecoder_FFMpeg::DecodePacket( float fTargetTime )
 				m_fPTS = float( m_Packet.dts * av_q2d(m_pStream->time_base) );
 
 				/* dts is the timestamp of the first frame in this packet. Only use it once;
-				 * if we get more than one frame from the same packet (eg. f;lushing the last
+				 * if we get more than one frame from the same packet (eg. flushing the last
 				 * frame), extrapolate. */
 				m_Packet.dts = int64_t(AV_NOPTS_VALUE);
 			}
@@ -319,7 +319,7 @@ int MovieDecoder_FFMpeg::DecodePacket( float fTargetTime )
 		}
 
 		/* Length of this frame: */
-		m_fLastFrameDelay = (float)m_pStream->codec->time_base.num / m_pStream->codec->time_base.den;
+		m_fLastFrameDelay = (float) av_q2d(m_pStream->time_base);
 		m_fLastFrameDelay += m_Frame.repeat_pict * (m_fLastFrameDelay * 0.5f);
 
 		++m_iFrameNumber;
