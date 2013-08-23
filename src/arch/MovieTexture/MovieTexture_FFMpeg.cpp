@@ -113,8 +113,6 @@ MovieDecoder_FFMpeg::MovieDecoder_FFMpeg()
 	m_pStream = NULL;
 	m_iCurrentPacketOffset = -1;
 
-	m_fLastFrame = 0;
-
 	Init();
 }
 
@@ -152,9 +150,10 @@ void MovieDecoder_FFMpeg::Init()
 	m_fPTS = -1;
 	m_iFrameNumber = -1; /* decode one frame and you're on the 0th */
 	m_fTimestampOffset = 0;
+	m_fLastFrame = 0;
 	m_swsctx = NULL;
-    m_avioContext = NULL;
-    m_buffer = NULL;
+	m_avioContext = NULL;
+	m_buffer = NULL;
 
 	if( m_iCurrentPacketOffset != -1 )
 	{
