@@ -144,10 +144,8 @@ MovieDecoder_FFMpeg::~MovieDecoder_FFMpeg()
 void MovieDecoder_FFMpeg::Init()
 {
 	m_iEOF = 0;
-	m_bGetNextTimestamp = true;
 	m_fTimestamp = 0;
 	m_fLastFrameDelay = 0;
-	m_fPTS = -1;
 	m_iFrameNumber = -1; /* decode one frame and you're on the 0th */
 	m_fTimestampOffset = 0;
 	m_fLastFrame = 0;
@@ -250,22 +248,6 @@ int MovieDecoder_FFMpeg::DecodePacket( float fTargetTime )
 
 	while( m_iEOF == 1 || (m_iEOF == 0 && m_iCurrentPacketOffset < m_Packet.size) )
 	{
-		if( m_bGetNextTimestamp )
-		{
-			if (m_Packet.dts != int64_t(AV_NOPTS_VALUE))
-			{
-				m_fPTS = float( m_Packet.dts * av_q2d(m_pStream->time_base) );
-
-				/* dts is the timestamp of the first frame in this packet. Only use it once;
-				 * if we get more than one frame from the same packet (eg. flushing the last
-				 * frame), extrapolate. */
-				m_Packet.dts = int64_t(AV_NOPTS_VALUE);
-			}
-			else
-				m_fPTS = -1;
-			m_bGetNextTimestamp = false;
-		}
-
 		/* If we have no data on the first frame, just return EOF; passing an empty packet
 		 * to avcodec_decode_video in this case is crashing it.  However, passing an empty
 		 * packet is normal with B-frames, to flush.  This may be unnecessary in newer
@@ -303,8 +285,6 @@ int MovieDecoder_FFMpeg::DecodePacket( float fTargetTime )
 				m_iEOF = 2;
 			continue;
 		}
-
-		m_bGetNextTimestamp = true;
 
 		if( m_Frame.pkt_dts != AV_NOPTS_VALUE )
 		{

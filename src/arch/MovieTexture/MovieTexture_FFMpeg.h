@@ -67,9 +67,7 @@ private:
 	avcodec::PixelFormat m_AVTexfmt; /* PixelFormat of output surface */
 	avcodec::SwsContext *m_swsctx;
 
-	float m_fPTS;
 	avcodec::AVFormatContext *m_fctx;
-	bool m_bGetNextTimestamp;
 	float m_fTimestamp;
 	float m_fTimestampOffset;
 	float m_fLastFrameDelay;
