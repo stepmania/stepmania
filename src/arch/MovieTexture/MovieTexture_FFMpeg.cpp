@@ -306,9 +306,9 @@ int MovieDecoder_FFMpeg::DecodePacket( float fTargetTime )
 
 		m_bGetNextTimestamp = true;
 
-		if( m_fPTS != -1 )
+		if( m_Frame.pkt_dts != AV_NOPTS_VALUE )
 		{
-			m_fTimestamp = m_fPTS;
+			m_fTimestamp = (float) (m_Frame.pkt_dts * av_q2d(m_pStream->time_base));
 		}
 		else
 		{
