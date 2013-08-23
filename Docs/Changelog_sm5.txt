@@ -8,6 +8,21 @@ ________________________________________________________________________________
 StepMania current development
 --------------------------------------------------------------------------------
 
+2013/08/22
+----------
+* [FFmpeg] Fix several video timing issues (delay, stutter, looping) with the
+  FFmpeg driver.
+
+2013/08/14
+----------
+* [ThemePrefs] Fix saving of ThemePrefs in default theme.
+
+2013/08/12
+----------
+* [ScreenEdit] Fix Undo for the Alter and Turn commands.  Previously, trying
+  to undo one of these commands would erase the notes instead.  Now it behaves
+  as expected.
+
 2013/08/08
 ----------
 * [SoundDriver_JACK] New sound driver (experimental!).  To use this, specify
