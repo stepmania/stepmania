@@ -276,7 +276,7 @@ int MovieDecoder_FFMpeg::DecodePacket( float fTargetTime )
 
 		bool bSkipThisFrame = 
 			fTargetTime != -1 &&
-			GetTimestamp() + GetFrameDuration() <= fTargetTime &&
+			GetTimestamp() + GetFrameDuration() < fTargetTime &&
 			(m_pStream->codec->frame_number % 2) == 0;
 
 		int iGotFrame;
