@@ -17,7 +17,14 @@ RageSoundDriver_JACK::RageSoundDriver_JACK() :
 
 RageSoundDriver_JACK::~RageSoundDriver_JACK()
 {
-	// Shut down client
+	// If Init failed, it cleaned up already and set client to NULL
+	if (client == NULL)
+		return;
+
+	// Clean up and shut down client
+	jack_deactivate(client);
+	jack_port_unregister(client, port_r);
+	jack_port_unregister(client, port_l);
 	jack_client_close(client);
 }
 
@@ -99,6 +106,7 @@ out_unreg_l:
 	jack_port_unregister(client, port_l);
 out_close:
 	jack_client_close(client);
+	client = NULL;
 	return error;
 }
 
