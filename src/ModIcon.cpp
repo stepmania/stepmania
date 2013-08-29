@@ -13,7 +13,10 @@ ModIcon::ModIcon( const ModIcon &cpy ):
 	ActorFrame(cpy),
 	m_text(cpy.m_text),
 	m_sprFilled(cpy.m_sprFilled),
-	m_sprEmpty(cpy.m_sprEmpty)
+	m_sprEmpty(cpy.m_sprEmpty),
+	m_vStopWords(cpy.m_vStopWords),
+	STOP_WORDS(cpy.STOP_WORDS),
+	CROP_TEXT_TO_WIDTH(cpy.CROP_TEXT_TO_WIDTH)
 {
 	this->RemoveAllChildren();
 	this->AddChild( m_sprFilled );
@@ -63,8 +66,7 @@ void ModIcon::Set( const RString &_sText )
 	m_sprEmpty->SetVisible( bVacant );
 
 	m_text.SetText( sText );
-	// This line makes Lua option rows crash: -aj
-	//m_text.CropToWidth( CROP_TEXT_TO_WIDTH );
+	m_text.CropToWidth( CROP_TEXT_TO_WIDTH );
 }
 
 /*
