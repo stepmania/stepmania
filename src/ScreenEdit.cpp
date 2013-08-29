@@ -5762,7 +5762,6 @@ static void ProcessKeyNames( vector<RString> &vs )
 	FOREACH( RString, vs, s )
 		ProcessKeyName( *s );
 
-	sort( vs.begin(), vs.end() );
 	vector<RString>::iterator toDelete = unique( vs.begin(), vs.end() );
 	vs.erase(toDelete, vs.end());
 }
