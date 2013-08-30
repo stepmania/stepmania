@@ -4772,7 +4772,8 @@ void ScreenEdit::HandleAlterMenuChoice(AlterMenuChoice c, const vector<int> &iAn
 						 m_NoteFieldEdit.m_iBeginMarker + 1,
 						 m_NoteFieldEdit.m_iEndMarker-m_NoteFieldEdit.m_iBeginMarker
 						 );
-			GetAppropriateTimingForUpdate().DeleteRows( m_NoteFieldEdit.m_iBeginMarker + 1,
+			// For TimingData, it makes more sense not to offset by a row
+			GetAppropriateTimingForUpdate().DeleteRows( m_NoteFieldEdit.m_iBeginMarker,
 							  m_NoteFieldEdit.m_iEndMarker-m_NoteFieldEdit.m_iBeginMarker );
 			GetAppropriateTimingForUpdate().SetStopAtRow( m_NoteFieldEdit.m_iBeginMarker, fStopLength );
 			m_NoteFieldEdit.m_iBeginMarker = -1;
@@ -4984,7 +4985,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 				NoteTypeToRow((NoteType)iAnswers[c]) : 48);
 			break;
 		case shift_pauses_backward:
-			GetAppropriateTimingForUpdate().DeleteRows( GetRow() + 1,
+			GetAppropriateTimingForUpdate().DeleteRows( GetRow(),
 			  iAnswers.size() > 0 ? 
 			  NoteTypeToRow((NoteType)iAnswers[c]) : 48);
 			break;
