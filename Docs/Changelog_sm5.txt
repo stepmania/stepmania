@@ -8,6 +8,11 @@ ________________________________________________________________________________
 StepMania current development
 --------------------------------------------------------------------------------
 
+2013/08/29
+----------
+* Fix hack pertaining to ModIcons and Lua-based option rows.
+* Fix visual oddity on autoplayed rolls.
+
 2013/08/22
 ----------
 * [FFmpeg] Fix several video timing issues (delay, stutter, looping) with the
