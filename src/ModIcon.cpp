@@ -14,9 +14,9 @@ ModIcon::ModIcon( const ModIcon &cpy ):
 	m_text(cpy.m_text),
 	m_sprFilled(cpy.m_sprFilled),
 	m_sprEmpty(cpy.m_sprEmpty),
-	m_vStopWords(cpy.m_vStopWords),
+	CROP_TEXT_TO_WIDTH(cpy.CROP_TEXT_TO_WIDTH),
 	STOP_WORDS(cpy.STOP_WORDS),
-	CROP_TEXT_TO_WIDTH(cpy.CROP_TEXT_TO_WIDTH)
+	m_vStopWords(cpy.m_vStopWords)
 {
 	this->RemoveAllChildren();
 	this->AddChild( m_sprFilled );
