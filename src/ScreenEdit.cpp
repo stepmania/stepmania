@@ -5757,11 +5757,13 @@ static void ProcessKeyName( RString &s )
 	s.Replace( "Key_", "" );
 }
 
-static void ProcessKeyNames( vector<RString> &vs )
+static void ProcessKeyNames( vector<RString> &vs, bool doSort )
 {
 	FOREACH( RString, vs, s )
 		ProcessKeyName( *s );
 
+	if (doSort)
+		sort( vs.begin(), vs.end() );
 	vector<RString>::iterator toDelete = unique( vs.begin(), vs.end() );
 	vs.erase(toDelete, vs.end());
 }
@@ -5786,8 +5788,8 @@ static RString GetDeviceButtonsLocalized( const vector<EditButton> &veb, const M
 		}
 	}
 
-	ProcessKeyNames( vsPress );
-	ProcessKeyNames( vsHold );
+	ProcessKeyNames( vsPress, false );
+	ProcessKeyNames( vsHold, true );
 
 	RString s = join("/",vsPress);
 	if( !vsHold.empty() )
