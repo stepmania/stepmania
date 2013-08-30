@@ -2078,9 +2078,6 @@ bool ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			}
 			else 
 			{
-				// TODO: Improve interaction when field is 0.
-				g_AlterMenu.rows[convert_to_delay].bEnabled = (m_NoteFieldEdit.m_iBeginMarker > 0);
-				g_AlterMenu.rows[convert_to_pause].bEnabled = (m_NoteFieldEdit.m_iBeginMarker > 0);
 				bool isRoutine = (m_InputPlayerNumber != PLAYER_INVALID);
 				g_AlterMenu.rows[routine_invert_notes].bEnabled = isRoutine;
 				g_AlterMenu.rows[routine_mirror_1_to_2].bEnabled = isRoutine;
