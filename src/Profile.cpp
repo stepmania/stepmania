@@ -876,7 +876,31 @@ ProfileLoadResult Profile::LoadAllFromDir( RString sDir, bool bRequireSignature 
 		return ProfileLoadResult_FailedTampered;
 	LOG->Trace( "Done." );
 
-	return LoadStatsXmlFromNode( &xml );
+	ProfileLoadResult ret = LoadStatsXmlFromNode(&xml);
+	if (ret != ProfileLoadResult_Success)
+		return ret;
+
+	/* Get the theme's custom load function:
+	 *   [Profile]
+	 *   CustomLoadFunction=function(profile, profileDir) ... end
+	 */
+	Lua *L = LUA->Get();
+	LuaReference customLoadFunc = THEME->GetMetricR("Profile", "CustomLoadFunction");
+	customLoadFunc.PushSelf(L);
+	ASSERT_M(!lua_isnil(L, -1), "CustomLoadFunction not defined");
+
+	// Pass profile and profile directory as arguments
+	this->PushSelf(L);
+	LuaHelpers::Push(L, sDir);
+
+	// Run it
+	RString sError;
+	if (!LuaHelpers::RunScriptOnStack(L, sError, 2, 0))
+		LOG->Warn("Error running CustomLoadFunction: %s", sError.c_str());
+
+	LUA->Release(L);
+
+	return ProfileLoadResult_Success;
 }
 
 ProfileLoadResult Profile::LoadStatsXmlFromNode( const XNode *xml, bool bIgnoreEditable )
@@ -935,6 +959,26 @@ bool Profile::SaveAllToDir( RString sDir, bool bSignData ) const
 		FILEMAN->CreateDir( sDir + EDIT_COURSES_SUBDIR );
 	FILEMAN->CreateDir( sDir + SCREENSHOTS_SUBDIR );
 	FILEMAN->CreateDir( sDir + RIVAL_SUBDIR );
+
+	/* Get the theme's custom save function:
+	 *   [Profile]
+	 *   CustomSaveFunction=function(profile, profileDir) ... end
+	 */
+	Lua *L = LUA->Get();
+	LuaReference customSaveFunc = THEME->GetMetricR("Profile", "CustomSaveFunction");
+	customSaveFunc.PushSelf(L);
+	ASSERT_M(!lua_isnil(L, -1), "CustomSaveFunction not defined");
+
+	// Pass profile and profile directory as arguments
+	const_cast<Profile *>(this)->PushSelf(L);
+	LuaHelpers::Push(L, sDir);
+
+	// Run it
+	RString sError;
+	if (!LuaHelpers::RunScriptOnStack(L, sError, 2, 0))
+		LOG->Warn("Error running CustomSaveFunction: %s", sError.c_str());
+
+	LUA->Release(L);
 
 	return bSaved;
 }
