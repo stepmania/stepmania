@@ -2967,24 +2967,24 @@ void Player::CrossedRows( int iLastRowCrossed, const RageTimer &now )
 			default: break;
 		}
 
-			// check to see if there's a note at the crossed row
-			if( m_pPlayerState->m_PlayerController != PC_HUMAN )
+		// check to see if there's a note at the crossed row
+		if( m_pPlayerState->m_PlayerController != PC_HUMAN )
+		{
+			if (tn.type != TapNote::empty &&
+				tn.type != TapNote::fake &&
+				tn.type != TapNote::autoKeysound &&
+				tn.result.tns == TNS_None &&
+				this->m_Timing->IsJudgableAtRow(iRow) )
 			{
-				if (tn.type != TapNote::empty &&
-					tn.type != TapNote::fake &&
-					tn.type != TapNote::autoKeysound &&
-					tn.result.tns == TNS_None &&
-					this->m_Timing->IsJudgableAtRow(iRow) )
+				Step( iTrack, iRow, now, false, false );
+				if( m_pPlayerState->m_PlayerController == PC_AUTOPLAY )
 				{
-					Step( iTrack, iRow, now, false, false );
-					if( m_pPlayerState->m_PlayerController == PC_AUTOPLAY )
-					{
-						if( m_pPlayerStageStats )
-							m_pPlayerStageStats->m_bDisqualified = true;
-					}
+					if( m_pPlayerStageStats )
+						m_pPlayerStageStats->m_bDisqualified = true;
 				}
 			}
-			
+		}
+
 		// TODO: Can we remove the iLastSeenRow logic and the
 		// autokeysound for loop, since the iterator in this loop will
 		// already be iterating over all of the tracks?
