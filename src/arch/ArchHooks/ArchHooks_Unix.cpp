@@ -5,6 +5,7 @@
 #include "RageUtil.h"
 #include "RageThreads.h"
 #include "LocalizedString.h"
+#include "SpecialFiles.h"
 #include "archutils/Unix/SignalHandler.h"
 #include "archutils/Unix/GetSysInfo.h"
 #include "archutils/Unix/LinuxThreadHelpers.h"
