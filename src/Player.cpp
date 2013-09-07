@@ -2967,10 +2967,6 @@ void Player::CrossedRows( int iLastRowCrossed, const RageTimer &now )
 			default: break;
 		}
 
-		if( iRow != iLastSeenRow )
-		{
-			// crossed a not-empty row
-
 			// check to see if there's a note at the crossed row
 			if( m_pPlayerState->m_PlayerController != PC_HUMAN )
 			{
@@ -2989,6 +2985,14 @@ void Player::CrossedRows( int iLastRowCrossed, const RageTimer &now )
 				}
 			}
 			
+		// TODO: Can we remove the iLastSeenRow logic and the
+		// autokeysound for loop, since the iterator in this loop will
+		// already be iterating over all of the tracks?
+		if( iRow != iLastSeenRow )
+		{
+			// crossed a new not-empty row
+			iLastSeenRow = iRow;
+
 			// handle autokeysounds here (if not in the editor).
 			if (!GAMESTATE->m_bInStepEditor)
 			{
