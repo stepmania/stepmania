@@ -327,8 +327,8 @@ void ArchHooks::MountUserFilesystems( const RString &sDirOfExecutable )
 	FILEMAN->Mount( "dir", sUserDataPath + "/Characters", "/Characters" );
 	FILEMAN->Mount( "dir", sUserDataPath + "/Courses", "/Courses" );
 	FILEMAN->Mount( "dir", sUserDataPath + "/Logs", "/Logs" );
-	FILEMAN->Mount( "dir", sUserDataPath + "/Noteskins", "/Noteskins" );
-	FILEMAN->Mount( "dir", sUserDataPath + "/Packages", "/Packages" );
+	FILEMAN->Mount( "dir", sUserDataPath + "/NoteSkins", "/NoteSkins" );
+	FILEMAN->Mount( "dir", sUserDataPath + "/Packages", "/" + SpecialFiles::USER_PACKAGES_DIR );
 	FILEMAN->Mount( "dir", sUserDataPath + "/Save", "/Save" );
 	FILEMAN->Mount( "dir", sUserDataPath + "/Screenshots", "/Screenshots" );
 	FILEMAN->Mount( "dir", sUserDataPath + "/Songs", "/Songs" );
