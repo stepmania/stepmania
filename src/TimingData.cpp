@@ -771,16 +771,24 @@ void TimingData::InsertRows( int iStartRow, int iRowsToAdd )
 	}
 }
 
-// Delete BPMChanges and StopSegments in [iStartRow,iRowsToDelete), and shift down.
+// Delete timing changes in [iStartRow, iStartRow + iRowsToDelete) and shift up.
 void TimingData::DeleteRows( int iStartRow, int iRowsToDelete )
 {
-	/* Remember the BPM at the end of the region being deleted. */
-	float fNewBPM = GetBPMAtBeat( NoteRowToBeat(iStartRow+iRowsToDelete) );
-
-	/* We're moving rows up. Delete any BPM changes and stops in the region
-	 * being deleted. */
 	FOREACH_TimingSegmentType( tst )
 	{
+		// Don't delete the indefinite segments that are still in effect
+		// at the end row; rather, shift them so they start there.
+		TimingSegment *tsEnd = GetSegmentAtRow(iStartRow + iRowsToDelete, tst);
+		if (tsEnd != NULL && tsEnd->GetEffectType() == SegmentEffectType_Indefinite &&
+				iStartRow <= tsEnd->GetRow() &&
+				tsEnd->GetRow() < iStartRow + iRowsToDelete)
+		{
+			// The iRowsToDelete will eventually be subtracted out
+			LOG->Trace("Segment at row %d shifted to %d", tsEnd->GetRow(), iStartRow + iRowsToDelete);
+			tsEnd->SetRow(iStartRow + iRowsToDelete);
+		}
+
+		// Now delete and shift up
 		vector<TimingSegment *> &segs = m_avpTimingSegments[tst];
 		for (unsigned j = 0; j < segs.size(); j++)
 		{
@@ -800,8 +808,6 @@ void TimingData::DeleteRows( int iStartRow, int iRowsToDelete )
 			seg->SetRow(seg->GetRow() - iRowsToDelete);
 		}
 	}
-
-	SetBPMAtRow( iStartRow, fNewBPM );
 }
 
 float TimingData::GetDisplayedSpeedPercent( float fSongBeat, float fMusicSeconds ) const

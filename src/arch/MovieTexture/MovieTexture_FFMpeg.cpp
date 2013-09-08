@@ -9,129 +9,6 @@
 
 #include <cerrno>
 
-namespace avcodec
-{
-	extern "C"
-	{
-		#include <libavformat/avformat.h>
-		#include <libswscale/swscale.h>
-		#include <libavutil/pixdesc.h>
-	}
-};
-
-/*
-#if defined(_MSC_VER)
-	#pragma comment(lib, "ffmpeg/lib/avcodec.lib")
-	#pragma comment(lib, "ffmpeg/lib/avformat.lib")
-	#if defined(USE_MODERN_FFMPEG)
-		#pragma comment(lib, "ffmpeg/lib/swscale.lib")
-	#endif
-#endif // _MSC_VER
-*/
-
-static const int sws_flags = SWS_BICUBIC; // XXX: Reasonable default?
-
-static struct AVPixelFormat_t
-{
-	int bpp;
-	uint32_t masks[4];
-	avcodec::PixelFormat pf;
-	bool bHighColor;
-	bool bByteSwapOnLittleEndian;
-	MovieDecoderPixelFormatYCbCr YUV;
-} AVPixelFormats[] = {
-	{
-		32,
-		{ 0xFF000000,
-		  0x00FF0000,
-		  0x0000FF00,
-		  0x000000FF },
-		avcodec::PIX_FMT_YUYV422,
-		false, /* N/A */
-		true,
-		PixelFormatYCbCr_YUYV422,
-	},
-	{ 
-		32,
-		{ 0x0000FF00,
-		  0x00FF0000,
-		  0xFF000000,
-		  0x000000FF },
-		avcodec::PIX_FMT_BGRA,
-		true,
-		true,
-		PixelFormatYCbCr_Invalid,
-	},
-	{ 
-		32,
-		{ 0x00FF0000,
-		  0x0000FF00,
-		  0x000000FF,
-		  0xFF000000 },
-		avcodec::PIX_FMT_ARGB,
-		true,
-		true,
-		PixelFormatYCbCr_Invalid,
-	},
-	/*
-	{ 
-		32,
-		{ 0x000000FF,
-		  0x0000FF00,
-		  0x00FF0000,
-		  0xFF000000 },
-		avcodec::PIX_FMT_ABGR,
-		true,
-		true,
-		PixelFormatYCbCr_Invalid,
-	},
-	{ 
-		32,
-		{ 0xFF000000,
-		  0x00FF0000,
-		  0x0000FF00,
-		  0x000000FF },
-		avcodec::PIX_FMT_RGBA,
-		true,
-		true,
-		PixelFormatYCbCr_Invalid,
-	}, */
-	{ 
-		24,
-		{ 0xFF0000,
-		  0x00FF00,
-		  0x0000FF,
-		  0x000000 },
-		avcodec::PIX_FMT_RGB24,
-		true,
-		true,
-		PixelFormatYCbCr_Invalid,
-	},
-	{ 
-		24,
-		{ 0x0000FF,
-		  0x00FF00,
-		  0xFF0000,
-		  0x000000 },
-		avcodec::PIX_FMT_BGR24,
-		true,
-		true,
-		PixelFormatYCbCr_Invalid,
-	},
-	{
-		16,
-		{ 0x7C00,
-		  0x03E0,
-		  0x001F,
-		  0x0000 },
-		avcodec::PIX_FMT_RGB555,
-		false,
-		false,
-		PixelFormatYCbCr_Invalid,
-	},
-	{ 0, { 0,0,0,0 }, avcodec::PIX_FMT_NB, true, false, PixelFormatYCbCr_Invalid }
-};
-
 static void FixLilEndian()
 {
 #if defined(ENDIAN_LITTLE)
@@ -196,15 +73,6 @@ static int FindCompatibleAVFormat( bool bHighColor )
 	return -1;
 }
 
-class MovieTexture_FFMpeg: public MovieTexture_Generic
-{
-public:
-	MovieTexture_FFMpeg( RageTextureID ID );
-
-	static void RegisterProtocols();
-	static RageSurface *AVCodecCreateCompatibleSurface( int iTextureWidth, int iTextureHeight, bool bPreferHighColor, int &iAVTexfmt, MovieDecoderPixelFormatYCbCr &fmtout );
-};
-
 RageSurface *RageMovieTextureDriver_FFMpeg::AVCodecCreateCompatibleSurface( int iTextureWidth, int iTextureHeight, bool bPreferHighColor, int &iAVTexfmt, MovieDecoderPixelFormatYCbCr &fmtout )
 {
 	FixLilEndian();
@@ -237,59 +105,6 @@ RageSurface *RageMovieTextureDriver_FFMpeg::AVCodecCreateCompatibleSurface( int 
 		pfd->masks[0], pfd->masks[1], pfd->masks[2], pfd->masks[3] );
 }
 
-class MovieDecoder_FFMpeg: public MovieDecoder
-{
-public:
-	MovieDecoder_FFMpeg();
-	~MovieDecoder_FFMpeg();
-
-	RString Open( RString sFile );
-	void Close();
-	void Rewind();
-
-	void GetFrame( RageSurface *pOut );
-	int DecodeFrame( float fTargetTime );
-
-	int GetWidth() const { return m_pStream->codec->width; }
-	int GetHeight() const { return m_pStream->codec->height; }
-
-	RageSurface *CreateCompatibleSurface( int iTextureWidth, int iTextureHeight, bool bPreferHighColor, MovieDecoderPixelFormatYCbCr &fmtout );
-
-	float GetTimestamp() const;
-	float GetFrameDuration() const;
-
-private:
-	void Init();
-	RString OpenCodec();
-	int ReadPacket();
-	int DecodePacket( float fTargetTime );
-
-	avcodec::AVStream *m_pStream;
-	avcodec::AVFrame m_Frame;
-	avcodec::PixelFormat m_AVTexfmt; /* PixelFormat of output surface */
-	avcodec::SwsContext *m_swsctx;
-
-	float m_fPTS;
-	avcodec::AVFormatContext *m_fctx;
-	bool m_bGetNextTimestamp;
-	float m_fTimestamp;
-	float m_fTimestampOffset;
-	float m_fLastFrameDelay;
-	int m_iFrameNumber;
-
-    unsigned char *m_buffer;
-    avcodec::AVIOContext *m_avioContext;
-    
-	avcodec::AVPacket m_Packet;
-	int m_iCurrentPacketOffset;
-	float m_fLastFrame;
-
-	/* 0 = no EOF
-	 * 1 = EOF from ReadPacket
-	 * 2 = EOF from ReadPacket and DecodePacket */
-	int m_iEOF;
-};
-
 MovieDecoder_FFMpeg::MovieDecoder_FFMpeg()
 {
 	FixLilEndian();
@@ -297,8 +112,6 @@ MovieDecoder_FFMpeg::MovieDecoder_FFMpeg()
 	m_fctx = NULL;
 	m_pStream = NULL;
 	m_iCurrentPacketOffset = -1;
-
-	m_fLastFrame = 0;
 
 	Init();
 }
@@ -331,15 +144,14 @@ MovieDecoder_FFMpeg::~MovieDecoder_FFMpeg()
 void MovieDecoder_FFMpeg::Init()
 {
 	m_iEOF = 0;
-	m_bGetNextTimestamp = true;
 	m_fTimestamp = 0;
 	m_fLastFrameDelay = 0;
-	m_fPTS = -1;
 	m_iFrameNumber = -1; /* decode one frame and you're on the 0th */
 	m_fTimestampOffset = 0;
+	m_fLastFrame = 0;
 	m_swsctx = NULL;
-    m_avioContext = NULL;
-    m_buffer = NULL;
+	m_avioContext = NULL;
+	m_buffer = NULL;
 
 	if( m_iCurrentPacketOffset != -1 )
 	{
@@ -436,22 +248,6 @@ int MovieDecoder_FFMpeg::DecodePacket( float fTargetTime )
 
 	while( m_iEOF == 1 || (m_iEOF == 0 && m_iCurrentPacketOffset < m_Packet.size) )
 	{
-		if( m_bGetNextTimestamp )
-		{
-			if (m_Packet.dts != int64_t(AV_NOPTS_VALUE))
-			{
-				m_fPTS = float( m_Packet.dts * av_q2d(m_pStream->time_base) );
-
-				/* dts is the timestamp of the first frame in this packet. Only use it once;
-				 * if we get more than one frame from the same packet (eg. f;lushing the last
-				 * frame), extrapolate. */
-				m_Packet.dts = int64_t(AV_NOPTS_VALUE);
-			}
-			else
-				m_fPTS = -1;
-			m_bGetNextTimestamp = false;
-		}
-
 		/* If we have no data on the first frame, just return EOF; passing an empty packet
 		 * to avcodec_decode_video in this case is crashing it.  However, passing an empty
 		 * packet is normal with B-frames, to flush.  This may be unnecessary in newer
@@ -461,7 +257,7 @@ int MovieDecoder_FFMpeg::DecodePacket( float fTargetTime )
 
 		bool bSkipThisFrame = 
 			fTargetTime != -1 &&
-			GetTimestamp() + GetFrameDuration() <= fTargetTime &&
+			GetTimestamp() + GetFrameDuration() < fTargetTime &&
 			(m_pStream->codec->frame_number % 2) == 0;
 
 		int iGotFrame;
@@ -490,11 +286,9 @@ int MovieDecoder_FFMpeg::DecodePacket( float fTargetTime )
 			continue;
 		}
 
-		m_bGetNextTimestamp = true;
-
-		if( m_fPTS != -1 )
+		if( m_Frame.pkt_dts != AV_NOPTS_VALUE )
 		{
-			m_fTimestamp = m_fPTS;
+			m_fTimestamp = (float) (m_Frame.pkt_dts * av_q2d(m_pStream->time_base));
 		}
 		else
 		{
@@ -504,7 +298,7 @@ int MovieDecoder_FFMpeg::DecodePacket( float fTargetTime )
 		}
 
 		/* Length of this frame: */
-		m_fLastFrameDelay = (float)m_pStream->codec->time_base.num / m_pStream->codec->time_base.den;
+		m_fLastFrameDelay = (float) av_q2d(m_pStream->time_base);
 		m_fLastFrameDelay += m_Frame.repeat_pict * (m_fLastFrameDelay * 0.5f);
 
 		++m_iFrameNumber;
@@ -588,8 +382,6 @@ void MovieTexture_FFMpeg::RegisterProtocols()
 	avcodec::avcodec_register_all();
 	avcodec::av_register_all();
 }
-
-#define STEPMANIA_FFMPEG_BUFFER_SIZE 4096
 
 static int AVIORageFile_ReadPacket( void *opaque, uint8_t *buf, int buf_size )
 {

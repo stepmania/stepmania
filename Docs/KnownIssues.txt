@@ -1,11 +1,5 @@
 The following is a list of known issues with StepMania 5.
 
-* Hidden, Sudden, Stealth, and RandomVanish do not work with multi-layered
-  NoteSkins. Random Vanish, in particular, has caused crashes.
- * In a more technical and general sense, diffuse commands do not
-   work properly with ActorFrames.
- * This is most evident with the default dance mode noteskin.
-
 * The course editor is not working. (It could stand to be rewritten.)
 
 * The scoring system needs to be made global for the game instead
@@ -45,10 +39,6 @@ The following is a list of known issues with StepMania 5.
  * This makes debug builds in particular load very slowly, and reduces quality.
 
 * The editor sometimes keeps playing music and won't scroll.
-
-* FFMPEG ruins our lives. I suspect init problems for Linux, since it
-  works perfectly fine seemingly at random. Unsure for other platforms.
-  * is this still an issue with ffmpeg 0.10? -freem
 
 * VBR MP3's don't seek correctly in the editor, which botches sync.
 

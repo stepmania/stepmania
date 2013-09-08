@@ -963,7 +963,8 @@ void Player::Update( float fDeltaTime )
 			if( tn.HoldResult.fLife >= 0.5f )
 				continue;
 
-			Step( iTrack, iHeadRow, now, false, false );
+			// This handles any roll steps beyond the first.
+			Step( iTrack, -1, now, false, false );
 			if( m_pPlayerState->m_PlayerController == PC_AUTOPLAY )
 			{
 				STATSMAN->m_CurStageStats.m_bUsedAutoplay = true;

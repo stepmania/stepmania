@@ -2078,9 +2078,6 @@ bool ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			}
 			else 
 			{
-				// TODO: Improve interaction when field is 0.
-				g_AlterMenu.rows[convert_to_delay].bEnabled = (m_NoteFieldEdit.m_iBeginMarker > 0);
-				g_AlterMenu.rows[convert_to_pause].bEnabled = (m_NoteFieldEdit.m_iBeginMarker > 0);
 				bool isRoutine = (m_InputPlayerNumber != PLAYER_INVALID);
 				g_AlterMenu.rows[routine_invert_notes].bEnabled = isRoutine;
 				g_AlterMenu.rows[routine_mirror_1_to_2].bEnabled = isRoutine;
@@ -4772,7 +4769,8 @@ void ScreenEdit::HandleAlterMenuChoice(AlterMenuChoice c, const vector<int> &iAn
 						 m_NoteFieldEdit.m_iBeginMarker + 1,
 						 m_NoteFieldEdit.m_iEndMarker-m_NoteFieldEdit.m_iBeginMarker
 						 );
-			GetAppropriateTimingForUpdate().DeleteRows( m_NoteFieldEdit.m_iBeginMarker + 1,
+			// For TimingData, it makes more sense not to offset by a row
+			GetAppropriateTimingForUpdate().DeleteRows( m_NoteFieldEdit.m_iBeginMarker,
 							  m_NoteFieldEdit.m_iEndMarker-m_NoteFieldEdit.m_iBeginMarker );
 			GetAppropriateTimingForUpdate().SetStopAtRow( m_NoteFieldEdit.m_iBeginMarker, fStopLength );
 			m_NoteFieldEdit.m_iBeginMarker = -1;
@@ -4984,7 +4982,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 				NoteTypeToRow((NoteType)iAnswers[c]) : 48);
 			break;
 		case shift_pauses_backward:
-			GetAppropriateTimingForUpdate().DeleteRows( GetRow() + 1,
+			GetAppropriateTimingForUpdate().DeleteRows( GetRow(),
 			  iAnswers.size() > 0 ? 
 			  NoteTypeToRow((NoteType)iAnswers[c]) : 48);
 			break;
@@ -5757,12 +5755,13 @@ static void ProcessKeyName( RString &s )
 	s.Replace( "Key_", "" );
 }
 
-static void ProcessKeyNames( vector<RString> &vs )
+static void ProcessKeyNames( vector<RString> &vs, bool doSort )
 {
 	FOREACH( RString, vs, s )
 		ProcessKeyName( *s );
 
-	sort( vs.begin(), vs.end() );
+	if (doSort)
+		sort( vs.begin(), vs.end() );
 	vector<RString>::iterator toDelete = unique( vs.begin(), vs.end() );
 	vs.erase(toDelete, vs.end());
 }
@@ -5787,8 +5786,8 @@ static RString GetDeviceButtonsLocalized( const vector<EditButton> &veb, const M
 		}
 	}
 
-	ProcessKeyNames( vsPress );
-	ProcessKeyNames( vsHold );
+	ProcessKeyNames( vsPress, false );
+	ProcessKeyNames( vsHold, true );
 
 	RString s = join("/",vsPress);
 	if( !vsHold.empty() )
