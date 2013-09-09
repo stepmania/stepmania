@@ -1701,6 +1701,8 @@
 			<Function name='GetUnlockEntry'/>
 			<Function name='GetUnlockEntryIndexToCelebrate'/>
 			<Function name='IsSongLocked'/>
+			<Function name='LockEntryID'/>
+			<Function name='LockEntryIndex'/>
 			<Function name='PreferUnlockEntryID'/>
 			<Function name='UnlockEntryID'/>
 			<Function name='UnlockEntryIndex'/>
@@ -1770,13 +1772,25 @@
 	</Namespaces>
 	<Singletons>
 		<Singleton class='AnnouncerManager' name='ANNOUNCER'/>
+		<Singleton class='CharacterManager' name='CHARMAN'/>
+		<Singleton class='CryptManager' name='CRYPTMAN'/>
+		<Singleton class='RageDisplay' name='DISPLAY'/>
 		<Singleton class='RageFileManager' name='FILEMAN'/>
 		<Singleton class='GameManager' name='GAMEMAN'/>
 		<Singleton class='GameState' name='GAMESTATE'/>
-		<Singleton class='ArchHooks' name='HOOKS'/>
+		<Singleton class='InputFilter' name='INPUTFILTER'/>
+		<Singleton class='RageInput' name='INPUTMAN'/>
+		<Singleton class='MemoryCardManager' name='MEMCARDMAN'/>
+		<Singleton class='MessageManager' name='MESSAGEMAN'/>
 		<Singleton class='NoteSkinManager' name='NOTESKIN'/>
 		<Singleton class='PrefsManager' name='PREFSMAN'/>
+		<Singleton class='ProfileManager' name='PROFILEMAN'/>
+		<Singleton class='ScreenManager' name='SCREENMAN'/>
+		<Singleton class='SongManager' name='SONGMAN'/>
+		<Singleton class='GameSoundManager' name='SOUND'/>
+		<Singleton class='StatsManager' name='STATSMAN'/>
 		<Singleton class='ThemeManager' name='THEME'/>
+		<Singleton class='UnlockManager' name='UNLOCKMAN'/>
 	</Singletons>
 	<Enums>
 		<Enum name='AllowW1'>
@@ -2362,6 +2376,6 @@
 		<Constant name='right' value='&apos;HorizAlign_Right&apos;'/>
 		<Constant name='top' value='&apos;VertAlign_Top&apos;'/>
 	</Constants>
-	<Version>StepMania v5.0 beta 1a</Version>
-	<Date>2013-03-24</Date>
+	<Version>StepMania v5.0 beta 2a</Version>
+	<Date>2013-08-31</Date>
 </Lua>

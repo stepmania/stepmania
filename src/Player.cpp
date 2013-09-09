@@ -963,8 +963,7 @@ void Player::Update( float fDeltaTime )
 			if( tn.HoldResult.fLife >= 0.5f )
 				continue;
 
-			// This handles any roll steps beyond the first.
-			Step( iTrack, -1, now, false, false );
+			Step( iTrack, iHeadRow, now, false, false );
 			if( m_pPlayerState->m_PlayerController == PC_AUTOPLAY )
 			{
 				STATSMAN->m_CurStageStats.m_bUsedAutoplay = true;
@@ -2968,28 +2967,32 @@ void Player::CrossedRows( int iLastRowCrossed, const RageTimer &now )
 			default: break;
 		}
 
-		if( iRow != iLastSeenRow )
+		// check to see if there's a note at the crossed row
+		if( m_pPlayerState->m_PlayerController != PC_HUMAN )
 		{
-			// crossed a not-empty row
-
-			// check to see if there's a note at the crossed row
-			if( m_pPlayerState->m_PlayerController != PC_HUMAN )
+			if (tn.type != TapNote::empty &&
+				tn.type != TapNote::fake &&
+				tn.type != TapNote::autoKeysound &&
+				tn.result.tns == TNS_None &&
+				this->m_Timing->IsJudgableAtRow(iRow) )
 			{
-				if (tn.type != TapNote::empty &&
-					tn.type != TapNote::fake &&
-					tn.type != TapNote::autoKeysound &&
-					tn.result.tns == TNS_None &&
-					this->m_Timing->IsJudgableAtRow(iRow) )
+				Step( iTrack, iRow, now, false, false );
+				if( m_pPlayerState->m_PlayerController == PC_AUTOPLAY )
 				{
-					Step( iTrack, iRow, now, false, false );
-					if( m_pPlayerState->m_PlayerController == PC_AUTOPLAY )
-					{
-						if( m_pPlayerStageStats )
-							m_pPlayerStageStats->m_bDisqualified = true;
-					}
+					if( m_pPlayerStageStats )
+						m_pPlayerStageStats->m_bDisqualified = true;
 				}
 			}
-			
+		}
+
+		// TODO: Can we remove the iLastSeenRow logic and the
+		// autokeysound for loop, since the iterator in this loop will
+		// already be iterating over all of the tracks?
+		if( iRow != iLastSeenRow )
+		{
+			// crossed a new not-empty row
+			iLastSeenRow = iRow;
+
 			// handle autokeysounds here (if not in the editor).
 			if (!GAMESTATE->m_bInStepEditor)
 			{

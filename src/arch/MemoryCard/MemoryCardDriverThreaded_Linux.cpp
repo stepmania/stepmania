@@ -46,7 +46,9 @@ static bool ReadFile( const RString &sPath, RString &sBuf )
 	int fd = open( sPath, O_RDONLY );
 	if( fd == -1 )
 	{
-		LOG->Warn( "Error opening \"%s\": %s", sPath.c_str(), strerror(errno) );
+		// "No such file or directory" is understandable
+		if (errno != ENOENT)
+			LOG->Warn( "Error opening \"%s\": %s", sPath.c_str(), strerror(errno) );
 		return false;
 	}
 	
@@ -301,7 +303,7 @@ void MemoryCardDriverThreaded_Linux::GetUSBStorageDevices( vector<UsbStorageDevi
 			char szScsiDevice[1024];
 			char szMountPoint[1024];
 			int iRet = sscanf( sLine, "%s %s", szScsiDevice, szMountPoint );
-			if( iRet != 2 )
+			if( iRet != 2 || szScsiDevice[0] == '#')
 				continue;	// don't process this line
 
 			/* Get the real kernel device name, which should match
@@ -311,7 +313,9 @@ void MemoryCardDriverThreaded_Linux::GetUSBStorageDevices( vector<UsbStorageDevi
 			char szUnderlyingDevice[PATH_MAX];
 			if( realpath(szScsiDevice, szUnderlyingDevice) == NULL )
 			{
-				LOG->Warn( "realpath(\"%s\"): %s", szScsiDevice, strerror(errno) );
+				// "No such file or directory" is understandable
+				if (errno != ENOENT)
+					LOG->Warn( "realpath(\"%s\"): %s", szScsiDevice, strerror(errno) );
 				continue;
 			}
 

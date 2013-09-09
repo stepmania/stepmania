@@ -8,6 +8,18 @@ ________________________________________________________________________________
 StepMania current development
 --------------------------------------------------------------------------------
 
+2013/09/06
+----------
+* Re-implement CustomSpeedMods to use new Lua hooks.  Fixes assertion when
+  loading SpeedMods.txt from unmounted card.
+* Add Lua hooks for themes to load/save custom data to/from profiles.
+* [Linux] Ignore comments in /etc/fstab.
+
+2013/08/30
+----------
+* Fix editor behavior when deleting/shifting timing changes.
+* Re-enabled "convert to stop/delay" at beat 0.
+
 2013/08/29
 ----------
 * Fix hack pertaining to ModIcons and Lua-based option rows.

@@ -73,12 +73,22 @@ void ArchHooks::MountUserFilesystems( const RString &sDirOfExecutable )
 	//RString sLocalAppDataDir = SpecialDirs::GetLocalAppDataDir() + PRODUCT_ID;
 	//RString sPicturesDir = SpecialDirs::GetPicturesDir() + PRODUCT_ID;
 
+	FILEMAN->Mount( "dir", sAppDataDir + "/Announcers", "/Announcers" );
+	FILEMAN->Mount( "dir", sAppDataDir + "/BGAnimations", "/BGAnimations" );
+	FILEMAN->Mount( "dir", sAppDataDir + "/BackgroundEffects", "/BackgroundEffects" );
+	FILEMAN->Mount( "dir", sAppDataDir + "/BackgroundTransitions", "/BackgroundTransitions" );
+	FILEMAN->Mount( "dir", sAppDataDir + "/Cache", "/Cache" );
+	FILEMAN->Mount( "dir", sAppDataDir + "/CDTitles", "/CDTitles" );
+	FILEMAN->Mount( "dir", sAppDataDir + "/Characters", "/Characters" );
+	FILEMAN->Mount( "dir", sAppDataDir + "/Courses", "/Courses" );
 	FILEMAN->Mount( "dir", sAppDataDir + "/Logs", "/Logs" );
+	FILEMAN->Mount( "dir", sAppDataDir + "/NoteSkins", "/NoteSkins" );
+	FILEMAN->Mount( "dir", sAppDataDir + "/Packages", "/" + SpecialFiles::USER_PACKAGES_DIR );
 	FILEMAN->Mount( "dir", sAppDataDir + "/Save", "/Save" );
 	FILEMAN->Mount( "dir", sAppDataDir + "/Screenshots", "/Screenshots" );
-	FILEMAN->Mount( "dir", sAppDataDir, "/" );
-	FILEMAN->Mount( "dir", sAppDataDir + "/Cache", "/Cache" );
-	FILEMAN->Mount( "dir", sAppDataDir + "/Packages", "/" + SpecialFiles::USER_PACKAGES_DIR );
+	FILEMAN->Mount( "dir", sAppDataDir + "/Songs", "/Songs" );
+	FILEMAN->Mount( "dir", sAppDataDir + "/RandomMovies", "/RandomMovies" );
+	FILEMAN->Mount( "dir", sAppDataDir + "/Themes", "/Themes" );
 }
 
 static RString LangIdToString( LANGID l )

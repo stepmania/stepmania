@@ -1,10 +1,13 @@
 --[[
-Custom Speed Mods v2.3 (for StepMania 5/SM5TE)
-by AJ Kelly of KKI Labs ( http://kki.ajworld.net/ )
+Custom Speed Mods v3 (for StepMania 5)
 
 changelog:
 
-v2.3 (StepMania 5 a2/SM5TE)
+v3 (StepMania 5 b3)
+* Complete rewrite to use profile load/save hooks.
+
+--------------------------------------------------------------------------------
+v2.3 (StepMania 5 a2/SM5TE) [by AJ]
 * If someone has decided to remove 1x from the machine profile's speed mods,
   silently fix it.
 * Ignore Cmod and mmod capitalization errors.
@@ -47,187 +50,155 @@ v1.1
 * Cleaned up code some, I think.
 ]]
 
--- ProfileDir(slot): gets the profile dir for slot,
--- where slot is a 'ProfileSlot_*' enum value.
-local function ProfileDir(slot)
-	local profileDir = PROFILEMAN:GetProfileDir(slot)
-	return profileDir or nil
+local ProfileSpeedMods = {}
+
+-- Returns a new, empty mod table: a table with three members x, C, and m,
+-- each being a table with the corresponding numbers set to true.
+local function EmptyModTable()
+	return {x = {}, C = {}, m = {}}
 end
 
--- Tries to parse the file at path. If successful, returns a table of mods.
--- If it can't open the file, it will write a fallback set of mods.
-local function ParseSpeedModFile(path)
-	local function Failure()
-		-- error; write a fallback mod file and return it
-		local fallbackString = "0.5x,1x,1.5x,2x,3x,4x,5x,6x,7x,8x,C250,C450,m550"
-		Trace("[CustomSpeedMods]: Could not read SpeedMods; writing fallback to "..path)
-		local file = RageFileUtil.CreateRageFile()
-		file:Open(path, 2)
-		file:Write(fallbackString)
-		file:destroy()
-		return split(',',fallbackString)
+-- Merge one mod table into another.
+local function MergeInModTable(dst, src)
+	for typ, subtbl in pairs(src) do
+		for n, v in pairs(subtbl) do
+			dst[typ][n] = v
+		end
+	end
+end
+
+-- Parses a speed mod and returns the pair (type, number) or nil if parsing
+-- failed.
+local function CanonicalizeMod(mod)
+	num = tonumber(mod:match("^(%d+.?%d*)[xX]$"))
+	if num ~= nil then
+		return "x", num
 	end
 
+	num = tonumber(mod:match("^[cC](%d+.?%d*)$"))
+	if num ~= nil then
+		return "C", num
+	end
+
+	num = tonumber(mod:match("^[mM](%d+.?%d*)$"))
+	if num ~= nil then
+		return "m", num
+	end
+
+	return nil
+end
+
+-- Parse a comma-separated string into a mod table.
+local function StringToModTable(str)
+	local mods = EmptyModTable()
+	local valid = false
+
+	string.gsub(str, "%s", "")
+	for _, mod in ipairs(split(",", str)) do
+		local t, n = CanonicalizeMod(mod)
+		if t then
+			mods[t][n] = true
+			valid = true
+		end
+	end
+
+	return valid and mods or nil
+end
+
+-- Return the contents of a mod table as a list of mod names.
+local function ModTableToList(mods)
+	local l = {}
+	local tmp = {}
+
+	-- Do x-mods separately because the x comes after
+	for mod, _ in pairs(mods.x) do
+		table.insert(tmp, mod)
+	end
+	table.sort(tmp)
+	for _, mod in ipairs(tmp) do
+		table.insert(l, mod .. "x")
+	end
+
+	-- C- and m-mods
+	for _, modtype in ipairs({"C", "m"}) do
+		tmp = {}
+		for mod, _ in pairs(mods[modtype]) do
+			table.insert(tmp, mod)
+		end
+		table.sort(tmp)
+		for _, mod in ipairs(tmp) do
+			table.insert(l, modtype .. mod)
+		end
+	end
+
+	return l
+end
+
+local DefaultMods = StringToModTable("0.5x,1x,1.5x,2x,3x,4x,5x,6x,7x,8x,C250,C450,m550")
+
+-- Reads the custom speed mod file at <path> and returns a corresponding mod
+-- table.
+local function ReadSpeedModFile(path)
 	local file = RageFileUtil.CreateRageFile()
-	if file:Open(path, 1) then
-		-- success
-		local contents = file:Read()
-		mods = split(',',contents)
-		
-		-- strip any whitespace and check 
-		for i=1,#mods do
-			string.gsub(mods[i], "%s", "")
-			if not(mods[i]:find("%d+.?%d*[xX]") or mods[i]:find("[cmCM]%d+")) then
-				mods[i] = nil
-			elseif mods[i]:find("[mM]") then mods[i]=mods[i]:lower()
-			elseif mods[i]:find("[cC]") then mods[i]=mods[i]:upper() end
-		end
-		
-    if #mods==0 then file:destroy() return Failure() end
-		
+	if not file:Open(path, 1) then
 		file:destroy()
-		return mods
-	else
-		file:destroy()
-		return Failure()
+		return nil
 	end
+
+	local contents = file:Read()
+	file:Close()
+	file:destroy()
+
+	return StringToModTable(contents)
 end
 
--- InvertTable(tbl)
--- Returns a table where a key-value pair is swapped.
-local function InvertTable(tbl)
-	local rTable = {}
-	for k,v in pairs(tbl) do
-		rTable[v] = k
-	end
-	return rTable
-end
+-- Hook called during profile load
+function LoadProfileCustom(profile, dir)
+	-- This will be (intentionally) nil if the file is missing or bad
+	local mods = ReadSpeedModFile(dir .. "SpeedMods.txt")
 
--- MergeTables(parent,child)
--- Puts two tables together, overwriting values
--- with the same key.
-local function MergeTables(parent, child)
-	for k,v in pairs(parent) do
-		child[k] = v
+	-- Special case for the machine profile
+	if profile == PROFILEMAN:GetMachineProfile() then
+		ProfileSpeedMods.machine = mods
+		return
 	end
-	return child
-end
 
--- code in this function is based off of code in
--- http://astrofra.com/weblog/files/sort.lua
-local function AnonSort(t)
-	local index_min
-	for i=1,#t,1 do
-		index_min = i
-		for j=i+1,#t,1 do
-			if (t[j] < t[index_min]) then
-				index_min = j
-			end
+	-- Otherwise, it's a player profile.  Store accordingly.
+	for i = 1, NUM_PLAYERS do
+		if profile == PROFILEMAN:GetProfile(PlayerNumber[i]) then
+			ProfileSpeedMods[PlayerNumber[i]] = mods
+			break
 		end
-		t[i], t[index_min] = t[index_min], t[i]
 	end
-	return t
 end
 
-local function SpeedModSort(tab)
-	local xMods = {}
-	local mMods = {}
-	local cMods = {}
-
-	-- convert to numbers so sorting works:
-	for i=1,#tab do
-		local typ,val
-		-- xxx: If people use a floating point CMod (e.g. C420.50),
-		-- it will get rounded. C420.50 gets rounded to 421, btw. -aj
-		if string.find(tab[i],"C%d") then
-			typ = cMods
-			val = string.gsub(tab[i], "C", "")
-		-- support both cases because I want to hit people -freem
-		elseif string.find(tab[i],"m%d") or string.find(tab[i],"M%d") then
-			typ = mMods
-			val = string.gsub(tab[i], "m", "")
-		else
-			typ = xMods
-			val = string.gsub(tab[i], "x", "")
-		end
-		table.insert(typ,tonumber(val))
-	end
-
-	-- sort Mods
-	xMods = AnonSort(xMods)
-	cMods = AnonSort(cMods)
-	mMods = AnonSort(mMods)
-	local fin = {}
-	-- convert it back to a string since that's what it expects
-	for i=1,#xMods do
-		table.insert(fin, xMods[i].."x")
-	end
-	for i=1,#cMods do
-		table.insert(fin, "C"..cMods[i])
-	end
-	for i=1,#mMods do
-		table.insert(fin, "m"..mMods[i])
-	end
-	return fin
+-- Hook called during profile save
+function SaveProfileCustom(profile, dir)
+	-- Change this if a theme allows you to change and save custom
+	-- per-profile settings.
 end
 
--- parse everything
+-- Returns a list of speed mods for the current round.
 local function GetSpeedMods()
-	local finalMods = {}
+	-- Start with machine profile
+	local mods = ProfileSpeedMods.machine or EmptyModTable()
 
-	local baseFilename = "SpeedMods.txt"
-	local profileDirs = {
-		Machine = ProfileDir('ProfileSlot_Machine'),
-		PlayerNumber_P1 = ProfileDir('ProfileSlot_Player1'),
-		PlayerNumber_P2 = ProfileDir('ProfileSlot_Player2')
-	}
-
-	-- if someone is trying to be "smart" and removes 1x from the machine
-	-- profile's custom speed mods, re-add it to prevent crashes.
-	local machineMods = ParseSpeedModFile(profileDirs.Machine..baseFilename)
-	if machineMods then
-		local found1X = false
-		for k,v in pairs(machineMods) do found1X = (v == "1x") end
-		if not found1X then table.insert(machineMods,"1x") end
-	end
-
-	-- load machine to finalMods
-	finalMods = InvertTable(machineMods)
-
-	-- figure out how many players we have to deal with.
-	local numPlayers = GAMESTATE:GetNumPlayersEnabled()
-
-	local playerMods = {}
-	for pn in ivalues(GAMESTATE:GetHumanPlayers()) do
-		-- file loading logic per player.
-		if PROFILEMAN:IsPersistentProfile(pn) then
-			playerMods[#playerMods+1] = ParseSpeedModFile(profileDirs[pn]..baseFilename)
-		-- we need to make sure the memory card is ready if we're gonna grab from it.
-		elseif MEMCARDMAN:GetCardState(pn) == 'MemoryCardState_ready' then
-			playerMods[#playerMods+1] = ParseSpeedModFile(profileDirs[pn]..baseFilename)
+	-- Merge in any active players
+	for _, p in ipairs(GAMESTATE:GetHumanPlayers()) do
+		if ProfileSpeedMods[p] and PROFILEMAN:IsPersistentProfile(p) then
+			MergeInModTable(mods, ProfileSpeedMods[p])
+		else
+			MergeInModTable(mods, DefaultMods)
 		end
 	end
-	
-	-- join players, overwriting duplicates
-	for ply=1,#playerMods do
-		finalMods=MergeTables(finalMods,InvertTable(playerMods[ply]))
-	end
-	
-	-- convert into an unsorted integer-indexed table
-	do
-		local curIndex = 1
-		local newFinalMods = {}
-		for k,v in pairs(finalMods) do
-			newFinalMods[curIndex] = k
-			curIndex = curIndex + 1
-		end
-		finalMods = newFinalMods
-	end
-	
-	-- sort the mods before returning them
-	return SpeedModSort(finalMods)
+
+	-- Apparently removing 1x caused crashes, so be sure it's there.
+	-- (This may not be a problem anymore. -- djpohly)
+	mods.x[1] = true
+	return ModTableToList(mods)
 end
 
+-- Implementation of custom Lua option row
 function SpeedMods()
 	local t = {
 		Name = "Speed",
@@ -238,31 +209,38 @@ function SpeedMods()
 		Choices = GetSpeedMods(),
 
 		LoadSelections = function(self, list, pn)
-			local pMods = GAMESTATE:GetPlayerState(pn):GetPlayerOptionsString("ModsLevel_Preferred")
-			for i = 1,table.getn(self.Choices) do
-				if string.find(pMods, self.Choices[i]) then
-					list[i] = true
-					return
+			local pref = GAMESTATE:GetPlayerState(pn):GetPlayerOptionsString("ModsLevel_Preferred")
+			local selected = 0
+
+			for i, choice in ipairs(self.Choices) do
+				if string.find(pref, choice) then
+					-- Found it, use it
+					selected = i
+					break
+				elseif choice == "1x" then
+					-- Pick this unless we find the
+					-- preferred choice
+					selected = i
 				end
 			end
 
-			-- if we've reached this point, try to find 1x or 1.0x instead,
-			-- in case the player has defined a speed mod under 1.0x
-			for i = 1,table.getn(self.Choices) do
-				if self.Choices[i] == "1x" or self.Choices[i] == "1.0x" then
-					list[i] = true
-					return
-				end
+			-- If we didn't find a match, just use the first
+			if selected ~= 0 then
+				list[selected] = true
+			else
+				list[1] = true
 			end
 		end,
 		SaveSelections = function(self, list, pn)
-			for i = 1,table.getn(self.Choices) do
+			local state = GAMESTATE:GetPlayerState(pn)
+			for i, choice in ipairs(self.Choices) do
 				if list[i] then
-					local PlayerState = GAMESTATE:GetPlayerState(pn)
-					PlayerState:SetPlayerOptions("ModsLevel_Preferred",self.Choices[i])
+					state:SetPlayerOptions("ModsLevel_Preferred", choice)
 					return
 				end
 			end
+			-- Or use the first
+			state:SetPlayerOptions("ModsLevel_Preferred", self.Choices[1])
 		end
 	}
 	setmetatable( t, t )
@@ -270,8 +248,9 @@ function SpeedMods()
 end
 
 --[[
-Copyright © 2008-2012 AJ Kelly/KKI Labs.
-Use freely, so long this notice and the above documentation remains.
+CustomSpeedMods (c) 2013 StepMania team.
+
+Use freely, so long as this notice and the above documentation remains.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -283,4 +262,6 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
 ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+Previous version was copyright © 2008-2012 AJ Kelly/KKI Labs.
 ]]
