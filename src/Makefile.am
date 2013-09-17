@@ -92,7 +92,7 @@ ScreenOptionsManageProfiles.cpp ScreenOptionsManageProfiles.h \
 ScreenOptionsMaster.cpp ScreenOptionsMaster.h \
 ScreenOptionsMasterPrefs.cpp ScreenOptionsMasterPrefs.h \
 ScreenOptionsToggleSongs.cpp ScreenOptionsToggleSongs.h \
-ScreenPackages.cpp ScreenPackages.h ScreenPackagesSSC.cpp ScreenPackagesSSC.h \
+ScreenPackages.cpp ScreenPackages.h \
 ScreenNetworkOptions.h ScreenNetworkOptions.cpp \
 ScreenPlayerOptions.cpp ScreenPlayerOptions.h \
 ScreenProfileLoad.cpp ScreenProfileLoad.h \
