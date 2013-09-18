@@ -3375,6 +3375,7 @@ void Player::SetHoldJudgment( TapNoteScore tns, HoldNoteScore hns, int iTrack )
 		msg.SetParam( "Player", m_pPlayerState->m_PlayerNumber );
 		msg.SetParam( "MultiPlayer", m_pPlayerState->m_mp );
 		msg.SetParam( "FirstTrack", iTrack );
+		msg.SetParam( "NumTracks", (int)m_vpHoldJudgment.size() );
 		msg.SetParam( "TapNoteScore", tns );
 		msg.SetParam( "HoldNoteScore", hns );
 		MESSAGEMAN->Broadcast( msg );
