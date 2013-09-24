@@ -584,13 +584,14 @@ namespace
 		}
 		else if( sExpression.size() > 0 && sExpression[0] == '@' )
 		{
-			// This is a raw string.
+			// Lua expression
 			sExpression.erase( 0, 1 );
-			LuaHelpers::Push( L, sExpression );
+			LuaHelpers::RunExpression( L, sExpression, sFile );
 		}
 		else
 		{
-			LuaHelpers::RunExpression( L, sExpression, sFile );
+			// This is a raw string.
+			LuaHelpers::Push( L, sExpression );
 		}
 
 		XNodeLuaValue *pRet = new XNodeLuaValue;
