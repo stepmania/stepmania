@@ -63,7 +63,7 @@ void LightsDriver_Linux_PIUIO::Set( const LightsState *ls )
 		if (ls->m_bGameButtonLights[GameController_2][PUMP_BUTTON_UPRIGHT]) buf[2] |= 0x08;
 		if (ls->m_bGameButtonLights[GameController_2][PUMP_BUTTON_CENTER]) buf[2] |= 0x10;
 		if (ls->m_bGameButtonLights[GameController_2][PUMP_BUTTON_DOWNLEFT]) buf[2] |= 0x20;
-		if (ls->m_bGameButtonLights[GameController_2][PUMP_BUTTON_DOWNRIGHT]) buf[2] |= 0x20;
+		if (ls->m_bGameButtonLights[GameController_2][PUMP_BUTTON_DOWNRIGHT]) buf[2] |= 0x40;
 	}
 	if (!memcmp(buf, oldbuf, 8))
 		return;
