@@ -1696,8 +1696,6 @@
 		EE906F8312BF3AF800146C96 /* JsonUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = EE906F8112BF3AF800146C96 /* JsonUtil.h */; };
 		EE906F8A12BF3C7C00146C96 /* FileDownload.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EE906F8812BF3C7C00146C96 /* FileDownload.cpp */; };
 		EE906F8B12BF3C7C00146C96 /* FileDownload.h in Headers */ = {isa = PBXBuildFile; fileRef = EE906F8912BF3C7C00146C96 /* FileDownload.h */; };
-		EEA7C84310A805A300082E7B /* ScreenPackagesSSC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EEA7C84110A805A300082E7B /* ScreenPackagesSSC.cpp */; };
-		EEA7C84410A805A300082E7B /* ScreenPackagesSSC.h in Headers */ = {isa = PBXBuildFile; fileRef = EEA7C84210A805A300082E7B /* ScreenPackagesSSC.h */; };
 		EEC7863F0E58208B00F559BC /* StepsDisplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EEC7863D0E58208B00F559BC /* StepsDisplay.cpp */; };
 		F4BC045409E6B578003F770B /* ScreenGameplaySyncMachine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAB55EB509A7E3D3008FDC69 /* ScreenGameplaySyncMachine.cpp */; };
 		F4BC045509E6B582003F770B /* ScreenGameplaySyncMachine.h in Headers */ = {isa = PBXBuildFile; fileRef = AAB55EB609A7E3D3008FDC69 /* ScreenGameplaySyncMachine.h */; };
@@ -3128,8 +3126,6 @@
 		EE906F8112BF3AF800146C96 /* JsonUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JsonUtil.h; path = ../src/JsonUtil.h; sourceTree = SOURCE_ROOT; };
 		EE906F8812BF3C7C00146C96 /* FileDownload.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FileDownload.cpp; path = ../src/FileDownload.cpp; sourceTree = SOURCE_ROOT; };
 		EE906F8912BF3C7C00146C96 /* FileDownload.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileDownload.h; path = ../src/FileDownload.h; sourceTree = SOURCE_ROOT; };
-		EEA7C84110A805A300082E7B /* ScreenPackagesSSC.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ScreenPackagesSSC.cpp; path = ../src/ScreenPackagesSSC.cpp; sourceTree = SOURCE_ROOT; };
-		EEA7C84210A805A300082E7B /* ScreenPackagesSSC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ScreenPackagesSSC.h; path = ../src/ScreenPackagesSSC.h; sourceTree = SOURCE_ROOT; };
 		EEC7863D0E58208B00F559BC /* StepsDisplay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StepsDisplay.cpp; path = ../src/StepsDisplay.cpp; sourceTree = "<group>"; };
 		EEC7863E0E58208B00F559BC /* StepsDisplay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StepsDisplay.h; path = ../src/StepsDisplay.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -3613,8 +3609,6 @@
 				AAA7D4C80C7E872500FB8F78 /* ScreenOptionsToggleSongs.h */,
 				AA1145D9075DFADF0050A3D1 /* ScreenPackages.cpp */,
 				AA1145DA075DFADF0050A3D1 /* ScreenPackages.h */,
-				EEA7C84110A805A300082E7B /* ScreenPackagesSSC.cpp */,
-				EEA7C84210A805A300082E7B /* ScreenPackagesSSC.h */,
 				AA6E004F047711F3005F316C /* ScreenPlayerOptions.cpp */,
 				AA6E0050047711F3005F316C /* ScreenPlayerOptions.h */,
 				AA18935C0BD777C400AEC0BF /* ScreenProfileLoad.cpp */,
@@ -5266,7 +5260,6 @@
 				36CA531D0F91564A0063D59D /* ScreenOptionsCourseOverview.h in Headers */,
 				36CA53210F9156860063D59D /* ScreenOptionsEditCourse.h in Headers */,
 				EE2153AA10A75BEE0074B01B /* NotesLoaderPMS.h in Headers */,
-				EEA7C84410A805A300082E7B /* ScreenPackagesSSC.h in Headers */,
 				36C6888411297FFE00453295 /* RageFileDriverReadAhead.h in Headers */,
 				36C6888611297FFE00453295 /* RageFileManager_ReadAhead.h in Headers */,
 				EE906F6712BF3A1B00146C96 /* ScreenInstallOverlay.h in Headers */,
@@ -6652,7 +6645,6 @@
 				3659B56F0F902143002B6B68 /* CommandLineActions.cpp in Sources */,
 				36CA531C0F91564A0063D59D /* ScreenOptionsCourseOverview.cpp in Sources */,
 				36CA53200F9156860063D59D /* ScreenOptionsEditCourse.cpp in Sources */,
-				EEA7C84310A805A300082E7B /* ScreenPackagesSSC.cpp in Sources */,
 				36C6888311297FFE00453295 /* RageFileDriverReadAhead.cpp in Sources */,
 				36C6888511297FFE00453295 /* RageFileManager_ReadAhead.cpp in Sources */,
 				EE906F6612BF3A1B00146C96 /* ScreenInstallOverlay.cpp in Sources */,
