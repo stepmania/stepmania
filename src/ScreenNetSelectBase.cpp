@@ -169,7 +169,7 @@ void ScreenNetSelectBase::UpdateUsers()
 
 	for( unsigned i=0; i < NSMAN->m_ActivePlayer.size(); i++)
 	{
-		m_textUsers[i].LoadFromFont( THEME->GetPathF(m_sName,"chat") );
+		m_textUsers[i].LoadFromFont( THEME->GetPathF(m_sName,"users") );
 		m_textUsers[i].SetHorizAlign( align_center );
 		m_textUsers[i].SetVertAlign( align_top );
 		m_textUsers[i].SetShadowLength( 0 );

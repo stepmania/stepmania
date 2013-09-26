@@ -90,7 +90,6 @@ ScreenNameEntryTraditional
 ScreenNetSelectBase
 ScreenOptions
 ScreenPackages
-ScreenPackagesSSC
 ScreenProfileLoad
 ScreenProfileSave
 ScreenPrompt

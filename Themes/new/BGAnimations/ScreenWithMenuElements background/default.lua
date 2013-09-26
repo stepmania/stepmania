@@ -21,7 +21,7 @@ t[#t+1] = Def.ActorFrame {
   -- Scanline
   LoadActor("_texture scanline") .. {
     InitCommand=cmd(zoomto,SCREEN_WIDTH,SCREEN_HEIGHT;
-      customtexturerect,0,0,SCREEN_WIDTH/16,SCREEN_HEIGHT/32;
+      customtexturerect,0,0,SCREEN_WIDTH/16,(SCREEN_HEIGHT/16)/2;
       diffuse,Color.Black;
       diffusealpha,0.25;
     );
