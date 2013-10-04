@@ -3358,6 +3358,9 @@ save yourself some time, copy this for undocumented things:
 	<Function name='GetCaloriesBurnedToday' return='float' arguments=''>
 		Returns the number of calories burned during the current day.
 	</Function>
+	<Function name='GetCategoryHighScoreList' return='HighScoreList' arguments='StepsType st, RankingCategory rc'>
+		Returns the profile's high scores for the specified ranking category.
+	</Function>
 	<Function name='GetCharacter' return='Character' arguments=''>
 		Returns the Character being used by this profile.
 	</Function>
