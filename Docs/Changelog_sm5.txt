@@ -8,6 +8,12 @@ ________________________________________________________________________________
 StepMania current development
 --------------------------------------------------------------------------------
 
+2013/10/03
+----------
+* [GameConstantsAndTypes] Declared RankingCategory as a type. [SSC]
+* [Profile] Added GetCategoryHighScoreList(StepsType,RankingCategory) Lua
+  binding. [SSC]
+
 2013/09/23
 ----------
 * PIUIO: Fix default mapping for lights on five-panel setups.

@@ -2007,6 +2007,14 @@ public:
 		luaL_typerror( L, 1, "Song or Course" );
 		return 0;
 	}
+	static int GetCategoryHighScoreList( T* p, lua_State *L )
+	{
+		StepsType pStepsType = Enum::Check<StepsType>(L, 1);
+		RankingCategory pRankCat = Enum::Check<RankingCategory>(L, 2);
+		HighScoreList &hsl = p->GetCategoryHighScoreList(pStepsType, pRankCat);
+		hsl.PushSelf( L );
+		return 1;
+	}
 
 	static int GetCharacter( T* p, lua_State *L )			{ p->GetCharacter()->PushSelf(L); return 1; }
 	static int SetCharacter( T* p, lua_State *L )			{ p->SetCharacter(SArg(1)); return 0; }
@@ -2102,6 +2110,7 @@ public:
 		ADD_METHOD( GetDisplayName );
 		ADD_METHOD( GetLastUsedHighScoreName );
 		ADD_METHOD( GetHighScoreList );
+		ADD_METHOD( GetCategoryHighScoreList );
 		ADD_METHOD( GetCharacter );
 		ADD_METHOD( SetCharacter );
 		ADD_METHOD( GetWeightPounds );

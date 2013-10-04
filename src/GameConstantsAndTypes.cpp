@@ -101,6 +101,7 @@ static const char *RankingCategoryNames[] = {
 };
 XToString( RankingCategory );
 StringToX( RankingCategory );
+LuaXType( RankingCategory );
 
 
 static const char *PlayerControllerNames[] = {
