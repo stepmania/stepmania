@@ -4,10 +4,6 @@ local width = 330
 local height = 46
 local offset = -16
 
-t.InitCommand=function(self)
-	--self:y(0.5)
-end
-
 -- background
 t[#t+1] = Def.Quad {}
 t[#t].InitCommand = function(self)
@@ -23,6 +19,10 @@ local function GenerateRandomColors(song)
 	-- randomseed truncates float values, but we need more randomness.
 	-- move the number over several digits to compensate.
 	local length = song:MusicLengthSeconds()
+
+	if song:GetDisplayMainTitle() == "DVNO" then
+		return 2, { { 1, 0.8, 0, 1 }, { 1, 0.6, 0, 1 } }
+	end
 
 	 -- BMS files without BGM mess with this (zero). Use 120 instead.
 	if length == 0 then
