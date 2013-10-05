@@ -20,11 +20,22 @@ end --]]
 
 --
 t[#t+1] = Def.ActorFrame {
-	InitCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y);
-	LoadActor("VOL1-29-NTSC") .. {
-		InitCommand=cmd(scaletoclipped,SCREEN_WIDTH,SCREEN_HEIGHT);
-		OnCommand=cmd(diffusealpha,0.75);
+	Def.Quad {
+		InitCommand=cmd(FullScreen;diffuse,color("#1C1C1C"));
 	};
+	LoadActor( THEME:GetPathG("_texture","checkerboard") ) .. {
+		InitCommand=cmd(FullScreen;
+						customtexturerect,0,0,SCREEN_WIDTH/64,SCREEN_HEIGHT/64;
+						Center);
+		OnCommand=cmd(texcoordvelocity,0.25,0;diffusealpha,0.025);
+	};
+	Def.Quad {
+		InitCommand=cmd(FullScreen;diffuse,Color.Orange;diffusealpha,0.6);
+		OnCommand=cmd(fadeleft,1;cropleft,0.45;diffuseshift;effectperiod,5;
+					  effectcolor2,Color.Alpha(Color.Orange,0.3);
+					  effectcolor1,Color.Alpha(Color.Orange,0.8)
+		);
+	}
 };
 --
 local bShow = 0;
