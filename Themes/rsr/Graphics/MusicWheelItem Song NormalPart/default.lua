@@ -128,23 +128,4 @@ t[#t].SetMessageCommand = function(self, params)
 	end
 end
 
-
--- bottom border
-t[#t+1] = Def.Quad {}
-t[#t].InitCommand = function(self)
-	self:x(offset+10)
-	self:y(math.ceil(height/2)+1)
-	self:setsize(width+20, 2)
-	self:diffuse({0.0, 0.0, 0.0, 0.8})
-end
-
--- left border
-t[#t+1] = Def.Quad {}
-t[#t].InitCommand = function(self)
-	self:x(-width/2+offset)
-	self:y(1)
-	self:setsize(2, height+2)
-	self:diffuse({0.0, 0.0, 0.0, 0.8})
-end
-
 return t
