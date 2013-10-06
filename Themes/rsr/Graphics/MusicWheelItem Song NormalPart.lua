@@ -24,6 +24,10 @@ local function GenerateRandomColors(song)
 		return 2, { { 1, 0.8, 0, 1 }, { 1, 0.6, 0, 1 } }
 	end
 
+	if song:GetDisplayMainTitle() == "The Witches' Ball" then
+		return 3, { { 0.2, 0.1, 0.3, 1 }, { 0.7, 0.7, 1.0, 1 }, { 0.2, 0.1, 0.3, 1 } }
+	end
+
 	 -- BMS files without BGM mess with this (zero). Use 120 instead.
 	if length == 0 then
 		length = 120
