@@ -102,7 +102,7 @@ end
 t[#t+1] = t2
 
 t[#t+1] = LoadActor(THEME:GetPathG("", "_shigu"))
-t[#t].InitCommand = cmd(visible,false;x,-width/2+3;zoom,0.25;animate,false)
+t[#t].InitCommand = cmd(visible,false;x,-width/2+8;zoom,0.25;animate,false)
 t[#t].SetMessageCommand = function(self, params)
 	local song = params.Song
 
