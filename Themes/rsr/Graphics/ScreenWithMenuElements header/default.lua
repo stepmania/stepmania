@@ -9,6 +9,18 @@ t[#t+1] = Def.ActorFrame {
 };
 
 t[#t+1] = Def.ActorFrame {
+	InitCommand=cmd(y,48);
+	Def.Quad {
+		InitCommand=cmd(vertalign,bottom;zoomto,SCREEN_WIDTH,24);
+		OnCommand=cmd(diffuse,Color.Orange;diffusealpha,0.125;fadetop,1);
+	};
+	Def.Quad {
+		InitCommand=cmd(vertalign,bottom;zoomto,SCREEN_WIDTH,2);
+		OnCommand=cmd(diffuse,Color.Orange);
+	};
+};
+
+t[#t+1] = Def.ActorFrame {
 	Name="MenuTimerDecoration";
 	InitCommand=cmd(y,40;visible,false);
 
