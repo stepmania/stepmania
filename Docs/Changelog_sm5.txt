@@ -8,6 +8,11 @@ ________________________________________________________________________________
 StepMania current development
 --------------------------------------------------------------------------------
 
+2013/10/06
+----------
+* [ScreenOptions] Allow for the use of per-screen Start sounds instead of a forced
+  Common Start. [SSC]
+
 2013/10/03
 ----------
 * [GameConstantsAndTypes] Declared RankingCategory as a type. [SSC]

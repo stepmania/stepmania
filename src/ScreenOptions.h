@@ -142,6 +142,7 @@ protected:	// derived classes need access to these
 	RageSound		m_SoundPrevRow;
 	RageSound		m_SoundToggleOn;
 	RageSound		m_SoundToggleOff;
+	RageSound		m_SoundStart;
 
 	// metrics
 	ThemeMetric<int>		NUM_ROWS_SHOWN;
