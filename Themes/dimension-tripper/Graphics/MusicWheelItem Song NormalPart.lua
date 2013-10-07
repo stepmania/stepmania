@@ -150,4 +150,10 @@ t[#t].SetMessageCommand = function(self, params)
 	end
 end
 
+t[#t+1] = Def.Quad {}
+t[#t].InitCommand = cmd(MaskSource,true;setsize,width+1,height+1)
+
+t[#t+1] = Theme.RoundboxInverse(width+6,height,color("0.85,0.85,0.85,1"))
+t[#t].InitCommand = cmd(runcommandsonleaves,cmd(ztestmode,'ZTestMode_WriteOnFail';blend,Blend.InvertDest))
+
 return t
