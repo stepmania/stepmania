@@ -176,3 +176,7 @@ Theme.RoundboxInverse = function(Width, Height, Color)
 		LoadActor(corner)..{ InitCommand=cmd(x,CornerPosX;y,EdgePosY;rotationz,0) }
 	}
 end
+
+Theme.GetAspect = function()
+	return SCREEN_WIDTH / SCREEN_HEIGHT
+end
