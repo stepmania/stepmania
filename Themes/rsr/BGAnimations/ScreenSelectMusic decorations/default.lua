@@ -23,7 +23,10 @@ local t = LoadFallbackB();
 for pn in ivalues(PlayerNumber) do
 	t[#t+1] = StepsDisplay(pn) .. {
 		InitCommand=cmd(x,pn == PLAYER_1 and SCREEN_CENTER_X*0.5 or SCREEN_CENTER_X*1.5;y,SCREEN_BOTTOM-96); 
-	}
+	};
+	
 end
+--
+t[#t+1] = StandardDecorationFromFileOptional("DifficultyIconRow","DifficultyIconRow");
 --
 return t;
