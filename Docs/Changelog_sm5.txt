@@ -8,6 +8,12 @@ ________________________________________________________________________________
 StepMania current development
 --------------------------------------------------------------------------------
 
+2013/10/09
+----------
+* [CombinedLifeMeterTug] Added names and commands to Separator and Frame items.
+  [SSC]
+* [MeterDisplay] Added names to Stream and Tip items. [SSC]
+
 2013/10/06
 ----------
 * [ScreenOptions] Allow for the use of per-screen Start sounds instead of a forced
