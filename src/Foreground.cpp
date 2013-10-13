@@ -52,12 +52,6 @@ void Foreground::LoadFromSong( const Song *pSong )
 		bga.m_fStartBeat = change.m_fStartBeat;
 		bga.m_bFinished = false;
 
-		const float fStartSecond = pSong->m_SongTiming.GetElapsedTimeFromBeat( bga.m_fStartBeat );
-		bga.m_bga->PlayCommand( "On" );
-		const float fStopSecond = fStartSecond + bga.m_bga->GetTweenTimeLeft();
-		bga.m_bga->StopTweening();
-		bga.m_fStopBeat = pSong->m_SongTiming.GetBeatFromElapsedTime( fStopSecond );
-
 		bga.m_bga->SetVisible( false );
 
 		this->AddChild( bga.m_bga );
@@ -96,6 +90,9 @@ void Foreground::Update( float fDeltaTime )
 			bga.m_bga->PlayCommand( "On" );
 
 			const float fStartSecond = m_pSong->m_SongTiming.GetElapsedTimeFromBeat( bga.m_fStartBeat );
+			const float fStopSecond = fStartSecond + bga.m_bga->GetTweenTimeLeft();
+			bga.m_fStopBeat = m_pSong->m_SongTiming.GetBeatFromElapsedTime( fStopSecond );
+
 			lDeltaTime = GAMESTATE->m_Position.m_fMusicSeconds - fStartSecond;
 		}
 		else
