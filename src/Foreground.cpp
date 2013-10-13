@@ -120,6 +120,17 @@ void Foreground::Update( float fDeltaTime )
 	m_fLastMusicSeconds = GAMESTATE->m_Position.m_fMusicSeconds;
 }
 
+void Foreground::HandleMessage( const Message &msg )
+{
+	// We want foregrounds to behave as if their On command happens at the
+	// starting beat, not when the Foreground object receives an On command.
+	// So don't propagate that; we'll call it ourselves.
+	if (msg.GetName() == "On")
+		Actor::HandleMessage(msg);
+	else
+		ActorFrame::HandleMessage(msg);
+}
+
 /*
  * (c) 2004 Glenn Maynard
  * All rights reserved.

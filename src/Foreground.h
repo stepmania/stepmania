@@ -13,6 +13,7 @@ public:
 	void LoadFromSong( const Song *pSong );
 
 	virtual void Update( float fDeltaTime );
+	virtual void HandleMessage( const Message &msg );
 
 protected:
 	struct LoadedBGA
