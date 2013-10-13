@@ -37,6 +37,9 @@ void ActorUtil::Register( const RString& sClassName, CreateActorFn pfn )
 	(*g_pmapRegistrees)[sClassName] = pfn;
 }
 
+/* Resolves actor paths a la LoadActor("..."), with autowildcarding and .redir
+ * files.  Returns a path *within* the Rage filesystem, unlike the FILEMAN
+ * function of the same name. */
 bool ActorUtil::ResolvePath( RString &sPath, const RString &sName )
 {
 	CollapsePath( sPath );
@@ -311,10 +314,28 @@ Actor* ActorUtil::MakeActor( const RString &sPath_, Actor *pParentActor )
 			Actor *pRet = ActorUtil::LoadFromNode( pNode.get(), pParentActor );
 			return pRet;
 		}
+	case FT_Xml:
+		{
+			// Legacy actors; only supported in quirks mode
+			if ( !PREFSMAN->m_bQuirksMode )
+				return new Actor;
+
+			XNode xml;
+			if ( !XmlFileUtil::LoadFromFileShowErrors(xml, sPath) )
+				return new Actor;
+			XmlFileUtil::CompileXNodeTree( &xml, sPath );
+			XmlFileUtil::AnnotateXNodeTree( &xml, sPath );
+			return LoadFromNode( &xml, pParentActor );
+		}
 	case FT_Directory:
 		{
 			if( sPath.Right(1) != "/" )
 				sPath += '/';
+
+			RString sXml = sPath + "default.xml";
+			if (DoesFileExist(sXml))
+				return MakeActor(sXml, pParentActor);
+
 			XNode xml;
 			xml.AppendAttr( "Class", "BGAnimation" );
 			xml.AppendAttr( "AniDir", sPath );
@@ -491,6 +512,7 @@ FileType ActorUtil::GetFileType( const RString &sPath )
 	sExt.MakeLower();
 	
 	if( sExt=="lua" )		return FT_Lua;
+	else if(sExt=="xml")		return FT_Xml;
 	else if( 
 		sExt=="png" ||
 		sExt=="jpg" || 

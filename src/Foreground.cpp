@@ -2,6 +2,7 @@
 #include "Foreground.h"
 #include "RageUtil.h"
 #include "GameState.h"
+#include "PrefsManager.h"
 #include "RageTextureManager.h"
 #include "ActorUtil.h"
 #include "Song.h"
@@ -34,12 +35,17 @@ void Foreground::LoadFromSong( const Song *pSong )
 	{
 		const BackgroundChange &change = *bgc;
 		RString sBGName = change.m_def.m_sFile1,
-			sLuaFile = pSong->GetSongDir() + sBGName + "/default.lua";
+			sLuaFile = pSong->GetSongDir() + sBGName + "/default.lua",
+			sXmlFile = pSong->GetSongDir() + sBGName + "/default.xml";
 
 		LoadedBGA bga;
 		if ( DoesFileExist( sLuaFile ) )
 		{
 			bga.m_bga = ActorUtil::MakeActor( sLuaFile, this );
+		}
+		else if ( PREFSMAN->m_bQuirksMode && DoesFileExist( sXmlFile ) )
+		{
+			bga.m_bga = ActorUtil::MakeActor( sXmlFile, this );
 		}
 		else
 		{
