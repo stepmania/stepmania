@@ -37,7 +37,7 @@ public:
 // string. sCommand list is a list of commands separated by ';'.
 // TODO: This is expensive to do during the game.  Eventually,  move all calls to
 // ParseCommands to happen during load, then execute from the parsed Command structures.
-void ParseCommands( const RString &sCmds, Commands &vCmdsOut );
+void ParseCommands( const RString &sCmds, Commands &vCmdsOut, bool bLegacy );
 Commands ParseCommands( const RString &sCmds );
 
 #endif

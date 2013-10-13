@@ -87,10 +87,13 @@ RString Commands::GetOriginalCommandString() const
 	return s;
 }
 
-void ParseCommands( const RString &sCommands, Commands &vCommandsOut )
+void ParseCommands( const RString &sCommands, Commands &vCommandsOut, bool bLegacy )
 {
 	vector<RString> vsCommands;
-	SplitWithQuotes( sCommands, ';', vsCommands, true );	// do ignore empty
+	if( bLegacy )
+		split( sCommands, ";", vsCommands, true );
+	else
+		SplitWithQuotes( sCommands, ';', vsCommands, true );	// do ignore empty
 	vCommandsOut.v.resize( vsCommands.size() );
 
 	for( unsigned i=0; i<vsCommands.size(); i++ )
@@ -103,7 +106,7 @@ void ParseCommands( const RString &sCommands, Commands &vCommandsOut )
 Commands ParseCommands( const RString &sCommands )
 {
 	Commands vCommands;
-	ParseCommands( sCommands, vCommands );
+	ParseCommands( sCommands, vCommands, false );
 	return vCommands;
 }
 

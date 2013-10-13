@@ -838,7 +838,7 @@ bool LuaHelpers::RunExpression( Lua *L, const RString &sExpression, const RStrin
 	return true;
 }
 
-void LuaHelpers::ParseCommandList( Lua *L, const RString &sCommands, const RString &sName )
+void LuaHelpers::ParseCommandList( Lua *L, const RString &sCommands, const RString &sName, bool bLegacy )
 {
 	RString sLuaFunction;
 	if( sCommands.size() > 0 && sCommands[0] == '\033' )
@@ -854,18 +854,35 @@ void LuaHelpers::ParseCommandList( Lua *L, const RString &sCommands, const RStri
 	else
 	{
 		Commands cmds;
-		ParseCommands( sCommands, cmds );
+		ParseCommands( sCommands, cmds, bLegacy );
 
 		// Convert cmds to a Lua function
 		ostringstream s;
 
 		s << "return function(self)\n";
 
+		if( bLegacy )
+			s << "\tparent = self:GetParent();\n";
+
 		FOREACH_CONST( Command, cmds.v, c )
 		{
 			const Command& cmd = (*c);
-			RString local_sName = cmd.GetName();
-			s << "\tself:" << local_sName << "(";
+			RString sCmdName = cmd.GetName();
+			if( bLegacy )
+				sCmdName.MakeLower();
+			s << "\tself:" << sCmdName << "(";
+
+			bool bFirstParamIsString = bLegacy && (
+					sCmdName == "horizalign" ||
+					sCmdName == "vertalign" ||
+					sCmdName == "effectclock" ||
+					sCmdName == "blend" ||
+					sCmdName == "ztestmode" ||
+					sCmdName == "cullmode" ||
+					sCmdName == "playcommand" ||
+					sCmdName == "queuecommand" ||
+					sCmdName == "queuemessage" ||
+					sCmdName == "settext");
 
 			for( unsigned i=1; i<cmd.m_vsArgs.size(); i++ )
 			{
@@ -875,7 +892,12 @@ void LuaHelpers::ParseCommandList( Lua *L, const RString &sCommands, const RStri
 				if( sArg[0] == '+' )
 					sArg.erase( sArg.begin() );
 
-				if( sArg[0] == '#' )	// HTML color
+				if( i==1 && bFirstParamIsString ) // string literal, legacy only
+				{
+					sArg.Replace( "'", "\\'" );	// escape quote
+					s << "'" << sArg << "'";
+				}
+				else if( sArg[0] == '#' )	// HTML color
 				{
 					RageColor col;	// in case FromString fails
 					col.FromString( sArg );

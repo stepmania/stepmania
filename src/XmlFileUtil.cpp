@@ -580,7 +580,8 @@ namespace
 
 		if( EndsWith(sName, "Command") )
 		{
-			LuaHelpers::ParseCommandList( L, sExpression, sFile );
+			// Use legacy parsing
+			LuaHelpers::ParseCommandList( L, sExpression, sFile, true );
 		}
 		else if( sExpression.size() > 0 && sExpression[0] == '@' )
 		{

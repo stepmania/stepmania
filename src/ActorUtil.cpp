@@ -307,7 +307,7 @@ bool ActorUtil::GetAttrPath( const XNode *pNode, const RString &sName, RString &
 apActorCommands ActorUtil::ParseActorCommands( const RString &sCommands, const RString &sName )
 {
 	Lua *L = LUA->Get();
-	LuaHelpers::ParseCommandList( L, sCommands, sName );
+	LuaHelpers::ParseCommandList( L, sCommands, sName, false );
 	LuaReference *pRet = new LuaReference;
 	pRet->SetFromStack( L );
 	LUA->Release( L );
