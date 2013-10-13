@@ -8,6 +8,7 @@
 #include "EnumHelper.h"
 #include "XmlFile.h"
 #include "XmlFileUtil.h"
+#include "IniFile.h"
 #include "LuaManager.h"
 #include "Foreach.h"
 #include "Song.h"
@@ -329,6 +330,18 @@ Actor* ActorUtil::MakeActor( const RString &sPath_, Actor *pParentActor )
 
 			return ActorUtil::LoadFromNode( &xml, pParentActor );
 		}
+	case FT_Sprite:
+		{
+			// Legacy actor; only supported in quirks mode
+			if( !PREFSMAN->m_bQuirksMode )
+				return new Actor;
+
+			IniFile ini;
+			ini.ReadFile( sPath );
+			XmlFileUtil::AnnotateXNodeTree( &ini, sPath );
+
+			return ActorUtil::LoadFromNode( ini.GetChild("Sprite"), pParentActor );
+		}
 	case FT_Model:
 		{
 			XNode xml;
@@ -499,6 +512,8 @@ FileType ActorUtil::GetFileType( const RString &sPath )
 		sExt=="flv" ||
 		sExt=="f4v" ||			
 		sExt=="mpg" )		return FT_Movie;
+	else if(
+		sExt=="sprite" )	return FT_Sprite;
 	else if( 
 		sExt=="txt" )		return FT_Model;
 	else if( sPath.size() > 0 && sPath[sPath.size()-1] == '/' )

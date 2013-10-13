@@ -331,6 +331,7 @@ bool BackgroundImpl::Layer::CreateBackground( const Song *pSong, const Backgroun
 			LOG->Warn( "CreateBackground() Unknown file type '%s'", vsResolved[0].c_str() );
 			// fall through
 		case FT_Bitmap:
+		case FT_Sprite:
 		case FT_Movie:
 			sEffect = SBE_StretchNormal;
 			break;
