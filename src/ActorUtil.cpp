@@ -1,6 +1,7 @@
 #include "global.h"
 #include "ActorUtil.h"
 #include "ThemeManager.h"
+#include "PrefsManager.h"
 #include "RageFileManager.h"
 #include "RageLog.h"
 #include "RageUtil.h"
@@ -9,6 +10,9 @@
 #include "XmlFileUtil.h"
 #include "LuaManager.h"
 #include "Foreach.h"
+#include "Song.h"
+#include "Course.h"
+#include "GameState.h"
 
 #include "arch/Dialog/Dialog.h"
 
@@ -101,6 +105,63 @@ bool ActorUtil::ResolvePath( RString &sPath, const RString &sName )
 	return true;
 }
 
+namespace
+{
+	RString GetLegacyActorClass(XNode *pActor)
+	{
+		DEBUG_ASSERT(PREFSMAN->m_bQuirksMode);
+		ASSERT(pActor);
+
+		// The non-legacy LoadFromNode has already checked the Class and
+		// Type attributes.
+
+		if (pActor->GetAttr("Text") != NULL)
+			return "BitmapText";
+
+		RString sFile;
+		if (pActor->GetAttrValue("File", sFile) && sFile != "")
+		{
+			// Backward compatibility hacks for "special" filenames
+			if (sFile.EqualsNoCase("songbackground"))
+			{
+				XNodeStringValue *pVal = new XNodeStringValue;
+				Song *pSong = GAMESTATE->m_pCurSong;
+				if (pSong && pSong->HasBackground())
+					pVal->SetValue(pSong->GetBackgroundPath());
+				else
+					pVal->SetValue(THEME->GetPathG("Common", "fallback background"));
+				pActor->AppendAttrFrom("Texture", pVal, false);
+				return "Sprite";
+			}
+			else if (sFile.EqualsNoCase("songbanner"))
+			{
+				XNodeStringValue *pVal = new XNodeStringValue;
+				Song *pSong = GAMESTATE->m_pCurSong;
+				if (pSong && pSong->HasBanner())
+					pVal->SetValue(pSong->GetBannerPath());
+				else
+					pVal->SetValue(THEME->GetPathG("Common", "fallback banner"));
+				pActor->AppendAttrFrom("Texture", pVal, false);
+				return "Sprite";
+			}
+			else if (sFile.EqualsNoCase("coursebanner"))
+			{
+				XNodeStringValue *pVal = new XNodeStringValue;
+				Course *pCourse = GAMESTATE->m_pCurCourse;
+				if (pCourse && pCourse->HasBanner())
+					pVal->SetValue(pCourse->GetBannerPath());
+				else
+					pVal->SetValue(THEME->GetPathG("Common", "fallback banner"));
+				pActor->AppendAttrFrom("Texture", pVal, false);
+				return "Sprite";
+			}
+		}
+
+		// Fallback: use XML tag name for actor class
+		return pActor->m_sName;
+	}
+}
+
 Actor *ActorUtil::LoadFromNode( const XNode* _pNode, Actor *pParentActor )
 {
 	ASSERT( _pNode != NULL );
@@ -121,9 +182,34 @@ Actor *ActorUtil::LoadFromNode( const XNode* _pNode, Actor *pParentActor )
 	if( !bHasClass )
 		bHasClass = node.GetAttrValue( "Type", sClass );
 
+	bool bLegacy = (node.GetAttr( "_LegacyXml" ) != NULL);
+	if( !bHasClass && bLegacy )
+		sClass = GetLegacyActorClass( &node );
+
 	map<RString,CreateActorFn>::iterator iter = g_pmapRegistrees->find( sClass );
 	if( iter == g_pmapRegistrees->end() )
 	{
+		RString sFile;
+		if (bLegacy && node.GetAttrValue("File", sFile) && sFile != "")
+		{
+			RString sPath;
+			// Handle absolute paths correctly
+			if (sFile.Left(1) == "/")
+				sPath = sFile;
+			else
+				sPath = Dirname(GetSourcePath(&node)) + sFile;
+			if (ResolvePath(sPath, GetWhere(&node)))
+			{
+				Actor *pNewActor = MakeActor(sPath, pParentActor);
+				if (pNewActor == NULL)
+					return NULL;
+				if (pParentActor)
+					pNewActor->SetParent(pParentActor);
+				pNewActor->LoadFromNode(&node);
+				return pNewActor;
+			}
+		}
+
 		// sClass is invalid
 		RString sError = ssprintf( "%s: invalid Class \"%s\"",
 			ActorUtil::GetWhere(&node).c_str(), sClass.c_str() );
