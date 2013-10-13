@@ -619,6 +619,9 @@ void XmlFileUtil::AnnotateXNodeTree( XNode *pNode, const RString &sFile )
 
 		/* Directory of caller, for relative paths: */
 		pNode->AppendAttr( "_Dir", sDir );
+
+		/* Note that this node came from a legacy XML file */
+		pNode->AppendAttr( "_LegacyXml", true );
 	}
 }
 
