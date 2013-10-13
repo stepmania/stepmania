@@ -101,30 +101,32 @@ bool ActorUtil::ResolvePath( RString &sPath, const RString &sName )
 	return true;
 }
 
-Actor* ActorUtil::LoadFromNode( const XNode* pNode, Actor *pParentActor )
+Actor *ActorUtil::LoadFromNode( const XNode* _pNode, Actor *pParentActor )
 {
-	ASSERT( pNode != NULL );
+	ASSERT( _pNode != NULL );
+
+	XNode node = *_pNode;
 
 	// Remove this in favor of using conditionals in Lua. -Chris
 	// There are a number of themes out there that depend on this (including
 	// sm-ssc default). Probably for the best to leave this in. -aj
 	{
 		bool bCond;
-		if( pNode->GetAttrValue("Condition", bCond) && !bCond )
+		if( node.GetAttrValue("Condition", bCond) && !bCond )
 			return NULL;
 	}
 
 	RString sClass;
-	bool bHasClass = pNode->GetAttrValue( "Class", sClass );
+	bool bHasClass = node.GetAttrValue( "Class", sClass );
 	if( !bHasClass )
-		bHasClass = pNode->GetAttrValue( "Type", sClass );
+		bHasClass = node.GetAttrValue( "Type", sClass );
 
 	map<RString,CreateActorFn>::iterator iter = g_pmapRegistrees->find( sClass );
 	if( iter == g_pmapRegistrees->end() )
 	{
 		// sClass is invalid
 		RString sError = ssprintf( "%s: invalid Class \"%s\"",
-			ActorUtil::GetWhere(pNode).c_str(), sClass.c_str() );
+			ActorUtil::GetWhere(&node).c_str(), sClass.c_str() );
 		Dialog::OK( sError );
 		return new Actor;	// Return a dummy object so that we don't crash in AutoActor later.
 	}
@@ -135,7 +137,7 @@ Actor* ActorUtil::LoadFromNode( const XNode* pNode, Actor *pParentActor )
 	if( pParentActor )
 		pRet->SetParent( pParentActor );
 
-	pRet->LoadFromNode( pNode );
+	pRet->LoadFromNode( &node );
 	return pRet;
 }
 
