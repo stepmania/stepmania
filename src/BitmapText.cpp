@@ -126,11 +126,16 @@ void BitmapText::LoadFromNode( const XNode* pNode )
 	ThemeManager::EvaluateString( sAltText );
 
 	RString sFont;
-	if( !ActorUtil::GetAttrPath(pNode, "File", sFont) )
+	if( !ActorUtil::GetAttrPath(pNode, "Font", sFont) &&
+			!ActorUtil::GetAttrPath(pNode, "File", sFont) )
 	{
-		if( !pNode->GetAttrValue("Font", sFont) ) // accept "File" for backward compatibility
-			RageException::Throw( "%s: BitmapText: missing the File attribute",
+		if( !pNode->GetAttrValue("Font", sFont) &&
+				!pNode->GetAttrValue("File", sFont) ) // accept "File" for backward compatibility
+		{
+			LOG->Warn( "%s: BitmapText: Font or File attribute not found",
 					      ActorUtil::GetWhere(pNode).c_str() );
+			sFont = "Common Normal";
+		}
 		sFont = THEME->GetPathF( "", sFont );
 	}
 
