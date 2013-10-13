@@ -152,7 +152,12 @@ function Actor:FullScreen()
 end
 
 function Actor:scale_or_crop_background()
-	self:cropto(SCREEN_WIDTH, SCREEN_HEIGHT)
+	if PREFSMAN:GetPreference("StretchBackgrounds") then
+		self:cropto(SCREEN_WIDTH, SCREEN_HEIGHT)
+	else
+		local graphicAspect = self:GetWidth()/self:GetHeight()
+		self:zoomto(SCREEN_HEIGHT*graphicAspect,SCREEN_HEIGHT)
+	end
 end
 
 function Actor:CenterX() self:x(SCREEN_CENTER_X) end
