@@ -1126,6 +1126,12 @@ void Actor::RunCommands( const LuaReference& cmds, const LuaReference *pParamTab
 
 	// function
 	cmds.PushSelf( L );
+	if( lua_isnil(L, -1) )
+	{
+		LOG->Warn("Error compiling commands");
+		LUA->Release(L);
+		return;
+	}
 
 	// 1st parameter
 	this->PushSelf( L );
