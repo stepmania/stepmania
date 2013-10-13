@@ -1370,16 +1370,20 @@ RString GetSongAssetPath( RString sPath, const RString &sSongPath )
 	if( sPath == "" )
 		return RString();
 
+	RString sRelPath = sSongPath + sPath;
+	if( DoesFileExist(sRelPath) )
+		return sRelPath;
+
 	/* If there's no path in the file, the file is in the same directory as the
 	 * song. (This is the preferred configuration.) */
 	if( sPath.find('/') == string::npos )
-		return sSongPath+sPath;
+		return sRelPath;
 
 	// The song contains a path; treat it as relative to the top SM directory.
 	if( sPath.Left(3) == "../" )
 	{
 		// The path begins with "../".  Resolve it wrt. the song directory.
-		sPath = sSongPath + sPath;
+		sPath = sRelPath;
 	}
 
 	CollapsePath( sPath );
