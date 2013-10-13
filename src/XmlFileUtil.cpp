@@ -600,6 +600,27 @@ namespace
 	}
 }
 
+void XmlFileUtil::AnnotateXNodeTree( XNode *pNode, const RString &sFile )
+{
+	RString sDir = Dirname( sFile );
+
+	vector<XNode *> queue;
+	queue.push_back( pNode );
+	while( !queue.empty() )
+	{
+		pNode = queue.back();
+		queue.pop_back();
+		FOREACH_Child( pNode, pChild )
+			queue.push_back( pChild );
+
+		/* Source file, for error messages: */
+		pNode->AppendAttr( "_Source", sFile );
+
+		/* Directory of caller, for relative paths: */
+		pNode->AppendAttr( "_Dir", sDir );
+	}
+}
+
 void XmlFileUtil::CompileXNodeTree( XNode *pNode, const RString &sFile )
 {
 	vector<XNode *> aToCompile;
