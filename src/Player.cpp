@@ -2695,6 +2695,9 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 		msg.SetParam( "MultiPlayer", m_pPlayerState->m_mp );
 		msg.SetParam( "Column", col );
 		MESSAGEMAN->Broadcast( msg );
+		// Backwards compatibility
+		Message msg2( ssprintf("StepP%d", m_pPlayerState->m_PlayerNumber + 1) );
+		MESSAGEMAN->Broadcast( msg2 );
 	}
 }
 
