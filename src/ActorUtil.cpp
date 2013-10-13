@@ -375,11 +375,13 @@ void ActorUtil::SortByZPosition( vector<Actor*> &vActors )
 
 static const char *FileTypeNames[] = {
 	"Bitmap", 
+	"Sprite",
 	"Sound", 
 	"Movie", 
 	"Directory", 
-	"Lua", 
+	"Xml",
 	"Model", 
+	"Lua", 
 };
 XToString( FileType );
 LuaXType( FileType );
