@@ -19,8 +19,8 @@ AC_PROG_CXX
 AC_PROG_RANLIB
 AM_PROG_CC_C_O
 
-test "$DEFAULT_CFLAGS" = "yes" && CFLAGS="-Wall -W -Wno-unused -Wno-switch"
-test "$DEFAULT_CXXFLAGS" = "yes" && CXXFLAGS="-Wall -W -Wno-unused -Wno-switch"
+test "$DEFAULT_CFLAGS" = "yes" && CFLAGS="-Wall -W -Wno-unused-parameter -Wno-switch"
+test "$DEFAULT_CXXFLAGS" = "yes" && CXXFLAGS="-Wall -W -Wno-unused-parameter -Wno-switch"
 test "$DEFAULT_LDFLAGS" = "yes" && LDFLAGS=""
 
 compile=release
