@@ -179,15 +179,6 @@ template<int> struct CompileAssertDecl { };
 #define CONST_FUNCTION
 #endif
 
-#if defined(__GNUC__)
-#define SM_ALIGN(n) __attribute__((aligned(n)))
-#else
-/** @brief A dummy define to keep things going smoothly. */
-#define SM_ALIGN(n)
-#endif
-
-
-
 #include "StdString.h"
 /** @brief Use RStrings throughout the program. */
 typedef StdString::CStdString RString;

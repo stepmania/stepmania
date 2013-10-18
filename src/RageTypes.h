@@ -181,7 +181,7 @@ public:
 	friend RageVector4 operator * ( float f, const RageVector4& other )	{ return other*f; }
 	
 	float x, y, z, w;
-} SM_ALIGN(16);
+};
 
 struct RageColor
 {
@@ -251,7 +251,7 @@ public:
 	void FromStackCompat( lua_State *L, int iPos );
 
 	float r, g, b, a;
-} SM_ALIGN(16);
+};
 
 /* Convert floating-point 0..1 value to integer 0..255 value. *
  *
@@ -389,7 +389,7 @@ public:
 	RageMatrix GetTranspose() const;
 
 	float m[4][4];
-} SM_ALIGN(16);
+};
 
 #endif
 
