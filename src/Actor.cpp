@@ -771,8 +771,6 @@ void Actor::BeginTweening( float time, ITween *pTween )
 {
 	ASSERT( time >= 0 );
 
-	time = max( time, 0 );
-
 	// If the number of tweens to ever gets this large, there's probably an infinitely 
 	// recursing ActorCommand.
 	if( m_Tweens.size() > 50 )
@@ -810,6 +808,8 @@ void Actor::BeginTweening( float time, ITween *pTween )
 
 void Actor::BeginTweening( float time, TweenType tt )
 {
+	ASSERT( time >= 0 );
+
 	ITween *pTween = ITween::CreateFromType( tt );
 	BeginTweening( time, pTween );
 }
@@ -1244,6 +1244,8 @@ void Actor::TweenState::MakeWeightedAverage( TweenState& average_out, const Twee
 
 void Actor::Sleep( float time )
 {
+	ASSERT( time >= 0 );
+
 	BeginTweening( time, TWEEN_LINEAR );
 	BeginTweening( 0, TWEEN_LINEAR ); 
 }
@@ -1368,15 +1370,71 @@ class LunaActor : public Luna<Actor>
 {
 public:
 	static int name( T* p, lua_State *L )			{ p->SetName(SArg(1)); return 0; }
-	static int sleep( T* p, lua_State *L )			{ p->Sleep(FArg(1)); return 0; }
-	static int linear( T* p, lua_State *L )			{ p->BeginTweening(FArg(1),TWEEN_LINEAR); return 0; }
-	static int accelerate( T* p, lua_State *L )		{ p->BeginTweening(FArg(1),TWEEN_ACCELERATE); return 0; }
-	static int decelerate( T* p, lua_State *L )		{ p->BeginTweening(FArg(1),TWEEN_DECELERATE); return 0; }
-	static int spring( T* p, lua_State *L )			{ p->BeginTweening(FArg(1),TWEEN_SPRING); return 0; }
+	static int sleep( T* p, lua_State *L )
+	{
+		float fTime = FArg(1);
+		if (fTime < 0)
+		{
+			LOG->Warn("Lua: sleep(%f): time must not be negative", fTime);
+			return 0;
+		}
+		p->Sleep(fTime);
+		return 0;
+	}
+	static int linear( T* p, lua_State *L )
+	{
+		float fTime = FArg(1);
+		if (fTime < 0)
+		{
+			LOG->Warn("Lua: linear(%f): tween time must not be negative", fTime);
+			return 0;
+		}
+		p->BeginTweening(fTime, TWEEN_LINEAR);
+		return 0;
+	}
+	static int accelerate( T* p, lua_State *L )
+	{
+		float fTime = FArg(1);
+		if (fTime < 0)
+		{
+			LOG->Warn("Lua: accelerate(%f): tween time must not be negative", fTime);
+			return 0;
+		}
+		p->BeginTweening(fTime, TWEEN_ACCELERATE);
+		return 0;
+	}
+	static int decelerate( T* p, lua_State *L )
+	{
+		float fTime = FArg(1);
+		if (fTime < 0)
+		{
+			LOG->Warn("Lua: decelerate(%f): tween time must not be negative", fTime);
+			return 0;
+		}
+		p->BeginTweening(fTime, TWEEN_DECELERATE);
+		return 0;
+	}
+	static int spring( T* p, lua_State *L )
+	{
+		float fTime = FArg(1);
+		if (fTime < 0)
+		{
+			LOG->Warn("Lua: spring(%f): tween time must not be negative", fTime);
+			return 0;
+		}
+		p->BeginTweening(fTime, TWEEN_SPRING);
+		return 0;
+	}
 	static int tween( T* p, lua_State *L )
 	{
+		float fTime = FArg(1);
+		if (fTime < 0)
+		{
+			LOG->Warn("Lua: tween(%f): tween time must not be negative", fTime);
+			return 0;
+		}
 		ITween *pTween = ITween::CreateFromStack( L, 2 );
-		p->BeginTweening( FArg(1), pTween );
+		p->BeginTweening(fTime, pTween);
 		return 0;
 	}
 	static int stoptweening( T* p, lua_State * )		{ p->StopTweening(); return 0; }
