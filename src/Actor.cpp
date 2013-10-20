@@ -922,11 +922,15 @@ float Actor::GetEffectPeriod() const
 
 void Actor::SetEffectTiming( float fRampUp, float fAtHalf, float fRampDown, float fAtZero )
 {
+	// No negative timings
+	ASSERT( fRampUp >= 0 && fAtHalf >= 0 && fRampDown >= 0 && fAtZero >= 0 );
+	// and at least one positive timing.
+	ASSERT( fRampUp > 0 || fAtHalf > 0 || fRampDown > 0 || fAtZero > 0 );
+
 	m_fEffectRampUp = fRampUp; 
 	m_fEffectHoldAtHalf = fAtHalf; 
 	m_fEffectRampDown = fRampDown;
 	m_fEffectHoldAtZero = fAtZero;
-	ASSERT( GetEffectPeriod() > 0 );
 }
 
 // effect "macros"
@@ -1474,7 +1478,23 @@ public:
 		p->SetEffectPeriod(FArg(1));
 		return 0;
 	}
-	static int effecttiming( T* p, lua_State *L )		{ p->SetEffectTiming(FArg(1),FArg(2),FArg(3),FArg(4)); return 0; }
+	static int effecttiming( T* p, lua_State *L )
+	{
+		float f1 = FArg(1), f2 = FArg(2), f3 = FArg(3), f4 = FArg(4);
+		if (f1 < 0 || f2 < 0 || f3 < 0 || f4 < 0)
+		{
+			LOG->Warn("Effect timings (%f,%f,%f,%f) must not be negative; ignoring",
+					f1, f2, f3, f4);
+			return 0;
+		}
+		if (f1 == 0 && f2 == 0 && f3 == 0 && f4 == 0)
+		{
+			LOG->Warn("Effect timings (0,0,0,0) must not all be zero; ignoring");
+			return 0;
+		}
+		p->SetEffectTiming(FArg(1), FArg(2), FArg(3), FArg(4));
+		return 0;
+	}
 	static int effectoffset( T* p, lua_State *L )		{ p->SetEffectOffset(FArg(1)); return 0; }
 	static int effectclock( T* p, lua_State *L )		{ p->SetEffectClockString(SArg(1)); return 0; }
 	static int effectmagnitude( T* p, lua_State *L )	{ p->SetEffectMagnitude( RageVector3(FArg(1),FArg(2),FArg(3)) ); return 0; }
