@@ -933,6 +933,7 @@ void Actor::SetEffectTiming( float fRampUp, float fAtHalf, float fRampDown, floa
 
 void Actor::SetEffectDiffuseBlink( float fEffectPeriodSeconds, RageColor c1, RageColor c2 )
 {
+	ASSERT( fEffectPeriodSeconds > 0 );
 	// todo: account for SSC_FUTURES -aj
 	if( m_Effect != diffuse_blink )
 	{
@@ -946,6 +947,7 @@ void Actor::SetEffectDiffuseBlink( float fEffectPeriodSeconds, RageColor c1, Rag
 
 void Actor::SetEffectDiffuseShift( float fEffectPeriodSeconds, RageColor c1, RageColor c2 )
 {
+	ASSERT( fEffectPeriodSeconds > 0 );
 	// todo: account for SSC_FUTURES -aj
 	if( m_Effect != diffuse_shift )
 	{
@@ -959,6 +961,7 @@ void Actor::SetEffectDiffuseShift( float fEffectPeriodSeconds, RageColor c1, Rag
 
 void Actor::SetEffectDiffuseRamp( float fEffectPeriodSeconds, RageColor c1, RageColor c2 )
 {
+	ASSERT( fEffectPeriodSeconds > 0 );
 	// todo: account for SSC_FUTURES -aj
 	if( m_Effect != diffuse_ramp )
 	{
@@ -972,6 +975,7 @@ void Actor::SetEffectDiffuseRamp( float fEffectPeriodSeconds, RageColor c1, Rage
 
 void Actor::SetEffectGlowBlink( float fEffectPeriodSeconds, RageColor c1, RageColor c2 )
 {
+	ASSERT( fEffectPeriodSeconds > 0 );
 	// todo: account for SSC_FUTURES -aj
 	if( m_Effect != glow_blink )
 	{
@@ -985,6 +989,7 @@ void Actor::SetEffectGlowBlink( float fEffectPeriodSeconds, RageColor c1, RageCo
 
 void Actor::SetEffectGlowShift( float fEffectPeriodSeconds, RageColor c1, RageColor c2 )
 {
+	ASSERT( fEffectPeriodSeconds > 0 );
 	// todo: account for SSC_FUTURES -aj
 	if( m_Effect != glow_shift )
 	{
@@ -998,6 +1003,7 @@ void Actor::SetEffectGlowShift( float fEffectPeriodSeconds, RageColor c1, RageCo
 
 void Actor::SetEffectGlowRamp( float fEffectPeriodSeconds, RageColor c1, RageColor c2 )
 {
+	ASSERT( fEffectPeriodSeconds > 0 );
 	// todo: account for SSC_FUTURES -aj
 	if( m_Effect != glow_ramp )
 	{
@@ -1011,6 +1017,7 @@ void Actor::SetEffectGlowRamp( float fEffectPeriodSeconds, RageColor c1, RageCol
 
 void Actor::SetEffectRainbow( float fEffectPeriodSeconds )
 {
+	ASSERT( fEffectPeriodSeconds > 0 );
 	// todo: account for SSC_FUTURES -aj
 	if( m_Effect != rainbow )
 	{
@@ -1022,6 +1029,7 @@ void Actor::SetEffectRainbow( float fEffectPeriodSeconds )
 
 void Actor::SetEffectWag( float fPeriod, RageVector3 vect )
 {
+	ASSERT( fPeriod > 0 );
 	// todo: account for SSC_FUTURES -aj
 	if( m_Effect != wag )
 	{
@@ -1034,6 +1042,7 @@ void Actor::SetEffectWag( float fPeriod, RageVector3 vect )
 
 void Actor::SetEffectBounce( float fPeriod, RageVector3 vect )
 {
+	ASSERT( fPeriod > 0 );
 	// todo: account for SSC_FUTURES -aj
 	m_Effect = bounce;
 	SetEffectPeriod( fPeriod );
@@ -1043,6 +1052,7 @@ void Actor::SetEffectBounce( float fPeriod, RageVector3 vect )
 
 void Actor::SetEffectBob( float fPeriod, RageVector3 vect )
 {
+	ASSERT( fPeriod > 0 );
 	// todo: account for SSC_FUTURES -aj
 	if( m_Effect!=bob || GetEffectPeriod() != fPeriod )
 	{
@@ -1069,6 +1079,7 @@ void Actor::SetEffectVibrate( RageVector3 vect )
 
 void Actor::SetEffectPulse( float fPeriod, float fMinZoom, float fMaxZoom )
 {
+	ASSERT( fPeriod > 0 );
 	// todo: account for SSC_FUTURES -aj
 	m_Effect = pulse;
 	SetEffectPeriod( fPeriod );
@@ -1452,7 +1463,17 @@ public:
 	static int stopeffect( T* p, lua_State * )		{ p->StopEffect(); return 0; }
 	static int effectcolor1( T* p, lua_State *L )		{ RageColor c; c.FromStackCompat( L, 1 ); p->SetEffectColor1( c ); return 0; }
 	static int effectcolor2( T* p, lua_State *L )		{ RageColor c; c.FromStackCompat( L, 1 ); p->SetEffectColor2( c ); return 0; }
-	static int effectperiod( T* p, lua_State *L )		{ p->SetEffectPeriod(FArg(1)); return 0; }
+	static int effectperiod( T* p, lua_State *L )
+	{
+		float fPeriod = FArg(1);
+		if (fPeriod <= 0)
+		{
+			LOG->Warn("Effect period (%f) must be positive; ignoring", fPeriod);
+			return 0;
+		}
+		p->SetEffectPeriod(FArg(1));
+		return 0;
+	}
 	static int effecttiming( T* p, lua_State *L )		{ p->SetEffectTiming(FArg(1),FArg(2),FArg(3),FArg(4)); return 0; }
 	static int effectoffset( T* p, lua_State *L )		{ p->SetEffectOffset(FArg(1)); return 0; }
 	static int effectclock( T* p, lua_State *L )		{ p->SetEffectClockString(SArg(1)); return 0; }
