@@ -71,9 +71,7 @@ void LifeMeterTime::Load( const PlayerState *pPlayerState, PlayerStageStats *pPl
 	m_quadDangerGlow.ZoomToWidth( METER_WIDTH );
 	m_quadDangerGlow.ZoomToHeight( METER_HEIGHT );
 	// hardcoded effects...
-	m_quadDangerGlow.SetEffectDiffuseShift();
-	m_quadDangerGlow.SetEffectColor1( RageColor(1,0,0,0.8f) );
-	m_quadDangerGlow.SetEffectColor2( RageColor(1,0,0,0) );
+	m_quadDangerGlow.SetEffectDiffuseShift( 1.0f, RageColor(1,0,0,0.8f), RageColor(1,0,0,0) );
 	m_quadDangerGlow.SetEffectClock( Actor::CLOCK_BGM_BEAT );
 	this->AddChild( &m_quadDangerGlow );
 

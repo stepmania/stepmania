@@ -1436,19 +1436,19 @@ public:
 	static int vertalign( T* p, lua_State *L )		{ p->SetVertAlign(Enum::Check<VertAlign>(L, 1)); return 0; }
 	static int halign( T* p, lua_State *L )			{ p->SetHorizAlign(FArg(1)); return 0; }
 	static int valign( T* p, lua_State *L )			{ p->SetVertAlign(FArg(1)); return 0; }
-	static int diffuseblink( T* p, lua_State * )		{ p->SetEffectDiffuseBlink(); return 0; }
-	static int diffuseshift( T* p, lua_State * )		{ p->SetEffectDiffuseShift(); return 0; }
-	static int diffuseramp( T* p, lua_State * )		{ p->SetEffectDiffuseRamp(); return 0; }
-	static int glowblink( T* p, lua_State * )		{ p->SetEffectGlowBlink(); return 0; }
-	static int glowshift( T* p, lua_State * )		{ p->SetEffectGlowShift(); return 0; }
-	static int glowramp( T* p, lua_State * )		{ p->SetEffectGlowRamp(); return 0; }
-	static int rainbow( T* p, lua_State * )		{ p->SetEffectRainbow(); return 0; }
-	static int wag( T* p, lua_State * )			{ p->SetEffectWag(); return 0; }
-	static int bounce( T* p, lua_State * )			{ p->SetEffectBounce(); return 0; }
-	static int bob( T* p, lua_State * )			{ p->SetEffectBob(); return 0; }
-	static int pulse( T* p, lua_State * )			{ p->SetEffectPulse(); return 0; }
-	static int spin( T* p, lua_State * )			{ p->SetEffectSpin(); return 0; }
-	static int vibrate( T* p, lua_State * )		{ p->SetEffectVibrate(); return 0; }
+	static int diffuseblink( T* p, lua_State * )		{ p->SetEffectDiffuseBlink(1.0f, RageColor(0.5f,0.5f,0.5f,0.5f), RageColor(1,1,1,1)); return 0; }
+	static int diffuseshift( T* p, lua_State * )		{ p->SetEffectDiffuseShift(1.0f, RageColor(0,0,0,1), RageColor(1,1,1,1)); return 0; }
+	static int diffuseramp( T* p, lua_State * )		{ p->SetEffectDiffuseRamp(1.0f, RageColor(0,0,0,1), RageColor(1,1,1,1)); return 0; }
+	static int glowblink( T* p, lua_State * )		{ p->SetEffectGlowBlink(1.0f, RageColor(1,1,1,0.2f), RageColor(1,1,1,0.8f)); return 0; }
+	static int glowshift( T* p, lua_State * )		{ p->SetEffectGlowShift(1.0f, RageColor(1,1,1,0.2f), RageColor(1,1,1,0.8f)); return 0; }
+	static int glowramp( T* p, lua_State * )		{ p->SetEffectGlowRamp(1.0f, RageColor(1,1,1,0.2f), RageColor(1,1,1,0.8f)); return 0; }
+	static int rainbow( T* p, lua_State * )			{ p->SetEffectRainbow(2.0f); return 0; }
+	static int wag( T* p, lua_State * )			{ p->SetEffectWag(2.0f, RageVector3(0,0,20)); return 0; }
+	static int bounce( T* p, lua_State * )			{ p->SetEffectBounce(2.0f, RageVector3(0,20,0)); return 0; }
+	static int bob( T* p, lua_State * )			{ p->SetEffectBob(2.0f, RageVector3(0,20,0)); return 0; }
+	static int pulse( T* p, lua_State * )			{ p->SetEffectPulse(2.0f, 0.5f, 1.0f); return 0; }
+	static int spin( T* p, lua_State * )			{ p->SetEffectSpin(RageVector3(0,0,180)); return 0; }
+	static int vibrate( T* p, lua_State * )			{ p->SetEffectVibrate(RageVector3(10,10,10)); return 0; }
 	static int stopeffect( T* p, lua_State * )		{ p->StopEffect(); return 0; }
 	static int effectcolor1( T* p, lua_State *L )		{ RageColor c; c.FromStackCompat( L, 1 ); p->SetEffectColor1( c ); return 0; }
 	static int effectcolor2( T* p, lua_State *L )		{ RageColor c; c.FromStackCompat( L, 1 ); p->SetEffectColor2( c ); return 0; }
