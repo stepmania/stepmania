@@ -222,7 +222,11 @@ void ActorFrame::BeginDraw()
 
 void ActorFrame::DrawPrimitives()
 {
-	ASSERT_M( !m_bClearZBuffer, "ClearZBuffer not supported on ActorFrames" );
+	if( m_bClearZBuffer )
+	{
+		LOG->Warn( "ClearZBuffer not supported on ActorFrames" );
+		m_bClearZBuffer = false;
+	}
 
 	// Don't set Actor-defined render states because we won't be drawing 
 	// any geometry that belongs to this object.
