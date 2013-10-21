@@ -1109,11 +1109,16 @@ void Actor::AddRotationR( float rot )
 
 void Actor::RunCommands( const LuaReference& cmds, const LuaReference *pParamTable )
 {
+	if( !cmds.IsSet() || cmds.IsNil() )
+	{
+		LOG->Warn( "RunCommands: command is unset or nil" );
+		return;
+	}
+
 	Lua *L = LUA->Get();
 
 	// function
 	cmds.PushSelf( L );
-	ASSERT( !lua_isnil(L, -1) );
 
 	// 1st parameter
 	this->PushSelf( L );
