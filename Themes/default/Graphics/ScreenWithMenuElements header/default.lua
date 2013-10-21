@@ -13,7 +13,7 @@ t[#t+1] = Def.Quad {
 t[#t+1] = LoadFont("Common Bold") .. {
 	Name="HeaderText";
 	Text=Screen.String("HeaderText");
-	InitCommand=cmd(x,-SCREEN_CENTER_X+24;y,24;zoom,1;horizalign,left;shadowlength,0;maxwidth,200);
+	InitCommand=cmd(x,-SCREEN_CENTER_X+24;y,26;zoom,1;horizalign,left;shadowlength,0;maxwidth,200);
 	OnCommand=cmd(strokecolor,Color.Invisible;diffusebottomedge,color("0.75,0.75,0.75"));
 	UpdateScreenHeaderMessageCommand=function(self,param)
 		self:settext(param.Header);
