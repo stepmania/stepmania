@@ -11,7 +11,7 @@ t[#t+1] = Def.ActorFrame {
 		InitCommand=cmd(hide_if,hideFancyElements;);
 		LoadActor("_checkerboard") .. {
 			InitCommand=cmd(rotationy,0;rotationz,0;rotationx,-90/4*3.5;zoomto,SCREEN_WIDTH*2,SCREEN_HEIGHT*2;customtexturerect,0,0,SCREEN_WIDTH*4/256,SCREEN_HEIGHT*4/256);
-			OnCommand=cmd(texcoordvelocity,0,0.25;diffuse,color("#ffd400");diffusealpha,0.5;fadetop,1);
+			OnCommand=cmd(texcoordvelocity,0,0.25;diffuse,color("#ffd400");fadetop,1);
 		};
 	};
 	LoadActor("_particleLoader") .. {
