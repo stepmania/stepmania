@@ -25,7 +25,6 @@ test "$DEFAULT_LDFLAGS" = "yes" && LDFLAGS=""
 
 # If on Windows, grab the prebuilts
 if test "$host_os" = "mingw32"; then
-	echo "MINGW MINGW MINGW"
 	CPPFLAGS="$CPPFLAGS -I$PWD/extern/for_mingw/include"
 	LDFLAGS="$LDFLAGS -L$PWD/extern/for_mingw/lib"
 fi
@@ -183,16 +182,12 @@ if test "$with_prof" = "yes"; then
 	test "$DEFAULT_LDFLAGS" = "yes" && LDFLAGS="$LDFLAGS -pg"
 fi
 
-# Stub out pkg-config stuff if not present (which is likely on Windows)
-AC_CHECK_FUNC(PKG_PROG_PKG_CONFIG, AC_DEFUN([PKG_PROG_PKG_CONFIG], ))
-AC_CHECK_FUNC(PKG_CHECK_MODULES, AC_DEFUN([PKG_CHECK_MODULES], ))
-
-AX_CHECK_GL
-
+SM_OPENGL
 if test "$host_os" != "mingw32"; then
 	SM_X11
 	GL_CFLAGS="$GL_CFLAGS $XCFLAGS"
 	GL_LIBS="$GL_LIBS $XLIBS"
+	# XXX Actually use GL_* (probably should replace $X* for the most part)
 fi
 
 have_libpng=yes
