@@ -88,7 +88,10 @@ static unsigned long rng_ansic(unsigned char *buf, unsigned long len,
 
 /* Try the Microsoft CSP */
 #if defined(WIN32) || defined(WINCE)
+// XXX This probably shouldn't be hardcoded at all but I don't want to break anything
+#if !defined(__MINGW32__)
 #define _WIN32_WINNT 0x0400
+#endif
 #ifdef WINCE
    #define UNDER_CE
    #define ARM

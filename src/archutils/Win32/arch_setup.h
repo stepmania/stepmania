@@ -161,7 +161,10 @@ inline long int lrintf( float f )
 #define CRASH_HANDLER
 #endif
 
+// autoconf does this for us
+#if !defined(__MINGW32__)
 #define ENDIAN_LITTLE
+#endif
 
 #define OGG_LIB_DIR "../extern/vorbis/win32/"
 
