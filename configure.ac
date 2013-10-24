@@ -23,6 +23,13 @@ test "$DEFAULT_CFLAGS" = "yes" && CFLAGS="-Wall -W -Wno-unused-parameter -Wno-sw
 test "$DEFAULT_CXXFLAGS" = "yes" && CXXFLAGS="-Wall -W -Wno-unused-parameter -Wno-switch"
 test "$DEFAULT_LDFLAGS" = "yes" && LDFLAGS=""
 
+# If on Windows, grab the prebuilts
+if test "$host_os" = "mingw32"; then
+	echo "MINGW MINGW MINGW"
+	CPPFLAGS="$CPPFLAGS -I$PWD/extern/for_mingw/include"
+	LDFLAGS="$LDFLAGS -L$PWD/extern/for_mingw/lib"
+fi
+
 compile=release
 AC_ARG_WITH(debug, AS_HELP_STRING([--with-debug],[Enable debug mode]), with_debug=$withval, with_debug=no)
 AC_ARG_WITH(fast-compile, AS_HELP_STRING([--with-fast-compile],[Enable fast compile]), with_fast_compile=$withval, with_fast_compile=no)
@@ -120,6 +127,10 @@ case $host_os in
 	bsd=yes
 	unix=yes
 	;;
+*mingw*)
+	AC_DEFINE(WINDOWS, 1, [Windows])
+	windows=yes
+	;;
 *)
 	AC_DEFINE(UNIX, 1, [Unix])
 	unix=yes
@@ -172,7 +183,17 @@ if test "$with_prof" = "yes"; then
 	test "$DEFAULT_LDFLAGS" = "yes" && LDFLAGS="$LDFLAGS -pg"
 fi
 
-SM_X_WITH_OPENGL
+# Stub out pkg-config stuff if not present (which is likely on Windows)
+AC_CHECK_FUNC(PKG_PROG_PKG_CONFIG, AC_DEFUN([PKG_PROG_PKG_CONFIG], ))
+AC_CHECK_FUNC(PKG_CHECK_MODULES, AC_DEFUN([PKG_CHECK_MODULES], ))
+
+AX_CHECK_GL
+
+if test "$host_os" != "mingw32"; then
+	SM_X11
+	GL_CFLAGS="$GL_CFLAGS $XCFLAGS"
+	GL_LIBS="$GL_LIBS $XLIBS"
+fi
 
 have_libpng=yes
 SM_STATIC
