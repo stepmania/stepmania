@@ -21,7 +21,7 @@ AM_CXXFLAGS += -fno-exceptions
 # generates enormous output.
 AM_CXXFLAGS += -finline-limit=300
 
-AM_CXXFLAGS += $(XCFLAGS)
+AM_CXXFLAGS += $(GL_CFLAGS)
 
 LIBS += 
 LIBS += -lpthread -lrt
@@ -637,7 +637,7 @@ endif
 main_LDADD = \
 		$(VIDEO_LIBS) \
 		$(AUDIO_LIBS) \
-		$(XLIBS) \
+		$(GL_LIBS) \
 		libtomcrypt.a libtommath.a
 
 nodist_stepmania_SOURCES = ver.cpp

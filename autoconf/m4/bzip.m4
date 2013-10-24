@@ -2,11 +2,10 @@ AC_DEFUN([SM_BZIP],
 [
         AC_REQUIRE([SM_STATIC])
 		
-dnl		# XXX: AC_CHECK_LIB doesn't work correctly on MinGW for BZip.
-dnl		# Hardcoding it because I'm so fed up with this shit.
-		if test "$host_os" != "mingw32"; then
-			AC_CHECK_LIB(bz2, BZ2_bzCompressInit, have_bzip=yes, have_bzip=no)
-		fi
+		AX_CHECK_LIB_USING_HEADER(bz2, 
+			'BZ2_bzCompressInit((bz_stream*) NULL, 0, 0, 0)',
+			bzlib.h, have_bzip=yes, have_bzip=no)
+		
         AC_CHECK_HEADER(bzlib.h, have_bzip_header=yes, have_bzip_header=no)
         AC_ARG_WITH(static-bzip, AS_HELP_STRING([--with-static-bzip],[Statically link bzip]), with_static_bzip=$withval, with_static_bzip=no)
 

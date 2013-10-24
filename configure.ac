@@ -183,12 +183,9 @@ if test "$with_prof" = "yes"; then
 fi
 
 SM_OPENGL
-if test "$host_os" != "mingw32"; then
-	SM_X11
-	GL_CFLAGS="$GL_CFLAGS $XCFLAGS"
-	GL_LIBS="$GL_LIBS $XLIBS"
-	# XXX Actually use GL_* (probably should replace $X* for the most part)
-fi
+SM_X11
+GL_CFLAGS="$GL_CFLAGS $XCFLAGS"
+GL_LIBS="$GL_LIBS $XLIBS"
 
 have_libpng=yes
 SM_STATIC
@@ -333,7 +330,22 @@ AC_CHECK_DECL(strtof, , AC_DEFINE([NEED_STRTOF],1,[Need strtof]), [#include <std
 
 AC_CHECK_DECLS([SIGPWR, SIGUSR1],,,[#include <signal.h>])
 
-PKG_CHECK_MODULES( [GLEW], [glew >= 1.3.5], LIBS="$LIBS -lGLEW" )
+have_glew="no"
+AX_CHECK_LIB_USING_HEADER(GLEW, 'glewInit()', GL/glew.h,
+	have_glew="yes"
+	LIBS="$LIBS -lGLEW", 
+	,
+	[$LIBS])
+	
+test $have_glew = "no" && { AX_CHECK_LIB_USING_HEADER(glew32, 'glewInit()', GL/glew.h,
+	have_glew="yes"
+	LIBS="$LIBS -lglew32",
+	,
+	[$LIBS]) }
+
+test $have_glew = "no" && AC_MSG_ERROR("Could not find GLEW.")
+
+AC_CHECK_DECL(GLEW_VERSION_2_1, , AC_MSG_ERROR("GLEW 1.3.5 or newer is required."), [#include <GL/glew.h>])
 
 AC_ARG_ENABLE(tests, AS_HELP_STRING([--enable-tests],[Build test programs]), enable_tests=$enableval, enable_tests=no)
 AM_CONDITIONAL(BUILD_TESTS, test "$enable_tests" = "yes" )
