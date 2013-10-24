@@ -529,6 +529,10 @@ void MusicWheel::BuildWheelItemDatas( vector<MusicWheelItemData *> &arrayWheelIt
 		case SORT_MEDIUM_METER:
 		case SORT_HARD_METER:
 		case SORT_CHALLENGE_METER:
+		case SORT_DOUBLE_EASY_METER:
+		case SORT_DOUBLE_MEDIUM_METER:
+		case SORT_DOUBLE_HARD_METER:
+		case SORT_DOUBLE_CHALLENGE_METER:
 		case SORT_LENGTH:
 		case SORT_RECENT:
 		{
