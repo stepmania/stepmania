@@ -1,4 +1,4 @@
-AC_DEFUN([SM_X_WITH_OPENGL],
+AC_DEFUN([SM_X11],
 [
 	AC_PATH_X
 
@@ -57,13 +57,4 @@ AC_DEFUN([SM_X_WITH_OPENGL],
 
 	AC_SUBST(XCFLAGS)
 	AC_SUBST(XLIBS)
-
-	# Check for libGL and libGLU.
-	AC_CHECK_LIB(GL, glPushMatrix, XLIBS="$XLIBS -lGL",
-	AC_MSG_ERROR([No OpenGL library could be found.]), [$XLIBS])
-	AC_CHECK_LIB(GLU, gluGetString, XLIBS="$XLIBS -lGLU",
-	AC_MSG_ERROR([No GLU library could be found.]), [$XLIBS])
-
-	AC_SUBST(XLIBS)
 ])
-
