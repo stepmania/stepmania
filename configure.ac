@@ -309,9 +309,12 @@ AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <stdlib.h>
 	      ])
 AC_LANG_POP(C++)
 
+# TODO: This should have a --with option to force it on
+if test "$windows" != "yes"; then
 AC_CHECK_LIB( pthread, pthread_create, [have_pthread=yes; AC_DEFINE([HAVE_LIBPTHREAD],1,[libpthread is available])], have_pthread=no)
 AC_CHECK_LIB( pthread, pthread_mutex_timedlock, AC_DEFINE([HAVE_PTHREAD_MUTEX_TIMEDLOCK],1,[pthreads has pthread_mutex_timedlock()]) )
 AC_CHECK_LIB( pthread, pthread_cond_timedwait, AC_DEFINE([HAVE_PTHREAD_COND_TIMEDWAIT],1,[pthreads has pthread_cond_timedwait()]) )
+fi
 
 AM_CONDITIONAL(HAVE_PTHREAD, test "$have_pthread" = "yes")
 
