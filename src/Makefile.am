@@ -361,8 +361,9 @@ if WINDOWS
 		arch/InputHandler/InputHandler_Win32_Pump.cpp arch/InputHandler/InputHandler_Win32_Pump.h
 		
  Sound += arch/Sound/RageSoundDriver_DSound_Software.cpp arch/Sound/RageSoundDriver_DSound_Software.h \
-	arch/Sound/RageSoundDriver_WaveOut.cpp arch/Sound/RageSoundDriver_WaveOut.h \
-	arch/Sound/RageSoundDriver_WDMKS.cpp arch/Sound/RageSoundDriver_WDMKS.h
+	arch/Sound/RageSoundDriver_WaveOut.cpp arch/Sound/RageSoundDriver_WaveOut.h
+# FIXME: BROKEN
+# 	arch/Sound/RageSoundDriver_WDMKS.cpp arch/Sound/RageSoundDriver_WDMKS.h
 	
 if HAVE_PARALLEL_PORT
   Lights += arch/Lights/LightsDriver_Win32Parallel.cpp arch/Lights/LightsDriver_Win32Parallel.h
