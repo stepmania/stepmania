@@ -4,6 +4,7 @@
 #include "global.h"
 #include "RageUtil.h"
 #include "RageThreads.h"
+#include "StdString.h"
 #include "archutils/Unix/Backtrace.h" // HACK: This should be platform-agnosticized
 #if defined(UNIX)
 #include "archutils/Unix/RunningUnderValgrind.h"
