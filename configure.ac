@@ -29,6 +29,7 @@ if test "$host_os" = "mingw32"; then
 	LDFLAGS="$LDFLAGS -L$PWD/extern/for_mingw/lib"
 	# HACK: The prebuilts are 32bit only. Force the issue.
 	CFLAGS="$CFLAGS -m32"
+	CXXFLAGS="$CXXFLAGS -m32"
 fi
 
 AM_CONDITIONAL(WITH_TTY, test "$with_tty" = "yes")
