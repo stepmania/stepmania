@@ -2,6 +2,7 @@
 #define PID_THREAD_HELPERS_H
 
 #include <stdint.h>
+#include "global.h"
 
 RString ThreadsVersion();
 
