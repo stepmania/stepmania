@@ -742,12 +742,35 @@ public:
 
 	// Array-indexing operators.  Required because we defined an implicit cast
 	// to operator const CT* (Thanks to Julian Selman for pointing this out)
-	CT& operator[](long long int nIdx)
+	CT& operator[](int nIdx)
 	{
 		return MYBASE::operator[](static_cast<MYSIZE>(nIdx));
 	}
+
+	const CT& operator[](int nIdx) const
+	{
+		return MYBASE::operator[](static_cast<MYSIZE>(nIdx));
+	}
+
+	CT& operator[](unsigned int nIdx)
+	{
+		return MYBASE::operator[](static_cast<MYSIZE>(nIdx));
+	}
+
+	const CT& operator[](unsigned int nIdx) const
+	{
+		return MYBASE::operator[](static_cast<MYSIZE>(nIdx));
+	}
+
+	CT& operator[](long unsigned int nIdx){
+	  return MYBASE::operator[](static_cast<MYSIZE>(nIdx));
+	}
+       
+	const CT& operator[](long unsigned int nIdx) const {
+	  return MYBASE::operator[](static_cast<MYSIZE>(nIdx));
+	}
 	
-	CT& operator[](long long unsigned int nIdx){
+	const CT& operator[](long long unsigned int nIdx) const {
 	  return MYBASE::operator[](static_cast<MYSIZE>(nIdx));
 	}
 #ifndef SS_NO_IMPLICIT_CASTS
