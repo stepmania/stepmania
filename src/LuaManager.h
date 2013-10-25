@@ -181,7 +181,7 @@ for( const int SM_UNIQUE_NAME(tab) = LuaHelpers::AbsIndex(L,index), \
 #define FOREACH_LUATABLEI(L, index, i) \
 	for( int SM_UNIQUE_NAME(tab) = LuaHelpers::AbsIndex(L,index), \
 		SM_UNIQUE_NAME(top) = lua_gettop(L), i = 1; \
-		lua_rawgeti( L, tab, i ), \
+		lua_rawgeti( L, SM_UNIQUE_NAME(tab), i ), \
 			lua_isnil(L, -1)? \
 			(lua_pop(L, 1), false):(true); /* if nil, pop the nil and stop traversal */ \
 		lua_settop(L,SM_UNIQUE_NAME(top)), ++i )
