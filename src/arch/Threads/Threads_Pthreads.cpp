@@ -6,12 +6,13 @@
 #include <errno.h>
 
 #if defined(UNIX)
-#include "archutils/Unix/LinuxThreadHelpers.h"
 #include "archutils/Unix/RunningUnderValgrind.h"
 #endif
 
 #if defined(MACOSX)
 #include "archutils/Darwin/DarwinThreadHelpers.h"
+#else
+#include "archutils/Common/PthreadHelpers.h"
 #endif
 
 void ThreadImpl_Pthreads::Halt( bool Kill )
