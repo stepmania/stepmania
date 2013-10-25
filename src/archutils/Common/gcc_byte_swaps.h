@@ -3,6 +3,8 @@
 
 #if defined(CPU_X86)
 
+#include <stdint.h>
+
 inline uint32_t ArchSwap32( uint32_t n )
 {
 	asm(
