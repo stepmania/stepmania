@@ -338,7 +338,16 @@ endif
 # =========================================
 if WINDOWS
  ArchHooks += arch/ArchHooks/ArchHooks_Win32.cpp arch/ArchHooks/ArchHooks_Win32.h \
-		arch/ArchHooks/ArchHooks_Win32Static.cpp
+	arch/ArchHooks/ArchHooks_Win32Static.cpp
+
+ ArchUtils += archutils/Win32/arch_setup.h \
+	archutils/Win32/arch_time.cpp \
+	archutils/Win32/Crash.cpp archutils/Win32/Crash.h \
+	archutils/Win32/CrashHandlerChild.cpp \
+	archutils/Win32/CrashHandlerInternal.h \
+	archutils/Win32/CrashHandlerNetworking.cpp archutils/Win32/CrashHandlerNetworking.h
+	archutils/Win32/SpecialDirs.cpp archutils/Win32/SpecialDirs.h \
+	archutils/Win32/VideoDriverInfo.cpp archutils/Win32/VideoDriverInfo.h
 		
  Dialog += arch/Dialog/DialogDriver_Win32.cpp arch/Dialog/DialogDriver_Win32.h
  
