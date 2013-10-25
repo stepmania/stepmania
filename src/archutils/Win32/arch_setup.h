@@ -145,8 +145,8 @@ inline long int lrintf( float f )
 {
 	int retval;
 
-	_asm fld f;
-	_asm fistp retval;
+	SM_ASM_X86(fld f);
+	SM_ASM_X86(fistp retval);
 
 	return retval;
 }
@@ -175,21 +175,19 @@ inline long int lrintf( float f )
 
 inline uint32_t ArchSwap32( uint32_t n )
 {
-	__asm
-	{
+	SM_ASM_X86(
 		mov eax, n
 		xchg al, ah
 		ror eax, 16
 		xchg al, ah
 		mov n, eax
-	};
+	);
 	return n;
 }
 
 inline uint32_t ArchSwap24( uint32_t n )
 {
-	__asm
-	{
+	SM_ASM_X86(
 		mov eax, n
 		xchg al, ah
 		ror eax, 16
@@ -202,12 +200,11 @@ inline uint32_t ArchSwap24( uint32_t n )
 
 inline uint16_t ArchSwap16( uint16_t n )
 {
-	__asm
-	{
+	SM_ASM_X86(
 		mov ax, n
 		xchg al, ah
 		mov n, ax
-	};
+	);
 	return n;
 }
 #endif

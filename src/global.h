@@ -240,9 +240,20 @@ float roundf( float f ) { if( f < 0.0f ) return truncf( f-0.5f ); return truncf(
 inline float strtof( const char *s, char **se ) { return (float) strtod( s, se ); }
 #endif
 
+// Compiler-agnostic macro for inline x86 assembly
+#if defined(CPU_X86) || defined(CPU_X86_64)
+#if defined(_MSC_VER)
+// TESTME: is a single instruction legal for this syntax?
+#define SM_ASM_X86(x) __asm { x }
+#elif defined(__GNUC__)
+#define SM_ASM_X86(x) __asm__("x")
+#else
+#error Inline assembly not implemented for your compiler.
+#endif
+
 /* Don't include our own headers here, since they tend to change often. */
 
-#endif
+#endif // GLOBAL_H
 
 /**
  * @file
