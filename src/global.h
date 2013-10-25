@@ -155,8 +155,8 @@ void ShowWarningOrTrace( const char *file, int line, const char *message, bool b
 /* Use SM_UNIQUE_NAME to get the line number concatenated to x. This is useful for
  * generating unique identifiers in other macros.  */
 #define SM_UNIQUE_NAME3(x,line) x##line
-#define SM_UNIQUE_NAME2(x,line) UNIQUE_NAME3(x, line)
-#define SM_UNIQUE_NAME(x) UNIQUE_NAME2(x, __LINE__)	
+#define SM_UNIQUE_NAME2(x,line) SM_UNIQUE_NAME3(x, line)
+#define SM_UNIQUE_NAME(x) SM_UNIQUE_NAME2(x, __LINE__)	
 
 template <bool> struct CompileAssert;
 template <> struct CompileAssert<true> { };
