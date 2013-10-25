@@ -23,9 +23,6 @@ AM_CXXFLAGS += -finline-limit=300
 
 AM_CXXFLAGS += $(GL_CFLAGS)
 
-LIBS += 
-LIBS += -lpthread -lrt
-
 .PHONY: increment_version
 
 all: increment_version
