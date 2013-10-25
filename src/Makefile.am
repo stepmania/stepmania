@@ -271,7 +271,7 @@ endif
 # Yes, really. MinGW provides pthread.
 if HAVE_PTHREAD
  Threads += arch/Threads/Threads_Pthreads.cpp arch/Threads/Threads_Pthreads.h \
-	achutils/Common/PthreadHelpers.cpp archutils/Common/PthreadHelpers.h
+	archutils/Common/PthreadHelpers.cpp archutils/Common/PthreadHelpers.h
 endif
 
 if HAVE_X11
