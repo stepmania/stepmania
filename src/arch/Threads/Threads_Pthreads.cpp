@@ -208,11 +208,11 @@ MutexImpl *MakeMutex( RageMutex *pParent )
 #if defined(UNIX)
 #include <dlfcn.h>
 #include "arch/ArchHooks/ArchHooks_Unix.h"
-#else
+#elseif defined(MACOSX)
 typedef int clockid_t;
 static const clockid_t CLOCK_REALTIME = 0;
 static const clockid_t CLOCK_MONOTONIC = 1;
-#endif
+#endif // On MinGW clockid_t is defined in pthread.h
 namespace
 {
 	typedef int (* CONDATTR_SET_CLOCK)( pthread_condattr_t *attr, clockid_t clock_id );
