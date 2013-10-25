@@ -5,6 +5,7 @@
 
 #include <windows.h>
 
+#include "global.h"
 #include "arch/Threads/Threads_Win32.h"
 #include "crash.h"
 #include "CrashHandlerInternal.h"
@@ -152,7 +153,8 @@ static const char *CrashGetModuleBaseName(HMODULE hmod, char *pszBaseName)
 	char szPath1[MAX_PATH];
 	char szPath2[MAX_PATH];
 
-	__try {
+// XXX: It looks like nothing in here COULD throw an exception. Need to verify that.
+//	__try {
 		if( !GetModuleFileName(hmod, szPath1, sizeof(szPath1)) )
 			return NULL;
 
@@ -173,9 +175,9 @@ static const char *CrashGetModuleBaseName(HMODULE hmod, char *pszBaseName)
 
 		if( period )
 			*period = 0;
-	} __except(1) {
-		return NULL;
-	}
+//	} __except(1) {
+//		return NULL;
+//	}
 
 	return pszBaseName;
 }
