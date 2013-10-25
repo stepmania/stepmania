@@ -141,6 +141,7 @@ fi
 AM_CONDITIONAL(UNIX, test "$unix" = "yes" )
 AM_CONDITIONAL(LINUX, test "$linux" = "yes" )
 AM_CONDITIONAL(BSD, test "$bsd" = "yes" )
+AM_CONDITIONAL(WINDOWS, test "$windows" = "yes" )
 
 # Define macros for individual CPU types, for a few bits of inline assembly.
 # This is for major, compatible CPU classes--"CPU_X86" includes P2, P3, P4,
