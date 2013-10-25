@@ -309,10 +309,11 @@ AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <stdlib.h>
 	      ])
 AC_LANG_POP(C++)
 
-AM_CONDITIONAL(HAVE_PTHREAD, test x$have_pthread = xyes)
 AC_CHECK_LIB( pthread, pthread_create, [have_pthread=yes; AC_DEFINE([HAVE_LIBPTHREAD],1,[libpthread is available])], have_pthread=no)
 AC_CHECK_LIB( pthread, pthread_mutex_timedlock, AC_DEFINE([HAVE_PTHREAD_MUTEX_TIMEDLOCK],1,[pthreads has pthread_mutex_timedlock()]) )
 AC_CHECK_LIB( pthread, pthread_cond_timedwait, AC_DEFINE([HAVE_PTHREAD_COND_TIMEDWAIT],1,[pthreads has pthread_cond_timedwait()]) )
+
+AM_CONDITIONAL(HAVE_PTHREAD, test "$have_pthread" = "yes")
 
 # Always:
 AC_DEFINE(_GNU_SOURCE, 1, [Use GNU extensions])
