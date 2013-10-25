@@ -841,11 +841,10 @@ RageDisplay_GLES2::SetCullMode( CullMode mode )
 void
 RageDisplay_GLES2::SetAlphaTest( bool b )
 {
-	void (*toggle)(GLenum) = b ? glEnable : glDisable;
 	if (State::bAlphaTestEnabled != b)
 	{
 		State::bAlphaTestEnabled = b;
-		toggle(GL_ALPHA_TEST);
+		b ? glEnable(GL_ALPHA_TEST) : glDisable(GL_ALPHA_TEST);
 	}
 }
 
