@@ -333,7 +333,6 @@ void InputHandler_DInput::UpdatePolled( DIDevice &device, const RageTimer &tm )
 					{
 						DeviceButton neg = DeviceButton_Invalid, pos = DeviceButton_Invalid;
 						int val = 0;
-						switch( in.ofs )
 						if( in.ofs == DIJOFS_X )
 							{ neg = JOY_LEFT; pos = JOY_RIGHT; val = state.lX; }
 						else if( in.ofs == DIJOFS_Y )
@@ -577,7 +576,8 @@ void InputHandler_DInput::UpdateBuffered( DIDevice &device, const RageTimer &tm 
 						// joystick
 						if( in.ofs == DIJOFS_X ) { up = JOY_LEFT; down = JOY_RIGHT; }
 						else if( in.ofs == DIJOFS_Y ) { up = JOY_UP; down = JOY_DOWN; }
-						else if( in.ofs == DIJOFS_Z ) { up = JOY_Z_UP; down = JOY_Z_DOWN; }else if( in.ofs == DIJOFS_RX ) { up = JOY_ROT_UP; down = JOY_ROT_DOWN; }
+						else if( in.ofs == DIJOFS_Z ) { up = JOY_Z_UP; down = JOY_Z_DOWN; }
+						else if( in.ofs == DIJOFS_RX ) { up = JOY_ROT_UP; down = JOY_ROT_DOWN; }
 						else if( in.ofs == DIJOFS_RY ) { up = JOY_ROT_LEFT; down = JOY_ROT_RIGHT; }
 						else if( in.ofs == DIJOFS_RZ ) { up = JOY_ROT_Z_UP; down = JOY_ROT_Z_DOWN; }
 						else if( in.ofs == DIJOFS_SLIDER(0) ) { up = JOY_AUX_1; down = JOY_AUX_2; }
