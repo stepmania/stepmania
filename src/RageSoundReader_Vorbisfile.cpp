@@ -7,7 +7,7 @@
 #if defined(INTEGER_VORBIS)
 #include <tremor/ivorbisfile.h>
 #else
-#include <../extern/vorbis/vorbis/vorbisfile.h>
+#include <vorbis/vorbisfile.h>
 #endif
 
 #if defined(_MSC_VER)
