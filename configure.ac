@@ -27,7 +27,12 @@ test "$DEFAULT_LDFLAGS" = "yes" && LDFLAGS=""
 if test "$host_os" = "mingw32"; then
 	CPPFLAGS="$CPPFLAGS -I$PWD/extern/for_mingw/include"
 	LDFLAGS="$LDFLAGS -L$PWD/extern/for_mingw/lib"
+	# HACK: The prebuilts are 32bit only. Force the issue.
+	CFLAGS="$CFLAGS -m32"
 fi
+
+AM_CONDITIONAL(WITH_TTY, test "$with_tty" = "yes")
+AC_ARG_WITH(linux-tty, AS_HELP_STRING([--with-linux-tty], [Enable Linux TTY input]), with_tty=yes, with_tty=no)
 
 compile=release
 AC_ARG_WITH(debug, AS_HELP_STRING([--with-debug],[Enable debug mode]), with_debug=$withval, with_debug=no)
@@ -135,7 +140,10 @@ case $host_os in
 	unix=yes
 	;;
 esac
-if test $host_os != mingw32; then
+if test "$windows" = "yes"; then
+	SM_WINDOWS
+fi
+if test "$linux" = "yes"; then
 	AC_DEFINE(LUA_USE_LINUX, 1, [Linux for Lua])
 fi
 AM_CONDITIONAL(UNIX, test "$unix" = "yes" )
