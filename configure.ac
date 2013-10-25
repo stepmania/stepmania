@@ -135,7 +135,9 @@ case $host_os in
 	unix=yes
 	;;
 esac
-AC_DEFINE(LUA_USE_LINUX, 1, [Linux for Lua])
+if test $host_os != mingw32; then
+	AC_DEFINE(LUA_USE_LINUX, 1, [Linux for Lua])
+fi
 AM_CONDITIONAL(UNIX, test "$unix" = "yes" )
 AM_CONDITIONAL(LINUX, test "$linux" = "yes" )
 AM_CONDITIONAL(BSD, test "$bsd" = "yes" )

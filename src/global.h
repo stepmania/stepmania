@@ -154,13 +154,9 @@ void ShowWarningOrTrace( const char *file, int line, const char *message, bool b
 
 /* Use UNIQUE_NAME to get the line number concatenated to x. This is useful for
  * generating unique identifiers in other macros.  */
-/* XXX: VC2003 expanding __LINE__ to nothing in the first version.  Investigate why. -Chris */
-//#define UNIQUE_NAME3(x,line) x##line
-//#define UNIQUE_NAME2(x,line) UNIQUE_NAME3(x, line)
-//#define UNIQUE_NAME(x) UNIQUE_NAME2(x, __LINE__)	
-#define UNIQUE_NAME3(x) x
-#define UNIQUE_NAME2(x) UNIQUE_NAME3(x)
-#define UNIQUE_NAME(x) UNIQUE_NAME2(x)	
+#define UNIQUE_NAME3(x,line) x##line
+#define UNIQUE_NAME2(x,line) UNIQUE_NAME3(x, line)
+#define UNIQUE_NAME(x) UNIQUE_NAME2(x, __LINE__)	
 
 template <bool> struct CompileAssert;
 template <> struct CompileAssert<true> { };
