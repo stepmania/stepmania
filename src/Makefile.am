@@ -270,7 +270,8 @@ endif
 
 # Yes, really. MinGW provides pthread.
 if HAVE_PTHREAD
- Threads += arch/Threads/Threads_Pthreads.cpp arch/Threads/Threads_Pthreads.h
+ Threads += arch/Threads/Threads_Pthreads.cpp arch/Threads/Threads_Pthreads.h \
+	achutils/Common/PthreadHelpers.cpp archutils/Common/PthreadHelpers.h
 endif
 
 if HAVE_X11
@@ -285,7 +286,6 @@ endif
 # =========================
 if UNIX
  ArchHooks += arch/ArchHooks/ArchHooks_Unix.cpp arch/ArchHooks/ArchHooks_Unix.h
- Threads += arch/Threads/Threads_Pthreads.cpp arch/Threads/Threads_Pthreads.h
  
 if LINUX
   InputHandler += arch/InputHandler/InputHandler_Linux_Joystick.cpp arch/InputHandler/InputHandler_Linux_Joystick.h \
@@ -322,7 +322,6 @@ endif
 		archutils/Unix/arch_setup.h \
 		archutils/Unix/GetSysInfo.cpp archutils/Unix/GetSysInfo.h \
 		archutils/Unix/SignalHandler.cpp archutils/Unix/SignalHandler.h \
-		archutils/Unix/LinuxThreadHelpers.cpp archutils/Unix/LinuxThreadHelpers.h \
 		archutils/Unix/RunningUnderValgrind.cpp archutils/Unix/RunningUnderValgrind.h \
 		archutils/Unix/EmergencyShutdown.cpp archutils/Unix/EmergencyShutdown.h \
 		archutils/Unix/StackCheck.cpp archutils/Unix/SpecialDirs.cpp archutils/Unix/SpecialDirs.h \
@@ -350,8 +349,9 @@ if WINDOWS
  MemoryCard += arch/MemoryCard/MemoryCardDriverThreaded_Windows.cpp arch/MemoryCard/MemoryCardDriverThreaded_Windows.h
  
  # XXX We may want to ditch DirectShow in favor of using ffmpeg on all platforms.
- MovieTexture += arch/MovieTexture/MovieTexture_DShow.cpp arch/MovieTexture/MovieTexture_DShow.h \
-	arch/MovieTexture/MovieTexture_DShowHelper.cpp arch/MovieTexture/MovieTexture_DShowHelper.h
+ # FIXME BROKEN
+ # MovieTexture += arch/MovieTexture/MovieTexture_DShow.cpp arch/MovieTexture/MovieTexture_DShow.h \
+ #	arch/MovieTexture/MovieTexture_DShowHelper.cpp arch/MovieTexture/MovieTexture_DShowHelper.h
  
  # XXX: Do we want to detect DirectX SDK and selectively enable DirectX drivers?
  InputHandler += arch/InputHandler/InputHandler_DirectInput.cpp arc/InputHandler/InputHandler_DirectInput.h \
