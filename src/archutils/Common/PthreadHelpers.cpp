@@ -1,7 +1,7 @@
 /* RageThreads helpers for threads in Linux, which are based on PIDs and TIDs. */
+#include "PthreadHelpers.h"
 
 #include "global.h"
-#include "LinuxThreadHelpers.h"
 #include "RageUtil.h"
 #include "RageThreads.h"
 #include "Backtrace.h"
