@@ -141,12 +141,15 @@ static inline int64_t llabs( int64_t i ) { return i >= 0? i: -i; }
 
 // MinGW provides us with this function already
 #if !defined(__MINGW32__)
+#if defined(__GNUC__)
+#error "MSVC asm syntax ahead"
+#endif
 inline long int lrintf( float f )
 {
 	int retval;
 
-	SM_ASM_X86(fld f);
-	SM_ASM_X86(fistp retval);
+	_asm fld f;
+	_asm fistp retval;
 
 	return retval;
 }
@@ -175,19 +178,21 @@ inline long int lrintf( float f )
 
 inline uint32_t ArchSwap32( uint32_t n )
 {
-	SM_ASM_X86(
+	__asm
+	{
 		mov eax, n
 		xchg al, ah
 		ror eax, 16
 		xchg al, ah
 		mov n, eax
-	);
+	};
 	return n;
 }
 
 inline uint32_t ArchSwap24( uint32_t n )
 {
-	SM_ASM_X86(
+	__asm
+	{
 		mov eax, n
 		xchg al, ah
 		ror eax, 16
@@ -200,11 +205,12 @@ inline uint32_t ArchSwap24( uint32_t n )
 
 inline uint16_t ArchSwap16( uint16_t n )
 {
-	SM_ASM_X86(
+	__asm
+	{
 		mov ax, n
 		xchg al, ah
 		mov n, ax
-	);
+	};
 	return n;
 }
 #endif

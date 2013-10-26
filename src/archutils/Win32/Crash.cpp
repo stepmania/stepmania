@@ -364,7 +364,7 @@ long __stdcall CrashHandler::ExceptionHandler( EXCEPTION_POINTERS *pExc )
 	int iSize = 1024*32;
 	char *pStack = (char *) VirtualAlloc( NULL, iSize, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE );
 	pStack += iSize;
-	SM_ASM_X86(mov esp, pStack);
+	_asm mov esp, pStack;
 
 	return MainExceptionHandler( pExc );
 }
@@ -532,10 +532,10 @@ void CrashHandler::do_backtrace( const void **buf, size_t size,
 static void NORETURN debug_crash()
 {
 	__try {
-		SM_ASM_X86(xor ebx,ebx);
-		SM_ASM_X86(mov eax,dword ptr [ebx]);
-//		SM_ASM_X86(mov dword ptr [ebx],eax);
-//		SM_ASM_X86(lock add dword ptr cs:[00000000h], 12345678h);
+		__asm xor ebx,ebx
+		__asm mov eax,dword ptr [ebx]
+//		__asm mov dword ptr [ebx],eax
+//		__asm lock add dword ptr cs:[00000000h], 12345678h
 	} __except( CrashHandler::ExceptionHandler((EXCEPTION_POINTERS*)_exception_info()) ) {
 	}
 }
