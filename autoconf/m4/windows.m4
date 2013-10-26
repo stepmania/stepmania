@@ -1,5 +1,7 @@
 AC_DEFUN([SM_WINDOWS],
 [
+dnl We are a GUI program...
+	LDFLAGS="$LDFLAGS -mwindows"
 
 	AM_CPPFLAGS="-I$WINSDK_PATH/Include $AM_CPPFLAGS"
 	AM_LDFLAGS="-I$WINSDK_PATH/Lib $AM_LDFLAGS"
