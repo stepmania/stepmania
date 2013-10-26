@@ -88,7 +88,6 @@ static void SetThreadName( DWORD dwThreadID, LPCTSTR szThreadName )
 	} __except (EXCEPTION_CONTINUE_EXECUTION) {
 	}
 #endif
-	LOG->Warn("SetThreadName: stub!");
 }
 
 static DWORD WINAPI StartThread( LPVOID pData )
