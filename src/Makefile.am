@@ -345,7 +345,7 @@ if WINDOWS
 	archutils/Win32/Crash.cpp archutils/Win32/Crash.h \
 	archutils/Win32/CrashHandlerChild.cpp \
 	archutils/Win32/CrashHandlerInternal.h \
-	archutils/Win32/CrashHandlerNetworking.cpp archutils/Win32/CrashHandlerNetworking.h
+	archutils/Win32/CrashHandlerNetworking.cpp archutils/Win32/CrashHandlerNetworking.h \
 	archutils/Win32/SpecialDirs.cpp archutils/Win32/SpecialDirs.h \
 	archutils/Win32/VideoDriverInfo.cpp archutils/Win32/VideoDriverInfo.h
 		
