@@ -427,6 +427,7 @@ static bool IsExecutableProtection(DWORD dwProtect) {
 	// Windows NT/2000 allows Execute permissions, but Win9x seems to rip it
 	// off. So we query the permissions on our own code block, and use it to
 	// determine if READONLY/READWRITE should be considered 'executable.'
+	// XXX: Special logic for Win98? Really? This should be cut.
 
 	VirtualQuery(IsExecutableProtection, &meminfo, sizeof meminfo);
 
