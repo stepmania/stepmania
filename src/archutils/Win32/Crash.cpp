@@ -364,10 +364,14 @@ long __stdcall CrashHandler::ExceptionHandler( EXCEPTION_POINTERS *pExc )
 	int iSize = 1024*32;
 	char *pStack = (char *) VirtualAlloc( NULL, iSize, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE );
 	pStack += iSize;
+	// FIXME: This will probably explode on x86-64
 #if defined(_MSC_VER)
 	_asm mov esp, pStack;
 #elif defined(__GNUC__)
-	asm ("mov esp, pStack");
+	asm volatile ("movl %%esp, %0\n\t"
+	:
+	: "r" (pStack)
+	);
 #endif
 
 	return MainExceptionHandler( pExc );
