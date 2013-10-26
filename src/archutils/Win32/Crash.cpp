@@ -536,21 +536,21 @@ void CrashHandler::do_backtrace( const void **buf, size_t size,
 // Trigger the crash handler. This works even in the debugger.
 static void NORETURN debug_crash()
 {
-	__try {
+//	__try {
 #if defined(__MSC_VER)
 		__asm xor ebx,ebx
 		__asm mov eax,dword ptr [ebx]
 //		__asm mov dword ptr [ebx],eax
 //		__asm lock add dword ptr cs:[00000000h], 12345678h
 #elif defined(__GNUC__)
-		asm("xor ebx,ebx",
-			"mov eax,dword ptr [ebx]",
-//			"mov dword ptr [ebx],eax",
-//			"lock add dword ptr cs:[00000000h], 12345678h",
+		asm("xor ebx,ebx"
+			"mov eax,dword ptr [ebx]"
+//			"mov dword ptr [ebx],eax"
+//			"lock add dword ptr cs:[00000000h], 12345678h"
 		);
 #endif
-	} __except( CrashHandler::ExceptionHandler((EXCEPTION_POINTERS*)_exception_info()) ) {
-	}
+//	} __except( CrashHandler::ExceptionHandler((EXCEPTION_POINTERS*)_exception_info()) ) {
+//	}
 }
 
 /* Get a stack trace of the current thread and the specified thread.
