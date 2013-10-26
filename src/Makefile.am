@@ -351,6 +351,8 @@ if WINDOWS
 	archutils/Win32/DialogUtil.cpp archutils/Win32/DialogUtil.h \
 	archutils/Win32/DirectXHelpers.cpp archutils/Win32/DirectXHelpers.h \
 	archutils/Win32/ErrorStrings.cpp archutils/Win32/ErrorStrings.h \
+	archutils/Win32/GetFileInformation.cpp archutils/Win32/GetFileInformation.h \
+	archutils/Win32/GoToURL.cpp archutils/Win32/GoToURL.h \
 	archutils/Win32/GraphicsWindow.cpp archutils/Win32/GraphicsWindow.h \
 	archutils/Win32/MessageWindow.cpp archutils/Win32/MessageWindow.h \
 	archutils/Win32/RegistryAccess.cpp archutils/Win32/RegistryAccess.h \
