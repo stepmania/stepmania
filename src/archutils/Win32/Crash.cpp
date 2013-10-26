@@ -429,7 +429,7 @@ static bool IsExecutableProtection(DWORD dwProtect) {
 	// determine if READONLY/READWRITE should be considered 'executable.'
 	// XXX: Special logic for Win98? Really? This should be cut.
 
-	VirtualQuery(IsExecutableProtection, &meminfo, sizeof meminfo);
+	VirtualQuery( (LPCVOID) IsExecutableProtection, &meminfo, sizeof meminfo);
 
 	switch((unsigned char)dwProtect) {
 	case PAGE_READONLY:			// *sigh* Win9x...
