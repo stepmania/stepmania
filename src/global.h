@@ -250,7 +250,6 @@ inline float strtof( const char *s, char **se ) { return (float) strtod( s, se )
 #else
 #error Inline assembly not implemented for your compiler.
 #endif
-#endif
 
 /* Don't include our own headers here, since they tend to change often. */
 
