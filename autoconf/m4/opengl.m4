@@ -10,10 +10,12 @@ AC_DEFUN([SM_OPENGL],
 	
 	AX_CHECK_LIB_USING_HEADER(GL, 'glBegin(GL_POINTS)', GL/gl.h, [GL_LIBS="-lGL"])
 	
-	if test x$GL_LIBS = "x"; then
+	if test "$GL_LIBS" = ""; then
 	AX_CHECK_LIB_USING_HEADER(opengl32, 'glBegin(GL_POINTS)', GL/gl.h, [GL_LIBS="-lopengl32"])
 	fi
-	if test x$GL_LIBS = "x"; then
+	if test "$GL_LIBS" = ""; then
 			AC_MSG_ERROR("No usable OpenGL library found.")
 	fi
+	
+	AC_SUBST(GL_LIBS)
 ])
