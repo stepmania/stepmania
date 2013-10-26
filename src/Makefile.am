@@ -342,12 +342,24 @@ if WINDOWS
 
  ArchUtils += archutils/Win32/arch_setup.h \
 	archutils/Win32/arch_time.cpp \
+	archutils/Win32/AppInstance.cpp archutils/Win32/AppInstance.h \
 	archutils/Win32/Crash.cpp archutils/Win32/Crash.h \
 	archutils/Win32/CrashHandlerChild.cpp \
 	archutils/Win32/CrashHandlerInternal.h \
 	archutils/Win32/CrashHandlerNetworking.cpp archutils/Win32/CrashHandlerNetworking.h \
+	archutils/Win32/DebugInfoHunt.cpp archutils/Win32/DebugInfoHunt.h \
+	archutils/Win32/DialogUtil.cpp archutils/Win32/DialogUtil.h \
+	archutils/Win32/DirectXHelpers.cpp archutils/Win32/DirectXHelpers.h \
+	archutils/Win32/ErrorStrings.cpp archutils/Win32/ErrorStrings.h \
+	archutils/Win32/GraphicsWindow.cpp archutils/Win32/GraphicsWindow.h \
+	archutils/Win32/MessageWindow.cpp archutils/Win32/MessageWindow.h \
+	archutils/Win32/RegistryAccess.cpp archutils/Win32/RegistryAccess.h \
+	archutils/Win32/RestartProgram.cpp archutils/Win32/RestartProgram.h \
 	archutils/Win32/SpecialDirs.cpp archutils/Win32/SpecialDirs.h \
-	archutils/Win32/VideoDriverInfo.cpp archutils/Win32/VideoDriverInfo.h
+	archutils/Win32/USB.cpp archutils/Win32/USB.h \
+	archutils/Win32/VideoDriverInfo.cpp archutils/Win32/VideoDriverInfo.h \
+	archutils/Win32/WindowIcon.cpp archutils/Win32/WindowIcon.h \
+	archutils/Win32/WindowsDialogBox.cpp archutils/Win32/WindowsDialogBox.h
 		
  Dialog += arch/Dialog/DialogDriver_Win32.cpp arch/Dialog/DialogDriver_Win32.h
  
@@ -370,6 +382,7 @@ if WINDOWS
 		arch/InputHandler/InputHandler_Win32_Pump.cpp arch/InputHandler/InputHandler_Win32_Pump.h
 		
  Sound += arch/Sound/RageSoundDriver_DSound_Software.cpp arch/Sound/RageSoundDriver_DSound_Software.h \
+	arch/Sound/DSoundHelpers.cpp arch/Sound/DSoundHelpers.h \
 	arch/Sound/RageSoundDriver_WaveOut.cpp arch/Sound/RageSoundDriver_WaveOut.h
 # FIXME: BROKEN
 # 	arch/Sound/RageSoundDriver_WDMKS.cpp arch/Sound/RageSoundDriver_WDMKS.h
