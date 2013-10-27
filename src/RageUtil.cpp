@@ -389,7 +389,7 @@ RString vssprintf( const char *szFormat, va_list argList )
 {
 	RString sStr;
 
-#if defined(WIN32) && !defined(__MINGW32__)
+#if defined(WIN32)
 	char *pBuf = NULL;
 	int iChars = 1;
 	int iUsed = 0;
