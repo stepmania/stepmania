@@ -699,8 +699,7 @@ main_CPPFLAGS = \
 	-I$(top_srcdir)/extern/jsoncpp/include
 #-I$(top_srcdir)/extern/glew-1.5.8/include
 
-main_SOURCES = $(PNG) \
-		$(Screens) \
+main_SOURCES = $(Screens) \
 		$(DataStructures) \
 		$(FileTypes) \
 		$(StepMania) \
