@@ -105,6 +105,7 @@ AC_LANG_POP([C])
 AC_CHECK_HEADERS([sys/param.h])
 
 if test x$with_debug = xyes; then
+	AC_DEFINE([DEBUG], 1, [Special debugging logic])
 	AC_LANG_PUSH([C++])
 	AC_CHECK_HEADER([debug/debug.h],[
 		AC_DEFINE([_GLIBCXX_DEBUG],1,[STL debug])
@@ -214,6 +215,7 @@ if test "$have_libpng" = "no"; then
   echo "*** it is installed to continue the build process."
   exit 1
 fi
+
 LIBS="$LIBS $LIB_PRE -lpng -lz -lm $LIB_POST"
 LIB_PRE=
 LIB_POST=
