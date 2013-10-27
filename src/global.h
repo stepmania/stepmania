@@ -143,8 +143,10 @@ void ShowWarningOrTrace( const char *file, int line, const char *message, bool b
 #endif
 
 #ifdef DEBUG
-#define DEBUG_ASSERT(x)		ASSERT(x)
-#define DEBUG_ASSERT_M(x,y)	ASSERT_M(x,y)
+// No reason to kill the program. A lot of these don't produce a crash in NDEBUG so why stop?
+// TODO: These should have something you can hook a breakpoint on.
+#define DEBUG_ASSERT(x) if(unlikely(x)) WARN("Debug assert failed")
+#define DEBUG_ASSERT_M(x,y) if(unlikely(x)) WARN(y)
 #else
 /** @brief A dummy define to keep things going smoothly. */
 #define DEBUG_ASSERT(x)
