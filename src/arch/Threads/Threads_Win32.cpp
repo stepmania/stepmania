@@ -79,12 +79,10 @@ static void SetThreadName( DWORD dwThreadID, LPCTSTR szThreadName )
 	info.dwThreadID = dwThreadID;
 	info.dwFlags = 0;
 
+	// FIXME: Need to find a GCC/GDB-friendly way to do this.
 #if defined(_MSC_VER)
 	__try {
-#endif
-	// XXX: How does GCC react if this throws an exception, since it doesn't implement SEH?
 		RaiseException(MS_VC_EXCEPTION, 0, sizeof(info) / sizeof(DWORD), (ULONG_PTR *)&info);
-#if defined(_MSC_VER)
 	} __except (EXCEPTION_CONTINUE_EXECUTION) {
 	}
 #endif
