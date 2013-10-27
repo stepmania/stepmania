@@ -340,9 +340,10 @@ if WINDOWS
  ArchHooks += arch/ArchHooks/ArchHooks_Win32.cpp arch/ArchHooks/ArchHooks_Win32.h \
 	arch/ArchHooks/ArchHooks_Win32Static.cpp
 
- ArchUtils += archutils/Win32/arch_setup.h \
+ ArchUtils += archutils/Win32/arch_setup.cpp archutils/Win32/arch_setup.h \
 	archutils/Win32/arch_time.cpp \
 	archutils/Win32/AppInstance.cpp archutils/Win32/AppInstance.h \
+	archutils/Win32/CommandLine.cpp archutils/Win32/CommandLine.h \
 	archutils/Win32/Crash.cpp archutils/Win32/Crash.h \
 	archutils/Win32/CrashHandlerChild.cpp \
 	archutils/Win32/CrashHandlerInternal.h \
