@@ -208,7 +208,7 @@ MutexImpl *MakeMutex( RageMutex *pParent )
 #if defined(UNIX)
 #include <dlfcn.h>
 #include "arch/ArchHooks/ArchHooks_Unix.h"
-#elseif defined(MACOSX)
+#elif defined(MACOSX)
 typedef int clockid_t;
 static const clockid_t CLOCK_REALTIME = 0;
 static const clockid_t CLOCK_MONOTONIC = 1;
