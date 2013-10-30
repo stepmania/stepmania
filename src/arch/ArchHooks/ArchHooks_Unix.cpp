@@ -8,7 +8,7 @@
 #include "SpecialFiles.h"
 #include "archutils/Unix/SignalHandler.h"
 #include "archutils/Unix/GetSysInfo.h"
-#include "archutils/Unix/LinuxThreadHelpers.h"
+#include "archutils/Common/PthreadHelpers.h"
 #include "archutils/Unix/EmergencyShutdown.h"
 #include "archutils/Unix/AssertionHandler.h"
 #include <unistd.h>

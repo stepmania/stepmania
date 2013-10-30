@@ -7,7 +7,7 @@
 #include "test_misc.h"
 
 #include <unistd.h>
-#include "archutils/Unix/LinuxThreadHelpers.h"
+#include "archutils/Common/PthreadHelpers.h"
 
 /* These are volatile, so writes to them aren't optimized. */
 volatile uint64_t g_ThreadId = (uint64_t) -1;

@@ -4,8 +4,8 @@
 #include "SignalHandler.h"
 #include "GetSysInfo.h"
 
-#if defined(UNIX)
-#include "archutils/Unix/LinuxThreadHelpers.h"
+#if defined(HAVE_LIBPTHREAD)
+#include "archutils/Common/PthreadHelpers.h"
 #endif
 
 #include <unistd.h>

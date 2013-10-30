@@ -11,7 +11,7 @@
 #include <fcntl.h>
 
 #if defined(BACKTRACE_METHOD_X86_LINUX)
-#include "LinuxThreadHelpers.h"
+#include "archutils/Common/PthreadHelpers.h"
 
 static const char *itoa(unsigned n)
 {
