@@ -1,5 +1,10 @@
 AUTOMAKE_OPTIONS = subdir-objects
 
+# Windows resource files
+# Using $^ here makes it add .dirstamp garbage as well. So just the first file please.
+.rc.o:
+	windres $(RESFLAGS) $< $@
+
 ## Do not install stepmania in the traditional way.
 noinst_PROGRAMS = stepmania
 TESTS = 
@@ -362,7 +367,8 @@ if WINDOWS
 	archutils/Win32/USB.cpp archutils/Win32/USB.h \
 	archutils/Win32/VideoDriverInfo.cpp archutils/Win32/VideoDriverInfo.h \
 	archutils/Win32/WindowIcon.cpp archutils/Win32/WindowIcon.h \
-	archutils/Win32/WindowsDialogBox.cpp archutils/Win32/WindowsDialogBox.h
+	archutils/Win32/WindowsDialogBox.cpp archutils/Win32/WindowsDialogBox.h \
+	archutils/Win32/WindowsResources.rc archutils/Win32/WindowsResources.h
 		
  Dialog += arch/Dialog/DialogDriver_Win32.cpp arch/Dialog/DialogDriver_Win32.h
  

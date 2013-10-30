@@ -41,5 +41,4 @@ AC_DEFUN([SM_OPENGL],
 	AC_CHECK_DECL(GLEW_VERSION_2_1, , AC_MSG_ERROR("GLEW 1.3.5 or newer is required."), [#include <GL/glew.h>])
 	
 	GL_LIBS="$GL_LIBS $GLU_LIBS $GLEW_LIBS"
-	AC_SUBST(GL_LIBS)
 ])

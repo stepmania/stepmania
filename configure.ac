@@ -30,6 +30,7 @@ if test "$host_os" = "mingw32"; then
 	# HACK: The prebuilts are 32bit only. Force the issue.
 	CFLAGS="$CFLAGS -m32"
 	CXXFLAGS="$CXXFLAGS -m32"
+	RESFLAGS="$RESFLAGS --target=pe-i386"
 fi
 
 AM_CONDITIONAL(WITH_TTY, test "$with_tty" = "yes")
@@ -200,6 +201,9 @@ SM_X11
 GL_CFLAGS="$GL_CFLAGS $XCFLAGS"
 GL_LIBS="$GL_LIBS $XLIBS"
 
+AC_SUBST(GL_CFLAGS)
+AC_SUBST(GL_LIBS)
+
 have_libpng=yes
 SM_STATIC
 AC_CHECK_LIB(png, png_create_read_struct, [x=y], have_libpng=no, [-lz -lm]) # x=y to stop autoconf from messing with LIBS
@@ -355,6 +359,8 @@ AM_CONDITIONAL(BUILD_TESTS, test "$enable_tests" = "yes" )
 
 AC_ARG_ENABLE(lua-binaries, AS_HELP_STRING([--enable-lua-binaries],[Build lua and luac]), enable_lua_binaries=$enableval, enable_lua_binaries=no)
 AM_CONDITIONAL(BUILD_LUA_BINARIES, test "$enable_lua_binaries" = "yes" )
+
+AC_SUBST(RESFLAGS)
 
 AC_CONFIG_FILES(Makefile)
 AC_CONFIG_FILES(src/Makefile)
