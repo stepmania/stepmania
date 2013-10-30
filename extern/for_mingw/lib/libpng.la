@@ -17,7 +17,7 @@ old_library='libpng16.a'
 inherited_linker_flags=''
 
 # Libraries that this one depends upon.
-dependency_libs=' -L/home/roothorick/stepmania/extern/for_mingw/lib -lz'
+dependency_libs=' -lz'
 
 # Names of additional weak libraries provided by this library
 weak_library_names=''
