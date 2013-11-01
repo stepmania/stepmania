@@ -30,7 +30,7 @@ if test "$host_os" = "mingw32"; then
 	# HACK: The prebuilts are 32bit only. Force the issue.
 	CFLAGS="$CFLAGS -m32"
 	CXXFLAGS="$CXXFLAGS -m32"
-	RESFLAGS="$RESFLAGS --target=pe-i386"
+	RESFLAGS="$RESFLAGS --target=pe-i386 -I$PWD/src/archutils/Win32/mingw"
 fi
 
 AM_CONDITIONAL(WITH_TTY, test "$with_tty" = "yes")
