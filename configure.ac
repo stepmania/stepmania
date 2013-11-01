@@ -26,7 +26,7 @@ test "$DEFAULT_LDFLAGS" = "yes" && LDFLAGS=""
 # If on Windows, grab the prebuilts
 if test "$host_os" = "mingw32"; then
 	CPPFLAGS="$CPPFLAGS -I$PWD/extern/for_mingw/include"
-	LDFLAGS="$LDFLAGS -L$PWD/extern/for_mingw/lib"
+	LDFLAGS="$LDFLAGS -L$PWD/extern/for_mingw/lib -static-libstdc++ -static-libgcc"
 	# HACK: The prebuilts are 32bit only. Force the issue.
 	CFLAGS="$CFLAGS -m32"
 	CXXFLAGS="$CXXFLAGS -m32"
@@ -265,9 +265,13 @@ if test "$with_gles2" = "no"; then
 fi
 AM_CONDITIONAL(WITHOUT_GLES2, test "$with_gles2" = "no")
 
-# ffmpeg may need -liconv (it does on mingw64)
 AM_ICONV
-LIBS="$LIBS $LIBICONV"
+# HACK: The iconv check can pass erroneously on mingw64 under some conditions I'm not really sure of.
+if test "$windows" = "yes"; then
+	LIBS="$LIBS -liconv"
+else
+	LIBS="$LIBS $LIBICONV"
+fi
 
 SM_ZLIB
 SM_BZIP
