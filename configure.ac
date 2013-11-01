@@ -265,6 +265,8 @@ if test "$with_gles2" = "no"; then
 fi
 AM_CONDITIONAL(WITHOUT_GLES2, test "$with_gles2" = "no")
 
+AM_ICONV
+
 SM_ZLIB
 SM_BZIP
 SM_AUDIO
@@ -274,8 +276,6 @@ SM_TLS
 SM_CHECK_CRASH_HANDLER
 
 AM_PATH_ALSA(0.9.0,AC_DEFINE([HAVE_ALSA],1,[Define presence of ALSA]),alsa=false)
-
-AM_ICONV
 
 AC_ARG_ENABLE(gtk2, AS_HELP_STRING([--disable-gtk2],[Disable GTK support]), enable_gtk2=$enableval, enable_gtk2=yes)
 
