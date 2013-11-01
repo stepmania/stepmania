@@ -265,7 +265,9 @@ if test "$with_gles2" = "no"; then
 fi
 AM_CONDITIONAL(WITHOUT_GLES2, test "$with_gles2" = "no")
 
+# ffmpeg may need -liconv (it does on mingw64)
 AM_ICONV
+LIBS="$LIBS $LIBICONV"
 
 SM_ZLIB
 SM_BZIP
