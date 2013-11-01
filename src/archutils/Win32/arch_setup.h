@@ -1,7 +1,9 @@
 #ifndef ARCH_SETUP_WINDOWS_H
 #define ARCH_SETUP_WINDOWS_H
 
+#if defined(_MSC_VER)
 #define HAVE_FFMPEG
+#endif
 
 #define SUPPORT_OPENGL
 #if defined(_MSC_VER)
