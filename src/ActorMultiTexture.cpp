@@ -70,7 +70,7 @@ int ActorMultiTexture::AddTexture( RageTexture *pTexture )
 
 	m_aTextureUnits.push_back( TextureUnitState() );
 	m_aTextureUnits.back().m_pTexture = TEXTUREMAN->CopyTexture( pTexture );
-	return m_aTextureUnits.size() - 1;
+	return m_aTextureUnits.size();
 }
 
 void ActorMultiTexture::SetTextureMode( int iIndex, TextureMode tm )
