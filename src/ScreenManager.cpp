@@ -584,8 +584,11 @@ void ScreenManager::PrepareScreen( const RString &sScreenName )
 		{
 			LOG->Trace( "Loading screen background \"%s\"", sNewBGA.c_str() );
 			Actor *pActor = ActorUtil::MakeActor( sNewBGA );
-			pActor->SetName( sNewBGA );
-			g_vPreparedBackgrounds.push_back( pActor );
+			if( pActor != NULL )
+			{
+				pActor->SetName( sNewBGA );
+				g_vPreparedBackgrounds.push_back( pActor );
+			}
 		}
 	}
 

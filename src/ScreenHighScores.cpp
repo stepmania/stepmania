@@ -187,7 +187,8 @@ void ScoreScroller::Load( RString sMetricsGroup )
 	for( int i=0; i<iNumCopies; ++i )
 	{
 		Actor *pActor = ActorUtil::MakeActor( THEME->GetPathG(sMetricsGroup,"ScrollerItem") );
-		this->AddChild( pActor );
+		if( pActor != NULL )
+			this->AddChild( pActor );
 	}
 
 	DynamicActorScroller::SetTransformFromReference( THEME->GetMetricR(sMetricsGroup,"ScrollerItemTransformFunction") );

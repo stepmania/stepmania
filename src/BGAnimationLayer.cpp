@@ -520,6 +520,8 @@ void BGAnimationLayer::LoadFromNode( const XNode* pNode )
 			for( unsigned i=0; i<NumSprites; i++ )
 			{
 				Actor* pSprite = ActorUtil::MakeActor( sFile, this );
+				if( pSprite == NULL )
+					continue;
 				this->AddChild( pSprite );
 				pSprite->SetTextureWrapping( true );		// gets rid of some "cracks"
 				pSprite->SetZoom( randomf(fZoomMin,fZoomMax) );

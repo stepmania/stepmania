@@ -201,6 +201,8 @@ bool ActorUtil::LoadTableFromStackShowErrors( Lua *L )
 	return true;
 }
 
+// NOTE: This function can return NULL if the actor should not be displayed.
+// Callers should be aware of this and handle it appropriately.
 Actor* ActorUtil::MakeActor( const RString &sPath_, Actor *pParentActor )
 {
 	RString sPath( sPath_ );

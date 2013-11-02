@@ -107,7 +107,10 @@ void OptionRowType::Load( const RString &sMetricsGroup, Actor *pParent )
 	m_textTitle.SetName( "Title" );
 	ActorUtil::LoadAllCommandsAndSetXY( m_textTitle, sMetricsGroup );
 
-	m_sprFrame.Load( ActorUtil::MakeActor( THEME->GetPathG(sMetricsGroup,"Frame"), pParent ) );
+	Actor *pActor = ActorUtil::MakeActor( THEME->GetPathG(sMetricsGroup,"Frame"), pParent );
+	if( pActor == NULL )
+		pActor = new Actor;
+	m_sprFrame.Load( pActor );
 	m_sprFrame->SetName( "Frame" );
 	ActorUtil::LoadAllCommandsAndSetXY( m_sprFrame, sMetricsGroup );
 
