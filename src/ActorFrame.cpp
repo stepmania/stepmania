@@ -236,7 +236,11 @@ void ActorFrame::DrawPrimitives()
 	{
 		Lua *L = LUA->Get();
 		m_DrawFunction.PushSelf( L );
-		ASSERT( !lua_isnil(L, -1) );
+		if( lua_isnil(L, -1) )
+		{
+			LOG->Warn( "Error compiling DrawFunction" );
+			return;
+		}
 		this->PushSelf( L );
 		RString sError;
 		if( !LuaHelpers::RunScriptOnStack(L, sError, 1, 0) ) // 1 arg, 0 results
