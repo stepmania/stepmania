@@ -352,7 +352,11 @@ void ActorFrame::UpdateInternal( float fDeltaTime )
 	{
 		Lua *L = LUA->Get();
 		m_UpdateFunction.PushSelf( L );
-		ASSERT( !lua_isnil(L, -1) );
+		if( lua_isnil(L, -1) )
+		{
+			LOG->Warn( "Error compiling UpdateFunction" );
+			return;
+		}
 		this->PushSelf( L );
 		lua_pushnumber( L, fDeltaTime );
 		RString sError;
