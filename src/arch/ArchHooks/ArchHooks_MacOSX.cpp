@@ -223,11 +223,10 @@ void ArchHooks_MacOSX::DumpDebugInfo()
 	// Get system version
 	RString sSystemVersion;
 	{
-		long major = 0, minor = 0, bugFix = 0;
+		long major = static_cast<long>(gestaltSystemVersionMajor);
+        long minor = static_cast<long>(gestaltSystemVersionMinor);
+        long bugFix = static_cast<long>(gestaltSystemVersionBugFix);
 
-		Gestalt( gestaltSystemVersionMajor, &major );
-		Gestalt( gestaltSystemVersionMinor, &minor );
-		Gestalt( gestaltSystemVersionBugFix, &bugFix );
 		if( bugFix )
 			sSystemVersion = ssprintf( "Mac OS X %ld.%ld.%ld", major, minor, bugFix );
 		else
