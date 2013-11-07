@@ -5,7 +5,6 @@
 #include "RageLog.h"
 
 #include <Carbon/Carbon.h>
-#include <CarbonCore/Files.h>
 #include <IOKit/IOKitLib.h>
 #include <IOKit/storage/IOMedia.h>
 #include <IOKit/usb/USBSpec.h>

@@ -6221,7 +6221,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastUpgradeCheck = 0500;
+				LastUpgradeCheck = 0460;
 			};
 			buildConfigurationList = AAC845130856A19700A9FEAB /* Build configuration list for PBXProject "stepmania_xcode4.3" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -8414,7 +8414,6 @@
 				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/Libraries";
 				LINKER_DISPLAYS_MANGLED_NAMES = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
-				ONLY_ACTIVE_ARCH = YES;
 				PRESERVE_DEAD_CODE_INITS_AND_TERMS = YES;
 				SDKROOT = "";
 				SHARED_PRECOMPS_DIR = "/Library/Caches/com.apple.Xcode.$(UID)/SharedPrecompiledHeaders/$(PRODUCT_NAME)/$(CONFIGURATION)";
@@ -8704,7 +8703,6 @@
 					"HAVE_WAITPID=1",
 					"SIZEOF_LONG=4",
 					"$(FPM)",
-					FPM_DEFAULT,
 				);
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = NO;
@@ -8740,7 +8738,6 @@
 					"HAVE_WAITPID=1",
 					"SIZEOF_LONG=4",
 					"$(FPM)",
-					FPM_DEFAULT,
 				);
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = NO;
@@ -8779,7 +8776,6 @@
 					"HAVE_WAITPID=1",
 					"SIZEOF_LONG=4",
 					"$(FPM)",
-					FPM_DEFAULT,
 				);
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = NO;

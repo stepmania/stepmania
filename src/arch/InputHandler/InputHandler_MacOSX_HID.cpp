@@ -25,7 +25,7 @@ void InputHandler_MacOSX_HID::QueueCallback( void *target, int result, void *ref
 	IOHIDQueueInterface **queue = (IOHIDQueueInterface **)sender;
 	IOHIDEventStruct event;
 	AbsoluteTime zeroTime = { 0, 0 };
-	HIDDevice *dev = This->m_vDevices[size_t( refcon )];
+	HIDDevice *dev = This->m_vDevices[int( refcon )];
 	vector<DeviceInput> vPresses;
 
 	while( (result = CALL(queue, getNextEvent, &event, zeroTime, 0)) == kIOReturnSuccess )
