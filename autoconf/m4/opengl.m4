@@ -31,7 +31,12 @@ AC_DEFUN([SM_OPENGL],
 	AX_CHECK_LIB_USING_HEADER(GLEW, glewInit(), GL/glew.h, [GLEW_LIBS="$LIBS -lGLEW"])
 
 	if test "$GLEW_LIBS" = ""; then
-		AX_CHECK_LIB_USING_HEADER(glew32, glewInit(), GL/glew.h, [GLEW_LIBS="$LIBS -lglew32"])
+		AX_CHECK_LIB_USING_HEADER(glew32, glewInit(), GL/glew.h, [GLEW_LIBS="$LIBS -lglew32"], , [$GL_LIBS])
+	fi
+	
+	if test "$GLEW_LIBS" = ""; then
+		AC_DEFINE([GLEW_STATIC], [], [Tell GLEW it is a static library.])
+		AX_CHECK_LIB_USING_HEADER(glew32, glewInit(), GL/glew.h, [GLEW_LIBS="$LIBS -lglew32"], , [$GL_LIBS])
 	fi
 	
 	if test "$GLEW_LIBS" = ""; then
