@@ -26,7 +26,7 @@ test "$DEFAULT_LDFLAGS" = "yes" && LDFLAGS=""
 # If on Windows, grab the prebuilts
 if test "$host_os" = "mingw32"; then
 	CPPFLAGS="$CPPFLAGS -I$PWD/extern/for_mingw/include"
-	LDFLAGS="$LDFLAGS -L$PWD/extern/for_mingw/lib -static-libstdc++ -static-libgcc"
+	LDFLAGS="$LDFLAGS -L$PWD/extern/for_mingw/lib"
 	# HACK: The prebuilts are 32bit only. Force the issue.
 	CFLAGS="$CFLAGS -m32"
 	CXXFLAGS="$CXXFLAGS -m32"
