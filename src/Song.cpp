@@ -349,6 +349,24 @@ bool Song::LoadFromSongDir( RString sDir )
 	if( PREFSMAN->m_BackgroundCache == BGCACHE_LOW_RES_PRELOAD && m_bHasBackground )
 		BACKGROUNDCACHE->LoadBackground( GetBackgroundPath() );
 	*/
+	
+	// Load any .edit files in the song folder.
+	// Doing this BEFORE setting up AutoGen just in case.
+	vector<RString> vs;
+	GetDirListing( sDir + "*.edit", vs, false, false);
+	// XXX: I'm sure there's a StepMania way of doing this, but familiar with this codebase I am not.
+	for(unsigned int i = 0; i < vs.size(); ++i) {
+		// Try SSCLoader
+		SSCLoader ldSSC;
+		if( ldSSC.LoadEditFromFile(sDir + vs[i], ProfileSlot_Invalid, true, this) != true )
+		{
+			// No dice? Try SMLoader then. If SMLoader fails too, well whatever.
+			// We don't have to do anything to fail gracefully.
+			SMLoader ldSM;
+			ldSM.LoadEditFromFile(sDir + vs[i], ProfileSlot_Invalid, true, this);
+		}
+	}
+	// Note: If vs.empty() then this loop is skipped entirely (vs.size() == 0)
 
 	// Add AutoGen pointers. (These aren't cached.)
 	AddAutoGenNotes();

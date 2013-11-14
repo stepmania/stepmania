@@ -829,6 +829,10 @@ bool SMLoader::LoadNoteDataFromSimfile( const RString &path, Steps &out )
 			RString stepsType = sParams[1];
 			RString description = sParams[2];
 			RString difficulty = sParams[3];
+
+			// HACK?: If this is a .edit fudge the edit difficulty
+			if(path.Right(5).CompareNoCase(".edit") == 0) difficulty = "edit";
+
 			Trim(stepsType);
 			Trim(description);
 			Trim(difficulty);
@@ -1108,7 +1112,7 @@ bool SMLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCache
 	return true;
 }
 
-bool SMLoader::LoadEditFromFile( RString sEditFilePath, ProfileSlot slot, bool bAddStepsToSong )
+bool SMLoader::LoadEditFromFile( RString sEditFilePath, ProfileSlot slot, bool bAddStepsToSong, Song *givenSong /* =NULL */ )
 {
 	LOG->Trace( "SMLoader::LoadEditFromFile(%s)", sEditFilePath.c_str() );
 
@@ -1126,19 +1130,19 @@ bool SMLoader::LoadEditFromFile( RString sEditFilePath, ProfileSlot slot, bool b
 		return false;
 	}
 
-	return LoadEditFromMsd( msd, sEditFilePath, slot, bAddStepsToSong );
+	return LoadEditFromMsd( msd, sEditFilePath, slot, bAddStepsToSong, givenSong );
 }
 
-bool SMLoader::LoadEditFromBuffer( const RString &sBuffer, const RString &sEditFilePath, ProfileSlot slot )
+bool SMLoader::LoadEditFromBuffer( const RString &sBuffer, const RString &sEditFilePath, ProfileSlot slot, Song *givenSong )
 {
 	MsdFile msd;
 	msd.ReadFromString( sBuffer, true ); // unescape
-	return LoadEditFromMsd( msd, sEditFilePath, slot, true );
+	return LoadEditFromMsd( msd, sEditFilePath, slot, true, givenSong );
 }
 
-bool SMLoader::LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePath, ProfileSlot slot, bool bAddStepsToSong )
+bool SMLoader::LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePath, ProfileSlot slot, bool bAddStepsToSong, Song *givenSong /* =NULL */ )
 {
-	Song* pSong = NULL;
+	Song* pSong = givenSong;
 
 	for( unsigned i=0; i<msd.GetNumValues(); i++ )
 	{
@@ -1152,8 +1156,10 @@ bool SMLoader::LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePath
 		{
 			if( pSong )
 			{
-				LOG->UserLog( "Edit file", sEditFilePath, "has more than one #SONG tag." );
-				return false;
+				/* LOG->UserLog( "Edit file", sEditFilePath, "has more than one #SONG tag." );
+				return false; */
+				// May have been given the song from outside the file. Not worth checking for.
+				continue;
 			}
 
 			RString sSongFullTitle = sParams[1];
@@ -1178,7 +1184,7 @@ bool SMLoader::LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePath
 		{
 			if( pSong == NULL )
 			{
-				LOG->UserLog( "Edit file", sEditFilePath, "doesn't have a #SONG tag preceeding the first #NOTES tag." );
+				LOG->UserLog( "Edit file", sEditFilePath, "doesn't have a #SONG tag preceeding the first #NOTES tag, and is not in a valid song-specific folder." );
 				return false;
 			}
 
