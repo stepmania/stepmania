@@ -1711,50 +1711,46 @@ void SongManager::RefreshCourseGroupInfo()
 
 void SongManager::LoadStepEditsFromProfileDir( const RString &sProfileDir, ProfileSlot slot )
 {
+	// Load all edit steps
+	RString sDir = sProfileDir + EDIT_STEPS_SUBDIR;
+
+	vector<RString> vsFiles;
+	GetDirListing( sDir+"*.edit", vsFiles, false, true );
+
+	int iNumEditsLoaded = GetNumEditsLoadedFromProfile( slot );
+	int size = min( (int) vsFiles.size(), MAX_EDIT_STEPS_PER_PROFILE - iNumEditsLoaded );
+
+	for( int i=0; i<size; i++ )
 	{
-		// Load all edit steps
-		RString sDir = sProfileDir + EDIT_STEPS_SUBDIR;
-
-		vector<RString> vsFiles;
-		GetDirListing( sDir+"*.edit", vsFiles, false, true );
-
-		int iNumEditsLoaded = GetNumEditsLoadedFromProfile( slot );
-		int size = min( (int) vsFiles.size(), MAX_EDIT_STEPS_PER_PROFILE - iNumEditsLoaded );
-
-		for( int i=0; i<size; i++ )
+		RString fn = vsFiles[i];
+		SSCLoader loaderSSC;
+		bool bLoadedFromSSC = loaderSSC.LoadEditFromFile( fn, slot, true );
+		// If we don't load the edit from a .ssc-style .edit, then we should
+		// also try the .sm-style edit file. -aj
+		if( !bLoadedFromSSC )
 		{
-			RString fn = vsFiles[i];
-			SSCLoader loaderSSC;
-			bool bLoadedFromSSC = loaderSSC.LoadEditFromFile( fn, slot, true );
-			// If we don't load the edit from a .ssc-style .edit, then we should
-			// also try the .sm-style edit file. -aj
-			if( !bLoadedFromSSC )
-			{
-				SMLoader loaderSM;
-				loaderSM.LoadEditFromFile( fn, slot, true );
-			}
+			SMLoader loaderSM;
+			loaderSM.LoadEditFromFile( fn, slot, true );
 		}
 	}
 }
 
 void SongManager::LoadCourseEditsFromProfileDir( const RString &sProfileDir, ProfileSlot slot )
 {
+	// Load all edit courses
+	RString sDir = sProfileDir + EDIT_COURSES_SUBDIR;
+
+	vector<RString> vsFiles;
+	GetDirListing( sDir+"*.crs", vsFiles, false, true );
+
+	int iNumEditsLoaded = GetNumEditsLoadedFromProfile( slot );
+	int size = min( (int) vsFiles.size(), MAX_EDIT_COURSES_PER_PROFILE - iNumEditsLoaded );
+
+	for( int i=0; i<size; i++ )
 	{
-		// Load all edit courses
-		RString sDir = sProfileDir + EDIT_COURSES_SUBDIR;
+		RString fn = vsFiles[i];
 
-		vector<RString> vsFiles;
-		GetDirListing( sDir+"*.crs", vsFiles, false, true );
-
-		int iNumEditsLoaded = GetNumEditsLoadedFromProfile( slot );
-		int size = min( (int) vsFiles.size(), MAX_EDIT_COURSES_PER_PROFILE - iNumEditsLoaded );
-
-		for( int i=0; i<size; i++ )
-		{
-			RString fn = vsFiles[i];
-
-			CourseLoaderCRS::LoadEditFromFile( fn, slot );
-		}
+		CourseLoaderCRS::LoadEditFromFile( fn, slot );
 	}
 }
 
