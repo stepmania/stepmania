@@ -84,7 +84,7 @@ static void RemoveStepsTypes( vector<StepsType>& inout, RString sStepsTypesToRem
 {
 	vector<RString> v;
 	split( sStepsTypesToRemove, ",", v );
-	if( v.size() > 0 ) return; // Nothing to do!
+	if( v.size() == 0 ) return; // Nothing to do!
 
 	// subtract StepsTypes
 	FOREACH_CONST( RString, v, i )
