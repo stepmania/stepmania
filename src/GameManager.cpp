@@ -2929,8 +2929,16 @@ void GameManager::GetStepsTypesForGame( const Game *pGame, vector<StepsType>& aS
 {
 	for( int i=0; pGame->m_apStyles[i]; ++i )
 	{
-		const StepsType st = pGame->m_apStyles[i]->m_StepsType;
+		StepsType st = pGame->m_apStyles[i]->m_StepsType;
 		ASSERT(st < NUM_StepsType);
+		
+		// Some Styles use the same StepsType (e.g. single and versus) so check
+		// that we aren't doubling up.
+		bool found = false;
+		for( int j=0; j < aStepsTypeAddTo.size(); j++ )
+			if( (int) st == (int) aStepsTypeAddTo[j] ) { found = true; break; }
+		if(found) continue;
+			
 		aStepsTypeAddTo.push_back( st );
 	}
 }
