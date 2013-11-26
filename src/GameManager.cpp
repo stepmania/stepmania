@@ -2927,19 +2927,11 @@ const Style* GameManager::GetEditorStyleForStepsType( StepsType st )
 
 void GameManager::GetStepsTypesForGame( const Game *pGame, vector<StepsType>& aStepsTypeAddTo )
 {
-	FOREACH_ENUM( StepsType, st )
+	for( int i=0; pGame->m_apStyles[i]; ++i )
 	{
-		bool found = false;
-		for( int s=0; pGame->m_apStyles[s]; ++s ) 
-		{
-			const Style *style = pGame->m_apStyles[s];
-			if( style->m_StepsType != st )
-				continue;
-
-			found = true;
-		}
-		if( found )
-			aStepsTypeAddTo.push_back( st );
+		const StepsType st = pGame->m_apStyles[i]->m_StepsType;
+		ASSERT(st < NUM_StepsType);
+		aStepsTypeAddTo.push_back( st );
 	}
 }
 
