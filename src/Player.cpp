@@ -184,6 +184,18 @@ ThemeMetric<bool> REQUIRE_STEP_ON_MINES	( "Player", "RequireStepOnMines" );
  * For those wishing to make a theme very accurate to In The Groove 2, set this to false. */
 ThemeMetric<bool> ROLL_BODY_INCREMENTS_COMBO	( "Player", "RollBodyIncrementsCombo" );
 /**
+ * @brief Does not stepping on a mine increase the combo?
+ *
+ * If set to true, every mine missed will increment the combo.
+ * If set to false, missing a mine will not affect the combo. */
+ThemeMetric<bool> AVOID_MINE_INCREMENTS_COMBO	( "Gameplay", "AvoidMineIncrementsCombo" );
+/**
+ * @brief Does stepping on a mine increment the miss combo?
+ *
+ * If set to true, every mine stepped on will break the combo and increment the miss combo.
+ * If set to false, stepping on a mine will not affect the combo. */
+ThemeMetric<bool> MINE_HIT_INCREMENTS_MISS_COMBO	( "Gameplay", "MineHitIncrementsMissCombo" );
+/**
  * @brief Are checkpoints and taps considered separate judgments?
  *
  * If set to true, they are considered separate.
@@ -3341,7 +3353,10 @@ void Player::SetMineJudgment( TapNoteScore tns )
 		msg.SetParam( "Player", m_pPlayerState->m_PlayerNumber );
 		msg.SetParam( "TapNoteScore", tns );
 		MESSAGEMAN->Broadcast( msg );
-		if( m_pPlayerStageStats )
+		if( m_pPlayerStageStats &&
+			( ( tns == TNS_AvoidMine && AVOID_MINE_INCREMENTS_COMBO ) || 
+				( tns == TNS_HitMine && MINE_HIT_INCREMENTS_MISS_COMBO ))
+		)
 		{
 			SetCombo( m_pPlayerStageStats->m_iCurCombo, m_pPlayerStageStats->m_iCurMissCombo );
 		}
