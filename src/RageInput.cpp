@@ -9,7 +9,7 @@
 
 RageInput* INPUTMAN = NULL; // globally accessable input device
 
-static Preference<RString> g_sInputDrivers( "InputDrivers", "" ); // "" == DEFAULT_INPUT_DRIVER_LIST
+Preference<RString> g_sInputDrivers( "InputDrivers", "" ); // "" == DEFAULT_INPUT_DRIVER_LIST
 
 namespace
 {
