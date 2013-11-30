@@ -19,7 +19,7 @@ public:
 	unsigned GetCacheHash( const RString &path ) const;
 };
 
-extern SongCacheIndex *SONGINDEX;	// global and accessable from anywhere in our program
+extern SongCacheIndex *SONGINDEX;	// global and accessible from anywhere in our program
 
 #endif
 

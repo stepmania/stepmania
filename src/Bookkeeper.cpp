@@ -10,7 +10,7 @@
 #include "XmlFileUtil.h"
 #include <ctime>
 
-Bookkeeper*	BOOKKEEPER = NULL;	// global and accessable from anywhere in our program
+Bookkeeper*	BOOKKEEPER = NULL;	// global and accessible from anywhere in our program
 
 static const RString COINS_DAT = "Save/Coins.xml";
 

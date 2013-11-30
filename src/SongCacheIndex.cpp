@@ -27,7 +27,7 @@
 #define CACHE_INDEX SpecialFiles::CACHE_DIR + "index.cache"
 
 
-SongCacheIndex *SONGINDEX;
+SongCacheIndex *SONGINDEX; // global and accessible from anywhere in our program
 
 RString SongCacheIndex::GetCacheFilePath( const RString &sGroup, const RString &sPath )
 {

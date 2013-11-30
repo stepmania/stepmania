@@ -124,7 +124,7 @@ private:
 	Profile *m_pMachineProfile;
 };
 
-extern ProfileManager*	PROFILEMAN;	// global and accessable from anywhere in our program
+extern ProfileManager*	PROFILEMAN;	// global and accessible from anywhere in our program
 
 #endif
 

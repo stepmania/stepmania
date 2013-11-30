@@ -140,7 +140,7 @@ private:
 
 #endif
 
-extern ArchHooks *HOOKS;	// global and accessable from anywhere in our program
+extern ArchHooks *HOOKS;	// global and accessible from anywhere in our program
 
 /**
  * @file

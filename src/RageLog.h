@@ -41,7 +41,7 @@ private:
 	void AddToRecentLogs( const RString &buf );
 };
 
-extern RageLog*	LOG;	// global and accessable from anywhere in our program
+extern RageLog*	LOG;	// global and accessible from anywhere in our program
 #endif
 
 /*

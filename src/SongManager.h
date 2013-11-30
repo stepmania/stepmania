@@ -217,7 +217,7 @@ protected:
 	ThemeMetric1D<RageColor>	COURSE_GROUP_COLOR;
 };
 
-extern SongManager*	SONGMAN;	// global and accessable from anywhere in our program
+extern SongManager*	SONGMAN;	// global and accessible from anywhere in our program
 
 #endif
 

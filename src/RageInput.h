@@ -34,7 +34,7 @@ public:
 
 extern Preference<RString> g_sInputDrivers;
 
-extern RageInput*			INPUTMAN;	// global and accessable from anywhere in our program
+extern RageInput*			INPUTMAN;	// global and accessible from anywhere in our program
 
 #endif
 

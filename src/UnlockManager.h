@@ -179,7 +179,7 @@ private:
 	set<RString> m_RouletteCodes; // "codes" which are available in roulette and which unlock if rouletted
 };
 
-extern UnlockManager*	UNLOCKMAN;  // global and accessable from anywhere in program
+extern UnlockManager*	UNLOCKMAN;  // global and accessible from anywhere in program
 
 #endif
 

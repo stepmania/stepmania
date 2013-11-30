@@ -104,7 +104,7 @@ private:
 	int				m_iControllerTestManualCycleCurrent;
 };
 
-extern LightsManager*	LIGHTSMAN;	// global and accessable from anywhere in our program
+extern LightsManager*	LIGHTSMAN;	// global and accessible from anywhere in our program
 
 #endif
 

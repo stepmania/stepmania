@@ -93,7 +93,7 @@ private:
 	RageTextureID::TexPolicy m_TexturePolicy;
 };
 
-extern RageTextureManager*	TEXTUREMAN;	// global and accessable from anywhere in our program
+extern RageTextureManager*	TEXTUREMAN;	// global and accessible from anywhere in our program
 
 #endif
 

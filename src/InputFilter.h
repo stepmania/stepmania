@@ -92,7 +92,7 @@ private:
 	InputFilter& operator=(const InputFilter& rhs);
 };
 
-extern InputFilter*	INPUTFILTER;	// global and accessable from anywhere in our program
+extern InputFilter*	INPUTFILTER;	// global and accessible from anywhere in our program
 
 #endif
 

@@ -12,7 +12,7 @@
 #include "Style.h"
 #include "Foreach.h"
 
-GameManager*	GAMEMAN = NULL;	// global and accessable from anywhere in our program
+GameManager*	GAMEMAN = NULL;	// global and accessible from anywhere in our program
 
 enum 
 {

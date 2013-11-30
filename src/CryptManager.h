@@ -35,7 +35,7 @@ public:
 	void PushSelf( lua_State *L );
 };
 
-extern CryptManager*	CRYPTMAN;	// global and accessable from anywhere in our program
+extern CryptManager*	CRYPTMAN;	// global and accessible from anywhere in our program
 
 #endif
 

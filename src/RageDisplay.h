@@ -410,7 +410,7 @@ protected:
 };
 
 
-extern RageDisplay*		DISPLAY;	// global and accessable from anywhere in our program
+extern RageDisplay*		DISPLAY;	// global and accessible from anywhere in our program
 
 #endif
 /*

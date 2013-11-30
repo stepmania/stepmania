@@ -18,7 +18,7 @@ public:
 	//void PruneFonts();
 };
 
-extern FontManager*	FONT;	// global and accessable from anywhere in our program
+extern FontManager*	FONT;	// global and accessible from anywhere in our program
 
 
 #endif

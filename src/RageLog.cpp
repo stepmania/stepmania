@@ -12,7 +12,7 @@
 #endif
 #include <map>
 
-RageLog* LOG;		// global and accessable from anywhere in the program
+RageLog* LOG;		// global and accessible from anywhere in the program
 
 /*
  * We have a couple log types and a couple logs.

@@ -14,7 +14,7 @@
 #include "CryptManager.h"
 #include "XmlFileUtil.h"
 
-StatsManager*	STATSMAN = NULL;	// global object accessable from anywhere in the program
+StatsManager*	STATSMAN = NULL;	// global object accessible from anywhere in the program
 
 void AddPlayerStatsToProfile( Profile *pProfile, const StageStats &ss, PlayerNumber pn );
 XNode* MakeRecentScoreNode( const StageStats &ss, Trail *pTrail, const PlayerStageStats &pss, MultiPlayer mp );

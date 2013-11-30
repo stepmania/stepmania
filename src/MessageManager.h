@@ -193,7 +193,7 @@ public:
 	void PushSelf( lua_State *L );
 };
 
-extern MessageManager*	MESSAGEMAN;	// global and accessable from anywhere in our program
+extern MessageManager*	MESSAGEMAN;	// global and accessible from anywhere in our program
 
 template<class T>
 class BroadcastOnChange

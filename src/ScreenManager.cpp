@@ -32,7 +32,7 @@
  * 
  * If a screen is added to the screen stack that isn't in the current screen group
  * (added to by GroupScreen), the screen group is reset: all prepared screens are
- * unloaded and the persistance list is cleared.
+ * unloaded and the persistence list is cleared.
  *
  * Note that not all screens yet support reuse in this way; proper use of BeginScreen
  * is required.  This will misbehave if a screen pushes another screen that's already
@@ -73,7 +73,7 @@
 #include "Foreach.h"
 #include "ActorUtil.h"
 
-ScreenManager*	SCREENMAN = NULL;	// global and accessable from anywhere in our program
+ScreenManager*	SCREENMAN = NULL;	// global and accessible from anywhere in our program
 
 static Preference<bool> g_bDelayedScreenLoad( "DelayedScreenLoad", false );
 //static Preference<bool> g_bPruneFonts( "PruneFonts", true );
