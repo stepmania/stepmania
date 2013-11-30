@@ -3,6 +3,7 @@
 #include "RageLog.h"
 #include "RageUtil.h"
 #include "LinuxInputManager.h"
+#include "RageInputDevice.h" // NUM_JOYSTICKS
 
 #include <unistd.h>
 #include <fcntl.h>
@@ -16,14 +17,6 @@
 
 REGISTER_INPUT_HANDLER_CLASS2( LinuxJoystick, Linux_Joystick );
 
-static const char *Paths[InputHandler_Linux_Joystick::NUM_JOYSTICKS] =
-{
-	"/dev/js0",
-	"/dev/js1",
-	"/dev/input/js0",
-	"/dev/input/js1",
-};
-
 InputHandler_Linux_Joystick::InputHandler_Linux_Joystick()
 {
 	m_bDevicesChanged = false;
@@ -36,11 +29,6 @@ InputHandler_Linux_Joystick::InputHandler_Linux_Joystick()
 
 	if( LINUXINPUT == NULL ) LINUXINPUT = new LinuxInputManager;
 	LINUXINPUT->InitDriver(this);
-
-	for(int i = 0; i < NUM_JOYSTICKS; ++i)
-	{
-
-	}
 
 	if( fds[0] != -1 ) // LinuxInputManager found at least one valid joystick for us
 		StartThread();
@@ -72,8 +60,6 @@ void InputHandler_Linux_Joystick::StopThread()
 
 bool InputHandler_Linux_Joystick::TryDevice(RString dev)
 {
-	bool hotplug = false;
-
 	struct stat st;
 	if( stat( dev, &st ) == -1 )
 		{ LOG->Warn( "LinuxJoystick: Couldn't stat %s: %s", dev.c_str(), strerror(errno) ); return false; }
@@ -82,6 +68,7 @@ bool InputHandler_Linux_Joystick::TryDevice(RString dev)
 		{ LOG->Warn( "LinuxJoystick: Ignoring %s: not a character device", dev.c_str() ); return false; }
 	
 	bool ret = false;
+	bool hotplug = false;
 	if( m_InputThread.IsCreated() ) { StopThread(); hotplug = true; }
 	/* Thread is stopped! DO NOT RETURN */
 	{
@@ -98,6 +85,7 @@ bool InputHandler_Linux_Joystick::TryDevice(RString dev)
 
 			LOG->Info("LinuxJoystick: Opened %s", dev.c_str() );
 			m_iLastFd++;
+			m_bDevicesChanged = true;
 			ret = true;
 		}
 		else LOG->Warn("LinuxJoystick: Failed to open %s: %s", dev.c_str(), strerror(errno) );
@@ -194,6 +182,11 @@ void InputHandler_Linux_Joystick::InputThread()
 
 void InputHandler_Linux_Joystick::GetDevicesAndDescriptions( vector<InputDeviceInfo>& vDevicesOut )
 {
+	// HACK: If IH_Linux_Joystick is constructed before IH_Linux_Event, our thread won't be started
+	// as part of the constructor. This isn't called until all InputHandlers have been constructed,
+	// and is (hopefully) in the same thread as TryDevice... so doublecheck our thread now.
+	if( !m_InputThread.IsCreated() ) StartThread();
+	
 	for(int i = 0; i < NUM_JOYSTICKS; ++i)
 	{
 		if (fds[i] < 0)

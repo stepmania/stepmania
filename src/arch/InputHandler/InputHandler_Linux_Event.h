@@ -10,7 +10,6 @@
 class InputHandler_Linux_Event: public InputHandler
 {
 public:
-	enum { NUM_JOYSTICKS = 4 };
 	InputHandler_Linux_Event();
 	~InputHandler_Linux_Event();
 	bool TryDevice(RString devfile);
