@@ -293,7 +293,8 @@ if UNIX
  ArchHooks += arch/ArchHooks/ArchHooks_Unix.cpp arch/ArchHooks/ArchHooks_Unix.h
  
 if LINUX
-  InputHandler += arch/InputHandler/InputHandler_Linux_Joystick.cpp arch/InputHandler/InputHandler_Linux_Joystick.h \
+  InputHandler += arch/InputHandler/LinuxInputManager.cpp arch/InputHandler/LinuxInputManager.h \
+		arch/InputHandler/InputHandler_Linux_Joystick.cpp arch/InputHandler/InputHandler_Linux_Joystick.h \
 		arch/InputHandler/InputHandler_Linux_Event.cpp arch/InputHandler/InputHandler_Linux_Event.h \
 		arch/InputHandler/InputHandler_Linux_PIUIO.cpp arch/InputHandler/InputHandler_Linux_PIUIO.h
   

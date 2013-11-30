@@ -37,6 +37,8 @@ void MakeInputHandlers( const RString &drivers, vector<InputHandler *> &Add )
 #ifdef USE_INPUT_HANDLER_LINUX_JOYSTICK
 		if( !s->CompareNoCase("Joystick") )	ret = new InputHandler_Linux_Joystick;
 #endif
+#ifdef USE_INPUT_HANDLER_LINUX_EVENT
+		if !s->CompareNocase("LinuxEvent") ) ret = new InputHandler_Linux_Event;
 #ifdef USE_INPUT_HANDLER_LINUX_TTY
 		if( !s->CompareNoCase("tty") )		ret = new InputHandler_Linux_tty;
 #endif

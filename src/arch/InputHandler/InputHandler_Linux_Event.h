@@ -13,17 +13,19 @@ public:
 	enum { NUM_JOYSTICKS = 4 };
 	InputHandler_Linux_Event();
 	~InputHandler_Linux_Event();
+	bool TryDevice(RString devfile);
+	bool DevicesChanged() { return m_bDevicesChanged; }
 	void GetDevicesAndDescriptions( vector<InputDeviceInfo>& vDevicesOut );
 
-	/* Shared with InputHandler_Linux_Joystick.cpp: */
-	static bool m_bFoundAnyJoysticks;
-
 private:
+	void StartThread();
+	void StopThread();
 	static int InputThread_Start( void *p );
 	void InputThread();
 
 	RageThread m_InputThread;
-	bool m_bShutdown;
+	InputDevice m_NextDevice;
+	bool m_bShutdown, m_bDevicesChanged;
 };
 #define USE_INPUT_HANDLER_LINUX_JOYSTICK
 

@@ -34,7 +34,7 @@
 #include "LoadingWindow/LoadingWindow_Gtk.h"
 #endif
 #if defined(LINUX)
-#define DEFAULT_INPUT_DRIVER_LIST "X11,Event,Joystick"
+#define DEFAULT_INPUT_DRIVER_LIST "X11,LinuxEvent,LinuxJoystick"
 #else
 #define DEFAULT_INPUT_DRIVER_LIST "X11"
 #endif
