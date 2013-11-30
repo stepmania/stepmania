@@ -185,7 +185,7 @@ void InputHandler_Linux_Joystick::GetDevicesAndDescriptions( vector<InputDeviceI
 	// HACK: If IH_Linux_Joystick is constructed before IH_Linux_Event, our thread won't be started
 	// as part of the constructor. This isn't called until all InputHandlers have been constructed,
 	// and is (hopefully) in the same thread as TryDevice... so doublecheck our thread now.
-	if( !m_InputThread.IsCreated() ) StartThread();
+	if( fds[0] != -1 && !m_InputThread.IsCreated() ) StartThread();
 	
 	for(int i = 0; i < NUM_JOYSTICKS; ++i)
 	{
