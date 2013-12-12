@@ -1412,35 +1412,39 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 			else
 				LOG->Trace("did not let go of hold note :D");
 			*/
+		}
 
-			if( bInitiatedNote )
+		if( bInitiatedNote )
+		{
+			if(!bLetGoOfHoldNote)
 			{
-				if(!bLetGoOfHoldNote)
+				//LOG->Trace("initiated note and didn't let go");
+				fLife = 1; // xxx: should be MAX_HOLD_LIFE instead? -aj
+				hns = HNS_Held;
+				bool bBright = m_pPlayerStageStats && m_pPlayerStageStats->m_iCurCombo>(int)BRIGHT_GHOST_COMBO_THRESHOLD;
+				if( m_pNoteField )
 				{
-					//LOG->Trace("initiated note and didn't let go");
-					fLife = 1; // xxx: should be MAX_HOLD_LIFE instead? -aj
-					hns = HNS_Held;
-					bool bBright = m_pPlayerStageStats && m_pPlayerStageStats->m_iCurCombo>(int)BRIGHT_GHOST_COMBO_THRESHOLD;
-					if( m_pNoteField )
+					FOREACH( TrackRowTapNote, vTN, trtn )
 					{
-						FOREACH( TrackRowTapNote, vTN, trtn )
-						{
-							int iTrack = trtn->iTrack;
-							m_pNoteField->DidHoldNote( iTrack, HNS_Held, bBright );	// bright ghost flash
-						}
+						int iTrack = trtn->iTrack;
+						m_pNoteField->DidHoldNote( iTrack, HNS_Held, bBright );	// bright ghost flash
 					}
 				}
+			}
 
-				else
-				{
-					//LOG->Trace("initiated note and let go :(");
-				}
-			}
-			else if( SCORE_MISSED_HOLDS_AND_ROLLS )
+			else
 			{
-				hns = HNS_LetGo;
+				//LOG->Trace("initiated note and let go :(");
 			}
-		} // hns == HNS_None initially and so it may remain
+		}
+		else if( SCORE_MISSED_HOLDS_AND_ROLLS )
+		{
+			hns = HNS_LetGo;
+		}
+		else 
+		{
+			hns = HNS_None;
+		}
 	}
 
 	float fLifeFraction = fLife / MAX_HOLD_LIFE;
