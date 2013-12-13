@@ -15,11 +15,14 @@ fi
 
 have_ffmpeg=no
 if test "$with_ffmpeg" = "yes"; then
+	if pkg-config --libs libavcodec &> /dev/null; then AVCODEC_LIBS="`pkg-config --libs libavcodec`"; else AVCODEC_LIBS="-lavutil"; fi
+	if pkg-config --libs libavformat &> /dev/null; then AVFORMAT_LIBS="`pkg-config --libs libavformat`"; else AVFORMAT_LIBS="-lavcodec -lavutil"; fi
+	if pkg-config --libs libswscale &> /dev/null; then SWSCALE_LIBS="`pkg-config --libs libswscale`"; else SWSCALE_LIBS="-lavutil"; fi
 	if test "$with_static_ffmpeg" = "yes" -o "$with_static_ffmpeg" = "no"; then
 		AC_CHECK_LIB(avutil, av_free, have_libavutil=yes, have_libavutil=no)
-		AC_CHECK_LIB(avcodec, avcodec_register_all, have_libavcodec=yes,  have_libavcodec=no, [-lavutil])
-		AC_CHECK_LIB(avformat, av_guess_format, have_libavformat=yes,  have_libavformat=no, [-lavcodec -lavutil])
-		AC_CHECK_LIB(swscale, sws_scale, have_libswscale=yes,  have_libswscale=no, [-lavutil])
+		AC_CHECK_LIB(avcodec, avcodec_register_all, have_libavcodec=yes,  have_libavcodec=no, [$AVCODEC_LIBS])
+		AC_CHECK_LIB(avformat, av_guess_format, have_libavformat=yes,  have_libavformat=no, [$AVFORMAT_LIBS])
+		AC_CHECK_LIB(swscale, sws_scale, have_libswscale=yes,  have_libswscale=no, [$SWSCALE_LIBS])
 		if test "$have_libavutil" = "yes" -a "$have_libavformat" = "yes" -a "$have_libavcodec" = "yes" -a "$have_libswscale" = "yes"; then
 			have_ffmpeg=yes
 			VIDEO_LIBS="$LIB_PRE -lswscale -lavformat -lswscale -lavcodec -lavutil $LIB_POST $VIDEO_LIBS"
@@ -46,9 +49,9 @@ if test "$with_ffmpeg" = "yes"; then
 		LIBS="$FFMPEG_LIBS -lpthread $LIBS"
 
 		AC_CHECK_FUNC([av_free], have_libavutil=yes, have_libavutil=no)
-		AC_CHECK_FUNC([avcodec_register_all], have_libavcodec=yes, have_libavcodec=no)
-		AC_CHECK_FUNC([av_guess_format], have_libavformat=yes, have_libavformat=no)
-		AC_CHECK_FUNC([sws_scale], have_libswscale=yes, have_libswscale=no)
+		AC_CHECK_FUNC([avcodec_register_all], have_libavcodec=yes, have_libavcodec=no, [$AVCODEC_LIBS])
+		AC_CHECK_FUNC([av_guess_format], have_libavformat=yes, have_libavformat=no, [$AVFORMAT_LIBS])
+		AC_CHECK_FUNC([sws_scale], have_libswscale=yes, have_libswscale=no, [$SWSCALE_LIBS])
 
 		if test "$have_libavutil" = "yes" -a "$have_libavformat" = "yes" -a "$have_libavcodec" = "yes" -a "$have_libswscale" = "yes"; then
 			have_ffmpeg=yes
