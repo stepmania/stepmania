@@ -281,12 +281,15 @@ void Actor::LoadFromNode( const XNode* pNode )
 
 void Actor::Draw()
 {
-	if( !m_bVisible )
+	if( !m_bVisible ||
+		m_fHibernateSecondsLeft > 0 || 
+		this->EarlyAbortDraw() )
+		return; // early abort
+	
+	this->PreDraw();
+	ASSERT( m_pTempState != NULL );
+	if( m_pTempState->diffuse[0].a == 0 && m_pTempState->diffuse[1].a == 0 && m_pTempState->diffuse[2].a == 0 && m_pTempState->diffuse[3].a == 0 ) // This Actor is fully transparent
 		return;	// early abort
-	if( m_fHibernateSecondsLeft > 0 )
-		return;	// early abort
-	if( this->EarlyAbortDraw() )
-		return;
 
 	// call the most-derived versions
 	this->BeginDraw();	
@@ -294,10 +297,8 @@ void Actor::Draw()
 	this->EndDraw();
 }
 
-void Actor::BeginDraw()		// set the world matrix and calculate actor properties
+void Actor::PreDraw() // calculate actor properties
 {
-	DISPLAY->PushMatrix();	// we're actually going to do some drawing in this function	
-
 	// Somthing below may set m_pTempState to tempState
 	m_pTempState = &m_current;
 
@@ -480,6 +481,11 @@ void Actor::BeginDraw()		// set the world matrix and calculate actor properties
 		tempState.glow = tempState.glow + m_internalGlow - m_internalGlow * tempState.glow;
 		m_internalGlow.a = 0;
 	}
+}
+	
+void Actor::BeginDraw() // set the world matrix
+{
+	DISPLAY->PushMatrix();
 
 	if( m_pTempState->pos.x != 0 || m_pTempState->pos.y != 0 || m_pTempState->pos.z != 0 )	
 	{
