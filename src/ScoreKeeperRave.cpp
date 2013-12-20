@@ -18,7 +18,7 @@ static void SuperMeterPercentChangeInit( size_t /*ScoreEvent*/ i, RString &sName
 	sNameOut = "SuperMeterPercentChange" + ScoreEventToString( ci );
 	switch(ci)
 	{
-	case SE_CheckpointHit:	defaultValueOut = +0.02f; break;
+	case SE_CheckpointHit:	defaultValueOut = +0.05f; break;
 	case SE_W1:				defaultValueOut = +0.05f; break;
 	case SE_W2:				defaultValueOut = +0.04f; break;
 	case SE_W3:				defaultValueOut = +0.02f; break;
@@ -26,7 +26,7 @@ static void SuperMeterPercentChangeInit( size_t /*ScoreEvent*/ i, RString &sName
 	case SE_W5:				defaultValueOut = +0.00f; break;
 	case SE_Miss:			defaultValueOut = -0.20f; break;
 	case SE_HitMine:		defaultValueOut = -0.40f; break;
-	case SE_CheckpointMiss:	defaultValueOut = -0.02f; break;
+	case SE_CheckpointMiss:	defaultValueOut = -0.20f; break;
 	case SE_Held:			defaultValueOut = +0.04f; break;
 	case SE_LetGo:			defaultValueOut = -0.20f; break;
 	DEFAULT_FAIL(ci);

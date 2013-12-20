@@ -36,7 +36,7 @@ void PercentScoreWeightInit( size_t /*ScoreEvent*/ i, RString &sNameOut, int &de
 	case SE_W5:		defaultValueOut = 0;	break;
 	case SE_Miss:		defaultValueOut = 0;	break;
 	case SE_HitMine:	defaultValueOut = -2;	break;
-	case SE_CheckpointHit:	defaultValueOut = 0;	break;
+	case SE_CheckpointHit:	defaultValueOut = 3;	break;
 	case SE_CheckpointMiss:	defaultValueOut = 0;	break;
 	case SE_Held:		defaultValueOut = 3;	break;
 	case SE_LetGo:		defaultValueOut = 0;	break;
@@ -57,8 +57,8 @@ void GradeWeightInit( size_t /*ScoreEvent*/ i, RString &sNameOut, int &defaultVa
 	case SE_W5:		defaultValueOut = -4;	break;
 	case SE_Miss:		defaultValueOut = -8;	break;
 	case SE_HitMine:	defaultValueOut = -8;	break;
-	case SE_CheckpointHit:	defaultValueOut = 0;	break;
-	case SE_CheckpointMiss:	defaultValueOut = 0;	break;
+	case SE_CheckpointHit:	defaultValueOut = 2;	break;
+	case SE_CheckpointMiss:	defaultValueOut = -8;	break;
 	case SE_Held:		defaultValueOut = 6;	break;
 	case SE_LetGo:		defaultValueOut = 0;	break;
 	}
