@@ -3009,8 +3009,8 @@ void Player::CrossedRows( int iLastRowCrossed, const RageTimer &now )
 	 * TODO: Move this to a separate function. */
 	if( m_bTickHolds && m_pPlayerState->m_PlayerController != PC_AUTOPLAY )
 	{
-		// There are some charts that don't want tickcounts involved at all.
 		int tickCurrent = m_Timing->GetTickcountAtRow( iLastRowCrossed );
+		// There are some charts that don't want tickcounts involved at all.
 		int iCheckpointFrequencyRows = ( tickCurrent > 0 ? ROWS_PER_BEAT / tickCurrent : 0 );
 
 		if( iCheckpointFrequencyRows > 0 )
