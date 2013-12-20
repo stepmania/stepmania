@@ -140,26 +140,6 @@ ThemeMetric<float> INITIAL_HOLD_LIFE		( "Player", "InitialHoldLife" );
 ThemeMetric<float> MAX_HOLD_LIFE		( "Player", "MaxHoldLife" );
 ThemeMetric<bool> PENALIZE_TAP_SCORE_NONE	( "Player", "PenalizeTapScoreNone" );
 ThemeMetric<bool> JUDGE_HOLD_NOTES_ON_SAME_ROW_TOGETHER	( "Player", "JudgeHoldNotesOnSameRowTogether" );
-/**
- * @brief Does StepMania use checkpoint judgments when interacting with holds?
- *
- * If set to true, checkpoint judgments are in use, similar to the Pump It Up
- * series. If set to false, no such judgments are used. */
-ThemeMetric<bool> HOLD_CHECKPOINTS	( "Player", "HoldCheckpoints" );
-/**
- * @brief If using checkpoints, are the song's TickcountSegments used?
- *
- * If set to true, the checkpoints rely on the data found in the TickcountSegments.
- * This is used via the #%TICKCOUNTS tag. */
-ThemeMetric<bool> CHECKPOINTS_USE_TICKCOUNTS ( "Player", "CheckpointsUseTickcounts" );
-/**
- * @brief If using checkpoints, are the song's TimeSignatureSegments used?
- *
- * If set to true AND CheckpointsUseTickcounts is set to false, the TimeSignatureSegments
- * are used to determine how often the checkpoints are found.
- *
- * It should be noted that this is a deprecated metric. */
-ThemeMetric<bool> CHECKPOINTS_USE_TIME_SIGNATURES ( "Player", "CheckpointsUseTimeSignatures" );
 ThemeMetric<bool> CHECKPOINTS_FLASH_ON_HOLD ( "Player", "CheckpointsFlashOnHold" ); // sm-ssc addition
 ThemeMetric<bool> IMMEDIATE_HOLD_LET_GO	( "Player", "ImmediateHoldLetGo" );
 /**
@@ -636,6 +616,9 @@ void Player::Load()
 {
 	m_bLoaded = true;
 
+	// Figured this is probably a little expensive so let's cache it
+	m_bTickHolds = GAMESTATE->GetCurrentGame()->m_bTickHolds;
+	
 	m_LastTapNoteScore = TNS_None;
 	// The editor can start playing in the middle of the song.
 	const int iNoteRow = BeatToNoteRowNotRounded( m_pPlayerState->m_Position.m_fSongBeat );
@@ -1359,7 +1342,7 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 		bool bLetGoOfHoldNote = false;
 
 		/* Score rolls that end with fLife == 0 as LetGo, even if
-		 * HOLD_CHECKPOINTS is on. Rolls don't have iCheckpointsMissed set, so,
+		 * m_bTickHolds is on. Rolls don't have iCheckpointsMissed set, so,
 		 * unless we check Life == 0, rolls would always be scored as Held. */
 		bool bAllowHoldCheckpoints;
 		switch( subType )
@@ -1378,7 +1361,7 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 		*/
 		}
 
-		if( HOLD_CHECKPOINTS  &&  bAllowHoldCheckpoints )
+		if( m_bTickHolds  &&  bAllowHoldCheckpoints )
 		{
 			//LOG->Trace("(hold checkpoints are allowed and enabled.)");
 			int iCheckpointsHit = 0;
@@ -3024,22 +3007,11 @@ void Player::CrossedRows( int iLastRowCrossed, const RageTimer &now )
 	/* Update hold checkpoints
 	 *
 	 * TODO: Move this to a separate function. */
-	if( HOLD_CHECKPOINTS && m_pPlayerState->m_PlayerController != PC_AUTOPLAY )
+	if( m_bTickHolds && m_pPlayerState->m_PlayerController != PC_AUTOPLAY )
 	{
-		int iCheckpointFrequencyRows = ROWS_PER_BEAT/2;
-		if( CHECKPOINTS_USE_TICKCOUNTS )
-		{
-			int tickCurrent = m_Timing->GetTickcountAtRow( iLastRowCrossed );
-			// There are some charts that don't want tickcounts involved at all.
-			iCheckpointFrequencyRows = (tickCurrent > 0 ? ROWS_PER_BEAT / tickCurrent : 0);
-		}
-		else if( CHECKPOINTS_USE_TIME_SIGNATURES )
-		{
-			TimeSignatureSegment * tSignature = m_Timing->GetTimeSignatureSegmentAtRow( iLastRowCrossed );
-
-			// Most songs are in 4/4 time. The frequency for checking tick counts should reflect that.
-			iCheckpointFrequencyRows = ROWS_PER_BEAT * tSignature->GetDen() / (tSignature->GetNum() * 4);
-		}
+		// There are some charts that don't want tickcounts involved at all.
+		int tickCurrent = m_Timing->GetTickcountAtRow( iLastRowCrossed );
+		int iCheckpointFrequencyRows = ( tickCurrent > 0 ? ROWS_PER_BEAT / tickCurrent : 0 );
 
 		if( iCheckpointFrequencyRows > 0 )
 		{

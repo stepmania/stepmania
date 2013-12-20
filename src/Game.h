@@ -34,6 +34,7 @@ public:
 
 	/** @brief Do we count multiple notes in a row as separate notes, or as one note? */
 	bool			m_bCountNotesSeparately;
+	bool			m_bTickHolds;
 
 	InputScheme		m_InputScheme;
 
