@@ -26,9 +26,8 @@ class Style;
 // MenuRight as long as "MenuLeft (optional)" and "MenuRight (optional)" are not mapped.
 
 /** @brief Holds information about a particular style of a game (e.g. "single", "double"). */
-class Game
+struct Game
 {
-public:
 	const char *		m_szName;
 	const Style * const*	m_apStyles;
 
