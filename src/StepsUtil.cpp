@@ -9,7 +9,8 @@
 #include "XmlFile.h"
 #include "UnlockManager.h"
 #include "SongUtil.h"
-
+#include "NoteData.h"
+#include "NoteTypes.h" // ROWS_PER_BEAT
 
 bool StepsCriteria::Matches( const Song *pSong, const Steps *pSteps ) const
 {

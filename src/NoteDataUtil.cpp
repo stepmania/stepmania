@@ -9,6 +9,7 @@
 #include "GameState.h"
 #include "RadarValues.h"
 #include "Foreach.h"
+#include "TimingData.h"
 #include <utility>
 
 // TODO: Remove these constants that aren't time signature-aware
@@ -2612,6 +2613,28 @@ void NoteDataUtil::SetHopoPossibleFlags( const Song *pSong, NoteData& ndInOut )
 	}
 }
 
+unsigned int NoteDataUtil::GetTotalHoldTicks( NoteData* nd, const TimingData* td )
+{
+	unsigned int ret = 0;
+	int end = nd->GetLastRow();
+	vector<TimingSegment*> segments = td->GetTimingSegments( SEGMENT_TICKCOUNT );
+	// We start with the LAST TimingSegment and work our way backwards.
+	// This way we can continually update end instead of having to lookup when
+	// the next segment starts.
+	for(int i = segments.size() - 1; i >= 0; i--)
+	{
+		TickcountSegment *ts = (TickcountSegment*) segments[i];
+		if( ts->GetTicks() > 0)
+		{
+			// Jump to each point where holds would tick and add the number of holds there to ret.
+			// XXX: Assuming each segment starts on the beat
+			for(int j = ts->GetRow(); j < end; j += ROWS_PER_BEAT / ts->GetTicks() )
+				ret += nd->GetNumTracksHeldAtRow(j);
+		}
+		end = ts->GetRow();
+	}
+	return ret;
+}
 
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard

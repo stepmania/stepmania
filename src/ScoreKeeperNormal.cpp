@@ -115,16 +115,13 @@ void ScoreKeeperNormal::Load(
 		pSteps->Compress();
 
 		const Style* pStyle = GAMESTATE->GetCurrentStyle();
-		NoteData nd;
-		pStyle->GetTransformedNoteDataForStyle( m_pPlayerState->m_PlayerNumber, ndTemp, nd );
+		NoteData ndPre;
+		pStyle->GetTransformedNoteDataForStyle( m_pPlayerState->m_PlayerNumber, ndTemp, ndPre );
 
 		/* Compute RadarValues before applying any user-selected mods. Apply
 		 * Course mods and count them in the "pre" RadarValues because they're
 		 * forced and not chosen by the user. */
-		NoteDataUtil::TransformNoteData( nd, aa, pSteps->m_StepsType, pSong );
-		RadarValues rvPre;
-		GAMESTATE->SetProcessedTimingData(pSteps->GetTimingData());
-		NoteDataUtil::CalculateRadarValues( nd, pSong->m_fMusicLengthSeconds, rvPre );
+		NoteDataUtil::TransformNoteData( ndPre, aa, pSteps->m_StepsType, pSong );
 
 		/* Apply user transforms to find out how the notes will really look.
 		 *
@@ -133,13 +130,13 @@ void ScoreKeeperNormal::Load(
 		 * have eg. GAMESTATE->GetOptionsForCourse(po,so,pn) to get options based on
 		 * the last call to StoreSelectedOptions and the modifiers list, but that'd
 		 * mean moving the queues in ScreenGameplay to GameState ... */
-		NoteDataUtil::TransformNoteData( nd, m_pPlayerState->m_PlayerOptions.GetStage(), pSteps->m_StepsType );
-		RadarValues rvPost;
-		NoteDataUtil::CalculateRadarValues( nd, pSong->m_fMusicLengthSeconds, rvPost );
-		GAMESTATE->SetProcessedTimingData(NULL);
+		NoteData ndPost = ndPre;
+		NoteDataUtil::TransformNoteData( ndPost, m_pPlayerState->m_PlayerOptions.GetStage(), pSteps->m_StepsType );
 
-		iTotalPossibleDancePoints += this->GetPossibleDancePoints( rvPre, rvPost );
-		iTotalPossibleGradePoints += this->GetPossibleGradePoints( rvPre, rvPost );
+		GAMESTATE->SetProcessedTimingData(pSteps->GetTimingData()); // XXX: Not sure why but NoteDataUtil::CalculateRadarValues segfaults without this
+		iTotalPossibleDancePoints += this->GetPossibleDancePoints( &ndPre, &ndPost, pSteps->GetTimingData(), pSong->m_fMusicLengthSeconds );
+		iTotalPossibleGradePoints += this->GetPossibleGradePoints( &ndPre, &ndPost, pSteps->GetTimingData(), pSong->m_fMusicLengthSeconds );
+		GAMESTATE->SetProcessedTimingData(NULL);
 	}
 
 	m_pPlayerStageStats->m_iPossibleDancePoints = iTotalPossibleDancePoints;
@@ -653,52 +650,60 @@ void ScoreKeeperNormal::HandleHoldScore( const TapNote &tn )
 }
 
 
-int ScoreKeeperNormal::GetPossibleDancePoints( const RadarValues& radars )
+int ScoreKeeperNormal::GetPossibleDancePoints( NoteData* nd, const TimingData* td, float fSongSeconds )
 {
 	/* Note: If W1 timing is disabled or not active (not course mode),
 	 * W2 will be used instead. */
-
-	int NumTaps = int(radars[RadarCategory_TapsAndHolds]);
-	int NumHolds = int(radars[RadarCategory_Holds]);
-	int NumRolls = int(radars[RadarCategory_Rolls]);
-	return
-		NumTaps*TapNoteScoreToDancePoints(TNS_W1, false) +
-		NumHolds*HoldNoteScoreToDancePoints(HNS_Held, false) +
-		NumRolls*HoldNoteScoreToDancePoints(HNS_Held, false);
+	// XXX: That's not actually implemented!
+	RadarValues radars;
+	NoteDataUtil::CalculateRadarValues( *nd, fSongSeconds, radars );
+	
+	int ret = 0;
+	 
+	ret += int(radars[RadarCategory_TapsAndHolds]) * TapNoteScoreToDancePoints(TNS_W1, false);
+	if( GAMESTATE->GetCurrentGame()->m_bTickHolds ) ret += NoteDataUtil::GetTotalHoldTicks( nd, td ) * g_iPercentScoreWeight[SE_CheckpointHit];
+	ret += int(radars[RadarCategory_Holds]) * HoldNoteScoreToDancePoints(HNS_Held, false);	
+	ret += int(radars[RadarCategory_Rolls]) * HoldNoteScoreToDancePoints(HNS_Held, false);
+	
+	return ret;
 }
 
-int ScoreKeeperNormal::GetPossibleDancePoints( const RadarValues& fOriginalRadars, const RadarValues& fPostRadars )
+int ScoreKeeperNormal::GetPossibleDancePoints( NoteData* ndPre, NoteData* ndPost, const TimingData* td, float fSongSeconds )
 {
 	/* The logic here is that if you use a modifier that adds notes, you should
 	 * have to hit the new notes to get a high grade. However, if you use one
 	 * that removes notes, they should simply be counted as misses. */
 	return max(
-		GetPossibleDancePoints(fOriginalRadars),
-		GetPossibleDancePoints(fPostRadars) );
+		GetPossibleDancePoints(ndPre, td, fSongSeconds),
+		GetPossibleDancePoints(ndPost, td, fSongSeconds) );
 }
 
-int ScoreKeeperNormal::GetPossibleGradePoints( const RadarValues& radars )
+int ScoreKeeperNormal::GetPossibleGradePoints( NoteData* nd, const TimingData* td, float fSongSeconds )
 {
 	/* Note: if W1 timing is disabled or not active (not course mode),
 	 * W2 will be used instead. */
+	// XXX: That's not actually implemented!
+	RadarValues radars;
+	NoteDataUtil::CalculateRadarValues( *nd, fSongSeconds, radars );
 
-	int NumTaps = int(radars[RadarCategory_TapsAndHolds]);
-	int NumHolds = int(radars[RadarCategory_Holds]);
-	int NumRolls = int(radars[RadarCategory_Rolls]);
-	return
-		NumTaps*TapNoteScoreToGradePoints(TNS_W1, false) +
-		NumHolds*HoldNoteScoreToGradePoints(HNS_Held, false) +
-		NumRolls*HoldNoteScoreToGradePoints(HNS_Held, false);
+	int ret = 0;
+	
+	ret += int(radars[RadarCategory_TapsAndHolds]) * TapNoteScoreToGradePoints(TNS_W1, false);
+	if( GAMESTATE->GetCurrentGame()->m_bTickHolds ) ret += NoteDataUtil::GetTotalHoldTicks( nd, td ) * g_iGradeWeight[SE_CheckpointHit];
+	ret += int(radars[RadarCategory_Holds]) * HoldNoteScoreToGradePoints(HNS_Held, false);
+	ret += int(radars[RadarCategory_Rolls]) * HoldNoteScoreToGradePoints(HNS_Held, false);
+	
+	return ret;
 }
 
-int ScoreKeeperNormal::GetPossibleGradePoints( const RadarValues& fOriginalRadars, const RadarValues& fPostRadars )
+int ScoreKeeperNormal::GetPossibleGradePoints( NoteData* ndPre, NoteData* ndPost, const TimingData* td, float fSongSeconds )
 {
 	/* The logic here is that if you use a modifier that adds notes, you should
 	 * have to hit the new notes to get a high grade. However, if you use one
 	 * that removes notes, they should simply be counted as misses. */
 	return max(
-		GetPossibleGradePoints(fOriginalRadars),
-		GetPossibleGradePoints(fPostRadars) );
+		GetPossibleGradePoints( ndPre, td, fSongSeconds ),
+		GetPossibleGradePoints( ndPost, td, fSongSeconds ) );
 }
 
 int ScoreKeeperNormal::TapNoteScoreToDancePoints( TapNoteScore tns ) const
