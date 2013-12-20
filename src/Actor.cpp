@@ -288,13 +288,15 @@ void Actor::Draw()
 	
 	this->PreDraw();
 	ASSERT( m_pTempState != NULL );
-	if( m_pTempState->diffuse[0].a == 0 && m_pTempState->diffuse[1].a == 0 && m_pTempState->diffuse[2].a == 0 && m_pTempState->diffuse[3].a == 0 ) // This Actor is fully transparent
-		return;	// early abort
-
-	// call the most-derived versions
-	this->BeginDraw();	
-	this->DrawPrimitives();	// call the most-derived version of DrawPrimitives();
-	this->EndDraw();
+	if( m_pTempState->diffuse[0].a != 0 || m_pTempState->diffuse[1].a != 0 || m_pTempState->diffuse[2].a != 0 || m_pTempState->diffuse[3].a != 0 ) // This Actor is not fully transparent
+	{	
+		// call the most-derived versions
+		this->BeginDraw();	
+		this->DrawPrimitives();	// call the most-derived version of DrawPrimitives();
+		this->EndDraw();
+	}
+	
+	m_pTempState = NULL;
 }
 
 void Actor::PreDraw() // calculate actor properties
@@ -598,7 +600,6 @@ void Actor::SetTextureRenderStates()
 void Actor::EndDraw()
 {
 	DISPLAY->PopMatrix();
-	m_pTempState = NULL;
 }
 
 void Actor::UpdateTweening( float fDeltaTime )
