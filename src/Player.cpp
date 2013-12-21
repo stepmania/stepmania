@@ -1203,7 +1203,9 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 	{
 		/*if this hold is already done, pretend it's always being pressed.
 		fixes/masks the phantom hold issue. -FSX*/
-		if( (iStartRow + trtn->pTN->iDuration) > iSongRow )
+		// That interacts badly with !IMMEDIATE_HOLD_LET_GO,
+		// causing ALL holds to be judged HNS_Held whether they were or not.
+		if( !IMMEDIATE_HOLD_LET_GO || (iStartRow + trtn->pTN->iDuration) > iSongRow )
 		{
 			int iTrack = trtn->iTrack;
 
