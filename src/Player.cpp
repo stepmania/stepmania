@@ -1283,12 +1283,19 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 					LOG->Trace("[ ] Holding Button");
 				*/
 
-				// Decrease life
-				//LOG->Trace("fLife before minus: %f",fLife);
-				fLife -= fDeltaTime/GetWindowSeconds(TW_Hold);
-				//LOG->Trace("fLife before clamp: %f",fLife);
-				fLife = max( fLife, 0 );	// clamp
-				//LOG->Trace("fLife after: %f",fLife);
+				// For tickholds, the concept of "life" doesn't really apply.
+				// XXX: if IMMEDIATE_HOLD_LET_GO this will kill holds if it's EVER let go,
+				// not just at the first missed checkpoint.
+				if( GAMESTATE->GetCurrentGame()->m_bTickHolds ) fLife = 0.0;
+				else
+				{
+					// Decrease life
+					//LOG->Trace("fLife before minus: %f",fLife);
+					fLife -= fDeltaTime/GetWindowSeconds(TW_Hold);
+					//LOG->Trace("fLife before clamp: %f",fLife);
+					fLife = max( fLife, 0 );	// clamp
+					//LOG->Trace("fLife after: %f",fLife);
+				}
 			}
 			break;
 		case TapNote::hold_head_roll:
