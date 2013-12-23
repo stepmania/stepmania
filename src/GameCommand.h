@@ -16,7 +16,7 @@ class Course;
 class Trail;
 class Character;
 class Style;
-class Game;
+struct Game;
 struct lua_State;
 
 int GetNumCreditsPaid();

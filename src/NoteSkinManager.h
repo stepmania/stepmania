@@ -7,7 +7,7 @@
 #include "GameInput.h"
 #include "IniFile.h"
 
-class Game;
+struct Game;
 struct NoteSkinData;
 
 /** @brief Loads note skins. */

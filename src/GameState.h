@@ -19,7 +19,7 @@
 
 class Character;
 class Course;
-class Game;
+struct Game;
 struct lua_State;
 class LuaTable;
 class PlayerState;

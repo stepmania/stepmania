@@ -14,7 +14,7 @@
 
 struct lua_State;
 class Style;
-class Game;
+struct Game;
 
 const int MAX_EDIT_COURSE_TITLE_LENGTH = 16;
 

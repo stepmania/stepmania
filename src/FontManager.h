@@ -4,7 +4,7 @@
 #define FONTMANAGER_H
 
 class Font;
-class Game;
+struct Game;
 
 class FontManager
 {

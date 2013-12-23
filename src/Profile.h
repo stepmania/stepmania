@@ -59,7 +59,7 @@ class Style;
 class Song;
 class Steps;
 class Course;
-class Game;
+struct Game;
 /** 
  * @brief Player data that persists between sessions. 
  *

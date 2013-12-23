@@ -4,7 +4,7 @@
 #define GAMEMANAGER_H
 
 class Style;
-class Game;
+struct Game;
 struct lua_State;
 
 #include "GameConstantsAndTypes.h"
