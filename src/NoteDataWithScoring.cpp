@@ -219,7 +219,7 @@ int MinTapNoteScoreTrack( const NoteData &in, unsigned iRow, PlayerNumber pn )
 
 }
 
-const TapNote &NoteDataWithScoring::LastTapNoteWithResult( const NoteData &in, unsigned iRow )
+const TapNote &NoteDataWithScoring::LastTapNoteWithResult( const NoteData &in, unsigned iRow, PlayerNumber plnum )
 {
 	// Allow this to be configurable between LastTapNoteScoreTrack and
 	// MinTapNoteScore; this change inspired by PumpMania (Zmey, et al) -aj
@@ -238,7 +238,7 @@ const TapNote &NoteDataWithScoring::LastTapNoteWithResult( const NoteData &in, u
 			break;
 	}
 	*/
-	int iTrack = LastTapNoteScoreTrack( in, iRow, PLAYER_INVALID );
+	int iTrack = LastTapNoteScoreTrack( in, iRow, plnum );
 	if( iTrack == -1 )
 		return TAP_EMPTY;
 
@@ -248,7 +248,7 @@ const TapNote &NoteDataWithScoring::LastTapNoteWithResult( const NoteData &in, u
 
 /* Return the minimum tap score of a row.  If the row isn't complete (not all
  * taps have been hit), return TNS_None or TNS_Miss. */
-TapNoteScore NoteDataWithScoring::MinTapNoteScore( const NoteData &in, unsigned row )
+TapNoteScore NoteDataWithScoring::MinTapNoteScore( const NoteData &in, unsigned row, PlayerNumber plnum )
 {
 	//LOG->Trace("Hey I'm NoteDataWithScoring::MinTapNoteScore");
 	TapNoteScore score = TNS_W1;
@@ -259,7 +259,8 @@ TapNoteScore NoteDataWithScoring::MinTapNoteScore( const NoteData &in, unsigned 
 		if (tn.type == TapNote::empty ||
 			tn.type == TapNote::mine ||
 			tn.type == TapNote::fake ||
-			tn.type == TapNote::autoKeysound)
+			tn.type == TapNote::autoKeysound ||
+			( plnum != PlayerNumber_Invalid && tn.pn != plnum ) )
 			continue;
 		score = min( score, tn.result.tns );
 	}
@@ -268,9 +269,9 @@ TapNoteScore NoteDataWithScoring::MinTapNoteScore( const NoteData &in, unsigned 
 	return score;
 }
 
-bool NoteDataWithScoring::IsRowCompletelyJudged( const NoteData &in, unsigned row )
+bool NoteDataWithScoring::IsRowCompletelyJudged( const NoteData &in, unsigned row, PlayerNumber plnum )
 {
-	return MinTapNoteScore( in, row ) >= TNS_Miss;
+	return MinTapNoteScore( in, row, plnum ) >= TNS_Miss;
 }
 
 namespace
