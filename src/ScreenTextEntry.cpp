@@ -13,6 +13,7 @@
 #include "LocalizedString.h"
 #include "RageLog.h"
 #include "LuaBinding.h"
+#include "arch/ArchHooks/ArchHooks.h" // HOOKS->GetClipboard()
 
 static const char* g_szKeys[NUM_KeyboardRow][KEYS_PER_ROW] =
 {
@@ -193,9 +194,34 @@ void ScreenTextEntry::Update( float fDelta )
 
 bool ScreenTextEntry::Input( const InputEventPlus &input )
 {
+	static bool bLCtrl = false, bRCtrl = false;
 	if( IsTransitioning() )
 		return false;
 
+	// bLCtrl and bRCtl are whether their respective Ctrl keys are held
+	// We update them here.
+	if( input.DeviceI == DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL) )
+	{
+		switch( input.type )
+		{
+		case IET_FIRST_PRESS:
+			bLCtrl = true; break;
+		case IET_RELEASE:
+			bLCtrl = false; break;
+		}
+	}
+	
+	if( input.DeviceI == DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL) )
+	{
+		switch( input.type )
+		{
+		case IET_FIRST_PRESS:
+			bRCtrl = true; break;
+		case IET_RELEASE:
+			bRCtrl = false; break;
+		}
+	}
+	
 	bool bHandled = false;
 	if( input.DeviceI == DeviceInput(DEVICE_KEYBOARD, KEY_BACK) )
 	{
@@ -212,7 +238,15 @@ bool ScreenTextEntry::Input( const InputEventPlus &input )
 	else if( input.type == IET_FIRST_PRESS )
 	{
 		wchar_t c = INPUTMAN->DeviceInputToChar(input.DeviceI,true);
-		if( c >= L' ' ) 
+		// Detect Ctrl+V
+		if( ( c == L'v' || c == L'V' ) && ( bLCtrl || bRCtrl ) )
+		{
+			TryAppendToAnswer( HOOKS->GetClipboard() );
+			
+			TextEnteredDirectly(); // XXX: This doesn't seem appropriate but there's no TextPasted()
+			bHandled = true;
+		}
+		else if( c >= L' ' ) 
 		{
 			// todo: handle caps lock -aj
 			TryAppendToAnswer( WStringToRString(wstring()+c) );

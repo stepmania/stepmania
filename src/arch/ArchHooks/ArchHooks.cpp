@@ -61,6 +61,12 @@ ArchHooks *ArchHooks::Create()
 	return new ARCH_HOOKS;
 }
 
+RString ArchHooks::GetClipboard()
+{
+	LOG->Warn("ArchHooks: GetClipboard() NOT IMPLEMENTED");
+	return "";
+}
+
 // lua start
 #include "LuaBinding.h"
 #include "LuaReference.h"

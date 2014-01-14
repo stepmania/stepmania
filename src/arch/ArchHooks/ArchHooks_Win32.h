@@ -23,6 +23,7 @@ public:
 
 	bool GoToURL( RString sUrl );
 	virtual float GetDisplayAspectRatio();
+	RString GetClipboard();
 };
 
 #ifdef ARCH_HOOKS

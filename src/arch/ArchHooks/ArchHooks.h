@@ -123,6 +123,9 @@ public:
 
 	virtual float GetDisplayAspectRatio() = 0;
 	
+	/** @brief Fetch the contents of the system clipboard. */
+	virtual RString GetClipboard();
+	
 	// Lua
 	void PushSelf( lua_State *L );
 

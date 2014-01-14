@@ -208,6 +208,46 @@ float ArchHooks_Win32::GetDisplayAspectRatio()
 	return dm.dmPelsWidth / (float)dm.dmPelsHeight;
 }
 
+RString ArchHooks_Win32::GetClipboard()
+{
+	HGLOBAL hgl;
+	LPTSTR lpstr;
+	RString ret;
+
+	// First make sure that the clipboard actually contains a string
+	// (or something stringifiable)
+	if(unlikely( !IsClipboardFormatAvailable( CF_TEXT ) )) return "";
+	
+	// Yes. All this mess just to gain access to the string stored by the clipboard.
+	// I'm having flashbacks to Berkeley sockets.
+	if(unlikely( !OpenClipboard( NULL ) ))
+		{ LOG->Warn(werr_ssprintf( GetLastError(), "InputHandler_DirectInput: OpenClipboard() failed" )); return ""; }
+	
+	hgl = GetClipboardData( CF_TEXT );
+	if(unlikely( hgl == NULL ))
+		{ LOG->Warn(werr_ssprintf( GetLastError(), "InputHandler_DirectInput: GetClipboardData() failed" )); CloseClipboard(); return ""; }
+
+	lpstr = (LPTSTR) GlobalLock( hgl );
+	if(unlikely( lpstr == NULL ))
+		{ LOG->Warn(werr_ssprintf( GetLastError(), "InputHandler_DirectInput: GlobalLock() failed" )); CloseClipboard(); return ""; }
+
+	// And finally, we have a char (or wchar_t) array of the clipboard contents,
+	// pointed to by sToPaste.
+	// (Hopefully.)
+
+#ifdef UNICODE
+	ret = WStringToRString( wstring()+*lpstr );
+#else
+	ret = RString( lpstr );
+#endif
+	
+	// And now we clean up.
+	GlobalUnlock( hgl );
+	CloseClipboard();
+	
+	return ret;
+}
+
 /*
  * (c) 2003-2004 Glenn Maynard, Chris Danford
  * All rights reserved.
