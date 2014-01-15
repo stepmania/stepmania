@@ -207,42 +207,14 @@ void Course::Init()
 
 bool Course::IsPlayableIn( StepsType st ) const
 {
-	// Stripped down version of GetTrailUnsorted
-	FOREACH_CONST( CourseEntry, m_vEntries, e )
+	Trail t;
+	FOREACH_ShownCourseDifficulty( cd )
 	{
-		SongCriteria soc = e->songCriteria;
-
-		Song *pSong = e->songID.ToSong();
-		if( pSong )
-		{
-			soc.m_bUseSongAllowedList = true;
-			soc.m_vpSongAllowedList.push_back( pSong );
-		}
-		soc.m_Tutorial = SongCriteria::Tutorial_No;
-		soc.m_Locked = SongCriteria::Locked_Unlocked;
-		if( !soc.m_bUseSongAllowedList )
-			soc.m_iMaxStagesForSong = 1;
-
-		StepsCriteria stc = e->stepsCriteria;
-		stc.m_st = st;
-		stc.m_Locked = StepsCriteria::Locked_Unlocked;
-
-		const bool bSameSongCriteria  = e != m_vEntries.begin() && (e-1)->songCriteria == soc;
-		const bool bSameStepsCriteria = e != m_vEntries.begin() && (e-1)->stepsCriteria == stc;
-
-		if( pSong )
-		{
-			if( StepsUtil::HasMatching(pSong, stc) )
-				return true;
-		}
-		else if( !(bSameSongCriteria && bSameStepsCriteria) )
-		{
-			if( StepsUtil::HasMatching(soc, stc) )
-				return true;
-		}
-
+		if( GetTrailUnsorted( st, cd, t ) )
+			return true;
 	}
 
+	// No valid trail for this StepsType.
 	return false;
 }
 
@@ -661,7 +633,7 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 
 	/* If the course difficulty never actually changed anything, then this difficulty
 	 * is equivalent to Difficulty_Medium; it doesn't exist. */
-	return bCourseDifficultyIsSignificant;
+	return bCourseDifficultyIsSignificant && trail.m_vEntries.size();
 }
 
 void Course::GetTrails( vector<Trail*> &AddTo, StepsType st ) const
