@@ -633,7 +633,7 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 
 	/* If the course difficulty never actually changed anything, then this difficulty
 	 * is equivalent to Difficulty_Medium; it doesn't exist. */
-	return bCourseDifficultyIsSignificant && trail.m_vEntries.size();
+	return bCourseDifficultyIsSignificant && trail.m_vEntries.size() > 0;
 }
 
 void Course::GetTrails( vector<Trail*> &AddTo, StepsType st ) const
