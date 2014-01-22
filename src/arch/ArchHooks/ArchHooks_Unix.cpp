@@ -340,9 +340,15 @@ RString ArchHooks_Unix::GetClipboard()
 	int unused2; // XXX: "actual format of the property"? What?
 	unsigned long unused3;
 	ck = XGetWindowProperty( Dpy, Win, XA_PRIMARY, 0, LONG_MAX, true, XA_STRING, &pstType, &unused2, &unused3, &remainder, &paste );
-	if( ck != Success || pstType != XA_STRING )
-		// Selection doesn't exist or isn't stringable
+	if( ck != Success )
+		// Selection doesn't exist
 		return "";
+	if( pstType != XA_STRING )
+	{
+		// Selection isn't stringable
+		XFree(paste);
+		return "";
+	}
 
 	ret = RString( (char*) paste);
 	XFree(paste);
