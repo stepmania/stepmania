@@ -327,7 +327,7 @@ RString ArchHooks_Unix::GetClipboard()
 	
 	// Now we must wait for the clipboard owner to cough it up.
 	// HACK: What we SHOULD do is XSelectInput() for SelectionNotify before
-	// calling XConvertSelection and then black on XWindowEvent(), but that
+	// calling XConvertSelection and then block on XWindowEvent(), but that
 	// would require significant cooperation with InputHandler_X11 through
 	// X11Helper.
 	// TODO: Said cooperation would be useful as then LowLevelWindow_X11
