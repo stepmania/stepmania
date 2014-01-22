@@ -12,7 +12,6 @@
 static Preference<RString> g_sIgnoredDialogs( "IgnoredDialogs", "" );
 #endif
 
-#include "Selector_Dialog.h"
 DialogDriver *MakeDialogDriver()
 {
 	RString sDrivers = "win32,cocoa,null";
