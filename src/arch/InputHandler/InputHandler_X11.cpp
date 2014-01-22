@@ -176,8 +176,9 @@ void InputHandler_X11::Update()
 	DeviceButton lastDB = DeviceButton_Invalid;
 	lastEvent.type = 0;
 
-	// TODO: Rewrite to use XEventsQueued, XNextEvent, and XPeekEvent - this
-	// will likely make the logic simpler
+	// We use XCheckWindowEvent instead of XNextEvent because
+	// other things (most notably ArchHooks_Unix) may be looking for
+	// events that we'd pick up and discard.
 	// todo: add other masks? (like the ones for drag'n drop) -aj
 	while( XCheckWindowEvent(Dpy, Win,
 			KeyPressMask | KeyReleaseMask
