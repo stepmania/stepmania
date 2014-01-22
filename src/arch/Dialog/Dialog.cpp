@@ -6,7 +6,6 @@
 #endif
 #include "RageUtil.h"
 #include "RageLog.h"
-#include "arch/arch.h"
 #include "RageThreads.h"
 
 #if !defined(SMPACKAGE)
