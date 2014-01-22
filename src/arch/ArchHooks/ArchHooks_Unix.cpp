@@ -27,6 +27,12 @@ extern "C"
 }
 #endif
 
+#if defined(HAVE_X11)
+#include "archutils/Unix/X11Helper.h"
+#include <X11/Xlib.h>
+#include <X11/Xatom.h>
+#endif
+
 static bool IsFatalSignal( int signal )
 {
 	switch( signal )
@@ -280,6 +286,71 @@ void ArchHooks_Unix::SetTime( tm newtime )
 	ret = system( "hwclock --systohc" );
 	if( ret == -1 || ret == 127 || !WIFEXITED(ret) || WEXITSTATUS(ret) )
 		LOG->Trace( "'hwclock --systohc' failed" );
+}
+
+RString ArchHooks_Unix::GetClipboard()
+{
+#ifdef HAVE_X11
+	using namespace X11Helper;
+	// Why isn't this defined by Xlib headers?
+	Atom XA_CLIPBOARD = XInternAtom( Dpy, "CLIPBOARD", 0);
+	Atom pstType;
+	RString ret;
+	unsigned char *paste;
+	unsigned long remainder;
+	int ck;
+	Window selOwner;
+
+	ASSERT( Win != None );
+	// X11 is weird: instead of the clipboard being stored by the server
+	// as you'd expect, it's actually a form of IPC, where we send
+	// a request to the window we're pasting text from, and it sends
+	// the paste data back.
+	// XXX: X11 has TWO clipboards, the traditional Ctrl+C Ctrl+V,
+	// and a second independent clipboard called the "primary selection",
+	// set simply by selecting a span of text, and pasted with a
+	// middle click. For now we just use the former, but this causes
+	// problems in some cases because some (generally older) applications
+	// only implement the latter.
+
+	// Make sure someone has the clipboard first.
+	selOwner = XGetSelectionOwner( Dpy, XA_CLIPBOARD );
+	if( selOwner == None )
+		// There is no clipboard right now.
+		return "";
+
+	// Tell the clipboard owner to give us the goods.
+	// protip: XConvertSelection() puts the result of the request in a
+	// property on YOUR window.
+	XConvertSelection( Dpy, XA_CLIPBOARD, XA_STRING, XA_PRIMARY, Win, CurrentTime );
+	// XXX: This seems to always return 1 even when it works. (Success == 0)
+	
+	// Now we must wait for the clipboard owner to cough it up.
+	// HACK: What we SHOULD do is XSelectInput() for SelectionNotify before
+	// calling XConvertSelection and then black on XWindowEvent(), but that
+	// would require significant cooperation with InputHandler_X11 through
+	// X11Helper.
+	// TODO: Said cooperation would be useful as then LowLevelWindow_X11
+	// could listen for XFocusInEvent / XFocusOutEvent and send those.
+	XSync( Dpy, false );
+	usleep( 10000 );
+
+	// Now retrieve the paste from our primary selection property.
+	// Delete our primary selection so we'll just have null next time.
+	int unused2; // XXX: "actual format of the property"? What?
+	unsigned long unused3;
+	ck = XGetWindowProperty( Dpy, Win, XA_PRIMARY, 0, LONG_MAX, true, XA_STRING, &pstType, &unused2, &unused3, &remainder, &paste );
+	if( ck != Success || pstType != XA_STRING )
+		// Selection doesn't exist or isn't stringable
+		return "";
+
+	ret = RString( (char*) paste);
+	XFree(paste);
+	return ret;
+#else
+	LOG->Warn("ArchHooks_Unix: GetClipboard(): Compiled without any supported clipboard source!");
+	return "";
+#endif
 }
 
 #include "RageFileManager.h"

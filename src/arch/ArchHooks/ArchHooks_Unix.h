@@ -18,6 +18,8 @@ public:
 	bool GoToURL( RString sUrl );
 
 	static clockid_t GetClock();
+
+	RString GetClipboard();
 };
 
 #ifdef ARCH_HOOKS
