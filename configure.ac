@@ -328,6 +328,11 @@ AC_CHECK_LIB( pthread, pthread_mutex_timedlock, AC_DEFINE([HAVE_PTHREAD_MUTEX_TI
 AC_CHECK_LIB( pthread, pthread_cond_timedwait, AC_DEFINE([HAVE_PTHREAD_COND_TIMEDWAIT],1,[pthreads has pthread_cond_timedwait()]) )
 fi
 
+# XXX: This isn't always being included when it is needed. Just force it in.
+if test "$have_pthread" = "yes"; then
+	LIBS="$LIBS -lpthread"
+fi
+
 AM_CONDITIONAL(HAVE_PTHREAD, test "$have_pthread" = "yes")
 
 # Always:
