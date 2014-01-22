@@ -1,8 +1,6 @@
 #ifndef SELECTOR_DIALOG
 #define SELECTOR_DIALOG
 
-#include "arch/arch_platform.h"
-
 // Dialog drivers selector.
 #if defined(WIN32)
 #include "DialogDriver_Win32.h"
