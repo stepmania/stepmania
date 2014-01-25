@@ -118,8 +118,11 @@ RString RageSoundDriver_JACK::ConnectPorts()
 	switch (portNames.size())
 	{
 	case 0:
-		// No ports specified
-		return RString();
+		// No ports specified. Try the system outputs.
+		// XXX: If only one system playback port is available,
+		// only our left channel will be connected.
+		portNames.push_back("system:playback_1");
+		portNames.push_back("system:playback_2");
 	case 1:
 		// HACK: Pointing both channels at one port is probably the
 		// wrong way to mix to mono.  For now, it works.
