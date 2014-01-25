@@ -4,6 +4,7 @@
 #include "RageUtil.h"
 #include "PrefsManager.h"
 #include "ProductInfo.h"
+#include "Foreach.h"
 
 REGISTER_SOUND_DRIVER_CLASS( JACK );
 
@@ -84,13 +85,12 @@ RString RageSoundDriver_JACK::Init()
 		goto out_unreg_r;
 	}
 
-	// Connect to playback port.  This currently requires that you specify
-	// the client using the SoundDevice preference.  The alternative is to
-	// connect automatically to something like `playback' if none is
-	// specified, which is not friendly JACK behavior.
 	error = ConnectPorts();
 	if (!error.empty())
-		goto out_deactivate;
+		// Eh. Not fatal. JACK *is* running and we successfully created
+		// our source ports, so it's unlkely any other driver will
+		// function.
+		LOG->Warn( "RageSoundDriver_JACK: Couldn't connect ports: %s", error.c_str() );
 
 	// Success!
 	LOG->Trace("JACK sound driver started successfully");
@@ -98,8 +98,6 @@ RString RageSoundDriver_JACK::Init()
 
 
 	// Not success!
-out_deactivate:
-	jack_deactivate(client);
 out_unreg_r:
 	jack_port_unregister(client, port_r);
 out_unreg_l:
@@ -115,40 +113,66 @@ RString RageSoundDriver_JACK::ConnectPorts()
 	vector<RString> portNames;
 	split(PREFSMAN->m_iSoundDevice.Get(), ",", portNames, true);
 
-	switch (portNames.size())
+	const char *port_out_l, *port_out_r;
+	if( portNames.size() == 0 )
 	{
-	case 0:
-		// No ports specified. Try the system outputs.
-		// XXX: If only one system playback port is available,
-		// only our left channel will be connected.
-		portNames.push_back("system:playback_1");
-		portNames.push_back("system:playback_2");
-	case 1:
-		// HACK: Pointing both channels at one port is probably the
-		// wrong way to mix to mono.  For now, it works.
-		portNames.push_back(portNames[0]);
-		break;
-	case 2:
-		break;
-	default:
-		LOG->Warn("More than two JACK ports specified; using the first two only.");
-		break;
+		// The user has NOT specified any ports to connect to. Search 
+		// for all physical sinks and use the first two.
+		const char **ports;
+		ports = jack_get_ports( client, NULL, NULL, JackPortIsInput | JackPortIsPhysical );
+		if( ports[0] == NULL )
+			return "No physical sinks!";
+		port_out_l = ports[0];
+
+		if( ports[1] == NULL )
+			// Only one physical sink. We're going mono!
+			port_out_r = ports[0];
+		else
+			port_out_r = ports[1];
 	}
+	else
+	{
+		// The user has specified ports to connect to. Loop through
+		// them to find two that are valid, then use them. If we find 
+		// only one that is valid, connect both channels to it.
+		// Use jack_port_by_name to ensure ports exist, then
+		// jack_port_name to use their canonical name.  (I'm not sure 
+		// if that second step is necessary, I've seen something about 
+		// "aliases" in the docs.)
+		FOREACH( RString, portNames, portName )
+		{
+			jack_port_t *out = jack_port_by_name( client, *portName );
+			// Make sure the port is a sink.
+			if( ! jack_port_flags( out ) & JackPortIsInput ) continue;
 
-	ASSERT(portNames.size() >= 2);
+			if( out != NULL )
+			{
+				if( port_out_l == NULL )
+					port_out_l = jack_port_name( out );
+				else
+				{
+					port_out_r = jack_port_name( out );
+					break;
+				}
+			}
+		}
+		if( port_out_l == NULL )
+			return "All specified sinks are invalid.";
+		
+		if( port_out_r == NULL )
+			// Only found one valid sink. Going mono!
+			port_out_r = port_out_l;
+	}
+	
+	RString ret = RString();
 
-	// Use jack_port_by_name to ensure ports exist, then jack_port_name to
-	// use their canonical name.  (I'm not sure if that second step is
-	// necessary, I've seen something about "aliases" in the docs.)
-	jack_port_t *port_out = jack_port_by_name(client, portNames[0]);
-	if (port_out == NULL || jack_connect(client, jack_port_name(port_l), jack_port_name(port_out)))
-		return "Couldn't connect left JACK port";
+	if ( jack_connect( client, jack_port_name(port_l), port_out_l ) != 0 )
+		ret = "Couldn't connect left JACK port";
 
-	port_out = jack_port_by_name(client, portNames[1]);
-	if (port_out == NULL || jack_connect(client, jack_port_name(port_r), jack_port_name(port_out)))
-		return "Couldn't connect right JACK port";
+	if( jack_connect( client, jack_port_name(port_r), port_out_r ) != 0 )
+		if( ret == "") ret = "Couldn't connect right JACK port";
 
-	return RString();
+	return ret;
 }
 
 int64_t RageSoundDriver_JACK::GetPosition() const
