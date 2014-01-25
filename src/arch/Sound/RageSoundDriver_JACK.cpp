@@ -34,7 +34,7 @@ RString RageSoundDriver_JACK::Init()
 	RString error;
 
 	// Open JACK client and call it "StepMania" or whatever
-	client = jack_client_open(PRODUCT_FAMILY, JackNullOption, &status);
+	client = jack_client_open(PRODUCT_FAMILY, JackNoStartServer, &status);
 	if (client == NULL)
 		return "Couldn't connect to JACK server";
 
