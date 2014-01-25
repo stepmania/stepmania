@@ -179,7 +179,10 @@ void EditMenu::Load( const RString &sType )
 
 	// fill in data structures
 	GetGroupsToShow( m_sGroups );
-	m_StepsTypes = CommonMetrics::STEPS_TYPES_TO_SHOW.GetValue();
+	
+	// In EditMode_Practice this will be filled in by OnRowValueChanged()
+	if( EDIT_MODE.GetValue() != EditMode_Practice )
+		m_StepsTypes = CommonMetrics::STEPS_TYPES_TO_SHOW.GetValue();
 
 	RefreshAll();
 }
@@ -357,6 +360,8 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 {
 	UpdateArrows();
 
+	EditMode mode = EDIT_MODE.GetValue();
+	
 	switch( row )
 	{
 	case ROW_GROUP:
@@ -367,7 +372,19 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 			m_GroupBanner.PlayCommand("Changed");
 		}
 		m_pSongs.clear();
-		GetSongsToShowForGroup( GetSelectedGroup(), m_pSongs );
+		if( mode == EditMode_Practice )
+		{
+			m_pSongs.clear();
+			vector<Song*> vtSongs;
+			GetSongsToShowForGroup( GetSelectedGroup(), vtSongs );
+			// Filter out songs that aren't playable.
+			FOREACH( Song*, vtSongs, s )
+				if( SongUtil::IsSongPlayable(*s) )
+					m_pSongs.push_back(*s);
+		}
+		else
+			GetSongsToShowForGroup( GetSelectedGroup(), m_pSongs );
+		
 		m_iSelection[ROW_SONG] = 0;
 		// fall through
 	case ROW_SONG:
@@ -376,6 +393,33 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 		m_SongBanner.PlayCommand("Changed");
 		m_SongTextBanner.SetFromSong( GetSelectedSong() );
 
+		if( mode == EditMode_Practice )
+		{
+			StepsType orgSel = StepsType_Invalid;
+			if( !m_StepsTypes.empty() ) // Not first run
+			{
+				ASSERT( m_StepsTypes.size() > m_iSelection[ROW_STEPS_TYPE] );
+				StepsType orgSel = m_StepsTypes[m_iSelection[ROW_STEPS_TYPE]];
+			}
+			
+			// The StepsType selection may no longer be valid. Zero it for now.
+			m_iSelection[ROW_STEPS_TYPE] = 0;
+			m_StepsTypes.clear();
+			
+			// Only show StepsTypes for which we have valid Steps.
+			vector<StepsType> vSts = CommonMetrics::STEPS_TYPES_TO_SHOW.GetValue();
+			FOREACH( StepsType, vSts, st )
+			{
+				if( SongUtil::GetStepsByDifficulty( GetSelectedSong(), *st, Difficulty_Invalid, false) != NULL )
+					m_StepsTypes.push_back( *st );
+					
+				// Try to preserve the user's StepsType selection.
+				if( *st == orgSel )
+					m_iSelection[ROW_STEPS_TYPE] = m_StepsTypes.size() - 1;
+			}
+			
+		}
+		
 		// fall through
 	case ROW_STEPS_TYPE:
 		m_textValue[ROW_STEPS_TYPE].SetText( GAMEMAN->GetStepsTypeInfo(GetSelectedStepsType()).GetLocalizedString() );
@@ -391,7 +435,6 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 			{
 				if( dc == Difficulty_Edit )
 				{
-					EditMode mode = EDIT_MODE.GetValue();
 					switch( mode )
 					{
 					case EditMode_Full:
@@ -431,8 +474,7 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 					if( pSteps && UNLOCKMAN->StepsIsLocked( GetSelectedSong(), pSteps ) )
 						pSteps = NULL;
 
-					EditMode mode = EDIT_MODE.GetValue();
-					switch( EDIT_MODE.GetValue() )
+					switch( mode )
 					{
 					case EditMode_Home:
 						// don't allow selecting of non-edits in HomeMode
@@ -534,7 +576,6 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 			m_Actions.clear();
 			if( GetSelectedSteps() )
 			{
-				EditMode mode = EDIT_MODE.GetValue();
 				switch( mode )
 				{
 				case EditMode_Practice:

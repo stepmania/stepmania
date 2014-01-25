@@ -931,7 +931,8 @@ void SongUtil::FilterSongs( const SongCriteria &sc, const vector<Song*> &in,
 void SongUtil::GetPlayableStepsTypes( const Song *pSong, set<StepsType> &vOut )
 {
 	vector<const Style*> vpPossibleStyles;
-	if( CommonMetrics::AUTO_SET_STYLE )
+	// If AutoSetStyle, or a Style hasn't been chosen, check StepsTypes for all Styles.
+	if( CommonMetrics::AUTO_SET_STYLE || GAMESTATE->m_pCurStyle == NULL )
 		GAMEMAN->GetCompatibleStyles( GAMESTATE->m_pCurGame, GAMESTATE->GetNumPlayersEnabled(), vpPossibleStyles );
 	else
 		vpPossibleStyles.push_back( GAMESTATE->m_pCurStyle );
