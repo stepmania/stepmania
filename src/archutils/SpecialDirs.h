@@ -8,7 +8,7 @@
 #include "Unix/SpecialDirs.h"
 #endif
 /*
- * (c) 2014-x Renaud Lepage, AJ Kelly
+ * (c) 2014 Renaud Lepage, AJ Kelly
  * All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
