@@ -12,15 +12,7 @@
 #include "ScreenPrompt.h"
 #include "SongManager.h"
 #include "RageFile.h"
-
-// there should probably be a better way to handle this: -aj
-#if defined(_WINDOWS)
-	#include "archutils/Win32/SpecialDirs.h"
-#elif defined(MACOSX)
-	#include "archutils/Darwin/SpecialDirs.h"
-#elif defined(UNIX)
-	#include "archutils/Unix/SpecialDirs.h"
-#endif
+#include "archutils/SpecialDirs.h"
 
 // main page (type list)
 REGISTER_SCREEN_CLASS( ScreenOptionsExportPackage );
@@ -286,7 +278,7 @@ void ScreenOptionsExportPackageSubPage::ExportOptions( int iRow, const vector<Pl
 }
 
 /*
- * (c) 2002-2011 Chris Danford, AJ Kelly
+ * (c) 2002-2014 Chris Danford, AJ Kelly, Renaud Lepage
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
