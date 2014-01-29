@@ -101,3 +101,5 @@ Save/
 Logs/
 Screenshots/
 portable.ini
+*.sublime-project
+*.sublime-workspace
