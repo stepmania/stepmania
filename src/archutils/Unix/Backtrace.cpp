@@ -461,9 +461,9 @@ void GetSignalBacktraceContext( BacktraceContext *ctx, const ucontext_t *uc )
 	ctx->bp = (void *) uc->uc_mcontext->ss.ebp;
 	ctx->sp = (void *) uc->uc_mcontext->ss.esp;
 #else
-	ctx->ip = (void *) uc->uc_mcontext->__ss.__eip;
-	ctx->bp = (void *) uc->uc_mcontext->__ss.__ebp;
-	ctx->sp = (void *) uc->uc_mcontext->__ss.__esp;	
+	ctx->ip = (void *) uc->uc_mcontext->__ss.__rip;
+	ctx->bp = (void *) uc->uc_mcontext->__ss.__rbp;
+	ctx->sp = (void *) uc->uc_mcontext->__ss.__rsp;	
 #endif
 }
 
