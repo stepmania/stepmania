@@ -220,18 +220,15 @@ RString ArchHooks_MacOSX::GetMachineId() const
 
 void ArchHooks_MacOSX::DumpDebugInfo()
 {
-	// Get system version
+	// Get system version: using http://stackoverflow.com/a/11697362 for now.
 	RString sSystemVersion;
 	{
-		long major = 0, minor = 0, bugFix = 0;
-
-		Gestalt( gestaltSystemVersionMajor, &major );
-		Gestalt( gestaltSystemVersionMinor, &minor );
-		Gestalt( gestaltSystemVersionBugFix, &bugFix );
-		if( bugFix )
-			sSystemVersion = ssprintf( "Mac OS X %ld.%ld.%ld", major, minor, bugFix );
-		else
-			sSystemVersion = ssprintf( "Mac OS X %ld.%ld", major, minor );
+		char str[256];
+        size_t charSize = sizeof(str);
+        
+        sysctlbyname("kern.osrelease", str, &charSize, NULL, 0);
+        
+        sSystemVersion = RString(str);
 	}
 
 	size_t size;
