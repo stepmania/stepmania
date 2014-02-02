@@ -493,10 +493,15 @@ bool GameCommand::IsPlayable( RString *why ) const
 
 	if ( m_pStyle )
 	{
-		int iCredits = NUM_PLAYERS;
+		int iCredits;
+		if( GAMESTATE->GetCoinMode() == CoinMode_Pay )
+			iCredits = GAMESTATE->m_iCoins / PREFSMAN->m_iCoinsPerCredit;
+		else
+			iCredits = NUM_PLAYERS;
+
 		const int iNumCreditsPaid = GetNumCreditsPaid();
 		const int iNumCreditsRequired = GetCreditsRequiredToPlayStyle(m_pStyle);
-
+		
 		/* With PREFSMAN->m_bDelayedCreditsReconcile disabled, enough credits must
 		 * be paid. (This means that enough sides must be joined.)  Enabled, simply
 		 * having enough credits lying in the machine is sufficient; we'll deduct the
@@ -637,6 +642,19 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 	{
 		GAMESTATE->SetCurrentStyle( m_pStyle );
 
+		// It's possible to choose a style that didn't have enough players joined.
+		// If enough players aren't joined, then  we need to subtract credits
+		// for the sides that will be joined as a result of applying this option.
+		if( GAMESTATE->GetCoinMode() == CoinMode_Pay )
+		{
+			int iNumCreditsRequired = GetCreditsRequiredToPlayStyle(m_pStyle);
+			int iNumCreditsPaid = GetNumCreditsPaid();
+			int iNumCreditsOwed = iNumCreditsRequired - iNumCreditsPaid;
+			GAMESTATE->m_iCoins.Set( GAMESTATE->m_iCoins - iNumCreditsOwed * PREFSMAN->m_iCoinsPerCredit );
+			LOG->Trace( "Deducted %i coins, %i remaining",
+					iNumCreditsOwed * PREFSMAN->m_iCoinsPerCredit, GAMESTATE->m_iCoins.Get() );
+		}
+		
 		// If only one side is joined and we picked a style that requires both
 		// sides, join the other side.
 		switch( m_pStyle->m_StyleType )

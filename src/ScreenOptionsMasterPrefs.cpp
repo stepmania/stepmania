@@ -383,43 +383,34 @@ static void MusicWheelSwitchSpeed( int &sel, bool ToSel, const ConfOption *pConf
 	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYLEN(mapping) );
 }
 
-// Gameplay options
-static void CoinModeWithHome( int &sel, bool ToSel, const ConfOption *pConfOption )
-{
-	if( ToSel )
-	{
-		// Two options: Home and Free
-		MovePref<CoinMode>( sel, ToSel, pConfOption );
-		if( sel != 0 )
-			sel = 1;
-	}
-	else
-	{
-		int tmp = static_cast<int>(CoinMode_Home);
-		if( sel != 0 )
-		{
-			sel = 1;
-			tmp = static_cast<int>(CoinMode_Free);
-		}
-		MovePref<CoinMode>( tmp , ToSel, pConfOption );
-	}
-}
-
 static void CoinModeNoHome( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
-	// We only have one play mode that isn't Home
-	sel = 0;
-	if( !ToSel )
+	// 0 = Pay, 1 = Free
+	// But MovePref<CoinMode> thinks 0 = Home, 1 = Pay, 2 = Free
+	if( ToSel )
 	{
-		int tmp = static_cast<int>(CoinMode_Free);
-		MovePref<CoinMode>( tmp, ToSel, pConfOption );
+		MovePref<CoinMode>( sel, ToSel, pConfOption );
+		sel--;
+	}
+	else 
+	{
+		int tmp = sel + 1;
+		MovePref<CoinMode>( sel, ToSel, pConfOption );
 	}
 }
 
 static void CoinsPerCredit( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
-	const int mapping[] = { 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16 };
-	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYLEN(mapping) );
+	if( ToSel )
+	{
+		MovePref<int>( sel, ToSel, pConfOption );
+		sel--;
+	}
+	else
+	{
+		int tmp = sel + 1;
+		MovePref<int>( tmp, ToSel, pConfOption );
+	}
 }
 
 static void JointPremium( int &sel, bool ToSel, const ConfOption *pConfOption )
@@ -729,9 +720,10 @@ static void InitializeConfOptions()
 
 	// Machine options
 	ADD( ConfOption( "MenuTimer",			MovePref<bool>,		"Off","On" ) );
-	ADD( ConfOption( "CoinMode",			CoinModeWithHome,	"Home","Free Play" ) );
-	ADD( ConfOption( "CoinModeNoHome",		CoinModeNoHome,		"Free Play" ) );
+	ADD( ConfOption( "CoinMode",			MovePref<CoinMode>,	"Home","Pay","Free Play" ) );
+	ADD( ConfOption( "CoinModeNoHome",		CoinModeNoHome,		"Pay","Free Play" ) );
 	g_ConfOptions.back().m_sPrefName = "CoinMode";
+	ADD( ConfOption( "CoinsPerCredit",		CoinsPerCredit,		"|1","|2","|3","|4","|5","|6","|7","|8","|9","|10","|11","|12","|13","|14","|15","|16" ) );
 
 	ADD( ConfOption( "SongsPerPlay",		SongsPerPlay,		"|1","|2","|3","|4","|5" ) );
 	ADD( ConfOption( "SongsPerPlayOrEvent",		SongsPerPlayOrEventMode,"|1","|2","|3","|4","|5","Event" ) );
