@@ -105,3 +105,10 @@ Screenshots/
 portable.ini
 *.sublime-project
 *.sublime-workspace
+*.xcscheme
+WorkspaceSettings.xcsettings
+UserInterfaceState.xcuserstate
+*.xccheckout
+contents.xcworkspacedata
+xcschememanagement.plist
+*.swp
