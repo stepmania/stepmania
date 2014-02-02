@@ -683,6 +683,8 @@ class DebugLineCoinMode : public IDebugLine
 	{
 		if (GAMESTATE->GetCoinMode() == CoinMode_Home)
 			GamePreferences::m_CoinMode.Set(CoinMode_Free);
+		else if (GAMESTATE->GetCoinMode() == CoinMode_Free)
+			GamePreferences::m_CoinMode.Set(CoinMode_Pay);
 		else
 			GamePreferences::m_CoinMode.Set(CoinMode_Home);
 		SCREENMAN->RefreshCreditsMessages();
