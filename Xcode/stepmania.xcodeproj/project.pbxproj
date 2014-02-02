@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 45;
+	objectVersion = 46;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -23,6 +23,14 @@
 
 /* Begin PBXBuildFile section */
 		1215D7A208C6559A00B87D8B /* ScreenGameplayNormal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1215D7A008C6559A00B87D8B /* ScreenGameplayNormal.cpp */; };
+		2B01A79616C881E500D5CFD2 /* RageDisplay_OGL_Helpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2B01A79216C881E500D5CFD2 /* RageDisplay_OGL_Helpers.cpp */; };
+		2B01A79716C881E500D5CFD2 /* RageDisplay_OGL_Helpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2B01A79216C881E500D5CFD2 /* RageDisplay_OGL_Helpers.cpp */; };
+		2B01A79816C881E500D5CFD2 /* RageDisplay_OGL_Helpers.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B01A79316C881E500D5CFD2 /* RageDisplay_OGL_Helpers.h */; };
+		2B01A79916C881E500D5CFD2 /* RageDisplay_OGL_Helpers.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B01A79316C881E500D5CFD2 /* RageDisplay_OGL_Helpers.h */; };
+		2B01A79A16C881E500D5CFD2 /* RageDisplay_OGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2B01A79416C881E500D5CFD2 /* RageDisplay_OGL.cpp */; };
+		2B01A79B16C881E500D5CFD2 /* RageDisplay_OGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2B01A79416C881E500D5CFD2 /* RageDisplay_OGL.cpp */; };
+		2B01A79C16C881E500D5CFD2 /* RageDisplay_OGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B01A79516C881E500D5CFD2 /* RageDisplay_OGL.h */; };
+		2B01A79D16C881E500D5CFD2 /* RageDisplay_OGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B01A79516C881E500D5CFD2 /* RageDisplay_OGL.h */; };
 		2B17AB7713980FF6001AE57D /* png.c in Sources */ = {isa = PBXBuildFile; fileRef = 2BC6130D13773C8E00CC8BBD /* png.c */; };
 		2B17AB7813980FF6001AE57D /* png.h in Headers */ = {isa = PBXBuildFile; fileRef = 2BC6130E13773C8E00CC8BBD /* png.h */; };
 		2B17AB7913980FF6001AE57D /* pngconf.h in Headers */ = {isa = PBXBuildFile; fileRef = 2BC6130F13773C8E00CC8BBD /* pngconf.h */; };
@@ -247,7 +255,6 @@
 		AA29CD4F0558741A00961A51 /* RageTextureManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFD8B04770A7C005F316C /* RageTextureManager.cpp */; };
 		AA29CD500558741A00961A51 /* RageThreads.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFD8D04770A7C005F316C /* RageThreads.cpp */; };
 		AA29CD510558741A00961A51 /* RageTimer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFD8F04770A7C005F316C /* RageTimer.cpp */; };
-		AA29CD520558741A00961A51 /* RageUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFD9204770A7C005F316C /* RageUtil.cpp */; };
 		AA29CD560558741A00961A51 /* Character.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFDCB04770C79005F316C /* Character.cpp */; };
 		AA29CD570558741A00961A51 /* CodeDetector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFDCD04770C79005F316C /* CodeDetector.cpp */; };
 		AA29CD580558741A00961A51 /* Course.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFDCF04770C79005F316C /* Course.cpp */; };
@@ -326,7 +333,6 @@
 		AA29CDBA0558741A00961A51 /* Screen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E000A047711F3005F316C /* Screen.cpp */; };
 		AA29CDBB0558741A00961A51 /* ScreenAttract.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E0010047711F3005F316C /* ScreenAttract.cpp */; };
 		AA29CDBE0558741A00961A51 /* ScreenDemonstration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E001B047711F3005F316C /* ScreenDemonstration.cpp */; };
-		AA29CDBF0558741A00961A51 /* ScreenEdit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E001D047711F3005F316C /* ScreenEdit.cpp */; settings = {COMPILER_FLAGS = "-finline-limit=300"; }; };
 		AA29CDC00558741A00961A51 /* ScreenEditMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E001F047711F3005F316C /* ScreenEditMenu.cpp */; };
 		AA29CDC10558741A00961A51 /* ScreenEvaluation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E0021047711F3005F316C /* ScreenEvaluation.cpp */; };
 		AA29CDC50558741A00961A51 /* ScreenGameplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E0029047711F3005F316C /* ScreenGameplay.cpp */; };
@@ -757,7 +763,6 @@
 		AA40D36409A08D650068C0D5 /* ScoreKeeperNormal.h in Headers */ = {isa = PBXBuildFile; fileRef = AAF34ADD0900AEBD0006EDB7 /* ScoreKeeperNormal.h */; };
 		AA40D36509A08D650068C0D5 /* ScreenStatsOverlay.h in Headers */ = {isa = PBXBuildFile; fileRef = AAF34AEC0900B00C0006EDB7 /* ScreenStatsOverlay.h */; };
 		AA40D36709A08D650068C0D5 /* MovieTexture_Generic.h in Headers */ = {isa = PBXBuildFile; fileRef = AAA372D10909934500141131 /* MovieTexture_Generic.h */; };
-		AA40D36809A08D650068C0D5 /* MovieTexture_Theora.h in Headers */ = {isa = PBXBuildFile; fileRef = AAA372D30909934500141131 /* MovieTexture_Theora.h */; };
 		AA40D36B09A08D650068C0D5 /* SpecialFiles.h in Headers */ = {isa = PBXBuildFile; fileRef = AAFBEED0094D7FCB000029DE /* SpecialFiles.h */; };
 		AA40D36C09A08D650068C0D5 /* ScreenOptionsManageEditSteps.h in Headers */ = {isa = PBXBuildFile; fileRef = AAFBEEE6094D807E000029DE /* ScreenOptionsManageEditSteps.h */; };
 		AA40D36D09A08D650068C0D5 /* ScreenOptionsMemoryCard.h in Headers */ = {isa = PBXBuildFile; fileRef = AAFBEEE8094D807E000029DE /* ScreenOptionsMemoryCard.h */; };
@@ -772,7 +777,6 @@
 		AA40D37909A08D650068C0D5 /* ScreenUnlockStatus.h in Headers */ = {isa = PBXBuildFile; fileRef = AA65877A098C322800CE55CC /* ScreenUnlockStatus.h */; };
 		AA40D37A09A08D650068C0D5 /* AdjustSync.h in Headers */ = {isa = PBXBuildFile; fileRef = AA84B7060996F8370085EECB /* AdjustSync.h */; };
 		AA40D37C09A08D650068C0D5 /* smicon.icns in Resources */ = {isa = PBXBuildFile; fileRef = AAB895E504A9057100D02EE9 /* smicon.icns */; };
-		AA40D38109A08D650068C0D5 /* RageUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFD9204770A7C005F316C /* RageUtil.cpp */; };
 		AA40D38209A08D650068C0D5 /* RageBitmapTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFD6D04770A7C005F316C /* RageBitmapTexture.cpp */; };
 		AA40D38309A08D650068C0D5 /* RageDisplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFD6F04770A7C005F316C /* RageDisplay.cpp */; };
 		AA40D38409A08D650068C0D5 /* RageException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFD7204770A7C005F316C /* RageException.cpp */; };
@@ -865,7 +869,6 @@
 		AA40D3E909A08D650068C0D5 /* Screen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E000A047711F3005F316C /* Screen.cpp */; };
 		AA40D3EA09A08D650068C0D5 /* ScreenAttract.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E0010047711F3005F316C /* ScreenAttract.cpp */; };
 		AA40D3EC09A08D650068C0D5 /* ScreenDemonstration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E001B047711F3005F316C /* ScreenDemonstration.cpp */; };
-		AA40D3ED09A08D650068C0D5 /* ScreenEdit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E001D047711F3005F316C /* ScreenEdit.cpp */; settings = {COMPILER_FLAGS = "-finline-limit=300"; }; };
 		AA40D3EE09A08D650068C0D5 /* ScreenEditMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E001F047711F3005F316C /* ScreenEditMenu.cpp */; };
 		AA40D3EF09A08D650068C0D5 /* ScreenEvaluation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E0021047711F3005F316C /* ScreenEvaluation.cpp */; };
 		AA40D3F209A08D650068C0D5 /* ScreenGameplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E0029047711F3005F316C /* ScreenGameplay.cpp */; };
@@ -1070,7 +1073,6 @@
 		AA40D4F909A08D650068C0D5 /* ScoreKeeperNormal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAF34ADC0900AEBD0006EDB7 /* ScoreKeeperNormal.cpp */; };
 		AA40D4FA09A08D650068C0D5 /* ScreenStatsOverlay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAF34AEB0900B00C0006EDB7 /* ScreenStatsOverlay.cpp */; };
 		AA40D4FC09A08D650068C0D5 /* MovieTexture_Generic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAA372D00909934500141131 /* MovieTexture_Generic.cpp */; };
-		AA40D4FD09A08D650068C0D5 /* MovieTexture_Theora.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAA372D20909934500141131 /* MovieTexture_Theora.cpp */; };
 		AA40D4FF09A08D650068C0D5 /* LifeMeter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA2FB638091212AF000FD574 /* LifeMeter.cpp */; };
 		AA40D50109A08D650068C0D5 /* SpecialFiles.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAFBEECF094D7FCB000029DE /* SpecialFiles.cpp */; };
 		AA40D50209A08D650068C0D5 /* ScreenOptionsManageEditSteps.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAFBEEE5094D807E000029DE /* ScreenOptionsManageEditSteps.cpp */; };
@@ -1494,7 +1496,6 @@
 		AA91ACB10878BB2C00FB2F8F /* RageTexturePreloader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA91ACAF0878BB2C00FB2F8F /* RageTexturePreloader.cpp */; };
 		AA9A78AB06B5C72200B03E97 /* Game.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA9A78A906B5C72200B03E97 /* Game.cpp */; };
 		AA9EC2F2055F5126007E5098 /* RageTextureID.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA9EC2F0055F5126007E5098 /* RageTextureID.cpp */; };
-		AAA0704E0CE5082E005A3060 /* libffmpeg_link.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AAA0704D0CE5082D005A3060 /* libffmpeg_link.a */; };
 		AAA0704F0CE5082E005A3060 /* libffmpeg_link.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AAA0704D0CE5082D005A3060 /* libffmpeg_link.a */; };
 		AAA0713D0CE7B3BB005A3060 /* bit.c in Sources */ = {isa = PBXBuildFile; fileRef = AAA070B40CE7B3AD005A3060 /* bit.c */; };
 		AAA0713E0CE7B3BB005A3060 /* bit.h in Headers */ = {isa = PBXBuildFile; fileRef = AAA070B50CE7B3AD005A3060 /* bit.h */; };
@@ -1546,7 +1547,6 @@
 		AAA071960CE7B50D005A3060 /* bit.c in Sources */ = {isa = PBXBuildFile; fileRef = AAA070B40CE7B3AD005A3060 /* bit.c */; };
 		AAA071B40CE7C9C9005A3060 /* libmad-sm5.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AAA070A90CE7B0DF005A3060 /* libmad-sm5.a */; };
 		AAA372D40909934500141131 /* MovieTexture_Generic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAA372D00909934500141131 /* MovieTexture_Generic.cpp */; };
-		AAA372D60909934500141131 /* MovieTexture_Theora.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAA372D20909934500141131 /* MovieTexture_Theora.cpp */; };
 		AAA6BFEC0644AB3700AFBBC8 /* ScreenWithMenuElements.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAA6BFEA0644AB3700AFBBC8 /* ScreenWithMenuElements.cpp */; };
 		AAA71EA105EE154E00D2E8FF /* global.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAA71EA005EE154E00D2E8FF /* global.cpp */; };
 		AAA7D4C90C7E872600FB8F78 /* ScreenOptionsToggleSongs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAA7D4C70C7E872500FB8F78 /* ScreenOptionsToggleSongs.cpp */; };
@@ -1678,10 +1678,19 @@
 		AAFF41A40F5BD4AD00FFDB67 /* ScreenOptionsExportPackage.h in Headers */ = {isa = PBXBuildFile; fileRef = AAFF41A20F5BD4AD00FFDB67 /* ScreenOptionsExportPackage.h */; };
 		AAFF41A50F5BD4AD00FFDB67 /* ScreenOptionsExportPackage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAFF41A10F5BD4AD00FFDB67 /* ScreenOptionsExportPackage.cpp */; };
 		AAFF41A60F5BD4AD00FFDB67 /* ScreenOptionsExportPackage.h in Headers */ = {isa = PBXBuildFile; fileRef = AAFF41A20F5BD4AD00FFDB67 /* ScreenOptionsExportPackage.h */; };
+		B7102E371545C0DA00C9D021 /* libavcodec.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7102E301545C0DA00C9D021 /* libavcodec.a */; };
+		B7102E381545C0DA00C9D021 /* libavdevice.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7102E311545C0DA00C9D021 /* libavdevice.a */; };
+		B7102E391545C0DA00C9D021 /* libavfilter.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7102E321545C0DA00C9D021 /* libavfilter.a */; };
+		B7102E3A1545C0DA00C9D021 /* libavformat.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7102E331545C0DA00C9D021 /* libavformat.a */; };
+		B7102E3B1545C0DA00C9D021 /* libavutil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7102E341545C0DA00C9D021 /* libavutil.a */; };
+		B7102E3C1545C0DA00C9D021 /* libswresample.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7102E351545C0DA00C9D021 /* libswresample.a */; };
+		B7102E3D1545C0DA00C9D021 /* libswscale.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7102E361545C0DA00C9D021 /* libswscale.a */; };
 		B75CE3B5137963350076A82D /* SongPosition.h in Headers */ = {isa = PBXBuildFile; fileRef = B75CE3B3137963350076A82D /* SongPosition.h */; };
 		B75CE3B6137963350076A82D /* SongPosition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B75CE3B4137963350076A82D /* SongPosition.cpp */; };
 		B773AE6D140AAB1800C68DDD /* SpecialDirs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B773AE6B140AAB1800C68DDD /* SpecialDirs.cpp */; };
 		B773AE6E140AAB1800C68DDD /* SpecialDirs.h in Headers */ = {isa = PBXBuildFile; fileRef = B773AE6C140AAB1800C68DDD /* SpecialDirs.h */; };
+		B7845BC3154051B6000DFDA8 /* ScreenEdit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B7845BC2154051B6000DFDA8 /* ScreenEdit.cpp */; };
+		B7845BC5154052CB000DFDA8 /* RageUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B7845BC4154052CB000DFDA8 /* RageUtil.cpp */; };
 		EE4FD2B014A8F066002B5758 /* ansi2knr.c in Sources */ = {isa = PBXBuildFile; fileRef = EE4FD26814A8F066002B5758 /* ansi2knr.c */; };
 		EE4FD2B114A8F066002B5758 /* cdjpeg.c in Sources */ = {isa = PBXBuildFile; fileRef = EE4FD26914A8F066002B5758 /* cdjpeg.c */; };
 		EE4FD2B214A8F066002B5758 /* cjpeg.c in Sources */ = {isa = PBXBuildFile; fileRef = EE4FD26A14A8F066002B5758 /* cjpeg.c */; };
@@ -1736,10 +1745,6 @@
 		EE4FD2E614A8F066002B5758 /* jquant1.c in Sources */ = {isa = PBXBuildFile; fileRef = EE4FD29E14A8F066002B5758 /* jquant1.c */; };
 		EE4FD2E714A8F066002B5758 /* jquant2.c in Sources */ = {isa = PBXBuildFile; fileRef = EE4FD29F14A8F066002B5758 /* jquant2.c */; };
 		EE4FD30814A8F281002B5758 /* libjpeg-sm5.a in Frameworks */ = {isa = PBXBuildFile; fileRef = EE4FD26014A8EFE1002B5758 /* libjpeg-sm5.a */; };
-		EE879B60132DEE720078FDDC /* RageDisplay_Legacy_Helpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EE879B5C132DEE720078FDDC /* RageDisplay_Legacy_Helpers.cpp */; };
-		EE879B61132DEE720078FDDC /* RageDisplay_Legacy_Helpers.h in Headers */ = {isa = PBXBuildFile; fileRef = EE879B5D132DEE720078FDDC /* RageDisplay_Legacy_Helpers.h */; };
-		EE879B62132DEE720078FDDC /* RageDisplay_Legacy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EE879B5E132DEE720078FDDC /* RageDisplay_Legacy.cpp */; };
-		EE879B63132DEE720078FDDC /* RageDisplay_Legacy.h in Headers */ = {isa = PBXBuildFile; fileRef = EE879B5F132DEE720078FDDC /* RageDisplay_Legacy.h */; };
 		EE906F6612BF3A1B00146C96 /* ScreenInstallOverlay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EE906F6412BF3A1B00146C96 /* ScreenInstallOverlay.cpp */; };
 		EE906F6712BF3A1B00146C96 /* ScreenInstallOverlay.h in Headers */ = {isa = PBXBuildFile; fileRef = EE906F6512BF3A1B00146C96 /* ScreenInstallOverlay.h */; };
 		EE906F8212BF3AF800146C96 /* JsonUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EE906F8012BF3AF800146C96 /* JsonUtil.cpp */; };
@@ -1908,6 +1913,10 @@
 		1215D7A108C6559A00B87D8B /* ScreenGameplayNormal.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ScreenGameplayNormal.h; path = ../src/ScreenGameplayNormal.h; sourceTree = "<group>"; };
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
+		2B01A79216C881E500D5CFD2 /* RageDisplay_OGL_Helpers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RageDisplay_OGL_Helpers.cpp; path = ../src/RageDisplay_OGL_Helpers.cpp; sourceTree = "<group>"; };
+		2B01A79316C881E500D5CFD2 /* RageDisplay_OGL_Helpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RageDisplay_OGL_Helpers.h; path = ../src/RageDisplay_OGL_Helpers.h; sourceTree = "<group>"; };
+		2B01A79416C881E500D5CFD2 /* RageDisplay_OGL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RageDisplay_OGL.cpp; path = ../src/RageDisplay_OGL.cpp; sourceTree = "<group>"; };
+		2B01A79516C881E500D5CFD2 /* RageDisplay_OGL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RageDisplay_OGL.h; path = ../src/RageDisplay_OGL.h; sourceTree = "<group>"; };
 		2B17AB7213980FDF001AE57D /* libpng-1.5.1-sm5.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libpng-1.5.1-sm5.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2B17ABC013981521001AE57D /* libglew-sm5.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libglew-sm5.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2B17ABE013981756001AE57D /* libpcre-sm5.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libpcre-sm5.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1917,7 +1926,7 @@
 		2B43509413949F37006FA051 /* TimingSegments.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TimingSegments.cpp; path = ../src/TimingSegments.cpp; sourceTree = SOURCE_ROOT; };
 		2B766989132FF71500586512 /* NotesLoaderSMA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NotesLoaderSMA.h; path = ../src/NotesLoaderSMA.h; sourceTree = SOURCE_ROOT; };
 		2B76698A132FF71500586512 /* NotesLoaderSMA.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NotesLoaderSMA.cpp; path = ../src/NotesLoaderSMA.cpp; sourceTree = SOURCE_ROOT; };
-		2B85696213DFAE2F005037D2 /* StepMania.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StepMania.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		2B85696213DFAE2F005037D2 /* StepMania (Debug).app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "StepMania (Debug).app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2B9C2E89137A138B004C92F3 /* NotesLoaderJson.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NotesLoaderJson.cpp; path = ../src/NotesLoaderJson.cpp; sourceTree = SOURCE_ROOT; };
 		2B9C2E8A137A138B004C92F3 /* NotesLoaderJson.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NotesLoaderJson.h; path = ../src/NotesLoaderJson.h; sourceTree = SOURCE_ROOT; };
 		2B9C2E8B137A138B004C92F3 /* NotesWriterJson.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NotesWriterJson.cpp; path = ../src/NotesWriterJson.cpp; sourceTree = SOURCE_ROOT; };
@@ -2132,7 +2141,7 @@
 		AA28B47A058F2F5D0097C109 /* MemoryCardManager.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = MemoryCardManager.cpp; path = ../src/MemoryCardManager.cpp; sourceTree = "<group>"; };
 		AA28B47B058F2F5D0097C109 /* MemoryCardManager.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = MemoryCardManager.h; path = ../src/MemoryCardManager.h; sourceTree = "<group>"; };
 		AA29CE570558741A00961A51 /* Info-StepMania.plist */ = {isa = PBXFileReference; explicitFileType = text.plist; path = "Info-StepMania.plist"; sourceTree = SOURCE_ROOT; };
-		AA29CE580558741A00961A51 /* StepMania.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StepMania.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		AA29CE580558741A00961A51 /* StepMania (Debug).app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "StepMania (Debug).app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA2C9C9F0BAD6F54002441E9 /* CodeSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CodeSet.cpp; path = ../src/CodeSet.cpp; sourceTree = "<group>"; };
 		AA2C9CA00BAD6F54002441E9 /* CodeSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CodeSet.h; path = ../src/CodeSet.h; sourceTree = "<group>"; };
 		AA2CA89D0BB745BD002441E9 /* ScreenContinue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ScreenContinue.cpp; path = ../src/ScreenContinue.cpp; sourceTree = "<group>"; };
@@ -2231,7 +2240,6 @@
 		AA6E0011047711F3005F316C /* ScreenAttract.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ScreenAttract.h; path = ../src/ScreenAttract.h; sourceTree = "<group>"; };
 		AA6E001B047711F3005F316C /* ScreenDemonstration.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScreenDemonstration.cpp; path = ../src/ScreenDemonstration.cpp; sourceTree = "<group>"; };
 		AA6E001C047711F3005F316C /* ScreenDemonstration.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ScreenDemonstration.h; path = ../src/ScreenDemonstration.h; sourceTree = "<group>"; };
-		AA6E001D047711F3005F316C /* ScreenEdit.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScreenEdit.cpp; path = ../src/ScreenEdit.cpp; sourceTree = "<group>"; };
 		AA6E001E047711F3005F316C /* ScreenEdit.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ScreenEdit.h; path = ../src/ScreenEdit.h; sourceTree = "<group>"; };
 		AA6E001F047711F3005F316C /* ScreenEditMenu.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScreenEditMenu.cpp; path = ../src/ScreenEditMenu.cpp; sourceTree = "<group>"; };
 		AA6E0020047711F3005F316C /* ScreenEditMenu.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ScreenEditMenu.h; path = ../src/ScreenEditMenu.h; sourceTree = "<group>"; };
@@ -2338,7 +2346,6 @@
 		AA6EFD8F04770A7C005F316C /* RageTimer.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = RageTimer.cpp; path = ../src/RageTimer.cpp; sourceTree = "<group>"; };
 		AA6EFD9004770A7C005F316C /* RageTimer.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = RageTimer.h; path = ../src/RageTimer.h; sourceTree = "<group>"; };
 		AA6EFD9104770A7C005F316C /* RageTypes.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = RageTypes.h; path = ../src/RageTypes.h; sourceTree = "<group>"; };
-		AA6EFD9204770A7C005F316C /* RageUtil.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = RageUtil.cpp; path = ../src/RageUtil.cpp; sourceTree = "<group>"; };
 		AA6EFD9304770A7C005F316C /* RageUtil.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = RageUtil.h; path = ../src/RageUtil.h; sourceTree = "<group>"; };
 		AA6EFDCB04770C79005F316C /* Character.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = Character.cpp; path = ../src/Character.cpp; sourceTree = "<group>"; };
 		AA6EFDCC04770C79005F316C /* Character.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = Character.h; path = ../src/Character.h; sourceTree = "<group>"; };
@@ -2913,8 +2920,6 @@
 		AAA0F7D2047ACBC9005F316C /* QuickTime.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuickTime.framework; path = /System/Library/Frameworks/QuickTime.framework; sourceTree = "<absolute>"; };
 		AAA372D00909934500141131 /* MovieTexture_Generic.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = MovieTexture_Generic.cpp; path = MovieTexture/MovieTexture_Generic.cpp; sourceTree = "<group>"; };
 		AAA372D10909934500141131 /* MovieTexture_Generic.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = MovieTexture_Generic.h; path = MovieTexture/MovieTexture_Generic.h; sourceTree = "<group>"; };
-		AAA372D20909934500141131 /* MovieTexture_Theora.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = MovieTexture_Theora.cpp; path = MovieTexture/MovieTexture_Theora.cpp; sourceTree = "<group>"; };
-		AAA372D30909934500141131 /* MovieTexture_Theora.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = MovieTexture_Theora.h; path = MovieTexture/MovieTexture_Theora.h; sourceTree = "<group>"; };
 		AAA6BFEA0644AB3700AFBBC8 /* ScreenWithMenuElements.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScreenWithMenuElements.cpp; path = ../src/ScreenWithMenuElements.cpp; sourceTree = "<group>"; };
 		AAA6BFEB0644AB3700AFBBC8 /* ScreenWithMenuElements.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ScreenWithMenuElements.h; path = ../src/ScreenWithMenuElements.h; sourceTree = "<group>"; };
 		AAA71EA005EE154E00D2E8FF /* global.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = global.cpp; sourceTree = "<group>"; };
@@ -3163,10 +3168,19 @@
 		AAFF55220549F43A00D02EE9 /* ComboGraph.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ComboGraph.h; path = ../src/ComboGraph.h; sourceTree = "<group>"; };
 		AAFF5541054E736D00D02EE9 /* Attack.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = Attack.cpp; path = ../src/Attack.cpp; sourceTree = "<group>"; };
 		AAFF5542054E736D00D02EE9 /* Attack.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = Attack.h; path = ../src/Attack.h; sourceTree = "<group>"; };
+		B7102E301545C0DA00C9D021 /* libavcodec.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavcodec.a; path = ffmpeg/lib/libavcodec.a; sourceTree = "<group>"; };
+		B7102E311545C0DA00C9D021 /* libavdevice.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavdevice.a; path = ffmpeg/lib/libavdevice.a; sourceTree = "<group>"; };
+		B7102E321545C0DA00C9D021 /* libavfilter.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavfilter.a; path = ffmpeg/lib/libavfilter.a; sourceTree = "<group>"; };
+		B7102E331545C0DA00C9D021 /* libavformat.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavformat.a; path = ffmpeg/lib/libavformat.a; sourceTree = "<group>"; };
+		B7102E341545C0DA00C9D021 /* libavutil.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavutil.a; path = ffmpeg/lib/libavutil.a; sourceTree = "<group>"; };
+		B7102E351545C0DA00C9D021 /* libswresample.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libswresample.a; path = ffmpeg/lib/libswresample.a; sourceTree = "<group>"; };
+		B7102E361545C0DA00C9D021 /* libswscale.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libswscale.a; path = ffmpeg/lib/libswscale.a; sourceTree = "<group>"; };
 		B75CE3B3137963350076A82D /* SongPosition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SongPosition.h; path = ../src/SongPosition.h; sourceTree = SOURCE_ROOT; };
 		B75CE3B4137963350076A82D /* SongPosition.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SongPosition.cpp; path = ../src/SongPosition.cpp; sourceTree = SOURCE_ROOT; };
 		B773AE6B140AAB1800C68DDD /* SpecialDirs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SpecialDirs.cpp; path = archutils/Darwin/SpecialDirs.cpp; sourceTree = "<group>"; };
 		B773AE6C140AAB1800C68DDD /* SpecialDirs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpecialDirs.h; path = archutils/Darwin/SpecialDirs.h; sourceTree = "<group>"; };
+		B7845BC2154051B6000DFDA8 /* ScreenEdit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ScreenEdit.cpp; path = ../src/ScreenEdit.cpp; sourceTree = "<group>"; };
+		B7845BC4154052CB000DFDA8 /* RageUtil.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RageUtil.cpp; path = ../src/RageUtil.cpp; sourceTree = "<group>"; };
 		EE4FD26014A8EFE1002B5758 /* libjpeg-sm5.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libjpeg-sm5.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE4FD26814A8F066002B5758 /* ansi2knr.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ansi2knr.c; path = ../extern/libjpeg/ansi2knr.c; sourceTree = SOURCE_ROOT; };
 		EE4FD26914A8F066002B5758 /* cdjpeg.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = cdjpeg.c; path = ../extern/libjpeg/cdjpeg.c; sourceTree = SOURCE_ROOT; };
@@ -3221,10 +3235,6 @@
 		EE4FD29C14A8F066002B5758 /* jmemnobs.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jmemnobs.c; path = ../extern/libjpeg/jmemnobs.c; sourceTree = SOURCE_ROOT; };
 		EE4FD29E14A8F066002B5758 /* jquant1.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jquant1.c; path = ../extern/libjpeg/jquant1.c; sourceTree = SOURCE_ROOT; };
 		EE4FD29F14A8F066002B5758 /* jquant2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jquant2.c; path = ../extern/libjpeg/jquant2.c; sourceTree = SOURCE_ROOT; };
-		EE879B5C132DEE720078FDDC /* RageDisplay_Legacy_Helpers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RageDisplay_Legacy_Helpers.cpp; path = ../src/RageDisplay_Legacy_Helpers.cpp; sourceTree = SOURCE_ROOT; };
-		EE879B5D132DEE720078FDDC /* RageDisplay_Legacy_Helpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RageDisplay_Legacy_Helpers.h; path = ../src/RageDisplay_Legacy_Helpers.h; sourceTree = SOURCE_ROOT; };
-		EE879B5E132DEE720078FDDC /* RageDisplay_Legacy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RageDisplay_Legacy.cpp; path = ../src/RageDisplay_Legacy.cpp; sourceTree = SOURCE_ROOT; };
-		EE879B5F132DEE720078FDDC /* RageDisplay_Legacy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RageDisplay_Legacy.h; path = ../src/RageDisplay_Legacy.h; sourceTree = SOURCE_ROOT; };
 		EE879BAA132E06C50078FDDC /* glew.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glew.c; path = src/glew.c; sourceTree = "<group>"; };
 		EE906F6412BF3A1B00146C96 /* ScreenInstallOverlay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ScreenInstallOverlay.cpp; path = ../src/ScreenInstallOverlay.cpp; sourceTree = SOURCE_ROOT; };
 		EE906F6512BF3A1B00146C96 /* ScreenInstallOverlay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ScreenInstallOverlay.h; path = ../src/ScreenInstallOverlay.h; sourceTree = SOURCE_ROOT; };
@@ -3287,12 +3297,18 @@
 				AA7C8D200B6748E400FD9940 /* libtomcrypt-sm5.a in Frameworks */,
 				AA7C8D1F0B6748E300FD9940 /* libtommath-sm5.a in Frameworks */,
 				AA059E2C0B8F0C67006F8139 /* libz_link.a in Frameworks */,
-				AAA0704E0CE5082E005A3060 /* libffmpeg_link.a in Frameworks */,
 				AAA071B40CE7C9C9005A3060 /* libmad-sm5.a in Frameworks */,
 				2B17AB9F13981271001AE57D /* libpng-1.5.1-sm5.a in Frameworks */,
 				2B17ABCF139815E0001AE57D /* libglew-sm5.a in Frameworks */,
 				2B17ABFC139817D5001AE57D /* libpcre-sm5.a in Frameworks */,
 				EE4FD30814A8F281002B5758 /* libjpeg-sm5.a in Frameworks */,
+				B7102E371545C0DA00C9D021 /* libavcodec.a in Frameworks */,
+				B7102E381545C0DA00C9D021 /* libavdevice.a in Frameworks */,
+				B7102E391545C0DA00C9D021 /* libavfilter.a in Frameworks */,
+				B7102E3A1545C0DA00C9D021 /* libavformat.a in Frameworks */,
+				B7102E3B1545C0DA00C9D021 /* libavutil.a in Frameworks */,
+				B7102E3C1545C0DA00C9D021 /* libswresample.a in Frameworks */,
+				B7102E3D1545C0DA00C9D021 /* libswscale.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3406,7 +3422,7 @@
 		19C28FACFE9D520D11CA2CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				AA29CE580558741A00961A51 /* StepMania.app */,
+				AA29CE580558741A00961A51 /* StepMania (Debug).app */,
 				AAE7817E0AC7E37B00AEFC64 /* liblua-5.1-sm5.a */,
 				AA7A2B940AE09B520054C5BA /* lua */,
 				AA7A2BAB0AE09CD50054C5BA /* luac */,
@@ -3417,7 +3433,7 @@
 				2B17ABC013981521001AE57D /* libglew-sm5.a */,
 				2B17ABE013981756001AE57D /* libpcre-sm5.a */,
 				2BD6E10C13D78B36008443DB /* libzlib-sm5.a */,
-				2B85696213DFAE2F005037D2 /* StepMania.app */,
+				2B85696213DFAE2F005037D2 /* StepMania (Debug).app */,
 				EE4FD26014A8EFE1002B5758 /* libjpeg-sm5.a */,
 			);
 			name = Products;
@@ -3426,6 +3442,13 @@
 		29B97314FDCFA39411CA2CEA /* SDL App */ = {
 			isa = PBXGroup;
 			children = (
+				B7102E301545C0DA00C9D021 /* libavcodec.a */,
+				B7102E311545C0DA00C9D021 /* libavdevice.a */,
+				B7102E321545C0DA00C9D021 /* libavfilter.a */,
+				B7102E331545C0DA00C9D021 /* libavformat.a */,
+				B7102E341545C0DA00C9D021 /* libavutil.a */,
+				B7102E351545C0DA00C9D021 /* libswresample.a */,
+				B7102E361545C0DA00C9D021 /* libswscale.a */,
 				2BDB87261371F7FF00E6FD3A /* extern */,
 				AA6EFF7404770F8B005F316C /* Actors */,
 				AA6EFEFA04770E84005F316C /* ActorsInGameplay */,
@@ -3624,7 +3647,7 @@
 				AA6E001C047711F3005F316C /* ScreenDemonstration.h */,
 				AA21D59C0712ADE4008B825F /* ScreenDimensions.cpp */,
 				AA6EFE6104770CF7005F316C /* ScreenDimensions.h */,
-				AA6E001D047711F3005F316C /* ScreenEdit.cpp */,
+				B7845BC2154051B6000DFDA8 /* ScreenEdit.cpp */,
 				AA6E001E047711F3005F316C /* ScreenEdit.h */,
 				AA6E001F047711F3005F316C /* ScreenEditMenu.cpp */,
 				AA6E0020047711F3005F316C /* ScreenEditMenu.h */,
@@ -3932,8 +3955,6 @@
 				AAA372D10909934500141131 /* MovieTexture_Generic.h */,
 				AAB3B39004C5921800D02EE9 /* MovieTexture_Null.cpp */,
 				AAB3B39104C5921800D02EE9 /* MovieTexture_Null.h */,
-				AAA372D20909934500141131 /* MovieTexture_Theora.cpp */,
-				AAA372D30909934500141131 /* MovieTexture_Theora.h */,
 			);
 			name = MovieTexture;
 			sourceTree = "<group>";
@@ -3945,12 +3966,12 @@
 				AA6EFD6E04770A7C005F316C /* RageBitmapTexture.h */,
 				AA6EFD6F04770A7C005F316C /* RageDisplay.cpp */,
 				AA6EFD7004770A7C005F316C /* RageDisplay.h */,
-				EE879B5E132DEE720078FDDC /* RageDisplay_Legacy.cpp */,
-				EE879B5F132DEE720078FDDC /* RageDisplay_Legacy.h */,
-				EE879B5C132DEE720078FDDC /* RageDisplay_Legacy_Helpers.cpp */,
-				EE879B5D132DEE720078FDDC /* RageDisplay_Legacy_Helpers.h */,
 				AAF7458E061181F700B19AD1 /* RageDisplay_Null.cpp */,
 				AAF7458F061181F700B19AD1 /* RageDisplay_Null.h */,
+				2B01A79216C881E500D5CFD2 /* RageDisplay_OGL_Helpers.cpp */,
+				2B01A79316C881E500D5CFD2 /* RageDisplay_OGL_Helpers.h */,
+				2B01A79416C881E500D5CFD2 /* RageDisplay_OGL.cpp */,
+				2B01A79516C881E500D5CFD2 /* RageDisplay_OGL.h */,
 				AA6EFD7204770A7C005F316C /* RageException.cpp */,
 				AA6EFD7304770A7C005F316C /* RageException.h */,
 				AA272C3004CD757100D02EE9 /* RageFile.cpp */,
@@ -4066,7 +4087,7 @@
 				AA6EFD9004770A7C005F316C /* RageTimer.h */,
 				AAE77F570AC3B52500AEFC64 /* RageTypes.cpp */,
 				AA6EFD9104770A7C005F316C /* RageTypes.h */,
-				AA6EFD9204770A7C005F316C /* RageUtil.cpp */,
+				B7845BC4154052CB000DFDA8 /* RageUtil.cpp */,
 				AA6EFD9304770A7C005F316C /* RageUtil.h */,
 				AACA592C07B5E23400763545 /* RageUtil_AutoPtr.h */,
 				AA8A404F06EEFF72002F25AB /* RageUtil_BackgroundLoader.cpp */,
@@ -5422,8 +5443,6 @@
 				2BA7925F1304F20D002BD8E1 /* NotesLoaderSSC.h in Headers */,
 				2BA792611304F20D002BD8E1 /* NotesWriterSSC.h in Headers */,
 				2B30D6831315EA7E00044B68 /* MouseDevice.h in Headers */,
-				EE879B61132DEE720078FDDC /* RageDisplay_Legacy_Helpers.h in Headers */,
-				EE879B63132DEE720078FDDC /* RageDisplay_Legacy.h in Headers */,
 				2B76698B132FF71500586512 /* NotesLoaderSMA.h in Headers */,
 				2BD06FEE137242680018CB9F /* json_batchallocator.h in Headers */,
 				B75CE3B5137963350076A82D /* SongPosition.h in Headers */,
@@ -5431,6 +5450,8 @@
 				2B9C2E90137A138B004C92F3 /* NotesWriterJson.h in Headers */,
 				2B43509513949F37006FA051 /* TimingSegments.h in Headers */,
 				B773AE6E140AAB1800C68DDD /* SpecialDirs.h in Headers */,
+				2B01A79816C881E500D5CFD2 /* RageDisplay_OGL_Helpers.h in Headers */,
+				2B01A79C16C881E500D5CFD2 /* RageDisplay_OGL.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5759,7 +5780,6 @@
 				AA40D36409A08D650068C0D5 /* ScoreKeeperNormal.h in Headers */,
 				AA40D36509A08D650068C0D5 /* ScreenStatsOverlay.h in Headers */,
 				AA40D36709A08D650068C0D5 /* MovieTexture_Generic.h in Headers */,
-				AA40D36809A08D650068C0D5 /* MovieTexture_Theora.h in Headers */,
 				AA40D36B09A08D650068C0D5 /* SpecialFiles.h in Headers */,
 				AA40D36C09A08D650068C0D5 /* ScreenOptionsManageEditSteps.h in Headers */,
 				AA40D36D09A08D650068C0D5 /* ScreenOptionsMemoryCard.h in Headers */,
@@ -5837,6 +5857,8 @@
 				AA6C6B110DC6B48C00E7A13E /* InputHandler_MacOSX_HID.h in Headers */,
 				AAC0BFE40E2951EC00F56EEB /* CryptHelpers.h in Headers */,
 				AAFF41A60F5BD4AD00FFDB67 /* ScreenOptionsExportPackage.h in Headers */,
+				2B01A79916C881E500D5CFD2 /* RageDisplay_OGL_Helpers.h in Headers */,
+				2B01A79D16C881E500D5CFD2 /* RageDisplay_OGL.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6043,7 +6065,7 @@
 			name = stepmania;
 			productInstallPath = "$(HOME)/Applications";
 			productName = "SDL App";
-			productReference = AA29CE580558741A00961A51 /* StepMania.app */;
+			productReference = AA29CE580558741A00961A51 /* StepMania (Debug).app */;
 			productType = "com.apple.product-type.application";
 		};
 		AA40D1B409A08D650068C0D5 /* stepmania-bare */ = {
@@ -6070,7 +6092,7 @@
 			name = "stepmania-bare";
 			productInstallPath = "$(HOME)/Applications";
 			productName = "SDL App";
-			productReference = 2B85696213DFAE2F005037D2 /* StepMania.app */;
+			productReference = 2B85696213DFAE2F005037D2 /* StepMania (Debug).app */;
 			productType = "com.apple.product-type.application";
 		};
 		AA7A2B930AE09B520054C5BA /* lua */ = {
@@ -6199,9 +6221,10 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 0460;
 			};
-			buildConfigurationList = AAC845130856A19700A9FEAB /* Build configuration list for PBXProject "stepmania" */;
-			compatibilityVersion = "Xcode 3.1";
+			buildConfigurationList = AAC845130856A19700A9FEAB /* Build configuration list for PBXProject "stepmania_xcode4.3" */;
+			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 1;
 			knownRegions = (
@@ -6435,7 +6458,6 @@
 			buildActionMask = 2147483647;
 			comments = "We need a better way of organizing compile order here.";
 			files = (
-				AA29CD520558741A00961A51 /* RageUtil.cpp in Sources */,
 				AA29CD420558741A00961A51 /* RageBitmapTexture.cpp in Sources */,
 				AA29CD430558741A00961A51 /* RageDisplay.cpp in Sources */,
 				AA29CD440558741A00961A51 /* RageException.cpp in Sources */,
@@ -6533,7 +6555,6 @@
 				AA29CDBA0558741A00961A51 /* Screen.cpp in Sources */,
 				AA29CDBB0558741A00961A51 /* ScreenAttract.cpp in Sources */,
 				AA29CDBE0558741A00961A51 /* ScreenDemonstration.cpp in Sources */,
-				AA29CDBF0558741A00961A51 /* ScreenEdit.cpp in Sources */,
 				AA29CDC00558741A00961A51 /* ScreenEditMenu.cpp in Sources */,
 				AA29CDC10558741A00961A51 /* ScreenEvaluation.cpp in Sources */,
 				AA29CDC50558741A00961A51 /* ScreenGameplay.cpp in Sources */,
@@ -6742,7 +6763,6 @@
 				AAF34ADE0900AEBD0006EDB7 /* ScoreKeeperNormal.cpp in Sources */,
 				AAF34AED0900B00C0006EDB7 /* ScreenStatsOverlay.cpp in Sources */,
 				AAA372D40909934500141131 /* MovieTexture_Generic.cpp in Sources */,
-				AAA372D60909934500141131 /* MovieTexture_Theora.cpp in Sources */,
 				AA2FB639091212B0000FD574 /* LifeMeter.cpp in Sources */,
 				AAFBEED1094D7FCB000029DE /* SpecialFiles.cpp in Sources */,
 				AAFBEEEB094D807E000029DE /* ScreenOptionsManageEditSteps.cpp in Sources */,
@@ -6830,13 +6850,15 @@
 				EE906F8A12BF3C7C00146C96 /* FileDownload.cpp in Sources */,
 				2BA792601304F20D002BD8E1 /* NotesWriterSSC.cpp in Sources */,
 				2B30D6821315EA7E00044B68 /* MouseDevice.cpp in Sources */,
-				EE879B60132DEE720078FDDC /* RageDisplay_Legacy_Helpers.cpp in Sources */,
-				EE879B62132DEE720078FDDC /* RageDisplay_Legacy.cpp in Sources */,
 				2BD06FF1137242680018CB9F /* json_reader.cpp in Sources */,
 				2BD06FF2137242680018CB9F /* json_value.cpp in Sources */,
 				2BD06FF4137242680018CB9F /* json_writer.cpp in Sources */,
 				2B43509613949F37006FA051 /* TimingSegments.cpp in Sources */,
 				B773AE6D140AAB1800C68DDD /* SpecialDirs.cpp in Sources */,
+				B7845BC3154051B6000DFDA8 /* ScreenEdit.cpp in Sources */,
+				B7845BC5154052CB000DFDA8 /* RageUtil.cpp in Sources */,
+				2B01A79616C881E500D5CFD2 /* RageDisplay_OGL_Helpers.cpp in Sources */,
+				2B01A79A16C881E500D5CFD2 /* RageDisplay_OGL.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6844,7 +6866,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AA40D38109A08D650068C0D5 /* RageUtil.cpp in Sources */,
 				AA40D38209A08D650068C0D5 /* RageBitmapTexture.cpp in Sources */,
 				AA40D38309A08D650068C0D5 /* RageDisplay.cpp in Sources */,
 				AA40D38409A08D650068C0D5 /* RageException.cpp in Sources */,
@@ -6937,7 +6958,6 @@
 				AA40D3E909A08D650068C0D5 /* Screen.cpp in Sources */,
 				AA40D3EA09A08D650068C0D5 /* ScreenAttract.cpp in Sources */,
 				AA40D3EC09A08D650068C0D5 /* ScreenDemonstration.cpp in Sources */,
-				AA40D3ED09A08D650068C0D5 /* ScreenEdit.cpp in Sources */,
 				AA40D3EE09A08D650068C0D5 /* ScreenEditMenu.cpp in Sources */,
 				AA40D3EF09A08D650068C0D5 /* ScreenEvaluation.cpp in Sources */,
 				AA40D3F209A08D650068C0D5 /* ScreenGameplay.cpp in Sources */,
@@ -7142,7 +7162,6 @@
 				AA40D4F909A08D650068C0D5 /* ScoreKeeperNormal.cpp in Sources */,
 				AA40D4FA09A08D650068C0D5 /* ScreenStatsOverlay.cpp in Sources */,
 				AA40D4FC09A08D650068C0D5 /* MovieTexture_Generic.cpp in Sources */,
-				AA40D4FD09A08D650068C0D5 /* MovieTexture_Theora.cpp in Sources */,
 				AA40D4FF09A08D650068C0D5 /* LifeMeter.cpp in Sources */,
 				AA40D50109A08D650068C0D5 /* SpecialFiles.cpp in Sources */,
 				AA40D50209A08D650068C0D5 /* ScreenOptionsManageEditSteps.cpp in Sources */,
@@ -7228,6 +7247,8 @@
 				AA6C6B100DC6B48C00E7A13E /* InputHandler_MacOSX_HID.cpp in Sources */,
 				AAC0BFE30E2951EC00F56EEB /* CryptHelpers.cpp in Sources */,
 				AAFF41A50F5BD4AD00FFDB67 /* ScreenOptionsExportPackage.cpp in Sources */,
+				2B01A79716C881E500D5CFD2 /* RageDisplay_OGL_Helpers.cpp in Sources */,
+				2B01A79B16C881E500D5CFD2 /* RageDisplay_OGL.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7755,8 +7776,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)";
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "";
@@ -7788,7 +7809,6 @@
 				HEADER_SEARCH_PATHS = "../extern/libpng/**";
 				INSTALL_PATH = /usr/local/lib;
 				OTHER_LDFLAGS = "";
-				PREBINDING = NO;
 				PRODUCT_NAME = "png-1.5.1-sm5";
 				USER_HEADER_SEARCH_PATHS = "";
 			};
@@ -7798,8 +7818,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)";
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "";
@@ -7831,63 +7851,19 @@
 				HEADER_SEARCH_PATHS = "../extern/libpng/**";
 				INSTALL_PATH = /usr/local/lib;
 				OTHER_LDFLAGS = "";
-				PREBINDING = NO;
 				PRODUCT_NAME = "png-1.5.1-sm5";
 				USER_HEADER_SEARCH_PATHS = "";
 			};
 			name = PerformanceDebug;
 		};
-		2B17AB7513980FE0001AE57D /* Universal */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)";
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
-				GCC_MODEL_TUNING = G5;
-				GCC_PRECOMPILE_PREFIX_HEADER = NO;
-				GCC_PREFIX_HEADER = "";
-				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
-				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
-				GCC_WARN_ABOUT_INVALID_OFFSETOF_MACRO = NO;
-				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = NO;
-				GCC_WARN_ABOUT_MISSING_NEWLINE = NO;
-				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
-				GCC_WARN_ABOUT_POINTER_SIGNEDNESS = NO;
-				GCC_WARN_ABOUT_RETURN_TYPE = NO;
-				GCC_WARN_ALLOW_INCOMPLETE_PROTOCOL = NO;
-				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = NO;
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = NO;
-				GCC_WARN_MISSING_PARENTHESES = NO;
-				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = NO;
-				GCC_WARN_PROTOTYPE_CONVERSION = NO;
-				GCC_WARN_SHADOW = NO;
-				GCC_WARN_SIGN_COMPARE = NO;
-				GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = NO;
-				GCC_WARN_UNDECLARED_SELECTOR = NO;
-				GCC_WARN_UNINITIALIZED_AUTOS = NO;
-				GCC_WARN_UNKNOWN_PRAGMAS = NO;
-				GCC_WARN_UNUSED_FUNCTION = NO;
-				GCC_WARN_UNUSED_LABEL = NO;
-				GCC_WARN_UNUSED_VALUE = NO;
-				GCC_WARN_UNUSED_VARIABLE = NO;
-				HEADER_SEARCH_PATHS = "../extern/libpng/**";
-				INSTALL_PATH = /usr/local/lib;
-				OTHER_LDFLAGS = "";
-				PREBINDING = NO;
-				PRODUCT_NAME = "png-1.5.1-sm5";
-				USER_HEADER_SEARCH_PATHS = "";
-			};
-			name = Universal;
-		};
 		2B17AB7613980FE0001AE57D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)";
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
@@ -7920,7 +7896,6 @@
 				HEADER_SEARCH_PATHS = "../extern/libpng/**";
 				INSTALL_PATH = /usr/local/lib;
 				OTHER_LDFLAGS = "";
-				PREBINDING = NO;
 				PRODUCT_NAME = "png-1.5.1-sm5";
 				USER_HEADER_SEARCH_PATHS = "";
 			};
@@ -7930,8 +7905,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)";
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "";
@@ -7962,7 +7937,6 @@
 				HEADER_SEARCH_PATHS = "../extern/glew-1.5.8/include";
 				INSTALL_PATH = /usr/local/lib;
 				OTHER_LDFLAGS = "";
-				PREBINDING = NO;
 				PRODUCT_NAME = "glew-sm5";
 				USER_HEADER_SEARCH_PATHS = "";
 			};
@@ -7972,8 +7946,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)";
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "";
@@ -8004,62 +7978,19 @@
 				HEADER_SEARCH_PATHS = "../extern/glew-1.5.8/include";
 				INSTALL_PATH = /usr/local/lib;
 				OTHER_LDFLAGS = "";
-				PREBINDING = NO;
 				PRODUCT_NAME = "glew-sm5";
 				USER_HEADER_SEARCH_PATHS = "";
 			};
 			name = PerformanceDebug;
 		};
-		2B17ABC313981522001AE57D /* Universal */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)";
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
-				GCC_MODEL_TUNING = G5;
-				GCC_PRECOMPILE_PREFIX_HEADER = NO;
-				GCC_PREFIX_HEADER = "";
-				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
-				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
-				GCC_WARN_ABOUT_INVALID_OFFSETOF_MACRO = NO;
-				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = NO;
-				GCC_WARN_ABOUT_MISSING_NEWLINE = NO;
-				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
-				GCC_WARN_ABOUT_POINTER_SIGNEDNESS = NO;
-				GCC_WARN_ABOUT_RETURN_TYPE = NO;
-				GCC_WARN_ALLOW_INCOMPLETE_PROTOCOL = NO;
-				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = NO;
-				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = NO;
-				GCC_WARN_MISSING_PARENTHESES = NO;
-				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = NO;
-				GCC_WARN_PROTOTYPE_CONVERSION = NO;
-				GCC_WARN_SHADOW = NO;
-				GCC_WARN_SIGN_COMPARE = NO;
-				GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = NO;
-				GCC_WARN_UNDECLARED_SELECTOR = NO;
-				GCC_WARN_UNINITIALIZED_AUTOS = NO;
-				GCC_WARN_UNKNOWN_PRAGMAS = NO;
-				GCC_WARN_UNUSED_FUNCTION = NO;
-				GCC_WARN_UNUSED_LABEL = NO;
-				GCC_WARN_UNUSED_VALUE = NO;
-				GCC_WARN_UNUSED_VARIABLE = NO;
-				HEADER_SEARCH_PATHS = "../extern/glew-1.5.8/include";
-				INSTALL_PATH = /usr/local/lib;
-				OTHER_LDFLAGS = "";
-				PREBINDING = NO;
-				PRODUCT_NAME = "glew-sm5";
-				USER_HEADER_SEARCH_PATHS = "";
-			};
-			name = Universal;
-		};
 		2B17ABC413981522001AE57D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)";
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
@@ -8091,7 +8022,6 @@
 				HEADER_SEARCH_PATHS = "../extern/glew-1.5.8/include";
 				INSTALL_PATH = /usr/local/lib;
 				OTHER_LDFLAGS = "";
-				PREBINDING = NO;
 				PRODUCT_NAME = "glew-sm5";
 				USER_HEADER_SEARCH_PATHS = "";
 			};
@@ -8101,8 +8031,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_WARN_CXX0X_EXTENSIONS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)";
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = "";
 				GCC_PREFIX_HEADER = "";
@@ -8115,6 +8046,7 @@
 				GCC_WARN_ABOUT_POINTER_SIGNEDNESS = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = NO;
 				GCC_WARN_ALLOW_INCOMPLETE_PROTOCOL = NO;
+				GCC_WARN_CHECK_SWITCH_STATEMENTS = NO;
 				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = NO;
 				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = NO;
 				GCC_WARN_MISSING_PARENTHESES = NO;
@@ -8132,7 +8064,6 @@
 				GCC_WARN_UNUSED_VARIABLE = NO;
 				INSTALL_PATH = /usr/local/lib;
 				OTHER_LDFLAGS = "";
-				PREBINDING = NO;
 				PRODUCT_NAME = "pcre-sm5";
 			};
 			name = Native;
@@ -8141,8 +8072,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_WARN_CXX0X_EXTENSIONS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)";
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = "";
 				GCC_PREFIX_HEADER = "";
@@ -8155,6 +8087,7 @@
 				GCC_WARN_ABOUT_POINTER_SIGNEDNESS = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = NO;
 				GCC_WARN_ALLOW_INCOMPLETE_PROTOCOL = NO;
+				GCC_WARN_CHECK_SWITCH_STATEMENTS = NO;
 				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = NO;
 				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = NO;
 				GCC_WARN_MISSING_PARENTHESES = NO;
@@ -8172,59 +8105,19 @@
 				GCC_WARN_UNUSED_VARIABLE = NO;
 				INSTALL_PATH = /usr/local/lib;
 				OTHER_LDFLAGS = "";
-				PREBINDING = NO;
 				PRODUCT_NAME = "pcre-sm5";
 			};
 			name = PerformanceDebug;
-		};
-		2B17ABE313981757001AE57D /* Universal */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)";
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
-				GCC_MODEL_TUNING = G5;
-				GCC_PRECOMPILE_PREFIX_HEADER = "";
-				GCC_PREFIX_HEADER = "";
-				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
-				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
-				GCC_WARN_ABOUT_INVALID_OFFSETOF_MACRO = NO;
-				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = NO;
-				GCC_WARN_ABOUT_MISSING_NEWLINE = NO;
-				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
-				GCC_WARN_ABOUT_POINTER_SIGNEDNESS = NO;
-				GCC_WARN_ABOUT_RETURN_TYPE = NO;
-				GCC_WARN_ALLOW_INCOMPLETE_PROTOCOL = NO;
-				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = NO;
-				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = NO;
-				GCC_WARN_MISSING_PARENTHESES = NO;
-				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = NO;
-				GCC_WARN_PROTOTYPE_CONVERSION = NO;
-				GCC_WARN_SHADOW = NO;
-				GCC_WARN_SIGN_COMPARE = NO;
-				GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = NO;
-				GCC_WARN_UNDECLARED_SELECTOR = NO;
-				GCC_WARN_UNINITIALIZED_AUTOS = NO;
-				GCC_WARN_UNKNOWN_PRAGMAS = NO;
-				GCC_WARN_UNUSED_FUNCTION = NO;
-				GCC_WARN_UNUSED_LABEL = NO;
-				GCC_WARN_UNUSED_VALUE = NO;
-				GCC_WARN_UNUSED_VARIABLE = NO;
-				INSTALL_PATH = /usr/local/lib;
-				OTHER_LDFLAGS = "";
-				PREBINDING = NO;
-				PRODUCT_NAME = "pcre-sm5";
-			};
-			name = Universal;
 		};
 		2B17ABE413981757001AE57D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_WARN_CXX0X_EXTENSIONS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)";
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = "";
@@ -8238,6 +8131,7 @@
 				GCC_WARN_ABOUT_POINTER_SIGNEDNESS = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = NO;
 				GCC_WARN_ALLOW_INCOMPLETE_PROTOCOL = NO;
+				GCC_WARN_CHECK_SWITCH_STATEMENTS = NO;
 				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = NO;
 				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = NO;
 				GCC_WARN_MISSING_PARENTHESES = NO;
@@ -8255,7 +8149,6 @@
 				GCC_WARN_UNUSED_VARIABLE = NO;
 				INSTALL_PATH = /usr/local/lib;
 				OTHER_LDFLAGS = "";
-				PREBINDING = NO;
 				PRODUCT_NAME = "pcre-sm5";
 			};
 			name = Debug;
@@ -8264,89 +8157,29 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_WARN_CXX0X_EXTENSIONS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)";
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
-				INSTALL_PATH = /usr/local/lib;
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../extern/zlib\"",
-				);
-				OTHER_LDFLAGS = (
-					"-framework",
-					Foundation,
-					"-framework",
-					AppKit,
-				);
-				PREBINDING = NO;
-				PRODUCT_NAME = "zlib-sm5";
-			};
-			name = Native;
-		};
-		2BD6E10E13D78B37008443DB /* PerformanceDebug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)";
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
-				GCC_MODEL_TUNING = G5;
-				INSTALL_PATH = /usr/local/lib;
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../extern/zlib\"",
-				);
-				OTHER_LDFLAGS = (
-					"-framework",
-					Foundation,
-					"-framework",
-					AppKit,
-				);
-				PREBINDING = NO;
-				PRODUCT_NAME = "zlib-sm5";
-			};
-			name = PerformanceDebug;
-		};
-		2BD6E10F13D78B37008443DB /* Universal */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)";
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
-				GCC_MODEL_TUNING = G5;
-				INSTALL_PATH = /usr/local/lib;
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../extern/zlib\"",
-				);
-				PRODUCT_NAME = "zlib-sm5";
-			};
-			name = Universal;
-		};
-		2BD6E11013D78B37008443DB /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)";
-				COPY_PHASE_STRIP = NO;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
-				GCC_MODEL_TUNING = G5;
-				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
+				GCC_WARN_ABOUT_INVALID_OFFSETOF_MACRO = NO;
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = NO;
 				GCC_WARN_ABOUT_MISSING_NEWLINE = NO;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
 				GCC_WARN_ABOUT_POINTER_SIGNEDNESS = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = NO;
 				GCC_WARN_ALLOW_INCOMPLETE_PROTOCOL = NO;
+				GCC_WARN_CHECK_SWITCH_STATEMENTS = NO;
+				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = NO;
 				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = NO;
 				GCC_WARN_MISSING_PARENTHESES = NO;
-				GCC_WARN_PROTOTYPE_CONVERSION = NO;
+				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = NO;
 				GCC_WARN_SHADOW = NO;
 				GCC_WARN_SIGN_COMPARE = NO;
 				GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = NO;
 				GCC_WARN_UNDECLARED_SELECTOR = NO;
+				GCC_WARN_UNINITIALIZED_AUTOS = NO;
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
 				GCC_WARN_UNUSED_FUNCTION = NO;
 				GCC_WARN_UNUSED_LABEL = NO;
@@ -8363,7 +8196,104 @@
 					"-framework",
 					AppKit,
 				);
-				PREBINDING = NO;
+				PRODUCT_NAME = "zlib-sm5";
+			};
+			name = Native;
+		};
+		2BD6E10E13D78B37008443DB /* PerformanceDebug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_WARN_CXX0X_EXTENSIONS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)";
+				GCC_MODEL_TUNING = G5;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
+				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
+				GCC_WARN_ABOUT_INVALID_OFFSETOF_MACRO = NO;
+				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = NO;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = NO;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
+				GCC_WARN_ABOUT_POINTER_SIGNEDNESS = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = NO;
+				GCC_WARN_ALLOW_INCOMPLETE_PROTOCOL = NO;
+				GCC_WARN_CHECK_SWITCH_STATEMENTS = NO;
+				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = NO;
+				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = NO;
+				GCC_WARN_MISSING_PARENTHESES = NO;
+				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = NO;
+				GCC_WARN_SHADOW = NO;
+				GCC_WARN_SIGN_COMPARE = NO;
+				GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = NO;
+				GCC_WARN_UNDECLARED_SELECTOR = NO;
+				GCC_WARN_UNINITIALIZED_AUTOS = NO;
+				GCC_WARN_UNKNOWN_PRAGMAS = NO;
+				GCC_WARN_UNUSED_FUNCTION = NO;
+				GCC_WARN_UNUSED_LABEL = NO;
+				GCC_WARN_UNUSED_VALUE = NO;
+				GCC_WARN_UNUSED_VARIABLE = NO;
+				INSTALL_PATH = /usr/local/lib;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../extern/zlib\"",
+				);
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PRODUCT_NAME = "zlib-sm5";
+			};
+			name = PerformanceDebug;
+		};
+		2BD6E11013D78B37008443DB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_WARN_CXX0X_EXTENSIONS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)";
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
+				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
+				GCC_WARN_ABOUT_INVALID_OFFSETOF_MACRO = NO;
+				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = NO;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = NO;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
+				GCC_WARN_ABOUT_POINTER_SIGNEDNESS = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = NO;
+				GCC_WARN_ALLOW_INCOMPLETE_PROTOCOL = NO;
+				GCC_WARN_CHECK_SWITCH_STATEMENTS = NO;
+				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = NO;
+				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = NO;
+				GCC_WARN_MISSING_PARENTHESES = NO;
+				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = NO;
+				GCC_WARN_PROTOTYPE_CONVERSION = NO;
+				GCC_WARN_SHADOW = NO;
+				GCC_WARN_SIGN_COMPARE = NO;
+				GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = NO;
+				GCC_WARN_UNDECLARED_SELECTOR = NO;
+				GCC_WARN_UNINITIALIZED_AUTOS = NO;
+				GCC_WARN_UNKNOWN_PRAGMAS = NO;
+				GCC_WARN_UNUSED_FUNCTION = NO;
+				GCC_WARN_UNUSED_LABEL = NO;
+				GCC_WARN_UNUSED_VALUE = NO;
+				GCC_WARN_UNUSED_VARIABLE = NO;
+				INSTALL_PATH = /usr/local/lib;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../extern/zlib\"",
+				);
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
 				PRODUCT_NAME = "zlib-sm5";
 			};
 			name = Debug;
@@ -8371,9 +8301,9 @@
 		AA0AA8FE0963CF7700427F4D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = YES;
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
@@ -8398,17 +8328,19 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = AA8B8C49091F48C000D14C5F /* product.xcconfig */;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				CONFIGURATION_BUILD_DIR = "$(SYMROOT)";
 				FULL_NAME = "$(PRODUCT_NAME).$(WRAPPER_EXTENSION)";
-				GCC_AUTO_VECTORIZATION = NO;
-				GCC_ENABLE_SSE3_EXTENSIONS = NO;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
 				GCC_PREFIX_HEADER = "$(SRCROOT)/../src/archutils/Darwin/StepMania.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = "DEBUG=1";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					_XOPEN_SOURCE,
+					"DEBUG=1",
+				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
 					"$(SRCROOT)/../src",
-					"$(SRCROOT)/../src/ffmpeg/include",
+					"$(SRCROOT)/../Xcode/ffmpeg/include",
 					"$(SRCROOT)/../src/vorbis",
 					"$(SRCROOT)/../extern/libjpeg",
 					"$(SRCROOT)/../src/libpng/include",
@@ -8421,9 +8353,11 @@
 					"$(SRCROOT)/build/$(CONFIGURATION)",
 					"$(SRCROOT)/Libraries",
 					"\"$(SRCROOT)/../extern/mad-0.15.1b/msvc++/Release\"",
+					"\"$(SRCROOT)/ffmpeg\"",
+					"\"$(SRCROOT)/ffmpeg/lib\"",
 				);
-				LIBRARY_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/build\"";
 				LINKER_DISPLAYS_MANGLED_NAMES = NO;
+				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				OBJROOT = "$(SRCROOT)/build";
 				OTHER_CPLUSPLUSFLAGS = (
 					"-finline-limit=300",
@@ -8431,7 +8365,9 @@
 					"-fno-exceptions",
 					"-falign-loops=16",
 				);
-				PRODUCT_NAME = StepMania;
+				OTHER_LDFLAGS = "-lbz2";
+				PRODUCT_NAME = "StepMania (Debug)";
+				SDKROOT = "";
 				SYMROOT = "$(SRCROOT)/..";
 				WRAPPER_EXTENSION = app;
 			};
@@ -8444,36 +8380,27 @@
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)";
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = YES;
-				DEBUG_INFORMATION_FORMAT = dwarf;
 				EXCLUDED_RECURSIVE_SEARCH_PATH_SUBDIRECTORIES = "*.nib *.lproj *.framework *.gch *.xcode* (*) CVS .svn .hg .git";
-				GCC_ALTIVEC_EXTENSIONS = YES;
-				GCC_DEBUGGING_SYMBOLS = full;
-				GCC_DYNAMIC_NO_PIC = YES;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_ENABLE_SYMBOL_SEPARATION = NO;
 				GCC_FAST_MATH = NO;
 				GCC_FAST_OBJC_DISPATCH = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
-				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PFE_FILE_C_DIALECTS = "c objective-c c++ objective-c++";
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = "DEBUG=1";
 				GCC_STRICT_ALIASING = YES;
 				GCC_UNROLL_LOOPS = YES;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_VERSION = "";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
 				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
-				GCC_WARN_EFFECTIVE_CPLUSPLUS_VIOLATIONS = NO;
 				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = YES;
 				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
 				GCC_WARN_MISSING_PARENTHESES = YES;
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
-				GCC_WARN_PROTOTYPE_CONVERSION = YES;
 				GCC_WARN_SHADOW = YES;
 				GCC_WARN_SIGN_COMPARE = YES;
 				GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = YES;
@@ -8486,19 +8413,13 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/Libraries";
 				LINKER_DISPLAYS_MANGLED_NAMES = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.5;
-				MACOSX_DEPLOYMENT_TARGET_i386 = 10.5;
-				MACOSX_DEPLOYMENT_TARGET_ppc = 10.5;
-				ONLY_LINK_ESSENTIAL_SYMBOLS = YES;
-				PREBINDING = NO;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				PRESERVE_DEAD_CODE_INITS_AND_TERMS = YES;
-				SDKROOT = macosx10.5;
-				SDKROOT_i386 = "";
-				SDKROOT_ppc = "";
+				SDKROOT = "";
 				SHARED_PRECOMPS_DIR = "/Library/Caches/com.apple.Xcode.$(UID)/SharedPrecompiledHeaders/$(PRODUCT_NAME)/$(CONFIGURATION)";
 				STRIP_INSTALLED_PRODUCT = NO;
 				STRIP_STYLE = "non-global";
-				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/../extern/glew-1.5.8/include $(PROJECT_DIR)/../extern/jsoncpp/include";
+				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/../extern/glew-1.5.8/include $(PROJECT_DIR)/../extern/jsoncpp/include $(PROJECT_DIR)/../extern/vorbis";
 			};
 			name = Debug;
 		};
@@ -8506,6 +8427,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = AA8B8C49091F48C000D14C5F /* product.xcconfig */;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SRCROOT)/Frameworks",
 					"$(SYSTEM_LIBRARY_DIR)/Frameworks",
@@ -8550,58 +8472,11 @@
 			};
 			name = Native;
 		};
-		AA40D52909A08D650068C0D5 /* Universal */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = AA8B8C49091F48C000D14C5F /* product.xcconfig */;
-			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(SRCROOT)/Frameworks",
-					"$(SYSTEM_LIBRARY_DIR)/Frameworks",
-					"$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Versions/Current/Frameworks",
-				);
-				FULL_NAME = "$(PRODUCT_NAME).$(WRAPPER_EXTENSION)";
-				GCC_PREFIX_HEADER = "$(SRCROOT)/../src/archutils/Darwin/StepMania.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					NO_MP3_SUPPORT,
-					WITHOUT_NETWORKING,
-				);
-				HEADER_SEARCH_PATHS = (
-					"$(SRCROOT)/../src",
-					"$(SRCROOT)/Frameworks/ffmpeg.framework/Headers",
-					"$(SRCROOT)/../src/vorbis",
-					"$(SRCROOT)/../src/libjpeg",
-					"$(SRCROOT)/../src/libpng/include",
-					"$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Versions/Current/Frameworks/CarbonCore.framework/Versions/A/Headers",
-				);
-				INFOPLIST_FILE = "Info-StepMania.plist";
-				INFOPLIST_PREFIX_HEADER = "$(SRCROOT)/../src/ProductInfo.h";
-				INFOPLIST_PREPROCESS = YES;
-				INFOPLIST_PREPROCESSOR_DEFINITIONS = "EXECUTABLE_NAME=\"$(PRODUCT_NAME)\"";
-				INSTALL_PATH = "$(HOME)/Applications";
-				LIBRARY_SEARCH_PATHS = (
-					"$(SRCROOT)/Libraries",
-					"$(SRCROOT)/build/$(CONFIGURATION)",
-					"$(LIBRARY_SEARCH_PATHS_QUOTED_1)",
-					"\"$(SRCROOT)/../extern/mad-0.15.1b/msvc++/Release\"",
-				);
-				LIBRARY_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/build\"";
-				OBJROOT = "$(SRCROOT)/build";
-				OTHER_CPLUSPLUSFLAGS = (
-					"-finline-limit=300",
-					"-fconstant-cfstrings",
-					"-fsingle-precision-constant",
-					"-fno-exceptions",
-				);
-				PRODUCT_NAME = StepMania;
-				SYMROOT = "$(SRCROOT)/..";
-				WRAPPER_EXTENSION = app;
-			};
-			name = Universal;
-		};
 		AA40D52A09A08D660068C0D5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = AA8B8C49091F48C000D14C5F /* product.xcconfig */;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SRCROOT)/Frameworks",
 					"$(SYSTEM_LIBRARY_DIR)/Frameworks",
@@ -8642,7 +8517,7 @@
 					"-fsingle-precision-constant",
 					"-fno-exceptions",
 				);
-				PRODUCT_NAME = StepMania;
+				PRODUCT_NAME = "StepMania (Debug)";
 				SYMROOT = "$(SRCROOT)/..";
 				WRAPPER_EXTENSION = app;
 			};
@@ -8665,24 +8540,6 @@
 				SYMROOT = "$(SRCROOT)/build";
 			};
 			name = Native;
-		};
-		AA7A2B9B0AE09BA50054C5BA /* Universal */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				GCC_DYNAMIC_NO_PIC = YES;
-				GCC_PRECOMPILE_PREFIX_HEADER = NO;
-				GCC_PREFIX_HEADER = "";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					LUA_USE_MACOSX,
-					"$(value)",
-				);
-				INSTALL_PATH = "$(HOME)/bin";
-				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/build/$(CONFIGURATION)";
-				OBJROOT = "$(SRCROOT)/build";
-				PRODUCT_NAME = lua;
-				SYMROOT = "$(SRCROOT)/build";
-			};
-			name = Universal;
 		};
 		AA7A2B9C0AE09BA50054C5BA /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -8717,21 +8574,6 @@
 			};
 			name = Native;
 		};
-		AA7A2BBB0AE09D4E0054C5BA /* Universal */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				GCC_DYNAMIC_NO_PIC = YES;
-				GCC_PRECOMPILE_PREFIX_HEADER = NO;
-				GCC_PREFIX_HEADER = "";
-				GCC_PREPROCESSOR_DEFINITIONS = LUA_USE_MACOSX;
-				INSTALL_PATH = "$(HOME)/bin";
-				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/build/$(CONFIGURATION)";
-				OBJROOT = "$(SRCROOT)/build";
-				PRODUCT_NAME = luac;
-				SYMROOT = "$(SRCROOT)/build";
-			};
-			name = Universal;
-		};
 		AA7A2BBC0AE09D4E0054C5BA /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -8750,20 +8592,15 @@
 		AA7A2BBE0AE09D4E0054C5BA /* Native */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				PRODUCT_NAME = "all lua";
 			};
 			name = Native;
 		};
-		AA7A2BBF0AE09D4E0054C5BA /* Universal */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				PRODUCT_NAME = "all lua";
-			};
-			name = Universal;
-		};
 		AA7A2BC00AE09D4E0054C5BA /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -8775,6 +8612,7 @@
 		AA7C89820B67447E00FD9940 /* Native */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)";
 				GCC_DYNAMIC_NO_PIC = YES;
 				GCC_MODEL_TUNING = G5;
@@ -8787,24 +8625,10 @@
 			};
 			name = Native;
 		};
-		AA7C89830B67447E00FD9940 /* Universal */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)";
-				GCC_DYNAMIC_NO_PIC = YES;
-				GCC_MODEL_TUNING = G5;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
-				GCC_WARN_ALLOW_INCOMPLETE_PROTOCOL = NO;
-				GCC_WARN_PROTOTYPE_CONVERSION = NO;
-				INSTALL_PATH = /usr/local/lib;
-				PRODUCT_NAME = "tommath-sm5";
-				SYMROOT = "$(SRCROOT)/build";
-			};
-			name = Universal;
-		};
 		AA7C89840B67447E00FD9940 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)";
 				GCC_DYNAMIC_NO_PIC = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -8822,6 +8646,7 @@
 		AA7C8B8F0B67464300FD9940 /* Native */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)";
 				DEAD_CODE_STRIPPING = NO;
 				GCC_DYNAMIC_NO_PIC = YES;
@@ -8836,26 +8661,10 @@
 			};
 			name = Native;
 		};
-		AA7C8B900B67464300FD9940 /* Universal */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)";
-				DEAD_CODE_STRIPPING = NO;
-				GCC_DYNAMIC_NO_PIC = YES;
-				GCC_ENABLE_CPP_RTTI = NO;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_WARN_ALLOW_INCOMPLETE_PROTOCOL = NO;
-				GCC_WARN_PROTOTYPE_CONVERSION = NO;
-				INSTALL_PATH = /usr/local/lib;
-				KEEP_PRIVATE_EXTERNS = YES;
-				PRODUCT_NAME = "tomcrypt-sm5";
-				SYMROOT = "$(SRCROOT)/build";
-			};
-			name = Universal;
-		};
 		AA7C8B910B67464300FD9940 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)";
 				DEAD_CODE_STRIPPING = NO;
 				GCC_DYNAMIC_NO_PIC = YES;
@@ -8877,11 +8686,11 @@
 		AAA070AA0CE7B0E2005A3060 /* Native */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)";
 				FPM = "";
 				"FPM[arch=i386]" = FPM_INTEL;
 				"FPM[arch=ppc]" = FPM_PPC;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"HAVE_ASSERT_H=1",
@@ -8905,7 +8714,6 @@
 				GCC_WARN_SIGN_COMPARE = NO;
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/../src/mad-0.15.1b";
 				INSTALL_PATH = /usr/local/lib;
-				PREBINDING = NO;
 				PRODUCT_NAME = "mad-sm5";
 			};
 			name = Native;
@@ -8913,11 +8721,11 @@
 		AAA070AB0CE7B0E2005A3060 /* PerformanceDebug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)";
 				FPM = "";
 				"FPM[arch=i386]" = FPM_INTEL;
 				"FPM[arch=ppc]" = FPM_PPC;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"HAVE_ASSERT_H=1",
@@ -8941,57 +8749,20 @@
 				GCC_WARN_SIGN_COMPARE = NO;
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/../src/mad-0.15.1b";
 				INSTALL_PATH = /usr/local/lib;
-				PREBINDING = NO;
 				PRODUCT_NAME = "mad-sm5";
 			};
 			name = PerformanceDebug;
 		};
-		AAA070AC0CE7B0E2005A3060 /* Universal */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)";
-				FPM = "";
-				"FPM[arch=i386]" = FPM_INTEL;
-				"FPM[arch=ppc]" = FPM_PPC;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
-				GCC_MODEL_TUNING = G5;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"HAVE_ASSERT_H=1",
-					"HAVE_DLFCN_H=1",
-					"HAVE_ERRNO_H=1",
-					"HAVE_FORK=1",
-					"HAVE_INTTYPES_H=1",
-					"HAVE_LIMITS_H=1",
-					"HAVE_MEMORY_H=1",
-					"HAVE_WAITPID=1",
-					"SIZEOF_LONG=4",
-					"$(FPM)",
-				);
-				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
-				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = NO;
-				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
-				GCC_WARN_ABOUT_POINTER_SIGNEDNESS = NO;
-				GCC_WARN_ALLOW_INCOMPLETE_PROTOCOL = NO;
-				GCC_WARN_PROTOTYPE_CONVERSION = NO;
-				GCC_WARN_SHADOW = NO;
-				GCC_WARN_SIGN_COMPARE = NO;
-				HEADER_SEARCH_PATHS = "$(SRCROOT)/../src/mad-0.15.1b";
-				INSTALL_PATH = /usr/local/lib;
-				PREBINDING = NO;
-				PRODUCT_NAME = "mad-sm5";
-			};
-			name = Universal;
-		};
 		AAA070AD0CE7B0E2005A3060 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)";
 				COPY_PHASE_STRIP = NO;
 				FPM = "";
 				"FPM[arch=i386]" = FPM_INTEL;
 				"FPM[arch=ppc]" = FPM_PPC;
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -9016,7 +8787,6 @@
 				GCC_WARN_SIGN_COMPARE = NO;
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/../src/mad-0.15.1b";
 				INSTALL_PATH = /usr/local/lib;
-				PREBINDING = NO;
 				PRODUCT_NAME = "mad-sm5";
 			};
 			name = Debug;
@@ -9027,35 +8797,26 @@
 				BUILD_VARIANTS = normal;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)";
 				DEAD_CODE_STRIPPING = YES;
-				DEBUG_INFORMATION_FORMAT = dwarf;
 				EXCLUDED_RECURSIVE_SEARCH_PATH_SUBDIRECTORIES = "*.nib *.lproj *.framework *.gch *.xcode* (*) CVS .svn .hg .git";
-				GCC_ALTIVEC_EXTENSIONS = YES;
-				GCC_DEBUGGING_SYMBOLS = full;
-				GCC_DYNAMIC_NO_PIC = YES;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_ENABLE_SYMBOL_SEPARATION = NO;
 				GCC_FAST_MATH = NO;
 				GCC_FAST_OBJC_DISPATCH = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
-				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 3;
-				GCC_PFE_FILE_C_DIALECTS = "c objective-c c++ objective-c++";
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_STRICT_ALIASING = YES;
 				GCC_UNROLL_LOOPS = YES;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_VERSION = "";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
 				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
-				GCC_WARN_EFFECTIVE_CPLUSPLUS_VIOLATIONS = NO;
 				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = YES;
 				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
 				GCC_WARN_MISSING_PARENTHESES = YES;
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
-				GCC_WARN_PROTOTYPE_CONVERSION = YES;
 				GCC_WARN_SHADOW = YES;
 				GCC_WARN_SIGN_COMPARE = YES;
 				GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = YES;
@@ -9068,19 +8829,13 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/Libraries";
 				LINKER_DISPLAYS_MANGLED_NAMES = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.5;
-				MACOSX_DEPLOYMENT_TARGET_i386 = 10.5;
-				MACOSX_DEPLOYMENT_TARGET_ppc = 10.5;
-				ONLY_LINK_ESSENTIAL_SYMBOLS = YES;
-				PREBINDING = NO;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				PRESERVE_DEAD_CODE_INITS_AND_TERMS = YES;
-				SDKROOT = macosx10.5;
-				SDKROOT_i386 = "";
-				SDKROOT_ppc = "";
+				SDKROOT = "";
 				SHARED_PRECOMPS_DIR = "/Library/Caches/com.apple.Xcode.$(UID)/SharedPrecompiledHeaders/$(PRODUCT_NAME)/$(CONFIGURATION)";
 				STRIP_INSTALLED_PRODUCT = YES;
 				STRIP_STYLE = "non-global";
-				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/../extern/glew-1.5.8/include $(PROJECT_DIR)/../extern/jsoncpp/include";
+				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/../extern/glew-1.5.8/include $(PROJECT_DIR)/../extern/jsoncpp/include $(PROJECT_DIR)/../extern/vorbis";
 			};
 			name = PerformanceDebug;
 		};
@@ -9088,20 +8843,22 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = AA8B8C49091F48C000D14C5F /* product.xcconfig */;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				CONFIGURATION_BUILD_DIR = "$(SYMROOT)";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = stabs;
 				FULL_NAME = "$(PRODUCT_NAME).$(WRAPPER_EXTENSION)";
-				GCC_AUTO_VECTORIZATION = NO;
-				GCC_ENABLE_SSE3_EXTENSIONS = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
 				GCC_PREFIX_HEADER = "$(SRCROOT)/../src/archutils/Darwin/StepMania.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = "DEBUG=1";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					_XOPEN_SOURCE,
+					"DEBUG=1",
+				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
 					"$(SRCROOT)/../src",
-					"$(SRCROOT)/../src/ffmpeg/include",
+					"$(SRCROOT)/../Xcode/ffmpeg/include",
 					"$(SRCROOT)/../src/vorbis",
 					"$(SRCROOT)/../src/libjpeg",
 					"$(SRCROOT)/../src/libpng/include",
@@ -9114,9 +8871,11 @@
 					"$(SRCROOT)/build/$(CONFIGURATION)",
 					"$(SRCROOT)/Libraries",
 					"\"$(SRCROOT)/../extern/mad-0.15.1b/msvc++/Release\"",
+					"\"$(SRCROOT)/ffmpeg\"",
+					"\"$(SRCROOT)/ffmpeg/lib\"",
 				);
-				LIBRARY_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/build\"";
 				LINKER_DISPLAYS_MANGLED_NAMES = NO;
+				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				OBJROOT = "$(SRCROOT)/build";
 				OTHER_CPLUSPLUSFLAGS = (
 					"-finline-limit=300",
@@ -9124,7 +8883,9 @@
 					"-fno-exceptions",
 					"-falign-loops=16",
 				);
-				PRODUCT_NAME = StepMania;
+				OTHER_LDFLAGS = "-lbz2";
+				PRODUCT_NAME = "StepMania (Performance-Debug)";
+				SDKROOT = "";
 				STRIP_INSTALLED_PRODUCT = NO;
 				SYMROOT = "$(SRCROOT)/..";
 				WRAPPER_EXTENSION = app;
@@ -9134,9 +8895,9 @@
 		AABF4DBC0CD37960005A3060 /* PerformanceDebug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = YES;
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
@@ -9161,6 +8922,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = AA8B8C49091F48C000D14C5F /* product.xcconfig */;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SRCROOT)/Frameworks",
 					"$(SYSTEM_LIBRARY_DIR)/Frameworks",
@@ -9199,7 +8961,7 @@
 					"-fsingle-precision-constant",
 					"-fno-exceptions",
 				);
-				PRODUCT_NAME = StepMania;
+				PRODUCT_NAME = "StepMania (Performance-Debug)";
 				SYMROOT = "$(SRCROOT)/..";
 				WRAPPER_EXTENSION = app;
 			};
@@ -9208,6 +8970,7 @@
 		AABF4DBE0CD37960005A3060 /* PerformanceDebug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)";
 				GCC_DEBUGGING_SYMBOLS = full;
 				GCC_DYNAMIC_NO_PIC = YES;
@@ -9266,6 +9029,7 @@
 		AABF4DC10CD37960005A3060 /* PerformanceDebug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				PRODUCT_NAME = "all lua";
 			};
 			name = PerformanceDebug;
@@ -9273,6 +9037,7 @@
 		AABF4DC20CD37960005A3060 /* PerformanceDebug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)";
 				GCC_DYNAMIC_NO_PIC = YES;
 				GCC_MODEL_TUNING = G5;
@@ -9288,6 +9053,7 @@
 		AABF4DC30CD37960005A3060 /* PerformanceDebug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)";
 				DEAD_CODE_STRIPPING = NO;
 				GCC_DYNAMIC_NO_PIC = YES;
@@ -9305,9 +9071,9 @@
 		AAC8450D0856A19700A9FEAB /* Native */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = YES;
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
@@ -9332,16 +9098,15 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = AA8B8C49091F48C000D14C5F /* product.xcconfig */;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				CONFIGURATION_BUILD_DIR = "$(SYMROOT)";
 				FULL_NAME = "$(PRODUCT_NAME).$(WRAPPER_EXTENSION)";
-				GCC_AUTO_VECTORIZATION = YES;
-				GCC_ENABLE_SSE3_EXTENSIONS = YES;
-				GCC_ENABLE_SUPPLEMENTAL_SSE3_INSTRUCTIONS = YES;
 				GCC_PREFIX_HEADER = "$(SRCROOT)/../src/archutils/Darwin/StepMania.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = _XOPEN_SOURCE;
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
 					"$(SRCROOT)/../src",
-					"$(SRCROOT)/../src/ffmpeg/include",
+					"$(SRCROOT)/../Xcode/ffmpeg/include",
 					"$(SRCROOT)/../src/vorbis",
 					"$(SRCROOT)/../src/libjpeg",
 					"$(SRCROOT)/../src/libpng/include",
@@ -9354,9 +9119,11 @@
 					"$(SRCROOT)/build/$(CONFIGURATION)",
 					"$(SRCROOT)/Libraries",
 					"\"$(SRCROOT)/../extern/mad-0.15.1b/msvc++/Release\"",
+					"\"$(SRCROOT)/ffmpeg\"",
+					"\"$(SRCROOT)/ffmpeg/lib\"",
 				);
-				LIBRARY_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/build\"";
 				LINKER_DISPLAYS_MANGLED_NAMES = NO;
+				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				OBJROOT = "$(SRCROOT)/build";
 				OTHER_CPLUSPLUSFLAGS = (
 					"-finline-limit=300",
@@ -9364,7 +9131,9 @@
 					"-fno-exceptions",
 					"-falign-loops=16",
 				);
+				OTHER_LDFLAGS = "-lbz2";
 				PRODUCT_NAME = StepMania;
+				SDKROOT = "";
 				SYMROOT = "$(SRCROOT)/..";
 				WRAPPER_EXTENSION = app;
 			};
@@ -9376,35 +9145,26 @@
 				BUILD_VARIANTS = normal;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)";
 				DEAD_CODE_STRIPPING = YES;
-				DEBUG_INFORMATION_FORMAT = dwarf;
 				EXCLUDED_RECURSIVE_SEARCH_PATH_SUBDIRECTORIES = "*.nib *.lproj *.framework *.gch *.xcode* (*) CVS .svn .hg .git";
-				GCC_ALTIVEC_EXTENSIONS = YES;
-				GCC_DEBUGGING_SYMBOLS = full;
-				GCC_DYNAMIC_NO_PIC = YES;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_ENABLE_SYMBOL_SEPARATION = NO;
 				GCC_FAST_MATH = NO;
 				GCC_FAST_OBJC_DISPATCH = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
-				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 3;
-				GCC_PFE_FILE_C_DIALECTS = "c objective-c c++ objective-c++";
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_STRICT_ALIASING = YES;
 				GCC_UNROLL_LOOPS = YES;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_VERSION = "";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
 				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
-				GCC_WARN_EFFECTIVE_CPLUSPLUS_VIOLATIONS = NO;
 				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = YES;
 				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
 				GCC_WARN_MISSING_PARENTHESES = YES;
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
-				GCC_WARN_PROTOTYPE_CONVERSION = YES;
 				GCC_WARN_SHADOW = YES;
 				GCC_WARN_SIGN_COMPARE = YES;
 				GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = YES;
@@ -9417,157 +9177,20 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/Libraries";
 				LINKER_DISPLAYS_MANGLED_NAMES = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.5;
-				MACOSX_DEPLOYMENT_TARGET_i386 = 10.5;
-				MACOSX_DEPLOYMENT_TARGET_ppc = 10.5;
-				ONLY_LINK_ESSENTIAL_SYMBOLS = YES;
-				PREBINDING = NO;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				PRESERVE_DEAD_CODE_INITS_AND_TERMS = YES;
-				SDKROOT = macosx10.5;
-				SDKROOT_i386 = "";
-				SDKROOT_ppc = "";
+				SDKROOT = "";
 				SHARED_PRECOMPS_DIR = "/Library/Caches/com.apple.Xcode.$(UID)/SharedPrecompiledHeaders/$(PRODUCT_NAME)/$(CONFIGURATION)";
 				STRIP_INSTALLED_PRODUCT = YES;
 				STRIP_STYLE = "non-global";
-				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/../extern/glew-1.5.8/include $(PROJECT_DIR)/../extern/jsoncpp/include";
+				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/../extern/glew-1.5.8/include $(PROJECT_DIR)/../extern/jsoncpp/include $(PROJECT_DIR)/../extern/vorbis";
 			};
 			name = Native;
-		};
-		AAE44A2B0965707500B025E5 /* Universal */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-				DEAD_CODE_STRIPPING = YES;
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_OPTIMIZATION_LEVEL = 3;
-				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
-				GCC_WARN_SHADOW = NO;
-				GCC_WARN_SIGN_COMPARE = YES;
-				GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES;
-				GCC_WARN_UNKNOWN_PRAGMAS = YES;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_LABEL = NO;
-				GCC_WARN_UNUSED_PARAMETER = NO;
-				GCC_WARN_UNUSED_VALUE = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				LIBRARY_STYLE = Bundle;
-				MACOSX_DEPLOYMENT_TARGET = 10.5;
-				PRODUCT_NAME = version;
-				ZERO_LINK = NO;
-			};
-			name = Universal;
-		};
-		AAE44A2C0965707500B025E5 /* Universal */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = AA8B8C49091F48C000D14C5F /* product.xcconfig */;
-			buildSettings = {
-				CONFIGURATION_BUILD_DIR = "$(SYMROOT)";
-				FULL_NAME = "$(PRODUCT_NAME).$(WRAPPER_EXTENSION)";
-				GCC_AUTO_VECTORIZATION = NO;
-				GCC_ENABLE_OBJC_EXCEPTIONS = NO;
-				GCC_ENABLE_SSE3_EXTENSIONS = NO;
-				GCC_PREFIX_HEADER = "$(SRCROOT)/../src/archutils/Darwin/StepMania.pch";
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (
-					"$(SRCROOT)/../src",
-					"$(SRCROOT)/../src/ffmpeg/include",
-					"$(SRCROOT)/../src/vorbis",
-					"$(SRCROOT)/../src/libjpeg",
-					"$(SRCROOT)/../src/libpng/include",
-				);
-				INFOPLIST_FILE = "Info-StepMania.plist";
-				INFOPLIST_PREFIX_HEADER = "$(SRCROOT)/../src/ProductInfo.h";
-				INFOPLIST_PREPROCESS = YES;
-				INFOPLIST_PREPROCESSOR_DEFINITIONS = "EXECUTABLE_NAME=\"$(PRODUCT_NAME)\"";
-				LIBRARY_SEARCH_PATHS = (
-					"$(SRCROOT)/build/$(CONFIGURATION)",
-					"$(SRCROOT)/Libraries",
-					"\"$(SRCROOT)/../extern/mad-0.15.1b/msvc++/Release\"",
-				);
-				LIBRARY_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/build\"";
-				LINKER_DISPLAYS_MANGLED_NAMES = NO;
-				OBJROOT = "$(SRCROOT)/build";
-				OTHER_CPLUSPLUSFLAGS = (
-					"-finline-limit=300",
-					"-fconstant-cfstrings",
-					"-fno-exceptions",
-					"-falign-loops=16",
-				);
-				PRODUCT_NAME = StepMania;
-				SYMROOT = "$(SRCROOT)/..";
-				WRAPPER_EXTENSION = app;
-			};
-			name = Universal;
-		};
-		AAE44A2D0965707500B025E5 /* Universal */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				BUILD_VARIANTS = normal;
-				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)";
-				DEAD_CODE_STRIPPING = YES;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				EXCLUDED_RECURSIVE_SEARCH_PATH_SUBDIRECTORIES = "*.nib *.lproj *.framework *.gch *.xcode* (*) CVS .svn .hg .git";
-				GCC_ALTIVEC_EXTENSIONS = YES;
-				GCC_DEBUGGING_SYMBOLS = full;
-				GCC_DYNAMIC_NO_PIC = YES;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_ENABLE_SYMBOL_SEPARATION = NO;
-				GCC_FAST_MATH = NO;
-				GCC_FAST_OBJC_DISPATCH = NO;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
-				GCC_MODEL_TUNING = G5;
-				GCC_OPTIMIZATION_LEVEL = 3;
-				GCC_PFE_FILE_C_DIALECTS = "c objective-c c++ objective-c++";
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_STRICT_ALIASING = YES;
-				GCC_UNROLL_LOOPS = YES;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
-				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
-				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES;
-				GCC_WARN_EFFECTIVE_CPLUSPLUS_VIOLATIONS = NO;
-				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = YES;
-				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
-				GCC_WARN_MISSING_PARENTHESES = YES;
-				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
-				GCC_WARN_PROTOTYPE_CONVERSION = YES;
-				GCC_WARN_SHADOW = YES;
-				GCC_WARN_SIGN_COMPARE = YES;
-				GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = YES;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES;
-				GCC_WARN_UNKNOWN_PRAGMAS = YES;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_LABEL = YES;
-				GCC_WARN_UNUSED_VALUE = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/Libraries";
-				LINKER_DISPLAYS_MANGLED_NAMES = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.5;
-				MACOSX_DEPLOYMENT_TARGET_i386 = 10.5;
-				MACOSX_DEPLOYMENT_TARGET_ppc = 10.5;
-				ONLY_LINK_ESSENTIAL_SYMBOLS = YES;
-				PREBINDING = NO;
-				PRESERVE_DEAD_CODE_INITS_AND_TERMS = YES;
-				SDKROOT = macosx10.5;
-				SDKROOT_i386 = "";
-				SDKROOT_ppc = "";
-				SHARED_PRECOMPS_DIR = "/Library/Caches/com.apple.Xcode.$(UID)/SharedPrecompiledHeaders/$(PRODUCT_NAME)/$(CONFIGURATION)";
-				STRIP_INSTALLED_PRODUCT = YES;
-				STRIP_STYLE = "non-global";
-				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/../extern/glew-1.5.8/include $(PROJECT_DIR)/../extern/jsoncpp/include";
-			};
-			name = Universal;
 		};
 		AAE781800AC7E3BF00AEFC64 /* Native */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)";
 				GCC_DEBUGGING_SYMBOLS = full;
 				GCC_DYNAMIC_NO_PIC = YES;
@@ -9590,34 +9213,10 @@
 			};
 			name = Native;
 		};
-		AAE781810AC7E3BF00AEFC64 /* Universal */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)";
-				GCC_DEBUGGING_SYMBOLS = full;
-				GCC_DYNAMIC_NO_PIC = YES;
-				GCC_PRECOMPILE_PREFIX_HEADER = NO;
-				GCC_PREFIX_HEADER = "";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(value)",
-					LUA_USE_MACOSX,
-				);
-				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
-				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
-				GCC_WARN_ALLOW_INCOMPLETE_PROTOCOL = NO;
-				GCC_WARN_PROTOTYPE_CONVERSION = NO;
-				GCC_WARN_SHADOW = NO;
-				INSTALL_PATH = /usr/local/lib;
-				OBJROOT = "$(SRCROOT)/build";
-				PRECOMPS_INCLUDE_HEADERS_FROM_BUILT_PRODUCTS_DIR = NO;
-				PRODUCT_NAME = "lua-5.1-sm5";
-				SYMROOT = "$(SRCROOT)/build";
-			};
-			name = Universal;
-		};
 		AAE781820AC7E3BF00AEFC64 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)";
 				GCC_DEBUGGING_SYMBOLS = full;
 				GCC_DYNAMIC_NO_PIC = YES;
@@ -9644,8 +9243,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_WARN_CXX0X_EXTENSIONS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)";
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
@@ -9657,6 +9257,7 @@
 				GCC_WARN_ABOUT_POINTER_SIGNEDNESS = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = NO;
 				GCC_WARN_ALLOW_INCOMPLETE_PROTOCOL = NO;
+				GCC_WARN_CHECK_SWITCH_STATEMENTS = NO;
 				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = NO;
 				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = NO;
 				GCC_WARN_MISSING_PARENTHESES = NO;
@@ -9674,7 +9275,6 @@
 				GCC_WARN_UNUSED_VARIABLE = NO;
 				INSTALL_PATH = /usr/local/lib;
 				OTHER_LDFLAGS = "";
-				PREBINDING = NO;
 				PRODUCT_NAME = "jpeg-sm5";
 			};
 			name = Native;
@@ -9683,8 +9283,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_WARN_CXX0X_EXTENSIONS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)";
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
@@ -9696,6 +9297,7 @@
 				GCC_WARN_ABOUT_POINTER_SIGNEDNESS = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = NO;
 				GCC_WARN_ALLOW_INCOMPLETE_PROTOCOL = NO;
+				GCC_WARN_CHECK_SWITCH_STATEMENTS = NO;
 				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = NO;
 				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = NO;
 				GCC_WARN_MISSING_PARENTHESES = NO;
@@ -9713,57 +9315,19 @@
 				GCC_WARN_UNUSED_VARIABLE = NO;
 				INSTALL_PATH = /usr/local/lib;
 				OTHER_LDFLAGS = "";
-				PREBINDING = NO;
 				PRODUCT_NAME = "jpeg-sm5";
 			};
 			name = PerformanceDebug;
-		};
-		EE4FD26314A8EFE1002B5758 /* Universal */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)";
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
-				GCC_MODEL_TUNING = G5;
-				GCC_PRECOMPILE_PREFIX_HEADER = NO;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
-				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
-				GCC_WARN_ABOUT_INVALID_OFFSETOF_MACRO = NO;
-				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = NO;
-				GCC_WARN_ABOUT_MISSING_NEWLINE = NO;
-				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
-				GCC_WARN_ABOUT_POINTER_SIGNEDNESS = NO;
-				GCC_WARN_ABOUT_RETURN_TYPE = NO;
-				GCC_WARN_ALLOW_INCOMPLETE_PROTOCOL = NO;
-				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = NO;
-				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = NO;
-				GCC_WARN_MISSING_PARENTHESES = NO;
-				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = NO;
-				GCC_WARN_PROTOTYPE_CONVERSION = NO;
-				GCC_WARN_SHADOW = NO;
-				GCC_WARN_SIGN_COMPARE = NO;
-				GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = NO;
-				GCC_WARN_UNDECLARED_SELECTOR = NO;
-				GCC_WARN_UNINITIALIZED_AUTOS = NO;
-				GCC_WARN_UNKNOWN_PRAGMAS = NO;
-				GCC_WARN_UNUSED_FUNCTION = NO;
-				GCC_WARN_UNUSED_LABEL = NO;
-				GCC_WARN_UNUSED_VALUE = NO;
-				GCC_WARN_UNUSED_VARIABLE = NO;
-				INSTALL_PATH = /usr/local/lib;
-				OTHER_LDFLAGS = "";
-				PRODUCT_NAME = "jpeg-sm5";
-			};
-			name = Universal;
 		};
 		EE4FD26414A8EFE1002B5758 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_WARN_CXX0X_EXTENSIONS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)";
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
@@ -9776,6 +9340,7 @@
 				GCC_WARN_ABOUT_POINTER_SIGNEDNESS = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = NO;
 				GCC_WARN_ALLOW_INCOMPLETE_PROTOCOL = NO;
+				GCC_WARN_CHECK_SWITCH_STATEMENTS = NO;
 				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = NO;
 				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = NO;
 				GCC_WARN_MISSING_PARENTHESES = NO;
@@ -9793,7 +9358,6 @@
 				GCC_WARN_UNUSED_VARIABLE = NO;
 				INSTALL_PATH = /usr/local/lib;
 				OTHER_LDFLAGS = "";
-				PREBINDING = NO;
 				PRODUCT_NAME = "jpeg-sm5";
 			};
 			name = Debug;
@@ -9806,7 +9370,6 @@
 			buildConfigurations = (
 				2B17AB7313980FE0001AE57D /* Native */,
 				2B17AB7413980FE0001AE57D /* PerformanceDebug */,
-				2B17AB7513980FE0001AE57D /* Universal */,
 				2B17AB7613980FE0001AE57D /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -9817,7 +9380,6 @@
 			buildConfigurations = (
 				2B17ABC113981522001AE57D /* Native */,
 				2B17ABC213981522001AE57D /* PerformanceDebug */,
-				2B17ABC313981522001AE57D /* Universal */,
 				2B17ABC413981522001AE57D /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -9828,7 +9390,6 @@
 			buildConfigurations = (
 				2B17ABE113981757001AE57D /* Native */,
 				2B17ABE213981757001AE57D /* PerformanceDebug */,
-				2B17ABE313981757001AE57D /* Universal */,
 				2B17ABE413981757001AE57D /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -9839,7 +9400,6 @@
 			buildConfigurations = (
 				2BD6E10D13D78B37008443DB /* Native */,
 				2BD6E10E13D78B37008443DB /* PerformanceDebug */,
-				2BD6E10F13D78B37008443DB /* Universal */,
 				2BD6E11013D78B37008443DB /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -9850,7 +9410,6 @@
 			buildConfigurations = (
 				AA40D52809A08D650068C0D5 /* Native */,
 				AABF4DBD0CD37960005A3060 /* PerformanceDebug */,
-				AA40D52909A08D650068C0D5 /* Universal */,
 				AA40D52A09A08D660068C0D5 /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -9861,7 +9420,6 @@
 			buildConfigurations = (
 				AA7A2B9A0AE09BA50054C5BA /* Native */,
 				AABF4DBF0CD37960005A3060 /* PerformanceDebug */,
-				AA7A2B9B0AE09BA50054C5BA /* Universal */,
 				AA7A2B9C0AE09BA50054C5BA /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -9872,7 +9430,6 @@
 			buildConfigurations = (
 				AA7A2BBA0AE09D4E0054C5BA /* Native */,
 				AABF4DC00CD37960005A3060 /* PerformanceDebug */,
-				AA7A2BBB0AE09D4E0054C5BA /* Universal */,
 				AA7A2BBC0AE09D4E0054C5BA /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -9883,7 +9440,6 @@
 			buildConfigurations = (
 				AA7A2BBE0AE09D4E0054C5BA /* Native */,
 				AABF4DC10CD37960005A3060 /* PerformanceDebug */,
-				AA7A2BBF0AE09D4E0054C5BA /* Universal */,
 				AA7A2BC00AE09D4E0054C5BA /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -9894,7 +9450,6 @@
 			buildConfigurations = (
 				AA7C89820B67447E00FD9940 /* Native */,
 				AABF4DC20CD37960005A3060 /* PerformanceDebug */,
-				AA7C89830B67447E00FD9940 /* Universal */,
 				AA7C89840B67447E00FD9940 /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -9905,7 +9460,6 @@
 			buildConfigurations = (
 				AA7C8B8F0B67464300FD9940 /* Native */,
 				AABF4DC30CD37960005A3060 /* PerformanceDebug */,
-				AA7C8B900B67464300FD9940 /* Universal */,
 				AA7C8B910B67464300FD9940 /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -9916,7 +9470,6 @@
 			buildConfigurations = (
 				AAA070AA0CE7B0E2005A3060 /* Native */,
 				AAA070AB0CE7B0E2005A3060 /* PerformanceDebug */,
-				AAA070AC0CE7B0E2005A3060 /* Universal */,
 				AAA070AD0CE7B0E2005A3060 /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -9927,7 +9480,6 @@
 			buildConfigurations = (
 				AAC8450D0856A19700A9FEAB /* Native */,
 				AABF4DBC0CD37960005A3060 /* PerformanceDebug */,
-				AAE44A2B0965707500B025E5 /* Universal */,
 				AA0AA8FE0963CF7700427F4D /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -9938,18 +9490,16 @@
 			buildConfigurations = (
 				AAC845110856A19700A9FEAB /* Native */,
 				AABF4DBB0CD37960005A3060 /* PerformanceDebug */,
-				AAE44A2C0965707500B025E5 /* Universal */,
 				AA0AA8FF0963CF7700427F4D /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Native;
 		};
-		AAC845130856A19700A9FEAB /* Build configuration list for PBXProject "stepmania" */ = {
+		AAC845130856A19700A9FEAB /* Build configuration list for PBXProject "stepmania_xcode4.3" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				AAC845150856A19700A9FEAB /* Native */,
 				AABF4DBA0CD37960005A3060 /* PerformanceDebug */,
-				AAE44A2D0965707500B025E5 /* Universal */,
 				AA0AA9000963CF7700427F4D /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -9960,7 +9510,6 @@
 			buildConfigurations = (
 				AAE781800AC7E3BF00AEFC64 /* Native */,
 				AABF4DBE0CD37960005A3060 /* PerformanceDebug */,
-				AAE781810AC7E3BF00AEFC64 /* Universal */,
 				AAE781820AC7E3BF00AEFC64 /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -9971,7 +9520,6 @@
 			buildConfigurations = (
 				EE4FD26114A8EFE1002B5758 /* Native */,
 				EE4FD26214A8EFE1002B5758 /* PerformanceDebug */,
-				EE4FD26314A8EFE1002B5758 /* Universal */,
 				EE4FD26414A8EFE1002B5758 /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
