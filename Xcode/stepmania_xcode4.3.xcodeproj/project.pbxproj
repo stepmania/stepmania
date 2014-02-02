@@ -8419,7 +8419,7 @@
 				SHARED_PRECOMPS_DIR = "/Library/Caches/com.apple.Xcode.$(UID)/SharedPrecompiledHeaders/$(PRODUCT_NAME)/$(CONFIGURATION)";
 				STRIP_INSTALLED_PRODUCT = NO;
 				STRIP_STYLE = "non-global";
-				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/../extern/glew-1.5.8/include $(PROJECT_DIR)/../extern/jsoncpp/include";
+				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/../extern/glew-1.5.8/include $(PROJECT_DIR)/../extern/jsoncpp/include $(PROJECT_DIR)/../extern/vorbis";
 			};
 			name = Debug;
 		};
@@ -8835,7 +8835,7 @@
 				SHARED_PRECOMPS_DIR = "/Library/Caches/com.apple.Xcode.$(UID)/SharedPrecompiledHeaders/$(PRODUCT_NAME)/$(CONFIGURATION)";
 				STRIP_INSTALLED_PRODUCT = YES;
 				STRIP_STYLE = "non-global";
-				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/../extern/glew-1.5.8/include $(PROJECT_DIR)/../extern/jsoncpp/include";
+				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/../extern/glew-1.5.8/include $(PROJECT_DIR)/../extern/jsoncpp/include $(PROJECT_DIR)/../extern/vorbis";
 			};
 			name = PerformanceDebug;
 		};
@@ -9183,7 +9183,7 @@
 				SHARED_PRECOMPS_DIR = "/Library/Caches/com.apple.Xcode.$(UID)/SharedPrecompiledHeaders/$(PRODUCT_NAME)/$(CONFIGURATION)";
 				STRIP_INSTALLED_PRODUCT = YES;
 				STRIP_STYLE = "non-global";
-				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/../extern/glew-1.5.8/include $(PROJECT_DIR)/../extern/jsoncpp/include";
+				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/../extern/glew-1.5.8/include $(PROJECT_DIR)/../extern/jsoncpp/include $(PROJECT_DIR)/../extern/vorbis";
 			};
 			name = Native;
 		};
