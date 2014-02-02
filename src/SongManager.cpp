@@ -36,7 +36,7 @@
 #include "UnlockManager.h"
 #include "SpecialFiles.h"
 
-SongManager*	SONGMAN = NULL;	// global and accessable from anywhere in our program
+SongManager*	SONGMAN = NULL;	// global and accessible from anywhere in our program
 
 const RString ADDITIONAL_SONGS_DIR	= "/AdditionalSongs/";
 const RString ADDITIONAL_COURSES_DIR	= "/AdditionalCourses/";
@@ -1711,50 +1711,100 @@ void SongManager::RefreshCourseGroupInfo()
 
 void SongManager::LoadStepEditsFromProfileDir( const RString &sProfileDir, ProfileSlot slot )
 {
+	// Load all edit steps
+	RString sDir = sProfileDir + EDIT_STEPS_SUBDIR;
+	SSCLoader loaderSSC;
+	SMLoader loaderSM;
+	int iNumEditsLoaded = GetNumEditsLoadedFromProfile( slot );
+
+	// Pass 1: Flat folder (old style)
+	vector<RString> vsFiles;
+	int size = min( (int) vsFiles.size(), MAX_EDIT_STEPS_PER_PROFILE - iNumEditsLoaded );
+	GetDirListing( sDir+"*.edit", vsFiles, false, true );
+	
+	// XXX: If some edits are invalid and they're close to the edit limit, this may erroneously skip some edits, and won't warn.
+	for( int i=0; i<size; i++ )
 	{
-		// Load all edit steps
-		RString sDir = sProfileDir + EDIT_STEPS_SUBDIR;
-
-		vector<RString> vsFiles;
-		GetDirListing( sDir+"*.edit", vsFiles, false, true );
-
-		int iNumEditsLoaded = GetNumEditsLoadedFromProfile( slot );
-		int size = min( (int) vsFiles.size(), MAX_EDIT_STEPS_PER_PROFILE - iNumEditsLoaded );
-
-		for( int i=0; i<size; i++ )
+		RString fn = vsFiles[i];
+		bool bLoadedFromSSC = loaderSSC.LoadEditFromFile( fn, slot, true );
+		// If we don't load the edit from a .ssc-style .edit, then we should
+		// also try the .sm-style edit file. -aj
+		if( !bLoadedFromSSC )
 		{
-			RString fn = vsFiles[i];
-			SSCLoader loaderSSC;
-			bool bLoadedFromSSC = loaderSSC.LoadEditFromFile( fn, slot, true );
-			// If we don't load the edit from a .ssc-style .edit, then we should
-			// also try the .sm-style edit file. -aj
-			if( !bLoadedFromSSC )
+			loaderSM.LoadEditFromFile( fn, slot, true );
+		}
+	}
+	
+	if( vsFiles.size() > MAX_EDIT_STEPS_PER_PROFILE - iNumEditsLoaded )
+	{
+		LOG->Warn("Profile %s has too many edits; some have been skipped.", ProfileSlotToString( slot ).c_str() );
+		return;
+	}
+
+	// Some .edit files may have been invalid, so re-query instead of just += size.
+	iNumEditsLoaded = GetNumEditsLoadedFromProfile( slot );
+	
+	// Pass 2: Group and song folders with #SONG inferred from folder (optional new style)
+	vector<RString> vsGroups;
+	GetDirListing( sDir+"*", vsGroups, true, false );
+	
+	// XXX: Same as above, edits may be skipped in error in some cases
+	for( int i=0; i<vsGroups.size(); i++ )
+	{
+		RString sGroupDir = vsGroups[i]+"/";
+		vector<RString> vsSongs;
+		GetDirListing(sDir+sGroupDir+"*", vsSongs, true, false );
+		
+		for( int j=0; j<vsSongs.size(); j++ )
+		{
+			vector<RString> vsEdits;
+			RString sSongDir = sGroupDir+vsSongs[j]+"/";
+			// XXX There doesn't appear to be a songdir const?
+			Song *given = GetSongFromDir( "/Songs/"+sSongDir );
+			// NOTE: We don't have to check the return value of GetSongFromDir here,
+			// because if it fails, it returns NULL, which is then passed to NotesLoader*.LoadEditFromFile(),
+			// which will interpret that as "we couldn't infer the song from the path",
+			// which is what we want in that case anyway.
+			GetDirListing(sDir+sSongDir+"/*.edit", vsEdits, false, true );
+			size = min( (int) vsEdits.size(), MAX_EDIT_STEPS_PER_PROFILE - iNumEditsLoaded );
+			
+			for( int k=0; k<size; k++ )
 			{
-				SMLoader loaderSM;
-				loaderSM.LoadEditFromFile( fn, slot, true );
+				RString fn = vsEdits[k];
+				bool bLoadedFromSSC = loaderSSC.LoadEditFromFile( fn, slot, true, given );
+				// And try again with SM
+				if( !bLoadedFromSSC )
+					loaderSM.LoadEditFromFile( fn, slot, true, given );
 			}
+			
+			if( vsEdits.size() > MAX_EDIT_STEPS_PER_PROFILE - iNumEditsLoaded )
+			{
+				LOG->Warn("Profile %s has too many edits; some have been skipped.", ProfileSlotToString( slot ).c_str() );
+				return;
+			}
+			
+			// Some .edit files may have been invalid, so re-query instead of just += size.
+			iNumEditsLoaded = GetNumEditsLoadedFromProfile( slot );
 		}
 	}
 }
 
 void SongManager::LoadCourseEditsFromProfileDir( const RString &sProfileDir, ProfileSlot slot )
 {
+	// Load all edit courses
+	RString sDir = sProfileDir + EDIT_COURSES_SUBDIR;
+
+	vector<RString> vsFiles;
+	GetDirListing( sDir+"*.crs", vsFiles, false, true );
+
+	int iNumEditsLoaded = GetNumEditsLoadedFromProfile( slot );
+	int size = min( (int) vsFiles.size(), MAX_EDIT_COURSES_PER_PROFILE - iNumEditsLoaded );
+
+	for( int i=0; i<size; i++ )
 	{
-		// Load all edit courses
-		RString sDir = sProfileDir + EDIT_COURSES_SUBDIR;
+		RString fn = vsFiles[i];
 
-		vector<RString> vsFiles;
-		GetDirListing( sDir+"*.crs", vsFiles, false, true );
-
-		int iNumEditsLoaded = GetNumEditsLoadedFromProfile( slot );
-		int size = min( (int) vsFiles.size(), MAX_EDIT_COURSES_PER_PROFILE - iNumEditsLoaded );
-
-		for( int i=0; i<size; i++ )
-		{
-			RString fn = vsFiles[i];
-
-			CourseLoaderCRS::LoadEditFromFile( fn, slot );
-		}
+		CourseLoaderCRS::LoadEditFromFile( fn, slot );
 	}
 }
 

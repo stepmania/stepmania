@@ -34,12 +34,19 @@
 #include "LoadingWindow/LoadingWindow_Gtk.h"
 #endif
 #if defined(LINUX)
-#define DEFAULT_INPUT_DRIVER_LIST "X11,Event,Joystick"
+#define DEFAULT_INPUT_DRIVER_LIST "X11,LinuxEvent,LinuxJoystick"
 #else
 #define DEFAULT_INPUT_DRIVER_LIST "X11"
 #endif
 #define DEFAULT_MOVIE_DRIVER_LIST "FFMpeg,Null"
-#define DEFAULT_SOUND_DRIVER_LIST "ALSA-sw,pulse,OSS,Null"
+// ALSA comes first, as the system may have OSS compat but we don't want to use
+// it if it's actually an ALSA wrapper.
+// Then try OSS before daemon drivers so we're going direct instead of
+// unwittingly starting a daemon.
+// JACK gives us an explicit option to NOT start a daemon, so try it third,
+// as PulseAudio will successfully Init() but not actually work if the
+// PulseAudio daemon has been suspended by/for jackd.
+#define DEFAULT_SOUND_DRIVER_LIST "ALSA-sw,OSS,JACK,Pulse,Null"
 #else
 #error Which arch?
 #endif

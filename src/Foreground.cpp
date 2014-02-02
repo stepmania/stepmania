@@ -45,6 +45,8 @@ void Foreground::LoadFromSong( const Song *pSong )
 		{
 			bga.m_bga = ActorUtil::MakeActor( pSong->GetSongDir() + sBGName, this );
 		}
+		if( bga.m_bga == NULL )
+			continue;
 		bga.m_bga->SetName( sBGName );
 		bga.m_bga->PlayCommand( "Init" );
 		bga.m_fStartBeat = change.m_fStartBeat;

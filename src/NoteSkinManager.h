@@ -7,7 +7,7 @@
 #include "GameInput.h"
 #include "IniFile.h"
 
-class Game;
+struct Game;
 struct NoteSkinData;
 
 /** @brief Loads note skins. */
@@ -54,7 +54,7 @@ protected:
 	GameController m_GameController;
 };
 
-extern NoteSkinManager*	NOTESKIN;	// global and accessable from anywhere in our program
+extern NoteSkinManager*	NOTESKIN;	// global and accessible from anywhere in our program
 
 class LockNoteSkin
 {

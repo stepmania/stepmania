@@ -29,7 +29,7 @@
 
 #include <map>
 
-RageTextureManager*		TEXTUREMAN		= NULL;
+RageTextureManager*		TEXTUREMAN		= NULL; // global and accessible from anywhere in our program
 
 namespace
 {

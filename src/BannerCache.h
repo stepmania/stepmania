@@ -31,7 +31,7 @@ private:
 	IniFile BannerData;
 };
 
-extern BannerCache *BANNERCACHE; // global and accessable from anywhere in our program
+extern BannerCache *BANNERCACHE; // global and accessible from anywhere in our program
 
 #endif
 

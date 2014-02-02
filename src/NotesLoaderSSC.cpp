@@ -874,7 +874,7 @@ bool SSCLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 	return true;
 }
 
-bool SSCLoader::LoadEditFromFile( RString sEditFilePath, ProfileSlot slot, bool bAddStepsToSong )
+bool SSCLoader::LoadEditFromFile( RString sEditFilePath, ProfileSlot slot, bool bAddStepsToSong, Song *givenSong /* =NULL */ )
 {
 	LOG->Trace( "SSCLoader::LoadEditFromFile(%s)", sEditFilePath.c_str() );
 
@@ -896,15 +896,16 @@ bool SSCLoader::LoadEditFromFile( RString sEditFilePath, ProfileSlot slot, bool 
 		return false;
 	}
 
-	return LoadEditFromMsd( msd, sEditFilePath, slot, bAddStepsToSong );
+	return LoadEditFromMsd( msd, sEditFilePath, slot, bAddStepsToSong, givenSong );
 }
 
 bool SSCLoader::LoadEditFromMsd(const MsdFile &msd,
 				const RString &sEditFilePath,
 				ProfileSlot slot,
-				bool bAddStepsToSong )
+				bool bAddStepsToSong,
+				Song *givenSong /* =NULL */ )
 {
-	Song* pSong = NULL;
+	Song* pSong = givenSong;
 	Steps* pNewNotes = NULL;
 	bool bSSCFormat = false;
 	bool bHasOwnTiming = false;
@@ -927,8 +928,9 @@ bool SSCLoader::LoadEditFromMsd(const MsdFile &msd,
 		{
 			if( pSong )
 			{
-				LOG->UserLog( "Edit file", sEditFilePath, "has more than one #SONG tag." );
-				return false;
+				/* LOG->UserLog( "Edit file", sEditFilePath, "has more than one #SONG tag." );
+				return false; */
+				continue;
 			}
 
 			RString sSongFullTitle = sParams[1];
@@ -1086,7 +1088,7 @@ bool SSCLoader::LoadEditFromMsd(const MsdFile &msd,
 			{
 				LOG->UserLog("Edit file",
 					     sEditFilePath,
-					     "doesn't have a #SONG tag preceeding the first #NOTES tag." );
+					     "doesn't have a #SONG tag preceeding the first #NOTES tag, and is not in a valid song-specific folder." );
 				return false;
 			}
 

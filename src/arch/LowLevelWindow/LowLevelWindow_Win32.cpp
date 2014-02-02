@@ -38,11 +38,11 @@ static void DestroyGraphicsWindowAndOpenGLContext()
 
 void *LowLevelWindow_Win32::GetProcAddress( RString s )
 {
-	void *pRet = wglGetProcAddress( s );
+	void *pRet = (void*) wglGetProcAddress( s );
 	if( pRet != NULL )
 		return pRet;
 
-	return ::GetProcAddress( GetModuleHandle(NULL), s );
+	return (void*) ::GetProcAddress( GetModuleHandle(NULL), s );
 }
 
 LowLevelWindow_Win32::LowLevelWindow_Win32()

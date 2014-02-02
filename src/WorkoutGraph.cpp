@@ -111,7 +111,7 @@ void WorkoutGraph::SetFromGameStateAndHighlightSong( int iSongIndex )
 	int iBarIndex = iSongIndex - m_iSongsChoppedOffAtBeginning;
 
 	if( iBarIndex < (int)m_vpBars.size() )
-		m_vpBars[iBarIndex]->SetEffectGlowBlink(0.3f);
+		m_vpBars[iBarIndex]->SetEffectGlowBlink(0.3f, RageColor(1,1,1,0.2f), RageColor(1,1,1,0.8f));
 }
 
 

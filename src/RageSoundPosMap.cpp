@@ -5,6 +5,7 @@
 #include "RageTimer.h"
 #include "Foreach.h"
 
+#include <limits.h>
 #include <list>
 
 /* The number of frames we should keep pos_map data for.  This being too high

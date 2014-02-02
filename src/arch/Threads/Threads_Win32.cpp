@@ -79,10 +79,13 @@ static void SetThreadName( DWORD dwThreadID, LPCTSTR szThreadName )
 	info.dwThreadID = dwThreadID;
 	info.dwFlags = 0;
 
+	// FIXME: Need to find a GCC/GDB-friendly way to do this.
+#if defined(_MSC_VER)
 	__try {
 		RaiseException(MS_VC_EXCEPTION, 0, sizeof(info) / sizeof(DWORD), (ULONG_PTR *)&info);
 	} __except (EXCEPTION_CONTINUE_EXECUTION) {
 	}
+#endif
 }
 
 static DWORD WINAPI StartThread( LPVOID pData )
@@ -159,13 +162,13 @@ ThreadImpl *MakeThread( int (*pFunc)(void *pData), void *pData, uint64_t *piThre
 
 	thread->ThreadHandle = CreateThread( NULL, 0, &StartThread, thread, CREATE_SUSPENDED, &thread->ThreadId );
 	*piThreadID = (uint64_t) thread->ThreadId;
-	ASSERT_M( thread->ThreadHandle != NULL, ssprintf("%s", werr_ssprintf(GetLastError(), "CreateThread")) );
+	ASSERT_M( thread->ThreadHandle != NULL, ssprintf("%s", werr_ssprintf(GetLastError(), "CreateThread").c_str() ) );
 
 	int slot = GetOpenSlot( thread->ThreadId );
 	g_ThreadHandles[slot] = thread->ThreadHandle;
 
 	int iRet = ResumeThread( thread->ThreadHandle );
-	ASSERT_M( iRet == 1, ssprintf("%s", werr_ssprintf(GetLastError(), "ResumeThread")) );
+	ASSERT_M( iRet == 1, ssprintf("%s", werr_ssprintf(GetLastError(), "ResumeThread").c_str() ) );
 
 	return thread;
 }

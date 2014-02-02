@@ -220,7 +220,7 @@ void ScreenSelectCharacter::AfterRowChange( PlayerNumber pn )
 	{
 		case CHOOSING_CPU_CHARACTER:
 		case CHOOSING_HUMAN_CHARACTER:
-			m_sprCardArrows[pnAffected].SetEffectGlowShift();
+			m_sprCardArrows[pnAffected].SetEffectGlowShift(1.0f, RageColor(1,1,1,0.2f), RageColor(1,1,1,0.8f));
 			break;
 		default: break;
 	}

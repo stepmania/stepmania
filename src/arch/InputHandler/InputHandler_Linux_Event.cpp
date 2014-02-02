@@ -2,6 +2,7 @@
 #include "InputHandler_Linux_Event.h"
 #include "RageLog.h"
 #include "RageUtil.h"
+#include "LinuxInputManager.h"
 
 #include <unistd.h>
 #include <fcntl.h>
@@ -11,9 +12,7 @@
 #include <sys/stat.h>
 #include <linux/input.h>
 
-REGISTER_INPUT_HANDLER_CLASS2( Event, Linux_Event );
-
-bool InputHandler_Linux_Event::m_bFoundAnyJoysticks;
+REGISTER_INPUT_HANDLER_CLASS2( LinuxEvent, Linux_Event );
 
 static RString BustypeToString( int iBus )
 {
@@ -94,13 +93,7 @@ bool EventDevice::Open( RString sFile, InputDevice dev )
 	m_iFD = open( sFile, O_RDWR );
 	if( m_iFD == -1 )
 	{
-		if( errno == ENODEV )
-			return false;
-
-		if( !EventDeviceExists(m_iFD) )
-			return false;
-
-		LOG->Warn( "Error opening %s: %s", sFile.c_str(), strerror(errno) );
+		// HACK: Let the caller handle errno.
 		return false;
 	}
 
@@ -273,58 +266,66 @@ EventDevice::~EventDevice()
 
 InputHandler_Linux_Event::InputHandler_Linux_Event()
 {
-	if( InputHandler_Linux_Event::m_bFoundAnyJoysticks )
-	{
-		LOG->Trace( "InputHandler_Linux_Event disabled (joystick driver already loaded)" );
-		return;
-	}
+	m_NextDevice = DEVICE_JOY1;
+	m_bDevicesChanged = false;
 
-	/* Permission problems are likely.  We want to warn about them only if there's actually
-	 * an underlying device, but if we can't open the device, the only way we can tell if
-	 * there'd be anything there is sysfs.  That won't always be there. */
-	m_bFoundAnyJoysticks = false;
-	InputDevice NextDevice = DEVICE_JOY1;
-	for( int i = 0; i < 64; ++i )
-	{
-		RString sFile = ssprintf( "/dev/input/event%i", i );
+	if(LINUXINPUT == NULL) LINUXINPUT = new LinuxInputManager;
+	LINUXINPUT->InitDriver(this);
 
-		g_apEventDevices.push_back( new EventDevice );
-		EventDevice *pDev = g_apEventDevices.back();
-		if( !pDev->Open(sFile, NextDevice) )
-		{
-			delete pDev;
-			g_apEventDevices.pop_back();
-			continue;
-		}
-		
-		NextDevice = enum_add2(NextDevice, 1);
-		m_bFoundAnyJoysticks = true;
-	}
-
-	m_bShutdown = false;
-
-	if( m_bFoundAnyJoysticks )
-	{
-		m_InputThread.SetName( "Event input thread" );
-		m_InputThread.Create( InputThread_Start, this );
-
-		/* We loaded joysticks, so disable joydev. */
-	}
+	if( ! g_apEventDevices.empty() ) // LinuxInputManager found at least one valid device for us
+		StartThread();
 }
 	
 InputHandler_Linux_Event::~InputHandler_Linux_Event()
 {
-	if( m_InputThread.IsCreated() )
-	{
-		m_bShutdown = true;
-		LOG->Trace( "Shutting down joystick thread ..." );
-		m_InputThread.Wait();
-		LOG->Trace( "Joystick thread shut down." );
-	}
+	if( m_InputThread.IsCreated() ) StopThread();
 
 	for( int i = 0; i < (int) g_apEventDevices.size(); ++i )
 		delete g_apEventDevices[i];
 	g_apEventDevices.clear();
+}
+
+void InputHandler_Linux_Event::StartThread()
+{
+	m_bShutdown = false;
+	m_InputThread.SetName( "Event input thread" );
+	m_InputThread.Create( InputThread_Start, this );
+}
+
+void InputHandler_Linux_Event::StopThread()
+{
+	m_bShutdown = true;
+	LOG->Trace( "Shutting down joystick thread ..." );
+	m_InputThread.Wait();
+	LOG->Trace( "Joystick thread shut down." );
+}
+
+bool InputHandler_Linux_Event::TryDevice(RString devfile)
+{
+	EventDevice* pDev = new EventDevice;
+	if( pDev->Open(devfile, m_NextDevice) )
+	{
+		bool hotplug = false;
+		if( m_InputThread.IsCreated() ) { StopThread(); hotplug = true; }
+		/* Thread is stopped! DO NOT RETURN */
+		{
+			g_apEventDevices.push_back( pDev );
+		}
+		if( hotplug ) StartThread();
+		
+		m_NextDevice = enum_add2(m_NextDevice, 1);
+		m_bDevicesChanged = true;
+		return true;
+	}
+	else
+	{
+		delete pDev;
+		// This is likely to fail; most systems still forbid ALL eventNN regardless
+		// of their type. Info it anyway, it could be useful for end-user
+		// troubleshooting.
+		LOG->Info("LinuxEvent: Couldn't open %s: %s.", devfile.c_str(), strerror(errno) );
+		return false;
+	}
 }
 
 int InputHandler_Linux_Event::InputThread_Start( void *p )
@@ -419,10 +420,13 @@ void InputHandler_Linux_Event::GetDevicesAndDescriptions( vector<InputDeviceInfo
 		EventDevice *pDev = g_apEventDevices[i];
                 vDevicesOut.push_back( InputDeviceInfo(pDev->m_Dev, pDev->m_sName) );
 	}
+	
+	m_bDevicesChanged = false;
 }
 
 /*
  * (c) 2003-2008 Glenn Maynard
+ * (c) 2013 Ben "root" Anderson
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

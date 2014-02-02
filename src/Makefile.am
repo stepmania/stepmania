@@ -1,11 +1,16 @@
 AUTOMAKE_OPTIONS = subdir-objects
 
+# Windows resource files
+# Using $^ here makes it add .dirstamp garbage as well. So just the first file please.
+.rc.o:
+	windres $(RESFLAGS) $< $@
+
 ## Do not install stepmania in the traditional way.
 noinst_PROGRAMS = stepmania
 TESTS = 
 tests: $(TESTS)
 if BUILD_TESTS
-noinst_PROGRAMS += $(TESTS)
+ noinst_PROGRAMS += $(TESTS)
 endif
 
 AM_LDFLAGS =
@@ -21,10 +26,7 @@ AM_CXXFLAGS += -fno-exceptions
 # generates enormous output.
 AM_CXXFLAGS += -finline-limit=300
 
-AM_CXXFLAGS += $(XCFLAGS)
-
-LIBS += 
-LIBS += -lpthread -lrt
+AM_CXXFLAGS += $(GL_CFLAGS)
 
 .PHONY: increment_version
 
@@ -121,7 +123,7 @@ ScreenUnlockStatus.cpp ScreenUnlockStatus.h \
 ScreenWithMenuElements.cpp ScreenWithMenuElements.h
 
 if !WITHOUT_NETWORKING
-Screens += ScreenSMOnlineLogin.cpp ScreenSMOnlineLogin.h
+ Screens += ScreenSMOnlineLogin.cpp ScreenSMOnlineLogin.h
 endif
 
 DataStructures = \
@@ -192,7 +194,7 @@ Trail.cpp Trail.h TrailUtil.cpp TrailUtil.h TitleSubstitution.cpp TitleSubstitut
 Tween.cpp Tween.h
 
 if !WITHOUT_NETWORKING
-DataStructures += RoomWheel.cpp RoomWheel.h
+ DataStructures += RoomWheel.cpp RoomWheel.h
 endif
 
 FileTypes = IniFile.cpp IniFile.h \
@@ -208,113 +210,200 @@ global.cpp global.h \
 SpecialFiles.cpp SpecialFiles.h \
 ProductInfo.h
 
-LoadingWindow = arch/LoadingWindow/LoadingWindow.cpp \
-		arch/LoadingWindow/LoadingWindow.h \
-		arch/LoadingWindow/LoadingWindow_Null.h
-
-if HAVE_GTK
-LoadingWindow += arch/LoadingWindow/LoadingWindow_Gtk.cpp arch/LoadingWindow/LoadingWindow_Gtk.h \
-arch/LoadingWindow/LoadingWindow_GtkModule.h
-endif
-
-Sound = arch/Sound/RageSoundDriver.h arch/Sound/RageSoundDriver.cpp \
-	arch/Sound/RageSoundDriver_Null.cpp arch/Sound/RageSoundDriver_Null.h \
-	arch/Sound/RageSoundDriver_Generic_Software.cpp
-
-if HAVE_PULSE
-Sound += arch/Sound/RageSoundDriver_PulseAudio.cpp arch/Sound/RageSoundDriver_PulseAudio.h
-endif
-
-if HAVE_JACK
-Sound += arch/Sound/RageSoundDriver_JACK.cpp arch/Sound/RageSoundDriver_JACK.h
-endif
-
-if HAVE_OSS
-Sound += arch/Sound/RageSoundDriver_OSS.cpp arch/Sound/RageSoundDriver_OSS.h
-endif
-
-if HAVE_ALSA
-Sound += arch/Sound/ALSA9Dynamic.cpp arch/Sound/ALSA9Dynamic.h arch/Sound/ALSA9Functions.h \
-	 arch/Sound/ALSA9Helpers.cpp arch/Sound/ALSA9Helpers.h \
-	 arch/Sound/RageSoundDriver_ALSA9_Software.cpp arch/Sound/RageSoundDriver_ALSA9_Software.h
-
-# Add this to AM_CXXFLAGS, not stepmania_CXXFLAGS: that'll cause multiple copies of
-# several sources to be built. We link to this at runtime, so don't add ALSA_LDFLAGS.
-AM_CXXFLAGS += $(ALSA_CFLAGS)
-endif
-
 ArchHooks = arch/ArchHooks/ArchHooks.cpp arch/ArchHooks/ArchHooks.h \
 	arch/ArchHooks/ArchHooksUtil.cpp
-
-InputHandler = arch/InputHandler/InputHandler.cpp arch/InputHandler/InputHandler.h \
-		arch/InputHandler/InputHandler_MonkeyKeyboard.cpp arch/InputHandler/InputHandler_MonkeyKeyboard.h \
-		arch/InputHandler/InputHandler_Linux_PIUIO.cpp arch/InputHandler/InputHandler_Linux_PIUIO.h
-
-MovieTexture = arch/MovieTexture/MovieTexture.cpp arch/MovieTexture/MovieTexture.h \
-		arch/MovieTexture/MovieTexture_Generic.cpp arch/MovieTexture/MovieTexture_Generic.h \
-		arch/MovieTexture/MovieTexture_Null.cpp arch/MovieTexture/MovieTexture_Null.h
-
-if HAVE_FFMPEG
-MovieTexture += arch/MovieTexture/MovieTexture_FFMpeg.cpp arch/MovieTexture/MovieTexture_FFMpeg.h
-endif
-
-Lights = arch/Lights/LightsDriver.cpp arch/Lights/LightsDriver.h \
-		arch/Lights/LightsDriver_Export.cpp arch/Lights/LightsDriver_Export.h \
-		arch/Lights/LightsDriver_SystemMessage.cpp arch/Lights/LightsDriver_SystemMessage.h
-
-MemoryCard = arch/MemoryCard/MemoryCardDriver.cpp arch/MemoryCard/MemoryCardDriver.h arch/MemoryCard/MemoryCardDriver_Null.h
-LowLevelWindow = arch/LowLevelWindow/LowLevelWindow.cpp arch/LowLevelWindow/LowLevelWindow.h
 
 ArchUtils =
 
 Dialog = arch/Dialog/Dialog.cpp arch/Dialog/Dialog.h arch/Dialog/DialogDriver.h arch/Dialog/DialogDriver.cpp
 
+InputHandler = arch/InputHandler/InputHandler.cpp arch/InputHandler/InputHandler.h
+
+Lights = arch/Lights/LightsDriver.cpp arch/Lights/LightsDriver.h
+
+MemoryCard = arch/MemoryCard/MemoryCardDriver.cpp arch/MemoryCard/MemoryCardDriver.h 
+
+MovieTexture = arch/MovieTexture/MovieTexture.cpp arch/MovieTexture/MovieTexture.h
+
+LoadingWindow = arch/LoadingWindow/LoadingWindow.cpp arch/LoadingWindow/LoadingWindow.h
+
+LowLevelWindow = arch/LowLevelWindow/LowLevelWindow.cpp arch/LowLevelWindow/LowLevelWindow.h
+
+Sound = arch/Sound/RageSoundDriver.h arch/Sound/RageSoundDriver.cpp \
+	arch/Sound/RageSoundDriver_Generic_Software.cpp
+
 Threads = arch/Threads/Threads.h
+
+# ===================================
+# (Potentially) multiplatform drivers
+# ===================================
+InputHandler += arch/InputHandler/InputHandler_MonkeyKeyboard.cpp arch/InputHandler/InputHandler_MonkeyKeyboard.h
+
+Lights += arch/Lights/LightsDriver_Export.cpp arch/Lights/LightsDriver_Export.h \
+	arch/Lights/LightsDriver_SystemMessage.cpp arch/Lights/LightsDriver_SystemMessage.h
+
+LoadingWindow += arch/LoadingWindow/LoadingWindow_Null.h
+
+MemoryCard += arch/MemoryCard/MemoryCardDriver_Null.h
+
+MovieTexture += arch/MovieTexture/MovieTexture_Generic.cpp arch/MovieTexture/MovieTexture_Generic.h \
+	arch/MovieTexture/MovieTexture_Null.cpp arch/MovieTexture/MovieTexture_Null.h
+
+Sound += arch/Sound/RageSoundDriver_Null.cpp arch/Sound/RageSoundDriver_Null.h
+	
+if HAVE_FFMPEG
+ MovieTexture += arch/MovieTexture/MovieTexture_FFMpeg.cpp arch/MovieTexture/MovieTexture_FFMpeg.h
+endif
+
+if HAVE_GTK
+ # XXX We need a GTK DialogDriver for Linux
+ LoadingWindow += arch/LoadingWindow/LoadingWindow_Gtk.cpp arch/LoadingWindow/LoadingWindow_Gtk.h \
+		arch/LoadingWindow/LoadingWindow_GtkModule.h
+endif
+
+if HAVE_JACK
+ Sound += arch/Sound/RageSoundDriver_JACK.cpp arch/Sound/RageSoundDriver_JACK.h
+endif
+
+if HAVE_OSS
+ Sound += arch/Sound/RageSoundDriver_OSS.cpp arch/Sound/RageSoundDriver_OSS.h
+endif
+
+if HAVE_PULSE
+ Sound += arch/Sound/RageSoundDriver_PulseAudio.cpp arch/Sound/RageSoundDriver_PulseAudio.h
+endif
+
+# Yes, really. MinGW provides pthread.
+if HAVE_PTHREAD
+ Threads += arch/Threads/Threads_Pthreads.cpp arch/Threads/Threads_Pthreads.h \
+	archutils/Common/PthreadHelpers.cpp archutils/Common/PthreadHelpers.h
+endif
 
 if HAVE_X11
 # InputHandler_X11 depends on LowLevelWindow_X11
-InputHandler += arch/InputHandler/InputHandler_X11.cpp arch/InputHandler/InputHandler_X11.h
-LowLevelWindow += arch/LowLevelWindow/LowLevelWindow_X11.cpp arch/LowLevelWindow/LowLevelWindow_X11.h
-LowLevelWindow += archutils/Unix/X11Helper.cpp archutils/Unix/X11Helper.h
+ InputHandler += arch/InputHandler/InputHandler_X11.cpp arch/InputHandler/InputHandler_X11.h
+ LowLevelWindow += arch/LowLevelWindow/LowLevelWindow_X11.cpp arch/LowLevelWindow/LowLevelWindow_X11.h
+ ArchUtils += archutils/Unix/X11Helper.cpp archutils/Unix/X11Helper.h
 endif
 
-# Platform-specific drivers:
-
+# =========================
+# Platform-specific drivers
+# =========================
 if UNIX
-ArchHooks += arch/ArchHooks/ArchHooks_Unix.cpp arch/ArchHooks/ArchHooks_Unix.h
-Threads += arch/Threads/Threads_Pthreads.cpp arch/Threads/Threads_Pthreads.h
+ ArchHooks += arch/ArchHooks/ArchHooks_Unix.cpp arch/ArchHooks/ArchHooks_Unix.h
+ 
 if LINUX
-Lights += arch/Lights/LightsDriver_LinuxWeedTech.cpp arch/Lights/LightsDriver_LinuxWeedTech.h \
+  InputHandler += arch/InputHandler/LinuxInputManager.cpp arch/InputHandler/LinuxInputManager.h \
+		arch/InputHandler/InputHandler_Linux_Joystick.cpp arch/InputHandler/InputHandler_Linux_Joystick.h \
+		arch/InputHandler/InputHandler_Linux_Event.cpp arch/InputHandler/InputHandler_Linux_Event.h \
+		arch/InputHandler/InputHandler_Linux_PIUIO.cpp arch/InputHandler/InputHandler_Linux_PIUIO.h
+  
+  Lights += arch/Lights/LightsDriver_LinuxWeedTech.cpp arch/Lights/LightsDriver_LinuxWeedTech.h \
 		arch/Lights/LightsDriver_Linux_PIUIO.cpp arch/Lights/LightsDriver_Linux_PIUIO.h
+  
+  MemoryCard += arch/MemoryCard/MemoryCardDriverThreaded_Linux.cpp arch/MemoryCard/MemoryCardDriverThreaded_Linux.h
+  
+if HAVE_ALSA
+   Sound += arch/Sound/ALSA9Dynamic.cpp arch/Sound/ALSA9Dynamic.h \
+	arch/Sound/ALSA9Functions.h \
+	arch/Sound/ALSA9Helpers.cpp arch/Sound/ALSA9Helpers.h \
+	arch/Sound/RageSoundDriver_ALSA9_Software.cpp arch/Sound/RageSoundDriver_ALSA9_Software.h
+
+   # Add this to AM_CXXFLAGS, not stepmania_CXXFLAGS: that'll cause multiple copies of
+   # several sources to be built. We link to this at runtime, so don't add ALSA_LDFLAGS.
+   AM_CXXFLAGS += $(ALSA_CFLAGS)
+endif
+  
 if HAVE_PARALLEL_PORT
-Lights += arch/Lights/LightsDriver_LinuxParallel.cpp arch/Lights/LightsDriver_LinuxParallel.h
+   Lights += arch/Lights/LightsDriver_LinuxParallel.cpp arch/Lights/LightsDriver_LinuxParallel.h
+endif
+  
+if WITH_TTY
+   InputHandler += arch/InputHandler/InputHandler_Linux_tty.cpp arch/InputHandler/InputHandler_Linux_tty.h \
+		arch/InputHandler/InputHandler_Linux_tty_keys.h
 endif
 endif
 
-ArchUtils +=    archutils/Unix/AssertionHandler.cpp archutils/Unix/AssertionHandler.h \
+ ArchUtils += archutils/Unix/AssertionHandler.cpp archutils/Unix/AssertionHandler.h \
 		archutils/Unix/arch_setup.h \
 		archutils/Unix/GetSysInfo.cpp archutils/Unix/GetSysInfo.h \
 		archutils/Unix/SignalHandler.cpp archutils/Unix/SignalHandler.h \
-		archutils/Unix/LinuxThreadHelpers.cpp archutils/Unix/LinuxThreadHelpers.h \
 		archutils/Unix/RunningUnderValgrind.cpp archutils/Unix/RunningUnderValgrind.h \
 		archutils/Unix/EmergencyShutdown.cpp archutils/Unix/EmergencyShutdown.h \
 		archutils/Unix/StackCheck.cpp archutils/Unix/SpecialDirs.cpp archutils/Unix/SpecialDirs.h \
 		archutils/Common/gcc_byte_swaps.h
 
 if USE_CRASH_HANDLER
-ArchUtils +=    archutils/Unix/Backtrace.cpp archutils/Unix/Backtrace.h \
+  ArchUtils += archutils/Unix/Backtrace.cpp archutils/Unix/Backtrace.h \
 		archutils/Unix/BacktraceNames.cpp archutils/Unix/BacktraceNames.h \
 		archutils/Unix/CrashHandler.cpp archutils/Unix/CrashHandler.h \
 		archutils/Unix/CrashHandlerChild.cpp archutils/Unix/CrashHandlerInternal.h \
 		archutils/Unix/CrashHandlerInternal.cpp
 endif
-
 endif
+# =========================================
+if WINDOWS
+ ArchHooks += arch/ArchHooks/ArchHooks_Win32.cpp arch/ArchHooks/ArchHooks_Win32.h \
+	arch/ArchHooks/ArchHooks_Win32Static.cpp
 
-if LINUX
-MemoryCard += arch/MemoryCard/MemoryCardDriverThreaded_Linux.cpp arch/MemoryCard/MemoryCardDriverThreaded_Linux.h
-InputHandler +=	arch/InputHandler/InputHandler_Linux_Joystick.cpp arch/InputHandler/InputHandler_Linux_Joystick.h
-InputHandler +=	arch/InputHandler/InputHandler_Linux_Event.cpp arch/InputHandler/InputHandler_Linux_Event.h
+ ArchUtils += archutils/Win32/arch_setup.cpp archutils/Win32/arch_setup.h \
+	archutils/Win32/arch_time.cpp \
+	archutils/Win32/AppInstance.cpp archutils/Win32/AppInstance.h \
+	archutils/Win32/CommandLine.cpp archutils/Win32/CommandLine.h \
+	archutils/Win32/Crash.cpp archutils/Win32/Crash.h \
+	archutils/Win32/CrashHandlerChild.cpp \
+	archutils/Win32/CrashHandlerInternal.h \
+	archutils/Win32/CrashHandlerNetworking.cpp archutils/Win32/CrashHandlerNetworking.h \
+	archutils/Win32/DebugInfoHunt.cpp archutils/Win32/DebugInfoHunt.h \
+	archutils/Win32/DialogUtil.cpp archutils/Win32/DialogUtil.h \
+	archutils/Win32/DirectXHelpers.cpp archutils/Win32/DirectXHelpers.h \
+	archutils/Win32/ErrorStrings.cpp archutils/Win32/ErrorStrings.h \
+	archutils/Win32/GetFileInformation.cpp archutils/Win32/GetFileInformation.h \
+	archutils/Win32/GoToURL.cpp archutils/Win32/GoToURL.h \
+	archutils/Win32/GraphicsWindow.cpp archutils/Win32/GraphicsWindow.h \
+	archutils/Win32/MessageWindow.cpp archutils/Win32/MessageWindow.h \
+	archutils/Win32/RegistryAccess.cpp archutils/Win32/RegistryAccess.h \
+	archutils/Win32/RestartProgram.cpp archutils/Win32/RestartProgram.h \
+	archutils/Win32/SpecialDirs.cpp archutils/Win32/SpecialDirs.h \
+	archutils/Win32/USB.cpp archutils/Win32/USB.h \
+	archutils/Win32/VideoDriverInfo.cpp archutils/Win32/VideoDriverInfo.h \
+	archutils/Win32/WindowIcon.cpp archutils/Win32/WindowIcon.h \
+	archutils/Win32/WindowsDialogBox.cpp archutils/Win32/WindowsDialogBox.h \
+	archutils/Win32/WindowsResources.rc archutils/Win32/WindowsResources.h
+		
+ Dialog += arch/Dialog/DialogDriver_Win32.cpp arch/Dialog/DialogDriver_Win32.h
+ 
+ LoadingWindow += arch/LoadingWindow/LoadingWindow_Win32.cpp arch/LoadingWindow/LoadingWindow_Win32.h
+ 
+ LowLevelWindow += arch/LowLevelWindow/LowLevelWindow_Win32.cpp arch/LowLevelWindow/LowLevelWindow_Win32.h
+
+ MemoryCard += arch/MemoryCard/MemoryCardDriverThreaded_Windows.cpp arch/MemoryCard/MemoryCardDriverThreaded_Windows.h
+ 
+ # XXX We may want to ditch DirectShow in favor of using ffmpeg on all platforms.
+ # FIXME BROKEN
+ # MovieTexture += arch/MovieTexture/MovieTexture_DShow.cpp arch/MovieTexture/MovieTexture_DShow.h \
+ #	arch/MovieTexture/MovieTexture_DShowHelper.cpp arch/MovieTexture/MovieTexture_DShowHelper.h
+ 
+ # XXX: Do we want to detect DirectX SDK and selectively enable DirectX drivers?
+ InputHandler += arch/InputHandler/InputHandler_DirectInput.cpp arc/InputHandler/InputHandler_DirectInput.h \
+		arch/InputHandler/InputHandler_DirectInputHelper.cpp arch/InputHandler/InputHandler_DirectInputHelper.h \
+		arch/InputHandler/InputHandler_Win32_MIDI.cpp arch/InputHandler/InputHandler_Win32_MIDI.h \
+		arch/InputHandler/InputHandler_Win32_Para.cpp arch/InputHandler/InputHandler_Win32_Para.h \
+		arch/InputHandler/InputHandler_Win32_Pump.cpp arch/InputHandler/InputHandler_Win32_Pump.h
+		
+ Sound += arch/Sound/RageSoundDriver_DSound_Software.cpp arch/Sound/RageSoundDriver_DSound_Software.h \
+	arch/Sound/DSoundHelpers.cpp arch/Sound/DSoundHelpers.h \
+	arch/Sound/RageSoundDriver_WaveOut.cpp arch/Sound/RageSoundDriver_WaveOut.h
+# FIXME: BROKEN
+# 	arch/Sound/RageSoundDriver_WDMKS.cpp arch/Sound/RageSoundDriver_WDMKS.h
+	
+if HAVE_PARALLEL_PORT
+  Lights += arch/Lights/LightsDriver_Win32Parallel.cpp arch/Lights/LightsDriver_Win32Parallel.h
+endif
+ 
+if !HAVE_PTHREAD
+  Threads += arch/Threads/Threads_Win32.cpp arch/Threads/Threads_Win32.h
+endif
 endif
 
 Arch = $(LoadingWindow) $(Sound) $(ArchHooks) $(InputHandler) $(MovieTexture) \
@@ -324,11 +413,11 @@ Arch = $(LoadingWindow) $(Sound) $(ArchHooks) $(InputHandler) $(MovieTexture) \
 RageSoundFileReaders = RageSoundReader_WAV.cpp RageSoundReader_WAV.h 
 
 if HAVE_VORBIS
-RageSoundFileReaders += RageSoundReader_Vorbisfile.cpp RageSoundReader_Vorbisfile.h
+ RageSoundFileReaders += RageSoundReader_Vorbisfile.cpp RageSoundReader_Vorbisfile.h
 endif
 
 if HAVE_MP3
-RageSoundFileReaders += RageSoundReader_MP3.cpp RageSoundReader_MP3.h
+ RageSoundFileReaders += RageSoundReader_MP3.cpp RageSoundReader_MP3.h
 endif
 
 ActorsInGameplayAndMenus = \
@@ -359,7 +448,7 @@ WheelNotifyIcon.cpp WheelNotifyIcon.h \
 WorkoutGraph.cpp WorkoutGraph.h 
 
 if !WITHOUT_NETWORKING
-ActorsInMenus += RoomInfoDisplay.cpp RoomInfoDisplay.h
+ ActorsInMenus += RoomInfoDisplay.cpp RoomInfoDisplay.h
 endif
 
 ActorsInGameplay = \
@@ -498,8 +587,8 @@ ThemeManager.cpp ThemeManager.h \
 UnlockManager.cpp UnlockManager.h
 
 if !WITHOUT_NETWORKING
-# Compile NetworkSyncManager even if networking is disabled; it'll stub itself.
-GlobalSingletons += ezsockets.cpp ezsockets.h
+ # Compile NetworkSyncManager even if networking is disabled; it'll stub itself.
+ GlobalSingletons += ezsockets.cpp ezsockets.h
 endif
 
 libtommath_a_SOURCES = \
@@ -617,8 +706,7 @@ main_CPPFLAGS = \
 	-I$(top_srcdir)/extern/jsoncpp/include
 #-I$(top_srcdir)/extern/glew-1.5.8/include
 
-main_SOURCES = $(PNG) \
-		$(Screens) \
+main_SOURCES = $(Screens) \
 		$(DataStructures) \
 		$(FileTypes) \
 		$(StepMania) \
@@ -631,13 +719,13 @@ main_SOURCES = $(PNG) \
 		$(GlobalSingletons)
 
 if !WITHOUT_GLES2
-main_SOURCES += RageDisplay_GLES2.cpp RageDisplay_GLES2.h
+ main_SOURCES += RageDisplay_GLES2.cpp RageDisplay_GLES2.h
 endif
 
 main_LDADD = \
 		$(VIDEO_LIBS) \
 		$(AUDIO_LIBS) \
-		$(XLIBS) \
+		$(GL_LIBS) \
 		libtomcrypt.a libtommath.a
 
 nodist_stepmania_SOURCES = ver.cpp
@@ -647,21 +735,21 @@ stepmania_SOURCES = $(main_SOURCES)
 stepmania_LDADD = $(main_LDADD)
 
 if BUILD_LUA_BINARIES
-noinst_PROGRAMS += lua luac
-lua_SOURCES = $(Lua) ../extern/lua-5.1/src/lua.c
-lua_LDADD = -lreadline
+ noinst_PROGRAMS += lua luac
+ lua_SOURCES = $(Lua) ../extern/lua-5.1/src/lua.c
+ lua_LDADD = -lreadline
 
-luac_SOURCES = $(Lua) ../extern/lua-5.1/src/luac.c ../extern/lua-5.1/src/print.c
-luac_LDADD =
+ luac_SOURCES = $(Lua) ../extern/lua-5.1/src/luac.c ../extern/lua-5.1/src/print.c
+ luac_LDADD =
 endif
 
 
 if HAVE_GTK
-noinst_PROGRAMS += GtkModule.so
-GtkModule_so_LDFLAGS = -rdynamic -shared
-GtkModule_so_CPPFLAGS = $(GTK_CFLAGS) -fPIC
-GtkModule_so_LDADD = $(GTK_LIBS)
-GtkModule_so_SOURCES = arch/LoadingWindow/LoadingWindow_GtkModule.cpp
+ noinst_PROGRAMS += GtkModule.so
+ GtkModule_so_LDFLAGS = -rdynamic -shared
+ GtkModule_so_CPPFLAGS = $(GTK_CFLAGS) -fPIC
+ GtkModule_so_LDADD = $(GTK_LIBS)
+ GtkModule_so_SOURCES = arch/LoadingWindow/LoadingWindow_GtkModule.cpp
 endif
 
 all_test_SOURCES = \
@@ -745,5 +833,3 @@ TESTS += test_threads
 test_threads_SOURCES = \
 		$(all_test_SOURCES) \
 		tests/test_threads.cpp
-
-INCLUDES = 

@@ -5,6 +5,7 @@
 
 #include <windows.h>
 
+#include "global.h"
 #include "arch/Threads/Threads_Win32.h"
 #include "crash.h"
 #include "CrashHandlerInternal.h"
@@ -152,7 +153,8 @@ static const char *CrashGetModuleBaseName(HMODULE hmod, char *pszBaseName)
 	char szPath1[MAX_PATH];
 	char szPath2[MAX_PATH];
 
-	__try {
+// XXX: It looks like nothing in here COULD throw an exception. Need to verify that.
+//	__try {
 		if( !GetModuleFileName(hmod, szPath1, sizeof(szPath1)) )
 			return NULL;
 
@@ -173,9 +175,9 @@ static const char *CrashGetModuleBaseName(HMODULE hmod, char *pszBaseName)
 
 		if( period )
 			*period = 0;
-	} __except(1) {
-		return NULL;
-	}
+//	} __except(1) {
+//		return NULL;
+//	}
 
 	return pszBaseName;
 }
@@ -362,7 +364,15 @@ long __stdcall CrashHandler::ExceptionHandler( EXCEPTION_POINTERS *pExc )
 	int iSize = 1024*32;
 	char *pStack = (char *) VirtualAlloc( NULL, iSize, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE );
 	pStack += iSize;
+	// FIXME: This will probably explode on x86-64
+#if defined(_MSC_VER)
 	_asm mov esp, pStack;
+#elif defined(__GNUC__)
+	asm volatile ("movl %%esp, %0\n\t"
+	:
+	: "r" (pStack)
+	);
+#endif
 
 	return MainExceptionHandler( pExc );
 }
@@ -421,8 +431,9 @@ static bool IsExecutableProtection(DWORD dwProtect) {
 	// Windows NT/2000 allows Execute permissions, but Win9x seems to rip it
 	// off. So we query the permissions on our own code block, and use it to
 	// determine if READONLY/READWRITE should be considered 'executable.'
+	// XXX: Special logic for Win98? Really? This should be cut.
 
-	VirtualQuery(IsExecutableProtection, &meminfo, sizeof meminfo);
+	VirtualQuery( (LPCVOID) IsExecutableProtection, &meminfo, sizeof meminfo);
 
 	switch((unsigned char)dwProtect) {
 	case PAGE_READONLY:			// *sigh* Win9x...
@@ -529,13 +540,24 @@ void CrashHandler::do_backtrace( const void **buf, size_t size,
 // Trigger the crash handler. This works even in the debugger.
 static void NORETURN debug_crash()
 {
-	__try {
+//	__try {
+#if defined(__MSC_VER)
 		__asm xor ebx,ebx
 		__asm mov eax,dword ptr [ebx]
 //		__asm mov dword ptr [ebx],eax
 //		__asm lock add dword ptr cs:[00000000h], 12345678h
-	} __except( CrashHandler::ExceptionHandler((EXCEPTION_POINTERS*)_exception_info()) ) {
-	}
+#elif defined(__GNUC__)
+		// HACK: I don't know a lick of ASM and don't know how to port this to
+		// the AT&T syntax gas uses. So we temporarily change it.
+		asm(".intel_syntax noprefix\n\t"
+			"xor ebx,ebx\n\t"
+			"mov eax,dword ptr [ebx]\n\t"
+//			"mov dword ptr [ebx],eax"
+//			"lock add dword ptr cs:[00000000h], 12345678h"
+			".att_syntax noprefix\n\t");
+#endif
+//	} __except( CrashHandler::ExceptionHandler((EXCEPTION_POINTERS*)_exception_info()) ) {
+//	}
 }
 
 /* Get a stack trace of the current thread and the specified thread.

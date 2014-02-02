@@ -10,6 +10,7 @@
 class Steps;
 class Song;
 struct RadarValues;
+class TimingData;
 
 AutoScreenMessage( SM_PlayToasty );
 
@@ -76,10 +77,10 @@ public:
 
 	// This must be calculated using only cached radar values so that we can 
 	// do it quickly.
-	static int GetPossibleDancePoints( const RadarValues& fRadars );
-	static int GetPossibleDancePoints( const RadarValues& fOriginalRadars, const RadarValues& fPostRadars );
-	static int GetPossibleGradePoints( const RadarValues& fRadars );
-	static int GetPossibleGradePoints( const RadarValues& fOriginalRadars, const RadarValues& fPostRadars );
+	static int GetPossibleDancePoints( NoteData* nd, const TimingData* td, float fSongSeconds );
+	static int GetPossibleDancePoints( NoteData* ndPre, NoteData* ndPost, const TimingData* td, float fSongSeconds );
+	static int GetPossibleGradePoints( NoteData* nd, const TimingData* td, float fSongSeconds );
+	static int GetPossibleGradePoints( NoteData* ndPre, NoteData* ndPost, const TimingData* td, float fSongSeconds );
 
 	int TapNoteScoreToDancePoints( TapNoteScore tns ) const;
 	int HoldNoteScoreToDancePoints( HoldNoteScore hns ) const;

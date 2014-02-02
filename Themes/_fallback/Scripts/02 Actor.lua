@@ -152,8 +152,7 @@ function Actor:FullScreen()
 end
 
 function Actor:scale_or_crop_background()
-	local graphicAspect = self:GetWidth()/self:GetHeight()
-	self:zoomto(SCREEN_HEIGHT*graphicAspect,SCREEN_HEIGHT)
+	self:scaletocover(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)
 end
 
 function Actor:CenterX() self:x(SCREEN_CENTER_X) end

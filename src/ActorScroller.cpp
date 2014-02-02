@@ -327,6 +327,7 @@ public:
 	static int SetDestinationItem( T* p, lua_State *L )		{ p->SetDestinationItem( FArg(1) ); return 0; }
 	static int GetSecondsToDestination( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetSecondsToDestination() ); return 1; }
 	static int SetSecondsPerItem( T* p, lua_State *L )		{ p->SetSecondsPerItem(FArg(1)); return 0; }
+	static int GetSecondsPauseBetweenItems( T* p, lua_State *L )	{ lua_pushnumber( L, p->GetSecondsPauseBetweenItems() ); return 1; }
 	static int SetSecondsPauseBetweenItems( T* p, lua_State *L )	{ p->SetSecondsPauseBetweenItems(FArg(1)); return 0; }
 	static int SetPauseCountdownSeconds( T* p, lua_State *L )	{ p->SetPauseCountdownSeconds(FArg(1)); return 0; }
 	static int SetNumSubdivisions( T* p, lua_State *L )		{ p->SetNumSubdivisions(IArg(1)); return 0; }
@@ -353,6 +354,7 @@ public:
 		ADD_METHOD( GetSecondsToDestination );
 		ADD_METHOD( SetSecondsPerItem );
 		ADD_METHOD( SetSecondsPauseBetweenItems );
+		ADD_METHOD( GetSecondsPauseBetweenItems );
 		ADD_METHOD( SetPauseCountdownSeconds );
 		ADD_METHOD( SetNumSubdivisions );
 		ADD_METHOD( ScrollThroughAllItems );

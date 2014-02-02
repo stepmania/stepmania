@@ -21,51 +21,11 @@
 #include "TimingData.h"
 #include "NoteDataWithScoring.h"
 
+static RString PercentScoreWeightName( size_t i ) { return "PercentScoreWeight" + ScoreEventToString( (ScoreEvent)i ); }
+static RString GradeWeightName( size_t i ) { return "GradeWeight" + ScoreEventToString( (ScoreEvent)i ); }
 
-void PercentScoreWeightInit( size_t /*ScoreEvent*/ i, RString &sNameOut, int &defaultValueOut )
-{
-	sNameOut = "PercentScoreWeight" + ScoreEventToString( (ScoreEvent)i );
-	switch( i )
-	{
-	default:
-		FAIL_M(ssprintf("Invalid ScoreEvent: %i", i));
-	case SE_W1:		defaultValueOut = 3;	break;
-	case SE_W2:		defaultValueOut = 2;	break;
-	case SE_W3:		defaultValueOut = 1;	break;
-	case SE_W4:		defaultValueOut = 0;	break;
-	case SE_W5:		defaultValueOut = 0;	break;
-	case SE_Miss:		defaultValueOut = 0;	break;
-	case SE_HitMine:	defaultValueOut = -2;	break;
-	case SE_CheckpointHit:	defaultValueOut = 0;	break;
-	case SE_CheckpointMiss:	defaultValueOut = 0;	break;
-	case SE_Held:		defaultValueOut = 3;	break;
-	case SE_LetGo:		defaultValueOut = 0;	break;
-	}
-}
-
-void GradeWeightInit( size_t /*ScoreEvent*/ i, RString &sNameOut, int &defaultValueOut )
-{
-	sNameOut = "GradeWeight" + ScoreEventToString( (ScoreEvent)i );
-	switch( i )
-	{
-	default:
-		FAIL_M(ssprintf("Invalid ScoreEvent: %i", i));
-	case SE_W1:		defaultValueOut = 2;	break;
-	case SE_W2:		defaultValueOut = 2;	break;
-	case SE_W3:		defaultValueOut = 1;	break;
-	case SE_W4:		defaultValueOut = 0;	break;
-	case SE_W5:		defaultValueOut = -4;	break;
-	case SE_Miss:		defaultValueOut = -8;	break;
-	case SE_HitMine:	defaultValueOut = -8;	break;
-	case SE_CheckpointHit:	defaultValueOut = 0;	break;
-	case SE_CheckpointMiss:	defaultValueOut = 0;	break;
-	case SE_Held:		defaultValueOut = 6;	break;
-	case SE_LetGo:		defaultValueOut = 0;	break;
-	}
-}
-
-static Preference1D<int> g_iPercentScoreWeight( PercentScoreWeightInit, NUM_ScoreEvent );
-static Preference1D<int> g_iGradeWeight( GradeWeightInit, NUM_ScoreEvent );
+static ThemeMetric1D<int> g_iPercentScoreWeight("ScoreKeeperNormal", PercentScoreWeightName, NUM_ScoreEvent );
+static ThemeMetric1D<int> g_iGradeWeight("ScoreKeeperNormal", GradeWeightName, NUM_ScoreEvent );
 
 ScoreKeeperNormal::ScoreKeeperNormal( PlayerState *pPlayerState, PlayerStageStats *pPlayerStageStats ):
 	ScoreKeeper(pPlayerState, pPlayerStageStats)
@@ -115,16 +75,13 @@ void ScoreKeeperNormal::Load(
 		pSteps->Compress();
 
 		const Style* pStyle = GAMESTATE->GetCurrentStyle();
-		NoteData nd;
-		pStyle->GetTransformedNoteDataForStyle( m_pPlayerState->m_PlayerNumber, ndTemp, nd );
+		NoteData ndPre;
+		pStyle->GetTransformedNoteDataForStyle( m_pPlayerState->m_PlayerNumber, ndTemp, ndPre );
 
 		/* Compute RadarValues before applying any user-selected mods. Apply
 		 * Course mods and count them in the "pre" RadarValues because they're
 		 * forced and not chosen by the user. */
-		NoteDataUtil::TransformNoteData( nd, aa, pSteps->m_StepsType, pSong );
-		RadarValues rvPre;
-		GAMESTATE->SetProcessedTimingData(pSteps->GetTimingData());
-		NoteDataUtil::CalculateRadarValues( nd, pSong->m_fMusicLengthSeconds, rvPre );
+		NoteDataUtil::TransformNoteData( ndPre, aa, pSteps->m_StepsType, pSong );
 
 		/* Apply user transforms to find out how the notes will really look.
 		 *
@@ -133,13 +90,13 @@ void ScoreKeeperNormal::Load(
 		 * have eg. GAMESTATE->GetOptionsForCourse(po,so,pn) to get options based on
 		 * the last call to StoreSelectedOptions and the modifiers list, but that'd
 		 * mean moving the queues in ScreenGameplay to GameState ... */
-		NoteDataUtil::TransformNoteData( nd, m_pPlayerState->m_PlayerOptions.GetStage(), pSteps->m_StepsType );
-		RadarValues rvPost;
-		NoteDataUtil::CalculateRadarValues( nd, pSong->m_fMusicLengthSeconds, rvPost );
-		GAMESTATE->SetProcessedTimingData(NULL);
+		NoteData ndPost = ndPre;
+		NoteDataUtil::TransformNoteData( ndPost, m_pPlayerState->m_PlayerOptions.GetStage(), pSteps->m_StepsType );
 
-		iTotalPossibleDancePoints += this->GetPossibleDancePoints( rvPre, rvPost );
-		iTotalPossibleGradePoints += this->GetPossibleGradePoints( rvPre, rvPost );
+		GAMESTATE->SetProcessedTimingData(pSteps->GetTimingData()); // XXX: Not sure why but NoteDataUtil::CalculateRadarValues segfaults without this
+		iTotalPossibleDancePoints += this->GetPossibleDancePoints( &ndPre, &ndPost, pSteps->GetTimingData(), pSong->m_fMusicLengthSeconds );
+		iTotalPossibleGradePoints += this->GetPossibleGradePoints( &ndPre, &ndPost, pSteps->GetTimingData(), pSong->m_fMusicLengthSeconds );
+		GAMESTATE->SetProcessedTimingData(NULL);
 	}
 
 	m_pPlayerStageStats->m_iPossibleDancePoints = iTotalPossibleDancePoints;
@@ -653,52 +610,60 @@ void ScoreKeeperNormal::HandleHoldScore( const TapNote &tn )
 }
 
 
-int ScoreKeeperNormal::GetPossibleDancePoints( const RadarValues& radars )
+int ScoreKeeperNormal::GetPossibleDancePoints( NoteData* nd, const TimingData* td, float fSongSeconds )
 {
 	/* Note: If W1 timing is disabled or not active (not course mode),
 	 * W2 will be used instead. */
-
-	int NumTaps = int(radars[RadarCategory_TapsAndHolds]);
-	int NumHolds = int(radars[RadarCategory_Holds]);
-	int NumRolls = int(radars[RadarCategory_Rolls]);
-	return
-		NumTaps*TapNoteScoreToDancePoints(TNS_W1, false) +
-		NumHolds*HoldNoteScoreToDancePoints(HNS_Held, false) +
-		NumRolls*HoldNoteScoreToDancePoints(HNS_Held, false);
+	// XXX: That's not actually implemented!
+	RadarValues radars;
+	NoteDataUtil::CalculateRadarValues( *nd, fSongSeconds, radars );
+	
+	int ret = 0;
+	 
+	ret += int(radars[RadarCategory_TapsAndHolds]) * TapNoteScoreToDancePoints(TNS_W1, false);
+	if( GAMESTATE->GetCurrentGame()->m_bTickHolds ) ret += NoteDataUtil::GetTotalHoldTicks( nd, td ) * g_iPercentScoreWeight.GetValue(SE_CheckpointHit);
+	ret += int(radars[RadarCategory_Holds]) * HoldNoteScoreToDancePoints(HNS_Held, false);	
+	ret += int(radars[RadarCategory_Rolls]) * HoldNoteScoreToDancePoints(HNS_Held, false);
+	
+	return ret;
 }
 
-int ScoreKeeperNormal::GetPossibleDancePoints( const RadarValues& fOriginalRadars, const RadarValues& fPostRadars )
+int ScoreKeeperNormal::GetPossibleDancePoints( NoteData* ndPre, NoteData* ndPost, const TimingData* td, float fSongSeconds )
 {
 	/* The logic here is that if you use a modifier that adds notes, you should
 	 * have to hit the new notes to get a high grade. However, if you use one
 	 * that removes notes, they should simply be counted as misses. */
 	return max(
-		GetPossibleDancePoints(fOriginalRadars),
-		GetPossibleDancePoints(fPostRadars) );
+		GetPossibleDancePoints(ndPre, td, fSongSeconds),
+		GetPossibleDancePoints(ndPost, td, fSongSeconds) );
 }
 
-int ScoreKeeperNormal::GetPossibleGradePoints( const RadarValues& radars )
+int ScoreKeeperNormal::GetPossibleGradePoints( NoteData* nd, const TimingData* td, float fSongSeconds )
 {
 	/* Note: if W1 timing is disabled or not active (not course mode),
 	 * W2 will be used instead. */
+	// XXX: That's not actually implemented!
+	RadarValues radars;
+	NoteDataUtil::CalculateRadarValues( *nd, fSongSeconds, radars );
 
-	int NumTaps = int(radars[RadarCategory_TapsAndHolds]);
-	int NumHolds = int(radars[RadarCategory_Holds]);
-	int NumRolls = int(radars[RadarCategory_Rolls]);
-	return
-		NumTaps*TapNoteScoreToGradePoints(TNS_W1, false) +
-		NumHolds*HoldNoteScoreToGradePoints(HNS_Held, false) +
-		NumRolls*HoldNoteScoreToGradePoints(HNS_Held, false);
+	int ret = 0;
+	
+	ret += int(radars[RadarCategory_TapsAndHolds]) * TapNoteScoreToGradePoints(TNS_W1, false);
+	if( GAMESTATE->GetCurrentGame()->m_bTickHolds ) ret += NoteDataUtil::GetTotalHoldTicks( nd, td ) * g_iGradeWeight.GetValue(SE_CheckpointHit);
+	ret += int(radars[RadarCategory_Holds]) * HoldNoteScoreToGradePoints(HNS_Held, false);
+	ret += int(radars[RadarCategory_Rolls]) * HoldNoteScoreToGradePoints(HNS_Held, false);
+	
+	return ret;
 }
 
-int ScoreKeeperNormal::GetPossibleGradePoints( const RadarValues& fOriginalRadars, const RadarValues& fPostRadars )
+int ScoreKeeperNormal::GetPossibleGradePoints( NoteData* ndPre, NoteData* ndPost, const TimingData* td, float fSongSeconds )
 {
 	/* The logic here is that if you use a modifier that adds notes, you should
 	 * have to hit the new notes to get a high grade. However, if you use one
 	 * that removes notes, they should simply be counted as misses. */
 	return max(
-		GetPossibleGradePoints(fOriginalRadars),
-		GetPossibleGradePoints(fPostRadars) );
+		GetPossibleGradePoints( ndPre, td, fSongSeconds ),
+		GetPossibleGradePoints( ndPost, td, fSongSeconds ) );
 }
 
 int ScoreKeeperNormal::TapNoteScoreToDancePoints( TapNoteScore tns ) const
@@ -731,16 +696,16 @@ int ScoreKeeperNormal::TapNoteScoreToDancePoints( TapNoteScore tns, bool bBeginn
 	switch( tns )
 	{
 	DEFAULT_FAIL( tns );
-	case TNS_None:		iWeight = 0;									break;
-	case TNS_HitMine:	iWeight = g_iPercentScoreWeight[SE_HitMine];	break;
-	case TNS_Miss:		iWeight = g_iPercentScoreWeight[SE_Miss];		break;
-	case TNS_W5:		iWeight = g_iPercentScoreWeight[SE_W5];			break;
-	case TNS_W4:		iWeight = g_iPercentScoreWeight[SE_W4];			break;
-	case TNS_W3:		iWeight = g_iPercentScoreWeight[SE_W3];			break;
-	case TNS_W2:		iWeight = g_iPercentScoreWeight[SE_W2];			break;
-	case TNS_W1:		iWeight = g_iPercentScoreWeight[SE_W1];			break;
-	case TNS_CheckpointHit:	iWeight = g_iPercentScoreWeight[SE_CheckpointHit];	break;
-	case TNS_CheckpointMiss:iWeight = g_iPercentScoreWeight[SE_CheckpointMiss];	break;
+	case TNS_None:		iWeight = 0;														break;
+	case TNS_HitMine:	iWeight = g_iPercentScoreWeight.GetValue(SE_HitMine);				break;
+	case TNS_Miss:		iWeight = g_iPercentScoreWeight.GetValue(SE_Miss);					break;
+	case TNS_W5:		iWeight = g_iPercentScoreWeight.GetValue(SE_W5);					break;
+	case TNS_W4:		iWeight = g_iPercentScoreWeight.GetValue(SE_W4);					break;
+	case TNS_W3:		iWeight = g_iPercentScoreWeight.GetValue(SE_W3);					break;
+	case TNS_W2:		iWeight = g_iPercentScoreWeight.GetValue(SE_W2);					break;
+	case TNS_W1:		iWeight = g_iPercentScoreWeight.GetValue(SE_W1);					break;
+	case TNS_CheckpointHit:	iWeight = g_iPercentScoreWeight.GetValue(SE_CheckpointHit);		break;
+	case TNS_CheckpointMiss:iWeight = g_iPercentScoreWeight.GetValue(SE_CheckpointMiss);	break;
 	}
 	if( bBeginner && PREFSMAN->m_bMercifulBeginner )
 		iWeight = max( 0, iWeight );
@@ -753,9 +718,9 @@ int ScoreKeeperNormal::HoldNoteScoreToDancePoints( HoldNoteScore hns, bool bBegi
 	switch( hns )
 	{
 	DEFAULT_FAIL( hns );
-	case HNS_None:	iWeight = 0;									break;
-	case HNS_LetGo:	iWeight = g_iPercentScoreWeight[SE_LetGo];	break;
-	case HNS_Held:	iWeight = g_iPercentScoreWeight[SE_Held];		break;
+	case HNS_None:	iWeight = 0;										break;
+	case HNS_LetGo:	iWeight = g_iPercentScoreWeight.GetValue(SE_LetGo);	break;
+	case HNS_Held:	iWeight = g_iPercentScoreWeight.GetValue(SE_Held);	break;
 	}
 	if( bBeginner && PREFSMAN->m_bMercifulBeginner )
 		iWeight = max( 0, iWeight );
@@ -773,17 +738,17 @@ int ScoreKeeperNormal::TapNoteScoreToGradePoints( TapNoteScore tns, bool bBeginn
 	switch( tns )
 	{
 	DEFAULT_FAIL( tns );
-	case TNS_None:		iWeight = 0;							break;
-	case TNS_AvoidMine:	iWeight = 0;						break;
-	case TNS_HitMine:	iWeight = g_iGradeWeight[SE_HitMine];	break;
-	case TNS_Miss:		iWeight = g_iGradeWeight[SE_Miss];		break;
-	case TNS_W5:		iWeight = g_iGradeWeight[SE_W5];		break;
-	case TNS_W4:		iWeight = g_iGradeWeight[SE_W4];		break;
-	case TNS_W3:		iWeight = g_iGradeWeight[SE_W3];		break;
-	case TNS_W2:		iWeight = g_iGradeWeight[SE_W2];		break;
-	case TNS_W1:		iWeight = g_iGradeWeight[SE_W1];		break;
-	case TNS_CheckpointHit:	iWeight = g_iGradeWeight[SE_CheckpointHit];	break;
-	case TNS_CheckpointMiss:iWeight = g_iGradeWeight[SE_CheckpointMiss];	break;
+	case TNS_None:		iWeight = 0;												break;
+	case TNS_AvoidMine:	iWeight = 0;												break;
+	case TNS_HitMine:	iWeight = g_iGradeWeight.GetValue(SE_HitMine);				break;
+	case TNS_Miss:		iWeight = g_iGradeWeight.GetValue(SE_Miss);					break;
+	case TNS_W5:		iWeight = g_iGradeWeight.GetValue(SE_W5);					break;
+	case TNS_W4:		iWeight = g_iGradeWeight.GetValue(SE_W4);					break;
+	case TNS_W3:		iWeight = g_iGradeWeight.GetValue(SE_W3);					break;
+	case TNS_W2:		iWeight = g_iGradeWeight.GetValue(SE_W2);					break;
+	case TNS_W1:		iWeight = g_iGradeWeight.GetValue(SE_W1);					break;
+	case TNS_CheckpointHit:	iWeight = g_iGradeWeight.GetValue(SE_CheckpointHit);	break;
+	case TNS_CheckpointMiss:iWeight = g_iGradeWeight.GetValue(SE_CheckpointMiss);	break;
 	}
 	if( bBeginner && PREFSMAN->m_bMercifulBeginner )
 		iWeight = max( 0, iWeight );
@@ -796,9 +761,9 @@ int ScoreKeeperNormal::HoldNoteScoreToGradePoints( HoldNoteScore hns, bool bBegi
 	switch( hns )
 	{
 	DEFAULT_FAIL( hns );
-	case HNS_None:	iWeight = 0;							break;
-	case HNS_LetGo:	iWeight = g_iGradeWeight[SE_LetGo];	break;
-	case HNS_Held:	iWeight = g_iGradeWeight[SE_Held];		break;
+	case HNS_None:	iWeight = 0;									break;
+	case HNS_LetGo:	iWeight = g_iGradeWeight.GetValue(SE_LetGo);	break;
+	case HNS_Held:	iWeight = g_iGradeWeight.GetValue(SE_Held);		break;
 	}
 	if( bBeginner && PREFSMAN->m_bMercifulBeginner )
 		iWeight = max( 0, iWeight );

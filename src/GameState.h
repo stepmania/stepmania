@@ -19,7 +19,7 @@
 
 class Character;
 class Course;
-class Game;
+struct Game;
 struct lua_State;
 class LuaTable;
 class PlayerState;
@@ -422,7 +422,7 @@ MultiPlayer GetNextEnabledMultiPlayer( MultiPlayer mp );
 
 
 
-extern GameState*	GAMESTATE;	// global and accessable from anywhere in our program
+extern GameState*	GAMESTATE;	// global and accessible from anywhere in our program
 
 #endif
 

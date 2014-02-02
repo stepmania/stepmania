@@ -172,19 +172,19 @@ private:
  * Once the loop exits normally, the top of the stack will be where it was before. 
  * If you break out of the loop early, you need to handle that explicitly. */
 #define FOREACH_LUATABLE(L,index) \
-for( const int UNIQUE_NAME(tab) = LuaHelpers::AbsIndex(L,index), \
-     UNIQUE_NAME(top) = (lua_pushnil(L),lua_gettop(L)); \
-     lua_next(L, UNIQUE_NAME(tab)) && (lua_pushvalue(L,-2),true); \
-     lua_settop(L,UNIQUE_NAME(top)) )
+for( const int SM_UNIQUE_NAME(tab) = LuaHelpers::AbsIndex(L,index), \
+     SM_UNIQUE_NAME(top) = (lua_pushnil(L),lua_gettop(L)); \
+     lua_next(L, SM_UNIQUE_NAME(tab)) && (lua_pushvalue(L,-2),true); \
+     lua_settop(L,SM_UNIQUE_NAME(top)) )
 
 /** @brief Iterate over the array elements of a table. */
 #define FOREACH_LUATABLEI(L, index, i) \
-	for( int UNIQUE_NAME(tab) = LuaHelpers::AbsIndex(L,index), \
-		UNIQUE_NAME(top) = lua_gettop(L), i = 1; \
-		lua_rawgeti( L, tab, i ), \
+	for( int SM_UNIQUE_NAME(tab) = LuaHelpers::AbsIndex(L,index), \
+		SM_UNIQUE_NAME(top) = lua_gettop(L), i = 1; \
+		lua_rawgeti( L, SM_UNIQUE_NAME(tab), i ), \
 			lua_isnil(L, -1)? \
 			(lua_pop(L, 1), false):(true); /* if nil, pop the nil and stop traversal */ \
-		lua_settop(L,UNIQUE_NAME(top)), ++i )
+		lua_settop(L,SM_UNIQUE_NAME(top)), ++i )
 
 
 struct RegisterLuaFunction { RegisterLuaFunction( RegisterWithLuaFn pfn ) { LuaManager::Register( pfn ); } };

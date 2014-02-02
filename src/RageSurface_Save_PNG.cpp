@@ -6,15 +6,13 @@
 #include "RageLog.h"
 #include "RageUtil.h"
 
-#if defined(WINDOWS)
-#include "png.h"
 #if defined(_MSC_VER)
-#  pragma comment(lib, "libpng.lib")
+#include "../extern/libpng/include/png.h"
+#pragma comment(lib, "libpng.lib")
 #pragma warning(disable: 4611) /* interaction between '_setjmp' and C++ object destruction is non-portable */
-#endif
 #else
-#include <../extern/libpng/include/png.h>
-#endif
+#include <png.h>
+#endif // _MSC_VER
 
 static void SafePngError( png_struct *pPng, const RString &sStr )
 {

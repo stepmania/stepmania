@@ -105,10 +105,7 @@ GameColor = {
 GameColor.Difficulty["Crazy"] = GameColor.Difficulty["Hard"]
 GameColor.Difficulty["Freestyle"] = GameColor.Difficulty["Easy"]
 GameColor.Difficulty["Nightmare"] = GameColor.Difficulty["Challenge"]
-GameColor.Difficulty["HalfDoubleEasy"] = GameColor.Difficulty["Easy"]
-GameColor.Difficulty["HalfDoubleMedium"] = GameColor.Difficulty["Medium"]
-GameColor.Difficulty["HalfDoubleHard"] = GameColor.Difficulty["Hard"]
-GameColor.Difficulty["HalfDoubleExpert"] = GameColor.Difficulty["Expert"]
+GameColor.Difficulty["HalfDouble"] = GameColor.Difficulty["Medium"]
 
 --[[ Fallbacks ]]
 function BoostColor( cColor, fBoost )

@@ -143,8 +143,10 @@ void ShowWarningOrTrace( const char *file, int line, const char *message, bool b
 #endif
 
 #ifdef DEBUG
-#define DEBUG_ASSERT(x)		ASSERT(x)
-#define DEBUG_ASSERT_M(x,y)	ASSERT_M(x,y)
+// No reason to kill the program. A lot of these don't produce a crash in NDEBUG so why stop?
+// TODO: These should have something you can hook a breakpoint on.
+#define DEBUG_ASSERT(x) if(unlikely(x)) WARN("Debug assert failed")
+#define DEBUG_ASSERT_M(x,y) if(unlikely(x)) WARN(y)
 #else
 /** @brief A dummy define to keep things going smoothly. */
 #define DEBUG_ASSERT(x)
@@ -152,15 +154,11 @@ void ShowWarningOrTrace( const char *file, int line, const char *message, bool b
 #define DEBUG_ASSERT_M(x,y)
 #endif
 
-/* Use UNIQUE_NAME to get the line number concatenated to x. This is useful for
+/* Use SM_UNIQUE_NAME to get the line number concatenated to x. This is useful for
  * generating unique identifiers in other macros.  */
-/* XXX: VC2003 expanding __LINE__ to nothing in the first version.  Investigate why. -Chris */
-//#define UNIQUE_NAME3(x,line) x##line
-//#define UNIQUE_NAME2(x,line) UNIQUE_NAME3(x, line)
-//#define UNIQUE_NAME(x) UNIQUE_NAME2(x, __LINE__)	
-#define UNIQUE_NAME3(x) x
-#define UNIQUE_NAME2(x) UNIQUE_NAME3(x)
-#define UNIQUE_NAME(x) UNIQUE_NAME2(x)	
+#define SM_UNIQUE_NAME3(x,line) x##line
+#define SM_UNIQUE_NAME2(x,line) SM_UNIQUE_NAME3(x, line)
+#define SM_UNIQUE_NAME(x) SM_UNIQUE_NAME2(x, __LINE__)	
 
 template <bool> struct CompileAssert;
 template <> struct CompileAssert<true> { };
@@ -178,15 +176,6 @@ template<int> struct CompileAssertDecl { };
 /** @brief A dummy define to keep things going smoothly. */
 #define CONST_FUNCTION
 #endif
-
-#if defined(__GNUC__)
-#define SM_ALIGN(n) __attribute__((aligned(n)))
-#else
-/** @brief A dummy define to keep things going smoothly. */
-#define SM_ALIGN(n)
-#endif
-
-
 
 #include "StdString.h"
 /** @brief Use RStrings throughout the program. */

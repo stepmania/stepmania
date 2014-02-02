@@ -4,7 +4,7 @@
 #define GAMEMANAGER_H
 
 class Style;
-class Game;
+struct Game;
 struct lua_State;
 
 #include "GameConstantsAndTypes.h"
@@ -55,7 +55,7 @@ public:
 	void PushSelf( lua_State *L );
 };
 
-extern GameManager*	GAMEMAN;	// global and accessable from anywhere in our program
+extern GameManager*	GAMEMAN;	// global and accessible from anywhere in our program
 
 #endif
 

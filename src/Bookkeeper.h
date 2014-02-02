@@ -61,7 +61,7 @@ private:
 	map<Date,int> m_mapCoinsForHour;
 };
 
-extern Bookkeeper*	BOOKKEEPER;	// global and accessable from anywhere in our program
+extern Bookkeeper*	BOOKKEEPER;	// global and accessible from anywhere in our program
 
 #endif
 

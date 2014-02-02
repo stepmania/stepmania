@@ -104,7 +104,7 @@ private:
 };
 
 
-extern ScreenManager*	SCREENMAN;	// global and accessable from anywhere in our program
+extern ScreenManager*	SCREENMAN;	// global and accessible from anywhere in our program
 
 #endif
 

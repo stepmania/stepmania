@@ -1,69 +1,49 @@
-AC_DEFUN([SM_X_WITH_OPENGL],
+
+AC_DEFUN([SM_OPENGL],
 [
-	AC_PATH_X
+	AC_LANG_PUSH(C)
 
-	XCFLAGS=
-	XLIBS=
+	AC_CHECK_HEADER("GL/gl.h", ,
+	AC_MSG_ERROR("OpenGL headers not found."), [$GL_INCLUDES])
+	
+	GL_LIBS=""
+	
+	AX_CHECK_LIB_USING_HEADER(GL, glBegin(GL_POINTS), GL/gl.h, [GL_LIBS="-lGL"])
+	
+	if test "$GL_LIBS" = ""; then
+		AX_CHECK_LIB_USING_HEADER(opengl32, glBegin(GL_POINTS), GL/gl.h, [GL_LIBS="-lopengl32"])
+	fi
+	
+	if test "$GL_LIBS" = ""; then
+		AC_MSG_ERROR("No usable OpenGL library found.")
+	fi
+	
+	AX_CHECK_LIB_USING_HEADER(GLU, gluGetString(GLU_VERSION), GL/glu.h, [GLU_LIBS="-lGLU"])
+	
+	if test "$GLU_LIBS" = ""; then
+		AX_CHECK_LIB_USING_HEADER(glu32, gluGetString(GLU_VERSION), GL/glu.h, [GLU_LIBS="-lglu32"])
+	fi
+	
+	if test "$GLU_LIBS" = ""; then
+		AC_MSG_ERROR("No usable GLU library found.")
+	fi
+	
+	AX_CHECK_LIB_USING_HEADER(GLEW, glewInit(), GL/glew.h, [GLEW_LIBS="$LIBS -lGLEW"])
 
-	if test "$no_x" != "yes"; then
-	if test -n "$x_includes"; then
-		XCFLAGS="-I$x_includes"
+	if test "$GLEW_LIBS" = ""; then
+		AX_CHECK_LIB_USING_HEADER(glew32, glewInit(), GL/glew.h, [GLEW_LIBS="$LIBS -lglew32"], , [$GL_LIBS])
+	fi
+	
+	if test "$GLEW_LIBS" = ""; then
+		AC_DEFINE([GLEW_STATIC], [], [Tell GLEW it is a static library.])
+		AX_CHECK_LIB_USING_HEADER(glew32, glewInit(), GL/glew.h, [GLEW_LIBS="$LIBS -lglew32"], , [$GL_LIBS])
+	fi
+	
+	if test "$GLEW_LIBS" = ""; then
+		AC_MSG_ERROR("No usable version of GLEW found.")
 	fi
 
-	if test -n "$x_libraries"; then
-		XLIBS="-L$x_libraries"
-	fi
-
-	XLIBS+="-lX11"
-
-	if test -n "$x_includes"; then
-		# See if we can compile X applications without using $XCFLAGS.
-		AC_MSG_CHECKING(if $XCFLAGS is really necessary)
-		AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <X11/Xos.h>]], [[]])],[XCFLAGS=
-		AC_MSG_RESULT(no)],[AC_MSG_RESULT(yes)])
-	fi
-
-	# Check for libXtst.
-	AC_CHECK_LIB(Xtst, XTestQueryExtension, 
-		XLIBS="$XLIBS -lXtst"
-		[AC_DEFINE(HAVE_LIBXTST, 1, [libXtst available])],
-		,
-		[$XLIBS])
-	AC_DEFINE(HAVE_X11, 1, [X11 libraries present])
-	fi
-
-	# Check for Xrandr
-	# Can someone fix this for me? This is producing bizarre warnings from
-	# configure... I have no clue what I'm doing -Ben
-	AC_CHECK_LIB(Xrandr, XRRSizes,
-		have_xrandr=yes,
-		have_xrandr=no,
-		[$XLIBS])
-	AC_CHECK_HEADER(X11/extensions/Xrandr.h, have_xrandr_header=yes, have_xrandr_header=no, [#include <X11/Xlib.h>])
-
-	if test "$have_xrandr_header" = "no"; then
-		have_xrandr=no
-	fi
-
-	if test "$have_xrandr" = "no"; then
-		echo "*** Direct X11 support needs Xrandr libraries and headers."
-		echo "*** Couldn't find needed headers. Continuing without X11 backend."
-		no_x=yes
-	else
-		XLIBS="$XLIBS -lXrandr"
-	fi
-
-	AM_CONDITIONAL(HAVE_X11, test "$no_x" != "yes")
-
-	AC_SUBST(XCFLAGS)
-	AC_SUBST(XLIBS)
-
-	# Check for libGL and libGLU.
-	AC_CHECK_LIB(GL, glPushMatrix, XLIBS="$XLIBS -lGL",
-	AC_MSG_ERROR([No OpenGL library could be found.]), [$XLIBS])
-	AC_CHECK_LIB(GLU, gluGetString, XLIBS="$XLIBS -lGLU",
-	AC_MSG_ERROR([No GLU library could be found.]), [$XLIBS])
-
-	AC_SUBST(XLIBS)
+	AC_CHECK_DECL(GLEW_VERSION_2_1, , AC_MSG_ERROR("GLEW 1.3.5 or newer is required."), [#include <GL/glew.h>])
+	
+	GL_LIBS="$GL_LIBS $GLU_LIBS $GLEW_LIBS"
 ])
-

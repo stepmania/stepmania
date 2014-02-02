@@ -281,23 +281,26 @@ void Actor::LoadFromNode( const XNode* pNode )
 
 void Actor::Draw()
 {
-	if( !m_bVisible )
-		return;	// early abort
-	if( m_fHibernateSecondsLeft > 0 )
-		return;	// early abort
-	if( this->EarlyAbortDraw() )
-		return;
-
-	// call the most-derived versions
-	this->BeginDraw();	
-	this->DrawPrimitives();	// call the most-derived version of DrawPrimitives();
-	this->EndDraw();
+	if( !m_bVisible ||
+		m_fHibernateSecondsLeft > 0 || 
+		this->EarlyAbortDraw() )
+		return; // early abort
+	
+	this->PreDraw();
+	ASSERT( m_pTempState != NULL );
+	if( m_pTempState->diffuse[0].a != 0 || m_pTempState->diffuse[1].a != 0 || m_pTempState->diffuse[2].a != 0 || m_pTempState->diffuse[3].a != 0 ) // This Actor is not fully transparent
+	{	
+		// call the most-derived versions
+		this->BeginDraw();	
+		this->DrawPrimitives();	// call the most-derived version of DrawPrimitives();
+		this->EndDraw();
+	}
+	
+	m_pTempState = NULL;
 }
 
-void Actor::BeginDraw()		// set the world matrix and calculate actor properties
+void Actor::PreDraw() // calculate actor properties
 {
-	DISPLAY->PushMatrix();	// we're actually going to do some drawing in this function	
-
 	// Somthing below may set m_pTempState to tempState
 	m_pTempState = &m_current;
 
@@ -480,6 +483,11 @@ void Actor::BeginDraw()		// set the world matrix and calculate actor properties
 		tempState.glow = tempState.glow + m_internalGlow - m_internalGlow * tempState.glow;
 		m_internalGlow.a = 0;
 	}
+}
+	
+void Actor::BeginDraw() // set the world matrix
+{
+	DISPLAY->PushMatrix();
 
 	if( m_pTempState->pos.x != 0 || m_pTempState->pos.y != 0 || m_pTempState->pos.z != 0 )	
 	{
@@ -592,7 +600,6 @@ void Actor::SetTextureRenderStates()
 void Actor::EndDraw()
 {
 	DISPLAY->PopMatrix();
-	m_pTempState = NULL;
 }
 
 void Actor::UpdateTweening( float fDeltaTime )
@@ -771,8 +778,6 @@ void Actor::BeginTweening( float time, ITween *pTween )
 {
 	ASSERT( time >= 0 );
 
-	time = max( time, 0 );
-
 	// If the number of tweens to ever gets this large, there's probably an infinitely 
 	// recursing ActorCommand.
 	if( m_Tweens.size() > 50 )
@@ -810,6 +815,8 @@ void Actor::BeginTweening( float time, ITween *pTween )
 
 void Actor::BeginTweening( float time, TweenType tt )
 {
+	ASSERT( time >= 0 );
+
 	ITween *pTween = ITween::CreateFromType( tt );
 	BeginTweening( time, pTween );
 }
@@ -922,17 +929,22 @@ float Actor::GetEffectPeriod() const
 
 void Actor::SetEffectTiming( float fRampUp, float fAtHalf, float fRampDown, float fAtZero )
 {
+	// No negative timings
+	ASSERT( fRampUp >= 0 && fAtHalf >= 0 && fRampDown >= 0 && fAtZero >= 0 );
+	// and at least one positive timing.
+	ASSERT( fRampUp > 0 || fAtHalf > 0 || fRampDown > 0 || fAtZero > 0 );
+
 	m_fEffectRampUp = fRampUp; 
 	m_fEffectHoldAtHalf = fAtHalf; 
 	m_fEffectRampDown = fRampDown;
 	m_fEffectHoldAtZero = fAtZero;
-	ASSERT( GetEffectPeriod() > 0 );
 }
 
 // effect "macros"
 
 void Actor::SetEffectDiffuseBlink( float fEffectPeriodSeconds, RageColor c1, RageColor c2 )
 {
+	ASSERT( fEffectPeriodSeconds > 0 );
 	// todo: account for SSC_FUTURES -aj
 	if( m_Effect != diffuse_blink )
 	{
@@ -946,6 +958,7 @@ void Actor::SetEffectDiffuseBlink( float fEffectPeriodSeconds, RageColor c1, Rag
 
 void Actor::SetEffectDiffuseShift( float fEffectPeriodSeconds, RageColor c1, RageColor c2 )
 {
+	ASSERT( fEffectPeriodSeconds > 0 );
 	// todo: account for SSC_FUTURES -aj
 	if( m_Effect != diffuse_shift )
 	{
@@ -959,6 +972,7 @@ void Actor::SetEffectDiffuseShift( float fEffectPeriodSeconds, RageColor c1, Rag
 
 void Actor::SetEffectDiffuseRamp( float fEffectPeriodSeconds, RageColor c1, RageColor c2 )
 {
+	ASSERT( fEffectPeriodSeconds > 0 );
 	// todo: account for SSC_FUTURES -aj
 	if( m_Effect != diffuse_ramp )
 	{
@@ -972,6 +986,7 @@ void Actor::SetEffectDiffuseRamp( float fEffectPeriodSeconds, RageColor c1, Rage
 
 void Actor::SetEffectGlowBlink( float fEffectPeriodSeconds, RageColor c1, RageColor c2 )
 {
+	ASSERT( fEffectPeriodSeconds > 0 );
 	// todo: account for SSC_FUTURES -aj
 	if( m_Effect != glow_blink )
 	{
@@ -985,6 +1000,7 @@ void Actor::SetEffectGlowBlink( float fEffectPeriodSeconds, RageColor c1, RageCo
 
 void Actor::SetEffectGlowShift( float fEffectPeriodSeconds, RageColor c1, RageColor c2 )
 {
+	ASSERT( fEffectPeriodSeconds > 0 );
 	// todo: account for SSC_FUTURES -aj
 	if( m_Effect != glow_shift )
 	{
@@ -998,6 +1014,7 @@ void Actor::SetEffectGlowShift( float fEffectPeriodSeconds, RageColor c1, RageCo
 
 void Actor::SetEffectGlowRamp( float fEffectPeriodSeconds, RageColor c1, RageColor c2 )
 {
+	ASSERT( fEffectPeriodSeconds > 0 );
 	// todo: account for SSC_FUTURES -aj
 	if( m_Effect != glow_ramp )
 	{
@@ -1011,6 +1028,7 @@ void Actor::SetEffectGlowRamp( float fEffectPeriodSeconds, RageColor c1, RageCol
 
 void Actor::SetEffectRainbow( float fEffectPeriodSeconds )
 {
+	ASSERT( fEffectPeriodSeconds > 0 );
 	// todo: account for SSC_FUTURES -aj
 	if( m_Effect != rainbow )
 	{
@@ -1022,6 +1040,7 @@ void Actor::SetEffectRainbow( float fEffectPeriodSeconds )
 
 void Actor::SetEffectWag( float fPeriod, RageVector3 vect )
 {
+	ASSERT( fPeriod > 0 );
 	// todo: account for SSC_FUTURES -aj
 	if( m_Effect != wag )
 	{
@@ -1034,6 +1053,7 @@ void Actor::SetEffectWag( float fPeriod, RageVector3 vect )
 
 void Actor::SetEffectBounce( float fPeriod, RageVector3 vect )
 {
+	ASSERT( fPeriod > 0 );
 	// todo: account for SSC_FUTURES -aj
 	m_Effect = bounce;
 	SetEffectPeriod( fPeriod );
@@ -1043,6 +1063,7 @@ void Actor::SetEffectBounce( float fPeriod, RageVector3 vect )
 
 void Actor::SetEffectBob( float fPeriod, RageVector3 vect )
 {
+	ASSERT( fPeriod > 0 );
 	// todo: account for SSC_FUTURES -aj
 	if( m_Effect!=bob || GetEffectPeriod() != fPeriod )
 	{
@@ -1069,6 +1090,7 @@ void Actor::SetEffectVibrate( RageVector3 vect )
 
 void Actor::SetEffectPulse( float fPeriod, float fMinZoom, float fMaxZoom )
 {
+	ASSERT( fPeriod > 0 );
 	// todo: account for SSC_FUTURES -aj
 	m_Effect = pulse;
 	SetEffectPeriod( fPeriod );
@@ -1094,11 +1116,16 @@ void Actor::AddRotationR( float rot )
 
 void Actor::RunCommands( const LuaReference& cmds, const LuaReference *pParamTable )
 {
+	if( !cmds.IsSet() || cmds.IsNil() )
+	{
+		LOG->Warn( "RunCommands: command is unset or nil" );
+		return;
+	}
+
 	Lua *L = LUA->Get();
 
 	// function
 	cmds.PushSelf( L );
-	ASSERT( !lua_isnil(L, -1) );
 
 	// 1st parameter
 	this->PushSelf( L );
@@ -1229,6 +1256,8 @@ void Actor::TweenState::MakeWeightedAverage( TweenState& average_out, const Twee
 
 void Actor::Sleep( float time )
 {
+	ASSERT( time >= 0 );
+
 	BeginTweening( time, TWEEN_LINEAR );
 	BeginTweening( 0, TWEEN_LINEAR ); 
 }
@@ -1353,15 +1382,71 @@ class LunaActor : public Luna<Actor>
 {
 public:
 	static int name( T* p, lua_State *L )			{ p->SetName(SArg(1)); return 0; }
-	static int sleep( T* p, lua_State *L )			{ p->Sleep(FArg(1)); return 0; }
-	static int linear( T* p, lua_State *L )			{ p->BeginTweening(FArg(1),TWEEN_LINEAR); return 0; }
-	static int accelerate( T* p, lua_State *L )		{ p->BeginTweening(FArg(1),TWEEN_ACCELERATE); return 0; }
-	static int decelerate( T* p, lua_State *L )		{ p->BeginTweening(FArg(1),TWEEN_DECELERATE); return 0; }
-	static int spring( T* p, lua_State *L )			{ p->BeginTweening(FArg(1),TWEEN_SPRING); return 0; }
+	static int sleep( T* p, lua_State *L )
+	{
+		float fTime = FArg(1);
+		if (fTime < 0)
+		{
+			LOG->Warn("Lua: sleep(%f): time must not be negative", fTime);
+			return 0;
+		}
+		p->Sleep(fTime);
+		return 0;
+	}
+	static int linear( T* p, lua_State *L )
+	{
+		float fTime = FArg(1);
+		if (fTime < 0)
+		{
+			LOG->Warn("Lua: linear(%f): tween time must not be negative", fTime);
+			return 0;
+		}
+		p->BeginTweening(fTime, TWEEN_LINEAR);
+		return 0;
+	}
+	static int accelerate( T* p, lua_State *L )
+	{
+		float fTime = FArg(1);
+		if (fTime < 0)
+		{
+			LOG->Warn("Lua: accelerate(%f): tween time must not be negative", fTime);
+			return 0;
+		}
+		p->BeginTweening(fTime, TWEEN_ACCELERATE);
+		return 0;
+	}
+	static int decelerate( T* p, lua_State *L )
+	{
+		float fTime = FArg(1);
+		if (fTime < 0)
+		{
+			LOG->Warn("Lua: decelerate(%f): tween time must not be negative", fTime);
+			return 0;
+		}
+		p->BeginTweening(fTime, TWEEN_DECELERATE);
+		return 0;
+	}
+	static int spring( T* p, lua_State *L )
+	{
+		float fTime = FArg(1);
+		if (fTime < 0)
+		{
+			LOG->Warn("Lua: spring(%f): tween time must not be negative", fTime);
+			return 0;
+		}
+		p->BeginTweening(fTime, TWEEN_SPRING);
+		return 0;
+	}
 	static int tween( T* p, lua_State *L )
 	{
+		float fTime = FArg(1);
+		if (fTime < 0)
+		{
+			LOG->Warn("Lua: tween(%f): tween time must not be negative", fTime);
+			return 0;
+		}
 		ITween *pTween = ITween::CreateFromStack( L, 2 );
-		p->BeginTweening( FArg(1), pTween );
+		p->BeginTweening(fTime, pTween);
 		return 0;
 	}
 	static int stoptweening( T* p, lua_State * )		{ p->StopTweening(); return 0; }
@@ -1436,24 +1521,50 @@ public:
 	static int vertalign( T* p, lua_State *L )		{ p->SetVertAlign(Enum::Check<VertAlign>(L, 1)); return 0; }
 	static int halign( T* p, lua_State *L )			{ p->SetHorizAlign(FArg(1)); return 0; }
 	static int valign( T* p, lua_State *L )			{ p->SetVertAlign(FArg(1)); return 0; }
-	static int diffuseblink( T* p, lua_State * )		{ p->SetEffectDiffuseBlink(); return 0; }
-	static int diffuseshift( T* p, lua_State * )		{ p->SetEffectDiffuseShift(); return 0; }
-	static int diffuseramp( T* p, lua_State * )		{ p->SetEffectDiffuseRamp(); return 0; }
-	static int glowblink( T* p, lua_State * )		{ p->SetEffectGlowBlink(); return 0; }
-	static int glowshift( T* p, lua_State * )		{ p->SetEffectGlowShift(); return 0; }
-	static int glowramp( T* p, lua_State * )		{ p->SetEffectGlowRamp(); return 0; }
-	static int rainbow( T* p, lua_State * )		{ p->SetEffectRainbow(); return 0; }
-	static int wag( T* p, lua_State * )			{ p->SetEffectWag(); return 0; }
-	static int bounce( T* p, lua_State * )			{ p->SetEffectBounce(); return 0; }
-	static int bob( T* p, lua_State * )			{ p->SetEffectBob(); return 0; }
-	static int pulse( T* p, lua_State * )			{ p->SetEffectPulse(); return 0; }
-	static int spin( T* p, lua_State * )			{ p->SetEffectSpin(); return 0; }
-	static int vibrate( T* p, lua_State * )		{ p->SetEffectVibrate(); return 0; }
+	static int diffuseblink( T* p, lua_State * )		{ p->SetEffectDiffuseBlink(1.0f, RageColor(0.5f,0.5f,0.5f,0.5f), RageColor(1,1,1,1)); return 0; }
+	static int diffuseshift( T* p, lua_State * )		{ p->SetEffectDiffuseShift(1.0f, RageColor(0,0,0,1), RageColor(1,1,1,1)); return 0; }
+	static int diffuseramp( T* p, lua_State * )		{ p->SetEffectDiffuseRamp(1.0f, RageColor(0,0,0,1), RageColor(1,1,1,1)); return 0; }
+	static int glowblink( T* p, lua_State * )		{ p->SetEffectGlowBlink(1.0f, RageColor(1,1,1,0.2f), RageColor(1,1,1,0.8f)); return 0; }
+	static int glowshift( T* p, lua_State * )		{ p->SetEffectGlowShift(1.0f, RageColor(1,1,1,0.2f), RageColor(1,1,1,0.8f)); return 0; }
+	static int glowramp( T* p, lua_State * )		{ p->SetEffectGlowRamp(1.0f, RageColor(1,1,1,0.2f), RageColor(1,1,1,0.8f)); return 0; }
+	static int rainbow( T* p, lua_State * )			{ p->SetEffectRainbow(2.0f); return 0; }
+	static int wag( T* p, lua_State * )			{ p->SetEffectWag(2.0f, RageVector3(0,0,20)); return 0; }
+	static int bounce( T* p, lua_State * )			{ p->SetEffectBounce(2.0f, RageVector3(0,20,0)); return 0; }
+	static int bob( T* p, lua_State * )			{ p->SetEffectBob(2.0f, RageVector3(0,20,0)); return 0; }
+	static int pulse( T* p, lua_State * )			{ p->SetEffectPulse(2.0f, 0.5f, 1.0f); return 0; }
+	static int spin( T* p, lua_State * )			{ p->SetEffectSpin(RageVector3(0,0,180)); return 0; }
+	static int vibrate( T* p, lua_State * )			{ p->SetEffectVibrate(RageVector3(10,10,10)); return 0; }
 	static int stopeffect( T* p, lua_State * )		{ p->StopEffect(); return 0; }
 	static int effectcolor1( T* p, lua_State *L )		{ RageColor c; c.FromStackCompat( L, 1 ); p->SetEffectColor1( c ); return 0; }
 	static int effectcolor2( T* p, lua_State *L )		{ RageColor c; c.FromStackCompat( L, 1 ); p->SetEffectColor2( c ); return 0; }
-	static int effectperiod( T* p, lua_State *L )		{ p->SetEffectPeriod(FArg(1)); return 0; }
-	static int effecttiming( T* p, lua_State *L )		{ p->SetEffectTiming(FArg(1),FArg(2),FArg(3),FArg(4)); return 0; }
+	static int effectperiod( T* p, lua_State *L )
+	{
+		float fPeriod = FArg(1);
+		if (fPeriod <= 0)
+		{
+			LOG->Warn("Effect period (%f) must be positive; ignoring", fPeriod);
+			return 0;
+		}
+		p->SetEffectPeriod(FArg(1));
+		return 0;
+	}
+	static int effecttiming( T* p, lua_State *L )
+	{
+		float f1 = FArg(1), f2 = FArg(2), f3 = FArg(3), f4 = FArg(4);
+		if (f1 < 0 || f2 < 0 || f3 < 0 || f4 < 0)
+		{
+			LOG->Warn("Effect timings (%f,%f,%f,%f) must not be negative; ignoring",
+					f1, f2, f3, f4);
+			return 0;
+		}
+		if (f1 == 0 && f2 == 0 && f3 == 0 && f4 == 0)
+		{
+			LOG->Warn("Effect timings (0,0,0,0) must not all be zero; ignoring");
+			return 0;
+		}
+		p->SetEffectTiming(FArg(1), FArg(2), FArg(3), FArg(4));
+		return 0;
+	}
 	static int effectoffset( T* p, lua_State *L )		{ p->SetEffectOffset(FArg(1)); return 0; }
 	static int effectclock( T* p, lua_State *L )		{ p->SetEffectClockString(SArg(1)); return 0; }
 	static int effectmagnitude( T* p, lua_State *L )	{ p->SetEffectMagnitude( RageVector3(FArg(1),FArg(2),FArg(3)) ); return 0; }

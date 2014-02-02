@@ -300,6 +300,12 @@ protected:
 	virtual PlayerInfo &GetPlayerInfoForInput( const InputEventPlus& iep )  { return m_vPlayerInfo[iep.pn]; }
 
 	RageTimer		m_timerGameplaySeconds;
+	
+	// HACK: We have no idea whether we're actually using SMOnline or not.
+	// No, seriously, NOWHERE is it stored what room we're in or whether we're in a room at all.
+	// Apparently we just hope the server is keeping track.
+	// All we can do is guess based on what subclass we are.
+	bool m_bForceNoNetwork;
 };
 
 vector<PlayerInfo>::iterator GetNextEnabledPlayerInfo		( vector<PlayerInfo>::iterator iter, vector<PlayerInfo> &v );

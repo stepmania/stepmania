@@ -121,6 +121,7 @@ public:
 	RString GetServerName();
 
 	// SMOnline stuff
+	// FIXME: This should NOT be public. PERIOD.
 	void SendSMOnline( );
 
 	bool Connect( const RString& addy, unsigned short port );
@@ -167,6 +168,7 @@ public:
 
 	RString m_sChatText;
 
+	// FIXME: This should NOT be public. PERIOD. It probably shouldn't be a member at all.
 	PacketFunctions	m_SMOnlinePacket;
 
 	StepManiaLanServer *LANserver;

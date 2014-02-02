@@ -65,17 +65,25 @@ void ActorMultiTexture::ClearTextures()
 
 int ActorMultiTexture::AddTexture( RageTexture *pTexture )
 {
-	ASSERT( pTexture != NULL );
+	if( pTexture == NULL )
+	{
+		LOG->Warn( "Can't add nil texture to ActorMultiTexture" );
+		return m_aTextureUnits.size();
+	}
 	LOG->Trace( "ActorMultiTexture::AddTexture( %s )", pTexture->GetID().filename.c_str() );
 
 	m_aTextureUnits.push_back( TextureUnitState() );
 	m_aTextureUnits.back().m_pTexture = TEXTUREMAN->CopyTexture( pTexture );
-	return m_aTextureUnits.size() - 1;
+	return m_aTextureUnits.size();
 }
 
 void ActorMultiTexture::SetTextureMode( int iIndex, TextureMode tm )
 {
-	ASSERT( iIndex < (int) m_aTextureUnits.size() );
+	if( iIndex >= (int) m_aTextureUnits.size() )
+	{
+		LOG->Warn( "Can't set texture mode, index %d too high.", iIndex );
+		return;
+	}
 	m_aTextureUnits[iIndex].m_TextureMode = tm;
 }
 

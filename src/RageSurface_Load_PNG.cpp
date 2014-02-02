@@ -5,16 +5,13 @@
 #include "RageFile.h"
 #include "RageSurface.h"
 
-
-#if defined(_WINDOWS)
-#  include "png.h"
-#  if defined(_MSC_VER)
-#  pragma comment(lib, "libpng.lib")
-#  pragma warning(disable: 4611) /* interaction between '_setjmp' and C++ object destruction is non-portable */
-#  endif // _MSC_VER
+#if defined(_MSC_VER)
+#include "../extern/libpng/include/png.h"
+#pragma comment(lib, "libpng.lib")
+#pragma warning(disable: 4611) /* interaction between '_setjmp' and C++ object destruction is non-portable */
 #else
-#  include <../extern/libpng/include/png.h>
-#endif
+#include <png.h>
+#endif // _MSC_VER
 
 namespace
 {
@@ -56,6 +53,7 @@ void PNG_Error( png_struct *png, const char *error )
 
 void PNG_Warning( png_struct *png, const char *warning )
 {
+	// FIXME: Mismatched libpng headers vs. library causes a segfault here on MinGW
 	CHECKPOINT;
 	error_info *info = (error_info *) png_get_io_ptr(png);
 	LOG->Trace( "loading \"%s\": warning: %s", info->fn, warning );

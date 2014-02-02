@@ -9,6 +9,7 @@ struct RadarValues;
 class NoteData;
 class Song;
 struct AttackArray;
+class TimingData;
 
 /** @brief A limited selection of the RadarValues. */
 struct RadarStats
@@ -196,6 +197,10 @@ namespace NoteDataUtil
 	bool GetPrevEditorPosition( const NoteData& in, int &rowInOut );
 
 	void SetHopoPossibleFlags( const Song *pSong, NoteData& ndInOut );
+	
+	/** @brief Count the number of hold ticks that will fire, assuming that tickholds are on.
+	  * @param td The TimingData from the relevant Steps. */
+	unsigned int GetTotalHoldTicks( NoteData* nd, const TimingData* td );
 };
 
 #endif

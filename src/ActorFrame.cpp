@@ -222,7 +222,11 @@ void ActorFrame::BeginDraw()
 
 void ActorFrame::DrawPrimitives()
 {
-	ASSERT_M( !m_bClearZBuffer, "ClearZBuffer not supported on ActorFrames" );
+	if( m_bClearZBuffer )
+	{
+		LOG->Warn( "ClearZBuffer not supported on ActorFrames" );
+		m_bClearZBuffer = false;
+	}
 
 	// Don't set Actor-defined render states because we won't be drawing 
 	// any geometry that belongs to this object.
@@ -232,7 +236,11 @@ void ActorFrame::DrawPrimitives()
 	{
 		Lua *L = LUA->Get();
 		m_DrawFunction.PushSelf( L );
-		ASSERT( !lua_isnil(L, -1) );
+		if( lua_isnil(L, -1) )
+		{
+			LOG->Warn( "Error compiling DrawFunction" );
+			return;
+		}
 		this->PushSelf( L );
 		RString sError;
 		if( !LuaHelpers::RunScriptOnStack(L, sError, 1, 0) ) // 1 arg, 0 results
@@ -344,7 +352,11 @@ void ActorFrame::UpdateInternal( float fDeltaTime )
 	{
 		Lua *L = LUA->Get();
 		m_UpdateFunction.PushSelf( L );
-		ASSERT( !lua_isnil(L, -1) );
+		if( lua_isnil(L, -1) )
+		{
+			LOG->Warn( "Error compiling UpdateFunction" );
+			return;
+		}
 		this->PushSelf( L );
 		lua_pushnumber( L, fDeltaTime );
 		RString sError;

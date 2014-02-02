@@ -22,6 +22,8 @@ void Attack::GetAttackBeats( const Song *pSong, float &fStartBeat, float &fEndBe
  * prevent popping when the attack has note modifers. */
 void Attack::GetRealtimeAttackBeats( const Song *pSong, const PlayerState* pPlayerState, float &fStartBeat, float &fEndBeat ) const
 {
+	ASSERT( pSong != NULL );
+
 	if( fStartSecond >= 0 )
 	{
 		GetAttackBeats( pSong, fStartBeat, fEndBeat );
@@ -29,7 +31,6 @@ void Attack::GetRealtimeAttackBeats( const Song *pSong, const PlayerState* pPlay
 	}
 
 	ASSERT( pPlayerState != NULL );
-	ASSERT( pSong != NULL );
 
 	/* If reasonable, push the attack forward 8 beats so that notes on screen don't change suddenly. */
 	fStartBeat = min( GAMESTATE->m_Position.m_fSongBeat+8, pPlayerState->m_fLastDrawnBeat );

@@ -15,6 +15,8 @@ REGISTER_SCREEN_CLASS( ScreenGameplaySyncMachine );
 
 void ScreenGameplaySyncMachine::Init()
 {
+	m_bForceNoNetwork = true;
+
 	GAMESTATE->m_PlayMode.Set( PLAY_MODE_REGULAR );
 	GAMESTATE->SetCurrentStyle( GAMEMAN->GetHowToPlayStyleForGame(GAMESTATE->m_pCurGame) );
 	AdjustSync::ResetOriginalSyncData();

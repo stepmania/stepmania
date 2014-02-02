@@ -16,7 +16,7 @@
 //STATIC_INI_PATH	= "Data/Static.ini";		// overlay on the 2 above, can't be overridden
 //TYPE_TXT_FILE	= "Data/Type.txt";
 
-PrefsManager*	PREFSMAN = NULL;	// global and accessable from anywhere in our program
+PrefsManager*	PREFSMAN = NULL;	// global and accessible from anywhere in our program
 
 static const char *MusicWheelUsesSectionsNames[] = {
 	"Never",
@@ -284,8 +284,13 @@ PrefsManager::PrefsManager() :
 
 	/* Debug: */
 	m_bLogToDisk			( "LogToDisk",		true ),
+#if defined(DEBUG)
+	m_bForceLogFlush		( "ForceLogFlush",	true ),
+	m_bShowLogOutput		( "ShowLogOutput",	true ),
+#else
 	m_bForceLogFlush		( "ForceLogFlush",	false ),
 	m_bShowLogOutput		( "ShowLogOutput",	false ),
+#endif
 	m_bLogSkips			( "LogSkips",		false ),
 	m_bLogCheckpoints		( "LogCheckpoints",	false ),
 	m_bShowLoadingWindow		( "ShowLoadingWindow",	true ),

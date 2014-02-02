@@ -6,14 +6,12 @@
 #endif
 #include "RageUtil.h"
 #include "RageLog.h"
-#include "arch/arch.h"
 #include "RageThreads.h"
 
 #if !defined(SMPACKAGE)
 static Preference<RString> g_sIgnoredDialogs( "IgnoredDialogs", "" );
 #endif
 
-#include "Selector_Dialog.h"
 DialogDriver *MakeDialogDriver()
 {
 	RString sDrivers = "win32,cocoa,null";

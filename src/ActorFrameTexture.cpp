@@ -2,6 +2,7 @@
 #include "ActorFrameTexture.h"
 #include "RageTextureRenderTarget.h"
 #include "RageTextureManager.h"
+#include "RageLog.h"
 #include "ActorUtil.h"
 
 REGISTER_ACTOR_CLASS_WITH_NAME( ActorFrameTextureAutoDeleteChildren, ActorFrameTexture );
@@ -34,7 +35,12 @@ ActorFrameTexture::~ActorFrameTexture()
 
 void ActorFrameTexture::Create()
 {
-	ASSERT( m_pRenderTarget == NULL );
+	if( m_pRenderTarget != NULL )
+	{
+		LOG->Warn( "Can't Create an already created ActorFrameTexture" );
+		return;
+	}
+
 	RageTextureID id( m_sTextureName );
 	id.Policy = RageTextureID::TEX_VOLATILE;
 

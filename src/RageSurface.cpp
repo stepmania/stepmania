@@ -2,6 +2,8 @@
 #include "RageSurface.h"
 #include "RageUtil.h"
 
+#include <limits.h>
+
 bool RageSurfaceColor::operator== ( const RageSurfaceColor &rhs ) const
 {
 	return rhs.r == r && rhs.g == g && rhs.b == b && rhs.a == a;

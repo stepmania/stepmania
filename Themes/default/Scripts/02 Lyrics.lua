@@ -1,4 +1,5 @@
 function Actor:LyricCommand(side)
+	self:draworder(DrawOrder.Screen+1);
 	self:settext(Var "LyricText")
 
 	self:stoptweening()

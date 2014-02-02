@@ -9,7 +9,7 @@ bool ArchHooks::g_bQuitting = false;
 bool ArchHooks::g_bToggleWindowed = false;
 // Keep from pulling RageThreads.h into ArchHooks.h
 static RageMutex g_Mutex( "ArchHooks" );
-ArchHooks *HOOKS = NULL;
+ArchHooks *HOOKS = NULL; // global and accessible from anywhere in our program
 
 ArchHooks::ArchHooks(): m_bHasFocus(true), m_bFocusChanged(false)
 {
@@ -59,6 +59,12 @@ bool ArchHooks::GoToURL( RString sUrl )
 ArchHooks *ArchHooks::Create()
 {
 	return new ARCH_HOOKS;
+}
+
+RString ArchHooks::GetClipboard()
+{
+	LOG->Warn("ArchHooks: GetClipboard() NOT IMPLEMENTED");
+	return "";
 }
 
 // lua start

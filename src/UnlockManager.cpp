@@ -19,7 +19,7 @@
 #include "GameManager.h"
 #include "Style.h"
 
-UnlockManager*	UNLOCKMAN = NULL;	// global and accessable from anywhere in our program
+UnlockManager*	UNLOCKMAN = NULL;	// global and accessible from anywhere in our program
 
 #define UNLOCK_NAMES		THEME->GetMetric ("UnlockManager","UnlockNames")
 #define UNLOCK(x)		THEME->GetMetricR("UnlockManager", ssprintf("Unlock%sCommand",x.c_str()));

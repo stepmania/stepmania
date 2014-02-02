@@ -35,12 +35,16 @@ void MeterDisplay::LoadFromNode( const XNode* pNode )
 	if( pStream == NULL )
 		RageException::Throw( "%s: MeterDisplay: missing the \"Stream\" attribute", ActorUtil::GetWhere(pNode).c_str() );
 	m_sprStream.LoadActorFromNode( pStream, this );
+	m_sprStream->SetName( "Stream" );
+	//LOAD_ALL_COMMANDS( m_sprStream );
 	this->AddChild( m_sprStream );
 
 	const XNode* pChild = pNode->GetChild( "Tip" );
 	if( pChild != NULL )
 	{
 		m_sprTip.LoadActorFromNode( pChild, this );
+		m_sprTip->SetName( "Tip" );
+		//LOAD_ALL_COMMANDS( m_sprTip );
 		this->AddChild( m_sprTip );
 	}
 

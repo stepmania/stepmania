@@ -23,7 +23,7 @@ function GetExtraColorThreshold()
 		techno = 10,
 		lights = 10, -- lights shouldn't be playable
 	}
-	return Modes[CurGameName()]
+	return Modes[CurGameName()] or 10
 end
 
 -- AllowOptionsMenu()
@@ -89,7 +89,7 @@ function ComboContinue()
 		kb7 = "TapNoteScore_W3",
 		para = "TapNoteScore_W4"
 	}
-	return Continue[CurGameName()]
+  return Continue[CurGameName()] or "TapNoteScore_W3"
 end
 
 function ComboMaintain()
@@ -100,7 +100,7 @@ function ComboMaintain()
 		kb7 = "TapNoteScore_W3",
 		para = "TapNoteScore_W4"
 	}
-	return Maintain[CurGameName()]
+  return Maintain[CurGameName()] or "TapNoteScore_W3"
 end
 
 function ComboPerRow()

@@ -19,9 +19,22 @@ AC_PROG_CXX
 AC_PROG_RANLIB
 AM_PROG_CC_C_O
 
-test "$DEFAULT_CFLAGS" = "yes" && CFLAGS="-Wall -W -Wno-unused -Wno-switch"
-test "$DEFAULT_CXXFLAGS" = "yes" && CXXFLAGS="-Wall -W -Wno-unused -Wno-switch"
+test "$DEFAULT_CFLAGS" = "yes" && CFLAGS="-Wall -W -Wno-unused-parameter -Wno-switch"
+test "$DEFAULT_CXXFLAGS" = "yes" && CXXFLAGS="-Wall -W -Wno-unused-parameter -Wno-switch"
 test "$DEFAULT_LDFLAGS" = "yes" && LDFLAGS=""
+
+# If on Windows, grab the prebuilts
+if test "$host_os" = "mingw32"; then
+	CPPFLAGS="$CPPFLAGS -I$PWD/extern/for_mingw/include"
+	LDFLAGS="$LDFLAGS -L$PWD/extern/for_mingw/lib"
+	# HACK: The prebuilts are 32bit only. Force the issue.
+	CFLAGS="$CFLAGS -m32"
+	CXXFLAGS="$CXXFLAGS -m32"
+	RESFLAGS="$RESFLAGS --target=pe-i386 -I$PWD/src/archutils/Win32/mingw"
+fi
+
+AM_CONDITIONAL(WITH_TTY, test "$with_tty" = "yes")
+AC_ARG_WITH(linux-tty, AS_HELP_STRING([--with-linux-tty], [Enable Linux TTY input]), with_tty=yes, with_tty=no)
 
 compile=release
 AC_ARG_WITH(debug, AS_HELP_STRING([--with-debug],[Enable debug mode]), with_debug=$withval, with_debug=no)
@@ -93,6 +106,7 @@ AC_LANG_POP([C])
 AC_CHECK_HEADERS([sys/param.h])
 
 if test x$with_debug = xyes; then
+	AC_DEFINE([DEBUG], 1, [Special debugging logic])
 	AC_LANG_PUSH([C++])
 	AC_CHECK_HEADER([debug/debug.h],[
 		AC_DEFINE([_GLIBCXX_DEBUG],1,[STL debug])
@@ -120,15 +134,25 @@ case $host_os in
 	bsd=yes
 	unix=yes
 	;;
+*mingw*)
+	AC_DEFINE(WINDOWS, 1, [Windows])
+	windows=yes
+	;;
 *)
 	AC_DEFINE(UNIX, 1, [Unix])
 	unix=yes
 	;;
 esac
-AC_DEFINE(LUA_USE_LINUX, 1, [Linux for Lua])
+if test "$windows" = "yes"; then
+	SM_WINDOWS
+fi
+if test "$linux" = "yes"; then
+	AC_DEFINE(LUA_USE_LINUX, 1, [Linux for Lua])
+fi
 AM_CONDITIONAL(UNIX, test "$unix" = "yes" )
 AM_CONDITIONAL(LINUX, test "$linux" = "yes" )
 AM_CONDITIONAL(BSD, test "$bsd" = "yes" )
+AM_CONDITIONAL(WINDOWS, test "$windows" = "yes" )
 
 # Define macros for individual CPU types, for a few bits of inline assembly.
 # This is for major, compatible CPU classes--"CPU_X86" includes P2, P3, P4,
@@ -172,7 +196,13 @@ if test "$with_prof" = "yes"; then
 	test "$DEFAULT_LDFLAGS" = "yes" && LDFLAGS="$LDFLAGS -pg"
 fi
 
-SM_X_WITH_OPENGL
+SM_OPENGL
+SM_X11
+GL_CFLAGS="$GL_CFLAGS $XCFLAGS"
+GL_LIBS="$GL_LIBS $XLIBS"
+
+AC_SUBST(GL_CFLAGS)
+AC_SUBST(GL_LIBS)
 
 have_libpng=yes
 SM_STATIC
@@ -189,6 +219,7 @@ if test "$have_libpng" = "no"; then
   echo "*** it is installed to continue the build process."
   exit 1
 fi
+
 LIBS="$LIBS $LIB_PRE -lpng -lz -lm $LIB_POST"
 LIB_PRE=
 LIB_POST=
@@ -234,6 +265,14 @@ if test "$with_gles2" = "no"; then
 fi
 AM_CONDITIONAL(WITHOUT_GLES2, test "$with_gles2" = "no")
 
+AM_ICONV
+# HACK: The iconv check can pass erroneously on mingw64 under some conditions I'm not really sure of.
+if test "$windows" = "yes"; then
+	LIBS="$LIBS -liconv"
+else
+	LIBS="$LIBS $LIBICONV"
+fi
+
 SM_ZLIB
 SM_BZIP
 SM_AUDIO
@@ -243,8 +282,6 @@ SM_TLS
 SM_CHECK_CRASH_HANDLER
 
 AM_PATH_ALSA(0.9.0,AC_DEFINE([HAVE_ALSA],1,[Define presence of ALSA]),alsa=false)
-
-AM_ICONV
 
 AC_ARG_ENABLE(gtk2, AS_HELP_STRING([--disable-gtk2],[Disable GTK support]), enable_gtk2=$enableval, enable_gtk2=yes)
 
@@ -283,9 +320,20 @@ AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <stdlib.h>
 		 AC_DEFINE([NEED_CSTDLIB_WORKAROUND], 1, [cstdlib breaks llabs])
 	      ])
 AC_LANG_POP(C++)
-AC_CHECK_LIB( pthread, pthread_create, AC_DEFINE([HAVE_LIBPTHREAD],1,[libpthread is available]) )
+
+# TODO: This should have a --with option to force it on
+if test "$windows" != "yes"; then
+AC_CHECK_LIB( pthread, pthread_create, [have_pthread=yes; AC_DEFINE([HAVE_LIBPTHREAD],1,[libpthread is available])], have_pthread=no)
 AC_CHECK_LIB( pthread, pthread_mutex_timedlock, AC_DEFINE([HAVE_PTHREAD_MUTEX_TIMEDLOCK],1,[pthreads has pthread_mutex_timedlock()]) )
 AC_CHECK_LIB( pthread, pthread_cond_timedwait, AC_DEFINE([HAVE_PTHREAD_COND_TIMEDWAIT],1,[pthreads has pthread_cond_timedwait()]) )
+fi
+
+# XXX: This isn't always being included when it is needed. Just force it in.
+if test "$have_pthread" = "yes"; then
+	LIBS="$LIBS -lpthread"
+fi
+
+AM_CONDITIONAL(HAVE_PTHREAD, test "$have_pthread" = "yes")
 
 # Always:
 AC_DEFINE(_GNU_SOURCE, 1, [Use GNU extensions])
@@ -317,13 +365,13 @@ AC_CHECK_DECL(strtof, , AC_DEFINE([NEED_STRTOF],1,[Need strtof]), [#include <std
 
 AC_CHECK_DECLS([SIGPWR, SIGUSR1],,,[#include <signal.h>])
 
-PKG_CHECK_MODULES( [GLEW], [glew >= 1.3.5], LIBS="$LIBS -lGLEW" )
-
 AC_ARG_ENABLE(tests, AS_HELP_STRING([--enable-tests],[Build test programs]), enable_tests=$enableval, enable_tests=no)
 AM_CONDITIONAL(BUILD_TESTS, test "$enable_tests" = "yes" )
 
 AC_ARG_ENABLE(lua-binaries, AS_HELP_STRING([--enable-lua-binaries],[Build lua and luac]), enable_lua_binaries=$enableval, enable_lua_binaries=no)
 AM_CONDITIONAL(BUILD_LUA_BINARIES, test "$enable_lua_binaries" = "yes" )
+
+AC_SUBST(RESFLAGS)
 
 AC_CONFIG_FILES(Makefile)
 AC_CONFIG_FILES(src/Makefile)

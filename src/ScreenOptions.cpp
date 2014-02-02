@@ -120,6 +120,7 @@ void ScreenOptions::Init()
 	m_SoundPrevRow.Load( THEME->GetPathS(m_sName,"prev"), true );
 	m_SoundToggleOn.Load( THEME->GetPathS(m_sName,"toggle on"), true );
 	m_SoundToggleOff.Load( THEME->GetPathS(m_sName,"toggle off"), true );
+	m_SoundStart.Load( THEME->GetPathS(m_sName,"start"), true );
 
 	// add everything to m_frameContainer so we can animate everything at once
 	m_frameContainer.SetName( "Container" );
@@ -830,7 +831,7 @@ void ScreenOptions::ProcessMenuStart( const InputEventPlus &input )
 	if( iCurRow < 0 )
 	{
 		// this shouldn't be happening, but it is, so we need to bail out. -aj
-		SCREENMAN->PlayStartSound();
+		m_SoundStart.PlayCopy();
 		this->BeginFadingOut();
 		return;
 	}
@@ -874,7 +875,7 @@ void ScreenOptions::ProcessMenuStart( const InputEventPlus &input )
 
 		if( bEndThisScreen )
 		{
-			SCREENMAN->PlayStartSound();
+			m_SoundStart.PlayCopy();
 			this->BeginFadingOut();
 			return;
 		}

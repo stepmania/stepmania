@@ -242,6 +242,8 @@ public:
 	 * aborted actors.
 	 * @return false, as by default Actors shouldn't be aborted on drawing. */
 	virtual bool EarlyAbortDraw() const { return false; }
+	/** @brief Calculate values that may be needed  for drawing. */
+	virtual void PreDraw();
 	/** @brief Start the drawing and push the transform on the world matrix stack. */
 	virtual void BeginDraw();
 	/**
@@ -511,44 +513,19 @@ public:
 	void SetEffectMagnitude( RageVector3 vec )	{ m_vEffectMagnitude = vec; }
 	RageVector3 GetEffectMagnitude() const		{ return m_vEffectMagnitude; }
 
-	void SetEffectDiffuseBlink( 
-		float fEffectPeriodSeconds = 1.0f,
-		RageColor c1 = RageColor(0.5f,0.5f,0.5f,1), 
-		RageColor c2 = RageColor(1,1,1,1) );
-	void SetEffectDiffuseShift( float fEffectPeriodSeconds = 1.f,
-		RageColor c1 = RageColor(0,0,0,1), 
-		RageColor c2 = RageColor(1,1,1,1) );
-	void SetEffectDiffuseRamp( float fEffectPeriodSeconds = 1.f,
-		RageColor c1 = RageColor(0,0,0,1), 
-		RageColor c2 = RageColor(1,1,1,1) );
-	void SetEffectGlowBlink( float fEffectPeriodSeconds = 1.f,
-		RageColor c1 = RageColor(1,1,1,0.2f),
-		RageColor c2 = RageColor(1,1,1,0.8f) );
-	void SetEffectGlowShift( 
-		float fEffectPeriodSeconds = 1.0f,
-		RageColor c1 = RageColor(1,1,1,0.2f),
-		RageColor c2 = RageColor(1,1,1,0.8f) );
-	void SetEffectGlowRamp( 
-		float fEffectPeriodSeconds = 1.0f,
-		RageColor c1 = RageColor(1,1,1,0.2f),
-		RageColor c2 = RageColor(1,1,1,0.8f) );
-	void SetEffectRainbow( 
-		float fEffectPeriodSeconds = 2.0f );
-	void SetEffectWag( 
-		float fPeriod = 2.f, 
-		RageVector3 vect = RageVector3(0,0,20) );
-	void SetEffectBounce( 
-		float fPeriod = 2.f, 
-		RageVector3 vect = RageVector3(0,20,0) );
-	void SetEffectBob( 
-		float fPeriod = 2.f, 
-		RageVector3 vect = RageVector3(0,20,0) );
-	void SetEffectPulse( 
-		float fPeriod = 2.f,
-		float fMinZoom = 0.5f,
-		float fMaxZoom = 1.f );
-	void SetEffectSpin( RageVector3 vect = RageVector3(0,0,180) );
-	void SetEffectVibrate( RageVector3 vect = RageVector3(10,10,10) );
+	void SetEffectDiffuseBlink( float fEffectPeriodSeconds, RageColor c1, RageColor c2 );
+	void SetEffectDiffuseShift( float fEffectPeriodSeconds, RageColor c1, RageColor c2 );
+	void SetEffectDiffuseRamp( float fEffectPeriodSeconds, RageColor c1, RageColor c2 );
+	void SetEffectGlowBlink( float fEffectPeriodSeconds, RageColor c1, RageColor c2 );
+	void SetEffectGlowShift( float fEffectPeriodSeconds, RageColor c1, RageColor c2 );
+	void SetEffectGlowRamp( float fEffectPeriodSeconds, RageColor c1, RageColor c2 );
+	void SetEffectRainbow( float fEffectPeriodSeconds );
+	void SetEffectWag( float fPeriod, RageVector3 vect );
+	void SetEffectBounce( float fPeriod, RageVector3 vect );
+	void SetEffectBob( float fPeriod, RageVector3 vect );
+	void SetEffectPulse( float fPeriod, float fMinZoom, float fMaxZoom );
+	void SetEffectSpin( RageVector3 vect );
+	void SetEffectVibrate( RageVector3 vect );
 
 
 	// other properties

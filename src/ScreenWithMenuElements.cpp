@@ -376,10 +376,12 @@ class LunaScreenWithMenuElements: public Luna<ScreenWithMenuElements>
 {
 public:
 	static int Cancel( T* p, lua_State *L )		{ p->Cancel( SM_GoToPrevScreen ); return 0; }
+	static int IsTransitioning( T* p, lua_State *L ) { lua_pushboolean( L, p->IsTransitioning() ); return 1; }
 
 	LunaScreenWithMenuElements()
 	{
-  		ADD_METHOD( Cancel );
+		ADD_METHOD( Cancel );
+		ADD_METHOD( IsTransitioning );
 	}
 };
 

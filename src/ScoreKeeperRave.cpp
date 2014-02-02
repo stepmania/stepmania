@@ -12,26 +12,25 @@
 
 ThemeMetric<float> ATTACK_DURATION_SECONDS	("ScoreKeeperRave","AttackDurationSeconds");
 
-static const float g_fSuperMeterPercentChangeInit[] =
-{
-	+0.02f, // SE_CheckpointHit
-	+0.05f, // SE_W1
-	+0.04f, // SE_W2
-	+0.02f, // SE_W3
-	+0.00f, // SE_W4
-	+0.00f, // SE_W5
-	-0.20f, // SE_Miss
-	-0.40f, // SE_HitMine
-	-0.02f, // SE_CheckpointMiss
-	+0.04f, // SE_Held
-	-0.20f, // SE_LetGo
-};
-COMPILE_ASSERT( ARRAYLEN(g_fSuperMeterPercentChangeInit) == NUM_ScoreEvent );
-
 static void SuperMeterPercentChangeInit( size_t /*ScoreEvent*/ i, RString &sNameOut, float &defaultValueOut )
 {
-	sNameOut = "SuperMeterPercentChange" + ScoreEventToString( (ScoreEvent)i );
-	defaultValueOut = g_fSuperMeterPercentChangeInit[i];
+	ScoreEvent ci = (ScoreEvent)i;
+	sNameOut = "SuperMeterPercentChange" + ScoreEventToString( ci );
+	switch(ci)
+	{
+	case SE_CheckpointHit:	defaultValueOut = +0.05f; break;
+	case SE_W1:				defaultValueOut = +0.05f; break;
+	case SE_W2:				defaultValueOut = +0.04f; break;
+	case SE_W3:				defaultValueOut = +0.02f; break;
+	case SE_W4:				defaultValueOut = +0.00f; break;
+	case SE_W5:				defaultValueOut = +0.00f; break;
+	case SE_Miss:			defaultValueOut = -0.20f; break;
+	case SE_HitMine:		defaultValueOut = -0.40f; break;
+	case SE_CheckpointMiss:	defaultValueOut = -0.20f; break;
+	case SE_Held:			defaultValueOut = +0.04f; break;
+	case SE_LetGo:			defaultValueOut = -0.20f; break;
+	DEFAULT_FAIL(ci);
+	}
 }
 
 static Preference1D<float> g_fSuperMeterPercentChange( SuperMeterPercentChangeInit, NUM_ScoreEvent );

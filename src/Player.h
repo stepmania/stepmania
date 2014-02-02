@@ -226,6 +226,7 @@ protected:
 	TweenState		m_tsCombo[NUM_REVERSE][NUM_CENTERED];
 
 	bool m_bSendJudgmentAndComboMessages;
+	bool m_bTickHolds;
 };
 
 class PlayerPlus

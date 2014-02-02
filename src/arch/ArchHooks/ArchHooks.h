@@ -123,6 +123,9 @@ public:
 
 	virtual float GetDisplayAspectRatio() = 0;
 	
+	/** @brief Fetch the contents of the system clipboard. */
+	virtual RString GetClipboard();
+	
 	// Lua
 	void PushSelf( lua_State *L );
 
@@ -140,7 +143,7 @@ private:
 
 #endif
 
-extern ArchHooks *HOOKS;	// global and accessable from anywhere in our program
+extern ArchHooks *HOOKS;	// global and accessible from anywhere in our program
 
 /**
  * @file

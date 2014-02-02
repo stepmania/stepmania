@@ -769,6 +769,14 @@ public:
 	const CT& operator[](long unsigned int nIdx) const {
 	  return MYBASE::operator[](static_cast<MYSIZE>(nIdx));
 	}
+	
+	CT& operator[](long long unsigned int nIdx){
+	  return MYBASE::operator[](static_cast<MYSIZE>(nIdx));
+	}
+	
+	const CT& operator[](long long unsigned int nIdx) const {
+	  return MYBASE::operator[](static_cast<MYSIZE>(nIdx));
+	}
 #ifndef SS_NO_IMPLICIT_CASTS
 	operator const CT*() const
 	{

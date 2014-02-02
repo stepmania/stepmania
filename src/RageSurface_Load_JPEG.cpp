@@ -7,7 +7,7 @@
 
 #include <setjmp.h>
 
-#if defined(WIN32)
+#if defined(WIN32) && !defined(__MINGW32__)
 // work around namespace bugs in win32/libjpeg:
 #define XMD_H
 #undef FAR
@@ -16,9 +16,9 @@
 
 #if defined(_MSC_VER)
 #pragma comment(lib, "jpeg.lib")
+#pragma warning(disable: 4611) /* interaction between '_setjmp' and C++ object destruction is non-portable */
 #endif
 
-#pragma warning(disable: 4611) /* interaction between '_setjmp' and C++ object destruction is non-portable */
 #else
 extern "C" {
 #if defined(MACOSX)

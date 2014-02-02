@@ -4,6 +4,7 @@
 #define RAGEINPUT_H
 
 #include "RageInputDevice.h"
+#include "Preference.h"
 
 struct lua_State;
 class InputHandler;
@@ -31,7 +32,9 @@ public:
 	void PushSelf( lua_State *L );
 };
 
-extern RageInput*			INPUTMAN;	// global and accessable from anywhere in our program
+extern Preference<RString> g_sInputDrivers;
+
+extern RageInput*			INPUTMAN;	// global and accessible from anywhere in our program
 
 #endif
 

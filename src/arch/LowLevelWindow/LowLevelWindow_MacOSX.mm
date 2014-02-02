@@ -36,7 +36,7 @@ public:
 	~AutoreleasePool() { [m_Pool release]; }
 };
 
-#define POOL AutoreleasePool UNIQUE_NAME(pool)
+#define POOL AutoreleasePool SM_UNIQUE_NAME(pool)
 
 // Window delegate class
 @interface SMWindowDelegate : NSObject

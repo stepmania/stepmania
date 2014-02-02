@@ -4,7 +4,7 @@
 #include "GameState.h"
 #include "PrefsManager.h"
 #include "ThemeMetric.h"
-
+#include "ActorUtil.h"
 
 ThemeMetric<float> METER_WIDTH		("CombinedLifeMeterTug","MeterWidth");
 
@@ -43,9 +43,13 @@ CombinedLifeMeterTug::CombinedLifeMeterTug()
 	m_Stream[PLAYER_2].SetZoomX( -1 );
 
 	m_sprSeparator.Load( THEME->GetPathG("CombinedLifeMeterTug","separator") );
+	m_sprSeparator->SetName( "Separator" );
+	LOAD_ALL_COMMANDS( m_sprSeparator );
 	this->AddChild( m_sprSeparator );
 
 	m_sprFrame.Load( THEME->GetPathG("CombinedLifeMeterTug","frame") );
+	m_sprFrame->SetName( "Frame" );
+	LOAD_ALL_COMMANDS( m_sprFrame );
 	this->AddChild( m_sprFrame );
 }
 

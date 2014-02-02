@@ -52,7 +52,7 @@ static BOOL CALLBACK EnumDevicesCallback( const DIDEVICEINSTANCE *pdidInstance, 
 
 	switch( device.type )
 	{
-	case device.JOYSTICK:
+	case DIDevice::JOYSTICK:
 		if( g_iNumJoysticks == NUM_JOYSTICKS )
 			return DIENUM_CONTINUE;
 
@@ -60,11 +60,11 @@ static BOOL CALLBACK EnumDevicesCallback( const DIDEVICEINSTANCE *pdidInstance, 
 		g_iNumJoysticks++;
 		break;
 
-	case device.KEYBOARD:
+	case DIDevice::KEYBOARD:
 		device.dev = DEVICE_KEYBOARD;
 		break;
 
-	case device.MOUSE:
+	case DIDevice::MOUSE:
 		device.dev = DEVICE_MOUSE;
 		break;
 	}
@@ -285,7 +285,7 @@ void InputHandler_DInput::UpdatePolled( DIDevice &device, const RageTimer &tm )
 	{
 	default:
 		FAIL_M(ssprintf("Unsupported DI device type: %i", device.type));
-	case device.KEYBOARD:
+	case DIDevice::KEYBOARD:
 		{
 			unsigned char keys[256];
 
@@ -306,7 +306,7 @@ void InputHandler_DInput::UpdatePolled( DIDevice &device, const RageTimer &tm )
 			}
 		}
 		break;
-	case device.JOYSTICK:
+	case DIDevice::JOYSTICK:
 		{
 			DIJOYSTATE state;
 
@@ -322,50 +322,37 @@ void InputHandler_DInput::UpdatePolled( DIDevice &device, const RageTimer &tm )
 
 				switch(in.type)
 				{
-					case in.BUTTON:
+					case input_t::BUTTON:
 					{
 						DeviceInput di( dev, enum_add2(JOY_BUTTON_1, in.num), !!state.rgbButtons[in.ofs - DIJOFS_BUTTON0], tm );
 						ButtonPressed( di );
 						break;
 					}
 
-					case in.AXIS:
+					case input_t::AXIS:
 					{
 						DeviceButton neg = DeviceButton_Invalid, pos = DeviceButton_Invalid;
 						int val = 0;
-						switch( in.ofs )
-						{
-							case DIJOFS_X:  neg = JOY_LEFT; pos = JOY_RIGHT;
-											val = state.lX;
-											break;
-							case DIJOFS_Y:  neg = JOY_UP; pos = JOY_DOWN;
-											val = state.lY;
-											break;
-							case DIJOFS_Z:  neg = JOY_Z_UP; pos = JOY_Z_DOWN;
-											val = state.lZ;
-											break;
-							case DIJOFS_RX: neg = JOY_ROT_LEFT; pos = JOY_ROT_RIGHT;
-											val = state.lRx;
-											break;
-							case DIJOFS_RY: neg = JOY_ROT_UP; pos = JOY_ROT_DOWN;
-											val = state.lRy;
-											break;
-							case DIJOFS_RZ: neg = JOY_ROT_Z_UP; pos = JOY_ROT_Z_DOWN;
-											val = state.lRz;
-											break;
-							case DIJOFS_SLIDER(0):
-											neg = JOY_AUX_1; pos = JOY_AUX_2;
-											val = state.rglSlider[0];
-											break;
-							case DIJOFS_SLIDER(1):
-											neg = JOY_AUX_3; pos = JOY_AUX_4;
-											val = state.rglSlider[1];
-											break;
-							default: LOG->MapLog( "unknown input", 
+						if( in.ofs == DIJOFS_X )
+							{ neg = JOY_LEFT; pos = JOY_RIGHT; val = state.lX; }
+						else if( in.ofs == DIJOFS_Y )
+							{ neg = JOY_UP; pos = JOY_DOWN; val = state.lY; }
+						else if( in.ofs == DIJOFS_Z )
+							{ neg = JOY_Z_UP; pos = JOY_Z_DOWN; val = state.lZ; }
+						else if( in.ofs == DIJOFS_RX )
+							{ neg = JOY_ROT_LEFT; pos = JOY_ROT_RIGHT; val = state.lRx; }
+						else if( in.ofs == DIJOFS_RY )
+							{ neg = JOY_ROT_UP; pos = JOY_ROT_DOWN;	val = state.lRy; }
+						else if( in.ofs == DIJOFS_RZ )
+							{ neg = JOY_ROT_Z_UP; pos = JOY_ROT_Z_DOWN; val = state.lRz; }
+						else if( in.ofs == DIJOFS_SLIDER(0) )
+							{ neg = JOY_AUX_1; pos = JOY_AUX_2;	val = state.rglSlider[0]; }
+						else if( in.ofs == DIJOFS_SLIDER(1) )
+							{ neg = JOY_AUX_3; pos = JOY_AUX_4;	val = state.rglSlider[1]; }
+						else LOG->MapLog( "unknown input", 
 											"Controller '%s' is returning an unknown joystick offset, %i",
 											device.m_sName.c_str(), in.ofs );
-									 continue;
-						}
+
 						if( neg != DeviceButton_Invalid )
 						{
 							float l = SCALE( int(val), 0.0f, 100.0f, 0.0f, 1.0f );
@@ -376,7 +363,7 @@ void InputHandler_DInput::UpdatePolled( DIDevice &device, const RageTimer &tm )
 						break;
 					}
 
-					case in.HAT:
+					case input_t::HAT:
 						if( in.num == 0 )
 						{
 							const int pos = TranslatePOV( state.rgdwPOV[in.ofs - DIJOFS_POV(0)] );
@@ -391,7 +378,7 @@ void InputHandler_DInput::UpdatePolled( DIDevice &device, const RageTimer &tm )
 			}
 		}
 		break;
-	case device.MOUSE:
+	case DIDevice::MOUSE:
 		// Not 100% perfect (or tested much) yet. -aj
 		DIMOUSESTATE state;
 
@@ -410,57 +397,48 @@ void InputHandler_DInput::UpdatePolled( DIDevice &device, const RageTimer &tm )
 
 			switch(in.type)
 			{
-				case in.BUTTON:
+				case input_t::BUTTON:
 				{
 					DeviceInput di( dev, enum_add2(MOUSE_LEFT, in.num), !!state.rgbButtons[in.ofs - DIMOFS_BUTTON0], tm );
 					ButtonPressed( di );
 					break;
 				}
-				case in.AXIS:
+				case input_t::AXIS:
 				{
 					DeviceButton neg = DeviceButton_Invalid, pos = DeviceButton_Invalid;
 					int val = 0;
-					switch( in.ofs )
+					if( in.ofs == DIMOFS_X )
+						{ neg = MOUSE_X_LEFT; pos = MOUSE_X_RIGHT; val = state.lX; }
+					else if( in.ofs == DIMOFS_Y )
+						{ neg = MOUSE_Y_UP; pos = MOUSE_Y_DOWN; val = state.lY; }
+					else if( in.ofs == DIMOFS_Z )
 					{
-						case DIMOFS_X:
-							neg = MOUSE_X_LEFT; pos = MOUSE_X_RIGHT;
-							val = state.lX;
-							break;
-						case DIMOFS_Y:
-							neg = MOUSE_Y_UP; pos = MOUSE_Y_DOWN;
-							val = state.lY;
-							break;
-						case DIMOFS_Z:
-							{
-								neg = MOUSE_WHEELDOWN; pos = MOUSE_WHEELUP;
-								val = state.lZ;
-								//LOG->Trace("MouseWheel polled: %i",val);
-								INPUTFILTER->UpdateMouseWheel(val);
-								if( val == 0 )
-								{
-									// release all
-									ButtonPressed( DeviceInput(dev, pos, 0, tm) );
-									ButtonPressed( DeviceInput(dev, neg, 0, tm) );
-								}
-								else if( int(val) > 0 )
-								{
-									// positive values: WheelUp
-									ButtonPressed( DeviceInput(dev, pos, 1, tm) );
-									ButtonPressed( DeviceInput(dev, neg, 0, tm) );
-								}
-								else if( int(val) < 0 )
-								{
-									// negative values: WheelDown
-									ButtonPressed( DeviceInput(dev, neg, 1, tm) );
-									ButtonPressed( DeviceInput(dev, pos, 0, tm) );
-								}
-							}
-							break;
-						default: LOG->MapLog( "unknown input", 
+						neg = MOUSE_WHEELDOWN; pos = MOUSE_WHEELUP;
+						val = state.lZ;
+						//LOG->Trace("MouseWheel polled: %i",val);
+						INPUTFILTER->UpdateMouseWheel(val);
+						if( val == 0 )
+						{
+							// release all
+							ButtonPressed( DeviceInput(dev, pos, 0, tm) );
+							ButtonPressed( DeviceInput(dev, neg, 0, tm) );
+						}
+						else if( int(val) > 0 )
+						{
+							// positive values: WheelUp
+							ButtonPressed( DeviceInput(dev, pos, 1, tm) );
+							ButtonPressed( DeviceInput(dev, neg, 0, tm) );
+						}
+						else if( int(val) < 0 )
+						{
+							// negative values: WheelDown
+							ButtonPressed( DeviceInput(dev, neg, 1, tm) );
+							ButtonPressed( DeviceInput(dev, pos, 0, tm) );
+						}
+					}
+					else LOG->MapLog( "unknown input", 
 											"Mouse '%s' is returning an unknown mouse offset, %i",
 											device.m_sName.c_str(), in.ofs );
-									 	continue;
-					}
 					break;
 				}
 			}
@@ -513,31 +491,28 @@ void InputHandler_DInput::UpdateBuffered( DIDevice &device, const RageTimer &tm 
 
 			switch( in.type )
 			{
-				case in.KEY:
+				case input_t::KEY:
 					ButtonPressed( DeviceInput(dev, (DeviceButton) in.num, !!(evtbuf[i].dwData & 0x80), tm) );
 					break;
 
-				case in.BUTTON:
+				case input_t::BUTTON:
 					if(dev == DEVICE_MOUSE)
 					{
 						DeviceButton mouseInput = DeviceButton_Invalid;
-						switch(in.ofs)
-						{
-							case DIMOFS_BUTTON0: mouseInput = MOUSE_LEFT; break;
-							case DIMOFS_BUTTON1: mouseInput = MOUSE_RIGHT; break;
-							case DIMOFS_BUTTON2: mouseInput = MOUSE_MIDDLE; break;
-							default: LOG->MapLog( "unknown input", 
+
+						if( in.ofs == DIMOFS_BUTTON0 ) mouseInput = MOUSE_LEFT;
+						else if( in.ofs == DIMOFS_BUTTON1 ) mouseInput = MOUSE_RIGHT;
+						else if( in.ofs == DIMOFS_BUTTON2 ) mouseInput = MOUSE_MIDDLE;
+						else LOG->MapLog( "unknown input", 
 								 "Mouse '%s' is returning an unknown mouse offset [button], %i",
 								 device.m_sName.c_str(), in.ofs );
-								continue;
-						}
 						ButtonPressed( DeviceInput(dev, mouseInput, !!evtbuf[i].dwData, tm) );
 					}
 					else
 						ButtonPressed( DeviceInput(dev, enum_add2(JOY_BUTTON_1, in.num), !!evtbuf[i].dwData, tm) );
 					break;
 
-				case in.AXIS:
+				case input_t::AXIS:
 				{
 					DeviceButton up = DeviceButton_Invalid, down = DeviceButton_Invalid;
 					if(dev == DEVICE_MOUSE)
@@ -548,79 +523,69 @@ void InputHandler_DInput::UpdateBuffered( DIDevice &device, const RageTimer &tm 
 						// convert screen coordinates to client
 						ScreenToClient(GraphicsWindow::GetHwnd(), &cursorPos);
 
-						switch(in.ofs)
+						if( in.ofs == DIMOFS_X ) INPUTFILTER->UpdateCursorLocation((float)cursorPos.x,(float)cursorPos.y);
+						else if( in.ofs == DIMOFS_Y ) INPUTFILTER->UpdateCursorLocation((float)cursorPos.x,(float)cursorPos.y);
+						else if( in.ofs == DIMOFS_Z )
 						{
-							case DIMOFS_X:
-								INPUTFILTER->UpdateCursorLocation((float)cursorPos.x,(float)cursorPos.y);
-								break;
-							case DIMOFS_Y:
-								INPUTFILTER->UpdateCursorLocation((float)cursorPos.x,(float)cursorPos.y);
-								break;
-							case DIMOFS_Z:
-								// positive values: WheelUp
-								// negative values: WheelDown
-								INPUTFILTER->UpdateMouseWheel(l);
+							// positive values: WheelUp
+							// negative values: WheelDown
+							INPUTFILTER->UpdateMouseWheel(l);
+							{
+								up = MOUSE_WHEELUP; down = MOUSE_WHEELDOWN;
+								float fWheelDelta = l;
+								//l = SCALE( int(evtbuf[i].dwData), -WHEEL_DELTA, WHEEL_DELTA, 1.0f, -1.0f );
+								if( l > 0 )
 								{
-									up = MOUSE_WHEELUP; down = MOUSE_WHEELDOWN;
-									float fWheelDelta = l;
-									//l = SCALE( int(evtbuf[i].dwData), -WHEEL_DELTA, WHEEL_DELTA, 1.0f, -1.0f );
-									if( l > 0 )
+									DeviceInput diUp = DeviceInput(dev, up, 1.0f, tm);
+									DeviceInput diDown = DeviceInput(dev, down, 0.0f, tm);
+									while( fWheelDelta >= WHEEL_DELTA )
 									{
-										DeviceInput diUp = DeviceInput(dev, up, 1.0f, tm);
-										DeviceInput diDown = DeviceInput(dev, down, 0.0f, tm);
-										while( fWheelDelta >= WHEEL_DELTA )
-										{
-											ButtonPressed( diUp );
-											ButtonPressed( diDown );
-											INPUTFILTER->UpdateMouseWheel(fWheelDelta);
-											fWheelDelta -= WHEEL_DELTA;
-										}
-									}
-									else if( l < 0 )
-									{
-										DeviceInput diDown = DeviceInput(dev, down, 1.0f, tm);
-										DeviceInput diUp = DeviceInput(dev, up, 0.0f, tm);
-										while( fWheelDelta <= -WHEEL_DELTA )
-										{
-											ButtonPressed( diDown );
-											ButtonPressed( diUp );
-											INPUTFILTER->UpdateMouseWheel(fWheelDelta);
-											fWheelDelta += WHEEL_DELTA;
-										}
-									}
-									else
-									{
-										DeviceInput diUp = DeviceInput(dev, up, 0.0f, tm);
 										ButtonPressed( diUp );
-										DeviceInput diDown = DeviceInput(dev, down, 0.0f, tm);
 										ButtonPressed( diDown );
+										INPUTFILTER->UpdateMouseWheel(fWheelDelta);
+										fWheelDelta -= WHEEL_DELTA;
 									}
 								}
-								break;
-							default: LOG->MapLog( "unknown input", 
+								else if( l < 0 )
+								{
+									DeviceInput diDown = DeviceInput(dev, down, 1.0f, tm);
+									DeviceInput diUp = DeviceInput(dev, up, 0.0f, tm);
+									while( fWheelDelta <= -WHEEL_DELTA )
+									{
+										ButtonPressed( diDown );
+										ButtonPressed( diUp );
+										INPUTFILTER->UpdateMouseWheel(fWheelDelta);
+										fWheelDelta += WHEEL_DELTA;
+									}
+								}
+								else
+								{
+									DeviceInput diUp = DeviceInput(dev, up, 0.0f, tm);
+									ButtonPressed( diUp );
+									DeviceInput diDown = DeviceInput(dev, down, 0.0f, tm);
+									ButtonPressed( diDown );
+								}
+							}
+						}
+						else LOG->MapLog( "unknown input", 
 										 "Mouse '%s' is returning an unknown mouse offset [axis], %i",
 										 device.m_sName.c_str(), in.ofs );
-								continue;
-						}
 					}
 					else
 					{
-						switch(in.ofs)
-						{
-							// joystick
-							case DIJOFS_X:  up = JOY_LEFT; down = JOY_RIGHT; break;
-							case DIJOFS_Y:  up = JOY_UP; down = JOY_DOWN; break;
-							case DIJOFS_Z:  up = JOY_Z_UP; down = JOY_Z_DOWN; break;
-							case DIJOFS_RX: up = JOY_ROT_UP; down = JOY_ROT_DOWN; break;
-							case DIJOFS_RY: up = JOY_ROT_LEFT; down = JOY_ROT_RIGHT; break;
-							case DIJOFS_RZ: up = JOY_ROT_Z_UP; down = JOY_ROT_Z_DOWN; break;
-							case DIJOFS_SLIDER(0): up = JOY_AUX_1; down = JOY_AUX_2; break;
-							case DIJOFS_SLIDER(1): up = JOY_AUX_3; down = JOY_AUX_4; break;
-							default: LOG->MapLog( "unknown input", 
+						// joystick
+						if( in.ofs == DIJOFS_X ) { up = JOY_LEFT; down = JOY_RIGHT; }
+						else if( in.ofs == DIJOFS_Y ) { up = JOY_UP; down = JOY_DOWN; }
+						else if( in.ofs == DIJOFS_Z ) { up = JOY_Z_UP; down = JOY_Z_DOWN; }
+						else if( in.ofs == DIJOFS_RX ) { up = JOY_ROT_UP; down = JOY_ROT_DOWN; }
+						else if( in.ofs == DIJOFS_RY ) { up = JOY_ROT_LEFT; down = JOY_ROT_RIGHT; }
+						else if( in.ofs == DIJOFS_RZ ) { up = JOY_ROT_Z_UP; down = JOY_ROT_Z_DOWN; }
+						else if( in.ofs == DIJOFS_SLIDER(0) ) { up = JOY_AUX_1; down = JOY_AUX_2; }
+						else if( in.ofs == DIJOFS_SLIDER(1) ) { up = JOY_AUX_3; down = JOY_AUX_4; }
+						else LOG->MapLog( "unknown input", 
 										 "Controller '%s' is returning an unknown joystick offset, %i",
 										 device.m_sName.c_str(), in.ofs );
-								continue;
-						}
+						
 						float l = SCALE( int(evtbuf[i].dwData), 0.0f, 100.0f, 0.0f, 1.0f );
 						ButtonPressed( DeviceInput(dev, up, max(-l,0), tm) );
 						ButtonPressed( DeviceInput(dev, down, max(+l,0), tm) );
@@ -628,7 +593,7 @@ void InputHandler_DInput::UpdateBuffered( DIDevice &device, const RageTimer &tm 
 					break;
 				}
 
-				case in.HAT:
+				case input_t::HAT:
 				{
 					const int pos = TranslatePOV( evtbuf[i].dwData );
 					ButtonPressed( DeviceInput(dev, JOY_HAT_UP, !!(pos & HAT_UP_MASK), tm) );

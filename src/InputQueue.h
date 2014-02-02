@@ -52,7 +52,7 @@ private:
 	float m_fMaxSecondsBack;
 };	
 
-extern InputQueue*	INPUTQUEUE;	// global and accessable from anywhere in our program
+extern InputQueue*	INPUTQUEUE;	// global and accessible from anywhere in our program
 
 #endif
 

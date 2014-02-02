@@ -14,7 +14,7 @@ const int MAX_COLS_PER_PLAYER = MAX_NOTE_TRACKS;
 static const int Column_Invalid = -1;
 
 class NoteData;
-class Game;
+struct Game;
 struct lua_State;
 
 class Style

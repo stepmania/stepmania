@@ -9,12 +9,10 @@ namespace X11Helper
 	// All functions in here that return a bool return true on success, and
 	// false on failure.
 
-	// Create the connection, if necessary; otherwise do some important
-	// internal session-tracking stuff (so you should call this anyway).
+	// Create the connection.
 	bool OpenXConnection();
 
-	// Destroy the connection, if appropriate; otherwise do some important
-	// internal session-tracking stuff (so you should call it anyway).
+	// Destroy the connection.
 	void CloseXConnection();
 
 	// The current Display (connection). Initialized by the first call to

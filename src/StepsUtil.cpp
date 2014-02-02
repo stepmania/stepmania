@@ -10,7 +10,6 @@
 #include "UnlockManager.h"
 #include "SongUtil.h"
 
-
 bool StepsCriteria::Matches( const Song *pSong, const Steps *pSteps ) const
 {
 	if( m_difficulty != Difficulty_Invalid  &&  pSteps->GetDifficulty() != m_difficulty )

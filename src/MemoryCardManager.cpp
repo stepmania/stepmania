@@ -13,7 +13,7 @@
 #include "arch/MemoryCard/MemoryCardDriver_Null.h"
 #include "LuaManager.h"
 
-MemoryCardManager*	MEMCARDMAN = NULL;	// global and accessable from anywhere in our program
+MemoryCardManager*	MEMCARDMAN = NULL;	// global and accessible from anywhere in our program
 
 static void MemoryCardOsMountPointInit( size_t /*PlayerNumber*/ i, RString &sNameOut, RString &defaultValueOut )
 {

@@ -152,6 +152,17 @@ bool Steps::GetNoteDataFromSimfile()
 	{
 		return BMSLoader::LoadNoteDataFromSimfile(stepFile, *this);
 	}
+	else if (extension == "edit")
+	{
+		// Try SSC, then fallback to SM.
+		SSCLoader ldSSC;
+		if(ldSSC.LoadNoteDataFromSimfile(stepFile, *this) != true)
+		{
+			SMLoader ldSM;
+			return ldSM.LoadNoteDataFromSimfile(stepFile, *this);
+		}
+		else return true;
+	}
 	return false;
 }
 

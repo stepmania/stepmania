@@ -4,7 +4,7 @@
 #include "Threads.h"
 #if defined(_WINDOWS)
 #  include <windows.h>
-#else if
+#else
 #  include <windef.h>
 #endif
 
