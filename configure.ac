@@ -1,5 +1,5 @@
 AC_PREREQ(2.59)
-AC_INIT(StepMania 5, alpha 0, [http://ssc.ajworld.net/sm-ssc/], StepMania)
+AC_INIT(StepMania 5, beta 0, [https://github.com/stepmania/stepmania], StepMania, [http://stepmania.com])
 AC_CONFIG_SRCDIR([src/StepMania.cpp])
 AC_CONFIG_AUX_DIR(autoconf)
 AC_CANONICAL_TARGET
@@ -173,7 +173,7 @@ powerpc*)
 esac
 AM_CONDITIONAL(HAVE_PARALLEL_PORT, test "${have_parallel_port-yes}" = "yes")
 
-AC_C_BIGENDIAN( 
+AC_C_BIGENDIAN(
 	AC_DEFINE(ENDIAN_BIG, 1, [Big endian]),
 	AC_DEFINE(ENDIAN_LITTLE, 1, [Little endian]),
 	AC_MSG_ERROR([Can't determine endianness]) )
@@ -315,7 +315,7 @@ AS_IF([test "x$with_jack" != "xno"], [
 AC_MSG_CHECKING(if cstdlib breaks llabs)
 AC_LANG_PUSH(C++)
 AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <stdlib.h>
-		 #include <cstdlib> 
+		 #include <cstdlib>
 		 using namespace std;]], [[llabs(1)]])],[AC_MSG_RESULT(no)],[AC_MSG_RESULT(yes)
 		 AC_DEFINE([NEED_CSTDLIB_WORKAROUND], 1, [cstdlib breaks llabs])
 	      ])
