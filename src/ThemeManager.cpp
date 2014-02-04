@@ -87,9 +87,12 @@ public:
 	const RString &GetLocalized() const
 	{
 		if( IsLoaded() )
+		{
 			return GetValue();
-		else
-			return m_sName;
+		}
+		RString const & curLanguage = (THEME && THEME->IsThemeLoaded() ? THEME->GetCurLanguage() : "current");
+		LOG->Warn("Missing translation for %s in the %s language.", m_sName.c_str(), curLanguage.c_str());
+		return m_sName;
 	}
 };
 
