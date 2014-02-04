@@ -10,16 +10,6 @@ class Song;
 class Steps;
 class TimingData;
 
-/**
- * @brief The various states while parsing a .sma file.
- */
-enum SMALoadingStates
-{
-	SMA_GETTING_SONG_INFO, /**< Retrieving song information. */
-	SMA_GETTING_STEP_INFO, /**< Retrieving step information. */
-	NUM_SMALoadingStates /**< The number of states used. */
-};
-
 /** @brief Reads a Song from a .SMA file. */
 struct SMALoader : public SMLoader
 {	

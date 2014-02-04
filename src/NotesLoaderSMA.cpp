@@ -161,7 +161,6 @@ bool SMALoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 	out.m_SongTiming.m_sFile = sPath; // songs still have their fallback timing.
 	out.m_sSongFileName = sPath;
 	
-	int state = SMA_GETTING_SONG_INFO;
 	Steps* pNewNotes = NULL;
 	int iRowsPerBeat = -1; // Start with an invalid value: needed for checking.
 	vector< pair<float, float> > vBPMChanges, vStops;
@@ -302,19 +301,15 @@ bool SMALoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 			else
 			{
 				// This should generally return song timing
-				TimingData &timing = (state == SMA_GETTING_STEP_INFO
-						? pNewNotes->m_Timing : out.m_SongTiming);
+				TimingData &timing = ( pNewNotes ? pNewNotes->m_Timing : out.m_SongTiming);
 				ProcessBPMsAndStops(timing, vBPMChanges, vStops);
 
-				state = SMA_GETTING_STEP_INFO;
-				pNewNotes = new Steps(&out);
 			}
 		}
 		
 		else if( sValueName=="BEATSPERMEASURE" )
 		{
-			TimingData &timing = (state == SMA_GETTING_STEP_INFO 
-					      ? pNewNotes->m_Timing : out.m_SongTiming);
+			TimingData &timing = ( pNewNotes ? pNewNotes->m_Timing : out.m_SongTiming);
 			ProcessBeatsPerMeasure( timing, sParams[1] );
 		}
 		
@@ -362,8 +357,7 @@ bool SMALoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 
 		else if( sValueName=="OFFSET" )
 		{
-			TimingData &timing = (state == SMA_GETTING_STEP_INFO
-					      ? pNewNotes->m_Timing : out.m_SongTiming);
+			TimingData &timing = ( pNewNotes ? pNewNotes->m_Timing : out.m_SongTiming);
 			timing.m_fBeat0OffsetInSeconds = StringToFloat( sParams[1] );
 		}
 
@@ -381,22 +375,19 @@ bool SMALoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 
 		else if( sValueName=="DELAYS" )
 		{
-			TimingData &timing = (state == SMA_GETTING_STEP_INFO
-					      ? pNewNotes->m_Timing : out.m_SongTiming);
+			TimingData &timing = ( pNewNotes ? pNewNotes->m_Timing : out.m_SongTiming);
 			ProcessDelays( timing, sParams[1], iRowsPerBeat );
 		}
 
 		else if( sValueName=="TICKCOUNT" )
 		{
-			TimingData &timing = (state == SMA_GETTING_STEP_INFO
-					      ? pNewNotes->m_Timing : out.m_SongTiming);
+			TimingData &timing = ( pNewNotes ? pNewNotes->m_Timing : out.m_SongTiming);
 			ProcessTickcounts( timing, sParams[1], iRowsPerBeat );
 		}
 
 		else if( sValueName=="SPEED" )
 		{
-			TimingData &timing = (state == SMA_GETTING_STEP_INFO
-					      ? pNewNotes->m_Timing : out.m_SongTiming);
+			TimingData &timing = ( pNewNotes ? pNewNotes->m_Timing : out.m_SongTiming);
 			RString tmp = sParams[1];
 			Trim( tmp );
 			ProcessSpeeds( timing, tmp, iRowsPerBeat );
@@ -404,15 +395,13 @@ bool SMALoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 
 		else if( sValueName=="MULTIPLIER" )
 		{
-			TimingData &timing = (state == SMA_GETTING_STEP_INFO
-					      ? pNewNotes->m_Timing : out.m_SongTiming);
+			TimingData &timing = ( pNewNotes ? pNewNotes->m_Timing : out.m_SongTiming);
 			ProcessMultipliers( timing, iRowsPerBeat, sParams[1] );
 		}
 
 		else if( sValueName=="FAKES" )
 		{
-			TimingData &timing = (state == SMA_GETTING_STEP_INFO
-					      ? pNewNotes->m_Timing : out.m_SongTiming);
+			TimingData &timing = ( pNewNotes ? pNewNotes->m_Timing : out.m_SongTiming);
 			ProcessFakes( timing, sParams[1], iRowsPerBeat );
 		}
 
@@ -444,6 +433,8 @@ bool SMALoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 				continue;
 			}
 
+			pNewNotes = new Steps(&out);
+			
 			LoadFromTokens( 
 					 sParams[1], 
 					 sParams[2], 
@@ -456,8 +447,7 @@ bool SMALoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 			out.AddSteps( pNewNotes );
 
 			// Handle timing changes and convert negative bpms/stops
-			TimingData &timing = (state == SMA_GETTING_STEP_INFO
-					      ? pNewNotes->m_Timing : out.m_SongTiming);
+			TimingData &timing = ( pNewNotes ? pNewNotes->m_Timing : out.m_SongTiming);
 			ProcessBPMsAndStops(timing, vBPMChanges, vStops);
 		}
 		else if( sValueName=="TIMESIGNATURES" || sValueName=="LEADTRACK"  )
