@@ -12,7 +12,7 @@
 srcdir=`dirname $0`
 test -z "$srcdir" && srcdir=.
 
-PKG_NAME="sm-ssc"
+PKG_NAME="stepmania"
 
 AUTOHEADER=autoheader
 ACLOCAL_OPTIONS="-I autoconf/m4/"
@@ -59,7 +59,7 @@ fi
 # If none of those were found, check if "automake" exists, and check the version.
 if test -z "$AUTOMAKE" && automake --version > /dev/null 2>&1; then
 	version=`automake --version 2>/dev/null|head -1|sed -e 's/.* \([0-9]\+\.[0-9]\+\).*$/\1/'`
-	
+
 	IFS=.
 	set $version
 	if test -z "$version"; then

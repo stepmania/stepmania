@@ -114,7 +114,7 @@ if( !defined($bin_path) )
 
 print "Binary path: $bin_path\n";
 
-open(F, "sm-ssc.nsi") || die "Couldn't open sm-ssc.nsi: $!";
+open(F, "stepmania.nsi") || die "Couldn't open stepmania.nsi: $!";
 
 # Search for the default installation section.
 my $FoundSection = 0;
@@ -130,7 +130,7 @@ while(!eof(F))
 	}
 }
 
-$FoundSection || die "sm-ssc.nsi parse error";
+$FoundSection || die "stepmania.nsi parse error";
 my $FoundEnd = 0;
 
 if( ! -d $instdir )
