@@ -1057,7 +1057,9 @@ save yourself some time, copy this for undocumented things:
 	<Function name='halign' return='void' arguments='float fAlign'>
 		Set the fractional horizontal alignment of the Actor according to <code>fAlign</code> which should be a float in the range 0..1. An alignment of 0 is left aligned while an alignment of 1 is right aligned. See <Link function='horizalign' /> for the common case.
 	</Function>
-	<!-- heading -->
+	<Function name='heading' return='void' arguments='float fHeading'>
+		Sets the heading of this Actor to <code>fHeading</code>.
+	</Function>
 	<Function name='hibernate' return='void' arguments='float fTime'>
 		Hides the Actor for the specified amount of time.
 	</Function>
@@ -1085,7 +1087,9 @@ save yourself some time, copy this for undocumented things:
 	<Function name='pause' return='void' arguments=''>
 		Stops the Actor's movement. (Usually used for Sprites or Models.)
 	</Function>
-	<!-- pitch -->
+	<Function name='pitch' return='void' arguments='float fPitch'>
+		Sets the pitch of this Actor to <code>fPitch</code>.
+	</Function>
 	<Function name='play' return='void' arguments=''>
 		Starts the Actor's movement. (Usually used for Sprites or Models.)
 	</Function>
@@ -1107,7 +1111,9 @@ save yourself some time, copy this for undocumented things:
 	<Function name='rainbow' return='void' arguments=''>
 		Makes the Actor change colors continually using colors of the rainbow.
 	</Function>
-	<!-- roll -->
+	<Function name='roll' return='void' arguments='float fRoll'>
+		Sets the roll of this Actor to <code>fRoll</code>.
+	</Function>
 	<Function name='rotationx' return='void' arguments='float fRotation'>
 		Set the Actor's rotation on the X axis to <code>fAlign</code>.
 	</Function>
