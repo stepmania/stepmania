@@ -1,4 +1,8 @@
-stepmania
+StepMania
 =========
 
-Git mirror of StepMania's entire history: CVS, Subversion, and Mercurial.
+Advanced cross-platform rhythm game for home and arcade use.
+
+Source is all MIT Licensed, songs are CC-NC, builds with MAD or GPL-licensed FFMPEG codecs are GPL.
+
+http://www.stepmania.com/
