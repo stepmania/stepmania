@@ -793,7 +793,11 @@ bool SMLoader::LoadFromBGChangesString( BackgroundChange &change, const RString 
 		// fall through
 	}
 
-	return aBGChangeValues.size() >= 2;
+	if (FILEMAN->DoesFileExist(change.m_def.m_sFile1))
+	{
+		return aBGChangeValues.size() >= 2;
+	}
+	return false;
 }
 
 bool SMLoader::LoadNoteDataFromSimfile( const RString &path, Steps &out )
