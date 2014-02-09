@@ -351,7 +351,7 @@ void RageFileManager::GetDirListing( const RString &sPath_, vector<RString> &Add
 	NormalizePath( sPath );
 	
 	// NormalizePath() calls CollapsePath() which will remove "dir/.." pairs.
-	// So if a "/.." is still present, they're trying to go below the mountpoint,
+	// So if a "/.." is still present, they're trying to go below the root,
 	// which isn't valid.
 	if( sPath.find("/..") != std::string::npos )
 		return;
