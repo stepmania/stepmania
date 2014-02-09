@@ -390,12 +390,17 @@ static void CoinModeNoHome( int &sel, bool ToSel, const ConfOption *pConfOption 
 	if( ToSel )
 	{
 		MovePref<CoinMode>( sel, ToSel, pConfOption );
-		sel--;
+		// If the mode was Pay, the index is 0; otherwise, set the index
+		// to 1 to avoid out-of-range crashing.
+		if (sel == 1)
+			sel = 0;
+		else
+			sel = 1;
 	}
 	else 
 	{
 		int tmp = sel + 1;
-		MovePref<CoinMode>( sel, ToSel, pConfOption );
+		MovePref<CoinMode>( tmp, ToSel, pConfOption );
 	}
 }
 

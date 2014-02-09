@@ -95,7 +95,7 @@ static void ZoomSurface( const RageSurface * src, RageSurface * dst )
 	const int width = dst->w;
 	for( int y = 0; y < height; y++ )
 	{
-		uint32_t *dp = (uint32_t *) (dst->pixels + dst->pitch*y);
+		uint8_t *dp = (uint8_t *) (dst->pixels + dst->pitch*y);
 		/* current source pointer and next source pointer (first and second 
 		 * rows sampled for this row): */
 		const uint8_t *csp = sp + esy0[y] * src->pitch;
@@ -109,7 +109,6 @@ static void ZoomSurface( const RageSurface * src, RageSurface * dst )
 			const uint8_t *c10 = ncsp + esx0[x]*4;
 			const uint8_t *c11 = ncsp + esx1[x]*4;
 
-			uint8_t color[4];
 			for( int c = 0; c < 4; ++c )
 			{
 				uint32_t x0 = uint32_t(c00[c]) * ex0[x];
@@ -120,12 +119,11 @@ static void ZoomSurface( const RageSurface * src, RageSurface * dst )
 				x1 >>= 24;
 				
 				const uint32_t res = ((x0 * ey0[y]) + (x1 * (16777216-ey0[y])) + 8388608) >> 24;
-				color[c] = uint8_t(res);
+				dp[c] = uint8_t(res);
 			}
-			*dp = *(uint32_t *) color;
 
 			// Advance destination pointer.
-			++dp;
+			dp += 4;
 		}
 	}
 }
