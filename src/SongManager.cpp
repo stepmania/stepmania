@@ -1735,7 +1735,7 @@ void SongManager::LoadStepEditsFromProfileDir( const RString &sProfileDir, Profi
 		}
 	}
 	
-	if( vsFiles.size() > MAX_EDIT_STEPS_PER_PROFILE - iNumEditsLoaded )
+	if( (int) vsFiles.size() > MAX_EDIT_STEPS_PER_PROFILE - iNumEditsLoaded )
 	{
 		LOG->Warn("Profile %s has too many edits; some have been skipped.", ProfileSlotToString( slot ).c_str() );
 		return;
@@ -1749,13 +1749,13 @@ void SongManager::LoadStepEditsFromProfileDir( const RString &sProfileDir, Profi
 	GetDirListing( sDir+"*", vsGroups, true, false );
 	
 	// XXX: Same as above, edits may be skipped in error in some cases
-	for( int i=0; i<vsGroups.size(); i++ )
+	for( unsigned i=0; i<vsGroups.size(); i++ )
 	{
 		RString sGroupDir = vsGroups[i]+"/";
 		vector<RString> vsSongs;
 		GetDirListing(sDir+sGroupDir+"*", vsSongs, true, false );
 		
-		for( int j=0; j<vsSongs.size(); j++ )
+		for( unsigned j=0; j<vsSongs.size(); j++ )
 		{
 			vector<RString> vsEdits;
 			RString sSongDir = sGroupDir+vsSongs[j]+"/";
@@ -1777,7 +1777,7 @@ void SongManager::LoadStepEditsFromProfileDir( const RString &sProfileDir, Profi
 					loaderSM.LoadEditFromFile( fn, slot, true, given );
 			}
 			
-			if( vsEdits.size() > MAX_EDIT_STEPS_PER_PROFILE - iNumEditsLoaded )
+			if( (int) vsEdits.size() > MAX_EDIT_STEPS_PER_PROFILE - iNumEditsLoaded )
 			{
 				LOG->Warn("Profile %s has too many edits; some have been skipped.", ProfileSlotToString( slot ).c_str() );
 				return;
