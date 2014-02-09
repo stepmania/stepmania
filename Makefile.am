@@ -1,6 +1,10 @@
 ## Need 1.7 for subdir support.  (Well, 1.4 doesn't work, I don't know if anything between does.)
 AUTOMAKE_OPTIONS = 1.7 foreign
+if SYSTEM_FFMPEG
 SUBDIRS = src
+else
+SUBDIRS = bundle/ffmpeg src
+endif
 ACLOCAL_AMFLAGS = -I autoconf/m4
 
 ## Black magic (read: sed) for getting the product ID as defined in code, not by the autotools.
