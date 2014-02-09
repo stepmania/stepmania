@@ -2947,7 +2947,7 @@ void GameManager::GetStepsTypesForGame( const Game *pGame, vector<StepsType>& aS
 		// that we aren't doubling up.
 		bool found = false;
 		for( unsigned j=0; j < aStepsTypeAddTo.size(); j++ )
-			if( (int) st == (int) aStepsTypeAddTo[j] ) { found = true; break; }
+			if( st == aStepsTypeAddTo[j] ) { found = true; break; }
 		if(found) continue;
 			
 		aStepsTypeAddTo.push_back( st );
