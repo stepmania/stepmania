@@ -114,14 +114,19 @@ RString RageSoundDriver_JACK::ConnectPorts()
 	split(PREFSMAN->m_iSoundDevice.Get(), ",", portNames, true);
 
 	const char *port_out_l = NULL, *port_out_r = NULL;
+	const char **ports = NULL;
 	if( portNames.size() == 0 )
 	{
 		// The user has NOT specified any ports to connect to. Search 
 		// for all physical sinks and use the first two.
-		const char **ports;
 		ports = jack_get_ports( client, NULL, NULL, JackPortIsInput | JackPortIsPhysical );
+		if( ports == NULL )
+			return "Couldn't get JACK ports";
 		if( ports[0] == NULL )
+		{
+			jack_free( ports );
 			return "No physical sinks!";
+		}
 		port_out_l = ports[0];
 
 		if( ports[1] == NULL )
@@ -167,11 +172,13 @@ RString RageSoundDriver_JACK::ConnectPorts()
 	
 	RString ret = RString();
 
-	if ( jack_connect( client, jack_port_name(port_l), port_out_l ) != 0 )
+	if( jack_connect( client, jack_port_name(port_l), port_out_l ) != 0 )
 		ret = "Couldn't connect left JACK port";
+	else if( jack_connect( client, jack_port_name(port_r), port_out_r ) != 0 )
+		ret = "Couldn't connect right JACK port";
 
-	if( jack_connect( client, jack_port_name(port_r), port_out_r ) != 0 )
-		if( ret == "") ret = "Couldn't connect right JACK port";
+	if( ports != NULL )
+		jack_free( ports );
 
 	return ret;
 }
