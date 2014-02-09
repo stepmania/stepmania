@@ -399,7 +399,7 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 			if( !m_StepsTypes.empty() ) // Not first run
 			{
 				ASSERT( (int) m_StepsTypes.size() > m_iSelection[ROW_STEPS_TYPE] );
-				StepsType orgSel = m_StepsTypes[m_iSelection[ROW_STEPS_TYPE]];
+				orgSel = m_StepsTypes[m_iSelection[ROW_STEPS_TYPE]];
 			}
 			
 			// The StepsType selection may no longer be valid. Zero it for now.
