@@ -113,7 +113,7 @@ RString RageSoundDriver_JACK::ConnectPorts()
 	vector<RString> portNames;
 	split(PREFSMAN->m_iSoundDevice.Get(), ",", portNames, true);
 
-	const char *port_out_l, *port_out_r;
+	const char *port_out_l = NULL, *port_out_r = NULL;
 	if( portNames.size() == 0 )
 	{
 		// The user has NOT specified any ports to connect to. Search 
@@ -143,7 +143,8 @@ RString RageSoundDriver_JACK::ConnectPorts()
 		{
 			jack_port_t *out = jack_port_by_name( client, *portName );
 			// Make sure the port is a sink.
-			if( ! jack_port_flags( out ) & JackPortIsInput ) continue;
+			if( ! ( jack_port_flags( out ) & JackPortIsInput ) )
+				continue;
 
 			if( out != NULL )
 			{
