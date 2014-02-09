@@ -119,8 +119,11 @@ namespace
 			default: // CoinMode_Free
 				if( GAMESTATE->PlayersCanJoin() )
 					return CREDITS_FREE_PLAY.GetValue();
+				// TODO: What should be displayed if players
+				// can't join in free mode?
 			}
 		}
+		return RString();
 	}
 
 };
