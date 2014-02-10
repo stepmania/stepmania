@@ -118,7 +118,7 @@ dnl NOTE: This won't be hardcoded "yes" later when we implement --with-license
 	CFLAGS="$CFLAGS -I$PWD/bundle/ffmpeg"
 	CXXFLAGS="$CXXFLAGS -I$PWD/bundle/ffmpeg"
 dnl Make the binary find our bundled libs
-	LDFLAGS="-Wl,-rpath=bundle/ffmpeg/libavutil,-rpath=bundle/ffmpeg/libavformat,-rpath=bundle/ffmpeg/libavcodec,-rpath=bundle/ffmpeg/libswscale"
+	LDFLAGS="$LDFLAGS -Wl,-rpath=bundle/ffmpeg/libavutil,-rpath=bundle/ffmpeg/libavformat,-rpath=bundle/ffmpeg/libavcodec,-rpath=bundle/ffmpeg/libswscale"
 dnl Classic autoconf. This CANNOT be broken across multiple lines.
 	FFMPEG_LIBS="-L$PWD/bundle/ffmpeg/libavutil -lavutil -L$PWD/bundle/ffmpeg/libavformat -lavformat -L$PWD/bundle/ffmpeg/libavcodec -lavcodec -L$PWD/bundle/ffmpeg/libswscale -lswscale"
 fi
