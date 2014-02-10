@@ -123,3 +123,8 @@ bundle/ffmpeg/version.h
 bundle/ffmpeg/*/*.so
 bundle/ffmpeg/*/*.so.*
 bundle/ffmpeg/*/*.ver
+bundle/ffmpeg/*/*.def
+bundle/ffmpeg/*/*.dll
+bundle/ffmpeg/*/*.orig.def
+bundle/ffmpeg/*/*.dll.a
+bundle/ffmpeg/*/*.lib
