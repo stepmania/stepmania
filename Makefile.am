@@ -19,6 +19,14 @@ endif
 
 installData = $(srcdir)/Announcers $(srcdir)/BGAnimations $(srcdir)/Themes $(srcdir)/Characters $(srcdir)/Scripts $(srcdir)/Courses $(srcdir)/BackgroundEffects $(srcdir)/Data $(srcdir)/BackgroundTransitions $(srcdir)/Docs $(srcdir)/NoteSkins
 
+## HACK: Windows is dumb and hardcoded about finding DLLs. This'll let us run stepmania from src/ without manual intervention
+if WINDOWS
+all-local:
+	cp bundle/ffmpeg/*/*.dll .
+clean-local:
+	rm *.dll
+endif
+
 .PHONY: SMData
 SMData:
 	$(srcdir)/Utils/CreatePackage.pl $(srcdir) .
