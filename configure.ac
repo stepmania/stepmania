@@ -96,7 +96,7 @@ if test x$enable_lto = xyes; then
 	fi
 fi
 
-AC_ARG_ENABLE(system-ffmpeg, AS_HELP_STRING([--with-system-ffmpeg], [Use system instead of bundled ffmpeg (UNSUPPORTED)]), system_ffmpeg=yes, system_ffmpeg=no)
+AC_ARG_WITH(system-ffmpeg, AS_HELP_STRING([--with-system-ffmpeg], [Use system instead of bundled ffmpeg (UNSUPPORTED)]), system_ffmpeg=yes, system_ffmpeg=no)
 AM_CONDITIONAL(SYSTEM_FFMPEG, test "$system_ffmpeg" = "yes")
 
 if test $system_ffmpeg = yes; then
@@ -117,6 +117,8 @@ dnl NOTE: This won't be hardcoded "yes" later when we implement --with-license
 	AC_DEFINE(HAVE_FFMPEG, 1, [FFMpeg is available])
 	CFLAGS="$CFLAGS -I$PWD/bundle/ffmpeg"
 	CXXFLAGS="$CXXFLAGS -I$PWD/bundle/ffmpeg"
+dnl Make the binary find our bundled libs
+	LDFLAGS="-Wl,-rpath=bundle/ffmpeg/libavutil,-rpath=bundle/ffmpeg/libavformat,-rpath=bundle/ffmpeg/libavcodec,-rpath=bundle/ffmpeg/libswscale"
 dnl Classic autoconf. This CANNOT be broken across multiple lines.
 	FFMPEG_LIBS="-L$PWD/bundle/ffmpeg/libavutil -lavutil -L$PWD/bundle/ffmpeg/libavformat -lavformat -L$PWD/bundle/ffmpeg/libavcodec -lavcodec -L$PWD/bundle/ffmpeg/libswscale -lswscale"
 fi
