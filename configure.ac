@@ -23,13 +23,13 @@ test "$DEFAULT_CFLAGS" = "yes" && CFLAGS="-Wall -W -Wno-unused-parameter -Wno-sw
 test "$DEFAULT_CXXFLAGS" = "yes" && CXXFLAGS="-Wall -W -Wno-unused-parameter -Wno-switch"
 test "$DEFAULT_LDFLAGS" = "yes" && LDFLAGS=""
 
-FFMPEG_CONFFLAGS="--prefix=../out/ --enable-gpl --disable-static --enable-shared --disable-programs --disable-doc --disable-avdevice --disable-swresample --disable-postproc --disable-avfilter --arch=x86 --cpu=i686"
+FFMPEG_CONFFLAGS="--enable-gpl --disable-static --enable-shared --disable-programs --disable-doc --disable-avdevice --disable-swresample --disable-postproc --disable-avfilter"
 
 # If on Windows, grab the prebuilts
 if test "$host_os" = "mingw32"; then
 	CPPFLAGS="$CPPFLAGS -I$PWD/extern/for_mingw/include"
 	LDFLAGS="$LDFLAGS -L$PWD/extern/for_mingw/lib"
-	FFMPEG_CONFFLAGS="$FFMPEG_CONFFLAGS --yasmexe=../yasm-1.2.0-win32.exe"
+	FFMPEG_CONFFLAGS="$FFMPEG_CONFFLAGS --yasmexe=../yasm-1.2.0-win32.exe --arch=x86"
 	# HACK: The prebuilts are 32bit only. Force the issue.
 	CFLAGS="$CFLAGS -m32"
 	CXXFLAGS="$CXXFLAGS -m32"
