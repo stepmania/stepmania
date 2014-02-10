@@ -81,7 +81,7 @@ dnl We might as well throw in GPL stuff as we're bound to GPL by libmad anyway.
 		else
 			FFMPEG_CONFFLAGS="$FFMPEG_CONFFLAGS --disable-static --enable-shared"
 		fi
-dnl	Run ffmpeg ./configure
+dnl Run ffmpeg ./configure
 dnl It's NOT autoconf-based, so AC_CONFIG_SUBDIRS does not work.
 		cd bundle/ffmpeg
 		AC_MSG_NOTICE([Configuring ffmpeg. This is quiet and takes a bit. Be patient.])
@@ -90,13 +90,10 @@ dnl It's NOT autoconf-based, so AC_CONFIG_SUBDIRS does not work.
 			AC_MSG_ERROR([ffmpeg configuration failed.])
 		fi
 		cd ../..
-dnl NOTE: This won't be hardcoded "yes" later when we implement --with-license
-		AM_CONDITIONAL(HAVE_FFMPEG, true)
-		AC_DEFINE(HAVE_FFMPEG, 1, [FFMpeg is available])
 		CFLAGS="$CFLAGS -I$PWD/bundle/ffmpeg"
 		CXXFLAGS="$CXXFLAGS -I$PWD/bundle/ffmpeg"
 dnl Make the binary find our bundled libs
-		LDFLAGS="$LDFLAGS -Wl,-rpath=bundle/ffmpeg/libavutil,-rpath=bundle/ffmpeg/libavformat,-rpath=bundle/ffmpeg/libavcodec,-rpath=bundle/ffmpeg/libswscale"
+		LDFLAGS="$LDFLAGS -Wl,-rpath=. -Wl,-rpath=bundle/ffmpeg/libavutil,-rpath=bundle/ffmpeg/libavformat,-rpath=bundle/ffmpeg/libavcodec,-rpath=bundle/ffmpeg/libswscale"
 dnl Classic autoconf. This CANNOT be broken across multiple lines.
 		VIDEO_LIBS="-L$PWD/bundle/ffmpeg/libavutil -lavutil -L$PWD/bundle/ffmpeg/libavformat -lavformat -L$PWD/bundle/ffmpeg/libavcodec -lavcodec -L$PWD/bundle/ffmpeg/libswscale -lswscale"
 		have_ffmpeg=yes
