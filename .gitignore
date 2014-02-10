@@ -112,3 +112,14 @@ UserInterfaceState.xcuserstate
 contents.xcworkspacedata
 xcschememanagement.plist
 *.swp
+*.pc
+*.d
+bundle/ffmpeg/.config
+bundle/ffmpeg/.version
+bundle/ffmpeg/config.*
+bundle/ffmpeg/doc/config.texi
+bundle/ffmpeg/libavutil/avconfig.h
+bundle/ffmpeg/version.h
+bundle/ffmpeg/*/*.so
+bundle/ffmpeg/*/*.so.*
+bundle/ffmpeg/*/*.ver
