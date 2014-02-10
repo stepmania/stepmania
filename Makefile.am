@@ -21,10 +21,12 @@ installData = $(srcdir)/Announcers $(srcdir)/BGAnimations $(srcdir)/Themes $(src
 
 ## HACK: Windows is dumb and hardcoded about finding DLLs. This'll let us run stepmania from src/ without manual intervention
 if WINDOWS
+if !STATIC_FFMPEG
 all-local:
 	cp bundle/ffmpeg/*/*.dll .
 clean-local:
 	rm *.dll
+endif
 endif
 
 .PHONY: SMData

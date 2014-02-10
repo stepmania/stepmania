@@ -23,13 +23,10 @@ test "$DEFAULT_CFLAGS" = "yes" && CFLAGS="-Wall -W -Wno-unused-parameter -Wno-sw
 test "$DEFAULT_CXXFLAGS" = "yes" && CXXFLAGS="-Wall -W -Wno-unused-parameter -Wno-switch"
 test "$DEFAULT_LDFLAGS" = "yes" && LDFLAGS=""
 
-FFMPEG_CONFFLAGS="--enable-gpl --disable-static --enable-shared --disable-programs --disable-doc --disable-avdevice --disable-swresample --disable-postproc --disable-avfilter"
-
 # If on Windows, grab the prebuilts
 if test "$host_os" = "mingw32"; then
 	CPPFLAGS="$CPPFLAGS -I$PWD/extern/for_mingw/include"
 	LDFLAGS="$LDFLAGS -L$PWD/extern/for_mingw/lib"
-	FFMPEG_CONFFLAGS="$FFMPEG_CONFFLAGS --yasmexe=../yasm-1.2.0-win32.exe --arch=x86"
 	# HACK: The prebuilts are 32bit only. Force the issue.
 	CFLAGS="$CFLAGS -m32"
 	CXXFLAGS="$CXXFLAGS -m32"
@@ -78,7 +75,6 @@ if test x$enable_lto = xyes; then
 	CFLAGS="$CFLAGS -O0 -flto"
 	CXXFLAGS="$CXXFLAGS -O0 -flto"
 	LDFLAGS="$LDFLAGS -flto"
-	FFMPEG_CONFFLAGS="$FFMPEG_CONFFLAGS --enable-lto"
 	case $compile in
 		release)
 		LDFLAGS="$LDFLAGS -O3"
@@ -96,32 +92,8 @@ if test x$enable_lto = xyes; then
 	fi
 fi
 
-AC_ARG_WITH(system-ffmpeg, AS_HELP_STRING([--with-system-ffmpeg], [Use system instead of bundled ffmpeg (UNSUPPORTED)]), system_ffmpeg=yes, system_ffmpeg=no)
-AM_CONDITIONAL(SYSTEM_FFMPEG, test "$system_ffmpeg" = "yes")
-
-if test $system_ffmpeg = yes; then
-	SM_VIDEO
-else
-dnl	Run ffmpeg ./configure
-dnl It's NOT autoconf-based, so AC_CONFIG_SUBDIRS does not work.
-	cd bundle/ffmpeg
-	AC_MSG_NOTICE([Configuring ffmpeg. This is quiet and takes a bit. Be patient.])
-dnl We might as well throw in GPL stuff as we're bound to GPL by libmad anyway.
-	./configure $FFMPEG_CONFFLAGS
-	if test $? != 0; then
-		AC_MSG_ERROR([ffmpeg configuration failed.])
-	fi
-	cd ../..
-dnl NOTE: This won't be hardcoded "yes" later when we implement --with-license
-	AM_CONDITIONAL(HAVE_FFMPEG, true)
-	AC_DEFINE(HAVE_FFMPEG, 1, [FFMpeg is available])
-	CFLAGS="$CFLAGS -I$PWD/bundle/ffmpeg"
-	CXXFLAGS="$CXXFLAGS -I$PWD/bundle/ffmpeg"
-dnl Make the binary find our bundled libs
-	LDFLAGS="$LDFLAGS -Wl,-rpath=bundle/ffmpeg/libavutil,-rpath=bundle/ffmpeg/libavformat,-rpath=bundle/ffmpeg/libavcodec,-rpath=bundle/ffmpeg/libswscale"
-dnl Classic autoconf. This CANNOT be broken across multiple lines.
-	FFMPEG_LIBS="-L$PWD/bundle/ffmpeg/libavutil -lavutil -L$PWD/bundle/ffmpeg/libavformat -lavformat -L$PWD/bundle/ffmpeg/libavcodec -lavcodec -L$PWD/bundle/ffmpeg/libswscale -lswscale"
-fi
+dnl Do this early as it has its own whole configure script to run with its own errors.
+SM_VIDEO
 
 # Some (broken?) versions of gcc treat char as unsigned, check for that.
 AC_LANG_PUSH([C])
