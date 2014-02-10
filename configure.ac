@@ -379,5 +379,6 @@ dnl Add these after all tests are done as they don't exist just yet.
 LIBS="$LIBS $FFMPEG_LIBS"
 
 AC_CONFIG_FILES(Makefile)
+AC_CONFIG_FILES(bundle/Makefile)
 AC_CONFIG_FILES(src/Makefile)
 AC_OUTPUT
