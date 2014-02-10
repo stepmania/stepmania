@@ -1,10 +1,6 @@
 ## Need 1.7 for subdir support.  (Well, 1.4 doesn't work, I don't know if anything between does.)
 AUTOMAKE_OPTIONS = 1.7 foreign
-if SYSTEM_FFMPEG
-SUBDIRS = src
-else
-SUBDIRS = bundle/ffmpeg src
-endif
+SUBDIRS = bundle src
 ACLOCAL_AMFLAGS = -I autoconf/m4
 
 ## Black magic (read: sed) for getting the product ID as defined in code, not by the autotools.
@@ -18,16 +14,6 @@ installFiles += src/GtkModule.so
 endif
 
 installData = $(srcdir)/Announcers $(srcdir)/BGAnimations $(srcdir)/Themes $(srcdir)/Characters $(srcdir)/Scripts $(srcdir)/Courses $(srcdir)/BackgroundEffects $(srcdir)/Data $(srcdir)/BackgroundTransitions $(srcdir)/Docs $(srcdir)/NoteSkins
-
-## HACK: Windows is dumb and hardcoded about finding DLLs. This'll let us run stepmania from src/ without manual intervention
-if WINDOWS
-if !STATIC_FFMPEG
-all-local:
-	cp bundle/ffmpeg/*/*.dll .
-clean-local:
-	rm *.dll
-endif
-endif
 
 .PHONY: SMData
 SMData:
