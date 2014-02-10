@@ -113,6 +113,7 @@ contents.xcworkspacedata
 xcschememanagement.plist
 *.swp
 *.pc
+*.dll
 *.d
 bundle/ffmpeg/.config
 bundle/ffmpeg/.version
@@ -124,7 +125,6 @@ bundle/ffmpeg/*/*.so
 bundle/ffmpeg/*/*.so.*
 bundle/ffmpeg/*/*.ver
 bundle/ffmpeg/*/*.def
-bundle/ffmpeg/*/*.dll
 bundle/ffmpeg/*/*.orig.def
 bundle/ffmpeg/*/*.dll.a
 bundle/ffmpeg/*/*.lib
