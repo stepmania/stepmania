@@ -32,7 +32,7 @@ public:
 	/**
 	 * @brief The name of the style.
 	 *
-	 * At this time, it is currently unused. */
+	 * Used by GameManager::GameAndStringToStyle to determine whether this is the style that matches the string. */
 	const char *		m_szName;
 
 	/**
