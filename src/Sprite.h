@@ -52,9 +52,11 @@ public:
 	void SetCustomTextureCoords( float fTexCoords[8] );
 	void SetCustomImageRect( RectF rectImageCoords );	// in image pixel space
 	void SetCustomImageCoords( float fImageCoords[8] );
+	void SetCustomPosCoords( float fPosCoords[8] );
 	const RectF *GetCurrentTextureCoordRect() const;
 	const RectF *GetTextureCoordRectForState( int iState ) const;
 	void StopUsingCustomCoords();
+	void StopUsingCustomPosCoords();
 	void GetActiveTextureCoords(float fTexCoordsOut[8]) const;
 	void StretchTexCoords( float fX, float fY );
 	void AddImageCoords( float fX, float fY ); // in image pixel space
@@ -99,6 +101,7 @@ private:
 
 	EffectMode m_EffectMode;
 	bool m_bUsingCustomTexCoords;
+	bool m_bUsingCustomPosCoords;
 	bool m_bSkipNextUpdate;
 	/**
 	 * @brief Set up the coordinates for the texture.
@@ -107,6 +110,16 @@ private:
 	 * The remaining six are for the (x, y) coordinates for bottom left,
 	 * bottom right, and top right respectively. */
 	float m_CustomTexCoords[8];
+	/**
+	 * @brief Set up the coordinates for the position.
+	 *
+	 * These are offsets for the quad the sprite will be drawn to.
+	 * The first two are the (x, y) offsets for the top left.
+	 * The remaining six are for the (x, y) coordinates for bottom left,
+	 * bottom right, and top right respectively.
+	 * These are offsets instead of a replacement for m_size to avoid
+	 * complicating the cropping code. */
+	float m_CustomPosCoords[8];
 
 	// Remembered clipped dimensions are applied on Load().
 	// -1 means no remembered dimensions;

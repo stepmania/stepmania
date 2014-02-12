@@ -34,6 +34,8 @@ public:
 	void SetUppercase( bool b );
 	void SetRainbowScroll( bool b )	{ m_bRainbowScroll = b; }
 	void SetJitter( bool b )	{ m_bJitter = b; }
+	void SetDistortion( float f );
+	void UnSetDistortion();
 
 	void SetHorizAlign( float f );
 
@@ -77,6 +79,8 @@ protected:
 	float		m_fMaxHeight;			// 0 = no max
 	bool		m_bRainbowScroll;
 	bool		m_bJitter;
+	bool		m_bUsingDistortion;
+	float		m_fDistortion;
 	int			m_iVertSpacing;
 
 	vector<RageSpriteVertex>	m_aVertices;

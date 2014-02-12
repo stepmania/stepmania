@@ -22,6 +22,11 @@ ComboGraph::ComboGraph()
 void ComboGraph::Load( RString sMetricsGroup )
 {
 	BODY_WIDTH.Load( sMetricsGroup, "BodyWidth" );
+	BODY_HEIGHT.Load( sMetricsGroup, "BodyHeight" );
+
+	// These need to be set so that a theme can use zoomtowidth/zoomtoheight and get correct behavior.
+	this->SetWidth(BODY_WIDTH);
+	this->SetHeight(BODY_HEIGHT);
 
 	Actor *pActor = NULL;
 
@@ -29,6 +34,7 @@ void ComboGraph::Load( RString sMetricsGroup )
 	if( m_pBacking != NULL )
 	{
 		m_pBacking->ZoomToWidth( BODY_WIDTH );
+		m_pBacking->ZoomToHeight( BODY_HEIGHT );
 		this->AddChild( m_pBacking );
 	}
 
@@ -36,6 +42,7 @@ void ComboGraph::Load( RString sMetricsGroup )
 	if( m_pNormalCombo != NULL )
 	{
 		m_pNormalCombo->ZoomToWidth( BODY_WIDTH );
+		m_pNormalCombo->ZoomToHeight( BODY_HEIGHT );
 		this->AddChild( m_pNormalCombo );
 	}
 
@@ -43,6 +50,7 @@ void ComboGraph::Load( RString sMetricsGroup )
 	if( m_pMaxCombo != NULL )
 	{
 		m_pMaxCombo->ZoomToWidth( BODY_WIDTH );
+		m_pMaxCombo->ZoomToHeight( BODY_HEIGHT );
 		this->AddChild( m_pMaxCombo );
 	}
 

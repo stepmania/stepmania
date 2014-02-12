@@ -11,7 +11,7 @@ void ValidateSongsPerPlay( int &val );
 /** @brief How many songs can be played during a normal game max?
  *
  * This assumes no extra stages, no event mode, no course modes. */
-const int MAX_SONGS_PER_PLAY = 7;
+const int MAX_SONGS_PER_PLAY = 128;
 
 enum MusicWheelUsesSections
 { 

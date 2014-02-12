@@ -158,7 +158,7 @@ if [ -n "$s_ffmpeg" ]; then
 #		message 'Cleaning up temporary files'
 #		call rm $ffmarc
 	fi
-	args="--enable-static --enable-gpl --enable-version3 --enable-nonfree --enable-libx264 --enable-libfaac --enable-libmp3lame --enable-libtheora --enable-libvorbis --disable-libvpx --disable-vaapi --enable-libxvid --disable-debug --enable-memalign-hack --disable-network --enable-small --disable-encoders --disable-ffserver --extra-cflags=-Dattribute_deprecated="
+	args="--enable-static --enable-gpl --enable-version3 --enable-nonfree --enable-libx264 --disable-libfaac --disable-libmp3lame --enable-libtheora --enable-libvorbis --disable-libvpx --disable-vaapi --enable-libxvid --disable-debug --enable-memalign-hack --disable-network --enable-small --disable-encoders --disable-ffserver --extra-cflags=-Dattribute_deprecated="
 	cd $ffmpeg
 	message 'Configuring ffmpeg'
 	call ./configure --prefix="`pwd`/_inst" $args

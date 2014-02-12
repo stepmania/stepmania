@@ -366,6 +366,14 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 	}
 
 	else if( sBit == "clearall" )				Init();
+	else if( sBit == "resetspeed" )
+	{
+		// Copied from Init.
+		m_fMaxScrollBPM = 0;		m_SpeedfMaxScrollBPM = 1.0f;
+		m_fTimeSpacing = 0;		m_SpeedfTimeSpacing = 1.0f;
+		m_fScrollSpeed = 1.0f;		m_SpeedfScrollSpeed = 1.0f;
+		m_fScrollBPM = 200;		m_SpeedfScrollBPM = 1.0f;
+	}
 	else if( sBit == "boost" )				SET_FLOAT( fAccels[ACCEL_BOOST] )
 	else if( sBit == "brake" || sBit == "land" )		SET_FLOAT( fAccels[ACCEL_BRAKE] )
 	else if( sBit == "wave" )				SET_FLOAT( fAccels[ACCEL_WAVE] )

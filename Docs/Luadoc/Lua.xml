@@ -550,6 +550,7 @@
 			<Function name='NoStroke'/>
 			<Function name='PixelFont'/>
 			<Function name='Stroke'/>
+			<Function name='distort'/>
 			<Function name='jitter'/>
 			<Function name='maxheight'/>
 			<Function name='maxwidth'/>
@@ -558,6 +559,7 @@
 			<Function name='settextf'/>
 			<Function name='strokecolor'/>
 			<Function name='textglowmode'/>
+			<Function name='undistort'/>
 			<Function name='uppercase'/>
 			<Function name='vertspacing'/>
 			<Function name='wrapwidthpixels'/>
@@ -1107,6 +1109,7 @@
 			<Function name='GetAliveSeconds'/>
 			<Function name='GetBestFullComboTapNoteScore'/>
 			<Function name='GetCaloriesBurned'/>
+			<Function name='GetComboList'/>
 			<Function name='GetCurMaxScore'/>
 			<Function name='GetCurrentCombo'/>
 			<Function name='GetCurrentLife'/>
@@ -1118,6 +1121,7 @@
 			<Function name='GetHoldNoteScores'/>
 			<Function name='GetLessonScoreActual'/>
 			<Function name='GetLessonScoreNeeded'/>
+			<Function name='GetLifeRecord'/>
 			<Function name='GetLifeRemainingSeconds'/>
 			<Function name='GetMachineHighScoreIndex'/>
 			<Function name='GetNumControllerSteps'/>
@@ -1138,6 +1142,7 @@
 			<Function name='GetTapNoteScores'/>
 			<Function name='IsDisqualified'/>
 			<Function name='MaxCombo'/>
+			<Function name='SetCurCombo'/>
 			<Function name='SetCurMaxScore'/>
 			<Function name='SetScore'/>
 		</Class>
@@ -1511,6 +1516,8 @@
 			<Function name='LoadFromSongBanner'/>
 			<Function name='SetAllStateDelays'/>
 			<Function name='SetCustomImageRect'/>
+			<Function name='SetCustomPosCoords'/>
+			<Function name='StopUsingCustomPosCoords'/>
 			<Function name='SetEffectMode'/>
 			<Function name='SetSecondsIntoAnimation'/>
 			<Function name='SetTexture'/>
