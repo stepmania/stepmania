@@ -716,7 +716,7 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 </Namespace>
 <Namespace name='SongUtil'>
-	<Function name='GetPlayableSteps' return='Steps' arguments='Song so'>
+	<Function name='GetPlayableSteps' return='{Steps}' arguments='Song so'>
 		Gets the playable Steps for the present Song based on the present Game.
 	</Function>
 	<Function name='IsStepsPlayable' return='bool' arguments='Song so, Steps st'>
@@ -1611,6 +1611,14 @@ save yourself some time, copy this for undocumented things:
 	<Function name='GetText' return='string' arguments=''>
 		Returns the text that is currently set.
 	</Function>
+	<Function name='distort' return='void' arguments='float distortion_percentage'>
+		Causes each character of text to be randomly distorted by
+		distortion_percentage of its size when the text is set.  The distortion
+		only changes when the text changes.
+	</Function>
+	<Function name='undistort' return='void' arguments=''>
+		Turns off distortion.
+	</Function>
 	<Function name='jitter' return='void' arguments='bool bJitter'>
 		If <code>bJitter</code> is <code>true</code>, move each character of the string around by a small random amount.
 	</Function>
@@ -2035,10 +2043,12 @@ save yourself some time, copy this for undocumented things:
 	<Function name='PlayAnnouncer' return='void' arguments='string sPath'>
 		Plays a sound from the current announcer.
 	</Function>
-	<Function name='PlayMusicPart' return='void' arguments='string musicPath, float musicStart, float musicLength, float fadeIn, float fadeOut'>
-		Play the sound at <code>musicPath</code> starting from <code>musicStart</code> for
-		<code>musicLength</code> seconds one time. Both <code>fadeIn</code> and
-		<code>fadeOut</code> can be customized as required.
+	<Function name='PlayMusicPart' return='void' arguments='string musicPath, float musicStart, float musicLength, float fadeIn, float fadeOut, bool loop, bool, applyRate'>
+ 		Play the sound at <code>musicPath</code> starting from <code>musicStart</code> for
+ 		<code>musicLength</code> seconds one time. Both <code>fadeIn</code> and
+		<code>fadeOut</code> can be customized as required.  <code>loop</code>
+		tells the sound manager to loop the music part.  <code>applyRate</code>
+		tells the sound manager to apply the current music rate.
 	</Function>
 	<Function name='PlayOnce' return='void' arguments='string sPath'>
 		Play the sound at <code>sPath</code> one time.
@@ -3217,6 +3227,9 @@ save yourself some time, copy this for undocumented things:
 	<Function name='GetCaloriesBurned' return='float' arguments=''>
 		Returns the number of calories burned.
 	</Function>
+	<Function name='GetComboList' return= '{combo}' arguments=''>
+		Returns a table of all the combos.  Each entry in the table is a table containing the StartSecond, SizeSeconds, Count, Rollover, StageCount, and IsZero information for that combo.
+	</Function>
 	<Function name='GetCurMaxScore' return='int' arguments=''>
 		Returns the current possible maximum score.
 	</Function>
@@ -3249,6 +3262,11 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='GetLessonScoreNeeded' return='int' arguments=''>
 		Returns the score needed to pass the lesson.
+	</Function>
+	<Function name='GetLifeRecord' return='{float}' arguments='float last_second, int samples'>
+		Returns table of samples of the life record from 0 to last_second.
+		'samples' determines the size of the table.  'samples' defaults to 100
+		if not specified.
 	</Function>
 	<Function name='GetLifeRemainingSeconds' return='float' arguments=''>
 		Returns the player's life remaining seconds.
@@ -4276,6 +4294,13 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='SetCustomImageRect' return='void' arguments='float fLeft, float fTop, float fRight, float fBottom'>
 		Sets the custom image rectangle. (Works in image pixel space.)
+	</Function>
+	<Function name='SetCustomPosCoords' return='void' arguments='float ulx, float uly, float llx, float lly, float lrx, float lry, float urx, float ury'>
+		Sets custom offsets for the corners of the Sprite.  Coordinates are paired,
+		corner order is upper left, lower left, lower right, upper right.
+	</Function>
+	<Function name='StopUsingCustomPosCoords' return='void' arguments=''>
+		Turns off the custom pos coords for the sprite.
 	</Function>
 	<Function name='SetEffectMode' return='void' arguments='EffectMode mode'>
 		Set the <Link class='ENUM' function='EffectMode' /> to <code>mode</code>.

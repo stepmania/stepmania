@@ -50,7 +50,8 @@ public:
 		float length_sec = -1, 
 		float fFadeInLengthSeconds = 0,
 		float fade_len = 0, 
-		bool align_beat = true );
+		bool align_beat = true,
+		bool bApplyMusicRate = false);
 	void StopMusic() { PlayMusic(""); }
 	void DimMusic( float fVolume, float fDurationSeconds );
 	RString GetMusicPath() const;

@@ -25,6 +25,7 @@ LuaXType( ScreenType );
 
 void Screen::InitScreen( Screen *pScreen )
 {
+	pScreen->m_bShouldAllowLateJoin= false;
 	pScreen->Init();
 }
 
@@ -304,6 +305,12 @@ public:
 		return 0;
 	}
 
+	static int SetAllowLateJoin( T* p, lua_State *L )
+	{
+		p->m_bShouldAllowLateJoin= BArg(1);
+		return 0;
+	}
+
 	LunaScreen()
 	{
 		ADD_METHOD( GetNextScreenName );
@@ -311,6 +318,7 @@ public:
 		ADD_METHOD( PostScreenMessage );
 		ADD_METHOD( lockinput );
 		ADD_METHOD( GetScreenType );
+		ADD_METHOD( SetAllowLateJoin );
 	}
 };
 

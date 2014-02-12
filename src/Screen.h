@@ -80,7 +80,7 @@ public:
 	/**
 	 * @brief Determine if we allow extra players to join in on this screen.
 	 * @return false, for players should never be able to join while in progress. */
-	virtual bool AllowLateJoin() const { return false; }
+	virtual bool AllowLateJoin() const { return m_bShouldAllowLateJoin; }
 
 	// Lua
 	virtual void PushSelf( lua_State *L );
@@ -121,6 +121,8 @@ protected:
 	bool m_bRunning;
 
 public:
+	bool m_bShouldAllowLateJoin; // So that it can be exposed to Lua.
+
 	RString GetNextScreenName() const;
 	RString GetPrevScreen() const;
 

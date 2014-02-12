@@ -99,6 +99,7 @@ public:
 
 	struct Combo_t
 	{
+		// Update GetComboList in PlayerStageStats.cpp when adding new members that should be visible from the Lua side.
 		/** 
 		 * @brief The start time of the combo.
 		 *
