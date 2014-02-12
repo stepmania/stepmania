@@ -32,12 +32,6 @@
 
 #define AV_TIMECODE_STR_SIZE 16
 
-#define AV_TIMECODE_OPTION(ctx, string_field, flags)                     \
-    "timecode", "set timecode value following hh:mm:ss[:;.]ff format, "  \
-                "use ';' or '.' before frame number for drop frame",     \
-    offsetof(ctx, string_field),                                         \
-    AV_OPT_TYPE_STRING, {.str=NULL}, CHAR_MIN, CHAR_MAX, flags
-
 enum AVTimecodeFlag {
     AV_TIMECODE_FLAG_DROPFRAME      = 1<<0, ///< timecode is drop frame
     AV_TIMECODE_FLAG_24HOURSMAX     = 1<<1, ///< timecode wraps after 24 hours
@@ -55,10 +49,11 @@ typedef struct {
  * Adjust frame number for NTSC drop frame time code.
  *
  * @param framenum frame number to adjust
+ * @param fps      frame per second, 30 or 60
  * @return         adjusted frame number
- * @warning        adjustment is only valid in NTSC 29.97
+ * @warning        adjustment is only valid in NTSC 29.97 and 59.94
  */
-int av_timecode_adjust_ntsc_framenum(int framenum);
+int av_timecode_adjust_ntsc_framenum2(int framenum, int fps);
 
 /**
  * Convert frame number to SMPTE 12M binary representation.
@@ -68,7 +63,7 @@ int av_timecode_adjust_ntsc_framenum(int framenum);
  * @return         the SMPTE binary representation
  *
  * @note Frame number adjustment is automatically done in case of drop timecode,
- *       you do NOT have to call av_timecode_adjust_ntsc_framenum().
+ *       you do NOT have to call av_timecode_adjust_ntsc_framenum2().
  * @note The frame number is relative to tc->start.
  * @note Color frame (CF), binary group flags (BGF) and biphase mark polarity
  *       correction (PC) bits are set to zero.
@@ -134,5 +129,12 @@ int av_timecode_init(AVTimecode *tc, AVRational rate, int flags, int frame_start
  * @return        0 on success, AVERROR otherwise
  */
 int av_timecode_init_from_string(AVTimecode *tc, AVRational rate, const char *str, void *log_ctx);
+
+/**
+ * Check if the timecode feature is available for the given frame rate
+ *
+ * @return 0 if supported, <0 otherwise
+ */
+int av_timecode_check_frame_rate(AVRational rate);
 
 #endif /* AVUTIL_TIMECODE_H */

@@ -27,7 +27,6 @@
 #include "common.h"
 
 #define AV_TS_MAX_STRING_SIZE 32
-#define AV_TS_MAX_STRING_SIZE 32
 
 /**
  * Fill the provided buffer with a string containing a timestamp
@@ -40,7 +39,7 @@
 static inline char *av_ts_make_string(char *buf, int64_t ts)
 {
     if (ts == AV_NOPTS_VALUE) snprintf(buf, AV_TS_MAX_STRING_SIZE, "NOPTS");
-    else                      snprintf(buf, AV_TS_MAX_STRING_SIZE, "%"PRId64"", ts);
+    else                      snprintf(buf, AV_TS_MAX_STRING_SIZE, "%"PRId64, ts);
     return buf;
 }
 
