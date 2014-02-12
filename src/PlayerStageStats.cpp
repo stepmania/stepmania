@@ -741,6 +741,58 @@ public:
 		}
 		return 1;
 	}
+	static int GetComboList( T* p, lua_State *L )
+	{
+		lua_createtable(L, p->m_ComboList.size(), 0);
+		for( size_t i= 0; i < p->m_ComboList.size(); ++i)
+		{
+			lua_createtable(L, 0, 6);
+			lua_pushstring(L, "StartSecond");
+			lua_pushnumber(L, p->m_ComboList[i].m_fStartSecond);
+			lua_rawset(L, -3);
+			lua_pushstring(L, "SizeSeconds");
+			lua_pushnumber(L, p->m_ComboList[i].m_fSizeSeconds);
+			lua_rawset(L, -3);
+			lua_pushstring(L, "Count");
+			lua_pushnumber(L, p->m_ComboList[i].m_cnt);
+			lua_rawset(L, -3);
+			lua_pushstring(L, "Rollover");
+			lua_pushnumber(L, p->m_ComboList[i].m_rollover);
+			lua_rawset(L, -3);
+			lua_pushstring(L, "StageCount");
+			lua_pushnumber(L, p->m_ComboList[i].GetStageCnt());
+			lua_rawset(L, -3);
+			lua_pushstring(L, "IsZero");
+			lua_pushnumber(L, p->m_ComboList[i].IsZero());
+			lua_rawset(L, -3);
+			lua_rawseti(L, -2, i+1);
+		}
+		return 1;
+	}
+	static int GetLifeRecord( T* p, lua_State *L )
+	{
+		float last_second= FArg(1);
+		int samples= 100;
+		if (lua_gettop(L) >= 2 && !lua_isnil(L,2))
+		{
+			samples= IArg(2);
+			if(samples <= 0)
+			{
+				LOG->Trace("PlayerStageStats:GetLifeRecord requires an integer greater than 0.  Defaulting to 100.");
+				samples= 100;
+			}
+		}
+		lua_createtable(L, samples, 0);
+		for(int i= 0; i < samples; ++i)
+		{
+			// The scale from range is [0, samples-1] because that is i's range.
+			float from= SCALE(i, 0, (float)samples-1.0f, 0.0f, last_second);
+			float curr= p->GetLifeRecordLerpAt(from);
+			lua_pushnumber(L, curr);
+			lua_rawseti(L, -2, i+1);
+		}
+		return 1;
+	}
 
 	static int GetRadarPossible( T* p, lua_State *L ) { p->m_radarPossible.PushSelf(L); return 1; }
 	static int GetRadarActual( T* p, lua_State *L ) { p->m_radarActual.PushSelf(L); return 1; }
@@ -800,6 +852,8 @@ public:
 		ADD_METHOD( IsDisqualified );
 		ADD_METHOD( GetPlayedSteps );
 		ADD_METHOD( GetPossibleSteps );
+		ADD_METHOD( GetComboList );
+		ADD_METHOD( GetLifeRecord );
 		ADD_METHOD( GetAliveSeconds );
 		ADD_METHOD( GetPercentageOfTaps );
 		ADD_METHOD( GetRadarActual );

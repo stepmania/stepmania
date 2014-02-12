@@ -1107,6 +1107,7 @@
 			<Function name='GetAliveSeconds'/>
 			<Function name='GetBestFullComboTapNoteScore'/>
 			<Function name='GetCaloriesBurned'/>
+			<Function name='GetComboList'/>
 			<Function name='GetCurMaxScore'/>
 			<Function name='GetCurrentCombo'/>
 			<Function name='GetCurrentLife'/>
@@ -1118,6 +1119,7 @@
 			<Function name='GetHoldNoteScores'/>
 			<Function name='GetLessonScoreActual'/>
 			<Function name='GetLessonScoreNeeded'/>
+			<Function name='GetLifeRecord'/>
 			<Function name='GetLifeRemainingSeconds'/>
 			<Function name='GetMachineHighScoreIndex'/>
 			<Function name='GetNumControllerSteps'/>
