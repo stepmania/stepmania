@@ -24,6 +24,7 @@ public:
 
 private:
 	ThemeMetric<float> BODY_WIDTH;
+	ThemeMetric<float> BODY_HEIGHT;
 	Actor *m_pBacking;
 	Actor *m_pNormalCombo;
 	Actor *m_pMaxCombo;
