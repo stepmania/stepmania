@@ -129,10 +129,10 @@ void ArchHooks_MacOSX::Init()
 
 RString ArchHooks_MacOSX::GetArchName() const
 {
-#if defined(__ppc__)
-	return "Mac OS X (ppc)";
-#elif defined(__i386__)
+#if defined(__i386__)
 	return "Mac OS X (i386)";
+#elif defined(__x86_64__)
+	return "Mac OS X (x86_64)";
 #else
 #error What arch?
 #endif
