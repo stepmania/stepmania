@@ -684,7 +684,8 @@ void GameSoundManager::PlayMusic(
 	float fLengthSeconds, 
 	float fFadeInLengthSeconds, 
 	float fFadeOutLengthSeconds, 
-	bool bAlignBeat
+	bool bAlignBeat,
+	bool bApplyMusicRate
 	)
 {
 	PlayMusicParams params;
@@ -696,7 +697,7 @@ void GameSoundManager::PlayMusic(
 	params.fFadeInLengthSeconds = fFadeInLengthSeconds;
 	params.fFadeOutLengthSeconds = fFadeOutLengthSeconds;
 	params.bAlignBeat = bAlignBeat;
-	params.bApplyMusicRate = false;
+	params.bApplyMusicRate = bApplyMusicRate;
 	PlayMusic( params );
 }
 
@@ -831,16 +832,26 @@ public:
 		float musicLength = FArg(3);
 		float fadeIn = 0;
 		float fadeOut = 0;
+		bool loop= false;
+		bool applyRate= false;
 		if (lua_gettop(L) >= 4 && !lua_isnil(L,4))
 		{
 			fadeIn = FArg(4);
 			if (lua_gettop(L) >= 5 && !lua_isnil(L,5))
 			{
 				fadeOut = FArg(5);
+				if (lua_gettop(L) >= 6 && !lua_isnil(L,6))
+				{
+					loop = BArg(6);
+					if (lua_gettop(L) >= 7 && !lua_isnil(L,7))
+					{
+						applyRate = BArg(7);
+					}
+				}
 			}
 		}
-		p->PlayMusic(musicPath, NULL, false, musicStart, musicLength,
-					 fadeIn, fadeOut);
+		p->PlayMusic(musicPath, NULL, loop, musicStart, musicLength,
+			fadeIn, fadeOut, applyRate);
 		return 0;
 	}
 
