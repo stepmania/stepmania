@@ -1511,6 +1511,8 @@
 			<Function name='LoadFromSongBanner'/>
 			<Function name='SetAllStateDelays'/>
 			<Function name='SetCustomImageRect'/>
+			<Function name='SetCustomPosCoords'/>
+			<Function name='StopUsingCustomPosCoords'/>
 			<Function name='SetEffectMode'/>
 			<Function name='SetSecondsIntoAnimation'/>
 			<Function name='SetTexture'/>
