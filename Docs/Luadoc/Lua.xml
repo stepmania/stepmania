@@ -1377,6 +1377,7 @@
 		</Class>
 		<Class base='Screen' name='ScreenWithMenuElements'>
 			<Function name='Cancel'/>
+			<Function name='SetAllowLateJoin'/>
 		</Class>
 		<Class base='ScreenWithMenuElements' name='ScreenWithMenuElementsSimple'/>
 		<Class name='Song'>
