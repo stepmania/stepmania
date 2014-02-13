@@ -1611,6 +1611,14 @@ save yourself some time, copy this for undocumented things:
 	<Function name='GetText' return='string' arguments=''>
 		Returns the text that is currently set.
 	</Function>
+	<Function name='distort' return='void' arguments='float distortion_percentage'>
+		Causes each character of text to be randomly distorted by
+		distortion_percentage of its size when the text is set.  The distortion
+		only changes when the text changes.
+	</Function>
+	<Function name='undistort' return='void' arguments=''>
+		Turns off distortion.
+	</Function>
 	<Function name='jitter' return='void' arguments='bool bJitter'>
 		If <code>bJitter</code> is <code>true</code>, move each character of the string around by a small random amount.
 	</Function>

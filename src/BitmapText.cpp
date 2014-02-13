@@ -47,6 +47,8 @@ BitmapText::BitmapText()
 
 	m_bRainbowScroll = false;
 	m_bJitter = false;
+	m_fDistortion= 0.0f;
+	m_bUsingDistortion= false;
 
 	m_iWrapWidthPixels = -1;
 	m_fMaxWidth = 0;
@@ -84,6 +86,8 @@ BitmapText & BitmapText::operator=(const BitmapText &cpy)
 	CPY( m_fMaxHeight );
 	CPY( m_bRainbowScroll );
 	CPY( m_bJitter );
+	CPY( m_fDistortion );
+	CPY( m_bUsingDistortion );
 	CPY( m_iVertSpacing );
 	CPY( m_aVertices );
 	CPY( m_vpFontPageTextures );
@@ -251,6 +255,22 @@ void BitmapText::BuildChars()
 
 		// The amount of padding a line needs:
 		iY += iPadding;
+	}
+
+	if( m_bUsingDistortion )
+	{
+		int iSeed = lrintf( RageTimer::GetTimeSinceStartFast()*500000.0f );
+		RandomGen rnd( iSeed );
+		for(unsigned int i= 0; i < m_aVertices.size(); i+=4)
+		{
+			float w= m_aVertices[i+2].p.x - m_aVertices[i].p.x;
+			float h= m_aVertices[i+2].p.y - m_aVertices[i].p.y;
+			for(unsigned int ioff= 0; ioff < 4; ++ioff)
+			{
+				m_aVertices[i+ioff].p.x += ((rnd()%9) / 8.0f - .5f) * m_fDistortion * w;
+				m_aVertices[i+ioff].p.y += ((rnd()%9) / 8.0f - .5f) * m_fDistortion * h;
+			}
+		}
 	}
 }
 
@@ -467,6 +487,19 @@ void BitmapText::SetMaxHeight( float fMaxHeight )
 void BitmapText::SetUppercase( bool b )
 {
 	m_bUppercase = b;
+	BuildChars();
+}
+
+void BitmapText::SetDistortion( float f )
+{
+	m_fDistortion= f;
+	m_bUsingDistortion= true;
+	BuildChars();
+}
+
+void BitmapText::UnSetDistortion()
+{
+	m_bUsingDistortion= false;
 	BuildChars();
 }
 
@@ -827,6 +860,8 @@ public:
 	}
 	static int rainbowscroll( T* p, lua_State *L )		{ p->SetRainbowScroll( BArg(1) ); return 0; }
 	static int jitter( T* p, lua_State *L )			{ p->SetJitter( BArg(1) ); return 0; }
+	static int distort( T* p, lua_State *L) { p->SetDistortion( FArg(1) ); return 0; }
+	static int undistort( T* p, lua_State *L) { p->UnSetDistortion(); return 0; }
 	static int GetText( T* p, lua_State *L )		{ lua_pushstring( L, p->GetText() ); return 1; }
 	static int AddAttribute( T* p, lua_State *L )
 	{
@@ -851,6 +886,8 @@ public:
 		ADD_METHOD( settext );
 		ADD_METHOD( rainbowscroll );
 		ADD_METHOD( jitter );
+		ADD_METHOD( distort );
+		ADD_METHOD( undistort );
 		ADD_METHOD( GetText );
 		ADD_METHOD( AddAttribute );
 		ADD_METHOD( ClearAttributes );
