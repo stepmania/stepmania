@@ -586,12 +586,9 @@ void ScoreKeeperNormal::HandleHoldScore( const TapNote &tn )
 	// update dance points totals
 	if( !m_pPlayerStageStats->m_bFailed )
 		m_pPlayerStageStats->m_iActualDancePoints += HoldNoteScoreToDancePoints( holdScore );
+	// increment the current total possible dance score
 	m_pPlayerStageStats->m_iCurPossibleDancePoints += HoldNoteScoreToDancePoints( HNS_Held );
 	m_pPlayerStageStats->m_iHoldNoteScores[holdScore] ++;
-
-	// increment the current total possible dance score
-
-	m_pPlayerStageStats->m_iCurPossibleDancePoints += HoldNoteScoreToDancePoints( HNS_Held );
 
 	AddHoldScore( holdScore );
 
