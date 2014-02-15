@@ -2327,7 +2327,10 @@ save yourself some time, copy this for undocumented things:
 		Returns <code>true</code> if player <code>pn</code> is the winner.
 	</Function>
 	<Function name='JoinPlayer' return='void' arguments='PlayerNumber pn'>
-		Joins player <code>pn</code>.
+		Joins player <code>pn</code>.  Does not deduct coins.
+	</Function>
+	<Function name='JoinInput' return='bool' arguments='PlayerNumber pn'>
+		Similar to JoinPlayer, but checks whether the player is allowed to join and returns false if the player is not allowed to join.  Also deducts coins for joining.  A player can't join if PlayersCanJoin() returns false, or that side is already joined (is true for both sides when in a style that is OnePlayerTwoSides), or there are not enough coins.
 	</Function>
 	<Function name='PlayerIsUsingModifier' return='bool' arguments='PlayerNumber pn, string sModifier'>
 		Returns <code>true</code> if player <code>pn</code> is using modifier <code>sModifier</code>.

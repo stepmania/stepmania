@@ -2474,6 +2474,11 @@ public:
 	static int Reset( T* p, lua_State *L )				{ p->Reset(); return 0; }
 	static int JoinPlayer( T* p, lua_State *L )				{ p->JoinPlayer(Enum::Check<PlayerNumber>(L, 1)); return 0; }
 	static int UnjoinPlayer( T* p, lua_State *L )				{ p->UnjoinPlayer(Enum::Check<PlayerNumber>(L, 1)); return 0; }
+	static int JoinInput( T* p, lua_State *L )
+	{
+		lua_pushboolean(L, p->JoinInput(Enum::Check<PlayerNumber>(L, 1)));
+		return 1;
+	}
 	static int GetSongPercent( T* p, lua_State *L )				{ lua_pushnumber(L, p->GetSongPercent(FArg(1))); return 1; }
 	DEFINE_METHOD( GetCurMusicSeconds,	m_Position.m_fMusicSeconds )
 
@@ -2606,6 +2611,7 @@ public:
 		ADD_METHOD( Reset );
 		ADD_METHOD( JoinPlayer );
 		ADD_METHOD( UnjoinPlayer );
+		ADD_METHOD( JoinInput );
 		ADD_METHOD( GetSongPercent );
 		ADD_METHOD( GetCurMusicSeconds );
 		ADD_METHOD( GetCharacter );
