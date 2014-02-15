@@ -2329,7 +2329,10 @@ save yourself some time, copy this for undocumented things:
 		Returns <code>true</code> if player <code>pn</code> is the winner.
 	</Function>
 	<Function name='JoinPlayer' return='void' arguments='PlayerNumber pn'>
-		Joins player <code>pn</code>.
+		Joins player <code>pn</code>.  Does not deduct coins.
+	</Function>
+	<Function name='JoinInput' return='bool' arguments='PlayerNumber pn'>
+		Similar to JoinPlayer, but checks whether the player is allowed to join and returns false if the player is not allowed to join.  Also deducts coins for joining.  A player can't join if PlayersCanJoin() returns false, or that side is already joined (is true for both sides when in a style that is OnePlayerTwoSides), or there are not enough coins.
 	</Function>
 	<Function name='PlayerIsUsingModifier' return='bool' arguments='PlayerNumber pn, string sModifier'>
 		Returns <code>true</code> if player <code>pn</code> is using modifier <code>sModifier</code>.
@@ -3904,6 +3907,9 @@ save yourself some time, copy this for undocumented things:
 <Class name='ScreenWithMenuElements'>
 	<Function name='Cancel' return='void' arguments=''>
 		Tells the screen to go to the previous screen.
+	</Function>
+	<Function name='SetAllowLateJoin' return='void' arguments='bool'>
+		Sets whether the screen allows late joining.  This only works for screens that are just ScreenWithMenuElements, as most derived screens have their own hard coded function for whether late joining is allowed.
 	</Function>
 </Class>
 <Class name='Song'>

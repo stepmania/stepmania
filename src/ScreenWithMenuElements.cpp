@@ -25,6 +25,7 @@ ScreenWithMenuElements::ScreenWithMenuElements()
 	FOREACH_PlayerNumber( p )
 		m_MemoryCardDisplay[p] = NULL;
 	m_MenuTimer = NULL;
+	m_bShouldAllowLateJoin= false;
 }
 
 void ScreenWithMenuElements::Init()
@@ -377,11 +378,18 @@ class LunaScreenWithMenuElements: public Luna<ScreenWithMenuElements>
 public:
 	static int Cancel( T* p, lua_State *L )		{ p->Cancel( SM_GoToPrevScreen ); return 0; }
 	static int IsTransitioning( T* p, lua_State *L ) { lua_pushboolean( L, p->IsTransitioning() ); return 1; }
+	static int SetAllowLateJoin( T* p, lua_State *L )
+	{
+		p->m_bShouldAllowLateJoin= BArg(1);
+		return 0;
+	}
+
 
 	LunaScreenWithMenuElements()
 	{
 		ADD_METHOD( Cancel );
 		ADD_METHOD( IsTransitioning );
+		ADD_METHOD( SetAllowLateJoin );
 	}
 };
 

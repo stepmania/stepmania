@@ -783,6 +783,7 @@
 			<Function name='IsSideJoined'/>
 			<Function name='IsWinner'/>
 			<Function name='JoinPlayer'/>
+			<Function name='JoinInput'/>
 			<Function name='PlayerIsUsingModifier'/>
 			<Function name='PlayersCanJoin'/>
 			<Function name='RefreshNoteSkinData'/>
@@ -1377,6 +1378,7 @@
 		</Class>
 		<Class base='Screen' name='ScreenWithMenuElements'>
 			<Function name='Cancel'/>
+			<Function name='SetAllowLateJoin'/>
 		</Class>
 		<Class base='ScreenWithMenuElements' name='ScreenWithMenuElementsSimple'/>
 		<Class name='Song'>
