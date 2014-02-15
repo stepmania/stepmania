@@ -366,6 +366,19 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 	}
 
 	else if( sBit == "clearall" )				Init();
+	else if( sBit == "resetspeed" )
+	{
+		/* level is set to the values from Init() because all speed related
+		   fields are being reset to initial values, and they each have different
+		   initial values.  -kyz */
+		level= 0;
+		SET_FLOAT(fMaxScrollBPM);
+		SET_FLOAT(fTimeSpacing);
+		level= 1.0f;
+		SET_FLOAT(fScrollSpeed);
+		level= 200.0f;
+		SET_FLOAT(fScrollBPM)
+	}
 	else if( sBit == "boost" )				SET_FLOAT( fAccels[ACCEL_BOOST] )
 	else if( sBit == "brake" || sBit == "land" )		SET_FLOAT( fAccels[ACCEL_BRAKE] )
 	else if( sBit == "wave" )				SET_FLOAT( fAccels[ACCEL_WAVE] )
