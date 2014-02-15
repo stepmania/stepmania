@@ -33,6 +33,9 @@ public:
 	// Lua
 	virtual void PushSelf( lua_State *L );
 
+	virtual bool AllowLateJoin() const { return m_bShouldAllowLateJoin; }
+	bool m_bShouldAllowLateJoin; // So that it can be exposed to Lua.
+
 protected:
 	virtual void StartPlayingMusic();
 	void SetHelpText( RString s );

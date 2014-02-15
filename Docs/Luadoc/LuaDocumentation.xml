@@ -3906,6 +3906,9 @@ save yourself some time, copy this for undocumented things:
 	<Function name='Cancel' return='void' arguments=''>
 		Tells the screen to go to the previous screen.
 	</Function>
+	<Function name='SetAllowLateJoin' return='void' arguments='bool'>
+		Sets whether the screen allows late joining.  This only works for screens that are just ScreenWithMenuElements, as most derived screens have their own hard coded function for whether late joining is allowed.
+	</Function>
 </Class>
 <Class name='Song'>
 	<Function name='GetAllSteps' return='{Steps}' arguments=''>
