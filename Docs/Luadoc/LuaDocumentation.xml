@@ -2035,7 +2035,7 @@ save yourself some time, copy this for undocumented things:
 	<Function name='PlayAnnouncer' return='void' arguments='string sPath'>
 		Plays a sound from the current announcer.
 	</Function>
-	<Function name='PlayMusicPart' return='void' arguments='string musicPath, float musicStart, float musicLength, float fadeIn, float fadeOut, bool loop, bool, applyRate'>
+	<Function name='PlayMusicPart' return='void' arguments='string musicPath, float musicStart, float musicLength, float fadeIn, float fadeOut, bool loop, bool applyRate'>
  		Play the sound at <code>musicPath</code> starting from <code>musicStart</code> for
  		<code>musicLength</code> seconds one time. Both <code>fadeIn</code> and
 		<code>fadeOut</code> can be customized as required.  <code>loop</code>
