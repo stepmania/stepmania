@@ -116,6 +116,7 @@ void Profile::InitGeneralData()
 	m_LastStepsType = StepsType_Invalid;
 	m_lastSong.Unset();
 	m_lastCourse.Unset();
+	m_iCurrentCombo = 0;
 	m_iTotalSessions = 0;
 	m_iTotalSessionSeconds = 0;
 	m_iTotalGameplaySeconds = 0;
@@ -1088,6 +1089,7 @@ XNode* Profile::SaveGeneralDataCreateNode() const
 		pGeneralDataNode->AppendChild( "LastStepsType",			GAMEMAN->GetStepsTypeInfo(m_LastStepsType).szName );
 	pGeneralDataNode->AppendChild( m_lastSong.CreateNode() );
 	pGeneralDataNode->AppendChild( m_lastCourse.CreateNode() );
+	pGeneralDataNode->AppendChild( "CurrentCombo", m_iCurrentCombo );
 	pGeneralDataNode->AppendChild( "TotalSessions",			m_iTotalSessions );
 	pGeneralDataNode->AppendChild( "TotalSessionSeconds",		m_iTotalSessionSeconds );
 	pGeneralDataNode->AppendChild( "TotalGameplaySeconds",		m_iTotalGameplaySeconds );
@@ -1271,6 +1273,7 @@ void Profile::LoadGeneralDataFromNode( const XNode* pNode )
 	pNode->GetChildValue( "LastStepsType",				s );	m_LastStepsType = GAMEMAN->StringToStepsType( s );
 	pTemp = pNode->GetChild( "Song" );				if( pTemp ) m_lastSong.LoadFromNode( pTemp );
 	pTemp = pNode->GetChild( "Course" );				if( pTemp ) m_lastCourse.LoadFromNode( pTemp );
+	pNode->GetChildValue( "CurrentCombo", m_iCurrentCombo );
 	pNode->GetChildValue( "TotalSessions",				m_iTotalSessions );
 	pNode->GetChildValue( "TotalSessionSeconds",			m_iTotalSessionSeconds );
 	pNode->GetChildValue( "TotalGameplaySeconds",			m_iTotalGameplaySeconds );
