@@ -78,7 +78,7 @@ public:
 		m_LastDifficulty(Difficulty_Invalid),
 		m_LastCourseDifficulty(Difficulty_Invalid),
 		m_LastStepsType(StepsType_Invalid), m_lastSong(),
-		m_lastCourse(), m_iTotalSessions(0),
+		m_lastCourse(), m_iCurrentCombo(0), m_iTotalSessions(0),
 		m_iTotalSessionSeconds(0), m_iTotalGameplaySeconds(0),
 		m_fTotalCaloriesBurned(0), m_GoalType(GoalType_Calories),
 		m_iGoalCalories(0), m_iGoalSeconds(0), m_iTotalDancePoints(0),
@@ -165,6 +165,7 @@ public:
 	StepsType m_LastStepsType;
 	SongID m_lastSong;
 	CourseID m_lastCourse;
+	int m_iCurrentCombo;
 	int m_iTotalSessions;
 	int m_iTotalSessionSeconds;
 	int m_iTotalGameplaySeconds;
