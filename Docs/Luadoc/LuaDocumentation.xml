@@ -3222,6 +3222,9 @@ save yourself some time, copy this for undocumented things:
 	<Function name='GetCaloriesBurned' return='float' arguments=''>
 		Returns the number of calories burned.
 	</Function>
+	<Function name='GetComboList' return= '{combo}' arguments=''>
+		Returns a table of all the combos.  Each entry in the table is a table containing the StartSecond, SizeSeconds, Count, Rollover, StageCount, and IsZero information for that combo.
+	</Function>
 	<Function name='GetCurMaxScore' return='int' arguments=''>
 		Returns the current possible maximum score.
 	</Function>
@@ -3254,6 +3257,11 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='GetLessonScoreNeeded' return='int' arguments=''>
 		Returns the score needed to pass the lesson.
+	</Function>
+	<Function name='GetLifeRecord' return='{float}' arguments='float last_second, int samples'>
+		Returns table of samples of the life record from 0 to last_second.
+		'samples' determines the size of the table.  'samples' defaults to 100
+		if not specified.
 	</Function>
 	<Function name='GetLifeRemainingSeconds' return='float' arguments=''>
 		Returns the player's life remaining seconds.
