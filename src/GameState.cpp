@@ -795,6 +795,13 @@ void GameState::FinishStage()
 		}
 	}
 
+	// Save the current combo to the profiles so it can be used for ComboContinuesBetweenSongs.
+	FOREACH_HumanPlayer( p )
+	{
+		Profile* pProfile = PROFILEMAN->GetProfile(p);
+		pProfile->m_iCurrentCombo = STATSMAN->m_CurStageStats.m_player[p].m_iCurCombo;
+	}
+
 	if( m_bDemonstrationOrJukebox )
 		return;
 
@@ -926,7 +933,24 @@ void GameState::ResetMusicStatistics()
 
 void GameState::ResetStageStatistics()
 {
+	StageStats OldStats = STATSMAN->m_CurStageStats;
 	STATSMAN->m_CurStageStats = StageStats();
+	if( PREFSMAN->m_bComboContinuesBetweenSongs )
+	{
+		FOREACH_PlayerNumber( p )
+		{
+			bool FirstSong = m_iCurrentStageIndex == 0;
+			if( FirstSong )
+			{
+				Profile* pProfile = PROFILEMAN->GetProfile(p);
+				STATSMAN->m_CurStageStats.m_player[p].m_iCurCombo = pProfile->m_iCurrentCombo;
+			}
+			else
+			{
+				STATSMAN->m_CurStageStats.m_player[p].m_iCurCombo = OldStats.m_player[p].m_iCurCombo;
+			}
+		}
+	}
 
 	RemoveAllActiveAttacks();
 	FOREACH_PlayerNumber( p )
