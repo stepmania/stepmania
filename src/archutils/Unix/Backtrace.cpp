@@ -460,10 +460,14 @@ void GetSignalBacktraceContext( BacktraceContext *ctx, const ucontext_t *uc )
 	ctx->ip = (void *) uc->uc_mcontext->ss.eip;
 	ctx->bp = (void *) uc->uc_mcontext->ss.ebp;
 	ctx->sp = (void *) uc->uc_mcontext->ss.esp;
-#else
+#elif defined(__i386__)
 	ctx->ip = (void *) uc->uc_mcontext->__ss.__eip;
 	ctx->bp = (void *) uc->uc_mcontext->__ss.__ebp;
 	ctx->sp = (void *) uc->uc_mcontext->__ss.__esp;	
+#elif defined(__x86_64__)
+	ctx->ip = (void *) uc->uc_mcontext->__ss.__rip;
+	ctx->bp = (void *) uc->uc_mcontext->__ss.__rbp;
+	ctx->sp = (void *) uc->uc_mcontext->__ss.__rsp;
 #endif
 }
 
@@ -635,13 +639,8 @@ struct Frame
 
 void GetSignalBacktraceContext( BacktraceContext *ctx, const ucontext_t *uc )
 {
-#if defined(__ppc__)
-	ctx->PC = (const void *) uc->uc_mcontext->__ss.__srr0;
-	ctx->FramePtr = (const Frame *) uc->uc_mcontext->__ss.__r1;
-#else
 	ctx->PC = (const void *) uc->uc_mcontext->ss.srr0;
 	ctx->FramePtr = (const Frame *) uc->uc_mcontext->ss.r1;
-#endif
 }
 
 void InitializeBacktrace() { }
