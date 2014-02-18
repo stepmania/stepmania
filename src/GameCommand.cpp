@@ -442,6 +442,15 @@ int GetNumCreditsPaid()
 
 int GetCreditsRequiredToPlayStyle( const Style *style )
 {
+	// GameState::GetCoinsNeededToJoin returns 0 if the coin mode isn't
+	// CoinMode_Pay, which means the theme can't make sure that there are
+	// enough credits available.  GameCommand::IsPlayable will cause a crash
+	// if there aren't enough credits.  So we have to check the coin mode here
+	// and return 0 if the player doesn't have to pay.
+	if( GAMESTATE->GetCoinMode() != CoinMode_Pay )
+	{
+		return 0;
+	}
 	if( GAMESTATE->GetPremium() == Premium_2PlayersFor1Credit )
 		return 1;
 
