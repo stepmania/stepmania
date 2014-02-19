@@ -4301,6 +4301,13 @@ save yourself some time, copy this for undocumented things:
 	<Function name='SetCustomImageRect' return='void' arguments='float fLeft, float fTop, float fRight, float fBottom'>
 		Sets the custom image rectangle. (Works in image pixel space.)
 	</Function>
+	<Function name='SetCustomPosCoords' return='void' arguments='float ulx, float uly, float llx, float lly, float lrx, float lry, float urx, float ury'>
+		Sets custom offsets for the corners of the Sprite.  Coordinates are paired,
+		corner order is upper left, lower left, lower right, upper right.
+	</Function>
+	<Function name='StopUsingCustomPosCoords' return='void' arguments=''>
+		Turns off the custom pos coords for the sprite.
+	</Function>
 	<Function name='SetEffectMode' return='void' arguments='EffectMode mode'>
 		Set the <Link class='ENUM' function='EffectMode' /> to <code>mode</code>.
 	</Function>

@@ -23,6 +23,7 @@ Sprite::Sprite()
 	m_iCurState = 0;
 	m_fSecsIntoState = 0.0f;
 	m_bUsingCustomTexCoords = false;
+	m_bUsingCustomPosCoords = false;
 	m_bSkipNextUpdate = true;
 	m_EffectMode = EffectMode_Normal;
 	
@@ -47,9 +48,11 @@ Sprite::Sprite( const Sprite &cpy ):
 	CPY( m_iCurState );
 	CPY( m_fSecsIntoState );
 	CPY( m_bUsingCustomTexCoords );
+	CPY( m_bUsingCustomPosCoords );
 	CPY( m_bSkipNextUpdate );
 	CPY( m_EffectMode );
 	memcpy( m_CustomTexCoords, cpy.m_CustomTexCoords, sizeof(m_CustomTexCoords) );
+	memcpy( m_CustomPosCoords, cpy.m_CustomPosCoords, sizeof(m_CustomPosCoords) );
 	CPY( m_fRememberedClipWidth );
 	CPY( m_fRememberedClipHeight );
 	CPY( m_fTexCoordVelocityX );
@@ -474,6 +477,14 @@ void Sprite::DrawTexture( const TweenState *state )
 	v[1].p = RageVector3( croppedQuadVerticies.left,	croppedQuadVerticies.bottom,	0 );	// bottom left
 	v[2].p = RageVector3( croppedQuadVerticies.right,	croppedQuadVerticies.bottom,	0 );	// bottom right
 	v[3].p = RageVector3( croppedQuadVerticies.right,	croppedQuadVerticies.top,	0 );	// top right
+	if( m_bUsingCustomPosCoords )
+	{
+		for( int i=0; i < 4; ++i)
+		{
+			v[i].p.x+= m_CustomPosCoords[i*2];
+			v[i].p.y+= m_CustomPosCoords[(i*2)+1];
+		}
+	}
 
 	DISPLAY->ClearAllTextures();
 	DISPLAY->SetTexture( TextureUnit_1, m_pTexture? m_pTexture->GetTexHandle():0 );
@@ -803,6 +814,15 @@ void Sprite::SetCustomImageCoords( float fImageCoords[8] )	// order: top left, b
 	SetCustomTextureCoords( fImageCoords );
 }
 
+void Sprite::SetCustomPosCoords( float fPosCoords[8] )	// order: top left, bottom left, bottom right, top right
+{
+	m_bUsingCustomPosCoords= true;
+	for( int i=0; i<8; ++i )
+	{
+		m_CustomPosCoords[i]= fPosCoords[i];
+	}
+}
+
 const RectF *Sprite::GetCurrentTextureCoordRect() const
 {
 	return GetTextureCoordRectForState( m_iCurState );
@@ -837,6 +857,11 @@ void Sprite::GetActiveTextureCoords( float fTexCoordsOut[8] ) const
 void Sprite::StopUsingCustomCoords()
 {
 	m_bUsingCustomTexCoords = false;
+}
+
+void Sprite::StopUsingCustomPosCoords()
+{
+	m_bUsingCustomPosCoords = false;
 }
 
 void Sprite::SetTexCoordVelocity(float fVelX, float fVelY)
@@ -1035,6 +1060,21 @@ public:
 	 * Commands that take effect immediately (ignoring the tweening queue): */
 	static int customtexturerect( T* p, lua_State *L )	{ p->SetCustomTextureRect( RectF(FArg(1),FArg(2),FArg(3),FArg(4)) ); return 0; }
 	static int SetCustomImageRect( T* p, lua_State *L )	{ p->SetCustomImageRect( RectF(FArg(1),FArg(2),FArg(3),FArg(4)) ); return 0; }
+	static int SetCustomPosCoords( T* p, lua_State *L )
+	{
+		float coords[8];
+		for( int i=0; i<8; ++i )
+		{
+			coords[i]= FArg(i+1);
+			if( isnan(coords[i]) )
+			{
+				coords[i]= 0.0f;
+			}
+		}
+		p->SetCustomPosCoords(coords);
+		return 0;
+	}
+	static int StopUsingCustomPosCoords( T* p, lua_State *L ) { p->StopUsingCustomPosCoords(); return 0; }
 	static int texcoordvelocity( T* p, lua_State *L )	{ p->SetTexCoordVelocity( FArg(1),FArg(2) ); return 0; }
 	static int scaletoclipped( T* p, lua_State *L )		{ p->ScaleToClipped( FArg(1),FArg(2) ); return 0; }
 	static int CropTo( T* p, lua_State *L )		{ p->CropTo( FArg(1),FArg(2) ); return 0; }
@@ -1076,6 +1116,8 @@ public:
 		ADD_METHOD( LoadBackground );
 		ADD_METHOD( customtexturerect );
 		ADD_METHOD( SetCustomImageRect );
+		ADD_METHOD( SetCustomPosCoords );
+		ADD_METHOD( StopUsingCustomPosCoords );
 		ADD_METHOD( texcoordvelocity );
 		ADD_METHOD( scaletoclipped );
 		ADD_METHOD( CropTo );
