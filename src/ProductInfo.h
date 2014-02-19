@@ -13,7 +13,7 @@
 /**
  * @brief A unique name for each application that you might want installed side-by-side with other applications.
  *
- * As an example, use "StepMania4" here, not "StepMania". 
+ * As an example, use "StepMania4" here, not "StepMania".
  * It would cause a conflict with older versions such as StepMania 3.X.
  */
 #define PRODUCT_ID_BARE StepMania 5
@@ -30,7 +30,7 @@
  * </li></ul>
  */
 #ifndef PRODUCT_VER_BARE
-#define PRODUCT_VER_BARE v5.0 beta 2b
+#define PRODUCT_VER_BARE v5.0 beta 3
 #endif
 
 /**
