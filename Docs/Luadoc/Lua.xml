@@ -550,6 +550,7 @@
 			<Function name='NoStroke'/>
 			<Function name='PixelFont'/>
 			<Function name='Stroke'/>
+			<Function name='distort'/>
 			<Function name='jitter'/>
 			<Function name='maxheight'/>
 			<Function name='maxwidth'/>
@@ -558,6 +559,7 @@
 			<Function name='settextf'/>
 			<Function name='strokecolor'/>
 			<Function name='textglowmode'/>
+			<Function name='undistort'/>
 			<Function name='uppercase'/>
 			<Function name='vertspacing'/>
 			<Function name='wrapwidthpixels'/>
