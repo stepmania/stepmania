@@ -31,11 +31,13 @@ Actor *CreateActor() { return new T; }
 enum FileType
 {
 	FT_Bitmap, 
+	FT_Sprite,
 	FT_Sound, 
 	FT_Movie, 
 	FT_Directory, 
-	FT_Lua, 
+	FT_Xml,
 	FT_Model, 
+	FT_Lua, 
 	NUM_FileType, 
 	FileType_Invalid
 };

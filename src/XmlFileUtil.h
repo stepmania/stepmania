@@ -21,6 +21,7 @@ namespace XmlFileUtil
 	bool SaveToFile( const XNode *pNode, const RString &sFile, const RString &sStylesheet = "", bool bWriteTabs = true );
 	bool SaveToFile( const XNode *pNode, RageFileBasic &f, const RString &sStylesheet = "", bool bWriteTabs = true );
 
+	void AnnotateXNodeTree( XNode *pNode, const RString &sFile );
 	void CompileXNodeTree( XNode *pNode, const RString &sFile );
 	XNode *XNodeFromTable( lua_State *L );
 

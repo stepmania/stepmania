@@ -580,7 +580,8 @@ namespace
 
 		if( EndsWith(sName, "Command") )
 		{
-			LuaHelpers::ParseCommandList( L, sExpression, sFile );
+			// Use legacy parsing
+			LuaHelpers::ParseCommandList( L, sExpression, sFile, true );
 		}
 		else if( sExpression.size() > 0 && sExpression[0] == '@' )
 		{
@@ -597,6 +598,30 @@ namespace
 		XNodeLuaValue *pRet = new XNodeLuaValue;
 		pRet->SetValueFromStack( L );
 		return pRet;
+	}
+}
+
+void XmlFileUtil::AnnotateXNodeTree( XNode *pNode, const RString &sFile )
+{
+	RString sDir = Dirname( sFile );
+
+	vector<XNode *> queue;
+	queue.push_back( pNode );
+	while( !queue.empty() )
+	{
+		pNode = queue.back();
+		queue.pop_back();
+		FOREACH_Child( pNode, pChild )
+			queue.push_back( pChild );
+
+		/* Source file, for error messages: */
+		pNode->AppendAttr( "_Source", sFile );
+
+		/* Directory of caller, for relative paths: */
+		pNode->AppendAttr( "_Dir", sDir );
+
+		/* Note that this node came from a legacy XML file */
+		pNode->AppendAttr( "_LegacyXml", true );
 	}
 }
 

@@ -88,7 +88,7 @@ namespace LuaHelpers
 	// Read the table at the top of the stack back into a vector.
 	void ReadArrayFromTableB( Lua *L, vector<bool> &aOut );
 
-	void ParseCommandList( lua_State *L, const RString &sCommands, const RString &sName );
+	void ParseCommandList( lua_State *L, const RString &sCommands, const RString &sName, bool bLegacy );
 
 	XNode *GetLuaInformation();
 

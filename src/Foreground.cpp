@@ -2,6 +2,7 @@
 #include "Foreground.h"
 #include "RageUtil.h"
 #include "GameState.h"
+#include "PrefsManager.h"
 #include "RageTextureManager.h"
 #include "ActorUtil.h"
 #include "Song.h"
@@ -34,12 +35,17 @@ void Foreground::LoadFromSong( const Song *pSong )
 	{
 		const BackgroundChange &change = *bgc;
 		RString sBGName = change.m_def.m_sFile1,
-			sLuaFile = pSong->GetSongDir() + sBGName + "/default.lua";
+			sLuaFile = pSong->GetSongDir() + sBGName + "/default.lua",
+			sXmlFile = pSong->GetSongDir() + sBGName + "/default.xml";
 
 		LoadedBGA bga;
 		if ( DoesFileExist( sLuaFile ) )
 		{
 			bga.m_bga = ActorUtil::MakeActor( sLuaFile, this );
+		}
+		else if ( PREFSMAN->m_bQuirksMode && DoesFileExist( sXmlFile ) )
+		{
+			bga.m_bga = ActorUtil::MakeActor( sXmlFile, this );
 		}
 		else
 		{
@@ -51,12 +57,6 @@ void Foreground::LoadFromSong( const Song *pSong )
 		bga.m_bga->PlayCommand( "Init" );
 		bga.m_fStartBeat = change.m_fStartBeat;
 		bga.m_bFinished = false;
-
-		const float fStartSecond = pSong->m_SongTiming.GetElapsedTimeFromBeat( bga.m_fStartBeat );
-		bga.m_bga->PlayCommand( "On" );
-		const float fStopSecond = fStartSecond + bga.m_bga->GetTweenTimeLeft();
-		bga.m_bga->StopTweening();
-		bga.m_fStopBeat = pSong->m_SongTiming.GetBeatFromElapsedTime( fStopSecond );
 
 		bga.m_bga->SetVisible( false );
 
@@ -96,6 +96,9 @@ void Foreground::Update( float fDeltaTime )
 			bga.m_bga->PlayCommand( "On" );
 
 			const float fStartSecond = m_pSong->m_SongTiming.GetElapsedTimeFromBeat( bga.m_fStartBeat );
+			const float fStopSecond = fStartSecond + bga.m_bga->GetTweenTimeLeft();
+			bga.m_fStopBeat = m_pSong->m_SongTiming.GetBeatFromElapsedTime( fStopSecond );
+
 			lDeltaTime = GAMESTATE->m_Position.m_fMusicSeconds - fStartSecond;
 		}
 		else
@@ -118,6 +121,17 @@ void Foreground::Update( float fDeltaTime )
 	}
 
 	m_fLastMusicSeconds = GAMESTATE->m_Position.m_fMusicSeconds;
+}
+
+void Foreground::HandleMessage( const Message &msg )
+{
+	// We want foregrounds to behave as if their On command happens at the
+	// starting beat, not when the Foreground object receives an On command.
+	// So don't propagate that; we'll call it ourselves.
+	if (msg.GetName() == "On")
+		Actor::HandleMessage(msg);
+	else
+		ActorFrame::HandleMessage(msg);
 }
 
 /*

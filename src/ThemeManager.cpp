@@ -1030,7 +1030,7 @@ void ThemeManager::PushMetric( Lua *L, const RString &sMetricsGroup, const RStri
 	RString sName = ssprintf( "%s::%s", sMetricsGroup.c_str(), sValueName.c_str() );
 	if( EndsWith(sValueName, "Command") )
 	{
-		LuaHelpers::ParseCommandList( L, sValue, sName );
+		LuaHelpers::ParseCommandList( L, sValue, sName, false );
 	}
 	else
 	{

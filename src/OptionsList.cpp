@@ -214,7 +214,7 @@ void OptionsList::Load( RString sType, PlayerNumber pn )
 
 		RString sRowCommands = LINE(sLineName);
 		Commands cmds;
-		ParseCommands( sRowCommands, cmds );
+		ParseCommands( sRowCommands, cmds, false );
 
 		OptionRowHandler *pHand = OptionRowHandlerUtil::Make( cmds );
 		if( pHand == NULL )

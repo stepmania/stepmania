@@ -1,14 +1,19 @@
 #include "global.h"
 #include "ActorUtil.h"
 #include "ThemeManager.h"
+#include "PrefsManager.h"
 #include "RageFileManager.h"
 #include "RageLog.h"
 #include "RageUtil.h"
 #include "EnumHelper.h"
 #include "XmlFile.h"
 #include "XmlFileUtil.h"
+#include "IniFile.h"
 #include "LuaManager.h"
 #include "Foreach.h"
+#include "Song.h"
+#include "Course.h"
+#include "GameState.h"
 
 #include "arch/Dialog/Dialog.h"
 
@@ -32,6 +37,9 @@ void ActorUtil::Register( const RString& sClassName, CreateActorFn pfn )
 	(*g_pmapRegistrees)[sClassName] = pfn;
 }
 
+/* Resolves actor paths a la LoadActor("..."), with autowildcarding and .redir
+ * files.  Returns a path *within* the Rage filesystem, unlike the FILEMAN
+ * function of the same name. */
 bool ActorUtil::ResolvePath( RString &sPath, const RString &sName )
 {
 	CollapsePath( sPath );
@@ -101,30 +109,114 @@ bool ActorUtil::ResolvePath( RString &sPath, const RString &sName )
 	return true;
 }
 
-Actor* ActorUtil::LoadFromNode( const XNode* pNode, Actor *pParentActor )
+namespace
 {
-	ASSERT( pNode != NULL );
+	RString GetLegacyActorClass(XNode *pActor)
+	{
+		DEBUG_ASSERT(PREFSMAN->m_bQuirksMode);
+		ASSERT(pActor);
+
+		// The non-legacy LoadFromNode has already checked the Class and
+		// Type attributes.
+
+		if (pActor->GetAttr("Text") != NULL)
+			return "BitmapText";
+
+		RString sFile;
+		if (pActor->GetAttrValue("File", sFile) && sFile != "")
+		{
+			// Backward compatibility hacks for "special" filenames
+			if (sFile.EqualsNoCase("songbackground"))
+			{
+				XNodeStringValue *pVal = new XNodeStringValue;
+				Song *pSong = GAMESTATE->m_pCurSong;
+				if (pSong && pSong->HasBackground())
+					pVal->SetValue(pSong->GetBackgroundPath());
+				else
+					pVal->SetValue(THEME->GetPathG("Common", "fallback background"));
+				pActor->AppendAttrFrom("Texture", pVal, false);
+				return "Sprite";
+			}
+			else if (sFile.EqualsNoCase("songbanner"))
+			{
+				XNodeStringValue *pVal = new XNodeStringValue;
+				Song *pSong = GAMESTATE->m_pCurSong;
+				if (pSong && pSong->HasBanner())
+					pVal->SetValue(pSong->GetBannerPath());
+				else
+					pVal->SetValue(THEME->GetPathG("Common", "fallback banner"));
+				pActor->AppendAttrFrom("Texture", pVal, false);
+				return "Sprite";
+			}
+			else if (sFile.EqualsNoCase("coursebanner"))
+			{
+				XNodeStringValue *pVal = new XNodeStringValue;
+				Course *pCourse = GAMESTATE->m_pCurCourse;
+				if (pCourse && pCourse->HasBanner())
+					pVal->SetValue(pCourse->GetBannerPath());
+				else
+					pVal->SetValue(THEME->GetPathG("Common", "fallback banner"));
+				pActor->AppendAttrFrom("Texture", pVal, false);
+				return "Sprite";
+			}
+		}
+
+		// Fallback: use XML tag name for actor class
+		return pActor->m_sName;
+	}
+}
+
+Actor *ActorUtil::LoadFromNode( const XNode* _pNode, Actor *pParentActor )
+{
+	ASSERT( _pNode != NULL );
+
+	XNode node = *_pNode;
 
 	// Remove this in favor of using conditionals in Lua. -Chris
 	// There are a number of themes out there that depend on this (including
 	// sm-ssc default). Probably for the best to leave this in. -aj
 	{
 		bool bCond;
-		if( pNode->GetAttrValue("Condition", bCond) && !bCond )
+		if( node.GetAttrValue("Condition", bCond) && !bCond )
 			return NULL;
 	}
 
 	RString sClass;
-	bool bHasClass = pNode->GetAttrValue( "Class", sClass );
+	bool bHasClass = node.GetAttrValue( "Class", sClass );
 	if( !bHasClass )
-		bHasClass = pNode->GetAttrValue( "Type", sClass );
+		bHasClass = node.GetAttrValue( "Type", sClass );
+
+	bool bLegacy = (node.GetAttr( "_LegacyXml" ) != NULL);
+	if( !bHasClass && bLegacy )
+		sClass = GetLegacyActorClass( &node );
 
 	map<RString,CreateActorFn>::iterator iter = g_pmapRegistrees->find( sClass );
 	if( iter == g_pmapRegistrees->end() )
 	{
+		RString sFile;
+		if (bLegacy && node.GetAttrValue("File", sFile) && sFile != "")
+		{
+			RString sPath;
+			// Handle absolute paths correctly
+			if (sFile.Left(1) == "/")
+				sPath = sFile;
+			else
+				sPath = Dirname(GetSourcePath(&node)) + sFile;
+			if (ResolvePath(sPath, GetWhere(&node)))
+			{
+				Actor *pNewActor = MakeActor(sPath, pParentActor);
+				if (pNewActor == NULL)
+					return NULL;
+				if (pParentActor)
+					pNewActor->SetParent(pParentActor);
+				pNewActor->LoadFromNode(&node);
+				return pNewActor;
+			}
+		}
+
 		// sClass is invalid
 		RString sError = ssprintf( "%s: invalid Class \"%s\"",
-			ActorUtil::GetWhere(pNode).c_str(), sClass.c_str() );
+			ActorUtil::GetWhere(&node).c_str(), sClass.c_str() );
 		Dialog::OK( sError );
 		return new Actor;	// Return a dummy object so that we don't crash in AutoActor later.
 	}
@@ -135,7 +227,7 @@ Actor* ActorUtil::LoadFromNode( const XNode* pNode, Actor *pParentActor )
 	if( pParentActor )
 		pRet->SetParent( pParentActor );
 
-	pRet->LoadFromNode( pNode );
+	pRet->LoadFromNode( &node );
 	return pRet;
 }
 
@@ -222,10 +314,28 @@ Actor* ActorUtil::MakeActor( const RString &sPath_, Actor *pParentActor )
 			Actor *pRet = ActorUtil::LoadFromNode( pNode.get(), pParentActor );
 			return pRet;
 		}
+	case FT_Xml:
+		{
+			// Legacy actors; only supported in quirks mode
+			if ( !PREFSMAN->m_bQuirksMode )
+				return new Actor;
+
+			XNode xml;
+			if ( !XmlFileUtil::LoadFromFileShowErrors(xml, sPath) )
+				return new Actor;
+			XmlFileUtil::CompileXNodeTree( &xml, sPath );
+			XmlFileUtil::AnnotateXNodeTree( &xml, sPath );
+			return LoadFromNode( &xml, pParentActor );
+		}
 	case FT_Directory:
 		{
 			if( sPath.Right(1) != "/" )
 				sPath += '/';
+
+			RString sXml = sPath + "default.xml";
+			if (DoesFileExist(sXml))
+				return MakeActor(sXml, pParentActor);
+
 			XNode xml;
 			xml.AppendAttr( "Class", "BGAnimation" );
 			xml.AppendAttr( "AniDir", sPath );
@@ -240,6 +350,18 @@ Actor* ActorUtil::MakeActor( const RString &sPath_, Actor *pParentActor )
 			xml.AppendAttr( "Texture", sPath );
 
 			return ActorUtil::LoadFromNode( &xml, pParentActor );
+		}
+	case FT_Sprite:
+		{
+			// Legacy actor; only supported in quirks mode
+			if( !PREFSMAN->m_bQuirksMode )
+				return new Actor;
+
+			IniFile ini;
+			ini.ReadFile( sPath );
+			XmlFileUtil::AnnotateXNodeTree( &ini, sPath );
+
+			return ActorUtil::LoadFromNode( ini.GetChild("Sprite"), pParentActor );
 		}
 	case FT_Model:
 		{
@@ -305,7 +427,7 @@ bool ActorUtil::GetAttrPath( const XNode *pNode, const RString &sName, RString &
 apActorCommands ActorUtil::ParseActorCommands( const RString &sCommands, const RString &sName )
 {
 	Lua *L = LUA->Get();
-	LuaHelpers::ParseCommandList( L, sCommands, sName );
+	LuaHelpers::ParseCommandList( L, sCommands, sName, false );
 	LuaReference *pRet = new LuaReference;
 	pRet->SetFromStack( L );
 	LUA->Release( L );
@@ -373,11 +495,13 @@ void ActorUtil::SortByZPosition( vector<Actor*> &vActors )
 
 static const char *FileTypeNames[] = {
 	"Bitmap", 
+	"Sprite",
 	"Sound", 
 	"Movie", 
 	"Directory", 
-	"Lua", 
+	"Xml",
 	"Model", 
+	"Lua", 
 };
 XToString( FileType );
 LuaXType( FileType );
@@ -388,6 +512,7 @@ FileType ActorUtil::GetFileType( const RString &sPath )
 	sExt.MakeLower();
 	
 	if( sExt=="lua" )		return FT_Lua;
+	else if(sExt=="xml")		return FT_Xml;
 	else if( 
 		sExt=="png" ||
 		sExt=="jpg" || 
@@ -409,6 +534,8 @@ FileType ActorUtil::GetFileType( const RString &sPath )
 		sExt=="flv" ||
 		sExt=="f4v" ||			
 		sExt=="mpg" )		return FT_Movie;
+	else if(
+		sExt=="sprite" )	return FT_Sprite;
 	else if( 
 		sExt=="txt" )		return FT_Model;
 	else if( sPath.size() > 0 && sPath[sPath.size()-1] == '/' )

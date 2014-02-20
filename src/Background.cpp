@@ -331,13 +331,22 @@ bool BackgroundImpl::Layer::CreateBackground( const Song *pSong, const Backgroun
 			LOG->Warn( "CreateBackground() Unknown file type '%s'", vsResolved[0].c_str() );
 			// fall through
 		case FT_Bitmap:
+		case FT_Sprite:
 		case FT_Movie:
 			sEffect = SBE_StretchNormal;
 			break;
-		case FT_Directory:
 		case FT_Lua:
 		case FT_Model:
 			sEffect = SBE_UpperLeft;
+			break;
+		case FT_Xml:
+			sEffect = SBE_Centered;
+			break;
+		case FT_Directory:
+			if( DoesFileExist(vsResolved[0] + "/default.lua") )
+				sEffect = SBE_UpperLeft;
+			else
+				sEffect = SBE_Centered;
 			break;
 		}
 	}
