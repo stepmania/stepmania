@@ -549,6 +549,7 @@ public:
 
 	// render states
 	void SetBlendMode( BlendMode mode )		{ m_BlendMode = mode; } 
+	void SetTextureTranslate( float x, float y )	{ m_texTranslate.x = x; m_texTranslate.y = y; }
 	void SetTextureWrapping( bool b ) 			{ m_bTextureWrapping = b; } 
 	void SetTextureFiltering( bool b ) 		{ m_bTextureFiltering = b; } 
 	void SetClearZBuffer( bool b ) 			{ m_bClearZBuffer = b; } 
@@ -685,6 +686,7 @@ protected:
 	BlendMode	m_BlendMode;
 	ZTestMode	m_ZTestMode;
 	CullMode	m_CullMode;
+	RageVector2	m_texTranslate;
 	bool		m_bTextureWrapping;
 	bool		m_bTextureFiltering;
 	bool		m_bClearZBuffer;
