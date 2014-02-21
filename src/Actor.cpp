@@ -127,6 +127,7 @@ void Actor::InitState()
 
 	m_bTextureWrapping = false;
 	m_bTextureFiltering = true;
+	m_texTranslate = RageVector2( 0, 0 );
 
 	m_BlendMode = BLEND_NORMAL;
 	m_fZBias = 0;
@@ -569,6 +570,12 @@ void Actor::BeginDraw() // set the world matrix
 		DISPLAY->SkewY( m_pTempState->fSkewY );
 	}
 
+	if( m_texTranslate.x != 0 || m_texTranslate.y != 0 )
+	{
+		DISPLAY->TexturePushMatrix();
+		DISPLAY->TextureTranslate( m_texTranslate.x, m_texTranslate.y );
+	}
+
 }
 
 void Actor::SetGlobalRenderStates()
@@ -600,6 +607,10 @@ void Actor::SetTextureRenderStates()
 void Actor::EndDraw()
 {
 	DISPLAY->PopMatrix();
+
+	if( m_texTranslate.x != 0 || m_texTranslate.y != 0 )
+		DISPLAY->TexturePopMatrix();
+
 }
 
 void Actor::UpdateTweening( float fDeltaTime )
@@ -1576,6 +1587,7 @@ public:
 	static int pause( T* p, lua_State * )			{ p->EnableAnimation(false); return 0; }
 	static int setstate( T* p, lua_State *L )		{ p->SetState(IArg(1)); return 0; }
 	static int GetNumStates( T* p, lua_State *L )		{ LuaHelpers::Push( L, p->GetNumStates() ); return 1; }
+    static int texturetranslate( T* p, lua_State *L )	{ p->SetTextureTranslate(FArg(1),FArg(2)); return 0; }
 	static int texturewrapping( T* p, lua_State *L )	{ p->SetTextureWrapping(BIArg(1)); return 0; }
 	static int SetTextureFiltering( T* p, lua_State *L )	{ p->SetTextureFiltering(BArg(1)); return 0; }
 	static int blend( T* p, lua_State *L )			{ p->SetBlendMode( Enum::Check<BlendMode>(L, 1) ); return 0; }
@@ -1795,6 +1807,7 @@ public:
 		ADD_METHOD( pause );
 		ADD_METHOD( setstate );
 		ADD_METHOD( GetNumStates );
+		ADD_METHOD( texturetranslate );
 		ADD_METHOD( texturewrapping );
 		ADD_METHOD( SetTextureFiltering );
 		ADD_METHOD( blend );
