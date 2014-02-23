@@ -173,7 +173,7 @@ void ModIconRow::SetFromGameState()
 		}
 	}
 
-	for( unsigned i=0; i<vsOptions.size(); i++ )
+	for( unsigned i=0; i<m_vpModIcon.size(); i++ )
 		m_vpModIcon[i]->Set( vsText[i] );
 }
 
