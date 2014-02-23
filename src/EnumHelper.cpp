@@ -22,6 +22,24 @@ int CheckEnum( lua_State *L, LuaReference &table, int iPos, int iInvalid, const 
 	lua_pushvalue( L, iPos );
 	lua_gettable( L, -2 );
 
+	// If not found, check case-insensitively for legacy compatibility
+	if( lua_isnil(L, -1) && lua_isstring(L, iPos) ) {
+		RString sLower;
+
+		// Get rid of nil value on stack
+		lua_pop( L, 1 );
+
+		// Get the string and lowercase it
+		lua_pushvalue( L, iPos );
+		LuaHelpers::Pop( L, sLower );
+		sLower.MakeLower();
+
+		// Try again to read the value
+		table.PushSelf( L );
+		LuaHelpers::Push( L, sLower );
+		lua_gettable( L, -2 );
+	}
+
 	// If the result is nil, then a string was passed that is not a member of this enum.  Throw
 	// an error.  To specify the invalid value, pass nil.  That way, typos will throw an error,
 	// and not silently result in nil, or an out-of-bounds value.
