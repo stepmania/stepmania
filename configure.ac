@@ -335,6 +335,13 @@ fi
 
 AM_CONDITIONAL(HAVE_PTHREAD, test "$have_pthread" = "yes")
 
+AC_CHECK_LIB( rubberband, rubberband_new, [have_rubberband=xyes])
+if test "$have_rubberband" = xyes; then
+	AC_DEFINE([HAVE_RUBBERBAND],1,[rubberband is available])
+	LIBS="$LIBS -lrubberband"
+fi
+AM_CONDITIONAL(HAVE_RUBBERBAND, [test "$have_rubberband" = xyes])
+
 # Always:
 AC_DEFINE(_GNU_SOURCE, 1, [Use GNU extensions])
 AC_DEFINE(__STDC_FORMAT_MACROS, 1, [Use PRId64 and similar])

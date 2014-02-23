@@ -24,7 +24,11 @@
 #include "RageSoundReader_Extend.h"
 #include "RageSoundReader_Merge.h"
 #include "RageSoundReader_Pan.h"
+#ifdef HAVE_RUBBERBAND
+#include "RageSoundReader_RubberBand.h"
+#else
 #include "RageSoundReader_PitchChange.h"
+#endif
 #include "RageSoundReader_PostBuffering.h"
 #include "RageSoundReader_ThreadedBuffer.h"
 #include "RageSoundManager.h"
@@ -280,14 +284,22 @@ void AutoKeysounds::FinishLoading()
 	}
 	ASSERT_M( m_pSharedSound != NULL, ssprintf("No keysounds were loaded for the song %s!", pSong->m_sMainTitle.c_str() ));
 
+#ifdef HAVE_RUBBERBAND
+	m_pSharedSound = new RageSoundReader_RubberBand( m_pSharedSound );
+#else
 	m_pSharedSound = new RageSoundReader_PitchChange( m_pSharedSound );
+#endif
 	m_pSharedSound = new RageSoundReader_PostBuffering( m_pSharedSound );
 	m_pSharedSound = new RageSoundReader_Pan( m_pSharedSound );
 	apSounds.push_back( m_pSharedSound );
 
 	if( m_pPlayerSounds[0] != NULL )
 	{
+#ifdef HAVE_RUBBERBAND
+		m_pPlayerSounds[0] = new RageSoundReader_RubberBand( m_pPlayerSounds[0] );
+#else
 		m_pPlayerSounds[0] = new RageSoundReader_PitchChange( m_pPlayerSounds[0] );
+#endif
 		m_pPlayerSounds[0] = new RageSoundReader_PostBuffering( m_pPlayerSounds[0] );
 		m_pPlayerSounds[0] = new RageSoundReader_Pan( m_pPlayerSounds[0] );
 		apSounds.push_back( m_pPlayerSounds[0] );
@@ -295,7 +307,11 @@ void AutoKeysounds::FinishLoading()
 
 	if( m_pPlayerSounds[1] != NULL )
 	{
+#ifdef HAVE_RUBBERBAND
+		m_pPlayerSounds[1] = new RageSoundReader_RubberBand( m_pPlayerSounds[1] );
+#else
 		m_pPlayerSounds[1] = new RageSoundReader_PitchChange( m_pPlayerSounds[1] );
+#endif
 		m_pPlayerSounds[1] = new RageSoundReader_PostBuffering( m_pPlayerSounds[1] );
 		m_pPlayerSounds[1] = new RageSoundReader_Pan( m_pPlayerSounds[1] );
 		apSounds.push_back( m_pPlayerSounds[1] );

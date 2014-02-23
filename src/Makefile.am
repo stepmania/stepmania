@@ -508,7 +508,11 @@ RageFileDriverReadAhead.cpp RageFileDriverReadAhead.h \
 RageFileDriverSlice.cpp RageFileDriverSlice.h \
 RageFileDriverTimeout.cpp RageFileDriverTimeout.h
 
-Rage = $(PCRE) $(Lua) $(jsoncpp) $(RageFile) $(RageSoundFileReaders) \
+if HAVE_RUBBERBAND
+ RubberBand = RageSoundReader_RubberBand.cpp RageSoundReader_RubberBand.h
+endif
+
+Rage = $(PCRE) $(Lua) $(jsoncpp) $(RageFile) $(RageSoundFileReaders) $(RubberBand) \
 RageBitmapTexture.cpp RageBitmapTexture.h \
 RageDisplay.cpp RageDisplay.h \
 RageDisplay_OGL.cpp RageDisplay_OGL.h \
