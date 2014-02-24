@@ -40,7 +40,7 @@
 	CRCCheck off
 !endif
 
-	; don't forget to change this before releasing a new verson.
+	; don't forget to change this before releasing a new version.
 	; wish this could be automated, but it requires "X.Y.Z.a" format. -aj
 	VIProductVersion "5.0.0.5"
 	VIAddVersionKey "ProductName" "${PRODUCT_ID}"
@@ -54,7 +54,7 @@
 	; I think it may need actual admin privs for writing to the registry... -aj
 	;RequestExecutionLevel user
 
-	InstallDir "$PROGRAMFILES\${PRODUCT_ID}"
+	InstallDir "C:\Games\${PRODUCT_ID}"
 	InstallDirRegKey HKEY_LOCAL_MACHINE "SOFTWARE\${PRODUCT_ID}" ""
 
 	; DirShow show ; (make this hide to not let the user change it)
