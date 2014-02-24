@@ -135,6 +135,14 @@ static void Lua##X(lua_State* L) \
 		lua_pushstring( L, (#X "_")+s ); \
 		lua_pushnumber( L, i ); /* 0-based */ \
 		lua_rawset( L, -3 ); \
+		/* Compatibility with old, case-insensitive values */ \
+		s.MakeLower(); \
+		lua_pushstring( L, s ); \
+		lua_pushnumber( L, i ); /* 0-based */ \
+		lua_rawset( L, -3 ); \
+		/* Compatibility with old, raw values */ \
+		lua_pushnumber( L, i ); \
+		lua_rawseti( L, -2, i ); \
 	} \
 	EnumTraits<X>::StringToEnum.SetFromStack( L ); \
 	EnumTraits<X>::StringToEnum.PushSelf( L ); \

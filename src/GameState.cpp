@@ -2223,8 +2223,17 @@ public:
 	static int ApplyGameCommand( T* p, lua_State *L )
 	{
 		PlayerNumber pn = PLAYER_INVALID;
-		if( lua_gettop(L) >= 2 && !lua_isnil(L,2) )
+		if( lua_gettop(L) >= 2 && !lua_isnil(L,2) ) {
+			// Legacy behavior: if an old-style numerical argument
+			// is given, decrement it before trying to parse
+			if( lua_isnumber(L,2) ) {
+				int arg = (int) lua_tonumber( L, 2 );
+				arg--;
+				LuaHelpers::Push( L, arg );
+				lua_replace( L, -2 );
+			}
 			pn = Enum::Check<PlayerNumber>(L, 2);
+		}
 		p->ApplyGameCommand(SArg(1),pn);
 		return 0;
 	}
