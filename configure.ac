@@ -92,6 +92,8 @@ if test x$enable_lto = xyes; then
 	fi
 fi
 
+dnl Do this early as it has its own whole configure script to run with its own errors.
+SM_VIDEO
 
 # Some (broken?) versions of gcc treat char as unsigned, check for that.
 AC_LANG_PUSH([C])
@@ -276,7 +278,7 @@ fi
 SM_ZLIB
 SM_BZIP
 SM_AUDIO
-SM_VIDEO
+dnl SM_VIDEO
 SM_TLS
 
 SM_CHECK_CRASH_HANDLER
@@ -373,6 +375,10 @@ AM_CONDITIONAL(BUILD_LUA_BINARIES, test "$enable_lua_binaries" = "yes" )
 
 AC_SUBST(RESFLAGS)
 
+dnl Add these after all tests are done as they don't exist just yet.
+LIBS="$LIBS $FFMPEG_LIBS"
+
 AC_CONFIG_FILES(Makefile)
+AC_CONFIG_FILES(bundle/Makefile)
 AC_CONFIG_FILES(src/Makefile)
 AC_OUTPUT

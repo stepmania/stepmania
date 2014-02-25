@@ -1,6 +1,6 @@
 ## Need 1.7 for subdir support.  (Well, 1.4 doesn't work, I don't know if anything between does.)
 AUTOMAKE_OPTIONS = 1.7 foreign
-SUBDIRS = src
+SUBDIRS = bundle src
 ACLOCAL_AMFLAGS = -I autoconf/m4
 
 ## Black magic (read: sed) for getting the product ID as defined in code, not by the autotools.
