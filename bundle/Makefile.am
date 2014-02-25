@@ -7,7 +7,7 @@ endif
 
 del-dlls:
 if WINDOWS
-	rm ../*.dll
+	rm -f ../*.dll
 endif
 
 clean-local: del-dlls
