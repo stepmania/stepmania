@@ -1,7 +1,6 @@
 local t = Def.ActorFrame {};
 
 t[#t+1] = Def.ActorFrame {
-  InitCommand=cmd(Center);
 	Def.Sprite {
 		OnCommand=function(self)
 			if GAMESTATE:GetCurrentSong() then
@@ -20,7 +19,7 @@ t[#t+1] = Def.ActorFrame {
 		end;
 	};
  	Def.Quad {
-		InitCommand=cmd(scaletoclipped,SCREEN_WIDTH+1,SCREEN_HEIGHT);
+		InitCommand=cmd(Center;scaletoclipped,SCREEN_WIDTH+1,SCREEN_HEIGHT);
 		OnCommand=cmd(diffuse,color("#FFCB05");diffusebottomedge,color("#F0BA00");diffusealpha,0.45);
 	};
 --[[
@@ -30,7 +29,7 @@ t[#t+1] = Def.ActorFrame {
 		effectcolor2,Color("Black");effectcolor1,Colors.Alpha(Color("Black"),0.45);fadebottom,0.25;fadetop,0.25;croptop,48/480;cropbottom,48/480;diffusealpha,0.345);
 	}; --]]
 	LoadActor(THEME:GetPathB("ScreenWithMenuElements","background/_bg top")) .. {
-		InitCommand=cmd(scaletoclipped,SCREEN_WIDTH+1,SCREEN_HEIGHT);
+		InitCommand=cmd(Center;scaletoclipped,SCREEN_WIDTH+1,SCREEN_HEIGHT);
 	};
 
 };
