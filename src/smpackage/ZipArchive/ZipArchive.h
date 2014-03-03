@@ -82,7 +82,7 @@
 #ifdef __GNUC__
 	#include "zlib.h"
 #else
-	#include "../../zlib/zlib.h"
+	#include "../../../extern/zlib/zlib.h"
 #endif
 
 #include "ZipException.h"
