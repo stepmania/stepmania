@@ -66,6 +66,7 @@
 		<Function name='GetThemeAspectRatio'/>
 		<Function name='GetThemePref'/>
 		<Function name='GetTimingDifficulty'/>
+		<Function name='GetTimeSinceStart'/>
 		<Function name='GetTitleSafeH'/>
 		<Function name='GetTitleSafeV'/>
 		<Function name='GetUnlockEntryIndexToCelebrate'/>
@@ -400,6 +401,7 @@
 			<Function name='stoptweening'/>
 			<Function name='stretchto'/>
 			<Function name='texturewrapping'/>
+			<Function name='texturetranslate'/>
 			<Function name='thump'/>
 			<Function name='tween'/>
 			<Function name='valign'/>

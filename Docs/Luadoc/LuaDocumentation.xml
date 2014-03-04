@@ -217,6 +217,9 @@ save yourself some time, copy this for undocumented things:
 	<Function name='GetTimingDifficulty' return='int' arguments=''>
 		Returns the current Timing difficulty.
 	</Function>
+	<Function name='GetTimeSinceStart' return='float' arguments=''>
+		Returns the time since Stepmania started.
+	</Function>
 	<Function name='GetTitleSafeH' theme='_fallback' return='float' arguments='float fPercent'>
 		[01 alias.lua]
 	</Function>
@@ -1187,6 +1190,9 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='stretchto' return='void' arguments='float x1, float y1, float x2, float y2'>
 		Stretches the Actor to a rectangle of a specific size.
+	</Function>
+	<Function name='texturetranslate' return='void' arguments='float x, float y'>
+		Shifts the textures in the Actor by the provided percentages.
 	</Function>
 	<Function name='texturewrapping' return='void' arguments='bool bWrap'>
 		Determines if the Actor should use texture wrapping or not.

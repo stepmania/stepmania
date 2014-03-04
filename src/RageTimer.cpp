@@ -147,6 +147,9 @@ float RageTimer::Difference(const RageTimer &lhs, const RageTimer &rhs)
 	return float(secs) + float(us) / TIMESTAMP_RESOLUTION;
 }
 
+#include "LuaManager.h"
+LuaFunction(GetTimeSinceStart, RageTimer::GetTimeSinceStartFast())
+
 /*
  * Copyright (c) 2001-2003 Chris Danford, Glenn Maynard
  * All rights reserved.
