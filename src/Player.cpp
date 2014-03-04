@@ -872,6 +872,7 @@ void Player::Update( float fDeltaTime )
 
 				float fX = ArrowEffects::GetXPos( m_pPlayerState, c, 0 );
 				const float fZ = ArrowEffects::GetZPos( m_pPlayerState, c, 0 );
+				fX *= ( 1 - fMiniPercent * 0.5f );
 
 				m_vpHoldJudgment[c]->SetX( fX );
 				m_vpHoldJudgment[c]->SetY( fHoldJudgeYPos );
