@@ -257,7 +257,7 @@ void ActorScroller::PositionItemsAndDrawPrimitives( bool bDrawPrimitives )
 		iLastItemToDraw = clamp( iLastItemToDraw, 0, m_iNumItems );
 	}
 
-	bool bDelayedDraw = m_bDrawByZPosition && !m_bLoop;
+	bool bDelayedDraw = m_bDrawByZPosition;
 	vector<Actor*> subs;
 
 	{
