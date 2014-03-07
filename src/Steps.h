@@ -13,7 +13,6 @@
 
 class Profile;
 class NoteData;
-struct lua_State;
 
 /** 
  * @brief Enforce a limit on the number of chars for the description.
@@ -172,9 +171,6 @@ public:
 	 * @brief Determine if the Steps have any attacks.
 	 * @return true if it does, or false otherwise. */
 	bool HasAttacks() const;
-
-	// Lua
-	void PushSelf( lua_State *L );
 
 	StepsType			m_StepsType;
 	/** @brief The Song these Steps are associated with */

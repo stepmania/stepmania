@@ -18,6 +18,8 @@
 #include "HighScore.h"
 #include "LightsManager.h"
 #include "LuaReference.h"
+#include "LuaBinding.h"
+#include "LunaSteps.h"
 #include "MessageManager.h"
 #include "MemoryCardManager.h"
 #include "NoteSkinManager.h"
@@ -2248,8 +2250,13 @@ public:
 	{
 		PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);
 		Steps *pSteps = p->m_pCurSteps[pn];
-		if( pSteps ) { pSteps->PushSelf(L); }
-		else		 { lua_pushnil(L); }
+		if( pSteps ) {
+			LunaSteps::PushSelf(L, pSteps);
+//			pSteps->PushSelf(L);
+		}
+		else {
+			lua_pushnil(L);
+		}
 		return 1;
 	}
 	static int SetCurrentSteps( T* p, lua_State *L )
@@ -2298,8 +2305,12 @@ public:
 	static int GetEditSourceSteps( T* p, lua_State *L )
 	{
 		Steps *pSteps = p->m_pEditSourceSteps;
-		if( pSteps ) { pSteps->PushSelf(L); }
-		else		 { lua_pushnil(L); }
+		if( pSteps ) {
+			LunaSteps::PushSelf(L, pSteps);
+		}
+		else {
+			lua_pushnil(L);
+		}
 		return 1;
 	}
 	static int SetPreferredDifficulty( T* p, lua_State *L )
