@@ -257,7 +257,6 @@ void ActorScroller::PositionItemsAndDrawPrimitives( bool bDrawPrimitives )
 		iLastItemToDraw = clamp( iLastItemToDraw, 0, m_iNumItems );
 	}
 
-	bool bDelayedDraw = m_bDrawByZPosition;
 	vector<Actor*> subs;
 
 	{
@@ -291,14 +290,14 @@ void ActorScroller::PositionItemsAndDrawPrimitives( bool bDrawPrimitives )
 		m_exprTransformFunction.TransformItemCached( *m_SubActors[iIndex], fPosition, iItem, m_iNumItems );
 		if( bDrawPrimitives )
 		{
-			if( bDelayedDraw )
+			if( m_bDrawByZPosition )
 				subs.push_back( m_SubActors[iIndex] );
 			else
 				m_SubActors[iIndex]->Draw();
 		}
 	}
 
-	if( bDelayedDraw )
+	if( m_bDrawByZPosition )
 	{
 		ActorUtil::SortByZPosition( subs );
 		FOREACH( Actor*, subs, a )
