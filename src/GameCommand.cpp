@@ -858,7 +858,7 @@ public:
 	static int GetSong( T* p, lua_State *L )	{ if(p->m_pSong==NULL) lua_pushnil(L); else p->m_pSong->PushSelf(L); return 1; }
 	static int GetSteps( T* p, lua_State *L ){
 		if(p->m_pSteps==NULL) {
-		lua_pushnil(L);
+			lua_pushnil(L);
 		}
 		else {
 			LunaSteps::PushSelf(L, p->m_pSteps);

@@ -2252,7 +2252,6 @@ public:
 		Steps *pSteps = p->m_pCurSteps[pn];
 		if( pSteps ) {
 			LunaSteps::PushSelf(L, pSteps);
-//			pSteps->PushSelf(L);
 		}
 		else {
 			lua_pushnil(L);

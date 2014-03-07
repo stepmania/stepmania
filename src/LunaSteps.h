@@ -1,11 +1,3 @@
-//
-//  LunaSteps.h
-//  stepmania
-//
-//  Created by Jason Felds on 3/6/14.
-//
-//
-
 #ifndef __stepmania__LunaSteps__
 #define __stepmania__LunaSteps__
 
