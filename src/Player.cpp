@@ -2846,10 +2846,10 @@ void Player::UpdateJudgedRows()
 				bAllJudged = false;
 				continue;
 			case TNS_AvoidMine:
-				SetMineJudgment( tn.result.tns );
+				SetMineJudgment( tn.result.tns , iter.Track() );
 				continue;
 			case TNS_HitMine:
-				SetMineJudgment( tn.result.tns );
+				SetMineJudgment( tn.result.tns , iter.Track() );
 				break;
 			}
 			if( m_pNoteField )
@@ -3330,13 +3330,14 @@ void Player::CacheAllUsedNoteSkins()
 		m_pNoteField->CacheAllUsedNoteSkins();
 }
 
-void Player::SetMineJudgment( TapNoteScore tns )
+void Player::SetMineJudgment( TapNoteScore tns , int iTrack )
 {
 	if( m_bSendJudgmentAndComboMessages )
 	{
 		Message msg("Judgment");
 		msg.SetParam( "Player", m_pPlayerState->m_PlayerNumber );
 		msg.SetParam( "TapNoteScore", tns );
+		msg.SetParam( "FirstTrack", iTrack );
 		MESSAGEMAN->Broadcast( msg );
 		if( m_pPlayerStageStats &&
 			( ( tns == TNS_AvoidMine && AVOID_MINE_INCREMENTS_COMBO ) || 
