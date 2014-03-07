@@ -11,6 +11,7 @@
 #include "Style.h"
 #include "XmlFile.h"
 #include "LuaBinding.h"
+#include "LunaSteps.h"
 #include "GameManager.h"
 #include "PlayerState.h"
 #include "RageLog.h"
@@ -211,7 +212,7 @@ void StepsDisplay::SetInternal( const SetParams &params )
 		sDisplayCredit = params.pSteps->GetCredit();
 
 	if( params.pSteps )
-		msg.SetParam( "Steps", LuaReference::CreateFromPush(*(Steps*)params.pSteps) );
+		msg.SetParam( "Steps", LunaSteps::CreateFromPush(const_cast<Steps *>(params.pSteps)) );
 	if( params.pTrail )
 		msg.SetParam( "Trail", LuaReference::CreateFromPush(*(Trail*)params.pTrail) );
 	msg.SetParam( "Meter", params.iMeter );

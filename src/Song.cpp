@@ -23,6 +23,7 @@
 #include "Foreach.h"
 #include "BackgroundUtil.h"
 #include "SpecialFiles.h"
+#include "LunaSteps.h"
 #include "NotesLoader.h"
 #include "NotesLoaderSM.h"
 #include "NotesLoaderSSC.h"
@@ -1888,10 +1889,12 @@ public:
 		StepsType st = Enum::Check<StepsType>(L, 1);
 		Difficulty dc = Enum::Check<Difficulty>( L, 2 );
 		Steps *pSteps = SongUtil::GetOneSteps( p, st, dc );
-		if( pSteps ) 
-			pSteps->PushSelf(L);
-		else 
+		if( pSteps ) {
+			LunaSteps::PushSelf(L, pSteps);
+		}
+		else {
 			lua_pushnil(L);
+		}
 		return 1;
 	}
 	static int GetTimingData( T* p, lua_State *L ) { p->m_SongTiming.PushSelf(L); return 1; }

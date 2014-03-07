@@ -170,6 +170,43 @@ public:
 #define LIST_METHOD( method_name ) \
 	{ #method_name, method_name }
 
+#define LUNA_FILE_ADD_PUSH(T) \
+static LuaReference CreateFromPush(T* obj) {\
+	Lua *L = LUA->Get(); \
+	PushSelf(L, obj); \
+	LuaReference ref; \
+	ref.SetFromStack(L); \
+	LUA->Release(L); \
+	return ref; \
+} \
+static void PushSelf(lua_State *, T *)
+
+#define LUNA_FILE_TEMPLATE_BASIC(T, B) \
+template<> RString Luna<T>::m_sClassName = #T; \
+template<> RString Luna<T>::m_sBaseClassName = #B; \
+void Luna##T::PushSelf(lua_State *L, T *obj) { \
+	Luna<B>::PushObject(L, Luna<T>::m_sClassName, obj); \
+}\
+namespace LuaHelpers { \
+	template<> void Push<T*>( lua_State *L, T *const &obj ) { \
+		if( obj == NULL ) {\
+			lua_pushnil(L); \
+		}\
+		else {\
+			Luna##T::PushSelf( L, obj );\
+		}\
+	}\
+}\
+static Luna##T registera##T
+
+#define LUNA_FILE_TEMPLATE(T) \
+template<> void Luna<T>::PushObject( Lua *L, const RString &derivedName, T* p ) { \
+	void **data = (void **) lua_newuserdata( L, sizeof(void *) ); \
+	*data = p; \
+	LuaBinding::ApplyDerivedType( L, derivedName, p ); \
+} \
+LUNA_FILE_TEMPLATE_BASIC(T, T)
+
 #endif
 
 /*

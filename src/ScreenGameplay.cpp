@@ -44,6 +44,7 @@
 #include "PlayerState.h"
 #include "Style.h"
 #include "LuaManager.h"
+#include "LunaSteps.h"
 #include "MemoryCardManager.h"
 #include "CommonMetrics.h"
 #include "InputMapper.h"
@@ -2892,7 +2893,7 @@ public:
 		int iIndex = IArg(1);
 		iIndex %= p->m_vpStepsQueue.size();
 		Steps *pSteps = p->m_vpStepsQueue[iIndex];
-		pSteps->PushSelf(L);
+		LunaSteps::PushSelf(L, pSteps);
 		return 1;
 	}
 
