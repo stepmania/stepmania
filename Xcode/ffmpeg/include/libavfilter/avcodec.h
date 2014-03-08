@@ -28,44 +28,83 @@
  * symbols defined below will not be available.
  */
 
-#include "libavcodec/avcodec.h" // AVFrame
 #include "avfilter.h"
-#include "vsrc_buffer.h"
 
+#if FF_API_AVFILTERBUFFER
 /**
- * Copy the frame properties of src to dst, without copying the actual
- * image data.
+ * Create and return a picref reference from the data and properties
+ * contained in frame.
+ *
+ * @param perms permissions to assign to the new buffer reference
+ * @deprecated avfilter APIs work natively with AVFrame instead.
  */
-int avfilter_copy_frame_props(AVFilterBufferRef *dst, const AVFrame *src);
+attribute_deprecated
+AVFilterBufferRef *avfilter_get_video_buffer_ref_from_frame(const AVFrame *frame, int perms);
+
 
 /**
  * Create and return a picref reference from the data and properties
  * contained in frame.
  *
  * @param perms permissions to assign to the new buffer reference
+ * @deprecated avfilter APIs work natively with AVFrame instead.
  */
-AVFilterBufferRef *avfilter_get_video_buffer_ref_from_frame(const AVFrame *frame, int perms);
+attribute_deprecated
+AVFilterBufferRef *avfilter_get_audio_buffer_ref_from_frame(const AVFrame *frame,
+                                                            int perms);
+
+/**
+ * Create and return a buffer reference from the data and properties
+ * contained in frame.
+ *
+ * @param perms permissions to assign to the new buffer reference
+ * @deprecated avfilter APIs work natively with AVFrame instead.
+ */
+attribute_deprecated
+AVFilterBufferRef *avfilter_get_buffer_ref_from_frame(enum AVMediaType type,
+                                                      const AVFrame *frame,
+                                                      int perms);
+#endif
+
+#if FF_API_FILL_FRAME
+/**
+ * Fill an AVFrame with the information stored in samplesref.
+ *
+ * @param frame an already allocated AVFrame
+ * @param samplesref an audio buffer reference
+ * @return >= 0 in case of success, a negative AVERROR code in case of
+ * failure
+ * @deprecated Use avfilter_copy_buf_props() instead.
+ */
+attribute_deprecated
+int avfilter_fill_frame_from_audio_buffer_ref(AVFrame *frame,
+                                              const AVFilterBufferRef *samplesref);
 
 /**
  * Fill an AVFrame with the information stored in picref.
  *
  * @param frame an already allocated AVFrame
  * @param picref a video buffer reference
- * @return 0 in case of success, a negative AVERROR code in case of
+ * @return >= 0 in case of success, a negative AVERROR code in case of
  * failure
+ * @deprecated Use avfilter_copy_buf_props() instead.
  */
+attribute_deprecated
 int avfilter_fill_frame_from_video_buffer_ref(AVFrame *frame,
                                               const AVFilterBufferRef *picref);
 
 /**
- * Add frame data to buffer_src.
+ * Fill an AVFrame with information stored in ref.
  *
- * @param buffer_src pointer to a buffer source context
- * @param flags a combination of AV_VSRC_BUF_FLAG_* flags
+ * @param frame an already allocated AVFrame
+ * @param ref a video or audio buffer reference
  * @return >= 0 in case of success, a negative AVERROR code in case of
  * failure
+ * @deprecated Use avfilter_copy_buf_props() instead.
  */
-int av_vsrc_buffer_add_frame(AVFilterContext *buffer_src,
-                             const AVFrame *frame, int flags);
+attribute_deprecated
+int avfilter_fill_frame_from_buffer_ref(AVFrame *frame,
+                                        const AVFilterBufferRef *ref);
+#endif
 
 #endif /* AVFILTER_AVCODEC_H */

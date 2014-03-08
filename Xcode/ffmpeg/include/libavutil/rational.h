@@ -46,6 +46,17 @@ typedef struct AVRational{
 } AVRational;
 
 /**
+ * Create a rational.
+ * Useful for compilers that do not support compound literals.
+ * @note  The return value is not reduced.
+ */
+static inline AVRational av_make_q(int num, int den)
+{
+    AVRational r = { num, den };
+    return r;
+}
+
+/**
  * Compare two rationals.
  * @param a first rational
  * @param b second rational
@@ -55,7 +66,7 @@ typedef struct AVRational{
 static inline int av_cmp_q(AVRational a, AVRational b){
     const int64_t tmp= a.num * (int64_t)b.den - b.num * (int64_t)a.den;
 
-    if(tmp) return ((tmp ^ a.den ^ b.den)>>63)|1;
+    if(tmp) return (int)((tmp ^ a.den ^ b.den)>>63)|1;
     else if(b.den && a.den) return 0;
     else if(a.num && b.num) return (a.num>>31) - (b.num>>31);
     else                    return INT_MIN;
@@ -113,6 +124,17 @@ AVRational av_add_q(AVRational b, AVRational c) av_const;
  * @return b-c
  */
 AVRational av_sub_q(AVRational b, AVRational c) av_const;
+
+/**
+ * Invert a rational.
+ * @param q value
+ * @return 1 / q
+ */
+static av_always_inline AVRational av_inv_q(AVRational q)
+{
+    AVRational r = { q.den, q.num };
+    return r;
+}
 
 /**
  * Convert a double precision floating point number to a rational.
