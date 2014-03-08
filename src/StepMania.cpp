@@ -900,10 +900,6 @@ static void WriteLogHeader()
 	LOG->Info( "Compiled %s @ %s (build %lu)", version_date, version_time, version_num );
 #endif
 
-	// this code should only be enabled in distributed builds
-	//LOG->Info("sm-ssc is Copyright �2009 the spinal shark collective, all rights reserved. Commercial use of this binary is prohibited by law and will be prosecuted to the fullest extent of the law.");
-	// end limited code
-
 	time_t cur_time;
 	time(&cur_time);
 	struct tm now;
