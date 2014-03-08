@@ -185,6 +185,7 @@ ScoreKeeperRave.cpp ScoreKeeperRave.h \
 ScoreKeeperShared.cpp ScoreKeeperShared.h \
 Song.cpp Song.h SongCacheIndex.cpp SongCacheIndex.h \
 SongOptions.cpp SongOptions.h SongUtil.cpp SongUtil.h StageStats.cpp StageStats.h Steps.cpp Steps.h \
+LunaSteps.cpp LunaSteps.h \
 SoundEffectControl.cpp SoundEffectControl.h \
 StepsUtil.cpp StepsUtil.h Style.cpp Style.h StyleUtil.cpp StyleUtil.h \
 SubscriptionManager.h \

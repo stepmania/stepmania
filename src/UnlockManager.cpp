@@ -13,6 +13,7 @@
 #include "ThemeManager.h"
 #include "Foreach.h"
 #include "Steps.h"
+#include "LunaSteps.h"
 #include <float.h>
 #include "CommonMetrics.h"
 #include "LuaManager.h"
@@ -840,7 +841,8 @@ public:
 			{
 				if ((*step)->GetDifficulty() == p->m_dc)
 				{
-					(*step)->PushSelf(L); return 1;
+					LunaSteps::PushSelf(L, *step);
+					return 1;
 				}
 			}
 		}

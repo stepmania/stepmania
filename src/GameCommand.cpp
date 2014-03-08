@@ -18,6 +18,7 @@
 #include "GameSoundManager.h"
 #include "PlayerState.h"
 #include "SongManager.h"
+#include "LunaSteps.h"
 #include "Song.h"
 #include "UnlockManager.h"
 #include "LocalizedString.h"
@@ -855,7 +856,15 @@ public:
 	static int GetScreen( T* p, lua_State *L )	{ lua_pushstring(L, p->m_sScreen ); return 1; }
 	static int GetProfileID( T* p, lua_State *L )	{ lua_pushstring(L, p->m_sProfileID ); return 1; }
 	static int GetSong( T* p, lua_State *L )	{ if(p->m_pSong==NULL) lua_pushnil(L); else p->m_pSong->PushSelf(L); return 1; }
-	static int GetSteps( T* p, lua_State *L )	{ if(p->m_pSteps==NULL) lua_pushnil(L); else p->m_pSteps->PushSelf(L); return 1; }
+	static int GetSteps( T* p, lua_State *L ){
+		if(p->m_pSteps==NULL) {
+			lua_pushnil(L);
+		}
+		else {
+			LunaSteps::PushSelf(L, p->m_pSteps);
+		}
+		return 1;
+	}
 	static int GetCourse( T* p, lua_State *L )	{ if(p->m_pCourse==NULL) lua_pushnil(L); else p->m_pCourse->PushSelf(L); return 1; }
 	static int GetTrail( T* p, lua_State *L )	{ if(p->m_pTrail==NULL) lua_pushnil(L); else p->m_pTrail->PushSelf(L); return 1; }
 	static int GetCharacter( T* p, lua_State *L )	{ if(p->m_pCharacter==NULL) lua_pushnil(L); else p->m_pCharacter->PushSelf(L); return 1; }

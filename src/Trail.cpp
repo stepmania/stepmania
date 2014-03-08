@@ -2,6 +2,7 @@
 #include "Trail.h"
 #include "Foreach.h"
 #include "GameState.h"
+#include "LunaSteps.h"
 #include "Steps.h"
 #include "Song.h"
 #include "PlayerOptions.h"
@@ -59,10 +60,12 @@ public:
 	}
 	static int GetSteps( T* p, lua_State *L )
 	{
-		if( p->pSteps )
-			p->pSteps->PushSelf(L);
-		else
+		if( p->pSteps ) {
+			LunaSteps::PushSelf(L, p->pSteps);
+		}
+		else {
 			lua_pushnil(L);
+		}
 		return 1;
 	}
 	DEFINE_METHOD( IsSecret, bSecret );

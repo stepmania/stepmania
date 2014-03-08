@@ -561,131 +561,28 @@ void Steps::SetCachedRadarValues( const RadarValues v[NUM_PLAYERS] )
 }
 
 // lua start
-#include "LuaBinding.h"
-/** @brief Allow Lua to have access to the Steps. */
-class LunaSteps: public Luna<Steps>
-{
-public:
-	DEFINE_METHOD( GetStepsType,	m_StepsType )
-	DEFINE_METHOD( GetDifficulty,	GetDifficulty() )
-	DEFINE_METHOD( GetDescription,	GetDescription() )
-	DEFINE_METHOD( GetChartStyle,	GetChartStyle() )
-	DEFINE_METHOD( GetAuthorCredit, GetCredit() )
-	DEFINE_METHOD( GetMeter,	GetMeter() )
-	DEFINE_METHOD( GetFilename,	GetFilename() )
-	DEFINE_METHOD( IsAutogen,	IsAutogen() )
-	DEFINE_METHOD( IsAnEdit,	IsAnEdit() )
-	DEFINE_METHOD( IsAPlayerEdit,	IsAPlayerEdit() )
+#include "LunaSteps.h"
 
-	static int HasSignificantTimingChanges( T* p, lua_State *L )
-	{
-		lua_pushboolean(L, p->HasSignificantTimingChanges()); 
-		return 1; 
-	}
-	static int HasAttacks( T* p, lua_State *L )
-	{ 
-		lua_pushboolean(L, p->HasAttacks()); 
-		return 1; 
-	}
-	static int GetRadarValues( T* p, lua_State *L )
-	{
-		PlayerNumber pn = PLAYER_1;
-		if (!lua_isnil(L, 1)) {
-			pn = Enum::Check<PlayerNumber>(L, 1);
+template<> void Luna<Steps>::PushObject( Lua *L, const RString &sDerivedClassName, Steps* p ) {
+	void **pData = (void **) lua_newuserdata( L, sizeof(void *) );
+	*pData = p;
+	LuaBinding::ApplyDerivedType( L, sDerivedClassName, p );
+}
+
+static LunaSteps registeraSteps;
+/* Call PushSelf, so we always call the derived Luna<T>::Push. */
+namespace LuaHelpers {
+	template<> void Push<Steps*>( lua_State *L, Steps *const &pObject ) {
+		if( pObject == NULL ) {
+			lua_pushnil(L);
 		}
-		
-		RadarValues &rv = const_cast<RadarValues &>(p->GetRadarValues(pn));
-		rv.PushSelf(L);
-		return 1;
+		else {
+			LunaSteps::PushSelf(L, pObject);
+		}
 	}
-	static int GetTimingData( T* p, lua_State *L )
-	{
-		p->GetTimingData()->PushSelf(L);
-		return 1;
-	}
-	static int GetHash( T* p, lua_State *L ) { lua_pushnumber( L, p->GetHash() ); return 1; }
-	// untested
-	/*
-	static int GetSMNoteData( T* p, lua_State *L )
-	{
-		RString out;
-		p->GetSMNoteData( out );
-		lua_pushstring( L, out );
-		return 1;
-	}
-	*/
-	static int GetChartName(T *p, lua_State *L)
-	{
-		lua_pushstring(L, p->GetChartName());
-		return 1;
-	}
-	static int GetDisplayBpms( T* p, lua_State *L )
-	{
-		DisplayBpms temp;
-		p->GetDisplayBpms(temp);
-		float fMin = temp.GetMin();
-		float fMax = temp.GetMax();
-		vector<float> fBPMs;
-		fBPMs.push_back( fMin );
-		fBPMs.push_back( fMax );
-		LuaHelpers::CreateTableFromArray(fBPMs, L);
-		return 1;
-	}
-	static int IsDisplayBpmSecret( T* p, lua_State *L )
-	{
-		DisplayBpms temp;
-		p->GetDisplayBpms(temp);
-		lua_pushboolean( L, temp.IsSecret() );
-		return 1;
-	}
-	static int IsDisplayBpmConstant( T* p, lua_State *L )
-	{
-		DisplayBpms temp;
-		p->GetDisplayBpms(temp);
-		lua_pushboolean( L, temp.BpmIsConstant() );
-		return 1;
-	}
-	static int IsDisplayBpmRandom( T* p, lua_State *L )
-	{
-		lua_pushboolean( L, p->GetDisplayBPM() == DISPLAY_BPM_RANDOM );
-		return 1;
-	}
-	DEFINE_METHOD( PredictMeter, PredictMeter() )
-	static int GetDisplayBPMType( T* p, lua_State *L )
-	{
-		LuaHelpers::Push( L, p->GetDisplayBPM() );
-		return 1;
-	}
+}
 
-	LunaSteps()
-	{
-		ADD_METHOD( GetAuthorCredit );
-		ADD_METHOD( GetChartStyle );
-		ADD_METHOD( GetDescription );
-		ADD_METHOD( GetDifficulty );
-		ADD_METHOD( GetFilename );
-		ADD_METHOD( GetHash );
-		ADD_METHOD( GetMeter );
-		ADD_METHOD( HasSignificantTimingChanges );
-		ADD_METHOD( HasAttacks );
-		ADD_METHOD( GetRadarValues );
-		ADD_METHOD( GetTimingData );
-		ADD_METHOD( GetChartName );
-		//ADD_METHOD( GetSMNoteData );
-		ADD_METHOD( GetStepsType );
-		ADD_METHOD( IsAnEdit );
-		ADD_METHOD( IsAutogen );
-		ADD_METHOD( IsAPlayerEdit );
-		ADD_METHOD( GetDisplayBpms );
-		ADD_METHOD( IsDisplayBpmSecret );
-		ADD_METHOD( IsDisplayBpmConstant );
-		ADD_METHOD( IsDisplayBpmRandom );
-		ADD_METHOD( PredictMeter );
-		ADD_METHOD( GetDisplayBPMType );
-	}
-};
-
-LUA_REGISTER_CLASS( Steps )
+// LUA_REGISTER_CLASS( Steps )
 // lua end
 
 

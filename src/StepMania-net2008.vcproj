@@ -1493,6 +1493,14 @@
 				>
 			</File>
 			<File
+				RelativePath="LunaSteps.cpp"
+				>
+			</File>
+			<File
+				RelativePath="LunaSteps.h"
+				>
+			</File>
+			<File
 				RelativePath="StepsUtil.cpp"
 				>
 			</File>
