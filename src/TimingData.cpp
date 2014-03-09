@@ -991,6 +991,43 @@ vector<RString> TimingData::ToVectorString(TimingSegmentType tst, int dec) const
 // lua start
 #include "LuaBinding.h"
 
+// This breaks encapsulation just as much as TimingData::ToVectorString does.
+// But, it exists solely for the purpose of providing lua access, so it's as okay as all the other lua stuff that reaches past the encapsulation.
+void TimingSegmentSetToLuaTable(TimingData* td, TimingSegmentType tst, lua_State *L);
+void TimingSegmentSetToLuaTable(TimingData* td, TimingSegmentType tst, lua_State *L)
+{
+	const vector<TimingSegment*> segs= td->GetTimingSegments(tst);
+	lua_createtable(L, segs.size(), 0);
+	if(tst == SEGMENT_LABEL)
+	{
+		for(size_t i= 0; i < segs.size(); ++i)
+		{
+			lua_createtable(L, 2, 0);
+			lua_pushnumber(L, segs[i]->GetBeat());
+			lua_rawseti(L, -2, 1);
+			lua_pushstring(L, (ToLabel(segs[i]))->GetLabel().c_str());
+			lua_rawseti(L, -2, 2);
+			lua_rawseti(L, -2, i+1);
+		}
+	}
+	else
+	{
+		for(size_t i= 0; i < segs.size(); ++i)
+		{
+			vector<float> values= segs[i]->GetValues();
+			lua_createtable(L, values.size()+1, 0);
+			lua_pushnumber(L, segs[i]->GetBeat());
+			lua_rawseti(L, -2, 1);
+			for(size_t v= 0; v < values.size(); ++v)
+			{
+				lua_pushnumber(L, values[v]);
+				lua_rawseti(L, -2, v+2);
+			}
+			lua_rawseti(L, -2, i+1);
+		}
+	}
+}
+
 /** @brief Allow Lua to have access to the TimingData. */
 class LunaTimingData: public Luna<TimingData>
 {
@@ -1004,47 +1041,47 @@ public:
 	static int HasScrollChanges( T* p, lua_State *L )	{ lua_pushboolean(L, p->HasScrollChanges()); return 1; }
 	static int GetWarps( T* p, lua_State *L )
 	{
-		LuaHelpers::CreateTableFromArray(p->ToVectorString(SEGMENT_WARP), L);
+		TimingSegmentSetToLuaTable(p, SEGMENT_WARP, L);
 		return 1;
 	}
 	static int GetFakes( T* p, lua_State *L )
 	{
-		LuaHelpers::CreateTableFromArray(p->ToVectorString(SEGMENT_FAKE), L);
+		TimingSegmentSetToLuaTable(p, SEGMENT_FAKE, L);
 		return 1;
 	}
 	static int GetScrolls( T* p, lua_State *L )
 	{
-		LuaHelpers::CreateTableFromArray(p->ToVectorString(SEGMENT_SCROLL), L);
+		TimingSegmentSetToLuaTable(p, SEGMENT_SCROLL, L);
 		return 1;
 	}
 	static int GetSpeeds( T* p, lua_State *L )
 	{
-		LuaHelpers::CreateTableFromArray(p->ToVectorString(SEGMENT_SPEED), L);
+		TimingSegmentSetToLuaTable(p, SEGMENT_SPEED, L);
 		return 1;
 	}
 	static int GetTimeSignatures( T* p, lua_State *L )
 	{
-		LuaHelpers::CreateTableFromArray(p->ToVectorString(SEGMENT_TIME_SIG), L);
+		TimingSegmentSetToLuaTable(p, SEGMENT_TIME_SIG, L);
 		return 1;
 	}
 	static int GetCombos( T* p, lua_State *L )
 	{
-		LuaHelpers::CreateTableFromArray(p->ToVectorString(SEGMENT_COMBO), L);
+		TimingSegmentSetToLuaTable(p, SEGMENT_COMBO, L);
 		return 1;
 	}
 	static int GetTickcounts( T* p, lua_State *L )
 	{
-		LuaHelpers::CreateTableFromArray(p->ToVectorString(SEGMENT_TICKCOUNT), L);
+		TimingSegmentSetToLuaTable(p, SEGMENT_TICKCOUNT, L);
 		return 1;
 	}
 	static int GetStops( T* p, lua_State *L )
 	{
-		LuaHelpers::CreateTableFromArray(p->ToVectorString(SEGMENT_STOP), L);
+		TimingSegmentSetToLuaTable(p, SEGMENT_STOP, L);
 		return 1;
 	}
 	static int GetDelays( T* p, lua_State *L )
 	{
-		LuaHelpers::CreateTableFromArray(p->ToVectorString(SEGMENT_DELAY), L);
+		TimingSegmentSetToLuaTable(p, SEGMENT_DELAY, L);
 		return 1;
 	}
 	static int GetBPMs( T* p, lua_State *L )
@@ -1060,12 +1097,12 @@ public:
 	}
 	static int GetLabels( T* p, lua_State *L )
 	{
-		LuaHelpers::CreateTableFromArray(p->ToVectorString(SEGMENT_LABEL), L);
+		TimingSegmentSetToLuaTable(p, SEGMENT_LABEL, L);
 		return 1;
 	}
 	static int GetBPMsAndTimes( T* p, lua_State *L )
 	{
-		LuaHelpers::CreateTableFromArray(p->ToVectorString(SEGMENT_BPM), L);
+		TimingSegmentSetToLuaTable(p, SEGMENT_BPM, L);
 		return 1;
 	}
 	static int GetActualBPM( T* p, lua_State *L )
