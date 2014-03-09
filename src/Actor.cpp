@@ -289,7 +289,7 @@ void Actor::Draw()
 	
 	this->PreDraw();
 	ASSERT( m_pTempState != NULL );
-	if( m_pTempState->diffuse[0].a != 0 || m_pTempState->diffuse[1].a != 0 || m_pTempState->diffuse[2].a != 0 || m_pTempState->diffuse[3].a != 0 ) // This Actor is not fully transparent
+	if( m_pTempState->diffuse[0].a != 0 || m_pTempState->diffuse[1].a != 0 || m_pTempState->diffuse[2].a != 0 || m_pTempState->diffuse[3].a != 0 || m_pTempState->glow.a != 0 ) // This Actor is not fully transparent
 	{	
 		// call the most-derived versions
 		this->BeginDraw();	
