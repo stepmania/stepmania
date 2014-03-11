@@ -134,7 +134,7 @@ bool ScreenSelectProfile::SetProfileIndex( PlayerNumber pn, int iProfileIndex )
 	// unload player
 	if( iProfileIndex == -2 )
 	{
-		PROFILEMAN->UnloadProfile( pn );
+		// GAMESTATE->UnjoinPlayer takes care of unloading the profile.
 		GAMESTATE->UnjoinPlayer( pn );
 		MEMCARDMAN->UnlockCard( pn );
 		MEMCARDMAN->UnmountCard( pn );

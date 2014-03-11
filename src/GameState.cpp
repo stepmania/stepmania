@@ -411,18 +411,29 @@ void GameState::JoinPlayer( PlayerNumber pn )
 
 void GameState::UnjoinPlayer( PlayerNumber pn )
 {
+	/* Unjoin STATSMAN first, so steps used by this player are released
+	 * and can be released by PROFILEMAN. */
+	STATSMAN->UnjoinPlayer( pn );
 	m_bSideIsJoined[pn] = false;
 	m_iPlayerStageTokens[pn] = 0;
 
 	ResetPlayer( pn );
 
 	if( this->GetMasterPlayerNumber() == pn )
-		this->SetMasterPlayerNumber(GetFirstHumanPlayer());
-
-	/* Unjoin STATSMAN first, so steps used by this player are released
-	 * and can be released by PROFILEMAN. */
-	STATSMAN->UnjoinPlayer( pn );
-	PROFILEMAN->UnloadProfile( pn );
+	{
+		// We can't use GetFirstHumanPlayer() because if both players were joined, GetFirstHumanPlayer() will always return PLAYER_1, even when PLAYER_1 is the player we're unjoining.
+		FOREACH_HumanPlayer( hp )
+		{
+			if( pn != hp )
+			{
+				this->SetMasterPlayerNumber(hp);
+			}
+		}
+		if( this->GetMasterPlayerNumber() == pn )
+		{
+			this->SetMasterPlayerNumber(PLAYER_INVALID);
+		}
+	}
 
 	Message msg( MessageIDToString(Message_PlayerUnjoined) );
 	msg.SetParam( "Player", pn );
