@@ -2383,11 +2383,11 @@ cl /Zl /nologo /c verstub.cpp /Fo"$(IntDir)"</Command>
     <ResourceCompile Include="archutils\Win32\WindowsResources.rc" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="libtomcrypt\libtomcrypt-net2011.vcxproj">
+    <ProjectReference Include="libtomcrypt\libtomcrypt-net2013.vcxproj">
       <Project>{f70dd0fe-a74a-42e7-b81f-e35c49fc9eb9}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
-    <ProjectReference Include="libtommath\libtommath-net2011.vcxproj">
+    <ProjectReference Include="libtommath\libtommath-net2013.vcxproj">
       <Project>{fede5283-1518-4b1d-8124-5c54db17ea57}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
