@@ -619,13 +619,17 @@ Function PreInstall
 		IfFileExists "$R1" prompt_uninstall_nsis old_nsis_not_installed
 
 		prompt_uninstall_nsis:
+		IfSilent do_uninstall_nsis
 		MessageBox MB_YESNO|MB_ICONINFORMATION "$(TEXT_IO_UNINSTALL_PREVIOUS)" IDYES do_uninstall_nsis
 		Abort
 
 		do_uninstall_nsis:
 		GetTempFileName $R3
 		CopyFiles /SILENT $R1 $R3
-		ExecWait '$R3 $R2$INSTDIR' $R4
+		IfSilent 0 +3
+		ExecWait '$R3 /S $R2$INSTDIR' $R4 ; uninstall silently
+		Goto +2
+		ExecWait '$R3 $R2$INSTDIR' $R4 ; uninstall prompt
 		; Delete the copy of the installer.
 		Delete $R3
 
