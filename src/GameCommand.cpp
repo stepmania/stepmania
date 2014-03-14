@@ -529,7 +529,7 @@ bool GameCommand::IsPlayable( RString *why ) const
 		/* If both sides are joined, disallow singles modes, since easy to select
 		 * them accidentally, instead of versus mode. */
 		if( m_pStyle->m_StyleType == StyleType_OnePlayerOneSide &&
-			GAMESTATE->GetNumSidesJoined() > 1 )
+			GAMESTATE->GetNumPlayersEnabled() > 1 )
 		{
 			if( why )
 				*why = "too many players joined for ONE_PLAYER_ONE_CREDIT";
@@ -669,9 +669,9 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 		switch( m_pStyle->m_StyleType )
 		{
 		case StyleType_OnePlayerOneSide:
+		case StyleType_OnePlayerTwoSides:
 			break;
 		case StyleType_TwoPlayersTwoSides:
-		case StyleType_OnePlayerTwoSides:
 		case StyleType_TwoPlayersSharedSides:
 			{
 				FOREACH_PlayerNumber( p )
