@@ -103,7 +103,7 @@ bool ScreenNetSelectBase::Input( const InputEventPlus &input )
 		wchar_t c;
 		c = INPUTMAN->DeviceInputToChar(input.DeviceI, true);
 
-        	if( (c >= L' ') && (!bHoldingCtrl) )
+		if( (c >= L' ') && (!bHoldingCtrl) )
 		{
 			m_sTextInput += WStringToRString(wstring()+c);
 			UpdateTextInput();
@@ -169,7 +169,7 @@ void ScreenNetSelectBase::UpdateUsers()
 
 	for( unsigned i=0; i < NSMAN->m_ActivePlayer.size(); i++)
 	{
-		m_textUsers[i].LoadFromFont( THEME->GetPathF(m_sName,"chat") );
+		m_textUsers[i].LoadFromFont( THEME->GetPathF(m_sName,"users") );
 		m_textUsers[i].SetHorizAlign( align_center );
 		m_textUsers[i].SetVertAlign( align_top );
 		m_textUsers[i].SetShadowLength( 0 );
@@ -250,11 +250,11 @@ void ColorBitmapText::SetText( const RString& _sText, const RString& _sAlternate
 			}
 		}
 
-	        int iCharLength = min( utf8_get_char_len(m_sText[i]), iCharsLeft + 1 );
-	        RString curCharStr = m_sText.substr( i, iCharLength );
-	        wchar_t curChar = utf8_get_char( curCharStr );
-	        i += iCharLength - 1;
-	        int iCharWidth = m_pFont->GetLineWidthInSourcePixels( wstring() + curChar );
+		int iCharLength = min( utf8_get_char_len(m_sText[i]), iCharsLeft + 1 );
+		RString curCharStr = m_sText.substr( i, iCharLength );
+		wchar_t curChar = utf8_get_char( curCharStr );
+		i += iCharLength - 1;
+		int iCharWidth = m_pFont->GetLineWidthInSourcePixels( wstring() + curChar );
 
 		switch( curChar )
 		{
@@ -262,7 +262,7 @@ void ColorBitmapText::SetText( const RString& _sText, const RString& _sAlternate
 			if( /* iLineWidth == 0 &&*/ iWordWidth == 0 )
 				break;
 			sCurrentLine += sCurrentWord + " ";
-            iLineWidth += iWordWidth + iCharWidth;
+			iLineWidth += iWordWidth + iCharWidth;
 			sCurrentWord = "";
 			iWordWidth = 0;
 			iGlyphsSoFar++;
@@ -287,23 +287,23 @@ void ColorBitmapText::SetText( const RString& _sText, const RString& _sAlternate
 			}
 			break;
 		default:
-            		if( iWordWidth + iCharWidth > iWrapWidthPixels && iLineWidth == 0 )
+			if( iWordWidth + iCharWidth > iWrapWidthPixels && iLineWidth == 0 )
 			{
 				SimpleAddLine( sCurrentWord, iWordWidth );
-                sCurrentWord = curCharStr;  iWordWidth = iCharWidth;
+				sCurrentWord = curCharStr;  iWordWidth = iCharWidth;
 			}
-           	 else if( iWordWidth + iLineWidth + iCharWidth > iWrapWidthPixels )
+			else if( iWordWidth + iLineWidth + iCharWidth > iWrapWidthPixels )
 			{
 				SimpleAddLine( sCurrentLine, iLineWidth );
 				sCurrentLine = ""; 
 				iLineWidth = 0;
-                sCurrentWord += curCharStr;
-                iWordWidth += iCharWidth;
+				sCurrentWord += curCharStr;
+				iWordWidth += iCharWidth;
 			}
 			else
 			{
-                sCurrentWord += curCharStr;
-                iWordWidth += iCharWidth;
+				sCurrentWord += curCharStr;
+				iWordWidth += iCharWidth;
 			}
 			iGlyphsSoFar++;
 			break;
