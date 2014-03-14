@@ -103,7 +103,7 @@ bool ScreenNetSelectBase::Input( const InputEventPlus &input )
 		wchar_t c;
 		c = INPUTMAN->DeviceInputToChar(input.DeviceI, true);
 
-		if( (c >= ' ') && (!bHoldingCtrl) )
+		if( (c >= L' ') && (!bHoldingCtrl) )
 		{
 			m_sTextInput += WStringToRString(wstring()+c);
 			UpdateTextInput();
@@ -250,21 +250,24 @@ void ColorBitmapText::SetText( const RString& _sText, const RString& _sAlternate
 			}
 		}
 
-		char curChar = m_sText[i];
-		int iCharLen = m_pFont->GetLineWidthInSourcePixels( wstring(1, curChar) );
+		int iCharLength = min( utf8_get_char_len(m_sText[i]), iCharsLeft + 1 );
+		RString curCharStr = m_sText.substr( i, iCharLength );
+		wchar_t curChar = utf8_get_char( curCharStr );
+		i += iCharLength - 1;
+		int iCharWidth = m_pFont->GetLineWidthInSourcePixels( wstring() + curChar );
 
 		switch( curChar )
 		{
-		case ' ':
+		case L' ':
 			if( /* iLineWidth == 0 &&*/ iWordWidth == 0 )
 				break;
 			sCurrentLine += sCurrentWord + " ";
-			iLineWidth += iWordWidth + iCharLen;
+			iLineWidth += iWordWidth + iCharWidth;
 			sCurrentWord = "";
 			iWordWidth = 0;
 			iGlyphsSoFar++;
 			break;
-		case '\n':
+		case L'\n':
 			if( iLineWidth + iWordWidth > iWrapWidthPixels )
 			{
 				SimpleAddLine( sCurrentLine, iLineWidth );
@@ -284,23 +287,23 @@ void ColorBitmapText::SetText( const RString& _sText, const RString& _sAlternate
 			}
 			break;
 		default:
-			if( iWordWidth + iCharLen > iWrapWidthPixels && iLineWidth == 0 )
+			if( iWordWidth + iCharWidth > iWrapWidthPixels && iLineWidth == 0 )
 			{
 				SimpleAddLine( sCurrentWord, iWordWidth );
-				sCurrentWord = curChar;	iWordWidth = iCharLen;
+				sCurrentWord = curCharStr;  iWordWidth = iCharWidth;
 			}
-			else if( iWordWidth + iLineWidth + iCharLen > iWrapWidthPixels )
+			else if( iWordWidth + iLineWidth + iCharWidth > iWrapWidthPixels )
 			{
 				SimpleAddLine( sCurrentLine, iLineWidth );
 				sCurrentLine = ""; 
 				iLineWidth = 0;
-				sCurrentWord += curChar;
-				iWordWidth += iCharLen;
+				sCurrentWord += curCharStr;
+				iWordWidth += iCharWidth;
 			}
 			else
 			{
-				sCurrentWord += curChar;
-				iWordWidth += iCharLen;
+				sCurrentWord += curCharStr;
+				iWordWidth += iCharWidth;
 			}
 			iGlyphsSoFar++;
 			break;
