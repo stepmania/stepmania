@@ -29,6 +29,7 @@ static void SuperMeterPercentChangeInit( size_t /*ScoreEvent*/ i, RString &sName
 	case SE_CheckpointMiss:	defaultValueOut = -0.20f; break;
 	case SE_Held:			defaultValueOut = +0.04f; break;
 	case SE_LetGo:			defaultValueOut = -0.20f; break;
+	case SE_Missed:			defaultValueOut = -0.00f; break;
 	DEFAULT_FAIL(ci);
 	}
 }
@@ -95,6 +96,7 @@ void ScoreKeeperRave::HandleHoldScore( const TapNote &tn )
 	{
 		case HNS_Held: fPercentToMove = g_fSuperMeterPercentChange[SE_Held]; break;
 		case HNS_LetGo: fPercentToMove = g_fSuperMeterPercentChange[SE_LetGo]; break;
+		case HNS_Missed: fPercentToMove = g_fSuperMeterPercentChange[SE_Missed]; break;
 		default: break;
 	}
 	AddSuperMeterDelta( fPercentToMove );

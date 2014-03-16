@@ -159,6 +159,7 @@ void LifeMeterBar::ChangeLife( HoldNoteScore score, TapNoteScore tscore )
 		{
 		case HNS_Held:		fDeltaLife = m_fLifePercentChange.GetValue(SE_Held);	break;
 		case HNS_LetGo:	fDeltaLife = m_fLifePercentChange.GetValue(SE_LetGo);	break;
+		case HNS_Missed:	fDeltaLife = m_fLifePercentChange.GetValue(SE_Missed);	break;
 		default:
 			FAIL_M(ssprintf("Invalid HoldNoteScore: %i", score));
 		}
@@ -170,6 +171,7 @@ void LifeMeterBar::ChangeLife( HoldNoteScore score, TapNoteScore tscore )
 		{
 		case HNS_Held:		fDeltaLife = +0.000f;	break;
 		case HNS_LetGo:	fDeltaLife = m_fLifePercentChange.GetValue(SE_LetGo);	break;
+		case HNS_Missed:		fDeltaLife = +0.000f;	break;
 		default:
 			FAIL_M(ssprintf("Invalid HoldNoteScore: %i", score));
 		}
@@ -179,6 +181,7 @@ void LifeMeterBar::ChangeLife( HoldNoteScore score, TapNoteScore tscore )
 		{
 		case HNS_Held:		fDeltaLife = +0;	break;
 		case HNS_LetGo:	fDeltaLife = -1.0f;	break;
+		case HNS_Missed:	fDeltaLife = +0;	break;
 		default:
 			FAIL_M(ssprintf("Invalid HoldNoteScore: %i", score));
 		}
