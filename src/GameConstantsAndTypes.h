@@ -249,6 +249,7 @@ enum HoldNoteScore
 	HNS_None,		/**< The HoldNote was not scored yet. */
 	HNS_LetGo,		/**< The HoldNote has passed, but the player missed it. */
 	HNS_Held,		/**< The HoldNote has passed, and was successfully held all the way. */
+	HNS_Missed,		/**< The HoldNote has passed, and was never initialized. */
 	NUM_HoldNoteScore,	/**< The number of hold note scores. */
 	HoldNoteScore_Invalid,
 };
@@ -302,6 +303,7 @@ enum ScoreEvent
 	SE_CheckpointMiss,
 	SE_Held,
 	SE_LetGo,
+	SE_Missed,
 	NUM_ScoreEvent
 };
 const RString& ScoreEventToString( ScoreEvent se );

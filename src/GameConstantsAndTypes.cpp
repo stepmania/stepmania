@@ -235,19 +235,21 @@ static const char *HoldNoteScoreNames[] = {
 	"None",
 	"LetGo",
 	"Held",
+	"MissedHold",
 };
 XToString( HoldNoteScore );
 LuaXType( HoldNoteScore );
 HoldNoteScore StringToHoldNoteScore( const RString &s )
 {
 	// for backward compatibility
-	if     ( s == "NG" )	return HNS_LetGo;
-	else if( s == "OK" )	return HNS_Held;
+	if     ( s == "NG" )		return HNS_LetGo;
+	else if( s == "OK" )		return HNS_Held;
 
 	// new style
-	else if( s == "None" )	return HNS_None;
-	else if( s == "LetGo" )	return HNS_LetGo;
-	else if( s == "Held" )	return HNS_Held;
+	else if( s == "None" )		return HNS_None;
+	else if( s == "LetGo" )		return HNS_LetGo;
+	else if( s == "Held" )		return HNS_Held;
+	else if( s == "MissedHold" )	return HNS_Missed;
 
 	return HoldNoteScore_Invalid;
 }
@@ -278,6 +280,7 @@ static const char *ScoreEventNames[] = {
 	"CheckpointMiss",
 	"Held",
 	"LetGo",
+	"MissedHold",
 };
 XToString( ScoreEvent );
 

@@ -50,7 +50,11 @@ void HoldJudgment::SetHoldJudgment( HoldNoteScore hns )
 {
 	//LOG->Trace( "Judgment::SetJudgment()" );
 
-	ResetAnimation();
+	// Matt: To save API. Command can handle if desired.
+	if( hns != HNS_Missed )
+	{
+		ResetAnimation();
+	}
 
 	switch( hns )
 	{
@@ -61,6 +65,10 @@ void HoldJudgment::SetHoldJudgment( HoldNoteScore hns )
 	case HNS_LetGo:
 		m_sprJudgment->SetState( 1 );
 		m_sprJudgment->PlayCommand( "LetGo" );
+		break;
+	case HNS_Missed:
+		//m_sprJudgment->SetState( 2 ); // Matt: Not until after 5.0
+		m_sprJudgment->PlayCommand( "MissedHold" );
 		break;
 	case HNS_None:
 	default:

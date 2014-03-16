@@ -32,6 +32,7 @@ static const float g_fTimeMeterSecondsChangeInit[] =
 	-0.0f, // SE_CheckpointMiss
 	-0.0f, // SE_Held
 	-4.0f, // SE_LetGo
+	-0.0f, // SE_Missed
 };
 COMPILE_ASSERT( ARRAYLEN(g_fTimeMeterSecondsChangeInit) == NUM_ScoreEvent );
 
@@ -143,6 +144,7 @@ void LifeMeterTime::ChangeLife( HoldNoteScore hns, TapNoteScore tns )
 		FAIL_M(ssprintf("Invalid HoldNoteScore: %i", hns));
 	case HNS_Held:	fMeterChange = g_fTimeMeterSecondsChange[SE_Held];	break;
 	case HNS_LetGo:	fMeterChange = g_fTimeMeterSecondsChange[SE_LetGo];	break;
+	case HNS_Missed:	fMeterChange = g_fTimeMeterSecondsChange[SE_Missed];	break;
 	}
 
 	float fOldLife = m_fLifeTotalLostSeconds;

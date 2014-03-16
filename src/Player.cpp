@@ -1436,7 +1436,7 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 		}
 		else 
 		{
-			hns = HNS_None;
+			hns = HNS_Missed;
 		}
 	}
 
