@@ -12,6 +12,7 @@
 #include "GameManager.h"
 #include "GameState.h"
 #include "LocalizedString.h"
+#include "LunaSteps.h"
 #include "MsdFile.h"
 #include "NoteSkinManager.h"
 #include "NotesLoaderDWI.h"
@@ -1991,7 +1992,7 @@ public:
 
 		p->GetExtraStageInfo( bExtra2, pStyle, pSong, pSteps );
 		pSong->PushSelf( L );
-		pSteps->PushSelf( L );
+		LunaSteps::PushSelf( L, pSteps );
 
 		return 2;
 	}

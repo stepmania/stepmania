@@ -4,6 +4,7 @@
 #include "ThemeManager.h"
 #include "Foreach.h"
 #include "LuaManager.h"
+#include "LunaSteps.h"
 #include <float.h>
 #include "GameState.h"
 #include "Course.h"
@@ -726,7 +727,7 @@ public:
 		lua_newtable(L);
 		for( int i = 0; i < (int) min(p->m_iStepsPlayed, (int) p->m_vpPossibleSteps.size()); ++i )
 		{
-			p->m_vpPossibleSteps[i]->PushSelf(L);
+			LunaSteps::PushSelf(L, p->m_vpPossibleSteps[i]);
 			lua_rawseti( L, -2, i+1 );
 		}
 		return 1;
@@ -736,7 +737,7 @@ public:
 		lua_newtable(L);
 		for( int i = 0; i < (int) p->m_vpPossibleSteps.size(); ++i )
 		{
-			p->m_vpPossibleSteps[i]->PushSelf(L);
+			LunaSteps::PushSelf(L, p->m_vpPossibleSteps[i]);
 			lua_rawseti( L, -2, i+1 );
 		}
 		return 1;
