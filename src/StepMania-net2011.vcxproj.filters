@@ -100,9 +100,6 @@
     <Filter Include="Helpers">
       <UniqueIdentifier>{46a5ab77-6eaf-44eb-93ec-43b2db4741ff}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Helpers\libpng">
-      <UniqueIdentifier>{a89b61cf-bbf6-4303-a32a-6eec76f78893}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Helpers\Lua">
       <UniqueIdentifier>{c2c701a5-a88f-4a36-ab40-43619668f88f}</UniqueIdentifier>
     </Filter>
@@ -1451,51 +1448,6 @@
     </ClCompile>
     <ClCompile Include="BaseClasses\wxutil.cpp">
       <Filter>BaseClasses</Filter>
-    </ClCompile>
-    <ClCompile Include="..\extern\libpng\include\png.c">
-      <Filter>Helpers\libpng</Filter>
-    </ClCompile>
-    <ClCompile Include="..\extern\libpng\include\pngerror.c">
-      <Filter>Helpers\libpng</Filter>
-    </ClCompile>
-    <ClCompile Include="..\extern\libpng\include\pngget.c">
-      <Filter>Helpers\libpng</Filter>
-    </ClCompile>
-    <ClCompile Include="..\extern\libpng\include\pngmem.c">
-      <Filter>Helpers\libpng</Filter>
-    </ClCompile>
-    <ClCompile Include="..\extern\libpng\include\pngpread.c">
-      <Filter>Helpers\libpng</Filter>
-    </ClCompile>
-    <ClCompile Include="..\extern\libpng\include\pngread.c">
-      <Filter>Helpers\libpng</Filter>
-    </ClCompile>
-    <ClCompile Include="..\extern\libpng\include\pngrio.c">
-      <Filter>Helpers\libpng</Filter>
-    </ClCompile>
-    <ClCompile Include="..\extern\libpng\include\pngrtran.c">
-      <Filter>Helpers\libpng</Filter>
-    </ClCompile>
-    <ClCompile Include="..\extern\libpng\include\pngrutil.c">
-      <Filter>Helpers\libpng</Filter>
-    </ClCompile>
-    <ClCompile Include="..\extern\libpng\include\pngset.c">
-      <Filter>Helpers\libpng</Filter>
-    </ClCompile>
-    <ClCompile Include="..\extern\libpng\include\pngtrans.c">
-      <Filter>Helpers\libpng</Filter>
-    </ClCompile>
-    <ClCompile Include="..\extern\libpng\include\pngwio.c">
-      <Filter>Helpers\libpng</Filter>
-    </ClCompile>
-    <ClCompile Include="..\extern\libpng\include\pngwrite.c">
-      <Filter>Helpers\libpng</Filter>
-    </ClCompile>
-    <ClCompile Include="..\extern\libpng\include\pngwtran.c">
-      <Filter>Helpers\libpng</Filter>
-    </ClCompile>
-    <ClCompile Include="..\extern\libpng\include\pngwutil.c">
-      <Filter>Helpers\libpng</Filter>
     </ClCompile>
     <ClCompile Include="..\extern\lua-5.1\src\lapi.c">
       <Filter>Helpers\Lua</Filter>
@@ -2884,27 +2836,6 @@
     </ClInclude>
     <ClInclude Include="glext.h">
       <Filter>Helpers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\extern\libpng\include\png.h">
-      <Filter>Helpers\libpng</Filter>
-    </ClInclude>
-    <ClInclude Include="..\extern\libpng\include\pngconf.h">
-      <Filter>Helpers\libpng</Filter>
-    </ClInclude>
-    <ClInclude Include="..\extern\libpng\include\pngdebug.h">
-      <Filter>Helpers\libpng</Filter>
-    </ClInclude>
-    <ClInclude Include="..\extern\libpng\include\pnginfo.h">
-      <Filter>Helpers\libpng</Filter>
-    </ClInclude>
-    <ClInclude Include="..\extern\libpng\include\scripts\pnglibconf.h">
-      <Filter>Helpers\libpng</Filter>
-    </ClInclude>
-    <ClInclude Include="..\extern\libpng\include\pngpriv.h">
-      <Filter>Helpers\libpng</Filter>
-    </ClInclude>
-    <ClInclude Include="..\extern\libpng\include\pngstruct.h">
-      <Filter>Helpers\libpng</Filter>
     </ClInclude>
     <ClInclude Include="..\extern\lua-5.1\src\lapi.h">
       <Filter>Helpers\Lua</Filter>

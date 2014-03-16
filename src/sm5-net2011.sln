@@ -9,6 +9,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libtomcrypt", "libtomcrypt\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libpcre", "..\extern\pcre\libpcre-net2011.vcxproj", "{91920268-4395-419F-8CE5-DA7E11A5C1FD}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libpng", "..\extern\libpng\libpng-net2011.vcxproj", "{046C857A-41C5-4E87-AD44-462AB17BBF4F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -49,6 +51,14 @@ Global
 		{91920268-4395-419F-8CE5-DA7E11A5C1FD}.Release|Win32.Build.0 = Release|Win32
 		{91920268-4395-419F-8CE5-DA7E11A5C1FD}.Release-SSE2|Win32.ActiveCfg = Release|Win32
 		{91920268-4395-419F-8CE5-DA7E11A5C1FD}.Release-SSE2|Win32.Build.0 = Release|Win32
+		{046C857A-41C5-4E87-AD44-462AB17BBF4F}.Debug|Win32.ActiveCfg = Debug|Win32
+		{046C857A-41C5-4E87-AD44-462AB17BBF4F}.Debug|Win32.Build.0 = Debug|Win32
+		{046C857A-41C5-4E87-AD44-462AB17BBF4F}.FastDebug|Win32.ActiveCfg = Debug|Win32
+		{046C857A-41C5-4E87-AD44-462AB17BBF4F}.FastDebug|Win32.Build.0 = Debug|Win32
+		{046C857A-41C5-4E87-AD44-462AB17BBF4F}.Release|Win32.ActiveCfg = Release|Win32
+		{046C857A-41C5-4E87-AD44-462AB17BBF4F}.Release|Win32.Build.0 = Release|Win32
+		{046C857A-41C5-4E87-AD44-462AB17BBF4F}.Release-SSE2|Win32.ActiveCfg = Release|Win32
+		{046C857A-41C5-4E87-AD44-462AB17BBF4F}.Release-SSE2|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
