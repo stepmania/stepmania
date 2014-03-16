@@ -103,9 +103,6 @@
     <Filter Include="Helpers\libpng">
       <UniqueIdentifier>{a89b61cf-bbf6-4303-a32a-6eec76f78893}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Helpers\pcre">
-      <UniqueIdentifier>{b4c5e8c8-60f5-44c6-9529-832212276d1a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Helpers\Lua">
       <UniqueIdentifier>{c2c701a5-a88f-4a36-ab40-43619668f88f}</UniqueIdentifier>
     </Filter>
@@ -1499,21 +1496,6 @@
     </ClCompile>
     <ClCompile Include="..\extern\libpng\include\pngwutil.c">
       <Filter>Helpers\libpng</Filter>
-    </ClCompile>
-    <ClCompile Include="..\extern\pcre\chartables.c">
-      <Filter>Helpers\pcre</Filter>
-    </ClCompile>
-    <ClCompile Include="..\extern\pcre\get.c">
-      <Filter>Helpers\pcre</Filter>
-    </ClCompile>
-    <ClCompile Include="..\extern\pcre\maketables.c">
-      <Filter>Helpers\pcre</Filter>
-    </ClCompile>
-    <ClCompile Include="..\extern\pcre\pcre.c">
-      <Filter>Helpers\pcre</Filter>
-    </ClCompile>
-    <ClCompile Include="..\extern\pcre\study.c">
-      <Filter>Helpers\pcre</Filter>
     </ClCompile>
     <ClCompile Include="..\extern\lua-5.1\src\lapi.c">
       <Filter>Helpers\Lua</Filter>
@@ -2923,12 +2905,6 @@
     </ClInclude>
     <ClInclude Include="..\extern\libpng\include\pngstruct.h">
       <Filter>Helpers\libpng</Filter>
-    </ClInclude>
-    <ClInclude Include="..\extern\pcre\internal.h">
-      <Filter>Helpers\pcre</Filter>
-    </ClInclude>
-    <ClInclude Include="..\extern\pcre\pcre.h">
-      <Filter>Helpers\pcre</Filter>
     </ClInclude>
     <ClInclude Include="..\extern\lua-5.1\src\lapi.h">
       <Filter>Helpers\Lua</Filter>
