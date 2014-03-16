@@ -13,6 +13,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libpng", "..\extern\libpng\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libglew", "..\extern\glew-1.5.8\libglew-net2011.vcxproj", "{9522F2E6-FFEB-4620-9EE2-79353A55671B}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "liblua", "..\extern\lua-5.1\liblua-net2011.vcxproj", "{0555A743-D202-409C-A331-349FEE971025}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -69,6 +71,14 @@ Global
 		{9522F2E6-FFEB-4620-9EE2-79353A55671B}.Release|Win32.Build.0 = Release|Win32
 		{9522F2E6-FFEB-4620-9EE2-79353A55671B}.Release-SSE2|Win32.ActiveCfg = Release|Win32
 		{9522F2E6-FFEB-4620-9EE2-79353A55671B}.Release-SSE2|Win32.Build.0 = Release|Win32
+		{0555A743-D202-409C-A331-349FEE971025}.Debug|Win32.ActiveCfg = Debug|Win32
+		{0555A743-D202-409C-A331-349FEE971025}.Debug|Win32.Build.0 = Debug|Win32
+		{0555A743-D202-409C-A331-349FEE971025}.FastDebug|Win32.ActiveCfg = Debug|Win32
+		{0555A743-D202-409C-A331-349FEE971025}.FastDebug|Win32.Build.0 = Debug|Win32
+		{0555A743-D202-409C-A331-349FEE971025}.Release|Win32.ActiveCfg = Release|Win32
+		{0555A743-D202-409C-A331-349FEE971025}.Release|Win32.Build.0 = Release|Win32
+		{0555A743-D202-409C-A331-349FEE971025}.Release-SSE2|Win32.ActiveCfg = Release|Win32
+		{0555A743-D202-409C-A331-349FEE971025}.Release-SSE2|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
