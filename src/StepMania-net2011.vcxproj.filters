@@ -106,9 +106,6 @@
     <Filter Include="Helpers\jsoncpp">
       <UniqueIdentifier>{52c8e19c-32ec-4115-bee6-f5957389d7ea}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Helpers\glew">
-      <UniqueIdentifier>{ba251bae-0742-4c91-9b1f-488c32791a63}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Screen.cpp">
@@ -1545,9 +1542,6 @@
     <ClCompile Include="..\extern\jsoncpp\src\lib_json\json_writer.cpp">
       <Filter>Helpers\jsoncpp</Filter>
     </ClCompile>
-    <ClCompile Include="..\extern\glew-1.5.8\src\glew.c">
-      <Filter>Helpers\glew</Filter>
-    </ClCompile>
     <ClCompile Include="SongPosition.cpp">
       <Filter>Data Structures</Filter>
     </ClCompile>
@@ -2833,9 +2827,6 @@
     </ClInclude>
     <ClInclude Include="UnlockManager.h">
       <Filter>Global Singletons</Filter>
-    </ClInclude>
-    <ClInclude Include="glext.h">
-      <Filter>Helpers</Filter>
     </ClInclude>
     <ClInclude Include="..\extern\lua-5.1\src\lapi.h">
       <Filter>Helpers\Lua</Filter>

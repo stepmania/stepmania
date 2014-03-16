@@ -126,7 +126,7 @@ cl /Zl /nologo /c verstub.cpp /Fo"$(IntDir)"</Command>
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>.;..\extern\lua-5.1\src;..\extern\ffmpeg\include;BaseClasses;..\extern\jsoncpp\include;..\extern\glew-1.5.8\include;..\extern\pcre;..\extern\mad-0.15.1b;..\extern\libpng\lib;..\extern\libpng\include;..\extern\libjpeg;..\extern\zlib;..\extern\vorbis;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;WINDOWS;DEBUG;GLEW_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;GLEW_STATIC;_DEBUG;_WINDOWS;WINDOWS;DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>Sync</ExceptionHandling>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -194,7 +194,7 @@ cl /Zl /nologo /c verstub.cpp /Fo"$(IntDir)"</Command>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
       <AdditionalIncludeDirectories>.;..\extern\lua-5.1\src;..\extern\ffmpeg\include;BaseClasses;..\extern\jsoncpp\include;..\extern\glew-1.5.8\include;..\extern\pcre;..\extern\mad-0.15.1b;..\extern\libpng\lib;..\extern\libpng\include;..\extern\libjpeg;..\extern\zlib;..\extern\vorbis;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;WINDOWS;RELEASE;GLEW_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;GLEW_STATIC;NDEBUG;_WINDOWS;WINDOWS;RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>Sync</ExceptionHandling>
@@ -259,7 +259,7 @@ cl /Zl /nologo /c verstub.cpp /Fo"$(IntDir)"</Command>
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <AdditionalIncludeDirectories>.;..\extern\lua-5.1\src;..\extern\ffmpeg\include;BaseClasses;..\extern\jsoncpp\include;..\extern\glew-1.5.8\include;..\extern\pcre;..\extern\mad-0.15.1b;..\extern\libpng\lib;..\extern\libpng\include;..\extern\libjpeg;..\extern\zlib;..\extern\vorbis;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;WINDOWS;DEBUG;GLEW_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;GLEW_STATIC;_DEBUG;_WINDOWS;WINDOWS;DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>Sync</ExceptionHandling>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -328,7 +328,7 @@ cl /Zl /nologo /c verstub.cpp /Fo"$(IntDir)"</Command>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <AdditionalIncludeDirectories>.;..\extern\lua-5.1\src;..\extern\ffmpeg\include;BaseClasses;..\extern\jsoncpp\include;..\extern\glew-1.5.8\include;..\extern\pcre;..\extern\mad-0.15.1b;..\extern\libpng\lib;..\extern\libpng\include;..\extern\libjpeg;..\extern\zlib;..\extern\vorbis;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;WINDOWS;RELEASE;GLEW_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;GLEW_STATIC;NDEBUG;_WINDOWS;WINDOWS;RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>Sync</ExceptionHandling>
@@ -1542,16 +1542,6 @@ cl /Zl /nologo /c verstub.cpp /Fo"$(IntDir)"</Command>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
       </PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="..\extern\glew-1.5.8\src\glew.c">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-      </PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='FastDebug|Win32'">
-      </PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release-SSE2|Win32'">
-      </PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-      </PrecompiledHeader>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Screen.h" />
@@ -2198,7 +2188,6 @@ cl /Zl /nologo /c verstub.cpp /Fo"$(IntDir)"</Command>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release-SSE2|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </CustomBuildStep>
-    <ClInclude Include="glext.h" />
     <ClInclude Include="..\extern\lua-5.1\src\lapi.h" />
     <ClInclude Include="..\extern\lua-5.1\src\lauxlib.h" />
     <ClInclude Include="..\extern\lua-5.1\src\lcode.h" />
@@ -2235,6 +2224,9 @@ cl /Zl /nologo /c verstub.cpp /Fo"$(IntDir)"</Command>
     <ResourceCompile Include="archutils\Win32\WindowsResources.rc" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\extern\glew-1.5.8\libglew-net2011.vcxproj">
+      <Project>{9522f2e6-ffeb-4620-9ee2-79353a55671b}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\extern\libpng\libpng-net2011.vcxproj">
       <Project>{046c857a-41c5-4e87-ad44-462ab17bbf4f}</Project>
     </ProjectReference>
