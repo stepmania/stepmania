@@ -100,20 +100,8 @@
     <Filter Include="Helpers">
       <UniqueIdentifier>{46a5ab77-6eaf-44eb-93ec-43b2db4741ff}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Helpers\libpng">
-      <UniqueIdentifier>{a89b61cf-bbf6-4303-a32a-6eec76f78893}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Helpers\pcre">
-      <UniqueIdentifier>{b4c5e8c8-60f5-44c6-9529-832212276d1a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Helpers\Lua">
-      <UniqueIdentifier>{c2c701a5-a88f-4a36-ab40-43619668f88f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Helpers\jsoncpp">
       <UniqueIdentifier>{52c8e19c-32ec-4115-bee6-f5957389d7ea}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Helpers\glew">
-      <UniqueIdentifier>{ba251bae-0742-4c91-9b1f-488c32791a63}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1455,153 +1443,6 @@
     <ClCompile Include="BaseClasses\wxutil.cpp">
       <Filter>BaseClasses</Filter>
     </ClCompile>
-    <ClCompile Include="..\extern\libpng\include\png.c">
-      <Filter>Helpers\libpng</Filter>
-    </ClCompile>
-    <ClCompile Include="..\extern\libpng\include\pngerror.c">
-      <Filter>Helpers\libpng</Filter>
-    </ClCompile>
-    <ClCompile Include="..\extern\libpng\include\pngget.c">
-      <Filter>Helpers\libpng</Filter>
-    </ClCompile>
-    <ClCompile Include="..\extern\libpng\include\pngmem.c">
-      <Filter>Helpers\libpng</Filter>
-    </ClCompile>
-    <ClCompile Include="..\extern\libpng\include\pngpread.c">
-      <Filter>Helpers\libpng</Filter>
-    </ClCompile>
-    <ClCompile Include="..\extern\libpng\include\pngread.c">
-      <Filter>Helpers\libpng</Filter>
-    </ClCompile>
-    <ClCompile Include="..\extern\libpng\include\pngrio.c">
-      <Filter>Helpers\libpng</Filter>
-    </ClCompile>
-    <ClCompile Include="..\extern\libpng\include\pngrtran.c">
-      <Filter>Helpers\libpng</Filter>
-    </ClCompile>
-    <ClCompile Include="..\extern\libpng\include\pngrutil.c">
-      <Filter>Helpers\libpng</Filter>
-    </ClCompile>
-    <ClCompile Include="..\extern\libpng\include\pngset.c">
-      <Filter>Helpers\libpng</Filter>
-    </ClCompile>
-    <ClCompile Include="..\extern\libpng\include\pngtrans.c">
-      <Filter>Helpers\libpng</Filter>
-    </ClCompile>
-    <ClCompile Include="..\extern\libpng\include\pngwio.c">
-      <Filter>Helpers\libpng</Filter>
-    </ClCompile>
-    <ClCompile Include="..\extern\libpng\include\pngwrite.c">
-      <Filter>Helpers\libpng</Filter>
-    </ClCompile>
-    <ClCompile Include="..\extern\libpng\include\pngwtran.c">
-      <Filter>Helpers\libpng</Filter>
-    </ClCompile>
-    <ClCompile Include="..\extern\libpng\include\pngwutil.c">
-      <Filter>Helpers\libpng</Filter>
-    </ClCompile>
-    <ClCompile Include="..\extern\pcre\chartables.c">
-      <Filter>Helpers\pcre</Filter>
-    </ClCompile>
-    <ClCompile Include="..\extern\pcre\get.c">
-      <Filter>Helpers\pcre</Filter>
-    </ClCompile>
-    <ClCompile Include="..\extern\pcre\maketables.c">
-      <Filter>Helpers\pcre</Filter>
-    </ClCompile>
-    <ClCompile Include="..\extern\pcre\pcre.c">
-      <Filter>Helpers\pcre</Filter>
-    </ClCompile>
-    <ClCompile Include="..\extern\pcre\study.c">
-      <Filter>Helpers\pcre</Filter>
-    </ClCompile>
-    <ClCompile Include="..\extern\lua-5.1\src\lapi.c">
-      <Filter>Helpers\Lua</Filter>
-    </ClCompile>
-    <ClCompile Include="..\extern\lua-5.1\src\lauxlib.c">
-      <Filter>Helpers\Lua</Filter>
-    </ClCompile>
-    <ClCompile Include="..\extern\lua-5.1\src\lbaselib.c">
-      <Filter>Helpers\Lua</Filter>
-    </ClCompile>
-    <ClCompile Include="..\extern\lua-5.1\src\lcode.c">
-      <Filter>Helpers\Lua</Filter>
-    </ClCompile>
-    <ClCompile Include="..\extern\lua-5.1\src\ldblib.c">
-      <Filter>Helpers\Lua</Filter>
-    </ClCompile>
-    <ClCompile Include="..\extern\lua-5.1\src\ldebug.c">
-      <Filter>Helpers\Lua</Filter>
-    </ClCompile>
-    <ClCompile Include="..\extern\lua-5.1\src\ldo.c">
-      <Filter>Helpers\Lua</Filter>
-    </ClCompile>
-    <ClCompile Include="..\extern\lua-5.1\src\ldump.c">
-      <Filter>Helpers\Lua</Filter>
-    </ClCompile>
-    <ClCompile Include="..\extern\lua-5.1\src\lfunc.c">
-      <Filter>Helpers\Lua</Filter>
-    </ClCompile>
-    <ClCompile Include="..\extern\lua-5.1\src\lgc.c">
-      <Filter>Helpers\Lua</Filter>
-    </ClCompile>
-    <ClCompile Include="..\extern\lua-5.1\src\linit.c">
-      <Filter>Helpers\Lua</Filter>
-    </ClCompile>
-    <ClCompile Include="..\extern\lua-5.1\src\liolib.c">
-      <Filter>Helpers\Lua</Filter>
-    </ClCompile>
-    <ClCompile Include="..\extern\lua-5.1\src\llex.c">
-      <Filter>Helpers\Lua</Filter>
-    </ClCompile>
-    <ClCompile Include="..\extern\lua-5.1\src\lmathlib.c">
-      <Filter>Helpers\Lua</Filter>
-    </ClCompile>
-    <ClCompile Include="..\extern\lua-5.1\src\lmem.c">
-      <Filter>Helpers\Lua</Filter>
-    </ClCompile>
-    <ClCompile Include="..\extern\lua-5.1\src\loadlib.c">
-      <Filter>Helpers\Lua</Filter>
-    </ClCompile>
-    <ClCompile Include="..\extern\lua-5.1\src\lobject.c">
-      <Filter>Helpers\Lua</Filter>
-    </ClCompile>
-    <ClCompile Include="..\extern\lua-5.1\src\lopcodes.c">
-      <Filter>Helpers\Lua</Filter>
-    </ClCompile>
-    <ClCompile Include="..\extern\lua-5.1\src\loslib.c">
-      <Filter>Helpers\Lua</Filter>
-    </ClCompile>
-    <ClCompile Include="..\extern\lua-5.1\src\lparser.c">
-      <Filter>Helpers\Lua</Filter>
-    </ClCompile>
-    <ClCompile Include="..\extern\lua-5.1\src\lstate.c">
-      <Filter>Helpers\Lua</Filter>
-    </ClCompile>
-    <ClCompile Include="..\extern\lua-5.1\src\lstring.c">
-      <Filter>Helpers\Lua</Filter>
-    </ClCompile>
-    <ClCompile Include="..\extern\lua-5.1\src\lstrlib.c">
-      <Filter>Helpers\Lua</Filter>
-    </ClCompile>
-    <ClCompile Include="..\extern\lua-5.1\src\ltable.c">
-      <Filter>Helpers\Lua</Filter>
-    </ClCompile>
-    <ClCompile Include="..\extern\lua-5.1\src\ltablib.c">
-      <Filter>Helpers\Lua</Filter>
-    </ClCompile>
-    <ClCompile Include="..\extern\lua-5.1\src\ltm.c">
-      <Filter>Helpers\Lua</Filter>
-    </ClCompile>
-    <ClCompile Include="..\extern\lua-5.1\src\lundump.c">
-      <Filter>Helpers\Lua</Filter>
-    </ClCompile>
-    <ClCompile Include="..\extern\lua-5.1\src\lvm.c">
-      <Filter>Helpers\Lua</Filter>
-    </ClCompile>
-    <ClCompile Include="..\extern\lua-5.1\src\lzio.c">
-      <Filter>Helpers\Lua</Filter>
-    </ClCompile>
     <ClCompile Include="..\extern\jsoncpp\src\lib_json\json_reader.cpp">
       <Filter>Helpers\jsoncpp</Filter>
     </ClCompile>
@@ -1610,9 +1451,6 @@
     </ClCompile>
     <ClCompile Include="..\extern\jsoncpp\src\lib_json\json_writer.cpp">
       <Filter>Helpers\jsoncpp</Filter>
-    </ClCompile>
-    <ClCompile Include="..\extern\glew-1.5.8\src\glew.c">
-      <Filter>Helpers\glew</Filter>
     </ClCompile>
     <ClCompile Include="SongPosition.cpp">
       <Filter>Data Structures</Filter>
@@ -2899,105 +2737,6 @@
     </ClInclude>
     <ClInclude Include="UnlockManager.h">
       <Filter>Global Singletons</Filter>
-    </ClInclude>
-    <ClInclude Include="glext.h">
-      <Filter>Helpers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\extern\libpng\include\png.h">
-      <Filter>Helpers\libpng</Filter>
-    </ClInclude>
-    <ClInclude Include="..\extern\libpng\include\pngconf.h">
-      <Filter>Helpers\libpng</Filter>
-    </ClInclude>
-    <ClInclude Include="..\extern\libpng\include\pngdebug.h">
-      <Filter>Helpers\libpng</Filter>
-    </ClInclude>
-    <ClInclude Include="..\extern\libpng\include\pnginfo.h">
-      <Filter>Helpers\libpng</Filter>
-    </ClInclude>
-    <ClInclude Include="..\extern\libpng\include\scripts\pnglibconf.h">
-      <Filter>Helpers\libpng</Filter>
-    </ClInclude>
-    <ClInclude Include="..\extern\libpng\include\pngpriv.h">
-      <Filter>Helpers\libpng</Filter>
-    </ClInclude>
-    <ClInclude Include="..\extern\libpng\include\pngstruct.h">
-      <Filter>Helpers\libpng</Filter>
-    </ClInclude>
-    <ClInclude Include="..\extern\pcre\internal.h">
-      <Filter>Helpers\pcre</Filter>
-    </ClInclude>
-    <ClInclude Include="..\extern\pcre\pcre.h">
-      <Filter>Helpers\pcre</Filter>
-    </ClInclude>
-    <ClInclude Include="..\extern\lua-5.1\src\lapi.h">
-      <Filter>Helpers\Lua</Filter>
-    </ClInclude>
-    <ClInclude Include="..\extern\lua-5.1\src\lauxlib.h">
-      <Filter>Helpers\Lua</Filter>
-    </ClInclude>
-    <ClInclude Include="..\extern\lua-5.1\src\lcode.h">
-      <Filter>Helpers\Lua</Filter>
-    </ClInclude>
-    <ClInclude Include="..\extern\lua-5.1\src\ldebug.h">
-      <Filter>Helpers\Lua</Filter>
-    </ClInclude>
-    <ClInclude Include="..\extern\lua-5.1\src\ldo.h">
-      <Filter>Helpers\Lua</Filter>
-    </ClInclude>
-    <ClInclude Include="..\extern\lua-5.1\src\lfunc.h">
-      <Filter>Helpers\Lua</Filter>
-    </ClInclude>
-    <ClInclude Include="..\extern\lua-5.1\src\lgc.h">
-      <Filter>Helpers\Lua</Filter>
-    </ClInclude>
-    <ClInclude Include="..\extern\lua-5.1\src\llex.h">
-      <Filter>Helpers\Lua</Filter>
-    </ClInclude>
-    <ClInclude Include="..\extern\lua-5.1\src\llimits.h">
-      <Filter>Helpers\Lua</Filter>
-    </ClInclude>
-    <ClInclude Include="..\extern\lua-5.1\src\lmem.h">
-      <Filter>Helpers\Lua</Filter>
-    </ClInclude>
-    <ClInclude Include="..\extern\lua-5.1\src\lobject.h">
-      <Filter>Helpers\Lua</Filter>
-    </ClInclude>
-    <ClInclude Include="..\extern\lua-5.1\src\lopcodes.h">
-      <Filter>Helpers\Lua</Filter>
-    </ClInclude>
-    <ClInclude Include="..\extern\lua-5.1\src\lparser.h">
-      <Filter>Helpers\Lua</Filter>
-    </ClInclude>
-    <ClInclude Include="..\extern\lua-5.1\src\lstate.h">
-      <Filter>Helpers\Lua</Filter>
-    </ClInclude>
-    <ClInclude Include="..\extern\lua-5.1\src\lstring.h">
-      <Filter>Helpers\Lua</Filter>
-    </ClInclude>
-    <ClInclude Include="..\extern\lua-5.1\src\ltable.h">
-      <Filter>Helpers\Lua</Filter>
-    </ClInclude>
-    <ClInclude Include="..\extern\lua-5.1\src\ltm.h">
-      <Filter>Helpers\Lua</Filter>
-    </ClInclude>
-    <ClInclude Include="..\extern\lua-5.1\src\lua.h">
-      <Filter>Helpers\Lua</Filter>
-    </ClInclude>
-    <ClInclude Include="..\extern\lua-5.1\src\luaconf.h">
-      <Filter>Helpers\Lua</Filter>
-    </ClInclude>
-    <ClInclude Include="..\extern\lua-5.1\src\lualib.h">
-      <Filter>Helpers\Lua</Filter>
-    </ClInclude>
-    <ClInclude Include="..\extern\lua-5.1\src\lundump.h">
-      <Filter>Helpers\Lua</Filter>
-    </ClInclude>
-    <ClInclude Include="..\extern\lua-5.1\src\lvm.h">
-      <Filter>Helpers\Lua</Filter>
-    </ClInclude>
-    <ClInclude Include="..\extern\lua-5.1\src\lzio.h">
-      <Filter>Helpers\Lua</Filter>
     </ClInclude>
     <ClInclude Include="SongPosition.h">
       <Filter>Data Structures</Filter>

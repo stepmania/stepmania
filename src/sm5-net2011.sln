@@ -7,6 +7,14 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libtommath", "libtommath\li
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libtomcrypt", "libtomcrypt\libtomcrypt-net2011.vcxproj", "{F70DD0FE-A74A-42E7-B81F-E35C49FC9EB9}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libpcre", "..\extern\pcre\libpcre-net2011.vcxproj", "{91920268-4395-419F-8CE5-DA7E11A5C1FD}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libpng", "..\extern\libpng\libpng-net2011.vcxproj", "{046C857A-41C5-4E87-AD44-462AB17BBF4F}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libglew", "..\extern\glew-1.5.8\libglew-net2011.vcxproj", "{9522F2E6-FFEB-4620-9EE2-79353A55671B}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "liblua", "..\extern\lua-5.1\liblua-net2011.vcxproj", "{0555A743-D202-409C-A331-349FEE971025}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -39,6 +47,38 @@ Global
 		{F70DD0FE-A74A-42E7-B81F-E35C49FC9EB9}.Release|Win32.Build.0 = Release|Win32
 		{F70DD0FE-A74A-42E7-B81F-E35C49FC9EB9}.Release-SSE2|Win32.ActiveCfg = Release-SSE2|Win32
 		{F70DD0FE-A74A-42E7-B81F-E35C49FC9EB9}.Release-SSE2|Win32.Build.0 = Release-SSE2|Win32
+		{91920268-4395-419F-8CE5-DA7E11A5C1FD}.Debug|Win32.ActiveCfg = Debug|Win32
+		{91920268-4395-419F-8CE5-DA7E11A5C1FD}.Debug|Win32.Build.0 = Debug|Win32
+		{91920268-4395-419F-8CE5-DA7E11A5C1FD}.FastDebug|Win32.ActiveCfg = Debug|Win32
+		{91920268-4395-419F-8CE5-DA7E11A5C1FD}.FastDebug|Win32.Build.0 = Debug|Win32
+		{91920268-4395-419F-8CE5-DA7E11A5C1FD}.Release|Win32.ActiveCfg = Release|Win32
+		{91920268-4395-419F-8CE5-DA7E11A5C1FD}.Release|Win32.Build.0 = Release|Win32
+		{91920268-4395-419F-8CE5-DA7E11A5C1FD}.Release-SSE2|Win32.ActiveCfg = Release|Win32
+		{91920268-4395-419F-8CE5-DA7E11A5C1FD}.Release-SSE2|Win32.Build.0 = Release|Win32
+		{046C857A-41C5-4E87-AD44-462AB17BBF4F}.Debug|Win32.ActiveCfg = Debug|Win32
+		{046C857A-41C5-4E87-AD44-462AB17BBF4F}.Debug|Win32.Build.0 = Debug|Win32
+		{046C857A-41C5-4E87-AD44-462AB17BBF4F}.FastDebug|Win32.ActiveCfg = Debug|Win32
+		{046C857A-41C5-4E87-AD44-462AB17BBF4F}.FastDebug|Win32.Build.0 = Debug|Win32
+		{046C857A-41C5-4E87-AD44-462AB17BBF4F}.Release|Win32.ActiveCfg = Release|Win32
+		{046C857A-41C5-4E87-AD44-462AB17BBF4F}.Release|Win32.Build.0 = Release|Win32
+		{046C857A-41C5-4E87-AD44-462AB17BBF4F}.Release-SSE2|Win32.ActiveCfg = Release|Win32
+		{046C857A-41C5-4E87-AD44-462AB17BBF4F}.Release-SSE2|Win32.Build.0 = Release|Win32
+		{9522F2E6-FFEB-4620-9EE2-79353A55671B}.Debug|Win32.ActiveCfg = Debug|Win32
+		{9522F2E6-FFEB-4620-9EE2-79353A55671B}.Debug|Win32.Build.0 = Debug|Win32
+		{9522F2E6-FFEB-4620-9EE2-79353A55671B}.FastDebug|Win32.ActiveCfg = Debug|Win32
+		{9522F2E6-FFEB-4620-9EE2-79353A55671B}.FastDebug|Win32.Build.0 = Debug|Win32
+		{9522F2E6-FFEB-4620-9EE2-79353A55671B}.Release|Win32.ActiveCfg = Release|Win32
+		{9522F2E6-FFEB-4620-9EE2-79353A55671B}.Release|Win32.Build.0 = Release|Win32
+		{9522F2E6-FFEB-4620-9EE2-79353A55671B}.Release-SSE2|Win32.ActiveCfg = Release|Win32
+		{9522F2E6-FFEB-4620-9EE2-79353A55671B}.Release-SSE2|Win32.Build.0 = Release|Win32
+		{0555A743-D202-409C-A331-349FEE971025}.Debug|Win32.ActiveCfg = Debug|Win32
+		{0555A743-D202-409C-A331-349FEE971025}.Debug|Win32.Build.0 = Debug|Win32
+		{0555A743-D202-409C-A331-349FEE971025}.FastDebug|Win32.ActiveCfg = Debug|Win32
+		{0555A743-D202-409C-A331-349FEE971025}.FastDebug|Win32.Build.0 = Debug|Win32
+		{0555A743-D202-409C-A331-349FEE971025}.Release|Win32.ActiveCfg = Release|Win32
+		{0555A743-D202-409C-A331-349FEE971025}.Release|Win32.Build.0 = Release|Win32
+		{0555A743-D202-409C-A331-349FEE971025}.Release-SSE2|Win32.ActiveCfg = Release|Win32
+		{0555A743-D202-409C-A331-349FEE971025}.Release-SSE2|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
