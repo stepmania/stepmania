@@ -18,3 +18,5 @@ source_group("" FILES ${PCRE_SRC})
 source_group("" FILES ${PCRE_HPP})
 
 add_library("pcre" ${PCRE_SRC} ${PCRE_HPP})
+
+set_property(TARGET pcre PROPERTY FOLDER "External Libraries")

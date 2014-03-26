@@ -66,3 +66,5 @@ source_group("" FILES ${LUA_SRC})
 source_group("" FILES ${LUA_HPP})
 
 add_library("lua-5.1" ${LUA_SRC} ${LUA_HPP})
+
+set_property(TARGET "lua-5.1" PROPERTY FOLDER "External Libraries")

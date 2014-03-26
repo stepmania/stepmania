@@ -37,3 +37,5 @@ source_group("" FILES ${PNG_SRC})
 source_group("" FILES ${PNG_HPP})
 
 add_library("png" ${PNG_SRC} ${PNG_HPP})
+
+set_property(TARGET png PROPERTY FOLDER "External Libraries")
