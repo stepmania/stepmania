@@ -1,7 +1,9 @@
 build/
+Debug/
 .dirstamp
 .deps
 *.orig
+*.ilk
 *.rej
 *~
 *.o
