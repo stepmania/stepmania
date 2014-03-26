@@ -78,7 +78,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="chartables.c" />
     <ClCompile Include="get.c" />
     <ClCompile Include="maketables.c" />
     <ClCompile Include="pcre.c" />
