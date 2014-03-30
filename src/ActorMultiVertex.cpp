@@ -421,6 +421,14 @@ public:
 		return 0;
 	}
 
+	static int SetTexture( T* p, lua_State *L )
+	{
+		RageTexture *pTexture = Luna<RageTexture>::check(L, 1);
+		pTexture = TEXTUREMAN->CopyTexture( pTexture );
+		p->SetTexture( pTexture );
+		return 0;
+	}
+
 	LunaActorMultiVertex()
 	{
 		ADD_METHOD( ClearVertices );
@@ -447,6 +455,8 @@ public:
 		ADD_METHOD( SetColor );
 		ADD_METHOD( SetCoords );
 		
+		// Copy from RageTexture
+		ADD_METHOD( SetTexture );
 		// Load from file path
 		ADD_METHOD( LoadTexture );
 	}
