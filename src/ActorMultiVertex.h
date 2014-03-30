@@ -30,13 +30,13 @@ public:
 	ActorMultiVertex( const ActorMultiVertex &cpy );
 	virtual ~ActorMultiVertex();
 
-	void LoadFromNode( const XNode* pNode );
+	void LoadFromNode( const XNode* Node );
 	virtual ActorMultiVertex *Copy() const;
 
 	virtual bool EarlyAbortDraw() const;
 	virtual void DrawPrimitives();
 
-	void SetTexture( RageTexture *pTexture );
+	void SetTexture( RageTexture *Texture );
 	void LoadFromTexture( RageTextureID ID );
 
 	void UnloadTexture();
@@ -45,32 +45,32 @@ public:
 	void AddVertex();
 	void AddVertex(float x, float y, float z);
 
-	void SetDrawMode( DrawMode dm )				{ m_DrawMode = dm; }
-	void SetEffectMode( EffectMode em)			{ m_EffectMode = em; }
-	void SetTextureMode( TextureMode tm)		{ m_TextureMode = tm; }
+	void SetDrawMode( DrawMode dm )				{ _DrawMode = dm; }
+	void SetEffectMode( EffectMode em)			{ _EffectMode = em; }
+	void SetTextureMode( TextureMode tm)		{ _TextureMode = tm; }
 
-	void SetVertexPos( int iIndex , float fX , float fY , float fZ );
-	void SetVertexColor( int iIndex , RageColor c );
-	void SetVertexCoords( int iIndex , float fTexCoordX , float fTexCoordY );
+	void SetVertexPos( int index , float x , float y , float z );
+	void SetVertexColor( int index , RageColor c );
+	void SetVertexCoords( int index , float TexCoordX , float TexCoordY );
 
 	// Set the last vertex without need to specify index.
-	void SetPos( float fX , float fY , float fZ ) 			{ SetVertexPos( m_Vertices.size()-1 , fX , fY , fZ ); }
-	void SetColor( RageColor c )							{ SetVertexColor( m_Vertices.size()-1 , c ); }
-	void SetCoords( float fTexCoordX , float fTexCoordY )	{ SetVertexCoords( m_Vertices.size()-1 , fTexCoordX , fTexCoordY ); }
+	void SetPos( float x , float y , float z ) 			{ SetVertexPos( _Vertices.size()-1 , x , y , z ); }
+	void SetColor( RageColor c )							{ SetVertexColor( _Vertices.size()-1 , c ); }
+	void SetCoords( float TexCoordX , float TexCoordY )	{ SetVertexCoords( _Vertices.size()-1 , TexCoordX , TexCoordY ); }
 
-	int GetNumVertices() { return m_Vertices.size(); }
+	size_t GetNumVertices() { return _Vertices.size(); }
 	virtual void PushSelf( lua_State *L );
 
 private:
-	RageTexture* m_pTexture;
-	vector<RageSpriteVertex> m_Vertices;
+	RageTexture* _Texture;
+	vector<RageSpriteVertex> _Vertices;
 
-	DrawMode m_DrawMode;
-	EffectMode m_EffectMode;
-	TextureMode m_TextureMode;
+	DrawMode _DrawMode;
+	EffectMode _EffectMode;
+	TextureMode _TextureMode;
 
 	// needed for DrawMode_LineStrip
-	float m_fLineWidth;
+	float _LineWidth;
 };
 
 /**
