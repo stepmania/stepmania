@@ -133,7 +133,6 @@ void ActorMultiVertex::AddVertex( lua_State *L, int Pos )
 
 	size_t NumTables = lua_objlen(L, Pos);
 	int TableIndex = lua_gettop(L);
-	LOG->Trace( "%i" , NumTables );
 	for( size_t i = 0; i < NumTables; ++i )
 	{
 		lua_pushnumber(L, i+1);
@@ -317,7 +316,6 @@ public:
 		int TableIndex = lua_gettop(L);
 		for(size_t n= 0; n < NumVerts; ++n)
 		{
-			LOG->Trace("DO STUFF %i" , n );
 			lua_pushnumber(L, n+1);
 			lua_gettable(L, TableIndex);
 			p->AddVertex( L , -1 );
