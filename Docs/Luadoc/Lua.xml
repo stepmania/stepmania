@@ -1889,13 +1889,13 @@
 			<EnumValue name='&apos;DisplayBPM_Random&apos;' value='2'/>
 		</Enum>
 		<Enum name='DrawMode'>
-			<EnumValue name='&apos;DrawMode_Quads;' value='0'/>
-			<EnumValue name='&apos;DrawMode_QuadStrip;' value='1'/>
-			<EnumValue name='&apos;DrawMode_Fan;' value='2'/>
-			<EnumValue name='&apos;DrawMode_Strip;' value='3'/>
-			<EnumValue name='&apos;DrawMode_Triangles;' value='4'/>
-			<EnumValue name='&apos;DrawMode_LineStrip;' value='5'/>
-			<EnumValue name='&apos;DrawMode_SymmetricQuadStrip;' value='6'/>
+			<EnumValue name='&apos;DrawMode_Quads&apos;' value='0'/>
+			<EnumValue name='&apos;DrawMode_QuadStrip&apos;' value='1'/>
+			<EnumValue name='&apos;DrawMode_Fan&apos;' value='2'/>
+			<EnumValue name='&apos;DrawMode_Strip&apos;' value='3'/>
+			<EnumValue name='&apos;DrawMode_Triangles&apos;' value='4'/>
+			<EnumValue name='&apos;DrawMode_LineStrip&apos;' value='5'/>
+			<EnumValue name='&apos;DrawMode_SymmetricQuadStrip&apos;' value='6'/>
 		</Enum>
 		<Enum name='EarnedExtraStage'>
 			<EnumValue name='&apos;EarnedExtraStage_No&apos;' value='0'/>
