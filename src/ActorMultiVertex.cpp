@@ -423,9 +423,9 @@ public:
 
 	static int SetTexture( T* p, lua_State *L )
 	{
-		RageTexture *pTexture = Luna<RageTexture>::check(L, 1);
-		pTexture = TEXTUREMAN->CopyTexture( pTexture );
-		p->SetTexture( pTexture );
+		RageTexture *Texture = Luna<RageTexture>::check(L, 1);
+		Texture = TEXTUREMAN->CopyTexture( Texture );
+		p->SetTexture( Texture );
 		return 0;
 	}
 
