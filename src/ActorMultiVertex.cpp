@@ -34,12 +34,12 @@ ActorMultiVertex::ActorMultiVertex()
 {
 	// Use blank texture by default.
 	RageTextureID ID = TEXTUREMAN->GetDefaultTextureID();
-	m_pTexture = TEXTUREMAN->LoadTexture( ID );
+	_Texture = TEXTUREMAN->LoadTexture( ID );
 	ClearVertices();
 
-	m_DrawMode = DrawMode_Invalid;
-	m_EffectMode = EffectMode_Normal;
-	m_TextureMode = TextureMode_Modulate;
+	_DrawMode = DrawMode_Invalid;
+	_EffectMode = EffectMode_Normal;
+	_TextureMode = TextureMode_Modulate;
 }
 
 ActorMultiVertex::~ActorMultiVertex()
@@ -52,79 +52,79 @@ ActorMultiVertex::ActorMultiVertex( const ActorMultiVertex &cpy ):
 	Actor( cpy )
 {
 #define CPY(a) a = cpy.a
-	CPY( m_Vertices );
-	CPY( m_DrawMode );
-	CPY( m_EffectMode );
-	CPY( m_TextureMode );
-	CPY( m_fLineWidth );
+	CPY( _Vertices );
+	CPY( _DrawMode );
+	CPY( _EffectMode );
+	CPY( _TextureMode );
+	CPY( _LineWidth );
 #undef CPY
 
-	if( cpy.m_pTexture != NULL )
-		m_pTexture = TEXTUREMAN->CopyTexture( cpy.m_pTexture );
+	if( cpy._Texture != NULL )
+		_Texture = TEXTUREMAN->CopyTexture( cpy._Texture );
 	else
-		m_pTexture = NULL;
+		_Texture = NULL;
 
 }
 
-void ActorMultiVertex::LoadFromNode( const XNode* pNode )
+void ActorMultiVertex::LoadFromNode( const XNode* Node )
 {
-	RString sPath;
-	pNode->GetAttrValue( "Texture", sPath );
-	if( !sPath.empty() && !TEXTUREMAN->IsTextureRegistered( RageTextureID(sPath) ) )
-		ActorUtil::GetAttrPath( pNode, "Texture", sPath );
+	RString path;
+	Node->GetAttrValue( "Texture", path );
+	if( !path.empty() && !TEXTUREMAN->IsTextureRegistered( RageTextureID(path) ) )
+		ActorUtil::GetAttrPath( Node, "Texture", path );
 
-	if( !sPath.empty() )
-		LoadFromTexture( sPath );
+	if( !path.empty() )
+		LoadFromTexture( path );
 
-	Actor::LoadFromNode( pNode );
+	Actor::LoadFromNode( Node );
 }
 
-void ActorMultiVertex::SetTexture( RageTexture *pTexture )
+void ActorMultiVertex::SetTexture( RageTexture *Texture )
 {
-	if( m_pTexture != pTexture )
+	if( _Texture != Texture )
 	{
 		UnloadTexture();
-		m_pTexture = pTexture;
+		_Texture = Texture;
 	}
 }
 
 void ActorMultiVertex::LoadFromTexture( RageTextureID ID )
 {
 
-	RageTexture *pTexture = NULL;
-	if( m_pTexture && m_pTexture->GetID() == ID )
+	RageTexture *Texture = NULL;
+	if( _Texture && _Texture->GetID() == ID )
 		return;
 	else
-		pTexture = TEXTUREMAN->LoadTexture( ID );
+		Texture = TEXTUREMAN->LoadTexture( ID );
 
-	SetTexture( pTexture );
+	SetTexture( Texture );
 		
 }
 
 void ActorMultiVertex::UnloadTexture()
 {
-	if( m_pTexture != NULL )
+	if( _Texture != NULL )
 	{
-		TEXTUREMAN->UnloadTexture( m_pTexture );
-		m_pTexture = NULL;
+		TEXTUREMAN->UnloadTexture( _Texture );
+		_Texture = NULL;
 	}
 }
 
 void ActorMultiVertex::ClearVertices()
 {
-	m_Vertices.clear();
+	_Vertices.clear();
 }
 
 void ActorMultiVertex::ReserveSpaceForMoreVertices(size_t n)
 {
 	// Repeatedly adding to a vector is more efficient when you know ahead how
 	// many elements are going to be added and reserve space for them.
-	m_Vertices.reserve(m_Vertices.size() + n);
+	_Vertices.reserve(_Vertices.size() + n);
 }
 
 void ActorMultiVertex::AddVertex()
 {
-	m_Vertices.push_back( RageSpriteVertex() );
+	_Vertices.push_back( RageSpriteVertex() );
 }
 
 void ActorMultiVertex::AddVertex(float x, float y, float z)
@@ -133,37 +133,37 @@ void ActorMultiVertex::AddVertex(float x, float y, float z)
 	tmp.p.x= x;
 	tmp.p.y= y;
 	tmp.p.z= z;
-	m_Vertices.push_back( tmp );
+	_Vertices.push_back( tmp );
 }
 
-void ActorMultiVertex::SetVertexPos( int iIndex , float fX , float fY , float fZ )
+void ActorMultiVertex::SetVertexPos( int index , float x , float y , float z )
 {
-	if( iIndex >= (int) m_Vertices.size() )
+	if( index >= (int) _Vertices.size() )
 	{
-		LOG->Warn( "Can't set Vertex Position, index %d too high.", iIndex );
+		LOG->Warn( "Can't set Vertex Position, index %d too high.", index );
 		return;
 	}
-	m_Vertices[iIndex].p = RageVector3( fX,  fY, fZ );
+	_Vertices[index].p = RageVector3( x, y, z );
 }
 
-void ActorMultiVertex::SetVertexColor( int iIndex , RageColor c )
+void ActorMultiVertex::SetVertexColor( int index , RageColor c )
 {
-	if( iIndex >= (int) m_Vertices.size() )
+	if( index >= (int) _Vertices.size() )
 	{
-		LOG->Warn( "Can't set Vertex Color, index %d too high.", iIndex );
+		LOG->Warn( "Can't set Vertex Color, index %d too high.", index );
 		return;
 	}
-	m_Vertices[iIndex].c = c;
+	_Vertices[index].c = c;
 }
 
-void ActorMultiVertex::SetVertexCoords( int iIndex , float fTexCoordX , float fTexCoordY )
+void ActorMultiVertex::SetVertexCoords( int index , float TexCoordX , float TexCoordY )
 {
-	if( iIndex >= (int) m_Vertices.size() )
+	if( index >= (int) _Vertices.size() )
 	{
-		LOG->Warn( "Can't set Vertex Texture Coordinates, index %d too high.", iIndex );
+		LOG->Warn( "Can't set Vertex Texture Coordinates, index %d too high.", index );
 		return;
 	}
-	m_Vertices[iIndex].t = RageVector2( fTexCoordX,  fTexCoordY );
+	_Vertices[index].t = RageVector2( TexCoordX,  TexCoordY );
 }
 
 void ActorMultiVertex::DrawPrimitives()
@@ -171,62 +171,62 @@ void ActorMultiVertex::DrawPrimitives()
 	Actor::SetGlobalRenderStates();	// set Actor-specified render states
 
 	DISPLAY->ClearAllTextures();
-	DISPLAY->SetTexture( TextureUnit_1, m_pTexture->GetTexHandle() );
+	DISPLAY->SetTexture( TextureUnit_1, _Texture->GetTexHandle() );
    
 	Actor::SetTextureRenderStates();
-	DISPLAY->SetEffectMode( m_EffectMode );
-	DISPLAY->SetTextureMode( TextureUnit_1, m_TextureMode );
+	DISPLAY->SetEffectMode( _EffectMode );
+	DISPLAY->SetTextureMode( TextureUnit_1, _TextureMode );
 
-	int iNumToDraw = m_Vertices.size();
+	int NumToDraw = _Vertices.size();
 
-	switch( m_DrawMode )
+	switch( _DrawMode )
 	{
 		case DrawMode_Quads:
 		{
-			iNumToDraw -= iNumToDraw%4;
-			if( iNumToDraw >= 4 )
-				DISPLAY->DrawQuads( &m_Vertices[0] , iNumToDraw );
+			NumToDraw -= NumToDraw%4;
+			if( NumToDraw >= 4 )
+				DISPLAY->DrawQuads( &_Vertices[0] , NumToDraw );
 			break;
 		}
 		case DrawMode_QuadStrip:
 		{
-			iNumToDraw -= iNumToDraw%2;
+			NumToDraw -= NumToDraw%2;
 
-			if( iNumToDraw >= 4 )
-				DISPLAY->DrawQuadStrip( &m_Vertices[0] , iNumToDraw );
+			if( NumToDraw >= 4 )
+				DISPLAY->DrawQuadStrip( &_Vertices[0] , NumToDraw );
 			break;
 		}
 		case DrawMode_Fan:
 		{
-			if( iNumToDraw >= 3 )
-				DISPLAY->DrawFan( &m_Vertices[0] , iNumToDraw );
+			if( NumToDraw >= 3 )
+				DISPLAY->DrawFan( &_Vertices[0] , NumToDraw );
 			break;
 		}
 		case DrawMode_Strip:
 		{
-			if( iNumToDraw >= 3 )
-				DISPLAY->DrawStrip( &m_Vertices[0] , iNumToDraw );
+			if( NumToDraw >= 3 )
+				DISPLAY->DrawStrip( &_Vertices[0] , NumToDraw );
 			break;
 		}
 		case DrawMode_Triangles:
 		{
-			iNumToDraw -= iNumToDraw%3;
-			if( iNumToDraw >= 3 )
-					DISPLAY->DrawTriangles( &m_Vertices[0] , iNumToDraw );
+			NumToDraw -= NumToDraw%3;
+			if( NumToDraw >= 3 )
+					DISPLAY->DrawTriangles( &_Vertices[0] , NumToDraw );
 			break;
 		}
 		case DrawMode_LineStrip:
 		{
-			if( iNumToDraw >= 2 )
-				DISPLAY->DrawLineStrip( &m_Vertices[0] , iNumToDraw , m_fLineWidth );
+			if( NumToDraw >= 2 )
+				DISPLAY->DrawLineStrip( &_Vertices[0] , NumToDraw , _LineWidth );
 			break;
 		}
 		case DrawMode_SymmetricQuadStrip:
 		{
-			iNumToDraw -= iNumToDraw%3;
+			NumToDraw -= NumToDraw%3;
 
-			if( iNumToDraw >= 6 )
-				DISPLAY->DrawSymmetricQuadStrip( &m_Vertices[0] , iNumToDraw );
+			if( NumToDraw >= 6 )
+				DISPLAY->DrawSymmetricQuadStrip( &_Vertices[0] , NumToDraw );
 			break;
 
 		}
@@ -237,7 +237,7 @@ void ActorMultiVertex::DrawPrimitives()
 
 bool ActorMultiVertex::EarlyAbortDraw() const
 {
-	return m_Vertices.empty();
+	return _Vertices.empty();
 }
 
 // lua start
@@ -423,9 +423,9 @@ public:
 
 	static int SetTexture( T* p, lua_State *L )
 	{
-		RageTexture *pTexture = Luna<RageTexture>::check(L, 1);
-		pTexture = TEXTUREMAN->CopyTexture( pTexture );
-		p->SetTexture( pTexture );
+		RageTexture *Texture = Luna<RageTexture>::check(L, 1);
+		Texture = TEXTUREMAN->CopyTexture( Texture );
+		p->SetTexture( Texture );
 		return 0;
 	}
 
