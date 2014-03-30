@@ -115,9 +115,25 @@ void ActorMultiVertex::ClearVertices()
 	m_Vertices.clear();
 }
 
+void ActorMultiVertex::ReserveSpaceForMoreVertices(size_t n)
+{
+	// Repeatedly adding to a vector is more efficient when you know ahead how
+	// many elements are going to be added and reserve space for them.
+	m_Vertices.reserve(m_Vertices.size() + n);
+}
+
 void ActorMultiVertex::AddVertex()
 {
 	m_Vertices.push_back( RageSpriteVertex() );
+}
+
+void ActorMultiVertex::AddVertex(float x, float y, float z)
+{
+	RageSpriteVertex tmp;
+	tmp.p.x= x;
+	tmp.p.y= y;
+	tmp.p.z= z;
+	m_Vertices.push_back( tmp );
 }
 
 void ActorMultiVertex::SetVertexPos( int iIndex , float fX , float fY , float fZ )
@@ -235,6 +251,28 @@ public:
 	static int ClearVertices( T* p, lua_State *L )		{ p->ClearVertices( ); return 0; }
 	static int GetNumVertices( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetNumVertices() ); return 1; }
 
+	static int AddVertices( T* p, lua_State *L )
+	{
+		size_t num_new_verts= lua_objlen(L, -1);
+		p->ReserveSpaceForMoreVertices(num_new_verts);
+		int vert_table_index= lua_gettop(L);
+		for(size_t n= 0; n < num_new_verts; ++n)
+		{
+			lua_pushnumber(L, n+1);
+			lua_gettable(L, vert_table_index);
+			int vindex= lua_gettop(L);
+			lua_rawgeti(L, vindex, 1);
+			float x= lua_tonumber(L, -1);
+			lua_rawgeti(L, vindex, 2);
+			float y= lua_tonumber(L, -1);
+			lua_rawgeti(L, vindex, 3);
+			float z= lua_tonumber(L, -1);
+			p->AddVertex(x, y, z);
+			lua_pop(L, 4);
+		}
+		return 0;
+	}
+
 	static int SetDrawMode( T* p, lua_State *L )
 	{
 		DrawMode dm = Enum::Check<DrawMode>(L, 1);
@@ -260,6 +298,111 @@ public:
 	static int SetVertexColor( T* p, lua_State *L )		{ RageColor c; c.FromStackCompat( L, 2 ); p->SetVertexColor( IArg(1), c ); return 0; }
 	static int SetVertexCoords( T* p, lua_State *L )	{ p->SetVertexCoords(IArg(1),FArg(2),FArg(3)); return 0; }
 
+	static int SetVertexPosMulti( T* p, lua_State *L )
+	{
+		size_t start= 0;
+		int table_index= 1;
+		// Allow the user to just pass a table without specifying a starting point.
+		if(lua_type(L, 1) == LUA_TNUMBER)
+		{
+			table_index= 2;
+			start= IArg(1);
+		}
+		size_t end= start + lua_objlen(L, table_index);
+		if(start > p->GetNumVertices())
+		{
+			LOG->Warn("ActorMultiVertex:SetVertexPosMulti: Out of range starting point.");
+			return 0;
+		}
+		if(end > p->GetNumVertices())
+		{
+			LOG->Warn("ActorMultiVertex:SetVertexPosMulti: Too many positions passed.");
+			return 0;
+		}
+		for(size_t n= start; n < end; ++n)
+		{
+			lua_pushnumber(L, n-start+1);
+			lua_gettable(L, table_index);
+			int vindex= lua_gettop(L);
+			lua_rawgeti(L, vindex, 1);
+			float x= lua_tonumber(L, -1);
+			lua_rawgeti(L, vindex, 2);
+			float y= lua_tonumber(L, -1);
+			lua_rawgeti(L, vindex, 3);
+			float z= lua_tonumber(L, -1);
+			p->SetVertexPos(n, x, y, z);
+			lua_pop(L, 4);
+		}
+		return 0;
+	}
+	static int SetVertexColorMulti( T* p, lua_State *L )
+	{
+		size_t start= 0;
+		int table_index= 1;
+		// Allow the user to just pass a table without specifying a starting point.
+		if(lua_type(L, 1) == LUA_TNUMBER)
+		{
+			table_index= 2;
+			start= IArg(1);
+		}
+		size_t end= start + lua_objlen(L, table_index);
+		if(start > p->GetNumVertices())
+		{
+			LOG->Warn("ActorMultiVertex:SetVertexColorMulti: Out of range starting point.");
+			return 0;
+		}
+		if(end > p->GetNumVertices())
+		{
+			LOG->Warn("ActorMultiVertex:SetVertexColorMulti: Too many colors passed.");
+			return 0;
+		}
+		for(size_t n= start; n < end; ++n)
+		{
+			lua_pushnumber(L, n-start+1);
+			lua_gettable(L, table_index);
+			RageColor c;
+			c.FromStackCompat(L, -1);
+			p->SetVertexColor(n, c);
+			lua_pop(L, 1);
+		}
+		return 0;
+	}
+	static int SetVertexCoordsMulti( T* p, lua_State *L )
+	{
+		size_t start= 0;
+		int table_index= 1;
+		// Allow the user to just pass a table without specifying a starting point.
+		if(lua_type(L, 1) == LUA_TNUMBER)
+		{
+			table_index= 2;
+			start= IArg(1);
+		}
+		size_t end= start + lua_objlen(L, table_index);
+		if(start > p->GetNumVertices())
+		{
+			LOG->Warn("ActorMultiVertex:SetVertexCoordsMulti: Out of range starting point.");
+			return 0;
+		}
+		if(end > p->GetNumVertices())
+		{
+			LOG->Warn("ActorMultiVertex:SetVertexCoordsMulti: Too many coords passed.");
+			return 0;
+		}
+		for(size_t n= start; n < end; ++n)
+		{
+			lua_pushnumber(L, n-start+1);
+			lua_gettable(L, table_index);
+			int vindex= lua_gettop(L);
+			lua_rawgeti(L, vindex, 1);
+			float x= lua_tonumber(L, -1);
+			lua_rawgeti(L, vindex, 2);
+			float y= lua_tonumber(L, -1);
+			p->SetVertexCoords(n, x, y);
+			lua_pop(L, 3);
+		}
+		return 0;
+	}
+
 	static int SetPos( T* p, lua_State *L )				{ p->SetPos(FArg(1),FArg(2),FArg(3)); return 0; }
 	static int SetColor( T* p, lua_State *L )			{ RageColor c; c.FromStackCompat( L, 1 ); p->SetColor( c ); return 0; }
 	static int SetCoords( T* p, lua_State *L )			{ p->SetCoords(FArg(1),FArg(2)); return 0; }
@@ -283,6 +426,7 @@ public:
 		ADD_METHOD( ClearVertices );
 		ADD_METHOD( AddVertex );
 		ADD_METHOD( GetNumVertices );
+		ADD_METHOD( AddVertices );
 
 		ADD_METHOD( SetDrawMode );
 		ADD_METHOD( SetEffectMode );
@@ -292,6 +436,11 @@ public:
 		ADD_METHOD( SetVertexPos );
 		ADD_METHOD( SetVertexColor );
 		ADD_METHOD( SetVertexCoords );
+
+		// Set multiple vertices from a table
+		ADD_METHOD( SetVertexPosMulti );
+		ADD_METHOD( SetVertexColorMulti );
+		ADD_METHOD( SetVertexCoordsMulti );
 		
 		// Set the most recent vertex
 		ADD_METHOD( SetPos );
