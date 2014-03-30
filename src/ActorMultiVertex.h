@@ -41,7 +41,9 @@ public:
 
 	void UnloadTexture();
 	void ClearVertices();
+	void ReserveSpaceForMoreVertices(size_t n);
 	void AddVertex();
+	void AddVertex(float x, float y, float z);
 
 	void SetDrawMode( DrawMode dm )				{ m_DrawMode = dm; }
 	void SetEffectMode( EffectMode em)			{ m_EffectMode = em; }
