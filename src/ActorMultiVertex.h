@@ -44,6 +44,7 @@ public:
 	void ReserveSpaceForMoreVertices(size_t n);
 	void AddVertex();
 	void AddVertex(float x, float y, float z);
+	void AddVertex( lua_State *L, int Pos );
 
 	void SetDrawMode( DrawMode dm )				{ _DrawMode = dm; }
 	void SetEffectMode( EffectMode em)			{ _EffectMode = em; }

@@ -122,25 +122,72 @@ void ActorMultiVertex::ReserveSpaceForMoreVertices(size_t n)
 	_Vertices.reserve(_Vertices.size() + n);
 }
 
+void ActorMultiVertex::AddVertex( lua_State *L, int Pos )
+{
+	RageSpriteVertex tmp;
+
+	if( lua_type(L, Pos) != LUA_TTABLE )
+	{
+		return;
+	}
+
+	size_t NumTables = lua_objlen(L, Pos);
+	int TableIndex = lua_gettop(L);
+	LOG->Trace( "%i" , NumTables );
+	for( size_t i = 0; i < NumTables; ++i )
+	{
+		lua_pushnumber(L, i+1);
+		lua_gettable(L, TableIndex );
+		size_t NumParams = lua_objlen(L, -1);
+		int ParamIndex = lua_gettop(L);
+		if( NumParams == 2)
+		{
+			lua_rawgeti( L ,ParamIndex , 1);
+			tmp.t.x = lua_tonumber(L, -1);
+			lua_rawgeti( L ,ParamIndex , 2);
+			tmp.t.y = lua_tonumber(L, -1);
+		}
+		else if( NumParams == 3)
+		{
+			lua_rawgeti( L ,ParamIndex , 1);
+			tmp.p.x = lua_tonumber(L, -1);
+			lua_rawgeti( L ,ParamIndex , 2);
+			tmp.p.y = lua_tonumber(L, -1);
+			lua_rawgeti( L ,ParamIndex , 3);
+			tmp.p.z = lua_tonumber(L, -1);
+		}
+		else if( NumParams == 4)
+		{
+			RageColor c;
+			lua_rawgeti( L ,ParamIndex , 1);
+			c.r = lua_tonumber(L, -1);
+			lua_rawgeti( L ,ParamIndex , 2);
+			c.g = lua_tonumber(L, -1);
+			lua_rawgeti( L ,ParamIndex , 3);
+			c.b = lua_tonumber(L, -1);
+			lua_rawgeti( L ,ParamIndex , 4);
+			c.a = lua_tonumber(L, -1);
+			tmp.c = c;
+		}
+		else
+		{
+			LOG->Warn( "ActorMultiVertex::AddVertex: %i Parameters supplied. 2, 3, or 4 expected." , NumParams );
+		}
+		lua_pop( L, int(NumParams) + 1 );
+	}
+	_Vertices.push_back( tmp );
+}
+
 void ActorMultiVertex::AddVertex()
 {
 	_Vertices.push_back( RageSpriteVertex() );
-}
-
-void ActorMultiVertex::AddVertex(float x, float y, float z)
-{
-	RageSpriteVertex tmp;
-	tmp.p.x= x;
-	tmp.p.y= y;
-	tmp.p.z= z;
-	_Vertices.push_back( tmp );
 }
 
 void ActorMultiVertex::SetVertexPos( int index , float x , float y , float z )
 {
 	if( index >= (int) _Vertices.size() )
 	{
-		LOG->Warn( "Can't set Vertex Position, index %d too high.", index );
+		LOG->Warn( "ActorMultiVertex::SetVertexPos: index %d too out of range.", index );
 		return;
 	}
 	_Vertices[index].p = RageVector3( x, y, z );
@@ -150,7 +197,7 @@ void ActorMultiVertex::SetVertexColor( int index , RageColor c )
 {
 	if( index >= (int) _Vertices.size() )
 	{
-		LOG->Warn( "Can't set Vertex Color, index %d too high.", index );
+		LOG->Warn( "ActorMultiVertex::SetVertexColor: index %d too out of range.", index );
 		return;
 	}
 	_Vertices[index].c = c;
@@ -160,7 +207,7 @@ void ActorMultiVertex::SetVertexCoords( int index , float TexCoordX , float TexC
 {
 	if( index >= (int) _Vertices.size() )
 	{
-		LOG->Warn( "Can't set Vertex Texture Coordinates, index %d too high.", index );
+		LOG->Warn( "ActorMultiVertex::SetVertexCoords: index %d too out of range.", index );
 		return;
 	}
 	_Vertices[index].t = RageVector2( TexCoordX,  TexCoordY );
@@ -247,28 +294,34 @@ bool ActorMultiVertex::EarlyAbortDraw() const
 class LunaActorMultiVertex: public Luna<ActorMultiVertex>
 {
 public:
-	static int AddVertex( T* p, lua_State *L )			{ p->AddVertex( ); return 0; }
 	static int ClearVertices( T* p, lua_State *L )		{ p->ClearVertices( ); return 0; }
 	static int GetNumVertices( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetNumVertices() ); return 1; }
 
+	static int AddVertex( T* p, lua_State *L )
+	{ 
+		if( lua_type(L, 1) == LUA_TTABLE )
+		{
+			p->AddVertex( L, 1 );
+		}
+		else
+		{
+			p->AddVertex( ); 
+		}
+		return 0; 
+	}
+
 	static int AddVertices( T* p, lua_State *L )
 	{
-		size_t num_new_verts= lua_objlen(L, -1);
-		p->ReserveSpaceForMoreVertices(num_new_verts);
-		int vert_table_index= lua_gettop(L);
-		for(size_t n= 0; n < num_new_verts; ++n)
+		size_t NumVerts = lua_objlen(L, -1);
+		p->ReserveSpaceForMoreVertices( NumVerts );
+		int TableIndex = lua_gettop(L);
+		for(size_t n= 0; n < NumVerts; ++n)
 		{
+			LOG->Trace("DO STUFF %i" , n );
 			lua_pushnumber(L, n+1);
-			lua_gettable(L, vert_table_index);
-			int vindex= lua_gettop(L);
-			lua_rawgeti(L, vindex, 1);
-			float x= lua_tonumber(L, -1);
-			lua_rawgeti(L, vindex, 2);
-			float y= lua_tonumber(L, -1);
-			lua_rawgeti(L, vindex, 3);
-			float z= lua_tonumber(L, -1);
-			p->AddVertex(x, y, z);
-			lua_pop(L, 4);
+			lua_gettable(L, TableIndex);
+			p->AddVertex( L , -1 );
+			lua_pop(L, 1);
 		}
 		return 0;
 	}
