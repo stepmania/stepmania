@@ -772,7 +772,7 @@ void Actor::UpdateInternal( float fDeltaTime )
 		default: break;
 	}
 
-	UpdateTweening( fDeltaTime );
+	this->UpdateTweening( fDeltaTime );
 }
 
 RString Actor::GetLineage() const
@@ -829,7 +829,7 @@ void Actor::BeginTweening( float time, TweenType tt )
 	ASSERT( time >= 0 );
 
 	ITween *pTween = ITween::CreateFromType( tt );
-	BeginTweening( time, pTween );
+	this->BeginTweening( time, pTween );
 }
 
 void Actor::StopTweening()
