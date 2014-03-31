@@ -122,59 +122,9 @@ void ActorMultiVertex::ReserveSpaceForMoreVertices(size_t n)
 	_Vertices.reserve(_Vertices.size() + n);
 }
 
-void ActorMultiVertex::AddVertex( lua_State *L, int Pos )
+void ActorMultiVertex::AddVertex( RageSpriteVertex rsv )
 {
-	RageSpriteVertex tmp;
-
-	if( lua_type(L, Pos) != LUA_TTABLE )
-	{
-		return;
-	}
-
-	size_t NumTables = lua_objlen(L, Pos);
-	int TableIndex = lua_gettop(L);
-	for( size_t i = 0; i < NumTables; ++i )
-	{
-		lua_pushnumber(L, i+1);
-		lua_gettable(L, TableIndex );
-		size_t NumParams = lua_objlen(L, -1);
-		int ParamIndex = lua_gettop(L);
-		if( NumParams == 2)
-		{
-			lua_rawgeti( L ,ParamIndex , 1);
-			tmp.t.x = lua_tonumber(L, -1);
-			lua_rawgeti( L ,ParamIndex , 2);
-			tmp.t.y = lua_tonumber(L, -1);
-		}
-		else if( NumParams == 3)
-		{
-			lua_rawgeti( L ,ParamIndex , 1);
-			tmp.p.x = lua_tonumber(L, -1);
-			lua_rawgeti( L ,ParamIndex , 2);
-			tmp.p.y = lua_tonumber(L, -1);
-			lua_rawgeti( L ,ParamIndex , 3);
-			tmp.p.z = lua_tonumber(L, -1);
-		}
-		else if( NumParams == 4)
-		{
-			RageColor c;
-			lua_rawgeti( L ,ParamIndex , 1);
-			c.r = lua_tonumber(L, -1);
-			lua_rawgeti( L ,ParamIndex , 2);
-			c.g = lua_tonumber(L, -1);
-			lua_rawgeti( L ,ParamIndex , 3);
-			c.b = lua_tonumber(L, -1);
-			lua_rawgeti( L ,ParamIndex , 4);
-			c.a = lua_tonumber(L, -1);
-			tmp.c = c;
-		}
-		else
-		{
-			LOG->Warn( "ActorMultiVertex::AddVertex: %i Parameters supplied. 2, 3, or 4 expected." , NumParams );
-		}
-		lua_pop( L, int(NumParams) + 1 );
-	}
-	_Vertices.push_back( tmp );
+	_Vertices.push_back( rsv );
 }
 
 void ActorMultiVertex::AddVertex()
@@ -296,11 +246,66 @@ public:
 	static int ClearVertices( T* p, lua_State *L )		{ p->ClearVertices( ); return 0; }
 	static int GetNumVertices( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetNumVertices() ); return 1; }
 
+	static void AddVertex( T* p, lua_State *L, int Pos )
+	{
+		RageSpriteVertex tmp;
+
+		if( lua_type(L, Pos) != LUA_TTABLE )
+		{
+			return;
+		}
+
+		size_t NumTables = lua_objlen(L, Pos);
+		int TableIndex = lua_gettop(L);
+		for( size_t i = 0; i < NumTables; ++i )
+		{
+			lua_pushnumber(L, i+1);
+			lua_gettable(L, TableIndex );
+			size_t NumParams = lua_objlen(L, -1);
+			int ParamIndex = lua_gettop(L);
+			if( NumParams == 2)
+			{
+				lua_rawgeti( L ,ParamIndex , 1);
+				tmp.t.x = lua_tonumber(L, -1);
+				lua_rawgeti( L ,ParamIndex , 2);
+				tmp.t.y = lua_tonumber(L, -1);
+			}
+			else if( NumParams == 3)
+			{
+				lua_rawgeti( L ,ParamIndex , 1);
+				tmp.p.x = lua_tonumber(L, -1);
+				lua_rawgeti( L ,ParamIndex , 2);
+				tmp.p.y = lua_tonumber(L, -1);
+				lua_rawgeti( L ,ParamIndex , 3);
+				tmp.p.z = lua_tonumber(L, -1);
+			}
+			else if( NumParams == 4)
+			{
+				RageColor c;
+				lua_rawgeti( L ,ParamIndex , 1);
+				c.r = lua_tonumber(L, -1);
+				lua_rawgeti( L ,ParamIndex , 2);
+				c.g = lua_tonumber(L, -1);
+				lua_rawgeti( L ,ParamIndex , 3);
+				c.b = lua_tonumber(L, -1);
+				lua_rawgeti( L ,ParamIndex , 4);
+				c.a = lua_tonumber(L, -1);
+				tmp.c = c;
+			}
+			else
+			{
+				LOG->Warn( "ActorMultiVertex::AddVertex: %i Parameters supplied. 2, 3, or 4 expected." , NumParams );
+			}
+			lua_pop( L, int(NumParams) + 1 );
+		}
+		p->AddVertex( tmp );
+	}
+
 	static int AddVertex( T* p, lua_State *L )
 	{ 
 		if( lua_type(L, 1) == LUA_TTABLE )
 		{
-			p->AddVertex( L, 1 );
+			AddVertex( p, L, 1 );
 		}
 		else
 		{
@@ -318,7 +323,7 @@ public:
 		{
 			lua_pushnumber(L, n+1);
 			lua_gettable(L, TableIndex);
-			p->AddVertex( L , -1 );
+			AddVertex( p, L , -1 );
 			lua_pop(L, 1);
 		}
 		return 0;
