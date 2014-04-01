@@ -52,11 +52,12 @@ ActorMultiVertex::ActorMultiVertex( const ActorMultiVertex &cpy ):
 	Actor( cpy )
 {
 #define CPY(a) a = cpy.a
-	CPY( _Vertices );
+	CPY( AMV_Tweens );
+	CPY( AMV_current );
+	CPY( AMV_start );
 	CPY( _DrawMode );
 	CPY( _EffectMode );
 	CPY( _TextureMode );
-	CPY( _LineWidth );
 #undef CPY
 
 	if( cpy._Texture != NULL )
@@ -112,54 +113,76 @@ void ActorMultiVertex::UnloadTexture()
 
 void ActorMultiVertex::ClearVertices()
 {
-	_Vertices.clear();
+	for( size_t i = 0; i < AMV_Tweens.size(); ++i)
+	{
+		AMV_Tweens[i].vertices.clear();
+	}
+	AMV_current.vertices.clear();
+	AMV_start.vertices.clear();
 }
 
 void ActorMultiVertex::ReserveSpaceForMoreVertices(size_t n)
 {
 	// Repeatedly adding to a vector is more efficient when you know ahead how
 	// many elements are going to be added and reserve space for them.
-	_Vertices.reserve(_Vertices.size() + n);
-}
-
-void ActorMultiVertex::AddVertex( RageSpriteVertex rsv )
-{
-	_Vertices.push_back( rsv );
+	for( size_t i = 0; i < AMV_Tweens.size(); ++i)
+	{
+		AMV_Tweens[i].vertices.reserve( AMV_current.vertices.size() + n );
+	}
+	AMV_current.vertices.reserve( AMV_current.vertices.size() + n );
+	AMV_start.vertices.reserve( AMV_current.vertices.size() + n );
 }
 
 void ActorMultiVertex::AddVertex()
 {
-	_Vertices.push_back( RageSpriteVertex() );
+	for( size_t i = 0; i < AMV_Tweens.size(); ++i)
+	{
+		AMV_Tweens[i].vertices.push_back( RageSpriteVertex() );
+	}
+	AMV_current.vertices.push_back( RageSpriteVertex() );
+	AMV_start.vertices.push_back( RageSpriteVertex() );
+}
+
+void ActorMultiVertex::AddVertices( int Add )
+{
+	int size = AMV_current.vertices.size();
+	size += Add;
+	for( size_t i = 0; i < AMV_Tweens.size(); ++i)
+	{
+		AMV_Tweens[i].vertices.resize( size );
+	}
+	AMV_current.vertices.resize( size );
+	AMV_start.vertices.resize( size );
 }
 
 void ActorMultiVertex::SetVertexPos( int index , float x , float y , float z )
 {
-	if( index >= (int) _Vertices.size() )
+	if( index >= (int) AMV_DestTweenState().vertices.size() )
 	{
 		LOG->Warn( "ActorMultiVertex::SetVertexPos: index %d too out of range.", index );
 		return;
 	}
-	_Vertices[index].p = RageVector3( x, y, z );
+	AMV_DestTweenState().vertices[index].p = RageVector3( x, y, z );
 }
 
 void ActorMultiVertex::SetVertexColor( int index , RageColor c )
 {
-	if( index >= (int) _Vertices.size() )
+	if( index >= (int) AMV_DestTweenState().vertices.size() )
 	{
 		LOG->Warn( "ActorMultiVertex::SetVertexColor: index %d too out of range.", index );
 		return;
 	}
-	_Vertices[index].c = c;
+	AMV_DestTweenState().vertices[index].c = c;
 }
 
 void ActorMultiVertex::SetVertexCoords( int index , float TexCoordX , float TexCoordY )
 {
-	if( index >= (int) _Vertices.size() )
+	if( index >= (int) AMV_DestTweenState().vertices.size() )
 	{
 		LOG->Warn( "ActorMultiVertex::SetVertexCoords: index %d too out of range.", index );
 		return;
 	}
-	_Vertices[index].t = RageVector2( TexCoordX,  TexCoordY );
+	AMV_DestTweenState().vertices[index].t = RageVector2( TexCoordX,  TexCoordY );
 }
 
 void ActorMultiVertex::DrawPrimitives()
@@ -173,7 +196,7 @@ void ActorMultiVertex::DrawPrimitives()
 	DISPLAY->SetEffectMode( _EffectMode );
 	DISPLAY->SetTextureMode( TextureUnit_1, _TextureMode );
 
-	int NumToDraw = _Vertices.size();
+	int NumToDraw = AMV_current.vertices.size();
 
 	switch( _DrawMode )
 	{
@@ -181,7 +204,7 @@ void ActorMultiVertex::DrawPrimitives()
 		{
 			NumToDraw -= NumToDraw%4;
 			if( NumToDraw >= 4 )
-				DISPLAY->DrawQuads( &_Vertices[0] , NumToDraw );
+				DISPLAY->DrawQuads( &AMV_current.vertices[0] , NumToDraw );
 			break;
 		}
 		case DrawMode_QuadStrip:
@@ -189,32 +212,32 @@ void ActorMultiVertex::DrawPrimitives()
 			NumToDraw -= NumToDraw%2;
 
 			if( NumToDraw >= 4 )
-				DISPLAY->DrawQuadStrip( &_Vertices[0] , NumToDraw );
+				DISPLAY->DrawQuadStrip( &AMV_current.vertices[0] , NumToDraw );
 			break;
 		}
 		case DrawMode_Fan:
 		{
 			if( NumToDraw >= 3 )
-				DISPLAY->DrawFan( &_Vertices[0] , NumToDraw );
+				DISPLAY->DrawFan( &AMV_current.vertices[0] , NumToDraw );
 			break;
 		}
 		case DrawMode_Strip:
 		{
 			if( NumToDraw >= 3 )
-				DISPLAY->DrawStrip( &_Vertices[0] , NumToDraw );
+				DISPLAY->DrawStrip( &AMV_current.vertices[0] , NumToDraw );
 			break;
 		}
 		case DrawMode_Triangles:
 		{
 			NumToDraw -= NumToDraw%3;
 			if( NumToDraw >= 3 )
-					DISPLAY->DrawTriangles( &_Vertices[0] , NumToDraw );
+					DISPLAY->DrawTriangles( &AMV_current.vertices[0] , NumToDraw );
 			break;
 		}
 		case DrawMode_LineStrip:
 		{
 			if( NumToDraw >= 2 )
-				DISPLAY->DrawLineStrip( &_Vertices[0] , NumToDraw , _LineWidth );
+				DISPLAY->DrawLineStrip( &AMV_current.vertices[0] , NumToDraw , AMV_current.line_width );
 			break;
 		}
 		case DrawMode_SymmetricQuadStrip:
@@ -222,7 +245,7 @@ void ActorMultiVertex::DrawPrimitives()
 			NumToDraw -= NumToDraw%3;
 
 			if( NumToDraw >= 6 )
-				DISPLAY->DrawSymmetricQuadStrip( &_Vertices[0] , NumToDraw );
+				DISPLAY->DrawSymmetricQuadStrip( &AMV_current.vertices[0] , NumToDraw );
 			break;
 
 		}
@@ -233,7 +256,79 @@ void ActorMultiVertex::DrawPrimitives()
 
 bool ActorMultiVertex::EarlyAbortDraw() const
 {
-	return _Vertices.empty();
+	return AMV_current.vertices.empty();
+}
+
+void ActorMultiVertex::UpdateTweening( float fDeltaTime )
+{
+	// Preserve time to send to Actor::UpdateTweening()
+	float Time = fDeltaTime;
+	// Walk through TweenStates without changing Actor's TweenInfo
+	size_t TweenIndex = 0;
+	float TimeIntoTween = 0;
+
+	while( AMV_Tweens.size() > TweenIndex && Time != 0 )
+	{
+		AMV_TweenState &TS = AMV_Tweens[TweenIndex];
+		TweenInfo  &TI = m_Tweens[TweenIndex]->info;
+
+		float TimeLeftInTween = TI.m_fTimeLeftInTween - TimeIntoTween;
+		bool Beginning = TimeLeftInTween == TI.m_fTweenTime;
+
+		float SecsToSubtract = min( TimeLeftInTween, Time );
+		TimeLeftInTween -= SecsToSubtract;
+
+		Time -= SecsToSubtract;
+
+		if( Beginning )			// we are just beginning this tween
+			AMV_start = AMV_current;	// set the start position
+
+		if( TimeLeftInTween == 0 )	// Current tween is over.  Stop.
+		{
+			AMV_current = TS;
+			// Move to the next TweenState
+			TweenIndex++;
+		}
+		else	// in the middle of tweening. Recalcute the current position.
+		{
+			const float PercentThroughTween = 1 - ( TimeLeftInTween / TI.m_fTweenTime );
+
+			// distort the percentage if appropriate
+			float PercentAlongPath = TI.m_pTween->Tween( PercentThroughTween );
+			AMV_TweenState::MakeWeightedAverage( AMV_current, AMV_start, TS, PercentAlongPath );
+		}
+
+	}
+	// Take out any TweenStates that have passed.
+	for( size_t i = 0; i < TweenIndex; ++i )
+	{
+		AMV_Tweens.erase( AMV_Tweens.begin() );
+	}
+	// update Actor
+	Actor::UpdateTweening( fDeltaTime );
+}
+
+void ActorMultiVertex::BeginTweening( float time, ITween *pTween )
+{
+	Actor::BeginTweening( time, pTween );
+
+	if( AMV_Tweens.size() >= 1 )		// if there was already a TS on the stack
+	{
+		AMV_Tweens.push_back( AMV_Tweens.back() );
+	}
+	else
+	{
+		AMV_Tweens.push_back( AMV_current );
+	}
+}
+
+void ActorMultiVertex::AMV_TweenState::MakeWeightedAverage(AMV_TweenState& average_out, const AMV_TweenState& ts1, const AMV_TweenState& ts2, float percent_between)
+{
+	average_out.line_width= lerp(percent_between, ts1.line_width, ts2.line_width);
+	for(size_t v= 0; v < average_out.vertices.size(); ++v)
+	{
+		WeightedAvergeOfRSVs(average_out.vertices[v], ts1.vertices[v], ts2.vertices[v], percent_between);
+	}
 }
 
 // lua start
@@ -246,76 +341,84 @@ public:
 	static int ClearVertices( T* p, lua_State *L )		{ p->ClearVertices( ); return 0; }
 	static int GetNumVertices( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetNumVertices() ); return 1; }
 
-	static void AddVertex( T* p, lua_State *L, int Pos )
+	static void SetVertexFromStack(T* p, lua_State* L, size_t VertexIndex, int DataStackIndex)
 	{
-		RageSpriteVertex tmp;
-
-		if( lua_type(L, Pos) != LUA_TTABLE )
+		if(lua_type(L, DataStackIndex) != LUA_TTABLE)
 		{
+			LOG->Warn("ActorMultiVertex::SetVertex: non-table parameter supplied.  table of tables of vertex data expected.");
 			return;
 		}
-
-		size_t NumTables = lua_objlen(L, Pos);
-		int TableIndex = lua_gettop(L);
-		for( size_t i = 0; i < NumTables; ++i )
+		size_t NumDataParts = lua_objlen(L, DataStackIndex);
+		for(size_t i = 0; i < NumDataParts; ++i)
 		{
 			lua_pushnumber(L, i+1);
-			lua_gettable(L, TableIndex );
-			size_t NumParams = lua_objlen(L, -1);
-			int ParamIndex = lua_gettop(L);
-			if( NumParams == 2)
+			lua_gettable(L, DataStackIndex);
+			int DataPieceIndex = lua_gettop(L);
+			size_t DataPieceElements = lua_objlen(L, DataPieceIndex);
+			if(lua_type(L, DataPieceIndex) != LUA_TTABLE)
 			{
-				lua_rawgeti( L ,ParamIndex , 1);
-				tmp.t.x = lua_tonumber(L, -1);
-				lua_rawgeti( L ,ParamIndex , 2);
-				tmp.t.y = lua_tonumber(L, -1);
+				LOG->Warn( "ActorMultiVertex::SetVertex: non-table parameter %d supplied inside table of parameters, table expected.", (int)i );
+				return;
 			}
-			else if( NumParams == 3)
+			int pushes = 1;
+			if(DataPieceElements == 2)
 			{
-				lua_rawgeti( L ,ParamIndex , 1);
-				tmp.p.x = lua_tonumber(L, -1);
-				lua_rawgeti( L ,ParamIndex , 2);
-				tmp.p.y = lua_tonumber(L, -1);
-				lua_rawgeti( L ,ParamIndex , 3);
-				tmp.p.z = lua_tonumber(L, -1);
+				pushes += 2;
+				lua_rawgeti(L, DataPieceIndex, 1);
+				float x= FArg(-1);
+				lua_rawgeti(L, DataPieceIndex, 2);
+				float y= FArg(-1);
+				p->SetVertexCoords(VertexIndex, x, y);
 			}
-			else if( NumParams == 4)
+			else if(DataPieceElements == 3)
 			{
+				pushes += 3;
+				lua_rawgeti(L, DataPieceIndex, 1);
+				float x= FArg(-1);
+				lua_rawgeti(L, DataPieceIndex, 2);
+				float y= FArg(-1);
+				lua_rawgeti(L, DataPieceIndex, 3);
+				float z= FArg(-1);
+				p->SetVertexPos(VertexIndex, x, y, z);
+			}
+			else if(DataPieceElements == 4)
+			{
+				// RageColor pops the things it pushes onto the stack, so we don't need to.
 				RageColor c;
-				lua_rawgeti( L ,ParamIndex , 1);
-				c.r = lua_tonumber(L, -1);
-				lua_rawgeti( L ,ParamIndex , 2);
-				c.g = lua_tonumber(L, -1);
-				lua_rawgeti( L ,ParamIndex , 3);
-				c.b = lua_tonumber(L, -1);
-				lua_rawgeti( L ,ParamIndex , 4);
-				c.a = lua_tonumber(L, -1);
-				tmp.c = c;
+				// Does not use FromStackCompat because we are not compatible with passing a color in non-table form.
+				c.FromStack(L, DataPieceIndex);
+				p->SetVertexColor(VertexIndex, c);
 			}
 			else
 			{
-				LOG->Warn( "ActorMultiVertex::AddVertex: %i Parameters supplied. 2, 3, or 4 expected." , NumParams );
+				LOG->Warn( "ActorMultiVertex::SetVertex: Parameter %d has %i elements supplied. 2, 3, or 4 expected.", (int)i, (int)DataPieceElements );
+
 			}
-			lua_pop( L, int(NumParams) + 1 );
+			// Avoid a stack underflow by only popping the amount we pushed.
+			lua_pop(L, pushes);
 		}
-		p->AddVertex( tmp );
+		return;
 	}
 
 	static int AddVertex( T* p, lua_State *L )
 	{ 
-		if( lua_type(L, 1) == LUA_TTABLE )
+		p->AddVertex();
+		if( lua_type(L, lua_gettop(L)) == LUA_TTABLE )
 		{
-			AddVertex( p, L, 1 );
-		}
-		else
-		{
-			p->AddVertex( ); 
+			size_t Index = p->GetNumVertices()-1;
+			SetVertexFromStack( p, L, Index, lua_gettop(L) );
 		}
 		return 0; 
 	}
 
 	static int AddVertices( T* p, lua_State *L )
 	{
+		if(lua_type(L, 1) == LUA_TNUMBER)
+		{
+			p->AddVertices( IArg(1) );
+			return 0;
+		}
+
 		size_t NumVerts = lua_objlen(L, -1);
 		p->ReserveSpaceForMoreVertices( NumVerts );
 		int TableIndex = lua_gettop(L);
@@ -323,7 +426,48 @@ public:
 		{
 			lua_pushnumber(L, n+1);
 			lua_gettable(L, TableIndex);
-			AddVertex( p, L , -1 );
+			AddVertex( p, L );
+			lua_pop(L, 1);
+		}
+		return 0;
+	}
+
+	static int SetVertex(T* p, lua_State* L)
+	{
+		size_t Index = p->GetNumVertices()-1;
+		if(lua_type(L, 1) == LUA_TNUMBER)
+		{
+			Index = IArg(1);
+		}
+		SetVertexFromStack(p, L, Index, lua_gettop(L));
+		return 0;
+	}
+	
+	static int SetVertices(T* p, lua_State* L)
+	{
+		size_t First = 0;
+		int StackIndex = lua_gettop(L);
+		// Allow the user to just pass a table without specifying a starting point.
+		if(lua_type(L, 1) == LUA_TNUMBER)
+		{
+			First = IArg(1);
+		}
+		size_t Last = First + lua_objlen(L, StackIndex );
+		if( First > p->GetNumVertices())
+		{
+			LOG->Warn("ActorMultiVertex:SetVertices: Out of range starting point.");
+			return 0;
+		}
+		if( Last > p->GetNumVertices())
+		{
+			LOG->Warn("ActorMultiVertex:SetVertices: Too many vertices passed.");
+			return 0;
+		}
+		for(size_t n = First; n < Last; ++n)
+		{
+			lua_pushnumber(L, n-First+1);
+			lua_gettable(L, StackIndex);
+			SetVertexFromStack(p, L, n, lua_gettop(L));
 			lua_pop(L, 1);
 		}
 		return 0;
@@ -350,119 +494,6 @@ public:
 		return 0;
 	}
 
-	static int SetVertexPos( T* p, lua_State *L )		{ p->SetVertexPos(IArg(1),FArg(2),FArg(3),FArg(4)); return 0; }
-	static int SetVertexColor( T* p, lua_State *L )		{ RageColor c; c.FromStackCompat( L, 2 ); p->SetVertexColor( IArg(1), c ); return 0; }
-	static int SetVertexCoords( T* p, lua_State *L )	{ p->SetVertexCoords(IArg(1),FArg(2),FArg(3)); return 0; }
-
-	static int SetVertexPosMulti( T* p, lua_State *L )
-	{
-		size_t start= 0;
-		int table_index= 1;
-		// Allow the user to just pass a table without specifying a starting point.
-		if(lua_type(L, 1) == LUA_TNUMBER)
-		{
-			table_index= 2;
-			start= IArg(1);
-		}
-		size_t end= start + lua_objlen(L, table_index);
-		if(start > p->GetNumVertices())
-		{
-			LOG->Warn("ActorMultiVertex:SetVertexPosMulti: Out of range starting point.");
-			return 0;
-		}
-		if(end > p->GetNumVertices())
-		{
-			LOG->Warn("ActorMultiVertex:SetVertexPosMulti: Too many positions passed.");
-			return 0;
-		}
-		for(size_t n= start; n < end; ++n)
-		{
-			lua_pushnumber(L, n-start+1);
-			lua_gettable(L, table_index);
-			int vindex= lua_gettop(L);
-			lua_rawgeti(L, vindex, 1);
-			float x= lua_tonumber(L, -1);
-			lua_rawgeti(L, vindex, 2);
-			float y= lua_tonumber(L, -1);
-			lua_rawgeti(L, vindex, 3);
-			float z= lua_tonumber(L, -1);
-			p->SetVertexPos(n, x, y, z);
-			lua_pop(L, 4);
-		}
-		return 0;
-	}
-	static int SetVertexColorMulti( T* p, lua_State *L )
-	{
-		size_t start= 0;
-		int table_index= 1;
-		// Allow the user to just pass a table without specifying a starting point.
-		if(lua_type(L, 1) == LUA_TNUMBER)
-		{
-			table_index= 2;
-			start= IArg(1);
-		}
-		size_t end= start + lua_objlen(L, table_index);
-		if(start > p->GetNumVertices())
-		{
-			LOG->Warn("ActorMultiVertex:SetVertexColorMulti: Out of range starting point.");
-			return 0;
-		}
-		if(end > p->GetNumVertices())
-		{
-			LOG->Warn("ActorMultiVertex:SetVertexColorMulti: Too many colors passed.");
-			return 0;
-		}
-		for(size_t n= start; n < end; ++n)
-		{
-			lua_pushnumber(L, n-start+1);
-			lua_gettable(L, table_index);
-			RageColor c;
-			c.FromStackCompat(L, -1);
-			p->SetVertexColor(n, c);
-			lua_pop(L, 1);
-		}
-		return 0;
-	}
-	static int SetVertexCoordsMulti( T* p, lua_State *L )
-	{
-		size_t start= 0;
-		int table_index= 1;
-		// Allow the user to just pass a table without specifying a starting point.
-		if(lua_type(L, 1) == LUA_TNUMBER)
-		{
-			table_index= 2;
-			start= IArg(1);
-		}
-		size_t end= start + lua_objlen(L, table_index);
-		if(start > p->GetNumVertices())
-		{
-			LOG->Warn("ActorMultiVertex:SetVertexCoordsMulti: Out of range starting point.");
-			return 0;
-		}
-		if(end > p->GetNumVertices())
-		{
-			LOG->Warn("ActorMultiVertex:SetVertexCoordsMulti: Too many coords passed.");
-			return 0;
-		}
-		for(size_t n= start; n < end; ++n)
-		{
-			lua_pushnumber(L, n-start+1);
-			lua_gettable(L, table_index);
-			int vindex= lua_gettop(L);
-			lua_rawgeti(L, vindex, 1);
-			float x= lua_tonumber(L, -1);
-			lua_rawgeti(L, vindex, 2);
-			float y= lua_tonumber(L, -1);
-			p->SetVertexCoords(n, x, y);
-			lua_pop(L, 3);
-		}
-		return 0;
-	}
-
-	static int SetPos( T* p, lua_State *L )				{ p->SetPos(FArg(1),FArg(2),FArg(3)); return 0; }
-	static int SetColor( T* p, lua_State *L )			{ RageColor c; c.FromStackCompat( L, 1 ); p->SetColor( c ); return 0; }
-	static int SetCoords( T* p, lua_State *L )			{ p->SetCoords(FArg(1),FArg(2)); return 0; }
-
 	static int LoadTexture( T* p, lua_State *L )
 	{
 		if( lua_isnil(L, 1) )
@@ -488,28 +519,18 @@ public:
 	LunaActorMultiVertex()
 	{
 		ADD_METHOD( ClearVertices );
-		ADD_METHOD( AddVertex );
 		ADD_METHOD( GetNumVertices );
+
+		ADD_METHOD( AddVertex );
 		ADD_METHOD( AddVertices );
 
+		ADD_METHOD( SetVertex );
+		ADD_METHOD( SetVertices );
+		
+		
 		ADD_METHOD( SetDrawMode );
 		ADD_METHOD( SetEffectMode );
 		ADD_METHOD( SetTextureMode );
-
-		// Set a specific vertex
-		ADD_METHOD( SetVertexPos );
-		ADD_METHOD( SetVertexColor );
-		ADD_METHOD( SetVertexCoords );
-
-		// Set multiple vertices from a table
-		ADD_METHOD( SetVertexPosMulti );
-		ADD_METHOD( SetVertexColorMulti );
-		ADD_METHOD( SetVertexCoordsMulti );
-		
-		// Set the most recent vertex
-		ADD_METHOD( SetPos );
-		ADD_METHOD( SetColor );
-		ADD_METHOD( SetCoords );
 		
 		// Copy from RageTexture
 		ADD_METHOD( SetTexture );
@@ -521,7 +542,7 @@ public:
 LUA_REGISTER_DERIVED_CLASS( ActorMultiVertex, Actor )
 
 /*
- * (c) 2014 Matthew Gardner
+ * (c) 2014 Matthew Gardner and Eric Reese
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

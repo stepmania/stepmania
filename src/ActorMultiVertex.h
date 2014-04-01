@@ -36,6 +36,9 @@ public:
 	virtual bool EarlyAbortDraw() const;
 	virtual void DrawPrimitives();
 
+	void UpdateTweening( float fDeltaTime );
+	void BeginTweening( float time, ITween *pInterp );
+
 	void SetTexture( RageTexture *Texture );
 	void LoadFromTexture( RageTextureID ID );
 
@@ -43,8 +46,7 @@ public:
 	void ClearVertices();
 	void ReserveSpaceForMoreVertices(size_t n);
 	void AddVertex();
-	void AddVertex(float x, float y, float z);
-	void AddVertex( RageSpriteVertex rsv );
+	void AddVertices( int Add );
 
 	void SetDrawMode( DrawMode dm )				{ _DrawMode = dm; }
 	void SetEffectMode( EffectMode em)			{ _EffectMode = em; }
@@ -54,29 +56,49 @@ public:
 	void SetVertexColor( int index , RageColor c );
 	void SetVertexCoords( int index , float TexCoordX , float TexCoordY );
 
-	// Set the last vertex without need to specify index.
-	void SetPos( float x , float y , float z ) 			{ SetVertexPos( _Vertices.size()-1 , x , y , z ); }
-	void SetColor( RageColor c )							{ SetVertexColor( _Vertices.size()-1 , c ); }
-	void SetCoords( float TexCoordX , float TexCoordY )	{ SetVertexCoords( _Vertices.size()-1 , TexCoordX , TexCoordY ); }
-
-	size_t GetNumVertices() { return _Vertices.size(); }
+	size_t GetNumVertices() { return AMV_current.vertices.size(); }
 	virtual void PushSelf( lua_State *L );
+
+	struct AMV_TweenState
+	{
+		AMV_TweenState(): line_width(1.0f) {}
+		static void MakeWeightedAverage(AMV_TweenState& average_out, const AMV_TweenState& ts1, const AMV_TweenState& ts2, float percent_between);
+		bool operator==(const AMV_TweenState& other) const;
+		bool operator!=(const AMV_TweenState& other) const { return !operator==(other); }
+
+		vector<RageSpriteVertex> vertices;
+		
+		// needed for DrawMode_LineStrip
+		float line_width;
+	};
+
+	AMV_TweenState& AMV_DestTweenState()
+	{
+		if(AMV_Tweens.empty())
+		{ return AMV_current; }
+		else
+		{ return AMV_Tweens.back(); }
+	}
+	const AMV_TweenState& AMV_DestTweenState() const { return const_cast<ActorMultiVertex*>(this)->AMV_DestTweenState(); }
 
 private:
 	RageTexture* _Texture;
+
 	vector<RageSpriteVertex> _Vertices;
+	vector<AMV_TweenState> AMV_Tweens;
+	AMV_TweenState AMV_current;
+	AMV_TweenState AMV_start;
 
 	DrawMode _DrawMode;
 	EffectMode _EffectMode;
 	TextureMode _TextureMode;
 
-	// needed for DrawMode_LineStrip
 	float _LineWidth;
 };
 
 /**
  * @file
- * @author Matthew Gardner (c) 2014
+ * @author Matthew Gardner and Eric Reese (c) 2014
  * @section LICENSE
  * All rights reserved.
  * 

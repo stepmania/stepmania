@@ -269,7 +269,7 @@ public:
 	bool IsFirstUpdate() const;
 	virtual void Update( float fDeltaTime );		// this can short circuit UpdateInternal
 	virtual void UpdateInternal( float fDeltaTime );	// override this
-	void UpdateTweening( float fDeltaTime );
+	virtual void UpdateTweening( float fDeltaTime );
 
 	/**
 	 * @brief Retrieve the Actor's name.
@@ -449,7 +449,7 @@ public:
 	void SetAux( float f )				{ DestTweenState().aux = f; }
 	float GetAux() const				{ return m_current.aux; }
 
-	void BeginTweening( float time, ITween *pInterp );
+	virtual void BeginTweening( float time, ITween *pInterp );
 	void BeginTweening( float time, TweenType tt = TWEEN_LINEAR );
 	void StopTweening();
 	void Sleep( float time );
