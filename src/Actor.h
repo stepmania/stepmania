@@ -451,7 +451,7 @@ public:
 
 	virtual void BeginTweening( float time, ITween *pInterp );
 	void BeginTweening( float time, TweenType tt = TWEEN_LINEAR );
-	void StopTweening();
+	virtual void StopTweening();
 	void Sleep( float time );
 	void QueueCommand( const RString& sCommandName );
 	void QueueMessage( const RString& sMessageName );

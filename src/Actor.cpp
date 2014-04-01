@@ -84,7 +84,7 @@ void Actor::SetBGMLight( int iLightNumber, float fCabinetLights )
 
 void Actor::InitState()
 {
-	StopTweening();
+	this->StopTweening();
 
 	m_pTempState = NULL;
 
@@ -797,7 +797,7 @@ void Actor::BeginTweening( float time, ITween *pTween )
 
 		LOG->Warn( "%s", sError.c_str() );
 		Dialog::OK( sError );
-		FinishTweening();
+		this->FinishTweening();
 	}
 
 	// add a new TweenState to the tail, and initialize it
@@ -843,7 +843,7 @@ void Actor::FinishTweening()
 {
 	if( !m_Tweens.empty() )
 		m_current = DestTweenState();
-	StopTweening();
+	this->StopTweening();
 }
 
 void Actor::HurryTweening( float factor )

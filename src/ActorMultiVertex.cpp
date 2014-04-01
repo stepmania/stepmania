@@ -322,6 +322,21 @@ void ActorMultiVertex::BeginTweening( float time, ITween *pTween )
 	}
 }
 
+void ActorMultiVertex::StopTweening()
+{
+	AMV_Tweens.clear();
+	Actor::StopTweening();
+}
+
+void ActorMultiVertex::FinishTweening()
+{
+	if( !AMV_Tweens.empty() )
+	{
+		AMV_current = AMV_DestTweenState();
+	}
+	Actor::FinishTweening();
+}
+
 void ActorMultiVertex::AMV_TweenState::MakeWeightedAverage(AMV_TweenState& average_out, const AMV_TweenState& ts1, const AMV_TweenState& ts2, float percent_between)
 {
 	average_out.line_width= lerp(percent_between, ts1.line_width, ts2.line_width);

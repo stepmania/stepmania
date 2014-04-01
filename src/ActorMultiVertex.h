@@ -39,6 +39,9 @@ public:
 	void UpdateTweening( float fDeltaTime );
 	void BeginTweening( float time, ITween *pInterp );
 
+	void StopTweening();
+	void FinishTweening();
+	
 	void SetTexture( RageTexture *Texture );
 	void LoadFromTexture( RageTextureID ID );
 
