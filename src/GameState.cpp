@@ -2545,6 +2545,28 @@ public:
 		return 1;
 	}
 
+    static int LoadProfiles( T* p, lua_State *L )
+    {
+        bool LoadEdits = true;
+        if(lua_isboolean(L, 1))
+        {
+            LoadEdits = BArg(1);
+        }
+        p->LoadProfiles( LoadEdits );
+        SCREENMAN->ZeroNextUpdate();
+        return 0;
+    }
+    
+    static int SaveProfiles( T* p, lua_State *L )
+    {
+        p->SavePlayerProfiles();
+        SCREENMAN->ZeroNextUpdate();
+        return 0;
+    }
+
+	DEFINE_METHOD( HaveProfileToLoad, HaveProfileToLoad() )
+	DEFINE_METHOD( HaveProfileToSave, HaveProfileToSave() )
+
 	LunaGameState()
 	{
 		ADD_METHOD( IsPlayerEnabled );
@@ -2655,6 +2677,10 @@ public:
 		ADD_METHOD( ResetPlayerOptions );
 		ADD_METHOD( RefreshNoteSkinData );
 		ADD_METHOD( Dopefish );
+		ADD_METHOD( LoadProfiles );
+		ADD_METHOD( SaveProfiles );
+		ADD_METHOD( HaveProfileToLoad );
+		ADD_METHOD( HaveProfileToSave );
 	}
 };
 
