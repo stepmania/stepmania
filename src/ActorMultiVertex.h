@@ -47,7 +47,9 @@ public:
 
 	void UnloadTexture();
 	void ClearVertices();
-	void ReserveSpaceForMoreVertices(size_t n);
+	void RemoveVertices( size_t n );
+	void ReserveSpaceForMoreVertices( size_t n );
+
 	void AddVertex();
 	void AddVertices( int Add );
 

@@ -35,7 +35,6 @@ ActorMultiVertex::ActorMultiVertex()
 	// Use blank texture by default.
 	RageTextureID ID = TEXTUREMAN->GetDefaultTextureID();
 	_Texture = TEXTUREMAN->LoadTexture( ID );
-	ClearVertices();
 
 	_DrawMode = DrawMode_Invalid;
 	_EffectMode = EffectMode_Normal;
@@ -44,7 +43,6 @@ ActorMultiVertex::ActorMultiVertex()
 
 ActorMultiVertex::~ActorMultiVertex()
 {
-	ClearVertices();
 	UnloadTexture();
 }
 
@@ -61,10 +59,13 @@ ActorMultiVertex::ActorMultiVertex( const ActorMultiVertex &cpy ):
 #undef CPY
 
 	if( cpy._Texture != NULL )
+	{
 		_Texture = TEXTUREMAN->CopyTexture( cpy._Texture );
+	}
 	else
+	{
 		_Texture = NULL;
-
+	}
 }
 
 void ActorMultiVertex::LoadFromNode( const XNode* Node )
@@ -72,11 +73,14 @@ void ActorMultiVertex::LoadFromNode( const XNode* Node )
 	RString path;
 	Node->GetAttrValue( "Texture", path );
 	if( !path.empty() && !TEXTUREMAN->IsTextureRegistered( RageTextureID(path) ) )
+	{
 		ActorUtil::GetAttrPath( Node, "Texture", path );
-
+	}
 	if( !path.empty() )
+	{
 		LoadFromTexture( path );
-
+	}
+	
 	Actor::LoadFromNode( Node );
 }
 
@@ -94,10 +98,13 @@ void ActorMultiVertex::LoadFromTexture( RageTextureID ID )
 
 	RageTexture *Texture = NULL;
 	if( _Texture && _Texture->GetID() == ID )
+	{
 		return;
+	}
 	else
+	{
 		Texture = TEXTUREMAN->LoadTexture( ID );
-
+	}
 	SetTexture( Texture );
 		
 }
@@ -111,77 +118,54 @@ void ActorMultiVertex::UnloadTexture()
 	}
 }
 
-void ActorMultiVertex::ClearVertices()
-{
-	for( size_t i = 0; i < AMV_Tweens.size(); ++i)
+void ActorMultiVertex::ClearVertices()	
+{ 
+	AMV_DestTweenState().vertices.clear(); 
+}
+
+void ActorMultiVertex::RemoveVertices( size_t n )	
+{ 
+	if( n < AMV_DestTweenState().vertices.size() )
 	{
-		AMV_Tweens[i].vertices.clear();
+		AMV_DestTweenState().vertices.clear(); 
 	}
-	AMV_current.vertices.clear();
-	AMV_start.vertices.clear();
+	else
+	{
+		AMV_DestTweenState().vertices.resize( AMV_DestTweenState().vertices.size() - n ); 
+	}
 }
 
 void ActorMultiVertex::ReserveSpaceForMoreVertices(size_t n)
 {
 	// Repeatedly adding to a vector is more efficient when you know ahead how
 	// many elements are going to be added and reserve space for them.
-	for( size_t i = 0; i < AMV_Tweens.size(); ++i)
-	{
-		AMV_Tweens[i].vertices.reserve( AMV_current.vertices.size() + n );
-	}
-	AMV_current.vertices.reserve( AMV_current.vertices.size() + n );
-	AMV_start.vertices.reserve( AMV_current.vertices.size() + n );
+	AMV_DestTweenState().vertices.reserve( AMV_DestTweenState().vertices.size() + n );
 }
 
 void ActorMultiVertex::AddVertex()
 {
-	for( size_t i = 0; i < AMV_Tweens.size(); ++i)
-	{
-		AMV_Tweens[i].vertices.push_back( RageSpriteVertex() );
-	}
-	AMV_current.vertices.push_back( RageSpriteVertex() );
-	AMV_start.vertices.push_back( RageSpriteVertex() );
+	AMV_DestTweenState().vertices.push_back( RageSpriteVertex() );
 }
 
 void ActorMultiVertex::AddVertices( int Add )
 {
-	int size = AMV_current.vertices.size();
+	int size = AMV_DestTweenState().vertices.size();
 	size += Add;
-	for( size_t i = 0; i < AMV_Tweens.size(); ++i)
-	{
-		AMV_Tweens[i].vertices.resize( size );
-	}
-	AMV_current.vertices.resize( size );
-	AMV_start.vertices.resize( size );
+	AMV_DestTweenState().vertices.resize( size );
 }
 
 void ActorMultiVertex::SetVertexPos( int index , float x , float y , float z )
 {
-	if( index >= (int) AMV_DestTweenState().vertices.size() )
-	{
-		LOG->Warn( "ActorMultiVertex::SetVertexPos: index %d too out of range.", index );
-		return;
-	}
 	AMV_DestTweenState().vertices[index].p = RageVector3( x, y, z );
 }
 
 void ActorMultiVertex::SetVertexColor( int index , RageColor c )
 {
-	if( index >= (int) AMV_DestTweenState().vertices.size() )
-	{
-		LOG->Warn( "ActorMultiVertex::SetVertexColor: index %d too out of range.", index );
-		return;
-	}
 	AMV_DestTweenState().vertices[index].c = c;
 }
 
 void ActorMultiVertex::SetVertexCoords( int index , float TexCoordX , float TexCoordY )
 {
-	if( index >= (int) AMV_DestTweenState().vertices.size() )
-	{
-		LOG->Warn( "ActorMultiVertex::SetVertexCoords: index %d too out of range.", index );
-		return;
-	}
 	AMV_DestTweenState().vertices[index].t = RageVector2( TexCoordX,  TexCoordY );
 }
 
@@ -204,50 +188,61 @@ void ActorMultiVertex::DrawPrimitives()
 		{
 			NumToDraw -= NumToDraw%4;
 			if( NumToDraw >= 4 )
+			{
 				DISPLAY->DrawQuads( &AMV_current.vertices[0] , NumToDraw );
+			}
 			break;
 		}
 		case DrawMode_QuadStrip:
 		{
 			NumToDraw -= NumToDraw%2;
-
 			if( NumToDraw >= 4 )
+			{
 				DISPLAY->DrawQuadStrip( &AMV_current.vertices[0] , NumToDraw );
+			}
 			break;
 		}
 		case DrawMode_Fan:
 		{
 			if( NumToDraw >= 3 )
+			{
 				DISPLAY->DrawFan( &AMV_current.vertices[0] , NumToDraw );
+			}
 			break;
 		}
 		case DrawMode_Strip:
 		{
 			if( NumToDraw >= 3 )
+			{
 				DISPLAY->DrawStrip( &AMV_current.vertices[0] , NumToDraw );
+			}
 			break;
 		}
 		case DrawMode_Triangles:
 		{
 			NumToDraw -= NumToDraw%3;
 			if( NumToDraw >= 3 )
+			{
 					DISPLAY->DrawTriangles( &AMV_current.vertices[0] , NumToDraw );
+			}
 			break;
 		}
 		case DrawMode_LineStrip:
 		{
 			if( NumToDraw >= 2 )
+			{
 				DISPLAY->DrawLineStrip( &AMV_current.vertices[0] , NumToDraw , AMV_current.line_width );
+			}
 			break;
 		}
 		case DrawMode_SymmetricQuadStrip:
 		{
 			NumToDraw -= NumToDraw%3;
-
 			if( NumToDraw >= 6 )
+			{
 				DISPLAY->DrawSymmetricQuadStrip( &AMV_current.vertices[0] , NumToDraw );
+			}
 			break;
-
 		}
 	}
 
@@ -286,7 +281,7 @@ void ActorMultiVertex::UpdateTweening( float fDeltaTime )
 		if( TimeLeftInTween == 0 )	// Current tween is over.  Stop.
 		{
 			AMV_current = TS;
-			// Move to the next TweenState
+			TimeIntoTween = 0;
 			TweenIndex++;
 		}
 		else	// in the middle of tweening. Recalcute the current position.
@@ -297,7 +292,6 @@ void ActorMultiVertex::UpdateTweening( float fDeltaTime )
 			float PercentAlongPath = TI.m_pTween->Tween( PercentThroughTween );
 			AMV_TweenState::MakeWeightedAverage( AMV_current, AMV_start, TS, PercentAlongPath );
 		}
-
 	}
 	// Take out any TweenStates that have passed.
 	for( size_t i = 0; i < TweenIndex; ++i )
@@ -340,7 +334,8 @@ void ActorMultiVertex::FinishTweening()
 void ActorMultiVertex::AMV_TweenState::MakeWeightedAverage(AMV_TweenState& average_out, const AMV_TweenState& ts1, const AMV_TweenState& ts2, float percent_between)
 {
 	average_out.line_width= lerp(percent_between, ts1.line_width, ts2.line_width);
-	for(size_t v= 0; v < average_out.vertices.size(); ++v)
+	size_t VerticesToTween = min( ts1.vertices.size(), ts2.vertices.size() );
+	for(size_t v= 0; v < VerticesToTween; ++v)
 	{
 		WeightedAvergeOfRSVs(average_out.vertices[v], ts1.vertices[v], ts2.vertices[v], percent_between);
 	}
@@ -354,6 +349,7 @@ class LunaActorMultiVertex: public Luna<ActorMultiVertex>
 {
 public:
 	static int ClearVertices( T* p, lua_State *L )		{ p->ClearVertices( ); return 0; }
+	static int RemoveVertices( T* p, lua_State *L )		{ p->RemoveVertices( IArg(1) ); return 0; }
 	static int GetNumVertices( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetNumVertices() ); return 1; }
 
 	static void SetVertexFromStack(T* p, lua_State* L, size_t VertexIndex, int DataStackIndex)
@@ -454,10 +450,15 @@ public:
 		{
 			Index = IArg(1);
 		}
+		if( Index >= p->GetNumVertices() )
+		{
+			LOG->Warn( "ActorMultiVertex::SetVertex: index %d too out of range.", Index );
+			return 0;
+		}
 		SetVertexFromStack(p, L, Index, lua_gettop(L));
 		return 0;
 	}
-	
+
 	static int SetVertices(T* p, lua_State* L)
 	{
 		size_t First = 0;
