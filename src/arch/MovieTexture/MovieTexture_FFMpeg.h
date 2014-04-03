@@ -11,8 +11,10 @@ namespace avcodec
 	extern "C"
 	{
 		#include <libavformat/avformat.h>
+		#include <libavcodec/avcodec.h>
 		#include <libswscale/swscale.h>
 		#include <libavutil/pixdesc.h>
+		#include <libavutil/frame.h>
 	}
 };
 
@@ -63,7 +65,7 @@ private:
 	int DecodePacket( float fTargetTime );
 
 	avcodec::AVStream *m_pStream;
-	avcodec::AVFrame m_Frame;
+	avcodec::AVFrame *m_Frame;
 	avcodec::PixelFormat m_AVTexfmt; /* PixelFormat of output surface */
 	avcodec::SwsContext *m_swsctx;
 
