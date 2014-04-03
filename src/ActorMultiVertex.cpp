@@ -154,6 +154,11 @@ void ActorMultiVertex::AddVertices( int Add )
 	AMV_DestTweenState().vertices.resize( size );
 }
 
+void ActorMultiVertex::SetLineWidth( float width )
+{
+	AMV_DestTweenState().line_width= width;
+}
+
 void ActorMultiVertex::SetVertexPos( int index , float x , float y , float z )
 {
 	AMV_DestTweenState().vertices[index].p = RageVector3( x, y, z );
@@ -335,6 +340,7 @@ void ActorMultiVertex::AMV_TweenState::MakeWeightedAverage(AMV_TweenState& avera
 {
 	average_out.line_width= lerp(percent_between, ts1.line_width, ts2.line_width);
 	size_t VerticesToTween = min( ts1.vertices.size(), ts2.vertices.size() );
+	average_out.vertices.resize(VerticesToTween);
 	for(size_t v= 0; v < VerticesToTween; ++v)
 	{
 		WeightedAvergeOfRSVs(average_out.vertices[v], ts1.vertices[v], ts2.vertices[v], percent_between);
@@ -510,6 +516,12 @@ public:
 		return 0;
 	}
 
+	static int SetLineWidth( T* p, lua_State *L )
+	{
+		p->SetLineWidth(FArg(1));
+		return 0;
+	}
+
 	static int LoadTexture( T* p, lua_State *L )
 	{
 		if( lua_isnil(L, 1) )
@@ -547,6 +559,7 @@ public:
 		ADD_METHOD( SetDrawMode );
 		ADD_METHOD( SetEffectMode );
 		ADD_METHOD( SetTextureMode );
+		ADD_METHOD( SetLineWidth );
 		
 		// Copy from RageTexture
 		ADD_METHOD( SetTexture );
