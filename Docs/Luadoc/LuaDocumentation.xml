@@ -2289,6 +2289,12 @@ save yourself some time, copy this for undocumented things:
 	<Function name='HasEarnedExtraStage' return='bool' arguments=''>
 		Returns <code>true</code> if an extra stage was earned.
 	</Function>
+	<Function name='HaveProfileToLoad' return='bool' arguments=''>
+		Returns <code>true</code> if either player does not have a profile loaded, and there is a loadable profile.
+	</Function>
+	<Function name='HaveProfileToSave' return='bool' arguments=''>
+		Returns <code>true</code> if either player has a profile loaded.
+	</Function>
 	<Function name='InStepEditor' return='bool' arguments=''>
 		Returns <code>true</code> if we are specifically in the Step Editor's
 		editing portion. If in recording or playing mode, this will return
@@ -2342,6 +2348,9 @@ save yourself some time, copy this for undocumented things:
 	<Function name='JoinInput' return='bool' arguments='PlayerNumber pn'>
 		Similar to JoinPlayer, but checks whether the player is allowed to join and returns false if the player is not allowed to join.  Also deducts coins for joining.  A player can't join if PlayersCanJoin() returns false, or that side is already joined (is true for both sides when in a style that is OnePlayerTwoSides), or there are not enough coins.
 	</Function>
+	<Function name='LoadProfiles' return='void' arguments='bool LoadEdits'>
+		If profiles are not loaded, this will load the profiles for each player. It will load from memory cards if they are present, and local profiles otherwise. It will load edits if <code>LoadEdits</code> is true, or by default if the argument is omitted.
+	</Function>
 	<Function name='PlayerIsUsingModifier' return='bool' arguments='PlayerNumber pn, string sModifier'>
 		Returns <code>true</code> if player <code>pn</code> is using modifier <code>sModifier</code>.
 	</Function>
@@ -2356,6 +2365,9 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='ResetPlayerOptions' return='void' arguments='PlayerNumber pn'>
 		Resets the specific Player's mods to the default settings.
+	</Function>
+	<Function name='SaveProfiles' return='void' arguments='bool LoadEdits'>
+		Save profiles.
 	</Function>
 	<Function name='SaveLocalData' return='void' arguments=''>
 		Saves the bookkeeping and machine profile data.

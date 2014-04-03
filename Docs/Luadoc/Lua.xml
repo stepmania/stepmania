@@ -769,6 +769,8 @@
 			<Function name='GetStageSeed'/>
 			<Function name='GetWorkoutGoalComplete'/>
 			<Function name='HasEarnedExtraStage'/>
+			<Function name='HaveProfileToLoad'/>
+			<Function name='HaveProfileToSave'/>
 			<Function name='InStepEditor'/>
 			<Function name='IsAnExtraStage'/>
 			<Function name='IsAnyHumanPlayerUsingMemoryCard'/>
@@ -786,12 +788,14 @@
 			<Function name='IsWinner'/>
 			<Function name='JoinPlayer'/>
 			<Function name='JoinInput'/>
+			<Function name='LoadProfiles'/>
 			<Function name='PlayerIsUsingModifier'/>
 			<Function name='PlayersCanJoin'/>
 			<Function name='RefreshNoteSkinData'/>
 			<Function name='Reset'/>
 			<Function name='ResetPlayerOptions'/>
 			<Function name='SaveLocalData'/>
+			<Function name='SaveProfiles'/>
 			<Function name='SetCharacter'/>
 			<Function name='SetCurrentCourse'/>
 			<Function name='SetCurrentSong'/>
