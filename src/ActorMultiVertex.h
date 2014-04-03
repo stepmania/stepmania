@@ -56,6 +56,7 @@ public:
 	void SetDrawMode( DrawMode dm )				{ _DrawMode = dm; }
 	void SetEffectMode( EffectMode em)			{ _EffectMode = em; }
 	void SetTextureMode( TextureMode tm)		{ _TextureMode = tm; }
+	void SetLineWidth( float width);
 
 	void SetVertexPos( int index , float x , float y , float z );
 	void SetVertexColor( int index , RageColor c );
@@ -97,8 +98,6 @@ private:
 	DrawMode _DrawMode;
 	EffectMode _EffectMode;
 	TextureMode _TextureMode;
-
-	float _LineWidth;
 };
 
 /**
