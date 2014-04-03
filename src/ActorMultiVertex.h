@@ -53,6 +53,7 @@ public:
 	void AddVertex();
 	void AddVertices( int Add );
 
+	void SetDrawRange( int First, int NumToDraw );
 	void SetDrawMode( DrawMode dm )				{ _DrawMode = dm; }
 	void SetEffectMode( EffectMode em)			{ _EffectMode = em; }
 	void SetTextureMode( TextureMode tm)		{ _TextureMode = tm; }
@@ -67,13 +68,16 @@ public:
 
 	struct AMV_TweenState
 	{
-		AMV_TweenState(): line_width(1.0f) {}
+		AMV_TweenState(): line_width(1.0f), FirstToDraw(0), NumToDraw(-1) {}
 		static void MakeWeightedAverage(AMV_TweenState& average_out, const AMV_TweenState& ts1, const AMV_TweenState& ts2, float percent_between);
 		bool operator==(const AMV_TweenState& other) const;
 		bool operator!=(const AMV_TweenState& other) const { return !operator==(other); }
 
 		vector<RageSpriteVertex> vertices;
-		
+
+		int FirstToDraw;
+		int NumToDraw;
+	
 		// needed for DrawMode_LineStrip
 		float line_width;
 	};

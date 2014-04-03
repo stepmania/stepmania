@@ -80,7 +80,7 @@ void ActorMultiVertex::LoadFromNode( const XNode* Node )
 	{
 		LoadFromTexture( path );
 	}
-	
+
 	Actor::LoadFromNode( Node );
 }
 
@@ -95,7 +95,6 @@ void ActorMultiVertex::SetTexture( RageTexture *Texture )
 
 void ActorMultiVertex::LoadFromTexture( RageTextureID ID )
 {
-
 	RageTexture *Texture = NULL;
 	if( _Texture && _Texture->GetID() == ID )
 	{
@@ -106,7 +105,6 @@ void ActorMultiVertex::LoadFromTexture( RageTextureID ID )
 		Texture = TEXTUREMAN->LoadTexture( ID );
 	}
 	SetTexture( Texture );
-		
 }
 
 void ActorMultiVertex::UnloadTexture()
@@ -120,7 +118,12 @@ void ActorMultiVertex::UnloadTexture()
 
 void ActorMultiVertex::ClearVertices()	
 { 
-	AMV_DestTweenState().vertices.clear(); 
+	for( size_t i = 0; i < AMV_Tweens.size(); ++i )
+	{
+		AMV_Tweens[i].vertices.clear();
+	}
+	AMV_current.vertices.clear();
+	AMV_start.vertices.clear();
 }
 
 void ActorMultiVertex::RemoveVertices( size_t n )	
@@ -131,7 +134,12 @@ void ActorMultiVertex::RemoveVertices( size_t n )
 	}
 	else
 	{
-		AMV_DestTweenState().vertices.resize( AMV_DestTweenState().vertices.size() - n ); 
+		for( size_t i = 0; i < AMV_Tweens.size(); ++i )
+		{
+			AMV_Tweens[i].vertices.resize( AMV_Tweens[i].vertices.size() - n );
+		}
+		AMV_current.vertices.resize( AMV_current.vertices.size() - n );
+		AMV_start.vertices.resize( AMV_start.vertices.size() - n );
 	}
 }
 
@@ -139,24 +147,45 @@ void ActorMultiVertex::ReserveSpaceForMoreVertices(size_t n)
 {
 	// Repeatedly adding to a vector is more efficient when you know ahead how
 	// many elements are going to be added and reserve space for them.
-	AMV_DestTweenState().vertices.reserve( AMV_DestTweenState().vertices.size() + n );
+	for( size_t i = 0; i < AMV_Tweens.size(); ++i)
+	{
+		AMV_Tweens[i].vertices.reserve( AMV_Tweens[i].vertices.size() + n );
+	}
+	AMV_current.vertices.reserve( AMV_current.vertices.size() + n );
+	AMV_start.vertices.reserve( AMV_start.vertices.size() + n );
 }
 
 void ActorMultiVertex::AddVertex()
 {
-	AMV_DestTweenState().vertices.push_back( RageSpriteVertex() );
+	for( size_t i = 0; i < AMV_Tweens.size(); ++i )
+	{
+		AMV_Tweens[i].vertices.push_back( RageSpriteVertex() );
+	}
+	AMV_current.vertices.push_back( RageSpriteVertex() );
+	AMV_start.vertices.push_back( RageSpriteVertex() );
 }
 
 void ActorMultiVertex::AddVertices( int Add )
 {
 	int size = AMV_DestTweenState().vertices.size();
 	size += Add;
-	AMV_DestTweenState().vertices.resize( size );
+	for( size_t i = 0; i < AMV_Tweens.size(); ++i )
+	{
+		AMV_Tweens[i].vertices.resize( size );
+	}
+	AMV_current.vertices.resize( size );
+	AMV_start.vertices.resize( size );
 }
 
 void ActorMultiVertex::SetLineWidth( float width )
 {
-	AMV_DestTweenState().line_width= width;
+	AMV_DestTweenState().line_width = width;
+}
+
+void ActorMultiVertex::SetDrawRange( int First, int NumToDraw )
+{
+	AMV_DestTweenState().FirstToDraw = First;
+	AMV_DestTweenState().NumToDraw = NumToDraw;
 }
 
 void ActorMultiVertex::SetVertexPos( int index , float x , float y , float z )
@@ -171,7 +200,7 @@ void ActorMultiVertex::SetVertexColor( int index , RageColor c )
 
 void ActorMultiVertex::SetVertexCoords( int index , float TexCoordX , float TexCoordY )
 {
-	AMV_DestTweenState().vertices[index].t = RageVector2( TexCoordX,  TexCoordY );
+	AMV_DestTweenState().vertices[index].t = RageVector2( TexCoordX, TexCoordY );
 }
 
 void ActorMultiVertex::DrawPrimitives()
@@ -180,12 +209,18 @@ void ActorMultiVertex::DrawPrimitives()
 
 	DISPLAY->ClearAllTextures();
 	DISPLAY->SetTexture( TextureUnit_1, _Texture->GetTexHandle() );
-   
+
 	Actor::SetTextureRenderStates();
 	DISPLAY->SetEffectMode( _EffectMode );
 	DISPLAY->SetTextureMode( TextureUnit_1, _TextureMode );
 
-	int NumToDraw = AMV_current.vertices.size();
+	int FirstToDraw = AMV_current.FirstToDraw;
+	int NumToDraw = AMV_current.NumToDraw;
+
+	if( NumToDraw == -1 )
+	{
+		NumToDraw = AMV_current.vertices.size() - FirstToDraw;
+	}
 
 	switch( _DrawMode )
 	{
@@ -194,7 +229,7 @@ void ActorMultiVertex::DrawPrimitives()
 			NumToDraw -= NumToDraw%4;
 			if( NumToDraw >= 4 )
 			{
-				DISPLAY->DrawQuads( &AMV_current.vertices[0] , NumToDraw );
+				DISPLAY->DrawQuads( &AMV_current.vertices[FirstToDraw] , NumToDraw );
 			}
 			break;
 		}
@@ -203,7 +238,7 @@ void ActorMultiVertex::DrawPrimitives()
 			NumToDraw -= NumToDraw%2;
 			if( NumToDraw >= 4 )
 			{
-				DISPLAY->DrawQuadStrip( &AMV_current.vertices[0] , NumToDraw );
+				DISPLAY->DrawQuadStrip( &AMV_current.vertices[FirstToDraw] , NumToDraw );
 			}
 			break;
 		}
@@ -211,7 +246,7 @@ void ActorMultiVertex::DrawPrimitives()
 		{
 			if( NumToDraw >= 3 )
 			{
-				DISPLAY->DrawFan( &AMV_current.vertices[0] , NumToDraw );
+				DISPLAY->DrawFan( &AMV_current.vertices[FirstToDraw] , NumToDraw );
 			}
 			break;
 		}
@@ -219,7 +254,7 @@ void ActorMultiVertex::DrawPrimitives()
 		{
 			if( NumToDraw >= 3 )
 			{
-				DISPLAY->DrawStrip( &AMV_current.vertices[0] , NumToDraw );
+				DISPLAY->DrawStrip( &AMV_current.vertices[FirstToDraw] , NumToDraw );
 			}
 			break;
 		}
@@ -228,7 +263,7 @@ void ActorMultiVertex::DrawPrimitives()
 			NumToDraw -= NumToDraw%3;
 			if( NumToDraw >= 3 )
 			{
-					DISPLAY->DrawTriangles( &AMV_current.vertices[0] , NumToDraw );
+					DISPLAY->DrawTriangles( &AMV_current.vertices[FirstToDraw] , NumToDraw );
 			}
 			break;
 		}
@@ -236,7 +271,7 @@ void ActorMultiVertex::DrawPrimitives()
 		{
 			if( NumToDraw >= 2 )
 			{
-				DISPLAY->DrawLineStrip( &AMV_current.vertices[0] , NumToDraw , AMV_current.line_width );
+				DISPLAY->DrawLineStrip( &AMV_current.vertices[FirstToDraw] , NumToDraw , AMV_current.line_width );
 			}
 			break;
 		}
@@ -245,7 +280,7 @@ void ActorMultiVertex::DrawPrimitives()
 			NumToDraw -= NumToDraw%3;
 			if( NumToDraw >= 6 )
 			{
-				DISPLAY->DrawSymmetricQuadStrip( &AMV_current.vertices[0] , NumToDraw );
+				DISPLAY->DrawSymmetricQuadStrip( &AMV_current.vertices[FirstToDraw] , NumToDraw );
 			}
 			break;
 		}
@@ -283,7 +318,7 @@ void ActorMultiVertex::UpdateTweening( float fDeltaTime )
 		if( Beginning )			// we are just beginning this tween
 			AMV_start = AMV_current;	// set the start position
 
-		if( TimeLeftInTween == 0 )	// Current tween is over.  Stop.
+		if( TimeLeftInTween == 0 )	// Current tween is over. Stop.
 		{
 			AMV_current = TS;
 			TimeIntoTween = 0;
@@ -362,7 +397,7 @@ public:
 	{
 		if(lua_type(L, DataStackIndex) != LUA_TTABLE)
 		{
-			LOG->Warn("ActorMultiVertex::SetVertex: non-table parameter supplied.  table of tables of vertex data expected.");
+			LOG->Warn("ActorMultiVertex::SetVertex: non-table parameter supplied. Table of tables of vertex data expected.");
 			return;
 		}
 		size_t NumDataParts = lua_objlen(L, DataStackIndex);
@@ -477,12 +512,12 @@ public:
 		size_t Last = First + lua_objlen(L, StackIndex );
 		if( First > p->GetNumVertices())
 		{
-			LOG->Warn("ActorMultiVertex:SetVertices: Out of range starting point.");
+			LOG->Warn("ActorMultiVertex::SetVertices: Out of range starting point.");
 			return 0;
 		}
 		if( Last > p->GetNumVertices())
 		{
-			LOG->Warn("ActorMultiVertex:SetVertices: Too many vertices passed.");
+			LOG->Warn("ActorMultiVertex::SetVertices: Too many vertices passed.");
 			return 0;
 		}
 		for(size_t n = First; n < Last; ++n)
@@ -492,6 +527,26 @@ public:
 			SetVertexFromStack(p, L, n, lua_gettop(L));
 			lua_pop(L, 1);
 		}
+		return 0;
+	}
+
+	static int SetDrawRange( T* p, lua_State *L )
+	{
+		size_t FirstToDraw = IArg(1);
+		size_t NumToDraw = IArg(2);
+		size_t LastToDraw = FirstToDraw + NumToDraw;
+
+		if( FirstToDraw >= p->GetNumVertices() )
+		{
+			LOG->Warn("ActorMultiVertex::SetDrawRange: Starting point out of range." );
+			return 0;
+		}
+		if( LastToDraw > p->GetNumVertices() )
+		{
+			LOG->Warn("ActorMultiVertex::SetDrawRange: Range too large. %i + %i > %i", FirstToDraw, NumToDraw, p->GetNumVertices()-1 );
+			return 0;
+		}
+		p->SetDrawRange( FirstToDraw, NumToDraw );
 		return 0;
 	}
 
@@ -521,7 +576,7 @@ public:
 		p->SetLineWidth(FArg(1));
 		return 0;
 	}
-
+	
 	static int LoadTexture( T* p, lua_State *L )
 	{
 		if( lua_isnil(L, 1) )
@@ -554,13 +609,13 @@ public:
 
 		ADD_METHOD( SetVertex );
 		ADD_METHOD( SetVertices );
-		
-		
+
+		ADD_METHOD( SetDrawRange );
 		ADD_METHOD( SetDrawMode );
 		ADD_METHOD( SetEffectMode );
 		ADD_METHOD( SetTextureMode );
 		ADD_METHOD( SetLineWidth );
-		
+
 		// Copy from RageTexture
 		ADD_METHOD( SetTexture );
 		// Load from file path
