@@ -177,17 +177,6 @@ void ActorMultiVertex::AddVertices( int Add )
 	AMV_start.vertices.resize( size );
 }
 
-void ActorMultiVertex::SetLineWidth( float width )
-{
-	AMV_DestTweenState().line_width = width;
-}
-
-void ActorMultiVertex::SetDrawRange( int First, int NumToDraw )
-{
-	AMV_DestTweenState().FirstToDraw = First;
-	AMV_DestTweenState().NumToDraw = NumToDraw;
-}
-
 void ActorMultiVertex::SetVertexPos( int index , float x , float y , float z )
 {
 	AMV_DestTweenState().vertices[index].p = RageVector3( x, y, z );
@@ -215,11 +204,12 @@ void ActorMultiVertex::DrawPrimitives()
 	DISPLAY->SetTextureMode( TextureUnit_1, _TextureMode );
 
 	int FirstToDraw = AMV_current.FirstToDraw;
+	int MaxToDraw = AMV_current.vertices.size() - FirstToDraw;
 	int NumToDraw = AMV_current.NumToDraw;
 
-	if( NumToDraw == -1 )
+	if( NumToDraw == -1 || NumToDraw > MaxToDraw )
 	{
-		NumToDraw = AMV_current.vertices.size() - FirstToDraw;
+		NumToDraw = MaxToDraw;
 	}
 
 	switch( _DrawMode )
@@ -291,7 +281,11 @@ void ActorMultiVertex::DrawPrimitives()
 
 bool ActorMultiVertex::EarlyAbortDraw() const
 {
-	return AMV_current.vertices.empty();
+	if( AMV_current.FirstToDraw >= (int) AMV_current.vertices.size() || _DrawMode >= NUM_DrawMode )
+	{
+		return true;
+	}
+	return false;
 }
 
 void ActorMultiVertex::UpdateTweening( float fDeltaTime )
@@ -374,9 +368,7 @@ void ActorMultiVertex::FinishTweening()
 void ActorMultiVertex::AMV_TweenState::MakeWeightedAverage(AMV_TweenState& average_out, const AMV_TweenState& ts1, const AMV_TweenState& ts2, float percent_between)
 {
 	average_out.line_width= lerp(percent_between, ts1.line_width, ts2.line_width);
-	size_t VerticesToTween = min( ts1.vertices.size(), ts2.vertices.size() );
-	average_out.vertices.resize(VerticesToTween);
-	for(size_t v= 0; v < VerticesToTween; ++v)
+	for(size_t v= 0; v < average_out.vertices.size(); ++v)
 	{
 		WeightedAvergeOfRSVs(average_out.vertices[v], ts1.vertices[v], ts2.vertices[v], percent_between);
 	}
@@ -489,7 +481,8 @@ public:
 		size_t Index = p->GetNumVertices()-1;
 		if(lua_type(L, 1) == LUA_TNUMBER)
 		{
-			Index = IArg(1);
+			// Indices from Lua are one-indexed.  -1 to adjust.
+			Index = IArg(1)-1;
 		}
 		if( Index >= p->GetNumVertices() )
 		{
@@ -507,7 +500,8 @@ public:
 		// Allow the user to just pass a table without specifying a starting point.
 		if(lua_type(L, 1) == LUA_TNUMBER)
 		{
-			First = IArg(1);
+			// Indices from Lua are one-indexed.  -1 to adjust.
+			First = IArg(1)-1;
 		}
 		size_t Last = First + lua_objlen(L, StackIndex );
 		if( First > p->GetNumVertices())
@@ -527,26 +521,6 @@ public:
 			SetVertexFromStack(p, L, n, lua_gettop(L));
 			lua_pop(L, 1);
 		}
-		return 0;
-	}
-
-	static int SetDrawRange( T* p, lua_State *L )
-	{
-		size_t FirstToDraw = IArg(1);
-		size_t NumToDraw = IArg(2);
-		size_t LastToDraw = FirstToDraw + NumToDraw;
-
-		if( FirstToDraw >= p->GetNumVertices() )
-		{
-			LOG->Warn("ActorMultiVertex::SetDrawRange: Starting point out of range." );
-			return 0;
-		}
-		if( LastToDraw > p->GetNumVertices() )
-		{
-			LOG->Warn("ActorMultiVertex::SetDrawRange: Range too large. %i + %i > %i", FirstToDraw, NumToDraw, p->GetNumVertices()-1 );
-			return 0;
-		}
-		p->SetDrawRange( FirstToDraw, NumToDraw );
 		return 0;
 	}
 
@@ -575,6 +549,32 @@ public:
 	{
 		p->SetLineWidth(FArg(1));
 		return 0;
+	}
+
+	static int SetFirstToDraw( T* p, lua_State *L )
+	{
+		// Indices from Lua are one-indexed.  -1 to adjust.
+		p->SetFirstToDraw(IArg(1) - 1);
+		return 0;
+	}
+
+	static int SetNumToDraw( T* p, lua_State* L )
+	{
+		p->SetNumToDraw(IArg(1));
+		return 0;
+	}
+
+	static int GetFirstToDraw( T* p, lua_State* L )
+	{
+		// Indices in Lua are one-indexed.  +1 to adjust.
+		lua_pushnumber(L, p->GetFirstToDraw()+1);
+		return 1;
+	}
+
+	static int GetNumToDraw( T* p, lua_State* L )
+	{
+		lua_pushnumber(L, p->GetNumToDraw());
+		return 1;
 	}
 	
 	static int LoadTexture( T* p, lua_State *L )
@@ -610,11 +610,15 @@ public:
 		ADD_METHOD( SetVertex );
 		ADD_METHOD( SetVertices );
 
-		ADD_METHOD( SetDrawRange );
 		ADD_METHOD( SetDrawMode );
 		ADD_METHOD( SetEffectMode );
 		ADD_METHOD( SetTextureMode );
 		ADD_METHOD( SetLineWidth );
+
+		ADD_METHOD( SetFirstToDraw );
+		ADD_METHOD( SetNumToDraw );
+		ADD_METHOD( GetFirstToDraw );
+		ADD_METHOD( GetNumToDraw );
 
 		// Copy from RageTexture
 		ADD_METHOD( SetTexture );

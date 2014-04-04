@@ -53,17 +53,22 @@ public:
 	void AddVertex();
 	void AddVertices( int Add );
 
-	void SetDrawRange( int First, int NumToDraw );
 	void SetDrawMode( DrawMode dm )				{ _DrawMode = dm; }
 	void SetEffectMode( EffectMode em)			{ _EffectMode = em; }
 	void SetTextureMode( TextureMode tm)		{ _TextureMode = tm; }
-	void SetLineWidth( float width);
+	void SetLineWidth( float width)				{ AMV_DestTweenState().line_width = width; }
 
+	void SetFirstToDraw( int first )			{ AMV_DestTweenState().FirstToDraw = min(first,0); }
+	void SetNumToDraw( int num )				{ AMV_DestTweenState().NumToDraw = max(num,0); }
+
+	int GetFirstToDraw() const					{ return AMV_current.FirstToDraw; }
+	int GetNumToDraw() const					{ return AMV_current.NumToDraw; }
+	size_t GetNumVertices() 					{ return AMV_current.vertices.size(); }
+	
 	void SetVertexPos( int index , float x , float y , float z );
 	void SetVertexColor( int index , RageColor c );
 	void SetVertexCoords( int index , float TexCoordX , float TexCoordY );
 
-	size_t GetNumVertices() { return AMV_current.vertices.size(); }
 	virtual void PushSelf( lua_State *L );
 
 	struct AMV_TweenState
