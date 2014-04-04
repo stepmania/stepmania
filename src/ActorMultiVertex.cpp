@@ -24,6 +24,30 @@ static const char *DrawModeNames[] = {
 	"SymmetricQuadStrip",
 };
 
+static const int DrawModeVertexGroupSizes[] = {
+	4, // Quads
+	2, // QuadStrip
+	1, // Fan
+	1, // Strip
+	3, // Triangles
+	1, // LineStrip
+	3, // SymmetricQuadStrip
+	1, // NUM_DrawMode
+	1, // DrawMode_Invalid
+};
+
+static const int DrawModeMinimumToDraw[] = {
+	4, // Quads
+	4, // QuadStrip
+	3, // Fan
+	3, // Strip
+	3, // Triangles
+	2, // LineStrip
+	6, // SymmetricQuadStrip
+	1, // NUM_DrawMode
+	1, // DrawMode_Invalid
+};
+
 XToString( DrawMode );
 XToLocalizedString( DrawMode );
 LuaXType( DrawMode );
@@ -177,17 +201,17 @@ void ActorMultiVertex::AddVertices( int Add )
 	AMV_start.vertices.resize( size );
 }
 
-void ActorMultiVertex::SetVertexPos( int index , float x , float y , float z )
+void ActorMultiVertex::SetVertexPos( int index, float x, float y, float z )
 {
 	AMV_DestTweenState().vertices[index].p = RageVector3( x, y, z );
 }
 
-void ActorMultiVertex::SetVertexColor( int index , RageColor c )
+void ActorMultiVertex::SetVertexColor( int index, RageColor c )
 {
 	AMV_DestTweenState().vertices[index].c = c;
 }
 
-void ActorMultiVertex::SetVertexCoords( int index , float TexCoordX , float TexCoordY )
+void ActorMultiVertex::SetVertexCoords( int index, float TexCoordX, float TexCoordY )
 {
 	AMV_DestTweenState().vertices[index].t = RageVector2( TexCoordX, TexCoordY );
 }
@@ -204,74 +228,49 @@ void ActorMultiVertex::DrawPrimitives()
 	DISPLAY->SetTextureMode( TextureUnit_1, _TextureMode );
 
 	int FirstToDraw = AMV_current.FirstToDraw;
-	int MaxToDraw = AMV_current.vertices.size() - FirstToDraw;
-	int NumToDraw = AMV_current.NumToDraw;
+	int NumToDraw = AMV_current.GetSafeNumToDraw(_DrawMode);
 
-	if( NumToDraw == -1 || NumToDraw > MaxToDraw )
+	if( NumToDraw == 0 )
 	{
-		NumToDraw = MaxToDraw;
+		// Nothing to draw.
+		return;
 	}
-
+	
 	switch( _DrawMode )
 	{
 		case DrawMode_Quads:
 		{
-			NumToDraw -= NumToDraw%4;
-			if( NumToDraw >= 4 )
-			{
-				DISPLAY->DrawQuads( &AMV_current.vertices[FirstToDraw] , NumToDraw );
-			}
+			DISPLAY->DrawQuads( &AMV_current.vertices[FirstToDraw], NumToDraw );
 			break;
 		}
 		case DrawMode_QuadStrip:
 		{
-			NumToDraw -= NumToDraw%2;
-			if( NumToDraw >= 4 )
-			{
-				DISPLAY->DrawQuadStrip( &AMV_current.vertices[FirstToDraw] , NumToDraw );
-			}
+			DISPLAY->DrawQuadStrip( &AMV_current.vertices[FirstToDraw], NumToDraw );
 			break;
 		}
 		case DrawMode_Fan:
 		{
-			if( NumToDraw >= 3 )
-			{
-				DISPLAY->DrawFan( &AMV_current.vertices[FirstToDraw] , NumToDraw );
-			}
+			DISPLAY->DrawFan( &AMV_current.vertices[FirstToDraw], NumToDraw );
 			break;
 		}
 		case DrawMode_Strip:
 		{
-			if( NumToDraw >= 3 )
-			{
-				DISPLAY->DrawStrip( &AMV_current.vertices[FirstToDraw] , NumToDraw );
-			}
+			DISPLAY->DrawStrip( &AMV_current.vertices[FirstToDraw], NumToDraw );
 			break;
 		}
 		case DrawMode_Triangles:
 		{
-			NumToDraw -= NumToDraw%3;
-			if( NumToDraw >= 3 )
-			{
-					DISPLAY->DrawTriangles( &AMV_current.vertices[FirstToDraw] , NumToDraw );
-			}
+			DISPLAY->DrawTriangles( &AMV_current.vertices[FirstToDraw], NumToDraw );
 			break;
 		}
 		case DrawMode_LineStrip:
 		{
-			if( NumToDraw >= 2 )
-			{
-				DISPLAY->DrawLineStrip( &AMV_current.vertices[FirstToDraw] , NumToDraw , AMV_current.line_width );
-			}
+			DISPLAY->DrawLineStrip( &AMV_current.vertices[FirstToDraw], NumToDraw, AMV_current.line_width );
 			break;
 		}
 		case DrawMode_SymmetricQuadStrip:
 		{
-			NumToDraw -= NumToDraw%3;
-			if( NumToDraw >= 6 )
-			{
-				DISPLAY->DrawSymmetricQuadStrip( &AMV_current.vertices[FirstToDraw] , NumToDraw );
-			}
+			DISPLAY->DrawSymmetricQuadStrip( &AMV_current.vertices[FirstToDraw], NumToDraw );
 			break;
 		}
 	}
@@ -286,6 +285,26 @@ bool ActorMultiVertex::EarlyAbortDraw() const
 		return true;
 	}
 	return false;
+}
+
+void ActorMultiVertex::UpdateInternal( float fDeltaTime )
+{
+	if( CheckValidity )
+	{
+		if( AMV_Tweens.empty() )
+		{
+			AMV_current.CheckValidity( _DrawMode );
+		}
+		else
+		{
+			for( size_t i = 0; i < AMV_Tweens.size(); ++i )
+			{
+				AMV_Tweens[i].CheckValidity( _DrawMode );
+			}
+		}
+		CheckValidity = false;
+	}
+	Actor::UpdateInternal( fDeltaTime );
 }
 
 void ActorMultiVertex::UpdateTweening( float fDeltaTime )
@@ -374,6 +393,35 @@ void ActorMultiVertex::AMV_TweenState::MakeWeightedAverage(AMV_TweenState& avera
 	}
 }
 
+int ActorMultiVertex::AMV_TweenState::GetSafeNumToDraw( DrawMode dm ) const
+{
+	int num = NumToDraw;
+	int max = vertices.size() - FirstToDraw;
+	if( num == -1 || num > max )
+	{
+		num = max;
+	}
+	num -= ( num % DrawModeVertexGroupSizes[dm]);
+	if( num < DrawModeMinimumToDraw[dm])
+	{
+		num = 0;
+	}
+	return num;
+}
+
+void ActorMultiVertex::AMV_TweenState::CheckValidity( DrawMode dm )
+{
+	if( FirstToDraw >= (int) vertices.size() )
+	{	
+		LOG->Warn("ActorMultiVertex: FirstToDraw > vertices.size(), %i > %i", FirstToDraw, (int) vertices.size() );
+	}
+	int num = GetSafeNumToDraw( dm );
+	if( NumToDraw != num && NumToDraw != -1 )
+	{
+		LOG->Warn("ActorMultiVertex: NumToDraw %i is not valid for %i vertices with DrawMode %s", NumToDraw, (int) vertices.size(), DrawModeNames[dm] );
+	}
+}
+
 // lua start
 #include "LuaBinding.h"
 
@@ -381,8 +429,18 @@ void ActorMultiVertex::AMV_TweenState::MakeWeightedAverage(AMV_TweenState& avera
 class LunaActorMultiVertex: public Luna<ActorMultiVertex>
 {
 public:
-	static int ClearVertices( T* p, lua_State *L )		{ p->ClearVertices( ); return 0; }
-	static int RemoveVertices( T* p, lua_State *L )		{ p->RemoveVertices( IArg(1) ); return 0; }
+	static int ClearVertices( T* p, lua_State *L )
+	{ 
+		p->CheckValidity = true;
+		p->ClearVertices( ); 
+		return 0;
+	}
+	static int RemoveVertices( T* p, lua_State *L )
+	{ 
+		p->CheckValidity = true;
+		p->RemoveVertices( IArg(1) ); 
+		return 0;
+	}
 	static int GetNumVertices( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetNumVertices() ); return 1; }
 
 	static void SetVertexFromStack(T* p, lua_State* L, size_t VertexIndex, int DataStackIndex)
@@ -446,6 +504,7 @@ public:
 
 	static int AddVertex( T* p, lua_State *L )
 	{ 
+		p->CheckValidity = true;
 		p->AddVertex();
 		if( lua_type(L, lua_gettop(L)) == LUA_TTABLE )
 		{
@@ -457,6 +516,7 @@ public:
 
 	static int AddVertices( T* p, lua_State *L )
 	{
+		p->CheckValidity = true;
 		if(lua_type(L, 1) == LUA_TNUMBER)
 		{
 			p->AddVertices( IArg(1) );
@@ -526,6 +586,7 @@ public:
 
 	static int SetDrawMode( T* p, lua_State *L )
 	{
+		p->CheckValidity = true;
 		DrawMode dm = Enum::Check<DrawMode>(L, 1);
 		p->SetDrawMode( dm );
 		return 0;
@@ -554,12 +615,14 @@ public:
 	static int SetFirstToDraw( T* p, lua_State *L )
 	{
 		// Indices from Lua are one-indexed.  -1 to adjust.
+		p->CheckValidity = true;
 		p->SetFirstToDraw(IArg(1) - 1);
 		return 0;
 	}
 
 	static int SetNumToDraw( T* p, lua_State* L )
 	{
+		p->CheckValidity = true;
 		p->SetNumToDraw(IArg(1));
 		return 0;
 	}

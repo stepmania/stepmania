@@ -35,7 +35,8 @@ public:
 
 	virtual bool EarlyAbortDraw() const;
 	virtual void DrawPrimitives();
-
+	virtual void UpdateInternal( float fDeltaTime );
+	
 	void UpdateTweening( float fDeltaTime );
 	void BeginTweening( float time, ITween *pInterp );
 
@@ -69,6 +70,8 @@ public:
 	void SetVertexColor( int index , RageColor c );
 	void SetVertexCoords( int index , float TexCoordX , float TexCoordY );
 
+	bool CheckValidity;
+
 	virtual void PushSelf( lua_State *L );
 
 	struct AMV_TweenState
@@ -78,11 +81,14 @@ public:
 		bool operator==(const AMV_TweenState& other) const;
 		bool operator!=(const AMV_TweenState& other) const { return !operator==(other); }
 
+		int GetSafeNumToDraw( DrawMode dm ) const;
+		void CheckValidity( DrawMode dm );
+
 		vector<RageSpriteVertex> vertices;
 
 		int FirstToDraw;
 		int NumToDraw;
-	
+
 		// needed for DrawMode_LineStrip
 		float line_width;
 	};
