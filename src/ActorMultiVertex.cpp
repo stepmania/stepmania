@@ -502,40 +502,6 @@ public:
 		return;
 	}
 
-	static int AddVertex( T* p, lua_State *L )
-	{ 
-		p->CheckValidity = true;
-		p->AddVertex();
-		if( lua_type(L, lua_gettop(L)) == LUA_TTABLE )
-		{
-			size_t Index = p->GetNumVertices()-1;
-			SetVertexFromStack( p, L, Index, lua_gettop(L) );
-		}
-		return 0; 
-	}
-
-	static int AddVertices( T* p, lua_State *L )
-	{
-		p->CheckValidity = true;
-		if(lua_type(L, 1) == LUA_TNUMBER)
-		{
-			p->AddVertices( IArg(1) );
-			return 0;
-		}
-
-		size_t NumVerts = lua_objlen(L, -1);
-		p->ReserveSpaceForMoreVertices( NumVerts );
-		int TableIndex = lua_gettop(L);
-		for(size_t n= 0; n < NumVerts; ++n)
-		{
-			lua_pushnumber(L, n+1);
-			lua_gettable(L, TableIndex);
-			AddVertex( p, L );
-			lua_pop(L, 1);
-		}
-		return 0;
-	}
-
 	static int SetVertex(T* p, lua_State* L)
 	{
 		size_t Index = p->GetNumVertices()-1;
@@ -544,9 +510,14 @@ public:
 			// Indices from Lua are one-indexed.  -1 to adjust.
 			Index = IArg(1)-1;
 		}
-		if( Index >= p->GetNumVertices() )
+		if( Index == p->GetNumVertices() )
 		{
-			LOG->Warn( "ActorMultiVertex::SetVertex: index %d too out of range.", Index );
+			p->CheckValidity = true;
+			p->AddVertices( 1 );
+		}
+		else if( Index > p->GetNumVertices() )
+		{
+			LOG->Warn( "ActorMultiVertex::SetVertex: index %d too out of range.", (int)Index );
 			return 0;
 		}
 		SetVertexFromStack(p, L, Index, lua_gettop(L));
@@ -564,15 +535,10 @@ public:
 			First = IArg(1)-1;
 		}
 		size_t Last = First + lua_objlen(L, StackIndex );
-		if( First > p->GetNumVertices())
-		{
-			LOG->Warn("ActorMultiVertex::SetVertices: Out of range starting point.");
-			return 0;
-		}
 		if( Last > p->GetNumVertices())
 		{
-			LOG->Warn("ActorMultiVertex::SetVertices: Too many vertices passed.");
-			return 0;
+			p->CheckValidity = true;
+			p->AddVertices( Last - p->GetNumVertices() );
 		}
 		for(size_t n = First; n < Last; ++n)
 		{
@@ -666,9 +632,6 @@ public:
 	{
 		ADD_METHOD( ClearVertices );
 		ADD_METHOD( GetNumVertices );
-
-		ADD_METHOD( AddVertex );
-		ADD_METHOD( AddVertices );
 
 		ADD_METHOD( SetVertex );
 		ADD_METHOD( SetVertices );
