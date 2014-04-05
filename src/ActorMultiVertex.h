@@ -79,8 +79,8 @@ public:
 		bool operator==(const AMV_TweenState& other) const;
 		bool operator!=(const AMV_TweenState& other) const { return !operator==(other); }
 
-		void SetFirstToDraw( int first );
-		void SetNumToDraw( int num );
+		void SetFirstToDraw( int first ) { FirstToDraw = max(first, 0); }
+		void SetNumToDraw( int num ) { NumToDraw = max(-1, num); }
 		int GetSafeNumToDraw( DrawMode dm ) const;
 		void CheckValidity( DrawMode dm );
 

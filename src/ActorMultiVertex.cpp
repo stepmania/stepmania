@@ -378,32 +378,6 @@ void ActorMultiVertex::AMV_TweenState::MakeWeightedAverage(AMV_TweenState& avera
 	}
 }
 
-void ActorMultiVertex::AMV_TweenState::SetFirstToDraw( int first )
-{
-	if(first < 0 || (size_t)first >= vertices.size())
-	{
-		// Add one to the value of first that we are reporting because indices in lua are one-indexed.
-		LOG->Warn("ActorMultiVertex:SetFirstToDraw:  Attempted to set bad FirstToDraw: %d < 0 or > vertex count %d.", first+1, (int)vertices.size());
-	}
-	else
-	{
-		FirstToDraw= first;
-	}
-}
-
-void ActorMultiVertex::AMV_TweenState::SetNumToDraw( int num )
-{
-	// -1 is a special value meaning "all verts"
-	if(num < -1 || num > (int)vertices.size())
-	{
-		LOG->Warn("ActorMultiVertex:SetNumToDraw:  Attempted to set bad NumToDraw: %d < -1 or > vertex count %d.", num, (int)vertices.size());
-	}
-	else
-	{
-		NumToDraw= num;
-	}
-}
-
 int ActorMultiVertex::AMV_TweenState::GetSafeNumToDraw( DrawMode dm ) const
 {
 	int num = NumToDraw;
