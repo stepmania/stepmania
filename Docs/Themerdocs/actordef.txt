@@ -6,6 +6,7 @@ Actor
 ActorFrame
 ActorFrameTexture
 ActorMultiTexture
+ActorMultiVertex
 ActorProxy
 ActorScroller
 Banner

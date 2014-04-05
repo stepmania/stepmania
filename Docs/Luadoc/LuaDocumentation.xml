@@ -1402,17 +1402,30 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 </Class>
 <Class name='ActorMultiVertex'>
-	<Function name='ClearVertices' return='void' arguments='void'>
-		Clears all the vertices from the ActorMultiVertex.
+	<Function name='SetVertex' return='void' arguments='int index, table { table pos, table color, table textcoords }'>
+		Sets vertex number <code>index</code> with the properties provided. The tables of properties are each optional and can be provided in any order.
 	</Function>
-	<Function name='AddVertex' return='void' arguments='void'>
-		Adds a blank vertex.
+	<Function name='SetVertices' return='void' arguments='int first, table vertices'>
+		Sets multiple vertices at once. The elements of <code>vertices</code> should themselves be tables, of the form provided to <Link class='ActorMultiVertex' function='SetVertex'>SetVertex</Link>. If <code>vertices</code> is the first argument it will start from vertex 1. If an integer is provided before <code>vertices</code> it will start from that vertex. It will add vertices as necessary.
+        Example: self:SetVertices( { { { x1, y1, z1 } , { r1,g1,b1,a1 } , { tcx1,tcy1 } }; { { x2, y2, z2 } , { r2,g2,b2,a2 } , { tcx2,tcy2 } } } )
 	</Function>
-	<Function name='GetNumVertices' return='int' arguments='void'>
-		Returns the number of vertices.
+	<Function name='SetNumVertices' return='void' arguments='int num'>
+		Sets the number of vertices.
 	</Function>
-	<Function name='AddVertices' return='void' arguments='table vertices'>
-		Adds the table of vertices to the ActorMultiVertex.  Each element of the table is a table with three elements, the x, y, and z of the vertex.  These vertices are added in addition to any vertices the ActorMultiVertex may already have.
+	<Function name='SetFirstToDraw' return='void' arguments='int num'>
+		Sets which vertex is drawn first.
+	</Function>
+	<Function name='SetNumToDraw' return='void' arguments='int num'>
+		Sets the number of vertices to draw.
+	</Function>
+	<Function name='GetNumVertices' return='void' arguments='void'>
+		Returns the number of vertices
+	</Function>
+	<Function name='GetFirstToDraw' return='void' arguments='void'>
+		Returns the first vertex being drawn.
+	</Function>
+	<Function name='GetNumToDraw' return='void' arguments='void'>
+		Returns the number of vertices being drawn.
 	</Function>
 	<Function name='SetDrawMode' return='void' arguments='DrawMode dm'>
 		Sets the <Link class='ENUM' function='DrawMode'>DrawMode</Link> of the ActorMultiVertex.
@@ -1423,35 +1436,11 @@ save yourself some time, copy this for undocumented things:
 	<Function name='SetTextureMode' return='void' arguments='TextureMode tm'>
 		Sets the <Link class='ENUM' function='TextureMode'>TextureMode</Link> of the ActorMultiVertex.
 	</Function>
-	<Function name='SetVertexPos' return='void' arguments='int index, float x, float y, float z'>
-		Sets the position of the vertex at index.
-	</Function>
-	<Function name='SetVertexColor' return='void' arguments='int index, color c'>
-		Sets the color of the vertex at index.
-	</Function>
-	<Function name='SetVertexCoords' return='void' arguments='int index, float x, float y'>
-		Sets the texture coords of the vertex at index.
-	</Function>
-	<Function name='SetVertexPosMulti' return='void' arguments='int start, table vertices'>
-		Sets multiple vertices from the table, starting from start.  start is optional and defaults to 0.
-	</Function>
-	<Function name='SetVertexColorMulti' return='void' arguments='int start, table colors'>
-		Sets multiple vertices from the table, starting from start.  start is optional and defaults to 0.
-	</Function>
-	<Function name='SetVertexCoordsMulti' return='void' arguments='int start, table coord_pairs'>
-		Sets multiple vertices from the table, starting from start.  start is optional and defaults to 0.
-	</Function>
-	<Function name='SetPos' return='void' arguments='float x, float y, float z'>
-		Sets the position of the most recently added vertex.
-	</Function>
-	<Function name='SetColor' return='void' arguments='color c'>
-		Sets the color of the most recently added vertex.  "SetColor(r, g, b, a)" is also valid.
-	</Function>
-	<Function name='SetCoords' return='void' arguments='float x, float y'>
-		Sets the texture coords of the most recently added vertex.
+	<Function name='SetTexture' return='void' arguments='RageTexture texture'>
+		Sets the texture to <code>texture</code>
 	</Function>
 	<Function name='LoadTexture' return='void' arguments='string path'>
-		Loads the texture at path.
+		Sets the texture at from the file path <code>path</code>.
 	</Function>
 </Class>
 <Class name='ActorProxy'>

@@ -469,22 +469,18 @@
 			<Function name='SetTextureMode'/>
 		</Class>
 		<Class base='Actor' name='ActorMultiVertex'>
-			<Function name='ClearVertices'/>
-			<Function name='AddVertex'/>
+			<Function name='SetVertex'/>
+			<Function name='SetVertices'/>
+			<Function name='SetNumVertices'/>
 			<Function name='GetNumVertices'/>
-			<Function name='AddVertices'/>
+			<Function name='SetFirstToDraw'/>
+			<Function name='SetNumToDraw'/>
+			<Function name='GetFirstToDraw'/>
+			<Function name='GetNumToDraw'/>
 			<Function name='SetDrawMode'/>
 			<Function name='SetEffectMode'/>
 			<Function name='SetTextureMode'/>
-			<Function name='SetVertexPos'/>
-			<Function name='SetVertexColor'/>
-			<Function name='SetVertexCoords'/>
-			<Function name='SetVertexPosMulti'/>
-			<Function name='SetVertexColorMulti'/>
-			<Function name='SetVertexCoordsMulti'/>
-			<Function name='SetPos'/>
-			<Function name='SetColor'/>
-			<Function name='SetCoords'/>
+			<Function name='SetTexture'/>
 			<Function name='LoadTexture'/>
 		</Class>
 		<Class base='Actor' name='ActorProxy'>
