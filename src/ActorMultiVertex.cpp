@@ -481,12 +481,8 @@ public:
 
 	static int SetVertex(T* p, lua_State* L)
 	{
-		size_t Index = 0;
-		if(lua_type(L, 1) == LUA_TNUMBER)
-		{
-			// Indices from Lua are one-indexed.  -1 to adjust.
-			Index = IArg(1)-1;
-		}
+		// Indices from Lua are one-indexed.  -1 to adjust.
+		size_t Index = IArg(1)-1;
 		if( Index == p->GetNumVertices() )
 		{
 			p->CheckValidity = true;
@@ -494,7 +490,7 @@ public:
 		}
 		else if( Index > p->GetNumVertices() )
 		{
-			LOG->Warn( "ActorMultiVertex::SetVertex: index %d too out of range.", (int)Index );
+			LOG->Warn( "ActorMultiVertex::SetVertex: Cannot set vertex %d if there is no vertex %d, only %d vertices.", (int)Index+1 , (int)Index, p->GetNumVertices() );
 			return 0;
 		}
 		SetVertexFromStack(p, L, Index, lua_gettop(L));
@@ -607,8 +603,6 @@ public:
 
 	LunaActorMultiVertex()
 	{
-		ADD_METHOD( SetNumVertices );
-		ADD_METHOD( GetNumVertices );
 
 		ADD_METHOD( SetVertex );
 		ADD_METHOD( SetVertices );
@@ -618,8 +612,10 @@ public:
 		ADD_METHOD( SetTextureMode );
 		ADD_METHOD( SetLineWidth );
 
+		ADD_METHOD( SetNumVertices );
 		ADD_METHOD( SetFirstToDraw );
 		ADD_METHOD( SetNumToDraw );
+		ADD_METHOD( GetNumVertices );
 		ADD_METHOD( GetFirstToDraw );
 		ADD_METHOD( GetNumToDraw );
 
