@@ -47,9 +47,7 @@ public:
 	void LoadFromTexture( RageTextureID ID );
 
 	void UnloadTexture();
-	void ClearVertices();
-	void RemoveVertices( size_t n );
-	void ReserveSpaceForMoreVertices( size_t n );
+	void SetNumVertices( size_t n );
 
 	void AddVertex();
 	void AddVertices( int Add );

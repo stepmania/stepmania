@@ -140,43 +140,26 @@ void ActorMultiVertex::UnloadTexture()
 	}
 }
 
-void ActorMultiVertex::ClearVertices()	
-{ 
-	for( size_t i = 0; i < AMV_Tweens.size(); ++i )
+void ActorMultiVertex::SetNumVertices( size_t n )
+{
+	if( n == 0 )
 	{
-		AMV_Tweens[i].vertices.clear();
-	}
-	AMV_current.vertices.clear();
-	AMV_start.vertices.clear();
-}
-
-void ActorMultiVertex::RemoveVertices( size_t n )	
-{ 
-	if( n < AMV_DestTweenState().vertices.size() )
-	{
-		AMV_DestTweenState().vertices.clear(); 
+		for( size_t i = 0; i < AMV_Tweens.size(); ++i )
+		{
+			AMV_Tweens[i].vertices.clear();
+		}
+		AMV_current.vertices.clear();
+		AMV_start.vertices.clear();
 	}
 	else
 	{
 		for( size_t i = 0; i < AMV_Tweens.size(); ++i )
 		{
-			AMV_Tweens[i].vertices.resize( AMV_Tweens[i].vertices.size() - n );
+			AMV_Tweens[i].vertices.resize( n );
 		}
-		AMV_current.vertices.resize( AMV_current.vertices.size() - n );
-		AMV_start.vertices.resize( AMV_start.vertices.size() - n );
+		AMV_current.vertices.resize( n );
+		AMV_start.vertices.resize( n );
 	}
-}
-
-void ActorMultiVertex::ReserveSpaceForMoreVertices(size_t n)
-{
-	// Repeatedly adding to a vector is more efficient when you know ahead how
-	// many elements are going to be added and reserve space for them.
-	for( size_t i = 0; i < AMV_Tweens.size(); ++i)
-	{
-		AMV_Tweens[i].vertices.reserve( AMV_Tweens[i].vertices.size() + n );
-	}
-	AMV_current.vertices.reserve( AMV_current.vertices.size() + n );
-	AMV_start.vertices.reserve( AMV_start.vertices.size() + n );
 }
 
 void ActorMultiVertex::AddVertex()
@@ -413,7 +396,7 @@ void ActorMultiVertex::AMV_TweenState::CheckValidity( DrawMode dm )
 {
 	if( FirstToDraw >= (int) vertices.size() )
 	{	
-		LOG->Warn("ActorMultiVertex: FirstToDraw > vertices.size(), %i > %i", FirstToDraw, (int) vertices.size() );
+		LOG->Warn("ActorMultiVertex: FirstToDraw >= vertices.size(), %i >= %i", FirstToDraw, (int) vertices.size() );
 	}
 	int num = GetSafeNumToDraw( dm );
 	if( NumToDraw != num && NumToDraw != -1 )
@@ -429,17 +412,10 @@ void ActorMultiVertex::AMV_TweenState::CheckValidity( DrawMode dm )
 class LunaActorMultiVertex: public Luna<ActorMultiVertex>
 {
 public:
-	static int ClearVertices( T* p, lua_State *L )
-	{ 
+	static int SetNumVertices( T* p, lua_State *L )
+	{
 		p->CheckValidity = true;
-		p->ClearVertices( ); 
-		return 0;
-	}
-	static int RemoveVertices( T* p, lua_State *L )
-	{ 
-		p->CheckValidity = true;
-		p->RemoveVertices( IArg(1) ); 
-		return 0;
+		p->SetNumVertices( IArg(1) );
 	}
 	static int GetNumVertices( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetNumVertices() ); return 1; }
 
@@ -504,7 +480,7 @@ public:
 
 	static int SetVertex(T* p, lua_State* L)
 	{
-		size_t Index = p->GetNumVertices()-1;
+		size_t Index = 0;
 		if(lua_type(L, 1) == LUA_TNUMBER)
 		{
 			// Indices from Lua are one-indexed.  -1 to adjust.
@@ -630,7 +606,7 @@ public:
 
 	LunaActorMultiVertex()
 	{
-		ADD_METHOD( ClearVertices );
+		ADD_METHOD( SetNumVertices );
 		ADD_METHOD( GetNumVertices );
 
 		ADD_METHOD( SetVertex );
