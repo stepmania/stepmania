@@ -76,7 +76,7 @@ public:
 
 	struct AMV_TweenState
 	{
-		AMV_TweenState(): line_width(1.0f), FirstToDraw(0), NumToDraw(-1) {}
+		AMV_TweenState(): FirstToDraw(0), NumToDraw(-1), line_width(1.0f) {}
 		static void MakeWeightedAverage(AMV_TweenState& average_out, const AMV_TweenState& ts1, const AMV_TweenState& ts2, float percent_between);
 		bool operator==(const AMV_TweenState& other) const;
 		bool operator!=(const AMV_TweenState& other) const { return !operator==(other); }
