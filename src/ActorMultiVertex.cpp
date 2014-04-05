@@ -370,8 +370,6 @@ void ActorMultiVertex::FinishTweening()
 void ActorMultiVertex::AMV_TweenState::MakeWeightedAverage(AMV_TweenState& average_out, const AMV_TweenState& ts1, const AMV_TweenState& ts2, float percent_between)
 {
 	average_out.line_width= lerp(percent_between, ts1.line_width, ts2.line_width);
-	average_out.FirstToDraw= ts1.FirstToDraw;
-	average_out.NumToDraw= ts1.NumToDraw;
 	for(size_t v= 0; v < average_out.vertices.size(); ++v)
 	{
 		WeightedAvergeOfRSVs(average_out.vertices[v], ts1.vertices[v], ts2.vertices[v], percent_between);
@@ -396,9 +394,9 @@ int ActorMultiVertex::AMV_TweenState::GetSafeNumToDraw( DrawMode dm ) const
 
 void ActorMultiVertex::AMV_TweenState::CheckValidity( DrawMode dm )
 {
-	if( FirstToDraw >= (int) vertices.size() )
+	if( FirstToDraw >= (int) vertices.size() && vertices.size() > 0)
 	{	
-		LOG->Warn("ActorMultiVertex: FirstToDraw >= vertices.size(), %i >= %i", FirstToDraw, (int) vertices.size() );
+		LOG->Warn("ActorMultiVertex: FirstToDraw > vertices.size(), %i > %i", FirstToDraw + 1, (int) vertices.size() );
 	}
 	int num = GetSafeNumToDraw( dm );
 	if( NumToDraw != num && NumToDraw != -1 )
