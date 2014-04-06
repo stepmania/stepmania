@@ -360,10 +360,10 @@ if(NOT APPLE)
 		)
 	else(WIN32)
 		list(APPEND SMDATA_ARCH_HOOKS_SRC
-			"arch/ArchHooks/ArchHooks_Linux.cpp"
+			"arch/ArchHooks/ArchHooks_Unix.cpp"
 		)
 		list(APPEND SMDATA_ARCH_HOOKS_HPP
-			"arch/ArchHooks/ArchHooks_Linux.h"
+			"arch/ArchHooks/ArchHooks_Unix.h"
 		)
 	endif(WIN32)
 else(NOT APPLE)
