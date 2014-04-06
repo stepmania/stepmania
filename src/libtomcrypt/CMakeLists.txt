@@ -224,7 +224,7 @@ list(APPEND TOMCRYPT_PK_DER
 	"src/pk/asn1/der/short_integer/der_length_short_integer.c"
 	"src/pk/asn1/der/utctime/der_decode_utctime.c"
 	"src/pk/asn1/der/utctime/der_encode_utctime.c"
-	"Src/pk/asn1/der/utctime/der_length_utctime.c"
+	"src/pk/asn1/der/utctime/der_length_utctime.c"
 	"src/pk/asn1/der/utf8/der_decode_utf8_string.c"
 	"src/pk/asn1/der/utf8/der_encode_utf8_string.c"
 	"src/pk/asn1/der/utf8/der_length_utf8_string.c"
