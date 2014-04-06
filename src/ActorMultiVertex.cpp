@@ -60,7 +60,6 @@ ActorMultiVertex::ActorMultiVertex()
 	RageTextureID ID = TEXTUREMAN->GetDefaultTextureID();
 	_Texture = TEXTUREMAN->LoadTexture( ID );
 
-	_DrawMode = DrawMode_Invalid;
 	_EffectMode = EffectMode_Normal;
 	_TextureMode = TextureMode_Modulate;
 }
@@ -77,7 +76,6 @@ ActorMultiVertex::ActorMultiVertex( const ActorMultiVertex &cpy ):
 	CPY( AMV_Tweens );
 	CPY( AMV_current );
 	CPY( AMV_start );
-	CPY( _DrawMode );
 	CPY( _EffectMode );
 	CPY( _TextureMode );
 #undef CPY
@@ -208,7 +206,7 @@ void ActorMultiVertex::DrawPrimitives()
 	DISPLAY->SetTextureMode( TextureUnit_1, _TextureMode );
 
 	int FirstToDraw = AMV_current.FirstToDraw;
-	int NumToDraw = AMV_current.GetSafeNumToDraw(_DrawMode);
+	int NumToDraw = AMV_current.GetSafeNumToDraw(AMV_current._DrawMode, AMV_current.NumToDraw);
 
 	if( NumToDraw == 0 )
 	{
@@ -216,7 +214,7 @@ void ActorMultiVertex::DrawPrimitives()
 		return;
 	}
 	
-	switch( _DrawMode )
+	switch( AMV_current._DrawMode )
 	{
 		case DrawMode_Quads:
 		{
@@ -260,7 +258,7 @@ void ActorMultiVertex::DrawPrimitives()
 
 bool ActorMultiVertex::EarlyAbortDraw() const
 {
-	if( AMV_current.FirstToDraw >= (int) AMV_current.vertices.size() || _DrawMode >= NUM_DrawMode )
+	if( AMV_current.FirstToDraw >= (int) AMV_current.vertices.size() || AMV_current._DrawMode >= NUM_DrawMode )
 	{
 		return true;
 	}
@@ -269,23 +267,6 @@ bool ActorMultiVertex::EarlyAbortDraw() const
 
 void ActorMultiVertex::UpdateInternal( float fDeltaTime )
 {
-	// Hack: Multiple changes are required to go from one valid state to another.
-	// Check here instead of on each change to prevent erroneous warns.
-	if( CheckValidity )
-	{
-		if( AMV_Tweens.empty() )
-		{
-			AMV_current.CheckValidity( _DrawMode );
-		}
-		else
-		{
-			for( size_t i = 0; i < AMV_Tweens.size(); ++i )
-			{
-				AMV_Tweens[i].CheckValidity( _DrawMode );
-			}
-		}
-		CheckValidity = false;
-	}
 	Actor::UpdateInternal( fDeltaTime );
 }
 
@@ -366,6 +347,24 @@ void ActorMultiVertex::FinishTweening()
 	Actor::FinishTweening();
 }
 
+void ActorMultiVertex::AMV_TweenState::SetDrawState( DrawMode dm, int first, int num )
+{
+	if(first >= (int)vertices.size() && vertices.size() > 0)
+	{
+		LOG->Warn("ActorMultiVertex:SetDrawState: FirstToDraw > vertices.size(), %d > %zu", FirstToDraw + 1, vertices.size() );
+		return;
+	}
+	int safe_num= GetSafeNumToDraw( dm, num );
+	if( num != safe_num && num != -1 )
+	{
+		LOG->Warn("ActorMultiVertex: NumToDraw %d is not valid for %zu vertices with DrawMode %s", num, vertices.size(), DrawModeNames[dm] );
+		return;
+	}
+	_DrawMode= dm;
+	FirstToDraw= first;
+	NumToDraw= num;
+}
+
 void ActorMultiVertex::AMV_TweenState::MakeWeightedAverage(AMV_TweenState& average_out, const AMV_TweenState& ts1, const AMV_TweenState& ts2, float percent_between)
 {
 	average_out.line_width= lerp(percent_between, ts1.line_width, ts2.line_width);
@@ -375,9 +374,8 @@ void ActorMultiVertex::AMV_TweenState::MakeWeightedAverage(AMV_TweenState& avera
 	}
 }
 
-int ActorMultiVertex::AMV_TweenState::GetSafeNumToDraw( DrawMode dm ) const
+int ActorMultiVertex::AMV_TweenState::GetSafeNumToDraw( DrawMode dm, int num ) const
 {
-	int num = NumToDraw;
 	int max = vertices.size() - FirstToDraw;
 	// NumToDraw == -1 draws all vertices
 	if( num == -1 || num > max )
@@ -392,19 +390,6 @@ int ActorMultiVertex::AMV_TweenState::GetSafeNumToDraw( DrawMode dm ) const
 	return num;
 }
 
-void ActorMultiVertex::AMV_TweenState::CheckValidity( DrawMode dm )
-{
-	if( FirstToDraw >= (int) vertices.size() && vertices.size() > 0)
-	{	
-		LOG->Warn("ActorMultiVertex: FirstToDraw > vertices.size(), %d > %u", FirstToDraw + 1, vertices.size() );
-	}
-	int num = GetSafeNumToDraw( dm );
-	if( NumToDraw != num && NumToDraw != -1 )
-	{
-		LOG->Warn("ActorMultiVertex: NumToDraw %d is not valid for %u vertices with DrawMode %s", NumToDraw, vertices.size(), DrawModeNames[dm] );
-	}
-}
-
 // lua start
 #include "LuaBinding.h"
 
@@ -414,7 +399,6 @@ class LunaActorMultiVertex: public Luna<ActorMultiVertex>
 public:
 	static int SetNumVertices( T* p, lua_State *L )
 	{
-		p->CheckValidity = true;
 		p->SetNumVertices( IArg(1) );
 		return 0;
 	}
@@ -437,7 +421,7 @@ public:
 			size_t DataPieceElements = lua_objlen(L, DataPieceIndex);
 			if(lua_type(L, DataPieceIndex) != LUA_TTABLE)
 			{
-				LOG->Warn( "ActorMultiVertex::SetVertex: non-table parameter %u supplied inside table of parameters, table expected.", i );
+				LOG->Warn( "ActorMultiVertex::SetVertex: non-table parameter %zu supplied inside table of parameters, table expected.", i );
 				return;
 			}
 			int pushes = 1;
@@ -471,7 +455,7 @@ public:
 			}
 			else
 			{
-				LOG->Warn( "ActorMultiVertex::SetVertex: Parameter %u has %u elements supplied. 2, 3, or 4 expected.", i, DataPieceElements );
+				LOG->Warn( "ActorMultiVertex::SetVertex: Parameter %zu has %zu elements supplied. 2, 3, or 4 expected.", i, DataPieceElements );
 
 			}
 			// Avoid a stack underflow by only popping the amount we pushed.
@@ -491,12 +475,11 @@ public:
 		}
 		else if( Index == (int) p->GetNumVertices() )
 		{
-			p->CheckValidity = true;
 			p->AddVertices( 1 );
 		}
 		else if( Index > (int) p->GetNumVertices() )
 		{
-			LOG->Warn( "ActorMultiVertex::SetVertex: Cannot set vertex %d if there is no vertex %d, only %u vertices.", Index+1 , Index, p->GetNumVertices() );
+			LOG->Warn( "ActorMultiVertex::SetVertex: Cannot set vertex %d if there is no vertex %d, only %zu vertices.", Index+1 , Index, p->GetNumVertices() );
 			return 0;
 		}
 		SetVertexFromStack(p, L, Index, lua_gettop(L));
@@ -514,14 +497,13 @@ public:
 			First = IArg(1)-1;
 			if( First < 0 )
 			{
-				LOG->Warn( "ActorMultiVertex::SetVertex: index %d provided, cannot set Index < 1", First+1 );
+				LOG->Warn( "ActorMultiVertex::SetVertices: index %d provided, cannot set Index < 1", First+1 );
 				return 0;
 			}
 		}
 		int Last = First + lua_objlen(L, StackIndex );
 		if( Last > (int) p->GetNumVertices())
 		{
-			p->CheckValidity = true;
 			p->AddVertices( Last - p->GetNumVertices() );
 		}
 		for(int n = First; n < Last; ++n)
@@ -531,14 +513,6 @@ public:
 			SetVertexFromStack(p, L, n, lua_gettop(L));
 			lua_pop(L, 1);
 		}
-		return 0;
-	}
-
-	static int SetDrawMode( T* p, lua_State *L )
-	{
-		p->CheckValidity = true;
-		DrawMode dm = Enum::Check<DrawMode>(L, 1);
-		p->SetDrawMode( dm );
 		return 0;
 	}
 
@@ -561,51 +535,81 @@ public:
 		float Width = FArg(1);
 		if( Width < 0 )
 		{
-			LOG->Warn( "ActorMultiVertex::SetVertex: cannot set negative width." );
+			LOG->Warn( "ActorMultiVertex::SetLineWidth: cannot set negative width." );
 			return 0;
 		}
 		p->SetLineWidth(Width);
 		return 0;
 	}
 
-	static int SetFirstToDraw( T* p, lua_State *L )
+	static int SetDrawState( T* p, lua_State* L )
 	{
-		// Indices from Lua are one-indexed.  -1 to adjust.
-		int First = IArg(1)-1;
-		if( First < 0 )
+		DrawMode dm= p->GetDestDrawMode();
+		int first= p->GetDestFirstToDraw();
+		int num= p->GetDestNumToDraw();
+		// Check the type of each arg to allow the themer to pass in nil for a value they don't wish to change.
+		if( lua_type(L, 1) != LUA_TNIL )
 		{
-			LOG->Warn( "ActorMultiVertex::SetVertex: index %d provided, cannot set Index < 1", First+1 );
-			return 0;
+			dm= Enum::Check<DrawMode>(L, 1);
 		}
-		p->CheckValidity = true;
-		p->SetFirstToDraw(First);
+		if( lua_type(L, 2) == LUA_TNUMBER )
+		{
+			// Indices from Lua are one-indexed.  -1 to adjust.
+			first= IArg(2)-1;
+			if( first < 0 )
+			{
+				LOG->Warn( "ActorMultiVertex::SetDrawState: first index %d provided, cannot set first index < 1.  Using previous value.", first+1 );
+				first= p->GetDestFirstToDraw();
+			}
+		}
+		if( lua_type(L, 3) == LUA_TNUMBER )
+		{
+			num= IArg(3);
+			if( num < -1 )
+			{
+				LOG->Warn( "ActorMultiVertex::SetDrawState: cannot draw %d vertices.  Using previous value.", num );
+				num= p->GetDestNumToDraw();
+			}
+		}
+		p->SetDrawState(dm, first, num);
 		return 0;
 	}
 
-	static int SetNumToDraw( T* p, lua_State* L )
+	static int GetDestDrawMode( T* p, lua_State* L )
 	{
-		int Num = IArg(1);
-		// NumToDraw == -1 draws all vertices
-		if( Num < -1 )
-		{
-			LOG->Warn( "ActorMultiVertex::SetVertex: cannot draw %d vertices.", Num );
-			return 0;
-		}
-		p->CheckValidity = true;
-		p->SetNumToDraw(Num);
-		return 0;
-	}
-
-	static int GetFirstToDraw( T* p, lua_State* L )
-	{
-		// Indices in Lua are one-indexed.  +1 to adjust.
-		lua_pushnumber(L, p->GetFirstToDraw()+1);
+		Enum::Push(L, p->GetDestDrawMode());
 		return 1;
 	}
 
-	static int GetNumToDraw( T* p, lua_State* L )
+	static int GetDestFirstToDraw( T* p, lua_State* L )
 	{
-		lua_pushnumber(L, p->GetNumToDraw());
+		// Indices in Lua are one-indexed.  +1 to adjust.
+		lua_pushnumber(L, p->GetDestFirstToDraw()+1);
+		return 1;
+	}
+
+	static int GetDestNumToDraw( T* p, lua_State* L )
+	{
+		lua_pushnumber(L, p->GetDestNumToDraw());
+		return 1;
+	}
+	
+	static int GetCurrDrawMode( T* p, lua_State* L )
+	{
+		Enum::Push(L, p->GetCurrDrawMode());
+		return 1;
+	}
+
+	static int GetCurrFirstToDraw( T* p, lua_State* L )
+	{
+		// Indices in Lua are one-indexed.  +1 to adjust.
+		lua_pushnumber(L, p->GetCurrFirstToDraw()+1);
+		return 1;
+	}
+
+	static int GetCurrNumToDraw( T* p, lua_State* L )
+	{
+		lua_pushnumber(L, p->GetCurrNumToDraw());
 		return 1;
 	}
 	
@@ -637,17 +641,19 @@ public:
 		ADD_METHOD( SetVertex );
 		ADD_METHOD( SetVertices );
 
-		ADD_METHOD( SetDrawMode );
 		ADD_METHOD( SetEffectMode );
 		ADD_METHOD( SetTextureMode );
 		ADD_METHOD( SetLineWidth );
 
+		ADD_METHOD( SetDrawState );
 		ADD_METHOD( SetNumVertices );
-		ADD_METHOD( SetFirstToDraw );
-		ADD_METHOD( SetNumToDraw );
 		ADD_METHOD( GetNumVertices );
-		ADD_METHOD( GetFirstToDraw );
-		ADD_METHOD( GetNumToDraw );
+		ADD_METHOD( GetDestDrawMode );
+		ADD_METHOD( GetDestFirstToDraw );
+		ADD_METHOD( GetDestNumToDraw );
+		ADD_METHOD( GetCurrDrawMode );
+		ADD_METHOD( GetCurrFirstToDraw );
+		ADD_METHOD( GetCurrNumToDraw );
 
 		// Copy from RageTexture
 		ADD_METHOD( SetTexture );
