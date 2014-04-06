@@ -124,10 +124,7 @@ void ActorMultiVertex::LoadFromTexture( RageTextureID ID )
 	{
 		return;
 	}
-	else
-	{
-		Texture = TEXTUREMAN->LoadTexture( ID );
-	}
+	Texture = TEXTUREMAN->LoadTexture( ID );
 	SetTexture( Texture );
 }
 
@@ -272,6 +269,8 @@ bool ActorMultiVertex::EarlyAbortDraw() const
 
 void ActorMultiVertex::UpdateInternal( float fDeltaTime )
 {
+	// Hack: Multiple changes are required to go from one valid state to another.
+	// Check here instead of on each change to prevent erroneous warns.
 	if( CheckValidity )
 	{
 		if( AMV_Tweens.empty() )
@@ -380,6 +379,7 @@ int ActorMultiVertex::AMV_TweenState::GetSafeNumToDraw( DrawMode dm ) const
 {
 	int num = NumToDraw;
 	int max = vertices.size() - FirstToDraw;
+	// NumToDraw == -1 draws all vertices
 	if( num == -1 || num > max )
 	{
 		num = max;
@@ -396,12 +396,12 @@ void ActorMultiVertex::AMV_TweenState::CheckValidity( DrawMode dm )
 {
 	if( FirstToDraw >= (int) vertices.size() && vertices.size() > 0)
 	{	
-		LOG->Warn("ActorMultiVertex: FirstToDraw > vertices.size(), %i > %i", FirstToDraw + 1, (int) vertices.size() );
+		LOG->Warn("ActorMultiVertex: FirstToDraw > vertices.size(), %d > %u", FirstToDraw + 1, vertices.size() );
 	}
 	int num = GetSafeNumToDraw( dm );
 	if( NumToDraw != num && NumToDraw != -1 )
 	{
-		LOG->Warn("ActorMultiVertex: NumToDraw %i is not valid for %i vertices with DrawMode %s", NumToDraw, (int) vertices.size(), DrawModeNames[dm] );
+		LOG->Warn("ActorMultiVertex: NumToDraw %d is not valid for %u vertices with DrawMode %s", NumToDraw, vertices.size(), DrawModeNames[dm] );
 	}
 }
 
@@ -422,6 +422,7 @@ public:
 
 	static void SetVertexFromStack(T* p, lua_State* L, size_t VertexIndex, int DataStackIndex)
 	{
+		// Use the number of arguments to determine which property a table is for
 		if(lua_type(L, DataStackIndex) != LUA_TTABLE)
 		{
 			LOG->Warn("ActorMultiVertex::SetVertex: non-table parameter supplied. Table of tables of vertex data expected.");
@@ -436,7 +437,7 @@ public:
 			size_t DataPieceElements = lua_objlen(L, DataPieceIndex);
 			if(lua_type(L, DataPieceIndex) != LUA_TTABLE)
 			{
-				LOG->Warn( "ActorMultiVertex::SetVertex: non-table parameter %d supplied inside table of parameters, table expected.", (int)i );
+				LOG->Warn( "ActorMultiVertex::SetVertex: non-table parameter %u supplied inside table of parameters, table expected.", i );
 				return;
 			}
 			int pushes = 1;
@@ -470,7 +471,7 @@ public:
 			}
 			else
 			{
-				LOG->Warn( "ActorMultiVertex::SetVertex: Parameter %d has %i elements supplied. 2, 3, or 4 expected.", (int)i, (int)DataPieceElements );
+				LOG->Warn( "ActorMultiVertex::SetVertex: Parameter %u has %u elements supplied. 2, 3, or 4 expected.", i, DataPieceElements );
 
 			}
 			// Avoid a stack underflow by only popping the amount we pushed.
@@ -482,15 +483,20 @@ public:
 	static int SetVertex(T* p, lua_State* L)
 	{
 		// Indices from Lua are one-indexed.  -1 to adjust.
-		size_t Index = IArg(1)-1;
-		if( Index == p->GetNumVertices() )
+		int Index = IArg(1)-1;
+		if( Index < 0 )
+		{
+			LOG->Warn( "ActorMultiVertex::SetVertex: index %d provided, cannot set Index < 1", Index+1 );
+			return 0;
+		}
+		else if( Index == (int) p->GetNumVertices() )
 		{
 			p->CheckValidity = true;
 			p->AddVertices( 1 );
 		}
-		else if( Index > p->GetNumVertices() )
+		else if( Index > (int) p->GetNumVertices() )
 		{
-			LOG->Warn( "ActorMultiVertex::SetVertex: Cannot set vertex %d if there is no vertex %d, only %d vertices.", (int)Index+1 , (int)Index, p->GetNumVertices() );
+			LOG->Warn( "ActorMultiVertex::SetVertex: Cannot set vertex %d if there is no vertex %d, only %u vertices.", Index+1 , Index, p->GetNumVertices() );
 			return 0;
 		}
 		SetVertexFromStack(p, L, Index, lua_gettop(L));
@@ -499,21 +505,26 @@ public:
 
 	static int SetVertices(T* p, lua_State* L)
 	{
-		size_t First = 0;
+		int First = 0;
 		int StackIndex = lua_gettop(L);
 		// Allow the user to just pass a table without specifying a starting point.
 		if(lua_type(L, 1) == LUA_TNUMBER)
 		{
 			// Indices from Lua are one-indexed.  -1 to adjust.
 			First = IArg(1)-1;
+			if( First < 0 )
+			{
+				LOG->Warn( "ActorMultiVertex::SetVertex: index %d provided, cannot set Index < 1", First+1 );
+				return 0;
+			}
 		}
-		size_t Last = First + lua_objlen(L, StackIndex );
-		if( Last > p->GetNumVertices())
+		int Last = First + lua_objlen(L, StackIndex );
+		if( Last > (int) p->GetNumVertices())
 		{
 			p->CheckValidity = true;
 			p->AddVertices( Last - p->GetNumVertices() );
 		}
-		for(size_t n = First; n < Last; ++n)
+		for(int n = First; n < Last; ++n)
 		{
 			lua_pushnumber(L, n-First+1);
 			lua_gettable(L, StackIndex);
@@ -547,22 +558,41 @@ public:
 
 	static int SetLineWidth( T* p, lua_State *L )
 	{
-		p->SetLineWidth(FArg(1));
+		float Width = FArg(1);
+		if( Width < 0 )
+		{
+			LOG->Warn( "ActorMultiVertex::SetVertex: cannot set negative width." );
+			return 0;
+		}
+		p->SetLineWidth(Width);
 		return 0;
 	}
 
 	static int SetFirstToDraw( T* p, lua_State *L )
 	{
 		// Indices from Lua are one-indexed.  -1 to adjust.
+		int First = IArg(1)-1;
+		if( First < 0 )
+		{
+			LOG->Warn( "ActorMultiVertex::SetVertex: index %d provided, cannot set Index < 1", First+1 );
+			return 0;
+		}
 		p->CheckValidity = true;
-		p->SetFirstToDraw(IArg(1) - 1);
+		p->SetFirstToDraw(First);
 		return 0;
 	}
 
 	static int SetNumToDraw( T* p, lua_State* L )
 	{
+		int Num = IArg(1);
+		// NumToDraw == -1 draws all vertices
+		if( Num < -1 )
+		{
+			LOG->Warn( "ActorMultiVertex::SetVertex: cannot draw %d vertices.", Num );
+			return 0;
+		}
 		p->CheckValidity = true;
-		p->SetNumToDraw(IArg(1));
+		p->SetNumToDraw(Num);
 		return 0;
 	}
 

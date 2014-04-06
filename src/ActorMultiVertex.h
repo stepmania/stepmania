@@ -57,8 +57,8 @@ public:
 	void SetTextureMode( TextureMode tm)		{ _TextureMode = tm; }
 	void SetLineWidth( float width)				{ AMV_DestTweenState().line_width = width; }
 
-	void SetFirstToDraw( int first )			{ AMV_DestTweenState().FirstToDraw = max(first, 0); }
-	void SetNumToDraw( int num )				{ AMV_DestTweenState().NumToDraw = max(-1, num); }
+	void SetFirstToDraw( int first )			{ AMV_DestTweenState().FirstToDraw = first; }
+	void SetNumToDraw( int num )				{ AMV_DestTweenState().NumToDraw = num; }
 
 	int GetFirstToDraw() const					{ return AMV_current.FirstToDraw; }
 	int GetNumToDraw() const					{ return AMV_current.NumToDraw; }
