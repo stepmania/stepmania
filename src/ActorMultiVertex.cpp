@@ -357,7 +357,7 @@ void ActorMultiVertex::AMV_TweenState::SetDrawState( DrawMode dm, int first, int
 	int safe_num= GetSafeNumToDraw( dm, num );
 	if( num != safe_num && num != -1 )
 	{
-		LOG->Warn("ActorMultiVertex: NumToDraw %d is not valid for %zu vertices with DrawMode %s", num, vertices.size(), DrawModeNames[dm] );
+		LOG->Warn("ActorMultiVertex:SetDrawState: NumToDraw %d is not valid for %zu vertices with DrawMode %s", num, vertices.size(), DrawModeNames[dm] );
 		return;
 	}
 	_DrawMode= dm;
@@ -558,7 +558,7 @@ public:
 			first= IArg(2)-1;
 			if( first < 0 )
 			{
-				LOG->Warn( "ActorMultiVertex::SetDrawState: first index %d provided, cannot set first index < 1.  Using previous value.", first+1 );
+				LOG->Warn( "ActorMultiVertex:SetDrawState: first index %d provided, cannot set first index < 1.  Using previous value.", first+1 );
 				first= p->GetDestFirstToDraw();
 			}
 		}
@@ -567,9 +567,47 @@ public:
 			num= IArg(3);
 			if( num < -1 )
 			{
-				LOG->Warn( "ActorMultiVertex::SetDrawState: cannot draw %d vertices.  Using previous value.", num );
+				LOG->Warn( "ActorMultiVertex:SetDrawState: cannot draw %d vertices.  Using previous value.", num );
 				num= p->GetDestNumToDraw();
 			}
+		}
+		p->SetDrawState(dm, first, num);
+		return 0;
+	}
+
+	static int SetDrawMode( T* p, lua_State* L )
+	{
+		DrawMode dm= Enum::Check<DrawMode>(L, 1);
+		int first= p->GetDestFirstToDraw();
+		int num= p->GetDestNumToDraw();
+		p->SetDrawState(dm, first, num);
+		return 0;
+	}
+
+	static int SetFirstToDraw( T* p, lua_State* L )
+	{
+		DrawMode dm= p->GetDestDrawMode();
+		// Indices from Lua are one-indexed.  -1 to adjust.
+		int first= IArg(1)-1;
+		int num= p->GetDestNumToDraw();
+		if( first < 0 )
+		{
+			LOG->Warn( "ActorMultiVertex:SetFirstToDraw: first index %d provided, cannot set first index < 1.", first+1 );
+			return 0;
+		}
+		p->SetDrawState(dm, first, num);
+		return 0;
+	}
+
+	static int SetNumToDraw( T* p, lua_State* L )
+	{
+		DrawMode dm= p->GetDestDrawMode();
+		int first= p->GetDestFirstToDraw();
+		int num= IArg(1);
+		if( num < -1 )
+		{
+			LOG->Warn( "ActorMultiVertex:SetNumToDraw: cannot draw %d vertices.", num );
+			return 0;
 		}
 		p->SetDrawState(dm, first, num);
 		return 0;
@@ -646,6 +684,9 @@ public:
 		ADD_METHOD( SetLineWidth );
 
 		ADD_METHOD( SetDrawState );
+		ADD_METHOD( SetDrawMode );
+		ADD_METHOD( SetFirstToDraw );
+		ADD_METHOD( SetNumToDraw );
 		ADD_METHOD( SetNumVertices );
 		ADD_METHOD( GetNumVertices );
 		ADD_METHOD( GetDestDrawMode );
