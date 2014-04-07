@@ -59,6 +59,7 @@ endif(WIN32)
 include(SMMakeArch)
 include(SMMakeRage)
 include(SMMakeActor)
+include(SMMakeScreen)
 
 list(APPEND SMDATA_GLOBAL_SINGLETON_SRC
 	"AnnouncerManager.cpp"
@@ -120,6 +121,21 @@ list(APPEND SMDATA_GLOBAL_SINGLETON_HPP
 
 source_group("Global Singletons" FILES ${SMDATA_GLOBAL_SINGLETON_SRC} ${SMDATA_GLOBAL_SINGLETON_HPP})
 
+list(APPEND SMDATA_FILE_TYPES_SRC
+	"IniFile.cpp"
+	"MsdFile.cpp"
+	"XmlFile.cpp"
+	"XmlFileUtil.cpp"
+)
+list(APPEND SMDATA_FILE_TYPES_HPP
+	"IniFile.h"
+	"MsdFile.h"
+	"XmlFile.h"
+	"XmlFileUtil.h"
+)
+
+source_group("File Types" FILES ${SMDATA_FILE_TYPES_SRC} ${SMDATA_FILE_TYPES_HPP})
+
 source_group("Generated Files" FILES ${CMAKE_CURRENT_BINARY_DIR}/verdata.cpp)
 
 list(APPEND SMDATA_ALL_FILES_SRC
@@ -128,6 +144,8 @@ list(APPEND SMDATA_ALL_FILES_SRC
 	${SMDATA_ALL_ARCH_SRC}
 	${SMDATA_ALL_RAGE_SRC}
 	${SMDATA_ALL_ACTORS_SRC}
+	${SMDATA_ALL_SCREENS_SRC}
+	${SMDATA_FILE_TYPES_SRC}
 	${CMAKE_CURRENT_BINARY_DIR}/verdata.cpp
 )
 
@@ -136,6 +154,8 @@ list(APPEND SMDATA_ALL_FILES_HPP
 	${SMDATA_ALL_ARCH_HPP}
 	${SMDATA_ALL_RAGE_HPP}
 	${SMDATA_ALL_ACTORS_HPP}
+	${SMDATA_ALL_SCREENS_HPP}
+	${SMDATA_FILE_TYPES_HPP}
 	${SMDATA_GLOBAL_FILES_HPP}
 )
 
