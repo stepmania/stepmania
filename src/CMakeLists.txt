@@ -54,6 +54,7 @@ set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}")
 
 include(SMMakeArch)
 include(SMMakeRage)
+include(SMMakeActor)
 
 list(APPEND SMDATA_GLOBAL_SINGLETON_SRC
 	"AnnouncerManager.cpp"
@@ -122,6 +123,7 @@ list(APPEND SMDATA_ALL_FILES_SRC
 	${SMDATA_GLOBAL_SINGLETON_SRC}
 	${SMDATA_ALL_ARCH_SRC}
 	${SMDATA_ALL_RAGE_SRC}
+	${SMDATA_ALL_ACTORS_SRC}
 	${CMAKE_CURRENT_BINARY_DIR}/verdata.cpp
 )
 
@@ -129,11 +131,12 @@ list(APPEND SMDATA_ALL_FILES_HPP
 	${SMDATA_GLOBAL_SINGLETON_HPP}
 	${SMDATA_ALL_ARCH_HPP}
 	${SMDATA_ALL_RAGE_HPP}
+	${SMDATA_ALL_ACTORS_HPP}
 	${SMDATA_GLOBAL_FILES_HPP}
 )
 
 if (WIN32)
-	# TODO: Combine these two into one.
+	# TODO: Combine these two definitions into one.
 	add_definitions(/D WINDOWS)
 	add_definitions(/D _WINDOWS)
 endif(WIN32)
@@ -149,12 +152,8 @@ target_link_libraries("StepMania-Data"
 	"tommath"
 )
 
-<<<<<<< HEAD
-set_property(TARGET "StepMania-Data" PROPERTY FOLDER "Internal Libraries")
-=======
 if (WIN32)
 	target_link_libraries("StepMania-Data" ${DIRECTX_LIBRARY_DIR})
 endif(WIN32)
 
 set_property(TARGET "StepMania-Data" PROPERTY FOLDER "Internal Libraries")
->>>>>>> Add Rage. Move Arch subproject to separate file.
