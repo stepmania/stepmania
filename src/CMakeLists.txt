@@ -52,6 +52,10 @@ source_group("Global Files" FILES ${SMDATA_GLOBAL_FILES_SRC} ${SMDATA_GLOBAL_FIL
 
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}")
 
+if(WIN32)
+	add_definitions(/MP)
+endif(WIN32)
+
 include(SMMakeArch)
 include(SMMakeRage)
 include(SMMakeActor)
