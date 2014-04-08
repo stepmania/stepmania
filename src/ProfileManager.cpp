@@ -349,6 +349,12 @@ bool ProfileManager::SaveLocalProfile( RString sProfileID )
 
 void ProfileManager::UnloadProfile( PlayerNumber pn )
 {
+	if( m_sProfileDir[pn].empty() )
+	{
+		// Don't bother unloading a profile that wasn't loaded in the first place.
+		// Saves us an expensive and pointless trip through all the songs.
+		return;
+	}
 	m_sProfileDir[pn] = "";
 	m_sProfileDirImportedFrom[pn] = "";
 	m_bWasLoadedFromMemoryCard[pn] = false;
