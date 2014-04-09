@@ -52,38 +52,39 @@ public:
 	void AddVertex();
 	void AddVertices( int Add );
 
-	void SetDrawMode( DrawMode dm )				{ _DrawMode = dm; }
 	void SetEffectMode( EffectMode em)			{ _EffectMode = em; }
 	void SetTextureMode( TextureMode tm)		{ _TextureMode = tm; }
 	void SetLineWidth( float width)				{ AMV_DestTweenState().line_width = width; }
 
-	void SetFirstToDraw( int first )			{ AMV_DestTweenState().FirstToDraw = first; }
-	void SetNumToDraw( int num )				{ AMV_DestTweenState().NumToDraw = num; }
+	void SetDrawState( DrawMode dm, int first, int num ) { AMV_DestTweenState().SetDrawState(dm, first, num); }
 
-	int GetFirstToDraw() const					{ return AMV_current.FirstToDraw; }
-	int GetNumToDraw() const					{ return AMV_current.NumToDraw; }
-	size_t GetNumVertices() 					{ return AMV_current.vertices.size(); }
+	DrawMode GetDestDrawMode() const { return AMV_DestTweenState()._DrawMode; }
+	int GetDestFirstToDraw() const					{ return AMV_DestTweenState().FirstToDraw; }
+	int GetDestNumToDraw() const					{ return AMV_DestTweenState().NumToDraw; }
+	DrawMode GetCurrDrawMode() const { return AMV_current._DrawMode; }
+	int GetCurrFirstToDraw() const					{ return AMV_current.FirstToDraw; }
+	int GetCurrNumToDraw() const					{ return AMV_current.NumToDraw; }
+	size_t GetNumVertices() 					{ return AMV_DestTweenState().vertices.size(); }
 	
 	void SetVertexPos( int index , float x , float y , float z );
 	void SetVertexColor( int index , RageColor c );
 	void SetVertexCoords( int index , float TexCoordX , float TexCoordY );
 
-	bool CheckValidity;
-
 	virtual void PushSelf( lua_State *L );
 
 	struct AMV_TweenState
 	{
-		AMV_TweenState(): FirstToDraw(0), NumToDraw(-1), line_width(1.0f) {}
+		AMV_TweenState(): _DrawMode(DrawMode_Invalid), FirstToDraw(0), NumToDraw(-1), line_width(1.0f) {}
 		static void MakeWeightedAverage(AMV_TweenState& average_out, const AMV_TweenState& ts1, const AMV_TweenState& ts2, float percent_between);
 		bool operator==(const AMV_TweenState& other) const;
 		bool operator!=(const AMV_TweenState& other) const { return !operator==(other); }
 
-		int GetSafeNumToDraw( DrawMode dm ) const;
-		void CheckValidity( DrawMode dm );
+		void SetDrawState( DrawMode dm, int first, int num );
+		int GetSafeNumToDraw( DrawMode dm, int num ) const;
 
 		vector<RageSpriteVertex> vertices;
 
+		DrawMode _DrawMode;
 		int FirstToDraw;
 		int NumToDraw;
 
@@ -108,7 +109,6 @@ private:
 	AMV_TweenState AMV_current;
 	AMV_TweenState AMV_start;
 
-	DrawMode _DrawMode;
 	EffectMode _EffectMode;
 	TextureMode _TextureMode;
 };
