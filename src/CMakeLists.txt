@@ -60,6 +60,7 @@ include(SMMakeArch)
 include(SMMakeRage)
 include(SMMakeActor)
 include(SMMakeScreen)
+include(SMMakeData)
 
 list(APPEND SMDATA_GLOBAL_SINGLETON_SRC
 	"AnnouncerManager.cpp"
@@ -145,6 +146,7 @@ list(APPEND SMDATA_ALL_FILES_SRC
 	${SMDATA_ALL_RAGE_SRC}
 	${SMDATA_ALL_ACTORS_SRC}
 	${SMDATA_ALL_SCREENS_SRC}
+	${SMDATA_ALL_DATA_SRC}
 	${SMDATA_FILE_TYPES_SRC}
 	${CMAKE_CURRENT_BINARY_DIR}/verdata.cpp
 )
@@ -155,15 +157,17 @@ list(APPEND SMDATA_ALL_FILES_HPP
 	${SMDATA_ALL_RAGE_HPP}
 	${SMDATA_ALL_ACTORS_HPP}
 	${SMDATA_ALL_SCREENS_HPP}
+	${SMDATA_ALL_DATA_HPP}
 	${SMDATA_FILE_TYPES_HPP}
 	${SMDATA_GLOBAL_FILES_HPP}
 )
 
-if (WIN32)
+if (MSVC)
 	# TODO: Combine these two definitions into one.
 	add_definitions(/D WINDOWS)
 	add_definitions(/D _WINDOWS)
-endif(WIN32)
+	add_definitions(/D _CRT_SECURE_NO_WARNINGS)
+endif(MSVC)
 
 add_library("StepMania-Data" ${SMDATA_ALL_FILES_SRC} ${SMDATA_ALL_FILES_HPP})
 
