@@ -351,13 +351,13 @@ void ActorMultiVertex::AMV_TweenState::SetDrawState( DrawMode dm, int first, int
 {
 	if(first >= (int)vertices.size() && vertices.size() > 0)
 	{
-		LOG->Warn("ActorMultiVertex:SetDrawState: FirstToDraw > vertices.size(), %d > %zu", FirstToDraw + 1, vertices.size() );
+		LOG->Warn("ActorMultiVertex:SetDrawState: FirstToDraw > vertices.size(), %d > %u", FirstToDraw + 1, (unsigned int)vertices.size() );
 		return;
 	}
 	int safe_num= GetSafeNumToDraw( dm, num );
 	if( num != safe_num && num != -1 )
 	{
-		LOG->Warn("ActorMultiVertex:SetDrawState: NumToDraw %d is not valid for %zu vertices with DrawMode %s", num, vertices.size(), DrawModeNames[dm] );
+		LOG->Warn("ActorMultiVertex:SetDrawState: NumToDraw %d is not valid for %u vertices with DrawMode %s", num, (unsigned int)vertices.size(), DrawModeNames[dm] );
 		return;
 	}
 	_DrawMode= dm;
@@ -421,7 +421,7 @@ public:
 			size_t DataPieceElements = lua_objlen(L, DataPieceIndex);
 			if(lua_type(L, DataPieceIndex) != LUA_TTABLE)
 			{
-				LOG->Warn( "ActorMultiVertex::SetVertex: non-table parameter %zu supplied inside table of parameters, table expected.", i );
+				LOG->Warn( "ActorMultiVertex::SetVertex: non-table parameter %u supplied inside table of parameters, table expected.", (unsigned int)i );
 				return;
 			}
 			int pushes = 1;
@@ -455,7 +455,7 @@ public:
 			}
 			else
 			{
-				LOG->Warn( "ActorMultiVertex::SetVertex: Parameter %zu has %zu elements supplied. 2, 3, or 4 expected.", i, DataPieceElements );
+				LOG->Warn( "ActorMultiVertex::SetVertex: Parameter %u has %u elements supplied. 2, 3, or 4 expected.", (unsigned int)i, (unsigned int)DataPieceElements );
 
 			}
 			// Avoid a stack underflow by only popping the amount we pushed.
@@ -479,7 +479,7 @@ public:
 		}
 		else if( Index > (int) p->GetNumVertices() )
 		{
-			LOG->Warn( "ActorMultiVertex::SetVertex: Cannot set vertex %d if there is no vertex %d, only %zu vertices.", Index+1 , Index, p->GetNumVertices() );
+			LOG->Warn( "ActorMultiVertex::SetVertex: Cannot set vertex %d if there is no vertex %d, only %u vertices.", Index+1 , Index, (unsigned int)p->GetNumVertices() );
 			return 0;
 		}
 		SetVertexFromStack(p, L, Index, lua_gettop(L));
