@@ -178,6 +178,7 @@ target_link_libraries("StepMania-Data"
 	"png"
 	"tomcrypt"
 	"tommath"
+	"jsoncpp"
 )
 
 if (WIN32)

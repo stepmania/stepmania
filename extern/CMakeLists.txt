@@ -1,4 +1,5 @@
 add_subdirectory(lua-5.1)
 add_subdirectory(glew-1.5.8)
+add_subdirectory(jsoncpp)
 add_subdirectory(pcre)
 add_subdirectory(libpng)
