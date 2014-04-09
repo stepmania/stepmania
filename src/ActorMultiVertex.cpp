@@ -547,68 +547,34 @@ public:
 		DrawMode dm= p->GetDestDrawMode();
 		int first= p->GetDestFirstToDraw();
 		int num= p->GetDestNumToDraw();
-		// Check the type of each arg to allow the themer to pass in nil for a value they don't wish to change.
-		if( lua_type(L, 1) != LUA_TNIL )
+		int ArgsIndex= 1;
+		if( !lua_istable(L, ArgsIndex) )
 		{
-			dm= Enum::Check<DrawMode>(L, 1);
+			LOG->Warn( "ActorMultiVertex:SetDrawState: Table expected, something else recieved.  Doing nothing.");
+			return 0;
 		}
-		if( lua_type(L, 2) == LUA_TNUMBER )
+		// Fetch the draw mode, if provided.
+		lua_getfield(L, ArgsIndex, "Mode");
+		if( !lua_isnil(L, -1) )
+		{
+			dm= Enum::Check<DrawMode>(L, -1);
+		}
+		lua_pop(L, 1);
+		// Fetch FirstToDraw, if provided.
+		lua_getfield(L, ArgsIndex, "First");
+		if( !lua_isnil(L, -1) )
 		{
 			// Indices from Lua are one-indexed.  -1 to adjust.
-			first= IArg(2)-1;
-			if( first < 0 )
-			{
-				LOG->Warn( "ActorMultiVertex:SetDrawState: first index %d provided, cannot set first index < 1.  Using previous value.", first+1 );
-				first= p->GetDestFirstToDraw();
-			}
+			first= IArg(-1)-1;
 		}
-		if( lua_type(L, 3) == LUA_TNUMBER )
+		lua_pop(L, 1);
+		// Fetch NumToDraw, if provided.
+		lua_getfield(L, ArgsIndex, "Num");
+		if( !lua_isnil(L, -1) )
 		{
-			num= IArg(3);
-			if( num < -1 )
-			{
-				LOG->Warn( "ActorMultiVertex:SetDrawState: cannot draw %d vertices.  Using previous value.", num );
-				num= p->GetDestNumToDraw();
-			}
+			num= IArg(-1);
 		}
-		p->SetDrawState(dm, first, num);
-		return 0;
-	}
-
-	static int SetDrawMode( T* p, lua_State* L )
-	{
-		DrawMode dm= Enum::Check<DrawMode>(L, 1);
-		int first= p->GetDestFirstToDraw();
-		int num= p->GetDestNumToDraw();
-		p->SetDrawState(dm, first, num);
-		return 0;
-	}
-
-	static int SetFirstToDraw( T* p, lua_State* L )
-	{
-		DrawMode dm= p->GetDestDrawMode();
-		// Indices from Lua are one-indexed.  -1 to adjust.
-		int first= IArg(1)-1;
-		int num= p->GetDestNumToDraw();
-		if( first < 0 )
-		{
-			LOG->Warn( "ActorMultiVertex:SetFirstToDraw: first index %d provided, cannot set first index < 1.", first+1 );
-			return 0;
-		}
-		p->SetDrawState(dm, first, num);
-		return 0;
-	}
-
-	static int SetNumToDraw( T* p, lua_State* L )
-	{
-		DrawMode dm= p->GetDestDrawMode();
-		int first= p->GetDestFirstToDraw();
-		int num= IArg(1);
-		if( num < -1 )
-		{
-			LOG->Warn( "ActorMultiVertex:SetNumToDraw: cannot draw %d vertices.", num );
-			return 0;
-		}
+		lua_pop(L, 1);
 		p->SetDrawState(dm, first, num);
 		return 0;
 	}
@@ -684,9 +650,6 @@ public:
 		ADD_METHOD( SetLineWidth );
 
 		ADD_METHOD( SetDrawState );
-		ADD_METHOD( SetDrawMode );
-		ADD_METHOD( SetFirstToDraw );
-		ADD_METHOD( SetNumToDraw );
 		ADD_METHOD( SetNumVertices );
 		ADD_METHOD( GetNumVertices );
 		ADD_METHOD( GetDestDrawMode );
