@@ -62,6 +62,10 @@ include(SMMakeActor)
 include(SMMakeScreen)
 include(SMMakeData)
 
+if(WIN32)
+	include(SMMakeOSWin)
+endif(WIN32)
+
 list(APPEND SMDATA_GLOBAL_SINGLETON_SRC
 	"AnnouncerManager.cpp"
 	"Bookkeeper.cpp"
@@ -148,6 +152,7 @@ list(APPEND SMDATA_ALL_FILES_SRC
 	${SMDATA_ALL_SCREENS_SRC}
 	${SMDATA_ALL_DATA_SRC}
 	${SMDATA_FILE_TYPES_SRC}
+	${SMDATA_OS_SRC}
 	${CMAKE_CURRENT_BINARY_DIR}/verdata.cpp
 )
 
@@ -159,6 +164,7 @@ list(APPEND SMDATA_ALL_FILES_HPP
 	${SMDATA_ALL_SCREENS_HPP}
 	${SMDATA_ALL_DATA_HPP}
 	${SMDATA_FILE_TYPES_HPP}
+	${SMDATA_OS_HPP}
 	${SMDATA_GLOBAL_FILES_HPP}
 )
 
