@@ -4,6 +4,7 @@ Debug/
 .deps
 *.orig
 *.ilk
+*.aps
 *.rej
 *~
 *.o
