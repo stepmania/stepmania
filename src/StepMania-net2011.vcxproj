@@ -380,6 +380,7 @@ cl /Zl /nologo /c verstub.cpp /Fo"$(IntDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Main.cpp" />
     <ClCompile Include="Screen.cpp" />
     <ClCompile Include="ScreenAttract.cpp" />
     <ClCompile Include="ScreenBookkeeping.cpp" />

@@ -1,37 +1,12 @@
-#ifndef STEP_MANIA_H
-#define STEP_MANIA_H
+#include "global.h"
+#include "StepMania.h"
 
-struct Game;
-class RageTimer;
-class VideoModeParams;
-
-int SMMain( int argc, char* argv[] );
-
-/** @brief Utility functions for controlling the whole game. */
-namespace StepMania
-{
-	void ApplyGraphicOptions();
-	void ResetPreferences();
-	void ResetGame();
-	RString GetInitialScreen();
-	RString GetSelectMusicScreen();
-	void ChangeCurrentGame( const Game* g );
-
-	// If successful, return filename of screenshot in sDir, else return ""
-	RString SaveScreenshot( RString sDir, bool bSaveCompressed, bool bMakeSignature, int iIndex = -1 );
-
-	void InsertCoin( int iNum = 1, bool bCountInBookkeeping = true );
-	void InsertCredit();
-	void ClearCredits();
-
-	void GetPreferredVideoModeParams( VideoModeParams &paramsOut );
-	bool GetHighResolutionTextures();
+int main(int argc, char* argv[]) {
+	return SMMain(argc, argv);
 }
 
-#endif
-
 /*
- * (c) 2001-2004 Chris Danford
+ * (c) 2014 Jason Felds
  * All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a

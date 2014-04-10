@@ -36,7 +36,7 @@ list(APPEND SMDATA_GLOBAL_FILES_SRC
 	"GameLoop.cpp"
 	"global.cpp"
 	"SpecialFiles.cpp"
-	# StepMania will be refactored to not have its main.
+	"StepMania.cpp"	# StepMania will be refactored to not have its main.
 )
 
 list(APPEND SMDATA_GLOBAL_FILES_HPP
@@ -45,7 +45,7 @@ list(APPEND SMDATA_GLOBAL_FILES_HPP
 	"ProductInfo.h" # At some point, have some of this file be generated perhaps.
 	"SpecialFiles.h"
 	"StdString.h" # At some point, remove the need for this file. We don't support Visual Studio 6.
-	# StepMania will be refactored to not have its main.
+	"StepMania.h" # StepMania will be refactored to not have its main.
 )
 
 source_group("Global Files" FILES ${SMDATA_GLOBAL_FILES_SRC} ${SMDATA_GLOBAL_FILES_HPP})
@@ -156,6 +156,11 @@ list(APPEND SMDATA_ALL_FILES_SRC
 	${CMAKE_CURRENT_BINARY_DIR}/verdata.cpp
 )
 
+if (NOT APPLE)
+	list(APPEND SMDATA_ALL_FILES_SRC "Main.cpp")
+	source_group("" FILES "Main.cpp")
+endif(NOT APPLE)
+
 list(APPEND SMDATA_ALL_FILES_HPP
 	${SMDATA_GLOBAL_SINGLETON_HPP}
 	${SMDATA_ALL_ARCH_HPP}
@@ -213,6 +218,8 @@ if (WIN32)
 	my_add_link_flags("StepMania" "/MAPINFO:EXPORTS")
 	my_add_link_flags("StepMania" "/SAFESEH:NO")
 	my_add_link_flags("StepMania" "/NOLOGO")
+	my_add_link_flags("StepMania" "/MAP")
+	my_add_link_flags("StepMania" "/SUBSYSTEM:WINDOWS")
 endif(WIN32)
 
 set_property(TARGET "StepMania" PROPERTY FOLDER "Executables")
