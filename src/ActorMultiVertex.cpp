@@ -213,7 +213,7 @@ void ActorMultiVertex::DrawPrimitives()
 		// Nothing to draw.
 		return;
 	}
-	
+
 	switch( AMV_current._DrawMode )
 	{
 		case DrawMode_Quads:
@@ -263,11 +263,6 @@ bool ActorMultiVertex::EarlyAbortDraw() const
 		return true;
 	}
 	return false;
-}
-
-void ActorMultiVertex::UpdateInternal( float fDeltaTime )
-{
-	Actor::UpdateInternal( fDeltaTime );
 }
 
 void ActorMultiVertex::UpdateTweening( float fDeltaTime )
