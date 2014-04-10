@@ -175,9 +175,9 @@ if (MSVC)
 	add_definitions(/D _CRT_SECURE_NO_WARNINGS)
 endif(MSVC)
 
-add_library("StepMania-Data" ${SMDATA_ALL_FILES_SRC} ${SMDATA_ALL_FILES_HPP})
+add_executable("StepMania" ${SMDATA_ALL_FILES_SRC} ${SMDATA_ALL_FILES_HPP})
 
-target_link_libraries("StepMania-Data"
+target_link_libraries("StepMania"
 	"glew"
 	"lua-5.1"
 	"pcre"
@@ -188,7 +188,31 @@ target_link_libraries("StepMania-Data"
 )
 
 if (WIN32)
-	target_link_libraries("StepMania-Data" ${DIRECTX_LIBRARY_DIR})
+	# Borrow from http://binglongx.wordpress.com/2013/06/30/add-arbitrary-compilelink-flags-in-cmake/
+	macro(my_append_target_property target property str)
+
+		get_target_property(current_property ${target} ${property})
+		if (current_property)
+			set_target_properties(${target} PROPERTIES ${property} "${current_property} ${str}")
+		else(current_property)
+			set_target_properties(${target} PROPERTIES ${property} ${str})
+		endif(current_property)
+
+	endmacro(my_append_target_property)
+
+	macro(my_add_compile_flags target flags)
+		my_append_target_property(${target} COMPILE_FLAGS ${flags})
+	endmacro(my_add_compile_flags)
+
+	macro(my_add_link_flags target flags)
+		my_append_target_property(${target} LINK_FLAGS ${flags})
+	endmacro(my_add_link_flags)
+
+	my_add_link_flags("StepMania" "/LIBPATH:\"${DIRECTX_LIBRARY_DIR}\"")
+	my_add_link_flags("StepMania" "/ERRORREPORT:SEND")
+	my_add_link_flags("StepMania" "/MAPINFO:EXPORTS")
+	my_add_link_flags("StepMania" "/SAFESEH:NO")
+	my_add_link_flags("StepMania" "/NOLOGO")
 endif(WIN32)
 
-set_property(TARGET "StepMania-Data" PROPERTY FOLDER "Internal Libraries")
+set_property(TARGET "StepMania" PROPERTY FOLDER "Executables")
