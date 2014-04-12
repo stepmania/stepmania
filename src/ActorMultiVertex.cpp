@@ -265,11 +265,6 @@ bool ActorMultiVertex::EarlyAbortDraw() const
 	return false;
 }
 
-void ActorMultiVertex::UpdateInternal( float fDeltaTime )
-{
-	Actor::UpdateInternal( fDeltaTime );
-}
-
 void ActorMultiVertex::SetCurrentTweenStart()
 {
 	AMV_start= AMV_current;
