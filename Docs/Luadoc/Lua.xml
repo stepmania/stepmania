@@ -473,13 +473,16 @@
 			<Function name='SetVertices'/>
 			<Function name='SetNumVertices'/>
 			<Function name='GetNumVertices'/>
-			<Function name='SetFirstToDraw'/>
-			<Function name='SetNumToDraw'/>
-			<Function name='GetFirstToDraw'/>
-			<Function name='GetNumToDraw'/>
-			<Function name='SetDrawMode'/>
 			<Function name='SetEffectMode'/>
 			<Function name='SetTextureMode'/>
+			<Function name='SetLineWidth'/>
+			<Function name='SetDrawState'/>
+			<Function name='GetDestDrawMode'/>
+			<Function name='GetDestFirstToDraw'/>
+			<Function name='GetDestNumToDraw'/>
+			<Function name='GetCurrDrawMode'/>
+			<Function name='GetCurrFirstToDraw'/>
+			<Function name='GetCurrNumToDraw'/>
 			<Function name='SetTexture'/>
 			<Function name='LoadTexture'/>
 		</Class>
