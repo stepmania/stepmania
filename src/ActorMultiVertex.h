@@ -37,7 +37,9 @@ public:
 	virtual void DrawPrimitives();
 	virtual void UpdateInternal( float fDeltaTime );
 	
-	void UpdateTweening( float fDeltaTime );
+	void SetCurrentTweenStart();
+	void EraseHeadTween();
+	void UpdatePercentThroughTween( float PercentThroughTween );
 	void BeginTweening( float time, ITween *pInterp );
 
 	void StopTweening();

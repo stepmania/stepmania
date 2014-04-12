@@ -270,52 +270,20 @@ void ActorMultiVertex::UpdateInternal( float fDeltaTime )
 	Actor::UpdateInternal( fDeltaTime );
 }
 
-void ActorMultiVertex::UpdateTweening( float fDeltaTime )
+void ActorMultiVertex::SetCurrentTweenStart()
 {
-	// Preserve time to send to Actor::UpdateTweening()
-	float Time = fDeltaTime;
-	// Walk through TweenStates without changing Actor's TweenInfo
-	size_t TweenIndex = 0;
-	float TimeIntoTween = 0;
+	AMV_start= AMV_current;
+}
 
-	while( AMV_Tweens.size() > TweenIndex && Time != 0 )
-	{
-		AMV_TweenState &TS = AMV_Tweens[TweenIndex];
-		TweenInfo  &TI = m_Tweens[TweenIndex]->info;
+void ActorMultiVertex::EraseHeadTween()
+{
+	AMV_current= AMV_Tweens[0];
+	AMV_Tweens.erase(AMV_Tweens.begin());
+}
 
-		float TimeLeftInTween = TI.m_fTimeLeftInTween - TimeIntoTween;
-		bool Beginning = TimeLeftInTween == TI.m_fTweenTime;
-
-		float SecsToSubtract = min( TimeLeftInTween, Time );
-		TimeLeftInTween -= SecsToSubtract;
-
-		Time -= SecsToSubtract;
-
-		if( Beginning )			// we are just beginning this tween
-			AMV_start = AMV_current;	// set the start position
-
-		if( TimeLeftInTween == 0 )	// Current tween is over. Stop.
-		{
-			AMV_current = TS;
-			TimeIntoTween = 0;
-			TweenIndex++;
-		}
-		else	// in the middle of tweening. Recalcute the current position.
-		{
-			const float PercentThroughTween = 1 - ( TimeLeftInTween / TI.m_fTweenTime );
-
-			// distort the percentage if appropriate
-			float PercentAlongPath = TI.m_pTween->Tween( PercentThroughTween );
-			AMV_TweenState::MakeWeightedAverage( AMV_current, AMV_start, TS, PercentAlongPath );
-		}
-	}
-	// Take out any TweenStates that have passed.
-	for( size_t i = 0; i < TweenIndex; ++i )
-	{
-		AMV_Tweens.erase( AMV_Tweens.begin() );
-	}
-	// update Actor
-	Actor::UpdateTweening( fDeltaTime );
+void ActorMultiVertex::UpdatePercentThroughTween( float PercentThroughTween )
+{
+	AMV_TweenState::MakeWeightedAverage( AMV_current, AMV_start, AMV_Tweens[0], PercentThroughTween );
 }
 
 void ActorMultiVertex::BeginTweening( float time, ITween *pTween )
