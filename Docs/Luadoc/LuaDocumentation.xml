@@ -1453,6 +1453,9 @@ save yourself some time, copy this for undocumented things:
 	<Function name='SetTextureMode' return='void' arguments='TextureMode tm'>
 		Sets the <Link class='ENUM' function='TextureMode'>TextureMode</Link> of the ActorMultiVertex.
 	</Function>
+	<Function name='SetLineWidth' return='void' arguments='float width'>
+		Sets the width of the line for DrawMode_LineStrip.
+	</Function>
 	<Function name='SetTexture' return='void' arguments='RageTexture texture'>
 		Sets the texture to <code>texture</code>
 	</Function>
