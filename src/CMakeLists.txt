@@ -182,6 +182,7 @@ if (MSVC)
 	add_definitions(/D WINDOWS)
 	add_definitions(/D _WINDOWS)
 	add_definitions(/D _CRT_SECURE_NO_WARNINGS)
+	add_definitions(/D GLEW_STATIC)
 endif(MSVC)
 
 add_executable("StepMania" ${SMDATA_ALL_FILES_SRC} ${SMDATA_ALL_FILES_HPP})

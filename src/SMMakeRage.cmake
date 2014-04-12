@@ -120,6 +120,7 @@ list(APPEND SMDATA_RAGE_FILE_SRC
 	"RageFileDriverSlice.cpp"
 	"RageFileDriverTimeout.cpp"
 	"RageFileDriverZip.cpp"
+	"RageFileManager.cpp"
 	"RageFileManager_ReadAhead.cpp"
 )
 
@@ -135,6 +136,7 @@ list(APPEND SMDATA_RAGE_FILE_HPP
 	"RageFileDriverSlice.h"
 	"RageFileDriverTimeout.h"
 	"RageFileDriverZip.h"
+	"RageFileManager.h"
 	"RageFileManager_ReadAhead.h"
 )
 
@@ -142,6 +144,7 @@ source_group("Rage\\\\File" FILES ${SMDATA_RAGE_FILE_SRC} ${SMDATA_RAGE_FILE_HPP
 
 list(APPEND SMDATA_RAGE_SOUND_SRC
 	"RageSound.cpp"
+	"RageSoundManager.cpp"
 	"RageSoundMixBuffer.cpp"
 	"RageSoundPosMap.cpp"
 	"RageSoundReader.cpp"
@@ -164,6 +167,7 @@ list(APPEND SMDATA_RAGE_SOUND_SRC
 )
 list(APPEND SMDATA_RAGE_SOUND_HPP
 	"RageSound.h"
+	"RageSoundManager.h"
 	"RageSoundMixBuffer.h"
 	"RageSoundPosMap.h"
 	"RageSoundReader.h"
