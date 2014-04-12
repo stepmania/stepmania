@@ -11,9 +11,9 @@
 #endif
 
 #if defined(_MSC_VER)
-#pragma comment(lib, OGG_LIB_DIR "ogg_static.lib")
-#pragma comment(lib, OGG_LIB_DIR "vorbis_static.lib")
-#pragma comment(lib, OGG_LIB_DIR "vorbisfile_static.lib")
+#pragma comment(lib, "ogg_static.lib")
+#pragma comment(lib, "vorbis_static.lib")
+#pragma comment(lib, "vorbisfile_static.lib")
 #endif // _MSC_VER
 
 #include <cstring>

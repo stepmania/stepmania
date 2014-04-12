@@ -5,8 +5,8 @@
 #include "archutils/Win32/ErrorStrings.h"
 
 #if defined(_MSC_VER)
-#pragma comment(lib, "archutils/Win32/ddk/setupapi.lib") 
-#pragma comment(lib, "archutils/Win32/ddk/hid.lib") 
+#pragma comment(lib, "setupapi.lib") 
+#pragma comment(lib, "hid.lib") 
 #endif
 
 extern "C" {

@@ -1,10 +1,10 @@
 include_directories(include)
 
-add_definitions(/D GLEW_STATIC)
-
 if(MSVC)
 #   Uncomment the one below if it ever gets fixed.
 #	VS_GLOBAL_ROOTNAMESPACE("glew")
+	add_definitions(/D GLEW_STATIC)
+	add_definitions(/D _MBCS)
 endif(MSVC)
 
 set(GLEW_SRC "src/glew.c")

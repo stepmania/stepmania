@@ -24,6 +24,10 @@ include_directories(
 	"../extern/zlib"
 )
 
+if(WIN32 OR APPLE)
+	include_directories("../extern/mad-0.15.1b")
+endif(WIN32 OR APPLE)
+
 if(WIN32)
 	include_directories(
 		${DIRECTX_INCLUDE_DIR}
@@ -182,7 +186,7 @@ endif(MSVC)
 
 add_executable("StepMania" ${SMDATA_ALL_FILES_SRC} ${SMDATA_ALL_FILES_HPP})
 
-target_link_libraries("StepMania"
+list(APPEND SM_LINK_LIBRARIES
 	"glew"
 	"lua-5.1"
 	"pcre"
@@ -192,28 +196,54 @@ target_link_libraries("StepMania"
 	"jsoncpp"
 )
 
-if (WIN32)
-	# Borrow from http://binglongx.wordpress.com/2013/06/30/add-arbitrary-compilelink-flags-in-cmake/
-	macro(my_append_target_property target property str)
+if(MSVC)
+	find_library(LIB_SWSCALE NAMES "swscale" 
+		PATHS ${CMAKE_SOURCE_DIR}/extern/ffmpeg/lib NO_DEFAULT_PATH)
+	get_filename_component(LIB_SWSCALE ${LIB_SWSCALE} NAME)
+	list(APPEND SM_LINK_LIBRARIES ${LIB_SWSCALE})
 
-		get_target_property(current_property ${target} ${property})
-		if (current_property)
-			set_target_properties(${target} PROPERTIES ${property} "${current_property} ${str}")
-		else(current_property)
-			set_target_properties(${target} PROPERTIES ${property} ${str})
-		endif(current_property)
+	find_library(LIB_AVCODEC NAMES "avcodec" 
+		PATHS ${CMAKE_SOURCE_DIR}/extern/ffmpeg/lib NO_DEFAULT_PATH)
+	get_filename_component(LIB_AVCODEC ${LIB_AVCODEC} NAME)
+	list(APPEND SM_LINK_LIBRARIES ${LIB_AVCODEC})
 
-	endmacro(my_append_target_property)
+	find_library(LIB_AVFORMAT NAMES "avformat" 
+		PATHS ${CMAKE_SOURCE_DIR}/extern/ffmpeg/lib NO_DEFAULT_PATH)
+	get_filename_component(LIB_AVFORMAT ${LIB_AVFORMAT} NAME)
+	list(APPEND SM_LINK_LIBRARIES ${LIB_AVFORMAT})
 
-	macro(my_add_compile_flags target flags)
-		my_append_target_property(${target} COMPILE_FLAGS ${flags})
-	endmacro(my_add_compile_flags)
+	find_library(LIB_AVUTIL NAMES "avutil" 
+		PATHS ${CMAKE_SOURCE_DIR}/extern/ffmpeg/lib NO_DEFAULT_PATH)
+	get_filename_component(LIB_AVUTIL ${LIB_AVUTIL} NAME)
+	list(APPEND SM_LINK_LIBRARIES ${LIB_AVUTIL})
 
-	macro(my_add_link_flags target flags)
-		my_append_target_property(${target} LINK_FLAGS ${flags})
-	endmacro(my_add_link_flags)
+	list(APPEND SM_LINK_LIBRARIES "libmad.lib")
 
+	list(APPEND SM_LINK_LIBRARIES
+		"ogg_static.lib"
+		"vorbis_static.lib"
+		"vorbisfile_static.lib"
+
+		"dbghelp.lib"
+		"setupapi.lib"
+		"hid.lib"
+	)
+
+endif(MSVC)
+
+target_link_libraries("StepMania"
+	${SM_LINK_LIBRARIES}
+)
+
+if(WIN32)
 	my_add_link_flags("StepMania" "/LIBPATH:\"${DIRECTX_LIBRARY_DIR}\"")
+	my_add_link_flags("StepMania" "/LIBPATH:\"${CMAKE_SOURCE_DIR}/extern/libpng/lib\"")
+	my_add_link_flags("StepMania" "/LIBPATH:\"${CMAKE_SOURCE_DIR}/extern/ffmpeg/lib\"")
+	my_add_link_flags("StepMania" "/LIBPATH:\"${CMAKE_SOURCE_DIR}/extern/libjpeg\"")
+	my_add_link_flags("StepMania" "/LIBPATH:\"${CMAKE_SOURCE_DIR}/extern/zlib\"")
+	my_add_link_flags("StepMania" "/LIBPATH:\"${CMAKE_SOURCE_DIR}/extern/mad-0.15.1b/msvc++/Release\"")
+	my_add_link_flags("StepMania" "/LIBPATH:\"${CMAKE_SOURCE_DIR}/extern/vorbis/win32\"")
+	my_add_link_flags("StepMania" "/LIBPATH:\"${CMAKE_SOURCE_DIR}/archutils/Win32/ddk\"")
 	my_add_link_flags("StepMania" "/ERRORREPORT:SEND")
 	my_add_link_flags("StepMania" "/MAPINFO:EXPORTS")
 	my_add_link_flags("StepMania" "/SAFESEH:NO")

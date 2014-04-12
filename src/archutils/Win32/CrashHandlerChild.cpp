@@ -27,7 +27,7 @@
 #include "RageFileDriverDeflate.h"
 
 #if defined(_MSC_VER)
-#pragma comment(lib, "archutils/Win32/ddk/dbghelp.lib")
+#pragma comment(lib, "dbghelp.lib")
 #endif
 
 extern unsigned long version_num;

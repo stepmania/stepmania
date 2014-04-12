@@ -172,8 +172,6 @@ inline long int lrintf( float f )
 #define ENDIAN_LITTLE
 #endif
 
-#define OGG_LIB_DIR "../extern/vorbis/win32/"
-
 #if defined(__GNUC__) // It might be MinGW or Cygwin(?)
 #include "archutils/Common/gcc_byte_swaps.h"
 #else // XXX: Should we test for MSVC?
