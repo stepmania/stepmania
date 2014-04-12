@@ -213,7 +213,7 @@ void ActorMultiVertex::DrawPrimitives()
 		// Nothing to draw.
 		return;
 	}
-	
+
 	switch( AMV_current._DrawMode )
 	{
 		case DrawMode_Quads:
