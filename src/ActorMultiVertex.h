@@ -36,7 +36,9 @@ public:
 	virtual bool EarlyAbortDraw() const;
 	virtual void DrawPrimitives();
 	
-	void UpdateTweening( float fDeltaTime );
+	void SetCurrentTweenStart();
+	void EraseHeadTween();
+	void UpdatePercentThroughTween( float PercentThroughTween );
 	void BeginTweening( float time, ITween *pInterp );
 
 	void StopTweening();
