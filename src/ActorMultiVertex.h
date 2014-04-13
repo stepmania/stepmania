@@ -33,8 +33,38 @@ public:
 	void LoadFromNode( const XNode* Node );
 	virtual ActorMultiVertex *Copy() const;
 
+	struct AMV_TweenState
+	{
+		AMV_TweenState(): _DrawMode(DrawMode_Invalid), FirstToDraw(0), NumToDraw(-1), line_width(1.0f) {}
+		static void MakeWeightedAverage(AMV_TweenState& average_out, const AMV_TweenState& ts1, const AMV_TweenState& ts2, float percent_between);
+		bool operator==(const AMV_TweenState& other) const;
+		bool operator!=(const AMV_TweenState& other) const { return !operator==(other); }
+
+		void SetDrawState( DrawMode dm, int first, int num );
+		int GetSafeNumToDraw( DrawMode dm, int num ) const;
+
+		vector<RageSpriteVertex> vertices;
+
+		DrawMode _DrawMode;
+		int FirstToDraw;
+		int NumToDraw;
+
+		// needed for DrawMode_LineStrip
+		float line_width;
+	};
+
+	AMV_TweenState& AMV_DestTweenState()
+	{
+		if(AMV_Tweens.empty())
+		{ return AMV_current; }
+		else
+		{ return AMV_Tweens.back(); }
+	}
+	const AMV_TweenState& AMV_DestTweenState() const { return const_cast<ActorMultiVertex*>(this)->AMV_DestTweenState(); }
+
 	virtual bool EarlyAbortDraw() const;
 	virtual void DrawPrimitives();
+	virtual void DrawInternal( const AMV_TweenState *TS );
 	
 	void SetCurrentTweenStart();
 	void EraseHeadTween();
@@ -73,35 +103,6 @@ public:
 
 	virtual void PushSelf( lua_State *L );
 
-	struct AMV_TweenState
-	{
-		AMV_TweenState(): _DrawMode(DrawMode_Invalid), FirstToDraw(0), NumToDraw(-1), line_width(1.0f) {}
-		static void MakeWeightedAverage(AMV_TweenState& average_out, const AMV_TweenState& ts1, const AMV_TweenState& ts2, float percent_between);
-		bool operator==(const AMV_TweenState& other) const;
-		bool operator!=(const AMV_TweenState& other) const { return !operator==(other); }
-
-		void SetDrawState( DrawMode dm, int first, int num );
-		int GetSafeNumToDraw( DrawMode dm, int num ) const;
-
-		vector<RageSpriteVertex> vertices;
-
-		DrawMode _DrawMode;
-		int FirstToDraw;
-		int NumToDraw;
-
-		// needed for DrawMode_LineStrip
-		float line_width;
-	};
-
-	AMV_TweenState& AMV_DestTweenState()
-	{
-		if(AMV_Tweens.empty())
-		{ return AMV_current; }
-		else
-		{ return AMV_Tweens.back(); }
-	}
-	const AMV_TweenState& AMV_DestTweenState() const { return const_cast<ActorMultiVertex*>(this)->AMV_DestTweenState(); }
-
 private:
 	RageTexture* _Texture;
 
@@ -110,6 +111,9 @@ private:
 	AMV_TweenState AMV_current;
 	AMV_TweenState AMV_start;
 
+	// required to handle diffuse and glow
+	AMV_TweenState *AMV_TempState;
+	
 	EffectMode _EffectMode;
 	TextureMode _TextureMode;
 };

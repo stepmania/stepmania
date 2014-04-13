@@ -203,10 +203,54 @@ void ActorMultiVertex::DrawPrimitives()
 
 	Actor::SetTextureRenderStates();
 	DISPLAY->SetEffectMode( _EffectMode );
-	DISPLAY->SetTextureMode( TextureUnit_1, _TextureMode );
+	
+	// set temporary diffuse and glow
+	static AMV_TweenState TS;
 
-	int FirstToDraw = AMV_current.FirstToDraw;
-	int NumToDraw = AMV_current.GetSafeNumToDraw(AMV_current._DrawMode, AMV_current.NumToDraw);
+	AMV_TempState = &TS;
+	TS = AMV_current;
+
+	// skip if no change or fully transparent
+	if( m_pTempState->diffuse[0] != RageColor(1, 1, 1, 1) && m_pTempState->diffuse[0].a > 0 )
+	{
+
+		for( size_t i=0; i < TS.vertices.size(); i++ )
+		{
+			// RageVColor * RageColor
+			TS.vertices[i].c.b *= m_pTempState->diffuse[0].b;
+			TS.vertices[i].c.r *= m_pTempState->diffuse[0].r;
+			TS.vertices[i].c.g *= m_pTempState->diffuse[0].g;
+			TS.vertices[i].c.a *= m_pTempState->diffuse[0].a;
+		}
+	
+	}
+	
+	// Draw diffuse pass.
+	if( m_pTempState->diffuse[0].a > 0 )
+	{
+		DISPLAY->SetTextureMode( TextureUnit_1, _TextureMode );
+		DrawInternal( AMV_TempState );
+	}
+
+	// Draw the glow pass
+	if( m_pTempState->glow.a > 0 )
+	{
+
+		for( size_t i=0; i < TS.vertices.size(); i++ )
+		{
+			TS.vertices[i].c = m_pTempState->glow;
+		}		
+		DISPLAY->SetTextureMode( TextureUnit_1, TextureMode_Glow );
+		DrawInternal( AMV_TempState );
+
+	}
+}
+
+void ActorMultiVertex::DrawInternal( const AMV_TweenState *TS )
+{
+
+	int FirstToDraw = TS->FirstToDraw;
+	int NumToDraw = TS->GetSafeNumToDraw(TS->_DrawMode, TS->NumToDraw);
 
 	if( NumToDraw == 0 )
 	{
@@ -214,41 +258,41 @@ void ActorMultiVertex::DrawPrimitives()
 		return;
 	}
 
-	switch( AMV_current._DrawMode )
+	switch( TS->_DrawMode )
 	{
 		case DrawMode_Quads:
 		{
-			DISPLAY->DrawQuads( &AMV_current.vertices[FirstToDraw], NumToDraw );
+			DISPLAY->DrawQuads( &TS->vertices[FirstToDraw], NumToDraw );
 			break;
 		}
 		case DrawMode_QuadStrip:
 		{
-			DISPLAY->DrawQuadStrip( &AMV_current.vertices[FirstToDraw], NumToDraw );
+			DISPLAY->DrawQuadStrip( &TS->vertices[FirstToDraw], NumToDraw );
 			break;
 		}
 		case DrawMode_Fan:
 		{
-			DISPLAY->DrawFan( &AMV_current.vertices[FirstToDraw], NumToDraw );
+			DISPLAY->DrawFan( &TS->vertices[FirstToDraw], NumToDraw );
 			break;
 		}
 		case DrawMode_Strip:
 		{
-			DISPLAY->DrawStrip( &AMV_current.vertices[FirstToDraw], NumToDraw );
+			DISPLAY->DrawStrip( &TS->vertices[FirstToDraw], NumToDraw );
 			break;
 		}
 		case DrawMode_Triangles:
 		{
-			DISPLAY->DrawTriangles( &AMV_current.vertices[FirstToDraw], NumToDraw );
+			DISPLAY->DrawTriangles( &TS->vertices[FirstToDraw], NumToDraw );
 			break;
 		}
 		case DrawMode_LineStrip:
 		{
-			DISPLAY->DrawLineStrip( &AMV_current.vertices[FirstToDraw], NumToDraw, AMV_current.line_width );
+			DISPLAY->DrawLineStrip( &TS->vertices[FirstToDraw], NumToDraw, TS->line_width );
 			break;
 		}
 		case DrawMode_SymmetricQuadStrip:
 		{
-			DISPLAY->DrawSymmetricQuadStrip( &AMV_current.vertices[FirstToDraw], NumToDraw );
+			DISPLAY->DrawSymmetricQuadStrip( &TS->vertices[FirstToDraw], NumToDraw );
 			break;
 		}
 	}
