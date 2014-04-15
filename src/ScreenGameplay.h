@@ -170,6 +170,7 @@ public:
 	PlayerInfo *GetDummyPlayerInfo( int iDummyIndex );
 	void Pause(bool bPause) { PauseGame(bPause); }
 	bool IsPaused() const { return m_bPaused; }
+	float GetHasteRate();
 
 protected:
 	virtual void UpdateStageStats( MultiPlayer /* mp */ ) {};	// overridden for multiplayer
@@ -182,6 +183,7 @@ protected:
 	LocalizedString GIVE_UP_START_TEXT;
 	LocalizedString GIVE_UP_BACK_TEXT;
 	LocalizedString GIVE_UP_ABORTED_TEXT;
+	ThemeMetric<float> GIVE_UP_SECONDS;
 	ThemeMetric<float> MUSIC_FADE_OUT_SECONDS;
 	ThemeMetric<float> OUT_TRANSITION_LENGTH;
 	ThemeMetric<float> COURSE_TRANSITION_LENGTH;
@@ -212,7 +214,6 @@ protected:
 	void UpdateLights();
 	void SendCrossedMessages();
 	void BeginBackingOutFromGameplay();
-	float GetHasteRate();
 
 	void PlayTicks();
 	void UpdateSongPosition( float fDeltaTime );

@@ -335,6 +335,7 @@ void ScreenGameplay::Init()
 	GIVE_UP_START_TEXT.Load(		m_sName, "GiveUpStartText" );
 	GIVE_UP_BACK_TEXT.Load(			m_sName, "GiveUpBackText" );
 	GIVE_UP_ABORTED_TEXT.Load(		m_sName, "GiveUpAbortedText" );
+	GIVE_UP_SECONDS.Load(			m_sName, "GiveUpSeconds" );
 	MUSIC_FADE_OUT_SECONDS.Load(		m_sName, "MusicFadeOutSeconds" );
 	OUT_TRANSITION_LENGTH.Load(		m_sName, "OutTransitionLength" );
 	COURSE_TRANSITION_LENGTH.Load(		m_sName, "CourseTransitionLength" );
@@ -1805,9 +1806,9 @@ void ScreenGameplay::Update( float fDeltaTime )
 			}
 
 			// update give up
-			bool bGiveUpTimerFired = !m_GiveUpTimer.IsZero() && m_GiveUpTimer.Ago() > 2.5f;
-			
-				
+			bool bGiveUpTimerFired = !m_GiveUpTimer.IsZero() && m_GiveUpTimer.Ago() > GIVE_UP_SECONDS;
+
+
 			bool bAllHumanHaveBigMissCombo = true;
 			FOREACH_EnabledPlayerNumberInfo( m_vPlayerInfo, pi )
 			{
@@ -2865,7 +2866,8 @@ public:
 	}
 	static int PauseGame( T* p, lua_State *L )		{ p->Pause( BArg(1)); return 0; }
 	static int IsPaused( T* p, lua_State *L )		{ lua_pushboolean( L, p->IsPaused() ); return 1; }
-
+	static int GetHasteRate( T* p, lua_State *L )    { lua_pushnumber( L, p->GetHasteRate() ); return 1; }
+	
 	LunaScreenGameplay()
 	{
 		ADD_METHOD( GetNextCourseSong );
@@ -2876,6 +2878,7 @@ public:
 		// sm-ssc additions:
 		ADD_METHOD( PauseGame );
 		ADD_METHOD( IsPaused );
+		ADD_METHOD( GetHasteRate );
 	}
 };
 
