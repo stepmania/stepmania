@@ -342,6 +342,7 @@ struct RageSpriteVertex	// has color
 	RageVector2 t; // texture coordinates
 };
 
+void WeightedAvergeOfRSVs(RageSpriteVertex& average_out, RageSpriteVertex const& rsv1, RageSpriteVertex const& rsv2, float percent_between);
 
 struct RageModelVertex	// doesn't have color.  Relies on material color
 {
