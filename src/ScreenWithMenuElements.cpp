@@ -384,13 +384,13 @@ public:
 		return 0;
 	}
 
-    static int StartTransitioningScreen( T* p, lua_State *L )
-    {
+	static int StartTransitioningScreen( T* p, lua_State *L )
+	{
 		RString sMessage = SArg(1);
 		ScreenMessage SM = ScreenMessageHelpers::ToScreenMessage( sMessage );
-        p->StartTransitioningScreen( SM );
+		p->StartTransitioningScreen( SM );
 		return 0;
-    }
+	}
 
 	LunaScreenWithMenuElements()
 	{
