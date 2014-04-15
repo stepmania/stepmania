@@ -1401,6 +1401,68 @@ save yourself some time, copy this for undocumented things:
 		Sets a TextureMode on the specified index.
 	</Function>
 </Class>
+<Class name='ActorMultiVertex'>
+	<Function name='SetVertex' return='void' arguments='int index, table { table pos, table color, table textcoords }'>
+		Sets vertex number <code>index</code> with the properties provided. The tables of properties are each optional and can be provided in any order.
+	</Function>
+	<Function name='SetVertices' return='void' arguments='int first, table vertices'>
+		Sets multiple vertices at once. The elements of <code>vertices</code> should themselves be tables, of the form provided to <Link class='ActorMultiVertex' function='SetVertex'>SetVertex</Link>. If <code>vertices</code> is the first argument it will start from vertex 1. If an integer is provided before <code>vertices</code> it will start from that vertex. It will add vertices as necessary.
+        Example: self:SetVertices( { { { x1, y1, z1 } , { r1,g1,b1,a1 } , { tcx1,tcy1 } }; { { x2, y2, z2 } , { r2,g2,b2,a2 } , { tcx2,tcy2 } } } )
+	</Function>
+	<Function name='SetNumVertices' return='void' arguments='int num'>
+		Sets the number of vertices.
+	</Function>
+	<Function name='GetNumVertices' return='void' arguments='void'>
+		Returns the number of vertices
+	</Function>
+	<Function name='SetDrawState' return='void' arguments='table { Mode= mode, First= first, Num= num }'>
+		Sets the draw state variables to the values in the table.<br />
+		Mode must be a <Link class='ENUM' function='DrawMode'>DrawMode</Link>.<br />
+		First is the index of the first vertex to draw.<br />
+		Num is the number of vertices to draw.  -1 for Num means draw all verts after First.<br />
+		Any value not in the table defaults to the already set value.<br />
+		Examples:<br />
+		-- Sets all three parts of the draw state.<br />
+		self:SetDrawState{Mode="DrawMode_Quads", First= 1, Num= -1}<br />
+		-- Set only the draw mode.  First and Num remain unchanged from previous.<br />
+		self:SetDrawState{Mode="DrawMode_Quads"}<br />
+		-- Set the first and number to draw.  Draw mode remains unchanged.<br />
+		self:SetDrawState{First= 3, Num= 4}<br />
+	</Function>
+	<Function name='GetDestDrawMode' return='DrawMode' arguments='void'>
+		Get the <Link class='ENUM' function='DrawMode'>DrawMode</Link> of the destination tween state.
+	</Function>
+	<Function name='GetDestFirstToDraw' return='int' arguments='void'>
+		Get the FirstToDraw of the destination tween state.
+	</Function>
+	<Function name='GetDestNumToDraw' return='int' arguments='void'>
+		Get the NumToDraw of the destination tween state.
+	</Function>
+	<Function name='GetCurrDrawMode' return='DrawMode' arguments='void'>
+		Get the <Link class='ENUM' function='DrawMode'>DrawMode</Link> of the current tween state.
+	</Function>
+	<Function name='GetCurrFirstToDraw' return='int' arguments='void'>
+		Get the FirstToDraw of the current tween state.
+	</Function>
+	<Function name='GetCurrNumToDraw' return='int' arguments='void'>
+		Get the NumToDraw of the current tween state.
+	</Function>
+	<Function name='SetEffectMode' return='void' arguments='EffectMode em'>
+		Sets the <Link class='ENUM' function='EffectMode'>EffectMode</Link> of the ActorMultiVertex.
+	</Function>
+	<Function name='SetTextureMode' return='void' arguments='TextureMode tm'>
+		Sets the <Link class='ENUM' function='TextureMode'>TextureMode</Link> of the ActorMultiVertex.
+	</Function>
+	<Function name='SetLineWidth' return='void' arguments='float width'>
+		Sets the width of the line for DrawMode_LineStrip.
+	</Function>
+	<Function name='SetTexture' return='void' arguments='RageTexture texture'>
+		Sets the texture to <code>texture</code>
+	</Function>
+	<Function name='LoadTexture' return='void' arguments='string path'>
+		Sets the texture at from the file path <code>path</code>.
+	</Function>
+</Class>
 <Class name='ActorProxy'>
 	<Function name='GetTarget' return='Actor' arguments=''>
 		Returns the target of the ActorProxy.
@@ -2366,11 +2428,11 @@ save yourself some time, copy this for undocumented things:
 	<Function name='ResetPlayerOptions' return='void' arguments='PlayerNumber pn'>
 		Resets the specific Player's mods to the default settings.
 	</Function>
-	<Function name='SaveProfiles' return='void' arguments='bool LoadEdits'>
-		Save profiles.
-	</Function>
 	<Function name='SaveLocalData' return='void' arguments=''>
 		Saves the bookkeeping and machine profile data.
+	</Function>
+	<Function name='SaveProfiles' return='void' arguments='bool LoadEdits'>
+		Save profiles.
 	</Function>
 	<Function name='SetCharacter' return='void' arguments='PlayerNumber pn, string sCharID'>
 		Sets the current <Link class='Character' /> for the specified <Link class='ENUM' function='PlayerNumber' />.

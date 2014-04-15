@@ -468,6 +468,24 @@
 			<Function name='SetTextureCoords'/>
 			<Function name='SetTextureMode'/>
 		</Class>
+		<Class base='Actor' name='ActorMultiVertex'>
+			<Function name='SetVertex'/>
+			<Function name='SetVertices'/>
+			<Function name='SetNumVertices'/>
+			<Function name='GetNumVertices'/>
+			<Function name='SetEffectMode'/>
+			<Function name='SetTextureMode'/>
+			<Function name='SetLineWidth'/>
+			<Function name='SetDrawState'/>
+			<Function name='GetDestDrawMode'/>
+			<Function name='GetDestFirstToDraw'/>
+			<Function name='GetDestNumToDraw'/>
+			<Function name='GetCurrDrawMode'/>
+			<Function name='GetCurrFirstToDraw'/>
+			<Function name='GetCurrNumToDraw'/>
+			<Function name='SetTexture'/>
+			<Function name='LoadTexture'/>
+		</Class>
 		<Class base='Actor' name='ActorProxy'>
 			<Function name='GetTarget'/>
 			<Function name='SetTarget'/>
@@ -1873,6 +1891,15 @@
 			<EnumValue name='&apos;DisplayBPM_Actual&apos;' value='0'/>
 			<EnumValue name='&apos;DisplayBPM_Specified&apos;' value='1'/>
 			<EnumValue name='&apos;DisplayBPM_Random&apos;' value='2'/>
+		</Enum>
+		<Enum name='DrawMode'>
+			<EnumValue name='&apos;DrawMode_Quads&apos;' value='0'/>
+			<EnumValue name='&apos;DrawMode_QuadStrip&apos;' value='1'/>
+			<EnumValue name='&apos;DrawMode_Fan&apos;' value='2'/>
+			<EnumValue name='&apos;DrawMode_Strip&apos;' value='3'/>
+			<EnumValue name='&apos;DrawMode_Triangles&apos;' value='4'/>
+			<EnumValue name='&apos;DrawMode_LineStrip&apos;' value='5'/>
+			<EnumValue name='&apos;DrawMode_SymmetricQuadStrip&apos;' value='6'/>
 		</Enum>
 		<Enum name='EarnedExtraStage'>
 			<EnumValue name='&apos;EarnedExtraStage_No&apos;' value='0'/>
