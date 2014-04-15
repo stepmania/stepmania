@@ -73,6 +73,18 @@ RString RageColor::NormalizeColorString( RString sColor )
 		return "";
 	return c.ToString();
 }
+
+void WeightedAvergeOfRSVs(RageSpriteVertex& average_out, RageSpriteVertex const& rsv1, RageSpriteVertex const& rsv2, float percent_between)
+{
+	average_out.p= lerp(percent_between, rsv1.p, rsv2.p);
+	average_out.n= lerp(percent_between, rsv1.n, rsv2.n);
+	average_out.c.b= lerp(percent_between, rsv1.c.b, rsv2.c.b);
+	average_out.c.g= lerp(percent_between, rsv1.c.g, rsv2.c.g);
+	average_out.c.r= lerp(percent_between, rsv1.c.r, rsv2.c.r);
+	average_out.c.a= lerp(percent_between, rsv1.c.a, rsv2.c.a);
+	average_out.t= lerp(percent_between, rsv1.t, rsv2.t);
+}
+
 /** @brief Utilities for working with Lua. */
 namespace LuaHelpers
 {

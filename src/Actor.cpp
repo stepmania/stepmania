@@ -84,7 +84,7 @@ void Actor::SetBGMLight( int iLightNumber, float fCabinetLights )
 
 void Actor::InitState()
 {
-	StopTweening();
+	this->StopTweening();
 
 	m_pTempState = NULL;
 
@@ -615,14 +615,9 @@ void Actor::EndDraw()
 
 void Actor::UpdateTweening( float fDeltaTime )
 {
-	while( 1 )
+	while( !m_Tweens.empty() // something to do
+		&& fDeltaTime > 0 )	// something will change
 	{
-		if( m_Tweens.empty() ) // nothing to do
-			return;
-
-		if( fDeltaTime == 0 )	// nothing will change
-			return;
-
 		// update current tween state
 		// earliest tween
 		TweenState &TS = m_Tweens[0]->state;
@@ -636,7 +631,10 @@ void Actor::UpdateTweening( float fDeltaTime )
 
 		RString sCommand = TI.m_sCommandName;
 		if( bBeginning )			// we are just beginning this tween
+		{
 			m_start = m_current;	// set the start position
+			SetCurrentTweenStart();
+		}
 	
 		if( TI.m_fTimeLeftInTween == 0 )	// Current tween is over.  Stop.
 		{
@@ -645,6 +643,7 @@ void Actor::UpdateTweening( float fDeltaTime )
 			// delete the head tween
 			delete m_Tweens.front();
 			m_Tweens.erase( m_Tweens.begin() );
+			EraseHeadTween();
 		}
 		else	// in the middle of tweening. Recalcute the current position.
 		{
@@ -653,6 +652,7 @@ void Actor::UpdateTweening( float fDeltaTime )
 			// distort the percentage if appropriate
 			float fPercentAlongPath = TI.m_pTween->Tween( fPercentThroughTween );
 			TweenState::MakeWeightedAverage( m_current, m_start, TS, fPercentAlongPath );
+			UpdatePercentThroughTween(fPercentAlongPath);
 		}
 
 		if( bBeginning )
@@ -772,7 +772,7 @@ void Actor::UpdateInternal( float fDeltaTime )
 		default: break;
 	}
 
-	UpdateTweening( fDeltaTime );
+	this->UpdateTweening( fDeltaTime );
 }
 
 RString Actor::GetLineage() const
@@ -797,7 +797,7 @@ void Actor::BeginTweening( float time, ITween *pTween )
 
 		LOG->Warn( "%s", sError.c_str() );
 		Dialog::OK( sError );
-		FinishTweening();
+		this->FinishTweening();
 	}
 
 	// add a new TweenState to the tail, and initialize it
@@ -829,7 +829,7 @@ void Actor::BeginTweening( float time, TweenType tt )
 	ASSERT( time >= 0 );
 
 	ITween *pTween = ITween::CreateFromType( tt );
-	BeginTweening( time, pTween );
+	this->BeginTweening( time, pTween );
 }
 
 void Actor::StopTweening()
@@ -843,7 +843,7 @@ void Actor::FinishTweening()
 {
 	if( !m_Tweens.empty() )
 		m_current = DestTweenState();
-	StopTweening();
+	this->StopTweening();
 }
 
 void Actor::HurryTweening( float factor )
