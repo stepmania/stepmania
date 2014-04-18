@@ -855,6 +855,8 @@ public:
 		return 0;
 	}
 
+	static int StopMusic( T* p, lua_State *L ) { p->StopMusic(); return 0; }
+	
 	LunaGameSoundManager()
 	{
 		ADD_METHOD( DimMusic );
@@ -862,6 +864,7 @@ public:
 		ADD_METHOD( PlayAnnouncer );
 		ADD_METHOD( GetPlayerBalance );
 		ADD_METHOD( PlayMusicPart );
+		ADD_METHOD( StopMusic );
 	}
 };
 
