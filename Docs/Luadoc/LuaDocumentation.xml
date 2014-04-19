@@ -2115,6 +2115,9 @@ save yourself some time, copy this for undocumented things:
 	<Function name='PlayOnce' return='void' arguments='string sPath'>
 		Play the sound at <code>sPath</code> one time.
 	</Function>
+	<Function name='StopMusic' return='void' arguments='void'>
+		Stops the music.
+	</Function>
 </Class>
 <Class name='GameState'>
 	<Function name='AddStageToPlayer' return='void' arguments='PlayerNumber pn'>

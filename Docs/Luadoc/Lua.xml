@@ -716,6 +716,7 @@
 			<Function name='PlayAnnouncer'/>
 			<Function name='PlayMusicPart'/>
 			<Function name='PlayOnce'/>
+			<Function name='StopMusic'/>
 		</Class>
 		<Class name='GameState'>
 			<Function name='AddStageToPlayer'/>
