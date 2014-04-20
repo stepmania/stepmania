@@ -2269,9 +2269,6 @@ public:
 		if( lua_isnil(L,2) )	{ p->m_pCurSteps[pn].Set( NULL ); }
 		else					{ Steps *pS = Luna<Steps>::check(L,2); p->m_pCurSteps[pn].Set( pS ); }
 		ASSERT(p->m_pCurSteps[pn]->m_StepsType == p->m_pCurStyle->m_StepsType);
-
-		// Why Broadcast again?  This is double-broadcasting. -Chris
-		MESSAGEMAN->Broadcast( (MessageID)(Message_CurrentStepsP1Changed+pn) );
 		return 0;
 	}
 	static int GetCurrentCourse( T* p, lua_State *L )		{ if(p->m_pCurCourse) p->m_pCurCourse->PushSelf(L); else lua_pushnil(L); return 1; }
@@ -2294,7 +2291,6 @@ public:
 		PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);
 		if( lua_isnil(L,2) )	{ p->m_pCurTrail[pn].Set( NULL ); }
 		else					{ Trail *pS = Luna<Trail>::check(L,2); p->m_pCurTrail[pn].Set( pS ); }
-		MESSAGEMAN->Broadcast( (MessageID)(Message_CurrentTrailP1Changed+pn) );
 		return 0;
 	}
 	static int GetPreferredSong( T* p, lua_State *L )		{ if(p->m_pPreferredSong) p->m_pPreferredSong->PushSelf(L); else lua_pushnil(L); return 1; }
