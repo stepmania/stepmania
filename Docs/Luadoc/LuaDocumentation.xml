@@ -631,6 +631,63 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='ResolvePath' return='string' arguments='string sPath, int iLevel' />
 </Namespace>
+<Namespace name='ArrowEffects'>
+	<Function name='Update' return='void' arguments=''>
+		Updates ArrowEffects, which sets current values for Tornado, Invert, and Beat.
+	</Function>
+	<Function name='GetYOffset' return='float fYOffset' arguments='PlayerState ps, int iCol, float fNoteBeat'>
+		Returns the Y Offset of a note in column <code>iCol</code> at beat <code>fNoteBeat</code> for the provided PlayerState. Y Offset is affected by Speed mods and Accel mods, and impacts most other arrow effects.
+	</Function>
+	<Function name='GetYPos' return='float fYPos' arguments='PlayerState ps, int iCol, float fYOffset, float fYReverseOffsetPixels'>
+		Returns the Y position of a note in column <code>iCol</code> with a Y offset of <code>fYOffset</code> for the provided PlayerState.<br>
+		<code>fYReverseOffsetPixels</code> is the separation between targets with and without reverse. This argument is optional and will pull defaults from the metrics for <code>[Player]</code>
+	</Function>
+	<Function name='GetYOffsetFromYPos' return='float fYOffset' arguments='PlayerState ps, int iCol, float fYPos, float fYReverseOffsetPixels'>
+		Returns the Y offset of a note in column <code>iCol</code> with a Y position of <code>fYPos</code> for the provided PlayerState.<br>
+		<code>fYReverseOffsetPixels</code> is the separation between targets with and without reverse. This argument is optional and will pull defaults from the metrics for <code>[Player]</code>
+	</Function>
+	<Function name='GetXPos' return='float fXPos' arguments='PlayerState ps, int iCol, float fYOffset'>
+		Returns the X position of a note in column <code>iCol</code> with a Y offset of <code>fYOffset</code> for the provided PlayerState.
+	</Function>
+	<Function name='GetZPos' return='float fZPos' arguments='PlayerState ps, int iCol, float fYOffset'>
+		Returns the Z position of a note in column <code>iCol</code> with a Y offset of <code>fYOffset</code> for the provided PlayerState.
+	</Function>
+	<Function name='GetRotationX' return='float fRotationX' arguments='PlayerState ps, float fYOffset'>
+		Returns the X rotation of a note with a Y offset of <code>fYOffset</code> for the provided PlayerState.
+	</Function>
+	<Function name='GetRotationY' return='float fRotationY' arguments='PlayerState ps, float fYOffset'>
+		Returns the Y rotation of a note with a Y offset of <code>fYOffset</code> for the provided PlayerState.
+	</Function>
+	<Function name='GetRotationZ' return='float fRotationZ' arguments='PlayerState ps, float fNoteBeat, bool bIsHoldHead'>
+		Returns the Z rotation of a note at beat <code>fNoteBeat</code> for the provided PlayerState.<br>
+		<code>bIsHoldHead</code> is an optional argument which defaults to false. If true, this function will return <code>0</code> if the [ArrowEffects] metric <code>DizzyHoldHeads</code> is false.
+	</Function>
+	<Function name='ReceptorGetRotationZ' return='float fRotationZ' arguments='PlayerState ps'>
+		Returns the Z rotation of the receptors for the provided PlayerState.
+	</Function>
+	<Function name='GetAlpha' return='float fAlpha' arguments='PlayerState ps, int iCol, float fYOffset, float fPercentFadeToFail, float fYReverseOffsetPixels, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar'>
+		Returns the Alpha of a note in column <code>iCol</code> with a Y offset of <code>fYOffset</code> for the provided PlayerState.<br>
+		<code>fPercentFadeToFail</code> is optional and defaults to -1.<br>
+		<code>fYReverseOffsetPixels</code> is the separation between targets with and without reverse. This argument is optional and will pull defaults from the metrics for <code>[Player]</code><br>
+		<code>fDrawDistanceBeforeTargetsPixels</code> is optional and will pull defaults from the <code>[Player]</code> metric <code>DrawDistanceBeforeTargetsPixels</code><br>
+		<code>fFadeInPercentOfDrawFar</code> is optional and will pull defaults from the <code>[NoteField]</code> metric <code>FadeBeforeTargetsPercent</code><br>
+	</Function>
+	<Function name='GetGlow' return='float fGlow' arguments='PlayerState ps, int iCol, float fYOffset, float fPercentFadeToFail, float fYReverseOffsetPixels, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar'>
+		Returns the Glow of a note in column <code>iCol</code> with a Y offset of <code>fYOffset</code> for the provided PlayerState. The arguments are the same as for GetAlpha.
+	</Function>
+	<Function name='GetBrightness' return='float fBrightness' arguments='PlayerState ps, float fNoteBeat'>
+		Returns the brightness of a note at beat <code>fNoteBeat</code> for the provided PlayerState.
+	</Function>
+	<Function name='NeedZBuffer' return='bool bNeedZBuffer' arguments='PlayerState ps'>
+		Returns true if any arrow effects for the provided PlayerState require the z buffer.
+	</Function>
+	<Function name='GetZoom' return='float fZoom' arguments='PlayerState ps'>
+		Returns the zoom of a note for the provided PlayerState.
+	</Function>
+	<Function name='GetFrameWidthScale' return='float fFameWidthScale' arguments='PlayerState ps, float fYOffset, fOverlappedTime'>
+		Returns the FrameWidthScale of a hold part with a Y offset of <code>fYOffset</code> for the provided PlayerState.<br> <code>fOverlappedTime</code> is optional and will default to 0.
+	</Function>
+</Namespace>
 <Namespace name='Enum'>
 	<Description>
 		Enumerated types are lookup tables associating a string to each numerical
