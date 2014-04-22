@@ -2759,7 +2759,8 @@ void Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 
 void Player::UpdateJudgedRows()
 {
-	const int iEndRow = BeatToNoteRow( m_pPlayerState->m_Position.m_fSongBeat );
+	// Look ahead far enough to catch any rows judged early.
+	const int iEndRow = BeatToNoteRow( m_Timing->GetBeatFromElapsedTime( m_pPlayerState->m_Position.m_fMusicSeconds + GetMaxStepDistanceSeconds() ) );
 	bool bAllJudged = true;
 	const bool bSeparately = GAMESTATE->GetCurrentGame()->m_bCountNotesSeparately;
 
