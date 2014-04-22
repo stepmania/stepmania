@@ -838,7 +838,7 @@ namespace
         float fPeakYOffset;
         bool bIsPastPeak;
 
-        lua_pushnumber( L, ArrowEffects::GetYOffset( ps, IArg(2), FArg(3), fPeakYOffset, bIsPastPeak ) );
+        lua_pushnumber( L, ArrowEffects::GetYOffset( ps, IArg(2)-1, FArg(3), fPeakYOffset, bIsPastPeak ) );
         lua_pushnumber( L, fPeakYOffset );
         lua_pushboolean( L, bIsPastPeak );
         return 3;
@@ -849,7 +849,7 @@ namespace
     {
         PlayerState *ps = Luna<PlayerState>::check( L, 1 );
         float fYReverseOffsetPixels = YReverseOffset( L, 4 );
-        lua_pushnumber( L, ArrowEffects::GetYPos( ps, IArg(2), FArg(3), fYReverseOffsetPixels ) );
+        lua_pushnumber( L, ArrowEffects::GetYPos( ps, IArg(2)-1, FArg(3), fYReverseOffsetPixels ) );
         return 1;
     }
 
@@ -858,7 +858,7 @@ namespace
     {
         PlayerState *ps = Luna<PlayerState>::check( L, 1 );
         float fYReverseOffsetPixels = YReverseOffset( L, 4 );
-        lua_pushnumber( L, ArrowEffects::GetYOffsetFromYPos( ps, IArg(2), FArg(3), fYReverseOffsetPixels ) );
+        lua_pushnumber( L, ArrowEffects::GetYOffsetFromYPos( ps, IArg(2)-1, FArg(3), fYReverseOffsetPixels ) );
         return 1;
     }
 
@@ -866,7 +866,7 @@ namespace
     int GetXPos( lua_State *L )
     {
         PlayerState *ps = Luna<PlayerState>::check( L, 1 );
-        lua_pushnumber( L, ArrowEffects::GetXPos( ps, IArg(2), FArg(3) ) );
+        lua_pushnumber( L, ArrowEffects::GetXPos( ps, IArg(2)-1, FArg(3) ) );
         return 1;
     }
 
@@ -874,7 +874,7 @@ namespace
     int GetZPos( lua_State *L )
     {
         PlayerState *ps = Luna<PlayerState>::check( L, 1 );
-        lua_pushnumber( L, ArrowEffects::GetZPos( ps, IArg(2), FArg(3) ) );
+        lua_pushnumber( L, ArrowEffects::GetZPos( ps, IArg(2)-1, FArg(3) ) );
         return 1;
     }
 
@@ -937,7 +937,7 @@ namespace
         {
             fFadeInPercentOfDrawFar = FArg(7);
         }
-        lua_pushnumber( L, ArrowEffects::GetAlpha( ps, IArg(2), FArg(3), fPercentFadeToFail, fYReverseOffsetPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar ) );
+        lua_pushnumber( L, ArrowEffects::GetAlpha( ps, IArg(2)-1, FArg(3), fPercentFadeToFail, fYReverseOffsetPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar ) );
         return 1;
     }
 
@@ -963,7 +963,7 @@ namespace
         {
             fFadeInPercentOfDrawFar = FArg(7);
         }
-        lua_pushnumber( L, ArrowEffects::GetGlow( ps, IArg(2), FArg(3), fPercentFadeToFail, fYReverseOffsetPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar ) );
+        lua_pushnumber( L, ArrowEffects::GetGlow( ps, IArg(2)-1, FArg(3), fPercentFadeToFail, fYReverseOffsetPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar ) );
         return 1;
     }
     
