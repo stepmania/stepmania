@@ -2093,7 +2093,7 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 					// Increase life
 					tn.HoldResult.fLife = 1;
 
-					if( ROLL_BODY_INCREMENTS_COMBO )
+					if( ROLL_BODY_INCREMENTS_COMBO && m_pPlayerState->m_PlayerController != PC_AUTOPLAY )
 					{
 						// increment combo
 						const int iOldCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurCombo : 0;
