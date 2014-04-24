@@ -817,215 +817,215 @@ ThemeMetric<float> GRAY_ARROWS_Y_REVERSE( "Player", "ReceptorArrowsYReverse" );
 
 namespace
 {
-    /* Update() need to be exposed to use ArrowEffects off ScreenGameplay. It is harmless.     */
-    int Update( lua_State *L )    { ArrowEffects::Update(); return 0; }
+	/* Update() need to be exposed to use ArrowEffects off ScreenGameplay. It is harmless.	 */
+	int Update( lua_State *L )	{ ArrowEffects::Update(); return 0; }
 
 	// Provide a reasonable default value for fYReverseOffset
 	float YReverseOffset( lua_State *L, int argnum )
 	{
 		float fYReverseOffsetPixels = GRAY_ARROWS_Y_STANDARD - GRAY_ARROWS_Y_REVERSE;
-        if( !lua_isnil(L, argnum) )
-        {
-            fYReverseOffsetPixels = FArg(argnum);
-        }
+		if( !lua_isnil(L, argnum) )
+		{
+			fYReverseOffsetPixels = FArg(argnum);
+		}
 		return fYReverseOffsetPixels;
 	}
 	
-    // ( PlayerState ps, int iCol, float fNoteBeat )
-    int GetYOffset( lua_State *L )
-    {
-        PlayerState *ps = Luna<PlayerState>::check( L, 1 );
-        float fPeakYOffset;
-        bool bIsPastPeak;
+	// ( PlayerState ps, int iCol, float fNoteBeat )
+	int GetYOffset( lua_State *L )
+	{
+		PlayerState *ps = Luna<PlayerState>::check( L, 1 );
+		float fPeakYOffset;
+		bool bIsPastPeak;
 
-        lua_pushnumber( L, ArrowEffects::GetYOffset( ps, IArg(2)-1, FArg(3), fPeakYOffset, bIsPastPeak ) );
-        lua_pushnumber( L, fPeakYOffset );
-        lua_pushboolean( L, bIsPastPeak );
-        return 3;
-    }
+		lua_pushnumber( L, ArrowEffects::GetYOffset( ps, IArg(2)-1, FArg(3), fPeakYOffset, bIsPastPeak ) );
+		lua_pushnumber( L, fPeakYOffset );
+		lua_pushboolean( L, bIsPastPeak );
+		return 3;
+	}
 
-    // ( PlayerState ps, int iCol, float fYOffset, float fYReverseOffsetPixels )
-    int GetYPos( lua_State *L )
-    {
-        PlayerState *ps = Luna<PlayerState>::check( L, 1 );
-        float fYReverseOffsetPixels = YReverseOffset( L, 4 );
-        lua_pushnumber( L, ArrowEffects::GetYPos( ps, IArg(2)-1, FArg(3), fYReverseOffsetPixels ) );
-        return 1;
-    }
+	// ( PlayerState ps, int iCol, float fYOffset, float fYReverseOffsetPixels )
+	int GetYPos( lua_State *L )
+	{
+		PlayerState *ps = Luna<PlayerState>::check( L, 1 );
+		float fYReverseOffsetPixels = YReverseOffset( L, 4 );
+		lua_pushnumber( L, ArrowEffects::GetYPos( ps, IArg(2)-1, FArg(3), fYReverseOffsetPixels ) );
+		return 1;
+	}
 
-    // ( PlayerState ps, int iCol, float fYPos, float fYReverseOffsetPixels )
-    int GetYOffsetFromYPos( lua_State *L )
-    {
-        PlayerState *ps = Luna<PlayerState>::check( L, 1 );
-        float fYReverseOffsetPixels = YReverseOffset( L, 4 );
-        lua_pushnumber( L, ArrowEffects::GetYOffsetFromYPos( ps, IArg(2)-1, FArg(3), fYReverseOffsetPixels ) );
-        return 1;
-    }
+	// ( PlayerState ps, int iCol, float fYPos, float fYReverseOffsetPixels )
+	int GetYOffsetFromYPos( lua_State *L )
+	{
+		PlayerState *ps = Luna<PlayerState>::check( L, 1 );
+		float fYReverseOffsetPixels = YReverseOffset( L, 4 );
+		lua_pushnumber( L, ArrowEffects::GetYOffsetFromYPos( ps, IArg(2)-1, FArg(3), fYReverseOffsetPixels ) );
+		return 1;
+	}
 
-    // ( PlayerState ps, int iCol, float fYOffset )
-    int GetXPos( lua_State *L )
-    {
-        PlayerState *ps = Luna<PlayerState>::check( L, 1 );
-        lua_pushnumber( L, ArrowEffects::GetXPos( ps, IArg(2)-1, FArg(3) ) );
-        return 1;
-    }
+	// ( PlayerState ps, int iCol, float fYOffset )
+	int GetXPos( lua_State *L )
+	{
+		PlayerState *ps = Luna<PlayerState>::check( L, 1 );
+		lua_pushnumber( L, ArrowEffects::GetXPos( ps, IArg(2)-1, FArg(3) ) );
+		return 1;
+	}
 
-    // ( PlayerState ps, int iCol, float fYOffset )
-    int GetZPos( lua_State *L )
-    {
-        PlayerState *ps = Luna<PlayerState>::check( L, 1 );
-        lua_pushnumber( L, ArrowEffects::GetZPos( ps, IArg(2)-1, FArg(3) ) );
-        return 1;
-    }
+	// ( PlayerState ps, int iCol, float fYOffset )
+	int GetZPos( lua_State *L )
+	{
+		PlayerState *ps = Luna<PlayerState>::check( L, 1 );
+		lua_pushnumber( L, ArrowEffects::GetZPos( ps, IArg(2)-1, FArg(3) ) );
+		return 1;
+	}
 
-    // ( PlayerState ps, float fYOffset )
-    int GetRotationX( lua_State *L )
-    {
-        PlayerState *ps = Luna<PlayerState>::check( L, 1 );
-        lua_pushnumber( L, ArrowEffects::GetRotationX( ps, FArg(2) ) );
-        return 1;
-    }
+	// ( PlayerState ps, float fYOffset )
+	int GetRotationX( lua_State *L )
+	{
+		PlayerState *ps = Luna<PlayerState>::check( L, 1 );
+		lua_pushnumber( L, ArrowEffects::GetRotationX( ps, FArg(2) ) );
+		return 1;
+	}
 
-    // ( PlayerState ps, float fYOffset )
-    int GetRotationY( lua_State *L )
-    {
-        PlayerState *ps = Luna<PlayerState>::check( L, 1 );
-        lua_pushnumber( L, ArrowEffects::GetRotationY( ps, FArg(2) ) );
-        return 1;
-    }
+	// ( PlayerState ps, float fYOffset )
+	int GetRotationY( lua_State *L )
+	{
+		PlayerState *ps = Luna<PlayerState>::check( L, 1 );
+		lua_pushnumber( L, ArrowEffects::GetRotationY( ps, FArg(2) ) );
+		return 1;
+	}
 
-    // ( PlayerState ps, float fNoteBeat, bool bIsHoldHead )
-    int GetRotationZ( lua_State *L )
-    {
-        PlayerState *ps = Luna<PlayerState>::check( L, 1 );
-        // Make bIsHoldHead optional.
-        bool bIsHoldHead = false;
-        if( !lua_isnil(L, 3) )
-        {
-            bIsHoldHead = BArg(3);
-        }
-        lua_pushnumber( L, ArrowEffects::GetRotationZ( ps, FArg(2), bIsHoldHead ) );
-        return 1;
-    }
+	// ( PlayerState ps, float fNoteBeat, bool bIsHoldHead )
+	int GetRotationZ( lua_State *L )
+	{
+		PlayerState *ps = Luna<PlayerState>::check( L, 1 );
+		// Make bIsHoldHead optional.
+		bool bIsHoldHead = false;
+		if( !lua_isnil(L, 3) )
+		{
+			bIsHoldHead = BArg(3);
+		}
+		lua_pushnumber( L, ArrowEffects::GetRotationZ( ps, FArg(2), bIsHoldHead ) );
+		return 1;
+	}
 
-    // ( PlayerState ps )
-    int ReceptorGetRotationZ( lua_State *L )
-    {
-        PlayerState *ps = Luna<PlayerState>::check( L, 1 );
-        lua_pushnumber( L, ArrowEffects::ReceptorGetRotationZ( ps ) );
-        return 1;
-    }
+	// ( PlayerState ps )
+	int ReceptorGetRotationZ( lua_State *L )
+	{
+		PlayerState *ps = Luna<PlayerState>::check( L, 1 );
+		lua_pushnumber( L, ArrowEffects::ReceptorGetRotationZ( ps ) );
+		return 1;
+	}
 
-    //( PlayerState ps, int iCol, float fYOffset, float fPercentFadeToFail, float fYReverseOffsetPixels, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar )
-    int GetAlpha( lua_State *L )
-    {
-        PlayerState *ps = Luna<PlayerState>::check( L, 1 );
-        // Provide reasonable default values.
-        float fPercentFadeToFail = -1;
-        float fYReverseOffsetPixels = YReverseOffset( L, 5 );
-        float fDrawDistanceBeforeTargetsPixels = DRAW_DISTANCE_BEFORE_TARGET_PIXELS;
-        float fFadeInPercentOfDrawFar = FADE_BEFORE_TARGETS_PERCENT;
-        if( !lua_isnil(L, 4) )
-        {
-            fPercentFadeToFail = FArg(4);
-        }
-        if( !lua_isnil(L, 6) )
-        {
-            fDrawDistanceBeforeTargetsPixels = FArg(6);
-        }
-        if( !lua_isnil(L, 7) )
-        {
-            fFadeInPercentOfDrawFar = FArg(7);
-        }
-        lua_pushnumber( L, ArrowEffects::GetAlpha( ps, IArg(2)-1, FArg(3), fPercentFadeToFail, fYReverseOffsetPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar ) );
-        return 1;
-    }
+	//( PlayerState ps, int iCol, float fYOffset, float fPercentFadeToFail, float fYReverseOffsetPixels, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar )
+	int GetAlpha( lua_State *L )
+	{
+		PlayerState *ps = Luna<PlayerState>::check( L, 1 );
+		// Provide reasonable default values.
+		float fPercentFadeToFail = -1;
+		float fYReverseOffsetPixels = YReverseOffset( L, 5 );
+		float fDrawDistanceBeforeTargetsPixels = DRAW_DISTANCE_BEFORE_TARGET_PIXELS;
+		float fFadeInPercentOfDrawFar = FADE_BEFORE_TARGETS_PERCENT;
+		if( !lua_isnil(L, 4) )
+		{
+			fPercentFadeToFail = FArg(4);
+		}
+		if( !lua_isnil(L, 6) )
+		{
+			fDrawDistanceBeforeTargetsPixels = FArg(6);
+		}
+		if( !lua_isnil(L, 7) )
+		{
+			fFadeInPercentOfDrawFar = FArg(7);
+		}
+		lua_pushnumber( L, ArrowEffects::GetAlpha( ps, IArg(2)-1, FArg(3), fPercentFadeToFail, fYReverseOffsetPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar ) );
+		return 1;
+	}
 
-    
-    //( PlayerState ps, int iCol, float fYOffset, float fPercentFadeToFail, float fYReverseOffsetPixels, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar )
-    int GetGlow( lua_State *L )
-    {
-        PlayerState *ps = Luna<PlayerState>::check( L, 1 );
-        // Provide reasonable default values.
-        float fPercentFadeToFail = -1; // 
-        float fYReverseOffsetPixels = YReverseOffset( L, 5 );
-        float fDrawDistanceBeforeTargetsPixels = DRAW_DISTANCE_BEFORE_TARGET_PIXELS;
-        float fFadeInPercentOfDrawFar = FADE_BEFORE_TARGETS_PERCENT;
-        if( !lua_isnil(L, 4) )
-        {
-            fPercentFadeToFail = FArg(4);
-        }
-        if( !lua_isnil(L, 6) )
-        {
-            fDrawDistanceBeforeTargetsPixels = FArg(6);
-        }
-        if( !lua_isnil(L, 7) )
-        {
-            fFadeInPercentOfDrawFar = FArg(7);
-        }
-        lua_pushnumber( L, ArrowEffects::GetGlow( ps, IArg(2)-1, FArg(3), fPercentFadeToFail, fYReverseOffsetPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar ) );
-        return 1;
-    }
-    
-    // ( PlayerState ps, float fNoteBeat )
-    int GetBrightness( lua_State *L )
-    {
-        PlayerState *ps = Luna<PlayerState>::check( L, 1 );
-        lua_pushnumber( L, ArrowEffects::GetBrightness( ps, FArg(2) ) );
-        return 1;
-    }
+	
+	//( PlayerState ps, int iCol, float fYOffset, float fPercentFadeToFail, float fYReverseOffsetPixels, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar )
+	int GetGlow( lua_State *L )
+	{
+		PlayerState *ps = Luna<PlayerState>::check( L, 1 );
+		// Provide reasonable default values.
+		float fPercentFadeToFail = -1; // 
+		float fYReverseOffsetPixels = YReverseOffset( L, 5 );
+		float fDrawDistanceBeforeTargetsPixels = DRAW_DISTANCE_BEFORE_TARGET_PIXELS;
+		float fFadeInPercentOfDrawFar = FADE_BEFORE_TARGETS_PERCENT;
+		if( !lua_isnil(L, 4) )
+		{
+			fPercentFadeToFail = FArg(4);
+		}
+		if( !lua_isnil(L, 6) )
+		{
+			fDrawDistanceBeforeTargetsPixels = FArg(6);
+		}
+		if( !lua_isnil(L, 7) )
+		{
+			fFadeInPercentOfDrawFar = FArg(7);
+		}
+		lua_pushnumber( L, ArrowEffects::GetGlow( ps, IArg(2)-1, FArg(3), fPercentFadeToFail, fYReverseOffsetPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar ) );
+		return 1;
+	}
+	
+	// ( PlayerState ps, float fNoteBeat )
+	int GetBrightness( lua_State *L )
+	{
+		PlayerState *ps = Luna<PlayerState>::check( L, 1 );
+		lua_pushnumber( L, ArrowEffects::GetBrightness( ps, FArg(2) ) );
+		return 1;
+	}
 
-    // ( PlayerState ps )
-    int NeedZBuffer( lua_State *L )
-    {
-        PlayerState *ps = Luna<PlayerState>::check( L, 1 );
-        lua_pushboolean( L, ArrowEffects::NeedZBuffer( ps ) );
-        return 1;
-    }
-    
-    // ( PlayerState ps )
-    int GetZoom( lua_State *L )
-    {
-        PlayerState *ps = Luna<PlayerState>::check( L, 1 );
-        lua_pushnumber( L, ArrowEffects::GetZoom( ps ) );
-        return 1;
-    }
-    
-    // ( PlayerState ps, float fYOffset, fOverlappedTime )
-    int GetFrameWidthScale( lua_State *L )
-    {
-        PlayerState *ps = Luna<PlayerState>::check( L, 1 );
+	// ( PlayerState ps )
+	int NeedZBuffer( lua_State *L )
+	{
+		PlayerState *ps = Luna<PlayerState>::check( L, 1 );
+		lua_pushboolean( L, ArrowEffects::NeedZBuffer( ps ) );
+		return 1;
+	}
+	
+	// ( PlayerState ps )
+	int GetZoom( lua_State *L )
+	{
+		PlayerState *ps = Luna<PlayerState>::check( L, 1 );
+		lua_pushnumber( L, ArrowEffects::GetZoom( ps ) );
+		return 1;
+	}
+	
+	// ( PlayerState ps, float fYOffset, fOverlappedTime )
+	int GetFrameWidthScale( lua_State *L )
+	{
+		PlayerState *ps = Luna<PlayerState>::check( L, 1 );
 
-        // Make fOverlappedTime optional.
-        float fOverlappedTime = 0;
-        if( !lua_isnil(L, 3) )
-        {
-            fOverlappedTime = FArg(3);
-        }
-        lua_pushnumber( L, ArrowEffects::GetFrameWidthScale( ps, FArg(2), fOverlappedTime ) );
-        return 1;
-    }
+		// Make fOverlappedTime optional.
+		float fOverlappedTime = 0;
+		if( !lua_isnil(L, 3) )
+		{
+			fOverlappedTime = FArg(3);
+		}
+		lua_pushnumber( L, ArrowEffects::GetFrameWidthScale( ps, FArg(2), fOverlappedTime ) );
+		return 1;
+	}
 
-    const luaL_Reg ArrowEffectsTable[] =
-    {
-        LIST_METHOD( Update ),
-        LIST_METHOD( GetYOffset ),
-        LIST_METHOD( GetYPos ),
-        LIST_METHOD( GetYOffsetFromYPos ),
-        LIST_METHOD( GetXPos ),
-        LIST_METHOD( GetZPos ),
-        LIST_METHOD( GetRotationX ),
-        LIST_METHOD( GetRotationY ),
-        LIST_METHOD( GetRotationZ ),
-        LIST_METHOD( ReceptorGetRotationZ ),
-        LIST_METHOD( GetAlpha ),
-        LIST_METHOD( GetGlow ),
-        LIST_METHOD( GetBrightness ),
-        LIST_METHOD( NeedZBuffer ),
-        LIST_METHOD( GetZoom ),
-        LIST_METHOD( GetFrameWidthScale ),
-        { NULL, NULL }
-    };
+	const luaL_Reg ArrowEffectsTable[] =
+	{
+		LIST_METHOD( Update ),
+		LIST_METHOD( GetYOffset ),
+		LIST_METHOD( GetYPos ),
+		LIST_METHOD( GetYOffsetFromYPos ),
+		LIST_METHOD( GetXPos ),
+		LIST_METHOD( GetZPos ),
+		LIST_METHOD( GetRotationX ),
+		LIST_METHOD( GetRotationY ),
+		LIST_METHOD( GetRotationZ ),
+		LIST_METHOD( ReceptorGetRotationZ ),
+		LIST_METHOD( GetAlpha ),
+		LIST_METHOD( GetGlow ),
+		LIST_METHOD( GetBrightness ),
+		LIST_METHOD( NeedZBuffer ),
+		LIST_METHOD( GetZoom ),
+		LIST_METHOD( GetFrameWidthScale ),
+		{ NULL, NULL }
+	};
 }
 
 LUA_REGISTER_NAMESPACE( ArrowEffects )
