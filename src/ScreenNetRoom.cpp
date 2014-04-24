@@ -27,8 +27,6 @@ REGISTER_SCREEN_CLASS( ScreenNetRoom );
 
 void ScreenNetRoom::Init()
 {
-	GAMESTATE->FinishStage();
-
 	ScreenNetSelectBase::Init();
 
 	m_soundChangeSel.Load( THEME->GetPathS("ScreenNetRoom","change sel") );
