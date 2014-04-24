@@ -39,9 +39,6 @@ REGISTER_SCREEN_CLASS( ScreenNetSelectMusic );
 
 void ScreenNetSelectMusic::Init()
 {
-	// Finish any previous stage. It's OK to call this when we haven't played a stage yet.
-	GAMESTATE->FinishStage();
-
 	ScreenNetSelectBase::Init();
 
 	SAMPLE_MUSIC_PREVIEW_MODE.Load( m_sName, "SampleMusicPreviewMode" );
