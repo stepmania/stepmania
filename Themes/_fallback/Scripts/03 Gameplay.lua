@@ -8,7 +8,7 @@ local function CurGameName()
 end
 
 -- Check the active game mode against a string. Cut down typing this in metrics.
-function IsGame(str) return CurGameName() == str end
+function IsGame(str) return CurGameName():lower() == str:lower() end
 
 -- GetExtraColorThreshold()
 -- [en] returns the difficulty threshold in meter

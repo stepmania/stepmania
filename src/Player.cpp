@@ -618,7 +618,7 @@ void Player::Load()
 
 	// Figured this is probably a little expensive so let's cache it
 	m_bTickHolds = GAMESTATE->GetCurrentGame()->m_bTickHolds;
-	
+
 	m_LastTapNoteScore = TNS_None;
 	// The editor can start playing in the middle of the song.
 	const int iNoteRow = BeatToNoteRowNotRounded( m_pPlayerState->m_Position.m_fSongBeat );
@@ -1289,7 +1289,7 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 				// For tickholds, the concept of "life" doesn't really apply.
 				// XXX: if IMMEDIATE_HOLD_LET_GO this will kill holds if it's EVER let go,
 				// not just at the first missed checkpoint.
-				if( GAMESTATE->GetCurrentGame()->m_bTickHolds ) fLife = 0.0;
+				if( m_bTickHolds ) fLife = 0.0;
 				else
 				{
 					// Decrease life
@@ -3022,23 +3022,16 @@ void Player::CrossedRows( int iLastRowCrossed, const RageTimer &now )
 	 * TODO: Move this to a separate function. */
 	if( m_bTickHolds && m_pPlayerState->m_PlayerController != PC_AUTOPLAY )
 	{
-		int tickCurrent = m_Timing->GetTickcountAtRow( iLastRowCrossed );
-		// There are some charts that don't want tickcounts involved at all.
-		int iCheckpointFrequencyRows = ( tickCurrent > 0 ? ROWS_PER_BEAT / tickCurrent : 0 );
-
-		if( iCheckpointFrequencyRows > 0 )
+		// Few rows typically cross per update. Easier to check all crossed rows
+		// than to calculate from timing segments.
+		for( int r = m_iFirstUncrossedRow; r <= iLastRowCrossed; ++r )
 		{
-			// "the first row after the start of the range that lands on a beat"
-			int iFirstCheckpointInRange = ((m_iFirstUncrossedRow+iCheckpointFrequencyRows-1)
-				/iCheckpointFrequencyRows) * iCheckpointFrequencyRows;
+			int tickCurrent = m_Timing->GetTickcountAtRow( r );
 
-			// "the last row or first row earlier that lands on a beat"
-			int iLastCheckpointInRange = ((iLastRowCrossed)/iCheckpointFrequencyRows)
-				* iCheckpointFrequencyRows;
-
-			for( int r = iFirstCheckpointInRange; r <= iLastCheckpointInRange; r += iCheckpointFrequencyRows )
+			// There is a tick count at this row
+			if( tickCurrent > 0 && r % ( ROWS_PER_BEAT / tickCurrent ) == 0 )
 			{
-				//LOG->Trace( "%d...", r );
+
 				vector<int> viColsWithHold;
 				int iNumHoldsHeldThisRow = 0;
 				int iNumHoldsMissedThisRow = 0;
@@ -3051,27 +3044,9 @@ void Player::CrossedRows( int iLastRowCrossed, const RageTimer &now )
 					if( tn.type != TapNote::hold_head )
 						continue;
 
-					int iStartRow = nIter.Row();
-					int iEndRow = iStartRow + tn.iDuration;
 					int iTrack = nIter.Track();
-
-					// "the first row after the hold head that lands on a beat"
-					int iFirstCheckpointOfHold = ((iStartRow+iCheckpointFrequencyRows)/iCheckpointFrequencyRows)
-						* iCheckpointFrequencyRows;
-
-					// "the end row or the first earlier row that lands on a beat"
-					int iLastCheckpointOfHold = ((iEndRow)/iCheckpointFrequencyRows)
-						* iCheckpointFrequencyRows;
-
-					// count the end of the hold as a checkpoint
-					bool bHoldOverlapsRow = iFirstCheckpointOfHold <= r  &&   r <= iLastCheckpointOfHold;
-					if( !bHoldOverlapsRow )
-						continue;
-					
-					
-
 					viColsWithHold.push_back( iTrack );
-					
+
 					if( tn.HoldResult.fLife > 0 )
 					{
 						++iNumHoldsHeldThisRow;
@@ -3086,12 +3061,12 @@ void Player::CrossedRows( int iLastRowCrossed, const RageTimer &now )
 				GAMESTATE->SetProcessedTimingData(this->m_Timing);
 
 				// TODO: Find a better way of handling hold checkpoints with other taps.
-				if( !viColsWithHold.empty() && ( CHECKPOINTS_TAPS_SEPARATE_JUDGMENT || m_NoteData.GetNumTapNotesInRow( iLastRowCrossed ) == 0 ) )
+				if( !viColsWithHold.empty() && ( CHECKPOINTS_TAPS_SEPARATE_JUDGMENT || m_NoteData.GetNumTapNotesInRow( r ) == 0 ) )
 				{
-					HandleHoldCheckpoint(r, 
-							     iNumHoldsHeldThisRow, 
-							     iNumHoldsMissedThisRow, 
-							     viColsWithHold );
+					HandleHoldCheckpoint(r,
+								 iNumHoldsHeldThisRow,
+								 iNumHoldsMissedThisRow,
+								 viColsWithHold );
 				}
 			}
 		}
