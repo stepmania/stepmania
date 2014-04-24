@@ -2616,7 +2616,8 @@ void NoteDataUtil::SetHopoPossibleFlags( const Song *pSong, NoteData& ndInOut )
 unsigned int NoteDataUtil::GetTotalHoldTicks( NoteData* nd, const TimingData* td )
 {
 	unsigned int ret = 0;
-	int end = nd->GetLastRow();
+	// Last row must be included. -- Matt
+	int end = nd->GetLastRow()+1;
 	vector<TimingSegment*> segments = td->GetTimingSegments( SEGMENT_TICKCOUNT );
 	// We start with the LAST TimingSegment and work our way backwards.
 	// This way we can continually update end instead of having to lookup when
@@ -2627,9 +2628,10 @@ unsigned int NoteDataUtil::GetTotalHoldTicks( NoteData* nd, const TimingData* td
 		if( ts->GetTicks() > 0)
 		{
 			// Jump to each point where holds would tick and add the number of holds there to ret.
-			// XXX: Assuming each segment starts on the beat
 			for(int j = ts->GetRow(); j < end; j += ROWS_PER_BEAT / ts->GetTicks() )
-				ret += nd->GetNumTracksHeldAtRow(j);
+				// 1 tick per row.
+				if( nd->GetNumTracksHeldAtRow(j) > 0 )
+					ret++;
 		}
 		end = ts->GetRow();
 	}
