@@ -823,8 +823,8 @@ namespace
 	// Provide a reasonable default value for fYReverseOffset
 	float YReverseOffset( lua_State *L, int argnum )
 	{
-		float fYReverseOffsetPixels = GRAY_ARROWS_Y_STANDARD - GRAY_ARROWS_Y_REVERSE;
-		if( !lua_isnil(L, argnum) )
+		float fYReverseOffsetPixels = GRAY_ARROWS_Y_REVERSE - GRAY_ARROWS_Y_STANDARD;
+		if( lua_gettop(L) >= argnum && !lua_isnil(L, argnum) )
 		{
 			fYReverseOffsetPixels = FArg(argnum);
 		}
@@ -900,7 +900,7 @@ namespace
 		PlayerState *ps = Luna<PlayerState>::check( L, 1 );
 		// Make bIsHoldHead optional.
 		bool bIsHoldHead = false;
-		if( !lua_isnil(L, 3) )
+		if( lua_gettop(L) >= 3 && !lua_isnil(L, 3) )
 		{
 			bIsHoldHead = BArg(3);
 		}
@@ -925,17 +925,19 @@ namespace
 		float fYReverseOffsetPixels = YReverseOffset( L, 5 );
 		float fDrawDistanceBeforeTargetsPixels = DRAW_DISTANCE_BEFORE_TARGET_PIXELS;
 		float fFadeInPercentOfDrawFar = FADE_BEFORE_TARGETS_PERCENT;
-		if( !lua_isnil(L, 4) )
+		if( lua_gettop(L) >= 4 && !lua_isnil(L, 4) )
 		{
 			fPercentFadeToFail = FArg(4);
-		}
-		if( !lua_isnil(L, 6) )
-		{
-			fDrawDistanceBeforeTargetsPixels = FArg(6);
-		}
-		if( !lua_isnil(L, 7) )
-		{
-			fFadeInPercentOfDrawFar = FArg(7);
+
+			if( lua_gettop(L) >= 6 && !lua_isnil(L, 6) )
+			{
+				fDrawDistanceBeforeTargetsPixels = FArg(6);
+
+				if( lua_gettop(L) >= 7 && !lua_isnil(L, 7) )
+				{
+					fFadeInPercentOfDrawFar = FArg(7);
+				}
+			}
 		}
 		lua_pushnumber( L, ArrowEffects::GetAlpha( ps, IArg(2)-1, FArg(3), fPercentFadeToFail, fYReverseOffsetPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar ) );
 		return 1;
@@ -951,17 +953,19 @@ namespace
 		float fYReverseOffsetPixels = YReverseOffset( L, 5 );
 		float fDrawDistanceBeforeTargetsPixels = DRAW_DISTANCE_BEFORE_TARGET_PIXELS;
 		float fFadeInPercentOfDrawFar = FADE_BEFORE_TARGETS_PERCENT;
-		if( !lua_isnil(L, 4) )
+		if( lua_gettop(L) >= 4 && !lua_isnil(L, 4) )
 		{
 			fPercentFadeToFail = FArg(4);
-		}
-		if( !lua_isnil(L, 6) )
-		{
-			fDrawDistanceBeforeTargetsPixels = FArg(6);
-		}
-		if( !lua_isnil(L, 7) )
-		{
-			fFadeInPercentOfDrawFar = FArg(7);
+
+			if( lua_gettop(L) >= 6 && !lua_isnil(L, 6) )
+			{
+				fDrawDistanceBeforeTargetsPixels = FArg(6);
+
+				if( lua_gettop(L) >= 7 && !lua_isnil(L, 7) )
+				{
+					fFadeInPercentOfDrawFar = FArg(7);
+				}
+			}
 		}
 		lua_pushnumber( L, ArrowEffects::GetGlow( ps, IArg(2)-1, FArg(3), fPercentFadeToFail, fYReverseOffsetPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar ) );
 		return 1;
@@ -998,7 +1002,7 @@ namespace
 
 		// Make fOverlappedTime optional.
 		float fOverlappedTime = 0;
-		if( !lua_isnil(L, 3) )
+		if( lua_gettop(L) >= 3 && !lua_isnil(L, 3) )
 		{
 			fOverlappedTime = FArg(3);
 		}
