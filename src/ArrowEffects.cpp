@@ -928,16 +928,14 @@ namespace
 		if( lua_gettop(L) >= 4 && !lua_isnil(L, 4) )
 		{
 			fPercentFadeToFail = FArg(4);
-
-			if( lua_gettop(L) >= 6 && !lua_isnil(L, 6) )
-			{
-				fDrawDistanceBeforeTargetsPixels = FArg(6);
-
-				if( lua_gettop(L) >= 7 && !lua_isnil(L, 7) )
-				{
-					fFadeInPercentOfDrawFar = FArg(7);
-				}
-			}
+		}
+		if( lua_gettop(L) >= 6 && !lua_isnil(L, 6) )
+		{
+			fDrawDistanceBeforeTargetsPixels = FArg(6);
+		}
+		if( lua_gettop(L) >= 7 && !lua_isnil(L, 7) )
+		{
+			fFadeInPercentOfDrawFar = FArg(7);
 		}
 		lua_pushnumber( L, ArrowEffects::GetAlpha( ps, IArg(2)-1, FArg(3), fPercentFadeToFail, fYReverseOffsetPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar ) );
 		return 1;
@@ -956,16 +954,14 @@ namespace
 		if( lua_gettop(L) >= 4 && !lua_isnil(L, 4) )
 		{
 			fPercentFadeToFail = FArg(4);
-
-			if( lua_gettop(L) >= 6 && !lua_isnil(L, 6) )
-			{
-				fDrawDistanceBeforeTargetsPixels = FArg(6);
-
-				if( lua_gettop(L) >= 7 && !lua_isnil(L, 7) )
-				{
-					fFadeInPercentOfDrawFar = FArg(7);
-				}
-			}
+		}
+		if( lua_gettop(L) >= 6 && !lua_isnil(L, 6) )
+		{
+			fDrawDistanceBeforeTargetsPixels = FArg(6);
+		}
+		if( lua_gettop(L) >= 7 && !lua_isnil(L, 7) )
+		{
+			fFadeInPercentOfDrawFar = FArg(7);
 		}
 		lua_pushnumber( L, ArrowEffects::GetGlow( ps, IArg(2)-1, FArg(3), fPercentFadeToFail, fYReverseOffsetPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar ) );
 		return 1;
