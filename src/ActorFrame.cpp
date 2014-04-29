@@ -289,14 +289,137 @@ void ActorFrame::EndDraw()
 	Actor::EndDraw();
 }
 
+// This exists solely as a helper for children table.
+// This applies the desired function to te first child in the table.
+static int IdenticalChildrenSingleApplier(lua_State* L)
+{
+	// First arg is the table of items, get the last object.
+	// It is the one that would have been in the children table in the old version.
+	// The other args are meant for the function.
+	// The upvalue for this function is the function the theme tried to call.
+	lua_rawgeti(L, 1, lua_objlen(L, 1)); // stack: table, args, obj
+	lua_insert(L, 2); // stack: table, obj, args
+	lua_pushvalue(L, lua_upvalueindex(1)); // stack: table, obj, args, func
+	lua_insert(L, 2); // stack: table, func, obj, args
+	int args_count= lua_gettop(L) - 2;
+	lua_call(L, args_count, LUA_MULTRET); // stack: table, return_values
+	return lua_gettop(L) - 1;
+}
+
+// This exists solely as a helper for children table.
+// This is the __index function for the table of all children with the same name.
+static int IdenticalChildrenIndexLayer(lua_State* L)
+{
+	if(lua_isnumber(L, 2))
+	{
+		lua_gettable(L, 1);
+	}
+	else
+	{
+		lua_pushvalue(L, 1);
+		lua_pushvalue(L, 2);
+		lua_pop(L, 2);
+		// Get the last object in the table.
+		// Its meta table contains the function the theme wanted to run.
+		// The function is then pushed as an upvalue for ICSA as a closure.
+		// The closure is then returned so that when the function call is performed, ICSA is actually called.
+		lua_pushnumber(L, lua_objlen(L, 1)); // stack: 1
+		lua_gettable(L, 1); // stack: object
+		lua_getmetatable(L, -1); // stack: object, obj_meta
+		lua_getfield(L, -1, "__index"); // stack: object, obj_meta, obj_index
+		lua_pushvalue(L, 2); // stack: object, obj_meta, obj_index, func_name
+		lua_gettable(L, -2); // stack: object, obj_meta, obj_index, obj_function
+		lua_pushcclosure(L, IdenticalChildrenSingleApplier, 1); // stack: object, obj_meta, obj_index, closure
+		lua_insert(L, -4); // stack: closure, object, obj_meta, obj_index
+		lua_pop(L, 3); // stack: closure
+	}
+	return 1;
+}
+
+static void CreateChildTable(lua_State* L, Actor* a)
+{
+	// Old PushChildrenTable assumed that all children had unique names, so only the last one of a name ended up in the table that was returned.
+	// Create a table that will hold all the children that have this name and act as a pass through layer for function calls.
+	// stack: old_entry
+	lua_createtable(L, 0, 0); // stack: old_entry, table_entry
+	lua_insert(L, -2); // stack: table_entry, old_entry
+	lua_rawseti(L, -2, 1); // stack: table_entry
+	a->PushSelf(L); // stack: table_entry, new_entry
+	lua_rawseti(L, -2, 2); // stack: table_entry
+	lua_createtable(L, 0, 1); // stack: table_entry, table_meta
+	lua_pushcfunction(L, IdenticalChildrenIndexLayer); // stack: table_entry, table_meta, ICIL
+	lua_setfield(L, -2, "__index"); // stack: table_entry, table_meta
+	lua_setmetatable(L, -2); // stack: table_entry
+}
+
+static void AddToChildTable(lua_State* L, Actor* a)
+{
+	// stack: table_entry
+	int next_index= lua_objlen(L, -1) + 1;
+	a->PushSelf(L); // stack: table_entry, actor
+	lua_rawseti(L, -2, next_index); // stack: table_entry
+}
+
 void ActorFrame::PushChildrenTable( lua_State *L )
 {
-	lua_newtable( L );
+	lua_newtable( L ); // stack: all_actors
 	FOREACH( Actor*, m_SubActors, a )
 	{
-		LuaHelpers::Push( L, (*a)->GetName() );
-		(*a)->PushSelf( L );
-		lua_rawset( L, -3 );
+		LuaHelpers::Push( L, (*a)->GetName() ); // stack: all_actors, name
+		lua_gettable(L, -2); // stack: all_actors, entry
+		if(lua_isnil(L, -1))
+		{
+			lua_pop(L, 1); // stack: all_actors
+			LuaHelpers::Push( L, (*a)->GetName() ); // stack: all_actors, name
+			(*a)->PushSelf( L ); // stack: all_actors, name, actor
+			lua_rawset( L, -3 ); // stack: all_actors
+		}
+		else
+		{
+			// Fun fact:  PushSelf pushes a table.
+			if(lua_objlen(L, -1) > 0)
+			{
+				 // stack: all_actors, table_entry
+				AddToChildTable(L, *a); // stack: all_actors, table_entry
+				lua_pop(L, 1); // stack: all_actors
+			}
+			else
+			{
+				 // stack: all_actors, old_entry
+				CreateChildTable(L, *a); // stack: all_actors, table_entry
+				LuaHelpers::Push(L, (*a)->GetName()); // stack: all_actors, table_entry, name
+				lua_insert(L, -2); // stack: all_actors, name, table_entry
+				lua_rawset(L, -3); // stack: all_actors
+			}
+		}
+	}
+}
+
+void ActorFrame::PushChildTable(lua_State* L, const RString &sName)
+{
+	int found= 0;
+	FOREACH(Actor*, m_SubActors, a)
+	{
+		if((*a)->GetName() == sName)
+		{
+			switch(found)
+			{
+				case 0:
+					(*a)->PushSelf(L);
+					break;
+				case 1:
+					CreateChildTable(L, *a);
+					break;
+				default:
+					AddToChildTable(L, *a);
+					break;
+			}
+			++found;
+		}
+	}
+	if(!found)
+	{
+		lua_pushnil(L);
 	}
 }
 
@@ -498,11 +621,7 @@ public:
 	static int vanishpoint( T* p, lua_State *L )			{ p->SetVanishPoint( FArg(1), FArg(2) ); return 0; }
 	static int GetChild( T* p, lua_State *L )
 	{
-		Actor *pChild = p->GetChild( SArg(1) );
-		if( pChild )
-			pChild->PushSelf( L );
-		else
-			lua_pushnil( L );
+		p->PushChildTable(L, SArg(1));
 		return 1;
 	}
 	static int GetChildren( T* p, lua_State *L )
