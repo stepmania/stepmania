@@ -386,9 +386,18 @@ void InputHandler_Linux_Event::InputThread()
 
 			switch (event.type) {
 			case EV_KEY: {
-				int iNum = event.code;
-				// In 2.6.11 using an EMS USB2, the event number for P1 Tri (the first button)
-				// is being reported as 32 instead of 0.  Correct for this.
+				int iNum;
+				if (event.code >= BTN_JOYSTICK && event.code <= BTN_JOYSTICK + 0xf) {
+					// These guys have arbitrary names, but the kernel code in hid-input.c maps exactly 0xf of them.
+					iNum = event.code - BTN_JOYSTICK;
+				} else if (event.code >= BTN_TRIGGER_HAPPY1 && event.code <= BTN_TRIGGER_HAPPY40) {
+					// Actually, we only have 32 buttons defined.
+					iNum = event.code - BTN_TRIGGER_HAPPY1 + 0x10;
+				} else {
+					// If the button number is >40+0xf, it gets mapped to a code with no #define.
+					// I don't know if this is appropriate at all, but what else to do?
+					iNum = event.code;
+				}
 				wrap( iNum, 32 );	// max number of joystick buttons.  Make this a constant?
 				ButtonPressed( DeviceInput(g_apEventDevices[i]->m_Dev, enum_add2(JOY_BUTTON_1, iNum), event.value != 0, now) );
 				break;
