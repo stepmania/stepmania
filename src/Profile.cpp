@@ -789,6 +789,29 @@ void Profile::IncrementCategoryPlayCount( StepsType st, RankingCategory rc )
 	if( X==NULL ) LOG->Warn("Failed to read section " #X); \
 	else Load##X##FromNode(X); }
 
+void Profile::LoadCustomFunction( RString sDir )
+{
+	/* Get the theme's custom load function:
+	 *   [Profile]
+	 *   CustomLoadFunction=function(profile, profileDir) ... end
+	 */
+	Lua *L = LUA->Get();
+	LuaReference customLoadFunc = THEME->GetMetricR("Profile", "CustomLoadFunction");
+	customLoadFunc.PushSelf(L);
+	ASSERT_M(!lua_isnil(L, -1), "CustomLoadFunction not defined");
+
+	// Pass profile and profile directory as arguments
+	this->PushSelf(L);
+	LuaHelpers::Push(L, sDir);
+
+	// Run it
+	RString sError;
+	if (!LuaHelpers::RunScriptOnStack(L, sError, 2, 0))
+		LOG->Warn("Error running CustomLoadFunction: %s", sError.c_str());
+
+	LUA->Release(L);
+}
+	
 ProfileLoadResult Profile::LoadAllFromDir( RString sDir, bool bRequireSignature )
 {
 	CHECKPOINT;
@@ -881,25 +904,7 @@ ProfileLoadResult Profile::LoadAllFromDir( RString sDir, bool bRequireSignature 
 	if (ret != ProfileLoadResult_Success)
 		return ret;
 
-	/* Get the theme's custom load function:
-	 *   [Profile]
-	 *   CustomLoadFunction=function(profile, profileDir) ... end
-	 */
-	Lua *L = LUA->Get();
-	LuaReference customLoadFunc = THEME->GetMetricR("Profile", "CustomLoadFunction");
-	customLoadFunc.PushSelf(L);
-	ASSERT_M(!lua_isnil(L, -1), "CustomLoadFunction not defined");
-
-	// Pass profile and profile directory as arguments
-	this->PushSelf(L);
-	LuaHelpers::Push(L, sDir);
-
-	// Run it
-	RString sError;
-	if (!LuaHelpers::RunScriptOnStack(L, sError, 2, 0))
-		LOG->Warn("Error running CustomLoadFunction: %s", sError.c_str());
-
-	LUA->Release(L);
+	LoadCustomFunction( sDir );
 
 	return ProfileLoadResult_Success;
 }

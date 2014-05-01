@@ -349,6 +349,7 @@ public:
 
 	// Loading and saving
 	ProfileLoadResult LoadAllFromDir( RString sDir, bool bRequireSignature );
+	void LoadCustomFunction( RString sDir );
 	bool SaveAllToDir( RString sDir, bool bSignData ) const;
 
 	ProfileLoadResult LoadEditableDataFromDir( RString sDir );
