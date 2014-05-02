@@ -1858,6 +1858,12 @@
 			<EnumValue name='&apos;EditState_RecordPaused&apos;' value='2'/>
 			<EnumValue name='&apos;EditState_Playing&apos;' value='3'/>
 		</Enum>
+		<Enum name='FailType'>
+			<EnumValue name='&apos;FailType_Immediate&apos;' value='0'/>
+			<EnumValue name='&apos;FailType_ImmediateContinue&apos;' value='0'/>
+			<EnumValue name='&apos;FailType_EndOfSong&apos;' value='0'/>
+			<EnumValue name='&apos;FailType_Off&apos;' value='0'/>
+		</Enum>
 		<Enum name='FileType'>
 			<EnumValue name='&apos;FileType_Bitmap&apos;' value='0'/>
 			<EnumValue name='&apos;FileType_Sound&apos;' value='1'/>
