@@ -452,6 +452,7 @@ class LunaNoteSkinManager: public Luna<NoteSkinManager>
 {
 public:
 	DEFINE_METHOD( GetPath, GetPath(SArg(1), SArg(2)) );
+	DEFINE_METHOD( GetMetric, GetMetricI(SArg(1), SArg(2)) );
 	DEFINE_METHOD( GetMetricI, GetMetricI(SArg(1), SArg(2)) );
 	DEFINE_METHOD( GetMetricF, GetMetricF(SArg(1), SArg(2)) );
 	DEFINE_METHOD( GetMetricB, GetMetricB(SArg(1), SArg(2)) );
@@ -475,6 +476,7 @@ public:
 		return 1; \
 	}
 	FOR_NOTESKIN( GetPath, 2 );
+	FOR_NOTESKIN( GetMetric, 2 );
 	FOR_NOTESKIN( GetMetricI, 2 );
 	FOR_NOTESKIN( GetMetricF, 2 );
 	FOR_NOTESKIN( GetMetricB, 2 );
@@ -503,12 +505,14 @@ public:
 	LunaNoteSkinManager()
 	{
 		ADD_METHOD( GetPath );
+		ADD_METHOD( GetMetric );
 		ADD_METHOD( GetMetricI );
 		ADD_METHOD( GetMetricF );
 		ADD_METHOD( GetMetricB );
 		ADD_METHOD( GetMetricA );
 		ADD_METHOD( LoadActor );
 		ADD_METHOD( GetPathForNoteSkin );
+		ADD_METHOD( GetMetricForNoteSkin );
 		ADD_METHOD( GetMetricIForNoteSkin );
 		ADD_METHOD( GetMetricFForNoteSkin );
 		ADD_METHOD( GetMetricBForNoteSkin );
