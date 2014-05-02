@@ -249,6 +249,7 @@ Player::Player( NoteData &nd, bool bVisibleParts ) : m_NoteData(nd)
 	{
 		m_pNoteField = new NoteField;
 		m_pNoteField->SetName( "NoteField" );
+		this->AddChild( m_pNoteField );
 	}
 	m_pJudgedRows = new JudgedRows;
 

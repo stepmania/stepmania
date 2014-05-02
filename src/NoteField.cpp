@@ -362,19 +362,22 @@ void NoteField::DrawBeatBar( const float fBeat, BeatBarType type, int iMeasureIn
 
 void NoteField::DrawBoard( int iDrawDistanceAfterTargetsPixels, int iDrawDistanceBeforeTargetsPixels )
 {
-	// Draw the board centered on fYPosAt0 so that the board doesn't slide as
-	// the draw distance changes with modifiers.
-	const float fYPosAt0 = ArrowEffects::GetYPos( m_pPlayerState, 0, 0, m_fYReverseOffsetPixels );
-
 	// todo: make this an AutoActor instead? -aj
 	Sprite *pSprite = dynamic_cast<Sprite *>( (Actor*)m_sprBoard );
 	if( pSprite == NULL )
-		RageException::Throw( "Board must be a Sprite" );
-
-	RectF rect = *pSprite->GetCurrentTextureCoordRect();
-	const float fBoardGraphicHeightPixels = pSprite->GetUnzoomedHeight();
-	float fTexCoordOffset = m_fBoardOffsetPixels / fBoardGraphicHeightPixels;
 	{
+		m_sprBoard->Draw();
+	}
+	else
+	{
+		// Draw the board centered on fYPosAt0 so that the board doesn't slide as
+		// the draw distance changes with modifiers.
+		const float fYPosAt0 = ArrowEffects::GetYPos( m_pPlayerState, 0, 0, m_fYReverseOffsetPixels );
+
+		RectF rect = *pSprite->GetCurrentTextureCoordRect();
+		const float fBoardGraphicHeightPixels = pSprite->GetUnzoomedHeight();
+		float fTexCoordOffset = m_fBoardOffsetPixels / fBoardGraphicHeightPixels;
+
 		// top half
 		const float fHeight = iDrawDistanceBeforeTargetsPixels - iDrawDistanceAfterTargetsPixels;
 		const float fY = fYPosAt0 - ((iDrawDistanceBeforeTargetsPixels + iDrawDistanceAfterTargetsPixels) / 2.0f);
