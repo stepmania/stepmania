@@ -112,16 +112,6 @@ enum CourseSortOrders
 	CourseSortOrders_Invalid
 };
 
-enum DefaultFailType
-{
-	FAIL_IMMEDIATE,
-	FAIL_IMMEDIATECONTINUE,
-	FAIL_ENDOFSONG,
-	FAIL_OFF,
-	NUM_DefaultFailType,
-	DefaultFailType_Invalid
-};
-
 /** @brief Holds user-chosen preferences that are saved between sessions. */
 class PrefsManager
 {

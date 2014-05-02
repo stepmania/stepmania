@@ -7,6 +7,7 @@ static const char *ModsLevelNames[] = {
 	"Preferred",
 	"Stage",
 	"Song",
+	"Current",
 };
 XToString( ModsLevel );
 LuaXType( ModsLevel );

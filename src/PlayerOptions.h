@@ -30,12 +30,11 @@ public:
 		m_fRandAttack(0), m_SpeedfRandAttack(1.0f),
 		m_fNoAttack(0), m_SpeedfNoAttack(1.0f),
 		m_fPlayerAutoPlay(0), m_SpeedfPlayerAutoPlay(1.0f),
-		m_bSetTiltOrSkew(false),
 		m_fPerspectiveTilt(0), m_SpeedfPerspectiveTilt(1.0f),
 		m_fSkew(0), m_SpeedfSkew(1.0f),
 		m_fPassmark(0), m_SpeedfPassmark(1.0f),
 		m_fRandomSpeed(0), m_SpeedfRandomSpeed(1.0f),
-		m_bMuteOnError(false), m_FailType(FAIL_IMMEDIATE)
+		m_bMuteOnError(false), m_FailType(FailType_Immediate)
 	{
 		m_sNoteSkin = "";
 		ZERO( m_fAccels );	ONE( m_SpeedfAccels );
@@ -172,7 +171,6 @@ public:
 	float	m_fRandAttack,			m_SpeedfRandAttack;
 	float	m_fNoAttack,			m_SpeedfNoAttack;
 	float	m_fPlayerAutoPlay,		m_SpeedfPlayerAutoPlay;
-	bool	m_bSetTiltOrSkew;				// true if the tilt or skew was set by FromString
 	float	m_fPerspectiveTilt,		m_SpeedfPerspectiveTilt;		// -1 = near, 0 = overhead, +1 = space
 	float	m_fSkew,			m_SpeedfSkew;		// 0 = vanish point is in center of player, 1 = vanish point is in center of screen
 
@@ -185,13 +183,6 @@ public:
 	bool		m_bTurns[NUM_TURNS];
 	bool		m_bTransforms[NUM_TRANSFORMS];
 	bool		m_bMuteOnError;
-	/** @brief How can the Player fail a song? */
-	enum FailType {
-		FAIL_IMMEDIATE=0,		/**< fail immediately when life touches 0 */
-		FAIL_IMMEDIATE_CONTINUE,	/**< Same as above, but allow playing the rest of the song */
-		FAIL_AT_END,			/**< fail if life is at 0 when the song ends */
-		FAIL_OFF			/**< never fail */
-	};
 	/** @brief The method for which a player can fail a song. */
 	FailType m_FailType;
 

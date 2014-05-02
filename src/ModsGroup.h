@@ -9,6 +9,7 @@ enum ModsLevel
 	ModsLevel_Preferred,	// user-chosen player options.  Does not include any forced mods.
 	ModsLevel_Stage,	// Preferred + forced stage mods
 	ModsLevel_Song,		// Stage + forced attack mods
+	ModsLevel_Current, // Approaches Song
 	NUM_ModsLevel,
 	ModsLevel_Invalid
 };
@@ -30,7 +31,6 @@ class ModsGroup
 {
 	T m_[NUM_ModsLevel];
 	RageTimer		m_Timer;
-	T m_Current;		// approaches ModsLevel_Song
 
 public:
 	void Init()
@@ -43,15 +43,15 @@ public:
 		// Don't let the mod approach speed be affected by Tab.
 		// TODO: Find a more elegant way of handling this.
 		fDelta = m_Timer.GetDeltaTime();
-		m_Current.Approach( m_[ModsLevel_Song], fDelta );
+		m_[ModsLevel_Current].Approach( m_[ModsLevel_Song], fDelta );
 	}
 
 	template<typename U>
 	inline void Assign( ModsLevel level, U T::*member, const U &val )
 	{
 		if( level != ModsLevel_Song )
-			m_Current.*member = val;
-		for( ; level < NUM_ModsLevel; enum_add(level, 1) )
+			m_[ModsLevel_Current].*member = val;
+		for( ; level < ModsLevel_Current; enum_add(level, 1) )
 			m_[level].*member = val;
 	}
 
@@ -60,45 +60,50 @@ public:
 	{
 		DEBUG_ASSERT( index < n );
 		if( level != ModsLevel_Song )
-			(m_Current.*member)[index] = val;
-		for( ; level < NUM_ModsLevel; enum_add(level, 1) )
+			(m_[ModsLevel_Current].*member)[index] = val;
+		for( ; level < ModsLevel_Current; enum_add(level, 1) )
 			(m_[level].*member)[index] = val;
 	}
 
 	void Assign( ModsLevel level, const T &val )
 	{
 		if( level != ModsLevel_Song )
-			m_Current = val;
-		for( ; level < NUM_ModsLevel; enum_add(level, 1) )
+			m_[ModsLevel_Current] = val;
+		for( ; level < ModsLevel_Current; enum_add(level, 1) )
 			m_[level] = val;
 	}
 
 	void Call( ModsLevel level, void (T::*fun)() )
 	{
 		if( level != ModsLevel_Song )
-			(m_Current.*fun)();
-		for( ; level < NUM_ModsLevel; enum_add(level, 1) )
+			(m_[ModsLevel_Current].*fun)();
+		for( ; level < ModsLevel_Current; enum_add(level, 1) )
 			(m_[level].*fun)();
 	}
 
 	void FromString( ModsLevel level, const RString &str )
 	{
 		if( level != ModsLevel_Song )
-			m_Current.FromString( str );
-		for( ; level < NUM_ModsLevel; enum_add(level, 1) )
+			m_[ModsLevel_Current].FromString( str );
+		for( ; level < ModsLevel_Current; enum_add(level, 1) )
 			m_[level].FromString( str );
 	}
 
 	void SetCurrentToLevel( ModsLevel level )
 	{
-		m_Current = m_[level];
+		m_[ModsLevel_Current] = m_[level];
 	}
 
 	const T &Get( ModsLevel l ) const { return m_[l]; }
-	const T &GetPreferred() const	{ return m_[ModsLevel_Preferred]; }
-	const T &GetStage() const	{ return m_[ModsLevel_Stage]; }
-	const T &GetSong() const	{ return m_[ModsLevel_Song]; }
-	const T &GetCurrent() const	{ return m_Current; }
+	const T &GetPreferred()	const { return m_[ModsLevel_Preferred]; }
+	const T &GetStage()	const { return m_[ModsLevel_Stage]; }
+	const T &GetSong()	const { return m_[ModsLevel_Song]; }
+	const T &GetCurrent()	const { return m_[ModsLevel_Current]; }
+	T &Get( ModsLevel l ) { return m_[l]; }
+	T &GetPreferred()	{ return m_[ModsLevel_Preferred]; }
+	T &GetStage()	{ return m_[ModsLevel_Stage]; }
+	T &GetSong()	{ return m_[ModsLevel_Song]; }
+	T &GetCurrent()	{ return m_[ModsLevel_Current]; }
 };
 
 #endif
