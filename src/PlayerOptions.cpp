@@ -260,6 +260,11 @@ void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
 	{
 		AddPart( AddTo, m_fSkew, "Incoming" );
 	}
+	else
+	{
+		AddPart( AddTo, m_fSkew, "Skew" );
+		AddPart( AddTo, m_fPerspectiveTilt, "Tilt" );
+	}
 
 	// Don't display a string if using the default NoteSkin unless we force it.
 	if( bForceNoteSkin || (!m_sNoteSkin.empty() && m_sNoteSkin != CommonMetrics::DEFAULT_NOTESKIN_NAME.GetValue()) )
@@ -461,6 +466,8 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 	else if( sBit == "hallway" )				{ m_fSkew = 0;		m_fPerspectiveTilt = -level;	m_SpeedfSkew = m_SpeedfPerspectiveTilt = speed; }
 	else if( sBit == "distant" )				{ m_fSkew = 0;		m_fPerspectiveTilt = +level;	m_SpeedfSkew = m_SpeedfPerspectiveTilt = speed; }
 	else if( NOTESKIN && NOTESKIN->DoesNoteSkinExist(sBit) )	m_sNoteSkin = sBit;
+	else if( sBit == "skew" ) SET_FLOAT( fSkew )
+	else if( sBit == "tilt" ) SET_FLOAT( fPerspectiveTilt )
 	else if( sBit == "noteskin" && !on ) /* "no noteskin" */	m_sNoteSkin = CommonMetrics::DEFAULT_NOTESKIN_NAME;
 	else if( sBit == "randomspeed" ) 			SET_FLOAT( fRandomSpeed )
 	else if( sBit == "failarcade" || 
@@ -925,11 +932,21 @@ public:
 
 	static float CheckedApproachSpeed(lua_State* L, float s)
 	{
-		if(s <= 0)
+		if(s < 0)
 		{
-			luaL_error(L, "Approach speed must be greater than zero.");
+			luaL_error(L, "Approach speed must be greater than or equal to zero.");
 		}
 		return s;
+	}
+
+	// Explicitly separates the stack into args and return values.
+	// This way, the stack can safely be used to store the previous values.
+	static void DefaultNilArgs(lua_State* L, int n)
+	{
+		while(lua_gettop(L) < n)
+		{
+			lua_pushnil(L);
+		}
 	}
 
 	// Functions are designed to combine Get and Set into one, to be less clumsy to use. -Kyz
@@ -938,11 +955,16 @@ public:
 #define FLOAT_INTERFACE(func_name, member) \
 	static int func_name(T* p, lua_State* L) \
 	{ \
+		DefaultNilArgs(L, 2); \
 		lua_pushnumber(L, p->m_f ## member); \
 		lua_pushnumber(L, p->m_Speedf ## member); \
 		if(lua_isnumber(L, 1)) \
 		{ \
 			p->m_f ## member = FArg(1); \
+			if(p->m_Speedf ## member <= 0.0f) \
+			{ \
+				p->m_Speedf ## member = 1.0f; \
+			} \
 		} \
 		if(lua_isnumber(L, 2)) \
 		{ \
@@ -953,6 +975,7 @@ public:
 #define BOOL_INTERFACE(func_name, member) \
 	static int func_name(T* p, lua_State* L) \
 	{ \
+		DefaultNilArgs(L, 1); \
 		lua_pushboolean(L, p->m_b ## member); \
 		if(lua_isboolean(L, 1)) \
 		{ \
@@ -1047,6 +1070,7 @@ public:
 	// NoteSkins
 	static int NoteSkin(T* p, lua_State* L)
 	{
+		DefaultNilArgs(L, 2);
 		if( p->m_sNoteSkin.empty()  )
 		{
 			lua_pushstring( L, CommonMetrics::DEFAULT_NOTESKIN_NAME.GetValue() );
@@ -1062,12 +1086,21 @@ public:
 				p->m_sNoteSkin = SArg(1);
 				lua_pushboolean(L, true);
 			}
+			else
+			{
+				lua_pushnil(L);
+			}
+		}
+		else
+		{
+			lua_pushnil(L);
 		}
 		return 2;
 	}
 
 	static int FailSetting(T* p, lua_State* L)
 	{
+		DefaultNilArgs(L, 1);
 		Enum::Push(L, p->m_FailType);
 		if(lua_isstring(L, 1))
 		{
@@ -1089,6 +1122,7 @@ public:
 	// engine's enforcement of sane separation between speed mod types.
 	static int CMod(T* p, lua_State* L)
 	{
+		DefaultNilArgs(L, 2);
 		if(p->m_fTimeSpacing)
 		{
 			lua_pushnumber(L, p->m_fScrollBPM);
@@ -1120,6 +1154,7 @@ public:
 
 	static int XMod(T* p, lua_State* L)
 	{
+		DefaultNilArgs(L, 2);
 		if(!p->m_fTimeSpacing)
 		{
 			lua_pushnumber(L, p->m_fScrollSpeed);
@@ -1146,6 +1181,7 @@ public:
 
 	static int MMod(T* p, lua_State* L)
 	{
+		DefaultNilArgs(L, 2);
 		if(!p->m_fTimeSpacing && p->m_fMaxScrollBPM)
 		{
 			lua_pushnumber(L, p->m_fMaxScrollBPM);
@@ -1183,6 +1219,7 @@ public:
 
 	static int Overhead(T* p, lua_State* L)
 	{
+		DefaultNilArgs(L, 2);
 		lua_pushboolean(L, (p->m_fPerspectiveTilt == 0.0f && p->m_fSkew == 0.0f));
 		if(lua_toboolean(L, 1))
 		{
@@ -1198,6 +1235,7 @@ public:
 
 	static int Incoming(T* p, lua_State* L)
 	{
+		DefaultNilArgs(L, 2);
 		if((p->m_fSkew > 0.0f && p->m_fPerspectiveTilt < 0.0f) ||
 			(p->m_fSkew < 0.0f && p->m_fPerspectiveTilt > 0.0f))
 		{
@@ -1224,6 +1262,7 @@ public:
 
 	static int Space(T* p, lua_State* L)
 	{
+		DefaultNilArgs(L, 2);
 		if((p->m_fSkew > 0.0f && p->m_fPerspectiveTilt > 0.0f) ||
 			(p->m_fSkew < 0.0f && p->m_fPerspectiveTilt < 0.0f))
 		{
@@ -1250,6 +1289,7 @@ public:
 
 	static int Hallway(T* p, lua_State* L)
 	{
+		DefaultNilArgs(L, 2);
 		if(p->m_fSkew == 0.0f && p->m_fPerspectiveTilt < 0.0f)
 		{
 			lua_pushnumber(L, -p->m_fPerspectiveTilt);
@@ -1274,6 +1314,7 @@ public:
 	
 	static int Distant(T* p, lua_State* L)
 	{
+		DefaultNilArgs(L, 2);
 		if(p->m_fSkew == 0.0f && p->m_fPerspectiveTilt > 0.0f)
 		{
 			lua_pushnumber(L, p->m_fPerspectiveTilt);
