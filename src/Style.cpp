@@ -126,11 +126,47 @@ public:
 	DEFINE_METHOD( NeedsZoomOutWith2Players,	m_bNeedsZoomOutWith2Players )
 	DEFINE_METHOD( LockedDifficulty,	m_bLockDifficulties )
 
+	static int GetColumnInfo( T* p, lua_State *L )
+	{
+		PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);
+		int iCol = IArg(2) - 1;
+		if( iCol < 0 || iCol >= p->m_iColsPerPlayer )
+		{
+			LOG->Warn( "Style:GetColumnDrawOrder(): column %i out of range( 1 to %i )", iCol+1, p->m_iColsPerPlayer );
+			return 0;
+		}
+
+		LuaTable ret;
+		lua_pushnumber( L, p->m_ColumnInfo[pn][iCol].track+1 );
+		ret.Set( L, "Track" );
+		lua_pushnumber( L, p->m_ColumnInfo[pn][iCol].fXOffset );
+		ret.Set( L,  "XOffset" );
+		lua_pushstring( L, p->ColToButtonName(iCol) );
+		ret.Set( L, "Name" );
+		
+		ret.PushSelf(L); 
+		return 1;
+	}
+
+	static int GetColumnDrawOrder( T* p, lua_State *L )
+	{
+		int iCol = IArg(1) - 1;
+		if( iCol < 0 || iCol >= p->m_iColsPerPlayer*NUM_PLAYERS )
+		{
+			LOG->Warn( "Style:GetColumnDrawOrder(): column %i out of range( 1 to %i )", iCol+1, p->m_iColsPerPlayer*NUM_PLAYERS );
+			return 0;
+		}
+		lua_pushnumber( L, p->m_iColumnDrawOrder[iCol]+1 );
+		return 1;
+	}
+	
 	LunaStyle()
 	{
 		ADD_METHOD( GetName );
 		ADD_METHOD( GetStyleType );
 		ADD_METHOD( GetStepsType );
+		ADD_METHOD( GetColumnInfo );
+		ADD_METHOD( GetColumnDrawOrder );
 		ADD_METHOD( ColumnsPerPlayer );
 		ADD_METHOD( NeedsZoomOutWith2Players );
 		ADD_METHOD( LockedDifficulty );
