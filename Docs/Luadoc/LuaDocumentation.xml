@@ -1289,10 +1289,15 @@ save yourself some time, copy this for undocumented things:
 		Sets the field of view for the ActorFrame.
 	</Function>
 	<Function name='GetChild' return='Actor' arguments='string sName'>
-		Returns the child with a name of <code>sName</code>.
+		Returns the child with a name of <code>sName</code>.<br/>
+		If there are multiple children with that name, returns an array of those children.<br/>
+		The table also acts as a pass through layer, function calls pass through to the last child of that name.
 	</Function>
 	<Function name='GetChildren' return='{Actor}' arguments=''>
-		Returns a table of all the children in the ActorFrame.
+		Returns a table of all the children in the ActorFrame.<br/>
+		The table is indexed by the names of the children.<br/>
+		If there are multiple children with the same name, the entry for that name is an array of those children.<br/>
+		The table also acts as a pass through layer, function calls pass through to the last child of that name.
 	</Function>
 	<Function name='GetDrawFunction' return='LuaReference' arguments=''>
 		Gets the ActorFrame's Draw function.
