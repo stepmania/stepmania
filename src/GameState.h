@@ -306,7 +306,7 @@ public:
 	bool CurrentOptionsDisqualifyPlayer( PlayerNumber pn );
 	bool PlayerIsUsingModifier( PlayerNumber pn, const RString &sModifier );
 
-	PlayerOptions::FailType GetPlayerFailType( const PlayerState *pPlayerState ) const;
+	FailType GetPlayerFailType( const PlayerState *pPlayerState ) const;
 
 	// character stuff
 	Character* m_pCurCharacters[NUM_PLAYERS];

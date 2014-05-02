@@ -500,14 +500,14 @@ static void DefaultFailType( int &sel, bool ToSel, const ConfOption *pConfOption
 
 		switch( sel )
 		{
-			case 0:	po.m_FailType = PlayerOptions::FAIL_IMMEDIATE; break;
-			case 1:	po.m_FailType = PlayerOptions::FAIL_IMMEDIATE_CONTINUE; break;
-			case 2:	po.m_FailType = PlayerOptions::FAIL_AT_END; break;
-			case 3:	po.m_FailType = PlayerOptions::FAIL_OFF; break;
+			case 0:	po.m_FailType = FailType_Immediate; break;
+			case 1:	po.m_FailType = FailType_ImmediateContinue; break;
+			case 2:	po.m_FailType = FailType_EndOfSong; break;
+			case 3:	po.m_FailType = FailType_Off; break;
 			default:
 			{
 				LOG->Warn("Invalid fail type %d! Going to use the default...", sel);
-				po.m_FailType = PlayerOptions::FAIL_IMMEDIATE; break;
+				po.m_FailType = FailType_Immediate; break;
 			}
 		}
 

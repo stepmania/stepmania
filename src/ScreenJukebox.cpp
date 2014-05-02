@@ -221,7 +221,7 @@ void ScreenJukebox::Init()
 	GAMESTATE->m_SongOptions.Assign( ModsLevel_Stage, so );
 
 	FOREACH_EnabledPlayer( p )
-		PO_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions, ModsLevel_Stage, m_FailType, PlayerOptions::FAIL_OFF );
+		PO_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions, ModsLevel_Stage, m_FailType, FailType_Off );
 
 	GAMESTATE->m_bDemonstrationOrJukebox = true;
 

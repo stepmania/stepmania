@@ -868,7 +868,7 @@ bool BackgroundImpl::IsDangerAllVisible()
 {
 	// The players are never in danger in FAIL_OFF.
 	FOREACH_PlayerNumber( p )
-		if( GAMESTATE->GetPlayerFailType(GAMESTATE->m_pPlayerState[p]) == PlayerOptions::FAIL_OFF )
+		if( GAMESTATE->GetPlayerFailType(GAMESTATE->m_pPlayerState[p]) == FailType_Off )
 			return false;
 	if( !g_bShowDanger )
 		return false;

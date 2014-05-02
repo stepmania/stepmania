@@ -232,8 +232,7 @@ public:
 	static int GetPlayerOptions( T* p, lua_State *L )
 	{
 		ModsLevel m = Enum::Check<ModsLevel>( L, 1 );
-		PlayerOptions po = p->m_PlayerOptions.Get(m);
-		po.PushSelf(L);
+		p->m_PlayerOptions.Get(m).PushSelf(L);
 		return 1;
 	}
 	static int GetPlayerOptionsArray( T* p, lua_State *L )

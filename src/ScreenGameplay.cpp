@@ -1085,7 +1085,7 @@ void ScreenGameplay::LoadNextSong()
 	if( GAMESTATE->m_SongOptions.GetCurrent().m_LifeType == SongOptions::LIFE_BATTERY )
 	{
 		FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
-			PO_GROUP_ASSIGN( pi->GetPlayerState()->m_PlayerOptions, ModsLevel_Song, m_FailType, PlayerOptions::FAIL_IMMEDIATE );
+			PO_GROUP_ASSIGN( pi->GetPlayerState()->m_PlayerOptions, ModsLevel_Song, m_FailType, FailType_Immediate );
 	}
 
 	m_textSongOptions.SetText( GAMESTATE->m_SongOptions.GetCurrent().GetString() );
@@ -1579,7 +1579,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 	{
 		HealthState &hs = pi->GetPlayerState()->m_HealthState;
 		HealthState OldHealthState = hs;
-		if( GAMESTATE->GetPlayerFailType(pi->GetPlayerState()) != PlayerOptions::FAIL_OFF &&
+		if( GAMESTATE->GetPlayerFailType(pi->GetPlayerState()) != FailType_Off &&
 			pi->m_pLifeMeter && pi->m_pLifeMeter->IsFailing() )
 		{
 			hs = HealthState_Dead;
@@ -1588,7 +1588,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 		{
 			hs = HealthState_Hot;
 		}
-		else if( GAMESTATE->GetPlayerFailType(pi->GetPlayerState()) != PlayerOptions::FAIL_OFF &&
+		else if( GAMESTATE->GetPlayerFailType(pi->GetPlayerState()) != FailType_Off &&
 			pi->m_pLifeMeter && pi->m_pLifeMeter->IsInDanger() )
 		{
 			hs = HealthState_Danger;
@@ -1633,10 +1633,10 @@ void ScreenGameplay::Update( float fDeltaTime )
 			{
 				PlayerNumber pn = pi->GetStepsAndTrailIndex();
 
-				PlayerOptions::FailType ft = GAMESTATE->GetPlayerFailType( pi->GetPlayerState() );
+				FailType ft = GAMESTATE->GetPlayerFailType( pi->GetPlayerState() );
 				SongOptions::LifeType lt = GAMESTATE->m_SongOptions.GetCurrent().m_LifeType;
 
-				if( ft == PlayerOptions::FAIL_OFF || ft == PlayerOptions::FAIL_AT_END )
+				if( ft == FailType_Off || ft == FailType_EndOfSong )
 					continue;
 
 				// check for individual fail
@@ -1663,7 +1663,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 					default:
 						break;
 				}
-				if( bAllowOniDie && ft == PlayerOptions::FAIL_IMMEDIATE )
+				if( bAllowOniDie && ft == FailType_Immediate )
 				{
 					if( !STATSMAN->m_CurStageStats.AllFailed() )	// if not the last one to fail
 					{
@@ -1681,18 +1681,18 @@ void ScreenGameplay::Update( float fDeltaTime )
 			bool bAllFailed = true;
 			FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
 			{
-				PlayerOptions::FailType ft = GAMESTATE->GetPlayerFailType( pi->GetPlayerState() );
+				FailType ft = GAMESTATE->GetPlayerFailType( pi->GetPlayerState() );
 				switch( ft )
 				{
-				case PlayerOptions::FAIL_IMMEDIATE:
+				case FailType_Immediate:
 					if( pi->m_pLifeMeter == NULL  ||  (pi->m_pLifeMeter && !pi->m_pLifeMeter->IsFailing()) )
 						bAllFailed = false;
 					break;
-				case PlayerOptions::FAIL_IMMEDIATE_CONTINUE:
-				case PlayerOptions::FAIL_AT_END:
+				case FailType_ImmediateContinue:
+				case FailType_EndOfSong:
 					bAllFailed = false;	// wait until the end of the song to fail.
 					break;
-				case PlayerOptions::FAIL_OFF:
+				case FailType_Off:
 					bAllFailed = false;	// never fail.
 					break;
 				default:
@@ -1812,7 +1812,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 			bool bAllHumanHaveBigMissCombo = true;
 			FOREACH_EnabledPlayerNumberInfo( m_vPlayerInfo, pi )
 			{
-				if (pi->GetPlayerState()->m_PlayerOptions.GetCurrent().m_FailType == PlayerOptions::FAIL_OFF ||
+				if (pi->GetPlayerState()->m_PlayerOptions.GetCurrent().m_FailType == FailType_Off ||
 					pi->GetPlayerState()->m_HealthState < HealthState_Dead )
 				{
 					bAllHumanHaveBigMissCombo = false;
@@ -2434,7 +2434,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
 		{
 			// Mark failure.
-			if( GAMESTATE->GetPlayerFailType(pi->GetPlayerState()) != PlayerOptions::FAIL_OFF &&
+			if( GAMESTATE->GetPlayerFailType(pi->GetPlayerState()) != FailType_Off &&
 				(pi->m_pLifeMeter && pi->m_pLifeMeter->IsFailing()) )
 				pi->GetPlayerStageStats()->m_bFailed = true;
 

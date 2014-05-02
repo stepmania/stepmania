@@ -125,17 +125,6 @@ XToString( CourseSortOrders );
 StringToX( CourseSortOrders );
 LuaXType( CourseSortOrders );
 
-// XXX: Fix fail bug?
-/* static const char *DefaultFailTypeNames[] = {
-	"Immediate",
-	"ImmediateContinue",
-	"EndOfSong",
-	"Off",
-};
-XToString( DefaultFailType );
-StringToX( DefaultFailType );
-LuaXType( DefaultFailType ); */
-
 bool g_bAutoRestart = false;
 #ifdef DEBUG
 # define TRUE_IF_DEBUG true
