@@ -1980,6 +1980,7 @@
 			<EnumValue name='&apos;ModsLevel_Preferred&apos;' value='0'/>
 			<EnumValue name='&apos;ModsLevel_Stage&apos;' value='1'/>
 			<EnumValue name='&apos;ModsLevel_Song&apos;' value='2'/>
+			<EnumValue name='&apos;ModsLevel_Current&apos;' value='2'/>
 		</Enum>
 		<Enum name='Month'>
 			<EnumValue name='&apos;Month_January&apos;' value='0'/>
