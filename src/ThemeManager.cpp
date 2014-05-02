@@ -12,6 +12,8 @@
 #include "RageFile.h"
 #if !defined(SMPACKAGE)
 #include "ScreenManager.h"
+#include "ProfileManager.h"
+#include "Profile.h"
 #include "ActorUtil.h"
 #endif
 #include "Foreach.h"
@@ -415,12 +417,20 @@ void ThemeManager::SwitchThemeAndLanguage( const RString &sThemeName_, const RSt
 		// reload common sounds
 		if( SCREENMAN != NULL )
 			SCREENMAN->ThemeChanged();
+
 #endif
 
 		/* Lua globals can use metrics which are cached, and vice versa.  Update Lua
 		 * globals first; it's Lua's job to explicitly update cached metrics that it
 		 * uses. */
 		UpdateLuaGlobals();
+
+		// Reload MachineProfile with new theme's CustomLoadFunction
+		if( PROFILEMAN != NULL )
+		{
+			Profile* pProfile = PROFILEMAN->GetMachineProfile();
+			pProfile->LoadCustomFunction( "/Save/MachineProfile/" );
+		}
 	}
 
 	// Use theme metrics for localization.
