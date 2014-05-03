@@ -252,8 +252,7 @@ public:
 	}
 	static int GetCurrentPlayerOptions( T* p, lua_State *L )
 	{
-		PlayerOptions po = p->m_PlayerOptions.GetCurrent();
-		po.PushSelf(L);
+		p->m_PlayerOptions.GetCurrent().PushSelf(L);
 		return 1;
 	}
 	DEFINE_METHOD( GetHealthState, m_HealthState );

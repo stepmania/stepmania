@@ -1,0 +1,12 @@
+PlayerOptions are arranged by ModsLevel.
+ModsLevel_Preferred,	// user-chosen player options.  Does not include any forced mods.
+ModsLevel_Stage,	// Preferred + forced stage mods
+ModsLevel_Song,		// Stage + forced attack mods
+ModsLevel_Current, // Approaches Song
+
+The following applies to modifying the player options through the object fetched from PlayerState:GetPlayerOptions(mods_level).
+
+Changes to ModsLevel_Current on ScreenGameplay take effect immediately, but are quickly nullified as Current tweens toward Song.  The approach speeds in Current are ignored.  Changing Current when not on ScreenGameplay will have no effect.
+Changes to ModsLevel_Song while on ScreenGameplay take effect over time, governed by an approach speed.  ModsLevel_Song should only be modified by the theme on ScreenGameplay, because it is reset to the contents of Preferred when ScreenGameplay starts.
+ModsLevel_Stage is a holding area the engine uses when building the active attacks a course or song forces on a player.  It should not be used by a theme.
+ModsLevel_Preferred is the user-chosen player options.  Use this if you are building a custom replacement for ScreenPlayerOptions.  Changes to ModsLevel_Preferred are applied to Stage, Song, and Current when ScreenGameplay starts.  Approach speeds in ModsLevel_Preferred are ignored.
