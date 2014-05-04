@@ -45,7 +45,7 @@ void ScreenGameplaySyncMachine::Init()
 
 	ScreenGameplayNormal::Init();
 
-	SO_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Stage, m_AutosyncType, SongOptions::AUTOSYNC_MACHINE );
+	SO_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Stage, m_AutosyncType, AutosyncType_Machine );
 
 	ClearMessageQueue();	// remove all of the messages set in ScreenGameplay that animate "ready", "here we go", etc.
 

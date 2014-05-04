@@ -2366,6 +2366,12 @@ public:
 		LuaHelpers::Push( L, s );
 		return 1;
 	}
+	static int GetSongOptionsObject( T* p, lua_State *L )
+	{
+		ModsLevel m = Enum::Check<ModsLevel>( L, 1 );
+		p->m_SongOptions.Get(m).PushSelf(L);
+		return 1;
+	}
 	static int GetDefaultSongOptions( T* p, lua_State *L )
 	{
 		SongOptions so;
@@ -2643,6 +2649,7 @@ public:
 		ADD_METHOD( GetPremium );
 		ADD_METHOD( GetSongOptionsString );
 		ADD_METHOD( GetSongOptions );
+		ADD_METHOD( GetSongOptionsObject );
 		ADD_METHOD( GetDefaultSongOptions );
 		ADD_METHOD( ApplyPreferredModifiers );
 		ADD_METHOD( ApplyStageModifiers );

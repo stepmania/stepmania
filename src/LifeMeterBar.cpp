@@ -31,16 +31,16 @@ LifeMeterBar::LifeMeterBar()
 
 	m_pPlayerState = NULL;
 
-	SongOptions::DrainType dtype = GAMESTATE->m_SongOptions.GetStage().m_DrainType;
+	DrainType dtype = GAMESTATE->m_SongOptions.GetStage().m_DrainType;
 	switch( dtype )
 	{
-	case SongOptions::DRAIN_NORMAL:
+	case DrainType_Normal:
 		m_fLifePercentage = INITIAL_VALUE;
 		break;
 
 	/* These types only go down, so they always start at full. */
-	case SongOptions::DRAIN_NO_RECOVER:
-	case SongOptions::DRAIN_SUDDEN_DEATH:
+	case DrainType_NoRecover:
+	case DrainType_SuddenDeath:
 		m_fLifePercentage = 1.0f;	break;
 	default:
 		FAIL_M(ssprintf("Invalid DrainType: %i", dtype));
@@ -132,12 +132,12 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 	switch( GAMESTATE->m_SongOptions.GetSong().m_DrainType )
 	{
 	DEFAULT_FAIL( GAMESTATE->m_SongOptions.GetSong().m_DrainType );
-	case SongOptions::DRAIN_NORMAL:
+	case DrainType_Normal:
 		break;
-	case SongOptions::DRAIN_NO_RECOVER:
+	case DrainType_NoRecover:
 		fDeltaLife = min( fDeltaLife, 0 );
 		break;
-	case SongOptions::DRAIN_SUDDEN_DEATH:
+	case DrainType_SuddenDeath:
 		if( score < MIN_STAY_ALIVE )
 			fDeltaLife = -1.0f;
 		else
@@ -151,10 +151,10 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 void LifeMeterBar::ChangeLife( HoldNoteScore score, TapNoteScore tscore )
 {
 	float fDeltaLife=0.f;
-	SongOptions::DrainType dtype = GAMESTATE->m_SongOptions.GetSong().m_DrainType;
+	DrainType dtype = GAMESTATE->m_SongOptions.GetSong().m_DrainType;
 	switch( dtype )
 	{
-	case SongOptions::DRAIN_NORMAL:
+	case DrainType_Normal:
 		switch( score )
 		{
 		case HNS_Held:		fDeltaLife = m_fLifePercentChange.GetValue(SE_Held);	break;
@@ -166,7 +166,7 @@ void LifeMeterBar::ChangeLife( HoldNoteScore score, TapNoteScore tscore )
 		if( IsHot()  &&  score == HNS_LetGo )
 			fDeltaLife = -0.10f;		// make it take a while to get back to "hot"
 		break;
-	case SongOptions::DRAIN_NO_RECOVER:
+	case DrainType_NoRecover:
 		switch( score )
 		{
 		case HNS_Held:		fDeltaLife = +0.000f;	break;
@@ -176,7 +176,7 @@ void LifeMeterBar::ChangeLife( HoldNoteScore score, TapNoteScore tscore )
 			FAIL_M(ssprintf("Invalid HoldNoteScore: %i", score));
 		}
 		break;
-	case SongOptions::DRAIN_SUDDEN_DEATH:
+	case DrainType_SuddenDeath:
 		switch( score )
 		{
 		case HNS_Held:		fDeltaLife = +0;	break;
@@ -221,14 +221,14 @@ void LifeMeterBar::ChangeLife( float fDeltaLife )
 
 	switch( GAMESTATE->m_SongOptions.GetSong().m_DrainType )
 	{
-		case SongOptions::DRAIN_NORMAL:
-		case SongOptions::DRAIN_NO_RECOVER:
+		case DrainType_Normal:
+		case DrainType_NoRecover:
 			if( fDeltaLife > 0 )
 				fDeltaLife *= m_fLifeDifficulty;
 			else
 				fDeltaLife /= m_fLifeDifficulty;
 			break;
-		case SongOptions::DRAIN_SUDDEN_DEATH:
+		case DrainType_SuddenDeath:
 			// This should always -1.0f;
 			if( fDeltaLife < 0 )
 				fDeltaLife = -1.0f;

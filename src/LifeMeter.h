@@ -41,7 +41,7 @@ public:
 	virtual float GetLife() const { return 0; } // for cosmetic use only
 	virtual void UpdateNonstopLifebar() { }
 
-	static LifeMeter *MakeLifeMeter( SongOptions::LifeType t );
+	static LifeMeter *MakeLifeMeter( LifeType t );
 
 	//
 	// Lua

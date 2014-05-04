@@ -647,28 +647,28 @@ class DebugLineAutosync : public IDebugLine
 	virtual RString GetDisplayTitle() { return AUTOSYNC.GetValue(); }
 	virtual RString GetDisplayValue()
 	{ 
-		SongOptions::AutosyncType type = GAMESTATE->m_SongOptions.GetSong().m_AutosyncType;
+		AutosyncType type = GAMESTATE->m_SongOptions.GetSong().m_AutosyncType;
 		switch( type )
 		{
-		case SongOptions::AUTOSYNC_OFF: 	return OFF.GetValue();  		break;
-		case SongOptions::AUTOSYNC_SONG:	return SONG.GetValue(); 		break;
-		case SongOptions::AUTOSYNC_MACHINE:	return MACHINE.GetValue(); 		break;
-		case SongOptions::AUTOSYNC_TEMPO:	return SYNC_TEMPO.GetValue();		break;
+		case AutosyncType_Off: 	return OFF.GetValue();  		break;
+		case AutosyncType_Song:	return SONG.GetValue(); 		break;
+		case AutosyncType_Machine:	return MACHINE.GetValue(); 		break;
+		case AutosyncType_Tempo:	return SYNC_TEMPO.GetValue();		break;
 		default:
 			FAIL_M(ssprintf("Invalid autosync type: %i", type));
 		}
 	}
 	virtual Type GetType() const { return IDebugLine::gameplay_only; }
-	virtual bool IsEnabled() { return GAMESTATE->m_SongOptions.GetSong().m_AutosyncType!=SongOptions::AUTOSYNC_OFF; }
+	virtual bool IsEnabled() { return GAMESTATE->m_SongOptions.GetSong().m_AutosyncType!=AutosyncType_Off; }
 	virtual void DoAndLog( RString &sMessageOut )
 	{
 		int as = GAMESTATE->m_SongOptions.GetSong().m_AutosyncType + 1;
 		bool bAllowSongAutosync = !GAMESTATE->IsCourseMode();
 		if( !bAllowSongAutosync  && 
-		  ( as == SongOptions::AUTOSYNC_SONG || as == SongOptions::AUTOSYNC_TEMPO ) )
-			as = SongOptions::AUTOSYNC_MACHINE;
-		wrap( as, SongOptions::NUM_AUTOSYNC_TYPES );
-		SO_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Song, m_AutosyncType, SongOptions::AutosyncType(as) );
+		  ( as == AutosyncType_Song || as == AutosyncType_Tempo ) )
+			as = AutosyncType_Machine;
+		wrap( as, NUM_AutosyncType );
+		SO_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Song, m_AutosyncType, AutosyncType(as) );
 		MESSAGEMAN->Broadcast( Message_AutosyncChanged );
 		IDebugLine::DoAndLog( sMessageOut );
 	}

@@ -805,9 +805,9 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 	// we don't override the user's changes if they back out.
 	if( GAMESTATE->m_PlayMode == PLAY_MODE_ONI && 
 		GAMESTATE->m_PlayMode != OldPlayMode &&
-		GAMESTATE->m_SongOptions.GetStage().m_LifeType == SongOptions::LIFE_BAR )
+		GAMESTATE->m_SongOptions.GetStage().m_LifeType == LifeType_Bar )
 	{
-		SO_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Stage, m_LifeType, SongOptions::LIFE_BATTERY );
+		SO_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Stage, m_LifeType, LifeType_Battery );
 	}
 }
 

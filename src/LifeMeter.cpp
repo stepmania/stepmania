@@ -4,13 +4,13 @@
 #include "LifeMeterBattery.h"
 #include "LifeMeterTime.h"
 
-LifeMeter *LifeMeter::MakeLifeMeter( SongOptions::LifeType t )
+LifeMeter *LifeMeter::MakeLifeMeter( LifeType t )
 {
 	switch( t )
 	{
-	case SongOptions::LIFE_BAR:     return new LifeMeterBar;
-	case SongOptions::LIFE_BATTERY: return new LifeMeterBattery;
-	case SongOptions::LIFE_TIME:    return new LifeMeterTime;
+	case LifeType_Bar:     return new LifeMeterBar;
+	case LifeType_Battery: return new LifeMeterBattery;
+	case LifeType_Time:    return new LifeMeterTime;
 	default:
 		FAIL_M(ssprintf("Unrecognized LifeMeter type: %i", t));
 	}
