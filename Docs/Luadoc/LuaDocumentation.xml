@@ -217,6 +217,9 @@ save yourself some time, copy this for undocumented things:
 	<Function name='GetTimingDifficulty' return='int' arguments=''>
 		Returns the current Timing difficulty.
 	</Function>
+	<Function name='GetTimeSinceStart' return='float' arguments=''>
+		Returns the current time since the program was started.  Includes time that was spent loading songs.
+	</Function>
 	<Function name='GetTitleSafeH' theme='_fallback' return='float' arguments='float fPercent'>
 		[01 alias.lua]
 	</Function>
@@ -1187,6 +1190,9 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='stretchto' return='void' arguments='float x1, float y1, float x2, float y2'>
 		Stretches the Actor to a rectangle of a specific size.
+	</Function>
+	<Function name='texturetranslate' return='void' arguments='float x, float y'>
+		Translates the texture of the actor by x and y.
 	</Function>
 	<Function name='texturewrapping' return='void' arguments='bool bWrap'>
 		Determines if the Actor should use texture wrapping or not.
@@ -2728,6 +2734,12 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 </Class> 
 <Class name='NoteSkinManager'>
+	<Function name='GetMetric' return='string' arguments='string sElement, string sValue'>
+		Returns a string from the specified element and value.
+	</Function>
+	<Function name='GetMetricForNoteSkin' return='string' arguments='string sElement, string sValue, string sNoteSkin'>
+		Returns a string from the specified element and value using NoteSkin <code>sNoteSkin</code>.
+	</Function>
 	<Function name='GetMetricA' return='ActorCommand' arguments='string sElement, string sValue'>
 		Returns a command from the specified element and value.
 	</Function>
@@ -3574,6 +3586,9 @@ save yourself some time, copy this for undocumented things:
 	<Function name='GetDummyPlayerInfo' return='PlayerInfo' arguments='int index'>
 		Returns a dummy PlayerInfo for the specified index.
 	</Function>
+	<Function name='GetHasteRate' return='float' arguments=''>
+		Returns the current haste rate.  HasteRate * MusicRate is the current total rate the music is multiplied by.
+	</Function>
 	<Function name='GetLifeMeter' return='LifeMeter' arguments='PlayerNumber pn'>
 		Returns the <Link class='LifeMeter' /> for the specified <Link class='ENUM' function='PlayerNumber' /> <code>pn</code>.
 	</Function>
@@ -4362,6 +4377,12 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='GetStyleType' return='StyleType' arguments=''>
 		Returns the StyleType for this Style.
+	</Function>
+	<Function name='GetColumnInfo' return='{Track= int, XOffset= int, Name= string}' arguments='int column'>
+		Returns a table containing the Track, XOffset, and Name of the column.
+	</Function>
+	<Function name='GetColumnDrawOrder' return='int' arguments='int column'>
+		Returns the draw order of the column.
 	</Function>
 	<Function name='LockedDifficulty' return='bool' arguments=''>
 		Returns <code>true</code> if this style locks the difficulty for both players.

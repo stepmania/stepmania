@@ -66,6 +66,7 @@
 		<Function name='GetThemeAspectRatio'/>
 		<Function name='GetThemePref'/>
 		<Function name='GetTimingDifficulty'/>
+		<Function name='GetTimeSinceStart'/>
 		<Function name='GetTitleSafeH'/>
 		<Function name='GetTitleSafeV'/>
 		<Function name='GetUnlockEntryIndexToCelebrate'/>
@@ -399,6 +400,7 @@
 			<Function name='stopeffect'/>
 			<Function name='stoptweening'/>
 			<Function name='stretchto'/>
+			<Function name='texturetranslate'/>
 			<Function name='texturewrapping'/>
 			<Function name='thump'/>
 			<Function name='tween'/>
@@ -931,6 +933,8 @@
 		</Class>
 		<Class name='NoteSkinManager'>
 			<Function name='DoesNoteSkinExist'/>
+			<Function name='GetMetric'/>
+			<Function name='GetMetricForNoteSkin'/>
 			<Function name='GetMetricA'/>
 			<Function name='GetMetricAForNoteSkin'/>
 			<Function name='GetMetricB'/>
@@ -1276,6 +1280,7 @@
 		<Class base='ScreenWithMenuElements' name='ScreenGameplay'>
 			<Function name='Center1Player'/>
 			<Function name='GetDummyPlayerInfo'/>
+			<Function name='GetHasteRate'/>
 			<Function name='GetLifeMeter'/>
 			<Function name='GetNextCourseSong'/>
 			<Function name='GetPlayerInfo'/>
@@ -1573,6 +1578,8 @@
 			<Function name='GetName'/>
 			<Function name='GetStepsType'/>
 			<Function name='GetStyleType'/>
+			<Function name='GetColumnInfo'/>
+			<Function name='GetColumnDrawOrder'/>
 			<Function name='LockedDifficulty'/>
 			<Function name='NeedsZoomOutWith2Players'/>
 		</Class>
