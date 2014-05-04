@@ -141,25 +141,22 @@ void AdjustSync::RevertSyncChanges()
 
 static LocalizedString AUTOSYNC_CORRECTION_APPLIED	( "AdjustSync", "Autosync: Correction applied." );
 static LocalizedString AUTOSYNC_CORRECTION_NOT_APPLIED	( "AdjustSync", "Autosync: Correction NOT applied. Deviation too high." );
-static LocalizedString AUTOSYNC_SONG			( "AdjustSync", "Autosync Song" );
-static LocalizedString AUTOSYNC_MACHINE			( "AdjustSync", "Autosync Machine" );
-static LocalizedString AUTOSYNC_TEMPO			( "AdjustSync", "Autosync Tempo" );
 void AdjustSync::HandleAutosync( float fNoteOffBySeconds, float fStepTime )
 {
 	if( GAMESTATE->IsCourseMode() )
 		return;
-	SongOptions::AutosyncType type = GAMESTATE->m_SongOptions.GetCurrent().m_AutosyncType;
+	AutosyncType type = GAMESTATE->m_SongOptions.GetCurrent().m_AutosyncType;
 	switch( type ) {
-	case SongOptions::AUTOSYNC_OFF:
+	case AutosyncType_Off:
 		return;
-	case SongOptions::AUTOSYNC_TEMPO:
+	case AutosyncType_Tempo:
 	{
 		// We collect all of the data and process it at the end
 		s_vAutosyncTempoData.push_back( make_pair(fStepTime, fNoteOffBySeconds) );
 		break;
 	}
-	case SongOptions::AUTOSYNC_MACHINE:
-	case SongOptions::AUTOSYNC_SONG:
+	case AutosyncType_Machine:
+	case AutosyncType_Song:
 	{
 		s_fAutosyncOffset[s_iAutosyncOffsetSample] = fNoteOffBySeconds;
 		++s_iAutosyncOffsetSample;
@@ -179,7 +176,7 @@ void AdjustSync::HandleSongEnd()
 {
 	if( GAMESTATE->IsCourseMode() )
 		return;
-	if( GAMESTATE->m_SongOptions.GetCurrent().m_AutosyncType == SongOptions::AUTOSYNC_TEMPO )
+	if( GAMESTATE->m_SongOptions.GetCurrent().m_AutosyncType == AutosyncType_Tempo )
 	{
 		AutosyncTempo();
 	}
@@ -192,25 +189,13 @@ void AdjustSync::AutosyncOffset()
 	const float mean = calc_mean( s_fAutosyncOffset, s_fAutosyncOffset+OFFSET_SAMPLE_COUNT );
 	const float stddev = calc_stddev( s_fAutosyncOffset, s_fAutosyncOffset+OFFSET_SAMPLE_COUNT );
 
-	RString sAutosyncType;
-	SongOptions::AutosyncType type = GAMESTATE->m_SongOptions.GetCurrent().m_AutosyncType;
-	switch( type )
-	{
-	case SongOptions::AUTOSYNC_SONG:
-		sAutosyncType = AUTOSYNC_SONG;
-		break;
-	case SongOptions::AUTOSYNC_MACHINE:
-		sAutosyncType = AUTOSYNC_MACHINE;
-		break;
-	default:
-		FAIL_M(ssprintf("Invalid autosync type: %i", type));
-	}
+	AutosyncType type = GAMESTATE->m_SongOptions.GetCurrent().m_AutosyncType;
 
 	if( stddev < .03f )  // If they stepped with less than .03 error
 	{
 		switch( type )
 		{
-			case SongOptions::AUTOSYNC_SONG:
+			case AutosyncType_Song:
 			{
 				GAMESTATE->m_pCurSong->m_SongTiming.m_fBeat0OffsetInSeconds += mean;
 				const vector<Steps *>& vpSteps = GAMESTATE->m_pCurSong->GetAllSteps();
@@ -224,7 +209,7 @@ void AdjustSync::AutosyncOffset()
 				}
 				break;
 			}
-			case SongOptions::AUTOSYNC_MACHINE:
+			case AutosyncType_Machine:
 				// Step timing is not needed for this operation.
 				PREFSMAN->m_fGlobalOffsetSeconds.Set( PREFSMAN->m_fGlobalOffsetSeconds + mean );
 				break;

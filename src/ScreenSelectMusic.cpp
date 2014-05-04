@@ -1247,11 +1247,11 @@ bool ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 			// apply #LIVES
 			if( pCourse->m_iLives != -1 )
 			{
-				SO_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Stage, m_LifeType, SongOptions::LIFE_BATTERY );
+				SO_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Stage, m_LifeType, LifeType_Battery );
 				SO_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Stage, m_iBatteryLives, pCourse->m_iLives );
 			}
 			if( pCourse->GetCourseType() == COURSE_TYPE_SURVIVAL)
-				SO_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Stage, m_LifeType, SongOptions::LIFE_TIME );
+				SO_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Stage, m_LifeType, LifeType_Time );
 		}
 		else
 		{

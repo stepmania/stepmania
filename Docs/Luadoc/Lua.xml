@@ -780,6 +780,7 @@
 			<Function name='GetSongDelay'/>
 			<Function name='GetSongFreeze'/>
 			<Function name='GetSongOptions'/>
+			<Function name='GetSongOptionsObject'/>
 			<Function name='GetSongOptionsString'/>
 			<Function name='GetSongPercent'/>
 			<Function name='GetSongPosition'/>
@@ -1453,6 +1454,20 @@
 			<Function name='WasLoadedFromAdditionalCourses'/>
 			<Function name='WasLoadedFromAdditionalSongs'/>
 		</Class>
+		<Class name='SongOptions'>
+			<Function name='LifeSetting'/>
+			<Function name='DrainSetting'/>
+			<Function name='AutosyncSetting'/>
+			<Function name='BatteryLives'/>
+			<Function name='AssistClap'/>
+			<Function name='AssistMetronome'/>
+			<Function name='StaticBackground'/>
+			<Function name='RandomBGOnly'/>
+			<Function name='SaveScore'/>
+			<Function name='SaveReplay'/>
+			<Function name='MusicRate'/>
+			<Function name='Haste'/>
+		</Class>
 		<Class name='SongPosition'>
 			<Function name='GetCurBPS'/>
 			<Function name='GetDelay'/>
@@ -1777,6 +1792,12 @@
 			<EnumValue name='&apos;AttractSoundFrequency_Every4Times&apos;' value='4'/>
 			<EnumValue name='&apos;AttractSoundFrequency_Every5Times&apos;' value='5'/>
 		</Enum>
+		<Enum name='AutosyncType'>
+			<EnumValue name='&apos;AutosyncType_Off&apos;' value='0'/>
+			<EnumValue name='&apos;AutosyncType_Song&apos;' value='1'/>
+			<EnumValue name='&apos;AutosyncType_Machine&apos;' value='2'/>
+			<EnumValue name='&apos;AutosyncType_Tempo&apos;' value='3'/>
+		</Enum>
 		<Enum name='BannerCacheMode'>
 			<EnumValue name='&apos;BannerCacheMode_Off&apos;' value='0'/>
 			<EnumValue name='&apos;BannerCacheMode_LowResPreload&apos;' value='1'/>
@@ -1831,6 +1852,11 @@
 			<EnumValue name='&apos;DisplayBPM_Actual&apos;' value='0'/>
 			<EnumValue name='&apos;DisplayBPM_Specified&apos;' value='1'/>
 			<EnumValue name='&apos;DisplayBPM_Random&apos;' value='2'/>
+		</Enum>
+		<Enum name='DrainType'>
+			<EnumValue name='&apos;DrainType_Normal&apos;' value='0'/>
+			<EnumValue name='&apos;DrainType_NoRecover&apos;' value='1'/>
+			<EnumValue name='&apos;DrainType_SuddenDeath&apos;' value='2'/>
 		</Enum>
 		<Enum name='DrawMode'>
 			<EnumValue name='&apos;DrawMode_Quads&apos;' value='0'/>
@@ -1950,6 +1976,11 @@
 		<Enum name='LayoutType'>
 			<EnumValue name='&apos;LayoutType_ShowAllInRow&apos;' value='0'/>
 			<EnumValue name='&apos;LayoutType_ShowOneInRow&apos;' value='1'/>
+		</Enum>
+		<Enum name='LifeType'>
+			<EnumValue name='&apos;LifeType_Bar&apos;' value='0'/>
+			<EnumValue name='&apos;LifeType_Battery&apos;' value='1'/>
+			<EnumValue name='&apos;LifeType_Time&apos;' value='2'/>
 		</Enum>
 		<Enum name='LightsMode'>
 			<EnumValue name='&apos;LightsMode_Attract&apos;' value='0'/>

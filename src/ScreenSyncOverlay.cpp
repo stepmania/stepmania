@@ -113,13 +113,13 @@ void ScreenSyncOverlay::UpdateText()
 		}
 	}
 
-	SongOptions::AutosyncType type = GAMESTATE->m_SongOptions.GetCurrent().m_AutosyncType;
+	AutosyncType type = GAMESTATE->m_SongOptions.GetCurrent().m_AutosyncType;
 	switch( type )
 	{
-	case SongOptions::AUTOSYNC_OFF:							break;
-	case SongOptions::AUTOSYNC_SONG:	vs.push_back(AUTO_SYNC_SONG);		break;
-	case SongOptions::AUTOSYNC_MACHINE:	vs.push_back(AUTO_SYNC_MACHINE);	break;
-	case SongOptions::AUTOSYNC_TEMPO:	vs.push_back(AUTO_SYNC_TEMPO);		break;
+	case AutosyncType_Off:							break;
+	case AutosyncType_Song:	vs.push_back(AUTO_SYNC_SONG);		break;
+	case AutosyncType_Machine:	vs.push_back(AUTO_SYNC_MACHINE);	break;
+	case AutosyncType_Tempo:	vs.push_back(AUTO_SYNC_TEMPO);		break;
 	default:
 		FAIL_M(ssprintf("Invalid autosync type: %i", type));
 	}
@@ -134,7 +134,7 @@ void ScreenSyncOverlay::UpdateText()
 
 
 	// Update SyncInfo
-	bool bVisible = GAMESTATE->m_SongOptions.GetCurrent().m_AutosyncType != SongOptions::AUTOSYNC_OFF;
+	bool bVisible = GAMESTATE->m_SongOptions.GetCurrent().m_AutosyncType != AutosyncType_Off;
 	m_textAdjustments.SetVisible( bVisible );
 	if( bVisible )
 	{

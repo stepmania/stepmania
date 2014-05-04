@@ -170,6 +170,11 @@ public:
 #define LIST_METHOD( method_name ) \
 	{ #method_name, method_name }
 
+// Explicitly separates the stack into args and return values.
+// This way, the stack can safely be used to store the previous values.
+void DefaultNilArgs(lua_State* L, int n);
+float FArgGTEZero(lua_State* L, int index);
+
 #endif
 
 /*

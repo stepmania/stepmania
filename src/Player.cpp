@@ -628,7 +628,7 @@ void Player::Load()
 	// TODO: Remove use of PlayerNumber.
 	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
 
-	bool bOniDead = GAMESTATE->m_SongOptions.GetStage().m_LifeType == SongOptions::LIFE_BATTERY  &&  
+	bool bOniDead = GAMESTATE->m_SongOptions.GetStage().m_LifeType == LifeType_Battery  &&  
 		(m_pPlayerStageStats == NULL || m_pPlayerStageStats->m_bFailed);
 
 	/* The editor reuses Players ... so we really need to make sure everything
@@ -1781,7 +1781,7 @@ int Player::GetClosestNonEmptyRow( int iNoteRow, int iMaxRowsAhead, int iMaxRows
 bool Player::IsOniDead() const
 {
 	// If we're playing on oni and we've died, do nothing.
-	return GAMESTATE->m_SongOptions.GetCurrent().m_LifeType == SongOptions::LIFE_BATTERY && m_pPlayerStageStats  && m_pPlayerStageStats->m_bFailed;
+	return GAMESTATE->m_SongOptions.GetCurrent().m_LifeType == LifeType_Battery && m_pPlayerStageStats  && m_pPlayerStageStats->m_bFailed;
 }
 
 void Player::Fret( int col, int row, const RageTimer &tm, bool bHeld, bool bRelease )

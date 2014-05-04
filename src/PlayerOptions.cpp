@@ -908,6 +908,7 @@ void PlayerOptions::ResetPrefs( ResetPrefsType type )
 
 // lua start
 #include "LuaBinding.h"
+#include "OptionsBinding.h"
 
 /** @brief Allow Lua to have access to PlayerOptions. */ 
 class LunaPlayerOptions: public Luna<PlayerOptions>
@@ -930,107 +931,53 @@ public:
 		return 1;
 	}
 
-	static float CheckedApproachSpeed(lua_State* L, float s)
-	{
-		if(s < 0)
-		{
-			luaL_error(L, "Approach speed must be greater than or equal to zero.");
-		}
-		return s;
-	}
-
-	// Explicitly separates the stack into args and return values.
-	// This way, the stack can safely be used to store the previous values.
-	static void DefaultNilArgs(lua_State* L, int n)
-	{
-		while(lua_gettop(L) < n)
-		{
-			lua_pushnil(L);
-		}
-	}
-
-	// Functions are designed to combine Get and Set into one, to be less clumsy to use. -Kyz
-	// If a valid arg is passed, the value is set.
-	// The previous value is returned.
-#define FLOAT_INTERFACE(func_name, member) \
-	static int func_name(T* p, lua_State* L) \
-	{ \
-		DefaultNilArgs(L, 2); \
-		lua_pushnumber(L, p->m_f ## member); \
-		lua_pushnumber(L, p->m_Speedf ## member); \
-		if(lua_isnumber(L, 1)) \
-		{ \
-			p->m_f ## member = FArg(1); \
-			if(p->m_Speedf ## member <= 0.0f) \
-			{ \
-				p->m_Speedf ## member = 1.0f; \
-			} \
-		} \
-		if(lua_isnumber(L, 2)) \
-		{ \
-			p->m_Speedf ## member = CheckedApproachSpeed(L, FArg(2)); \
-		} \
-		return 2; \
-	}
-#define BOOL_INTERFACE(func_name, member) \
-	static int func_name(T* p, lua_State* L) \
-	{ \
-		DefaultNilArgs(L, 1); \
-		lua_pushboolean(L, p->m_b ## member); \
-		if(lua_isboolean(L, 1)) \
-		{ \
-			p->m_b ## member = BArg(1); \
-		} \
-		return 1; \
-	}
-
 	// Direct control functions, for themes that can handle it.
 
-	FLOAT_INTERFACE(TimeSpacing, TimeSpacing);
-	FLOAT_INTERFACE(MaxScrollBPM, MaxScrollBPM);
-	FLOAT_INTERFACE(ScrollSpeed, ScrollSpeed);
-	FLOAT_INTERFACE(ScrollBPM, ScrollBPM);
-	FLOAT_INTERFACE(Boost, Accels[PlayerOptions::ACCEL_BOOST]);
-	FLOAT_INTERFACE(Brake, Accels[PlayerOptions::ACCEL_BRAKE]);
-	FLOAT_INTERFACE(Wave, Accels[PlayerOptions::ACCEL_WAVE]);
-	FLOAT_INTERFACE(Expand, Accels[PlayerOptions::ACCEL_EXPAND]);
-	FLOAT_INTERFACE(Boomerang, Accels[PlayerOptions::ACCEL_BOOMERANG]);
-	FLOAT_INTERFACE(Drunk, Effects[PlayerOptions::EFFECT_DRUNK]);
-	FLOAT_INTERFACE(Dizzy, Effects[PlayerOptions::EFFECT_DIZZY]);
-	FLOAT_INTERFACE(Confusion, Effects[PlayerOptions::EFFECT_CONFUSION]);
-	FLOAT_INTERFACE(Mini, Effects[PlayerOptions::EFFECT_MINI]);
-	FLOAT_INTERFACE(Tiny, Effects[PlayerOptions::EFFECT_TINY]);
-	FLOAT_INTERFACE(Flip, Effects[PlayerOptions::EFFECT_FLIP]);
-	FLOAT_INTERFACE(Invert, Effects[PlayerOptions::EFFECT_INVERT]);
-	FLOAT_INTERFACE(Tornado, Effects[PlayerOptions::EFFECT_TORNADO]);
-	FLOAT_INTERFACE(Tipsy, Effects[PlayerOptions::EFFECT_TIPSY]);
-	FLOAT_INTERFACE(Bumpy, Effects[PlayerOptions::EFFECT_BUMPY]);
-	FLOAT_INTERFACE(Beat, Effects[PlayerOptions::EFFECT_BEAT]);
-	FLOAT_INTERFACE(Xmode, Effects[PlayerOptions::EFFECT_XMODE]);
-	FLOAT_INTERFACE(Twirl, Effects[PlayerOptions::EFFECT_TWIRL]);
-	FLOAT_INTERFACE(Roll, Effects[PlayerOptions::EFFECT_ROLL]);
-	FLOAT_INTERFACE(Hidden, Appearances[PlayerOptions::APPEARANCE_HIDDEN]);
-	FLOAT_INTERFACE(HiddenOffset, Appearances[PlayerOptions::APPEARANCE_HIDDEN_OFFSET]);
-	FLOAT_INTERFACE(Sudden, Appearances[PlayerOptions::APPEARANCE_SUDDEN]);
-	FLOAT_INTERFACE(SuddenOffset, Appearances[PlayerOptions::APPEARANCE_SUDDEN_OFFSET]);
-	FLOAT_INTERFACE(Stealth, Appearances[PlayerOptions::APPEARANCE_STEALTH]);
-	FLOAT_INTERFACE(Blink, Appearances[PlayerOptions::APPEARANCE_BLINK]);
-	FLOAT_INTERFACE(RandomVanish, Appearances[PlayerOptions::APPEARANCE_RANDOMVANISH]);
-	FLOAT_INTERFACE(Reverse, Scrolls[PlayerOptions::SCROLL_REVERSE]);
-	FLOAT_INTERFACE(Split, Scrolls[PlayerOptions::SCROLL_SPLIT]);
-	FLOAT_INTERFACE(Alternate, Scrolls[PlayerOptions::SCROLL_ALTERNATE]);
-	FLOAT_INTERFACE(Cross, Scrolls[PlayerOptions::SCROLL_CROSS]);
-	FLOAT_INTERFACE(Centered, Scrolls[PlayerOptions::SCROLL_CENTERED]);
-	FLOAT_INTERFACE(Dark, Dark);
-	FLOAT_INTERFACE(Blind, Blind);
-	FLOAT_INTERFACE(Cover, Cover);
-	FLOAT_INTERFACE(RandAttack, RandAttack);
-	FLOAT_INTERFACE(NoAttack, NoAttack);
-	FLOAT_INTERFACE(PlayerAutoPlay, PlayerAutoPlay);
-	FLOAT_INTERFACE(Skew, Skew);
-	FLOAT_INTERFACE(Tilt, PerspectiveTilt);
-	FLOAT_INTERFACE(Passmark, Passmark); // Passmark is not sanity checked to the [0, 1] range because LifeMeterBar::IsFailing is the only thing that uses it, and it's used in a <= test.  Any theme passing a value outside the [0, 1] range probably expects the result they get. -Kyz
-	FLOAT_INTERFACE(RandomSpeed, RandomSpeed);
+	FLOAT_INTERFACE(TimeSpacing, TimeSpacing, true);
+	FLOAT_INTERFACE(MaxScrollBPM, MaxScrollBPM, true);
+	FLOAT_INTERFACE(ScrollSpeed, ScrollSpeed, true);
+	FLOAT_INTERFACE(ScrollBPM, ScrollBPM, true);
+	FLOAT_INTERFACE(Boost, Accels[PlayerOptions::ACCEL_BOOST], true);
+	FLOAT_INTERFACE(Brake, Accels[PlayerOptions::ACCEL_BRAKE], true);
+	FLOAT_INTERFACE(Wave, Accels[PlayerOptions::ACCEL_WAVE], true);
+	FLOAT_INTERFACE(Expand, Accels[PlayerOptions::ACCEL_EXPAND], true);
+	FLOAT_INTERFACE(Boomerang, Accels[PlayerOptions::ACCEL_BOOMERANG], true);
+	FLOAT_INTERFACE(Drunk, Effects[PlayerOptions::EFFECT_DRUNK], true);
+	FLOAT_INTERFACE(Dizzy, Effects[PlayerOptions::EFFECT_DIZZY], true);
+	FLOAT_INTERFACE(Confusion, Effects[PlayerOptions::EFFECT_CONFUSION], true);
+	FLOAT_INTERFACE(Mini, Effects[PlayerOptions::EFFECT_MINI], true);
+	FLOAT_INTERFACE(Tiny, Effects[PlayerOptions::EFFECT_TINY], true);
+	FLOAT_INTERFACE(Flip, Effects[PlayerOptions::EFFECT_FLIP], true);
+	FLOAT_INTERFACE(Invert, Effects[PlayerOptions::EFFECT_INVERT], true);
+	FLOAT_INTERFACE(Tornado, Effects[PlayerOptions::EFFECT_TORNADO], true);
+	FLOAT_INTERFACE(Tipsy, Effects[PlayerOptions::EFFECT_TIPSY], true);
+	FLOAT_INTERFACE(Bumpy, Effects[PlayerOptions::EFFECT_BUMPY], true);
+	FLOAT_INTERFACE(Beat, Effects[PlayerOptions::EFFECT_BEAT], true);
+	FLOAT_INTERFACE(Xmode, Effects[PlayerOptions::EFFECT_XMODE], true);
+	FLOAT_INTERFACE(Twirl, Effects[PlayerOptions::EFFECT_TWIRL], true);
+	FLOAT_INTERFACE(Roll, Effects[PlayerOptions::EFFECT_ROLL], true);
+	FLOAT_INTERFACE(Hidden, Appearances[PlayerOptions::APPEARANCE_HIDDEN], true);
+	FLOAT_INTERFACE(HiddenOffset, Appearances[PlayerOptions::APPEARANCE_HIDDEN_OFFSET], true);
+	FLOAT_INTERFACE(Sudden, Appearances[PlayerOptions::APPEARANCE_SUDDEN], true);
+	FLOAT_INTERFACE(SuddenOffset, Appearances[PlayerOptions::APPEARANCE_SUDDEN_OFFSET], true);
+	FLOAT_INTERFACE(Stealth, Appearances[PlayerOptions::APPEARANCE_STEALTH], true);
+	FLOAT_INTERFACE(Blink, Appearances[PlayerOptions::APPEARANCE_BLINK], true);
+	FLOAT_INTERFACE(RandomVanish, Appearances[PlayerOptions::APPEARANCE_RANDOMVANISH], true);
+	FLOAT_INTERFACE(Reverse, Scrolls[PlayerOptions::SCROLL_REVERSE], true);
+	FLOAT_INTERFACE(Split, Scrolls[PlayerOptions::SCROLL_SPLIT], true);
+	FLOAT_INTERFACE(Alternate, Scrolls[PlayerOptions::SCROLL_ALTERNATE], true);
+	FLOAT_INTERFACE(Cross, Scrolls[PlayerOptions::SCROLL_CROSS], true);
+	FLOAT_INTERFACE(Centered, Scrolls[PlayerOptions::SCROLL_CENTERED], true);
+	FLOAT_INTERFACE(Dark, Dark, true);
+	FLOAT_INTERFACE(Blind, Blind, true);
+	FLOAT_INTERFACE(Cover, Cover, true);
+	FLOAT_INTERFACE(RandAttack, RandAttack, true);
+	FLOAT_INTERFACE(NoAttack, NoAttack, true);
+	FLOAT_INTERFACE(PlayerAutoPlay, PlayerAutoPlay, true);
+	FLOAT_INTERFACE(Skew, Skew, true);
+	FLOAT_INTERFACE(Tilt, PerspectiveTilt, true);
+	FLOAT_INTERFACE(Passmark, Passmark, true); // Passmark is not sanity checked to the [0, 1] range because LifeMeterBar::IsFailing is the only thing that uses it, and it's used in a <= test.  Any theme passing a value outside the [0, 1] range probably expects the result they get. -Kyz
+	FLOAT_INTERFACE(RandomSpeed, RandomSpeed, true);
 	BOOL_INTERFACE(TurnNone, Turns[PlayerOptions::TURN_NONE]);
 	BOOL_INTERFACE(Mirror, Turns[PlayerOptions::TURN_MIRROR]);
 	BOOL_INTERFACE(Backwards, Turns[PlayerOptions::TURN_BACKWARDS]);
@@ -1063,9 +1010,7 @@ public:
 	BOOL_INTERFACE(NoQuads, Transforms[PlayerOptions::TRANSFORM_NOQUADS]);
 	BOOL_INTERFACE(NoStretch, Transforms[PlayerOptions::TRANSFORM_NOSTRETCH]);
 	BOOL_INTERFACE(MuteOnError, MuteOnError);
-
-#undef FLOAT_INTERFACE
-#undef BOOL_INTERFACE
+	ENUM_INTERFACE(FailSetting, FailType, FailType);
 
 	// NoteSkins
 	static int NoteSkin(T* p, lua_State* L)
@@ -1096,17 +1041,6 @@ public:
 			lua_pushnil(L);
 		}
 		return 2;
-	}
-
-	static int FailSetting(T* p, lua_State* L)
-	{
-		DefaultNilArgs(L, 1);
-		Enum::Push(L, p->m_FailType);
-		if(lua_isstring(L, 1))
-		{
-			p->m_FailType= Enum::Check<FailType>(L, 1);
-		}
-		return 1;
 	}
 
 	static void SetSpeedModApproaches(T* p, float speed)
@@ -1147,7 +1081,7 @@ public:
 		}
 		if(lua_isnumber(L, 2))
 		{
-			SetSpeedModApproaches(p, CheckedApproachSpeed(L, FArg(2)));
+			SetSpeedModApproaches(p, FArgGTEZero(L, 2));
 		}
 		return 2;
 	}
@@ -1174,7 +1108,7 @@ public:
 		}
 		if(lua_isnumber(L, 2))
 		{
-			SetSpeedModApproaches(p, CheckedApproachSpeed(L, FArg(2)));
+			SetSpeedModApproaches(p, FArgGTEZero(L, 2));
 		}
 		return 2;
 	}
@@ -1206,7 +1140,7 @@ public:
 		}
 		if(lua_isnumber(L, 2))
 		{
-			SetSpeedModApproaches(p, CheckedApproachSpeed(L, FArg(2)));
+			SetSpeedModApproaches(p, FArgGTEZero(L, 2));
 		}
 		return 2;
 	}
@@ -1228,7 +1162,7 @@ public:
 		}
 		if(lua_isnumber(L, 2))
 		{
-			SetPerspectiveApproach(p, L, CheckedApproachSpeed(L, FArg(2)));
+			SetPerspectiveApproach(p, L, FArgGTEZero(L, 2));
 		}
 		return 1;
 	}
@@ -1255,7 +1189,7 @@ public:
 		}
 		if(lua_isnumber(L, 2))
 		{
-			SetPerspectiveApproach(p, L, CheckedApproachSpeed(L, FArg(2)));
+			SetPerspectiveApproach(p, L, FArgGTEZero(L, 2));
 		}
 		return 2;
 	}
@@ -1282,7 +1216,7 @@ public:
 		}
 		if(lua_isnumber(L, 2))
 		{
-			SetPerspectiveApproach(p, L, CheckedApproachSpeed(L, FArg(2)));
+			SetPerspectiveApproach(p, L, FArgGTEZero(L, 2));
 		}
 		return 2;
 	}
@@ -1307,7 +1241,7 @@ public:
 		}
 		if(lua_isnumber(L, 2))
 		{
-			SetPerspectiveApproach(p, L, CheckedApproachSpeed(L, FArg(2)));
+			SetPerspectiveApproach(p, L, FArgGTEZero(L, 2));
 		}
 		return 2;
 	}
@@ -1332,7 +1266,7 @@ public:
 		}
 		if(lua_isnumber(L, 2))
 		{
-			SetPerspectiveApproach(p, L, CheckedApproachSpeed(L, FArg(2)));
+			SetPerspectiveApproach(p, L, FArgGTEZero(L, 2));
 		}
 		return 2;
 	}

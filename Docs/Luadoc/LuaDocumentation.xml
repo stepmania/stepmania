@@ -2330,6 +2330,9 @@ save yourself some time, copy this for undocumented things:
 	<Function name='GetSongOptionsString' return='string' arguments=''>
 		Returns the song options as a string.
 	</Function>
+	<Function name='GetSongOptionsObject' return='SongOptions' arguments='ModsLevel ml'>
+		Returns the song options for the specified ModsLevel as an object.
+	</Function>
 	<Function name='GetSongPercent' return='float' arguments='float fBeat'>
 		Returns how much of the song is through at beat <code>fBeat</code>.
 	</Function>
@@ -2825,7 +2828,7 @@ save yourself some time, copy this for undocumented things:
 </Class>
 <Class name='PlayerOptions'>
 	<Description>
-		Most options fall into one of two types:  float or bool.<br />
+		Most options fall into one of four types:  float, int, bool, or enum.<br />
 		Float type options have this interface:<br />
 		Option(value, approach_speed)<br />
 		If value is a float, sets the TimeSpacing modifier to value.<br />
@@ -2838,7 +2841,9 @@ save yourself some time, copy this for undocumented things:
 		a,b= options:Boost(5) -- Sets a and b to the previous values, NOT to 5 and .5.  Sets the value to 5 and leaves the approach speed at whatever it was.<br />
 		<br />
 		Setting the approach speed only matters when modifying the PlayerOptions from ModsLevel_Song.<br />
+		Int type options are similar to float in that they return and take a number, but they do not have an approach speed.<br />
 		Bool type options have an almost identical interface, the difference is that they can not have an approach speed.<br />
+		Enum type options are almost identical to bool type.  They take and return an enum value.<br />
 		For brevity, the functions are only given a description if the option requires careful handling or does not follow the float or bool interfaces.<br />
 	</Description>
 	<Function name='IsEasierForCourseAndTrail' return='bool' arguments='Course c, Trail t'>
@@ -4037,6 +4042,36 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='WasLoadedFromAdditionalSongs' return='bool' arguments='Song s'>
 		Returns <code>true</code> if the specified song was loaded from AdditionalSongs.
+	</Function>
+</Class>
+<Class name='SongOptions'>
+	<Description>
+		See the description for PlayerOptions.  The functions follow the same design.
+	</Description>
+	<Function name='LifeSetting' return='LifeType' arguments='LifeType type'>
+	</Function>
+	<Function name='DrainSetting' return= 'DrainType' arguments='DrainType type'>
+	</Function>
+	<Function name='AutosyncSetting' return='AutosyncType' arguments='AutosyncType type'>
+	</Function>
+	<Function name='BatteryLives' return='int' arguments='int num'>
+	</Function>
+	<Function name='AssistClap' return='bool' arguments='bool b'>
+	</Function>
+	<Function name='AssistMetronome' return='bool' arguments='bool b'>
+	</Function>
+	<Function name='StaticBackground' return='bool' arguments='bool b'>
+	</Function>
+	<Function name='RandomBGOnly' return='bool' arguments='bool b'>
+	</Function>
+	<Function name='SaveScore' return='bool' arguments='bool b'>
+	</Function>
+	<Function name='SaveReplay' return='bool' arguments='bool b'>
+	</Function>
+	<Function name='MusicRate' return='float' arguments='float rate'>
+		Limited to the range 0 &lt; rate &lt;= 3 because speeds greater than 3 are likely to crash.
+	</Function>
+	<Function name='Haste' return='float' arguments='float h'>
 	</Function>
 </Class>
 <Class name='SongPosition'>

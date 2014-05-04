@@ -135,7 +135,7 @@ void PlayerInfo::Load( PlayerNumber pn, MultiPlayer mp, bool bShowNoteField, int
 			break;
 		case PLAY_MODE_ONI:
 		case PLAY_MODE_ENDLESS:
-			if( GAMESTATE->m_SongOptions.GetStage().m_LifeType == SongOptions::LIFE_TIME )
+			if( GAMESTATE->m_SongOptions.GetStage().m_LifeType == LifeType_Time )
 				m_pPrimaryScoreDisplay = new ScoreDisplayLifeTime;
 			else
 				m_pPrimaryScoreDisplay = new ScoreDisplayOni;
@@ -570,7 +570,7 @@ void ScreenGameplay::Init()
 				// not 100% sure of that. -freem
 				if( !GAMESTATE->IsPlayerEnabled(pi->m_pn) && SHOW_LIFE_METER_FOR_DISABLED_PLAYERS )
 				{
-					if(GAMESTATE->m_SongOptions.GetStage().m_LifeType == SongOptions::LIFE_BAR)
+					if(GAMESTATE->m_SongOptions.GetStage().m_LifeType == LifeType_Bar)
 						static_cast<LifeMeterBar*>(pi->m_pLifeMeter)->ChangeLife(-1.0f);
 				}
 			}
@@ -1017,9 +1017,9 @@ void ScreenGameplay::SetupSong( int iSongIndex )
 			RString sType;
 			switch( GAMESTATE->m_SongOptions.GetCurrent().m_SoundEffectType )
 			{
-				case SongOptions::SOUNDEFFECT_OFF:	sType = "SoundEffectControl_Off";	break;
-				case SongOptions::SOUNDEFFECT_SPEED:	sType = "SoundEffectControl_Speed";	break;
-				case SongOptions::SOUNDEFFECT_PITCH:	sType = "SoundEffectControl_Pitch";	break;
+				case SoundEffectType_Off:	sType = "SoundEffectControl_Off";	break;
+				case SoundEffectType_Speed:	sType = "SoundEffectControl_Speed";	break;
+				case SoundEffectType_Pitch:	sType = "SoundEffectControl_Pitch";	break;
 				default: break;
 			}
 
@@ -1082,7 +1082,7 @@ void ScreenGameplay::LoadNextSong()
 
 	/* If we're in battery mode, force FailImmediate. We assume in Player::Step
 	 * that failed players can't step. */
-	if( GAMESTATE->m_SongOptions.GetCurrent().m_LifeType == SongOptions::LIFE_BATTERY )
+	if( GAMESTATE->m_SongOptions.GetCurrent().m_LifeType == LifeType_Battery )
 	{
 		FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
 			PO_GROUP_ASSIGN( pi->GetPlayerState()->m_PlayerOptions, ModsLevel_Song, m_FailType, FailType_Immediate );
@@ -1118,10 +1118,10 @@ void ScreenGameplay::LoadNextSong()
 		// reset oni game over graphic
 		SET_XY_AND_ON_COMMAND( pi->m_sprOniGameOver );
 
-		if( GAMESTATE->m_SongOptions.GetCurrent().m_LifeType==SongOptions::LIFE_BATTERY && pi->GetPlayerStageStats()->m_bFailed )	// already failed
+		if( GAMESTATE->m_SongOptions.GetCurrent().m_LifeType==LifeType_Battery && pi->GetPlayerStageStats()->m_bFailed )	// already failed
 			pi->ShowOniGameOver();
 
-		if( GAMESTATE->m_SongOptions.GetCurrent().m_LifeType==SongOptions::LIFE_BAR && pi->m_pLifeMeter )
+		if( GAMESTATE->m_SongOptions.GetCurrent().m_LifeType==LifeType_Bar && pi->m_pLifeMeter )
 			pi->m_pLifeMeter->UpdateNonstopLifebar();
 
 		if( pi->m_pStepsDisplay )
@@ -1634,7 +1634,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 				PlayerNumber pn = pi->GetStepsAndTrailIndex();
 
 				FailType ft = GAMESTATE->GetPlayerFailType( pi->GetPlayerState() );
-				SongOptions::LifeType lt = GAMESTATE->m_SongOptions.GetCurrent().m_LifeType;
+				LifeType lt = GAMESTATE->m_SongOptions.GetCurrent().m_LifeType;
 
 				if( ft == FailType_Off || ft == FailType_EndOfSong )
 					continue;
@@ -1658,7 +1658,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 				bool bAllowOniDie = false;
 				switch( lt )
 				{
-					case SongOptions::LIFE_BATTERY:
+					case LifeType_Battery:
 						bAllowOniDie = true;
 					default:
 						break;
