@@ -4113,7 +4113,7 @@ save yourself some time, copy this for undocumented things:
 		Limited to the range 0 &lt; rate &lt;= 3 because speeds greater than 3 are likely to crash.
 	</Function>
 	<Function name='Haste' return='float' arguments='float h'>
-		Not actually usable as a float.  Any value other than 0 is considered "on".
+		A multiplier for the haste system.  Limited to the range -1 to 1.
 	</Function>
 </Class>
 <Class name='SongPosition'>
