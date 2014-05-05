@@ -1,0 +1,79 @@
+Traditionally, the Haste effect is an effect where the song speeds up when the player is doing well, and slows down when the player is doing poorly.
+This document lists the lua functions that change the behavior of Haste and some suggested practices.
+
+All of these functions are combined Get/Set.  This means that they always return the value as it was before the function was called, and the parameters are optional.  "prev_value= SongOptions:Haste(new_value)" (somewhere else) "SongOptions:Haste(prev_value)" is an example of using this to set a new value, store the previous, then later restore the previous value.
+
+SongOptions:Haste(n)
+	Gets/Sets the haste multiplier.  The haste multiplier is applied to the Haste effect as a scale factor.  Negative haste works as the inverse of normal haste.
+	SongOptions:Haste(0) disables Haste.
+	Limited to the range of -1 to 1, but is a floating point value.
+
+ScreenGameplay:HasteTurningPoints({a, b ...})
+	Gets/Sets the turning points at which the haste effect changes.
+	There must be at least two turning points.
+	Each turning point must be greater than the previous.
+	Each turning point must be between -1 and 1.
+
+ScreenGameplay:HasteAddAmounts({a, b ...})
+	Gets/Sets the amounts that are added to the song speed at each turning point.
+	There must be at least two add amounts.
+	Each add amount must be greater than the previous.
+	Each add amount must be between -1 and 1.
+	If you allow negative haste in your theme, do not allow it to be combined with an add amount of 1.  It won't crash, but it will bring the song to a standstill.  The same goes for positive haste and add amount -1.
+
+ScreenGameplay:HasteTimeBetweenUpdates(n)
+	Gets/Sets the amount of time between Haste updates.  Every n seconds, if any player has hit all the steps since the last update, the value used to determine where the player is on the haste scale increases by .1.
+
+ScreenGameplay:HasteLifeSwitchPoint(n)
+	Gets/Sets the point below which the haste effect depends on the life bar.
+
+ScreenGameplay:GetTrueBPS(player_number)
+	Returns the current true beats per second for the specified player.
+	This takes into account the current music rate and the current haste effect.
+	If you are displaying the BPM on ScreenGameplay, this is what you should use to have correct behavior when Haste and/or a music rate mod are in effect.
+
+
+Full explanation:
+Variables: (not the names used in the source code)
+haste_score:
+	Controls where the player is on the scale from minimum haste to maximum haste.
+	Ranges from -1 to 1.
+	Mode 1:  Player's life is above haste_life_switch_point.
+		haste_score starts at 0 and increases by .1 every haste_update_time seconds if the player has hit all steps.
+	Mode 2:  Player's life is at or below haste_life_switch_point.
+		haste_score is between -1 and 0, scaled by the player's life.  At 0 life, haste_score is -1.  At haste_life_switch_point, haste_score is at 0.
+haste_life_switch_point:
+	The point at which haste_score switches from Mode 1 to Mode 2.
+turning_points:
+add_amounts:
+	There must be the same number of turning_points as add_amounts.
+	There must be at least two turning_points/add_amounts.
+	If either of these conditions is false, haste is disabled.
+	Values must be between -1 and 1.  Attempting to set an invalid value will throw an error.
+	haste_score is a single linear input.  turning_points and add_amounts are used to transform this single linear input into a set of connected lines.
+	The turning_points adjacent to haste_score's value are used as the "from" range for scaling haste_score to speed_add.  This shall be referred to as from_low and from_high.
+	The add_amounts that match up to the turning_points are used as the "to" range for scaling haste_score to speed_add.  This shall be referred to as to_low and to_high.
+	So when haste_score is equal to from_low, speed_add comes out as to_low.  Wheen haste_score is equal to from_high, speed_add comes out as to_high.
+speed_add:
+	The amount that is added to 1 to get the final haste effect.
+	After being calculated from turning_points and add_amounts, speed_add is multiplied by song_haste from the song options.  This means that if song_haste is negative, speed_add will work in reverse, slowing the song down.
+accumulated_seconds:
+	While the song is sped up, the player accumulates seconds.  While the song is slowed down, the player loses seconds.  When the player has 0 seconds, the song is no longer slowed down.  This prevents a player from keeping the song perpetually slow by keeping their life bar low.
+	If song_haste is negative, this works in reverse.
+
+Example:
+-- This is what the default haste settings would be if they were set through the above functions.
+	ScreenGameplay:HasteTurningPoints({-1, 0, .3, 1})
+	ScreenGameplay:HasteAddAmounts({-.5, 0, .2, .5})
+	ScreenGameplay:HasteTimeBetweenUpdates(4)
+	ScreenGameplay:HasteLifeSwitchPoint(.5)
+-- haste_score goes up by .1 every 4 seconds if the player hits all steps.
+-- When haste_score is between -1 and 0 (player's life is between 0 and .5), speed_add will be between -.5 and 0 before being multiplied by song_haste.
+-- When haste_score is between 0 and .3 (player life above .5), speed_add will be between 0 and .2 before being multiplied by song_haste.
+-- When haste_score is between .3 and 1 (player life above .5), speed_add will be between .2 and .5 before being multiplied by song_haste.
+
+
+Source code references to be used by people looking to improve this explanation:
+ScreenGameplay::UpdateHasteRate
+ScreenGameplay.cpp:1743-1757 (where UpdateHasteRate is called and AccumulatedHasteSeconds is updated)
+ScreenGameplay::Init (lines 355-369)

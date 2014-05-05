@@ -33,6 +33,22 @@
 		} \
 		return 2; \
 	}
+#define FLOAT_NO_SPEED_INTERFACE(func_name, member, valid) \
+	static int func_name(T* p, lua_State* L) \
+	{ \
+		DefaultNilArgs(L, 1); \
+		lua_pushnumber(L, p->m_f ## member); \
+		if(lua_isnumber(L, 1)) \
+		{ \
+			float v= FArg(1); \
+			if(!valid) \
+			{ \
+				luaL_error(L, "Invalid value %f", v); \
+			} \
+			p->m_f ## member = v; \
+		} \
+		return 1; \
+	}
 #define INT_INTERFACE(func_name, member) \
 	static int func_name(T* p, lua_State* L) \
 	{ \
@@ -63,6 +79,36 @@
 		if(!lua_isnil(L, 1)) \
 		{ \
 			p->m_ ## member= Enum::Check<enum_name>(L, 1); \
+		} \
+		return 1; \
+	}
+// Walk the table to make sure all entries are valid before setting.
+#define FLOAT_TABLE_INTERFACE(func_name, member, valid) \
+	static int func_name(T* p, lua_State* L) \
+	{ \
+		DefaultNilArgs(L, 1); \
+		lua_createtable(L, p->m_ ## member.size(), 0); \
+		for(size_t n= 0; n < p->m_ ## member.size(); ++n) \
+		{ \
+			lua_pushnumber(L, p->m_ ## member[n]); \
+			lua_rawseti(L, -2, n+1); \
+		} \
+		if(lua_istable(L, 1)) \
+		{ \
+			size_t size= lua_objlen(L, 1); \
+			if(valid(L, 1)) \
+			{ \
+				p->m_ ## member.clear(); \
+				p->m_ ## member.reserve(size); \
+				for(size_t n= 1; n <= size; ++n) \
+				{ \
+					lua_pushnumber(L, n); \
+					lua_gettable(L, 1); \
+					float v= FArg(-1); \
+					p->m_ ## member.push_back(v); \
+					lua_pop(L, 1); \
+				} \
+			} \
 		} \
 		return 1; \
 	}

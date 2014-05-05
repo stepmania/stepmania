@@ -1284,6 +1284,11 @@
 			<Function name='GetLifeMeter'/>
 			<Function name='GetNextCourseSong'/>
 			<Function name='GetPlayerInfo'/>
+			<Function name='GetTrueBPS'/>
+			<Function name='HasteAddAmounts'/>
+			<Function name='HasteLifeSwitchPoint'/>
+			<Function name='HasteTimeBetweenUpdates'/>
+			<Function name='HasteTurningPoints'/>
 			<Function name='IsPaused'/>
 			<Function name='PauseGame'/>
 		</Class>

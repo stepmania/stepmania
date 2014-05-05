@@ -296,7 +296,7 @@ public:
 	BOOL_INTERFACE(SaveScore, SaveScore);
 	BOOL_INTERFACE(SaveReplay, SaveReplay);
 	FLOAT_INTERFACE(MusicRate, MusicRate, (v > 0.0f && v <= 3.0f)); // Greater than 3 seems to crash frequently, haven't investigated why. -Kyz
-	FLOAT_INTERFACE(Haste, Haste, true);
+	FLOAT_INTERFACE(Haste, Haste, (v >= -1.0f && v <= 1.0f));
 
 	LunaSongOptions()
 	{
