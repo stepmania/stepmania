@@ -249,7 +249,6 @@ Player::Player( NoteData &nd, bool bVisibleParts ) : m_NoteData(nd)
 	{
 		m_pNoteField = new NoteField;
 		m_pNoteField->SetName( "NoteField" );
-		this->AddChild( m_pNoteField );
 	}
 	m_pJudgedRows = new JudgedRows;
 
@@ -523,6 +522,7 @@ void Player::Init(
 	{
 		m_pNoteField->Init( m_pPlayerState, m_fNoteFieldHeight );
 		ActorUtil::LoadAllCommands( *m_pNoteField, sType );
+		this->AddChild( m_pNoteField );
 	}
 
 	m_vbFretIsDown.resize( GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer );
@@ -855,9 +855,6 @@ void Player::Update( float fDeltaTime )
 			if( m_pPlayerState->m_bAttackEndedThisUpdate )
 				m_soundAttackEnding.Play();
 		}
-
-		if( m_pNoteField )
-			m_pNoteField->Update( fDeltaTime );
 
 		float fMiniPercent = m_pPlayerState->m_PlayerOptions.GetCurrent().m_fEffects[PlayerOptions::EFFECT_MINI];
 		float fTinyPercent = m_pPlayerState->m_PlayerOptions.GetCurrent().m_fEffects[PlayerOptions::EFFECT_TINY];
