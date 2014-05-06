@@ -2804,7 +2804,17 @@ void Player::UpdateJudgedRows()
 				}
 				else
 				{
-					SetJudgment( lastTNR.tns, m_NoteData.GetFirstTrackWithTapOrHoldHead(iRow), lastTNR.fTapNoteOffset );
+					vector<int> viColsWithTaps;
+					for( int iTrack = 0; iTrack < m_NoteData.GetNumTracks(); ++iTrack )
+					{
+						const TapNote &tn = m_NoteData.GetTapNote( iTrack, iRow );
+						if (tn.type == TapNote::tap || tn.type == TapNote::lift ||
+						( tn.type == TapNote::hold_head && !REQUIRE_STEP_ON_HOLD_HEADS ) )
+						{
+							viColsWithTaps.push_back( iTrack );
+						};
+					}
+					SetJudgment( lastTNR.tns, m_NoteData.GetFirstTrackWithTapOrHoldHead(iRow), lastTNR.fTapNoteOffset, viColsWithTaps );
 				}
 				HandleTapRowScore( iRow );
 			}
@@ -3323,7 +3333,7 @@ void Player::SetMineJudgment( TapNoteScore tns , int iTrack )
 	}
 }
 
-void Player::SetJudgment( TapNoteScore tns, int iTrack, float fTapNoteOffset )
+void Player::SetJudgment( TapNoteScore tns, int iTrack, float fTapNoteOffset, vector<int> viCols )
 {
 	if( m_bSendJudgmentAndComboMessages )
 	{
@@ -3334,6 +3344,7 @@ void Player::SetJudgment( TapNoteScore tns, int iTrack, float fTapNoteOffset )
 		msg.SetParam( "TapNoteScore", tns );
 		msg.SetParam( "Early", fTapNoteOffset < 0.0f );
 		msg.SetParam( "TapNoteOffset", fTapNoteOffset );
+		msg.SetParam( "Tracks" , viCols );
 		MESSAGEMAN->Broadcast( msg );
 	}
 }
