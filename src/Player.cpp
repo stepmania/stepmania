@@ -3344,12 +3344,7 @@ void Player::SetJudgment( TapNoteScore tns, int iTrack, float fTapNoteOffset, ve
 		msg.SetParam( "TapNoteScore", tns );
 		msg.SetParam( "Early", fTapNoteOffset < 0.0f );
 		msg.SetParam( "TapNoteOffset", fTapNoteOffset );
-		{
-			Lua *L = LUA->Get();
-			LuaHelpers::CreateTableFromArray( viCols, L );
-			msg.SetParamFromStack( L , "Tracks" );
-			LUA->Release( L );
-		}
+		msg.SetParam( "Tracks" , viCols );
 		MESSAGEMAN->Broadcast( msg );
 	}
 }
