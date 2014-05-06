@@ -125,6 +125,15 @@ struct Message
 		LUA->Release( L );
 	}
 
+	template<typename T>
+	void SetParam( const RString &sName, const vector<T> &val )
+	{
+		Lua *L = LUA->Get();
+		LuaHelpers::CreateTableFromArray( val, L );
+		SetParamFromStack( L , sName );
+		LUA->Release( L );
+	}
+
 	bool operator==( const RString &s ) const { return m_sName == s; }
 	bool operator==( MessageID id ) const { return MessageIDToString(id) == m_sName; }
 
