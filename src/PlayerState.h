@@ -136,6 +136,9 @@ public:
 	int		m_iTapsHitSinceLastHasteUpdate;
 	int		m_iTapsMissedSinceLastHasteUpdate;
 
+	// Stores the bpm that was picked for reading the chart if the player is using an mmod.
+	float m_fReadBPM;
+
 	// Used in Rave
 	float	m_fSuperMeter;	// between 0 and NUM_ATTACK_LEVELS
 	float	m_fSuperMeterGrowthScale;
