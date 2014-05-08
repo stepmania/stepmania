@@ -4424,6 +4424,9 @@ save yourself some time, copy this for undocumented things:
 	<Function name='GetMetric' return='string' arguments='string ClassName, string Element'>
 		Returns the value of <code>Element</code> in <code>Class</code> from metrics.ini.
 	</Function>
+	<Function name='GetMetricNamesInGroup' return='{string}' arguments='string ClassName'>
+		Returns the names of all elements in <code>Class</code> from metrics.ini.
+	</Function>
 	<Function name='GetNumSelectableThemes' return='int' arguments=''>
 		Returns the number of selectable themes.
 	</Function>
@@ -4450,6 +4453,9 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='GetString' return='string' arguments='string ClassName, string Element'>
 		Returns the value of <code>Element</code> in <code>Class</code> for the currently loaded language.
+	</Function>
+	<Function name='GetStringNamesInGroup' return='{string}' arguments='string ClassName'>
+		Returns the names of all elements in <code>Class</code> for the currently loaded language.
 	</Function>
 	<Function name='GetThemeAuthor' return='string' arguments=''>
 		Returns the author of the current theme or "[unknown author]".
