@@ -1298,6 +1298,40 @@ public:
 	DEFINE_METHOD( DoesLanguageExist, DoesLanguageExist(SArg(1)) );
 	DEFINE_METHOD( GetCurThemeName, GetCurThemeName() );
 
+	static void PushMetricNamesInGroup(IniFile const& ini, lua_State* L)
+	{
+		RString group_name= SArg(1);
+		const XNode* metric_node= ini.GetChild(group_name);
+		if(metric_node != NULL)
+		{
+			// Placed in a table indexed by number, so the order is always the same.
+			lua_createtable(L, metric_node->m_attrs.size(), 0);
+			int next_index= 1;
+			for(XAttrs::const_iterator n= metric_node->m_attrs.begin(); n != metric_node->m_attrs.end(); ++n)
+			{
+				LuaHelpers::Push(L, n->first);
+				lua_rawseti(L, -2, next_index);
+				++next_index;
+			}
+		}
+		else
+		{
+			lua_pushnil(L);
+		}
+	}
+
+	static int GetMetricNamesInGroup(T* p, lua_State* L)
+	{
+		PushMetricNamesInGroup(g_pLoadedThemeData->iniMetrics, L);
+		return 1;
+	}
+
+	static int GetStringNamesInGroup(T* p, lua_State* L)
+	{
+		PushMetricNamesInGroup(g_pLoadedThemeData->iniStrings, L);
+		return 1;
+	}
+
 	LunaThemeManager()
 	{
 		ADD_METHOD( ReloadMetrics );
@@ -1322,6 +1356,8 @@ public:
 		ADD_METHOD( GetCurThemeName );
 		ADD_METHOD( HasMetric );
 		ADD_METHOD( HasString );
+		ADD_METHOD( GetMetricNamesInGroup );
+		ADD_METHOD( GetStringNamesInGroup );
 	}
 };
 
