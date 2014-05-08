@@ -1596,6 +1596,7 @@
 			<Function name='GetCurThemeName'/>
 			<Function name='GetCurrentThemeDirectory'/>
 			<Function name='GetMetric'/>
+			<Function name='GetMetricNamesInGroup'/>
 			<Function name='GetNumSelectableThemes'/>
 			<Function name='GetPathB'/>
 			<Function name='GetPathF'/>
@@ -1605,6 +1606,7 @@
 			<Function name='GetPathS'/>
 			<Function name='GetSelectableThemeNames'/>
 			<Function name='GetString'/>
+			<Function name='GetStringNamesInGroup'/>
 			<Function name='GetThemeAuthor'/>
 			<Function name='GetThemeDisplayName'/>
 			<Function name='HasMetric'/>
