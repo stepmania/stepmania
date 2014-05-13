@@ -872,6 +872,8 @@
 		</Class>
 		<Class name='HighScoreList'>
 			<Function name='GetHighScores'/>
+			<Function name='GetHighestScoreOfName'/>
+			<Function name='GetRankOfName'/>
 		</Class>
 		<Class base='ActorFrame' name='HoldJudgment'>
 			<Function name='LoadFromMultiPlayer'/>
@@ -1133,6 +1135,7 @@
 			<Function name='SetPreferenceToDefault'/>
 		</Class>
 		<Class name='Profile'>
+			<Function name='GetAllUsedHighScoreNames'/>
 			<Function name='GetCaloriesBurnedToday'/>
 			<Function name='GetCharacter'/>
 			<Function name='GetCoursesActual'/>
@@ -1145,6 +1148,7 @@
 			<Function name='GetGoalSeconds'/>
 			<Function name='GetGoalType'/>
 			<Function name='GetHighScoreList'/>
+			<Function name='GetHighScoreListIfExists'/>
 			<Function name='GetLastPlayedCourse'/>
 			<Function name='GetLastPlayedSong'/>
 			<Function name='GetLastUsedHighScoreName'/>
