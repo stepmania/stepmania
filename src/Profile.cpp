@@ -1993,6 +1993,11 @@ class LunaProfile: public Luna<Profile>
 public:
 	static int GetDisplayName( T* p, lua_State *L )			{ lua_pushstring(L, p->m_sDisplayName ); return 1; }
 	static int GetLastUsedHighScoreName( T* p, lua_State *L )	{ lua_pushstring(L, p->m_sLastUsedHighScoreName ); return 1; }
+	static int SetLastUsedHighScoreName( T* p, lua_State *L )
+	{
+		p->m_sLastUsedHighScoreName= SArg(1);
+		return 0;
+	}
 	static int GetHighScoreList( T* p, lua_State *L )
 	{
 		if( LuaBinding::CheckLuaObjectType(L, 1, "Song") )
@@ -2117,6 +2122,7 @@ public:
 	{
 		ADD_METHOD( GetDisplayName );
 		ADD_METHOD( GetLastUsedHighScoreName );
+		ADD_METHOD( SetLastUsedHighScoreName );
 		ADD_METHOD( GetHighScoreList );
 		ADD_METHOD( GetCategoryHighScoreList );
 		ADD_METHOD( GetCharacter );

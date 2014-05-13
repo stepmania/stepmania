@@ -831,6 +831,7 @@
 			<Function name='SetPreferredSongGroup'/>
 			<Function name='SetSongOptions'/>
 			<Function name='SetTemporaryEventMode'/>
+			<Function name='StoreRankingName'/>
 			<Function name='ShowW1'/>
 			<Function name='UnjoinPlayer'/>
 		</Class>
@@ -1179,6 +1180,7 @@
 			<Function name='SetGoalCalories'/>
 			<Function name='SetGoalSeconds'/>
 			<Function name='SetGoalType'/>
+			<Function name='SetLastUsedHighScoreName'/>
 			<Function name='SetWeightPounds'/>
 		</Class>
 		<Class name='ProfileManager'>

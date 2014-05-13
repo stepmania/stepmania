@@ -1841,7 +1841,8 @@ bool GameState::AnyPlayerHasRankingFeats() const
 
 void GameState::StoreRankingName( PlayerNumber pn, RString sName )
 {
-	sName.MakeUpper();
+	// The theme can upper it if desired. -Kyz
+	// sName.MakeUpper();
 
 	if( USE_NAME_BLACKLIST )
 	{
@@ -2577,6 +2578,12 @@ public:
 		return 0;
 	}
 
+	static int StoreRankingName( T* p, lua_State *L )
+	{
+		p->StoreRankingName(Enum::Check<PlayerNumber>(L, 1), SArg(2));
+		return 0;
+	}
+
 	DEFINE_METHOD( HaveProfileToLoad, HaveProfileToLoad() )
 	DEFINE_METHOD( HaveProfileToSave, HaveProfileToSave() )
 
@@ -2695,6 +2702,7 @@ public:
 		ADD_METHOD( SaveProfiles );
 		ADD_METHOD( HaveProfileToLoad );
 		ADD_METHOD( HaveProfileToSave );
+		ADD_METHOD( StoreRankingName );
 	}
 };
 
