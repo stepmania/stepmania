@@ -2490,6 +2490,9 @@ save yourself some time, copy this for undocumented things:
 	<Function name='SetTemporaryEventMode' return='void' arguments='bool bOn'>
 		Turns temporary Event Mode on or off, depending on <code>bOn</code>.
 	</Function>
+	<Function name='StoreRankingName' return='void' arguments='PlayerNumber pn, string name'>
+		Stores the ranking name for the player.  Use this at the end of a round, on a name entry screen or similar, to set the name for the high scores the player has earned.
+	</Function>
 	<Function name='ShowW1' return='void' arguments='bool bOn'>
 		Determines if Judgment W1 should be shown based on <code>bOn</code>.
 	</Function>
@@ -3339,6 +3342,9 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='SetGoalType' return='void' arguments='GoalType gt'>
 		Sets the current goal type to <code>gt</code>.
+	</Function>
+	<Function name='SetLastUsedHighScoreName' return='void' arguments='string name'>
+		Sets last used high score name.
 	</Function>
 	<Function name='SetWeightPounds' return='void' arguments='int weightPounds'>
 		Sets how much the player weighs (in pounds) to <code>weightPounds</code>.
