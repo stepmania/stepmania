@@ -2809,7 +2809,7 @@ void Player::UpdateJudgedRows()
 					{
 						const TapNote &tn = m_NoteData.GetTapNote( iTrack, iRow );
 						if (tn.type == TapNote::tap || tn.type == TapNote::lift ||
-						( tn.type == TapNote::hold_head && !REQUIRE_STEP_ON_HOLD_HEADS ) )
+						( tn.type == TapNote::hold_head && REQUIRE_STEP_ON_HOLD_HEADS ) )
 						{
 							viColsWithTaps.push_back( iTrack );
 						};
