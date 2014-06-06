@@ -209,7 +209,7 @@
 <xsl:template match="sm:Lua">
 	<div>
 		<div id="header">
-		<h2><a href="http://code.google.com/p/stepmania/">StepMania 5</a> Lua Information</h2><br/>
+		<h2><a href="https://github.com/stepmania/stepmania/">StepMania 5</a> Lua Information</h2><br/>
 		<small>A collection of Lua bindings which can be used in themes for StepMania 5.</small>
 		</div>
 		<table id="sections">
