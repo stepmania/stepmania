@@ -1,0 +1,28 @@
+language: c
+
+compiler:
+    - clang
+    - gcc
+
+notifications:
+    email: false
+
+before_script:
+    - sudo apt-get install nasm
+    - sudo apt-get install libmad0-dev
+    - sudo apt-get install libgtk2.0-dev
+    - sudo apt-get install binutils-dev
+    - sudo apt-get install libasound-dev
+    - sudo apt-get install libpulse-dev
+    - sudo apt-get install libjack-dev
+    - sudo apt-get install libc6-dev
+    - sudo apt-get install libogg-dev
+    - sudo apt-get install libvorbis-dev
+    - sudo apt-get install libbz2-dev
+    - sudo apt-get install zlib1g-dev
+    - sudo apt-get install libjpeg8-dev
+    - sudo apt-get install libpng12-dev
+    - sudo apt-get install libxtst-dev libxrandr-dev
+    - sudo apt-get install libglu1-mesa-dev
+    - sudo apt-get install mesa-common-dev
+    - ./autogen.sh
