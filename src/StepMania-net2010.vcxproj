@@ -748,6 +748,7 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)</Command>
     <ClCompile Include="ActorFrame.cpp" />
     <ClCompile Include="ActorFrameTexture.cpp" />
     <ClCompile Include="ActorMultiTexture.cpp" />
+    <ClCompile Include="ActorMultiVertex.cpp" />
     <ClCompile Include="ActorProxy.cpp" />
     <ClCompile Include="ActorScroller.cpp" />
     <ClCompile Include="ActorSound.cpp" />
@@ -2069,6 +2070,7 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)</Command>
     <ClInclude Include="ActorFrame.h" />
     <ClInclude Include="ActorFrameTexture.h" />
     <ClInclude Include="ActorMultiTexture.h" />
+    <ClInclude Include="ActorMultiVertex.h" />
     <ClInclude Include="ActorProxy.h" />
     <ClInclude Include="ActorScroller.h" />
     <ClInclude Include="ActorSound.h" />
