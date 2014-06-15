@@ -572,7 +572,7 @@ bool ScreenSelectMusic::Input( const InputEventPlus &input )
 				default: break;
 			}
 		}
-		else if( input.type == IET_FIRST_PRESS && input.MenuI != GAME_BUTTON_SELECT )
+		if( input.type == IET_FIRST_PRESS && input.MenuI != GAME_BUTTON_SELECT )
 		{
 			Message msg("SelectMenuInput");
 			msg.SetParam( "Player", input.pn );
