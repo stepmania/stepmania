@@ -70,6 +70,8 @@ void ReceptorArrowRow::DrawPrimitives()
 	for( unsigned i=0; i<m_ReceptorArrow.size(); i++ )
 	{
 		const int c = pStyle->m_iColumnDrawOrder[i];
+		m_ReceptorArrow[c]->SetInternalDiffuse(m_pTempState->diffuse[0]);
+		m_ReceptorArrow[c]->SetInternalGlow(m_pTempState->glow);
 		m_ReceptorArrow[c]->Draw();
 	}
 }
