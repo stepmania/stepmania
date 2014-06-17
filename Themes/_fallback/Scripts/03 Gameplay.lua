@@ -264,35 +264,35 @@ local CodeDetectorCodes = {
 	--- specific modifiers
 	Mirror = {
 		default = "",
-		dance = "Up,Left,Right,Left,Right",
+		dance = "",
 		pump = "DownRight,DownLeft,UpRight,UpLeft,DownRight,DownLeft,UpRight,UpLeft,Center",
 	},
 	Left = {
 		default = "",
-		dance = "Up,Down,Right,Left",
+		dance = "",
 	},
 	Right = {
 		default = "",
-		dance = "Up,Down,Left,Right",
+		dance = "",
 	},
 	Shuffle = {
 		default = "",
-		dance = "Down,Up,Down,Up",
+		dance = "",
 		pump = "UpLeft,UpRight,UpLeft,UpRight,DownLeft,DownRight,DownLeft,DownRight,Center", -- random
 	},
 	SuperShuffle = {
 		default = "",
-		dance = "Down,Up,Left,Right",
+		dance = "",
 		pump = "UpLeft,UpRight,DownLeft,DownRight,UpLeft,UpRight,DownLeft,DownRight,Center"
 	},
 	Reverse = {
 		default = "",
-		dance = "Down,Left,Right,Left,Right",
+		dance = "",
 		pump = "UpLeft,DownLeft,UpRight,DownRight,UpLeft,DownLeft,UpRight,DownRight,DownRight", -- drop
 	},
 	HoldNotes = {
 		default = "",
-		dance = "Right,Left,Down,Up",
+		dance = "",
 	},
 	Mines = {
 		default = "",
@@ -314,25 +314,25 @@ local CodeDetectorCodes = {
 	},
 	NextScrollSpeed = {
 		default = "",
-		dance = "Up,Left,Down,Left,Up",
+		dance = "",
 		pump = "UpLeft,UpRight,UpLeft,UpRight,Center",
 	},
 	PreviousScrollSpeed = {
 		default = "",
-		dance = "Down,Right,Up,Right,Down",
+		dance = "",
 		pump = "UpRight,UpLeft,UpRight,UpLeft,Center",
 	},
 	NextAccel = {
 		default = "",
-		dance = "Left,Right,Down,Up",
+		dance = "",
 	},
 	NextEffect = {
 		default = "",
-		dance = "Left,Down,Right",
+		dance = "",
 	},
 	NextAppearance = {
 		default = "",
-		dance = "Left,Up,Right",
+		dance = "",
 	},
 	NextTurn = {
 		default = "",
