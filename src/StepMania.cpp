@@ -1192,32 +1192,32 @@ int main(int argc, char* argv[])
 	return 0;
 }
 
-RString StepMania::SaveScreenshot( RString sDir, bool bSaveCompressed, bool bMakeSignature, int iIndex )
+RString StepMania::SaveScreenshot( RString Dir, bool SaveCompressed, bool MakeSignature, RString NamePrefix, RString NameSuffix )
 {
 	/* As of sm-ssc v1.0 rc2, screenshots are no longer named by an arbitrary
 	 * index. This was causing naming issues for some unknown reason, so we have
 	 * changed the screenshot names to a non-blocking format: date and time.
 	 * As before, we ignore the extension. -aj */
-	RString sFileNameNoExtension = DateTime::GetNowDateTime().GetString();
+	RString FileNameNoExtension = NamePrefix + DateTime::GetNowDateTime().GetString() + NameSuffix;
 	// replace space with underscore.
-	sFileNameNoExtension.Replace(" ","_");
+	FileNameNoExtension.Replace(" ","_");
 	// colons are illegal in filenames.
-	sFileNameNoExtension.Replace(":","");
+	FileNameNoExtension.Replace(":","");
 
 	// Save the screenshot. If writing lossy to a memcard, use
 	// SAVE_LOSSY_LOW_QUAL, so we don't eat up lots of space.
 	RageDisplay::GraphicsFileFormat fmt;
-	if( bSaveCompressed && MEMCARDMAN->PathIsMemCard(sDir) )
+	if( SaveCompressed && MEMCARDMAN->PathIsMemCard(Dir) )
 		fmt = RageDisplay::SAVE_LOSSY_LOW_QUAL;
-	else if( bSaveCompressed )
+	else if( SaveCompressed )
 		fmt = RageDisplay::SAVE_LOSSY_HIGH_QUAL;
 	else
 		fmt = RageDisplay::SAVE_LOSSLESS_SENSIBLE;
 
-	RString sFileName = sFileNameNoExtension + "." + (bSaveCompressed ? "jpg" : "png");
-	RString sPath = sDir+sFileName;
-	bool bResult = DISPLAY->SaveScreenshot( sPath, fmt );
-	if( !bResult )
+	RString FileName = FileNameNoExtension + "." + (SaveCompressed ? "jpg" : "png");
+	RString Path = Dir+FileName;
+	bool Result = DISPLAY->SaveScreenshot( Path, fmt );
+	if( !Result )
 	{
 		SCREENMAN->PlayInvalidSound();
 		return RString();
@@ -1225,10 +1225,10 @@ RString StepMania::SaveScreenshot( RString sDir, bool bSaveCompressed, bool bMak
 
 	SCREENMAN->PlayScreenshotSound();
 
-	if( PREFSMAN->m_bSignProfileData && bMakeSignature )
-		CryptManager::SignFileToFile( sPath );
+	if( PREFSMAN->m_bSignProfileData && MakeSignature )
+		CryptManager::SignFileToFile( Path );
 
-	return sFileName;
+	return FileName;
 }
 
 void StepMania::InsertCoin( int iNum, bool bCountInBookkeeping )
@@ -1427,7 +1427,7 @@ bool HandleGlobalInputs( const InputEventPlus &input )
 								|| INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT) ) );
 		bool bSaveCompressed = !bHoldingShift;
 		RageTimer timer;
-		StepMania::SaveScreenshot( "Screenshots/", bSaveCompressed, false, -1 );
+		StepMania::SaveScreenshot( "Screenshots/", bSaveCompressed, false, "", "" );
 		LOG->Trace( "Screenshot took %f seconds.", timer.GetDeltaTime() );
 		return true; // handled
 	}
@@ -1561,6 +1561,48 @@ void HandleInputEvents(float fDeltaTime)
 		StepMania::ApplyGraphicOptions();
 	}
 }
+
+#include "LuaManager.h"
+int LuaFunc_SaveScreenshot(lua_State *L);
+int LuaFunc_SaveScreenshot(lua_State *L)
+{
+	// If pn is provided, save to that player's profile.
+	// Otherwise, save to the machine.
+	PlayerNumber pn= Enum::Check<PlayerNumber>(L, 1, true);
+	bool compress= lua_toboolean(L, 2);
+	bool sign= lua_toboolean(L, 3);
+	RString prefix= luaL_optstring(L, 4, "");
+	RString suffix= luaL_optstring(L, 5, "");
+	RString dir;
+	if(pn == PlayerNumber_Invalid)
+	{
+		dir= "Screenshots/";
+	}
+	else
+	{
+		dir= PROFILEMAN->GetProfileDir((ProfileSlot)pn) + "Screenshots/";
+		if(PROFILEMAN->ProfileWasLoadedFromMemoryCard(pn))
+		{
+			MEMCARDMAN->MountCard(pn);
+		}
+	}
+	RString filename= StepMania::SaveScreenshot(dir, compress, sign, prefix, suffix);
+	if(pn != PlayerNumber_Invalid)
+	{
+		if(PROFILEMAN->ProfileWasLoadedFromMemoryCard(pn))
+		{
+			MEMCARDMAN->UnmountCard(pn);
+		}
+	}
+	RString path= dir + filename;
+	lua_pushboolean(L, !filename.empty());
+	lua_pushstring(L, path);
+	return 2;
+}
+void LuaFunc_Register_SaveScreenshot(lua_State *L);
+void LuaFunc_Register_SaveScreenshot(lua_State *L)
+{ lua_register(L, "SaveScreenshot", LuaFunc_SaveScreenshot); }
+REGISTER_WITH_LUA_FUNCTION(LuaFunc_Register_SaveScreenshot);
 
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard
