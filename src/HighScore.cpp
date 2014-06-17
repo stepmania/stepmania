@@ -500,9 +500,44 @@ public:
 		return 1;
 	}
 
+	static int GetHighestScoreOfName( T* p, lua_State *L )
+	{
+		RString name= SArg(1);
+		for(size_t i= 0; i < p->vHighScores.size(); ++i)
+		{
+			if(name == p->vHighScores[i].GetName())
+			{
+				p->vHighScores[i].PushSelf(L);
+				return 1;
+			}
+		}
+		lua_pushnil(L);
+		return 1;
+	}
+
+	static int GetRankOfName( T* p, lua_State *L )
+	{
+		RString name= SArg(1);
+		size_t rank= 0;
+		for(size_t i= 0; i < p->vHighScores.size(); ++i)
+		{
+			if(name == p->vHighScores[i].GetName())
+			{
+				// Indices from Lua are one-indexed.  +1 to adjust.
+				rank= i+1;
+				break;
+			}
+		}
+		// The themer is expected to check for validity before using.
+		lua_pushnumber(L, rank);
+		return 1;
+	}
+
 	LunaHighScoreList()
 	{
 		ADD_METHOD( GetHighScores );
+		ADD_METHOD( GetHighestScoreOfName );
+		ADD_METHOD( GetRankOfName );
 	}
 };
 

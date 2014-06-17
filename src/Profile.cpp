@@ -744,6 +744,33 @@ void Profile::IncrementCoursePlayCount( const Course* pCourse, const Trail* pTra
 	GetCourseHighScoreList(pCourse,pTrail).IncrementPlayCount( now );
 }
 
+void Profile::GetAllUsedHighScoreNames(std::set<RString>& names)
+{
+#define GET_NAMES_FROM_MAP(main_member, main_key_type, main_value_type, sub_member, sub_key_type, sub_value_type) \
+	for(std::map<main_key_type, main_value_type>::iterator main_entry= \
+				main_member.begin(); main_entry != main_member.end(); ++main_entry) \
+	{ \
+		for(std::map<sub_key_type, sub_value_type>::iterator sub_entry= \
+					main_entry->second.sub_member.begin(); \
+				sub_entry != main_entry->second.sub_member.end(); ++sub_entry) \
+		{ \
+			for(vector<HighScore>::iterator high_score= \
+						sub_entry->second.hsl.vHighScores.begin(); \
+					high_score != sub_entry->second.hsl.vHighScores.end(); \
+					++high_score) \
+			{ \
+				if(high_score->GetName().size() > 0) \
+				{ \
+					names.insert(high_score->GetName()); \
+				} \
+			} \
+		} \
+	}
+	GET_NAMES_FROM_MAP(m_SongHighScores, SongID, HighScoresForASong, m_StepsHighScores, StepsID, HighScoresForASteps);
+	GET_NAMES_FROM_MAP(m_CourseHighScores, CourseID, HighScoresForACourse, m_TrailHighScores, TrailID, HighScoresForATrail);
+#undef GET_NAMES_FROM_MAP
+}
+
 // Category high scores
 void Profile::AddCategoryHighScore( StepsType st, RankingCategory rc, HighScore hs, int &iIndexOut )
 {
@@ -2029,6 +2056,61 @@ public:
 		return 1;
 	}
 
+	static int GetHighScoreListIfExists( T* p, lua_State *L )
+	{
+#define GET_IF_EXISTS(arga_type, argb_type) \
+		const arga_type *parga = Luna<arga_type>::check(L, 1); \
+		const argb_type *pargb = Luna<argb_type>::check(L, 2); \
+		arga_type##ID arga_id; \
+		arga_id.From##arga_type(parga); \
+		argb_type##ID argb_id; \
+		argb_id.From##argb_type(pargb); \
+		std::map<arga_type##ID, Profile::HighScoresForA##arga_type>::iterator \
+			main_scores= p->m_##arga_type##HighScores.find(arga_id); \
+		if(main_scores == p->m_##arga_type##HighScores.end()) \
+		{ \
+			lua_pushnil(L); \
+			return 1; \
+		} \
+		std::map<argb_type##ID, Profile::HighScoresForA##argb_type>::iterator \
+			sub_scores= main_scores->second.m_##argb_type##HighScores.find(argb_id); \
+		if(sub_scores == main_scores->second.m_##argb_type##HighScores.end()) \
+		{ \
+			lua_pushnil(L); \
+			return 1; \
+		} \
+		sub_scores->second.hsl.PushSelf(L); \
+		return 1;
+
+		if( LuaBinding::CheckLuaObjectType(L, 1, "Song") )
+		{
+			GET_IF_EXISTS(Song, Steps);
+		}
+		else if( LuaBinding::CheckLuaObjectType(L, 1, "Course") )
+		{
+			GET_IF_EXISTS(Course, Trail);
+		}
+		luaL_typerror( L, 1, "Song or Course" );
+		return 0;
+#undef GET_IF_EXISTS
+	}
+
+	static int GetAllUsedHighScoreNames( T* p, lua_State *L )
+	{
+		std::set<RString> names;
+		p->GetAllUsedHighScoreNames(names);
+		lua_createtable(L, names.size(), 0);
+		int next_name_index= 1;
+		for(std::set<RString>::iterator name= names.begin(); name != names.end();
+				++name)
+		{
+			lua_pushstring(L, name->c_str());
+			lua_rawseti(L, -2, next_name_index);
+			++next_name_index;
+		}
+		return 1;
+	}
+
 	static int GetCharacter( T* p, lua_State *L )			{ p->GetCharacter()->PushSelf(L); return 1; }
 	static int SetCharacter( T* p, lua_State *L )			{ p->SetCharacter(SArg(1)); return 0; }
 	static int GetWeightPounds( T* p, lua_State *L )		{ lua_pushnumber(L, p->m_iWeightPounds ); return 1; }
@@ -2123,6 +2205,8 @@ public:
 		ADD_METHOD( GetDisplayName );
 		ADD_METHOD( GetLastUsedHighScoreName );
 		ADD_METHOD( SetLastUsedHighScoreName );
+		ADD_METHOD( GetAllUsedHighScoreNames );
+		ADD_METHOD( GetHighScoreListIfExists );
 		ADD_METHOD( GetHighScoreList );
 		ADD_METHOD( GetCategoryHighScoreList );
 		ADD_METHOD( GetCharacter );

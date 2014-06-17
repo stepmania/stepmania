@@ -2595,6 +2595,12 @@ save yourself some time, copy this for undocumented things:
 	<Function name='GetHighScores' return='{HighScore}' arguments=''>
 		Returns a table of the high scores.
 	</Function>
+	<Function name='GetHighestScoreOfName' return='HighScore' arguments='string name'>
+		Returns the highest score for name in the list.  Returns nil if there is no score for name in the list.
+	</Function>
+	<Function name='GetRankOfName' return='int' arguments='string name'>
+		Returns the rank of the highest score for name in the list.  Returns 0 if there is no score for name in the list.  (returns 1 if name has the top score, 2 if name has the second place score, and so on)
+	</Function>
 </Class>
 <Class name='HoldJudgment'>
 	<Function name='LoadFromMultiPlayer' return='void' arguments='MultiPlayer mp'>
@@ -3211,6 +3217,9 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 </Class>
 <Class name='Profile'>
+	<Function name='GetAllUsedHighScoreNames' return= '{string}' arguments='void'>
+		Returns a table of all high score names that have been used on this profile.
+	</Function>
 	<Function name='GetCaloriesBurnedToday' return='float' arguments=''>
 		Returns the number of calories burned during the current day.
 	</Function>
@@ -3249,6 +3258,10 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='GetHighScoreList' return='HighScoreList' arguments='Song s, Steps st'>
 		Gets the profile's HighScoreList for a specified Song and Steps. (Alternate arguments for Courses: <code>Course c, Trail t</code>)
+	</Function>
+	<Function name='GetHighScoreListIfExists' return='HighScoreList' arguments='Song s, Steps st'>
+		Gets the profile's HighScoreList for a specified Song and Steps. (Alternate arguments for Courses: <code>Course c, Trail t</code>)<br />
+		If the profile does not have a HighScoreList for the Song and Steps, returns nil.  Use this to avoid increasing the memory footprint of the profile when checking the score lists for every song and steps.
 	</Function>
 	<Function name='GetLastPlayedCourse' return='Course' arguments=''>
 		Returns the last played Course for this profile.

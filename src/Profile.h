@@ -262,6 +262,7 @@ public:
 	DateTime GetCourseLastPlayedDateTime( const Course* pCourse ) const;
 	void IncrementCoursePlayCount( const Course* pCourse, const Trail* pTrail );
 
+	void GetAllUsedHighScoreNames(std::set<RString>& names);
 
 	// Category high scores
 	HighScoreList m_CategoryHighScores[NUM_StepsType][NUM_RankingCategory];
