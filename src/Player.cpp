@@ -402,7 +402,7 @@ void Player::Init(
 
 	// calculate M-mod speed here, so we can adjust properly on a per-song basis.
 	// XXX: can we find a better location for this?
-	if( m_pPlayerState->m_PlayerOptions.GetCurrent().m_fMaxScrollBPM != 0 )
+	// Always calculate the reading bpm, to allow switching to an mmod mid-song.
 	{
 		DisplayBpms bpms;
 
@@ -464,10 +464,7 @@ void Player::Init(
 		}
 
 		ASSERT( fMaxBPM > 0 );
-
-		// set an X-mod equal to Mnum / fMaxBPM (e.g. M600 with 150 becomes 4x)	
-		PO_GROUP_ASSIGN(m_pPlayerState->m_PlayerOptions, ModsLevel_Preferred, m_fScrollSpeed,
-				m_pPlayerState->m_PlayerOptions.GetPreferred().m_fMaxScrollBPM / fMaxBPM);
+		m_pPlayerState->m_fReadBPM= fMaxBPM;
 	}
 
 	float fBalance = GameSoundManager::GetPlayerBalance( pn );

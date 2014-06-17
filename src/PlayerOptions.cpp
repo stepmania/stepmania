@@ -66,7 +66,7 @@ void PlayerOptions::Approach( const PlayerOptions& other, float fDeltaSeconds )
 
 	APPROACH( fTimeSpacing );
 	APPROACH( fScrollSpeed );
-	//APPROACH( fMaxScrollBPM ); // if uncommented, causes crashes. -aj
+	APPROACH( fMaxScrollBPM );
 	fapproach( m_fScrollBPM, other.m_fScrollBPM, fDeltaSeconds * other.m_SpeedfScrollBPM*150 );
 	for( int i=0; i<NUM_ACCELS; i++ )
 		APPROACH( fAccels[i] );
@@ -365,7 +365,6 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 		m_fMaxScrollBPM = 0;
 	}
 	// oITG's m-mods
-	// XXX: will not properly tween, I don't think.
 	else if( sscanf( sBit, "m%f", &level ) == 1 )
 	{
 		// OpenITG doesn't have this block:

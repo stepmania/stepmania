@@ -282,10 +282,17 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 	// TODO: If we allow noteskins to have metricable row spacing
 	// (per issue 24), edit this to reflect that. -aj
 	fYOffset *= ARROW_SPACING;
+
+	// Factor in scroll speed
+	float fScrollSpeed = pPlayerState->m_PlayerOptions.GetCurrent().m_fScrollSpeed;
+	if(pPlayerState->m_PlayerOptions.GetCurrent().m_fMaxScrollBPM != 0)
+	{
+		fScrollSpeed= pPlayerState->m_PlayerOptions.GetCurrent().m_fMaxScrollBPM / pPlayerState->m_fReadBPM;
+	}
 	
 	// don't mess with the arrows after they've crossed 0
 	if( fYOffset < 0 )
-		return fYOffset * pPlayerState->m_PlayerOptions.GetCurrent().m_fScrollSpeed;
+		return fYOffset * fScrollSpeed;
 
 	const float* fAccels = pPlayerState->m_PlayerOptions.GetCurrent().m_fAccels;
 	//const float* fEffects = pPlayerState->m_PlayerOptions.GetCurrent().m_fEffects;
@@ -326,9 +333,6 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 		fYOffset = (-1*fYOffset*fYOffset/SCREEN_HEIGHT) + 1.5f*fYOffset;
 	}
 
-	// Factor in scroll speed
-	float fScrollSpeed = pPlayerState->m_PlayerOptions.GetCurrent().m_fScrollSpeed;
-	
 	if( pPlayerState->m_PlayerOptions.GetCurrent().m_fRandomSpeed > 0 && !bAbsolute )
 	{
 		// Generate a deterministically "random" speed for each arrow.
