@@ -3604,6 +3604,27 @@ save yourself some time, copy this for undocumented things:
 	<Function name='GetPlayerInfo' return='PlayerInfo' arguments='PlayerNumber pn'>
 		Returns the PlayerInfo for player <code>pn</code>.
 	</Function>
+	<Function name='GetTrueBPS' return='float' arguments='PlayerNumber pn'>
+		Returns the current true beats per second for the specified player.<br />
+		This takes into account the current music rate and the current haste effect.<br />
+		If you are displaying the BPM on ScreenGameplay, this is what you should use to have correct behavior when Haste and/or a music rate mod are in effect.
+	</Function>
+	<Function name='HasteAddAmounts' return='{float}' arguments='{float}'>
+		This is part of the system for controlling how haste behaves. <br />
+		Read Docs/Themerdocs/haste.txt.
+	</Function>
+	<Function name='HasteLifeSwitchPoint' return='float' arguments='float'>
+		This is part of the system for controlling how haste behaves. <br />
+		Read Docs/Themerdocs/haste.txt.
+	</Function>
+	<Function name='HasteTimeBetweenUpdates' return='float' arguments='float'>
+		This is part of the system for controlling how haste behaves. <br />
+		Read Docs/Themerdocs/haste.txt.
+	</Function>
+	<Function name='HasteTurningPoints' return='{float}' arguments='{float}'>
+		This is part of the system for controlling how haste behaves. <br />
+		Read Docs/Themerdocs/haste.txt.
+	</Function>
 	<Function name='SetNewScreen' return='void' arguments='string s'>
 		Sets the next Screen to be loaded.
 	</Function>
@@ -4098,6 +4119,7 @@ save yourself some time, copy this for undocumented things:
 		Limited to the range 0 &lt; rate &lt;= 3 because speeds greater than 3 are likely to crash.
 	</Function>
 	<Function name='Haste' return='float' arguments='float h'>
+		A multiplier for the haste system.  Limited to the range -1 to 1.
 	</Function>
 </Class>
 <Class name='SongPosition'>

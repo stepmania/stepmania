@@ -172,6 +172,11 @@ public:
 	bool IsPaused() const { return m_bPaused; }
 	float GetHasteRate();
 
+	vector<float> m_HasteTurningPoints; // Values at which the meaning of GAMESTATE->m_fHasteRate changes.
+	vector<float> m_HasteAddAmounts; // Amounts that are added to speed depending on what turning point has been passed.
+	float m_fHasteTimeBetweenUpdates; // Seconds between haste updates.
+	float m_fHasteLifeSwitchPoint; // Life amount below which GAMESTATE->m_fHasteRate is based on the life amount.
+
 protected:
 	virtual void UpdateStageStats( MultiPlayer /* mp */ ) {};	// overridden for multiplayer
 
@@ -226,6 +231,10 @@ protected:
 	bool AllAreFailing();
 
 	virtual void InitSongQueues();
+
+	void UpdateHasteRate();
+	float m_fCurrHasteRate;
+	// These exist so that the haste rate isn't recalculated every time GetHasteRate is called, which is at least once per frame. -Kyz
 
 	/** @brief The different game states of ScreenGameplay. */
 	enum DancingState { 
