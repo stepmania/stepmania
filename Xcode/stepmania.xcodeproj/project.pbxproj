@@ -180,6 +180,8 @@
 		36CA531D0F91564A0063D59D /* ScreenOptionsCourseOverview.h in Headers */ = {isa = PBXBuildFile; fileRef = 36CA531B0F91564A0063D59D /* ScreenOptionsCourseOverview.h */; };
 		36CA53200F9156860063D59D /* ScreenOptionsEditCourse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 36CA531E0F9156860063D59D /* ScreenOptionsEditCourse.cpp */; };
 		36CA53210F9156860063D59D /* ScreenOptionsEditCourse.h in Headers */ = {isa = PBXBuildFile; fileRef = 36CA531F0F9156860063D59D /* ScreenOptionsEditCourse.h */; };
+		37171EBE1946C9D500E09FC5 /* ActorMultiVertex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37171EBC1946C9D500E09FC5 /* ActorMultiVertex.cpp */; };
+		37171EBF1946C9D500E09FC5 /* ActorMultiVertex.h in Headers */ = {isa = PBXBuildFile; fileRef = 37171EBD1946C9D500E09FC5 /* ActorMultiVertex.h */; };
 		AA059ABC0B8CCFB5006F8139 /* ActorMultiTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA059ABA0B8CCFB5006F8139 /* ActorMultiTexture.cpp */; };
 		AA059ABD0B8CCFB5006F8139 /* ActorMultiTexture.h in Headers */ = {isa = PBXBuildFile; fileRef = AA059ABB0B8CCFB5006F8139 /* ActorMultiTexture.h */; };
 		AA059ABE0B8CCFB5006F8139 /* ActorMultiTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA059ABA0B8CCFB5006F8139 /* ActorMultiTexture.cpp */; };
@@ -2061,6 +2063,8 @@
 		36CA531B0F91564A0063D59D /* ScreenOptionsCourseOverview.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ScreenOptionsCourseOverview.h; path = ../src/ScreenOptionsCourseOverview.h; sourceTree = SOURCE_ROOT; };
 		36CA531E0F9156860063D59D /* ScreenOptionsEditCourse.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ScreenOptionsEditCourse.cpp; path = ../src/ScreenOptionsEditCourse.cpp; sourceTree = SOURCE_ROOT; };
 		36CA531F0F9156860063D59D /* ScreenOptionsEditCourse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ScreenOptionsEditCourse.h; path = ../src/ScreenOptionsEditCourse.h; sourceTree = SOURCE_ROOT; };
+		37171EBC1946C9D500E09FC5 /* ActorMultiVertex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ActorMultiVertex.cpp; path = ../src/ActorMultiVertex.cpp; sourceTree = "<group>"; };
+		37171EBD1946C9D500E09FC5 /* ActorMultiVertex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ActorMultiVertex.h; path = ../src/ActorMultiVertex.h; sourceTree = "<group>"; };
 		AA059ABA0B8CCFB5006F8139 /* ActorMultiTexture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 8; lastKnownFileType = sourcecode.cpp.cpp; name = ActorMultiTexture.cpp; path = ../src/ActorMultiTexture.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 1; };
 		AA059ABB0B8CCFB5006F8139 /* ActorMultiTexture.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 8; lastKnownFileType = sourcecode.c.h; name = ActorMultiTexture.h; path = ../src/ActorMultiTexture.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 1; };
 		AA059E2A0B8F0C66006F8139 /* libz_link.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libz_link.a; sourceTree = "<group>"; };
@@ -4480,6 +4484,8 @@
 		AA6EFF7404770F8B005F316C /* Actors */ = {
 			isa = PBXGroup;
 			children = (
+				37171EBC1946C9D500E09FC5 /* ActorMultiVertex.cpp */,
+				37171EBD1946C9D500E09FC5 /* ActorMultiVertex.h */,
 				AA6EFF7504770FFD005F316C /* Actor.cpp */,
 				AA6EFF7604770FFD005F316C /* Actor.h */,
 				AA6EFF7704770FFD005F316C /* ActorFrame.cpp */,
@@ -5488,6 +5494,7 @@
 				B773AE6E140AAB1800C68DDD /* SpecialDirs.h in Headers */,
 				2B01A79816C881E500D5CFD2 /* RageDisplay_OGL_Helpers.h in Headers */,
 				2B01A79C16C881E500D5CFD2 /* RageDisplay_OGL.h in Headers */,
+				37171EBF1946C9D500E09FC5 /* ActorMultiVertex.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6895,6 +6902,7 @@
 				B7845BC5154052CB000DFDA8 /* RageUtil.cpp in Sources */,
 				2B01A79616C881E500D5CFD2 /* RageDisplay_OGL_Helpers.cpp in Sources */,
 				2B01A79A16C881E500D5CFD2 /* RageDisplay_OGL.cpp in Sources */,
+				37171EBE1946C9D500E09FC5 /* ActorMultiVertex.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

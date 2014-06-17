@@ -1239,6 +1239,9 @@
     <ClCompile Include="ActorMultiTexture.cpp">
       <Filter>Actors</Filter>
     </ClCompile>
+    <ClCompile Include="ActorMultiVertex.cpp">
+      <Filter>Actors</Filter>
+    </ClCompile>
     <ClCompile Include="ActorProxy.cpp">
       <Filter>Actors</Filter>
     </ClCompile>
@@ -2619,6 +2622,9 @@
       <Filter>Actors</Filter>
     </ClInclude>
     <ClInclude Include="ActorMultiTexture.h">
+      <Filter>Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="ActorMultiVertex.h">
       <Filter>Actors</Filter>
     </ClInclude>
     <ClInclude Include="ActorProxy.h">
