@@ -834,7 +834,9 @@ public:
 
 		lua_call( L, 1, 1 ); // call function with 1 argument and 1 result
 		if( !lua_istable(L, -1) )
-			RageException::Throw( "\"EnabledForPlayers\" did not return a table." );
+		{
+			LOG->Warn("LUA_ERROR:  \"EnabledForPlayers\" did not return a table." );
+		}
 
 		m_Def.m_vEnabledForPlayers.clear();	// and fill in with supplied PlayerNumbers below
 
@@ -842,7 +844,7 @@ public:
 		while( lua_next(L, -2) != 0 )
 		{
 			// `key' is at index -2 and `value' at index -1
-			PlayerNumber pn = (PlayerNumber)luaL_checkint( L, -1 );
+			PlayerNumber pn = Enum::Check<PlayerNumber>(L, -1);
 
 			m_Def.m_vEnabledForPlayers.insert( pn );
 
@@ -869,7 +871,9 @@ public:
 		m_pLuaTable->SetFromExpression( sLuaFunction );
 
 		if( m_pLuaTable->GetLuaType() != LUA_TTABLE )
-			RageException::Throw( "Result of \"%s\" is not a table.", sLuaFunction.c_str() );
+		{
+			LOG->Warn("LUA_ERROR:  Result of \"%s\" is not a table.", sLuaFunction.c_str());
+		}
 
 		m_pLuaTable->PushSelf( L );
 
@@ -877,25 +881,29 @@ public:
 		lua_gettable( L, -2 );
 		const char *pStr = lua_tostring( L, -1 );
 		if( pStr == NULL )
-			RageException::Throw( "\"%s\" \"Name\" entry is not a string.", sLuaFunction.c_str() );
+		{
+			LOG->Warn("LUA_ERROR:  \"%s\" \"Name\" entry is not a string.", sLuaFunction.c_str());
+		}
 		m_Def.m_sName = pStr;
 		lua_pop( L, 1 );
 
 		lua_pushstring( L, "OneChoiceForAllPlayers" );
 		lua_gettable( L, -2 );
-		m_Def.m_bOneChoiceForAllPlayers = !!lua_toboolean( L, -1 );
+		m_Def.m_bOneChoiceForAllPlayers = lua_toboolean( L, -1 );
 		lua_pop( L, 1 );
 
 		lua_pushstring( L, "ExportOnChange" );
 		lua_gettable( L, -2 );
-		m_Def.m_bExportOnChange = !!lua_toboolean( L, -1 );
+		m_Def.m_bExportOnChange = lua_toboolean( L, -1 );
 		lua_pop( L, 1 );
 
 		lua_pushstring( L, "LayoutType" );
 		lua_gettable( L, -2 );
 		pStr = lua_tostring( L, -1 );
 		if( pStr == NULL )
-			RageException::Throw( "\"%s\" \"LayoutType\" entry is not a string.", sLuaFunction.c_str() );
+		{
+			LOG->Warn("LUA_ERROR:  \"%s\" \"LayoutType\" entry is not a string.", sLuaFunction.c_str());
+		}
 		m_Def.m_layoutType = StringToLayoutType( pStr );
 		ASSERT( m_Def.m_layoutType != LayoutType_Invalid );
 		lua_pop( L, 1 );
@@ -904,7 +912,9 @@ public:
 		lua_gettable( L, -2 );
 		pStr = lua_tostring( L, -1 );
 		if( pStr == NULL )
-			RageException::Throw( "\"%s\" \"SelectType\" entry is not a string.", sLuaFunction.c_str() );
+		{
+			LOG->Warn("LUA_ERROR:  \"%s\" \"SelectType\" entry is not a string.", sLuaFunction.c_str());
+		}
 		m_Def.m_selectType = StringToSelectType( pStr );
 		ASSERT( m_Def.m_selectType != SelectType_Invalid );
 		lua_pop( L, 1 );
@@ -913,7 +923,9 @@ public:
 		lua_pushstring( L, "Choices" );
 		lua_gettable( L, -2 );
 		if( !lua_istable( L, -1 ) )
-			RageException::Throw( "\"%s\" \"Choices\" is not a table.", sLuaFunction.c_str() );
+		{
+			LOG->Warn("LUA_ERROR:  \"%s\" \"Choices\" is not a table.", sLuaFunction.c_str());
+		}
 
 		lua_pushnil( L );
 		while( lua_next(L, -2) != 0 )
@@ -921,8 +933,10 @@ public:
 			// `key' is at index -2 and `value' at index -1
 			const char *pValue = lua_tostring( L, -1 );
 			if( pValue == NULL )
-				RageException::Throw( "\"%s\" Column entry is not a string.", sLuaFunction.c_str() );
-//				LOG->Trace( "'%s'", pValue);
+			{
+				LOG->Warn("LUA_ERROR:  \"%s\" Column entry is not a string.", sLuaFunction.c_str());
+			}
+			//LOG->Trace( "choice: '%s'", pValue);
 
 			m_Def.m_vsChoices.push_back( pValue );
 
@@ -935,7 +949,9 @@ public:
 		lua_pushstring( L, "EnabledForPlayers" );
 		lua_gettable( L, -2 );
 		if( !lua_isfunction( L, -1 ) && !lua_isnil( L, -1 ) )
-			RageException::Throw( "\"%s\" \"EnabledForPlayers\" is not a table.", sLuaFunction.c_str() );
+		{
+			LOG->Warn("LUA_ERROR:  \"%s\" \"EnabledForPlayers\" is not a function.", sLuaFunction.c_str());
+		}
 		m_EnabledForPlayersFunc.SetFromStack( L );
 		SetEnabledForPlayers();
 
@@ -953,8 +969,10 @@ public:
 				// `key' is at index -2 and `value' at index -1
 				const char *pValue = lua_tostring( L, -1 );
 				if( pValue == NULL )
-					RageException::Throw( "\"%s\" Column entry is not a string.", sLuaFunction.c_str() );
-				LOG->Trace( "Found ReloadRowMessage '%s'", pValue);
+				{
+					LOG->Warn("LUA_ERROR:  \"%s\" Column entry is not a string.", sLuaFunction.c_str());
+				}
+				//LOG->Trace( "Found ReloadRowMessage '%s'", pValue);
 
 				m_vsReloadRowMessages.push_back( pValue );
 
@@ -962,15 +980,6 @@ public:
 			}
 		}
 		lua_pop( L, 1 ); // pop ReloadRowMessages table
-
-		// Look for "ExportOnChange" value.
-		lua_pushstring( L, "ExportOnChange" );
-		lua_gettable( L, -2 );
-		if( !lua_isnil( L, -1 ) )
-		{
-			m_Def.m_bExportOnChange = !!MyLua_checkboolean( L, -1 );
-		}
-		lua_pop( L, 1 ); // pop ExportOnChange value
 
 		lua_pop( L, 1 ); // pop main table
 		ASSERT( lua_gettop(L) == 0 );
@@ -1013,7 +1022,9 @@ public:
 			lua_pushstring( L, "LoadSelections" );
 			lua_gettable( L, -2 );
 			if( !lua_isfunction( L, -1 ) )
-				RageException::Throw( "\"%s\" \"LoadSelections\" entry is not a function.", m_Def.m_sName.c_str() );
+			{
+				LOG->Warn("LUA_ERROR:  \"%s\" \"LoadSelections\" entry is not a function.", m_Def.m_sName.c_str());
+			}
 
 			// Argument 1 (self):
 			m_pLuaTable->PushSelf( L );
@@ -1067,7 +1078,9 @@ public:
 			lua_pushstring( L, "SaveSelections" );
 			lua_gettable( L, -2 );
 			if( !lua_isfunction( L, -1 ) )
-				RageException::Throw( "\"%s\" \"SaveSelections\" entry is not a function.", m_Def.m_sName.c_str() );
+			{
+				LOG->Warn("LUA_ERROR:  \"%s\" \"SaveSelections\" entry is not a function.", m_Def.m_sName.c_str());
+			}
 
 			// Argument 1 (self):
 			m_pLuaTable->PushSelf( L );
@@ -1093,6 +1106,54 @@ public:
 
 		// XXX: allow specifying the mask
 		return 0;
+	}
+	virtual bool NotifyOfSelection(PlayerNumber pn, int choice)
+	{
+		Lua *L= LUA->Get();
+		m_pLuaTable->PushSelf(L);
+
+		lua_pushstring(L, "NotifyOfSelection");
+		lua_gettable(L, -2);
+		bool changed= false;
+		if(lua_isfunction(L, -1))
+		{
+			m_pLuaTable->PushSelf(L);
+			LuaHelpers::Push(L, pn);
+			// Convert choice to a lua index so it matches up with the Choices table.
+			lua_pushinteger(L, choice+1);
+			lua_call(L, 3, 1);
+			if(lua_toboolean(L, -1))
+			{
+				lua_pop(L, 1);
+				changed= true;
+				m_Def.m_vsChoices.clear();
+				// Iterate over the "Choices" table.
+				lua_pushstring( L, "Choices" );
+				lua_gettable( L, -2 );
+				if(!lua_istable(L, -1))
+				{
+					LOG->Warn("\"%s\" \"Choices\" is not a table.", m_Def.m_sName.c_str());
+				}
+				lua_pushnil( L );
+				while( lua_next(L, -2) != 0 )
+				{
+					// `key' is at index -2 and `value' at index -1
+					const char *pValue = lua_tostring( L, -1 );
+					if(pValue == NULL)
+					{
+						LOG->Warn("\"%s\" Column entry is not a string.", m_Def.m_sName.c_str());
+					}
+					//LOG->Trace( "choice: '%s'", pValue);
+
+					m_Def.m_vsChoices.push_back( pValue );
+
+					lua_pop( L, 1 ); // removes `value'; keeps `key' for next iteration
+				}
+			}
+		}
+		lua_settop(L, 0); // Release has an assert that forces a clear stack.
+		LUA->Release(L);
+		return changed;
 	}
 };
 

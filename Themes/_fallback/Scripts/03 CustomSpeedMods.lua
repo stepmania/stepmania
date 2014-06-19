@@ -243,8 +243,128 @@ function SpeedMods()
 			state:SetPlayerOptions("ModsLevel_Preferred", self.Choices[1])
 		end
 	}
-	setmetatable( t, t )
 	return t
+end
+
+function ArbSpeedMods()
+	-- If players are allowed to join while this option row is active, problems will probably occur.
+	local ret= {
+		Name= "Speed",
+		LayoutType= "ShowAllInRow",
+		SelectType= "SelectMultiple",
+		OneChoiceForAllPlayers= false,
+		LoadSelections= function(self, list, pn)
+			-- The first values display the current status of the speed mod.
+			if pn == PLAYER_1 or self.NumPlayers == 1 then
+				list[1]= true
+			else
+				list[2]= true
+			end
+		end,
+		SaveSelections= function(self, list, pn)
+			local val= self.CurValues[pn]
+			local poptions= GAMESTATE:GetPlayerState(pn):GetPlayerOptions("ModsLevel_Preferred")
+			-- modify stage, song and current too so this will work in edit mode.
+			local stoptions= GAMESTATE:GetPlayerState(pn):GetPlayerOptions("ModsLevel_Stage")
+			local soptions= GAMESTATE:GetPlayerState(pn):GetPlayerOptions("ModsLevel_Song")
+			local coptions= GAMESTATE:GetPlayerState(pn):GetPlayerOptions("ModsLevel_Current")
+			if val.mode == "x" then
+				poptions:XMod(val.speed)
+				stoptions:XMod(val.speed)
+				soptions:XMod(val.speed)
+				coptions:XMod(val.speed)
+			elseif val.mode == "C" then
+				poptions:CMod(val.speed)
+				stoptions:CMod(val.speed)
+				soptions:CMod(val.speed)
+				coptions:CMod(val.speed)
+			else
+				poptions:MMod(val.speed)
+				stoptions:MMod(val.speed)
+				soptions:MMod(val.speed)
+				coptions:MMod(val.speed)
+			end
+		end,
+		NotifyOfSelection= function(self, pn, choice)
+			-- Adjust for the status elements
+			local real_choice= choice - self.NumPlayers
+			-- return true even though we didn't actually change anything so that the underlines will stay correct.
+			if real_choice < 1 then return true end
+			local val= self.CurValues[pn]
+			if real_choice < 5 then
+				local incs= {100, 25, -25, -100}
+				if val.mode == "x" then
+					val.speed= val.speed + (incs[real_choice] / 100)
+				else
+					val.speed= val.speed + incs[real_choice]
+				end
+			elseif real_choice == 5 then
+				if val.mode ~= "x" then
+					val.speed= val.speed / 100
+					val.mode= "x"
+				end
+			elseif real_choice == 6 then
+				if val.mode == "x" then
+					val.speed= math.floor(val.speed * 100)
+				end
+				val.mode= "C"
+			elseif real_choice == 7 then
+				if val.mode == "x" then
+					val.speed= math.floor(val.speed * 100)
+				end
+				val.mode= "m"
+			end
+			self:GenChoices()
+			return true
+		end,
+		GenChoices= function(self)
+			-- We can't show different options to each player, so compromise by
+			-- only showing the xmod increments if one player is in that mode.
+			local show_x_incs= false
+			for pn, val in pairs(self.CurValues) do
+				if val.mode == "x" then
+					show_x_incs= true
+				end
+			end
+			if show_x_incs then
+				self.Choices= {"+1", "+.25", "-.25", "-1", "Xmod", "Cmod", "Mmod"}
+			else
+				self.Choices= {"+100", "+25", "-25", "-100", "Xmod", "Cmod", "Mmod"}
+			end
+			-- Insert the status element for P2 first so it will be second
+			for i, pn in ipairs({PLAYER_2, PLAYER_1}) do
+				local val= self.CurValues[pn]
+				if val then
+					if val.mode == "x" then
+						table.insert(self.Choices, 1, val.speed .. "x")
+					else
+						table.insert(self.Choices, 1, val.mode .. val.speed)
+					end
+				end
+			end
+		end,
+		CurValues= {}, -- for easy tracking of what speed the player wants
+		NumPlayers= 0 -- for ease when adjusting for the status elements.
+	}
+	for i, pn in ipairs(GAMESTATE:GetEnabledPlayers()) do
+		local poptions= GAMESTATE:GetPlayerState(pn):GetPlayerOptions("ModsLevel_Preferred")
+		local speed= nil
+		local mode= nil
+		if poptions:MaxScrollBPM() > 0 then
+			mode= "m"
+			speed= poptions:MaxScrollBPM()
+		elseif poptions:TimeSpacing() > 0 then
+			mode= "C"
+			speed= poptions:ScrollBPM()
+		else
+			mode= "x"
+			speed= poptions:ScrollSpeed()
+		end
+		ret.CurValues[pn]= {mode= mode, speed= speed}
+		ret.NumPlayers= ret.NumPlayers + 1
+	end
+	ret:GenChoices()
+	return ret
 end
 
 --[[

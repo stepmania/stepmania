@@ -895,7 +895,11 @@ void ScreenOptions::ProcessMenuStart( const InputEventPlus &input )
 	{
 		int iChoiceInRow = row.GetChoiceInRowWithFocus(pn);
 		bool bSelected = !row.GetSelected( pn, iChoiceInRow );
-		row.SetSelected( pn, iChoiceInRow, bSelected );
+		bool changed= row.SetSelected( pn, iChoiceInRow, bSelected );
+		if(changed)
+		{
+			AfterChangeValueOrRow(pn);
+		}
 
 		if( bSelected )
 			m_SoundToggleOn.Play();
