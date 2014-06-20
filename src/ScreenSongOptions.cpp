@@ -30,7 +30,9 @@ void ScreenSongOptions::ExportOptions( int iRow, const vector<PlayerNumber> &vpn
 	ScreenOptionsMaster::ExportOptions( iRow, vpns );
 
 	if( ft != pPS->m_PlayerOptions.GetPreferred().m_FailType )
-		GAMESTATE->m_bChangedFailTypeOnScreenSongOptions = true;
+	{
+		GAMESTATE->m_bFailTypeWasExplicitlySet = true;
+	}
 }
 
 /*

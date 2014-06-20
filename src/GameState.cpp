@@ -292,7 +292,7 @@ void GameState::Reset()
 	*m_Environment = LuaTable();
 	m_sPreferredSongGroup.Set( GROUP_ALL );
 	m_sPreferredCourseGroup.Set( GROUP_ALL );
-	m_bChangedFailTypeOnScreenSongOptions = false;
+	m_bFailTypeWasExplicitlySet = false;
 	m_SortOrder.Set( SortOrder_Invalid );
 	m_PreferredSortOrder = GetDefaultSort();
 	m_PlayMode.Set( PlayMode_Invalid );
@@ -1540,7 +1540,7 @@ FailType GameState::GetPlayerFailType( const PlayerState *pPlayerState ) const
 	FailType ft = pPlayerState->m_PlayerOptions.GetCurrent().m_FailType;
 
 	// If the player changed the fail mode explicitly, leave it alone.
-	if( m_bChangedFailTypeOnScreenSongOptions )
+	if( m_bFailTypeWasExplicitlySet )
 		return ft;
 
 	if( IsCourseMode() )
@@ -2579,6 +2579,12 @@ public:
 		return 0;
 	}
 
+	static int SetFailTypeExplicitlySet(T* p, lua_State* L)
+	{
+		p->m_bFailTypeWasExplicitlySet= true;
+		return 0;
+	}
+
 	static int StoreRankingName( T* p, lua_State *L )
 	{
 		p->StoreRankingName(Enum::Check<PlayerNumber>(L, 1), SArg(2));
@@ -2703,6 +2709,7 @@ public:
 		ADD_METHOD( SaveProfiles );
 		ADD_METHOD( HaveProfileToLoad );
 		ADD_METHOD( HaveProfileToSave );
+		ADD_METHOD( SetFailTypeExplicitlySet );
 		ADD_METHOD( StoreRankingName );
 	}
 };
