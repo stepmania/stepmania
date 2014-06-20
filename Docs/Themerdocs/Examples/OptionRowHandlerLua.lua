@@ -6,12 +6,12 @@
 -- screen.
 -- Line1="lua,FooMods()"
 
+-- Make sure you test this with Player 2, Player 1 can't interact with this
+-- option row as part of the example.
 -- When on the screen testing the example, flush the log and read it when
 -- interacting with the option row.  This example doesn't actually apply any
 -- modifiers to the player, it just prints messages to the log file so you can
 -- see what functions are being called.
--- Make sure you test this with Player 2, Player 1 can't interact with this
--- option row as part of the example.
 
 -- Comments explaining an element come before the element they explain.
 
@@ -22,32 +22,46 @@ function FooMods()
 		-- A string with the name of the row.  This name will be localized using
 		-- the entry in the "OptionTitles" section of the language file.
     Name= "Foo",
+
 		-- A boolean controlling whether the choice affects all players.
     OneChoiceForAllPlayers= false,
+
+		-- A boolean controlling whether SaveSelections is called after every
+		-- change.  If this is true, SaveSelections will be called every time
+		-- the player moves the cursor on the row.
+		ExportOnChange= false,
+
 		-- A LayoutType enum value.  "ShowAllInRow" shows all items in the row,
 		-- "ShowOneInRow" shows only the choice with focus is shown.
 		-- "ShowOneInRow" is forced if there are enough choices that they would go
 		-- off screen.
     LayoutType= "ShowAllInRow",
+
 		-- A SelectType enum value.  "SelectOne" allows only one choice to be
 		-- selected.  "SelectMultiple" allows multiple to be selected.
 		-- "SelectNone" allows none to be selected.
     SelectType= "SelectMultiple",
+
 		-- Optional function.  If non-nil, this function must return a table of
 		-- PlayerNumbers that are allowed to use the row.
+		-- A row that can't be used by one player can be confusing for the players
+		-- so consider carefully before using this.
 		EnabledForPlayers= function(self)
 			Trace("FooMods:EnabledForPlayers() called.")
 			-- Leave out PLAYER_1 just for example.
 			return {PLAYER_2}
 		end,
+
 		-- A table of strings that are the names of choices.  Choice names are not
 		-- localized.
     Choices= {"a", "b", "c", "d"},
+
 		-- Optional table.  If non-nil, this table must contain a list of messages
 		-- this row should listen for.  If one of the messages is recieved, the
-		-- row is reloaded and the EnabledForPlayers function is called if it is
-		-- non-nil.
+		-- row is reloaded (and the EnabledForPlayers function is called if it is
+		-- non-nil).
 		ReloadRowMessages= {"ReloadFooMods"},
+
 		-- LoadSelections should examine the player and figure out which options
 		-- on the row the player has selected.
 		-- self is the table returned by the original function used to create the
@@ -65,9 +79,10 @@ function FooMods()
 				end
       end
     end,
-		-- SaveSelections should examin the list of what the player has selected
+
+		-- SaveSelections should examine the list of what the player has selected
 		-- and apply the appropriate modifiers to the player.
-		-- Same args as LoadSelections
+		-- Same args as LoadSelections.
     SaveSelections= function(self, list, pn)
 			Trace("FooMods:SaveSelections(" .. pn .. ")")
       for i, choice in ipairs(self.Choices) do
@@ -76,6 +91,7 @@ function FooMods()
 				end
       end
     end,
+
 		-- Optional function.  If non-nil, this function must take 3 parameters
 		-- (self, pn, choice), and return a bool.  It is called when a player
 		-- selects an item in the row by pressing start.
@@ -95,6 +111,11 @@ function FooMods()
 			-- Randomly decide whether to change, as an example.
 			local change= math.random(0, 3)
 			-- No change half the time, lengthen or clip strings the other half.
+			if change < 2 then
+				Trace("Not changing choices.")
+			else
+				Trace("Changing choices.")
+			end
 			if change == 2 then
 				for i, choice in ipairs(self.Choices) do
 					self.Choices[i]= choice .. choice
@@ -103,6 +124,14 @@ function FooMods()
 				for i, choice in ipairs(self.Choices) do
 					self.Choices[i]= choice:sub(1, 1)
 				end
+			end
+			-- Don't actually broadcast a reload message from here, do it from some
+			-- other place that actually has a reason to trigger a reload.  This is
+			-- just here so that nothing needs to be added to a screen's lua files
+			-- for this example.
+			if math.random(0, 5) == 0 then
+				Trace("Broadcasting reload message.")
+				MESSAGEMAN:Broadcast("ReloadFooMods")
 			end
 			return change >= 2
 		end
