@@ -121,7 +121,6 @@ function OptionRowProTiming()
 			setenv("ProTiming"..pname, val); --]]
 		end;
 	};
-	setmetatable( t, t );
 	return t;
 end;
 
@@ -202,6 +201,5 @@ function GamePrefDefaultFail()
 			THEME:ReloadMetrics();
 		end;
 	};
-	setmetatable( t, t );
 	return t;
 end

@@ -246,8 +246,105 @@ function SpeedMods()
 	return t
 end
 
-function ArbSpeedMods()
+local default_speed_increment= 25
+local default_speed_inc_multiple= 4
+
+local function get_speed_increment()
+	local increment= default_speed_increment
+	if ReadGamePrefFromFile("SpeedIncrement") then
+		increment= tonumber(GetGamePref("SpeedIncrement")) or default_speed_increment
+	else
+		WriteGamePrefToFile("SpeedIncrement", increment)
+	end
+	return increment
+end
+
+local function get_speed_multiple()
+	local multiple= default_speed_inc_multiple
+	if ReadGamePrefFromFile("SpeedMultiple") then
+		multiple= tonumber(GetGamePref("SpeedMultiple")) or default_speed_inc_multiple
+	else
+		WriteGamePrefToFile("SpeedMultiple", multiple)
+	end
+	return multiple
+end
+
+function SpeedModIncSize()
+	-- An option row for controlling the size of the increment used by
+	-- ArbitrarySpeedMods.
+	local increment= get_speed_increment()
+	local ret= {
+		Name= "Speed Increment",
+		LayoutType= "ShowAllInRow",
+		SelectType= "SelectMultiple",
+		OneChoiceForAllPlayers= true,
+		LoadSelections= function(self, list, pn)
+			-- The first value is the status element, only it should be true.
+			list[1]= true
+		end,
+		SaveSelections= function(self, list, pn)
+			WriteGamePrefToFile("SpeedIncrement", increment)
+		end,
+		NotifyOfSelection= function(self, pn, choice)
+			-- return true even though we didn't actually change anything so that
+			-- the underlines will stay correct.
+			if choice == 1 then return true end
+			local incs= {10, 1, -1, -10}
+			local new_val= increment + incs[choice-1]
+			if new_val > 0 then
+				increment= new_val
+			end
+			self:GenChoices()
+			return true
+		end,
+		GenChoices= function(self)
+			self.Choices= {tostring(increment), "+10", "+1", "-1", "-10"}
+		end
+	}
+	ret:GenChoices()
+	return ret
+end
+
+function SpeedModIncMultiple()
+	-- An option row for controlling the size of the increment used by
+	-- ArbitrarySpeedMods.
+	local multiple= get_speed_multiple()
+	local ret= {
+		Name= "Speed Multiple",
+		LayoutType= "ShowAllInRow",
+		SelectType= "SelectMultiple",
+		OneChoiceForAllPlayers= true,
+		LoadSelections= function(self, list, pn)
+			-- The first value is the status element, only it should be true.
+			list[1]= true
+		end,
+		SaveSelections= function(self, list, pn)
+			WriteGamePrefToFile("SpeedMultiple", multiple)
+		end,
+		NotifyOfSelection= function(self, pn, choice)
+			-- return true even though we didn't actually change anything so that
+			-- the underlines will stay correct.
+			if choice == 1 then return true end
+			local incs= {5, 1, -1, -5}
+			local new_val= multiple + incs[choice-1]
+			if new_val > 0 then
+				multiple= new_val
+			end
+			self:GenChoices()
+			return true
+		end,
+		GenChoices= function(self)
+			self.Choices= {tostring(multiple), "+5", "+1", "-1", "-5"}
+		end
+	}
+	ret:GenChoices()
+	return ret
+end
+
+function ArbitrarySpeedMods()
 	-- If players are allowed to join while this option row is active, problems will probably occur.
+	local increment= get_speed_increment()
+	local multiple= get_speed_multiple()
 	local ret= {
 		Name= "Speed",
 		LayoutType= "ShowAllInRow",
@@ -269,10 +366,11 @@ function ArbSpeedMods()
 			local soptions= GAMESTATE:GetPlayerState(pn):GetPlayerOptions("ModsLevel_Song")
 			local coptions= GAMESTATE:GetPlayerState(pn):GetPlayerOptions("ModsLevel_Current")
 			if val.mode == "x" then
-				poptions:XMod(val.speed)
-				stoptions:XMod(val.speed)
-				soptions:XMod(val.speed)
-				coptions:XMod(val.speed)
+				local speed= val.speed / 100
+				poptions:XMod(speed)
+				stoptions:XMod(speed)
+				soptions:XMod(speed)
+				coptions:XMod(speed)
 			elseif val.mode == "C" then
 				poptions:CMod(val.speed)
 				stoptions:CMod(val.speed)
@@ -288,31 +386,19 @@ function ArbSpeedMods()
 		NotifyOfSelection= function(self, pn, choice)
 			-- Adjust for the status elements
 			local real_choice= choice - self.NumPlayers
-			-- return true even though we didn't actually change anything so that the underlines will stay correct.
+			-- return true even though we didn't actually change anything so that
+			-- the underlines will stay correct.
 			if real_choice < 1 then return true end
 			local val= self.CurValues[pn]
 			if real_choice < 5 then
-				local incs= {100, 25, -25, -100}
-				if val.mode == "x" then
-					val.speed= val.speed + (incs[real_choice] / 100)
-				else
-					val.speed= val.speed + incs[real_choice]
+				local big_inc= increment * multiple
+				local incs= {big_inc, increment, -increment, -big_inc}
+				local new_val= val.speed + incs[real_choice]
+				if new_val > 0 then
+					val.speed= math.round(new_val)
 				end
-			elseif real_choice == 5 then
-				if val.mode ~= "x" then
-					val.speed= val.speed / 100
-					val.mode= "x"
-				end
-			elseif real_choice == 6 then
-				if val.mode == "x" then
-					val.speed= math.floor(val.speed * 100)
-				end
-				val.mode= "C"
-			elseif real_choice == 7 then
-				if val.mode == "x" then
-					val.speed= math.floor(val.speed * 100)
-				end
-				val.mode= "m"
+			elseif real_choice >= 5 then
+				val.mode= ({"x", "C", "m"})[real_choice - 4]
 			end
 			self:GenChoices()
 			return true
@@ -326,17 +412,24 @@ function ArbSpeedMods()
 					show_x_incs= true
 				end
 			end
+			local big_inc= increment * multiple
+			local small_inc= increment
 			if show_x_incs then
-				self.Choices= {"+1", "+.25", "-.25", "-1", "Xmod", "Cmod", "Mmod"}
+				big_inc= tostring(big_inc / 100)
+				small_inc= tostring(small_inc / 100)
 			else
-				self.Choices= {"+100", "+25", "-25", "-100", "Xmod", "Cmod", "Mmod"}
+				big_inc= tostring(big_inc)
+				small_inc= tostring(small_inc)
 			end
+			self.Choices= {
+				"+" .. big_inc, "+" .. small_inc, "-" .. small_inc, "-" .. big_inc,
+				"Xmod", "Cmod", "Mmod"}
 			-- Insert the status element for P2 first so it will be second
 			for i, pn in ipairs({PLAYER_2, PLAYER_1}) do
 				local val= self.CurValues[pn]
 				if val then
 					if val.mode == "x" then
-						table.insert(self.Choices, 1, val.speed .. "x")
+						table.insert(self.Choices, 1, (val.speed/100) .. "x")
 					else
 						table.insert(self.Choices, 1, val.mode .. val.speed)
 					end
@@ -352,13 +445,13 @@ function ArbSpeedMods()
 		local mode= nil
 		if poptions:MaxScrollBPM() > 0 then
 			mode= "m"
-			speed= poptions:MaxScrollBPM()
+			speed= math.round(poptions:MaxScrollBPM())
 		elseif poptions:TimeSpacing() > 0 then
 			mode= "C"
-			speed= poptions:ScrollBPM()
+			speed= math.round(poptions:ScrollBPM())
 		else
 			mode= "x"
-			speed= poptions:ScrollSpeed()
+			speed= math.round(poptions:ScrollSpeed() * 100)
 		end
 		ret.CurValues[pn]= {mode= mode, speed= speed}
 		ret.NumPlayers= ret.NumPlayers + 1

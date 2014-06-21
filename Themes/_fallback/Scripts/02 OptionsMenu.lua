@@ -91,7 +91,6 @@ function OptionsRandomJukebox()
 			GAMESTATE:SetJukeboxUsesModifiers(val)
 		end
 	}
-	setmetatable( t, t )
 	return t
 end
 
@@ -134,7 +133,6 @@ function OptionsWeight()
 			end
 		end,
 	}
-	setmetatable(t, t)
 	return t
 end
 			
