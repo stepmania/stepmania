@@ -67,10 +67,10 @@ public:
 	 * @brief Scale the Sprite while maintaining the aspect ratio.
 	 *
 	 * It has to fit within and become clipped to the given parameters.
-	 * @param fWidth the new width.
-	 * @param fHeight the new height. */
-	void ScaleToClipped( float fWidth, float fHeight );
-	void CropTo( float fWidth, float fHeight );
+	 * @param width the new width.
+	 * @param height the new height. */
+	void ScaleToClipped( float width, float height );
+	void CropTo( float width, float height );
 
 	// Commands
 	virtual void PushSelf( lua_State *L );
@@ -124,6 +124,7 @@ private:
 	// Remembered clipped dimensions are applied on Load().
 	// -1 means no remembered dimensions;
 	float	m_fRememberedClipWidth, m_fRememberedClipHeight;
+	float	m_fRememberedCropWidth, m_fRememberedCropHeight;
 
 	float m_fTexCoordVelocityX;
 	float m_fTexCoordVelocityY;
