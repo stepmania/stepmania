@@ -447,6 +447,10 @@ save yourself some time, copy this for undocumented things:
 	<Function name='Saturation' theme='_fallback' return='color' arguments='color c, float percent'>
 		[02 Colors.lua] Modifies the saturation of the specified color
 	</Function>
+	<Function name='SaveScreenshot' return= 'bool, string' arguments='PlayerNumber pn, bool compress, bool sign, string prefix, string suffix'>
+		Saves a screenshot.  If pn is nil, saves to the machine's Screenshots dir, otherwise saves to the profile's Screenshots dir.  Saves as jpg if compress is true, or png if compress is false.  The screenshot is signed if sign is true.  prefix and suffix are optional strings to add to the beginning and end of the filename.<br/>
+		Returns success and full path of the resulting screenshot.
+	</Function>
 	<Function name='scale' return='float' arguments='float x, float low1, float high1, float low2, float high2'>
 		Scales <code>x</code>, originally within <code>low1</code> and <code>high1</code>, to fall between <code>low2</code> and <code>high2</code>.
 	</Function>
@@ -2551,6 +2555,9 @@ save yourself some time, copy this for undocumented things:
 	<Function name='GetGrade' return='Grade' arguments=''>
 		Returns the Grade of this high score.
 	</Function>
+	<Function name='GetHighScore' return='HighScore' arguments=''>
+		Returns the HighScore for this PlayerStageStats.
+	</Function>
 	<Function name='GetHoldNoteScore' return='int' arguments='HoldNoteScore hns'>
 		Return the number of HoldNoteScores that match <code>hns</code>.
 	</Function>
@@ -3217,6 +3224,9 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 </Class>
 <Class name='Profile'>
+	<Function name='AddScreenshot' return='void' arguments='HighScore hs, string filename'>
+		Adds a screenshot entry to the profile.  filename must be the full path of the screenshot, as returned by SaveScreenshot.
+	</Function>
 	<Function name='GetAllUsedHighScoreNames' return= '{string}' arguments='void'>
 		Returns a table of all high score names that have been used on this profile.
 	</Function>

@@ -139,6 +139,7 @@
 		<Function name='RoutineSkinP2'/>
 		<Function name='SMOnlineScreen'/>
 		<Function name='Saturation'/>
+		<Function name='SaveScreenshot'/>
 		<Function name='ScoreKeeperClass'/>
 		<Function name='ScreenMetric'/>
 		<Function name='ScreenString'/>
@@ -1005,7 +1006,7 @@
 			<Function name='Twirl'/>
 			<Function name='Roll'/>
 			<Function name='Hidden'/>
-			<Function name='HIddenOffset'/>
+			<Function name='HiddenOffset'/>
 			<Function name='Sudden'/>
 			<Function name='SuddenOffset'/>
 			<Function name='Stealth'/>
@@ -1089,6 +1090,7 @@
 			<Function name='GetCurrentScoreMultiplier'/>
 			<Function name='GetFailed'/>
 			<Function name='GetGrade'/>
+			<Function name='GetHighScore'/>
 			<Function name='GetHoldNoteScores'/>
 			<Function name='GetLessonScoreActual'/>
 			<Function name='GetLessonScoreNeeded'/>
@@ -1136,6 +1138,7 @@
 			<Function name='SetPreferenceToDefault'/>
 		</Class>
 		<Class name='Profile'>
+			<Function name='AddScreenshot'/>
 			<Function name='GetAllUsedHighScoreNames'/>
 			<Function name='GetCaloriesBurnedToday'/>
 			<Function name='GetCharacter'/>

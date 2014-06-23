@@ -2018,6 +2018,18 @@ RString Profile::MakeFileNameNoExtension( RString sFileNameBeginning, int iIndex
 class LunaProfile: public Luna<Profile>
 {
 public:
+	static int AddScreenshot( T* p, lua_State *L )
+	{
+		HighScore* hs= Luna<HighScore>::check(L, 1);
+		RString filename= SArg(2);
+		Screenshot screenshot;
+		screenshot.sFileName= filename;
+		screenshot.sMD5= BinaryToHex(CRYPTMAN->GetMD5ForFile(filename));
+		screenshot.highScore= *hs;
+		p->AddScreenshot(screenshot);
+		return 0;
+	}
+
 	static int GetDisplayName( T* p, lua_State *L )			{ lua_pushstring(L, p->m_sDisplayName ); return 1; }
 	static int GetLastUsedHighScoreName( T* p, lua_State *L )	{ lua_pushstring(L, p->m_sLastUsedHighScoreName ); return 1; }
 	static int SetLastUsedHighScoreName( T* p, lua_State *L )
@@ -2202,6 +2214,7 @@ public:
 
 	LunaProfile()
 	{
+		ADD_METHOD( AddScreenshot );
 		ADD_METHOD( GetDisplayName );
 		ADD_METHOD( GetLastUsedHighScoreName );
 		ADD_METHOD( SetLastUsedHighScoreName );

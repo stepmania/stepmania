@@ -721,6 +721,12 @@ public:
 	DEFINE_METHOD( GetSongsPassed, 					m_iSongsPassed )
 	DEFINE_METHOD( GetSongsPlayed, 					m_iSongsPlayed )
 
+	static int GetHighScore( T* p, lua_State *L )
+	{
+		p->m_HighScore.PushSelf(L);
+		return 1;
+	}
+
 	static int GetPlayedSteps( T* p, lua_State *L )
 	{
 		lua_newtable(L);
@@ -839,6 +845,7 @@ public:
 		ADD_METHOD( MaxCombo );
 		ADD_METHOD( GetCurrentLife );
 		ADD_METHOD( GetGrade );
+		ADD_METHOD( GetHighScore );
 		ADD_METHOD( GetActualDancePoints );
 		ADD_METHOD( GetPossibleDancePoints );
 		ADD_METHOD( GetCurrentPossibleDancePoints );
