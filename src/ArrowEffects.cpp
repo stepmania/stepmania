@@ -274,7 +274,7 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 		float fNoteSeconds = pCurSteps->GetTimingData()->GetElapsedTimeFromBeat(fNoteBeat);
 		float fSecondsUntilStep = fNoteSeconds - fSongSeconds;
 		float fBPM = pPlayerState->m_PlayerOptions.GetCurrent().m_fScrollBPM;
-		float fBPS = fBPM/60.f;
+		float fBPS = fBPM/60.f / GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate;
 		float fYOffsetTimeSpacing = fSecondsUntilStep * fBPS;
 		fYOffset += fYOffsetTimeSpacing * pPlayerState->m_PlayerOptions.GetCurrent().m_fTimeSpacing;
 	}
@@ -287,7 +287,8 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 	float fScrollSpeed = pPlayerState->m_PlayerOptions.GetCurrent().m_fScrollSpeed;
 	if(pPlayerState->m_PlayerOptions.GetCurrent().m_fMaxScrollBPM != 0)
 	{
-		fScrollSpeed= pPlayerState->m_PlayerOptions.GetCurrent().m_fMaxScrollBPM / pPlayerState->m_fReadBPM;
+		fScrollSpeed= pPlayerState->m_PlayerOptions.GetCurrent().m_fMaxScrollBPM /
+			(pPlayerState->m_fReadBPM * GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate);
 	}
 	
 	// don't mess with the arrows after they've crossed 0
