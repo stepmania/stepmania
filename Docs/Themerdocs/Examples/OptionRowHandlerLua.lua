@@ -46,6 +46,8 @@ function FooMods()
 		-- PlayerNumbers that are allowed to use the row.
 		-- A row that can't be used by one player can be confusing for the players
 		-- so consider carefully before using this.
+		-- This function will be called an extra time during loading to ensure
+		-- it returns a table.
 		EnabledForPlayers= function(self)
 			Trace("FooMods:EnabledForPlayers() called.")
 			-- Leave out PLAYER_1 just for example.
