@@ -148,7 +148,7 @@ void OptionRow::LoadExit()
 	ChoicesChanged( RowType_Exit );
 }
 
-void OptionRow::ChoicesChanged( RowType type )
+void OptionRow::ChoicesChanged( RowType type, bool reset_focus )
 {
 	ASSERT_M( !m_pHand->m_Def.m_vsChoices.empty(), m_pHand->m_Def.m_sName + " has no choices" );
 
@@ -181,9 +181,13 @@ void OptionRow::ChoicesChanged( RowType type )
 
 	InitText( type );
 
-	// When choices change, the old focus position is meaningless; reset it.
-	FOREACH_PlayerNumber( p )
-		SetChoiceInRowWithFocus( p, 0 );
+	// Lua can change the choices now, and when it does, we don't want to change focus.
+	if(reset_focus)
+	{
+		// When choices change, the old focus position is meaningless; reset it.
+		FOREACH_PlayerNumber( p )
+			SetChoiceInRowWithFocus( p, 0 );
+	}
 
 	m_textTitle->SetText( GetRowTitle() );
 }
@@ -705,6 +709,7 @@ void OptionRow::SetOneSelection( PlayerNumber pn, int iChoice )
 	FOREACH( bool, vb, b )
 		*b = false;
 	vb[iChoice] = true;
+	NotifyHandlerOfSelection(pn, iChoice);
 }
 
 void OptionRow::SetOneSharedSelection( int iChoice )
@@ -788,11 +793,31 @@ OptionRowDefinition &OptionRow::GetRowDef()
 	return m_pHand->m_Def;
 }
 
-void OptionRow::SetSelected( PlayerNumber pn, int iChoice, bool b )
+bool OptionRow::SetSelected( PlayerNumber pn, int iChoice, bool b )
 {
 	if( m_pHand->m_Def.m_bOneChoiceForAllPlayers )
 		pn = PLAYER_1;
 	m_vbSelected[pn][iChoice] = b;
+	return NotifyHandlerOfSelection(pn, iChoice);
+}
+
+bool OptionRow::NotifyHandlerOfSelection(PlayerNumber pn, int choice)
+{
+	bool changed= m_pHand->NotifyOfSelection(pn, choice);
+	if(changed)
+	{
+		ChoicesChanged(m_RowType, false);
+		vector<PlayerNumber> vpns;
+		FOREACH_HumanPlayer( p )
+			vpns.push_back( p );
+		ImportOptions(vpns);
+		FOREACH_PlayerNumber(p)
+		{
+			PositionUnderlines(p);
+		}
+		UpdateEnabledDisabled();
+	}
+	return changed;
 }
 
 void OptionRow::SetExitText( RString sExitText )

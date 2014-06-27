@@ -178,6 +178,8 @@ public:
 	virtual int ExportOption( const vector<PlayerNumber> &, const vector<bool> vbSelected[NUM_PLAYERS] ) const { return 0; }
 	virtual void GetIconTextAndGameCommand( int iFirstSelection, RString &sIconTextOut, GameCommand &gcOut ) const;
 	virtual RString GetScreen( int /* iChoice */ ) const { return RString(); }
+	// Exists so that a lua function can act on the selection.  Returns true if the choices should be reloaded.
+	virtual bool NotifyOfSelection(PlayerNumber pn, int choice) { return false; }
 };
 
 /** @brief Utilities for the OptionRowHandlers. */

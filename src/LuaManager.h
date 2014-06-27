@@ -213,6 +213,26 @@ inline bool MyLua_checkintboolean( lua_State *L, int iArg )
 	return MyLua_checkboolean( L, iArg );
 }
 
+// Checks the table at index to verify that it contains strings.
+inline bool TableContainsOnlyStrings(lua_State* L, int index)
+{
+	bool passed= true;
+	lua_pushnil(L);
+	while(lua_next(L, index) != 0)
+	{
+		// `key' is at index -2 and `value' at index -1
+		const char *pValue = lua_tostring(L, -1);
+		if(pValue == NULL)
+		{
+			// Was going to print an error to the log with the key that failed,
+			// but didn't want to pull in RageLog. -Kyz
+			passed= false;
+		}
+		lua_pop(L, 1);
+	}
+	return passed;
+}
+
 #define SArg(n) (luaL_checkstring(L,(n)))
 #define BIArg(n) (MyLua_checkintboolean(L,(n)))
 #define IArg(n) (luaL_checkint(L,(n)))

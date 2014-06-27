@@ -76,7 +76,7 @@ public:
 
 	RString GetRowTitle() const;
 
-	void ChoicesChanged( RowType type );
+	void ChoicesChanged( RowType type, bool reset_focus= true );
 	void PositionUnderlines( PlayerNumber pn );
 	void PositionIcons( PlayerNumber pn );
 	void UpdateText( PlayerNumber pn );
@@ -96,7 +96,10 @@ public:
 	void ResetFocusFromSelection( PlayerNumber pn );
 
 	bool GetSelected( PlayerNumber pn, int iChoice ) const;
-	void SetSelected( PlayerNumber pn, int iChoice, bool b );
+	// SetSelected returns true if the choices changed because of setting.
+	bool SetSelected( PlayerNumber pn, int iChoice, bool b );
+
+	bool NotifyHandlerOfSelection(PlayerNumber pn, int choice);
 
 	const OptionRowDefinition &GetRowDef() const;
 	OptionRowDefinition &GetRowDef();

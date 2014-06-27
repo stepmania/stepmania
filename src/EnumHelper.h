@@ -20,7 +20,8 @@ int CheckEnum(lua_State *L,
 	      int iPos,
 	      int iInvalid,
 	      const char *szType,
-	      bool bAllowInvalid);
+	      bool bAllowInvalid,
+	      bool bAllowAnything= false);
 
 template<typename T>
 struct EnumTraits
@@ -36,14 +37,15 @@ template<typename T> LuaReference EnumTraits<T>::EnumToString;
 namespace Enum
 {
 	template<typename T>
-	static T Check( lua_State *L, int iPos, bool bAllowInvalid = false )
+	static T Check( lua_State *L, int iPos, bool bAllowInvalid = false, bool bAllowAnything= false )
 	{
 		return (T) CheckEnum(L,
 				     EnumTraits<T>::StringToEnum,
 				     iPos,
 				     EnumTraits<T>::Invalid,
 				     EnumTraits<T>::szName,
-				     bAllowInvalid);
+				     bAllowInvalid,
+				     bAllowAnything);
 	}
 	template<typename T>
 	static void Push( lua_State *L, T iVal )

@@ -121,7 +121,6 @@ function OptionRowProTiming()
 			setenv("ProTiming"..pname, val); --]]
 		end;
 	};
-	setmetatable( t, t );
 	return t;
 end;
 

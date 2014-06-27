@@ -34,6 +34,15 @@ function string:find_last(text)
 	end
 end
 
+-- Round to nearest integer.
+function math.round(n)
+	if n > 0 then
+		return math.floor(n+0.5)
+	else
+		return math.ceil(n-0.5)
+	end
+end
+
 -- (c) 2006 Glenn Maynard
 -- All rights reserved.
 --
