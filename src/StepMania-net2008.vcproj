@@ -3829,6 +3829,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ActorMultiVertex.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ActorMultiVertex.h"
+				>
+			</File>
+			<File
 				RelativePath="ActorProxy.cpp"
 				>
 			</File>
