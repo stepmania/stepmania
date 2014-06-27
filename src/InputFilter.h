@@ -22,6 +22,10 @@ enum InputEventType
 	InputEventType_Invalid
 };
 
+const RString& InputEventTypeToString(InputEventType cat);
+const RString& InputEventTypeToLocalizedString(InputEventType cat);
+LuaDeclareType(InputEventType);
+
 struct InputEvent
 {
 	InputEvent(): type(IET_FIRST_PRESS) {}

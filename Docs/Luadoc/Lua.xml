@@ -1271,11 +1271,13 @@
 		<Class base='BitmapText' name='ScoreDisplayAliveTime'/>
 		<Class base='BitmapText' name='ScoreDisplayCalories'/>
 		<Class base='ActorFrame' name='Screen'>
+			<Function name='AddInputCallback'/>
 			<Function name='GetNextScreenName'/>
 			<Function name='GetPrevScreenName'/>
 			<Function name='GetScreenType'/>
 			<Function name='Metric'/>
 			<Function name='PostScreenMessage'/>
+			<Function name='RemoveInputCallback'/>
 			<Function name='String'/>
 			<Function name='lockinput'/>
 		</Class>
@@ -1985,6 +1987,11 @@
 			<EnumValue name='&apos;HorizAlign_Left&apos;' value='0'/>
 			<EnumValue name='&apos;HorizAlign_Center&apos;' value='1'/>
 			<EnumValue name='&apos;HorizAlign_Right&apos;' value='2'/>
+		</Enum>
+		<Enum name='InputEventType'>
+			<EnumValue name='&apos;InputEventType_FirstPress&apos;' value= '0'/>
+			<EnumValue name='&apos;InputEventType_Repeat&apos;' value= '1'/>
+			<EnumValue name='&apos;InputEventType_Release&apos;' value= '2'/>
 		</Enum>
 		<Enum name='JudgmentLine'>
 			<EnumValue name='&apos;JudgmentLine_W1&apos;' value='0'/>

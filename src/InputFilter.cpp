@@ -1,4 +1,5 @@
 #include "global.h"
+#include "LocalizedString.h"
 #include "InputFilter.h"
 #include "RageLog.h"
 #include "RageInput.h"
@@ -11,6 +12,17 @@
 #include "ScreenDimensions.h"
 
 #include <set>
+
+static const char *InputEventTypeNames[] = {
+	"FirstPress",
+	"Repeat",
+	"Release"
+};
+
+XToString(InputEventType);
+XToLocalizedString(InputEventType);
+LuaXType(InputEventType);
+
 struct ButtonState
 {
 	ButtonState();

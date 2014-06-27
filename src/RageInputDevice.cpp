@@ -15,6 +15,7 @@ static const char *InputDeviceStateNames[] = {
 };
 XToString( InputDeviceState );
 XToLocalizedString( InputDeviceState );
+LuaXType(InputDevice);
 
 static map<DeviceButton,RString> g_mapNamesToString;
 static map<RString,DeviceButton> g_mapStringToNames;
@@ -190,6 +191,7 @@ DeviceButton StringToDeviceButton( const RString& s )
 
 	return DeviceButton_Invalid;
 }
+LuaXType(DeviceButton);
 
 static const char *InputDeviceNames[] = {
 	"Key",
