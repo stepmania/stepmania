@@ -2470,6 +2470,9 @@ save yourself some time, copy this for undocumented things:
 	<Function name='SetCurrentTrail' return='void' arguments='Trail trail'>
 		Sets the current Trail to <code>trail</code>.
 	</Function>
+	<Function name='SetFailTypeExplicitlySet' return='void' arguments=''>
+		Tells the engine that the theme explicitly set the fail type for the players so that it won't override it with the easier settings for beginner or easy.
+	</Function>
 	<Function name='SetJukeboxUsesModifiers' return='void' arguments='bool bUseMods'>
 		Sets if the Jukebox should use modifiers.
 	</Function>

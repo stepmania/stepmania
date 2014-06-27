@@ -151,57 +151,82 @@ end;
 --[[ end themeoption rows ]]
 
 --[[ game option rows ]]
+local fail_choices= { "Immediate","ImmediateContinue", "EndOfSong", "Off" }
 function GamePrefDefaultFail()
-	local t = {
+	return {
 		Name = "GamePrefDefaultFail";
 		LayoutType = "ShowAllInRow";
 		SelectType = "SelectOne";
 		OneChoiceForAllPlayers = true;
 		ExportOnChange = false;
-		Choices = { "Immediate","ImmediateContinue", "AtEnd", "Off" };
+		Choices = fail_choices;
 		LoadSelections = function(self, list, pn)
 			if ReadGamePrefFromFile("DefaultFail") ~= nil then
-				if GetGamePref("DefaultFail") then
-					if GetGamePref("DefaultFail") == "Immediate" then
-						list[1] = true;
-					elseif GetGamePref("DefaultFail") == "ImmediateContinue" then
-						list[2] = true;
-					elseif GetGamePref("DefaultFail") == "AtEnd" then
-						list[3] = true;
-					elseif GetGamePref("DefaultFail") == "Off" then
-						list[4] = true;
+				local default= GetGamePref("DefaultFail")
+				if default then
+					if default == "Immediate" then
+						list[1] = true
+					elseif default == "ImmediateContinue" then
+						list[2] = true
+					elseif default == "EndOfSong" or default == "AtEnd" then
+						list[3] = true
+					elseif default == "Off" then
+						list[4] = true
 					else
-						list[1] = true;
+						list[1] = true
 					end
-					-- list[table.find( list, GetGamePref("DefaultFail") )] = true;
 				else
-					list[1] = true;
-				end;
+					list[1] = true
+				end
 			else
-				WriteGamePrefToFile("DefaultFail","Immediate");
-				list[1] = true;
-			end;
+				WriteGamePrefToFile("DefaultFail","Immediate")
+				list[1] = true
+			end
 		end;
 		SaveSelections = function(self, list, pn)
-			-- This is so stupid.
-			local tChoices = { "Immediate","ImmediateContinue", "AtEnd", "Off" };
-			local val;
+			local val
 			if list[1] then
-				val = tChoices[1];
+				val = fail_choices[1]
 			elseif list[2] then
-				val = tChoices[2];
+				val = fail_choices[2]
 			elseif list[3] then
-				val = tChoices[3];
+				val = fail_choices[3]
 			elseif list[4] then
-				val = tChoices[4];
+				val = fail_choices[4]
 			else
-				val = tChoices[1];
+				val = fail_choices[1]
 			end
-			WriteGamePrefToFile("DefaultFail",val);
-			MESSAGEMAN:Broadcast("PreferenceSet", { Message == "Set Preference" } );
-			THEME:ReloadMetrics();
+			WriteGamePrefToFile("DefaultFail",val)
+			MESSAGEMAN:Broadcast("PreferenceSet", { Message == "Set Preference" } )
+			THEME:ReloadMetrics()
 		end;
-	};
-	setmetatable( t, t );
-	return t;
+	}
+end
+
+function SongPrefFail()
+	-- Apply the default fail type to any players that haven't had it applied.
+	SetFail()
+	return {
+		Name= "Fail",
+		LayoutType= "ShowAllInRow",
+		SelectType= "SelectOne",
+		OneChoiceForAllPlayers= false,
+		ExportOnChange= false,
+		Choices= fail_choices,
+		LoadSelections= function(self, list, pn)
+			local fail= GAMESTATE:GetPlayerState(pn):GetPlayerOptions("ModsLevel_Preferred"):FailSetting():sub(10)
+			for i, c in ipairs(self.Choices) do
+				if c == fail then
+					list[i]= true
+				end
+			end
+		end,
+		SaveSelections= function(self, list, pn)
+			for i, c in ipairs(self.Choices) do
+				if list[i] then
+					GAMESTATE:GetPlayerState(pn):GetPlayerOptions("ModsLevel_Preferred"):FailSetting("FailType_" .. c)
+				end
+			end
+		end
+	}
 end

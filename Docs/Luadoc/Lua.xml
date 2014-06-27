@@ -824,6 +824,7 @@
 			<Function name='SetCurrentSong'/>
 			<Function name='SetCurrentSteps'/>
 			<Function name='SetCurrentTrail'/>
+			<Function name='SetFailTypeExplicitlySet'/>
 			<Function name='SetJukeboxUsesModifiers'/>
 			<Function name='SetMultiplayer'/>
 			<Function name='SetNumMultiplayerNoteFields'/>
