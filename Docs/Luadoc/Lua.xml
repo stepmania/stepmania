@@ -479,22 +479,22 @@
 			<Function name='SetTextureMode'/>
 		</Class>
 		<Class base='Actor' name='ActorMultiVertex'>
-			<Function name='SetVertex'/>
-			<Function name='SetVertices'/>
-			<Function name='SetNumVertices'/>
-			<Function name='GetNumVertices'/>
-			<Function name='SetEffectMode'/>
-			<Function name='SetTextureMode'/>
-			<Function name='SetLineWidth'/>
-			<Function name='SetDrawState'/>
-			<Function name='GetDestDrawMode'/>
-			<Function name='GetDestFirstToDraw'/>
-			<Function name='GetDestNumToDraw'/>
 			<Function name='GetCurrDrawMode'/>
 			<Function name='GetCurrFirstToDraw'/>
 			<Function name='GetCurrNumToDraw'/>
-			<Function name='SetTexture'/>
+			<Function name='GetDestDrawMode'/>
+			<Function name='GetDestFirstToDraw'/>
+			<Function name='GetDestNumToDraw'/>
+			<Function name='GetNumVertices'/>
 			<Function name='LoadTexture'/>
+			<Function name='SetDrawState'/>
+			<Function name='SetEffectMode'/>
+			<Function name='SetLineWidth'/>
+			<Function name='SetNumVertices'/>
+			<Function name='SetTexture'/>
+			<Function name='SetTextureMode'/>
+			<Function name='SetVertex'/>
+			<Function name='SetVertices'/>
 		</Class>
 		<Class base='Actor' name='ActorProxy'>
 			<Function name='GetTarget'/>
@@ -1485,18 +1485,18 @@
 			<Function name='WasLoadedFromAdditionalSongs'/>
 		</Class>
 		<Class name='SongOptions'>
-			<Function name='LifeSetting'/>
-			<Function name='DrainSetting'/>
-			<Function name='AutosyncSetting'/>
-			<Function name='BatteryLives'/>
 			<Function name='AssistClap'/>
 			<Function name='AssistMetronome'/>
-			<Function name='StaticBackground'/>
-			<Function name='RandomBGOnly'/>
-			<Function name='SaveScore'/>
-			<Function name='SaveReplay'/>
-			<Function name='MusicRate'/>
+			<Function name='AutosyncSetting'/>
+			<Function name='BatteryLives'/>
+			<Function name='DrainSetting'/>
 			<Function name='Haste'/>
+			<Function name='LifeSetting'/>
+			<Function name='MusicRate'/>
+			<Function name='RandomBGOnly'/>
+			<Function name='SaveReplay'/>
+			<Function name='SaveScore'/>
+			<Function name='StaticBackground'/>
 		</Class>
 		<Class name='SongPosition'>
 			<Function name='GetCurBPS'/>
@@ -1526,10 +1526,10 @@
 			<Function name='SetAllStateDelays'/>
 			<Function name='SetCustomImageRect'/>
 			<Function name='SetCustomPosCoords'/>
-			<Function name='StopUsingCustomPosCoords'/>
 			<Function name='SetEffectMode'/>
 			<Function name='SetSecondsIntoAnimation'/>
 			<Function name='SetTexture'/>
+			<Function name='StopUsingCustomPosCoords'/>
 			<Function name='addimagecoords'/>
 			<Function name='cropto'/>
 			<Function name='customtexturerect'/>
@@ -1922,17 +1922,19 @@
 		</Enum>
 		<Enum name='FailType'>
 			<EnumValue name='&apos;FailType_Immediate&apos;' value='0'/>
-			<EnumValue name='&apos;FailType_ImmediateContinue&apos;' value='0'/>
-			<EnumValue name='&apos;FailType_EndOfSong&apos;' value='0'/>
-			<EnumValue name='&apos;FailType_Off&apos;' value='0'/>
+			<EnumValue name='&apos;FailType_ImmediateContinue&apos;' value='1'/>
+			<EnumValue name='&apos;FailType_EndOfSong&apos;' value='2'/>
+			<EnumValue name='&apos;FailType_Off&apos;' value='3'/>
 		</Enum>
 		<Enum name='FileType'>
 			<EnumValue name='&apos;FileType_Bitmap&apos;' value='0'/>
-			<EnumValue name='&apos;FileType_Sound&apos;' value='1'/>
-			<EnumValue name='&apos;FileType_Movie&apos;' value='2'/>
-			<EnumValue name='&apos;FileType_Directory&apos;' value='3'/>
-			<EnumValue name='&apos;FileType_Lua&apos;' value='4'/>
-			<EnumValue name='&apos;FileType_Model&apos;' value='5'/>
+			<EnumValue name='&apos;FileType_Sprite&apos;' value='1'/>
+			<EnumValue name='&apos;FileType_Sound&apos;' value='2'/>
+			<EnumValue name='&apos;FileType_Movie&apos;' value='3'/>
+			<EnumValue name='&apos;FileType_Directory&apos;' value='4'/>
+			<EnumValue name='&apos;FileType_Xml&apos;' value='5'/>
+			<EnumValue name='&apos;FileType_Model&apos;' value='6'/>
+			<EnumValue name='&apos;FileType_Lua&apos;' value='7'/>
 		</Enum>
 		<Enum name='GameController'>
 			<EnumValue name='&apos;GameController_1&apos;' value='0'/>
@@ -2442,6 +2444,6 @@
 		<Constant name='right' value='&apos;HorizAlign_Right&apos;'/>
 		<Constant name='top' value='&apos;VertAlign_Top&apos;'/>
 	</Constants>
-	<Version>StepMania v5.0 beta 2a</Version>
-	<Date>2013-08-31</Date>
+	<Version>StepMania v5.0 beta 3</Version>
+	<Date>2014-06-27</Date>
 </Lua>
