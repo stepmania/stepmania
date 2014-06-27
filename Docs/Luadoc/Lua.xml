@@ -5,6 +5,7 @@
 	<GlobalFunctions>
 		<Function name='AllowOptionsMenu'/>
 		<Function name='Alpha'/>
+		<Function name='ArbitrarySpeedMods'/>
 		<Function name='AreStagePlayerModsForced'/>
 		<Function name='AreStageSongModsForced'/>
 		<Function name='ArgsIfPlayerJoinedOrNil'/>
@@ -65,8 +66,8 @@
 		<Function name='GetTapPosition'/>
 		<Function name='GetThemeAspectRatio'/>
 		<Function name='GetThemePref'/>
-		<Function name='GetTimingDifficulty'/>
 		<Function name='GetTimeSinceStart'/>
+		<Function name='GetTimingDifficulty'/>
 		<Function name='GetTitleSafeH'/>
 		<Function name='GetTitleSafeV'/>
 		<Function name='GetUnlockEntryIndexToCelebrate'/>
@@ -104,6 +105,7 @@
 		<Function name='LoadActorWithParams'/>
 		<Function name='LoadFallbackB'/>
 		<Function name='LoadFont'/>
+		<Function name='LoadProfileCustom'/>
 		<Function name='LoadSongBackground'/>
 		<Function name='LocalizeOptionItem'/>
 		<Function name='Minute'/>
@@ -134,11 +136,13 @@
 		<Function name='ReadGamePrefFromFile'/>
 		<Function name='ReadPrefFromFile'/>
 		<Function name='ReportStyle'/>
+		<Function name='ResetDefaultFail'/>
 		<Function name='ResolveRelativePath'/>
 		<Function name='RoutineSkinP1'/>
 		<Function name='RoutineSkinP2'/>
 		<Function name='SMOnlineScreen'/>
 		<Function name='Saturation'/>
+		<Function name='SaveProfileCustom'/>
 		<Function name='SaveScreenshot'/>
 		<Function name='ScoreKeeperClass'/>
 		<Function name='ScreenMetric'/>
@@ -162,7 +166,10 @@
 		<Function name='SongMeterDisplayCommand'/>
 		<Function name='SongMeterDisplayX'/>
 		<Function name='SongMeterDisplayY'/>
+		<Function name='SongPrefFail'/>
 		<Function name='SortOrderToLocalizedString'/>
+		<Function name='SpeedModIncMultiple'/>
+		<Function name='SpeedModIncSize'/>
 		<Function name='SpeedMods'/>
 		<Function name='StageAwardToLocalizedString'/>
 		<Function name='StageToColor'/>
@@ -498,6 +505,7 @@
 			<Function name='GetDestinationItem'/>
 			<Function name='GetFullScrollLengthSeconds'/>
 			<Function name='GetNumItems'/>
+			<Function name='GetSecondsPauseBetweenItems'/>
 			<Function name='GetSecondsToDestination'/>
 			<Function name='PositionItems'/>
 			<Function name='ScrollThroughAllItems'/>
@@ -809,8 +817,8 @@
 			<Function name='IsPlayerEnabled'/>
 			<Function name='IsSideJoined'/>
 			<Function name='IsWinner'/>
-			<Function name='JoinPlayer'/>
 			<Function name='JoinInput'/>
+			<Function name='JoinPlayer'/>
 			<Function name='LoadProfiles'/>
 			<Function name='PlayerIsUsingModifier'/>
 			<Function name='PlayersCanJoin'/>
@@ -833,8 +841,8 @@
 			<Function name='SetPreferredSongGroup'/>
 			<Function name='SetSongOptions'/>
 			<Function name='SetTemporaryEventMode'/>
-			<Function name='StoreRankingName'/>
 			<Function name='ShowW1'/>
+			<Function name='StoreRankingName'/>
 			<Function name='UnjoinPlayer'/>
 		</Class>
 		<Class base='ActorFrame' name='GradeDisplay'>
@@ -939,13 +947,13 @@
 		<Class name='NoteSkinManager'>
 			<Function name='DoesNoteSkinExist'/>
 			<Function name='GetMetric'/>
-			<Function name='GetMetricForNoteSkin'/>
 			<Function name='GetMetricA'/>
 			<Function name='GetMetricAForNoteSkin'/>
 			<Function name='GetMetricB'/>
 			<Function name='GetMetricBForNoteSkin'/>
 			<Function name='GetMetricF'/>
 			<Function name='GetMetricFForNoteSkin'/>
+			<Function name='GetMetricForNoteSkin'/>
 			<Function name='GetMetricI'/>
 			<Function name='GetMetricIForNoteSkin'/>
 			<Function name='GetNoteSkinNames'/>
@@ -1142,6 +1150,7 @@
 			<Function name='AddScreenshot'/>
 			<Function name='GetAllUsedHighScoreNames'/>
 			<Function name='GetCaloriesBurnedToday'/>
+			<Function name='GetCategoryHighScoreList'/>
 			<Function name='GetCharacter'/>
 			<Function name='GetCoursesActual'/>
 			<Function name='GetCoursesPercentComplete'/>
@@ -1365,8 +1374,9 @@
 		</Class>
 		<Class base='Screen' name='ScreenWithMenuElements'>
 			<Function name='Cancel'/>
-			<Function name='StartTransitioningScreen'/>
+			<Function name='IsTransitioning'/>
 			<Function name='SetAllowLateJoin'/>
+			<Function name='StartTransitioningScreen'/>
 		</Class>
 		<Class base='ScreenWithMenuElements' name='ScreenWithMenuElementsSimple'/>
 		<Class name='Song'>
@@ -1549,6 +1559,7 @@
 			<Function name='GetBestFinalGrade'/>
 			<Function name='GetBestGrade'/>
 			<Function name='GetCurStageStats'/>
+			<Function name='GetFinalEvalStageStats'/>
 			<Function name='GetFinalGrade'/>
 			<Function name='GetPlayedStageStats'/>
 			<Function name='GetStagesPlayed'/>
@@ -1590,11 +1601,11 @@
 		</Class>
 		<Class name='Style'>
 			<Function name='ColumnsPerPlayer'/>
+			<Function name='GetColumnDrawOrder'/>
+			<Function name='GetColumnInfo'/>
 			<Function name='GetName'/>
 			<Function name='GetStepsType'/>
 			<Function name='GetStyleType'/>
-			<Function name='GetColumnInfo'/>
-			<Function name='GetColumnDrawOrder'/>
 			<Function name='LockedDifficulty'/>
 			<Function name='NeedsZoomOutWith2Players'/>
 		</Class>
@@ -1788,6 +1799,7 @@
 		<Singleton class='RageFileManager' name='FILEMAN'/>
 		<Singleton class='GameManager' name='GAMEMAN'/>
 		<Singleton class='GameState' name='GAMESTATE'/>
+		<Singleton class='ArchHooks' name='HOOKS'/>
 		<Singleton class='InputFilter' name='INPUTFILTER'/>
 		<Singleton class='RageInput' name='INPUTMAN'/>
 		<Singleton class='MemoryCardManager' name='MEMCARDMAN'/>
@@ -1981,6 +1993,7 @@
 			<EnumValue name='&apos;HoldNoteScore_None&apos;' value='0'/>
 			<EnumValue name='&apos;HoldNoteScore_LetGo&apos;' value='1'/>
 			<EnumValue name='&apos;HoldNoteScore_Held&apos;' value='2'/>
+			<EnumValue name='&apos;HoldNoteScore_MissedHold&apos;' value='3'/>
 		</Enum>
 		<Enum name='HorizAlign'>
 			<EnumValue name='&apos;HorizAlign_Left&apos;' value='0'/>
@@ -2035,7 +2048,7 @@
 			<EnumValue name='&apos;ModsLevel_Preferred&apos;' value='0'/>
 			<EnumValue name='&apos;ModsLevel_Stage&apos;' value='1'/>
 			<EnumValue name='&apos;ModsLevel_Song&apos;' value='2'/>
-			<EnumValue name='&apos;ModsLevel_Current&apos;' value='2'/>
+			<EnumValue name='&apos;ModsLevel_Current&apos;' value='3'/>
 		</Enum>
 		<Enum name='Month'>
 			<EnumValue name='&apos;Month_January&apos;' value='0'/>
@@ -2184,6 +2197,12 @@
 			<EnumValue name='&apos;RandomBackgroundMode_Animations&apos;' value='1'/>
 			<EnumValue name='&apos;RandomBackgroundMode_RandomMovies&apos;' value='2'/>
 		</Enum>
+		<Enum name='RankingCategory'>
+			<EnumValue name='&apos;RankingCategory_a&apos;' value='0'/>
+			<EnumValue name='&apos;RankingCategory_b&apos;' value='1'/>
+			<EnumValue name='&apos;RankingCategory_c&apos;' value='2'/>
+			<EnumValue name='&apos;RankingCategory_d&apos;' value='3'/>
+		</Enum>
 		<Enum name='RankingType'>
 			<EnumValue name='&apos;RankingType_Category&apos;' value='0'/>
 			<EnumValue name='&apos;RankingType_Course&apos;' value='1'/>
@@ -2236,6 +2255,11 @@
 			<EnumValue name='&apos;SortOrder_Length&apos;' value='22'/>
 			<EnumValue name='&apos;SortOrder_Roulette&apos;' value='23'/>
 			<EnumValue name='&apos;SortOrder_Recent&apos;' value='24'/>
+		</Enum>
+		<Enum name='SoundEffectType'>
+			<EnumValue name='&apos;SoundEffectType_Off&apos;' value='0'/>
+			<EnumValue name='&apos;SoundEffectType_Speed&apos;' value='1'/>
+			<EnumValue name='&apos;SoundEffectType_Pitch&apos;' value='2'/>
 		</Enum>
 		<Enum name='Stage'>
 			<EnumValue name='&apos;Stage_1st&apos;' value='0'/>
