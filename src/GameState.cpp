@@ -1207,7 +1207,16 @@ void GameState::SetCurrentStyle( const Style *pStyle )
 
 bool GameState::SetCompatibleStyle(StepsType stype)
 {
-	if(CommonMetrics::AUTO_SET_STYLE)
+	bool style_incompatible= false;
+	if(!m_pCurStyle)
+	{
+		style_incompatible= true;
+	}
+	else
+	{
+		style_incompatible= stype != m_pCurStyle->m_StepsType;
+	}
+	if(CommonMetrics::AUTO_SET_STYLE && style_incompatible)
 	{
 		const Style* compatible_style= GAMEMAN->GetFirstCompatibleStyle(
 			m_pCurGame, GetNumSidesJoined(), stype);
