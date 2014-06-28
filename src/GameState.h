@@ -128,6 +128,7 @@ public:
 	const Game*	GetCurrentGame();
 	const Style*	GetCurrentStyle() const;
 	void	SetCurrentStyle( const Style *pStyle );
+	bool SetCompatibleStyle(StepsType stype);
 
 	void GetPlayerInfo( PlayerNumber pn, bool& bIsEnabledOut, bool& bIsHumanOut );
 	bool IsPlayerEnabled( PlayerNumber pn ) const;

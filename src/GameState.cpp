@@ -1205,6 +1205,30 @@ void GameState::SetCurrentStyle( const Style *pStyle )
 	}
 }
 
+bool GameState::SetCompatibleStyle(StepsType stype)
+{
+	bool style_incompatible= false;
+	if(!m_pCurStyle)
+	{
+		style_incompatible= true;
+	}
+	else
+	{
+		style_incompatible= stype != m_pCurStyle->m_StepsType;
+	}
+	if(CommonMetrics::AUTO_SET_STYLE && style_incompatible)
+	{
+		const Style* compatible_style= GAMEMAN->GetFirstCompatibleStyle(
+			m_pCurGame, GetNumSidesJoined(), stype);
+		if(!compatible_style)
+		{
+			return false;
+		}
+		SetCurrentStyle(compatible_style);
+	}
+	return stype == m_pCurStyle->m_StepsType;
+}
+
 bool GameState::IsPlayerEnabled( PlayerNumber pn ) const
 {
 	// In rave, all players are present.  Non-human players are CPU controlled.
@@ -2256,6 +2280,17 @@ public:
 		else { Song *pS = Luna<Song>::check( L, 1, true ); p->m_pCurSong.Set( pS ); }
 		return 0;
 	}
+	static void SetCompatibleStyleOrError(T* p, lua_State* L, StepsType stype)
+	{
+		if(!p->SetCompatibleStyle(stype))
+		{
+			luaL_error(L, "No compatible style for steps/trail.");
+		}
+		if(!p->m_pCurStyle)
+		{
+			luaL_error(L, "No style set and AutoSetStyle is false, cannot set steps/trail.");
+		}
+	}
 	static int GetCurrentSteps( T* p, lua_State *L )
 	{
 		PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);
@@ -2267,10 +2302,16 @@ public:
 	static int SetCurrentSteps( T* p, lua_State *L )
 	{
 		PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);
-		if( lua_isnil(L,2) )	{ p->m_pCurSteps[pn].Set( NULL ); }
-		else					{ Steps *pS = Luna<Steps>::check(L,2); p->m_pCurSteps[pn].Set( pS ); }
-		ASSERT( p->m_pCurSteps[pn] == NULL ||
-			p->m_pCurSteps[pn]->m_StepsType == p->m_pCurStyle->m_StepsType);
+		if(lua_isnil(L,2))
+		{
+			p->m_pCurSteps[pn].Set(NULL);
+		}
+		else
+		{
+			Steps *pS = Luna<Steps>::check(L,2);
+			SetCompatibleStyleOrError(p, L, pS->m_StepsType);
+			p->m_pCurSteps[pn].Set(pS);
+		}
 		return 0;
 	}
 	static int GetCurrentCourse( T* p, lua_State *L )		{ if(p->m_pCurCourse) p->m_pCurCourse->PushSelf(L); else lua_pushnil(L); return 1; }
@@ -2291,8 +2332,16 @@ public:
 	static int SetCurrentTrail( T* p, lua_State *L )
 	{
 		PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);
-		if( lua_isnil(L,2) )	{ p->m_pCurTrail[pn].Set( NULL ); }
-		else					{ Trail *pS = Luna<Trail>::check(L,2); p->m_pCurTrail[pn].Set( pS ); }
+		if(lua_isnil(L,2))
+		{
+			p->m_pCurTrail[pn].Set(NULL);
+		}
+		else
+		{
+			Trail *pS = Luna<Trail>::check(L,2);
+			SetCompatibleStyleOrError(p, L, pS->m_StepsType);
+			p->m_pCurTrail[pn].Set(pS);
+		}
 		return 0;
 	}
 	static int GetPreferredSong( T* p, lua_State *L )		{ if(p->m_pPreferredSong) p->m_pPreferredSong->PushSelf(L); else lua_pushnil(L); return 1; }
