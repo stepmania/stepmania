@@ -1757,6 +1757,24 @@
 			<Function name='LoadAllCommandsFromName'/>
 			<Function name='ResolvePath'/>
 		</Namespace>
+		<Namespace name='ArrowEffects'>
+			<Function name='Update'/>
+			<Function name='GetYOffset'/>
+			<Function name='GetYPos'/>
+			<Function name='GetYOffsetFromYPos'/>
+			<Function name='GetXPos'/>
+			<Function name='GetZPos'/>
+			<Function name='GetRotationX'/>
+			<Function name='GetRotationY'/>
+			<Function name='GetRotationZ'/>
+			<Function name='ReceptorGetRotationZ'/>
+			<Function name='GetAlpha'/>
+			<Function name='GetGlow'/>
+			<Function name='GetBrightness'/>
+			<Function name='NeedZBuffer'/>
+			<Function name='GetZoom'/>
+			<Function name='GetFrameWidthScale'/>
+		</Namespace>
 		<Namespace name='Enum'>
 			<Function name='Compare'/>
 			<Function name='GetName'/>
