@@ -3441,6 +3441,9 @@ save yourself some time, copy this for undocumented things:
 	<Function name='SetCharacter' return='void' arguments='string sCharID'>
 		Sets the current <Link class='Character' /> for the Profile.
 	</Function>
+	<Function name='SetDisplayName' return='void' arguments='string name'>
+		Sets the display name of the profile to name.
+	</Function>
 	<Function name='SetGoalCalories' return='void' arguments='int iCals'>
 		Sets the goal to <code>iCals</code> calories.
 	</Function>

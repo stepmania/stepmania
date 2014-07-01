@@ -1202,6 +1202,7 @@
 			<Function name='IsCodeUnlocked'/>
 			<Function name='SetBirthYear'/>
 			<Function name='SetCharacter'/>
+			<Function name='SetDisplayName'/>
 			<Function name='SetGoalCalories'/>
 			<Function name='SetGoalSeconds'/>
 			<Function name='SetGoalType'/>

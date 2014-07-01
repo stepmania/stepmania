@@ -2374,6 +2374,7 @@ public:
 	{
 		ADD_METHOD( AddScreenshot );
 		ADD_METHOD( GetDisplayName );
+		ADD_METHOD( SetDisplayName );
 		ADD_METHOD( GetLastUsedHighScoreName );
 		ADD_METHOD( SetLastUsedHighScoreName );
 		ADD_METHOD( GetAllUsedHighScoreNames );
