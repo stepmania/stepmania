@@ -73,6 +73,8 @@ public:
 	 * Note: there are probably a lot of variables. */
 	Profile(): m_sDisplayName(""), m_sCharacterID(""),
 		m_sLastUsedHighScoreName(""), m_iWeightPounds(0),
+		m_Voomax(0), m_BirthYear(0), m_IgnoreStepCountCalories(false),
+		m_IsMale(true),
 		m_sGuid(MakeGuid()), m_sDefaultModifiers(),
 		m_SortOrder(SortOrder_Invalid),
 		m_LastDifficulty(Difficulty_Invalid),
@@ -120,6 +122,7 @@ public:
 	RString GetDisplayTotalCaloriesBurned() const;		// remove me and use Lua instead
 	RString GetDisplayTotalCaloriesBurnedToday() const;	// remove me and use Lua instead
 	int GetCalculatedWeightPounds() const;	// returns a default value if m_iWeightPounds isn't set
+	int GetAge() const; // returns a default value if m_Age isn't set
 	float GetCaloriesBurnedToday() const;
 	int GetTotalNumSongsPassed() const;
 	int GetTotalStepsWithTopGrade( StepsType st, Difficulty d, Grade g ) const;
@@ -139,6 +142,8 @@ public:
 
 	void AddStepTotals( int iNumTapsAndHolds, int iNumJumps, int iNumHolds, int iNumRolls, int iNumMines, 
 			   int iNumHands, int iNumLifts, float fCaloriesBurned );
+	void AddCaloriesToDailyTotal(float cals);
+	float CalculateCaloriesFromHeartRate(float HeartRate, float Duration);
 
 	bool IsMachine() const;
 
@@ -152,6 +157,14 @@ public:
 	 * so that it can be ready quickly. */
 	RString m_sLastUsedHighScoreName;
 	int m_iWeightPounds;	// 0 == not set
+	// Voomax and BirthYear are used for calculating calories from heart rate.
+	float m_Voomax; // 0 == not set
+	int m_BirthYear; // 0 == not set
+	// m_IgnoreStepCountCalories is so that the step count based calorie
+	// counter can be ignored in favor of calculating calories from heart rate
+	// and voomax.
+	bool m_IgnoreStepCountCalories;
+	bool m_IsMale; // Used solely for calculating calories from heart rate.
 	//RString m_sProfileImageName;	// todo: add a default image -aj
 
 	// General data

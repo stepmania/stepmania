@@ -3284,11 +3284,23 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 </Class>
 <Class name='Profile'>
+	<Function name='AddCaloriesToDailyTotal' return='void' arguments='float cals'>
+		Adds cals to the daily total.
+	</Function>
 	<Function name='AddScreenshot' return='void' arguments='HighScore hs, string filename'>
 		Adds a screenshot entry to the profile.  filename must be the full path of the screenshot, as returned by SaveScreenshot.
 	</Function>
+	<Function name='CalculateCaloriesFromHeartRate' return='float' arguments='float heart_bpm, float duration'>
+		Calculates the number of calories burned based on the heart rate (in beats per minute), the duration (in seconds), and data in the profile.
+	</Function>
+	<Function name='GetAge' return='int' arguments=''>
+		Returns the age.
+	</Function>
 	<Function name='GetAllUsedHighScoreNames' return= '{string}' arguments='void'>
 		Returns a table of all high score names that have been used on this profile.
+	</Function>
+	<Function name='GetBirthYear' return='int' arguments=''>
+		Returns the birth year.
 	</Function>
 	<Function name='GetCaloriesBurnedToday' return='float' arguments=''>
 		Returns the number of calories burned during the current day.
@@ -3325,6 +3337,12 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='GetGUID' return='string' arguments=''>
 		Returns the GUID of this Profile.
+	</Function>
+	<Function name='GetIgnoreStepCountCalories' return='bool' arguments=''>
+		Returns whether this profile ignores the step count based calorie calculation.
+	</Function>
+	<Function name='GetIsMale' return='bool' arguments=''>
+		Returns whether this profile uses the male formula when CalculateCaloriesFromHeartRate is used.
 	</Function>
 	<Function name='GetHighScoreList' return='HighScoreList' arguments='Song s, Steps st'>
 		Gets the profile's HighScoreList for a specified Song and Steps. (Alternate arguments for Courses: <code>Course c, Trail t</code>)
@@ -3405,6 +3423,9 @@ save yourself some time, copy this for undocumented things:
 	<Function name='GetUserTable' return='table' arguments=''>
 		Returns the user table for this Profile.
 	</Function>
+	<Function name='GetVoomax' return='float' arguments=''>
+		Returns the VO2 max for this profile.
+	</Function>
 	<Function name='GetWeightPounds' return='int' arguments=''>
 		Returns how much the player weighs.
 	</Function>
@@ -3414,8 +3435,14 @@ save yourself some time, copy this for undocumented things:
 	<Function name='IsCodeUnlocked' return='bool' arguments='string sUnlockEntryID'>
 		Returns <code>true</code> if the specified code <code>sUnlockEntryID</code> is unlocked.
 	</Function>
+	<Function name='SetBirthYear' return='void' arguments='int year'>
+		Sets the birth year of the profile.
+	</Function>
 	<Function name='SetCharacter' return='void' arguments='string sCharID'>
 		Sets the current <Link class='Character' /> for the Profile.
+	</Function>
+	<Function name='SetDisplayName' return='void' arguments='string name'>
+		Sets the display name of the profile to name.
 	</Function>
 	<Function name='SetGoalCalories' return='void' arguments='int iCals'>
 		Sets the goal to <code>iCals</code> calories.
@@ -3426,8 +3453,17 @@ save yourself some time, copy this for undocumented things:
 	<Function name='SetGoalType' return='void' arguments='GoalType gt'>
 		Sets the current goal type to <code>gt</code>.
 	</Function>
+	<Function name='SetIgnoreStepCountCalories' return='void' arguments='bool ignore'>
+		Sets whether this profile ignores the step count based calorie counting.
+	</Function>
+	<Function name='SetIsMale' return='void' arguments='bool male'>
+		Sets whether this profile uses the male formula when CalculateCaloriesFromHeartRate is used.
+	</Function>
 	<Function name='SetLastUsedHighScoreName' return='void' arguments='string name'>
 		Sets last used high score name.
+	</Function>
+	<Function name='SetVoomax' return='void' arguments='float voo'>
+		Sets the VO2 max for the profile.  0 is treated as unset.
 	</Function>
 	<Function name='SetWeightPounds' return='void' arguments='int weightPounds'>
 		Sets how much the player weighs (in pounds) to <code>weightPounds</code>.

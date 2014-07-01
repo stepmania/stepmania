@@ -1147,8 +1147,12 @@
 			<Function name='SetPreferenceToDefault'/>
 		</Class>
 		<Class name='Profile'>
+			<Function name='AddCaloriesToDailyTotal'/>
 			<Function name='AddScreenshot'/>
+			<Function name='CalculateCaloriesFromHeartRate'/>
+			<Function name='GetAge'/>
 			<Function name='GetAllUsedHighScoreNames'/>
+			<Function name='GetBirthYear'/>
 			<Function name='GetCaloriesBurnedToday'/>
 			<Function name='GetCategoryHighScoreList'/>
 			<Function name='GetCharacter'/>
@@ -1163,6 +1167,8 @@
 			<Function name='GetGoalType'/>
 			<Function name='GetHighScoreList'/>
 			<Function name='GetHighScoreListIfExists'/>
+			<Function name='GetIgnoreStepCountCalories'/>
+			<Function name='GetIsMale'/>
 			<Function name='GetLastPlayedCourse'/>
 			<Function name='GetLastPlayedSong'/>
 			<Function name='GetLastUsedHighScoreName'/>
@@ -1190,15 +1196,21 @@
 			<Function name='GetTotalTapsAndHolds'/>
 			<Function name='GetTotalTrailsWithTopGrade'/>
 			<Function name='GetUserTable'/>
+			<Function name='GetVoomax'/>
 			<Function name='GetWeightPounds'/>
 			<Function name='HasPassedAnyStepsInSong'/>
 			<Function name='IsCodeUnlocked'/>
+			<Function name='SetBirthYear'/>
 			<Function name='SetCharacter'/>
+			<Function name='SetDisplayName'/>
 			<Function name='SetGoalCalories'/>
 			<Function name='SetGoalSeconds'/>
 			<Function name='SetGoalType'/>
+			<Function name='SetIgnoreStepCountCalories'/>
+			<Function name='SetIsMale'/>
 			<Function name='SetLastUsedHighScoreName'/>
 			<Function name='SetWeightPounds'/>
+			<Function name='SetVoomax'/>
 		</Class>
 		<Class name='ProfileManager'>
 			<Function name='GetLocalProfile'/>
