@@ -51,7 +51,8 @@ static ThemeMetric<RString> UNLOCK_AUTH_STRING( "Profile", "UnlockAuthString" );
 	* 5 /* HighScores per Steps */		\
 	* 1024 /* size in bytes of a HighScores XNode */
 
-const unsigned int DEFAULT_WEIGHT_POUNDS	= 120;
+const int DEFAULT_WEIGHT_POUNDS	= 120;
+const float DEFAULT_BIRTH_YEAR= 1995;
 
 #if defined(_MSC_VER)
 #pragma warning (disable : 4706) // assignment within conditional expression
@@ -85,6 +86,10 @@ void Profile::InitEditableData()
 	m_sCharacterID = "";
 	m_sLastUsedHighScoreName = "";
 	m_iWeightPounds = 0;
+	m_Voomax= 0;
+	m_BirthYear= 0;
+	m_IgnoreStepCountCalories= false;
+	m_IsMale= true;
 }
 
 void Profile::ClearStats()
@@ -219,6 +224,15 @@ int Profile::GetCalculatedWeightPounds() const
 		return DEFAULT_WEIGHT_POUNDS;
 	else 
 		return m_iWeightPounds;
+}
+
+int Profile::GetAge() const
+{
+	if(m_BirthYear == 0)
+	{
+		return (GetLocalTime().tm_year+1900) - DEFAULT_BIRTH_YEAR;
+	}
+	return (GetLocalTime().tm_year+1900) - m_BirthYear;
 }
 
 RString Profile::GetDisplayTotalCaloriesBurned() const
@@ -954,6 +968,10 @@ ProfileLoadResult Profile::LoadStatsXmlFromNode( const XNode *xml, bool bIgnoreE
 	RString sCharacterID = m_sCharacterID;
 	RString sLastUsedHighScoreName = m_sLastUsedHighScoreName;
 	int iWeightPounds = m_iWeightPounds;
+	float Voomax= m_Voomax;
+	int BirthYear= m_BirthYear;
+	bool IgnoreStepCountCalories= m_IgnoreStepCountCalories;
+	bool IsMale= m_IsMale;
 
 	LOAD_NODE( GeneralData );
 	LOAD_NODE( SongScores );
@@ -968,6 +986,10 @@ ProfileLoadResult Profile::LoadStatsXmlFromNode( const XNode *xml, bool bIgnoreE
 		m_sCharacterID = sCharacterID;
 		m_sLastUsedHighScoreName = sLastUsedHighScoreName;
 		m_iWeightPounds = iWeightPounds;
+		m_Voomax= Voomax;
+		m_BirthYear= BirthYear;
+		m_IgnoreStepCountCalories= IgnoreStepCountCalories;
+		m_IsMale= IsMale;
 	}
 
 	return ProfileLoadResult_Success;
@@ -1095,6 +1117,10 @@ void Profile::SaveEditableDataToDir( RString sDir ) const
 	ini.SetValue( "Editable", "CharacterID",			m_sCharacterID );
 	ini.SetValue( "Editable", "LastUsedHighScoreName",		m_sLastUsedHighScoreName );
 	ini.SetValue( "Editable", "WeightPounds",			m_iWeightPounds );
+	ini.SetValue( "Editable", "Voomax", m_Voomax );
+	ini.SetValue( "Editable", "BirthYear", m_BirthYear );
+	ini.SetValue( "Editable", "IgnoreStepCountCalories", m_IgnoreStepCountCalories );
+	ini.SetValue( "Editable", "IsMale", m_IsMale );
 
 	ini.WriteFile( sDir + EDITABLE_INI );
 }
@@ -1110,8 +1136,12 @@ XNode* Profile::SaveGeneralDataCreateNode() const
 	pGeneralDataNode->AppendChild( "CharacterID",			m_sCharacterID );
 	pGeneralDataNode->AppendChild( "LastUsedHighScoreName",		m_sLastUsedHighScoreName );
 	pGeneralDataNode->AppendChild( "WeightPounds",			m_iWeightPounds );
+	pGeneralDataNode->AppendChild( "Voomax", m_Voomax );
+	pGeneralDataNode->AppendChild( "BirthYear", m_BirthYear );
+	pGeneralDataNode->AppendChild( "IgnoreStepCountCalories", m_IgnoreStepCountCalories );
+	pGeneralDataNode->AppendChild( "IsMale", m_IsMale );
+
 	pGeneralDataNode->AppendChild( "IsMachine",			IsMachine() );
-	pGeneralDataNode->AppendChild( "IsWeightSet",			m_iWeightPounds != 0 );
 
 	pGeneralDataNode->AppendChild( "Guid",				m_sGuid );
 	pGeneralDataNode->AppendChild( "SortOrder",			SortOrderToString(m_SortOrder) );
@@ -1274,6 +1304,10 @@ ProfileLoadResult Profile::LoadEditableDataFromDir( RString sDir )
 	ini.GetValue( "Editable", "CharacterID",			m_sCharacterID );
 	ini.GetValue( "Editable", "LastUsedHighScoreName",		m_sLastUsedHighScoreName );
 	ini.GetValue( "Editable", "WeightPounds",			m_iWeightPounds );
+	ini.GetValue( "Editable", "Voomax", m_Voomax );
+	ini.GetValue( "Editable", "BirthYear", m_BirthYear );
+	ini.GetValue( "Editable", "IgnoreStepCountCalories", m_IgnoreStepCountCalories );
+	ini.GetValue( "Editable", "IsMale", m_IsMale );
 
 	// This is data that the user can change, so we have to validate it.
 	wstring wstr = RStringToWstring(m_sDisplayName);
@@ -1298,6 +1332,10 @@ void Profile::LoadGeneralDataFromNode( const XNode* pNode )
 	pNode->GetChildValue( "CharacterID",				m_sCharacterID );
 	pNode->GetChildValue( "LastUsedHighScoreName",			m_sLastUsedHighScoreName );
 	pNode->GetChildValue( "WeightPounds",				m_iWeightPounds );
+	pNode->GetChildValue( "Voomax", m_Voomax );
+	pNode->GetChildValue( "BirthYear", m_BirthYear );
+	pNode->GetChildValue( "IgnoreStepCountCalories", m_IgnoreStepCountCalories );
+	pNode->GetChildValue( "IsMale", m_IsMale );
 	pNode->GetChildValue( "Guid",					m_sGuid );
 	pNode->GetChildValue( "SortOrder",				s );	m_SortOrder = StringToSortOrder( s );
 	pNode->GetChildValue( "LastDifficulty",				s );	m_LastDifficulty = StringToDifficulty( s );
@@ -1451,10 +1489,94 @@ void Profile::AddStepTotals( int iTotalTapsAndHolds, int iTotalJumps, int iTotal
 	m_iTotalHands += iTotalHands;
 	m_iTotalLifts += iTotalLifts;
 
-	m_fTotalCaloriesBurned += fCaloriesBurned;
+	if(!m_IgnoreStepCountCalories)
+	{
+		m_fTotalCaloriesBurned += fCaloriesBurned;
+		DateTime date = DateTime::GetNowDate();
+		m_mapDayToCaloriesBurned[date].fCals += fCaloriesBurned;
+	}
+}
 
+// It's a bit unclean to have this flag for routing around the old step count
+// based calorie calculation, but I can't think of a better way to do it.
+// AddStepTotals is called (through a couple layers) by CommitStageStats at
+// the end of ScreenGameplay, so it can't be moved to somewhere else.  The
+// player can't put in their heart rate for calculation until after
+// ScreenGameplay
+void Profile::AddCaloriesToDailyTotal(float cals)
+{
+	m_fTotalCaloriesBurned += cals;
 	DateTime date = DateTime::GetNowDate();
-	m_mapDayToCaloriesBurned[date].fCals += fCaloriesBurned;
+	m_mapDayToCaloriesBurned[date].fCals += cals;
+}
+
+float Profile::CalculateCaloriesFromHeartRate(float HeartRate, float Duration)
+{
+	// Copied from http://www.shapesense.com/fitness-exercise/calculators/heart-rate-based-calorie-burn-calculator.aspx
+	/*
+		Male: ((-55.0969 + (0.6309 x HR) + (0.1988 x W) + (0.2017 x A))/4.184) x T
+		Female: ((-20.4022 + (0.4472 x HR) - (0.1263 x W) + (0.074 x A))/4.184) x T
+		where
+
+		HR = Heart rate (in beats/minute) 
+		W = Weight (in kilograms) 
+		A = Age (in years) 
+		T = Exercise duration time (in minutes)
+
+		Equations for Determination of Calorie Burn if VO2max is Known
+
+		Male: ((-95.7735 + (0.634 x HR) + (0.404 x VO2max) + (0.394 x W) + (0.271 x A))/4.184) x T
+		Female: ((-59.3954 + (0.45 x HR) + (0.380 x VO2max) + (0.103 x W) + (0.274 x A))/4.184) x T
+		where
+
+		HR = Heart rate (in beats/minute) 
+		VO2max = Maximal oxygen consumption (in mL•kg-1•min-1) 
+		W = Weight (in kilograms) 
+		A = Age (in years) 
+		T = Exercise duration time (in minutes)
+	*/
+	// Duration passed in is in seconds.  Convert it to minutes to make the code
+	// match the equations from the website.
+	Duration= Duration / 60.0;
+	float kilos= GetCalculatedWeightPounds() / 2.205;
+	float age= GetAge();
+
+	// Names for the constants in the equations.
+	// Assumes male and unknown voomax.
+	float gender_factor= -55.0969;
+	float heart_factor= 0.6309;
+	float voo_factor= 0;
+	float weight_factor= 0.1988;
+	float age_factor= 0.2017;
+	if(m_Voomax > 0)
+	{
+		if(m_IsMale)
+		{
+			gender_factor= -95.7735;
+			heart_factor= 0.634;
+			voo_factor= 0.404;
+			weight_factor= 0.394;
+			age_factor= 0.271;
+		}
+		else
+		{
+			gender_factor= -59.3954;
+			heart_factor= 0.45;
+			voo_factor= 0.380;
+			weight_factor= 0.103;
+			age_factor= 0.274;
+		}
+	}
+	else if(!m_IsMale)
+	{
+		gender_factor= -20.4022;
+		heart_factor= 0.6309;
+		weight_factor= 0.1988;
+		age_factor= 0.2017;
+	}
+	return ((gender_factor + (heart_factor * HeartRate) +
+			(voo_factor * m_Voomax) + (weight_factor * kilos) + (age_factor + age))
+		/ 4.184) * Duration;
 }
 
 XNode* Profile::SaveSongScoresCreateNode() const
@@ -2031,6 +2153,11 @@ public:
 	}
 
 	static int GetDisplayName( T* p, lua_State *L )			{ lua_pushstring(L, p->m_sDisplayName ); return 1; }
+	static int SetDisplayName( T* p, lua_State *L )
+	{
+		p->m_sDisplayName= SArg(1);
+		return 0;
+	}
 	static int GetLastUsedHighScoreName( T* p, lua_State *L )	{ lua_pushstring(L, p->m_sLastUsedHighScoreName ); return 1; }
 	static int SetLastUsedHighScoreName( T* p, lua_State *L )
 	{
@@ -2127,6 +2254,37 @@ public:
 	static int SetCharacter( T* p, lua_State *L )			{ p->SetCharacter(SArg(1)); return 0; }
 	static int GetWeightPounds( T* p, lua_State *L )		{ lua_pushnumber(L, p->m_iWeightPounds ); return 1; }
 	static int SetWeightPounds( T* p, lua_State *L )		{ p->m_iWeightPounds = IArg(1); return 0; }
+	DEFINE_METHOD(GetVoomax, m_Voomax);
+	DEFINE_METHOD(GetAge, GetAge());
+	DEFINE_METHOD(GetBirthYear, m_BirthYear);
+	DEFINE_METHOD(GetIgnoreStepCountCalories, m_IgnoreStepCountCalories);
+	DEFINE_METHOD(GetIsMale, m_IsMale);
+	static int SetVoomax( T* p, lua_State *L )
+	{
+		p->m_Voomax= FArg(1);
+		return 0;
+	}
+	static int SetBirthYear( T* p, lua_State *L )
+	{
+		p->m_BirthYear= IArg(1);
+		return 0;
+	}
+	static int SetIgnoreStepCountCalories( T* p, lua_State *L )
+	{
+		p->m_IgnoreStepCountCalories= BArg(1);
+		return 0;
+	}
+	static int SetIsMale( T* p, lua_State *L )
+	{
+		p->m_IsMale= BArg(1);
+		return 0;
+	}
+	static int AddCaloriesToDailyTotal( T* p, lua_State *L )
+	{
+		p->AddCaloriesToDailyTotal(FArg(1));
+		return 0;
+	}
+	DEFINE_METHOD(CalculateCaloriesFromHeartRate, CalculateCaloriesFromHeartRate(FArg(1), FArg(2)));
 	static int GetGoalType( T* p, lua_State *L )			{ lua_pushnumber(L, p->m_GoalType ); return 1; }
 	static int SetGoalType( T* p, lua_State *L )			{ p->m_GoalType = Enum::Check<GoalType>(L, 1); return 0; }
 	static int GetGoalCalories( T* p, lua_State *L )		{ lua_pushnumber(L, p->m_iGoalCalories ); return 1; }
@@ -2226,6 +2384,17 @@ public:
 		ADD_METHOD( SetCharacter );
 		ADD_METHOD( GetWeightPounds );
 		ADD_METHOD( SetWeightPounds );
+		ADD_METHOD( GetVoomax );
+		ADD_METHOD( SetVoomax );
+		ADD_METHOD( GetAge );
+		ADD_METHOD( GetBirthYear );
+		ADD_METHOD( SetBirthYear );
+		ADD_METHOD( GetIgnoreStepCountCalories );
+		ADD_METHOD( SetIgnoreStepCountCalories );
+		ADD_METHOD( GetIsMale );
+		ADD_METHOD( SetIsMale );
+		ADD_METHOD( AddCaloriesToDailyTotal );
+		ADD_METHOD( CalculateCaloriesFromHeartRate );
 		ADD_METHOD( GetGoalType );
 		ADD_METHOD( SetGoalType );
 		ADD_METHOD( GetGoalCalories );
