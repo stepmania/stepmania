@@ -862,7 +862,29 @@ public:
 	// Note: PrepareScreen binding is not allowed; loading data inside
 	// Lua causes the Lua lock to be held for the duration of the load,
 	// which blocks concurrent rendering
-	static int SetNewScreen( T* p, lua_State *L )		{ p->SetNewScreen( SArg(1) ); return 0; }
+	static void ValidateScreenName(lua_State* L, RString& name)
+	{
+		if(name == "")
+		{
+			RString errstr= "Screen name is empty.";
+			SCREENMAN->SystemMessage(errstr);
+			luaL_error(L, errstr.c_str());
+		}
+		RString ClassName= THEME->GetMetric(name, "Class");
+		if(g_pmapRegistrees->find(ClassName) == g_pmapRegistrees->end())
+		{
+			RString errstr= "Screen \"" + name + "\" has an invalid class \"" + ClassName + "\".";
+			SCREENMAN->SystemMessage(errstr);
+			luaL_error(L, errstr.c_str());
+		}
+	}
+	static int SetNewScreen( T* p, lua_State *L )
+	{
+		RString screen= SArg(1);
+		ValidateScreenName(L, screen);
+		p->SetNewScreen(screen);
+		return 0;
+	}
 	static int GetTopScreen( T* p, lua_State *L )
 	{
 		Actor *pScreen = p->GetTopScreen();
@@ -877,6 +899,8 @@ public:
 	static int ScreenClassExists( T* p, lua_State *L )	{ lua_pushboolean( L, g_pmapRegistrees->find( SArg(1) ) != g_pmapRegistrees->end() ); return 1; }
 	static int AddNewScreenToTop( T* p, lua_State *L )
 	{
+		RString screen= SArg(1);
+		ValidateScreenName(L, screen);
 		ScreenMessage SM = SM_None;
 		if( lua_gettop(L) >= 2 && !lua_isnil(L,2) )
 		{
@@ -884,7 +908,7 @@ public:
 			SM = ScreenMessageHelpers::ToScreenMessage( sMessage );
 		}
 
-		p->AddNewScreenToTop( SArg(1), SM );
+		p->AddNewScreenToTop( screen, SM );
 		return 0;
 	}
 	//static int GetScreenStackSize( T* p, lua_State *L )	{ lua_pushnumber( L, ScreenManagerUtil::g_ScreenStack.size() ); return 1; }
