@@ -46,8 +46,10 @@ pos_map_queue::pos_map_queue( const pos_map_queue &cpy )
 
 pos_map_queue &pos_map_queue::operator=( const pos_map_queue &rhs )
 {
-	delete m_pImpl;
-	m_pImpl = new pos_map_impl( *rhs.m_pImpl );
+	if (this != &rhs){
+		delete m_pImpl;
+		m_pImpl = new pos_map_impl( *rhs.m_pImpl );
+	}
 	return *this;
 }
 
