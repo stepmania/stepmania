@@ -298,7 +298,7 @@ void RageSurfaceUtils::Palettize( RageSurface *&pImg, int iColors, bool bDither 
 		}
 	}
 
-	delete acolormap
+	delete acolormap;
 	delete [] thiserr;
 	delete [] nexterr;
 
