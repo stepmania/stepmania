@@ -55,7 +55,7 @@ pos_map_queue &pos_map_queue::operator=( const pos_map_queue &rhs )
 
 void pos_map_queue::Insert( int64_t iSourceFrame, int iFrames, int64_t iDestFrame, float fSourceToDestRatio )
 {
-	if( m_pImpl->m_Queue.size() )
+	if( !m_pImpl->m_Queue.empty() )
 	{
 		/* Optimization: If the last entry lines up with this new entry, just merge them. */
 		pos_map_t &last = m_pImpl->m_Queue.back();
