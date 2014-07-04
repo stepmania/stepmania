@@ -509,7 +509,11 @@ void ScreenManager::Input( const InputEventPlus &input )
 	for( unsigned i = 0; i < g_OverlayScreens.size(); ++i )
 	{
 		Screen *pScreen = g_OverlayScreens[i];
-		if( pScreen->Input(input) )
+		bool handled= pScreen->Input(input);
+		// Pass input to the screen and lua.  Contention shouldn't be a problem
+		// because anybody setting an input callback is probably doing it to
+		// do something in addition to whatever the screen does.
+		if(pScreen->PassInputToLua(input) || handled)
 			return;
 	}
 
@@ -522,6 +526,7 @@ void ScreenManager::Input( const InputEventPlus &input )
 		return;
 
 	g_ScreenStack.back().m_pScreen->Input( input );
+	g_ScreenStack.back().m_pScreen->PassInputToLua( input );
 }
 
 // Just create a new screen; don't do any associated cleanup.
