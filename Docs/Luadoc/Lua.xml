@@ -261,6 +261,9 @@
 			<Function name='GetBaseZoomY'/>
 			<Function name='GetBaseZoomZ'/>
 			<Function name='GetCommand'/>
+			<Function name='GetDestX'/>
+			<Function name='GetDestY'/>
+			<Function name='GetDestZ'/>
 			<Function name='GetDiffuse'/>
 			<Function name='GetDiffuseAlpha'/>
 			<Function name='GetEffectDelta'/>

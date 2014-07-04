@@ -1662,6 +1662,9 @@ public:
 	static int GetX( T* p, lua_State *L )			{ lua_pushnumber( L, p->GetX() ); return 1; }
 	static int GetY( T* p, lua_State *L )			{ lua_pushnumber( L, p->GetY() ); return 1; }
 	static int GetZ( T* p, lua_State *L )			{ lua_pushnumber( L, p->GetZ() ); return 1; }
+	static int GetDestX( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetDestX() ); return 1; }
+	static int GetDestY( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetDestY() ); return 1; }
+	static int GetDestZ( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetDestZ() ); return 1; }
 	static int GetWidth( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetUnzoomedWidth() ); return 1; }
 	static int GetHeight( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetUnzoomedHeight() ); return 1; }
 	static int GetZoomedWidth( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetZoomedWidth() ); return 1; }
@@ -1838,6 +1841,9 @@ public:
 		ADD_METHOD( GetX );
 		ADD_METHOD( GetY );
 		ADD_METHOD( GetZ );
+		ADD_METHOD( GetDestX );
+		ADD_METHOD( GetDestY );
+		ADD_METHOD( GetDestZ );
 		ADD_METHOD( GetWidth );
 		ADD_METHOD( GetHeight );
 		ADD_METHOD( GetZoomedWidth );

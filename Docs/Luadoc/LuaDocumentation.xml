@@ -818,6 +818,15 @@ save yourself some time, copy this for undocumented things:
 	<Function name='GetZ' return='float' arguments=''>
 		Returns the Actor's z position.
 	</Function>
+	<Function name='GetDestX' return='float' arguments=''>
+		Returns what the Actor's x position will be when it reaches its destination tween state.
+	</Function>
+	<Function name='GetDestY' return='float' arguments=''>
+		Returns what the Actor's y position will be when it reaches its destination tween state.
+	</Function>
+	<Function name='GetDestZ' return='float' arguments=''>
+		Returns what the Actor's z position will be when it reaches its destination tween state.
+	</Function>
 	<Function name='GetZoom' return='float' arguments=''>
 		Returns the Actor's zoom.
 	</Function>
@@ -3687,8 +3696,8 @@ save yourself some time, copy this for undocumented things:
 		ago= float, -- How long ago this input occurred, in seconds.<br/>
 		is_joystick= bool, -- True if the device is a joystick.<br/>
 		is_mouse= bool -- True if the device is a mouse.<br/>
-		},<br/>
-		controller= string, -- The game controller this event was mapped to.  "GameController_1" or "GameController_2", or nil if the event wasn't mapped to either controller.
+		}, -- This ends the list of things inside the DeviceInput part of the table.<br/>
+		controller= string, -- The game controller this event was mapped to.  "GameController_1" or "GameController_2", or nil if the event wasn't mapped to either controller.<br/>
 		button= string, -- The semi-raw button that was pressed.  This is what the button was mapped to by the keymap settings, but without the conversions that occur when OnlyDedicatedMenuButtons is true.  Will be empty if the button was not mapped.<br/>
 		type= string, -- The type of event.  "InputEventType_FirstPress", "InputEventType_Repeat", or "InputEventType_Release".<br/>
 		GameButton= string, -- The cooked button that was pressed.  This is button with mapping that occurs when OnlyDedicatedMenuButtons is true applied.  This is nil for unmapped buttons.<br/>
