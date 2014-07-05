@@ -337,11 +337,8 @@ bool Screen::PassInputToLua(const InputEventPlus& input)
 	{
 		callback->second.PushSelf(L);
 		lua_pushvalue(L, -2);
-		RString error;
-		if(!LuaHelpers::RunScriptOnStack(L, error, 1, 1))
-		{
-			LOG->Warn("Error running input callback: %s", error.c_str());
-		}
+		RString error= "Error running input callback: ";
+		LuaHelpers::RunScriptOnStack(L, error, 1, 1, true);
 		handled= lua_toboolean(L, -1);
 		lua_pop(L, 1);
 	}

@@ -376,7 +376,10 @@ void ScreenTextEntry::TextEntrySettings::FromStack( lua_State *L )
 	lua_getfield( L, iTab, "Question" );
 	pStr = lua_tostring( L, -1 );
 	if( pStr == NULL )
-		RageException::Throw( "\"Question\" entry is not a string." );
+	{
+		LuaHelpers::ReportScriptError("ScreenTextEntry \"Question\" entry is not a string.");
+		pStr= "";
+	}
 	sQuestion = pStr;
 	lua_settop( L, iTab );
 
@@ -398,53 +401,34 @@ void ScreenTextEntry::TextEntrySettings::FromStack( lua_State *L )
 	bPassword = !!lua_toboolean( L, -1 );
 	lua_settop( L, iTab );
 
-	// and now the hard part, the functions.
-	// Validate
-	lua_getfield( L, iTab, "Validate" );
-	if( !lua_isfunction( L, -1 ) && !lua_isnil( L, -1 ) )
-		RageException::Throw( "\"Validate\" is not a function." );
-	Validate.SetFromStack( L );
-	lua_settop( L, iTab );
+#define SET_FUNCTION_MEMBER(memname) \
+	lua_getfield(L, iTab, #memname); \
+	if(lua_isfunction(L, -1)) \
+	{ \
+		memname.SetFromStack(L); \
+	} \
+	else if(!lua_isnil(L, -1)) \
+	{ \
+		LuaHelpers::ReportScriptError("ScreenTextEntry \"" #memname "\" is not a function."); \
+	} \
+	lua_settop(L, iTab);
 
-	// OnOK
-	lua_getfield( L, iTab, "OnOK" );
-	if( !lua_isfunction( L, -1 ) && !lua_isnil( L, -1 ) )
-		RageException::Throw( "\"OnOK\" is not a function." );
-	OnOK.SetFromStack( L );
-	lua_settop( L, iTab );
-
-	// OnCancel
-	lua_getfield( L, iTab, "OnCancel" );
-	if( !lua_isfunction( L, -1 ) && !lua_isnil( L, -1 ) )
-		RageException::Throw( "\"OnCancel\" is not a function." );
-	OnCancel.SetFromStack( L );
-	lua_settop( L, iTab );
-
-	// ValidateAppend
-	lua_getfield( L, iTab, "ValidateAppend" );
-	if( !lua_isfunction( L, -1 ) && !lua_isnil( L, -1 ) )
-		RageException::Throw( "\"ValidateAppend\" is not a function." );
-	ValidateAppend.SetFromStack( L );
-	lua_settop( L, iTab );
-
-	// FormatAnswerForDisplay
-	lua_getfield( L, iTab, "FormatAnswerForDisplay" );
-	if( !lua_isfunction( L, -1 ) && !lua_isnil( L, -1 ) )
-		RageException::Throw( "\"FormatAnswerForDisplay\" is not a function." );
-	FormatAnswerForDisplay.SetFromStack( L );
-	lua_settop( L, iTab );
+	SET_FUNCTION_MEMBER(Validate);
+	SET_FUNCTION_MEMBER(OnOK);
+	SET_FUNCTION_MEMBER(OnCancel);
+	SET_FUNCTION_MEMBER(ValidateAppend);
+	SET_FUNCTION_MEMBER(FormatAnswerForDisplay);
+#undef SET_FUNCTION_MEMBER
 }
 
 // Lua bridges
 static bool ValidateFromLua( const RString &sAnswer, RString &sErrorOut )
 {
-	Lua *L = LUA->Get();
-
-	if( g_ValidateFunc.IsNil() )
+	if(g_ValidateFunc.IsNil() || !g_ValidateFunc.IsSet())
 	{
-		LUA->Release(L);
 		return true;
 	}
+	Lua *L = LUA->Get();
 
 	g_ValidateFunc.PushSelf( L );
 
@@ -454,69 +438,70 @@ static bool ValidateFromLua( const RString &sAnswer, RString &sErrorOut )
 	// Argument 2 (error out):
 	lua_pushstring( L, sErrorOut );
 
-	lua_call( L, 2, 2 ); // call function with 2 arguments and 2 results
+	bool valid= false;
 
-	if( !lua_isstring(L, -1) )
-		RageException::Throw( "\"Validate\" did not return a string." );
-
-	if( !lua_isboolean(L, -2) )
-		RageException::Throw( "\"Validate\" did not return a boolean." );
-
-	RString sErrorFromLua;
-	LuaHelpers::Pop( L, sErrorFromLua );
-	if( !sErrorFromLua.empty() )
-		sErrorOut = sErrorFromLua;
-
-	bool bValidate;
-	LuaHelpers::Pop( L, bValidate );
-
+	RString error= "Lua error in ScreenTextEntry Validate: ";
+	if(LuaHelpers::RunScriptOnStack(L, error, 2, 2, true))
+	{
+		if(!lua_isstring(L, -1) || !lua_isboolean(L, -2))
+		{
+			LuaHelpers::ReportScriptError("Lua error: ScreenTextEntry Validate did not return 'bool, string'.");
+		}
+		else
+		{
+			RString ErrorFromLua;
+			LuaHelpers::Pop( L, ErrorFromLua );
+			if( !ErrorFromLua.empty() )
+			{
+				sErrorOut = ErrorFromLua;
+			}
+			LuaHelpers::Pop( L, valid );
+		}
+	}
+	lua_settop(L, 0);
 	LUA->Release(L);
-	return bValidate;
+	return valid;
 }
 
 static void OnOKFromLua( const RString &sAnswer )
 {
-	Lua *L = LUA->Get();
-
-	if( g_OnOKFunc.IsNil() )
+	if(g_OnOKFunc.IsNil() || !g_OnOKFunc.IsSet())
 	{
-		LUA->Release(L);
 		return;
 	}
+	Lua *L = LUA->Get();
 
 	g_OnOKFunc.PushSelf( L );
 	// Argument 1 (answer):
 	lua_pushstring( L, sAnswer );
-	lua_call( L, 1, 0 ); // call function with 1 argument and 0 results
+	RString error= "Lua error in ScreenTextEntry OnOK: ";
+	LuaHelpers::RunScriptOnStack(L, error, 1, 0, true);
 
 	LUA->Release(L);
 }
 
 static void OnCancelFromLua()
 {
-	Lua *L = LUA->Get();
-
-	if( g_OnCancelFunc.IsNil() )
+	if(g_OnCancelFunc.IsNil() || !g_OnCancelFunc.IsSet())
 	{
-		LUA->Release(L);
 		return;
 	}
+	Lua *L = LUA->Get();
 
 	g_OnCancelFunc.PushSelf( L );
-	lua_call( L, 0, 0 ); // call function with 0 arguments and 0 results
+	RString error= "Lua error in ScreenTextEntry OnCancel: ";
+	LuaHelpers::RunScriptOnStack(L, error, 0, 0, true);
 
 	LUA->Release(L);
 }
 
 static bool ValidateAppendFromLua( const RString &sAnswerBeforeChar, RString &sAppend )
 {
-	Lua *L = LUA->Get();
-
-	if( g_ValidateAppendFunc.IsNil() )
+	if(g_ValidateAppendFunc.IsNil() || !g_ValidateAppendFunc.IsSet())
 	{
-		LUA->Release(L);
 		return true;
 	}
+	Lua *L = LUA->Get();
 
 	g_ValidateAppendFunc.PushSelf( L );
 
@@ -525,41 +510,54 @@ static bool ValidateAppendFromLua( const RString &sAnswerBeforeChar, RString &sA
 
 	// Argument 2 (Append):
 	lua_pushstring( L, sAppend );
-	lua_call( L, 2, 1 ); // call function with 2 arguments and 1 result
 
-	if( !lua_isboolean(L, -1) )
-		RageException::Throw( "\"ValidateAppend\" did not return a boolean." );
+	bool append= false;
 
-	bool bAppend;
-	LuaHelpers::Pop( L, bAppend );
-
+	RString error= "Lua error in ScreenTextEntry ValidateAppend: ";
+	if(LuaHelpers::RunScriptOnStack(L, error, 2, 1, true))
+	{
+		if( !lua_isboolean(L, -1) )
+		{
+			LuaHelpers::ReportScriptError("\"ValidateAppend\" did not return a boolean.");
+		}
+		else
+		{
+			LuaHelpers::Pop( L, append );
+		}
+	}
+	lua_settop(L, 0);
 	LUA->Release(L);
-	return bAppend;
+	return append;
 }
 
 static RString FormatAnswerForDisplayFromLua( const RString &sAnswer )
 {
-	Lua *L = LUA->Get();
-
-	if( g_FormatAnswerForDisplayFunc.IsNil() )
+	if(g_FormatAnswerForDisplayFunc.IsNil() || !g_FormatAnswerForDisplayFunc.IsSet())
 	{
-		LUA->Release(L);
 		return sAnswer;
 	}
+	Lua *L = LUA->Get();
 
 	g_FormatAnswerForDisplayFunc.PushSelf( L );
 	// Argument 1 (Answer):
 	lua_pushstring( L, sAnswer );
-	lua_call( L, 1, 1 ); // call function with 1 argument and 1 result
 
-	if( !lua_isstring(L, -1) )
-		RageException::Throw( "\"FormatAnswerForDisplay\" did not return a string." );
-
-	RString sAnswerFromLua;
-	LuaHelpers::Pop( L, sAnswerFromLua );
-
+	RString answer;
+	RString error= "Lua error in ScreenTextEntry FormatAnswerForDisplay: ";
+	if(LuaHelpers::RunScriptOnStack(L, error, 1, 1, true))
+	{
+		if( !lua_isstring(L, -1) )
+		{
+			LuaHelpers::ReportScriptError("\"FormatAnswerForDisplay\" did not return a string.");
+		}
+		else
+		{
+			LuaHelpers::Pop(L, answer);
+		}
+	}
+	lua_settop(L, 0);
 	LUA->Release(L);
-	return sAnswerFromLua;
+	return answer;
 }
 
 void ScreenTextEntry::LoadFromTextEntrySettings( const TextEntrySettings &settings )

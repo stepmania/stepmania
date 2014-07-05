@@ -9,7 +9,9 @@
 #include "arch/Dialog/Dialog.h"
 #include "XmlFile.h"
 #include "Command.h"
+#include "RageLog.h"
 #include "RageTypes.h"
+#include "ScreenManager.h"
 
 #include <sstream> // conversion for lua functions.
 #include <csetjmp>
@@ -787,43 +789,75 @@ bool LuaHelpers::LoadScript( Lua *L, const RString &sScript, const RString &sNam
 	return true;
 }
 
-bool LuaHelpers::RunScriptOnStack( Lua *L, RString &sError, int iArgs, int iReturnValues )
+void LuaHelpers::ReportScriptError(RString const& Error)
+{
+	size_t line_break_pos= Error.find('\n');
+	RString short_error;
+	if(line_break_pos == RString::npos)
+	{
+		short_error= Error;
+	}
+	else
+	{
+		short_error= Error.substr(0, line_break_pos);
+	}
+	SCREENMAN->SystemMessage(short_error);
+	LOG->Warn(Error.c_str());
+}
+
+bool LuaHelpers::RunScriptOnStack( Lua *L, RString &Error, int Args, int ReturnValues, bool ReportError )
 {
 	lua_pushcfunction( L, GetLuaStack );
 
 	// move the error function above the function and params
-	int iErrFunc = lua_gettop(L) - iArgs - 1;
-	lua_insert( L, iErrFunc );
+	int ErrFunc = lua_gettop(L) - Args - 1;
+	lua_insert( L, ErrFunc );
 
 	// evaluate
-	int ret = lua_pcall( L, iArgs, iReturnValues, iErrFunc );
+	int ret = lua_pcall( L, Args, ReturnValues, ErrFunc );
 	if( ret )
 	{
-		LuaHelpers::Pop( L, sError );
-		lua_remove( L, iErrFunc );
-		for( int i = 0; i < iReturnValues; ++i )
+		if(ReportError)
+		{
+			RString lerror;
+			LuaHelpers::Pop( L, lerror );
+			Error+= lerror;
+			ReportScriptError(Error);
+		}
+		else
+		{
+			LuaHelpers::Pop( L, Error );
+		}
+		lua_remove( L, ErrFunc );
+		for( int i = 0; i < ReturnValues; ++i )
 			lua_pushnil( L );
 		return false;
 	}
 
-	lua_remove( L, iErrFunc );
+	lua_remove( L, ErrFunc );
 	return true;
 }
 
-bool LuaHelpers::RunScript( Lua *L, const RString &sScript, const RString &sName, RString &sError, int iArgs, int iReturnValues )
+bool LuaHelpers::RunScript( Lua *L, const RString &Script, const RString &Name, RString &Error, int Args, int ReturnValues, bool ReportError )
 {
-	if( !LoadScript(L, sScript, sName, sError) )
+	RString lerror;
+	if( !LoadScript(L, Script, Name, lerror) )
 	{
-		lua_pop( L, iArgs );
-		for( int i = 0; i < iReturnValues; ++i )
+		Error+= lerror;
+		if(ReportError)
+		{
+			ReportScriptError(Error);
+		}
+		lua_pop( L, Args );
+		for( int i = 0; i < ReturnValues; ++i )
 			lua_pushnil( L );
 		return false;
 	}
 
 	// move the function above the params
-	lua_insert( L, lua_gettop(L) - iArgs );
+	lua_insert( L, lua_gettop(L) - Args );
 
-	return LuaHelpers::RunScriptOnStack( L, sError, iArgs, iReturnValues );
+	return LuaHelpers::RunScriptOnStack( L, Error, Args, ReturnValues, ReportError );
 }
 
 bool LuaHelpers::RunExpression( Lua *L, const RString &sExpression, const RString &sName )

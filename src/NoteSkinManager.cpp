@@ -169,11 +169,10 @@ void NoteSkinManager::LoadNoteSkinDataRecursive( const RString &sNoteSkinName_, 
 		LOG->Trace( "Load script \"%s\"", sFile.c_str() );
 
 		Lua *L = LUA->Get();
-		RString sError;
+		RString Error= "Error running " + sFile + ": ";
 		refScript.PushSelf( L );
-		if( !LuaHelpers::RunScript(L, sScript, "@" + sFile, sError, 1, 1) )
+		if( !LuaHelpers::RunScript(L, sScript, "@" + sFile, Error, 1, 1, true) )
 		{
-			LOG->Trace( "Error running %s: %s", sFile.c_str(), sError.c_str() );
 			lua_pop( L, 1 );
 		}
 		else

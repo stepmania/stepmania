@@ -502,7 +502,8 @@ void UnlockManager::Load()
 		current.PushSelf( L );
 		
 		// call function with 1 argument and 0 results
-		lua_call( L, 1, 0 ); 
+		RString error= "Lua error in command: ";
+		LuaHelpers::RunScriptOnStack(L, error, 1, 0, true);
 
 		if( current.m_bRoulette )
 			m_RouletteCodes.insert( current.m_sEntryID );
