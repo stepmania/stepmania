@@ -235,7 +235,10 @@ void GameCommand::LoadOne( const Command& cmd )
 	else if( sName == "lua" )
 	{
 		m_LuaFunction.SetFromExpression( sValue );
-		ASSERT_M( !m_LuaFunction.IsNil(), ssprintf("\"%s\" evaluated to nil", sValue.c_str()) );
+		if(m_LuaFunction.IsNil())
+		{
+			LuaHelpers::ReportScriptError("Lua error in game command: \"" + sValue + "\" evaluated to nil");
+		}
 	}
 
 	else if( sName == "screen" )
@@ -693,7 +696,7 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 	if( m_sStageModifiers != "" )
 		FOREACH_CONST( PlayerNumber, vpns, pn )
 			GAMESTATE->ApplyStageModifiers( *pn, m_sStageModifiers );
-	if( m_LuaFunction.IsSet() )
+	if( m_LuaFunction.IsSet() && !m_LuaFunction.IsNil() )
 	{
 		Lua *L = LUA->Get();
 		FOREACH_CONST( PlayerNumber, vpns, pn )
@@ -702,7 +705,8 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 			ASSERT( !lua_isnil(L, -1) );
 
 			lua_pushnumber( L, *pn ); // 1st parameter
-			lua_call( L, 1, 0 ); // call function with 1 argument and 0 results
+			RString error= "Lua GameCommand error: ";
+			LuaHelpers::RunScriptOnStack(L, error, 1, 0, true);
 		}
 		LUA->Release(L);
 	}

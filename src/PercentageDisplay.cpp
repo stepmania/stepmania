@@ -42,8 +42,15 @@ void PercentageDisplay::LoadFromNode( const XNode* pNode )
 
 	const XNode *pChild = pNode->GetChild( "Percent" );
 	if( pChild == NULL )
-		RageException::Throw( "%s: PercentageDisplay: missing the node \"Percent\"", ActorUtil::GetWhere(pNode).c_str() );
-	m_textPercent.LoadFromNode( pChild );
+	{
+		LuaHelpers::ReportScriptError(ActorUtil::GetWhere(pNode) + ": PercentageDisplay: missing the node \"Percent\"");
+		// Make a BitmapText just so we don't crash.
+		m_textPercent.LoadFromFont(THEME->GetPathF("", "Common Normal"));
+	}
+	else
+	{
+		m_textPercent.LoadFromNode( pChild );
+	}
 	this->AddChild( &m_textPercent );
 
 	pChild = pNode->GetChild( "PercentRemainder" );
@@ -154,9 +161,8 @@ void PercentageDisplay::Refresh()
 			m_FormatPercentScore.PushSelf( L );
 			ASSERT( !lua_isnil(L, -1) );
 			LuaHelpers::Push( L, fPercentDancePoints );
-			RString sError;
-			if( !LuaHelpers::RunScriptOnStack(L, sError, 1, 1) ) // 1 arg, 1 result
-				LOG->Warn( "Error running FormatPercentScore: %s", sError.c_str() );
+			RString Error= "Error running FormatPercentScore: ";
+			LuaHelpers::RunScriptOnStack(L, Error, 1, 1, true); // 1 arg, 1 result
 			LuaHelpers::Pop( L, sNumToDisplay );
 			LUA->Release(L);
 
