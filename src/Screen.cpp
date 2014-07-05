@@ -234,7 +234,17 @@ void Screen::HandleScreenMessage( const ScreenMessage SM )
 		if( SCREENMAN->IsStackedScreen(this) )
 			SCREENMAN->PopTopScreen( m_smSendOnPop );
 		else
-			SCREENMAN->SetNewScreen( SM == SM_GoToNextScreen? GetNextScreenName():GetPrevScreen() );
+		{
+			RString ToScreen= (SM == SM_GoToNextScreen? GetNextScreenName():GetPrevScreen());
+			if(ToScreen == "")
+			{
+				LuaHelpers::ReportScriptError("Error:  Tried to go to empty screen.");
+			}
+			else
+			{
+				SCREENMAN->SetNewScreen(ToScreen);
+			}
+		}
 	}
 	else if( SM == SM_GainFocus )
 	{
