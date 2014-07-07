@@ -10,7 +10,6 @@
 #include "RageTexture.h"
 #include "RageUtil.h"
 #include "ActorUtil.h"
-#include "arch/Dialog/Dialog.h"
 #include "Foreach.h"
 #include "LuaBinding.h"
 #include "LuaManager.h"
@@ -743,7 +742,7 @@ void Sprite::SetState( int iNewState )
 			else
 				sError = ssprintf("A Sprite (\"%s\") tried to set state index %d, but no texture is loaded.", 
 					this->m_sName.c_str(), iNewState );
-			Dialog::OK( sError, "SPRITE_INVALID_FRAME" );
+			LuaHelpers::ReportScriptError(sError, "SPRITE_INVALID_FRAME");
 		}
 	}
 

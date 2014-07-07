@@ -195,7 +195,7 @@ void ScreenSelectMaster::Init()
 			int from, to;
 			if( sscanf( parts[part], "%d:%d", &from, &to ) != 2 )
 			{
-				LOG->Warn( "%s::OptionOrder%s parse error", m_sName.c_str(), MenuDirToString(dir).c_str() );
+				LuaHelpers::ReportScriptErrorFmt( "%s::OptionOrder%s parse error", m_sName.c_str(), MenuDirToString(dir).c_str() );
 				continue;
 			}
 

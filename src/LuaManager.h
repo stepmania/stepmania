@@ -59,7 +59,9 @@ namespace LuaHelpers
 	bool LoadScript( Lua *L, const RString &sScript, const RString &sName, RString &sError );
 
 	/* Report the error through the log and on the screen. */
-	void ReportScriptError(RString const& Error);
+	void ReportScriptError(RString const& Error, RString ErrorType= "LUA_ERROR");
+	// For convenience when replacing uses of LOG->Warn.
+	void ReportScriptErrorFmt(const char *fmt, ...);
 
 	/* Run the function with arguments at the top of the stack, with the given
 	 * number of arguments. The specified number of return values are left on

@@ -246,7 +246,7 @@ namespace
 		{
 			LUA->Release( L );
 			sError = ssprintf( "Lua runtime error: %s", sError.c_str() );
-			Dialog::OK( sError, "LUA_ERROR" );
+			LuaHelpers::ReportScriptError(sError);
 			return NULL;
 		}
 
@@ -272,7 +272,6 @@ bool ActorUtil::LoadTableFromStackShowErrors( Lua *L )
 	if( !LuaHelpers::RunScriptOnStack(L, Error, 0, 1, true) )
 	{
 		lua_pop( L, 1 );
-		Dialog::OK( Error, "LUA_ERROR" );
 		return false;
 	}
 
@@ -286,7 +285,7 @@ bool ActorUtil::LoadTableFromStackShowErrors( Lua *L )
 
 		Error = ssprintf( "%s: must return a table", debug.short_src );
 
-		Dialog::OK( Error, "LUA_ERROR" );
+		LuaHelpers::ReportScriptError(Error, "LUA_ERROR");
 		return false;
 	}
 	return true;

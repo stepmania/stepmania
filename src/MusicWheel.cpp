@@ -1613,7 +1613,7 @@ Song *MusicWheel::GetPreferredSelectionForRandomOrPortal()
 			return wid[iSelection]->m_pSong;
 		}
 	}
-	LOG->Warn( "Couldn't find any songs" );
+	LuaHelpers::ReportScriptError( "Couldn't find any songs" );
 	return wid[0]->m_pSong;
 }
 

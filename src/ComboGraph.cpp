@@ -61,7 +61,7 @@ void ComboGraph::Load( RString sMetricsGroup )
 		if( m_pComboNumber != NULL )
 			this->AddChild( m_pComboNumber );
 		else
-			LOG->Warn( "ComboGraph: \"sMetricsGroup\" \"ComboNumber\" must be a BitmapText" );
+			LuaHelpers::ReportScriptErrorFmt( "ComboGraph: \"sMetricsGroup\" \"ComboNumber\" must be a BitmapText" );
 	}
 }	
 

@@ -1879,7 +1879,7 @@ void GameState::StoreRankingName( PlayerNumber pn, RString sName )
 			{
 				if( file.GetLine(sLine) == -1 )
 				{
-					LOG->Warn( "Error reading \"%s\": %s", NAME_BLACKLIST_FILE, file.GetError().c_str() );
+					LuaHelpers::ReportScriptErrorFmt( "Error reading \"%s\": %s", NAME_BLACKLIST_FILE, file.GetError().c_str() );
 					break;
 				}
 
@@ -2085,7 +2085,7 @@ Difficulty GameState::GetEasiestStepsDifficulty() const
 	{
 		if( m_pCurSteps[p] == NULL )
 		{
-			LOG->Warn( "GetEasiestStepsDifficulty called but p%i hasn't chosen notes", p+1 );
+			LuaHelpers::ReportScriptErrorFmt( "GetEasiestStepsDifficulty called but p%i hasn't chosen notes", p+1 );
 			continue;
 		}
 		dc = min( dc, m_pCurSteps[p]->GetDifficulty() );
@@ -2100,7 +2100,7 @@ Difficulty GameState::GetHardestStepsDifficulty() const
 	{
 		if( m_pCurSteps[p] == NULL )
 		{
-			LOG->Warn( "GetHardestStepsDifficulty called but p%i hasn't chosen notes", p+1 );
+			LuaHelpers::ReportScriptErrorFmt( "GetHardestStepsDifficulty called but p%i hasn't chosen notes", p+1 );
 			continue;
 		}
 		dc = max( dc, m_pCurSteps[p]->GetDifficulty() );

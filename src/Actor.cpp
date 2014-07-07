@@ -4,7 +4,6 @@
 #include "RageUtil.h"
 #include "RageMath.h"
 #include "RageLog.h"
-#include "arch/Dialog/Dialog.h"
 #include "Foreach.h"
 #include "XmlFile.h"
 #include "LuaBinding.h"
@@ -793,10 +792,7 @@ void Actor::BeginTweening( float time, ITween *pTween )
 	// recursing ActorCommand.
 	if( m_Tweens.size() > 50 )
 	{
-		RString sError = ssprintf( "Tween overflow: \"%s\"; infinitely recursing ActorCommand?", GetLineage().c_str() );
-
-		LOG->Warn( "%s", sError.c_str() );
-		Dialog::OK( sError );
+		LuaHelpers::ReportScriptErrorFmt("Tween overflow: \"%s\"; infinitely recursing ActorCommand?", GetLineage().c_str());
 		this->FinishTweening();
 	}
 
@@ -1129,7 +1125,7 @@ void Actor::RunCommands( const LuaReference& cmds, const LuaReference *pParamTab
 {
 	if( !cmds.IsSet() || cmds.IsNil() )
 	{
-		LOG->Warn( "RunCommands: command is unset or nil" );
+		LuaHelpers::ReportScriptError("RunCommands: command is unset or nil");
 		return;
 	}
 
@@ -1139,7 +1135,7 @@ void Actor::RunCommands( const LuaReference& cmds, const LuaReference *pParamTab
 	cmds.PushSelf( L );
 	if( lua_isnil(L, -1) )
 	{
-		LOG->Warn("Error compiling commands");
+		LuaHelpers::ReportScriptError("Error compiling commands");
 		LUA->Release(L);
 		return;
 	}
@@ -1300,7 +1296,7 @@ void Actor::AddCommand( const RString &sCmdName, apActorCommands apac )
 	if( HasCommand(sCmdName) )
 	{
 		RString sWarning = GetLineage()+"'s command '"+sCmdName+"' defined twice";
-		Dialog::OK( sWarning, "COMMAND_DEFINED_TWICE" );
+		LuaHelpers::ReportScriptError(sWarning, "COMMAND_DEFINED_TWICE");
 	}
 
 	RString sMessage;
@@ -1403,7 +1399,7 @@ public:
 		float fTime = FArg(1);
 		if (fTime < 0)
 		{
-			LOG->Warn("Lua: sleep(%f): time must not be negative", fTime);
+			LuaHelpers::ReportScriptErrorFmt("Lua: sleep(%f): time must not be negative", fTime);
 			return 0;
 		}
 		p->Sleep(fTime);
@@ -1414,7 +1410,7 @@ public:
 		float fTime = FArg(1);
 		if (fTime < 0)
 		{
-			LOG->Warn("Lua: linear(%f): tween time must not be negative", fTime);
+			LuaHelpers::ReportScriptErrorFmt("Lua: linear(%f): tween time must not be negative", fTime);
 			return 0;
 		}
 		p->BeginTweening(fTime, TWEEN_LINEAR);
@@ -1425,7 +1421,7 @@ public:
 		float fTime = FArg(1);
 		if (fTime < 0)
 		{
-			LOG->Warn("Lua: accelerate(%f): tween time must not be negative", fTime);
+			LuaHelpers::ReportScriptErrorFmt("Lua: accelerate(%f): tween time must not be negative", fTime);
 			return 0;
 		}
 		p->BeginTweening(fTime, TWEEN_ACCELERATE);
@@ -1436,7 +1432,7 @@ public:
 		float fTime = FArg(1);
 		if (fTime < 0)
 		{
-			LOG->Warn("Lua: decelerate(%f): tween time must not be negative", fTime);
+			LuaHelpers::ReportScriptErrorFmt("Lua: decelerate(%f): tween time must not be negative", fTime);
 			return 0;
 		}
 		p->BeginTweening(fTime, TWEEN_DECELERATE);
@@ -1447,7 +1443,7 @@ public:
 		float fTime = FArg(1);
 		if (fTime < 0)
 		{
-			LOG->Warn("Lua: spring(%f): tween time must not be negative", fTime);
+			LuaHelpers::ReportScriptErrorFmt("Lua: spring(%f): tween time must not be negative", fTime);
 			return 0;
 		}
 		p->BeginTweening(fTime, TWEEN_SPRING);
@@ -1458,7 +1454,7 @@ public:
 		float fTime = FArg(1);
 		if (fTime < 0)
 		{
-			LOG->Warn("Lua: tween(%f): tween time must not be negative", fTime);
+			LuaHelpers::ReportScriptErrorFmt("Lua: tween(%f): tween time must not be negative", fTime);
 			return 0;
 		}
 		ITween *pTween = ITween::CreateFromStack( L, 2 );
@@ -1558,7 +1554,7 @@ public:
 		float fPeriod = FArg(1);
 		if (fPeriod <= 0)
 		{
-			LOG->Warn("Effect period (%f) must be positive; ignoring", fPeriod);
+			LuaHelpers::ReportScriptErrorFmt("Effect period (%f) must be positive; ignoring", fPeriod);
 			return 0;
 		}
 		p->SetEffectPeriod(FArg(1));
@@ -1569,13 +1565,13 @@ public:
 		float f1 = FArg(1), f2 = FArg(2), f3 = FArg(3), f4 = FArg(4);
 		if (f1 < 0 || f2 < 0 || f3 < 0 || f4 < 0)
 		{
-			LOG->Warn("Effect timings (%f,%f,%f,%f) must not be negative; ignoring",
+			LuaHelpers::ReportScriptErrorFmt("Effect timings (%f,%f,%f,%f) must not be negative; ignoring",
 					f1, f2, f3, f4);
 			return 0;
 		}
 		if (f1 == 0 && f2 == 0 && f3 == 0 && f4 == 0)
 		{
-			LOG->Warn("Effect timings (0,0,0,0) must not all be zero; ignoring");
+			LuaHelpers::ReportScriptErrorFmt("Effect timings (0,0,0,0) must not all be zero; ignoring");
 			return 0;
 		}
 		p->SetEffectTiming(FArg(1), FArg(2), FArg(3), FArg(4));

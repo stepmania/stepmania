@@ -132,7 +132,7 @@ void BitmapText::LoadFromNode( const XNode* pNode )
 		if( !pNode->GetAttrValue("Font", sFont) &&
 				!pNode->GetAttrValue("File", sFont) ) // accept "File" for backward compatibility
 		{
-			LOG->Warn( "%s: BitmapText: Font or File attribute not found",
+			LuaHelpers::ReportScriptErrorFmt( "%s: BitmapText: Font or File attribute not found",
 					      ActorUtil::GetWhere(pNode).c_str() );
 			sFont = "Common Normal";
 		}

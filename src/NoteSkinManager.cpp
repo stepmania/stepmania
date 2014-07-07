@@ -419,7 +419,7 @@ Actor *NoteSkinManager::LoadActor( const RString &sButton, const RString &sEleme
 		// Make sure pActor is a Sprite (or something derived from Sprite).
 		Sprite *pSprite = dynamic_cast<Sprite *>( pRet );
 		if( pSprite == NULL )
-			LOG->Warn( "%s: %s %s must be a Sprite", m_sCurrentNoteSkin.c_str(), sButton.c_str(), sElement.c_str() );
+			LuaHelpers::ReportScriptErrorFmt( "%s: %s %s must be a Sprite", m_sCurrentNoteSkin.c_str(), sButton.c_str(), sElement.c_str() );
 	}
 
 	return pRet;

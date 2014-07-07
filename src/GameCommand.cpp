@@ -14,7 +14,6 @@
 #include "Game.h"
 #include "Style.h"
 #include "Foreach.h"
-#include "arch/Dialog/Dialog.h"
 #include "GameSoundManager.h"
 #include "PlayerState.h"
 #include "SongManager.h"
@@ -426,8 +425,7 @@ void GameCommand::LoadOne( const Command& cmd )
 	else
 	{
 		RString sWarning = ssprintf( "Command '%s' is not valid.", cmd.GetOriginalCommandString().c_str() );
-		LOG->Warn( "%s", sWarning.c_str() );
-		Dialog::OK( sWarning, "INVALID_GAME_COMMAND" );
+		LuaHelpers::ReportScriptError(sWarning, "INVALID_GAME_COMMAND");
 	}
 }
 

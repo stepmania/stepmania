@@ -7,6 +7,7 @@
 #include "RageLog.h"
 #include "arch/Dialog/Dialog.h"
 #include "Foreach.h"
+#include "LuaManager.h"
 
 bool XmlFileUtil::LoadFromFileShowErrors( XNode &xml, RageFileBasic &f )
 {
@@ -20,8 +21,7 @@ bool XmlFileUtil::LoadFromFileShowErrors( XNode &xml, RageFileBasic &f )
 		return true;
 
 	RString sWarning = ssprintf( "XML: LoadFromFile failed: %s", sError.c_str() );
-	LOG->Warn( "%s", sWarning.c_str() );
-	Dialog::OK( sWarning, "XML_PARSE_ERROR" );
+	LuaHelpers::ReportScriptError(sWarning, "XML_PARSE_ERROR");
 	return false;
 }
 
@@ -30,7 +30,7 @@ bool XmlFileUtil::LoadFromFileShowErrors( XNode &xml, const RString &sFile )
 	RageFile f;
 	if( !f.Open(sFile, RageFile::READ) )
 	{
-		LOG->Warn("Couldn't open %s for reading: %s", sFile.c_str(), f.GetError().c_str() );
+		LuaHelpers::ReportScriptErrorFmt("Couldn't open %s for reading: %s", sFile.c_str(), f.GetError().c_str() );
 		return false;
 	}
 
@@ -38,8 +38,7 @@ bool XmlFileUtil::LoadFromFileShowErrors( XNode &xml, const RString &sFile )
 	if( !bSuccess )
 	{
 		RString sWarning = ssprintf( "XML: LoadFromFile failed for file: %s", sFile.c_str() );
-		LOG->Warn( "%s", sWarning.c_str() );
-		Dialog::OK( sWarning, "XML_PARSE_ERROR" );
+		LuaHelpers::ReportScriptError(sWarning, "XML_PARSE_ERROR");
 	}
 	return bSuccess;
 }
@@ -518,14 +517,13 @@ bool XmlFileUtil::SaveToFile( const XNode *pNode, const RString &sFile, const RS
 	RageFile f;
 	if( !f.Open(sFile, RageFile::WRITE) )
 	{
-		LOG->Warn( "Couldn't open %s for writing: %s", sFile.c_str(), f.GetError().c_str() );
+		LuaHelpers::ReportScriptErrorFmt( "Couldn't open %s for writing: %s", sFile.c_str(), f.GetError().c_str() );
 		return false;
 	}
 
 	return SaveToFile( pNode, f, sStylesheet, bWriteTabs );
 }
 
-#include "LuaManager.h"
 #include "LuaReference.h"
 class XNodeLuaValue: public XNodeValue
 {
